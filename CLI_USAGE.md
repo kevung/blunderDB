@@ -2066,7 +2066,7 @@ Options:
   -format string
     	Output format: text or json (default "text")
   -jobs int
-    	Positions analysed in parallel (one CPU each) (default 16)
+    	Positions analysed in parallel (one CPU each) (default 28)
   -limit int
     	With --compare: stop after this many positions (0 = all)
   -match int

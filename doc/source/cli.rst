@@ -2231,9 +2231,10 @@ restreint la liste à un type d'objet : ``position``, ``collection``,
 Une restauration de position repasse par la déduplication Zobrist : elle ne
 crée jamais de doublon, mais elle ne rend pas son ancien identifiant — la ligne
 d'origine n'existe plus. Une position restaurée est la même position, sous un
-nouveau numéro. Un match restauré revient de même sous un nouveau numéro,
-avec ses parties, ses coups, ses analyses et ses positions ; il est refusé si le
-même match a été importé de nouveau entre-temps.
+nouveau numéro. Un match restauré, lui, reprend son numéro d'origine, avec
+ses parties, ses coups, ses analyses et ses positions ; il est refusé si un
+autre match occupe ce numéro, ou si un match de même empreinte de fichier a
+été importé entre-temps.
 
 Ce qui a plus de trente jours est supprimé par ``blunderdb vacuum`` — jamais à
 l'ouverture d'une base.

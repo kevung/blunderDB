@@ -154,6 +154,10 @@ func testTrashMatchRestores(t *testing.T, s storage.Storage) {
 	if _, err := s.Comments().Add(ctx, "", held, "mine"); err != nil {
 		t.Fatalf("Add comment: %v", err)
 	}
+	heldNote, err := s.Comments().AddFrom(ctx, "", held, "file note", domain.CommentOriginXG)
+	if err != nil {
+		t.Fatalf("AddFrom held: %v", err)
+	}
 	draftID, err := s.Transcriptions().Save(ctx, "", &storage.Transcription{MatchID: matchID, Label: "draft", Document: "{}"})
 	if err != nil {
 		t.Fatalf("Save transcription: %v", err)
@@ -192,6 +196,11 @@ func testTrashMatchRestores(t *testing.T, s storage.Storage) {
 		t.Fatalf("trash list of matches: %v %v, want entry %d", entries, err, entryID)
 	}
 
+	// Deleted while the match sat in the trash: the held position stayed in
+	// the library, so the note must not come back with the match.
+	if err := s.Comments().Delete(ctx, "", heldNote); err != nil {
+		t.Fatalf("Delete note: %v", err)
+	}
 	restored, err := trash.Restore(ctx, s, "", entryID)
 	if err != nil {
 		t.Fatalf("Restore: %v", err)

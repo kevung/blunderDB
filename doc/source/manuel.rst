@@ -967,11 +967,15 @@ supprimées — une collection est une vue sur elles.
 
 Un match supprimé emporte ses parties, ses coups, leurs analyses et les
 positions que plus rien d'autre ne retient, avec les notes venues du fichier
-source : la corbeille garde tout cela. Restauré, il revient sous un nouveau
-numéro avec ses positions, leurs analyses et leurs commentaires, dans son
-tournoi à sa place s'il existe encore. Si le même match a été importé de
-nouveau entre-temps, la restauration est refusée plutôt que de créer un
-doublon, et l'entrée reste dans la corbeille.
+source : la corbeille garde tout cela. Restauré, il revient sous son numéro
+et sa date d'import d'origine, avec ses parties et ses coups ; les positions
+que la suppression avait purgées reviennent avec leurs analyses et leurs
+notes, celles restées dans la bibliothèque restent telles qu'elles sont
+devenues. Il reprend sa place dans son tournoi s'il existe encore. La
+restauration est refusée, et l'entrée reste dans la corbeille, si un autre
+match occupe son numéro, ou si un match de même empreinte de fichier a été
+importé entre-temps ; un match sans empreinte, saisi ou joué dans blunderDB,
+n'est pas comparé ainsi.
 
 Ce qui a plus de trente jours est supprimé par la commande ``vacuum``, jamais à
 l'ouverture d'une base : ne pas faire de ``vacuum``, c'est tout garder.

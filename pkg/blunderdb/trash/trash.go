@@ -164,7 +164,8 @@ func Restore(ctx context.Context, s storage.Stores, scope string, trashID int64)
 	case domain.TrashComment:
 		restored, err = restoreComment(ctx, s, scope, entry)
 	case domain.TrashMatch:
-		restored, err = restoreMatch(ctx, s, scope, entry)
+		// Discards the entry inside its own transaction.
+		return restoreMatch(ctx, s, scope, entry)
 	case domain.TrashRencontre:
 		err = fmt.Errorf("trash entry %d: %w", trashID, ErrRencontreByService)
 	default:
@@ -185,16 +186,21 @@ func restorePosition(ctx context.Context, s storage.Stores, scope string, entry 
 	if err := json.Unmarshal(entry.Payload, &payload); err != nil {
 		return 0, fmt.Errorf("trash entry %d: %w", entry.ID, err)
 	}
-	return restorePositionPayload(ctx, s, scope, payload)
+	return restorePositionPayload(ctx, s, scope, payload, false)
 }
 
 // restorePositionPayload re-Saves a snapshotted position and puts back its
-// analysis and comments; see restorePosition.
-func restorePositionPayload(ctx context.Context, s storage.Stores, scope string, payload domain.TrashPositionPayload) (int64, error) {
+// analysis and comments; see restorePosition. With onlyIfGone, a position the
+// database still holds is left as it is: it stayed in the library while the
+// snapshot waited, so a note edited or deleted since must not come back.
+func restorePositionPayload(ctx context.Context, s storage.Stores, scope string, payload domain.TrashPositionPayload, onlyIfGone bool) (int64, error) {
 	pos := payload.Position
-	id, err := s.Positions().Save(ctx, scope, &pos)
+	id, created, err := s.Positions().SaveCreated(ctx, scope, &pos)
 	if err != nil {
 		return 0, err
+	}
+	if onlyIfGone && !created {
+		return id, nil
 	}
 	if payload.Analysis != nil {
 		switch _, err := s.Analyses().Load(ctx, scope, id); {

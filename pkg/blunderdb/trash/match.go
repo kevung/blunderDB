@@ -132,8 +132,8 @@ func snapshotMatch(ctx context.Context, s storage.Stores, scope string, matchID 
 // outside the match's own cascade names them.
 //
 // The positions are re-Saved first, so the moves point at whatever row now
-// holds each one; a position's analysis and comments come back as
-// restorePosition puts them. What the match was attached to — its tournament,
+// holds each one. Only a position the delete purged gets its analysis and
+// comments back; one that stayed held kept them, edits included. What the match was attached to — its tournament,
 // its import batch, the drafts that produced it — is attached again only
 // where it still exists.
 func restoreMatch(ctx context.Context, s storage.Stores, scope string, entry *domain.TrashEntry) (int64, error) {
@@ -144,8 +144,10 @@ func restoreMatch(ctx context.Context, s storage.Stores, scope string, entry *do
 	var id int64
 	err := inTx(ctx, s, func(s storage.Stores) error {
 		var err error
-		id, err = rebuildMatch(ctx, s, scope, &p)
-		return err
+		if id, err = rebuildMatch(ctx, s, scope, &p); err != nil {
+			return err
+		}
+		return s.Trash().Discard(ctx, scope, entry.ID)
 	})
 	if err != nil {
 		return 0, err
@@ -167,7 +169,7 @@ func rebuildMatch(ctx context.Context, s storage.Stores, scope string, p *domain
 
 	positions := make(map[int64]int64, len(p.Positions))
 	for _, pp := range p.Positions {
-		newID, err := restorePositionPayload(ctx, s, scope, pp)
+		newID, err := restorePositionPayload(ctx, s, scope, pp, true)
 		if err != nil {
 			return 0, err
 		}
