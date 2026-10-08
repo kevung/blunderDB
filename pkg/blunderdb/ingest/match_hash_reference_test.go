@@ -22,6 +22,7 @@ func TestMatchHashReference(t *testing.T) {
 		aachen       = "2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation"
 	)
 	cases := []struct{ file, matchHash, canonical string }{
+		{"Kev_GammonNetNormal_2026-10-06_7p.xg", "d8237ca7a469581882e0317ec47ef48830fc93ddc31fd302c99391f99ec936bf", "0121626713fb77eeec57ed2cf2c23e3b3e06d0f574859324cecb076487860fca"},
 		{"test.xg", "04bea47408f39652f9e148f6ac37d7483ccfd441c87ae9c5cde284c53b37f3bd", canonTest},
 		{"test.sgf", "a0699549243906e9683ee419f2c9545da0242a9b623238017896945e24a6337b", canonTest},
 		{"test.mat", "664609786127f6eec9f50d925bca270b790736d7a2caaf75444b78cbf8e60a8b", canonTest},

@@ -1,0 +1,52 @@
+{
+  "match_file": "testdata/Kev_GammonNetNormal_2026-10-06_7p.xg",
+  "match_length": 7,
+  "players": [
+    "Kev",
+    "gammonNet normal"
+  ],
+  "xg": {
+    "player1": {
+      "pr": 8.48,
+      "snowie_error_rate": null,
+      "total_decisions": 68,
+      "checker_unforced": 64,
+      "checker_forced": null,
+      "double_decisions": 3,
+      "take_decisions": 1,
+      "pass_decisions": 0,
+      "total_equity_error_emg": 1.153,
+      "checker_equity_error_emg": 1.153,
+      "double_equity_error_emg": 0.0,
+      "take_equity_error_emg": 0.0,
+      "total_mwc_loss_pct": 8.23,
+      "checker_mwc_loss_pct": 8.23,
+      "double_mwc_loss_pct": 0.0,
+      "take_mwc_loss_pct": 0.0,
+      "total_errors": null,
+      "total_blunders": null
+    },
+    "player2": {
+      "pr": 0.52,
+      "snowie_error_rate": null,
+      "total_decisions": 89,
+      "checker_unforced": 78,
+      "checker_forced": null,
+      "double_decisions": 10,
+      "take_decisions": 1,
+      "pass_decisions": 0,
+      "total_equity_error_emg": 0.092,
+      "checker_equity_error_emg": null,
+      "double_equity_error_emg": null,
+      "take_equity_error_emg": null,
+      "total_mwc_loss_pct": 0.71,
+      "checker_mwc_loss_pct": null,
+      "double_mwc_loss_pct": null,
+      "take_mwc_loss_pct": null,
+      "total_errors": null,
+      "total_blunders": null
+    }
+  },
+  "gnubg": null,
+  "notes": "Issue #595 match. XG figures of the stats window provided by the user on 2026-10-08. gammonNet normal's breakdown by checker/cube was not transcribed: only its total is known. XG's 'Take Decisions' counts takes and passes together, stored in take_decisions with pass_decisions 0."
+}

@@ -2,8 +2,52 @@
   "match_file": "testdata/test.xg",
   "sgf_file": "testdata/test.sgf",
   "match_length": 7,
-  "players": ["Kévin Unger", "Maxence Job"],
-  "xg": null,
+  "players": [
+    "Kévin Unger",
+    "Maxence Job"
+  ],
+  "xg": {
+    "player1": {
+      "pr": 7.79,
+      "snowie_error_rate": null,
+      "total_decisions": 162,
+      "checker_unforced": 145,
+      "checker_forced": null,
+      "double_decisions": 13,
+      "take_decisions": 4,
+      "pass_decisions": 0,
+      "total_equity_error_emg": 2.523,
+      "checker_equity_error_emg": 2.147,
+      "double_equity_error_emg": 0.371,
+      "take_equity_error_emg": 0.006,
+      "total_mwc_loss_pct": 30.03,
+      "checker_mwc_loss_pct": 27.12,
+      "double_mwc_loss_pct": 2.87,
+      "take_mwc_loss_pct": 0.04,
+      "total_errors": null,
+      "total_blunders": null
+    },
+    "player2": {
+      "pr": 13.87,
+      "snowie_error_rate": null,
+      "total_decisions": 140,
+      "checker_unforced": 124,
+      "checker_forced": null,
+      "double_decisions": 13,
+      "take_decisions": 3,
+      "pass_decisions": 0,
+      "total_equity_error_emg": 3.884,
+      "checker_equity_error_emg": 3.599,
+      "double_equity_error_emg": 0.284,
+      "take_equity_error_emg": 0.0,
+      "total_mwc_loss_pct": 51.2,
+      "checker_mwc_loss_pct": 49.1,
+      "double_mwc_loss_pct": 2.1,
+      "take_mwc_loss_pct": 0.0,
+      "total_errors": null,
+      "total_blunders": null
+    }
+  },
   "gnubg": {
     "player1": {
       "checker_unforced": 147,
@@ -31,7 +75,7 @@
       "total_mwc_loss_pct": 30.8044,
       "close_cube_decisions": null,
       "pr_gnubg": null,
-      "snowie_er": 3.920
+      "snowie_er": 3.92
     },
     "player2": {
       "checker_unforced": 127,
@@ -62,5 +106,5 @@
       "snowie_er": 5.543
     }
   },
-  "notes": "XG values not yet available (binary .xg format; match report not exported). gnuBG stats extracted from test.sgf GS tags using cmd/extract_gnubg_stats. gnuBG app: GNU Backgammon 1.08.003, full statistics computed (non-zero equity errors). Sanity check: P1 checker_pr_xg_500 = 500 × 2.152127 / 147 = 7.320 ✓; P2 = 500 × 3.376956 / 127 = 13.295 ✓. close_cube_decisions (anCloseCube) not stored in SGF — combined PR unavailable."
+  "notes": "XG values not yet available (binary .xg format; match report not exported). gnuBG stats extracted from test.sgf GS tags using cmd/extract_gnubg_stats. gnuBG app: GNU Backgammon 1.08.003, full statistics computed (non-zero equity errors). Sanity check: P1 checker_pr_xg_500 = 500 × 2.152127 / 147 = 7.320 ✓; P2 = 500 × 3.376956 / 127 = 13.295 ✓. close_cube_decisions (anCloseCube) not stored in SGF — combined PR unavailable. XG figures of the stats window (PR, decisions = unforced checker + doubles + takes/passes, equity and MWC losses) provided by the user on 2026-10-08; XG's 'Take Decisions' counts takes and passes together, stored in take_decisions with pass_decisions 0."
 }

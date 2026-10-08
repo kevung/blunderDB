@@ -268,3 +268,11 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   1 while the Duel is being played, so several can be open and every daemon on
   the database sees the same ones. Schema-visible: bumped
   `domain.DatabaseVersion` to 2.36.0.
+- `042_pr_xg_rules.sql` — the 2.37.0 wave: `analysis.is_forced`,
+  `is_close_cube` and `best_move_equity_error` take the rules XG counts a
+  Performance Rating by (`engine.IsForcedChecker`, `engine.ComputeIsCloseCube`,
+  NULL for a played move no candidate names). No SQL backfill is possible —
+  the columns project the compressed blob and the position's legal plays — so
+  the existing rows keep their old values until a repair pass
+  (`RepairDenormalisedColumns`) rewrites them; `match_stats` is dropped.
+  Schema-visible: bumped `domain.DatabaseVersion` to 2.37.0.

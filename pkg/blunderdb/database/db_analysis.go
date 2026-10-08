@@ -32,6 +32,11 @@ var (
 	roundAnalysisForStorage   = engine.RoundAnalysisForStorage
 )
 
+// legalPlaysUnknown is what the historical migrations pass for the legal-play
+// count: they ran before is_forced needed it, and migrate_2_36_0_to_2_37_0
+// recomputes the column with it.
+const legalPlaysUnknown = engine.LegalPlaysUnknown
+
 func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()

@@ -213,12 +213,12 @@ func (s *StatsStore) computeMatchStatsRows(ctx context.Context, db Execer, scope
 		return nil, fmt.Errorf("match stats snowie: %w", err)
 	}
 
-	// Checker decisions with a position, analysed or not: the players
-	// table's Snowie denominator.
+	// Checker decisions with a position, analysed or not, but an unscored
+	// play: the players table's Snowie denominator.
 	if err := scanEach(ctx, d,
 		`SELECT g.match_id, `+seatExpr+`, COUNT(*)
 		 FROM move mv JOIN game g ON g.id = mv.game_id JOIN position p ON p.id = mv.position_id
-		 WHERE g.match_id IN (`+ph+`) AND p.decision_type = 0
+		 WHERE g.match_id IN (`+ph+`) AND p.decision_type = 0 AND NOT `+UnscoredPlaySQL("p")+`
 		 GROUP BY g.match_id, `+seatExpr,
 		ids, func(r Rows) error {
 			var id int64
