@@ -170,6 +170,8 @@ export const studyLoopErrorStore = writable(null);
 
 /** Cache key of the last successful before/after and biases fetch. */
 let _cachedStudyLoopKey = null;
+/** Sequence number of the latest before/after and biases request: a slower, older reply is dropped. */
+let _studyLoopSeq = 0;
 
 /**
  * Fetch the before/after measure of the studied families and the signed biases of the filter
@@ -183,19 +185,22 @@ export async function refreshStudyLoop(filter, invalidationKey) {
         return;
     }
     _cachedStudyLoopKey = key;
+    const seq = ++_studyLoopSeq;
     studyLoopLoadingStore.set(true);
     studyLoopErrorStore.set(null);
     try {
         const [effect, biases] = await Promise.all([ComputeStudyEffect(filter), ComputeDirectionalBiases(filter)]);
+        if (seq !== _studyLoopSeq) return;
         studyEffectStore.set(effect);
         biasesStore.set(biases);
     } catch (err) {
+        if (seq !== _studyLoopSeq) return;
         _cachedStudyLoopKey = null; // allow retry on error
         studyLoopErrorStore.set(err?.message ?? String(err));
         studyEffectStore.set(null);
         biasesStore.set(null);
     } finally {
-        studyLoopLoadingStore.set(false);
+        if (seq === _studyLoopSeq) studyLoopLoadingStore.set(false);
     }
 }
 
