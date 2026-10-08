@@ -1520,7 +1520,10 @@
             "timecode_backwards": "Zeitmarke rückwärts"
         },
         "tickRoll": "Wurf {time}",
-        "tickAction": "Zug {time}"
+        "tickAction": "Zug {time}",
+        "duration": "Zeit",
+        "durationDecision": "Entscheidung {time}",
+        "durationCube": "Doppler {time}"
     },
     "status": {
         "importChip": "Import läuft: {percent} %",

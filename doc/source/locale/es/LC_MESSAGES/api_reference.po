@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-08 20:08+0200\n"
+"POT-Creation-Date: 2026-10-09 00:25+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -43,11 +43,11 @@ msgstr ""
 "lista en flujo) y, cuando exista, una mención de la cabecera opcional "
 "``Idempotency-Key``."
 
-#: ../../source/api_reference.rst:389
+#: ../../source/api_reference.rst:394
 msgid "Idempotence"
 msgstr "Idempotencia"
 
-#: ../../source/api_reference.rst:391
+#: ../../source/api_reference.rst:396
 msgid ""
 "La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les "
 "lectures sont sans effet de bord, et les écritures de ``positions.*`` "
@@ -75,11 +75,11 @@ msgstr ""
 "marca «(Idempotency-Key)» en la tabla anterior. Ningún otro método "
 "necesita ni acepta esta cabecera."
 
-#: ../../source/api_reference.rst:403
+#: ../../source/api_reference.rst:408
 msgid "Lectures conditionnelles"
 msgstr "Lecturas condicionales"
 
-#: ../../source/api_reference.rst:405
+#: ../../source/api_reference.rst:410
 msgid ""
 "Les méthodes marquées « (ETag) » rendent un en-tête ``ETag``. Le renvoyer"
 " dans ``If-None-Match`` obtient une réponse ``304`` sans corps tant que "
@@ -91,11 +91,11 @@ msgstr ""
 "no haya cambiado nada de lo que el método lee — véase "
 ":ref:`headless_direction`."
 
-#: ../../source/api_reference.rst:410
+#: ../../source/api_reference.rst:415
 msgid "Repères d'une transcription"
 msgstr "Marcas de tiempo de una transcripción"
 
-#: ../../source/api_reference.rst:412
+#: ../../source/api_reference.rst:417
 msgid ""
 "Un geste de ``transcriptions.apply`` peut porter l'instant de la vidéo où"
 " il est fait, en millisecondes depuis le début du média : ``TickMS``, lu "
@@ -125,7 +125,19 @@ msgstr ""
 "ruta local), una cadena vacía la desvincula; ``set_header`` también la "
 "fija cuando su encabezado nombra una, sin borrarla nunca."
 
-#: ../../source/api_reference.rst:424
+#: ../../source/api_reference.rst:429
+msgid ""
+"Le geste ``seek_cursor`` pose le curseur sur l'action de rang ``At``, la "
+"fin du document au-delà de la dernière, sans rien écrire ni s'empiler sur"
+" la pile d'annulation : c'est ainsi que le curseur suit une vidéo en "
+"lecture."
+msgstr ""
+"El gesto ``seek_cursor`` coloca el cursor en la acción de rango ``At``, "
+"al final del documento más allá de la última, sin escribir nada ni "
+"apilarse en la pila de deshacer: así es como el cursor sigue un vídeo en "
+"reproducción."
+
+#: ../../source/api_reference.rst:433
 msgid ""
 "L'état rendu porte la source dans ``header.video_source``, les repères de"
 " chaque action dans ``roll_tick_ms`` et ``tick_ms``, et, sur chaque "

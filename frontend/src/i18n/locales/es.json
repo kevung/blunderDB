@@ -1520,7 +1520,10 @@
             "timecode_backwards": "marca de tiempo hacia atrás"
         },
         "tickRoll": "tirada {time}",
-        "tickAction": "jugada {time}"
+        "tickAction": "jugada {time}",
+        "duration": "tiempo",
+        "durationDecision": "decisión {time}",
+        "durationCube": "cubo {time}"
     },
     "status": {
         "importChip": "Importación en curso: {percent} %",

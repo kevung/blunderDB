@@ -1520,7 +1520,10 @@
             "timecode_backwards": "χρονοσήμανση προς τα πίσω"
         },
         "tickRoll": "ζαριά {time}",
-        "tickAction": "κίνηση {time}"
+        "tickAction": "κίνηση {time}",
+        "duration": "χρόνος",
+        "durationDecision": "απόφαση {time}",
+        "durationCube": "κύβος {time}"
     },
     "status": {
         "importChip": "Εισαγωγή σε εξέλιξη: {percent} %",

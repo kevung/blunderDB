@@ -290,7 +290,7 @@ func TestUndoRedoWalksTheSessionStack(t *testing.T) {
 
 	// Undo and redo are NOT gestures of the document: Apply refuses them rather
 	// than pretending to have a stack it cannot have.
-	for _, k := range []GestureKind{GestureUndo, GestureRedo} {
+	for _, k := range []GestureKind{GestureUndo, GestureRedo, GestureSeekCursor} {
 		if _, err := Apply(e.Doc, Gesture{Kind: k}); !errors.Is(err, ErrNotPure) {
 			t.Errorf("Apply(%s) = %v, want ErrNotPure", k, err)
 		}

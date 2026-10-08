@@ -1520,7 +1520,10 @@
             "timecode_backwards": "aikamerkki taaksepäin"
         },
         "tickRoll": "heitto {time}",
-        "tickAction": "siirto {time}"
+        "tickAction": "siirto {time}",
+        "duration": "aika",
+        "durationDecision": "päätös {time}",
+        "durationCube": "kuutio {time}"
     },
     "status": {
         "importChip": "Tuonti käynnissä: {percent} %",

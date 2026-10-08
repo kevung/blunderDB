@@ -48,7 +48,14 @@ peut pas embarquer ; le lecteur intégré de YouTube refuse une page sans réfé
    pas aux Repères. Une validation implicite — par le chiffre du jet suivant ou par un geste de
    videau — ne pose aucun instant : le coup reste sans instant d'action plutôt que d'en recevoir
    un faux. Un geste explicite pose l'instant courant sur l'action du curseur, jet ou
-   action. Placer le curseur sur une cellule amène la vidéo à son Repère. Repères et source
+   action. Placer le curseur sur une cellule amène la vidéo à son Repère. En sens inverse,
+   pendant la lecture, le curseur suit la vidéo dans la partie horodatée : une Action couvre
+   la vidéo de son jet — à défaut de l'instant de l'Action précédente — au début de la
+   suivante, et au-delà du dernier Repère le curseur revient une fois en fin de document. Ce
+   suivi n'écrit rien et ne s'empile pas sur l'annulation, ne ramène jamais la vidéo, se tait
+   pendant une saisie ou une pause, et cède à un placement à la main tant que la lecture
+   n'a pas quitté l'Action choisie : le geste explicite horodate celle que l'on a désignée.
+   Repères et source
    sont des champs optionnels des gestes d'écriture et de l'état exposé (ADR-0057) : un client
    externe pose les siens par l'API, et la logique vit dans `transcript`, le lecteur n'étant
    qu'un fournisseur d'instants.

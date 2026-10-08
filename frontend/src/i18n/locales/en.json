@@ -1520,7 +1520,10 @@
             "timecode_backwards": "time mark out of order"
         },
         "tickRoll": "roll {time}",
-        "tickAction": "play {time}"
+        "tickAction": "play {time}",
+        "duration": "time",
+        "durationDecision": "decision {time}",
+        "durationCube": "cube {time}"
     },
     "status": {
         "importChip": "Importing: {percent}%",

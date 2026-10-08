@@ -88,6 +88,7 @@
     import { GetGammonNetPruneK } from '../../wailsjs/go/main/Config.js';
     import { finishDraft, exportDraftMat, abandonDraft, draftState } from '../services/transcriptionSave.js';
     import { get } from 'svelte/store';
+    import { createCursorFollower, isTyping } from '../services/videoFollow.js';
 
     // Mirrors Go's transcript.DefaultMatchLength: the form shows it before any call.
     /** @typedef {import('../services/transcriptionKeys.js').KeyState} KeyState */
@@ -454,6 +455,29 @@
         const at = info?.roll_tick_ms ?? info?.tick_ms;
         if (typeof at === 'number') videoPane.seek(at - 1000);
     }
+
+    // The Cursor follows the playing video through the timed part, by a seek that writes
+    // nothing; the move never seeks the video back (services/videoFollow.js).
+    $effect(() => {
+        if (!videoSource) return;
+        const follower = createCursorFollower();
+        let moving = false;
+        const id = setInterval(() => {
+            if (moving) return;
+            const active = document.activeElement;
+            const quiet = (active instanceof Element && active.matches('input, textarea, select, [contenteditable]')) || isTyping(get(transcriptionStore)?.annotated, get(transcriptionKeyStore));
+            const target = follower.step(videoNow(), get(transcriptionStore)?.annotated, quiet);
+            if (target === null) return;
+            moving = true;
+            sendGesture({ Kind: 'seek_cursor', At: target })
+                .then(() => {
+                    if (get(transcriptionStore)?.annotated?.cursor !== target) follower.forget();
+                    return settleCursor();
+                })
+                .finally(() => (moving = false));
+        }, 250);
+        return () => clearInterval(id);
+    });
 
     /**
      * The video keys, live only while a source is attached and read by their position
@@ -1853,12 +1877,20 @@
 </Modal>
 
 <style>
+    /* A drag across labels and cells would select the panel's text; only the fields
+       hold text the user edits or copies. */
     .transcription-panel {
         display: flex;
         flex-direction: column;
         height: 100%;
         min-height: 0;
         outline: none;
+        user-select: none;
+        -webkit-user-select: none;
+    }
+    .transcription-panel :global(:is(input, textarea, [contenteditable])) {
+        user-select: text;
+        -webkit-user-select: text;
     }
 
     .detail-title {

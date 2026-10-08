@@ -2138,6 +2138,20 @@ curseur sur une cellule (clic, *h*, *l*) amène la vidéo une seconde avant le
 jet de cette action, ou avant son action si le jet n'a pas d'instant ; un
 lecteur en pause le reste.
 
+Dès que le brouillon a une vidéo ou un repère, le transcript gagne une colonne
+**durée** à droite de chaque joueur : la durée de la décision, en secondes
+(en minutes et secondes au-delà d'une minute), suivie, après un point médian,
+de la décision de videau qui précède le jet. Pendant la lecture, le curseur
+**suit la vidéo** dans la partie déjà horodatée : chaque action couvre la vidéo
+depuis son jet, ou à défaut depuis l'action précédente, jusqu'au début de la
+suivante, et le curseur se pose sur l'action où entre la lecture ; au-delà du
+dernier repère, il revient une fois en fin de transcript. Il ne bouge ni
+pendant une saisie ni quand la vidéo est en pause, et ce déplacement n'entre
+pas dans l'historique d'annulation. Placé à la main, le curseur reste sur
+l'action choisie tant que la lecture n'en est pas sortie : on clique sur un
+coup sans instant d'action, on lance la vidéo, on appuie sur *v* à la fin du
+coup, et c'est ce coup qui reçoit l'instant.
+
 L'application ne décode pas la vidéo elle-même : les formats lus sont ceux du
 webview. Un format qu'il ne lit pas est signalé dans le volet, avec son
 conteneur et, sous Linux, les greffons GStreamer à installer —

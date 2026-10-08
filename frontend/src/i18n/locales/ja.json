@@ -1520,7 +1520,10 @@
             "timecode_backwards": "時刻マークの逆行"
         },
         "tickRoll": "ロール {time}",
-        "tickAction": "手 {time}"
+        "tickAction": "手 {time}",
+        "duration": "時間",
+        "durationDecision": "判断 {time}",
+        "durationCube": "キューブ {time}"
     },
     "status": {
         "importChip": "インポート中：{percent} %",

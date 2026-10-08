@@ -1520,7 +1520,10 @@
             "timecode_backwards": "marcatore a ritroso"
         },
         "tickRoll": "lancio {time}",
-        "tickAction": "mossa {time}"
+        "tickAction": "mossa {time}",
+        "duration": "tempo",
+        "durationDecision": "decisione {time}",
+        "durationCube": "cubo {time}"
     },
     "status": {
         "importChip": "Importazione in corso: {percent} %",

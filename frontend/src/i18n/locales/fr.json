@@ -1520,7 +1520,10 @@
             "timecode_backwards": "repère à rebours"
         },
         "tickRoll": "jet {time}",
-        "tickAction": "coup {time}"
+        "tickAction": "coup {time}",
+        "duration": "durée",
+        "durationDecision": "décision {time}",
+        "durationCube": "videau {time}"
     },
     "status": {
         "importChip": "Import en cours : {percent} %",

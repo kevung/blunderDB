@@ -1520,7 +1520,10 @@
             "timecode_backwards": "метка времени назад"
         },
         "tickRoll": "бросок {time}",
-        "tickAction": "ход {time}"
+        "tickAction": "ход {time}",
+        "duration": "время",
+        "durationDecision": "решение {time}",
+        "durationCube": "куб {time}"
     },
     "status": {
         "importChip": "Идёт импорт: {percent} %",
