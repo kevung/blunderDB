@@ -48,6 +48,11 @@
        Named exception under ADR-0008 rule 2. */
     --font-size-stat-figure: 28px;
 
+    /* The playback-rate indicator centred on the video: sized from the video pane (a size
+       container), so it reads at a glance in a small pane as in a full-screen one.
+       Named exception under ADR-0008 rule 2. */
+    --font-size-video-overlay: clamp(20px, 14cqmin, 120px);
+
     /* One colour palette — see docs/adr/0031. Components use these tokens rather than
        a literal hex value; the migration is progressive (docs/adr/0031's Consequences),
        so a component may still carry its own hex today, but a new declaration must not.

@@ -32,7 +32,9 @@ const CHROME_TOKEN_SCOPES = {
     '--font-size-dialog-close': [/Modal\.svelte$/],
     // "Figures meant to be read at a glance": the statistics tabs and the running counters
     // of the two import-progress dialogs.
-    '--font-size-stat-figure': [/^components\/stats\//, /^components\/(FileImportProgressModal|ImportProgressModal)\.svelte$/]
+    '--font-size-stat-figure': [/^components\/stats\//, /^components\/(FileImportProgressModal|ImportProgressModal)\.svelte$/],
+    // "The playback-rate indicator centred on the video".
+    '--font-size-video-overlay': [/^components\/VideoPane\.svelte$/]
 };
 
 function svelteFiles(dir) {
