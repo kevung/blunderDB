@@ -12,7 +12,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// runCollectionSuggest proposes reference positions (ADR-0079) and, on
+// runCollectionSuggest proposes reference positions (ADR-0080) and, on
 // request, makes a collection or an Anki deck of them.
 func (cli *CLI) runCollectionSuggest(args []string) error {
 	fs, dbPath := collectionFlagSet("suggest",
@@ -21,7 +21,7 @@ func (cli *CLI) runCollectionSuggest(args []string) error {
 			fmt.Sprintf("within %d checker-pips; a cube reference holds at one score). A close lesson (second-best\n", storage.ReferenceRadius)+
 			"option within half an error) or an unstable verdict (another depth or a rollout disagrees) counts\n"+
 			"for half. Positions already commented, carded, collected or marked studied are never proposed,\n"+
-			"and no two proposed positions are near-duplicates (ADR-0079). Nothing is written unless\n"+
+			"and no two proposed positions are near-duplicates (ADR-0080). Nothing is written unless\n"+
 			"--collection or --deck is given.",
 		"blunderdb collection suggest --db database.db --player \"Alice\"",
 		"blunderdb collection suggest --db database.db --player \"Alice\" --tournament 4 --size 10",

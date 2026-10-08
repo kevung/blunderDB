@@ -162,6 +162,14 @@ export function CompareWithGammonNet(arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
   return window['go']['database']['Database']['CompareWithGammonNet'](arg1, arg2, arg3, arg4, arg5, arg6, arg7);
 }
 
+export function ComputeDirectionalBiases(arg1) {
+  return window['go']['database']['Database']['ComputeDirectionalBiases'](arg1);
+}
+
+export function ComputeDirectionalBiasesCtx(arg1, arg2) {
+  return window['go']['database']['Database']['ComputeDirectionalBiasesCtx'](arg1, arg2);
+}
+
 export function ComputeEPCFromPosition(arg1) {
   return window['go']['database']['Database']['ComputeEPCFromPosition'](arg1);
 }
@@ -180,6 +188,14 @@ export function ComputeStats(arg1) {
 
 export function ComputeStatsCtx(arg1, arg2) {
   return window['go']['database']['Database']['ComputeStatsCtx'](arg1, arg2);
+}
+
+export function ComputeStudyEffect(arg1) {
+  return window['go']['database']['Database']['ComputeStudyEffect'](arg1);
+}
+
+export function ComputeStudyEffectCtx(arg1, arg2) {
+  return window['go']['database']['Database']['ComputeStudyEffectCtx'](arg1, arg2);
 }
 
 export function ComputeStudyPlan(arg1) {

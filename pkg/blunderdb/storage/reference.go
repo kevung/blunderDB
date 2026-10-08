@@ -10,7 +10,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 )
 
-// The reference positions of ADR-0079: the positions of a filter whose lesson
+// The reference positions of ADR-0080: the positions of a filter whose lesson
 // would recover the most of the winning chances its neighbouring errors lost.
 // The constants are fixed there, before any proposal was read, and change only
 // with a new ADR.
@@ -56,7 +56,7 @@ type ReferenceRequest struct {
 	Size     int         `json:"size,omitempty"`
 }
 
-// ReferenceLesson reads how clean a position's lesson is (ADR-0079 §4): the
+// ReferenceLesson reads how clean a position's lesson is (ADR-0080 §4): the
 // cost of the second-best option in millipoints (-1 when fewer than two are
 // priced), whether another depth or a rollout rules the decision the player
 // faced otherwise, and whether a rollout stands behind it. costs are the
@@ -131,7 +131,7 @@ func normaliseMove(m string) string {
 }
 
 // ReferenceSuggestion is one proposed position with the components of its
-// reason (ADR-0079 §7); each client words them in its own language.
+// reason (ADR-0080 §7); each client words them in its own language.
 type ReferenceSuggestion struct {
 	PositionID int64 `json:"PositionID"`
 	// MatchID and Label name a match the position's worst error was played in.
@@ -274,7 +274,7 @@ type referenceCandidate struct {
 }
 
 // SuggestReferences proposes up to size reference positions among priced,
-// themed errors (ADR-0079): a lazy greedy cover of the recoverable MWC of each
+// themed errors (ADR-0080): a lazy greedy cover of the recoverable MWC of each
 // group's neighbourhoods, the positions in handled counting as already picked.
 // It is pure and shared by every backend.
 func SuggestReferences(rows []ReferenceRow, handled map[int64]bool, numDecisions, thresholdMP, size int) *ReferenceSuggestions {
@@ -410,7 +410,7 @@ func containsID(ids []int64, id int64) bool {
 // segment totals differ by at most the radius in each segment, so a member
 // only meets the members of its own and the adjacent cells of a grid on the
 // four totals, cells one radius wide: that grid is the neighbourhood index of
-// ADR-0079 §8.
+// ADR-0080 §8.
 func linkNeighbours(cands []*referenceCandidate, members []int32) {
 	const w = ReferenceRadius + 1
 	type cell [4]int

@@ -6544,6 +6544,106 @@ export namespace storage {
 	        this.engine = source["engine"];
 	    }
 	}
+	export class ScoreBias {
+	    MoverAway: number;
+	    OpponentAway: number;
+	    Decisions: number;
+	    Plus: number;
+	    PlusMP: number;
+	    Minus: number;
+	    MinusMP: number;
+	    Bias: number;
+	    Low: number;
+	    High: number;
+	    Verdict: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new ScoreBias(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.MoverAway = source["MoverAway"];
+	        this.OpponentAway = source["OpponentAway"];
+	        this.Decisions = source["Decisions"];
+	        this.Plus = source["Plus"];
+	        this.PlusMP = source["PlusMP"];
+	        this.Minus = source["Minus"];
+	        this.MinusMP = source["MinusMP"];
+	        this.Bias = source["Bias"];
+	        this.Low = source["Low"];
+	        this.High = source["High"];
+	        this.Verdict = source["Verdict"];
+	    }
+	}
+	export class SignedBias {
+	    Decisions: number;
+	    Plus: number;
+	    PlusMP: number;
+	    Minus: number;
+	    MinusMP: number;
+	    Bias: number;
+	    Low: number;
+	    High: number;
+	    Verdict: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new SignedBias(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Decisions = source["Decisions"];
+	        this.Plus = source["Plus"];
+	        this.PlusMP = source["PlusMP"];
+	        this.Minus = source["Minus"];
+	        this.MinusMP = source["MinusMP"];
+	        this.Bias = source["Bias"];
+	        this.Low = source["Low"];
+	        this.High = source["High"];
+	        this.Verdict = source["Verdict"];
+	    }
+	}
+	export class DirectionalBiases {
+	    MinDecisions: number;
+	    TakePass: SignedBias;
+	    Doubles: SignedBias;
+	    DoublesByScore: ScoreBias[];
+	    Blots: SignedBias;
+	    BlotsUnread: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new DirectionalBiases(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.MinDecisions = source["MinDecisions"];
+	        this.TakePass = this.convertValues(source["TakePass"], SignedBias);
+	        this.Doubles = this.convertValues(source["Doubles"], SignedBias);
+	        this.DoublesByScore = this.convertValues(source["DoublesByScore"], ScoreBias);
+	        this.Blots = this.convertValues(source["Blots"], SignedBias);
+	        this.BlotsUnread = source["BlotsUnread"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
 	export class HeadToHeadMatch {
 	    id: number;
 	    date: string;
@@ -7048,6 +7148,110 @@ export namespace storage {
 		    return a;
 		}
 	}
+	export class StudyEffectWindow {
+	    Decisions: number;
+	    Errors: number;
+	    Loss: number;
+	    Rate: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new StudyEffectWindow(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Decisions = source["Decisions"];
+	        this.Errors = source["Errors"];
+	        this.Loss = source["Loss"];
+	        this.Rate = source["Rate"];
+	    }
+	}
+	export class StudyEffectFamily {
+	    GameType: string;
+	    Kind: string;
+	    Theme: string;
+	    StudiedOn: string;
+	    Studied: number;
+	    Before: StudyEffectWindow;
+	    After: StudyEffectWindow;
+	    Gain: number;
+	    Low: number;
+	    High: number;
+	    Verdict: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new StudyEffectFamily(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.GameType = source["GameType"];
+	        this.Kind = source["Kind"];
+	        this.Theme = source["Theme"];
+	        this.StudiedOn = source["StudiedOn"];
+	        this.Studied = source["Studied"];
+	        this.Before = this.convertValues(source["Before"], StudyEffectWindow);
+	        this.After = this.convertValues(source["After"], StudyEffectWindow);
+	        this.Gain = source["Gain"];
+	        this.Low = source["Low"];
+	        this.High = source["High"];
+	        this.Verdict = source["Verdict"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class StudyEffect {
+	    MinDecisions: number;
+	    Families: StudyEffectFamily[];
+	    Unstudied: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new StudyEffect(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.MinDecisions = source["MinDecisions"];
+	        this.Families = this.convertValues(source["Families"], StudyEffectFamily);
+	        this.Unstudied = source["Unstudied"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	
+	
 	export class StudyPlanPosition {
 	    PositionID: number;
 	    MatchID: number;

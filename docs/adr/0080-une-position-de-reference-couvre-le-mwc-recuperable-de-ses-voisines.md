@@ -1,4 +1,4 @@
-# ADR-0079 — Une position de référence couvre le MWC récupérable de ses voisines
+# ADR-0080 — Une position de référence couvre le MWC récupérable de ses voisines
 
 Statut : acceptée.
 Voir aussi : ADR-0077 (plan d'étude), ADR-0076 (difficulté), ADR-0043 (distance `like`),

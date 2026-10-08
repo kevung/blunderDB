@@ -209,13 +209,8 @@ MWC par décision (#597), M1 (L₇, #598) et M3 (difficulté par décision, #599
   score (la chance est déjà importée), et la distinction erreur précipitée / erreur réfléchie
   (temps de décision : discipline contre connaissance).
 - **Familles par similarité du plan d'étude** (suite de #602). La grille de voisinage de
-  l'ADR-0079 (`storage/reference.go`, 0,5 s pour 50 000 erreurs en 20 groupes) rend
+  l'ADR-0080 (`storage/reference.go`, 0,5 s pour 50 000 erreurs en 20 groupes) rend
   abordable un regroupement par distance `like` ; le plan d'étude groupe encore par thème seul.
-- **Fermer la boucle, et biais directionnels** (#603). Par famille étudiée : erreur en match réel
-  avant/après l'étude, avec IC (la vue `list --type study` n'a pas de colonne de gain). Biais
-  signés plutôt que perte seule : taux de prises/refus contre le bot, doubles prématurés contre
-  manqués par score, prudence/audace sur les blots — « tu prends trop » se corrige mieux qu'un
-  PR.
 - **Bilan de tournoi** (#604). L₇ avec IC comparé au niveau habituel, 2-3 familles d'erreurs de
   l'épreuve, erreur selon la ronde et selon le rang de la décision dans le match (fatigue),
   aux scores de pression (DMP, Crawford) et sous la pendule.

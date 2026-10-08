@@ -10,7 +10,7 @@ import (
 
 // TestCLI_CollectionSuggest runs the proposal on an analysed match and keeps
 // it as a collection: the collection holds exactly the proposed positions,
-// and a second run leaves them out, now handled (ADR-0079 §6).
+// and a second run leaves them out, now handled (ADR-0080 §6).
 func TestCLI_CollectionSuggest(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)
 	if err := cli.Run([]string{"import", "--db", dbPath, "--type", "match", "--file",

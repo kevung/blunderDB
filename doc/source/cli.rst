@@ -1320,6 +1320,35 @@ Mêmes options de filtre que ``stats recurring``, plus :
    ./blunderdb stats plan --db base.db --player "Alice" --quiz --format json
    ./blunderdb stats plan --db base.db --family 2 --queue
 
+**stats effect** — L'avant/après de chaque famille étudiée, comme la carte
+*Avant/après l'étude* du tableau de bord (voir :ref:`avant_apres_etude`) : la
+date de la première action d'étude sur l'une de ses positions, le taux de perte
+en MWC pour 100 décisions de son plan et de sa nature avant et après ce jour,
+le gain et son intervalle à 95 %, et le verdict (``improved``, ``worse``,
+``undetermined``, ``insufficient`` sous 30 décisions par fenêtre).
+
+.. code-block:: bash
+
+   ./blunderdb stats effect --db <fichier> [options]
+
+**stats biases** — Les biais signés du filtre, comme la carte *Biais signés*
+(voir :ref:`biais_signes`) : prise/refus, doubles (sur l'ensemble et par
+score) et blots, chacun avec ses deux comptes et leur coût, le biais, son
+intervalle à 95 % et le verdict (``too_much``, ``too_little``, ``balanced``,
+``insufficient`` sous 20 décisions).
+
+.. code-block:: bash
+
+   ./blunderdb stats biases --db <fichier> [options]
+
+Mêmes options de filtre que ``stats recurring`` (``--player``,
+``--tournament``, ``--from``, ``--to``, ``--decision-type``, ``--format``).
+
+.. code-block:: bash
+
+   ./blunderdb stats effect --db base.db --player "Alice"
+   ./blunderdb stats biases --db base.db --player "Alice" --format json
+
 **stats training** — Le PR du quiz Décision, le PR des matchs et la rétention
 Anki, repliés par fenêtre calendaire, comme l'onglet *Entraînement* du panneau
 Stats (voir :ref:`stats`).

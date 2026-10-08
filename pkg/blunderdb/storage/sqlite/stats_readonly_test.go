@@ -10,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/report"
@@ -181,10 +182,13 @@ func TestReportAndPlayerTableReadOnlyMatchWritable(t *testing.T) {
 		{DecisionType: -1, PlayerName: "Ada Fairweather"},
 		{DecisionType: 1, MinAnalysisDepth: 2},
 	}
+	// The report prints its minute of generation: pin it, or a minute that
+	// turns between the two builds is a difference.
+	generated := time.Date(2026, 1, 2, 3, 4, 0, 0, time.UTC)
 	wantHTML := make([]string, len(filters))
 	wantRows := make([]string, len(filters))
 	for i, f := range filters {
-		if wantHTML[i], err = report.Build(ctx, w, "", f, "fr", nil); err != nil {
+		if wantHTML[i], err = report.BuildAt(ctx, w, "", f, "fr", nil, generated); err != nil {
 			t.Fatalf("writable report %+v: %v", f, err)
 		}
 		rows, err := w.Stats().PlayerTable(ctx, "", f)
@@ -197,7 +201,7 @@ func TestReportAndPlayerTableReadOnlyMatchWritable(t *testing.T) {
 		t.Fatal(err)
 	}
 	for i, f := range filters {
-		html, err := report.Build(ctx, ro, "", f, "fr", nil)
+		html, err := report.BuildAt(ctx, ro, "", f, "fr", nil, generated)
 		if err != nil {
 			t.Fatalf("read-only report %+v: %v", f, err)
 		}

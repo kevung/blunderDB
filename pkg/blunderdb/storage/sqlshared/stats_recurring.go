@@ -51,7 +51,7 @@ func (s *StatsStore) StudyPlan(ctx context.Context, scope string, filter storage
 
 // SuggestReferences reads the same priced errors with their boards and the
 // state of their lesson, and the positions something already deals with, and
-// proposes the reference positions of ADR-0079 (storage.SuggestReferences).
+// proposes the reference positions of ADR-0080 (storage.SuggestReferences).
 func (s *StatsStore) SuggestReferences(ctx context.Context, scope string, req storage.ReferenceRequest) (*storage.ReferenceSuggestions, error) {
 	rows, numDecisions, thresholdMP, err := s.classifiedErrors(ctx, scope, req.Filter,
 		classifyOptions{priced: true, reference: true, matchIDs: req.MatchIDs})
@@ -134,7 +134,7 @@ func (s *StatsStore) classifiedErrors(ctx context.Context, scope string, filter 
 			COALESCE(mv.checker_move, ''), `+ActionLabelOrEmptyFor(s.DB, "mv.cube_action")+`, `+ActionLabelOrEmptyFor(s.DB, "a.best_cube_action")+`,
 			`+dataExpr+`, m.id, COALESCE(m.player1_name, ''), COALESCE(m.player2_name, ''),
 			COALESCE(mv.player, 0), COALESCE(p.score_1, 0), COALESCE(p.score_2, 0), `+cubeMultiplierExpr+`,
-			COALESCE(p.match_length, m.match_length, 0), COALESCE(m.match_length, 0) `+
+			COALESCE(p.match_length, m.match_length, 0), COALESCE(m.match_length, 0), `+s.DB.DateText("m.match_date")+` `+
 			statsBaseJoin+whereSQL+` AND (`+statsErrExpr+`) >= ?`,
 		append(append([]any{}, baseArgs...), settings.ErrorThresholdMP)...)
 	if err != nil {
@@ -161,9 +161,10 @@ func (s *StatsStore) classifiedErrors(ctx context.Context, scope string, filter 
 		var onRoll, dice1, dice2, gameType, decisionType int
 		var rawPlayer, away0, away1, cubeValue, matchLength, labelLength int
 		var data []byte
+		var day string
 		if err := rows.Scan(&id, &state, &onRoll, &dice1, &dice2, &gameType, &decisionType, &errMP,
 			&checkerMove, &cubeAction, &bestCube, &data, &matchID, &p1, &p2,
-			&rawPlayer, &away0, &away1, &cubeValue, &matchLength, &labelLength); err != nil {
+			&rawPlayer, &away0, &away1, &cubeValue, &matchLength, &labelLength, &day); err != nil {
 			return nil, 0, 0, errf(s.DB, "classifiedErrors scan", err)
 		}
 		row := storage.ReferenceRow{StudyPlanRow: storage.StudyPlanRow{RecurringErrorRow: storage.RecurringErrorRow{
@@ -189,12 +190,14 @@ func (s *StatsStore) classifiedErrors(ctx context.Context, scope string, filter 
 		}
 		if priced {
 			row.Label = matchLabel(p1, p2, labelLength)
+			row.Day = day
 			if loss := decisionMWCLoss(errMP, away0, away1, rawPlayer, cubeValue, matchLength); !math.IsNaN(loss) {
+				row.Loss = &loss
 				if costs := decisionCosts(analysisOf(id, data), row.Kind, cubeAction); costs != nil {
 					// As MatchDecisionLosses: the conversion is linear in equity.
 					perUnit := decisionMWCLoss(1000, away0, away1, rawPlayer, cubeValue, matchLength)
 					diff := perUnit * storage.ReferenceExpectedLoss(costs, storage.DifficultyTemperature)
-					row.Loss, row.Difficulty = &loss, &diff
+					row.Difficulty = &diff
 					row.Avoidable = storage.IsAvoidable(loss, diff, true)
 					if opts.reference {
 						s.readReference(&row, string(state), onRoll, away0, away1, analysisOf(id, data), cubeAction, costs)

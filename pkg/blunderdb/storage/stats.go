@@ -622,9 +622,19 @@ type StatsStore interface {
 
 	// SuggestReferences proposes the reference positions of a filter: those
 	// whose lesson covers the most recoverable MWC of their neighbouring
-	// errors, near-duplicates and handled positions left out (ADR-0079). See
+	// errors, near-duplicates and handled positions left out (ADR-0080). See
 	// SuggestReferences.
 	SuggestReferences(ctx context.Context, scope string, req ReferenceRequest) (*ReferenceSuggestions, error)
+
+	// StudyEffect measures each studied family's loss rate in real play
+	// before and after the day it was first studied (ADR-0079). See
+	// BuildStudyEffect.
+	StudyEffect(ctx context.Context, scope string, filter StatsFilter) (*StudyEffect, error)
+
+	// DirectionalBiases tallies which way the filter's decisions err: takes
+	// against passes, premature against missed doubles by score, bolder
+	// against more cautious plays (ADR-0079). See BuildDirectionalBiases.
+	DirectionalBiases(ctx context.Context, scope string, filter StatsFilter) (*DirectionalBiases, error)
 
 	// MatchStats returns the stored per-match, per-seat tallies of the given
 	// matches (every match in scope when matchIDs is empty), two rows per
