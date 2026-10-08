@@ -121,13 +121,26 @@ func MatchMWC7(loss float64, matchLength int, gameLosses []float64) MWC7 {
 // a progression window — into one MWC7. It pools the losses and the √N before
 // taking one ratio, L7 = √7·ΣL/Σ√N: additive, never a mean of ratios, so a
 // seven-point match weighs more than a one-pointer, and a pool of one unit is
-// that unit unchanged. The interval resamples the units: the ratio
-// estimator's cluster variance n/(n−1)·Σ(L − R·√N)²/(Σ√N)², from sums kept as
-// units arrive.
+// that unit unchanged. The interval resamples the independent units: the
+// ratio estimator's cluster variance n/(n−1)·Σ(L − R·W)²/(ΣW)², from sums
+// kept as units arrive. A unit is one seat (W = √N) or, through AddMatch, the
+// two seats of one match together (W = 2√N): they play the same positions, so
+// they are one sample, not two.
 type MWC7Pool struct {
 	sumW, sumL, sumLL, sumLW, sumWW float64
-	n                               int
-	single                          MWC7
+	// n counts the resampled units, seats the (match, player) pairs in them.
+	n, seats int
+	single   MWC7
+}
+
+func (p *MWC7Pool) addUnit(l, w float64, seats int) {
+	p.sumW += w
+	p.sumL += l
+	p.sumLL += l * l
+	p.sumLW += l * w
+	p.sumWW += w * w
+	p.n++
+	p.seats += seats
 }
 
 // Add pools one unit as MatchMWC7 returned it for a match of matchLength
@@ -136,15 +149,21 @@ func (p *MWC7Pool) Add(e MWC7, matchLength int) {
 	if !e.Available || !MWC7Defined(matchLength) {
 		return
 	}
-	w := math.Sqrt(float64(matchLength))
-	l := e.Loss / mwc7Scale(matchLength)
-	p.sumW += w
-	p.sumL += l
-	p.sumLL += l * l
-	p.sumLW += l * w
-	p.sumWW += w * w
-	p.n++
+	p.addUnit(e.Loss/mwc7Scale(matchLength), math.Sqrt(float64(matchLength)), 1)
 	p.single = e
+}
+
+// AddMatch pools the seats of one match as a single unit: loss is their
+// summed MWC loss over the match. One seat is AddLoss.
+func (p *MWC7Pool) AddMatch(loss float64, seats, matchLength int) {
+	if seats == 1 {
+		p.AddLoss(loss, matchLength)
+		return
+	}
+	if seats < 1 || !MWC7Defined(matchLength) {
+		return
+	}
+	p.addUnit(loss, float64(seats)*math.Sqrt(float64(matchLength)), seats)
 }
 
 // AddLoss pools one unit from its loss alone (no per-game split, so the unit
@@ -155,16 +174,19 @@ func (p *MWC7Pool) AddLoss(loss float64, matchLength int) {
 
 // Result is the pooled MWC7.
 func (p *MWC7Pool) Result() MWC7 {
-	switch p.n {
-	case 0:
+	if p.n == 0 {
 		return MWC7{}
-	case 1:
-		return p.single
 	}
 	r := p.sumL / p.sumW
+	k := math.Sqrt(MWC7Length)
+	if p.n == 1 {
+		if p.seats == 1 {
+			return p.single
+		}
+		return newMWC7(k*r, 0, 0, false, p.seats)
+	}
 	ss := p.sumLL - 2*r*p.sumLW + r*r*p.sumWW
 	n := float64(p.n)
 	se := math.Sqrt(math.Max(ss, 0)*n/(n-1)) / p.sumW
-	k := math.Sqrt(MWC7Length)
-	return newMWC7(k*r, k*(r-mwc7Z*se), k*(r+mwc7Z*se), true, p.n)
+	return newMWC7(k*r, k*(r-mwc7Z*se), k*(r+mwc7Z*se), true, p.seats)
 }

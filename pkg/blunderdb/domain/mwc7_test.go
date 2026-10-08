@@ -153,3 +153,18 @@ func TestMWC7Pool(t *testing.T) {
 		}
 	}
 }
+
+func TestMWC7PoolAddMatchIsOneUnit(t *testing.T) {
+	var p MWC7Pool
+	p.AddMatch(0.3, 2, 7)
+	if r := p.Result(); !r.Available || r.HasInterval || r.Matches != 2 || !near(r.Loss, 0.15, 1e-12) {
+		t.Errorf("one match, two seats: %+v", r)
+	}
+	// A seat alone is AddLoss.
+	var a, b MWC7Pool
+	a.AddMatch(0.2, 1, 5)
+	b.AddLoss(0.2, 5)
+	if a.Result() != b.Result() {
+		t.Errorf("AddMatch of one seat %+v, AddLoss %+v", a.Result(), b.Result())
+	}
+}
