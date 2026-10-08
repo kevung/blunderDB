@@ -1462,6 +1462,14 @@ export function SuggestMatFilename(arg1) {
   return window['go']['database']['Database']['SuggestMatFilename'](arg1);
 }
 
+export function SuggestReferencePositions(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['SuggestReferencePositions'](arg1, arg2, arg3);
+}
+
+export function SuggestReferencePositionsCtx(arg1, arg2, arg3, arg4) {
+  return window['go']['database']['Database']['SuggestReferencePositionsCtx'](arg1, arg2, arg3, arg4);
+}
+
 export function SuggestTranscriptionMatFilename(arg1) {
   return window['go']['database']['Database']['SuggestTranscriptionMatFilename'](arg1);
 }

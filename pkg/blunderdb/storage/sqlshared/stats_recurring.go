@@ -23,7 +23,7 @@ import (
 // stats' own counted decisions, so a group's PRCost and the filter's PR are
 // one formula on one scale (ADR-0019).
 func (s *StatsStore) RecurringErrors(ctx context.Context, scope string, filter storage.StatsFilter) (*storage.RecurringErrors, error) {
-	rows, numDecisions, thresholdMP, err := s.classifiedErrors(ctx, scope, filter, false)
+	rows, numDecisions, thresholdMP, err := s.classifiedErrors(ctx, scope, filter, classifyOptions{})
 	if err != nil {
 		return nil, err
 	}
@@ -38,17 +38,69 @@ func (s *StatsStore) RecurringErrors(ctx context.Context, scope string, filter s
 // MatchDecisionLosses prices a match's decisions, and ranks their families
 // (storage.BuildStudyPlan, ADR-0077).
 func (s *StatsStore) StudyPlan(ctx context.Context, scope string, filter storage.StatsFilter) (*storage.StudyPlan, error) {
-	rows, numDecisions, thresholdMP, err := s.classifiedErrors(ctx, scope, filter, true)
+	rows, numDecisions, thresholdMP, err := s.classifiedErrors(ctx, scope, filter, classifyOptions{priced: true})
 	if err != nil {
 		return nil, err
 	}
-	return storage.BuildStudyPlan(rows, numDecisions, thresholdMP), nil
+	plan := make([]storage.StudyPlanRow, len(rows))
+	for i, r := range rows {
+		plan[i] = r.StudyPlanRow
+	}
+	return storage.BuildStudyPlan(plan, numDecisions, thresholdMP), nil
+}
+
+// SuggestReferences reads the same priced errors with their boards and the
+// state of their lesson, and the positions something already deals with, and
+// proposes the reference positions of ADR-0080 (storage.SuggestReferences).
+func (s *StatsStore) SuggestReferences(ctx context.Context, scope string, req storage.ReferenceRequest) (*storage.ReferenceSuggestions, error) {
+	rows, numDecisions, thresholdMP, err := s.classifiedErrors(ctx, scope, req.Filter,
+		classifyOptions{priced: true, reference: true, matchIDs: req.MatchIDs})
+	if err != nil {
+		return nil, err
+	}
+	handled, err := s.handledPositions(ctx, scope)
+	if err != nil {
+		return nil, err
+	}
+	return storage.SuggestReferences(rows, handled, numDecisions, thresholdMP, req.Size), nil
+}
+
+// handledPositions are the positions the study queue's backlog leaves out:
+// unhandledSQL negated, word for word.
+func (s *StatsStore) handledPositions(ctx context.Context, scope string) (map[int64]bool, error) {
+	tenant, targs := s.DB.TenantFilter("p", scope)
+	rows, err := s.DB.Query(ctx, `SELECT p.id FROM position p WHERE `+tenant+` AND NOT (1 = 1`+unhandledSQL+`)`, targs...)
+	if err != nil {
+		return nil, errf(s.DB, "handledPositions query", err)
+	}
+	defer rows.Close()
+	handled := map[int64]bool{}
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			return nil, errf(s.DB, "handledPositions scan", err)
+		}
+		handled[id] = true
+	}
+	if err := rows.Err(); err != nil {
+		return nil, errf(s.DB, "handledPositions rows", err)
+	}
+	return handled, nil
+}
+
+// classifyOptions say how much classifiedErrors reads: priced adds the MWC
+// loss and the difficulty, reference the board and the lesson's state;
+// matchIDs narrows the filter to these matches.
+type classifyOptions struct {
+	priced, reference bool
+	matchIDs          []int64
 }
 
 // classifiedErrors lists every error of the filter with its theme and, when
 // priced, its MWC loss and difficulty. It returns the filter's counted
 // decisions and the library's Error threshold alongside.
-func (s *StatsStore) classifiedErrors(ctx context.Context, scope string, filter storage.StatsFilter, priced bool) ([]storage.StudyPlanRow, int, int, error) {
+func (s *StatsStore) classifiedErrors(ctx context.Context, scope string, filter storage.StatsFilter, opts classifyOptions) ([]storage.ReferenceRow, int, int, error) {
+	priced := opts.priced
 	filter, err := s.withPlayerAliases(ctx, scope, filter)
 	if err != nil {
 		return nil, 0, 0, fmt.Errorf("classifiedErrors aliases: %w", err)
@@ -58,6 +110,12 @@ func (s *StatsStore) classifiedErrors(ctx context.Context, scope string, filter 
 		return nil, 0, 0, errf(s.DB, "classifiedErrors settings", err)
 	}
 	whereSQL, baseArgs := s.buildStatsWhereClause(scope, filter)
+	if len(opts.matchIDs) > 0 {
+		whereSQL += " AND m.id IN (" + Placeholders(len(opts.matchIDs)) + ")"
+		for _, id := range opts.matchIDs {
+			baseArgs = append(baseArgs, id)
+		}
+	}
 
 	var numDecisions int
 	if err := s.DB.QueryRow(ctx, `SELECT COUNT(*) `+statsBaseJoin+whereSQL, baseArgs...).Scan(&numDecisions); err != nil {
@@ -95,7 +153,7 @@ func (s *StatsStore) classifiedErrors(ctx context.Context, scope string, filter 
 		}
 		return ana
 	}
-	var classified []storage.StudyPlanRow
+	var classified []storage.ReferenceRow
 	for rows.Next() {
 		var id, errMP, matchID int64
 		var checkerMove, cubeAction, bestCube, p1, p2 string
@@ -109,12 +167,12 @@ func (s *StatsStore) classifiedErrors(ctx context.Context, scope string, filter 
 			&rawPlayer, &away0, &away1, &cubeValue, &matchLength, &labelLength, &day); err != nil {
 			return nil, 0, 0, errf(s.DB, "classifiedErrors scan", err)
 		}
-		row := storage.StudyPlanRow{RecurringErrorRow: storage.RecurringErrorRow{
+		row := storage.ReferenceRow{StudyPlanRow: storage.StudyPlanRow{RecurringErrorRow: storage.RecurringErrorRow{
 			PositionID: id,
 			GameType:   domain.GameType(gameType).String(),
 			ErrorMP:    errMP,
 			Theme:      storage.RecurringThemeNone,
-		}, MatchID: matchID}
+		}, MatchID: matchID}}
 		if decisionType == 1 {
 			row.Kind = "cube"
 			row.Theme = cubeTheme(bestCube, cubeAction)
@@ -141,6 +199,9 @@ func (s *StatsStore) classifiedErrors(ctx context.Context, scope string, filter 
 					diff := perUnit * storage.ReferenceExpectedLoss(costs, storage.DifficultyTemperature)
 					row.Difficulty = &diff
 					row.Avoidable = storage.IsAvoidable(loss, diff, true)
+					if opts.reference {
+						s.readReference(&row, string(state), onRoll, away0, away1, analysisOf(id, data), cubeAction, costs)
+					}
 				}
 			}
 		}
@@ -162,4 +223,21 @@ func cubeTheme(best, played string) string {
 		return cell
 	}
 	return storage.RecurringThemeNone
+}
+
+// readReference fills what a reference proposal reads beyond the plan: the
+// board seen from the side on roll, the score of each side and the state of
+// the position's lesson.
+func (s *StatsStore) readReference(row *storage.ReferenceRow, state string, onRoll, away0, away1 int,
+	ana *domain.PositionAnalysis, cubeAction string, costs []float64) {
+	if pos, ok := positionOfState(state); ok {
+		pos.PlayerOnRoll = onRoll
+		row.Vector = engine.BuildSimilarityVector(&pos)
+	}
+	away := [2]int{domain.PointsAway(away0), domain.PointsAway(away1)}
+	if onRoll == 1 {
+		away[0], away[1] = away[1], away[0]
+	}
+	row.AwayOnRoll, row.AwayOpponent = away[0], away[1]
+	row.GapMP, row.Unstable, row.RolledOut = storage.ReferenceLesson(ana, row.Kind, cubeAction, costs)
 }

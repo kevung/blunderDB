@@ -3,6 +3,8 @@ package storage
 import (
 	"math"
 	"sort"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
 // The signed biases of ADR-0079: which way a player errs, not only how much.
@@ -37,10 +39,12 @@ type SignedBias struct {
 }
 
 // ScoreBias is the doubling bias of one score cell: the away scores of the
-// player on roll and of the opponent, (0, 0) for money play.
+// player on roll and of the opponent, post-Crawford read as one away
+// (domain.PointsAway), or Money with both at 0.
 type ScoreBias struct {
-	MoverAway    int `json:"MoverAway"`
-	OpponentAway int `json:"OpponentAway"`
+	Money        bool `json:"Money"`
+	MoverAway    int  `json:"MoverAway"`
+	OpponentAway int  `json:"OpponentAway"`
 	SignedBias
 }
 
@@ -63,7 +67,8 @@ type DirectionalBiases struct {
 
 // BiasCubeRow is one counted cube decision as a backend reads it: the bot's
 // ruling and the action played, both as the importer spelt them, the away
-// scores of the normalised position and the decision's cost.
+// scores of the normalised position as stored (the money and post-Crawford
+// sentinels included) and the cost of the action played in that match.
 type BiasCubeRow struct {
 	Best, Played string
 	MoverAway    int
@@ -84,7 +89,10 @@ type BiasCheckerRow struct {
 // shared by every backend.
 func BuildDirectionalBiases(cube []BiasCubeRow, checker []BiasCheckerRow) *DirectionalBiases {
 	out := &DirectionalBiases{MinDecisions: BiasMinDecisions, DoublesByScore: []ScoreBias{}}
-	type cell struct{ mover, opp int }
+	type cell struct {
+		money      bool
+		mover, opp int
+	}
 	byScore := map[cell]*SignedBias{}
 	for _, r := range cube {
 		switch cellOf := ClassifyCubeDirection(r.Best, r.Played); cellOf {
@@ -103,7 +111,10 @@ func BuildDirectionalBiases(cube []BiasCubeRow, checker []BiasCheckerRow) *Direc
 				sign = -1
 			}
 			out.Doubles.add(sign, r.ErrorMP)
-			c := cell{r.MoverAway, r.OpponentAway}
+			c := cell{mover: domain.PointsAway(r.MoverAway), opp: domain.PointsAway(r.OpponentAway)}
+			if r.MoverAway < 0 && r.OpponentAway < 0 {
+				c = cell{money: true}
+			}
 			if byScore[c] == nil {
 				byScore[c] = &SignedBias{}
 			}
@@ -122,16 +133,30 @@ func BuildDirectionalBiases(cube []BiasCubeRow, checker []BiasCheckerRow) *Direc
 	out.Blots.measure()
 	for c, b := range byScore {
 		b.measure()
-		out.DoublesByScore = append(out.DoublesByScore, ScoreBias{MoverAway: c.mover, OpponentAway: c.opp, SignedBias: *b})
+		out.DoublesByScore = append(out.DoublesByScore, ScoreBias{Money: c.money, MoverAway: c.mover, OpponentAway: c.opp, SignedBias: *b})
 	}
 	sort.Slice(out.DoublesByScore, func(i, j int) bool {
 		a, b := out.DoublesByScore[i], out.DoublesByScore[j]
+		if a.Money != b.Money {
+			return a.Money
+		}
 		if a.MoverAway != b.MoverAway {
 			return a.MoverAway < b.MoverAway
 		}
 		return a.OpponentAway < b.OpponentAway
 	})
 	return out
+}
+
+// BlotsUnreadShare is the share of the checker plays with contact left out of
+// the blots bias because they could not be replayed: the selection the
+// measure carries (ADR-0079 rule 11).
+func BlotsUnreadShare(b *DirectionalBiases) float64 {
+	total := b.BlotsUnread + b.Blots.Decisions
+	if total == 0 {
+		return 0
+	}
+	return float64(b.BlotsUnread) / float64(total)
 }
 
 func (b *SignedBias) add(sign int, errMP int64) {

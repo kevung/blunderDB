@@ -37,6 +37,7 @@
     import { t, tMsg } from '../i18n';
     import { confirmAction } from '../services/confirmService.js';
     import PanelTable from './panels/PanelTable.svelte';
+    import ReferenceSuggest from './ReferenceSuggest.svelte';
     import { panelKeyGuard } from '../services/keyboardService.js';
     import { registerKeys } from '../services/keyDispatch.js';
 
@@ -703,6 +704,9 @@
                 {#snippet header()}
                     <span class="detail-title">{$t('collection.title')}</span>
                     <NewButton label={$t('collection.newButton')} onclick={() => (creating = true)} />
+                    <button type="button" class="suggest-btn" data-testid="collection-suggest" onclick={() => (view = 'suggest')} title={$t('collection.suggestHint')}
+                        >{$t('collection.suggestButton')}</button
+                    >
                 {/snippet}
                 {#snippet cells(collection, index)}
                     <td class="name-cell">
@@ -801,6 +805,8 @@
                 </div>
             {/if}
         </div>
+    {:else if view === 'suggest'}
+        <ReferenceSuggest onClose={() => (view = 'list')} onCollectionCreated={loadCollections} />
     {:else if view === 'detail' && activeCollection}
         <!-- Positions in active collection -->
         <div class="table-wrapper">
@@ -1053,6 +1059,11 @@
         padding: 3px 8px 3px 32px;
         border-bottom: 1px solid var(--color-border);
         flex-shrink: 0;
+    }
+    .suggest-btn {
+        font-size: var(--font-size-small);
+        padding: 1px 8px;
+        margin-left: 6px;
     }
     /* A <button> (click-to-edit, reachable with Tab and Enter) drawn as the
        plain bar it replaced. */

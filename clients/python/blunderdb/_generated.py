@@ -266,6 +266,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/collections.setFilter — JSON."
         return self._call("/v1/collections.setFilter", payload)
 
+    def collections_suggest(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/collections.suggest — JSON."
+        return self._call("/v1/collections.suggest", payload)
+
     def collections_update(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/collections.update — JSON."
         return self._call("/v1/collections.update", payload)

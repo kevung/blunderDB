@@ -634,6 +634,12 @@ type StatsStore interface {
 	// BuildStudyPlan.
 	StudyPlan(ctx context.Context, scope string, filter StatsFilter) (*StudyPlan, error)
 
+	// SuggestReferences proposes the reference positions of a filter: those
+	// whose lesson covers the most recoverable MWC of their neighbouring
+	// errors, near-duplicates and handled positions left out (ADR-0080). See
+	// SuggestReferences.
+	SuggestReferences(ctx context.Context, scope string, req ReferenceRequest) (*ReferenceSuggestions, error)
+
 	// StudyEffect measures each studied family's loss rate in real play
 	// before and after the day it was first studied (ADR-0079). See
 	// BuildStudyEffect.

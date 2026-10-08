@@ -28,7 +28,7 @@
     }
 
     function score(c) {
-        return c.MoverAway === 0 && c.OpponentAway === 0 ? $t('stats.biasesMoney') : `${c.MoverAway}-${c.OpponentAway}`;
+        return c.Money ? $t('stats.biasesMoney') : `${c.MoverAway}-${c.OpponentAway}`;
     }
 </script>
 
@@ -67,7 +67,13 @@
             </tbody>
         </table>
         {#if biases.BlotsUnread > 0}
-            <p class="aside">{$t('stats.biasesUnread', { n: biases.BlotsUnread })}</p>
+            <p class="aside" data-testid="bias-unread">
+                {$t('stats.biasesUnread', {
+                    n: biases.BlotsUnread,
+                    total: biases.BlotsUnread + biases.Blots.Decisions,
+                    share: `${((100 * biases.BlotsUnread) / (biases.BlotsUnread + biases.Blots.Decisions)).toFixed(1)} %`
+                })}
+            </p>
         {/if}
         {#if scoreCells.length > 0}
             <h4 class="sub-title">{$t('stats.biasesByScore')}</h4>
@@ -84,7 +90,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {#each scoreCells as c (c.MoverAway + '-' + c.OpponentAway)}
+                    {#each scoreCells as c ((c.Money ? 'money' : '') + c.MoverAway + '-' + c.OpponentAway)}
                         <tr class="family-row" data-testid="bias-score">
                             <td>{score(c)}</td>
                             <td class="num">{c.Decisions}</td>

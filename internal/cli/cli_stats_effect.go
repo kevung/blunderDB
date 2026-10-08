@@ -190,15 +190,20 @@ func printBiases(b *storage.DirectionalBiases) {
 	row("blots", "bolder", "more cautious", b.Blots)
 	w.Flush()
 	if b.BlotsUnread > 0 {
-		fmt.Printf("(%d checker plays could not be replayed and are left out of the blots bias.)\n", b.BlotsUnread)
+		fmt.Printf("(%d of %d checker plays with contact (%.1f%%) could not be replayed and are left out of the blots bias.)\n",
+			b.BlotsUnread, b.BlotsUnread+b.Blots.Decisions, 100*storage.BlotsUnreadShare(b))
 	}
 	if len(b.DoublesByScore) > 0 {
 		fmt.Println()
-		fmt.Println("Doubles by score (your away, opponent's away; 0-0 is money play):")
+		fmt.Println("Doubles by score (your away, opponent's away; post-Crawford reads 1-away):")
 		w = tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
 		fmt.Fprintln(w, "SCORE\tDECISIONS\tPREMATURE\tMISSED\tBIAS\t95% INTERVAL\tVERDICT")
 		for _, c := range b.DoublesByScore {
-			fmt.Fprintf(w, "%d-%d\t%d\t%d\t%d\t%+.1f%%\t[%+.1f%%, %+.1f%%]\t%s\n", c.MoverAway, c.OpponentAway,
+			score := fmt.Sprintf("%d-%d", c.MoverAway, c.OpponentAway)
+			if c.Money {
+				score = "money"
+			}
+			fmt.Fprintf(w, "%s\t%d\t%d\t%d\t%+.1f%%\t[%+.1f%%, %+.1f%%]\t%s\n", score,
 				c.Decisions, c.Plus, c.Minus, 100*c.Bias, 100*c.Low, 100*c.High, c.Verdict)
 		}
 		w.Flush()

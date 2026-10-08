@@ -70,7 +70,7 @@ describe('StatsBiases', () => {
             Blots: bias(10, 1, 0, 'insufficient'),
             BlotsUnread: 5,
             DoublesByScore: [
-                { MoverAway: 0, OpponentAway: 0, ...bias(25, 1, 6, 'too_little') },
+                { Money: true, MoverAway: 0, OpponentAway: 0, ...bias(25, 1, 6, 'too_little') },
                 { MoverAway: 3, OpponentAway: 5, ...bias(4, 1, 0, 'insufficient') }
             ]
         });
@@ -82,5 +82,8 @@ describe('StatsBiases', () => {
         const cells = screen.getAllByTestId('bias-score');
         expect(cells).toHaveLength(1);
         expect(cells[0].textContent).toContain('-20.0 %');
+        expect(cells[0].textContent).toContain('money');
+        expect(screen.getByTestId('bias-unread').textContent).toContain('5 of 15');
+        expect(screen.getByTestId('bias-unread').textContent).toContain('33.3 %');
     });
 });

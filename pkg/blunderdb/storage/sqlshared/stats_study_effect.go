@@ -13,9 +13,13 @@ import (
 // StudyEffect measures each studied family of the study plan before and after
 // the day it was first studied (storage.BuildStudyEffect, ADR-0079).
 func (s *StatsStore) StudyEffect(ctx context.Context, scope string, filter storage.StatsFilter) (*storage.StudyEffect, error) {
-	rows, _, _, err := s.classifiedErrors(ctx, scope, filter, true)
+	classified, _, _, err := s.classifiedErrors(ctx, scope, filter, classifyOptions{priced: true})
 	if err != nil {
 		return nil, err
+	}
+	rows := make([]storage.StudyPlanRow, len(classified))
+	for i := range classified {
+		rows[i] = classified[i].StudyPlanRow
 	}
 	filter, err = s.withPlayerAliases(ctx, scope, filter)
 	if err != nil {
@@ -157,7 +161,7 @@ func (s *StatsStore) DirectionalBiases(ctx context.Context, scope string, filter
 
 	cubeRows, err := s.DB.Query(ctx,
 		`SELECT `+ActionLabelOrEmptyFor(s.DB, "a.best_cube_action")+`, `+ActionLabelOrEmptyFor(s.DB, "mv.cube_action")+`,
-			COALESCE(p.score_1, 0), COALESCE(p.score_2, 0), COALESCE(a.cube_error, 0) `+
+			COALESCE(p.score_1, 0), COALESCE(p.score_2, 0), COALESCE(`+statsErrExpr+`, 0) `+
 			statsBaseJoin+whereSQL+` AND p.decision_type = 1`, args...)
 	if err != nil {
 		return nil, errf(s.DB, "DirectionalBiases cube", err)
@@ -178,12 +182,13 @@ func (s *StatsStore) DirectionalBiases(ctx context.Context, scope string, filter
 		return nil, errf(s.DB, "DirectionalBiases cube", err)
 	}
 
-	// The analysis blob is only decoded for a play that cost something: a
-	// free play is a best play and reads 0 without a board.
+	// Each play is costed as played in its match (statsErrExpr). The analysis
+	// blob is only decoded for a play that cost something: a free play is a
+	// best play and reads 0 without a board.
 	checkerRows, err := s.DB.Query(ctx,
 		`SELECT p.state, COALESCE(p.player_on_roll, 0), COALESCE(p.dice_1, 0), COALESCE(p.dice_2, 0),
-			COALESCE(a.best_move_equity_error, 0), COALESCE(mv.checker_move, ''),
-			CASE WHEN a.best_move_equity_error > 0 THEN a.data END `+
+			COALESCE(`+statsErrExpr+`, 0), COALESCE(mv.checker_move, ''),
+			CASE WHEN `+statsErrExpr+` > 0 THEN a.data END `+
 			statsBaseJoin+whereSQL+` AND p.decision_type = 0`, args...)
 	if err != nil {
 		return nil, errf(s.DB, "DirectionalBiases checker", err)

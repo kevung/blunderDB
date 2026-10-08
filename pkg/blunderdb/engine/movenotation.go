@@ -16,8 +16,9 @@ import (
 //     board, not part of which move was chosen.
 //   - repetition: "4/2 4/2" and "4/2(2)" are the same move; which form appears
 //     depends on which side collapsed it.
-//   - chained hops: XG writes one checker's two dice as one step, "13/7";
-//     gammonNet writes both, "13/8 8/7". They leave the SAME board.
+//   - chained hops: XG writes one checker's two dice as one step, "13/7", or
+//     as one token naming the hop, "8/5*/4"; gammonNet writes both, "13/8
+//     8/7". They leave the SAME board.
 //
 // CanonicalMove folds all three, so a comparison counts disagreements, not
 // dialects.
@@ -42,14 +43,17 @@ func CanonicalMove(move string) string {
 			}
 			tok = tok[:i]
 		}
-		from, to, ok := strings.Cut(tok, "/")
-		if !ok {
+		points := strings.Split(tok, "/")
+		if len(points) < 2 {
 			// Not a step at all ("cannot move", a bare word): keep it as is,
 			// so two spellings of the same non-move still compare equal.
-			from, to = tok, ""
+			points = []string{tok, ""}
 		}
+		// "8/5*/4" is one checker hopping twice, written as one token.
 		for i := 0; i < count; i++ {
-			hops = append(hops, hop{from, to})
+			for j := 0; j+1 < len(points); j++ {
+				hops = append(hops, hop{points[j], points[j+1]})
+			}
 		}
 	}
 

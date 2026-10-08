@@ -53,7 +53,9 @@ fixés ici **avant** d'avoir regardé ce qu'ils donnent sur une base réelle.
    normale de la moyenne : B ± 1,96·√(((P + M)/N − B²)/N). Au moins **20 décisions** ;
    verdict « trop » si la borne basse est > 0, « pas assez » si la borne haute est < 0,
    « équilibré » sinon, « insuffisant » sous le minimum. Les coûts de P et M (millipoints)
-   accompagnent les comptes.
+   accompagnent les comptes. Le signe et le coût d'une décision sont ceux du coup ou de
+   l'action joués dans son match (`move.decision_error_mp`, comme toute statistique), jamais
+   les colonnes de la position, qui ne notent qu'un des matchs qui l'ont atteinte.
 9. **Prises et refus.** Décisions : les réponses au videau comptées (prise ou refus joués,
    verdict du bot lisible), la classification de `storage.ClassifyCubeDirection`.
    P = prises fautives (le bot refuse), M = refus fautifs (le bot prend). B est exactement le
@@ -62,14 +64,21 @@ fixés ici **avant** d'avoir regardé ce qu'ils donnent sur une base réelle.
     porteur comptées (double proposé, ou pas de double signalé serré), même classification.
     P = doubles prématurés (le bot ne double pas, ou est trop bon), M = doubles manqués. Le
     biais est rendu sur l'ensemble et par case de score (away du joueur au trait, away de
-    l'adversaire, la case (0, 0) pour la partie libre), chaque case avec le même estimateur
-    et le même minimum.
+    l'adversaire, lus par `domain.PointsAway` : un score post-Crawford est à 1 point ; la
+    partie libre a sa propre case, jamais confondue avec un score), chaque case avec le
+    même estimateur et le même minimum.
 11. **Audace et prudence sur les blots.** Décisions : les décisions de pions comptées dont la
     position a du contact. Une décision dont le coup joué ne coûte rien porte 0. Sinon le
     plateau après le coup joué et après le meilleur coup de l'analyse sont reconstruits (le
     générateur de coups légaux, comme `engine.ExplainChecker`), et x est le signe de
-    (blots du joueur après le coup joué − blots après le meilleur). Un coup que le générateur
-    ne reproduit pas sort du compte, il n'est pas deviné nul.
+    (blots du joueur après le coup joué − blots après le meilleur). Un coup est retrouvé par
+    le plateau qu'il laisse, non par son orthographe : « 13/7(2) » ou « 8/5*/4 » d'une
+    analyse désignent les coups que le générateur écrit pas à pas (`engine.CanonicalMove`,
+    départagé par le nombre de frappes). Un coup qui reste introuvable sort du compte, il
+    n'est pas deviné nul ; cette sélection n'est pas neutre (elle touchait d'abord les
+    doubles et les frappes), donc sa part est rendue avec le biais. La mesure compte les
+    blots sans les pondérer par leur exposition : un blot hors de portée pèse autant qu'un
+    blot à six cases d'un pion adverse.
 12. **Usage.** Une seule fonction de stockage par mesure sert la GUI (Stats), la CLI
     (`stats effect`, `stats biases`) et le serveur (`/v1/stats.studyEffect`,
     `/v1/stats.biases`).
