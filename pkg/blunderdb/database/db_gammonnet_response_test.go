@@ -82,6 +82,9 @@ func TestAnalyzeMissingWithGammonNetScoresTakesAndPassesAsReplies(t *testing.T) 
 		if doubler.ID != moves[i-1].positionID {
 			doubler, answer = answer, doubler
 		}
+		if !gammonnet.IsResponsePosition(&answer) {
+			t.Fatalf("move %d (%s): stored with cube %+v, want the turned cube held by no one", i, mv.action, answer.Cube)
+		}
 		// Positions are stored with the player on roll as 0.
 		rebuilt := gammonnet.DoublerPosition(answer)
 		rebuilt = rebuilt.NormalizeForStorage()

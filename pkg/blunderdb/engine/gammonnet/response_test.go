@@ -31,7 +31,7 @@ func TestEvaluateResponseIsTheDoublersDecisionFromTheOtherSide(t *testing.T) {
 	if err != nil || direct.Cube == nil {
 		t.Fatalf("direct: %v", err)
 	}
-	reply, err := EvaluateResponseWithMET(nil, answer, nil, 0, 0)
+	reply, err := EvaluatePositionWithMET(nil, answer, nil, 0, 0, 0)
 	if err != nil || reply.Cube == nil {
 		t.Fatalf("reply: %v", err)
 	}

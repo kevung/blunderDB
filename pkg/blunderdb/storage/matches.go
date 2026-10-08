@@ -5,7 +5,6 @@ import (
 	"iter"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
-	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 )
 
 // MatchListOpts filters, orders and paginates a match List query. Zero values
@@ -135,6 +134,16 @@ type MatchStore interface {
 	// alone, and so are ids that no longer exist.
 	PurgeOrphanPositions(ctx context.Context, scope string, positionIDs []int64) error
 
+	// ReanchorAnsweredDoubles moves every take or pass a transcribed or
+	// duelled match recorded with the turned cube owned by the answerer onto
+	// the position importers record it on: the same, the cube held by no one
+	// (sqlshared.AnsweredOwnedCubeMovesSQL). Copy-on-write, as SwapPlayers: the
+	// row it leaves keeps its id and analysis for whatever else holds it — a
+	// redouble on the same board — and is purged when nothing does, its stale
+	// analysis with it. Invalidates the stats of the matches it touches and
+	// returns how many moves moved.
+	ReanchorAnsweredDoubles(ctx context.Context, scope string) (int, error)
+
 	// SwapPlayers swaps player 1 and player 2 for the match (and mirrors the
 	// stored positions accordingly).
 	SwapPlayers(ctx context.Context, scope string, id int64) error
@@ -248,36 +257,6 @@ func (f *DiceFolder) Flush() (MatchDice, bool) {
 	done := *f.cur
 	f.cur = nil
 	return done, true
-}
-
-// ResponsePositions reports which of positions were answered with a take or a
-// pass in some match. A cube position records no answer of its own; only the
-// moves played on it say whether its decision is a double or the reply to
-// one. Only cube decisions are looked up.
-func ResponsePositions(ctx context.Context, store MatchStore, scope string, positions []domain.Position) (map[int64]bool, error) {
-	var ids []int64
-	for i := range positions {
-		if positions[i].DecisionType == domain.CubeAction {
-			ids = append(ids, positions[i].ID)
-		}
-	}
-	out := make(map[int64]bool)
-	if len(ids) == 0 {
-		return out, nil
-	}
-	moves, err := store.MovesByPositions(ctx, scope, ids)
-	if err != nil {
-		return nil, err
-	}
-	for id, mvs := range moves {
-		for _, mv := range mvs {
-			if engine.IsResponseCubeAction(mv.CubeAction) {
-				out[id] = true
-				break
-			}
-		}
-	}
-	return out, nil
 }
 
 // ScoreBatchSize bounds the moves one ScoreMoves call examines.
