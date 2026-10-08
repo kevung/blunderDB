@@ -880,7 +880,11 @@ func record(doc Document, a Action) Document {
 		}
 		// …and its Repères: a correction retypes what was played, not when
 		// (ADR-0079 rule 3).
-		a.RollTickMS, a.TickMS = doc.Actions[at].RollTickMS, doc.Actions[at].TickMS
+		// A correction into a kind without a roll has no roll to time.
+		a.RollTickMS, a.TickMS = nil, doc.Actions[at].TickMS
+		if rolls(a.Kind) {
+			a.RollTickMS = doc.Actions[at].RollTickMS
+		}
 		var nextScore *[2]int
 		if at+1 < len(doc.Actions) && gameEndsAt(doc, at) {
 			ann := Replay(doc, 0)

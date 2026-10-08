@@ -292,3 +292,61 @@ func TestBuildCarriesRepèresAndDurations(t *testing.T) {
 		t.Fatalf("a detached source should be stated empty, got %v", p.Match.VideoSource)
 	}
 }
+
+// TestImplicitValidationPostsNoInstant: a play left selected and recorded by the
+// gesture that follows it — a cube gesture — gets no action Repère: the instant
+// is the cube's, and lending it to the play would be false (ADR-0079 rule 3).
+func TestImplicitValidationPostsNoInstant(t *testing.T) {
+	var steps []step
+	steps = append(steps, timedTurn(6, 3, 1000, 4000)...)
+	steps = append(steps,
+		step{name: "first die", g: at(die(5), 6000)},
+		step{name: "second die", g: at(die(2), 6400)},
+		step{name: "play", g: candidate(0)},
+		step{name: "double", g: at(Gesture{Kind: GestureDouble}, 9000)})
+	doc := runSteps(t, New(7), steps)
+	if len(doc.Actions) != 3 || doc.Actions[1].Kind != KindChecker || doc.Actions[2].Kind != KindDouble {
+		t.Fatalf("want play then double, got %s", dumpActions(doc.Actions))
+	}
+	if p := doc.Actions[1]; !sameMS(p.RollTickMS, ms(6000)) || p.TickMS != nil {
+		t.Errorf("implicitly validated play: roll %s, action %s; want 6000, unknown", show(p.RollTickMS), show(p.TickMS))
+	}
+	if d := doc.Actions[2]; !sameMS(d.TickMS, ms(9000)) {
+		t.Errorf("double timed %s, want 9000", show(d.TickMS))
+	}
+
+	// A die typed over a selected play writes nothing: it retypes the roll,
+	// so no instant lands on any Action either.
+	steps = append(timedTurn(6, 3, 1000, 4000),
+		step{name: "first die", g: at(die(5), 6000)},
+		step{name: "second die", g: at(die(2), 6400)},
+		step{name: "play", g: candidate(0)},
+		step{name: "next die", g: at(die(4), 9000)})
+	doc = runSteps(t, New(7), steps)
+	if len(doc.Actions) != 1 {
+		t.Fatalf("a die recorded the selected play: %s", dumpActions(doc.Actions))
+	}
+	if e := doc.Entry; e == nil || !sameMS(e.RollTickMS, ms(6000)) || e.TickMS != nil {
+		t.Fatalf("the entry should keep its first die's instant and no action instant: %+v", doc.Entry)
+	}
+}
+
+// TestCorrectionToACubeActionDropsTheRollRepère: an Action corrected in place
+// into a kind without a roll keeps its action Repère and loses the roll's,
+// which no double, answer or resignation carries.
+func TestCorrectionToACubeActionDropsTheRollRepère(t *testing.T) {
+	doc := runSteps(t, seek(t, timedGame(t), 4), []step{
+		{name: "clear the roll", g: Gesture{Kind: GestureClearDice}},
+	})
+	doc, err := Apply(doc, at(Gesture{Kind: GestureResign, Level: 1}, 99000))
+	if err != nil {
+		t.Fatal(err)
+	}
+	a := doc.Actions[4]
+	if a.Kind != KindResign {
+		t.Fatalf("Action 4 is a %s, want a resignation", a.Kind)
+	}
+	if a.RollTickMS != nil || !sameMS(a.TickMS, ms(20000)) {
+		t.Errorf("corrected into a resignation: roll %s, action %s; want unknown, 20000", show(a.RollTickMS), show(a.TickMS))
+	}
+}

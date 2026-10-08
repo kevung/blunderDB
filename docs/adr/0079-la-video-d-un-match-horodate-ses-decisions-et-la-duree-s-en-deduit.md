@@ -45,7 +45,9 @@ peut pas embarquer ; le lecteur intégré de YouTube refuse une page sans réfé
 3. **Les Repères se posent de deux façons, et le transcript ramène à la vidéo.** Sur une
    Action *nouvelle*, la première touche de dé pose l'instant du jet et la validation pose
    l'instant de l'action, à l'instant courant de la vidéo ; une correction en place ne touche
-   pas aux Repères. Un geste explicite pose l'instant courant sur l'action du curseur, jet ou
+   pas aux Repères. Une validation implicite — par le chiffre du jet suivant ou par un geste de
+   videau — ne pose aucun instant : le coup reste sans instant d'action plutôt que d'en recevoir
+   un faux. Un geste explicite pose l'instant courant sur l'action du curseur, jet ou
    action. Placer le curseur sur une cellule amène la vidéo à son Repère. Repères et source
    sont des champs optionnels des gestes d'écriture et de l'état exposé (ADR-0057) : un client
    externe pose les siens par l'API, et la logique vit dans `transcript`, le lecteur n'étant
