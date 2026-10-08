@@ -1261,6 +1261,40 @@ connaît plus **refuse de s'ouvrir** en le disant, plutôt que de renvoyer toute
 la base. C'est la seule panne qu'un filtre enregistré ne doit pas avoir :
 s'élargir en silence.
 
+.. _positions_reference:
+
+Le bouton **Proposer…** de l'en-tête ouvre les **positions de référence** :
+une courte liste de positions à étudier, choisie parmi vos erreurs pour que
+chacune en résume beaucoup. Étudier les dix pires erreurs donne souvent dix
+variantes d'un même problème, ou des positions singulières qui n'apprennent
+rien sur les autres ; une position de référence est au centre de plusieurs de
+vos erreurs, de structure voisine, et sa leçon sert à toutes.
+
+* Les erreurs sont celles du :ref:`plan d'étude <plan_etude>` : chiffrées en
+  MWC et rangées par famille (plan de jeu, nature, thème). Deux erreurs d'une
+  famille sont **voisines** à au plus 12 pions-pas de distance ``like`` ; une
+  erreur de videau n'a pour voisines que celles du même score.
+* Chaque position vaut le **MWC récupérable** (perte moins difficulté) de ses
+  voisines et d'elle-même : ce que sa leçon rapporterait si elle servait à
+  toutes. Une leçon **serrée** (le second choix coûte moins d'une demi-erreur)
+  ou un verdict **instable** (une autre profondeur ou un rollout dit autre
+  chose) compte pour moitié ; un rollout qui confirme est signalé.
+* La liste est **variée** : une position retenue couvre ses voisines, qui ne
+  rapportent plus rien aux suivantes, et aucune position proposée n'est un
+  quasi-doublon d'une autre. Une position **déjà traitée** — commentée, dans
+  une collection, une carte Anki ou marquée « étudiée » — n'est jamais
+  proposée, et ses voisines sont tenues pour couvertes.
+
+La **portée** est toute la base, le match en cours, un tournoi ou le filtre du
+panneau Statistiques ; le joueur est celui de ce filtre. La **taille** est de
+10, 20 ou 50 positions. Chaque ligne donne sa famille, son score s'il s'agit
+du videau, le MWC qu'elle couvre et sa raison : combien d'erreurs et de
+matchs elle résume, la taille de sa famille parmi vos décisions, son propre
+récupérable, l'écart avec le second choix. Cliquer sur une ligne ouvre la
+position ; les cases cochées deviennent en un clic une **collection**, un
+**paquet Anki** ou un **quiz**. En ligne de commande :
+``blunderdb collection suggest`` (voir :ref:`cli_collection`).
+
 .. _lecons:
 
 Leçons
