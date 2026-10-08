@@ -284,12 +284,23 @@ func youTubeID(source string) string {
 	return id
 }
 
+// videoDialogPattern lists each extension in both cases: GTK matches dialog
+// patterns case-sensitively, and cameras name their files *.MOV or *.MP4.
+var videoDialogPattern = func() string {
+	exts := []string{"mp4", "m4v", "mov", "webm", "mkv", "ogv"}
+	var pats []string
+	for _, e := range exts {
+		pats = append(pats, "*."+e, "*."+strings.ToUpper(e))
+	}
+	return strings.Join(pats, ";")
+}()
+
 // PickTranscriptionVideo asks for a video file; empty when cancelled.
 func (a *App) PickTranscriptionVideo() (string, error) {
 	return runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
 		Title: "Choose the match video",
 		Filters: []runtime.FileFilter{
-			{DisplayName: "Videos (*.mp4, *.m4v, *.mov, *.webm, *.mkv, *.ogv)", Pattern: "*.mp4;*.m4v;*.mov;*.webm;*.mkv;*.ogv"},
+			{DisplayName: "Videos (*.mp4, *.m4v, *.mov, *.webm, *.mkv, *.ogv)", Pattern: videoDialogPattern},
 		},
 	})
 }

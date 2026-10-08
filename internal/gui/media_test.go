@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 )
@@ -160,5 +161,13 @@ func TestMediaServesTheOpenPanesAndThemOnly(t *testing.T) {
 	h.release(u2)
 	if resp, _ := get(t, u2, ""); resp.StatusCode != 404 {
 		t.Fatal("served after release")
+	}
+}
+
+func TestVideoDialogPatternAcceptsUpperCase(t *testing.T) {
+	for _, want := range []string{"*.mov", "*.MOV", "*.mp4", "*.MP4"} {
+		if !slices.Contains(strings.Split(videoDialogPattern, ";"), want) {
+			t.Errorf("pattern %q lacks %s", videoDialogPattern, want)
+		}
 	}
 }
