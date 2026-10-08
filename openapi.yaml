@@ -5876,6 +5876,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/stats.biases:
+    post:
+      operationId: stats.biases
+      tags: [stats]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/statsComputeReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/storage_DirectionalBiases"
+                nullable: true
   /v1/stats.compute:
     post:
       operationId: stats.compute
@@ -6216,6 +6234,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/statsReportResp"
+  /v1/stats.studyEffect:
+    post:
+      operationId: stats.studyEffect
+      tags: [stats]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/statsComputeReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/storage_StudyEffect"
+                nullable: true
   /v1/stats.studyIds:
     post:
       operationId: stats.studyIds
@@ -8954,6 +8990,9 @@ components:
     storage_DecisionLoss:
       type: object
       description: "Opaque: see the Go type storage.DecisionLoss (defined outside internal/server, not expanded here)."
+    storage_DirectionalBiases:
+      type: object
+      description: "Opaque: see the Go type storage.DirectionalBiases (defined outside internal/server, not expanded here)."
     storage_Filter:
       type: object
       description: "Opaque: see the Go type storage.Filter (defined outside internal/server, not expanded here)."
@@ -9014,6 +9053,9 @@ components:
     storage_StatsResult:
       type: object
       description: "Opaque: see the Go type storage.StatsResult (defined outside internal/server, not expanded here)."
+    storage_StudyEffect:
+      type: object
+      description: "Opaque: see the Go type storage.StudyEffect (defined outside internal/server, not expanded here)."
     storage_StudyPlan:
       type: object
       description: "Opaque: see the Go type storage.StudyPlan (defined outside internal/server, not expanded here)."

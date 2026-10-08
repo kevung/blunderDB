@@ -110,6 +110,14 @@ func (s *Server) statsRoutes() []route {
 		{http.MethodPost, "/v1/stats.studyPlan", rpc(func(ctx context.Context, scope string, req statsComputeReq) (*storage.StudyPlan, error) {
 			return ss().StudyPlan(ctx, scope, req.Filter)
 		})},
+		// Avant/après l'étude de chaque famille étudiée (ADR-0078).
+		{http.MethodPost, "/v1/stats.studyEffect", rpc(func(ctx context.Context, scope string, req statsComputeReq) (*storage.StudyEffect, error) {
+			return ss().StudyEffect(ctx, scope, req.Filter)
+		})},
+		// Les biais signés : prises/refus, doubles par score, blots (ADR-0078).
+		{http.MethodPost, "/v1/stats.biases", rpc(func(ctx context.Context, scope string, req statsComputeReq) (*storage.DirectionalBiases, error) {
+			return ss().DirectionalBiases(ctx, scope, req.Filter)
+		})},
 		// Les positions des familles du plan, tirées pour un quiz si Size > 0.
 		{http.MethodPost, "/v1/stats.studyPlanIds", rpc(func(ctx context.Context, scope string, req studyIDsReq) (idsResp, error) {
 			ids, err := storage.StudyPlanIDs(ctx, s.opts.Storage, scope, req.Filter, req.Rank, req.Size)

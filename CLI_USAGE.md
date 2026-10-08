@@ -4059,6 +4059,41 @@ Examples:
   blunderdb search --db database.db --query 's m"13/11" t"blunder" pl"Alice" T>2026/01/01'
 ```
 
+### `blunderdb stats biases`
+
+```
+Usage: blunderdb stats biases --db <file> [options]
+
+Which way do the decisions err? Three signed biases (ADR-0078), each the share
+of decisions erring one way minus the share erring the other, with a 95%
+interval:
+  take/pass  wrong takes minus wrong passes: your take rate minus the bot's
+  doubles    premature doubles minus missed ones, overall and by score
+  blots      plays leaving more blots than the best minus plays leaving fewer
+A direction is stated only with at least 20 decisions and an interval that
+excludes zero: too_much, too_little, balanced or insufficient.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -decision-type string
+    	Decision type: all, checker, or cube (default "all")
+  -format string
+    	Output format: text or json (default "text")
+  -from string
+    	Start date filter YYYY-MM-DD
+  -player string
+    	Only this player's decisions
+  -to string
+    	End date filter YYYY-MM-DD
+  -tournament string
+    	Filter by tournament IDs, comma-separated
+
+Examples:
+  blunderdb stats biases --db database.db --player "Alice"
+  blunderdb stats biases --db database.db --player "Alice" --format json
+```
+
 ### `blunderdb stats breakdown`
 
 ```
@@ -4130,6 +4165,43 @@ Options:
 Examples:
   blunderdb stats contrast --db database.db --player "Alice" --opponent "Bob"
   blunderdb stats contrast --db database.db --player "Alice" --opponent "Bob" --format json
+```
+
+### `blunderdb stats effect`
+
+```
+Usage: blunderdb stats effect --db <file> [options]
+
+Did studying a family change how much it costs in real play? For each
+recurring-error family (plan of play x theme) one of whose positions was
+studied — marked studied, reviewed in Anki or answered in a quiz — the
+family's MWC loss per decision of its plan and kind, in the matches played
+before the day of the first study action and in those played after it
+(ADR-0078). The gain is the before rate minus the after rate, with a 95%
+interval; a direction is stated only when both windows hold at least
+30 decisions and the interval excludes zero.
+A change, not an effect: a family is studied because it cost, so part of
+any gain is regression to the mean.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -decision-type string
+    	Decision type: all, checker, or cube (default "all")
+  -format string
+    	Output format: text or json (default "text")
+  -from string
+    	Start date filter YYYY-MM-DD
+  -player string
+    	Only this player's decisions
+  -to string
+    	End date filter YYYY-MM-DD
+  -tournament string
+    	Filter by tournament IDs, comma-separated
+
+Examples:
+  blunderdb stats effect --db database.db --player "Alice"
+  blunderdb stats effect --db database.db --player "Alice" --format json
 ```
 
 ### `blunderdb stats h2h`

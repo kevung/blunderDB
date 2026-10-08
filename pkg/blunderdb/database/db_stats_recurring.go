@@ -52,3 +52,30 @@ func (d *Database) StudyPlanQueue(filter StatsFilter, rank int) ([]domain.StudyQ
 	}
 	return plan.QueueEntries(rank), nil
 }
+
+// ComputeStudyEffect measures each studied family before and after the day it
+// was first studied (storage.StatsStore.StudyEffect, ADR-0078).
+func (d *Database) ComputeStudyEffect(filter StatsFilter) (*storage.StudyEffect, error) {
+	return d.ComputeStudyEffectCtx(context.Background(), filter)
+}
+
+// ComputeStudyEffectCtx is ComputeStudyEffect with a caller-supplied context.
+func (d *Database) ComputeStudyEffectCtx(ctx context.Context, filter StatsFilter) (*storage.StudyEffect, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	return d.store.Stats().StudyEffect(ctx, "", toStorageStatsFilter(filter))
+}
+
+// ComputeDirectionalBiases tallies which way the filter's decisions err
+// (storage.StatsStore.DirectionalBiases, ADR-0078).
+func (d *Database) ComputeDirectionalBiases(filter StatsFilter) (*storage.DirectionalBiases, error) {
+	return d.ComputeDirectionalBiasesCtx(context.Background(), filter)
+}
+
+// ComputeDirectionalBiasesCtx is ComputeDirectionalBiases with a
+// caller-supplied context.
+func (d *Database) ComputeDirectionalBiasesCtx(ctx context.Context, filter StatsFilter) (*storage.DirectionalBiases, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	return d.store.Stats().DirectionalBiases(ctx, "", toStorageStatsFilter(filter))
+}
