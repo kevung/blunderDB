@@ -367,6 +367,10 @@ type DecisionLoss struct {
 	// the position's score and cube like a loss (ADR-0078); nil when unknown,
 	// on a cube row, or at money.
 	Luck *float64 `json:"luck"`
+	// Rolled marks a checker play that has its position: a roll whose luck
+	// the analysis could have measured. A checker row without one never
+	// carries luck, so it is not a roll the luck coverage misses.
+	Rolled bool `json:"rolled"`
 	// DurationMS is the time taken over the decision (ADR-0073), nil when
 	// unknown.
 	DurationMS *int64 `json:"duration_ms"`

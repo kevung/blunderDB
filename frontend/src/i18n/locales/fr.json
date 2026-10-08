@@ -1701,7 +1701,7 @@
         "noData": "Aucune donnée pour ce filtre.",
         "noTags": "Aucune étiquette dans les commentaires des positions retenues.",
         "tagsDoNotSum": "Une position peut porter plusieurs étiquettes : ces lignes ne s'additionnent pas au total.",
-        "thinCells": "Les lignes grisées n'ont pas d'intervalle : un seul match, ce n'est pas encore un échantillon.",
+        "thinCells": "Les lignes grisées n'ont pas d'intervalle : moins de trois matchs, ou des matchs tous au même PR, ce n'est pas encore un échantillon.",
         "goalTitle": "Objectif :",
         "goalStated": "PR < {target} d'ici {weeks} semaines ({band}).",
         "goalSet": "Se fixer un objectif…",
@@ -1878,7 +1878,7 @@
             "prCube": "PR videau"
         },
         "interval95": "IC 95 %",
-        "intervalHint": "Intervalle de confiance à 95 % : rééchantillonne les matchs d'une sélection, les parties d'un match. Une ligne sans intervalle (un seul match, ou une seule partie) est grisée."
+        "intervalHint": "Intervalle de confiance à 95 % : rééchantillonne les matchs d'une sélection, les parties d'un match. Une ligne sans intervalle (moins de trois matchs ou parties, ou toutes au même PR) est grisée."
     },
     "resumeBatch": {
         "title": "Reprendre un import",
@@ -3118,7 +3118,7 @@
     },
     "matchReview": {
         "title": "Bilan du match",
-        "oneGame": "Une seule partie : pas d'intervalle",
+        "noInterval": "Moins de trois parties, ou toutes au même PR : pas d'intervalle",
         "luckAdjusted": "Résultat ajusté de la chance {adjusted} (résultat {result}, chance nette {luck} ; écart des erreurs {balance})",
         "luckPartial": "chance mesurée sur {measured} jets sur {rolls}",
         "wonByPlay": "gagné par le jeu",

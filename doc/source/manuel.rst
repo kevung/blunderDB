@@ -2811,11 +2811,12 @@ tous les onglets.
   faire varier du simple au double. Le badge et le bilan d'un match
   (:ref:`bilan du match <bilan_match>`) donnent l'intervalle à 95 % en rééchantillonnant ses
   parties ; un agrégat (statistiques d'un joueur, d'un tournoi) le donne en
-  rééchantillonnant ses matchs. Il faut au moins deux parties, ou deux matchs.
-  Une ligne par match des statistiques n'a pas d'intervalle : filtrée par
-  joueur, elle ne contient qu'une unité ; sans joueur, ses deux sièges
-  mesureraient l'écart entre les adversaires, pas l'incertitude. Ne classez pas
-  des joueurs sur un seul match.
+  rééchantillonnant ses matchs ; sans filtre joueur, les deux sièges d'un match
+  forment une seule unité, puisqu'ils jouent les mêmes positions. Il faut au
+  moins trois parties, ou trois matchs, et qu'elles ne donnent pas toutes la
+  même perte : sinon pas d'intervalle. Une ligne par match des statistiques
+  n'en a donc pas : c'est une seule unité. Ne classez pas des joueurs sur un
+  seul match.
 
   .. caution::
      Une partie *money-game* n'a pas de longueur de match : la perte MWC
@@ -3221,8 +3222,10 @@ seulement combien de décisions le portent. Il rééchantillonne les **matchs** 
 la sélection, pas les décisions ni les parties : les parties d'un match
 partagent adversaire, séance et fatigue, et les compter comme indépendantes
 donnerait un intervalle trop étroit ; sans filtre joueur, les deux sièges d'un
-match forment une seule unité. Une ligne qui ne repose que sur un match n'a pas
-d'intervalle et est grisée, même avec beaucoup de décisions. Pour l'étude : une
+match forment une seule unité. Une ligne qui repose sur moins de trois matchs,
+ou dont tous les matchs donnent le même PR, n'a pas d'intervalle et est grisée,
+même avec beaucoup de décisions : deux matchs ne disent rien de la dispersion,
+et des matchs identiques disent qu'ils s'accordent, pas que le PR est exact. Pour l'étude : une
 famille de positions dont l'intervalle reste au-dessus de votre PR global est
 une faiblesse établie ; une ligne à l'intervalle large ne justifie pas encore un
 plan de travail. Le PR global du tableau de bord porte le même intervalle, sous

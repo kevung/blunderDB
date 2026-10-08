@@ -35,6 +35,9 @@ type PlayerReview struct {
 	ToReview []ReviewDecision `json:"to_review"`
 	Pace     ErrorPace        `json:"pace"`
 	Luck     LuckAdjusted     `json:"luck"`
+	// Difficulty is SummariseDifficulty's reading for the player: served so
+	// the GUI shows the excess and the ratio Go computes, not its own.
+	Difficulty DifficultySummary `json:"difficulty"`
 }
 
 // ReviewDecision is an error proposed for review. AvoidableLoss is MWCLoss −
@@ -98,7 +101,7 @@ func BuildMatchReview(matchID int64, decisions []DecisionLoss, matchLength int, 
 		errs[seat], losses[seat] = map[int]*sums{}, map[int]float64{}
 	}
 	for _, d := range decisions {
-		if d.DecisionType == "checker" {
+		if d.Rolled {
 			rolls++
 			if d.Luck != nil {
 				measured++
@@ -126,8 +129,10 @@ func BuildMatchReview(matchID int64, decisions []DecisionLoss, matchLength int, 
 		}
 	}
 	slices.Sort(games)
+	difficulty := SummariseDifficulty(decisions)
 	for seat := range 2 {
 		p := &r.Players[seat]
+		p.Difficulty = difficulty[seat]
 		var pool domain.RatioPool
 		var sumErr, n int64
 		perGame := make([]float64, len(games))

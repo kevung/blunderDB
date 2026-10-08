@@ -144,6 +144,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Stats/HeadToHeadWindowsRanking", testHeadToHeadWindowsRanking},
 		{"Stats/MatchMoveGrades", testStatsMatchMoveGrades},
 		{"Stats/MatchDecisionLosses", testStatsMatchDecisionLosses},
+		{"Stats/MatchDecisionLossesCube", testStatsMatchDecisionLossesCube},
 		{"Stats/TournamentReview", testStatsTournamentReview},
 		{"Stats/PlayedDecisionPerMatch", testStatsPlayedDecisionPerMatch},
 		{"Stats/PlayedDecisionFollowsPositionEdit", testStatsPlayedDecisionFollowsPositionEdit},
