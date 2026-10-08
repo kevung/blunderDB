@@ -612,6 +612,22 @@ export default {
 <li><strong>95 %:n luottamusväli</strong> seuraa jokaista lukua. Perhe pääsee suunnitelmaan <strong>5 virheestä</strong> alkaen ja kun väli on kokonaan nollan yläpuolella; suunnitelma järjestetään välin alarajan mukaan, joten yhtä suuressa takaisin saatavassa parhaiten perusteltu perhe kulkee edellä. Muut mainitaan taulukon alla, <strong>vahvistettavina</strong>, ilman sijaa: suunnitelma ei työnnä sinua kohinaan.</li>
 </ul>
 <p>Jokainen perhe tarjoaa kolme toimintoa: <strong>Opiskele</strong> avaa opiskelujonon sen asemilla, suurin ero viitepelaajaan ensin; <strong>Tietovisa</strong> käynnistää Harjoittelu-paneelin Päätös-harjoituksen kahdellakymmenellä niistä; <strong>Anki</strong> tekee niistä korttipakan. Taulukon yläpuolella <strong>Tietovisa kolmesta ensimmäisestä perheestä</strong> poimii kaksikymmentä asemaa kolmen kärkiperheen asemista. Suunnitelma seuraa paneelin suodatinta: aseta pelaaja saadaksesi <em>oman</em> suunnitelmasi. Komentorivillä: <code>blunderdb stats plan</code> (ks. stats — Toistuvat virheet).</p>
+<h5>Ennen/jälkeen opiskelun</h5>
+<p><strong>Ennen/jälkeen opiskelun</strong> -kortti sulkee suunnitelman kehän: maksaako se, mitä olet harjoitellut, sinulle vähemmän oikeissa otteluissa? Ilman sitä opiskelua arvioidaan tuntumalla; sen kanssa perhe, joka ei liiku työstä huolimatta, kertoo, että menetelmää on vaihdettava, ja edistyvä perhe voi luovuttaa paikkansa suunnitelmassa.</p>
+<ul>
+<li>Perhe (suunnitelman perhe) on <strong>opiskeltu</strong> siitä päivästä, jona johonkin sen asemaan kohdistuu ensimmäinen opiskelutoimi: opiskelujonon ”opiskeltu”-merkintä, Anki-kertaus tai tietovisan vastaus. Kortin luominen tai aseman lisääminen kokoelmaan ei lasketa.</li>
+<li>Jokaiselle opiskellulle perheelle kortti vertaa kahta <strong>ikkunaa</strong>: ennen kyseistä päivää pelattuja otteluita ja sen jälkeen pelattuja (itse päivä jätetään pois). Kummassakin <strong>tappioaste</strong> on perheen virheiden hävitty MWC suhteessa kaikkiin saman pelisuunnitelman ja saman lajin päätöksiin, ja se esitetään MWC-pisteinä sataa päätöstä kohti.</li>
+<li><strong>Hyöty</strong> on aiempi aste miinus myöhempi aste, 95 %:n välin kanssa. Tuomio on ”parantunut” (tai ”heikentynyt”) vain, jos kummassakin ikkunassa on vähintään <strong>30 päätöstä</strong> ja väli ei sisällä nollaa; muuten se jää tilaan ”epäselvä” tai ”liian vähän päätöksiä”.</li>
+</ul>
+<p>Tämä on muutos, ei vaikutus: perhe opiskellaan, koska se maksoi, ja osa hyödystä on regressiota kohti keskiarvoa; mikään ei kontrolloi vastustajia, formaattia tai noppia. Komentoriviltä: <code>blunderdb stats effect</code> (ks. stats — Toistuvat virheet).</p>
+<h5>Etumerkilliset vinoumat</h5>
+<p><strong>Etumerkilliset vinoumat</strong> -kortti kertoo, mihin suuntaan erehdyt, ei vain kuinka paljon. ”Otat liikaa” korjautuu paremmin kuin PR: tarkistettava sääntö on nimetty. Jokainen vinouma on virheellisten päätösten osuus yhteen suuntaan miinus virheellisten osuus toiseen suuntaan, 95 %:n välin kanssa; taipumus nimetään vasta <strong>20 päätöksestä</strong> alkaen ja kun väli ei sisällä nollaa.</p>
+<ul>
+<li><strong>Ottaminen / hylkääminen</strong> — kuution vastauksissa: virheelliset otot (botti hylkää) miinus virheelliset hylkäykset (botti ottaa). Tämä on täsmälleen oma ottoprosenttisi miinus botin ottoprosentti samoissa asemissa.</li>
+<li><strong>Tuplaukset</strong> — tuplauspäätöksissä: ennenaikaiset tuplaukset (botti ei tuplaa, tai asema on liian hyvä tuplattavaksi) miinus väliin jääneet tuplaukset. Sama vinouma annetaan <strong>tilanteen mukaan</strong> (oma away, vastustajan away; vapaa peli erikseen) tilanteille, joissa on tarpeeksi päätöksiä.</li>
+<li><strong>Blotit</strong> — kontaktillisissa nappulasiirroissa: siirrot, jotka jättävät enemmän blotteja kuin paras siirto, miinus ne, jotka jättävät vähemmän. Siirto, jota siirtogeneraattori ei osaa toistaa, hylätään ja lasketaan taulukon alle.</li>
+</ul>
+<p>Jokaisen luvun vieressä sen hinta millipisteinä kertoo, maksaako taipumus. Vinoumat seuraavat paneelin suodatinta. Komentoriviltä: <code>blunderdb stats biases</code> (ks. stats — Toistuvat virheet).</p>
 <h5>Liukuva PR viimeisten N päätöksen perusteella</h5>
 <p>Rivi PR- (tai MWC-) arvoja, jotka on laskettu viimeisten <em>N</em> päätöksen perusteella (N = 5, 10, 50, 100, 250, 500, 1000), mahdollistaa viimeaikaisen kehityssuunnan mittaamisen. Harmaannetut arvot vastaavat N:ää, joka on suurempi kuin käytettävissä olevien päätösten määrä.</p>
 <p>Arvon napsauttaminen lataa vastaavat viimeiset <em>N</em> asemaa.</p>

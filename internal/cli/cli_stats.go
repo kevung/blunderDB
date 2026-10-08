@@ -46,6 +46,8 @@ func (cli *CLI) statsHandlers() map[string]func([]string) error {
 		"ranking":     cli.runStatsRanking,
 		"recurring":   cli.runStatsRecurring,
 		"plan":        cli.runStatsPlan,
+		"effect":      cli.runStatsEffect,
+		"biases":      cli.runStatsBiases,
 		"training":    cli.runStatsTraining,
 		"windows":     cli.runStatsWindows,
 		"progression": cli.runStatsProgression,
@@ -77,6 +79,8 @@ func (cli *CLI) printStatsUsage() {
 	fmt.Println("  ranking    Players ranked by PR above a floor of counted decisions")
 	fmt.Println("  recurring  Errors grouped by plan of play and theme, costliest first")
 	fmt.Println("  plan       Study plan: error families ranked by recoverable MWC, with a 95% interval")
+	fmt.Println("  effect     Each studied family's loss rate before and after it was first studied")
+	fmt.Println("  biases     Which way the decisions err: takes, doubles by score, blots, with 95% intervals")
 	fmt.Println("  training   Quiz PR and Anki retention against real PR, by calendar window")
 	fmt.Println("  windows    PR over a sliding calendar window (month, quarter)")
 	fmt.Println("  progression  PR per match, per tournament and rolling (Progression tab)")
