@@ -106,10 +106,14 @@ func TestMatchMWC7_Interval(t *testing.T) {
 	if e.Low < 0 {
 		t.Errorf("low bound under zero: %v", e.Low)
 	}
-	// Equal games have nothing to resample: the interval is the point.
+	// Equal games say they agree, not that the loss is exact: no band.
 	e = MatchMWC7(0.2, 7, []float64{0.05, 0.05, 0.05, 0.05})
-	if e.Low != e.Loss || e.High != e.Loss {
-		t.Errorf("equal games: %+v", e)
+	if e.HasInterval {
+		t.Errorf("equal games: %+v, want no interval", e)
+	}
+	// Two games leave one degree of freedom: no band either.
+	if e = MatchMWC7(0.2, 7, []float64{0.02, 0.18}); e.HasInterval {
+		t.Errorf("two games: %+v, want no interval", e)
 	}
 }
 

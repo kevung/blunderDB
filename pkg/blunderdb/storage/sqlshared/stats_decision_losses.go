@@ -68,7 +68,8 @@ func (s *StatsStore) MatchDecisionLosses(ctx context.Context, scope string, matc
 			d.Player = 1
 		}
 		d.DurationMS = durationMS
-		if luckMP != nil && hasPosition == 1 && d.DecisionType == "checker" {
+		d.Rolled = hasPosition == 1 && d.DecisionType == "checker"
+		if luckMP != nil && d.Rolled {
 			if luck := decisionMWCLoss(*luckMP, away0, away1, rawPlayer, cubeValue, matchLength); !math.IsNaN(luck) {
 				d.Luck = &luck
 			}

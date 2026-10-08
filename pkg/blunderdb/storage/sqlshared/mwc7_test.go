@@ -23,17 +23,17 @@ func TestEloUnitsResampleMatchesNotSeats(t *testing.T) {
 		t.Errorf("tournament of one match: %+v", got)
 	}
 
-	// Two matches whose seat totals are equal: the match units agree, so the
-	// interval collapses on the value, whereas the seats would spread.
+	// Three matches whose seat totals are equal: the match units agree, so
+	// there is no band, whereas the seats would spread.
 	u = eloUnits{}
-	u.add(1, 0, 0, 7, 0, 0.05)
-	u.add(1, 0, 1, 7, 0, 0.25)
-	u.add(2, 0, 0, 7, 0, 0.25)
-	u.add(2, 0, 1, 7, 0, 0.05)
+	for m := int64(1); m <= 3; m++ {
+		u.add(m, 0, 0, 7, 0, 0.05*float64(m))
+		u.add(m, 0, 1, 7, 0, 0.3-0.05*float64(m))
+	}
 	res = storage.StatsResult{}
 	u.fill(&res)
 	e := res.MWC7
-	if !e.HasInterval || math.Abs(e.High-e.Low) > 1e-12 || math.Abs(e.Loss-0.15) > 1e-12 {
-		t.Errorf("two matches of equal totals: %+v", e)
+	if e.HasInterval || e.Matches != 6 || math.Abs(e.Loss-0.15) > 1e-12 {
+		t.Errorf("three matches of equal totals: %+v", e)
 	}
 }

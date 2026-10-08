@@ -20,8 +20,8 @@ type MWC7 struct {
 	// Loss is L7, a fraction of a match (0.123 = 12.3 %).
 	Loss float64 `json:"loss"`
 	// Low and High bound L7's 95 % interval; they mean nothing unless
-	// HasInterval, which needs two independent units to resample (two games
-	// for one match, two matches for a pool).
+	// HasInterval, which needs IntervalMinUnits independent units that do not
+	// all agree (games for one match, matches for a pool).
 	HasInterval bool    `json:"has_interval"`
 	Low         float64 `json:"low"`
 	High        float64 `json:"high"`
@@ -101,7 +101,7 @@ func MatchMWC7(loss float64, matchLength int, gameLosses []float64) MWC7 {
 	}
 	k := mwc7Scale(matchLength)
 	g := len(gameLosses)
-	if g < 2 {
+	if g < IntervalMinUnits {
 		return newMWC7(k*loss, 0, 0, false, 1)
 	}
 	mean := 0.0
@@ -114,7 +114,7 @@ func MatchMWC7(loss float64, matchLength int, gameLosses []float64) MWC7 {
 		ss += (l - mean) * (l - mean)
 	}
 	half := mwc7Z * math.Sqrt(float64(g)/float64(g-1)*ss)
-	return newMWC7(k*loss, k*(loss-half), k*(loss+half), true, 1)
+	return newMWC7(k*loss, k*(loss-half), k*(loss+half), spread(half, loss), 1)
 }
 
 // MWC7Pool aggregates (match, player) units — a player's stats, a tournament,
@@ -179,14 +179,14 @@ func (p *MWC7Pool) Result() MWC7 {
 	}
 	r := p.sumL / p.sumW
 	k := math.Sqrt(MWC7Length)
-	if p.n == 1 {
-		if p.seats == 1 {
-			return p.single
-		}
+	if p.n == 1 && p.seats == 1 {
+		return p.single
+	}
+	if p.n < IntervalMinUnits {
 		return newMWC7(k*r, 0, 0, false, p.seats)
 	}
 	ss := p.sumLL - 2*r*p.sumLW + r*r*p.sumWW
 	n := float64(p.n)
 	se := math.Sqrt(math.Max(ss, 0)*n/(n-1)) / p.sumW
-	return newMWC7(k*r, k*(r-mwc7Z*se), k*(r+mwc7Z*se), true, p.seats)
+	return newMWC7(k*r, k*(r-mwc7Z*se), k*(r+mwc7Z*se), spread(se, r), p.seats)
 }

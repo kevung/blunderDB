@@ -98,7 +98,7 @@ func BuildMatchReview(matchID int64, decisions []DecisionLoss, matchLength int, 
 		errs[seat], losses[seat] = map[int]*sums{}, map[int]float64{}
 	}
 	for _, d := range decisions {
-		if d.DecisionType == "checker" {
+		if d.Rolled {
 			rolls++
 			if d.Luck != nil {
 				measured++
