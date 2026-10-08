@@ -55,7 +55,7 @@ func normalizeStats(t *testing.T, v any) storage.StatsResult {
 		t.Fatalf("unmarshal into storage.StatsResult: %v", err)
 	}
 	// PRRolling/MWCRolling are windowed over the "most recent N decisions",
-	// ordered by (match_date DESC, move_number DESC) — which is not a total
+	// ordered by (match_date, game_number, move_number DESC, id) — which is a total
 	// order: decisions tied on both columns resolve in backend-defined order,
 	// and the migration's primary-key remap shifts which tied rows land inside
 	// the window. Both backends run the identical ORDER BY, so this is a shared

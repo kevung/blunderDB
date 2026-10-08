@@ -483,7 +483,7 @@ func (s *StatsStore) computeRollingPR(ctx context.Context, q statsQuery, result 
 	recentRows, err := s.DB.Query(ctx,
 		`SELECT (`+statsErrExpr+`) as err `+
 			q.join+q.whereSQL+
-			` ORDER BY m.match_date DESC, mv.move_number DESC LIMIT ?`,
+			` ORDER BY m.match_date DESC, g.game_number DESC, mv.move_number DESC, mv.id DESC LIMIT ?`,
 		append(q.baseArgs, maxN)...,
 	)
 	if err != nil {
@@ -538,7 +538,7 @@ func (s *StatsStore) computeMWCPass(ctx context.Context, q statsQuery, result *s
 			` ` + ActionLabelOrEmptyFor(s.DB, "a.best_cube_action") + `, p.decision_type, p.id,` +
 			` ` + seatExpr + `, COALESCE(m.match_length, 0) ` +
 			q.join + q.whereSQL +
-			` ORDER BY m.match_date DESC, mv.move_number DESC`
+			` ORDER BY m.match_date DESC, g.game_number DESC, mv.move_number DESC, mv.id DESC`
 
 		mwcRows, mwcErr := s.DB.Query(ctx, mwcPassSQL, q.baseArgs...)
 		if mwcErr != nil {

@@ -2066,7 +2066,7 @@ Options:
   -format string
     	Output format: text or json (default "text")
   -jobs int
-    	Positions analysed in parallel (one CPU each) (default 16)
+    	Positions analysed in parallel (one CPU each) (default 28)
   -limit int
     	With --compare: stop after this many positions (0 = all)
   -match int
@@ -4173,7 +4173,7 @@ Examples:
 Usage: blunderdb stats progression --db <file> [options]
 
 The Progression tab of the Stats panel: the PR of each match in date order,
-each tournament's PR, and the rolling PR over the last N matches.
+each tournament's PR, and the rolling PR over the last N decisions.
 
 Options:
   -db string

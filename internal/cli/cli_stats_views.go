@@ -78,7 +78,7 @@ func (cli *CLI) runStatsProgression(args []string) error {
 		fmt.Println("Usage: blunderdb stats progression --db <file> [options]")
 		fmt.Println()
 		fmt.Println("The Progression tab of the Stats panel: the PR of each match in date order,")
-		fmt.Println("each tournament's PR, and the rolling PR over the last N matches.")
+		fmt.Println("each tournament's PR, and the rolling PR over the last N decisions.")
 		fmt.Println()
 		fmt.Println("Options:")
 		fs.PrintDefaults()
@@ -108,7 +108,7 @@ func (cli *CLI) runStatsProgression(args []string) error {
 	w.Flush()
 	if len(res.PRRolling) > 0 {
 		fmt.Println()
-		fmt.Println("Rolling PR (last N matches):")
+		fmt.Println("Rolling PR (last N decisions):")
 		for _, n := range sortedKeys(res.PRRolling) {
 			fmt.Printf("  %d: %.2f\n", n, res.PRRolling[n])
 		}
