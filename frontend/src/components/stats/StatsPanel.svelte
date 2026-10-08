@@ -88,6 +88,9 @@
             <button class="metric-btn" class:active={$statsMetricStore === 'pr'} onclick={() => statsMetricStore.set('pr')} aria-pressed={$statsMetricStore === 'pr'}>{$t('stats.metricPR')}</button>
             <button class="metric-btn" class:active={$statsMetricStore === 'mwc'} onclick={() => statsMetricStore.set('mwc')} aria-pressed={$statsMetricStore === 'mwc'}>{$t('stats.metricMWC')}</button
             >
+            <button class="metric-btn" class:active={$statsMetricStore === 'mwc7'} onclick={() => statsMetricStore.set('mwc7')} aria-pressed={$statsMetricStore === 'mwc7'} title={$t('mwc7.name')}
+                >{$t('mwc7.short')}</button
+            >
         </div>
         <!-- Le rapport porte le filtre courant, donc il vit là où le
              filtre se règle. -->

@@ -241,3 +241,22 @@ describe('Transcript marks (#287)', () => {
         expect(fmtGradeCost(150)).toBe('0.150');
     });
 });
+
+describe('7-point MWC loss in the match table', () => {
+    test('sorts by the loss, unavailable last', () => {
+        const rows = /** @type {any[]} */ ([
+            { id: 1, mwc7: { available: false, loss: 0 } },
+            { id: 2, mwc7: { available: true, loss: 0.2 } },
+            { id: 3, mwc7: { available: true, loss: 0.1 } }
+        ]);
+        expect(sortMatches(rows, 'mwc7', 'asc').map((m) => m.id)).toEqual([3, 2, 1]);
+    });
+
+    test('the stats row formats the player figure and explains it', () => {
+        const row = /** @type {any} */ (MATCH_STAT_ROWS.find((r) => 'label' in r && r.label === 'mwc7.name'));
+        const p = /** @type {any} */ ({ mwc7: { available: true, loss: 0.123, has_interval: false } });
+        expect(row.fmt(p)).toBe('12.3 %');
+        expect(typeof row.title(p)).toBe('string');
+        expect(row.fmt(/** @type {any} */ ({ mwc7: { available: false } }))).toBe('—');
+    });
+});

@@ -3021,5 +3021,11 @@
             "answer": "Botti tuplaa: ota vastaan tai luovuta laudalla.",
             "move": "Napsauta nappulaa pelataksesi vasemman nopan; oikea napsautus peruu siirron, ja napsautus nopista tai Enter vahvistaa sen."
         }
+    },
+    "mwc7": {
+        "name": "MWC-tappio (7 pisteen ekv.)",
+        "short": "MWC 7 p.",
+        "tooltip": "Täydelliseen pelaajaan nähden menetetty MWC skaalattuna 7 pisteen otteluun (L × √(7/N)); 95 %:n luottamusväli pelien uudelleenotannalla; {elo} Elo moottoriin nähden",
+        "unavailable": "Rahapelillä ei ole ottelun pituutta: 7 pisteen ekvivalenttia ei ole määritelty"
     }
 }

@@ -5,6 +5,7 @@
     import { toDateInputValue, formatDate, formatDiceShort, MATCH_STAT_ROWS, GRADE_MARKS, indexMoveGrades, countGrades, fmtGradeCost } from '../utils/matchTable.js';
     import { createInlineEdit } from '../utils/inlineEdit.svelte.js';
     import { onChange } from '../utils/onChange.js';
+    import { fmtMwc7, mwc7Tooltip } from '../utils/mwc7.js';
     import { onMount, onDestroy, untrack } from 'svelte';
     import { get } from 'svelte/store';
     import { SvelteSet } from 'svelte/reactivity';
@@ -292,6 +293,7 @@
         { key: 'tournament', label: $t('match.tournament'), sortable: true, class: 'tournament-col' },
         { key: 'pr', label: 'PR', sortable: true, narrow: true },
         { key: 'mwc', label: 'MWC', sortable: true, narrow: true },
+        { key: 'mwc7', label: $t('mwc7.short'), sortable: true, narrow: true, title: $t('mwc7.name') },
         { key: 'actions', actions: true }
     ]);
 
@@ -878,6 +880,7 @@
                         <td class="tournament-col no-select">{match.tournament_name || match.event || ''}</td>
                         <td class="narrow-col no-select">{match.pr > 0 ? match.pr.toFixed(2) : ''}{match.pr2 > 0 ? ' / ' + match.pr2.toFixed(2) : ''}</td>
                         <td class="narrow-col no-select">{match.mwc_loss > 0 ? (match.mwc_loss * 100).toFixed(2) + '%' : ''}</td>
+                        <td class="narrow-col no-select">{fmtMwc7(match.mwc7)}</td>
                         <td class="actions-col no-select">
                             <span class="item-actions editing-actions">
                                 <button
@@ -931,6 +934,7 @@
                         </td>
                         <td class="narrow-col no-select stat-col">{match.pr > 0 ? match.pr.toFixed(2) : '—'}{match.pr2 > 0 ? ' / ' + match.pr2.toFixed(2) : ''}</td>
                         <td class="narrow-col no-select stat-col">{match.mwc_loss > 0 ? (match.mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
+                        <td class="narrow-col no-select stat-col" title={mwc7Tooltip(match.mwc7, $t)}>{fmtMwc7(match.mwc7)}{match.mwc7_p2?.available ? ' / ' + fmtMwc7(match.mwc7_p2) : ''}</td>
                         <td class="actions-col no-select">
                             <span class="item-actions">
                                 <button
@@ -1267,8 +1271,8 @@
                                         {:else}
                                             <tr>
                                                 <td class="stats-label{row.sub ? ' sub-label' : ''}">{row.bullet ? '• ' : ''}{$t(row.label ?? '')}</td>
-                                                <td class="stats-val{row.valClass ? ' ' + row.valClass : ''}{row.sub ? ' sub-val' : ''}">{row.fmt(p1)}</td>
-                                                <td class="stats-val{row.valClass ? ' ' + row.valClass : ''}{row.sub ? ' sub-val' : ''}">{row.fmt(p2)}</td>
+                                                <td class="stats-val{row.valClass ? ' ' + row.valClass : ''}{row.sub ? ' sub-val' : ''}" title={row.title?.(p1)}>{row.fmt(p1)}</td>
+                                                <td class="stats-val{row.valClass ? ' ' + row.valClass : ''}{row.sub ? ' sub-val' : ''}" title={row.title?.(p2)}>{row.fmt(p2)}</td>
                                             </tr>
                                         {/if}
                                     {/each}
