@@ -3195,6 +3195,8 @@
         "placeBoard": "Näytä video laudan vieressä",
         "placePanel": "Palauta video paneeliin",
         "stageResize": "Muuta videon kokoa",
+        "swapSide": "Siirrä video laudan toiselle puolelle",
+        "stageMove": "Vedä sijoittaaksesi video vasemmalle tai oikealle",
         "rate": "Toistonopeus"
     },
     "tournamentReview": {

@@ -3195,6 +3195,8 @@
         "placeBoard": "Afficher la vidéo à côté du plateau",
         "placePanel": "Remettre la vidéo dans le panneau",
         "stageResize": "Redimensionner la vidéo",
+        "swapSide": "Déplacer la vidéo de l'autre côté du plateau",
+        "stageMove": "Glisser pour placer la vidéo à gauche ou à droite",
         "rate": "Vitesse de lecture"
     },
     "tournamentReview": {

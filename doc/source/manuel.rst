@@ -2108,6 +2108,15 @@ Cliquer dans la vidéo, sur ses commandes ou sur la barre de séparation laisse
 le clavier au panneau : les touches de saisie, les touches de la vidéo et
 *CTRL-GAUCHE* / *CTRL-DROITE*, qui tournent le plateau, gardent leur effet.
 
+**Le côté de la vidéo.** La vidéo se met à gauche du plateau au départ ; elle peut
+passer à droite. Le bouton ⇄, à côté de celui qui la remet dans le panneau,
+change de côté d'un clic. On peut aussi saisir la petite poignée en haut de la
+vidéo et la glisser : les deux moitiés de la zone s'éclairent, et lâcher dans
+l'une y place la vidéo. *ÉCHAP*, ou lâcher hors de la zone, annule. Le plateau,
+lui, ne se déplace pas : y glisser déplace les pions. Le côté est retenu d'une
+session à l'autre, et la largeur reste celle de la vidéo, de quelque côté
+qu'elle soit. La poignée et le bouton laissent le clavier au panneau.
+
 Avec une vidéo, chaque action **nouvelle** porte des **repères** : l'instant
 du jet, posé par la première touche de dé, et l'instant de l'action, posé par
 la validation, tous deux lus sur la vidéo au moment du geste. Une correction en

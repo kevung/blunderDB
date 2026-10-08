@@ -3195,6 +3195,8 @@
         "placeBoard": "Show the video beside the board",
         "placePanel": "Put the video back in the panel",
         "stageResize": "Resize the video",
+        "swapSide": "Move the video to the other side of the board",
+        "stageMove": "Drag to put the video on the left or the right",
         "rate": "Playback speed"
     },
     "tournamentReview": {
