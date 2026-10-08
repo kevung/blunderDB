@@ -130,6 +130,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Stats/Breakdowns", testStatsBreakdowns},
 		{"Stats/RecurringErrors", testStatsRecurringErrors},
 		{"Stats/StudyPlan", testStatsStudyPlan},
+		{"Stats/SuggestReferences", testStatsSuggestReferences},
 		{"Stats/PlayerContrast", testStatsPlayerContrast},
 		{"Stats/TrainingAndStudy", testTrainingStatsAndStudy},
 		{"Analyses/RepairDenormalisedColumns", testRepairDenormalisedColumns},
