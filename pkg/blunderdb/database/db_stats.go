@@ -106,6 +106,7 @@ type BlunderEntry struct {
 type StatsResult struct {
 	Totals       StatsTotals     `json:"Totals"`
 	PRGlobal     float64         `json:"PRGlobal"`
+	PRInterval   domain.Interval `json:"PRInterval"` // over the selection's matches (ADR-0077)
 	PRChecker    float64         `json:"PRChecker"`
 	PRCube       float64         `json:"PRCube"`
 	PRRolling    map[int]float64 `json:"PRRolling"`    // keyed by N: 5,10,50,100,250,500,1000
@@ -116,7 +117,10 @@ type StatsResult struct {
 	MWCAvailable bool            `json:"MWCAvailable"` // true if at least one match-play decision contributed
 	// MWC7 pools every (match, player) unit of the selection
 	// (ADR-0075); unavailable when the selection holds no match play.
-	MWC7                domain.MWC7       `json:"MWC7"`
+	MWC7 domain.MWC7 `json:"MWC7"`
+	// MWC7Checker and MWC7Cube split MWC7 by decision type; they add up to it.
+	MWC7Checker         domain.MWC7       `json:"MWC7Checker"`
+	MWC7Cube            domain.MWC7       `json:"MWC7Cube"`
 	SnowieGlobal        float64           `json:"SnowieGlobal"` // Snowie ER: 500×Σerr / (total checker moves, both players, forced included)
 	PerTournament       []TournamentStats `json:"PerTournament"`
 	PerMatch            []MatchStats      `json:"PerMatch"`
@@ -140,40 +144,44 @@ type StatsResult struct {
 // GameTypeStats is one row of the per-game-type breakdown. GameType carries
 // the stable token of domain.GameType ("holding", "blitz", …).
 type GameTypeStats struct {
-	GameType     string  `json:"GameType"`
-	PR           float64 `json:"PR"`
-	NumDecisions int     `json:"NumDecisions"`
-	BlunderCount int     `json:"BlunderCount"`
+	GameType     string          `json:"GameType"`
+	PR           float64         `json:"PR"`
+	PRInterval   domain.Interval `json:"PRInterval"`
+	NumDecisions int             `json:"NumDecisions"`
+	BlunderCount int             `json:"BlunderCount"`
 }
 
 // PhaseStats is one row of the per-phase breakdown. Phase carries the stable
 // token of domain.GamePhase ("opening", "middlegame", "race", "bearoff",
 // "unknown").
 type PhaseStats struct {
-	Phase        string  `json:"Phase"`
-	PR           float64 `json:"PR"`
-	NumDecisions int     `json:"NumDecisions"`
-	BlunderCount int     `json:"BlunderCount"`
+	Phase        string          `json:"Phase"`
+	PR           float64         `json:"PR"`
+	PRInterval   domain.Interval `json:"PRInterval"`
+	NumDecisions int             `json:"NumDecisions"`
+	BlunderCount int             `json:"BlunderCount"`
 }
 
 // TagStats is one row of the per-tag breakdown; Tag carries the "#". A
 // position may hold several tags, so these rows do NOT sum to the total: a tag
 // labels, it does not partition.
 type TagStats struct {
-	Tag          string  `json:"Tag"`
-	PR           float64 `json:"PR"`
-	NumDecisions int     `json:"NumDecisions"`
-	BlunderCount int     `json:"BlunderCount"`
+	Tag          string          `json:"Tag"`
+	PR           float64         `json:"PR"`
+	PRInterval   domain.Interval `json:"PRInterval"`
+	NumDecisions int             `json:"NumDecisions"`
+	BlunderCount int             `json:"BlunderCount"`
 }
 
 // ScoreCellStats is one cell of the away × away matrix, read from the side of
 // the player on roll — the one taking the decision. (0,0) is money play.
 type ScoreCellStats struct {
-	MoverAway    int     `json:"MoverAway"`
-	OpponentAway int     `json:"OpponentAway"`
-	PR           float64 `json:"PR"`
-	NumDecisions int     `json:"NumDecisions"`
-	BlunderCount int     `json:"BlunderCount"`
+	MoverAway    int             `json:"MoverAway"`
+	OpponentAway int             `json:"OpponentAway"`
+	PR           float64         `json:"PR"`
+	PRInterval   domain.Interval `json:"PRInterval"`
+	NumDecisions int             `json:"NumDecisions"`
+	BlunderCount int             `json:"BlunderCount"`
 }
 
 // CubeOfferCounts tallies the decision of the player holding the cube: Missed,
