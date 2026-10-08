@@ -87,12 +87,13 @@ const matchInsertSQL = `INSERT INTO match (
 	player1_elo, player2_elo, player1_experience, player2_experience,
 	transcriber, has_jacoby, has_beaver, engine_version, video_source
 ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,
-	$17,$18,$19,$20,$21,$22,$23,$24,$25,$26)
+	$17,$18,$19,$20,$21,$22,$23,$24,$25,NULLIF($26, ''))
 RETURNING id, import_date`
 
 // sourceMetadataArgs are the eight source-metadata columns, then the video
 // source, in the order matchInsertSQL and ReplaceHeader list them. A nil
-// pointer stays NULL.
+// pointer stays NULL, except the video source, which ReplaceHeader keeps when
+// nil and clears when "" (storage.MatchStore).
 func sourceMetadataArgs(m *domain.Match) []any {
 	return []any{m.Player1Elo, m.Player2Elo, m.Player1Experience, m.Player2Experience,
 		m.Transcriber, m.HasJacoby, m.HasBeaver, m.EngineVersion, m.VideoSource}
@@ -382,7 +383,8 @@ func (s *matchStore) ReplaceHeader(ctx context.Context, scope string, id int64, 
 		                  match_hash = $9, canonical_hash = $10, dice_hash = $11,
 		                  player1_elo = $12, player2_elo = $13, player1_experience = $14,
 		                  player2_experience = $15, transcriber = $16, has_jacoby = $17,
-		                  has_beaver = $18, engine_version = $19, video_source = $20
+		                  has_beaver = $18, engine_version = $19,
+		                  video_source = NULLIF(COALESCE($20, video_source), '')
 		 WHERE id = $21 AND tenant_id = $22`,
 		append(append([]any{m.Player1Name, m.Player2Name, m.Event, m.Location,
 			m.Round, m.MatchLength, nullableTime(m.MatchDate), m.GameCount,

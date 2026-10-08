@@ -12,7 +12,8 @@ import (
 // (ADR-0079) are read back as written, through every read of a match and its
 // moves, and a Match without a video reads them back nil — a NULL read as ""
 // or 0 would claim a video, or a Repère at the start of the media. Zero is a
-// Repère like any other; ReplaceHeader rewrites the source with the header.
+// Repère like any other. ReplaceHeader replaces the source when given one,
+// keeps it when given nil and clears it when given "".
 func testMatchVideoRoundTrip(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 	ms := s.Matches()
@@ -100,4 +101,17 @@ func testMatchVideoRoundTrip(t *testing.T, s storage.Storage) {
 		t.Fatalf("ReplaceHeader: %v", err)
 	}
 	check("after ReplaceHeader", bareID, &local, bare)
+
+	m.VideoSource = nil
+	if err := ms.ReplaceHeader(ctx, "", bareID, m); err != nil {
+		t.Fatalf("ReplaceHeader(nil): %v", err)
+	}
+	check("after ReplaceHeader with nil", bareID, &local, bare)
+
+	empty := ""
+	m.VideoSource = &empty
+	if err := ms.ReplaceHeader(ctx, "", bareID, m); err != nil {
+		t.Fatalf(`ReplaceHeader(""): %v`, err)
+	}
+	check(`after ReplaceHeader with ""`, bareID, nil, bare)
 }

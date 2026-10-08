@@ -98,11 +98,11 @@ func CarriedVideoSource(src *string) *string {
 	if src == nil {
 		return nil
 	}
-	lower := strings.ToLower(*src)
+	v := strings.TrimSpace(*src)
+	lower := strings.ToLower(v)
 	if !strings.HasPrefix(lower, "http://") && !strings.HasPrefix(lower, "https://") {
 		return nil
 	}
-	v := *src
 	return &v
 }
 

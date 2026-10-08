@@ -26,6 +26,8 @@ func TestExportCarriesVideoSourceOnlyAsURL(t *testing.T) {
 		{"https URL", str("https://example.org/finale.mp4"), str("https://example.org/finale.mp4")},
 		{"http URL", str("http://192.168.1.2/m.webm"), str("http://192.168.1.2/m.webm")},
 		{"upper-case scheme", str("HTTPS://example.org/m.mp4"), str("HTTPS://example.org/m.mp4")},
+		{"URL with surrounding blanks", str("  https://example.org/m.mp4\n"), str("https://example.org/m.mp4")},
+		{"blank", str("   "), nil},
 		{"local path", str("/home/alice/videos/finale.mkv"), nil},
 		{"Windows path", str(`C:\Users\alice\finale.mp4`), nil},
 		{"file URL", str("file:///home/alice/finale.mp4"), nil},

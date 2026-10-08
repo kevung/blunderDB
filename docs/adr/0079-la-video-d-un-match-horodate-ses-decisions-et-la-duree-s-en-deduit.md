@@ -86,5 +86,7 @@ peut pas embarquer ; le lecteur intégré de YouTube refuse une page sans réfé
   logiciel pour le seul cas d'une distribution sans greffons) ; le serveur d'assets de Wails
   comme source média ; un chemin local qui voyage à l'export ; une Transcription qui refuse
   un Repère à rebours.
+- Remplacer un match par un fichier corrigé garde sa source vidéo et perd ses Repères : le
+  fichier n'en porte pas.
 - Garde : les tests de dérivation dans `transcript`, la suite de contrat des backends sur les
   nouvelles colonnes, `TestMigrationSteps_ContinuousChain`, `TestDemoDatabaseIsCurrent`.
