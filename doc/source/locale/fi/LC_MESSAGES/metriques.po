@@ -1,0 +1,1438 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-08 20:50+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: fi\n"
+"Language-Team: fi <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/metriques.rst:4
+msgid "Métriques et outils d'étude"
+msgstr "Mittarit ja opiskelutyökalut"
+
+#: ../../source/metriques.rst:6
+msgid ""
+"Chaque chiffre que blunderDB affiche sur votre jeu répond à une question."
+" Cette page les réunit : pour chacun, la question à laquelle il répond et"
+" ce qu'il apporte à l'étude, sa définition, sa formule exacte, ce qui "
+"compte comme décision, son unité, sa lecture, son incertitude, ses "
+"limites et ce qui le distingue des chiffres d'eXtreme Gammon (XG) et de "
+"GNU Backgammon (gnuBG). Les écrans qui les montrent sont décrits dans le "
+":ref:`manuel` ; les liens y mènent."
+msgstr ""
+"Jokainen luku, jonka blunderDB näyttää pelistäsi, vastaa johonkin "
+"kysymykseen. Tämä sivu kokoaa ne yhteen: kustakin luvusta kerrotaan "
+"kysymys, johon se vastaa, ja mitä se antaa opiskelulle, sen määritelmä, "
+"tarkka kaava, mikä lasketaan päätökseksi, yksikkö, tulkinta, epävarmuus, "
+"rajat sekä se, mikä erottaa sen eXtreme Gammonin (XG) ja GNU Backgammonin"
+" (gnuBG) luvuista. Ne näyttävät näkymät on kuvattu :ref:`käsikirjassa "
+"<manuel>`; linkit johtavat sinne."
+
+#: ../../source/metriques.rst:14
+msgid ""
+"Les seuils et les paramètres de cette page ont été fixés avant tout "
+"examen de résultats réels : les ajuster après coup reviendrait à faire "
+"dire aux chiffres ce qu'on attend d'eux."
+msgstr ""
+"Tämän sivun rajat ja parametrit on asetettu ennen todellisten tulosten "
+"tarkastelua: niiden säätäminen jälkikäteen merkitsisi sitä, että luvut "
+"saataisiin sanomaan se, mitä niiltä odotetaan."
+
+#: ../../source/metriques.rst:26
+msgid "L'erreur et la perte d'une décision"
+msgstr "Päätöksen virhe ja menetys"
+
+#: ../../source/metriques.rst:28
+msgid "Toutes les mesures partent de deux grandeurs par décision."
+msgstr "Kaikki mittaukset lähtevät kahdesta päätöskohtaisesta suureesta."
+
+#: ../../source/metriques.rst:30
+msgid ""
+"**L'erreur e** est ce que la décision jouée a coûté en équité, comparée à"
+" la meilleure décision de l'analyse importée (XG ou gnuBG ; blunderDB ne "
+"réanalyse pas les matchs pour ses statistiques). Elle s'exprime en "
+"**équité normalisée** : ±1 vaut le videau courant, à l'argent comme au "
+"score de match (EMG au score). Elle est arrondie au millième (le "
+"millipoint, mpt)."
+msgstr ""
+"**Virhe e** on se, mitä pelattu päätös maksoi equityssä verrattuna tuodun"
+" analyysin (XG tai gnuBG; blunderDB ei analysoi otteluita uudelleen "
+"tilastojaan varten) parhaaseen päätökseen. Se ilmaistaan **normalisoituna"
+" equitynä**: ±1 vastaa voimassa olevaa kuutiota sekä rahapelissä että "
+"ottelupistetilanteessa (EMG pistetilanteessa). Se pyöristetään "
+"tuhannesosaan (millipiste, mpt)."
+
+#: ../../source/metriques.rst:36
+msgid "Coup de pions : équité du meilleur candidat moins équité du coup joué."
+msgstr "Nappulasiirto: parhaan ehdokkaan equity miinus pelatun siirron equity."
+
+#: ../../source/metriques.rst:37
+msgid "Pas de double : l'erreur de « pas de double » donnée par l'analyse."
+msgstr "Ei tuplausta: analyysin antama ”ei tuplausta” -virhe."
+
+#: ../../source/metriques.rst:38
+msgid ""
+"Double : la plus petite des erreurs de « double, prise » et « double, "
+"refus » — le doubleur est jugé sur la meilleure réponse adverse."
+msgstr ""
+"Tuplaus: pienempi virheistä ”tuplaus, vastaanotto” ja ”tuplaus, hylkäys” "
+"— tuplaaja arvioidaan vastustajan parhaan vastauksen mukaan."
+
+#: ../../source/metriques.rst:40
+msgid "Prise ou refus : l'écart entre la réponse jouée et la meilleure des deux."
+msgstr ""
+"Vastaanotto tai hylkäys: pelatun vastauksen ja kahdesta paremman välinen "
+"ero."
+
+#: ../../source/metriques.rst:42
+msgid ""
+"L'erreur est celle **du coup joué dans ce match**. Une position atteinte "
+"dans deux matchs, et jouée différemment, porte deux erreurs ; aucune "
+"n'écrase l'autre. Un coup joué que l'analyse ne nomme parmi aucun de ses "
+"candidats n'a pas d'erreur : il n'est pas noté, et il sort de tous les "
+"comptes."
+msgstr ""
+"Virhe on **ottelussa pelatun siirron** virhe. Asema, joka on saavutettu "
+"kahdessa ottelussa ja pelattu eri tavoin, saa kaksi virhettä; kumpikaan "
+"ei kumoa toista. Pelatulla siirrolla, jota analyysi ei nimeä "
+"ehdokkaidensa joukossa, ei ole virhettä: sitä ei arvioida, ja se jää "
+"kaikkien laskentojen ulkopuolelle."
+
+#: ../../source/metriques.rst:47
+msgid ""
+"**La perte de MWC ℓ** est la même erreur exprimée en chances de gagner le"
+" match (*Match Winning Chances*). Au score et au videau v de la décision "
+":"
+msgstr ""
+"**MWC-menetys ℓ** on sama virhe ilmaistuna ottelun "
+"voittotodennäköisyyksinä (*Match Winning Chances*). Päätöksen "
+"pistetilanteessa ja kuutiolla v:"
+
+#: ../../source/metriques.rst:50
+msgid "\\ell = e \\times \\frac{\\mathrm{MWC}_{+v} - \\mathrm{MWC}_{-v}}{2}"
+msgstr "\\ell = e \\times \\frac{\\mathrm{MWC}_{+v} - \\mathrm{MWC}_{-v}}{2}"
+
+#: ../../source/metriques.rst:54
+#, no-python-brace-format
+msgid ""
+"où :math:`\\mathrm{MWC}_{+v}` et :math:`\\mathrm{MWC}_{-v}` sont les "
+"chances de gagner le match si le joueur gagne, ou perd, v points à ce "
+"score. La table d'équité de match (MET) est la Kazaross-XG2, prolongée "
+"au-delà de 25 points par la formule de Zadeh ; un score post-Crawford est"
+" lu comme tel. Une prise ou un refus est converti au videau **d'avant** "
+"le double, comme le doubleur et comme XG : convertie au videau doublé, "
+"une erreur de réponse coûterait deux fois trop. Une partie d'argent n'a "
+"pas de MWC : ℓ n'y existe pas."
+msgstr ""
+"missä :math:`\\mathrm{MWC}_{+v}` ja :math:`\\mathrm{MWC}_{-v}` ovat "
+"ottelun voittotodennäköisyydet, jos pelaaja voittaa tai häviää v pistettä"
+" tässä pistetilanteessa. Ottelun ekvivalenssitaulukko (MET) on Kazaross-"
+"XG2, jota jatketaan yli 25 pisteen Zadehin kaavalla; Crawford-pelin "
+"jälkeinen pistetilanne luetaan sellaisenaan. Vastaanotto tai hylkäys "
+"muunnetaan kuutiolla **ennen** tuplausta, kuten tuplaaja ja kuten XG: "
+"tuplatulla kuutiolla muunnettuna vastausvirhe maksaisi kaksi kertaa "
+"liikaa. Rahapelillä ei ole MWC:tä: ℓ:ää ei siellä ole."
+
+#: ../../source/metriques.rst:62
+msgid ""
+"Ces deux grandeurs sont additives. Toutes les métriques ci-dessous en "
+"sont des sommes, rapportées à des dénominateurs différents, ou comparées "
+"à une référence."
+msgstr ""
+"Nämä kaksi suuretta ovat additiivisia. Kaikki alla olevat mittarit ovat "
+"niiden summia, jaettuina eri nimittäjillä tai verrattuina vertailuarvoon."
+
+#: ../../source/metriques.rst:70
+msgid "PR (*Performance Rating*)"
+msgstr "PR (*Performance Rating*)"
+
+#: ../../source/metriques.rst:72
+msgid ""
+"**La question.** Quel est mon niveau, sur l'échelle que tout le monde "
+"connaît ? Le PR est le chiffre des classements, des forums et des clubs ;"
+" il permet de se situer et de comparer deux matchs analysés par XG."
+msgstr ""
+"**Kysymys.** Mikä on tasoni kaikkien tuntemalla asteikolla? PR on "
+"rankingien, foorumien ja kerhojen luku; sen avulla voi sijoittaa itsensä "
+"ja verrata kahta XG:n analysoimaa ottelua."
+
+#: ../../source/metriques.rst:76
+msgid "**La formule.** Sur les décisions comptées du joueur :"
+msgstr "**Kaava.** Pelaajan lasketuille päätöksille:"
+
+#: ../../source/metriques.rst:78
+msgid "\\mathrm{PR} = 500 \\times \\frac{\\sum_i e_i}{N_\\text{compté}}"
+msgstr "\\mathrm{PR} = 500 \\times \\frac{\\sum_i e_i}{N_\\text{compté}}"
+
+#: ../../source/metriques.rst:82
+msgid ""
+"Le facteur 500 est la convention d'XG : un PR de 5,0 vaut une erreur "
+"moyenne de 0,010, soit 10 mpt par décision comptée. Le PR est une "
+"moyenne, sans unité ; plus il est bas, mieux on a joué."
+msgstr ""
+"Kerroin 500 on XG:n käytäntö: PR 5,0 vastaa keskimääräistä virhettä "
+"0,010, eli 10 mpt laskettua päätöstä kohden. PR on keskiarvo ilman "
+"yksikköä; mitä pienempi, sitä paremmin on pelattu."
+
+#: ../../source/metriques.rst:86
+msgid ""
+"**Ce qui compte comme décision.** Les règles sont celles d'XG, vérifiées "
+"match par match contre ses chiffres (:ref:`stats_parity`) :"
+msgstr ""
+"**Mikä lasketaan päätökseksi.** Säännöt ovat XG:n, varmistettuina ottelu "
+"ottelulta sen lukuja vasten (:ref:`stats_parity`):"
+
+#: ../../source/metriques.rst:90
+msgid "Décision"
+msgstr "Päätös"
+
+#: ../../source/metriques.rst:90
+msgid "Comptée si"
+msgstr "Lasketaan, jos"
+
+#: ../../source/metriques.rst:92
+msgid "Coup de pions"
+msgstr "Nappulasiirto"
+
+#: ../../source/metriques.rst:92
+msgid "il n'est pas forcé et le coup joué est noté"
+msgstr "se ei ole pakotettu ja pelattu siirto on arvioitu"
+
+#: ../../source/metriques.rst:94
+msgid "Double proposé"
+msgstr "Ehdotettu tuplaus"
+
+#: ../../source/metriques.rst:94 ../../source/metriques.rst:96
+msgid "toujours"
+msgstr "aina"
+
+#: ../../source/metriques.rst:96
+msgid "Prise, refus"
+msgstr "Vastaanotto, hylkäys"
+
+#: ../../source/metriques.rst:98
+msgid "Pas de double"
+msgstr "Ei tuplausta"
+
+#: ../../source/metriques.rst:98
+msgid "ND > 0 et ND − min(D/T, D/P) < 0,200"
+msgstr "ND > 0 et ND − min(D/T, D/P) < 0,200"
+
+#: ../../source/metriques.rst:101
+msgid ""
+"Un coup de pions est **forcé** quand le lancer n'offre qu'un coup légal, "
+"ou quand l'analyse couvre tous les coups légaux (comptés par le "
+"générateur de coups de blunderDB) et que tous valent la même équité au "
+"millième près : un choix qui ne coûte rien, quel que soit le coup, n'est "
+"pas une décision. C'est la règle d'XG pour les coups « non forcés mais "
+"sans enjeu » (fin de course décidée, sortie où tout se vaut). Quand les "
+"coups légaux ne peuvent pas être comptés, seul un candidat unique rend le"
+" coup forcé."
+msgstr ""
+"Nappulasiirto on **pakotettu**, kun heitto sallii vain yhden laillisen "
+"siirron, tai kun analyysi kattaa kaikki laillisat siirrot (blunderDB:n "
+"siirtogeneraattorin laskemina) ja kaikilla on sama equity tuhannesosan "
+"tarkkuudella: valinta, joka ei maksa mitään siirrosta riippumatta, ei ole"
+" päätös. Tämä on XG:n sääntö ”ei pakotetuille mutta merkityksettömille” "
+"siirroille (ratkennut kilpajuoksun loppu, poisto, jossa kaikki on yhtä "
+"hyvää). Kun laillisia siirtoja ei voi laskea, vain yksittäinen ehdokas "
+"tekee siirrosta pakotetun."
+
+#: ../../source/metriques.rst:108
+msgid ""
+"Un **pas de double** est compté quand le joueur était près de doubler : "
+"son équité sans doubler (ND) est positive et dépasse de moins de 0,200 la"
+" meilleure issue du double pour l'adversaire, min(D/T, D/P). Mesurer "
+"contre ce minimum plutôt que contre D/T seul garde comme décision une "
+"position « trop bonne » tant qu'elle reste à moins de 0,200 de "
+"l'encaissement."
+msgstr ""
+"**Ei tuplausta** lasketaan, kun pelaaja oli lähellä tuplausta: hänen "
+"equitynsä ilman tuplausta (ND) on positiivinen ja ylittää alle 0,200:lla "
+"tuplauksen parhaan lopputuloksen vastustajalle, min(D/T, D/P). "
+"Mittaaminen tätä minimiä vastaan pelkän D/T:n sijaan pitää ”liian hyvän” "
+"aseman päätöksenä niin kauan kuin se on alle 0,200 päässä "
+"loppuunmyynnistä."
+
+#: ../../source/metriques.rst:113
+msgid ""
+"La condition **ND > 0** écarte les positions où le joueur au trait est "
+"derrière : il n'a aucun double à envisager. XG les écarte aussi, ce que "
+"son manuel ne dit pas ; les matchs de référence le montrent."
+msgstr ""
+"Ehto **ND > 0** sulkee pois asemat, joissa vuorossa oleva pelaaja on "
+"häviöllä: hänellä ei ole tuplausta harkittavana. XG sulkee ne pois myös, "
+"mitä sen käsikirja ei kerro; vertailuottelut osoittavat sen."
+
+#: ../../source/metriques.rst:116
+msgid ""
+"Une décision de videau sans analyse de videau n'est jamais un pas de "
+"double compté."
+msgstr ""
+"Kuutiopäätös ilman kuutioanalyysiä ei ole koskaan laskettu ”ei tuplausta”"
+" -päätös."
+
+#: ../../source/metriques.rst:119
+msgid ""
+"**Lecture.** Les bandes de niveau du panneau Stats (:ref:`stats`) sont un"
+" repère propre à blunderDB, pas une norme publiée. Un PR se compare "
+"d'abord à vos propres PR : même analyseur, même type d'adversaires, mêmes"
+" longueurs."
+msgstr ""
+"**Tulkinta.** Tilastot-paneelin tasoluokat (:ref:`stats`) ovat "
+"blunderDB:n oma viitearvo, eivät julkaistu standardi. PR:ää verrataan "
+"ensin omiin PR-arvoihin: sama analysoija, samanlaiset vastustajat, samat "
+"pituudet."
+
+#: ../../source/metriques.rst:123
+msgid ""
+"**Incertitude.** Le PR d'un match est très bruité : l'erreur-type d'un "
+"match en 7 points est de l'ordre de 1,5 PR. blunderDB donne un intervalle"
+" à 95 % (:ref:`metrique_intervalles`) en rééchantillonnant les parties "
+"d'un match, et les matchs d'un agrégat."
+msgstr ""
+"**Epävarmuus.** Yhden ottelun PR on hyvin kohinainen: 7 pisteen ottelun "
+"keskivirhe on noin 1,5 PR. blunderDB antaa 95 %:n välin "
+"(:ref:`metrique_intervalles`) poimimalla ottelun pelit uudelleen ja "
+"kokonaisuuden ottelut uudelleen."
+
+#: ../../source/metriques.rst:128
+msgid ""
+"**Limites.** Le numérateur ne dépend de rien, mais le dénominateur dépend"
+" de ce que l'on compte : les seuils de 0,001 et 0,200 sont arbitraires. "
+"On peut faire baisser son PR sans mieux jouer, en prenant un refus serré "
+"pour ajouter des décisions à une course, ou en choisissant au bear-off un"
+" coup qui crée une décision de plus. Le PR pèse une erreur au videau 8 "
+"comme une erreur au videau 1 (l'équité est normalisée au videau), et une "
+"erreur au DMP comme une erreur à 0-0. Il hérite des imperfections du "
+"moteur, et l'adversaire qui crée des positions difficiles fait monter le "
+"PR de l'autre. La :ref:`perte de MWC <metrique_l7>` et la "
+":ref:`difficulté <metrique_difficulte>` répondent à ces trois défauts."
+msgstr ""
+"**Rajat.** Osoittaja ei riipu mistään, mutta nimittäjä riippuu siitä, "
+"mitä lasketaan: rajat 0,001 ja 0,200 ovat mielivaltaisia. PR:ää voi "
+"laskea pelaamatta paremmin, ottamalla niukan hylkäyksen lisätäkseen "
+"päätöksiä kilpajuoksuun, tai valitsemalla bear-off-vaiheessa siirron, "
+"joka luo yhden päätöksen lisää. PR painottaa kuution 8 virhettä kuten "
+"kuution 1 virhettä (equity on normalisoitu kuutioon), ja DMP:n virhettä "
+"kuten 0-0:n virhettä. Se perii moottorin puutteet, ja vaikeita asemia "
+"luova vastustaja nostaa toisen PR:ää. :ref:`MWC-menetys <metrique_l7>` ja"
+" :ref:`vaikeus <metrique_difficulte>` vastaavat näihin kolmeen "
+"puutteeseen."
+
+#: ../../source/metriques.rst:139
+msgid ""
+"**XG et gnuBG.** Sur un fichier XG, le PR de blunderDB est celui d'XG, à "
+"la précision d'affichage près, hormis les écarts expliqués de "
+":ref:`stats_parity`. gnuBG divise la même somme par un autre nombre : "
+"chaque coup ayant plus d'un coup légal, et les décisions de videau qu'il "
+"juge proches selon sa propre fenêtre. Son taux par décision ne se compare"
+" donc pas au PR d'XG, même sur la même analyse. Le *Snowie Error Rate* "
+"(:ref:`stats_parity`) divise par tous les coups des deux joueurs : il ne "
+"dépend d'aucune règle de comptage, mais vaut environ la moitié du PR."
+msgstr ""
+"**XG ja gnuBG.** XG-tiedostossa blunderDB:n PR on XG:n PR näytön "
+"tarkkuudella, lukuun ottamatta sivun :ref:`stats_parity` selitettyjä "
+"poikkeamia. gnuBG jakaa saman summan toisella luvulla: jokainen siirto, "
+"jolla on useampi kuin yksi laillinen siirto, sekä kuutiopäätökset, jotka "
+"se katsoo lähellä oleviksi oman ikkunansa mukaan. Sen päätöskohtainen "
+"virheprosentti ei siis ole verrattavissa XG:n PR:ään, vaikka analyysi "
+"olisi sama. *Snowie Error Rate* (:ref:`stats_parity`) jakaa molempien "
+"pelaajien kaikilla siirroilla: se ei riipu mistään laskentasäännöstä, "
+"mutta on noin puolet PR:stä."
+
+#: ../../source/metriques.rst:152
+msgid "Perte de MWC par décision et graphique du match"
+msgstr "MWC-menetys päätöstä kohden ja ottelukaavio"
+
+#: ../../source/metriques.rst:154
+msgid ""
+"**La question.** Quelles décisions m'ont coûté ce match ? Le PR met "
+"toutes les erreurs sur la même échelle ; ℓ les pèse au score où elles ont"
+" été commises. Une erreur de 0,040 à 4-4 dans un match en 5 points ne "
+"coûte pas ce qu'elle coûte à 0-0 dans un match en 17. Pour l'étude, la "
+"colonne et le graphique désignent les quelques décisions qui ont décidé "
+"du match, et la courbe cumulée montre où il a basculé."
+msgstr ""
+"**Kysymys.** Mitkä päätökset maksoivat minulle tämän ottelun? PR asettaa "
+"kaikki virheet samalle asteikolle; ℓ painottaa ne pistetilanteen mukaan, "
+"jossa ne tehtiin. 0,040:n virhe tilanteessa 4-4 5 pisteen ottelussa ei "
+"maksa sitä, mitä se maksaa tilanteessa 0-0 17 pisteen ottelussa. "
+"Opiskelua varten sarake ja kaavio osoittavat ne harvat päätökset, jotka "
+"ratkaisivat ottelun, ja kumulatiivinen käyrä näyttää, missä se kääntyi."
+
+#: ../../source/metriques.rst:161
+msgid ""
+"**Définition.** ℓ (:ref:`metrique_erreur`) pour chaque décision comptée "
+"au PR ; la perte d'un joueur sur le match est Σℓ sur ces décisions. Une "
+"décision hors du compte (coup forcé, pas de double hors de la fenêtre) "
+"n'a pas de ℓ : elle n'aurait de toute façon rien coûté, ou presque."
+msgstr ""
+"**Määritelmä.** ℓ (:ref:`metrique_erreur`) jokaiselle PR:ssä lasketulle "
+"päätökselle; pelaajan menetys ottelussa on Σℓ näiden päätösten yli. "
+"Laskennan ulkopuolisella päätöksellä (pakotettu siirto, tuplaamatta "
+"jättäminen ikkunan ulkopuolella) ei ole ℓ:ää: se ei olisi joka "
+"tapauksessa maksanut mitään tai melkein mitään."
+
+#: ../../source/metriques.rst:166
+#, no-python-format
+msgid ""
+"**Unité.** Un pourcentage de chances de gagner le match : 2,5 veut dire "
+"2,5 % de MWC perdus."
+msgstr ""
+"**Yksikkö.** Prosentti ottelun voittotodennäköisyydestä: 2,5 tarkoittaa "
+"2,5 % menetettyä MWC:tä."
+
+#: ../../source/metriques.rst:169
+msgid ""
+"**Lecture.** La colonne **MWC** de la transcription, la barre par "
+"décision et la courbe cumulée de chaque joueur sont décrites au "
+":ref:`panneau_matchs`. Une barre isolée haute est une décision à revoir ;"
+" une courbe qui monte régulièrement dit un match d'erreurs moyennes, pas "
+"d'accident."
+msgstr ""
+"**Tulkinta.** Litteroinnin **MWC**-sarake, päätöskohtainen palkki ja "
+"kunkin pelaajan kumulatiivinen käyrä on kuvattu kohdassa "
+":ref:`panneau_matchs`. Yksittäinen korkea palkki on päätös, joka "
+"kannattaa käydä läpi uudelleen; tasaisesti nouseva käyrä kertoo "
+"ottelusta, jossa oli keskinkertaisia virheitä, ei onnettomuutta."
+
+#: ../../source/metriques.rst:174
+msgid ""
+"**Incertitude.** ℓ est exact au regard de l'analyse : son incertitude est"
+" celle de l'analyse elle-même (profondeur, rollout ou non) et de la MET."
+msgstr ""
+"**Epävarmuus.** ℓ on analyysiin nähden tarkka: sen epävarmuus on itse "
+"analyysin (syvyys, rollout vai ei) ja MET:n epävarmuus."
+
+#: ../../source/metriques.rst:177
+msgid ""
+"**Limites.** ℓ dépend de la MET : deux logiciels qui n'utilisent pas la "
+"même table ne donnent pas la même perte. Une partie d'argent n'en a pas, "
+"et une analyse calculée avec une autre MET que celle de la base reste "
+"hors des statistiques. Une décision non notée porte un tiret, jamais "
+"zéro."
+msgstr ""
+"**Rajat.** ℓ riippuu MET:stä: kaksi ohjelmaa, jotka eivät käytä samaa "
+"taulukkoa, eivät anna samaa menetystä. Rahapelillä sitä ei ole, ja "
+"tietokannan MET:stä poikkeavalla MET:llä laskettu analyysi jää tilastojen"
+" ulkopuolelle. Arvioimaton päätös saa viivan, ei koskaan nollaa."
+
+#: ../../source/metriques.rst:182
+msgid ""
+"**XG et gnuBG.** La somme est la perte de MWC qu'XG affiche pour le match"
+" : pions, doubles et réponses concordent sur les matchs de référence à la"
+" précision d'affichage d'XG (écart borné à 0,06 point de pourcentage par "
+"la suite de tests), hormis les joueurs aux écarts résiduels connus de "
+":ref:`stats_parity`, jusqu'à 0,45 point. gnuBG fait la même conversion, "
+"avec ses propres équités : sur un match qu'il a analysé, ses chiffres "
+"diffèrent de ceux d'XG par l'analyse, pas par la formule."
+msgstr ""
+"**XG ja gnuBG.** Summa on MWC-menetys, jonka XG näyttää ottelulle: "
+"nappulasiirrot, tuplat ja vastaukset täsmäävät vertailuotteluissa XG:n "
+"näyttötarkkuudella (poikkeama rajattu testisarjassa 0,06 "
+"prosenttiyksikköön), lukuun ottamatta pelaajia, joilla on "
+":ref:`stats_parity`-luvun tunnetut jäännöspoikkeamat, enintään 0,45 "
+"pistettä. gnuBG tekee saman muunnoksen omilla ekvityillään: sen "
+"analysoimassa ottelussa sen luvut eroavat XG:n luvuista analyysin, eivät "
+"kaavan vuoksi."
+
+#: ../../source/metriques.rst:194
+msgid "Perte MWC (éq. 7 pts) L₇ et Elo face au moteur"
+msgstr "MWC-menetys (7 pisteen ekv.) L₇ ja Elo moottoria vastaan"
+
+#: ../../source/metriques.rst:196
+msgid ""
+"**La question.** Combien de match ai-je perdu par mes erreurs, quelle que"
+" soit la façon de compter les décisions, et comment comparer un match en "
+"5 points à un match en 11 ? L₇ ne divise par aucun nombre de décisions : "
+"il ne se manipule pas en ajoutant des décisions faciles, et il pèse "
+"chaque erreur ce qu'elle a coûté."
+msgstr ""
+"**Kysymys.** Kuinka paljon ottelusta menetin virheilläni, päätösten "
+"laskentatavasta riippumatta, ja miten 5 pisteen ottelua verrataan 11 "
+"pisteen otteluun? L₇ ei jaa millään päätösmäärällä: sitä ei voi "
+"manipuloida lisäämällä helppoja päätöksiä, ja se painottaa jokaisen "
+"virheen sen todellisen hinnan mukaan."
+
+#: ../../source/metriques.rst:202
+msgid ""
+"**Définition.** Sous jeu parfait, les chances de gagner le match évoluent"
+" sans biais : contre un adversaire parfait, un joueur qui perd L de MWC "
+"sur le match garde q = 0,5 − L de chances. Le modèle de la formule FIBS "
+"dit qu'à force égale la perte croît comme la racine de la longueur N. L "
+"est donc ramené à un match en 7 points, la longueur de tournoi la plus "
+"courante :"
+msgstr ""
+"**Määritelmä.** Täydellisessä pelissä ottelun voittotodennäköisyydet "
+"kehittyvät harhattomasti: täydellistä vastustajaa vastaan pelaaja, joka "
+"menettää L MWC:tä ottelussa, säilyttää todennäköisyyden q = 0,5 − L. "
+"FIBS-kaavan malli sanoo, että yhtä vahvoilla menetys kasvaa pituuden N "
+"neliöjuuren mukana. L palautetaan siksi 7 pisteen otteluun, yleisimpään "
+"turnauspituuteen:"
+
+#: ../../source/metriques.rst:208
+msgid ""
+"L_7 = L \\times \\sqrt{7 / N}\n"
+"\\qquad\n"
+"L_7^\\text{agrégat} = \\sqrt{7} \\times \\frac{\\sum L}{\\sum \\sqrt{N}}"
+msgstr ""
+"L_7 = L \\times \\sqrt{7 / N}\n"
+"\\qquad\n"
+"L_7^\\text{agrégat} = \\sqrt{7} \\times \\frac{\\sum L}{\\sum \\sqrt{N}}"
+
+#: ../../source/metriques.rst:214
+msgid ""
+"L'agrégat (plusieurs matchs, un joueur, un tournoi) additionne les pertes"
+" et les racines des longueurs avant le rapport : un match en 7 points "
+"pèse plus qu'un match en 1 point, et un seul match rend sa propre valeur."
+" Sans filtre joueur, les deux sièges d'un match pèsent chacun √N, mais "
+"forment une seule unité de l'intervalle."
+msgstr ""
+"Koonti (useita otteluita, yksi pelaaja, yksi turnaus) laskee yhteen "
+"menetykset ja pituuksien neliöjuuret ennen suhdetta: 7 pisteen ottelu "
+"painaa enemmän kuin 1 pisteen ottelu, ja yksittäinen ottelu antaa oman "
+"arvonsa. Ilman pelaajasuodatinta ottelun molemmat paikat painavat "
+"kumpikin √N, mutta muodostavat yhden välin yksikön."
+
+#: ../../source/metriques.rst:220
+msgid "**L'Elo face au moteur** inverse la formule FIBS à 7 points :"
+msgstr "**Elo moottoria vastaan** kääntää FIBS-kaavan 7 pisteen kohdalla:"
+
+#: ../../source/metriques.rst:222
+msgid ""
+"D = \\frac{2000}{\\sqrt{7}} \\log_{10} \\frac{q}{1 - q}, \\qquad q = "
+"0{,}5 - L_7"
+msgstr ""
+"D = \\frac{2000}{\\sqrt{7}} \\log_{10} \\frac{q}{1 - q}, \\qquad q = "
+"0{,}5 - L_7"
+
+#: ../../source/metriques.rst:226
+msgid ""
+"Linéarisé, D ≈ −3474 × L / √N. À L₇ ≥ 50 %, q n'a plus d'inverse fini ; "
+"dès L₇ > 49 %, q est plancher à 1 % (D ≥ −1509) et l'Elo est affiché « ≤ "
+"». L₇, lui, n'a pas de plancher. Les deux classent les joueurs dans le "
+"même ordre."
+msgstr ""
+"Linearisoituna D ≈ −3474 × L / √N. Kun L₇ ≥ 50 %, q:lla ei ole äärellistä"
+" käänteisarvoa; kun L₇ > 49 %, q rajataan alhaalta 1 %:iin (D ≥ −1509) ja"
+" Elo näytetään muodossa ”≤”. L₇:llä ei ole alarajaa. Molemmat asettavat "
+"pelaajat samaan järjestykseen."
+
+#: ../../source/metriques.rst:230
+msgid ""
+"**Unité.** L₇ : un pourcentage de MWC. D : des points Elo, négatifs, "
+"l'écart attendu entre le joueur et le moteur."
+msgstr ""
+"**Yksikkö.** L₇: prosentti MWC:stä. D: Elo-pisteitä, negatiivisia, "
+"pelaajan ja moottorin välinen odotettu ero."
+
+#: ../../source/metriques.rst:233
+#, no-python-format
+msgid ""
+"**Lecture.** 12,3 % : au lieu de 50 % de chances contre le moteur, le "
+"joueur n'en avait plus que 37,7 % sur un match en 7 points. Le badge, le "
+"détail, les statistiques, le tournoi et la progression l'affichent "
+"(:ref:`Perte MWC (éq. 7 pts) <perte_mwc_7pts>`)."
+msgstr ""
+"**Tulkinta.** 12,3 %: 50 %:n todennäköisyyden sijaan moottoria vastaan "
+"pelaajalla oli 7 pisteen ottelussa enää 37,7 %. Merkki, yksityiskohdat, "
+"tilastot, turnaus ja edistyminen näyttävät sen (:ref:`MWC-menetys (7 "
+"pisteen ekv.) <perte_mwc_7pts>`)."
+
+#: ../../source/metriques.rst:238
+msgid ""
+"**Incertitude.** Intervalle à 95 % par les parties pour un match, par les"
+" matchs pour un agrégat (:ref:`metrique_intervalles`), puis même "
+"transformation que la valeur. Une ligne par match des statistiques n'en a"
+" pas : c'est une seule unité ; le bilan du match porte l'intervalle par "
+"parties."
+msgstr ""
+"**Epävarmuus.** 95 %:n väli pelien perusteella yhdelle ottelulle, "
+"otteluiden perusteella kokonaisuudelle (:ref:`metrique_intervalles`), "
+"sitten sama muunnos kuin arvolle. Tilastojen ottelukohtaisella rivillä ei"
+" ole väliä: se on yksi yksikkö; ottelun yhteenveto sisältää pelikohtaisen"
+" välin."
+
+#: ../../source/metriques.rst:244
+msgid ""
+"**Limites.** Le modèle en √N est approximatif sous 7 points et autour du "
+"Crawford. L₇ dépend de la MET. Une partie d'argent n'a pas de longueur, "
+"donc pas de L₇ : l'écran le dit au lieu d'afficher un nombre. Des joueurs"
+" réels perdent plus d'un demi-match, car les erreurs commises après un "
+"retournement de chance s'additionnent : l'Elo atteint alors son plancher."
+msgstr ""
+"**Rajat.** √N-malli on likimääräinen alle 7 pisteen otteluissa ja "
+"Crawford-pelin ympärillä. L₇ riippuu MET:stä. Rahapelillä ei ole "
+"pituutta, joten ei L₇:ääkään: näkymä kertoo sen luvun näyttämisen sijaan."
+" Todelliset pelaajat menettävät yli puoli ottelua, koska tuurin "
+"kääntymisen jälkeen tehdyt virheet kasautuvat: Elo saavuttaa silloin "
+"lattiansa."
+
+#: ../../source/metriques.rst:250
+msgid ""
+"**XG et gnuBG.** Pour un match en 7 points, L₇ est exactement la perte de"
+" MWC qu'affiche XG. Aucun des deux logiciels ne ramène la perte à une "
+"longueur de référence ni ne la convertit en Elo. Cet Elo mesure l'écart "
+"au moteur, pas un classement FIBS ou BMAB entre joueurs humains."
+msgstr ""
+"**XG ja gnuBG.** 7 pisteen ottelussa L₇ on täsmälleen XG:n näyttämä MWC-"
+"menetys. Kumpikaan ohjelma ei palauta menetystä vertailupituuteen eikä "
+"muunna sitä Eloksi. Tämä Elo mittaa etäisyyttä moottoriin, ei "
+"ihmispelaajien välistä FIBS- tai BMAB-rankingia."
+
+#: ../../source/metriques.rst:259
+msgid "Difficulté, erreurs évitables, excès et ratio"
+msgstr "Vaikeus, vältettävissä olevat virheet, ylijäämä ja suhde"
+
+#: ../../source/metriques.rst:261
+#, no-python-format
+msgid ""
+"**La question.** Cette erreur était-elle pardonnable ? Une même perte de "
+"2 % est une inattention dans une position évidente, et une faute que tout"
+" bon joueur ferait dans une position où quatre coups se tiennent à "
+"quelques millièmes. Pour l'étude, la difficulté trie les fautes : les "
+"erreurs évitables (inattention, règle mal sue) se corrigent vite et "
+"passent en premier ; les pertes sur des décisions difficiles relèvent du "
+"travail de fond."
+msgstr ""
+"**Kysymys.** Oliko tämä virhe anteeksiannettava? Sama 2 %:n menetys on "
+"huolimattomuutta ilmeisessä asemassa ja virhe, jonka jokainen hyvä "
+"pelaaja tekisi asemassa, jossa neljä siirtoa on muutaman tuhannesosan "
+"sisällä. Opiskelua varten vaikeus lajittelee virheet: vältettävissä "
+"olevat virheet (huolimattomuus, väärin osattu sääntö) korjataan nopeasti "
+"ja ne tulevat ensin; vaikeiden päätösten menetykset kuuluvat perustyöhön."
+
+#: ../../source/metriques.rst:268
+msgid ""
+"**Définition.** La difficulté d est la perte qu'aurait subie en moyenne, "
+"dans la même position, un **joueur de référence** qui choisit chaque "
+"option i avec une probabilité d'autant plus faible qu'elle coûte cher :"
+msgstr ""
+"**Määritelmä.** Vaikeus d on menetys, jonka **vertailupelaaja** kärsisi "
+"keskimäärin samassa asemassa, kun hän valitsee kunkin vaihtoehdon i sitä "
+"pienemmällä todennäköisyydellä, mitä kalliimmaksi se tulee:"
+
+#: ../../source/metriques.rst:272
+msgid ""
+"\\pi(i) = \\frac{e^{-\\Delta_i/\\tau}}{\\sum_j e^{-\\Delta_j/\\tau}},\n"
+"\\qquad d = \\sum_i \\pi(i)\\,\\Delta_i,\n"
+"\\qquad \\tau = 0{,}025"
+msgstr ""
+"\\pi(i) = \\frac{e^{-\\Delta_i/\\tau}}{\\sum_j e^{-\\Delta_j/\\tau}},\n"
+"\\qquad d = \\sum_i \\pi(i)\\,\\Delta_i,\n"
+"\\qquad \\tau = 0{,}025"
+
+#: ../../source/metriques.rst:278
+msgid ""
+"Δᵢ est le coût de l'option i par rapport à la meilleure, en équité "
+"normalisée. Les options sont les candidats de l'analyse pour un coup de "
+"pions ; pas de double et double (contre la meilleure réponse) pour le "
+"joueur qui a le videau ; prendre et passer pour celui qui reçoit le "
+"double. d est convertie en MWC comme ℓ : les deux sont dans la même "
+"unité, et l'option jouée a pour coût exactement ℓ."
+msgstr ""
+"Δᵢ on vaihtoehdon i hinta parhaaseen verrattuna normalisoidussa "
+"equityssä. Vaihtoehdot ovat analyysin ehdokkaat nappulasiirrolle; ei "
+"tuplausta ja tuplaus (parasta vastausta vastaan) kuution haltijalle; ota "
+"ja hylkää tuplauksen vastaanottajalle. d muunnetaan MWC:ksi kuten ℓ: "
+"molemmat ovat samassa yksikössä, ja pelatun vaihtoehdon hinta on "
+"täsmälleen ℓ."
+
+#: ../../source/metriques.rst:285
+#, no-python-brace-format
+msgid ""
+"τ = 0,025 est un a priori de joueur fort : sur deux options séparées de "
+"Δ, d = Δ / (1 + e^{Δ/τ}) est maximale vers Δ ≈ 0,032, entre « douteux » "
+"et « erreur » ; un écart de 0,1 ne coûte plus que 0,002 ; cinq candidats "
+"espacés de 0,01 donnent d ≈ 0,012, l'erreur moyenne d'un joueur de PR 6 "
+"environ."
+msgstr ""
+"τ = 0,025 on vahvan pelaajan priori: kahdelle vaihtoehdolle, joiden ero "
+"on Δ, d = Δ / (1 + e^{Δ/τ}) on suurimmillaan noin Δ ≈ 0,032, "
+"”epäilyttävän” ja ”virheen” välissä; ero 0,1 maksaa enää 0,002; viisi "
+"0,01:n välein olevaa ehdokasta antaa d ≈ 0,012, noin PR 6 -pelaajan "
+"keskimääräisen virheen."
+
+#: ../../source/metriques.rst:290
+msgid ""
+"**Erreur évitable** : la perte atteint le seuil Erreur de la base et d ≤ "
+"ℓ / 10 — sur deux options, le joueur de référence ne la commettrait pas "
+"une fois sur dix."
+msgstr ""
+"**Vältettävissä oleva virhe**: menetys saavuttaa tietokannan Virhe-rajan "
+"ja d ≤ ℓ / 10 — kahden vaihtoehdon välillä vertailupelaaja ei tekisi sitä"
+" kertaakaan kymmenestä."
+
+#: ../../source/metriques.rst:293
+msgid ""
+"**Excès** d'un joueur sur un match : Σ(ℓ − d), ce qu'il a perdu au-delà "
+"de la référence (négatif quand il a fait mieux)."
+msgstr ""
+"Pelaajan **ylijäämä** ottelussa: Σ(ℓ − d), se mitä hän menetti vertailun "
+"yli (negatiivinen, kun hän pelasi paremmin)."
+
+#: ../../source/metriques.rst:295
+#, no-python-format
+msgid ""
+"**Ratio** : Σℓ / Σd ; 1 veut dire « joue comme la référence », 2 « perd "
+"deux fois plus ». Il n'est pas donné quand Σd < 0,5 % de MWC : sur un "
+"match trop facile il ne mesure que du bruit, l'excès reste."
+msgstr ""
+"**Suhde**: Σℓ / Σd; 1 tarkoittaa ”pelaa kuten vertailu”, 2 ”menettää "
+"kaksi kertaa enemmän”. Sitä ei anneta, kun Σd < 0,5 % MWC:tä: liian "
+"helpossa ottelussa se mittaa vain kohinaa, ylijäämä säilyy."
+
+#: ../../source/metriques.rst:299
+msgid ""
+"**Ce qui compte.** Les décisions comptées au PR dont la perte est notée "
+"et convertie en MWC ; ailleurs la difficulté est absente, jamais nulle. "
+"Un coup forcé ou un pas de double hors de la fenêtre du PR n'a donc ni "
+"perte ni difficulté. Parmi les décisions comptées, aucun seuil "
+"supplémentaire ne met à part une décision évidente : sa difficulté est "
+"proche de zéro d'elle-même."
+msgstr ""
+"**Mikä lasketaan.** PR:ssä lasketut päätökset, joiden menetys arvioidaan "
+"ja muunnetaan MWC:ksi; muualla vaikeus puuttuu, se ei ole koskaan nolla. "
+"Pakotetulla siirrolla tai PR-ikkunan ulkopuolisella tuplaamatta "
+"jättämisellä ei siis ole menetystä eikä vaikeutta. Laskettujen päätösten "
+"joukossa mikään lisäkynnys ei erota ilmeistä päätöstä: sen vaikeus on "
+"itsestään lähellä nollaa."
+
+#: ../../source/metriques.rst:305
+msgid "**Unité.** d et l'excès : un pourcentage de MWC. Le ratio : sans unité."
+msgstr "**Yksikkö.** d ja ylijäämä: prosentti MWC:stä. Suhde: ei yksikköä."
+
+#: ../../source/metriques.rst:307
+msgid ""
+"**Lecture.** Une perte bien au-dessus de sa difficulté est une faute que "
+"la position n'excusait pas ; une perte proche de sa difficulté, une faute"
+" partagée. Excès et ratio corrigent le PR de la difficulté des positions "
+"rencontrées, donc en partie du style de l'adversaire "
+"(:ref:`panneau_matchs`)."
+msgstr ""
+"**Tulkinta.** Vaikeuttaan selvästi suurempi menetys on virhe, jota asema "
+"ei puolustanut; vaikeuttaan lähellä oleva menetys on jaettu virhe. "
+"Ylijäämä ja suhde korjaavat PR:ää kohdattujen asemien vaikeudella, siis "
+"osin vastustajan tyylillä (:ref:`panneau_matchs`)."
+
+#: ../../source/metriques.rst:312
+msgid ""
+"**Incertitude.** Sur un match, excès et ratio reposent sur peu de "
+"décisions et varient beaucoup : une tendance, pas un classement."
+msgstr ""
+"**Epävarmuus.** Yhdessä ottelussa ylijäämä ja suhde perustuvat harvoihin "
+"päätöksiin ja vaihtelevat paljon: suuntaus, ei ranking."
+
+#: ../../source/metriques.rst:315
+msgid ""
+"**Limites.** La difficulté dépend d'un modèle de joueur et de τ, fixés "
+"une fois : les changer change tous les chiffres. Elle ne connaît que les "
+"candidats que l'analyse a gardés (quelques-uns chez XG, selon ses filtres"
+" chez gnuBG) : les options absentes ne pèsent rien, et d est alors un "
+"minorant. Elle hérite de l'erreur de l'analyse, surtout à faible "
+"profondeur."
+msgstr ""
+"**Rajat.** Vaikeus riippuu pelaajamallista ja τ:sta, jotka on asetettu "
+"kerran: niiden muuttaminen muuttaa kaikki luvut. Se tuntee vain "
+"ehdokkaat, jotka analyysi on säilyttänyt (muutaman XG:ssä, gnuBG:ssä sen "
+"suodattimien mukaan): puuttuvat vaihtoehdot eivät paina mitään, ja d on "
+"silloin alaraja. Se perii analyysin virheen, etenkin pienellä syvyydellä."
+
+#: ../../source/metriques.rst:321
+msgid ""
+"**XG et gnuBG.** Ni l'un ni l'autre ne calcule de difficulté. L'idée "
+"vient des indices de vraisemblance des échecs (Regan) ; τ n'est pas "
+"étalonné sur une population de joueurs."
+msgstr ""
+"**XG ja gnuBG.** Kumpikaan ei laske vaikeutta. Idea tulee shakin "
+"uskottavuusindekseistä (Regan); τ:aa ei ole kalibroitu "
+"pelaajapopulaatiolla."
+
+#: ../../source/metriques.rst:329
+msgid "Intervalles à 95 %"
+msgstr "95 %:n välit"
+
+#: ../../source/metriques.rst:331
+msgid ""
+"**La question.** Ce chiffre dit-il quelque chose, ou est-ce du bruit ? Un"
+" PR de 4,2 sur un match et un PR de 4,2 sur quarante matchs ne valent pas"
+" la même chose. L'intervalle évite de bâtir un plan de travail sur une "
+"case qui ne repose sur rien, et de lire un rang dans un match isolé."
+msgstr ""
+"**Kysymys.** Kertooko tämä luku jotain, vai onko se kohinaa? PR 4,2 "
+"yhdessä ottelussa ja PR 4,2 neljässäkymmenessä ottelussa eivät ole yhtä "
+"arvokkaita. Väli estää rakentamasta työsuunnitelmaa ruudun varaan, joka "
+"ei perustu mihinkään, ja lukemasta rankingia yksittäisestä ottelusta."
+
+#: ../../source/metriques.rst:336
+msgid ""
+"**Définition.** L'intervalle rééchantillonne la plus grande unité "
+"indépendante : les **parties** d'un match, les **matchs** d'un agrégat "
+"(PR global, cases par phase, plan de jeu, étiquette et score, L₇ d'un "
+"agrégat). Les parties d'un même match partagent adversaire, séance et "
+"fatigue : les rééchantillonner séparément dans un agrégat rétrécirait "
+"l'intervalle à tort. Sans filtre joueur, les deux sièges d'un match "
+"forment une seule unité, car ils jouent les mêmes positions."
+msgstr ""
+"**Määritelmä.** Väli poimii uudelleen suurimman riippumattoman yksikön: "
+"ottelun **pelit**, kokonaisuuden **ottelut** (kokonais-PR, vaihekohtaiset"
+" ruudut, pelisuunnitelma, tunniste ja pistetilanne, kokonaisuuden L₇). "
+"Saman ottelun pelit jakavat vastustajan, istunnon ja väsymyksen: niiden "
+"erillinen uudelleenpoiminta kokonaisuudessa kaventaisi väliä "
+"virheellisesti. Ilman pelaajasuodatinta ottelun kaksi paikkaa muodostavat"
+" yhden yksikön, koska ne pelaavat samat asemat."
+
+#: ../../source/metriques.rst:344
+msgid ""
+"**La formule.** Pour un rapport R = Σeᵤ / Σnᵤ sur G unités (eᵤ la somme "
+"des erreurs, nᵤ le nombre de décisions de l'unité), la variance du "
+"bootstrap est calculée, sans tirage :"
+msgstr ""
+"**Kaava.** Suhteelle R = Σeᵤ / Σnᵤ G yksikön yli (eᵤ virheiden summa, nᵤ "
+"yksikön päätösten määrä) bootstrap-varianssi lasketaan ilman arvontaa:"
+
+#: ../../source/metriques.rst:348
+msgid ""
+"\\widehat{\\mathrm{Var}}(R) = \\frac{G}{G-1} \\cdot\n"
+"\\frac{\\sum_u (e_u - R\\,n_u)^2}{\\left(\\sum_u n_u\\right)^2}"
+msgstr ""
+"\\widehat{\\mathrm{Var}}(R) = \\frac{G}{G-1} \\cdot\n"
+"\\frac{\\sum_u (e_u - R\\,n_u)^2}{\\left(\\sum_u n_u\\right)^2}"
+
+#: ../../source/metriques.rst:353
+msgid ""
+"et l'intervalle vaut R ± 1,96 × √Var, la borne basse jamais sous 0, puis "
+"la même transformation que la valeur (× 500 pour le PR). Le L₇ d'un "
+"agrégat suit la même règle, L à la place de e et √N à la place de n ; "
+"celui d'un match est une somme sur ses G parties, de variance G/(G−1) × "
+"Σ(l_g − l̄)², l_g la perte de la partie g. Le calcul est déterministe : "
+"la même base donne toujours le même intervalle, sur les deux moteurs de "
+"stockage."
+msgstr ""
+"ja väli on R ± 1,96 × √Var, alaraja ei koskaan alle 0, sitten sama "
+"muunnos kuin arvolle (× 500 PR:lle). Kokonaisuuden L₇ noudattaa samaa "
+"sääntöä, L e:n ja √N n:n paikalla; ottelun L₇ on summa sen G pelin yli, "
+"varianssi G/(G−1) × Σ(l_g − l̄)², missä l_g on pelin g menetys. Laskenta "
+"on deterministinen: sama tietokanta antaa aina saman välin molemmilla "
+"tallennusmoottoreilla."
+
+#: ../../source/metriques.rst:361
+msgid ""
+"**Ce qu'il faut.** Au moins **trois unités** et une largeur non nulle. "
+"Avec deux, la dispersion repose sur un seul degré de liberté et "
+"l'intervalle serait plusieurs fois trop étroit ; des unités toutes au "
+"même rapport disent qu'elles s'accordent, pas que la valeur est exacte. "
+"Sans intervalle, la case est grisée, son effectif visible (:ref:`stats`)."
+msgstr ""
+"**Mitä tarvitaan.** Vähintään **kolme yksikköä** ja nollasta poikkeava "
+"leveys. Kahdella hajonta perustuu yhteen vapausasteeseen ja väli olisi "
+"moninkertaisesti liian kapea; yksiköt, joilla kaikilla on sama suhde, "
+"kertovat olevansa yhtä mieltä, eivät sitä, että arvo on tarkka. Ilman "
+"väliä ruutu harmaantuu ja sen otoskoko pysyy näkyvissä (:ref:`stats`)."
+
+#: ../../source/metriques.rst:367
+msgid ""
+"**Lecture.** Deux intervalles qui se chevauchent largement ne départagent"
+" rien. Une famille dont l'intervalle reste au-dessus de votre PR global "
+"est une faiblesse établie."
+msgstr ""
+"**Tulkinta.** Kaksi laajasti päällekkäistä väliä ei erottele mitään. "
+"Perhe, jonka väli pysyy kokonais-PR:äsi yläpuolella, on todettu heikkous."
+
+#: ../../source/metriques.rst:371
+msgid ""
+"**Limites.** L'approximation normale est grossière sur peu d'unités, et "
+"les erreurs ont une distribution asymétrique (quelques grosses fautes) : "
+"avec trois ou quatre unités, l'intervalle est indicatif."
+msgstr ""
+"**Rajat.** Normaaliapproksimaatio on karkea harvoilla yksiköillä, ja "
+"virheiden jakauma on epäsymmetrinen (muutama iso virhe): kolmella tai "
+"neljällä yksiköllä väli on suuntaa-antava."
+
+#: ../../source/metriques.rst:375
+msgid "**XG et gnuBG.** Aucun des deux ne donne d'intervalle."
+msgstr "**XG ja gnuBG.** Kumpikaan ei anna väliä."
+
+#: ../../source/metriques.rst:381
+msgid "Bilan du match"
+msgstr "Ottelun yhteenveto"
+
+#: ../../source/metriques.rst:383
+msgid ""
+"**La question.** Après un match : qu'est-ce que je revois, ai-je perdu à "
+"cause des dés ou du jeu, et mes erreurs viennent-elles de la "
+"précipitation ou d'une lacune ? Les écrans : :ref:`bilan du match "
+"<bilan_match>`."
+msgstr ""
+"**Kysymys.** Ottelun jälkeen: mitä katson uudelleen, hävisinkö nopan vai "
+"pelin takia, ja johtuvatko virheeni kiireestä vai tiedon aukosta? "
+"Näkymät: :ref:`ottelun yhteenveto <bilan_match>`."
+
+#: ../../source/metriques.rst:387
+msgid ""
+"**Trois décisions à revoir.** Parmi les erreurs du joueur (seuil de la "
+"base) dont la perte est chiffrée, les trois de plus grande **part "
+"évitable** ℓ − d = ℓ × (1 − d/ℓ), positive : la perte multipliée par son "
+"caractère évitable. Une difficulté inconnue compte zéro ; à égalité, la "
+"plus grosse perte, puis l'ordre du match. Une erreur que le joueur de "
+"référence ferait aussi ne vaut pas une séance."
+msgstr ""
+"**Kolme päätöstä tarkistettavaksi.** Pelaajan virheistä (tietokannan "
+"raja), joiden menetys on laskettu, kolme suurinta **vältettävissä olevaa "
+"osuutta** ℓ − d = ℓ × (1 − d/ℓ), positiivinen: menetys kerrottuna sen "
+"vältettävyydellä. Tuntematon vaikeus lasketaan nollaksi; tasatilanteessa "
+"suurempi menetys, sitten ottelun järjestys. Virhe, jonka "
+"vertailupelaajakin tekisi, ei ansaitse harjoitusta."
+
+#: ../../source/metriques.rst:394
+msgid ""
+"**Résultat ajusté de la chance**, pour un match terminé, en points de MWC"
+" du joueur :"
+msgstr "**Tuurilla oikaistu tulos** päättyneelle ottelulle, pelaajan MWC-pisteinä:"
+
+#: ../../source/metriques.rst:397
+#, no-python-brace-format
+msgid ""
+"A = R - C, \\quad R = \\text{issue} - \\mathrm{MWC}_\\text{départ}, "
+"\\quad\n"
+"C = \\sum \\text{chance de ses jets} - \\sum \\text{chance des jets "
+"adverses}"
+msgstr ""
+"A = R - C, \\quad R = \\text{issue} - \\mathrm{MWC}_\\text{départ}, "
+"\\quad\n"
+"C = \\sum \\text{chance de ses jets} - \\sum \\text{chance des jets "
+"adverses}"
+
+#: ../../source/metriques.rst:402
+msgid ""
+"L'issue vaut 1 gagné, 0 perdu ; la MWC de départ est celle du score "
+"initial (50 % à 0-0). Chaque jet est converti en MWC comme une perte, au "
+"score et au videau de sa position. Sous jeu parfait, l'espérance de A est"
+" la perte de l'adversaire moins la vôtre : le bilan donne l'*écart des "
+"erreurs* à côté pour recouper. A > 0 sur un match perdu : perdu par les "
+"dés ; A < 0 : perdu par le jeu. La chance est celle que l'analyseur a "
+"écrite (:ref:`stats_parity`) : sans chance, pas de ligne, et la "
+"couverture (jets mesurés sur jets joués) est affichée, car une chance "
+"partielle biaise A. Pas de ligne non plus pour une partie d'argent ou un "
+"match inachevé."
+msgstr ""
+"Lopputulos on 1 voitto, 0 tappio; lähtö-MWC on alkupistetilanteen (50 % "
+"tilanteessa 0-0). Jokainen heitto muunnetaan MWC:ksi kuten menetys, "
+"asemansa pistetilanteessa ja kuutiolla. Täydellisessä pelissä A:n "
+"odotusarvo on vastustajan menetys miinus oma menetyksesi: yhteenveto "
+"antaa vierellä *virheiden eron* ristiintarkistusta varten. A > 0 "
+"hävityssä ottelussa: hävitty nopilla; A < 0: hävitty pelillä. Tuuri on "
+"se, jonka analysoija on kirjoittanut (:ref:`stats_parity`): ilman tuuria "
+"ei riviä, ja kattavuus (mitatut heitot pelatuista heitoista) näytetään, "
+"koska osittainen tuuri vinouttaa A:ta. Riviä ei ole myöskään rahapelille "
+"eikä keskeneräiselle ottelulle."
+
+#: ../../source/metriques.rst:412
+msgid ""
+"**Erreurs précipitées et réfléchies.** Par joueur et par type (pions, "
+"videau), le seuil est la médiane des durées connues de ses décisions "
+"chiffrées de ce type dans le match : une erreur jouée plus vite est "
+"précipitée, les autres réfléchies. La médiane est la sienne, dans ce "
+"match : elle ne dépend pas de la cadence, et sans lien entre vitesse et "
+"erreur les erreurs se partagent moitié-moitié. Une majorité précipitée "
+"appelle de la discipline ; une majorité réfléchie, de la connaissance."
+msgstr ""
+"**Kiireessä ja harkiten tehdyt virheet.** Pelaajakohtaisesti ja "
+"tyypeittäin (nappulat, kuutio) raja on hänen tämän tyypin arvioitujen "
+"päätösten tunnettujen kestojen mediaani ottelussa: nopeammin pelattu "
+"virhe on kiireessä tehty, muut harkittuja. Mediaani on hänen omansa, "
+"tässä ottelussa: se ei riipu tahdista, ja ilman yhteyttä nopeuden ja "
+"virheen välillä virheet jakautuvat puoliksi. Kiireessä tehtyjen enemmistö"
+" vaatii kuria; harkittujen enemmistö tietoa."
+
+#: ../../source/metriques.rst:420
+msgid ""
+"**Limites.** Un match est un petit échantillon : PR et L₇ y portent leur "
+"intervalle par parties (trois parties au moins). Le résultat ajusté "
+"dépend de la MET et de la chance du fichier. La durée n'existe que pour "
+"un match qui l'a gardée (un match joué contre un bot)."
+msgstr ""
+"**Rajat.** Ottelu on pieni otos: PR ja L₇ sisältävät siinä pelikohtaisen "
+"välinsä (vähintään kolme peliä). Oikaistu tulos riippuu MET:stä ja "
+"tiedoston tuurista. Kesto on olemassa vain ottelulle, joka on sen "
+"säilyttänyt (bottia vastaan pelattu ottelu)."
+
+#: ../../source/metriques.rst:425
+msgid ""
+"**XG et gnuBG.** XG et gnuBG affichent la chance totale de chaque joueur,"
+" mais ni résultat ajusté en MWC, ni sélection des décisions à revoir, ni "
+"partage par la durée."
+msgstr ""
+"**XG ja gnuBG.** XG ja gnuBG näyttävät kunkin pelaajan kokonaistuurin, "
+"mutta eivät MWC:nä oikaistua tulosta, tarkistettavien päätösten valintaa "
+"eivätkä keston mukaista jakoa."
+
+#: ../../source/metriques.rst:433
+msgid "Plan d'étude"
+msgstr "Opiskelusuunnitelma"
+
+#: ../../source/metriques.rst:435
+msgid ""
+"**La question.** Que dois-je travailler maintenant ? Classer ses erreurs "
+"par coût dit où l'on a le plus perdu, pas où l'étude rapporte le plus : "
+"une famille de positions réellement difficiles coûte à tout le monde, et "
+"trois erreurs ne font pas une tendance. Les écrans : :ref:`plan_etude`."
+msgstr ""
+"**Kysymys.** Mitä minun pitäisi harjoitella nyt? Virheiden järjestäminen "
+"hinnan mukaan kertoo, missä menetettiin eniten, ei missä opiskelu tuottaa"
+" eniten: todella vaikeiden asemien perhe maksaa kaikille, ja kolme "
+"virhettä ei tee suuntausta. Näkymät: :ref:`plan_etude`."
+
+#: ../../source/metriques.rst:440
+msgid ""
+"**Définition.** Une **famille** est un triplet (plan de jeu, nature de la"
+" décision, thème) des erreurs récurrentes ; ses membres sont les erreurs "
+"du filtre, décisions comptées qui coûtent au moins le seuil Erreur. Une "
+"erreur sans thème n'entre dans aucune famille. Un membre est **chiffré** "
+"s'il porte ℓ et d ; une erreur en partie d'argent est comptée « non "
+"chiffrée » et n'entre dans aucune priorité."
+msgstr ""
+"**Määritelmä.** **Perhe** on toistuvien virheiden kolmikko "
+"(pelisuunnitelma, päätöksen luonne, teema); sen jäsenet ovat suodattimen "
+"virheet, lasketut päätökset, jotka maksavat vähintään Virhe-rajan. Virhe "
+"ilman teemaa ei kuulu mihinkään perheeseen. Jäsen on **arvioitu**, jos "
+"sillä on ℓ ja d; rahapelin virhe lasketaan ”arvioimattomaksi” eikä se "
+"kuulu mihinkään prioriteettiin."
+
+#: ../../source/metriques.rst:447
+msgid "**La formule.** Le **MWC récupérable** et son intervalle :"
+msgstr "**Kaava.** **Palautettavissa oleva MWC** ja sen väli:"
+
+#: ../../source/metriques.rst:449
+#, no-python-brace-format
+msgid ""
+"R = \\sum_i (\\ell_i - d_i), \\qquad\n"
+"R \\pm 1{,}96 \\sqrt{\\textstyle\\sum_i (\\ell_i - d_i)^2}"
+msgstr ""
+"R = \\sum_i (\\ell_i - d_i), \\qquad\n"
+"R \\pm 1{,}96 \\sqrt{\\textstyle\\sum_i (\\ell_i - d_i)^2}"
+
+#: ../../source/metriques.rst:454
+msgid ""
+"R est la fréquence de la famille multipliée par sa perte moyenne au-delà "
+"de la difficulté : ce qu'on regagnerait en jouant ces positions comme le "
+"joueur de référence. La somme est signée, sans écrêtage. L'intervalle "
+"traite le nombre de membres comme un comptage de Poisson."
+msgstr ""
+"R on perheen esiintymistiheys kerrottuna sen keskimääräisellä "
+"menetyksellä vaikeuden yli: se, minkä saisi takaisin pelaamalla nämä "
+"asemat kuten vertailupelaaja. Summa on etumerkillinen, ilman leikkausta. "
+"Väli käsittelee jäsenmäärää Poisson-laskentana."
+
+#: ../../source/metriques.rst:459
+msgid ""
+"**Ce qui entre au plan.** Au moins **5 membres chiffrés** et une **borne "
+"basse strictement positive**. Le plan est classé par borne basse "
+"décroissante : à récupérable égal, la famille la mieux établie passe "
+"devant. Les autres sont « à confirmer », sans rang."
+msgstr ""
+"**Mikä pääsee suunnitelmaan.** Vähintään **5 arvioitua jäsentä** ja "
+"**ehdottoman positiivinen alaraja**. Suunnitelma järjestetään laskevan "
+"alarajan mukaan: samalla palautettavalla perhe, joka on paremmin "
+"perusteltu, tulee ensin. Muut ovat ”vahvistettavia”, ilman sijaa."
+
+#: ../../source/metriques.rst:464
+msgid "**Unité.** Un pourcentage de MWC, cumulé sur le filtre."
+msgstr "**Yksikkö.** Prosentti MWC:stä, kumuloituna suodattimen yli."
+
+#: ../../source/metriques.rst:466
+msgid ""
+"**Lecture.** Une famille d'erreurs évitables monte ; une famille de "
+"positions où tout le monde se trompe descend. Un nouveau joueur voit "
+"d'abord des familles « à confirmer » : le plan ne pousse pas vers du "
+"bruit."
+msgstr ""
+"**Tulkinta.** Vältettävissä olevien virheiden perhe nousee; asemien "
+"perhe, joissa kaikki erehtyvät, laskee. Uusi pelaaja näkee ensin "
+"”vahvistettavia” perheitä: suunnitelma ei työnnä kohti kohinaa."
+
+#: ../../source/metriques.rst:470
+msgid ""
+"**Limites.** Le thème vient du classificateur de blunderDB : une erreur "
+"mal classée tombe dans une mauvaise famille, une erreur sans thème n'est "
+"dans aucune. R hérite des limites de ℓ et d (MET, troncature des "
+"candidats)."
+msgstr ""
+"**Rajat.** Teema tulee blunderDB:n luokittelijalta: väärin luokiteltu "
+"virhe päätyy väärään perheeseen, virhe ilman teemaa ei ole missään. R "
+"perii ℓ:n ja d:n rajat (MET, ehdokkaiden typistys)."
+
+#: ../../source/metriques.rst:474
+msgid "**XG et gnuBG.** Ni l'un ni l'autre ne propose de plan d'étude."
+msgstr "**XG ja gnuBG.** Kumpikaan ei tarjoa opiskelusuunnitelmaa."
+
+#: ../../source/metriques.rst:480
+msgid "Positions de référence"
+msgstr "Viiteasemat"
+
+#: ../../source/metriques.rst:482
+msgid ""
+"**La question.** Quelles positions mettre dans une collection pour "
+"travailler le plan ? Les dix pires erreurs donnent souvent dix variantes "
+"d'un même problème. Une bonne position de référence est au centre de "
+"beaucoup de vos erreurs évitables, porte une leçon nette et n'est pas "
+"déjà étudiée. Les écrans : :ref:`positions de référence "
+"<positions_reference>`."
+msgstr ""
+"**Kysymys.** Mitkä asemat kannattaa laittaa kokoelmaan suunnitelman "
+"työstämiseksi? Kymmenen pahinta virhettä antavat usein kymmenen "
+"muunnelmaa samasta ongelmasta. Hyvä viiteasema on monen vältettävissä "
+"olevan virheesi keskellä, sisältää selkeän opetuksen eikä ole jo "
+"opiskeltu. Näkymät: :ref:`viiteasemat <positions_reference>`."
+
+#: ../../source/metriques.rst:488
+msgid ""
+"**Définition.** Les candidates sont les erreurs chiffrées et thématisées "
+"du filtre, réunies par position ; l'excès d'une position est la somme des"
+" excès positifs ℓ − d de ses erreurs. Deux candidates d'une même famille "
+"— et, pour le videau, du même score — sont **voisines** à au plus ρ = 12 "
+"pions-pas de distance ``like`` (un coup de dés en vaut 8 à 16)."
+msgstr ""
+"**Määritelmä.** Ehdokkaat ovat suodattimen arvioidut ja teemoitetut "
+"virheet, ryhmiteltyinä asemittain; aseman ylijäämä on sen virheiden "
+"positiivisten ylijäämien ℓ − d summa. Kaksi saman perheen ehdokasta — ja "
+"kuutiolle samaa pistetilannetta — ovat **naapureita**, kun niiden "
+"``like``-etäisyys on enintään ρ = 12 pip-askelta (yksi nopanheitto on "
+"8–16)."
+
+#: ../../source/metriques.rst:494
+msgid "**La formule.** Le gain d'une candidate p est"
+msgstr "**Kaava.** Ehdokkaan p hyöty on"
+
+#: ../../source/metriques.rst:496
+msgid ""
+"G(p) = c(p) \\times \\sum_{q \\,\\in\\, \\text{voisinage}(p),\\ q\\ "
+"\\text{non couverte}} \\text{excès}(q)"
+msgstr ""
+"G(p) = c(p) \\times \\sum_{q \\,\\in\\, \\text{voisinage}(p),\\ q\\ "
+"\\text{non couverte}} \\text{excès}(q)"
+
+#: ../../source/metriques.rst:500
+msgid ""
+"en fraction de MWC : la représentativité, la fréquence et le coût "
+"évitable en une seule quantité. c(p) part de 1 et est multiplié par ½ si "
+"la leçon est **serrée** (le second choix coûte moins de la moitié du "
+"seuil Erreur), et encore par ½ si elle est **instable** (une autre "
+"profondeur d'analyse du videau ou un rollout rend un autre verdict) : ¼ "
+"quand les deux se cumulent. Un rollout qui confirme ne relève rien : il "
+"départage à gain égal."
+msgstr ""
+"MWC:n osuutena: edustavuus, esiintymistiheys ja vältettävissä oleva hinta"
+" yhdessä suureessa. c(p) alkaa arvosta 1 ja kerrotaan ½:lla, jos opetus "
+"on **tiukka** (toinen valinta maksaa alle puolet Virhe-rajasta), ja vielä"
+" ½:lla, jos se on **epävakaa** (toinen kuution analyysisyvyys tai rollout"
+" antaa toisen tuomion): ¼, kun molemmat kasautuvat. Vahvistava rollout ei"
+" nosta mitään: se ratkaisee tasatilanteen hyödyn ollessa sama."
+
+#: ../../source/metriques.rst:508
+msgid ""
+"**Sélection.** Gloutonne par gain marginal : chaque position retenue "
+"couvre ses voisines, qui ne rapportent plus rien aux suivantes, et ses "
+"quasi-doublons sont écartés même hors de sa famille. Une position déjà "
+"traitée (commentaire, carte Anki, collection, marque « étudiée ») n'est "
+"jamais proposée et compte comme déjà retenue."
+msgstr ""
+"**Valinta.** Ahne marginaalihyödyn mukaan: jokainen valittu asema kattaa "
+"naapurinsa, jotka eivät enää tuota mitään seuraaville, ja sen lähes "
+"kaksoiskappaleet hylätään jopa perheensä ulkopuolella. Jo käsitelty asema"
+" (kommentti, Anki-kortti, kokoelma, ”opiskeltu”-merkintä) ei koskaan "
+"ehdoteta ja se lasketaan jo valituksi."
+
+#: ../../source/metriques.rst:514
+msgid "**Unité.** Le MWC couvert, en pourcentage."
+msgstr "**Yksikkö.** Katettu MWC prosentteina."
+
+#: ../../source/metriques.rst:516
+msgid ""
+"**Limites.** Le rayon et les facteurs sont fixés, pas appris. La distance"
+" ``like`` compare des structures de pions, pas des idées : deux positions"
+" de même leçon mais de structure éloignée ne se couvrent pas."
+msgstr ""
+"**Rajat.** Säde ja kertoimet on asetettu, ei opittu. ``like``-etäisyys "
+"vertaa nappularakenteita, ei ideoita: kaksi samanlaisen opetuksen mutta "
+"kaukaisen rakenteen asemaa eivät kata toisiaan."
+
+#: ../../source/metriques.rst:520 ../../source/metriques.rst:562
+#: ../../source/metriques.rst:642
+msgid "**XG et gnuBG.** Pas d'équivalent."
+msgstr "**XG ja gnuBG.** Ei vastinetta."
+
+#: ../../source/metriques.rst:526
+msgid "Avant/après l'étude"
+msgstr "Ennen/jälkeen opiskelun"
+
+#: ../../source/metriques.rst:528
+msgid ""
+"**La question.** Ce que j'ai travaillé me coûte-t-il moins en match réel "
+"? Sans mesure, l'étude se juge à l'impression ; une famille qui ne bouge "
+"pas malgré le travail dit qu'il faut changer de méthode. Les écrans : "
+":ref:`avant_apres_etude`."
+msgstr ""
+"**Kysymys.** Maksaako se, mitä harjoittelin, minulle vähemmän "
+"todellisessa ottelussa? Ilman mittausta opiskelua arvioidaan vaikutelman "
+"mukaan; perhe, joka ei liiku työstä huolimatta, kertoo, että menetelmää "
+"on vaihdettava. Näkymät: :ref:`avant_apres_etude`."
+
+#: ../../source/metriques.rst:533
+msgid ""
+"**Définition.** Chaque famille thématisée du filtre est mesurée, celles "
+"du plan comme celles « à confirmer ». Une famille est **étudiée** au jour"
+" (UTC) de la première action d'étude sur l'une de ses positions : marque "
+"« étudiée », révision Anki quelle que soit la note, réponse de quiz. "
+"Créer une carte ou ranger une position en collection n'en est pas une. "
+"Fenêtre *avant* : les matchs datés strictement avant ce jour ; *après* : "
+"strictement après ; le jour même et les matchs sans date sont écartés."
+msgstr ""
+"**Määritelmä.** Jokainen suodattimen teemoitettu perhe mitataan, sekä "
+"suunnitelman että ”vahvistettavat” perheet. Perhe on **opiskeltu** sen "
+"jonkin aseman ensimmäisen opiskelutoimen päivänä (UTC): "
+"”opiskeltu”-merkintä, Anki-kertaus arvosanasta riippumatta, tietovisan "
+"vastaus. Kortin luominen tai aseman asettaminen kokoelmaan ei ole "
+"sellainen. *Ennen*-ikkuna: ottelut, joiden päiväys on tiukasti ennen "
+"kyseistä päivää; *jälkeen*: tiukasti sen jälkeen; itse päivä ja "
+"päiväämättömät ottelut jätetään pois."
+
+#: ../../source/metriques.rst:541
+msgid ""
+"**La formule.** Dans chaque fenêtre, le taux de perte r = Σℓ / N : ℓ les "
+"pertes des erreurs de la famille, N les décisions comptées en match du "
+"même plan de jeu et de la même nature (le thème n'existe que pour une "
+"erreur). Le gain et son intervalle :"
+msgstr ""
+"**Kaava.** Kussakin ikkunassa menetysaste r = Σℓ / N: ℓ perheen virheiden"
+" menetykset, N samaan pelisuunnitelmaan ja samaan luonteeseen kuuluvat "
+"ottelussa lasketut päätökset (teema on olemassa vain virheelle). Hyöty ja"
+" sen väli:"
+
+#: ../../source/metriques.rst:546
+msgid ""
+"\\Delta = r_\\text{avant} - r_\\text{après}, \\qquad\n"
+"\\Delta \\pm 1{,}96 \\sqrt{\\frac{\\sum "
+"\\ell^2_\\text{avant}}{N^2_\\text{avant}}\n"
+"+ \\frac{\\sum \\ell^2_\\text{après}}{N^2_\\text{après}}}"
+msgstr ""
+"\\Delta = r_\\text{avant} - r_\\text{après}, \\qquad\n"
+"\\Delta \\pm 1{,}96 \\sqrt{\\frac{\\sum "
+"\\ell^2_\\text{avant}}{N^2_\\text{avant}}\n"
+"+ \\frac{\\sum \\ell^2_\\text{après}}{N^2_\\text{après}}}"
+
+#: ../../source/metriques.rst:552
+msgid ""
+"**Verdict.** Au moins **30 décisions** dans chaque fenêtre, sinon « "
+"insuffisant ». « En progrès » si la borne basse de Δ est positive, « en "
+"recul » si la borne haute est négative, « indéterminé » sinon."
+msgstr ""
+"**Tuomio.** Vähintään **30 päätöstä** kummassakin ikkunassa, muuten "
+"”riittämätön”. ”Edistyy”, jos Δ:n alaraja on positiivinen, ”taantuu”, jos"
+" yläraja on negatiivinen, muuten ”epäselvä”."
+
+#: ../../source/metriques.rst:556
+msgid "**Unité.** Points de MWC pour 100 décisions."
+msgstr "**Yksikkö.** MWC-pistettä 100 päätöstä kohden."
+
+#: ../../source/metriques.rst:558
+msgid ""
+"**Limites.** Un changement, pas un effet. Une famille est étudiée *parce "
+"qu'elle* coûtait : la régression vers la moyenne gonfle le gain. Rien ne "
+"contrôle les adversaires, le format ni les dés."
+msgstr ""
+"**Rajat.** Muutos, ei vaikutus. Perhe opiskellaan, *koska* se maksoi: "
+"regressio keskiarvoon paisuttaa hyötyä. Mikään ei kontrolloi vastustajia,"
+" muotoa tai noppia."
+
+#: ../../source/metriques.rst:568
+msgid "Biais signés"
+msgstr "Etumerkilliset vinoumat"
+
+#: ../../source/metriques.rst:570
+msgid ""
+"**La question.** Dans quel sens est-ce que je me trompe ? « Vous prenez "
+"trop » se corrige mieux qu'un PR : la règle à revoir est nommée. Les "
+"écrans : :ref:`biais_signes`."
+msgstr ""
+"**Kysymys.** Mihin suuntaan erehdyn? ”Otat liikaa” korjautuu paremmin "
+"kuin PR: tarkistettava sääntö nimetään. Näkymät: :ref:`biais_signes`."
+
+#: ../../source/metriques.rst:574
+msgid ""
+"**La formule.** Chaque décision comptée porte x = +1 (erreur par excès "
+"d'audace), −1 (par excès de prudence) ou 0. Avec P et M les deux comptes "
+"sur N décisions :"
+msgstr ""
+"**Kaava.** Jokaisella lasketulla päätöksellä on x = +1 (virhe liiasta "
+"rohkeudesta), −1 (liiasta varovaisuudesta) tai 0. Kun P ja M ovat kaksi "
+"lukumäärää N päätöksestä:"
+
+#: ../../source/metriques.rst:578
+msgid ""
+"B = \\frac{P - M}{N}, \\qquad\n"
+"B \\pm 1{,}96 \\sqrt{\\frac{(P + M)/N - B^2}{N}}"
+msgstr ""
+"B = \\frac{P - M}{N}, \\qquad\n"
+"B \\pm 1{,}96 \\sqrt{\\frac{(P + M)/N - B^2}{N}}"
+
+#: ../../source/metriques.rst:583
+msgid ""
+"Au moins **20 décisions** ; « trop » si la borne basse est positive, « "
+"pas assez » si la borne haute est négative, « équilibré » sinon. Le coût "
+"de P et de M (en mpt) accompagne les comptes. Le signe et le coût sont "
+"ceux du coup joué dans son match."
+msgstr ""
+"Vähintään **20 päätöstä**; ”liikaa”, jos alaraja on positiivinen, ”liian "
+"vähän”, jos yläraja on negatiivinen, muuten ”tasapainoinen”. P:n ja M:n "
+"hinta (mpt) liitetään lukumääriin. Etumerkki ja hinta ovat ottelussaan "
+"pelatun siirron."
+
+#: ../../source/metriques.rst:588
+msgid ""
+"**Prise / refus** : sur les réponses au videau ; P = prises fautives, M ="
+" refus fautifs. B est exactement votre taux de prise moins celui du bot "
+"sur les mêmes positions."
+msgstr ""
+"**Vastaanotto / hylkäys**: kuutiovastauksissa; P = virheelliset "
+"vastaanotot, M = virheelliset hylkäykset. B on täsmälleen sinun "
+"vastaanottoasteesi miinus botin vastaanottoaste samoissa asemissa."
+
+#: ../../source/metriques.rst:591
+msgid ""
+"**Doubles** : sur les décisions de videau du porteur comptées au PR ; P ="
+" doubles prématurés (pas de double, ou trop bon), M = doubles manqués. Le"
+" biais est aussi donné par case de score (vos points restants, ceux de "
+"l'adversaire ; post-Crawford compté à 1 ; la partie d'argent à part)."
+msgstr ""
+"**Tuplaukset**: PR:ssä laskettuihin haltijan kuutiopäätöksiin; P = "
+"ennenaikaiset tuplaukset (ei tuplausta tai liian hyvä), M = väliin "
+"jääneet tuplaukset. Vinouma annetaan myös pistetilanneruuduittain (sinun "
+"jäljellä olevat pisteesi, vastustajan; Crawford-pelin jälkeinen lasketaan"
+" 1:ksi; rahapeli erikseen)."
+
+#: ../../source/metriques.rst:595
+msgid ""
+"**Blots** : sur les coups de pions avec contact ; x est le signe de (vos "
+"blots après le coup joué − vos blots après le meilleur coup). Un coup est"
+" reconnu par le plateau qu'il laisse ; un coup introuvable sort du "
+"compte, et sa part est affichée."
+msgstr ""
+"**Blotit**: kontaktillisissa nappulasiirroissa; x on merkki lausekkeesta "
+"(blottisi pelatun siirron jälkeen − blottisi parhaan siirron jälkeen). "
+"Siirto tunnistetaan sen jättämästä laudasta; löytymätön siirto jää "
+"laskennan ulkopuolelle, ja sen osuus näytetään."
+
+#: ../../source/metriques.rst:600
+msgid "**Unité.** Une différence de proportions, sans unité."
+msgstr "**Yksikkö.** Osuuksien erotus, ei yksikköä."
+
+#: ../../source/metriques.rst:602
+msgid ""
+"**Limites.** La plupart des cases de score restent muettes : c'est la "
+"réponse honnête. Le biais des blots compte les blots sans peser leur "
+"exposition, et les coups écartés ne sont pas un tirage neutre."
+msgstr ""
+"**Rajat.** Useimmat pistetilanneruudut jäävät mykiksi: se on rehellinen "
+"vastaus. Blottien vinouma laskee blotit painottamatta niiden altistusta, "
+"eikä hylätyt siirrot ole neutraali otanta."
+
+#: ../../source/metriques.rst:606
+msgid ""
+"**XG et gnuBG.** Pas d'équivalent ; XG et gnuBG comptent les erreurs de "
+"videau par type (double manqué, prise fautive…) sans intervalle ni "
+"verdict."
+msgstr ""
+"**XG ja gnuBG.** Ei vastinetta; XG ja gnuBG laskevat kuutiovirheet "
+"tyypeittäin (väliin jäänyt tuplaus, virheellinen vastaanotto…) ilman "
+"väliä tai tuomiota."
+
+#: ../../source/metriques.rst:613
+msgid "Bilan du tournoi"
+msgstr "Turnauksen yhteenveto"
+
+#: ../../source/metriques.rst:615
+msgid ""
+"**La question.** Ai-je joué à mon niveau, et sinon, où cela a-t-il cédé :"
+" les dernières rondes, les longues fins de match, les scores où un point "
+"décide, la pendule ? Les écrans : :ref:`bilan du tournoi "
+"<bilan_tournoi>`."
+msgstr ""
+"**Kysymys.** Pelasinko tasollani, ja jos en, missä se petti: viimeiset "
+"kierrokset, pitkät ottelun loppuvaiheet, pistetilanteet, joissa yksi "
+"piste ratkaisee, kello? Näkymät: :ref:`turnauksen yhteenveto "
+"<bilan_tournoi>`."
+
+#: ../../source/metriques.rst:619
+msgid ""
+"**Définition.** Le **niveau habituel** est le joueur sur ses matchs en "
+"points des **365 jours** qui précèdent le tournoi (sa date, à défaut "
+"celle de son premier match), ceux du tournoi exclus ; il faut au moins "
+"**5 matchs**. Le tournoi et le niveau habituel ont chacun leur PR et leur"
+" L₇, avec l'intervalle par matchs (:ref:`metrique_intervalles`)."
+msgstr ""
+"**Määritelmä.** **Tavanomainen taso** on pelaaja turnausta edeltävien "
+"**365 päivän** pisteottelussa (turnauksen päiväys, tai sen puuttuessa sen"
+" ensimmäisen ottelun päiväys), turnauksen ottelut pois lukien; tarvitaan "
+"vähintään **5 ottelua**. Turnauksella ja tavanomaisella tasolla on "
+"kummallakin oma PR ja L₇, otteluittain laskettu väli mukana "
+"(:ref:`metrique_intervalles`)."
+
+#: ../../source/metriques.rst:625
+msgid ""
+"**La formule.** Δ = tournoi − habituel, d'écart-type √(σₜ² + σₕ²), chaque"
+" σ lu sur la demi-largeur haute de son intervalle. « Moins bien » si la "
+"borne basse de Δ est positive, « mieux » si sa borne haute est négative, "
+"« dans l'habitude » sinon. Le verdict demande un intervalle et au moins "
+"**20 décisions** de chaque côté ; sinon « insuffisant », chiffres "
+"visibles."
+msgstr ""
+"**Kaava.** Δ = turnaus − tavanomainen, keskihajonta √(σₜ² + σₕ²), kukin σ"
+" luettuna välinsä ylemmästä puolileveydestä. ”Huonommin”, jos Δ:n alaraja"
+" on positiivinen, ”paremmin”, jos sen yläraja on negatiivinen, muuten "
+"”tavanomaisella tasolla”. Tuomio vaatii välin ja vähintään **20 "
+"päätöstä** kummallakin puolella; muuten ”riittämätön”, luvut näkyvissä."
+
+#: ../../source/metriques.rst:631
+msgid ""
+"**Ventilations**, en PR : par ronde, chaque match face au PR habituel "
+"global ; puis, chaque case face à la même case du niveau habituel, par "
+"rang de la décision dans le match (tranches de 30 : la fatigue) ; par "
+"score (DMP, partie Crawford, post-Crawford, autres) ; par rythme (de part"
+" et d'autre de la médiane de vos durées dans le match). Au plus trois "
+"familles du plan d'étude restreint au tournoi."
+msgstr ""
+"**Erittelyt** PR:nä: kierroksen mukaan, kukin ottelu suhteessa yleiseen "
+"tavanomaiseen PR:ään; sitten kukin solu suhteessa tavanomaisen tason "
+"samaan soluun, päätöksen sijainnin mukaan ottelussa (30 päätöksen osiot: "
+"väsymys); tuloksen mukaan (DMP, Crawford-peli, Crawfordin jälkeinen, "
+"muut); tahdin mukaan (ottelussa käyttämiesi aikojen mediaanin molemmin "
+"puolin). Enintään kolme turnaukseen rajatun opiskelusuunnitelman "
+"perhettä."
+
+#: ../../source/metriques.rst:637
+msgid ""
+"**Limites.** Un tournoi de trois matchs ne dit presque jamais « moins "
+"bien » : c'est voulu. Les deux côtés sont traités comme indépendants, ce "
+"qui élargit l'intervalle : la règle est prudente. La réserve de la "
+"pendule n'est pas enregistrée coup par coup : la pression du temps "
+"restant ne se mesure pas."
+msgstr ""
+"**Rajat.** Kolmen ottelun turnaus ei lähes koskaan sano ”huonommin”: se "
+"on tarkoituksellista. Molempia puolia käsitellään riippumattomina, mikä "
+"levittää väliä: sääntö on varovainen. Kellon varaa ei tallenneta siirto "
+"siirrolta: jäljellä olevan ajan painetta ei voi mitata."

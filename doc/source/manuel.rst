@@ -1638,8 +1638,8 @@ la précipitation ou d'une lacune ? Les seuils ont été fixés avant tout exame
 de résultats.
 
 * **PR et perte MWC (éq. 7 pts), avec leur intervalle à 95 %**, calculé en
-  rééchantillonnant les parties du match. Il faut deux parties ; un match d'une
-  seule partie montre un tiret. Un intervalle large dit qu'un match ne suffit
+  rééchantillonnant les parties du match. Il faut trois parties ; un match plus
+  court montre un tiret. Un intervalle large dit qu'un match ne suffit
   pas à juger un niveau : comparez-le à vos autres matchs plutôt que de
   conclure sur une valeur.
 * **Résultat ajusté de la chance**, pour un match terminé. Le *résultat* est
@@ -2707,6 +2707,9 @@ Le panneau Stats est particulièrement utile pour :
 * **accéder directement aux positions concernées** en cliquant sur n'importe
   quel indicateur (drill-down).
 
+La définition, la formule, l'incertitude et les limites de chaque chiffre du
+panneau sont réunies dans :ref:`metriques`.
+
 Ouverture du panneau
 ~~~~~~~~~~~~~~~~~~~~~
 
@@ -2773,7 +2776,7 @@ tous les onglets.
   le font eXtreme Gammon et GNUbg : un PR de 5,0 vaut 0,010 d'équité perdue
   par décision, soit 10 millipoints (mpt). La règle de comptage exacte —
   quelles décisions entrent au dénominateur, comment le score est converti —
-  est celle de :ref:`stats_parity`.
+  est celle de :ref:`metrique_pr`.
 
   Les bandes de niveau que le panneau dessine derrière la courbe de
   progression sont un **repère indicatif propre à blunderDB** : aucune

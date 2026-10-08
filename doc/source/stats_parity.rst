@@ -19,32 +19,32 @@ Définitions formelles
 PR (Performance Rating)
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Le PR (aussi appelé « error rate per decision » dans gnuBG) mesure le coût
-moyen des erreurs par décision comptée, sur l'échelle d'eXtreme Gammon et de
-gnuBG : l'erreur moyenne d'équité, multipliée par 500.
+Le PR est l'erreur moyenne d'équité par décision comptée, multipliée par 500
+comme le fait eXtreme Gammon :
 
 .. math::
 
    \mathrm{PR} = \frac{\sum_i |\mathrm{erreur}_i|}{\mathrm{N_{compté}}} \times 500
 
-- Le numérateur est la somme absolue des erreurs EMG (en equity cubeful) sur
-  toutes les décisions du périmètre.
-- Le dénominateur :math:`N_\text{compté}` est le nombre de **décisions comptées**
-  (voir ci-dessous).
-- Le facteur 500 est la convention d'XG et de gnuBG (cf.
-  ``gnubg/formatgs.c:399–409``). Ce n'est pas une conversion en millipoints :
-  une erreur moyenne de 0,010 d'équité — soit 10 millipoints (mpt) — donne un
-  PR de 5,0. Les erreurs d'une position, elles, se lisent bien en millipoints,
-  c'est-à-dire en millièmes d'équité : le seuil de blunder ci-dessous, les
-  filtres de recherche ``e>`` et ``E>``, l'histogramme des magnitudes du
-  panneau Stats.
+- Le numérateur est la somme des erreurs en équité normalisée (EMG au score),
+  chacune celle du coup joué dans son match.
+- Le dénominateur :math:`N_\text{compté}` compte les décisions selon les règles
+  d'XG : coups de pions non forcés, doubles proposés, prises et refus, et
+  « pas de double » proches. Ces règles, leur motivation et leurs limites sont
+  détaillées dans :ref:`metrique_pr`.
+- Le facteur 500 est la convention d'XG. Ce n'est pas une conversion en
+  millipoints : une erreur moyenne de 0,010 d'équité — soit 10 millipoints
+  (mpt) — donne un PR de 5,0. Les erreurs d'une position, elles, se lisent bien
+  en millipoints, c'est-à-dire en millièmes d'équité : le seuil de blunder
+  ci-dessous, les filtres de recherche ``e>`` et ``E>``, l'histogramme des
+  magnitudes du panneau Stats.
 
 Snowie Error Rate
 ~~~~~~~~~~~~~~~~~
 
 Le Snowie ER utilise le **même numérateur** que le PR, mais le dénominateur est
-le nombre total de coups des deux joueurs, coups forcés inclus (toutes décisions,
-sans filtre) :
+le nombre de coups de pions des deux joueurs, coups forcés inclus, sans
+aucune règle de comptage :
 
 .. math::
 
@@ -52,8 +52,8 @@ sans filtre) :
 
 Référence : ``gnubg/formatgs.c:415–424``.
 
-Le Snowie ER est plus stable entre les outils car son dénominateur ne dépend pas
-du filtre des décisions forcées/triviales. Il sert de métrique de recoupement
+Le Snowie ER est plus stable entre les outils car son dénominateur ne dépend
+d'aucune règle de comptage des décisions. Il sert de métrique de recoupement
 XG ↔ gnuBG ↔ blunderDB.
 
 .. important::
@@ -83,7 +83,9 @@ convertie en MWC via la table MET (Match Equity Table) au score courant :
 
    \mathrm{MWCLoss} = \sum_i \mathrm{eq2mwc}(\mathrm{erreur}_i, \mathrm{score}_i)
 
-Référence : ``gnubg/analysis.c:1449–1464``.
+Une prise ou un refus est converti au videau d'avant le double, comme la
+décision du doubleur et comme le fait XG. La conversion et ses limites sont
+détaillées dans :ref:`metrique_perte_mwc`.
 
 Chance (*luck*)
 ~~~~~~~~~~~~~~~
@@ -164,58 +166,31 @@ qu'en une catégorie unique, et eXtreme Gammon trace les siennes à 0,020 et
 0,100), XG (0,020 et 0,080) et GNUbg (0,040 et 0,080).
 
 
-Décisions comptées au dénominateur du PR
------------------------------------------
+Décisions comptées : XG et gnuBG
+--------------------------------
 
-blunderDB suit les mêmes règles d'exclusion qu'XG et gnuBG.
+blunderDB compte les décisions comme XG (:ref:`metrique_pr`). gnuBG suit
+d'autres règles, si bien que son taux par décision ne se compare pas au PR
+d'XG, même calculé sur la même analyse :
 
-Coups de pions — décisions comptées
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++--------------------+------------------------------+------------------------------+
+| Décision           | XG et blunderDB              | gnuBG                        |
++====================+==============================+==============================+
+| Coup de pions      | plus d'un coup légal, sauf   | plus d'un coup légal         |
+|                    | si l'analyse les couvre tous | (``cMoves > 1``)             |
+|                    | à la même équité au millième |                              |
++--------------------+------------------------------+------------------------------+
+| Double proposé     | toujours                     | toujours                     |
++--------------------+------------------------------+------------------------------+
+| Prise, refus       | toujours                     | toujours                     |
++--------------------+------------------------------+------------------------------+
+| Pas de double      | ND > 0 et                    | décision « proche » selon    |
+|                    | ND − min(D/T, D/P) < 0,200   | ``isCloseCubedecision``      |
++--------------------+------------------------------+------------------------------+
 
-Seuls les **coups non-forcés** sont comptés :
-
-- Un coup est **forcé** si le dé n'offre qu'un seul coup légal (``cMoves == 1``
-  dans ``gnubg/analysis.c:458``).
-- Les coups forcés ont une erreur nulle par définition : le joueur n'avait pas
-  le choix. Les inclure dans le dénominateur abaisserait artificiellement le PR.
-
-Décisions de cube — décisions comptées
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Une décision de cube est comptée si elle est **proche**, ou si le joueur a
-pris une action autre que « No Double » (double, prise, abandon) :
-
-- Une décision cube est **proche** si elle se situe dans la fenêtre d'équité
-  ``[-0.16, +0.16]`` autour du point de redoublement (prédicat
-  ``isCloseCubedecision`` dans ``gnubg/eval.c:5088–5100``).
-- Un double prématuré, même hors de cette fenêtre, est compté : le joueur a
-  pris une décision, et elle a un coût.
-- Un « No Double » trivial (équité très négative ou très positive) n'est pas
-  une vraie décision stratégique ; l'inclure gonflerait le dénominateur et
-  dépresserait le PR.
-- Comme dans XG, un « No Double » proche mais correctement joué, videau
-  centré, n'est pas compté quand le joueur au trait est à 2 points ou moins
-  du gain : les équités EMG y sont amplifiées et le seuil de 0,16 les
-  classerait à tort comme proches.
-
-Résumé du filtre
-~~~~~~~~~~~~~~~~~
-
-+--------------------+---------------------------------------------+
-| Type de décision   | Inclus dans :math:`N_\text{compté}` (PR)    |
-+====================+=============================================+
-| Coup non-forcé     | Oui                                         |
-+--------------------+---------------------------------------------+
-| Coup forcé         | Non                                         |
-+--------------------+---------------------------------------------+
-| Cube proche        | Oui                                         |
-+--------------------+---------------------------------------------+
-| Double non proche  | Oui                                         |
-+--------------------+---------------------------------------------+
-| No Double trivial  | Non                                         |
-+--------------------+---------------------------------------------+
-| Take / Pass        | Toujours (ce sont des réponses au double)   |
-+--------------------+---------------------------------------------+
+La condition ND > 0 n'est pas dans le manuel d'XG : XG ne compte pas le « pas
+de double » d'un joueur qui est derrière, et les matchs de référence le
+montrent.
 
 
 Correspondance blunderDB ↔ XG ↔ gnuBG
@@ -225,28 +200,49 @@ Les métriques sont alignées dans les limites ci-dessous. Ce sont des **bornes
 vérifiées par la suite de tests**, et non des écarts moyens : le test compare
 match par match les chiffres de blunderDB à ceux enregistrés pour les matchs de
 référence du dépôt, et échoue dès qu'un seul écart dépasse la borne. Les
-références XG portent sur deux matchs — l'un complet (317 décisions comptées,
-156 et 161 par joueur), l'autre réduit à son seul PR, avec une borne portée à
-0,15 à cause d'un coup non apparié ; les références gnuBG portent sur deux
-autres matchs. La version d'eXtreme Gammon qui a produit ces chiffres n'est pas
-enregistrée.
+références XG portent sur cinq matchs en 7 points, les deux joueurs de chacun ;
+les références gnuBG sur deux d'entre eux. La version d'eXtreme Gammon qui a
+produit ces chiffres n'est pas enregistrée.
 
-Comparaison XG ↔ blunderDB (même moteur d'analyse)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Comparaison XG ↔ blunderDB (même analyse)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-+---------------------+------------------+
-| Métrique            | Écart maximal    |
-+=====================+==================+
-| Décisions totales   | ≤ 5              |
-+---------------------+------------------+
-| Coups non-forcés    | ≤ 7              |
-+---------------------+------------------+
-| PR                  | ≤ 0.10           |
-+---------------------+------------------+
-| Perte MWC           | ≤ 1.0 pp         |
-+---------------------+------------------+
-| Equity total (EMG)  | ≤ 0.05           |
-+---------------------+------------------+
+Hors écarts résiduels ci-dessous, les comptes de décisions — coups de pions,
+doubles, prises, décisions de videau proches — sont **exacts**. Les écarts
+restants sont ceux de l'affichage
+d'XG, qui arrondit ce que blunderDB additionne au millipoint :
+
++------------------------------------+------------------+
+| Métrique                           | Écart maximal    |
++====================================+==================+
+| Décisions comptées                 | 0                |
++------------------------------------+------------------+
+| PR                                 | ≤ 0,02           |
++------------------------------------+------------------+
+| Perte MWC (totale, pions, doubles, | ≤ 0,06 point     |
+| réponses)                          |                  |
++------------------------------------+------------------+
+| Erreur d'équité (EMG)              | ≤ 0,004          |
++------------------------------------+------------------+
+
+Écarts résiduels connus
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Quatre joueurs des matchs de référence s'écartent davantage, chacun pour une
+cause qui tient à ce que le fichier ne transporte pas :
+
+* **Coup non analysé** (deux joueurs). XG écrit, pour un coup qu'il n'a pas
+  noté, une erreur de −1000 et le laisse hors du compte ; cette valeur n'est
+  pas lue à l'import, et blunderDB note le coup à partir des candidats
+  stockés. blunderDB compte une décision de plus ; le PR s'écarte jusqu'à
+  0,09, la perte MWC jusqu'à 0,45 point.
+* **Sortie jugée hors du fichier** (un joueur). XG compte comme décision une
+  sortie dont les candidats stockés couvrent tous les coups légaux à la même
+  équité : il l'a jugée sur des évaluations que le fichier ne garde pas.
+  blunderDB compte une décision de moins ; le PR s'écarte de 0,02.
+* **Somme des erreurs de pions** (un joueur). Les comptes et le videau
+  concordent ; la somme des erreurs des coups stockés dépasse de quelques
+  millipoints le total de pions d'XG (2,150 contre 2,147).
 
 Comparaison gnuBG ↔ blunderDB (import SGF — moteurs différents)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -254,11 +250,13 @@ Comparaison gnuBG ↔ blunderDB (import SGF — moteurs différents)
 +---------------------+----------------+------------------------------+
 | Métrique            | Écart maximal  | Cause principale             |
 +=====================+================+==============================+
-| PR (checker)        | ≤ 0.20         | equity cross-engine          |
+| PR (pions)          | ≤ 0,40         | règle des coups forcés,      |
+|                     |                | équités entre moteurs        |
 +---------------------+----------------+------------------------------+
-| Perte MWC           | ≤ 3.5 pp       | close-cube SGF incomplet     |
+| Perte MWC           | ≤ 3,5 points   | videau proche incomplet      |
+|                     |                | dans le SGF                  |
 +---------------------+----------------+------------------------------+
-| Snowie ER           | ≤ 0.50         | forcés sans analyse (SGF)    |
+| Snowie ER           | ≤ 0,50         | forcés sans analyse (SGF)    |
 +---------------------+----------------+------------------------------+
 
 .. note::
@@ -275,9 +273,9 @@ Valider vos propres chiffres
 Si vos valeurs PR ou MWC divergent des chiffres XG, vérifier les points
 suivants :
 
-1. **Analyses complètes** — Le PR ne peut être calculé que sur les positions
-   disposant d'une analyse. Des positions sans analyse sont comptées comme
-   erreur zéro mais n'entrent pas dans :math:`N_\text{compté}`.
+1. **Analyses complètes** — Le PR ne peut être calculé que sur les décisions
+   disposant d'une analyse. Un coup que l'analyse ne note pas n'entre ni au
+   numérateur ni dans :math:`N_\text{compté}`.
 
 2. **Version XG** — XG peut changer ses calculs entre versions. blunderDB
    s'aligne sur le comportement observé des versions récentes.
@@ -294,11 +292,12 @@ suivants :
 Référence gnuBG
 ---------------
 
-Les formules ont été vérifiées dans les fichiers source suivants (dépôt gnuBG) :
+Les formules de gnuBG citées sur cette page se trouvent dans les fichiers
+source suivants (dépôt gnuBG) :
 
-- ``gnubg/formatgs.c:399–409`` — PR (« Error rate per decision »).
+- ``gnubg/formatgs.c:399–409`` — taux d'erreur par décision (« Error rate per decision »).
 - ``gnubg/formatgs.c:415–424`` — Snowie Error Rate.
-- ``gnubg/analysis.c:458–462`` — Accumulation checker, exclusion des forcés (``cMoves > 1``).
+- ``gnubg/analysis.c:458–462`` — Accumulation pions, exclusion des forcés (``cMoves > 1``).
 - ``gnubg/analysis.c:1430–1474`` — Conversion EMG → MWC par décision.
 - ``gnubg/analysis.c:1449–1464`` — Accumulation de la perte MWC (``eq2mwc``).
-- ``gnubg/eval.c:5088–5100`` — Prédicat ``isCloseCubedecision`` (seuil 0.16).
+- ``gnubg/eval.c:5088–5100`` — Prédicat ``isCloseCubedecision``.
