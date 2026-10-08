@@ -423,7 +423,7 @@ func legacyComputeStats(d *Database, filter StatsFilter) (*StatsResult, error) {
 	recentRows, err := d.db.Query(
 		`SELECT (`+statsErrExpr+`) as err `+
 			statsBaseJoin+whereSQL+
-			` ORDER BY m.match_date DESC, mv.move_number DESC LIMIT ?`,
+			` ORDER BY m.match_date DESC, g.game_number DESC, mv.move_number DESC, mv.id DESC LIMIT ?`,
 		append(baseArgs, maxN)...,
 	)
 	if err != nil {
@@ -462,7 +462,7 @@ func legacyComputeStats(d *Database, filter StatsFilter) (*StatsResult, error) {
 			` COALESCE(m.tournament_id, 0), m.id,` +
 			` ` + sqlshared.ActionLabelOrEmptySQL("a.best_cube_action") + `, p.decision_type, p.id ` +
 			statsBaseJoin + whereSQL +
-			` ORDER BY m.match_date DESC, mv.move_number DESC`
+			` ORDER BY m.match_date DESC, g.game_number DESC, mv.move_number DESC, mv.id DESC`
 
 		mwcRows, mwcErr := d.db.Query(mwcPassSQL, baseArgs...)
 		if mwcErr != nil {
@@ -603,7 +603,7 @@ func buildSelectionWhereClause(sel SelectionSpec) (whereAdd string, orderLimit s
 		whereAdd = " AND m.id = ?"
 		args = append(args, sel.MatchID)
 	case "last_n":
-		orderLimit = "ORDER BY m.match_date DESC, mv.move_number DESC LIMIT ?"
+		orderLimit = "ORDER BY m.match_date DESC, g.game_number DESC, mv.move_number DESC, mv.id DESC LIMIT ?"
 		args = append(args, sel.LastN)
 	case "position":
 		whereAdd = " AND p.id = ?"

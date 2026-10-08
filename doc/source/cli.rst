@@ -1328,7 +1328,7 @@ filtre de provenance, qui porte sur chaque décision.
    ./blunderdb list --type stats --db base.db --player "Alice" --min-depth 3
 
 **stats progression** — Le PR de chaque match par ordre de date, le PR de
-chaque tournoi et le PR glissant sur les N derniers matchs : l'onglet
+chaque tournoi et le PR glissant sur les N dernières décisions : l'onglet
 *Progression* du panneau Stats (voir :ref:`stats`).
 
 .. code-block:: bash

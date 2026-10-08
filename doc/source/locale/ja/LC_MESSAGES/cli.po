@@ -2481,10 +2481,10 @@ msgstr ""
 #: ../../source/cli.rst:1330
 msgid ""
 "**stats progression** — Le PR de chaque match par ordre de date, le PR de"
-" chaque tournoi et le PR glissant sur les N derniers matchs : l'onglet "
+" chaque tournoi et le PR glissant sur les N dernières décisions : l'onglet "
 "*Progression* du panneau Stats (voir :ref:`stats`)."
 msgstr ""
-"**stats progression** — 各マッチの PR を日付順に、各トーナメントの PR と直近 N マッチの移動 PR "
+"**stats progression** — 各マッチの PR を日付順に、各トーナメントの PR と直近 N 件の判断の移動 PR "
 "を表示します。Stats パネルの *Progression* タブに相当します(:ref:`stats` を参照)。"
 
 #: ../../source/cli.rst:1340

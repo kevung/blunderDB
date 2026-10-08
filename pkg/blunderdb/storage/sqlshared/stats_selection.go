@@ -34,7 +34,7 @@ var selectionCols = []struct{ alias, cols string }{
 	{"p", "id, decision_type, cube_value, game_phase, game_type, match_length, score_1, score_2"},
 	{"a", "position_id, analysis_depth, analysis_engine, best_cube_action, best_move_equity_error, cube_error, is_close_cube, is_forced, met_id"},
 	{"mv", "id, position_id, game_id, cube_action, luck_mp, move_number, player"},
-	{"g", "id, match_id"},
+	{"g", "id, match_id, game_number"},
 }
 
 // selectionTable is the flat copy; selectionJoin the FROM clause that reads it.

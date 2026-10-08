@@ -2727,11 +2727,11 @@ msgstr ""
 #: ../../source/cli.rst:1330
 msgid ""
 "**stats progression** — Le PR de chaque match par ordre de date, le PR de"
-" chaque tournoi et le PR glissant sur les N derniers matchs : l'onglet "
+" chaque tournoi et le PR glissant sur les N dernières décisions : l'onglet "
 "*Progression* du panneau Stats (voir :ref:`stats`)."
 msgstr ""
 "**stats progression** — PR каждого матча в порядке дат, PR каждого "
-"турнира и скользящий PR по последним N матчам: вкладка *Progression* "
+"турнира и скользящий PR по последним N решениям: вкладка *Progression* "
 "панели Stats (см. :ref:`stats`)."
 
 #: ../../source/cli.rst:1340

@@ -236,7 +236,7 @@ func buildSelectionWhereClause(d Dialect, sel storage.SelectionSpec) (whereAdd s
 		whereAdd = " AND m.id = ?"
 		args = append(args, sel.MatchID)
 	case "last_n":
-		orderLimit = "ORDER BY m.match_date DESC, mv.move_number DESC LIMIT ?"
+		orderLimit = "ORDER BY m.match_date DESC, g.game_number DESC, mv.move_number DESC, mv.id DESC LIMIT ?"
 		args = append(args, sel.LastN)
 	case "position":
 		whereAdd = " AND p.id = ?"
