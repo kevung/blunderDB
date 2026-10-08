@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-08 20:41+0200\n"
+"POT-Creation-Date: 2026-10-08 20:50+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -327,21 +327,23 @@ msgstr ""
 
 #: ../../source/metriques.rst:161
 msgid ""
-"**Définition.** ℓ (:ref:`metrique_erreur`) pour chaque décision notée ; "
-"la perte d'un joueur sur le match est Σℓ sur ses décisions comptées au "
-"PR. Les non-décisions coûtent zéro : elles ne changent pas la somme."
+"**Définition.** ℓ (:ref:`metrique_erreur`) pour chaque décision comptée "
+"au PR ; la perte d'un joueur sur le match est Σℓ sur ces décisions. Une "
+"décision hors du compte (coup forcé, pas de double hors de la fenêtre) "
+"n'a pas de ℓ : elle n'aurait de toute façon rien coûté, ou presque."
 msgstr ""
-"**定義。** 評価された判断ごとの ℓ (:ref:`metrique_erreur`)。マッチでのプレイヤーの損失は、PR "
-"にカウントされた判断についての Σℓ です。判断でないものはコストがゼロで、合計を変えません。"
+"**定義。**\\ ℓ(:ref:`metrique_erreur`)を PR "
+"に数えられる各判断について求めます。マッチにおけるプレイヤーの損失は、これらの判断にわたる Σℓ "
+"です。集計対象外の判断(強制手、ウィンドウ外のノーダブル)には ℓ がありません。いずれにせよ、損失はゼロかほぼゼロだからです。"
 
-#: ../../source/metriques.rst:165
+#: ../../source/metriques.rst:166
 #, no-python-format
 msgid ""
 "**Unité.** Un pourcentage de chances de gagner le match : 2,5 veut dire "
 "2,5 % de MWC perdus."
 msgstr "**単位。** マッチ勝率のパーセンテージ。2.5 は MWC を 2.5 % 失ったことを意味します。"
 
-#: ../../source/metriques.rst:168
+#: ../../source/metriques.rst:169
 msgid ""
 "**Lecture.** La colonne **MWC** de la transcription, la barre par "
 "décision et la courbe cumulée de chaque joueur sont décrites au "
@@ -352,13 +354,13 @@ msgstr ""
 "**読み方。** トランスクリプトの **MWC** 列、判断ごとのバー、各プレイヤーの累積曲線は :ref:`panneau_matchs` "
 "で説明しています。突出して高い孤立したバーは見直すべき判断です。着実に上昇する曲線は、事故ではなく平均的な誤差が重なったマッチを表します。"
 
-#: ../../source/metriques.rst:173
+#: ../../source/metriques.rst:174
 msgid ""
 "**Incertitude.** ℓ est exact au regard de l'analyse : son incertitude est"
 " celle de l'analyse elle-même (profondeur, rollout ou non) et de la MET."
 msgstr "**不確実性。** ℓ は解析に対して正確です。その不確実性は解析自体（深さ、ロールアウトの有無）と MET の不確実性です。"
 
-#: ../../source/metriques.rst:176
+#: ../../source/metriques.rst:177
 msgid ""
 "**Limites.** ℓ dépend de la MET : deux logiciels qui n'utilisent pas la "
 "même table ne donnent pas la même perte. Une partie d'argent n'en a pas, "
@@ -370,23 +372,27 @@ msgstr ""
 "つのソフトウェアは同じ損失を出しません。マネーゲームにはなく、データベースと異なる MET "
 "で計算された解析は統計の対象外のままです。評価されていない判断にはハイフンが付き、ゼロにはなりません。"
 
-#: ../../source/metriques.rst:181
+#: ../../source/metriques.rst:182
 msgid ""
 "**XG et gnuBG.** La somme est la perte de MWC qu'XG affiche pour le match"
 " : pions, doubles et réponses concordent sur les matchs de référence à la"
-" précision d'affichage d'XG (écart ≤ 0,006 point). gnuBG fait la même "
-"conversion, avec ses propres équités : sur un match qu'il a analysé, ses "
-"chiffres diffèrent de ceux d'XG par l'analyse, pas par la formule."
+" précision d'affichage d'XG (écart borné à 0,06 point de pourcentage par "
+"la suite de tests), hormis les joueurs aux écarts résiduels connus de "
+":ref:`stats_parity`, jusqu'à 0,45 point. gnuBG fait la même conversion, "
+"avec ses propres équités : sur un match qu'il a analysé, ses chiffres "
+"diffèrent de ceux d'XG par l'analyse, pas par la formule."
 msgstr ""
-"**XG と gnuBG。** 合計は XG がマッチについて表示する MWC 損失です。チェッカー、ダブル、応答は、基準マッチで XG "
-"の表示精度の範囲で一致します（差 ≤ 0.006 点）。gnuBG も自分のエクイティで同じ変換を行います。解析したマッチでは、その数値が XG "
-"と異なるのは式ではなく解析によるものです。"
+"**XG と gnuBG。**\\ この合計は、XG がマッチについて表示する MWC "
+"損失です。基準マッチでは、チェッカームーブ、ダブル、応答のいずれも XG の表示精度で一致します(差はテストスイートにより 0.06 "
+"パーセントポイント以内)。ただし、:ref:`stats_parity` に記載の既知の残差があるプレイヤーは例外で、最大 0.45 "
+"ポイントです。gnuBG も独自のエクイティで同じ換算を行います。gnuBG が解析したマッチでは、XG "
+"との数値の違いは公式ではなく解析によるものです。"
 
-#: ../../source/metriques.rst:191
+#: ../../source/metriques.rst:194
 msgid "Perte MWC (éq. 7 pts) L₇ et Elo face au moteur"
 msgstr "MWC 損失（7 点等価）L₇ とエンジンに対する Elo"
 
-#: ../../source/metriques.rst:193
+#: ../../source/metriques.rst:196
 msgid ""
 "**La question.** Combien de match ai-je perdu par mes erreurs, quelle que"
 " soit la façon de compter les décisions, et comment comparer un match en "
@@ -397,7 +403,7 @@ msgstr ""
 "**問い。** 判断の数え方にかかわらず、自分の誤りでマッチをどれだけ失ったか。5 点マッチと 11 点マッチをどう比較するか。L₇ "
 "は判断数で割りません。簡単な判断を足しても操作できず、各誤差をそれが実際に失ったとおりに重みづけます。"
 
-#: ../../source/metriques.rst:199
+#: ../../source/metriques.rst:202
 msgid ""
 "**Définition.** Sous jeu parfait, les chances de gagner le match évoluent"
 " sans biais : contre un adversaire parfait, un joueur qui perd L de MWC "
@@ -410,7 +416,7 @@ msgstr ""
 "0.5 − L の勝率を保ちます。FIBS の式のモデルによれば、実力が同じなら損失は長さ N の平方根に比例して増えます。そこで L "
 "を、トーナメントで最も一般的な長さである 7 点マッチに換算します。"
 
-#: ../../source/metriques.rst:205
+#: ../../source/metriques.rst:208
 msgid ""
 "L_7 = L \\times \\sqrt{7 / N}\n"
 "\\qquad\n"
@@ -420,45 +426,48 @@ msgstr ""
 "\\qquad\n"
 "L_7^\\text{agrégat} = \\sqrt{7} \\times \\frac{\\sum L}{\\sum \\sqrt{N}}"
 
-#: ../../source/metriques.rst:211
+#: ../../source/metriques.rst:214
 msgid ""
 "L'agrégat (plusieurs matchs, un joueur, un tournoi) additionne les pertes"
 " et les racines des longueurs avant le rapport : un match en 7 points "
 "pèse plus qu'un match en 1 point, et un seul match rend sa propre valeur."
-" Sans filtre joueur, les deux sièges d'un match sont deux unités."
+" Sans filtre joueur, les deux sièges d'un match pèsent chacun √N, mais "
+"forment une seule unité de l'intervalle."
 msgstr ""
-"集計（複数のマッチ、1 人のプレイヤー、トーナメント）は、損失と長さの平方根をそれぞれ合計してから比を取ります。7 点マッチは 1 "
-"点マッチより重く、1 マッチだけなら自身の値を返します。プレイヤーフィルタがない場合、マッチの 2 つの席は 2 つの単位として扱います。"
+"集計(複数のマッチ、1 人のプレイヤー、1 つのトーナメント)は、比を取る前に損失と長さの平方根をそれぞれ合算します。7 ポイントマッチは 1 "
+"ポイントマッチより重く、単一マッチはそのマッチ自身の値を返します。プレイヤーフィルターがない場合、マッチの 2 つの席はそれぞれ √N "
+"の重みを持ちますが、区間では 1 単位として扱われます。"
 
-#: ../../source/metriques.rst:216
+#: ../../source/metriques.rst:220
 msgid "**L'Elo face au moteur** inverse la formule FIBS à 7 points :"
 msgstr "**エンジンに対する Elo** は、FIBS の式を 7 点で逆算します。"
 
-#: ../../source/metriques.rst:218
-msgid ""
-"D = \\frac{2000}{\\sqrt{7}} \\log_{10} \\frac{q}{1 - q}, \\qquad q = "
-"0{,}5 - L_7"
-msgstr ""
-"D = \\frac{2000}{\\sqrt{7}} \\log_{10} \\frac{q}{1 - q}, \\qquad q = "
-"0{,}5 - L_7"
-
 #: ../../source/metriques.rst:222
 msgid ""
-"Linéarisé, D ≈ −3474 × L / √N. Au-delà de L₇ ≈ 49 %, q n'a plus d'inverse"
-" fini : q est plancher à 1 % (D ≥ −1509) et l'Elo est affiché « ≤ ». L₇, "
-"lui, n'a pas de plancher. Les deux classent les joueurs dans le même "
-"ordre."
+"D = \\frac{2000}{\\sqrt{7}} \\log_{10} \\frac{q}{1 - q}, \\qquad q = "
+"0{,}5 - L_7"
 msgstr ""
-"線形化すると D ≈ −3474 × L / √N です。L₇ ≈ 49 % を超えると q は有限の逆を持たなくなります。q は下限 1 % "
-"(D ≥ −1509) に切り詰められ、Elo は「≤」付きで表示されます。L₇ には下限がありません。どちらもプレイヤーを同じ順序に並べます。"
+"D = \\frac{2000}{\\sqrt{7}} \\log_{10} \\frac{q}{1 - q}, \\qquad q = "
+"0{,}5 - L_7"
 
 #: ../../source/metriques.rst:226
+msgid ""
+"Linéarisé, D ≈ −3474 × L / √N. À L₇ ≥ 50 %, q n'a plus d'inverse fini ; "
+"dès L₇ > 49 %, q est plancher à 1 % (D ≥ −1509) et l'Elo est affiché « ≤ "
+"». L₇, lui, n'a pas de plancher. Les deux classent les joueurs dans le "
+"même ordre."
+msgstr ""
+"線形化すると D ≈ −3474 × L / √N です。L₇ ≥ 50 % では q に有限の逆関数がありません。L₇ > 49 % から q "
+"は 1 % を下限とし(D ≥ −1509)、Elo は「≤」付きで表示されます。L₇ "
+"自体に下限はありません。どちらも同じ順序でプレイヤーを並べます。"
+
+#: ../../source/metriques.rst:230
 msgid ""
 "**Unité.** L₇ : un pourcentage de MWC. D : des points Elo, négatifs, "
 "l'écart attendu entre le joueur et le moteur."
 msgstr "**単位。** L₇：MWC のパーセンテージ。D：Elo ポイント。負の値で、プレイヤーとエンジンの間の期待される差です。"
 
-#: ../../source/metriques.rst:229
+#: ../../source/metriques.rst:233
 #, no-python-format
 msgid ""
 "**Lecture.** 12,3 % : au lieu de 50 % de chances contre le moteur, le "
@@ -470,7 +479,7 @@ msgstr ""
 "しかなかったということです。バッジ、詳細、統計、トーナメント、進捗に表示されます (:ref:`MWC 損失（7 点等価） "
 "<perte_mwc_7pts>`)。"
 
-#: ../../source/metriques.rst:234
+#: ../../source/metriques.rst:238
 msgid ""
 "**Incertitude.** Intervalle à 95 % par les parties pour un match, par les"
 " matchs pour un agrégat (:ref:`metrique_intervalles`), puis même "
@@ -481,7 +490,7 @@ msgstr ""
 "**不確実性。** 1 マッチではゲーム、集計ではマッチによる 95 % 区間 (:ref:`metrique_intervalles`) "
 "で、値と同じ変換を適用します。統計のマッチごとの行には区間がありません。単位が 1 つだからです。マッチの総括がゲームによる区間を示します。"
 
-#: ../../source/metriques.rst:240
+#: ../../source/metriques.rst:244
 msgid ""
 "**Limites.** Le modèle en √N est approximatif sous 7 points et autour du "
 "Crawford. L₇ dépend de la MET. Une partie d'argent n'a pas de longueur, "
@@ -493,7 +502,7 @@ msgstr ""
 "もなく、画面は数値を表示する代わりにそのことを伝えます。実際のプレイヤーは半マッチ以上を失うことがあります。形勢が逆転した後の誤りが積み重なるためで、その場合"
 " Elo は下限に達します。"
 
-#: ../../source/metriques.rst:246
+#: ../../source/metriques.rst:250
 msgid ""
 "**XG et gnuBG.** Pour un match en 7 points, L₇ est exactement la perte de"
 " MWC qu'affiche XG. Aucun des deux logiciels ne ramène la perte à une "
@@ -504,11 +513,11 @@ msgstr ""
 "損失そのものです。どちらのソフトウェアも、損失を基準の長さに換算したり Elo に変換したりしません。この Elo "
 "はエンジンとの差を測るもので、人間のプレイヤー間の FIBS や BMAB のレーティングではありません。"
 
-#: ../../source/metriques.rst:255
+#: ../../source/metriques.rst:259
 msgid "Difficulté, erreurs évitables, excès et ratio"
 msgstr "難易度、回避可能な誤り、超過、比"
 
-#: ../../source/metriques.rst:257
+#: ../../source/metriques.rst:261
 #, no-python-format
 msgid ""
 "**La question.** Cette erreur était-elle pardonnable ? Une même perte de "
@@ -522,7 +531,7 @@ msgstr ""
 "**問い。** この誤りは許容できるものだったか。同じ 2 % の損失でも、自明な局面では不注意であり、4 つの手が千分の 1 "
 "の差で並ぶ局面ではどんな上級者でもする誤りです。学習のために、難易度は誤りを仕分けします。回避可能な誤り（不注意、覚え違いの規則）はすぐ直せるので先に扱い、難しい判断での損失は基礎的な取り組みの対象です。"
 
-#: ../../source/metriques.rst:264
+#: ../../source/metriques.rst:268
 msgid ""
 "**Définition.** La difficulté d est la perte qu'aurait subie en moyenne, "
 "dans la même position, un **joueur de référence** qui choisit chaque "
@@ -531,7 +540,7 @@ msgstr ""
 "**定義。** 難易度 d は、同じ局面で\\ **基準プレイヤー**\\ が平均して被る損失です。基準プレイヤーは各選択肢 i "
 "を、コストが高いほど低い確率で選びます。"
 
-#: ../../source/metriques.rst:268
+#: ../../source/metriques.rst:272
 msgid ""
 "\\pi(i) = \\frac{e^{-\\Delta_i/\\tau}}{\\sum_j e^{-\\Delta_j/\\tau}},\n"
 "\\qquad d = \\sum_i \\pi(i)\\,\\Delta_i,\n"
@@ -541,7 +550,7 @@ msgstr ""
 "\\qquad d = \\sum_i \\pi(i)\\,\\Delta_i,\n"
 "\\qquad \\tau = 0{,}025"
 
-#: ../../source/metriques.rst:274
+#: ../../source/metriques.rst:278
 msgid ""
 "Δᵢ est le coût de l'option i par rapport à la meilleure, en équité "
 "normalisée. Les options sont les candidats de l'analyse pour un coup de "
@@ -555,7 +564,7 @@ msgstr ""
 "(最善の応答に対する)、ダブルを受ける側ではテイクとパスです。d は ℓ と同様に MWC "
 "に換算されるため、両者は同じ単位であり、指した選択肢のコストはちょうど ℓ です。"
 
-#: ../../source/metriques.rst:281
+#: ../../source/metriques.rst:285
 #, no-python-brace-format
 msgid ""
 "τ = 0,025 est un a priori de joueur fort : sur deux options séparées de "
@@ -568,7 +577,7 @@ msgstr ""
 "0.032 付近、つまり「疑問手」と「誤り」の間で最大になります。差 0.1 では 0.002 にしかなりません。0.01 間隔の 5 つの候補は"
 " d ≈ 0.012 となり、PR 6 程度のプレイヤーの平均誤差にあたります。"
 
-#: ../../source/metriques.rst:286
+#: ../../source/metriques.rst:290
 msgid ""
 "**Erreur évitable** : la perte atteint le seuil Erreur de la base et d ≤ "
 "ℓ / 10 — sur deux options, le joueur de référence ne la commettrait pas "
@@ -577,13 +586,13 @@ msgstr ""
 "**回避可能な誤り**：損失がデータベースの誤り閾値に達し、かつ d ≤ ℓ / 10 であるもの。2 つの選択肢では、基準プレイヤーは 10 "
 "回に 1 回もその誤りをしません。"
 
-#: ../../source/metriques.rst:289
+#: ../../source/metriques.rst:293
 msgid ""
 "**Excès** d'un joueur sur un match : Σ(ℓ − d), ce qu'il a perdu au-delà "
 "de la référence (négatif quand il a fait mieux)."
 msgstr "マッチにおけるプレイヤーの\\ **超過**：Σ(ℓ − d)。基準を超えて失った量です（基準より良かった場合は負）。"
 
-#: ../../source/metriques.rst:291
+#: ../../source/metriques.rst:295
 #, no-python-format
 msgid ""
 "**Ratio** : Σℓ / Σd ; 1 veut dire « joue comme la référence », 2 « perd "
@@ -593,21 +602,24 @@ msgstr ""
 "**比**：Σℓ / Σd。1 は「基準と同じようにプレイ」、2 は「2 倍失う」を意味します。Σd < 0.5 % MWC "
 "の場合は示しません。簡単すぎるマッチではノイズしか測れないためで、超過は残ります。"
 
-#: ../../source/metriques.rst:295
-msgid ""
-"**Ce qui compte.** Les décisions dont la perte est notée et convertie en "
-"MWC ; ailleurs la difficulté est absente, jamais nulle. Aucun seuil ne "
-"met à part une décision évidente ou forcée : sa difficulté est proche de "
-"zéro d'elle-même."
-msgstr ""
-"**対象となるもの。** 損失が評価され MWC "
-"に換算された判断。それ以外では難易度は存在せず、ゼロにはなりません。自明な判断や強制された判断を別扱いする閾値はありません。その難易度は自然にゼロに近くなります。"
-
 #: ../../source/metriques.rst:299
+msgid ""
+"**Ce qui compte.** Les décisions comptées au PR dont la perte est notée "
+"et convertie en MWC ; ailleurs la difficulté est absente, jamais nulle. "
+"Un coup forcé ou un pas de double hors de la fenêtre du PR n'a donc ni "
+"perte ni difficulté. Parmi les décisions comptées, aucun seuil "
+"supplémentaire ne met à part une décision évidente : sa difficulté est "
+"proche de zéro d'elle-même."
+msgstr ""
+"**対象。**\\ PR に数えられる判断のうち、損失が評価されて MWC "
+"に換算されるものです。それ以外では難易度は存在せず、ゼロになることもありません。したがって、強制手や PR "
+"のウィンドウ外のノーダブルには、損失も難易度もありません。数えられる判断の中で、自明な判断を別扱いする追加のしきい値はありません。その難易度は、もともとゼロに近いからです。"
+
+#: ../../source/metriques.rst:305
 msgid "**Unité.** d et l'excès : un pourcentage de MWC. Le ratio : sans unité."
 msgstr "**単位。** d と超過：MWC のパーセンテージ。比：単位なし。"
 
-#: ../../source/metriques.rst:301
+#: ../../source/metriques.rst:307
 msgid ""
 "**Lecture.** Une perte bien au-dessus de sa difficulté est une faute que "
 "la position n'excusait pas ; une perte proche de sa difficulté, une faute"
@@ -618,13 +630,13 @@ msgstr ""
 "**読み方。** 難易度を大きく上回る損失は、局面が許さなかった誤りです。難易度に近い損失は、誰にでも起こりうる誤りです。超過と比は PR "
 "を出会った局面の難易度で補正するため、一部は相手のスタイルを補正することにもなります (:ref:`panneau_matchs`)。"
 
-#: ../../source/metriques.rst:306
+#: ../../source/metriques.rst:312
 msgid ""
 "**Incertitude.** Sur un match, excès et ratio reposent sur peu de "
 "décisions et varient beaucoup : une tendance, pas un classement."
 msgstr "**不確実性。** 1 マッチでは、超過と比は少数の判断に基づき大きく変動します。順位ではなく傾向を示します。"
 
-#: ../../source/metriques.rst:309
+#: ../../source/metriques.rst:315
 msgid ""
 "**Limites.** La difficulté dépend d'un modèle de joueur et de τ, fixés "
 "une fois : les changer change tous les chiffres. Elle ne connaît que les "
@@ -637,7 +649,7 @@ msgstr ""
 "では数個、gnuBG ではフィルタ次第）しか知らないため、欠けた選択肢は重みを持たず、d "
 "は下限になります。特に深さが浅い場合、解析の誤差を引き継ぎます。"
 
-#: ../../source/metriques.rst:315
+#: ../../source/metriques.rst:321
 msgid ""
 "**XG et gnuBG.** Ni l'un ni l'autre ne calcule de difficulté. L'idée "
 "vient des indices de vraisemblance des échecs (Regan) ; τ n'est pas "
@@ -646,11 +658,11 @@ msgstr ""
 "**XG と gnuBG。** どちらも難易度を計算しません。考え方はチェスの尤度指標 (Regan) に由来します。τ "
 "はプレイヤー集団で較正されていません。"
 
-#: ../../source/metriques.rst:323
+#: ../../source/metriques.rst:329
 msgid "Intervalles à 95 %"
 msgstr "95 % 区間"
 
-#: ../../source/metriques.rst:325
+#: ../../source/metriques.rst:331
 msgid ""
 "**La question.** Ce chiffre dit-il quelque chose, ou est-ce du bruit ? Un"
 " PR de 4,2 sur un match et un PR de 4,2 sur quarante matchs ne valent pas"
@@ -660,7 +672,7 @@ msgstr ""
 "**問い。** この数値は何かを語っているのか、それともノイズか。1 マッチでの PR 4.2 と 40 マッチでの PR 4.2 "
 "は同じ価値ではありません。区間は、何の根拠もないセルに学習計画を立てたり、1 マッチから順位を読み取ったりするのを防ぎます。"
 
-#: ../../source/metriques.rst:330
+#: ../../source/metriques.rst:336
 msgid ""
 "**Définition.** L'intervalle rééchantillonne la plus grande unité "
 "indépendante : les **parties** d'un match, les **matchs** d'un agrégat "
@@ -675,7 +687,7 @@ msgstr ""
 "L₇)。同じマッチのゲームは、相手、セッション、疲労を共有します。集計でそれらを別々に再標本化すると、区間が不当に狭くなります。プレイヤーフィルタがない場合、マッチの"
 " 2 つの席は同じ局面をプレイするので、1 つの単位になります。"
 
-#: ../../source/metriques.rst:338
+#: ../../source/metriques.rst:344
 msgid ""
 "**La formule.** Pour un rapport R = Σeᵤ / Σnᵤ sur G unités (eᵤ la somme "
 "des erreurs, nᵤ le nombre de décisions de l'unité), la variance du "
@@ -684,7 +696,7 @@ msgstr ""
 "**式。** G 個の単位についての比 R = Σeᵤ / Σnᵤ (eᵤ は単位の誤差の和、nᵤ はその判断数) "
 "では、ブートストラップの分散を抽出なしで計算します。"
 
-#: ../../source/metriques.rst:342
+#: ../../source/metriques.rst:348
 msgid ""
 "\\widehat{\\mathrm{Var}}(R) = \\frac{G}{G-1} \\cdot\n"
 "\\frac{\\sum_u (e_u - R\\,n_u)^2}{\\left(\\sum_u n_u\\right)^2}"
@@ -692,7 +704,7 @@ msgstr ""
 "\\widehat{\\mathrm{Var}}(R) = \\frac{G}{G-1} \\cdot\n"
 "\\frac{\\sum_u (e_u - R\\,n_u)^2}{\\left(\\sum_u n_u\\right)^2}"
 
-#: ../../source/metriques.rst:347
+#: ../../source/metriques.rst:353
 msgid ""
 "et l'intervalle vaut R ± 1,96 × √Var, la borne basse jamais sous 0, puis "
 "la même transformation que la valeur (× 500 pour le PR). Le L₇ d'un "
@@ -707,7 +719,7 @@ msgstr ""
 "Σ(l_g − l̄)² です（l_g はゲーム g の損失）。計算は決定的で、同じデータベースは 2 "
 "つのストレージエンジンのどちらでも常に同じ区間を与えます。"
 
-#: ../../source/metriques.rst:355
+#: ../../source/metriques.rst:361
 msgid ""
 "**Ce qu'il faut.** Au moins **trois unités** et une largeur non nulle. "
 "Avec deux, la dispersion repose sur un seul degré de liberté et "
@@ -719,29 +731,29 @@ msgstr ""
 "に依存し、区間は数倍狭くなってしまいます。すべての単位が同じ比であることは、それらが一致していることを示すだけで、値が正確であることを示しません。区間がない場合、セルはグレー表示になり、サンプル数は見えるままです"
 " (:ref:`stats`)。"
 
-#: ../../source/metriques.rst:361
+#: ../../source/metriques.rst:367
 msgid ""
 "**Lecture.** Deux intervalles qui se chevauchent largement ne départagent"
 " rien. Une famille dont l'intervalle reste au-dessus de votre PR global "
 "est une faiblesse établie."
 msgstr "**読み方。** 大きく重なる 2 つの区間は何も区別しません。区間が全体の PR を上回ったままのファミリーは、確かな弱点です。"
 
-#: ../../source/metriques.rst:365
+#: ../../source/metriques.rst:371
 msgid ""
 "**Limites.** L'approximation normale est grossière sur peu d'unités, et "
 "les erreurs ont une distribution asymétrique (quelques grosses fautes) : "
 "avec trois ou quatre unités, l'intervalle est indicatif."
 msgstr "**限界。** 単位が少ないと正規近似は粗く、誤差の分布は非対称です（少数の大きな誤り）。3 つか 4 つの単位では、区間は目安にすぎません。"
 
-#: ../../source/metriques.rst:369
+#: ../../source/metriques.rst:375
 msgid "**XG et gnuBG.** Aucun des deux ne donne d'intervalle."
 msgstr "**XG と gnuBG。** どちらも区間を示しません。"
 
-#: ../../source/metriques.rst:375
+#: ../../source/metriques.rst:381
 msgid "Bilan du match"
 msgstr "マッチの総括"
 
-#: ../../source/metriques.rst:377
+#: ../../source/metriques.rst:383
 msgid ""
 "**La question.** Après un match : qu'est-ce que je revois, ai-je perdu à "
 "cause des dés ou du jeu, et mes erreurs viennent-elles de la "
@@ -752,7 +764,7 @@ msgstr ""
 "マッチの後、何を見直すべきか。ダイスのせいで負けたのかプレイのせいか。誤りは焦りからか、知識の穴からか。画面：:ref:`マッチの総括 "
 "<bilan_match>`。"
 
-#: ../../source/metriques.rst:381
+#: ../../source/metriques.rst:387
 msgid ""
 "**Trois décisions à revoir.** Parmi les erreurs du joueur (seuil de la "
 "base) dont la perte est chiffrée, les trois de plus grande **part "
@@ -765,13 +777,13 @@ msgstr ""
 " × (1 − d/ℓ) が大きい上位 3 つ。損失に回避可能性を掛けたものです。難易度が不明なら 0 "
 "として扱います。同順位では損失の大きい方、次にマッチ内の順序です。基準プレイヤーもするであろう誤りは、学習時間をかける価値がありません。"
 
-#: ../../source/metriques.rst:388
+#: ../../source/metriques.rst:394
 msgid ""
 "**Résultat ajusté de la chance**, pour un match terminé, en points de MWC"
 " du joueur :"
 msgstr "終了したマッチの\\ **運を調整した結果**。プレイヤーの MWC の点数で表します。"
 
-#: ../../source/metriques.rst:391
+#: ../../source/metriques.rst:397
 #, no-python-brace-format
 msgid ""
 "A = R - C, \\quad R = \\text{issue} - \\mathrm{MWC}_\\text{départ}, "
@@ -784,7 +796,7 @@ msgstr ""
 "C = \\sum \\text{chance de ses jets} - \\sum \\text{chance des jets "
 "adverses}"
 
-#: ../../source/metriques.rst:396
+#: ../../source/metriques.rst:402
 msgid ""
 "L'issue vaut 1 gagné, 0 perdu ; la MWC de départ est celle du score "
 "initial (50 % à 0-0). Chaque jet est converti en MWC comme une perte, au "
@@ -804,7 +816,7 @@ msgstr ""
 "(:ref:`stats_parity`)。運がなければ行はなく、カバレッジ（プレイしたロールに対する測定したロール）が表示されます。部分的な運は"
 " A を偏らせるためです。マネーゲームや未完了のマッチにも行はありません。"
 
-#: ../../source/metriques.rst:406
+#: ../../source/metriques.rst:412
 msgid ""
 "**Erreurs précipitées et réfléchies.** Par joueur et par type (pions, "
 "videau), le seuil est la médiane des durées connues de ses décisions "
@@ -817,7 +829,7 @@ msgstr ""
 "**急いだ誤りと熟考した誤り。** "
 "プレイヤーとタイプ（チェッカー、キューブ）ごとに、閾値はそのマッチでの、そのタイプの評価済み判断の既知の所要時間の中央値です。それより速く指した誤りは急いだ誤り、それ以外は熟考した誤りです。中央値はそのマッチでの自分自身のものなので、ペースには依存しません。速さと誤りに関係がなければ、誤りは半々に分かれます。急いだ誤りが多数なら規律、熟考した誤りが多数なら知識が必要です。"
 
-#: ../../source/metriques.rst:414
+#: ../../source/metriques.rst:420
 msgid ""
 "**Limites.** Un match est un petit échantillon : PR et L₇ y portent leur "
 "intervalle par parties (trois parties au moins). Le résultat ajusté "
@@ -827,7 +839,7 @@ msgstr ""
 "**限界。** 1 マッチは小さな標本です。PR と L₇ にはゲームによる区間が付きます（ゲームは 3 つ以上）。調整後の結果は MET "
 "とファイルの運に依存します。所要時間は、それを保持したマッチ（ボットと指したマッチ）にしか存在しません。"
 
-#: ../../source/metriques.rst:419
+#: ../../source/metriques.rst:425
 msgid ""
 "**XG et gnuBG.** XG et gnuBG affichent la chance totale de chaque joueur,"
 " mais ni résultat ajusté en MWC, ni sélection des décisions à revoir, ni "
@@ -836,11 +848,11 @@ msgstr ""
 "**XG と gnuBG。** XG と gnuBG は各プレイヤーの運の合計を表示しますが、MWC "
 "での調整後の結果も、見直す判断の選択も、所要時間による分割もありません。"
 
-#: ../../source/metriques.rst:427
+#: ../../source/metriques.rst:433
 msgid "Plan d'étude"
 msgstr "学習プラン"
 
-#: ../../source/metriques.rst:429
+#: ../../source/metriques.rst:435
 msgid ""
 "**La question.** Que dois-je travailler maintenant ? Classer ses erreurs "
 "par coût dit où l'on a le plus perdu, pas où l'étude rapporte le plus : "
@@ -851,7 +863,7 @@ msgstr ""
 "今、何に取り組むべきか。誤りをコストで並べると、どこで最も失ったかはわかりますが、どこで学習が最も報われるかはわかりません。本当に難しい局面のファミリーは誰にとってもコストがかかり、3"
 " つの誤りは傾向にはなりません。画面：:ref:`plan_etude`。"
 
-#: ../../source/metriques.rst:434
+#: ../../source/metriques.rst:440
 msgid ""
 "**Définition.** Une **famille** est un triplet (plan de jeu, nature de la"
 " décision, thème) des erreurs récurrentes ; ses membres sont les erreurs "
@@ -864,11 +876,11 @@ msgstr ""
 "です。メンバーはフィルタの誤り、すなわち誤り閾値以上のコストがかかるカウントされた判断です。テーマのない誤りはどのファミリーにも入りません。メンバーは"
 " ℓ と d を持つ場合に\\ **算出済み**\\ です。マネーゲームの誤りは「未算出」としてカウントされ、どの優先度にも入りません。"
 
-#: ../../source/metriques.rst:441
+#: ../../source/metriques.rst:447
 msgid "**La formule.** Le **MWC récupérable** et son intervalle :"
 msgstr "**式。** **回収可能な MWC** とその区間："
 
-#: ../../source/metriques.rst:443
+#: ../../source/metriques.rst:449
 #, no-python-brace-format
 msgid ""
 "R = \\sum_i (\\ell_i - d_i), \\qquad\n"
@@ -877,7 +889,7 @@ msgstr ""
 "R = \\sum_i (\\ell_i - d_i), \\qquad\n"
 "R \\pm 1{,}96 \\sqrt{\\textstyle\\sum_i (\\ell_i - d_i)^2}"
 
-#: ../../source/metriques.rst:448
+#: ../../source/metriques.rst:454
 msgid ""
 "R est la fréquence de la famille multipliée par sa perte moyenne au-delà "
 "de la difficulté : ce qu'on regagnerait en jouant ces positions comme le "
@@ -887,7 +899,7 @@ msgstr ""
 "R "
 "は、ファミリーの頻度に、難易度を超えた平均損失を掛けたものです。基準プレイヤーのようにこれらの局面を指した場合に取り戻せる量です。合計は符号付きで、クリッピングはしません。区間はメンバー数をポアソン計数として扱います。"
 
-#: ../../source/metriques.rst:453
+#: ../../source/metriques.rst:459
 msgid ""
 "**Ce qui entre au plan.** Au moins **5 membres chiffrés** et une **borne "
 "basse strictement positive**. Le plan est classé par borne basse "
@@ -897,11 +909,11 @@ msgstr ""
 "**プランに入るもの。** 少なくとも **5 つの算出済みメンバー**\\ "
 "と、**厳密に正の下限**。プランは下限の降順で並びます。回収可能量が同じなら、より確かなファミリーが先になります。それ以外は「要確認」で、順位はありません。"
 
-#: ../../source/metriques.rst:458
+#: ../../source/metriques.rst:464
 msgid "**Unité.** Un pourcentage de MWC, cumulé sur le filtre."
 msgstr "**単位。** フィルタ全体で累積した MWC のパーセンテージ。"
 
-#: ../../source/metriques.rst:460
+#: ../../source/metriques.rst:466
 msgid ""
 "**Lecture.** Une famille d'erreurs évitables monte ; une famille de "
 "positions où tout le monde se trompe descend. Un nouveau joueur voit "
@@ -911,7 +923,7 @@ msgstr ""
 "**読み方。** "
 "回避可能な誤りのファミリーは上がり、誰もが間違える局面のファミリーは下がります。新しいプレイヤーはまず「要確認」のファミリーを見ます。プランはノイズに向かって押しません。"
 
-#: ../../source/metriques.rst:464
+#: ../../source/metriques.rst:470
 msgid ""
 "**Limites.** Le thème vient du classificateur de blunderDB : une erreur "
 "mal classée tombe dans une mauvaise famille, une erreur sans thème n'est "
@@ -922,15 +934,15 @@ msgstr ""
 "の分類器に由来します。誤って分類された誤りは誤ったファミリーに入り、テーマのない誤りはどこにも入りません。R は ℓ と d "
 "の限界（MET、候補手の切り捨て）を引き継ぎます。"
 
-#: ../../source/metriques.rst:468
+#: ../../source/metriques.rst:474
 msgid "**XG et gnuBG.** Ni l'un ni l'autre ne propose de plan d'étude."
 msgstr "**XG と gnuBG。** どちらも学習プランを提供しません。"
 
-#: ../../source/metriques.rst:474
+#: ../../source/metriques.rst:480
 msgid "Positions de référence"
 msgstr "基準局面"
 
-#: ../../source/metriques.rst:476
+#: ../../source/metriques.rst:482
 msgid ""
 "**La question.** Quelles positions mettre dans une collection pour "
 "travailler le plan ? Les dix pires erreurs donnent souvent dix variantes "
@@ -943,7 +955,7 @@ msgstr ""
 "の変形になります。良い基準局面は、あなたの回避可能な誤りの多くの中心にあり、明確な教訓を持ち、まだ学習されていないものです。画面：:ref:`基準局面"
 " <positions_reference>`。"
 
-#: ../../source/metriques.rst:482
+#: ../../source/metriques.rst:488
 msgid ""
 "**Définition.** Les candidates sont les erreurs chiffrées et thématisées "
 "du filtre, réunies par position ; l'excès d'une position est la somme des"
@@ -955,11 +967,11 @@ msgstr ""
 "の合計です。同じファミリー（キューブでは同じスコアも）の 2 つの候補は、``like`` 距離で ρ = 12 ピップステップ以内にあるとき\\"
 " **近傍**\\ です（ダイスの 1 振りは 8 から 16 に相当します）。"
 
-#: ../../source/metriques.rst:488
+#: ../../source/metriques.rst:494
 msgid "**La formule.** Le gain d'une candidate p est"
 msgstr "**式。** 候補 p のゲインは"
 
-#: ../../source/metriques.rst:490
+#: ../../source/metriques.rst:496
 msgid ""
 "G(p) = c(p) \\times \\sum_{q \\,\\in\\, \\text{voisinage}(p),\\ q\\ "
 "\\text{non couverte}} \\text{excès}(q)"
@@ -967,7 +979,7 @@ msgstr ""
 "G(p) = c(p) \\times \\sum_{q \\,\\in\\, \\text{voisinage}(p),\\ q\\ "
 "\\text{non couverte}} \\text{excès}(q)"
 
-#: ../../source/metriques.rst:494
+#: ../../source/metriques.rst:500
 msgid ""
 "en fraction de MWC : la représentativité, la fréquence et le coût "
 "évitable en une seule quantité. c(p) part de 1 et est multiplié par ½ si "
@@ -982,7 +994,7 @@ msgstr ""
 "（別のキューブ解析の深さまたはロールアウトで異なる判定になる）なら ½ 倍します。両方が重なると ¼ "
 "です。確認するロールアウトは何も引き上げません。ゲインが同じときの順位決めに使います。"
 
-#: ../../source/metriques.rst:502
+#: ../../source/metriques.rst:508
 msgid ""
 "**Sélection.** Gloutonne par gain marginal : chaque position retenue "
 "couvre ses voisines, qui ne rapportent plus rien aux suivantes, et ses "
@@ -994,11 +1006,11 @@ msgstr ""
 "限界ゲインによる貪欲法です。選ばれた各局面は近傍をカバーし、近傍は後続の局面には何ももたらさなくなります。ほぼ重複する局面は、ファミリーの外でも除外されます。すでに扱った局面（コメント、Anki"
 " カード、コレクション、「学習済み」マーク）は提案されず、すでに選ばれたものとして数えます。"
 
-#: ../../source/metriques.rst:508
+#: ../../source/metriques.rst:514
 msgid "**Unité.** Le MWC couvert, en pourcentage."
 msgstr "**単位。** カバーした MWC。パーセンテージ。"
 
-#: ../../source/metriques.rst:510
+#: ../../source/metriques.rst:516
 msgid ""
 "**Limites.** Le rayon et les facteurs sont fixés, pas appris. La distance"
 " ``like`` compare des structures de pions, pas des idées : deux positions"
@@ -1007,16 +1019,16 @@ msgstr ""
 "**限界。** 半径と係数は固定されており、学習されたものではありません。``like`` "
 "距離は考え方ではなくチェッカー構造を比較します。同じ教訓でも構造が離れた 2 つの局面は互いをカバーしません。"
 
-#: ../../source/metriques.rst:514 ../../source/metriques.rst:555
-#: ../../source/metriques.rst:635
+#: ../../source/metriques.rst:520 ../../source/metriques.rst:562
+#: ../../source/metriques.rst:642
 msgid "**XG et gnuBG.** Pas d'équivalent."
 msgstr "**XG と gnuBG。** 同等のものはありません。"
 
-#: ../../source/metriques.rst:520
+#: ../../source/metriques.rst:526
 msgid "Avant/après l'étude"
 msgstr "学習の前後"
 
-#: ../../source/metriques.rst:522
+#: ../../source/metriques.rst:528
 msgid ""
 "**La question.** Ce que j'ai travaillé me coûte-t-il moins en match réel "
 "? Sans mesure, l'étude se juge à l'impression ; une famille qui ne bouge "
@@ -1026,21 +1038,23 @@ msgstr ""
 "**問い。** "
 "取り組んだことは、実戦で私のコストを減らしたか。測定がなければ、学習は印象で判断されます。努力しても動かないファミリーは、方法を変える必要があることを示します。画面：:ref:`avant_apres_etude`。"
 
-#: ../../source/metriques.rst:527
+#: ../../source/metriques.rst:533
 msgid ""
-"**Définition.** Une famille du plan est **étudiée** au jour (UTC) de la "
-"première action d'étude sur l'une de ses positions : marque « étudiée », "
-"révision Anki quelle que soit la note, réponse de quiz. Créer une carte "
-"ou ranger une position en collection n'en est pas une. Fenêtre *avant* : "
-"les matchs datés strictement avant ce jour ; *après* : strictement après "
-"; le jour même et les matchs sans date sont écartés."
+"**Définition.** Chaque famille thématisée du filtre est mesurée, celles "
+"du plan comme celles « à confirmer ». Une famille est **étudiée** au jour"
+" (UTC) de la première action d'étude sur l'une de ses positions : marque "
+"« étudiée », révision Anki quelle que soit la note, réponse de quiz. "
+"Créer une carte ou ranger une position en collection n'en est pas une. "
+"Fenêtre *avant* : les matchs datés strictement avant ce jour ; *après* : "
+"strictement après ; le jour même et les matchs sans date sont écartés."
 msgstr ""
-"**定義。** プランのファミリーは、その局面のいずれかでの最初の学習行動の日 (UTC) に\\ **学習済み**\\ "
-"になります。「学習済み」マーク、評価にかかわらない Anki "
-"の復習、クイズの回答が該当します。カードの作成やコレクションへの整理は該当しません。*前*\\ "
-"の窓：この日より厳密に前の日付のマッチ。*後*：厳密に後。当日と日付のないマッチは除外されます。"
+"**定義。**\\ "
+"フィルターのテーマ別ファミリーはすべて、プランのものも「要確認」のものも測定します。ファミリーは、その局面のいずれかに対する最初の学習アクションの日(UTC)に\\"
+" **学習済み**\\ となります。「学習済み」マーク、評価を問わない Anki "
+"の復習、クイズへの回答が該当します。カードの作成や局面のコレクションへの整理は該当しません。\\ *前*\\ "
+"ウィンドウは、その日より厳密に前の日付のマッチ、\\ *後*\\ は厳密に後のマッチで、当日と日付のないマッチは除外されます。"
 
-#: ../../source/metriques.rst:534
+#: ../../source/metriques.rst:541
 msgid ""
 "**La formule.** Dans chaque fenêtre, le taux de perte r = Σℓ / N : ℓ les "
 "pertes des erreurs de la famille, N les décisions comptées en match du "
@@ -1050,7 +1064,7 @@ msgstr ""
 "**式。** 各窓で、損失率 r = Σℓ / N。ℓ はファミリーの誤りの損失、N "
 "は同じゲームプランかつ同じ種類のマッチでカウントされた判断です（テーマは誤りにしか存在しません）。ゲインとその区間："
 
-#: ../../source/metriques.rst:539
+#: ../../source/metriques.rst:546
 msgid ""
 "\\Delta = r_\\text{avant} - r_\\text{après}, \\qquad\n"
 "\\Delta \\pm 1{,}96 \\sqrt{\\frac{\\sum "
@@ -1062,7 +1076,7 @@ msgstr ""
 "\\ell^2_\\text{avant}}{N^2_\\text{avant}}\n"
 "+ \\frac{\\sum \\ell^2_\\text{après}}{N^2_\\text{après}}}"
 
-#: ../../source/metriques.rst:545
+#: ../../source/metriques.rst:552
 msgid ""
 "**Verdict.** Au moins **30 décisions** dans chaque fenêtre, sinon « "
 "insuffisant ». « En progrès » si la borne basse de Δ est positive, « en "
@@ -1071,11 +1085,11 @@ msgstr ""
 "**判定。** 各窓に少なくとも **30 判断**。なければ「不十分」です。Δ "
 "の下限が正なら「改善」、上限が負なら「悪化」、それ以外は「不確定」です。"
 
-#: ../../source/metriques.rst:549
+#: ../../source/metriques.rst:556
 msgid "**Unité.** Points de MWC pour 100 décisions."
 msgstr "**単位。** 100 判断あたりの MWC ポイント。"
 
-#: ../../source/metriques.rst:551
+#: ../../source/metriques.rst:558
 msgid ""
 "**Limites.** Un changement, pas un effet. Une famille est étudiée *parce "
 "qu'elle* coûtait : la régression vers la moyenne gonfle le gain. Rien ne "
@@ -1084,11 +1098,11 @@ msgstr ""
 "**限界。** "
 "変化であって効果ではありません。ファミリーはコストがかかったから学習されます。平均への回帰がゲインを膨らませます。相手、フォーマット、ダイスは何も統制されません。"
 
-#: ../../source/metriques.rst:561
+#: ../../source/metriques.rst:568
 msgid "Biais signés"
 msgstr "符号付きバイアス"
 
-#: ../../source/metriques.rst:563
+#: ../../source/metriques.rst:570
 msgid ""
 "**La question.** Dans quel sens est-ce que je me trompe ? « Vous prenez "
 "trop » se corrige mieux qu'un PR : la règle à revoir est nommée. Les "
@@ -1097,7 +1111,7 @@ msgstr ""
 "**問い。** 私はどちらの方向に間違えているか。「テイクしすぎ」は PR "
 "より修正しやすい指摘です。見直すべき規則に名前が付くからです。画面：:ref:`biais_signes`。"
 
-#: ../../source/metriques.rst:567
+#: ../../source/metriques.rst:574
 msgid ""
 "**La formule.** Chaque décision comptée porte x = +1 (erreur par excès "
 "d'audace), −1 (par excès de prudence) ou 0. Avec P et M les deux comptes "
@@ -1106,7 +1120,7 @@ msgstr ""
 "**式。** カウントされた各判断は x = +1（強気すぎる誤り）、−1（慎重すぎる誤り）、または 0 を持ちます。N 判断における 2 "
 "つのカウントを P と M とすると："
 
-#: ../../source/metriques.rst:571
+#: ../../source/metriques.rst:578
 msgid ""
 "B = \\frac{P - M}{N}, \\qquad\n"
 "B \\pm 1{,}96 \\sqrt{\\frac{(P + M)/N - B^2}{N}}"
@@ -1114,7 +1128,7 @@ msgstr ""
 "B = \\frac{P - M}{N}, \\qquad\n"
 "B \\pm 1{,}96 \\sqrt{\\frac{(P + M)/N - B^2}{N}}"
 
-#: ../../source/metriques.rst:576
+#: ../../source/metriques.rst:583
 msgid ""
 "Au moins **20 décisions** ; « trop » si la borne basse est positive, « "
 "pas assez » si la borne haute est négative, « équilibré » sinon. Le coût "
@@ -1124,7 +1138,7 @@ msgstr ""
 "少なくとも **20 判断**。下限が正なら「多すぎ」、上限が負なら「足りない」、それ以外は「均衡」です。P と M のコスト (mpt) "
 "がカウントに添えられます。符号とコストは、そのマッチで指した手のものです。"
 
-#: ../../source/metriques.rst:581
+#: ../../source/metriques.rst:588
 msgid ""
 "**Prise / refus** : sur les réponses au videau ; P = prises fautives, M ="
 " refus fautifs. B est exactement votre taux de prise moins celui du bot "
@@ -1133,7 +1147,7 @@ msgstr ""
 "**テイク / パス**：キューブへの応答について。P = 誤ったテイク、M = 誤ったパス。B "
 "は、同じ局面での自分のテイク率からボットのテイク率を引いた値そのものです。"
 
-#: ../../source/metriques.rst:584
+#: ../../source/metriques.rst:591
 msgid ""
 "**Doubles** : sur les décisions de videau du porteur comptées au PR ; P ="
 " doubles prématurés (pas de double, ou trop bon), M = doubles manqués. Le"
@@ -1144,7 +1158,7 @@ msgstr ""
 "逃したダブル。バイアスはスコアのセルごと（自分の残り点数、相手の残り点数。ポスト・クロフォードは 1 "
 "として扱う。マネーゲームは別）にも示されます。"
 
-#: ../../source/metriques.rst:588
+#: ../../source/metriques.rst:595
 msgid ""
 "**Blots** : sur les coups de pions avec contact ; x est le signe de (vos "
 "blots après le coup joué − vos blots après le meilleur coup). Un coup est"
@@ -1154,11 +1168,11 @@ msgstr ""
 "**ブロット**：接触のあるチェッカー移動について。x は（指した手の後の自分のブロット数 − "
 "最善手の後の自分のブロット数）の符号です。手は残す盤面で識別します。見つからない手はカウントから外れ、その割合が表示されます。"
 
-#: ../../source/metriques.rst:593
+#: ../../source/metriques.rst:600
 msgid "**Unité.** Une différence de proportions, sans unité."
 msgstr "**単位。** 割合の差。単位なし。"
 
-#: ../../source/metriques.rst:595
+#: ../../source/metriques.rst:602
 msgid ""
 "**Limites.** La plupart des cases de score restent muettes : c'est la "
 "réponse honnête. Le biais des blots compte les blots sans peser leur "
@@ -1167,7 +1181,7 @@ msgstr ""
 "**限界。** "
 "スコアのセルの大半は沈黙したままです。それが誠実な答えです。ブロットのバイアスは、露出度を考慮せずにブロットを数え、除外された手は中立な抽出ではありません。"
 
-#: ../../source/metriques.rst:599
+#: ../../source/metriques.rst:606
 msgid ""
 "**XG et gnuBG.** Pas d'équivalent ; XG et gnuBG comptent les erreurs de "
 "videau par type (double manqué, prise fautive…) sans intervalle ni "
@@ -1176,11 +1190,11 @@ msgstr ""
 "**XG と gnuBG。** 同等のものはありません。XG と gnuBG "
 "はキューブの誤りをタイプ別（逃したダブル、誤ったテイクなど）に数えますが、区間も判定もありません。"
 
-#: ../../source/metriques.rst:606
+#: ../../source/metriques.rst:613
 msgid "Bilan du tournoi"
 msgstr "トーナメントの総括"
 
-#: ../../source/metriques.rst:608
+#: ../../source/metriques.rst:615
 msgid ""
 "**La question.** Ai-je joué à mon niveau, et sinon, où cela a-t-il cédé :"
 " les dernières rondes, les longues fins de match, les scores où un point "
@@ -1190,7 +1204,7 @@ msgstr ""
 "**問い。** 自分のレベルでプレイできたか。そうでなければ、どこで崩れたか。最終ラウンドか、長いマッチ終盤か、1 "
 "点が勝負を決めるスコアか、時計か。画面：:ref:`トーナメントの総括 <bilan_tournoi>`。"
 
-#: ../../source/metriques.rst:612
+#: ../../source/metriques.rst:619
 msgid ""
 "**Définition.** Le **niveau habituel** est le joueur sur ses matchs en "
 "points des **365 jours** qui précèdent le tournoi (sa date, à défaut "
@@ -1202,7 +1216,7 @@ msgstr ""
 "のポイントマッチでのプレイヤーで、トーナメントのマッチは除きます。**5 マッチ**\\ 以上が必要です。トーナメントと通常のレベルにはそれぞれ "
 "PR と L₇ があり、マッチによる区間 (:ref:`metrique_intervalles`) が付きます。"
 
-#: ../../source/metriques.rst:618
+#: ../../source/metriques.rst:625
 msgid ""
 "**La formule.** Δ = tournoi − habituel, d'écart-type √(σₜ² + σₕ²), chaque"
 " σ lu sur la demi-largeur haute de son intervalle. « Moins bien » si la "
@@ -1215,19 +1229,21 @@ msgstr ""
 "の下限が正なら「悪い」、上限が負なら「良い」、それ以外は「いつもどおり」です。判定には区間と、両側それぞれ少なくとも **20 判断**\\ "
 "が必要です。なければ「不十分」で、数値は表示されます。"
 
-#: ../../source/metriques.rst:624
+#: ../../source/metriques.rst:631
 msgid ""
-"**Ventilations**, en PR, chaque case face à la même case du niveau "
-"habituel : par ronde ; par rang de la décision dans le match (tranches de"
-" 30 : la fatigue) ; par score (DMP, partie Crawford, post-Crawford, "
-"autres) ; par rythme (de part et d'autre de la médiane de vos durées dans"
-" le match). Au plus trois familles du plan d'étude restreint au tournoi."
+"**Ventilations**, en PR : par ronde, chaque match face au PR habituel "
+"global ; puis, chaque case face à la même case du niveau habituel, par "
+"rang de la décision dans le match (tranches de 30 : la fatigue) ; par "
+"score (DMP, partie Crawford, post-Crawford, autres) ; par rythme (de part"
+" et d'autre de la médiane de vos durées dans le match). Au plus trois "
+"familles du plan d'étude restreint au tournoi."
 msgstr ""
-"**内訳**\\ は PR で、各セルを通常のレベルの同じセルと比較します。ラウンド別、マッチ内の判断の順位別（30 "
-"ずつの区切り：疲労）、スコア別（DMP、クロフォードゲーム、ポスト・クロフォード、その他）、ペース別（マッチ内の所要時間の中央値の前後）。トーナメントに限定した学習プランのファミリーは最大"
+"**内訳**\\ (PR 単位):ラウンド別では、各マッチを全体の通常 PR "
+"と比較します。続いて、各セルを通常レベルの同じセルと比較し、マッチ内での判断の順位別(30 "
+"手ごとの区間:疲労)、スコア別(DMP、クロフォードゲーム、ポストクロフォード、その他)、ペース別(マッチでのあなたの所要時間の中央値の前後)に分けます。トーナメントに限定した学習プランのファミリーは最大"
 " 3 つです。"
 
-#: ../../source/metriques.rst:630
+#: ../../source/metriques.rst:637
 msgid ""
 "**Limites.** Un tournoi de trois matchs ne dit presque jamais « moins "
 "bien » : c'est voulu. Les deux côtés sont traités comme indépendants, ce "

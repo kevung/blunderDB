@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-08 20:34+0200\n"
+"POT-Creation-Date: 2026-10-08 20:50+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -102,12 +102,12 @@ msgstr "Snowie Error Rate"
 #: ../../source/stats_parity.rst:45
 msgid ""
 "Le Snowie ER utilise le **même numérateur** que le PR, mais le "
-"dénominateur est le nombre total de coups des deux joueurs, coups forcés "
-"inclus (toutes décisions, sans filtre) :"
+"dénominateur est le nombre de coups de pions des deux joueurs, coups "
+"forcés inclus, sans aucune règle de comptage :"
 msgstr ""
-"Snowie ER käyttää **samaa osoittajaa** kuin PR, mutta nimittäjä on "
-"molempien pelaajien siirtojen kokonaismäärä, pakkosiirrot mukaan luettuna"
-" (kaikki päätökset, ilman suodatusta):"
+"Snowie ER käyttää **samaa osoittajaa** kuin PR, mutta nimittäjänä on "
+"molempien pelaajien nappulasiirtojen määrä pakotetut siirrot mukaan "
+"lukien, ilman mitään laskentasääntöä:"
 
 #: ../../source/stats_parity.rst:49
 msgid ""
@@ -486,61 +486,61 @@ msgstr "Vertailu XG ↔ blunderDB (sama analyysi)"
 
 #: ../../source/stats_parity.rst:210
 msgid ""
-"Les comptes de décisions — coups de pions, doubles, prises, décisions de "
-"videau proches — sont **exacts**. Les écarts restants sont ceux de "
-"l'affichage d'XG, qui arrondit ce que blunderDB additionne au millipoint "
-":"
+"Hors écarts résiduels ci-dessous, les comptes de décisions — coups de "
+"pions, doubles, prises, décisions de videau proches — sont **exacts**. "
+"Les écarts restants sont ceux de l'affichage d'XG, qui arrondit ce que "
+"blunderDB additionne au millipoint :"
 msgstr ""
-"Päätösten lukumäärät — nappulasiirrot, tuplaukset, vastaanotot, lähellä "
-"olevat kuutiopäätökset — ovat **tarkkoja**. Jäljelle jäävät poikkeamat "
-"johtuvat XG:n näytöstä, joka pyöristää sen, minkä blunderDB laskee yhteen"
-" millipisteen tarkkuudella:"
+"Alla mainittuja jäännöspoikkeamia lukuun ottamatta päätösten lukumäärät —"
+" nappulasiirrot, tuplat, vastaanotot, tiukat kuutiopäätökset — ovat "
+"**tarkkoja**. Jäljelle jäävät poikkeamat johtuvat XG:n näytöstä, joka "
+"pyöristää tuhannesosapisteeseen sen, minkä blunderDB laskee yhteen:"
 
-#: ../../source/stats_parity.rst:215 ../../source/stats_parity.rst:250
+#: ../../source/stats_parity.rst:216 ../../source/stats_parity.rst:251
 msgid "Métrique"
 msgstr "Mittari"
 
-#: ../../source/stats_parity.rst:215 ../../source/stats_parity.rst:250
+#: ../../source/stats_parity.rst:216 ../../source/stats_parity.rst:251
 msgid "Écart maximal"
 msgstr "Suurin ero"
 
-#: ../../source/stats_parity.rst:217
+#: ../../source/stats_parity.rst:218
 msgid "Décisions comptées"
 msgstr "Lasketut päätökset"
 
-#: ../../source/stats_parity.rst:217
+#: ../../source/stats_parity.rst:218
 msgid "0"
 msgstr "0"
 
-#: ../../source/stats_parity.rst:219
+#: ../../source/stats_parity.rst:220
 msgid "PR"
 msgstr "PR"
 
-#: ../../source/stats_parity.rst:219
+#: ../../source/stats_parity.rst:220
 msgid "≤ 0,02"
 msgstr "≤ 0,02"
 
-#: ../../source/stats_parity.rst:221
+#: ../../source/stats_parity.rst:222
 msgid "Perte MWC (totale, pions, doubles, réponses)"
 msgstr "MWC-menetys (kokonais-, nappulat, tuplaukset, vastaukset)"
 
-#: ../../source/stats_parity.rst:221
+#: ../../source/stats_parity.rst:222
 msgid "≤ 0,06 point"
 msgstr "≤ 0,06 pistettä"
 
-#: ../../source/stats_parity.rst:224
+#: ../../source/stats_parity.rst:225
 msgid "Erreur d'équité (EMG)"
 msgstr "Equity-virhe (EMG)"
 
-#: ../../source/stats_parity.rst:224
+#: ../../source/stats_parity.rst:225
 msgid "≤ 0,004"
 msgstr "≤ 0,004"
 
-#: ../../source/stats_parity.rst:228
+#: ../../source/stats_parity.rst:229
 msgid "Écarts résiduels connus"
 msgstr "Tunnetut jäännöspoikkeamat"
 
-#: ../../source/stats_parity.rst:230
+#: ../../source/stats_parity.rst:231
 msgid ""
 "Quatre joueurs des matchs de référence s'écartent davantage, chacun pour "
 "une cause qui tient à ce que le fichier ne transporte pas :"
@@ -548,7 +548,7 @@ msgstr ""
 "Neljän vertailuotteluiden pelaajan luvut poikkeavat enemmän, kukin "
 "syystä, joka johtuu siitä, mitä tiedosto ei sisällä:"
 
-#: ../../source/stats_parity.rst:233
+#: ../../source/stats_parity.rst:234
 msgid ""
 "**Coup non analysé** (deux joueurs). XG écrit, pour un coup qu'il n'a pas"
 " noté, une erreur de −1000 et le laisse hors du compte ; cette valeur "
@@ -562,7 +562,7 @@ msgstr ""
 "tallennettujen ehdokkaiden perusteella. blunderDB laskee yhden päätöksen "
 "enemmän; PR poikkeaa enintään 0,09, MWC-menetys enintään 0,45 pistettä."
 
-#: ../../source/stats_parity.rst:238
+#: ../../source/stats_parity.rst:239
 msgid ""
 "**Sortie jugée hors du fichier** (un joueur). XG compte comme décision "
 "une sortie dont les candidats stockés couvrent tous les coups légaux à la"
@@ -575,7 +575,7 @@ msgstr ""
 "joita tiedosto ei säilytä. blunderDB laskee yhden päätöksen vähemmän; PR "
 "poikkeaa 0,02."
 
-#: ../../source/stats_parity.rst:242
+#: ../../source/stats_parity.rst:243
 msgid ""
 "**Somme des erreurs de pions** (un joueur). Les comptes et le videau "
 "concordent ; la somme des erreurs des coups stockés dépasse de quelques "
@@ -585,51 +585,51 @@ msgstr ""
 "täsmäävät; tallennettujen siirtojen virheiden summa ylittää XG:n "
 "nappulakokonaissumman muutamalla millipisteellä (2,150 vs. 2,147)."
 
-#: ../../source/stats_parity.rst:247
+#: ../../source/stats_parity.rst:248
 msgid "Comparaison gnuBG ↔ blunderDB (import SGF — moteurs différents)"
 msgstr "Vertailu gnuBG ↔ blunderDB (SGF-tuonti — eri moottorit)"
 
-#: ../../source/stats_parity.rst:250
+#: ../../source/stats_parity.rst:251
 msgid "Cause principale"
 msgstr "Pääsyy"
 
-#: ../../source/stats_parity.rst:252
+#: ../../source/stats_parity.rst:253
 msgid "PR (pions)"
 msgstr "PR (nappulat)"
 
-#: ../../source/stats_parity.rst:252
+#: ../../source/stats_parity.rst:253
 msgid "≤ 0,40"
 msgstr "≤ 0,40"
 
-#: ../../source/stats_parity.rst:252
+#: ../../source/stats_parity.rst:253
 msgid "règle des coups forcés, équités entre moteurs"
 msgstr "pakotettujen siirtojen sääntö, moottorien väliset equityt"
 
-#: ../../source/stats_parity.rst:255
+#: ../../source/stats_parity.rst:256
 msgid "Perte MWC"
 msgstr "MWC-tappio"
 
-#: ../../source/stats_parity.rst:255
+#: ../../source/stats_parity.rst:256
 msgid "≤ 3,5 points"
 msgstr "≤ 3,5 pistettä"
 
-#: ../../source/stats_parity.rst:255
+#: ../../source/stats_parity.rst:256
 msgid "videau proche incomplet dans le SGF"
 msgstr "epätäydellinen lähellä oleva kuutiopäätös SGF:ssä"
 
-#: ../../source/stats_parity.rst:258
+#: ../../source/stats_parity.rst:259
 msgid "Snowie ER"
 msgstr "Snowie ER"
 
-#: ../../source/stats_parity.rst:258
+#: ../../source/stats_parity.rst:259
 msgid "≤ 0,50"
 msgstr "≤ 0,50"
 
-#: ../../source/stats_parity.rst:258
+#: ../../source/stats_parity.rst:259
 msgid "forcés sans analyse (SGF)"
 msgstr "pakotetut siirrot ilman analyysiä (SGF)"
 
-#: ../../source/stats_parity.rst:263
+#: ../../source/stats_parity.rst:264
 msgid ""
 "Les fichiers SGF (gnuBG) n'incluent pas les alternatives pour les coups "
 "forcés, ce qui signifie que blunderDB ne peut pas détecter tous les coups"
@@ -641,11 +641,11 @@ msgstr ""
 "siirtoja SGF:ää tuotaessa. Tämä aiheuttaa rakenteellisen eron Snowie "
 "ER:ssä (hieman erilainen nimittäjä)."
 
-#: ../../source/stats_parity.rst:270
+#: ../../source/stats_parity.rst:271
 msgid "Valider vos propres chiffres"
 msgstr "Omien lukujen tarkistaminen"
 
-#: ../../source/stats_parity.rst:272
+#: ../../source/stats_parity.rst:273
 msgid ""
 "Si vos valeurs PR ou MWC divergent des chiffres XG, vérifier les points "
 "suivants :"
@@ -653,7 +653,7 @@ msgstr ""
 "Jos PR- tai MWC-arvosi poikkeavat XG:n luvuista, tarkista seuraavat "
 "seikat:"
 
-#: ../../source/stats_parity.rst:275
+#: ../../source/stats_parity.rst:276
 #, no-python-brace-format
 msgid ""
 "**Analyses complètes** — Le PR ne peut être calculé que sur les décisions"
@@ -664,7 +664,7 @@ msgstr ""
 "analyysi. Ilman analyysiä olevat asemat lasketaan nollavirheinä, mutta ne"
 " eivät sisälly lukuun :math:`N_\\text{compté}`."
 
-#: ../../source/stats_parity.rst:279
+#: ../../source/stats_parity.rst:280
 msgid ""
 "**Version XG** — XG peut changer ses calculs entre versions. blunderDB "
 "s'aligne sur le comportement observé des versions récentes."
@@ -673,7 +673,7 @@ msgstr ""
 "blunderDB on yhdenmukaistettu viimeaikaisissa versioissa havaitun "
 "käyttäytymisen kanssa."
 
-#: ../../source/stats_parity.rst:282
+#: ../../source/stats_parity.rst:283
 msgid ""
 "**Format d'import** — Les fichiers SGF gnuBG produisent des écarts plus "
 "importants sur le cube (voir tableau ci-dessus) car le fichier n'inclut "
@@ -683,7 +683,7 @@ msgstr ""
 "kuutiomittareissa (katso yllä oleva taulukko), koska tiedosto ei sisällä "
 "täydellisiä analyysejä kaikille kuutiopäätöksille."
 
-#: ../../source/stats_parity.rst:286
+#: ../../source/stats_parity.rst:287
 msgid ""
 "**Migration de base** — Après mise à jour de blunderDB, les bases "
 "existantes sont migrées automatiquement. Faire une sauvegarde avant "
@@ -693,11 +693,11 @@ msgstr ""
 "olevat tietokannat migratoidaan automaattisesti. Tee varmuuskopio ennen "
 "tietokannan avaamista uudella versiolla."
 
-#: ../../source/stats_parity.rst:292
+#: ../../source/stats_parity.rst:293
 msgid "Référence gnuBG"
 msgstr "gnuBG-viite"
 
-#: ../../source/stats_parity.rst:294
+#: ../../source/stats_parity.rst:295
 msgid ""
 "Les formules de gnuBG citées sur cette page se trouvent dans les fichiers"
 " source suivants (dépôt gnuBG) :"
@@ -705,7 +705,7 @@ msgstr ""
 "Tällä sivulla mainitut gnuBG:n kaavat löytyvät seuraavista "
 "lähdetiedostoista (gnuBG-repositorio):"
 
-#: ../../source/stats_parity.rst:297
+#: ../../source/stats_parity.rst:298
 msgid ""
 "``gnubg/formatgs.c:399–409`` — taux d'erreur par décision (« Error rate "
 "per decision »)."
@@ -713,11 +713,11 @@ msgstr ""
 "``gnubg/formatgs.c:399–409`` — päätöskohtainen virheprosentti (”Error "
 "rate per decision”)."
 
-#: ../../source/stats_parity.rst:298
+#: ../../source/stats_parity.rst:299
 msgid "``gnubg/formatgs.c:415–424`` — Snowie Error Rate."
 msgstr "``gnubg/formatgs.c:415–424`` — Snowie Error Rate."
 
-#: ../../source/stats_parity.rst:299
+#: ../../source/stats_parity.rst:300
 msgid ""
 "``gnubg/analysis.c:458–462`` — Accumulation pions, exclusion des forcés "
 "(``cMoves > 1``)."
@@ -725,17 +725,17 @@ msgstr ""
 "``gnubg/analysis.c:458–462`` — Nappuloiden kertymä, pakotettujen "
 "siirtojen poissulkeminen (``cMoves > 1``)."
 
-#: ../../source/stats_parity.rst:300
+#: ../../source/stats_parity.rst:301
 msgid "``gnubg/analysis.c:1430–1474`` — Conversion EMG → MWC par décision."
 msgstr "``gnubg/analysis.c:1430–1474`` — Päätöskohtainen EMG → MWC -muunnos."
 
-#: ../../source/stats_parity.rst:301
+#: ../../source/stats_parity.rst:302
 msgid ""
 "``gnubg/analysis.c:1449–1464`` — Accumulation de la perte MWC "
 "(``eq2mwc``)."
 msgstr "``gnubg/analysis.c:1449–1464`` — MWC-tappion kertymä (``eq2mwc``)."
 
-#: ../../source/stats_parity.rst:302
+#: ../../source/stats_parity.rst:303
 msgid "``gnubg/eval.c:5088–5100`` — Prédicat ``isCloseCubedecision``."
 msgstr "``gnubg/eval.c:5088–5100`` — Predikaatti ``isCloseCubedecision``."
 

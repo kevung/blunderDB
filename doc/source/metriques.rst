@@ -158,9 +158,10 @@ qu'elle coûte à 0-0 dans un match en 17. Pour l'étude, la colonne et le
 graphique désignent les quelques décisions qui ont décidé du match, et la
 courbe cumulée montre où il a basculé.
 
-**Définition.** ℓ (:ref:`metrique_erreur`) pour chaque décision notée ; la
-perte d'un joueur sur le match est Σℓ sur ses décisions comptées au PR. Les
-non-décisions coûtent zéro : elles ne changent pas la somme.
+**Définition.** ℓ (:ref:`metrique_erreur`) pour chaque décision comptée au
+PR ; la perte d'un joueur sur le match est Σℓ sur ces décisions. Une décision
+hors du compte (coup forcé, pas de double hors de la fenêtre) n'a pas de ℓ :
+elle n'aurait de toute façon rien coûté, ou presque.
 
 **Unité.** Un pourcentage de chances de gagner le match : 2,5 veut dire
 2,5 % de MWC perdus.
@@ -180,7 +181,9 @@ statistiques. Une décision non notée porte un tiret, jamais zéro.
 
 **XG et gnuBG.** La somme est la perte de MWC qu'XG affiche pour le match :
 pions, doubles et réponses concordent sur les matchs de référence à la
-précision d'affichage d'XG (écart ≤ 0,006 point). gnuBG fait la même
+précision d'affichage d'XG (écart borné à 0,06 point de pourcentage par la
+suite de tests), hormis les joueurs aux écarts résiduels connus de
+:ref:`stats_parity`, jusqu'à 0,45 point. gnuBG fait la même
 conversion, avec ses propres équités : sur un match qu'il a analysé, ses
 chiffres diffèrent de ceux d'XG par l'analyse, pas par la formule.
 
@@ -211,7 +214,8 @@ match en 7 points, la longueur de tournoi la plus courante :
 L'agrégat (plusieurs matchs, un joueur, un tournoi) additionne les pertes et
 les racines des longueurs avant le rapport : un match en 7 points pèse plus
 qu'un match en 1 point, et un seul match rend sa propre valeur. Sans filtre
-joueur, les deux sièges d'un match sont deux unités.
+joueur, les deux sièges d'un match pèsent chacun √N, mais forment une seule
+unité de l'intervalle.
 
 **L'Elo face au moteur** inverse la formule FIBS à 7 points :
 
@@ -219,8 +223,8 @@ joueur, les deux sièges d'un match sont deux unités.
 
    D = \frac{2000}{\sqrt{7}} \log_{10} \frac{q}{1 - q}, \qquad q = 0{,}5 - L_7
 
-Linéarisé, D ≈ −3474 × L / √N. Au-delà de L₇ ≈ 49 %, q n'a plus d'inverse
-fini : q est plancher à 1 % (D ≥ −1509) et l'Elo est affiché « ≤ ». L₇, lui,
+Linéarisé, D ≈ −3474 × L / √N. À L₇ ≥ 50 %, q n'a plus d'inverse fini ; dès
+L₇ > 49 %, q est plancher à 1 % (D ≥ −1509) et l'Elo est affiché « ≤ ». L₇, lui,
 n'a pas de plancher. Les deux classent les joueurs dans le même ordre.
 
 **Unité.** L₇ : un pourcentage de MWC. D : des points Elo, négatifs, l'écart
@@ -292,9 +296,11 @@ de 0,01 donnent d ≈ 0,012, l'erreur moyenne d'un joueur de PR 6 environ.
   fois plus ». Il n'est pas donné quand Σd < 0,5 % de MWC : sur un match trop
   facile il ne mesure que du bruit, l'excès reste.
 
-**Ce qui compte.** Les décisions dont la perte est notée et convertie en MWC ;
-ailleurs la difficulté est absente, jamais nulle. Aucun seuil ne met à part
-une décision évidente ou forcée : sa difficulté est proche de zéro d'elle-même.
+**Ce qui compte.** Les décisions comptées au PR dont la perte est notée et
+convertie en MWC ; ailleurs la difficulté est absente, jamais nulle. Un coup
+forcé ou un pas de double hors de la fenêtre du PR n'a donc ni perte ni
+difficulté. Parmi les décisions comptées, aucun seuil supplémentaire ne met à
+part une décision évidente : sa difficulté est proche de zéro d'elle-même.
 
 **Unité.** d et l'excès : un pourcentage de MWC. Le ratio : sans unité.
 
@@ -524,7 +530,8 @@ Sans mesure, l'étude se juge à l'impression ; une famille qui ne bouge pas
 malgré le travail dit qu'il faut changer de méthode. Les écrans :
 :ref:`avant_apres_etude`.
 
-**Définition.** Une famille du plan est **étudiée** au jour (UTC) de la
+**Définition.** Chaque famille thématisée du filtre est mesurée, celles du
+plan comme celles « à confirmer ». Une famille est **étudiée** au jour (UTC) de la
 première action d'étude sur l'une de ses positions : marque « étudiée »,
 révision Anki quelle que soit la note, réponse de quiz. Créer une carte ou
 ranger une position en collection n'en est pas une. Fenêtre *avant* : les
@@ -621,8 +628,8 @@ de Δ est positive, « mieux » si sa borne haute est négative, « dans
 l'habitude » sinon. Le verdict demande un intervalle et au moins **20
 décisions** de chaque côté ; sinon « insuffisant », chiffres visibles.
 
-**Ventilations**, en PR, chaque case face à la même case du niveau habituel :
-par ronde ; par rang de la décision dans le match (tranches de 30 : la
+**Ventilations**, en PR : par ronde, chaque match face au PR habituel global ;
+puis, chaque case face à la même case du niveau habituel, par rang de la décision dans le match (tranches de 30 : la
 fatigue) ; par score (DMP, partie Crawford, post-Crawford, autres) ; par
 rythme (de part et d'autre de la médiane de vos durées dans le match). Au plus
 trois familles du plan d'étude restreint au tournoi.

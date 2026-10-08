@@ -43,8 +43,8 @@ Snowie Error Rate
 ~~~~~~~~~~~~~~~~~
 
 Le Snowie ER utilise le **même numérateur** que le PR, mais le dénominateur est
-le nombre total de coups des deux joueurs, coups forcés inclus (toutes décisions,
-sans filtre) :
+le nombre de coups de pions des deux joueurs, coups forcés inclus, sans
+aucune règle de comptage :
 
 .. math::
 
@@ -207,8 +207,9 @@ produit ces chiffres n'est pas enregistrée.
 Comparaison XG ↔ blunderDB (même analyse)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Les comptes de décisions — coups de pions, doubles, prises, décisions de
-videau proches — sont **exacts**. Les écarts restants sont ceux de l'affichage
+Hors écarts résiduels ci-dessous, les comptes de décisions — coups de pions,
+doubles, prises, décisions de videau proches — sont **exacts**. Les écarts
+restants sont ceux de l'affichage
 d'XG, qui arrondit ce que blunderDB additionne au millipoint :
 
 +------------------------------------+------------------+
