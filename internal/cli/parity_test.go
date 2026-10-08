@@ -248,6 +248,7 @@ var databaseParity = map[string]parityEntry{
 	"GetTimeErrors":                     {CLI: "list", Server: "/v1/stats.timeErrors"},
 	"GetMatchDecisionLosses":            {CLI: "match", Server: "/v1/stats.matchDecisionLosses"},
 	"GetMatchReview":                    {CLI: "match", Server: "/v1/stats.matchReview"},
+	"GetTournamentReview":               {CLI: "stats tournament", Server: "/v1/stats.tournamentReview"},
 	"GetMatchTimeSummary":               {CLI: "match", Server: "/v1/stats.matchTimeSummary"},
 	"GetMatchOrigin":                    {CLI: "match", Server: "/v1/matches.origin"},
 	"GetMatchMovePositions":             {CLI: "match", Server: "/v1/matches.movePositions"},

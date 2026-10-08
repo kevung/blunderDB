@@ -499,6 +499,15 @@ func (d *Database) GetMatchReview(matchID int64) (storage.MatchReview, error) {
 	return d.store.Stats().MatchReview(context.Background(), "", matchID)
 }
 
+// GetTournamentReview is one player's review of a tournament (ADR-0081),
+// for the Tournaments panel; an empty player is the one who played the most
+// of its matches.
+func (d *Database) GetTournamentReview(tournamentID int64, player string) (storage.TournamentReview, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	return d.store.Stats().TournamentReview(context.Background(), "", tournamentID, player)
+}
+
 // GetMatchTimeSummary adds up the decision times of a match per player and
 // counts the turns played past the reserve of the Cadence it was played under,
 // for the Match panel's time summary.

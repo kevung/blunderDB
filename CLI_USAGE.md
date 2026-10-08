@@ -4439,6 +4439,34 @@ Examples:
   blunderdb stats report --db database.db --html --player "Alice" --lang fr
 ```
 
+### `blunderdb stats tournament`
+
+```
+Usage: blunderdb stats tournament --db <file> --id <n> [options]
+
+One player's tournament set against their usual level (ADR-0081): L7 and PR
+against the 365 days before the tournament, by round, by decision rank within
+the match (fatigue), at pressure scores (DMP, Crawford, post-Crawford) and by
+pace (quick or considered), with 95% intervals, then the tournament's error
+families. A verdict (worse, better, usual) needs an interval and at least
+20 decisions on both sides, and a usual level of 5 matches; otherwise it reads
+insufficient.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+  -id list --type tournaments
+    	Tournament ID (required; list --type tournaments lists them)
+  -player string
+    	Player to review (default: the one in the most matches of the tournament)
+
+Examples:
+  blunderdb stats tournament --db database.db --id 3
+  blunderdb stats tournament --db database.db --id 3 --player "Alice" --format json
+```
+
 ### `blunderdb stats training`
 
 ```

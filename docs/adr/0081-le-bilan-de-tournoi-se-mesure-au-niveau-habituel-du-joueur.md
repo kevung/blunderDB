@@ -54,7 +54,7 @@ ici avant d'avoir regardé ce qu'ils donnent sur une base réelle.
    joueur dans le tournoi, mêmes règles (5 membres chiffrés, borne basse > 0) : au plus
    **trois**, par borne basse ; les familles « à confirmer » sont comptées, pas nommées.
 8. **Où** : `storage.TournamentReview` (pur) et la lecture `TournamentReview` du contrat,
-   sqlshared commun aux deux moteurs ; le panneau Tournois, `tournament review` et
+   sqlshared commun aux deux moteurs ; le panneau Tournois, `stats tournament` et
    `/v1/stats.tournamentReview`. Aucun changement de schéma.
 
 ## Conséquences

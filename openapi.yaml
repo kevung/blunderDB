@@ -6376,6 +6376,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/tournamentBadgesResp"
+  /v1/stats.tournamentReview:
+    post:
+      operationId: stats.tournamentReview
+      tags: [stats]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/tournamentReviewReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/storage_TournamentReview"
   /v1/stats.training:
     post:
       operationId: stats.training
@@ -9085,6 +9102,9 @@ components:
     storage_TournamentBadge:
       type: object
       description: "Opaque: see the Go type storage.TournamentBadge (defined outside internal/server, not expanded here)."
+    storage_TournamentReview:
+      type: object
+      description: "Opaque: see the Go type storage.TournamentReview (defined outside internal/server, not expanded here)."
     storage_TrainingMissedFilter:
       type: object
       description: "Opaque: see the Go type storage.TrainingMissedFilter (defined outside internal/server, not expanded here)."
@@ -9221,6 +9241,14 @@ components:
         matchId:
           type: integer
           format: int64
+    tournamentReviewReq:
+      type: object
+      properties:
+        tournamentId:
+          type: integer
+          format: int64
+        player:
+          type: string
     tournamentUpdateReq:
       type: object
       properties:
