@@ -106,5 +106,6 @@ func RescorePositionMoves(ctx context.Context, db Execer, scope string, position
 	if err := writeScores(ctx, db, scores); err != nil {
 		return errf(db, "rescore position moves", err)
 	}
-	return nil
+	_, err = RescorePlayedDecisionsOf(ctx, db, []int64{positionID})
+	return err
 }

@@ -212,7 +212,11 @@ func (s *positionStore) Update(ctx context.Context, scope string, p *domain.Posi
 			p.ID); err != nil {
 			return err
 		}
-		_, err := tx.ExecContext(ctx, invalidateMatchStatsOfPositionSQL, p.ID)
+		if _, err := tx.ExecContext(ctx, invalidateMatchStatsOfPositionSQL, p.ID); err != nil {
+			return err
+		}
+		// A new decision type changes which play each move is scored against.
+		_, err := sqlshared.RescorePlayedDecisionsOf(ctx, binder{tx}.shared(), []int64{p.ID})
 		return err
 	})
 	if isUniqueViolation(err) {

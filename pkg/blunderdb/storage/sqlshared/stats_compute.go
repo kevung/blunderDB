@@ -317,8 +317,8 @@ func (s *StatsStore) computeCubeActionBreakdown(ctx context.Context, q statsQuer
 	d := s.DB
 	cubeWhere := q.whereSQL + " AND p.decision_type = 1"
 	rows, err := s.DB.Query(ctx,
-		`SELECT `+ActionLabelOrEmptyFor(s.DB, "a.best_cube_action")+`, `+d.Bigint(`SUM(a.cube_error)`)+`, COUNT(*),`+
-			` `+d.Bigint(`SUM(CASE WHEN a.cube_error >= ? THEN 1 ELSE 0 END)`)+` `+
+		`SELECT `+ActionLabelOrEmptyFor(s.DB, "a.best_cube_action")+`, `+d.Bigint(`SUM(`+statsErrExpr+`)`)+`, COUNT(*),`+
+			` `+d.Bigint(`SUM(CASE WHEN `+statsErrExpr+` >= ? THEN 1 ELSE 0 END)`)+` `+
 			q.join+cubeWhere+
 			// The label (column 1) is grouped as well as the code: its
 			// registered-label lookup reads the row's tenant.
@@ -361,7 +361,7 @@ func (s *StatsStore) computeCubeDirections(ctx context.Context, q statsQuery, re
 		cubeWhere := q.whereSQL + " AND p.decision_type = 1"
 		rows, err := s.DB.Query(ctx,
 			`SELECT `+ActionLabelOrEmptyFor(s.DB, "a.best_cube_action")+`, `+ActionLabelOrEmptyFor(s.DB, "mv.cube_action")+`, COUNT(*),`+
-				` `+d.Bigint(`COALESCE(SUM(a.cube_error),0)`)+` `+
+				` `+d.Bigint(`COALESCE(SUM(`+statsErrExpr+`),0)`)+` `+
 				q.join+cubeWhere+
 				` GROUP BY a.best_cube_action, mv.cube_action, 1, 2`,
 			q.baseArgs...,

@@ -50,8 +50,8 @@ func insertStatsFixtureRow(t *testing.T, db *Database, matchID int64, gameID int
 
 	// Insert move linking game → position
 	if _, err = db.db.Exec(
-		`INSERT INTO move (game_id, move_number, position_id, player) VALUES (?, ?, ?, ?)`,
-		gameID, moveNum, posID, xgPlayer,
+		`INSERT INTO move (game_id, move_number, position_id, player, decision_error_mp, is_close_cube) VALUES (?, ?, ?, ?, ?, ?)`,
+		gameID, moveNum, posID, xgPlayer, errMP, closeCube,
 	); err != nil {
 		t.Fatalf("insert move: %v", err)
 	}
@@ -523,8 +523,8 @@ func insertStatsFixtureRowMWC(t *testing.T, db *Database, matchID, gameID int64,
 		t.Fatalf("insert analysis: %v", err)
 	}
 	if _, err = db.db.Exec(
-		`INSERT INTO move (game_id, move_number, position_id, player) VALUES (?, ?, ?, ?)`,
-		gameID, moveNum, posID, player,
+		`INSERT INTO move (game_id, move_number, position_id, player, decision_error_mp) VALUES (?, ?, ?, ?, ?)`,
+		gameID, moveNum, posID, player, errMP,
 	); err != nil {
 		t.Fatalf("insert move: %v", err)
 	}

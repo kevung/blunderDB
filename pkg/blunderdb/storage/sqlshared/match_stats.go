@@ -218,7 +218,7 @@ func (s *StatsStore) computeMatchStatsRows(ctx context.Context, db Execer, scope
 	if err := scanEach(ctx, d,
 		`SELECT g.match_id, `+seatExpr+`, COUNT(*)
 		 FROM move mv JOIN game g ON g.id = mv.game_id JOIN position p ON p.id = mv.position_id
-		 WHERE g.match_id IN (`+ph+`) AND p.decision_type = 0 AND NOT `+UnscoredPlaySQL("p")+`
+		 WHERE g.match_id IN (`+ph+`) AND p.decision_type = 0 AND NOT `+UnscoredPlaySQL("p", "mv")+`
 		 GROUP BY g.match_id, `+seatExpr,
 		ids, func(r Rows) error {
 			var id int64

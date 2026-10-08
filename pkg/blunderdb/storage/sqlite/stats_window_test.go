@@ -54,9 +54,9 @@ func duplicateMatch(t *testing.T, db *sql.DB, matchID int64, date string) {
 		}
 		newGame, _ := res.LastInsertId()
 		if _, err := db.Exec(`INSERT INTO move (game_id, move_number, move_type, position_id, player,
-			dice_1, dice_2, checker_move, cube_action, luck_mp, error_mp)
+			dice_1, dice_2, checker_move, cube_action, luck_mp, error_mp, decision_error_mp, is_close_cube)
 			SELECT ?, move_number, move_type, position_id, player, dice_1, dice_2, checker_move,
-			cube_action, luck_mp, error_mp FROM move WHERE game_id = ? ORDER BY id`, newGame, g); err != nil {
+			cube_action, luck_mp, error_mp, decision_error_mp, is_close_cube FROM move WHERE game_id = ? ORDER BY id`, newGame, g); err != nil {
 			t.Fatal(err)
 		}
 		if _, err := db.Exec(`UPDATE move SET move_number = id WHERE game_id = ?`, newGame); err != nil {
