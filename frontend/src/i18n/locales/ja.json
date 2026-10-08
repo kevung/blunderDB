@@ -665,7 +665,16 @@
         "confirmDelete": "{player1}と{player2}のマッチを削除しますか?",
         "enrichFromFile": "ファイルから補完…",
         "editTranscription": "記譜を編集",
-        "editTranscriptionTooltip": "このマッチを記譜の下書きとして開きます。完了するとマッチが置き換えられます"
+        "editTranscriptionTooltip": "このマッチを記譜の下書きとして開きます。完了するとマッチが置き換えられます",
+        "video": "動画",
+        "videoPlaceholder": "動画のURLまたはファイルパス",
+        "videoChoose": "ファイル…",
+        "videoDetach": "切り離す",
+        "videoOpen": "マッチの動画",
+        "viewInVideo": "動画で見る",
+        "videoSet": "動画ソースを保存しました",
+        "videoDetached": "動画ソースを切り離しました",
+        "errorVideo": "マッチ動画のエラー"
     },
     "collection": {
         "addDescription": "説明を追加…",
@@ -1441,7 +1450,11 @@
             "nothingToUndo": "元に戻す操作はありません",
             "nothingToRedo": "やり直す操作はありません",
             "noAction": "カーソル位置にアクションがありません",
-            "noDice": "入力中のダイスはありません"
+            "noDice": "入力中のダイスはありません",
+            "untimedAction": "アクションの時刻なしで手を確定しました。動画があるときは、映像の瞬間に Enter で確定するか、セル上で v を押します。",
+            "noRollToTime": "このアクションには時刻を付けるロールがありません。",
+            "rollTimed": "ロールを {time} に設定しました。",
+            "actionTimed": "アクションを {time} に設定しました。"
         },
         "candidatesLabel": "候補手",
         "finish": "完了",
@@ -1457,7 +1470,14 @@
         "stateEditsMatch": "マッチ #{id} を編集中",
         "editLossWarning": "このマッチはインポートされたものです。最大 {analyses} 件の解析と最大 {comments} 件のコメントは記譜に引き継がれず、完了すると失われる可能性があります。記譜を開きますか？",
         "editAnyway": "記譜を開く",
-        "editFailed": "記譜を開けませんでした: {error}"
+        "editFailed": "記譜を開けませんでした: {error}",
+        "video": "動画",
+        "videoTooltip": "試合の動画を添付・置換・解除します",
+        "videoFile": "ファイル…",
+        "videoYouTube": "YouTube リンク…",
+        "videoDetach": "解除",
+        "videoAttach": "添付",
+        "videoResize": "動画欄の高さ"
     },
     "transcript": {
         "title": "棋譜",
@@ -1496,8 +1516,11 @@
             "past_end": "試合終了後",
             "inconsistent_dice": "ダイスの不一致",
             "unrecorded_move": "記録のない手",
-            "score_mismatch": "スコアの不一致"
-        }
+            "score_mismatch": "スコアの不一致",
+            "timecode_backwards": "時刻マークの逆行"
+        },
+        "tickRoll": "ロール {time}",
+        "tickAction": "手 {time}"
     },
     "status": {
         "importChip": "インポート中：{percent} %",
@@ -3160,6 +3183,19 @@
         "pace": "エラー：性急 {hasty}（{hastyLoss}）、熟考 {deliberate}（{deliberateLoss}）、時間なし {unknown}",
         "paceDiscipline": "むしろ規律：ゆっくり打つ",
         "paceKnowledge": "むしろ知識：これらの局面を学ぶ"
+    },
+    "video": {
+        "notPlayable": "このソースはここでは再生できません。",
+        "codecDetail": "Webview はこのファイルを再生できません（{container}、対応状況：{support}、コード {code}）。",
+        "unsupported": "非対応",
+        "codecHint": "Linux では GStreamer プラグインをインストールしてください：gstreamer1.0-plugins-good, gstreamer1.0-libav（Debian、Ubuntu）、gstreamer1-plugins-good, gstreamer1-plugin-libav（Fedora）、gst-plugins-good, gst-libav（Arch）。Windows では Store の HEVC 拡張機能が H.265 を再生します。",
+        "missing": "動画ファイルが見つかりません。",
+        "relocate": "ファイルを選択…",
+        "player": "動画プレーヤー",
+        "placeBoard": "動画を盤の横に表示",
+        "placePanel": "動画をパネルに戻す",
+        "stageResize": "動画のサイズを変更",
+        "rate": "再生速度"
     },
     "tournamentReview": {
         "title": "トーナメントの総括",

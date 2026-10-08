@@ -100,13 +100,23 @@ type MatchStore interface {
 	// UpdateComment sets the free-text comment on a match.
 	UpdateComment(ctx context.Context, scope string, id int64, comment string) error
 
+	// SetVideoSource attaches the video a match was transcribed from
+	// (ADR-0082), or detaches it when source is empty. ErrNotFound when no
+	// match has this id.
+	SetVideoSource(ctx context.Context, scope string, id int64, source string) error
+
 	// ReplaceHeader rewrites the header columns of an existing match in place,
 	// from m: the two names, the event, location and round, the length, the
 	// date, the hashes, the game count and the source metadata (Elo,
 	// experience, transcriber, session rules, engine version). The id, the import date, the
 	// tournament, the comment and the last-visited position are NOT touched —
 	// they are what a replacement exists to preserve (ADR-0045 §2), and none of
-	// them is a property of the transcript being re-saved.
+	// them is a property of the transcript being re-saved. The video source
+	// (ADR-0082) is kept when m.VideoSource is nil, cleared when it is "", and
+	// replaced otherwise. A header built by transcript.BuildPlayed — a
+	// Transcription's save, a Duel's — always states it, "" included, so a
+	// video detached in the draft leaves the Match; nil is for a writer that
+	// knows nothing of the video, which leaves it where it was.
 	//
 	// Update is the user's edit of a match's identity (two names and a date);
 	// this is the writer re-stating what the match now contains.

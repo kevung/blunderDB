@@ -150,6 +150,10 @@ export function LooksLikeOGID(arg1) {
   return window['go']['gui']['App']['LooksLikeOGID'](arg1);
 }
 
+export function MediaURL(arg1) {
+  return window['go']['gui']['App']['MediaURL'](arg1);
+}
+
 export function OpenBearoffFileDialog() {
   return window['go']['gui']['App']['OpenBearoffFileDialog']();
 }
@@ -194,6 +198,10 @@ export function OpenPositionFolderDialog() {
   return window['go']['gui']['App']['OpenPositionFolderDialog']();
 }
 
+export function OpenVideoExternally(arg1, arg2) {
+  return window['go']['gui']['App']['OpenVideoExternally'](arg1, arg2);
+}
+
 export function PathExists(arg1) {
   return window['go']['gui']['App']['PathExists'](arg1);
 }
@@ -204,6 +212,10 @@ export function PauseBearoffGeneration() {
 
 export function PickIdentityFile() {
   return window['go']['gui']['App']['PickIdentityFile']();
+}
+
+export function PickTranscriptionVideo() {
+  return window['go']['gui']['App']['PickTranscriptionVideo']();
 }
 
 export function PrepareDemoDatabase() {
@@ -220,6 +232,10 @@ export function ReadLogTail(arg1) {
 
 export function RegenerateIssuerIdentity(arg1) {
   return window['go']['gui']['App']['RegenerateIssuerIdentity'](arg1);
+}
+
+export function ReleaseMedia(arg1) {
+  return window['go']['gui']['App']['ReleaseMedia'](arg1);
 }
 
 export function RolloutPresets() {
@@ -304,4 +320,12 @@ export function StopFolderWatch() {
 
 export function SuggestWatchFolder() {
   return window['go']['gui']['App']['SuggestWatchFolder']();
+}
+
+export function VideoSourceKind(arg1) {
+  return window['go']['gui']['App']['VideoSourceKind'](arg1);
+}
+
+export function YouTubeEmbedURL(arg1) {
+  return window['go']['gui']['App']['YouTubeEmbedURL'](arg1);
 }

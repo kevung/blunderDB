@@ -665,7 +665,16 @@
         "confirmDelete": "Διαγραφή του αγώνα μεταξύ {player1} και {player2};",
         "enrichFromFile": "Εμπλουτισμός από αρχείο…",
         "editTranscription": "Επεξεργασία μεταγραφής",
-        "editTranscriptionTooltip": "Άνοιγμα αυτού του match ως πρόχειρο μεταγραφής· η ολοκλήρωσή του αντικαθιστά το match"
+        "editTranscriptionTooltip": "Άνοιγμα αυτού του match ως πρόχειρο μεταγραφής· η ολοκλήρωσή του αντικαθιστά το match",
+        "video": "Βίντεο",
+        "videoPlaceholder": "URL ή διαδρομή αρχείου βίντεο",
+        "videoChoose": "Αρχείο…",
+        "videoDetach": "Αποσύνδεση",
+        "videoOpen": "Βίντεο του αγώνα",
+        "viewInVideo": "Προβολή στο βίντεο",
+        "videoSet": "Η πηγή βίντεο αποθηκεύτηκε",
+        "videoDetached": "Η πηγή βίντεο αποσυνδέθηκε",
+        "errorVideo": "Σφάλμα στο βίντεο του αγώνα"
     },
     "collection": {
         "addDescription": "Προσθήκη περιγραφής…",
@@ -1441,7 +1450,11 @@
             "nothingToUndo": "Τίποτα για αναίρεση",
             "nothingToRedo": "Τίποτα για επανάληψη",
             "noAction": "Καμία ενέργεια κάτω από τον δρομέα",
-            "noDice": "Δεν εισάγεται ρίψη"
+            "noDice": "Δεν εισάγεται ρίψη",
+            "untimedAction": "Η κίνηση επικυρώθηκε χωρίς στιγμή ενέργειας: με βίντεο, το Enter επικυρώνει στη στιγμή της εικόνας, ή το v πάνω στο κελί.",
+            "noRollToTime": "Αυτή η ενέργεια δεν έχει ζαριά για χρονοσήμανση.",
+            "rollTimed": "Η ζαριά σημειώθηκε στο {time}.",
+            "actionTimed": "Η ενέργεια σημειώθηκε στο {time}."
         },
         "candidatesLabel": "Υποψήφιες κινήσεις",
         "finish": "Ολοκλήρωση",
@@ -1457,7 +1470,14 @@
         "stateEditsMatch": "επεξεργάζεται το match #{id}",
         "editLossWarning": "Αυτό το match εισήχθη: έως {analyses} ανάλυση(-εις) και έως {comments} σχόλιο(-α) δεν περνούν σε μια μεταγραφή, και η ολοκλήρωσή της μπορεί να τα χάσει. Άνοιγμα της μεταγραφής;",
         "editAnyway": "Άνοιγμα της μεταγραφής",
-        "editFailed": "Αδύνατο το άνοιγμα της μεταγραφής: {error}"
+        "editFailed": "Αδύνατο το άνοιγμα της μεταγραφής: {error}",
+        "video": "Βίντεο",
+        "videoTooltip": "Επισύναψη, αντικατάσταση ή αποσύνδεση του βίντεο του αγώνα",
+        "videoFile": "Αρχείο…",
+        "videoYouTube": "Σύνδεσμος YouTube…",
+        "videoDetach": "Αποσύνδεση",
+        "videoAttach": "Επισύναψη",
+        "videoResize": "Ύψος του πλαισίου βίντεο"
     },
     "transcript": {
         "title": "Καταγραφή",
@@ -1496,8 +1516,11 @@
             "past_end": "μετά το τέλος",
             "inconsistent_dice": "ασυνεπή ζάρια",
             "unrecorded_move": "μη καταγεγραμμένη κίνηση",
-            "score_mismatch": "ασυνεπές σκορ"
-        }
+            "score_mismatch": "ασυνεπές σκορ",
+            "timecode_backwards": "χρονοσήμανση προς τα πίσω"
+        },
+        "tickRoll": "ζαριά {time}",
+        "tickAction": "κίνηση {time}"
     },
     "status": {
         "importChip": "Εισαγωγή σε εξέλιξη: {percent} %",
@@ -3160,6 +3183,19 @@
         "pace": "Λάθη: {hasty} βιαστικά ({hastyLoss}), {deliberate} μελετημένα ({deliberateLoss}), {unknown} χωρίς χρόνο",
         "paceDiscipline": "μάλλον πειθαρχία: πιο αργά",
         "paceKnowledge": "μάλλον γνώση: μελέτη αυτών των θέσεων"
+    },
+    "video": {
+        "notPlayable": "Αυτή η πηγή δεν μπορεί να αναπαραχθεί εδώ.",
+        "codecDetail": "Το webview δεν αναπαράγει αυτό το αρχείο ({container}, υποστήριξη: {support}, κωδικός {code}).",
+        "unsupported": "μη υποστηριζόμενο",
+        "codecHint": "Στο Linux, εγκαταστήστε τα πρόσθετα GStreamer: gstreamer1.0-plugins-good, gstreamer1.0-libav (Debian, Ubuntu)· gstreamer1-plugins-good, gstreamer1-plugin-libav (Fedora)· gst-plugins-good, gst-libav (Arch). Στα Windows, η επέκταση HEVC του Store αναπαράγει H.265.",
+        "missing": "Το αρχείο βίντεο δεν βρέθηκε.",
+        "relocate": "Επιλογή αρχείου…",
+        "player": "Πρόγραμμα αναπαραγωγής βίντεο",
+        "placeBoard": "Εμφάνιση του βίντεο δίπλα στο ταμπλό",
+        "placePanel": "Επαναφορά του βίντεο στο πάνελ",
+        "stageResize": "Αλλαγή μεγέθους βίντεο",
+        "rate": "Ταχύτητα αναπαραγωγής"
     },
     "tournamentReview": {
         "title": "Απολογισμός τουρνουά",

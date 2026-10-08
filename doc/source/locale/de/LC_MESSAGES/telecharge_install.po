@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-05 04:23+0200\n"
+"POT-Creation-Date: 2026-10-08 20:06+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -416,10 +416,40 @@ msgstr ""
 "``flatpak run io.github.kevung.blunderDB <Befehl>``."
 
 #: ../../source/telecharge_install.rst:186
+msgid "Vidéos de match sous Linux"
+msgstr "Match-Videos unter Linux"
+
+#: ../../source/telecharge_install.rst:188
+msgid ""
+"Le panneau Matchs lit la vidéo attachée à un match avec les codecs du "
+"webview : sous Linux, ceux de GStreamer. Pour lire le MP4 et le WebM, "
+"installez ``gst-plugins-good``, et ``gst-libav`` pour le H.264 et le HEVC"
+" (paquets ``gstreamer1.0-plugins-good`` et ``gstreamer1.0-libav`` sur "
+"Debian, Ubuntu et Mint ; ``gstreamer1-plugins-good`` et "
+"``gstreamer1-libav`` sur Fedora). Le paquet AUR les propose en "
+"dépendances optionnelles ; le Flatpak embarque l'extension "
+"``org.freedesktop.Platform.ffmpeg-full``. Sous Windows, le HEVC demande "
+"l'extension « Extensions vidéo HEVC » du Microsoft Store ; macOS lit ces "
+"formats nativement. Un fichier que le webview ne lit pas est signalé dans"
+" le volet vidéo, avec son format."
+msgstr ""
+"Das Matches-Panel spielt das einem Match angehängte Video mit den Codecs "
+"des Webviews ab: unter Linux sind es die von GStreamer. Für MP4 und WebM "
+"``gst-plugins-good`` installieren, für H.264 und HEVC zusätzlich ``gst-"
+"libav`` (Pakete ``gstreamer1.0-plugins-good`` und ``gstreamer1.0-libav`` "
+"unter Debian, Ubuntu und Mint; ``gstreamer1-plugins-good`` und "
+"``gstreamer1-libav`` unter Fedora). Das AUR-Paket führt sie als optionale"
+" Abhängigkeiten; das Flatpak bringt die Erweiterung "
+"``org.freedesktop.Platform.ffmpeg-full`` mit. Unter Windows braucht HEVC "
+"die Erweiterung „HEVC-Videoerweiterungen“ aus dem Microsoft Store; macOS "
+"spielt diese Formate nativ ab. Eine Datei, die das Webview nicht "
+"abspielen kann, wird im Videobereich mit ihrem Format gemeldet."
+
+#: ../../source/telecharge_install.rst:200
 msgid "Archive .tar.gz"
 msgstr ".tar.gz-Archiv"
 
-#: ../../source/telecharge_install.rst:188
+#: ../../source/telecharge_install.rst:202
 msgid ""
 "Pour les autres distributions. L'extraction d'une archive conserve le bit"
 " exécutable, aucun ``chmod`` n'est donc nécessaire :"
@@ -427,7 +457,7 @@ msgstr ""
 "Für andere Distributionen. Das Entpacken eines Archivs bewahrt das "
 "Ausführbar-Bit, sodass kein ``chmod`` nötig ist:"
 
-#: ../../source/telecharge_install.rst:197
+#: ../../source/telecharge_install.rst:211
 msgid ""
 "L'exécutable de l'archive s'appelle ``blunderDB``, avec les majuscules. "
 "Les paquets ``.deb``, ``.rpm``, AUR et Flatpak installent en plus le lien"
@@ -443,11 +473,11 @@ msgstr ""
 " denselben Link neben der ausführbaren Datei. Um ihn in Ihrem ``PATH`` zu"
 " haben: ``ln -s \"$PWD/blunderDB\" ~/.local/bin/blunderdb``."
 
-#: ../../source/telecharge_install.rst:205
+#: ../../source/telecharge_install.rst:219
 msgid "Binaire brut (méthode avancée)"
 msgstr "Rohbinärdatei (fortgeschrittene Methode)"
 
-#: ../../source/telecharge_install.rst:207
+#: ../../source/telecharge_install.rst:221
 msgid ""
 "Le binaire brut |latest_linux_exe| reste disponible. Comme un navigateur "
 "retire le bit exécutable au téléchargement, il faut le rétablir avant la "
@@ -457,7 +487,7 @@ msgstr ""
 "beim Herunterladen das Ausführbar-Bit entfernt, müssen Sie es vor dem "
 "ersten Start wiederherstellen:"
 
-#: ../../source/telecharge_install.rst:215
+#: ../../source/telecharge_install.rst:229
 msgid ""
 "Deux variantes Linux sont publiées selon la version de la bibliothèque "
 "webkit2gtk. Si vous obtenez l'erreur ``libwebkit2gtk-4.0.so.37: cannot "
@@ -473,11 +503,11 @@ msgstr ""
 "oder laden Sie die dedizierte Version |latest_linux_webkit2gtk41_exe| "
 "herunter. Native Pakete wählen die richtige Abhängigkeit automatisch aus."
 
-#: ../../source/telecharge_install.rst:224
+#: ../../source/telecharge_install.rst:238
 msgid "Image Docker (mode serveur)"
 msgstr "Docker-Image (Servermodus)"
 
-#: ../../source/telecharge_install.rst:226
+#: ../../source/telecharge_install.rst:240
 msgid ""
 "Le mode serveur (:ref:`headless`) n'a pas besoin de l'application de "
 "bureau : chaque version publie l'image ``ghcr.io/kevung/blunderdb-serve``"
@@ -489,7 +519,7 @@ msgstr ""
 "in der GitHub-Registry, für ``linux/amd64`` und ``linux/arm64``, unter "
 "dem Versions-Tag und unter ``latest``:"
 
-#: ../../source/telecharge_install.rst:235
+#: ../../source/telecharge_install.rst:249
 msgid ""
 "Le lancement, la configuration et l'avertissement sur le mandataire "
 "d'authentification sont décrits dans :ref:`headless_docker_image`."
@@ -497,11 +527,11 @@ msgstr ""
 "Start, Konfiguration und die Warnung zum authentifizierenden Proxy sind "
 "in :ref:`headless_docker_image` beschrieben."
 
-#: ../../source/telecharge_install.rst:241
+#: ../../source/telecharge_install.rst:255
 msgid "Manifestes winget et Homebrew"
 msgstr "winget- und Homebrew-Manifeste"
 
-#: ../../source/telecharge_install.rst:243
+#: ../../source/telecharge_install.rst:257
 msgid ""
 "Chaque release fournit un manifeste `winget "
 "<https://learn.microsoft.com/windows/package-manager/>`__ (``blunderDB-"
@@ -522,11 +552,11 @@ msgstr ""
 "die Natur der ausführbaren Datei: Sie bleibt unsigniert, und die unten "
 "beschriebenen Warnungen gelten unverändert."
 
-#: ../../source/telecharge_install.rst:253
+#: ../../source/telecharge_install.rst:267
 msgid "Avertissements Windows et Mac"
 msgstr "Hinweise für Windows und Mac"
 
-#: ../../source/telecharge_install.rst:255
+#: ../../source/telecharge_install.rst:269
 msgid ""
 "Sous Windows, il est possible que ce dernier émette des réticences à "
 "exécuter blunderDB. Voir :ref:`annexe_windows_malware` pour comprendre "
@@ -536,7 +566,7 @@ msgstr ""
 "blunderDB auszuführen. Siehe :ref:`annexe_windows_malware`, um zu "
 "verstehen, warum, und um etwaige Blockaden zu umgehen."
 
-#: ../../source/telecharge_install.rst:259
+#: ../../source/telecharge_install.rst:273
 msgid ""
 "Sous Mac, il est possible que ce dernier émette des réticences à exécuter"
 " blunderDB. Voir :ref:`annexe_mac_malware` pour comprendre pourquoi et "

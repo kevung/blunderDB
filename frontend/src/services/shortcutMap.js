@@ -62,7 +62,8 @@ export const SHORTCUTS = {
     matchPanel: {
         tier: TIER.PANEL,
         group: 'tab',
-        keys: ['Escape', '/', 'j', 'k', 'ArrowDown', 'ArrowUp', 'Enter', 'Delete'],
+        // [ and ] set the speed of the open video.
+        keys: ['Escape', '/', 'j', 'k', 'v', '[', ']', 'ArrowDown', 'ArrowUp', 'Enter', 'Delete'],
         shadows: ['Escape', '/', 'j', 'k', 'Delete']
     },
     collectionPanel: { tier: TIER.PANEL, group: 'tab', keys: ['Escape', 'Delete'], shadows: ['Escape', 'Delete'] },
@@ -98,9 +99,20 @@ export const SHORTCUTS = {
             'Delete',
             'Enter',
             'Ctrl+Enter',
-            'Escape'
+            'Escape',
+            // The video's keys, bound only while a source is attached; Space stays global
+            // (the command line) without one.
+            'Space',
+            'Shift+ArrowLeft',
+            'Shift+ArrowRight',
+            'Ctrl+Shift+ArrowLeft',
+            'Ctrl+Shift+ArrowRight',
+            'v',
+            'Shift+V',
+            '[',
+            ']'
         ],
-        shadows: [...digits('', 1, 4), 'h', 'l', 'ArrowLeft', 'ArrowRight', 'j', 'k', 'p', 'r', 'Backspace', 'Delete', 'Escape']
+        shadows: [...digits('', 1, 4), 'h', 'l', 'ArrowLeft', 'ArrowRight', 'j', 'k', 'p', 'r', 'Backspace', 'Delete', 'Escape', 'Space']
     },
 
     // Always mounted beside the board.

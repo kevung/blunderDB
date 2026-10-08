@@ -4544,15 +4544,89 @@ func TestMigrate_2_38_0_to_2_39_0_PlayedDecisionsResume(t *testing.T) {
 	}
 }
 
-// TestMigrate_2_39_0_to_2_40_0_AnsweredDoubles opens a 2.39.0 library whose
+// TestMigrate_2_39_0_to_2_40_0_MatchVideo opens a 2.39.0 library — a match
+// with a move — and checks the match gains no video source and the move its
+// two Repères as unknown, never zero nor "", with the rows kept and both
+// writable afterwards.
+func TestMigrate_2_39_0_to_2_40_0_MatchVideo(t *testing.T) {
+	t.Parallel()
+	dbPath := filepath.Join(tempDir(t), "test_v2390.db")
+	createOldDatabase(t, dbPath, "2.31.0")
+	d := NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open: %v", err)
+	}
+	ctx := context.Background()
+	matchID, err := d.store.Matches().Save(ctx, "", &domain.Match{Player1Name: "A", Player2Name: "B", MatchLength: 3, MatchHash: "match-video"})
+	if err != nil {
+		t.Fatalf("save match: %v", err)
+	}
+	gameID, err := d.store.Matches().CreateGame(ctx, "", &domain.Game{MatchID: matchID, GameNumber: 1})
+	if err != nil {
+		t.Fatalf("create game: %v", err)
+	}
+	if _, err := d.store.Matches().CreateMove(ctx, "", &domain.Move{GameID: gameID, MoveType: "checker", Player: 1, Dice: [2]int32{3, 1}}); err != nil {
+		t.Fatalf("create move: %v", err)
+	}
+	// Back to the 2.39.0 shape.
+	for _, stmt := range []string{
+		`ALTER TABLE match DROP COLUMN video_source`,
+		`ALTER TABLE move DROP COLUMN roll_tick_ms`,
+		`ALTER TABLE move DROP COLUMN tick_ms`,
+		`UPDATE metadata SET value = '2.39.0' WHERE key = 'database_version'`,
+	} {
+		if _, err := d.db.Exec(stmt); err != nil {
+			t.Fatalf("%s: %v", stmt, err)
+		}
+	}
+	if err := d.Close(); err != nil {
+		t.Fatalf("close: %v", err)
+	}
+
+	d = NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open v2.39.0 database: %v", err)
+	}
+	closeOnCleanup(t, d)
+	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {
+		t.Fatalf("version after migration = %q, %v; want %q", v, err, DatabaseVersion)
+	}
+	m, err := d.store.Matches().Get(ctx, "", matchID)
+	if err != nil {
+		t.Fatalf("get match: %v", err)
+	}
+	if m.VideoSource != nil {
+		t.Errorf("a match stored before 2.40.0 has video source %q, want none", *m.VideoSource)
+	}
+	n := 0
+	for mv, err := range d.store.Matches().MovesByMatch(ctx, "", matchID) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		n++
+		if mv.RollTickMS != nil || mv.TickMS != nil {
+			t.Errorf("a move stored before 2.40.0 reads Repères %v/%v, want unknown", mv.RollTickMS, mv.TickMS)
+		}
+	}
+	if n != 1 {
+		t.Fatalf("%d moves after migration, want 1", n)
+	}
+	src := "https://example.org/match.mp4"
+	m.VideoSource = &src
+	if err := d.store.Matches().ReplaceHeader(ctx, "", matchID, m); err != nil {
+		t.Fatalf("set a video source on a migrated library: %v", err)
+	}
+}
+
+// TestMigrate_2_40_0_to_2_41_0_AnsweredDoubles opens a 2.40.0 library whose
 // transcribed take and pass stand on the answerer's own redouble row, and
 // checks the step moves them onto the ownerless cube: the take merges into
 // an importer's reply row, the pass's row is purged with its stale analysis,
 // imported moves stay, and the moved take is rescored by its new row.
-func TestMigrate_2_39_0_to_2_40_0_AnsweredDoubles(t *testing.T) {
+func TestMigrate_2_40_0_to_2_41_0_AnsweredDoubles(t *testing.T) {
 	t.Parallel()
 	ctx := context.Background()
-	dbPath := filepath.Join(tempDir(t), "test_v2390.db")
+	dbPath := filepath.Join(tempDir(t), "test_v2400.db")
 	d := NewDatabase()
 	if err := d.SetupDatabase(dbPath); err != nil {
 		t.Fatalf("setup: %v", err)
@@ -4596,6 +4670,25 @@ func TestMigrate_2_39_0_to_2_40_0_AnsweredDoubles(t *testing.T) {
 		}
 		return mvID
 	}
+	doubler := owned(9)
+	doubler.PlayerOnRoll, doubler.Cube = domain.White, domain.Cube{Owner: domain.None, Value: 0}
+	doublerID := save(doubler)
+	// answered records an answer the transcription's way: right after the
+	// opponent's Double, on the doubler's own row.
+	answered := func(filePath, action string, posID int64) int64 {
+		mvID := move(filePath, action, posID)
+		if _, err := d.db.Exec(`UPDATE move SET move_number = 2 WHERE id = ?`, mvID); err != nil {
+			t.Fatal(err)
+		}
+		var gid int64
+		if err := d.db.QueryRow(`SELECT game_id FROM move WHERE id = ?`, mvID).Scan(&gid); err != nil {
+			t.Fatal(err)
+		}
+		if _, err := s.Matches().CreateMove(ctx, "", &domain.Move{GameID: gid, MoveNumber: 1, MoveType: "cube", PositionID: doublerID, Player: 1, CubeAction: "Double"}); err != nil {
+			t.Fatalf("create double: %v", err)
+		}
+		return mvID
+	}
 	positionOf := func(d *Database, moveID int64) (pid int64, errMP sql.NullInt64) {
 		t.Helper()
 		if err := d.db.QueryRow(`SELECT position_id, decision_error_mp FROM move WHERE id = ?`, moveID).Scan(&pid, &errMP); err != nil {
@@ -4620,14 +4713,14 @@ func TestMigrate_2_39_0_to_2_40_0_AnsweredDoubles(t *testing.T) {
 	if _, err := s.Matches().CreateMove(ctx, "", &domain.Move{GameID: importedGame, MoveNumber: 0, MoveType: "cube", PositionID: sharedID, Player: 1, CubeAction: "Double"}); err != nil {
 		t.Fatalf("create double: %v", err)
 	}
-	transcribedTake := move("", "Take", sharedID)
+	transcribedTake := answered("", "Take", sharedID)
 	loneID := save(owned(1))
 	analyse(loneID, "XG")
-	transcribedPass := move("", "Pass", loneID)
+	transcribedPass := answered("", "Pass", loneID)
 	// An imported match corrected through a transcription: its file stays,
 	// its take stands the transcript's way.
 	correctedID := save(owned(2))
-	correctedTake := move("c.xg", "Take", correctedID)
+	correctedTake := answered("c.xg", "Take", correctedID)
 	// Take/pass rows gammonNet scored as the answerer's centred-cube
 	// decision, beside one XG scored as the doubler's.
 	gnReply := owned(3)
@@ -4643,7 +4736,7 @@ func TestMigrate_2_39_0_to_2_40_0_AnsweredDoubles(t *testing.T) {
 	// the reply row has none, so the rescore must clear it.
 	for _, stmt := range []string{
 		fmt.Sprintf(`UPDATE move SET decision_error_mp = 999 WHERE id IN (%d, %d)`, transcribedTake, gnTake),
-		`UPDATE metadata SET value = '2.39.0' WHERE key = 'database_version'`,
+		`UPDATE metadata SET value = '2.40.0' WHERE key = 'database_version'`,
 	} {
 		if _, err := d.db.Exec(stmt); err != nil {
 			t.Fatalf("%s: %v", stmt, err)
@@ -4655,7 +4748,7 @@ func TestMigrate_2_39_0_to_2_40_0_AnsweredDoubles(t *testing.T) {
 
 	d = NewDatabase()
 	if err := d.OpenDatabase(dbPath); err != nil {
-		t.Fatalf("open v2.39.0 database: %v", err)
+		t.Fatalf("open v2.40.0 database: %v", err)
 	}
 	closeOnCleanup(t, d)
 	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {

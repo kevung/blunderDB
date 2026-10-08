@@ -288,3 +288,12 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   (`runGoBackfills`, generation 2), which also recompute the 2.37.0 columns
   and drop `match_stats`. Schema-visible: bumped `domain.DatabaseVersion` to
   2.39.0.
+- `045_match_video.sql` — the 2.40.0 wave (ADR-0082): `match.video_source`,
+  the video a Match was transcribed from (an http(s) URL or a local path), and
+  `move.roll_tick_ms` / `move.tick_ms`, the Move's Repères in it, NULL for
+  unknown. Schema-visible: bumped `domain.DatabaseVersion` to 2.40.0.
+- The 2.41.0 wave has no SQL file: a take or a pass a transcription recorded
+  on the answerer's own redouble row moves to the turned cube held by no one,
+  and gammonNet's verdicts on take/pass rows are dropped for reanalysis as the
+  doubler's decision. Both are Go-side passes (`runGoBackfills`, generation
+  3). Schema-visible: bumped `domain.DatabaseVersion` to 2.41.0.

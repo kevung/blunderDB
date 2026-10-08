@@ -562,6 +562,16 @@ from there.
 _Avoid_: error (the analysed blunder), fault (Training), invalid move (what gnubg
 refuses — a Transcription refuses nothing)
 
+**Timecode** (of an Action; interface: *repère*):
+The instant, in the media time of the video attached to a Transcription, at which an Action
+happened: the roll (the dice land) and the action (the play is finished, the double offered,
+the answer given). Media time, not wall-clock time: pausing, rewinding or speeding the video
+up does not move it. Posted on the Action while typing, carried by the saved Move, and the
+source of every Decision time a Transcription has — the Replay derives the durations from
+consecutive Timecodes, never the other way round (ADR-0082). Unknown, never zero, when the
+Transcription has no video or the Action was never stamped.
+_Avoid_: timestamp (a wall-clock date), tick, duration (what is derived from it), frame
+
 ### Playing a match
 
 **Duel** (interface: *match*, under the gesture *Jouer*):
@@ -652,7 +662,8 @@ the Side has the trait until it acts. A turn holds up to two: from the trait to 
 the cube Decision, taken even by rolling — and from the roll to the play. A double, a take,
 a pass, a resignation each have their own. It does not depend on the Cadence: the delay is
 part of it, and a Duel with no Cadence measures it all the same. It becomes a property of
-the play in the saved Match; a Match that was not played here has none — unknown, never
+the play in the saved Match. A Transcription with a video attached derives it from its
+Timecodes (ADR-0082); any other Match that was not played here has none — unknown, never
 zero.
 _Avoid_: thinking time, time per move (a turn is two Decisions), clock time (the Cadence)
 

@@ -142,6 +142,17 @@ type Action struct {
 	// unknown, never zero: a record typed or imported carries none.
 	DecisionMS     *int64 `json:"decision_ms,omitempty"`
 	CubeDecisionMS *int64 `json:"cube_decision_ms,omitempty"`
+
+	// RollTickMS and TickMS are the Action's Repères in the Transcription's
+	// video, in milliseconds from the start of the media (ADR-0082): the
+	// instant the dice fell — on a checker play, a dance or an unrecorded
+	// play — and the instant the action was done, on every Kind. nil is
+	// unknown, never zero. They are posted by the gestures that write a NEW
+	// Action and by [GestureSetTimecode]; a correction in place keeps them,
+	// and inserting or deleting an Action moves none. The durations the
+	// Replay deduces from them are never written back here.
+	RollTickMS *int64 `json:"roll_tick_ms,omitempty"`
+	TickMS     *int64 `json:"tick_ms,omitempty"`
 }
 
 // Header is the head of the document (fonctionnel.md §1.1). Only MatchLength is asked
@@ -170,6 +181,11 @@ type Header struct {
 	// draft owns, posted at the first save and stable from then on.
 	TournamentID *int64 `json:"tournament_id,omitempty"`
 	MatchID      *int64 `json:"match_id,omitempty"`
+
+	// VideoSource is the media the Repères of the Actions refer to: an http(s)
+	// URL or a local path, "" for none (ADR-0082 rule 4). It is carried to the
+	// saved Match and back when the Match is reopened as a draft.
+	VideoSource string `json:"video_source,omitempty"`
 }
 
 // Document is a Transcription: its header, its Actions in order, and the Cursor — the
@@ -241,6 +257,13 @@ type Entry struct {
 	// longer fits preselects the roll's first candidate (fonctionnel.md §2). Only
 	// the Entry is marked, never the Action; a Replay ignores it.
 	Review bool
+
+	// RollTickMS is the instant of the video the first die was typed at, and
+	// TickMS the one a hand-entered play was finished at: the Repères a NEW
+	// Action receives when it is written (ADR-0082 rule 3). A correction in
+	// place ignores them and keeps the Action's own.
+	RollTickMS *int64
+	TickMS     *int64
 }
 
 // New returns an empty draft of the given length, with a game's first play expected. A length of

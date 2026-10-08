@@ -4,7 +4,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
-// InconsistencyKind names one of the seven facts a Replay can find (fonctionnel.md §1.4).
+// InconsistencyKind names one of the eight facts a Replay can find (fonctionnel.md §1.4).
 // Every one of them is derived at each Replay, shown, and kept: none is stored on an
 // Action, none is written into the saved Match, and none is ever a refusal.
 type InconsistencyKind string
@@ -36,6 +36,10 @@ const (
 	// one (ADR-0053); the game is played at the declared score and the detail names
 	// the derived one. It also marks an unusable declaration (money, negative).
 	ScoreMismatch InconsistencyKind = "score_mismatch"
+	// TimecodeBackwards: a Repère earlier than the one before it in the document —
+	// the roll's then the action's of each Action, in order (ADR-0082 rule 2). It
+	// is kept as typed, and every duration that starts or ends on it is unknown.
+	TimecodeBackwards InconsistencyKind = "timecode_backwards"
 )
 
 // Inconsistency is one derived fact about one Action, with the sentence the panel shows.
@@ -79,10 +83,19 @@ type ActionInfo struct {
 	// it, and it is the one that carries a declared score.
 	OpensGame bool `json:"opens_game"`
 
-	// DecisionMS and CubeDecisionMS are the Action's own, carried to the Move
-	// it produces: the one thing here a Replay does not derive.
+	// DecisionMS and CubeDecisionMS are carried to the Move the Action
+	// produces: the Action's own when an Arbiter measured them, otherwise
+	// deduced from the Repères (ADR-0082 rule 2), nil when neither says.
 	DecisionMS     *int64 `json:"decision_ms,omitempty"`
 	CubeDecisionMS *int64 `json:"cube_decision_ms,omitempty"`
+
+	// RollTickMS and TickMS are the Action's own Repères, carried to its Move.
+	RollTickMS *int64 `json:"roll_tick_ms,omitempty"`
+	TickMS     *int64 `json:"tick_ms,omitempty"`
+
+	// cubeChoice says the roll was one the side could double before: the only
+	// rolls a cube decision is deduced for.
+	cubeChoice bool
 
 	Inconsistencies []Inconsistency `json:"inconsistencies,omitempty"`
 }
@@ -257,6 +270,9 @@ func (r *Replayer) Replay(doc Document, from int) Annotated {
 	// The caller gets copies: the cache must survive whatever is done to what it
 	// handed out, and an Annotated is passed around and serialised.
 	out.Actions = append(make([]ActionInfo, 0, len(r.infos)), r.infos...)
+	// Repères and durations are read after the cache, so moving a Repère
+	// replays nothing.
+	timeActions(doc.Actions, out.Actions)
 	out.Games = append([]GameInfo(nil), s.games...)
 	out.Score = s.points
 	if s.matchOver() {

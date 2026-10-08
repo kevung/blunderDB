@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-06 04:35+0200\n"
+"POT-Creation-Date: 2026-10-08 20:08+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -42,11 +42,11 @@ msgstr ""
 " with their response shape (JSON, or NDJSON for a streamed list) and, "
 "where it exists, a note of the optional ``Idempotency-Key`` header."
 
-#: ../../source/api_reference.rst:383
+#: ../../source/api_reference.rst:389
 msgid "Idempotence"
 msgstr "Idempotency"
 
-#: ../../source/api_reference.rst:385
+#: ../../source/api_reference.rst:391
 msgid ""
 "La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les "
 "lectures sont sans effet de bord, et les écritures de ``positions.*`` "
@@ -73,11 +73,11 @@ msgstr ""
 "Key)\" mark in the table above. No other method needs or accepts this "
 "header."
 
-#: ../../source/api_reference.rst:397
+#: ../../source/api_reference.rst:403
 msgid "Lectures conditionnelles"
 msgstr "Conditional reads"
 
-#: ../../source/api_reference.rst:399
+#: ../../source/api_reference.rst:405
 msgid ""
 "Les méthodes marquées « (ETag) » rendent un en-tête ``ETag``. Le renvoyer"
 " dans ``If-None-Match`` obtient une réponse ``304`` sans corps tant que "
@@ -87,3 +87,54 @@ msgstr ""
 "Methods marked \"(ETag)\" return an ``ETag`` header. Sending it back in "
 "``If-None-Match`` gets a body-less ``304`` response as long as nothing "
 "the method reads has changed — see :ref:`headless_direction`."
+
+#: ../../source/api_reference.rst:410
+msgid "Repères d'une transcription"
+msgstr "Timecodes of a transcription"
+
+#: ../../source/api_reference.rst:412
+msgid ""
+"Un geste de ``transcriptions.apply`` peut porter l'instant de la vidéo où"
+" il est fait, en millisecondes depuis le début du média : ``TickMS``, lu "
+"seulement quand ``HasTick`` vaut ``true`` (0 est un instant). "
+"``enter_die`` en fait le repère du jet (la première touche de dé compte),"
+" ``enter_play``, ``validate``, ``dance``, ``double``, ``take``, ``pass`` "
+"et ``resign`` le repère de l'action, sur une action nouvelle seulement : "
+"une correction en place garde les repères qu'elle avait. Le geste "
+"``set_timecode`` pose ``TickMS`` (avec ``HasTick``) et ``RollTickMS`` "
+"(avec ``HasRollTick``) sur l'action du curseur ; une valeur négative "
+"efface le repère. Le geste ``set_video`` attache la source vidéo nommée "
+"par ``VideoSource`` (URL http(s) ou chemin local), une chaîne vide la "
+"détache ; ``set_header`` la pose aussi quand son en-tête en nomme une, "
+"sans jamais l'effacer."
+msgstr ""
+"A ``transcriptions.apply`` gesture can carry the video instant at which "
+"it is made, in milliseconds from the start of the media: ``TickMS``, read"
+" only when ``HasTick`` is ``true`` (0 is an instant). ``enter_die`` makes"
+" it the timecode of the roll (the first die key counts); ``enter_play``, "
+"``validate``, ``dance``, ``double``, ``take``, ``pass`` and ``resign`` "
+"make it the timecode of the action, on a new action only: an in-place "
+"correction keeps the timecodes it had. The ``set_timecode`` gesture sets "
+"``TickMS`` (with ``HasTick``) and ``RollTickMS`` (with ``HasRollTick``) "
+"on the cursor's action; a negative value clears the timecode. The "
+"``set_video`` gesture attaches the video source named by ``VideoSource`` "
+"(http(s) URL or local path), and an empty string detaches it; "
+"``set_header`` also sets it when its header names one, but never clears "
+"it."
+
+#: ../../source/api_reference.rst:424
+msgid ""
+"L'état rendu porte la source dans ``header.video_source``, les repères de"
+" chaque action dans ``roll_tick_ms`` et ``tick_ms``, et, sur chaque "
+"action annotée, les durées ``decision_ms`` et ``cube_decision_ms`` : "
+"mesurées par l'Arbitre quand elles le sont, sinon déduites des repères. "
+"Un repère antérieur au précédent est marqué par l'incohérence "
+"``timecode_backwards`` et laisse inconnues les durées qui en dépendent."
+msgstr ""
+"The rendered state carries the source in ``header.video_source``, the "
+"timecodes of each action in ``roll_tick_ms`` and ``tick_ms``, and, on "
+"each annotated action, the durations ``decision_ms`` and "
+"``cube_decision_ms``: measured by the Arbiter when they are, otherwise "
+"deduced from the timecodes. A timecode earlier than the previous one is "
+"flagged by the ``timecode_backwards`` inconsistency and leaves the "
+"durations that depend on it unknown."

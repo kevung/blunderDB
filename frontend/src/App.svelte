@@ -69,6 +69,7 @@
     import Toolbar from './components/Toolbar.svelte';
     import CommandPalette from './components/CommandPalette.svelte';
     import Board from './components/Board.svelte';
+    import VideoStage from './components/VideoStage.svelte';
     import DirectionFullscreenToggle from './components/direction/DirectionFullscreenToggle.svelte';
     import { directionFullscreenStore } from './services/directionFullscreen.js';
     import { directionPageShownStore, directionViewLoadedStore } from './stores/directionStore';
@@ -482,11 +483,14 @@
             <!-- La seule chose qui remplace le plateau dans la zone principale (ADR-0047) :
                  l'onglet Tournoi actif ET une Direction ouverte. Tout autre onglet ramène le
                  plateau sans rien fermer — la Direction reste ouverte et continue de vivre. -->
-            {#if $directionPageShownStore && DirectionViewComponent}
-                <DirectionViewComponent />
-            {:else}
-                <Board />
-            {/if}
+            <!-- Une vidéo de match peut se loger à gauche du plateau (stores/videoStageStore.js). -->
+            <VideoStage>
+                {#if $directionPageShownStore && DirectionViewComponent}
+                    <DirectionViewComponent />
+                {:else}
+                    <Board />
+                {/if}
+            </VideoStage>
         </div>
 
         <div

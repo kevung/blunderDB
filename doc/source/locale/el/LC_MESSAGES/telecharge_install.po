@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-05 04:23+0200\n"
+"POT-Creation-Date: 2026-10-08 20:06+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -414,10 +414,40 @@ msgstr ""
 "io.github.kevung.blunderDB <εντολή>``."
 
 #: ../../source/telecharge_install.rst:186
+msgid "Vidéos de match sous Linux"
+msgstr "Βίντεο αγώνων σε Linux"
+
+#: ../../source/telecharge_install.rst:188
+msgid ""
+"Le panneau Matchs lit la vidéo attachée à un match avec les codecs du "
+"webview : sous Linux, ceux de GStreamer. Pour lire le MP4 et le WebM, "
+"installez ``gst-plugins-good``, et ``gst-libav`` pour le H.264 et le HEVC"
+" (paquets ``gstreamer1.0-plugins-good`` et ``gstreamer1.0-libav`` sur "
+"Debian, Ubuntu et Mint ; ``gstreamer1-plugins-good`` et "
+"``gstreamer1-libav`` sur Fedora). Le paquet AUR les propose en "
+"dépendances optionnelles ; le Flatpak embarque l'extension "
+"``org.freedesktop.Platform.ffmpeg-full``. Sous Windows, le HEVC demande "
+"l'extension « Extensions vidéo HEVC » du Microsoft Store ; macOS lit ces "
+"formats nativement. Un fichier que le webview ne lit pas est signalé dans"
+" le volet vidéo, avec son format."
+msgstr ""
+"Ο πίνακας Αγώνες αναπαράγει το βίντεο που είναι συνημμένο σε έναν αγώνα "
+"με τους κωδικοποιητές του webview: σε Linux, αυτούς του GStreamer. Για να"
+" αναπαράγετε MP4 και WebM, εγκαταστήστε το ``gst-plugins-good``, και το "
+"``gst-libav`` για H.264 και HEVC (πακέτα ``gstreamer1.0-plugins-good`` "
+"και ``gstreamer1.0-libav`` σε Debian, Ubuntu και Mint· ``gstreamer1"
+"-plugins-good`` και ``gstreamer1-libav`` σε Fedora). Το πακέτο AUR τα "
+"προτείνει ως προαιρετικές εξαρτήσεις· το Flatpak περιλαμβάνει την "
+"επέκταση ``org.freedesktop.Platform.ffmpeg-full``. Σε Windows, το HEVC "
+"απαιτεί την επέκταση «HEVC Video Extensions» του Microsoft Store· το "
+"macOS αναπαράγει αυτές τις μορφές εγγενώς. Ένα αρχείο που το webview δεν "
+"αναπαράγει αναφέρεται στο πλαίσιο βίντεο, με τη μορφή του."
+
+#: ../../source/telecharge_install.rst:200
 msgid "Archive .tar.gz"
 msgstr "Αρχείο .tar.gz"
 
-#: ../../source/telecharge_install.rst:188
+#: ../../source/telecharge_install.rst:202
 msgid ""
 "Pour les autres distributions. L'extraction d'une archive conserve le bit"
 " exécutable, aucun ``chmod`` n'est donc nécessaire :"
@@ -425,7 +455,7 @@ msgstr ""
 "Για άλλες διανομές. Η εξαγωγή ενός αρχείου διατηρεί το bit εκτέλεσης, "
 "οπότε δεν χρειάζεται ``chmod``:"
 
-#: ../../source/telecharge_install.rst:197
+#: ../../source/telecharge_install.rst:211
 msgid ""
 "L'exécutable de l'archive s'appelle ``blunderDB``, avec les majuscules. "
 "Les paquets ``.deb``, ``.rpm``, AUR et Flatpak installent en plus le lien"
@@ -441,11 +471,11 @@ msgstr ""
 "δίπλα στο εκτελέσιμο. Για να τον έχετε στο ``PATH`` σας: ``ln -s "
 "\"$PWD/blunderDB\" ~/.local/bin/blunderdb``."
 
-#: ../../source/telecharge_install.rst:205
+#: ../../source/telecharge_install.rst:219
 msgid "Binaire brut (méthode avancée)"
 msgstr "Ακατέργαστο εκτελέσιμο (προχωρημένη μέθοδος)"
 
-#: ../../source/telecharge_install.rst:207
+#: ../../source/telecharge_install.rst:221
 msgid ""
 "Le binaire brut |latest_linux_exe| reste disponible. Comme un navigateur "
 "retire le bit exécutable au téléchargement, il faut le rétablir avant la "
@@ -455,7 +485,7 @@ msgstr ""
 "ένα πρόγραμμα περιήγησης αφαιρεί το bit εκτέλεσης κατά τη λήψη, πρέπει να"
 " το αποκαταστήσετε πριν από την πρώτη εκτέλεση:"
 
-#: ../../source/telecharge_install.rst:215
+#: ../../source/telecharge_install.rst:229
 msgid ""
 "Deux variantes Linux sont publiées selon la version de la bibliothèque "
 "webkit2gtk. Si vous obtenez l'erreur ``libwebkit2gtk-4.0.so.37: cannot "
@@ -471,11 +501,11 @@ msgstr ""
 " ειδική έκδοση |latest_linux_webkit2gtk41_exe|. Τα εγγενή πακέτα "
 "επιλέγουν αυτόματα τη σωστή εξάρτηση."
 
-#: ../../source/telecharge_install.rst:224
+#: ../../source/telecharge_install.rst:238
 msgid "Image Docker (mode serveur)"
 msgstr "Εικόνα Docker (λειτουργία διακομιστή)"
 
-#: ../../source/telecharge_install.rst:226
+#: ../../source/telecharge_install.rst:240
 msgid ""
 "Le mode serveur (:ref:`headless`) n'a pas besoin de l'application de "
 "bureau : chaque version publie l'image ``ghcr.io/kevung/blunderdb-serve``"
@@ -488,7 +518,7 @@ msgstr ""
 "``linux/arm64``, με την ετικέτα της έκδοσης και με την ετικέτα "
 "``latest``:"
 
-#: ../../source/telecharge_install.rst:235
+#: ../../source/telecharge_install.rst:249
 msgid ""
 "Le lancement, la configuration et l'avertissement sur le mandataire "
 "d'authentification sont décrits dans :ref:`headless_docker_image`."
@@ -496,11 +526,11 @@ msgstr ""
 "Η εκκίνηση, η ρύθμιση και η προειδοποίηση για τον διαμεσολαβητή "
 "ταυτοποίησης περιγράφονται στο :ref:`headless_docker_image`."
 
-#: ../../source/telecharge_install.rst:241
+#: ../../source/telecharge_install.rst:255
 msgid "Manifestes winget et Homebrew"
 msgstr "Μανιφέστα winget και Homebrew"
 
-#: ../../source/telecharge_install.rst:243
+#: ../../source/telecharge_install.rst:257
 msgid ""
 "Chaque release fournit un manifeste `winget "
 "<https://learn.microsoft.com/windows/package-manager/>`__ (``blunderDB-"
@@ -521,11 +551,11 @@ msgstr ""
 "εκτελέσιμου: παραμένει ανυπόγραφο, και οι προειδοποιήσεις που "
 "περιγράφονται παρακάτω ισχύουν ως έχουν."
 
-#: ../../source/telecharge_install.rst:253
+#: ../../source/telecharge_install.rst:267
 msgid "Avertissements Windows et Mac"
 msgstr "Προειδοποιήσεις για Windows και Mac"
 
-#: ../../source/telecharge_install.rst:255
+#: ../../source/telecharge_install.rst:269
 msgid ""
 "Sous Windows, il est possible que ce dernier émette des réticences à "
 "exécuter blunderDB. Voir :ref:`annexe_windows_malware` pour comprendre "
@@ -535,7 +565,7 @@ msgstr ""
 "blunderDB. Δείτε :ref:`annexe_windows_malware` για να κατανοήσετε γιατί "
 "και πώς να παρακάμψετε τυχόν εμπόδια."
 
-#: ../../source/telecharge_install.rst:259
+#: ../../source/telecharge_install.rst:273
 msgid ""
 "Sous Mac, il est possible que ce dernier émette des réticences à exécuter"
 " blunderDB. Voir :ref:`annexe_mac_malware` pour comprendre pourquoi et "

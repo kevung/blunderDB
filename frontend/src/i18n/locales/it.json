@@ -665,7 +665,16 @@
         "confirmDelete": "Eliminare il match tra {player1} e {player2}?",
         "enrichFromFile": "Arricchire da un file…",
         "editTranscription": "Modifica la trascrizione",
-        "editTranscriptionTooltip": "Aprire questo match come bozza di trascrizione; terminarla sostituisce il match"
+        "editTranscriptionTooltip": "Aprire questo match come bozza di trascrizione; terminarla sostituisce il match",
+        "video": "Video",
+        "videoPlaceholder": "URL o percorso del file video",
+        "videoChoose": "File…",
+        "videoDetach": "Scollega",
+        "videoOpen": "Video del match",
+        "viewInVideo": "Vedi nel video",
+        "videoSet": "Sorgente video salvata",
+        "videoDetached": "Sorgente video scollegata",
+        "errorVideo": "Errore sul video del match"
     },
     "collection": {
         "addDescription": "Aggiungi una descrizione…",
@@ -1441,7 +1450,11 @@
             "nothingToUndo": "Niente da annullare",
             "nothingToRedo": "Niente da ripetere",
             "noAction": "Nessuna azione sotto il cursore",
-            "noDice": "Nessun tiro in corso di inserimento"
+            "noDice": "Nessun tiro in corso di inserimento",
+            "untimedAction": "Mossa convalidata senza istante dell'azione: con un video, Invio convalida all'istante dell'immagine, oppure v sulla cella.",
+            "noRollToTime": "Questa azione non ha un lancio da marcare.",
+            "rollTimed": "Lancio marcato a {time}.",
+            "actionTimed": "Azione marcata a {time}."
         },
         "candidatesLabel": "Mosse candidate",
         "finish": "Termina",
@@ -1457,7 +1470,14 @@
         "stateEditsMatch": "modifica il match #{id}",
         "editLossWarning": "Questo match è stato importato: fino a {analyses} analisi e fino a {comments} commento/i non passano in una trascrizione, e terminarla può perderli. Aprire la trascrizione?",
         "editAnyway": "Apri la trascrizione",
-        "editFailed": "Impossibile aprire la trascrizione: {error}"
+        "editFailed": "Impossibile aprire la trascrizione: {error}",
+        "video": "Video",
+        "videoTooltip": "Allega, sostituisci o stacca il video del match",
+        "videoFile": "File…",
+        "videoYouTube": "Link YouTube…",
+        "videoDetach": "Stacca",
+        "videoAttach": "Allega",
+        "videoResize": "Altezza del riquadro video"
     },
     "transcript": {
         "title": "Trascrizione",
@@ -1496,8 +1516,11 @@
             "past_end": "oltre la fine",
             "inconsistent_dice": "dadi incoerenti",
             "unrecorded_move": "mossa non registrata",
-            "score_mismatch": "punteggio incoerente"
-        }
+            "score_mismatch": "punteggio incoerente",
+            "timecode_backwards": "marcatore a ritroso"
+        },
+        "tickRoll": "lancio {time}",
+        "tickAction": "mossa {time}"
     },
     "status": {
         "importChip": "Importazione in corso: {percent} %",
@@ -3160,6 +3183,19 @@
         "pace": "Errori: {hasty} affrettati ({hastyLoss}), {deliberate} ponderati ({deliberateLoss}), {unknown} senza tempo",
         "paceDiscipline": "piuttosto disciplina: rallentare",
         "paceKnowledge": "piuttosto conoscenza: studiare queste posizioni"
+    },
+    "video": {
+        "notPlayable": "Questa sorgente non può essere riprodotta qui.",
+        "codecDetail": "Il webview non riproduce questo file ({container}, supporto: {support}, codice {code}).",
+        "unsupported": "non supportato",
+        "codecHint": "Su Linux, installare i plugin GStreamer: gstreamer1.0-plugins-good, gstreamer1.0-libav (Debian, Ubuntu); gstreamer1-plugins-good, gstreamer1-plugin-libav (Fedora); gst-plugins-good, gst-libav (Arch). Su Windows, l'estensione HEVC dello Store riproduce H.265.",
+        "missing": "File video non trovato.",
+        "relocate": "Scegli il file…",
+        "player": "Lettore video",
+        "placeBoard": "Mostra il video accanto al tavoliere",
+        "placePanel": "Riporta il video nel pannello",
+        "stageResize": "Ridimensiona il video",
+        "rate": "Velocità di riproduzione"
     },
     "tournamentReview": {
         "title": "Bilancio del torneo",

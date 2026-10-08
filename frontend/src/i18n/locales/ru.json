@@ -665,7 +665,16 @@
         "confirmDelete": "Удалить матч между {player1} и {player2}?",
         "enrichFromFile": "Дополнить из файла…",
         "editTranscription": "Править запись",
-        "editTranscriptionTooltip": "Открыть этот матч как черновик записи; его завершение заменяет матч"
+        "editTranscriptionTooltip": "Открыть этот матч как черновик записи; его завершение заменяет матч",
+        "video": "Видео",
+        "videoPlaceholder": "URL или путь к видеофайлу",
+        "videoChoose": "Файл…",
+        "videoDetach": "Отвязать",
+        "videoOpen": "Видео матча",
+        "viewInVideo": "Смотреть в видео",
+        "videoSet": "Источник видео сохранён",
+        "videoDetached": "Источник видео отвязан",
+        "errorVideo": "Ошибка видео матча"
     },
     "collection": {
         "addDescription": "Добавить описание…",
@@ -1441,7 +1450,11 @@
             "nothingToUndo": "Нечего отменять",
             "nothingToRedo": "Нечего повторять",
             "noAction": "Под курсором нет действия",
-            "noDice": "Бросок не вводится"
+            "noDice": "Бросок не вводится",
+            "untimedAction": "Ход подтверждён без момента действия: при видео Enter подтверждает в момент кадра, либо v на ячейке.",
+            "noRollToTime": "У этого действия нет броска для отметки времени.",
+            "rollTimed": "Бросок отмечен на {time}.",
+            "actionTimed": "Действие отмечено на {time}."
         },
         "candidatesLabel": "Ходы-кандидаты",
         "finish": "Завершить",
@@ -1457,7 +1470,14 @@
         "stateEditsMatch": "правит матч #{id}",
         "editLossWarning": "Этот матч импортирован: до {analyses} анализов и до {comments} комментариев не переходят в запись, и её завершение может их потерять. Открыть запись?",
         "editAnyway": "Открыть запись",
-        "editFailed": "Не удалось открыть запись: {error}"
+        "editFailed": "Не удалось открыть запись: {error}",
+        "video": "Видео",
+        "videoTooltip": "Прикрепить, заменить или открепить видео матча",
+        "videoFile": "Файл…",
+        "videoYouTube": "Ссылка YouTube…",
+        "videoDetach": "Открепить",
+        "videoAttach": "Прикрепить",
+        "videoResize": "Высота панели видео"
     },
     "transcript": {
         "title": "Запись",
@@ -1496,8 +1516,11 @@
             "past_end": "после конца матча",
             "inconsistent_dice": "несогласованные кости",
             "unrecorded_move": "незаписанный ход",
-            "score_mismatch": "несогласованный счёт"
-        }
+            "score_mismatch": "несогласованный счёт",
+            "timecode_backwards": "метка времени назад"
+        },
+        "tickRoll": "бросок {time}",
+        "tickAction": "ход {time}"
     },
     "status": {
         "importChip": "Идёт импорт: {percent} %",
@@ -3160,6 +3183,19 @@
         "pace": "Ошибки: {hasty} поспешных ({hastyLoss}), {deliberate} обдуманных ({deliberateLoss}), {unknown} без времени",
         "paceDiscipline": "скорее дисциплина: играть медленнее",
         "paceKnowledge": "скорее знания: изучить эти позиции"
+    },
+    "video": {
+        "notPlayable": "Этот источник нельзя воспроизвести здесь.",
+        "codecDetail": "Webview не воспроизводит этот файл ({container}, поддержка: {support}, код {code}).",
+        "unsupported": "не поддерживается",
+        "codecHint": "В Linux установите плагины GStreamer: gstreamer1.0-plugins-good, gstreamer1.0-libav (Debian, Ubuntu); gstreamer1-plugins-good, gstreamer1-plugin-libav (Fedora); gst-plugins-good, gst-libav (Arch). В Windows расширение HEVC из Store воспроизводит H.265.",
+        "missing": "Видеофайл не найден.",
+        "relocate": "Выбрать файл…",
+        "player": "Видеоплеер",
+        "placeBoard": "Показать видео рядом с доской",
+        "placePanel": "Вернуть видео в панель",
+        "stageResize": "Изменить размер видео",
+        "rate": "Скорость воспроизведения"
     },
     "tournamentReview": {
         "title": "Итог турнира",

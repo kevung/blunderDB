@@ -16,7 +16,11 @@ var answerCodesSQL = fmt.Sprint(fixedActionCode("Take")) + `, ` + fmt.Sprint(fix
 // match's provenance (a transcription rewrites an imported match keeping its
 // file): an importer that carries no separate response lets the take fall
 // back onto the doubler's own position, which the double of the same game
-// stands on too, and that row is right. Aliases mv, g, m, p; the caller
+// stands on too, and that row is right. That fallback can also leave a take
+// alone on the doubler's own row when it owned the cube before redoubling,
+// which looks the same; there the take is the doubler's record, while an
+// answer recorded by a transcription follows the opponent's own Double move.
+// Aliases mv, g, m, p; the caller
 // appends its tenant predicate.
 var AnsweredOwnedCubeMovesSQL = `SELECT mv.id, mv.game_id, mv.position_id FROM move mv
 	JOIN game g ON g.id = mv.game_id
@@ -25,7 +29,9 @@ var AnsweredOwnedCubeMovesSQL = `SELECT mv.id, mv.game_id, mv.position_id FROM m
 	WHERE ` + ActionCodeOrEmptySQL("mv.cube_action") + ` IN (` + answerCodesSQL + `)
 	  AND p.decision_type = 1 AND p.cube_value > 0 AND p.cube_owner = p.player_on_roll
 	  AND NOT EXISTS (SELECT 1 FROM move d WHERE d.game_id = mv.game_id AND d.position_id = mv.position_id
-	      AND ` + ActionCodeOrEmptySQL("d.cube_action") + ` NOT IN (` + answerCodesSQL + `))`
+	      AND ` + ActionCodeOrEmptySQL("d.cube_action") + ` NOT IN (` + answerCodesSQL + `))
+	  AND EXISTS (SELECT 1 FROM move o WHERE o.game_id = mv.game_id AND o.move_number = mv.move_number - 1
+	      AND ` + ActionIsSQL("o.cube_action", "Double") + ` AND o.player <> mv.player)`
 
 // DropGammonNetResponseAnalyses deletes every gammonNet analysis stored on a
 // take/pass position (a turned cube held by no one): gammonNet once scored

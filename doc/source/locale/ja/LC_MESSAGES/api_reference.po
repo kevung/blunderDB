@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-06 04:35+0200\n"
+"POT-Creation-Date: 2026-10-08 20:12+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -41,11 +41,11 @@ msgstr ""
 "参照)、レスポンスの形式(JSON、またはストリーミングリストの場合は NDJSON)と、存在する場合は任意の ``Idempotency-"
 "Key`` ヘッダーへの言及を含みます。"
 
-#: ../../source/api_reference.rst:383
+#: ../../source/api_reference.rst:389
 msgid "Idempotence"
 msgstr "冪等性"
 
-#: ../../source/api_reference.rst:385
+#: ../../source/api_reference.rst:391
 msgid ""
 "La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les "
 "lectures sont sans effet de bord, et les écritures de ``positions.*`` "
@@ -67,11 +67,11 @@ msgstr ""
 " ``positions.save`` です。同じキーで再送された呼び出しは、効果を繰り返さず最初の試行の結果を返します。上の表の"
 "「(Idempotency-Key)」の印を参照してください。それ以外のメソッドはこのヘッダーを必要とせず、受け付けません。"
 
-#: ../../source/api_reference.rst:397
+#: ../../source/api_reference.rst:403
 msgid "Lectures conditionnelles"
 msgstr "条件付き読み取り"
 
-#: ../../source/api_reference.rst:399
+#: ../../source/api_reference.rst:405
 msgid ""
 "Les méthodes marquées « (ETag) » rendent un en-tête ``ETag``. Le renvoyer"
 " dans ``If-None-Match`` obtient une réponse ``304`` sans corps tant que "
@@ -81,3 +81,49 @@ msgstr ""
 "「(ETag)」と記されたメソッドは ``ETag`` ヘッダーを返します。これを ``If-None-Match`` "
 "に付けて送り返すと、メソッドが読み取る内容に変化がない限り、本文のない ``304`` 応答が返ります — "
 ":ref:`headless_direction` を参照してください。"
+
+#: ../../source/api_reference.rst:410
+msgid "Repères d'une transcription"
+msgstr "文字起こしのタイムコード"
+
+#: ../../source/api_reference.rst:412
+msgid ""
+"Un geste de ``transcriptions.apply`` peut porter l'instant de la vidéo où"
+" il est fait, en millisecondes depuis le début du média : ``TickMS``, lu "
+"seulement quand ``HasTick`` vaut ``true`` (0 est un instant). "
+"``enter_die`` en fait le repère du jet (la première touche de dé compte),"
+" ``enter_play``, ``validate``, ``dance``, ``double``, ``take``, ``pass`` "
+"et ``resign`` le repère de l'action, sur une action nouvelle seulement : "
+"une correction en place garde les repères qu'elle avait. Le geste "
+"``set_timecode`` pose ``TickMS`` (avec ``HasTick``) et ``RollTickMS`` "
+"(avec ``HasRollTick``) sur l'action du curseur ; une valeur négative "
+"efface le repère. Le geste ``set_video`` attache la source vidéo nommée "
+"par ``VideoSource`` (URL http(s) ou chemin local), une chaîne vide la "
+"détache ; ``set_header`` la pose aussi quand son en-tête en nomme une, "
+"sans jamais l'effacer."
+msgstr ""
+"``transcriptions.apply`` のジェスチャーは、それが行われた動画上の時刻を、メディアの先頭からのミリ秒で持てます。これが "
+"``TickMS`` で、``HasTick`` が ``true`` のときだけ読まれます(0 も時刻です)。``enter_die`` "
+"はこれをロールのタイムコードにし(最初のダイスキーが有効)、``enter_play``、``validate``、``dance``、``double``、``take``、``pass``、``resign``"
+" "
+"はこれをアクションのタイムコードにします。ただし新しいアクションに限り、その場での修正は元のタイムコードを保ちます。``set_timecode``"
+" ジェスチャーは、カーソル位置のアクションに ``TickMS`` (``HasTick`` とともに)と ``RollTickMS`` "
+"(``HasRollTick`` とともに)を設定し、負の値はタイムコードを消去します。``set_video`` ジェスチャーは "
+"``VideoSource`` で指定された動画ソース(http(s) の URL "
+"またはローカルパス)を関連付け、空文字列はそれを解除します。``set_header`` "
+"も、ヘッダーが動画ソースを指定している場合はそれを設定しますが、消去することはありません。"
+
+#: ../../source/api_reference.rst:424
+msgid ""
+"L'état rendu porte la source dans ``header.video_source``, les repères de"
+" chaque action dans ``roll_tick_ms`` et ``tick_ms``, et, sur chaque "
+"action annotée, les durées ``decision_ms`` et ``cube_decision_ms`` : "
+"mesurées par l'Arbitre quand elles le sont, sinon déduites des repères. "
+"Un repère antérieur au précédent est marqué par l'incohérence "
+"``timecode_backwards`` et laisse inconnues les durées qui en dépendent."
+msgstr ""
+"レンダリングされた状態は、ソースを ``header.video_source`` に、各アクションのタイムコードを "
+"``roll_tick_ms`` と ``tick_ms`` に持ち、注釈付きの各アクションには所要時間 ``decision_ms`` と "
+"``cube_decision_ms`` "
+"を持ちます。これらは測定されている場合は審判(Arbiter)が測定した値で、そうでなければタイムコードから導かれます。直前より前のタイムコードは"
+" ``timecode_backwards`` の不整合として示され、それに依存する所要時間は不明のままになります。"

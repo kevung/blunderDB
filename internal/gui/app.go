@@ -84,6 +84,7 @@ type App struct {
 	// mcp is the MCP server served on localhost (mcphost.go); assistant the
 	// in-app assistant, a client of the same tools (assistant.go).
 	mcp       mcpHost
+	media     mediaHost
 	assistant assistantState
 }
 

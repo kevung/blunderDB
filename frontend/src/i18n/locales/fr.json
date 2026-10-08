@@ -665,7 +665,16 @@
         "confirmDelete": "Supprimer le match entre {player1} et {player2} ?",
         "enrichFromFile": "Enrichir depuis un fichier…",
         "editTranscription": "Éditer la transcription",
-        "editTranscriptionTooltip": "Ouvrir ce match en brouillon de transcription ; le terminer remplace le match"
+        "editTranscriptionTooltip": "Ouvrir ce match en brouillon de transcription ; le terminer remplace le match",
+        "video": "Vidéo",
+        "videoPlaceholder": "URL ou chemin du fichier vidéo",
+        "videoChoose": "Fichier…",
+        "videoDetach": "Détacher",
+        "videoOpen": "Vidéo du match",
+        "viewInVideo": "Voir dans la vidéo",
+        "videoSet": "Source vidéo enregistrée",
+        "videoDetached": "Source vidéo détachée",
+        "errorVideo": "Erreur sur la vidéo du match"
     },
     "collection": {
         "addDescription": "Ajouter une description…",
@@ -1441,7 +1450,11 @@
             "nothingToUndo": "Rien à annuler",
             "nothingToRedo": "Rien à rétablir",
             "noAction": "Aucune Action sous le curseur",
-            "noDice": "Aucun jet en cours"
+            "noDice": "Aucun jet en cours",
+            "untimedAction": "Coup validé sans instant d'action : avec une vidéo, Entrée valide à l'instant de l'image, ou v sur la cellule.",
+            "noRollToTime": "Cette action n'a pas de jet à horodater.",
+            "rollTimed": "Jet posé à {time}.",
+            "actionTimed": "Action posée à {time}."
         },
         "candidatesLabel": "Coups candidats",
         "finish": "Terminer",
@@ -1457,7 +1470,14 @@
         "stateEditsMatch": "édite le match #{id}",
         "editLossWarning": "Ce match a été importé : jusqu'à {analyses} analyse(s) et jusqu'à {comments} commentaire(s) ne passent pas dans une transcription, et la terminer peut les perdre. Ouvrir la transcription ?",
         "editAnyway": "Ouvrir la transcription",
-        "editFailed": "Impossible d'ouvrir la transcription : {error}"
+        "editFailed": "Impossible d'ouvrir la transcription : {error}",
+        "video": "Vidéo",
+        "videoTooltip": "Attacher, remplacer ou détacher la vidéo du match",
+        "videoFile": "Fichier…",
+        "videoYouTube": "Lien YouTube…",
+        "videoDetach": "Détacher",
+        "videoAttach": "Attacher",
+        "videoResize": "Hauteur du volet vidéo"
     },
     "transcript": {
         "title": "Transcript",
@@ -1496,8 +1516,11 @@
             "past_end": "au-delà de la fin",
             "inconsistent_dice": "dés incohérents",
             "unrecorded_move": "coup non consigné",
-            "score_mismatch": "score incohérent"
-        }
+            "score_mismatch": "score incohérent",
+            "timecode_backwards": "repère à rebours"
+        },
+        "tickRoll": "jet {time}",
+        "tickAction": "coup {time}"
     },
     "status": {
         "importChip": "Import en cours : {percent} %",
@@ -3160,6 +3183,19 @@
         "pace": "Erreurs : {hasty} précipitées ({hastyLoss}), {deliberate} réfléchies ({deliberateLoss}), {unknown} sans temps",
         "paceDiscipline": "plutôt de la discipline : ralentir",
         "paceKnowledge": "plutôt de la connaissance : étudier ces positions"
+    },
+    "video": {
+        "notPlayable": "Cette source n'est pas lisible ici.",
+        "codecDetail": "Le webview ne lit pas ce fichier ({container}, lecture : {support}, code {code}).",
+        "unsupported": "non prise en charge",
+        "codecHint": "Sous Linux, installez les greffons GStreamer : gstreamer1.0-plugins-good, gstreamer1.0-libav (Debian, Ubuntu) ; gstreamer1-plugins-good, gstreamer1-plugin-libav (Fedora) ; gst-plugins-good, gst-libav (Arch). Sous Windows, l'extension HEVC du Store lit le H.265.",
+        "missing": "Fichier vidéo introuvable.",
+        "relocate": "Choisir le fichier…",
+        "player": "Lecteur vidéo",
+        "placeBoard": "Afficher la vidéo à côté du plateau",
+        "placePanel": "Remettre la vidéo dans le panneau",
+        "stageResize": "Redimensionner la vidéo",
+        "rate": "Vitesse de lecture"
     },
     "tournamentReview": {
         "title": "Bilan du tournoi",

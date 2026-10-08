@@ -90,6 +90,22 @@ var CarriedCommentColumns = []string{"text", "created_at", "modified_at", "autho
 // the author the source file named for its header or footer comment.
 var CarriedMatchCommentColumns = []string{"comment", "comment_author"}
 
+// CarriedVideoSource is the video source an exported match carries: an
+// http(s) URL travels, anything else — a local path — is nil (ADR-0082). A
+// path only reveals the producer's directory tree and opens nothing on the
+// recipient's machine; the Repères keep their meaning without it.
+func CarriedVideoSource(src *string) *string {
+	if src == nil {
+		return nil
+	}
+	v := strings.TrimSpace(*src)
+	lower := strings.ToLower(v)
+	if !strings.HasPrefix(lower, "http://") && !strings.HasPrefix(lower, "https://") {
+		return nil
+	}
+	return &v
+}
+
 // Carried returns the subset of md that may travel inside an exported file.
 func Carried(md map[string]string) map[string]string {
 	out := make(map[string]string, len(CarriedMetadataKeys))

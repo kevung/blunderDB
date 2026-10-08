@@ -82,6 +82,8 @@ export function LegalMoves(arg1:domain.Position):Promise<Array<domain.LegalPlay>
 
 export function LooksLikeOGID(arg1:string):Promise<boolean>;
 
+export function MediaURL(arg1:string):Promise<string>;
+
 export function OpenBearoffFileDialog():Promise<string>;
 
 export function OpenDatabaseDialog():Promise<string>;
@@ -104,11 +106,15 @@ export function OpenPositionFilesDialog():Promise<Array<string>>;
 
 export function OpenPositionFolderDialog():Promise<string>;
 
+export function OpenVideoExternally(arg1:string,arg2:number):Promise<void>;
+
 export function PathExists(arg1:string):Promise<boolean>;
 
 export function PauseBearoffGeneration():Promise<void>;
 
 export function PickIdentityFile():Promise<domain.IdentityFilePick>;
+
+export function PickTranscriptionVideo():Promise<string>;
 
 export function PrepareDemoDatabase():Promise<string>;
 
@@ -117,6 +123,8 @@ export function ReadFileContent(arg1:string):Promise<gui.FileDialogResponse>;
 export function ReadLogTail(arg1:number):Promise<Array<string>>;
 
 export function RegenerateIssuerIdentity(arg1:string):Promise<domain.IssuerIdentityInfo>;
+
+export function ReleaseMedia(arg1:string):Promise<void>;
 
 export function RolloutPresets():Promise<Array<gui.RolloutPreset>>;
 
@@ -159,3 +167,7 @@ export function StartupFilePath():Promise<string>;
 export function StopFolderWatch():Promise<void>;
 
 export function SuggestWatchFolder():Promise<string>;
+
+export function VideoSourceKind(arg1:string):Promise<string>;
+
+export function YouTubeEmbedURL(arg1:string):Promise<string>;

@@ -474,6 +474,7 @@ var databaseParity = map[string]parityEntry{
 	"RankPositionsByFilters":            {CLI: "search --query 's like42'", Server: "/v1/positions.similar"},
 	"RankPositionIDsByFilters":          {CLI: "search --query 's like42'", Server: "/v1/positions.similar"},
 	"UpdateMatch":                       {Server: "/v1/matches.update", Why: whyGUIEdit},
+	"SetMatchVideoSource":               {Server: "/v1/matches.setVideoSource", Why: whyGUIEdit},
 	"UpdateMatchComment":                {Server: "/v1/matches.updateComment", Why: whyGUIEdit},
 	"UpdatePosition":                    {Server: "/v1/positions.update", Why: whyGUIEdit},
 	"UpdateTournament":                  {Server: "/v1/tournaments.update", Why: whyGUIEdit},

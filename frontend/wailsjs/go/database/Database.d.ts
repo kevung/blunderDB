@@ -697,6 +697,8 @@ export function SetLessonStepDone(arg1:number,arg2:boolean):Promise<void>;
 
 export function SetMatchTournamentByName(arg1:number,arg2:string):Promise<void>;
 
+export function SetMatchVideoSource(arg1:number,arg2:string):Promise<void>;
+
 export function SetMigrationProgress(arg1:any):Promise<void>;
 
 export function SetPositionStudied(arg1:number,arg2:boolean):Promise<void>;

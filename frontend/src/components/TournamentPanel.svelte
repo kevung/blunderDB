@@ -932,7 +932,6 @@
         white-space: nowrap;
     }
 
-    .direction-btn.active,
     .review-btn.active {
         background: var(--color-primary);
         color: var(--color-surface);

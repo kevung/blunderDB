@@ -19,6 +19,7 @@
         LoadAnalysis,
         GetAllTournaments,
         SetMatchTournamentByName,
+        SetMatchVideoSource,
         SwapMatchPlayers,
         SaveLastVisitedPosition,
         GetMatchDetailStats,
@@ -28,6 +29,10 @@
         GetMatchTimeSummary,
         GetMatchOrigin
     } from '../../wailsjs/go/database/Database.js';
+    import { VideoSourceKind, OpenVideoExternally, PickTranscriptionVideo } from '../../wailsjs/go/gui/App.js';
+    import VideoDock from './VideoDock.svelte';
+    import { rateKeyDirection } from '../utils/videoRate.js';
+    import { isBareLetter } from '../utils/keys.js';
     import MergePlayersModal from './MergePlayersModal.svelte';
     import EntityAutocomplete from './EntityAutocomplete.svelte';
     import PanelTable, { navigationDelta } from './panels/PanelTable.svelte';
@@ -142,6 +147,102 @@
             }
         }
     });
+
+    // The match's video (ADR-0082): a file plays in a pane of this panel, a web source opens
+    // in the browser at the timestamped link.
+    /** @type {'' | 'file' | 'youtube' | 'url'} */
+    let videoKind = $state('');
+    let videoOpen = $state(false);
+    let videoStartMs = $state(0);
+    /** @type {any} */
+    let videoPane = $state(null);
+    let videoOnBoard = $state(false);
+    let videoDraft = $state('');
+    const videoSource = $derived(detailMatch?.video_source || '');
+
+    // The pane belongs to the match shown: another match closes it, a new source for the same
+    // match (a relocated file) keeps it open.
+    $effect(() => {
+        void detailMatch?.id;
+        videoOpen = false;
+    });
+
+    $effect(() => {
+        const source = videoSource;
+        videoDraft = source;
+        if (!source) {
+            videoKind = '';
+            return;
+        }
+        let cancelled = false;
+        VideoSourceKind(source)
+            .then((k) => {
+                if (!cancelled) videoKind = k || '';
+            })
+            .catch(() => {
+                if (!cancelled) videoKind = '';
+            });
+        return () => {
+            cancelled = true;
+        };
+    });
+
+    // A Move's Repère: the dice fell, else the action was done. Absent is unknown, never zero.
+    function moveTickMs(mp) {
+        return mp?.roll_tick_ms ?? mp?.tick_ms ?? null;
+    }
+
+    // Open the video at the decision, one second before the dice fell.
+    async function viewInVideo(mp) {
+        const tick = moveTickMs(mp);
+        if (!videoSource || tick === null) return;
+        await openVideoAt(Math.max(0, tick - 1000));
+    }
+
+    async function openVideoAt(ms) {
+        if (videoKind === 'file') {
+            videoStartMs = ms;
+            if (videoOpen && videoPane) videoPane.seek(ms);
+            videoOpen = true;
+        } else if (videoKind === 'youtube' || videoKind === 'url') {
+            try {
+                await OpenVideoExternally(videoSource, ms);
+            } catch (error) {
+                logger.error('Error opening the video:', error);
+                statusBarTextStore.set(tMsg('match.errorVideo'));
+            }
+        }
+    }
+
+    function toggleVideo() {
+        if (videoKind === 'file' && videoOpen) videoOpen = false;
+        else openVideoAt(0);
+    }
+
+    async function saveVideoSource(source) {
+        if (!detailMatch) return;
+        const id = detailMatch.id;
+        const value = source.trim();
+        try {
+            await SetMatchVideoSource(id, value);
+            const video_source = value || undefined;
+            Object.assign(detailMatch, { video_source });
+            matchListStore.patchRow(id, { video_source });
+            statusBarTextStore.set(tMsg(value ? 'match.videoSet' : 'match.videoDetached'));
+        } catch (error) {
+            logger.error('Error setting the video source:', error);
+            statusBarTextStore.set(tMsg('match.errorVideo'));
+        }
+    }
+
+    async function pickVideoFile() {
+        try {
+            const path = await PickTranscriptionVideo();
+            if (path) await saveVideoSource(path);
+        } catch (error) {
+            logger.error('Error choosing the video:', error);
+        }
+    }
 
     // Merge players modal
     let showMergePlayersModal = $state(false);
@@ -783,6 +884,16 @@
         // Don't intercept keys while the merge players modal is open
         if (showMergePlayersModal) return;
 
+        // [ and ] set the open video's speed. Read before panelKeyGuard: AltGr, which types
+        // them on AZERTY, arrives as Ctrl+Alt on Windows.
+        const rateStep = rateKeyDirection(event);
+        if (rateStep !== 0 && videoOpen && videoPane && !(event.target instanceof Element && event.target.matches('input, textarea, select, [contenteditable]'))) {
+            event.stopPropagation();
+            event.preventDefault();
+            videoPane.stepRate(rateStep);
+            return;
+        }
+
         // Let Ctrl/Meta combos, Space, '?' and typing in an editable field pass
         // through to the global handler — see keyboardService.panelKeyGuard.
         if (panelKeyGuard(event)) return;
@@ -828,6 +939,17 @@
                 table?.navigate(delta);
             }
             return;
+        }
+
+        // `v` shows the reviewed decision in the match video.
+        if (isBareLetter(event, 'v') && videoSource && selectedIdx >= 0) {
+            const mp = detailMovePositions[selectedIdx];
+            if (moveTickMs(mp) !== null) {
+                event.stopPropagation();
+                event.preventDefault();
+                viewInVideo(mp);
+                return;
+            }
         }
 
         // Claimed with or without a selection: a Delete here never reaches the board's position.
@@ -1094,6 +1216,9 @@
                         {/if}
                     </div>
                     <div class="detail-tabs">
+                        {#if videoSource}
+                            <button class="detail-tab video-btn" class:active={videoOpen} data-testid="match-video" onclick={toggleVideo} title={$t('match.videoOpen')}>🎞</button>
+                        {/if}
                         <button class="detail-tab" class:active={detailView === 'transcript'} onclick={() => switchDetailView('transcript')}>{$t('match.transcript')}</button>
                         <button class="detail-tab" class:active={detailView === 'metadata'} onclick={() => switchDetailView('metadata')}>{$t('match.info')}</button>
                         <button class="detail-tab" class:active={detailView === 'stats'} onclick={() => switchDetailView('stats')}>{$t('match.stats')}</button>
@@ -1102,6 +1227,13 @@
                         <button class="detail-tab enter-match-btn" onclick={() => enterMatchMode(detailMatch)} title="{$t('match.enterMatchMode')} (↵)">▶ {$t('match.review')}</button>
                     </div>
                 </div>
+
+                {#if videoOpen && videoKind === 'file'}
+                    <!-- Folded to nothing while the video sits beside the board. -->
+                    <div class="match-video-slot" class:empty={videoOnBoard}>
+                        <VideoDock bind:this={videoPane} bind:onBoard={videoOnBoard} owner="match" source={videoSource} startMs={videoStartMs} onrelocate={saveVideoSource} />
+                    </div>
+                {/if}
 
                 <!-- Transcript view -->
                 {#if detailView === 'transcript'}
@@ -1204,7 +1336,20 @@
                                                         onclick={() => navigateToMove(globalIdx)}
                                                         title={$t('match.clickToReview')}
                                                     >
-                                                        <td class="transcript-num">{mi + 1}</td>
+                                                        <td class="transcript-num">
+                                                            {mi + 1}
+                                                            {#if videoSource && moveTickMs(mp) !== null}
+                                                                <button
+                                                                    class="row-video"
+                                                                    data-testid="view-in-video"
+                                                                    title="{$t('match.viewInVideo')} (v)"
+                                                                    onclick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        viewInVideo(mp);
+                                                                    }}>🎞</button
+                                                                >
+                                                            {/if}
+                                                        </td>
                                                         <td class="transcript-player" class:player1={mp.player_on_roll === 0} class:player2={mp.player_on_roll === 1}>
                                                             {getPlayerName(mp)}
                                                         </td>
@@ -1292,6 +1437,29 @@
                                 {/if}
                                 <tr><td class="meta-label">{$t('match.games')}</td><td class="meta-value">{detailMatch.game_count || detailGames.length || '—'}</td></tr>
                                 <tr><td class="meta-label">{$t('match.date')}</td><td class="meta-value">{formatDate(detailMatch.match_date)}</td></tr>
+                                <tr data-testid="meta-video">
+                                    <td class="meta-label">{$t('match.video')}</td>
+                                    <td class="meta-value">
+                                        <input
+                                            type="text"
+                                            class="match-video-input"
+                                            bind:value={videoDraft}
+                                            placeholder={$t('match.videoPlaceholder')}
+                                            onkeydown={(e) => {
+                                                // Enter commits through the change event, once.
+                                                if (e.key === 'Enter') {
+                                                    e.stopPropagation();
+                                                } else if (e.key === 'Escape') {
+                                                    e.stopPropagation();
+                                                    videoDraft = videoSource;
+                                                }
+                                            }}
+                                            onchange={() => saveVideoSource(videoDraft)}
+                                        />
+                                        <button class="detail-tab" onclick={pickVideoFile}>{$t('match.videoChoose')}</button>
+                                        {#if videoSource}<button class="detail-tab" data-testid="video-detach" onclick={() => saveVideoSource('')}>{$t('match.videoDetach')}</button>{/if}
+                                    </td>
+                                </tr>
                                 <tr>
                                     <td class="meta-label">{$t('match.comment')}</td>
                                     <td class="meta-value">
@@ -1413,6 +1581,16 @@
 {/if}
 
 <style>
+    .match-video-slot {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        max-height: 40vh;
+        flex: 0 0 auto;
+    }
+    .match-video-slot.empty {
+        aspect-ratio: auto;
+        height: 0;
+    }
     .match-charts {
         display: flex;
         flex-wrap: wrap;
@@ -1589,6 +1767,16 @@
         margin-bottom: 6px;
     }
 
+    .row-video {
+        background: none;
+        border: 0;
+        padding: 0 2px;
+        cursor: pointer;
+        opacity: 0.6;
+    }
+    .row-video:hover {
+        opacity: 1;
+    }
     .meta-item {
         white-space: nowrap;
     }
@@ -1919,6 +2107,7 @@
         color: var(--color-text);
     }
 
+    .match-video-input,
     .match-comment-input {
         width: 100%;
         padding: 1px 3px;

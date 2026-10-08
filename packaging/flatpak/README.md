@@ -34,6 +34,18 @@ dialog does not route through the XDG file-chooser portal, the
 `--filesystem=home` grant in `finish-args` is what makes arbitrary `.db`
 paths work; narrow it if portal access proves sufficient on your setup.
 
+**Match videos.** The manifest declares `add-extensions`
+`org.freedesktop.Platform.ffmpeg-full` at version `24.08` — the freedesktop
+release under the GNOME 47 runtime; the version moves with the runtime.
+blunderDB decodes nothing itself: the webview plays a match video with the
+codecs the runtime provides, and without that extension an H.264 or HEVC MP4
+shows a diagnostic instead of the picture. Flatpak installs the extension
+with the application; to add it by hand:
+
+```bash
+flatpak install flathub org.freedesktop.Platform.ffmpeg-full//24.08
+```
+
 ## 2. What CI does on a release tag (already automated)
 
 The `flatpak` job in `.github/workflows/build.yml` runs on every tag push,

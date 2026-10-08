@@ -251,7 +251,7 @@ func (d *Database) GetMovesByGame(gameID int64) ([]Move, error) {
 	rows, err := d.db.Query(`
 		SELECT id, game_id, move_number, `+sqlshared.ActionLabelSQL("move_type")+`, position_id, player,
 		       dice_1, dice_2, checker_move, `+sqlshared.ActionLabelSQL("cube_action")+`, luck_mp,
-		       decision_ms, cube_decision_ms
+		       decision_ms, cube_decision_ms, roll_tick_ms, tick_ms
 		FROM move
 		WHERE game_id = ?
 		ORDER BY move_number ASC
@@ -267,9 +267,10 @@ func (d *Database) GetMovesByGame(gameID int64) ([]Move, error) {
 		var dice1, dice2 int32
 		var checkerMove, cubeAction sql.NullString
 		var luckMP sql.NullInt32
-		var decision, cube sql.NullInt64
+		var decision, cube, rollTick, tick sql.NullInt64
 		err := rows.Scan(&m.ID, &m.GameID, &m.MoveNumber, &m.MoveType, &m.PositionID,
-			&m.Player, &dice1, &dice2, &checkerMove, &cubeAction, &luckMP, &decision, &cube)
+			&m.Player, &dice1, &dice2, &checkerMove, &cubeAction, &luckMP, &decision, &cube,
+			&rollTick, &tick)
 		if err != nil {
 			slog.Warn("scanning move", "err", err)
 			continue
@@ -286,6 +287,7 @@ func (d *Database) GetMovesByGame(gameID int64) ([]Move, error) {
 			m.LuckMP = &v
 		}
 		m.DecisionMS, m.CubeDecisionMS = sqlshared.NullableMS(decision), sqlshared.NullableMS(cube)
+		m.RollTickMS, m.TickMS = sqlshared.NullableMS(rollTick), sqlshared.NullableMS(tick)
 		moves = append(moves, m)
 	}
 	if err := rows.Err(); err != nil {
@@ -419,7 +421,7 @@ func (d *Database) GetMatchMovePositions(matchID int64) ([]MatchMovePosition, er
 			p.has_jacoby, p.has_beaver,
 			COALESCE(m.checker_move, '') as checker_move,
 			`+sqlshared.ActionLabelOrEmptySQL("m.cube_action")+` as cube_action,
-			m.decision_ms, m.cube_decision_ms
+			m.decision_ms, m.cube_decision_ms, m.roll_tick_ms, m.tick_ms
 		FROM move m
 		INNER JOIN game g ON m.game_id = g.id
 		INNER JOIN position p ON m.position_id = p.id
@@ -437,11 +439,11 @@ func (d *Database) GetMatchMovePositions(matchID int64) ([]MatchMovePosition, er
 		var gameNumber, moveNumber, player int32
 		var moveType, positionState, checkerMove, cubeAction string
 		var pDT, pPOR, pD1, pD2, pCV, pCO, pS1, pS2, pHJ, pHB sql.NullInt64
-		var decisionMS, cubeDecisionMS sql.NullInt64
+		var decisionMS, cubeDecisionMS, rollTick, tick sql.NullInt64
 
 		err := rows.Scan(&moveID, &gameID, &gameNumber, &moveNumber, &moveType, &player, &positionID, &positionState,
 			&pDT, &pPOR, &pD1, &pD2, &pCV, &pCO, &pS1, &pS2, &pHJ, &pHB,
-			&checkerMove, &cubeAction, &decisionMS, &cubeDecisionMS)
+			&checkerMove, &cubeAction, &decisionMS, &cubeDecisionMS, &rollTick, &tick)
 		if err != nil {
 			slog.Warn("scanning move", "err", err)
 			continue
@@ -471,6 +473,8 @@ func (d *Database) GetMatchMovePositions(matchID int64) ([]MatchMovePosition, er
 
 			DecisionMS:     sqlshared.NullableMS(decisionMS),
 			CubeDecisionMS: sqlshared.NullableMS(cubeDecisionMS),
+			RollTickMS:     sqlshared.NullableMS(rollTick),
+			TickMS:         sqlshared.NullableMS(tick),
 		}
 
 		movePositions = append(movePositions, movePos)
@@ -575,6 +579,18 @@ func (d *Database) SaveLibrarySettings(settings storage.LibrarySettings) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	return d.store.LibrarySettings().Save(context.Background(), "", settings)
+}
+
+// SetMatchVideoSource attaches the video a match was transcribed from (an
+// http(s) URL or a local path), or detaches it when source is empty.
+func (d *Database) SetMatchVideoSource(matchID int64, source string) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return fmt.Errorf("no database is currently open")
+	}
+	return d.store.Matches().SetVideoSource(context.Background(), "", matchID, strings.TrimSpace(source))
 }
 
 // UpdateMatch updates editable metadata for a match (player names and date).

@@ -665,7 +665,16 @@
         "confirmDelete": "¿Eliminar la partida entre {player1} y {player2}?",
         "enrichFromFile": "Enriquecer desde un fichero…",
         "editTranscription": "Editar la transcripción",
-        "editTranscriptionTooltip": "Abrir este match como borrador de transcripción; terminarlo reemplaza el match"
+        "editTranscriptionTooltip": "Abrir este match como borrador de transcripción; terminarlo reemplaza el match",
+        "video": "Vídeo",
+        "videoPlaceholder": "URL o ruta del archivo de vídeo",
+        "videoChoose": "Archivo…",
+        "videoDetach": "Desvincular",
+        "videoOpen": "Vídeo de la partida",
+        "viewInVideo": "Ver en el vídeo",
+        "videoSet": "Fuente de vídeo guardada",
+        "videoDetached": "Fuente de vídeo desvinculada",
+        "errorVideo": "Error en el vídeo de la partida"
     },
     "collection": {
         "addDescription": "Añadir una descripción…",
@@ -1441,7 +1450,11 @@
             "nothingToUndo": "Nada que deshacer",
             "nothingToRedo": "Nada que rehacer",
             "noAction": "Ninguna acción bajo el cursor",
-            "noDice": "Ninguna tirada en curso"
+            "noDice": "Ninguna tirada en curso",
+            "untimedAction": "Jugada validada sin instante de acción: con un vídeo, Intro valida en el instante de la imagen, o v sobre la celda.",
+            "noRollToTime": "Esta acción no tiene tirada que marcar.",
+            "rollTimed": "Tirada marcada en {time}.",
+            "actionTimed": "Acción marcada en {time}."
         },
         "candidatesLabel": "Jugadas candidatas",
         "finish": "Terminar",
@@ -1457,7 +1470,14 @@
         "stateEditsMatch": "edita el match #{id}",
         "editLossWarning": "Este match fue importado: hasta {analyses} análisis y hasta {comments} comentario(s) no pasan a una transcripción, y terminarla puede perderlos. ¿Abrir la transcripción?",
         "editAnyway": "Abrir la transcripción",
-        "editFailed": "No se pudo abrir la transcripción: {error}"
+        "editFailed": "No se pudo abrir la transcripción: {error}",
+        "video": "Vídeo",
+        "videoTooltip": "Adjuntar, sustituir o quitar el vídeo del match",
+        "videoFile": "Archivo…",
+        "videoYouTube": "Enlace de YouTube…",
+        "videoDetach": "Quitar",
+        "videoAttach": "Adjuntar",
+        "videoResize": "Altura del panel de vídeo"
     },
     "transcript": {
         "title": "Transcripción",
@@ -1496,8 +1516,11 @@
             "past_end": "más allá del final",
             "inconsistent_dice": "dados incoherentes",
             "unrecorded_move": "jugada no registrada",
-            "score_mismatch": "marcador incoherente"
-        }
+            "score_mismatch": "marcador incoherente",
+            "timecode_backwards": "marca de tiempo hacia atrás"
+        },
+        "tickRoll": "tirada {time}",
+        "tickAction": "jugada {time}"
     },
     "status": {
         "importChip": "Importación en curso: {percent} %",
@@ -3160,6 +3183,19 @@
         "pace": "Errores: {hasty} precipitados ({hastyLoss}), {deliberate} meditados ({deliberateLoss}), {unknown} sin tiempo",
         "paceDiscipline": "más bien disciplina: ir más despacio",
         "paceKnowledge": "más bien conocimiento: estudiar estas posiciones"
+    },
+    "video": {
+        "notPlayable": "Esta fuente no se puede reproducir aquí.",
+        "codecDetail": "El webview no puede reproducir este archivo ({container}, compatibilidad: {support}, código {code}).",
+        "unsupported": "no compatible",
+        "codecHint": "En Linux, instale los complementos de GStreamer: gstreamer1.0-plugins-good, gstreamer1.0-libav (Debian, Ubuntu); gstreamer1-plugins-good, gstreamer1-plugin-libav (Fedora); gst-plugins-good, gst-libav (Arch). En Windows, la extensión HEVC de la Store reproduce H.265.",
+        "missing": "Archivo de vídeo no encontrado.",
+        "relocate": "Elegir el archivo…",
+        "player": "Reproductor de vídeo",
+        "placeBoard": "Mostrar el vídeo junto al tablero",
+        "placePanel": "Devolver el vídeo al panel",
+        "stageResize": "Redimensionar el vídeo",
+        "rate": "Velocidad de reproducción"
     },
     "tournamentReview": {
         "title": "Balance del torneo",

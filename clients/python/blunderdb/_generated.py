@@ -806,6 +806,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/matches.setLastVisitedPosition — JSON."
         return self._call("/v1/matches.setLastVisitedPosition", payload)
 
+    def matches_set_video_source(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/matches.setVideoSource — JSON."
+        return self._call("/v1/matches.setVideoSource", payload)
+
     def matches_swap_players(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/matches.swapPlayers — JSON."
         return self._call("/v1/matches.swapPlayers", payload)

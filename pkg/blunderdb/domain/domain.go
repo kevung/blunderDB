@@ -42,7 +42,7 @@ const (
 )
 
 const (
-	DatabaseVersion = "2.40.0"
+	DatabaseVersion = "2.41.0"
 )
 
 // Anki deck source types
@@ -852,6 +852,12 @@ type Match struct {
 	// EngineVersion names the program that wrote the file, as it states it
 	// ("eXtreme Gammon 2.19.211").
 	EngineVersion string `json:"engine_version,omitempty"`
+
+	// VideoSource is the video the Match was transcribed from (ADR-0082): an
+	// http(s) URL or a local path, nil when none is attached. A local path is
+	// a hint the Repères keep their meaning without; only a URL leaves the
+	// library in an export.
+	VideoSource *string `json:"video_source,omitempty"`
 }
 
 // CopySourceMetadata sets dst's source metadata to src's.
@@ -987,6 +993,13 @@ type Move struct {
 	// played alone (a forced roll, a dance, the only play).
 	DecisionMS     *int64 `json:"decision_ms,omitempty"`
 	CubeDecisionMS *int64 `json:"cube_decision_ms,omitempty"`
+
+	// RollTickMS and TickMS are the Move's Repères in the Match's video
+	// (ADR-0082), in milliseconds from the start of the media: the instant
+	// the dice fell and the instant the action was done. A cube action, a
+	// resignation has only TickMS. nil is unknown, never zero.
+	RollTickMS *int64 `json:"roll_tick_ms,omitempty"`
+	TickMS     *int64 `json:"tick_ms,omitempty"`
 }
 
 type MoveAnalysis struct {
@@ -1021,6 +1034,10 @@ type MatchMovePosition struct {
 	// milliseconds, nil when unknown (see Move).
 	DecisionMS     *int64 `json:"decision_ms,omitempty"`
 	CubeDecisionMS *int64 `json:"cube_decision_ms,omitempty"`
+	// RollTickMS and TickMS are the Move's Repères in the Match's video, nil
+	// when unknown (see Move).
+	RollTickMS *int64 `json:"roll_tick_ms,omitempty"`
+	TickMS     *int64 `json:"tick_ms,omitempty"`
 }
 
 // IssuerIdentityInfo describes this machine's signing identity, as displayed in the

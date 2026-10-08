@@ -3,6 +3,7 @@ package transcript
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
@@ -68,6 +69,14 @@ const (
 	// GestureSetScore declares (or, with a nil Gesture.Score, clears) the score of
 	// the game whose first Action is Gesture.At (ADR-0053).
 	GestureSetScore GestureKind = "set_score"
+	// GestureSetVideo attaches the media the Repères refer to
+	// (Gesture.VideoSource); an empty source detaches it (ADR-0082 rule 4).
+	GestureSetVideo GestureKind = "set_video"
+	// GestureSetTimecode posts Repères on the Action under the Cursor: the
+	// instant of the action (Gesture.TickMS, when HasTick) and the instant of
+	// the roll (Gesture.RollTickMS, when HasRollTick), a negative value
+	// clearing it. It is the explicit gesture of ADR-0082 rule 3.
+	GestureSetTimecode GestureKind = "set_timecode"
 	// GestureUndo and GestureRedo are named here for one spelling, but [Apply]
 	// refuses them: the stack lives in [Editor], and the session layer routes them
 	// to [Editor.Undo] and [Editor.Redo].
@@ -111,6 +120,20 @@ type Gesture struct {
 	// Score is the score GestureSetScore declares, points of player 1 then of
 	// player 2; nil clears the declaration.
 	Score *[2]int
+
+	// TickMS is the instant of the video, in milliseconds, the gesture was made
+	// at, read only when HasTick says a video is playing: 0 is a real instant.
+	// GestureEnterDie posts it as the roll's Repère, GestureEnterPlay,
+	// GestureValidate, GestureDance and the cube gestures as the action's —
+	// on a NEW Action only, a correction in place keeping the Repères it had
+	// (ADR-0082 rule 3). GestureSetTimecode writes it, and RollTickMS when
+	// HasRollTick, on the Action under the Cursor, a negative value clearing.
+	TickMS      int64
+	HasTick     bool
+	RollTickMS  int64
+	HasRollTick bool
+	// VideoSource is the media GestureSetVideo attaches, "" to detach.
+	VideoSource string
 }
 
 var (
@@ -177,34 +200,7 @@ func apply(doc Document, g Gesture) (Document, error) {
 		return fresh, nil
 
 	case GestureEnterDie:
-		if g.Die < 1 || g.Die > 6 {
-			return doc, fmt.Errorf("transcript: %d is not a die", g.Die)
-		}
-		e := ensureEntry(&out)
-		switch {
-		case e.Dice[0] == 0:
-			e.Dice[0] = g.Die
-		case e.Dice[1] == 0:
-			e.Dice[1] = g.Die
-		default:
-			e.Dice = [2]int{g.Die, 0}
-		}
-		e.Steps, e.Selected, e.Review = nil, false, false
-		if d := e.Dice; d[1] != 0 && slotOpensGame(Replay(out, 0), e.At, e.Mode == EntryReplace) {
-			// The roll the play already has is kept as written — unless it is written
-			// against its camp, which retyping it in player order repairs.
-			stored := Action{Side: -1}
-			if e.Mode == EntryReplace && e.At < len(out.Actions) {
-				stored = out.Actions[e.At]
-			}
-			if sameRoll(d, stored.Dice) && openingWinner(stored.Dice) == stored.Side {
-				e.Dice, e.Side = stored.Dice, stored.Side
-			} else if w := openingWinner(d); w >= 0 {
-				e.Side = w
-			}
-		}
-		reroll(&out)
-		return out, nil
+		return enterDie(doc, out, g)
 
 	case GestureClearDice:
 		if out.Entry == nil {
@@ -233,6 +229,9 @@ func apply(doc Document, g Gesture) (Document, error) {
 		e := ensureEntry(&out)
 		e.Steps = append([]domain.CheckerStep(nil), g.Steps...)
 		e.Selected = true
+		if g.HasTick {
+			e.TickMS = tickOf(g.TickMS)
+		}
 		// A board no legal play reaches is what really happened, and it is kept as
 		// given; validate() drops it again if the play turns out to be legal.
 		out.pendingBoard = nil
@@ -243,6 +242,9 @@ func apply(doc Document, g Gesture) (Document, error) {
 		return out, nil
 
 	case GestureValidate:
+		if g.HasTick && out.Entry != nil {
+			out.Entry.TickMS = tickOf(g.TickMS)
+		}
 		return validate(out)
 
 	case GestureDance:
@@ -250,7 +252,11 @@ func apply(doc Document, g Gesture) (Document, error) {
 		if e.Dice[0] == 0 || e.Dice[1] == 0 {
 			return doc, ErrNoDice
 		}
-		return record(out, Action{Side: e.Side, Kind: KindDance, Dice: e.Dice}), nil
+		if g.HasTick {
+			e.TickMS = tickOf(g.TickMS)
+		}
+		return record(out, Action{Side: e.Side, Kind: KindDance, Dice: e.Dice,
+			RollTickMS: e.RollTickMS, TickMS: e.TickMS}), nil
 
 	case GestureDouble, GestureTake, GesturePass, GestureResign:
 		return cubeGesture(out, g)
@@ -361,6 +367,14 @@ func apply(doc Document, g Gesture) (Document, error) {
 	case GestureSetScore:
 		return setScore(doc, out, g)
 
+	case GestureSetVideo:
+		out.Header.VideoSource = strings.TrimSpace(g.VideoSource)
+		out.HoldCursor = true
+		return out, nil
+
+	case GestureSetTimecode:
+		return setTimecode(doc, out, g)
+
 	case GestureUndo, GestureRedo:
 		return doc, ErrNotPure
 	}
@@ -405,6 +419,81 @@ func setScore(doc, out Document, g Gesture) (Document, error) {
 	return out, nil
 }
 
+// enterDie is GestureEnterDie: one die of the roll being typed. doc is the
+// document as it was, returned with an error; out is its working copy.
+func enterDie(doc, out Document, g Gesture) (Document, error) {
+	if g.Die < 1 || g.Die > 6 {
+		return doc, fmt.Errorf("transcript: %d is not a die", g.Die)
+	}
+	e := ensureEntry(&out)
+	// The roll's Repère is the FIRST die typed: retyping or correcting a
+	// die is not the dice falling again.
+	if g.HasTick && e.RollTickMS == nil {
+		e.RollTickMS = tickOf(g.TickMS)
+	}
+	switch {
+	case e.Dice[0] == 0:
+		e.Dice[0] = g.Die
+	case e.Dice[1] == 0:
+		e.Dice[1] = g.Die
+	default:
+		e.Dice = [2]int{g.Die, 0}
+	}
+	e.Steps, e.Selected, e.Review = nil, false, false
+	if d := e.Dice; d[1] != 0 && slotOpensGame(Replay(out, 0), e.At, e.Mode == EntryReplace) {
+		// The roll the play already has is kept as written — unless it is written
+		// against its camp, which retyping it in player order repairs.
+		stored := Action{Side: -1}
+		if e.Mode == EntryReplace && e.At < len(out.Actions) {
+			stored = out.Actions[e.At]
+		}
+		if sameRoll(d, stored.Dice) && openingWinner(stored.Dice) == stored.Side {
+			e.Dice, e.Side = stored.Dice, stored.Side
+		} else if w := openingWinner(d); w >= 0 {
+			e.Side = w
+		}
+	}
+	reroll(&out)
+	return out, nil
+}
+
+// setTimecode is GestureSetTimecode: it writes the Repères the gesture states on
+// the Action under the Cursor and nothing else. A Repère out of order is kept and
+// marked by the Replay (TimecodeBackwards), never refused (ADR-0082 rule 2).
+func setTimecode(doc, out Document, g Gesture) (Document, error) {
+	at := out.Cursor
+	if at < 0 || at >= len(out.Actions) {
+		return doc, ErrNoAction
+	}
+	a := &out.Actions[at]
+	if g.HasRollTick {
+		if !rolls(a.Kind) {
+			return doc, fmt.Errorf("transcript: a %s has no roll to time", a.Kind)
+		}
+		a.RollTickMS = tickOf(g.RollTickMS)
+	}
+	if g.HasTick {
+		a.TickMS = tickOf(g.TickMS)
+	}
+	out.HoldCursor = true
+	return out, nil
+}
+
+// tickOf is the Repère a gesture states: the instant itself, or nil — cleared —
+// for a negative one.
+func tickOf(ms int64) *int64 {
+	if ms < 0 {
+		return nil
+	}
+	return &ms
+}
+
+// rolls reports whether an Action of kind k starts with a roll, and so carries
+// the roll's Repère besides the action's.
+func rolls(k Kind) bool {
+	return k == KindChecker || k == KindDance || k == KindUnrecorded
+}
+
 // sameRoll reports whether two rolls are the same two dice, in either order.
 func sameRoll(a, b [2]int) bool {
 	return a == b || a == [2]int{b[1], b[0]}
@@ -418,6 +507,11 @@ func mergeHeader(cur, in Header) Header {
 	out.Event, out.Location, out.Round = in.Event, in.Location, in.Round
 	out.Date, out.Transcriber = in.Date, in.Transcriber
 	out.TournamentID = in.TournamentID
+	// A form that does not name the video keeps it: detaching is
+	// GestureSetVideo's, so a header form unaware of the video cannot drop it.
+	if v := strings.TrimSpace(in.VideoSource); v != "" {
+		out.VideoSource = v
+	}
 	return out
 }
 
@@ -732,7 +826,8 @@ func validate(doc Document) (Document, error) {
 	if !e.Selected {
 		return doc, ErrNoCandidate
 	}
-	a := Action{Side: e.Side, Kind: KindChecker, Dice: e.Dice, Steps: e.Steps}
+	a := Action{Side: e.Side, Kind: KindChecker, Dice: e.Dice, Steps: e.Steps,
+		RollTickMS: e.RollTickMS, TickMS: e.TickMS}
 	if doc.pendingBoard != nil {
 		pos := entryPosition(doc)
 		pos.Dice, pos.PlayerOnRoll, pos.DecisionType = e.Dice, e.Side, domain.CheckerAction
@@ -782,6 +877,13 @@ func record(doc Document, a Action) Document {
 		// roll and the play, and they are all it knows about.
 		if a.Score == nil {
 			a.Score = doc.Actions[at].Score
+		}
+		// …and its Repères: a correction retypes what was played, not when
+		// (ADR-0082 rule 3).
+		// A correction into a kind without a roll has no roll to time.
+		a.RollTickMS, a.TickMS = nil, doc.Actions[at].TickMS
+		if rolls(a.Kind) {
+			a.RollTickMS = doc.Actions[at].RollTickMS
 		}
 		var nextScore *[2]int
 		if at+1 < len(doc.Actions) && gameEndsAt(doc, at) {
@@ -886,6 +988,9 @@ func cubeGesture(doc Document, g Gesture) (Document, error) {
 		side = g.Side
 	}
 	a := Action{Side: side}
+	if g.HasTick {
+		a.TickMS = tickOf(g.TickMS)
+	}
 	switch g.Kind {
 	case GestureDouble:
 		a.Kind = KindDouble

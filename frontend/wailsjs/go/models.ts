@@ -826,6 +826,7 @@ export namespace database {
 		}
 	}
 	export class ScoreCellStats {
+	    Money: boolean;
 	    MoverAway: number;
 	    OpponentAway: number;
 	    PR: number;
@@ -839,6 +840,7 @@ export namespace database {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Money = source["Money"];
 	        this.MoverAway = source["MoverAway"];
 	        this.OpponentAway = source["OpponentAway"];
 	        this.PR = source["PR"];
@@ -2520,6 +2522,7 @@ export namespace domain {
 	    has_jacoby?: boolean;
 	    has_beaver?: boolean;
 	    engine_version?: string;
+	    video_source?: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new Match(source);
@@ -2562,6 +2565,7 @@ export namespace domain {
 	        this.has_jacoby = source["has_jacoby"];
 	        this.has_beaver = source["has_beaver"];
 	        this.engine_version = source["engine_version"];
+	        this.video_source = source["video_source"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -2618,6 +2622,8 @@ export namespace domain {
 	    cube_action: string;
 	    decision_ms?: number;
 	    cube_decision_ms?: number;
+	    roll_tick_ms?: number;
+	    tick_ms?: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new MatchMovePosition(source);
@@ -2638,6 +2644,8 @@ export namespace domain {
 	        this.cube_action = source["cube_action"];
 	        this.decision_ms = source["decision_ms"];
 	        this.cube_decision_ms = source["cube_decision_ms"];
+	        this.roll_tick_ms = source["roll_tick_ms"];
+	        this.tick_ms = source["tick_ms"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -2672,6 +2680,8 @@ export namespace domain {
 	    error_mp?: number;
 	    decision_ms?: number;
 	    cube_decision_ms?: number;
+	    roll_tick_ms?: number;
+	    tick_ms?: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new Move(source);
@@ -2692,6 +2702,8 @@ export namespace domain {
 	        this.error_mp = source["error_mp"];
 	        this.decision_ms = source["decision_ms"];
 	        this.cube_decision_ms = source["cube_decision_ms"];
+	        this.roll_tick_ms = source["roll_tick_ms"];
+	        this.tick_ms = source["tick_ms"];
 	    }
 	}
 	
@@ -6656,6 +6668,7 @@ export namespace storage {
 	    error_mp?: number;
 	    error: boolean;
 	    luck?: number;
+	    rolled: boolean;
 	    duration_ms?: number;
 	    away: number[];
 	
@@ -6676,6 +6689,7 @@ export namespace storage {
 	        this.error_mp = source["error_mp"];
 	        this.error = source["error"];
 	        this.luck = source["luck"];
+	        this.rolled = source["rolled"];
 	        this.duration_ms = source["duration_ms"];
 	        this.away = source["away"];
 	    }
@@ -6696,7 +6710,30 @@ export namespace storage {
 	        this.engine = source["engine"];
 	    }
 	}
+	export class DifficultySummary {
+	    decisions: number;
+	    loss: number;
+	    difficulty: number;
+	    excess: number;
+	    ratio?: number;
+	    avoidable: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new DifficultySummary(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.decisions = source["decisions"];
+	        this.loss = source["loss"];
+	        this.difficulty = source["difficulty"];
+	        this.excess = source["excess"];
+	        this.ratio = source["ratio"];
+	        this.avoidable = source["avoidable"];
+	    }
+	}
 	export class ScoreBias {
+	    Money: boolean;
 	    MoverAway: number;
 	    OpponentAway: number;
 	    Decisions: number;
@@ -6715,6 +6752,7 @@ export namespace storage {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Money = source["Money"];
 	        this.MoverAway = source["MoverAway"];
 	        this.OpponentAway = source["OpponentAway"];
 	        this.Decisions = source["Decisions"];
@@ -7010,6 +7048,7 @@ export namespace storage {
 	    to_review: ReviewDecision[];
 	    pace: ErrorPace;
 	    luck: LuckAdjusted;
+	    difficulty: DifficultySummary;
 	
 	    static createFrom(source: any = {}) {
 	        return new PlayerReview(source);
@@ -7025,6 +7064,7 @@ export namespace storage {
 	        this.to_review = this.convertValues(source["to_review"], ReviewDecision);
 	        this.pace = this.convertValues(source["pace"], ErrorPace);
 	        this.luck = this.convertValues(source["luck"], LuckAdjusted);
+	        this.difficulty = this.convertValues(source["difficulty"], DifficultySummary);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -7347,6 +7387,94 @@ export namespace storage {
 		    return a;
 		}
 	}
+	export class ReferenceSuggestion {
+	    PositionID: number;
+	    MatchID: number;
+	    Label: string;
+	    GameType: string;
+	    Kind: string;
+	    Theme: string;
+	    AwayOnRoll: number;
+	    AwayOpponent: number;
+	    Gain: number;
+	    Covered: number;
+	    Errors: number;
+	    Matches: number;
+	    Excess: number;
+	    FamilyErrors: number;
+	    GapMP: number;
+	    Close: boolean;
+	    Unstable: boolean;
+	    RolledOut: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new ReferenceSuggestion(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.PositionID = source["PositionID"];
+	        this.MatchID = source["MatchID"];
+	        this.Label = source["Label"];
+	        this.GameType = source["GameType"];
+	        this.Kind = source["Kind"];
+	        this.Theme = source["Theme"];
+	        this.AwayOnRoll = source["AwayOnRoll"];
+	        this.AwayOpponent = source["AwayOpponent"];
+	        this.Gain = source["Gain"];
+	        this.Covered = source["Covered"];
+	        this.Errors = source["Errors"];
+	        this.Matches = source["Matches"];
+	        this.Excess = source["Excess"];
+	        this.FamilyErrors = source["FamilyErrors"];
+	        this.GapMP = source["GapMP"];
+	        this.Close = source["Close"];
+	        this.Unstable = source["Unstable"];
+	        this.RolledOut = source["RolledOut"];
+	    }
+	}
+	export class ReferenceSuggestions {
+	    NumDecisions: number;
+	    ThresholdMP: number;
+	    Radius: number;
+	    Size: number;
+	    Candidates: number;
+	    Handled: number;
+	    References: ReferenceSuggestion[];
+	
+	    static createFrom(source: any = {}) {
+	        return new ReferenceSuggestions(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.NumDecisions = source["NumDecisions"];
+	        this.ThresholdMP = source["ThresholdMP"];
+	        this.Radius = source["Radius"];
+	        this.Size = source["Size"];
+	        this.Candidates = source["Candidates"];
+	        this.Handled = source["Handled"];
+	        this.References = this.convertValues(source["References"], ReferenceSuggestion);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
 	export class ReviewCell {
 	    key: string;
 	    decisions: number;
@@ -7440,94 +7568,8 @@ export namespace storage {
 		    return a;
 		}
 	}
-	export class ReferenceSuggestion {
-	    PositionID: number;
-	    MatchID: number;
-	    Label: string;
-	    GameType: string;
-	    Kind: string;
-	    Theme: string;
-	    AwayOnRoll: number;
-	    AwayOpponent: number;
-	    Gain: number;
-	    Covered: number;
-	    Errors: number;
-	    Matches: number;
-	    Excess: number;
-	    FamilyErrors: number;
-	    GapMP: number;
-	    Close: boolean;
-	    Unstable: boolean;
-	    RolledOut: boolean;
 	
-	    static createFrom(source: any = {}) {
-	        return new ReferenceSuggestion(source);
-	    }
 	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.PositionID = source["PositionID"];
-	        this.MatchID = source["MatchID"];
-	        this.Label = source["Label"];
-	        this.GameType = source["GameType"];
-	        this.Kind = source["Kind"];
-	        this.Theme = source["Theme"];
-	        this.AwayOnRoll = source["AwayOnRoll"];
-	        this.AwayOpponent = source["AwayOpponent"];
-	        this.Gain = source["Gain"];
-	        this.Covered = source["Covered"];
-	        this.Errors = source["Errors"];
-	        this.Matches = source["Matches"];
-	        this.Excess = source["Excess"];
-	        this.FamilyErrors = source["FamilyErrors"];
-	        this.GapMP = source["GapMP"];
-	        this.Close = source["Close"];
-	        this.Unstable = source["Unstable"];
-	        this.RolledOut = source["RolledOut"];
-	    }
-	}
-	export class ReferenceSuggestions {
-	    NumDecisions: number;
-	    ThresholdMP: number;
-	    Radius: number;
-	    Size: number;
-	    Candidates: number;
-	    Handled: number;
-	    References: ReferenceSuggestion[];
-	
-	    static createFrom(source: any = {}) {
-	        return new ReferenceSuggestions(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.NumDecisions = source["NumDecisions"];
-	        this.ThresholdMP = source["ThresholdMP"];
-	        this.Radius = source["Radius"];
-	        this.Size = source["Size"];
-	        this.Candidates = source["Candidates"];
-	        this.Handled = source["Handled"];
-	        this.References = this.convertValues(source["References"], ReferenceSuggestion);
-	    }
-	
-		convertValues(a: any, classs: any, asMap: boolean = false): any {
-		    if (!a) {
-		        return a;
-		    }
-		    if (a.slice && a.map) {
-		        return (a as any[]).map(elem => this.convertValues(elem, classs));
-		    } else if ("object" === typeof a) {
-		        if (asMap) {
-		            for (const key of Object.keys(a)) {
-		                a[key] = new classs(a[key]);
-		            }
-		            return a;
-		        }
-		        return new classs(a);
-		    }
-		    return a;
-		}
-	}
 	export class SimilarPosition {
 	    position: domain.Position;
 	    distance: number;
@@ -8906,6 +8948,8 @@ export namespace transcript {
 	    score?: number[];
 	    decision_ms?: number;
 	    cube_decision_ms?: number;
+	    roll_tick_ms?: number;
+	    tick_ms?: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new Action(source);
@@ -8922,6 +8966,8 @@ export namespace transcript {
 	        this.score = source["score"];
 	        this.decision_ms = source["decision_ms"];
 	        this.cube_decision_ms = source["cube_decision_ms"];
+	        this.roll_tick_ms = source["roll_tick_ms"];
+	        this.tick_ms = source["tick_ms"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -8971,6 +9017,8 @@ export namespace transcript {
 	    opens_game: boolean;
 	    decision_ms?: number;
 	    cube_decision_ms?: number;
+	    roll_tick_ms?: number;
+	    tick_ms?: number;
 	    inconsistencies?: Inconsistency[];
 	
 	    static createFrom(source: any = {}) {
@@ -8993,6 +9041,8 @@ export namespace transcript {
 	        this.opens_game = source["opens_game"];
 	        this.decision_ms = source["decision_ms"];
 	        this.cube_decision_ms = source["cube_decision_ms"];
+	        this.roll_tick_ms = source["roll_tick_ms"];
+	        this.tick_ms = source["tick_ms"];
 	        this.inconsistencies = this.convertValues(source["inconsistencies"], Inconsistency);
 	    }
 	
@@ -9129,6 +9179,7 @@ export namespace transcript {
 	    transcriber?: string;
 	    tournament_id?: number;
 	    match_id?: number;
+	    video_source?: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new Header(source);
@@ -9149,6 +9200,7 @@ export namespace transcript {
 	        this.transcriber = source["transcriber"];
 	        this.tournament_id = source["tournament_id"];
 	        this.match_id = source["match_id"];
+	        this.video_source = source["video_source"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -9262,6 +9314,8 @@ export namespace transcript {
 	    Mode: number;
 	    At: number;
 	    Review: boolean;
+	    RollTickMS?: number;
+	    TickMS?: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new Entry(source);
@@ -9276,6 +9330,8 @@ export namespace transcript {
 	        this.Mode = source["Mode"];
 	        this.At = source["At"];
 	        this.Review = source["Review"];
+	        this.RollTickMS = source["RollTickMS"];
+	        this.TickMS = source["TickMS"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -9315,6 +9371,11 @@ export namespace transcript {
 	    Header: Header;
 	    At: number;
 	    Score?: number[];
+	    TickMS: number;
+	    HasTick: boolean;
+	    RollTickMS: number;
+	    HasRollTick: boolean;
+	    VideoSource: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new Gesture(source);
@@ -9338,6 +9399,11 @@ export namespace transcript {
 	        this.Header = this.convertValues(source["Header"], Header);
 	        this.At = source["At"];
 	        this.Score = source["Score"];
+	        this.TickMS = source["TickMS"];
+	        this.HasTick = source["HasTick"];
+	        this.RollTickMS = source["RollTickMS"];
+	        this.HasRollTick = source["HasRollTick"];
+	        this.VideoSource = source["VideoSource"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

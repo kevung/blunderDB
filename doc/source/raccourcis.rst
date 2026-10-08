@@ -277,6 +277,8 @@ Panneau des matchs
    "BAS, j", "Sélectionner le match suivant."
    "ENTREE", "Charger le match sélectionné."
    "Del", "Supprimer le match sélectionné."
+   "v", "Voir dans la vidéo la décision étudiée, une seconde avant le jet (match portant une source vidéo et un repère à cette décision)."
+   "[ / ] (vidéo ouverte)", "Ralentir ou accélérer la lecture de la vidéo, par pas de 0,25 entre 0,25× et 4×."
    "/", "Aller au champ de filtre (joueur, événement, tournoi, date). *Esc* efface le filtre."
    "Esc", "Désélectionner/fermer le panneau."
 
@@ -407,9 +409,23 @@ veille ne demande pas la souris.
    "s", "Donner l'action du curseur à l'autre camp."
    "CTRL-Z", "Annuler le dernier geste sur le brouillon."
    "CTRL-MAJ-Z", "Rétablir le geste annulé."
+   "ESPACE (vidéo attachée)", "Lancer ou mettre en pause la vidéo. Sans vidéo, ESPACE ouvre la ligne de commande, comme ailleurs."
+   "MAJ-GAUCHE / MAJ-DROITE (vidéo attachée)", "Reculer ou avancer la vidéo de 5 secondes."
+   "CTRL-MAJ-GAUCHE / CTRL-MAJ-DROITE (vidéo attachée)", "Reculer ou avancer la vidéo d'une seconde."
+   "v (vidéo attachée)", "Poser l'instant courant de la vidéo comme instant de l'action du curseur."
+   "MAJ-V (vidéo attachée)", "Poser l'instant courant de la vidéo comme instant du jet de l'action du curseur."
+   "[ / ] (vidéo attachée)", "Ralentir ou accélérer la lecture, par pas de 0,25 entre 0,25× et 4× (jusqu'à 2× pour YouTube)."
 
 Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans touche
 supplémentaire.
+
+Avec une vidéo attachée, seule une validation explicite — *ENTREE*, le
+double-clic sur un candidat, le coup achevé au plateau — pose l'instant de
+l'action. Le chiffre du jet suivant, ou un geste de videau, valide sans
+instant ; *v* le pose après coup. Les flèches se lisent à leur place sur le
+clavier, quelle que soit sa disposition ; *[* et *]* se lisent au caractère
+tapé, *ALTGR* compris sur un clavier qui les place ainsi. Sans vidéo, ces touches gardent leur
+sens habituel.
 
 Le chiffre a un seul sens : **il commence un jet là où le curseur est**. En bout
 de document il n'y a rien sous le curseur, donc il valide le coup sélectionné

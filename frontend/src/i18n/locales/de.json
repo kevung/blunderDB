@@ -665,7 +665,16 @@
         "confirmDelete": "Match zwischen {player1} und {player2} löschen?",
         "enrichFromFile": "Aus einer Datei anreichern…",
         "editTranscription": "Transkription bearbeiten",
-        "editTranscriptionTooltip": "Dieses Match als Transkriptionsentwurf öffnen; Abschließen ersetzt das Match"
+        "editTranscriptionTooltip": "Dieses Match als Transkriptionsentwurf öffnen; Abschließen ersetzt das Match",
+        "video": "Video",
+        "videoPlaceholder": "Video-URL oder Dateipfad",
+        "videoChoose": "Datei…",
+        "videoDetach": "Lösen",
+        "videoOpen": "Match-Video",
+        "viewInVideo": "Im Video ansehen",
+        "videoSet": "Videoquelle gespeichert",
+        "videoDetached": "Videoquelle gelöst",
+        "errorVideo": "Fehler beim Match-Video"
     },
     "collection": {
         "addDescription": "Beschreibung hinzufügen…",
@@ -1441,7 +1450,11 @@
             "nothingToUndo": "Nichts zum Rückgängigmachen",
             "nothingToRedo": "Nichts zum Wiederholen",
             "noAction": "Keine Aktion unter dem Cursor",
-            "noDice": "Kein Wurf in Eingabe"
+            "noDice": "Kein Wurf in Eingabe",
+            "untimedAction": "Zug ohne Aktionszeitpunkt bestätigt: Mit einem Video bestätigt Enter zum Zeitpunkt des Bildes, oder v auf der Zelle.",
+            "noRollToTime": "Diese Aktion hat keinen Wurf, der sich markieren lässt.",
+            "rollTimed": "Wurf auf {time} gesetzt.",
+            "actionTimed": "Aktion auf {time} gesetzt."
         },
         "candidatesLabel": "Kandidatenzüge",
         "finish": "Abschließen",
@@ -1457,7 +1470,14 @@
         "stateEditsMatch": "bearbeitet Match #{id}",
         "editLossWarning": "Dieses Match wurde importiert: bis zu {analyses} Analyse(n) und bis zu {comments} Kommentar(e) gehen nicht in eine Transkription über und können beim Abschließen verloren gehen. Transkription öffnen?",
         "editAnyway": "Transkription öffnen",
-        "editFailed": "Transkription konnte nicht geöffnet werden: {error}"
+        "editFailed": "Transkription konnte nicht geöffnet werden: {error}",
+        "video": "Video",
+        "videoTooltip": "Video des Matches anhängen, ersetzen oder lösen",
+        "videoFile": "Datei…",
+        "videoYouTube": "YouTube-Link…",
+        "videoDetach": "Lösen",
+        "videoAttach": "Anhängen",
+        "videoResize": "Höhe des Videobereichs"
     },
     "transcript": {
         "title": "Transkript",
@@ -1496,8 +1516,11 @@
             "past_end": "nach dem Matchende",
             "inconsistent_dice": "unstimmige Würfel",
             "unrecorded_move": "nicht aufgezeichneter Zug",
-            "score_mismatch": "inkonsistenter Spielstand"
-        }
+            "score_mismatch": "inkonsistenter Spielstand",
+            "timecode_backwards": "Zeitmarke rückwärts"
+        },
+        "tickRoll": "Wurf {time}",
+        "tickAction": "Zug {time}"
     },
     "status": {
         "importChip": "Import läuft: {percent} %",
@@ -3160,6 +3183,19 @@
         "pace": "Fehler: {hasty} überhastet ({hastyLoss}), {deliberate} überlegt ({deliberateLoss}), {unknown} ohne Zeit",
         "paceDiscipline": "eher Disziplin: langsamer spielen",
         "paceKnowledge": "eher Wissen: diese Stellungen studieren"
+    },
+    "video": {
+        "notPlayable": "Diese Quelle kann hier nicht abgespielt werden.",
+        "codecDetail": "Das Webview kann diese Datei nicht abspielen ({container}, Unterstützung: {support}, Code {code}).",
+        "unsupported": "nicht unterstützt",
+        "codecHint": "Unter Linux die GStreamer-Plugins installieren: gstreamer1.0-plugins-good, gstreamer1.0-libav (Debian, Ubuntu); gstreamer1-plugins-good, gstreamer1-plugin-libav (Fedora); gst-plugins-good, gst-libav (Arch). Unter Windows spielt die HEVC-Erweiterung aus dem Store H.265 ab.",
+        "missing": "Videodatei nicht gefunden.",
+        "relocate": "Datei wählen…",
+        "player": "Videoplayer",
+        "placeBoard": "Video neben dem Brett anzeigen",
+        "placePanel": "Video zurück ins Panel legen",
+        "stageResize": "Videogröße ändern",
+        "rate": "Wiedergabegeschwindigkeit"
     },
     "tournamentReview": {
         "title": "Turnierbilanz",

@@ -268,7 +268,10 @@ var schemaStatements = []string{
 		transcriber TEXT DEFAULT '',
 		has_jacoby INTEGER,
 		has_beaver INTEGER,
-		engine_version TEXT DEFAULT ''
+		engine_version TEXT DEFAULT '',
+		-- The video the Match was transcribed from (domain.Match.VideoSource,
+		-- ADR-0082): an http(s) URL or a local path, NULL when none.
+		video_source TEXT
 	)`,
 	`CREATE INDEX IF NOT EXISTS idx_match_hash ON match(match_hash)`,
 	`CREATE INDEX IF NOT EXISTS idx_match_dice_hash ON match(dice_hash) WHERE dice_hash IS NOT NULL`,
@@ -405,6 +408,11 @@ var schemaStatements = []string{
 		-- unknown, never zero: only a Duel measures it.
 		decision_ms INTEGER,
 		cube_decision_ms INTEGER,
+		-- The Move's Repères in the Match's video, in milliseconds from the
+		-- start of the media (domain.Move.RollTickMS / TickMS, ADR-0082):
+		-- the roll and the action. NULL is unknown, never zero.
+		roll_tick_ms INTEGER,
+		tick_ms INTEGER,
 		FOREIGN KEY(game_id) REFERENCES game(id) ON DELETE CASCADE,
 		FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE SET NULL
 	)`,

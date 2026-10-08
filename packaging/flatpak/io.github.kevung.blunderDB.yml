@@ -42,6 +42,19 @@ finish-args:
   # keeps arbitrary paths working. Narrow this if portal access proves enough.
   - --filesystem=home
 
+# The application decodes nothing itself: the webview plays the match videos with
+# the codecs of the runtime. The GNOME 47 runtime is built on freedesktop 24.08,
+# whose ffmpeg-full extension carries H.264 and HEVC.
+add-extensions:
+  org.freedesktop.Platform.ffmpeg-full:
+    directory: lib/ffmpeg
+    version: '24.08'
+    add-ld-path: .
+    autodelete: false
+
+cleanup-commands:
+  - mkdir -p /app/lib/ffmpeg
+
 modules:
   - name: blunderdb
     buildsystem: simple

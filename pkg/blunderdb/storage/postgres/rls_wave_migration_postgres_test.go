@@ -599,7 +599,20 @@ func TestMigrate_AnsweredDoublesUnderRLS(t *testing.T) {
 		if _, err := s.Comments().Add(ctx, scope, pid, "redouble"); err != nil {
 			t.Fatal(err)
 		}
-		mv, err := ms.CreateMove(ctx, scope, &domain.Move{GameID: gameID, MoveNumber: 1, MoveType: "cube",
+		// The opponent's Double precedes the answer, as a transcription
+		// records it.
+		d := p
+		d.Board.Points[14].Checkers = 1
+		d.PlayerOnRoll, d.Cube = domain.White, domain.Cube{Owner: domain.None}
+		did, err := s.Positions().Save(ctx, scope, &d)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if _, err := ms.CreateMove(ctx, scope, &domain.Move{GameID: gameID, MoveNumber: 1, MoveType: "cube",
+			PositionID: did, Player: 1, CubeAction: "Double"}); err != nil {
+			t.Fatal(err)
+		}
+		mv, err := ms.CreateMove(ctx, scope, &domain.Move{GameID: gameID, MoveNumber: 2, MoveType: "cube",
 			PositionID: pid, Player: -1, CubeAction: "Take"})
 		if err != nil {
 			t.Fatal(err)
