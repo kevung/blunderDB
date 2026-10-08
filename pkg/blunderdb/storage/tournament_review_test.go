@@ -144,6 +144,25 @@ func TestBuildTournamentReview(t *testing.T) {
 	if short.Families == nil || short.Rounds == nil {
 		t.Errorf("lists stay lists")
 	}
+	// Few priced decisions: the PR has enough, the L7 comparison does not.
+	var sparse []ReviewMatch
+	for _, m := range usual {
+		d := append([]DecisionLoss(nil), m.Decisions...)
+		kept := 0
+		for i := range d {
+			if d[i].Player == m.Seat {
+				if kept++; kept > 3 {
+					d[i].MWCLoss = nil
+				}
+			}
+		}
+		m.Decisions = d
+		sparse = append(sparse, m)
+	}
+	thin := BuildTournamentReview(TournamentReview{Usual: UsualLevel{From: "2024-01-01"}}, matches, sparse, nil)
+	if thin.PRVersus.Verdict == VerdictInsufficient || thin.MWC7Versus.Verdict != VerdictInsufficient {
+		t.Errorf("unpriced decisions do not count toward the L7 minimum: PR %+v, L7 %+v", thin.PRVersus, thin.MWC7Versus)
+	}
 	undated := BuildTournamentReview(TournamentReview{}, matches, usual, nil)
 	if undated.Usual.Available {
 		t.Errorf("an undated tournament has no usual window")

@@ -90,8 +90,12 @@ func (s *StatsStore) TournamentReview(ctx context.Context, scope string, tournam
 		review.Usual.To = ref
 		var all []reviewMatchRow
 		clause, pargs := playerFilterClause(storage.PlayerNameSet(filter), false)
-		if err := scanEach(ctx, s.DB, cols+` AND m.match_length BETWEEN 1 AND 64 AND `+clause+` ORDER BY m.match_date, m.id`,
-			append(append([]any{}, margs...), pargs...), scanMatch(&all)); err != nil {
+		day8 := `SUBSTR(` + s.DB.DateText("m.match_date") + `, 1, 10)`
+		args := append(append([]any{}, margs...), pargs...)
+		args = append(args, review.Usual.From, ref)
+		if err := scanEach(ctx, s.DB, cols+` AND m.match_length BETWEEN 1 AND 64 AND `+clause+
+			` AND `+day8+` >= ? AND `+day8+` < ? ORDER BY m.match_date, m.id`,
+			args, scanMatch(&all)); err != nil {
 			return storage.TournamentReview{}, errf(s.DB, "TournamentReview usual", err)
 		}
 		for _, m := range all {

@@ -239,6 +239,8 @@ type side struct {
 	mwc7                  domain.MWC7Pool
 	rank, pressure, clock breakdown
 	matches               int
+	// priced counts the decisions that carry an MWC loss: the MWC7 sample.
+	priced int
 }
 
 func newSide() *side {
@@ -315,6 +317,7 @@ func (s *side) add(m ReviewMatch) round {
 			loss += *d.MWCLoss
 			gameLoss[d.GameNumber] += *d.MWCLoss
 			priced = true
+			s.priced++
 		}
 	}
 	var r round
@@ -403,8 +406,8 @@ func BuildTournamentReview(r TournamentReview, matches, usualMatches []ReviewMat
 	if r.Usual.Available {
 		r.PRVersus = Compare(r.PR, r.PRInterval.High, r.PRInterval.Available, r.Decisions,
 			r.Usual.PR, r.Usual.PRInterval.High, r.Usual.PRInterval.Available, r.Usual.Decisions)
-		r.MWC7Versus = Compare(r.MWC7.Loss, r.MWC7.High, r.MWC7.HasInterval, r.Decisions,
-			r.Usual.MWC7.Loss, r.Usual.MWC7.High, r.Usual.MWC7.HasInterval, r.Usual.Decisions)
+		r.MWC7Versus = Compare(r.MWC7.Loss, r.MWC7.High, r.MWC7.HasInterval, t.priced,
+			r.Usual.MWC7.Loss, r.Usual.MWC7.High, r.Usual.MWC7.HasInterval, u.priced)
 	}
 	for i, m := range matches {
 		f := rounds[i]
