@@ -2631,13 +2631,10 @@ msgid "Mêmes options de filtre que ``stats recurring``, plus :"
 msgstr "Same filter options as ``stats recurring``, plus:"
 
 #: ../../source/cli.rst:1278
-#, fuzzy
 msgid ""
 "``--limit <n>`` — Nombre de familles affichées en texte (défaut 10, ``0``"
 " pour toutes)."
-msgstr ""
-"``--limit <n>`` — Number of groups shown in text (default 20, ``0`` for "
-"all)."
+msgstr "``--limit <n>`` — Number of families shown in text (default 10, ``0`` for all)."
 
 #: ../../source/cli.rst:1280
 msgid ""
@@ -2657,13 +2654,10 @@ msgstr ""
 "line, the largest gap to the reference player first (JSON: ``Queue``)."
 
 #: ../../source/cli.rst:1285
-#, fuzzy
 msgid ""
 "``--family <rang>`` — Avec ``--quiz``, ``--deck`` ou ``--queue`` : la "
 "famille de ce rang (1 pour la première) au lieu des trois premières."
-msgstr ""
-"``--group <rank>`` — With ``--quiz`` or ``--deck``: the group of that "
-"rank (1 for the costliest) instead of the first three."
+msgstr "``--family <rank>`` — With ``--quiz``, ``--deck`` or ``--queue``: the family of that rank (1 for the first) instead of the first three."
 
 #: ../../source/cli.rst:1294
 msgid ""

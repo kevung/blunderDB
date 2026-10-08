@@ -2704,13 +2704,10 @@ msgid "Mêmes options de filtre que ``stats recurring``, plus :"
 msgstr "Las mismas opciones de filtro que ``stats recurring``, más:"
 
 #: ../../source/cli.rst:1278
-#, fuzzy
 msgid ""
 "``--limit <n>`` — Nombre de familles affichées en texte (défaut 10, ``0``"
 " pour toutes)."
-msgstr ""
-"``--limit <n>`` — Número de grupos mostrados en texto (por defecto 20, "
-"``0`` para todos)."
+msgstr "``--limit <n>`` — Número de familias mostradas en texto (por defecto 10, ``0`` para todas)."
 
 #: ../../source/cli.rst:1280
 msgid ""
@@ -2732,13 +2729,10 @@ msgstr ""
 "(JSON: ``Queue``)."
 
 #: ../../source/cli.rst:1285
-#, fuzzy
 msgid ""
 "``--family <rang>`` — Avec ``--quiz``, ``--deck`` ou ``--queue`` : la "
 "famille de ce rang (1 pour la première) au lieu des trois premières."
-msgstr ""
-"``--group <rango>`` — Con ``--quiz`` o ``--deck``: el grupo de ese rango "
-"(1 para el más costoso) en lugar de los tres primeros."
+msgstr "``--family <rango>`` — Con ``--quiz``, ``--deck`` o ``--queue``: la familia de ese rango (1 para la primera) en lugar de las tres primeras."
 
 #: ../../source/cli.rst:1294
 msgid ""

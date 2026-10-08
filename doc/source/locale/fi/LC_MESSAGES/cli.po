@@ -2694,13 +2694,10 @@ msgid "Mêmes options de filtre que ``stats recurring``, plus :"
 msgstr "Samat suodatinvalinnat kuin ``stats recurring``, sekä:"
 
 #: ../../source/cli.rst:1278
-#, fuzzy
 msgid ""
 "``--limit <n>`` — Nombre de familles affichées en texte (défaut 10, ``0``"
 " pour toutes)."
-msgstr ""
-"``--limit <n>`` — Tekstinä näytettävien ryhmien määrä (oletus 20, ``0`` "
-"kaikille)."
+msgstr "``--limit <n>`` — Tekstinä näytettävien perheiden määrä (oletus 10, ``0`` kaikille)."
 
 #: ../../source/cli.rst:1280
 msgid ""
@@ -2720,13 +2717,10 @@ msgstr ""
 "riville, suurin ero viitepelaajaan ensin (JSON: ``Queue``)."
 
 #: ../../source/cli.rst:1285
-#, fuzzy
 msgid ""
 "``--family <rang>`` — Avec ``--quiz``, ``--deck`` ou ``--queue`` : la "
 "famille de ce rang (1 pour la première) au lieu des trois premières."
-msgstr ""
-"``--group <sija>`` — ``--quiz``- tai ``--deck``-valinnan kanssa: tämän "
-"sijan ryhmä (1 on kallein) kolmen ensimmäisen sijaan."
+msgstr "``--family <sija>`` — Valitsimien ``--quiz``, ``--deck`` tai ``--queue`` kanssa: tämän sijan perhe (1 ensimmäinen) kolmen ensimmäisen sijaan."
 
 #: ../../source/cli.rst:1294
 msgid ""

@@ -2675,13 +2675,10 @@ msgid "Mêmes options de filtre que ``stats recurring``, plus :"
 msgstr "Те же параметры фильтра, что и у ``stats recurring``, плюс:"
 
 #: ../../source/cli.rst:1278
-#, fuzzy
 msgid ""
 "``--limit <n>`` — Nombre de familles affichées en texte (défaut 10, ``0``"
 " pour toutes)."
-msgstr ""
-"``--limit <n>`` — Число групп, выводимых текстом (по умолчанию 20, ``0`` "
-"— все)."
+msgstr "``--limit <n>`` — Число семейств, показываемых в тексте (по умолчанию 10, ``0`` — все)."
 
 #: ../../source/cli.rst:1280
 msgid ""
@@ -2702,13 +2699,10 @@ msgstr ""
 "``Queue``)."
 
 #: ../../source/cli.rst:1285
-#, fuzzy
 msgid ""
 "``--family <rang>`` — Avec ``--quiz``, ``--deck`` ou ``--queue`` : la "
 "famille de ce rang (1 pour la première) au lieu des trois premières."
-msgstr ""
-"``--group <ранг>`` — Вместе с ``--quiz`` или ``--deck``: группа этого "
-"ранга (1 — самая затратная) вместо первых трёх."
+msgstr "``--family <ранг>`` — С ``--quiz``, ``--deck`` или ``--queue``: семейство этого ранга (1 — первое) вместо трёх первых."
 
 #: ../../source/cli.rst:1294
 msgid ""
