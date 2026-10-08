@@ -222,6 +222,9 @@ func TestTenantsQuotaReportsLimitsAndUse(t *testing.T) {
 // what it computed and ends on quota_exceeded, well before its total.
 func TestQuotaStopsSweepMidway(t *testing.T) {
 	ts, srv := newQuotaTestServer(t, TenantQuotas{AnalysisSecondsPerDay: 1})
+	// One worker takes the positions one after the other; on a wide pool every
+	// position is already in flight when the first one spends the allowance.
+	srv.analysis = newAnalysisPool(1, nil)
 	ctx := context.Background()
 	saved := 0
 	for d1 := 1; d1 <= 6; d1++ {

@@ -316,9 +316,14 @@ func DefaultBearoffCores(cores int) int {
 // BearoffPlan is what the Bearoff tab renders. rate is Config.GetBearoffRate
 // (0 when none), cores the user's choice.
 func (a *App) BearoffPlan(rate float64, cores int) BearoffPlan {
+	return a.bearoffPlan(rate, cores, availableRAM())
+}
+
+// bearoffPlan is BearoffPlan with the memory the machine can hand out given,
+// so the greying of what does not fit does not depend on the host.
+func (a *App) bearoffPlan(rate float64, cores int, available int64) BearoffPlan {
 	dir := race.DataDir()
 	workers := DefaultBearoffCores(cores)
-	available := availableRAM()
 
 	plan := BearoffPlan{
 		Cores:        workers,

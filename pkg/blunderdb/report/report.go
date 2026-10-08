@@ -59,6 +59,12 @@ type Data struct {
 // Build computes the statistics of filter in scope and renders the report.
 // diagram nil means the built-in Diagram.
 func Build(ctx context.Context, s storage.Storage, scope string, filter storage.StatsFilter, lang string, diagram Diagrammer) (string, error) {
+	return BuildAt(ctx, s, scope, filter, lang, diagram, time.Now())
+}
+
+// BuildAt is Build with the generation date given, so two reports of the same
+// figures can be compared byte for byte whatever the clock reads between them.
+func BuildAt(ctx context.Context, s storage.Storage, scope string, filter storage.StatsFilter, lang string, diagram Diagrammer, generated time.Time) (string, error) {
 	stats, err := s.Stats().Compute(ctx, scope, filter)
 	if err != nil {
 		return "", fmt.Errorf("report: compute stats: %w", err)
@@ -68,7 +74,7 @@ func Build(ctx context.Context, s storage.Storage, scope string, filter storage.
 	}
 	d := Data{
 		Language:  lang,
-		Generated: time.Now(),
+		Generated: generated,
 		Totals:    stats.Totals,
 		PRGlobal:  stats.PRGlobal,
 		PRChecker: stats.PRChecker,

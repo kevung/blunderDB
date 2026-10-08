@@ -172,7 +172,8 @@ func TestBearoffPlan_PricesEveryDomainAndGreysWhatDoesNotFit(t *testing.T) {
 	if n := runtime.NumCPU(); asked > n {
 		asked = n
 	}
-	plan := (&App{}).BearoffPlan(0, 4)
+	const ram = 8 << 30 // a typical machine, whatever the host has
+	plan := (&App{}).bearoffPlan(0, 4, ram)
 	if plan.Cores != asked {
 		t.Errorf("Cores = %d, want %d (4 asked for, %d on this machine)", plan.Cores, asked, runtime.NumCPU())
 	}
@@ -226,7 +227,10 @@ func TestBearoffPlan_PricesEveryDomainAndGreysWhatDoesNotFit(t *testing.T) {
 
 	// The widest two-sided domain (22 GB) fits on no test machine.
 	widest := plan.Candidates[len(bearoffgen.Candidates())-1]
-	if plan.RAMAvailable > 0 && widest.Fits {
+	if plan.RAMAvailable != ram {
+		t.Errorf("RAMAvailable = %d, want the %d given", plan.RAMAvailable, int64(ram))
+	}
+	if widest.Fits {
 		t.Errorf("%s (%d bytes of RAM) is offered on a machine with %d available", widest.Domain, widest.RAMNeeded, plan.RAMAvailable)
 	}
 
