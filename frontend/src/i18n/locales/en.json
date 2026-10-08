@@ -1701,7 +1701,7 @@
         "noData": "No data for this filter.",
         "noTags": "No tag in the comments of the selected positions.",
         "tagsDoNotSum": "A position may carry several tags: these rows do not sum to the total.",
-        "thinCells": "Greyed rows have no interval: a single match is not yet a sample.",
+        "thinCells": "Greyed rows have no interval: fewer than three matches, or matches all at the same PR, are not yet a sample.",
         "goalTitle": "Goal:",
         "goalStated": "PR < {target} within {weeks} weeks ({band}).",
         "goalSet": "Set a goal…",
@@ -1834,7 +1834,7 @@
             "prCube": "Cube PR"
         },
         "interval95": "95 % CI",
-        "intervalHint": "95 % confidence interval: resamples the matches of a selection, the games of a match. A row without one (a single match, or a single game) is greyed."
+        "intervalHint": "95 % confidence interval: resamples the matches of a selection, the games of a match. A row without one (fewer than three matches or games, or all at the same PR) is greyed."
     },
     "resumeBatch": {
         "title": "Resume an import",
@@ -3074,7 +3074,7 @@
     },
     "matchReview": {
         "title": "Match review",
-        "oneGame": "A single game: no interval",
+        "noInterval": "Fewer than three games, or all at the same PR: no interval",
         "luckAdjusted": "Luck-adjusted result {adjusted} (result {result}, net luck {luck}; error balance {balance})",
         "luckPartial": "luck measured on {measured} of {rolls} rolls",
         "wonByPlay": "won by the play",

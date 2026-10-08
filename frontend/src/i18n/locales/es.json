@@ -1701,7 +1701,7 @@
         "noData": "Ningún dato para este filtro.",
         "noTags": "Ninguna etiqueta en los comentarios de las posiciones seleccionadas.",
         "tagsDoNotSum": "Una posición puede llevar varias etiquetas: estas filas no suman el total.",
-        "thinCells": "Las filas en gris no tienen intervalo: un solo match aún no es una muestra.",
+        "thinCells": "Las filas en gris no tienen intervalo: menos de tres matches, o matches todos con el mismo PR, aún no son una muestra.",
         "goalTitle": "Objetivo:",
         "goalStated": "PR < {target} en {weeks} semanas ({band}).",
         "goalSet": "Fijarse un objetivo…",
@@ -1834,7 +1834,7 @@
             "prCube": "PR cubo"
         },
         "interval95": "IC 95 %",
-        "intervalHint": "Intervalo de confianza del 95 %: remuestrea los matches de una selección, las partidas de un match. Una fila sin intervalo (un solo match o una sola partida) aparece en gris."
+        "intervalHint": "Intervalo de confianza del 95 %: remuestrea los matches de una selección, las partidas de un match. Una fila sin intervalo (menos de tres matches o partidas, o todos con el mismo PR) aparece en gris."
     },
     "resumeBatch": {
         "title": "Reanudar una importación",
@@ -3074,7 +3074,7 @@
     },
     "matchReview": {
         "title": "Balance del match",
-        "oneGame": "Una sola partida: sin intervalo",
+        "noInterval": "Menos de tres partidas, o todas con el mismo PR: sin intervalo",
         "luckAdjusted": "Resultado ajustado por la suerte {adjusted} (resultado {result}, suerte neta {luck}; balance de errores {balance})",
         "luckPartial": "suerte medida en {measured} de {rolls} tiradas",
         "wonByPlay": "ganado por el juego",
