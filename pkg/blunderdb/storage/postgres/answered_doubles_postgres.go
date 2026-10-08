@@ -95,17 +95,40 @@ var responseAnalysisTables = []string{
 	"match_stats", "match_stats_cell", "match_stats_position",
 }
 
+// responseAnalysesDroppedKey is the metadata row saying the gammonNet
+// verdicts on take/pass positions have been dropped. The drop must run once
+// per library and never again: a verdict gammonNet gives after it is the
+// doubler's, the right one, and a second drop would erase it. The row is
+// written in the drop's own transaction, so the work and its record commit
+// together, and it outlives goBackfillsGeneration.
+const responseAnalysesDroppedKey = "gammonnet_response_analyses_dropped"
+
 // dropGammonNetResponseAnalyses runs sqlshared.DropGammonNetResponseAnalyses
 // over every tenant in one unforced transaction: analyses, moves and match
-// statistics are reached by id, which no tenant shares. One of
-// runGoBackfills' passes, ahead of reanchorAnsweredDoubles so a moved answer
-// is rescored against what its new row keeps.
+// statistics are reached by id, which no tenant shares. A role that cannot
+// see every tenant's rows drops nothing and leaves the pass to a start that
+// can, so the drop is never split. One of runGoBackfills' passes, ahead of
+// reanchorAnsweredDoubles so a moved answer is rescored against what its new
+// row keeps.
 func dropGammonNetResponseAnalyses(ctx context.Context, conn beginner) (bool, error) {
 	n := 0
-	complete, err := inUnforcedTx(ctx, conn, responseAnalysisTables, func(tx pgx.Tx) error {
+	complete, err := inUnforcedTxSeeing(ctx, conn, responseAnalysisTables, func(tx pgx.Tx, complete bool) error {
+		var done int
+		if err := tx.QueryRow(ctx, `SELECT COUNT(*) FROM metadata WHERE key = $1`, responseAnalysesDroppedKey).Scan(&done); err != nil {
+			return fmt.Errorf("postgres: read %s: %w", responseAnalysesDroppedKey, err)
+		}
+		if done > 0 || !complete {
+			return nil
+		}
 		var err error
-		n, err = sqlshared.DropGammonNetResponseAnalyses(ctx, binder{tx}.shared())
-		return err
+		if n, err = sqlshared.DropGammonNetResponseAnalyses(ctx, binder{tx}.shared()); err != nil {
+			return err
+		}
+		if _, err := tx.Exec(ctx, `INSERT INTO metadata (key, value) VALUES ($1, '1') ON CONFLICT (key) DO NOTHING`,
+			responseAnalysesDroppedKey); err != nil {
+			return fmt.Errorf("postgres: write %s: %w", responseAnalysesDroppedKey, err)
+		}
+		return nil
 	})
 	if err != nil {
 		return false, err

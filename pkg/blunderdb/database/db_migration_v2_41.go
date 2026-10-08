@@ -20,7 +20,7 @@ const answeredDoublesPendingKey = "answered_doubles_pending"
 // match recorded on the answerer's own redouble position (the turned cube
 // owned by the answerer) onto the response position, the turned cube held by
 // no one, as importers record it, and empties gammonNet's stale verdicts on
-// those positions. The step only raises the pending key: the
+// those positions (ADR-0083). The step only raises the pending key: the
 // move itself runs in runMigrationChain once EnsureSchema has created every
 // column the rescore of the moved moves reads.
 func (d *Database) migrate_2_40_0_to_2_41_0(ctx context.Context) error {

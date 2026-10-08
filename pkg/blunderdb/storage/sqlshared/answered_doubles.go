@@ -34,13 +34,15 @@ var AnsweredOwnedCubeMovesSQL = `SELECT mv.id, mv.game_id, mv.position_id FROM m
 	      AND ` + ActionIsSQL("o.cube_action", "Double") + ` AND o.player <> mv.player)`
 
 // DropGammonNetResponseAnalyses deletes every gammonNet analysis stored on a
-// take/pass position (a turned cube held by no one): gammonNet once scored
-// such a row as the answerer's centred-cube decision, a verdict its version
-// label does not tell apart from the doubler's one it now gives, so the row
-// is emptied for the next analysis to fill. Other engines' verdicts are the
-// doubler's already and stay. The moves on those rows lose their error and
-// the match statistics that summarised them are dropped. Every scope the
-// handle sees; it returns how many analyses went.
+// take/pass position (a turned cube held by no one) whose verdict is the
+// answerer's centred-cube decision rather than the doubler's: such a verdict
+// reads the take against the wrong equities, and its version label cannot
+// tell it from a right one, so the row is emptied for the next analysis to
+// fill. The caller runs it once per library, before any right verdict can
+// exist. Other engines' verdicts are the doubler's and stay. The moves on
+// those rows lose their error and the match statistics that summarised them
+// are dropped. Every scope the handle sees; it returns how many analyses
+// went.
 func DropGammonNetResponseAnalyses(ctx context.Context, db Execer) (int, error) {
 	rows, err := db.Query(ctx, `SELECT a.position_id FROM analysis a JOIN position p ON p.id = a.position_id
 		WHERE a.analysis_engine LIKE 'gammonNet%' AND p.decision_type = 1 AND p.cube_value > 0 AND p.cube_owner = -1

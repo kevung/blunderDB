@@ -637,7 +637,9 @@ func TestMigrate_AnsweredDoublesUnderRLS(t *testing.T) {
 	if err := s.ApplyRLS(ctx); err != nil {
 		t.Fatalf("ApplyRLS: %v", err)
 	}
-	execUnforced(t, conn, nil, []string{`UPDATE metadata SET value = '2' WHERE key = 'go_backfills'`})
+	// Back to a library from before the drop.
+	execUnforced(t, conn, nil, []string{`UPDATE metadata SET value = '2' WHERE key = 'go_backfills'`,
+		`DELETE FROM metadata WHERE key = 'gammonnet_response_analyses_dropped'`})
 
 	if err := s.Migrate(ctx); err != nil {
 		t.Fatalf("Migrate under RLS: %v", err)
@@ -667,5 +669,39 @@ func TestMigrate_AnsweredDoublesUnderRLS(t *testing.T) {
 				t.Errorf("tenant %s: analyses left on response rows %q, want XG's alone", scope, engines)
 			}
 		})
+	}
+}
+
+// TestMigrate_ResponseAnalysesDroppedOnce: gammonNet's verdicts on take/pass
+// rows are dropped once per library. One given after the drop is the
+// doubler's, so a later generation of the Go-side passes leaves it.
+func TestMigrate_ResponseAnalysesDroppedOnce(t *testing.T) {
+	ctx := context.Background()
+	s, dsn := openMatchStore(t)
+	r := domain.InitializePosition()
+	r.DecisionType = domain.CubeAction
+	r.PlayerOnRoll, r.Cube = domain.White, domain.Cube{Owner: domain.None, Value: 1}
+	rid, err := s.Positions().Save(ctx, "", &r)
+	if err != nil {
+		t.Fatal(err)
+	}
+	a := domain.PositionAnalysis{AnalysisType: "DoublingCube", AnalysisEngineVersion: "gammonNet v1.7.0",
+		DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{AnalysisDepth: "0-ply", AnalysisEngine: "gammonNet v1.7.0"}}
+	if err := s.Analyses().Save(ctx, "", rid, &a); err != nil {
+		t.Fatal(err)
+	}
+	conn, err := pgx.Connect(ctx, dsn)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer conn.Close(ctx)
+	if _, err := conn.Exec(ctx, `UPDATE metadata SET value = '2' WHERE key = 'go_backfills'`); err != nil {
+		t.Fatal(err)
+	}
+	if err := s.Migrate(ctx); err != nil {
+		t.Fatalf("Migrate: %v", err)
+	}
+	if _, err := s.Analyses().Load(ctx, "", rid); err != nil {
+		t.Errorf("gammonNet's verdict given after the drop was dropped again: %v", err)
 	}
 }

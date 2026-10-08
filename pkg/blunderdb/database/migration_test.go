@@ -4800,3 +4800,97 @@ func TestMigrate_2_40_0_to_2_41_0_AnsweredDoubles(t *testing.T) {
 		t.Errorf("pending key left after success: %d rows, %v", left, err)
 	}
 }
+
+// TestAnsweredDoubles_ResumeAndClean opens a 2.41.0 library left with its
+// pending key raised after the drop of gammonNet's verdicts but before the
+// move: the open finishes the move and lowers the key. Raised again on the
+// library now clean, the two passes change nothing.
+func TestAnsweredDoubles_ResumeAndClean(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	dbPath := filepath.Join(tempDir(t), "test_resume_answers.db")
+	d := NewDatabase()
+	if err := d.SetupDatabase(dbPath); err != nil {
+		t.Fatalf("setup: %v", err)
+	}
+	s := sqlite.New(d.db)
+	save := func(p domain.Position) int64 {
+		id, err := s.Positions().Save(ctx, "", &p)
+		if err != nil {
+			t.Fatalf("save position: %v", err)
+		}
+		return id
+	}
+	owned := domain.InitializePosition()
+	owned.DecisionType = domain.CubeAction
+	owned.Board.Points[6] = domain.Point{Checkers: 1, Color: domain.Black}
+	owned.PlayerOnRoll, owned.Cube = domain.Black, domain.Cube{Owner: domain.Black, Value: 1}
+	ownedID := save(owned)
+	reply := owned
+	reply.Cube.Owner = domain.None
+	replyID := save(reply)
+	a := &domain.PositionAnalysis{AnalysisType: "DoublingCube", AnalysisEngineVersion: "XG",
+		DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{AnalysisDepth: "0-ply", AnalysisEngine: "XG", BestCubeAction: "Double, Take"}}
+	if err := s.Analyses().Save(ctx, "", replyID, a); err != nil {
+		t.Fatal(err)
+	}
+	doubler := owned
+	doubler.PlayerOnRoll, doubler.Cube = domain.White, domain.Cube{Owner: domain.None}
+	doublerID := save(doubler)
+	mid, err := s.Matches().Save(ctx, "", &domain.Match{Player1Name: "A", Player2Name: "B", MatchLength: 7})
+	if err != nil {
+		t.Fatal(err)
+	}
+	gid, err := s.Matches().CreateGame(ctx, "", &domain.Game{MatchID: mid, GameNumber: 1})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := s.Matches().CreateMove(ctx, "", &domain.Move{GameID: gid, MoveNumber: 1, MoveType: "cube", PositionID: doublerID, Player: 1, CubeAction: "Double"}); err != nil {
+		t.Fatal(err)
+	}
+	take, err := s.Matches().CreateMove(ctx, "", &domain.Move{GameID: gid, MoveNumber: 2, MoveType: "cube", PositionID: ownedID, Player: -1, CubeAction: "Take"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	reopen := func() {
+		t.Helper()
+		if _, err := d.db.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES (?, '1')`, answeredDoublesPendingKey); err != nil {
+			t.Fatal(err)
+		}
+		if err := d.Close(); err != nil {
+			t.Fatal(err)
+		}
+		d = NewDatabase()
+		if err := d.OpenDatabase(dbPath); err != nil {
+			t.Fatalf("open: %v", err)
+		}
+		var left int
+		if err := d.db.QueryRow(`SELECT COUNT(*) FROM metadata WHERE key = ?`, answeredDoublesPendingKey).Scan(&left); err != nil || left != 0 {
+			t.Errorf("pending key left after the open: %d rows, %v", left, err)
+		}
+	}
+	// snapshot is every move's row and every analysis' row.
+	snapshot := func() string {
+		t.Helper()
+		var out string
+		if err := d.db.QueryRow(`SELECT COALESCE(group_concat(x, ';'), '') FROM (
+			SELECT 'm' || id || ':' || position_id || ':' || COALESCE(decision_error_mp, '') AS x FROM move
+			UNION ALL SELECT 'a' || position_id || ':' || analysis_engine FROM analysis
+			UNION ALL SELECT 'p' || id FROM position ORDER BY 1)`).Scan(&out); err != nil {
+			t.Fatal(err)
+		}
+		return out
+	}
+
+	reopen()
+	var pid int64
+	if err := d.db.QueryRow(`SELECT position_id FROM move WHERE id = ?`, take).Scan(&pid); err != nil || pid != replyID {
+		t.Fatalf("resumed open left the take on %d (%v), want the reply row %d", pid, err, replyID)
+	}
+	clean := snapshot()
+	reopen()
+	closeOnCleanup(t, d)
+	if got := snapshot(); got != clean {
+		t.Errorf("the passes changed a clean library:\n got %s\nwant %s", got, clean)
+	}
+}
