@@ -3,6 +3,7 @@ package sqlshared
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
@@ -94,6 +95,9 @@ func PlayedDecisionArgs(ctx context.Context, db Execer, positionID int64, checke
 // playedDecisionChunk bounds the positions one rescoring query names.
 const playedDecisionChunk = 500
 
+// playedDecisionUpdateBatch is how many moves one UPDATE rewrites.
+const playedDecisionUpdateBatch = 200
+
 // RescorePlayedDecisions rewrites move.decision_error_mp and
 // move.is_close_cube for every move played from the positions of analyses,
 // each scored by its position's analysis (nil: none, the move is unscored),
@@ -157,16 +161,36 @@ func rescorePlayedDecisionsChunk(ctx context.Context, db Execer, ids []int64, an
 
 	var changedIDs []int64
 	err = db.Transact(ctx, func(tx Execer) error {
+		type update struct {
+			id int64
+			pd playedDecision
+		}
+		var updates []update
 		for _, m := range moves {
 			pd := scorePlayedDecision(analyses[m.positionID], m.decisionType, m.checkerMove, m.cubeAct)
 			if pd.closeCube == m.stored.closeCube && equalErr(pd.errMP, m.stored.errMP) {
 				continue
 			}
-			if _, err := tx.Exec(ctx, `UPDATE move SET decision_error_mp = ?, is_close_cube = ? WHERE id = ?`,
-				pd.errArg(), pd.closeCube, m.id); err != nil {
-				return fmt.Errorf("rescore move %d: %w", m.id, err)
-			}
+			updates = append(updates, update{m.id, pd})
 			changedIDs = append(changedIDs, m.id)
+		}
+		// One statement per batch of moves, not one per move.
+		for start := 0; start < len(updates); start += playedDecisionUpdateBatch {
+			part := updates[start:min(start+playedDecisionUpdateBatch, len(updates))]
+			args := make([]any, 0, 3*len(part))
+			var sb strings.Builder
+			sb.WriteString(`UPDATE move SET decision_error_mp = v.e, is_close_cube = v.c FROM (`)
+			for i, u := range part {
+				if i > 0 {
+					sb.WriteString(" UNION ALL ")
+				}
+				sb.WriteString(`SELECT CAST(? AS BIGINT) AS id, CAST(? AS BIGINT) AS e, CAST(? AS BIGINT) AS c`)
+				args = append(args, u.id, u.pd.errArg(), u.pd.closeCube)
+			}
+			sb.WriteString(`) AS v WHERE move.id = v.id`)
+			if _, err := tx.Exec(ctx, sb.String(), args...); err != nil {
+				return fmt.Errorf("rescore moves: %w", err)
+			}
 		}
 		if len(changedIDs) == 0 {
 			return nil
