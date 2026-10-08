@@ -200,11 +200,8 @@ func (d *Database) runMigrationChain(ctx context.Context) error {
 		}
 	}
 
-	if d.pendingPlayedDecisions {
-		d.pendingPlayedDecisions = false
-		if err := d.recountPlayedDecisions(ctx); err != nil {
-			return fmt.Errorf("scoring the decisions of the stored moves: %w", err)
-		}
+	if err := d.finishPlayedDecisions(ctx); err != nil {
+		return fmt.Errorf("scoring the decisions of the stored moves: %w", err)
 	}
 
 	// The 2.30.0 derived columns, after ensureAllTablesExist created them.

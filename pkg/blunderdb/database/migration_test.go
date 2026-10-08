@@ -4483,3 +4483,63 @@ func TestMigrate_2_38_0_to_2_39_0_PlayedDecisions(t *testing.T) {
 		t.Errorf("PR after migration (%v, %v), want (%v, %v)", after.Player1.PR, after.Player2.PR, before.Player1.PR, before.Player2.PR)
 	}
 }
+
+// TestMigrate_2_38_0_to_2_39_0_PlayedDecisionsResume interrupts the scoring
+// after the version was stamped: the next open must finish it and clear the
+// pending key, rather than leave the moves unscored for good.
+func TestMigrate_2_38_0_to_2_39_0_PlayedDecisionsResume(t *testing.T) {
+	dbPath := filepath.Join(tempDir(t), "test_v2380_resume.db")
+	d := NewDatabase()
+	if err := d.SetupDatabase(dbPath); err != nil {
+		t.Fatalf("setup: %v", err)
+	}
+	if _, err := d.ImportXGMatch(filepath.Join("testdata", "HsbtMarseille_main_ronde4_LamourDeCaslouGildas_UngerKevin_7p.xg")); err != nil {
+		t.Fatalf("import: %v", err)
+	}
+	scored := func(d *Database) (n int) {
+		t.Helper()
+		if err := d.db.QueryRow(`SELECT COUNT(decision_error_mp) FROM move`).Scan(&n); err != nil {
+			t.Fatal(err)
+		}
+		return n
+	}
+	want := scored(d)
+	if want == 0 {
+		t.Fatal("fixture should score moves")
+	}
+	for _, stmt := range []string{
+		`ALTER TABLE move DROP COLUMN decision_error_mp`,
+		`ALTER TABLE move DROP COLUMN is_close_cube`,
+		`UPDATE metadata SET value = '2.38.0' WHERE key = 'database_version'`,
+	} {
+		if _, err := d.db.Exec(stmt); err != nil {
+			t.Fatalf("%s: %v", stmt, err)
+		}
+	}
+	if err := d.Close(); err != nil {
+		t.Fatalf("close: %v", err)
+	}
+
+	real := rescorePlayedDecisions
+	rescorePlayedDecisions = func(context.Context, *sql.DB) (int, error) { return 0, errors.New("interrupted") }
+	d = NewDatabase()
+	err := d.OpenDatabase(dbPath)
+	rescorePlayedDecisions = real
+	if err == nil {
+		d.Close()
+		t.Fatal("open should fail while the scoring is interrupted")
+	}
+
+	d = NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("reopen: %v", err)
+	}
+	closeOnCleanup(t, d)
+	if got := scored(d); got != want {
+		t.Errorf("scored moves after the resumed open = %d, want %d", got, want)
+	}
+	var left int
+	if err := d.db.QueryRow(`SELECT COUNT(*) FROM metadata WHERE key = ?`, playedDecisionsPendingKey).Scan(&left); err != nil || left != 0 {
+		t.Errorf("pending key left after success: %d rows, %v", left, err)
+	}
+}
