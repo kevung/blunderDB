@@ -8,14 +8,11 @@
 --     with two plays charged both with the first one's error.
 --
 -- Both are projections of the compressed analysis blob, which SQL cannot
--- read: the metadata row below asks Migrate for its one-shot Go pass
--- (recountPlayedDecisions), which also recomputes the 2.37.0 columns 042
--- left to `blunderdb repair`, then drops match_stats — the rows 042 and 043
--- meant to drop too, which FORCEd RLS hid from them — and the row.
+-- read: Migrate's Go-side passes (runGoBackfills, generation 2) score them,
+-- recompute the 2.37.0 columns 042 left to `blunderdb repair`, and drop
+-- match_stats — the rows 042 and 043 meant to drop too, which FORCEd RLS hid
+-- from them.
 -- Schema-visible: bumps domain.DatabaseVersion to 2.39.0.
 
 ALTER TABLE move ADD COLUMN IF NOT EXISTS decision_error_mp BIGINT;
 ALTER TABLE move ADD COLUMN IF NOT EXISTS is_close_cube     INTEGER NOT NULL DEFAULT 0;
-
-INSERT INTO metadata (key, value) VALUES ('recount_played_decisions', 'pending')
-ON CONFLICT (key) DO NOTHING;

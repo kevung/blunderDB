@@ -5,6 +5,7 @@ package postgres_test
 import (
 	"context"
 	"net/url"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -365,4 +366,126 @@ func TestActionLabelReadStaysInTenant(t *testing.T) {
 	if len(got) != 1 {
 		t.Fatalf("read moves for %d positions, want 1", len(got))
 	}
+}
+
+// TestMigrate_GoBackfillsUnderRLS runs the Go-side passes of Migrate on a
+// two-tenant library whose RLS is FORCEd on an owner without BYPASSRLS: the
+// provenance backfill must reach every analysis of both tenants and drop the
+// match stats it invalidates, the match_stats repair must drop the rows of
+// an older shape, and FORCE must be back on afterwards.
+func TestMigrate_GoBackfillsUnderRLS(t *testing.T) {
+	ctx := context.Background()
+	s, conn, ownerDSN := openAsRLSOwner(t)
+	ms := s.Matches()
+	var seed []string
+	for i, scope := range []string{"1", "2"} {
+		matchID, err := ms.Save(ctx, scope, &domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: 7})
+		if err != nil {
+			t.Fatal(err)
+		}
+		gameID, err := ms.CreateGame(ctx, scope, &domain.Game{MatchID: matchID, GameNumber: 1})
+		if err != nil {
+			t.Fatal(err)
+		}
+		idle, err := ms.Save(ctx, scope, &domain.Match{Player1Name: "Carol", Player2Name: "Dan", MatchLength: 5})
+		if err != nil {
+			t.Fatal(err)
+		}
+		p := domain.InitializePosition()
+		p.Board.Points[4+i].Checkers = 2
+		pid, err := s.Positions().Save(ctx, scope, &p)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if _, err := ms.CreateMove(ctx, scope, &domain.Move{GameID: gameID, MoveNumber: 1, MoveType: "cube", PositionID: pid, Player: 1}); err != nil {
+			t.Fatal(err)
+		}
+		a := domain.PositionAnalysis{AnalysisType: "DoublingCube",
+			DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{AnalysisDepth: "4-ply", BestCubeAction: "No Double, Take"}}
+		if err := s.Analyses().Save(ctx, scope, pid, &a); err != nil {
+			t.Fatal(err)
+		}
+		// A current-shape row on the analysed match, an older-shape row
+		// (checker_moves NULL) on the match without analysis.
+		seed = append(seed,
+			`INSERT INTO match_stats (tenant_id, match_id, seat, checker_moves) VALUES (`+scope+`, `+strconv.FormatInt(matchID, 10)+`, 1, 0)`,
+			`INSERT INTO match_stats (tenant_id, match_id, seat) VALUES (`+scope+`, `+strconv.FormatInt(idle, 10)+`, 1)`)
+	}
+	if err := s.ApplyRLS(ctx); err != nil {
+		t.Fatalf("ApplyRLS: %v", err)
+	}
+	tables := []string{"analysis", "move", "game", "match_stats", "match_stats_cell"}
+	execUnforced(t, conn, tables, append(seed,
+		`UPDATE analysis SET analysis_engine = NULL, analysis_depth = NULL, creation_date = NULL`,
+		`DELETE FROM metadata WHERE key = 'go_backfills'`))
+
+	if err := s.Migrate(ctx); err != nil {
+		t.Fatalf("Migrate under RLS: %v", err)
+	}
+	assertForced(t, conn, tables...)
+	for _, scope := range []string{"1", "2"} {
+		asTenant(t, conn, scope, func() {
+			var analyses, unset, stats int
+			if err := conn.QueryRow(ctx, `SELECT count(*), count(*) FILTER (WHERE analysis_engine IS NULL),
+				        (SELECT count(*) FROM match_stats) FROM analysis`).Scan(&analyses, &unset, &stats); err != nil {
+				t.Fatal(err)
+			}
+			if analyses == 0 || unset != 0 {
+				t.Errorf("tenant %s: %d of %d analyses without provenance after Migrate", scope, unset, analyses)
+			}
+			if stats != 0 {
+				t.Errorf("tenant %s: %d match_stats rows survive Migrate, want the invalidated and the older-shape rows dropped", scope, stats)
+			}
+		})
+	}
+	var marker string
+	if err := conn.QueryRow(ctx, `SELECT value FROM metadata WHERE key = 'go_backfills'`).Scan(&marker); err != nil {
+		t.Fatalf("go_backfills not recorded after a complete pass: %v", err)
+	}
+
+	// Once recorded, Migrate lifts FORCE on nothing: behind a transaction
+	// holding analysis, it returns well before the lock timeout.
+	holder, err := pgx.Connect(ctx, ownerDSN)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer holder.Close(ctx)
+	hold := func() pgx.Tx {
+		tx, err := holder.Begin(ctx)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if _, err := tx.Exec(ctx, `LOCK TABLE analysis IN ACCESS SHARE MODE`); err != nil {
+			t.Fatal(err)
+		}
+		return tx
+	}
+	tx := hold()
+	start := time.Now()
+	if err := s.Migrate(ctx); err != nil {
+		t.Fatalf("second Migrate: %v", err)
+	}
+	if d := time.Since(start); d > 3*time.Second {
+		t.Errorf("second Migrate took %v behind a reader of analysis: it waited for a lock", d)
+	}
+	_ = tx.Rollback(ctx)
+
+	// Without the record, a busy table defers the pass instead of failing
+	// Migrate, and the record stays unwritten.
+	if _, err := conn.Exec(ctx, `DELETE FROM metadata WHERE key = 'go_backfills'`); err != nil {
+		t.Fatal(err)
+	}
+	tx = hold()
+	if err := s.Migrate(ctx); err != nil {
+		t.Fatalf("Migrate behind a busy table: %v", err)
+	}
+	_ = tx.Rollback(ctx)
+	var n int
+	if err := conn.QueryRow(ctx, `SELECT count(*) FROM metadata WHERE key = 'go_backfills'`).Scan(&n); err != nil {
+		t.Fatal(err)
+	}
+	if n != 0 {
+		t.Error("go_backfills recorded although the pass gave way to a busy table")
+	}
+	assertForced(t, conn, tables...)
 }
