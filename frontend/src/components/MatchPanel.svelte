@@ -1129,6 +1129,7 @@
                                 {/if}
                                 <MatchLosses
                                     losses={detailLosses}
+                                    review={detailReview}
                                     movePositions={detailMovePositions}
                                     player1={detailMatch.player1_name}
                                     player2={detailMatch.player2_name}

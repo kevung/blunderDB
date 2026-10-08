@@ -46,6 +46,14 @@ func TestBuildMatchReview(t *testing.T) {
 	if p.Decisions != 3 || p.PRInterval.Available || p.PRInterval.Units != 2 || p.MWC7.HasInterval {
 		t.Errorf("PR %v over %d, interval %+v, L7 %+v", p.PR, p.Decisions, p.PRInterval, p.MWC7)
 	}
+	for seat, want := range SummariseDifficulty(d) {
+		if got := r.Players[seat].Difficulty; got.Decisions != want.Decisions || got.Excess != want.Excess || got.Avoidable != want.Avoidable {
+			t.Errorf("seat %d difficulty %+v, want %+v", seat, got, want)
+		}
+	}
+	if r.Players[0].Difficulty.Decisions != 1 {
+		t.Errorf("player 1's difficulty covers move 3 only: %+v", r.Players[0].Difficulty)
+	}
 	if m := BuildMatchReview(9, d, 0, 0.5, 1); m.Players[0].Luck.Available {
 		t.Error("money play has no luck-adjusted result")
 	}
