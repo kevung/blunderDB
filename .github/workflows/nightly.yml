@@ -233,7 +233,12 @@ jobs:
   # back from the cache too, saved only when the gate passed, so a regression
   # never becomes the next night's reference. No versioned baseline file: a
   # runner is not the machine tasks/bench/ was measured on, so only
-  # runner-to-runner comparisons mean anything.
+  # runner-to-runner comparisons mean anything — and only between runners
+  # of the same CPU model: ubuntu-latest draws from several processor
+  # generations (EPYC 7763, EPYC 9V45, Xeon 8573C seen) whose speeds differ
+  # by up to ×1.8 on unchanged code, wider than the factor. The reference is
+  # therefore cached per CPU model, and the first night on a model not seen
+  # before becomes that model's reference instead of being compared.
   scale-bench:
     # A dispatch aimed at a PR measures that PR's micro-benchmarks only: an
     # hour of scale benchmarks would not answer it, and its figures must
@@ -286,19 +291,26 @@ jobs:
             ./pkg/blunderdb/database | tee scale-bench.txt
         shell: bash
 
-      - name: Restore the previous night's results
+      - name: Identify the runner's CPU model
+        id: cpu
+        run: |
+          model=$(grep -m1 '^cpu:' scale-bench.txt | sed 's/^cpu:[[:space:]]*//' | tr -cs 'A-Za-z0-9' '-' | sed 's/^-*//; s/-*$//')
+          echo "model=${model:-unknown}" >>"$GITHUB_OUTPUT"
+        shell: bash
+
+      - name: Restore the previous results on this CPU model
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: scale-bench-previous.txt
-          key: scale-bench-results-${{ github.run_id }}
-          restore-keys: scale-bench-results-
+          key: scale-bench-results-${{ steps.cpu.outputs.model }}-${{ github.run_id }}
+          restore-keys: scale-bench-results-${{ steps.cpu.outputs.model }}-
 
-      - name: Compare with the previous night (×1.5 per benchmark)
+      - name: Compare with the previous run on this CPU model (×1.5 per benchmark)
         run: |
           if [ -f scale-bench-previous.txt ]; then
             scripts/bench-scale-compare.sh scale-bench-previous.txt scale-bench.txt 1.5 "$GITHUB_STEP_SUMMARY"
           else
-            echo "No previous scale results: this run becomes the reference." | tee -a "$GITHUB_STEP_SUMMARY"
+            echo "No previous scale results on ${{ steps.cpu.outputs.model }}: this run becomes its reference." | tee -a "$GITHUB_STEP_SUMMARY"
           fi
           cp scale-bench.txt scale-bench-previous.txt
         shell: bash
@@ -307,7 +319,7 @@ jobs:
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: scale-bench-previous.txt
-          key: scale-bench-results-${{ github.run_id }}
+          key: scale-bench-results-${{ steps.cpu.outputs.model }}-${{ github.run_id }}
 
       - name: Upload the scale results
         if: always()
