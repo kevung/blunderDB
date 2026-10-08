@@ -141,13 +141,13 @@ func (s *SearchStore) appendMoveErrorClause(scope string, f domain.SearchFilters
 		eqMax := int(math.Round(eMax))
 		var cond string
 		if eHasMin && eHasMax {
-			cond = statsErrExpr + " BETWEEN ? AND ?"
+			cond = positionErrExpr + " BETWEEN ? AND ?"
 			args = append(args, eqMin, eqMax)
 		} else if eHasMin {
-			cond = statsErrExpr + " >= ?"
+			cond = positionErrExpr + " >= ?"
 			args = append(args, eqMin)
 		} else if eHasMax {
-			cond = statsErrExpr + " <= ?"
+			cond = positionErrExpr + " <= ?"
 			args = append(args, eqMax)
 		}
 		if cond != "" {

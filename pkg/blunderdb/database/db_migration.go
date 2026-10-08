@@ -89,6 +89,7 @@ var migrationSteps = []migrationStep{
 	{"2.34.0", "2.35.0", (*Database).migrate_2_34_0_to_2_35_0},
 	{"2.35.0", "2.36.0", (*Database).migrate_2_35_0_to_2_36_0},
 	{"2.36.0", "2.37.0", (*Database).migrate_2_36_0_to_2_37_0},
+	{"2.37.0", "2.38.0", (*Database).migrate_2_37_0_to_2_38_0},
 }
 
 // findMigrationStep returns the registered step that starts from the given
@@ -195,6 +196,13 @@ func (d *Database) runMigrationChain(ctx context.Context) error {
 		}
 		if err := d.ensureAllTablesExist(); err != nil {
 			return err
+		}
+	}
+
+	if d.pendingPlayedDecisions {
+		d.pendingPlayedDecisions = false
+		if err := d.recountPlayedDecisions(ctx); err != nil {
+			return fmt.Errorf("scoring the decisions of the stored moves: %w", err)
 		}
 	}
 

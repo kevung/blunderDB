@@ -29,9 +29,15 @@ import (
 // so each backend keeps its own on top of this store.
 type StatsStore struct{ DB Execer }
 
-// statsErrExpr selects the error column that applies to a decision; it is
-// shared with the search store's move-error filter.
-const statsErrExpr = "CASE WHEN p.decision_type = 1 THEN a.cube_error ELSE a.best_move_equity_error END"
+// statsErrExpr is the error of a decision as played in its match: the move's
+// own column (played_decisions.go), never the position's, which scores one
+// play for every match that reached the position.
+const statsErrExpr = "mv.decision_error_mp"
+
+// positionErrExpr is the error the position's analysis columns score, for the
+// searches over positions that join no move; they settle a position played
+// several ways in Go (multiPlayedSQL).
+const positionErrExpr = "CASE WHEN p.decision_type = 1 THEN a.cube_error ELSE a.best_move_equity_error END"
 
 // The Error and Blunder thresholds are the library's settings
 // (storage.LibrarySettings, ADR-0046, defaults 50 and 100), read once per
@@ -46,21 +52,21 @@ const statsErrExpr = "CASE WHEN p.decision_type = 1 THEN a.cube_error ELSE a.bes
 //   - Cube: every double offered, take and pass (the move's own cube action,
 //     not the analysis's: a deduplicated position may have been doubled in
 //     one match and not in another), and a no-double flagged close
-//     (a.is_close_cube, engine.ComputeIsCloseCube).
+//     (mv.is_close_cube, engine.ComputeIsCloseCube against the move's action).
 //
 // A function of the dialect because the two flags are INTEGER 0/1 on SQLite,
 // BOOLEAN on PostgreSQL.
 func countedExpr(d Dialect) string {
-	return "((p.decision_type = 0 AND " + d.Bool("a.is_forced", false) + " AND a.best_move_equity_error IS NOT NULL) OR (p.decision_type = 1 AND (" + ActionNotInSQL("mv.cube_action", "", "No Double", "NoDouble") + " OR " + d.Bool("a.is_close_cube", true) + ")))"
+	return "((p.decision_type = 0 AND " + d.Bool("a.is_forced", false) + " AND mv.decision_error_mp IS NOT NULL) OR (p.decision_type = 1 AND (" + ActionNotInSQL("mv.cube_action", "", "No Double", "NoDouble") + " OR mv.is_close_cube = 1)))"
 }
 
-// UnscoredPlaySQL is true for a checker position whose analysis cannot score
-// the play made there: a NULL error, the played move naming no candidate
-// (engine.AnalysisColumns.BestMoveUnscored). Such a play is left out of every
-// count, as an unanalysed one is left out of the analysed counts; pos is the
-// position's alias.
-func UnscoredPlaySQL(pos string) string {
-	return "EXISTS (SELECT 1 FROM analysis ua WHERE ua.position_id = " + pos + ".id AND ua.best_move_equity_error IS NULL)"
+// UnscoredPlaySQL is true for a checker move whose position's analysis cannot
+// score the play made there: a NULL error, the played move naming no
+// candidate (engine.AnalysisColumns.BestMoveUnscored). Such a play is left out
+// of every count, as an unanalysed one is left out of the analysed counts;
+// pos and mv are the position's and the move's aliases.
+func UnscoredPlaySQL(pos, mv string) string {
+	return "(" + mv + ".decision_error_mp IS NULL AND EXISTS (SELECT 1 FROM analysis ua WHERE ua.position_id = " + pos + ".id))"
 }
 
 // cubeMultiplierExpr is the cube value (1, 2, 4, …) from its stored log2
@@ -876,7 +882,7 @@ func (s *StatsStore) playerTable(ctx context.Context, scope string, filter stora
 	checkerMoves := `COALESCE((SELECT COUNT(*) FROM move mv2
 		                  JOIN position p2 ON p2.id = mv2.position_id
 		                  JOIN game g2 ON g2.id = mv2.game_id
-		                  WHERE g2.match_id = m.id AND p2.decision_type = 0 AND NOT ` + UnscoredPlaySQL("p2") + `), 0)`
+		                  WHERE g2.match_id = m.id AND p2.decision_type = 0 AND NOT ` + UnscoredPlaySQL("p2", "mv2") + `), 0)`
 	// A reader that cannot write takes the direct path, as Compute does,
 	// unless the table already holds every match.
 	readable := false

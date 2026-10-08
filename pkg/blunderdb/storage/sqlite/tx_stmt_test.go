@@ -7,6 +7,7 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
 
 // countingExecer counts the statements a transaction sends, by text.
@@ -98,10 +99,11 @@ func TestImportPathStatementsArePreparedOnceAndSkipTheMoveTable(t *testing.T) {
 	if n := count.sent[playedActionsSQL]; n != 0 {
 		t.Errorf("the move table was read %d times although the graph knew every played action", n)
 	}
-	if per := (count.total() - before) / decisions; per != 6 {
-		t.Errorf("%d statements per decision, want 6 (position, analysis read, match stats invalidation, analysis upsert, move, position match date): %v", per, count.sent)
+	if per := (count.total() - before) / decisions; per != 8 {
+		t.Errorf("%d statements per decision, want 8 (position, analysis read, match stats invalidation, analysis upsert, moves to rescore, analysis of the new move, move, position match date): %v", per, count.sent)
 	}
-	for _, q := range []string{positionInsertSQL, analysisMergeSelectSQL, invalidateMatchStatsOfPositionSQL, analysisUpsertSQL, moveInsertSQL, positionMatchDateOnMoveSQL} {
+	for _, q := range []string{positionInsertSQL, analysisMergeSelectSQL, invalidateMatchStatsOfPositionSQL, analysisUpsertSQL,
+		sqlshared.RescoreMovesSQL(shared{}, 1), sqlshared.PlayedDecisionAnalysisSQL, moveInsertSQL, positionMatchDateOnMoveSQL} {
 		if _, ok := stx.stmts[q]; !ok {
 			t.Errorf("hot statement not prepared: %.40q", q)
 		}

@@ -613,7 +613,7 @@ func (s *matchStore) SwapPlayers(ctx context.Context, scope string, id int64) er
 		}
 		// Positions repointed away from are orphan candidates, checked in one
 		// DELETE after the loop: a mid-loop check could not see later repoints.
-		var swappedAway []int64
+		var swappedAway, repointed []int64
 		for _, pid := range posIDs {
 			pos, ok := byID[pid]
 			if !ok {
@@ -637,6 +637,11 @@ func (s *matchStore) SwapPlayers(ctx context.Context, scope string, id int64) er
 				return fmt.Errorf("repoint swapped move: %w", err)
 			}
 			swappedAway = append(swappedAway, pid)
+			repointed = append(repointed, newID)
+		}
+		// The repointed moves are scored by their new position's analysis.
+		if _, err := sqlshared.RescorePlayedDecisionsOf(ctx, binder{tx}.shared(), repointed); err != nil {
+			return fmt.Errorf("rescore swapped moves: %w", err)
 		}
 		if err := deleteOrphanedPositions(ctx, tx, swappedAway); err != nil {
 			return fmt.Errorf("swap orphan cleanup: %w", err)
@@ -818,8 +823,8 @@ func scanScoredMove(rows *sql.Rows, scorer sqlshared.PlayScorer) (domain.Move, e
 const moveInsertSQL = `INSERT INTO move (
 	game_id, move_number, move_type, position_id, player,
 	dice_1, dice_2, checker_move, cube_action, luck_mp,
-	decision_ms, cube_decision_ms
-) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`
+	decision_ms, cube_decision_ms, decision_error_mp, is_close_cube
+) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
 
 // CreateMove stores a new move and returns its id, updating mv.ID in place. A
 // zero PositionID is stored as NULL (no associated position).
@@ -840,10 +845,14 @@ func (s *matchStore) CreateMove(ctx context.Context, scope string, mv *domain.Mo
 	if err != nil {
 		return 0, fmt.Errorf("sqlite: create move: %w", err)
 	}
+	decisionErr, closeCube, err := sqlshared.PlayedDecisionArgs(ctx, binder{s.db}.shared(), mv.PositionID, mv.CheckerMove, mv.CubeAction)
+	if err != nil {
+		return 0, fmt.Errorf("sqlite: create move: %w", err)
+	}
 	res, err := s.db.ExecContext(ctx, moveInsertSQL,
 		mv.GameID, mv.MoveNumber, moveType, positionID, mv.Player,
 		mv.Dice[0], mv.Dice[1], mv.CheckerMove, cubeAction, luckMP,
-		sqlshared.MSArg(mv.DecisionMS), sqlshared.MSArg(mv.CubeDecisionMS))
+		sqlshared.MSArg(mv.DecisionMS), sqlshared.MSArg(mv.CubeDecisionMS), decisionErr, closeCube)
 	if err != nil {
 		return 0, fmt.Errorf("sqlite: create move: %w", err)
 	}

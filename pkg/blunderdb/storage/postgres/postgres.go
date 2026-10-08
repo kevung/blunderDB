@@ -215,6 +215,9 @@ func (s *Storage) Migrate(ctx context.Context) error {
 	if err := backfillAnalysisProvenance(ctx, conn); err != nil {
 		return err
 	}
+	if err := recountPlayedDecisions(ctx, conn, conn); err != nil {
+		return err
+	}
 	return setDatabaseVersion(ctx, conn)
 }
 
