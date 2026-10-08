@@ -1781,7 +1781,7 @@
         "biases_blots_too_little": "πολύ προσεκτικός με τα blots",
         "biasesVerdict_balanced": "καμία σαφής κλίση",
         "biasesVerdict_insufficient": "λίγες αποφάσεις",
-        "biasesUnread": "{n} κινήσεις πουλιών δεν μπόρεσαν να αναπαραχθούν και μένουν εκτός της τάσης των blots.",
+        "biasesUnread": "{n} από {total} κινήσεις πουλιών με επαφή ({share}) δεν μπόρεσαν να αναπαραχθούν και μένουν εκτός της τάσης των blots.",
         "biasesByScore": "Διπλασιασμοί ανά σκορ (δικό σας away – away αντιπάλου)",
         "biasesScore": "Σκορ",
         "biasesMoney": "money",

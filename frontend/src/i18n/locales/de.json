@@ -1781,7 +1781,7 @@
         "biases_blots_too_little": "zu vorsichtig mit Blots",
         "biasesVerdict_balanced": "keine klare Neigung",
         "biasesVerdict_insufficient": "zu wenige Entscheidungen",
-        "biasesUnread": "{n} Steinzüge konnten nicht nachgespielt werden und fehlen in der Blot-Tendenz.",
+        "biasesUnread": "{n} von {total} Steinzügen mit Kontakt ({share}) konnten nicht nachgespielt werden und fehlen in der Blot-Tendenz.",
         "biasesByScore": "Doppel nach Spielstand (Ihr Away – Away des Gegners)",
         "biasesScore": "Spielstand",
         "biasesMoney": "Money",

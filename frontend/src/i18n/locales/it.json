@@ -1781,7 +1781,7 @@
         "biases_blots_too_little": "troppo prudente con i blot",
         "biasesVerdict_balanced": "nessuna inclinazione netta",
         "biasesVerdict_insufficient": "troppe poche decisioni",
-        "biasesUnread": "{n} mosse di pedine non sono state rigiocate e restano fuori dalla tendenza sui blot.",
+        "biasesUnread": "{n} su {total} mosse di pedine con contatto ({share}) non sono state rigiocate e restano fuori dalla tendenza sui blot.",
         "biasesByScore": "Raddoppi per punteggio (suo away – away avversario)",
         "biasesScore": "Punteggio",
         "biasesMoney": "money",

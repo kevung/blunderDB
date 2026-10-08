@@ -1781,7 +1781,7 @@
         "biases_blots_too_little": "trop prudent sur les blots",
         "biasesVerdict_balanced": "pas de penchant net",
         "biasesVerdict_insufficient": "trop peu de décisions",
-        "biasesUnread": "{n} coups de pions n’ont pas pu être rejoués et sont hors du biais des blots.",
+        "biasesUnread": "{n} des {total} coups de pions avec contact ({share}) n’ont pas pu être rejoués et sont hors du biais des blots.",
         "biasesByScore": "Doubles par score (votre away – away adverse)",
         "biasesScore": "Score",
         "biasesMoney": "partie libre",

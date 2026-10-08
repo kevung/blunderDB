@@ -1781,7 +1781,7 @@
         "biases_blots_too_little": "demasiado prudente con los blots",
         "biasesVerdict_balanced": "sin tendencia clara",
         "biasesVerdict_insufficient": "pocas decisiones",
-        "biasesUnread": "{n} jugadas de fichas no se pudieron reproducir y quedan fuera del sesgo de blots.",
+        "biasesUnread": "{n} de {total} jugadas de fichas con contacto ({share}) no se pudieron reproducir y quedan fuera del sesgo de blots.",
         "biasesByScore": "Dobles por marcador (su away – away rival)",
         "biasesScore": "Marcador",
         "biasesMoney": "money",

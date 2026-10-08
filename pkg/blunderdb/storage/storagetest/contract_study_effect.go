@@ -114,3 +114,133 @@ func testStatsDirectionalBiases(t *testing.T, s storage.Storage) {
 		t.Errorf("Blots %+v unread %d, want the two checker decisions", got.Blots, got.BlotsUnread)
 	}
 }
+
+// biasGame saves a one-game match for Alice and returns the game's id; a
+// match length of 0 is money play.
+func biasGame(t *testing.T, s storage.Storage, matchLength int32) int64 {
+	t.Helper()
+	ctx := context.Background()
+	m := domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: matchLength,
+		MatchDate: time.Date(2025, 6, 1, 0, 0, 0, 0, time.UTC)}
+	matchID, err := s.Matches().Save(ctx, "", &m)
+	if err != nil {
+		t.Fatalf("Save match: %v", err)
+	}
+	gameID, err := s.Matches().CreateGame(ctx, "", &domain.Game{MatchID: matchID, GameNumber: 1})
+	if err != nil {
+		t.Fatalf("CreateGame: %v", err)
+	}
+	return gameID
+}
+
+// testStatsDirectionalBiasesPerMatch pins that a bias reads each decision's
+// error as played in its own match: two matches reach the same positions, the
+// first plays right and the second errs, and the second's cost is counted —
+// not the position's columns, which score the first match's play.
+func testStatsDirectionalBiasesPerMatch(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	if _, err := s.Stats().DateRange(ctx, ""); errors.Is(err, storage.ErrInternal) {
+		t.Skip("Stats not implemented on this backend")
+	}
+	first, second := biasGame(t, s, 7), biasGame(t, s, 7)
+
+	cube := statsDecisionPos(t, 0)
+	cube.DecisionType = domain.CubeAction
+	cubeID, err := s.Positions().Save(ctx, "", &cube)
+	if err != nil {
+		t.Fatalf("Save cube position: %v", err)
+	}
+	checker := statsDecisionPos(t, 1)
+	checker.Dice = [2]int{3, 1}
+	checkerID, err := s.Positions().Save(ctx, "", &checker)
+	if err != nil {
+		t.Fatalf("Save checker position: %v", err)
+	}
+	for _, mv := range []domain.Move{
+		{GameID: first, MoveNumber: 1, MoveType: "cube", PositionID: cubeID, Player: 1, CubeAction: "Pass"},
+		{GameID: second, MoveNumber: 1, MoveType: "cube", PositionID: cubeID, Player: 1, CubeAction: "Take"},
+		{GameID: first, MoveNumber: 2, MoveType: "checker", PositionID: checkerID, Player: 1, CheckerMove: "8/5 6/5"},
+		{GameID: second, MoveNumber: 2, MoveType: "checker", PositionID: checkerID, Player: 1, CheckerMove: "24/23 13/10"},
+	} {
+		if _, err := s.Matches().CreateMove(ctx, "", &mv); err != nil {
+			t.Fatalf("CreateMove: %v", err)
+		}
+	}
+	zero, cost := 0.0, 0.150
+	if err := s.Analyses().Save(ctx, "", cubeID, &domain.PositionAnalysis{
+		PlayedCubeActions: []string{"Pass"},
+		DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{BestCubeAction: "Double, Pass",
+			CubefulNoDoubleEquity: 0.40, CubefulDoubleTakeEquity: 1.20, CubefulDoublePassEquity: 1.00,
+			CubefulNoDoubleError: -0.100, CubefulDoubleTakeError: -0.100, CubefulDoublePassError: -0.100},
+	}); err != nil {
+		t.Fatalf("Save cube analysis: %v", err)
+	}
+	if err := s.Analyses().Save(ctx, "", checkerID, &domain.PositionAnalysis{
+		PlayedMoves: []string{"8/5 6/5"},
+		CheckerAnalysis: &domain.CheckerAnalysis{Moves: []domain.CheckerMove{
+			{Move: "8/5 6/5", Equity: 0.50, EquityError: &zero},
+			{Move: "24/23 13/10", Equity: 0.35, EquityError: &cost},
+		}},
+	}); err != nil {
+		t.Fatalf("Save checker analysis: %v", err)
+	}
+
+	got, err := s.Stats().DirectionalBiases(ctx, "", storage.StatsFilter{DecisionType: -1, PlayerName: "Alice"})
+	if err != nil {
+		t.Fatalf("DirectionalBiases: %v", err)
+	}
+	if tp := got.TakePass; tp.Decisions != 2 || tp.Plus != 1 || tp.PlusMP <= 0 {
+		t.Errorf("TakePass %+v, want the second match's wrong take with its own cost", tp)
+	}
+	if b := got.Blots; b.Decisions != 2 || b.Plus != 1 || b.PlusMP != 150 || got.BlotsUnread != 0 {
+		t.Errorf("Blots %+v unread %d, want the second match's bolder play at 150 mp", b, got.BlotsUnread)
+	}
+}
+
+// testStatsDirectionalBiasesScores pins the score cells of the doubling bias:
+// money play has its own cell, and a post-Crawford score reads as one away,
+// never as the stored sentinels.
+func testStatsDirectionalBiasesScores(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	if _, err := s.Stats().DateRange(ctx, ""); errors.Is(err, storage.ErrInternal) {
+		t.Skip("Stats not implemented on this backend")
+	}
+	cubeAt := func(gameID int64, slot int, score [2]int) {
+		t.Helper()
+		pos := statsDecisionPos(t, slot)
+		pos.DecisionType = domain.CubeAction
+		pos.Score = score
+		posID, err := s.Positions().Save(ctx, "", &pos)
+		if err != nil {
+			t.Fatalf("Save cube position: %v", err)
+		}
+		mv := domain.Move{GameID: gameID, MoveNumber: int32(slot), MoveType: "cube", PositionID: posID, Player: 1, CubeAction: "Double"}
+		if _, err := s.Matches().CreateMove(ctx, "", &mv); err != nil {
+			t.Fatalf("CreateMove: %v", err)
+		}
+		if err := s.Analyses().Save(ctx, "", posID, &domain.PositionAnalysis{
+			PlayedCubeActions: []string{"Double"},
+			DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{BestCubeAction: "No Double",
+				CubefulNoDoubleEquity: 0.40, CubefulDoubleTakeEquity: 0.30, CubefulDoublePassEquity: 1.00},
+		}); err != nil {
+			t.Fatalf("Save cube analysis: %v", err)
+		}
+	}
+	cubeAt(biasGame(t, s, 0), 0, [2]int{-1, -1})
+	cubeAt(biasGame(t, s, 7), 1, [2]int{domain.PostCrawford, 3})
+
+	got, err := s.Stats().DirectionalBiases(ctx, "", storage.StatsFilter{DecisionType: -1, PlayerName: "Alice"})
+	if err != nil {
+		t.Fatalf("DirectionalBiases: %v", err)
+	}
+	if len(got.DoublesByScore) != 2 {
+		t.Fatalf("DoublesByScore %+v, want a money cell and a 1-away/3-away cell", got.DoublesByScore)
+	}
+	money, post := got.DoublesByScore[0], got.DoublesByScore[1]
+	if !money.Money || money.MoverAway != 0 || money.OpponentAway != 0 || money.Decisions != 1 {
+		t.Errorf("first cell %+v, want money play", money)
+	}
+	if post.Money || post.MoverAway != 1 || post.OpponentAway != 3 || post.Decisions != 1 {
+		t.Errorf("second cell %+v, want 1-away/3-away", post)
+	}
+}

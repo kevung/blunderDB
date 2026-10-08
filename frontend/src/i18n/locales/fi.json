@@ -1781,7 +1781,7 @@
         "biases_blots_too_little": "liian varovainen blottien kanssa",
         "biasesVerdict_balanced": "ei selvää kallistumaa",
         "biasesVerdict_insufficient": "liian vähän päätöksiä",
-        "biasesUnread": "{n} nappulasiirtoa ei voitu toistaa, ja ne jäävät blottitaipumuksen ulkopuolelle.",
+        "biasesUnread": "{n}/{total} kosketuksellista nappulasiirtoa ({share}) ei voitu toistaa, ja ne jäävät blottitaipumuksen ulkopuolelle.",
         "biasesByScore": "Tuplaukset tilanteen mukaan (oma away – vastustajan away)",
         "biasesScore": "Tilanne",
         "biasesMoney": "money",

@@ -184,21 +184,66 @@ func findPlayedAndBest(moves []domain.CheckerMove, played string) (*domain.Check
 			playedMove = m
 		}
 	}
+	if playedMove == nil && norm != "" {
+		// The match record and the analysis may spell one play two ways; the
+		// play's error was scored by the same lookup.
+		playedMove = PlayedCandidate(moves, played)
+	}
 	return playedMove, bestMove
 }
 
 // boardAfter replays a move notation through the legal-move generator and
-// returns the board it produces. A notation the generator does not produce —
-// an imported analysis can spell a move a way this port does not — yields
-// ok=false, and the rules that need a board simply do not fire.
+// returns the board it produces. The generator writes each step ("13/10(2)
+// 10/7(2)", "8/5* 5/4") where an analysis may merge them ("13/7(2)",
+// "8/5*/4"), so a notation that is not one of the generator's spellings is
+// matched by the play it describes (CanonicalMove): the legal plays it
+// names must all leave one board, after keeping those that hit as often as
+// the notation says when they do not. A notation that names no legal play, or
+// plays leaving different boards, yields ok=false, and the rules that need a
+// board simply do not fire.
 func boardAfter(pos *domain.Position, notation string) (domain.Board, bool) {
 	norm := NormalizeMove(notation)
-	for _, play := range domain.LegalMoves(pos) {
+	plays := domain.LegalMoves(pos)
+	for _, play := range plays {
 		if strings.EqualFold(NormalizeMove(play.Notation), norm) {
 			return play.Result.Board, true
 		}
 	}
-	return domain.Board{}, false
+	canon := strings.ToLower(CanonicalMove(notation))
+	if canon == "" {
+		return domain.Board{}, false
+	}
+	var same []domain.LegalPlay
+	for _, play := range plays {
+		if strings.ToLower(CanonicalMove(play.Notation)) == canon {
+			same = append(same, play)
+		}
+	}
+	if board, ok := oneBoard(same); ok {
+		return board, true
+	}
+	hits := strings.Count(notation, "*")
+	var hitting []domain.LegalPlay
+	for _, play := range same {
+		if strings.Count(play.Notation, "*") == hits {
+			hitting = append(hitting, play)
+		}
+	}
+	return oneBoard(hitting)
+}
+
+// oneBoard is the board every play leaves, ok=false when there is no play or
+// they leave different boards.
+func oneBoard(plays []domain.LegalPlay) (domain.Board, bool) {
+	if len(plays) == 0 {
+		return domain.Board{}, false
+	}
+	for _, play := range plays[1:] {
+		if play.Result.Board != plays[0].Result.Board {
+			return domain.Board{}, false
+		}
+	}
+	return plays[0].Result.Board, true
 }
 
 // countBlots counts a side's lone checkers on the board.

@@ -3,6 +3,8 @@ package storage
 import (
 	"math"
 	"testing"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
 // TestSignedBias_IntervalAndVerdict pins the estimator of ADR-0079: the mean
@@ -60,5 +62,27 @@ func TestBuildDirectionalBiases_Axes(t *testing.T) {
 	}
 	if got.Blots.Decisions != 2 || got.Blots.Plus != 1 || got.BlotsUnread != 1 {
 		t.Errorf("Blots %+v unread %d", got.Blots, got.BlotsUnread)
+	}
+}
+
+// TestBuildDirectionalBiases_ScoreSentinels: the stored sentinels never reach a
+// label — money play is its own cell, first, and post-Crawford reads one away.
+func TestBuildDirectionalBiases_ScoreSentinels(t *testing.T) {
+	got := BuildDirectionalBiases([]BiasCubeRow{
+		{Best: "No Double", Played: "Double", MoverAway: domain.PostCrawford, OpponentAway: 3},
+		{Best: "No Double", Played: "Double", MoverAway: -1, OpponentAway: -1},
+		{Best: "No Double", Played: "Double", MoverAway: 1, OpponentAway: 3},
+	}, []BiasCheckerRow{{Sign: 1}, {Unread: true}, {}, {}})
+	if len(got.DoublesByScore) != 2 {
+		t.Fatalf("DoublesByScore %+v, want money and 1-away/3-away", got.DoublesByScore)
+	}
+	if c := got.DoublesByScore[0]; !c.Money || c.MoverAway != 0 || c.Decisions != 1 {
+		t.Errorf("first cell %+v, want money", c)
+	}
+	if c := got.DoublesByScore[1]; c.Money || c.MoverAway != 1 || c.OpponentAway != 3 || c.Decisions != 2 {
+		t.Errorf("second cell %+v, want 1-away/3-away with both decisions", c)
+	}
+	if share := BlotsUnreadShare(got); share != 0.25 {
+		t.Errorf("BlotsUnreadShare = %v, want 0.25", share)
 	}
 }

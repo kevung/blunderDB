@@ -1781,7 +1781,7 @@
         "biases_blots_too_little": "ブロットに慎重すぎる",
         "biasesVerdict_balanced": "明確な傾向なし",
         "biasesVerdict_insufficient": "判断数不足",
-        "biasesUnread": "{n} 件のチェッカー手は再現できず、ブロットの偏りから除外されています。",
+        "biasesUnread": "接触のあるチェッカー手 {total} 件のうち {n} 件（{share}）は再現できず、ブロットの偏りから除外されています。",
         "biasesByScore": "スコア別のダブル（自分の away – 相手の away）",
         "biasesScore": "スコア",
         "biasesMoney": "マネー",

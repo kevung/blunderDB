@@ -2938,15 +2938,19 @@ nommé qu'à partir de **20 décisions** et d'un intervalle qui exclut zéro.
 * **Doubles** — sur les décisions de doubler : doubles prématurés (le bot ne
   double pas, ou la position est trop bonne pour doubler) moins doubles
   manqués. Le même biais est donné **par score** (votre away, celui de
-  l'adversaire ; la partie libre à part), pour les scores qui comptent assez
-  de décisions.
+  l'adversaire, un score post-Crawford compté à 1 point ; la partie libre
+  dans sa propre case), pour les scores qui comptent assez de décisions.
 * **Blots** — sur les coups de pions avec contact : les coups qui laissent plus
-  de blots que le meilleur coup moins ceux qui en laissent moins. Un coup que
-  le générateur de coups ne sait pas rejouer est écarté, et compté sous le
-  tableau.
+  de blots que le meilleur coup moins ceux qui en laissent moins. Un coup est
+  reconnu par le plateau qu'il laisse, quelle que soit son écriture
+  (« 13/7(2) », « 8/5*/4 ») ; un coup que le générateur de coups ne sait
+  toujours pas rejouer est écarté, et la part des coups écartés est donnée
+  sous le tableau. Le biais compte les blots sans peser leur exposition : un
+  blot hors de portée compte autant qu'un blot exposé.
 
-À côté de chaque compte, son coût en millipoints dit si le penchant coûte. Les
-biais suivent le filtre du panneau. En ligne de commande :
+À côté de chaque compte, son coût en millipoints dit si le penchant coûte ;
+une position jouée dans plusieurs matchs y compte avec le coup joué dans
+chacun. Les biais suivent le filtre du panneau. En ligne de commande :
 ``blunderdb stats biases`` (voir :ref:`cli_stats`).
 
 PR glissant sur N dernières décisions

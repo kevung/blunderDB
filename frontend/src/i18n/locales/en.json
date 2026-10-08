@@ -1781,7 +1781,7 @@
         "biases_blots_too_little": "too cautious with blots",
         "biasesVerdict_balanced": "no clear lean",
         "biasesVerdict_insufficient": "too few decisions",
-        "biasesUnread": "{n} checker plays could not be replayed and are left out of the blots bias.",
+        "biasesUnread": "{n} of {total} checker plays with contact ({share}) could not be replayed and are left out of the blots bias.",
         "biasesByScore": "Doubles by score (your away – opponent’s away)",
         "biasesScore": "Score",
         "biasesMoney": "money",

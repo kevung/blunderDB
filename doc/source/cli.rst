@@ -1316,7 +1316,9 @@ le gain et son intervalle à 95 %, et le verdict (``improved``, ``worse``,
 (voir :ref:`biais_signes`) : prise/refus, doubles (sur l'ensemble et par
 score) et blots, chacun avec ses deux comptes et leur coût, le biais, son
 intervalle à 95 % et le verdict (``too_much``, ``too_little``, ``balanced``,
-``insufficient`` sous 20 décisions).
+``insufficient`` sous 20 décisions). La partie libre a sa ligne ``money`` et un
+score post-Crawford se lit à 1 point ; la part des coups de pions qui n'ont pas
+pu être rejoués est donnée sous le tableau.
 
 .. code-block:: bash
 
