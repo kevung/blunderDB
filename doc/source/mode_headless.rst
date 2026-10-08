@@ -1789,6 +1789,14 @@ gestes compte donc.
    schémas diffèrent — la réponse nomme celui de la base et celui que le binaire
    attend. ``blunderdb healthcheck`` rend le même verdict en code de retour.
 
+Sous la sécurité au niveau des lignes (``--rls``), le premier démarrage d'une
+version qui ajoute une dérivation calculée par le démon, comme la provenance des
+analyses, parcourt une fois les lignes de tous les tenants : chaque lot verrouille
+brièvement les tables qu'il touche, et les requêtes des tenants attendent la fin
+du lot. Si une table reste occupée plus de cinq secondes, le démon démarre quand
+même et reprend ce parcours au démarrage suivant ; une fois le parcours achevé,
+les démarrages suivants ne verrouillent plus rien.
+
 Un ``version_mismatch`` qui persiste après le redémarrage, c'est le retour en
 arrière : un binaire plus ancien devant une base déjà migrée. Il n'existe pas de
 migration descendante ; c'est la sauvegarde de l'étape 1 qu'il faut restaurer.
