@@ -1,7 +1,6 @@
 ---
 name: traiter-lot
-description: Traiter un lot d'issues blunderDB en orchestrateur — une issue (ou une zone de code) = un ouvrier frais, l'orchestrateur ne lit ni n'édite de code et ne garde que des verdicts. Invoqué par l'humain uniquement.
-disable-model-invocation: true
+description: Traiter un lot d'issues blunderDB en orchestrateur — une issue (ou une zone de code) = un ouvrier frais, l'orchestrateur ne lit ni n'édite de code et ne garde que des verdicts.
 ---
 
 # Traiter un lot d'issues
