@@ -5,7 +5,7 @@
     import { toDateInputValue, formatDate, formatDiceShort, MATCH_STAT_ROWS, GRADE_MARKS, indexMoveGrades, countGrades, fmtGradeCost } from '../utils/matchTable.js';
     import { createInlineEdit } from '../utils/inlineEdit.svelte.js';
     import { onChange } from '../utils/onChange.js';
-    import { onMount, onDestroy, untrack } from 'svelte';
+    import { onMount, onDestroy, untrack, tick } from 'svelte';
     import { get } from 'svelte/store';
     import { SvelteSet } from 'svelte/reactivity';
     import {
@@ -22,6 +22,7 @@
         SaveLastVisitedPosition,
         GetMatchDetailStats,
         GetMatchMoveGrades,
+        GetMatchDecisionLosses,
         GetMatchTimeSummary,
         GetMatchOrigin
     } from '../../wailsjs/go/database/Database.js';
@@ -30,6 +31,8 @@
     import PanelTable, { navigationDelta } from './panels/PanelTable.svelte';
     import { exportMatchMat } from '../services/exportService.js';
     import MatchTimes from './MatchTimes.svelte';
+    import { fmtLoss, sortByLoss } from '../utils/decisionLoss.js';
+    import MatchLosses from './MatchLosses.svelte';
     import MatchOrigin from './MatchOrigin.svelte';
     import { cumulativeClocks, fmtClock, fmtDuration, hasAnyDuration, sortByDuration } from '../utils/decisionTime.js';
     import { editMatchTranscription } from '../services/transcriptionSave.js';
@@ -84,10 +87,19 @@
     let detailGrades = $state([]); // MoveGrade[] for the detail match
     /** @type {import('../../wailsjs/go/models').service.MatchTimeSummary | null} */
     let detailTimes = $state(null);
+    /** @type {any[] | null} */
+    /** @type {any[] | null} the MWC loss of each decision */
+    let detailLosses = $state(null);
     /** @type {import('../../wailsjs/go/models').duel.Origin | null} the Origin of a match played here */
     let detailOrigin = $state(null);
     /** @type {'' | 'desc' | 'asc'} the transcript's order by decision time */
+    // The decision under the pointer or the keyboard on either chart, by its Move.
+    /** @type {number | null} */
+    let hoveredMove = $state(null);
+    /** @type {'' | 'asc' | 'desc'} */
     let timeSort = $state('');
+    /** @type {'' | 'asc' | 'desc'} */
+    let lossSort = $state('');
     let detailView = $state('transcript'); // 'transcript' | 'metadata' | 'stats'
     let loadingDetail = $state(false);
     /** @type {any} */
@@ -303,6 +315,7 @@
             detailGames = [];
             detailGrades = [];
             detailTimes = null;
+            detailLosses = null;
             detailOrigin = null;
             detailStats = null;
         } else {
@@ -317,17 +330,19 @@
         detailMatch = match;
         detailStats = null; // reset stats when switching match
         try {
-            const [movePositions, games, grades, times, origin] = await Promise.all([
+            const [movePositions, games, grades, times, origin, losses] = await Promise.all([
                 GetMatchMovePositions(match.id),
                 GetGamesByMatch(match.id),
                 loadMoveGrades(match.id),
                 loadTimeSummary(match.id),
-                loadOrigin(match.id)
+                loadOrigin(match.id),
+                loadDecisionLosses(match.id)
             ]);
             detailMovePositions = movePositions || [];
             detailGames = games || [];
             detailGrades = grades;
             detailTimes = times;
+            detailLosses = losses;
             detailOrigin = origin;
         } catch (error) {
             logger.error('Error loading match detail:', error);
@@ -335,6 +350,7 @@
             detailGames = [];
             detailGrades = [];
             detailTimes = null;
+            detailLosses = null;
             detailOrigin = null;
         }
         loadingDetail = false;
@@ -362,6 +378,17 @@
         }
     }
 
+    // The per-decision MWC loss is optional too: without it no loss chart is drawn.
+    /** @param {number} matchID */
+    async function loadDecisionLosses(matchID) {
+        try {
+            return (await GetMatchDecisionLosses(matchID)) || null;
+        } catch (error) {
+            logger.error('Error loading decision losses:', error);
+            return null;
+        }
+    }
+
     // The origin is optional too: a match not played here has none.
     /** @param {number} matchID */
     async function loadOrigin(matchID) {
@@ -374,8 +401,16 @@
     }
 
     function cycleTimeSort() {
+        lossSort = '';
         timeSort = timeSort === '' ? 'desc' : timeSort === 'desc' ? 'asc' : '';
     }
+    function cycleLossSort() {
+        timeSort = '';
+        lossSort = lossSort === '' ? 'desc' : lossSort === 'desc' ? 'asc' : '';
+    }
+    // One order at a time: by the time a decision took, by what it cost, or the match's own.
+    /** @param {{ mp: any, globalIdx: number, grade: any, loss: number | null }[]} moves */
+    const ordered = (moves) => (lossSort ? sortByLoss(moves, lossSort) : sortByDuration(moves, timeSort));
 
     // Grades follow the library thresholds: re-read when the library counter changes.
     $effect(() => {
@@ -413,6 +448,7 @@
     // Computed in match order, whatever the transcript's sort, indexed by globalIdx.
     let clocks = $derived(cumulativeClocks(detailMovePositions));
     // A time cell is never blank: no decision, or one the Arbiter played alone, reads as a dash.
+    let showLosses = $derived(/** @type {any[]} */ (detailLosses ?? []).some((d) => d.mwc_loss != null));
     const orDash = (/** @type {string} */ text) => text || '—';
     // Under a Cadence the clock column shows the reserve left, replayed by the backend with the
     // Arbiter's own arithmetic; without one, the time used so far.
@@ -435,13 +471,14 @@
     let transcriptGames = $derived.by(() => {
         if (!detailMovePositions.length) return [];
         const gradeByMove = indexMoveGrades(detailGrades);
-        /** @type {Map<number, { mp: any, globalIdx: number, grade: any }[]>} */
+        const lossByMove = new Map(/** @type {any[]} */ (detailLosses ?? []).map((d) => [d.move_id, d.mwc_loss ?? null]));
+        /** @type {Map<number, { mp: any, globalIdx: number, grade: any, loss: number | null }[]>} */
         // eslint-disable-next-line svelte/prefer-svelte-reactivity -- local temp inside $derived
         const gameMap = new Map();
         detailMovePositions.forEach((/** @type {any} */ mp, globalIdx) => {
             let moves = gameMap.get(mp.game_number);
             if (!moves) gameMap.set(mp.game_number, (moves = []));
-            moves.push({ mp, globalIdx, grade: gradeByMove.get(mp.move_id) });
+            moves.push({ mp, globalIdx, grade: gradeByMove.get(mp.move_id), loss: lossByMove.get(mp.move_id) ?? null });
         });
         const result = [];
         for (const [gameNum, moves] of gameMap) {
@@ -497,6 +534,17 @@
             if (!openGames.has(move.game_number)) setGameOpen(move.game_number, true);
         });
     });
+
+    // The decision a chart points at: shown as the transcript shows a row clicked, then brought into view.
+    /** @param {number} index */
+    async function jumpToMove(index) {
+        await navigateToMove(index);
+        await tick();
+        document.querySelector(`[data-move-idx="${index}"]`)?.scrollIntoView?.({ block: 'nearest' });
+    }
+
+    // The row the review is on, when it is in this match.
+    let selectedIdx = $derived($matchContextStore.isMatchMode && detailMatch && $matchContextStore.matchID === detailMatch.id ? $matchContextStore.currentIndex : -1);
 
     async function navigateToMove(moveIndex) {
         if (!detailMatch || !detailMovePositions.length) return;
@@ -1041,9 +1089,28 @@
                         {:else if transcriptGames.length === 0}
                             <div class="empty-state">{$t('match.noMovesRecorded')}</div>
                         {:else}
-                            {#if detailTimes}
-                                <MatchTimes summary={detailTimes} movePositions={detailMovePositions} player1={detailMatch.player1_name} player2={detailMatch.player2_name} />
-                            {/if}
+                            <div class="match-charts">
+                                {#if detailTimes}
+                                    <MatchTimes
+                                        summary={detailTimes}
+                                        movePositions={detailMovePositions}
+                                        player1={detailMatch.player1_name}
+                                        player2={detailMatch.player2_name}
+                                        hovered={hoveredMove}
+                                        onhover={(id) => (hoveredMove = id)}
+                                        onselect={jumpToMove}
+                                    />
+                                {/if}
+                                <MatchLosses
+                                    losses={detailLosses}
+                                    movePositions={detailMovePositions}
+                                    player1={detailMatch.player1_name}
+                                    player2={detailMatch.player2_name}
+                                    hovered={hoveredMove}
+                                    onhover={(id) => (hoveredMove = id)}
+                                    onselect={jumpToMove}
+                                />
+                            </div>
                             {#each transcriptGames as game (game.gameNumber)}
                                 {@const isOpen = openGames.has(game.gameNumber)}
                                 <details class="game-section" open={isOpen} ontoggle={(e) => setGameOpen(game.gameNumber, e.currentTarget.open)}>
@@ -1087,15 +1154,25 @@
                                                             >{$t(remaining ? 'match.timeRemainCol' : 'match.timeClockCol')}</th
                                                         >
                                                     {/if}
+                                                    {#if showLosses}
+                                                        <th class="transcript-time" title={$t('match.lossColTooltip')}
+                                                            ><button class="time-sort" data-testid="loss-sort" onclick={cycleLossSort} title={$t('match.lossSortTooltip')}
+                                                                >{$t('match.lossCol')}{lossSort === 'desc' ? ' ▼' : lossSort === 'asc' ? ' ▲' : ''}</button
+                                                            ></th
+                                                        >
+                                                    {/if}
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {#each sortByDuration(game.moves, timeSort) as { mp, globalIdx, grade }, mi (globalIdx)}
+                                                {#each ordered(game.moves) as { mp, globalIdx, grade, loss }, mi (globalIdx)}
                                                     <tr
                                                         class="transcript-row"
                                                         class:cube-row={mp.move_type === 'cube'}
                                                         class:graded-error={grade?.grade === 'error'}
                                                         class:graded-blunder={grade?.grade === 'blunder'}
+                                                        class:current-move={selectedIdx === globalIdx}
+                                                        class:linked={hoveredMove === mp.move_id}
+                                                        data-move-idx={globalIdx}
                                                         onclick={() => navigateToMove(globalIdx)}
                                                         title={$t('match.clickToReview')}
                                                     >
@@ -1129,6 +1206,14 @@
                                                             <td class="transcript-time" data-testid="move-time-play">{orDash(mp.move_type === 'cube' ? '' : fmtDuration(mp.decision_ms))}</td>
                                                             <td class="transcript-time" data-testid="move-time-clock"
                                                                 >{orDash(remaining ? fmtClock(remaining[globalIdx]) : fmtClock(clocks[globalIdx]))}</td
+                                                            >
+                                                        {/if}
+                                                        {#if showLosses}
+                                                            <td
+                                                                class="transcript-time transcript-loss"
+                                                                class:grade-error={grade?.grade === 'error'}
+                                                                class:grade-blunder={grade?.grade === 'blunder'}
+                                                                data-testid="move-loss">{loss === null ? '—' : loss > 0 ? fmtLoss(loss) : '0'}</td
                                                             >
                                                         {/if}
                                                     </tr>
@@ -1293,6 +1378,12 @@
 {/if}
 
 <style>
+    .match-charts {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        column-gap: 12px;
+    }
     .match-panel {
         width: 100%;
         height: 100%;
@@ -1666,6 +1757,16 @@
         color: var(--text-muted, inherit);
         font-size: var(--font-size-small);
         font-variant-numeric: tabular-nums;
+    }
+    .transcript-row.linked {
+        background-color: var(--color-surface-alt);
+    }
+    .transcript-row.current-move {
+        box-shadow: inset 0 0 0 2px var(--color-primary);
+    }
+    .transcript-loss.grade-error,
+    .transcript-loss.grade-blunder {
+        font-weight: 700;
     }
     .time-sort {
         background: none;

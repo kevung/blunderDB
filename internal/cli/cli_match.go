@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/duel"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // runMatch handles the match command
@@ -115,6 +116,10 @@ func (cli *CLI) formatMatchJSON(match *Match, positions []MatchMovePosition, ori
 		"origin":         origin,
 		"positions":      positions,
 		"position_count": len(positions),
+	}
+	// Per Move, in match order; mwc_loss is a fraction, null when unscored.
+	if losses := cli.decisionLosses(match.ID); losses != nil {
+		output["decision_losses"] = losses
 	}
 
 	jsonData, err := json.MarshalIndent(output, "", "  ")
@@ -245,6 +250,12 @@ func (cli *CLI) formatMatchText(match *Match, positions []MatchMovePosition, ori
 	writeOrigin(&sb, match, origin)
 	sb.WriteString(fmt.Sprintf("Total Positions: %d\n\n", len(positions)))
 
+	lossByMove := map[int64]float64{}
+	for _, d := range cli.decisionLosses(match.ID) {
+		if d.MWCLoss != nil {
+			lossByMove[d.MoveID] = *d.MWCLoss
+		}
+	}
 	for i, movePos := range positions {
 		sb.WriteString(fmt.Sprintf("Position %d:\n", i+1))
 		sb.WriteString(fmt.Sprintf("  Game: %d, Move: %d\n", movePos.GameNumber, movePos.MoveNumber))
@@ -271,10 +282,26 @@ func (cli *CLI) formatMatchText(match *Match, positions []MatchMovePosition, ori
 		if movePos.CubeDecisionMS != nil {
 			sb.WriteString(fmt.Sprintf("  Cube decision time: %.1f s\n", float64(*movePos.CubeDecisionMS)/1000))
 		}
+		// An unscored decision is left out, never printed as zero.
+		if loss, ok := lossByMove[movePos.MoveID]; ok {
+			sb.WriteString(fmt.Sprintf("  MWC loss: %.2f%%\n", loss*100))
+		}
 		sb.WriteString("\n")
 	}
 
 	return sb.String(), nil
+}
+
+// decisionLosses is the per-Move MWC loss of a match, nil when it cannot be read.
+func (cli *CLI) decisionLosses(matchID int64) []storage.DecisionLoss {
+	if cli.db == nil {
+		return nil
+	}
+	losses, err := cli.db.GetMatchDecisionLosses(matchID)
+	if err != nil {
+		return nil
+	}
+	return losses
 }
 
 // formatMatchSummary formats match data as a summary
@@ -302,9 +329,31 @@ func (cli *CLI) formatMatchSummary(match *Match, positions []MatchMovePosition, 
 		count := gamePositions[gameNum]
 		sb.WriteString(fmt.Sprintf("  Game %d: %d positions\n", gameNum, count))
 	}
+	cli.writeLossSummary(&sb, match)
 	cli.writeTimeSummary(&sb, match)
 
 	return sb.String(), nil
+}
+
+// writeLossSummary adds, per player, the winning chances the match's analysed
+// decisions cost (the sum of `match --format text`'s per-decision lines):
+// nothing at all when no decision is scored.
+func (cli *CLI) writeLossSummary(sb *strings.Builder, match *Match) {
+	var total [2]float64
+	var n [2]int
+	for _, d := range cli.decisionLosses(match.ID) {
+		if d.MWCLoss != nil {
+			total[d.Player] += *d.MWCLoss
+			n[d.Player]++
+		}
+	}
+	if n[0]+n[1] == 0 {
+		return
+	}
+	sb.WriteString("\nMWC loss:\n")
+	for i, name := range [2]string{match.Player1Name, match.Player2Name} {
+		fmt.Fprintf(sb, "  %s: %.2f%% over %d decisions\n", name, total[i]*100, n[i])
+	}
 }
 
 // writeTimeSummary adds, per player, the decision times the match recorded:

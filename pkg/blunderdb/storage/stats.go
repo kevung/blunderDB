@@ -315,6 +315,21 @@ type MoveGrade struct {
 	Grade   string `json:"grade"` // "", MoveGradeError or MoveGradeBlunder
 }
 
+// DecisionLoss is one Move of a match with the match winning chances its play
+// cost, as a fraction (0.0123 is 1.23 %), the unit of Match.MWCLoss. Summed
+// per player, the losses are that player's Match.MWCLoss / MWCLoss2. MWCLoss
+// is nil for a Move that carries no figure (no analysis, a decision that does
+// not count toward the statistics, a position the match equity table cannot
+// price, money play): unscored is not a loss of zero.
+type DecisionLoss struct {
+	MoveID       int64    `json:"move_id"`
+	GameNumber   int      `json:"game_number"`
+	MoveNumber   int      `json:"move_number"`
+	Player       int      `json:"player"`        // 0 is player 1, 1 is player 2
+	DecisionType string   `json:"decision_type"` // "checker" or "cube"
+	MWCLoss      *float64 `json:"mwc_loss"`
+}
+
 // PlayerTimeSummary is what one player's recorded decision times add up to
 // (ADR-0073). Durations are milliseconds; a Move whose duration is unknown is
 // counted in Unknown and in no total or mean, so an unknown is never a zero:
@@ -495,6 +510,12 @@ type StatsStore interface {
 	// colours its rows with. Moves come back in Transcript order; a
 	// Move the analysis does not score is absent.
 	MatchMoveGrades(ctx context.Context, scope string, matchID int64) ([]MoveGrade, error)
+
+	// MatchDecisionLosses lists every Move of a Match, in Transcript order,
+	// with the winning chances it cost. It reads the rows the statistics read
+	// and converts through the same function, so a player's losses add up to
+	// the Match's MWCLoss (MWCLoss2 for player 2).
+	MatchDecisionLosses(ctx context.Context, scope string, matchID int64) ([]DecisionLoss, error)
 
 	// MatchTimeSummary adds up the decision times of a Match per player, and
 	// counts what overran the Cadence it was played under (match_origin). A

@@ -459,6 +459,15 @@ func (d *Database) GetMatchMoveGrades(matchID int64) ([]storage.MoveGrade, error
 	return d.store.Stats().MatchMoveGrades(context.Background(), "", matchID)
 }
 
+// GetMatchDecisionLosses lists every Move of a match with the winning chances
+// its play cost (a fraction, nil when unscored), for the Match panel's
+// per-decision chart and `match --format summary`.
+func (d *Database) GetMatchDecisionLosses(matchID int64) ([]storage.DecisionLoss, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	return d.store.Stats().MatchDecisionLosses(context.Background(), "", matchID)
+}
+
 // GetMatchTimeSummary adds up the decision times of a match per player and
 // counts the turns played past the reserve of the Cadence it was played under,
 // for the Match panel's time summary.

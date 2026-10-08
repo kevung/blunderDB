@@ -313,6 +313,8 @@ export function GetLinkedAnkiCard(arg1:number,arg2:number):Promise<domain.AnkiRe
 
 export function GetMatchByID(arg1:number):Promise<domain.Match>;
 
+export function GetMatchDecisionLosses(arg1:number):Promise<Array<storage.DecisionLoss>>;
+
 export function GetMatchDetailStats(arg1:number):Promise<database.MatchDetailStats>;
 
 export function GetMatchMoveGrades(arg1:number):Promise<Array<storage.MoveGrade>>;
