@@ -42,8 +42,8 @@ Chaque seuil est fixé ici avant de regarder les résultats.
    match. Trois au plus, d'une part évitable positive. Une erreur que le joueur de référence
    aurait faite aussi ne vaut pas une séance : on revoit ce qui était à sa portée.
 3. **Résultat ajusté de la chance**, match fini, en points de MWC du joueur :
-   - résultat R = issue (1 gagné, 0 perdu) − MWC au départ (table de la bibliothèque au score
-     initial de la première partie ; 50 % à 0-0) ;
+   - résultat R = issue (1 gagné, 0 perdu) − MWC au départ (la table de la conversion des
+     erreurs, au score initial de la première partie ; 50 % à 0-0) ;
    - chance nette C = Σ chance de ses jets − Σ chance des jets adverses, chaque jet
      (`move.luck_mp`, équité) converti en MWC au score et au videau de sa position par la
      conversion des erreurs (`ConvertEMGLossToMWCLoss`, linéaire) ;
@@ -72,5 +72,5 @@ Chaque seuil est fixé ici avant de regarder les résultats.
 - Un PR d'une case peut avoir un intervalle large malgré beaucoup de décisions : c'est le
   but. Une case d'un seul match n'en a pas, quel que soit son effectif.
 - Le bilan relit chaque décision du match ; c'est un match, pas une base.
-- Le résultat ajusté dépend de la MET de la bibliothèque, comme L₇, et de la chance que
+- Le résultat ajusté dépend de la MET de la conversion, comme L₇, et de la chance que
   l'outil d'analyse a écrite (ADR-0010) : un fichier sans chance n'en a pas.
