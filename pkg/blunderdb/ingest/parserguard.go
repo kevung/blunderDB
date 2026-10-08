@@ -104,7 +104,7 @@ func xgParseError(path, stage string, err error) error {
 // the read hits EOF). That is the file's fault, unlike an open or I/O error.
 func truncatedRead(err error) bool {
 	var pathErr *fs.PathError
-	if errors.As(err, &pathErr) && pathErr.Op == "seek" && errors.Is(pathErr.Err, syscall.EINVAL) {
+	if errors.As(err, &pathErr) && pathErr.Op == "seek" && (errors.Is(pathErr.Err, syscall.EINVAL) || errors.Is(pathErr.Err, errNegativeSeek)) {
 		return true
 	}
 	return errors.Is(err, io.EOF) || errors.Is(err, io.ErrUnexpectedEOF)
