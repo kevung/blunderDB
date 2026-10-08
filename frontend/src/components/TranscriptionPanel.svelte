@@ -383,6 +383,11 @@
         // A play typed and preselected but not validated: a cube gesture validates it on
         // the way, as the next roll's digit does, without an instant.
         const pendingPlay = !inPlace && entry?.dice?.[0] > 0 && entry?.dice?.[1] > 0;
+        // A cube decision starts at the previous Action's instant and is never estimated:
+        // without it, say how to measure it.
+        if (videoSource && !inPlace && !pendingPlay && commands.some((c) => CUBE_KINDS.has(c.kind) && c.kind !== COMMAND.RESIGN) && !previousTimed()) {
+            noticeTranscription('transcription.notice.cubeUntimed');
+        }
         /** @type {any[]} */
         const gestures = [];
         commands.forEach((command, i) => {
@@ -403,6 +408,14 @@
             gestures.push(gesture);
         });
         return queue(gestures);
+    }
+
+    /** Whether the Action a new one follows has its action's Repère; true when there is none. */
+    function previousTimed() {
+        const actions = annotated?.actions ?? [];
+        const entry = annotated?.entry;
+        const prev = actions[(entry && !entry.replacing ? entry.at : actions.length) - 1];
+        return !prev || prev.tick_ms != null;
     }
 
     /** @type {Set<string>} */

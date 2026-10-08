@@ -1452,6 +1452,7 @@
             "noAction": "No Action under the cursor",
             "noDice": "No roll being entered",
             "untimedAction": "Play validated without an action time: with a video, Enter validates at the frame's instant, or v on the cell.",
+            "cubeUntimed": "Cube decision time unknown: v on the previous play to measure it.",
             "noRollToTime": "This action has no roll to time.",
             "rollTimed": "Roll timed at {time}.",
             "actionTimed": "Action timed at {time}."
@@ -1523,7 +1524,8 @@
         "tickAction": "play {time}",
         "duration": "time",
         "durationDecision": "decision {time}",
-        "durationCube": "cube {time}"
+        "durationCube": "cube {time}",
+        "durationEstimated": "≈ {time}, up to the next roll, picking up the dice included"
     },
     "status": {
         "importChip": "Importing: {percent}%",

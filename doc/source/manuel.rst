@@ -2150,7 +2150,13 @@ lecteur en pause le reste.
 Dès que le brouillon a une vidéo ou un repère, le transcript gagne une colonne
 **durée** à droite de chaque joueur : la durée de la décision, en secondes
 (en minutes et secondes au-delà d'une minute), suivie, après un point médian,
-de la décision de videau qui précède le jet. Pendant la lecture, le curseur
+de la décision de videau qui précède le jet. Un coup sans instant d'action
+n'est pas laissé vide : sa durée s'estime du jet au premier instant du coup
+suivant (son jet, ou un geste de videau), et s'affiche en italique précédée de
+« ≈ ». C'est un majorant, qui compte le ramassage et le lancer des dés. Aucune
+décision de videau ne s'estime : sans l'instant d'action du coup précédent, sa
+durée reste inconnue, et la barre d'état propose alors *v* sur ce coup pour la
+mesurer. Pendant la lecture, le curseur
 **suit la vidéo** dans la partie déjà horodatée : chaque action couvre la vidéo
 depuis son jet, ou à défaut depuis l'action précédente, jusqu'au début de la
 suivante, et le curseur se pose sur l'action où entre la lecture ; au-delà du

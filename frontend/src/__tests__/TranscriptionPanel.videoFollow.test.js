@@ -8,6 +8,7 @@
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
+import { get } from 'svelte/store';
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
     ListTranscriptions: vi.fn().mockResolvedValue([]),
@@ -30,7 +31,7 @@ import { ApplyTranscriptionGesture } from '../../wailsjs/go/database/Database.js
 import { LegalMoves, EvaluatePositionImmediate } from '../../wailsjs/go/gui/App.js';
 
 import TranscriptionPanel from '../components/TranscriptionPanel.svelte';
-import { transcriptionStore, clearTranscription } from '../stores/transcriptionStore.js';
+import { transcriptionStore, transcriptionNoticeStore, clearTranscription } from '../stores/transcriptionStore.js';
 import { selectedMoveStore } from '../stores/analysisStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { activeTabStore, statusBarModeStore } from '../stores/uiStore.js';
@@ -46,7 +47,7 @@ const POSITION = (/** @type {any} */ dice) => ({
 });
 
 // Three plays: two timed in full, the last one timed only by its roll.
-/** @type {{side: number, kind: string, dice: number[], roll?: number, tick?: number}[]} */
+/** @type {{side: number, kind: string, dice: number[], roll?: number, tick?: number, estimate?: number}[]} */
 let ACTIONS = [];
 
 let source = 'C:/videos/match.mov';
@@ -68,7 +69,8 @@ function annotated(/** @type {number} */ cursor) {
             inconsistencies: [],
             roll_tick_ms: a.roll,
             tick_ms: a.tick,
-            decision_ms: a.roll != null && a.tick != null ? a.tick - a.roll : undefined,
+            decision_ms: a.roll != null && a.tick != null ? a.tick - a.roll : a.estimate,
+            decision_estimated: a.estimate != null ? true : undefined,
             cube_decision_ms: index > 0 && a.roll != null && ACTIONS[index - 1].tick != null ? a.roll - /** @type {number} */ (ACTIONS[index - 1].tick) : undefined
         })),
         games: [{ number: 1, initial_score: [0, 0], winner: -1, points_won: 0, crawford: false, finished: false, first: 0, last: ACTIONS.length - 1 }],
@@ -253,5 +255,32 @@ describe('the duration column', () => {
         ACTIONS = ACTIONS.map(({ roll: _r, tick: _t, ...a }) => a);
         await openedPanel();
         expect(document.querySelector('th.time')).toBeNull();
+    });
+
+    test('an estimated duration reads apart, with what it takes in', async () => {
+        ACTIONS[1] = { ...ACTIONS[1], tick: undefined, estimate: 10000 };
+        await openedPanel();
+        const cell = /** @type {HTMLElement} */ (document.querySelector('td.time[data-duration="1"]'));
+        expect(cell.querySelector('.estimated')?.textContent).toBe('≈ 10 s');
+        expect(cell.getAttribute('title')).toContain('up to the next roll');
+        // A measured one does not.
+        expect(document.querySelector('td.time[data-duration="0"] .estimated')).toBeNull();
+    });
+});
+
+describe('the cube decision has no estimate', () => {
+    test('a double after a play with no action Repère says how to measure it', async () => {
+        await openedPanel();
+        await fireEvent.keyDown(document.activeElement ?? document, { code: 'KeyD', key: 'd', bubbles: true, cancelable: true });
+        await settle(20);
+        expect(get(transcriptionNoticeStore)?.key).toBe('transcription.notice.cubeUntimed');
+    });
+
+    test('after a timed play it says nothing', async () => {
+        ACTIONS[2] = { ...ACTIONS[2], tick: 33000 };
+        await openedPanel();
+        await fireEvent.keyDown(document.activeElement ?? document, { code: 'KeyD', key: 'd', bubbles: true, cancelable: true });
+        await settle(20);
+        expect(get(transcriptionNoticeStore)?.key).not.toBe('transcription.notice.cubeUntimed');
     });
 });

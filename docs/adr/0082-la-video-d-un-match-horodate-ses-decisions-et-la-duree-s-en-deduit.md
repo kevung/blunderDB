@@ -36,7 +36,15 @@ peut pas embarquer ; le lecteur intégré de YouTube refuse une page sans réfé
    va de l'instant du jet à l'instant de l'action ; un double, une réponse, un abandon vont de
    l'instant de l'action précédente au leur. Le premier jet d'une partie n'a pas de décision
    de videau ; une danse et un coup non consigné n'ont pas de décision de pions, comme sous
-   l'Arbitre. Un Repère manquant laisse inconnues les durées qui en dépendent. Une durée
+   l'Arbitre. Un Repère manquant laisse inconnues les durées qui en dépendent, à une
+   exception : une décision de pions sans instant d'action s'*estime* du jet au premier
+   instant de l'Action suivante — son jet, ou l'instant d'un geste de videau —, un majorant
+   qui compte le ramassage et le lancer des dés, marqué comme estimé et affiché à part.
+   Aucune décision de videau ne s'estime : la fin du coup précédent ne se distingue pas du
+   début de la réflexion au videau, et seul l'instant de ce coup, posé par `v` ou par une
+   validation explicite, la mesure. Un Repère à rebours ne sert à aucune estimation ; une
+   mesure prime toujours. Le marqueur ne survit pas à l'enregistrement : le coup du Match ne
+   porte que la durée. Une durée
    mesurée par l'Arbitre prime toujours sur une durée déduite. À l'enregistrement, la durée
    déduite remplit le champ du coup que l'ADR-0073 a défini : même colonne, même filtre, même
    affichage. Un Repère antérieur à celui qui le précède est une Incohérence, marquée et

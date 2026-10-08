@@ -64,6 +64,8 @@ en-tête en nomme une, sans jamais l'effacer.
 Le geste ` + "``seek_cursor``" + ` pose le curseur sur l'action de rang ` + "``At``" + `, la fin du
 document au-delà de la dernière, sans rien écrire ni s'empiler sur la pile
 d'annulation : c'est ainsi que le curseur suit une vidéo en lecture.
+Une ` + "``decision_ms``" + ` accompagnée de ` + "``decision_estimated``" + ` est une estimation : un coup
+sans repère d'action, mesuré du jet au premier instant de l'action suivante.
 
 L'état rendu porte la source dans ` + "``header.video_source``" + `, les repères de chaque
 action dans ` + "``roll_tick_ms``" + ` et ` + "``tick_ms``" + `, et, sur chaque action annotée, les durées

@@ -1452,6 +1452,7 @@
             "noAction": "Aucune Action sous le curseur",
             "noDice": "Aucun jet en cours",
             "untimedAction": "Coup validé sans instant d'action : avec une vidéo, Entrée valide à l'instant de l'image, ou v sur la cellule.",
+            "cubeUntimed": "Durée du videau inconnue : v sur le coup précédent pour la mesurer.",
             "noRollToTime": "Cette action n'a pas de jet à horodater.",
             "rollTimed": "Jet posé à {time}.",
             "actionTimed": "Action posée à {time}."
@@ -1523,7 +1524,8 @@
         "tickAction": "coup {time}",
         "duration": "durée",
         "durationDecision": "décision {time}",
-        "durationCube": "videau {time}"
+        "durationCube": "videau {time}",
+        "durationEstimated": "≈ {time}, jusqu'au jet suivant, ramassage des dés compris"
     },
     "status": {
         "importChip": "Import en cours : {percent} %",

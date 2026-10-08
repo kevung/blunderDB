@@ -9017,6 +9017,7 @@ export namespace transcript {
 	    opens_game: boolean;
 	    decision_ms?: number;
 	    cube_decision_ms?: number;
+	    decision_estimated?: boolean;
 	    roll_tick_ms?: number;
 	    tick_ms?: number;
 	    inconsistencies?: Inconsistency[];
@@ -9041,6 +9042,7 @@ export namespace transcript {
 	        this.opens_game = source["opens_game"];
 	        this.decision_ms = source["decision_ms"];
 	        this.cube_decision_ms = source["cube_decision_ms"];
+	        this.decision_estimated = source["decision_estimated"];
 	        this.roll_tick_ms = source["roll_tick_ms"];
 	        this.tick_ms = source["tick_ms"];
 	        this.inconsistencies = this.convertValues(source["inconsistencies"], Inconsistency);

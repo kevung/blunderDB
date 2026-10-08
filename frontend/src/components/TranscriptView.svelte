@@ -541,13 +541,18 @@
 {#snippet durationBlock(/** @type {any} */ c)}
     <!-- The Action under correction is drawn as its entry; its durations are still the Action's. -->
     {@const info = c?.kind === 'action' ? c.info : c?.kind === 'pending' && c.replacing ? (annotated?.actions?.[c.index] ?? null) : null}
+    {@const estimated = !!info?.decision_estimated && info?.decision_ms != null}
     {@const spent = fmtSeconds(info?.decision_ms)}
     {@const cube = fmtSeconds(info?.cube_decision_ms)}
     <td
         class="time"
         data-duration={info ? c.index : undefined}
-        title={spent || cube ? [spent ? $t('transcript.durationDecision', { time: spent }) : '', cube ? $t('transcript.durationCube', { time: cube }) : ''].filter(Boolean).join('\n') : undefined}
-        >{spent}{#if cube}<span class="cube-time">{spent ? ' · ' : ''}{cube}</span>{/if}</td
+        title={spent || cube
+            ? [spent ? $t(estimated ? 'transcript.durationEstimated' : 'transcript.durationDecision', { time: spent }) : '', cube ? $t('transcript.durationCube', { time: cube }) : '']
+                  .filter(Boolean)
+                  .join('\n')
+            : undefined}
+        >{#if estimated}<span class="estimated">≈ {spent}</span>{:else}{spent}{/if}{#if cube}<span class="cube-time">{spent ? ' · ' : ''}{cube}</span>{/if}</td
     >
 {/snippet}
 
@@ -742,6 +747,11 @@
         font-variant-numeric: tabular-nums;
         text-align: right;
         white-space: nowrap;
+    }
+
+    /* An upper bound, not a measure: it reads apart. */
+    .estimated {
+        font-style: italic;
     }
 
     .transcript-view input {

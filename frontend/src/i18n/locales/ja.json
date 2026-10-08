@@ -1452,6 +1452,7 @@
             "noAction": "カーソル位置にアクションがありません",
             "noDice": "入力中のダイスはありません",
             "untimedAction": "アクションの時刻なしで手を確定しました。動画があるときは、映像の瞬間に Enter で確定するか、セル上で v を押します。",
+            "cubeUntimed": "キューブ判断の時間は不明です。前の手で v を押すと測れます。",
             "noRollToTime": "このアクションには時刻を付けるロールがありません。",
             "rollTimed": "ロールを {time} に設定しました。",
             "actionTimed": "アクションを {time} に設定しました。"
@@ -1523,7 +1524,8 @@
         "tickAction": "手 {time}",
         "duration": "時間",
         "durationDecision": "判断 {time}",
-        "durationCube": "キューブ {time}"
+        "durationCube": "キューブ {time}",
+        "durationEstimated": "≈ {time}（次のロールまで、ダイスを拾う時間を含む）"
     },
     "status": {
         "importChip": "インポート中：{percent} %",

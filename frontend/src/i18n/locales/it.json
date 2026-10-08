@@ -1452,6 +1452,7 @@
             "noAction": "Nessuna azione sotto il cursore",
             "noDice": "Nessun tiro in corso di inserimento",
             "untimedAction": "Mossa convalidata senza istante dell'azione: con un video, Invio convalida all'istante dell'immagine, oppure v sulla cella.",
+            "cubeUntimed": "Durata della decisione di cubo sconosciuta: v sulla mossa precedente per misurarla.",
             "noRollToTime": "Questa azione non ha un lancio da marcare.",
             "rollTimed": "Lancio marcato a {time}.",
             "actionTimed": "Azione marcata a {time}."
@@ -1523,7 +1524,8 @@
         "tickAction": "mossa {time}",
         "duration": "tempo",
         "durationDecision": "decisione {time}",
-        "durationCube": "cubo {time}"
+        "durationCube": "cubo {time}",
+        "durationEstimated": "≈ {time}, fino al tiro successivo, raccolta dei dadi compresa"
     },
     "status": {
         "importChip": "Importazione in corso: {percent} %",

@@ -1452,6 +1452,7 @@
             "noAction": "Keine Aktion unter dem Cursor",
             "noDice": "Kein Wurf in Eingabe",
             "untimedAction": "Zug ohne Aktionszeitpunkt bestätigt: Mit einem Video bestätigt Enter zum Zeitpunkt des Bildes, oder v auf der Zelle.",
+            "cubeUntimed": "Dauer der Doppler-Entscheidung unbekannt: v auf dem vorherigen Zug, um sie zu messen.",
             "noRollToTime": "Diese Aktion hat keinen Wurf, der sich markieren lässt.",
             "rollTimed": "Wurf auf {time} gesetzt.",
             "actionTimed": "Aktion auf {time} gesetzt."
@@ -1523,7 +1524,8 @@
         "tickAction": "Zug {time}",
         "duration": "Zeit",
         "durationDecision": "Entscheidung {time}",
-        "durationCube": "Doppler {time}"
+        "durationCube": "Doppler {time}",
+        "durationEstimated": "≈ {time}, bis zum nächsten Wurf, Aufnehmen der Würfel inbegriffen"
     },
     "status": {
         "importChip": "Import läuft: {percent} %",
