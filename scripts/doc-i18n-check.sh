@@ -86,10 +86,12 @@ trap 'rm -rf "$TMP"' EXIT
 
 # msgfmt --statistics prints "N translated messages, N fuzzy translations,
 # N untranslated messages." on stderr, omitting the zero categories; the
-# header entry is not counted. Returns "<fuzzy> <untranslated>".
+# header entry is not counted. Returns "<fuzzy> <untranslated>". The message
+# is localised, so it is read in the C locale: under a French one it says
+# "non traduit", which the patterns below would miss.
 count_gaps() {
   local stats
-  stats="$(msgfmt -o /dev/null --statistics "$1" 2>&1 >/dev/null || true)"
+  stats="$(LC_ALL=C msgfmt -o /dev/null --statistics "$1" 2>&1 >/dev/null || true)"
   local fuzzy untranslated
   fuzzy="$(sed -n 's/.*[^0-9]\([0-9]\+\) fuzzy.*/\1/p; s/^\([0-9]\+\) fuzzy.*/\1/p' <<<"$stats" | head -1)"
   untranslated="$(sed -n 's/.*[^0-9]\([0-9]\+\) untranslated.*/\1/p; s/^\([0-9]\+\) untranslated.*/\1/p' <<<"$stats" | head -1)"

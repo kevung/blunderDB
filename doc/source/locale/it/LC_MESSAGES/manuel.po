@@ -6486,7 +6486,7 @@ msgstr ""
 " match dà il proprio valore."
 
 #: ../../source/manuel.rst:2774
-#, no-python-format, python-format
+#, no-python-format
 msgid ""
 "Un match isolé est très bruité : quelques grosses erreurs suffisent à le "
 "faire varier du simple au double. Le badge et le bilan d'un match "
