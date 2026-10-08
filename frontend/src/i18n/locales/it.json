@@ -1728,7 +1728,7 @@
         "noData": "Nessun dato per questo filtro.",
         "noTags": "Nessuna etichetta nei commenti delle posizioni selezionate.",
         "tagsDoNotSum": "Una posizione può portare più etichette: queste righe non sommano al totale.",
-        "thinCells": "Le righe in grigio non hanno intervallo: un solo match non è ancora un campione.",
+        "thinCells": "Le righe in grigio non hanno intervallo: meno di tre match, o match tutti con lo stesso PR, non sono ancora un campione.",
         "goalTitle": "Obiettivo:",
         "goalStated": "PR < {target} entro {weeks} settimane ({band}).",
         "goalSet": "Fissarsi un obiettivo…",
@@ -1905,7 +1905,7 @@
             "prCube": "PR cubo"
         },
         "interval95": "IC 95 %",
-        "intervalHint": "Intervallo di confidenza al 95 %: ricampiona i match di una selezione, le partite di un match. Una riga senza intervallo (un solo match o una sola partita) è in grigio."
+        "intervalHint": "Intervallo di confidenza al 95 %: ricampiona i match di una selezione, le partite di un match. Una riga senza intervallo (meno di tre match o partite, o tutti con lo stesso PR) è in grigio."
     },
     "resumeBatch": {
         "title": "Riprendi un'importazione",
@@ -3145,7 +3145,7 @@
     },
     "matchReview": {
         "title": "Bilancio del match",
-        "oneGame": "Una sola partita: nessun intervallo",
+        "noInterval": "Meno di tre partite, o tutte con lo stesso PR: nessun intervallo",
         "luckAdjusted": "Risultato corretto per la fortuna {adjusted} (risultato {result}, fortuna netta {luck}; bilancio degli errori {balance})",
         "luckPartial": "fortuna misurata su {measured} tiri su {rolls}",
         "wonByPlay": "vinto con il gioco",

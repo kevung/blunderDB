@@ -7,6 +7,7 @@ package sqlshared
 // the same (key, match) units here, so they give the same interval.
 
 import (
+	"cmp"
 	"context"
 	"fmt"
 	"maps"
@@ -74,6 +75,27 @@ func (s *StatsStore) computePRInterval(ctx context.Context, q statsQuery, result
 // are two rows, as in the cells.
 type breakdownKey struct{ k1, k2, nulls int }
 
+// sortKey is column i of k as the cells path orders it: a NULL is stored
+// there as cellNull, below every value, so it sorts first.
+func (k breakdownKey) sortKey(i int) int {
+	if k.nulls&(1<<i) != 0 {
+		return cellNull
+	}
+	if i == 0 {
+		return k.k1
+	}
+	return k.k2
+}
+
+// sortBreakdownKeys puts keys in the cells path's order, NULL first. The
+// order is Go's, not SQL's: SQLite puts NULL first and PostgreSQL last, and
+// both backends, by both paths, must list the rows alike.
+func sortBreakdownKeys(keys []breakdownKey) {
+	slices.SortFunc(keys, func(a, b breakdownKey) int {
+		return cmp.Or(cmp.Compare(a.sortKey(0), b.sortKey(0)), cmp.Compare(a.sortKey(1), b.sortKey(1)))
+	})
+}
+
 // breakdownRow is a direct breakdown row folded over its matches.
 type breakdownRow struct {
 	breakdownKey
@@ -83,7 +105,7 @@ type breakdownRow struct {
 
 // breakdownRows runs a breakdown over the position columns cols, grouped by
 // match too, and folds the match rows back into one row per key, in key
-// order, each with its interval over its matches.
+// order (sortBreakdownKeys), each with its interval over its matches.
 func (s *StatsStore) breakdownRows(ctx context.Context, q statsQuery, cols ...string) ([]breakdownRow, error) {
 	d := s.DB
 	shown, nulls := "", "0"
@@ -102,7 +124,7 @@ func (s *StatsStore) breakdownRows(ctx context.Context, q statsQuery, cols ...st
 	err := scanEach(ctx, d,
 		`SELECT `+shown+nulls+`, m.id, `+d.Bigint(`SUM(`+statsErrExpr+`)`)+`, COUNT(*), `+
 			d.Bigint(`SUM(CASE WHEN `+statsErrExpr+` >= ? THEN 1 ELSE 0 END)`)+` `+
-			q.join+q.whereSQL+` GROUP BY `+group+` ORDER BY `+group,
+			q.join+q.whereSQL+` GROUP BY `+group,
 		append([]any{q.settings.BlunderThresholdMP}, q.baseArgs...), func(r Rows) error {
 			var k breakdownKey
 			var match, sumErr, n, blunders int64
@@ -128,6 +150,7 @@ func (s *StatsStore) breakdownRows(ctx context.Context, q statsQuery, cols ...st
 	if err != nil {
 		return nil, err
 	}
+	sortBreakdownKeys(order)
 	out := make([]breakdownRow, 0, len(order))
 	for _, k := range order {
 		row := rows[k]

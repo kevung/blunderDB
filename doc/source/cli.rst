@@ -956,7 +956,7 @@ Le serveur la sert par ``/v1/stats.matchDecisionLosses``.
 
 ``summary`` se termine par une section ``Review``, le bilan du match
 (:ref:`bilan du match <bilan_match>`) : par joueur, le PR et son intervalle à 95 % sur les
-parties, le résultat ajusté de la chance (avec le résultat, la chance nette,
+parties, la perte MWC ramenée à 7 points et son intervalle sur les parties, le résultat ajusté de la chance (avec le résultat, la chance nette,
 l'écart des erreurs et la couverture des jets), les trois erreurs à revoir
 (partie, coup, perte et part évitable) et le partage des erreurs entre
 précipitées et réfléchies. Le serveur le sert par ``/v1/stats.matchReview``.

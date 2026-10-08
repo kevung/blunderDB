@@ -1,6 +1,7 @@
 package sqlshared
 
 import (
+	"math"
 	"reflect"
 	"testing"
 
@@ -40,5 +41,15 @@ func TestDecisionCosts(t *testing.T) {
 	}
 	if decisionCosts(nil, "checker", "") != nil || decisionCosts(cube, "checker", "") != nil || decisionCosts(checker, "cube", "Take") != nil {
 		t.Error("a decision its analysis does not price has no costs")
+	}
+
+	// A position only a rollout analysed is priced from that rollout, as its
+	// loss is (ColumnSource, ADR-0060).
+	rolled := &domain.PositionAnalysis{Rollouts: []domain.RolloutAnalysis{{
+		Kind:       domain.RolloutKindMoves,
+		Candidates: []domain.RolloutCandidate{{Move: "a", Equity: 0.1}, {Move: "b", Equity: 0.04}},
+	}}}
+	if got := decisionCosts(rolled, "checker", ""); len(got) != 2 || got[0] != 0 || math.Abs(got[1]-0.06) > 1e-12 {
+		t.Errorf("rollout only: got %v, want [0 0.06]", got)
 	}
 }
