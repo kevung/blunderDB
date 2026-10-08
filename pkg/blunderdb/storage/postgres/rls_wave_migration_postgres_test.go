@@ -566,3 +566,70 @@ func TestMigrate_DecisionRecountUnderRLS(t *testing.T) {
 		})
 	}
 }
+
+// TestMigrate_AnsweredDoublesUnderRLS upgrades a two-tenant library of
+// generation 2 whose transcribed takes stand on the answerer's own redouble
+// row: each tenant's take must land on the ownerless cube, and a row that
+// tenant still holds by a comment must survive the purge — a retention
+// check that cannot see the tenant's rows would drop it.
+func TestMigrate_AnsweredDoublesUnderRLS(t *testing.T) {
+	ctx := context.Background()
+	s, conn, _ := openAsRLSOwner(t)
+	ms := s.Matches()
+	takes := map[string]int64{}
+	owned := map[string]int64{}
+	for i, scope := range []string{"1", "2"} {
+		matchID, err := ms.Save(ctx, scope, &domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: 7})
+		if err != nil {
+			t.Fatal(err)
+		}
+		gameID, err := ms.CreateGame(ctx, scope, &domain.Game{MatchID: matchID, GameNumber: 1})
+		if err != nil {
+			t.Fatal(err)
+		}
+		p := domain.InitializePosition()
+		p.DecisionType = domain.CubeAction
+		p.Board.Points[4+i].Checkers = 2
+		p.PlayerOnRoll = domain.Black
+		p.Cube = domain.Cube{Owner: domain.Black, Value: 1}
+		pid, err := s.Positions().Save(ctx, scope, &p)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if _, err := s.Comments().Add(ctx, scope, pid, "redouble"); err != nil {
+			t.Fatal(err)
+		}
+		mv, err := ms.CreateMove(ctx, scope, &domain.Move{GameID: gameID, MoveNumber: 1, MoveType: "cube",
+			PositionID: pid, Player: -1, CubeAction: "Take"})
+		if err != nil {
+			t.Fatal(err)
+		}
+		takes[scope], owned[scope] = mv, pid
+	}
+	if err := s.ApplyRLS(ctx); err != nil {
+		t.Fatalf("ApplyRLS: %v", err)
+	}
+	execUnforced(t, conn, nil, []string{`UPDATE metadata SET value = '2' WHERE key = 'go_backfills'`})
+
+	if err := s.Migrate(ctx); err != nil {
+		t.Fatalf("Migrate under RLS: %v", err)
+	}
+	assertForced(t, conn, "position", "move", "comment")
+	for _, scope := range []string{"1", "2"} {
+		asTenant(t, conn, scope, func() {
+			var owner int
+			var held int
+			if err := conn.QueryRow(ctx, `SELECT p.cube_owner, (SELECT count(*) FROM position WHERE id = $2)
+				   FROM move mv JOIN position p ON p.id = mv.position_id WHERE mv.id = $1`,
+				takes[scope], owned[scope]).Scan(&owner, &held); err != nil {
+				t.Fatal(err)
+			}
+			if owner != int(domain.None) {
+				t.Errorf("tenant %s: take stands on cube owner %d, want none", scope, owner)
+			}
+			if held != 1 {
+				t.Errorf("tenant %s: the commented redouble row was purged", scope)
+			}
+		})
+	}
+}

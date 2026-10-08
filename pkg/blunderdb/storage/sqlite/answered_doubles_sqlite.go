@@ -29,6 +29,7 @@ func (s *matchStore) ReanchorAnsweredDoubles(ctx context.Context, scope string) 
 		// Left rows are orphan candidates, checked in one DELETE after the
 		// loop: a mid-loop check could not see later repoints.
 		left := make([]int64, 0, len(order))
+		landed := make([]int64, 0, len(order))
 		for _, pid := range order {
 			pos, ok := byID[pid]
 			if !ok {
@@ -52,6 +53,11 @@ func (s *matchStore) ReanchorAnsweredDoubles(ctx context.Context, scope string) 
 				return fmt.Errorf("invalidate match stats: %w", err)
 			}
 			left = append(left, pid)
+			landed = append(landed, newID)
+		}
+		// A moved move is scored by the analysis of the row it lands on.
+		if _, err := sqlshared.RescorePlayedDecisionsOf(ctx, binder{tx}.shared(), landed); err != nil {
+			return fmt.Errorf("rescore answered moves: %w", err)
 		}
 		if err := RefreshPositionMatchDates(ctx, tx, left); err != nil {
 			return err
