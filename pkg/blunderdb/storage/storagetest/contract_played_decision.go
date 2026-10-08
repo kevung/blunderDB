@@ -148,3 +148,63 @@ func testStatsPlayedDecisionPerMatch(t *testing.T, s storage.Storage) {
 		}
 	}
 }
+
+// Editing a match position's decision type changes which play each of its
+// moves is scored against: the statistics follow the edit.
+func testStatsPlayedDecisionFollowsPositionEdit(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+
+	cube := statsDecisionPos(t, 4)
+	cube.DecisionType = domain.CubeAction
+	cube.Dice = [2]int{0, 0}
+	cubeID, err := s.Positions().Save(ctx, "", &cube)
+	if err != nil {
+		t.Fatalf("Save position: %v", err)
+	}
+	if err := s.Analyses().Save(ctx, "", cubeID, &domain.PositionAnalysis{
+		AnalysisType: "DoublingCube", PlayedCubeActions: []string{"No Double"},
+		DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{
+			CubefulNoDoubleEquity: 0.500, CubefulNoDoubleError: 0.300,
+			CubefulDoubleTakeEquity: 0.800, CubefulDoubleTakeError: 0,
+			CubefulDoublePassEquity: 1.000, CubefulDoublePassError: 0.200,
+		},
+	}); err != nil {
+		t.Fatalf("Save analysis: %v", err)
+	}
+	m := domain.Match{Player1Name: "Erin", Player2Name: "Frank", MatchLength: 7,
+		MatchDate: time.Date(2025, 6, 3, 0, 0, 0, 0, time.UTC)}
+	matchID, err := s.Matches().Save(ctx, "", &m)
+	if err != nil {
+		t.Fatalf("Save match: %v", err)
+	}
+	gameID, err := s.Matches().CreateGame(ctx, "", &domain.Game{MatchID: matchID, GameNumber: 1, Winner: 1, PointsWon: 1})
+	if err != nil {
+		t.Fatalf("CreateGame: %v", err)
+	}
+	if _, err := s.Matches().CreateMove(ctx, "", &domain.Move{GameID: gameID, MoveNumber: 1,
+		MoveType: "cube", PositionID: cubeID, Player: 1, CubeAction: "No Double"}); err != nil {
+		t.Fatalf("CreateMove: %v", err)
+	}
+
+	pr := func() float64 {
+		t.Helper()
+		b, err := s.Stats().MatchBadges(ctx, "", []int64{matchID})
+		if err != nil {
+			t.Fatalf("MatchBadges: %v", err)
+		}
+		return b[matchID].PR
+	}
+	if got, want := pr(), 500*0.300; math.Abs(got-want) > 1e-9 {
+		t.Fatalf("before the edit: PR %v, want %v", got, want)
+	}
+
+	cube.ID = cubeID
+	cube.DecisionType = domain.CheckerAction
+	cube.Dice = [2]int{3, 1}
+	if err := s.Positions().Update(ctx, "", &cube); err != nil {
+		t.Fatalf("Update: %v", err)
+	}
+	if got := pr(); got != 0 {
+		t.Errorf("after turning the cube decision into a checker one: PR %v, want 0 (the cube error no longer applies)", got)
+	}
+}
