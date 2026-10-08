@@ -28,6 +28,8 @@ type refPlayer struct {
 	CheckerEquityEMG    *float64 `json:"checker_equity_error_emg"`
 	DoubleEquityEMG     *float64 `json:"double_equity_error_emg"`
 	TakeEquityEMG       *float64 `json:"take_equity_error_emg"`
+	DoubleMWCLossPct    *float64 `json:"double_mwc_loss_pct"`
+	TakeMWCLossPct      *float64 `json:"take_mwc_loss_pct"`
 	// gnuBG-only fields
 	CheckerTotal   *int     `json:"checker_total"`
 	CheckerForced  *int     `json:"checker_forced"`
@@ -130,10 +132,8 @@ var tolXG = parityTolerances{
 //   - unanalysed: XG stores ErrMove = -1000 for a play it never scored and
 //     leaves it out; xgparser's light API does not expose ErrMove, so
 //     blunderDB counts and scores the play from the stored candidates.
-//   - cubeMWC: the cube errors' equities agree with XG's, their conversion to
-//     MWC does not (blunderDB converts at the current cube's value from the
-//     decision maker's side; XG's own cube MWC is lower). Not Crawford: the
-//     MET lookup already takes the post-Crawford table at a 1-away score.
+//   - checkerSum: the counts and the cube agree, the checker errors summed
+//     from the stored plays exceed XG's checker total by a few millipoints.
 type xgResidual struct {
 	checker int
 	pr      float64
@@ -144,12 +144,10 @@ type xgResidual struct {
 
 // xgResiduals keys a fixture's player ("file.json/P1") to its residual.
 var xgResiduals = map[string]xgResidual{
-	"aachen-double-7pt.json/P1":    {0, 0, 0, 0.9, "cubeMWC (total MWC 20.71 vs 19.85, checker MWC within tolerance)"},
 	"aachen-double-7pt.json/P2":    {-1, 0.03, 0.017, 0.45, "unanalysed (1 play)"},
 	"charlot1-charlot2.json/P2":    {1, 0.02, 0, 0, "unstored (1 bear-off)"},
 	"marseille-round4-7pt.json/P1": {-1, 0.09, 0.005, 0, "unanalysed (1 play)"},
-	"marseille-round4-7pt.json/P2": {0, 0, 0, 0.85, "cubeMWC (total MWC 20.65 vs 19.81, checker MWC within tolerance)"},
-	"test.json/P1":                 {0, 0, 0.005, 0.1, "cubeMWC (total MWC 30.12 vs 30.03, checker MWC within tolerance)"},
+	"test.json/P1":                 {0, 0, 0.005, 0, "checkerSum (checker equity 2.150 vs 2.147)"},
 }
 
 // ── Diff helpers ─────────────────────────────────────────────────────────────
@@ -293,6 +291,13 @@ func compareXGRef(t *testing.T, prefix string, ref *refPlayer, bdb MatchPlayerDe
 	if ref.CheckerMWCLossPct != nil {
 		mwcRef := *ref.CheckerMWCLossPct
 		diffFloat(t, prefix+" checker_mwc_pct", &mwcRef, bdb.CheckerMWCLoss*100, tol.MWCPct)
+	}
+	// The cube's two sides, each converted at the cube before the double.
+	if ref.DoubleMWCLossPct != nil {
+		diffFloat(t, prefix+" double_mwc_pct", ref.DoubleMWCLossPct, bdb.DoubleMWCLoss*100, tol.MWCPct)
+	}
+	if ref.TakeMWCLossPct != nil {
+		diffFloat(t, prefix+" take_mwc_pct", ref.TakeMWCLossPct, bdb.TakeMWCLoss*100, tol.MWCPct)
 	}
 }
 

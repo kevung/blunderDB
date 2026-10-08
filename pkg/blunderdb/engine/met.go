@@ -454,7 +454,10 @@ func (m *MET) GetME(score0, score1, matchTo, fPlayer, nPoints, fWhoWins int, fCr
 //	ΔMWC = ΔEMG × (mwcWin − mwcLose) / 2
 //
 // The conversion applies identically to checker and cube errors because the
-// NEMG mapping is simply a change of unit.
+// NEMG mapping is simply a change of unit. cubeValue is the cube the equity
+// is normalised to: for a take or a pass, the cube before the double, as for
+// the doubler — the seat does not matter, the gap between winning and losing
+// cubeValue points is the same from either side.
 //
 // Returns math.NaN() for money-game positions or when the cube/score makes the
 // denominator degenerate (e.g. dead cube). Money is spelt two ways on disk — a

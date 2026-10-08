@@ -63,11 +63,18 @@ func UnscoredPlaySQL(pos string) string {
 	return "EXISTS (SELECT 1 FROM analysis ua WHERE ua.position_id = " + pos + ".id AND ua.best_move_equity_error IS NULL)"
 }
 
-// cubeMultiplierExpr is the cube value (1, 2, 4, …) from its stored log2
-// exponent. The CAST keeps the shift an integer operation on PostgreSQL, where
+// cubeMultiplierExpr is the cube value (1, 2, 4, …) a decision's equity is
+// normalised to, the one its MWC loss is converted at. A take or a pass is
+// stored on the position after the double (the cube already turned, held by
+// no one), but its equities, like the doubler's, are counted in units of the
+// cube before the double: XG converts both sides of a double at that value,
+// and a response converted at the doubled cube costs twice the MWC it should.
+// The CAST keeps the shift an integer operation on PostgreSQL, where
 // cube_value is BIGINT and `1 << bigint` is not defined; SQLite accepts it as
 // written.
-const cubeMultiplierExpr = "(1 << CAST(COALESCE(p.cube_value, 0) AS INTEGER))"
+var cubeMultiplierExpr = "(1 << CAST(CASE WHEN " + ActionCodeOrEmptySQL("mv.cube_action") + " IN (" +
+	fmt.Sprint(fixedActionCode("Take")) + ", " + fmt.Sprint(fixedActionCode("Pass")) +
+	") AND COALESCE(p.cube_value, 0) > 0 THEN p.cube_value - 1 ELSE COALESCE(p.cube_value, 0) END AS INTEGER))"
 
 // statsBaseJoin is the FROM + JOIN fragment shared by all stats queries.
 const statsBaseJoin = `FROM position p
