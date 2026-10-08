@@ -370,6 +370,9 @@ type DecisionLoss struct {
 	// DurationMS is the time taken over the decision (ADR-0073), nil when
 	// unknown.
 	DurationMS *int64 `json:"duration_ms"`
+	// Away is the position's stored away scores, player 1's first, the
+	// Crawford rule inside them (CONTEXT.md, « Away score »).
+	Away [2]int `json:"away"`
 }
 
 // PlayerTimeSummary is what one player's recorded decision times add up to
@@ -583,6 +586,13 @@ type StatsStore interface {
 	// their intervals over the games, the errors worth revisiting, the
 	// luck-adjusted result and the hasty/deliberate split of the errors.
 	MatchReview(ctx context.Context, scope string, matchID int64) (MatchReview, error)
+
+	// TournamentReview is one player's review of a tournament (ADR-0081):
+	// L7 and PR against the player's usual level, by round, by decision rank,
+	// at pressure scores and by pace, and the tournament's error families.
+	// An empty player is the one who played the most of its matches. A
+	// tournament of another tenant, or none, is ErrNotFound.
+	TournamentReview(ctx context.Context, scope string, tournamentID int64, player string) (TournamentReview, error)
 
 	// MatchTimeSummary adds up the decision times of a Match per player, and
 	// counts what overran the Cadence it was played under (match_origin). A
