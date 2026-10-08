@@ -193,6 +193,42 @@ une machine arm64 ne les a pas débloqués ; le registre des décisions amont et
   trancher avant : voudra-t-on un jour traduire *depuis* le français vers un français
   simplifié.
 
+### Étude : du diagnostic à l'action
+
+Constat : le diagnostic (erreurs récurrentes, ventilations, temps × erreur) et la pratique
+(quiz, Anki, entraînement, file d'étude) sont riches, mais rien ne répond à « que dois-je
+travailler maintenant ? », le bruit n'est jamais montré, la priorité ne regarde que le coût,
+et l'effet de l'étude n'est jamais mesuré. Ordre proposé ci-dessous ; s'appuie sur la perte de
+MWC par décision, M1 (L₇) et M3 (difficulté par décision). Chaque seuil se fixe dans une ADR
+*avant* de regarder les résultats ; chaque métrique est documentée en détail dans le manuel.
+
+- **Intervalles de confiance partout, et bilan de match.** Afficher la bande (IC 95 %,
+  bootstrap par parties) du PR, de L₇ et des cellules de ventilation, à la place du seul
+  grisage « < 10 décisions ». Au niveau du match : un encart « 3 décisions à revoir » (perte ×
+  caractère évitable M3, un clic vers le coup), le résultat ajusté de la chance à côté du
+  score (la chance est déjà importée), et la distinction erreur précipitée / erreur réfléchie
+  (temps de décision : discipline contre connaissance).
+- **Plan d'étude classé (base).** Priorité d'une famille d'erreurs (plan × thème, puis
+  famille de positions par similarité `like`) = fréquence × perte moyenne en excès de la
+  difficulté M3 = MWC récupérable, avec son IC pour ne pas pousser vers du bruit. Carte « Plan
+  d'étude » au tableau de bord, qui alimente la file d'étude et les quiz ; parité CLI/serveur.
+- **Positions de référence proposées (panneau Collections, `collection suggest`).** Critères
+  combinés, raison affichée par position : représentativité (centre d'une famille de ses
+  erreurs, distance `like`), fréquence de la famille dans toutes ses décisions, coût évitable
+  (M3), leçon nette (écart meilleur/second large, verdict stable entre profondeurs, rollout si
+  possible), diversité (dédoublonnage par similarité), non traitée (même prédicat que la file
+  d'étude), références de videau par score. Portée match / tournoi / base / filtre courant,
+  taille 10/20/50, liste proposée à cocher → collection figée ou vivante, deck Anki ou quiz en
+  un clic. À vérifier : coût du regroupement par similarité sur une grosse base.
+- **Fermer la boucle, et biais directionnels.** Par famille étudiée : erreur en match réel
+  avant/après l'étude, avec IC (la vue `list --type study` n'a pas de colonne de gain). Biais
+  signés plutôt que perte seule : taux de prises/refus contre le bot, doubles prématurés contre
+  manqués par score, prudence/audace sur les blots — « tu prends trop » se corrige mieux qu'un
+  PR.
+- **Bilan de tournoi.** L₇ avec IC comparé au niveau habituel, 2-3 familles d'erreurs de
+  l'épreuve, erreur selon la ronde et selon le rang de la décision dans le match (fatigue),
+  aux scores de pression (DMP, Crawford) et sous la pendule.
+
 ## Historique — items faits
 
 - **2026-10-05 — relevé avant 0.37.0, items trouvés faits dans le code** : la valuation du
