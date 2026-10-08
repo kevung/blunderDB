@@ -420,8 +420,9 @@ supplémentaire.
 Avec une vidéo attachée, seule une validation explicite — *ENTREE*, le
 double-clic sur un candidat, le coup achevé au plateau — pose l'instant de
 l'action. Le chiffre du jet suivant, ou un geste de videau, valide sans
-instant ; *v* le pose après coup. Ces touches se lisent à leur place sur le
-clavier, quelle que soit sa disposition. Sans vidéo, elles ne font rien.
+instant ; *v* le pose après coup. Les flèches se lisent à leur place sur le
+clavier, quelle que soit sa disposition. Sans vidéo, ces touches gardent leur
+sens habituel.
 
 Le chiffre a un seul sens : **il commence un jet là où le curseur est**. En bout
 de document il n'y a rien sous le curseur, donc il valide le coup sélectionné

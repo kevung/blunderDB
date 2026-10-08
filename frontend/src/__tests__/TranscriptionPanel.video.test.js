@@ -302,6 +302,14 @@ describe('the video keys', () => {
         ]);
     });
 
+    test('v is read by its label, not by its place', async () => {
+        await openedPanel(1);
+        // Dvorak: the key labelled v sits where QWERTY has the period.
+        await press('Period', { key: 'v' });
+        await press('KeyV', { key: 'k' });
+        expect(gestures().filter((g) => g.Kind === 'set_timecode')).toEqual([{ Kind: 'set_timecode', TickMS: 65000, HasTick: true }]);
+    });
+
     test('v at the end of the document, with no Action under the Cursor, says so', async () => {
         await openedPanel();
         await press('KeyV');

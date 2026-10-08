@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-08 20:55+0200\n"
+"POT-Creation-Date: 2026-10-08 21:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -1611,15 +1611,15 @@ msgid ""
 "Avec une vidéo attachée, seule une validation explicite — *ENTREE*, le "
 "double-clic sur un candidat, le coup achevé au plateau — pose l'instant "
 "de l'action. Le chiffre du jet suivant, ou un geste de videau, valide "
-"sans instant ; *v* le pose après coup. Ces touches se lisent à leur place"
-" sur le clavier, quelle que soit sa disposition. Sans vidéo, elles ne "
-"font rien."
+"sans instant ; *v* le pose après coup. Les flèches se lisent à leur place"
+" sur le clavier, quelle que soit sa disposition. Sans vidéo, ces touches "
+"gardent leur sens habituel."
 msgstr ""
 "動画が添付されている場合、アクションの時刻を設定するのは明示的な確定(*ENTER*、候補のダブルクリック、盤上で完了した手)だけです。次のロールの数字は時刻なしで確定し、*v*"
 " "
-"が後から時刻を設定します。動画がない場合、これらのキーは何もしません。キューブ操作も同様に、時刻なしで確定します。これらのキーは、配列に関係なくキーボード上の位置で読み取られます。"
+"が後から時刻を設定します。キューブ操作も同様に、時刻なしで確定します。矢印キーは、配列に関係なくキーボード上の位置で読み取られます。動画がない場合、これらのキーは通常の意味のままです。"
 
-#: ../../source/raccourcis.rst:426
+#: ../../source/raccourcis.rst:427
 msgid ""
 "Le chiffre a un seul sens : **il commence un jet là où le curseur est**. "
 "En bout de document il n'y a rien sous le curseur, donc il valide le coup"
@@ -1638,7 +1638,7 @@ msgstr ""
 " **最後の**\\ アクションは例外です。その出目を打ち直すと、次の数字がそれを確定して次の決定を開きます。文書の末尾と同じく、ENTER "
 "でもそこへ進みます。"
 
-#: ../../source/raccourcis.rst:437
+#: ../../source/raccourcis.rst:438
 msgid ""
 "Ce qui est en train d'être tapé se dessine dans le transcript, en "
 "pointillés, à la place où il sera écrit : une correction recouvre la "
@@ -1647,7 +1647,7 @@ msgid ""
 "validation."
 msgstr "入力中の内容は、書き込まれる位置に破線でトランスクリプトに描かれる。訂正は置き換えるセルを覆い、挿入は両隣のあいだにセルを開き、手番は列で読み取れる。確定前には何も記録されない。"
 
-#: ../../source/raccourcis.rst:442
+#: ../../source/raccourcis.rst:443
 msgid ""
 "Une insertion au milieu du document continue d'insérer : la validation "
 "ouvre une cellule vide à la suite, et l'action suivante s'insère à son "
@@ -1655,7 +1655,7 @@ msgid ""
 "déplacement du curseur y met fin."
 msgstr "文書の途中への挿入は挿入を続ける。確定すると続きに空のセルが開き、次のアクションもまた挿入され、後続のアクションを上書きしない。ゲームが終わるか、カーソルを動かすと終わる。"
 
-#: ../../source/raccourcis.rst:447
+#: ../../source/raccourcis.rst:448
 msgid ""
 "Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
 "rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
@@ -1663,7 +1663,7 @@ msgid ""
 "l'action attendue."
 msgstr "何もすることのない操作は、ステータスバーで一度そう告げます。積みが空なら「取り消すものがありません」、文書の末尾なら「カーソルの下にアクションがありません」。この文はひとりでに消え、期待される行動に場所を返します。"
 
-#: ../../source/raccourcis.rst:452
+#: ../../source/raccourcis.rst:453
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était — "
@@ -1677,7 +1677,7 @@ msgstr ""
 "カーソルをあるアクションまで戻して入力し直すと、そのアクションを\\ **その場で**\\ "
 "修正できます。確定するとアクションが置き換えられ、カーソルは元の位置に戻ります——最後のアクションの場合は文書の末尾へ移り、そこで記譜が続きます。ダイスを修正しても記録済みの手が新しいロールの合法手のままであれば、その手は保たれます。そうでない場合は新しいロールの最初の候補が提示され、その手は確定するまで「要確認」と表示されます。何かを変更したあとでカーソルを前後に動かすと、その際に修正が記録されます。"
 
-#: ../../source/raccourcis.rst:460
+#: ../../source/raccourcis.rst:461
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1694,7 +1694,7 @@ msgstr ""
 "拒否されるものも削除されるものもありません。隣と同じ手番のアクションを挿入すれば二重手番になり、アクションを削除すれば別の二重手番が生じることがあり、手番を変えれば以降の手が不正になることがあります。これらの不整合はトランスクリプトに印が付き、勝手に修正されることはありません。カーソルは書き込む操作のたびにその最初の不整合へ移動します。ただし続けて入力している場合は別で、削除、挿入、再び開いたゲームのあとでは、入力している場所にとどまります。移動やダイスの入力でカーソルが動くことはありません。二重手番で失われた手番はトランスクリプトのセルです。h"
 " と l はそこで止まり、そこで入力した出目は、手番が抜けていた側に挿入されます。取り消し履歴はメモリ上にあり、下書きを閉じると失われます。"
 
-#: ../../source/raccourcis.rst:471
+#: ../../source/raccourcis.rst:472
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1703,7 +1703,7 @@ msgstr ""
 "パネルそのもの — 下書き一覧、作成、入力、棋譜、下書きのバー — は :ref:`panneau_transcription` "
 "で説明されています。"
 
-#: ../../source/raccourcis.rst:478
+#: ../../source/raccourcis.rst:479
 msgid "Planche-contact"
 msgstr "コンタクトシート"
 
@@ -1751,7 +1751,7 @@ msgstr "局面を盤面に開き、シートを閉じます。"
 msgid "Refermer la planche."
 msgstr "シートを閉じます。"
 
-#: ../../source/raccourcis.rst:495
+#: ../../source/raccourcis.rst:496
 msgid "Panneau d'aide"
 msgstr "ヘルプパネル"
 

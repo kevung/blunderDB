@@ -454,9 +454,9 @@
 
     /**
      * The video keys, live only while a source is attached and read by their position
-     * (event.code), whatever the layout: Space plays or pauses, Shift+Left/Right step
-     * 5 s, Ctrl+Shift+Left/Right 1 s (Ctrl+Left/Right turn the board), `v` / Shift+V
-     * time the Cursor. Space and the Ctrl chords are global everywhere else: they are
+     * for the arrows (event.code), whatever the layout: Space plays or pauses,
+     * Shift+Left/Right step 5 s, Ctrl+Shift+Left/Right 1 s (Ctrl+Left/Right turn the
+     * board); `v` / Shift+V, read by their label, time the Cursor. Space and the Ctrl chords are global everywhere else: they are
      * read before panelKeyGuard, and only here.
      *
      * @param {KeyboardEvent} event
@@ -475,8 +475,10 @@
             if (now !== null) videoPane.seek(now + step * 1000);
             return true;
         }
-        if (event.code === 'KeyV' && !event.ctrlKey) {
-            stampCursor(event.shiftKey);
+        // A letter follows its label, as every letter shortcut does; only the arrows are read
+        // by their place.
+        if ((event.key === 'v' || event.key === 'V') && !event.ctrlKey) {
+            stampCursor(event.key === 'V' || event.shiftKey);
             return true;
         }
         return false;

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-08 20:55+0200\n"
+"POT-Creation-Date: 2026-10-08 21:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -1770,18 +1770,19 @@ msgid ""
 "Avec une vidéo attachée, seule une validation explicite — *ENTREE*, le "
 "double-clic sur un candidat, le coup achevé au plateau — pose l'instant "
 "de l'action. Le chiffre du jet suivant, ou un geste de videau, valide "
-"sans instant ; *v* le pose après coup. Ces touches se lisent à leur place"
-" sur le clavier, quelle que soit sa disposition. Sans vidéo, elles ne "
-"font rien."
+"sans instant ; *v* le pose après coup. Les flèches se lisent à leur place"
+" sur le clavier, quelle que soit sa disposition. Sans vidéo, ces touches "
+"gardent leur sens habituel."
 msgstr ""
 "Con un vídeo adjunto, solo una validación explícita (*INTRO*, el doble "
 "clic sobre un candidato, la jugada completada en el tablero) fija el "
 "instante de la jugada. La cifra de la tirada siguiente valida sin "
-"instante; *v* lo fija a posteriori. Sin vídeo, estas teclas no hacen "
-"nada. Un gesto de cubo valida del mismo modo, sin instante. Estas teclas "
-"se leen por su posición en el teclado, sea cual sea su distribución."
+"instante; *v* lo fija a posteriori. Un gesto de cubo valida del mismo "
+"modo, sin instante. Las flechas se leen por su posición en el teclado, "
+"sea cual sea su distribución. Sin vídeo, estas teclas conservan su "
+"significado habitual."
 
-#: ../../source/raccourcis.rst:426
+#: ../../source/raccourcis.rst:427
 msgid ""
 "Le chiffre a un seul sens : **il commence un jet là où le curseur est**. "
 "En bout de document il n'y a rien sous le curseur, donc il valide le coup"
@@ -1808,7 +1809,7 @@ msgstr ""
 "decisión siguiente, como al final del documento, e INTRO lleva allí "
 "también."
 
-#: ../../source/raccourcis.rst:437
+#: ../../source/raccourcis.rst:438
 msgid ""
 "Ce qui est en train d'être tapé se dessine dans le transcript, en "
 "pointillés, à la place où il sera écrit : une correction recouvre la "
@@ -1821,7 +1822,7 @@ msgstr ""
 "celda que reemplaza, una inserción abre una celda entre sus dos vecinas, "
 "y el bando se lee en la columna. Nada se registra antes de la validación."
 
-#: ../../source/raccourcis.rst:442
+#: ../../source/raccourcis.rst:443
 msgid ""
 "Une insertion au milieu du document continue d'insérer : la validation "
 "ouvre une cellule vide à la suite, et l'action suivante s'insère à son "
@@ -1833,7 +1834,7 @@ msgstr ""
 "vez en lugar de sobrescribir la de después. El final de la partida o "
 "mover el cursor le pone fin."
 
-#: ../../source/raccourcis.rst:447
+#: ../../source/raccourcis.rst:448
 msgid ""
 "Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
 "rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
@@ -1845,7 +1846,7 @@ msgstr ""
 "cursor» al final del documento. La frase se borra sola y devuelve el "
 "sitio a la acción esperada."
 
-#: ../../source/raccourcis.rst:452
+#: ../../source/raccourcis.rst:453
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était — "
@@ -1865,7 +1866,7 @@ msgstr ""
 " «por revisar» hasta la validación. Avanzar o retroceder el cursor "
 "después de haber cambiado algo registra la corrección de paso."
 
-#: ../../source/raccourcis.rst:460
+#: ../../source/raccourcis.rst:461
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1891,7 +1892,7 @@ msgstr ""
 " inserta para el bando al que le faltaba. La pila de deshacer vive en "
 "memoria: se pierde al cerrar el borrador."
 
-#: ../../source/raccourcis.rst:471
+#: ../../source/raccourcis.rst:472
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1901,7 +1902,7 @@ msgstr ""
 "transcripción y la barra del borrador — se describe en "
 ":ref:`panneau_transcription`."
 
-#: ../../source/raccourcis.rst:478
+#: ../../source/raccourcis.rst:479
 msgid "Planche-contact"
 msgstr "Hoja de contactos"
 
@@ -1949,7 +1950,7 @@ msgstr "Abrir la posición en el tablero y cerrar la hoja."
 msgid "Refermer la planche."
 msgstr "Cerrar la hoja."
 
-#: ../../source/raccourcis.rst:495
+#: ../../source/raccourcis.rst:496
 msgid "Panneau d'aide"
 msgstr "Panel de ayuda"
 
