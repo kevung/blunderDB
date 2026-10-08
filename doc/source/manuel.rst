@@ -1732,9 +1732,10 @@ pour choisir une vidéo, **Détacher** pour retirer la source. Un match qui en a
 une affiche l'icône 🎞 dans la barre de sa fiche, et chaque décision qui porte
 un repère de la vidéo la même icône dans sa ligne de l'onglet **Transcription**.
 Cliquer l'icône, ou appuyer sur *v* quand la décision est celle de la revue,
-amène la vidéo une seconde avant le jet des dés : pour un fichier, un volet
-vidéo s'ouvre au-dessus de la fiche ; pour une source YouTube, le navigateur
-s'ouvre sur le lien horodaté. Un fichier introuvable se relocalise depuis le
+amène la vidéo une seconde avant le jet des dés : pour un fichier, la vidéo
+s'ouvre à côté du plateau, ou au-dessus de la fiche si elle a été remise dans
+le panneau, et *[* et *]* en règlent la
+vitesse ; pour une source YouTube, le navigateur s'ouvre sur le lien horodaté. Un fichier introuvable se relocalise depuis le
 volet, et un format que le webview ne lit pas y est signalé avec les paquets à
 installer (voir :ref:`telecharge_install`). Un match sans source ne change pas.
 
@@ -2089,10 +2090,23 @@ Un match se transcrit aussi **depuis une vidéo**. Le bouton **Vidéo** de la
 barre du brouillon propose **Fichier…** pour choisir une vidéo sur le disque,
 **Lien YouTube…** pour coller une adresse, et **Détacher** pour retirer la
 source. Tant qu'aucune source n'est attachée, le panneau reste tel qu'il est
-décrit plus haut : ni volet, ni touche de plus. Une fois la source attachée, un
-volet vidéo s'ouvre au-dessus du transcript ; sa hauteur se règle en tirant la
-barre placée sous lui et reste la même d'une session à l'autre. Un fichier
-introuvable se relocalise depuis le volet par **Choisir le fichier…**.
+décrit plus haut : ni volet, ni touche de plus. Une fois la source attachée, la
+vidéo s'affiche à côté du plateau. Un fichier introuvable se relocalise depuis
+la vidéo par **Choisir le fichier…**.
+
+**La vidéo à côté du plateau.** Tant qu'une vidéo est ouverte, la zone du
+plateau se partage : la vidéo à gauche, le plateau à droite, séparés par une
+barre verticale qu'on tire pour agrandir l'une ou l'autre ; la largeur reste la
+même d'une session à l'autre. La vidéo garde ses proportions et occupe au mieux
+la place qu'on lui donne. Le bouton placé dans son coin supérieur droit la
+remet dans le panneau, au-dessus du transcript, et la ramène à côté du plateau ;
+ce choix aussi est retenu. Dans le panneau, la hauteur de la vidéo se règle en
+tirant la barre placée sous elle, sans jamais repousser la saisie hors de vue.
+Passer d'une place à l'autre ne relance pas un fichier : la lecture continue au
+même instant ; une vidéo YouTube reprend à l'instant où elle était, en pause.
+Cliquer dans la vidéo, sur ses commandes ou sur la barre de séparation laisse
+le clavier au panneau : les touches de saisie, les touches de la vidéo et
+*CTRL-GAUCHE* / *CTRL-DROITE*, qui tournent le plateau, gardent leur effet.
 
 Avec une vidéo, chaque action **nouvelle** porte des **repères** : l'instant
 du jet, posé par la première touche de dé, et l'instant de l'action, posé par
@@ -2107,7 +2121,10 @@ donc par *ENTREE* au moment où le coup est fini à l'image. *v* pose après cou
 l'instant courant comme instant de l'action du curseur, *MAJ-V* comme instant
 du jet. *ESPACE* lance ou met en pause la vidéo ; *MAJ-GAUCHE* et
 *MAJ-DROITE* la déplacent de 5 secondes, *CTRL-MAJ-GAUCHE* et
-*CTRL-MAJ-DROITE* d'une seconde.
+*CTRL-MAJ-DROITE* d'une seconde. *[* ralentit la lecture et *]* l'accélère,
+par pas de 0,25 entre 0,25× et 4× ; une vidéo YouTube ne propose que les
+vitesses de son lecteur, jusqu'à 2×. La vitesse s'affiche dans le coin de la
+vidéo quand elle n'est pas de 1×, et une nouvelle source repart à 1×.
 
 Des repères se déduisent les **durées** de décision : la décision de pions va
 du jet à la fin du coup, la décision de videau de l'action précédente au jet, un
