@@ -124,7 +124,9 @@ func TestEnsureBearoffTables_MakesWhatIsMissing(t *testing.T) {
 
 	// The work is a goroutine; wait for it the way the panel does, by polling
 	// the status.
-	deadline := 120
+	// The loop leaves as soon as the tables are ready; the bound only stops a
+	// generation that never ends, and is wide enough for -race on a busy host.
+	deadline := 1200
 	for i := 0; i < deadline; i++ {
 		if st := app.BearoffStatus(); st.Ready && st.Generating == "" {
 			break
