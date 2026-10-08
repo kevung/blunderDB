@@ -595,6 +595,15 @@ export default {
 <div class="admonition note">
 <p>El número total de decisiones se muestra en la parte inferior de cada tarjeta al pasar el cursor.</p>
 </div>
+<h5>Plan de estudio</h5>
+<p>La tarjeta <strong>Plan de estudio</strong> responde a «¿qué debo trabajar ahora?». Los errores recurrentes (pestaña Errores) dicen dónde perdió más el filtro; no dicen dónde rinde más el estudio. Una familia de posiciones realmente difíciles cuesta caro a todo el mundo, y tres errores no hacen una tendencia. El plan corrige ambas cosas.</p>
+<ul>
+<li>Una <strong>familia</strong> es un grupo de errores recurrentes: un plan de juego, una naturaleza de decisión (fichas o cubo) y un tema. Los errores sin tema no forman ninguna: no indican nada que estudiar.</li>
+<li>Cada error se cuantifica en <strong>MWC</strong>, como en el panel Match: su pérdida ℓ y su <em>dificultad</em> d, la pérdida que habría sufrido un jugador de referencia en la misma posición (véase la dificultad por decisión del panel Match). Un error en partida libre no tiene MWC: solo se cuenta, «sin cuantificar».</li>
+<li>El <strong>MWC recuperable</strong> de una familia es la suma de ℓ − d sobre sus errores: la frecuencia de la familia multiplicada por su pérdida media más allá de la dificultad. Es lo que recuperaría jugando esas posiciones como el jugador de referencia. Una familia de errores evitables sube, una familia de posiciones donde todos se equivocan baja.</li>
+<li>El <strong>intervalo al 95 %</strong> acompaña a cada cifra. Una familia entra en el plan a partir de <strong>5 errores</strong> y de un intervalo enteramente por encima de cero; el plan se ordena por el límite inferior del intervalo, de modo que, a igual recuperable, la familia mejor establecida pasa delante. Las demás se nombran bajo la tabla, <strong>por confirmar</strong>, sin rango: el plan no le empuja hacia el ruido.</li>
+</ul>
+<p>Cada familia propone tres acciones: <strong>Estudiar</strong> abre la cola de estudio con sus posiciones, la mayor diferencia con el jugador de referencia primero; <strong>Quiz</strong> lanza el ejercicio Decisión del panel Entrenamiento con veinte de ellas; <strong>Anki</strong> hace con ellas un mazo de tarjetas. Encima de la tabla, <strong>Quiz de las tres primeras familias</strong> extrae veinte posiciones de las de las tres familias de cabeza. El plan sigue el filtro del panel: ajuste el jugador para obtener <em>su</em> plan. En línea de comandos: <code>blunderdb stats plan</code> (véase stats — Errores recurrentes).</p>
 <h5>PR deslizante sobre las últimas N decisiones</h5>
 <p>Una fila de valores PR (o MWC) calculados sobre las últimas <em>N</em> decisiones (N = 5, 10, 50, 100, 250, 500, 1000) permite medir la tendencia reciente. Los valores atenuados corresponden a un N superior al número de decisiones disponibles.</p>
 <p>Hacer clic en un valor carga las últimas <em>N</em> posiciones correspondientes.</p>

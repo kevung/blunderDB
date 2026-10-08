@@ -1260,6 +1260,37 @@ part du PR du filtre que le groupe représente.
    ./blunderdb stats recurring --db base.db --quiz --format json
    ./blunderdb stats recurring --db base.db --group 1 --deck "Mon pire groupe"
 
+**stats plan** — Le plan d'étude du filtre, comme la carte *Plan d'étude* du
+tableau de bord (voir :ref:`plan_etude`) : les familles d'erreurs (plan de jeu
+× thème) classées par MWC récupérable, la somme sur leurs erreurs de la perte
+moins la difficulté, avec un intervalle à 95 %. Une famille entre au plan à
+partir de 5 erreurs chiffrées et d'un intervalle au-dessus de zéro ; les
+autres sont listées à part, à confirmer (champ ``Tentative`` en JSON). Les
+erreurs sans thème et celles sans MWC (partie libre) sont seulement comptées
+(``Unthemed``, ``Unpriced``).
+
+.. code-block:: bash
+
+   ./blunderdb stats plan --db <fichier> [options]
+
+Mêmes options de filtre que ``stats recurring``, plus :
+
+* ``--limit <n>`` — Nombre de familles affichées en texte (défaut 10, ``0``
+  pour toutes).
+* ``--quiz`` (``--quiz-size <n>``, défaut 20), ``--deck <nom>`` — Comme pour
+  ``stats recurring``, sur les positions des trois premières familles.
+* ``--queue`` — Affiche la file d'étude de ces familles, une position par
+  ligne, l'écart au joueur de référence le plus grand d'abord (JSON :
+  ``Queue``).
+* ``--family <rang>`` — Avec ``--quiz``, ``--deck`` ou ``--queue`` : la famille
+  de ce rang (1 pour la première) au lieu des trois premières.
+
+.. code-block:: bash
+
+   ./blunderdb stats plan --db base.db --player "Alice"
+   ./blunderdb stats plan --db base.db --player "Alice" --quiz --format json
+   ./blunderdb stats plan --db base.db --family 2 --queue
+
 **stats training** — Le PR du quiz Décision, le PR des matchs et la rétention
 Anki, repliés par fenêtre calendaire, comme l'onglet *Entraînement* du panneau
 Stats (voir :ref:`stats`).

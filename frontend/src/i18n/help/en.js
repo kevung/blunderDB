@@ -595,6 +595,15 @@ export default {
 <div class="admonition note">
 <p>The total number of decisions is shown at the bottom of each card on hover.</p>
 </div>
+<h5>Study plan</h5>
+<p>The <strong>Study plan</strong> card answers "what should I work on now?". Recurring mistakes (Errors tab) say where the filter lost the most; they do not say where study pays off the most. A family of truly hard positions costs everyone dearly, and three mistakes do not make a trend. The plan corrects both.</p>
+<ul>
+<li>A <strong>family</strong> is a group of recurring mistakes: a game plan, a kind of decision (checkers or cube) and a theme. Mistakes without a theme form none: they point to nothing to study.</li>
+<li>Each mistake is priced in <strong>MWC</strong>, as in the Match panel: its loss ℓ, and its <em>difficulty</em> d, the loss a reference player would have suffered in the same position (see the per-decision difficulty in the Match panel). A mistake in a free game has no MWC: it is only counted, "unpriced".</li>
+<li>The <strong>recoverable MWC</strong> of a family is the sum of ℓ − d over its mistakes: the family's frequency times its average loss beyond the difficulty. It is what you would regain by playing these positions like the reference player. A family of avoidable mistakes rises, a family of positions where everyone errs falls.</li>
+<li>The <strong>95% interval</strong> accompanies every figure. A family enters the plan from <strong>5 mistakes</strong> and an interval entirely above zero; the plan is ranked by the lower bound of the interval, so that at equal recoverable the best-established family comes first. The others are named under the table, <strong>to be confirmed</strong>, without a rank: the plan does not push you toward noise.</li>
+</ul>
+<p>Each family offers three actions: <strong>Study</strong> opens the study queue on its positions, the largest gap to the reference player first; <strong>Quiz</strong> starts the Decision exercise of the Training panel on twenty of them; <strong>Anki</strong> turns them into a deck of cards. Above the table, <strong>Quiz on the top three families</strong> draws twenty positions from those of the three leading families. The plan follows the panel's filter: set the player to get <em>your</em> plan. On the command line: <code>blunderdb stats plan</code> (see stats — Recurring errors).</p>
 <h5>Rolling PR over last N decisions</h5>
 <p>A row of PR (or MWC) values computed over the last <em>N</em> decisions (N = 5, 10, 50, 100, 250, 500, 1000) lets you measure the recent trend. Greyed values correspond to an N larger than the number of available decisions.</p>
 <p>Clicking a value loads the corresponding last <em>N</em> positions.</p>

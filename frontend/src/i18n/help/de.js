@@ -595,6 +595,15 @@ export default {
 <div class="admonition note">
 <p>Die Gesamtzahl der Entscheidungen wird beim Überfahren am unteren Rand jeder Karte angezeigt.</p>
 </div>
+<h5>Lernplan</h5>
+<p>Die Karte <strong>Lernplan</strong> beantwortet die Frage „Was soll ich jetzt üben?“. Die wiederkehrenden Fehler (Reiter Fehler) zeigen, wo der Filter am meisten verloren hat; sie zeigen nicht, wo das Lernen am meisten bringt. Eine Familie wirklich schwieriger Stellungen kostet jeden viel, und drei Fehler machen noch keinen Trend. Der Plan korrigiert beides.</p>
+<ul>
+<li>Eine <strong>Familie</strong> ist eine Gruppe wiederkehrender Fehler: ein Spielplan, die Art der Entscheidung (Steine oder Doppler) und ein Thema. Fehler ohne Thema bilden keine: Sie weisen auf nichts hin, was zu lernen wäre.</li>
+<li>Jeder Fehler wird in <strong>MWC</strong> beziffert, wie im Match-Panel: sein Verlust ℓ und seine <em>Schwierigkeit</em> d, der Verlust, den ein Referenzspieler in derselben Stellung erlitten hätte (siehe die Schwierigkeit pro Entscheidung im Match-Panel). Ein Fehler in einer freien Partie hat keinen MWC: Er wird nur gezählt, „nicht beziffert“.</li>
+<li>Der <strong>rückgewinnbare MWC</strong> einer Familie ist die Summe von ℓ − d über ihre Fehler: die Häufigkeit der Familie mal ihr mittlerer Verlust über die Schwierigkeit hinaus. Das ist es, was Sie zurückgewinnen würden, wenn Sie diese Stellungen wie der Referenzspieler spielten. Eine Familie vermeidbarer Fehler steigt, eine Familie von Stellungen, in denen sich alle irren, sinkt.</li>
+<li>Das <strong>95-%-Intervall</strong> begleitet jede Zahl. Eine Familie kommt in den Plan ab <strong>5 Fehlern</strong> und einem Intervall, das ganz über null liegt; der Plan wird nach der unteren Grenze des Intervalls geordnet, sodass bei gleichem Rückgewinnbaren die am besten gesicherte Familie vorn steht. Die übrigen werden unter der Tabelle genannt, <strong>zu bestätigen</strong>, ohne Rang: Der Plan schickt Sie nicht dem Rauschen nach.</li>
+</ul>
+<p>Jede Familie bietet drei Aktionen: <strong>Lernen</strong> öffnet die Lernwarteschlange mit ihren Stellungen, die größte Abweichung vom Referenzspieler zuerst; <strong>Quiz</strong> startet die Übung Entscheidung des Panels Training mit zwanzig davon; <strong>Anki</strong> macht daraus einen Kartenstapel. Über der Tabelle zieht <strong>Quiz zu den ersten drei Familien</strong> zwanzig Stellungen aus denen der drei führenden Familien. Der Plan folgt dem Filter des Panels: Stellen Sie den Spieler ein, um <em>Ihren</em> Plan zu erhalten. Auf der Kommandozeile: <code>blunderdb stats plan</code> (siehe stats — Wiederkehrende Fehler).</p>
 <h5>Gleitender PR über die letzten N Entscheidungen</h5>
 <p>Eine Zeile mit PR- (oder MWC-)Werten, die über die letzten <em>N</em> Entscheidungen berechnet werden (N = 5, 10, 50, 100, 250, 500, 1000), ermöglicht es, den jüngsten Trend zu messen. Die ausgegrauten Werte entsprechen einem N, das größer als die Anzahl der verfügbaren Entscheidungen ist.</p>
 <p>Ein Klick auf einen Wert lädt die entsprechenden letzten <em>N</em> Stellungen.</p>

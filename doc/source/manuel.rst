@@ -2802,6 +2802,46 @@ sous-ensemble correspondant (drill-down).
 .. note::
    Le nombre total de décisions est affiché en bas de chaque carte au survol.
 
+.. _plan_etude:
+
+Plan d'étude
+^^^^^^^^^^^^
+
+La carte **Plan d'étude** répond à « que dois-je travailler maintenant ? ».
+Les erreurs récurrentes (onglet Erreurs) disent où le filtre a perdu le plus ;
+elles ne disent pas où l'étude rapporte le plus. Une famille de positions
+réellement difficiles coûte cher à tout le monde, et trois erreurs ne font pas
+une tendance. Le plan corrige les deux.
+
+* Une **famille** est un groupe des erreurs récurrentes : un plan de jeu, une
+  nature de décision (pions ou videau) et un thème. Les erreurs sans thème
+  n'en forment pas : elles n'indiquent rien à étudier.
+* Chaque erreur est chiffrée en **MWC**, comme dans le panneau Match : sa
+  perte ℓ, et sa *difficulté* d, la perte qu'un joueur de référence aurait
+  subie dans la même position (voir la difficulté par décision du panneau
+  Match). Une erreur en partie libre n'a pas de MWC : elle est seulement
+  comptée, « non chiffrée ».
+* Le **MWC récupérable** d'une famille est la somme de ℓ − d sur ses erreurs :
+  la fréquence de la famille multipliée par sa perte moyenne au-delà de la
+  difficulté. C'est ce que vous regagneriez en jouant ces positions comme le
+  joueur de référence. Une famille d'erreurs évitables monte, une famille de
+  positions où tout le monde se trompe descend.
+* L'**intervalle à 95 %** accompagne chaque chiffre. Une famille entre au plan
+  à partir de **5 erreurs** et d'un intervalle entièrement au-dessus de zéro ;
+  le plan est classé par la borne basse de l'intervalle, si bien qu'à
+  récupérable égal la famille la mieux établie passe devant. Les autres sont
+  nommées sous le tableau, **à confirmer**, sans rang : le plan ne vous pousse
+  pas vers du bruit.
+
+Chaque famille propose trois gestes : **Étudier** ouvre la file d'étude sur
+ses positions, l'écart au joueur de référence le plus grand d'abord ; **Quiz**
+lance l'exercice Décision du panneau :ref:`Entraînement <panneau_entrainement>`
+sur vingt d'entre elles ; **Anki** en fait un paquet de cartes. Au-dessus du
+tableau, **Quiz sur les trois premières familles** tire vingt positions parmi
+celles des trois familles de tête. Le plan suit le filtre du panneau : réglez
+le joueur pour obtenir *votre* plan. En ligne de commande :
+``blunderdb stats plan`` (voir :ref:`cli_stats`).
+
 PR glissant sur N dernières décisions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
