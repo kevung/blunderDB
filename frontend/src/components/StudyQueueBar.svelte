@@ -26,6 +26,8 @@
                 return $t('studyQueue.reasonClose');
             case 'backlog':
                 return $t('studyQueue.reasonBacklog');
+            case 'plan':
+                return $t('studyQueue.reasonPlan');
             default:
                 return reason;
         }

@@ -182,6 +182,14 @@ export function ComputeStatsCtx(arg1, arg2) {
   return window['go']['database']['Database']['ComputeStatsCtx'](arg1, arg2);
 }
 
+export function ComputeStudyPlan(arg1) {
+  return window['go']['database']['Database']['ComputeStudyPlan'](arg1);
+}
+
+export function ComputeStudyPlanCtx(arg1, arg2) {
+  return window['go']['database']['Database']['ComputeStudyPlanCtx'](arg1, arg2);
+}
+
 export function ComputeTrainingStats(arg1, arg2) {
   return window['go']['database']['Database']['ComputeTrainingStats'](arg1, arg2);
 }
@@ -1408,6 +1416,14 @@ export function StudyBacklog(arg1) {
 
 export function StudyImpact(arg1) {
   return window['go']['database']['Database']['StudyImpact'](arg1);
+}
+
+export function StudyPlanPositionIDs(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['StudyPlanPositionIDs'](arg1, arg2, arg3);
+}
+
+export function StudyPlanQueue(arg1, arg2) {
+  return window['go']['database']['Database']['StudyPlanQueue'](arg1, arg2);
 }
 
 export function StudyPositionIDs(arg1, arg2, arg3) {
