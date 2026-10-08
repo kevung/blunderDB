@@ -665,7 +665,16 @@
         "confirmDelete": "Удалить матч между {player1} и {player2}?",
         "enrichFromFile": "Дополнить из файла…",
         "editTranscription": "Править запись",
-        "editTranscriptionTooltip": "Открыть этот матч как черновик записи; его завершение заменяет матч"
+        "editTranscriptionTooltip": "Открыть этот матч как черновик записи; его завершение заменяет матч",
+        "video": "Видео",
+        "videoPlaceholder": "URL или путь к видеофайлу",
+        "videoChoose": "Файл…",
+        "videoDetach": "Отвязать",
+        "videoOpen": "Видео матча",
+        "viewInVideo": "Смотреть в видео",
+        "videoSet": "Источник видео сохранён",
+        "videoDetached": "Источник видео отвязан",
+        "errorVideo": "Ошибка видео матча"
     },
     "collection": {
         "addDescription": "Добавить описание…",
@@ -3089,5 +3098,14 @@
         "pace": "Ошибки: {hasty} поспешных ({hastyLoss}), {deliberate} обдуманных ({deliberateLoss}), {unknown} без времени",
         "paceDiscipline": "скорее дисциплина: играть медленнее",
         "paceKnowledge": "скорее знания: изучить эти позиции"
+    },
+    "video": {
+        "notPlayable": "Этот источник нельзя воспроизвести здесь.",
+        "codecDetail": "Webview не воспроизводит этот файл ({container}, поддержка: {support}, код {code}).",
+        "unsupported": "не поддерживается",
+        "codecHint": "В Linux установите gst-plugins-good и gst-libav; в Windows расширение HEVC из Store воспроизводит H.265.",
+        "missing": "Видеофайл не найден.",
+        "relocate": "Выбрать файл…",
+        "player": "Видеоплеер"
     }
 }

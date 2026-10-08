@@ -20,16 +20,19 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-// mediaHost serves a draft's video from a loopback HTTP server rather than
-// Wails' asset server, which does not honour Range requests. It serves only
-// files registered through MediaURL, each under an unguessable token: the URL
-// never carries a path, so nothing else on disk is reachable.
+// mediaHost serves the videos of the open panes from a loopback HTTP server
+// rather than Wails' asset server, which does not honour Range requests. It
+// serves only files registered through MediaURL, each under an unguessable
+// token: the URL never carries a path, so nothing else on disk is reachable.
+// A registration is counted: two panes on the same file share a token, and the
+// token goes when the last of them releases its URL.
 type mediaHost struct {
 	mu      sync.Mutex
 	srv     *http.Server
 	base    string
 	tokens  map[string]string // token -> absolute path
 	byPath  map[string]string // absolute path -> token
+	refs    map[string]int    // token or YouTube id -> panes holding it
 	youtube map[string]bool   // ids with an attached YouTube source
 }
 
@@ -153,9 +156,12 @@ func (h *mediaHost) register(path string) (string, error) {
 			return "", err
 		}
 		tok = hex.EncodeToString(b[:])
-		// One video is served at a time: the new file replaces the last.
-		h.tokens, h.byPath = map[string]string{tok: abs}, map[string]string{abs: tok}
+		if h.tokens == nil {
+			h.tokens, h.byPath = map[string]string{}, map[string]string{}
+		}
+		h.tokens[tok], h.byPath[abs] = abs, tok
 	}
+	h.hold(tok)
 	return h.base + "/media/" + tok, nil
 }
 
@@ -168,22 +174,57 @@ func (h *mediaHost) registerYouTube(id string) (string, error) {
 	if err := h.startLocked(); err != nil {
 		return "", err
 	}
-	h.youtube = map[string]bool{id: true}
+	if h.youtube == nil {
+		h.youtube = map[string]bool{}
+	}
+	h.youtube[id] = true
+	h.hold(id)
 	return h.base + "/yt/" + id, nil
 }
 
-// release forgets the registered file and YouTube id; the server stays up.
-func (h *mediaHost) release() {
+// hold counts one more pane on key. Called with h.mu held.
+func (h *mediaHost) hold(key string) {
+	if h.refs == nil {
+		h.refs = map[string]int{}
+	}
+	h.refs[key]++
+}
+
+// release forgets one pane's registration, named by the URL it was given; the
+// file or YouTube id stops being served with the last pane that held it, and
+// the server stays up. An unknown URL is ignored.
+func (h *mediaHost) release(u string) {
 	h.mu.Lock()
-	h.tokens, h.byPath, h.youtube = nil, nil, nil
-	h.mu.Unlock()
+	defer h.mu.Unlock()
+	var key, kind string
+	switch {
+	case h.base != "" && strings.HasPrefix(u, h.base+"/media/"):
+		key, kind = strings.TrimPrefix(u, h.base+"/media/"), "media"
+	case h.base != "" && strings.HasPrefix(u, h.base+"/yt/"):
+		key, kind = strings.TrimPrefix(u, h.base+"/yt/"), "yt"
+	default:
+		return
+	}
+	if h.refs[key] == 0 {
+		return
+	}
+	if h.refs[key]--; h.refs[key] > 0 {
+		return
+	}
+	delete(h.refs, key)
+	if kind == "yt" {
+		delete(h.youtube, key)
+		return
+	}
+	delete(h.byPath, h.tokens[key])
+	delete(h.tokens, key)
 }
 
 func (h *mediaHost) stop() {
 	h.mu.Lock()
 	srv := h.srv
 	h.srv, h.base = nil, ""
-	h.tokens, h.byPath, h.youtube = nil, nil, nil
+	h.tokens, h.byPath, h.youtube, h.refs = nil, nil, nil, nil
 	h.mu.Unlock()
 	if srv != nil {
 		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
@@ -194,8 +235,10 @@ func (h *mediaHost) stop() {
 	}
 }
 
-// ReleaseMedia stops serving the current video (draft closed).
-func (a *App) ReleaseMedia() { a.media.release() }
+// ReleaseMedia stops serving the video behind url, a URL MediaURL or
+// YouTubeEmbedURL returned (its pane closed or changed source); the other
+// panes' videos keep playing.
+func (a *App) ReleaseMedia(url string) { a.media.release(url) }
 
 // stopMedia stops the loopback media server, at shutdown.
 func (a *App) stopMedia() { a.media.stop() }

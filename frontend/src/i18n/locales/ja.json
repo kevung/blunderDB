@@ -665,7 +665,16 @@
         "confirmDelete": "{player1}と{player2}のマッチを削除しますか?",
         "enrichFromFile": "ファイルから補完…",
         "editTranscription": "記譜を編集",
-        "editTranscriptionTooltip": "このマッチを記譜の下書きとして開きます。完了するとマッチが置き換えられます"
+        "editTranscriptionTooltip": "このマッチを記譜の下書きとして開きます。完了するとマッチが置き換えられます",
+        "video": "動画",
+        "videoPlaceholder": "動画のURLまたはファイルパス",
+        "videoChoose": "ファイル…",
+        "videoDetach": "切り離す",
+        "videoOpen": "マッチの動画",
+        "viewInVideo": "動画で見る",
+        "videoSet": "動画ソースを保存しました",
+        "videoDetached": "動画ソースを切り離しました",
+        "errorVideo": "マッチ動画のエラー"
     },
     "collection": {
         "addDescription": "説明を追加…",
@@ -3089,5 +3098,14 @@
         "pace": "エラー：性急 {hasty}（{hastyLoss}）、熟考 {deliberate}（{deliberateLoss}）、時間なし {unknown}",
         "paceDiscipline": "むしろ規律：ゆっくり打つ",
         "paceKnowledge": "むしろ知識：これらの局面を学ぶ"
+    },
+    "video": {
+        "notPlayable": "このソースはここでは再生できません。",
+        "codecDetail": "Webview はこのファイルを再生できません（{container}、対応状況：{support}、コード {code}）。",
+        "unsupported": "非対応",
+        "codecHint": "Linux では gst-plugins-good と gst-libav をインストールしてください。Windows では Store の HEVC 拡張機能で H.265 を再生できます。",
+        "missing": "動画ファイルが見つかりません。",
+        "relocate": "ファイルを選択…",
+        "player": "動画プレーヤー"
     }
 }

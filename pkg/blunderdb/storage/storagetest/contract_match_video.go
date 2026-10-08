@@ -2,6 +2,7 @@ package storagetest
 
 import (
 	"context"
+	"errors"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -114,4 +115,17 @@ func testMatchVideoRoundTrip(t *testing.T, s storage.Storage) {
 		t.Fatalf(`ReplaceHeader(""): %v`, err)
 	}
 	check(`after ReplaceHeader with ""`, bareID, nil, bare)
+
+	url := "https://youtu.be/dQw4w9WgXcQ"
+	if err := ms.SetVideoSource(ctx, "", bareID, url); err != nil {
+		t.Fatalf("SetVideoSource: %v", err)
+	}
+	check("after SetVideoSource", bareID, &url, bare)
+	if err := ms.SetVideoSource(ctx, "", bareID, ""); err != nil {
+		t.Fatalf(`SetVideoSource(""): %v`, err)
+	}
+	check(`after SetVideoSource with ""`, bareID, nil, bare)
+	if err := ms.SetVideoSource(ctx, "", 987654321, url); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("SetVideoSource on an unknown id = %v, want ErrNotFound", err)
+	}
 }

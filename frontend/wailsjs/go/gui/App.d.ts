@@ -124,7 +124,7 @@ export function ReadLogTail(arg1:number):Promise<Array<string>>;
 
 export function RegenerateIssuerIdentity(arg1:string):Promise<domain.IssuerIdentityInfo>;
 
-export function ReleaseMedia():Promise<void>;
+export function ReleaseMedia(arg1:string):Promise<void>;
 
 export function RolloutPresets():Promise<Array<gui.RolloutPreset>>;
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-05 04:23+0200\n"
+"POT-Creation-Date: 2026-10-08 20:06+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -408,10 +408,39 @@ msgstr ""
 "``flatpak run io.github.kevung.blunderDB <команда>``."
 
 #: ../../source/telecharge_install.rst:186
+msgid "Vidéos de match sous Linux"
+msgstr "Видео матчей в Linux"
+
+#: ../../source/telecharge_install.rst:188
+msgid ""
+"Le panneau Matchs lit la vidéo attachée à un match avec les codecs du "
+"webview : sous Linux, ceux de GStreamer. Pour lire le MP4 et le WebM, "
+"installez ``gst-plugins-good``, et ``gst-libav`` pour le H.264 et le HEVC"
+" (paquets ``gstreamer1.0-plugins-good`` et ``gstreamer1.0-libav`` sur "
+"Debian, Ubuntu et Mint ; ``gstreamer1-plugins-good`` et "
+"``gstreamer1-libav`` sur Fedora). Le paquet AUR les propose en "
+"dépendances optionnelles ; le Flatpak embarque l'extension "
+"``org.freedesktop.Platform.ffmpeg-full``. Sous Windows, le HEVC demande "
+"l'extension « Extensions vidéo HEVC » du Microsoft Store ; macOS lit ces "
+"formats nativement. Un fichier que le webview ne lit pas est signalé dans"
+" le volet vidéo, avec son format."
+msgstr ""
+"Панель «Матчи» воспроизводит видео, прикреплённое к матчу, кодеками "
+"webview: в Linux это кодеки GStreamer. Для MP4 и WebM установите ``gst-"
+"plugins-good``, а для H.264 и HEVC — ``gst-libav`` (пакеты ``gstreamer1.0"
+"-plugins-good`` и ``gstreamer1.0-libav`` в Debian, Ubuntu и Mint; "
+"``gstreamer1-plugins-good`` и ``gstreamer1-libav`` в Fedora). Пакет AUR "
+"предлагает их как необязательные зависимости; Flatpak включает расширение"
+" ``org.freedesktop.Platform.ffmpeg-full``. В Windows для HEVC нужно "
+"расширение «Расширения для видео HEVC» из Microsoft Store; macOS "
+"воспроизводит эти форматы штатно. Файл, который webview не воспроизводит,"
+" отмечается в видеопанели вместе с его форматом."
+
+#: ../../source/telecharge_install.rst:200
 msgid "Archive .tar.gz"
 msgstr "Архив .tar.gz"
 
-#: ../../source/telecharge_install.rst:188
+#: ../../source/telecharge_install.rst:202
 msgid ""
 "Pour les autres distributions. L'extraction d'une archive conserve le bit"
 " exécutable, aucun ``chmod`` n'est donc nécessaire :"
@@ -419,7 +448,7 @@ msgstr ""
 "Для других дистрибутивов. При извлечении архива сохраняется бит "
 "исполнения, поэтому ``chmod`` не требуется:"
 
-#: ../../source/telecharge_install.rst:197
+#: ../../source/telecharge_install.rst:211
 msgid ""
 "L'exécutable de l'archive s'appelle ``blunderDB``, avec les majuscules. "
 "Les paquets ``.deb``, ``.rpm``, AUR et Flatpak installent en plus le lien"
@@ -435,11 +464,11 @@ msgstr ""
 "рядом с исполняемым файлом. Чтобы она была в вашем ``PATH``: ``ln -s "
 "\"$PWD/blunderDB\" ~/.local/bin/blunderdb``."
 
-#: ../../source/telecharge_install.rst:205
+#: ../../source/telecharge_install.rst:219
 msgid "Binaire brut (méthode avancée)"
 msgstr "Необработанный двоичный файл (продвинутый способ)"
 
-#: ../../source/telecharge_install.rst:207
+#: ../../source/telecharge_install.rst:221
 msgid ""
 "Le binaire brut |latest_linux_exe| reste disponible. Comme un navigateur "
 "retire le bit exécutable au téléchargement, il faut le rétablir avant la "
@@ -449,7 +478,7 @@ msgstr ""
 "Поскольку браузер удаляет бит исполнения при загрузке, его необходимо "
 "восстановить перед первым запуском:"
 
-#: ../../source/telecharge_install.rst:215
+#: ../../source/telecharge_install.rst:229
 msgid ""
 "Deux variantes Linux sont publiées selon la version de la bibliothèque "
 "webkit2gtk. Si vous obtenez l'erreur ``libwebkit2gtk-4.0.so.37: cannot "
@@ -465,11 +494,11 @@ msgstr ""
 "сборку |latest_linux_webkit2gtk41_exe|. Нативные пакеты выбирают "
 "правильную зависимость автоматически."
 
-#: ../../source/telecharge_install.rst:224
+#: ../../source/telecharge_install.rst:238
 msgid "Image Docker (mode serveur)"
 msgstr "Образ Docker (серверный режим)"
 
-#: ../../source/telecharge_install.rst:226
+#: ../../source/telecharge_install.rst:240
 msgid ""
 "Le mode serveur (:ref:`headless`) n'a pas besoin de l'application de "
 "bureau : chaque version publie l'image ``ghcr.io/kevung/blunderdb-serve``"
@@ -481,7 +510,7 @@ msgstr ""
 "реестре GitHub для ``linux/amd64`` и ``linux/arm64``, с тегом версии и с "
 "тегом ``latest``:"
 
-#: ../../source/telecharge_install.rst:235
+#: ../../source/telecharge_install.rst:249
 msgid ""
 "Le lancement, la configuration et l'avertissement sur le mandataire "
 "d'authentification sont décrits dans :ref:`headless_docker_image`."
@@ -489,11 +518,11 @@ msgstr ""
 "Запуск, настройка и предупреждение об аутентифицирующем прокси описаны в "
 ":ref:`headless_docker_image`."
 
-#: ../../source/telecharge_install.rst:241
+#: ../../source/telecharge_install.rst:255
 msgid "Manifestes winget et Homebrew"
 msgstr "Манифесты winget и Homebrew"
 
-#: ../../source/telecharge_install.rst:243
+#: ../../source/telecharge_install.rst:257
 msgid ""
 "Chaque release fournit un manifeste `winget "
 "<https://learn.microsoft.com/windows/package-manager/>`__ (``blunderDB-"
@@ -513,11 +542,11 @@ msgstr ""
 "исполняемого файла: он остаётся неподписанным, и описанные ниже "
 "предупреждения применяются как есть."
 
-#: ../../source/telecharge_install.rst:253
+#: ../../source/telecharge_install.rst:267
 msgid "Avertissements Windows et Mac"
 msgstr "Предупреждения для Windows и Mac"
 
-#: ../../source/telecharge_install.rst:255
+#: ../../source/telecharge_install.rst:269
 msgid ""
 "Sous Windows, il est possible que ce dernier émette des réticences à "
 "exécuter blunderDB. Voir :ref:`annexe_windows_malware` pour comprendre "
@@ -527,7 +556,7 @@ msgstr ""
 " :ref:`annexe_windows_malware` для понимания причин и обхода возможных "
 "блокировок."
 
-#: ../../source/telecharge_install.rst:259
+#: ../../source/telecharge_install.rst:273
 msgid ""
 "Sous Mac, il est possible que ce dernier émette des réticences à exécuter"
 " blunderDB. Voir :ref:`annexe_mac_malware` pour comprendre pourquoi et "

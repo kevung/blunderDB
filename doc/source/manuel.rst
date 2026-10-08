@@ -1689,6 +1689,19 @@ n'en nomme pas ; l'horloge et la table d'équité ne sont pas importées. La
 fiche affiche cet auteur à côté du commentaire, et l'export le copie avec lui ;
 modifier le commentaire le signe de **Votre nom** (réglages).
 
+Un match transcrit depuis une vidéo en porte la **source** : une URL http(s)
+(YouTube, par exemple) ou le chemin d'un fichier. La ligne **Vidéo** de l'onglet
+**Infos** la modifie : saisir une URL ou un chemin puis *ENTREE*, **Fichier…**
+pour choisir une vidéo, **Détacher** pour retirer la source. Un match qui en a
+une affiche l'icône 🎞 dans la barre de sa fiche, et chaque décision qui porte
+un repère de la vidéo la même icône dans sa ligne de l'onglet **Transcription**.
+Cliquer l'icône, ou appuyer sur *v* quand la décision est celle de la revue,
+amène la vidéo une seconde avant le jet des dés : pour un fichier, un volet
+vidéo s'ouvre au-dessus de la fiche ; pour une source YouTube, le navigateur
+s'ouvre sur le lien horodaté. Un fichier introuvable se relocalise depuis le
+volet, et un format que le webview ne lit pas y est signalé avec les paquets à
+installer (voir :ref:`telecharge_install`). Un match sans source ne change pas.
+
 Le bouton **Fusionner les joueurs** de la barre d'outils du panneau ouvre une
 fenêtre listant tous les noms de joueurs de la base avec leur nombre de
 matchs : sélectionner les variantes d'orthographe d'un même joueur, choisir le

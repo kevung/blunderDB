@@ -4,6 +4,7 @@ import (
 	"context"
 	"io"
 	"net/http"
+	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
@@ -24,6 +25,11 @@ type matchUpdateReq struct {
 type matchCommentReq struct {
 	ID      int64  `json:"id"`
 	Comment string `json:"comment"`
+}
+
+type matchVideoSourceReq struct {
+	ID     int64  `json:"id"`
+	Source string `json:"source"`
 }
 
 type mergePlayersReq struct {
@@ -144,6 +150,9 @@ func (s *Server) matchRoutes() []route {
 		})},
 		{http.MethodPost, "/v1/matches.updateComment", rpcVoid(func(ctx context.Context, scope string, req matchCommentReq) error {
 			return ms().UpdateComment(ctx, scope, req.ID, req.Comment)
+		})},
+		{http.MethodPost, "/v1/matches.setVideoSource", rpcVoid(func(ctx context.Context, scope string, req matchVideoSourceReq) error {
+			return ms().SetVideoSource(ctx, scope, req.ID, strings.TrimSpace(req.Source))
 		})},
 		{http.MethodPost, "/v1/matches.delete", rpcVoid(func(ctx context.Context, scope string, req idReq) error {
 			return ms().DeleteCascade(ctx, scope, req.ID)

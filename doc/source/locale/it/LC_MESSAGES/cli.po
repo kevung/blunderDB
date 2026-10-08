@@ -2141,6 +2141,16 @@ msgid ""
 " % sur les matchs (colonne ``95 % CI``), et ``list --type players`` une "
 "colonne ``L7``."
 msgstr ""
+"``summary`` termina con una sezione ``Review``, il bilancio del match "
+"(:ref:`bilancio del match <bilan_match>`): per giocatore, il PR e il suo "
+"intervallo al 95 % sulle partite, il risultato corretto dalla fortuna "
+"(con il risultato, la fortuna netta, lo scarto degli errori e la "
+"copertura dei lanci), i tre errori da rivedere (partita, mossa, perdita e"
+" quota evitabile) e la ripartizione degli errori tra affrettati e "
+"ponderati. Il server lo serve su ``/v1/stats.matchReview``. In ``stats``,"
+" il PR globale e le righe per fase, per etichetta e per punteggio portano"
+" il loro intervallo al 95 % sui match (colonna ``95 % CI``), e ``list "
+"--type players`` una colonna ``L7``."
 
 #: ../../source/cli.rst:974
 msgid "``--id`` — ID du match à afficher (obligatoire)."
@@ -5459,4 +5469,3 @@ msgstr "Questo permette di utilizzare la CLI in script con gestione degli errori
 #~ "``--edit`` ne dà il conto al "
 #~ "massimo e rifiuta senza ``--accept-"
 #~ "losses``."
-

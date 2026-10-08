@@ -62,7 +62,7 @@ export const SHORTCUTS = {
     matchPanel: {
         tier: TIER.PANEL,
         group: 'tab',
-        keys: ['Escape', '/', 'j', 'k', 'ArrowDown', 'ArrowUp', 'Enter', 'Delete'],
+        keys: ['Escape', '/', 'j', 'k', 'v', 'ArrowDown', 'ArrowUp', 'Enter', 'Delete'],
         shadows: ['Escape', '/', 'j', 'k', 'Delete']
     },
     collectionPanel: { tier: TIER.PANEL, group: 'tab', keys: ['Escape', 'Delete'], shadows: ['Escape', 'Delete'] },

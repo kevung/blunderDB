@@ -59,7 +59,7 @@ peut pas embarquer ; le lecteur intégré de YouTube refuse une page sans réfé
    sert à personne d'autre. Les Repères voyagent toujours. Le `.mat` ne porte ni l'un ni
    l'autre.
 5. **Le bureau lit la vidéo par un serveur HTTP de bouclage, jamais par le serveur d'assets de
-   Wails.** Le processus du bureau sert le fichier attaché, et lui seul, sous une URL à jeton
+   Wails.** Le processus du bureau sert les fichiers attachés aux volets ouverts, et eux seuls, sous une URL à jeton
    sur `127.0.0.1`, avec les requêtes partielles qu'exige la lecture. Une source YouTube se lit
    par le lecteur intégré de YouTube, dans une page hébergée par ce même serveur pour qu'elle
    ait un référent ; une vidéo qui interdit l'intégration se regarde ailleurs et ses Repères

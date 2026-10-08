@@ -665,7 +665,16 @@
         "confirmDelete": "Διαγραφή του αγώνα μεταξύ {player1} και {player2};",
         "enrichFromFile": "Εμπλουτισμός από αρχείο…",
         "editTranscription": "Επεξεργασία μεταγραφής",
-        "editTranscriptionTooltip": "Άνοιγμα αυτού του match ως πρόχειρο μεταγραφής· η ολοκλήρωσή του αντικαθιστά το match"
+        "editTranscriptionTooltip": "Άνοιγμα αυτού του match ως πρόχειρο μεταγραφής· η ολοκλήρωσή του αντικαθιστά το match",
+        "video": "Βίντεο",
+        "videoPlaceholder": "URL ή διαδρομή αρχείου βίντεο",
+        "videoChoose": "Αρχείο…",
+        "videoDetach": "Αποσύνδεση",
+        "videoOpen": "Βίντεο του αγώνα",
+        "viewInVideo": "Προβολή στο βίντεο",
+        "videoSet": "Η πηγή βίντεο αποθηκεύτηκε",
+        "videoDetached": "Η πηγή βίντεο αποσυνδέθηκε",
+        "errorVideo": "Σφάλμα στο βίντεο του αγώνα"
     },
     "collection": {
         "addDescription": "Προσθήκη περιγραφής…",
@@ -3089,5 +3098,14 @@
         "pace": "Λάθη: {hasty} βιαστικά ({hastyLoss}), {deliberate} μελετημένα ({deliberateLoss}), {unknown} χωρίς χρόνο",
         "paceDiscipline": "μάλλον πειθαρχία: πιο αργά",
         "paceKnowledge": "μάλλον γνώση: μελέτη αυτών των θέσεων"
+    },
+    "video": {
+        "notPlayable": "Αυτή η πηγή δεν μπορεί να αναπαραχθεί εδώ.",
+        "codecDetail": "Το webview δεν αναπαράγει αυτό το αρχείο ({container}, υποστήριξη: {support}, κωδικός {code}).",
+        "unsupported": "μη υποστηριζόμενο",
+        "codecHint": "Σε Linux εγκαταστήστε gst-plugins-good και gst-libav· σε Windows η επέκταση HEVC του Store παίζει H.265.",
+        "missing": "Το αρχείο βίντεο δεν βρέθηκε.",
+        "relocate": "Επιλογή αρχείου…",
+        "player": "Πρόγραμμα αναπαραγωγής βίντεο"
     }
 }

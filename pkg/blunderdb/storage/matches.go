@@ -100,6 +100,11 @@ type MatchStore interface {
 	// UpdateComment sets the free-text comment on a match.
 	UpdateComment(ctx context.Context, scope string, id int64, comment string) error
 
+	// SetVideoSource attaches the video a match was transcribed from
+	// (ADR-0079), or detaches it when source is empty. ErrNotFound when no
+	// match has this id.
+	SetVideoSource(ctx context.Context, scope string, id int64, source string) error
+
 	// ReplaceHeader rewrites the header columns of an existing match in place,
 	// from m: the two names, the event, location and round, the length, the
 	// date, the hashes, the game count and the source metadata (Elo,

@@ -581,6 +581,18 @@ func (d *Database) SaveLibrarySettings(settings storage.LibrarySettings) error {
 	return d.store.LibrarySettings().Save(context.Background(), "", settings)
 }
 
+// SetMatchVideoSource attaches the video a match was transcribed from (an
+// http(s) URL or a local path), or detaches it when source is empty.
+func (d *Database) SetMatchVideoSource(matchID int64, source string) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return fmt.Errorf("no database is currently open")
+	}
+	return d.store.Matches().SetVideoSource(context.Background(), "", matchID, strings.TrimSpace(source))
+}
+
 // UpdateMatch updates editable metadata for a match (player names and date).
 // matchDate should be an empty string or a date string parseable by time.Parse ("2006-01-02").
 func (d *Database) UpdateMatch(matchID int64, player1Name, player2Name, matchDate string) error {

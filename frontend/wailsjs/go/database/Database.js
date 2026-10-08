@@ -1338,6 +1338,10 @@ export function SetMatchTournamentByName(arg1, arg2) {
   return window['go']['database']['Database']['SetMatchTournamentByName'](arg1, arg2);
 }
 
+export function SetMatchVideoSource(arg1, arg2) {
+  return window['go']['database']['Database']['SetMatchVideoSource'](arg1, arg2);
+}
+
 export function SetMigrationProgress(arg1) {
   return window['go']['database']['Database']['SetMigrationProgress'](arg1);
 }

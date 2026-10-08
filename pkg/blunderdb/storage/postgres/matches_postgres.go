@@ -404,6 +404,20 @@ func (s *matchStore) ReplaceHeader(ctx context.Context, scope string, id int64, 
 	return nil
 }
 
+// SetVideoSource attaches or detaches (empty) a match's video source.
+func (s *matchStore) SetVideoSource(ctx context.Context, scope string, id int64, source string) error {
+	tag, err := s.db.Exec(ctx,
+		`UPDATE match SET video_source = NULLIF($1, '') WHERE id = $2 AND tenant_id = $3`,
+		source, id, tenantID(scope))
+	if err != nil {
+		return fmt.Errorf("postgres: set match %d video source: %w", id, err)
+	}
+	if tag.RowsAffected() == 0 {
+		return fmt.Errorf("postgres: set match %d video source: %w", id, storage.ErrNotFound)
+	}
+	return nil
+}
+
 // UpdateComment sets the free-text comment on a match, signed by the
 // context's comment author (storage.WithCommentAuthor).
 func (s *matchStore) UpdateComment(ctx context.Context, scope string, id int64, comment string) error {
