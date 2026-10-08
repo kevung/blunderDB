@@ -6,6 +6,8 @@
     import { t } from '../../i18n/index.js';
     import { fmtMwc7, fmtMwc7Interval, mwc7Tooltip } from '../../utils/mwc7.js';
     import StatsStudyPlan from './StatsStudyPlan.svelte';
+    import StatsStudyEffect from './StatsStudyEffect.svelte';
+    import StatsBiases from './StatsBiases.svelte';
 
     /** @type {{ result: import('../../stores/statsStore.js').StatsResult|null, metric: string }} */
     let { result = null, metric = 'pr' } = $props();
@@ -131,6 +133,10 @@
 
     <!-- ── Study plan: what to work on now (ADR-0077) ───────────────── -->
     <StatsStudyPlan />
+
+    <!-- ── Before/after the study, and which way the decisions err (ADR-0078) ── -->
+    <StatsStudyEffect />
+    <StatsBiases />
 
     <!-- ── Rolling N ────────────────────────────────────────────── -->
     <section class="rolling-section">

@@ -15,6 +15,7 @@
         recurringErrorsErrorStore,
         refreshRecurringErrors,
         refreshStudyPlan,
+        refreshStudyLoop,
         trainingStatsStore,
         trainingStatsLoadingStore,
         trainingStatsErrorStore,
@@ -70,6 +71,14 @@
         const key = $statsInvalidationKeyStore;
         if (!$databaseLoadedStore || activeTab !== 'dashboard') return;
         logger.perf('StatsPanel:refreshStudyPlan', () => refreshStudyPlan(filter, key));
+    });
+
+    // Before/after the study and the signed biases replay analyses as well (ADR-0078).
+    $effect(() => {
+        const filter = $statsFilterStore;
+        const key = $statsInvalidationKeyStore;
+        if (!$databaseLoadedStore || activeTab !== 'dashboard') return;
+        logger.perf('StatsPanel:refreshStudyLoop', () => refreshStudyLoop(filter, key));
     });
 
     // The training series read three journals: fetched only while their tab is open.

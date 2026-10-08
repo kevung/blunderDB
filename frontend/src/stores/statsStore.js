@@ -1,5 +1,5 @@
 import { writable, derived, get } from 'svelte/store';
-import { ComputeStats, ComputeRecurringErrors, ComputeStudyPlan, ComputeTrainingStats, GetPlayerTable } from '../../wailsjs/go/database/Database.js';
+import { ComputeStats, ComputeRecurringErrors, ComputeStudyPlan, ComputeStudyEffect, ComputeDirectionalBiases, ComputeTrainingStats, GetPlayerTable } from '../../wailsjs/go/database/Database.js';
 import { databasePathStore } from './databaseStore.js';
 import { dbMutationCounterStore } from './uiStore.js';
 
@@ -160,6 +160,42 @@ export async function refreshStudyPlan(filter, invalidationKey) {
         studyPlanStore.set(null);
     } finally {
         studyPlanLoadingStore.set(false);
+    }
+}
+
+export const studyEffectStore = writable(null);
+export const biasesStore = writable(null);
+export const studyLoopLoadingStore = writable(false);
+export const studyLoopErrorStore = writable(null);
+
+/** Cache key of the last successful before/after and biases fetch. */
+let _cachedStudyLoopKey = null;
+
+/**
+ * Fetch the before/after measure of the studied families and the signed biases of the filter
+ * (ADR-0078). Both replay analyses: fetched only while the dashboard, which shows them, is open.
+ * @param {object} filter
+ * @param {number} invalidationKey
+ */
+export async function refreshStudyLoop(filter, invalidationKey) {
+    const key = JSON.stringify(filter) + '||' + invalidationKey;
+    if (key === _cachedStudyLoopKey && get(studyEffectStore) !== null && get(biasesStore) !== null) {
+        return;
+    }
+    _cachedStudyLoopKey = key;
+    studyLoopLoadingStore.set(true);
+    studyLoopErrorStore.set(null);
+    try {
+        const [effect, biases] = await Promise.all([ComputeStudyEffect(filter), ComputeDirectionalBiases(filter)]);
+        studyEffectStore.set(effect);
+        biasesStore.set(biases);
+    } catch (err) {
+        _cachedStudyLoopKey = null; // allow retry on error
+        studyLoopErrorStore.set(err?.message ?? String(err));
+        studyEffectStore.set(null);
+        biasesStore.set(null);
+    } finally {
+        studyLoopLoadingStore.set(false);
     }
 }
 
