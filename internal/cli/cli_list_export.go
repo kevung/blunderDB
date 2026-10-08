@@ -77,9 +77,9 @@ func (cli *CLI) exportPositionsCSV(limit int) error {
 		p := pos
 		pipBlack, pipWhite := p.ComputePipCounts()
 		pip1, pip2 := strconv.Itoa(pipBlack), strconv.Itoa(pipWhite)
-		cols := engine.PopulateAnalysisColumns(nil, "", "")
+		cols := engine.PopulateAnalysisColumns(nil, "", "", engine.LegalPlaysUnknown)
 		if a, err := cli.db.LoadAnalysis(p.ID); err == nil && a != nil {
-			cols = engine.PopulateAnalysisColumns(a, firstPlayed(a.PlayedMoves), firstPlayed(a.PlayedCubeActions))
+			cols = engine.PopulateAnalysisColumns(a, firstPlayed(a.PlayedMoves), firstPlayed(a.PlayedCubeActions), engine.CountLegalPlays(&p))
 		}
 		if err := w.Write([]string{
 			strconv.FormatInt(p.ID, 10),
@@ -189,7 +189,7 @@ func (cli *CLI) exportAnalysesCSV(limit int) error {
 		if err != nil || a == nil {
 			continue
 		}
-		cols := engine.PopulateAnalysisColumns(a, firstPlayed(a.PlayedMoves), firstPlayed(a.PlayedCubeActions))
+		cols := engine.PopulateAnalysisColumns(a, firstPlayed(a.PlayedMoves), firstPlayed(a.PlayedCubeActions), engine.CountLegalPlays(&pos))
 
 		bestMove, bestEquity := "", ""
 		engineName, depth := "", ""

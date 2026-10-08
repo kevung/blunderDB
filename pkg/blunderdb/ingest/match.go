@@ -259,7 +259,7 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 		for mi := range gg.Moves {
 			mg := &gg.Moves[mi]
 			if mg.Position != nil {
-				played := &storage.PlayedActions{CheckerMove: mg.Move.CheckerMove, CubeAction: mg.Move.CubeAction}
+				played := &storage.PlayedActions{CheckerMove: mg.Move.CheckerMove, CubeAction: mg.Move.CubeAction, Position: mg.Position}
 				posID, err := savePositionWithAnalyses(commentCtx, tx, scope, mg.Position, played, mg.Analyses, mg.Comments, g.CommentOrigin)
 				if err != nil {
 					return res, err
@@ -412,7 +412,7 @@ func deepenAnalyses(ctx context.Context, tx storage.Tx, scope string, g *MatchGr
 			if !found {
 				continue
 			}
-			played := &storage.PlayedActions{CheckerMove: mg.Move.CheckerMove, CubeAction: mg.Move.CubeAction}
+			played := &storage.PlayedActions{CheckerMove: mg.Move.CheckerMove, CubeAction: mg.Move.CubeAction, Position: mg.Position}
 			written, err := tx.Analyses().Merge(ctx, scope, posID, played, func(existing *domain.PositionAnalysis) *domain.PositionAnalysis {
 				cur := existing
 				for _, frag := range mg.Analyses {

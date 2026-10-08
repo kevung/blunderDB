@@ -101,10 +101,10 @@ func (s *analysisStore) merge(ctx context.Context, scope string, positionID int6
 	load := func() error {
 		return s.db.QueryRow(ctx,
 			`SELECT data, `+sqlshared.TenantActionLabelOrEmptySQL("analysis.best_cube_action")+`, COALESCE(cube_error,0), COALESCE(best_move_equity_error,0),
-			        COALESCE(is_forced,FALSE), COALESCE(is_close_cube,FALSE)
+			        best_move_equity_error IS NULL, COALESCE(is_forced,FALSE), COALESCE(is_close_cube,FALSE)
 			 FROM analysis WHERE position_id = $1 AND tenant_id = $2
 			 FOR UPDATE`, positionID, tenant).
-			Scan(&data, &stored.bestCube, &stored.cubeErr, &stored.bestMoveErr, &stored.forced, &stored.closeCube)
+			Scan(&data, &stored.bestCube, &stored.cubeErr, &stored.bestMoveErr, &stored.bestMoveUnscored, &stored.forced, &stored.closeCube)
 	}
 	err := load()
 	if errors.Is(err, pgx.ErrNoRows) {
@@ -161,12 +161,13 @@ func (s *analysisStore) merge(ctx context.Context, scope string, positionID int6
 type storedPlayedColumns struct {
 	bestCube             string
 	cubeErr, bestMoveErr int64
+	bestMoveUnscored     bool // best_move_equity_error is NULL
 	forced, closeCube    bool
 }
 
 func (p storedPlayedColumns) equal(c engine.AnalysisColumns) bool {
 	return c.BestCubeAction == p.bestCube && c.CubeError == p.cubeErr &&
-		c.BestMoveEquityError == p.bestMoveErr &&
+		c.BestMoveEquityError == p.bestMoveErr && c.BestMoveUnscored == p.bestMoveUnscored &&
 		(c.IsForced == 1) == p.forced && (c.IsCloseCube == 1) == p.closeCube
 }
 
@@ -192,8 +193,35 @@ func (s *analysisStore) prepare(ctx context.Context, tenant, positionID int64, a
 		playedMove, playedCubeAction = engine.PlayedActionsFor(
 			[]string{playedMove}, []string{playedCubeAction}, []string{mvMove}, []string{mvCube})
 	}
+	legal, err := s.legalPlaysOf(ctx, tenant, positionID, a, played)
+	if err != nil {
+		return engine.AnalysisColumns{}, err
+	}
 	engine.RoundAnalysisForStorage(a)
-	return engine.PopulateAnalysisColumns(a, playedMove, playedCubeAction), nil
+	return engine.PopulateAnalysisColumns(a, playedMove, playedCubeAction, legal), nil
+}
+
+// legalPlaysOf counts the legal plays of the position a checker analysis is
+// for; a cube-only analysis needs none, and a caller holding the position
+// (storage.PlayedActions) spares the read.
+func (s *analysisStore) legalPlaysOf(ctx context.Context, tenant, positionID int64, a *domain.PositionAnalysis, played *storage.PlayedActions) (int, error) {
+	if ca := a.ColumnSource().CheckerAnalysis; ca == nil || len(ca.Moves) == 0 {
+		return engine.LegalPlaysUnknown, nil
+	}
+	if played != nil && played.Position != nil {
+		return engine.CountLegalPlays(played.Position), nil
+	}
+	var state []byte
+	var por, d1, d2 *int64
+	err := s.db.QueryRow(ctx, `SELECT `+sqlshared.LegalPlaysColumns+` FROM position p WHERE p.id = $1 AND p.tenant_id = $2`,
+		positionID, tenant).Scan(&state, &por, &d1, &d2)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return engine.LegalPlaysUnknown, nil
+	}
+	if err != nil {
+		return 0, fmt.Errorf("postgres: read position %d for its legal plays: %w", positionID, err)
+	}
+	return sqlshared.LegalPlays(state, por, d1, d2), nil
 }
 
 // write encodes a prepared analysis into the BYTEA data column and upserts
@@ -218,7 +246,7 @@ func (s *analysisStore) write(ctx context.Context, tenant, positionID int64, a *
 		}
 		tag, err := tx.Exec(ctx, analysisUpsertSQL,
 			tenant, positionID, data,
-			bestCube, c.CubeError, c.BestMoveEquityError,
+			bestCube, c.CubeError, c.BestMoveErrorArg(),
 			c.Player1WinRate, c.Player1GammonRate, c.Player1BackgammonRate,
 			c.Player2WinRate, c.Player2GammonRate, c.Player2BackgammonRate,
 			c.IsForced != 0, c.IsCloseCube != 0,
@@ -373,7 +401,11 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, scope str
 		data                 []byte
 		bestCube             string
 		cubeErr, bestMoveErr int64
+		bestMoveUnscored     bool
 		forced, closeCub     bool
+		// The position's columns its legal plays depend on.
+		state       []byte
+		por, d1, d2 *int64
 		// The match's own record of what was played, joined in here rather
 		// than looked up row by row: a repair walks every analysis in the
 		// tenant.
@@ -386,10 +418,12 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, scope str
 		if err := func() error {
 			rows, err := s.db.Query(ctx,
 				`SELECT a.id, a.data, `+sqlshared.TenantActionLabelOrEmptySQL("a.best_cube_action")+`, COALESCE(a.cube_error,0),
-				        COALESCE(a.best_move_equity_error,0), a.is_forced, a.is_close_cube,
+				        COALESCE(a.best_move_equity_error,0), a.best_move_equity_error IS NULL, a.is_forced, a.is_close_cube,
 				        (SELECT mv.checker_move FROM move mv WHERE mv.position_id = a.position_id AND mv.tenant_id = a.tenant_id AND COALESCE(mv.checker_move, '') <> '' ORDER BY mv.id LIMIT 1),
-				        (SELECT `+sqlshared.TenantActionLabelSQL("mv.cube_action")+` FROM move mv WHERE mv.position_id = a.position_id AND mv.tenant_id = a.tenant_id AND `+sqlshared.ActionNotEmptySQL("mv.cube_action")+` ORDER BY mv.id LIMIT 1)
-				 FROM analysis a WHERE a.tenant_id = $1 AND a.id > $2 ORDER BY a.id LIMIT $3`,
+				        (SELECT `+sqlshared.TenantActionLabelSQL("mv.cube_action")+` FROM move mv WHERE mv.position_id = a.position_id AND mv.tenant_id = a.tenant_id AND `+sqlshared.ActionNotEmptySQL("mv.cube_action")+` ORDER BY mv.id LIMIT 1),
+				        `+sqlshared.LegalPlaysColumns+`
+				 FROM analysis a LEFT JOIN position p ON p.id = a.position_id AND p.tenant_id = a.tenant_id
+				 WHERE a.tenant_id = $1 AND a.id > $2 ORDER BY a.id LIMIT $3`,
 				tid, lastID, repairPageSize)
 			if err != nil {
 				return fmt.Errorf("postgres: repair: read analyses: %w", err)
@@ -397,7 +431,7 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, scope str
 			defer rows.Close()
 			for rows.Next() {
 				var r row
-				if err := rows.Scan(&r.id, &r.data, &r.bestCube, &r.cubeErr, &r.bestMoveErr, &r.forced, &r.closeCub, &r.mvMove, &r.mvCube); err != nil {
+				if err := rows.Scan(&r.id, &r.data, &r.bestCube, &r.cubeErr, &r.bestMoveErr, &r.bestMoveUnscored, &r.forced, &r.closeCub, &r.mvMove, &r.mvCube, &r.state, &r.por, &r.d1, &r.d2); err != nil {
 					return fmt.Errorf("postgres: repair: scan: %w", err)
 				}
 				page = append(page, r)
@@ -425,10 +459,11 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, scope str
 			playedMove, playedCubeAction := engine.PlayedActionsFor(
 				a.PlayedMoves, a.PlayedCubeActions,
 				[]string{deref(r.mvMove)}, []string{deref(r.mvCube)})
-			c := engine.PopulateAnalysisColumns(&a, playedMove, playedCubeAction)
-			if c.BestCubeAction == r.bestCube && c.CubeError == r.cubeErr &&
-				c.BestMoveEquityError == r.bestMoveErr &&
-				(c.IsForced == 1) == r.forced && (c.IsCloseCube == 1) == r.closeCub {
+			c := engine.PopulateAnalysisColumns(&a, playedMove, playedCubeAction,
+				sqlshared.LegalPlays(r.state, r.por, r.d1, r.d2))
+			stored := storedPlayedColumns{bestCube: r.bestCube, cubeErr: r.cubeErr, bestMoveErr: r.bestMoveErr,
+				bestMoveUnscored: r.bestMoveUnscored, forced: r.forced, closeCube: r.closeCub}
+			if stored.equal(c) {
 				continue
 			}
 			bestCube, err := actionCode(ctx, s.db, tid, c.BestCubeAction)
@@ -438,7 +473,7 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, scope str
 			if _, err := s.db.Exec(ctx,
 				`UPDATE analysis SET best_cube_action=$1, cube_error=$2, best_move_equity_error=$3,
 				 is_forced=$4, is_close_cube=$5 WHERE id=$6 AND tenant_id=$7`,
-				bestCube, c.CubeError, c.BestMoveEquityError,
+				bestCube, c.CubeError, c.BestMoveErrorArg(),
 				c.IsForced == 1, c.IsCloseCube == 1, r.id, tid); err != nil {
 				return repaired, fmt.Errorf("postgres: repair: update %d: %w", r.id, err)
 			}
@@ -506,7 +541,7 @@ func invalidateMatchStatsOnAnalysis(ctx context.Context, tx execer, tenant, posi
 		}
 		return *p
 	}
-	if err == nil && cubeErr != nil && *cubeErr == c.CubeError && moveErr != nil && *moveErr == c.BestMoveEquityError &&
+	if err == nil && cubeErr != nil && *cubeErr == c.CubeError && (moveErr == nil) == c.BestMoveUnscored && (moveErr == nil || *moveErr == c.BestMoveEquityError) &&
 		forced != nil && *forced == (c.IsForced != 0) && closeCube != nil && *closeCube == (c.IsCloseCube != 0) &&
 		eng != nil && *eng == c.AnalysisEngine && deref(depth) == c.AnalysisDepth &&
 		derefS(bestCube) == c.BestCubeAction && !sqlshared.UpsertDropsMET(metID != nil, c.AnalysisEngine) {

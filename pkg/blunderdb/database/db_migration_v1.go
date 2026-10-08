@@ -479,7 +479,7 @@ func (d *Database) migrate_1_9_0_to_2_0_0(ctx context.Context) error {
 						playedCubeAction = ca.String
 					}
 				}
-				ac := populateAnalysisColumns(&ana, playedMove, playedCubeAction)
+				ac := populateAnalysisColumns(&ana, playedMove, playedCubeAction, legalPlaysUnknown)
 				_, _ = updateAna.Exec(
 					ac.BestCubeAction, ac.CubeError, ac.BestMoveEquityError,
 					ac.Player1WinRate, ac.Player1GammonRate, ac.Player1BackgammonRate,

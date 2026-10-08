@@ -5946,6 +5946,25 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/matchBadgesResp"
+  /v1/stats.matchDecisionLosses:
+    post:
+      operationId: stats.matchDecisionLosses
+      tags: [stats]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/matchIDReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/storage_DecisionLoss"
   /v1/stats.matchDetail:
     post:
       operationId: stats.matchDetail
@@ -8878,6 +8897,9 @@ components:
     storage_CountsEstimate:
       type: object
       description: "Opaque: see the Go type storage.CountsEstimate (defined outside internal/server, not expanded here)."
+    storage_DecisionLoss:
+      type: object
+      description: "Opaque: see the Go type storage.DecisionLoss (defined outside internal/server, not expanded here)."
     storage_Filter:
       type: object
       description: "Opaque: see the Go type storage.Filter (defined outside internal/server, not expanded here)."

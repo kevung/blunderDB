@@ -1507,6 +1507,29 @@ l'analyse ne note pas ne porte aucune marque.
 L'en-tête de chaque partie compte ses marques, qu'elle soit dépliée ou non :
 on voit sans l'ouvrir dans quelle partie se trouvent les blunders.
 
+Quand le match est analysé, l'onglet ajoute la colonne **MWC**, les chances de
+gagner le match que la décision a coûtées, en pourcentage : ``0`` pour une
+décision sans perte, un tiret pour une décision que l'analyse ne note pas ou
+dont le score n'a pas de valeur dans la table d'équité du match (jeu en
+money, décision hors statistiques). Un clic sur l'en-tête **MWC** trie les
+coups de chaque partie de la perte la plus lourde à la plus légère, puis
+l'inverse, puis rend l'ordre du match ; les décisions non notées passent en
+dernier, et ce tri remplace celui de la durée. Au-dessus des parties, un
+résumé donne pour chaque joueur sa perte MWC totale (celle de la liste des
+matchs) et le nombre de décisions notées, avec deux graphiques sur le même
+axe de décisions que celui des durées : une barre par décision, puis la perte
+cumulée de chaque joueur, qui s'arrête sur son total (trait plein pour le
+premier joueur, pointillé pour le second). Une décision non notée porte un
+petit repère à la base de la barre, sans hauteur. Survoler une décision, ou la
+parcourir avec les flèches (les touches Début et Fin mènent aux extrémités), la marque sur les deux
+graphiques et sur sa ligne de la transcription et affiche la partie, le coup, le
+joueur et la perte ; un clic, ou Entrée, y amène la revue et fait défiler la
+transcription jusqu'à la ligne. Il en va de même pour le graphique des
+durées. Hors de l'interface, ``match --format json`` ajoute ``decision_losses``
+(une entrée par coup, ``mwc_loss`` valant ``null`` pour un coup non noté),
+``--format text`` une ligne « MWC loss » par coup noté et ``--format summary`` le
+total par joueur.
+
 Quand le match a gardé la durée de ses décisions (un match joué contre un bot),
 l'onglet ajoute trois colonnes alignées sur les chiffres : **Videau** (la
 décision de videau, prise avant le lancer ou sur la ligne du videau elle-même),

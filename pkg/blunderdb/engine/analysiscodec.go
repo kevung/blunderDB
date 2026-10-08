@@ -422,11 +422,16 @@ func DecodeAnalysesConcurrently(raw map[int64][]byte) (decoded map[int64]*domain
 // PositionAnalysis. Win/gammon/backgammon rates follow the on-roll convention:
 // "player1" is always the player on roll, "player2" the opponent.
 type AnalysisColumns struct {
-	BestCubeAction        string
-	CubeError             int64 // equity loss × 1000 (millipoints); 0 if no played action
-	BestMoveEquityError   int64 // equity loss × 1000 (millipoints); 0 if no played move
-	IsForced              int64 // 1 if checker position with exactly 1 legal move, else 0
-	IsCloseCube           int64 // 1 if cube decision meets gnuBG isCloseCubedecision
+	BestCubeAction      string
+	CubeError           int64 // equity loss × 1000 (millipoints); 0 if no played action
+	BestMoveEquityError int64 // equity loss × 1000 (millipoints); 0 if no played move
+	// BestMoveUnscored is true when a move was played but is none of the
+	// analysed candidates: its cost is unknown, which is not a cost of 0, so
+	// the column is written NULL (BestMoveErrorArg) and the decision is left
+	// out of the statistics.
+	BestMoveUnscored      bool
+	IsForced              int64 // 1 if the checker play is no decision (IsForcedChecker), else 0
+	IsCloseCube           int64 // 1 if the cube decision counts (ComputeIsCloseCube), else 0
 	Player1WinRate        int64
 	Player1GammonRate     int64
 	Player1BackgammonRate int64
@@ -472,44 +477,93 @@ func AnalysisProvenance(a *domain.PositionAnalysis) (engineLabel string, depth i
 	return "", -1, creation
 }
 
-// closeCubeThreshold is the gnuBG isCloseCubedecision equity gap threshold.
-const closeCubeThreshold = 0.16
+// closeCubeThreshold is the gap, in normalised equity, under which XG counts
+// a no-double as a cube decision: no double minus the better of the doubled
+// outcomes for the opponent, min(double/take, double/pass). Measured against
+// min(D/T, D/P) rather than D/T alone, a position too good to double stays a
+// decision while it is within the threshold of cashing.
+const closeCubeThreshold = 0.200
 
-// ComputeIsCloseCube returns 1 if the cube decision qualifies as "close" per
-// the gnuBG isCloseCubedecision predicate (gnubg/eval.c:5088-5100). Take/Pass
-// decisions always count as close. Returns 0 when dca is nil.
+// ComputeIsCloseCube returns 1 if the cube decision counts toward the
+// Performance Rating as XG counts it: every double actually offered, every take
+// and every pass, and a no-double when the player stood close to doubling —
+// no-double equity positive and within closeCubeThreshold of min(D/T, D/P).
+// Returns 0 when there is no cube analysis to judge a no-double by.
 func ComputeIsCloseCube(dca *domain.DoublingCubeAnalysis, playedCubeAction string) int64 {
-	if playedCubeAction == "Take" || playedCubeAction == "Pass" {
+	switch CanonicalCubeAction(playedCubeAction) {
+	case CubeDouble, CubeTake, CubePass:
 		return 1
 	}
 	if dca == nil {
 		return 0
 	}
-	var rOptimal float64
-	switch dca.BestCubeAction {
-	case "No Double":
-		rOptimal = dca.CubefulNoDoubleEquity
-	case "Double, Take", "Double/Take":
-		rOptimal = dca.CubefulDoubleTakeEquity
-	case "Double, Pass", "Double/Pass":
-		rOptimal = dca.CubefulDoublePassEquity
-	default:
-		rOptimal = dca.CubefulNoDoubleEquity
-		if dca.CubefulDoubleTakeEquity > rOptimal {
-			rOptimal = dca.CubefulDoubleTakeEquity
-		}
-		if dca.CubefulDoublePassEquity > rOptimal {
-			rOptimal = dca.CubefulDoublePassEquity
-		}
-	}
-	rDouble := dca.CubefulDoubleTakeEquity
-	if rDouble > 1.0 {
-		rDouble = 1.0
-	}
-	if rOptimal-rDouble < closeCubeThreshold {
+	nd := dca.CubefulNoDoubleEquity
+	doubled := math.Min(dca.CubefulDoubleTakeEquity, dca.CubefulDoublePassEquity)
+	if nd > 0 && nd-doubled < closeCubeThreshold {
 		return 1
 	}
 	return 0
+}
+
+// LegalPlaysUnknown is the legal-play count of a position whose legal plays
+// could not be generated (no dice, an unreadable board).
+const LegalPlaysUnknown = -1
+
+// legalPlayCounter is the move generator CountLegalPlays delegates to. It
+// lives in gammonnet, which imports this package, so it is registered from
+// there (gammonnet's init) rather than imported: every binary links gammonnet.
+var legalPlayCounter atomic.Pointer[func(*domain.Position) int]
+
+// RegisterLegalPlayCounter installs the move generator behind CountLegalPlays.
+func RegisterLegalPlayCounter(f func(*domain.Position) int) {
+	legalPlayCounter.Store(&f)
+}
+
+// CountLegalPlays returns how many distinct legal checker plays the player on
+// roll has in p, LegalPlaysUnknown when it cannot be told: no dice, an
+// unreadable board, or no generator registered (a program not linking
+// gammonnet).
+func CountLegalPlays(p *domain.Position) int {
+	f := legalPlayCounter.Load()
+	if f == nil || p == nil {
+		return LegalPlaysUnknown
+	}
+	return (*f)(p)
+}
+
+// forcedEquitySpan is the spread under which every legal play is worth the
+// same: a choice that costs nothing whichever play is made is no decision.
+// Equities are compared once rounded for storage (millipoints), so the span
+// is "equal to the millipoint".
+const forcedEquitySpan = 0.0005
+
+// IsForcedChecker reports whether a checker play is no decision, as XG
+// counts them for the Performance Rating: a single legal play, or analysed
+// candidates covering every legal play with the first-ranked one worth no
+// more than the lowest. legalPlays is the count of distinct legal plays
+// (LegalPlaysUnknown when it could not be generated); without it, coverage
+// cannot be told, and only a lone candidate is forced.
+//
+// gnuBG's own "unforced" (more than one legal play) is not this predicate; no
+// figure of blunderDB uses it, the Snowie error rate dividing by every move.
+func IsForcedChecker(ca *domain.CheckerAnalysis, legalPlays int) bool {
+	if legalPlays == 0 || legalPlays == 1 {
+		return true
+	}
+	if ca == nil || len(ca.Moves) == 0 {
+		return false
+	}
+	if legalPlays < 0 {
+		return len(ca.Moves) == 1
+	}
+	if len(ca.Moves) < legalPlays {
+		return false
+	}
+	lowest := ca.Moves[0].Equity
+	for _, m := range ca.Moves[1:] {
+		lowest = math.Min(lowest, m.Equity)
+	}
+	return ca.Moves[0].Equity-lowest < forcedEquitySpan
 }
 
 // CubeActionError returns the signed equity error of the played cube action
@@ -646,8 +700,10 @@ func IsResponseCubeAction(action string) bool {
 
 // PopulateAnalysisColumns computes the scalar analysis columns from a
 // PositionAnalysis. playedMove and playedCubeAction are the actions taken in
-// this position (may be empty). Rates are stored × 100, equities × 1000.
-func PopulateAnalysisColumns(a *domain.PositionAnalysis, playedMove, playedCubeAction string) AnalysisColumns {
+// this position (may be empty); legalPlays is the position's count of legal
+// checker plays (LegalPlaysUnknown when not known), which IsForcedChecker
+// needs. Rates are stored × 100, equities × 1000.
+func PopulateAnalysisColumns(a *domain.PositionAnalysis, playedMove, playedCubeAction string, legalPlays int) AnalysisColumns {
 	var c AnalysisColumns
 	if a == nil {
 		return c
@@ -678,23 +734,57 @@ func PopulateAnalysisColumns(a *domain.PositionAnalysis, playedMove, playedCubeA
 		c.Player2BackgammonRate = int64(math.Round(best.OpponentBackgammonChance * 100))
 	}
 
-	if playedMove != "" && a.CheckerAnalysis != nil {
-		normPlayed := NormalizeMove(playedMove)
-		for _, m := range a.CheckerAnalysis.Moves {
-			if NormalizeMove(m.Move) == normPlayed && m.EquityError != nil {
-				c.BestMoveEquityError = int64(math.Round(*m.EquityError * 1000))
-				break
-			}
+	if playedMove != "" && a.CheckerAnalysis != nil && len(a.CheckerAnalysis.Moves) > 0 {
+		if m := PlayedCandidate(a.CheckerAnalysis.Moves, playedMove); m == nil {
+			c.BestMoveUnscored = true
+		} else if m.EquityError != nil {
+			c.BestMoveEquityError = int64(math.Round(*m.EquityError * 1000))
 		}
 	}
 
-	if a.CheckerAnalysis != nil && len(a.CheckerAnalysis.Moves) == 1 {
+	if a.CheckerAnalysis != nil && IsForcedChecker(a.CheckerAnalysis, legalPlays) {
 		c.IsForced = 1
 	}
 
 	c.IsCloseCube = ComputeIsCloseCube(a.DoublingCubeAnalysis, playedCubeAction)
 
 	return c
+}
+
+// PlayedCandidate returns the candidate that is the played move, nil when
+// none is. The notation is matched first as written (parts in any order);
+// failing that, as the play it describes (CanonicalMove), because the match
+// record and the analysis may spell one play two ways — "13/9 9/6" against
+// "13/6", "4/3 3/off" against "4/off". The canonical form drops hit markers,
+// so it is only trusted when it names a single candidate.
+func PlayedCandidate(moves []domain.CheckerMove, playedMove string) *domain.CheckerMove {
+	norm := NormalizeMove(playedMove)
+	for i := range moves {
+		if NormalizeMove(moves[i].Move) == norm {
+			return &moves[i]
+		}
+	}
+	canon := CanonicalMove(playedMove)
+	var found *domain.CheckerMove
+	for i := range moves {
+		if CanonicalMove(moves[i].Move) != canon {
+			continue
+		}
+		if found != nil {
+			return nil
+		}
+		found = &moves[i]
+	}
+	return found
+}
+
+// BestMoveErrorArg is BestMoveEquityError as a column value: nil (NULL) when
+// the played move is unscored.
+func (c AnalysisColumns) BestMoveErrorArg() any {
+	if c.BestMoveUnscored {
+		return nil
+	}
+	return c.BestMoveEquityError
 }
 
 // RoundToMillipoint rounds an equity value (equity points) to the nearest 0.001.

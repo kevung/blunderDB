@@ -2,8 +2,52 @@
   "match_file": "testdata/charlot1-charlot2_7p_2025-11-08-2305.xg",
   "sgf_file": "testdata/charlot1-charlot2_7p_2025-11-08-2305.sgf",
   "match_length": 7,
-  "players": ["charlot1", "charlot2"],
-  "xg": null,
+  "players": [
+    "charlot1",
+    "charlot2"
+  ],
+  "xg": {
+    "player1": {
+      "pr": 0.39,
+      "snowie_error_rate": null,
+      "total_decisions": 90,
+      "checker_unforced": 85,
+      "checker_forced": null,
+      "double_decisions": 3,
+      "take_decisions": 2,
+      "pass_decisions": 0,
+      "total_equity_error_emg": 0.07,
+      "checker_equity_error_emg": 0.07,
+      "double_equity_error_emg": 0.0,
+      "take_equity_error_emg": 0.0,
+      "total_mwc_loss_pct": 0.76,
+      "checker_mwc_loss_pct": 0.76,
+      "double_mwc_loss_pct": 0.0,
+      "take_mwc_loss_pct": 0.0,
+      "total_errors": null,
+      "total_blunders": null
+    },
+    "player2": {
+      "pr": 0.42,
+      "snowie_error_rate": null,
+      "total_decisions": 79,
+      "checker_unforced": 64,
+      "checker_forced": null,
+      "double_decisions": 13,
+      "take_decisions": 2,
+      "pass_decisions": 0,
+      "total_equity_error_emg": 0.066,
+      "checker_equity_error_emg": 0.058,
+      "double_equity_error_emg": 0.008,
+      "take_equity_error_emg": 0.0,
+      "total_mwc_loss_pct": 0.91,
+      "checker_mwc_loss_pct": 0.85,
+      "double_mwc_loss_pct": 0.05,
+      "take_mwc_loss_pct": 0.0,
+      "total_errors": null,
+      "total_blunders": null
+    }
+  },
   "gnubg": {
     "player1": {
       "checker_unforced": 86,
@@ -60,5 +104,5 @@
       "pr_gnubg": null
     }
   },
-  "notes": "XG values not yet available. gnuBG SGF (AP: GNU Backgammon 1.08.003) stores move counts in GS tags but all equity errors are zero — gnuBG recorded alternative moves but did NOT run the statistics pass (skill classification absent). Only move counts (checker_unforced/total, cube decision counts) are reliable from this file. To get full gnuBG stats, re-import in gnuBG and run Analyze > Match Statistics."
+  "notes": "XG values not yet available. gnuBG SGF (AP: GNU Backgammon 1.08.003) stores move counts in GS tags but all equity errors are zero — gnuBG recorded alternative moves but did NOT run the statistics pass (skill classification absent). Only move counts (checker_unforced/total, cube decision counts) are reliable from this file. To get full gnuBG stats, re-import in gnuBG and run Analyze > Match Statistics. XG figures of the stats window (PR, decisions = unforced checker + doubles + takes/passes, equity and MWC losses) provided by the user on 2026-10-08; XG's 'Take Decisions' counts takes and passes together, stored in take_decisions with pass_decisions 0."
 }

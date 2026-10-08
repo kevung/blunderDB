@@ -2,10 +2,11 @@
     // The time a match took, per player, and the decisions over the match.
     // Nothing is drawn for a match that recorded no time.
     import { t } from '../i18n';
+    import { indexAt, stepIndex } from '../utils/chartAxis.js';
     import { fmtDuration, fmtMean, timeBars } from '../utils/decisionTime.js';
 
-    /** @type {{ summary: any, movePositions: any[], player1: string, player2: string }} */
-    let { summary, movePositions, player1, player2 } = $props();
+    /** @type {{ summary: any, movePositions: any[], player1: string, player2: string, hovered?: number | null, onhover?: (moveId: number | null) => void, onselect?: (index: number) => void }} */
+    let { summary, movePositions, player1, player2, hovered = null, onhover = () => {}, onselect = () => {} } = $props();
 
     const W = 320;
     const H = 56;
@@ -17,6 +18,28 @@
         { name: player1, p: summary?.players?.[0] },
         { name: player2, p: summary?.players?.[1] }
     ]);
+    // The hovered decision is shared with the loss chart by its Move, not its place.
+    let focus = $derived.by(() => {
+        if (hovered === null) return null;
+        const i = movePositions.findIndex((mp) => mp.move_id === hovered);
+        return i < 0 ? null : i;
+    });
+    /** @param {number | null} i */
+    const setFocus = (i) => onhover(i === null ? null : (movePositions[i]?.move_id ?? null));
+
+    /** @param {KeyboardEvent} e */
+    function onKey(e) {
+        const next = stepIndex(e.key, focus, movePositions.length);
+        if (next !== null) {
+            e.preventDefault();
+            setFocus(next);
+        } else if (e.key === 'Enter' && focus !== null) {
+            e.preventDefault();
+            onselect(focus);
+        } else if (e.key === 'Escape') {
+            setFocus(null);
+        }
+    }
     let known = $derived(players.some(({ p }) => p && p.checker_count + p.cube_count > 0));
 </script>
 
@@ -48,14 +71,42 @@
                 {/each}
             </tbody>
         </table>
-        <svg class="times-chart" viewBox="0 0 {W} {H}" role="img" aria-label={$t('match.timesChart')}>
-            {#each bars as b (b.index)}
-                {@const h = Math.max(1, (b.ms / peak) * (H - 2))}
-                <rect class="bar" class:player1={b.player === 0} class:player2={b.player === 1} x={b.index * slot} y={H - h} width={Math.max(1, slot - 0.5)} height={h}>
-                    <title>{fmtDuration(b.ms)}</title>
-                </rect>
-            {/each}
-        </svg>
+        <!-- A chart: walked with the arrow keys, opened with Enter. -->
+        <!-- svelte-ignore a11y_no_noninteractive_tabindex, a11y_no_noninteractive_element_interactions -->
+        <div
+            class="times-plot"
+            role="group"
+            tabindex="0"
+            aria-label={$t('match.timesChart')}
+            title={$t('match.chartOpen')}
+            data-testid="times-plot"
+            onmousemove={(e) => setFocus(indexAt(e, movePositions.length))}
+            onmouseleave={() => setFocus(null)}
+            onclick={(e) => onselect(indexAt(e, movePositions.length))}
+            onkeydown={onKey}
+            onblur={() => setFocus(null)}
+        >
+            <svg class="times-chart" viewBox="0 0 {W} {H}" role="img" aria-label={$t('match.timesChart')}>
+                {#each bars as b (b.index)}
+                    {@const h = Math.max(1, (b.ms / peak) * (H - 2))}
+                    <rect
+                        class="bar"
+                        class:player1={b.player === 0}
+                        class:player2={b.player === 1}
+                        class:hot={b.index === focus}
+                        x={b.index * slot}
+                        y={H - h}
+                        width={Math.max(1, slot - 0.5)}
+                        height={h}
+                    >
+                        <title>{fmtDuration(b.ms)}</title>
+                    </rect>
+                {/each}
+                {#if focus !== null}
+                    <line class="cross" x1={(focus + 0.5) * slot} y1="0" x2={(focus + 0.5) * slot} y2={H} />
+                {/if}
+            </svg>
+        </div>
     </div>
 {/if}
 
@@ -87,6 +138,20 @@
         width: 320px;
         max-width: 100%;
         height: 56px;
+    }
+    .times-plot {
+        width: 320px;
+        max-width: 100%;
+        cursor: pointer;
+        outline-offset: 2px;
+    }
+    .cross {
+        stroke: var(--color-text-muted, currentColor);
+        stroke-width: 1;
+    }
+    .bar.hot {
+        stroke: var(--color-text, currentColor);
+        stroke-width: 1;
     }
     .bar.player1 {
         fill: var(--player1-color, currentColor);

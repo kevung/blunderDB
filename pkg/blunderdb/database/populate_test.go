@@ -111,7 +111,7 @@ func TestPopulatePositionColumns_Normalization(t *testing.T) {
 
 func TestPopulateAnalysisColumns_Nil(t *testing.T) {
 	t.Parallel()
-	c := populateAnalysisColumns(nil, "", "")
+	c := populateAnalysisColumns(nil, "", "", legalPlaysUnknown)
 	if c.BestCubeAction != "" || c.CubeError != 0 || c.BestMoveEquityError != 0 {
 		t.Error("nil analysis should produce zero-value columns")
 	}
@@ -141,7 +141,7 @@ func TestPopulateAnalysisColumns_WinRates(t *testing.T) {
 		},
 	}
 
-	c := populateAnalysisColumns(a, "13/7 6/5", "NoDouble")
+	c := populateAnalysisColumns(a, "13/7 6/5", "NoDouble", legalPlaysUnknown)
 
 	if c.BestCubeAction != "NoDouble" {
 		t.Errorf("BestCubeAction: got %q, want %q", c.BestCubeAction, "NoDouble")
@@ -175,13 +175,13 @@ func TestPopulateAnalysisColumns_CubeError(t *testing.T) {
 	}
 
 	// Played "NoDouble" but best is "Double/Take" → error = |0.25| = 250 millipoints
-	c := populateAnalysisColumns(a, "", "NoDouble")
+	c := populateAnalysisColumns(a, "", "NoDouble", legalPlaysUnknown)
 	if c.CubeError != 250 {
 		t.Errorf("CubeError for wrong NoDouble: got %d, want 250", c.CubeError)
 	}
 
 	// Same with space-separated form used by XG import
-	c2 := populateAnalysisColumns(a, "", "No Double")
+	c2 := populateAnalysisColumns(a, "", "No Double", legalPlaysUnknown)
 	if c2.CubeError != 250 {
 		t.Errorf("CubeError for wrong 'No Double' (with space): got %d, want 250", c2.CubeError)
 	}
@@ -196,7 +196,7 @@ func TestPopulateAnalysisColumns_CubeError(t *testing.T) {
 			CubefulDoublePassError: -0.05,
 		},
 	}
-	c3 := populateAnalysisColumns(a2, "", "No Double")
+	c3 := populateAnalysisColumns(a2, "", "No Double", legalPlaysUnknown)
 	if c3.CubeError != 120 {
 		t.Errorf("CubeError for negative raw error: got %d, want 120", c3.CubeError)
 	}
@@ -211,7 +211,7 @@ func TestPopulateAnalysisColumns_NoPlayedMove(t *testing.T) {
 			},
 		},
 	}
-	c := populateAnalysisColumns(a, "", "")
+	c := populateAnalysisColumns(a, "", "", legalPlaysUnknown)
 	if c.BestMoveEquityError != 0 {
 		t.Errorf("BestMoveEquityError should be 0 when no played move, got %d", c.BestMoveEquityError)
 	}
