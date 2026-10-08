@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-08 20:06+0200\n"
+"POT-Creation-Date: 2026-10-05 17:49+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -217,9 +217,11 @@ msgstr "Doble clic fuera del tablero"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Mettre la position affichée sur la Pile, ou l'en retirer, dans tous les "
-"modes."
-msgstr "Poner la posición mostrada en la Pila, o retirarla, en todos los modos."
+"Mettre la position affichée sur la Pile, ou l'en retirer, dans tous "
+"les modes."
+msgstr ""
+"Poner la posición mostrada en la Pila, o retirarla, en todos los "
+"modos."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic droit hors du plateau (édition, Eval)"
@@ -227,8 +229,8 @@ msgstr "Clic derecho fuera del tablero (edición, Eval)"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Ouvrir le menu du plateau : *Effacer la position*, comme RETOUR ARRIERE, "
-"ou *Position de départ*."
+"Ouvrir le menu du plateau : *Effacer la position*, comme RETOUR "
+"ARRIERE, ou *Position de départ*."
 msgstr ""
 "Abrir el menú del tablero: *Borrar la posición*, como RETROCESO, o "
 "*Posición inicial*."
@@ -239,11 +241,11 @@ msgstr "Clic derecho en el tablero (jugada hecha en el tablero)"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Ouvrir le menu du plateau, qui commence par *Recommencer* : le coup est "
-"remis à zéro, pas la position."
+"Ouvrir le menu du plateau, qui commence par *Recommencer* : le coup "
+"est remis à zéro, pas la position."
 msgstr ""
-"Abrir el menú del tablero, que empieza por *Empezar de nuevo*: se pone a "
-"cero la jugada, no la posición."
+"Abrir el menú del tablero, que empieza por *Empezar de nuevo*: se "
+"pone a cero la jugada, no la posición."
 
 #: ../../source/raccourcis.rst:57
 msgid "Navigation"
@@ -500,12 +502,8 @@ msgid "ESPACE (Duel)"
 msgstr "ESPACIO (Duelo)"
 
 #: ../../source/raccourcis.rst:1
-msgid ""
-"Valider le coup arrangé au plateau, une fois tous les dés joués ; sans "
-"effet sur un coup partiel ou hors de votre tour."
-msgstr ""
-"Validar la jugada dispuesta en el tablero, una vez jugados todos los "
-"dados; sin efecto en una jugada parcial o fuera de su turno."
+msgid "Valider le coup arrangé au plateau, une fois tous les dés joués ; sans effet sur un coup partiel ou hors de votre tour."
+msgstr "Validar la jugada dispuesta en el tablero, una vez jugados todos los dados; sin efecto en una jugada parcial o fuera de su turno."
 
 #: ../../source/raccourcis.rst:1
 msgid "RETOUR ARRIÈRE (Duel)"

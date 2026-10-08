@@ -3,7 +3,7 @@
     // <video>, a YouTube source through the hosted player page and postMessage. The caller
     // drives it by bind:this — currentTimeMs(), seek(ms), togglePlay() — and never touches the
     // element, so the Transcription panel and the match review share one player.
-    import { onDestroy, untrack } from 'svelte';
+    import { untrack } from 'svelte';
     import { MediaURL, ReleaseMedia, PickTranscriptionVideo, VideoSourceKind, YouTubeEmbedURL } from '../../wailsjs/go/gui/App.js';
     import { t } from '../i18n';
     import { logger } from '../utils/logger.js';
@@ -61,10 +61,21 @@
         frame.contentWindow.postMessage(message, ytOrigin);
     }
 
-    // A new source replaces the served media; the previous one is released first.
+    function release(url) {
+        if (!url) return;
+        try {
+            Promise.resolve(ReleaseMedia(url)).catch(() => {});
+        } catch (_e) {
+            /* no host: nothing was served */
+        }
+    }
+
+    // The pane releases the URL it was given when it closes or changes source, and only that
+    // one: another pane's video keeps playing.
     $effect(() => {
         const current = source;
         let cancelled = false;
+        let served = '';
         status = 'loading';
         detail = '';
         src = '';
@@ -74,11 +85,16 @@
                 const k = await VideoSourceKind(current);
                 if (cancelled) return;
                 kind = k;
-                if (k === 'file') {
-                    src = await MediaURL(current);
-                } else if (k === 'youtube') {
-                    src = await YouTubeEmbedURL(current);
-                    ytOrigin = new URL(src).origin;
+                if (k === 'file' || k === 'youtube') {
+                    const url = await (k === 'file' ? MediaURL(current) : YouTubeEmbedURL(current));
+                    // Closed or re-sourced while the host answered: nobody will play it.
+                    if (cancelled) {
+                        release(url);
+                        return;
+                    }
+                    served = url;
+                    src = url;
+                    if (k === 'youtube') ytOrigin = new URL(url).origin;
                 } else {
                     status = 'error';
                     detail = $t('video.notPlayable');
@@ -95,20 +111,13 @@
         })();
         return () => {
             cancelled = true;
+            release(served);
         };
     });
 
     $effect(() => {
         window.addEventListener('message', onYouTubeMessage);
         return () => window.removeEventListener('message', onYouTubeMessage);
-    });
-
-    onDestroy(() => {
-        try {
-            ReleaseMedia();
-        } catch (_e) {
-            /* no host: nothing was served */
-        }
     });
 
     function onLoadedMetadata() {

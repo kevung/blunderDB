@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-08 20:06+0200\n"
+"POT-Creation-Date: 2026-10-05 17:49+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -213,8 +213,8 @@ msgstr "Doppio clic fuori dalla scacchiera"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Mettre la position affichée sur la Pile, ou l'en retirer, dans tous les "
-"modes."
+"Mettre la position affichée sur la Pile, ou l'en retirer, dans tous "
+"les modes."
 msgstr ""
 "Mettere la posizione mostrata sulla Pila, o toglierla, in tutte le "
 "modalità."
@@ -225,11 +225,11 @@ msgstr "Clic destro fuori dalla scacchiera (modifica, Eval)"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Ouvrir le menu du plateau : *Effacer la position*, comme RETOUR ARRIERE, "
-"ou *Position de départ*."
+"Ouvrir le menu du plateau : *Effacer la position*, comme RETOUR "
+"ARRIERE, ou *Position de départ*."
 msgstr ""
-"Aprire il menu della scacchiera: *Cancella la posizione*, come BACKSPACE,"
-" o *Posizione iniziale*."
+"Aprire il menu della scacchiera: *Cancella la posizione*, come "
+"BACKSPACE, o *Posizione iniziale*."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic droit sur le plateau (coup joué au plateau)"
@@ -237,11 +237,11 @@ msgstr "Clic destro sulla scacchiera (mossa giocata sulla scacchiera)"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Ouvrir le menu du plateau, qui commence par *Recommencer* : le coup est "
-"remis à zéro, pas la position."
+"Ouvrir le menu du plateau, qui commence par *Recommencer* : le coup "
+"est remis à zéro, pas la position."
 msgstr ""
-"Aprire il menu della scacchiera, che inizia con *Ricomincia*: si azzera "
-"la mossa, non la posizione."
+"Aprire il menu della scacchiera, che inizia con *Ricomincia*: si "
+"azzera la mossa, non la posizione."
 
 #: ../../source/raccourcis.rst:57
 msgid "Navigation"
@@ -496,12 +496,8 @@ msgid "ESPACE (Duel)"
 msgstr "SPAZIO (Duello)"
 
 #: ../../source/raccourcis.rst:1
-msgid ""
-"Valider le coup arrangé au plateau, une fois tous les dés joués ; sans "
-"effet sur un coup partiel ou hors de votre tour."
-msgstr ""
-"Convalidare la mossa disposta sulla scacchiera, una volta giocati tutti i"
-" dadi; nessun effetto su una mossa parziale o fuori dal vostro turno."
+msgid "Valider le coup arrangé au plateau, une fois tous les dés joués ; sans effet sur un coup partiel ou hors de votre tour."
+msgstr "Convalidare la mossa disposta sulla scacchiera, una volta giocati tutti i dadi; nessun effetto su una mossa parziale o fuori dal vostro turno."
 
 #: ../../source/raccourcis.rst:1
 msgid "RETOUR ARRIÈRE (Duel)"
@@ -678,9 +674,7 @@ msgstr "Clic sulla scacchiera o sui dadi (prima del lancio)"
 
 #: ../../source/raccourcis.rst:1
 msgid "Lancer les dés. Le videau garde son sens : il propose de doubler."
-msgstr ""
-"Lanciare i dadi. Il cubo conserva il suo significato: propone di "
-"raddoppiare."
+msgstr "Lanciare i dadi. Il cubo conserva il suo significato: propone di raddoppiare."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic sur le videau (avant le lancer)"

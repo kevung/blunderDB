@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-08 20:06+0200\n"
+"POT-Creation-Date: 2026-10-05 17:49+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -217,11 +217,11 @@ msgstr "Doppelklick außerhalb des Bretts"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Mettre la position affichée sur la Pile, ou l'en retirer, dans tous les "
-"modes."
+"Mettre la position affichée sur la Pile, ou l'en retirer, dans tous "
+"les modes."
 msgstr ""
-"Die angezeigte Stellung auf den Stapel legen oder davon nehmen, in allen "
-"Modi."
+"Die angezeigte Stellung auf den Stapel legen oder davon nehmen, in "
+"allen Modi."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic droit hors du plateau (édition, Eval)"
@@ -229,8 +229,8 @@ msgstr "Rechtsklick außerhalb des Bretts (Bearbeitung, Eval)"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Ouvrir le menu du plateau : *Effacer la position*, comme RETOUR ARRIERE, "
-"ou *Position de départ*."
+"Ouvrir le menu du plateau : *Effacer la position*, comme RETOUR "
+"ARRIERE, ou *Position de départ*."
 msgstr ""
 "Das Brettmenü öffnen: *Position löschen*, wie RÜCKTASTE, oder "
 "*Startposition*."
@@ -241,8 +241,8 @@ msgstr "Rechtsklick auf das Brett (auf dem Brett gespielter Zug)"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Ouvrir le menu du plateau, qui commence par *Recommencer* : le coup est "
-"remis à zéro, pas la position."
+"Ouvrir le menu du plateau, qui commence par *Recommencer* : le coup "
+"est remis à zéro, pas la position."
 msgstr ""
 "Das Brettmenü öffnen, das mit *Neu beginnen* anfängt: Der Zug wird "
 "zurückgesetzt, nicht die Stellung."
@@ -501,13 +501,8 @@ msgid "ESPACE (Duel)"
 msgstr "LEERTASTE (Duell)"
 
 #: ../../source/raccourcis.rst:1
-msgid ""
-"Valider le coup arrangé au plateau, une fois tous les dés joués ; sans "
-"effet sur un coup partiel ou hors de votre tour."
-msgstr ""
-"Den auf dem Brett aufgestellten Zug bestätigen, sobald alle Würfel "
-"gespielt sind; ohne Wirkung bei einem unvollständigen Zug oder außerhalb "
-"Ihres Zugs."
+msgid "Valider le coup arrangé au plateau, une fois tous les dés joués ; sans effet sur un coup partiel ou hors de votre tour."
+msgstr "Den auf dem Brett aufgestellten Zug bestätigen, sobald alle Würfel gespielt sind; ohne Wirkung bei einem unvollständigen Zug oder außerhalb Ihres Zugs."
 
 #: ../../source/raccourcis.rst:1
 msgid "RETOUR ARRIÈRE (Duel)"
@@ -684,9 +679,7 @@ msgstr "Klick auf das Brett oder auf die Würfel (vor dem Wurf)"
 
 #: ../../source/raccourcis.rst:1
 msgid "Lancer les dés. Le videau garde son sens : il propose de doubler."
-msgstr ""
-"Die Würfel werfen. Der Doppler behält seine Bedeutung: Er schlägt ein "
-"Doppeln vor."
+msgstr "Die Würfel werfen. Der Doppler behält seine Bedeutung: Er schlägt ein Doppeln vor."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic sur le videau (avant le lancer)"

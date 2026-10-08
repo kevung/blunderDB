@@ -60,7 +60,7 @@ import { lastVisitedMatchStore, matchContextStore } from '../stores/positionStor
 import { ListMatches, SetMatchVideoSource } from '../../wailsjs/go/database/Database.js';
 import MatchPanel from '../components/MatchPanel.svelte';
 
-import { OpenVideoExternally } from '../../wailsjs/go/gui/App.js';
+import { OpenVideoExternally, PickTranscriptionVideo } from '../../wailsjs/go/gui/App.js';
 
 async function openTranscript() {
     const view = render(MatchPanel);
@@ -136,5 +136,21 @@ describe('MatchPanel — View in the video', () => {
         await fireEvent.click([...container.querySelectorAll('button')].find((b) => b.classList.contains('detail-tab') && b.textContent.trim() === 'Info'));
         await fireEvent.click(container.querySelector('[data-testid="video-detach"]'));
         await vi.waitFor(() => expect(SetMatchVideoSource).toHaveBeenCalledWith(7, ''));
+    });
+
+    test('relocating the file keeps the pane open and the source is written once', async () => {
+        state.source = '/videos/final.mp4';
+        state.kind = 'file';
+        vi.mocked(PickTranscriptionVideo).mockResolvedValueOnce('/moved/final.mp4');
+        const container = await openTranscript();
+        await vi.waitFor(() => expect(container.querySelectorAll('[data-testid="view-in-video"]').length).toBe(2));
+        await fireEvent.click(container.querySelectorAll('[data-testid="view-in-video"]')[0]);
+        await vi.waitFor(() => expect(container.querySelector('[data-testid="video-pane"]')).not.toBeNull());
+        await fireEvent.click([...container.querySelectorAll('button')].find((b) => b.classList.contains('detail-tab') && b.textContent.trim() === 'Info'));
+        await fireEvent.click([...container.querySelectorAll('.meta-value button')].find((b) => b.textContent.trim() === 'File…'));
+        await vi.waitFor(() => expect(SetMatchVideoSource).toHaveBeenCalledWith(7, '/moved/final.mp4'));
+        for (let i = 0; i < 6; i++) await tick();
+        expect(SetMatchVideoSource).toHaveBeenCalledTimes(1);
+        expect(container.querySelector('[data-testid="video-pane"]')).not.toBeNull();
     });
 });

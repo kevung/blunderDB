@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-08 20:08+0200\n"
+"POT-Creation-Date: 2026-10-05 17:49+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -207,8 +207,8 @@ msgstr "盤面外でのダブルクリック"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Mettre la position affichée sur la Pile, ou l'en retirer, dans tous les "
-"modes."
+"Mettre la position affichée sur la Pile, ou l'en retirer, dans tous "
+"les modes."
 msgstr "表示中の局面をパイルに載せる、または外す。すべてのモードで使えます。"
 
 #: ../../source/raccourcis.rst:1
@@ -217,8 +217,8 @@ msgstr "盤面の外で右クリック（編集、Eval）"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Ouvrir le menu du plateau : *Effacer la position*, comme RETOUR ARRIERE, "
-"ou *Position de départ*."
+"Ouvrir le menu du plateau : *Effacer la position*, comme RETOUR "
+"ARRIERE, ou *Position de départ*."
 msgstr "盤面のメニューを開く：\\ *局面を消去*\\ （BACKSPACE と同じ）または\\ *初期配置*\\ 。"
 
 #: ../../source/raccourcis.rst:1
@@ -227,8 +227,8 @@ msgstr "盤面を右クリック（盤上で打った手）"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Ouvrir le menu du plateau, qui commence par *Recommencer* : le coup est "
-"remis à zéro, pas la position."
+"Ouvrir le menu du plateau, qui commence par *Recommencer* : le coup "
+"est remis à zéro, pas la position."
 msgstr "盤面のメニューを開く。先頭は\\ *やり直す*\\ で、リセットされるのは手であり、局面ではありません。"
 
 #: ../../source/raccourcis.rst:57
@@ -472,9 +472,7 @@ msgid "ESPACE (Duel)"
 msgstr "SPACE（デュエル）"
 
 #: ../../source/raccourcis.rst:1
-msgid ""
-"Valider le coup arrangé au plateau, une fois tous les dés joués ; sans "
-"effet sur un coup partiel ou hors de votre tour."
+msgid "Valider le coup arrangé au plateau, une fois tous les dés joués ; sans effet sur un coup partiel ou hors de votre tour."
 msgstr "すべてのダイスを使い終えたら、盤面に作った手を確定する。手が途中のとき、または自分の番でないときは何も起きない。"
 
 #: ../../source/raccourcis.rst:1

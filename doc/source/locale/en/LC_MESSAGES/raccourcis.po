@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-08 20:06+0200\n"
+"POT-Creation-Date: 2026-10-05 17:49+0200\n"
 "PO-Revision-Date: 2025-11-01 23:50+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -212,9 +212,11 @@ msgstr "Double-click outside the board"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Mettre la position affichée sur la Pile, ou l'en retirer, dans tous les "
-"modes."
-msgstr "Put the displayed position on the Pile, or take it off, in every mode."
+"Mettre la position affichée sur la Pile, ou l'en retirer, dans tous "
+"les modes."
+msgstr ""
+"Put the displayed position on the Pile, or take it off, in every "
+"mode."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic droit hors du plateau (édition, Eval)"
@@ -222,11 +224,11 @@ msgstr "Right-click outside the board (edit, Eval)"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Ouvrir le menu du plateau : *Effacer la position*, comme RETOUR ARRIERE, "
-"ou *Position de départ*."
+"Ouvrir le menu du plateau : *Effacer la position*, comme RETOUR "
+"ARRIERE, ou *Position de départ*."
 msgstr ""
-"Open the board menu: *Clear the position*, like BACKSPACE, or *Starting "
-"position*."
+"Open the board menu: *Clear the position*, like BACKSPACE, or "
+"*Starting position*."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic droit sur le plateau (coup joué au plateau)"
@@ -234,11 +236,11 @@ msgstr "Right-click on the board (move played on the board)"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Ouvrir le menu du plateau, qui commence par *Recommencer* : le coup est "
-"remis à zéro, pas la position."
+"Ouvrir le menu du plateau, qui commence par *Recommencer* : le coup "
+"est remis à zéro, pas la position."
 msgstr ""
-"Open the board menu, which starts with *Start over*: the move is reset, "
-"not the position."
+"Open the board menu, which starts with *Start over*: the move is "
+"reset, not the position."
 
 #: ../../source/raccourcis.rst:57
 msgid "Navigation"
@@ -492,12 +494,8 @@ msgid "ESPACE (Duel)"
 msgstr "SPACE (Duel)"
 
 #: ../../source/raccourcis.rst:1
-msgid ""
-"Valider le coup arrangé au plateau, une fois tous les dés joués ; sans "
-"effet sur un coup partiel ou hors de votre tour."
-msgstr ""
-"Validate the move arranged on the board, once every die is played; no "
-"effect on a partial move or outside your turn."
+msgid "Valider le coup arrangé au plateau, une fois tous les dés joués ; sans effet sur un coup partiel ou hors de votre tour."
+msgstr "Validate the move arranged on the board, once every die is played; no effect on a partial move or outside your turn."
 
 #: ../../source/raccourcis.rst:1
 msgid "RETOUR ARRIÈRE (Duel)"

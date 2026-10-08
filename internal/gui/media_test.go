@@ -114,26 +114,46 @@ func TestYouTube(t *testing.T) {
 	}
 }
 
-func TestMediaServesOneFileAtATime(t *testing.T) {
+func TestMediaServesTheOpenPanesAndThemOnly(t *testing.T) {
 	var h mediaHost
 	t.Cleanup(h.stop)
-	u1, _ := h.register(newMediaFile(t, "a.mp4", 10))
+	pa := newMediaFile(t, "a.mp4", 10)
+	u1, _ := h.register(pa)
 	u2, err := h.register(newMediaFile(t, "b.mp4", 10))
 	if err != nil {
 		t.Fatal(err)
 	}
+	for _, u := range []string{u1, u2} {
+		if resp, _ := get(t, u, ""); resp.StatusCode != 200 {
+			t.Fatalf("%s: %d", u, resp.StatusCode)
+		}
+	}
+	// A second pane on the same file shares the token and keeps it alive.
+	if again, _ := h.register(pa); again != u1 {
+		t.Fatalf("same path, new token: %s != %s", again, u1)
+	}
+	h.release(u1)
+	if resp, _ := get(t, u1, ""); resp.StatusCode != 200 {
+		t.Fatal("released while another pane holds it")
+	}
+	h.release(u1)
 	if resp, _ := get(t, u1, ""); resp.StatusCode != 404 {
-		t.Fatalf("old token %d", resp.StatusCode)
+		t.Fatal("served after the last release")
 	}
 	if resp, _ := get(t, u2, ""); resp.StatusCode != 200 {
-		t.Fatalf("new token %d", resp.StatusCode)
+		t.Fatal("another pane's video released")
 	}
 	y1, _ := h.registerYouTube("dQw4w9WgXcQ")
-	h.registerYouTube("AAAAAAAAAAA")
+	y2, _ := h.registerYouTube("AAAAAAAAAAA")
+	h.release(y1)
 	if resp, _ := get(t, y1, ""); resp.StatusCode != 404 {
-		t.Fatal("old id served")
+		t.Fatal("released id served")
 	}
-	h.release()
+	if resp, _ := get(t, y2, ""); resp.StatusCode != 200 {
+		t.Fatal("other id released")
+	}
+	h.release("http://127.0.0.1:1/media/unknown")
+	h.release(u2)
 	if resp, _ := get(t, u2, ""); resp.StatusCode != 404 {
 		t.Fatal("served after release")
 	}

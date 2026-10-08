@@ -234,8 +234,8 @@ export function RegenerateIssuerIdentity(arg1) {
   return window['go']['gui']['App']['RegenerateIssuerIdentity'](arg1);
 }
 
-export function ReleaseMedia() {
-  return window['go']['gui']['App']['ReleaseMedia']();
+export function ReleaseMedia(arg1) {
+  return window['go']['gui']['App']['ReleaseMedia'](arg1);
 }
 
 export function RolloutPresets() {

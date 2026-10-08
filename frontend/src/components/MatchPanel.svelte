@@ -158,10 +158,16 @@
     let videoDraft = $state('');
     const videoSource = $derived(detailMatch?.video_source || '');
 
+    // The pane belongs to the match shown: another match closes it, a new source for the same
+    // match (a relocated file) keeps it open.
+    $effect(() => {
+        void detailMatch?.id;
+        videoOpen = false;
+    });
+
     $effect(() => {
         const source = videoSource;
         videoDraft = source;
-        videoOpen = false;
         if (!source) {
             videoKind = '';
             return;
@@ -1424,9 +1430,9 @@
                                             bind:value={videoDraft}
                                             placeholder={$t('match.videoPlaceholder')}
                                             onkeydown={(e) => {
+                                                // Enter commits through the change event, once.
                                                 if (e.key === 'Enter') {
                                                     e.stopPropagation();
-                                                    saveVideoSource(videoDraft);
                                                 } else if (e.key === 'Escape') {
                                                     e.stopPropagation();
                                                     videoDraft = videoSource;

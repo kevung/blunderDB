@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-08 20:06+0200\n"
+"POT-Creation-Date: 2026-10-05 17:49+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -213,8 +213,8 @@ msgstr "Kaksoisnapsautus laudan ulkopuolella"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Mettre la position affichée sur la Pile, ou l'en retirer, dans tous les "
-"modes."
+"Mettre la position affichée sur la Pile, ou l'en retirer, dans tous "
+"les modes."
 msgstr ""
 "Näytetyn aseman lisääminen pinoon tai poistaminen sieltä kaikissa "
 "tiloissa."
@@ -225,8 +225,8 @@ msgstr "Oikea napsautus laudan ulkopuolella (muokkaus, Eval)"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Ouvrir le menu du plateau : *Effacer la position*, comme RETOUR ARRIERE, "
-"ou *Position de départ*."
+"Ouvrir le menu du plateau : *Effacer la position*, comme RETOUR "
+"ARRIERE, ou *Position de départ*."
 msgstr ""
 "Avaa laudan valikko: *Tyhjennä asema*, kuten ASKELPALAUTIN, tai "
 "*Aloitusasema*."
@@ -237,8 +237,8 @@ msgstr "Oikea napsautus laudalla (laudalla pelattu siirto)"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Ouvrir le menu du plateau, qui commence par *Recommencer* : le coup est "
-"remis à zéro, pas la position."
+"Ouvrir le menu du plateau, qui commence par *Recommencer* : le coup "
+"est remis à zéro, pas la position."
 msgstr ""
 "Avaa laudan valikko, joka alkaa kohdalla *Aloita alusta*: siirto "
 "nollataan, ei asemaa."
@@ -493,12 +493,8 @@ msgid "ESPACE (Duel)"
 msgstr "VÄLILYÖNTI (Kaksintaistelu)"
 
 #: ../../source/raccourcis.rst:1
-msgid ""
-"Valider le coup arrangé au plateau, une fois tous les dés joués ; sans "
-"effet sur un coup partiel ou hors de votre tour."
-msgstr ""
-"Vahvista laudalle asetettu siirto, kun kaikki nopat on pelattu; ei "
-"vaikutusta keskeneräiseen siirtoon tai oman vuorosi ulkopuolella."
+msgid "Valider le coup arrangé au plateau, une fois tous les dés joués ; sans effet sur un coup partiel ou hors de votre tour."
+msgstr "Vahvista laudalle asetettu siirto, kun kaikki nopat on pelattu; ei vaikutusta keskeneräiseen siirtoon tai oman vuorosi ulkopuolella."
 
 #: ../../source/raccourcis.rst:1
 msgid "RETOUR ARRIÈRE (Duel)"
@@ -674,9 +670,7 @@ msgstr "Napsautus lautaan tai noppiin (ennen heittoa)"
 
 #: ../../source/raccourcis.rst:1
 msgid "Lancer les dés. Le videau garde son sens : il propose de doubler."
-msgstr ""
-"Noppien heitto. Kuutio säilyttää oman merkityksensä: se ehdottaa "
-"tuplausta."
+msgstr "Noppien heitto. Kuutio säilyttää oman merkityksensä: se ehdottaa tuplausta."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic sur le videau (avant le lancer)"

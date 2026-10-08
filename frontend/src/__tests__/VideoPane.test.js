@@ -19,6 +19,7 @@ vi.mock('../../wailsjs/go/gui/App.js', () => ({
     ReleaseMedia: vi.fn(() => Promise.resolve())
 }));
 
+import { MediaURL, ReleaseMedia } from '../../wailsjs/go/gui/App.js';
 import VideoPane from '../components/VideoPane.svelte';
 
 describe('VideoPane', () => {
@@ -27,6 +28,41 @@ describe('VideoPane', () => {
         gui.mediaError = null;
     });
     afterEach(cleanup);
+
+    test('closing releases its own URL, a new source releases the old one', async () => {
+        vi.mocked(MediaURL).mockClear();
+        vi.mocked(ReleaseMedia).mockClear();
+        vi.mocked(MediaURL).mockResolvedValueOnce('http://127.0.0.1:1/media/one').mockResolvedValueOnce('http://127.0.0.1:1/media/two');
+        const { container, rerender, unmount } = render(VideoPane, { props: { source: '/v/a.mp4' } });
+        await vi.waitFor(() => expect(container.querySelector('video')?.getAttribute('src')).toBe('http://127.0.0.1:1/media/one'));
+        await rerender({ source: '/v/b.mp4' });
+        await vi.waitFor(() => expect(ReleaseMedia).toHaveBeenCalledWith('http://127.0.0.1:1/media/one'));
+        await vi.waitFor(() => expect(container.querySelector('video')?.getAttribute('src')).toBe('http://127.0.0.1:1/media/two'));
+        unmount();
+        expect(ReleaseMedia).toHaveBeenLastCalledWith('http://127.0.0.1:1/media/two');
+    });
+
+    test('an answer that arrives after the pane closed is released at once', async () => {
+        vi.mocked(ReleaseMedia).mockClear();
+        let answer;
+        vi.mocked(MediaURL).mockImplementationOnce(() => new Promise((r) => (answer = r)));
+        const { unmount } = render(VideoPane, { props: { source: '/v/late.mp4' } });
+        await vi.waitFor(() => expect(answer).toBeDefined());
+        unmount();
+        answer('http://127.0.0.1:1/media/late');
+        await vi.waitFor(() => expect(ReleaseMedia).toHaveBeenCalledWith('http://127.0.0.1:1/media/late'));
+    });
+
+    test('a relocated file is read at the instant that was asked', async () => {
+        const { container, component, rerender } = render(VideoPane, { props: { source: '/v/a.mp4', startMs: 64000 } });
+        let video = await vi.waitFor(() => container.querySelector('video') ?? expect.fail('no video'));
+        await fireEvent(video, new Event('loadedmetadata'));
+        component.seek(64000);
+        await rerender({ source: '/v/moved.mp4' });
+        video = await vi.waitFor(() => container.querySelector('video') ?? expect.fail('no video'));
+        await fireEvent(video, new Event('loadedmetadata'));
+        expect(video.currentTime).toBe(64);
+    });
 
     test('a file plays through a <video> on the loopback URL and seeks in milliseconds', async () => {
         const { container, component } = render(VideoPane, { props: { source: '/v/final.mp4' } });
