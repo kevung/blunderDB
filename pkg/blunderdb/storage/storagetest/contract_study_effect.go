@@ -11,7 +11,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// testStatsStudyEffect pins the before/after measure (ADR-0078) on both
+// testStatsStudyEffect pins the before/after measure (ADR-0079) on both
 // backends: a family is studied on the day of the first study mark on one of
 // its positions, a match before that day and one after fill the two windows,
 // and the change is the difference of their loss rates.
@@ -70,7 +70,7 @@ func testStatsStudyEffect(t *testing.T, s storage.Storage) {
 	}
 }
 
-// testStatsDirectionalBiases pins the signed biases (ADR-0078) on both
+// testStatsDirectionalBiases pins the signed biases (ADR-0079) on both
 // backends: takes and passes against the bot's ruling, offers by score, and
 // every checker decision with contact read or counted unread.
 func testStatsDirectionalBiases(t *testing.T, s storage.Storage) {

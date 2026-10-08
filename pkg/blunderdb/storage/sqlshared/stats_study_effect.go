@@ -11,7 +11,7 @@ import (
 )
 
 // StudyEffect measures each studied family of the study plan before and after
-// the day it was first studied (storage.BuildStudyEffect, ADR-0078).
+// the day it was first studied (storage.BuildStudyEffect, ADR-0079).
 func (s *StatsStore) StudyEffect(ctx context.Context, scope string, filter storage.StatsFilter) (*storage.StudyEffect, error) {
 	rows, _, _, err := s.classifiedErrors(ctx, scope, filter, true)
 	if err != nil {
@@ -58,7 +58,7 @@ func (s *StatsStore) StudyEffect(ctx context.Context, scope string, filter stora
 }
 
 // firstStudyDays is the UTC day of each position's first study action: a
-// study mark, an Anki review, a quiz answer (ADR-0078 rule 2).
+// study mark, an Anki review, a quiz answer (ADR-0079 rule 2).
 func (s *StatsStore) firstStudyDays(ctx context.Context, scope string) (map[int64]string, error) {
 	out := map[int64]string{}
 	keep := func(id int64, t time.Time) {
@@ -147,7 +147,7 @@ func parseStudyTime(v string) time.Time {
 }
 
 // DirectionalBiases tallies the signed biases of the filter's decisions
-// (storage.BuildDirectionalBiases, ADR-0078).
+// (storage.BuildDirectionalBiases, ADR-0079).
 func (s *StatsStore) DirectionalBiases(ctx context.Context, scope string, filter storage.StatsFilter) (*storage.DirectionalBiases, error) {
 	filter, err := s.withPlayerAliases(ctx, scope, filter)
 	if err != nil {

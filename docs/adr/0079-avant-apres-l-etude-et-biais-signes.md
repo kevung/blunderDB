@@ -1,4 +1,4 @@
-# ADR-0078 — Avant/après l'étude d'une famille, et biais signés
+# ADR-0079 — Avant/après l'étude d'une famille, et biais signés
 
 Statut : acceptée.
 Voir aussi : ADR-0077 (plan d'étude, familles), ADR-0075 (perte MWC), ADR-0046 (seuils d'erreur),

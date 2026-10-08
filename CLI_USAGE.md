@@ -4064,7 +4064,7 @@ Examples:
 ```
 Usage: blunderdb stats biases --db <file> [options]
 
-Which way do the decisions err? Three signed biases (ADR-0078), each the share
+Which way do the decisions err? Three signed biases (ADR-0079), each the share
 of decisions erring one way minus the share erring the other, with a 95%
 interval:
   take/pass  wrong takes minus wrong passes: your take rate minus the bot's
@@ -4177,7 +4177,7 @@ recurring-error family (plan of play x theme) one of whose positions was
 studied — marked studied, reviewed in Anki or answered in a quiz — the
 family's MWC loss per decision of its plan and kind, in the matches played
 before the day of the first study action and in those played after it
-(ADR-0078). The gain is the before rate minus the after rate, with a 95%
+(ADR-0079). The gain is the before rate minus the after rate, with a 95%
 interval; a direction is stated only when both windows hold at least
 30 decisions and the interval excludes zero.
 A change, not an effect: a family is studied because it cost, so part of

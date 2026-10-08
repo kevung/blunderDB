@@ -218,11 +218,6 @@ MWC par décision (#597), M1 (L₇, #598) et M3 (difficulté par décision, #599
   un clic. Coût du regroupement par similarité mesuré (ADR-0077) : 166 ns par paire, 8 s pour
   10 000 erreurs en paires complètes — il faut un index de voisinage, qui servira aussi les
   familles par similarité du plan d'étude.
-- **Fermer la boucle, et biais directionnels** (#603). Par famille étudiée : erreur en match réel
-  avant/après l'étude, avec IC (la vue `list --type study` n'a pas de colonne de gain). Biais
-  signés plutôt que perte seule : taux de prises/refus contre le bot, doubles prématurés contre
-  manqués par score, prudence/audace sur les blots — « tu prends trop » se corrige mieux qu'un
-  PR.
 - **Bilan de tournoi** (#604). L₇ avec IC comparé au niveau habituel, 2-3 familles d'erreurs de
   l'épreuve, erreur selon la ronde et selon le rang de la décision dans le match (fatigue),
   aux scores de pression (DMP, Crawford) et sous la pendule.

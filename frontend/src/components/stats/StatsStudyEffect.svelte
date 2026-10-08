@@ -1,5 +1,5 @@
 <script>
-    // Avant/après l'étude (ADR-0078) : pour chaque famille dont une position a été étudiée, la perte
+    // Avant/après l'étude (ADR-0079) : pour chaque famille dont une position a été étudiée, la perte
     // de MWC par décision de son plan et de sa nature, dans les matchs joués avant le jour de la
     // première action d'étude et dans ceux joués après. Un sens n'est affirmé que si l'intervalle
     // l'exclut et que chaque fenêtre a assez de décisions.

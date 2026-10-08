@@ -67,7 +67,7 @@ func (cli *CLI) runStatsEffect(args []string) error {
 		fmt.Println("studied — marked studied, reviewed in Anki or answered in a quiz — the")
 		fmt.Println("family's MWC loss per decision of its plan and kind, in the matches played")
 		fmt.Println("before the day of the first study action and in those played after it")
-		fmt.Println("(ADR-0078). The gain is the before rate minus the after rate, with a 95%")
+		fmt.Println("(ADR-0079). The gain is the before rate minus the after rate, with a 95%")
 		fmt.Println("interval; a direction is stated only when both windows hold at least")
 		fmt.Printf("%d decisions and the interval excludes zero.\n", storage.StudyEffectMinDecisions)
 		fmt.Println("A change, not an effect: a family is studied because it cost, so part of")
@@ -136,7 +136,7 @@ func (cli *CLI) runStatsBiases(args []string) error {
 	fs.Usage = func() {
 		fmt.Println("Usage: blunderdb stats biases --db <file> [options]")
 		fmt.Println()
-		fmt.Println("Which way do the decisions err? Three signed biases (ADR-0078), each the share")
+		fmt.Println("Which way do the decisions err? Three signed biases (ADR-0079), each the share")
 		fmt.Println("of decisions erring one way minus the share erring the other, with a 95%")
 		fmt.Println("interval:")
 		fmt.Println("  take/pass  wrong takes minus wrong passes: your take rate minus the bot's")

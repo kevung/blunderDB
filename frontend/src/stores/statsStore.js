@@ -173,7 +173,7 @@ let _cachedStudyLoopKey = null;
 
 /**
  * Fetch the before/after measure of the studied families and the signed biases of the filter
- * (ADR-0078). Both replay analyses: fetched only while the dashboard, which shows them, is open.
+ * (ADR-0079). Both replay analyses: fetched only while the dashboard, which shows them, is open.
  * @param {object} filter
  * @param {number} invalidationKey
  */

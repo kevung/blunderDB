@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-// TestSignedBias_IntervalAndVerdict pins the estimator of ADR-0078: the mean
+// TestSignedBias_IntervalAndVerdict pins the estimator of ADR-0079: the mean
 // of the signs, its normal interval, and no direction below the minimum.
 func TestSignedBias_IntervalAndVerdict(t *testing.T) {
 	var b SignedBias

@@ -5,7 +5,7 @@ import (
 	"sort"
 )
 
-// The signed biases of ADR-0078: which way a player errs, not only how much.
+// The signed biases of ADR-0079: which way a player errs, not only how much.
 // Each decision carries +1 (too much: a wrong take, a premature double, a
 // bolder play than the best), −1 (too little) or 0, and the bias is their mean
 // with a 95 % interval. The thresholds are fixed there.
@@ -80,7 +80,7 @@ type BiasCheckerRow struct {
 	Unread  bool
 }
 
-// BuildDirectionalBiases tallies the three biases (ADR-0078). It is pure and
+// BuildDirectionalBiases tallies the three biases (ADR-0079). It is pure and
 // shared by every backend.
 func BuildDirectionalBiases(cube []BiasCubeRow, checker []BiasCheckerRow) *DirectionalBiases {
 	out := &DirectionalBiases{MinDecisions: BiasMinDecisions, DoublesByScore: []ScoreBias{}}
@@ -147,7 +147,7 @@ func (b *SignedBias) add(sign int, errMP int64) {
 }
 
 // measure computes the mean of the signs, its normal 95 % interval and the
-// verdict (ADR-0078 rule 8).
+// verdict (ADR-0079 rule 8).
 func (b *SignedBias) measure() {
 	if b.Decisions == 0 {
 		b.Verdict = BiasInsufficient

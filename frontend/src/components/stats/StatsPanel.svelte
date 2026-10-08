@@ -73,7 +73,7 @@
         logger.perf('StatsPanel:refreshStudyPlan', () => refreshStudyPlan(filter, key));
     });
 
-    // Before/after the study and the signed biases replay analyses as well (ADR-0078).
+    // Before/after the study and the signed biases replay analyses as well (ADR-0079).
     $effect(() => {
         const filter = $statsFilterStore;
         const key = $statsInvalidationKeyStore;

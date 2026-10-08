@@ -1,5 +1,5 @@
 <script>
-    // Biais signés (ADR-0078) : dans quel sens les décisions se trompent, pas seulement combien.
+    // Biais signés (ADR-0079) : dans quel sens les décisions se trompent, pas seulement combien.
     // Chaque biais est la part des décisions fautives dans un sens moins la part dans l'autre,
     // avec son intervalle ; un sens n'est nommé que si l'intervalle exclut zéro.
     import { biasesStore, studyLoopLoadingStore, studyLoopErrorStore } from '../../stores/statsStore.js';

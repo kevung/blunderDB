@@ -5,7 +5,7 @@ import (
 	"sort"
 )
 
-// The before/after measure of ADR-0078: for each studied family of the study
+// The before/after measure of ADR-0079: for each studied family of the study
 // plan (ADR-0077), the family's MWC loss rate in real play before and after the
 // day it was first studied, and the change with its 95 % interval. The
 // thresholds are fixed there, before any result was read.
@@ -72,7 +72,7 @@ type StudyEffectDecisions struct {
 	Count    int
 }
 
-// BuildStudyEffect measures every studied family (ADR-0078). rows are the
+// BuildStudyEffect measures every studied family (ADR-0079). rows are the
 // filter's classified errors, each with its match day; decisions the counted
 // match-play decisions by plan, kind and day; studied the UTC day of each
 // position's first study action. It is pure and shared by every backend.
@@ -175,7 +175,7 @@ func (f *StudyEffectFamily) window(day string) *StudyEffectWindow {
 }
 
 // measure turns the two windows into rates, the change and its interval
-// (compound Poisson on each side, ADR-0078 rule 5), and the verdict.
+// (compound Poisson on each side, ADR-0079 rule 5), and the verdict.
 func (f *StudyEffectFamily) measure() {
 	var variance float64
 	for _, w := range []*StudyEffectWindow{&f.Before, &f.After} {

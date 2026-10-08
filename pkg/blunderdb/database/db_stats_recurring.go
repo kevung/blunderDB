@@ -54,7 +54,7 @@ func (d *Database) StudyPlanQueue(filter StatsFilter, rank int) ([]domain.StudyQ
 }
 
 // ComputeStudyEffect measures each studied family before and after the day it
-// was first studied (storage.StatsStore.StudyEffect, ADR-0078).
+// was first studied (storage.StatsStore.StudyEffect, ADR-0079).
 func (d *Database) ComputeStudyEffect(filter StatsFilter) (*storage.StudyEffect, error) {
 	return d.ComputeStudyEffectCtx(context.Background(), filter)
 }
@@ -67,7 +67,7 @@ func (d *Database) ComputeStudyEffectCtx(ctx context.Context, filter StatsFilter
 }
 
 // ComputeDirectionalBiases tallies which way the filter's decisions err
-// (storage.StatsStore.DirectionalBiases, ADR-0078).
+// (storage.StatsStore.DirectionalBiases, ADR-0079).
 func (d *Database) ComputeDirectionalBiases(filter StatsFilter) (*storage.DirectionalBiases, error) {
 	return d.ComputeDirectionalBiasesCtx(context.Background(), filter)
 }

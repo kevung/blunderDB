@@ -10,7 +10,7 @@ func effectRow(id int64, theme, day string, loss float64) StudyPlanRow {
 		Theme: theme}, Day: day, Loss: &loss}
 }
 
-// TestBuildStudyEffect_WindowsAndInterval pins ADR-0078: the study day is the
+// TestBuildStudyEffect_WindowsAndInterval pins ADR-0079: the study day is the
 // first study action on a member, the day itself belongs to neither window,
 // the change is the before rate minus the after rate with a compound-Poisson
 // interval, and an unstudied family is only counted.

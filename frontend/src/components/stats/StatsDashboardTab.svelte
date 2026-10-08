@@ -134,7 +134,7 @@
     <!-- ── Study plan: what to work on now (ADR-0077) ───────────────── -->
     <StatsStudyPlan />
 
-    <!-- ── Before/after the study, and which way the decisions err (ADR-0078) ── -->
+    <!-- ── Before/after the study, and which way the decisions err (ADR-0079) ── -->
     <StatsStudyEffect />
     <StatsBiases />
 

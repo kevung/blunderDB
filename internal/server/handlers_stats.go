@@ -110,11 +110,11 @@ func (s *Server) statsRoutes() []route {
 		{http.MethodPost, "/v1/stats.studyPlan", rpc(func(ctx context.Context, scope string, req statsComputeReq) (*storage.StudyPlan, error) {
 			return ss().StudyPlan(ctx, scope, req.Filter)
 		})},
-		// Avant/après l'étude de chaque famille étudiée (ADR-0078).
+		// Avant/après l'étude de chaque famille étudiée (ADR-0079).
 		{http.MethodPost, "/v1/stats.studyEffect", rpc(func(ctx context.Context, scope string, req statsComputeReq) (*storage.StudyEffect, error) {
 			return ss().StudyEffect(ctx, scope, req.Filter)
 		})},
-		// Les biais signés : prises/refus, doubles par score, blots (ADR-0078).
+		// Les biais signés : prises/refus, doubles par score, blots (ADR-0079).
 		{http.MethodPost, "/v1/stats.biases", rpc(func(ctx context.Context, scope string, req statsComputeReq) (*storage.DirectionalBiases, error) {
 			return ss().DirectionalBiases(ctx, scope, req.Filter)
 		})},
