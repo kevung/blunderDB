@@ -665,7 +665,16 @@
         "confirmDelete": "Delete match between {player1} and {player2}?",
         "enrichFromFile": "Enrich from a file…",
         "editTranscription": "Edit the transcription",
-        "editTranscriptionTooltip": "Open this match as a transcription draft; finishing it replaces the match"
+        "editTranscriptionTooltip": "Open this match as a transcription draft; finishing it replaces the match",
+        "video": "Video",
+        "videoPlaceholder": "Video URL or file path",
+        "videoChoose": "File…",
+        "videoDetach": "Detach",
+        "videoOpen": "Match video",
+        "viewInVideo": "View in video",
+        "videoSet": "Video source saved",
+        "videoDetached": "Video source detached",
+        "errorVideo": "Error on the match video"
     },
     "collection": {
         "addDescription": "Add a description…",
@@ -3089,5 +3098,14 @@
         "pace": "Errors: {hasty} hasty ({hastyLoss}), {deliberate} deliberate ({deliberateLoss}), {unknown} without time",
         "paceDiscipline": "rather discipline: slow down",
         "paceKnowledge": "rather knowledge: study these positions"
+    },
+    "video": {
+        "notPlayable": "This source cannot be played here.",
+        "codecDetail": "The webview cannot play this file ({container}, support: {support}, code {code}).",
+        "unsupported": "unsupported",
+        "codecHint": "On Linux, install gst-plugins-good and gst-libav; on Windows, the Store's HEVC extension plays H.265.",
+        "missing": "Video file not found.",
+        "relocate": "Choose the file…",
+        "player": "Video player"
     }
 }

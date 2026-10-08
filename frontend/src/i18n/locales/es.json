@@ -665,7 +665,16 @@
         "confirmDelete": "¿Eliminar la partida entre {player1} y {player2}?",
         "enrichFromFile": "Enriquecer desde un fichero…",
         "editTranscription": "Editar la transcripción",
-        "editTranscriptionTooltip": "Abrir este match como borrador de transcripción; terminarlo reemplaza el match"
+        "editTranscriptionTooltip": "Abrir este match como borrador de transcripción; terminarlo reemplaza el match",
+        "video": "Vídeo",
+        "videoPlaceholder": "URL o ruta del archivo de vídeo",
+        "videoChoose": "Archivo…",
+        "videoDetach": "Desvincular",
+        "videoOpen": "Vídeo de la partida",
+        "viewInVideo": "Ver en el vídeo",
+        "videoSet": "Fuente de vídeo guardada",
+        "videoDetached": "Fuente de vídeo desvinculada",
+        "errorVideo": "Error en el vídeo de la partida"
     },
     "collection": {
         "addDescription": "Añadir una descripción…",
@@ -3089,5 +3098,14 @@
         "pace": "Errores: {hasty} precipitados ({hastyLoss}), {deliberate} meditados ({deliberateLoss}), {unknown} sin tiempo",
         "paceDiscipline": "más bien disciplina: ir más despacio",
         "paceKnowledge": "más bien conocimiento: estudiar estas posiciones"
+    },
+    "video": {
+        "notPlayable": "Esta fuente no se puede reproducir aquí.",
+        "codecDetail": "El webview no puede reproducir este archivo ({container}, compatibilidad: {support}, código {code}).",
+        "unsupported": "no compatible",
+        "codecHint": "En Linux, instale gst-plugins-good y gst-libav; en Windows, la extensión HEVC de la Store reproduce H.265.",
+        "missing": "Archivo de vídeo no encontrado.",
+        "relocate": "Elegir el archivo…",
+        "player": "Reproductor de vídeo"
     }
 }

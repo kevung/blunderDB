@@ -277,6 +277,7 @@ Panneau des matchs
    "BAS, j", "Sélectionner le match suivant."
    "ENTREE", "Charger le match sélectionné."
    "Del", "Supprimer le match sélectionné."
+   "v", "Voir dans la vidéo la décision étudiée, une seconde avant le jet (match portant une source vidéo et un repère à cette décision)."
    "/", "Aller au champ de filtre (joueur, événement, tournoi, date). *Esc* efface le filtre."
    "Esc", "Désélectionner/fermer le panneau."
 

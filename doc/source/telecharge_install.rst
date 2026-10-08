@@ -182,6 +182,20 @@ installant celui de la version suivante. L'application a accès au dossier
 personnel pour ouvrir et enregistrer les bases. La ligne de commande (:ref:`cli`) s'obtient par
 ``flatpak run io.github.kevung.blunderDB <commande>``.
 
+Vidéos de match sous Linux
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Le panneau Matchs lit la vidéo attachée à un match avec les codecs du webview :
+sous Linux, ceux de GStreamer. Pour lire le MP4 et le WebM, installez
+``gst-plugins-good``, et ``gst-libav`` pour le H.264 et le HEVC (paquets
+``gstreamer1.0-plugins-good`` et ``gstreamer1.0-libav`` sur Debian, Ubuntu et
+Mint ; ``gstreamer1-plugins-good`` et ``gstreamer1-libav`` sur Fedora). Le
+paquet AUR les propose en dépendances optionnelles ; le Flatpak embarque
+l'extension ``org.freedesktop.Platform.ffmpeg-full``. Sous Windows, le HEVC
+demande l'extension « Extensions vidéo HEVC » du Microsoft Store ; macOS lit
+ces formats nativement. Un fichier que le webview ne lit pas est signalé dans
+le volet vidéo, avec son format.
+
 Archive .tar.gz
 ~~~~~~~~~~~~~~~~
 

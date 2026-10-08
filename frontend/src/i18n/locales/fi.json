@@ -665,7 +665,16 @@
         "confirmDelete": "Poistetaanko ottelu pelaajien {player1} ja {player2} välillä?",
         "enrichFromFile": "Rikasta tiedostosta…",
         "editTranscription": "Muokkaa litterointia",
-        "editTranscriptionTooltip": "Avaa tämä ottelu litterointiluonnoksena; sen vieminen valmiiksi korvaa ottelun"
+        "editTranscriptionTooltip": "Avaa tämä ottelu litterointiluonnoksena; sen vieminen valmiiksi korvaa ottelun",
+        "video": "Video",
+        "videoPlaceholder": "Videon URL tai tiedostopolku",
+        "videoChoose": "Tiedosto…",
+        "videoDetach": "Irrota",
+        "videoOpen": "Ottelun video",
+        "viewInVideo": "Katso videolta",
+        "videoSet": "Videolähde tallennettu",
+        "videoDetached": "Videolähde irrotettu",
+        "errorVideo": "Virhe ottelun videossa"
     },
     "collection": {
         "addDescription": "Lisää kuvaus…",
@@ -3089,5 +3098,14 @@
         "pace": "Virheet: {hasty} hätäisiä ({hastyLoss}), {deliberate} harkittuja ({deliberateLoss}), {unknown} ilman aikaa",
         "paceDiscipline": "pikemminkin kurinalaisuutta: hidasta",
         "paceKnowledge": "pikemminkin tietoa: tutki näitä asemia"
+    },
+    "video": {
+        "notPlayable": "Tätä lähdettä ei voi toistaa täällä.",
+        "codecDetail": "Webview ei toista tätä tiedostoa ({container}, tuki: {support}, koodi {code}).",
+        "unsupported": "ei tuettu",
+        "codecHint": "Linuxissa asenna gst-plugins-good ja gst-libav; Windowsissa Storen HEVC-laajennus toistaa H.265:n.",
+        "missing": "Videotiedostoa ei löydy.",
+        "relocate": "Valitse tiedosto…",
+        "player": "Videosoitin"
     }
 }

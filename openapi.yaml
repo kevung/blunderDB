@@ -4409,6 +4409,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/matches.setVideoSource:
+    post:
+      operationId: matches.setVideoSource
+      tags: [matches]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/matchVideoSourceReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/okResp"
   /v1/matches.swapPlayers:
     post:
       operationId: matches.swapPlayers
@@ -8482,6 +8499,14 @@ components:
         player2Name:
           type: string
         matchDate:
+          type: string
+    matchVideoSourceReq:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        source:
           type: string
     mergePlayersReq:
       type: object

@@ -407,6 +407,20 @@ func refreshMatchPositionDates(ctx context.Context, tx execer, matchID int64) er
 	return RefreshPositionMatchDates(ctx, tx, ids)
 }
 
+// SetVideoSource attaches or detaches (empty) a match's video source.
+func (s *matchStore) SetVideoSource(ctx context.Context, scope string, id int64, source string) error {
+	res, err := s.db.ExecContext(ctx, `UPDATE match SET video_source = NULLIF(?, '') WHERE id = ?`, source, id)
+	if err != nil {
+		return fmt.Errorf("sqlite: set match %d video source: %w", id, err)
+	}
+	if n, err := res.RowsAffected(); err != nil {
+		return fmt.Errorf("sqlite: set match %d video source: %w", id, err)
+	} else if n == 0 {
+		return fmt.Errorf("sqlite: set match %d video source: %w", id, storage.ErrNotFound)
+	}
+	return nil
+}
+
 // ReplaceHeader rewrites a match's header columns in place — see
 // storage.MatchStore. The hashes go in through nullableString for the same
 // reason Save does it: their UNIQUE index counts two empty strings as a

@@ -665,7 +665,16 @@
         "confirmDelete": "Match zwischen {player1} und {player2} löschen?",
         "enrichFromFile": "Aus einer Datei anreichern…",
         "editTranscription": "Transkription bearbeiten",
-        "editTranscriptionTooltip": "Dieses Match als Transkriptionsentwurf öffnen; Abschließen ersetzt das Match"
+        "editTranscriptionTooltip": "Dieses Match als Transkriptionsentwurf öffnen; Abschließen ersetzt das Match",
+        "video": "Video",
+        "videoPlaceholder": "Video-URL oder Dateipfad",
+        "videoChoose": "Datei…",
+        "videoDetach": "Lösen",
+        "videoOpen": "Match-Video",
+        "viewInVideo": "Im Video ansehen",
+        "videoSet": "Videoquelle gespeichert",
+        "videoDetached": "Videoquelle gelöst",
+        "errorVideo": "Fehler beim Match-Video"
     },
     "collection": {
         "addDescription": "Beschreibung hinzufügen…",
@@ -3089,5 +3098,14 @@
         "pace": "Fehler: {hasty} überhastet ({hastyLoss}), {deliberate} überlegt ({deliberateLoss}), {unknown} ohne Zeit",
         "paceDiscipline": "eher Disziplin: langsamer spielen",
         "paceKnowledge": "eher Wissen: diese Stellungen studieren"
+    },
+    "video": {
+        "notPlayable": "Diese Quelle kann hier nicht abgespielt werden.",
+        "codecDetail": "Das Webview kann diese Datei nicht abspielen ({container}, Unterstützung: {support}, Code {code}).",
+        "unsupported": "nicht unterstützt",
+        "codecHint": "Unter Linux gst-plugins-good und gst-libav installieren; unter Windows spielt die HEVC-Erweiterung aus dem Store H.265.",
+        "missing": "Videodatei nicht gefunden.",
+        "relocate": "Datei wählen…",
+        "player": "Videoplayer"
     }
 }
