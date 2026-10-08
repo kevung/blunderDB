@@ -4421,3 +4421,65 @@ func TestMigrate_2_37_0_to_2_38_0_CubeResponseMWC(t *testing.T) {
 		t.Errorf("match_stats_cell after migration = %d rows, MWC %.6f; want %d rows, MWC %.6f", gotN, got, n, want)
 	}
 }
+
+// TestMigrate_2_38_0_to_2_39_0_PlayedDecisions opens a 2.38.0 library, whose
+// moves carry no error of their own, and checks the step scores every move as
+// an import would have and leaves the match statistics unchanged for a
+// library where no position was played two ways.
+func TestMigrate_2_38_0_to_2_39_0_PlayedDecisions(t *testing.T) {
+	t.Parallel()
+	dbPath := filepath.Join(tempDir(t), "test_v2380.db")
+	d := NewDatabase()
+	if err := d.SetupDatabase(dbPath); err != nil {
+		t.Fatalf("setup: %v", err)
+	}
+	if _, err := d.ImportXGMatch(filepath.Join("testdata", "HsbtMarseille_main_ronde4_LamourDeCaslouGildas_UngerKevin_7p.xg")); err != nil {
+		t.Fatalf("import: %v", err)
+	}
+	scored := func(d *Database) (n, sum, closeCube int) {
+		t.Helper()
+		if err := d.db.QueryRow(`SELECT COUNT(decision_error_mp), COALESCE(SUM(decision_error_mp), 0), SUM(is_close_cube) FROM move`).Scan(&n, &sum, &closeCube); err != nil {
+			t.Fatal(err)
+		}
+		return n, sum, closeCube
+	}
+	wantN, wantSum, wantClose := scored(d)
+	if wantN == 0 || wantSum == 0 || wantClose == 0 {
+		t.Fatalf("fixture should score moves and flag close cubes, got %d, %d, %d", wantN, wantSum, wantClose)
+	}
+	before, err := d.GetMatchDetailStats(1)
+	if err != nil {
+		t.Fatalf("stats: %v", err)
+	}
+	for _, stmt := range []string{
+		`ALTER TABLE move DROP COLUMN decision_error_mp`,
+		`ALTER TABLE move DROP COLUMN is_close_cube`,
+		`UPDATE metadata SET value = '2.38.0' WHERE key = 'database_version'`,
+	} {
+		if _, err := d.db.Exec(stmt); err != nil {
+			t.Fatalf("%s: %v", stmt, err)
+		}
+	}
+	if err := d.Close(); err != nil {
+		t.Fatalf("close: %v", err)
+	}
+
+	d = NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open v2.38.0 database: %v", err)
+	}
+	closeOnCleanup(t, d)
+	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {
+		t.Fatalf("version after migration = %q, %v; want %q", v, err, DatabaseVersion)
+	}
+	if n, sum, closeCube := scored(d); n != wantN || sum != wantSum || closeCube != wantClose {
+		t.Errorf("moves after migration: %d scored, %d mP, %d close; want %d, %d, %d", n, sum, closeCube, wantN, wantSum, wantClose)
+	}
+	after, err := d.GetMatchDetailStats(1)
+	if err != nil {
+		t.Fatalf("stats after migration: %v", err)
+	}
+	if after.Player1.PR != before.Player1.PR || after.Player2.PR != before.Player2.PR {
+		t.Errorf("PR after migration (%v, %v), want (%v, %v)", after.Player1.PR, after.Player2.PR, before.Player1.PR, before.Player2.PR)
+	}
+}
