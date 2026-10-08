@@ -179,10 +179,11 @@ type TagStats struct {
 }
 
 // ScoreCellStats is one cell of the away × away matrix, keyed by (mover's
-// away, opponent's away) from the reference player's side. Crawford is a
-// separate flag: Crawford and post-Crawford at the same score are different
-// games and must not be averaged.
+// away, opponent's away) from the reference player's side. Post-Crawford is read as one away
+// (domain.PointsAway), as in ScoreBias; money play is the cell with Money set
+// and both aways at 0.
 type ScoreCellStats struct {
+	Money        bool    `json:"Money"`
 	MoverAway    int     `json:"MoverAway"`
 	OpponentAway int     `json:"OpponentAway"`
 	PR           float64 `json:"PR"`

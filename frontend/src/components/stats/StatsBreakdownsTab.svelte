@@ -38,7 +38,7 @@
     }
 
     function scoreLabel(cell) {
-        if (cell.MoverAway === 0 && cell.OpponentAway === 0) return $t('stats.scoreMoney');
+        if (cell.Money) return $t('stats.scoreMoney');
         return `${cell.MoverAway}-${cell.OpponentAway}`;
     }
 </script>
@@ -154,7 +154,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {#each cells as cell (`${cell.MoverAway}-${cell.OpponentAway}`)}
+                    {#each cells as cell ((cell.Money ? 'money' : '') + `${cell.MoverAway}-${cell.OpponentAway}`)}
                         <!-- Une cellule trop maigre est grisée, jamais cachée :
                              son effectif reste lisible, donc l'omission reste
                              vérifiable. -->

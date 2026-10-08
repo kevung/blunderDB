@@ -457,6 +457,9 @@ func (s *StatsStore) breakdownsFromCells(ctx context.Context, phase []phaseCell,
 				if err := r.Scan(append(dest, &match, &t.sumErr, &t.n, &t.blunders)...); err != nil {
 					return err
 				}
+				if kind == cellScore {
+					k = cellScoreKey(k)
+				}
 				cur := tallies[k]
 				if cur == nil {
 					cur = &tally{}
@@ -477,11 +480,15 @@ func (s *StatsStore) breakdownsFromCells(ctx context.Context, phase []phaseCell,
 			// and shown with NULL read as 0, as the direct pass's COALESCE
 			// does.
 			k1, k2 := int(k.k1), int(k.k2)
-			if k1 == cellNull {
-				k1 = 0
-			}
-			if k2 == cellNull {
-				k2 = 0
+			if kind == cellScore && k1 < 0 && k2 < 0 {
+				k1, k2 = moneyKey, moneyKey
+			} else {
+				if k1 == cellNull {
+					k1 = 0
+				}
+				if k2 == cellNull {
+					k2 = 0
+				}
 			}
 			fn(k1, k2, *tallies[k], units.interval(k))
 		}
@@ -523,10 +530,10 @@ func (s *StatsStore) breakdownsFromCells(ctx context.Context, phase []phaseCell,
 		return fmt.Errorf("per-game-type (cells): %w", err)
 	}
 	if err := read(cellScore, "c.k1, c.k2", func(k1, k2 int, t tally, iv domain.Interval) {
-		result.PerScore = append(result.PerScore, storage.ScoreCellStats{
-			MoverAway: k1, OpponentAway: k2, PR: pr(t.sumErr, int(t.n)), PRInterval: iv,
+		result.PerScore = append(result.PerScore, scoreCell(k1, k2, true, storage.ScoreCellStats{
+			PR: pr(t.sumErr, int(t.n)), PRInterval: iv,
 			NumDecisions: int(t.n), BlunderCount: int(t.blunders),
-		})
+		}))
 	}); err != nil {
 		return fmt.Errorf("per-score (cells): %w", err)
 	}
@@ -534,4 +541,20 @@ func (s *StatsStore) breakdownsFromCells(ctx context.Context, phase []phaseCell,
 	// that one save for NULL scores, read as 0 and kept apart.
 	sortScoreCells(result.PerScore)
 	return nil
+}
+
+// moneyKey is the pair of aways money is counted under, both columns.
+const moneyKey = -1
+
+// cellScoreKey is scoreKey on a stored cell: money (both negative, which also
+// swallows a cell with both columns NULL) as one key, otherwise the scores
+// through domain.PointsAway. A single NULL column keeps its key.
+func cellScoreKey(k struct{ k1, k2 int64 }) struct{ k1, k2 int64 } {
+	if k.k1 < 0 && k.k2 < 0 {
+		return struct{ k1, k2 int64 }{moneyKey, moneyKey}
+	}
+	if k.k1 == cellNull || k.k2 == cellNull {
+		return k
+	}
+	return struct{ k1, k2 int64 }{int64(domain.PointsAway(int(k.k1))), int64(domain.PointsAway(int(k.k2)))}
 }
