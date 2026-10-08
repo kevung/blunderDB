@@ -33,8 +33,8 @@ const (
 	// position its moves reached, with their analyses and comments: the
 	// positions only this match held are purged with it, and they carry the
 	// source file's notes. Restoring re-Saves the positions (Zobrist decides
-	// where each lands, as for TrashPosition) and rebuilds the match under a
-	// new id.
+	// where each lands, as for TrashPosition) and puts the match back under
+	// its own id and import date.
 	TrashMatch TrashKind = "match"
 )
 
@@ -113,6 +113,9 @@ type TrashMatchPayload struct {
 	// as storage.MatchOrigin spells it in JSON; absent otherwise. Raw, since
 	// this package depends on the standard library only.
 	Origin json.RawMessage `json:"origin,omitempty"`
+	// DirectionSlot is the Slot of its directed Tournament the match filled,
+	// "" for none.
+	DirectionSlot string `json:"directionSlot,omitempty"`
 	// TranscriptionIDs are the drafts that had produced this match; the
 	// delete leaves them unsaved, a restore ties them to it again.
 	TranscriptionIDs []int64 `json:"transcriptionIds,omitempty"`

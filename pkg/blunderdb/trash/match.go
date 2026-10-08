@@ -12,7 +12,8 @@ import (
 )
 
 // ErrMatchPresent refuses restoring a match the database holds again — it was
-// re-imported since the delete: a restore would make it a duplicate.
+// re-imported since the delete, so a restore would make it a duplicate — or
+// whose id another match now holds.
 var ErrMatchPresent = errors.New("trash: the match is in the database again")
 
 // Match deletes a match after snapshotting it whole: its header, games,
@@ -103,6 +104,9 @@ func snapshotMatch(ctx context.Context, s storage.Stores, scope string, matchID 
 			i++
 		}
 	}
+	if _, p.DirectionSlot, err = s.Directions().SlotOf(ctx, scope, matchID); err != nil {
+		return nil, err
+	}
 	switch o, err := s.Duels().Origin(ctx, scope, matchID); {
 	case err == nil:
 		if p.Origin, err = json.Marshal(o); err != nil {
@@ -122,8 +126,10 @@ func snapshotMatch(ctx context.Context, s storage.Stores, scope string, matchID 
 	return p, nil
 }
 
-// restoreMatch rebuilds a match from its snapshot, in one transaction when the
-// store offers one: a half-restored match would be worse than none.
+// restoreMatch rebuilds a match from its snapshot under its old id and import
+// date, in one transaction when the store offers one: a half-restored match
+// would be worse than none. Games, moves and analyses get new ids: nothing
+// outside the match's own cascade names them.
 //
 // The positions are re-Saved first, so the moves point at whatever row now
 // holds each one; a position's analysis and comments come back as
@@ -169,7 +175,6 @@ func rebuildMatch(ctx context.Context, s storage.Stores, scope string, p *domain
 	}
 
 	m := p.Match
-	m.ID = 0
 	if m.TournamentID != nil {
 		if _, err := s.Tournaments().Get(ctx, scope, *m.TournamentID); err != nil {
 			if !errors.Is(err, storage.ErrNotFound) {
@@ -186,10 +191,15 @@ func rebuildMatch(ctx context.Context, s storage.Stores, scope string, p *domain
 			m.ImportBatchID = 0
 		}
 	}
-	matchID, err := ms.Save(ctx, scope, &m)
-	if err != nil {
+	// Under its own id and import date: whatever named the match by id — a
+	// link, a review, a client's cache — finds it again.
+	if err := ms.Reinstate(ctx, scope, &m); err != nil {
+		if errors.Is(err, storage.ErrConflict) {
+			return 0, fmt.Errorf("%w: its id %d is taken", ErrMatchPresent, m.ID)
+		}
 		return 0, err
 	}
+	matchID := m.ID
 	if m.VideoSource != nil {
 		if err := ms.SetVideoSource(ctx, scope, matchID, *m.VideoSource); err != nil {
 			return 0, err
@@ -249,6 +259,11 @@ func rebuildMatch(ctx context.Context, s storage.Stores, scope string, p *domain
 			return 0, err
 		}
 	}
+	if p.DirectionSlot != "" && m.TournamentID != nil {
+		if err := refillSlot(ctx, s, scope, *m.TournamentID, p.DirectionSlot, matchID); err != nil {
+			return 0, err
+		}
+	}
 	if m.TournamentID != nil {
 		if err := placeInTournament(ctx, s, scope, *m.TournamentID, matchID, p.TournamentIndex); err != nil {
 			return 0, err
@@ -272,6 +287,21 @@ func rebuildMatch(ctx context.Context, s storage.Stores, scope string, p *domain
 		}
 	}
 	return matchID, nil
+}
+
+// refillSlot puts the match back in the Slot of a directed Tournament it
+// filled, unless another match fills it now: the Slot is the director's.
+func refillSlot(ctx context.Context, s storage.Stores, scope string, tournamentID int64, slotID string, matchID int64) error {
+	filled, err := s.Directions().FilledSlots(ctx, scope, tournamentID)
+	if err != nil {
+		return err
+	}
+	for _, f := range filled {
+		if f.SlotID == slotID {
+			return nil
+		}
+	}
+	return s.Directions().AttachSlot(ctx, scope, tournamentID, slotID, matchID)
 }
 
 // placeInTournament puts matchID back at index among its tournament's matches.

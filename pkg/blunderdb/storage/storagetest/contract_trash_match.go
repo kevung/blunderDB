@@ -1,6 +1,6 @@
 // Contract case for a match deleted through the trash: what the delete purges
 // is what a plain DeleteCascade purges, and the restore gives the match back
-// as it was, under a new id. The table that runs it lives in contract.go.
+// as it was, under its own id and import date. The table that runs it lives in contract.go.
 package storagetest
 
 import (
@@ -33,7 +33,8 @@ func readMatchContent(t *testing.T, s storage.Storage, matchID int64) matchConte
 		t.Fatalf("Get match %d: %v", matchID, err)
 	}
 	c := matchContent{Header: *m}
-	c.Header.ID, c.Header.ImportDate, c.Header.TournamentSortOrder = 0, time.Time{}, 0
+	// The import date as an instant: a backend may hand back another zone.
+	c.Header.ImportDate = c.Header.ImportDate.UTC()
 	for g, err := range s.Matches().Games(ctx, "", matchID) {
 		if err != nil {
 			t.Fatalf("Games: %v", err)
@@ -109,8 +110,9 @@ func testTrashMatchRestores(t *testing.T, s storage.Storage) {
 	}
 	addMove := func(gameID int64, n int32, posID int64) int64 {
 		luck := int32(-120)
+		roll, tick := int64(1000*int64(n)), int64(1000*int64(n)+400)
 		mv := domain.Move{GameID: gameID, MoveNumber: n, MoveType: "checker", PositionID: posID, Player: 1,
-			Dice: [2]int32{3, 1}, CheckerMove: "8/5 6/5", LuckMP: &luck}
+			Dice: [2]int32{3, 1}, CheckerMove: "8/5 6/5", LuckMP: &luck, RollTickMS: &roll, TickMS: &tick}
 		id, err := ms.CreateMove(ctx, "", &mv)
 		if err != nil {
 			t.Fatalf("CreateMove: %v", err)
@@ -149,6 +151,13 @@ func testTrashMatchRestores(t *testing.T, s storage.Storage) {
 		t.Fatalf("AddPositions: %v", err)
 	}
 
+	if _, err := s.Comments().Add(ctx, "", held, "mine"); err != nil {
+		t.Fatalf("Add comment: %v", err)
+	}
+	draftID, err := s.Transcriptions().Save(ctx, "", &storage.Transcription{MatchID: matchID, Label: "draft", Document: "{}"})
+	if err != nil {
+		t.Fatalf("Save transcription: %v", err)
+	}
 	m1 := addMove(gameID, 1, orphan)
 	addMove(gameID, 2, held)
 	addMove(gameID, 3, 0)
@@ -187,8 +196,8 @@ func testTrashMatchRestores(t *testing.T, s storage.Storage) {
 	if err != nil {
 		t.Fatalf("Restore: %v", err)
 	}
-	if restored == matchID {
-		t.Errorf("restored match kept id %d; a deleted id is never reused", restored)
+	if restored != matchID {
+		t.Errorf("restored match has id %d, want its own %d", restored, matchID)
 	}
 	got := readMatchContent(t, s, restored)
 	if !reflect.DeepEqual(got, want) {
@@ -233,6 +242,35 @@ func testTrashMatchRestores(t *testing.T, s storage.Storage) {
 	if _, err := s.Trash().Load(ctx, "", entryID); !errors.Is(err, storage.ErrNotFound) {
 		t.Errorf("trash entry after restore: %v, want ErrNotFound", err)
 	}
+	// What named the match or its held positions by id finds them again.
+	if d, err := s.Transcriptions().Get(ctx, "", draftID); err != nil || d.MatchID != matchID {
+		t.Errorf("draft after restore names match %v (%v), want %d", d, err, matchID)
+	}
+	var mine []string
+	for c, err := range s.Comments().ByPosition(ctx, "", held) {
+		if err != nil {
+			t.Fatalf("ByPosition: %v", err)
+		}
+		mine = append(mine, c.Text)
+	}
+	if !reflect.DeepEqual(mine, []string{"mine"}) {
+		t.Errorf("comments of the held position after restore = %v, want [mine]", mine)
+	}
+	var members []int64
+	for p, err := range s.Collections().Positions(ctx, "", colID, storage.ListOpts{}) {
+		if err != nil {
+			t.Fatalf("collection positions: %v", err)
+		}
+		members = append(members, p.ID)
+	}
+	if !reflect.DeepEqual(members, []int64{held}) {
+		t.Errorf("collection after restore = %v, want [%d]", members, held)
+	}
+	for _, mv := range got.Moves {
+		if mv.RollTickMS == nil || mv.TickMS == nil {
+			t.Errorf("move %d lost its video marks", mv.MoveNumber)
+		}
+	}
 
 	// A match imported again meanwhile is not restored over: that would be a
 	// duplicate. The entry stays.
@@ -246,5 +284,31 @@ func testTrashMatchRestores(t *testing.T, s storage.Storage) {
 	}
 	if _, err := s.Trash().Load(ctx, "", entryID); err != nil {
 		t.Errorf("trash entry after a refused restore: %v", err)
+	}
+
+	// The id taken by another match meanwhile: refused, the entry stays.
+	if err := s.Trash().Discard(ctx, "", entryID); err != nil {
+		t.Fatalf("Discard: %v", err)
+	}
+	third, _ := newMatch("Eve", "Fay", "h-third")
+	entryID, err = trash.Match(ctx, s, "", third)
+	if err != nil {
+		t.Fatalf("trash.Match third: %v", err)
+	}
+	squatter := domain.Match{ID: third, Player1Name: "Gus", Player2Name: "Hal"}
+	if err := ms.Reinstate(ctx, "", &squatter); err != nil {
+		t.Fatalf("Reinstate squatter: %v", err)
+	}
+	if _, err := trash.Restore(ctx, s, "", entryID); !errors.Is(err, trash.ErrMatchPresent) {
+		t.Errorf("restore over a taken id: %v, want ErrMatchPresent", err)
+	}
+	if _, err := s.Trash().Load(ctx, "", entryID); err != nil {
+		t.Errorf("trash entry after a refused restore: %v", err)
+	}
+	if err := ms.Reinstate(ctx, "", &domain.Match{ID: third}); !errors.Is(err, storage.ErrConflict) {
+		t.Errorf("Reinstate on a held id: %v, want ErrConflict", err)
+	}
+	if err := ms.Reinstate(ctx, "", &domain.Match{}); !errors.Is(err, storage.ErrInvalid) {
+		t.Errorf("Reinstate without an id: %v, want ErrInvalid", err)
 	}
 }

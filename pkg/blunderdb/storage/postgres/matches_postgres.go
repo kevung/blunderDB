@@ -149,6 +149,54 @@ func (s *matchStore) Save(ctx context.Context, scope string, m *domain.Match) (i
 	return id, nil
 }
 
+// matchReinstateSQL is matchInsertSQL with the id and the import date stated.
+const matchReinstateSQL = `INSERT INTO match (
+	id, import_date,
+	tenant_id, player1_name, player2_name, event, location, round,
+	match_length, match_date, file_path, game_count, tournament_id, comment, comment_author,
+	match_hash, canonical_hash, import_batch_id, dice_hash,
+	player1_elo, player2_elo, player1_experience, player2_experience,
+	transcriber, has_jacoby, has_beaver, engine_version, video_source
+) VALUES ($27, COALESCE($28, now()),
+	$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,
+	$17,$18,$19,$20,$21,$22,$23,$24,$25,NULLIF($26, ''))`
+
+// matchIDIssuedSQL is the highest id the match sequence has handed out, 0
+// before the first.
+const matchIDIssuedSQL = `SELECT COALESCE(pg_sequence_last_value(pg_get_serial_sequence('match', 'id')::regclass), 0)`
+
+// Reinstate stores m under its own id and import date — see
+// storage.MatchStore. The id must be one the sequence already issued: the
+// sequence is left alone (moving it back or forth under concurrent inserts
+// could hand the id out twice), so an id beyond it would collide with a
+// later Save.
+func (s *matchStore) Reinstate(ctx context.Context, scope string, m *domain.Match) error {
+	if m.ID <= 0 {
+		return fmt.Errorf("postgres: reinstate match: id %d: %w", m.ID, storage.ErrInvalid)
+	}
+	var issued int64
+	if err := s.db.QueryRow(ctx, matchIDIssuedSQL).Scan(&issued); err != nil {
+		return fmt.Errorf("postgres: reinstate match %d: read id sequence: %w", m.ID, err)
+	}
+	if m.ID > issued {
+		return fmt.Errorf("postgres: reinstate match: id %d was never issued: %w", m.ID, storage.ErrInvalid)
+	}
+	args := append([]any{
+		tenantID(scope), m.Player1Name, m.Player2Name, m.Event, m.Location, m.Round,
+		m.MatchLength, nullableTime(m.MatchDate), m.FilePath, m.GameCount,
+		m.TournamentID, m.Comment, m.CommentAuthor,
+		nullableString(m.MatchHash), nullableString(m.CanonicalHash), nullableID(m.ImportBatchID),
+		nullableString(m.DiceHash)}, sourceMetadataArgs(m)...)
+	args = append(args, m.ID, nullableTime(m.ImportDate))
+	if _, err := s.db.Exec(ctx, matchReinstateSQL, args...); err != nil {
+		if isUniqueViolation(err) {
+			return fmt.Errorf("postgres: reinstate match %d: %w", m.ID, storage.ErrConflict)
+		}
+		return fmt.Errorf("postgres: reinstate match %d: %w", m.ID, referenced(err))
+	}
+	return nil
+}
+
 // FindByHash returns the id of a match matching hash (preferred) or
 // canonicalHash, scoped to the tenant, for duplicate detection.
 func (s *matchStore) FindByHash(ctx context.Context, scope string, hash, canonicalHash string) (int64, bool, error) {

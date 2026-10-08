@@ -177,6 +177,42 @@ func (s *matchStore) Save(ctx context.Context, scope string, m *domain.Match) (i
 	return id, nil
 }
 
+// matchReinstateSQL is matchInsertSQL with the id and the import date stated.
+var matchReinstateSQL = strings.Replace(strings.Replace(matchInsertSQL,
+	"INSERT INTO match (", "INSERT INTO match (id, import_date, ", 1),
+	"VALUES (", "VALUES (?, COALESCE(?, CURRENT_TIMESTAMP), ", 1)
+
+// Reinstate stores m under its own id and import date — see
+// storage.MatchStore. AUTOINCREMENT never issues an id twice, and an explicit
+// id above its counter raises the counter, so nothing collides later.
+func (s *matchStore) Reinstate(ctx context.Context, scope string, m *domain.Match) error {
+	if m.ID <= 0 {
+		return fmt.Errorf("sqlite: reinstate match: id %d: %w", m.ID, storage.ErrInvalid)
+	}
+	var importDate any
+	if !m.ImportDate.IsZero() {
+		// CURRENT_TIMESTAMP's own spelling, so the column reads as it did.
+		importDate = m.ImportDate.UTC().Format("2006-01-02 15:04:05")
+		if m.ImportDate.Nanosecond() != 0 {
+			importDate = m.ImportDate
+		}
+	}
+	args := append([]any{
+		m.ID, importDate,
+		m.Player1Name, m.Player2Name, m.Event, m.Location, m.Round,
+		m.MatchLength, nullableTime(m.MatchDate), m.FilePath, m.GameCount,
+		m.TournamentID, m.Comment, m.CommentAuthor,
+		nullableString(m.MatchHash), nullableString(m.CanonicalHash), nullableID(m.ImportBatchID),
+		nullableString(m.DiceHash)}, sourceMetadataArgs(m)...)
+	if _, err := s.db.ExecContext(ctx, matchReinstateSQL, args...); err != nil {
+		if isKeyViolation(err) {
+			return fmt.Errorf("sqlite: reinstate match %d: %w", m.ID, storage.ErrConflict)
+		}
+		return fmt.Errorf("sqlite: reinstate match %d: %w", m.ID, referenced(err))
+	}
+	return nil
+}
+
 // FindByHash returns the id of a match matching hash (preferred) or
 // canonicalHash, for duplicate detection.
 func (s *matchStore) FindByHash(ctx context.Context, scope string, hash, canonicalHash string) (int64, bool, error) {
