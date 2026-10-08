@@ -151,7 +151,7 @@ func testStatsMatchDecisionLosses(t *testing.T, s storage.Storage) {
 		t.Errorf("badge should carry a loss for both players: %+v", b)
 	}
 
-	// The match review (ADR-0077) reads the same decisions: its PR and L7 are
+	// The match review (ADR-0078) reads the same decisions: its PR and L7 are
 	// the badge's, its errors to review rank the avoidable part of the loss,
 	// and without durations every error is of unknown pace.
 	review, err := s.Stats().MatchReview(ctx, "", matchID)

@@ -603,6 +603,15 @@ export default {
 <div class="admonition note">
 <p>Il numero totale di decisioni viene visualizzato in fondo a ciascuna scheda al passaggio del mouse.</p>
 </div>
+<h5>Piano di studio</h5>
+<p>La scheda <strong>Piano di studio</strong> risponde a «che cosa devo lavorare adesso?». Gli errori ricorrenti (scheda Errori) dicono dove il filtro ha perso di più; non dicono dove lo studio rende di più. Una famiglia di posizioni davvero difficili costa cara a tutti, e tre errori non fanno una tendenza. Il piano corregge entrambe le cose.</p>
+<ul>
+<li>Una <strong>famiglia</strong> è un gruppo di errori ricorrenti: un piano di gioco, una natura di decisione (pedine o cubo) e un tema. Gli errori senza tema non ne formano: non indicano nulla da studiare.</li>
+<li>Ogni errore è quantificato in <strong>MWC</strong>, come nel pannello Match: la sua perdita ℓ e la sua <em>difficoltà</em> d, la perdita che un giocatore di riferimento avrebbe subito nella stessa posizione (vedere la difficoltà per decisione del pannello Match). Un errore in partita libera non ha MWC: viene solo contato, «non quantificato».</li>
+<li>L'<strong>MWC recuperabile</strong> di una famiglia è la somma di ℓ − d sui suoi errori: la frequenza della famiglia moltiplicata per la sua perdita media oltre la difficoltà. È ciò che recupererebbe giocando quelle posizioni come il giocatore di riferimento. Una famiglia di errori evitabili sale, una famiglia di posizioni in cui tutti sbagliano scende.</li>
+<li>L'<strong>intervallo al 95 %</strong> accompagna ogni cifra. Una famiglia entra nel piano a partire da <strong>5 errori</strong> e da un intervallo interamente sopra lo zero; il piano è ordinato per il limite inferiore dell'intervallo, così che, a pari recuperabile, passi avanti la famiglia meglio accertata. Le altre sono nominate sotto la tabella, <strong>da confermare</strong>, senza rango: il piano non la spinge verso il rumore.</li>
+</ul>
+<p>Ogni famiglia propone tre azioni: <strong>Studiare</strong> apre la coda di studio sulle sue posizioni, lo scarto maggiore dal giocatore di riferimento per primo; <strong>Quiz</strong> avvia l'esercizio Decisione del pannello Allenamento su venti di esse; <strong>Anki</strong> ne fa un mazzo di carte. Sopra la tabella, <strong>Quiz sulle prime tre famiglie</strong> estrae venti posizioni da quelle delle tre famiglie di testa. Il piano segue il filtro del pannello: imposti il giocatore per ottenere <em>il suo</em> piano. Da riga di comando: <code>blunderdb stats plan</code> (vedere stats — Errori ricorrenti).</p>
 <h5>PR mobile sulle ultime N decisioni</h5>
 <p>Una riga di valori PR (o MWC) calcolati sulle ultime <em>N</em> decisioni (N = 5, 10, 50, 100, 250, 500, 1000) permette di misurare la tendenza recente. I valori in grigio corrispondono a un N superiore al numero di decisioni disponibili.</p>
 <p>Cliccando su un valore si caricano le ultime <em>N</em> posizioni corrispondenti.</p>

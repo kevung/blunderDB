@@ -2,7 +2,7 @@ package domain
 
 import "math"
 
-// Interval is a 95 % interval around a figure (ADR-0077). Low and High mean
+// Interval is a 95 % interval around a figure (ADR-0078). Low and High mean
 // nothing unless Available, which needs two independent units to resample.
 type Interval struct {
 	Available bool    `json:"available"`

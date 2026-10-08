@@ -354,7 +354,7 @@ func (cli *CLI) formatMatchSummary(match *Match, positions []MatchMovePosition, 
 	return sb.String(), nil
 }
 
-// writeMatchReview adds the match's study summary (ADR-0077), per player: PR
+// writeMatchReview adds the match's study summary (ADR-0078), per player: PR
 // with its interval over the games, the luck-adjusted result, the errors to
 // revisit, and the hasty/deliberate split of the errors.
 func writeMatchReview(sb *strings.Builder, names [2]string, review storage.MatchReview) {

@@ -603,6 +603,15 @@ export default {
 <div class="admonition note">
 <p>Päätösten kokonaismäärä näytetään kunkin kortin alaosassa, kun osoitin on sen päällä.</p>
 </div>
+<h5>Opintosuunnitelma</h5>
+<p><strong>Opintosuunnitelma</strong>-kortti vastaa kysymykseen ”mitä minun pitäisi harjoitella nyt?”. Toistuvat virheet (Erreurs-välilehti) kertovat, missä suodatin hävisi eniten; ne eivät kerro, missä opiskelu tuottaa eniten. Perheellinen todella vaikeita asemia maksaa kaikille paljon, eivätkä kolme virhettä tee trendiä. Suunnitelma korjaa molemmat.</p>
+<ul>
+<li><strong>Perhe</strong> on toistuvien virheiden ryhmä: pelisuunnitelma, päätöksen laji (nappulat tai kuutio) ja teema. Teemattomat virheet eivät muodosta perhettä: ne eivät osoita mitään opiskeltavaa.</li>
+<li>Jokainen virhe mitataan <strong>MWC</strong>:nä kuten Match-paneelissa: sen tappio ℓ ja sen <em>vaikeus</em> d, eli tappio, jonka viitepelaaja olisi kärsinyt samassa asemassa (ks. Match-paneelin päätöskohtainen vaikeus). Vapaan pelin virheellä ei ole MWC:tä: se vain lasketaan, ”mittaamattomana”.</li>
+<li>Perheen <strong>takaisin saatava MWC</strong> on ℓ − d:n summa sen virheiden yli: perheen esiintymistiheys kerrottuna sen keskimääräisellä vaikeuden ylittävällä tappiolla. Se on se, minkä saisit takaisin pelaamalla nämä asemat kuten viitepelaaja. Vältettävien virheiden perhe nousee, asemien perhe, joissa kaikki erehtyvät, laskee.</li>
+<li><strong>95 %:n luottamusväli</strong> seuraa jokaista lukua. Perhe pääsee suunnitelmaan <strong>5 virheestä</strong> alkaen ja kun väli on kokonaan nollan yläpuolella; suunnitelma järjestetään välin alarajan mukaan, joten yhtä suuressa takaisin saatavassa parhaiten perusteltu perhe kulkee edellä. Muut mainitaan taulukon alla, <strong>vahvistettavina</strong>, ilman sijaa: suunnitelma ei työnnä sinua kohinaan.</li>
+</ul>
+<p>Jokainen perhe tarjoaa kolme toimintoa: <strong>Opiskele</strong> avaa opiskelujonon sen asemilla, suurin ero viitepelaajaan ensin; <strong>Tietovisa</strong> käynnistää Harjoittelu-paneelin Päätös-harjoituksen kahdellakymmenellä niistä; <strong>Anki</strong> tekee niistä korttipakan. Taulukon yläpuolella <strong>Tietovisa kolmesta ensimmäisestä perheestä</strong> poimii kaksikymmentä asemaa kolmen kärkiperheen asemista. Suunnitelma seuraa paneelin suodatinta: aseta pelaaja saadaksesi <em>oman</em> suunnitelmasi. Komentorivillä: <code>blunderdb stats plan</code> (ks. stats — Toistuvat virheet).</p>
 <h5>Liukuva PR viimeisten N päätöksen perusteella</h5>
 <p>Rivi PR- (tai MWC-) arvoja, jotka on laskettu viimeisten <em>N</em> päätöksen perusteella (N = 5, 10, 50, 100, 250, 500, 1000), mahdollistaa viimeaikaisen kehityssuunnan mittaamisen. Harmaannetut arvot vastaavat N:ää, joka on suurempi kuin käytettävissä olevien päätösten määrä.</p>
 <p>Arvon napsauttaminen lataa vastaavat viimeiset <em>N</em> asemaa.</p>

@@ -99,7 +99,7 @@ type StatsResult struct {
 	Totals   StatsTotals `json:"Totals"`
 	PRGlobal float64     `json:"PRGlobal"`
 	// PRInterval is PRGlobal's 95 % interval over the selection's matches
-	// (ADR-0077).
+	// (ADR-0078).
 	PRInterval   domain.Interval `json:"PRInterval"`
 	PRChecker    float64         `json:"PRChecker"`
 	PRCube       float64         `json:"PRCube"`
@@ -151,7 +151,7 @@ type PhaseStats struct {
 	// Phase is the stable token of domain.GamePhase ("opening", "race", …).
 	Phase string  `json:"Phase"`
 	PR    float64 `json:"PR"`
-	// PRInterval is PR's 95 % interval over the cell's matches (ADR-0077).
+	// PRInterval is PR's 95 % interval over the cell's matches (ADR-0078).
 	PRInterval   domain.Interval `json:"PRInterval"`
 	NumDecisions int             `json:"NumDecisions"`
 	BlunderCount int             `json:"BlunderCount"`
@@ -162,7 +162,7 @@ type GameTypeStats struct {
 	// GameType is the stable token of domain.GameType ("holding", "blitz", …).
 	GameType string  `json:"GameType"`
 	PR       float64 `json:"PR"`
-	// PRInterval is PR's 95 % interval over the cell's matches (ADR-0077).
+	// PRInterval is PR's 95 % interval over the cell's matches (ADR-0078).
 	PRInterval   domain.Interval `json:"PRInterval"`
 	NumDecisions int             `json:"NumDecisions"`
 	BlunderCount int             `json:"BlunderCount"`
@@ -172,7 +172,7 @@ type GameTypeStats struct {
 type TagStats struct {
 	Tag string  `json:"Tag"`
 	PR  float64 `json:"PR"`
-	// PRInterval is PR's 95 % interval over the cell's matches (ADR-0077).
+	// PRInterval is PR's 95 % interval over the cell's matches (ADR-0078).
 	PRInterval   domain.Interval `json:"PRInterval"`
 	NumDecisions int             `json:"NumDecisions"`
 	BlunderCount int             `json:"BlunderCount"`
@@ -186,7 +186,7 @@ type ScoreCellStats struct {
 	MoverAway    int     `json:"MoverAway"`
 	OpponentAway int     `json:"OpponentAway"`
 	PR           float64 `json:"PR"`
-	// PRInterval is PR's 95 % interval over the cell's matches (ADR-0077).
+	// PRInterval is PR's 95 % interval over the cell's matches (ADR-0078).
 	PRInterval   domain.Interval `json:"PRInterval"`
 	NumDecisions int             `json:"NumDecisions"`
 	BlunderCount int             `json:"BlunderCount"`
@@ -364,7 +364,7 @@ type DecisionLoss struct {
 	ErrorMP *int64 `json:"error_mp"`
 	Error   bool   `json:"error"`
 	// Luck is the roll's luck for the player who rolled, converted to MWC at
-	// the position's score and cube like a loss (ADR-0077); nil when unknown,
+	// the position's score and cube like a loss (ADR-0078); nil when unknown,
 	// on a cube row, or at money.
 	Luck *float64 `json:"luck"`
 	// DurationMS is the time taken over the decision (ADR-0073), nil when
@@ -579,7 +579,7 @@ type StatsStore interface {
 	// the Match's MWCLoss (MWCLoss2 for player 2).
 	MatchDecisionLosses(ctx context.Context, scope string, matchID int64) ([]DecisionLoss, error)
 
-	// MatchReview is a match's study summary (ADR-0077): PR and L7 with
+	// MatchReview is a match's study summary (ADR-0078): PR and L7 with
 	// their intervals over the games, the errors worth revisiting, the
 	// luck-adjusted result and the hasty/deliberate split of the errors.
 	MatchReview(ctx context.Context, scope string, matchID int64) (MatchReview, error)
@@ -614,6 +614,11 @@ type StatsStore interface {
 	// at least the library's Error threshold) by plan of play and theme,
 	// heaviest summed cost first. See GroupRecurringErrors.
 	RecurringErrors(ctx context.Context, scope string, filter StatsFilter) (*RecurringErrors, error)
+
+	// StudyPlan ranks the same families by the winning chances studying them
+	// would recover, apart from those short of evidence (ADR-0077). See
+	// BuildStudyPlan.
+	StudyPlan(ctx context.Context, scope string, filter StatsFilter) (*StudyPlan, error)
 
 	// MatchStats returns the stored per-match, per-seat tallies of the given
 	// matches (every match in scope when matchIDs is empty), two rows per

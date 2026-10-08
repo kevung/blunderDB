@@ -1,6 +1,6 @@
 package sqlshared
 
-// stats_intervals.go — the PR intervals of the statistics (ADR-0077). An
+// stats_intervals.go — the PR intervals of the statistics (ADR-0078). An
 // aggregate resamples its matches: the two seats of a match play the same
 // positions and form one unit, and the games of a match share an opponent and
 // a sitting, so neither is an independent sample. Both computation paths sum

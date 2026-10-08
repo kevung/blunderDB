@@ -1,4 +1,4 @@
-// Display of a 95 % interval (domain.Interval, ADR-0077): the bootstrap band of a PR over the
+// Display of a 95 % interval (domain.Interval, ADR-0078): the bootstrap band of a PR over the
 // games of a match or the matches of a selection. Without one (a single unit) nothing is shown,
 // and the caller greys the figure.
 

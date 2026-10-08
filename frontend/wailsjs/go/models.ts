@@ -6960,6 +6960,120 @@ export namespace storage {
 		    return a;
 		}
 	}
+	export class StudyPlanPosition {
+	    PositionID: number;
+	    MatchID: number;
+	    Label: string;
+	    ErrorMP: number;
+	    Excess: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new StudyPlanPosition(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.PositionID = source["PositionID"];
+	        this.MatchID = source["MatchID"];
+	        this.Label = source["Label"];
+	        this.ErrorMP = source["ErrorMP"];
+	        this.Excess = source["Excess"];
+	    }
+	}
+	export class StudyPlanFamily {
+	    GameType: string;
+	    Kind: string;
+	    Theme: string;
+	    Errors: number;
+	    Avoidable: number;
+	    MeanLoss: number;
+	    MeanDifficulty: number;
+	    Recoverable: number;
+	    Low: number;
+	    High: number;
+	    Positions: StudyPlanPosition[];
+	
+	    static createFrom(source: any = {}) {
+	        return new StudyPlanFamily(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.GameType = source["GameType"];
+	        this.Kind = source["Kind"];
+	        this.Theme = source["Theme"];
+	        this.Errors = source["Errors"];
+	        this.Avoidable = source["Avoidable"];
+	        this.MeanLoss = source["MeanLoss"];
+	        this.MeanDifficulty = source["MeanDifficulty"];
+	        this.Recoverable = source["Recoverable"];
+	        this.Low = source["Low"];
+	        this.High = source["High"];
+	        this.Positions = this.convertValues(source["Positions"], StudyPlanPosition);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class StudyPlan {
+	    NumDecisions: number;
+	    ThresholdMP: number;
+	    MinErrors: number;
+	    Families: StudyPlanFamily[];
+	    Tentative: StudyPlanFamily[];
+	    Unthemed: number;
+	    Unpriced: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new StudyPlan(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.NumDecisions = source["NumDecisions"];
+	        this.ThresholdMP = source["ThresholdMP"];
+	        this.MinErrors = source["MinErrors"];
+	        this.Families = this.convertValues(source["Families"], StudyPlanFamily);
+	        this.Tentative = this.convertValues(source["Tentative"], StudyPlanFamily);
+	        this.Unthemed = source["Unthemed"];
+	        this.Unpriced = source["Unpriced"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	
+	
 	export class TimeErrorRow {
 	    player: string;
 	    bucket: number;

@@ -6,6 +6,7 @@
     import { t } from '../../i18n/index.js';
     import { fmtMwc7, fmtMwc7Interval, mwc7Tooltip } from '../../utils/mwc7.js';
     import { fmtPRInterval } from '../../utils/interval.js';
+    import StatsStudyPlan from './StatsStudyPlan.svelte';
 
     /** @type {{ result: import('../../stores/statsStore.js').StatsResult|null, metric: string }} */
     let { result = null, metric = 'pr' } = $props();
@@ -30,7 +31,7 @@
         return metric === 'pr' ? '' : 'MWC loss';
     }
 
-    /** The 95 % interval of the headline card (ADR-0077), '' without one. */
+    /** The 95 % interval of the headline card (ADR-0078), '' without one. */
     function cardInterval() {
         if (!result) return '';
         if (metric === 'mwc7') return fmtMwc7Interval(result.MWC7);
@@ -148,6 +149,9 @@
         {result.Totals.NumDecisions}
         {$t('stats.decisions')}
     </p>
+
+    <!-- ── Study plan: what to work on now (ADR-0077) ───────────────── -->
+    <StatsStudyPlan />
 
     <!-- ── Rolling N ────────────────────────────────────────────── -->
     <section class="rolling-section">

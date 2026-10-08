@@ -8,10 +8,10 @@ import (
 )
 
 // ReviewCount is how many decisions a MatchReview proposes to revisit per
-// player (ADR-0077).
+// player (ADR-0078).
 const ReviewCount = 3
 
-// MatchReview is a match's study summary (ADR-0077), per player (index 0 is
+// MatchReview is a match's study summary (ADR-0078), per player (index 0 is
 // player 1): what the uncertainty of the figures is, which decisions are
 // worth revisiting, whether the dice or the play decided the result, and
 // whether the errors came from haste or from a gap in knowledge.
@@ -172,7 +172,7 @@ func BuildMatchReview(matchID int64, decisions []DecisionLoss, matchLength int, 
 	return r
 }
 
-// toReview ranks seat's priced errors by their avoidable loss (ADR-0077).
+// toReview ranks seat's priced errors by their avoidable loss (ADR-0078).
 func toReview(decisions []DecisionLoss, seat int) []ReviewDecision {
 	type ranked struct {
 		ReviewDecision
@@ -206,7 +206,7 @@ func toReview(decisions []DecisionLoss, seat int) []ReviewDecision {
 }
 
 // errorPace splits seat's priced errors at the median duration of its priced
-// decisions of the same type (ADR-0077).
+// decisions of the same type (ADR-0078).
 func errorPace(decisions []DecisionLoss, seat int) ErrorPace {
 	durations := map[string][]int64{}
 	for _, d := range decisions {

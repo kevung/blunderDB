@@ -603,6 +603,15 @@ export default {
 <div class="admonition note">
 <p>Le nombre total de décisions est affiché en bas de chaque carte au survol.</p>
 </div>
+<h5>Plan d'étude</h5>
+<p>La carte <strong>Plan d'étude</strong> répond à « que dois-je travailler maintenant ? ». Les erreurs récurrentes (onglet Erreurs) disent où le filtre a perdu le plus ; elles ne disent pas où l'étude rapporte le plus. Une famille de positions réellement difficiles coûte cher à tout le monde, et trois erreurs ne font pas une tendance. Le plan corrige les deux.</p>
+<ul>
+<li>Une <strong>famille</strong> est un groupe des erreurs récurrentes : un plan de jeu, une nature de décision (pions ou videau) et un thème. Les erreurs sans thème n'en forment pas : elles n'indiquent rien à étudier.</li>
+<li>Chaque erreur est chiffrée en <strong>MWC</strong>, comme dans le panneau Match : sa perte ℓ, et sa <em>difficulté</em> d, la perte qu'un joueur de référence aurait subie dans la même position (voir la difficulté par décision du panneau Match). Une erreur en partie libre n'a pas de MWC : elle est seulement comptée, « non chiffrée ».</li>
+<li>Le <strong>MWC récupérable</strong> d'une famille est la somme de ℓ − d sur ses erreurs : la fréquence de la famille multipliée par sa perte moyenne au-delà de la difficulté. C'est ce que vous regagneriez en jouant ces positions comme le joueur de référence. Une famille d'erreurs évitables monte, une famille de positions où tout le monde se trompe descend.</li>
+<li>L'<strong>intervalle à 95 %</strong> accompagne chaque chiffre. Une famille entre au plan à partir de <strong>5 erreurs</strong> et d'un intervalle entièrement au-dessus de zéro ; le plan est classé par la borne basse de l'intervalle, si bien qu'à récupérable égal la famille la mieux établie passe devant. Les autres sont nommées sous le tableau, <strong>à confirmer</strong>, sans rang : le plan ne vous pousse pas vers du bruit.</li>
+</ul>
+<p>Chaque famille propose trois gestes : <strong>Étudier</strong> ouvre la file d'étude sur ses positions, l'écart au joueur de référence le plus grand d'abord ; <strong>Quiz</strong> lance l'exercice Décision du panneau Entraînement sur vingt d'entre elles ; <strong>Anki</strong> en fait un paquet de cartes. Au-dessus du tableau, <strong>Quiz sur les trois premières familles</strong> tire vingt positions parmi celles des trois familles de tête. Le plan suit le filtre du panneau : réglez le joueur pour obtenir <em>votre</em> plan. En ligne de commande : <code>blunderdb stats plan</code> (voir stats — Erreurs récurrentes).</p>
 <h5>PR glissant sur N dernières décisions</h5>
 <p>Une ligne de valeurs PR (ou MWC) calculées sur les <em>N</em> dernières décisions (N = 5, 10, 50, 100, 250, 500, 1000) permet de mesurer la tendance récente. Les valeurs grisées correspondent à un N supérieur au nombre de décisions disponibles.</p>
 <p>Cliquer sur une valeur charge les <em>N</em> dernières positions correspondantes.</p>

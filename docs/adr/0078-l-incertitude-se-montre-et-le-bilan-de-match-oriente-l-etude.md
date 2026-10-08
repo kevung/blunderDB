@@ -1,4 +1,4 @@
-# ADR-0077 — L'incertitude se montre, et le bilan de match oriente l'étude
+# ADR-0078 — L'incertitude se montre, et le bilan de match oriente l'étude
 
 Statut : acceptée.
 Voir aussi : ADR-0010 (la chance par coup), ADR-0046 (les seuils d'erreur), ADR-0073 (le temps

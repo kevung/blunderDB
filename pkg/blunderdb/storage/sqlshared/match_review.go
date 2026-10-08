@@ -9,7 +9,7 @@ import (
 
 // MatchReview reads a match's decisions as MatchDecisionLosses lists them,
 // and the score it started and ended at, and hands them to
-// storage.BuildMatchReview (ADR-0077). The winning chances at the start come
+// storage.BuildMatchReview (ADR-0078). The winning chances at the start come
 // from the table the losses and the luck are converted with.
 func (s *StatsStore) MatchReview(ctx context.Context, scope string, matchID int64) (storage.MatchReview, error) {
 	decisions, err := s.MatchDecisionLosses(ctx, scope, matchID)

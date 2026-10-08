@@ -1,5 +1,5 @@
 import { get } from 'svelte/store';
-import { ImportStudyQueue, StudyBacklog, SetPositionStudied } from '../../wailsjs/go/database/Database.js';
+import { ImportStudyQueue, StudyBacklog, SetPositionStudied, StudyPlanQueue } from '../../wailsjs/go/database/Database.js';
 import { studyQueueStore, studyQueueIndexStore, studyQueueActiveStore, studyQueueCurrentStore, studyQueueBacklogStore, studyQueueLastMarkedStore } from '../stores/studyQueueStore.js';
 import { showImportedPosition } from './importService.js';
 import { setStatusBarMessage } from './databaseService.js';
@@ -58,6 +58,32 @@ export async function startStudyBacklog() {
         return true;
     } catch (error) {
         logger.error('could not build the study backlog:', error);
+        setStatusBarMessage(tMsg('studyQueue.failed'));
+        return false;
+    }
+}
+
+/**
+ * Démarre la file d'une famille du plan d'étude (ADR-0077) : ses positions, l'excès sur le
+ * joueur de référence le plus grand d'abord. Le rang 0 prend les trois premières familles.
+ * @param {object} filter le filtre des statistiques, celui qui a produit le plan
+ * @param {number} rank
+ */
+export async function startStudyPlanQueue(filter, rank) {
+    try {
+        const entries = (await StudyPlanQueue(filter, rank)) || [];
+        if (entries.length === 0) {
+            setStatusBarMessage(tMsg('studyQueue.planEmpty'));
+            return false;
+        }
+        studyQueueBacklogStore.set(false);
+        studyQueueStore.set(entries);
+        studyQueueIndexStore.set(0);
+        studyQueueActiveStore.set(true);
+        await showCurrent();
+        return true;
+    } catch (error) {
+        logger.error('could not build the study-plan queue:', error);
         setStatusBarMessage(tMsg('studyQueue.failed'));
         return false;
     }

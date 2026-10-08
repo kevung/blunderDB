@@ -4,7 +4,7 @@
 // qui les portent déjà ; il ne fait que les relier.
 
 import { get } from 'svelte/store';
-import { CreateCollection, AddPositionsToCollection, CreateStudyDeck, StudyPositionIDs } from '../../wailsjs/go/database/Database.js';
+import { CreateCollection, AddPositionsToCollection, CreateStudyDeck, StudyPositionIDs, StudyPlanPositionIDs } from '../../wailsjs/go/database/Database.js';
 import { tMsg } from '../i18n';
 import { activeTabStore, statusBarTextStore } from '../stores/uiStore.js';
 import { loadPositionsFromSelection } from './positionLoader.js';
@@ -38,6 +38,14 @@ export async function quizOnIds(ids) {
  */
 export async function quizOnWorstGroups() {
     return quizOnIds((await StudyPositionIDs(get(statsFilterStore), 0, WORST_QUIZ_SIZE)) ?? []);
+}
+
+/**
+ * Le quiz du plan d'étude : rang 0 pour les trois premières familles, n pour la n-ième seule.
+ * @param {number} rank
+ */
+export async function quizOnPlan(rank) {
+    return quizOnIds((await StudyPlanPositionIDs(get(statsFilterStore), rank, WORST_QUIZ_SIZE)) ?? []);
 }
 
 /**

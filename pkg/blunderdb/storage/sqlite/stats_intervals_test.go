@@ -8,7 +8,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// The statistics resample matches (ADR-0077): the global PR's interval
+// The statistics resample matches (ADR-0078): the global PR's interval
 // counts the demo's matches and holds the PR; a per-match row of a selection
 // without a player gathers two seats, so its L7 has no interval; and L7
 // splits into checker and cube parts that add up to it.

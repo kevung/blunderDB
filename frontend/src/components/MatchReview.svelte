@@ -1,5 +1,5 @@
 <script>
-    // A match's study summary (storage.MatchReview, ADR-0077), per player: the PR and the
+    // A match's study summary (storage.MatchReview, ADR-0078), per player: the PR and the
     // 7-point loss with their interval over the games, whether the dice or the play decided the
     // result, the three errors most worth revisiting (one click shows the decision), and whether
     // the errors came from haste or from a gap in knowledge.

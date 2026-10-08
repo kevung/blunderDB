@@ -14,6 +14,7 @@
         recurringErrorsLoadingStore,
         recurringErrorsErrorStore,
         refreshRecurringErrors,
+        refreshStudyPlan,
         trainingStatsStore,
         trainingStatsLoadingStore,
         trainingStatsErrorStore,
@@ -60,6 +61,15 @@
         const key = $statsInvalidationKeyStore;
         if (!$databaseLoadedStore || activeTab !== 'errors') return;
         logger.perf('StatsPanel:refreshRecurringErrors', () => refreshRecurringErrors(filter, key));
+    });
+
+    // The study plan replays each error's analysis too: fetched only while the
+    // dashboard, the one that shows it, is open.
+    $effect(() => {
+        const filter = $statsFilterStore;
+        const key = $statsInvalidationKeyStore;
+        if (!$databaseLoadedStore || activeTab !== 'dashboard') return;
+        logger.perf('StatsPanel:refreshStudyPlan', () => refreshStudyPlan(filter, key));
     });
 
     // The training series read three journals: fetched only while their tab is open.

@@ -109,6 +109,10 @@ export function ComputeStats(arg1:database.StatsFilter):Promise<database.StatsRe
 
 export function ComputeStatsCtx(arg1:context.Context,arg2:database.StatsFilter):Promise<database.StatsResult>;
 
+export function ComputeStudyPlan(arg1:database.StatsFilter):Promise<storage.StudyPlan>;
+
+export function ComputeStudyPlanCtx(arg1:context.Context,arg2:database.StatsFilter):Promise<storage.StudyPlan>;
+
 export function ComputeTrainingStats(arg1:database.StatsFilter,arg2:string):Promise<storage.TrainingStats>;
 
 export function ComputeTrainingStatsCtx(arg1:context.Context,arg2:database.StatsFilter,arg3:string):Promise<storage.TrainingStats>;
@@ -724,6 +728,10 @@ export function StopDuel(arg1:number,arg2:number,arg3:boolean):Promise<database.
 export function StudyBacklog(arg1:number):Promise<Array<domain.StudyQueueEntry>>;
 
 export function StudyImpact(arg1:number):Promise<Array<database.StudyImpactRow>>;
+
+export function StudyPlanPositionIDs(arg1:database.StatsFilter,arg2:number,arg3:number):Promise<Array<number>>;
+
+export function StudyPlanQueue(arg1:database.StatsFilter,arg2:number):Promise<Array<domain.StudyQueueEntry>>;
 
 export function StudyPositionIDs(arg1:database.StatsFilter,arg2:number,arg3:number):Promise<Array<number>>;
 

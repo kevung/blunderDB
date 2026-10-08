@@ -12,7 +12,7 @@ import (
 )
 
 // playerMWC7 pools each player's (match, seat) MWC losses into an L7 for the
-// players table (ADR-0075, ADR-0077): the decisions the PR beside it counts,
+// players table (ADR-0075, ADR-0078): the decisions the PR beside it counts,
 // converted as the statistics convert them, one unit per match the player
 // sat in. Names are canonical (aliases folded), as the table's rows are.
 func (s *StatsStore) playerMWC7(ctx context.Context, scope string, f storage.StatsFilter, aliases storage.AliasMap) (map[string]domain.MWC7, error) {

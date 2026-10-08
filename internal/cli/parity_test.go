@@ -529,6 +529,10 @@ var databaseParity = map[string]parityEntry{
 	"PRByWindowCtx":                     {CLI: "stats windows", Server: "/v1/stats.prByWindow"},
 	"PlayerRankingCtx":                  {CLI: "stats ranking", Server: "/v1/stats.ranking"},
 	"StudyPositionIDs":                  {CLI: "stats recurring", Server: "/v1/stats.studyIds"},
+	"ComputeStudyPlan":                  {CLI: "stats plan", Server: "/v1/stats.studyPlan"},
+	"ComputeStudyPlanCtx":               {CLI: "stats plan", Server: "/v1/stats.studyPlan"},
+	"StudyPlanPositionIDs":              {CLI: "stats plan", Server: "/v1/stats.studyPlanIds"},
+	"StudyPlanQueue":                    {CLI: "stats plan", Server: "/v1/stats.studyPlanQueue"},
 	"CreateStudyDeck":                   {CLI: "stats recurring", Server: "/v1/anki.createStudyDeck"},
 	"RecommendedTags":                   {CLI: "list", Server: "/v1/comments.tags", Why: whySuggestion},
 }

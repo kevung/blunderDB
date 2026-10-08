@@ -7,6 +7,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"os"
 	"strconv"
 	"strings"
@@ -327,6 +328,42 @@ func (cli *CLI) listPositions(offset, limit int) error {
 	return nil
 }
 
+// printRollingStats writes the rolling-window table of the text report.
+func printRollingStats(w io.Writer, result *StatsResult, metricLabel string, useMWC bool) {
+	rollingNs := []int{5, 10, 50, 100, 250, 500, 1000}
+	fmt.Printf("── Rolling %s ──\n", metricLabel)
+	fmt.Fprintln(w, "  N\tDecisions used\tValue")
+	fmt.Fprintln(w, "  —\t——————————————\t—————")
+	for _, n := range rollingNs {
+		var val string
+		if useMWC {
+			if v, ok := result.MWCRolling[n]; ok {
+				if result.MWCAvailable {
+					val = fmt.Sprintf("%.4f", v)
+				} else {
+					val = "—"
+				}
+			} else {
+				val = "n/a"
+			}
+		} else {
+			if v, ok := result.PRRolling[n]; ok {
+				val = fmt.Sprintf("%.3f", v)
+			} else {
+				val = "n/a"
+			}
+		}
+		actualN := n
+		if actualN > result.Totals.NumDecisions {
+			actualN = result.Totals.NumDecisions
+		}
+		fmt.Fprintf(w, "  %d\t%d\t%s\n", n, actualN, val)
+	}
+	if f, ok := w.(interface{ Flush() error }); ok {
+		f.Flush()
+	}
+}
+
 // showStats displays database statistics. metric is "pr" or "mwc"; topN
 // bounds the text output only, JSON always carries every TopBlunder.
 func (cli *CLI) showStats(filter StatsFilter, metric, format string, topN int) error {
@@ -422,37 +459,7 @@ func (cli *CLI) showStats(filter StatsFilter, metric, format string, topN int) e
 	w.Flush()
 	fmt.Println()
 
-	// 4. Rolling
-	rollingNs := []int{5, 10, 50, 100, 250, 500, 1000}
-	fmt.Printf("── Rolling %s ──\n", metricLabel)
-	fmt.Fprintln(w, "  N\tDecisions used\tValue")
-	fmt.Fprintln(w, "  —\t——————————————\t—————")
-	for _, n := range rollingNs {
-		var val string
-		if useMWC {
-			if v, ok := result.MWCRolling[n]; ok {
-				if result.MWCAvailable {
-					val = fmt.Sprintf("%.4f", v)
-				} else {
-					val = "—"
-				}
-			} else {
-				val = "n/a"
-			}
-		} else {
-			if v, ok := result.PRRolling[n]; ok {
-				val = fmt.Sprintf("%.3f", v)
-			} else {
-				val = "n/a"
-			}
-		}
-		actualN := n
-		if actualN > result.Totals.NumDecisions {
-			actualN = result.Totals.NumDecisions
-		}
-		fmt.Fprintf(w, "  %d\t%d\t%s\n", n, actualN, val)
-	}
-	w.Flush()
+	printRollingStats(w, result, metricLabel, useMWC)
 	fmt.Println()
 
 	// 5. Top blunders

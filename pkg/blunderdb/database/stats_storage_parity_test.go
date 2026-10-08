@@ -35,7 +35,7 @@ var frozenOracleGaps = map[string]string{
 	"PerTag":      "#266, added after the migration the oracle guards",
 	"PerScore":    "#266, added after the migration the oracle guards",
 	"PerGameType": "#291, added after the migration the oracle guards",
-	"PRInterval":  "ADR-0077, added after the migration the oracle guards",
+	"PRInterval":  "ADR-0078, added after the migration the oracle guards",
 }
 
 // statsEqual is jsonEqual for a statistics result, whose MWC sums may part

@@ -106,7 +106,7 @@ type BlunderEntry struct {
 type StatsResult struct {
 	Totals       StatsTotals     `json:"Totals"`
 	PRGlobal     float64         `json:"PRGlobal"`
-	PRInterval   domain.Interval `json:"PRInterval"` // over the selection's matches (ADR-0077)
+	PRInterval   domain.Interval `json:"PRInterval"` // over the selection's matches (ADR-0078)
 	PRChecker    float64         `json:"PRChecker"`
 	PRCube       float64         `json:"PRCube"`
 	PRRolling    map[int]float64 `json:"PRRolling"`    // keyed by N: 5,10,50,100,250,500,1000
@@ -491,7 +491,7 @@ func (d *Database) GetMatchDecisionLosses(matchID int64) ([]storage.DecisionLoss
 	return d.store.Stats().MatchDecisionLosses(context.Background(), "", matchID)
 }
 
-// GetMatchReview is a match's study summary (ADR-0077), for the Match panel's
+// GetMatchReview is a match's study summary (ADR-0078), for the Match panel's
 // review and `match --format summary`.
 func (d *Database) GetMatchReview(matchID int64) (storage.MatchReview, error) {
 	d.mu.RLock()

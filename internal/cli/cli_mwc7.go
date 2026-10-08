@@ -28,7 +28,7 @@ func formatMWC7(e domain.MWC7) string {
 	return s + ")"
 }
 
-// formatPRInterval renders a PR's 95 % interval (ADR-0077), or says why there
+// formatPRInterval renders a PR's 95 % interval (ADR-0078), or says why there
 // is none: one match is not a sample of a player.
 func formatPRInterval(iv domain.Interval) string {
 	if !iv.Available {
