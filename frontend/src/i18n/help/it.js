@@ -554,6 +554,21 @@ export default {
 <p>Il MWC cost <strong>non è applicabile</strong> alle posizioni <em>money-game</em> (senza posta di match). Queste posizioni sono escluse dal calcolo MWC. I valori MWC dipendono dalla MET utilizzata; non sono direttamente confrontabili tra software che usano MET diverse.</p>
 </div>
 </blockquote>
+<p><strong>Perdita di MWC (eq. 7 punti)</strong></p>
+<blockquote>
+<p>La probabilità di vincere il match che un giocatore ha perso sull'insieme delle sue decisioni — pedine, cubo, accetto o rifiuto, con cubo — riportata a un match ai 7 punti. Per un match ai <em>N</em> punti in cui il giocatore ha perso <em>L</em> di MWC:</p>
+<blockquote>
+<p>L₇ = L × √(7 / N)</p>
+</blockquote>
+<p>Per un match ai 7 punti, è la perdita di MWC del match, quella che mostra eXtreme Gammon. La radice viene dal modello della formula FIBS: a parità di forza, la perdita di un giocatore cresce come la radice della lunghezza del match. 7 punti è la lunghezza di riferimento perché è la più comune nei tornei.</p>
+<p>Si legge come la quota di match persa contro un giocatore perfetto: 12,3 % significa che, invece del 50 % di probabilità contro il motore, il giocatore ne aveva solo il 37,7 % in un match ai 7 punti. Il suggerimento a comparsa ne dà la lettura in Elo contro il motore, invertendo la formula FIBS: D = (2000 / √7) × log₁₀(q / (1 − q)), con q = 0,5 − L₇. Oltre una perdita del 49 %, la formula non ha più un valore finito: l'Elo mostrato è allora un massimo («≤»). Le due cifre ordinano i giocatori allo stesso modo.</p>
+<p>Completa il PR senza sostituirlo: il PR divide gli errori per un numero di decisioni, e questo numero dipende da ciò che si conta come decisione (mosse forzate, decisioni di cubo ovvie). La perdita di MWC non conta alcuna decisione: ogni errore pesa quanto è costato al punteggio in cui è stato commesso.</p>
+<p>Su più match (statistiche di un giocatore o di un torneo), le perdite e le radici delle lunghezze si sommano prima del rapporto: L₇ = √7 × ΣL / Σ√N. Un match ai 7 punti pesa quindi più di un match a 1 punto, e un solo match dà il proprio valore.</p>
+<p>Un match isolato è molto rumoroso: bastano pochi errori gravi per farlo raddoppiare. Ogni valore è accompagnato dal suo intervallo al 95 %, calcolato ricampionando le partite del match (o i match di un aggregato). Servono almeno due partite, o due match, perché un intervallo esista. Non classificate i giocatori su un solo match.</p>
+<div class="admonition caution">
+<p>Una partita <em>money-game</em> non ha una lunghezza di match: la perdita di MWC (eq. 7 punti) non vi è definita e il pannello lo indica invece di mostrare un numero. Come il costo MWC, dipende dalla MET.</p>
+</div>
+</blockquote>
 <p>La commutazione PR ↔ MWC è istantanea: non viene eseguito alcun ricalcolo da parte del backend.</p>
 <h4>Il rapporto HTML</h4>
 <p>Il pulsante <strong>Rapporto HTML</strong> nell'intestazione del pannello produce un documento <strong>autonomo</strong>: un solo file, senza immagini esterne, senza foglio di stile remoto, senza script. I diagrammi sono SVG in linea, disegnati dallo stesso rendering della dama a schermo, con la vostra tavolozza. Si apre in qualunque browser, viaggia per posta elettronica, e <strong>si stampa in PDF dal browser stesso</strong> — il che evita di imbarcare un generatore di PDF per produrre ciò che tutti hanno già.</p>

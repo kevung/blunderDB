@@ -554,6 +554,21 @@ export default {
 <p>MWC cost <strong>does not apply</strong> to <em>money-game</em> positions (with no match stake). Those positions are excluded from the MWC computation. MWC values depend on the MET used; they are not directly comparable across software using different METs.</p>
 </div>
 </blockquote>
+<p><strong>MWC loss (7-pt eq.)</strong></p>
+<blockquote>
+<p>The probability of winning the match that a player lost across all their decisions — checker plays, cube, take or pass, with cube — scaled to a 7-point match. For an <em>N</em>-point match in which the player lost <em>L</em> of MWC:</p>
+<blockquote>
+<p>L₇ = L × √(7 / N)</p>
+</blockquote>
+<p>For a 7-point match, this is the match's MWC loss, the one eXtreme Gammon displays. The square root comes from the FIBS formula's model: at equal strength, a player's loss grows as the square root of the match length. 7 points is the reference length because it is the most common in tournaments.</p>
+<p>It reads as the share of the match lost against a perfect player: 12.3% means that instead of 50% winning chances against the engine, the player had only 37.7% in a 7-point match. The tooltip gives the reading as Elo against the engine, by inverting the FIBS formula: D = (2000 / √7) × log₁₀(q / (1 − q)), with q = 0.5 − L₇. Beyond a loss of 49%, the formula has no finite value: the displayed Elo is then a ceiling ("≤"). The two figures rank players in the same order.</p>
+<p>It complements the PR without replacing it: the PR divides errors by a number of decisions, and that number depends on what is counted as a decision (forced moves, obvious cube decisions). The MWC loss counts no decisions: each error weighs what it cost at the score where it was made.</p>
+<p>Over several matches (a player's or a tournament's statistics), the losses and the square roots of the lengths are added before taking the ratio: L₇ = √7 × ΣL / Σ√N. A 7-point match therefore weighs more than a 1-point match, and a single match gives its own value.</p>
+<p>A single match is very noisy: a few big errors are enough to make it vary by a factor of two. Each value comes with its 95% interval, computed by resampling the match's games (or the matches of an aggregate). At least two games, or two matches, are needed for an interval to exist. Do not rank players on a single match.</p>
+<div class="admonition caution">
+<p>A <em>money-game</em> has no match length: the MWC loss (7-pt eq.) is not defined there and the panel says so instead of displaying a number. Like the MWC cost, it depends on the MET.</p>
+</div>
+</blockquote>
 <p>The PR ↔ MWC toggle is instant: no backend recalculation is performed.</p>
 <h4>The HTML report</h4>
 <p>The <strong>HTML report</strong> button in the panel's header produces a <strong>self-contained</strong> document: a single file, with no external image, no remote stylesheet, no script. The diagrams are inline SVG, drawn by the same renderer as the board on screen, with your palette. It opens in any browser, travels by e-mail, and <strong>prints to PDF from the browser itself</strong> — which avoids embedding a PDF generator to produce what everybody already has.</p>
