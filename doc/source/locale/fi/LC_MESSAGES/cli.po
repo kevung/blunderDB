@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-08 18:32+0200\n"
+"POT-Creation-Date: 2026-10-08 18:35+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -2142,16 +2142,6 @@ msgid ""
 " % sur les matchs (colonne ``95 % CI``), et ``list --type players`` une "
 "colonne ``L7``."
 msgstr ""
-"``summary`` päättyy ``Review``-osioon, ottelun yhteenvetoon "
-"(:ref:`ottelun yhteenveto <bilan_match>`): pelaajittain PR ja sen 95 %:n "
-"väli peleistä, onnella oikaistu tulos (tuloksen, nettoonnen, virheiden "
-"eron ja heittojen kattavuuden kanssa), kolme tarkistettavaa virhettä "
-"(peli, siirto, tappio ja vältettävissä oleva osuus) sekä virheiden jako "
-"kiireellisiin ja harkittuihin. Palvelin tarjoaa sen osoitteessa "
-"``/v1/stats.matchReview``. Komennossa ``stats`` kokonais-PR ja vaiheen, "
-"tunnisteen ja pistetilanteen mukaiset rivit sisältävät 95 %:n välin "
-"otteluista (sarake ``95 % CI``), ja ``list --type players`` sisältää "
-"sarakkeen ``L7``."
 
 #: ../../source/cli.rst:974
 msgid "``--id`` — ID du match à afficher (obligatoire)."
@@ -2719,13 +2709,12 @@ msgid "Mêmes options de filtre que ``stats recurring``, plus :"
 msgstr "Samat suodatinvalinnat kuin ``stats recurring``, sekä:"
 
 #: ../../source/cli.rst:1288
-#, fuzzy
 msgid ""
 "``--limit <n>`` — Nombre de familles affichées en texte (défaut 10, ``0``"
 " pour toutes)."
 msgstr ""
-"``--limit <n>`` — Tekstinä näytettävien ryhmien määrä (oletus 20, ``0`` "
-"kaikille)."
+"``--limit <n>`` — Tekstinä näytettävien perheiden määrä (oletus 10, ``0``"
+" kaikille)."
 
 #: ../../source/cli.rst:1290
 msgid ""
@@ -2745,13 +2734,12 @@ msgstr ""
 "riville, suurin ero viitepelaajaan ensin (JSON: ``Queue``)."
 
 #: ../../source/cli.rst:1295
-#, fuzzy
 msgid ""
 "``--family <rang>`` — Avec ``--quiz``, ``--deck`` ou ``--queue`` : la "
 "famille de ce rang (1 pour la première) au lieu des trois premières."
 msgstr ""
-"``--group <sija>`` — ``--quiz``- tai ``--deck``-valinnan kanssa: tämän "
-"sijan ryhmä (1 on kallein) kolmen ensimmäisen sijaan."
+"``--family <sija>`` — Valitsimien ``--quiz``, ``--deck`` tai ``--queue`` "
+"kanssa: tämän sijan perhe (1 ensimmäinen) kolmen ensimmäisen sijaan."
 
 #: ../../source/cli.rst:1304
 msgid ""
@@ -5449,3 +5437,4 @@ msgstr ""
 #~ " ei sisällä: ``--edit`` ilmoittaa niiden"
 #~ " määrän enintään ja kieltäytyy ilman "
 #~ "``--accept-losses``-valitsinta."
+

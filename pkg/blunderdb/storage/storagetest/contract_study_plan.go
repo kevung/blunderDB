@@ -39,15 +39,28 @@ func testStatsStudyPlan(t *testing.T, s storage.Storage) {
 	statsCubeDecision(t, s, gameID, 7, 1, "No Double", "Double, Take", 0.40, 0.60, 1.00) // missed
 	statsCheckerDecision(t, s, gameID, 8, 1, "24/14", 0.080, 0)                          // no theme
 
+	// A money-play error has no MWC: it is counted as unpriced, never ranked.
+	money := domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: 0,
+		MatchDate: time.Date(2025, 6, 2, 0, 0, 0, 0, time.UTC)}
+	moneyID, err := s.Matches().Save(ctx, "", &money)
+	if err != nil {
+		t.Fatalf("Save money match: %v", err)
+	}
+	moneyGame, err := s.Matches().CreateGame(ctx, "", &domain.Game{MatchID: moneyID, GameNumber: 1})
+	if err != nil {
+		t.Fatalf("CreateGame (money): %v", err)
+	}
+	statsCheckerDecision(t, s, moneyGame, 9, 1, "24/18 13/11", 0.120, 8)
+
 	plan, err := s.Stats().StudyPlan(ctx, "", storage.StatsFilter{DecisionType: -1, PlayerName: "Alice"})
 	if err != nil {
 		t.Fatalf("StudyPlan: %v", err)
 	}
-	if plan.NumDecisions != 9 || plan.MinErrors != storage.StudyPlanMinErrors {
-		t.Errorf("NumDecisions %d, MinErrors %d; want 9, %d", plan.NumDecisions, plan.MinErrors, storage.StudyPlanMinErrors)
+	if plan.NumDecisions != 10 || plan.MinErrors != storage.StudyPlanMinErrors {
+		t.Errorf("NumDecisions %d, MinErrors %d; want 10, %d", plan.NumDecisions, plan.MinErrors, storage.StudyPlanMinErrors)
 	}
-	if plan.Unthemed != 1 || plan.Unpriced != 0 {
-		t.Errorf("Unthemed %d, Unpriced %d; want 1, 0", plan.Unthemed, plan.Unpriced)
+	if plan.Unthemed != 1 || plan.Unpriced != 1 {
+		t.Errorf("Unthemed %d, Unpriced %d; want 1, 1", plan.Unthemed, plan.Unpriced)
 	}
 	if len(plan.Families) != 1 {
 		t.Fatalf("Families = %+v, want the gammon family alone", plan.Families)

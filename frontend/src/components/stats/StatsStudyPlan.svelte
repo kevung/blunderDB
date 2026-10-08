@@ -50,6 +50,9 @@
         <p class="empty-subsection">{$studyPlanErrorStore}</p>
     {:else if !anyPriced}
         <p class="empty-subsection">{$t('stats.planEmpty')}</p>
+        {#if (plan?.Unpriced ?? 0) > 0}
+            <p class="aside" data-testid="plan-unpriced-only">{$t('stats.planOutside', { unthemed: 0, unpriced: plan.Unpriced })}</p>
+        {/if}
     {:else}
         {#if families.length === 0}
             <p class="empty-subsection">{$t('stats.planNoEvidence')}</p>

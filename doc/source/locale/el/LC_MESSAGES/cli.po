@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-08 18:32+0200\n"
+"POT-Creation-Date: 2026-10-08 18:35+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -2159,17 +2159,6 @@ msgid ""
 " % sur les matchs (colonne ``95 % CI``), et ``list --type players`` une "
 "colonne ``L7``."
 msgstr ""
-"Το ``summary`` τελειώνει με μια ενότητα ``Review``, τον απολογισμό του "
-"αγώνα (:ref:`απολογισμός αγώνα <bilan_match>`): ανά παίκτη, το PR και το "
-"διάστημά του στο 95 % πάνω στις παρτίδες, το αποτέλεσμα προσαρμοσμένο "
-"στην τύχη (με το αποτέλεσμα, την καθαρή τύχη, τη διαφορά λαθών και την "
-"κάλυψη των ρίψεων), τα τρία λάθη προς επανεξέταση (παρτίδα, κίνηση, "
-"απώλεια και αποφεύξιμο μέρος) και την κατανομή των λαθών σε βιαστικά και "
-"σκεπτόμενα. Ο διακομιστής το εξυπηρετεί μέσω του "
-"``/v1/stats.matchReview``. Στο ``stats``, το συνολικό PR και οι γραμμές "
-"ανά φάση, ανά ετικέτα και ανά σκορ φέρουν το διάστημά τους στο 95 % πάνω "
-"στους αγώνες (στήλη ``95 % CI``), και το ``list --type players`` έχει μια"
-" στήλη ``L7``."
 
 #: ../../source/cli.rst:974
 msgid "``--id`` — ID du match à afficher (obligatoire)."
@@ -2746,13 +2735,12 @@ msgid "Mêmes options de filtre que ``stats recurring``, plus :"
 msgstr "Ίδιες επιλογές φίλτρου με το ``stats recurring``, συν:"
 
 #: ../../source/cli.rst:1288
-#, fuzzy
 msgid ""
 "``--limit <n>`` — Nombre de familles affichées en texte (défaut 10, ``0``"
 " pour toutes)."
 msgstr ""
-"``--limit <n>`` — Αριθμός ομάδων που εμφανίζονται σε κείμενο (προεπιλογή "
-"20, ``0`` για όλες)."
+"``--limit <n>`` — Αριθμός οικογενειών που εμφανίζονται σε κείμενο "
+"(προεπιλογή 10, ``0`` για όλες)."
 
 #: ../../source/cli.rst:1290
 msgid ""
@@ -2773,13 +2761,12 @@ msgstr ""
 "``Queue``)."
 
 #: ../../source/cli.rst:1295
-#, fuzzy
 msgid ""
 "``--family <rang>`` — Avec ``--quiz``, ``--deck`` ou ``--queue`` : la "
 "famille de ce rang (1 pour la première) au lieu des trois premières."
 msgstr ""
-"``--group <κατάταξη>`` — Με το ``--quiz`` ή το ``--deck``: η ομάδα αυτής "
-"της κατάταξης (1 για την πιο δαπανηρή) αντί για τις τρεις πρώτες."
+"``--family <θέση>`` — Με ``--quiz``, ``--deck`` ή ``--queue``: η "
+"οικογένεια αυτής της θέσης (1 για την πρώτη) αντί για τις τρεις πρώτες."
 
 #: ../../source/cli.rst:1304
 msgid ""
@@ -5522,3 +5509,4 @@ msgstr "Αυτό επιτρέπει τη χρήση της CLI σε σενάρι
 #~ "``--edit`` δίνει το πολύ τον αριθμό "
 #~ "τους και αρνείται χωρίς ``--accept-"
 #~ "losses``."
+

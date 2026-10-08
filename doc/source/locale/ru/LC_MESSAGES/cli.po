@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-08 18:32+0200\n"
+"POT-Creation-Date: 2026-10-08 18:35+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -2124,15 +2124,6 @@ msgid ""
 " % sur les matchs (colonne ``95 % CI``), et ``list --type players`` une "
 "colonne ``L7``."
 msgstr ""
-"``summary`` заканчивается разделом ``Review`` — итогом матча (:ref:`итог "
-"матча <bilan_match>`): по игрокам PR и его 95-процентный интервал по "
-"партиям, результат с поправкой на удачу (с результатом, чистой удачей, "
-"разницей ошибок и покрытием бросков), три ошибки для пересмотра (партия, "
-"ход, потеря и устранимая часть) и распределение ошибок на поспешные и "
-"обдуманные. Сервер отдаёт его через ``/v1/stats.matchReview``. В "
-"``stats`` общий PR и строки по фазе, по метке и по счёту несут свой "
-"95-процентный интервал по матчам (столбец ``95 % CI``), а ``list --type "
-"players`` имеет столбец ``L7``."
 
 #: ../../source/cli.rst:974
 msgid "``--id`` — ID du match à afficher (obligatoire)."
@@ -2699,13 +2690,12 @@ msgid "Mêmes options de filtre que ``stats recurring``, plus :"
 msgstr "Те же параметры фильтра, что и у ``stats recurring``, плюс:"
 
 #: ../../source/cli.rst:1288
-#, fuzzy
 msgid ""
 "``--limit <n>`` — Nombre de familles affichées en texte (défaut 10, ``0``"
 " pour toutes)."
 msgstr ""
-"``--limit <n>`` — Число групп, выводимых текстом (по умолчанию 20, ``0`` "
-"— все)."
+"``--limit <n>`` — Число семейств, показываемых в тексте (по умолчанию 10,"
+" ``0`` — все)."
 
 #: ../../source/cli.rst:1290
 msgid ""
@@ -2726,13 +2716,12 @@ msgstr ""
 "``Queue``)."
 
 #: ../../source/cli.rst:1295
-#, fuzzy
 msgid ""
 "``--family <rang>`` — Avec ``--quiz``, ``--deck`` ou ``--queue`` : la "
 "famille de ce rang (1 pour la première) au lieu des trois premières."
 msgstr ""
-"``--group <ранг>`` — Вместе с ``--quiz`` или ``--deck``: группа этого "
-"ранга (1 — самая затратная) вместо первых трёх."
+"``--family <ранг>`` — С ``--quiz``, ``--deck`` или ``--queue``: семейство"
+" этого ранга (1 — первое) вместо трёх первых."
 
 #: ../../source/cli.rst:1304
 msgid ""
@@ -5402,3 +5391,4 @@ msgstr "Это позволяет использовать CLI в скрипта
 #~ "``--edit`` сообщает самое большее их "
 #~ "число и отказывает без ``--accept-"
 #~ "losses``."
+

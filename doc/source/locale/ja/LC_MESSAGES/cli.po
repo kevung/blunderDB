@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-08 18:32+0200\n"
+"POT-Creation-Date: 2026-10-08 18:35+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -1930,13 +1930,6 @@ msgid ""
 " % sur les matchs (colonne ``95 % CI``), et ``list --type players`` une "
 "colonne ``L7``."
 msgstr ""
-"``summary`` は ``Review`` セクション、つまりマッチの総括（:ref:`マッチの総括 "
-"<bilan_match>`）で終わります。プレイヤーごとに、PR とそのゲームにわたる 95 % "
-"区間、運で補正した結果（結果、純運、ミス差、ロールのカバー率を含む）、見直すべき 3 "
-"つのミス（ゲーム、手、損失、回避可能な部分）、そして急いだミスと熟考したミスへの内訳を示します。サーバーは "
-"``/v1/stats.matchReview`` で提供します。``stats`` では、全体の PR "
-"とフェーズ別、ラベル別、スコア別の行が、マッチにわたる 95 % 区間（列 ``95 % CI``）を持ち、``list --type "
-"players`` には列 ``L7`` があります。"
 
 #: ../../source/cli.rst:974
 msgid "``--id`` — ID du match à afficher (obligatoire)."
@@ -2455,11 +2448,10 @@ msgid "Mêmes options de filtre que ``stats recurring``, plus :"
 msgstr "``stats recurring`` と同じフィルターオプションに加えて、次があります。"
 
 #: ../../source/cli.rst:1288
-#, fuzzy
 msgid ""
 "``--limit <n>`` — Nombre de familles affichées en texte (défaut 10, ``0``"
 " pour toutes)."
-msgstr "``--limit <n>`` — テキストで表示するグループ数（既定は 20、``0`` ですべて）。"
+msgstr "``--limit <n>`` — テキストで表示するファミリーの数（既定は 10、``0`` ですべて）。"
 
 #: ../../source/cli.rst:1290
 msgid ""
@@ -2479,13 +2471,12 @@ msgstr ""
 "ポジションで、基準プレイヤーとの差が最も大きいものから表示します（JSON：``Queue``）。"
 
 #: ../../source/cli.rst:1295
-#, fuzzy
 msgid ""
 "``--family <rang>`` — Avec ``--quiz``, ``--deck`` ou ``--queue`` : la "
 "famille de ce rang (1 pour la première) au lieu des trois premières."
 msgstr ""
-"``--group <順位>`` — ``--quiz`` または ``--deck`` "
-"と併用：最初の3グループの代わりに、その順位（最もコストの高いものが1）のグループ。"
+"``--family <順位>`` — ``--quiz``、``--deck``、``--queue`` と併用：上位 3 "
+"ファミリーの代わりに、この順位のファミリー（1 が先頭）。"
 
 #: ../../source/cli.rst:1304
 msgid ""
@@ -4830,3 +4821,4 @@ msgstr "これにより、エラー処理を含むスクリプトでCLIを使用
 #~ "が必要で、書かれた内容はすべて失われます。取り込み済みのマッチは ``.mat`` "
 #~ "に含まれない分析とコメントを持っています。``--edit`` は最大でその件数を示し、``--accept-"
 #~ "losses`` がなければ拒否します。"
+

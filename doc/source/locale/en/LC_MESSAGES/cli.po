@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-08 18:32+0200\n"
+"POT-Creation-Date: 2026-10-08 18:35+0200\n"
 "PO-Revision-Date: 2026-04-20 17:00+0200\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -2081,15 +2081,6 @@ msgid ""
 " % sur les matchs (colonne ``95 % CI``), et ``list --type players`` une "
 "colonne ``L7``."
 msgstr ""
-"``summary`` ends with a ``Review`` section, the match review (:ref:`match"
-" review <bilan_match>`): per player, the PR and its 95 % interval over "
-"the games, the luck-adjusted result (with the result, the net luck, the "
-"error gap and the roll coverage), the three errors to review (game, move,"
-" loss and avoidable part) and the split of errors between hasty and "
-"considered. The server serves it through ``/v1/stats.matchReview``. In "
-"``stats``, the overall PR and the per-phase, per-label and per-score rows"
-" carry their 95 % interval over the matches (``95 % CI`` column), and "
-"``list --type players`` has an ``L7`` column."
 
 #: ../../source/cli.rst:974
 msgid "``--id`` — ID du match à afficher (obligatoire)."
@@ -2655,13 +2646,12 @@ msgid "Mêmes options de filtre que ``stats recurring``, plus :"
 msgstr "Same filter options as ``stats recurring``, plus:"
 
 #: ../../source/cli.rst:1288
-#, fuzzy
 msgid ""
 "``--limit <n>`` — Nombre de familles affichées en texte (défaut 10, ``0``"
 " pour toutes)."
 msgstr ""
-"``--limit <n>`` — Number of groups shown in text (default 20, ``0`` for "
-"all)."
+"``--limit <n>`` — Number of families shown in text (default 10, ``0`` for"
+" all)."
 
 #: ../../source/cli.rst:1290
 msgid ""
@@ -2681,13 +2671,12 @@ msgstr ""
 "line, the largest gap to the reference player first (JSON: ``Queue``)."
 
 #: ../../source/cli.rst:1295
-#, fuzzy
 msgid ""
 "``--family <rang>`` — Avec ``--quiz``, ``--deck`` ou ``--queue`` : la "
 "famille de ce rang (1 pour la première) au lieu des trois premières."
 msgstr ""
-"``--group <rank>`` — With ``--quiz`` or ``--deck``: the group of that "
-"rank (1 for the costliest) instead of the first three."
+"``--family <rank>`` — With ``--quiz``, ``--deck`` or ``--queue``: the "
+"family of that rank (1 for the first) instead of the first three."
 
 #: ../../source/cli.rst:1304
 msgid ""
@@ -5342,3 +5331,4 @@ msgstr "This makes the CLI suitable for use in scripts with error handling:"
 #~ "not: ``--edit`` reports at most their"
 #~ " count and refuses without ``--accept-"
 #~ "losses``."
+
