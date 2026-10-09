@@ -7,6 +7,7 @@
  * l'exercice Scores — le composant qui l'affiche n'a pas d'autre décision à
  * prendre — et elle se vérifie sans plateau, sans Wails et sans navigateur.
  */
+import { must } from './helpers/must.js';
 import { describe, test, expect } from 'vitest';
 import { SCORE_CARD_ROWS, UNORDERED_SCORES, buildScoreCard, scoreCardNumbers } from '../services/scoreCard.js';
 import { takePoint2LiveTable } from '../stores/takePoint2LiveTable.js';
@@ -82,11 +83,11 @@ describe('buildScoreCard', () => {
         const card = buildScoreCard(3, 7);
         const numbers = scoreCardNumbers(card);
         const mine = numbers.find((n) => n.type === 'tp2.live' && n.away === 3);
-        expect(mine.value).toBe(takePoint2LiveTable[3 - 2][7 - 2]);
+        expect(must(mine).value).toBe(takePoint2LiveTable[3 - 2][7 - 2]);
         // gv4 ne commence qu’à 5 away : la case du 7-away se lit à la ligne 2.
         const gv4 = numbers.find((n) => n.type === 'gv4');
-        expect(gv4.away).toBe(7);
-        expect(gv4.value).toBe(gammonValue4Table[7 - 5][3 - 2]);
+        expect(must(gv4).away).toBe(7);
+        expect(must(gv4).value).toBe(gammonValue4Table[7 - 5][3 - 2]);
     });
 
     test('le score est non ordonné : 3a-5a et 5a-3a donnent la même fiche', () => {

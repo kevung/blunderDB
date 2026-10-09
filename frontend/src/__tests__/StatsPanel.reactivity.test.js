@@ -87,7 +87,7 @@ describe('StatsPanel — réactivité statsFilterStore', () => {
 
         // StatsFilterBar.onMount appelle toujours statsFilterStore.set() une fois résolue,
         // ce qui déclenche l'$effect une deuxième fois : >= 1 appel attendu.
-        expect(ComputeStats.mock.calls.length).toBeGreaterThanOrEqual(1);
+        expect(vi.mocked(ComputeStats).mock.calls.length).toBeGreaterThanOrEqual(1);
         // Le premier appel reçoit le filtre initial (sans nom de joueur)
         expect(ComputeStats).toHaveBeenCalledWith(
             expect.objectContaining({
@@ -103,7 +103,7 @@ describe('StatsPanel — réactivité statsFilterStore', () => {
         await tick();
         await tick();
 
-        const callsAfterMount = ComputeStats.mock.calls.length;
+        const callsAfterMount = vi.mocked(ComputeStats).mock.calls.length;
 
         const newFilter = {
             ...DEFAULT_FILTER,
@@ -132,7 +132,7 @@ describe('StatsPanel — réactivité statsFilterStore', () => {
         unmount();
         await tick();
 
-        const callCountAfterUnmount = ComputeStats.mock.calls.length;
+        const callCountAfterUnmount = vi.mocked(ComputeStats).mock.calls.length;
 
         // Changer le filtre après démontage ne doit pas déclencher refreshStats
         statsFilterStore.set({ ...DEFAULT_FILTER, playerName: 'Bob' });

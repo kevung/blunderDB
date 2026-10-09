@@ -108,7 +108,7 @@ describe('Toolbar — service wiring', () => {
     test.each(EXPECTED.map((target, i) => [i, target]))('button %i reaches its action', async (i, target) => {
         const { container } = render(Toolbar);
         const button = container.querySelectorAll('.toolbar button')[i];
-        expect(button.disabled).toBe(false);
+        expect(/** @type {HTMLButtonElement | HTMLInputElement} */ (button).disabled).toBe(false);
         await fireEvent.click(button);
         if (typeof target === 'string') {
             expect(get(activeModal)).toBe(target);
@@ -125,14 +125,14 @@ describe('Toolbar — service wiring', () => {
         activeTabStore.set('eval');
         const { container } = render(Toolbar);
         const buttons = container.querySelectorAll('.toolbar button');
-        expect(buttons[EXPECTED.indexOf(positionService.saveCurrentPosition)].disabled).toBe(false);
-        expect(buttons[EXPECTED.indexOf(positionService.updatePosition)].disabled).toBe(true);
+        expect(/** @type {HTMLButtonElement | HTMLInputElement} */ (buttons[EXPECTED.indexOf(positionService.saveCurrentPosition)]).disabled).toBe(false);
+        expect(/** @type {HTMLButtonElement | HTMLInputElement} */ (buttons[EXPECTED.indexOf(positionService.updatePosition)]).disabled).toBe(true);
     });
 
     test('on the Matches tab, save is disabled', () => {
         activeTabStore.set('matches');
         const { container } = render(Toolbar);
         const buttons = container.querySelectorAll('.toolbar button');
-        expect(buttons[EXPECTED.indexOf(positionService.saveCurrentPosition)].disabled).toBe(true);
+        expect(/** @type {HTMLButtonElement | HTMLInputElement} */ (buttons[EXPECTED.indexOf(positionService.saveCurrentPosition)]).disabled).toBe(true);
     });
 });

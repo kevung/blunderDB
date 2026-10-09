@@ -3,6 +3,7 @@
  * stored search, syncing decks with their source, and walking a review or
  * cram session, with the Wails bindings mocked.
  */
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 import { get } from 'svelte/store';
 
@@ -123,22 +124,22 @@ describe('resolveSearchDeckIds', () => {
     });
 
     test('re-runs a bare `s` on the stored board and merges the stored ids in', async () => {
-        db.LoadPositionIDsByFilters.mockResolvedValueOnce([9, 4]);
+        vi.mocked(db.LoadPositionIDsByFilters).mockResolvedValueOnce([9, 4]);
         const ids = await resolveSearchDeckIds(JSON.stringify({ command: 's', position: '{"cube":1}', ids: [4, 5] }));
         expect(db.LoadPositionIDsByFilters).toHaveBeenCalledTimes(1);
         expect(ids).toEqual([9, 4, 5]);
     });
 
     test('a filtered command goes through the command parser', async () => {
-        db.LoadPositionIDsByFilters.mockResolvedValueOnce([1]);
+        vi.mocked(db.LoadPositionIDsByFilters).mockResolvedValueOnce([1]);
         const ids = await resolveSearchDeckIds(JSON.stringify({ command: 's e>0.1', position: '{}', ids: [] }));
         expect(ids).toEqual([1]);
-        const payload = db.LoadPositionIDsByFilters.mock.calls[0][0];
+        const payload = vi.mocked(db.LoadPositionIDsByFilters).mock.calls[0][0];
         expect(payload).toBeTruthy();
     });
 
     test('a failing search is logged and yields no ids', async () => {
-        db.LoadPositionIDsByFilters.mockRejectedValueOnce(new Error('boom'));
+        vi.mocked(db.LoadPositionIDsByFilters).mockRejectedValueOnce(new Error('boom'));
         expect(await resolveSearchDeckIds(JSON.stringify({ command: 's', position: '{}', ids: [1] }))).toEqual([]);
         expect(logger.error).toHaveBeenCalled();
     });
@@ -165,7 +166,7 @@ describe('syncing', () => {
             { id: 1, name: 'a', sourceType: 'collection' },
             { id: 2, name: 'b', sourceType: 'collection' }
         ];
-        db.GetAllAnkiDecks.mockResolvedValue(decks);
+        vi.mocked(db.GetAllAnkiDecks).mockResolvedValue(decks);
         /** @type {import('vitest').Mock} */ (db.SyncAnkiDeck).mockImplementation((id) => (id === 1 ? Promise.reject(new Error('x')) : Promise.resolve()));
         await syncAllDecksAndReload();
         expect(db.SyncAnkiDeck).toHaveBeenCalledTimes(2);
@@ -184,9 +185,9 @@ describe('deck lifecycle', () => {
     });
 
     test('createDeck from a search stores the search and syncs the matched ids', async () => {
-        db.LoadPositionIDsByFilters.mockResolvedValueOnce([8]);
+        vi.mocked(db.LoadPositionIDsByFilters).mockResolvedValueOnce([8]);
         await createDeck({ name: 'S', sourceType: 'search', sourceId: 99, lastSearch: { command: 's', position: '{}' }, positionIds: [8, 9] });
-        const [, , type, sourceId, sourceCommand] = db.CreateAnkiDeck.mock.calls[0];
+        const [, , type, sourceId, sourceCommand] = vi.mocked(db.CreateAnkiDeck).mock.calls[0];
         expect(type).toBe('search');
         expect(sourceId).toBe(0);
         expect(JSON.parse(sourceCommand)).toEqual({ command: 's', position: '{}', ids: [8, 9] });
@@ -197,15 +198,15 @@ describe('deck lifecycle', () => {
         const source = { count: async () => 3, window: async () => [], indexOf: async () => -1 };
         await positionsStore.setSource(source);
         const payload = { gamePhaseFilter: 'bearoff' };
-        db.LoadPositionIDsByFilters.mockResolvedValueOnce([4, 5, 6]);
+        vi.mocked(db.LoadPositionIDsByFilters).mockResolvedValueOnce([4, 5, 6]);
         await createDeck({ name: 'P', sourceType: 'search', sourceId: 0, lastSearch: null, positionIds: [], origin: { kind: 'search', payload } });
-        expect(JSON.parse(db.CreateAnkiDeck.mock.calls.at(-1)[4])).toEqual({ ids: [], payload });
+        expect(JSON.parse(vi.mocked(db.CreateAnkiDeck).mock.calls.at(-1)[4])).toEqual({ ids: [], payload });
         expect(db.LoadPositionIDsByFilters).toHaveBeenLastCalledWith(payload);
         expect(db.SyncAnkiDeckWithPositions).toHaveBeenLastCalledWith(42, [4, 5, 6]);
 
-        db.ListPositionIDs.mockResolvedValueOnce([1, 2, 3]);
+        vi.mocked(db.ListPositionIDs).mockResolvedValueOnce([1, 2, 3]);
         await createDeck({ name: 'L', sourceType: 'search', sourceId: 0, lastSearch: null, positionIds: [], origin: { kind: 'library' } });
-        expect(JSON.parse(db.CreateAnkiDeck.mock.calls.at(-1)[4])).toEqual({ ids: [], library: true });
+        expect(JSON.parse(vi.mocked(db.CreateAnkiDeck).mock.calls.at(-1)[4])).toEqual({ ids: [], library: true });
         expect(db.SyncAnkiDeckWithPositions).toHaveBeenLastCalledWith(42, [1, 2, 3]);
         positionsStore.setIds([]);
     });
@@ -232,7 +233,7 @@ describe('deck lifecycle', () => {
 
     test('saveDeckParams updates, reloads and refreshes the selected deck object', async () => {
         selectedAnkiDeckStore.set({ id: 5, requestRetention: 0.9 });
-        db.GetAllAnkiDecks.mockResolvedValueOnce([{ id: 5, requestRetention: 0.95 }]);
+        vi.mocked(db.GetAllAnkiDecks).mockResolvedValueOnce([{ id: 5, requestRetention: 0.95 }]);
         await saveDeckParams(5, { requestRetention: 0.95, maximumInterval: 100, enableFuzz: false });
         expect(db.UpdateAnkiDeckParams).toHaveBeenCalledWith(5, 0.95, 100, false, null);
         expect(get(selectedAnkiDeckStore)).toEqual({ id: 5, requestRetention: 0.95 });
@@ -243,13 +244,13 @@ describe('sessions', () => {
     const deck = { id: 5, sourceType: 'collection' };
 
     test('startSession syncs, loads positions, draws the next due card and shows it', async () => {
-        db.GetNextAnkiCard.mockResolvedValueOnce(card(1, 11));
+        vi.mocked(db.GetNextAnkiCard).mockResolvedValueOnce(card(1, 11));
         const first = await startSession(deck);
         expect(db.SyncAnkiDeck).toHaveBeenCalledWith(5);
-        expect(first.card.id).toBe(1);
+        expect(must(first).card.id).toBe(1);
         expect(get(ankiReviewCardStore)).toEqual(first);
         expect(get(positionStore)).toEqual({ id: 11, board: [] });
-        expect(get(positionStore)).not.toBe(first.position); // a copy: the board edits its own object
+        expect(get(positionStore)).not.toBe(must(first).position); // a copy: the board edits its own object
         expect(get(currentPositionIndexStore)).toBe(1);
     });
 
@@ -257,17 +258,17 @@ describe('sessions', () => {
         expect(await startSession(deck)).toBeNull();
         expect(db.GetRandomAnkiCard).not.toHaveBeenCalled();
 
-        db.GetRandomAnkiCard.mockResolvedValueOnce(card(2, 10));
+        vi.mocked(db.GetRandomAnkiCard).mockResolvedValueOnce(card(2, 10));
         const c = await startSession(deck, { cram: true });
         expect(db.GetRandomAnkiCard).toHaveBeenCalledWith(5, 0);
-        expect(c.card.id).toBe(2);
+        expect(must(c).card.id).toBe(2);
     });
 
     test('reviewCard grades the card and shows the next one; the session ends on null', async () => {
-        db.ReviewAnkiCard.mockResolvedValueOnce(card(2, 10));
+        vi.mocked(db.ReviewAnkiCard).mockResolvedValueOnce(card(2, 10));
         const next = await reviewCard(card(1, 11), 3);
         expect(db.ReviewAnkiCard).toHaveBeenCalledWith(1, 3);
-        expect(next.card.id).toBe(2);
+        expect(must(next).card.id).toBe(2);
         expect(get(ankiReviewCardStore)).toEqual(next);
 
         expect(await reviewCard(next, 4)).toBeNull();
@@ -275,7 +276,7 @@ describe('sessions', () => {
     });
 
     test('nextCramCard never schedules and skips the card just shown', async () => {
-        db.GetRandomAnkiCard.mockResolvedValueOnce(card(3, 10));
+        vi.mocked(db.GetRandomAnkiCard).mockResolvedValueOnce(card(3, 10));
         const next = await nextCramCard(deck, card(1, 11));
         expect(db.GetRandomAnkiCard).toHaveBeenCalledWith(5, 11);
         expect(db.ReviewAnkiCard).not.toHaveBeenCalled();

@@ -74,7 +74,7 @@ describe('StatsPanel — refreshStats integration', () => {
     beforeEach(() => {
         resetStores();
         vi.resetAllMocks();
-        ComputeStats.mockResolvedValue({ prGlobal: 2.5, totals: { numDecisions: 5 } });
+        vi.mocked(ComputeStats).mockResolvedValue({ prGlobal: 2.5, totals: { numDecisions: 5 } });
     });
 
     test('refreshStats populates statsResultStore', async () => {
@@ -92,7 +92,7 @@ describe('StatsPanel — refreshStats integration', () => {
     });
 
     test('refreshStats sets errorStore on failure', async () => {
-        ComputeStats.mockRejectedValueOnce(new Error('network error'));
+        vi.mocked(ComputeStats).mockRejectedValueOnce(new Error('network error'));
         const filter = get(statsFilterStore);
         await refreshStats(filter);
         expect(get(statsErrorStore)).toBe('network error');

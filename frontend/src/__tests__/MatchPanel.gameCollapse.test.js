@@ -95,18 +95,18 @@ describe('MatchPanel — every game of the transcript collapses, game 1 included
         const sections = () => [...container.querySelectorAll('details.game-section')];
         expect(sections().length, 'both games are listed').toBe(2);
         const first = sections()[0];
-        expect(first.open, 'game 1 is the one seeded open').toBe(true);
+        expect(/** @type {HTMLDetailsElement} */ (first).open, 'game 1 is the one seeded open').toBe(true);
         // game.winner is 1 for player 1 and -1 for player 2.
         const results = sections().map((s) => s.querySelector('.game-result')?.textContent ?? '');
         expect(results[0]).toContain('Alice');
         expect(results[1]).toContain('Bob');
 
         // Collapse it the way the browser does: flip `open`, then fire toggle.
-        first.open = false;
+        /** @type {HTMLDetailsElement} */ (first).open = false;
         await fireEvent(first, new Event('toggle'));
         for (let i = 0; i < 4; i++) await tick();
 
-        expect(sections()[0].open, 'game 1 must stay collapsed').toBe(false);
+        expect(/** @type {HTMLDetailsElement} */ (sections()[0]).open, 'game 1 must stay collapsed').toBe(false);
     });
 
     // The real report: the user is reviewing the match. The transcript follows
@@ -129,23 +129,23 @@ describe('MatchPanel — every game of the transcript collapses, game 1 included
 
         const sections = () => [...container.querySelectorAll('details.game-section')];
         const first = sections()[0];
-        expect(first.open, 'game 1 holds the move under review').toBe(true);
+        expect(/** @type {HTMLDetailsElement} */ (first).open, 'game 1 holds the move under review').toBe(true);
 
-        first.open = false;
+        /** @type {HTMLDetailsElement} */ (first).open = false;
         await fireEvent(first, new Event('toggle'));
         for (let i = 0; i < 6; i++) await tick();
 
-        expect(sections()[0].open, 'game 1 must stay collapsed even under review').toBe(false);
+        expect(/** @type {HTMLDetailsElement} */ (sections()[0]).open, 'game 1 must stay collapsed even under review').toBe(false);
 
         // And the later game, which holds no reviewed move, collapses too.
         const second = sections()[1];
-        second.open = true;
+        /** @type {HTMLDetailsElement} */ (second).open = true;
         await fireEvent(second, new Event('toggle'));
         for (let i = 0; i < 4; i++) await tick();
-        second.open = false;
+        /** @type {HTMLDetailsElement} */ (second).open = false;
         await fireEvent(second, new Event('toggle'));
         for (let i = 0; i < 4; i++) await tick();
-        expect(sections()[1].open, 'game 2 collapses, as it always did').toBe(false);
+        expect(/** @type {HTMLDetailsElement} */ (sections()[1]).open, 'game 2 collapses, as it always did').toBe(false);
     });
 
     // The behaviour the reopening exists for must survive: stepping from game
@@ -166,12 +166,12 @@ describe('MatchPanel — every game of the transcript collapses, game 1 included
         for (let i = 0; i < 4; i++) await tick();
 
         const sections = () => [...container.querySelectorAll('details.game-section')];
-        expect(sections()[1].open, 'game 2 starts collapsed').toBe(false);
+        expect(/** @type {HTMLDetailsElement} */ (sections()[1]).open, 'game 2 starts collapsed').toBe(false);
 
         // Step forward into game 2 (moves 0-1 are game 1, 2-3 are game 2).
         matchContextStore.set({ isMatchMode: true, matchID: 7, currentIndex: 2 });
         for (let i = 0; i < 6; i++) await tick();
 
-        expect(sections()[1].open, 'stepping into game 2 opens it').toBe(true);
+        expect(/** @type {HTMLDetailsElement} */ (sections()[1]).open, 'stepping into game 2 opens it').toBe(true);
     });
 });

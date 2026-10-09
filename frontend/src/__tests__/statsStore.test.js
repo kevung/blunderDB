@@ -65,7 +65,7 @@ describe('refreshStats()', () => {
 
     test('sets loading=true then false, populates result on success', async () => {
         let resolveCall;
-        ComputeStats.mockReturnValue(
+        vi.mocked(ComputeStats).mockReturnValue(
             new Promise((res) => {
                 resolveCall = res;
             })
@@ -83,7 +83,7 @@ describe('refreshStats()', () => {
     });
 
     test('sets error store and clears result on failure', async () => {
-        ComputeStats.mockRejectedValue(new Error('backend error'));
+        vi.mocked(ComputeStats).mockRejectedValue(new Error('backend error'));
 
         await refreshStats({});
 
@@ -93,7 +93,7 @@ describe('refreshStats()', () => {
     });
 
     test('calls ComputeStats with the provided filter', async () => {
-        ComputeStats.mockResolvedValue(fakeResult);
+        vi.mocked(ComputeStats).mockResolvedValue(fakeResult);
         const filter = { playerName: 'Alice', decisionType: 0 };
         await refreshStats(filter);
         expect(ComputeStats).toHaveBeenCalledWith(filter);
@@ -103,8 +103,8 @@ describe('refreshStats()', () => {
 describe('refreshStudyPlan', () => {
     test('a slower, older reply does not overwrite the latest', async () => {
         let /** @type {((v: unknown) => void) | undefined} */ resolveOld;
-        ComputeStudyPlan.mockImplementationOnce(() => new Promise((r) => (resolveOld = r)));
-        ComputeStudyPlan.mockImplementationOnce(() => Promise.resolve({ tag: 'new' }));
+        vi.mocked(ComputeStudyPlan).mockImplementationOnce(() => new Promise((r) => (resolveOld = r)));
+        vi.mocked(ComputeStudyPlan).mockImplementationOnce(() => Promise.resolve({ tag: 'new' }));
         const first = refreshStudyPlan({ a: 1 }, 1);
         await refreshStudyPlan({ a: 2 }, 1);
         resolveOld?.({ tag: 'old' });

@@ -6,6 +6,7 @@
  * reach the object the export service reads.
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect, afterEach, vi } from 'vitest';
 import { render, cleanup, fireEvent, waitFor } from '@testing-library/svelte';
 import { tick } from 'svelte';
@@ -36,7 +37,7 @@ describe('ExportDatabaseModal lessons', () => {
         const onExport = vi.fn();
         const { container, getByText } = render(ExportDatabaseModal, { visible: true, exportOptions: options, onExport });
         const box = container.querySelector('#export-lessons');
-        await waitFor(() => expect(box.disabled).toBe(false));
+        await waitFor(() => expect(/** @type {HTMLButtonElement | HTMLInputElement} */ (must(box)).disabled).toBe(false));
 
         await fireEvent.click(box);
         await tick();

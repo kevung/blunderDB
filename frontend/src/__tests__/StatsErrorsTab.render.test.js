@@ -12,6 +12,7 @@
  * so the real template and helpers are what gets exercised.
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, afterEach } from 'vitest';
 import { render, cleanup, screen } from '@testing-library/svelte';
 
@@ -212,20 +213,20 @@ describe('StatsErrorsTab — cube error directions', () => {
         render(StatsErrorsTab, { props: { result: withDirections, metric: 'pr' } });
 
         const missedBtn = screen.getByText('2').closest('button');
-        expect(missedBtn.disabled).toBe(false);
+        expect(must(missedBtn).disabled).toBe(false);
 
         const wrongTakeBtn = screen.getByText('0').closest('button');
-        expect(wrongTakeBtn.disabled).toBe(true);
+        expect(must(wrongTakeBtn).disabled).toBe(true);
     });
 
     test('clicking a non-empty direction cell loads positions for it, an empty cell is inert', async () => {
         render(StatsErrorsTab, { props: { result: withDirections, metric: 'pr' } });
 
-        await screen.getByText('2').closest('button').click();
+        await must(screen.getByText('2').closest('button')).click();
         expect(loadPositionsFromStatsSelection).toHaveBeenCalledWith(expect.anything(), { Kind: 'cube_direction', CubeCell: 'offer_missed' });
 
-        loadPositionsFromStatsSelection.mockClear();
-        screen.getByText('0').closest('button').click();
+        vi.mocked(loadPositionsFromStatsSelection).mockClear();
+        must(screen.getByText('0').closest('button')).click();
         expect(loadPositionsFromStatsSelection).not.toHaveBeenCalled();
     });
 

@@ -3,6 +3,7 @@
  * backend accepts and stores) and uiStore.js (what the Settings offer). A value offered but
  * not accepted would be saved and silently reset to the default on the next launch.
  */
+import { must } from './helpers/must.js';
 import { describe, test, expect } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -16,7 +17,7 @@ describe('page steps mirror config.go', () => {
     test('PageSteps', () => {
         const m = /var PageSteps = \[\]string\{([^}]*)\}/.exec(configGo);
         expect(m).not.toBeNull();
-        expect(JSON.parse(`[${m[1]}]`)).toEqual([...PAGE_STEPS]);
+        expect(JSON.parse(`[${must(m)[1]}]`)).toEqual([...PAGE_STEPS]);
     });
 
     test('DefaultPageStep', () => {

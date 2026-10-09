@@ -1,3 +1,4 @@
+import { must } from './helpers/must.js';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { get } from 'svelte/store';
 
@@ -36,10 +37,10 @@ describe('compteur de bibliothèque', () => {
         estimate.mockResolvedValue({ position_count: 5000000, match_count: 40, approximate: ['positions'] });
         await refreshLibraryCounts();
         const c = get(libraryCountsStore);
-        expect(c.blunders).toBeNull();
-        expect(formatCount(c.positions, c.approximate.positions)).toBe('≈ 5000000');
-        expect(formatCount(c.blunders)).toBe('?');
-        expect(formatCount(c.matches, c.approximate.matches)).toBe('40');
+        expect(must(c).blunders).toBeNull();
+        expect(formatCount(must(c).positions, must(c).approximate.positions)).toBe('≈ 5000000');
+        expect(formatCount(must(c).blunders)).toBe('?');
+        expect(formatCount(must(c).matches, must(c).approximate.matches)).toBe('40');
     });
 
     it('une réponse périmée n écrase pas une plus récente', async () => {

@@ -8,6 +8,7 @@
  * dispatcher must never see it), a click on the backdrop closes only when asked,
  * and the dialog is named by its title.
  */
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
@@ -40,18 +41,18 @@ describe('Modal — focus', () => {
         await tick();
 
         const dialog = container.querySelector('[role="dialog"]');
-        expect(dialog.getAttribute('aria-modal')).toBe('true');
+        expect(must(dialog).getAttribute('aria-modal')).toBe('true');
         const title = container.querySelector('.modal-title');
-        expect(dialog.getAttribute('aria-labelledby')).toBe(title.id);
-        expect(title.textContent).toBe('A title');
+        expect(must(dialog).getAttribute('aria-labelledby')).toBe(must(title).id);
+        expect(must(title).textContent).toBe('A title');
         expect(document.activeElement).toBe(container.querySelector('#first'));
     });
 
     test('falls back to aria-label when there is no title', () => {
         const { container } = render(ModalFixture, { props: { open: true, withTitle: false, label: 'Plain' } });
         const dialog = container.querySelector('[role="dialog"]');
-        expect(dialog.getAttribute('aria-label')).toBe('Plain');
-        expect(dialog.hasAttribute('aria-labelledby')).toBe(false);
+        expect(must(dialog).getAttribute('aria-label')).toBe('Plain');
+        expect(must(dialog).hasAttribute('aria-labelledby')).toBe(false);
     });
 
     test('Tab wraps inside the box, the close cross last', async () => {
@@ -60,7 +61,7 @@ describe('Modal — focus', () => {
         const first = container.querySelector('#first');
         const cross = container.querySelector('.modal-close');
 
-        cross.focus();
+        /** @type {HTMLElement} */ (must(cross)).focus();
         expect(tab(cross).defaultPrevented).toBe(true);
         expect(document.activeElement).toBe(first);
 

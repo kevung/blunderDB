@@ -9,6 +9,7 @@
  * autofocuses the name field), and Escape closes it.
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
@@ -51,8 +52,8 @@ describe('SearchPanel — save-filter dialog accessibility', () => {
 
         const dialog = container.querySelector('[role="dialog"]');
         expect(dialog).not.toBeNull();
-        expect(dialog.getAttribute('aria-modal')).toBe('true');
-        expect(dialog.hasAttribute('aria-label')).toBe(true);
+        expect(must(dialog).getAttribute('aria-modal')).toBe('true');
+        expect(must(dialog).hasAttribute('aria-label')).toBe(true);
 
         const input = container.querySelector('#filterNameInput');
         expect(input).not.toBeNull();

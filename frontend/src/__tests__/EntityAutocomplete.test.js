@@ -3,6 +3,7 @@
  * MatchPanel's tournament cell and TournamentPanel's "add a match" field:
  * filtering, keyboard selection, and where the list opens.
  */
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { tick, createRawSnippet } from 'svelte';
@@ -77,11 +78,11 @@ describe('EntityAutocomplete', () => {
         await tick();
         await fireEvent.keyDown(input, { key: 'ArrowDown' });
         await tick();
-        expect(container.querySelector('.option.active').textContent.trim()).toBe('Marseille');
+        expect(must(container.querySelector('.option.active')).textContent.trim()).toBe('Marseille');
 
         await fireEvent.keyDown(input, { key: 'ArrowUp' });
         await tick();
-        expect(container.querySelector('.option.active').textContent.trim()).toBe('Nordic Open');
+        expect(must(container.querySelector('.option.active')).textContent.trim()).toBe('Nordic Open');
 
         await fireEvent.keyDown(input, { key: 'Enter' });
         expect(onSelect).toHaveBeenCalledWith(ITEMS[0]);
@@ -153,7 +154,7 @@ describe('EntityAutocomplete', () => {
         const { container, input } = await mount();
         layout(input, { top: 100, bottom: 120, innerHeight: 600 });
         await fireEvent.focus(input);
-        let style = container.querySelector('.dropdown').style;
+        let style = must(container.querySelector('.dropdown')).style;
         expect(style.position).toBe('fixed');
         expect(style.top).toBe('120px');
         expect(style.bottom).toBe('');
@@ -162,7 +163,7 @@ describe('EntityAutocomplete', () => {
         // 40px left under the input, 560px above: flip.
         layout(input, { top: 540, bottom: 560, innerHeight: 600 });
         await fireEvent.input(input, { target: { value: '' } });
-        style = container.querySelector('.dropdown').style;
+        style = must(container.querySelector('.dropdown')).style;
         expect(style.bottom).toBe('60px');
         expect(style.top).toBe('');
         expect(style.maxHeight).toBe('120px');
@@ -172,7 +173,7 @@ describe('EntityAutocomplete', () => {
         const { container, input } = await mount({ placement: 'above', maxHeight: 90 });
         layout(input, { top: 100, bottom: 120, innerHeight: 600 });
         await fireEvent.focus(input);
-        const style = container.querySelector('.dropdown').style;
+        const style = must(container.querySelector('.dropdown')).style;
         expect(style.bottom).toBe('500px');
         expect(style.maxHeight).toBe('90px');
     });

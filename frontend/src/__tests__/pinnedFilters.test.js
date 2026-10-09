@@ -8,6 +8,7 @@
  * ÉDITION où le plateau à l'écran n'en est pas une (#410).
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
@@ -190,7 +191,7 @@ describe('ALT-n pose la question du double-clic', () => {
         expect(bindings.SearchPositionIDs).toHaveBeenCalledTimes(1);
         const fromAlt = bindings.SearchPositionIDs.mock.calls[0];
         expect(fromAlt).toEqual(fromPanel);
-        expect(fromAlt[0].filter.board.points[6].checkers).toBe(5);
+        expect(must(fromAlt[0]).filter.board.points[6].checkers).toBe(5);
     });
 });
 
@@ -226,11 +227,11 @@ describe('le panneau de recherche', () => {
         await fireEvent.click(container.querySelectorAll('.sub-tab-btn')[2]);
         await tick();
         const star = container.querySelector('.saved-item .pin-btn');
-        expect(star.getAttribute('aria-pressed')).toBe('false');
+        expect(must(star).getAttribute('aria-pressed')).toBe('false');
         await fireEvent.click(star);
         await settle();
         expect(bindings.SetFilterPinned).toHaveBeenCalledWith(1, true);
-        expect(container.querySelector('.saved-item .pin-btn').getAttribute('aria-pressed')).toBe('true');
+        expect(must(container.querySelector('.saved-item .pin-btn')).getAttribute('aria-pressed')).toBe('true');
         expect(container.querySelectorAll('.pinned-chip')).toHaveLength(1);
     });
 });

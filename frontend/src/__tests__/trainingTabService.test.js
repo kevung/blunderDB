@@ -8,6 +8,7 @@
  * de Pions est ouverte. Trois critères d'acceptation, trois assertions sur ce
  * qui part vers la base ou vers le plateau — pas sur un rendu.
  */
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 import { get } from 'svelte/store';
 
@@ -173,7 +174,7 @@ describe('une session de Scores', () => {
         expect(row.numbersAsked).toBeLessThanOrEqual(14);
         expect(row.items).toHaveLength(row.numbersAsked);
         expect(row.faults).toBe(1);
-        expect(row.items.filter((/** @type {any} */ i) => i.wrong)).toHaveLength(1);
+        expect(must(row.items).filter((/** @type {any} */ i) => i.wrong)).toHaveLength(1);
         // Aucun écart en mode déclaré : la moyenne des écarts reste vide.
         expect(row.deviations).toBe(0);
         expect(get(trainingSessionStore)).toBeNull();
@@ -564,7 +565,7 @@ describe('une session de Bearoff', () => {
         const row = db.SaveTrainingSession.mock.calls[0][0];
         expect(row.exercise).toBe('bearoff');
         expect(row.deviations).toBe(2);
-        expect(row.items.map((i) => i.deviation)).toEqual([3, 0]);
+        expect(must(row.items).map((i) => i.deviation)).toEqual([3, 0]);
     });
 
     // ADR-0041 règle 3 : le refus NOMME le domaine, et rien ne démarre.

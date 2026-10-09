@@ -6,6 +6,7 @@
  * of leaving a black frame.
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 
@@ -71,11 +72,11 @@ describe('VideoPane', () => {
             expect(el).not.toBeNull();
             return el;
         });
-        expect(video.getAttribute('src')).toBe('http://127.0.0.1:1/m/tok');
+        expect(must(video).getAttribute('src')).toBe('http://127.0.0.1:1/m/tok');
         expect(component.currentTimeMs()).toBeNull();
         await fireEvent(video, new Event('loadedmetadata'));
         component.seek(12500);
-        expect(video.currentTime).toBe(12.5);
+        expect(must(video).currentTime).toBe(12.5);
         expect(component.currentTimeMs()).toBe(12500);
     });
 

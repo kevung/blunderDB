@@ -9,6 +9,7 @@
  * CountPositionsByFilters.
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 
 const bindings = vi.hoisted(() => ({
@@ -64,18 +65,18 @@ beforeEach(() => {
 describe('le jeton n, de la barre de commande au backend (#362)', () => {
     test('s n>3 envoie encounterFilter', async () => {
         const payload = await searchFromCommandBar('s n>3');
-        expect(payload.encounterFilter).toBe('n>3');
+        expect(must(payload).encounterFilter).toBe('n>3');
     });
 
     test('la forme bornée voyage telle quelle, le compte exact est déplié', async () => {
-        expect((await searchFromCommandBar('s n2,5')).encounterFilter).toBe('n2,5');
+        expect(must(await searchFromCommandBar('s n2,5')).encounterFilter).toBe('n2,5');
         vi.clearAllMocks();
-        expect((await searchFromCommandBar('s n4')).encounterFilter).toBe('n4,4');
+        expect(must(await searchFromCommandBar('s n4')).encounterFilter).toBe('n4,4');
     });
 
     test('nc ne se confond pas avec n', async () => {
         const payload = await searchFromCommandBar('s nc');
-        expect(payload.noContactFilter).toBe(true);
-        expect(payload.encounterFilter).toBe('');
+        expect(must(payload).noContactFilter).toBe(true);
+        expect(must(payload).encounterFilter).toBe('');
     });
 });

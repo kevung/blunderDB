@@ -13,6 +13,7 @@
  * was on screen. The board stays a scratch board after it is saved.
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 import { get } from 'svelte/store';
 
@@ -167,16 +168,16 @@ describe('saving the Search scratch board', () => {
         expect(db.SaveAnalysis).toHaveBeenCalledTimes(1);
         const [id, sent] = db.SaveAnalysis.mock.calls[0];
         expect(id).toBe(99);
-        expect(sent.playedMoves ?? []).toEqual([]);
-        expect(sent.playedCubeActions ?? []).toEqual([]);
-        expect(sent.allCubeAnalyses ?? []).toEqual([]);
-        expect(sent.checkerAnalysis?.moves ?? []).toEqual([]);
-        expect(sent.player1 ?? '').toBe('');
-        expect(sent.player2 ?? '').toBe('');
-        expect(sent.analysisType ?? '').toBe('');
+        expect(must(sent).playedMoves ?? []).toEqual([]);
+        expect(must(sent).playedCubeActions ?? []).toEqual([]);
+        expect(must(sent).allCubeAnalyses ?? []).toEqual([]);
+        expect(must(sent).checkerAnalysis?.moves ?? []).toEqual([]);
+        expect(must(sent).player1 ?? '').toBe('');
+        expect(must(sent).player2 ?? '').toBe('');
+        expect(must(sent).analysisType ?? '').toBe('');
         // The xgid is the drawn board's, not the studied one's.
-        expect(sent.xgid).toBeTruthy();
-        expect(sent.xgid).not.toBe(before.xgid);
+        expect(must(sent).xgid).toBeTruthy();
+        expect(must(sent).xgid).not.toBe(before.xgid);
         expect(sent).not.toBe(get(analysisStore));
         expect(get(analysisStore)).toEqual(before);
     });
@@ -440,11 +441,11 @@ describe('saving the Eval scratch board (#399)', () => {
         expect(sentId).toBe(0);
         expect(db.SaveAnalysis).toHaveBeenCalledTimes(1);
         const [, sent] = db.SaveAnalysis.mock.calls[0];
-        expect(sent.playedMoves ?? []).toEqual([]);
-        expect(sent.allCubeAnalyses ?? []).toEqual([]);
-        expect(sent.checkerAnalysis?.moves ?? []).toEqual([]);
-        expect(sent.player1 ?? '').toBe('');
-        expect(sent.xgid).not.toBe(before.xgid);
+        expect(must(sent).playedMoves ?? []).toEqual([]);
+        expect(must(sent).allCubeAnalyses ?? []).toEqual([]);
+        expect(must(sent).checkerAnalysis?.moves ?? []).toEqual([]);
+        expect(must(sent).player1 ?? '').toBe('');
+        expect(must(sent).xgid).not.toBe(before.xgid);
         expect(get(analysisStore)).toEqual(before);
         expect(lastStatus()).toEqual({ i18nKey: 'status.scratchBoardSaved', i18nParams: { id: 99 } });
     });

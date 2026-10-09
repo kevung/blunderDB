@@ -261,7 +261,7 @@ describe('MATCH → EDIT → MATCH (bug 2 : l’onglet recherche ne perd pas la 
     test('exitEditMode restaure la partie et réaffiche le coup étudié (analyse rechargée)', async () => {
         setMatch(1);
         await enterEditMode();
-        LoadAnalysis.mockResolvedValueOnce({ positionId: 102, checkerAnalysis: { moves: [{ move: '8/5 6/5' }] } });
+        vi.mocked(LoadAnalysis).mockResolvedValueOnce({ positionId: 102, checkerAnalysis: { moves: [{ move: '8/5 6/5' }] } });
 
         await exitEditMode();
 
@@ -315,7 +315,7 @@ describe('NORMAL → EVAL → NORMAL', () => {
     test('exitEvalMode restaure la liste et l’index, recharge l’analyse, vide le contexte', async () => {
         const lib = setLibrary();
         enterEvalMode();
-        LoadAnalysis.mockResolvedValueOnce({ positionId: 2, checkerAnalysis: { moves: [] } });
+        vi.mocked(LoadAnalysis).mockResolvedValueOnce({ positionId: 2, checkerAnalysis: { moves: [] } });
 
         await exitEvalMode();
 
@@ -360,7 +360,7 @@ describe('MATCH → EVAL → MATCH', () => {
     test('exitEvalMode repasse par showPosition : l’analyse est rechargée alors que l’effet de nav ne redessine plus en MATCH (bug 1)', async () => {
         setMatch(2);
         enterEvalMode();
-        LoadAnalysis.mockResolvedValueOnce({ positionId: 103, checkerAnalysis: { moves: [{ move: '24/21' }] } });
+        vi.mocked(LoadAnalysis).mockResolvedValueOnce({ positionId: 103, checkerAnalysis: { moves: [{ move: '24/21' }] } });
 
         await exitEvalMode();
 
@@ -580,8 +580,8 @@ describe('toggleMatchMode', () => {
     test('NORMAL → MATCH : reprend la dernière partie visitée à son dernier coup', async () => {
         setLibrary();
         const ctx = makeMatchContext();
-        GetLastVisitedMatch.mockResolvedValueOnce({ id: 7, player1_name: 'Alice', player2_name: 'Bob', last_visited_position: 2 });
-        GetMatchMovePositions.mockResolvedValueOnce(ctx.movePositions);
+        vi.mocked(GetLastVisitedMatch).mockResolvedValueOnce({ id: 7, player1_name: 'Alice', player2_name: 'Bob', last_visited_position: 2 });
+        vi.mocked(GetMatchMovePositions).mockResolvedValueOnce(ctx.movePositions);
 
         await toggleMatchMode();
 
@@ -595,8 +595,8 @@ describe('toggleMatchMode', () => {
     test('depuis EVAL : le brouillon est abandonné, son contexte oublié', async () => {
         setLibrary();
         enterEvalMode();
-        GetLastVisitedMatch.mockResolvedValueOnce({ id: 7, player1_name: 'Alice', player2_name: 'Bob', last_visited_position: 0 });
-        GetMatchMovePositions.mockResolvedValueOnce(makeMatchContext().movePositions);
+        vi.mocked(GetLastVisitedMatch).mockResolvedValueOnce({ id: 7, player1_name: 'Alice', player2_name: 'Bob', last_visited_position: 0 });
+        vi.mocked(GetMatchMovePositions).mockResolvedValueOnce(makeMatchContext().movePositions);
 
         await toggleMatchMode();
 
@@ -613,7 +613,7 @@ describe('toggleMatchMode', () => {
 
     test('GetLastVisitedMatch qui échoue avec "no matches" affiche le message dédié', async () => {
         setLibrary();
-        GetLastVisitedMatch.mockRejectedValueOnce(new Error('no matches found'));
+        vi.mocked(GetLastVisitedMatch).mockRejectedValueOnce(new Error('no matches found'));
 
         await toggleMatchMode();
 
@@ -623,7 +623,7 @@ describe('toggleMatchMode', () => {
 
     test('GetLastVisitedMatch qui échoue autrement affiche le message générique', async () => {
         setLibrary();
-        GetLastVisitedMatch.mockRejectedValueOnce(new Error('bridge disconnected'));
+        vi.mocked(GetLastVisitedMatch).mockRejectedValueOnce(new Error('bridge disconnected'));
 
         await toggleMatchMode();
 
@@ -680,7 +680,7 @@ describe('COLLECTION → NORMAL', () => {
     test('exitCollectionMode : CountPositions qui échoue retombe sur loadAllPositions au lieu de rester bloqué', async () => {
         await openCollectionOf(handleOpenCollection, { name: 'Backgames' }, [makePosition(2)]);
         serveLibrary([1, 2, 3]);
-        CountPositions.mockRejectedValueOnce(new Error('db locked')); // l'appel de repli, dans loadAllPositions, réussit
+        vi.mocked(CountPositions).mockRejectedValueOnce(new Error('db locked')); // l'appel de repli, dans loadAllPositions, réussit
 
         await exitCollectionMode();
 

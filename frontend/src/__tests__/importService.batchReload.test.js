@@ -1,3 +1,4 @@
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 import { get } from 'svelte/store';
 
@@ -31,7 +32,7 @@ const ImportFiles = vi.fn(async (paths) => {
             summary.succeeded++;
         } catch (error) {
             summary.failed++;
-            summary.errors.push({ file: path, message: error.message });
+            summary.errors.push({ file: path, message: must(error).message });
         }
     }
     return summary;

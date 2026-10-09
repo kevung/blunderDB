@@ -4,6 +4,7 @@
  * there, the study button is inactive when the limit serves nothing, and cram
  * ignores the limit entirely.
  */
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
@@ -86,9 +87,9 @@ describe('the study button', () => {
         selectedAnkiDeckStore.set(deckWith(0));
         const { container } = render(AnkiPanel);
         await settle();
-        expect(container.querySelector('[data-testid="anki-study"]').disabled).toBe(true);
+        expect(/** @type {HTMLButtonElement | HTMLInputElement} */ (must(container.querySelector('[data-testid="anki-study"]'))).disabled).toBe(true);
         // Cram is not bounded by the setting, so it stays available.
-        expect(container.querySelector('[data-testid="anki-cram"]').disabled).toBe(false);
+        expect(/** @type {HTMLButtonElement | HTMLInputElement} */ (must(container.querySelector('[data-testid="anki-cram"]'))).disabled).toBe(false);
     });
 
     test('is active on a deck with a positive limit', async () => {
@@ -96,7 +97,7 @@ describe('the study button', () => {
         selectedAnkiDeckStore.set(deckWith(2));
         const { container } = render(AnkiPanel);
         await settle();
-        expect(container.querySelector('[data-testid="anki-study"]').disabled).toBe(false);
+        expect(/** @type {HTMLButtonElement | HTMLInputElement} */ (must(container.querySelector('[data-testid="anki-study"]'))).disabled).toBe(false);
     });
 });
 
@@ -108,7 +109,7 @@ describe('reaching the limit', () => {
         ankiReviewCardStore.set(CARD(1));
         ankiViewModeStore.set('review');
         // A card remains due: the queue is not what stops the session.
-        db.ReviewAnkiCard.mockResolvedValue(CARD(2));
+        vi.mocked(db.ReviewAnkiCard).mockResolvedValue(CARD(2));
 
         const { container } = render(AnkiPanel);
         await settle();
@@ -130,7 +131,7 @@ describe('reaching the limit', () => {
         selectedAnkiDeckStore.set(deck);
         ankiReviewCardStore.set(CARD(1));
         ankiViewModeStore.set('review');
-        db.ReviewAnkiCard.mockResolvedValue(CARD(2));
+        vi.mocked(db.ReviewAnkiCard).mockResolvedValue(CARD(2));
 
         const { container } = render(AnkiPanel);
         await settle();
@@ -148,7 +149,7 @@ describe('grading faster than the board loads', () => {
         selectedAnkiDeckStore.set(deck);
         ankiReviewCardStore.set(CARD(1));
         ankiViewModeStore.set('review');
-        db.ReviewAnkiCard.mockImplementation((/** @type {number} */ id) => Promise.resolve(id === 1 ? CARD(2) : null));
+        vi.mocked(db.ReviewAnkiCard).mockImplementation((/** @type {number} */ id) => Promise.resolve(id === 1 ? CARD(2) : null));
         // The second card is on screen, its board still loading.
         /** @type {(v?: unknown) => void} */
         let release = () => {};
@@ -185,7 +186,7 @@ describe('the setting in the deck settings view', () => {
 
         const checkboxes = container.querySelectorAll('.settings-row input[type="checkbox"]');
         const limited = checkboxes[checkboxes.length - 1];
-        expect(limited.checked).toBe(false);
+        expect(/** @type {HTMLInputElement} */ (limited).checked).toBe(false);
 
         await fireEvent.click(container.querySelector('.settings-actions .btn-primary'));
         await settle();
@@ -202,7 +203,7 @@ describe('the setting in the deck settings view', () => {
         await settle();
 
         const checkboxes = container.querySelectorAll('.settings-row input[type="checkbox"]');
-        expect(checkboxes[checkboxes.length - 1].checked).toBe(true);
+        expect(/** @type {HTMLInputElement} */ (checkboxes[checkboxes.length - 1]).checked).toBe(true);
 
         await fireEvent.click(container.querySelector('.settings-actions .btn-primary'));
         await settle();

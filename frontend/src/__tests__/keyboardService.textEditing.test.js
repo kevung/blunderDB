@@ -1,3 +1,4 @@
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 
 // While focus is in an editable field, the clipboard/selection/undo combos
@@ -74,7 +75,7 @@ describe('keyboard shortcuts while editing text', () => {
         activeTabStore.set('comments');
         document.body.innerHTML = '<div class="comment-panel"><textarea id="commentTextArea"></textarea></div>';
         textarea = document.getElementById('commentTextArea');
-        textarea.focus();
+        must(textarea).focus();
     });
 
     afterEach(() => {
@@ -127,7 +128,7 @@ describe('keyboard shortcuts with the board focused', () => {
         vi.clearAllMocks();
         activeTabStore.set('matches');
         document.body.innerHTML = '<div id="board" tabindex="-1"></div>';
-        document.getElementById('board').focus();
+        must(document.getElementById('board')).focus();
     });
 
     afterEach(() => {

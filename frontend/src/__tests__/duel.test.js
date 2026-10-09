@@ -2,6 +2,7 @@
  * Le Duel côté bureau : le formulaire devenu `duel.Settings`, les horloges lues dans l'état de
  * l'Arbitre, et ce que le plateau rejoue du Bot.
  */
+import { must } from './helpers/must.js';
 import { describe, test, expect } from 'vitest';
 import { normalizeForm, settingsFromForm, scoreStart, clockView, formatClock, framesBetween, humanSide, levelLabelParts, DEFAULT_FORM, START } from '../services/duel.js';
 
@@ -79,16 +80,16 @@ describe('clockView', () => {
 
     test('the delay is free, then the running reserve goes down', () => {
         const at5 = clockView(state, t0 + 5000);
-        expect(at5.reserve).toEqual([180000, 180000]);
-        expect(at5.delayLeft).toBe(7000);
+        expect(must(at5).reserve).toEqual([180000, 180000]);
+        expect(must(at5).delayLeft).toBe(7000);
         const at20 = clockView(state, t0 + 20000);
-        expect(at20.reserve).toEqual([180000, 172000]);
-        expect(at20.running).toBe(1);
+        expect(must(at20).reserve).toEqual([180000, 172000]);
+        expect(must(at20).running).toBe(1);
     });
 
     test('no Cadence, no clock; an ended Duel runs no clock', () => {
         expect(clockView({ awaiting: state.awaiting }, t0)).toBeNull();
-        expect(clockView({ ...state, ended: { matchId: 1 } }, t0 + 60000).running).toBe(-1);
+        expect(must(clockView({ ...state, ended: { matchId: 1 } }, t0 + 60000)).running).toBe(-1);
     });
 
     test('formatClock', () => {

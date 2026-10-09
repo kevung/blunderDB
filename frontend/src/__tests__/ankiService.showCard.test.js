@@ -8,6 +8,7 @@
  * and it showed ANOTHER position's numbers — the reason ADR-0025 rule 1 makes
  * the stored analysis the answer only once this path is fixed.
  */
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 import { get } from 'svelte/store';
 
@@ -89,7 +90,7 @@ describe('what resets the reveal', () => {
     test('the next card of a session hides its answer', async () => {
         ankiAnswerShownStore.set(true);
         selectedMoveStore.set('13/7 8/7');
-        db.ReviewAnkiCard.mockResolvedValueOnce(card(11));
+        vi.mocked(db.ReviewAnkiCard).mockResolvedValueOnce(card(11));
 
         await reviewCard(card(10), 3);
 
@@ -99,7 +100,7 @@ describe('what resets the reveal', () => {
 
     test('starting a session hides the first card answer', async () => {
         ankiAnswerShownStore.set(true);
-        db.GetNextAnkiCard.mockResolvedValueOnce(card(10));
+        vi.mocked(db.GetNextAnkiCard).mockResolvedValueOnce(card(10));
 
         await startSession({ id: 1 });
 
@@ -109,20 +110,20 @@ describe('what resets the reveal', () => {
 
 describe('session walking', () => {
     test('the first card of a session is displayed through showPosition', async () => {
-        db.GetNextAnkiCard.mockResolvedValueOnce(card(10));
+        vi.mocked(db.GetNextAnkiCard).mockResolvedValueOnce(card(10));
         await startSession({ id: 1 });
         expect(showPosition).toHaveBeenCalledWith(expect.objectContaining({ id: 10 }));
     });
 
     test('grading a card displays the next one before resolving', async () => {
-        db.ReviewAnkiCard.mockResolvedValueOnce(card(11));
+        vi.mocked(db.ReviewAnkiCard).mockResolvedValueOnce(card(11));
         const next = await reviewCard(card(10), 3);
-        expect(next.position.id).toBe(11);
+        expect(must(next).position.id).toBe(11);
         expect(showPosition).toHaveBeenCalledWith(expect.objectContaining({ id: 11 }));
     });
 
     test('the end of a session displays nothing', async () => {
-        db.ReviewAnkiCard.mockResolvedValueOnce(null);
+        vi.mocked(db.ReviewAnkiCard).mockResolvedValueOnce(null);
         const next = await reviewCard(card(10), 3);
         expect(next).toBeNull();
         expect(showPosition).not.toHaveBeenCalled();

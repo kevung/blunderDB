@@ -7,6 +7,7 @@
  * Pattern : vi.mock hoisted → render(StatusBar) → mutate store → await tick() → assert DOM.
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, cleanup, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
@@ -107,7 +108,7 @@ describe('StatusBar — réactivité', () => {
         // .position-info doit afficher "2 / 3"
         const posInfo = document.querySelector('.position-info');
         expect(posInfo).not.toBeNull();
-        expect(posInfo.textContent.trim()).toBe('2 / 3');
+        expect(must(posInfo).textContent.trim()).toBe('2 / 3');
     });
 
     // ── Test 4 : latence de mise à jour ──────────────────────────────────────
@@ -147,7 +148,7 @@ describe('StatusBar — réactivité', () => {
 
     // ── Test 6 : showCommandInputStore true → LoadCommandHistory + input visible ──
     test('T6 — showCommandInputStore.set(true) → LoadCommandHistory appelée et input affiché', async () => {
-        LoadCommandHistory.mockClear();
+        vi.mocked(LoadCommandHistory).mockClear();
         render(StatusBar);
 
         showCommandInputStore.set(true);
@@ -193,11 +194,11 @@ describe('StatusBar — réactivité', () => {
         const { container } = render(StatusBar);
 
         const bar = container.querySelector('.status-bar');
-        expect(bar.getAttribute('role')).toBeNull();
-        expect(bar.getAttribute('aria-live')).toBeNull();
+        expect(must(bar).getAttribute('role')).toBeNull();
+        expect(must(bar).getAttribute('aria-live')).toBeNull();
 
         const message = container.querySelector('.info-message');
-        expect(message.getAttribute('role')).toBe('status');
-        expect(message.getAttribute('aria-live')).toBe('polite');
+        expect(must(message).getAttribute('role')).toBe('status');
+        expect(must(message).getAttribute('aria-live')).toBe('polite');
     });
 });

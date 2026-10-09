@@ -4,6 +4,7 @@
  * review and settings views, and the rating keys routed from App.svelte
  * reach the service.
  */
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach, afterEach, onTestFinished } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
@@ -73,19 +74,19 @@ describe('AnkiPanel', () => {
         await settle();
         expect(container.querySelector('.empty-state')).not.toBeNull();
 
-        db.GetAllAnkiDecks.mockResolvedValue(DECKS);
+        vi.mocked(db.GetAllAnkiDecks).mockResolvedValue(DECKS);
         ankiDecksStore.set(DECKS);
         await settle();
         const rows = container.querySelectorAll('tbody tr');
         expect(rows).toHaveLength(2);
         expect(rows[0].textContent).toContain('Alpha');
-        expect(rows[0].querySelector('.source-cell').textContent).toBe('Openings');
-        expect(rows[1].querySelector('.source-cell').textContent).toBe('s e>0.1');
+        expect(must(rows[0].querySelector('.source-cell')).textContent).toBe('Openings');
+        expect(must(rows[1].querySelector('.source-cell')).textContent).toBe('s e>0.1');
         expect(container.querySelector('.empty-state')).toBeNull();
     });
 
     test('clicking a deck selects it and opens its detail with the stats', async () => {
-        db.GetAllAnkiDecks.mockResolvedValue(DECKS);
+        vi.mocked(db.GetAllAnkiDecks).mockResolvedValue(DECKS);
         const { container } = render(AnkiPanel);
         await settle();
 
@@ -94,15 +95,15 @@ describe('AnkiPanel', () => {
 
         expect(get(selectedAnkiDeckStore)).toEqual(DECKS[0]);
         expect(db.GetAnkiDeckStats).toHaveBeenCalledWith(1);
-        expect(container.querySelector('tbody tr').classList.contains('selected')).toBe(true);
+        expect(must(container.querySelector('tbody tr')).classList.contains('selected')).toBe(true);
         // The selected deck takes over the strip: its counts, and the study it starts.
-        expect(container.querySelector('[data-testid="panel-header"] .panel-title').textContent).toBe('Alpha');
+        expect(must(container.querySelector('[data-testid="panel-header"] .panel-title')).textContent).toBe('Alpha');
         expect(container.querySelector('[data-testid="anki-due"]')).not.toBeNull();
-        expect(container.querySelector('[data-testid="anki-study"]').disabled).toBe(false);
+        expect(/** @type {HTMLButtonElement | HTMLInputElement} */ (must(container.querySelector('[data-testid="anki-study"]'))).disabled).toBe(false);
     });
 
     test('every counter of the selected deck opens the positions it counts', async () => {
-        db.GetAllAnkiDecks.mockResolvedValue(DECKS);
+        vi.mocked(db.GetAllAnkiDecks).mockResolvedValue(DECKS);
         ankiDecksStore.set(DECKS);
         selectedAnkiDeckStore.set(DECKS[0]);
         const spread = { newCount: 2, learningCount: 1, reviewCount: 1, totalCount: 3, dueCount: 2 };
@@ -138,8 +139,8 @@ describe('AnkiPanel', () => {
         ankiDeckStatsStore.set({ newCount: 0, learningCount: 0, reviewCount: 1, totalCount: 1, dueCount: 0 });
         const { container } = render(AnkiPanel);
         await settle();
-        expect(container.querySelector('[data-testid="anki-study"]').disabled).toBe(true);
-        expect(container.querySelector('[data-testid="anki-cram"]').disabled).toBe(false);
+        expect(/** @type {HTMLButtonElement | HTMLInputElement} */ (must(container.querySelector('[data-testid="anki-study"]'))).disabled).toBe(true);
+        expect(/** @type {HTMLButtonElement | HTMLInputElement} */ (must(container.querySelector('[data-testid="anki-cram"]'))).disabled).toBe(false);
     });
 
     test('the review view shows the current card and routes the rating keys to the service', async () => {
@@ -150,8 +151,8 @@ describe('AnkiPanel', () => {
         const { container } = render(AnkiPanel);
         await settle();
 
-        expect(container.querySelector('.view-title').textContent).toBe('Alpha');
-        expect(container.querySelector('.card-state').textContent).toBe('New');
+        expect(must(container.querySelector('.view-title')).textContent).toBe('Alpha');
+        expect(must(container.querySelector('.card-state')).textContent).toBe('New');
         expect(container.querySelectorAll('.btn-rating')).toHaveLength(4);
 
         ankiReviewActionStore.set(3);
@@ -185,7 +186,7 @@ describe('AnkiPanel', () => {
         await fireEvent.click(container.querySelector('[data-testid="anki-settings"]'));
         await settle();
         expect(get(ankiViewModeStore)).toBe('settings');
-        expect(container.querySelector('.settings-row input[type="number"]').value).toBe('0.85');
+        expect(/** @type {HTMLInputElement} */ (must(container.querySelector('.settings-row input[type="number"]'))).value).toBe('0.85');
 
         await fireEvent.click(container.querySelector('.settings-actions .btn-primary'));
         await settle();

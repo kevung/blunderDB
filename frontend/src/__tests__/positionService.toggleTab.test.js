@@ -85,7 +85,7 @@ describe('toggleTab', () => {
         databasePathStore.set('');
         for (const [fn, tab] of NAMED) {
             if (tab === 'metadata' || tab === 'search') continue;
-            setStatusBarMessage.mockClear();
+            vi.mocked(setStatusBarMessage).mockClear();
             fn();
             expect(get(activeTabStore), tab).toBe('eval');
             expect(setStatusBarMessage, tab).toHaveBeenCalledWith(tMsg('commands.noDatabaseOpened'));

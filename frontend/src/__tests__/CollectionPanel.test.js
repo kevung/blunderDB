@@ -9,6 +9,7 @@
  * every Wails binding mocked and the real Svelte stores driving the component.
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, cleanup, screen, fireEvent, within } from '@testing-library/svelte';
 import { tick } from 'svelte';
@@ -312,14 +313,14 @@ describe('CollectionPanel — a partly loaded collection', () => {
 
         // Drive the window to the end of the loaded rows.
         const scroll = [...document.querySelectorAll('.scroll')].pop();
-        scroll.scrollTop = 28 * 490;
+        must(scroll).scrollTop = 28 * 490;
         await fireEvent.scroll(scroll);
         const rows = [...document.querySelectorAll('tbody tr:not(.spacer)')];
         const last = rows.find((r) => r.querySelector('.idx-cell')?.textContent === '500');
         expect(last).toBeTruthy();
-        expect(within(last).getByTitle(/move down/i).disabled).toBe(true);
+        expect(/** @type {HTMLButtonElement | HTMLInputElement} */ (within(last).getByTitle(/move down/i)).disabled).toBe(true);
         const before = rows.find((r) => r.querySelector('.idx-cell')?.textContent === '499');
-        expect(within(before).getByTitle(/move down/i).disabled).toBe(false);
+        expect(/** @type {HTMLButtonElement | HTMLInputElement} */ (within(before).getByTitle(/move down/i)).disabled).toBe(false);
     });
 });
 

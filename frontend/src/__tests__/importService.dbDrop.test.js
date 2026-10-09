@@ -1,3 +1,4 @@
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 
 // Dropping a database on an open one asks in the user's language, and the answer
@@ -72,9 +73,9 @@ describe('handleDbFileDrop', () => {
             expect(m).not.toBeNull();
             return m;
         });
-        expect(message.message).toContain('autre.db');
-        expect(message.choices.map((c) => c.label)).toEqual(['Ouvrir', 'Fusionner']);
-        expect(message.cancelLabel).toBe('Annuler');
+        expect(must(message).message).toContain('autre.db');
+        expect(must(message).choices.map((c) => c.label)).toEqual(['Ouvrir', 'Fusionner']);
+        expect(must(message).cancelLabel).toBe('Annuler');
         resolveConfirm('open');
         await done;
         expect(openDatabaseByPath).toHaveBeenCalledWith('/x/autre.db');

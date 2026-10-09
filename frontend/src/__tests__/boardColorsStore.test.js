@@ -1,3 +1,4 @@
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 import { get } from 'svelte/store';
 
@@ -48,7 +49,7 @@ describe('boardColorsStore', () => {
         setBoardColor('checker1', '#ff0000');
         expect(get(boardColorsStore).checker1).toBe('#ff0000');
         expect(SaveBoardColors).toHaveBeenCalledTimes(1);
-        expect(SaveBoardColors.mock.calls[0][0].checker1).toBe('#ff0000');
+        expect(must(SaveBoardColors.mock.calls[0][0]).checker1).toBe('#ff0000');
     });
 
     test('setBoardColor ignores unknown keys', () => {

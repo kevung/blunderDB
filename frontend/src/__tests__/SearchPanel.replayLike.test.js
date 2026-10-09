@@ -13,6 +13,7 @@
  * commande tapée dans la barre.
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
@@ -168,22 +169,22 @@ describe('le rejeu porte le classement like (#404)', () => {
     test('like42* élargit la classe et E>80 restreint, au rejeu comme à la frappe', async () => {
         await replayHistory('s like42* E>80', drawnBoard());
         const [payload] = ranked();
-        expect(payload.likeFilter).toBe(true);
-        expect(payload.likeTargetId).toBe(42);
-        expect(payload.likeWidened).toBe(true);
-        expect(payload.moveErrorFilter).toBe('E>80');
+        expect(must(payload).likeFilter).toBe(true);
+        expect(must(payload).likeTargetId).toBe(42);
+        expect(must(payload).likeWidened).toBe(true);
+        expect(must(payload).moveErrorFilter).toBe('E>80');
     });
 
     test('s like sur un plateau dessiné reclasse contre le plateau conservé avec l’entrée', async () => {
         const board = drawnBoard();
         const expected = await typed('s like', board);
-        expect(expected[0].likeTargetBoard.board.points[6].checkers).toBe(5);
+        expect(must(expected[0]).likeTargetBoard.board.points[6].checkers).toBe(5);
 
         await replayHistory('s like', board);
         const sent = ranked();
         expect(sent).toEqual(expected);
-        expect(sent[0].likeTargetId).toBe(0);
-        expect(sent[0].likeTargetBoard.board.points[6].checkers).toBe(5);
+        expect(must(sent[0]).likeTargetId).toBe(0);
+        expect(must(sent[0]).likeTargetBoard.board.points[6].checkers).toBe(5);
     });
 
     test('s like sur un plateau dessiné, depuis la bibliothèque, reclasse contre le plateau enregistré', async () => {

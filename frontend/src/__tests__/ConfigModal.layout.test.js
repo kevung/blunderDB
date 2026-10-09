@@ -2,6 +2,7 @@
  * ConfigModal.svelte : les neuf onglets se montent en colonne (aria-orientation) et chacun
  * ouvre son corps. Le débordement lui-même est géométrique (e2e) ; ce test tient le montage.
  */
+import { must } from './helpers/must.js';
 import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 
@@ -30,8 +31,8 @@ describe('ConfigModal tabs', () => {
     test('nine tabs in a vertical tablist, each selectable', async () => {
         const { container } = render(ConfigModal, { visible: true, onClose: () => {} });
         const list = container.ownerDocument.querySelector('[role="tablist"]');
-        expect(list.getAttribute('aria-orientation')).toBe('vertical');
-        const tabs = [...list.querySelectorAll('[role="tab"]')];
+        expect(must(list).getAttribute('aria-orientation')).toBe('vertical');
+        const tabs = [...must(list).querySelectorAll('[role="tab"]')];
         expect(tabs).toHaveLength(9);
         expect(tabs[0].getAttribute('aria-selected')).toBe('true');
         await fireEvent.click(tabs[7]);
@@ -68,17 +69,17 @@ describe('ConfigModal scroll', () => {
             const doc = container.ownerDocument;
             const tabs = [...doc.querySelectorAll('[role="tab"]')];
             const body = doc.querySelector('.tab-body');
-            body.scrollTop = 120;
+            must(body).scrollTop = 120;
             await fireEvent.click(tabs[1]);
             await Promise.resolve();
-            expect(body.scrollTop).toBe(0);
-            body.scrollTop = 40;
+            expect(must(body).scrollTop).toBe(0);
+            must(body).scrollTop = 40;
             await fireEvent.click(tabs[0]);
             await Promise.resolve();
-            expect(body.scrollTop).toBe(120);
+            expect(must(body).scrollTop).toBe(120);
             await fireEvent.click(tabs[1]);
             await Promise.resolve();
-            expect(body.scrollTop).toBe(40);
+            expect(must(body).scrollTop).toBe(40);
         } finally {
             if (desc) Object.defineProperty(Element.prototype, 'scrollTop', desc);
             else delete Element.prototype.scrollTop;

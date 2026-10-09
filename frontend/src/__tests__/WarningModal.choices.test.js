@@ -4,6 +4,7 @@
  * A confirmation with several answers: Enter answers with the focused button,
  * and the primary one holds the focus on open.
  */
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import WarningModal from '../components/WarningModal.svelte';
@@ -34,7 +35,7 @@ describe('WarningModal with choices — Enter', () => {
     test('on Cancel, cancels', async () => {
         const { container, onChoose, onClose } = mount();
         const cancel = [...container.querySelectorAll('.modal-footer button')].find((b) => !b.dataset.testid);
-        cancel.focus();
+        /** @type {HTMLElement} */ (must(cancel)).focus();
         await fireEvent.keyDown(cancel, { key: 'Enter' });
         expect(onClose).toHaveBeenCalledOnce();
         expect(onChoose).not.toHaveBeenCalled();
@@ -43,7 +44,7 @@ describe('WarningModal with choices — Enter', () => {
     test('on another choice, answers with it', async () => {
         const { container, onChoose } = mount();
         const open = container.querySelector('[data-testid="choice-open"]');
-        open.focus();
+        /** @type {HTMLElement} */ (must(open)).focus();
         await fireEvent.keyDown(open, { key: 'Enter' });
         expect(onChoose).toHaveBeenCalledExactlyOnceWith('open');
     });

@@ -5,6 +5,7 @@
  * confirmed answer reaches the backend.
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { answerConfirm } from './confirmHelper.js';
@@ -110,14 +111,14 @@ describe('MatchPanel — deleting a match', () => {
         const dialog = await vi.waitFor(() => {
             const d = document.querySelector('[role="dialog"]');
             expect(d).not.toBeNull();
-            expect(d.contains(document.activeElement)).toBe(true);
+            expect(must(d).contains(document.activeElement)).toBe(true);
             return d;
         });
-        const loadsBefore = GetMatchMovePositions.mock.calls.length;
+        const loadsBefore = vi.mocked(GetMatchMovePositions).mock.calls.length;
         await fireEvent.keyDown(document.activeElement, { key: 'Enter' });
         await vi.waitFor(() => expect(TrashMatch).toHaveBeenCalledWith(7));
         await new Promise((r) => setTimeout(r, 50));
-        expect(GetMatchMovePositions.mock.calls.length).toBe(loadsBefore);
-        expect(dialog.isConnected).toBe(false);
+        expect(vi.mocked(GetMatchMovePositions).mock.calls.length).toBe(loadsBefore);
+        expect(must(dialog).isConnected).toBe(false);
     });
 });

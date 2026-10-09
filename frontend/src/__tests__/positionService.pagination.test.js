@@ -7,6 +7,7 @@
  * one call per half-window while browsing.
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 import { get } from 'svelte/store';
 
@@ -100,14 +101,14 @@ describe('browsing fetches windows, one call per half-window', () => {
 
         // What the index effect does for the shown index.
         const shown = await positionsStore.getPosition(get(currentPositionIndexStore));
-        expect(shown.id).toBe(300);
+        expect(must(shown).id).toBe(300);
         expect(bindings.LoadPositionsByIDs).toHaveBeenCalledTimes(1);
         expect(bindings.LoadPositionsByIDs.mock.calls[0][0]).toEqual(range(300).slice(249));
 
         for (let step = 0; step < 10; step++) {
             await previousPosition();
             const p = await positionsStore.getPosition(get(currentPositionIndexStore));
-            expect(p.id).toBe(299 - step);
+            expect(must(p).id).toBe(299 - step);
         }
         await flush();
         expect(bindings.LoadPositionsByIDs, 'ten steps inside the window: no new call').toHaveBeenCalledTimes(1);

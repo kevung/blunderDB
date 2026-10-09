@@ -6,6 +6,7 @@
  * throughout. A card whose position has no stored analysis says so plainly
  * instead of offering a mask that reveals nothing.
  */
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
@@ -175,7 +176,7 @@ describe('the answer of a review card', () => {
         expect(container.querySelector('.answer-masked')).not.toBeNull();
         const buttons = container.querySelectorAll('.btn-rating');
         expect(buttons).toHaveLength(4);
-        for (const b of buttons) expect(b.disabled).toBe(false);
+        for (const b of buttons) expect(/** @type {HTMLButtonElement | HTMLInputElement} */ (b).disabled).toBe(false);
     });
 
     test('the grading strip sits above the answer, and only the answer scrolls', async () => {
@@ -184,7 +185,7 @@ describe('the answer of a review card', () => {
         await settle();
 
         const body = container.querySelector('.review-body');
-        const children = [...body.children];
+        const children = [...must(body).children];
         expect(children[0].classList.contains('review-strip')).toBe(true);
         expect(children[1].classList.contains('review-answer')).toBe(true);
     });

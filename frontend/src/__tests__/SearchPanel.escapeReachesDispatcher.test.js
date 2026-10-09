@@ -6,6 +6,7 @@
  * field: without it the user would be stuck in the field with no keyboard way out.
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
@@ -35,7 +36,7 @@ async function mountWithFocusedField() {
     await tick();
     const field = container.querySelector('.filter-checkbox input');
     expect(field).not.toBeNull();
-    field.focus();
+    /** @type {HTMLElement} */ (must(field)).focus();
     const reachedWindow = vi.fn();
     const done = registerKeys('global', reachedWindow);
     return { field, reachedWindow, done };

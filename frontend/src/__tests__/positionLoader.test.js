@@ -91,8 +91,8 @@ describe('loadPositionsFromStatsSelection', () => {
     });
 
     test('calls GetPositionIDsByStatsSelection with correct args', async () => {
-        GetPositionIDsByStatsSelection.mockResolvedValue([1, 2, 3]);
-        LoadPositionIDsByFilters.mockResolvedValue([1, 2, 3]);
+        vi.mocked(GetPositionIDsByStatsSelection).mockResolvedValue([1, 2, 3]);
+        vi.mocked(LoadPositionIDsByFilters).mockResolvedValue([1, 2, 3]);
 
         const filter = { playerName: 'Bob', decisionType: -1 };
         const sel = { kind: 'checker' };
@@ -102,8 +102,8 @@ describe('loadPositionsFromStatsSelection', () => {
     });
 
     test('loads position ids into positionsStore and switches to analysis tab', async () => {
-        GetPositionIDsByStatsSelection.mockResolvedValue([10, 20]);
-        LoadPositionIDsByFilters.mockResolvedValue([10, 20]);
+        vi.mocked(GetPositionIDsByStatsSelection).mockResolvedValue([10, 20]);
+        vi.mocked(LoadPositionIDsByFilters).mockResolvedValue([10, 20]);
 
         await loadPositionsFromStatsSelection({}, { kind: 'all' });
 
@@ -122,8 +122,8 @@ describe('loadWorstBlunders', () => {
     test('requests the top_blunders selection under the current stats filter', async () => {
         const filter = { decisionType: 1, playerName: 'Alice', tournamentIDs: [], dateFrom: '', dateTo: '', matchLength: [] };
         statsFilterStore.set(filter);
-        GetPositionIDsByStatsSelection.mockResolvedValue([7, 8]);
-        LoadPositionIDsByFilters.mockResolvedValue([7, 8]);
+        vi.mocked(GetPositionIDsByStatsSelection).mockResolvedValue([7, 8]);
+        vi.mocked(LoadPositionIDsByFilters).mockResolvedValue([7, 8]);
 
         await loadWorstBlunders();
 
@@ -134,8 +134,8 @@ describe('loadWorstBlunders', () => {
 
     test('passes a positive count through as LastN', async () => {
         statsFilterStore.set({ decisionType: -1 });
-        GetPositionIDsByStatsSelection.mockResolvedValue([1]);
-        LoadPositionIDsByFilters.mockResolvedValue([1]);
+        vi.mocked(GetPositionIDsByStatsSelection).mockResolvedValue([1]);
+        vi.mocked(LoadPositionIDsByFilters).mockResolvedValue([1]);
 
         await loadWorstBlunders(50);
 
@@ -144,8 +144,8 @@ describe('loadWorstBlunders', () => {
 
     test('ignores a non-positive / non-integer count (backend default applies)', async () => {
         statsFilterStore.set({ decisionType: -1 });
-        GetPositionIDsByStatsSelection.mockResolvedValue([1]);
-        LoadPositionIDsByFilters.mockResolvedValue([1]);
+        vi.mocked(GetPositionIDsByStatsSelection).mockResolvedValue([1]);
+        vi.mocked(LoadPositionIDsByFilters).mockResolvedValue([1]);
 
         await loadWorstBlunders(0);
         expect(GetPositionIDsByStatsSelection).toHaveBeenLastCalledWith({ decisionType: -1 }, { Kind: 'top_blunders' });
@@ -154,8 +154,8 @@ describe('loadWorstBlunders', () => {
 
 describe('loadPositionsFromTournament', () => {
     test('calls GetPositionIDsByTournament with tournamentID', async () => {
-        GetPositionIDsByTournament.mockResolvedValue([5, 6]);
-        LoadPositionIDsByFilters.mockResolvedValue([5, 6]);
+        vi.mocked(GetPositionIDsByTournament).mockResolvedValue([5, 6]);
+        vi.mocked(LoadPositionIDsByFilters).mockResolvedValue([5, 6]);
 
         await loadPositionsFromTournament(42);
         expect(GetPositionIDsByTournament).toHaveBeenCalledWith(42);
@@ -164,8 +164,8 @@ describe('loadPositionsFromTournament', () => {
 
 describe('loadPositionsFromMatch', () => {
     test('calls GetPositionIDsByMatch with matchID', async () => {
-        GetPositionIDsByMatch.mockResolvedValue([7, 8]);
-        LoadPositionIDsByFilters.mockResolvedValue([7, 8]);
+        vi.mocked(GetPositionIDsByMatch).mockResolvedValue([7, 8]);
+        vi.mocked(LoadPositionIDsByFilters).mockResolvedValue([7, 8]);
 
         await loadPositionsFromMatch(99);
         expect(GetPositionIDsByMatch).toHaveBeenCalledWith(99);
@@ -185,7 +185,7 @@ describe('loadPositionsFromSelection', () => {
     });
 
     test('passes comma-separated IDs as restrictToPositionIDs', async () => {
-        LoadPositionIDsByFilters.mockResolvedValue([1, 2, 3]);
+        vi.mocked(LoadPositionIDsByFilters).mockResolvedValue([1, 2, 3]);
         await loadPositionsFromSelection([1, 2, 3]);
         expect(LoadPositionIDsByFilters).toHaveBeenCalledWith(expect.objectContaining({ restrictToPositionIDs: '1,2,3' }));
     });

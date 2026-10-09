@@ -114,10 +114,10 @@ beforeEach(() => {
     resetStores();
     // Default happy-path resolutions; individual tests override with
     // `.mockResolvedValueOnce` / `.mockRejectedValueOnce` as needed.
-    CheckDatabaseVersion.mockResolvedValue('2.18.0');
-    GetDatabaseVersion.mockResolvedValue('2.18.0');
-    IsReadOnly.mockResolvedValue(false);
-    IsProtectedCopyPath.mockResolvedValue(false);
+    vi.mocked(CheckDatabaseVersion).mockResolvedValue('2.18.0');
+    vi.mocked(GetDatabaseVersion).mockResolvedValue('2.18.0');
+    vi.mocked(IsReadOnly).mockResolvedValue(false);
+    vi.mocked(IsProtectedCopyPath).mockResolvedValue(false);
     vi.mocked(OpenDatabase).mockResolvedValue(undefined);
 });
 
@@ -125,7 +125,7 @@ beforeEach(() => {
 
 describe('newDatabase', () => {
     test('creates the file, opens it and reloads the library', async () => {
-        SaveDatabaseDialog.mockResolvedValue('/tmp/new.db');
+        vi.mocked(SaveDatabaseDialog).mockResolvedValue('/tmp/new.db');
 
         await newDatabase();
 
@@ -139,7 +139,7 @@ describe('newDatabase', () => {
     });
 
     test('resets the analysis/comment/Anki stores before creating the file', async () => {
-        SaveDatabaseDialog.mockResolvedValue('/tmp/new.db');
+        vi.mocked(SaveDatabaseDialog).mockResolvedValue('/tmp/new.db');
 
         await newDatabase();
 
@@ -152,7 +152,7 @@ describe('newDatabase', () => {
     });
 
     test('a cancelled dialog is a no-op', async () => {
-        SaveDatabaseDialog.mockResolvedValue('');
+        vi.mocked(SaveDatabaseDialog).mockResolvedValue('');
 
         await newDatabase();
 
@@ -161,8 +161,8 @@ describe('newDatabase', () => {
     });
 
     test('DeleteFile failing (no prior file) does not abort database creation', async () => {
-        SaveDatabaseDialog.mockResolvedValue('/tmp/new.db');
-        DeleteFile.mockRejectedValue(new Error('ENOENT'));
+        vi.mocked(SaveDatabaseDialog).mockResolvedValue('/tmp/new.db');
+        vi.mocked(DeleteFile).mockRejectedValue(new Error('ENOENT'));
 
         await newDatabase();
 
@@ -171,9 +171,9 @@ describe('newDatabase', () => {
     });
 
     test('SetupDatabase failing reports the error and still resets the mode', async () => {
-        SaveDatabaseDialog.mockResolvedValue('/tmp/new.db');
+        vi.mocked(SaveDatabaseDialog).mockResolvedValue('/tmp/new.db');
         databasePathStore.set('/tmp/old.db');
-        SetupDatabase.mockRejectedValue(new Error('disk full'));
+        vi.mocked(SetupDatabase).mockRejectedValue(new Error('disk full'));
 
         await newDatabase();
 
@@ -188,7 +188,7 @@ describe('newDatabase', () => {
 
 describe('openDatabase', () => {
     test('delegates to openDatabaseByPath with the chosen file', async () => {
-        OpenDatabaseDialog.mockResolvedValue('/tmp/existing.db');
+        vi.mocked(OpenDatabaseDialog).mockResolvedValue('/tmp/existing.db');
 
         await openDatabase();
 
@@ -197,7 +197,7 @@ describe('openDatabase', () => {
     });
 
     test('a cancelled dialog never touches the database', async () => {
-        OpenDatabaseDialog.mockResolvedValue('');
+        vi.mocked(OpenDatabaseDialog).mockResolvedValue('');
 
         await openDatabase();
 
@@ -206,7 +206,7 @@ describe('openDatabase', () => {
     });
 
     test('a dialog error reports it without throwing', async () => {
-        OpenDatabaseDialog.mockRejectedValue(new Error('dialog crashed'));
+        vi.mocked(OpenDatabaseDialog).mockRejectedValue(new Error('dialog crashed'));
 
         await expect(openDatabase()).resolves.toBeUndefined();
         expect(get(statusBarTextStore)).not.toBe('');
@@ -215,7 +215,7 @@ describe('openDatabase', () => {
 
 describe('loadDemoDatabase', () => {
     test('decompresses the demo database and opens it', async () => {
-        PrepareDemoDatabase.mockResolvedValue('/tmp/demo.db');
+        vi.mocked(PrepareDemoDatabase).mockResolvedValue('/tmp/demo.db');
 
         await loadDemoDatabase();
 
@@ -224,7 +224,7 @@ describe('loadDemoDatabase', () => {
     });
 
     test('no path returned is a no-op', async () => {
-        PrepareDemoDatabase.mockResolvedValue('');
+        vi.mocked(PrepareDemoDatabase).mockResolvedValue('');
 
         await loadDemoDatabase();
 
@@ -232,7 +232,7 @@ describe('loadDemoDatabase', () => {
     });
 
     test('a failure to prepare the demo database reports an error', async () => {
-        PrepareDemoDatabase.mockRejectedValue(new Error('embed missing'));
+        vi.mocked(PrepareDemoDatabase).mockRejectedValue(new Error('embed missing'));
 
         await loadDemoDatabase();
 
@@ -257,7 +257,7 @@ describe('a Lesson being read', () => {
     });
 
     test('is dropped when a database is created', async () => {
-        SaveDatabaseDialog.mockResolvedValue('/tmp/new.db');
+        vi.mocked(SaveDatabaseDialog).mockResolvedValue('/tmp/new.db');
         lessonStore.set(lesson);
         lessonStepIndexStore.set(1);
 
@@ -271,7 +271,7 @@ describe('a Lesson being read', () => {
 describe('openDatabaseByPath', () => {
     test('a failed open leaves nothing open: empty path, neutral title, counts re-read', async () => {
         databasePathStore.set('/tmp/old.db');
-        OpenDatabase.mockRejectedValue(new Error('corrupt'));
+        vi.mocked(OpenDatabase).mockRejectedValue(new Error('corrupt'));
         vi.mocked(refreshLibraryCounts).mockClear();
         vi.mocked(WindowSetTitle).mockClear();
 
@@ -284,7 +284,7 @@ describe('openDatabaseByPath', () => {
     });
 
     test('a failure after a successful open keeps the opened path', async () => {
-        CheckDatabaseVersion.mockRejectedValue(new Error('version unreadable'));
+        vi.mocked(CheckDatabaseVersion).mockRejectedValue(new Error('version unreadable'));
         vi.mocked(refreshLibraryCounts).mockClear();
 
         await openDatabaseByPath('/tmp/opened.db');
@@ -297,8 +297,8 @@ describe('openDatabaseByPath', () => {
     test('the library counts are refreshed once the database is open, not before', async () => {
         /** @type {string[]} */
         const order = [];
-        OpenDatabase.mockImplementation(async () => void order.push('open'));
-        refreshLibraryCounts.mockImplementation(() => void order.push('counts'));
+        vi.mocked(OpenDatabase).mockImplementation(async () => void order.push('open'));
+        vi.mocked(refreshLibraryCounts).mockImplementation(() => void order.push('counts'));
 
         await openDatabaseByPath('/tmp/counts.db');
 
@@ -309,13 +309,13 @@ describe('openDatabaseByPath', () => {
     test('the session (and the Direction in it) is restored only once the database is open', async () => {
         /** @type {string[]} */
         const order = [];
-        OpenDatabase.mockImplementation(async () => void order.push('open'));
-        restoreSessionState.mockImplementation(async () => void order.push('restore'));
+        vi.mocked(OpenDatabase).mockImplementation(async () => void order.push('open'));
+        vi.mocked(restoreSessionState).mockImplementation(async () => void order.push('restore'));
 
         await openDatabaseByPath('/tmp/ordered.db');
 
         expect(order).toEqual(['open', 'restore']);
-        restoreSessionState.mockResolvedValue(undefined);
+        vi.mocked(restoreSessionState).mockResolvedValue(undefined);
     });
 
     test('opening another database closes the Direction of the previous one', async () => {
@@ -325,7 +325,7 @@ describe('openDatabaseByPath', () => {
     });
 
     test('protected copy: prompts for a password instead of opening', async () => {
-        IsProtectedCopyPath.mockResolvedValue(true);
+        vi.mocked(IsProtectedCopyPath).mockResolvedValue(true);
 
         await openDatabaseByPath('/tmp/protected.blunderdb');
 
@@ -338,8 +338,8 @@ describe('openDatabaseByPath', () => {
     });
 
     test('a mismatched major version opens a warning modal', async () => {
-        CheckDatabaseVersion.mockResolvedValue('1.0.0');
-        GetDatabaseVersion.mockResolvedValue('2.18.0');
+        vi.mocked(CheckDatabaseVersion).mockResolvedValue('1.0.0');
+        vi.mocked(GetDatabaseVersion).mockResolvedValue('2.18.0');
 
         await openDatabaseByPath('/tmp/old.db');
 
@@ -348,8 +348,8 @@ describe('openDatabaseByPath', () => {
     });
 
     test('matching major versions do not open the warning modal', async () => {
-        CheckDatabaseVersion.mockResolvedValue('2.0.0');
-        GetDatabaseVersion.mockResolvedValue('2.18.0');
+        vi.mocked(CheckDatabaseVersion).mockResolvedValue('2.0.0');
+        vi.mocked(GetDatabaseVersion).mockResolvedValue('2.18.0');
 
         await openDatabaseByPath('/tmp/ok.db');
 
@@ -380,7 +380,7 @@ describe('openDatabaseByPath', () => {
     });
 
     test('read-only fallback: title and status reflect it, session is still restored', async () => {
-        IsReadOnly.mockResolvedValue(true);
+        vi.mocked(IsReadOnly).mockResolvedValue(true);
 
         await openDatabaseByPath('/tmp/locked.db');
 
@@ -389,7 +389,7 @@ describe('openDatabaseByPath', () => {
     });
 
     test('IsReadOnly failing is treated as read-write (fails open)', async () => {
-        IsReadOnly.mockRejectedValue(new Error('bridge error'));
+        vi.mocked(IsReadOnly).mockRejectedValue(new Error('bridge error'));
 
         await openDatabaseByPath('/tmp/x.db');
 
@@ -407,7 +407,7 @@ describe('openDatabaseByPath', () => {
     });
 
     test('OpenDatabase failing reports the error and resets the mode without restoring a session', async () => {
-        OpenDatabase.mockRejectedValue(new Error('corrupt file'));
+        vi.mocked(OpenDatabase).mockRejectedValue(new Error('corrupt file'));
 
         await openDatabaseByPath('/tmp/broken.db');
 
@@ -443,7 +443,7 @@ describe('unlockProtectedCopy', () => {
     });
 
     test('a correct password opens the recovered database and clears the prompt', async () => {
-        OpenProtectedCopyPath.mockResolvedValue('/tmp/recovered.db');
+        vi.mocked(OpenProtectedCopyPath).mockResolvedValue('/tmp/recovered.db');
 
         await unlockProtectedCopy('right-pass');
 
@@ -455,7 +455,7 @@ describe('unlockProtectedCopy', () => {
     });
 
     test('removeContainer=true deletes the container after a successful unlock', async () => {
-        OpenProtectedCopyPath.mockResolvedValue('/tmp/recovered.db');
+        vi.mocked(OpenProtectedCopyPath).mockResolvedValue('/tmp/recovered.db');
 
         await unlockProtectedCopy('right-pass', true);
 
@@ -463,15 +463,15 @@ describe('unlockProtectedCopy', () => {
     });
 
     test('the container survives even if deleting it fails', async () => {
-        OpenProtectedCopyPath.mockResolvedValue('/tmp/recovered.db');
-        DeleteProtectedCopyPath.mockRejectedValue(new Error('permission denied'));
+        vi.mocked(OpenProtectedCopyPath).mockResolvedValue('/tmp/recovered.db');
+        vi.mocked(DeleteProtectedCopyPath).mockRejectedValue(new Error('permission denied'));
 
         await expect(unlockProtectedCopy('right-pass', true)).resolves.toBeUndefined();
         expect(get(databasePathStore)).toBe('/tmp/recovered.db');
     });
 
     test('a wrong password keeps the prompt open with an error, never touching the container', async () => {
-        OpenProtectedCopyPath.mockRejectedValue(new Error('wrong passphrase'));
+        vi.mocked(OpenProtectedCopyPath).mockRejectedValue(new Error('wrong passphrase'));
 
         await unlockProtectedCopy('bad-pass');
 
@@ -525,7 +525,7 @@ describe('changing library lets go of the open transcription draft', () => {
 
     test('creating a new database', async () => {
         openDraft();
-        SaveDatabaseDialog.mockResolvedValue('/tmp/new.db');
+        vi.mocked(SaveDatabaseDialog).mockResolvedValue('/tmp/new.db');
         await newDatabase();
         expect(get(transcriptionStore)).toBeNull();
     });

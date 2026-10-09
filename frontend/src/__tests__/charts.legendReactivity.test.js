@@ -11,6 +11,7 @@
  * live. This locks the fix for all three chart components.
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, afterEach } from 'vitest';
 import { render, cleanup } from '@testing-library/svelte';
 
@@ -59,6 +60,6 @@ describe.each(CASES)('%s — legend reflects the current dataset count', (_name,
         lastConfig = null;
         await rerender(twoSeries);
         await waitForChart();
-        expect(lastConfig.options.plugins.legend.display).toBe(true);
+        expect(must(lastConfig).options.plugins.legend.display).toBe(true);
     });
 });

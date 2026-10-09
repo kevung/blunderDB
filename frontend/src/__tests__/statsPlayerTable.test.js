@@ -41,7 +41,7 @@ describe('refreshPlayerTable', () => {
         vi.clearAllMocks();
         playerTableStore.set(null);
         playerTableErrorStore.set(null);
-        GetPlayerTable.mockResolvedValue(ROWS);
+        vi.mocked(GetPlayerTable).mockResolvedValue(ROWS);
     });
 
     test('fetches the table and stores the rows', async () => {
@@ -73,20 +73,20 @@ describe('refreshPlayerTable', () => {
     });
 
     test('surfaces an error and allows a retry', async () => {
-        GetPlayerTable.mockRejectedValueOnce(new Error('boom'));
+        vi.mocked(GetPlayerTable).mockRejectedValueOnce(new Error('boom'));
         await refreshPlayerTable(baseFilter, 'key-6');
         expect(get(playerTableErrorStore)).toBe('boom');
         expect(get(playerTableStore)).toBeNull();
 
         // A failed fetch must not be cached, or the panel would stay empty
         // until something else changed.
-        GetPlayerTable.mockResolvedValue(ROWS);
+        vi.mocked(GetPlayerTable).mockResolvedValue(ROWS);
         await refreshPlayerTable(baseFilter, 'key-6');
         expect(get(playerTableStore)).toEqual(ROWS);
     });
 
     test('an empty database yields an empty table, not a null one', async () => {
-        GetPlayerTable.mockResolvedValue(null);
+        vi.mocked(GetPlayerTable).mockResolvedValue(null);
         await refreshPlayerTable(baseFilter, 'key-7');
         expect(get(playerTableStore)).toEqual([]);
     });

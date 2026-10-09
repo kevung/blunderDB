@@ -5,6 +5,7 @@
  * the revealed seed with its fingerprint; an imported match carries none.
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
@@ -113,21 +114,21 @@ describe('MatchPanel — the origin of a match played here', () => {
         expect(GetMatchOrigin).toHaveBeenCalledWith(7);
         const line = container.querySelector('[data-testid="match-origin"]');
         expect(line).not.toBeNull();
-        const summary = line.querySelector('summary').textContent;
+        const summary = must(line.querySelector('summary')).textContent;
         expect(summary).toContain('rapid-3+12');
         expect(summary).toContain('Bob');
         expect(summary).toContain('v0.9.0');
-        expect(line.querySelector('[data-testid="origin-stopped"]')).not.toBeNull();
-        expect(line.querySelector('[data-testid="origin-seed"]').textContent).toBe(SEED);
-        expect(line.querySelector('[data-testid="origin-fingerprint"]').textContent).toBe(FINGERPRINT);
+        expect(must(line).querySelector('[data-testid="origin-stopped"]')).not.toBeNull();
+        expect(must(line.querySelector('[data-testid="origin-seed"]')).textContent).toBe(SEED);
+        expect(must(line.querySelector('[data-testid="origin-fingerprint"]')).textContent).toBe(FINGERPRINT);
     });
 
     test('a match lost on time says so, not that it was stopped', async () => {
         vi.mocked(GetMatchOrigin).mockImplementation(() => Promise.resolve({ ...ORIGIN, lost_on_time: true, cadence_settings: { ...ORIGIN.cadence_settings, timeOut: 'lose_match' } }));
         const container = await openTranscript();
         const line = container.querySelector('[data-testid="match-origin"]');
-        expect(line.querySelector('[data-testid="origin-lost-on-time"]').textContent).toContain('Bob');
-        expect(line.querySelector('[data-testid="origin-stopped"]')).toBeNull();
+        expect(must(line.querySelector('[data-testid="origin-lost-on-time"]')).textContent).toContain('Bob');
+        expect(must(line).querySelector('[data-testid="origin-stopped"]')).toBeNull();
     });
 
     test('a match played here without a single move still shows its origin', async () => {

@@ -13,6 +13,7 @@
  * never saw: the merge button stayed disabled whatever was ticked. The payload
  * test fails against that version.
  */
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
@@ -71,8 +72,8 @@ describe('MergePlayersModal — focus', () => {
 
         const dialog = container.querySelector('[role="dialog"]');
         expect(dialog).not.toBeNull();
-        expect(dialog.getAttribute('aria-modal')).toBe('true');
-        expect(dialog.contains(document.activeElement)).toBe(true);
+        expect(must(dialog).getAttribute('aria-modal')).toBe('true');
+        expect(must(dialog).contains(document.activeElement)).toBe(true);
     });
 
     test('Tab is trapped: it wraps from the last control to the first and back', async () => {
@@ -80,11 +81,11 @@ describe('MergePlayersModal — focus', () => {
         const dialog = container.querySelector('[role="dialog"]');
 
         // The filter field opens the dialog; the close cross, last in the DOM, ends it.
-        const first = dialog.querySelector('.filter-input');
-        const last = dialog.querySelector('.modal-close');
+        const first = must(dialog).querySelector('.filter-input');
+        const last = must(dialog).querySelector('.modal-close');
         expect(document.activeElement).toBe(first);
 
-        last.focus();
+        /** @type {HTMLElement} */ (must(last)).focus();
         const forward = tab(last);
         expect(forward.defaultPrevented).toBe(true);
         expect(document.activeElement).toBe(first);
@@ -92,7 +93,7 @@ describe('MergePlayersModal — focus', () => {
         const backward = tab(first, true);
         expect(backward.defaultPrevented).toBe(true);
         expect(document.activeElement).toBe(last);
-        expect(dialog.contains(document.activeElement)).toBe(true);
+        expect(must(dialog).contains(document.activeElement)).toBe(true);
     });
 
     test('closing gives the focus back to what had it before', async () => {
@@ -108,10 +109,10 @@ describe('MergePlayersModal — merging', () => {
         const { container } = await mount();
 
         const rows = [...container.querySelectorAll('.player-row')];
-        expect(rows.map((r) => r.querySelector('.player-name').textContent)).toEqual(['Alice', 'alice', 'Bob']);
+        expect(rows.map((r) => must(r.querySelector('.player-name')).textContent)).toEqual(['Alice', 'alice', 'Bob']);
 
         const mergeButton = container.querySelector('.btn-merge');
-        expect(mergeButton.disabled).toBe(true);
+        expect(/** @type {HTMLButtonElement | HTMLInputElement} */ (must(mergeButton)).disabled).toBe(true);
 
         await fireEvent.click(rows[0]);
         await fireEvent.click(rows[1]);
@@ -119,8 +120,8 @@ describe('MergePlayersModal — merging', () => {
 
         // The first ticked name is proposed as the one to keep.
         const canonical = container.querySelector('#canonical-input');
-        expect(canonical.value).toBe('Alice');
-        expect(mergeButton.disabled).toBe(false);
+        expect(/** @type {HTMLInputElement} */ (must(canonical)).value).toBe('Alice');
+        expect(/** @type {HTMLButtonElement | HTMLInputElement} */ (must(mergeButton)).disabled).toBe(false);
         expect(rows[0].classList.contains('selected')).toBe(true);
         expect(rows[1].classList.contains('selected')).toBe(true);
         expect(rows[2].classList.contains('selected')).toBe(false);

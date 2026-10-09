@@ -15,6 +15,7 @@
  * Wails backend mocking is needed here.
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect, beforeEach, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { get } from 'svelte/store';
@@ -74,8 +75,8 @@ describe('TabbedPanel — roles', () => {
         const { container } = mount();
         const matchesTab = container.querySelector('[data-testid="tab-matches"]');
         const tournamentsTab = container.querySelector('[data-testid="tab-tournaments"]');
-        expect(matchesTab.getAttribute('aria-selected')).toBe('true');
-        expect(tournamentsTab.getAttribute('aria-selected')).toBe('false');
+        expect(must(matchesTab).getAttribute('aria-selected')).toBe('true');
+        expect(must(tournamentsTab).getAttribute('aria-selected')).toBe('false');
     });
 });
 
@@ -88,7 +89,7 @@ describe('TabbedPanel — keyboard activation (Enter/Space)', () => {
         await tick();
 
         expect(get(activeTabStore)).toBe('tournaments');
-        expect(tournamentsTab.getAttribute('aria-selected')).toBe('true');
+        expect(must(tournamentsTab).getAttribute('aria-selected')).toBe('true');
     });
 
     test('Space on a focused tab activates it', async () => {
@@ -107,8 +108,8 @@ describe('TabbedPanel — roving tabindex + arrow navigation', () => {
         const { container } = mount();
         const matchesTab = container.querySelector('[data-testid="tab-matches"]');
         const tournamentsTab = container.querySelector('[data-testid="tab-tournaments"]');
-        expect(matchesTab.getAttribute('tabindex')).toBe('0');
-        expect(tournamentsTab.getAttribute('tabindex')).toBe('-1');
+        expect(must(matchesTab).getAttribute('tabindex')).toBe('0');
+        expect(must(tournamentsTab).getAttribute('tabindex')).toBe('-1');
     });
 
     test('ArrowRight moves focus to the next tab without switching tabs', async () => {
@@ -116,13 +117,13 @@ describe('TabbedPanel — roving tabindex + arrow navigation', () => {
         const matchesTab = container.querySelector('[data-testid="tab-matches"]');
         const tournamentsTab = container.querySelector('[data-testid="tab-tournaments"]');
 
-        matchesTab.focus();
+        /** @type {HTMLElement} */ (must(matchesTab)).focus();
         await fireEvent.keyDown(matchesTab, { key: 'ArrowRight' });
         await tick();
 
         expect(document.activeElement).toBe(tournamentsTab);
-        expect(tournamentsTab.getAttribute('tabindex')).toBe('0');
-        expect(matchesTab.getAttribute('tabindex')).toBe('-1');
+        expect(must(tournamentsTab).getAttribute('tabindex')).toBe('0');
+        expect(must(matchesTab).getAttribute('tabindex')).toBe('-1');
         // Manual activation: moving focus does not select the tab.
         expect(get(activeTabStore)).toBe('matches');
     });
@@ -133,7 +134,7 @@ describe('TabbedPanel — roving tabindex + arrow navigation', () => {
         const firstTab = tabs[0];
         const lastTab = tabs[tabs.length - 1];
 
-        firstTab.focus();
+        /** @type {HTMLElement} */ (firstTab).focus();
         await fireEvent.keyDown(firstTab, { key: 'ArrowLeft' });
         await tick();
 
@@ -146,11 +147,11 @@ describe('TabbedPanel — roving tabindex + arrow navigation', () => {
         const tournamentsTab = container.querySelector('[data-testid="tab-tournaments"]');
         const matchesTab = container.querySelector('[data-testid="tab-matches"]');
 
-        tournamentsTab.focus();
+        /** @type {HTMLElement} */ (must(tournamentsTab)).focus();
         await fireEvent.keyDown(tournamentsTab, { key: 'Enter' });
         await tick();
 
-        expect(tournamentsTab.getAttribute('tabindex')).toBe('0');
-        expect(matchesTab.getAttribute('tabindex')).toBe('-1');
+        expect(must(tournamentsTab).getAttribute('tabindex')).toBe('0');
+        expect(must(matchesTab).getAttribute('tabindex')).toBe('-1');
     });
 });

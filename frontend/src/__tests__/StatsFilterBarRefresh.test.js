@@ -65,8 +65,8 @@ describe('StatsFilterBar refresh', () => {
             decisionType: -1,
             matchLength: []
         });
-        GetStatsFilter.mockResolvedValue(null);
-        GetAllPlayerNames.mockResolvedValue(BEFORE_MERGE);
+        vi.mocked(GetStatsFilter).mockResolvedValue(null);
+        vi.mocked(GetAllPlayerNames).mockResolvedValue(BEFORE_MERGE);
     });
 
     test('re-reads the player list when the database changes', async () => {
@@ -79,11 +79,11 @@ describe('StatsFilterBar refresh', () => {
         });
 
         // A merge happened elsewhere in the app.
-        GetAllPlayerNames.mockResolvedValue(AFTER_MERGE);
+        vi.mocked(GetAllPlayerNames).mockResolvedValue(AFTER_MERGE);
         dbMutationCounterStore.update((n) => n + 1);
 
         await waitFor(() => {
-            const names = [...container.querySelectorAll('#fb-player option')].map((o) => o.value);
+            const names = [...container.querySelectorAll('#fb-player option')].map((o) => /** @type {HTMLInputElement} */ (o).value);
             expect(names).not.toContain('K. Unger');
             expect(names).toContain('Kevin Unger');
         });
@@ -91,14 +91,14 @@ describe('StatsFilterBar refresh', () => {
 
     test('drops a selected player who was merged away', async () => {
         // The user had picked the name that is about to disappear.
-        GetStatsFilter.mockResolvedValue({ player_name: 'K. Unger' });
+        vi.mocked(GetStatsFilter).mockResolvedValue({ player_name: 'K. Unger' });
 
         render(StatsFilterBar);
         await waitFor(() => {
             expect(get(statsFilterStore).playerName).toBe('K. Unger');
         });
 
-        GetAllPlayerNames.mockResolvedValue(AFTER_MERGE);
+        vi.mocked(GetAllPlayerNames).mockResolvedValue(AFTER_MERGE);
         dbMutationCounterStore.update((n) => n + 1);
 
         // Left in place, the filter would match nothing and every tab would
@@ -109,14 +109,14 @@ describe('StatsFilterBar refresh', () => {
     });
 
     test('keeps a selected player who survived the merge', async () => {
-        GetStatsFilter.mockResolvedValue({ player_name: 'Bob' });
+        vi.mocked(GetStatsFilter).mockResolvedValue({ player_name: 'Bob' });
 
         render(StatsFilterBar);
         await waitFor(() => {
             expect(get(statsFilterStore).playerName).toBe('Bob');
         });
 
-        GetAllPlayerNames.mockResolvedValue(AFTER_MERGE);
+        vi.mocked(GetAllPlayerNames).mockResolvedValue(AFTER_MERGE);
         dbMutationCounterStore.update((n) => n + 1);
 
         await waitFor(() => {

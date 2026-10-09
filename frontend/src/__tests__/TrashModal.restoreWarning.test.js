@@ -37,13 +37,13 @@ import { t, tMsg } from '../i18n';
 import { dbMutationCounterStore, matchPanelRefreshTriggerStore } from '../stores/uiStore';
 
 async function restoreOnce(result) {
-    RestoreFromTrash.mockResolvedValueOnce(result);
+    vi.mocked(RestoreFromTrash).mockResolvedValueOnce(result);
     const { findByText } = render(TrashModal, { props: { visible: true, onClose: () => {} } });
     await findByText(ENTRY.label);
     const button = await findByText(get(t)('trash.restore'));
     await fireEvent.click(button);
     await waitFor(() => expect(setStatusBarMessage).toHaveBeenCalled());
-    return setStatusBarMessage.mock.calls.at(-1)[0];
+    return vi.mocked(setStatusBarMessage).mock.calls.at(-1)[0];
 }
 
 describe('TrashModal restore warnings', () => {

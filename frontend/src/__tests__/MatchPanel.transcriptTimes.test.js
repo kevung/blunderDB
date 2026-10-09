@@ -6,6 +6,7 @@
  * player above the games, with the turns past the Cadence's reserve.
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
@@ -121,19 +122,19 @@ describe('MatchPanel — the Transcript carries the time of every decision', () 
         });
         const container = await openTranscript();
         expect(col(container, 'clock')).toEqual(['1:57', '2:00', '1:40']);
-        expect(container.querySelector('[data-testid="header-cadence"]').textContent).toContain('2:00');
+        expect(must(container.querySelector('[data-testid="header-cadence"]')).textContent).toContain('2:00');
         await openTab(container, 'info');
         const row = container.querySelector('[data-testid="meta-cadence"]');
-        expect(row.textContent).toContain('rapid-2+12');
-        expect(container.querySelector('[data-testid="meta-bank"]').textContent).toContain('2:00 each');
+        expect(must(row).textContent).toContain('rapid-2+12');
+        expect(must(container.querySelector('[data-testid="meta-bank"]')).textContent).toContain('2:00 each');
     });
 
     test('the summary marks the player whose reserve ran out, and leaves an unknown mean empty', async () => {
         const container = await openTranscript();
         const summary = container.querySelector('[data-testid="match-times"]');
         expect(summary).not.toBeNull();
-        expect(summary.querySelector('[data-testid="overrun-0"]').textContent).toBe('●');
-        const bob = [...summary.querySelectorAll('tbody tr')][1];
+        expect(must(summary.querySelector('[data-testid="overrun-0"]')).textContent).toBe('●');
+        const bob = [...must(summary).querySelectorAll('tbody tr')][1];
         expect([...bob.querySelectorAll('td')].slice(1, 4).map((c) => c.textContent)).toEqual(['', '', '']);
     });
 });

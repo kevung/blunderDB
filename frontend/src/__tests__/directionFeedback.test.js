@@ -2,6 +2,7 @@
  * Un geste du directeur produit un retour visible (barre d'état, aria-live) ; le forfait et le
  * retrait se confirment par un bouton à leur nom, non rouge ; la page murale se nomme.
  */
+import { must } from './helpers/must.js';
 import { test, expect, vi, afterEach, beforeEach } from 'vitest';
 import { render, cleanup, screen, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
@@ -100,7 +101,7 @@ test('le forfait propose de retirer le perdant dans la même fiche', async () =>
     await fireEvent.click(screen.getByTestId('direction-result-more'));
     await fireEvent.click(screen.getByTestId('direction-result-forfeit-a'));
     await vi.waitFor(() => expect(get(confirmModalStore)).not.toBeNull());
-    const labels = get(confirmModalStore).choices.map((/** @type {any} */ c) => c.label);
+    const labels = must(get(confirmModalStore)).choices.map((/** @type {any} */ c) => c.label);
     expect(labels).toEqual([tr('direction.result.forfeitDo'), tr('direction.result.forfeitWithdraw', { loser: 'Alice' })]);
     resolveConfirm('forfeitWithdraw');
     await vi.waitFor(() => expect(onForfeit).toHaveBeenCalledWith('m1', 'pb', '', 'pa'));

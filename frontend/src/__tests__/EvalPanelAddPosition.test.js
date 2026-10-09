@@ -7,6 +7,7 @@
  * here is the button — where it stands, when it is disabled and why.
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeAll, beforeEach, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
@@ -158,7 +159,7 @@ describe('the Eval panel’s add-to-database button (#399)', () => {
         const { container } = render(EvalPanel);
         await tick();
 
-        expect(container.querySelector('.error-text').textContent).toBe('boom');
+        expect(must(container.querySelector('.error-text')).textContent).toBe('boom');
         expect(addButton(container)).not.toBeNull();
         expect(addButton(container).disabled).toBe(false);
     });
@@ -170,7 +171,7 @@ describe('the Eval panel before the engine has said anything', () => {
         positionStore.set(validBoard());
         const { container } = render(EvalPanel);
         await tick();
-        expect(container.querySelector('[data-testid="empty-state"]').textContent.trim()).toBe(en.eval.evaluating);
+        expect(must(container.querySelector('[data-testid="empty-state"]')).textContent.trim()).toBe(en.eval.evaluating);
         expect(container.querySelector('.cube-table')).toBeNull();
     });
 
@@ -180,7 +181,7 @@ describe('the Eval panel before the engine has said anything', () => {
         positionStore.set(board);
         const { container } = render(EvalPanel);
         await tick();
-        expect(container.querySelector('[data-testid="empty-state"]').textContent.trim()).toBe(en.eval.emptyBoard);
+        expect(must(container.querySelector('[data-testid="empty-state"]')).textContent.trim()).toBe(en.eval.emptyBoard);
     });
 
     test('an empty answer settles: its table shows, never an evaluation without end', async () => {

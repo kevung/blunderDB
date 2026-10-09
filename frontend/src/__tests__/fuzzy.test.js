@@ -2,6 +2,7 @@
  * fuzzy.test.js — the approximate matching of the command palette (#287).
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect } from 'vitest';
 import { fold, fuzzyMatch, highlightSegments } from '../utils/fuzzy.js';
 
@@ -31,10 +32,10 @@ describe('fuzzyMatch', () => {
     test('a substring beats a scattered match, a word start beats a middle', () => {
         const substring = fuzzyMatch('stat', 'Statistiques');
         const scattered = fuzzyMatch('stat', 'Supprimer toute la table');
-        expect(substring.score).toBeGreaterThan(scattered.score);
+        expect(must(substring).score).toBeGreaterThan(must(scattered).score);
         const atStart = fuzzyMatch('mat', 'Matrice du videau');
         const inside = fuzzyMatch('mat', 'Automatique');
-        expect(atStart.score).toBeGreaterThan(inside.score);
+        expect(must(atStart).score).toBeGreaterThan(must(inside).score);
     });
 
     test('never trades a match for a word start that loses the rest', () => {
@@ -43,7 +44,7 @@ describe('fuzzyMatch', () => {
 
     test('prefers word starts for the scattered characters', () => {
         const m = fuzzyMatch('bd', 'Nouvelle base de données');
-        expect(m.indices).toEqual([9, 14]);
+        expect(must(m).indices).toEqual([9, 14]);
     });
 });
 

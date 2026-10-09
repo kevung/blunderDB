@@ -2,6 +2,7 @@
  * Search in the help: accent- and case-insensitive, occurrences counted in reading order,
  * the current one shown as the selection; "/" reaches the field without closing the help.
  */
+import { must } from './helpers/must.js';
 import { test, expect, vi, afterEach } from 'vitest';
 import { render, screen, cleanup, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
@@ -36,7 +37,7 @@ test('the search field counts the occurrences, Enter steps through them, "/" foc
 
     await fireEvent.input(input, { target: { value: 'position' } });
     await vi.waitFor(() => expect(screen.getByTestId('help-search-count').textContent).toMatch(/^0 \/ [1-9]\d*$/));
-    expect(window.getSelection().toString()).toBe('');
+    expect(must(window.getSelection()).toString()).toBe('');
 
     await fireEvent.keyDown(input, { key: 'Enter' });
     await tick();
@@ -44,7 +45,7 @@ test('the search field counts the occurrences, Enter steps through them, "/" foc
     await fireEvent.keyDown(input, { key: 'Enter' });
     await tick();
     expect(screen.getByTestId('help-search-count').textContent).toMatch(/^2 \/ \d+$/);
-    expect(window.getSelection().toString().toLowerCase()).toBe('position');
+    expect(must(window.getSelection()).toString().toLowerCase()).toBe('position');
     expect(onClose).not.toHaveBeenCalled();
 
     await fireEvent.input(input, { target: { value: 'zzzzqqq' } });

@@ -10,6 +10,7 @@
  * Svelte stores drive the component.
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { answerConfirm } from './confirmHelper.js';
 import { render, cleanup, screen, fireEvent, within } from '@testing-library/svelte';
@@ -178,7 +179,7 @@ describe('TournamentPanel — list view', () => {
 
         await fireEvent.click(row);
 
-        expect(row.classList.contains('selected')).toBe(true);
+        expect(must(row).classList.contains('selected')).toBe(true);
         expect(get(selectedTournamentStore)).toBeNull();
         expect(GetTournamentMatches).not.toHaveBeenCalled();
     });
@@ -233,9 +234,9 @@ describe('TournamentPanel — list view', () => {
     test('a tournament row is reachable by Tab and Enter opens it; Enter on the rename button still renames', async () => {
         renderOpen();
         const row = (await screen.findByText('Blunder Cup')).closest('tr');
-        expect(row.getAttribute('tabindex')).toBe('0');
+        expect(must(row).getAttribute('tabindex')).toBe('0');
 
-        await fireEvent.keyDown(row.querySelector('button[title]'), { key: 'Enter' });
+        await fireEvent.keyDown(must(row).querySelector('button[title]'), { key: 'Enter' });
         expect(get(selectedTournamentStore)).toBeNull();
 
         await fireEvent.keyDown(row, { key: 'Enter' });

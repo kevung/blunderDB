@@ -6,6 +6,7 @@
  * comment panel does for a position's comments.
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
@@ -77,7 +78,7 @@ describe('MatchPanel — the author of the match comment', () => {
         const { container } = render(MatchPanel);
         await settle();
         await select(container, 'Alice');
-        expect(container.querySelector('.match-comment-display').textContent).toContain('Opening notes');
+        expect(must(container.querySelector('.match-comment-display')).textContent).toContain('Opening notes');
         expect(container.querySelector('.match-comment-author')?.textContent).toBe('Carol');
     });
 
@@ -85,7 +86,7 @@ describe('MatchPanel — the author of the match comment', () => {
         const { container } = render(MatchPanel);
         await settle();
         await select(container, 'Dave');
-        expect(container.querySelector('.match-comment-display').textContent).toContain('Unsigned note');
+        expect(must(container.querySelector('.match-comment-display')).textContent).toContain('Unsigned note');
         expect(container.querySelector('.match-comment-author')).toBeNull();
     });
 
@@ -93,7 +94,7 @@ describe('MatchPanel — the author of the match comment', () => {
         const { container } = render(MatchPanel);
         await settle();
         await select(container, 'Alice');
-        GetMatchByID.mockResolvedValue({ id: 7, comment: 'Revised', comment_author: 'Ivy' });
+        vi.mocked(GetMatchByID).mockResolvedValue({ id: 7, comment: 'Revised', comment_author: 'Ivy' });
         await fireEvent.click(container.querySelector('.match-comment-display'));
         await tick();
         const input = container.querySelector('.match-comment-input');

@@ -11,6 +11,7 @@
  *     a stale confirmation can never fire after the situation that prompted it has moved on.
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect } from 'vitest';
 import { get } from 'svelte/store';
 import { confirmAction, resolveConfirm, confirmModalStore } from '../services/confirmService.js';
@@ -34,7 +35,7 @@ describe('confirmAction / resolveConfirm', () => {
     test('a second confirmAction resolves the first one false', async () => {
         const first = confirmAction('First?');
         const second = confirmAction('Second?');
-        expect(get(confirmModalStore).message).toBe('Second?');
+        expect(must(get(confirmModalStore)).message).toBe('Second?');
         await expect(first).resolves.toBe(false);
         resolveConfirm(true);
         await expect(second).resolves.toBe(true);
