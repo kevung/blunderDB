@@ -8,7 +8,7 @@ import { tick } from 'svelte';
 
 vi.mock('../../wailsjs/go/database/Database', () => ({ GetDatabaseVersion: vi.fn(() => Promise.resolve('2.0.0')) }));
 
-import { findInHelp } from '../utils/helpSearch.js';
+import { findInHelp, createHelpIndex } from '../utils/helpSearch.js';
 import HelpModal from '../components/HelpModal.svelte';
 
 afterEach(cleanup);
@@ -89,4 +89,22 @@ test('Escape in the search field is left to the modal', async () => {
     input.focus();
     await fireEvent.keyDown(input, { key: 'Escape' });
     await vi.waitFor(() => expect(onClose).toHaveBeenCalled());
+});
+
+test('the index walks the text once; a query counts every hit but builds only `limit` ranges', () => {
+    const root = document.createElement('div');
+    root.innerHTML = '<p>aaa</p><p>Éa</p>';
+    const walk = vi.spyOn(document, 'createTreeWalker');
+    const range = vi.spyOn(document, 'createRange');
+    const index = createHelpIndex(root);
+    expect(walk).toHaveBeenCalledTimes(1);
+    const first = index.search('a', 2);
+    index.search('aa');
+    index.search('é');
+    expect(walk).toHaveBeenCalledTimes(1);
+    expect(first.count).toBe(4);
+    expect(first.ranges).toHaveLength(2);
+    expect(index.search('a', 2).at(3).startContainer.nodeValue).toBe('Éa');
+    walk.mockRestore();
+    range.mockRestore();
 });
