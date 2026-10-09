@@ -212,6 +212,7 @@
         "savePosition": "Salva posizione",
         "settings": "Impostazioni",
         "togglePipcount": "Attiva/disattiva conteggio pip",
+        "toggleAnalysisChallenge": "Sfida: nascondi l'analisi",
         "updatePosition": "Aggiorna posizione",
         "tour": "Tour guidati",
         "importDatabaseTip": "Unisci un altro database a questo: le posizioni comuni non vengono duplicate, le loro analisi e i loro commenti sono combinati",

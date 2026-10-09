@@ -212,6 +212,7 @@
         "savePosition": "Tallenna asema",
         "settings": "Asetukset",
         "togglePipcount": "Näytä/piilota pip-laskuri",
+        "toggleAnalysisChallenge": "Haaste: piilota analyysi",
         "updatePosition": "Päivitä asema",
         "tour": "Opastetut kierrokset",
         "importDatabaseTip": "Yhdistä toinen tietokanta tähän: yhteisiä asemia ei kahdenneta, niiden analyysit ja kommentit yhdistetään",

@@ -156,8 +156,8 @@ test.describe('dock latéral élargi, au-delà du second point de rupture', () =
 });
 
 /**
- * Le formulaire d'en-tête ouvert ne chasse pas la liste : il défile dans sa
- * propre boîte, et le panneau ne déborde pas.
+ * Le formulaire d'en-tête ouvert remplace la saisie : dés, palette et liste
+ * sont masqués (le Transcript reste), le panneau ne déborde pas, et le même bouton ou Échap le ferment.
  */
 test.describe('dock latéral, en-tête du brouillon ouvert', () => {
     test.beforeEach(async ({ page }) => {
@@ -170,8 +170,25 @@ test.describe('dock latéral, en-tête du brouillon ouvert', () => {
         expect(await overflow(page)).toBe(0);
     });
 
-    test('la liste des candidats reste visible, au moins deux lignes entières', async ({ page }) => {
-        expect(await fullyVisibleRows(page)).toBeGreaterThanOrEqual(2);
+    test('le Transcript reste visible', async ({ page }) => {
+        await expect(page.locator('.transcript-col')).toBeVisible();
+    });
+
+    test('la saisie est masquée', async ({ page }) => {
+        await expect(page.locator('[data-testid="transcription-dice"]')).toHaveCount(0);
+        await expect(page.locator('[data-testid="transcription-candidates"]')).toHaveCount(0);
+    });
+
+    test('le même bouton rend la saisie', async ({ page }) => {
+        await page.locator('#transcriptionPanel .draft-bar').getByRole('button', { name: 'Metadata' }).click();
+        await expect(page.locator('[data-testid="transcription-metadata"]')).toHaveCount(0);
+        await expect(page.locator('[data-testid="transcription-dice"]')).toBeVisible();
+    });
+
+    test('Échap rend la saisie', async ({ page }) => {
+        await page.keyboard.press('Escape');
+        await expect(page.locator('[data-testid="transcription-metadata"]')).toHaveCount(0);
+        await expect(page.locator('[data-testid="transcription-dice"]')).toBeVisible();
     });
 });
 

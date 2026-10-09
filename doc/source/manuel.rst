@@ -776,6 +776,16 @@ afficher ou masquer le panneau.
 Une position sans analyse l'indique, avec un bouton **Évaluer** qui l'ouvre
 dans le panneau Eval.
 
+Le bouton **Défi** de la barre d'outils, placé après celui du pipcount (touche
+*m*), sert à se prononcer avant de voir l'analyse en parcourant des positions :
+résultats d'une recherche, revue d'un match, révision de ses erreurs. Activé,
+il recouvre d'une zone grise toute l'analyse du panneau, pions et videau ; un
+clic sur la zone la dévoile. Elle revient à chaque changement de position. Le
+défi est un masque d'affichage : dévoiler n'enregistre rien dans la base. Le
+réglage tient jusqu'à la fermeture de blunderDB, comme celui du pipcount.
+En revue de match, le défi masque aussi les marques, les pertes et la difficulté
+de la liste des coups ; celles du coup affiché se dévoilent avec son analyse.
+
 Sous les tableaux, une **phrase** dit parfois ce que la décision jouée a
 coûté et pourquoi : « Vous perdez 120 mp : le coup joué laisse trois blots
 là où 13/7 8/7 n'en laisse qu'un. » Elle est produite par six règles
@@ -1918,6 +1928,10 @@ un brouillon sans noms s'enregistre et s'exporte, avec des en-têtes vides. Le
 bouton **Inverser les joueurs** échange les deux noms, donne toutes les actions
 au camp d'en face et retourne le plateau : c'est le même match, lu de l'autre
 côté.
+
+Ouvert, le formulaire prend la place de la saisie : les dés, la palette et les
+candidats sont masqués, la transcription reste visible, la vidéo reste en place. Le même
+bouton, ou *Échap*, rend la saisie.
 
 La **longueur du match** se change dans ce même volet, à tout moment : le score,
 la partie Crawford et le référentiel — les parties d'argent lorsque la longueur

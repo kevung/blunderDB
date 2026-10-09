@@ -49,3 +49,39 @@ describe('ConfigModal tabs', () => {
         pageStepStore.set(PAGE_STEP_DEFAULT);
     });
 });
+
+describe('ConfigModal scroll', () => {
+    test('each tab keeps its own scroll offset; a tab never seen starts at the top', async () => {
+        const store = new WeakMap();
+        const desc = Object.getOwnPropertyDescriptor(Element.prototype, 'scrollTop');
+        Object.defineProperty(Element.prototype, 'scrollTop', {
+            configurable: true,
+            get() {
+                return store.get(this) ?? 0;
+            },
+            set(v) {
+                store.set(this, v);
+            }
+        });
+        try {
+            const { container } = render(ConfigModal, { visible: true, onClose: () => {} });
+            const doc = container.ownerDocument;
+            const tabs = [...doc.querySelectorAll('[role="tab"]')];
+            const body = doc.querySelector('.tab-body');
+            body.scrollTop = 120;
+            await fireEvent.click(tabs[1]);
+            await Promise.resolve();
+            expect(body.scrollTop).toBe(0);
+            body.scrollTop = 40;
+            await fireEvent.click(tabs[0]);
+            await Promise.resolve();
+            expect(body.scrollTop).toBe(120);
+            await fireEvent.click(tabs[1]);
+            await Promise.resolve();
+            expect(body.scrollTop).toBe(40);
+        } finally {
+            if (desc) Object.defineProperty(Element.prototype, 'scrollTop', desc);
+            else delete Element.prototype.scrollTop;
+        }
+    });
+});
