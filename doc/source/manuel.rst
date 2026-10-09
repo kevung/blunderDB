@@ -3145,7 +3145,9 @@ une tendance. Le plan corrige les deux.
 
 Chaque ligne du plan montre son rang, la famille, une barre dont la longueur
 est son MWC récupérable rapporté à celui de la première, ce MWC avec son
-intervalle, et le nombre d'erreurs.
+intervalle, et le nombre d'erreurs. Chaque compte de positions du plan (par
+famille, à confirmer, hors plan) est cliquable : il charge exactement ces
+positions dans la liste.
 
 Chaque famille propose trois gestes : **Étudier** ouvre la file d'étude sur
 ses positions, l'écart au joueur de référence le plus grand d'abord ; **Quiz**

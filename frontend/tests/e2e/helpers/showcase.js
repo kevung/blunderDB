@@ -419,7 +419,9 @@ export const showcaseStudyPlan = {
     ],
     Tentative: [planFamily('backgame', 'checker', 'point', 2, 0.02, -0.01, 0.05)],
     Unthemed: 41,
-    Unpriced: 3
+    Unpriced: 3,
+    UnthemedPositions: [{ PositionID: showcasePositionId }],
+    UnpricedPositions: [{ PositionID: showcasePositionId }]
 };
 
 /** Onglet Joueurs (GetPlayerTable). */

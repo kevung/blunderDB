@@ -108,6 +108,8 @@
         {:else}
             <p class="aside">{$t('stats.biasesByScoreEmpty', { n: biases.MinDecisions })}</p>
         {/if}
+    {:else}
+        <p class="empty-subsection">{$t('stats.noData')}</p>
     {/if}
 </section>
 

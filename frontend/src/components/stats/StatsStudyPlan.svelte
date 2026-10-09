@@ -7,6 +7,7 @@
     import { statsFilterStore, studyPlanStore, studyPlanLoadingStore, studyPlanErrorStore } from '../../stores/statsStore.js';
     import { startStudyPlanQueue } from '../../services/studyQueueService.js';
     import { quizOnPlan, deckFromIds } from '../../services/recurringStudy.js';
+    import { loadPositionsFromSelection } from '../../services/positionLoader.js';
     import { t } from '../../i18n/index.js';
 
     let plan = $derived($studyPlanStore);
@@ -53,6 +54,19 @@
     function ids(f) {
         return (f.Positions ?? []).map((/** @type {any} */ p) => p.PositionID);
     }
+
+    /** @param {any} list positions as the plan carries them */
+    function idsOf(list) {
+        return (list ?? []).map((/** @type {any} */ p) => p.PositionID);
+    }
+
+    /** @param {any[]} list */
+    function load(list) {
+        loadPositionsFromSelection(idsOf(list));
+    }
+
+    let unthemedPositions = $derived(plan?.UnthemedPositions ?? []);
+    let unpricedPositions = $derived(plan?.UnpricedPositions ?? []);
 </script>
 
 <section class="study-plan" data-testid="study-plan">
@@ -70,7 +84,13 @@
         <p class="empty-subsection">{$t('stats.planEmpty')}</p>
         {#if (plan?.Unpriced ?? 0) > 0}
             <p class="aside" data-testid="plan-unpriced-only" title={$t('stats.planOutside', { unthemed: 0, unpriced: plan.Unpriced })}>
-                {$t('stats.planOutsideShort', { unthemed: 0, unpriced: plan.Unpriced })}
+                {#each $t('stats.planOutsideShort', { unthemed: '\uE000a', unpriced: '\uE000b' }).split(/(\uE000[ab])/) as part, i (i)}
+                    {#if part === '\uE000a'}
+                        0
+                    {:else if part === '\uE000b'}
+                        <button type="button" class="count-link" data-testid="plan-unpriced" onclick={() => load(unpricedPositions)}>{unpricedPositions.length}</button>
+                    {:else}{part}{/if}
+                {/each}
             </p>
         {/if}
     {:else}
@@ -90,8 +110,8 @@
                             <small class="interval" title={$t('stats.planInterval')}>[{pct(f.Low)}, {pct(f.High)}]</small>
                         </span>
                         <span class="errors" title={$t('stats.planAvoidable', { n: f.Avoidable })}>
-                            <b>{f.Errors}</b>
-                            <small>{$t('stats.planErrors')}</small>
+                            <button type="button" class="count-link" data-testid="plan-family-positions" onclick={() => load(f.Positions)}>{(f.Positions ?? []).length}</button>
+                            <small>{f.Errors} {$t('stats.planErrors')}</small>
                         </span>
                         <span class="actions">
                             <button type="button" class="study-btn primary" onclick={() => startStudyPlanQueue(get(statsFilterStore), i + 1)}>{$t('stats.planStudy')}</button>
@@ -104,10 +124,31 @@
         {/if}
         <p class="meta">
             {#if tentative.length > 0}
-                <span>{$t('stats.planTentative', { n: tentative.length, list: tentative.map((/** @type {any} */ f) => `${familyName(f)} (${f.Errors})`).join(', ') })}</span>
+                <!-- La phrase traduite place les deux champs où la langue les veut : on la découpe aux repères. -->
+                <span data-testid="plan-tentative">
+                    {#each $t('stats.planTentative', { n: tentative.length, list: '\uE000list' }).split(/(\uE000list)/) as part, i (i)}
+                        {#if part === '\uE000list'}
+                            {#each tentative as f, k (f.GameType + '/' + f.Kind + '/' + f.Theme)}
+                                {familyName(f)}
+                                (<button type="button" class="count-link" data-testid="plan-tentative-positions" onclick={() => load(f.Positions)}>{(f.Positions ?? []).length}</button>){k <
+                                tentative.length - 1
+                                    ? ', '
+                                    : ''}
+                            {/each}
+                        {:else}{part}{/if}
+                    {/each}
+                </span>
             {/if}
             {#if plan.Unthemed > 0 || plan.Unpriced > 0}
-                <span title={$t('stats.planOutside', { unthemed: plan.Unthemed, unpriced: plan.Unpriced })}>{$t('stats.planOutsideShort', { unthemed: plan.Unthemed, unpriced: plan.Unpriced })}</span>
+                <span data-testid="plan-outside" title={$t('stats.planOutside', { unthemed: plan.Unthemed, unpriced: plan.Unpriced })}>
+                    {#each $t('stats.planOutsideShort', { unthemed: '\uE000a', unpriced: '\uE000b' }).split(/(\uE000[ab])/) as part, i (i)}
+                        {#if part === '\uE000a'}
+                            <button type="button" class="count-link" data-testid="plan-unthemed" onclick={() => load(unthemedPositions)}>{unthemedPositions.length}</button>
+                        {:else if part === '\uE000b'}
+                            <button type="button" class="count-link" data-testid="plan-unpriced" onclick={() => load(unpricedPositions)}>{unpricedPositions.length}</button>
+                        {:else}{part}{/if}
+                    {/each}
+                </span>
             {/if}
         </p>
     {/if}
@@ -272,6 +313,23 @@
         font-size: var(--font-size-small);
         color: var(--color-text-muted);
         margin: 6px 0 0;
+    }
+
+    .count-link {
+        background: none;
+        border: none;
+        padding: 0;
+        color: inherit;
+        cursor: pointer;
+        text-decoration: underline dotted;
+    }
+
+    .count-link:hover {
+        color: var(--color-primary);
+    }
+
+    .errors .count-link {
+        font-weight: 700;
     }
 
     .meta:empty {
