@@ -47,7 +47,18 @@
     let tipW = $state(0);
     let tipH = $state(0);
     let anchor = $derived(pointer ?? { x: ((focus ?? 0) + 0.5) * slot, y: H / 3 });
-    let at = $derived(placeTip(anchor, { w: tipW, h: tipH }, { w: W, h: H }));
+    // The visible part of the scrolling tab around the plot, for a tooltip
+    // taller than the plot itself.
+    /** @type {HTMLElement | undefined} */
+    let plotEl = $state();
+    let room = $derived.by(() => {
+        // Read again whenever the tooltip moves: the tab may have scrolled since.
+        if (!plotEl || tipH <= H || !anchor) return {};
+        const box = plotEl.getBoundingClientRect();
+        const view = plotEl.closest('[role="tabpanel"]')?.getBoundingClientRect() ?? { top: 0, bottom: globalThis.innerHeight ?? box.bottom };
+        return { top: view.top - box.top, bottom: view.bottom - box.top };
+    });
+    let at = $derived(placeTip(anchor, { w: tipW, h: tipH }, { w: W, h: H, ...room }));
 
     // Measured whenever it shows another decision, its text having changed.
     /** @param {HTMLElement} node @param {number | null} _decision */
@@ -106,6 +117,7 @@
         <!-- svelte-ignore a11y_no_noninteractive_tabindex, a11y_no_noninteractive_element_interactions -->
         <div
             class="plot"
+            bind:this={plotEl}
             role="group"
             tabindex="0"
             aria-label={label}

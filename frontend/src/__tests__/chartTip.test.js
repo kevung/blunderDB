@@ -38,3 +38,24 @@ describe('the games along the decision axis', () => {
         expect(gameSpans([])).toEqual([]);
     });
 });
+
+describe('a tooltip taller than its plot', () => {
+    const short = { w: 300, h: 50 };
+
+    test('stays inside the visible part of the container around the plot', () => {
+        const { top } = placeTip({ x: 20, y: 40 }, tip, { ...short, top: -120, bottom: 200 });
+        expect(top).toBeGreaterThanOrEqual(-120);
+        expect(top + tip.h).toBeLessThanOrEqual(200);
+        expect(top).toBe(50);
+    });
+
+    test('goes above the plot when the container shows nothing below it', () => {
+        const { top } = placeTip({ x: 20, y: 40 }, tip, { ...short, top: -120, bottom: 50 });
+        expect(top).toBe(-30);
+        expect(top + tip.h).toBeLessThanOrEqual(50);
+    });
+
+    test('without the container bounds, starts at the plot top as before', () => {
+        expect(placeTip({ x: 20, y: 40 }, tip, short).top).toBe(0);
+    });
+});

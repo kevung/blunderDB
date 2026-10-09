@@ -15,11 +15,34 @@ const TAB_KEY = 'blunderdb.matchTab';
  */
 export function rememberedTab() {
     try {
-        const id = globalThis.localStorage?.getItem(TAB_KEY);
+        const id = globalThis.localStorage?.getItem(TAB_KEY) ?? fromFoldedSections();
         return id && MATCH_TABS.includes(id) ? id : 'transcript';
     } catch {
         return 'transcript';
     }
+}
+
+// The sheet once had folded sections, each remembered open under its own key.
+// The first one a user left open names the tab to start on; the keys are then
+// dropped, so this is read once.
+const SECTION_KEY = 'blunderdb.matchSection.';
+/** @type {[string, string][]} */
+const SECTION_TABS = [
+    ['review', 'details'],
+    ['info', 'info'],
+    ['origin', 'info'],
+    ['stats', 'stats']
+];
+
+/** @returns {string | null} */
+function fromFoldedSections() {
+    const storage = globalThis.localStorage;
+    if (!storage) return null;
+    const open = SECTION_TABS.find(([section]) => storage.getItem(SECTION_KEY + section) === '1');
+    for (const [section] of SECTION_TABS) storage.removeItem(SECTION_KEY + section);
+    if (!open) return null;
+    storage.setItem(TAB_KEY, open[1]);
+    return open[1];
 }
 
 /** @param {string} id */

@@ -88,6 +88,15 @@ describe('the tab the sheet opens on', () => {
         expect(rememberedTab()).toBe('charts');
     });
 
+    test('a section left open on the former sheet names the first tab, once', () => {
+        localStorage.setItem('blunderdb.matchSection.stats', '1');
+        localStorage.setItem('blunderdb.matchSection.review', '1');
+        expect(rememberedTab()).toBe('details');
+        expect(localStorage.getItem('blunderdb.matchSection.stats')).toBeNull();
+        rememberTab('charts');
+        expect(rememberedTab()).toBe('charts');
+    });
+
     test('a stored name that is no tab, or a storage that throws, opens the transcript', () => {
         localStorage.setItem('blunderdb.matchTab', 'gone');
         expect(rememberedTab()).toBe('transcript');
