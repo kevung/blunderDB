@@ -1090,6 +1090,7 @@
         "menu": {
             "evaluate": "Valuta questa posizione",
             "evaluateMirror": "Valuta lo specchio di questa posizione",
+            "evaluateInNewView": "Valuta in una nuova scheda",
             "copyImageWithAnalysis": "Copia l'immagine del tabellone con l'analisi",
             "newView": "Nuova vista",
             "addToAnkiDeck": "Aggiungi al mazzo Anki: {deck}",
@@ -1188,6 +1189,7 @@
     },
     "viewTabs": {
         "closeView": "Chiudi vista",
+        "variantOf": "Variante di #{n}",
         "newView": "Nuova vista"
     },
     "goToPosition": {

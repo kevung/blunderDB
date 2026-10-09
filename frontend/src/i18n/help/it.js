@@ -90,6 +90,7 @@ export default {
 <li><strong>Cambiare vista</strong> : fare clic su una scheda, premere <em>CTRL-PageUp</em> / <em>CTRL-PageDown</em> (o <em>MAIUSC-J</em> / <em>MAIUSC-K</em>) per passare alla vista precedente / successiva, oppure da <em>CTRL-1</em> a <em>CTRL-9</em> per raggiungere direttamente l'n-esima vista.</li>
 <li><strong>Rinominare una vista</strong> : fare doppio clic sulla scheda, inserire il nuovo nome e confermare con <em>INVIO</em>.</li>
 </ul>
+<p>Una vista lasciata nel pannello Eval vi ritorna così come è stata lasciata: con la sua scacchiera di prova e, uscendo dal pannello, con la posizione che stava studiando. Anche l'ultima scacchiera di prova del pannello Eval è propria di ciascuna vista.</p>
 <p>Le viste vengono salvate con lo stato di sessione del database e ripristinate alla sua riapertura.</p>
 <h3>Configurazione</h3>
 <p>Il pulsante di configurazione (icona a forma di ingranaggio) situato nella barra degli strumenti, a sinistra del pulsante di aiuto, apre la finestra di configurazione di blunderDB. È organizzata in nove schede:</p>
@@ -867,9 +868,10 @@ export default {
 <p>Ogni casella è una ricerca a sé. Il motore tiene conto del punteggio — non gioca la stessa partita a 2-away e a 7-away — quindi una sola ricerca riletta attraverso equità di incontro diverse sarebbe falsa esattamente dove il punteggio conta. La griglia arriva prima in 0-ply, poi si ricalcola alla profondità di visualizzazione configurata una volta che la finestra è a riposo: la stessa escalation del resto del pannello, per una griglia da 9 punti che costa circa un secondo e mezzo.</p>
 <p>La stessa griglia si calcola fuori dall'interfaccia, con il comando cubematrix della riga di comando.</p>
 <h4>Portare una posizione nel pannello Eval</h4>
-<p>Il pannello si apre per impostazione predefinita su una posizione di bearoff, ma lo studio parte più spesso da una posizione già in mano. Tre gesti ve la portano:</p>
+<p>Il pannello si apre per impostazione predefinita su una posizione di bearoff, ma lo studio parte più spesso da una posizione già in mano. Quattro gesti ve la portano:</p>
 <ul>
 <li><strong>Clic destro sul tavoliere</strong>, in un pannello di analisi o durante la navigazione di un match, poi <em>Valuta questa posizione</em>: il pannello Eval si apre direttamente su questa posizione, così come è visualizzata; <em>Valuta lo specchio di questa posizione</em> ve la apre vista dall'altro lato. Il menu contestuale non compare nel pannello Eval né nel pannello Ricerca, dove il tasto destro serve già a collocare le pedine dell'altro colore.</li>
+<li><strong>Clic destro sulla scacchiera, poi</strong> <em>Valuta in una nuova scheda</em>: una nuova vista, chiamata <em>Variante di #n</em> (n è il numero della vista d'origine), si apre nel pannello Eval sulla posizione visualizzata, dove impostare liberamente delle varianti. La vista d'origine conserva la sua posizione, la sua lista e la sua analisi. Questa scelta non è offerta nel pannello Trascrizione.</li>
 <li><strong>CTRL-C poi CTRL-V</strong>: copiare la posizione dal pannello di analisi, poi incollarla una volta nel pannello Eval. L'incollaggio accetta anche un identificatore proveniente da altrove — un XGID (eXtreme Gammon, GNU Backgammon, un'altra istanza di blunderDB) o un OGID (OpenGammon): basta che sia negli appunti.</li>
 <li><strong>Il comando</strong> <code>import XGID=…</code> (o <code>import OGID=…</code>) per il caso in cui l'identificatore non è negli appunti ma in un messaggio, su un forum letto in un terminale, o prodotto da uno script. È lo stesso verbo di <code>import</code> da solo: senza argomento apre un selettore di file, con un argomento legge l'identificatore. Il percorso è poi identico a quello dell'incollaggio — stessa lettura, stessa deduplicazione, stessa apertura della posizione importata.</li>
 </ul>

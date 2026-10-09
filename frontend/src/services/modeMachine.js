@@ -99,8 +99,11 @@ const NO_MATCH_CONTEXT = Object.freeze({
  *               sendPositionToEval() and enterEvalMode() run a tick apart
  *               (through App.svelte's tab effect).
  *   lastEvalBoard the board Eval was last left on. NOT consumed on use, and
- *               survives a library reload: a scratch board belongs to the
- *               session. id forced to 0, no analysis (it would be stale).
+ *               survives a library reload: a scratch board belongs to its
+ *               view. id forced to 0, no analysis (it would be stale).
+ *
+ * The three Eval slots move with the view on screen (takeEvalContext,
+ * giveEvalContext); the others are the session's.
  *   beforeSubSearch the collection or match an `ss` was run from:
  *               { mode: COLLECTION, collection, list, positionIndex, position, resultIds }
  *               or { mode: MATCH, matchContext, resultIds }. The way back is
@@ -126,6 +129,26 @@ const savedContext = {
 /** Read-only snapshot of the machine's state, for tests and debugging. */
 export function modeState() {
     return { mode: get(statusBarModeStore), savedContext: { ...savedContext } };
+}
+
+/**
+ * The Eval slots belong to a view, not to the session: a view left in Eval and
+ * shown again resumes its own scratch board and its own way back, never those
+ * of the view shown in between. viewStore takes them when a view is left and
+ * gives them back when it is shown (positionService wires the two).
+ *
+ * @returns {{ beforeEval: any, lastEvalBoard: any, evalSeed: any }}
+ */
+export function takeEvalContext() {
+    const { beforeEval, lastEvalBoard, evalSeed } = savedContext;
+    return { beforeEval, lastEvalBoard, evalSeed };
+}
+
+/** @param {{ beforeEval?: any, lastEvalBoard?: any, evalSeed?: any } | null | undefined} context */
+export function giveEvalContext(context) {
+    savedContext.beforeEval = context?.beforeEval ?? null;
+    savedContext.lastEvalBoard = context?.lastEvalBoard ?? null;
+    savedContext.evalSeed = context?.evalSeed ?? null;
 }
 
 /**

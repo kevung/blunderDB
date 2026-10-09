@@ -90,6 +90,7 @@ export default {
 <li><strong>Cambiar de vista</strong>: hacer clic en una pestaña, pulsar <em>CTRL-PageUp</em> / <em>CTRL-PageDown</em> (o <em>MAJ-J</em> / <em>MAJ-K</em>) para pasar a la vista anterior / siguiente, o <em>CTRL-1</em> a <em>CTRL-9</em> para ir directamente a la n-ésima vista.</li>
 <li><strong>Renombrar una vista</strong>: hacer doble clic en la pestaña, escribir el nuevo nombre y validar con <em>INTRO</em>.</li>
 </ul>
+<p>Una vista dejada en el panel Eval vuelve a él tal como se dejó: con su tablero borrador y, al salir del panel, con la posición que estudiaba. El último tablero borrador del panel Eval también es propio de cada vista.</p>
 <p>Las vistas se guardan con el estado de sesión de la base de datos y se restauran al reabrirla.</p>
 <h3>Configuración</h3>
 <p>El botón de configuración (icono en forma de rueda dentada) situado en la barra de herramientas, a la izquierda del botón de ayuda, abre la ventana de configuración de blunderDB. Está organizada en nueve pestañas:</p>
@@ -867,9 +868,10 @@ export default {
 <p>Cada casilla es una búsqueda propia. El motor tiene en cuenta el marcador — no juega la misma partida a 2-away que a 7-away —, así que una sola búsqueda releída a través de equidades de partido distintas sería falsa justo donde el marcador importa. La cuadrícula llega primero en 0-ply y se recalcula a la profundidad de visualización configurada cuando la ventana queda en reposo: la misma escalada que el resto del panel, para una cuadrícula de 9 puntos que cuesta alrededor de un segundo y medio.</p>
 <p>La misma cuadrícula se calcula fuera de la interfaz, con el comando cubematrix de la línea de comandos.</p>
 <h4>Llevar una posición al panel Eval</h4>
-<p>El panel se abre por defecto en una posición de bearoff, pero el estudio parte la mayoría de las veces de una posición que ya se tiene a mano. Tres gestos la llevan allí:</p>
+<p>El panel se abre por defecto en una posición de bearoff, pero el estudio parte la mayoría de las veces de una posición que ya se tiene a mano. Cuatro gestos la llevan allí:</p>
 <ul>
 <li><strong>Clic derecho en el tablero</strong>, en un panel de análisis o durante la navegación de un partido, y luego <em>Evaluar esta posición</em>: el panel Eval se abre directamente en esa posición, tal como se muestra; <em>Evaluar el espejo de esta posición</em> la abre vista desde el otro bando. El menú contextual no aparece en el panel Eval ni en el panel de búsqueda, donde el botón derecho sirve ya para colocar las fichas del otro color.</li>
+<li><strong>Clic derecho en el tablero, luego</strong> <em>Evaluar en una nueva pestaña</em>: una nueva vista, llamada <em>Variante de #n</em> (n es el número de la vista de origen), se abre en el panel Eval sobre la posición mostrada, donde se pueden plantear variantes libremente. La vista de origen conserva su posición, su lista y su análisis. Esta opción no se ofrece en el panel Transcripción.</li>
 <li><strong>CTRL-C y luego CTRL-V</strong>: copiar la posición desde el panel de análisis y pegarla después, una vez, en el panel Eval. El pegado acepta también un identificador venido de otra parte — un XGID (eXtreme Gammon, GNU Backgammon, otra instancia de blunderDB) o un OGID (OpenGammon): basta con que esté en el portapapeles.</li>
 <li><strong>El comando</strong> <code>import XGID=…</code> (o <code>import OGID=…</code>) para cuando el identificador no está en el portapapeles sino en un mensaje, en un foro leído en un terminal, o producido por un script. Es el mismo verbo que <code>import</code> a secas: sin argumento abre un selector de ficheros, con argumento lee el identificador. El camino es luego idéntico al del pegado — misma lectura, misma deduplicación, misma apertura de la posición importada.</li>
 </ul>

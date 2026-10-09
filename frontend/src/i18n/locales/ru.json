@@ -1090,6 +1090,7 @@
         "menu": {
             "evaluate": "Оценить эту позицию",
             "evaluateMirror": "Оценить зеркальное отражение этой позиции",
+            "evaluateInNewView": "Оценить в новой вкладке",
             "copyImageWithAnalysis": "Скопировать изображение доски с анализом",
             "newView": "Новый вид",
             "addToAnkiDeck": "Добавить в колоду Anki: {deck}",
@@ -1188,6 +1189,7 @@
     },
     "viewTabs": {
         "closeView": "Закрыть вид",
+        "variantOf": "Вариант #{n}",
         "newView": "Новый вид"
     },
     "goToPosition": {

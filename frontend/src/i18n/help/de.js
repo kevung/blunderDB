@@ -90,6 +90,7 @@ export default {
 <li><strong>Die Ansicht wechseln</strong>: auf einen Reiter klicken, <em>CTRL-PageUp</em> / <em>CTRL-PageDown</em> (oder <em>UMSCHALT-J</em> / <em>UMSCHALT-K</em>) drücken, um zur vorherigen / nächsten Ansicht zu wechseln, oder <em>CTRL-1</em> bis <em>CTRL-9</em>, um direkt die n-te Ansicht zu erreichen.</li>
 <li><strong>Eine Ansicht umbenennen</strong>: auf den Reiter doppelklicken, den neuen Namen eingeben und mit <em>EINGABE</em> bestätigen.</li>
 </ul>
+<p>Eine im Eval-Panel verlassene Ansicht kehrt so dorthin zurück, wie sie verlassen wurde: mit ihrem Entwurfsbrett und, beim Verlassen des Panels, mit der Stellung, die sie untersuchte. Auch das letzte Entwurfsbrett des Eval-Panels gehört jeder Ansicht für sich.</p>
 <p>Die Ansichten werden mit dem Sitzungszustand der Datenbank gespeichert und beim erneuten Öffnen wiederhergestellt.</p>
 <h3>Konfiguration</h3>
 <p>Die Konfigurationsschaltfläche (Zahnradsymbol) in der Werkzeugleiste, links neben der Hilfeschaltfläche, öffnet das Konfigurationsfenster von blunderDB. Es ist in neun Registerkarten gegliedert:</p>
@@ -867,9 +868,10 @@ export default {
 <p>Jede Zelle ist eine eigene Suche. Die Engine berücksichtigt den Punktestand — bei 2-away spielt sie nicht dieselbe Partie wie bei 7-away —, also wäre eine einzige, durch verschiedene Match-Equities gelesene Suche genau dort falsch, wo der Punktestand zählt. Das Raster erscheint zuerst mit 0-Ply und wird dann in der eingestellten Anzeigetiefe neu berechnet, sobald das Fenster ruht: dieselbe Eskalation wie im Rest des Panels, für ein 9-Punkte-Raster von etwa anderthalb Sekunden.</p>
 <p>Dasselbe Raster wird außerhalb der Oberfläche mit dem Befehl cubematrix der Kommandozeile berechnet.</p>
 <h4>Eine Stellung in das Eval-Panel bringen</h4>
-<p>Das Panel öffnet sich standardmäßig mit einer Bearoff-Stellung, doch die Untersuchung geht meist von einer bereits vorliegenden Stellung aus. Drei Gesten bringen sie dorthin:</p>
+<p>Das Panel öffnet sich standardmäßig mit einer Bearoff-Stellung, doch die Untersuchung geht meist von einer bereits vorliegenden Stellung aus. Vier Gesten bringen sie dorthin:</p>
 <ul>
 <li><strong>Rechtsklick auf das Brett</strong>, in einem Analyse-Panel oder während der Navigation in einem Match, dann <em>Diese Position auswerten</em>: Das Eval-Panel öffnet sich direkt mit dieser Stellung, so wie sie angezeigt wird; <em>Das Spiegelbild dieser Position auswerten</em> öffnet sie dort aus der Sicht der anderen Seite. Das Kontextmenü erscheint weder im Eval-Panel noch im Suchpanel, wo die rechte Maustaste bereits zum Setzen der Steine der anderen Farbe dient.</li>
+<li><strong>Rechtsklick auf das Brett, dann</strong> <em>In einem neuen Tab auswerten</em>: Eine neue Ansicht namens <em>Variante von #n</em> (n ist die Nummer der ursprünglichen Ansicht) öffnet sich im Eval-Panel mit der angezeigten Stellung, in der sich Varianten frei aufbauen lassen. Die ursprüngliche Ansicht behält ihre Stellung, ihre Liste und ihre Analyse. Diese Wahl wird im Transkriptions-Panel nicht angeboten.</li>
 <li><strong>CTRL-C, dann CTRL-V</strong>: die Stellung aus dem Analyse-Panel kopieren und dann einmal im Eval-Panel einfügen. Das Einfügen akzeptiert auch eine Kennung von anderswo — eine XGID (eXtreme Gammon, GNU Backgammon, eine andere blunderDB-Instanz) oder eine OGID (OpenGammon): Sie muss nur in der Zwischenablage liegen.</li>
 <li><strong>Der Befehl</strong> <code>import XGID=…</code> (oder <code>import OGID=…</code>) für den Fall, dass die Kennung nicht in der Zwischenablage steht, sondern in einer Nachricht, in einem im Terminal gelesenen Forum oder von einem Skript erzeugt wurde. Es ist derselbe Befehl wie <code>import</code> allein: ohne Argument öffnet er eine Dateiauswahl, mit Argument liest er die Kennung. Der Weg ist danach mit dem des Einfügens identisch — dieselbe Lesung, dieselbe Deduplizierung, dasselbe Öffnen der importierten Stellung.</li>
 </ul>

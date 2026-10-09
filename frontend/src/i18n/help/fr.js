@@ -90,6 +90,7 @@ export default {
 <li><strong>Changer de vue</strong> : cliquer sur un onglet, appuyer sur <em>CTRL-PageUp</em> / <em>CTRL-PageDown</em> (ou <em>MAJ-J</em> / <em>MAJ-K</em>) pour passer à la vue précédente / suivante, ou <em>CTRL-1</em> à <em>CTRL-9</em> pour atteindre directement la n-ième vue.</li>
 <li><strong>Renommer une vue</strong> : double-cliquer sur l'onglet, saisir le nouveau nom et valider avec <em>ENTREE</em>.</li>
 </ul>
+<p>Une vue laissée dans le panneau Eval y revient telle qu'elle a été laissée : son plateau brouillon, et en sortant du panneau, la position qu'elle étudiait. Le dernier plateau brouillon du panneau Eval est lui aussi propre à chaque vue.</p>
 <p>Les vues sont enregistrées avec l'état de session de la base de données et restaurées à sa réouverture.</p>
 <h3>Configuration</h3>
 <p>Le bouton de configuration (icône en forme de rouage) situé dans la barre d'outils, à gauche du bouton d'aide, ouvre la fenêtre de configuration de blunderDB. Elle est organisée en neuf onglets :</p>
@@ -867,9 +868,10 @@ export default {
 <p>Chaque case est une recherche à part entière. Le moteur tient compte du score — il ne joue pas la même partie à 2-away qu'à 7-away —, donc une seule recherche relue à travers des équités de match différentes serait fausse exactement là où le score compte. La grille arrive d'abord en 0-ply, puis se recalcule à la profondeur d'affichage configurée une fois la fenêtre au repos : la même escalade que le reste du panneau, pour une grille de 9 points qui coûte environ une seconde et demie.</p>
 <p>La même grille se calcule hors de l'interface, avec la commande cubematrix de la ligne de commande.</p>
 <h4>Amener une position dans le panneau Eval</h4>
-<p>Le panneau s'ouvre par défaut sur une position de bearoff, mais l'étude part le plus souvent d'une position déjà en main. Trois gestes l'y amènent :</p>
+<p>Le panneau s'ouvre par défaut sur une position de bearoff, mais l'étude part le plus souvent d'une position déjà en main. Quatre gestes l'y amènent :</p>
 <ul>
 <li><strong>Clic droit sur le plateau</strong>, dans un panneau d'analyse ou pendant la navigation d'un match, puis <em>Évaluer cette position</em> : le panneau Eval s'ouvre directement sur cette position, telle qu'elle est affichée ; <em>Évaluer le miroir de cette position</em> l'y ouvre vue de l'autre camp. Le menu contextuel n'apparaît pas dans le panneau Eval ni dans le panneau Recherche, où le bouton droit sert déjà à poser les pions de l'autre couleur.</li>
+<li><strong>Clic droit sur le plateau, puis</strong> <em>Évaluer dans un nouvel onglet</em> : une nouvelle vue, nommée <em>Variante de #n</em> (n étant le numéro de la vue d'origine), s'ouvre dans le panneau Eval sur la position affichée, où poser librement des variantes. La vue d'origine garde sa position, sa liste et son analyse. Ce choix n'est pas offert dans le panneau Transcription.</li>
 <li><strong>CTRL-C puis CTRL-V</strong> : copier la position depuis le panneau d'analyse, puis la coller une fois dans le panneau Eval. Le collage accepte aussi un identifiant venu d'ailleurs — un XGID (eXtreme Gammon, GNU Backgammon, une autre instance de blunderDB) ou un OGID (OpenGammon) : il suffit qu'il soit dans le presse-papier.</li>
 <li><strong>La commande</strong> <code>import XGID=…</code> (ou <code>import OGID=…</code>) pour le cas où l'identifiant n'est pas dans le presse-papier mais dans un message, sur un forum lu dans un terminal, ou produit par un script. C'est le même verbe qu'<code>import</code> tout court : sans argument il ouvre un sélecteur de fichiers, avec un argument il lit l'identifiant. Le chemin est ensuite identique à celui du collage — même lecture, même déduplication, même ouverture de la position importée.</li>
 </ul>

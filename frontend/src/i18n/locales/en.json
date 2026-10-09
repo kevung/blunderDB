@@ -1090,6 +1090,7 @@
         "menu": {
             "evaluate": "Evaluate this position",
             "evaluateMirror": "Evaluate the mirror of this position",
+            "evaluateInNewView": "Evaluate in a new tab",
             "copyImageWithAnalysis": "Copy the board image with the analysis",
             "newView": "New view",
             "addToAnkiDeck": "Add to Anki deck: {deck}",
@@ -1188,6 +1189,7 @@
     },
     "viewTabs": {
         "closeView": "Close view",
+        "variantOf": "Variant of #{n}",
         "newView": "New view"
     },
     "goToPosition": {

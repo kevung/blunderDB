@@ -90,6 +90,7 @@ export default {
 <li><strong>Switch view</strong>: click a tab, press <em>CTRL-PageUp</em> / <em>CTRL-PageDown</em> (or <em>SHIFT-J</em> / <em>SHIFT-K</em>) to move to the previous / next view, or <em>CTRL-1</em> to <em>CTRL-9</em> to jump directly to the n-th view.</li>
 <li><strong>Rename a view</strong>: double-click the tab, type the new name and confirm with <em>ENTER</em>.</li>
 </ul>
+<p>A view left in the Eval panel comes back to it as it was left: its scratch board and, on leaving the panel, the position it was studying. The last scratch board of the Eval panel also belongs to each view.</p>
 <p>Views are saved with the database session state and restored when it is reopened.</p>
 <h3>Configuration</h3>
 <p>The settings button (gear icon) in the toolbar, to the left of the help button, opens blunderDB's settings window. It is organised in nine tabs:</p>
@@ -867,9 +868,10 @@ export default {
 <p>Every cell is its own search. The engine is match-aware — it does not play the same game at 2-away as at 7-away — so a single search read through different match equities would be wrong exactly where the score matters. The grid arrives at 0-ply first, then recomputes at the configured display depth once the window is at rest: the same escalation as the rest of the panel, for a 9-point grid costing about a second and a half.</p>
 <p>The same grid is computed outside the interface, with the command line's cubematrix command.</p>
 <h4>Bringing a position into the Eval panel</h4>
-<p>The panel opens by default on a bearoff position, but a study most often starts from a position already at hand. Three gestures bring it there:</p>
+<p>The panel opens by default on a bearoff position, but a study most often starts from a position already at hand. Four gestures bring it there:</p>
 <ul>
 <li><strong>Right click on the board</strong>, in an analysis panel or while navigating a match, then <em>Evaluate this position</em>: the Eval panel opens directly on that position, as displayed; <em>Evaluate the mirror of this position</em> opens it there seen from the other side. The context menu does not appear in the Eval panel or in the Search panel, where the right button already serves to place checkers of the other colour.</li>
+<li><strong>Right-click on the board, then</strong> <em>Evaluate in a new tab</em>: a new view, named <em>Variant of #n</em> (n being the number of the original view), opens in the Eval panel on the displayed position, where variants can be set up freely. The original view keeps its position, its list and its analysis. This choice is not offered in the Transcription panel.</li>
 <li><strong>CTRL-C then CTRL-V</strong>: copy the position from the analysis panel, then paste it once in the Eval panel. Pasting also accepts an identifier from elsewhere — an XGID (eXtreme Gammon, GNU Backgammon, another instance of blunderDB) or an OGID (OpenGammon): it only has to be in the clipboard.</li>
 <li><strong>The command</strong> <code>import XGID=…</code> (or <code>import OGID=…</code>) for when the identifier is not in the clipboard but in a message, on a forum read in a terminal, or produced by a script. It is the same verb as plain <code>import</code>: with no argument it opens a file picker, with one it reads the identifier. The path is then identical to pasting — same reading, same deduplication, same opening of the imported position.</li>
 </ul>

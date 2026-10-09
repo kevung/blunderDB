@@ -337,6 +337,13 @@
     /** @type {{ x: number, y: number, items: MenuItem[] } | null} */
     let boardMenu = $state(null);
 
+    // The view on screen keeps its position, list and analysis; the variant is played in a copy.
+    /** @param {any} position */
+    function evaluateInNewView(position) {
+        const id = viewStore.addView({ name: (_id, originId) => $t('viewTabs.variantOf', { n: originId }) });
+        if (id != null) sendPositionToEval(position);
+    }
+
     /** @param {{ x: number, y: number }} at client coordinates */
     function openContextMenu({ x, y }) {
         if (get(duelHoldsBoardStore)) {
@@ -375,6 +382,8 @@
                 label: $t('board.menu.evaluateMirror'),
                 onClick: () => sendPositionToEval(mirrorPosition(getDisplayPosition()))
             },
+            // A studied position only (ADR-0086 §10): a scratch or Transcription board is not one.
+            ...(mode === 'NORMAL' || mode === 'MATCH' || mode === 'COLLECTION' ? [{ label: $t('board.menu.evaluateInNewView'), onClick: () => evaluateInNewView(getDisplayPosition()) }] : []),
             {
                 label: $t('board.menu.copyImageWithAnalysis'),
                 onClick: () => copyBoardWithAnalysisImage()

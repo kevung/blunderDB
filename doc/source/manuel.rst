@@ -233,6 +233,11 @@ dans une vue tout en parcourant un match dans une autre.
 * **Renommer une vue** : double-cliquer sur l'onglet, saisir le nouveau nom
   et valider avec *ENTREE*.
 
+Une vue laissée dans le panneau Eval y revient telle qu'elle a été laissée :
+son plateau brouillon, et en sortant du panneau, la position qu'elle
+étudiait. Le dernier plateau brouillon du panneau Eval est lui aussi propre à
+chaque vue.
+
 Les vues sont enregistrées avec l'état de session de la base de données et
 restaurées à sa réouverture.
 
@@ -3967,7 +3972,7 @@ Amener une position dans le panneau Eval
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Le panneau s'ouvre par défaut sur une position de bearoff, mais l'étude part
-le plus souvent d'une position déjà en main. Trois gestes l'y amènent :
+le plus souvent d'une position déjà en main. Quatre gestes l'y amènent :
 
 * **Clic droit sur le plateau**, dans un panneau d'analyse ou pendant la
   navigation d'un match, puis *Évaluer cette position* : le panneau Eval
@@ -3976,6 +3981,12 @@ le plus souvent d'une position déjà en main. Trois gestes l'y amènent :
   menu contextuel n'apparaît pas dans le panneau Eval ni dans le panneau
   Recherche, où le bouton droit sert déjà à poser les pions de l'autre
   couleur.
+
+* **Clic droit sur le plateau, puis** *Évaluer dans un nouvel onglet* : une
+  nouvelle vue, nommée *Variante de #n* (n étant le numéro de la vue
+  d'origine), s'ouvre dans le panneau Eval sur la position affichée, où
+  poser librement des variantes. La vue d'origine garde sa position, sa liste
+  et son analyse. Ce choix n'est pas offert dans le panneau Transcription.
 
 * **CTRL-C puis CTRL-V** : copier la position depuis le panneau d'analyse,
   puis la coller une fois dans le panneau Eval. Le collage accepte aussi un
