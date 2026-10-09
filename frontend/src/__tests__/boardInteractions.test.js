@@ -62,7 +62,10 @@ function mount({ mode = 'EDIT', orientation = 'right', scale = 1, position = emp
         quizPlay: writable(/** @type {any} */ (null)),
         // Le videau cliqué pendant une transcription (T2.5) : null tant que
         // rien n'a été demandé, et le panneau le remet à null en servant.
-        transcriptionCube: writable(/** @type {string|null} */ (null))
+        transcriptionCube: writable(/** @type {string|null} */ (null)),
+        // Le rappel de validation d'un mode passé à la grammaire d'ADR-0086 : null, la saisie
+        // source puis destination reste.
+        quizPlayValidate: writable(/** @type {(() => void)|null} */ (null))
     };
     const state = { mode, previousDice: [3, 1], cubeBox: cubeBox(geom, position, false) };
     const deps = {
@@ -940,6 +943,106 @@ describe('le clic sur le videau, en transcription', () => {
         b.stores.quizPlay.set(newBoardPlay(b.pos(), [], { rolled: [3, 1] }));
         b.click(b.state.cubeBox, 0);
         expect(cubeOf(b)).toBe('double');
+        b.detach();
+    });
+});
+
+// ── La grammaire d'ADR-0086 au plateau ───────────────────────────────────────
+//
+// Un mode qui pose son rappel de validation passe à la grammaire : le pion cliqué part du
+// premier dé non joué, le clic sur les dés intervertit ou valide, le clic droit reprend. Sans
+// rappel, rien ne change (les modes basculent un par un).
+describe('ADR-0086: the play follows the one grammar once its mode opts in', () => {
+    /** @param {Record<number, [number, number]>} stacks */
+    function posWith(stacks) {
+        const p = emptyPos();
+        p.board.bearoff = [0, 0];
+        for (const [pt, [n, color]] of Object.entries(stacks)) p.board.points[Number(pt)] = { checkers: n, color };
+        return p;
+    }
+    const position = posWith({ 13: [5, 0], 8: [3, 0], 6: [5, 0] });
+    /** @param {[number, number][]} list */
+    const play = (list) => ({ steps: list.map(([from, to]) => ({ from, to })), notation: '', result: {} });
+    const plays = [
+        play([
+            [8, 5],
+            [6, 5]
+        ]),
+        play([
+            [13, 10],
+            [10, 9]
+        ]),
+        play([
+            [8, 7],
+            [8, 5]
+        ])
+    ];
+
+    function mountGrammar({ optIn = true } = {}) {
+        const b = mount({ mode: 'NORMAL', position });
+        const validate = vi.fn();
+        b.stores.quizPlay.set(newPlay(position, plays));
+        if (optIn) b.stores.quizPlayValidate.set(validate);
+        const dice = sideTargets(b.geom, b.cfg, 0);
+        return { b, validate, dice };
+    }
+    const steps = (/** @type {any} */ b) => get(b.stores.quizPlay).steps.map((/** @type {any} */ s) => [s.from, s.to]);
+
+    test('a click on a checker moves it by the left die, then the right one', () => {
+        const { b } = mountGrammar();
+        b.click(b.slot(8, 0));
+        expect(steps(b)).toEqual([[8, 5]]);
+        expect(get(b.stores.quizPlay).selected).toBeNull();
+        b.click(b.slot(6, 0));
+        expect(steps(b)).toEqual([
+            [8, 5],
+            [6, 5]
+        ]);
+        b.detach();
+    });
+
+    test('a click on the dice swaps them before the play, and validates it once finished', () => {
+        const { b, validate, dice } = mountGrammar();
+        b.click(dice.die(0));
+        expect(get(b.stores.quizPlay).swapped).toBe(true);
+        b.click(b.slot(8, 0));
+        expect(steps(b)).toEqual([[8, 7]]);
+        expect(validate).not.toHaveBeenCalled();
+        b.click(b.slot(8, 0));
+        expect(steps(b)).toEqual([
+            [8, 7],
+            [8, 5]
+        ]);
+        b.detach();
+    });
+
+    test('a finished play is validated by a click on the dice, never on its own', () => {
+        const { b, validate, dice } = mountGrammar();
+        b.click(b.slot(8, 0));
+        b.click(b.slot(6, 0));
+        expect(validate).not.toHaveBeenCalled();
+        b.click(dice.die(1));
+        expect(validate).toHaveBeenCalledTimes(1);
+        b.detach();
+    });
+
+    test('a right click on the board takes the play back; with nothing played it opens the menu', () => {
+        const { b } = mountGrammar();
+        b.fire('contextmenu', b.slot(13, 0), 2);
+        expect(b.deps.openContextMenu).toHaveBeenCalledTimes(1);
+        b.click(b.slot(8, 0));
+        b.fire('contextmenu', b.slot(13, 0), 2);
+        expect(get(b.stores.quizPlay).steps).toEqual([]);
+        expect(get(b.stores.quizPlay).board.points[8].checkers).toBe(3);
+        expect(b.deps.openContextMenu).toHaveBeenCalledTimes(1);
+        b.detach();
+    });
+
+    test('without the opt-in the click still chooses a source', () => {
+        const { b } = mountGrammar({ optIn: false });
+        b.click(b.slot(8, 0));
+        expect(steps(b)).toEqual([]);
+        expect(get(b.stores.quizPlay).selected).toBe(8);
         b.detach();
     });
 });

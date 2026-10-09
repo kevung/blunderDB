@@ -411,6 +411,17 @@ describe('drawDice', () => {
         drawDice(two, geom, makeCfg(), pos);
         for (const face of two.of('rect')) expect(face.args[1]).toBeCloseTo(geom.originY - geom.boardHeight / 2 + 1.5 * cs, 6);
     });
+
+    test('a die is veiled by how much of it is played: half a double, a spent die, a fresh one', () => {
+        const two = recorder();
+        drawDice(two, geom, makeCfg(), startPos(), [0.5, true]);
+        const [left, right] = two.of('rect').map((/** @type {any} */ r) => r.opacity);
+        expect(right).toBeLessThan(left);
+        expect(left).toBeLessThan(1);
+        const fresh = recorder();
+        drawDice(fresh, geom, makeCfg(), startPos(), [0, false]);
+        expect(fresh.of('rect').map((/** @type {any} */ r) => r.opacity)).toEqual([1, 1]);
+    });
 });
 
 describe('drawScores / drawBearoff / drawPipCounts', () => {

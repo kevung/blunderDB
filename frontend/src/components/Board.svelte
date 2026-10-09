@@ -23,7 +23,8 @@
     import { viewStore } from '../stores/viewStore.js';
     import * as anki from '../services/ankiService.js';
     import { ankiDecksStore } from '../stores/ankiStore.js';
-    import { quizPlayStore, quizPlayTargetsStore } from '../stores/quizPlayStore.js';
+    import { quizPlayStore, quizPlayTargetsStore, quizPlayValidateStore } from '../stores/quizPlayStore.js';
+    import { diceShade } from '../services/boardMove.js';
     import { transcriptionCubeRequestStore, transcriptionBoardSwapStore } from '../stores/transcriptionStore.js';
     import { resetBoardPlay } from '../services/transcriptionPlay.js';
     import ContextMenu from './ContextMenu.svelte';
@@ -285,6 +286,8 @@
                 offeredCube: searchOfferedCubeStore,
                 anyModalOpen: isAnyModalOpen,
                 quizPlay: quizPlayStore,
+                // Non nul : le coup armé suit la grammaire d'ADR-0086.
+                quizPlayValidate: quizPlayValidateStore,
                 // Transcription : le plateau pose la demande, le panneau décide.
                 transcriptionCube: transcriptionCubeRequestStore
             },
@@ -355,7 +358,8 @@
         /** @type {MenuItem[]} */
         const items = [];
         // A play in progress (quiz, Transcription): its reset clears the play, not the position.
-        if (get(quizPlayStore)) {
+        // Under ADR-0086's grammar the right click on the board takes the play back instead.
+        if (get(quizPlayStore) && !get(quizPlayValidateStore)) {
             items.push({
                 label: $t('training.resetPlay'),
                 onClick: () => quizPlayStore.update((s) => (s ? resetBoardPlay(s, get(positionStore)) : s))
@@ -479,6 +483,8 @@
         let position = play ? { ...stored, board: play.board } : stored;
         // Duel : les dés dans l'ordre où le joueur les a rangés (le premier est celui qu'un clic joue).
         if (get(duelHoldsBoardStore) && get(duelBoardStore).swapped) position = { ...position, dice: orderedDice(position.dice, true) };
+        // Grammaire d'ADR-0086 hors Duel : le jet du coup, dans l'ordre que le joueur a choisi.
+        else if (play && get(quizPlayValidateStore)) position = { ...position, dice: orderedDice(play.rolled ?? position.dice, !!play.swapped) };
         return displayIsMirrored(position) ? mirrorPosition(position) : position;
     }
 
@@ -517,12 +523,23 @@
     /** @param {boolean} mirrored */
     function playHighlights(mirrored) {
         const play = get(quizPlayStore);
-        if (!play) return {};
+        // La grammaire d'ADR-0086 n'allume aucune cible : le pion cliqué part aussitôt.
+        if (!play || get(quizPlayValidateStore)) return {};
         const shown = (/** @type {number} */ point) => screenOfModelPoint(point, mirrored);
         return {
             targets: [...$quizPlayTargetsStore].map(shown),
             selected: play.selected === null || play.selected === undefined ? null : shown(play.selected)
         };
+    }
+
+    // Les dés joués, grisés : en Duel, et pour tout coup armé selon la grammaire d'ADR-0086
+    // (demi-voile d'un double, dés gris d'un coup achevé). Le miroir ne change pas les dés.
+    /** @param {BoardPosition} position */
+    function playedDice(position) {
+        const play = get(quizPlayStore);
+        if (get(duelHoldsBoardStore)) return usedDice(play, position.dice);
+        if (play && get(quizPlayValidateStore)) return diceShade(play, position.dice);
+        return null;
     }
 
     // Flèches : la notation est dans la numérotation du camp au trait, donc
@@ -592,8 +609,7 @@
             showPipcount,
             play: playHighlights(mirrored),
             moves: selectedMoveArrows(flip),
-            // Duel : un dé joué est grisé.
-            diceUsed: get(duelHoldsBoardStore) ? usedDice(get(quizPlayStore), position.dice) : null
+            diceUsed: playedDice(position)
         });
 
         two.update();
