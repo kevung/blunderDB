@@ -86,6 +86,16 @@
   </branding>
 
   <releases>
+    <release version="0.39.0" date="2026-10-09">
+      <description>
+        <ul>
+          <li>Match video: attach a local file or a YouTube link to a match, watch it beside the board, and jump to any decision in it</li>
+          <li>Transcription follows the video: timestamps for every action, move durations, and a full-screen theatre mode with a floating mini-board</li>
+          <li>Match and tournament reviews: decisions to revisit, luck-adjusted result, error pace, and MWC loss per 7-point match with confidence intervals</li>
+          <li>Study tools: a study plan card, before/after-study effect and signed biases, suggested reference positions, and matches restorable from the trash</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.38.0" date="2026-10-06">
       <description>
         <ul>
