@@ -79,12 +79,21 @@ function resetAnalysisAndCommentStores() {
     searchEmptyStore.set(false);
 }
 
+// The backend closes the open database before trying another and leaves none open when the
+// attempt fails: nothing is open then, so the path, the title and the counter say so.
+function showNoDatabaseOpen() {
+    databasePathStore.set('');
+    WindowSetTitle('blunderDB');
+    refreshLibraryCounts();
+}
+
 function getMajorVersion(version) {
     return version.split('.')[0];
 }
 
 export async function newDatabase() {
     logger.log('newDatabase');
+    let setupFailed = false;
     try {
         const filePath = await SaveDatabaseDialog();
         if (filePath) {
@@ -99,9 +108,14 @@ export async function newDatabase() {
                 logger.log('No existing file to delete or error deleting file:', error);
             }
 
+            try {
+                await SetupDatabase(filePath);
+            } catch (error) {
+                setupFailed = true;
+                throw error;
+            }
             databasePathStore.set(filePath);
             logger.log('databasePathStore:', filePath);
-            await SetupDatabase(filePath);
             refreshLibraryCounts();
             setStatusBarMessage(tMsg('commands.dbCreated'));
             const filename = getFilenameFromPath(filePath);
@@ -120,6 +134,7 @@ export async function newDatabase() {
     } catch (error) {
         logger.error('Error opening file dialog:', error);
         setStatusBarMessage(tMsg('commands.errorCreatingDb'));
+        if (setupFailed) showNoDatabaseOpen();
     } finally {
         statusBarModeStore.set('NORMAL');
     }
@@ -173,17 +188,22 @@ export async function openDatabaseByPath(filePath) {
     // after restoreSessionState's microtasks and overwrite the EVAL/EDIT mode
     // it re-enters.
     statusBarModeStore.set('NORMAL');
+    let openFailed = false;
     try {
         resetAnalysisAndCommentStores();
         resetAnkiStores();
         resetTranscriptionStores();
 
         (await import('../stores/directionStore.js')).forgetDirection();
+        try {
+            await OpenDatabase(filePath);
+        } catch (error) {
+            openFailed = true;
+            throw error;
+        }
+        await SaveLastDatabasePath(filePath);
         databasePathStore.set(filePath);
         logger.log('databasePathStore:', filePath);
-
-        await SaveLastDatabasePath(filePath);
-        await OpenDatabase(filePath);
         refreshLibraryCounts();
 
         const dbVersion = await CheckDatabaseVersion();
@@ -220,6 +240,8 @@ export async function openDatabaseByPath(filePath) {
         logger.error('Error opening database:', error);
         setStatusBarMessage(tMsg('commands.errorOpeningDb'));
         statusBarModeStore.set('NORMAL');
+        // A failure after a successful open leaves the database open, and its path displayed.
+        if (openFailed) showNoDatabaseOpen();
     }
 }
 
