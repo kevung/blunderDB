@@ -162,7 +162,7 @@
         <section class="blunders-section">
             <h3 class="section-title">{$t('stats.topBlunders')}</h3>
             <ol class="blunders-list">
-                {#each result.TopBlunders as entry, i (entry.PositionID)}
+                {#each result.TopBlunders as entry, i (`${entry.MatchID}-${entry.PositionID}-${i}`)}
                     <li class="blunder-item">
                         <button
                             class="blunder-main"
