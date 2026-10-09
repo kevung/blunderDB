@@ -736,7 +736,7 @@ export function playDecisionNotation(text) {
     const steps = stepsFromNotation(text, state.mover);
     if (steps.length === 0) return 'empty';
     const { state: next, all } = playStepsInAnyOrder(resetPlay(state, question.position), steps);
-    quizPlayStore.set(next);
+    quizPlayStore.set({ ...next, swapped: !!state.swapped });
     return all ? 'ok' : 'partial';
 }
 
