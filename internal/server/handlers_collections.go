@@ -11,9 +11,18 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
+// collectionCreateReq creates a collection, living when FilterQuery is set.
 type collectionCreateReq struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
+	FilterQuery string `json:"filterQuery,omitempty"`
+}
+
+// collectionEvaluateReq reads a collection whole, at most Limit ids (bounded
+// by storage.LivingCollectionCap; zero asks for the ceiling).
+type collectionEvaluateReq struct {
+	ID    int64 `json:"id"`
+	Limit int   `json:"limit"`
 }
 
 type collectionUpdateReq struct {
@@ -80,7 +89,7 @@ func (s *Server) collectionRoutes() []route {
 		// Idempotent: Create has no natural dedup key, so a retry would make a
 		// second, identically named collection.
 		{http.MethodPost, "/v1/collections.create", s.withIdempotency(rpc(func(ctx context.Context, scope string, req collectionCreateReq) (idResp, error) {
-			id, err := cs().Create(ctx, scope, req.Name, req.Description)
+			id, err := storage.CreateCollection(ctx, s.opts.Storage, scope, req.Name, req.Description, req.FilterQuery)
 			return idResp{ID: id}, err
 		}))},
 		// Les positions de référence proposées pour un filtre (ADR-0080) : rien
@@ -101,7 +110,12 @@ func (s *Server) collectionRoutes() []route {
 		// Collection VIVANTE : la route pose la requête, le client la réévalue
 		// à chaque ouverture.
 		{http.MethodPost, "/v1/collections.setFilter", rpcVoid(func(ctx context.Context, scope string, req collectionFilterReq) error {
-			return cs().SetFilterQuery(ctx, scope, req.ID, req.Query)
+			return storage.SetCollectionFilter(ctx, s.opts.Storage, scope, req.ID, req.Query)
+		})},
+		// La collection lue entière sous le plafond déclaré : le total vrai et
+		// le drapeau truncated accompagnent toujours les ids.
+		{http.MethodPost, "/v1/collections.evaluate", rpc(func(ctx context.Context, scope string, req collectionEvaluateReq) (*storage.CollectionEvaluation, error) {
+			return storage.EvaluateCollection(ctx, s.opts.Storage, scope, req.ID, req.Limit)
 		})},
 		// Figer : la requête cesse de commander, ses positions d'aujourd'hui
 		// deviennent l'appartenance.
