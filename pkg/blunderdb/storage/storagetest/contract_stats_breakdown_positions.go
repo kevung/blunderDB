@@ -27,7 +27,29 @@ func testStatsBreakdownPositions(t *testing.T, s storage.Storage) {
 		t.Fatalf("Save settings: %v", err)
 	}
 
-	filter := storage.StatsFilter{DecisionType: -1}
+	// The figure must equal the list under every filter, not only the open
+	// one: the player and the decision type narrow the decisions a position
+	// is counted for.
+	for name, filter := range map[string]storage.StatsFilter{
+		"no filter":       {DecisionType: -1},
+		"player":          {DecisionType: -1, PlayerName: "Alice"},
+		"decision type":   {DecisionType: 0},
+		"player and type": {DecisionType: 0, PlayerName: "Bob"},
+		"other decision":  {DecisionType: 1},
+	} {
+		t.Run(name, func(t *testing.T) { checkBreakdownPositions(t, s, filter, name != "other decision") })
+	}
+
+	// A row the selection does not hold loads nothing.
+	ids, err := s.Stats().PositionIDsBySelection(ctx, "", storage.StatsFilter{DecisionType: -1}, storage.SelectionSpec{
+		Kind: "breakdown", Breakdown: storage.BreakdownTag, BreakdownKey: "#absent"})
+	if err != nil || len(ids) != 0 {
+		t.Errorf("an absent tag loads %v (err %v), want nothing", ids, err)
+	}
+}
+
+func checkBreakdownPositions(t *testing.T, s storage.Storage, filter storage.StatsFilter, wantRows bool) {
+	ctx := context.Background()
 	res, err := s.Stats().Compute(ctx, "", filter)
 	if err != nil {
 		t.Fatalf("Compute: %v", err)
@@ -59,7 +81,10 @@ func testStatsBreakdownPositions(t *testing.T, s storage.Storage) {
 		rows = append(rows, row{storage.BreakdownScore, key, c.NumDecisions, c.BlunderCount})
 	}
 	if len(rows) == 0 {
-		t.Fatal("the breakdowns are empty though decisions were counted")
+		if wantRows {
+			t.Fatal("the breakdowns are empty though decisions were counted")
+		}
+		return
 	}
 
 	sawDuplicate := false
@@ -91,14 +116,7 @@ func testStatsBreakdownPositions(t *testing.T, s storage.Storage) {
 			sawDuplicate = true
 		}
 	}
-	if !sawDuplicate {
+	if !sawDuplicate && filter.PlayerName == "" && filter.DecisionType == -1 {
 		t.Error("no row counts fewer positions than decisions, though each position was played twice")
-	}
-
-	// A row the selection does not hold loads nothing.
-	ids, err := s.Stats().PositionIDsBySelection(ctx, "", filter, storage.SelectionSpec{
-		Kind: "breakdown", Breakdown: storage.BreakdownTag, BreakdownKey: "#absent"})
-	if err != nil || len(ids) != 0 {
-		t.Errorf("an absent tag loads %v (err %v), want nothing", ids, err)
 	}
 }
