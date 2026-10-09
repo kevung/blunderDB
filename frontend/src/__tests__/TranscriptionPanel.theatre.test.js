@@ -141,11 +141,37 @@ describe('the theatre of the transcription', () => {
         await openedPanel();
         await openFromMenu();
         expect(get(theatreStore)).toBe(true);
-        expect(theatre()?.contains(dock())).toBe(true);
         expect(dock().dataset.placement).toBe('theatre');
+        expect(dock().classList.contains('in-theatre')).toBe(true);
         expect(document.querySelector('[data-testid="theatre-board"] svg')).not.toBeNull();
         // The dock's own buttons stay out of the theatre: it has its own way out.
         expect(document.querySelector('[data-testid="video-placement"]')).toBeNull();
+    });
+
+    test('the player is not moved by entering or leaving: same dock, same pane, so the instant and the play state stay', async () => {
+        await openedPanel();
+        const before = dock();
+        const pane = before.querySelector('[data-testid="video-pane"]');
+        const parent = before.parentNode;
+        await enterTheatre();
+        await settle();
+        expect(dock()).toBe(before);
+        expect(before.parentNode).toBe(parent);
+        expect(before.querySelector('[data-testid="video-pane"]')).toBe(pane);
+        handleEscapeCapture(key('Escape'));
+        await settle();
+        expect(dock()).toBe(before);
+        expect(before.parentNode).toBe(parent);
+        expect(before.querySelector('[data-testid="video-pane"]')).toBe(pane);
+    });
+
+    test('the dock’s buttons sit in a bar above the image, not over the video', async () => {
+        await openedPanel();
+        const bar = dock().querySelector('.video-dock-bar');
+        expect(bar).not.toBeNull();
+        expect(bar?.contains(document.querySelector('[data-testid="video-theatre"]'))).toBe(true);
+        expect(bar?.contains(document.querySelector('[data-testid="video-placement"]'))).toBe(true);
+        expect(dock().querySelector('[data-testid="video-pane"] [data-testid="video-placement"]')).toBeNull();
     });
 
     test('the button on the video opens it too, without taking the focus', async () => {

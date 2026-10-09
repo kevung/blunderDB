@@ -169,6 +169,7 @@
     .theatre-board-tab {
         position: absolute;
         z-index: 2;
+        pointer-events: auto;
         color: var(--color-text);
         background: var(--color-surface);
         border: 1px solid var(--color-border);
