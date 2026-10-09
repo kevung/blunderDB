@@ -95,9 +95,11 @@ type trashRestoreResp struct {
 	Warnings []trashWarning `json:"warnings,omitempty"`
 }
 
-// trashWarning is domain.TrashWarning. Code is stable ("direction_slot_taken":
-// the match's Direction Slot is filled by another match, and the match came
-// back without it); Message says it in English.
+// trashWarning is domain.TrashWarning. Code is stable — "direction_slot_taken":
+// the match's Direction Slot is filled by another match; "direction_slot_gone":
+// the Slot left its Direction or pairs other players; "tournament_gone": the
+// match's tournament was deleted. In each case the match came back without
+// what the code names. Message says it in English.
 type trashWarning struct {
 	Code    string `json:"code"`
 	Message string `json:"message"`

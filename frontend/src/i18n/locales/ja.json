@@ -1957,6 +1957,8 @@
         "kindMatch": "マッチ",
         "restored": "復元しました：{what}",
         "restoredSlotTaken": "復元しました: {what} — ディレクションの枠は別のマッチが使用中のため、枠なしで戻しました",
+        "restoredSlotGone": "復元しました: {what} — ディレクションの枠がなくなったか別の対戦になったため、枠なしで戻しました",
+        "restoredTournamentGone": "復元しました: {what} — 大会が削除されたため、大会なしで戻しました",
         "restoreFailed": "復元できませんでした：{error}"
     },
     "tags": {

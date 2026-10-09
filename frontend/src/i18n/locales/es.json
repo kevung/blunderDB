@@ -1957,6 +1957,8 @@
         "kindMatch": "Partido",
         "restored": "Restaurado: {what}",
         "restoredSlotTaken": "Restaurado: {what} — su plaza de Dirección la ocupa otro match, vuelve sin ella",
+        "restoredSlotGone": "Restaurado: {what} — su plaza de Dirección ya no existe o enfrenta a otros jugadores, vuelve sin ella",
+        "restoredTournamentGone": "Restaurado: {what} — su torneo fue eliminado, vuelve fuera de todo torneo",
         "restoreFailed": "No se pudo restaurar: {error}"
     },
     "tags": {

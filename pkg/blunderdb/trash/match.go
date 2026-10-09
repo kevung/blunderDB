@@ -7,6 +7,9 @@ import (
 	"fmt"
 	"slices"
 
+	tournoi "github.com/PileOfCells/backgammon-tournoi"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -23,7 +26,7 @@ var ErrMatchPresent = errors.New("trash: the match is in the database again")
 // plain delete; the snapshot is what lets them come back.
 func Match(ctx context.Context, s storage.Stores, scope string, matchID int64) (int64, error) {
 	var id int64
-	err := inTx(ctx, s, func(s storage.Stores) error {
+	err := inTx(ctx, s, scope, func(s storage.Stores) error {
 		payload, err := snapshotMatch(ctx, s, scope, matchID)
 		if err != nil {
 			return err
@@ -104,8 +107,15 @@ func snapshotMatch(ctx context.Context, s storage.Stores, scope string, matchID 
 			i++
 		}
 	}
-	if _, p.DirectionSlot, err = s.Directions().SlotOf(ctx, scope, matchID); err != nil {
+	slotTournament, slot, err := s.Directions().SlotOf(ctx, scope, matchID)
+	if err != nil {
 		return nil, err
+	}
+	if slot != "" {
+		p.DirectionSlot = slot
+		if p.DirectionPair, _, err = slotPair(ctx, s, scope, slotTournament, slot); err != nil {
+			return nil, err
+		}
 	}
 	switch o, err := s.Duels().Origin(ctx, scope, matchID); {
 	case err == nil:
@@ -138,15 +148,16 @@ func snapshotMatch(ctx context.Context, s storage.Stores, scope string, matchID 
 // holds each one. Only a position the delete purged gets its analysis and
 // comments back; one that stayed held kept them, edits included. What the match was attached to — its tournament,
 // its import batch, the drafts that produced it — is attached again only
-// where it still exists. Its Direction Slot is the director's: taken since,
-// the match comes back without it, and the result warns.
+// where it still exists, and a Tournament gone since is warned of. Its
+// Direction Slot is the director's: taken, gone or re-paired since, the match
+// comes back without it, and the result warns.
 func restoreMatch(ctx context.Context, s storage.Stores, scope string, entry *domain.TrashEntry) (domain.TrashRestore, error) {
 	var p domain.TrashMatchPayload
 	if err := json.Unmarshal(entry.Payload, &p); err != nil {
 		return domain.TrashRestore{}, fmt.Errorf("trash entry %d: %w", entry.ID, err)
 	}
 	var res domain.TrashRestore
-	err := inTx(ctx, s, func(s storage.Stores) error {
+	err := inTx(ctx, s, scope, func(s storage.Stores) error {
 		id, warnings, err := rebuildMatch(ctx, s, scope, &p)
 		if err != nil {
 			return err
@@ -181,12 +192,15 @@ func rebuildMatch(ctx context.Context, s storage.Stores, scope string, p *domain
 		positions[pp.Position.ID] = newID
 	}
 
+	var warnings []domain.TrashWarning
 	m := p.Match
 	if m.TournamentID != nil {
 		if _, err := s.Tournaments().Get(ctx, scope, *m.TournamentID); err != nil {
 			if !errors.Is(err, storage.ErrNotFound) {
 				return 0, nil, err
 			}
+			warnings = append(warnings, domain.TrashWarning{Code: domain.TrashWarnTournamentGone,
+				Message: fmt.Sprintf("tournament %d was deleted; the match is restored outside any tournament", *m.TournamentID)})
 			m.TournamentID = nil
 		}
 	}
@@ -212,10 +226,10 @@ func rebuildMatch(ctx context.Context, s storage.Stores, scope string, p *domain
 			return 0, nil, err
 		}
 	}
-	if m.LastVisitedPosition != 0 {
-		if err := ms.SetLastVisitedPosition(ctx, scope, matchID, m.LastVisitedPosition); err != nil {
-			return 0, nil, err
-		}
+	// Always written: 0 is the first position, and the column's own default
+	// (-1, never visited) is a value the snapshot carries as well.
+	if err := ms.SetLastVisitedPosition(ctx, scope, matchID, m.LastVisitedPosition); err != nil {
+		return 0, nil, err
 	}
 
 	games := make(map[int64]int64, len(p.Games))
@@ -266,15 +280,19 @@ func rebuildMatch(ctx context.Context, s storage.Stores, scope string, p *domain
 			return 0, nil, err
 		}
 	}
-	var warnings []domain.TrashWarning
 	if p.DirectionSlot != "" && m.TournamentID != nil {
-		refilled, err := refillSlot(ctx, s, scope, *m.TournamentID, p.DirectionSlot, matchID)
+		code, err := refillSlot(ctx, s, scope, *m.TournamentID, p.DirectionSlot, p.DirectionPair, matchID)
 		if err != nil {
 			return 0, nil, err
 		}
-		if !refilled {
-			warnings = append(warnings, domain.TrashWarning{Code: domain.TrashWarnSlotTaken,
+		switch code {
+		case domain.TrashWarnSlotTaken:
+			warnings = append(warnings, domain.TrashWarning{Code: code,
 				Message: fmt.Sprintf("slot %s of tournament %d is filled by another match; the match is restored without it",
+					p.DirectionSlot, *m.TournamentID)})
+		case domain.TrashWarnSlotGone:
+			warnings = append(warnings, domain.TrashWarning{Code: code,
+				Message: fmt.Sprintf("slot %s of tournament %d no longer pairs these players; the match is restored without it",
 					p.DirectionSlot, *m.TournamentID)})
 		}
 	}
@@ -312,19 +330,51 @@ func rebuildMatch(ctx context.Context, s storage.Stores, scope string, p *domain
 }
 
 // refillSlot puts the match back in the Slot of a directed Tournament it
-// filled, unless another match fills it now: the Slot is the director's. It
-// reports whether the match has its Slot again.
-func refillSlot(ctx context.Context, s storage.Stores, scope string, tournamentID int64, slotID string, matchID int64) (bool, error) {
+// filled, when the Slot is still in the Direction, pairs the same players
+// (pair, when the snapshot recorded it) and no other match fills it: the Slot
+// is the director's. It returns "" when the match has its Slot again, the
+// warning code saying why not otherwise.
+func refillSlot(ctx context.Context, s storage.Stores, scope string, tournamentID int64, slotID string, pair [2]string, matchID int64) (string, error) {
+	current, ok, err := slotPair(ctx, s, scope, tournamentID, slotID)
+	if err != nil {
+		return "", err
+	}
+	if !ok || (pair != [2]string{} && current != pair) {
+		return domain.TrashWarnSlotGone, nil
+	}
 	filled, err := s.Directions().FilledSlots(ctx, scope, tournamentID)
 	if err != nil {
-		return false, err
+		return "", err
 	}
 	for _, f := range filled {
 		if f.SlotID == slotID {
-			return false, nil
+			return domain.TrashWarnSlotTaken, nil
 		}
 	}
-	return true, s.Directions().AttachSlot(ctx, scope, tournamentID, slotID, matchID)
+	return "", s.Directions().AttachSlot(ctx, scope, tournamentID, slotID, matchID)
+}
+
+// slotPair reads the two players a Slot of a directed Tournament pairs, by
+// their Direction ids, replaying the Direction as the direction service does.
+// It reports false when the Tournament is no longer directed or its Direction
+// has no such Slot.
+func slotPair(ctx context.Context, s storage.Stores, scope string, tournamentID int64, slotID string) ([2]string, bool, error) {
+	dir, err := direction.Open(ctx, storage.BindDirection(s.Directions(), scope), tournamentID)
+	if errors.Is(err, direction.ErrNoDirection) {
+		return [2]string{}, false, nil
+	}
+	if err != nil {
+		return [2]string{}, false, err
+	}
+	st := dir.State()
+	if st == nil {
+		return [2]string{}, false, nil
+	}
+	m := st.Matches[tournoi.MatchID(slotID)]
+	if m == nil {
+		return [2]string{}, false, nil
+	}
+	return [2]string{string(m.A), string(m.B)}, true, nil
 }
 
 // placeInTournament puts matchID back at index among its tournament's matches.
@@ -349,12 +399,21 @@ type txBeginner interface {
 }
 
 // inTx runs fn in a transaction when s can open one, directly on s otherwise.
-func inTx(ctx context.Context, s storage.Stores, fn func(storage.Stores) error) error {
+// The transaction is guarded when the backend can guard it: fn reads, then
+// writes, and a deferred SQLite transaction that read first would fail with
+// SQLITE_BUSY at its first write when another connection wrote meanwhile.
+func inTx(ctx context.Context, s storage.Stores, scope string, fn func(storage.Stores) error) error {
 	b, ok := s.(txBeginner)
 	if !ok {
 		return fn(s)
 	}
-	tx, err := b.BeginTx(ctx)
+	var tx storage.Tx
+	var err error
+	if g, ok := s.(storage.GuardedBeginner); ok {
+		tx, err = g.BeginGuardedTx(ctx, "trash:"+scope)
+	} else {
+		tx, err = b.BeginTx(ctx)
+	}
 	if err != nil {
 		return err
 	}

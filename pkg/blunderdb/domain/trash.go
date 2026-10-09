@@ -122,6 +122,10 @@ type TrashMatchPayload struct {
 	// DirectionSlot is the Slot of its directed Tournament the match filled,
 	// "" for none.
 	DirectionSlot string `json:"directionSlot,omitempty"`
+	// DirectionPair is the two players the Slot paired at delete time, by
+	// their Direction ids: a Slot re-paired since is another match, and the
+	// restore does not fill it.
+	DirectionPair [2]string `json:"directionPair,omitzero"`
 	// TranscriptionIDs are the drafts that had produced this match; the
 	// delete leaves them unsaved, a restore ties them to it again.
 	TranscriptionIDs []int64 `json:"transcriptionIds,omitempty"`
@@ -148,6 +152,15 @@ type TrashWarning struct {
 // and another match fills it now. The Slot is the director's; the match comes
 // back in its Tournament without it.
 const TrashWarnSlotTaken = "direction_slot_taken"
+
+// TrashWarnSlotGone: the Slot the match filled is no longer in its
+// Tournament's Direction, or pairs other players now. The match comes back in
+// its Tournament without it.
+const TrashWarnSlotGone = "direction_slot_gone"
+
+// TrashWarnTournamentGone: the match's Tournament was deleted meanwhile. The
+// match comes back outside any Tournament, so without its place or Slot.
+const TrashWarnTournamentGone = "tournament_gone"
 
 // TrashRetentionDays is how long a deleted thing stays recoverable.
 // `blunderdb vacuum` drops what is older; nothing purges on open.

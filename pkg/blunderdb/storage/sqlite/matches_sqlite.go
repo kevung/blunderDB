@@ -183,11 +183,17 @@ var matchReinstateSQL = strings.Replace(strings.Replace(matchInsertSQL,
 	"VALUES (", "VALUES (?, COALESCE(?, CURRENT_TIMESTAMP), ", 1)
 
 // Reinstate stores m under its own id and import date — see
-// storage.MatchStore. AUTOINCREMENT never issues an id twice, and an explicit
-// id above its counter raises the counter, so nothing collides later.
+// storage.MatchStore. AUTOINCREMENT never issues an id twice, and only an id
+// it issued is taken back, so nothing collides later.
 func (s *matchStore) Reinstate(ctx context.Context, scope string, m *domain.Match) error {
 	if m.ID <= 0 {
 		return fmt.Errorf("sqlite: reinstate match: id %d: %w", m.ID, storage.ErrInvalid)
+	}
+	switch ok, err := checkIssued(ctx, s.db, "match", m.ID); {
+	case err != nil:
+		return fmt.Errorf("sqlite: reinstate match %d: %w", m.ID, err)
+	case !ok:
+		return fmt.Errorf("sqlite: reinstate match: id %d was never issued: %w", m.ID, storage.ErrInvalid)
 	}
 	var importDate any
 	if !m.ImportDate.IsZero() {

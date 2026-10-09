@@ -175,34 +175,7 @@ func testTrashMatchRestores(t *testing.T, s storage.Storage) {
 	if err := s.Duels().SetOrigin(ctx, "", &storage.MatchOrigin{MatchID: matchID, DiceSeed: "seed"}); err != nil {
 		t.Fatalf("SetOrigin: %v", err)
 	}
-	// What names the match or its purged position from outside its cascade.
-	if err := s.ImportBatches().SetStudied(ctx, "", orphan, true); err != nil {
-		t.Fatalf("SetStudied: %v", err)
-	}
-	markedAt, err := s.ImportBatches().StudyMark(ctx, "", orphan)
-	if err != nil || markedAt == 0 {
-		t.Fatalf("StudyMark = %d, %v", markedAt, err)
-	}
-	if _, err := s.Training().Save(ctx, "", storage.TrainingSession{Exercise: "decision",
-		Items: []storage.TrainingItem{{NumberType: "decision", Wrong: true, PositionID: &orphan}}}); err != nil {
-		t.Fatalf("Save training session: %v", err)
-	}
-	items, err := s.Training().ItemsOfPosition(ctx, "", orphan)
-	if err != nil || len(items) != 1 {
-		t.Fatalf("ItemsOfPosition = %v, %v", items, err)
-	}
-	batchID, err := s.ImportBatches().Begin(ctx, "", "m.xg", "xg")
-	if err != nil {
-		t.Fatalf("Begin batch: %v", err)
-	}
-	if err := s.ImportBatches().RecordFiles(ctx, "", batchID,
-		[]domain.ImportFileEntry{{Path: "m.xg", Outcome: domain.JournalNew, MatchID: matchID}}); err != nil {
-		t.Fatalf("RecordFiles: %v", err)
-	}
-	files, err := s.ImportBatches().FilesOfMatch(ctx, "", matchID)
-	if err != nil || len(files) != 1 {
-		t.Fatalf("FilesOfMatch = %v, %v", files, err)
-	}
+	markedAt, items, files := nameFromOutside(t, s, matchID, orphan)
 	wantStats, err := s.Stats().MatchStats(ctx, "", []int64{matchID})
 	if err != nil || len(wantStats) == 0 {
 		t.Fatalf("MatchStats before delete = %v, %v", wantStats, err)
@@ -286,14 +259,7 @@ func testTrashMatchRestores(t *testing.T, s storage.Storage) {
 	if _, err := s.Analyses().Load(ctx, "", restoredOrphan); err != nil {
 		t.Errorf("analysis of the purged position after restore: %v", err)
 	}
-	var notes []string
-	for c, err := range s.Comments().ByPosition(ctx, "", restoredOrphan) {
-		if err != nil {
-			t.Fatalf("ByPosition: %v", err)
-		}
-		notes = append(notes, string(c.Origin)+":"+c.Text)
-	}
-	if !reflect.DeepEqual(notes, []string{"xg:from the file"}) {
+	if notes := commentsOf(t, s, restoredOrphan, true); !reflect.DeepEqual(notes, []string{"xg:from the file"}) {
 		t.Errorf("comments of the purged position after restore = %v", notes)
 	}
 	if _, err := s.Trash().Load(ctx, "", entryID); !errors.Is(err, storage.ErrNotFound) {
@@ -303,14 +269,7 @@ func testTrashMatchRestores(t *testing.T, s storage.Storage) {
 	if d, err := s.Transcriptions().Get(ctx, "", draftID); err != nil || d.MatchID != matchID {
 		t.Errorf("draft after restore names match %v (%v), want %d", d, err, matchID)
 	}
-	var mine []string
-	for c, err := range s.Comments().ByPosition(ctx, "", held) {
-		if err != nil {
-			t.Fatalf("ByPosition: %v", err)
-		}
-		mine = append(mine, c.Text)
-	}
-	if !reflect.DeepEqual(mine, []string{"mine"}) {
+	if mine := commentsOf(t, s, held, false); !reflect.DeepEqual(mine, []string{"mine"}) {
 		t.Errorf("comments of the held position after restore = %v, want [mine]", mine)
 	}
 	var members []int64
@@ -329,9 +288,72 @@ func testTrashMatchRestores(t *testing.T, s storage.Storage) {
 		}
 	}
 
+	testTrashMatchRestoreRefused(t, s, newMatch, restored)
+}
+
+// commentsOf lists the texts of positionID's comments, each prefixed by its
+// origin when withOrigin.
+func commentsOf(t *testing.T, s storage.Storage, positionID int64, withOrigin bool) []string {
+	t.Helper()
+	var out []string
+	for c, err := range s.Comments().ByPosition(context.Background(), "", positionID) {
+		if err != nil {
+			t.Fatalf("ByPosition: %v", err)
+		}
+		if withOrigin {
+			out = append(out, string(c.Origin)+":"+c.Text)
+		} else {
+			out = append(out, c.Text)
+		}
+	}
+	return out
+}
+
+// nameFromOutside ties the match and its purged position to what names them
+// from outside the match's cascade — a study mark, a training answer, a line
+// of the import journal — and returns them as the restore must give them back.
+func nameFromOutside(t *testing.T, s storage.Storage, matchID, orphan int64) (int64, []int64, []int64) {
+	t.Helper()
+	ctx := context.Background()
+	if err := s.ImportBatches().SetStudied(ctx, "", orphan, true); err != nil {
+		t.Fatalf("SetStudied: %v", err)
+	}
+	markedAt, err := s.ImportBatches().StudyMark(ctx, "", orphan)
+	if err != nil || markedAt == 0 {
+		t.Fatalf("StudyMark = %d, %v", markedAt, err)
+	}
+	if _, err := s.Training().Save(ctx, "", storage.TrainingSession{Exercise: "decision",
+		Items: []storage.TrainingItem{{NumberType: "decision", Wrong: true, PositionID: &orphan}}}); err != nil {
+		t.Fatalf("Save training session: %v", err)
+	}
+	items, err := s.Training().ItemsOfPosition(ctx, "", orphan)
+	if err != nil || len(items) != 1 {
+		t.Fatalf("ItemsOfPosition = %v, %v", items, err)
+	}
+	batchID, err := s.ImportBatches().Begin(ctx, "", "m.xg", "xg")
+	if err != nil {
+		t.Fatalf("Begin batch: %v", err)
+	}
+	if err := s.ImportBatches().RecordFiles(ctx, "", batchID,
+		[]domain.ImportFileEntry{{Path: "m.xg", Outcome: domain.JournalNew, MatchID: matchID}}); err != nil {
+		t.Fatalf("RecordFiles: %v", err)
+	}
+	files, err := s.ImportBatches().FilesOfMatch(ctx, "", matchID)
+	if err != nil || len(files) != 1 {
+		t.Fatalf("FilesOfMatch = %v, %v", files, err)
+	}
+	return markedAt, items, files
+}
+
+// testTrashMatchRestoreRefused: a match imported again meanwhile, or whose id
+// another match holds, is not restored over; the entry stays.
+func testTrashMatchRestoreRefused(t *testing.T, s storage.Storage, newMatch func(p1, p2, hash string) (int64, int64), restored int64) {
+	t.Helper()
+	ctx := context.Background()
+	ms := s.Matches()
 	// A match imported again meanwhile is not restored over: that would be a
 	// duplicate. The entry stays.
-	entryID, err = trash.Match(ctx, s, "", restored)
+	entryID, err := trash.Match(ctx, s, "", restored)
 	if err != nil {
 		t.Fatalf("trash.Match again: %v", err)
 	}
@@ -368,6 +390,9 @@ func testTrashMatchRestores(t *testing.T, s storage.Storage) {
 	if err := ms.Reinstate(ctx, "", &domain.Match{}); !errors.Is(err, storage.ErrInvalid) {
 		t.Errorf("Reinstate without an id: %v, want ErrInvalid", err)
 	}
+	if err := ms.Reinstate(ctx, "", &domain.Match{ID: third + 1000}); !errors.Is(err, storage.ErrInvalid) {
+		t.Errorf("Reinstate of an id never issued: %v, want ErrInvalid", err)
+	}
 }
 
 // testTrashMatchDirectionSlot: a match comes back in the Slot it filled when
@@ -375,11 +400,7 @@ func testTrashMatchRestores(t *testing.T, s storage.Storage) {
 func testTrashMatchDirectionSlot(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 	ds := s.Directions()
-	tid := newDirectedTournament(t, s, "Principal")
-	mid := newTournamentMatch(t, s, tid, "Anna", "Bruno")
-	if err := ds.AttachSlot(ctx, "", tid, "M1", mid); err != nil {
-		t.Fatalf("AttachSlot: %v", err)
-	}
+	svc, tid, slotID, mid := directedSlot(t, s, "Principal")
 
 	entry, err := trash.Match(ctx, s, "", mid)
 	if err != nil {
@@ -392,16 +413,16 @@ func testTrashMatchDirectionSlot(t *testing.T, s storage.Storage) {
 	if res.ID != mid || len(res.Warnings) != 0 {
 		t.Errorf("Restore with the Slot free = %+v, want id %d and no warning", res, mid)
 	}
-	if _, slot, err := ds.SlotOf(ctx, "", mid); err != nil || slot != "M1" {
-		t.Errorf("Slot after restore = %q, %v; want M1", slot, err)
+	if _, slot, err := ds.SlotOf(ctx, "", mid); err != nil || slot != slotID {
+		t.Errorf("Slot after restore = %q, %v; want %s", slot, err, slotID)
 	}
 
 	if entry, err = trash.Match(ctx, s, "", mid); err != nil {
 		t.Fatalf("trash.Match again: %v", err)
 	}
 	other := newTournamentMatch(t, s, tid, "Carl", "Dora")
-	if err := ds.AttachSlot(ctx, "", tid, "M1", other); err != nil {
-		t.Fatalf("AttachSlot of another match: %v", err)
+	if err := svc.AttachMatchToSlot(ctx, tid, slotID, other); err != nil {
+		t.Fatalf("AttachMatchToSlot of another match: %v", err)
 	}
 	res, err = trash.Restore(ctx, s, "", entry)
 	if err != nil {
@@ -413,8 +434,8 @@ func testTrashMatchDirectionSlot(t *testing.T, s storage.Storage) {
 	if _, slot, err := ds.SlotOf(ctx, "", mid); err != nil || slot != "" {
 		t.Errorf("Slot of the restored match = %q, %v; want none", slot, err)
 	}
-	if _, slot, err := ds.SlotOf(ctx, "", other); err != nil || slot != "M1" {
-		t.Errorf("Slot of the match that took it = %q, %v; want M1", slot, err)
+	if _, slot, err := ds.SlotOf(ctx, "", other); err != nil || slot != slotID {
+		t.Errorf("Slot of the match that took it = %q, %v; want %s", slot, err, slotID)
 	}
 	if m, err := s.Matches().Get(ctx, "", mid); err != nil || m.TournamentID == nil || *m.TournamentID != tid {
 		t.Errorf("restored match's tournament = %+v, %v; want %d", m, err, tid)
@@ -454,6 +475,24 @@ func testPositionReinstate(t *testing.T, s storage.Storage) {
 	stale.ID = id
 	if got, created, err := ps.Reinstate(ctx, "", &stale); err != nil || got != qid || created {
 		t.Errorf("Reinstate of a stored hash = %d, %v, %v; want %d, not created", got, created, err, qid)
+	}
+	// That row takes the marks the reinstated position carried, as
+	// SaveCreated gives them: a position the user brought stays held.
+	marked := provenancePos(42)
+	marked.ID = id
+	marked.IndividuallyImported, marked.Flagged = true, true
+	if _, _, err := ps.Reinstate(ctx, "", &marked); err != nil {
+		t.Fatalf("Reinstate of a marked stored hash: %v", err)
+	}
+	if got, err := ps.Load(ctx, "", qid); err != nil || !got.IndividuallyImported || !got.Flagged {
+		t.Errorf("stored row after a marked Reinstate = %+v, %v; want individually imported and flagged", got, err)
+	}
+
+	// An id the store never issued is refused, so a later Save cannot meet it.
+	unissued := provenancePos(44)
+	unissued.ID = qid + 1000
+	if _, _, err := ps.Reinstate(ctx, "", &unissued); !errors.Is(err, storage.ErrInvalid) {
+		t.Errorf("Reinstate of an id never issued: %v, want ErrInvalid", err)
 	}
 
 	// The id held by another position: refused, and the transaction goes on.

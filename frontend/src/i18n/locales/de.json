@@ -1957,6 +1957,8 @@
         "kindMatch": "Match",
         "restored": "Wiederhergestellt: {what}",
         "restoredSlotTaken": "Wiederhergestellt: {what} — sein Platz in der Turnierleitung ist von einem anderen Match belegt, es kehrt ohne ihn zurück",
+        "restoredSlotGone": "Wiederhergestellt: {what} — sein Platz in der Turnierleitung existiert nicht mehr oder paart andere Spieler, es kehrt ohne ihn zurück",
+        "restoredTournamentGone": "Wiederhergestellt: {what} — sein Turnier wurde gelöscht, es kehrt ohne Turnier zurück",
         "restoreFailed": "Wiederherstellung nicht möglich: {error}"
     },
     "tags": {

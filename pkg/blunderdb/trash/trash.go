@@ -5,8 +5,8 @@
 // (no search filter, statistic, retention predicate or uniqueness index).
 //
 // Restoring is NOT symmetric with deleting: a position is re-Saved, so Zobrist
-// deduplication decides where it lands — never a duplicate, never its old id
-// (AUTOINCREMENT does not reuse it).
+// deduplication decides where it lands — never a duplicate. It takes back its
+// old id when that id is free and the hash is not stored under another one.
 //
 // Everything here is written against storage.Stores, so the desktop wrapper,
 // the CLI and the daemon share one implementation.
@@ -202,15 +202,18 @@ func restorePosition(ctx context.Context, s storage.Stores, scope string, entry 
 
 // restorePositionPayload re-Saves a snapshotted position and puts back its
 // analysis and comments; see restorePosition. With onlyIfGone, a position the
-// database still holds is left as it is: it stayed in the library while the
-// snapshot waited, so a note edited or deleted since must not come back.
+// database still holds under its own id is left as it is: it stayed in the
+// library while the snapshot waited, so a note edited or deleted since must
+// not come back. A position that was purged and stored again since under
+// another id is a different case: it gets back what it lacks — its study mark,
+// its training answers, an analysis and notes — and keeps what it has.
 func restorePositionPayload(ctx context.Context, s storage.Stores, scope string, payload domain.TrashPositionPayload, onlyIfGone bool) (int64, error) {
 	pos := payload.Position
 	id, created, err := reinstatePosition(ctx, s, scope, &pos)
 	if err != nil {
 		return 0, err
 	}
-	if onlyIfGone && !created {
+	if onlyIfGone && !created && id == payload.Position.ID {
 		return id, nil
 	}
 	if payload.StudiedAt != 0 {

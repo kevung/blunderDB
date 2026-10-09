@@ -181,11 +181,17 @@ var positionReinstateSQL = strings.Replace(strings.Replace(strings.Replace(posit
 	"ON CONFLICT(zobrist_hash) DO NOTHING", "ON CONFLICT DO NOTHING", 1)
 
 // Reinstate stores p under its own id — see storage.PositionStore.
-// AUTOINCREMENT never issues an id twice, and an explicit id above its counter
-// raises the counter, so nothing collides later.
+// AUTOINCREMENT never issues an id twice, and only an id it issued is taken
+// back, so nothing collides later.
 func (s *positionStore) Reinstate(ctx context.Context, scope string, p *domain.Position) (int64, bool, error) {
 	if p.ID <= 0 {
 		return 0, false, fmt.Errorf("sqlite: reinstate position: id %d: %w", p.ID, storage.ErrInvalid)
+	}
+	switch ok, err := checkIssued(ctx, s.db, "position", p.ID); {
+	case err != nil:
+		return 0, false, fmt.Errorf("sqlite: reinstate position %d: %w", p.ID, err)
+	case !ok:
+		return 0, false, fmt.Errorf("sqlite: reinstate position: id %d was never issued: %w", p.ID, storage.ErrInvalid)
 	}
 	norm := p.NormalizeForStorage()
 	cols := engine.PopulatePositionColumns(p)
@@ -219,10 +225,32 @@ func (s *positionStore) Reinstate(ctx context.Context, scope string, p *domain.P
 		case err != nil:
 			return 0, false, fmt.Errorf("sqlite: reinstate position %d: %w", p.ID, err)
 		}
+		// The stored row is the position: it takes the marks the snapshot
+		// carries, as SaveCreated gives them, or a position the user brought
+		// would lose what keeps it from the orphan purge.
+		if err := s.raiseMarks(ctx, norm, int64(cols.ZobristHash)); err != nil {
+			return 0, false, fmt.Errorf("sqlite: reinstate position %d: %w", p.ID, err)
+		}
 	}
 	norm.ID = id
 	*p = norm
 	return id, affected > 0, nil
+}
+
+// raiseMarks ORs the individual-import and source-tool marks of p onto the
+// stored row of hash; a mark is raised, never lowered.
+func (s *positionStore) raiseMarks(ctx context.Context, p domain.Position, hash int64) error {
+	if p.IndividuallyImported {
+		if _, err := s.db.ExecContext(ctx, markIndividualSQL, hash); err != nil {
+			return fmt.Errorf("mark position individually imported: %w", err)
+		}
+	}
+	if p.Flagged {
+		if _, err := s.db.ExecContext(ctx, markFlaggedSQL, hash); err != nil {
+			return fmt.Errorf("mark position flagged: %w", err)
+		}
+	}
+	return nil
 }
 
 // RaiseFlag — see storage.PositionStore.

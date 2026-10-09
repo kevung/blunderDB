@@ -250,6 +250,19 @@ func (s *positionStore) Reinstate(ctx context.Context, scope string, p *domain.P
 		case err != nil:
 			return 0, false, fmt.Errorf("postgres: reinstate position %d: %w", p.ID, err)
 		}
+		// The stored row is the position: it takes the marks the snapshot
+		// carries, as SaveCreated gives them, or a position the user brought
+		// would lose what keeps it from the orphan purge.
+		if norm.IndividuallyImported {
+			if _, err := s.db.Exec(ctx, markIndividualSQL, tenant, int64(cols.ZobristHash)); err != nil {
+				return 0, false, fmt.Errorf("postgres: reinstate position %d: mark individually imported: %w", p.ID, err)
+			}
+		}
+		if norm.Flagged {
+			if _, err := s.db.Exec(ctx, markFlaggedSQL, tenant, int64(cols.ZobristHash)); err != nil {
+				return 0, false, fmt.Errorf("postgres: reinstate position %d: mark flagged: %w", p.ID, err)
+			}
+		}
 	case err != nil:
 		return 0, false, fmt.Errorf("postgres: reinstate position %d: %w", p.ID, err)
 	}

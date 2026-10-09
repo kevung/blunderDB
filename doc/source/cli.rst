@@ -2229,12 +2229,14 @@ restreint la liste à un type d'objet : ``position``, ``collection``,
    voir grossir. C'est ``trash delete`` qui garde l'annulation.
 
 Une restauration de position repasse par la déduplication Zobrist : elle ne
-crée jamais de doublon, mais elle ne rend pas son ancien identifiant — la ligne
-d'origine n'existe plus. Une position restaurée est la même position, sous un
-nouveau numéro. Un match restauré, lui, reprend son numéro d'origine, avec
-ses parties, ses coups, ses analyses et ses positions ; il est refusé si un
-autre match occupe ce numéro, ou si un match de même empreinte de fichier a
-été importé entre-temps.
+crée jamais de doublon. Une position restaurée reprend son ancien numéro ; si
+la même position a été enregistrée entre-temps, c'est celle-là qui est gardée,
+et elle reçoit ce qui lui manque. Un match restauré reprend lui aussi son
+numéro d'origine, avec ses parties, ses coups, ses analyses et ses positions ;
+il est refusé si un autre match occupe ce numéro, ou si un match de même
+empreinte de fichier a été importé entre-temps. Ce qu'une restauration réussie
+n'a pas pu remettre — une place de Direction prise ou disparue, un tournoi
+supprimé — est signalé par un avertissement.
 
 Ce qui a plus de trente jours est supprimé par ``blunderdb vacuum`` — jamais à
 l'ouverture d'une base.

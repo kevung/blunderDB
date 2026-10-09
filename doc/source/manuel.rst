@@ -961,8 +961,9 @@ Une position restaurée revient avec **son analyse et ses commentaires** — la
 rendre nue serait une restauration de nom seulement —, sa marque « étudiée »
 et les réponses d'entraînement données sur elle. Elle reprend son ancien
 numéro ; si la même position a été enregistrée entre-temps, c'est celle-là qui
-est gardée, car une position n'existe qu'une fois. Si son numéro est pris par
-une autre, elle en reçoit un nouveau. Une collection revient avec sa
+est gardée, car une position n'existe qu'une fois : elle reçoit la marque, les
+réponses et les commentaires qui lui manquent, et garde son analyse si elle en
+a une. Si son numéro est pris par une autre, elle en reçoit un nouveau. Une collection revient avec sa
 liste ; les positions qu'elle contenait, elles, n'avaient jamais été
 supprimées — une collection est une vue sur elles.
 
@@ -973,9 +974,10 @@ et sa date d'import d'origine, avec ses parties, ses coups et ses
 statistiques, et le journal de son import le nomme de nouveau ; les positions
 que la suppression avait purgées reviennent comme une position restaurée,
 celles restées dans la bibliothèque restent telles qu'elles sont devenues. Il
-reprend sa place dans son tournoi s'il existe encore, et sa place de Direction
-si elle est libre ; occupée depuis par un autre match, elle reste à celui-ci :
-le match revient sans elle, et la barre d'état le signale. La
+reprend sa place dans son tournoi ; si le tournoi a été supprimé, il revient
+hors tournoi. Il reprend sa place de Direction si elle existe encore, oppose
+les mêmes joueurs et est libre ; sinon elle reste au directeur et le match
+revient sans elle. Dans ces cas, la barre d'état le signale. La
 restauration est refusée, et l'entrée reste dans la corbeille, si un autre
 match occupe son numéro, ou si un match de même empreinte de fichier a été
 importé entre-temps ; un match sans empreinte, saisi ou joué dans blunderDB,

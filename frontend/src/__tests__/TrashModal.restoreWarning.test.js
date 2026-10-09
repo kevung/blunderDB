@@ -1,8 +1,9 @@
 /**
  * TrashModal.restoreWarning.test.js
  *
- * A restore that succeeded without the match's Direction slot says so in the
- * status bar; a plain restore keeps the plain message.
+ * A restore that succeeded without the match's Direction slot or tournament
+ * says so in the status bar; a plain restore keeps the plain message. A
+ * restored match reloads the match panel.
  */
 
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
@@ -33,6 +34,7 @@ import { RestoreFromTrash } from '../../wailsjs/go/database/Database.js';
 import { setStatusBarMessage } from '../services/databaseService.js';
 import { get } from 'svelte/store';
 import { t, tMsg } from '../i18n';
+import { dbMutationCounterStore, matchPanelRefreshTriggerStore } from '../stores/uiStore';
 
 async function restoreOnce(result) {
     RestoreFromTrash.mockResolvedValueOnce(result);
@@ -51,6 +53,24 @@ describe('TrashModal restore warnings', () => {
     test('a slot taken since is reported', async () => {
         const msg = await restoreOnce({ id: 7, warnings: [{ code: 'direction_slot_taken', message: 'x' }] });
         expect(msg).toEqual(tMsg('trash.restoredSlotTaken', { what: ENTRY.label }));
+    });
+
+    test('a slot gone since is reported', async () => {
+        const msg = await restoreOnce({ id: 7, warnings: [{ code: 'direction_slot_gone', message: 'x' }] });
+        expect(msg).toEqual(tMsg('trash.restoredSlotGone', { what: ENTRY.label }));
+    });
+
+    test('a tournament deleted since is reported', async () => {
+        const msg = await restoreOnce({ id: 7, warnings: [{ code: 'tournament_gone', message: 'x' }] });
+        expect(msg).toEqual(tMsg('trash.restoredTournamentGone', { what: ENTRY.label }));
+    });
+
+    test('a restored match reloads the match panel', async () => {
+        const panel = get(matchPanelRefreshTriggerStore);
+        const mutations = get(dbMutationCounterStore);
+        await restoreOnce({ id: 7 });
+        expect(get(matchPanelRefreshTriggerStore)).toBe(panel + 1);
+        expect(get(dbMutationCounterStore)).toBe(mutations + 1);
     });
 
     test('a plain restore says restored', async () => {

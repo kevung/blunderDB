@@ -1957,6 +1957,8 @@
         "kindMatch": "Match",
         "restored": "Restored: {what}",
         "restoredSlotTaken": "Restored: {what} — its Direction slot is taken by another match, so it came back without it",
+        "restoredSlotGone": "Restored: {what} — its Direction slot no longer exists or pairs other players, so it came back without it",
+        "restoredTournamentGone": "Restored: {what} — its tournament was deleted, so it came back outside any tournament",
         "restoreFailed": "Could not restore: {error}"
     },
     "tags": {
