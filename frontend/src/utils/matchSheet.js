@@ -1,33 +1,33 @@
 // What the match sheet shows at a glance and what it remembers: the final score
-// read from the games, and which of its folded sections the user left open.
-// The open state is a per-viewer convenience, so a storage that throws (private
-// window, blocked site data) only means every section starts folded.
+// read from the games, and which of its tabs the user left open. The tab is a
+// per-viewer convenience, so a storage that throws (private window, blocked
+// site data) only means the sheet opens on its transcript.
 
-const SECTION_KEY = 'blunderdb.matchSection.';
+/** The sheet's tabs, in the order of its tab bar. */
+/** @type {readonly string[]} */
+export const MATCH_TABS = ['transcript', 'charts', 'review', 'details', 'info', 'stats'];
+
+const TAB_KEY = 'blunderdb.matchTab';
 
 /**
- * Whether the user left a section of the match sheet open; folded by default.
- * @param {string} id
- * @returns {boolean}
+ * The tab the user left the sheet on; the transcript by default.
+ * @returns {string}
  */
-export function isSectionOpen(id) {
+export function rememberedTab() {
     try {
-        return globalThis.localStorage?.getItem(SECTION_KEY + id) === '1';
+        const id = globalThis.localStorage?.getItem(TAB_KEY);
+        return id && MATCH_TABS.includes(id) ? id : 'transcript';
     } catch {
-        return false;
+        return 'transcript';
     }
 }
 
-/**
- * @param {string} id
- * @param {boolean} open
- */
-export function rememberSectionOpen(id, open) {
+/** @param {string} id */
+export function rememberTab(id) {
     try {
-        if (open) globalThis.localStorage?.setItem(SECTION_KEY + id, '1');
-        else globalThis.localStorage?.removeItem(SECTION_KEY + id);
+        globalThis.localStorage?.setItem(TAB_KEY, id);
     } catch {
-        // Nothing to keep: the section folds again next time.
+        // Nothing to keep: the sheet opens on its transcript next time.
     }
 }
 

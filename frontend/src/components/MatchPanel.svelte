@@ -43,7 +43,8 @@
     import MatchReview from './MatchReview.svelte';
     import MatchReviewDetails from './MatchReviewDetails.svelte';
     import MatchDetailHeader from './MatchDetailHeader.svelte';
-    import MatchSection from './MatchSection.svelte';
+    import MatchReviewDecisions from './MatchReviewDecisions.svelte';
+    import { MATCH_TABS, rememberTab, rememberedTab } from '../utils/matchSheet.js';
     import MatchStatsTable from './MatchStatsTable.svelte';
     import { hasReview } from '../utils/matchReview.js';
     import MatchOrigin from './MatchOrigin.svelte';
@@ -574,6 +575,53 @@
     let clocks = $derived(cumulativeClocks(detailMovePositions));
     // A time cell is never blank: no decision, or one the Arbiter played alone, reads as a dash.
     let showLosses = $derived(/** @type {any[]} */ (detailLosses ?? []).some((d) => d.mwc_loss != null));
+
+    // The sheet's tabs: a tab with nothing to show is left out, and the sheet
+    // falls back to the transcript without forgetting the tab the user chose.
+    let chosenTab = $state(rememberedTab());
+    let tabs = $derived(
+        MATCH_TABS.filter((id) => {
+            if (id === 'charts') return showTimes || showLosses;
+            if (id === 'review') return hasReview(detailReview);
+            if (id === 'details') return hasReview(detailReview) || showLosses;
+            return true;
+        })
+    );
+    let currentTab = $derived(tabs.includes(chosenTab) ? chosenTab : 'transcript');
+    /** @type {Record<string, string>} */
+    const TAB_LABELS = { transcript: 'match.tabTranscript', charts: 'match.tabCharts', review: 'match.tabReview', details: 'match.tabDetails', info: 'match.info', stats: 'match.tabStats' };
+
+    /** @param {string} id */
+    function selectTab(id) {
+        chosenTab = id;
+        rememberTab(id);
+    }
+
+    /** @param {KeyboardEvent} e */
+    function onTabKey(e) {
+        const i = tabs.indexOf(currentTab);
+        const next =
+            e.key === 'ArrowRight'
+                ? tabs[(i + 1) % tabs.length]
+                : e.key === 'ArrowLeft'
+                  ? tabs[(i - 1 + tabs.length) % tabs.length]
+                  : e.key === 'Home'
+                    ? tabs[0]
+                    : e.key === 'End'
+                      ? tabs[tabs.length - 1]
+                      : null;
+        if (!next) return;
+        // The arrows walk the tabs here, not the match.
+        e.preventDefault();
+        e.stopPropagation();
+        selectTab(next);
+        tick().then(() => document.getElementById(`match-tab-${next}`)?.focus());
+    }
+
+    // The statistics are loaded when their tab is shown.
+    $effect(() => {
+        if (currentTab === 'stats') openStats();
+    });
     const orDash = (/** @type {string} */ text) => text || '—';
     // Under a Cadence the clock column shows the reserve left, replayed by the backend with the
     // Arbiter's own arithmetic; without one, the time used so far.
@@ -1210,6 +1258,10 @@
                     ondelete={(e) => deleteMatchEntry(detailMatch, e)}
                 />
 
+                {#if !loadingDetail}
+                    <MatchReview review={detailReview} player1={detailMatch.player1_name} player2={detailMatch.player2_name} />
+                {/if}
+
                 {#if videoOpen && videoKind === 'file'}
                     <!-- Folded to nothing while the video sits beside the board. -->
                     <div class="match-video-slot" class:empty={videoOnBoard}>
@@ -1217,27 +1269,28 @@
                     </div>
                 {/if}
 
-                <div class="transcript-container">
-                    {#if loadingDetail}
-                        <div class="loading-state">{$t('common.loading')}</div>
-                    {:else if transcriptGames.length === 0}
-                        <div class="empty-state">{$t('match.noMovesRecorded')}</div>
-                    {:else}
-                        <MatchReview review={detailReview} player1={detailMatch.player1_name} player2={detailMatch.player2_name} />
-                        <div class="match-charts">
-                            {#if detailTimes}
-                                <MatchTimes
-                                    summary={detailTimes}
-                                    movePositions={detailMovePositions}
-                                    player1={detailMatch.player1_name}
-                                    player2={detailMatch.player2_name}
-                                    hovered={hoveredMove}
-                                    onhover={(id) => (hoveredMove = id)}
-                                    onselect={jumpToMove}
-                                />
-                            {/if}
-                            <MatchLosses
-                                losses={detailLosses}
+                <div class="match-tabs" role="tablist" tabindex="-1" aria-label={$t('match.tabsLabel')} onkeydown={onTabKey}>
+                    {#each tabs as id (id)}
+                        <button
+                            class="detail-tab"
+                            class:active={id === currentTab}
+                            role="tab"
+                            id="match-tab-{id}"
+                            aria-selected={id === currentTab}
+                            aria-controls="match-tabpanel-{id}"
+                            tabindex={id === currentTab ? 0 : -1}
+                            data-testid="match-tab-{id}"
+                            onclick={() => selectTab(id)}>{$t(TAB_LABELS[id])}</button
+                        >
+                    {/each}
+                </div>
+
+                <!-- Every tab stays mounted: a tab shown again keeps its scroll and its open games. -->
+                <div class="tab-panel match-charts" role="tabpanel" id="match-tabpanel-charts" aria-labelledby="match-tab-charts" hidden={currentTab !== 'charts'}>
+                    {#if !loadingDetail}
+                        {#if detailTimes}
+                            <MatchTimes
+                                summary={detailTimes}
                                 movePositions={detailMovePositions}
                                 player1={detailMatch.player1_name}
                                 player2={detailMatch.player2_name}
@@ -1245,7 +1298,25 @@
                                 onhover={(id) => (hoveredMove = id)}
                                 onselect={jumpToMove}
                             />
-                        </div>
+                        {/if}
+                        <MatchLosses
+                            losses={detailLosses}
+                            movePositions={detailMovePositions}
+                            player1={detailMatch.player1_name}
+                            player2={detailMatch.player2_name}
+                            hovered={hoveredMove}
+                            onhover={(id) => (hoveredMove = id)}
+                            onselect={jumpToMove}
+                        />
+                    {/if}
+                </div>
+
+                <div class="tab-panel transcript-container" role="tabpanel" id="match-tabpanel-transcript" aria-labelledby="match-tab-transcript" hidden={currentTab !== 'transcript'}>
+                    {#if loadingDetail}
+                        <div class="loading-state">{$t('common.loading')}</div>
+                    {:else if transcriptGames.length === 0}
+                        <div class="empty-state">{$t('match.noMovesRecorded')}</div>
+                    {:else}
                         {#each transcriptGames as game (game.gameNumber)}
                             {@const isOpen = openGames.has(game.gameNumber)}
                             <details class="game-section" open={isOpen} ontoggle={(e) => setGameOpen(game.gameNumber, e.currentTarget.open)}>
@@ -1379,146 +1450,142 @@
                             </details>
                         {/each}
                     {/if}
-                    {#if hasReview(detailReview) || detailLosses?.some((d) => d.mwc_loss != null)}
-                        <MatchSection id="review" title={$t('matchReview.details')}>
-                            <MatchReviewDetails
-                                review={detailReview}
-                                losses={detailLosses}
-                                movePositions={detailMovePositions}
-                                player1={detailMatch.player1_name}
-                                player2={detailMatch.player2_name}
-                                onselect={jumpToMove}
-                            />
-                        </MatchSection>
-                    {/if}
-                    {#if detailOrigin}
-                        <MatchSection id="origin" title={$t('match.origin')}>
-                            <MatchOrigin origin={detailOrigin} player1={detailMatch.player1_name} player2={detailMatch.player2_name} />
-                        </MatchSection>
-                    {/if}
-                    <MatchSection id="info" title={$t('match.info')}>
-                        <div class="metadata-container">
-                            <table class="metadata-table">
-                                <tbody>
-                                    <tr><td class="meta-label">{$t('match.player1')}</td><td class="meta-value">{detailMatch.player1_name || '—'}</td></tr>
-                                    <tr><td class="meta-label">{$t('match.player2')}</td><td class="meta-value">{detailMatch.player2_name || '—'}</td></tr>
-                                    <tr
-                                        ><td class="meta-label">{$t('match.matchLength')}</td><td class="meta-value"
-                                            >{detailMatch.match_length > 1 ? $t('match.points', { n: detailMatch.match_length }) : $t('match.point', { n: detailMatch.match_length })}</td
+                </div>
+
+                <div class="tab-panel" role="tabpanel" id="match-tabpanel-review" aria-labelledby="match-tab-review" hidden={currentTab !== 'review'}>
+                    <MatchReviewDecisions review={detailReview} movePositions={detailMovePositions} player1={detailMatch.player1_name} player2={detailMatch.player2_name} onselect={jumpToMove} />
+                </div>
+
+                <div class="tab-panel" role="tabpanel" id="match-tabpanel-details" aria-labelledby="match-tab-details" hidden={currentTab !== 'details'}>
+                    <MatchReviewDetails review={detailReview} losses={detailLosses} movePositions={detailMovePositions} player1={detailMatch.player1_name} player2={detailMatch.player2_name} />
+                </div>
+
+                <div class="tab-panel" role="tabpanel" id="match-tabpanel-info" aria-labelledby="match-tab-info" hidden={currentTab !== 'info'}>
+                    <div class="metadata-container">
+                        <table class="metadata-table">
+                            <tbody>
+                                <tr><td class="meta-label">{$t('match.player1')}</td><td class="meta-value">{detailMatch.player1_name || '—'}</td></tr>
+                                <tr><td class="meta-label">{$t('match.player2')}</td><td class="meta-value">{detailMatch.player2_name || '—'}</td></tr>
+                                <tr
+                                    ><td class="meta-label">{$t('match.matchLength')}</td><td class="meta-value"
+                                        >{detailMatch.match_length > 1 ? $t('match.points', { n: detailMatch.match_length }) : $t('match.point', { n: detailMatch.match_length })}</td
+                                    ></tr
+                                >
+                                {#if cadenceInfo}
+                                    <tr data-testid="meta-cadence"
+                                        ><td class="meta-label">{$t('match.cadenceRow')}</td><td class="meta-value"
+                                            >{[cadenceInfo.name, $t('match.originDelay', { s: cadenceInfo.delay }), $t('match.timeOutRow', { what: cadenceInfo.timeOut })]
+                                                .filter(Boolean)
+                                                .join(', ')}</td
                                         ></tr
                                     >
-                                    {#if cadenceInfo}
-                                        <tr data-testid="meta-cadence"
-                                            ><td class="meta-label">{$t('match.cadenceRow')}</td><td class="meta-value"
-                                                >{[cadenceInfo.name, $t('match.originDelay', { s: cadenceInfo.delay }), $t('match.timeOutRow', { what: cadenceInfo.timeOut })]
-                                                    .filter(Boolean)
-                                                    .join(', ')}</td
-                                            ></tr
-                                        >
-                                        <tr data-testid="meta-bank"
-                                            ><td class="meta-label">{$t('match.bankRow')}</td><td class="meta-value"
-                                                >{cadenceInfo.bank ? $t('match.bankEach', { time: cadenceInfo.bank }) : '—'}{cadenceInfo.perPoint
-                                                    ? ' (' + $t('match.bankPerPoint', { s: cadenceInfo.perPoint }) + ')'
-                                                    : ''}</td
-                                            ></tr
-                                        >
-                                    {/if}
-                                    <tr><td class="meta-label">{$t('match.games')}</td><td class="meta-value">{detailMatch.game_count || detailGames.length || '—'}</td></tr>
-                                    <tr><td class="meta-label">{$t('match.date')}</td><td class="meta-value">{formatDate(detailMatch.match_date)}</td></tr>
-                                    <tr data-testid="meta-video">
-                                        <td class="meta-label">{$t('match.video')}</td>
-                                        <td class="meta-value">
-                                            <input
-                                                type="text"
-                                                class="match-video-input"
-                                                bind:value={videoDraft}
-                                                placeholder={$t('match.videoPlaceholder')}
-                                                onkeydown={(e) => {
-                                                    // Enter commits through the change event, once.
-                                                    if (e.key === 'Enter') {
-                                                        e.stopPropagation();
-                                                    } else if (e.key === 'Escape') {
-                                                        e.stopPropagation();
-                                                        videoDraft = videoSource;
-                                                    }
-                                                }}
-                                                onchange={() => saveVideoSource(videoDraft)}
-                                            />
-                                            <button class="detail-tab" onclick={pickVideoFile}>{$t('match.videoChoose')}</button>
-                                            {#if videoSource}<button class="detail-tab" data-testid="video-detach" onclick={() => saveVideoSource('')}>{$t('match.videoDetach')}</button>{/if}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="meta-label">{$t('match.comment')}</td>
-                                        <td class="meta-value">
-                                            {#if commentEdit.isEditing(detailMatch.id)}
-                                                <input type="text" class="match-comment-input" bind:value={commentEdit.draft} onkeydown={commentEdit.onKeyDown} onblur={commentEdit.onBlur} />
-                                            {:else}
-                                                <!-- svelte-ignore a11y_click_events_have_key_events -->
-                                                <!-- svelte-ignore a11y_no_static_element_interactions -->
-                                                <span class="match-comment-display" onclick={() => commentEdit.start(detailMatch.id, detailMatch.comment || '')} title={$t('match.clickToAddComment')}>
-                                                    {detailMatch.comment || $t('match.addComment')}
-                                                </span>
-                                                {#if detailMatch.comment && detailMatch.comment_author}
-                                                    <span class="match-comment-author">{detailMatch.comment_author}</span>
-                                                {/if}
-                                            {/if}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="meta-label">{$t('match.tournament')}</td>
-                                        <td
-                                            class="meta-value tournament-meta-cell"
-                                            onclick={(e) => {
-                                                e.stopPropagation();
-                                                ((e) => startEditTournament(detailMatch, e))(e);
+                                    <tr data-testid="meta-bank"
+                                        ><td class="meta-label">{$t('match.bankRow')}</td><td class="meta-value"
+                                            >{cadenceInfo.bank ? $t('match.bankEach', { time: cadenceInfo.bank }) : '—'}{cadenceInfo.perPoint
+                                                ? ' (' + $t('match.bankPerPoint', { s: cadenceInfo.perPoint }) + ')'
+                                                : ''}</td
+                                        ></tr
+                                    >
+                                {/if}
+                                <tr><td class="meta-label">{$t('match.games')}</td><td class="meta-value">{detailMatch.game_count || detailGames.length || '—'}</td></tr>
+                                <tr><td class="meta-label">{$t('match.date')}</td><td class="meta-value">{formatDate(detailMatch.match_date)}</td></tr>
+                                <tr data-testid="meta-video">
+                                    <td class="meta-label">{$t('match.video')}</td>
+                                    <td class="meta-value">
+                                        <input
+                                            type="text"
+                                            class="match-video-input"
+                                            bind:value={videoDraft}
+                                            placeholder={$t('match.videoPlaceholder')}
+                                            onkeydown={(e) => {
+                                                // Enter commits through the change event, once.
+                                                if (e.key === 'Enter') {
+                                                    e.stopPropagation();
+                                                } else if (e.key === 'Escape') {
+                                                    e.stopPropagation();
+                                                    videoDraft = videoSource;
+                                                }
                                             }}
-                                        >
-                                            {#if tournamentEdit.isEditing(detailMatch.id)}
-                                                <div class="tournament-cell-edit">
-                                                    <EntityAutocomplete
-                                                        bind:value={tournamentEdit.draft}
-                                                        items={tournaments}
-                                                        autofocus
-                                                        blurDelay={200}
-                                                        placeholder={$t('match.tournamentNamePlaceholder')}
-                                                        onSelect={selectTournamentOption}
-                                                        onSubmit={() => tournamentEdit.save()}
-                                                        onCancel={tournamentEdit.cancel}
-                                                        onDismiss={tournamentEdit.cancel}
-                                                    />
-                                                </div>
-                                            {:else}
-                                                <span class="tournament-display" title={$t('match.clickToEdit')}>{detailMatch.tournament_name || detailMatch.event || '—'}</span>
+                                            onchange={() => saveVideoSource(videoDraft)}
+                                        />
+                                        <button class="detail-tab" onclick={pickVideoFile}>{$t('match.videoChoose')}</button>
+                                        {#if videoSource}<button class="detail-tab" data-testid="video-detach" onclick={() => saveVideoSource('')}>{$t('match.videoDetach')}</button>{/if}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="meta-label">{$t('match.comment')}</td>
+                                    <td class="meta-value">
+                                        {#if commentEdit.isEditing(detailMatch.id)}
+                                            <input type="text" class="match-comment-input" bind:value={commentEdit.draft} onkeydown={commentEdit.onKeyDown} onblur={commentEdit.onBlur} />
+                                        {:else}
+                                            <!-- svelte-ignore a11y_click_events_have_key_events -->
+                                            <!-- svelte-ignore a11y_no_static_element_interactions -->
+                                            <span class="match-comment-display" onclick={() => commentEdit.start(detailMatch.id, detailMatch.comment || '')} title={$t('match.clickToAddComment')}>
+                                                {detailMatch.comment || $t('match.addComment')}
+                                            </span>
+                                            {#if detailMatch.comment && detailMatch.comment_author}
+                                                <span class="match-comment-author">{detailMatch.comment_author}</span>
                                             {/if}
-                                        </td>
-                                    </tr>
-                                    <tr><td class="meta-label">{$t('match.event')}</td><td class="meta-value">{detailMatch.event || '—'}</td></tr>
-                                    <tr><td class="meta-label">{$t('match.location')}</td><td class="meta-value">{detailMatch.location || '—'}</td></tr>
-                                    <tr><td class="meta-label">{$t('match.round')}</td><td class="meta-value">{detailMatch.round || '—'}</td></tr>
-                                    {#if detailMatch.player1_elo != null || detailMatch.player2_elo != null}
-                                        <tr><td class="meta-label">{$t('match.ratings')}</td><td class="meta-value">{formatRatings(detailMatch)}</td></tr>
-                                    {/if}
-                                    {#if detailMatch.transcriber}
-                                        <tr><td class="meta-label">{$t('match.transcriber')}</td><td class="meta-value">{detailMatch.transcriber}</td></tr>
-                                    {/if}
-                                    {#if detailMatch.match_length === 0 && (detailMatch.has_jacoby != null || detailMatch.has_beaver != null)}
-                                        <tr><td class="meta-label">{$t('match.sessionRules')}</td><td class="meta-value">{formatSessionRules(detailMatch)}</td></tr>
-                                    {/if}
-                                    {#if detailMatch.engine_version}
-                                        <tr><td class="meta-label">{$t('match.writtenBy')}</td><td class="meta-value">{detailMatch.engine_version}</td></tr>
-                                    {/if}
-                                    <tr><td class="meta-label">{$t('match.sourceFile')}</td><td class="meta-value source-file">{detailMatch.file_path || '—'}</td></tr>
-                                    <tr><td class="meta-label">{$t('match.importDate')}</td><td class="meta-value">{formatDate(detailMatch.import_date)}</td></tr>
-                                    <tr><td class="meta-label">{$t('match.matchId')}</td><td class="meta-value id-value">{detailMatch.id}</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </MatchSection>
+                                        {/if}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="meta-label">{$t('match.tournament')}</td>
+                                    <td
+                                        class="meta-value tournament-meta-cell"
+                                        onclick={(e) => {
+                                            e.stopPropagation();
+                                            ((e) => startEditTournament(detailMatch, e))(e);
+                                        }}
+                                    >
+                                        {#if tournamentEdit.isEditing(detailMatch.id)}
+                                            <div class="tournament-cell-edit">
+                                                <EntityAutocomplete
+                                                    bind:value={tournamentEdit.draft}
+                                                    items={tournaments}
+                                                    autofocus
+                                                    blurDelay={200}
+                                                    placeholder={$t('match.tournamentNamePlaceholder')}
+                                                    onSelect={selectTournamentOption}
+                                                    onSubmit={() => tournamentEdit.save()}
+                                                    onCancel={tournamentEdit.cancel}
+                                                    onDismiss={tournamentEdit.cancel}
+                                                />
+                                            </div>
+                                        {:else}
+                                            <span class="tournament-display" title={$t('match.clickToEdit')}>{detailMatch.tournament_name || detailMatch.event || '—'}</span>
+                                        {/if}
+                                    </td>
+                                </tr>
+                                <tr><td class="meta-label">{$t('match.event')}</td><td class="meta-value">{detailMatch.event || '—'}</td></tr>
+                                <tr><td class="meta-label">{$t('match.location')}</td><td class="meta-value">{detailMatch.location || '—'}</td></tr>
+                                <tr><td class="meta-label">{$t('match.round')}</td><td class="meta-value">{detailMatch.round || '—'}</td></tr>
+                                {#if detailMatch.player1_elo != null || detailMatch.player2_elo != null}
+                                    <tr><td class="meta-label">{$t('match.ratings')}</td><td class="meta-value">{formatRatings(detailMatch)}</td></tr>
+                                {/if}
+                                {#if detailMatch.transcriber}
+                                    <tr><td class="meta-label">{$t('match.transcriber')}</td><td class="meta-value">{detailMatch.transcriber}</td></tr>
+                                {/if}
+                                {#if detailMatch.match_length === 0 && (detailMatch.has_jacoby != null || detailMatch.has_beaver != null)}
+                                    <tr><td class="meta-label">{$t('match.sessionRules')}</td><td class="meta-value">{formatSessionRules(detailMatch)}</td></tr>
+                                {/if}
+                                {#if detailMatch.engine_version}
+                                    <tr><td class="meta-label">{$t('match.writtenBy')}</td><td class="meta-value">{detailMatch.engine_version}</td></tr>
+                                {/if}
+                                <tr><td class="meta-label">{$t('match.sourceFile')}</td><td class="meta-value source-file">{detailMatch.file_path || '—'}</td></tr>
+                                <tr><td class="meta-label">{$t('match.importDate')}</td><td class="meta-value">{formatDate(detailMatch.import_date)}</td></tr>
+                                <tr><td class="meta-label">{$t('match.matchId')}</td><td class="meta-value id-value">{detailMatch.id}</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    {#if detailOrigin}
+                        <h4 class="tab-heading">{$t('match.origin')}</h4>
+                        <MatchOrigin origin={detailOrigin} player1={detailMatch.player1_name} player2={detailMatch.player2_name} />
+                    {/if}
+                </div>
 
-                    <MatchSection id="stats" title={$t('match.stats')} onopen={openStats}>
-                        <MatchStatsTable stats={detailStats} loading={loadingStats} player1={detailMatch.player1_name} player2={detailMatch.player2_name} />
-                    </MatchSection>
+                <div class="tab-panel" role="tabpanel" id="match-tabpanel-stats" aria-labelledby="match-tab-stats" hidden={currentTab !== 'stats'}>
+                    <MatchStatsTable stats={detailStats} loading={loadingStats} player1={detailMatch.player1_name} player2={detailMatch.player2_name} />
                 </div>
             </div>
         {/if}
@@ -1546,9 +1613,29 @@
         aspect-ratio: auto;
         height: 0;
     }
-    .match-charts {
+    /* The tabs take what the header and the summary leave; only a tab scrolls. */
+    .match-tabs {
+        flex: 0 0 auto;
         display: flex;
-        flex-direction: column;
+        flex-wrap: wrap;
+        padding: 0 8px;
+        border-top: 1px solid var(--color-border);
+        border-bottom: 1px solid var(--color-border);
+    }
+    .match-tabs .detail-tab {
+        padding: 6px 12px;
+        font-size: var(--font-size-base);
+    }
+    .tab-panel {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+        text-align: left;
+    }
+    .tab-heading {
+        margin: 12px 8px 4px;
+        font-size: var(--font-size-base);
+        color: var(--color-text);
     }
     .match-panel {
         width: 100%;

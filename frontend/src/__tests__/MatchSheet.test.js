@@ -1,15 +1,14 @@
 /**
- * The match sheet at a glance: a summary per player above the charts, the
- * review's details folded below the transcript, sections that remember being
- * open, and a final score in the header.
+ * The match sheet at a glance: a summary per player above the tabs, the
+ * decisions to review and the review's details each in a tab, the tab the user
+ * left remembered, and a final score in the header.
  */
 import { describe, test, expect, vi, afterEach, beforeEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
-import { createRawSnippet, tick } from 'svelte';
 import MatchReview from '../components/MatchReview.svelte';
+import MatchReviewDecisions from '../components/MatchReviewDecisions.svelte';
 import MatchReviewDetails from '../components/MatchReviewDetails.svelte';
-import MatchSection from '../components/MatchSection.svelte';
-import { finalScore, isSectionOpen } from '../utils/matchSheet.js';
+import { finalScore, rememberTab, rememberedTab } from '../utils/matchSheet.js';
 
 const moves = [100, 101, 102, 103].map((id, i) => ({ move_id: id, player_on_roll: i % 2, game_number: 1, move_number: i + 1 }));
 const losses = moves.map((m, i) => ({ move_id: m.move_id, mwc_loss: [0.012, 0.034, 0, 0.021][i], difficulty: 0.002, avoidable: i === 1 }));
@@ -56,65 +55,49 @@ describe('the review details', () => {
         expect(mwc7.title).toContain('compare matches of different lengths');
     });
 
-    test('a decision to review shows it in the transcript', async () => {
-        const onselect = vi.fn();
-        const { getAllByTestId } = render(MatchReviewDetails, { review, losses, movePositions: moves, player1: 'Alice', player2: 'Bob', onselect });
-        await fireEvent.click(getAllByTestId('review-decision')[1]);
-        expect(onselect).toHaveBeenCalledWith(1);
-    });
-
     test('the loss and difficulty table is there, with each player total', () => {
         const { getByTestId } = render(MatchReviewDetails, { review, losses, movePositions: moves, player1: 'Alice', player2: 'Bob' });
         expect(getByTestId('loss-total-0').textContent).toBe('1.20 %');
         expect(getByTestId('ratio-1').textContent).toBe('12.50');
     });
+
+    test('the details leave the decisions to review to their own tab', () => {
+        const { container } = render(MatchReviewDetails, { review, losses, movePositions: moves, player1: 'Alice', player2: 'Bob' });
+        expect(container.querySelector('[data-testid="review-decision"]')).toBeNull();
+    });
 });
 
-describe('a folded section', () => {
-    const body = createRawSnippet(() => ({ render: () => '<p>inside</p>' }));
-
-    test('is folded by default, its content still in the page', () => {
-        const { getByTestId } = render(MatchSection, { id: 'review', title: 'Review details', children: body });
-        const section = /** @type {HTMLDetailsElement} */ (getByTestId('match-section-review'));
-        expect(section.open).toBe(false);
-        expect(section.textContent).toContain('inside');
+describe('the decisions to review', () => {
+    test('a decision to review shows it on the board', async () => {
+        const onselect = vi.fn();
+        const { getAllByTestId } = render(MatchReviewDecisions, { review, movePositions: moves, player1: 'Alice', player2: 'Bob', onselect });
+        await fireEvent.click(getAllByTestId('review-decision')[1]);
+        expect(onselect).toHaveBeenCalledWith(1);
     });
 
-    test('remembers being opened, and being folded again', async () => {
-        const first = render(MatchSection, { id: 'review', title: 'Review details', children: body });
-        const section = /** @type {HTMLDetailsElement} */ (first.getByTestId('match-section-review'));
-        section.open = true;
-        await fireEvent(section, new Event('toggle'));
-        expect(isSectionOpen('review')).toBe(true);
-        cleanup();
+    test('with the split of the errors by time', () => {
+        const { getAllByTestId } = render(MatchReviewDecisions, { review, movePositions: moves, player1: 'Alice', player2: 'Bob' });
+        expect(getAllByTestId('error-pace')).toHaveLength(2);
+    });
+});
 
-        const again = render(MatchSection, { id: 'review', title: 'Review details', children: body });
-        const reopened = /** @type {HTMLDetailsElement} */ (again.getByTestId('match-section-review'));
-        expect(reopened.open).toBe(true);
-        reopened.open = false;
-        await fireEvent(reopened, new Event('toggle'));
-        expect(isSectionOpen('review')).toBe(false);
+describe('the tab the sheet opens on', () => {
+    test('the transcript, until the user picks another tab', () => {
+        expect(rememberedTab()).toBe('transcript');
+        rememberTab('charts');
+        expect(rememberedTab()).toBe('charts');
     });
 
-    test('opening calls onopen, so a section loads what it shows on demand', async () => {
-        const onopen = vi.fn();
-        const { getByTestId } = render(MatchSection, { id: 'stats', title: 'Stats', onopen, children: body });
-        expect(onopen).not.toHaveBeenCalled();
-        const section = /** @type {HTMLDetailsElement} */ (getByTestId('match-section-stats'));
-        section.open = true;
-        await fireEvent(section, new Event('toggle'));
-        await tick();
-        expect(onopen).toHaveBeenCalledTimes(1);
-    });
-
-    test('a storage that throws only leaves the section folded', () => {
+    test('a stored name that is no tab, or a storage that throws, opens the transcript', () => {
+        localStorage.setItem('blunderdb.matchTab', 'gone');
+        expect(rememberedTab()).toBe('transcript');
         const denied = () => {
             throw new Error('denied');
         };
         vi.stubGlobal('localStorage', { getItem: denied, setItem: denied, removeItem: denied });
         try {
-            const { getByTestId } = render(MatchSection, { id: 'info', title: 'Info', children: body });
-            expect(/** @type {HTMLDetailsElement} */ (getByTestId('match-section-info')).open).toBe(false);
+            expect(() => rememberTab('stats')).not.toThrow();
+            expect(rememberedTab()).toBe('transcript');
         } finally {
             vi.unstubAllGlobals();
         }

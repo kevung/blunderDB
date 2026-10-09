@@ -1,9 +1,9 @@
 /**
  * match-mwc-chart.spec.js
  *
- * Fiche d'un match analysé : le graphique de la perte MWC par décision et son cumul, la
- * colonne MWC de la transcription, et le saut d'un clic sur une barre vers la ligne de la
- * transcription (la revue s'ouvre sur ce coup), dans les deux thèmes.
+ * Fiche d'un match analysé : la colonne MWC de la transcription, les totaux de l'onglet
+ * Détails, le graphique de la perte MWC par décision et son cumul (onglet Graphes), et le
+ * saut d'un clic sur une barre vers ce coup (la revue s'ouvre), dans les deux thèmes.
  */
 
 import { test, expect } from '@playwright/test';
@@ -33,11 +33,13 @@ for (const theme of ['light', 'dark']) {
         const panel = page.getByRole('region', { name: 'Match navigator' });
         await panel.getByRole('row', { name: /Alice/ }).getByRole('cell', { name: /Alice/ }).click();
 
-        const chart = panel.getByTestId('match-losses');
-        await expect(chart).toBeVisible();
+        await expect(panel.getByTestId('move-loss').first()).toHaveText('3.40 %');
+        await panel.getByRole('tab', { name: 'Details' }).click();
         await expect(panel.getByTestId('loss-total-0')).toHaveText('1.70 %');
         await expect(panel.getByTestId('loss-total-1')).toHaveText('5.50 %');
-        await expect(panel.getByTestId('move-loss').first()).toHaveText('3.40 %');
+        await panel.getByRole('tab', { name: 'Charts' }).click();
+        const chart = panel.getByTestId('match-losses');
+        await expect(chart).toBeVisible();
         await page.screenshot({ path: process.env.MWC_SHOT_DIR ? `${process.env.MWC_SHOT_DIR}/mwc-${theme}.png` : undefined });
 
         // Une barre du graphique : le pointeur survole la quatrième décision de six.
