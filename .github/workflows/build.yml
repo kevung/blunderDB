@@ -23,7 +23,7 @@ env:
   # dependencies require (1.26.0) because gammonGo embeds pkg/blunderdb/server
   # and inherits it. NODE_VERSION is an LTS line — 23 was an odd-numbered
   # release, out of support since 2025.
-  GO_VERSION: "1.27.1"
+  GO_VERSION: "1.27.2"
   NODE_VERSION: "22.22.2"
 
 # One in-flight run per branch/tag: a burst of 3 commits collapses to the
