@@ -143,7 +143,7 @@ test('the decision has the same three options plus a verdict, race or not', asyn
     // `margin-left: auto` from manufacturing a void across the middle.
     const stripThenRow = await page.locator('.eval-content').evaluate((el) => {
         const kids = [...el.children].map((c) => c.className);
-        return kids.findIndex((c) => c.includes('badges-strip')) < kids.findIndex((c) => c.includes('top-row'));
+        return kids.findIndex((c) => c.includes('panel-header')) < kids.findIndex((c) => c.includes('top-row'));
     });
     expect(stripThenRow).toBe(true);
 });

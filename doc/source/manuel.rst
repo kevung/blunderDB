@@ -1196,9 +1196,10 @@ filtré. Cocher un tournoi coche automatiquement (et grise) ses matchs membres
 dans la liste des matchs, rendant visible le fait qu'un tournoi équivaut à
 l'ensemble de ses matchs.
 
-Le panneau de recherche comporte trois onglets sur son bord gauche :
-*Critères* (les filtres), *Historique* et *Enregistrés* — et un quatrième,
-*Assistant*, quand l'assistant interne est activé. L'onglet
+La bande du panneau de recherche porte un sélecteur *Critères* (les filtres) |
+*Historique* | *Enregistrés* — avec un quatrième segment, *Assistant*, quand
+l'assistant interne est activé — et, sur *Critères*, le bouton **Rechercher**
+à son extrémité droite. L'onglet
 **Historique** liste les recherches passées avec leur date et leur commande :
 un clic sélectionne une recherche et affiche la position associée sur le
 plateau, un double-clic la ré-exécute. Chaque entrée peut être enregistrée
@@ -3712,10 +3713,12 @@ toujours présent, dés posés ou non, porte l'EPC, le pip count, le wastage,
 le nombre moyen de lancers et l'écart type ; ces cinq colonnes ne migrent
 jamais. Les deux tableaux sont empilés et partagent la même grille de
 colonnes : mêmes bords, mêmes repères de colonne, une seule colonne de
-pastilles — ils se lisent comme un seul objet à deux étages. Le bouton
-*Ajouter à la base*, le badge de régime, l'attribution du moteur (la
-profondeur de la dernière évaluation y figure aussi) et la case *Défi*
-forment une bande à part, alignée à droite au-dessus des tableaux.
+pastilles — ils se lisent comme un seul objet à deux étages. Au-dessus des
+tableaux, la bande d'en-tête porte le titre, le badge de régime et
+l'attribution du moteur (la profondeur de la dernière évaluation y figure
+aussi), puis, à droite, la case *Défi* et le bouton *Ajouter à la base*.
+Tant que gammonNet n'a rien rendu, le panneau le dit en une ligne :
+« Évaluation… », ou « Posez une position » sur un plateau vide.
 
 Seule la liste des coups candidats défile — la ligne *avant le jet*, elle
 aussi, reste épinglée au-dessus d'elle ; le reste du panneau (faits, badge,
@@ -4049,7 +4052,7 @@ défaut à tout moment. Rien n'est enregistré dans la base au passage — le
 brouillon n'a pas d'identité de position, et son évaluation est recalculée à
 l'arrivée plutôt que transportée.
 
-**Mode défi.** La case *Défi*, dans la bande de badges, active un mode
+**Mode défi.** La case *Défi*, dans la bande d'en-tête, active un mode
 entraînement : à chaque modification de la position, les valeurs de trois
 zones sont masquées (remplacées par « ··· ») ; un clic sur une zone révèle
 cette zone seulement. Sans dés, ce sont la ligne du joueur du bas, la ligne
@@ -4405,7 +4408,7 @@ Au repos, le panneau montre le lanceur et le bilan des sessions passées.
 Le lanceur
 ~~~~~~~~~~
 
-Trois choix, puis « Démarrer » :
+Trois réglages, un par ligne ; « Démarrer » est au bout de la bande d'en-tête :
 
 * l'**exercice** — *Scores*, *Comptage des pips*, *Bearoff*, *Évaluation* ou *Décision* ;
 * la **source** de la question, quand l'exercice en a plusieurs — *Vivier*
@@ -4432,8 +4435,8 @@ affiche une **fiche de score** : deux colonnes — *Vous* et *L'adversaire* — 
 sept lignes — le point de prise au videau 2 puis au videau 4, chacun en course
 longue et au dernier lancer, puis la valeur du gammon aux videaux 1, 2 et 4.
 
-Une ligne de consigne rappelle le geste — estimer chaque nombre de tête, puis
-*Révéler*, puis cliquer ceux qu'on a ratés —, et le plateau montre le score
+L'infobulle de « Révéler » rappelle le geste — estimer chaque nombre de tête,
+puis *Révéler*, puis cliquer ceux qu'on a ratés —, et le plateau montre le score
 tiré sur une table vide.
 
 Chaque colonne ne porte que les cases que les tables de référence — celles
@@ -4580,8 +4583,11 @@ coup, et n'entre pas dans le PR de la session.
 
 « Suivante » enregistre la question et en pose une autre. La session n'a pas de
 longueur fixée : elle dure jusqu'à « Terminer », qui l'écrit au journal, ou
-« Quitter », qui la jette. Tous les boutons sont dans le panneau ; le plateau
-montre la question et sa réponse, il ne porte aucune commande.
+« Quitter », qui la jette. Tous les boutons sont dans la bande d'en-tête du
+panneau, avec l'exercice, le numéro de la question et le chronomètre :
+« Quitter », « Terminer », puis, toujours au bout, l'action de la question
+(« Révéler », « Valider » ou « Suivante »). Le plateau montre la question et sa
+réponse, il ne porte aucune commande.
 
 Tant qu'une question est posée sur le plateau, révélée ou non, les touches qui
 parcourent la liste ne la font pas défiler : la question garde le plateau
@@ -4635,7 +4641,8 @@ d'outils, ou par la commande ``duel``. Une base doit être ouverte : le Duel s'y
 écrit après chaque décision.
 
 Sans Duel ouvert, le panneau montre le formulaire, mémorisé d'un Duel à
-l'autre, et la liste des Duels en suspens :
+l'autre, un réglage par ligne, « Jouer » au bout de la bande d'en-tête, et,
+s'il y en a, la liste des Duels en suspens :
 
 * **Match** de 1 à 25 points, ou **session en argent** (Jacoby au choix).
 * **Départ** : la position initiale, la position au plateau, ou la position
@@ -4658,14 +4665,14 @@ pas, parce que ses dés à venir ne doivent sortir par aucune voie avant la fin.
 Un Duel terminé part comme tout Match.
 
 Le Duel se joue au plateau. Le panneau montre la feuille de match en deux
-colonnes, comme la Transcription, les horloges quand une cadence court, une
-ligne qui dit ce qui est attendu, et « Abandonner le match », « Mettre en
-pause », « Annuler le match ». Un match en points ne s'enregistre qu'entier :
+colonnes, comme la Transcription, et les horloges quand une cadence court ;
+sa bande d'en-tête nomme les joueurs, dit ce qui est attendu, et porte à
+droite « Abandonner le match », « Mettre en pause », « Annuler le match ». Un match en points ne s'enregistre qu'entier :
 il n'y a pas d'arrêt qui garde un match inachevé. Le score et le videau sont
 ceux du plateau ; le score et les horloges restent dans la barre d'état quand
 l'onglet est replié.
 L'empreinte SHA-256 du germe des dés, publiée par l'Arbitre dès la création,
-se lit dans l'infobulle de la ligne d'invite du panneau, puis avec le germe dans l'origine du Match terminé. Le plateau
+se lit dans l'infobulle de l'invite de la bande d'en-tête, puis avec le germe dans l'origine du Match terminé. Le plateau
 passe en mode **DUEL** : la bibliothèque ne se parcourt plus, l'édition, le
 panneau Eval et les autres onglets ne s'ouvrent pas, et le moteur se tait —
 aucune évaluation, aucun candidat. Seules restent la Pile (``B``), le
