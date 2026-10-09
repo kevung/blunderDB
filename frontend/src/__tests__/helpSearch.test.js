@@ -35,9 +35,7 @@ test('the search field counts the occurrences, Enter steps through them, "/" foc
     expect(document.activeElement).toBe(input);
 
     await fireEvent.input(input, { target: { value: 'position' } });
-    await tick();
-    const count = screen.getByTestId('help-search-count').textContent;
-    expect(count).toMatch(/^0 \/ \d+$/);
+    await vi.waitFor(() => expect(screen.getByTestId('help-search-count').textContent).toMatch(/^0 \/ [1-9]\d*$/));
     expect(window.getSelection().toString()).toBe('');
 
     await fireEvent.keyDown(input, { key: 'Enter' });
@@ -50,6 +48,45 @@ test('the search field counts the occurrences, Enter steps through them, "/" foc
     expect(onClose).not.toHaveBeenCalled();
 
     await fireEvent.input(input, { target: { value: 'zzzzqqq' } });
-    await tick();
-    expect(screen.getByTestId('help-search-count').textContent).toBe('no result');
+    await vi.waitFor(() => expect(screen.getByTestId('help-search-count').textContent).toBe('no result'));
+});
+
+test('typing alone refreshes count and highlights after a short debounce, no Enter needed', async () => {
+    const store = new Map();
+    vi.stubGlobal(
+        'Highlight',
+        class {
+            constructor(...r) {
+                this.ranges = r;
+            }
+        }
+    );
+    Object.defineProperty(CSS, 'highlights', { value: store, configurable: true, writable: true });
+    render(HelpModal, { visible: true, onClose: vi.fn() });
+    await vi.waitFor(() => expect(screen.queryByTestId('help-loading')).toBeNull());
+    const input = screen.getByTestId('help-search');
+
+    await fireEvent.input(input, { target: { value: 'pos' } });
+    expect(store.has('help-search')).toBe(false); // debounced, not per synchronous event
+    await vi.waitFor(() => expect(store.get('help-search')?.ranges.length).toBeGreaterThan(0));
+    const shortCount = store.get('help-search').ranges.length;
+
+    await fireEvent.input(input, { target: { value: 'POSITIONS' } }); // case-insensitive, narrower
+    await vi.waitFor(() => expect(store.get('help-search')?.ranges.length).toBeLessThan(shortCount));
+
+    await fireEvent.input(input, { target: { value: '' } });
+    await vi.waitFor(() => expect(store.has('help-search')).toBe(false));
+    expect(screen.queryByTestId('help-search-count')).toBeNull();
+    vi.unstubAllGlobals();
+    delete CSS.highlights;
+});
+
+test('Escape in the search field is left to the modal', async () => {
+    const onClose = vi.fn();
+    render(HelpModal, { visible: true, onClose });
+    await vi.waitFor(() => expect(screen.queryByTestId('help-loading')).toBeNull());
+    const input = screen.getByTestId('help-search');
+    input.focus();
+    await fireEvent.keyDown(input, { key: 'Escape' });
+    await vi.waitFor(() => expect(onClose).toHaveBeenCalled());
 });

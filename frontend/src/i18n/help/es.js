@@ -2127,7 +2127,7 @@ export default {
 </tr>
 <tr>
 <td>/</td>
-<td>Buscar en la ayuda: Intro pasa a la ocurrencia siguiente, MAYÚS-Intro a la anterior.</td>
+<td>Buscar en la ayuda: las apariciones se cuentan y resaltan al escribir; Intro pasa a la siguiente, MAYÚS-Intro a la anterior.</td>
 </tr>
 <tr>
 <td>?, CTRL-F, Esc</td>

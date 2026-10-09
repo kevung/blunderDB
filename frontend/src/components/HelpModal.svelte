@@ -3,7 +3,7 @@
     import Modal from './Modal.svelte';
     import { logger } from '../utils/logger.js';
     import { isBareLetter } from '../utils/keys.js';
-    import { onMount, tick } from 'svelte';
+    import { onMount, onDestroy, tick } from 'svelte';
     import { metaStore } from '../stores/metaStore'; // Import metaStore
     import { t, language } from '../i18n';
     import { help, loadHelpFor } from '../i18n/help/index.js';
@@ -43,6 +43,7 @@
 
     // Search: Enter steps to the next occurrence, Shift+Enter to the previous one. The match
     // is shown as the page's own selection, so no markup is added to the generated corpus.
+    const SEARCH_DEBOUNCE_MS = 150;
     let searchQuery = $state('');
     let searchInput = $state();
     let matchCount = $state(0);
@@ -59,17 +60,42 @@
         range.startContainer.parentElement?.scrollIntoView?.({ block: 'center' });
     }
 
+    // Highlights go through the CSS Custom Highlight API: unlike the page selection they do not
+    // pull focus from the field, so every keystroke can refresh them.
+    const HIGHLIGHT = 'help-search';
+    function paintMatches() {
+        if (typeof CSS === 'undefined' || !CSS.highlights || typeof Highlight === 'undefined') return;
+        if (matches.length === 0) CSS.highlights.delete(HIGHLIGHT);
+        else CSS.highlights.set(HIGHLIGHT, new Highlight(...matches));
+    }
+
     function runSearch() {
+        clearTimeout(searchTimer);
+        searchPending = false;
         matches = findInHelp(contentArea, searchQuery);
         matchCount = matches.length;
-        // Typing only counts: moving the page's selection under the caret would cut the word short.
+        // Typing only counts and paints: moving the page's selection under the caret would cut the word short.
         matchIndex = -1;
+        paintMatches();
+        matches[0]?.startContainer.parentElement?.scrollIntoView?.({ block: 'center' });
     }
+
+    let searchTimer;
+    let searchPending = false;
+    function onSearchInput() {
+        clearTimeout(searchTimer);
+        searchPending = true;
+        searchTimer = setTimeout(runSearch, SEARCH_DEBOUNCE_MS);
+    }
+    onDestroy(() => {
+        clearTimeout(searchTimer);
+        if (typeof CSS !== 'undefined' && CSS.highlights) CSS.highlights.delete(HIGHLIGHT);
+    });
 
     function onSearchKeyDown(event) {
         if (event.key === 'Enter') {
             event.preventDefault();
-            if (matches.length === 0) runSearch();
+            if (searchPending || matches.length === 0) runSearch();
             showMatch(matchIndex < 0 ? (event.shiftKey ? -1 : 0) : matchIndex + (event.shiftKey ? -1 : 1));
         }
         // Everything else a field needs (letters, arrows, Escape for Modal) is left alone.
@@ -80,6 +106,7 @@
         activeTab = tab;
         matches = [];
         matchCount = 0;
+        paintMatches();
         if (searchQuery) tick().then(runSearch);
     }
 
@@ -169,7 +196,7 @@
             type="search"
             bind:this={searchInput}
             bind:value={searchQuery}
-            oninput={runSearch}
+            oninput={onSearchInput}
             onkeydown={onSearchKeyDown}
             placeholder={$t('help.searchPlaceholder')}
             aria-label={$t('help.searchPlaceholder')}
@@ -237,6 +264,11 @@
     .tab-header button.active {
         background-color: var(--color-border);
         font-weight: bold;
+    }
+
+    :global(::highlight(help-search)) {
+        background: #ffd54a;
+        color: #000;
     }
 
     .help-search {

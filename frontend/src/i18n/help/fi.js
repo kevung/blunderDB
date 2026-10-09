@@ -2127,7 +2127,7 @@ export default {
 </tr>
 <tr>
 <td>/</td>
-<td>Hae ohjeesta: Enter siirtyy seuraavaan osumaan, SHIFT-Enter edelliseen.</td>
+<td>Haku ohjeesta: osumat lasketaan ja korostetaan kirjoitettaessa; Enter siirtyy seuraavaan osumaan, VAIHTO-Enter edelliseen.</td>
 </tr>
 <tr>
 <td>?, CTRL-F, Esc</td>

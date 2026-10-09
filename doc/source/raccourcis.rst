@@ -512,5 +512,5 @@ Panneau d'aide
    "ESPACE", "Page suivante."
    "Page préc.", "Haut du contenu."
    "Page suiv.", "Bas du contenu."
-   "/", "Chercher dans l'aide : Entrée passe à l'occurrence suivante, MAJ-Entrée à la précédente."
+   "/", "Chercher dans l'aide : les occurrences sont comptées et surlignées à la frappe ; Entrée passe à l'occurrence suivante, MAJ-Entrée à la précédente."
    "?, CTRL-F, Esc", "Fermer l'aide."

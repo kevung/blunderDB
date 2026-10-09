@@ -2127,7 +2127,7 @@ export default {
 </tr>
 <tr>
 <td>/</td>
-<td>Search the help: Enter goes to the next occurrence, SHIFT-Enter to the previous one.</td>
+<td>Search the help: occurrences are counted and highlighted as you type; Enter goes to the next occurrence, SHIFT-Enter to the previous one.</td>
 </tr>
 <tr>
 <td>?, CTRL-F, Esc</td>
