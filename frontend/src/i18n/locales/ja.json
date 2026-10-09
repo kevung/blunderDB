@@ -1962,6 +1962,8 @@
         "positions": "局面",
         "breakdownOpenPositions": "この {n} 局面を開く（{decisions} 判断）",
         "breakdownOpenBlunders": "大悪手のある {n} 局面を開く（{decisions} 大悪手）",
+        "breakdownCountsError": "件数を取得できません: {error}",
+        "breakdownCountsMissing": "局面の件数にこの行がありません",
         "breakdownBlundersHint": "少なくとも 1 つの判断が大悪手である局面",
         "planOutsideShort": "計画外: テーマなし {unthemed} · 未評価 {unpriced}"
     },

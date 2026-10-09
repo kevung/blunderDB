@@ -1962,6 +1962,8 @@
         "positions": "Positions",
         "breakdownOpenPositions": "Ouvrir ces {n} positions ({decisions} décisions)",
         "breakdownOpenBlunders": "Ouvrir les {n} positions à bourde ({decisions} bourdes)",
+        "breakdownCountsError": "Comptes indisponibles : {error}",
+        "breakdownCountsMissing": "Ligne absente des comptes de positions",
         "breakdownBlundersHint": "Positions où au moins une décision est une bourde",
         "planOutsideShort": "Hors plan : {unthemed} sans thème · {unpriced} non chiffrées"
     },

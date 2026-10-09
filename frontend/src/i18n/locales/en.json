@@ -1962,6 +1962,8 @@
         "positions": "Positions",
         "breakdownOpenPositions": "Open these {n} positions ({decisions} decisions)",
         "breakdownOpenBlunders": "Open the {n} positions with a blunder ({decisions} blunders)",
+        "breakdownCountsError": "Counts unavailable: {error}",
+        "breakdownCountsMissing": "Row missing from the position counts",
         "breakdownBlundersHint": "Positions where at least one decision is a blunder",
         "planOutsideShort": "Outside the plan: {unthemed} without a theme · {unpriced} unpriced"
     },

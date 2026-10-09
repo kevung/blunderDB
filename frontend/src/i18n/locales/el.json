@@ -1962,6 +1962,8 @@
         "positions": "Θέσεις",
         "breakdownOpenPositions": "Άνοιγμα αυτών των {n} θέσεων ({decisions} αποφάσεις)",
         "breakdownOpenBlunders": "Άνοιγμα των {n} θέσεων με σοβαρό λάθος ({decisions} σοβαρά λάθη)",
+        "breakdownCountsError": "Οι μετρήσεις δεν είναι διαθέσιμες: {error}",
+        "breakdownCountsMissing": "Η γραμμή λείπει από τις μετρήσεις θέσεων",
         "breakdownBlundersHint": "Θέσεις όπου τουλάχιστον μία απόφαση είναι σοβαρό λάθος",
         "planOutsideShort": "Εκτός πλάνου: {unthemed} χωρίς θέμα · {unpriced} χωρίς αποτίμηση"
     },

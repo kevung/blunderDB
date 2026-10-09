@@ -1962,6 +1962,8 @@
         "positions": "Позиции",
         "breakdownOpenPositions": "Открыть эти позиции: {n} ({decisions} решений)",
         "breakdownOpenBlunders": "Открыть позиции с грубой ошибкой: {n} ({decisions} грубых ошибок)",
+        "breakdownCountsError": "Подсчёт недоступен: {error}",
+        "breakdownCountsMissing": "Строка отсутствует в подсчёте позиций",
         "breakdownBlundersHint": "Позиции, где хотя бы одно решение — грубая ошибка",
         "planOutsideShort": "Вне плана: без темы {unthemed} · без оценки {unpriced}"
     },

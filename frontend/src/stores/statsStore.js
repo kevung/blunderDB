@@ -18,6 +18,8 @@ export const statsFilterStore = writable(defaultFilter);
 export const statsResultStore = writable(/** @type {any} */ (null));
 export const statsLoadingStore = writable(false);
 export const statsErrorStore = writable(/** @type {any} */ (null));
+/** The filter statsResultStore was computed under: a tab drilling into the result asks with it. */
+export const statsResultFilterStore = writable(/** @type {any} */ (null));
 
 // Toggle global PR / MWC display (persisted via Config.yaml in fiche 09)
 // 'pr' | 'mwc' | 'mwc7'
@@ -29,6 +31,11 @@ export const statsInvalidationKeyStore = derived([databasePathStore, dbMutationC
 /** Cache key of the last successful fetch. */
 /** @type {string | null} */
 let _cachedKey = null;
+/**
+ * Sequence number of the latest stats request. Opening the panel computes the default filter,
+ * then the restored one: when the older, wider reply lands last it must not overwrite the newer.
+ */
+let _statsSeq = 0;
 
 /**
  * Fetch stats for the filter, skipping the backend when already cached for the same filter and
@@ -43,17 +50,22 @@ export async function refreshStats(filter, invalidationKey) {
         return; // cache hit — nothing changed
     }
     _cachedKey = key;
+    const seq = ++_statsSeq;
     statsLoadingStore.set(true);
     statsErrorStore.set(null);
     try {
         const result = await ComputeStats(filter);
+        if (seq !== _statsSeq) return;
+        statsResultFilterStore.set(filter);
         statsResultStore.set(result);
     } catch (err) {
+        if (seq !== _statsSeq) return;
         _cachedKey = null; // allow retry on error
         statsErrorStore.set(/** @type {any} */ (err)?.message ?? String(err));
+        statsResultFilterStore.set(null);
         statsResultStore.set(null);
     } finally {
-        statsLoadingStore.set(false);
+        if (seq === _statsSeq) statsLoadingStore.set(false);
     }
 }
 
@@ -64,6 +76,8 @@ export const playerTableErrorStore = writable(/** @type {any} */ (null));
 /** Cache key of the last successful player-table fetch. */
 /** @type {string | null} */
 let _cachedPlayerKey = null;
+/** Sequence number of the latest player-table request: a slower, older reply is dropped. */
+let _playerSeq = 0;
 
 /**
  * Fetch the players table. The cache key keeps only the filter parts the backend honours (dates,
@@ -86,17 +100,20 @@ export async function refreshPlayerTable(filter, invalidationKey) {
         return; // cache hit — nothing the table depends on changed
     }
     _cachedPlayerKey = key;
+    const seq = ++_playerSeq;
     playerTableLoadingStore.set(true);
     playerTableErrorStore.set(null);
     try {
         const rows = await GetPlayerTable(filter);
+        if (seq !== _playerSeq) return;
         playerTableStore.set(rows ?? []);
     } catch (err) {
+        if (seq !== _playerSeq) return;
         _cachedPlayerKey = null; // allow retry on error
         playerTableErrorStore.set(/** @type {any} */ (err)?.message ?? String(err));
         playerTableStore.set(null);
     } finally {
-        playerTableLoadingStore.set(false);
+        if (seq === _playerSeq) playerTableLoadingStore.set(false);
     }
 }
 
@@ -107,6 +124,8 @@ export const recurringErrorsErrorStore = writable(/** @type {any} */ (null));
 /** Cache key of the last successful recurring-errors fetch. */
 /** @type {string | null} */
 let _cachedRecurringKey = null;
+/** Sequence number of the latest recurring-errors request: a slower, older reply is dropped. */
+let _recurringSeq = 0;
 
 /**
  * Fetch the recurring errors of the filter: its errors grouped by plan of play and theme. Fetched
@@ -122,16 +141,20 @@ export async function refreshRecurringErrors(filter, invalidationKey) {
         return;
     }
     _cachedRecurringKey = key;
+    const seq = ++_recurringSeq;
     recurringErrorsLoadingStore.set(true);
     recurringErrorsErrorStore.set(null);
     try {
-        recurringErrorsStore.set(await ComputeRecurringErrors(filter));
+        const recurring = await ComputeRecurringErrors(filter);
+        if (seq !== _recurringSeq) return;
+        recurringErrorsStore.set(recurring);
     } catch (err) {
+        if (seq !== _recurringSeq) return;
         _cachedRecurringKey = null; // allow retry on error
         recurringErrorsErrorStore.set(/** @type {any} */ (err)?.message ?? String(err));
         recurringErrorsStore.set(null);
     } finally {
-        recurringErrorsLoadingStore.set(false);
+        if (seq === _recurringSeq) recurringErrorsLoadingStore.set(false);
     }
 }
 
@@ -227,6 +250,8 @@ export const trainingWindowStore = writable('week');
 /** Cache key of the last successful training-stats fetch. */
 /** @type {string | null} */
 let _cachedTrainingKey = null;
+/** Sequence number of the latest training-stats request: a slower, older reply is dropped. */
+let _trainingSeq = 0;
 
 /**
  * Un quiz terminé ou une carte révisée change la série sans toucher à aucune clé de la requête :
@@ -251,15 +276,19 @@ export async function refreshTrainingStats(filter, invalidationKey, window) {
         return;
     }
     _cachedTrainingKey = key;
+    const seq = ++_trainingSeq;
     trainingStatsLoadingStore.set(true);
     trainingStatsErrorStore.set(null);
     try {
-        trainingStatsStore.set(await ComputeTrainingStats(filter, window));
+        const training = await ComputeTrainingStats(filter, window);
+        if (seq !== _trainingSeq) return;
+        trainingStatsStore.set(training);
     } catch (err) {
+        if (seq !== _trainingSeq) return;
         _cachedTrainingKey = null; // allow retry on error
         trainingStatsErrorStore.set(/** @type {any} */ (err)?.message ?? String(err));
         trainingStatsStore.set(null);
     } finally {
-        trainingStatsLoadingStore.set(false);
+        if (seq === _trainingSeq) trainingStatsLoadingStore.set(false);
     }
 }

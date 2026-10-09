@@ -8,7 +8,17 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
 }));
 
 import { ComputeStats, ComputeStudyPlan } from '../../wailsjs/go/database/Database.js';
-import { refreshStudyPlan, studyPlanStore, statsFilterStore, statsResultStore, statsLoadingStore, statsErrorStore, statsMetricStore, refreshStats } from '../stores/statsStore.js';
+import {
+    refreshStudyPlan,
+    studyPlanStore,
+    statsFilterStore,
+    statsResultStore,
+    statsLoadingStore,
+    statsErrorStore,
+    statsMetricStore,
+    refreshStats,
+    statsResultFilterStore
+} from '../stores/statsStore.js';
 
 describe('statsStore — initial state', () => {
     test('statsResultStore starts null', () => {
@@ -93,5 +103,33 @@ describe('refreshStudyPlan', () => {
         resolveOld({ tag: 'old' });
         await first;
         expect(get(studyPlanStore)).toEqual({ tag: 'new' });
+    });
+});
+
+describe('refreshStats() — an older reply landing last', () => {
+    // Opening the panel computes the default filter, then the restored one;
+    // the default, wider, can answer after the restored one.
+    test('keeps the result and filter of the latest request', async () => {
+        statsResultStore.set(null);
+        vi.resetAllMocks();
+        /** @type {(v: any) => void} */
+        let resolveOld = () => {};
+        /** @type {(v: any) => void} */
+        let resolveNew = () => {};
+        vi.mocked(ComputeStats)
+            .mockImplementationOnce(() => new Promise((r) => (resolveOld = r)))
+            .mockImplementationOnce(() => new Promise((r) => (resolveNew = r)));
+        const oldFilter = { playerName: '' };
+        const newFilter = { playerName: 'Alice' };
+        const pOld = refreshStats(oldFilter, 'race');
+        const pNew = refreshStats(newFilter, 'race');
+        resolveNew({ who: 'new' });
+        await pNew;
+        expect(get(statsLoadingStore)).toBe(false);
+        resolveOld({ who: 'old' });
+        await pOld;
+        expect(get(statsResultStore)).toEqual({ who: 'new' });
+        expect(get(statsResultFilterStore)).toEqual(newFilter);
+        expect(get(statsLoadingStore)).toBe(false);
     });
 });

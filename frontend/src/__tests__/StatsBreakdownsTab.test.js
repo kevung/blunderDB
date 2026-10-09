@@ -39,7 +39,8 @@ vi.mock('../stores/positionStore.js', () => {
 
 import StatsBreakdownsTab from '../components/stats/StatsBreakdownsTab.svelte';
 import { positionsStore } from '../stores/positionStore.js';
-import { GetPositionIDsByStatsSelection } from '../../wailsjs/go/database/Database.js';
+import { statsFilterStore, statsResultFilterStore } from '../stores/statsStore.js';
+import { GetPositionIDsByStatsSelection, GetStatsBreakdownPositionCounts } from '../../wailsjs/go/database/Database.js';
 
 const iv = { available: true, low: 1, high: 2 };
 const result = {
@@ -52,7 +53,10 @@ const result = {
     ]
 };
 
-beforeEach(() => positionsStore.set([]));
+beforeEach(() => {
+    positionsStore.set([]);
+    statsResultFilterStore.set(null);
+});
 afterEach(() => {
     cleanup();
     vi.clearAllMocks();
@@ -96,5 +100,33 @@ describe('StatsBreakdownsTab — clickable counts', () => {
         const row = /** @type {HTMLElement} */ (link.closest('tr'));
         expect(link.textContent).toBe('3');
         expect(row.textContent).toContain('5');
+    });
+});
+
+describe('StatsBreakdownsTab — counts that cannot be read', () => {
+    test('a failed count call shows on the cell instead of a wait', async () => {
+        vi.mocked(GetStatsBreakdownPositionCounts).mockRejectedValueOnce(new Error('boom'));
+        render(StatsBreakdownsTab, { props: { result } });
+        const cell = await screen.findByTestId('breakdown-error-positions-phase-opening');
+        expect(cell.getAttribute('title')).toContain('boom');
+        expect(document.querySelector('.pending')).toBeNull();
+    });
+
+    test('a row the counts do not know shows, instead of a wait', async () => {
+        vi.mocked(GetStatsBreakdownPositionCounts).mockResolvedValueOnce(/** @type {any} */ ({ phase: {}, game_type: {}, tag: {}, score: {} }));
+        render(StatsBreakdownsTab, { props: { result } });
+        await screen.findByTestId('breakdown-error-positions-phase-opening');
+        expect(document.querySelector('.pending')).toBeNull();
+    });
+
+    test('counts and opens under the filter that produced the result, not the bar', async () => {
+        const produced = { playerName: '', decisionType: -1 };
+        statsResultFilterStore.set(produced);
+        statsFilterStore.set({ playerName: 'Alice', decisionType: -1 });
+        render(StatsBreakdownsTab, { props: { result } });
+        const link = await screen.findByTestId('breakdown-positions-phase-opening');
+        expect(GetStatsBreakdownPositionCounts).toHaveBeenLastCalledWith(produced);
+        await fireEvent.click(link);
+        await waitFor(() => expect(GetPositionIDsByStatsSelection).toHaveBeenLastCalledWith(produced, expect.objectContaining({ BreakdownKey: 'opening' })));
     });
 });
