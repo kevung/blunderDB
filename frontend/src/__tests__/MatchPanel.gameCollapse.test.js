@@ -86,14 +86,9 @@ describe('MatchPanel — every game of the transcript collapses, game 1 included
             const cell = [...container.querySelectorAll('tbody tr td')].find((td) => td.textContent.includes('Alice'));
             await fireEvent.click(cell);
         }
-        await vi.waitFor(() => expect(container.querySelector('.detail-tabs')).not.toBeNull());
+        await vi.waitFor(() => expect(container.querySelector('[data-testid="match-detail-header"]')).not.toBeNull());
         for (let i = 0; i < 4; i++) await tick();
 
-        // The transcript is one of the detail tabs; make sure it is the one showing.
-        const transcriptTab = [...container.querySelectorAll('.detail-tab')].find((b) => !b.classList.contains('export-mat-btn') && !b.classList.contains('enter-match-btn'));
-        if (!transcriptTab.classList.contains('active')) {
-            await fireEvent.click(transcriptTab);
-        }
         await vi.waitFor(() => expect(container.querySelector('details.game-section')).not.toBeNull());
         for (let i = 0; i < 4; i++) await tick();
 
@@ -124,7 +119,7 @@ describe('MatchPanel — every game of the transcript collapses, game 1 included
             const cell = [...container.querySelectorAll('tbody tr td')].find((td) => td.textContent.includes('Alice'));
             await fireEvent.click(cell);
         }
-        await vi.waitFor(() => expect(container.querySelector('.detail-tabs')).not.toBeNull());
+        await vi.waitFor(() => expect(container.querySelector('[data-testid="match-detail-header"]')).not.toBeNull());
         for (let i = 0; i < 4; i++) await tick();
 
         // Enter match mode on the first move — game 1.
@@ -163,7 +158,7 @@ describe('MatchPanel — every game of the transcript collapses, game 1 included
             const cell = [...container.querySelectorAll('tbody tr td')].find((td) => td.textContent.includes('Alice'));
             await fireEvent.click(cell);
         }
-        await vi.waitFor(() => expect(container.querySelector('.detail-tabs')).not.toBeNull());
+        await vi.waitFor(() => expect(container.querySelector('[data-testid="match-detail-header"]')).not.toBeNull());
         for (let i = 0; i < 4; i++) await tick();
 
         matchContextStore.set({ isMatchMode: true, matchID: 7, currentIndex: 0 });

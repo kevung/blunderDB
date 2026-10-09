@@ -180,6 +180,15 @@ describe('MatchPanel — the Transcript carries the MWC loss of every decision',
         expect(cell('ratio-1')).toBe('—'); // 0.3 % of difficulty: under the floor
     });
 
+    test('the sheet reads top down: the charts, the transcript, then the review details folded', async () => {
+        const container = await openTranscript();
+        const order = ['match-losses', 'move-loss', 'match-section-review', 'match-section-info', 'match-section-stats'].map((id) => container.querySelector(`[data-testid="${id}"]`));
+        order.forEach((el) => expect(el).not.toBeNull());
+        for (let i = 1; i < order.length; i++) expect(order[i - 1].compareDocumentPosition(order[i]) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+        expect(container.querySelector('[data-testid="match-section-review"]').open).toBe(false);
+        expect(container.querySelector('[data-testid="match-losses"] table')).toBeNull();
+    });
+
     test('Enter on a chart jumps to the decision: the review opens it and the row is marked', async () => {
         const container = await openTranscript();
         const plot = container.querySelector('[data-testid="loss-plot-per"]');

@@ -2,7 +2,7 @@
     import { confirmAction, confirmModalStore } from '../services/confirmService.js';
     import { logger } from '../utils/logger.js';
     import { focusPanelUnlessTyping } from '../utils/panelFocus.js';
-    import { toDateInputValue, formatDate, formatDiceShort, MATCH_STAT_ROWS, GRADE_MARKS, indexMoveGrades, countGrades, fmtGradeCost } from '../utils/matchTable.js';
+    import { toDateInputValue, formatDate, formatDiceShort, GRADE_MARKS, indexMoveGrades, countGrades, fmtGradeCost } from '../utils/matchTable.js';
     import { createInlineEdit } from '../utils/inlineEdit.svelte.js';
     import { onChange } from '../utils/onChange.js';
     import { fmtMwc7, mwc7Tooltip } from '../utils/mwc7.js';
@@ -41,6 +41,11 @@
     import { fmtLoss, sortByLoss } from '../utils/decisionLoss.js';
     import MatchLosses from './MatchLosses.svelte';
     import MatchReview from './MatchReview.svelte';
+    import MatchReviewDetails from './MatchReviewDetails.svelte';
+    import MatchDetailHeader from './MatchDetailHeader.svelte';
+    import MatchSection from './MatchSection.svelte';
+    import MatchStatsTable from './MatchStatsTable.svelte';
+    import { hasReview } from '../utils/matchReview.js';
     import MatchOrigin from './MatchOrigin.svelte';
     import { cumulativeClocks, fmtClock, fmtDuration, hasAnyDuration, sortByDuration } from '../utils/decisionTime.js';
     import { editMatchTranscription } from '../services/transcriptionSave.js';
@@ -107,7 +112,6 @@
     let timeSort = $state('');
     /** @type {'' | 'asc' | 'desc'} */
     let lossSort = $state('');
-    let detailView = $state('transcript'); // 'transcript' | 'metadata' | 'stats'
     let loadingDetail = $state(false);
     /** @type {any} */
     let detailStats = $state(null); // MatchDetailStats for the detail match
@@ -555,11 +559,13 @@
         loadingStats = false;
     }
 
-    function switchDetailView(view) {
-        detailView = view;
-        if (view === 'stats' && detailMatch && !detailStats && !loadingStats) {
-            loadMatchStats(detailMatch);
-        }
+    // Called by the Stats section while it is open, again when the match
+    // changes under it; only the match is tracked, not the loading state.
+    function openStats() {
+        const match = detailMatch;
+        untrack(() => {
+            if (match && !detailStats && !loadingStats) loadMatchStats(match);
+        });
     }
 
     // The Time column appears once the match recorded any duration.
@@ -1190,43 +1196,18 @@
              stays under the cursor for the second click of a double-click. -->
         {#if detailMatch}
             <div class="detail-pane">
-                <!-- Match metadata header -->
-                <div class="detail-header">
-                    <div class="detail-title">
-                        <span class="player-name">{detailMatch.player1_name}</span>
-                        <span class="vs-label">{$t('match.vs')}</span>
-                        <span class="player-name">{detailMatch.player2_name}</span>
-                        <span class="match-length-badge">{detailMatch.match_length} pt</span>
-                        {#if cadenceInfo}<span class="match-length-badge" data-testid="header-cadence" title={$t('match.cadenceRow')}
-                                >{$t('match.cadenceBadge', { bank: cadenceInfo.bank || '—', s: cadenceInfo.delay })}</span
-                            >{/if}
-                    </div>
-                    <div class="detail-meta">
-                        {#if detailMatch.match_date && formatDate(detailMatch.match_date) !== '-'}
-                            <span class="meta-item" title={$t('match.date')}>{formatDate(detailMatch.match_date)}</span>
-                        {/if}
-                        {#if detailMatch.tournament_name || detailMatch.event}
-                            <span class="meta-item meta-tournament" title={$t('match.tournament')}>{detailMatch.tournament_name || detailMatch.event}</span>
-                        {/if}
-                        {#if detailMatch.round}
-                            <span class="meta-item" title={$t('match.round')}>R{detailMatch.round}</span>
-                        {/if}
-                        {#if detailMatch.location}
-                            <span class="meta-item" title={$t('match.location')}>{detailMatch.location}</span>
-                        {/if}
-                    </div>
-                    <div class="detail-tabs">
-                        {#if videoSource}
-                            <button class="detail-tab video-btn" class:active={videoOpen} data-testid="match-video" onclick={toggleVideo} title={$t('match.videoOpen')}>🎞</button>
-                        {/if}
-                        <button class="detail-tab" class:active={detailView === 'transcript'} onclick={() => switchDetailView('transcript')}>{$t('match.transcript')}</button>
-                        <button class="detail-tab" class:active={detailView === 'metadata'} onclick={() => switchDetailView('metadata')}>{$t('match.info')}</button>
-                        <button class="detail-tab" class:active={detailView === 'stats'} onclick={() => switchDetailView('stats')}>{$t('match.stats')}</button>
-                        <button class="detail-tab export-mat-btn" onclick={() => exportMatchMat(detailMatch)} title={$t('match.exportMat')}>⬇ .mat</button>
-                        <button class="detail-tab" onclick={() => editMatchTranscription(detailMatch.id)} title={$t('match.editTranscriptionTooltip')}>⌨ {$t('match.editTranscription')}</button>
-                        <button class="detail-tab enter-match-btn" onclick={() => enterMatchMode(detailMatch)} title="{$t('match.enterMatchMode')} (↵)">▶ {$t('match.review')}</button>
-                    </div>
-                </div>
+                <MatchDetailHeader
+                    match={detailMatch}
+                    games={detailGames}
+                    cadence={cadenceInfo}
+                    hasVideo={!!videoSource}
+                    {videoOpen}
+                    ontogglevideo={toggleVideo}
+                    onreview={() => enterMatchMode(detailMatch)}
+                    onexport={() => exportMatchMat(detailMatch)}
+                    onedit={() => editMatchTranscription(detailMatch.id)}
+                    ondelete={(e) => deleteMatchEntry(detailMatch, e)}
+                />
 
                 {#if videoOpen && videoKind === 'file'}
                     <!-- Folded to nothing while the video sits beside the board. -->
@@ -1235,33 +1216,17 @@
                     </div>
                 {/if}
 
-                <!-- Transcript view -->
-                {#if detailView === 'transcript'}
-                    <div class="transcript-container">
-                        {#if !loadingDetail}
-                            <MatchOrigin origin={detailOrigin} player1={detailMatch.player1_name} player2={detailMatch.player2_name} />
-                        {/if}
-                        {#if loadingDetail}
-                            <div class="loading-state">{$t('common.loading')}</div>
-                        {:else if transcriptGames.length === 0}
-                            <div class="empty-state">{$t('match.noMovesRecorded')}</div>
-                        {:else}
-                            <MatchReview review={detailReview} movePositions={detailMovePositions} player1={detailMatch.player1_name} player2={detailMatch.player2_name} onselect={jumpToMove} />
-                            <div class="match-charts">
-                                {#if detailTimes}
-                                    <MatchTimes
-                                        summary={detailTimes}
-                                        movePositions={detailMovePositions}
-                                        player1={detailMatch.player1_name}
-                                        player2={detailMatch.player2_name}
-                                        hovered={hoveredMove}
-                                        onhover={(id) => (hoveredMove = id)}
-                                        onselect={jumpToMove}
-                                    />
-                                {/if}
-                                <MatchLosses
-                                    losses={detailLosses}
-                                    review={detailReview}
+                <div class="transcript-container">
+                    {#if loadingDetail}
+                        <div class="loading-state">{$t('common.loading')}</div>
+                    {:else if transcriptGames.length === 0}
+                        <div class="empty-state">{$t('match.noMovesRecorded')}</div>
+                    {:else}
+                        <MatchReview review={detailReview} player1={detailMatch.player1_name} player2={detailMatch.player2_name} />
+                        <div class="match-charts">
+                            {#if detailTimes}
+                                <MatchTimes
+                                    summary={detailTimes}
                                     movePositions={detailMovePositions}
                                     player1={detailMatch.player1_name}
                                     player2={detailMatch.player2_name}
@@ -1269,302 +1234,291 @@
                                     onhover={(id) => (hoveredMove = id)}
                                     onselect={jumpToMove}
                                 />
-                            </div>
-                            {#each transcriptGames as game (game.gameNumber)}
-                                {@const isOpen = openGames.has(game.gameNumber)}
-                                <details class="game-section" open={isOpen} ontoggle={(e) => setGameOpen(game.gameNumber, e.currentTarget.open)}>
-                                    <summary class="game-header">
-                                        <span class="game-title">{$t('match.game', { n: game.gameNumber })}</span>
-                                        {#if game.gameInfo}
-                                            <span class="game-score">{$t('match.score')}: {game.gameInfo.initial_score[0]}–{game.gameInfo.initial_score[1]}</span>
-                                            <!-- game.winner: 1 = player 1, -1 = player 2, 0 = unfinished (domain.WinnerPlayer1) -->
-                                            {#if game.gameInfo.winner === 1 || game.gameInfo.winner === -1}
-                                                <span class="game-result"
-                                                    >{$t('match.wonBy', {
-                                                        player: game.gameInfo.winner === 1 ? detailMatch.player1_name : detailMatch.player2_name,
-                                                        points: game.gameInfo.points_won
-                                                    })}</span
+                            {/if}
+                            <MatchLosses
+                                losses={detailLosses}
+                                movePositions={detailMovePositions}
+                                player1={detailMatch.player1_name}
+                                player2={detailMatch.player2_name}
+                                hovered={hoveredMove}
+                                onhover={(id) => (hoveredMove = id)}
+                                onselect={jumpToMove}
+                            />
+                        </div>
+                        {#each transcriptGames as game (game.gameNumber)}
+                            {@const isOpen = openGames.has(game.gameNumber)}
+                            <details class="game-section" open={isOpen} ontoggle={(e) => setGameOpen(game.gameNumber, e.currentTarget.open)}>
+                                <summary class="game-header">
+                                    <span class="game-title">{$t('match.game', { n: game.gameNumber })}</span>
+                                    {#if game.gameInfo}
+                                        <span class="game-score">{$t('match.score')}: {game.gameInfo.initial_score[0]}–{game.gameInfo.initial_score[1]}</span>
+                                        <!-- game.winner: 1 = player 1, -1 = player 2, 0 = unfinished (domain.WinnerPlayer1) -->
+                                        {#if game.gameInfo.winner === 1 || game.gameInfo.winner === -1}
+                                            <span class="game-result"
+                                                >{$t('match.wonBy', {
+                                                    player: game.gameInfo.winner === 1 ? detailMatch.player1_name : detailMatch.player2_name,
+                                                    points: game.gameInfo.points_won
+                                                })}</span
+                                            >
+                                        {/if}
+                                    {/if}
+                                    {#if game.marks.blunders > 0}
+                                        <span class="game-marks grade-blunder" title={$t('match.gameBlunderCount', { n: game.marks.blunders })}>{game.marks.blunders} {GRADE_MARKS.blunder}</span>
+                                    {/if}
+                                    {#if game.marks.errors > 0}
+                                        <span class="game-marks grade-error" title={$t('match.gameErrorCount', { n: game.marks.errors })}>{game.marks.errors} {GRADE_MARKS.error}</span>
+                                    {/if}
+                                </summary>
+                                {#if isOpen}
+                                    <table class="transcript-table">
+                                        <thead>
+                                            <tr>
+                                                <th class="transcript-num">#</th>
+                                                <th class="transcript-player">{$t('match.player')}</th>
+                                                <th class="transcript-dice">{$t('match.dice')}</th>
+                                                <th class="transcript-move">{$t('match.move')}</th>
+                                                {#if showTimes}
+                                                    <th class="transcript-time" title={$t('match.timeCubeTooltip')}>{$t('match.timeCubeCol')}</th>
+                                                    <th class="transcript-time"
+                                                        ><button class="time-sort" onclick={cycleTimeSort} title={$t('match.timeSortTooltip')}
+                                                            >{$t('match.timePlayCol')}{timeSort === 'desc' ? ' ▼' : timeSort === 'asc' ? ' ▲' : ''}</button
+                                                        ></th
+                                                    >
+                                                    <th class="transcript-time" title={$t(remaining ? 'match.timeRemainTooltip' : 'match.timeClockTooltip')}
+                                                        >{$t(remaining ? 'match.timeRemainCol' : 'match.timeClockCol')}</th
+                                                    >
+                                                {/if}
+                                                {#if showLosses}
+                                                    <th class="transcript-time" title={$t('match.lossColTooltip')}
+                                                        ><button class="time-sort" data-testid="loss-sort" onclick={cycleLossSort} title={$t('match.lossSortTooltip')}
+                                                            >{$t('match.lossCol')}{lossSort === 'desc' ? ' ▼' : lossSort === 'asc' ? ' ▲' : ''}</button
+                                                        ></th
+                                                    >
+                                                    <th class="transcript-time" title={$t('match.difficultyColTooltip')}>{$t('match.difficultyCol')}</th>
+                                                {/if}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {#each ordered(game.moves) as { mp, globalIdx, grade, loss, difficulty, avoidable }, mi (globalIdx)}
+                                                <tr
+                                                    class="transcript-row"
+                                                    class:cube-row={mp.move_type === 'cube'}
+                                                    class:graded-error={grade?.grade === 'error'}
+                                                    class:graded-blunder={grade?.grade === 'blunder'}
+                                                    class:current-move={selectedIdx === globalIdx}
+                                                    class:linked={hoveredMove === mp.move_id}
+                                                    data-move-idx={globalIdx}
+                                                    onclick={() => navigateToMove(globalIdx)}
+                                                    title={$t('match.clickToReview')}
                                                 >
-                                            {/if}
-                                        {/if}
-                                        {#if game.marks.blunders > 0}
-                                            <span class="game-marks grade-blunder" title={$t('match.gameBlunderCount', { n: game.marks.blunders })}>{game.marks.blunders} {GRADE_MARKS.blunder}</span>
-                                        {/if}
-                                        {#if game.marks.errors > 0}
-                                            <span class="game-marks grade-error" title={$t('match.gameErrorCount', { n: game.marks.errors })}>{game.marks.errors} {GRADE_MARKS.error}</span>
-                                        {/if}
-                                    </summary>
-                                    {#if isOpen}
-                                        <table class="transcript-table">
-                                            <thead>
-                                                <tr>
-                                                    <th class="transcript-num">#</th>
-                                                    <th class="transcript-player">{$t('match.player')}</th>
-                                                    <th class="transcript-dice">{$t('match.dice')}</th>
-                                                    <th class="transcript-move">{$t('match.move')}</th>
+                                                    <td class="transcript-num">
+                                                        {mi + 1}
+                                                        {#if videoSource && moveTickMs(mp) !== null}
+                                                            <button
+                                                                class="row-video"
+                                                                data-testid="view-in-video"
+                                                                title="{$t('match.viewInVideo')} (v)"
+                                                                onclick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    viewInVideo(mp);
+                                                                }}>🎞</button
+                                                            >
+                                                        {/if}
+                                                    </td>
+                                                    <td class="transcript-player" class:player1={mp.player_on_roll === 0} class:player2={mp.player_on_roll === 1}>
+                                                        {getPlayerName(mp)}
+                                                    </td>
+                                                    <td class="transcript-dice">
+                                                        {#if mp.move_type === 'checker'}
+                                                            {formatDiceShort(mp.position.dice)}
+                                                        {/if}
+                                                    </td>
+                                                    <td class="transcript-move">
+                                                        {#if mp.move_type === 'cube'}
+                                                            <span class="cube-action">{mp.cube_action || $t('match.cube')}</span>
+                                                        {:else}
+                                                            {mp.checker_move || '—'}
+                                                        {/if}
+                                                        {#if grade}
+                                                            <span
+                                                                class="grade-mark grade-{grade.grade}"
+                                                                title={$t(grade.grade === 'blunder' ? 'match.gradeBlunder' : 'match.gradeError', { cost: fmtGradeCost(grade.error_mp) })}
+                                                                >{GRADE_MARKS[grade.grade]}</span
+                                                            >
+                                                        {/if}
+                                                    </td>
                                                     {#if showTimes}
-                                                        <th class="transcript-time" title={$t('match.timeCubeTooltip')}>{$t('match.timeCubeCol')}</th>
-                                                        <th class="transcript-time"
-                                                            ><button class="time-sort" onclick={cycleTimeSort} title={$t('match.timeSortTooltip')}
-                                                                >{$t('match.timePlayCol')}{timeSort === 'desc' ? ' ▼' : timeSort === 'asc' ? ' ▲' : ''}</button
-                                                            ></th
+                                                        <td class="transcript-time" data-testid="move-time-cube"
+                                                            >{orDash(fmtDuration(mp.move_type === 'cube' ? mp.decision_ms : mp.cube_decision_ms))}</td
                                                         >
-                                                        <th class="transcript-time" title={$t(remaining ? 'match.timeRemainTooltip' : 'match.timeClockTooltip')}
-                                                            >{$t(remaining ? 'match.timeRemainCol' : 'match.timeClockCol')}</th
+                                                        <td class="transcript-time" data-testid="move-time-play">{orDash(mp.move_type === 'cube' ? '' : fmtDuration(mp.decision_ms))}</td>
+                                                        <td class="transcript-time" data-testid="move-time-clock">{orDash(remaining ? fmtClock(remaining[globalIdx]) : fmtClock(clocks[globalIdx]))}</td
                                                         >
                                                     {/if}
                                                     {#if showLosses}
-                                                        <th class="transcript-time" title={$t('match.lossColTooltip')}
-                                                            ><button class="time-sort" data-testid="loss-sort" onclick={cycleLossSort} title={$t('match.lossSortTooltip')}
-                                                                >{$t('match.lossCol')}{lossSort === 'desc' ? ' ▼' : lossSort === 'asc' ? ' ▲' : ''}</button
-                                                            ></th
+                                                        <td
+                                                            class="transcript-time transcript-loss"
+                                                            class:grade-error={grade?.grade === 'error'}
+                                                            class:grade-blunder={grade?.grade === 'blunder'}
+                                                            data-testid="move-loss"
+                                                            >{loss === null ? '—' : loss > 0 ? fmtLoss(loss) : '0'}{#if avoidable}<span
+                                                                    class="avoidable-mark"
+                                                                    title={$t('match.avoidableTooltip')}
+                                                                    aria-label={$t('match.avoidable')}
+                                                                    data-testid="move-avoidable">!</span
+                                                                >{/if}</td
                                                         >
-                                                        <th class="transcript-time" title={$t('match.difficultyColTooltip')}>{$t('match.difficultyCol')}</th>
+                                                        <td class="transcript-time" data-testid="move-difficulty">{difficulty === null ? '—' : difficulty > 0 ? fmtLoss(difficulty) : '0'}</td>
                                                     {/if}
                                                 </tr>
-                                            </thead>
-                                            <tbody>
-                                                {#each ordered(game.moves) as { mp, globalIdx, grade, loss, difficulty, avoidable }, mi (globalIdx)}
-                                                    <tr
-                                                        class="transcript-row"
-                                                        class:cube-row={mp.move_type === 'cube'}
-                                                        class:graded-error={grade?.grade === 'error'}
-                                                        class:graded-blunder={grade?.grade === 'blunder'}
-                                                        class:current-move={selectedIdx === globalIdx}
-                                                        class:linked={hoveredMove === mp.move_id}
-                                                        data-move-idx={globalIdx}
-                                                        onclick={() => navigateToMove(globalIdx)}
-                                                        title={$t('match.clickToReview')}
-                                                    >
-                                                        <td class="transcript-num">
-                                                            {mi + 1}
-                                                            {#if videoSource && moveTickMs(mp) !== null}
-                                                                <button
-                                                                    class="row-video"
-                                                                    data-testid="view-in-video"
-                                                                    title="{$t('match.viewInVideo')} (v)"
-                                                                    onclick={(e) => {
-                                                                        e.stopPropagation();
-                                                                        viewInVideo(mp);
-                                                                    }}>🎞</button
-                                                                >
-                                                            {/if}
-                                                        </td>
-                                                        <td class="transcript-player" class:player1={mp.player_on_roll === 0} class:player2={mp.player_on_roll === 1}>
-                                                            {getPlayerName(mp)}
-                                                        </td>
-                                                        <td class="transcript-dice">
-                                                            {#if mp.move_type === 'checker'}
-                                                                {formatDiceShort(mp.position.dice)}
-                                                            {/if}
-                                                        </td>
-                                                        <td class="transcript-move">
-                                                            {#if mp.move_type === 'cube'}
-                                                                <span class="cube-action">{mp.cube_action || $t('match.cube')}</span>
-                                                            {:else}
-                                                                {mp.checker_move || '—'}
-                                                            {/if}
-                                                            {#if grade}
-                                                                <span
-                                                                    class="grade-mark grade-{grade.grade}"
-                                                                    title={$t(grade.grade === 'blunder' ? 'match.gradeBlunder' : 'match.gradeError', { cost: fmtGradeCost(grade.error_mp) })}
-                                                                    >{GRADE_MARKS[grade.grade]}</span
-                                                                >
-                                                            {/if}
-                                                        </td>
-                                                        {#if showTimes}
-                                                            <td class="transcript-time" data-testid="move-time-cube"
-                                                                >{orDash(fmtDuration(mp.move_type === 'cube' ? mp.decision_ms : mp.cube_decision_ms))}</td
-                                                            >
-                                                            <td class="transcript-time" data-testid="move-time-play">{orDash(mp.move_type === 'cube' ? '' : fmtDuration(mp.decision_ms))}</td>
-                                                            <td class="transcript-time" data-testid="move-time-clock"
-                                                                >{orDash(remaining ? fmtClock(remaining[globalIdx]) : fmtClock(clocks[globalIdx]))}</td
-                                                            >
-                                                        {/if}
-                                                        {#if showLosses}
-                                                            <td
-                                                                class="transcript-time transcript-loss"
-                                                                class:grade-error={grade?.grade === 'error'}
-                                                                class:grade-blunder={grade?.grade === 'blunder'}
-                                                                data-testid="move-loss"
-                                                                >{loss === null ? '—' : loss > 0 ? fmtLoss(loss) : '0'}{#if avoidable}<span
-                                                                        class="avoidable-mark"
-                                                                        title={$t('match.avoidableTooltip')}
-                                                                        aria-label={$t('match.avoidable')}
-                                                                        data-testid="move-avoidable">!</span
-                                                                    >{/if}</td
-                                                            >
-                                                            <td class="transcript-time" data-testid="move-difficulty">{difficulty === null ? '—' : difficulty > 0 ? fmtLoss(difficulty) : '0'}</td>
-                                                        {/if}
-                                                    </tr>
-                                                {/each}
-                                            </tbody>
-                                        </table>
-                                    {/if}
-                                </details>
-                            {/each}
-                        {/if}
-                    </div>
-                {/if}
-
-                <!-- Metadata view -->
-                {#if detailView === 'metadata'}
-                    <div class="metadata-container">
-                        <table class="metadata-table">
-                            <tbody>
-                                <tr><td class="meta-label">{$t('match.player1')}</td><td class="meta-value">{detailMatch.player1_name || '—'}</td></tr>
-                                <tr><td class="meta-label">{$t('match.player2')}</td><td class="meta-value">{detailMatch.player2_name || '—'}</td></tr>
-                                <tr
-                                    ><td class="meta-label">{$t('match.matchLength')}</td><td class="meta-value"
-                                        >{detailMatch.match_length > 1 ? $t('match.points', { n: detailMatch.match_length }) : $t('match.point', { n: detailMatch.match_length })}</td
-                                    ></tr
-                                >
-                                {#if cadenceInfo}
-                                    <tr data-testid="meta-cadence"
-                                        ><td class="meta-label">{$t('match.cadenceRow')}</td><td class="meta-value"
-                                            >{[cadenceInfo.name, $t('match.originDelay', { s: cadenceInfo.delay }), $t('match.timeOutRow', { what: cadenceInfo.timeOut })]
-                                                .filter(Boolean)
-                                                .join(', ')}</td
-                                        ></tr
-                                    >
-                                    <tr data-testid="meta-bank"
-                                        ><td class="meta-label">{$t('match.bankRow')}</td><td class="meta-value"
-                                            >{cadenceInfo.bank ? $t('match.bankEach', { time: cadenceInfo.bank }) : '—'}{cadenceInfo.perPoint
-                                                ? ' (' + $t('match.bankPerPoint', { s: cadenceInfo.perPoint }) + ')'
-                                                : ''}</td
-                                        ></tr
-                                    >
+                                            {/each}
+                                        </tbody>
+                                    </table>
                                 {/if}
-                                <tr><td class="meta-label">{$t('match.games')}</td><td class="meta-value">{detailMatch.game_count || detailGames.length || '—'}</td></tr>
-                                <tr><td class="meta-label">{$t('match.date')}</td><td class="meta-value">{formatDate(detailMatch.match_date)}</td></tr>
-                                <tr data-testid="meta-video">
-                                    <td class="meta-label">{$t('match.video')}</td>
-                                    <td class="meta-value">
-                                        <input
-                                            type="text"
-                                            class="match-video-input"
-                                            bind:value={videoDraft}
-                                            placeholder={$t('match.videoPlaceholder')}
-                                            onkeydown={(e) => {
-                                                // Enter commits through the change event, once.
-                                                if (e.key === 'Enter') {
-                                                    e.stopPropagation();
-                                                } else if (e.key === 'Escape') {
-                                                    e.stopPropagation();
-                                                    videoDraft = videoSource;
-                                                }
-                                            }}
-                                            onchange={() => saveVideoSource(videoDraft)}
-                                        />
-                                        <button class="detail-tab" onclick={pickVideoFile}>{$t('match.videoChoose')}</button>
-                                        {#if videoSource}<button class="detail-tab" data-testid="video-detach" onclick={() => saveVideoSource('')}>{$t('match.videoDetach')}</button>{/if}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="meta-label">{$t('match.comment')}</td>
-                                    <td class="meta-value">
-                                        {#if commentEdit.isEditing(detailMatch.id)}
-                                            <input type="text" class="match-comment-input" bind:value={commentEdit.draft} onkeydown={commentEdit.onKeyDown} onblur={commentEdit.onBlur} />
-                                        {:else}
-                                            <!-- svelte-ignore a11y_click_events_have_key_events -->
-                                            <!-- svelte-ignore a11y_no_static_element_interactions -->
-                                            <span class="match-comment-display" onclick={() => commentEdit.start(detailMatch.id, detailMatch.comment || '')} title={$t('match.clickToAddComment')}>
-                                                {detailMatch.comment || $t('match.addComment')}
-                                            </span>
-                                            {#if detailMatch.comment && detailMatch.comment_author}
-                                                <span class="match-comment-author">{detailMatch.comment_author}</span>
-                                            {/if}
-                                        {/if}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="meta-label">{$t('match.tournament')}</td>
-                                    <td
-                                        class="meta-value tournament-meta-cell"
-                                        onclick={(e) => {
-                                            e.stopPropagation();
-                                            ((e) => startEditTournament(detailMatch, e))(e);
-                                        }}
-                                    >
-                                        {#if tournamentEdit.isEditing(detailMatch.id)}
-                                            <div class="tournament-cell-edit">
-                                                <EntityAutocomplete
-                                                    bind:value={tournamentEdit.draft}
-                                                    items={tournaments}
-                                                    autofocus
-                                                    blurDelay={200}
-                                                    placeholder={$t('match.tournamentNamePlaceholder')}
-                                                    onSelect={selectTournamentOption}
-                                                    onSubmit={() => tournamentEdit.save()}
-                                                    onCancel={tournamentEdit.cancel}
-                                                    onDismiss={tournamentEdit.cancel}
-                                                />
-                                            </div>
-                                        {:else}
-                                            <span class="tournament-display" title={$t('match.clickToEdit')}>{detailMatch.tournament_name || detailMatch.event || '—'}</span>
-                                        {/if}
-                                    </td>
-                                </tr>
-                                <tr><td class="meta-label">{$t('match.event')}</td><td class="meta-value">{detailMatch.event || '—'}</td></tr>
-                                <tr><td class="meta-label">{$t('match.location')}</td><td class="meta-value">{detailMatch.location || '—'}</td></tr>
-                                <tr><td class="meta-label">{$t('match.round')}</td><td class="meta-value">{detailMatch.round || '—'}</td></tr>
-                                {#if detailMatch.player1_elo != null || detailMatch.player2_elo != null}
-                                    <tr><td class="meta-label">{$t('match.ratings')}</td><td class="meta-value">{formatRatings(detailMatch)}</td></tr>
-                                {/if}
-                                {#if detailMatch.transcriber}
-                                    <tr><td class="meta-label">{$t('match.transcriber')}</td><td class="meta-value">{detailMatch.transcriber}</td></tr>
-                                {/if}
-                                {#if detailMatch.match_length === 0 && (detailMatch.has_jacoby != null || detailMatch.has_beaver != null)}
-                                    <tr><td class="meta-label">{$t('match.sessionRules')}</td><td class="meta-value">{formatSessionRules(detailMatch)}</td></tr>
-                                {/if}
-                                {#if detailMatch.engine_version}
-                                    <tr><td class="meta-label">{$t('match.writtenBy')}</td><td class="meta-value">{detailMatch.engine_version}</td></tr>
-                                {/if}
-                                <tr><td class="meta-label">{$t('match.sourceFile')}</td><td class="meta-value source-file">{detailMatch.file_path || '—'}</td></tr>
-                                <tr><td class="meta-label">{$t('match.importDate')}</td><td class="meta-value">{formatDate(detailMatch.import_date)}</td></tr>
-                                <tr><td class="meta-label">{$t('match.matchId')}</td><td class="meta-value id-value">{detailMatch.id}</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                {/if}
-
-                <!-- Stats view -->
-                {#if detailView === 'stats'}
-                    <div class="stats-container">
-                        {#if loadingStats}
-                            <div class="loading-state">{$t('match.loadingStats')}</div>
-                        {:else if !detailStats}
-                            <div class="empty-state">{$t('match.noAnalysedPositions')}</div>
-                        {:else}
-                            {@const p1 = detailStats.player1}
-                            {@const p2 = detailStats.player2}
-                            {@const p1Name = detailMatch.player1_name || $t('match.player1')}
-                            {@const p2Name = detailMatch.player2_name || $t('match.player2')}
-                            <table class="stats-table">
-                                <thead>
-                                    <tr>
-                                        <th class="stats-label"></th>
-                                        <th class="stats-player">{p1Name}</th>
-                                        <th class="stats-player">{p2Name}</th>
-                                    </tr>
-                                </thead>
+                            </details>
+                        {/each}
+                    {/if}
+                    {#if hasReview(detailReview) || detailLosses?.some((d) => d.mwc_loss != null)}
+                        <MatchSection id="review" title={$t('matchReview.details')}>
+                            <MatchReviewDetails
+                                review={detailReview}
+                                losses={detailLosses}
+                                movePositions={detailMovePositions}
+                                player1={detailMatch.player1_name}
+                                player2={detailMatch.player2_name}
+                                onselect={jumpToMove}
+                            />
+                        </MatchSection>
+                    {/if}
+                    {#if detailOrigin}
+                        <MatchSection id="origin" title={$t('match.origin')}>
+                            <MatchOrigin origin={detailOrigin} player1={detailMatch.player1_name} player2={detailMatch.player2_name} />
+                        </MatchSection>
+                    {/if}
+                    <MatchSection id="info" title={$t('match.info')}>
+                        <div class="metadata-container">
+                            <table class="metadata-table">
                                 <tbody>
-                                    {#each MATCH_STAT_ROWS as row, i (i)}
-                                        {#if row.section}
-                                            <tr class="stats-section-header"><td colspan="3">{$t(row.section)}</td></tr>
-                                        {:else}
-                                            <tr>
-                                                <td class="stats-label{row.sub ? ' sub-label' : ''}">{row.bullet ? '• ' : ''}{$t(row.label ?? '')}</td>
-                                                <td class="stats-val{row.valClass ? ' ' + row.valClass : ''}{row.sub ? ' sub-val' : ''}" title={row.title?.(p1)}>{row.fmt(p1)}</td>
-                                                <td class="stats-val{row.valClass ? ' ' + row.valClass : ''}{row.sub ? ' sub-val' : ''}" title={row.title?.(p2)}>{row.fmt(p2)}</td>
-                                            </tr>
-                                        {/if}
-                                    {/each}
+                                    <tr><td class="meta-label">{$t('match.player1')}</td><td class="meta-value">{detailMatch.player1_name || '—'}</td></tr>
+                                    <tr><td class="meta-label">{$t('match.player2')}</td><td class="meta-value">{detailMatch.player2_name || '—'}</td></tr>
+                                    <tr
+                                        ><td class="meta-label">{$t('match.matchLength')}</td><td class="meta-value"
+                                            >{detailMatch.match_length > 1 ? $t('match.points', { n: detailMatch.match_length }) : $t('match.point', { n: detailMatch.match_length })}</td
+                                        ></tr
+                                    >
+                                    {#if cadenceInfo}
+                                        <tr data-testid="meta-cadence"
+                                            ><td class="meta-label">{$t('match.cadenceRow')}</td><td class="meta-value"
+                                                >{[cadenceInfo.name, $t('match.originDelay', { s: cadenceInfo.delay }), $t('match.timeOutRow', { what: cadenceInfo.timeOut })]
+                                                    .filter(Boolean)
+                                                    .join(', ')}</td
+                                            ></tr
+                                        >
+                                        <tr data-testid="meta-bank"
+                                            ><td class="meta-label">{$t('match.bankRow')}</td><td class="meta-value"
+                                                >{cadenceInfo.bank ? $t('match.bankEach', { time: cadenceInfo.bank }) : '—'}{cadenceInfo.perPoint
+                                                    ? ' (' + $t('match.bankPerPoint', { s: cadenceInfo.perPoint }) + ')'
+                                                    : ''}</td
+                                            ></tr
+                                        >
+                                    {/if}
+                                    <tr><td class="meta-label">{$t('match.games')}</td><td class="meta-value">{detailMatch.game_count || detailGames.length || '—'}</td></tr>
+                                    <tr><td class="meta-label">{$t('match.date')}</td><td class="meta-value">{formatDate(detailMatch.match_date)}</td></tr>
+                                    <tr data-testid="meta-video">
+                                        <td class="meta-label">{$t('match.video')}</td>
+                                        <td class="meta-value">
+                                            <input
+                                                type="text"
+                                                class="match-video-input"
+                                                bind:value={videoDraft}
+                                                placeholder={$t('match.videoPlaceholder')}
+                                                onkeydown={(e) => {
+                                                    // Enter commits through the change event, once.
+                                                    if (e.key === 'Enter') {
+                                                        e.stopPropagation();
+                                                    } else if (e.key === 'Escape') {
+                                                        e.stopPropagation();
+                                                        videoDraft = videoSource;
+                                                    }
+                                                }}
+                                                onchange={() => saveVideoSource(videoDraft)}
+                                            />
+                                            <button class="detail-tab" onclick={pickVideoFile}>{$t('match.videoChoose')}</button>
+                                            {#if videoSource}<button class="detail-tab" data-testid="video-detach" onclick={() => saveVideoSource('')}>{$t('match.videoDetach')}</button>{/if}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="meta-label">{$t('match.comment')}</td>
+                                        <td class="meta-value">
+                                            {#if commentEdit.isEditing(detailMatch.id)}
+                                                <input type="text" class="match-comment-input" bind:value={commentEdit.draft} onkeydown={commentEdit.onKeyDown} onblur={commentEdit.onBlur} />
+                                            {:else}
+                                                <!-- svelte-ignore a11y_click_events_have_key_events -->
+                                                <!-- svelte-ignore a11y_no_static_element_interactions -->
+                                                <span class="match-comment-display" onclick={() => commentEdit.start(detailMatch.id, detailMatch.comment || '')} title={$t('match.clickToAddComment')}>
+                                                    {detailMatch.comment || $t('match.addComment')}
+                                                </span>
+                                                {#if detailMatch.comment && detailMatch.comment_author}
+                                                    <span class="match-comment-author">{detailMatch.comment_author}</span>
+                                                {/if}
+                                            {/if}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="meta-label">{$t('match.tournament')}</td>
+                                        <td
+                                            class="meta-value tournament-meta-cell"
+                                            onclick={(e) => {
+                                                e.stopPropagation();
+                                                ((e) => startEditTournament(detailMatch, e))(e);
+                                            }}
+                                        >
+                                            {#if tournamentEdit.isEditing(detailMatch.id)}
+                                                <div class="tournament-cell-edit">
+                                                    <EntityAutocomplete
+                                                        bind:value={tournamentEdit.draft}
+                                                        items={tournaments}
+                                                        autofocus
+                                                        blurDelay={200}
+                                                        placeholder={$t('match.tournamentNamePlaceholder')}
+                                                        onSelect={selectTournamentOption}
+                                                        onSubmit={() => tournamentEdit.save()}
+                                                        onCancel={tournamentEdit.cancel}
+                                                        onDismiss={tournamentEdit.cancel}
+                                                    />
+                                                </div>
+                                            {:else}
+                                                <span class="tournament-display" title={$t('match.clickToEdit')}>{detailMatch.tournament_name || detailMatch.event || '—'}</span>
+                                            {/if}
+                                        </td>
+                                    </tr>
+                                    <tr><td class="meta-label">{$t('match.event')}</td><td class="meta-value">{detailMatch.event || '—'}</td></tr>
+                                    <tr><td class="meta-label">{$t('match.location')}</td><td class="meta-value">{detailMatch.location || '—'}</td></tr>
+                                    <tr><td class="meta-label">{$t('match.round')}</td><td class="meta-value">{detailMatch.round || '—'}</td></tr>
+                                    {#if detailMatch.player1_elo != null || detailMatch.player2_elo != null}
+                                        <tr><td class="meta-label">{$t('match.ratings')}</td><td class="meta-value">{formatRatings(detailMatch)}</td></tr>
+                                    {/if}
+                                    {#if detailMatch.transcriber}
+                                        <tr><td class="meta-label">{$t('match.transcriber')}</td><td class="meta-value">{detailMatch.transcriber}</td></tr>
+                                    {/if}
+                                    {#if detailMatch.match_length === 0 && (detailMatch.has_jacoby != null || detailMatch.has_beaver != null)}
+                                        <tr><td class="meta-label">{$t('match.sessionRules')}</td><td class="meta-value">{formatSessionRules(detailMatch)}</td></tr>
+                                    {/if}
+                                    {#if detailMatch.engine_version}
+                                        <tr><td class="meta-label">{$t('match.writtenBy')}</td><td class="meta-value">{detailMatch.engine_version}</td></tr>
+                                    {/if}
+                                    <tr><td class="meta-label">{$t('match.sourceFile')}</td><td class="meta-value source-file">{detailMatch.file_path || '—'}</td></tr>
+                                    <tr><td class="meta-label">{$t('match.importDate')}</td><td class="meta-value">{formatDate(detailMatch.import_date)}</td></tr>
+                                    <tr><td class="meta-label">{$t('match.matchId')}</td><td class="meta-value id-value">{detailMatch.id}</td></tr>
                                 </tbody>
                             </table>
-                        {/if}
-                    </div>
-                {/if}
+                        </div>
+                    </MatchSection>
+
+                    <MatchSection id="stats" title={$t('match.stats')} onopen={openStats}>
+                        <MatchStatsTable stats={detailStats} loading={loadingStats} player1={detailMatch.player1_name} player2={detailMatch.player2_name} />
+                    </MatchSection>
+                </div>
             </div>
         {/if}
     </div>
@@ -1593,9 +1547,7 @@
     }
     .match-charts {
         display: flex;
-        flex-wrap: wrap;
-        align-items: flex-end;
-        column-gap: 12px;
+        flex-direction: column;
     }
     .match-panel {
         width: 100%;
@@ -1722,51 +1674,6 @@
         overflow: hidden;
     }
 
-    .detail-header {
-        flex-shrink: 0;
-        padding: 8px 12px 0 12px;
-        border-bottom: 1px solid var(--color-border);
-        background: var(--color-surface-alt);
-    }
-
-    .detail-title {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        font-size: var(--font-size-base);
-        font-weight: 600;
-        color: var(--color-text);
-        margin-bottom: 4px;
-    }
-
-    .vs-label {
-        color: var(--color-text-muted);
-        font-weight: 400;
-        font-size: var(--font-size-small);
-    }
-
-    .match-length-badge {
-        display: inline-block;
-        /* Text and fill come from a token pair the theme contrast test covers, so the badge stays AA in every theme. */
-        background: var(--color-surface-alt);
-        color: var(--color-text);
-        border: 1px solid var(--color-primary);
-        font-size: var(--font-size-small);
-        font-weight: 600;
-        padding: 1px 6px;
-        border-radius: 8px;
-        margin-left: 4px;
-    }
-
-    .detail-meta {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 4px 12px;
-        font-size: var(--font-size-small);
-        color: var(--color-text-muted);
-        margin-bottom: 6px;
-    }
-
     .row-video {
         background: none;
         border: 0;
@@ -1776,21 +1683,6 @@
     }
     .row-video:hover {
         opacity: 1;
-    }
-    .meta-item {
-        white-space: nowrap;
-    }
-
-    .meta-tournament {
-        color: color-mix(in srgb, var(--color-primary) 80%, var(--color-text));
-        font-weight: 500;
-    }
-
-    .detail-tabs {
-        display: flex;
-        gap: 0;
-        margin: 0 -12px;
-        padding: 0 12px;
     }
 
     .detail-tab {
@@ -1813,16 +1705,6 @@
     .detail-tab.active {
         color: color-mix(in srgb, var(--color-primary) 80%, var(--color-text));
         border-bottom-color: var(--color-primary);
-    }
-
-    .enter-match-btn {
-        margin-left: auto;
-        color: color-mix(in srgb, var(--color-primary) 80%, var(--color-text));
-        font-weight: 600;
-    }
-
-    .enter-match-btn:hover {
-        color: color-mix(in srgb, var(--color-primary) 55%, var(--color-text));
     }
 
     /* --- Transcript --- */
@@ -2029,9 +1911,7 @@
 
     /* --- Metadata view --- */
     .metadata-container {
-        flex: 1;
-        overflow-y: auto;
-        padding: 8px 12px;
+        padding: 0;
     }
 
     .metadata-table {
@@ -2116,72 +1996,5 @@
         border-radius: 3px;
         outline: none;
         box-sizing: border-box;
-    }
-
-    .stats-container {
-        flex: 1;
-        overflow-y: auto;
-        padding: 8px 12px;
-    }
-
-    .stats-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: var(--font-size-base);
-    }
-
-    .stats-table th {
-        text-align: left;
-        padding: 4px 8px;
-        font-size: var(--font-size-small);
-        color: var(--color-text-muted);
-        border-bottom: 2px solid var(--color-border);
-        font-weight: 600;
-    }
-
-    .stats-table th.stats-player {
-        text-align: right;
-        min-width: 80px;
-    }
-
-    .stats-section-header td {
-        background: var(--color-surface-alt);
-        padding: 5px 8px;
-        font-size: var(--font-size-small);
-        font-weight: 600;
-        color: var(--color-text);
-        text-transform: uppercase;
-        letter-spacing: 0.03em;
-        border-top: 1px solid var(--color-border);
-    }
-
-    .stats-label {
-        padding: 3px 8px;
-        color: var(--color-text-muted);
-        font-size: var(--font-size-base);
-    }
-
-    .sub-label {
-        padding-left: 20px;
-        color: var(--color-text-muted);
-        font-size: var(--font-size-small);
-    }
-
-    .stats-val {
-        text-align: right;
-        padding: 3px 8px;
-        font-variant-numeric: tabular-nums;
-        color: var(--color-text);
-        min-width: 80px;
-    }
-
-    .sub-val {
-        color: var(--color-text-muted);
-        font-size: var(--font-size-small);
-    }
-
-    .pr-val {
-        font-weight: 600;
-        color: color-mix(in srgb, var(--color-primary) 80%, var(--color-text));
     }
 </style>

@@ -3,20 +3,21 @@
     // decision and the running total, on the decision axis of MatchTimes. Two
     // plots rather than one: a decision's loss and a total are the same unit
     // but not the same scale. Nothing is drawn for a match without analysis.
+    // The plots take the sheet's width, drawn at its pixel size so a dot stays
+    // round; the per-player totals are in the review's details.
     import { t } from '../i18n';
     import { indexAt, stepIndex } from '../utils/chartAxis.js';
-    import { fmtExcess, fmtLoss, lossSeries, niceCeil, servedDifficulty } from '../utils/decisionLoss.js';
+    import { fmtLoss, lossSeries, niceCeil } from '../utils/decisionLoss.js';
+    import { trackWidth } from '../utils/trackWidth.js';
 
-    /** @type {{ losses: any[] | null, review?: any, movePositions: any[], player1: string, player2: string, hovered?: number | null, onhover?: (moveId: number | null) => void, onselect?: (index: number) => void }} */
-    let { losses, review = null, movePositions, player1, player2, hovered = null, onhover = () => {}, onselect = () => {} } = $props();
+    /** @type {{ losses: any[] | null, movePositions: any[], player1: string, player2: string, hovered?: number | null, onhover?: (moveId: number | null) => void, onselect?: (index: number) => void }} */
+    let { losses, movePositions, player1, player2, hovered = null, onhover = () => {}, onselect = () => {} } = $props();
 
-    const W = 320;
-    const H = 56;
+    const H = 64;
+    let plotsWidth = $state(0);
+    let W = $derived(Math.max(160, Math.round(plotsWidth) || 320));
 
     let series = $derived(lossSeries(movePositions, losses));
-    // The summary is the review's, computed in Go: the excess and the ratio
-    // are the ones `match --format summary` prints.
-    let served = $derived(servedDifficulty(review));
     let n = $derived(Math.max(1, movePositions.length));
     let slot = $derived(W / n);
     let peak = $derived(niceCeil(Math.max(0, ...series.items.map((d) => Math.max(d.loss ?? 0, d.difficulty ?? 0)))));
@@ -66,43 +67,7 @@
 
 {#if series.any}
     <div class="match-losses" role="group" aria-label={$t('match.lossTitle')} data-testid="match-losses">
-        <table class="loss-table">
-            <thead>
-                <tr>
-                    <th></th>
-                    <th>{$t('match.lossTotal')}</th>
-                    <th>{$t('match.lossScored')}</th>
-                    {#if served.any}
-                        <th title={$t('match.difficultyColTooltip')}>{$t('match.difficultyTotal')}</th>
-                        <th title={$t('match.excessTooltip')}>{$t('match.excess')}</th>
-                        <th title={$t('match.ratioTooltip')}>{$t('match.ratio')}</th>
-                        <th title={$t('match.avoidableTooltip')}>{$t('match.avoidableCount')}</th>
-                    {/if}
-                </tr>
-            </thead>
-            <tbody>
-                {#each [0, 1] as p (p)}
-                    <tr>
-                        <td class="loss-player">
-                            <svg class="swatch" viewBox="0 0 18 6" aria-hidden="true">
-                                <line class="line" class:player1={p === 0} class:player2={p === 1} x1="1" y1="3" x2="17" y2="3" />
-                            </svg>{names[p]}
-                        </td>
-                        <td data-testid="loss-total-{p}">{fmtLoss(series.totals[p])}</td>
-                        <td>{series.scored[p]}</td>
-                        {#if served.any}
-                            {@const s = served.difficulty[p]}
-                            <td data-testid="difficulty-total-{p}">{s ? fmtLoss(s.difficulty) : ''}</td>
-                            <td data-testid="excess-{p}">{s ? fmtExcess(s.excess) : ''}</td>
-                            <td data-testid="ratio-{p}">{s?.ratio == null ? '—' : s.ratio.toFixed(2)}</td>
-                            <td data-testid="avoidable-{p}">{s?.avoidable ?? ''}</td>
-                        {/if}
-                    </tr>
-                {/each}
-            </tbody>
-        </table>
-
-        <div class="plots">
+        <div class="plots" use:trackWidth={(w) => (plotsWidth = w)}>
             {#each [{ key: 'per', label: $t('match.lossPerDecision'), top: peak }, { key: 'cum', label: $t('match.lossCumulative'), top: cumPeak }] as plot (plot.key)}
                 <div class="plot-label">{plot.label}</div>
                 <!-- A chart: walked with the arrow keys, opened with Enter. -->
@@ -185,37 +150,11 @@
 
 <style>
     .match-losses {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-        align-items: flex-end;
-        padding: 6px 8px;
+        padding: 0 12px;
         font-size: var(--font-size-small);
     }
-    .loss-table {
-        border-collapse: collapse;
-    }
-    .loss-table th,
-    .loss-table td {
-        padding: 2px 8px;
-        text-align: right;
-    }
-    .loss-table th {
-        font-weight: 500;
-        color: var(--color-text-muted, inherit);
-    }
-    .loss-player {
-        text-align: left !important;
-    }
-    .swatch {
-        width: 18px;
-        height: 6px;
-        margin-right: 6px;
-        vertical-align: middle;
-    }
     .plots {
-        width: 320px;
-        max-width: 100%;
+        width: 100%;
     }
     .plot-label {
         color: var(--color-text-muted, inherit);
@@ -230,7 +169,7 @@
     .plot svg {
         display: block;
         width: 100%;
-        height: 56px;
+        height: 64px;
         overflow: visible;
     }
     .grid {

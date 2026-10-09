@@ -646,7 +646,6 @@
         "totalErrors": "Total des erreurs",
         "tournament": "Tournoi",
         "tournamentNamePlaceholder": "Nom du tournoi",
-        "transcript": "Transcription",
         "unforcedMoves": "Coups non forcés",
         "vs": "vs",
         "wonBy": "Gagné par {player} ({points})",
@@ -674,7 +673,12 @@
         "viewInVideo": "Voir dans la vidéo",
         "videoSet": "Source vidéo enregistrée",
         "videoDetached": "Source vidéo détachée",
-        "errorVideo": "Erreur sur la vidéo du match"
+        "errorVideo": "Erreur sur la vidéo du match",
+        "origin": "Provenance",
+        "moreActions": "Autres actions",
+        "deleteMatch": "Supprimer le match",
+        "finalScore": "Score final",
+        "matchWonBy": "{player} a gagné le match"
     },
     "collection": {
         "addDescription": "Ajouter une description…",
@@ -3187,7 +3191,14 @@
         "lossAvoidable": "perte {loss}, évitable {avoidable}",
         "pace": "Erreurs : {hasty} précipitées ({hastyLoss}), {deliberate} réfléchies ({deliberateLoss}), {unknown} sans temps",
         "paceDiscipline": "plutôt de la discipline : ralentir",
-        "paceKnowledge": "plutôt de la connaissance : étudier ces positions"
+        "paceKnowledge": "plutôt de la connaissance : étudier ces positions",
+        "details": "Détails du bilan",
+        "prInterval": "PR, intervalle à 95 %",
+        "mwc7Label": "Perte de MWC ramenée à 7 pts",
+        "mwc7Hint": "La perte de MWC ramenée à un match en 7 points, pour comparer des matchs de longueurs différentes.",
+        "adjustedShort": "corrigé de la chance {adjusted}",
+        "mwcLossHint": "Chances de gagner le match perdues par les décisions de ce joueur dans ce match",
+        "toReview": "Décisions à revoir"
     },
     "video": {
         "notPlayable": "Cette source n'est pas lisible ici.",

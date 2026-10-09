@@ -4,12 +4,15 @@
     import { t } from '../i18n';
     import { indexAt, stepIndex } from '../utils/chartAxis.js';
     import { fmtDuration, fmtMean, timeBars } from '../utils/decisionTime.js';
+    import { trackWidth } from '../utils/trackWidth.js';
 
     /** @type {{ summary: any, movePositions: any[], player1: string, player2: string, hovered?: number | null, onhover?: (moveId: number | null) => void, onselect?: (index: number) => void }} */
     let { summary, movePositions, player1, player2, hovered = null, onhover = () => {}, onselect = () => {} } = $props();
 
-    const W = 320;
+    // Drawn at the sheet's pixel width, on the same axis as the loss plots below.
     const H = 56;
+    let plotWidth = $state(0);
+    let W = $derived(Math.max(160, Math.round(plotWidth) || 320));
 
     let bars = $derived(timeBars(movePositions));
     let peak = $derived(Math.max(1, ...bars.map((b) => b.ms)));
@@ -80,6 +83,7 @@
             aria-label={$t('match.timesChart')}
             title={$t('match.chartOpen')}
             data-testid="times-plot"
+            use:trackWidth={(w) => (plotWidth = w)}
             onmousemove={(e) => setFocus(indexAt(e, movePositions.length))}
             onmouseleave={() => setFocus(null)}
             onclick={(e) => onselect(indexAt(e, movePositions.length))}
@@ -114,9 +118,9 @@
     .match-times {
         display: flex;
         flex-wrap: wrap;
-        gap: 12px;
+        gap: 4px 12px;
         align-items: flex-end;
-        padding: 6px 8px;
+        padding: 6px 12px;
         font-size: var(--font-size-small);
     }
     .times-table {
@@ -135,13 +139,13 @@
         text-align: left;
     }
     .times-chart {
-        width: 320px;
-        max-width: 100%;
+        display: block;
+        width: 100%;
         height: 56px;
     }
     .times-plot {
-        width: 320px;
-        max-width: 100%;
+        flex: 1 1 100%;
+        width: 100%;
         cursor: pointer;
         outline-offset: 2px;
     }

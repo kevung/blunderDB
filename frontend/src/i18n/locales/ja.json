@@ -646,7 +646,6 @@
         "totalErrors": "エラー合計",
         "tournament": "トーナメント",
         "tournamentNamePlaceholder": "トーナメント名",
-        "transcript": "棋譜",
         "unforcedMoves": "選択可能なムーブ",
         "vs": "vs",
         "wonBy": "{player} の勝利（{points}）",
@@ -674,7 +673,12 @@
         "viewInVideo": "動画で見る",
         "videoSet": "動画ソースを保存しました",
         "videoDetached": "動画ソースを切り離しました",
-        "errorVideo": "マッチ動画のエラー"
+        "errorVideo": "マッチ動画のエラー",
+        "origin": "出所",
+        "moreActions": "その他の操作",
+        "deleteMatch": "マッチを削除",
+        "finalScore": "最終スコア",
+        "matchWonBy": "{player} がマッチに勝利"
     },
     "collection": {
         "addDescription": "説明を追加…",
@@ -3187,7 +3191,14 @@
         "lossAvoidable": "損失 {loss}、回避可能 {avoidable}",
         "pace": "エラー：性急 {hasty}（{hastyLoss}）、熟考 {deliberate}（{deliberateLoss}）、時間なし {unknown}",
         "paceDiscipline": "むしろ規律：ゆっくり打つ",
-        "paceKnowledge": "むしろ知識：これらの局面を学ぶ"
+        "paceKnowledge": "むしろ知識：これらの局面を学ぶ",
+        "details": "レビューの詳細",
+        "prInterval": "PR・95 %区間",
+        "mwc7Label": "7ポイント換算のMWC損失",
+        "mwc7Hint": "MWC損失を7ポイントマッチに換算した値。長さの異なるマッチを比較するためのものです。",
+        "adjustedShort": "運補正 {adjusted}",
+        "mwcLossHint": "このマッチでこのプレイヤーの判断により失われたマッチ勝率",
+        "toReview": "見直す判断"
     },
     "video": {
         "notPlayable": "このソースはここでは再生できません。",

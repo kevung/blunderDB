@@ -35,8 +35,8 @@ for (const theme of ['light', 'dark']) {
 
         const chart = panel.getByTestId('match-losses');
         await expect(chart).toBeVisible();
-        await expect(chart.getByTestId('loss-total-0')).toHaveText('1.70 %');
-        await expect(chart.getByTestId('loss-total-1')).toHaveText('5.50 %');
+        await expect(panel.getByTestId('loss-total-0')).toHaveText('1.70 %');
+        await expect(panel.getByTestId('loss-total-1')).toHaveText('5.50 %');
         await expect(panel.getByTestId('move-loss').first()).toHaveText('3.40 %');
         await page.screenshot({ path: process.env.MWC_SHOT_DIR ? `${process.env.MWC_SHOT_DIR}/mwc-${theme}.png` : undefined });
 

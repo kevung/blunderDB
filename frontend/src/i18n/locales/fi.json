@@ -646,7 +646,6 @@
         "totalErrors": "Virheitä yhteensä",
         "tournament": "Turnaus",
         "tournamentNamePlaceholder": "Turnauksen nimi",
-        "transcript": "Pelipöytäkirja",
         "unforcedMoves": "Vapaaehtoiset siirrot",
         "vs": "vs",
         "wonBy": "Voittaja {player} ({points})",
@@ -674,7 +673,12 @@
         "viewInVideo": "Katso videolta",
         "videoSet": "Videolähde tallennettu",
         "videoDetached": "Videolähde irrotettu",
-        "errorVideo": "Virhe ottelun videossa"
+        "errorVideo": "Virhe ottelun videossa",
+        "origin": "Alkuperä",
+        "moreActions": "Lisää toimintoja",
+        "deleteMatch": "Poista ottelu",
+        "finalScore": "Lopputulos",
+        "matchWonBy": "{player} voitti ottelun"
     },
     "collection": {
         "addDescription": "Lisää kuvaus…",
@@ -3187,7 +3191,14 @@
         "lossAvoidable": "menetys {loss}, vältettävissä {avoidable}",
         "pace": "Virheet: {hasty} hätäisiä ({hastyLoss}), {deliberate} harkittuja ({deliberateLoss}), {unknown} ilman aikaa",
         "paceDiscipline": "pikemminkin kurinalaisuutta: hidasta",
-        "paceKnowledge": "pikemminkin tietoa: tutki näitä asemia"
+        "paceKnowledge": "pikemminkin tietoa: tutki näitä asemia",
+        "details": "Yhteenvedon tiedot",
+        "prInterval": "PR, 95 %:n väli",
+        "mwc7Label": "MWC-menetys 7 pisteeseen skaalattuna",
+        "mwc7Hint": "MWC-menetys skaalattuna 7 pisteen otteluun, jotta eripituisia otteluita voi verrata.",
+        "adjustedShort": "onnella korjattu {adjusted}",
+        "mwcLossHint": "Pelaajan tämän ottelun päätöksillä menettämät ottelun voittomahdollisuudet",
+        "toReview": "Tarkistettavat päätökset"
     },
     "video": {
         "notPlayable": "Tätä lähdettä ei voi toistaa täällä.",

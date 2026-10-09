@@ -646,7 +646,6 @@
         "totalErrors": "Всего ошибок",
         "tournament": "Турнир",
         "tournamentNamePlaceholder": "Название турнира",
-        "transcript": "Запись партии",
         "unforcedMoves": "Непринуждённые ходы",
         "vs": "против",
         "wonBy": "Победил {player} ({points})",
@@ -674,7 +673,12 @@
         "viewInVideo": "Смотреть в видео",
         "videoSet": "Источник видео сохранён",
         "videoDetached": "Источник видео отвязан",
-        "errorVideo": "Ошибка видео матча"
+        "errorVideo": "Ошибка видео матча",
+        "origin": "Происхождение",
+        "moreActions": "Другие действия",
+        "deleteMatch": "Удалить матч",
+        "finalScore": "Итоговый счёт",
+        "matchWonBy": "{player} выиграл(а) матч"
     },
     "collection": {
         "addDescription": "Добавить описание…",
@@ -3187,7 +3191,14 @@
         "lossAvoidable": "потеря {loss}, устранимая {avoidable}",
         "pace": "Ошибки: {hasty} поспешных ({hastyLoss}), {deliberate} обдуманных ({deliberateLoss}), {unknown} без времени",
         "paceDiscipline": "скорее дисциплина: играть медленнее",
-        "paceKnowledge": "скорее знания: изучить эти позиции"
+        "paceKnowledge": "скорее знания: изучить эти позиции",
+        "details": "Подробности итога",
+        "prInterval": "PR, интервал 95 %",
+        "mwc7Label": "Потеря MWC в пересчёте на 7 очков",
+        "mwc7Hint": "Потеря MWC, пересчитанная на матч до 7 очков, чтобы сравнивать матчи разной длины.",
+        "adjustedShort": "с поправкой на удачу {adjusted}",
+        "mwcLossHint": "Шансы на победу в матче, потерянные решениями этого игрока в этом матче",
+        "toReview": "Решения для разбора"
     },
     "video": {
         "notPlayable": "Этот источник нельзя воспроизвести здесь.",

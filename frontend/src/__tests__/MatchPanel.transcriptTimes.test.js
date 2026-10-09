@@ -61,6 +61,7 @@ import { databasePathStore } from '../stores/databaseStore.js';
 import { lastVisitedMatchStore, matchContextStore } from '../stores/positionStore.js';
 import { ListMatches, GetMatchOrigin } from '../../wailsjs/go/database/Database.js';
 import MatchPanel from '../components/MatchPanel.svelte';
+import { openSection } from './matchSectionHelper.js';
 
 async function openTranscript() {
     const view = render(MatchPanel);
@@ -121,7 +122,7 @@ describe('MatchPanel — the Transcript carries the time of every decision', () 
         const container = await openTranscript();
         expect(col(container, 'clock')).toEqual(['1:57', '2:00', '1:40']);
         expect(container.querySelector('[data-testid="header-cadence"]').textContent).toContain('2:00');
-        await fireEvent.click([...container.querySelectorAll('button')].find((b) => b.classList.contains('detail-tab') && b.textContent.trim() === 'Info'));
+        await openSection(container, 'info');
         const row = container.querySelector('[data-testid="meta-cadence"]');
         expect(row.textContent).toContain('rapid-2+12');
         expect(container.querySelector('[data-testid="meta-bank"]').textContent).toContain('2:00 each');

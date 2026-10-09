@@ -42,6 +42,7 @@ import { openPanels, PANEL } from '../stores/uiStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { ListMatches, GetMatchByID, UpdateMatchComment } from '../../wailsjs/go/database/Database.js';
 import MatchPanel from '../components/MatchPanel.svelte';
+import { openSection } from './matchSectionHelper.js';
 
 /**
  * The list is loaded twice at mount (onMount, then the visibility effect) and
@@ -59,7 +60,7 @@ async function select(container, name) {
     await vi.waitFor(() => expect(cell()).toBeTruthy());
     await fireEvent.click(cell());
     await vi.waitFor(() => expect(container.querySelector('.detail-pane')).not.toBeNull());
-    await fireEvent.click(container.querySelectorAll('.detail-tab')[1]);
+    await openSection(container, 'info');
     for (let i = 0; i < 4; i++) await tick();
     return container.querySelector('.detail-pane').textContent;
 }

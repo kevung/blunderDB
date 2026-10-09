@@ -63,6 +63,7 @@ import VideoStageHarness from './fixtures/VideoStageHarness.svelte';
 import { setVideoPlacement } from '../stores/videoStageStore.js';
 
 import { OpenVideoExternally, PickTranscriptionVideo } from '../../wailsjs/go/gui/App.js';
+import { openSection } from './matchSectionHelper.js';
 
 async function openTranscript() {
     const view = render(MatchPanel);
@@ -135,7 +136,7 @@ describe('MatchPanel — View in the video', () => {
         state.source = '/videos/final.mp4';
         state.kind = 'file';
         const container = await openTranscript();
-        await fireEvent.click([...container.querySelectorAll('button')].find((b) => b.classList.contains('detail-tab') && b.textContent.trim() === 'Info'));
+        await openSection(container, 'info');
         await fireEvent.click(container.querySelector('[data-testid="video-detach"]'));
         await vi.waitFor(() => expect(SetMatchVideoSource).toHaveBeenCalledWith(7, ''));
     });
@@ -148,7 +149,7 @@ describe('MatchPanel — View in the video', () => {
         await vi.waitFor(() => expect(container.querySelectorAll('[data-testid="view-in-video"]').length).toBe(2));
         await fireEvent.click(container.querySelectorAll('[data-testid="view-in-video"]')[0]);
         await vi.waitFor(() => expect(container.querySelector('[data-testid="video-pane"]')).not.toBeNull());
-        await fireEvent.click([...container.querySelectorAll('button')].find((b) => b.classList.contains('detail-tab') && b.textContent.trim() === 'Info'));
+        await openSection(container, 'info');
         await fireEvent.click([...container.querySelectorAll('.meta-value button')].find((b) => b.textContent.trim() === 'File…'));
         await vi.waitFor(() => expect(SetMatchVideoSource).toHaveBeenCalledWith(7, '/moved/final.mp4'));
         for (let i = 0; i < 6; i++) await tick();
