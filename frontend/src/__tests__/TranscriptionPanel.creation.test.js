@@ -77,7 +77,7 @@ afterEach(cleanup);
 describe('le formulaire de création', () => {
     test('propose 7 quand la bibliothèque ne tient aucun brouillon', async () => {
         render(TranscriptionPanel);
-        await fireEvent.click(await screen.findByText('New transcription'));
+        await fireEvent.click(await screen.findByTestId('empty-action'));
         expect(/** @type {HTMLInputElement} */ (screen.getByLabelText('Length')).value).toBe('7');
     });
 
@@ -93,7 +93,7 @@ describe('le formulaire de création', () => {
 
     test('une longueur non renseignée bloque la création, et rien d’autre ne la bloque', async () => {
         render(TranscriptionPanel);
-        await fireEvent.click(await screen.findByText('New transcription'));
+        await fireEvent.click(await screen.findByTestId('empty-action'));
         const input = screen.getByLabelText('Length');
         const create = /** @type {HTMLButtonElement} */ (screen.getByText('Create'));
 
@@ -110,7 +110,7 @@ describe('le formulaire de création', () => {
 
     test('Jacoby et le beaver n’apparaissent qu’en partie d’argent', async () => {
         render(TranscriptionPanel);
-        await fireEvent.click(await screen.findByText('New transcription'));
+        await fireEvent.click(await screen.findByTestId('empty-action'));
         const input = screen.getByLabelText('Length');
 
         expect(screen.queryByText('Jacoby')).toBeNull();
@@ -126,7 +126,7 @@ describe('le formulaire de création', () => {
 
     test('crée le brouillon avec la longueur donnée et l’ouvre', async () => {
         render(TranscriptionPanel);
-        await fireEvent.click(await screen.findByText('New transcription'));
+        await fireEvent.click(await screen.findByTestId('empty-action'));
         await fireEvent.input(screen.getByLabelText('Length'), { target: { value: '5' } });
         await fireEvent.click(screen.getByText('Create'));
         await tick();
@@ -140,7 +140,7 @@ describe('le formulaire de création', () => {
 
     test('une partie d’argent porte les règles de session cochées', async () => {
         render(TranscriptionPanel);
-        await fireEvent.click(await screen.findByText('New transcription'));
+        await fireEvent.click(await screen.findByTestId('empty-action'));
         await fireEvent.input(screen.getByLabelText('Length'), { target: { value: '0' } });
         await fireEvent.click(screen.getByText('Create'));
         await tick();

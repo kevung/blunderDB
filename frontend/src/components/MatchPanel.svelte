@@ -36,6 +36,8 @@
     import MergePlayersModal from './MergePlayersModal.svelte';
     import EntityAutocomplete from './EntityAutocomplete.svelte';
     import PanelTable, { navigationDelta } from './panels/PanelTable.svelte';
+    import CountLink from './panels/CountLink.svelte';
+    import { loadPositionsFromSelection } from '../services/positionLoader.js';
     import { exportMatchMat } from '../services/exportService.js';
     import MatchTimes from './MatchTimes.svelte';
     import { fmtLoss, sortByLoss } from '../utils/decisionLoss.js';
@@ -408,11 +410,11 @@
         { key: 'date', label: $t('match.date'), sortable: true, narrow: true },
         { key: 'player1', label: $t('match.player1'), sortable: true },
         { key: 'player2', label: $t('match.player2'), sortable: true },
-        { key: 'length', label: $t('match.pts'), sortable: true, narrow: true },
+        { key: 'length', label: $t('match.pts'), sortable: true, narrow: true, align: 'right' },
         { key: 'tournament', label: $t('match.tournament'), sortable: true, class: 'tournament-col' },
-        { key: 'pr', label: 'PR', sortable: true, narrow: true },
-        { key: 'mwc', label: 'MWC', sortable: true, narrow: true },
-        { key: 'mwc7', label: $t('mwc7.short'), sortable: true, narrow: true, title: $t('mwc7.name') },
+        { key: 'pr', label: 'PR', sortable: true, narrow: true, align: 'right' },
+        { key: 'mwc', label: 'MWC', sortable: true, narrow: true, align: 'right' },
+        { key: 'mwc7', label: $t('mwc7.short'), sortable: true, narrow: true, align: 'right', title: $t('mwc7.name') },
         { key: 'actions', actions: true }
     ]);
 
@@ -661,6 +663,20 @@
         }
         return result;
     });
+
+    // A game's count of errors opens those positions (ADR-0085, G7). The link sits in the
+    // game's <summary>: the click must not also fold or unfold the game.
+    /**
+     * @param {MouseEvent} event
+     * @param {{ mp: any, grade: any }[]} moves
+     * @param {'blunder' | 'error'} grade
+     */
+    function openGraded(event, moves, grade) {
+        event.preventDefault();
+        event.stopPropagation();
+        const ids = moves.filter((m) => m.grade?.grade === grade && m.mp.position?.id).map((m) => m.mp.position.id);
+        loadPositionsFromSelection([...new Set(ids)]);
+    }
 
     // Games whose move table is mounted (collapsed ones render only <summary>).
     // A SvelteSet mutated in place; reseeded to the current game on match change.
@@ -1122,11 +1138,11 @@
                         <td>
                             <input type="text" class="match-edit-input" bind:value={matchEdit.draft.player2} onkeydown={matchEdit.onKeyDown} placeholder={$t('match.player2')} />
                         </td>
-                        <td class="narrow-col no-select">{match.match_length}</td>
+                        <td class="narrow-col align-right no-select">{match.match_length}</td>
                         <td class="tournament-col no-select">{match.tournament_name || match.event || ''}</td>
-                        <td class="narrow-col no-select">{match.pr > 0 ? match.pr.toFixed(2) : ''}{match.pr2 > 0 ? ' / ' + match.pr2.toFixed(2) : ''}</td>
-                        <td class="narrow-col no-select">{match.mwc_loss > 0 ? (match.mwc_loss * 100).toFixed(2) + '%' : ''}</td>
-                        <td class="narrow-col no-select">{fmtMwc7(match.mwc7)}</td>
+                        <td class="narrow-col align-right no-select">{match.pr > 0 ? match.pr.toFixed(2) : ''}{match.pr2 > 0 ? ' / ' + match.pr2.toFixed(2) : ''}</td>
+                        <td class="narrow-col align-right no-select">{match.mwc_loss > 0 ? (match.mwc_loss * 100).toFixed(2) + '%' : ''}</td>
+                        <td class="narrow-col align-right no-select">{fmtMwc7(match.mwc7)}</td>
                         <td class="actions-col no-select">
                             <span class="item-actions editing-actions">
                                 <button
@@ -1152,7 +1168,7 @@
                         <td class="narrow-col no-select">{formatDate(match.match_date)}</td>
                         <td class="no-select">{match.player1_name}</td>
                         <td class="no-select">{match.player2_name}</td>
-                        <td class="narrow-col no-select">{match.match_length}</td>
+                        <td class="narrow-col align-right no-select">{match.match_length}</td>
                         <td
                             class="tournament-col no-select tournament-meta-cell"
                             onclick={(e) => {
@@ -1178,9 +1194,11 @@
                                 <span class="tournament-display" title={$t('match.clickToAssignTournament')}>{match.tournament_name || match.event || ''}</span>
                             {/if}
                         </td>
-                        <td class="narrow-col no-select stat-col">{match.pr > 0 ? match.pr.toFixed(2) : '—'}{match.pr2 > 0 ? ' / ' + match.pr2.toFixed(2) : ''}</td>
-                        <td class="narrow-col no-select stat-col">{match.mwc_loss > 0 ? (match.mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
-                        <td class="narrow-col no-select stat-col" title={mwc7Tooltip(match.mwc7, $t)}>{fmtMwc7(match.mwc7)}{match.mwc7_p2?.available ? ' / ' + fmtMwc7(match.mwc7_p2) : ''}</td>
+                        <td class="narrow-col align-right no-select stat-col">{match.pr > 0 ? match.pr.toFixed(2) : '—'}{match.pr2 > 0 ? ' / ' + match.pr2.toFixed(2) : ''}</td>
+                        <td class="narrow-col align-right no-select stat-col">{match.mwc_loss > 0 ? (match.mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
+                        <td class="narrow-col align-right no-select stat-col" title={mwc7Tooltip(match.mwc7, $t)}
+                            >{fmtMwc7(match.mwc7)}{match.mwc7_p2?.available ? ' / ' + fmtMwc7(match.mwc7_p2) : ''}</td
+                        >
                         <td class="actions-col no-select">
                             <span class="item-actions">
                                 <button
@@ -1335,10 +1353,22 @@
                                         {/if}
                                     {/if}
                                     {#if game.marks.blunders > 0}
-                                        <span class="game-marks grade-blunder" title={$t('match.gameBlunderCount', { n: game.marks.blunders })}>{game.marks.blunders} {GRADE_MARKS.blunder}</span>
+                                        <span class="game-marks grade-blunder"
+                                            ><CountLink
+                                                label="{game.marks.blunders} {GRADE_MARKS.blunder}"
+                                                title={$t('match.gameBlunderCount', { n: game.marks.blunders })}
+                                                onclick={(e) => openGraded(e, game.moves, 'blunder')}
+                                            /></span
+                                        >
                                     {/if}
                                     {#if game.marks.errors > 0}
-                                        <span class="game-marks grade-error" title={$t('match.gameErrorCount', { n: game.marks.errors })}>{game.marks.errors} {GRADE_MARKS.error}</span>
+                                        <span class="game-marks grade-error"
+                                            ><CountLink
+                                                label="{game.marks.errors} {GRADE_MARKS.error}"
+                                                title={$t('match.gameErrorCount', { n: game.marks.errors })}
+                                                onclick={(e) => openGraded(e, game.moves, 'error')}
+                                            /></span
+                                        >
                                     {/if}
                                 </summary>
                                 {#if isOpen}
@@ -1679,12 +1709,14 @@
         border-right: 1px solid var(--color-border);
     }
 
+    /* Drawn as PanelHeader's strip, so the list and the match beside it share one band. */
     .match-list-toolbar {
         flex-shrink: 0;
         display: flex;
         align-items: center;
-        gap: 6px;
-        padding: 4px 8px;
+        gap: var(--space-2);
+        min-height: 24px;
+        padding: var(--space-1) var(--space-2);
         border-bottom: 1px solid var(--color-border);
         background: var(--color-surface-alt);
     }
@@ -1874,6 +1906,17 @@
         background: var(--color-surface-alt);
     }
 
+    /* Text at the start of the cell, numbers at its end (ADR-0085, G4), headers over their values. */
+    .transcript-table thead th.transcript-num,
+    .transcript-table thead th.transcript-time {
+        text-align: right;
+    }
+
+    .transcript-player,
+    .transcript-move {
+        text-align: start;
+    }
+
     .transcript-table tbody td {
         padding: 2px 8px;
         border-bottom: 1px solid var(--color-border);
@@ -1890,7 +1933,8 @@
 
     .transcript-num {
         width: 28px;
-        text-align: center;
+        text-align: right;
+        font-variant-numeric: tabular-nums;
         color: var(--color-text-muted);
     }
 

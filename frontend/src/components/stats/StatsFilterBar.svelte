@@ -1,6 +1,5 @@
 <script>
     import { onMount, untrack } from 'svelte';
-    import EmptyState from '../panels/EmptyState.svelte';
     import { get } from 'svelte/store';
     import { statsFilterStore, statsMetricStore, statsInvalidationKeyStore } from '../../stores/statsStore.js';
     import { databaseLoadedStore } from '../../stores/databaseStore.js';
@@ -11,15 +10,16 @@
     /**
      * Players tab on screen: player selection and decision type are disabled,
      * since that table covers every player and splits checker from cube.
-     * @type {{ playersTab?: boolean }}
+     * @type {{ playersTab?: boolean, dbEmpty?: boolean }}
      */
-    let { playersTab = false } = $props();
+    // `dbEmpty`: no match imported yet. The panel then shows its empty state in place of the
+    // filters, which have nothing to filter.
+    let { playersTab = false, dbEmpty = $bindable(false) } = $props();
 
     /** @type {Array<{Name: string, Count: number}>} */
     let playerList = $state([]);
     /** @type {Array<{id: number, name: string}>} */
     let tournamentList = $state([]);
-    let dbEmpty = $state(false);
     /** @type {string} earliest match date for input min/placeholder */
     let dateRangeMin = $state('');
     /** @type {string} latest match date for input max/placeholder */
@@ -233,10 +233,8 @@
     });
 </script>
 
-<div class="filter-bar" aria-label={$t('stats.title')}>
-    {#if dbEmpty}
-        <EmptyState text={$t('stats.importMatchesHint')} />
-    {:else}
+{#if !dbEmpty}
+    <div class="filter-bar" aria-label={$t('stats.title')}>
         <!-- Player -->
         <label class="fb-label" for="fb-player">{$t('stats.playerLabel')}</label>
         <select
@@ -396,8 +394,8 @@
 
         <!-- Reset -->
         <button class="fb-reset" onclick={resetFilters} title={$t('stats.resetFiltersHint')}>{$t('stats.resetFilters')}</button>
-    {/if}
-</div>
+    </div>
+{/if}
 
 <style>
     .fb-engine {

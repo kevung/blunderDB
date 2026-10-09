@@ -5,6 +5,7 @@
     import { t, translate } from '../../i18n/index.js';
     import BarChart from './charts/BarChart.svelte';
     import Histogram from './charts/Histogram.svelte';
+    import EmptyState from '../panels/EmptyState.svelte';
     import { PRIMARY } from './charts/palette.js';
     import StatsRecurringErrors from './StatsRecurringErrors.svelte';
     import StatsTimeErrors from './StatsTimeErrors.svelte';
@@ -205,7 +206,7 @@
 </script>
 
 {#if !result || numDecisions === 0}
-    <p class="empty-state">{$t('stats.noDecisionsEmpty')}</p>
+    <EmptyState text={$t('stats.noDecisionsEmpty')} actions={false} />
 {:else}
     <StatsRecurringErrors data={recurring} loading={recurringLoading} error={recurringError} />
     <StatsTimeErrors />
@@ -278,13 +279,6 @@
 
 <style>
     /* ── Shared ── */
-    .empty-state {
-        color: var(--color-text-muted);
-        font-size: var(--font-size-base);
-        text-align: center;
-        padding: 32px 16px;
-    }
-
     .empty-subsection {
         color: #aaa;
         font-size: var(--font-size-base);
@@ -300,7 +294,7 @@
     }
 
     .section-title {
-        font-size: var(--font-size-base);
+        font-size: var(--font-size-small);
         font-weight: 600;
         color: var(--color-text-muted);
         text-transform: uppercase;

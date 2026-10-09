@@ -2,7 +2,7 @@
     // A count of positions is a way to those positions (ADR-0085, G7): a button drawn as the
     // status bar's dotted link, never inert text.
 
-    /** @type {{ label: string, onclick: () => void, title?: string }} */
+    /** @type {{ label: string, onclick: (event: MouseEvent) => void, title?: string }} */
     let { label, onclick, title = undefined } = $props();
 </script>
 

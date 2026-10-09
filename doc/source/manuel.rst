@@ -1601,7 +1601,8 @@ position jouée deux fois dans le match reçoit deux jugements. Un coup que
 l'analyse ne note pas ne porte aucune marque.
 
 L'en-tête de chaque partie compte ses marques, qu'elle soit dépliée ou non :
-on voit sans l'ouvrir dans quelle partie se trouvent les blunders.
+on voit sans l'ouvrir dans quelle partie se trouvent les blunders. Un clic sur
+un compte charge ces positions dans le panneau d'analyse.
 
 Quand le match est analysé, la transcription ajoute la colonne **MWC**, les chances de
 gagner le match que la décision a coûtées, en pourcentage : ``0`` pour une
@@ -2128,7 +2129,8 @@ menu du navigateur n'est retiré que là. Ils n'ont pas de boutons ailleurs : un
 bouton qui agirait sur « l'action du curseur » viserait une cellule que l'on ne
 voit pas forcément, quand le clic droit désigne la sienne.
 
-La barre du brouillon porte ses deux seules sorties. « **Terminer** »
+La barre du brouillon porte ses deux seules sorties, au bout à droite, après le
+menu « ⋯ ». « **Terminer** »
 (CTRL-ENTREE) écrit le match dans la bibliothèque et libère le brouillon ;
 l'analyse des seules positions nouvelles démarre aussitôt, avec sa progression
 et son annulation dans la barre d'état. « **Abandonner** » supprime le
@@ -3136,7 +3138,9 @@ Trois cartes affichent le PR (ou MWC) pour :
 * **PR videau** — décisions de videau seulement.
 
 Cliquer sur une carte charge dans le panneau d'analyse les positions du
-sous-ensemble correspondant (drill-down).
+sous-ensemble correspondant (drill-down). Une quatrième carte, **Perte MWC (éq.
+7 pts)**, donne cette perte quel que soit le choix du bouton PR / MWC, avec son
+intervalle ; elle ne charge rien.
 
 .. note::
    Le nombre total de décisions est affiché en bas de chaque carte au survol.

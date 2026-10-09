@@ -331,7 +331,7 @@
 
     .section-title {
         margin: 0 0 6px;
-        font-size: var(--font-size-base);
+        font-size: var(--font-size-small);
         font-weight: 600;
         color: var(--color-text-muted);
         text-transform: uppercase;
