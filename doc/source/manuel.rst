@@ -2055,8 +2055,8 @@ videau valent eux aussi comme corrections : sur une passe, *t* — ou le bouton
 supprimer puis insérer. La partie reprend alors son cours : une cellule s'ouvre
 juste après la prise, au camp du doubleur, et la suite de la partie s'y tape
 comme d'habitude, insérée devant le premier coup de la partie suivante, jusqu'à ce
-que la partie se termine. Ce premier coup garde le score auquel sa partie
-commençait, désormais annoncé : si la fin de la partie reprise en donne un
+que la partie se termine. Ce premier coup garde, en l'annonçant, le score
+auquel sa partie commençait : si la fin de la partie reprise en donne un
 autre, l'écart est marqué. Les mêmes touches remplissent la cellule qu'une
 insertion vient d'ouvrir : *i* puis *d* insère un double devant l'action visée.
 

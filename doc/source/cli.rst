@@ -1352,7 +1352,7 @@ Mêmes options de filtre que ``stats recurring`` (``--player``,
    ./blunderdb stats biases --db base.db --player "Alice" --format json
 
 **stats tournament** — Le bilan d'un tournoi pour un joueur, comme le bouton
-*Bilan* du panneau Tournois (voir :ref:`bilan_tournoi`) : PR et perte MWC
+*Bilan* du panneau Tournois (voir :ref:`bilan du tournoi <bilan_tournoi>`) : PR et perte MWC
 (éq. 7 pts) face au niveau habituel des 365 jours précédents, par ronde, par
 rang de la décision dans le match, par score (``dmp``, ``crawford``,
 ``post_crawford``, ``other``) et par rythme (``quick``, ``considered``), chacun

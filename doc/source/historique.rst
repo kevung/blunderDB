@@ -31,6 +31,34 @@ ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
 - **Lancer le rattrapage d'analyse gammonNet** (0.34.0), depuis l'interface, par
   ``blunderdb analyze`` ou en mode serveur : il comble les positions qui n'ont
   aucune analyse, sans jamais écraser une analyse importée.
+- **Relancer le rattrapage d'analyse gammonNet** (0.39.0). La migration efface
+  les verdicts gammonNet d'une prise ou d'un refus, calculés comme une décision
+  du receveur ; le rattrapage les récrit comme la décision du doubleur avant le
+  double.
+
+0.39.0 (2026-10-09)
+-------------------
+
+- **La vidéo d'un match** : un fichier local ou un lien YouTube s'attache à un match, et le panneau Matchs ouvre la vidéo une seconde avant le jet de la décision étudiée (icône de la ligne ou touche *v*).
+- **La vidéo à côté du plateau** : la zone du plateau se partage entre la vidéo et le plateau, de part et d'autre d'une poignée dont la place est retenue ; ⇄ ou la poignée choisit le côté de la vidéo, *[* et *]* règlent sa vitesse, qu'un grand indicateur affiche au centre de la vidéo.
+- **La Transcription suit une vidéo** : le volet vidéo pose les repères de chaque action (instant du jet, instant de l'action), *ESPACE*, *MAJ* avec les flèches, *v* et *MAJ-V* pilotent la lecture et les repères, un clic sur une cellule amène la vidéo à son repère, et le Curseur suit la vidéo pendant la lecture.
+- **La durée de chaque coup** se lit dans une colonne de la transcription, déduite des repères ; un coup sans instant d'action a une durée estimée, marquée « ≈ ».
+- **La barre de la Transcription** se lit en trois groupes : les brouillons, la saisie avec le menu *Vidéo* (fichier local, lien YouTube, détacher), puis *Terminer*, *Abandonner* et un menu ⋯ qui tient le texte et l'export ``.mat``.
+- **Le mode théâtre** : *F11* passe la fenêtre en plein écran avec la vidéo, un mini-plateau flottant par-dessus, le clavier de saisie restant actif.
+- **La fiche d'un match se lit de haut en bas** : l'en-tête, la synthèse du bilan par joueur, les graphiques en pleine largeur, la transcription, puis des sections repliées dont l'état est retenu, à la place des onglets.
+- **Le bilan du match** : les décisions à revoir, le résultat ajusté de la chance converti en MWC, le rythme des erreurs (précipitées ou réfléchies, à la médiane des durées du joueur) et le PR et la perte L₇ avec leurs intervalles ; ``blunderdb match --format summary`` et la route ``stats.matchReview`` le donnent aussi.
+- **La perte MWC rapportée à un match en 7 points** (L₇) se lit à côté du PR dans la liste des matchs, les statistiques du match, les tournois, le tableau de bord et la progression, ainsi que dans ``blunderdb stats``, ``stats progression`` et ``match``.
+- **La difficulté de chaque décision** et l'**erreur évitable** : la transcription et le graphique de perte les montrent, et l'en-tête du match donne par joueur la difficulté, l'excès, le ratio et le nombre d'erreurs évitables.
+- **Un intervalle à 95 %** accompagne le PR et chaque cellule des ventilations, rééchantillonné par matchs.
+- **Le bilan d'un tournoi** : le bouton *Bilan* du panneau Tournois compare le tournoi d'un joueur à son niveau habituel, ventilé par ronde, par rang de décision, aux scores de pression et par rythme, puis par familles d'erreurs ; ``blunderdb stats tournament`` et le serveur le donnent aussi.
+- **La carte Plan d'étude** du tableau de bord classe les familles d'erreurs par MWC récupérable, et chacune alimente la file d'étude, un quiz ou un paquet Anki ; ``blunderdb stats plan`` en est la forme en ligne de commande.
+- **Avant/après l'étude et biais signés** : le tableau de bord mesure si ce qui a été étudié coûte moins en match, et dans quel sens le joueur se trompe ; ``blunderdb stats effect`` et ``stats biases`` les donnent aussi.
+- **Les positions de référence** : le bouton *Proposer…* du panneau Collections propose les positions à étudier sur une portée (base, match en cours, tournoi, filtre des Statistiques), pour en faire une collection, un paquet Anki ou un quiz ; ``blunderdb collection suggest`` en est l'autre forme.
+- **Un match passe par la corbeille** : supprimé, il se restaure à l'identique, avec son numéro, sa date d'import, ses parties, ses analyses et ses positions ; ``blunderdb trash delete --kind match`` fait le même geste.
+- **Une page Métriques** donne la définition, la formule et les limites de chaque mesure : erreur, PR, perte MWC, difficulté, intervalles, bilans, plan d'étude, positions de référence, avant/après et biais.
+- **Schéma 2.41.0** : la source vidéo du match et les repères de chaque coup ; chaque coup porte l'erreur de sa propre décision, et le PR des matchs déjà en base se recalcule selon les règles d'eXtreme Gammon. La migration depuis 2.36.0 est automatique à l'ouverture et sans retour possible (:ref:`annexe_db_migration`).
+- Corrections notables : gammonNet analyse une prise ou un refus comme la décision du doubleur avant le double, rollouts compris, et la migration efface les verdicts gammonNet périmés de ces positions ; le PR compte les coups forcés, les décisions de videau et les erreurs non notées comme eXtreme Gammon ; un fichier ``.xg`` tronqué est refusé avec le code ``invalid``.
+- Voir :ref:`manuel`, :ref:`metriques`, :ref:`cli` et :ref:`headless`.
 
 0.38.0 (2026-10-06)
 -------------------
