@@ -12,7 +12,7 @@
     import { get } from 'svelte/store';
     import { t } from '../../i18n';
     import { fmtPRInterval, hasInterval } from '../../utils/interval.js';
-    import { statsFilterStore } from '../../stores/statsStore.js';
+    import { statsFilterStore, statsResultFilterStore } from '../../stores/statsStore.js';
     import { loadPositionsFromStatsSelection } from '../../services/positionLoader.js';
     import { GetStatsBreakdownPositionCounts } from '../../../wailsjs/go/database/Database.js';
 
@@ -28,31 +28,46 @@
 
     /** @type {Record<string, Record<string, {Positions: number, Blunders: number}>> | null} */
     let counts = $state(null);
+    /** Why the counts could not be read; shown on every cell instead of a wait. */
+    let countsError = $state('');
     let countsFor = 0;
 
-    // Recompté à chaque résultat, avec le filtre qui l'a produit ; une réponse
-    // devancée par un résultat plus récent est ignorée.
+    // Les lignes viennent du résultat : on compte et on ouvre sous le filtre
+    // qui l'a produit, pas sous celui de la barre, qui peut l'avoir devancé.
+    function resultFilter() {
+        return get(statsResultFilterStore) ?? get(statsFilterStore);
+    }
+
+    // Recompté à chaque résultat ; une réponse devancée par un résultat plus
+    // récent est ignorée.
     $effect(() => {
         if (!result) return;
         const ticket = ++countsFor;
         counts = null;
-        Promise.resolve(GetStatsBreakdownPositionCounts(/** @type {any} */ (get(statsFilterStore))))
+        countsError = '';
+        Promise.resolve()
+            .then(() => GetStatsBreakdownPositionCounts(/** @type {any} */ (resultFilter())))
             .then((c) => {
                 if (ticket === countsFor) counts = c ?? {};
             })
-            .catch(() => {
-                if (ticket === countsFor) counts = {};
+            .catch((/** @type {any} */ err) => {
+                if (ticket === countsFor) countsError = err?.message ?? String(err);
             });
     });
 
-    /** @param {string} dim @param {string} key */
+    /**
+     * The counts of one row: null while they are read, 'missing' when the
+     * reply has no such row — the two reads disagree, which must show.
+     * @param {string} dim @param {string} key
+     */
     function countOf(dim, key) {
-        return counts?.[dim]?.[key] ?? null;
+        if (counts == null) return null;
+        return counts[dim]?.[key] ?? 'missing';
     }
 
     /** @param {string} dim @param {string} key @param {boolean} onlyBlunders */
     function open(dim, key, onlyBlunders) {
-        loadPositionsFromStatsSelection(get(statsFilterStore), { Kind: 'breakdown', Breakdown: dim, BreakdownKey: key, OnlyBlunders: onlyBlunders });
+        loadPositionsFromStatsSelection(resultFilter(), { Kind: 'breakdown', Breakdown: dim, BreakdownKey: key, OnlyBlunders: onlyBlunders });
     }
 
     /** @param {string} phase */
@@ -93,9 +108,15 @@
 <div class="breakdowns">
     {#snippet countCell(/** @type {string} */ dim, /** @type {string} */ key, /** @type {boolean} */ onlyBlunders, /** @type {number} */ decisions)}
         {@const c = countOf(dim, key)}
-        {@const n = c == null ? null : onlyBlunders ? c.Blunders : c.Positions}
+        {@const n = c == null || c === 'missing' ? null : onlyBlunders ? c.Blunders : c.Positions}
         <td class="num">
-            {#if n == null}
+            {#if countsError || c === 'missing'}
+                <span
+                    class="count-error"
+                    data-testid="breakdown-error-{onlyBlunders ? 'blunders' : 'positions'}-{dim}-{key}"
+                    title={countsError ? $t('stats.breakdownCountsError', { error: countsError }) : $t('stats.breakdownCountsMissing')}>?</span
+                >
+            {:else if n == null}
                 <span class="pending">…</span>
             {:else if n === 0}
                 <span class="zero">0</span>
@@ -234,6 +255,10 @@
     .pending,
     .zero {
         color: var(--color-text-muted);
+    }
+    .count-error {
+        color: var(--color-danger, #c0392b);
+        cursor: help;
     }
     /* Le chiffre est le lien : même convention que les compteurs de la barre d'état. */
     .count-link {

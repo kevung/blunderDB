@@ -1962,6 +1962,8 @@
         "positions": "Posiciones",
         "breakdownOpenPositions": "Abrir estas {n} posiciones ({decisions} decisiones)",
         "breakdownOpenBlunders": "Abrir las {n} posiciones con un error grave ({decisions} errores graves)",
+        "breakdownCountsError": "Recuentos no disponibles: {error}",
+        "breakdownCountsMissing": "Fila ausente de los recuentos de posiciones",
         "breakdownBlundersHint": "Posiciones donde al menos una decisión es un error grave",
         "planOutsideShort": "Fuera del plan: {unthemed} sin tema · {unpriced} sin cifrar"
     },

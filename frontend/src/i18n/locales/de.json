@@ -1962,6 +1962,8 @@
         "positions": "Positionen",
         "breakdownOpenPositions": "Diese {n} Positionen öffnen ({decisions} Entscheidungen)",
         "breakdownOpenBlunders": "Die {n} Positionen mit Patzer öffnen ({decisions} Patzer)",
+        "breakdownCountsError": "Zählungen nicht verfügbar: {error}",
+        "breakdownCountsMissing": "Zeile fehlt in den Positionszählungen",
         "breakdownBlundersHint": "Positionen, in denen mindestens eine Entscheidung ein Patzer ist",
         "planOutsideShort": "Außerhalb des Plans: {unthemed} ohne Thema · {unpriced} unbewertet"
     },

@@ -1962,6 +1962,8 @@
         "positions": "Asemat",
         "breakdownOpenPositions": "Avaa nämä {n} asemaa ({decisions} päätöstä)",
         "breakdownOpenBlunders": "Avaa {n} asemaa, joissa on vakava virhe ({decisions} vakavaa virhettä)",
+        "breakdownCountsError": "Lukumäärät eivät ole saatavilla: {error}",
+        "breakdownCountsMissing": "Rivi puuttuu asemien lukumääristä",
         "breakdownBlundersHint": "Asemat, joissa vähintään yksi päätös on vakava virhe",
         "planOutsideShort": "Suunnitelman ulkopuolella: {unthemed} ilman teemaa · {unpriced} hinnoittelematta"
     },

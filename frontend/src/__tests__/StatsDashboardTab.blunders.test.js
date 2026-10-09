@@ -1,5 +1,5 @@
 import { describe, test, expect, vi, afterEach } from 'vitest';
-import { render, cleanup, screen, fireEvent, waitFor } from '@testing-library/svelte';
+import { render, cleanup, fireEvent, waitFor } from '@testing-library/svelte';
 import { get } from 'svelte/store';
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
