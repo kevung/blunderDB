@@ -166,7 +166,7 @@ describe('syncing', () => {
             { id: 2, name: 'b', sourceType: 'collection' }
         ];
         db.GetAllAnkiDecks.mockResolvedValue(decks);
-        db.SyncAnkiDeck.mockImplementation((id) => (id === 1 ? Promise.reject(new Error('x')) : Promise.resolve()));
+        /** @type {import('vitest').Mock} */ (db.SyncAnkiDeck).mockImplementation((id) => (id === 1 ? Promise.reject(new Error('x')) : Promise.resolve()));
         await syncAllDecksAndReload();
         expect(db.SyncAnkiDeck).toHaveBeenCalledTimes(2);
         expect(logger.error).toHaveBeenCalledWith('Error syncing deck "a":', expect.any(Error));

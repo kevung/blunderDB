@@ -25,7 +25,7 @@ import { positionsStore } from '../stores/positionStore.js';
 import { GetPositionIDsByStatsSelection } from '../../wailsjs/go/database/Database.js';
 
 // The same position can be a top blunder in two matches: its id alone is not a row key.
-const blunder = (matchID) => ({ PositionID: 42, MatchID: matchID, TournamentID: 1, ErrorMP: 900, MWCLoss: 0.1, DecisionType: 0, MatchDate: '2025-01-01', PlayerNames: 'A vs B' });
+const blunder = (/** @type {number} */ matchID) => ({ PositionID: 42, MatchID: matchID, TournamentID: 1, ErrorMP: 900, MWCLoss: 0.1, DecisionType: 0, MatchDate: '2025-01-01', PlayerNames: 'A vs B' });
 const result = {
     Totals: { NumPositions: 10, NumMatches: 2, NumTournaments: 1, NumDecisions: 20 },
     PRGlobal: 4,

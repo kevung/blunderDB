@@ -229,7 +229,7 @@ describe('virtualization', () => {
 });
 
 describe('the elastic column', () => {
-    const elastic = (container) => [...container.querySelectorAll('th')].findIndex((th) => th.classList.contains('elastic-col'));
+    const elastic = (/** @type {HTMLElement} */ container) => [...container.querySelectorAll('th')].findIndex((th) => th.classList.contains('elastic-col'));
 
     test('a table of short columns gives the slack to its last non-action column', () => {
         const { container } = mount({

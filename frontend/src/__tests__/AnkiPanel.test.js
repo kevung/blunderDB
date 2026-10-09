@@ -108,8 +108,8 @@ describe('AnkiPanel', () => {
         const spread = { newCount: 2, learningCount: 1, reviewCount: 1, totalCount: 3, dueCount: 2 };
         ankiDeckStatsStore.set(spread);
         // Opening a counter refreshes the stats: they keep every counter non-zero, so each stays a link.
-        db.GetAnkiDeckStats.mockResolvedValue(spread);
-        onTestFinished(() => db.GetAnkiDeckStats.mockResolvedValue({ newCount: 2, learningCount: 0, reviewCount: 1, totalCount: 3, dueCount: 2 }));
+        vi.mocked(db.GetAnkiDeckStats).mockResolvedValue(spread);
+        onTestFinished(() => vi.mocked(db.GetAnkiDeckStats).mockResolvedValue({ newCount: 2, learningCount: 0, reviewCount: 1, totalCount: 3, dueCount: 2 }));
         const { container } = render(AnkiPanel);
         await settle();
 
@@ -119,7 +119,7 @@ describe('AnkiPanel', () => {
             ['anki-learning', 'learning'],
             ['anki-review', 'review']
         ]) {
-            db.CountAnkiDeckFilteredPositions.mockClear();
+            vi.mocked(db.CountAnkiDeckFilteredPositions).mockClear();
             await fireEvent.click(container.querySelector(`[data-testid="${testid}"] [data-testid="count-link"]`));
             await vi.waitFor(() => expect(db.CountAnkiDeckFilteredPositions).toHaveBeenCalledWith(1, filter));
         }
@@ -127,7 +127,7 @@ describe('AnkiPanel', () => {
         // card past its date.
         const cells = container.querySelectorAll('tbody tr')[0].querySelectorAll('[data-testid="count-link"]');
         expect(cells).toHaveLength(3);
-        db.CountAnkiDeckFilteredPositions.mockClear();
+        vi.mocked(db.CountAnkiDeckFilteredPositions).mockClear();
         await fireEvent.click(cells[2]);
         await vi.waitFor(() => expect(db.CountAnkiDeckFilteredPositions).toHaveBeenCalledWith(1, 'pastDue'));
     });

@@ -212,6 +212,7 @@
         "savePosition": "Save Position",
         "settings": "Settings",
         "togglePipcount": "Toggle Pipcount",
+        "toggleAnalysisChallenge": "Challenge: hide the analysis",
         "updatePosition": "Update Position",
         "tour": "Guided tours",
         "importDatabaseTip": "Merge another database into this one: shared positions are not duplicated, their analyses and comments are combined",

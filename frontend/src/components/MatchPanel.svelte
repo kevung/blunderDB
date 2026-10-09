@@ -2,6 +2,7 @@
     import { confirmAction, confirmModalStore } from '../services/confirmService.js';
     import { logger } from '../utils/logger.js';
     import { focusPanelUnlessTyping } from '../utils/panelFocus.js';
+    import { analysisChallengeStore, analysisChallengeHiddenStore } from '../stores/analysisChallengeStore.js';
     import { toDateInputValue, formatDate, formatDiceShort, GRADE_MARKS, indexMoveGrades, countGrades, fmtGradeCost } from '../utils/matchTable.js';
     import { createInlineEdit } from '../utils/inlineEdit.svelte.js';
     import { onChange } from '../utils/onChange.js';
@@ -739,6 +740,10 @@
 
     // The row the review is on, when it is in this match.
     let selectedIdx = $derived($matchContextStore.isMatchMode && detailMatch && $matchContextStore.matchID === detailMatch.id ? $matchContextStore.currentIndex : -1);
+    // Défi actif : marques et pertes de la liste sont masquées, sauf celle du coup affiché une fois
+    // son analyse dévoilée (même clé que le panneau Analyse) ; sinon la liste trahit la réponse.
+    /** @param {number} idx */
+    const gradeHidden = (idx) => $analysisChallengeStore && (idx !== selectedIdx || $analysisChallengeHiddenStore);
 
     async function navigateToMove(moveIndex) {
         if (!detailMatch || !detailMovePositions.length) return;
@@ -1405,8 +1410,8 @@
                                                 <tr
                                                     class="transcript-row"
                                                     class:cube-row={mp.move_type === 'cube'}
-                                                    class:graded-error={grade?.grade === 'error'}
-                                                    class:graded-blunder={grade?.grade === 'blunder'}
+                                                    class:graded-error={grade?.grade === 'error' && !gradeHidden(globalIdx)}
+                                                    class:graded-blunder={grade?.grade === 'blunder' && !gradeHidden(globalIdx)}
                                                     class:current-move={selectedIdx === globalIdx}
                                                     class:linked={hoveredMove === mp.move_id}
                                                     data-move-idx={globalIdx}
@@ -1441,7 +1446,7 @@
                                                         {:else}
                                                             {mp.checker_move || '—'}
                                                         {/if}
-                                                        {#if grade}
+                                                        {#if grade && !gradeHidden(globalIdx)}
                                                             <span
                                                                 class="grade-mark grade-{grade.grade}"
                                                                 title={$t(grade.grade === 'blunder' ? 'match.gradeBlunder' : 'match.gradeError', { cost: fmtGradeCost(grade.error_mp) })}
@@ -1460,17 +1465,19 @@
                                                     {#if showLosses}
                                                         <td
                                                             class="transcript-time transcript-loss"
-                                                            class:grade-error={grade?.grade === 'error'}
-                                                            class:grade-blunder={grade?.grade === 'blunder'}
+                                                            class:grade-error={grade?.grade === 'error' && !gradeHidden(globalIdx)}
+                                                            class:grade-blunder={grade?.grade === 'blunder' && !gradeHidden(globalIdx)}
                                                             data-testid="move-loss"
-                                                            >{loss === null ? '—' : loss > 0 ? fmtLoss(loss) : '0'}{#if avoidable}<span
+                                                            >{gradeHidden(globalIdx) ? '···' : loss === null ? '—' : loss > 0 ? fmtLoss(loss) : '0'}{#if avoidable && !gradeHidden(globalIdx)}<span
                                                                     class="avoidable-mark"
                                                                     title={$t('match.avoidableTooltip')}
                                                                     aria-label={$t('match.avoidable')}
                                                                     data-testid="move-avoidable">!</span
                                                                 >{/if}</td
                                                         >
-                                                        <td class="transcript-time" data-testid="move-difficulty">{difficulty === null ? '—' : difficulty > 0 ? fmtLoss(difficulty) : '0'}</td>
+                                                        <td class="transcript-time" data-testid="move-difficulty"
+                                                            >{gradeHidden(globalIdx) ? '···' : difficulty === null ? '—' : difficulty > 0 ? fmtLoss(difficulty) : '0'}</td
+                                                        >
                                                     {/if}
                                                 </tr>
                                             {/each}

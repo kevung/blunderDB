@@ -118,7 +118,7 @@ beforeEach(() => {
     GetDatabaseVersion.mockResolvedValue('2.18.0');
     IsReadOnly.mockResolvedValue(false);
     IsProtectedCopyPath.mockResolvedValue(false);
-    OpenDatabase.mockResolvedValue(undefined);
+    vi.mocked(OpenDatabase).mockResolvedValue(undefined);
 });
 
 // ── newDatabase ───────────────────────────────────────────────────────────────
@@ -272,8 +272,8 @@ describe('openDatabaseByPath', () => {
     test('a failed open leaves nothing open: empty path, neutral title, counts re-read', async () => {
         databasePathStore.set('/tmp/old.db');
         OpenDatabase.mockRejectedValue(new Error('corrupt'));
-        refreshLibraryCounts.mockClear();
-        WindowSetTitle.mockClear();
+        vi.mocked(refreshLibraryCounts).mockClear();
+        vi.mocked(WindowSetTitle).mockClear();
 
         await openDatabaseByPath('/tmp/bad.db');
 
@@ -285,7 +285,7 @@ describe('openDatabaseByPath', () => {
 
     test('a failure after a successful open keeps the opened path', async () => {
         CheckDatabaseVersion.mockRejectedValue(new Error('version unreadable'));
-        refreshLibraryCounts.mockClear();
+        vi.mocked(refreshLibraryCounts).mockClear();
 
         await openDatabaseByPath('/tmp/opened.db');
 
@@ -303,7 +303,7 @@ describe('openDatabaseByPath', () => {
         await openDatabaseByPath('/tmp/counts.db');
 
         expect(order).toEqual(['open', 'counts']);
-        refreshLibraryCounts.mockReset();
+        vi.mocked(refreshLibraryCounts).mockReset();
     });
 
     test('the session (and the Direction in it) is restored only once the database is open', async () => {

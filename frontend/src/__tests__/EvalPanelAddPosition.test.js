@@ -96,7 +96,7 @@ describe('the Eval panel’s add-to-database button (#399)', () => {
         await tick();
 
         const actions = container.querySelector('[data-testid="panel-header"] .panel-actions');
-        expect(actions.lastElementChild).toBe(addButton(container));
+        expect(actions?.lastElementChild).toBe(addButton(container));
         expect(addButton(container).textContent.trim()).toBe(en.eval.addPosition);
         expect(addButton(container).querySelector('svg')).not.toBeNull();
     });
@@ -166,7 +166,7 @@ describe('the Eval panel’s add-to-database button (#399)', () => {
 
 describe('the Eval panel before the engine has said anything', () => {
     test('one line says so, instead of a grid of dashes', async () => {
-        EvaluatePositionImmediate.mockReturnValueOnce(new Promise(() => {}));
+        vi.mocked(EvaluatePositionImmediate).mockReturnValueOnce(new Promise(() => {}));
         positionStore.set(validBoard());
         const { container } = render(EvalPanel);
         await tick();
@@ -192,7 +192,7 @@ describe('the Eval panel before the engine has said anything', () => {
     });
 
     test('the race facts do not wait for the engine', async () => {
-        EvaluatePositionImmediate.mockReturnValueOnce(new Promise(() => {}));
+        vi.mocked(EvaluatePositionImmediate).mockReturnValueOnce(new Promise(() => {}));
         positionStore.set(validBoard());
         const epc = { epc: 20.5, pipCount: 15, wastage: 5.5, meanRolls: 3.2, stdDev: 0.8 };
         epcDataStore.set({ bottomEPC: epc, topEPC: epc, race: null, error: null, bottomPoints: 5, topPoints: 5 });

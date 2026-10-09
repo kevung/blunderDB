@@ -28,15 +28,15 @@ afterEach(() => {
     positionStore.set(initialPosition);
 });
 
-const button = (label) => createRawSnippet(() => ({ render: () => `<button type="button" class="primary">${label}</button>` }));
+const button = (/** @type {string} */ label) => createRawSnippet(() => ({ render: () => `<button type="button" class="primary">${label}</button>` }));
 
 describe('PanelHeader', () => {
     test('title, count, then the actions after a spacer, the primary last', () => {
         const { container } = render(PanelHeader, { props: { title: 'Collections', count: '3', actions: button('New') } });
         const strip = container.querySelector('[data-testid="panel-header"]');
-        const parts = [...strip.children].map((el) => el.className.split(' ').find((c) => !c.startsWith('svelte-')));
+        const parts = [...(strip?.children ?? [])].map((el) => el.className.split(' ').find((c) => !c.startsWith('svelte-')));
         expect(parts).toEqual(['panel-title', 'panel-count', 'spacer', 'panel-actions']);
-        expect(strip.querySelector('.panel-actions').textContent).toBe('New');
+        expect(strip?.querySelector('.panel-actions')?.textContent).toBe('New');
     });
 
     test('a back arrow and a count that leads somewhere, only when asked for', async () => {
@@ -84,7 +84,7 @@ describe('FormGrid / FormRow', () => {
         const { container } = render(FormGrid, { props: { children: createRawSnippet(() => ({ render: () => '<span></span>' })) } });
         expect(container.querySelector('[data-testid="form-grid"]')).not.toBeNull();
         const row = render(FormRow, { props: { label: 'Name', for: 'n', children: control } });
-        expect(row.container.querySelector('label.form-label').getAttribute('for')).toBe('n');
+        expect(row.container.querySelector('label.form-label')?.getAttribute('for')).toBe('n');
         expect(row.container.querySelector('.form-control input')).not.toBeNull();
     });
 });

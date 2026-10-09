@@ -12,6 +12,7 @@ import { directionOwnsKey, directionTabKey, directionLeavesToPage, directionSear
 import { directionFullscreenKey, toggleDirectionFullscreen } from './directionFullscreen.js';
 import { theatreKey, toggleTheatre } from './transcriptionTheatre.js';
 import { trainingHoldsBoardStore } from '../stores/trainingTabStore.js';
+import { toggleAnalysisChallenge } from '../stores/analysisChallengeStore.js';
 
 import { newDatabase, openDatabase, exitApp } from './databaseService.js';
 import {
@@ -509,6 +510,8 @@ export function handleKeyDown(event) {
         viewStore.selectNextView();
     } else if (!event.ctrlKey && letter('p')) {
         togglePipcount();
+    } else if (!event.ctrlKey && letter('m')) {
+        toggleAnalysisChallenge();
     } else if (!event.ctrlKey && letter('r') && !event.defaultPrevented) {
         // A panel that claimed `r` (a rollout from the Eval panel) keeps it.
         loadRandomPosition();
