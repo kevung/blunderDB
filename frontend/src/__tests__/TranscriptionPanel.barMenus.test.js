@@ -5,6 +5,7 @@
  * so the next keystroke is a transcription key.
  */
 
+import { handleEscapeCapture } from '../services/escapeService.js';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
@@ -260,5 +261,30 @@ describe('the ⋯ menu', () => {
         await settle();
         expect(moreMenu()).toBeNull();
         expect(document.querySelector('.mat-text')).not.toBeNull();
+    });
+});
+
+describe('the Metadata button', () => {
+    const metadataButton = () => /** @type {HTMLElement} */ ([...document.querySelectorAll('.draft-bar button')].find((b) => b.textContent?.trim() === 'Metadata'));
+
+    test('the open form replaces the entry; the same button and Escape bring it back', async () => {
+        await openedPanel();
+        expect(document.querySelector('[data-testid="transcription-dice"]')).not.toBeNull();
+        await fireEvent.click(metadataButton());
+        await settle();
+        expect(document.querySelector('[data-testid="transcription-metadata"]')).not.toBeNull();
+        expect(document.querySelector('[data-testid="transcription-dice"]')).toBeNull();
+        expect(document.querySelector('[data-testid="transcription-candidates"]')).toBeNull();
+        expect(document.querySelector('.transcript-col')).not.toBeNull();
+        await fireEvent.click(metadataButton());
+        await settle();
+        expect(document.querySelector('[data-testid="transcription-metadata"]')).toBeNull();
+        expect(document.querySelector('[data-testid="transcription-dice"]')).not.toBeNull();
+        await fireEvent.click(metadataButton());
+        await settle();
+        handleEscapeCapture(new KeyboardEvent('keydown', { key: 'Escape', cancelable: true }));
+        await settle();
+        expect(document.querySelector('[data-testid="transcription-metadata"]')).toBeNull();
+        expect(document.querySelector('[data-testid="transcription-dice"]')).not.toBeNull();
     });
 });
