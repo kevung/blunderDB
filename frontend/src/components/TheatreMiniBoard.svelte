@@ -20,6 +20,9 @@
     const BOTTOM = 64;
     /** Widths of the three sizes; the height follows the board's own ratio. */
     const SIZES = /** @type {const} */ ({ s: 240, m: 340, l: 460 });
+    // The nominal diagram is centred on its board, whose point numbers hang below it and
+    // overflow the nominal height; this taller drawing keeps them inside.
+    const DRAW_HEIGHT = DIAGRAM_HEIGHT + 24;
     /** @typedef {keyof typeof SIZES} Size */
 
     /** @type {{ x: number | null, y: number | null, size: Size, hidden: boolean }} */
@@ -35,7 +38,7 @@
     let viewH = $state(window.innerHeight);
 
     const width = $derived(SIZES[size]);
-    const height = $derived(Math.round((width * DIAGRAM_HEIGHT) / DIAGRAM_WIDTH));
+    const height = $derived(Math.round((width * DRAW_HEIGHT) / DIAGRAM_WIDTH));
 
     const scene = $derived(theatreScene({ position: $positionStore, play: $quizPlayStore, swap: $transcriptionBoardSwapStore, selectedMove: $selectedMoveStore }));
 
@@ -43,7 +46,7 @@
         void $boardColorsStore;
         if (!scene) return '';
         try {
-            return renderPositionSVG(scene.position, { showPipcount: true, moves: scene.moves, flip: scene.flip });
+            return renderPositionSVG(scene.position, { height: DRAW_HEIGHT, showPipcount: true, moves: scene.moves, flip: scene.flip });
         } catch (error) {
             logger.error('theatre board:', error);
             return '';

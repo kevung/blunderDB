@@ -67,3 +67,23 @@ test('le mini-plateau se déplace à la souris et garde sa place', async ({ page
     const again = await page.locator('[data-testid="theatre-board"]').boundingBox();
     expect(Math.abs((again?.x ?? 0) - (after?.x ?? 0))).toBeLessThan(2);
 });
+
+for (const size of ['s', 'm', 'l']) {
+    test(`le plateau entier, numéros compris, tient dans la boîte du mini-plateau (taille ${size})`, async ({ page }) => {
+        await page.locator('#transcriptionPanel').focus();
+        await page.keyboard.press('F11');
+        const board = page.locator('[data-testid="theatre-board"]');
+        while ((await board.getAttribute('data-size')) !== size) await page.locator('[data-testid="theatre-board-size"]').click();
+        const m = await board.evaluate((el) => {
+            const box = el.getBoundingClientRect();
+            const svg = /** @type {SVGSVGElement} */ (el.querySelector('.theatre-board-svg svg'));
+            const holder = /** @type {HTMLElement} */ (el.querySelector('.theatre-board-svg')).getBoundingClientRect();
+            const bottom = Math.max(...[...svg.querySelectorAll('text')].map((t) => t.getBoundingClientRect().bottom));
+            const rendered = svg.getBoundingClientRect();
+            return { boxBottom: box.bottom, holderBottom: holder.bottom, svgBottom: rendered.bottom, textBottom: bottom, clientH: el.clientHeight, scrollH: el.scrollHeight };
+        });
+        expect(m.textBottom).toBeLessThanOrEqual(m.boxBottom - 1 + 0.5);
+        expect(m.svgBottom).toBeLessThanOrEqual(m.boxBottom - 1 + 0.5);
+        expect(m.scrollH).toBeLessThanOrEqual(m.clientH);
+    });
+}
