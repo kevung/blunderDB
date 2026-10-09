@@ -125,20 +125,6 @@ export namespace database {
 	        this.PlayerNames = source["PlayerNames"];
 	    }
 	}
-	export class BreakdownPositionCount {
-	    Positions: number;
-	    Blunders: number;
-	
-	    static createFrom(source: any = {}) {
-	        return new BreakdownPositionCount(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.Positions = source["Positions"];
-	        this.Blunders = source["Blunders"];
-	    }
-	}
 	export class Collection {
 	    id: number;
 	    name: string;
