@@ -3085,6 +3085,10 @@ Onglet Tableau de bord
 ~~~~~~~~~~~~~~~~~~~~~~
 
 L'onglet **Tableau de bord** donne une vue synthétique des indicateurs clés.
+Il se lit de haut en bas : les cartes de niveau, puis ce qui se travaille (plan
+d'étude, top blunders), puis les lectures (PR glissant, avant/après l'étude,
+biais signés). L'explication de chaque carte est dans l'info-bulle de son
+titre.
 
 .. figure:: img/panel_stats_dashboard.png
    :width: 100%
@@ -3135,14 +3139,19 @@ une tendance. Le plan corrige les deux.
   à partir de **5 erreurs** et d'un intervalle entièrement au-dessus de zéro ;
   le plan est classé par la borne basse de l'intervalle, si bien qu'à
   récupérable égal la famille la mieux établie passe devant. Les autres sont
-  nommées sous le tableau, **à confirmer**, sans rang : le plan ne vous pousse
-  pas vers du bruit.
+  nommées sous la liste, **à confirmer**, sans rang : le plan ne vous pousse
+  pas vers du bruit. La même ligne compte les erreurs **hors plan** (sans
+  thème, non chiffrées).
+
+Chaque ligne du plan montre son rang, la famille, une barre dont la longueur
+est son MWC récupérable rapporté à celui de la première, ce MWC avec son
+intervalle, et le nombre d'erreurs.
 
 Chaque famille propose trois gestes : **Étudier** ouvre la file d'étude sur
 ses positions, l'écart au joueur de référence le plus grand d'abord ; **Quiz**
 lance l'exercice Décision du panneau :ref:`Entraînement <panneau_entrainement>`
-sur vingt d'entre elles ; **Anki** en fait un paquet de cartes. Au-dessus du
-tableau, **Quiz sur les trois premières familles** tire vingt positions parmi
+sur vingt d'entre elles ; **Anki** en fait un paquet de cartes. En tête de la
+carte, **Quiz sur les trois premières familles** tire vingt positions parmi
 celles des trois familles de tête. Le plan suit le filtre du panneau : réglez
 le joueur pour obtenir *votre* plan. En ligne de commande :
 ``blunderdb stats plan`` (voir :ref:`cli_stats`).
@@ -3438,6 +3447,13 @@ ce serait un second PR sous le même nom.
   donc du côté de celui qui décide. La ligne *Money* est la partie d'argent.
   Une cellule sans intervalle est **grisée avec son effectif visible**
   plutôt que cachée (voir ci-dessous).
+
+Les colonnes **Positions** et **Bourdes** comptent des positions distinctes, et
+chaque chiffre est un lien : un clic charge exactement ces positions dans le
+panneau d'analyse, comme les compteurs de la barre d'état. *Bourdes* compte les
+positions où au moins une décision est une bourde. Une position jouée dans
+plusieurs matchs (une ouverture, par exemple) n'y compte qu'une fois ; la
+colonne **Décisions** la compte à chaque fois, car c'est le dénominateur du PR.
 
 Chaque ligne porte son **intervalle de confiance à 95 %** (colonne *IC 95 %*),
 qui remplace le seuil fixe de dix décisions : il dit ce que vaut un PR, pas
