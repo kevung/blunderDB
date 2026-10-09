@@ -34,8 +34,17 @@
     let size = $state(saved.size);
     let hidden = $state(saved.hidden);
     let dragging = $state(false);
+    // The layer's own size, in its CSS pixels: the theatre sits inside the interface's `zoom`,
+    // so a window pixel is `scale` of them and a place computed in window pixels lands off screen.
     let viewW = $state(window.innerWidth);
     let viewH = $state(window.innerHeight);
+    let scale = 1;
+    /** @type {HTMLDivElement | null} */
+    let card = $state(null);
+
+    $effect(() => {
+        if (card) measure();
+    });
 
     const width = $derived(SIZES[size]);
     const height = $derived(Math.round((width * DRAW_HEIGHT) / DIAGRAM_WIDTH));
@@ -55,7 +64,7 @@
 
     const style = $derived.by(() => {
         if (fx === null || fy === null) return `right: ${MARGIN}px; bottom: ${BOTTOM}px; width: ${width}px;`;
-        const left = clamp(fx * viewW, viewW - width);
+        const left = clamp(fx * viewW, viewW - width - 2);
         const top = clamp(fy * viewH, viewH - height - 28);
         return `left: ${left}px; top: ${top}px; width: ${width}px;`;
     });
@@ -94,27 +103,31 @@
         if (event.button !== 0 || (event.target instanceof Element && event.target.closest('button'))) return;
         // No focus taken: the transcription keys stay where they were.
         event.preventDefault();
-        const card = /** @type {HTMLElement} */ (event.currentTarget);
-        card.setPointerCapture?.(event.pointerId);
-        const box = card.getBoundingClientRect();
+        const el = /** @type {HTMLElement} */ (event.currentTarget);
+        el.setPointerCapture?.(event.pointerId);
+        measure();
+        const origin = el.parentElement?.getBoundingClientRect() ?? { left: 0, top: 0 };
+        const box = el.getBoundingClientRect();
         const dx = event.clientX - box.left;
         const dy = event.clientY - box.top;
+        const boxW = box.width / scale;
+        const boxH = box.height / scale;
         dragging = true;
         /** @param {PointerEvent} e */
         const move = (e) => {
-            fx = clamp(e.clientX - dx, viewW - box.width) / Math.max(1, viewW);
-            fy = clamp(e.clientY - dy, viewH - box.height) / Math.max(1, viewH);
+            fx = clamp((e.clientX - dx - origin.left) / scale, viewW - boxW) / Math.max(1, viewW);
+            fy = clamp((e.clientY - dy - origin.top) / scale, viewH - boxH) / Math.max(1, viewH);
         };
         const up = () => {
-            card.removeEventListener('pointermove', move);
-            card.removeEventListener('pointerup', up);
-            card.removeEventListener('pointercancel', up);
+            el.removeEventListener('pointermove', move);
+            el.removeEventListener('pointerup', up);
+            el.removeEventListener('pointercancel', up);
             dragging = false;
             save();
         };
-        card.addEventListener('pointermove', move);
-        card.addEventListener('pointerup', up);
-        card.addEventListener('pointercancel', up);
+        el.addEventListener('pointermove', move);
+        el.addEventListener('pointerup', up);
+        el.addEventListener('pointercancel', up);
     }
 
     function cycleSize() {
@@ -127,16 +140,19 @@
         save();
     }
 
-    function onResize() {
-        viewW = window.innerWidth;
-        viewH = window.innerHeight;
+    function measure() {
+        const layer = card?.parentElement;
+        if (!layer || !layer.offsetWidth || !layer.offsetHeight) return;
+        viewW = layer.offsetWidth;
+        viewH = layer.offsetHeight;
+        scale = layer.getBoundingClientRect().width / layer.offsetWidth || 1;
     }
 
     /** @param {MouseEvent} event */
     const keepFocus = (event) => event.preventDefault();
 </script>
 
-<svelte:window onresize={onResize} />
+<svelte:window onresize={measure} />
 
 {#if hidden}
     <button class="theatre-board-tab" data-testid="theatre-board-show" onmousedown={keepFocus} onclick={toggleHidden} title={$t('theatre.boardShow')} aria-label={$t('theatre.boardShow')}>
@@ -146,7 +162,7 @@
         <span>{$t('theatre.board')}</span>
     </button>
 {:else}
-    <div class="theatre-board" class:dragging data-testid="theatre-board" data-size={size} {style} role="group" aria-label={$t('theatre.board')} onpointerdown={startDrag}>
+    <div class="theatre-board" class:dragging bind:this={card} data-testid="theatre-board" data-size={size} {style} role="group" aria-label={$t('theatre.board')} onpointerdown={startDrag}>
         <div class="theatre-board-head" title={$t('theatre.boardMove')}>
             <span class="grip" aria-hidden="true">⠿</span>
             <span class="move" data-testid="theatre-board-move">{$selectedMoveStore ?? ''}</span>

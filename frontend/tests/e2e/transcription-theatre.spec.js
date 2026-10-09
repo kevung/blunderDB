@@ -145,3 +145,35 @@ test('le plateau du théâtre est visible et non vide', async ({ page }) => {
     expect(m.shapes).toBeGreaterThan(30);
     expect(m.onTop).toBe(true);
 });
+
+test('sous une échelle d’interface de 150 %, le mini-plateau reste dans la fenêtre, à sa place comme glissé', async ({ page }) => {
+    // Le théâtre est sous le `zoom` de l'interface : une place retenue en fraction de la fenêtre
+    // doit tomber dans la fenêtre, et le glisser suivre la souris.
+    await page.evaluate(() => {
+        localStorage.setItem('blunderdb.theatre.board', JSON.stringify({ x: 0.75, y: 0.55, size: 'm', hidden: false }));
+        document.documentElement.style.setProperty('--ui-scale', '1.5');
+    });
+    await page.locator('#transcriptionPanel').focus();
+    await page.keyboard.press('F11');
+    const view = page.viewportSize() ?? { width: 0, height: 0 };
+    const board = page.locator('[data-testid="theatre-board"]');
+    const inside = async () => {
+        const b = await board.boundingBox();
+        if (!b) throw new Error('mini-plateau absent');
+        expect(b.x).toBeGreaterThanOrEqual(0);
+        expect(b.y).toBeGreaterThanOrEqual(0);
+        expect(b.x + b.width).toBeLessThanOrEqual(view.width + 1);
+        expect(b.y + b.height).toBeLessThanOrEqual(view.height + 1);
+        return b;
+    };
+    const before = await inside();
+    expect(before.x).toBeGreaterThan(view.width / 3);
+    // Saisi par sa tête, il suit la souris d'autant.
+    await page.mouse.move(before.x + 40, before.y + 10);
+    await page.mouse.down();
+    await page.mouse.move(before.x - 160, before.y - 90, { steps: 5 });
+    await page.mouse.up();
+    const after = await inside();
+    expect(Math.abs(after.x - (before.x - 200))).toBeLessThan(3);
+    expect(Math.abs(after.y - (before.y - 100))).toBeLessThan(3);
+});
