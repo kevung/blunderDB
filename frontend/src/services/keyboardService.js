@@ -299,6 +299,8 @@ export function handleKeyDown(event) {
     if (document.activeElement?.closest('.analysis-panel')) {
         if (isAlwaysGlobal(event) || event.key === 'Escape' || event.key === 'Tab') {
             // Let shortcut through
+        } else if (isBareLetter(event, 'm')) {
+            // The challenge toggle acts on this very panel: it must work where the focus sits.
         } else {
             if (isBoardNavigationKey(event) && !get(selectedMoveStore)) {
                 // No move selected - allow position navigation
