@@ -1936,7 +1936,12 @@
             "prCube": "PR Doppler"
         },
         "interval95": "95-%-KI",
-        "intervalHint": "95-%-Konfidenzintervall: zieht die Matches einer Auswahl bzw. die Spiele eines Matches neu. Eine Zeile ohne Intervall (weniger als drei Matches oder Spiele, oder alle mit demselben PR) ist ausgegraut."
+        "intervalHint": "95-%-Konfidenzintervall: zieht die Matches einer Auswahl bzw. die Spiele eines Matches neu. Eine Zeile ohne Intervall (weniger als drei Matches oder Spiele, oder alle mit demselben PR) ist ausgegraut.",
+        "positions": "Positionen",
+        "breakdownOpenPositions": "Diese {n} Positionen öffnen ({decisions} Entscheidungen)",
+        "breakdownOpenBlunders": "Die {n} Positionen mit Patzer öffnen ({decisions} Patzer)",
+        "breakdownBlundersHint": "Positionen, in denen mindestens eine Entscheidung ein Patzer ist",
+        "planOutsideShort": "Außerhalb des Plans: {unthemed} ohne Thema · {unpriced} unbewertet"
     },
     "resumeBatch": {
         "title": "Import fortsetzen",

@@ -36,8 +36,7 @@
 </script>
 
 <section class="chart-section biases" data-testid="biases">
-    <h3 class="section-title">{$t('stats.biasesTitle')}</h3>
-    <p class="hint">{$t('stats.biasesHint', { n: biases?.MinDecisions ?? 20 })}</p>
+    <h3 class="section-title" title={$t('stats.biasesHint', { n: biases?.MinDecisions ?? 20 })}>{$t('stats.biasesTitle')}</h3>
     {#if $studyLoopLoadingStore}
         <p class="empty-subsection">{$t('stats.loading')}</p>
     {:else if $studyLoopErrorStore}
@@ -124,9 +123,9 @@
         text-transform: uppercase;
         letter-spacing: 0.05em;
         margin: 0 0 8px;
+        cursor: help;
     }
 
-    .hint,
     .aside {
         font-size: var(--font-size-small);
         color: var(--color-text-muted);

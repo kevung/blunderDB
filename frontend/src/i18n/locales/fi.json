@@ -1936,7 +1936,12 @@
             "prCube": "Kuution PR"
         },
         "interval95": "95 %:n LV",
-        "intervalHint": "95 %:n luottamusväli: otantaa uudelleen valinnan otteluista tai ottelun peleistä. Rivi ilman väliä (alle kolme ottelua tai peliä, tai kaikilla sama PR) on harmaannettu."
+        "intervalHint": "95 %:n luottamusväli: otantaa uudelleen valinnan otteluista tai ottelun peleistä. Rivi ilman väliä (alle kolme ottelua tai peliä, tai kaikilla sama PR) on harmaannettu.",
+        "positions": "Asemat",
+        "breakdownOpenPositions": "Avaa nämä {n} asemaa ({decisions} päätöstä)",
+        "breakdownOpenBlunders": "Avaa {n} asemaa, joissa on vakava virhe ({decisions} vakavaa virhettä)",
+        "breakdownBlundersHint": "Asemat, joissa vähintään yksi päätös on vakava virhe",
+        "planOutsideShort": "Suunnitelman ulkopuolella: {unthemed} ilman teemaa · {unpriced} hinnoittelematta"
     },
     "resumeBatch": {
         "title": "Jatka tuontia",

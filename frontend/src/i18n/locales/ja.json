@@ -1936,7 +1936,12 @@
             "prCube": "キューブ PR"
         },
         "interval95": "95 % 信頼区間",
-        "intervalHint": "95 % 信頼区間：選択範囲ではマッチを、1 マッチではゲームを再標本化します。区間のない行（マッチまたはゲームが 3 未満、またはすべて同じ PR）は灰色で示します。"
+        "intervalHint": "95 % 信頼区間：選択範囲ではマッチを、1 マッチではゲームを再標本化します。区間のない行（マッチまたはゲームが 3 未満、またはすべて同じ PR）は灰色で示します。",
+        "positions": "局面",
+        "breakdownOpenPositions": "この {n} 局面を開く（{decisions} 判断）",
+        "breakdownOpenBlunders": "大悪手のある {n} 局面を開く（{decisions} 大悪手）",
+        "breakdownBlundersHint": "少なくとも 1 つの判断が大悪手である局面",
+        "planOutsideShort": "計画外: テーマなし {unthemed} · 未評価 {unpriced}"
     },
     "resumeBatch": {
         "title": "インポートを再開",

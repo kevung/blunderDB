@@ -1936,7 +1936,12 @@
             "prCube": "Cube PR"
         },
         "interval95": "95 % CI",
-        "intervalHint": "95 % confidence interval: resamples the matches of a selection, the games of a match. A row without one (fewer than three matches or games, or all at the same PR) is greyed."
+        "intervalHint": "95 % confidence interval: resamples the matches of a selection, the games of a match. A row without one (fewer than three matches or games, or all at the same PR) is greyed.",
+        "positions": "Positions",
+        "breakdownOpenPositions": "Open these {n} positions ({decisions} decisions)",
+        "breakdownOpenBlunders": "Open the {n} positions with a blunder ({decisions} blunders)",
+        "breakdownBlundersHint": "Positions where at least one decision is a blunder",
+        "planOutsideShort": "Outside the plan: {unthemed} without a theme · {unpriced} unpriced"
     },
     "resumeBatch": {
         "title": "Resume an import",

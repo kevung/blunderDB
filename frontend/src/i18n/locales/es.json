@@ -1936,7 +1936,12 @@
             "prCube": "PR cubo"
         },
         "interval95": "IC 95 %",
-        "intervalHint": "Intervalo de confianza del 95 %: remuestrea los matches de una selección, las partidas de un match. Una fila sin intervalo (menos de tres matches o partidas, o todos con el mismo PR) aparece en gris."
+        "intervalHint": "Intervalo de confianza del 95 %: remuestrea los matches de una selección, las partidas de un match. Una fila sin intervalo (menos de tres matches o partidas, o todos con el mismo PR) aparece en gris.",
+        "positions": "Posiciones",
+        "breakdownOpenPositions": "Abrir estas {n} posiciones ({decisions} decisiones)",
+        "breakdownOpenBlunders": "Abrir las {n} posiciones con un error grave ({decisions} errores graves)",
+        "breakdownBlundersHint": "Posiciones donde al menos una decisión es un error grave",
+        "planOutsideShort": "Fuera del plan: {unthemed} sin tema · {unpriced} sin cifrar"
     },
     "resumeBatch": {
         "title": "Reanudar una importación",
