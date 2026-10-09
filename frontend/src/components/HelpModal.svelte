@@ -7,7 +7,7 @@
     import { metaStore } from '../stores/metaStore'; // Import metaStore
     import { t, language } from '../i18n';
     import { help, loadHelpFor } from '../i18n/help/index.js';
-    import { findInHelp } from '../utils/helpSearch.js';
+    import { createHelpIndex } from '../utils/helpSearch.js';
     import { GetDatabaseVersion } from '../../wailsjs/go/database/Database'; // Correct import path
 
     let { visible = false, onClose } = $props();
@@ -43,17 +43,26 @@
 
     // Search: Enter steps to the next occurrence, Shift+Enter to the previous one. The match
     // is shown as the page's own selection, so no markup is added to the generated corpus.
-    const SEARCH_DEBOUNCE_MS = 150;
+    const SEARCH_DEBOUNCE_MS = 50;
     let searchQuery = $state('');
     let searchInput = $state();
     let matchCount = $state(0);
     let matchIndex = $state(0);
-    let matches = [];
+    // Every occurrence is counted, but a one-letter query would paint tens of thousands of
+    // ranges for nothing a reader can use: the highlight stops at a cap, stepping reaches the rest.
+    const HIGHLIGHT_CAP = 500;
+    let found = { count: 0, ranges: [], at: () => null };
+    let helpIndex = null;
+    // The index holds the text nodes of what is on screen: a new tab, language or corpus replaces them.
+    $effect(() => {
+        void [$help, activeTab, $language, aboutHtml];
+        helpIndex = null;
+    });
 
     function showMatch(index) {
-        if (matches.length === 0) return;
-        matchIndex = (index + matches.length) % matches.length;
-        const range = matches[matchIndex];
+        if (found.count === 0) return;
+        matchIndex = (index + found.count) % found.count;
+        const range = found.at(matchIndex);
         const selection = window.getSelection();
         selection?.removeAllRanges();
         selection?.addRange(range);
@@ -65,19 +74,20 @@
     const HIGHLIGHT = 'help-search';
     function paintMatches() {
         if (typeof CSS === 'undefined' || !CSS.highlights || typeof Highlight === 'undefined') return;
-        if (matches.length === 0) CSS.highlights.delete(HIGHLIGHT);
-        else CSS.highlights.set(HIGHLIGHT, new Highlight(...matches));
+        if (found.count === 0) CSS.highlights.delete(HIGHLIGHT);
+        else CSS.highlights.set(HIGHLIGHT, new Highlight(...found.ranges));
     }
 
     function runSearch() {
         clearTimeout(searchTimer);
         searchPending = false;
-        matches = findInHelp(contentArea, searchQuery);
-        matchCount = matches.length;
+        helpIndex ??= createHelpIndex(contentArea);
+        found = helpIndex.search(searchQuery, HIGHLIGHT_CAP);
+        matchCount = found.count;
         // Typing only counts and paints: moving the page's selection under the caret would cut the word short.
         matchIndex = -1;
         paintMatches();
-        matches[0]?.startContainer.parentElement?.scrollIntoView?.({ block: 'center' });
+        found.ranges[0]?.startContainer.parentElement?.scrollIntoView?.({ block: 'center' });
     }
 
     let searchTimer;
@@ -95,7 +105,7 @@
     function onSearchKeyDown(event) {
         if (event.key === 'Enter') {
             event.preventDefault();
-            if (searchPending || matches.length === 0) runSearch();
+            if (searchPending || found.count === 0) runSearch();
             showMatch(matchIndex < 0 ? (event.shiftKey ? -1 : 0) : matchIndex + (event.shiftKey ? -1 : 1));
         }
         // Everything else a field needs (letters, arrows, Escape for Modal) is left alone.
@@ -104,7 +114,7 @@
 
     function switchTab(tab) {
         activeTab = tab;
-        matches = [];
+        found = { count: 0, ranges: [], at: () => null };
         matchCount = 0;
         paintMatches();
         if (searchQuery) tick().then(runSearch);
