@@ -172,6 +172,7 @@ describe('newDatabase', () => {
 
     test('SetupDatabase failing reports the error and still resets the mode', async () => {
         SaveDatabaseDialog.mockResolvedValue('/tmp/new.db');
+        databasePathStore.set('/tmp/old.db');
         SetupDatabase.mockRejectedValue(new Error('disk full'));
 
         await newDatabase();
@@ -179,6 +180,7 @@ describe('newDatabase', () => {
         expect(get(statusBarTextStore)).not.toBe('');
         expect(get(statusBarModeStore)).toBe('NORMAL');
         expect(loadAllPositions).not.toHaveBeenCalled();
+        expect(get(databasePathStore)).toBe('');
     });
 });
 
@@ -267,16 +269,29 @@ describe('a Lesson being read', () => {
 });
 
 describe('openDatabaseByPath', () => {
-    test('a failed open keeps the previously open path and re-reads the counts', async () => {
+    test('a failed open leaves nothing open: empty path, neutral title, counts re-read', async () => {
         databasePathStore.set('/tmp/old.db');
         OpenDatabase.mockRejectedValue(new Error('corrupt'));
         refreshLibraryCounts.mockClear();
+        WindowSetTitle.mockClear();
 
         await openDatabaseByPath('/tmp/bad.db');
 
-        expect(get(databasePathStore)).toBe('/tmp/old.db');
+        expect(get(databasePathStore)).toBe('');
+        expect(WindowSetTitle).toHaveBeenLastCalledWith('blunderDB');
         expect(refreshLibraryCounts).toHaveBeenCalledTimes(1);
         expect(SaveLastDatabasePath).not.toHaveBeenCalled();
+    });
+
+    test('a failure after a successful open keeps the opened path', async () => {
+        CheckDatabaseVersion.mockRejectedValue(new Error('version unreadable'));
+        refreshLibraryCounts.mockClear();
+
+        await openDatabaseByPath('/tmp/opened.db');
+
+        expect(get(databasePathStore)).toBe('/tmp/opened.db');
+        expect(SaveLastDatabasePath).toHaveBeenCalledWith('/tmp/opened.db');
+        expect(refreshLibraryCounts).toHaveBeenCalledTimes(1);
     });
 
     test('the library counts are refreshed once the database is open, not before', async () => {
