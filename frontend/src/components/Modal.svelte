@@ -59,8 +59,19 @@
         onkeydown?.(event);
     }
 
+    // A drag that starts in the box (selecting text) and ends on the backdrop makes the
+    // browser fire `click` on their common ancestor: only a press that began outside
+    // the box may close.
+    let pressedOutside = false;
+
+    function handleMouseDown(event) {
+        pressedOutside = !!box && !box.contains(event.target);
+    }
+
     function handleClick(event) {
-        if (closeOnOverlay && box && !box.contains(event.target)) onclose();
+        const pressed = pressedOutside;
+        pressedOutside = false;
+        if (closeOnOverlay && pressed && box && !box.contains(event.target)) onclose();
     }
 </script>
 
@@ -73,6 +84,7 @@
         aria-label={title ? undefined : label}
         tabindex="-1"
         onkeydown={handleKeydown}
+        onmousedown={handleMouseDown}
         onclick={handleClick}
         use:trapFocus
     >

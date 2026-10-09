@@ -1016,11 +1016,12 @@ export default {
 <ul>
 <li>Antes de la tirada, un clic en el tablero, en los dados o en una ficha los lanza; solo un clic en el cubo propone doblar, y el tablero pregunta «Doblar» o «Cancelar». Cuando el cubo no está disponible, la tirada es automática.</li>
 <li>Ante un doble del Bot, el tablero pregunta «Aceptar» o «Rechazar».</li>
-<li>Un clic en una ficha la juega con el dado izquierdo aún libre, o con el otro cuando el izquierdo no puede jugarla; un doble se juega en cuatro clics. Una ficha también puede arrastrarse hasta su destino. Un dado jugado se atenúa. Solo pasan los pasos de una jugada legal.</li>
-<li>Antes de jugar, un clic en los dados, o un clic derecho en el tablero, invierte su orden. Durante la jugada, el clic derecho en el tablero recupera todas las fichas jugadas (<code>RETROCESO</code> también).</li>
+<li>Un clic en una ficha la juega en el acto con el dado izquierdo aún libre, o con el otro cuando el izquierdo no puede jugarla; una ficha en la barra entra, un doble se juega en cuatro clics. Una ficha también puede arrastrarse hasta su destino. Solo pasan los pasos de una jugada legal.</li>
+<li>Un dado se atenúa cuando se juega; en un doble, cada dado vale dos pasos y se vela a medias tras el primero. La jugada completa atenúa todos los dados, incluidos los que la regla no permite jugar.</li>
+<li>Mientras la jugada no esté completa, un clic en los dados invierte los dados que quedan por jugar. El clic derecho en el tablero recupera todas las fichas jugadas (<code>RETROCESO</code> también); sin ficha jugada, abre el menú del Duelo.</li>
 <li>La jugada completa se valida con un clic en los dados, con «Validar» en el tablero, o con <code>INTRO</code> o <code>ESPACIO</code>. Después no se puede retroceder.</li>
 <li>El Bot responde enseguida; sus jugadas se reproducen en el tablero, despacio.</li>
-<li>El clic derecho fuera del tablero, o en el tablero fuera de su jugada, abre el menú del Duelo: poner la posición en la Pila o retirarla, abandonar la partida por una simple, un gammon o un backgammon (en su turno, tras confirmación), abandonar el match, ponerlo en pausa, anularlo. Este menú no ofrece ni evaluación ni edición.</li>
+<li>El clic derecho fuera del tablero, o en el tablero fuera de su jugada o sin ficha jugada, abre el menú del Duelo: poner la posición en la Pila o retirarla, abandonar la partida por una simple, un gammon o un backgammon (en su turno, tras confirmación), abandonar el match, ponerlo en pausa, anularlo. Este menú no ofrece ni evaluación ni edición.</li>
 <li>«Abandonar el match» cede el match entero, en cualquier momento y tras confirmación: la partida en curso va al adversario por los puntos que lo llevan a la longitud, y el Match se guarda como ganado por él. En dinero, la partida en curso se pierde como simple, al valor del cubo (con o sin regla Jacoby), y la sesión se cierra. Bajo una cadencia que hace perder el match, una reserva agotada equivale al abandono del match por ese jugador.</li>
 <li>«Pausar el match» deja el Duelo en suspenso, con los relojes parados; se reanuda en el mismo punto. «Anular el match» lo descarta, tras confirmación: no se guarda nada.</li>
 <li>Un doble clic fuera del tablero pone la posición en la Pila, o la retira, como <code>B</code>; solo el marcador en la esquina del tablero lo muestra.</li>
@@ -1438,7 +1439,7 @@ export default {
 </tr>
 <tr>
 <td>Clic en una ficha</td>
-<td>Jugarla con el dado izquierdo aún libre, o con el otro si el izquierdo no puede jugarla. Un dado jugado se atenúa.</td>
+<td>Jugarla en el acto con el dado izquierdo aún libre, o con el otro si el izquierdo no puede jugarla. Un dado jugado se atenúa; la jugada completa atenúa todos los dados.</td>
 </tr>
 <tr>
 <td>Arrastrar una ficha</td>
@@ -1446,11 +1447,11 @@ export default {
 </tr>
 <tr>
 <td>Clic en los dados (jugada en curso)</td>
-<td>Ningún dado jugado: invertir su orden. Jugada completa: validarla.</td>
+<td>Jugada completa: validarla. Si no: invertir los dados que quedan por jugar.</td>
 </tr>
 <tr>
 <td>Clic derecho en el tablero (jugada en curso)</td>
-<td>Recuperar todas las fichas jugadas; sin ficha jugada, invertir los dados.</td>
+<td>Recuperar todas las fichas jugadas; sin ficha jugada, abrir el menú del Duelo.</td>
 </tr>
 <tr>
 <td>Clic derecho fuera del tablero, o fuera de su jugada</td>
@@ -2127,7 +2128,7 @@ export default {
 </tr>
 <tr>
 <td>/</td>
-<td>Buscar en la ayuda: Intro pasa a la ocurrencia siguiente, MAYÚS-Intro a la anterior.</td>
+<td>Buscar en la ayuda: las apariciones se cuentan y resaltan al escribir; Intro pasa a la siguiente, MAYÚS-Intro a la anterior.</td>
 </tr>
 <tr>
 <td>?, CTRL-F, Esc</td>

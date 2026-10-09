@@ -688,10 +688,11 @@ describe('the quiz move is played on the board', () => {
         return p;
     }
 
+    // 2-1 : le moteur ne rend que 13/11, le 1 restant injouable dans ce plateau de test.
     const play13to11 = [{ steps: [{ from: 13, to: 11, hit: false }], notation: '13/11', result: {} }];
 
     test('the clicked source and destination move the checker', () => {
-        const position = posWith({ 13: [5, 0] });
+        const position = { ...posWith({ 13: [5, 0] }), dice: [2, 1] };
         const b = mountQuiz({ plays: play13to11, position });
         b.click(b.slot(13, 0));
         b.click(b.slot(11, 0));
@@ -702,7 +703,7 @@ describe('the quiz move is played on the board', () => {
     });
 
     test('a mirrored board maps the clicked point back to the model', () => {
-        const position = posWith({ 13: [5, 0] });
+        const position = { ...posWith({ 13: [5, 0] }), dice: [2, 1] };
         const b = mountQuiz({ mirrored: true, plays: play13to11, position });
         // En miroir, le point 13 du modèle est dessiné là où le 12 le serait.
         b.click(b.slot(12, 0));
@@ -712,7 +713,7 @@ describe('the quiz move is played on the board', () => {
     });
 
     test('the position itself never moves: it is the question', () => {
-        const position = posWith({ 13: [5, 0] });
+        const position = { ...posWith({ 13: [5, 0] }), dice: [2, 1] };
         const b = mountQuiz({ plays: play13to11, position });
         b.click(b.slot(13, 0));
         b.click(b.slot(11, 0));
@@ -721,7 +722,7 @@ describe('the quiz move is played on the board', () => {
     });
 
     test('a click no legal play offers moves nothing, and says nothing', () => {
-        const position = posWith({ 13: [5, 0] });
+        const position = { ...posWith({ 13: [5, 0] }), dice: [2, 1] };
         const b = mountQuiz({ plays: play13to11, position });
         b.click(b.slot(13, 0));
         b.click(b.slot(9, 0));

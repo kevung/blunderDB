@@ -158,10 +158,10 @@ Duel au plateau
 
    "Clic sur le plateau ou sur les dés (avant le lancer)", "Lancer les dés. Le videau garde son sens : il propose de doubler."
    "Clic sur le videau (avant le lancer)", "Proposer de doubler ; « Doubler » ou « Annuler » confirme sur le plateau."
-   "Clic sur un pion", "Le jouer avec le dé de gauche encore libre, ou avec l'autre si celui-ci ne peut pas le jouer. Un dé joué est grisé."
+   "Clic sur un pion", "Le jouer aussitôt avec le dé de gauche encore libre, ou avec l'autre si celui-ci ne peut pas le jouer. Un dé joué est grisé ; le coup complet grise tous les dés."
    "Glisser un pion", "Le jouer vers le point où il est lâché, si un coup légal le permet."
-   "Clic sur les dés (coup en cours)", "Aucun dé joué : intervertir leur ordre. Coup complet : le valider."
-   "Clic droit sur le plateau (coup en cours)", "Reprendre tous les pions joués ; sans pion joué, intervertir les dés."
+   "Clic sur les dés (coup en cours)", "Coup complet : le valider. Sinon : intervertir les dés restant à jouer."
+   "Clic droit sur le plateau (coup en cours)", "Reprendre tous les pions joués ; sans pion joué, ouvrir le menu du Duel."
    "Clic droit hors du plateau, ou hors de son coup", "Ouvrir le menu du Duel : Pile, abandon, suspension, arrêt."
 
 .. _raccourcis_vues:
@@ -512,5 +512,5 @@ Panneau d'aide
    "ESPACE", "Page suivante."
    "Page préc.", "Haut du contenu."
    "Page suiv.", "Bas du contenu."
-   "/", "Chercher dans l'aide : Entrée passe à l'occurrence suivante, MAJ-Entrée à la précédente."
+   "/", "Chercher dans l'aide : les occurrences sont comptées et surlignées à la frappe ; Entrée passe à l'occurrence suivante, MAJ-Entrée à la précédente."
    "?, CTRL-F, Esc", "Fermer l'aide."

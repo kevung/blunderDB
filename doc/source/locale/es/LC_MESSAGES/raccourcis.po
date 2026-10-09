@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-09 23:53+0200\n"
+"POT-Creation-Date: 2026-10-10 00:46+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -710,11 +710,13 @@ msgstr "Clic en una ficha"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Le jouer avec le dé de gauche encore libre, ou avec l'autre si celui-ci "
-"ne peut pas le jouer. Un dé joué est grisé."
+"Le jouer aussitôt avec le dé de gauche encore libre, ou avec l'autre si "
+"celui-ci ne peut pas le jouer. Un dé joué est grisé ; le coup complet "
+"grise tous les dés."
 msgstr ""
-"Jugarla con el dado izquierdo aún libre, o con el otro si el izquierdo no"
-" puede jugarla. Un dado jugado se atenúa."
+"Jugarla en el acto con el dado izquierdo aún libre, o con el otro si el "
+"izquierdo no puede jugarla. Un dado jugado se atenúa; la jugada completa "
+"atenúa todos los dados."
 
 #: ../../source/raccourcis.rst:1
 msgid "Glisser un pion"
@@ -729,16 +731,20 @@ msgid "Clic sur les dés (coup en cours)"
 msgstr "Clic en los dados (jugada en curso)"
 
 #: ../../source/raccourcis.rst:1
-msgid "Aucun dé joué : intervertir leur ordre. Coup complet : le valider."
-msgstr "Ningún dado jugado: invertir su orden. Jugada completa: validarla."
+msgid "Coup complet : le valider. Sinon : intervertir les dés restant à jouer."
+msgstr ""
+"Jugada completa: validarla. Si no: invertir los dados que quedan por "
+"jugar."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic droit sur le plateau (coup en cours)"
 msgstr "Clic derecho en el tablero (jugada en curso)"
 
 #: ../../source/raccourcis.rst:1
-msgid "Reprendre tous les pions joués ; sans pion joué, intervertir les dés."
-msgstr "Recuperar todas las fichas jugadas; sin ficha jugada, invertir los dados."
+msgid "Reprendre tous les pions joués ; sans pion joué, ouvrir le menu du Duel."
+msgstr ""
+"Recuperar todas las fichas jugadas; sin ficha jugada, abrir el menú del "
+"Duelo."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic droit hors du plateau, ou hors de son coup"
@@ -2039,11 +2045,12 @@ msgstr "Final del contenido."
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Chercher dans l'aide : Entrée passe à l'occurrence suivante, MAJ-Entrée à"
-" la précédente."
+"Chercher dans l'aide : les occurrences sont comptées et surlignées à la "
+"frappe ; Entrée passe à l'occurrence suivante, MAJ-Entrée à la "
+"précédente."
 msgstr ""
-"Buscar en la ayuda: Intro pasa a la ocurrencia siguiente, MAYÚS-Intro a "
-"la anterior."
+"Buscar en la ayuda: las apariciones se cuentan y resaltan al escribir; "
+"Intro pasa a la siguiente, MAYÚS-Intro a la anterior."
 
 #: ../../source/raccourcis.rst:1
 msgid "?, CTRL-F, Esc"
@@ -2325,3 +2332,6 @@ msgstr "Cerrar la ayuda."
 
 #~ msgid ", / . (vidéo attachée)"
 #~ msgstr ", / . (vídeo adjunto)"
+
+#~ msgid "Aucun dé joué : intervertir leur ordre. Coup complet : le valider."
+#~ msgstr "Ningún dado jugado: invertir su orden. Jugada completa: validarla."

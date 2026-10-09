@@ -4,10 +4,7 @@
 // picks which die a click spends and lets `playHop` accept or refuse it.
 
 import { completedPlay } from './quizPlay.js';
-import { orderedDice, playClickedChecker } from './boardMove.js';
-
-// The grammar itself is boardMove.js's, shared by every mode that takes a checker play.
-export { stepDistance, landing, orderedDice, spentDice, usedDice, playClickedChecker } from './boardMove.js';
+import { orderedDice, playClickedChecker, diceClick, boardRightClick } from './boardMove.js';
 
 /**
  * What the click fell on: a die (0 left, 1 right, as drawn), the cube, a point of the model
@@ -17,7 +14,8 @@ export { stepDistance, landing, orderedDice, spentDice, usedDice, playClickedChe
 
 /**
  * The Duel as the board reads it.
- * @typedef {{ awaiting: any, human: number, animating: boolean, play: any, swapped: boolean, prompt: string|null }} DuelBoardContext
+ * The order of the dice is the play's own (`play.swapped`), as in every mode on the grammar.
+ * @typedef {{ awaiting: any, human: number, animating: boolean, play: any, prompt: string|null }} DuelBoardContext
  */
 
 /**
@@ -29,9 +27,18 @@ export function isMine(ctx) {
 }
 
 /**
+ * The roll of the move in the order drawn: the one a click on a checker spends first is left.
+ * @param {DuelBoardContext} ctx
+ */
+export function drawnDice(ctx) {
+    return orderedDice(ctx.awaiting?.position?.dice, !!ctx.play?.swapped);
+}
+
+/**
  * A left click on the board, as an action for the Duel to carry out, or null.
- * `roll`, `offerDouble` (asks the on-board confirmation), `swap` (the dice order), `validate`,
- * `play` (with the next quizPlay state).
+ * `roll`, `offerDouble` (asks the on-board confirmation), `swap` (the dice still to play change
+ * places), `validate`, `play` (with the next quizPlay state). During the move the clicks follow
+ * the grammar every mode shares (ADR-0086, services/boardMove.js).
  * @param {DuelBoardContext} ctx
  * @param {BoardHit} hit
  * @returns {{ type: 'roll'|'offerDouble'|'swap'|'validate' } | { type: 'play', play: any } | null}
@@ -50,12 +57,11 @@ export function boardPress(ctx, hit) {
     }
     if (kind !== 'move' || !ctx.play) return null;
     if (hit.kind === 'die') {
-        if (ctx.play.steps.length === 0) return { type: 'swap' };
-        // The dice spent: a click on them confirms a finished move, as Enter does.
-        return completedPlay(ctx.play) ? { type: 'validate' } : null;
+        const action = diceClick(ctx.play, drawnDice(ctx));
+        return action ? { type: action } : null;
     }
     if (hit.kind === 'point') {
-        const next = playClickedChecker(ctx.play, hit.point, orderedDice(ctx.awaiting.position?.dice, ctx.swapped));
+        const next = playClickedChecker(ctx.play, hit.point, drawnDice(ctx));
         return next === ctx.play ? null : { type: 'play', play: next };
     }
     return null;
@@ -70,16 +76,17 @@ export function canValidateMove(ctx) {
 }
 
 /**
- * A right click: on the board during the player's move it takes the move back, or swaps the
- * dice when nothing is played; anywhere else, and at any other moment, the Duel's menu.
+ * A right click: on the board during the player's move it takes back the steps played; with
+ * nothing played, anywhere else, and at any other moment, the Duel's menu. The dice swap by a
+ * click on them, not here (ADR-0086 §8).
  * @param {DuelBoardContext} ctx
  * @param {BoardHit} hit
- * @returns {{ type: 'menu'|'reset'|'swap' }}
+ * @returns {{ type: 'menu'|'reset' }}
  */
 export function boardContext(ctx, hit) {
     const onBoard = hit.kind === 'point' || hit.kind === 'none';
     if (!onBoard || !isMine(ctx) || ctx.prompt || ctx.awaiting.kind !== 'move' || !ctx.play) return { type: 'menu' };
-    return ctx.play.steps.length > 0 ? { type: 'reset' } : { type: 'swap' };
+    return boardRightClick(ctx.play) === 'reset' ? { type: 'reset' } : { type: 'menu' };
 }
 
 /**

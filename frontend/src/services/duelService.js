@@ -6,7 +6,7 @@ import { CreateDuel, OpenDuel, SuspendDuel, PlayDuel, FlagDuel, StopDuel, Forfei
 import { LegalMoves, StartGammonNetMatchBatch } from '../../wailsjs/go/gui/App.js';
 import { GetGammonNetAnalysisPly, GetGammonNetPruneK, GetDuelForm, SaveDuelForm } from '../../wailsjs/go/main/Config.js';
 import { duelStore, duelListStore, duelNowStore, duelAnimatingStore, duelHoldsBoardStore, duelBoardStore } from '../stores/duelStore.js';
-import { quizPlayStore } from '../stores/quizPlayStore.js';
+import { quizPlayStore, armBoardMove } from '../stores/quizPlayStore.js';
 import { positionStore } from '../stores/positionStore.js';
 import { statusBarTextStore, activeTabStore, matchOpenRequestStore, matchPanelRefreshTriggerStore, dbMutationCounterStore } from '../stores/uiStore.js';
 import { newPlay, completedPlay, resetPlay, playHop } from './quizPlay.js';
@@ -146,7 +146,8 @@ export async function validateMove() {
 export function resetMove() {
     const awaiting = get(duelStore)?.state?.awaiting;
     if (!awaiting) return;
-    quizPlayStore.update((state) => (state ? resetPlay(state, awaiting.position) : state));
+    // The steps go back; the order the player gave the dice stays.
+    quizPlayStore.update((state) => (state ? { ...resetPlay(state, awaiting.position), swapped: !!state.swapped } : state));
 }
 
 // ── The board's gestures (ADR-0072: the Duel is played on the board) ──────────
@@ -154,14 +155,12 @@ export function resetMove() {
 /** The Duel as `duelBoard.js` reads it. */
 export function duelBoardContext() {
     const state = get(duelStore)?.state;
-    const board = get(duelBoardStore);
     return {
         awaiting: state && !state.ended ? (state.awaiting ?? null) : null,
         human: humanSide(state),
         animating: get(duelAnimatingStore) || busy,
         play: get(quizPlayStore),
-        swapped: board.swapped,
-        prompt: board.prompt
+        prompt: get(duelBoardStore).prompt
     };
 }
 
@@ -176,7 +175,7 @@ export function duelBoardPress(hit) {
     if (!action) return true;
     if (action.type === 'roll') decide('roll');
     else if (action.type === 'offerDouble') duelBoardStore.update((b) => ({ ...b, prompt: 'double' }));
-    else if (action.type === 'swap') swapDuelDice();
+    else if (action.type === 'swap') quizPlayStore.update((s) => (s ? { ...s, swapped: !s.swapped } : s));
     else if (action.type === 'validate') validateMove();
     else if (action.type === 'play') quizPlayStore.set(action.play);
     return true;
@@ -200,15 +199,7 @@ export function duelBoardDrop(from, to) {
 export function duelBoardContextMenu(hit) {
     const action = boardContext(duelBoardContext(), hit);
     if (action.type === 'reset') resetMove();
-    else if (action.type === 'swap') swapDuelDice();
     return action.type === 'menu';
-}
-
-/** The dice change places, before any of them is played. */
-export function swapDuelDice() {
-    const play = get(quizPlayStore);
-    if (play && play.steps.length > 0) return;
-    duelBoardStore.update((b) => ({ ...b, swapped: !b.swapped }));
 }
 
 /** The on-board confirmation of a double: offered, or put back. */
@@ -287,7 +278,7 @@ async function draw(before, result) {
     if (!state) return;
     if (!before) await enterDuelMode();
     quizPlayStore.set(null);
-    duelBoardStore.set({ swapped: false, prompt: null });
+    duelBoardStore.set({ prompt: null });
 
     const human = humanSide(state);
     const frames = before ? framesBetween(before.sheet, result.sheet, human) : [];
@@ -317,7 +308,7 @@ async function draw(before, result) {
     if (awaiting.side === human && awaiting.kind === 'move') {
         try {
             const plays = await LegalMoves(awaiting.position);
-            if (get(duelStore)?.state?.revision === state.revision) quizPlayStore.set(newPlay(awaiting.position, plays ?? []));
+            if (get(duelStore)?.state?.revision === state.revision) armBoardMove(newPlay(awaiting.position, plays ?? []), validateMove);
         } catch (error) {
             logger.error('could not list the legal plays of the Duel:', error);
         }

@@ -24,14 +24,14 @@
     import * as anki from '../services/ankiService.js';
     import { ankiDecksStore } from '../stores/ankiStore.js';
     import { quizPlayStore, quizPlayTargetsStore, quizPlayValidateStore } from '../stores/quizPlayStore.js';
-    import { diceShade } from '../services/boardMove.js';
+    import { diceShade, orderedDice } from '../services/boardMove.js';
     import { transcriptionCubeRequestStore, transcriptionBoardSwapStore } from '../stores/transcriptionStore.js';
     import { resetBoardPlay } from '../services/transcriptionPlay.js';
     import ContextMenu from './ContextMenu.svelte';
     import { onPileStore, refreshPileState, togglePile } from '../services/pileService.js';
-    import { duelHoldsBoardStore, duelBoardStore, duelStore } from '../stores/duelStore.js';
+    import { duelHoldsBoardStore, duelStore } from '../stores/duelStore.js';
     import { duelBoardPress, duelBoardDrop, duelBoardContextMenu, duelBoardContext, suspendDuel, confirmForfeitDuel, confirmCancelDuel, resignDuel } from '../services/duelService.js';
-    import { orderedDice, usedDice, isMine } from '../services/duelBoard.js';
+    import { isMine } from '../services/duelBoard.js';
     import DuelBoardPrompt from './DuelBoardPrompt.svelte';
     import { registerKeys } from '../services/keyDispatch.js';
 
@@ -481,10 +481,9 @@
         // Quiz : seul le damier suit le coup en cours ; le reste vient de la position.
         const play = get(quizPlayStore);
         let position = play ? { ...stored, board: play.board } : stored;
-        // Duel : les dés dans l'ordre où le joueur les a rangés (le premier est celui qu'un clic joue).
-        if (get(duelHoldsBoardStore) && get(duelBoardStore).swapped) position = { ...position, dice: orderedDice(position.dice, true) };
-        // Grammaire d'ADR-0086 hors Duel : le jet du coup, dans l'ordre que le joueur a choisi.
-        else if (play && get(quizPlayValidateStore)) position = { ...position, dice: orderedDice(play.rolled ?? position.dice, !!play.swapped) };
+        // Grammaire d'ADR-0086 : le jet du coup, dans l'ordre que le joueur a choisi (le dé de
+        // gauche est celui qu'un clic joue).
+        if (play && get(quizPlayValidateStore)) position = { ...position, dice: orderedDice(play.rolled ?? position.dice, !!play.swapped) };
         return displayIsMirrored(position) ? mirrorPosition(position) : position;
     }
 
@@ -532,12 +531,11 @@
         };
     }
 
-    // Les dés joués, grisés : en Duel, et pour tout coup armé selon la grammaire d'ADR-0086
-    // (demi-voile d'un double, dés gris d'un coup achevé). Le miroir ne change pas les dés.
+    // Les dés joués, grisés, pour tout coup armé selon la grammaire d'ADR-0086 (demi-voile d'un
+    // double, dés gris d'un coup achevé). Le miroir ne change pas les dés.
     /** @param {BoardPosition} position */
     function playedDice(position) {
         const play = get(quizPlayStore);
-        if (get(duelHoldsBoardStore)) return usedDice(play, position.dice);
         if (play && get(quizPlayValidateStore)) return diceShade(play, position.dice);
         return null;
     }

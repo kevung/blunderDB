@@ -34,9 +34,9 @@ duelHoldsBoardStore.subscribe((holds) => {
 });
 
 /**
- * Ce que le plateau ajoute au tour du joueur, hors de l'Arbitre : l'ordre des dés tel qu'il les
- * a rangés (`swapped`) et la confirmation affichée sur le plateau (`prompt` : `'double'`).
- * Remis à zéro à chaque décision rendue par l'Arbitre.
- * @type {import('svelte/store').Writable<{ swapped: boolean, prompt: string|null }>}
+ * Ce que le plateau ajoute au tour du joueur, hors de l'Arbitre et du coup : la confirmation
+ * affichée sur le plateau (`prompt` : `'double'`). L'ordre des dés est celui du coup
+ * (`quizPlayStore`, `swapped`). Remis à zéro à chaque décision rendue par l'Arbitre.
+ * @type {import('svelte/store').Writable<{ prompt: string|null }>}
  */
-export const duelBoardStore = writable({ swapped: false, prompt: null });
+export const duelBoardStore = writable({ prompt: null });
