@@ -567,6 +567,44 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/anki.filteredPositionCount:
+    post:
+      operationId: anki.filteredPositionCount
+      tags: [anki]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/deckFilterReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int32
+  /v1/anki.filteredPositionIds:
+    post:
+      operationId: anki.filteredPositionIds
+      tags: [anki]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/deckFilterReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: integer
+                  format: int64
   /v1/anki.forecast:
     post:
       operationId: anki.forecast
@@ -596,6 +634,24 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/deckPositionReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int32
+  /v1/anki.indexOfFilteredPosition:
+    post:
+      operationId: anki.indexOfFilteredPosition
+      tags: [anki]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/deckFilterReq"
       responses:
         "200":
           description: OK
@@ -7822,6 +7878,23 @@ components:
           format: int64
         sourceCommand:
           type: string
+    deckFilterReq:
+      type: object
+      properties:
+        deckId:
+          type: integer
+          format: int64
+        filter:
+          type: string
+        limit:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int32
+        positionId:
+          type: integer
+          format: int64
     deckIDReq:
       type: object
       properties:

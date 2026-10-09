@@ -886,7 +886,10 @@
         "resumeShort": "Продолжить ({reviewed})",
         "dueShort": "{n} к повторению",
         "cardsShort": "{n} карточек",
-        "allDecks": "Все колоды"
+        "allDecks": "Все колоды",
+        "newShort": "{n} новых",
+        "learningShort": "{n} изучаются",
+        "reviewShort": "{n} на повторении"
     },
     "analysis": {
         "menuCopy": "Копировать позицию и анализ",

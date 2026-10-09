@@ -331,11 +331,16 @@ export async function addPositionToDeck(deckId, positionId) {
     }
 }
 
-/** Select a deck: its stats, and its positions as the list the status bar counts. */
-export async function selectDeck(deck) {
+/**
+ * Select a deck: its stats, and its positions as the list the status bar counts — all of them, or
+ * those behind one of its counters (`filter`, see deckSource).
+ * @param {any} deck
+ * @param {string} [filter]
+ */
+export async function selectDeck(deck, filter = '') {
     selectedAnkiDeckStore.set(deck);
     await refreshDeckStats(deck.id);
-    const total = await positionsStore.setSource(deckSource(deck.id));
+    const total = await positionsStore.setSource(deckSource(deck.id, filter));
     if (total > 0) currentPositionIndexStore.set(0);
 }
 

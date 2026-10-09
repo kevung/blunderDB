@@ -54,6 +54,16 @@ type deckPositionReq struct {
 	PositionID int64 `json:"positionId"`
 }
 
+// deckFilterReq names a deck counter (domain.AnkiCardFilter), its window and,
+// for a rank, the position; "" is every card.
+type deckFilterReq struct {
+	DeckID     int64  `json:"deckId"`
+	Filter     string `json:"filter"`
+	Limit      int    `json:"limit"`
+	Offset     int    `json:"offset"`
+	PositionID int64  `json:"positionId"`
+}
+
 // deckSyncResp is the report of a sync. ok stays so that a client reading
 // only it keeps working.
 type deckSyncResp struct {
@@ -161,6 +171,19 @@ func (s *Server) ankiRoutes() []route {
 		})},
 		{http.MethodPost, "/v1/anki.indexOfDeckPosition", rpc(func(ctx context.Context, scope string, req deckPositionReq) (int, error) {
 			index, found, err := as().IndexOfDeckPosition(ctx, scope, req.DeckID, req.PositionID)
+			if err != nil || !found {
+				return -1, err
+			}
+			return index, nil
+		})},
+		{http.MethodPost, "/v1/anki.filteredPositionIds", rpc(func(ctx context.Context, scope string, req deckFilterReq) ([]int64, error) {
+			return as().FilteredDeckPositionIDs(ctx, scope, req.DeckID, domain.AnkiCardFilter(req.Filter), storage.ListOpts{Limit: req.Limit, Offset: req.Offset})
+		})},
+		{http.MethodPost, "/v1/anki.filteredPositionCount", rpc(func(ctx context.Context, scope string, req deckFilterReq) (int, error) {
+			return as().FilteredDeckPositionCount(ctx, scope, req.DeckID, domain.AnkiCardFilter(req.Filter))
+		})},
+		{http.MethodPost, "/v1/anki.indexOfFilteredPosition", rpc(func(ctx context.Context, scope string, req deckFilterReq) (int, error) {
+			index, found, err := as().IndexOfFilteredDeckPosition(ctx, scope, req.DeckID, domain.AnkiCardFilter(req.Filter), req.PositionID)
 			if err != nil || !found {
 				return -1, err
 			}

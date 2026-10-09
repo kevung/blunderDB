@@ -4,7 +4,7 @@
  * review and settings views, and the rating keys routed from App.svelte
  * reach the service.
  */
-import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, test, expect, vi, beforeEach, afterEach, onTestFinished } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
 import { get } from 'svelte/store';
@@ -21,6 +21,9 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     CountAnkiDeckPositions: vi.fn(() => Promise.resolve(1)),
     ListAnkiDeckPositionIDs: vi.fn((/** @type {number} */ _deck, offset = 0, limit = 0) => Promise.resolve([10].slice(offset, limit > 0 ? offset + limit : undefined))),
     IndexOfAnkiDeckPosition: vi.fn((/** @type {number} */ _deck, /** @type {number} */ id) => Promise.resolve([10].indexOf(id))),
+    CountAnkiDeckFilteredPositions: vi.fn(() => Promise.resolve(1)),
+    ListAnkiDeckFilteredPositionIDs: vi.fn(() => Promise.resolve([10])),
+    IndexOfAnkiDeckFilteredPosition: vi.fn(() => Promise.resolve(0)),
     GetNextAnkiCard: vi.fn(() => Promise.resolve(null)),
     GetRandomAnkiCard: vi.fn(() => Promise.resolve(null)),
     ReviewAnkiCard: vi.fn(() => Promise.resolve(null)),
@@ -96,6 +99,37 @@ describe('AnkiPanel', () => {
         expect(container.querySelector('[data-testid="panel-header"] .panel-title').textContent).toBe('Alpha');
         expect(container.querySelector('[data-testid="anki-due"]')).not.toBeNull();
         expect(container.querySelector('[data-testid="anki-study"]').disabled).toBe(false);
+    });
+
+    test('every counter of the selected deck opens the positions it counts', async () => {
+        db.GetAllAnkiDecks.mockResolvedValue(DECKS);
+        ankiDecksStore.set(DECKS);
+        selectedAnkiDeckStore.set(DECKS[0]);
+        const spread = { newCount: 2, learningCount: 1, reviewCount: 1, totalCount: 3, dueCount: 2 };
+        ankiDeckStatsStore.set(spread);
+        // Opening a counter refreshes the stats: they keep every counter non-zero, so each stays a link.
+        db.GetAnkiDeckStats.mockResolvedValue(spread);
+        onTestFinished(() => db.GetAnkiDeckStats.mockResolvedValue({ newCount: 2, learningCount: 0, reviewCount: 1, totalCount: 3, dueCount: 2 }));
+        const { container } = render(AnkiPanel);
+        await settle();
+
+        for (const [testid, filter] of [
+            ['anki-due', 'due'],
+            ['anki-new', 'new'],
+            ['anki-learning', 'learning'],
+            ['anki-review', 'review']
+        ]) {
+            db.CountAnkiDeckFilteredPositions.mockClear();
+            await fireEvent.click(container.querySelector(`[data-testid="${testid}"] [data-testid="count-link"]`));
+            await vi.waitFor(() => expect(db.CountAnkiDeckFilteredPositions).toHaveBeenCalledWith(1, filter));
+        }
+        // The table's columns are counters too: Nouvelles counts every unseen card, Échues every
+        // card past its date.
+        const cells = container.querySelectorAll('tbody tr')[0].querySelectorAll('[data-testid="count-link"]');
+        expect(cells).toHaveLength(3);
+        db.CountAnkiDeckFilteredPositions.mockClear();
+        await fireEvent.click(cells[2]);
+        await vi.waitFor(() => expect(db.CountAnkiDeckFilteredPositions).toHaveBeenCalledWith(1, 'pastDue'));
     });
 
     test('the study button is disabled with nothing due; cram only needs cards', async () => {

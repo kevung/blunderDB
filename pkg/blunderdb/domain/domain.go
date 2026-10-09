@@ -183,6 +183,42 @@ type AnkiDeckStats struct {
 	TotalCount    int `json:"totalCount"`
 }
 
+// AnkiCardFilter names one of a deck's counters — AnkiDeckStats's or AnkiDeck's
+// — so the positions behind a number are listed by the predicate that counted
+// them, and the number and the list cannot disagree.
+type AnkiCardFilter string
+
+const (
+	// AnkiFilterAll is every card: AnkiDeck.CardCount, AnkiDeckStats.TotalCount.
+	AnkiFilterAll AnkiCardFilter = ""
+	// AnkiFilterNew is AnkiDeckStats.NewCount: never studied, available now.
+	AnkiFilterNew AnkiCardFilter = "new"
+	// AnkiFilterLearning is AnkiDeckStats.LearningCount: learning or
+	// relearning, available now.
+	AnkiFilterLearning AnkiCardFilter = "learning"
+	// AnkiFilterReview is AnkiDeckStats.ReviewCount: in review and due,
+	// available now.
+	AnkiFilterReview AnkiCardFilter = "review"
+	// AnkiFilterDue is AnkiDeckStats.DueCount: due, available now — what a
+	// study session serves.
+	AnkiFilterDue AnkiCardFilter = "due"
+	// AnkiFilterUnseen is AnkiDeck.NewCount: never studied, suspended or
+	// buried included.
+	AnkiFilterUnseen AnkiCardFilter = "unseen"
+	// AnkiFilterPastDue is AnkiDeck.DueCount: due date passed, suspended or
+	// buried included.
+	AnkiFilterPastDue AnkiCardFilter = "pastDue"
+)
+
+// Valid reports whether f names one of the counters above.
+func (f AnkiCardFilter) Valid() bool {
+	switch f {
+	case AnkiFilterAll, AnkiFilterNew, AnkiFilterLearning, AnkiFilterReview, AnkiFilterDue, AnkiFilterUnseen, AnkiFilterPastDue:
+		return true
+	}
+	return false
+}
+
 // Tournament represents a tournament that organizes matches
 type Tournament struct {
 	ID         int64   `json:"id"`

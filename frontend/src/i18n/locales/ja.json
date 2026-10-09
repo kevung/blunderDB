@@ -886,7 +886,10 @@
         "resumeShort": "再開（{reviewed}）",
         "dueShort": "{n} 件期限",
         "cardsShort": "{n} 枚",
-        "allDecks": "すべてのデッキ"
+        "allDecks": "すべてのデッキ",
+        "newShort": "新規 {n}",
+        "learningShort": "学習中 {n}",
+        "reviewShort": "復習 {n}"
     },
     "analysis": {
         "menuCopy": "局面と解析をコピー",

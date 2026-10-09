@@ -884,9 +884,12 @@
         "title": "Anki",
         "studyShort": "Étudier",
         "resumeShort": "Reprendre ({reviewed})",
-        "dueShort": "{n} à réviser",
+        "dueShort": "{n} dues",
         "cardsShort": "{n} cartes",
-        "allDecks": "Tous les paquets"
+        "allDecks": "Tous les paquets",
+        "newShort": "{n} nouvelles",
+        "learningShort": "{n} en cours",
+        "reviewShort": "{n} en révision"
     },
     "analysis": {
         "menuCopy": "Copier la position et l'analyse",

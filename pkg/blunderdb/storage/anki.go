@@ -53,6 +53,15 @@ type AnkiStore interface {
 	DeckPositionCount(ctx context.Context, scope string, deckID int64) (int, error)
 	IndexOfDeckPosition(ctx context.Context, scope string, deckID, positionID int64) (int, bool, error)
 
+	// FilteredDeckPositionIDs, FilteredDeckPositionCount and
+	// IndexOfFilteredDeckPosition are the same window, count and rank over
+	// the cards one counter counts (domain.AnkiCardFilter): the count equals
+	// the counter of DeckStats or ListDecks it names, on a deck of position
+	// cards. An unknown filter is storage.ErrInvalid.
+	FilteredDeckPositionIDs(ctx context.Context, scope string, deckID int64, filter domain.AnkiCardFilter, opts ListOpts) ([]int64, error)
+	FilteredDeckPositionCount(ctx context.Context, scope string, deckID int64, filter domain.AnkiCardFilter) (int, error)
+	IndexOfFilteredDeckPosition(ctx context.Context, scope string, deckID int64, filter domain.AnkiCardFilter, positionID int64) (int, bool, error)
+
 	// DeckStats returns the review counters for a deck.
 	DeckStats(ctx context.Context, scope string, deckID int64) (*domain.AnkiDeckStats, error)
 

@@ -886,7 +886,10 @@
         "resumeShort": "Fortsetzen ({reviewed})",
         "dueShort": "{n} fällig",
         "cardsShort": "{n} Karten",
-        "allDecks": "Alle Stapel"
+        "allDecks": "Alle Stapel",
+        "newShort": "{n} neu",
+        "learningShort": "{n} in Lernphase",
+        "reviewShort": "{n} in Wiederholung"
     },
     "analysis": {
         "menuCopy": "Position und Analyse kopieren",

@@ -43,8 +43,45 @@ func (s *AnkiStore) ankiDeckSelectCols() string {
 		ad.request_retention, ad.maximum_interval, ` + s.DB.BoolAsInt("ad.enable_fuzz") + `, ad.session_limit,
 		` + s.DB.TimestampText("ad.created_at") + `, ` + s.DB.TimestampText("ad.updated_at") + `,
 		(SELECT COUNT(*) FROM anki_card ac WHERE ac.deck_id = ad.id),
-		(SELECT COUNT(*) FROM anki_card ac WHERE ac.deck_id = ad.id AND ac.due <= ` + s.DB.TimestampArg() + `),
-		(SELECT COUNT(*) FROM anki_card ac WHERE ac.deck_id = ad.id AND ac.state = 0)`
+		(SELECT COUNT(*) FROM anki_card ac WHERE ac.deck_id = ad.id AND ` + s.mustCardPredicate(domain.AnkiFilterPastDue, "ac.") + `),
+		(SELECT COUNT(*) FROM anki_card ac WHERE ac.deck_id = ad.id AND ` + s.mustCardPredicate(domain.AnkiFilterUnseen, "ac.") + `)`
+}
+
+// cardPredicate is the SQL condition a deck counter counts its cards with,
+// its columns prefixed by alias ("" or "ac."), and the arguments it binds, in
+// order. DeckStats, the deck list and the filtered position windows all read
+// it, so a counter and the positions listed behind it cannot drift apart.
+func (s *AnkiStore) cardPredicate(f domain.AnkiCardFilter, alias, now string) (string, []any, error) {
+	c := func(col string) string { return alias + col }
+	avail := s.DB.Bool(c("suspended"), false) + ` AND (` + c("buried_until") + ` IS NULL OR ` + c("buried_until") + ` <= ` + s.DB.TimestampArg() + `)`
+	dueNow := c("due") + ` <= ` + s.DB.TimestampArg()
+	switch f {
+	case domain.AnkiFilterAll:
+		return `1 = 1`, nil, nil
+	case domain.AnkiFilterNew:
+		return c("state") + ` = 0 AND ` + avail, []any{now}, nil
+	case domain.AnkiFilterLearning:
+		return `(` + c("state") + ` = 1 OR ` + c("state") + ` = 3) AND ` + avail, []any{now}, nil
+	case domain.AnkiFilterReview:
+		return c("state") + ` = 2 AND ` + dueNow + ` AND ` + avail, []any{now, now}, nil
+	case domain.AnkiFilterDue:
+		return dueNow + ` AND ` + avail, []any{now, now}, nil
+	case domain.AnkiFilterUnseen:
+		return c("state") + ` = 0`, nil, nil
+	case domain.AnkiFilterPastDue:
+		return dueNow, []any{now}, nil
+	}
+	return "", nil, fmt.Errorf("anki card filter %q: %w", f, storage.ErrInvalid)
+}
+
+// mustCardPredicate is cardPredicate for a filter known valid, its arguments
+// bound by the caller (ListDecks binds the one "now" PastDue takes).
+func (s *AnkiStore) mustCardPredicate(f domain.AnkiCardFilter, alias string) string {
+	pred, _, err := s.cardPredicate(f, alias, "")
+	if err != nil {
+		panic(err)
+	}
+	return pred
 }
 
 func scanAnkiDeck(sc interface{ Scan(...any) error }) (domain.AnkiDeck, error) {
@@ -326,10 +363,40 @@ func (s *AnkiStore) DeckPositions(ctx context.Context, scope string, deckID int6
 // DeckPositionIDs returns the window of the position ids linked to a deck's
 // cards, ordered by position id.
 func (s *AnkiStore) DeckPositionIDs(ctx context.Context, scope string, deckID int64, opts storage.ListOpts) ([]int64, error) {
+	return s.FilteredDeckPositionIDs(ctx, scope, deckID, domain.AnkiFilterAll, opts)
+}
+
+// DeckPositionCount returns how many positions a deck's cards link.
+func (s *AnkiStore) DeckPositionCount(ctx context.Context, scope string, deckID int64) (int, error) {
+	return s.FilteredDeckPositionCount(ctx, scope, deckID, domain.AnkiFilterAll)
+}
+
+// IndexOfDeckPosition returns the rank of a position in DeckPositionIDs's
+// order: the number of linked positions below it.
+func (s *AnkiStore) IndexOfDeckPosition(ctx context.Context, scope string, deckID, positionID int64) (int, bool, error) {
+	return s.IndexOfFilteredDeckPosition(ctx, scope, deckID, domain.AnkiFilterAll, positionID)
+}
+
+// deckCardsWhere is the WHERE clause of a deck's position cards that filter
+// counts, and its arguments.
+func (s *AnkiStore) deckCardsWhere(scope string, deckID int64, filter domain.AnkiCardFilter) (string, []any, error) {
+	pred, pargs, err := s.cardPredicate(filter, "", ankiNow())
+	if err != nil {
+		return "", nil, err
+	}
 	tenant, targs := s.DB.TenantFilter("", scope)
-	query := `SELECT DISTINCT position_id FROM anki_card WHERE deck_id = ? AND position_id IS NOT NULL AND ` + tenant + `
-		 ORDER BY position_id ASC`
-	args := append([]any{deckID}, targs...)
+	args := append([]any{deckID}, pargs...)
+	return `deck_id = ? AND position_id IS NOT NULL AND ` + pred + ` AND ` + tenant, append(args, targs...), nil
+}
+
+// FilteredDeckPositionIDs returns the window of the position ids linked to
+// the deck's cards that filter counts, ordered by position id.
+func (s *AnkiStore) FilteredDeckPositionIDs(ctx context.Context, scope string, deckID int64, filter domain.AnkiCardFilter, opts storage.ListOpts) ([]int64, error) {
+	where, args, err := s.deckCardsWhere(scope, deckID, filter)
+	if err != nil {
+		return nil, err
+	}
+	query := `SELECT DISTINCT position_id FROM anki_card WHERE ` + where + ` ORDER BY position_id ASC`
 	if opts.Limit > 0 || opts.Offset > 0 {
 		limit := int64(math.MaxInt64)
 		if opts.Limit > 0 {
@@ -357,27 +424,32 @@ func (s *AnkiStore) DeckPositionIDs(ctx context.Context, scope string, deckID in
 	return ids, nil
 }
 
-// DeckPositionCount returns how many positions a deck's cards link.
-func (s *AnkiStore) DeckPositionCount(ctx context.Context, scope string, deckID int64) (int, error) {
-	tenant, targs := s.DB.TenantFilter("", scope)
+// FilteredDeckPositionCount returns how many positions the deck's cards that
+// filter counts link.
+func (s *AnkiStore) FilteredDeckPositionCount(ctx context.Context, scope string, deckID int64, filter domain.AnkiCardFilter) (int, error) {
+	where, args, err := s.deckCardsWhere(scope, deckID, filter)
+	if err != nil {
+		return 0, err
+	}
 	var n int
-	if err := s.DB.QueryRow(ctx,
-		`SELECT COUNT(DISTINCT position_id) FROM anki_card WHERE deck_id = ? AND position_id IS NOT NULL AND `+tenant,
-		append([]any{deckID}, targs...)...).Scan(&n); err != nil {
+	if err := s.DB.QueryRow(ctx, `SELECT COUNT(DISTINCT position_id) FROM anki_card WHERE `+where, args...).Scan(&n); err != nil {
 		return 0, errf(s.DB, "count anki deck positions", err)
 	}
 	return n, nil
 }
 
-// IndexOfDeckPosition returns the rank of a position in DeckPositionIDs's
-// order: the number of linked positions below it.
-func (s *AnkiStore) IndexOfDeckPosition(ctx context.Context, scope string, deckID, positionID int64) (int, bool, error) {
-	tenant, targs := s.DB.TenantFilter("", scope)
+// IndexOfFilteredDeckPosition returns the rank of a position in
+// FilteredDeckPositionIDs's order: the number of listed positions below it.
+func (s *AnkiStore) IndexOfFilteredDeckPosition(ctx context.Context, scope string, deckID int64, filter domain.AnkiCardFilter, positionID int64) (int, bool, error) {
+	where, args, err := s.deckCardsWhere(scope, deckID, filter)
+	if err != nil {
+		return 0, false, err
+	}
 	var held, rank int
-	err := s.DB.QueryRow(ctx,
+	err = s.DB.QueryRow(ctx,
 		`SELECT COUNT(CASE WHEN position_id = ? THEN 1 END), COUNT(DISTINCT CASE WHEN position_id < ? THEN position_id END)
-		 FROM anki_card WHERE deck_id = ? AND position_id IS NOT NULL AND `+tenant,
-		append([]any{positionID, positionID, deckID}, targs...)...).Scan(&held, &rank)
+		 FROM anki_card WHERE `+where,
+		append([]any{positionID, positionID}, args...)...).Scan(&held, &rank)
 	if err != nil {
 		return 0, false, errf(s.DB, "index of anki deck position", err)
 	}
@@ -389,19 +461,19 @@ func (s *AnkiStore) DeckStats(ctx context.Context, scope string, deckID int64) (
 	now := ankiNow()
 	tenant, targs := s.DB.TenantFilter("", scope)
 	// Queue counters exclude suspended/buried cards; TotalCount counts the
-	// whole deck regardless of availability. avail is the availability
-	// predicate inlined per counter, each occurrence binding its own
-	// current-time argument for the buried_until comparison.
-	avail := s.DB.Bool("suspended", false) + ` AND (buried_until IS NULL OR buried_until <= ` + s.DB.TimestampArg() + `)`
-	query := `SELECT
-			COALESCE(SUM(CASE WHEN state = 0 AND ` + avail + ` THEN 1 ELSE 0 END), 0),
-			COALESCE(SUM(CASE WHEN (state = 1 OR state = 3) AND ` + avail + ` THEN 1 ELSE 0 END), 0),
-			COALESCE(SUM(CASE WHEN state = 2 AND due <= ` + s.DB.TimestampArg() + ` AND ` + avail + ` THEN 1 ELSE 0 END), 0),
-			COALESCE(SUM(CASE WHEN due <= ` + s.DB.TimestampArg() + ` AND ` + avail + ` THEN 1 ELSE 0 END), 0),
-			COUNT(*)
-		 FROM anki_card WHERE deck_id = ? AND ` + tenant
-	// Six identical "now" placeholders precede deckID's; only the count matters.
-	args := []any{now, now, now, now, now, now, deckID}
+	// whole deck regardless of availability.
+	cols := make([]string, 0, 4)
+	var args []any
+	for _, f := range []domain.AnkiCardFilter{domain.AnkiFilterNew, domain.AnkiFilterLearning, domain.AnkiFilterReview, domain.AnkiFilterDue} {
+		pred, pargs, err := s.cardPredicate(f, "", now)
+		if err != nil {
+			return nil, err
+		}
+		cols = append(cols, `COALESCE(SUM(CASE WHEN `+pred+` THEN 1 ELSE 0 END), 0)`)
+		args = append(args, pargs...)
+	}
+	query := `SELECT ` + strings.Join(cols, ", ") + `, COUNT(*) FROM anki_card WHERE deck_id = ? AND ` + tenant
+	args = append(args, deckID)
 	args = append(args, targs...)
 	var st domain.AnkiDeckStats
 	err := s.DB.QueryRow(ctx, query, args...).

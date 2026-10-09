@@ -886,7 +886,10 @@
         "resumeShort": "Jatka ({reviewed})",
         "dueShort": "{n} erääntynyt",
         "cardsShort": "{n} korttia",
-        "allDecks": "Kaikki pakat"
+        "allDecks": "Kaikki pakat",
+        "newShort": "{n} uutta",
+        "learningShort": "{n} opittavana",
+        "reviewShort": "{n} kertauksessa"
     },
     "analysis": {
         "menuCopy": "Kopioi asema ja analyysi",

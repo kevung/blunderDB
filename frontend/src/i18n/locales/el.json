@@ -886,7 +886,10 @@
         "resumeShort": "Συνέχεια ({reviewed})",
         "dueShort": "{n} προς εξέταση",
         "cardsShort": "{n} κάρτες",
-        "allDecks": "Όλες οι τράπουλες"
+        "allDecks": "Όλες οι τράπουλες",
+        "newShort": "{n} νέες",
+        "learningShort": "{n} σε εκμάθηση",
+        "reviewShort": "{n} σε επανάληψη"
     },
     "analysis": {
         "menuCopy": "Αντιγραφή θέσης και ανάλυσης",

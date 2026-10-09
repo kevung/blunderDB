@@ -886,7 +886,10 @@
         "resumeShort": "Riprendi ({reviewed})",
         "dueShort": "{n} in scadenza",
         "cardsShort": "{n} carte",
-        "allDecks": "Tutti i mazzi"
+        "allDecks": "Tutti i mazzi",
+        "newShort": "{n} nuove",
+        "learningShort": "{n} in apprendimento",
+        "reviewShort": "{n} in ripasso"
     },
     "analysis": {
         "menuCopy": "Copia la posizione e l'analisi",

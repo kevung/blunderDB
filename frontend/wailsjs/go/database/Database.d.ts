@@ -135,6 +135,8 @@ export function CopyPositionToCollection(arg1:number,arg2:number):Promise<void>;
 
 export function CorrectResult(arg1:number,arg2:string,arg3:string,arg4:number,arg5:number,arg6:string):Promise<service.DirectionView>;
 
+export function CountAnkiDeckFilteredPositions(arg1:number,arg2:string):Promise<number>;
+
 export function CountAnkiDeckPositions(arg1:number):Promise<number>;
 
 export function CountCollectionPositions(arg1:number):Promise<number>;
@@ -417,6 +419,8 @@ export function ImportXGMatch(arg1:string):Promise<number>;
 
 export function ImportXGPPosition(arg1:string):Promise<number>;
 
+export function IndexOfAnkiDeckFilteredPosition(arg1:number,arg2:string,arg3:number):Promise<number>;
+
 export function IndexOfAnkiDeckPosition(arg1:number,arg2:number):Promise<number>;
 
 export function IndexOfCollectionPosition(arg1:number,arg2:number):Promise<number>;
@@ -436,6 +440,8 @@ export function LastDecision(arg1:number):Promise<service.LastDecision>;
 export function LessonDoneSteps(arg1:number):Promise<Record<number, string>>;
 
 export function ListAliases(arg1:string):Promise<Array<storage.Alias>>;
+
+export function ListAnkiDeckFilteredPositionIDs(arg1:number,arg2:string,arg3:number,arg4:number):Promise<Array<number>>;
 
 export function ListAnkiDeckPositionIDs(arg1:number,arg2:number,arg3:number):Promise<Array<number>>;
 

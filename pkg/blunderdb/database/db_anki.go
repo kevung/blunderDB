@@ -164,6 +164,49 @@ func (d *Database) IndexOfAnkiDeckPosition(deckID, positionID int64) (int, error
 	return index, nil
 }
 
+// ListAnkiDeckFilteredPositionIDs, CountAnkiDeckFilteredPositions and
+// IndexOfAnkiDeckFilteredPosition browse the positions behind one of a deck's
+// counters (domain.AnkiCardFilter: "", "new", "learning", "review", "due",
+// "unseen", "pastDue"), so a number the GUI shows opens exactly the positions
+// it counts.
+func (d *Database) ListAnkiDeckFilteredPositionIDs(deckID int64, filter string, offset, limit int) ([]int64, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	if d.db == nil {
+		return nil, fmt.Errorf("no database is currently open")
+	}
+	return d.store.Anki().FilteredDeckPositionIDs(context.Background(), "", deckID, domain.AnkiCardFilter(filter), storage.ListOpts{Offset: offset, Limit: limit})
+}
+
+// CountAnkiDeckFilteredPositions returns how many positions the cards one
+// counter counts link.
+func (d *Database) CountAnkiDeckFilteredPositions(deckID int64, filter string) (int, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	if d.db == nil {
+		return 0, fmt.Errorf("no database is currently open")
+	}
+	return d.store.Anki().FilteredDeckPositionCount(context.Background(), "", deckID, domain.AnkiCardFilter(filter))
+}
+
+// IndexOfAnkiDeckFilteredPosition returns the rank of a position in
+// ListAnkiDeckFilteredPositionIDs's order, or -1 when the filter leaves it out.
+func (d *Database) IndexOfAnkiDeckFilteredPosition(deckID int64, filter string, positionID int64) (int, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	if d.db == nil {
+		return -1, fmt.Errorf("no database is currently open")
+	}
+	index, found, err := d.store.Anki().IndexOfFilteredDeckPosition(context.Background(), "", deckID, domain.AnkiCardFilter(filter), positionID)
+	if err != nil || !found {
+		return -1, err
+	}
+	return index, nil
+}
+
 // GetAnkiDeckStats returns review statistics for a deck. The queue counters
 // leave suspended and buried cards out; TotalCount counts the whole deck.
 func (d *Database) GetAnkiDeckStats(deckID int64) (AnkiDeckStats, error) {

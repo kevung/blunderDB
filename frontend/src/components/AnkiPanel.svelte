@@ -286,9 +286,9 @@
         }
     }
 
-    async function selectDeck(deck) {
+    async function selectDeck(deck, filter = '') {
         try {
-            await anki.selectDeck(deck);
+            await anki.selectDeck(deck, filter);
         } catch (e) {
             logger.error(e);
         }
@@ -494,6 +494,25 @@
     }
 </script>
 
+<!-- A deck counter opens the positions it counts (ADR-0085, G7); a score deck's cards are scores,
+     and an empty counter opens nothing, so both stay text. -->
+{#snippet deckCount(deck, n, label, filter, testid)}
+    <span class="band-count" data-testid={testid}>
+        {#if n > 0 && !isScoreDeck(deck)}
+            <CountLink
+                {label}
+                title={$t('collection.browsePositions')}
+                onclick={(e) => {
+                    e.stopPropagation();
+                    selectDeck(deck, filter);
+                }}
+            />
+        {:else}
+            {label}
+        {/if}
+    </span>
+{/snippet}
+
 {#snippet icon(path, size = 14)}
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width={size} height={size}>
         {#each Array.isArray(path) ? path : [path] as d, i (i)}
@@ -685,12 +704,18 @@
              the study that Enter would start (ADR-0085, G1-G3). -->
         {#if selectedDeck && stats}
             <PanelHeader title={selectedDeck.name} onBack={() => anki.clearSelection()} backHint={$t('anki.allDecks')}>
-                {#if isScoreDeck(selectedDeck)}
-                    <span class="band-count">{$t('anki.cardsShort', { n: stats.totalCount })}</span>
-                {:else}
-                    <CountLink label={$t('statusBar.countPositions', { n: stats.totalCount })} title={$t('collection.browsePositions')} onclick={() => selectDeck(selectedDeck)} />
-                {/if}
-                <span class="band-count" data-testid="anki-due">{$t('anki.dueShort', { n: stats.dueCount })}</span>
+                {@render deckCount(
+                    selectedDeck,
+                    stats.totalCount,
+                    isScoreDeck(selectedDeck) ? $t('anki.cardsShort', { n: stats.totalCount }) : $t('statusBar.countPositions', { n: stats.totalCount }),
+                    '',
+                    'anki-total'
+                )}
+                {@render deckCount(selectedDeck, stats.dueCount, $t('anki.dueShort', { n: stats.dueCount }), 'due', 'anki-due')}
+                <span class="band-sep">·</span>
+                {@render deckCount(selectedDeck, stats.newCount, $t('anki.newShort', { n: stats.newCount }), 'new', 'anki-new')}
+                {@render deckCount(selectedDeck, stats.learningCount, $t('anki.learningShort', { n: stats.learningCount }), 'learning', 'anki-learning')}
+                {@render deckCount(selectedDeck, stats.reviewCount, $t('anki.reviewShort', { n: stats.reviewCount }), 'review', 'anki-review')}
                 {#snippet actions()}
                     <button class="icon-btn" data-testid="anki-settings" onclick={openSettings} title={$t('anki.deckSettingsTooltip')}>{@render icon(ICON.gear)}</button>
                     <button class="icon-btn" onclick={(e) => resetDeck(selectedDeck, e)} title={$t('anki.resetTooltip')}>{@render icon(ICON.sync)}</button>
@@ -778,22 +803,9 @@
                     <td class="name-cell"><span class="deck-name">{deck.name}</span></td>
                     <td class="desc-cell">{deck.description || ''}</td>
                     <td class="source-cell">{anki.sourceLabel(deck, collections, $t)}</td>
-                    <td class="narrow-col count-cell num">
-                        {#if isScoreDeck(deck) || !deck.cardCount}
-                            {deck.cardCount}
-                        {:else}
-                            <CountLink
-                                label={String(deck.cardCount)}
-                                title={$t('collection.browsePositions')}
-                                onclick={(e) => {
-                                    e?.stopPropagation();
-                                    selectDeck(deck);
-                                }}
-                            />
-                        {/if}
-                    </td>
-                    <td class="narrow-col count-cell num">{deck.newCount || ''}</td>
-                    <td class="narrow-col count-cell num">{deck.dueCount || ''}</td>
+                    <td class="narrow-col count-cell num">{@render deckCount(deck, deck.cardCount, String(deck.cardCount), '', null)}</td>
+                    <td class="narrow-col count-cell num">{@render deckCount(deck, deck.newCount, deck.newCount ? String(deck.newCount) : '', 'unseen', null)}</td>
+                    <td class="narrow-col count-cell num">{@render deckCount(deck, deck.dueCount, deck.dueCount ? String(deck.dueCount) : '', 'pastDue', null)}</td>
                     <td class="actions-col">
                         <span class="item-actions">
                             <button class="icon-btn" onclick={(e) => startEditing(deck, e)} title={$t('anki.renameTooltip')}>{@render icon(ICON.edit, 12)}</button>
@@ -949,6 +961,9 @@
     .band-count {
         flex-shrink: 0;
         font-variant-numeric: tabular-nums;
+    }
+    .band-sep {
+        flex-shrink: 0;
     }
 
     /* The strip's primary action launches a session: drawn full, the one filled button of the

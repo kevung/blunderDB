@@ -886,7 +886,10 @@
         "resumeShort": "Resume ({reviewed})",
         "dueShort": "{n} due",
         "cardsShort": "{n} cards",
-        "allDecks": "All decks"
+        "allDecks": "All decks",
+        "newShort": "{n} new",
+        "learningShort": "{n} learning",
+        "reviewShort": "{n} in review"
     },
     "analysis": {
         "menuCopy": "Copy position and analysis",

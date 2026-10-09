@@ -358,4 +358,36 @@ func TestLivingCollectionEvaluateAndDeck(t *testing.T) {
 	if !sync.OK || sync.Source == nil || sync.Source.Total != 3 || sync.Source.Truncated {
 		t.Errorf("anki.sync = %+v; want ok with a source of 3, not truncated", sync)
 	}
+
+	// A counter opens the positions it counts: three new cards, three ids,
+	// each at its rank; an unknown counter is the client's mistake.
+	var n int
+	resp = post(t, ts, "/v1/anki.filteredPositionCount", deckFilterReq{DeckID: deck.ID, Filter: "new"})
+	if err := json.NewDecoder(resp.Body).Decode(&n); err != nil {
+		t.Fatal(err)
+	}
+	resp.Body.Close()
+	var ids []int64
+	resp = post(t, ts, "/v1/anki.filteredPositionIds", deckFilterReq{DeckID: deck.ID, Filter: "new"})
+	if err := json.NewDecoder(resp.Body).Decode(&ids); err != nil {
+		t.Fatal(err)
+	}
+	resp.Body.Close()
+	if n != 3 || len(ids) != 3 {
+		t.Fatalf("anki.filteredPosition* new = %d, %v; want 3 and 3 ids", n, ids)
+	}
+	var rank int
+	resp = post(t, ts, "/v1/anki.indexOfFilteredPosition", deckFilterReq{DeckID: deck.ID, Filter: "new", PositionID: ids[2]})
+	if err := json.NewDecoder(resp.Body).Decode(&rank); err != nil {
+		t.Fatal(err)
+	}
+	resp.Body.Close()
+	if rank != 2 {
+		t.Errorf("anki.indexOfFilteredPosition = %d; want 2", rank)
+	}
+	resp = post(t, ts, "/v1/anki.filteredPositionCount", deckFilterReq{DeckID: deck.ID, Filter: "overdue"})
+	resp.Body.Close()
+	if resp.StatusCode < 400 || resp.StatusCode >= 500 {
+		t.Errorf("an unknown counter: status %d, want a client error", resp.StatusCode)
+	}
 }
