@@ -72,7 +72,7 @@ func TestGeneratedBearoffsMatchTheHistogramOfRealRaces(t *testing.T) {
 	rng := rand.New(rand.NewPCG(0x9e3779b9, 0x7f4a7c15))
 	var generated []bearoffSample
 	for i := 0; i < 4000; i++ {
-		q := generateBearoff(BearoffRequest{Source: SourcePool}, rng)
+		q := generateOnFrozenClock(BearoffRequest{Source: SourcePool}, rng)
 		if !q.Generated {
 			t.Fatalf("draw %d refused: %q", i, q.Refusal)
 		}

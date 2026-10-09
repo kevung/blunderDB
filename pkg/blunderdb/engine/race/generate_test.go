@@ -116,7 +116,7 @@ func TestAContactSeedIsRefusedByName(t *testing.T) {
 	put(17, 3, domain.White)
 	put(19, 5, domain.White)
 
-	q := generateBearoff(BearoffRequest{Source: SourceBoard, Seed: &domain.Position{Board: start}}, seededRNG())
+	q := generateOnFrozenClock(BearoffRequest{Source: SourceBoard, Seed: &domain.Position{Board: start}}, seededRNG())
 	if q.Generated {
 		t.Fatal("the opening position started a Bearoff session")
 	}
@@ -128,7 +128,7 @@ func TestAContactSeedIsRefusedByName(t *testing.T) {
 func TestACheckerOnTheBarIsRefused(t *testing.T) {
 	b := boardWith(sideBoard{2, 2, 2, 2, 2, 2}, sideBoard{2, 2, 2, 2, 2, 2})
 	b.Points[domain.BlackBar] = domain.Point{Checkers: 1, Color: domain.Black}
-	q := generateBearoff(BearoffRequest{Source: SourceBoard, Seed: &domain.Position{Board: b}}, seededRNG())
+	q := generateOnFrozenClock(BearoffRequest{Source: SourceBoard, Seed: &domain.Position{Board: b}}, seededRNG())
 	if q.Generated || q.Refusal != RefusalNotBearoff {
 		t.Errorf("generated=%v refusal=%q, want a notBearoff refusal", q.Generated, q.Refusal)
 	}
@@ -138,7 +138,7 @@ func TestASideBelowFourCheckersIsRefusedByItsOwnName(t *testing.T) {
 	// A perfectly legal bear-off, but outside what this exercise trains. The
 	// refusal must not say "this is not a bear-off": it is one.
 	b := boardWith(sideBoard{1, 1, 1, 0, 0, 0}, sideBoard{2, 2, 2, 2, 2, 2})
-	q := generateBearoff(BearoffRequest{Source: SourceLibrary, Seed: &domain.Position{Board: b}}, seededRNG())
+	q := generateOnFrozenClock(BearoffRequest{Source: SourceLibrary, Seed: &domain.Position{Board: b}}, seededRNG())
 	if q.Generated {
 		t.Fatal("a three-chequer side started a session")
 	}
@@ -148,7 +148,7 @@ func TestASideBelowFourCheckersIsRefusedByItsOwnName(t *testing.T) {
 }
 
 func TestAnEmptyBoardFallsBackToThePoolAndStillSaysWhy(t *testing.T) {
-	q := generateBearoff(BearoffRequest{Source: SourceBoard, Seed: &domain.Position{}}, seededRNG())
+	q := generateOnFrozenClock(BearoffRequest{Source: SourceBoard, Seed: &domain.Position{}}, seededRNG())
 	if !q.Generated {
 		t.Fatal("an empty board produced no question; rule 3 falls back to the pool")
 	}
@@ -161,7 +161,7 @@ func TestAnEmptyBoardFallsBackToThePoolAndStillSaysWhy(t *testing.T) {
 }
 
 func TestAnUnknownSourceIsRefused(t *testing.T) {
-	q := generateBearoff(BearoffRequest{Source: "elsewhere"}, seededRNG())
+	q := generateOnFrozenClock(BearoffRequest{Source: "elsewhere"}, seededRNG())
 	if q.Generated || q.Refusal != RefusalUnknownSource {
 		t.Errorf("generated=%v refusal=%q, want an unknownSource refusal", q.Generated, q.Refusal)
 	}
@@ -181,7 +181,7 @@ func TestWithoutAOneSidedTableTheExerciseSaysSo(t *testing.T) {
 		}
 	})
 
-	q := generateBearoff(BearoffRequest{Source: SourcePool}, seededRNG())
+	q := generateOnFrozenClock(BearoffRequest{Source: SourcePool}, seededRNG())
 	if q.Generated || q.Refusal != RefusalNoTable {
 		t.Errorf("generated=%v refusal=%q, want a noTable refusal", q.Generated, q.Refusal)
 	}
@@ -220,7 +220,7 @@ func assertQuestionsAreInDomain(t *testing.T, request BearoffRequest) {
 	t.Helper()
 	rng := seededRNG()
 	for i := 0; i < 500; i++ {
-		q := generateBearoff(request, rng)
+		q := generateOnFrozenClock(request, rng)
 		if !q.Generated {
 			t.Fatalf("draw %d refused: %q", i, q.Refusal)
 		}
@@ -261,7 +261,7 @@ func TestTheBoardSourceNeverAsksTheSeedItself(t *testing.T) {
 	seed := &domain.Position{Board: boardWith(sideBoard{3, 2, 3, 2, 3, 2}, sideBoard{2, 3, 2, 3, 2, 3})}
 	rng := seededRNG()
 	for i := 0; i < 200; i++ {
-		q := generateBearoff(BearoffRequest{Source: SourceBoard, Seed: seed}, rng)
+		q := generateOnFrozenClock(BearoffRequest{Source: SourceBoard, Seed: seed}, rng)
 		if !q.Generated {
 			t.Fatalf("draw %d refused: %q", i, q.Refusal)
 		}
@@ -278,7 +278,7 @@ func TestTheLibrarySourceKeepsThePositionAsItIs(t *testing.T) {
 	// Rule 2: a library position is already real; simulating from it would add
 	// nothing, so k = 0 and the chequers must not move.
 	board := boardWith(sideBoard{3, 2, 3, 2, 3, 2}, sideBoard{2, 3, 2, 3, 2, 3})
-	q := generateBearoff(BearoffRequest{Source: SourceLibrary, Seed: &domain.Position{Board: board}}, seededRNG())
+	q := generateOnFrozenClock(BearoffRequest{Source: SourceLibrary, Seed: &domain.Position{Board: board}}, seededRNG())
 	if !q.Generated {
 		t.Fatalf("refused: %q", q.Refusal)
 	}
@@ -380,7 +380,7 @@ func rollers(t *testing.T, req BearoffRequest, draws int) map[int]int {
 	rng := seededRNG()
 	seen := map[int]int{}
 	for i := 0; i < draws; i++ {
-		q := generateBearoff(req, rng)
+		q := generateOnFrozenClock(req, rng)
 		if !q.Generated {
 			t.Fatalf("draw %d refused: %q", i, q.Refusal)
 		}
@@ -422,4 +422,11 @@ func TestTheRollerIsDrawnFromThePoolAndKeptFromASeed(t *testing.T) {
 	if got[domain.Black] == 0 || got[domain.White] == 0 {
 		t.Errorf("an unassigned seed produced %v: the roller is not drawn", got)
 	}
+}
+
+// generateOnFrozenClock runs the generator on a clock that never moves, so a
+// slow machine cannot expire the walk's deadline and change what a test sees.
+func generateOnFrozenClock(req BearoffRequest, rng *rand.Rand) BearoffQuestion {
+	frozen := time.Now()
+	return generateBearoffWithClock(req, rng, func() time.Time { return frozen })
 }
