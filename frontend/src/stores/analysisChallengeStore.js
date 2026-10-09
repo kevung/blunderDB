@@ -34,15 +34,26 @@ positionStore.subscribe((position) => {
 });
 
 /**
+ * Le défi cache-t-il la réponse de la position affichée ? Indépendant de l'entraînement : la
+ * liste des coups d'un match s'y règle aussi, la marque du coup courant se dévoilant avec l'analyse.
+ *
+ * @type {import('svelte/store').Readable<boolean>}
+ */
+export const analysisChallengeHiddenStore = derived(
+    [analysisChallengeStore, revealedKeyStore, positionStore],
+    ([$challenge, $revealedKey, $position]) => $challenge && $revealedKey !== challengeKey($position)
+);
+
+/**
  * Le masque du panneau Analyse : `'training'` tant qu'une question d'entraînement attend sa
  * réponse (inerte : le verdict dévoile), `'challenge'` tant que le défi n'est pas relevé sur cette
  * position (un clic dévoile), `null` sinon. Un seul masque : les deux ne se superposent jamais.
  *
  * @type {import('svelte/store').Readable<'training'|'challenge'|null>}
  */
-export const analysisMaskStore = derived([trainingAnalysisHiddenStore, analysisChallengeStore, revealedKeyStore, positionStore], ([$training, $challenge, $revealedKey, $position]) => {
+export const analysisMaskStore = derived([trainingAnalysisHiddenStore, analysisChallengeHiddenStore], ([$training, $challengeHidden]) => {
     if ($training) return 'training';
-    if ($challenge && $revealedKey !== challengeKey($position)) return 'challenge';
+    if ($challengeHidden) return 'challenge';
     return null;
 });
 

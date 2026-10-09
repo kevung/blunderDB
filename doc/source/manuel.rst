@@ -783,6 +783,8 @@ il recouvre d'une zone grise toute l'analyse du panneau, pions et videau ; un
 clic sur la zone la dévoile. Elle revient à chaque changement de position. Le
 défi est un masque d'affichage : dévoiler n'enregistre rien dans la base. Le
 réglage tient jusqu'à la fermeture de blunderDB, comme celui du pipcount.
+En revue de match, le défi masque aussi les marques et les pertes de la liste
+des coups ; celles du coup affiché se dévoilent avec son analyse.
 
 Sous les tableaux, une **phrase** dit parfois ce que la décision jouée a
 coûté et pourquoi : « Vous perdez 120 mp : le coup joué laisse trois blots
