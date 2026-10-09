@@ -9,7 +9,7 @@
     let { summary, movePositions, player1, player2, hovered = null, onhover = () => {}, onselect = () => {} } = $props();
 
     // On the same decision axis as the loss charts.
-    const H = 110;
+    const MIN_H = 100;
 
     let bars = $derived(timeBars(movePositions));
     let peak = $derived(Math.max(1, ...bars.map((b) => b.ms)));
@@ -63,7 +63,7 @@
                 testid="times-plot"
                 title={$t('match.timesPerDecision')}
                 label={$t('match.timesChart')}
-                height={H}
+                minHeight={MIN_H}
                 {movePositions}
                 ticks={[
                     { at: 1, text: fmtDuration(peak) },
@@ -78,7 +78,7 @@
                         <span><span class="key" class:player1={i === 0} class:player2={i === 1}></span>{name}</span>
                     {/each}
                 {/snippet}
-                {#snippet marks({ slot })}
+                {#snippet marks({ slot, H })}
                     {#each bars as b (b.index)}
                         {@const h = Math.max(1, (b.ms / peak) * (H - 2))}
                         <rect
@@ -106,14 +106,15 @@
 
 <style>
     .match-times {
+        flex: 2 1 0;
         display: flex;
-        flex-wrap: wrap;
-        gap: 4px 12px;
-        align-items: flex-end;
-        padding: 6px 12px;
+        flex-direction: column;
+        gap: 4px;
+        padding: 6px 12px 0;
         font-size: var(--font-size-small);
     }
     .times-table {
+        align-self: flex-start;
         border-collapse: collapse;
     }
     .times-table th,
@@ -129,7 +130,9 @@
         text-align: left;
     }
     .times-chart {
-        flex: 1 1 100%;
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
         min-width: 0;
         margin: 0 -12px;
     }

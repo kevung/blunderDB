@@ -1632,6 +1632,11 @@
         overflow-y: auto;
         text-align: left;
     }
+    /* The charts share the tab's height out; under their least height, the tab scrolls. */
+    .match-charts:not([hidden]) {
+        display: flex;
+        flex-direction: column;
+    }
     .tab-heading {
         margin: 12px 8px 4px;
         font-size: var(--font-size-base);

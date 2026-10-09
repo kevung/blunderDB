@@ -6,14 +6,14 @@
     import { t } from '../i18n';
     import { gameSpans, indexAt, stepIndex } from '../utils/chartAxis.js';
     import { placeTip } from '../utils/chartTip.js';
-    import { trackWidth } from '../utils/trackWidth.js';
+    import { trackSize } from '../utils/trackWidth.js';
 
     /**
      * @typedef {{
      *   testid: string,
      *   title: string,
      *   label: string,
-     *   height: number,
+     *   minHeight: number,
      *   movePositions: any[],
      *   ticks: { at: number, text: string }[],
      *   focus: number | null,
@@ -25,11 +25,15 @@
      * }} Props
      */
     /** @type {Props} */
-    let { testid, title, label, height, movePositions, ticks, focus, onfocus, onselect, legend, marks, tip } = $props();
+    let { testid, title, label, minHeight, movePositions, ticks, focus, onfocus, onselect, legend, marks, tip } = $props();
 
+    // Drawn at the plot's pixel size, so a dot stays round: the width is the
+    // sheet's, the height what the Charts tab gives this chart, never below
+    // minHeight.
     let plotWidth = $state(0);
+    let plotHeight = $state(0);
     let W = $derived(Math.max(160, Math.round(plotWidth) || 320));
-    let H = $derived(height);
+    let H = $derived(Math.max(minHeight, Math.round(plotHeight) || 0));
     let n = $derived(Math.max(1, movePositions.length));
     let slot = $derived(W / n);
     // Short game names only where the stretch is wide enough to hold one.
@@ -93,7 +97,7 @@
         {#if legend}<span class="legend">{@render legend()}</span>{/if}
     </figcaption>
     <div class="body">
-        <div class="y-axis" style="height: {H}px" aria-hidden="true">
+        <div class="y-axis" aria-hidden="true">
             {#each ticks as tk (tk.at)}
                 <span class="tick" style="top: {(1 - tk.at) * 100}%">{tk.text}</span>
             {/each}
@@ -107,8 +111,11 @@
             aria-label={label}
             title={active ? undefined : $t('match.chartOpen')}
             data-testid={testid}
-            style="height: {H}px"
-            use:trackWidth={(w) => (plotWidth = w)}
+            style="min-height: {minHeight}px"
+            use:trackSize={(w, h) => {
+                plotWidth = w;
+                plotHeight = h;
+            }}
             onmousemove={onMove}
             onmouseleave={leave}
             onclick={(e) => onselect(indexAt(e, movePositions.length))}
@@ -145,7 +152,11 @@
 </figure>
 
 <style>
+    /* A chart grows with the room its parent gives it; the plot takes the growth. */
     .chart {
+        flex: 1 1 0;
+        display: flex;
+        flex-direction: column;
         margin: 0;
         padding: 8px 12px 4px;
         font-size: var(--font-size-small);
@@ -171,8 +182,10 @@
     }
     /* The value axis in its own column, so no label sits over a mark. */
     .body {
+        flex: 1 1 auto;
         display: grid;
         grid-template-columns: 52px minmax(0, 1fr);
+        grid-template-rows: minmax(0, 1fr) auto;
         column-gap: 6px;
     }
     .y-axis {
@@ -192,7 +205,10 @@
         cursor: pointer;
         outline-offset: 2px;
     }
+    /* Out of the flow, so the drawing never feeds back into the size it is drawn at. */
     .plot svg {
+        position: absolute;
+        inset: 0;
         display: block;
         width: 100%;
         height: 100%;

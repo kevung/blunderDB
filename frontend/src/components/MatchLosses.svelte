@@ -11,17 +11,18 @@
     /** @type {{ losses: any[] | null, movePositions: any[], player1: string, player2: string, hovered?: number | null, onhover?: (moveId: number | null) => void, onselect?: (index: number) => void }} */
     let { losses, movePositions, player1, player2, hovered = null, onhover = () => {}, onselect = () => {} } = $props();
 
-    const H = 150;
+    // The least height a plot keeps; the Charts tab shares the rest of its height out.
+    const MIN_H = 140;
 
     let series = $derived(lossSeries(movePositions, losses));
     let peak = $derived(niceCeil(Math.max(0, ...series.items.map((d) => Math.max(d.loss ?? 0, d.difficulty ?? 0)))));
     let cumPeak = $derived(niceCeil(Math.max(series.totals[0], series.totals[1])));
     let names = $derived([player1, player2]);
 
-    /** @param {number} loss @param {number} top */
-    const barH = (loss, top) => (loss > 0 ? Math.max(1, (loss / top) * (H - 2)) : 0);
-    /** @param {number} cum */
-    const cumY = (cum) => H - 1 - (cum / cumPeak) * (H - 4);
+    /** @param {number} loss @param {number} top @param {number} H */
+    const barH = (loss, top, H) => (loss > 0 ? Math.max(1, (loss / top) * (H - 2)) : 0);
+    /** @param {number} cum @param {number} H */
+    const cumY = (cum, H) => H - 1 - (cum / cumPeak) * (H - 4);
 
     // The hovered decision is shared with the time chart by its Move, not its place.
     let hover = $derived.by(() => {
@@ -44,19 +45,29 @@
 
 {#if series.any}
     <div class="match-losses" role="group" aria-label={$t('match.lossTitle')} data-testid="match-losses">
-        <MatchChart testid="loss-plot-per" title={$t('match.lossPerDecision')} label={$t('match.lossChart')} height={H} {movePositions} ticks={ticks(peak)} focus={hover} onfocus={setHover} {onselect}>
+        <MatchChart
+            testid="loss-plot-per"
+            title={$t('match.lossPerDecision')}
+            label={$t('match.lossChart')}
+            minHeight={MIN_H}
+            {movePositions}
+            ticks={ticks(peak)}
+            focus={hover}
+            onfocus={setHover}
+            {onselect}
+        >
             {#snippet legend()}
                 <span><span class="key bar-key player1"></span>{names[0]}</span>
                 <span><span class="key bar-key player2"></span>{names[1]}</span>
                 <span title={$t('match.difficultyColTooltip')}><span class="key tick-key"></span>{$t('match.legendDifficulty')}</span>
                 <span><span class="key dot-key"></span>{$t('match.avoidable')}</span>
             {/snippet}
-            {#snippet marks({ slot })}
+            {#snippet marks({ slot, H })}
                 {#each series.items as d (d.index)}
                     {#if d.loss === null}
                         <rect class="unscored" x={d.index * slot} y={H - 1.5} width={Math.max(1, slot - 0.5)} height="1.5" />
                     {:else if d.loss > 0}
-                        {@const h = barH(d.loss, peak)}
+                        {@const h = barH(d.loss, peak, H)}
                         <rect
                             class="bar"
                             class:player1={d.player === 0}
@@ -69,7 +80,7 @@
                         />
                     {/if}
                     {#if d.difficulty !== null && d.difficulty > 0}
-                        {@const y = H - barH(d.difficulty, peak)}
+                        {@const y = H - barH(d.difficulty, peak, H)}
                         <line class="difficulty" x1={d.index * slot} y1={y} x2={d.index * slot + Math.max(1, slot - 0.5)} y2={y} />
                     {/if}
                     {#if d.avoidable}
@@ -85,7 +96,7 @@
             testid="loss-plot-cum"
             title={$t('match.lossCumulative')}
             label={$t('match.lossChart')}
-            height={H}
+            minHeight={MIN_H}
             {movePositions}
             ticks={ticks(cumPeak)}
             focus={hover}
@@ -96,9 +107,9 @@
                 <span><svg class="line-key" viewBox="0 0 22 6"><line class="line player1" x1="1" y1="3" x2="21" y2="3" /></svg>{names[0]}</span>
                 <span><svg class="line-key" viewBox="0 0 22 6"><line class="line player2" x1="1" y1="3" x2="21" y2="3" /></svg>{names[1]}</span>
             {/snippet}
-            {#snippet marks({ slot })}
+            {#snippet marks({ slot, H })}
                 {#each [0, 1] as p (p)}
-                    {@const pts = series.items.filter((d) => d.player === p).map((d) => ({ x: (d.index + 0.5) * slot, y: cumY(d.cum) }))}
+                    {@const pts = series.items.filter((d) => d.player === p).map((d) => ({ x: (d.index + 0.5) * slot, y: cumY(d.cum, H) }))}
                     {#if pts.length > 0}
                         {@const end = pts[pts.length - 1]}
                         <polyline class="line" class:player1={p === 0} class:player2={p === 1} points={pts.map(({ x, y }) => `${x.toFixed(1)},${y.toFixed(1)}`).join(' ')} />
@@ -106,7 +117,7 @@
                     {/if}
                 {/each}
                 {#if hover !== null && series.items[hover].loss !== null}
-                    <circle class="hot-dot" cx={(hover + 0.5) * slot} cy={cumY(series.items[hover].cum)} r="4" />
+                    <circle class="hot-dot" cx={(hover + 0.5) * slot} cy={cumY(series.items[hover].cum, H)} r="4" />
                 {/if}
             {/snippet}
             {#snippet tip(i)}
@@ -134,6 +145,7 @@
     .match-losses {
         display: flex;
         flex-direction: column;
+        flex: 5 1 0;
     }
     .key {
         display: inline-block;
