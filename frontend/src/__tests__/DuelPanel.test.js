@@ -118,6 +118,8 @@ describe('DuelPanel', () => {
         await tick();
         expect(container.textContent).not.toContain('ab12cd34');
         expect(queryByTestId('duel-hint').getAttribute('title')).toContain('ab12cd34');
+        // The strip may cut the hint short: the tooltip gives it whole.
+        expect(queryByTestId('duel-hint').getAttribute('title')).toContain(queryByTestId('duel-hint').textContent.trim());
         // Without a Cadence there is no clock line, so no score either.
         expect(queryByTestId('duel-clocks')).toBeNull();
     });

@@ -446,9 +446,11 @@
     let showDecision = $derived(!hasDiceSet);
 
     // Nothing the engine said yet: one line saying so, not a grid of dashes. A refusal is an
-    // answer, and the race tables answer before the engine does.
-    let nothingYet = $derived(!data.race && !evalRefused && !evalPreRoll && !evalCubeAnalysis && evalMoves.length === 0);
+    // answer, and the race tables answer before the engine does. Only while the engine is still
+    // out (or the board is bare): a settled empty answer shows its table, never an endless wait.
     let boardEmpty = $derived(!($positionStore?.board?.points ?? []).some((p) => p?.checkers > 0));
+    let noResult = $derived(!data.race && !evalRefused && !evalPreRoll && !evalCubeAnalysis && evalMoves.length === 0);
+    let nothingYet = $derived(noResult && (boardEmpty || !evalSettled));
 
     // PositionFactsTable (ADR-0018 rule 1) would be empty with dice off a race: not mounted.
     let showFactsTable = $derived(!!data.race || !hasDiceSet);
@@ -583,6 +585,22 @@
             {@render evalHeader(true)}
 
             {#if nothingYet}
+                <!-- The race facts (EPC, pips) do not wait for the engine: only its part is empty. -->
+                {#if data.bottomEPC || data.topEPC}
+                    <div class="top-row">
+                        <PositionFactsTable
+                            bottomEPC={data.bottomEPC}
+                            topEPC={data.topEPC}
+                            bottomPoints={data.bottomPoints}
+                            topPoints={data.topPoints}
+                            {maskedBottom}
+                            {maskedTop}
+                            onRevealBottom={() => reveal('bottom')}
+                            onRevealTop={() => reveal('top')}
+                            showProbabilities={false}
+                        />
+                    </div>
+                {/if}
                 <EmptyState text={boardEmpty ? $t('eval.emptyBoard') : $t('eval.evaluating')} actions={false} />
             {:else}
                 <!-- Facts and the one decision block (ADR-0017 rule 2); facts stacked on

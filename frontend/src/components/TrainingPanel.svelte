@@ -429,7 +429,7 @@
 
             {#if question && session.revealed && !session.outOfTime && !entered && !judgedByEngine}
                 <!-- Consigne à l'écran, pas en infobulle. -->
-                <p class="hint">{$t('training.faultHint')}</p>
+                <p class="hint" data-testid="training-fault-hint" title={question.kind === 'scores' ? $t('training.scoresInstruction') : undefined}>{$t('training.faultHint')}</p>
             {/if}
             {#if question && !session.revealed && entered}
                 <!-- Tolérance écrite en toutes lettres par langue ; `trainingTab.test.js`

@@ -41,6 +41,7 @@ import { databasePathStore } from '../stores/databaseStore.js';
 import { epcDataStore } from '../stores/epcStore.js';
 import { enterEvalMode, exitEvalMode } from '../services/modeMachine.js';
 import EvalPanel from '../components/EvalPanel.svelte';
+import { EvaluatePositionImmediate } from '../../wailsjs/go/gui/App.js';
 
 function validBoard() {
     const points = Array.from({ length: 26 }, () => ({ checkers: 0, color: -1 }));
@@ -165,6 +166,7 @@ describe('the Eval panel’s add-to-database button (#399)', () => {
 
 describe('the Eval panel before the engine has said anything', () => {
     test('one line says so, instead of a grid of dashes', async () => {
+        EvaluatePositionImmediate.mockReturnValueOnce(new Promise(() => {}));
         positionStore.set(validBoard());
         const { container } = render(EvalPanel);
         await tick();
@@ -179,5 +181,24 @@ describe('the Eval panel before the engine has said anything', () => {
         const { container } = render(EvalPanel);
         await tick();
         expect(container.querySelector('[data-testid="empty-state"]').textContent.trim()).toBe(en.eval.emptyBoard);
+    });
+
+    test('an empty answer settles: its table shows, never an evaluation without end', async () => {
+        positionStore.set(validBoard());
+        const { container } = render(EvalPanel);
+        await vi.waitFor(() => expect(EvaluatePositionImmediate).toHaveBeenCalled());
+        await vi.waitFor(() => expect(container.querySelector('[data-testid="empty-state"]')).toBeNull());
+        expect(container.querySelector('.cube-table')).not.toBeNull();
+    });
+
+    test('the race facts do not wait for the engine', async () => {
+        EvaluatePositionImmediate.mockReturnValueOnce(new Promise(() => {}));
+        positionStore.set(validBoard());
+        const epc = { epc: 20.5, pipCount: 15, wastage: 5.5, meanRolls: 3.2, stdDev: 0.8 };
+        epcDataStore.set({ bottomEPC: epc, topEPC: epc, race: null, error: null, bottomPoints: 5, topPoints: 5 });
+        const { container } = render(EvalPanel);
+        await tick();
+        expect(container.querySelector('[data-testid="empty-state"]')).not.toBeNull();
+        expect(container.textContent).toContain('20.50');
     });
 });

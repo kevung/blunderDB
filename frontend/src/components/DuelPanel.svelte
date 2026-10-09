@@ -29,6 +29,14 @@
     let players = $derived(duel ? [duel.header?.player1 || $t('duel.player1'), duel.header?.player2 || $t('duel.player2')] : null);
     /** @type {import('../../wailsjs/go/models').duel.LevelInfo[]} */
     let levels = $state([]);
+    let hint = $derived.by(() => {
+        if ($duelAnimatingStore || (awaiting && !mine)) return $t('duel.botPlaying');
+        if (awaiting?.kind === 'cube') return $t('duel.hint.cube');
+        if (awaiting?.kind === 'answer') return $t('duel.hint.answer');
+        if (awaiting?.kind === 'move') return $t('duel.hint.move');
+        return '';
+    });
+    let hintTitle = $derived([hint, duel?.fingerprint ? $t('duel.fingerprintTitle', { fingerprint: duel.fingerprint }) : ''].filter(Boolean).join('\n') || undefined);
     let lengthChoices = Array.from({ length: MAX_MATCH_LENGTH }, (_, i) => i + 1);
 
     onMount(async () => {
@@ -50,17 +58,8 @@
         <!-- Les gestes du jeu sont au plateau ; la bande dit ce qui est attendu et porte l'arrêt. -->
         <PanelHeader title={players ? `${players[0]} – ${players[1]}` : $t('tabbedPanel.duel')}>
             <!-- Published before the first roll (ADR-0072 rule 8): the seed revealed with the Match must hash back to it; shown as a tooltip only. -->
-            <span class="prompt" data-testid="duel-hint" title={duel.fingerprint ? $t('duel.fingerprintTitle', { fingerprint: duel.fingerprint }) : undefined}>
-                {#if $duelAnimatingStore || (awaiting && !mine)}
-                    {$t('duel.botPlaying')}
-                {:else if awaiting?.kind === 'cube'}
-                    {$t('duel.hint.cube')}
-                {:else if awaiting?.kind === 'answer'}
-                    {$t('duel.hint.answer')}
-                {:else if awaiting?.kind === 'move'}
-                    {$t('duel.hint.move')}
-                {/if}
-            </span>
+            <!-- The strip may cut the hint short: its tooltip gives it whole, with the fingerprint. -->
+            <span class="prompt" data-testid="duel-hint" title={hintTitle}>{hint}</span>
             {#snippet actions()}
                 <span class="gestures">
                     <button type="button" class="danger" onclick={confirmForfeitDuel}>{$t('duel.forfeit')}</button>
