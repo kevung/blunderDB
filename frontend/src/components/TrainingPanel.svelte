@@ -32,6 +32,9 @@
     import ScoreCard from './ScoreCard.svelte';
     import ExplanationLine from './ExplanationLine.svelte';
     import TrainingNumberCell from './TrainingNumberCell.svelte';
+    import PanelHeader from './panels/PanelHeader.svelte';
+    import FormGrid from './panels/FormGrid.svelte';
+    import FormRow from './panels/FormRow.svelte';
 
     let exercise = $state(TRAINING_EXERCISES[0].id);
     let limitSeconds = $state(0);
@@ -201,8 +204,9 @@
 <div class="training-panel" data-testid="training-panel" role="presentation" onkeydown={onPanelKey}>
     {#if session}
         <div class="session" role="group" aria-label={$t('training.title')}>
-            <div class="session-head">
-                <span class="exercise">{$t(`training.exercise.${session.exercise}`)}</span>
+            <!-- La bande porte la séance et ses gestes ; la primaire reste en bout, au même endroit
+                 d'une question à l'autre, pour qui garde les mains sur le clavier. -->
+            <PanelHeader title={$t(`training.exercise.${session.exercise}`)}>
                 <span class="counter">{$t('training.questionCount', { n: session.askedQuestions + 1 })}</span>
                 {#if question}
                     <span class="clock" data-testid="training-clock">
@@ -216,7 +220,33 @@
                 {#if session.outOfTime}
                     <span class="out-of-time" data-testid="training-out-of-time">{$t('training.outOfTime')}</span>
                 {/if}
-            </div>
+                {#snippet actions()}
+                    <span class="actions">
+                        <button type="button" data-testid="training-quit" onclick={() => quitTrainingSession()}>{$t('training.leave')}</button>
+                        <button type="button" data-testid="training-finish" bind:this={finishButton} onclick={() => finishTrainingSession()}>{$t('training.finish')}</button>
+                        {#if !question}
+                            <button type="button" class="launch" data-testid="training-retry" onclick={() => retryTrainingQuestion()}>{$t('training.retry')}</button>
+                        {:else if !session.revealed}
+                            {#if !judgedByEngine}
+                                <button
+                                    type="button"
+                                    class="launch"
+                                    data-testid="training-reveal"
+                                    title={question.kind === 'scores' ? $t('training.scoresInstruction') : undefined}
+                                    bind:this={revealButton}
+                                    onclick={() => revealQuestion()}>{entered ? $t('training.validate') : $t('training.reveal')}</button
+                                >
+                            {:else if question.prompt === 'checker'}
+                                <button type="button" class="launch" data-testid="training-validate-move" disabled={!$quizPlayCompleteStore} onclick={() => answerDecisionBoard()}
+                                    >{$t('training.validate')}</button
+                                >
+                            {/if}
+                        {:else if another}
+                            <button type="button" class="launch" data-testid="training-next" bind:this={nextButton} onclick={() => nextTrainingQuestion()}>{$t('training.next')}</button>
+                        {/if}
+                    </span>
+                {/snippet}
+            </PanelHeader>
 
             <div class="question" bind:this={questionBox}>
                 {#if !question}
@@ -293,7 +323,6 @@
                         {/if}
                     </div>
                 {:else if question.kind === 'scores'}
-                    <p class="hint">{$t('training.scoresInstruction')}</p>
                     <ScoreCard card={question.card} numbers={question.numbers} revealed={session.revealed} faults={session.faults} locked={session.outOfTime} onToggle={markFault} />
                 {:else if entered}
                     <!-- Mode saisi : la vérité à côté de la saisie, sans écart imprimé
@@ -407,72 +436,55 @@
                      la lie à `EPC_TOLERANCE`. -->
                 <p class="hint">{$t(session.exercise === 'evaluation' ? 'training.toleranceEvaluation' : 'training.tolerance')}</p>
             {/if}
-
-            <div class="actions">
-                {#if !question}
-                    <button type="button" data-testid="training-retry" onclick={() => retryTrainingQuestion()}>{$t('training.retry')}</button>
-                {:else if !session.revealed}
-                    {#if !judgedByEngine}
-                        <button type="button" data-testid="training-reveal" bind:this={revealButton} onclick={() => revealQuestion()}
-                            >{entered ? $t('training.validate') : $t('training.reveal')}</button
-                        >
-                    {:else if question.prompt === 'checker'}
-                        <button type="button" data-testid="training-validate-move" disabled={!$quizPlayCompleteStore} onclick={() => answerDecisionBoard()}>{$t('training.validate')}</button>
-                    {/if}
-                {:else if another}
-                    <button type="button" data-testid="training-next" bind:this={nextButton} onclick={() => nextTrainingQuestion()}>{$t('training.next')}</button>
-                {/if}
-                <button type="button" data-testid="training-finish" bind:this={finishButton} onclick={() => finishTrainingSession()}>{$t('training.finish')}</button>
-                <button type="button" data-testid="training-quit" onclick={() => quitTrainingSession()}>{$t('training.leave')}</button>
-            </div>
         </div>
     {:else}
-        <div class="launcher">
-            <div class="row">
-                <span class="field-label" id="training-exercise-label">{$t('training.exerciseLabel')}</span>
-                <div class="choices" role="group" aria-labelledby="training-exercise-label">
-                    {#each TRAINING_EXERCISES as item (item.id)}
-                        <button type="button" class:selected={exercise === item.id} data-testid="training-exercise-{item.id}" onclick={() => (exercise = item.id)}>
-                            {$t(`training.exercise.${item.id}`)}
-                        </button>
-                    {/each}
-                </div>
-            </div>
+        <PanelHeader title={$t('training.title')}>
+            {#snippet actions()}
+                <button type="button" class="launch" data-testid="training-start" disabled={libraryMissing} onclick={start}>{$t('training.start')}</button>
+            {/snippet}
+        </PanelHeader>
 
-            <!-- Décision ne connaît que la bibliothèque. -->
-            {#if chosen.sources.length > 1}
-                <div class="row">
-                    <span class="field-label" id="training-source-label">{$t('training.source')}</span>
-                    <div class="choices" role="group" aria-labelledby="training-source-label">
-                        {#each chosen.sources as source (source)}
-                            <button
-                                type="button"
-                                class:selected={seedSource === source}
-                                disabled={source === 'library' && !hasLibrary}
-                                data-testid="training-source-{source}"
-                                onclick={() => chooseSource(source)}
-                            >
-                                {$t(`training.sources.${source}`)}
+        <div class="launcher">
+            <FormGrid>
+                <FormRow label={$t('training.exerciseLabel')}>
+                    <div class="choices" role="group" aria-label={$t('training.exerciseLabel')}>
+                        {#each TRAINING_EXERCISES as item (item.id)}
+                            <button type="button" class:selected={exercise === item.id} data-testid="training-exercise-{item.id}" onclick={() => (exercise = item.id)}>
+                                {$t(`training.exercise.${item.id}`)}
                             </button>
                         {/each}
                     </div>
-                </div>
-            {/if}
+                </FormRow>
 
-            <div class="row">
-                <span class="field-label" id="training-limit-label">{$t('training.limit')}</span>
-                <div class="choices" role="group" aria-labelledby="training-limit-label">
-                    {#each TIME_LIMITS as limit (limit)}
-                        <button type="button" class:selected={limitSeconds === limit} data-testid="training-limit-{limit}" onclick={() => (limitSeconds = limit)}>
-                            {limit === 0 ? $t('training.limitNone') : $t('training.limitSeconds', { n: limit })}
-                        </button>
-                    {/each}
-                </div>
-            </div>
+                <!-- Décision ne connaît que la bibliothèque. -->
+                {#if chosen.sources.length > 1}
+                    <FormRow label={$t('training.source')}>
+                        <div class="choices" role="group" aria-label={$t('training.source')}>
+                            {#each chosen.sources as source (source)}
+                                <button
+                                    type="button"
+                                    class:selected={seedSource === source}
+                                    disabled={source === 'library' && !hasLibrary}
+                                    data-testid="training-source-{source}"
+                                    onclick={() => chooseSource(source)}
+                                >
+                                    {$t(`training.sources.${source}`)}
+                                </button>
+                            {/each}
+                        </div>
+                    </FormRow>
+                {/if}
 
-            <div class="row">
-                <button type="button" class="start" data-testid="training-start" disabled={libraryMissing} onclick={start}>{$t('training.start')}</button>
-            </div>
+                <FormRow label={$t('training.limit')}>
+                    <div class="choices" role="group" aria-label={$t('training.limit')}>
+                        {#each TIME_LIMITS as limit (limit)}
+                            <button type="button" class:selected={limitSeconds === limit} data-testid="training-limit-{limit}" onclick={() => (limitSeconds = limit)}>
+                                {limit === 0 ? $t('training.limitNone') : $t('training.limitSeconds', { n: limit })}
+                            </button>
+                        {/each}
+                    </div>
+                </FormRow>
+            </FormGrid>
 
             {#if libraryMissing}
                 <!-- Décision ne tire que de la bibliothèque : la raison est dite avant le clic (ADR-0041 règle 2). -->
@@ -541,34 +553,69 @@
         -webkit-user-select: none;
         display: flex;
         flex-direction: column;
-        gap: 0.8em;
-        padding: 0.6em 0.8em;
+        text-align: start;
     }
 
-    .row,
-    .session-head,
+    .session {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+        padding: 0 var(--space-2) var(--space-2);
+    }
+
+    /* The band runs edge to edge over the padded session. */
+    .session > :global(.panel-header) {
+        margin: 0 calc(-1 * var(--space-2));
+    }
+
+    .launcher > .refusal {
+        padding: 0 var(--space-2);
+    }
+
+    .journal {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-1);
+        padding: var(--space-2);
+    }
+
     .actions,
     .summary-line {
         display: flex;
         align-items: center;
-        gap: 0.5em;
+        gap: var(--space-1) var(--space-2);
         flex-wrap: wrap;
     }
 
-    .field-label,
     .detail-label {
         color: var(--color-text-muted);
     }
 
     .choices button,
     .actions button,
-    .start {
+    .launch {
         cursor: pointer;
-        padding: 0.15em 0.6em;
+        padding: 2px var(--space-2);
         border: 1px solid var(--color-border);
-        border-radius: 3px;
+        border-radius: var(--radius);
         background: var(--color-surface);
         color: var(--color-text);
+    }
+
+    /* The gesture that moves the session on: filled, at the end of the band (ADR-0085, G3). */
+    .actions button.launch,
+    button.launch {
+        font-size: var(--font-size-base);
+        font-weight: 600;
+        padding: 2px var(--space-3);
+        background: var(--color-primary);
+        border-color: var(--color-primary);
+        color: white;
+    }
+
+    button.launch:disabled {
+        cursor: default;
+        opacity: 0.5;
     }
 
     .notation {
@@ -595,10 +642,6 @@
     .choices button:disabled {
         cursor: default;
         color: var(--color-text-muted);
-    }
-
-    .exercise {
-        font-weight: 600;
     }
 
     .counter,
@@ -701,8 +744,9 @@
 
     h3 {
         margin: 0;
-        font-size: var(--font-size-base);
+        font-size: var(--font-size-small);
         font-weight: 600;
+        color: var(--color-text-muted);
     }
 
     .disclose {
@@ -712,7 +756,7 @@
         color: var(--color-text);
         cursor: pointer;
         text-align: left;
-        min-width: 6em;
+        min-width: 10em;
     }
 
     .disclose:disabled {

@@ -94,6 +94,12 @@ describe('au repos', () => {
         expect(container.querySelector('[data-testid="training-start"]')).not.toBeNull();
         expect(container.querySelector('[data-testid="training-summary-scores"]')).not.toBeNull();
     });
+
+    test('« Démarrer » ferme la bande ; les réglages sont une grille libellé │ contrôle', () => {
+        const { container } = render(TrainingPanel);
+        expect(container.querySelector('[data-testid="panel-header"] .panel-actions [data-testid="training-start"]')).not.toBeNull();
+        expect(container.querySelector('[data-testid="form-grid"] [data-testid="training-exercise-scores"]')).not.toBeNull();
+    });
 });
 
 describe('pendant une question', () => {
@@ -104,6 +110,13 @@ describe('pendant une question', () => {
         expect(container.querySelector('[data-testid="training-finish"]')).not.toBeNull();
         expect(container.querySelector('[data-testid="training-quit"]')).not.toBeNull();
         expect(container.querySelector('[data-testid="training-start"]')).toBeNull();
+    });
+
+    test('ses gestes sont dans la bande, la primaire en bout, toujours au même endroit', () => {
+        trainingSessionStore.set(askQuestion(newSession({ exercise: 'pips', seedSource: 'board' }), pipsQuestion(), 0));
+        const { container } = render(TrainingPanel);
+        const ids = [...container.querySelectorAll('[data-testid="panel-header"] .panel-actions button')].map((b) => b.dataset.testid);
+        expect(ids).toEqual(['training-quit', 'training-finish', 'training-reveal']);
     });
 
     test('la consigne de cochage est à l’écran une fois révélée, pas seulement dans une infobulle', () => {

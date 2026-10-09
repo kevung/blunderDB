@@ -14,6 +14,9 @@
     import { loadDuelForm, duelOffer, refreshDuels, startDuel, resumeDuel, suspendDuel, confirmForfeitDuel, confirmCancelDuel } from '../services/duelService.js';
     import TranscriptView from './TranscriptView.svelte';
     import DuelClocks from './DuelClocks.svelte';
+    import PanelHeader from './panels/PanelHeader.svelte';
+    import FormGrid from './panels/FormGrid.svelte';
+    import FormRow from './panels/FormRow.svelte';
 
     let form = $state(normalizeForm(null));
     let cadences = $state(/** @type {any[]} */ ([]));
@@ -44,121 +47,137 @@
 
 <div class="duel-panel" data-testid="duel-panel">
     {#if duel}
-        {#if duel.clock}
-            <div class="head">
-                <DuelClocks {duel} clocksOnly />
-            </div>
-        {/if}
+        <!-- Les gestes du jeu sont au plateau ; la bande dit ce qui est attendu et porte l'arrêt. -->
+        <PanelHeader title={players ? `${players[0]} – ${players[1]}` : $t('tabbedPanel.duel')}>
+            <!-- Published before the first roll (ADR-0072 rule 8): the seed revealed with the Match must hash back to it; shown as a tooltip only. -->
+            <span class="prompt" data-testid="duel-hint" title={duel.fingerprint ? $t('duel.fingerprintTitle', { fingerprint: duel.fingerprint }) : undefined}>
+                {#if $duelAnimatingStore || (awaiting && !mine)}
+                    {$t('duel.botPlaying')}
+                {:else if awaiting?.kind === 'cube'}
+                    {$t('duel.hint.cube')}
+                {:else if awaiting?.kind === 'answer'}
+                    {$t('duel.hint.answer')}
+                {:else if awaiting?.kind === 'move'}
+                    {$t('duel.hint.move')}
+                {/if}
+            </span>
+            {#snippet actions()}
+                <span class="gestures">
+                    <button type="button" class="danger" onclick={confirmForfeitDuel}>{$t('duel.forfeit')}</button>
+                    <button type="button" onclick={suspendDuel}>{$t('duel.pause')}</button>
+                    <button type="button" class="danger" onclick={confirmCancelDuel}>{$t('duel.cancel')}</button>
+                </span>
+            {/snippet}
+        </PanelHeader>
 
-        <!-- Les gestes du jeu sont au plateau ; ici, ce qui est attendu, en une ligne. -->
-        <!-- Published before the first roll (ADR-0072 rule 8): the seed revealed with the Match must hash back to it; shown as a tooltip only. -->
-        <p class="prompt" data-testid="duel-hint" title={duel.fingerprint ? $t('duel.fingerprintTitle', { fingerprint: duel.fingerprint }) : undefined}>
-            {#if $duelAnimatingStore || (awaiting && !mine)}
-                {$t('duel.botPlaying')}
-            {:else if awaiting?.kind === 'cube'}
-                {$t('duel.hint.cube')}
-            {:else if awaiting?.kind === 'answer'}
-                {$t('duel.hint.answer')}
-            {:else if awaiting?.kind === 'move'}
-                {$t('duel.hint.move')}
+        <div class="body">
+            {#if duel.clock}
+                <div class="head">
+                    <DuelClocks {duel} clocksOnly />
+                </div>
             {/if}
-        </p>
-
-        <TranscriptView annotated={open.sheet} {players} />
-
-        <div class="gestures secondary">
-            <span class="spacer"></span>
-            <button type="button" class="danger" onclick={confirmForfeitDuel}>{$t('duel.forfeit')}</button>
-            <button type="button" onclick={suspendDuel}>{$t('duel.pause')}</button>
-            <button type="button" class="danger" onclick={confirmCancelDuel}>{$t('duel.cancel')}</button>
+            <TranscriptView annotated={open.sheet} {players} />
         </div>
     {:else}
-        <form
-            class="form"
-            onsubmit={(e) => {
-                e.preventDefault();
-                play();
-            }}
-        >
-            <div class="row">
-                <label class="field"><input type="radio" bind:group={form.money} value={false} /> {$t('duel.match')}</label>
-                <select bind:value={form.matchLength} disabled={form.money} aria-label={$t('duel.matchLength')}>
-                    {#each lengthChoices as n (n)}<option value={n}>{$t('duel.lengthPoints', { n })}</option>{/each}
-                </select>
-                <label class="field"><input type="radio" bind:group={form.money} value={true} /> {$t('duel.moneySession')}</label>
-                <label class="field"><input type="checkbox" bind:checked={form.jacoby} disabled={!form.money} /> {$t('duel.jacoby')}</label>
-            </div>
+        <PanelHeader title={$t('tabbedPanel.duel')}>
+            {#snippet actions()}
+                <button type="submit" form="duel-form" class="launch" data-testid="duel-play" disabled={!$databasePathStore}><span aria-hidden="true">▶</span> <span>{$t('duel.play')}</span></button>
+            {/snippet}
+        </PanelHeader>
 
-            <div class="row">
-                <span class="field-label">{$t('duel.start')}</span>
-                <select bind:value={form.start} aria-label={$t('duel.start')}>
-                    <option value={START.OPENING}>{$t('duel.startOpening')}</option>
-                    <option value={START.BOARD}>{$t('duel.startBoard')}</option>
-                    <option value={START.SCORE} disabled={form.money}>{$t('duel.startScore')}</option>
-                </select>
-                {#if form.start === START.SCORE && !form.money}
-                    <label class="field"
-                        >{$t('duel.awayPlayer1')}
-                        <input type="number" min="1" max={form.matchLength} bind:value={form.away[0]} />
-                    </label>
-                    <label class="field"
-                        >{$t('duel.awayPlayer2')}
-                        <input type="number" min="1" max={form.matchLength} bind:value={form.away[1]} />
-                    </label>
-                {/if}
-            </div>
+        <div class="body launcher">
+            <form
+                id="duel-form"
+                onsubmit={(e) => {
+                    e.preventDefault();
+                    play();
+                }}
+            >
+                <FormGrid>
+                    <FormRow label={$t('duel.type')}>
+                        <label class="field"><input type="radio" bind:group={form.money} value={false} /> {$t('duel.match')}</label>
+                        <select bind:value={form.matchLength} disabled={form.money} aria-label={$t('duel.matchLength')}>
+                            {#each lengthChoices as n (n)}<option value={n}>{$t('duel.lengthPoints', { n })}</option>{/each}
+                        </select>
+                        <label class="field"><input type="radio" bind:group={form.money} value={true} /> {$t('duel.moneySession')}</label>
+                        <label class="field"><input type="checkbox" bind:checked={form.jacoby} disabled={!form.money} /> {$t('duel.jacoby')}</label>
+                    </FormRow>
 
-            <div class="row">
-                <span class="field-label">{$t('duel.side')}</span>
-                <label class="field"><input type="radio" bind:group={form.side} value={0} /> {$t('duel.player1')}</label>
-                <label class="field"><input type="radio" bind:group={form.side} value={1} /> {$t('duel.player2')}</label>
-                <span class="field-label">{$t('duel.level')}</span>
-                <select bind:value={form.level} aria-label={$t('duel.level')} title={$t('duel.levelTitle')}>
-                    {#each BOT_LEVELS as level (level)}
-                        {@const label = levelLabelParts(level, levels)}
-                        <option value={level}>{label.key ? $t(label.key, label.params) : level}</option>
-                    {/each}
-                </select>
-            </div>
+                    <FormRow label={$t('duel.start')} for="duel-start">
+                        <select id="duel-start" bind:value={form.start}>
+                            <option value={START.OPENING}>{$t('duel.startOpening')}</option>
+                            <option value={START.BOARD}>{$t('duel.startBoard')}</option>
+                            <option value={START.SCORE} disabled={form.money}>{$t('duel.startScore')}</option>
+                        </select>
+                        {#if form.start === START.SCORE && !form.money}
+                            <label class="field"
+                                >{$t('duel.awayPlayer1')}
+                                <input type="number" min="1" max={form.matchLength} bind:value={form.away[0]} />
+                            </label>
+                            <label class="field"
+                                >{$t('duel.awayPlayer2')}
+                                <input type="number" min="1" max={form.matchLength} bind:value={form.away[1]} />
+                            </label>
+                        {/if}
+                    </FormRow>
 
-            <div class="row">
-                <span class="field-label">{$t('duel.cadence')}</span>
-                <select bind:value={form.cadence} aria-label={$t('duel.cadence')}>
-                    <option value="">{$t('duel.noCadence')}</option>
-                    {#each cadences as c (c.name)}<option value={c.name}>{c.name}</option>{/each}
-                </select>
-                {#if form.cadence}
-                    <span class="field-label">{$t('duel.timeOut')}</span>
-                    <select bind:value={form.timeOut} aria-label={$t('duel.timeOut')}>
-                        <option value="continue">{$t('duel.timeContinue')}</option>
-                        <option value="lose_match">{$t('duel.timeLose')}</option>
-                    </select>
-                {/if}
-            </div>
+                    <FormRow label={$t('duel.side')}>
+                        <label class="field"><input type="radio" bind:group={form.side} value={0} /> {$t('duel.player1')}</label>
+                        <label class="field"><input type="radio" bind:group={form.side} value={1} /> {$t('duel.player2')}</label>
+                    </FormRow>
 
-            <div class="row">
-                <label class="field">{$t('duel.playerName')} <input type="text" bind:value={form.player} /></label>
-                <label class="field"><input type="checkbox" bind:checked={form.record} /> {$t('duel.record')}</label>
-                <button type="submit" class="primary" disabled={!$databasePathStore}>{$t('duel.play')}</button>
-            </div>
-        </form>
+                    <FormRow label={$t('duel.level')} for="duel-level">
+                        <select id="duel-level" bind:value={form.level} title={$t('duel.levelTitle')}>
+                            {#each BOT_LEVELS as level (level)}
+                                {@const label = levelLabelParts(level, levels)}
+                                <option value={level}>{label.key ? $t(label.key, label.params) : level}</option>
+                            {/each}
+                        </select>
+                    </FormRow>
 
-        <section class="suspended">
-            <h3>{$t('duel.suspended')}</h3>
-            {#if $duelListStore.length === 0}
-                <p class="hint">{$t('duel.noneSuspended')}</p>
-            {:else}
-                <ul>
-                    {#each $duelListStore as item (item.id)}
-                        <li>
-                            <span>{item.label}</span>
-                            <span class="hint">{item.updatedAt}</span>
-                            <button type="button" onclick={() => resumeDuel(item.id)}>{$t('duel.resume')}</button>
-                        </li>
-                    {/each}
-                </ul>
+                    <FormRow label={$t('duel.cadence')} for="duel-cadence">
+                        <select id="duel-cadence" bind:value={form.cadence}>
+                            <option value="">{$t('duel.noCadence')}</option>
+                            {#each cadences as c (c.name)}<option value={c.name}>{c.name}</option>{/each}
+                        </select>
+                    </FormRow>
+
+                    {#if form.cadence}
+                        <FormRow label={$t('duel.timeOut')} for="duel-timeout">
+                            <select id="duel-timeout" bind:value={form.timeOut}>
+                                <option value="continue">{$t('duel.timeContinue')}</option>
+                                <option value="lose_match">{$t('duel.timeLose')}</option>
+                            </select>
+                        </FormRow>
+                    {/if}
+
+                    <FormRow label={$t('duel.playerName')} for="duel-player">
+                        <input id="duel-player" type="text" bind:value={form.player} />
+                    </FormRow>
+
+                    <FormRow label="">
+                        <label class="field"><input type="checkbox" bind:checked={form.record} /> {$t('duel.record')}</label>
+                    </FormRow>
+                </FormGrid>
+            </form>
+
+            <!-- Nothing suspended, no section: an empty list says nothing the form does not. -->
+            {#if $duelListStore.length > 0}
+                <section class="suspended" data-testid="duel-suspended">
+                    <h3>{$t('duel.suspended')}</h3>
+                    <ul>
+                        {#each $duelListStore as item (item.id)}
+                            <li>
+                                <span>{item.label}</span>
+                                <span class="hint">{item.updatedAt}</span>
+                                <span class="spacer"></span>
+                                <button type="button" onclick={() => resumeDuel(item.id)}>{$t('duel.resume')}</button>
+                            </li>
+                        {/each}
+                    </ul>
+                </section>
             {/if}
-        </section>
+        </div>
     {/if}
 </div>
 
@@ -169,39 +188,66 @@
         -webkit-user-select: none;
         display: flex;
         flex-direction: column;
-        gap: 0.6em;
-        padding: 0.6em 0.8em;
+        height: 100%;
+        box-sizing: border-box;
+        text-align: start;
     }
 
-    .row,
+    .body {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+        padding: 0 var(--space-2) var(--space-2);
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+    }
+
+    /* The dock is short: the suspended Duels sit beside the form, not under its fold. */
+    .body.launcher {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        column-gap: var(--space-3);
+        overflow-y: auto;
+    }
+
+    .suspended {
+        padding-top: var(--space-2);
+        min-width: 18em;
+    }
+
+    .head {
+        padding-top: var(--space-2);
+    }
+
+    form :global(.form-grid) {
+        padding: var(--space-2) 0 0;
+    }
+
     .gestures,
     .suspended li {
         display: flex;
         align-items: center;
-        gap: 0.5em;
-        flex-wrap: wrap;
-    }
-
-    .form {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5em;
+        gap: var(--space-1);
     }
 
     .field {
         display: inline-flex;
         align-items: center;
-        gap: 0.3em;
+        gap: var(--space-1);
     }
 
-    .field-label,
     .hint,
     .prompt {
         color: var(--color-text-muted);
     }
 
-    p.prompt {
-        margin: 0;
+    .prompt {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        min-width: 0;
     }
 
     input[type='number'] {
@@ -210,16 +256,21 @@
 
     button {
         cursor: pointer;
-        padding: 0.15em 0.6em;
+        padding: 2px var(--space-2);
         border: 1px solid var(--color-border);
-        border-radius: 3px;
+        border-radius: var(--radius);
         background: var(--color-surface);
         color: var(--color-text);
     }
 
-    button.primary {
+    /* The button that starts a game: filled, at the end of the strip (ADR-0085, G3). */
+    button.launch {
+        font-size: var(--font-size-base);
+        font-weight: 600;
+        padding: 2px var(--space-3, 12px);
+        background: var(--color-primary);
         border-color: var(--color-primary);
-        color: var(--color-primary);
+        color: white;
     }
 
     button.danger {
@@ -228,8 +279,7 @@
 
     button:disabled {
         cursor: default;
-        color: var(--color-text-muted);
-        border-color: var(--color-border);
+        opacity: 0.5;
     }
 
     .spacer {
@@ -238,14 +288,16 @@
 
     h3 {
         margin: 0;
-        font-size: var(--font-size-base);
+        font-size: var(--font-size-small);
         font-weight: 600;
+        color: var(--color-text-muted);
     }
 
     .suspended ul {
         list-style: none;
-        margin: 0.3em 0 0;
+        margin: var(--space-1) 0 0;
         padding: 0;
+        max-width: 40em;
     }
 
     .duel-panel input {

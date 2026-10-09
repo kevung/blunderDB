@@ -22,6 +22,8 @@
     import RolloutStrip from './RolloutStrip.svelte';
     import RolloutResults from './RolloutResults.svelte';
     import ContextMenu from './ContextMenu.svelte';
+    import PanelHeader from './panels/PanelHeader.svelte';
+    import EmptyState from './panels/EmptyState.svelte';
     import { rolloutStore } from '../stores/rolloutStore.js';
     import { toggleRollout, cancelRollout, ensureRolloutEvents, syncRolloutStatus, rolloutOnBoard } from '../services/rolloutService.js';
     import { analysisMenuItems } from '../services/analysisMenu.js';
@@ -443,6 +445,11 @@
     );
     let showDecision = $derived(!hasDiceSet);
 
+    // Nothing the engine said yet: one line saying so, not a grid of dashes. A refusal is an
+    // answer, and the race tables answer before the engine does.
+    let nothingYet = $derived(!data.race && !evalRefused && !evalPreRoll && !evalCubeAnalysis && evalMoves.length === 0);
+    let boardEmpty = $derived(!($positionStore?.board?.points ?? []).some((p) => p?.checkers > 0));
+
     // PositionFactsTable (ADR-0018 rule 1) would be empty with dice off a race: not mounted.
     let showFactsTable = $derived(!!data.race || !hasDiceSet);
 
@@ -494,6 +501,50 @@
     </button>
 {/snippet}
 
+<!-- The band (ADR-0085): what the numbers are, then Défi, then keeping the position — the gesture
+     that closes a check. -->
+{#snippet evalHeader(/** @type {boolean} */ withBadges)}
+    <PanelHeader title={$t('tabbedPanel.eval')}>
+        {#if withBadges}
+            {#if data.race}
+                {#if displayRace?.exactWin}
+                    <span class="badge badge-composite" title={$t('epc.race.exactAndEvaluatedTooltip')}>
+                        {$t('epc.race.exactAndEvaluated')}
+                    </span>
+                {:else if displayRace?.regime === 'exact'}
+                    <span class="badge badge-exact" title={$t('epc.race.exactTooltip', { n: displayRace.source_checkers })}>
+                        {$t('epc.race.exact')}
+                    </span>
+                {:else if displayRace?.regime === 'evaluated'}
+                    <span class="badge badge-evaluated" title={$t('epc.race.evaluatedTooltip')}>
+                        {$t('epc.race.evaluated')} · {displayRace.depth}
+                    </span>
+                {:else if displayRace}
+                    <button
+                        class="badge badge-estimated badge-link"
+                        onclick={openBearoffSettings}
+                        title={$t('epc.race.estimatedTooltip', { p99: pct(displayRace.p99) }) + ' ' + $t('epc.race.downloadHint')}
+                        aria-label={$t('epc.race.openConfig')}
+                    >
+                        {$t('epc.race.estimated')} ± {pct(displayRace.sigma)} %
+                    </button>
+                {/if}
+            {/if}
+            {#if genericDepthLabel}
+                <span class="badge badge-evaluated" title={$t('analysis.analysisDepth')}>{genericDepthLabel}</span>
+            {/if}
+        {/if}
+        <button class="eval-engine-badge" onclick={openGammonNetRepo} title={$t('eval.engineTooltip')} aria-label={$t('eval.engineTooltip')}>?</button>
+        {#snippet actions()}
+            <label class="challenge-toggle" title={$t('epc.challengeTooltip')}>
+                <input type="checkbox" checked={challenge} onchange={toggleChallenge} />
+                <span>{$t('epc.challenge')}</span>
+            </label>
+            {@render addPositionButton()}
+        {/snippet}
+    </PanelHeader>
+{/snippet}
+
 <!-- A <section> taking focus for keyboard delegation (tabindex="-1"); no ARIA
      role is both a landmark and interactive, hence the ignore. -->
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
@@ -513,14 +564,14 @@
         </div>
     {:else if data.error}
         <div class="eval-content">
-            <div class="badges-strip">{@render addPositionButton()}</div>
+            {@render evalHeader(false)}
             <div class="eval-error">
                 <span class="error-text">{data.error}</span>
             </div>
         </div>
     {:else if evalFailed}
         <div class="eval-content">
-            <div class="badges-strip">{@render addPositionButton()}</div>
+            {@render evalHeader(false)}
             <div class="eval-error">
                 <span class="error-text">{$t('eval.failed', { error: evalFailedMessage })}</span>
             </div>
@@ -529,107 +580,77 @@
         <!-- svelte-ignore a11y_no_static_element_interactions -->
         <div class="eval-content" oncontextmenu={handleContentContextMenu}>
             <!-- The strip, a full-width line on top (ADR-0020 rule 8): a badge qualifies the numbers below. -->
-            <div class="badges-strip">
-                {@render addPositionButton()}
-                {#if data.race}
-                    {#if displayRace?.exactWin}
-                        <span class="badge badge-composite" title={$t('epc.race.exactAndEvaluatedTooltip')}>
-                            {$t('epc.race.exactAndEvaluated')}
-                        </span>
-                    {:else if displayRace?.regime === 'exact'}
-                        <span class="badge badge-exact" title={$t('epc.race.exactTooltip', { n: displayRace.source_checkers })}>
-                            {$t('epc.race.exact')}
-                        </span>
-                    {:else if displayRace?.regime === 'evaluated'}
-                        <span class="badge badge-evaluated" title={$t('epc.race.evaluatedTooltip')}>
-                            {$t('epc.race.evaluated')} · {displayRace.depth}
-                        </span>
-                    {:else if displayRace}
-                        <button
-                            class="badge badge-estimated badge-link"
-                            onclick={openBearoffSettings}
-                            title={$t('epc.race.estimatedTooltip', { p99: pct(displayRace.p99) }) + ' ' + $t('epc.race.downloadHint')}
-                            aria-label={$t('epc.race.openConfig')}
-                        >
-                            {$t('epc.race.estimated')} ± {pct(displayRace.sigma)} %
-                        </button>
-                    {/if}
-                {/if}
-                {#if genericDepthLabel}
-                    <span class="badge badge-evaluated" title={$t('analysis.analysisDepth')}>{genericDepthLabel}</span>
-                {/if}
-                <button class="eval-engine-badge" onclick={openGammonNetRepo} title={$t('eval.engineTooltip')} aria-label={$t('eval.engineTooltip')}>?</button>
-                <label class="challenge-toggle" title={$t('epc.challengeTooltip')}>
-                    <input type="checkbox" checked={challenge} onchange={toggleChallenge} />
-                    <span>{$t('epc.challenge')}</span>
-                </label>
-            </div>
+            {@render evalHeader(true)}
 
-            <!-- Facts and the one decision block (ADR-0017 rule 2); facts stacked on
+            {#if nothingYet}
+                <EmptyState text={boardEmpty ? $t('eval.emptyBoard') : $t('eval.evaluating')} actions={false} />
+            {:else}
+                <!-- Facts and the one decision block (ADR-0017 rule 2); facts stacked on
                  one grid (ADR-0021), flex-wrap only for a hand-narrowed panel. -->
-            <div class="top-row">
-                {#if showFactsTable}
-                    <PositionFactsTable
-                        bottom={facts.bottom}
-                        top={facts.top}
-                        bottomEPC={data.bottomEPC}
-                        topEPC={data.topEPC}
-                        bottomPoints={data.bottomPoints}
-                        topPoints={data.topPoints}
-                        {maskedBottom}
-                        {maskedTop}
-                        onRevealBottom={() => reveal('bottom')}
-                        onRevealTop={() => reveal('top')}
-                        showProbabilities={!hasDiceSet}
-                    />
-                {/if}
-
-                {#if showDecision}
-                    <!-- Défi masks in place: values and verdict become `···` (ADR-0020 rule 7). -->
-                    <!-- svelte-ignore a11y_click_events_have_key_events -->
-                    <!-- svelte-ignore a11y_no_static_element_interactions -->
-                    <div class="decision-cube" class:masked={maskedDecision} onclick={() => maskedDecision && reveal('decision')} title={maskedDecision ? $t('epc.clickToReveal') : undefined}>
-                        <CubeVerdictTable {decision} cubeValue={$positionStore?.cube?.value ?? 0} showInfo={false} masked={maskedDecision} {isMoney} {jacoby} {beaver} {maxCube} />
-                    </div>
-                {/if}
-            </div>
-
-            {#if showDecision && !maskedDecision && (cubeRolled.length || onBoard.live.length)}
-                <!-- The cube decision has no play row: its rollout is read below it. -->
-                <RolloutResults rollouts={cubeRolled} live={onBoard.live} liveGames={rollout.games} liveMaxGames={rollout.maxGames} {isMoney} />
-            {/if}
-
-            <!-- The only scrolling region (ADR-0017). The Baseline row lives in this
-                 table, so Défi masks it with the ranking (ADR-0018 rules 2, 6). -->
-            {#if hasDiceSet}
-                {#if maskedDecision}
-                    <!-- A button for keyboard reveal; focus goes back to the panel, since the reveal removes it. -->
-                    <button
-                        type="button"
-                        class="decision-cube-masked moves-masked"
-                        onclick={() => {
-                            reveal('decision');
-                            panelEl?.focus({ preventScroll: true });
-                        }}
-                        title={$t('epc.clickToReveal')}>{HIDDEN}</button
-                    >
-                {:else}
-                    <div class="moves-scroll">
-                        <CandidateMovesTable
-                            moves={evalMoves}
-                            selectedMove={$selectedMoveStore}
-                            selectedMoves={pickedMoves}
-                            rollouts={rolloutRows}
-                            onRowClick={handleMoveRowClick}
-                            onRowContextMenu={handleRowContextMenu}
-                            showProvenance={false}
-                            baseline={baselineFacts}
-                            {isMoney}
+                <div class="top-row">
+                    {#if showFactsTable}
+                        <PositionFactsTable
+                            bottom={facts.bottom}
+                            top={facts.top}
+                            bottomEPC={data.bottomEPC}
+                            topEPC={data.topEPC}
+                            bottomPoints={data.bottomPoints}
+                            topPoints={data.topPoints}
+                            {maskedBottom}
+                            {maskedTop}
+                            onRevealBottom={() => reveal('bottom')}
+                            onRevealTop={() => reveal('top')}
+                            showProbabilities={!hasDiceSet}
                         />
-                        {#if evalMoves.length === 0}
-                            <div class="eval-placeholder">{evalRefused ? $t('cube.refused') : $t('eval.pending')}</div>
-                        {/if}
-                    </div>
+                    {/if}
+
+                    {#if showDecision}
+                        <!-- Défi masks in place: values and verdict become `···` (ADR-0020 rule 7). -->
+                        <!-- svelte-ignore a11y_click_events_have_key_events -->
+                        <!-- svelte-ignore a11y_no_static_element_interactions -->
+                        <div class="decision-cube" class:masked={maskedDecision} onclick={() => maskedDecision && reveal('decision')} title={maskedDecision ? $t('epc.clickToReveal') : undefined}>
+                            <CubeVerdictTable {decision} cubeValue={$positionStore?.cube?.value ?? 0} showInfo={false} masked={maskedDecision} {isMoney} {jacoby} {beaver} {maxCube} />
+                        </div>
+                    {/if}
+                </div>
+
+                {#if showDecision && !maskedDecision && (cubeRolled.length || onBoard.live.length)}
+                    <!-- The cube decision has no play row: its rollout is read below it. -->
+                    <RolloutResults rollouts={cubeRolled} live={onBoard.live} liveGames={rollout.games} liveMaxGames={rollout.maxGames} {isMoney} />
+                {/if}
+
+                <!-- The only scrolling region (ADR-0017). The Baseline row lives in this
+                 table, so Défi masks it with the ranking (ADR-0018 rules 2, 6). -->
+                {#if hasDiceSet}
+                    {#if maskedDecision}
+                        <!-- A button for keyboard reveal; focus goes back to the panel, since the reveal removes it. -->
+                        <button
+                            type="button"
+                            class="decision-cube-masked moves-masked"
+                            onclick={() => {
+                                reveal('decision');
+                                panelEl?.focus({ preventScroll: true });
+                            }}
+                            title={$t('epc.clickToReveal')}>{HIDDEN}</button
+                        >
+                    {:else}
+                        <div class="moves-scroll">
+                            <CandidateMovesTable
+                                moves={evalMoves}
+                                selectedMove={$selectedMoveStore}
+                                selectedMoves={pickedMoves}
+                                rollouts={rolloutRows}
+                                onRowClick={handleMoveRowClick}
+                                onRowContextMenu={handleRowContextMenu}
+                                showProvenance={false}
+                                baseline={baselineFacts}
+                                {isMoney}
+                            />
+                            {#if evalMoves.length === 0}
+                                <div class="eval-placeholder">{evalRefused ? $t('cube.refused') : $t('eval.pending')}</div>
+                            {/if}
+                        </div>
+                    {/if}
                 {/if}
             {/if}
             <RolloutStrip here={onBoard.here} />
@@ -649,7 +670,7 @@
         box-sizing: border-box;
         /* Only .moves-scroll scrolls (ADR-0017). */
         overflow: hidden;
-        padding: 3px 14px;
+        padding: 0;
         font-family: var(--font-family-ui);
         font-size: var(--font-size-base);
         /* For the child tables' @container rules. */
@@ -693,25 +714,22 @@
 
     .eval-content {
         height: 100%;
+        box-sizing: border-box;
         display: flex;
         flex-direction: column;
         gap: 6px;
+        padding: 0 var(--space-2) var(--space-1);
+    }
+
+    /* The band runs edge to edge over the padded content. */
+    .eval-content > :global(.panel-header) {
+        margin: 0 calc(-1 * var(--space-2));
     }
 
     /* Under the strip, the error message takes what is left of the panel. */
     .eval-content > .eval-error {
         flex: 1 1 auto;
         height: auto;
-    }
-
-    /* The strip (ADR-0020 rule 8): its own right-aligned line. */
-    .badges-strip {
-        flex: 0 0 auto;
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-        gap: 8px;
-        flex-wrap: wrap;
     }
 
     /* Facts (≤ 561 px, ADR-0021) beside the decision block; wrap is a fallback. */
@@ -772,9 +790,9 @@
         display: inline-flex;
         align-items: center;
         gap: var(--space-1);
-        padding: 0 var(--space-2);
+        padding: 1px var(--space-2);
         border: 1px solid var(--color-border);
-        border-radius: 9px;
+        border-radius: var(--radius);
         background: var(--color-surface);
         color: var(--color-primary);
         font-size: var(--font-size-small);
