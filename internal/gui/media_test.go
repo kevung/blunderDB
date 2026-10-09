@@ -23,9 +23,18 @@ func newMediaFile(t *testing.T, name string, n int) string {
 	return p
 }
 
-func get(t *testing.T, url, rng string) (*http.Response, []byte) {
+// reply keeps what the tests read of a response once its body is closed.
+type reply struct {
+	StatusCode int
+	Header     http.Header
+}
+
+func get(t *testing.T, url, rng string) (reply, []byte) {
 	t.Helper()
-	req, _ := http.NewRequest("GET", url, nil)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
 	if rng != "" {
 		req.Header.Set("Range", rng)
 	}
@@ -35,7 +44,7 @@ func get(t *testing.T, url, rng string) (*http.Response, []byte) {
 	}
 	defer resp.Body.Close()
 	b, _ := io.ReadAll(resp.Body)
-	return resp, b
+	return reply{resp.StatusCode, resp.Header}, b
 }
 
 func TestMediaRangeAndHeaders(t *testing.T) {
@@ -69,7 +78,9 @@ func TestMediaUnknownTokenAndUnregisteredFile(t *testing.T) {
 		t.Fatal(err)
 	}
 	base := u[:strings.Index(u, "/media/")]
-	for _, p := range []string{"/media/deadbeef", "/media/", "/media/../" + secret, secret, "/media/" + secret, "/yt/abcdefghijk"} {
+	// A Windows path (C:\...) is no URL path: probe it as /C:/... like the others.
+	secret = "/" + strings.TrimPrefix(filepath.ToSlash(secret), "/")
+	for _, p := range []string{"/media/deadbeef", "/media/", "/media/.." + secret, secret, "/media" + secret, "/yt/abcdefghijk"} {
 		if resp, _ := get(t, base+p, ""); resp.StatusCode != 404 {
 			t.Errorf("%s: status %d", p, resp.StatusCode)
 		}
