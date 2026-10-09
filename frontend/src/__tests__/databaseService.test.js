@@ -118,6 +118,7 @@ beforeEach(() => {
     GetDatabaseVersion.mockResolvedValue('2.18.0');
     IsReadOnly.mockResolvedValue(false);
     IsProtectedCopyPath.mockResolvedValue(false);
+    OpenDatabase.mockResolvedValue(undefined);
 });
 
 // ── newDatabase ───────────────────────────────────────────────────────────────
@@ -275,7 +276,6 @@ describe('openDatabaseByPath', () => {
 
         expect(get(databasePathStore)).toBe('/tmp/old.db');
         expect(refreshLibraryCounts).toHaveBeenCalledTimes(1);
-        OpenDatabase.mockReset();
     });
 
     test('the library counts are refreshed once the database is open, not before', async () => {
