@@ -187,7 +187,9 @@ export const showcaseMatch = {
     import_date: '2026-03-15',
     pr: 4.12,
     pr2: 6.35,
-    mwc_loss: 0.0213
+    mwc_loss: 0.0213,
+    mwc7: { available: true, loss: 0.034, has_interval: true, low: 0.012, high: 0.082, elo: 1890, elo_low: 1760, elo_high: 2000, elo_floored: false, matches: 1 },
+    mwc7_p2: { available: true, loss: 0.071, has_interval: true, low: 0.028, high: 0.142, elo: 1760, elo_low: 1630, elo_high: 1870, elo_floored: false, matches: 1 }
 };
 
 /** Parties du match (GetGamesByMatch) : Alice mène 3-2, quatrième partie en cours. */
@@ -360,6 +362,8 @@ export const showcaseStatsResult = {
     MWCCube: 0.041,
     MWCRolling: { 5: 0.03, 10: 0.036, 50: 0.045, 100: 0.047, 250: 0.048 },
     MWCAvailable: true,
+    MWC7Checker: { available: true, loss: 0.028, has_interval: true, low: 0.015, high: 0.049, elo: 1900, elo_low: 1770, elo_high: 2010, elo_floored: false, matches: 9 },
+    MWC7Cube: { available: true, loss: 0.041, has_interval: true, low: 0.02, high: 0.08, elo: 1850, elo_low: 1720, elo_high: 1960, elo_floored: false, matches: 9 },
     PerTournament: [
         { ID: 21, Name: 'Spring Open', PR: 4.12, MWC: 0.0213, NumDecisions: 210 },
         { ID: 22, Name: 'Winter Cup', PR: 5.4, MWC: 0.0388, NumDecisions: 276 }
@@ -398,9 +402,42 @@ export const showcaseStatsResult = {
 
 /** Onglet Joueurs (GetPlayerTable). */
 export const showcasePlayerTable = [
-    { name: 'Alice', matches: 9, wins: 6, losses: 3, decisions: 486, pr: 4.71, luck_known: true, luck_rate_mp: 8, luck_rolls: 512 },
-    { name: 'Bob', matches: 5, wins: 2, losses: 3, decisions: 260, pr: 6.15, luck_known: true, luck_rate_mp: -4, luck_rolls: 288 },
-    { name: 'Charlie', matches: 3, wins: 1, losses: 2, decisions: 140, pr: 5.02, luck_known: false, luck_rate_mp: 0, luck_rolls: 0 }
+    {
+        name: 'Alice',
+        mwc7: { available: true, loss: 0.039, has_interval: true, low: 0.026, high: 0.058, elo: 1880, elo_low: 1750, elo_high: 1990, elo_floored: false, matches: 9 },
+        matches: 9,
+        wins: 6,
+        losses: 3,
+        decisions: 486,
+        pr: 4.71,
+        luck_known: true,
+        luck_rate_mp: 8,
+        luck_rolls: 512
+    },
+    {
+        name: 'Bob',
+        mwc7: { available: true, loss: 0.064, has_interval: true, low: 0.038, high: 0.101, elo: 1790, elo_low: 1660, elo_high: 1900, elo_floored: false, matches: 5 },
+        matches: 5,
+        wins: 2,
+        losses: 3,
+        decisions: 260,
+        pr: 6.15,
+        luck_known: true,
+        luck_rate_mp: -4,
+        luck_rolls: 288
+    },
+    {
+        name: 'Charlie',
+        mwc7: { available: true, loss: 0.052, has_interval: true, low: 0.021, high: 0.118, elo: 1830, elo_low: 1700, elo_high: 1940, elo_floored: false, matches: 3 },
+        matches: 3,
+        wins: 1,
+        losses: 2,
+        decisions: 140,
+        pr: 5.02,
+        luck_known: false,
+        luck_rate_mp: 0,
+        luck_rolls: 0
+    }
 ];
 
 /**
