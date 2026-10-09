@@ -450,14 +450,10 @@
         padding: 1px 4px;
         background: var(--color-surface);
         color: inherit;
-        height: 22px;
     }
 
     .fb-select {
         cursor: pointer;
-        height: auto;
-        line-height: 1.4;
-        padding: 2px 6px;
     }
 
     .fb-select:disabled {
@@ -481,7 +477,6 @@
         background: var(--color-surface);
         cursor: pointer;
         white-space: nowrap;
-        height: 22px;
         color: var(--color-text-muted);
     }
 
@@ -603,5 +598,23 @@
 
     .fb-reset:hover {
         background: color-mix(in srgb, var(--color-text) 6%, var(--color-surface-alt));
+    }
+
+    /* Every control of the bar takes its height from its content, so none clips its text and
+       they all line up. */
+    .fb-select,
+    .fb-date,
+    .fb-engine,
+    .fb-depth,
+    .fb-tour-btn,
+    .fb-ml-btn,
+    .fb-ml-all,
+    .fb-reset {
+        box-sizing: border-box;
+        height: auto;
+        min-height: calc(1.4em + 12px);
+        font-size: var(--font-size-small);
+        line-height: 1.4;
+        padding: 2px 6px;
     }
 </style>

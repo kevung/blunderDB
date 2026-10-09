@@ -33,5 +33,10 @@ test('le nom du joueur n’est pas coupé en hauteur et reste tronqué en largeu
     expect(m.font).toBe(24);
     expect(m.height).toBeGreaterThanOrEqual(m.font * 1.15 + m.chrome);
     expect(m.title).toBe(LONG);
+    const heights = await page
+        .locator('.filter-bar')
+        .evaluate((bar) => [...bar.querySelectorAll('.fb-select, .fb-date, .fb-engine, .fb-depth, .fb-tour-btn, .fb-reset')].map((el) => Math.round(el.getBoundingClientRect().height)));
+    expect(heights.length).toBeGreaterThan(3);
+    expect(new Set(heights).size, `hauteurs ${heights}`).toBe(1);
     expect(await select.evaluate((el) => getComputedStyle(el).textOverflow)).toBe('ellipsis');
 });
