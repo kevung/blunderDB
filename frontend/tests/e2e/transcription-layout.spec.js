@@ -157,7 +157,7 @@ test.describe('dock latéral élargi, au-delà du second point de rupture', () =
 
 /**
  * Le formulaire d'en-tête ouvert remplace la saisie : dés, palette et liste
- * sont masqués, le panneau ne déborde pas, et le même bouton ou Échap le ferment.
+ * sont masqués (le Transcript reste), le panneau ne déborde pas, et le même bouton ou Échap le ferment.
  */
 test.describe('dock latéral, en-tête du brouillon ouvert', () => {
     test.beforeEach(async ({ page }) => {
@@ -168,6 +168,10 @@ test.describe('dock latéral, en-tête du brouillon ouvert', () => {
 
     test('le panneau ne défile pas', async ({ page }) => {
         expect(await overflow(page)).toBe(0);
+    });
+
+    test('le Transcript reste visible', async ({ page }) => {
+        await expect(page.locator('.transcript-col')).toBeVisible();
     });
 
     test('la saisie est masquée', async ({ page }) => {

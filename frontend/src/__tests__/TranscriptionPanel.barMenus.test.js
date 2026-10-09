@@ -275,6 +275,7 @@ describe('the Metadata button', () => {
         expect(document.querySelector('[data-testid="transcription-metadata"]')).not.toBeNull();
         expect(document.querySelector('[data-testid="transcription-dice"]')).toBeNull();
         expect(document.querySelector('[data-testid="transcription-candidates"]')).toBeNull();
+        expect(document.querySelector('.transcript-col')).not.toBeNull();
         await fireEvent.click(metadataButton());
         await settle();
         expect(document.querySelector('[data-testid="transcription-metadata"]')).toBeNull();

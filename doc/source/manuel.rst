@@ -1929,8 +1929,8 @@ bouton **Inverser les joueurs** échange les deux noms, donne toutes les actions
 au camp d'en face et retourne le plateau : c'est le même match, lu de l'autre
 côté.
 
-Ouvert, le formulaire prend la place de la saisie : les dés, la palette, les
-candidats et la transcription sont masqués, la vidéo reste en place. Le même
+Ouvert, le formulaire prend la place de la saisie : les dés, la palette et les
+candidats sont masqués, la transcription reste visible, la vidéo reste en place. Le même
 bouton, ou *Échap*, rend la saisie.
 
 La **longueur du match** se change dans ce même volet, à tout moment : le score,

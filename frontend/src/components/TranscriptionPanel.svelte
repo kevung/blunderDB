@@ -1937,10 +1937,11 @@
             {#if metaOpen}
                 <!-- En-tête du brouillon : rien n'y est exigé. Il remplace la saisie. -->
                 <TranscriptionMetadata header={annotated?.document?.header ?? {}} apply={sendGesture} {busy} />
-            {:else}
-                <!-- Ordre du DOM = boîte étroite ; en large, `order` (ADR-0048 décision 5).
+            {/if}
+            <!-- Ordre du DOM = boîte étroite ; en large, `order` (ADR-0048 décision 5).
                  Rien ne s'intercale entre les cases du jet et le premier candidat. -->
-                <div class="draft-body">
+            <div class="draft-body" class:meta-open={metaOpen}>
+                {#if !metaOpen}
                     <div class="candidates-col">
                         {#if unranked && visible.length}
                             <!-- Message sur la liste, donc dans son en-tête. -->
@@ -2012,25 +2013,24 @@
                             <DiceTriangle single={gameStart} allowed={rollsAllowed} onPick={pickDice} onDie={pickDie} />
                         {/if}
                     </div>
-
-                    <div class="transcript-col">
-                        {#if lastFlags.length}
-                            <!-- Incohérence marquée, jamais refusée (ADR-0044), visible sans chercher. -->
-                            <p class="flag">{$t('transcription.inconsistencyPrefix')} {lastFlags.join(' · ')}</p>
-                        {/if}
-                        <TranscriptView
-                            {annotated}
-                            cursor={annotated?.cursor ?? 0}
-                            players={[playerName(0), playerName(1)]}
-                            onSelect={selectAction}
-                            onHole={selectHole}
-                            onMenu={openTranscriptMenu}
-                            onEditMove={commitNotation}
-                            onEditScore={declareScore}
-                        />
-                    </div>
+                {/if}
+                <div class="transcript-col">
+                    {#if lastFlags.length}
+                        <!-- Incohérence marquée, jamais refusée (ADR-0044), visible sans chercher. -->
+                        <p class="flag">{$t('transcription.inconsistencyPrefix')} {lastFlags.join(' · ')}</p>
+                    {/if}
+                    <TranscriptView
+                        {annotated}
+                        cursor={annotated?.cursor ?? 0}
+                        players={[playerName(0), playerName(1)]}
+                        onSelect={selectAction}
+                        onHole={selectHole}
+                        onMenu={openTranscriptMenu}
+                        onEditMove={commitNotation}
+                        onEditScore={declareScore}
+                    />
                 </div>
-            {/if}
+            </div>
         </div>
     {/if}
     {#if error}
@@ -2371,6 +2371,12 @@
             grid-template-rows: minmax(0, 1fr);
             grid-template-areas: 'palette candidates transcript';
         }
+    }
+
+    /* Le formulaire a pris la saisie : le Transcript garde une bande sous lui. */
+    .draft-body.meta-open {
+        display: flex;
+        flex: 0 1 40%;
     }
 
     /* Les deux dés et les quatre gestes de videau sur une ligne. */
