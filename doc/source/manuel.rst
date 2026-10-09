@@ -463,6 +463,14 @@ gammonNet à la profondeur d'analyse configurée. Un bouton **Analyser
 maintenant** relance manuellement le même rattrapage, utile pour une
 bibliothèque constituée avant l'existence de cette fonctionnalité.
 
+Une prise ou un refus est évalué par gammonNet sur la décision du doubleur,
+avant le double. Un verdict gammonNet écrit sur une telle réponse par une
+version antérieure de blunderDB jugeait le redouble du receveur : il est
+supprimé à l'ouverture de la bibliothèque, ou à l'import d'une base qui le
+porte. La prise ou le refus redevient une position sans analyse, absente des
+statistiques jusqu'à ce que **Analyser maintenant** (ou l'analyse automatique
+après import) la réévalue.
+
 Un second bouton, **Ré-analyser les positions périmées**, couvre le cas
 inverse : une position déjà analysée par gammonNet, mais dont l'analyse
 stockée a été écrite par une version de moteur plus ancienne que celle en
