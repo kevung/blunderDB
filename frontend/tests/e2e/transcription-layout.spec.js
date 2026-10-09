@@ -154,3 +154,23 @@ test.describe('dock latéral élargi, au-delà du second point de rupture', () =
         expect(clipped).toBeLessThanOrEqual(0);
     });
 });
+
+/**
+ * Le formulaire d'en-tête ouvert ne chasse pas la liste : il défile dans sa
+ * propre boîte, et le panneau ne déborde pas.
+ */
+test.describe('dock latéral, en-tête du brouillon ouvert', () => {
+    test.beforeEach(async ({ page }) => {
+        await openDraft(page, { GetPanelPosition: 'side', GetPanelWidth: 420 });
+        await page.locator('#transcriptionPanel .draft-bar').getByRole('button', { name: 'Metadata' }).click();
+        await expect(page.locator('[data-testid="transcription-metadata"]')).toBeVisible();
+    });
+
+    test('le panneau ne défile pas', async ({ page }) => {
+        expect(await overflow(page)).toBe(0);
+    });
+
+    test('la liste des candidats reste visible, au moins deux lignes entières', async ({ page }) => {
+        expect(await fullyVisibleRows(page)).toBeGreaterThanOrEqual(2);
+    });
+});

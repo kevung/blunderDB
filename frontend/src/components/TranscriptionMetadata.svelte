@@ -310,7 +310,12 @@
 </div>
 
 <style>
+    /* Le formulaire cède : au-delà du quart de la hauteur il défile, sans quoi il
+       repousse la liste des candidats hors du panneau. */
     .metadata {
+        flex: 0 0 auto;
+        max-height: 25%;
+        overflow: auto;
         display: flex;
         flex-direction: column;
         gap: var(--space-1);
