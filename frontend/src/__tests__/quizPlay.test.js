@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { OFF, alivePlays, applyStep, completedPlay, destinationsFrom, newPlay, playHop, resetPlay, selectSource, sources, undoLast } from '../services/quizPlay.js';
+import { OFF, alivePlays, applyStep, completedPlay, destinationsFrom, newPlay, playHop, playStepsInAnyOrder, resetPlay, selectSource, sources, undoLast } from '../services/quizPlay.js';
 
 const BLACK = 0;
 const WHITE = 1;
@@ -150,6 +150,81 @@ describe("quizPlay — l'ordre des pas appartient au joueur", () => {
         s = playHop(s, 5, 3);
         s = playHop(s, 3, OFF);
         expect(completedPlay(s)).not.toBeNull();
+    });
+
+    it('3-3, deux pions à la barre : 22/19 refusé tant qu’un pion y reste', () => {
+        const pos = { ...position({ 25: [2, BLACK], 13: [5, BLACK] }), dice: [3, 3] };
+        const plays = [
+            play([
+                [25, 22],
+                [25, 22],
+                [22, 19],
+                [13, 10]
+            ])
+        ];
+        let s = newPlay(pos, plays);
+        s = playHop(s, 25, 22);
+        expect(playHop(s, 22, 19)).toBe(s);
+        expect(playHop(s, 13, 10)).toBe(s);
+        s = playHop(s, 25, 22);
+        s = playHop(s, 22, 19);
+        s = playHop(s, 13, 10);
+        expect(completedPlay(s)).not.toBeNull();
+    });
+
+    it('4-4 Blanc : 23/off refusé avant 22/off', () => {
+        // Blanc sort vers le haut : 22 est à 3 pips de la sortie, 23 à 2. Le 4 ne sort le pion du 23
+        // qu'une fois le 22 vidé.
+        const pos = { ...position({ 22: [1, WHITE], 23: [1, WHITE] }, WHITE), dice: [4, 4] };
+        const plays = [
+            play([
+                [22, OFF],
+                [23, OFF]
+            ])
+        ];
+        let s = newPlay(pos, plays);
+        expect(playHop(s, 23, OFF)).toBe(s);
+        s = playHop(s, 22, OFF);
+        s = playHop(s, 23, OFF);
+        expect(completedPlay(s)).not.toBeNull();
+    });
+
+    it('une notation écrite se joue dans un ordre légal, quel que soit l’ordre d’écriture', () => {
+        const bar = { ...position({ 25: [1, BLACK], 24: [1, BLACK] }), dice: [6, 3] };
+        const barPlays = [
+            play([
+                [25, 22],
+                [24, 18]
+            ])
+        ];
+        const entered = playStepsInAnyOrder(newPlay(bar, barPlays), [
+            { from: 24, to: 18 },
+            { from: 25, to: 22 }
+        ]);
+        expect(entered.all).toBe(true);
+        expect(completedPlay(entered.state)).not.toBeNull();
+
+        // 6-5 : « 2/off 3/off » écrit, mais le 5 ne sort le pion du 2 qu'une fois le 3 sorti.
+        const off = { ...position({ 3: [1, BLACK], 2: [1, BLACK] }), dice: [6, 5] };
+        const offPlays = [
+            play([
+                [3, OFF],
+                [2, OFF]
+            ])
+        ];
+        const borne = playStepsInAnyOrder(newPlay(off, offPlays), [
+            { from: 2, to: OFF },
+            { from: 3, to: OFF }
+        ]);
+        expect(borne.all).toBe(true);
+
+        // Un pas qu'aucun coup n'offre : le plus long début jouable, et `all` faux.
+        const partial = playStepsInAnyOrder(newPlay(bar, barPlays), [
+            { from: 25, to: 22 },
+            { from: 24, to: 20 }
+        ]);
+        expect(partial.all).toBe(false);
+        expect(partial.state.steps).toHaveLength(1);
     });
 
     it('Blanc : même règle, de l’autre côté du plateau', () => {

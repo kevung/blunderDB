@@ -316,6 +316,39 @@ export function playHop(state, from, to) {
 }
 
 /**
+ * Joue des pas écrits (une notation tapée) dans un ordre légal, s'il en existe
+ * un : l'ordre d'écriture ne compte pas, seul celui des gestes au plateau est
+ * imposé. L'ordre écrit est essayé d'abord ; sans ordre qui les joue tous,
+ * rend l'état qui en joue le plus.
+ * @param {PlayState} state
+ * @param {{from: number, to: number}[]} steps
+ * @returns {{ state: PlayState, all: boolean }}
+ */
+export function playStepsInAnyOrder(state, steps) {
+    let best = state;
+    /**
+     * @param {PlayState} at
+     * @param {{from: number, to: number}[]} left
+     * @returns {boolean}
+     */
+    const walk = (at, left) => {
+        if (at.steps.length > best.steps.length) best = at;
+        if (left.length === 0) return true;
+        const tried = new Set();
+        for (let i = 0; i < left.length; i++) {
+            const key = `${left[i].from}>${left[i].to}`;
+            if (tried.has(key)) continue;
+            tried.add(key);
+            const next = playHop(at, left[i].from, left[i].to);
+            if (next !== at && walk(next, [...left.slice(0, i), ...left.slice(i + 1)])) return true;
+        }
+        return false;
+    };
+    const all = walk(state, steps);
+    return { state: best, all };
+}
+
+/**
  * Annule le dernier pas joué, en rejouant les autres depuis le début.
  * @param {PlayState} state
  * @param {any} position

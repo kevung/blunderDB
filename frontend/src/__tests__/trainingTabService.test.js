@@ -922,6 +922,32 @@ describe('une session de Décision (#323)', () => {
             expect(db.GradeQuizChecker).toHaveBeenCalled();
         });
 
+        test('l’ordre écrit ne compte pas : « 24/18 bar/22 » se joue en entrant d’abord', async () => {
+            library({ 7: CHECKER });
+            const barPos = board();
+            barPos.board.points[25] = { checkers: 1, color: 0 };
+            barPos.board.points[24] = { checkers: 1, color: 0 };
+            db.LoadPosition.mockImplementation((/** @type {any} */ id) => Promise.resolve({ ...barPos, dice: [6, 3], id }));
+            app.LegalMoves.mockResolvedValue(
+                /** @type {any} */ ([
+                    {
+                        notation: 'bar/22 24/18',
+                        steps: [
+                            { from: 25, to: 22, hit: false },
+                            { from: 24, to: 18, hit: false }
+                        ],
+                        result: {}
+                    }
+                ])
+            );
+            await startTrainingSession({ exercise: 'decision', seedSource: 'library' });
+            expect(playDecisionNotation('24/18 bar/22')).toBe('ok');
+            expect(get(quizPlayStore)?.steps).toEqual([
+                { from: 25, to: 22 },
+                { from: 24, to: 18 }
+            ]);
+        });
+
         test('un pas que les coups légaux n’offrent pas arrête la pose là', async () => {
             library({ 7: CHECKER });
             await startTrainingSession({ exercise: 'decision', seedSource: 'library' });
