@@ -496,7 +496,7 @@
 
 <!-- A deck counter opens the positions it counts (ADR-0085, G7); a score deck's cards are scores,
      and an empty counter opens nothing, so both stay text. -->
-{#snippet deckCount(deck, n, label, filter, testid)}
+{#snippet deckCount(/** @type {any} */ deck, /** @type {number} */ n, /** @type {string} */ label, /** @type {string} */ filter, /** @type {string | null} */ testid)}
     <span class="band-count" data-testid={testid}>
         {#if n > 0 && !isScoreDeck(deck)}
             <CountLink

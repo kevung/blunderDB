@@ -93,10 +93,10 @@ export function dragReorder(node, params) {
     /** @param {PointerEvent} e */
     function onDown(e) {
         if (!enabled || e.button !== 0) return;
-        if (e.target.closest('button, input, select, textarea, a, [contenteditable]')) return;
+        if (/** @type {Element} */ (e.target).closest('button, input, select, textarea, a, [contenteditable]')) return;
 
         const rows = getRows();
-        const row = e.target.closest(itemSelector);
+        const row = /** @type {Element} */ (e.target).closest(itemSelector);
         if (!row || !node.contains(row)) return;
         const idx = rows.indexOf(row);
         if (idx < 0) return;

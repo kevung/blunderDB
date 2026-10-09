@@ -102,12 +102,12 @@ describe('refreshStats()', () => {
 
 describe('refreshStudyPlan', () => {
     test('a slower, older reply does not overwrite the latest', async () => {
-        let resolveOld;
+        let /** @type {((v: unknown) => void) | undefined} */ resolveOld;
         ComputeStudyPlan.mockImplementationOnce(() => new Promise((r) => (resolveOld = r)));
         ComputeStudyPlan.mockImplementationOnce(() => Promise.resolve({ tag: 'new' }));
         const first = refreshStudyPlan({ a: 1 }, 1);
         await refreshStudyPlan({ a: 2 }, 1);
-        resolveOld({ tag: 'old' });
+        resolveOld?.({ tag: 'old' });
         await first;
         expect(get(studyPlanStore)).toEqual({ tag: 'new' });
     });
@@ -115,14 +115,14 @@ describe('refreshStudyPlan', () => {
 
 describe('refreshStudyLoop', () => {
     test('a slower, older reply does not overwrite the latest nor clear loading', async () => {
-        let resolveOld;
-        ComputeStudyEffect.mockImplementationOnce(() => new Promise((r) => (resolveOld = r)));
-        ComputeStudyEffect.mockImplementationOnce(() => Promise.resolve({ tag: 'new' }));
-        ComputeDirectionalBiases.mockImplementationOnce(() => Promise.resolve({ tag: 'old' }));
-        ComputeDirectionalBiases.mockImplementationOnce(() => Promise.resolve({ tag: 'new' }));
+        let /** @type {((v: unknown) => void) | undefined} */ resolveOld;
+        /** @type {import('vitest').Mock} */ (ComputeStudyEffect).mockImplementationOnce(() => new Promise((r) => (resolveOld = r)));
+        /** @type {import('vitest').Mock} */ (ComputeStudyEffect).mockImplementationOnce(() => Promise.resolve({ tag: 'new' }));
+        /** @type {import('vitest').Mock} */ (ComputeDirectionalBiases).mockImplementationOnce(() => Promise.resolve({ tag: 'old' }));
+        /** @type {import('vitest').Mock} */ (ComputeDirectionalBiases).mockImplementationOnce(() => Promise.resolve({ tag: 'new' }));
         const first = refreshStudyLoop({ a: 1 }, 1);
         await refreshStudyLoop({ a: 2 }, 1);
-        resolveOld({ tag: 'old' });
+        resolveOld?.({ tag: 'old' });
         await first;
         expect(get(studyEffectStore)).toEqual({ tag: 'new' });
         expect(get(biasesStore)).toEqual({ tag: 'new' });

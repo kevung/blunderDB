@@ -121,7 +121,7 @@ describe('pendant une question', () => {
     test('ses gestes sont dans la bande, la primaire en bout, toujours au même endroit', () => {
         trainingSessionStore.set(askQuestion(newSession({ exercise: 'pips', seedSource: 'board' }), pipsQuestion(), 0));
         const { container } = render(TrainingPanel);
-        const ids = [...container.querySelectorAll('[data-testid="panel-header"] .panel-actions button')].map((b) => b.dataset.testid);
+        const ids = [...container.querySelectorAll('[data-testid="panel-header"] .panel-actions button')].map((b) => /** @type {HTMLElement} */ (b).dataset.testid);
         expect(ids).toEqual(['training-quit', 'training-finish', 'training-reveal']);
     });
 
