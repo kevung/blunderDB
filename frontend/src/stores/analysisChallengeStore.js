@@ -1,6 +1,7 @@
 import { writable, derived, get } from 'svelte/store';
 import { positionStore } from './positionStore';
 import { trainingAnalysisHiddenStore } from './trainingTabStore.js';
+import { selectedMoveStore } from './analysisStore.js';
 
 // Le défi du panneau Analyse : se prononcer avant de voir l'analyse d'une position parcourue.
 // Un masque d'affichage, comme celui de l'entraînement : dévoiler ne touche pas la base.
@@ -55,6 +56,12 @@ export const analysisMaskStore = derived([trainingAnalysisHiddenStore, analysisC
     if ($training) return 'training';
     if ($challengeHidden) return 'challenge';
     return null;
+});
+
+// Masquée, l'analyse n'a plus de ligne choisie : ses flèches sur le plateau trahiraient la réponse,
+// et le répartiteur garderait j/k pour parcourir une liste que personne ne voit.
+analysisMaskStore.subscribe((mask) => {
+    if (mask) selectedMoveStore.set(null);
 });
 
 /** Dévoile l'analyse de la position affichée, jusqu'au prochain changement de position. */
