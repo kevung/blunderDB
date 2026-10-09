@@ -1529,11 +1529,23 @@ qui suit dit lequel des deux a eu lieu — « enrichis : 1 » plutôt que
 « importés : 1 ».
 
 Chaque match peut être exporté en transcription Jellyfish ``.mat`` via le
-bouton ⬇ de la liste des matchs ou le bouton *.mat* de la fiche du match.
+bouton ⬇ de la liste des matchs ou l'entrée *Exporter en .mat* du menu ⋯ de la
+fiche du match.
 
-Un clic sur un match ouvre sa fiche. Son onglet **Transcription** liste les
-coups partie par partie, et un clic sur un coup y amène la revue. Chaque coup y porte
-sa **gravité** : ``?`` pour une erreur, ``??`` pour un blunder, un filet de
+Un clic sur un match ouvre sa fiche, qui se lit de haut en bas. Une ligne
+d'en-tête donne les joueurs, le score final (le vainqueur en gras, son nom au
+survol), la longueur, la cadence s'il y en a une et la date ; le tournoi, la
+ronde et le lieu s'affichent au survol. À droite, l'icône 🎞 d'un match qui a
+une vidéo, le bouton **Revoir** et le menu ⋯, qui porte *Exporter en .mat*,
+*Éditer la transcription* et *Supprimer le match*. Viennent ensuite la
+synthèse du :ref:`bilan du match <bilan_match>`, les graphiques, puis la
+**transcription**, qui liste les coups partie par partie : un clic sur un coup
+y amène la revue. Tout le reste est rangé dans des sections repliées sous la
+transcription : **Détails du bilan**, **Provenance** (un match joué ici),
+**Infos** et **Statistiques**. Elles sont fermées par défaut ; une section laissée
+ouverte l'est encore au match suivant.
+
+Chaque coup de la transcription porte sa **gravité** : ``?`` pour une erreur, ``??`` pour un blunder, un filet de
 couleur en marge de la ligne, et le coût du coup en équité au survol de la
 marque. Les seuils sont ceux de la base (:ref:`configuration`), ceux que
 comptent les statistiques. Le coup est jugé tel qu'il a été joué : une même
@@ -1543,17 +1555,16 @@ l'analyse ne note pas ne porte aucune marque.
 L'en-tête de chaque partie compte ses marques, qu'elle soit dépliée ou non :
 on voit sans l'ouvrir dans quelle partie se trouvent les blunders.
 
-Quand le match est analysé, l'onglet ajoute la colonne **MWC**, les chances de
+Quand le match est analysé, la transcription ajoute la colonne **MWC**, les chances de
 gagner le match que la décision a coûtées, en pourcentage : ``0`` pour une
 décision sans perte, un tiret pour une décision que l'analyse ne note pas ou
 dont le score n'a pas de valeur dans la table d'équité du match (jeu en
 money, décision hors statistiques). Un clic sur l'en-tête **MWC** trie les
 coups de chaque partie de la perte la plus lourde à la plus légère, puis
 l'inverse, puis rend l'ordre du match ; les décisions non notées passent en
-dernier, et ce tri remplace celui de la durée. Au-dessus des parties, un
-résumé donne pour chaque joueur sa perte MWC totale (celle de la liste des
-matchs) et le nombre de décisions notées, avec deux graphiques sur le même
-axe de décisions que celui des durées : une barre par décision, puis la perte
+dernier, et ce tri remplace celui de la durée. Au-dessus des parties, deux
+graphiques en pleine largeur partagent l'axe de décisions de celui des
+durées : une barre par décision, puis la perte
 cumulée de chaque joueur, qui s'arrête sur son total (trait plein pour le
 premier joueur, pointillé pour le second). Une décision non notée porte un
 petit repère à la base de la barre, sans hauteur. Survoler une décision, ou la
@@ -1595,7 +1606,8 @@ options, le joueur de référence ne la commettrait pas une fois sur dix. Sur le
 graphique par décision, la difficulté est un trait horizontal sur chaque barre :
 une barre qui monte loin au-dessus de son trait signale une erreur évitable.
 
-Le tableau au-dessus des graphiques ajoute, pour chaque joueur et sur les
+Le tableau des **Détails du bilan** donne, pour chaque joueur, sa perte MWC
+totale (celle de la liste des matchs), le nombre de décisions notées et, sur les
 décisions qui ont une perte et une difficulté : la **difficulté** totale,
 l'**excès** Σ(perte − difficulté), en MWC, ce que le joueur a perdu au-delà du
 joueur de référence (négatif quand il a fait mieux), le **ratio** perte totale /
@@ -1631,14 +1643,24 @@ de ``decision_losses`` et le résumé par joueur sous ``difficulty_summary`` ;
 
 .. _bilan_match:
 
-**Bilan du match.** Au-dessus des graphiques, un encart répond, pour chaque
-joueur, aux trois questions qu'on se pose après un match : qu'est-ce que je
-revois, ai-je perdu à cause des dés ou du jeu, et mes erreurs viennent-elles de
-la précipitation ou d'une lacune ? Les seuils ont été fixés avant tout examen
-de résultats.
+**Bilan du match.** Le bilan répond, pour chaque joueur, aux trois questions
+qu'on se pose après un match : qu'est-ce que je revois, ai-je perdu à cause des
+dés ou du jeu, et mes erreurs viennent-elles de la précipitation ou d'une
+lacune ? Les seuils ont été fixés avant tout examen de résultats.
 
-* **PR et perte MWC (éq. 7 pts), avec leur intervalle à 95 %**, calculé en
-  rééchantillonnant les parties du match. Il faut trois parties ; un match plus
+En tête de la fiche, au-dessus des graphiques, une synthèse place les joueurs
+côte à côte (l'un sous l'autre quand le panneau est étroit) : le nom, avec le
+trait qui le désigne sur le graphique cumulé, le PR, la perte MWC du match et,
+pour un match terminé, le verdict de la chance en clair (« gagné par le jeu »,
+« perdu par les dés »…) suivi du seul résultat ajusté. Le survol du PR donne son
+intervalle ; celui du verdict, les composantes du résultat ajusté. Le reste
+est dans la section repliée **Détails du bilan**, sous la transcription :
+
+* **PR et perte de MWC ramenée à 7 pts, avec leur intervalle à 95 %**, calculé
+  en rééchantillonnant les parties du match. La perte ramenée à 7 points est
+  la perte du match mise à l'échelle d'un match en 7 points (L₇, voir
+  :doc:`metriques`) : elle sert à comparer des matchs de longueurs
+  différentes, la synthèse ne montre que la perte du match lui-même. Il faut trois parties ; un match plus
   court montre un tiret. Un intervalle large dit qu'un match ne suffit
   pas à juger un niveau : comparez-le à vos autres matchs plutôt que de
   conclure sur une valeur.
@@ -1667,11 +1689,12 @@ de résultats.
   Une majorité précipitée appelle de la discipline (ralentir sur ces positions) ;
   une majorité réfléchie, de la connaissance (étudier la famille de positions).
 
-``match --format summary`` imprime le même bilan, et le serveur le sert par
-``/v1/stats.matchReview``.
+Les détails se terminent sur le tableau des pertes et de la difficulté décrit
+plus haut. ``match --format summary`` imprime le même bilan, et le serveur le
+sert par ``/v1/stats.matchReview``.
 
 Quand le match a gardé la durée de ses décisions (un match joué contre un bot),
-l'onglet ajoute trois colonnes alignées sur les chiffres : **Videau** (la
+la transcription ajoute trois colonnes alignées sur les chiffres : **Videau** (la
 décision de videau, prise avant le lancer ou sur la ligne du videau elle-même),
 **Jeu** (le coup de pions) et **Horloge**, le temps que le joueur au trait a
 consommé depuis le début du match, ce coup compris, quel que soit le tri. Sous
@@ -1693,14 +1716,14 @@ de chaque décision au fil du match. En revue, la durée de la décision jouée 
 lit discrètement sous l'analyse. La recherche la filtre avec ``tm>30`` (en
 secondes), qui se combine avec ``E>x`` : ``s tm>30 E>80`` retient les coups
 longuement réfléchis et pourtant faux, la durée et l'erreur étant celles du
-même coup joué. L'onglet Statistiques, sous les erreurs récurrentes, croise
+même coup joué. La section **Statistiques**, sous les erreurs récurrentes, croise
 le temps et l'erreur : pour chaque joueur et chaque tranche de durée connue
 (moins de 5 s, 5 à 15 s, 15 à 30 s, plus de 30 s), le nombre de décisions,
 l'erreur moyenne et la part de blunders. Une décision dont l'erreur n'est pas
 enregistrée est comptée sans entrer dans la moyenne.
 
-Un match joué ici, issu d'un Duel, porte son origine en tête de la
-transcription, sur une ligne, même s'il n'a aucun coup : « Joué ici », puis,
+Un match joué ici, issu d'un Duel, porte son origine dans la section
+**Provenance** de sa fiche, sur une ligne, même s'il n'a aucun coup : « Joué ici », puis,
 s'il y a lieu, « Perdu au temps » avec le joueur dont la réserve s'est épuisée
 sous une cadence qui fait perdre le match, ou « Arrêté avant la fin » pour un
 Match qu'un Duel arrêté a laissé inachevé, la cadence, le joueur dont la réserve s'est épuisée en premier et
@@ -1709,9 +1732,9 @@ clic déplie le départ (la position initiale ou le XGID choisi), le germe des
 dés révélé et son SHA-256, à comparer avec l'empreinte publiée à la création
 du Duel : s'ils concordent, le germe permet de recalculer chaque lancer sans
 faire confiance à blunderDB. Un match qui n'a pas été joué ici n'a pas
-d'origine et n'affiche pas cette ligne.
+d'origine et n'a pas cette section.
 
-L'onglet **Infos** de la fiche rappelle l'en-tête du match. Il y ajoute ce que
+La section **Infos** de la fiche rappelle l'en-tête du match. Il y ajoute ce que
 le fichier source dit des joueurs et de la session, quand il le dit — un
 fichier eXtreme Gammon le dit toujours : le classement Elo de chaque joueur et
 son expérience entre parenthèses, le transcripteur, les règles Jacoby et Beaver
@@ -1726,11 +1749,11 @@ fiche affiche cet auteur à côté du commentaire, et l'export le copie avec lui
 modifier le commentaire le signe de **Votre nom** (réglages).
 
 Un match transcrit depuis une vidéo en porte la **source** : une URL http(s)
-(YouTube, par exemple) ou le chemin d'un fichier. La ligne **Vidéo** de l'onglet
+(YouTube, par exemple) ou le chemin d'un fichier. La ligne **Vidéo** de la section
 **Infos** la modifie : saisir une URL ou un chemin puis *ENTREE*, **Fichier…**
 pour choisir une vidéo, **Détacher** pour retirer la source. Un match qui en a
-une affiche l'icône 🎞 dans la barre de sa fiche, et chaque décision qui porte
-un repère de la vidéo la même icône dans sa ligne de l'onglet **Transcription**.
+une affiche l'icône 🎞 dans l'en-tête de sa fiche, et chaque décision qui porte
+un repère de la vidéo la même icône dans sa ligne de la transcription.
 Cliquer l'icône, ou appuyer sur *v* quand la décision est celle de la revue,
 amène la vidéo une seconde avant le jet des dés : pour un fichier, la vidéo
 s'ouvre à côté du plateau, ou au-dessus de la fiche si elle a été remise dans
