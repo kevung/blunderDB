@@ -61,6 +61,13 @@ type MatchStore interface {
 	// m.CanonicalHash, when non-empty, are persisted for duplicate detection.
 	Save(ctx context.Context, scope string, m *domain.Match) (int64, error)
 
+	// Reinstate stores m again under its own id m.ID and its import date
+	// m.ImportDate (zero means now), for a match deleted earlier and put back
+	// from the trash: what pointed at the match by id finds it again. The id
+	// must be one the store issued — ErrInvalid otherwise — and free:
+	// ErrConflict when a match of any scope holds it. Everything else is
+	// written as Save writes it.
+	Reinstate(ctx context.Context, scope string, m *domain.Match) error
 	// FindByHash looks up an existing match for duplicate detection. It returns
 	// the id of a match whose match_hash equals hash (same-format duplicate) or
 	// whose canonical_hash equals canonicalHash (cross-format duplicate),
@@ -143,6 +150,18 @@ type MatchStore interface {
 	// comment the user wrote, an individual import or a study mark — are left
 	// alone, and so are ids that no longer exist.
 	PurgeOrphanPositions(ctx context.Context, scope string, positionIDs []int64) error
+
+	// ReanchorAnsweredDoubles moves every take or pass recorded the
+	// transcript's way — the turned cube owned by the answerer, on a row no
+	// double of its game stands on — onto
+	// the position importers record it on: the same, the cube held by no one
+	// (sqlshared.AnsweredOwnedCubeMovesSQL). Copy-on-write, as SwapPlayers: the
+	// row it leaves keeps its id and analysis for whatever else holds it — a
+	// redouble on the same board — and is purged when nothing does, its stale
+	// analysis with it; its provenance flags stay behind. The moved moves are
+	// rescored by their new row. Invalidates the stats of the matches it
+	// touches and returns how many moves moved.
+	ReanchorAnsweredDoubles(ctx context.Context, scope string) (int, error)
 
 	// SwapPlayers swaps player 1 and player 2 for the match (and mirrors the
 	// stored positions accordingly).

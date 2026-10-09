@@ -75,4 +75,18 @@ type ImportBatchStore interface {
 	// Files returns the batch's journal, in the order it was written, or
 	// ErrNotFound when the batch does not exist.
 	Files(ctx context.Context, scope string, batchID int64) ([]domain.ImportFileEntry, error)
+
+	// StudyMark returns when the position was marked studied (Unix seconds),
+	// 0 when it is not.
+	StudyMark(ctx context.Context, scope string, positionID int64) (int64, error)
+	// RestoreStudyMark puts back a mark StudyMark read, with its own date,
+	// for a position restored from the trash. A mark already there is kept.
+	RestoreStudyMark(ctx context.Context, scope string, positionID, markedAt int64) error
+
+	// FilesOfMatch returns the ids of the journal lines that name the match.
+	FilesOfMatch(ctx context.Context, scope string, matchID int64) ([]int64, error)
+	// RelinkFiles names matchID again on the journal lines of fileIDs that
+	// name no match: a match restored from the trash finds its import's
+	// journal again. A line that names another match is left as it is.
+	RelinkFiles(ctx context.Context, scope string, fileIDs []int64, matchID int64) error
 }

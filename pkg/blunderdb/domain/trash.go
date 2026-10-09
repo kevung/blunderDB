@@ -29,6 +29,13 @@ const (
 	// detached them (they keep their Direction, log and tables); restoring
 	// attaches again those still free.
 	TrashRencontre TrashKind = "rencontre"
+	// TrashMatch — a match with its games, moves and move analyses, and every
+	// position its moves reached, with their analyses and comments: the
+	// positions only this match held are purged with it, and they carry the
+	// source file's notes. Restoring re-Saves the positions (Zobrist decides
+	// where each lands, as for TrashPosition) and puts the match back under
+	// its own id and import date.
+	TrashMatch TrashKind = "match"
 )
 
 // TrashEntry is one deleted thing, kept so it can be put back.
@@ -59,6 +66,12 @@ type TrashPositionPayload struct {
 	// MET is the table the analysis was valued with, 0 for the built-in one.
 	// Tables are never deleted, so the id still names it at restore.
 	MET int64 `json:"met,omitempty"`
+	// StudiedAt is when the position was marked studied (Unix seconds), 0
+	// for never; the mark cascades off the position.
+	StudiedAt int64 `json:"studiedAt,omitempty"`
+	// TrainingItemIDs are the quiz answers given on the position; the delete
+	// leaves them without one, a restore ties them to it again.
+	TrainingItemIDs []int64 `json:"trainingItemIds,omitempty"`
 }
 
 // TrashCollectionPayload is what a deleted collection keeps: enough of the
@@ -85,6 +98,69 @@ type TrashAnkiCardPayload struct {
 	Card   AnkiCard `json:"card"`
 	DeckID int64    `json:"deckId"`
 }
+
+// TrashMatchPayload is what a deleted match keeps.
+//
+// Games, moves and analyses keep their old ids: they are the keys that tie
+// a move to its game and an analysis to its move, remapped on restore.
+// Positions holds every position a move reached, keyed by its old id
+// (Position.ID), not only those the delete purged: a position still held at
+// delete time can be gone by restore time.
+type TrashMatchPayload struct {
+	Match        Match                  `json:"match"`
+	Games        []Game                 `json:"games,omitempty"`
+	Moves        []Move                 `json:"moves,omitempty"`
+	MoveAnalyses []MoveAnalysis         `json:"moveAnalyses,omitempty"`
+	Positions    []TrashPositionPayload `json:"positions,omitempty"`
+	// TournamentIndex is the match's place among its tournament's matches,
+	// so a restore puts it back there rather than first.
+	TournamentIndex int `json:"tournamentIndex,omitempty"`
+	// Origin is how the match came to be when it was played here (a Duel),
+	// as storage.MatchOrigin spells it in JSON; absent otherwise. Raw, since
+	// this package depends on the standard library only.
+	Origin json.RawMessage `json:"origin,omitempty"`
+	// DirectionSlot is the Slot of its directed Tournament the match filled,
+	// "" for none.
+	DirectionSlot string `json:"directionSlot,omitempty"`
+	// DirectionPair is the two players the Slot paired at delete time, by
+	// their Direction ids: a Slot re-paired since is another match, and the
+	// restore does not fill it.
+	DirectionPair [2]string `json:"directionPair,omitzero"`
+	// TranscriptionIDs are the drafts that had produced this match; the
+	// delete leaves them unsaved, a restore ties them to it again.
+	TranscriptionIDs []int64 `json:"transcriptionIds,omitempty"`
+	// ImportFileIDs are the lines of the import journal that named the
+	// match; the delete leaves them naming none.
+	ImportFileIDs []int64 `json:"importFileIds,omitempty"`
+}
+
+// TrashRestore is what a restore gives back: the id of what came back, as
+// TrashEntry.Kind reads it, and what it could not put back as it was.
+type TrashRestore struct {
+	ID       int64          `json:"id"`
+	Warnings []TrashWarning `json:"warnings,omitempty"`
+}
+
+// TrashWarning is one thing a restore that succeeded left out. Code is
+// stable, for a client to word it; Message says it in English.
+type TrashWarning struct {
+	Code    string `json:"code"`
+	Message string `json:"message"`
+}
+
+// TrashWarnSlotTaken: the match filled a Slot of its directed Tournament,
+// and another match fills it now. The Slot is the director's; the match comes
+// back in its Tournament without it.
+const TrashWarnSlotTaken = "direction_slot_taken"
+
+// TrashWarnSlotGone: the Slot the match filled is no longer in its
+// Tournament's Direction, or pairs other players now. The match comes back in
+// its Tournament without it.
+const TrashWarnSlotGone = "direction_slot_gone"
+
+// TrashWarnTournamentGone: the match's Tournament was deleted meanwhile. The
+// match comes back outside any Tournament, so without its place or Slot.
+const TrashWarnTournamentGone = "tournament_gone"
 
 // TrashRetentionDays is how long a deleted thing stays recoverable.
 // `blunderdb vacuum` drops what is older; nothing purges on open.

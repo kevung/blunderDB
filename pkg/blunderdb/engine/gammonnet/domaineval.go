@@ -127,8 +127,12 @@ func ConfigForPositionMET(pos *domain.Position, met *engine.MET, ply, pruneK int
 // verdict for pos, cubeful, in pos's own referential (ADR-0016, ADR-0019):
 // money points, or normalised equity at a score. The depth label reports the
 // depth that actually ran. An unevaluable score is an error naming the
-// score, never a fall to money.
+// score, never a fall to money. A take/pass position (IsResponsePosition)
+// gets the doubler's cube decision it answers (evaluateResponse).
 func EvaluatePosition(pos domain.Position, ply, pruneK, candidates int) (EvalResult, error) {
+	if IsResponsePosition(&pos) {
+		return evaluateResponse(nil, pos, nil, ply, pruneK)
+	}
 	gnPos, err := FromDomain(&pos)
 	if err != nil {
 		return EvalResult{}, err
@@ -177,6 +181,9 @@ func EvaluatePositionWith(searcher *Searcher, pos domain.Position, ply, pruneK, 
 // equity table met (nil: the built-in Kazaross-XG2), the table a library
 // records on the analysis it stores (ADR-0068).
 func EvaluatePositionWithMET(searcher *Searcher, pos domain.Position, met *engine.MET, ply, pruneK, candidates int) (EvalResult, error) {
+	if IsResponsePosition(&pos) {
+		return evaluateResponse(searcher, pos, met, ply, pruneK)
+	}
 	if searcher == nil {
 		if met == nil {
 			return EvaluatePosition(pos, ply, pruneK, candidates)

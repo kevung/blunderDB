@@ -463,6 +463,14 @@ gammonNet à la profondeur d'analyse configurée. Un bouton **Analyser
 maintenant** relance manuellement le même rattrapage, utile pour une
 bibliothèque constituée avant l'existence de cette fonctionnalité.
 
+Une prise ou un refus est évalué par gammonNet sur la décision du doubleur,
+avant le double. Un verdict gammonNet écrit sur une telle réponse par une
+version antérieure de blunderDB jugeait le redouble du receveur : il est
+supprimé à l'ouverture de la bibliothèque, ou à l'import d'une base qui le
+porte. La prise ou le refus redevient une position sans analyse, absente des
+statistiques jusqu'à ce que **Analyser maintenant** (ou l'analyse automatique
+après import) la réévalue.
+
 Un second bouton, **Ré-analyser les positions périmées**, couvre le cas
 inverse : une position déjà analysée par gammonNet, mais dont l'analyse
 stockée a été écrite par une version de moteur plus ancienne que celle en
@@ -951,27 +959,42 @@ tags`` (voir :ref:`cli`).
 La corbeille
 ------------
 
-Supprimer une position, une collection, un commentaire ou une carte Anki passe par une
-**corbeille** : la suppression a bien lieu, mais une copie de ce qui
+Supprimer une position, une collection, un commentaire, une carte Anki ou un
+match passe par une **corbeille** : la suppression a bien lieu, mais une copie de ce qui
 disparaît est gardée trente jours. La commande ``trash`` ouvre la fenêtre qui
 les liste, avec pour chacune *Restaurer* et *Supprimer*, et un bouton
 *Vider la corbeille*.
 
 Une position restaurée revient avec **son analyse et ses commentaires** — la
-rendre nue serait une restauration de nom seulement. Elle ne revient pas sous
-son ancien numéro : la ligne d'origine n'existe plus, et blunderDB la
-réenregistre par son empreinte, ce qui garantit qu'elle ne crée jamais de
-doublon mais lui donne un nouvel identifiant. Une collection revient avec sa
+rendre nue serait une restauration de nom seulement —, sa marque « étudiée »
+et les réponses d'entraînement données sur elle. Elle reprend son ancien
+numéro ; si la même position a été enregistrée entre-temps, c'est celle-là qui
+est gardée, car une position n'existe qu'une fois : elle reçoit la marque, les
+réponses et les commentaires qui lui manquent, et garde son analyse si elle en
+a une. Si son numéro est pris par une autre, elle en reçoit un nouveau. Une collection revient avec sa
 liste ; les positions qu'elle contenait, elles, n'avaient jamais été
 supprimées — une collection est une vue sur elles.
+
+Un match supprimé emporte ses parties, ses coups, leurs analyses et les
+positions que plus rien d'autre ne retient, avec les notes venues du fichier
+source : la corbeille garde tout cela. Restauré, il revient sous son numéro
+et sa date d'import d'origine, avec ses parties, ses coups et ses
+statistiques, et le journal de son import le nomme de nouveau ; les positions
+que la suppression avait purgées reviennent comme une position restaurée,
+celles restées dans la bibliothèque restent telles qu'elles sont devenues. Il
+reprend sa place dans son tournoi ; si le tournoi a été supprimé, il revient
+hors tournoi. Il reprend sa place de Direction si elle existe encore, oppose
+les mêmes joueurs et est libre ; sinon elle reste au directeur et le match
+revient sans elle. Dans ces cas, la barre d'état le signale. La
+restauration est refusée, et l'entrée reste dans la corbeille, si un autre
+match occupe son numéro, ou si un match de même empreinte de fichier a été
+importé entre-temps ; un match sans empreinte, saisi ou joué dans blunderDB,
+n'est pas comparé ainsi.
 
 Ce qui a plus de trente jours est supprimé par la commande ``vacuum``, jamais à
 l'ouverture d'une base : ne pas faire de ``vacuum``, c'est tout garder.
 
-.. note:: La corbeille ne voyage pas. Un export ne l'emporte pas, et supprimer
-   un match n'y met rien : la purge des positions orphelines qui suit une
-   suppression de match est un nettoyage automatique, pas un geste de
-   l'utilisateur — voir la règle de rétention dans :ref:`panneau_matchs`.
+.. note:: La corbeille ne voyage pas : un export ne l'emporte pas.
 
 .. _panneau_recherche:
 

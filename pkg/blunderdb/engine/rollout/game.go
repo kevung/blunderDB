@@ -44,7 +44,11 @@ type branch struct {
 // output equity, so means, differences and standard deviations convert once
 // at the end (EquityScale, ADR-0019).
 type table struct {
-	root     uint8
+	root uint8
+	// answer says the rollout is of a take/pass position, rolled out as the
+	// doubler's decision before the double: its chances are reported turned
+	// to the answerer on roll at the stored position.
+	answer   bool
 	rootCube int
 	match    bool
 	away     [2]int // indexed by colour

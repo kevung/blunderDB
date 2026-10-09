@@ -29,3 +29,10 @@ func isUniqueViolation(err error) bool {
 	var se *sqlite3.Error
 	return errors.As(err, &se) && se.Code() == sqlite3lib.SQLITE_CONSTRAINT_UNIQUE
 }
+
+// isKeyViolation reports whether err is SQLite refusing a row whose primary
+// key another row holds.
+func isKeyViolation(err error) bool {
+	var se *sqlite3.Error
+	return errors.As(err, &se) && se.Code() == sqlite3lib.SQLITE_CONSTRAINT_PRIMARYKEY
+}

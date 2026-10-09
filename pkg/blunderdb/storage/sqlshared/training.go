@@ -206,3 +206,28 @@ func (s *TrainingStore) DecisionErrors(ctx context.Context, scope string) ([]sto
 	}
 	return out, nil
 }
+
+// ItemsOfPosition — see storage.TrainingStore.
+func (s *TrainingStore) ItemsOfPosition(ctx context.Context, scope string, positionID int64) ([]int64, error) {
+	tenant, targs := s.DB.TenantFilter("", scope)
+	return queryIDs(ctx, s.DB, "list training items of position",
+		`SELECT id FROM training_item WHERE position_id = ? AND `+tenant+` ORDER BY id`,
+		append([]any{positionID}, targs...))
+}
+
+// RelinkItems — see storage.TrainingStore.
+func (s *TrainingStore) RelinkItems(ctx context.Context, scope string, itemIDs []int64, positionID int64) error {
+	if len(itemIDs) == 0 {
+		return nil
+	}
+	if err := RequireOwned(ctx, s.DB, scope, "position", positionID); err != nil {
+		return err
+	}
+	tenant, targs := s.DB.TenantFilter("", scope)
+	args := append([]any{positionID}, int64Args(itemIDs)...)
+	if _, err := s.DB.Exec(ctx, `UPDATE training_item SET position_id = ? WHERE position_id IS NULL AND id IN (`+
+		Placeholders(len(itemIDs))+`) AND `+tenant, append(args, targs...)...); err != nil {
+		return errf(s.DB, "relink training items", err)
+	}
+	return nil
+}

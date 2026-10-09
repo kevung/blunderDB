@@ -7180,6 +7180,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/idResp"
+  /v1/trash.deleteMatch:
+    post:
+      operationId: trash.deleteMatch
+      tags: [trash]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/idReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/idResp"
   /v1/trash.deletePosition:
     post:
       operationId: trash.deletePosition
@@ -7267,7 +7284,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/idResp"
+                $ref: "#/components/schemas/trashRestoreResp"
   /v1/events:
     get:
       operationId: events
@@ -9431,6 +9448,24 @@ components:
         trashId:
           type: integer
           format: int64
+    trashRestoreResp:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        warnings:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/trashWarning"
+    trashWarning:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
     versionResp:
       type: object
       properties:

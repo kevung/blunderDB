@@ -343,9 +343,7 @@ func (s *state) step(i int, a Action) ActionInfo {
 
 	case KindTake, KindPass:
 		s.ensureGame()
-		// The answerer decides on the cube AT THE LEVEL OFFERED (fonctionnel.md §1.2):
-		// what they weigh is the doubled cube they are being handed.
-		offered := domain.Cube{Owner: a.Side, Value: s.cube.Value + 1}
+		offered := answeredCube(s.cube)
 		info.Before, info.HasPosition = s.position(a.Side, [2]int{}, domain.CubeAction, offered), true
 		info.After = s.board
 		if s.pendingDouble < 0 || s.pendingDouble == a.Side {
@@ -499,10 +497,19 @@ func (s *state) next(nextScore *[2]int) Next {
 	cube := proj.cube
 	if n.Expects == KindTake {
 		decision = domain.CubeAction
-		cube = domain.Cube{Owner: n.Side, Value: cube.Value + 1}
+		cube = answeredCube(cube)
 	}
 	n.Position = proj.position(n.Side, [2]int{}, decision, cube)
 	return n
+}
+
+// answeredCube is the cube a take/pass decision is recorded with. The answerer
+// decides on the cube AT THE LEVEL OFFERED (fonctionnel.md §1.2), and it is
+// held by no one, as every importer records it: owned by the answerer, the
+// position would be the very one of their own redouble decision on that
+// board, and share its Zobrist hash and its analysis.
+func answeredCube(c domain.Cube) domain.Cube {
+	return domain.Cube{Owner: domain.None, Value: c.Value + 1}
 }
 
 // openingWinner is the side an opening roll names — the dice are player 1's then

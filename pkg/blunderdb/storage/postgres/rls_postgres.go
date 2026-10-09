@@ -145,6 +145,13 @@ var errUnforcedLockTimeout = errors.New("postgres: table busy, FORCE not lifted"
 // policy binds whatever FORCE says, and the role cannot lift it. A lock not
 // granted within unforcedLockTimeout returns errUnforcedLockTimeout.
 func inUnforcedTx(ctx context.Context, conn beginner, tables []string, fn func(tx pgx.Tx) error) (bool, error) {
+	return inUnforcedTxSeeing(ctx, conn, tables, func(tx pgx.Tx, _ bool) error { return fn(tx) })
+}
+
+// inUnforcedTxSeeing is inUnforcedTx whose fn is told, before it runs,
+// whether it sees every row: a pass that must not run twice records its own
+// completion inside the transaction, and only when it saw everything.
+func inUnforcedTxSeeing(ctx context.Context, conn beginner, tables []string, fn func(tx pgx.Tx, complete bool) error) (bool, error) {
 	complete, err := unforcedTx(ctx, conn, tables, fn)
 	var pgErr *pgconn.PgError
 	if errors.As(err, &pgErr) && pgErr.Code == "55P03" { // lock_not_available
@@ -153,7 +160,7 @@ func inUnforcedTx(ctx context.Context, conn beginner, tables []string, fn func(t
 	return complete, err
 }
 
-func unforcedTx(ctx context.Context, conn beginner, tables []string, fn func(tx pgx.Tx) error) (complete bool, err error) {
+func unforcedTx(ctx context.Context, conn beginner, tables []string, fn func(tx pgx.Tx, complete bool) error) (complete bool, err error) {
 	tx, err := conn.Begin(ctx)
 	if err != nil {
 		return false, fmt.Errorf("postgres: begin: %w", err)
@@ -185,7 +192,7 @@ func unforcedTx(ctx context.Context, conn beginner, tables []string, fn func(tx 
 		}
 		lifted = append(lifted, t)
 	}
-	if err := fn(tx); err != nil {
+	if err := fn(tx, complete); err != nil {
 		return false, err
 	}
 	for _, t := range lifted {

@@ -2066,7 +2066,7 @@ Options:
   -format string
     	Output format: text or json (default "text")
   -jobs int
-    	Positions analysed in parallel (one CPU each) (default 28)
+    	Positions analysed in parallel (one CPU each) (default: the number of CPUs)
   -limit int
     	With --compare: stop after this many positions (0 = all)
   -match int
@@ -5037,7 +5037,7 @@ Subcommands:
 
 Options:
   --db string          Path to the database file (required)
-  --kind string        position, collection, comment (delete); narrows list, which also takes anki_card
+  --kind string        position, collection, comment, match (delete); narrows list, which also takes anki_card
   --limit int          Maximum entries listed (default 50)
   --format string      text (default) or json
 
@@ -5046,6 +5046,7 @@ position expects it gone. Use `trash delete` to keep the undo.
 
 Examples:
   blunderdb trash delete --db base.db --kind position --id 412
+  blunderdb trash delete --db base.db --kind match --id 12
   blunderdb trash list --db base.db
   blunderdb trash restore --db base.db --id 3
   blunderdb trash empty --db base.db --older-than 30

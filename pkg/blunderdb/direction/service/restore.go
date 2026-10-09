@@ -13,28 +13,28 @@ import (
 )
 
 // RestoreFromTrash puts one trash entry back and removes it from the trash (ADR-0036), and
-// returns the id of what came back. A Rencontre is a gesture on its events: they join the room
+// returns the id of what came back, with the warnings of a restore that left something out. A Rencontre is a gesture on its events: they join the room
 // again under their locks, in one transaction with the room's creation and the entry's discard.
-func (d *Service) RestoreFromTrash(ctx context.Context, trashID int64) (int64, error) {
+func (d *Service) RestoreFromTrash(ctx context.Context, trashID int64) (domain.TrashRestore, error) {
 	entry, err := d.st.Trash().Load(ctx, d.scope, trashID)
 	if err != nil {
-		return 0, err
+		return domain.TrashRestore{}, err
 	}
 	if entry.Kind != domain.TrashRencontre {
 		return trash.Restore(ctx, d.st, d.scope, trashID)
 	}
 	var payload domain.TrashRencontrePayload
 	if err := json.Unmarshal(entry.Payload, &payload); err != nil {
-		return 0, fmt.Errorf("trash entry %d: %w", trashID, err)
+		return domain.TrashRestore{}, fmt.Errorf("trash entry %d: %w", trashID, err)
 	}
 	id, err := d.restoreRencontre(ctx, trashID, payload.Rencontre.TournamentIDs)
 	if err != nil {
-		return 0, err
+		return domain.TrashRestore{}, err
 	}
 	ctx = context.WithoutCancel(ctx)
 	d.publishGesture(ctx, 0, id, nil)
 	d.writeRencontrePages(ctx, id)
-	return id, nil
+	return domain.TrashRestore{ID: id}, nil
 }
 
 // restoreRencontre recreates the Rencontre of the trash entry trashID and attaches its events

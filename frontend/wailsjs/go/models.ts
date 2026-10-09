@@ -3171,6 +3171,53 @@ export namespace domain {
 	        this.payload = source["payload"];
 	    }
 	}
+	export class TrashWarning {
+	    code: string;
+	    message: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new TrashWarning(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.code = source["code"];
+	        this.message = source["message"];
+	    }
+	}
+	export class TrashRestore {
+	    id: number;
+	    warnings?: TrashWarning[];
+	
+	    static createFrom(source: any = {}) {
+	        return new TrashRestore(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.warnings = this.convertValues(source["warnings"], TrashWarning);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	
 
 }
 

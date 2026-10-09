@@ -292,3 +292,17 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   the video a Match was transcribed from (an http(s) URL or a local path), and
   `move.roll_tick_ms` / `move.tick_ms`, the Move's Repères in it, NULL for
   unknown. Schema-visible: bumped `domain.DatabaseVersion` to 2.40.0.
+- The 2.41.0 wave has no SQL file (ADR-0083). Its Go-side passes run in
+  `runGoBackfills`, generation 3:
+  - gammonNet's verdicts on take/pass rows are dropped for reanalysis as the
+    doubler's decision. This pass comes first, and also drops the
+    `match_stats` of matches holding a take on an owned cube. It is guarded,
+    beyond the generation, by the metadata row
+    `gammonnet_response_analyses_dropped`. That row is written in the drop's
+    own transaction, and only when that transaction sees every tenant's rows.
+    A later generation never drops again.
+  - A take or a pass that a transcription recorded on the answerer's own
+    redouble row moves to the turned cube held by no one, flagged
+    `is_cube_response`.
+
+  Schema-visible: bumped `domain.DatabaseVersion` to 2.41.0.

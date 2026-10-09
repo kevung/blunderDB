@@ -359,3 +359,53 @@ func TestNamedMovesInAnotherDialect(t *testing.T) {
 		t.Fatalf("candidates %v, want the names given", names)
 	}
 }
+
+// TestResponseRolloutIsTheDoublersDecision: a take/pass position (the
+// answerer on roll, the turned cube held by no one) rolls out as the
+// doubler's cube decision before the double — the same equities, on the
+// scale the imports store — with its chances turned to the answerer.
+func TestResponseRolloutIsTheDoublersDecision(t *testing.T) {
+	for _, xgid := range []string{
+		"XGID=-CCCBBB-----------bbbccc--:1:1:1:00:0:0:0:0:10",
+		"XGID=-CCCBBB-----------bbbccc--:1:1:1:00:2:3:0:7:10",
+	} {
+		doubler := decode(t, xgid)
+		answer := doubler
+		answer.PlayerOnRoll = 1 - doubler.PlayerOnRoll
+		answer.Cube = domain.Cube{Value: doubler.Cube.Value + 1, Owner: domain.None}
+		if !gammonnet.IsResponsePosition(&answer) {
+			t.Fatalf("%s: the answer's position is not a take/pass one", xgid)
+		}
+		want, err := Run(context.Background(), doubler, small(), Options{NoBearoffTable: true})
+		if err != nil {
+			t.Fatal(err)
+		}
+		got, err := Run(context.Background(), answer, small(), Options{NoBearoffTable: true})
+		if err != nil {
+			t.Fatalf("%s: rollout of the answer: %v", xgid, err)
+		}
+		if got.Kind != KindCube || got.Cube == nil {
+			t.Fatalf("%s: kind %s, cube %v", xgid, got.Kind, got.Cube)
+		}
+		for _, c := range []struct {
+			name      string
+			got, want Estimate
+		}{
+			{NoDouble, got.Cube.NoDouble, want.Cube.NoDouble},
+			{DoubleTake, got.Cube.DoubleTake, want.Cube.DoubleTake},
+			{DoublePass, got.Cube.DoublePass, want.Cube.DoublePass},
+		} {
+			if c.got.Equity != c.want.Equity || c.got.StdErr != c.want.StdErr {
+				t.Errorf("%s %s: %+.4f ± %.4f, the doubler's %+.4f ± %.4f", xgid, c.name,
+					c.got.Equity, c.got.StdErr, c.want.Equity, c.want.StdErr)
+			}
+			// Double/Pass is exact and never rolled: it carries no chances.
+			if c.name != DoublePass && c.got.Chances != turnChances(c.want.Chances) {
+				t.Errorf("%s %s: chances %v, want the doubler's %v turned", xgid, c.name, c.got.Chances, c.want.Chances)
+			}
+		}
+		if got.Cube.Action != want.Cube.Action {
+			t.Errorf("%s: verdict %s, the doubler's %s", xgid, got.Cube.Action, want.Cube.Action)
+		}
+	}
+}
