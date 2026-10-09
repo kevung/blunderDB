@@ -172,6 +172,87 @@ func (s *positionStore) saveOnce(ctx context.Context, scope string, p *domain.Po
 	return id, created, nil
 }
 
+// positionReinstateSQL is positionInsertSQL with the id stated. Its ON
+// CONFLICT has no target, so a taken id is skipped like a stored hash rather
+// than raised: an error would leave the caller no clean fallback.
+var positionReinstateSQL = strings.Replace(strings.Replace(strings.Replace(positionInsertSQL,
+	"INSERT INTO position (", "INSERT INTO position (id, ", 1),
+	"VALUES (", "VALUES (?, ", 1),
+	"ON CONFLICT(zobrist_hash) DO NOTHING", "ON CONFLICT DO NOTHING", 1)
+
+// Reinstate stores p under its own id — see storage.PositionStore.
+// AUTOINCREMENT never issues an id twice, and only an id it issued is taken
+// back, so nothing collides later.
+func (s *positionStore) Reinstate(ctx context.Context, scope string, p *domain.Position) (int64, bool, error) {
+	if p.ID <= 0 {
+		return 0, false, fmt.Errorf("sqlite: reinstate position: id %d: %w", p.ID, storage.ErrInvalid)
+	}
+	switch ok, err := checkIssued(ctx, s.db, "position", p.ID); {
+	case err != nil:
+		return 0, false, fmt.Errorf("sqlite: reinstate position %d: %w", p.ID, err)
+	case !ok:
+		return 0, false, fmt.Errorf("sqlite: reinstate position: id %d was never issued: %w", p.ID, storage.ErrInvalid)
+	}
+	norm := p.NormalizeForStorage()
+	cols := engine.PopulatePositionColumns(p)
+	var affected int64
+	err := retryOnBusy(func() error {
+		res, err := s.db.ExecContext(ctx, positionReinstateSQL, p.ID,
+			int64(cols.ZobristHash), cols.DecisionType, norm.PlayerOnRoll, cols.Dice1, cols.Dice2,
+			cols.CubeValue, cols.CubeOwner, cols.Score1, cols.Score2,
+			cols.HasJacoby, cols.HasBeaver,
+			cols.Pip1, cols.Pip2, cols.PipDiff, cols.Off1, cols.Off2,
+			cols.BackCheckers1, cols.BackCheckers2, boolToInt(cols.NoContact), int(cols.GamePhase), int(cols.GameType),
+			int64(cols.Occupancy1), int64(cols.Occupancy2), int64(cols.PointMask1), int64(cols.PointMask2),
+			engine.EncodeBoardState(norm.Board), boolToInt(norm.IndividuallyImported), boolToInt(norm.Flagged),
+			cols.MaxCube)
+		if err != nil {
+			return err
+		}
+		affected, err = res.RowsAffected()
+		return err
+	})
+	if err != nil {
+		return 0, false, fmt.Errorf("sqlite: reinstate position %d: %w", p.ID, err)
+	}
+	id := p.ID
+	if affected == 0 {
+		// Skipped: either the hash is stored, and that row is the position,
+		// or the id is another position's.
+		switch err := s.db.QueryRowContext(ctx, positionIDByHashSQL, int64(cols.ZobristHash)).Scan(&id); {
+		case errors.Is(err, sql.ErrNoRows):
+			return 0, false, fmt.Errorf("sqlite: reinstate position %d: %w", p.ID, storage.ErrConflict)
+		case err != nil:
+			return 0, false, fmt.Errorf("sqlite: reinstate position %d: %w", p.ID, err)
+		}
+		// The stored row is the position: it takes the marks the snapshot
+		// carries, as SaveCreated gives them, or a position the user brought
+		// would lose what keeps it from the orphan purge.
+		if err := s.raiseMarks(ctx, norm, int64(cols.ZobristHash)); err != nil {
+			return 0, false, fmt.Errorf("sqlite: reinstate position %d: %w", p.ID, err)
+		}
+	}
+	norm.ID = id
+	*p = norm
+	return id, affected > 0, nil
+}
+
+// raiseMarks ORs the individual-import and source-tool marks of p onto the
+// stored row of hash; a mark is raised, never lowered.
+func (s *positionStore) raiseMarks(ctx context.Context, p domain.Position, hash int64) error {
+	if p.IndividuallyImported {
+		if _, err := s.db.ExecContext(ctx, markIndividualSQL, hash); err != nil {
+			return fmt.Errorf("mark position individually imported: %w", err)
+		}
+	}
+	if p.Flagged {
+		if _, err := s.db.ExecContext(ctx, markFlaggedSQL, hash); err != nil {
+			return fmt.Errorf("mark position flagged: %w", err)
+		}
+	}
+	return nil
+}
+
 // RaiseFlag — see storage.PositionStore.
 func (s *positionStore) RaiseFlag(ctx context.Context, scope string, p *domain.Position) (bool, error) {
 	res, err := s.db.ExecContext(ctx, markFlaggedSQL, int64(engine.PopulatePositionColumns(p).ZobristHash))

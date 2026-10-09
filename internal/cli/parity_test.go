@@ -509,6 +509,7 @@ var databaseParity = map[string]parityEntry{
 	"TrashPosition":                     {CLI: "trash", Server: "/v1/trash.deletePosition"},
 	"TrashCollection":                   {CLI: "trash", Server: "/v1/trash.deleteCollection"},
 	"TrashCommentEntry":                 {CLI: "trash", Server: "/v1/trash.deleteComment"},
+	"TrashMatch":                        {CLI: "trash", Server: "/v1/trash.deleteMatch"},
 	"RestoreFromTrash":                  {CLI: "trash", Server: "/v1/trash.restore"},
 	"DiscardFromTrash":                  {CLI: "trash", Server: "/v1/trash.discard"},
 	"EmptyTrash":                        {CLI: "trash", Server: "/v1/trash.empty"},

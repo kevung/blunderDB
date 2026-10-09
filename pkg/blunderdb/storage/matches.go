@@ -61,6 +61,13 @@ type MatchStore interface {
 	// m.CanonicalHash, when non-empty, are persisted for duplicate detection.
 	Save(ctx context.Context, scope string, m *domain.Match) (int64, error)
 
+	// Reinstate stores m again under its own id m.ID and its import date
+	// m.ImportDate (zero means now), for a match deleted earlier and put back
+	// from the trash: what pointed at the match by id finds it again. The id
+	// must be one the store issued — ErrInvalid otherwise — and free:
+	// ErrConflict when a match of any scope holds it. Everything else is
+	// written as Save writes it.
+	Reinstate(ctx context.Context, scope string, m *domain.Match) error
 	// FindByHash looks up an existing match for duplicate detection. It returns
 	// the id of a match whose match_hash equals hash (same-format duplicate) or
 	// whose canonical_hash equals canonicalHash (cross-format duplicate),

@@ -13,6 +13,10 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
 )
 
+// NumCPU is the core count a flag defaults to. cmd/cli-doc-gen replaces it,
+// so the generated reference does not depend on the machine it ran on.
+var NumCPU = runtime.NumCPU
+
 // runAnalyze handles the analyze command: gammonNet's catch-up sweep
 // (ADR-0013/ADR-0015) for a library — write an analysis for every position
 // that has none — or, with --stale, its re-analysis sweep: every position
@@ -30,7 +34,7 @@ func (cli *CLI) runAnalyze(args []string) error {
 	ply := analyzeCmd.Int("ply", 2, "Search depth (canonical: 2, k=12)")
 	pruneK := analyzeCmd.Int("prune-k", 12, "Pruning width (canonical: 12)")
 	candidates := analyzeCmd.Int("candidates", 10, "Candidate moves kept per checker decision")
-	jobs := analyzeCmd.Int("jobs", runtime.NumCPU(), "Positions analysed in parallel (one CPU each)")
+	jobs := analyzeCmd.Int("jobs", NumCPU(), "Positions analysed in parallel (one CPU each)")
 	stale := analyzeCmd.Bool("stale", false, "Re-analyse positions whose gammonNet analysis is outdated, instead of filling gaps")
 	matchID := analyzeCmd.Int64("match", 0, "Restrict the sweep to one match's positions (0 = the whole library)")
 	compare := analyzeCmd.Bool("compare", false, "Compare gammonNet against the imported analyses instead of writing anything")
