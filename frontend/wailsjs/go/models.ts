@@ -125,6 +125,20 @@ export namespace database {
 	        this.PlayerNames = source["PlayerNames"];
 	    }
 	}
+	export class BreakdownPositionCount {
+	    Positions: number;
+	    Blunders: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new BreakdownPositionCount(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Positions = source["Positions"];
+	        this.Blunders = source["Blunders"];
+	    }
+	}
 	export class Collection {
 	    id: number;
 	    name: string;
@@ -898,6 +912,9 @@ export namespace database {
 	    LastN: number;
 	    PositionID: number;
 	    OnlyWithError: boolean;
+	    Breakdown: string;
+	    BreakdownKey: string;
+	    OnlyBlunders: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new SelectionSpec(source);
@@ -915,6 +932,9 @@ export namespace database {
 	        this.LastN = source["LastN"];
 	        this.PositionID = source["PositionID"];
 	        this.OnlyWithError = source["OnlyWithError"];
+	        this.Breakdown = source["Breakdown"];
+	        this.BreakdownKey = source["BreakdownKey"];
+	        this.OnlyBlunders = source["OnlyBlunders"];
 	    }
 	}
 	export class SessionState {
