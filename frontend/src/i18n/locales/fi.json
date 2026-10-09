@@ -1503,7 +1503,7 @@
         "moreActions": "Lisää toimintoja",
         "videoFile": "Paikallinen tiedosto…",
         "videoYouTube": "YouTube-linkki…",
-        "videoDetach": "Irrota",
+        "videoRemove": "Poista video",
         "videoAttach": "Liitä",
         "videoResize": "Videoruudun korkeus"
     },
@@ -3287,7 +3287,6 @@
         "noDecision": "Ei pelaajan laskettuja päätöksiä turnauksessa"
     },
     "theatre": {
-        "menuItem": "Teatteritila",
         "enter": "Teatteritila: video koko näytöllä (F11)",
         "exit": "Poistu teatteritilasta (F11 tai Esc)",
         "region": "Teatteritila",

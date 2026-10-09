@@ -2179,7 +2179,10 @@ jusqu'à combien, et que terminer le brouillon peut les perdre.
 Un match se transcrit aussi **depuis une vidéo**. Le bouton **Vidéo** de la
 barre du brouillon ouvre un menu : **Fichier local…** pour choisir une vidéo sur
 le disque, **Lien YouTube…** pour coller une adresse dans le champ qui s'ouvre
-dans le menu, et **Détacher** pour retirer la source. *ECHAP* ou un clic
+dans le menu, et, séparé, **Retirer la vidéo** pour retirer la source. Le menu
+ne porte que la source : le mode théâtre et la place de la vidéo se règlent par
+les boutons du coin supérieur droit de la vidéo, visibles tant qu'une vidéo est
+chargée. *ECHAP* ou un clic
 ailleurs ferme le menu et rend la saisie au panneau. Tant qu'aucune source n'est
 attachée, le panneau reste tel qu'il est décrit plus haut : ni volet, ni touche
 de plus. Une fois la source attachée, le bouton porte son nom court — le nom du
@@ -2217,8 +2220,7 @@ qu'elle soit. La poignée et le bouton laissent le clavier au panneau.
 
 .. _transcription_theatre:
 
-**Le mode théâtre.** Pour suivre le match en grand, *F11*, l'entrée **Mode
-théâtre** du menu **Vidéo** ou le bouton du coin supérieur droit de la vidéo,
+**Le mode théâtre.** Pour suivre le match en grand, *F11* ou le bouton du coin supérieur droit de la vidéo,
 à gauche de celui qui la remet dans le panneau, passent la fenêtre en plein
 écran et donnent toute la place à la vidéo. Un petit plateau flotte par-dessus,
 dans le coin inférieur droit : il montre la position de la transcription, les dés
@@ -2231,7 +2233,7 @@ touches de la vidéo (*ESPACE*, *[*, *]*, …) gardent leur effet, et ni le
 plateau ni les boutons ne prennent le focus. *F11*, *ÉCHAP* ou le bouton en
 haut à droite sortent du mode théâtre et rendent la fenêtre à son état
 précédent : dans le théâtre, *ÉCHAP* sert à sortir, et *RETOUR ARRIERE* efface
-les dés saisis. Détacher la vidéo, quitter le brouillon ou changer d'onglet y
+les dés saisis. Retirer la vidéo, quitter le brouillon ou changer d'onglet y
 met fin aussi. Le lecteur n'a pas de plein écran à lui, YouTube compris : seul
 le mode théâtre change l'écran. Le mode n'existe que dans la Transcription,
 avec une vidéo attachée.

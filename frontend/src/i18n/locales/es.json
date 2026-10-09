@@ -1503,7 +1503,7 @@
         "moreActions": "Más acciones",
         "videoFile": "Archivo local…",
         "videoYouTube": "Enlace de YouTube…",
-        "videoDetach": "Quitar",
+        "videoRemove": "Quitar el vídeo",
         "videoAttach": "Adjuntar",
         "videoResize": "Altura del panel de vídeo"
     },
@@ -3287,7 +3287,6 @@
         "noDecision": "Ninguna decisión contada de este jugador en el torneo"
     },
     "theatre": {
-        "menuItem": "Modo cine",
         "enter": "Modo cine: el vídeo a pantalla completa (F11)",
         "exit": "Salir del modo cine (F11 o Esc)",
         "region": "Modo cine",

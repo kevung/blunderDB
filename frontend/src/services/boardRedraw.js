@@ -9,7 +9,7 @@
  */
 import { analysisStore, selectedMoveStore } from '../stores/analysisStore.js';
 import { searchOfferedCubeStore } from '../stores/searchExcludePositionStore.js';
-import { quizPlayStore } from '../stores/quizPlayStore.js';
+import { quizPlayStore, quizPlayValidateStore } from '../stores/quizPlayStore.js';
 import { pipcountVisibleStore } from '../stores/uiStore.js';
 import { transcriptionBoardSwapStore } from '../stores/transcriptionStore.js';
 import { duelBoardStore } from '../stores/duelStore.js';
@@ -28,6 +28,8 @@ export const BOARD_REDRAW_TRIGGERS = Object.freeze([
     Object.freeze({ name: 'offeredCube', store: searchOfferedCubeStore }),
     // Le coup du quiz, construit un pas à la fois.
     Object.freeze({ name: 'quizPlay', store: quizPlayStore }),
+    // La grammaire du coup armé (ADR-0086) : ordre des dés et dés grisés.
+    Object.freeze({ name: 'quizPlayValidate', store: quizPlayValidateStore }),
     // La visibilité du pipcount : la préférence de l'utilisateur, ou le masque
     // d'une question de Pions.
     Object.freeze({ name: 'pipcountVisible', store: pipcountVisibleStore }),

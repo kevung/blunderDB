@@ -1503,7 +1503,7 @@
         "moreActions": "Weitere Aktionen",
         "videoFile": "Lokale Datei…",
         "videoYouTube": "YouTube-Link…",
-        "videoDetach": "Lösen",
+        "videoRemove": "Video entfernen",
         "videoAttach": "Anhängen",
         "videoResize": "Höhe des Videobereichs"
     },
@@ -3287,7 +3287,6 @@
         "noDecision": "Keine gezählte Entscheidung dieses Spielers im Turnier"
     },
     "theatre": {
-        "menuItem": "Kinomodus",
         "enter": "Kinomodus: das Video im Vollbild (F11)",
         "exit": "Kinomodus verlassen (F11 oder Esc)",
         "region": "Kinomodus",

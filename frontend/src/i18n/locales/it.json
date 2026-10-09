@@ -1503,7 +1503,7 @@
         "moreActions": "Altre azioni",
         "videoFile": "File locale…",
         "videoYouTube": "Link YouTube…",
-        "videoDetach": "Stacca",
+        "videoRemove": "Rimuovi il video",
         "videoAttach": "Allega",
         "videoResize": "Altezza del riquadro video"
     },
@@ -3287,7 +3287,6 @@
         "noDecision": "Nessuna decisione contata di questo giocatore nel torneo"
     },
     "theatre": {
-        "menuItem": "Modalità cinema",
         "enter": "Modalità cinema: il video a schermo intero (F11)",
         "exit": "Esci dalla modalità cinema (F11 o Esc)",
         "region": "Modalità cinema",

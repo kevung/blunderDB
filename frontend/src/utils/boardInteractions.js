@@ -8,7 +8,8 @@ import { get } from 'svelte/store';
 import { boardMetrics, boardMouseToDrawing, checkerPointAndCountAt } from './boardGeometry.js';
 import { EXCLUDE_EMPTY, sideLayout } from './boardScene.js';
 import { OFF, playHop, selectSource } from '../services/quizPlay.js';
-import { canPlayFree, dragStep, freeClick, hasMoverChecker } from '../services/transcriptionPlay.js';
+import { canPlayFree, dragStep, freeClick, hasMoverChecker, resetBoardPlay } from '../services/transcriptionPlay.js';
+import { boardRightClick, diceClick, orderedDice, playClickedChecker } from '../services/boardMove.js';
 
 // A second click on the same Except point within this delay blocks it. Detected by hand: each
 // click recreates the two.js shapes, so native 'dblclick' sees two different DOM nodes.
@@ -245,7 +246,8 @@ function stepDie(value, button) {
  *   cfg                  Board.svelte's boardCfg (orientation, widthFactor read live)
  *   getCubeBox()         { x, y, size } where the cube was last drawn
  *   stores               { position, structureMode, activeTab, offeredCube, anyModalOpen,
- *                          quizPlay, transcriptionCube }
+ *                          quizPlay, quizPlayValidate, transcriptionCube }; quizPlayValidate
+ *                        holds the armed mode's validation: set, the play follows ADR-0086
  *   getPreviousDice()    dice saved when a player rectangle cleared them
  *   setPreviousDice(d)
  *   openContextMenu(at)  { x, y } client coordinates; in EDIT/EVAL only outside the frame and
@@ -416,6 +418,68 @@ export function attachBoardInteractions(canvas, deps) {
     }
 
     /**
+     * Le coup armé selon la grammaire d'ADR-0086 (`quizPlayValidate` posé par son mode), ou null.
+     */
+    function grammarPlay() {
+        const play = stores.quizPlay ? get(stores.quizPlay) : null;
+        if (!play || !stores.quizPlayValidate) return null;
+        return get(stores.quizPlayValidate) ? play : null;
+    }
+
+    /**
+     * Le jet dans l'ordre dessiné : le jet saisi du coup, sinon les dés de la position.
+     * @param {any} play
+     */
+    function drawnDice(play) {
+        return orderedDice(play.rolled ?? get(stores.position).dice, !!play.swapped);
+    }
+
+    // Le pion pressé d'un coup selon la grammaire : relâché sur place, c'est un clic (le premier
+    // dé non joué) ; relâché ailleurs, un glissé vers ce point.
+    /** @type {number|null} */
+    let grammarPress = null;
+
+    /**
+     * Pression sur le plateau pendant un coup selon la grammaire. Rend `true` quand elle est prise.
+     * @param {MouseEvent} event
+     * @param {number} x
+     * @param {number} y
+     */
+    function grammarMouseDown(event, x, y) {
+        grammarPress = null;
+        const play = grammarPlay();
+        if (!play) return false;
+        if (event.button !== 0) return true;
+        const hit = hitAt(x, y);
+        if (hit.kind === 'point') {
+            grammarPress = hit.point;
+        } else if (hit.kind === 'die') {
+            const action = diceClick(play, drawnDice(play));
+            if (action === 'validate') get(stores.quizPlayValidate)?.();
+            else if (action === 'swap') stores.quizPlay.update((/** @type {any} */ s) => (s ? { ...s, swapped: !s.swapped } : s));
+        }
+        return true;
+    }
+
+    /**
+     * Relâchement d'une pression du coup selon la grammaire. Rend `true` quand elle est prise.
+     * @param {MouseEvent} event
+     */
+    function grammarMouseUp(event) {
+        const from = grammarPress;
+        grammarPress = null;
+        if (from === null) return false;
+        const { x, y } = toDrawing(event);
+        const target = quizTargetAt(x, y);
+        stores.quizPlay.update((/** @type {any} */ s) => {
+            if (!s) return s;
+            if (target === null || target === from) return playClickedChecker(s, from, drawnDice(s));
+            return dragStep(s, from, target);
+        });
+        return true;
+    }
+
+    /**
      * Fin d'un glissé sur `to`. Rend `true` si c'était un glissé du coup en cours. Un pas légal
      * est joué ; sinon, jet connu, le pion est posé où il est lâché (`dragStep`, ADR-0052).
      * @param {MouseEvent} event
@@ -494,6 +558,7 @@ export function attachBoardInteractions(canvas, deps) {
             // Le videau d'abord : il est hors du damier, donc le coup joué au
             // plateau ne le vise pas, et il avale le clic.
             if (transcriptionCubeClick(event, x, y)) return;
+            if (grammarMouseDown(event, x, y)) return;
             if (quizClick(event, x, y)) return;
         }
         if (!editable()) return;
@@ -517,6 +582,7 @@ export function attachBoardInteractions(canvas, deps) {
         }
         // Avant la garde d'édition : le coup joué au plateau vit dans des modes qui n'éditent pas
         // la position (TRANSCRIBE, quiz).
+        if (grammarMouseUp(event)) return;
         if (boardPlayDrop(event)) return;
         if (!editable() || !startMousePos) return;
         const end = { ...toDrawing(event), button: event.button };
@@ -585,6 +651,21 @@ export function attachBoardInteractions(canvas, deps) {
         return hit.die === null && hit.playerRect === null && hit.score === null;
     }
 
+    /**
+     * Clic droit sur le damier pendant un coup selon la grammaire : au moins un pas joué, il les
+     * reprend tous (jet saisi, origine et ordre des dés gardés). Rend `true` quand il est pris.
+     * @param {number} x
+     * @param {number} y
+     */
+    function grammarRightClick(x, y) {
+        const play = grammarPlay();
+        const kind = hitAt(x, y).kind;
+        if (!play || (kind !== 'point' && kind !== 'none')) return false;
+        if (boardRightClick(play) !== 'reset') return false;
+        stores.quizPlay.update((/** @type {any} */ s) => (s ? { ...resetBoardPlay(s, get(stores.position)), swapped: !!s.swapped } : s));
+        return true;
+    }
+
     /** @param {MouseEvent} event */
     function onContextMenu(event) {
         event.preventDefault(); // no native menu, in every mode
@@ -592,6 +673,8 @@ export function attachBoardInteractions(canvas, deps) {
         const { x, y } = toDrawing(event);
         if (deps.duel?.holds()) {
             if (!deps.duel.context(hitAt(x, y))) return;
+        } else if (grammarRightClick(x, y)) {
+            return;
         } else if (editable() && !rightButtonIdle(x, y)) return;
         deps.openContextMenu({ x: event.clientX, y: event.clientY });
     }

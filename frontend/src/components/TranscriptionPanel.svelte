@@ -645,18 +645,8 @@
     let videoMenuItems = $derived([
         { label: $t('transcription.videoFile'), onClick: pickVideoFile },
         { label: $t('transcription.videoYouTube'), onClick: toggleYouTubeField, keepOpen: true },
-        ...(videoSource
-            ? [
-                  { label: $t('theatre.menuItem'), shortcut: 'F11', onClick: openTheatre },
-                  { label: $t('transcription.videoDetach'), onClick: () => attachVideo('') }
-              ]
-            : [])
+        ...(videoSource ? [{ label: $t('transcription.videoRemove'), separatorBefore: true, onClick: () => attachVideo('') }] : [])
     ]);
-
-    function openTheatre() {
-        closeVideoMenu();
-        enterTheatre();
-    }
 
     // The theatre opens over a draft with its video, on this tab; losing any of the three ends it.
     $effect(() => {
@@ -1914,7 +1904,7 @@
             {#if videoSource}
                 <!-- Replié tant qu'aucune source n'est attachée (ADR-0082 règle 3). -->
                 <!-- Beside the board the dock leaves this slot empty, and the slot folds. -->
-                <div class="video-slot" style={videoOnBoard ? '' : `height: ${videoHeight}px`}>
+                <div class="video-slot" class:folded={videoOnBoard} style={videoOnBoard ? '' : `height: ${videoHeight}px`}>
                     <!-- Another draft opens its own video where it was left: the player remounts. -->
                     {#key draftId}
                         <VideoDock
@@ -2204,6 +2194,10 @@
         overflow: hidden;
         /* However far the handle went, the draft below keeps room to be typed in. */
         max-height: 60%;
+    }
+    /* The player sits beside the board: an empty slot keeps no floor. */
+    .video-slot.folded {
+        min-height: 0;
     }
     .video-resize {
         flex: 0 0 auto;
