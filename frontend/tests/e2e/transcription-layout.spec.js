@@ -179,31 +179,110 @@ test.describe('dock latéral, en-tête du brouillon ouvert', () => {
  * Vidéo attachée, à la hauteur la plus grande que la poignée accorde : la
  * liste garde son plancher, c'est la vidéo qui cède.
  */
-for (const [name, config] of [
-    ['dock latéral étroit', { GetPanelPosition: 'side', GetPanelWidth: 420 }],
-    ['dock latéral élargi', { GetPanelPosition: 'side', GetPanelWidth: 520 }],
-    ['dock bas, plancher', { GetPanelPosition: 'bottom', GetTabPanelHeights: { '*': 280 } }]
+for (const [name, config, fits] of [
+    ['dock latéral étroit', { GetPanelPosition: 'side', GetPanelWidth: 420 }, true],
+    ['dock latéral élargi', { GetPanelPosition: 'side', GetPanelWidth: 520 }, true],
+    // À 280 px, barre + vidéo (5 rem) + liste (7 rem) dépassent la hauteur : le
+    // panneau défile alors par construction, seuls les planchers sont dus.
+    ['dock bas, plancher', { GetPanelPosition: 'bottom', GetTabPanelHeights: { '*': 280 } }, false]
 ]) {
     test.describe(`${name}, vidéo attachée`, () => {
         test.beforeEach(async ({ page }) => {
-            await page.addInitScript(() => localStorage.setItem('blunderdb.transcription.videoHeight', '900'));
+            await page.addInitScript(() => {
+                localStorage.setItem('blunderdb.transcription.videoHeight', '900');
+                // En panneau : sur le plateau la fente se replie et ne prend aucune place.
+                localStorage.setItem('blunderdb.video.placement', 'panel');
+            });
             await installWailsMock(page, openLibraryMock({ config }));
             await installTranscriptionEngine(page, { video: '/videos/match.mp4' });
             await page.goto('/');
             await page.locator('[data-testid="tab-transcription"]').click();
             await page.locator('#transcriptionPanel tbody tr').first().click();
-            await expect(page.locator('#transcriptionPanel .video-slot')).toBeVisible();
+            await expect(page.locator('#transcriptionPanel .video-slot')).toBeAttached();
             await page.keyboard.press('Digit3');
             await page.keyboard.press('Digit1');
-            await expect(page.locator('[data-testid="transcription-candidates"] tbody tr').first()).toBeVisible();
+            // Attachée, pas visible : une liste écrasée à zéro doit échouer sur
+            // les assertions ci-dessous, qui la mesurent, non sur l'attente.
+            await expect(page.locator('[data-testid="transcription-candidates"] tbody tr').first()).toBeAttached();
+        });
+
+        test('le panneau ne défile pas', async ({ page }) => {
+            test.skip(!fits, 'les planchers cumulés dépassent la hauteur');
+            expect(await overflow(page)).toBe(0);
+        });
+
+        test('la liste garde au moins deux lignes entières', async ({ page }) => {
+            expect(await fullyVisibleRows(page)).toBeGreaterThanOrEqual(2);
+        });
+
+        test('la vidéo garde au moins cinq rem', async ({ page }) => {
+            const box = await page.locator('#transcriptionPanel .video-slot').boundingBox();
+            const rem = await page.evaluate(() => parseFloat(getComputedStyle(document.documentElement).fontSize));
+            expect(box.height).toBeGreaterThanOrEqual(5 * rem - 1);
+        });
+
+        test('la liste garde son plancher de sept rem', async ({ page }) => {
+            const box = await page.locator('[data-testid="transcription-candidates"]').boundingBox();
+            const rem = await page.evaluate(() => parseFloat(getComputedStyle(document.documentElement).fontSize));
+            expect(box.height).toBeGreaterThanOrEqual(7 * rem - 1);
+        });
+    });
+}
+
+/**
+ * Les deux régimes que le plancher a retouchés : la palette empilée sous
+ * 500 px, la grille à deux colonnes de 500 à 900 px. Largeurs de part et
+ * d'autre des points de rupture, vidéo attachée, hauteur la plus rude.
+ */
+for (const [name, width, stacked] of [
+    ['étroit (sous 500 px)', 380, true],
+    ['intermédiaire (500 à 900 px)', 700, false]
+]) {
+    test.describe(`dock latéral ${name}, vidéo attachée`, () => {
+        test.beforeEach(async ({ page }) => {
+            await page.addInitScript(() => {
+                localStorage.setItem('blunderdb.transcription.videoHeight', '900');
+                // En panneau : sur le plateau la fente se replie et ne prend aucune place.
+                localStorage.setItem('blunderdb.video.placement', 'panel');
+            });
+            await installWailsMock(page, openLibraryMock({ config: { GetPanelPosition: 'side', GetPanelWidth: width } }));
+            await installTranscriptionEngine(page, { video: '/videos/match.mp4' });
+            await page.goto('/');
+            await page.locator('[data-testid="tab-transcription"]').click();
+            await page.locator('#transcriptionPanel tbody tr').first().click();
+            await expect(page.locator('#transcriptionPanel .video-slot')).toBeAttached();
+            await page.keyboard.press('Digit3');
+            await page.keyboard.press('Digit1');
+            await expect(page.locator('[data-testid="transcription-candidates"] tbody tr').first()).toBeAttached();
         });
 
         test('le panneau ne défile pas', async ({ page }) => {
             expect(await overflow(page)).toBe(0);
         });
 
-        test('la liste garde au moins deux lignes entières', async ({ page }) => {
-            expect(await fullyVisibleRows(page)).toBeGreaterThanOrEqual(2);
+        test('la vidéo garde au moins cinq rem', async ({ page }) => {
+            const box = await page.locator('#transcriptionPanel .video-slot').boundingBox();
+            const rem = await page.evaluate(() => parseFloat(getComputedStyle(document.documentElement).fontSize));
+            expect(box.height).toBeGreaterThanOrEqual(5 * rem - 1);
+        });
+
+        test('la liste garde son plancher de sept rem', async ({ page }) => {
+            const box = await page.locator('[data-testid="transcription-candidates"]').boundingBox();
+            const rem = await page.evaluate(() => parseFloat(getComputedStyle(document.documentElement).fontSize));
+            expect(box.height).toBeGreaterThanOrEqual(7 * rem - 1);
+        });
+
+        test(stacked ? 'la palette est empilée sous la liste' : 'la palette est sous la liste, le Transcript à sa droite', async ({ page }) => {
+            const palette = await page.locator('[data-testid="transcription-palette"]').boundingBox();
+            const list = await page.locator('[data-testid="transcription-candidates"]').boundingBox();
+            const transcript = await page.locator('.transcript-col').boundingBox();
+            expect(palette.y).toBeGreaterThanOrEqual(list.y + list.height - 1);
+            if (stacked) {
+                expect(transcript.y).toBeGreaterThanOrEqual(palette.y + palette.height - 1);
+            } else {
+                expect(transcript.x).toBeGreaterThanOrEqual(palette.x + palette.width - 1);
+                expect(Math.abs(transcript.y - palette.y)).toBeLessThanOrEqual(1);
+            }
         });
     });
 }
