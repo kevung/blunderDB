@@ -16,9 +16,11 @@ import (
 const LivingCollectionCap = 5000
 
 // CollectionEvaluation is a collection read whole, under a declared ceiling.
-// Total is how many positions the collection holds in truth; Truncated is
-// true exactly when PositionIDs stops short of it. A truncation is never
-// silent: the caller always learns both numbers.
+// Truncated is decided by the same read as PositionIDs (one id past the
+// ceiling is asked for), so it is exact: true when the collection held more
+// than Cap ids at that read. Total is a count taken by a second read; under
+// concurrent writes it may differ from what the first read saw, and it is
+// never reported below len(PositionIDs), nor at or below Cap when Truncated.
 type CollectionEvaluation struct {
 	CollectionID int64   `json:"collectionId"`
 	Living       bool    `json:"living"`
@@ -65,8 +67,9 @@ func SetCollectionFilter(ctx context.Context, st Storage, scope string, id int64
 }
 
 // CreateCollection creates a collection, living when query is not blank. The
-// query is checked before anything is written, so a refusal leaves no empty
-// collection behind.
+// query is checked before anything is written, so a refused query leaves no
+// collection behind. The store has no single write for both, so a failure
+// of the second write is compensated by deleting the collection just made.
 func CreateCollection(ctx context.Context, st Storage, scope, name, description, query string) (int64, error) {
 	query = strings.TrimSpace(query)
 	if err := ValidateFilterQuery(query); err != nil {
@@ -116,14 +119,14 @@ func EvaluateCollection(ctx context.Context, st Storage, scope string, collectio
 	}
 	ev := &CollectionEvaluation{CollectionID: collectionID, Living: living, FilterQuery: query, Cap: limit}
 	if living {
-		if ev.PositionIDs, err = st.Search().FindIDs(ctx, scope, filters, ListOpts{Limit: limit}); err != nil {
+		if ev.PositionIDs, err = st.Search().FindIDs(ctx, scope, filters, ListOpts{Limit: limit + 1}); err != nil {
 			return nil, err
 		}
 		if ev.Total, err = st.Search().Count(ctx, scope, filters); err != nil {
 			return nil, err
 		}
 	} else {
-		if ev.PositionIDs, err = st.Collections().PositionIDs(ctx, scope, collectionID, ListOpts{Limit: limit}); err != nil {
+		if ev.PositionIDs, err = st.Collections().PositionIDs(ctx, scope, collectionID, ListOpts{Limit: limit + 1}); err != nil {
 			return nil, err
 		}
 		if ev.Total, err = st.Collections().CountPositions(ctx, scope, collectionID); err != nil {
@@ -133,7 +136,12 @@ func EvaluateCollection(ctx context.Context, st Storage, scope string, collectio
 	if ev.PositionIDs == nil {
 		ev.PositionIDs = []int64{}
 	}
-	ev.Truncated = ev.Total > len(ev.PositionIDs)
+	if len(ev.PositionIDs) > limit {
+		ev.Truncated = true
+		ev.PositionIDs = ev.PositionIDs[:limit]
+		ev.Total = max(ev.Total, limit+1)
+	}
+	ev.Total = max(ev.Total, len(ev.PositionIDs))
 	return ev, nil
 }
 
@@ -163,8 +171,8 @@ func SyncDeck(ctx context.Context, st Storage, scope string, deckID int64) (*Dec
 		return nil, err
 	}
 	if !living {
-		// A hand-made list was chosen position by position: it feeds its
-		// deck whole, as it always has.
+		// A hand-made list was chosen position by position: every one of
+		// them is meant to be studied, so it feeds its deck whole.
 		return report, st.Anki().Sync(ctx, scope, deckID)
 	}
 	ev, err := EvaluateCollection(ctx, st, scope, deck.SourceID, 0)
