@@ -2187,7 +2187,7 @@ barre du brouillon ouvre un menu : **Fichier local…** pour choisir une vidéo 
 le disque, **Lien YouTube…** pour coller une adresse dans le champ qui s'ouvre
 dans le menu, et, séparé, **Retirer la vidéo** pour retirer la source. Le menu
 ne porte que la source : le mode théâtre et la place de la vidéo se règlent par
-les boutons du coin supérieur droit de la vidéo, visibles tant qu'une vidéo est
+les boutons de la barre au-dessus de la vidéo, visible tant qu'une vidéo est
 chargée. *ECHAP* ou un clic
 ailleurs ferme le menu et rend la saisie au panneau. Tant qu'aucune source n'est
 attachée, le panneau reste tel qu'il est décrit plus haut : ni volet, ni touche
@@ -2205,7 +2205,7 @@ qu'elle entre dans une autre action.
 plateau se partage : la vidéo à gauche, le plateau à droite, séparés par une
 barre verticale qu'on tire pour agrandir l'une ou l'autre ; la largeur reste la
 même d'une session à l'autre. La vidéo garde ses proportions et occupe au mieux
-la place qu'on lui donne. Le bouton placé dans son coin supérieur droit la
+la place qu'on lui donne. Le bouton placé dans la barre au-dessus d'elle la
 remet dans le panneau, au-dessus du transcript, et la ramène à côté du plateau ;
 ce choix aussi est retenu. Dans le panneau, la hauteur de la vidéo se règle en
 tirant la barre placée sous elle, sans jamais repousser la saisie hors de vue.
@@ -2226,7 +2226,7 @@ qu'elle soit. La poignée et le bouton laissent le clavier au panneau.
 
 .. _transcription_theatre:
 
-**Le mode théâtre.** Pour suivre le match en grand, *F11* ou le bouton du coin supérieur droit de la vidéo,
+**Le mode théâtre.** Pour suivre le match en grand, *F11* ou le bouton de la barre au-dessus de la vidéo,
 à gauche de celui qui la remet dans le panneau, passent la fenêtre en plein
 écran et donnent toute la place à la vidéo. Un petit plateau flotte par-dessus,
 dans le coin inférieur droit : il montre la position de la transcription, les dés
