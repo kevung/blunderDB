@@ -50,6 +50,7 @@
      * @property {boolean} [sortable]
      * @property {boolean} [narrow]   sized to its content (`.narrow-col`)
      * @property {boolean} [actions]  the icon-button column (`.actions-col`)
+     * @property {boolean} [elastic]  the one column that takes the leftover width (ADR-0085, G4)
      * @property {'left'|'center'|'right'} [align]
      * @property {string} [title]
      * @property {string} [class]     extra class on the header cell
@@ -102,6 +103,17 @@
         /** The cells of one row: (row, index). */
         cells
     } = $props();
+
+    // One column takes the leftover width, so short columns stay at their content and the
+    // actions column sits at the right edge. A panel names it (`elastic`); a table of short
+    // columns only gets its last non-action column, else the browser spreads the slack over
+    // every column and the actions float mid-row.
+    let elasticIndex = $derived.by(() => {
+        const named = columns.findIndex((c) => c.elastic);
+        if (named >= 0) return named;
+        if (columns.some((c) => !c.narrow && !c.actions)) return -1;
+        return columns.findLastIndex((c) => !c.actions);
+    });
 
     let tbodyEl = $state(null);
     let scrollEl = $state(null);
@@ -220,12 +232,13 @@
         <table>
             <thead>
                 <tr>
-                    {#each columns as col (col.key)}
+                    {#each columns as col, i (col.key)}
                         <th
                             class="no-select {col.class ?? ''}"
                             class:sortable={col.sortable}
                             class:narrow-col={col.narrow}
                             class:actions-col={col.actions}
+                            class:elastic-col={i === elasticIndex}
                             class:align-center={col.align === 'center'}
                             class:align-right={col.align === 'right'}
                             title={col.title}
@@ -418,6 +431,11 @@
         white-space: nowrap;
         text-align: center;
         padding: 0 4px;
+    }
+
+    /* A percentage beats the cells' 1px: this column takes the slack, the others their content. */
+    .panel-table th.elastic-col {
+        width: 100%;
     }
 
     .panel-table :global(.no-select) {

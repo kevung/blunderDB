@@ -20,7 +20,11 @@ contenu (Analyse sans analyse) restait blanc. Rien ne disait pour qui un panneau
 3. **Une bande d'en-tête par vue** (`panels/PanelHeader.svelte`) :
    `[←] titre · compteur · filtres ⟶ secondaires [primaire]`. Le titre ne s'étire jamais ;
    l'action primaire, une seule, est en bout de bande à droite (`NewButton` si elle crée).
-4. **Contenu au début de ligne** ; dans un tableau, texte à gauche, nombres à droite.
+4. **Contenu au début de ligne** ; dans un tableau, texte à gauche, nombres à droite. Les
+   colonnes courtes (#, id, nombres) prennent la largeur de leur contenu, une seule colonne
+   prend le reste (`elastic` de `PanelTable`, à défaut la dernière avant les actions), la
+   colonne d'actions est collée au bord droit. Un tableau sans colonne d'actions (les coups
+   candidats) garde sa largeur de contenu et laisse le reste vide (ADR-0021).
 5. **Seul l'état vide est centré** (`panels/EmptyState.svelte`), cinq mots au plus ; son
    bouton est l'action propre au panneau (`action`), l'import seulement là où le contenu
    vient d'un import.

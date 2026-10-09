@@ -151,9 +151,9 @@
 
     /* Rows are picked with Ctrl/Shift+click and right-click: the cells must not
        be selected as text along the way. */
+    /* Columns at their content from the start edge, the leftover width left over (ADR-0021,
+       ADR-0085): spread over the panel, the numbers drifted away from their move. */
     .checker-table {
-        margin: 0 auto;
-        width: 100%;
         font-size: var(--font-size-base);
         border-collapse: collapse;
         user-select: none;

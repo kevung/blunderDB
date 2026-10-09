@@ -227,3 +227,24 @@ describe('virtualization', () => {
         expect(index(names[from])).toBeGreaterThan(19000);
     });
 });
+
+describe('the elastic column', () => {
+    const elastic = (container) => [...container.querySelectorAll('th')].findIndex((th) => th.classList.contains('elastic-col'));
+
+    test('a table of short columns gives the slack to its last non-action column', () => {
+        const { container } = mount({
+            columns: [
+                { key: 'i', narrow: true },
+                { key: 'id', narrow: true },
+                { key: 'actions', actions: true }
+            ]
+        });
+        expect(elastic(container)).toBe(1);
+    });
+
+    test('a named column wins; a free text column needs no help', () => {
+        expect(elastic(mount({ columns: [{ key: 'a' }, { key: 'b', elastic: true }] }).container)).toBe(1);
+        cleanup();
+        expect(elastic(mount().container)).toBe(-1);
+    });
+});
