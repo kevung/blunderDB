@@ -286,3 +286,36 @@ for (const [name, width, stacked] of [
         });
     });
 }
+
+// The player stays where its placement puts it, at its size, once the draft has settled; beside
+// the board the slot it left in the panel takes no room.
+for (const placement of ['board', 'panel']) {
+    test.describe(`vidéo attachée, placement ${placement}`, () => {
+        test.beforeEach(async ({ page }) => {
+            await page.addInitScript((p) => localStorage.setItem('blunderdb.video.placement', p), placement);
+            await installWailsMock(page, openLibraryMock({ config: { GetPanelPosition: 'bottom', GetTabPanelHeights: { '*': 420 } } }));
+            await installTranscriptionEngine(page, { video: '/videos/match.mp4' });
+            await page.goto('/');
+            await page.locator('[data-testid="tab-transcription"]').click();
+            await page.locator('#transcriptionPanel tbody tr').first().click();
+            await expect(page.locator('[data-testid="video-dock"]')).toBeAttached();
+            await page.keyboard.press('Digit3');
+            await page.keyboard.press('Digit1');
+            await expect(page.locator('[data-testid="transcription-candidates"] tbody tr').first()).toBeAttached();
+        });
+
+        test('le lecteur reste affiché à sa place', async ({ page }) => {
+            const dock = page.locator('[data-testid="video-dock"]');
+            await expect(dock).toHaveAttribute('data-placement', placement);
+            const box = await dock.boundingBox();
+            const rem = await page.evaluate(() => parseFloat(getComputedStyle(document.documentElement).fontSize));
+            expect(box?.height ?? 0).toBeGreaterThanOrEqual(5 * rem - 1);
+        });
+
+        test(placement === 'board' ? 'la fente vide du panneau ne prend aucune place' : 'la fente du panneau tient le lecteur', async ({ page }) => {
+            const slot = await page.locator('#transcriptionPanel .video-slot').boundingBox();
+            if (placement === 'board') expect(slot?.height ?? -1).toBe(0);
+            else expect(slot?.height ?? 0).toBeGreaterThan(0);
+        });
+    });
+}
