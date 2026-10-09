@@ -14,7 +14,7 @@ const BLACK = 0;
  * @param {{from: number, to: number}} step
  * @param {number} mover
  */
-export function stepDistance(step, mover) {
+function stepDistance(step, mover) {
     if (step.to === OFF) return mover === BLACK ? step.from : 25 - step.from;
     return mover === BLACK ? step.from - step.to : step.to - step.from;
 }
@@ -68,25 +68,6 @@ export function spentDice(play, dice) {
 }
 
 /**
- * Which drawn die is spent, left to right. A double is drawn as two dice of two moves each: the
- * left one is spent after two moves, the right one after four.
- * @param {any} play
- * @param {number[]} drawn the roll in the order drawn
- * @returns {boolean[]}
- */
-export function usedDice(play, drawn) {
-    if (!play || !(drawn[0] >= 1)) return [false, false];
-    const spent = spentDice(play, drawn);
-    if (drawn[0] === drawn[1]) return [spent.length >= 2, spent.length >= 4];
-    const used = [false, false];
-    for (const die of spent) {
-        const i = drawn.findIndex((d, k) => d === die && !used[k]);
-        if (i >= 0) used[i] = true;
-    }
-    return used;
-}
-
-/**
  * The dice still to play, in the order drawn.
  * @param {any} play
  * @param {number[]} drawn
@@ -133,7 +114,12 @@ export function diceShade(play, drawn) {
         const n = spentDice(play, drawn).length;
         return [Math.min(n, 2) / 2, Math.max(0, Math.min(n - 2, 2)) / 2];
     }
-    return usedDice(play, drawn).map((u) => (u ? 1 : 0));
+    const shade = [0, 0];
+    for (const die of spentDice(play, drawn)) {
+        const i = drawn.findIndex((d, k) => d === die && !shade[k]);
+        if (i >= 0) shade[i] = 1;
+    }
+    return shade;
 }
 
 /**

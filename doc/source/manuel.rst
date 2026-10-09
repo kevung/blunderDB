@@ -4696,18 +4696,21 @@ pipcount (``P``) et l'aide.
   lance ; seul un clic sur le videau propose de doubler, et le plateau demande « Doubler » ou « Annuler ». Quand
   le videau n'est pas disponible, le lancer est automatique.
 * Face à un double du Bot, le plateau demande « Prendre » ou « Passer ».
-* Un clic sur un pion le joue avec le dé de gauche encore libre, ou avec
-  l'autre quand celui-ci ne peut pas le jouer ; un double se joue en quatre
-  clics. Un pion peut aussi se glisser vers sa destination. Un dé joué est
-  grisé. Seuls passent les pas d'un coup légal.
-* Avant de jouer, un clic sur les dés, ou un clic droit sur le plateau,
-  intervertit leur ordre. Pendant le coup, le clic droit sur le plateau
-  reprend tous les pions joués (``RETOUR ARRIÈRE`` aussi).
+* Un clic sur un pion le joue aussitôt avec le dé de gauche encore libre, ou
+  avec l'autre quand celui-ci ne peut pas le jouer ; un pion sur la barre
+  entre, un double se joue en quatre clics. Un pion peut aussi se glisser
+  vers sa destination. Seuls passent les pas d'un coup légal.
+* Un dé se grise quand il est joué ; sur un double, chaque dé vaut deux pas
+  et se voile à moitié au premier. Le coup complet grise tous les dés, y
+  compris ceux que la règle ne permet pas de jouer.
+* Tant que le coup n'est pas complet, un clic sur les dés intervertit les
+  dés restant à jouer. Le clic droit sur le plateau reprend tous les pions
+  joués (``RETOUR ARRIÈRE`` aussi) ; sans pion joué, il ouvre le menu du Duel.
 * Le coup complet se valide par un clic sur les dés, par « Valider » sur le
   plateau, ou par ``ENTRÉE`` ou ``ESPACE``. Rien ne se reprend après.
 * Le Bot répond aussitôt ; ses coups sont rejoués au plateau, lentement.
-* Le clic droit hors du plateau, ou sur le plateau hors de son coup, ouvre le
-  menu du Duel : mettre la position sur la Pile ou l'en retirer, abandonner la
+* Le clic droit hors du plateau, ou sur le plateau hors de son coup ou sans
+  pion joué, ouvre le menu du Duel : mettre la position sur la Pile ou l'en retirer, abandonner la
   partie pour un simple, un gammon ou un backgammon (à son tour, après
   confirmation), abandonner le match, le mettre en pause, l'annuler. Ce menu
   n'offre ni évaluation ni édition.

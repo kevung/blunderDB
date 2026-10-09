@@ -1014,11 +1014,12 @@ export default {
 <ul>
 <li>Prima del lancio, un clic sulla scacchiera, sui dadi o su una pedina li lancia; solo un clic sul cubo propone di raddoppiare, e la scacchiera chiede «Raddoppia» o «Annulla». Quando il cubo non è disponibile, il lancio è automatico.</li>
 <li>Di fronte a un raddoppio del Bot, la scacchiera chiede «Accetta» o «Rifiuta».</li>
-<li>Un clic su una pedina la gioca con il dado di sinistra ancora libero, o con l'altro quando quello di sinistra non può giocarla; un doppio si gioca con quattro clic. Una pedina può anche essere trascinata verso la sua destinazione. Un dado giocato è attenuato. Passano solo i passi di una mossa legale.</li>
-<li>Prima di giocare, un clic sui dadi, o un clic destro sulla scacchiera, ne inverte l'ordine. Durante la mossa, il clic destro sulla scacchiera riprende tutte le pedine giocate (anche <code>BACKSPACE</code>).</li>
+<li>Un clic su una pedina la gioca subito con il dado di sinistra ancora libero, o con l'altro quando quello di sinistra non può giocarla; una pedina sulla barra entra, un doppio si gioca con quattro clic. Una pedina può anche essere trascinata verso la sua destinazione. Passano solo i passi di una mossa legale.</li>
+<li>Un dado si attenua quando è giocato; su un doppio, ogni dado vale due passi e si vela a metà dopo il primo. La mossa completa attenua tutti i dadi, compresi quelli che la regola non permette di giocare.</li>
+<li>Finché la mossa non è completa, un clic sui dadi inverte i dadi ancora da giocare. Il clic destro sulla scacchiera riprende tutte le pedine giocate (anche <code>BACKSPACE</code>); senza pedine giocate, apre il menu del Duello.</li>
 <li>La mossa completa si convalida con un clic sui dadi, con «Convalida» sulla scacchiera, o con <code>INVIO</code> o <code>SPAZIO</code>. Dopo non si riprende nulla.</li>
 <li>Il Bot risponde subito; le sue mosse vengono rigiocate sul tavoliere, lentamente.</li>
-<li>Il clic destro fuori dalla scacchiera, o sulla scacchiera fuori dalla sua mossa, apre il menu del Duello: mettere la posizione sulla Pila o toglierla, abbandonare la partita per un semplice, un gammon o un backgammon (al proprio turno, dopo conferma), abbandonare il match, metterlo in pausa, annullarlo. Questo menu non offre né valutazione né modifica.</li>
+<li>Il clic destro fuori dalla scacchiera, o sulla scacchiera fuori dalla sua mossa o senza pedine giocate, apre il menu del Duello: mettere la posizione sulla Pila o toglierla, abbandonare la partita per un semplice, un gammon o un backgammon (al proprio turno, dopo conferma), abbandonare il match, metterlo in pausa, annullarlo. Questo menu non offre né valutazione né modifica.</li>
 <li>«Abbandona il match» cede l'intero match, in qualsiasi momento e dopo conferma: la partita in corso va all'avversario per i punti che lo portano alla lunghezza, e il Match viene salvato come vinto da lui. In money, la partita in corso è persa come semplice, al valore del cubo (con o senza regola Jacoby), e la sessione si chiude. Sotto una cadenza che fa perdere il match, una riserva esaurita vale l'abbandono del match da parte di quel giocatore.</li>
 <li>«Metti in pausa» sospende il Duello, orologi fermi; riprende dallo stesso punto. «Annulla il match» lo scarta, dopo conferma: non viene salvato nulla.</li>
 <li>Un doppio clic fuori dalla scacchiera mette la posizione sulla Pila, o la toglie, come <code>B</code>; solo il segnalibro all'angolo della scacchiera lo mostra.</li>
@@ -1432,7 +1433,7 @@ export default {
 </tr>
 <tr>
 <td>Clic su una pedina</td>
-<td>Giocarla con il dado di sinistra ancora libero, o con l'altro se quello di sinistra non può giocarla. Un dado giocato è attenuato.</td>
+<td>Giocarla subito con il dado di sinistra ancora libero, o con l'altro se quello di sinistra non può giocarla. Un dado giocato è attenuato; la mossa completa attenua tutti i dadi.</td>
 </tr>
 <tr>
 <td>Trascinare una pedina</td>
@@ -1440,11 +1441,11 @@ export default {
 </tr>
 <tr>
 <td>Clic sui dadi (mossa in corso)</td>
-<td>Nessun dado giocato: invertirne l'ordine. Mossa completa: convalidarla.</td>
+<td>Mossa completa: convalidarla. Altrimenti: invertire i dadi ancora da giocare.</td>
 </tr>
 <tr>
 <td>Clic destro sulla scacchiera (mossa in corso)</td>
-<td>Riprendere tutte le pedine giocate; senza pedine giocate, invertire i dadi.</td>
+<td>Riprendere tutte le pedine giocate; senza pedine giocate, aprire il menu del Duello.</td>
 </tr>
 <tr>
 <td>Clic destro fuori dalla scacchiera, o fuori dalla sua mossa</td>

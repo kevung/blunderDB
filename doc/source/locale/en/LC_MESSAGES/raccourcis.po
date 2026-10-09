@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-09 02:11+0200\n"
+"POT-Creation-Date: 2026-10-10 00:14+0200\n"
 "PO-Revision-Date: 2025-11-01 23:50+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -690,11 +690,13 @@ msgstr "Click on a checker"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Le jouer avec le dé de gauche encore libre, ou avec l'autre si celui-ci "
-"ne peut pas le jouer. Un dé joué est grisé."
+"Le jouer aussitôt avec le dé de gauche encore libre, ou avec l'autre si "
+"celui-ci ne peut pas le jouer. Un dé joué est grisé ; le coup complet "
+"grise tous les dés."
 msgstr ""
-"Play it with the left die that is still free, or with the other one if "
-"the left die cannot play it. A played die is greyed out."
+"Play it at once with the left die that is still free, or with the other "
+"one if the left die cannot play it. A played die is greyed out; a "
+"complete move greys out every die."
 
 #: ../../source/raccourcis.rst:1
 msgid "Glisser un pion"
@@ -709,16 +711,18 @@ msgid "Clic sur les dés (coup en cours)"
 msgstr "Click on the dice (move in progress)"
 
 #: ../../source/raccourcis.rst:1
-msgid "Aucun dé joué : intervertir leur ordre. Coup complet : le valider."
-msgstr "No die played: swap their order. Complete move: validate it."
+msgid "Coup complet : le valider. Sinon : intervertir les dés restant à jouer."
+msgstr "Complete move: validate it. Otherwise: swap the dice still to be played."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic droit sur le plateau (coup en cours)"
 msgstr "Right-click on the board (move in progress)"
 
 #: ../../source/raccourcis.rst:1
-msgid "Reprendre tous les pions joués ; sans pion joué, intervertir les dés."
-msgstr "Take back all the checkers played; with no checker played, swap the dice."
+msgid "Reprendre tous les pions joués ; sans pion joué, ouvrir le menu du Duel."
+msgstr ""
+"Take back all the checkers played; with no checker played, open the Duel "
+"menu."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic droit hors du plateau, ou hors de son coup"
@@ -2284,3 +2288,6 @@ msgstr "Close the help."
 
 #~ msgid ", / . (vidéo attachée)"
 #~ msgstr ", / . (video attached)"
+
+#~ msgid "Aucun dé joué : intervertir leur ordre. Coup complet : le valider."
+#~ msgstr "No die played: swap their order. Complete move: validate it."

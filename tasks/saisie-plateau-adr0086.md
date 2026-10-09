@@ -20,8 +20,6 @@ sinon les dés de la position. En conséquence :
   tant qu'un mode s'en sert ; la dernière tranche les retire.
 - La documentation utilisateur (`raccourcis.rst`, `manuel.rst`, `.po`) n'a pas changé en T1 :
   chaque tranche décrit la grammaire pour son mode quand elle le bascule.
-- Le Duel garde `usedDice` (sans demi-voile ni dés gris d'un coup partiel) jusqu'à T2, qui passe
-  à `diceShade`.
 
 Plan d'origine :
 
@@ -46,7 +44,15 @@ Plan d'origine :
 - Le clic source/destination bascule ici pour tous les modes : **T1 livre la doc commune**
   (`raccourcis.rst` l. 50-52, menu du plateau ; `manuel.rst` l. ~123-135 ; `.po`).
 
-## T2 — Duel
+## T2 — Duel (faite)
+
+Le Duel arme son coup par `armBoardMove(play, validateMove)` ; l'ordre des dés est celui du coup
+(`play.swapped`), plus `duelBoardStore.swapped`. `usedDice` et `stepDistance` ne sont plus
+exportés (`diceShade` les remplace). Le Duel garde ses propres gestes de plateau (lancer, videau,
+invites) : `boardPress`/`boardContext` délèguent le coup à `diceClick`/`boardRightClick`.
+
+Plan d'origine :
+
 
 - `frontend/src/services/duelBoard.js` : `boardPress`/`boardContext` sur la grammaire de T1 ;
   clic sur les dés pendant le coup intervertit les dés restants ; clic droit sans pas joué :

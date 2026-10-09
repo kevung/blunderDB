@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-09 02:11+0200\n"
+"POT-Creation-Date: 2026-10-10 00:14+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -657,9 +657,10 @@ msgstr "チェッカーをクリック"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Le jouer avec le dé de gauche encore libre, ou avec l'autre si celui-ci "
-"ne peut pas le jouer. Un dé joué est grisé."
-msgstr "まだ空いている左のダイスで動かす。左のダイスで動かせないときはもう一方で動かす。使ったダイスは灰色になる。"
+"Le jouer aussitôt avec le dé de gauche encore libre, ou avec l'autre si "
+"celui-ci ne peut pas le jouer. Un dé joué est grisé ; le coup complet "
+"grise tous les dés."
+msgstr "まだ空いている左のダイスですぐに動かす。左のダイスで動かせないときはもう一方で動かす。使ったダイスは灰色になり、手が完成するとすべてのダイスが灰色になる。"
 
 #: ../../source/raccourcis.rst:1
 msgid "Glisser un pion"
@@ -674,16 +675,16 @@ msgid "Clic sur les dés (coup en cours)"
 msgstr "ダイスをクリック（手の途中）"
 
 #: ../../source/raccourcis.rst:1
-msgid "Aucun dé joué : intervertir leur ordre. Coup complet : le valider."
-msgstr "ダイスを使っていない：順序を入れ替える。手が完成：確定する。"
+msgid "Coup complet : le valider. Sinon : intervertir les dés restant à jouer."
+msgstr "手が完成していれば確定する。そうでなければ、まだ使っていないダイスを入れ替える。"
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic droit sur le plateau (coup en cours)"
 msgstr "盤面を右クリック（手の途中）"
 
 #: ../../source/raccourcis.rst:1
-msgid "Reprendre tous les pions joués ; sans pion joué, intervertir les dés."
-msgstr "動かしたチェッカーをすべて戻す。動かしていなければ、ダイスを入れ替える。"
+msgid "Reprendre tous les pions joués ; sans pion joué, ouvrir le menu du Duel."
+msgstr "動かしたチェッカーをすべて戻す。動かしていなければ、デュエルのメニューを開く。"
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic droit hors du plateau, ou hors de son coup"
@@ -2038,3 +2039,6 @@ msgstr "ヘルプを閉じる。"
 
 #~ msgid ", / . (vidéo attachée)"
 #~ msgstr ", / . (動画添付時)"
+
+#~ msgid "Aucun dé joué : intervertir leur ordre. Coup complet : le valider."
+#~ msgstr "ダイスを使っていない：順序を入れ替える。手が完成：確定する。"

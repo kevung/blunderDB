@@ -1014,11 +1014,12 @@ export default {
 <ul>
 <li>Before the roll, a click on the board, on the dice or on a checker rolls them; only a click on the cube offers to double, and the board asks “Double” or “Cancel”. When the cube is not available, the roll is automatic.</li>
 <li>Facing a double from the Bot, the board asks “Take” or “Pass”.</li>
-<li>A click on a checker plays it with the left die that is still free, or with the other one when the left die cannot play it; a double is played in four clicks. A checker can also be dragged to its destination. A played die is greyed out. Only the steps of a legal move go through.</li>
-<li>Before playing, a click on the dice, or a right-click on the board, swaps their order. During the move, a right-click on the board takes back all the checkers played (<code>BACKSPACE</code> too).</li>
+<li>A click on a checker plays it at once with the left die that is still free, or with the other one when the left die cannot play it; a checker on the bar enters, a double is played in four clicks. A checker can also be dragged to its destination. Only the steps of a legal move go through.</li>
+<li>A die greys out when it is played; on a double, each die stands for two steps and is half veiled after the first. A complete move greys out every die, including those the rules do not allow to be played.</li>
+<li>As long as the move is not complete, a click on the dice swaps the dice still to be played. A right-click on the board takes back all the checkers played (<code>BACKSPACE</code> too); with no checker played, it opens the Duel menu.</li>
 <li>The complete move is validated by a click on the dice, by “Validate” on the board, or by <code>ENTER</code> or <code>SPACE</code>. Nothing can be taken back afterwards.</li>
 <li>The Bot answers immediately; its moves are replayed on the board, slowly.</li>
-<li>A right-click outside the board, or on the board outside its move, opens the Duel menu: put the position on the Pile or take it off, resign the game for a single game, a gammon or a backgammon (on one's turn, after confirmation), forfeit the match, pause it, cancel it. This menu offers neither evaluation nor editing.</li>
+<li>A right-click outside the board, or on the board outside its move or with no checker played, opens the Duel menu: put the position on the Pile or take it off, resign the game for a single game, a gammon or a backgammon (on one's turn, after confirmation), forfeit the match, pause it, cancel it. This menu offers neither evaluation nor editing.</li>
 <li>"Forfeit match" gives the whole match up, at any moment and after confirmation: the game in progress goes to the opponent for the points that bring them to the length, and the Match is written as won by them. In money play, the game in progress is lost as a single game at the cube's value (Jacoby rule or not) and the session ends. Under a time control that loses the match, a reserve that runs out counts as that player forfeiting the match.</li>
 <li>"Pause match" puts the Duel on hold, clocks stopped; it resumes where it stopped. "Cancel match" discards it, after confirmation: nothing of it is written.</li>
 <li>A double-click outside the board puts the position on the Pile, or takes it off, like <code>B</code>; only the bookmark in the corner of the board shows it.</li>
@@ -1432,7 +1433,7 @@ export default {
 </tr>
 <tr>
 <td>Click on a checker</td>
-<td>Play it with the left die that is still free, or with the other one if the left die cannot play it. A played die is greyed out.</td>
+<td>Play it at once with the left die that is still free, or with the other one if the left die cannot play it. A played die is greyed out; a complete move greys out every die.</td>
 </tr>
 <tr>
 <td>Drag a checker</td>
@@ -1440,11 +1441,11 @@ export default {
 </tr>
 <tr>
 <td>Click on the dice (move in progress)</td>
-<td>No die played: swap their order. Complete move: validate it.</td>
+<td>Complete move: validate it. Otherwise: swap the dice still to be played.</td>
 </tr>
 <tr>
 <td>Right-click on the board (move in progress)</td>
-<td>Take back all the checkers played; with no checker played, swap the dice.</td>
+<td>Take back all the checkers played; with no checker played, open the Duel menu.</td>
 </tr>
 <tr>
 <td>Right-click outside the board, or outside its move</td>

@@ -1014,11 +1014,12 @@ export default {
 <ul>
 <li>Avant le lancer, un clic sur le plateau, sur les dés ou sur un pion les lance ; seul un clic sur le videau propose de doubler, et le plateau demande « Doubler » ou « Annuler ». Quand le videau n'est pas disponible, le lancer est automatique.</li>
 <li>Face à un double du Bot, le plateau demande « Prendre » ou « Passer ».</li>
-<li>Un clic sur un pion le joue avec le dé de gauche encore libre, ou avec l'autre quand celui-ci ne peut pas le jouer ; un double se joue en quatre clics. Un pion peut aussi se glisser vers sa destination. Un dé joué est grisé. Seuls passent les pas d'un coup légal.</li>
-<li>Avant de jouer, un clic sur les dés, ou un clic droit sur le plateau, intervertit leur ordre. Pendant le coup, le clic droit sur le plateau reprend tous les pions joués (<code>RETOUR ARRIÈRE</code> aussi).</li>
+<li>Un clic sur un pion le joue aussitôt avec le dé de gauche encore libre, ou avec l'autre quand celui-ci ne peut pas le jouer ; un pion sur la barre entre, un double se joue en quatre clics. Un pion peut aussi se glisser vers sa destination. Seuls passent les pas d'un coup légal.</li>
+<li>Un dé se grise quand il est joué ; sur un double, chaque dé vaut deux pas et se voile à moitié au premier. Le coup complet grise tous les dés, y compris ceux que la règle ne permet pas de jouer.</li>
+<li>Tant que le coup n'est pas complet, un clic sur les dés intervertit les dés restant à jouer. Le clic droit sur le plateau reprend tous les pions joués (<code>RETOUR ARRIÈRE</code> aussi) ; sans pion joué, il ouvre le menu du Duel.</li>
 <li>Le coup complet se valide par un clic sur les dés, par « Valider » sur le plateau, ou par <code>ENTRÉE</code> ou <code>ESPACE</code>. Rien ne se reprend après.</li>
 <li>Le Bot répond aussitôt ; ses coups sont rejoués au plateau, lentement.</li>
-<li>Le clic droit hors du plateau, ou sur le plateau hors de son coup, ouvre le menu du Duel : mettre la position sur la Pile ou l'en retirer, abandonner la partie pour un simple, un gammon ou un backgammon (à son tour, après confirmation), abandonner le match, le mettre en pause, l'annuler. Ce menu n'offre ni évaluation ni édition.</li>
+<li>Le clic droit hors du plateau, ou sur le plateau hors de son coup ou sans pion joué, ouvre le menu du Duel : mettre la position sur la Pile ou l'en retirer, abandonner la partie pour un simple, un gammon ou un backgammon (à son tour, après confirmation), abandonner le match, le mettre en pause, l'annuler. Ce menu n'offre ni évaluation ni édition.</li>
 <li>« Abandonner le match » cède le match entier, à tout moment et après confirmation : la partie en cours va à l'adversaire pour les points qui le portent à la longueur, et le Match s'écrit gagné par lui. En argent, la partie en cours est perdue en simple, à la valeur du videau (avec ou sans règle Jacoby), et la session se clôt. Sous une cadence qui fait perdre le match, une réserve épuisée vaut l'abandon du match par ce joueur.</li>
 <li>« Mettre en pause » met le Duel en suspens, horloges arrêtées ; il se reprend au même point. « Annuler le match » le jette, après confirmation : rien n'en est écrit.</li>
 <li>Un double-clic hors du plateau met la position sur la Pile, ou l'en retire, comme <code>B</code> ; seul le marque-page au coin du plateau le montre.</li>
@@ -1432,7 +1433,7 @@ export default {
 </tr>
 <tr>
 <td>Clic sur un pion</td>
-<td>Le jouer avec le dé de gauche encore libre, ou avec l'autre si celui-ci ne peut pas le jouer. Un dé joué est grisé.</td>
+<td>Le jouer aussitôt avec le dé de gauche encore libre, ou avec l'autre si celui-ci ne peut pas le jouer. Un dé joué est grisé ; le coup complet grise tous les dés.</td>
 </tr>
 <tr>
 <td>Glisser un pion</td>
@@ -1440,11 +1441,11 @@ export default {
 </tr>
 <tr>
 <td>Clic sur les dés (coup en cours)</td>
-<td>Aucun dé joué : intervertir leur ordre. Coup complet : le valider.</td>
+<td>Coup complet : le valider. Sinon : intervertir les dés restant à jouer.</td>
 </tr>
 <tr>
 <td>Clic droit sur le plateau (coup en cours)</td>
-<td>Reprendre tous les pions joués ; sans pion joué, intervertir les dés.</td>
+<td>Reprendre tous les pions joués ; sans pion joué, ouvrir le menu du Duel.</td>
 </tr>
 <tr>
 <td>Clic droit hors du plateau, ou hors de son coup</td>

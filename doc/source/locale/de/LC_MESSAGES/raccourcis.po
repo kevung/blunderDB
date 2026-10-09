@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-09 02:11+0200\n"
+"POT-Creation-Date: 2026-10-10 00:14+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -704,11 +704,13 @@ msgstr "Klick auf einen Stein"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Le jouer avec le dé de gauche encore libre, ou avec l'autre si celui-ci "
-"ne peut pas le jouer. Un dé joué est grisé."
+"Le jouer aussitôt avec le dé de gauche encore libre, ou avec l'autre si "
+"celui-ci ne peut pas le jouer. Un dé joué est grisé ; le coup complet "
+"grise tous les dés."
 msgstr ""
-"Ihn mit dem linken noch freien Würfel spielen oder mit dem anderen, wenn "
-"der linke ihn nicht spielen kann. Ein gespielter Würfel wird ausgegraut."
+"Ihn sofort mit dem linken noch freien Würfel spielen oder mit dem "
+"anderen, wenn der linke ihn nicht spielen kann. Ein gespielter Würfel "
+"wird ausgegraut; der vollständige Zug graut alle Würfel aus."
 
 #: ../../source/raccourcis.rst:1
 msgid "Glisser un pion"
@@ -725,20 +727,20 @@ msgid "Clic sur les dés (coup en cours)"
 msgstr "Klick auf die Würfel (Zug läuft)"
 
 #: ../../source/raccourcis.rst:1
-msgid "Aucun dé joué : intervertir leur ordre. Coup complet : le valider."
+msgid "Coup complet : le valider. Sinon : intervertir les dés restant à jouer."
 msgstr ""
-"Kein Würfel gespielt: ihre Reihenfolge vertauschen. Vollständiger Zug: "
-"ihn bestätigen."
+"Vollständiger Zug: ihn bestätigen. Sonst: die noch zu spielenden Würfel "
+"vertauschen."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic droit sur le plateau (coup en cours)"
 msgstr "Rechtsklick auf das Brett (Zug läuft)"
 
 #: ../../source/raccourcis.rst:1
-msgid "Reprendre tous les pions joués ; sans pion joué, intervertir les dés."
+msgid "Reprendre tous les pions joués ; sans pion joué, ouvrir le menu du Duel."
 msgstr ""
-"Alle gespielten Steine zurücknehmen; ohne gespielten Stein die Würfel "
-"vertauschen."
+"Alle gespielten Steine zurücknehmen; ohne gespielten Stein das Duell-Menü"
+" öffnen."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic droit hors du plateau, ou hors de son coup"
@@ -2341,3 +2343,9 @@ msgstr "Hilfe schließen."
 
 #~ msgid ", / . (vidéo attachée)"
 #~ msgstr ", / . (Video angehängt)"
+
+#~ msgid "Aucun dé joué : intervertir leur ordre. Coup complet : le valider."
+#~ msgstr ""
+#~ "Kein Würfel gespielt: ihre Reihenfolge "
+#~ "vertauschen. Vollständiger Zug: ihn "
+#~ "bestätigen."

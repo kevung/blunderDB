@@ -6,7 +6,7 @@
  */
 import { describe, test, expect } from 'vitest';
 import { newPlay, OFF } from '../services/quizPlay.js';
-import { boardRightClick, diceClick, diceLeft, diceShade, orderedDice, playClickedChecker, playIsDone } from '../services/boardMove.js';
+import { boardRightClick, diceClick, diceLeft, diceShade, landing, orderedDice, playClickedChecker, playIsDone, spentDice } from '../services/boardMove.js';
 
 /** @param {[number, number][]} pairs */
 const steps = (pairs) => pairs.map(([from, to]) => ({ from, to }));
@@ -109,6 +109,60 @@ describe('un clic sur un pion', () => {
         const play = playClickedChecker(newPlay(pos, legal), 3, [6, 1]);
         expect(play.steps).toEqual([{ from: 3, to: OFF, die: 6 }]);
         expect(play.board.points[3].checkers).toBe(0);
+    });
+
+    test('un pion sur la barre entre du dé de gauche, sinon de l’autre', () => {
+        // 4-2, un pion de Noir sur la barre (25) : tout coup légal commence par l'entrée.
+        const pos = position({ 25: [1, 0], 13: [5, 0] }, [4, 2]);
+        const legal = plays([
+            [
+                [25, 21],
+                [21, 19]
+            ],
+            [
+                [25, 21],
+                [13, 11]
+            ],
+            [
+                [25, 23],
+                [13, 9]
+            ]
+        ]);
+        const play = newPlay(pos, legal);
+        expect(playClickedChecker(play, 25, [4, 2]).steps).toEqual([{ from: 25, to: 21, die: 4 }]);
+        // Le 21 fermé par Blanc : le 4 n'entre pas, le 2 est essayé.
+        const blocked = newPlay(
+            position({ 25: [1, 0], 13: [5, 0], 21: [2, 1] }, [4, 2]),
+            plays([
+                [
+                    [25, 23],
+                    [13, 9]
+                ]
+            ])
+        );
+        expect(playClickedChecker(blocked, 25, [4, 2]).steps).toEqual([{ from: 25, to: 23, die: 2 }]);
+    });
+
+    test('règle du plus grand dé : le petit dé à gauche est refusé, le grand joue, et le coup partiel est achevé', () => {
+        // 6-3, un seul pion de Noir : le 6 ou le 3 se joue, jamais les deux ; la règle impose le 6.
+        const pos = position({ 13: [1, 0], 4: [2, 1] }, [6, 3]);
+        let play = newPlay(pos, plays([[[13, 7]]]));
+        const drawn = orderedDice([6, 3], true);
+        expect(drawn).toEqual([3, 6]);
+        play = playClickedChecker(play, 13, drawn);
+        expect(play.steps).toEqual([{ from: 13, to: 7, die: 6 }]);
+        expect(playIsDone(play, drawn)).toBe(true);
+        expect(diceShade(play, drawn)).toEqual([1, 1]);
+        expect(diceClick(play, drawn)).toBe('validate');
+        expect(playClickedChecker(play, 7, drawn)).toBe(play);
+    });
+
+    test('un pas glissé ne porte pas de dé : il est lu de sa distance, une sortie prend le plus petit dé qui suffit', () => {
+        expect(spentDice({ mover: 0, steps: [{ from: 3, to: OFF }] }, [6, 4])).toEqual([4]);
+        expect(spentDice({ mover: 1, steps: [{ from: 22, to: OFF }] }, [6, 4])).toEqual([4]);
+        expect(spentDice({ mover: 0, steps: [{ from: 3, to: OFF, die: 6 }] }, [6, 4])).toEqual([6]);
+        expect(landing(3, 5, 0)).toBe(OFF);
+        expect(landing(22, 4, 1)).toBe(OFF);
     });
 });
 

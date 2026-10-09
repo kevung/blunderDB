@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-09 02:11+0200\n"
+"POT-Creation-Date: 2026-10-10 00:14+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -693,11 +693,13 @@ msgstr "Щелчок по шашке"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Le jouer avec le dé de gauche encore libre, ou avec l'autre si celui-ci "
-"ne peut pas le jouer. Un dé joué est grisé."
+"Le jouer aussitôt avec le dé de gauche encore libre, ou avec l'autre si "
+"celui-ci ne peut pas le jouer. Un dé joué est grisé ; le coup complet "
+"grise tous les dés."
 msgstr ""
-"Сыграть её левой ещё свободной костью или другой, если левая не может её "
-"сыграть. Сыгранная кость затемняется."
+"Сразу сыграть её левой ещё свободной костью или другой, если левая не "
+"может её сыграть. Сыгранная кость затемняется; завершённый ход затемняет "
+"все кости."
 
 #: ../../source/raccourcis.rst:1
 msgid "Glisser un pion"
@@ -712,20 +714,18 @@ msgid "Clic sur les dés (coup en cours)"
 msgstr "Щелчок по костям (ход в процессе)"
 
 #: ../../source/raccourcis.rst:1
-msgid "Aucun dé joué : intervertir leur ordre. Coup complet : le valider."
+msgid "Coup complet : le valider. Sinon : intervertir les dés restant à jouer."
 msgstr ""
-"Ни одна кость не сыграна: поменять их порядок. Полный ход: подтвердить "
-"его."
+"Завершённый ход: подтвердить его. Иначе: поменять местами кости, которые "
+"ещё предстоит сыграть."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic droit sur le plateau (coup en cours)"
 msgstr "Щелчок правой кнопкой по доске (ход в процессе)"
 
 #: ../../source/raccourcis.rst:1
-msgid "Reprendre tous les pions joués ; sans pion joué, intervertir les dés."
-msgstr ""
-"Вернуть все сыгранные шашки; если ни одной не сыграно, поменять кости "
-"местами."
+msgid "Reprendre tous les pions joués ; sans pion joué, ouvrir le menu du Duel."
+msgstr "Вернуть все сыгранные шашки; если ни одной не сыграно, открыть меню Дуэли."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic droit hors du plateau, ou hors de son coup"
@@ -2276,3 +2276,8 @@ msgstr "Закрыть справку."
 
 #~ msgid ", / . (vidéo attachée)"
 #~ msgstr ", / . (видео прикреплено)"
+
+#~ msgid "Aucun dé joué : intervertir leur ordre. Coup complet : le valider."
+#~ msgstr ""
+#~ "Ни одна кость не сыграна: поменять "
+#~ "их порядок. Полный ход: подтвердить его."

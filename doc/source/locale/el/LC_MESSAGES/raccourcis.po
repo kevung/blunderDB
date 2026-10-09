@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-09 02:11+0200\n"
+"POT-Creation-Date: 2026-10-10 00:14+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -700,11 +700,13 @@ msgstr "Κλικ σε πούλι"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Le jouer avec le dé de gauche encore libre, ou avec l'autre si celui-ci "
-"ne peut pas le jouer. Un dé joué est grisé."
+"Le jouer aussitôt avec le dé de gauche encore libre, ou avec l'autre si "
+"celui-ci ne peut pas le jouer. Un dé joué est grisé ; le coup complet "
+"grise tous les dés."
 msgstr ""
-"Παίζεται με το αριστερό ζάρι που είναι ακόμη ελεύθερο, ή με το άλλο αν το"
-" αριστερό δεν μπορεί να το παίξει. Ένα ζάρι που παίχτηκε γκριζάρει."
+"Παίζεται αμέσως με το αριστερό ζάρι που είναι ακόμη ελεύθερο, ή με το "
+"άλλο αν το αριστερό δεν μπορεί να το παίξει. Ένα ζάρι που παίχτηκε "
+"γκριζάρει· η ολοκληρωμένη κίνηση γκριζάρει όλα τα ζάρια."
 
 #: ../../source/raccourcis.rst:1
 msgid "Glisser un pion"
@@ -719,20 +721,20 @@ msgid "Clic sur les dés (coup en cours)"
 msgstr "Κλικ στα ζάρια (κίνηση σε εξέλιξη)"
 
 #: ../../source/raccourcis.rst:1
-msgid "Aucun dé joué : intervertir leur ordre. Coup complet : le valider."
+msgid "Coup complet : le valider. Sinon : intervertir les dés restant à jouer."
 msgstr ""
-"Κανένα ζάρι δεν παίχτηκε: αντιστροφή της σειράς τους. Πλήρης κίνηση: "
-"επικύρωσή της."
+"Ολοκληρωμένη κίνηση: επικύρωσή της. Αλλιώς: αντιστροφή των ζαριών που "
+"μένουν να παιχτούν."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic droit sur le plateau (coup en cours)"
 msgstr "Δεξί κλικ στη σκακιέρα (κίνηση σε εξέλιξη)"
 
 #: ../../source/raccourcis.rst:1
-msgid "Reprendre tous les pions joués ; sans pion joué, intervertir les dés."
+msgid "Reprendre tous les pions joués ; sans pion joué, ouvrir le menu du Duel."
 msgstr ""
 "Επαναφορά όλων των πουλιών που παίχτηκαν· χωρίς πούλι που παίχτηκε, "
-"αντιστροφή των ζαριών."
+"άνοιγμα του μενού της Μονομαχίας."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic droit hors du plateau, ou hors de son coup"
@@ -2342,3 +2344,9 @@ msgstr "Κλείσιμο της βοήθειας."
 
 #~ msgid ", / . (vidéo attachée)"
 #~ msgstr ", / . (επισυναπτόμενο βίντεο)"
+
+#~ msgid "Aucun dé joué : intervertir leur ordre. Coup complet : le valider."
+#~ msgstr ""
+#~ "Κανένα ζάρι δεν παίχτηκε: αντιστροφή της"
+#~ " σειράς τους. Πλήρης κίνηση: επικύρωσή "
+#~ "της."

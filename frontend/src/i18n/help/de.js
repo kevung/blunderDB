@@ -1014,11 +1014,12 @@ export default {
 <ul>
 <li>Vor dem Wurf würfelt ein Klick auf das Brett, auf die Würfel oder auf einen Stein; nur ein Klick auf den Doppler schlägt ein Doppeln vor, und das Brett fragt „Doppeln“ oder „Abbrechen“. Wenn der Doppler nicht verfügbar ist, erfolgt der Wurf automatisch.</li>
 <li>Bei einem Doppeln des Bots fragt das Brett „Annehmen“ oder „Aufgeben“.</li>
-<li>Ein Klick auf einen Stein spielt ihn mit dem linken noch freien Würfel oder mit dem anderen, wenn der linke ihn nicht spielen kann; ein Pasch wird mit vier Klicks gespielt. Ein Stein kann auch an sein Ziel gezogen werden. Ein gespielter Würfel wird ausgegraut. Nur die Schritte eines legalen Zugs gehen durch.</li>
-<li>Vor dem Spielen vertauscht ein Klick auf die Würfel oder ein Rechtsklick auf das Brett ihre Reihenfolge. Während des Zugs nimmt der Rechtsklick auf das Brett alle gespielten Steine zurück (<code>RÜCKTASTE</code> ebenso).</li>
+<li>Ein Klick auf einen Stein spielt ihn sofort mit dem linken noch freien Würfel oder mit dem anderen, wenn der linke ihn nicht spielen kann; ein Stein auf der Bar kommt herein, ein Pasch wird mit vier Klicks gespielt. Ein Stein kann auch an sein Ziel gezogen werden. Nur die Schritte eines legalen Zugs gehen durch.</li>
+<li>Ein Würfel wird ausgegraut, sobald er gespielt ist; bei einem Pasch zählt jeder Würfel zwei Schritte und wird nach dem ersten halb verschleiert. Der vollständige Zug graut alle Würfel aus, auch jene, die die Regel nicht spielen lässt.</li>
+<li>Solange der Zug nicht vollständig ist, vertauscht ein Klick auf die Würfel die noch zu spielenden Würfel. Der Rechtsklick auf das Brett nimmt alle gespielten Steine zurück (<code>RÜCKTASTE</code> ebenso); ohne gespielten Stein öffnet er das Duell-Menü.</li>
 <li>Der vollständige Zug wird durch einen Klick auf die Würfel, durch „Bestätigen“ auf dem Brett oder durch <code>EINGABE</code> oder <code>LEERTASTE</code> bestätigt. Danach lässt sich nichts mehr zurücknehmen.</li>
 <li>Der Bot antwortet sofort; seine Züge werden auf dem Brett langsam nachgespielt.</li>
-<li>Der Rechtsklick außerhalb des Bretts oder auf dem Brett außerhalb seines Zugs öffnet das Duell-Menü: die Stellung auf den Stapel legen oder davon nehmen, das Spiel als einfaches Spiel, Gammon oder Backgammon aufgeben (am Zug, nach Bestätigung), das Match aufgeben, es pausieren, es abbrechen. Dieses Menü bietet weder Auswertung noch Bearbeitung.</li>
+<li>Der Rechtsklick außerhalb des Bretts oder auf dem Brett außerhalb seines Zugs oder ohne gespielten Stein öffnet das Duell-Menü: die Stellung auf den Stapel legen oder davon nehmen, das Spiel als einfaches Spiel, Gammon oder Backgammon aufgeben (am Zug, nach Bestätigung), das Match aufgeben, es pausieren, es abbrechen. Dieses Menü bietet weder Auswertung noch Bearbeitung.</li>
 <li>„Match aufgeben“ gibt das ganze Match auf, jederzeit und nach Bestätigung: Das laufende Spiel geht an den Gegner, mit den Punkten, die ihn auf die Matchlänge bringen, und das Match wird als von ihm gewonnen gespeichert. Im Geldspiel ist das laufende Spiel als einfaches Spiel zum Wert des Dopplers verloren (mit oder ohne Jacoby-Regel), und die Session endet. Unter einer Bedenkzeit, die das Match verlieren lässt, gilt eine abgelaufene Reserve als Aufgabe des Matches durch diesen Spieler.</li>
 <li>„Match pausieren“ unterbricht das Duell, die Uhren stehen; es wird an derselben Stelle fortgesetzt. „Match abbrechen“ verwirft es nach Bestätigung: Nichts davon wird gespeichert.</li>
 <li>Ein Doppelklick außerhalb des Bretts legt die Stellung auf den Stapel oder nimmt sie davon herunter, wie <code>B</code>; nur das Lesezeichen in der Ecke des Bretts zeigt es.</li>
@@ -1432,7 +1433,7 @@ export default {
 </tr>
 <tr>
 <td>Klick auf einen Stein</td>
-<td>Ihn mit dem linken noch freien Würfel spielen oder mit dem anderen, wenn der linke ihn nicht spielen kann. Ein gespielter Würfel wird ausgegraut.</td>
+<td>Ihn sofort mit dem linken noch freien Würfel spielen oder mit dem anderen, wenn der linke ihn nicht spielen kann. Ein gespielter Würfel wird ausgegraut; der vollständige Zug graut alle Würfel aus.</td>
 </tr>
 <tr>
 <td>Einen Stein ziehen</td>
@@ -1440,11 +1441,11 @@ export default {
 </tr>
 <tr>
 <td>Klick auf die Würfel (Zug läuft)</td>
-<td>Kein Würfel gespielt: ihre Reihenfolge vertauschen. Vollständiger Zug: ihn bestätigen.</td>
+<td>Vollständiger Zug: ihn bestätigen. Sonst: die noch zu spielenden Würfel vertauschen.</td>
 </tr>
 <tr>
 <td>Rechtsklick auf das Brett (Zug läuft)</td>
-<td>Alle gespielten Steine zurücknehmen; ohne gespielten Stein die Würfel vertauschen.</td>
+<td>Alle gespielten Steine zurücknehmen; ohne gespielten Stein das Duell-Menü öffnen.</td>
 </tr>
 <tr>
 <td>Rechtsklick außerhalb des Bretts oder außerhalb seines Zugs</td>

@@ -1014,11 +1014,12 @@ export default {
 <ul>
 <li>Ennen heittoa lautaan, noppiin tai nappulaan napsauttaminen heittää ne; vain kuutioon napsauttaminen ehdottaa tuplausta, ja lauta kysyy ”Tuplaa” tai ”Peruuta”. Kun kuutio ei ole käytettävissä, heitto tapahtuu automaattisesti.</li>
 <li>Botin tuplauksen edessä lauta kysyy ”Ota vastaan” tai ”Luovuta”.</li>
-<li>Napsautus nappulaan pelaa sen vasemmalla vielä vapaalla nopalla tai toisella, kun vasen ei voi pelata sitä; tuplaheitto pelataan neljällä napsautuksella. Nappulan voi myös vetää kohteeseensa. Pelattu noppa harmaantuu. Vain laillisen siirron askeleet menevät läpi.</li>
-<li>Ennen pelaamista noppiin napsauttaminen tai oikea napsautus laudalla vaihtaa niiden järjestyksen. Siirron aikana oikea napsautus laudalla ottaa takaisin kaikki pelatut nappulat (myös <code>BACKSPACE</code>).</li>
+<li>Napsautus nappulaan pelaa sen heti vasemmalla vielä vapaalla nopalla tai toisella, kun vasen ei voi pelata sitä; barilla oleva nappula tulee sisään, tuplaheitto pelataan neljällä napsautuksella. Nappulan voi myös vetää kohteeseensa. Vain laillisen siirron askeleet menevät läpi.</li>
+<li>Noppa harmaantuu, kun se on pelattu; tuplaheitossa kumpikin noppa vastaa kahta askelta ja himmenee puoliksi ensimmäisen jälkeen. Valmis siirto harmaannuttaa kaikki nopat, myös ne, joita sääntö ei salli pelata.</li>
+<li>Niin kauan kuin siirto ei ole valmis, noppiin napsauttaminen vaihtaa vielä pelaamatta olevien noppien järjestyksen. Oikea napsautus laudalla ottaa takaisin kaikki pelatut nappulat (myös <code>BACKSPACE</code>); jos nappuloita ei ole pelattu, se avaa Kaksintaistelun valikon.</li>
 <li>Täysi siirto vahvistetaan napsauttamalla noppia, painikkeella ”Vahvista” laudalla tai näppäimellä <code>ENTER</code> tai <code>VÄLILYÖNTI</code>. Sen jälkeen mitään ei voi ottaa takaisin.</li>
 <li>Botti vastaa heti; sen siirrot toistetaan laudalla hitaasti.</li>
-<li>Oikea napsautus laudan ulkopuolella tai laudalla siirron ulkopuolella avaa Kaksintaistelun valikon: aseman lisääminen pinoon tai poistaminen sieltä, pelin luovuttaminen yksinkertaisena, gammonina tai backgammonina (omalla vuorolla, vahvistuksen jälkeen), ottelun luovuttaminen, tauotus, peruminen. Valikko ei tarjoa arviointia eikä muokkausta.</li>
+<li>Oikea napsautus laudan ulkopuolella tai laudalla siirron ulkopuolella tai kun nappuloita ei ole pelattu avaa Kaksintaistelun valikon: aseman lisääminen pinoon tai poistaminen sieltä, pelin luovuttaminen yksinkertaisena, gammonina tai backgammonina (omalla vuorolla, vahvistuksen jälkeen), ottelun luovuttaminen, tauotus, peruminen. Valikko ei tarjoa arviointia eikä muokkausta.</li>
 <li>”Luovuta ottelu” luovuttaa koko ottelun milloin tahansa vahvistuksen jälkeen: käynnissä oleva peli menee vastustajalle niillä pisteillä, jotka vievät hänet ottelun pituuteen, ja ottelu tallennetaan hänen voittamakseen. Rahapelissä käynnissä oleva peli hävitään yksinkertaisena kuution arvolla (Jacoby-säännöllä tai ilman) ja sessio päättyy. Ottelun häviämiseen johtavalla aikataululla loppunut varaus vastaa sitä, että pelaaja luovuttaa ottelun.</li>
 <li>”Tauota ottelu” keskeyttää kaksintaistelun kellot pysäytettyinä; se jatkuu samasta kohdasta. ”Peru ottelu” hylkää sen vahvistuksen jälkeen: mitään ei tallenneta.</li>
 <li>Kaksoisnapsautus laudan ulkopuolella lisää aseman pinoon tai poistaa sen sieltä kuten <code>B</code>; vain laudan kulmassa oleva kirjanmerkki näyttää sen.</li>
@@ -1432,7 +1433,7 @@ export default {
 </tr>
 <tr>
 <td>Napsautus nappulaan</td>
-<td>Sen pelaaminen vasemmalla vielä vapaalla nopalla tai toisella, jos vasen ei voi pelata sitä. Pelattu noppa harmaantuu.</td>
+<td>Sen pelaaminen heti vasemmalla vielä vapaalla nopalla tai toisella, jos vasen ei voi pelata sitä. Pelattu noppa harmaantuu; valmis siirto harmaannuttaa kaikki nopat.</td>
 </tr>
 <tr>
 <td>Nappulan vetäminen</td>
@@ -1440,11 +1441,11 @@ export default {
 </tr>
 <tr>
 <td>Napsautus noppiin (siirto kesken)</td>
-<td>Yhtään noppaa ei pelattu: niiden järjestyksen vaihto. Täysi siirto: sen vahvistus.</td>
+<td>Valmis siirto: sen vahvistaminen. Muuten: vielä pelaamatta olevien noppien vaihto.</td>
 </tr>
 <tr>
 <td>Oikea napsautus laudalla (siirto kesken)</td>
-<td>Kaikkien pelattujen nappuloiden takaisinotto; jos nappuloita ei ole pelattu, noppien vaihto.</td>
+<td>Kaikkien pelattujen nappuloiden takaisinotto; jos nappuloita ei ole pelattu, Kaksintaistelun valikon avaaminen.</td>
 </tr>
 <tr>
 <td>Oikea napsautus laudan ulkopuolella tai siirron ulkopuolella</td>

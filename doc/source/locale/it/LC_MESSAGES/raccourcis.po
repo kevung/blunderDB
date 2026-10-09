@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-09 02:11+0200\n"
+"POT-Creation-Date: 2026-10-10 00:14+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -698,11 +698,13 @@ msgstr "Clic su una pedina"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Le jouer avec le dé de gauche encore libre, ou avec l'autre si celui-ci "
-"ne peut pas le jouer. Un dé joué est grisé."
+"Le jouer aussitôt avec le dé de gauche encore libre, ou avec l'autre si "
+"celui-ci ne peut pas le jouer. Un dé joué est grisé ; le coup complet "
+"grise tous les dés."
 msgstr ""
-"Giocarla con il dado di sinistra ancora libero, o con l'altro se quello "
-"di sinistra non può giocarla. Un dado giocato è attenuato."
+"Giocarla subito con il dado di sinistra ancora libero, o con l'altro se "
+"quello di sinistra non può giocarla. Un dado giocato è attenuato; la "
+"mossa completa attenua tutti i dadi."
 
 #: ../../source/raccourcis.rst:1
 msgid "Glisser un pion"
@@ -719,18 +721,20 @@ msgid "Clic sur les dés (coup en cours)"
 msgstr "Clic sui dadi (mossa in corso)"
 
 #: ../../source/raccourcis.rst:1
-msgid "Aucun dé joué : intervertir leur ordre. Coup complet : le valider."
-msgstr "Nessun dado giocato: invertirne l'ordine. Mossa completa: convalidarla."
+msgid "Coup complet : le valider. Sinon : intervertir les dés restant à jouer."
+msgstr ""
+"Mossa completa: convalidarla. Altrimenti: invertire i dadi ancora da "
+"giocare."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic droit sur le plateau (coup en cours)"
 msgstr "Clic destro sulla scacchiera (mossa in corso)"
 
 #: ../../source/raccourcis.rst:1
-msgid "Reprendre tous les pions joués ; sans pion joué, intervertir les dés."
+msgid "Reprendre tous les pions joués ; sans pion joué, ouvrir le menu du Duel."
 msgstr ""
-"Riprendere tutte le pedine giocate; senza pedine giocate, invertire i "
-"dadi."
+"Riprendere tutte le pedine giocate; senza pedine giocate, aprire il menu "
+"del Duello."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic droit hors du plateau, ou hors de son coup"
@@ -2313,3 +2317,6 @@ msgstr "Chiudi la guida."
 
 #~ msgid ", / . (vidéo attachée)"
 #~ msgstr ", / . (video allegato)"
+
+#~ msgid "Aucun dé joué : intervertir leur ordre. Coup complet : le valider."
+#~ msgstr "Nessun dado giocato: invertirne l'ordine. Mossa completa: convalidarla."

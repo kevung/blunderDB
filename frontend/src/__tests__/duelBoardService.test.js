@@ -54,7 +54,7 @@ function open(awaiting) {
 }
 
 beforeEach(() => {
-    duelBoardStore.set({ swapped: false, prompt: null });
+    duelBoardStore.set({ prompt: null });
     duelAnimatingStore.set(false);
     quizPlayStore.set(null);
 });
@@ -97,17 +97,39 @@ describe('the board’s gestures reach the Arbiter', () => {
         expect(PlayDuel).toHaveBeenCalledWith(4, 7, { side: 0, kind: 'double' });
     });
 
-    test('checkers move on the board, a right click takes them back, then swaps the dice', () => {
+    test('checkers move on the board, a right click takes them back, then opens the menu', () => {
         open({ side: 0, kind: 'move', position: opening });
         quizPlayStore.set(newPlay(opening, plays));
         duelBoardPress({ kind: 'point', point: 8 });
         expect(/** @type {any} */ (get(quizPlayStore)).steps).toHaveLength(1);
         expect(duelBoardContextMenu({ kind: 'point', point: 13 })).toBe(false);
         expect(/** @type {any} */ (get(quizPlayStore)).steps).toHaveLength(0);
-        expect(duelBoardContextMenu({ kind: 'point', point: 13 })).toBe(false);
-        expect(get(duelBoardStore).swapped).toBe(true);
+        expect(duelBoardContextMenu({ kind: 'point', point: 13 })).toBe(true);
         // Outside the frame: the menu.
         expect(duelBoardContextMenu({ kind: 'outside' })).toBe(true);
+    });
+
+    test('a click on the dice swaps them, before or during the play; a take-back keeps the order', () => {
+        open({ side: 0, kind: 'move', position: opening });
+        quizPlayStore.set(newPlay(opening, plays));
+        duelBoardPress({ kind: 'die', index: 0 });
+        expect(/** @type {any} */ (get(quizPlayStore)).swapped).toBe(true);
+        // 1 first: from the 13 it lands on the 12, which no play offers; the 3 is played.
+        duelBoardPress({ kind: 'point', point: 13 });
+        expect(/** @type {any} */ (get(quizPlayStore)).steps).toEqual([{ from: 13, to: 10, die: 3 }]);
+        duelBoardContextMenu({ kind: 'point', point: 13 });
+        expect(/** @type {any} */ (get(quizPlayStore)).steps).toHaveLength(0);
+        expect(/** @type {any} */ (get(quizPlayStore)).swapped).toBe(true);
+    });
+
+    test('a click on the dice validates the finished play', async () => {
+        open({ side: 0, kind: 'move', position: opening });
+        quizPlayStore.set(newPlay(opening, plays));
+        duelBoardPress({ kind: 'point', point: 8 });
+        duelBoardPress({ kind: 'point', point: 6 });
+        duelBoardPress({ kind: 'die', index: 1 });
+        await tick();
+        expect(PlayDuel).toHaveBeenCalledWith(4, 7, expect.objectContaining({ side: 0, kind: 'move' }));
     });
 
     test('a drag plays one legal step, and nothing else', () => {
@@ -194,7 +216,7 @@ describe('DuelBoardPrompt', () => {
         const { queryByTestId, getByTestId } = render(DuelBoardPrompt);
         await tick();
         expect(queryByTestId('duel-board-prompt')).toBeNull();
-        duelBoardStore.set({ swapped: false, prompt: 'double' });
+        duelBoardStore.set({ prompt: 'double' });
         await tick();
         await fireEvent.click(getByTestId('duel-cancel-double'));
         expect(get(duelBoardStore).prompt).toBeNull();
