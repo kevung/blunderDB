@@ -7,14 +7,14 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     SaveCommand: vi.fn(() => Promise.resolve(undefined)),
     GetDatabaseStatsEstimate: vi.fn(() => Promise.resolve({ position_count: 10, match_count: 1, blunder_count: 340, approximate: [] })),
     GetLibrarySettings: vi.fn(() => Promise.resolve({ errorThresholdMP: 80, blunderThresholdMP: 175 })),
-    CountPositionsByFilters: (...a) => countPositions(...a),
+    CountPositionsByFilters: (/** @type {any[]} */ ...a) => countPositions(...a),
     CountPositions: vi.fn(() => Promise.resolve(10)),
     ListPositionIDs: vi.fn(() => Promise.resolve([]))
 }));
 vi.mock('../../wailsjs/go/gui/App.js', () => ({ CancelGammonNetBatch: vi.fn(() => Promise.resolve(undefined)) }));
 vi.mock('../../wailsjs/runtime/runtime.js', () => ({ EventsOn: vi.fn(() => () => {}) }));
 const processCommand = vi.fn();
-vi.mock('../commandProcessor.js', () => ({ processCommand: (...a) => processCommand(...a) }));
+vi.mock('../commandProcessor.js', () => ({ processCommand: (/** @type {any[]} */ ...a) => processCommand(...a) }));
 
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionsStore } from '../stores/positionStore.js';

@@ -28,6 +28,7 @@ vi.mock('../services/confirmService.js', () => ({ confirmAction: vi.fn(async () 
 import LessonEditorModal from '../components/LessonEditorModal.svelte';
 import { lessonEditorTargetStore } from '../stores/lessonStore.js';
 import { positionStore } from '../stores/positionStore.js';
+import { must } from './helpers/must.js';
 
 const lesson = {
     id: 2,
@@ -65,8 +66,8 @@ describe('LessonEditorModal', () => {
         const { container, getByText } = render(LessonEditorModal, { visible: true });
         await waitFor(() => expect(container.querySelectorAll('.step').length).toBe(2));
         const input = container.querySelector('.new input');
-        await fireEvent.input(input, { target: { value: 'Nouvelle' } });
-        await fireEvent.submit(container.querySelector('.new'));
+        await fireEvent.input(must(input), { target: { value: 'Nouvelle' } });
+        await fireEvent.submit(must(container.querySelector('.new')));
         await waitFor(() => expect(api.CreateLesson).toHaveBeenCalledWith('Nouvelle', ''));
 
         await fireEvent.click(getByText('Add a step'));
@@ -78,8 +79,8 @@ describe('LessonEditorModal', () => {
         await waitFor(() => expect(container.querySelectorAll('.step').length).toBe(2));
         const first = container.querySelectorAll('.step')[0];
         const buttons = [...first.querySelectorAll('button')];
-        await fireEvent.click(buttons.find((b) => b.textContent.includes('Current position')));
-        await fireEvent.click(buttons.find((b) => b.textContent.includes('Save the step')));
+        await fireEvent.click(must(buttons.find((b) => b.textContent.includes('Current position'))));
+        await fireEvent.click(must(buttons.find((b) => b.textContent.includes('Save the step'))));
         await waitFor(() => expect(api.UpdateLessonStep).toHaveBeenCalledWith(20, 'A', 'one', 5, 77));
     });
 

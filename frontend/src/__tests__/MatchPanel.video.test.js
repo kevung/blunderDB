@@ -64,6 +64,7 @@ import { setVideoPlacement } from '../stores/videoStageStore.js';
 
 import { OpenVideoExternally, PickTranscriptionVideo } from '../../wailsjs/go/gui/App.js';
 import { openTab } from './matchTabHelper.js';
+import { must } from './helpers/must.js';
 
 async function openTranscript() {
     const view = render(MatchPanel);
@@ -73,7 +74,7 @@ async function openTranscript() {
     for (let i = 0; i < 6; i++) await tick();
     if (!container.querySelector('tbody tr.selected')) {
         const cell = [...container.querySelectorAll('tbody tr td')].find((td) => td.textContent.includes('Alice'));
-        await fireEvent.click(cell);
+        await fireEvent.click(must(cell));
     }
     await vi.waitFor(() => expect(container.querySelector('details.game-section')).not.toBeNull());
     for (let i = 0; i < 4; i++) await tick();
@@ -137,7 +138,7 @@ describe('MatchPanel — View in the video', () => {
         state.kind = 'file';
         const container = await openTranscript();
         await openTab(container, 'info');
-        await fireEvent.click(container.querySelector('[data-testid="video-detach"]'));
+        await fireEvent.click(must(container.querySelector('[data-testid="video-detach"]')));
         await vi.waitFor(() => expect(SetMatchVideoSource).toHaveBeenCalledWith(7, ''));
     });
 
@@ -150,7 +151,7 @@ describe('MatchPanel — View in the video', () => {
         await fireEvent.click(container.querySelectorAll('[data-testid="view-in-video"]')[0]);
         await vi.waitFor(() => expect(container.querySelector('[data-testid="video-pane"]')).not.toBeNull());
         await openTab(container, 'info');
-        await fireEvent.click([...container.querySelectorAll('.meta-value button')].find((b) => b.textContent.trim() === 'File…'));
+        await fireEvent.click(must([...container.querySelectorAll('.meta-value button')].find((b) => b.textContent.trim() === 'File…')));
         await vi.waitFor(() => expect(SetMatchVideoSource).toHaveBeenCalledWith(7, '/moved/final.mp4'));
         for (let i = 0; i < 6; i++) await tick();
         expect(SetMatchVideoSource).toHaveBeenCalledTimes(1);
@@ -185,7 +186,7 @@ describe('MatchPanel — View in the video', () => {
         state.source = '/videos/final.mp4';
         state.kind = 'file';
         const container = await openTranscript();
-        await fireEvent.click(container.querySelector('[data-testid="match-video"]'));
+        await fireEvent.click(must(container.querySelector('[data-testid="match-video"]')));
         await vi.waitFor(() => expect(container.querySelector('.match-video-slot [data-testid="video-pane"]')).not.toBeNull());
         setVideoPlacement('board');
     });

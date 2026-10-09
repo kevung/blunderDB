@@ -121,7 +121,7 @@ describe('AnkiPanel', () => {
             ['anki-review', 'review']
         ]) {
             vi.mocked(db.CountAnkiDeckFilteredPositions).mockClear();
-            await fireEvent.click(container.querySelector(`[data-testid="${testid}"] [data-testid="count-link"]`));
+            await fireEvent.click(must(container.querySelector(`[data-testid="${testid}"] [data-testid="count-link"]`)));
             await vi.waitFor(() => expect(db.CountAnkiDeckFilteredPositions).toHaveBeenCalledWith(1, filter));
         }
         // The table's columns are counters too: Nouvelles counts every unseen card, Échues every
@@ -183,12 +183,12 @@ describe('AnkiPanel', () => {
         const { container } = render(AnkiPanel);
         await settle();
 
-        await fireEvent.click(container.querySelector('[data-testid="anki-settings"]'));
+        await fireEvent.click(must(container.querySelector('[data-testid="anki-settings"]')));
         await settle();
         expect(get(ankiViewModeStore)).toBe('settings');
         expect(/** @type {HTMLInputElement} */ (must(container.querySelector('.settings-row input[type="number"]'))).value).toBe('0.85');
 
-        await fireEvent.click(container.querySelector('.settings-actions .btn-primary'));
+        await fireEvent.click(must(container.querySelector('.settings-actions .btn-primary')));
         await settle();
         expect(db.UpdateAnkiDeckParams).toHaveBeenCalledWith(1, 0.85, 365, false, null);
         expect(get(ankiViewModeStore)).toBe('list');

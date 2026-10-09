@@ -17,9 +17,9 @@ const startEvaluationAtRest = vi.fn().mockResolvedValue(undefined);
 const cancelEvaluationAtRest = vi.fn().mockResolvedValue(undefined);
 
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
-    EvaluatePositionImmediate: (...args) => evaluatePositionImmediate(...args),
-    StartEvaluationAtRest: (...args) => startEvaluationAtRest(...args),
-    CancelEvaluationAtRest: (...args) => cancelEvaluationAtRest(...args)
+    EvaluatePositionImmediate: (/** @type {any[]} */ ...args) => evaluatePositionImmediate(...args),
+    StartEvaluationAtRest: (/** @type {any[]} */ ...args) => startEvaluationAtRest(...args),
+    CancelEvaluationAtRest: (/** @type {any[]} */ ...args) => cancelEvaluationAtRest(...args)
 }));
 
 vi.mock('../../wailsjs/go/main/Config.js', () => ({

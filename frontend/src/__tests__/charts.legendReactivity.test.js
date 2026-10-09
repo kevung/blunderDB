@@ -15,6 +15,7 @@ import { must } from './helpers/must.js';
 import { describe, test, expect, vi, afterEach } from 'vitest';
 import { render, cleanup } from '@testing-library/svelte';
 
+/** @type {any} */
 let lastConfig = null;
 class FakeChart {
     constructor(_canvas, config) {

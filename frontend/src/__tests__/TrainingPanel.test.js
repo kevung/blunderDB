@@ -60,6 +60,7 @@ function scoresQuestion() {
     return { kind: 'scores', key: '3:5', card, numbers: scoreCardNumbers(card) };
 }
 import * as missedModule from '../services/trainingMissed.js';
+import { must } from './helpers/must.js';
 
 const service = vi.mocked(serviceModule);
 
@@ -538,7 +539,7 @@ describe('une question d’Évaluation (#322)', () => {
         trainingJournalStore.set({ decision: { sessions: [{ exercise: 'decision', numbersAsked: 5, faults: 2, deviations: 0, meanDeviation: 0, medianMs: 3000, pr: 6.5 }], numbers: [] } });
         const panel = render(TrainingPanel);
         expect(panel.queryByTestId('training-missed')).toBeNull();
-        await fireEvent.click(panel.getByTestId('training-summary-decision').querySelector('button.disclose'));
+        await fireEvent.click(must(panel.getByTestId('training-summary-decision').querySelector('button.disclose')));
         await fireEvent.click(panel.getByTestId('training-missed-retake'));
         await fireEvent.click(panel.getByTestId('training-missed-deck'));
         await fireEvent.click(panel.getByTestId('training-missed-collection'));

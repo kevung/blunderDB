@@ -175,7 +175,7 @@ describe('CollectionPanel — list view', () => {
         render(CollectionPanel, { props: { onOpenCollection } });
         const row = (await screen.findByText('Backgames')).closest('tr');
 
-        await fireEvent.dblClick(row);
+        await fireEvent.dblClick(must(row));
         await vi.waitFor(() => expect(get(activeCollectionStore)).not.toBeNull());
 
         expect(get(activeCollectionStore)).toMatchObject({ id: 1, name: 'Backgames' });
@@ -188,7 +188,7 @@ describe('CollectionPanel — list view', () => {
         render(CollectionPanel, { props: {} });
         const row = (await screen.findByText('Bear-offs')).closest('tr');
 
-        await fireEvent.dblClick(row);
+        await fireEvent.dblClick(must(row));
         await vi.waitFor(() => expect(get(statusBarTextStore)).not.toBe(''));
 
         expect(get(activeCollectionStore)).toBeNull();
@@ -197,7 +197,7 @@ describe('CollectionPanel — list view', () => {
     test('deleting a collection calls the backend and reloads the list', async () => {
         render(CollectionPanel, { props: {} });
         const row = (await screen.findByText('Backgames')).closest('tr');
-        const deleteBtn = within(row).getByTitle(/delete/i);
+        const deleteBtn = within(must(row)).getByTitle(/delete/i);
         vi.mocked(GetAllCollections).mockResolvedValue([SAMPLE_COLLECTIONS[1]]);
 
         await fireEvent.click(deleteBtn);
@@ -209,10 +209,10 @@ describe('CollectionPanel — list view', () => {
     test('renaming a collection through the inline editor', async () => {
         render(CollectionPanel, { props: {} });
         const row = (await screen.findByText('Backgames')).closest('tr');
-        const editBtn = within(row).getByTitle(/^edit$/i);
+        const editBtn = within(must(row)).getByTitle(/^edit$/i);
         await fireEvent.click(editBtn);
 
-        const nameInput = within(row).getByDisplayValue('Backgames');
+        const nameInput = within(must(row)).getByDisplayValue('Backgames');
         await fireEvent.input(nameInput, { target: { value: 'Back games (renamed)' } });
         await fireEvent.keyDown(nameInput, { key: 'Enter' });
 
@@ -224,7 +224,7 @@ describe('CollectionPanel — list view', () => {
         positionStore.set({ id: 55 });
         render(CollectionPanel, { props: {} });
         const row = (await screen.findByText('Backgames')).closest('tr');
-        const checkbox = within(row).getByRole('checkbox');
+        const checkbox = within(must(row)).getByRole('checkbox');
 
         await fireEvent.click(checkbox);
 
@@ -236,7 +236,7 @@ describe('CollectionPanel — list view', () => {
         render(CollectionPanel, { props: {} });
         const row = (await screen.findByText('Backgames')).closest('tr');
 
-        expect(within(row).queryByRole('checkbox')).toBeNull();
+        expect(within(must(row)).queryByRole('checkbox')).toBeNull();
     });
 });
 
@@ -314,13 +314,13 @@ describe('CollectionPanel — a partly loaded collection', () => {
         // Drive the window to the end of the loaded rows.
         const scroll = [...document.querySelectorAll('.scroll')].pop();
         must(scroll).scrollTop = 28 * 490;
-        await fireEvent.scroll(scroll);
+        await fireEvent.scroll(must(scroll));
         const rows = [...document.querySelectorAll('tbody tr:not(.spacer)')];
         const last = rows.find((r) => r.querySelector('.idx-cell')?.textContent === '500');
         expect(last).toBeTruthy();
-        expect(/** @type {HTMLButtonElement | HTMLInputElement} */ (within(last).getByTitle(/move down/i)).disabled).toBe(true);
+        expect(/** @type {HTMLButtonElement | HTMLInputElement} */ (within(must(last)).getByTitle(/move down/i)).disabled).toBe(true);
         const before = rows.find((r) => r.querySelector('.idx-cell')?.textContent === '499');
-        expect(/** @type {HTMLButtonElement | HTMLInputElement} */ (within(before).getByTitle(/move down/i)).disabled).toBe(false);
+        expect(/** @type {HTMLButtonElement | HTMLInputElement} */ (within(must(before)).getByTitle(/move down/i)).disabled).toBe(false);
     });
 });
 

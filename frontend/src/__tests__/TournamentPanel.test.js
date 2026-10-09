@@ -177,7 +177,7 @@ describe('TournamentPanel — list view', () => {
         renderOpen();
         const row = (await screen.findByText('Blunder Cup')).closest('tr');
 
-        await fireEvent.click(row);
+        await fireEvent.click(must(row));
 
         expect(must(row).classList.contains('selected')).toBe(true);
         expect(get(selectedTournamentStore)).toBeNull();
@@ -199,7 +199,7 @@ describe('TournamentPanel — list view', () => {
         renderOpen();
         const row = (await screen.findByText('Blunder Cup')).closest('tr');
 
-        await fireEvent.dblClick(row);
+        await fireEvent.dblClick(must(row));
 
         await vi.waitFor(() => expect(get(selectedTournamentStore)).toMatchObject({ id: 1 }));
         expect(ListMatches).toHaveBeenCalledWith(expect.objectContaining({ Unassigned: true }));
@@ -236,10 +236,10 @@ describe('TournamentPanel — list view', () => {
         const row = (await screen.findByText('Blunder Cup')).closest('tr');
         expect(must(row).getAttribute('tabindex')).toBe('0');
 
-        await fireEvent.keyDown(must(row).querySelector('button[title]'), { key: 'Enter' });
+        await fireEvent.keyDown(must(must(row).querySelector('button[title]')), { key: 'Enter' });
         expect(get(selectedTournamentStore)).toBeNull();
 
-        await fireEvent.keyDown(row, { key: 'Enter' });
+        await fireEvent.keyDown(must(row), { key: 'Enter' });
         await vi.waitFor(() => expect(get(selectedTournamentStore)).toMatchObject({ id: 1 }));
     });
 
@@ -248,7 +248,7 @@ describe('TournamentPanel — list view', () => {
         const row = (await screen.findByText('Blunder Cup')).closest('tr');
         expect(screen.getByTestId('tournament-open-hint').classList.contains('concealed')).toBe(true);
 
-        await fireEvent.click(row);
+        await fireEvent.click(must(row));
 
         expect(screen.getByTestId('tournament-open-hint').classList.contains('concealed')).toBe(false);
         expect(screen.getByTestId('tournament-open-hint').textContent).toMatch(/Enter/);
@@ -259,7 +259,7 @@ describe('TournamentPanel — list view', () => {
         renderOpen();
         const row = (await screen.findByText('Blunder Cup')).closest('tr');
 
-        await fireEvent.dblClick(row);
+        await fireEvent.dblClick(must(row));
         await vi.waitFor(() => expect(get(selectedTournamentStore)).not.toBeNull());
 
         await fireEvent.click(screen.getByTitle(/back to tournaments/i));
@@ -271,7 +271,7 @@ describe('TournamentPanel — list view', () => {
     test('deleting a tournament asks for confirmation then reloads the list', async () => {
         renderOpen();
         const row = (await screen.findByText('Amsterdam Open')).closest('tr');
-        const deleteBtn = within(row).getByTitle(/delete/i);
+        const deleteBtn = within(must(row)).getByTitle(/delete/i);
         vi.mocked(GetAllTournaments).mockResolvedValue([SAMPLE_TOURNAMENTS[0]]);
 
         await fireEvent.click(deleteBtn);
@@ -284,7 +284,7 @@ describe('TournamentPanel — list view', () => {
     test('declining the confirmation leaves the tournament in place', async () => {
         renderOpen();
         const row = (await screen.findByText('Amsterdam Open')).closest('tr');
-        const deleteBtn = within(row).getByTitle(/delete/i);
+        const deleteBtn = within(must(row)).getByTitle(/delete/i);
 
         await fireEvent.click(deleteBtn);
         await answerConfirm(false);
@@ -296,10 +296,10 @@ describe('TournamentPanel — list view', () => {
     test('renaming a tournament through the inline editor', async () => {
         renderOpen();
         const row = (await screen.findByText('Blunder Cup')).closest('tr');
-        const editBtn = within(row).getByTitle(/^edit$/i);
+        const editBtn = within(must(row)).getByTitle(/^edit$/i);
         await fireEvent.click(editBtn);
 
-        const nameInput = within(row).getByDisplayValue('Blunder Cup');
+        const nameInput = within(must(row)).getByDisplayValue('Blunder Cup');
         await fireEvent.input(nameInput, { target: { value: 'Blunder Cup (2026)' } });
         await fireEvent.keyDown(nameInput, { key: 'Enter' });
 
@@ -332,7 +332,7 @@ describe('TournamentPanel — keyboard shortcuts', () => {
         vi.mocked(GetTournamentMatches).mockResolvedValue([]);
         renderOpen();
         const row = (await screen.findByText('Blunder Cup')).closest('tr');
-        await fireEvent.dblClick(row);
+        await fireEvent.dblClick(must(row));
         await vi.waitFor(() => expect(get(selectedTournamentStore)).not.toBeNull());
 
         await fireEvent.keyDown(document, { key: 'Escape' });

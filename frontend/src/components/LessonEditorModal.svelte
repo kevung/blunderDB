@@ -21,7 +21,7 @@
     import { openLesson, refreshOpenLesson } from '../services/lessonService.js';
     import { confirmAction } from '../services/confirmService.js';
     import { logger } from '../utils/logger.js';
-    import { t, tMsg } from '../i18n';
+    import { t, translate } from '../i18n';
 
     let { visible = false, onClose } = $props();
 
@@ -63,12 +63,12 @@
         }
     }
 
-    function fail(e) {
+    function fail(/** @type {any} */ e) {
         logger.error('lesson editor:', e);
-        error = tMsg('lessonEditor.failed', { error: String(e?.message ?? e) });
+        error = translate('lessonEditor.failed', { error: String(e?.message ?? e) });
     }
 
-    async function select(id) {
+    async function select(/** @type {number} */ id) {
         selectedId = id;
         steps = [];
         if (!id) {
@@ -87,7 +87,7 @@
     }
 
     /** Toute écriture repasse par ici : relire la liste, la leçon, et la leçon en lecture. */
-    async function after(write) {
+    async function after(/** @type {() => Promise<unknown>} */ write) {
         error = '';
         try {
             await write();
@@ -113,20 +113,20 @@
     async function remove() {
         const lesson = lessons.find((l) => l.id === selectedId);
         if (!lesson) return;
-        if (!(await confirmAction(tMsg('lessonEditor.confirmDelete', { name: lesson.name })))) return;
+        if (!(await confirmAction(translate('lessonEditor.confirmDelete', { name: lesson.name })))) return;
         await after(() => DeleteLesson(selectedId));
     }
 
-    const addStep = () => after(() => AddLessonStep(selectedId, tMsg('lessonEditor.newStepTitle', { n: steps.length + 1 }), '', 0, 0));
+    const addStep = () => after(() => AddLessonStep(selectedId, translate('lessonEditor.newStepTitle', { n: steps.length + 1 }), '', 0, 0));
 
-    const saveStep = (s) => after(() => UpdateLessonStep(s.id, s.title, s.text, Number(s.collectionId) || 0, Number(s.positionId) || 0));
+    const saveStep = (/** @type {any} */ s) => after(() => UpdateLessonStep(s.id, s.title, s.text, Number(s.collectionId) || 0, Number(s.positionId) || 0));
 
-    async function removeStep(s) {
-        if (!(await confirmAction(tMsg('lessonEditor.confirmRemoveStep', { title: s.title || s.id })))) return;
+    async function removeStep(/** @type {any} */ s) {
+        if (!(await confirmAction(translate('lessonEditor.confirmRemoveStep', { title: s.title || s.id })))) return;
         await after(() => RemoveLessonStep(s.id));
     }
 
-    function move(index, delta) {
+    function move(/** @type {number} */ index, /** @type {number} */ delta) {
         const ids = steps.map((s) => s.id);
         const j = index + delta;
         if (j < 0 || j >= ids.length) return;
@@ -134,17 +134,17 @@
         return after(() => ReorderLessonSteps(selectedId, ids));
     }
 
-    function attachCurrentPosition(s) {
+    function attachCurrentPosition(/** @type {any} */ s) {
         const id = get(positionStore)?.id;
         if (!id) {
-            error = tMsg('lessonEditor.noCurrentPosition');
+            error = translate('lessonEditor.noCurrentPosition');
             return;
         }
         s.positionId = id;
         s.dirty = true;
     }
 
-    function chooseCollection(s, value) {
+    function chooseCollection(/** @type {any} */ s, /** @type {unknown} */ value) {
         s.collectionId = Number(value) || 0;
         s.dirty = true;
     }

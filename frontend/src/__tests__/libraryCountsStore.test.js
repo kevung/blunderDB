@@ -6,8 +6,8 @@ const estimate = vi.fn();
 const exact = vi.fn();
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
     GetLibrarySettings: () => Promise.resolve({ errorThresholdMP: 80, blunderThresholdMP: 150 }),
-    GetDatabaseStatsEstimate: (...a) => estimate(...a),
-    GetDatabaseStats: (...a) => exact(...a)
+    GetDatabaseStatsEstimate: (/** @type {any[]} */ ...a) => estimate(...a),
+    GetDatabaseStats: (/** @type {any[]} */ ...a) => exact(...a)
 }));
 
 import { libraryCountsStore, refreshLibraryCounts, formatCount } from '../stores/libraryCountsStore.js';

@@ -45,7 +45,7 @@ async function mountWithFocusedField() {
 describe('SearchPanel — keys from a focused field', () => {
     test('Escape reaches the global dispatcher on window', async () => {
         const { field, reachedWindow, done } = await mountWithFocusedField();
-        await fireEvent.keyDown(field, { key: 'Escape' });
+        await fireEvent.keyDown(must(field), { key: 'Escape' });
         expect(reachedWindow).toHaveBeenCalledTimes(1);
         expect(reachedWindow.mock.calls[0][0].key).toBe('Escape');
         done();
@@ -53,9 +53,9 @@ describe('SearchPanel — keys from a focused field', () => {
 
     test('bare keys and Tab stay with the field', async () => {
         const { field, reachedWindow, done } = await mountWithFocusedField();
-        await fireEvent.keyDown(field, { key: 'j' });
-        await fireEvent.keyDown(field, { key: 'ArrowRight' });
-        await fireEvent.keyDown(field, { key: 'Tab', code: 'Tab' });
+        await fireEvent.keyDown(must(field), { key: 'j' });
+        await fireEvent.keyDown(must(field), { key: 'ArrowRight' });
+        await fireEvent.keyDown(must(field), { key: 'Tab', code: 'Tab' });
         expect(reachedWindow).not.toHaveBeenCalled();
         done();
     });
@@ -64,7 +64,7 @@ describe('SearchPanel — keys from a focused field', () => {
         const { field, reachedWindow, done } = await mountWithFocusedField();
         activeTabStore.set('analysis');
         await tick();
-        await fireEvent.keyDown(field, { key: 'j' });
+        await fireEvent.keyDown(must(field), { key: 'j' });
         expect(reachedWindow).toHaveBeenCalledTimes(1);
         done();
     });

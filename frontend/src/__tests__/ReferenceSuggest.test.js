@@ -12,6 +12,7 @@ import ReferenceSuggest from '../components/ReferenceSuggest.svelte';
 import { SuggestReferencePositions } from '../../wailsjs/go/database/Database.js';
 import { collectionFromIds, quizOnIds } from '../services/recurringStudy.js';
 import { statsFilterStore } from '../stores/statsStore.js';
+import { must } from './helpers/must.js';
 
 afterEach(() => {
     cleanup();
@@ -72,7 +73,7 @@ describe('ReferenceSuggest', () => {
         render(ReferenceSuggest, { props: { onCollectionCreated } });
         await fireEvent.click(screen.getByTestId('suggest-run'));
         await waitFor(() => expect(screen.getAllByTestId('suggest-row')).toHaveLength(2));
-        await fireEvent.click(screen.getAllByTestId('suggest-row')[0].querySelector('input[type=checkbox]'));
+        await fireEvent.click(must(screen.getAllByTestId('suggest-row')[0].querySelector('input[type=checkbox]')));
         await fireEvent.click(screen.getByTestId('suggest-quiz'));
         expect(quizOnIds).toHaveBeenCalledWith([9]);
         await fireEvent.click(screen.getByTestId('suggest-collection'));

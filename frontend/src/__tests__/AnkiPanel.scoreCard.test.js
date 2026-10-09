@@ -91,7 +91,7 @@ describe('a review card that is a score', () => {
         const { container } = render(AnkiPanel);
         await settle();
 
-        await fireEvent.click(container.querySelector('.answer-masked'));
+        await fireEvent.click(must(container.querySelector('.answer-masked')));
         await settle();
 
         const sheet = container.querySelector('.score-card');

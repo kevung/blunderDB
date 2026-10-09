@@ -16,7 +16,7 @@ import { get } from 'svelte/store';
 
 const SaveLanguage = vi.fn(() => Promise.resolve(undefined));
 vi.mock('../../wailsjs/go/main/Config.js', () => ({
-    SaveLanguage: (...args) => SaveLanguage(...args),
+    SaveLanguage: (/** @type {any[]} */ ...args) => SaveLanguage(...args),
     GetLanguage: vi.fn(() => Promise.resolve('en'))
 }));
 
