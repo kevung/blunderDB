@@ -1,6 +1,6 @@
 # ADR-0052 — Le coup se joue directement au plateau, et se tape dans sa cellule
 
-Statut : acceptée.
+Statut : acceptée. §3 abrogé et §4 révisé par ADR-0086.
 Voir aussi : ADR-0044, ADR-0048 décision 7, ADR-0049 règle 1.
 
 ## Contexte
