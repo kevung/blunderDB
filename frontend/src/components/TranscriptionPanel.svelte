@@ -56,6 +56,7 @@
     import CubeActionRow from './CubeActionRow.svelte';
     import ContextMenu from './ContextMenu.svelte';
     import TranscriptView from './TranscriptView.svelte';
+    import { closeOnEscape } from '../services/escapeService.js';
     import TranscriptionMetadata from './TranscriptionMetadata.svelte';
     import VideoDock from './VideoDock.svelte';
     import { rateKeyDirection } from '../utils/videoRate.js';
@@ -114,6 +115,15 @@
     let panelEl = $state(/** @type {HTMLElement | null} */ (null));
     // Volet des métadonnées, replié par défaut ; l'en-tête vit dans le document.
     let metaOpen = $state(false);
+
+    // Échap referme le formulaire ; le blur valide d'abord le champ en cours de saisie.
+    $effect(() => {
+        if (!metaOpen) return;
+        return closeOnEscape(() => {
+            if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+            metaOpen = false;
+        });
+    });
 
     // ── la vidéo (ADR-0082) ──────────────────────────────────────────────
     // Le volet n'est qu'un fournisseur d'instants : le moteur pose les Repères
@@ -1925,94 +1935,102 @@
             {/if}
 
             {#if metaOpen}
-                <!-- En-tête du brouillon : rien n'y est exigé. -->
+                <!-- En-tête du brouillon : rien n'y est exigé. Il remplace la saisie. -->
                 <TranscriptionMetadata header={annotated?.document?.header ?? {}} apply={sendGesture} {busy} />
-            {/if}
-
-            <!-- Ordre du DOM = boîte étroite ; en large, `order` (ADR-0048 décision 5).
+            {:else}
+                <!-- Ordre du DOM = boîte étroite ; en large, `order` (ADR-0048 décision 5).
                  Rien ne s'intercale entre les cases du jet et le premier candidat. -->
-            <div class="draft-body">
-                <div class="candidates-col">
-                    {#if unranked && visible.length}
-                        <!-- Message sur la liste, donc dans son en-tête. -->
-                        <div class="list-head">
-                            <span class="list-note">{$t('transcription.unranked')}</span>
-                        </div>
-                    {/if}
-                    {#if playFree}
-                        <!-- Coup hors des règles : la touche qui l'enregistre (ADR-0052). -->
-                        <p class="list-note" data-testid="transcription-free-hint">{$t('transcription.freePlayHint')}</p>
-                    {/if}
-                    {#if visible.length}
-                        {#if unranked}
-                            <ol class="plain-candidates" data-testid="transcription-candidates">
-                                {#each visible as row, index (row.gen)}
-                                    <li>
-                                        <button class="plain-candidate" class:selected={index === keys.selected} onclick={() => chooseCandidate(index)} ondblclick={() => commitCandidate(index)}
-                                            >{row.move.move}</button
-                                        >
-                                    </li>
-                                {/each}
-                            </ol>
-                        {:else}
-                            <!-- Molette = `j`/`k` (décision 11). -->
-                            <div class="candidates" data-testid="transcription-candidates" role="listbox" tabindex="-1" aria-label={$t('transcription.candidatesLabel')} onwheel={wheelCandidates}>
-                                <CandidateMovesTable
-                                    moves={rankedMoves}
-                                    selectedMove={$selectedMoveStore}
-                                    onRowClick={(/** @type {any} */ move) => chooseCandidate(rankedMoves.indexOf(move))}
-                                    onRowDblClick={(/** @type {any} */ move) => commitCandidate(rankedMoves.indexOf(move))}
-                                    showProvenance={false}
-                                    baseline={null}
-                                    projection="identify"
-                                    {isMoney}
-                                />
+                <div class="draft-body">
+                    <div class="candidates-col">
+                        {#if unranked && visible.length}
+                            <!-- Message sur la liste, donc dans son en-tête. -->
+                            <div class="list-head">
+                                <span class="list-note">{$t('transcription.unranked')}</span>
                             </div>
                         {/if}
-                    {/if}
-                </div>
-
-                <div class="palette-col" data-testid="transcription-palette">
-                    <!-- Dés et gestes de videau sur une ligne, triangle dessous (décision 7). -->
-                    <div class="entry-row" data-testid="transcription-dice">
-                        {#if !awaitingAnswer && keys.phase !== PHASE.RESIGN}
-                            <!-- Cliquables : Retour arrière à la souris. -->
-                            <button class="die" class:filled={keys.dice[0] > 0} onclick={clearDice} title={$t('transcription.clearDice')} aria-label={$t('transcription.clearDice')}
-                                >{dieCells[0]}</button
-                            >
-                            <button class="die" class:filled={keys.dice[1] > 0} onclick={clearDice} title={$t('transcription.clearDice')} aria-label={$t('transcription.clearDice')}
-                                >{dieCells[1]}</button
-                            >
+                        {#if playFree}
+                            <!-- Coup hors des règles : la touche qui l'enregistre (ADR-0052). -->
+                            <p class="list-note" data-testid="transcription-free-hint">{$t('transcription.freePlayHint')}</p>
+                        {/if}
+                        {#if visible.length}
+                            {#if unranked}
+                                <ol class="plain-candidates" data-testid="transcription-candidates">
+                                    {#each visible as row, index (row.gen)}
+                                        <li>
+                                            <button class="plain-candidate" class:selected={index === keys.selected} onclick={() => chooseCandidate(index)} ondblclick={() => commitCandidate(index)}
+                                                >{row.move.move}</button
+                                            >
+                                        </li>
+                                    {/each}
+                                </ol>
+                            {:else}
+                                <!-- Molette = `j`/`k` (décision 11). -->
+                                <div class="candidates" data-testid="transcription-candidates" role="listbox" tabindex="-1" aria-label={$t('transcription.candidatesLabel')} onwheel={wheelCandidates}>
+                                    <CandidateMovesTable
+                                        moves={rankedMoves}
+                                        selectedMove={$selectedMoveStore}
+                                        onRowClick={(/** @type {any} */ move) => chooseCandidate(rankedMoves.indexOf(move))}
+                                        onRowDblClick={(/** @type {any} */ move) => commitCandidate(rankedMoves.indexOf(move))}
+                                        showProvenance={false}
+                                        baseline={null}
+                                        projection="identify"
+                                        {isMoney}
+                                    />
+                                </div>
+                            {/if}
                         {/if}
                     </div>
 
-                    {#if cubeRowOpen}
-                        <CubeActionRow canAct={canCubeAct} canAnswer={canCubeAnswer} {resigning} onGesture={sendCube} onResign={startResign} onLevel={pickResignLevel} onCancelResign={abortResign} />
-                    {/if}
+                    <div class="palette-col" data-testid="transcription-palette">
+                        <!-- Dés et gestes de videau sur une ligne, triangle dessous (décision 7). -->
+                        <div class="entry-row" data-testid="transcription-dice">
+                            {#if !awaitingAnswer && keys.phase !== PHASE.RESIGN}
+                                <!-- Cliquables : Retour arrière à la souris. -->
+                                <button class="die" class:filled={keys.dice[0] > 0} onclick={clearDice} title={$t('transcription.clearDice')} aria-label={$t('transcription.clearDice')}
+                                    >{dieCells[0]}</button
+                                >
+                                <button class="die" class:filled={keys.dice[1] > 0} onclick={clearDice} title={$t('transcription.clearDice')} aria-label={$t('transcription.clearDice')}
+                                    >{dieCells[1]}</button
+                                >
+                            {/if}
+                        </div>
 
-                    {#if diceEntryOpen}
-                        <!-- Sous les cases du jet, jamais à leur place : le clavier reste deux fois plus rapide. -->
-                        <DiceTriangle single={gameStart} allowed={rollsAllowed} onPick={pickDice} onDie={pickDie} />
-                    {/if}
-                </div>
+                        {#if cubeRowOpen}
+                            <CubeActionRow
+                                canAct={canCubeAct}
+                                canAnswer={canCubeAnswer}
+                                {resigning}
+                                onGesture={sendCube}
+                                onResign={startResign}
+                                onLevel={pickResignLevel}
+                                onCancelResign={abortResign}
+                            />
+                        {/if}
 
-                <div class="transcript-col">
-                    {#if lastFlags.length}
-                        <!-- Incohérence marquée, jamais refusée (ADR-0044), visible sans chercher. -->
-                        <p class="flag">{$t('transcription.inconsistencyPrefix')} {lastFlags.join(' · ')}</p>
-                    {/if}
-                    <TranscriptView
-                        {annotated}
-                        cursor={annotated?.cursor ?? 0}
-                        players={[playerName(0), playerName(1)]}
-                        onSelect={selectAction}
-                        onHole={selectHole}
-                        onMenu={openTranscriptMenu}
-                        onEditMove={commitNotation}
-                        onEditScore={declareScore}
-                    />
+                        {#if diceEntryOpen}
+                            <!-- Sous les cases du jet, jamais à leur place : le clavier reste deux fois plus rapide. -->
+                            <DiceTriangle single={gameStart} allowed={rollsAllowed} onPick={pickDice} onDie={pickDie} />
+                        {/if}
+                    </div>
+
+                    <div class="transcript-col">
+                        {#if lastFlags.length}
+                            <!-- Incohérence marquée, jamais refusée (ADR-0044), visible sans chercher. -->
+                            <p class="flag">{$t('transcription.inconsistencyPrefix')} {lastFlags.join(' · ')}</p>
+                        {/if}
+                        <TranscriptView
+                            {annotated}
+                            cursor={annotated?.cursor ?? 0}
+                            players={[playerName(0), playerName(1)]}
+                            onSelect={selectAction}
+                            onHole={selectHole}
+                            onMenu={openTranscriptMenu}
+                            onEditMove={commitNotation}
+                            onEditScore={declareScore}
+                        />
+                    </div>
                 </div>
-            </div>
+            {/if}
         </div>
     {/if}
     {#if error}
