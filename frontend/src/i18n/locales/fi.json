@@ -727,6 +727,7 @@
         "livingNeedsSearch": "Tee ensin haku: sen kokoelma säilyttää.",
         "livingSet": "Elävä kokoelma: {query}",
         "livingCleared": "Kokoelma palautettiin käsin tehdyksi listaksi.",
+        "livingCapped": "Pakka ”{name}”: elävä kokoelma valitsee {total} asemaa; {count} aseman katto täyttyi, ja vain ensimmäiset päätyvät pakkaan.",
         "freezeTitle": "Jäädytä: säilytä tämän päivän tulos tavallisena kokoelmana.",
         "frozen": "Kokoelma jäädytetty: {count} asemaa.",
         "newButton": "Uusi kokoelma",

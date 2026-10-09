@@ -80,15 +80,17 @@ func (d *Database) DeleteAnkiDeck(id int64) error {
 	return d.store.Anki().DeleteDeck(context.Background(), "", id)
 }
 
-// SyncAnkiDeck populates cards from the deck's source (collection or search)
-func (d *Database) SyncAnkiDeck(deckID int64) error {
+// SyncAnkiDeck populates cards from the deck's source (collection or search).
+// A deck fed by a living collection re-evaluates its query here, and the
+// report says whether the declared ceiling cut it short.
+func (d *Database) SyncAnkiDeck(deckID int64) (*storage.DeckSync, error) {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
 	if d.db == nil {
-		return fmt.Errorf("no database is currently open")
+		return nil, fmt.Errorf("no database is currently open")
 	}
-	return d.store.Anki().Sync(context.Background(), "", deckID)
+	return storage.SyncDeck(context.Background(), d.store, "", deckID)
 }
 
 // SyncAnkiDeckWithPositions syncs a deck with explicit position IDs (for search-based decks)

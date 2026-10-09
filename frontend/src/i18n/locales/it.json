@@ -727,6 +727,7 @@
         "livingNeedsSearch": "Lancia prima una ricerca: è quella che la raccolta conserverà.",
         "livingSet": "Raccolta viva: {query}",
         "livingCleared": "Raccolta restituita alla sua lista fatta a mano.",
+        "livingCapped": "Mazzo «{name}»: la raccolta viva seleziona {total} posizioni; il tetto di {count} è stato raggiunto e solo le prime alimentano il mazzo.",
         "freezeTitle": "Congela: tenere il risultato di oggi come raccolta ordinaria.",
         "frozen": "Raccolta congelata su {count} posizione/i.",
         "newButton": "Nuova raccolta",

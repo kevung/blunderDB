@@ -164,7 +164,7 @@ func enrich(d *database.Database, now time.Time, seed int64) error {
 	if err != nil {
 		return fmt.Errorf("creating anki deck: %w", err)
 	}
-	if err := d.SyncAnkiDeck(deckID); err != nil {
+	if _, err := d.SyncAnkiDeck(deckID); err != nil {
 		return fmt.Errorf("syncing anki deck: %w", err)
 	}
 	if err := simulateReviews(database.RawConn(d), deckID, now, seed); err != nil {

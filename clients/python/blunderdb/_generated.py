@@ -214,6 +214,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/collections.delete — JSON."
         return self._call("/v1/collections.delete", payload)
 
+    def collections_evaluate(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/collections.evaluate — JSON."
+        return self._call("/v1/collections.evaluate", payload)
+
     def collections_freeze(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/collections.freeze — JSON."
         return self._call("/v1/collections.freeze", payload)

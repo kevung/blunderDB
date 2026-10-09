@@ -207,11 +207,36 @@ func (d *Database) SetCollectionFilter(collectionID int64, query string) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
-	cs, err := d.collectionStore()
-	if err != nil {
+	if _, err := d.collectionStore(); err != nil {
 		return err
 	}
-	return cs.SetFilterQuery(context.Background(), "", collectionID, query)
+	return storage.SetCollectionFilter(context.Background(), d.store, "", collectionID, query)
+}
+
+// CreateLivingCollection creates a collection whose membership is the result
+// of query, in one gesture; a blank query makes an ordinary one. A query the
+// parser cannot read whole is refused before anything is written.
+func (d *Database) CreateLivingCollection(name, description, query string) (int64, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if _, err := d.collectionStore(); err != nil {
+		return 0, err
+	}
+	return storage.CreateCollection(context.Background(), d.store, "", name, description, query)
+}
+
+// EvaluateCollection reads a collection's position ids under the declared
+// ceiling (storage.LivingCollectionCap), saying how many it holds in truth and
+// whether the answer stops short of it. limit <= 0 asks for the ceiling.
+func (d *Database) EvaluateCollection(collectionID int64, limit int) (*storage.CollectionEvaluation, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	if _, err := d.collectionStore(); err != nil {
+		return nil, err
+	}
+	return storage.EvaluateCollection(context.Background(), d.store, "", collectionID, limit)
 }
 
 // FreezeCollection turns a LIVING collection into a hand-made one holding the

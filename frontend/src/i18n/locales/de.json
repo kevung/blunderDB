@@ -727,6 +727,7 @@
         "livingNeedsSearch": "Führen Sie zuerst eine Suche aus: Sie ist es, was die Sammlung behält.",
         "livingSet": "Lebendige Sammlung: {query}",
         "livingCleared": "Die Sammlung hat ihre handgemachte Liste zurück.",
+        "livingCapped": "Stapel „{name}“: Die lebende Sammlung wählt {total} Positionen aus; die Obergrenze von {count} wurde erreicht, nur die ersten speisen den Stapel.",
         "freezeTitle": "Einfrieren: das heutige Ergebnis als gewöhnliche Sammlung behalten.",
         "frozen": "Sammlung auf {count} Position(en) eingefroren.",
         "newButton": "Neue Sammlung",

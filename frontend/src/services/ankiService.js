@@ -29,7 +29,8 @@ import { ankiDecksStore, selectedAnkiDeckStore, ankiReviewCardStore, ankiDeckSta
 import { collectionsStore } from '../stores/collectionStore.js';
 import { positionsStore, deckSource } from '../stores/positionStore.js';
 import { selectedMoveStore } from '../stores/analysisStore.js';
-import { currentPositionIndexStore } from '../stores/uiStore.js';
+import { currentPositionIndexStore, statusBarTextStore } from '../stores/uiStore.js';
+import { tMsg } from '../i18n';
 import { showPosition } from './positionService.js';
 import { parseFilters } from '../commandProcessor.js';
 import { buildSearchFilterPayload } from './searchFilterService.js';
@@ -244,13 +245,21 @@ export async function resolveSearchDeckIds(sourceCommand) {
     }
 }
 
-/** Bring a deck's cards in line with its source (collection or stored search). */
+/**
+ * Bring a deck's cards in line with its source (collection or stored search).
+ * A living collection is re-evaluated by the backend under a declared ceiling;
+ * when the ceiling cuts it short the user is told, never left to guess.
+ */
 export async function syncDeckCards(deck) {
     if (deck.sourceType === 'search' && deck.sourceCommand) {
         const ids = await resolveSearchDeckIds(deck.sourceCommand);
         if (ids.length > 0) await SyncAnkiDeckWithPositions(deck.id, ids);
-    } else {
-        await SyncAnkiDeck(deck.id);
+        return;
+    }
+    const report = await SyncAnkiDeck(deck.id);
+    const source = report?.source;
+    if (source?.truncated) {
+        statusBarTextStore.set(tMsg('collection.livingCapped', { name: deck.name ?? '', total: source.total, count: source.cap }));
     }
 }
 

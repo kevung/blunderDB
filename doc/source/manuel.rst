@@ -1284,6 +1284,14 @@ connaît plus **refuse de s'ouvrir** en le disant, plutôt que de renvoyer toute
 la base. C'est la seule panne qu'un filtre enregistré ne doit pas avoir :
 s'élargir en silence.
 
+Un paquet de répétition espacée fondé sur une collection vivante rejoue sa
+requête à chaque ouverture de séance : les positions que la recherche
+sélectionne depuis la dernière fois y entrent, et les cartes déjà là gardent
+leur planification. Une évaluation est bornée par un **plafond** de 5 000
+positions ; quand la requête en sélectionne davantage, seules les premières,
+dans l'ordre de la recherche, alimentent le paquet, et la barre d'état le dit
+avec le nombre réel de positions sélectionnées.
+
 .. _positions_reference:
 
 Le bouton **Proposer…** de l'en-tête ouvre les **positions de référence** :

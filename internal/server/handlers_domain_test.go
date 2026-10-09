@@ -11,6 +11,7 @@ import (
 
 	"github.com/kevung/blunderdb/internal/server/middleware"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 const testTenant = "1"
@@ -305,4 +306,56 @@ func TestLivingCollectionRoutesResolveTheQuery(t *testing.T) {
 		t.Error("freezing a hand-made collection must be refused")
 	}
 	resp.Body.Close()
+}
+
+// TestLivingCollectionEvaluateAndDeck: a collection created living in one
+// call is read under its declared ceiling with the true total, a refused
+// query is a client error, and a deck it feeds reports the evaluation next to
+// ok, which a client reading only it relies on.
+func TestLivingCollectionEvaluateAndDeck(t *testing.T) {
+	ts := newTestServer(t)
+	for i := range 3 {
+		p := domain.InitializePosition()
+		p.Board.Points[6].Checkers = i + 2
+		post(t, ts, "/v1/positions.save", positionReq{Position: &p}).Body.Close()
+	}
+
+	resp := post(t, ts, "/v1/collections.create", collectionCreateReq{Name: "bad", FilterQuery: "s quux"})
+	resp.Body.Close()
+	if resp.StatusCode < 400 || resp.StatusCode >= 500 {
+		t.Errorf("an unreadable query: status %d, want a client error", resp.StatusCode)
+	}
+
+	resp = post(t, ts, "/v1/collections.create", collectionCreateReq{Name: "living", FilterQuery: "s n<1"})
+	var col idResp
+	if err := json.NewDecoder(resp.Body).Decode(&col); err != nil {
+		t.Fatal(err)
+	}
+	resp.Body.Close()
+
+	var ev storage.CollectionEvaluation
+	resp = post(t, ts, "/v1/collections.evaluate", collectionEvaluateReq{ID: col.ID, Limit: 2})
+	if err := json.NewDecoder(resp.Body).Decode(&ev); err != nil {
+		t.Fatal(err)
+	}
+	resp.Body.Close()
+	if !ev.Living || len(ev.PositionIDs) != 2 || ev.Total != 3 || !ev.Truncated || ev.Cap != 2 {
+		t.Errorf("evaluate = %+v; want living, 2 ids of 3, truncated at 2", ev)
+	}
+
+	resp = post(t, ts, "/v1/anki.createDeck", deckCreateReq{Name: "living", SourceType: domain.AnkiSourceCollection, SourceID: col.ID})
+	var deck idResp
+	if err := json.NewDecoder(resp.Body).Decode(&deck); err != nil {
+		t.Fatal(err)
+	}
+	resp.Body.Close()
+	var sync deckSyncResp
+	resp = post(t, ts, "/v1/anki.sync", deckIDReq{DeckID: deck.ID})
+	if err := json.NewDecoder(resp.Body).Decode(&sync); err != nil {
+		t.Fatal(err)
+	}
+	resp.Body.Close()
+	if !sync.OK || sync.Source == nil || sync.Source.Total != 3 || sync.Source.Truncated {
+		t.Errorf("anki.sync = %+v; want ok with a source of 3, not truncated", sync)
+	}
 }
