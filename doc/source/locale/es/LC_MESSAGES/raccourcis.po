@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-09 00:05+0200\n"
+"POT-Creation-Date: 2026-10-09 02:11+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -1783,7 +1783,23 @@ msgstr ""
 "Ralentizar o acelerar la reproducción, en pasos de 0,25 entre 0,25× y 4× "
 "(hasta 2× en YouTube)."
 
-#: ../../source/raccourcis.rst:419
+#: ../../source/raccourcis.rst:1
+msgid "F11 (vidéo attachée)"
+msgstr "F11 (vídeo adjunto)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Passer en mode théâtre — la vidéo en plein écran, un petit plateau "
+"flottant par-dessus, le clavier de saisie toujours actif — ou en sortir. "
+"ÉCHAP en sort aussi ; dans le théâtre, RETOUR ARRIERE efface les dés "
+"saisis (:ref:`détail <transcription_theatre>`)."
+msgstr ""
+"Pasar al modo cine — el vídeo a pantalla completa, un pequeño tablero "
+"flotando encima, el teclado de entrada siempre activo — o salir de él. "
+"ESC también sale; en el modo cine, RETROCESO borra los dados introducidos"
+" (:ref:`detalle <transcription_theatre>`)."
+
+#: ../../source/raccourcis.rst:420
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -1791,7 +1807,7 @@ msgstr ""
 "Una tirada que no permite ningún movimiento registra el baile por sí "
 "sola, sin pulsación adicional."
 
-#: ../../source/raccourcis.rst:422
+#: ../../source/raccourcis.rst:423
 msgid ""
 "Avec une vidéo attachée, seule une validation explicite — *ENTREE*, le "
 "double-clic sur un candidat, le coup achevé au plateau — pose l'instant "
@@ -1809,7 +1825,7 @@ msgstr ""
 " leen por el carácter tecleado, *ALTGR* incluido en un teclado que los "
 "coloca así. Sin vídeo, estas teclas conservan su significado habitual."
 
-#: ../../source/raccourcis.rst:430
+#: ../../source/raccourcis.rst:431
 msgid ""
 "Le chiffre a un seul sens : **il commence un jet là où le curseur est**. "
 "En bout de document il n'y a rien sous le curseur, donc il valide le coup"
@@ -1836,7 +1852,7 @@ msgstr ""
 "decisión siguiente, como al final del documento, e INTRO lleva allí "
 "también."
 
-#: ../../source/raccourcis.rst:441
+#: ../../source/raccourcis.rst:442
 msgid ""
 "Ce qui est en train d'être tapé se dessine dans le transcript, en "
 "pointillés, à la place où il sera écrit : une correction recouvre la "
@@ -1849,7 +1865,7 @@ msgstr ""
 "celda que reemplaza, una inserción abre una celda entre sus dos vecinas, "
 "y el bando se lee en la columna. Nada se registra antes de la validación."
 
-#: ../../source/raccourcis.rst:446
+#: ../../source/raccourcis.rst:447
 msgid ""
 "Une insertion au milieu du document continue d'insérer : la validation "
 "ouvre une cellule vide à la suite, et l'action suivante s'insère à son "
@@ -1861,7 +1877,7 @@ msgstr ""
 "vez en lugar de sobrescribir la de después. El final de la partida o "
 "mover el cursor le pone fin."
 
-#: ../../source/raccourcis.rst:451
+#: ../../source/raccourcis.rst:452
 msgid ""
 "Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
 "rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
@@ -1873,7 +1889,7 @@ msgstr ""
 "cursor» al final del documento. La frase se borra sola y devuelve el "
 "sitio a la acción esperada."
 
-#: ../../source/raccourcis.rst:456
+#: ../../source/raccourcis.rst:457
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était — "
@@ -1893,7 +1909,7 @@ msgstr ""
 " «por revisar» hasta la validación. Avanzar o retroceder el cursor "
 "después de haber cambiado algo registra la corrección de paso."
 
-#: ../../source/raccourcis.rst:464
+#: ../../source/raccourcis.rst:465
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1919,7 +1935,7 @@ msgstr ""
 " inserta para el bando al que le faltaba. La pila de deshacer vive en "
 "memoria: se pierde al cerrar el borrador."
 
-#: ../../source/raccourcis.rst:475
+#: ../../source/raccourcis.rst:476
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1929,7 +1945,7 @@ msgstr ""
 "transcripción y la barra del borrador — se describe en "
 ":ref:`panneau_transcription`."
 
-#: ../../source/raccourcis.rst:482
+#: ../../source/raccourcis.rst:483
 msgid "Planche-contact"
 msgstr "Hoja de contactos"
 
@@ -1977,7 +1993,7 @@ msgstr "Abrir la posición en el tablero y cerrar la hoja."
 msgid "Refermer la planche."
 msgstr "Cerrar la hoja."
 
-#: ../../source/raccourcis.rst:499
+#: ../../source/raccourcis.rst:500
 msgid "Panneau d'aide"
 msgstr "Panel de ayuda"
 

@@ -3240,5 +3240,17 @@
         "noFamily": "Aucune famille ne tient dans ce tournoi ({tentative} à confirmer)",
         "tentative": "{tentative} autres à confirmer",
         "noDecision": "Aucune décision chiffrée de ce joueur dans le tournoi"
+    },
+    "theatre": {
+        "menuItem": "Mode théâtre",
+        "enter": "Mode théâtre : la vidéo en plein écran (F11)",
+        "exit": "Quitter le mode théâtre (F11 ou Échap)",
+        "region": "Mode théâtre",
+        "hint": "F11 ou Échap pour sortir",
+        "board": "Plateau",
+        "boardMove": "Glisser pour déplacer le plateau",
+        "boardSize": "Changer la taille du plateau",
+        "boardHide": "Replier le plateau",
+        "boardShow": "Afficher le plateau"
     }
 }

@@ -3240,5 +3240,17 @@
         "noFamily": "Nessuna famiglia di errori regge in questo torneo ({tentative} da confermare)",
         "tentative": "altre {tentative} da confermare",
         "noDecision": "Nessuna decisione contata di questo giocatore nel torneo"
+    },
+    "theatre": {
+        "menuItem": "Modalità cinema",
+        "enter": "Modalità cinema: il video a schermo intero (F11)",
+        "exit": "Esci dalla modalità cinema (F11 o Esc)",
+        "region": "Modalità cinema",
+        "hint": "F11 o Esc per uscire",
+        "board": "Tavoliere",
+        "boardMove": "Trascina per spostare il tavoliere",
+        "boardSize": "Cambia la dimensione del tavoliere",
+        "boardHide": "Riduci il tavoliere",
+        "boardShow": "Mostra il tavoliere"
     }
 }

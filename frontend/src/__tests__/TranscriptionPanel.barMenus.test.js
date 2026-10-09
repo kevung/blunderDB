@@ -139,13 +139,13 @@ describe('the Video button', () => {
         expect(videoButton().textContent).toContain('Video');
     });
 
-    test('opens a menu under it: a local file, a YouTube link, and Detach while a video is attached', async () => {
+    test('opens a menu under it: a local file, a YouTube link, and the theatre and Detach while a video is attached', async () => {
         await openedPanel();
         await fireEvent.click(videoButton());
         await settle();
         expect(videoMenu()?.getAttribute('role')).toBe('menu');
         expect(videoButton().getAttribute('aria-expanded')).toBe('true');
-        expect(itemsOf(videoMenu())).toEqual(['Local file…', 'YouTube link…', 'Detach']);
+        expect(itemsOf(videoMenu())).toEqual(['Local file…', 'YouTube link…', 'Theatre modeF11', 'Detach']);
         expect(videoMenu()?.contains(document.activeElement)).toBe(true);
         cleanup();
         source = '';

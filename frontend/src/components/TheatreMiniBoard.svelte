@@ -1,0 +1,249 @@
+<script>
+    // The floating board of the theatre: the transcription's position, the move being played on
+    // the board and the arrows of the selected candidate (services/theatreBoard.js), drawn by
+    // the board's own scene functions (services/diagramService.js). It is dragged anywhere, takes
+    // three sizes and folds into a tab; where it sits is remembered. It never takes the focus:
+    // the transcription keys stay live while it is handled.
+    import { t } from '../i18n';
+    import { positionStore } from '../stores/positionStore.js';
+    import { quizPlayStore } from '../stores/quizPlayStore.js';
+    import { selectedMoveStore } from '../stores/analysisStore.js';
+    import { transcriptionBoardSwapStore } from '../stores/transcriptionStore.js';
+    import { boardColorsStore } from '../stores/boardColorsStore.js';
+    import { renderPositionSVG, DIAGRAM_WIDTH, DIAGRAM_HEIGHT } from '../services/diagramService.js';
+    import { theatreScene } from '../services/theatreBoard.js';
+    import { logger } from '../utils/logger.js';
+
+    const STORE_KEY = 'blunderdb.theatre.board';
+    const MARGIN = 16;
+    // Above the bottom edge, where a player draws its controls.
+    const BOTTOM = 64;
+    /** Widths of the three sizes; the height follows the board's own ratio. */
+    const SIZES = /** @type {const} */ ({ s: 240, m: 340, l: 460 });
+    /** @typedef {keyof typeof SIZES} Size */
+
+    /** @type {{ x: number | null, y: number | null, size: Size, hidden: boolean }} */
+    const saved = readSaved();
+    // Fractions of the window, so the board keeps its corner when the window changes size;
+    // null until dragged, the bottom-right corner.
+    let fx = $state(saved.x);
+    let fy = $state(saved.y);
+    let size = $state(saved.size);
+    let hidden = $state(saved.hidden);
+    let dragging = $state(false);
+    let viewW = $state(window.innerWidth);
+    let viewH = $state(window.innerHeight);
+
+    const width = $derived(SIZES[size]);
+    const height = $derived(Math.round((width * DIAGRAM_HEIGHT) / DIAGRAM_WIDTH));
+
+    const scene = $derived(theatreScene({ position: $positionStore, play: $quizPlayStore, swap: $transcriptionBoardSwapStore, selectedMove: $selectedMoveStore }));
+
+    const svg = $derived.by(() => {
+        void $boardColorsStore;
+        if (!scene) return '';
+        try {
+            return renderPositionSVG(scene.position, { showPipcount: true, moves: scene.moves, flip: scene.flip });
+        } catch (error) {
+            logger.error('theatre board:', error);
+            return '';
+        }
+    });
+
+    const style = $derived.by(() => {
+        if (fx === null || fy === null) return `right: ${MARGIN}px; bottom: ${BOTTOM}px; width: ${width}px;`;
+        const left = clamp(fx * viewW, viewW - width);
+        const top = clamp(fy * viewH, viewH - height - 28);
+        return `left: ${left}px; top: ${top}px; width: ${width}px;`;
+    });
+
+    /**
+     * @param {number} v
+     * @param {number} max
+     */
+    function clamp(v, max) {
+        return Math.round(Math.max(0, Math.min(v, Math.max(0, max))));
+    }
+
+    function readSaved() {
+        try {
+            const v = JSON.parse(localStorage.getItem(STORE_KEY) || 'null');
+            if (v && typeof v === 'object') {
+                const ok = (/** @type {unknown} */ n) => typeof n === 'number' && n >= 0 && n <= 1;
+                return { x: ok(v.x) ? v.x : null, y: ok(v.y) ? v.y : null, size: v.size in SIZES ? v.size : 'm', hidden: v.hidden === true };
+            }
+        } catch (_e) {
+            /* storage unavailable or unreadable: the defaults */
+        }
+        return { x: null, y: null, size: /** @type {Size} */ ('m'), hidden: false };
+    }
+
+    function save() {
+        try {
+            localStorage.setItem(STORE_KEY, JSON.stringify({ x: fx, y: fy, size, hidden }));
+        } catch (_e) {
+            /* storage unavailable: the place lasts the session */
+        }
+    }
+
+    /** @param {PointerEvent} event */
+    function startDrag(event) {
+        if (event.button !== 0 || (event.target instanceof Element && event.target.closest('button'))) return;
+        // No focus taken: the transcription keys stay where they were.
+        event.preventDefault();
+        const card = /** @type {HTMLElement} */ (event.currentTarget);
+        card.setPointerCapture?.(event.pointerId);
+        const box = card.getBoundingClientRect();
+        const dx = event.clientX - box.left;
+        const dy = event.clientY - box.top;
+        dragging = true;
+        /** @param {PointerEvent} e */
+        const move = (e) => {
+            fx = clamp(e.clientX - dx, viewW - box.width) / Math.max(1, viewW);
+            fy = clamp(e.clientY - dy, viewH - box.height) / Math.max(1, viewH);
+        };
+        const up = () => {
+            card.removeEventListener('pointermove', move);
+            card.removeEventListener('pointerup', up);
+            card.removeEventListener('pointercancel', up);
+            dragging = false;
+            save();
+        };
+        card.addEventListener('pointermove', move);
+        card.addEventListener('pointerup', up);
+        card.addEventListener('pointercancel', up);
+    }
+
+    function cycleSize() {
+        size = size === 's' ? 'm' : size === 'm' ? 'l' : 's';
+        save();
+    }
+
+    function toggleHidden() {
+        hidden = !hidden;
+        save();
+    }
+
+    function onResize() {
+        viewW = window.innerWidth;
+        viewH = window.innerHeight;
+    }
+
+    /** @param {MouseEvent} event */
+    const keepFocus = (event) => event.preventDefault();
+</script>
+
+<svelte:window onresize={onResize} />
+
+{#if hidden}
+    <button class="theatre-board-tab" data-testid="theatre-board-show" onmousedown={keepFocus} onclick={toggleHidden} title={$t('theatre.boardShow')} aria-label={$t('theatre.boardShow')}>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"
+            ><rect x="3" y="5" width="18" height="14" rx="1.5" /><path d="M12 5v14" /></svg
+        >
+        <span>{$t('theatre.board')}</span>
+    </button>
+{:else}
+    <div class="theatre-board" class:dragging data-testid="theatre-board" data-size={size} {style} role="group" aria-label={$t('theatre.board')} onpointerdown={startDrag}>
+        <div class="theatre-board-head" title={$t('theatre.boardMove')}>
+            <span class="grip" aria-hidden="true">⠿</span>
+            <span class="move" data-testid="theatre-board-move">{$selectedMoveStore ?? ''}</span>
+            <button class="head-btn" data-testid="theatre-board-size" onmousedown={keepFocus} onclick={cycleSize} title={$t('theatre.boardSize')} aria-label={$t('theatre.boardSize')}>
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7" /></svg>
+            </button>
+            <button class="head-btn" data-testid="theatre-board-hide" onmousedown={keepFocus} onclick={toggleHidden} title={$t('theatre.boardHide')} aria-label={$t('theatre.boardHide')}>
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 12h14" /></svg>
+            </button>
+        </div>
+        <div class="theatre-board-svg" style="height: {height}px">
+            <!-- eslint-disable-next-line svelte/no-at-html-tags -- drawn here by the scene functions, from the position alone -->
+            {@html svg}
+        </div>
+    </div>
+{/if}
+
+<style>
+    .theatre-board,
+    .theatre-board-tab {
+        position: absolute;
+        z-index: 2;
+        color: var(--color-text);
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        box-shadow: 0 6px 24px rgb(0 0 0 / 0.45);
+    }
+    .theatre-board {
+        overflow: hidden;
+        cursor: grab;
+        touch-action: none;
+        user-select: none;
+        opacity: 0.96;
+        transition: opacity 0.15s;
+    }
+    .theatre-board:hover,
+    .theatre-board.dragging {
+        opacity: 1;
+    }
+    .theatre-board.dragging {
+        cursor: grabbing;
+    }
+    .theatre-board-head {
+        display: flex;
+        align-items: center;
+        gap: var(--space-1);
+        height: 26px;
+        padding: 0 4px 0 8px;
+        font-size: var(--font-size-small);
+        border-bottom: 1px solid var(--color-border);
+        background: var(--color-surface-alt);
+    }
+    .grip {
+        color: var(--color-text-muted);
+    }
+    .move {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-family: var(--font-family-mono);
+        font-weight: 600;
+    }
+    .head-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 22px;
+        height: 22px;
+        padding: 0;
+        border: 0;
+        border-radius: var(--radius);
+        background: transparent;
+        color: var(--color-text-muted);
+        cursor: pointer;
+    }
+    .head-btn:hover,
+    .head-btn:focus-visible {
+        background: var(--color-surface);
+        color: var(--color-text);
+    }
+    .theatre-board-svg :global(svg) {
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
+    .theatre-board-tab {
+        right: 16px;
+        bottom: 64px;
+        display: flex;
+        align-items: center;
+        gap: var(--space-1);
+        padding: 4px 10px;
+        cursor: pointer;
+        opacity: 0.85;
+    }
+    .theatre-board-tab:hover,
+    .theatre-board-tab:focus-visible {
+        opacity: 1;
+    }
+</style>

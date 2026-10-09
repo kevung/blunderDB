@@ -10,6 +10,7 @@ import { togglePile } from './pileService.js';
 import { duelKeyGuard } from './duelService.js';
 import { directionOwnsKey, directionTabKey, directionLeavesToPage, directionSearchKey } from './directionKeys.js';
 import { directionFullscreenKey, toggleDirectionFullscreen } from './directionFullscreen.js';
+import { theatreKey, toggleTheatre } from './transcriptionTheatre.js';
 import { trainingHoldsBoardStore } from '../stores/trainingTabStore.js';
 
 import { newDatabase, openDatabase, exitApp } from './databaseService.js';
@@ -220,6 +221,12 @@ export function handleKeyDown(event) {
     if (directionFullscreenKey(event)) {
         event.preventDefault();
         toggleDirectionFullscreen();
+        return;
+    }
+    // F11 during a transcription with a video toggles its theatre (services/transcriptionTheatre.js).
+    if (theatreKey(event)) {
+        event.preventDefault();
+        toggleTheatre();
         return;
     }
 

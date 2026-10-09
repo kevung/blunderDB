@@ -3240,5 +3240,17 @@
         "noFamily": "Mikään virheperhe ei pidä tässä turnauksessa ({tentative} vahvistettavana)",
         "tentative": "{tentative} muuta vahvistettavana",
         "noDecision": "Ei pelaajan laskettuja päätöksiä turnauksessa"
+    },
+    "theatre": {
+        "menuItem": "Teatteritila",
+        "enter": "Teatteritila: video koko näytöllä (F11)",
+        "exit": "Poistu teatteritilasta (F11 tai Esc)",
+        "region": "Teatteritila",
+        "hint": "F11 tai Esc poistuu",
+        "board": "Lauta",
+        "boardMove": "Siirrä lautaa vetämällä",
+        "boardSize": "Muuta laudan kokoa",
+        "boardHide": "Pienennä lauta",
+        "boardShow": "Näytä lauta"
     }
 }

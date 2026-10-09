@@ -2128,6 +2128,27 @@ lui, ne se déplace pas : y glisser déplace les pions. Le côté est retenu d'u
 session à l'autre, et la largeur reste celle de la vidéo, de quelque côté
 qu'elle soit. La poignée et le bouton laissent le clavier au panneau.
 
+.. _transcription_theatre:
+
+**Le mode théâtre.** Pour suivre le match en grand, *F11*, l'entrée **Mode
+théâtre** du menu **Vidéo** ou le bouton du coin supérieur droit de la vidéo,
+à gauche de celui qui la remet dans le panneau, passent la fenêtre en plein
+écran et donnent toute la place à la vidéo. Un petit plateau flotte par-dessus,
+dans le coin inférieur droit : il montre la position de la transcription, les dés
+saisis, le coup en cours au plateau et les flèches du candidat sélectionné, dont
+la notation s'affiche dans son bandeau. On le déplace en le glissant ; un bouton
+de son bandeau lui fait prendre trois tailles, un autre le replie en un onglet
+qui le rouvre. Sa place, sa taille et son repli sont retenus. Le clavier reste
+celui du panneau : les dés, les candidats, la validation, le curseur et les
+touches de la vidéo (*ESPACE*, *[*, *]*, …) gardent leur effet, et ni le
+plateau ni les boutons ne prennent le focus. *F11*, *ÉCHAP* ou le bouton en
+haut à droite sortent du mode théâtre et rendent la fenêtre à son état
+précédent : dans le théâtre, *ÉCHAP* sert à sortir, et *RETOUR ARRIERE* efface
+les dés saisis. Détacher la vidéo, quitter le brouillon ou changer d'onglet y
+met fin aussi. Le lecteur n'a pas de plein écran à lui, YouTube compris : seul
+le mode théâtre change l'écran. Le mode n'existe que dans la Transcription,
+avec une vidéo attachée.
+
 Avec une vidéo, chaque action **nouvelle** porte des **repères** : l'instant
 du jet, posé par la première touche de dé, et l'instant de l'action, posé par
 la validation, tous deux lus sur la vidéo au moment du geste. Une correction en

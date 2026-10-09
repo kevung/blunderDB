@@ -3240,5 +3240,17 @@
         "noFamily": "Keine Fehlerfamilie ist in diesem Turnier belegt ({tentative} zu bestätigen)",
         "tentative": "{tentative} weitere zu bestätigen",
         "noDecision": "Keine gezählte Entscheidung dieses Spielers im Turnier"
+    },
+    "theatre": {
+        "menuItem": "Kinomodus",
+        "enter": "Kinomodus: das Video im Vollbild (F11)",
+        "exit": "Kinomodus verlassen (F11 oder Esc)",
+        "region": "Kinomodus",
+        "hint": "F11 oder Esc zum Verlassen",
+        "board": "Brett",
+        "boardMove": "Ziehen, um das Brett zu verschieben",
+        "boardSize": "Brettgröße ändern",
+        "boardHide": "Brett einklappen",
+        "boardShow": "Brett anzeigen"
     }
 }

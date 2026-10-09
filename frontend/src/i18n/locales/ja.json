@@ -3240,5 +3240,17 @@
         "noFamily": "このトーナメントで成立するエラーファミリーはありません(確認待ち {tentative})",
         "tentative": "ほかに確認待ち {tentative}",
         "noDecision": "このプレイヤーのトーナメント内の判断はありません"
+    },
+    "theatre": {
+        "menuItem": "シアターモード",
+        "enter": "シアターモード：動画を全画面表示 (F11)",
+        "exit": "シアターモードを終了 (F11 または Esc)",
+        "region": "シアターモード",
+        "hint": "F11 または Esc で終了",
+        "board": "盤面",
+        "boardMove": "ドラッグして盤面を移動",
+        "boardSize": "盤面のサイズを変更",
+        "boardHide": "盤面を折りたたむ",
+        "boardShow": "盤面を表示"
     }
 }

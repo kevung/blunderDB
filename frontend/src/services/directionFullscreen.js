@@ -10,53 +10,26 @@
  * Le mode ne vit que tant que la page Direction est affichée : la quitter (autre onglet de
  * l'application, direction fermée) y met fin. Les onglets internes de la direction ne la
  * touchent pas. À la sortie, la fenêtre revient à l'état d'avant : si elle était déjà en
- * plein écran système, elle y reste.
+ * plein écran système, elle y reste (fullscreenMode.js).
  */
 
-import { get, writable } from 'svelte/store';
-import { WindowFullscreen, WindowUnfullscreen, WindowIsFullscreen } from '../../wailsjs/runtime/runtime.js';
+import { get } from 'svelte/store';
 import { directionPageShownStore } from '../stores/directionStore.js';
-import { closeOnEscape } from './escapeService.js';
+import { createFullscreenMode, isBareF11 } from './fullscreenMode.js';
 import { directionPageShown, somethingOpenAbove } from './directionKeys.js';
 
+const mode = createFullscreenMode(directionPageShownStore);
+
 /** Le plein écran de la Direction est-il actif ? */
-export const directionFullscreenStore = writable(false);
-
-/** @type {Array<() => void>} Ce qu'il faut défaire à la sortie. */
-let teardown = [];
-let windowWasFullscreen = false;
-
-/** Un appel du runtime Wails ; absent en navigateur (tests, e2e) où il n'y a rien à faire. */
-async function runtimeCall(/** @type {() => unknown} */ fn) {
-    try {
-        return await fn();
-    } catch {
-        return undefined;
-    }
-}
+export const directionFullscreenStore = mode.active;
 
 /** Entre en plein écran ; sans effet hors de la page Direction. */
-export async function enterDirectionFullscreen() {
-    if (get(directionFullscreenStore) || !get(directionPageShownStore)) return;
-    directionFullscreenStore.set(true);
-    teardown = [closeOnEscape(exitDirectionFullscreen), directionPageShownStore.subscribe((shown) => !shown && exitDirectionFullscreen())];
-    windowWasFullscreen = Boolean(await runtimeCall(WindowIsFullscreen));
-    if (!windowWasFullscreen && get(directionFullscreenStore)) await runtimeCall(WindowFullscreen);
-}
+export const enterDirectionFullscreen = mode.enter;
 
 /** Sort du plein écran et rend la fenêtre à son état précédent. */
-export async function exitDirectionFullscreen() {
-    if (!get(directionFullscreenStore)) return;
-    directionFullscreenStore.set(false);
-    const undo = teardown;
-    teardown = [];
-    for (const fn of undo) fn();
-    if (!windowWasFullscreen) await runtimeCall(WindowUnfullscreen);
-}
+export const exitDirectionFullscreen = mode.exit;
 
-export function toggleDirectionFullscreen() {
-    return get(directionFullscreenStore) ? exitDirectionFullscreen() : enterDirectionFullscreen();
-}
+export const toggleDirectionFullscreen = mode.toggle;
 
 /**
  * F11 nu bascule le plein écran, sur la page Direction seulement (et pour en sortir, où que
@@ -66,7 +39,7 @@ export function toggleDirectionFullscreen() {
  * @returns {boolean}
  */
 export function directionFullscreenKey(event) {
-    if (event.key !== 'F11' || event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) return false;
+    if (!isBareF11(event)) return false;
     // Le plein écran a lui-même une entrée dans la pile d'Échap : elle ne compte pas comme une surcouche.
     const active = get(directionFullscreenStore);
     if (active ? document.querySelector('[aria-modal="true"], .context-menu') : somethingOpenAbove()) return false;

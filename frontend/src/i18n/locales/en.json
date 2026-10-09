@@ -3240,5 +3240,17 @@
         "noFamily": "No error family holds in this tournament ({tentative} to confirm)",
         "tentative": "{tentative} more to confirm",
         "noDecision": "No counted decision of this player in the tournament"
+    },
+    "theatre": {
+        "menuItem": "Theatre mode",
+        "enter": "Theatre mode: the video full screen (F11)",
+        "exit": "Leave theatre mode (F11 or Esc)",
+        "region": "Theatre mode",
+        "hint": "F11 or Esc to leave",
+        "board": "Board",
+        "boardMove": "Drag to move the board",
+        "boardSize": "Change the board size",
+        "boardHide": "Fold the board",
+        "boardShow": "Show the board"
     }
 }

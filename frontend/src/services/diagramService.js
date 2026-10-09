@@ -21,10 +21,11 @@ export const DIAGRAM_HEIGHT = 380;
  * Rend une position en un document SVG autonome.
  *
  * @param {object} position La position au format du store (board, cube, dés…).
- * @param {{width?: number, height?: number, showPipcount?: boolean}} [opts]
+ * @param {{width?: number, height?: number, showPipcount?: boolean, moves?: import('../utils/boardGeometry.js').StepMove[], flip?: boolean}} [opts]
+ *   `moves` : les flèches, en points affichés ; `flip` : la numérotation, par défaut celle du camp au trait.
  * @returns {string} Le SVG sérialisé, fond compris.
  */
-export function renderPositionSVG(position, { width = DIAGRAM_WIDTH, height = DIAGRAM_HEIGHT, showPipcount = true } = {}) {
+export function renderPositionSVG(position, { width = DIAGRAM_WIDTH, height = DIAGRAM_HEIGHT, showPipcount = true, moves = [], flip = position?.player_on_roll === 1 } = {}) {
     const cfg = applyPalette(defaultBoardConfig(), get(boardColorsStore));
     const geom = boardMetrics(width, height, cfg.widthFactor);
 
@@ -34,10 +35,8 @@ export function renderPositionSVG(position, { width = DIAGRAM_WIDTH, height = DI
     const dynamicLayer = two.makeGroup();
     const frameLayer = two.makeGroup();
 
-    // Le repère des points est celui du joueur au trait, comme à l'écran.
-    const flip = position?.player_on_roll === 1;
     drawStaticScene(layerOf(two, staticLayer), geom, cfg, flip);
-    drawDynamicScene(layerOf(two, dynamicLayer), geom, cfg, position, { text: (key, params) => translate(`board.scene.${key}`, params), offeredCube: false, showPipcount, moves: [] });
+    drawDynamicScene(layerOf(two, dynamicLayer), geom, cfg, position, { text: (key, params) => translate(`board.scene.${key}`, params), offeredCube: false, showPipcount, moves });
     drawFrame(layerOf(two, frameLayer), geom, cfg);
     two.update();
 
