@@ -12,13 +12,12 @@
     import { playedMovePredicate, playedCubeActionPredicate } from '../utils/playedMarks.js';
     import { t } from '../i18n';
     import { cubeTurnability, isMoneyPosition } from '../utils/cubeDecision.js';
-    import { trainingAnalysisHiddenStore } from '../stores/trainingTabStore.js';
+    import { analysisMaskStore, revealAnalysis } from '../stores/analysisChallengeStore.js';
+    import AnswerMask from './AnswerMask.svelte';
     import ExplanationLine from './ExplanationLine.svelte';
     import METBadge from './METBadge.svelte';
     import { canLeaveSubSearchResults } from '../services/positionService.js';
 
-    // Le même remplaçant que le panneau Eval en mode Défi (ADR-0018 règle 6).
-    const HIDDEN = '···';
     import AnalysisView from './AnalysisView.svelte';
     import EmptyState from './panels/EmptyState.svelte';
     import { sendPositionToEval } from '../services/positionService.js';
@@ -164,7 +163,7 @@
 
     /** Right-click elsewhere in the panel: the selection, or the whole position (its cube decision). */
     function handleContentContextMenu(event) {
-        if (event.defaultPrevented || $trainingAnalysisHiddenStore) return;
+        if (event.defaultPrevented || $analysisMaskStore) return;
         openPanelMenu(event, rolloutSelection());
     }
 
@@ -236,6 +235,10 @@
             toggleRollout(rolloutSelection());
             return;
         }
+
+        // Masked, the panel shows no rows to walk: its other keys go to the global dispatcher,
+        // so j/k keep browsing positions while the challenge is on.
+        if ($analysisMaskStore) return;
 
         // Handle tab switching with 'd' (doubling/cube) key to toggle
         // Only allow if showTabs is true (not first position of game)
@@ -481,9 +484,9 @@
 <section class="analysis-panel" aria-label={$t('analysis.panelLabel')} id="analysisPanel" tabindex="-1" onkeydown={handleKeyDown}>
     <div class="analysis-content" onclick={handleContentClick} oncontextmenu={handleContentContextMenu} onkeydown={() => {}} role="button" tabindex="-1">
         <!-- Comparaison inter-moteurs ici, pas dans Eval (ADR-0017) ; seulement s'il y en a plusieurs. -->
-        {#if $trainingAnalysisHiddenStore}
-            <!-- Question de Décision ouverte : la réponse est masquée (ADR-0018 règle 6). -->
-            <div class="quiz-masked">{HIDDEN}</div>
+        {#if $analysisMaskStore}
+            <!-- Question ouverte (ADR-0018 règle 6) ou défi non relevé : pions et videau masqués d'un bloc. -->
+            <AnswerMask onReveal={$analysisMaskStore === 'challenge' ? revealAnalysis : null} title={$analysisMaskStore === 'challenge' ? $t('epc.clickToReveal') : ''} />
         {:else if isEmpty}
             <!-- A position without analysis still says what to do: evaluate it (ADR-0085, G5). -->
             <EmptyState text={$t('analysis.empty')} action={$positionStore ? { label: $t('analysis.evaluate'), onClick: () => sendPositionToEval($positionStore) } : null} actions={!!$positionStore} />
@@ -537,16 +540,6 @@
 </section>
 
 <style>
-    /* Plage inerte de la taille du bloc (ADR-0018 règle 6). */
-    .quiz-masked {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 6em;
-        color: var(--color-text-muted);
-        letter-spacing: 0.4em;
-    }
-
     .played-time {
         padding: 2px 8px;
         font-size: var(--font-size-small);

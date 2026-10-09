@@ -184,6 +184,7 @@ export const SHORTCUTS = {
             'Shift+K',
             'b',
             'p',
+            'm',
             'r',
             'F11',
             '/'
@@ -212,6 +213,7 @@ export const TOOLBAR_CHORDS = {
     nextPosition: ['ArrowRight', 'j'],
     lastPosition: ['PageDown', 'l'],
     togglePipcount: ['p'],
+    toggleAnalysisChallenge: ['m'],
     randomPosition: ['r'],
     training: ['Ctrl+J'],
     duel: ['Ctrl+H'],

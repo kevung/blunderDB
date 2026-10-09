@@ -199,6 +199,7 @@ export default {
 <h3>Panel de Análisis</h3>
 <p>El panel <strong>Análisis</strong> (<em>CTRL-L</em>) muestra los datos de análisis de la posición actual importados desde eXtreme Gammon (XG), GNUbg, BGBlitz o gammonNet. Presenta las mejores alternativas (jugadas de fichas o decisiones de cubo) con sus valores de equidad y los errores correspondientes. La tecla <em>d</em> alterna entre el análisis de las jugadas de fichas y el análisis del cubo. Durante la navegación por una partida, la jugada realmente jugada se resalta en la lista de alternativas. Pulse <em>CTRL-L</em> o ejecute el comando <code>list</code> para mostrar u ocultar el panel.</p>
 <p>Una posición sin análisis lo indica, con un botón <strong>Evaluar</strong> que la abre en el panel Eval.</p>
+<p>El botón <strong>Desafío</strong> de la barra de herramientas, situado tras el del pipcount (tecla <em>m</em>), sirve para decidirse antes de ver el análisis al recorrer posiciones: resultados de una búsqueda, revisión de un match, repaso de los propios errores. Activado, cubre con una zona gris todo el análisis del panel, fichas y cubo; un clic en la zona lo revela. Vuelve en cada cambio de posición. El desafío es una máscara de visualización: revelar no guarda nada en la base. El ajuste se mantiene hasta cerrar blunderDB, como el del pipcount.</p>
 <p>Bajo las tablas, una <strong>frase</strong> dice a veces lo que costó la decisión jugada y por qué: «Pierde 120 mp: la jugada realizada deja tres fichas sueltas donde 13/7 8/7 solo deja una.» Procede de seis reglas medibles — la exposición, un punto de la casa hecho o perdido, las posibilidades de gammon abandonadas, una seguridad que cuesta más de lo que aporta, y los dos sentidos de un error de cubo (doblar demasiado tarde o demasiado pronto, aceptar demasiado amplio o pasar demasiado estricto).</p>
 <p>La regla que importa es la del <strong>silencio</strong>: la frase solo aparece cuando una regla se aplica con confianza, y sobre un error que supera el umbral a partir del cual los motores coinciden en que lo es. El resto del tiempo no hay frase — ni marco vacío, ni «no lo sabemos». Una explicación equivocada cuesta más que ninguna: enseña algo inexacto.</p>
 <p>La misma frase acompaña al error allí donde acaba de cometerlo: al dorso de una <strong>tarjeta Anki</strong>, bajo el análisis revelado, y en el <strong>veredicto del quiz</strong> del ejercicio Decisión, bajo el coste en mp. Rigen las mismas reglas de silencio: una jugada correcta, o un error que ninguna regla explica, no añade nada.</p>
@@ -1272,6 +1273,10 @@ export default {
 <tr>
 <td>p</td>
 <td>Mostrar/ocultar el recuento de pips.</td>
+</tr>
+<tr>
+<td>m</td>
+<td>Activar/desactivar el desafío: el análisis del panel Análisis queda oculto hasta un clic, en cada posición.</td>
 </tr>
 </tbody>
 </table>

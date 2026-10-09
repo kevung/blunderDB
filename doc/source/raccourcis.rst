@@ -93,6 +93,7 @@ Affichage
    "CTRL-GAUCHE", "Orientation du board à gauche."
    "CTRL-DROITE", "Orientation du board à droite."
    "p", "Afficher/cacher le compte de course."
+   "m", "Activer/désactiver le défi : l'analyse du panneau Analyse est masquée jusqu'à un clic, à chaque position."
 
 .. _raccourcis_modes:
 

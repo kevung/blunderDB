@@ -212,6 +212,7 @@
         "savePosition": "Enregistrer la position",
         "settings": "Paramètres",
         "togglePipcount": "Afficher/masquer le pipcount",
+        "toggleAnalysisChallenge": "Défi : masquer l'analyse",
         "updatePosition": "Mettre à jour la position",
         "tour": "Visites guidées",
         "importDatabaseTip": "Fusionner une autre base dans celle-ci : les positions communes ne sont pas dupliquées, leurs analyses et commentaires sont combinés",

@@ -212,6 +212,7 @@
         "savePosition": "ポジションを保存",
         "settings": "設定",
         "togglePipcount": "pip カウント表示切替",
+        "toggleAnalysisChallenge": "チャレンジ：解析を隠す",
         "updatePosition": "ポジションを更新",
         "tour": "ガイドツアー",
         "importDatabaseTip": "別のデータベースをこれに統合する：共通する局面は重複せず、その解析とコメントは結合される",
