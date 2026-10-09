@@ -2087,7 +2087,7 @@
         "finishedDecision": "Décision terminée : {correct}/{n}, PR de session {pr}.",
         "undoHop": "Annuler le pas",
         "resetPlay": "Recommencer",
-        "playOnBoard": "Jouez le coup sur le plateau, puis validez.",
+        "playOnBoard": "Jouez le coup sur le plateau, puis cliquez les dés.",
         "notationPlaceholder": "Coup en notation, ex. 13/7 8/7",
         "notationLabel": "Coup tapé en notation",
         "cubePrompt": "Choisissez l'action de videau.",

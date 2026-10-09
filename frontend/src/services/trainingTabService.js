@@ -30,7 +30,7 @@ import {
     attachCorrection
 } from './trainingTab.js';
 import { invalidateTrainingStats } from '../stores/statsStore.js';
-import { quizPlayStore } from '../stores/quizPlayStore.js';
+import { quizPlayStore, armBoardMove } from '../stores/quizPlayStore.js';
 import { newPlay, completedPlay, undoLast, resetPlay, playStepsInAnyOrder } from './quizPlay.js';
 import { stepsFromNotation } from './transcriptionPlay.js';
 import { UNORDERED_SCORES, buildScoreCard, scoreCardNumbers } from './scoreCard.js';
@@ -510,7 +510,8 @@ async function showQuestion(question) {
  */
 function armBoard(question) {
     if (question?.kind !== 'decision') return;
-    quizPlayStore.set(question.prompt === 'checker' && question.plays?.length ? newPlay(question.position, question.plays) : null);
+    if (question.prompt === 'checker' && question.plays?.length) armBoardMove(newPlay(question.position, question.plays), () => void answerDecisionBoard());
+    else quizPlayStore.set(null);
 }
 
 /** Désarme le plateau à la fin d'une session de Décision, et seulement d'elle.
@@ -710,13 +711,13 @@ function fetchCorrection(question) {
 /** Annule le dernier pas du coup joué au plateau. */
 export function undoDecisionStep() {
     const question = openCheckerQuestion();
-    if (question) quizPlayStore.update((state) => (state ? undoLast(state, question.position) : state));
+    if (question) quizPlayStore.update((state) => (state ? { ...undoLast(state, question.position), swapped: !!state.swapped } : state));
 }
 
 /** Remet la position telle que la question la pose : le coup reprend de zéro. */
 export function resetDecisionPlay() {
     const question = openCheckerQuestion();
-    if (question) quizPlayStore.update((state) => (state ? resetPlay(state, question.position) : state));
+    if (question) quizPlayStore.update((state) => (state ? { ...resetPlay(state, question.position), swapped: !!state.swapped } : state));
 }
 
 /**

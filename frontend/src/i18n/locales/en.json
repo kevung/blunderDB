@@ -2087,7 +2087,7 @@
         "finishedDecision": "Decision done: {correct}/{n}, session PR {pr}.",
         "undoHop": "Undo step",
         "resetPlay": "Start over",
-        "playOnBoard": "Play the move on the board, then check it.",
+        "playOnBoard": "Play the move on the board, then click the dice.",
         "notationPlaceholder": "Move in notation, e.g. 13/7 8/7",
         "notationLabel": "Move typed in notation",
         "cubePrompt": "Choose the cube action.",

@@ -44,7 +44,7 @@ import * as dbModule from '../../wailsjs/go/database/Database.js';
 import * as appModule from '../../wailsjs/go/gui/App.js';
 import * as importServiceModule from '../services/importService.js';
 import * as databaseServiceModule from '../services/databaseService.js';
-import { quizPlayStore } from '../stores/quizPlayStore.js';
+import { quizPlayStore, quizPlayValidateStore } from '../stores/quizPlayStore.js';
 import { playHop } from '../services/quizPlay.js';
 import fr from '../i18n/locales/fr.json';
 import { positionStore, positionsStore, searchSource } from '../stores/positionStore.js';
@@ -900,6 +900,28 @@ describe('une session de Décision (#323)', () => {
             await answerDecisionBoard();
             expect(db.GradeQuizChecker).not.toHaveBeenCalled();
             expect(current().revealed).toBe(false);
+        });
+
+        test('le coup est armé selon la grammaire commune : le clic sur les dés juge', async () => {
+            library({ 7: CHECKER });
+            await startTrainingSession({ exercise: 'decision', seedSource: 'library' });
+            const validate = get(quizPlayValidateStore);
+            expect(validate, 'le rappel de validation est posé').toBeTypeOf('function');
+            playOnBoard();
+            db.GradeQuizChecker.mockResolvedValue(/** @type {any} */ (verdict()));
+            validate?.();
+            await vi.waitFor(() => expect(db.GradeQuizChecker).toHaveBeenCalled());
+        });
+
+        test('annuler un pas ou tout reprendre garde l’ordre donné aux dés', async () => {
+            library({ 7: CHECKER });
+            await startTrainingSession({ exercise: 'decision', seedSource: 'library' });
+            quizPlayStore.update((s) => (s ? { ...s, swapped: true } : s));
+            playOnBoard();
+            undoDecisionStep();
+            expect(get(quizPlayStore)?.swapped).toBe(true);
+            resetDecisionPlay();
+            expect(get(quizPlayStore)?.swapped).toBe(true);
         });
 
         test('annuler un pas, puis tout reprendre', async () => {

@@ -353,20 +353,9 @@ msgstr ""
 
 #: ../../source/raccourcis.rst:76
 msgid ""
-"Tant qu'une question du :ref:`panneau Entraînement "
-"<panneau_entrainement>` est posée sur le plateau, les touches qui "
-"parcourent la liste ne la font pas défiler : la question garde le "
-"plateau. Sur une décision de pions, le panneau ayant le focus : RETOUR "
-"ARRIÈRE défait le dernier pas, ÉCHAP recommence le coup, ENTRÉE le valide"
-" quand il est complet ; dans le champ de notation, ENTRÉE valide le coup "
-"tapé (``13/7 8/7``)."
+"Tant qu'une question du :ref:`panneau Entraînement <panneau_entrainement>` est posée sur le plateau, les touches qui parcourent la liste ne la font pas défiler : la question garde le plateau. Sur une décision de pions, le panneau ayant le focus : RETOUR ARRIÈRE défait le dernier pas, ÉCHAP recommence le coup, ENTRÉE le valide quand il est complet, comme un clic sur les dés ; dans le champ de notation, ENTRÉE valide le coup tapé (``13/7 8/7``)."
 msgstr ""
-"Kun :ref:`Harjoittelu-paneelin <panneau_entrainement>` kysymys on "
-"esitetty laudalla, luetteloa selaavat näppäimet eivät vieritä sitä: "
-"kysymys pitää laudan. Nappulasiirrossa, kun paneelilla on fokus: "
-"ASKELPALAUTIN kumoaa viimeisen askeleen, ESC aloittaa siirron alusta, "
-"ENTER vahvistaa sen, kun se on valmis; merkintäkentässä ENTER vahvistaa "
-"kirjoitetun siirron (``13/7 8/7``)."
+"Kun :ref:`Harjoittelu-paneelin <panneau_entrainement>` kysymys on esitetty laudalla, luetteloa selaavat näppäimet eivät vieritä sitä: kysymys pitää laudan. Nappulasiirrossa, kun paneelilla on fokus: ASKELPALAUTIN kumoaa viimeisen askeleen, ESC aloittaa siirron alusta, ENTER vahvistaa sen, kun se on valmis, kuten noppien napsautus; merkintäkentässä ENTER vahvistaa kirjoitetun siirron (``13/7 8/7``)."
 
 #: ../../source/raccourcis.rst:86
 msgid "Affichage"

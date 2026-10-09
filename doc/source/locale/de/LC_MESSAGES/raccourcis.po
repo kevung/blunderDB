@@ -359,20 +359,9 @@ msgstr ""
 
 #: ../../source/raccourcis.rst:76
 msgid ""
-"Tant qu'une question du :ref:`panneau Entraînement "
-"<panneau_entrainement>` est posée sur le plateau, les touches qui "
-"parcourent la liste ne la font pas défiler : la question garde le "
-"plateau. Sur une décision de pions, le panneau ayant le focus : RETOUR "
-"ARRIÈRE défait le dernier pas, ÉCHAP recommence le coup, ENTRÉE le valide"
-" quand il est complet ; dans le champ de notation, ENTRÉE valide le coup "
-"tapé (``13/7 8/7``)."
+"Tant qu'une question du :ref:`panneau Entraînement <panneau_entrainement>` est posée sur le plateau, les touches qui parcourent la liste ne la font pas défiler : la question garde le plateau. Sur une décision de pions, le panneau ayant le focus : RETOUR ARRIÈRE défait le dernier pas, ÉCHAP recommence le coup, ENTRÉE le valide quand il est complet, comme un clic sur les dés ; dans le champ de notation, ENTRÉE valide le coup tapé (``13/7 8/7``)."
 msgstr ""
-"Solange eine Frage des :ref:`Trainings-Panels <panneau_entrainement>` auf"
-" dem Brett steht, blättern die Tasten, die die Liste durchlaufen, sie "
-"nicht weiter: Die Frage behält das Brett. Bei einer Zugentscheidung und "
-"mit Fokus im Panel: RÜCKTASTE macht den letzten Schritt rückgängig, ESC "
-"beginnt den Zug neu, EINGABE bestätigt ihn, sobald er vollständig ist; im"
-" Notationsfeld bestätigt EINGABE den eingetippten Zug (``13/7 8/7``)."
+"Solange eine Frage des :ref:`Trainings-Panels <panneau_entrainement>` auf dem Brett steht, blättern die Tasten, die die Liste durchlaufen, sie nicht weiter: Die Frage behält das Brett. Bei einer Zugentscheidung und mit Fokus im Panel: RÜCKTASTE macht den letzten Schritt rückgängig, ESC beginnt den Zug neu, EINGABE bestätigt ihn, sobald er vollständig ist, wie ein Klick auf die Würfel; im Notationsfeld bestätigt EINGABE den eingetippten Zug (``13/7 8/7``)."
 
 #: ../../source/raccourcis.rst:86
 msgid "Affichage"
