@@ -54,8 +54,8 @@ type deckPositionReq struct {
 	PositionID int64 `json:"positionId"`
 }
 
-// deckSyncResp is the report of a sync, with the ok an earlier contract
-// answered alone.
+// deckSyncResp is the report of a sync. ok stays so that a client reading
+// only it keeps working.
 type deckSyncResp struct {
 	OK     bool                          `json:"ok"`
 	DeckID int64                         `json:"deckId"`
@@ -139,7 +139,7 @@ func (s *Server) ankiRoutes() []route {
 			return as().ResetDeck(ctx, scope, req.DeckID)
 		})},
 		// Un paquet adossé à une collection vivante réévalue sa requête ici ;
-		// ok reste pour les clients qui n'attendaient que lui.
+		// ok reste pour qu'un client qui ne lit que lui fonctionne.
 		{http.MethodPost, "/v1/anki.sync", rpc(func(ctx context.Context, scope string, req deckIDReq) (deckSyncResp, error) {
 			report, err := storage.SyncDeck(ctx, s.opts.Storage, scope, req.DeckID)
 			if err != nil {

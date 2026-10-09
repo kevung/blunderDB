@@ -26,9 +26,12 @@ vivante n'a pas), et un refus commun aux trois modes d'une requête illisible.
    tenant, sous la RLS comme toute recherche.
 2. **Plafond déclaré, jamais de troncature muette.** `storage.LivingCollectionCap` (5 000)
    borne une évaluation ; un `limit` plus petit l'abaisse. La réponse
-   (`CollectionEvaluation`) porte toujours les ids, le total réel, le plafond appliqué et
-   `truncated`, vrai exactement quand les ids s'arrêtent avant le total. La même forme
-   répond pour une liste faite à la main. Les lectures par fenêtres
+   (`CollectionEvaluation`) porte toujours les ids, le total, le plafond appliqué et
+   `truncated`. `truncated` se décide dans la même lecture que les ids (on demande un id de
+   plus que le plafond) : il est exact pour cette lecture. Le total vient d'un comptage
+   séparé, hors transaction commune ; sous écriture concurrente il peut différer de ce que
+   la lecture a vu, mais il n'est jamais rendu sous le nombre d'ids, ni au plus égal au
+   plafond quand `truncated` est vrai. La même forme répond pour une liste faite à la main. Les lectures par fenêtres
    (`positionIds`, `countPositions`) restent bornées par leur propre `limit` et ne sont pas
    plafonnées : elles ne rendent jamais la collection entière.
 3. **Le paquet fondé sur une collection vivante.** Un paquet de source `collection` dont la
@@ -45,7 +48,10 @@ vivante n'a pas), et un refus commun aux trois modes d'une requête illisible.
    collection vivante et un paquet de source `collection` dessus.
 5. **Une requête illisible est refusée à l'écriture**, dans les trois modes : un jeton
    qu'aucune règle ne réclame ferait d'une collection toute la base. `ErrUnreadableFilter`
-   enveloppe `ErrInvalid` (code `invalid` côté daemon) ; une création refusée n'écrit rien.
+   enveloppe `ErrInvalid` (code `invalid` côté daemon) ; une requête refusée n'écrit rien,
+   car elle est vérifiée avant toute écriture. Créer une collection vivante fait deux
+   écritures (création, puis requête) ; si la seconde échoue, la collection juste créée est
+   supprimée, sans garantie transactionnelle.
 
 ## Conséquences
 

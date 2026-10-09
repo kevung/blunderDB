@@ -107,8 +107,8 @@ func (s *Server) collectionRoutes() []route {
 		{http.MethodPost, "/v1/collections.update", rpcVoid(func(ctx context.Context, scope string, req collectionUpdateReq) error {
 			return cs().Update(ctx, scope, req.ID, req.Name, req.Description)
 		})},
-		// Collection VIVANTE : la route pose la requête, le client la réévalue
-		// à chaque ouverture.
+		// Collection VIVANTE : la route pose la requête ; le moteur la
+		// réévalue à chaque lecture (ADR-0084).
 		{http.MethodPost, "/v1/collections.setFilter", rpcVoid(func(ctx context.Context, scope string, req collectionFilterReq) error {
 			return storage.SetCollectionFilter(ctx, s.opts.Storage, scope, req.ID, req.Query)
 		})},

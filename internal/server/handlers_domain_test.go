@@ -310,8 +310,8 @@ func TestLivingCollectionRoutesResolveTheQuery(t *testing.T) {
 
 // TestLivingCollectionEvaluateAndDeck: a collection created living in one
 // call is read under its declared ceiling with the true total, a refused
-// query is a client error, and a deck it feeds reports the evaluation while
-// still answering the ok an earlier client expects.
+// query is a client error, and a deck it feeds reports the evaluation next to
+// ok, which a client reading only it relies on.
 func TestLivingCollectionEvaluateAndDeck(t *testing.T) {
 	ts := newTestServer(t)
 	for i := range 3 {
