@@ -2128,7 +2128,7 @@ export default {
 </tr>
 <tr>
 <td>/</td>
-<td>Cerca nella guida: Invio passa all'occorrenza successiva, MAIUSC-Invio alla precedente.</td>
+<td>Cerca nella guida: le occorrenze vengono contate ed evidenziate durante la digitazione; Invio passa alla successiva, MAIUSC-Invio alla precedente.</td>
 </tr>
 <tr>
 <td>?, CTRL-F, Esc</td>

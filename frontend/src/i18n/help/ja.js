@@ -2128,7 +2128,7 @@ export default {
 </tr>
 <tr>
 <td>/</td>
-<td>ヘルプ内を検索します。Enter で次の一致へ、SHIFT-Enter で前の一致へ移動します。</td>
+<td>ヘルプ内検索：入力するたびに一致箇所が数えられ強調表示されます。Enter で次の一致箇所へ、SHIFT-Enter で前の一致箇所へ移動します。</td>
 </tr>
 <tr>
 <td>?, CTRL-F, Esc</td>

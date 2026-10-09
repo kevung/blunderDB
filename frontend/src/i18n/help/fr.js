@@ -2128,7 +2128,7 @@ export default {
 </tr>
 <tr>
 <td>/</td>
-<td>Chercher dans l'aide : Entrée passe à l'occurrence suivante, MAJ-Entrée à la précédente.</td>
+<td>Chercher dans l'aide : les occurrences sont comptées et surlignées à la frappe ; Entrée passe à l'occurrence suivante, MAJ-Entrée à la précédente.</td>
 </tr>
 <tr>
 <td>?, CTRL-F, Esc</td>
