@@ -91,7 +91,7 @@ et un coup achevé part seul en Transcription quand rien ne l'annonce.
   pour tout coup armé, pas seulement en Duel.
 - Transcription : un coup lointain coûte un clic de plus (la validation) ; c'est le prix d'un
   coup qui ne part jamais sans qu'on le dise. La note KLM d'ADR-0052 est à refaire.
-- Le menu du plateau pendant un quiz ou une transcription ne s'ouvre plus sur le damier : la
+- Pendant un coup, le menu du plateau ne s'ouvre sur le damier qu'avant le premier pas : la
   documentation (`raccourcis.rst`, `manuel.rst`) change avec chaque tranche.
 - La Transcription perd « le coup joué au plateau dispense de lire les dés » : tout coup au
   plateau commence par le jet, au clavier ou au triangle.
