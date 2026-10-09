@@ -32,10 +32,20 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     UpdateMatchComment: vi.fn().mockResolvedValue(undefined),
     UpdateTournamentComment: vi.fn().mockResolvedValue(undefined),
     ReorderTournamentMatches: vi.fn().mockResolvedValue(undefined),
-    GetTournamentReview: vi.fn().mockResolvedValue(null)
+    GetTournamentReview: vi.fn().mockResolvedValue(null),
+    GetPositionIDsByTournament: vi.fn().mockResolvedValue([])
 }));
 
-import { GetAllTournaments, CreateTournament, DeleteTournament, UpdateTournament, GetTournamentMatches, ListMatches, GetTournamentReview } from '../../wailsjs/go/database/Database.js';
+import {
+    GetAllTournaments,
+    CreateTournament,
+    DeleteTournament,
+    UpdateTournament,
+    GetTournamentMatches,
+    ListMatches,
+    GetTournamentReview,
+    GetPositionIDsByTournament
+} from '../../wailsjs/go/database/Database.js';
 
 import TournamentPanel from '../components/TournamentPanel.svelte';
 import { openPanels, PANEL, statusBarTextStore } from '../stores/uiStore.js';
@@ -194,6 +204,17 @@ describe('TournamentPanel — list view', () => {
         expect(ListMatches).toHaveBeenCalledWith(expect.objectContaining({ Unassigned: true }));
         expect(GetTournamentMatches).toHaveBeenCalledWith(1);
         expect(await screen.findByText('Alice')).toBeTruthy();
+    });
+
+    test('the strip shows as many positions as the ids the link opens', async () => {
+        vi.mocked(GetTournamentMatches).mockResolvedValue(/** @type {any} */ ([{ id: 501, player1_name: 'Alice', player2_name: 'Bob', match_length: 7, comment: '' }]));
+        vi.mocked(GetPositionIDsByTournament).mockResolvedValue([11, 12, 13]);
+        renderOpen();
+        await fireEvent.dblClick(/** @type {HTMLElement} */ ((await screen.findByText('Blunder Cup')).closest('tr')));
+
+        await vi.waitFor(() => expect(GetPositionIDsByTournament).toHaveBeenCalledWith(1));
+        const link = await screen.findByTestId('tournament-positions');
+        expect(link.textContent).toMatch(/\b3\b/);
     });
 
     test('the review toggle loads the review of the most present player', async () => {

@@ -14,7 +14,7 @@
     import PanelTable, { navigationDelta, stepSelection } from './panels/PanelTable.svelte';
     import PanelHeader from './panels/PanelHeader.svelte';
     import CountLink from './panels/CountLink.svelte';
-    import { loadPositionsFromTournament } from '../services/positionLoader.js';
+    import { loadPositionsFromSelection } from '../services/positionLoader.js';
     import {
         GetAllTournaments,
         CreateTournament,
@@ -30,7 +30,8 @@
         SaveLastVisitedPosition,
         UpdateMatchComment,
         UpdateTournamentComment,
-        ReorderTournamentMatches
+        ReorderTournamentMatches,
+        GetPositionIDsByTournament
     } from '../../wailsjs/go/database/Database.js';
     import { openPanels, PANEL, closePanel, statusBarTextStore, statusBarModeStore } from '../stores/uiStore';
     import { tournamentsStore, selectedTournamentStore, tournamentMatchesStore } from '../stores/tournamentStore';
@@ -272,6 +273,27 @@
             return sortOrder === 'asc' ? cmp : -cmp;
         });
     }
+
+    // The positions of the open tournament: their count is the strip's link, and the link opens
+    // exactly these ids. Re-read when a match joins or leaves.
+    let tournamentPositionIds = $state(/** @type {number[]} */ ([]));
+    $effect(() => {
+        const id = selectedTournament?.id;
+        void tournamentMatches.length;
+        if (!id) {
+            tournamentPositionIds = [];
+            return;
+        }
+        let stale = false;
+        Promise.resolve(GetPositionIDsByTournament(id))
+            .then((ids) => {
+                if (!stale) tournamentPositionIds = ids || [];
+            })
+            .catch((e) => logger.error('Error loading tournament positions:', e));
+        return () => {
+            stale = true;
+        };
+    });
 
     // Back from a tournament's matches to the list of tournaments.
     function leaveTournament() {
@@ -752,11 +774,16 @@
                         </span>
                     {/if}
                     {#if tournamentMatches.length > 0}
-                        <CountLink
-                            label={tournamentMatches.length === 1 ? $t('tournament.matchCountOne') : $t('tournament.matchCountMany', { n: tournamentMatches.length })}
-                            title={$t('stats.openPositions')}
-                            onclick={() => loadPositionsFromTournament(selectedTournament.id)}
-                        />
+                        <span class="header-meta">{tournamentMatches.length === 1 ? $t('tournament.matchCountOne') : $t('tournament.matchCountMany', { n: tournamentMatches.length })}</span>
+                    {/if}
+                    {#if tournamentPositionIds.length > 0}
+                        <span data-testid="tournament-positions">
+                            <CountLink
+                                label={$t('statusBar.countPositions', { n: tournamentPositionIds.length })}
+                                title={$t('stats.openPositions')}
+                                onclick={() => loadPositionsFromSelection(tournamentPositionIds)}
+                            />
+                        </span>
                     {/if}
                     <button
                         class="icon-btn edit-header-btn"

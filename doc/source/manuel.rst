@@ -4217,7 +4217,7 @@ séparées : le journal de l'Entraînement ignore les révisions Anki, et les
 statistiques d'Anki ignorent les sessions d'Entraînement.
 
 **Un paquet sélectionné prend l'en-tête du panneau** : son nom, le nombre de ses
-positions, qu'un clic ouvre, et le nombre de cartes à réviser ; à droite, les
+positions, qu'un clic ouvre, et le nombre de cartes dues ; à droite, les
 paramètres (⚙), la remise à zéro (↻), *Bachoter* et *Étudier*. ← revient à la
 liste des paquets.
 
@@ -4230,8 +4230,14 @@ pour arrêter et revenir à la liste des paquets.
 
 Deux comptes portent des noms distincts : la colonne **Échues** de la liste
 compte toutes les cartes dont l'échéance est passée, y compris les cartes
-suspendues ou enterrées ; le compte *à réviser* de l'en-tête ne retient que celles qui
+suspendues ou enterrées ; le compte *dues* de l'en-tête ne retient que celles qui
 sont disponibles maintenant, et peut donc être plus petit.
+
+Les comptes d'Anki sont des liens : un clic sur les cartes dues, nouvelles, en
+cours ou en révision de la bande, ou sur une valeur des colonnes **Cartes**,
+**Nouvelles** et **Échues** de la liste, charge les positions correspondantes.
+De même, dans un tournoi ouvert, le nombre de positions ouvre exactement ces
+positions.
 
 **Les décisions de videau font deux cartes, enchaînées.** Une décision de
 videau est deux questions — « double ? », puis « prend ? » — et blunderDB les
