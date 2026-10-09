@@ -1,4 +1,5 @@
 <script>
+    /** @typedef {import('../../wailsjs/go/models').domain.Match} Match */
     import { confirmAction, confirmModalStore } from '../services/confirmService.js';
     import { logger } from '../utils/logger.js';
     import { focusPanelUnlessTyping } from '../utils/panelFocus.js';
@@ -83,6 +84,7 @@
     const matchTotal = $derived($matchListStore.total);
     let filterText = $state('');
     let filterInput = $state(null);
+    /** @type {ReturnType<typeof setTimeout> | null} */
     let filterTimer = null;
     /** @type {any} */
     let selectedMatch = $state(null);
@@ -196,18 +198,18 @@
     });
 
     // A Move's Repère: the dice fell, else the action was done. Absent is unknown, never zero.
-    function moveTickMs(mp) {
+    function moveTickMs(/** @type {Partial<import("../../wailsjs/go/models").domain.MatchMovePosition> | null | undefined} */ mp) {
         return mp?.roll_tick_ms ?? mp?.tick_ms ?? null;
     }
 
     // Open the video at the decision, one second before the dice fell.
-    async function viewInVideo(mp) {
+    async function viewInVideo(/** @type {Partial<import("../../wailsjs/go/models").domain.MatchMovePosition> | null | undefined} */ mp) {
         const tick = moveTickMs(mp);
         if (!videoSource || tick === null) return;
         await openVideoAt(Math.max(0, tick - 1000));
     }
 
-    async function openVideoAt(ms) {
+    async function openVideoAt(/** @type {number} */ ms) {
         if (videoKind === 'file') {
             videoStartMs = ms;
             if (videoOpen && videoPane) videoPane.seek(ms);
@@ -227,7 +229,7 @@
         else openVideoAt(0);
     }
 
-    async function saveVideoSource(source) {
+    async function saveVideoSource(/** @type {string} */ source) {
         if (!detailMatch) return;
         const id = detailMatch.id;
         const value = source.trim();
@@ -295,7 +297,7 @@
     $effect(
         onChange(
             () => visible, // $derived — tracked
-            (opened) => {
+            (/** @type {boolean} */ opened) => {
                 if (opened && databaseLoaded) {
                     loadMatches().then(async () => {
                         const lvm = lastVisitedMatch;
@@ -345,17 +347,17 @@
         }
     }
 
-    function startEditTournament(match, event) {
+    function startEditTournament(/** @type {Match} */ match, /** @type {Event} */ event) {
         event.stopPropagation();
         tournamentEdit.start(match.id, match.tournament_name || match.event || '');
     }
 
-    async function selectTournamentOption(tournament) {
+    async function selectTournamentOption(/** @type {{ name: string }} */ tournament) {
         tournamentEdit.draft = tournament.name;
         await tournamentEdit.save();
     }
 
-    function startEditMatch(match, ev) {
+    function startEditMatch(/** @type {Match} */ match, /** @type {Event} */ ev) {
         ev.stopPropagation();
         matchEdit.start(match.id, {
             player1: match.player1_name || '',
@@ -382,19 +384,20 @@
     }
 
     /** "1855 (205) – 1600 (0)": each seat's rating and, when stated, its experience, player 1 first. */
-    function formatRatings(m) {
-        const seat = (elo, exp) => (elo == null ? '—' : `${Math.round(elo)}${exp == null ? '' : ` (${exp})`}`);
+    function formatRatings(/** @type {Match} */ m) {
+        const seat = (/** @type {number | null | undefined} */ elo, /** @type {number | string | null | undefined} */ exp) =>
+            elo == null ? '—' : `${Math.round(elo)}${exp == null ? '' : ` (${exp})`}`;
         return `${seat(m.player1_elo, m.player1_experience)} – ${seat(m.player2_elo, m.player2_experience)}`;
     }
 
     /** The optional rules a money session was played under: "Jacoby, Beaver", or none. */
-    function formatSessionRules(m) {
+    function formatSessionRules(/** @type {Match} */ m) {
         const rules = [m.has_jacoby && 'Jacoby', m.has_beaver && 'Beaver'].filter(Boolean);
         return rules.length ? rules.join(', ') : $t('match.rulesNone');
     }
 
     /** A match by id: from the loaded rows, else read on its own (it may lie beyond the first page). */
-    async function findMatch(id) {
+    async function findMatch(/** @type {number} */ id) {
         const loaded = matches.find((m) => m.id === id);
         if (loaded) return loaded;
         try {
@@ -419,7 +422,7 @@
         { key: 'actions', actions: true }
     ]);
 
-    function selectMatch(match) {
+    function selectMatch(/** @type {Match} */ match) {
         if (selectedMatch && selectedMatch.id === match.id) {
             selectedMatch = null;
             detailMatch = null;
@@ -437,7 +440,7 @@
         }
     }
 
-    async function loadMatchDetail(match) {
+    async function loadMatchDetail(/** @type {Match} */ match) {
         if (!match) return;
         loadingDetail = true;
         detailMatch = match;
@@ -551,7 +554,7 @@
         });
     });
 
-    async function loadMatchStats(match) {
+    async function loadMatchStats(/** @type {Match} */ match) {
         if (!match || loadingStats) return;
         loadingStats = true;
         try {
@@ -701,13 +704,14 @@
         });
     });
 
-    function setGameOpen(gameNumber, isOpen) {
+    function setGameOpen(/** @type {number} */ gameNumber, /** @type {boolean} */ isOpen) {
         if (isOpen) openGames.add(gameNumber);
         else openGames.delete(gameNumber);
     }
 
     // Last game stepped into: reopening reacts to crossing into a game, so the
     // user can still collapse the current one.
+    /** @type {number | null} */
     let lastCrossedGame = null;
 
     // In MATCH mode, crossing into a collapsed game reopens it (never closes any).
@@ -745,7 +749,7 @@
     /** @param {number} idx */
     const gradeHidden = (idx) => $analysisChallengeStore && (idx !== selectedIdx || $analysisChallengeHiddenStore);
 
-    async function navigateToMove(moveIndex) {
+    async function navigateToMove(/** @type {number} */ moveIndex) {
         if (!detailMatch || !detailMovePositions.length) return;
         // Enter match mode and navigate to the clicked move
         const movePositions = detailMovePositions;
@@ -828,7 +832,7 @@
         activeTabStore.set('analysis');
     }
 
-    async function enterMatchMode(match) {
+    async function enterMatchMode(/** @type {Match} */ match) {
         if (!detailMovePositions.length) {
             // Load if not already loaded
             await loadMatchDetail(match);
@@ -850,7 +854,7 @@
         await navigateToMove(startIndex);
     }
 
-    function handleDoubleClick(match) {
+    function handleDoubleClick(/** @type {Match} */ match) {
         enterMatchMode(match);
     }
 
@@ -877,7 +881,7 @@
         });
     });
 
-    async function deleteMatchEntry(match, event) {
+    async function deleteMatchEntry(/** @type {Match} */ match, /** @type {Event} */ event) {
         event.stopPropagation();
         if (!(await confirmAction(get(t)('match.confirmDelete', { player1: match.player1_name, player2: match.player2_name }), { confirmLabel: get(t)('common.delete') }))) return;
         try {
@@ -903,7 +907,7 @@
         }
     }
 
-    async function swapMatchPlayers(match, event) {
+    async function swapMatchPlayers(/** @type {Match} */ match, /** @type {Event} */ event) {
         event.stopPropagation();
         try {
             await SwapMatchPlayers(match.id);
@@ -943,7 +947,7 @@
         }
     }
 
-    function getPlayerName(mp) {
+    function getPlayerName(/** @type {{ player_on_roll: number, player1_name?: string, player2_name?: string }} */ mp) {
         return mp.player_on_roll === 0 ? mp.player1_name || $t('match.player1') : mp.player2_name || $t('match.player2');
     }
 
@@ -951,7 +955,7 @@
         closePanel(PANEL.MATCH);
     }
 
-    function handleKeyDown(event) {
+    function handleKeyDown(/** @type {KeyboardEvent} */ event) {
         if (!visible) return;
         // Already handled: a dialog delegated on the app root runs first and claims its keys this way.
         if (event.defaultPrevented) return;
@@ -1043,7 +1047,7 @@
         }
     }
 
-    function handleClickOutside(event) {
+    function handleClickOutside(/** @type {MouseEvent} */ event) {
         // A `document` listener sees every click, modals included: it must never
         // blur the focused element, or modal text fields become unclickable.
         if (get(isAnyModalOpen)) return;
@@ -1119,11 +1123,11 @@
                 bind:sort
                 sortOptions={{ tristate: true }}
                 selectedKey={selectedMatch?.id}
-                rowClass={(match) => (matchEdit.isEditing(match.id) ? 'match-editing-row' : '')}
-                onSelect={(match) => {
+                rowClass={(/** @type {Match} */ match) => (matchEdit.isEditing(match.id) ? 'match-editing-row' : '')}
+                onSelect={(/** @type {Match} */ match) => {
                     if (!matchEdit.isEditing(match.id)) selectMatch(match);
                 }}
-                onActivate={(match) => {
+                onActivate={(/** @type {Match} */ match) => {
                     if (!matchEdit.isEditing(match.id)) handleDoubleClick(match);
                 }}
                 onNearEnd={matchListStore.loadMore}
@@ -1131,7 +1135,7 @@
                 emptyClear={filterText.trim() ? { label: $t('emptyState.clearFilter'), onClick: clearFilter } : null}
                 emptyText={matches.length === 0 && ($matchListStore.loaded || !$databasePathStore) ? (filterText.trim() ? $t('match.noMatchesFiltered') : $t('match.noMatchesImported')) : ''}
             >
-                {#snippet cells(match, index)}
+                {#snippet cells(/** @type {Match} */ match, /** @type {number} */ index)}
                     {#if matchEdit.isEditing(match.id)}
                         <td class="index-cell narrow-col no-select">{index + 1}</td>
                         <td class="narrow-col">

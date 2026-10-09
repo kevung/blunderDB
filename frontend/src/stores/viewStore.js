@@ -157,7 +157,7 @@ function createViewStore() {
     // A Duel holds the board: a view restore would put a library position under it.
     const viewsLocked = () => get(duelHoldsBoardStore);
 
-    function switchTo(viewId) {
+    function switchTo(/** @type {number} */ viewId) {
         if (viewsLocked()) return;
         const currentId = get(activeViewId);
         if (viewId === currentId) return;
@@ -190,7 +190,7 @@ function createViewStore() {
         restoreViewState(newView);
     }
 
-    function closeView(viewId) {
+    function closeView(/** @type {number} */ viewId) {
         if (viewsLocked()) return;
         const vs = get(views);
         if (vs.length <= 1) return;
@@ -204,7 +204,7 @@ function createViewStore() {
         }
     }
 
-    function renameView(viewId, newName) {
+    function renameView(/** @type {number} */ viewId, newName) {
         views.update((vs) => vs.map((v) => (v.id === viewId ? { ...v, name: newName } : v)));
     }
 

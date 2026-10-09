@@ -91,7 +91,7 @@
         }
     });
 
-    function toggleLessonSelection(lessonId) {
+    function toggleLessonSelection(/** @type {number} */ lessonId) {
         lessonsManuallyModified = true;
         const ids = exportOptions.lessonIDs ?? [];
         exportOptions.lessonIDs = ids.includes(lessonId) ? ids.filter((id) => id !== lessonId) : [...ids, lessonId];
@@ -209,7 +209,7 @@
         }
     });
 
-    function toggleMatchSelection(matchId) {
+    function toggleMatchSelection(/** @type {number} */ matchId) {
         matchesManuallyModified = true;
         if (exportOptions.matchIDs.includes(matchId)) {
             exportOptions.matchIDs = exportOptions.matchIDs.filter((id) => id !== matchId);
@@ -228,7 +228,7 @@
         exportOptions.matchIDs = [];
     }
 
-    function toggleCollectionSelection(collectionId) {
+    function toggleCollectionSelection(/** @type {number} */ collectionId) {
         collectionsManuallyModified = true;
         if (exportOptions.collectionIDs.includes(collectionId)) {
             exportOptions.collectionIDs = exportOptions.collectionIDs.filter((id) => id !== collectionId);
@@ -237,7 +237,7 @@
         }
     }
 
-    function toggleTournamentSelection(tournamentId) {
+    function toggleTournamentSelection(/** @type {number} */ tournamentId) {
         tournamentsManuallyModified = true;
         if (exportOptions.includeTournamentIDs.includes(tournamentId)) {
             exportOptions.includeTournamentIDs = exportOptions.includeTournamentIDs.filter((id) => id !== tournamentId);

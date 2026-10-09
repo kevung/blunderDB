@@ -44,7 +44,7 @@ export function formatIsoDay(value) {
  * `new Date(...)`, which is UTC midnight. Formatting that instant in local time would show the
  * day before west of Greenwich.
  */
-export function formatUtcDay(ms) {
+export function formatUtcDay(/** @type {number} */ ms) {
     if (!ms) return '';
     const d = new Date(ms);
     return formatDate(new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
@@ -73,6 +73,6 @@ export function formatPercent(value, options) {
  * The CLDR plural category of `n` in the active language, instead of `n === 1 ? … : …`, which is
  * wrong outside English/French (Russian has three categories).
  */
-export function pluralCategory(n, options) {
+export function pluralCategory(/** @type {number} */ n, options) {
     return new Intl.PluralRules(activeLocale(), options).select(n);
 }

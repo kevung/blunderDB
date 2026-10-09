@@ -70,15 +70,15 @@
         return s;
     });
 
-    function isMatchChecked(matchId) {
+    function isMatchChecked(/** @type {number} */ matchId) {
         return localMatchIDs.includes(matchId) || impliedMatchIDs.has(matchId);
     }
 
-    function isMatchDisabled(matchId) {
+    function isMatchDisabled(/** @type {number} */ matchId) {
         return impliedMatchIDs.has(matchId) && !localMatchIDs.includes(matchId);
     }
 
-    function toggleMatch(matchId) {
+    function toggleMatch(/** @type {number} */ matchId) {
         if (isMatchDisabled(matchId)) return;
         localMatchIDs = localMatchIDs.includes(matchId) ? localMatchIDs.filter((id) => id !== matchId) : [...localMatchIDs, matchId];
     }
@@ -92,7 +92,7 @@
         localMatchIDs = localMatchIDs.filter((id) => !visibleIDs.has(id));
     }
 
-    function toggleTournament(tournamentId) {
+    function toggleTournament(/** @type {number} */ tournamentId) {
         localTournamentIDs = localTournamentIDs.includes(tournamentId) ? localTournamentIDs.filter((id) => id !== tournamentId) : [...localTournamentIDs, tournamentId];
     }
 

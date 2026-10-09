@@ -221,7 +221,7 @@
         }
     }
 
-    function handlePromptKeyDown(event) {
+    function handlePromptKeyDown(/** @type {KeyboardEvent} */ event) {
         // La liste ne capte que ses touches ; le reste va à la saisie.
         if (tagSuggestions.length > 0) {
             if (event.key === 'ArrowDown') {
@@ -284,7 +284,7 @@
         }
     }
 
-    function handleEditKeyDown(event, comment) {
+    function handleEditKeyDown(/** @type {KeyboardEvent} */ event, comment) {
         if (event.key === 'Enter' && !event.shiftKey) {
             event.stopPropagation();
             event.preventDefault();
@@ -295,7 +295,7 @@
         }
     }
 
-    async function deleteComment(comment, event) {
+    async function deleteComment(comment, /** @type {Event} */ event) {
         event.stopPropagation();
         try {
             // Through the trash: restorable from the `trash` command.
@@ -307,7 +307,7 @@
     }
 
     // Reactive formatter: depends on $t so labels re-render on language change.
-    let formatDate = $derived((dateStr) => {
+    let formatDate = $derived((/** @type {string} */ dateStr) => {
         if (!dateStr) return '';
         try {
             // SQLite CURRENT_TIMESTAMP returns "YYYY-MM-DD HH:MM:SS" which some
@@ -327,7 +327,7 @@
         }
     });
 
-    function handleSearchKeyDown(event) {
+    function handleSearchKeyDown(/** @type {KeyboardEvent} */ event) {
         if (event.key === 'Escape') {
             event.stopPropagation();
             event.currentTarget.blur();

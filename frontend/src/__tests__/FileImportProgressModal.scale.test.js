@@ -11,7 +11,7 @@ import FileImportProgressModal from '../components/FileImportProgressModal.svelt
 
 afterEach(cleanup);
 
-function progress(i, total) {
+function progress(/** @type {number} */ i, total) {
     return {
         filesDone: i,
         filesTotal: total,

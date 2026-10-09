@@ -4,6 +4,7 @@ import { writable } from 'svelte/store';
 // last minutes). { domain, done, total, startedAt, firstDone } or null. Remaining time is timed
 // from the first callback (after the successor lists are built), not from the click, to be
 // honest. Fed by ConfigModal's listeners on bearoff:progress/done/error.
+/** @type {import('svelte/store').Writable<{ domain: string, done: number, total: number, startedAt: number, firstDone: number } | null>} */
 export const bearoffProgressStore = writable(null);
 
 // The last error a generation reported, cleared when a new one starts.

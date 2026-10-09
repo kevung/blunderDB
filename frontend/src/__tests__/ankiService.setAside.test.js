@@ -34,7 +34,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     GetAllCollections: vi.fn(() => Promise.resolve([])),
     LoadPositionIDsByFilters: vi.fn(() => Promise.resolve([]))
 }));
-vi.mock('../utils/logger.js', () => ({ logger: { error: vi.fn(), perf: (_n, f) => f() } }));
+vi.mock('../utils/logger.js', () => ({ logger: { error: vi.fn(), perf: (/** @type {number} */ _n, f) => f() } }));
 
 import * as db from '../../wailsjs/go/database/Database.js';
 import { suspendCard, buryCard, removeCard } from '../services/ankiService.js';

@@ -57,7 +57,7 @@ test('typing alone refreshes count and highlights after a short debounce, no Ent
     vi.stubGlobal(
         'Highlight',
         class {
-            constructor(...r) {
+            constructor(/** @type {Range[]} */ ...r) {
                 this.ranges = r;
             }
         }
@@ -79,7 +79,7 @@ test('typing alone refreshes count and highlights after a short debounce, no Ent
     await vi.waitFor(() => expect(store.has('help-search')).toBe(false));
     expect(screen.queryByTestId('help-search-count')).toBeNull();
     vi.unstubAllGlobals();
-    delete CSS.highlights;
+    delete (/** @type {any} */ (CSS).highlights);
 });
 
 test('Escape in the search field is left to the modal', async () => {

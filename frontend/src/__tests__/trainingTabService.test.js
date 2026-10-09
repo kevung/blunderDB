@@ -212,7 +212,7 @@ describe('une session de Pions sur le plateau', () => {
         schedule.mockClear();
 
         expect(await startTrainingSession({ exercise: 'pips', seedSource: 'board' })).toBe(true);
-        expect(current().question.numbers.map((n) => n.type)).toEqual(['pips.bottom', 'pips.top']);
+        expect(current().question.numbers.map((/** @type {number} */ n) => n.type)).toEqual(['pips.bottom', 'pips.top']);
         expect(get(pipcountVisibleStore), 'le plateau porte la réponse').toBe(false);
         expect(schedule, 'masquer sans repeindre ne masque rien').toHaveBeenCalled();
 

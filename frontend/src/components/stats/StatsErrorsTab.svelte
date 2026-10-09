@@ -51,7 +51,7 @@
         scales: { y: { beginAtZero: true } }
     };
 
-    function handleCubeBarClick(dataIndex) {
+    function handleCubeBarClick(/** @type {number} */ dataIndex) {
         const c = cubeBreakdown[dataIndex];
         if (!c) return;
         const filter = get(statsFilterStore);
@@ -112,7 +112,7 @@
               ]
     );
 
-    function handleDirectionClick(cell, n) {
+    function handleDirectionClick(cell, /** @type {number} */ n) {
         if (n === 0) return; // nothing behind an empty cell
         const filter = get(statsFilterStore);
         loadPositionsFromStatsSelection(filter, { Kind: 'cube_direction', CubeCell: cell });
@@ -134,7 +134,7 @@
         scales: { y: { beginAtZero: true } }
     };
 
-    function handleCompBarClick(dataIndex) {
+    function handleCompBarClick(/** @type {number} */ dataIndex) {
         const kind = dataIndex === 0 ? 'checker' : 'cube';
         const filter = get(statsFilterStore);
         loadPositionsFromStatsSelection(filter, { Kind: kind, OnlyWithError: true });
@@ -160,7 +160,7 @@
         scales: { y: { beginAtZero: true } }
     };
 
-    function handleHistBarClick(dataIndex) {
+    function handleHistBarClick(/** @type {number} */ dataIndex) {
         const b = histogram[dataIndex];
         if (!b) return;
         const filter = get(statsFilterStore);

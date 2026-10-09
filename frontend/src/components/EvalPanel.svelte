@@ -244,7 +244,7 @@
         unsubEval.forEach((off) => off && off());
     });
 
-    function toggleChallenge(e) {
+    function toggleChallenge(/** @type {Event & { target: HTMLInputElement }} */ e) {
         const on = e.target.checked;
         epcChallengeStore.set(on);
         resetEpcReveal();
@@ -339,7 +339,7 @@
     // j/k and arrows walk the candidates, Escape drops the selection, as in the
     // analysis panel. Required: keyboardService withholds these keys app-wide
     // while selectedMoveStore is set.
-    function handleKeyDown(event) {
+    function handleKeyDown(/** @type {KeyboardEvent} */ event) {
         if (event.target?.matches?.('input, select, textarea')) return;
         if (event.key === 'Escape') {
             // A running rollout is stopped first, then the selection cleared.

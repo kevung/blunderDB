@@ -27,7 +27,7 @@
 
     onMount(loadAliases);
 
-    async function onSkipToggle(event) {
+    async function onSkipToggle(/** @type {Event & { currentTarget: HTMLInputElement }} */ event) {
         const skip = event.currentTarget.checked;
         try {
             await SetSkipDuplicates(skip);

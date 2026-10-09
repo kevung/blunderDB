@@ -99,7 +99,7 @@ export function createMatchList({ list = ListMatches, count = CountMatches, getB
         }
     }
 
-    function setText(text) {
+    function setText(/** @type {string} */ text) {
         if (get(store).text === text) return Promise.resolve();
         update((s) => ({ ...s, text }));
         return reload();

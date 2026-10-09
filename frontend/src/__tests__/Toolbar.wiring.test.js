@@ -9,7 +9,7 @@ import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { get } from 'svelte/store';
 
-const stub = vi.hoisted(() => (names) => Object.fromEntries(names.map((n) => [n, vi.fn()])));
+const stub = vi.hoisted(() => (names) => Object.fromEntries(names.map((/** @type {number} */ n) => [n, vi.fn()])));
 vi.mock('../services/databaseService.js', () => stub(['newDatabase', 'openDatabase', 'exitApp']));
 vi.mock('../services/importService.js', () => stub(['importDatabase', 'importPosition', 'importFolder', 'pastePosition']));
 vi.mock('../services/exportService.js', () => stub(['exportDatabase']));

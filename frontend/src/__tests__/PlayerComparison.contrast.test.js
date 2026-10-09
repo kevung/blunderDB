@@ -12,7 +12,7 @@ vi.mock('../services/positionLoader.js', () => ({ loadPositionsFromSelection: (.
 
 const { default: PlayerComparison } = await import('../components/stats/PlayerComparison.svelte');
 
-const row = (name) => ({ name, decisions: 100, pr: 5, pr_checker: 5, pr_cube: 5, snowie_er: 5, blunders: 2, matches: 3, wins: 1, losses: 2 });
+const row = (/** @type {string} */ name) => ({ name, decisions: 100, pr: 5, pr_checker: 5, pr_cube: 5, snowie_er: 5, blunders: 2, matches: 3, wins: 1, losses: 2 });
 
 afterEach(() => {
     cleanup();

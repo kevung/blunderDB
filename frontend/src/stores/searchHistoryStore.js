@@ -8,6 +8,7 @@ export const MAX_SEARCH_HISTORY = 100;
 
 // Store for search history
 // Each entry contains: { command: string, position: object, timestamp: number }
+/** @type {import('svelte/store').Writable<{ command: string, position: string, excludePosition: string, timestamp: number }[]>} */
 export const searchHistoryStore = writable([]);
 
 // Store for the last executed search (command + position JSON string)

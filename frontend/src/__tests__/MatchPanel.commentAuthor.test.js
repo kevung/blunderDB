@@ -56,7 +56,7 @@ async function settle() {
     for (let i = 0; i < 4; i++) await tick();
 }
 
-async function select(container, name) {
+async function select(container, /** @type {string} */ name) {
     const cell = () => [...container.querySelectorAll('tbody tr td')].find((td) => td.textContent.includes(name));
     await vi.waitFor(() => expect(cell()).toBeTruthy());
     await fireEvent.click(cell());

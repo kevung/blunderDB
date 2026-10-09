@@ -3,7 +3,7 @@ import { ComputeStats, ComputeRecurringErrors, ComputeStudyPlan, ComputeStudyEff
 import { databasePathStore } from './databaseStore.js';
 import { dbMutationCounterStore } from './uiStore.js';
 
-/** @typedef {any} StatsResult the engine result; consumers narrow it field by field */
+/** @typedef {import('../../wailsjs/go/models').database.StatsResult} StatsResult the engine result; consumers narrow it field by field */
 
 const defaultFilter = {
     playerName: '',

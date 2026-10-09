@@ -230,11 +230,11 @@
     // ── UI event handlers ──────────────────────────────────────────
 
     // Resize-handle drag (utils/resizeHandle.js).
-    function setPanelSize(size, side) {
+    function setPanelSize(/** @type {number} */ size, side) {
         if (side) panelWidth = size;
         else panelHeight = size;
     }
-    function savePanelSize(size, side) {
+    function savePanelSize(/** @type {number} */ size, side) {
         if (side) savePanelWidth(size);
         else rememberPanelHeight(size);
     }
@@ -242,7 +242,7 @@
     // A trackpad fires many wheel events per gesture, each a Wails round trip; 60 ms between
     // navigations keeps one gesture to a handful of steps.
     let lastWheelNavTime = 0;
-    function handleWheel(event) {
+    function handleWheel(/** @type {WheelEvent} */ event) {
         if ($isAnyModalOpen || $statusBarModeStore === 'EDIT' || $statusBarModeStore === 'EVAL' || $duelHoldsBoardStore) return;
         // La page Direction remplace le plateau dans la même zone : la molette y défile.
         if (!isOnBoard(event.target)) return;

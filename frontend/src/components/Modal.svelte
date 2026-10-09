@@ -48,7 +48,7 @@
     const titleId = $props.id();
     let box = $state();
 
-    function handleKeydown(event) {
+    function handleKeydown(/** @type {KeyboardEvent} */ event) {
         if (event.key === 'Escape') {
             if (!closeOnEscape) return;
             event.preventDefault();

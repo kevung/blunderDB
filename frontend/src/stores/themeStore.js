@@ -45,7 +45,7 @@ export async function initTheme() {
 }
 
 /** Choisit un thème : l'applique, palette comprise, et le persiste. */
-export async function setTheme(name) {
+export async function setTheme(/** @type {string} */ name) {
     if (!THEME_NAMES.includes(name)) return;
     themeStore.set(name);
     applyTheme(name);

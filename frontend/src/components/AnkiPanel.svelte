@@ -55,7 +55,7 @@
     let pausedSession = $derived($ankiPausedSessionStore);
     let answerShown = $derived($ankiAnswerShownStore);
     // A score deck's cards are scores, not positions: its count opens nothing.
-    const isScoreDeck = (deck) => deck?.sourceType === anki.SOURCE_SCORES;
+    const isScoreDeck = (/** @type {import("../services/ankiService.js").Deck} */ deck) => deck?.sourceType === anki.SOURCE_SCORES;
 
     // The answer of the card under review (ADR-0025). Board/analysis reads below
     // concern position cards; a score card's answer is the Training tab's sheet (ADR-0042).
@@ -84,11 +84,11 @@
     let isPlayedCubeAction = $derived(playedCubeActionPredicate(analysis));
 
     // A candidate click shows it on the board, as in the Analysis tab; a second click clears it.
-    function handleMoveRowClick(move) {
+    function handleMoveRowClick(/** @type {{ move: string }} */ move) {
         selectedMoveStore.set($selectedMoveStore === move.move ? null : move.move);
     }
 
-    function cubeAnalysesCount(a) {
+    function cubeAnalysesCount(/** @type {{ allCubeAnalyses?: unknown[], doublingCubeAnalysis?: unknown } | null | undefined} */ a) {
         if (!a) return 0;
         if (a.allCubeAnalyses && a.allCubeAnalyses.length > 0) return a.allCubeAnalyses.length;
         return a.doublingCubeAnalysis ? 1 : 0;
@@ -251,7 +251,7 @@
         }
     }
 
-    function fail(e) {
+    function fail(/** @type {unknown} */ e) {
         statusBarTextStore.set(tMsg('common.errorWithMsg', { msg: e }));
     }
 
@@ -276,7 +276,7 @@
         }
     }
 
-    async function deleteDeck(deck, event) {
+    async function deleteDeck(/** @type {import("../services/ankiService.js").Deck} */ deck, /** @type {Event} */ event) {
         event.stopPropagation();
         if (!(await confirmAction($t('anki.confirmDeleteDeck', { name: deck.name }), { confirmLabel: $t('common.delete') }))) return;
         try {
@@ -287,7 +287,7 @@
         }
     }
 
-    async function selectDeck(deck, filter = '') {
+    async function selectDeck(/** @type {import("../services/ankiService.js").Deck} */ deck, filter = '') {
         try {
             await anki.selectDeck(deck, filter);
         } catch (e) {
@@ -297,7 +297,7 @@
 
     // A study session walks the due cards through FSRS; a cram session draws
     // random cards and never schedules anything.
-    async function startSession(cram) {
+    async function startSession(/** @type {boolean} */ cram) {
         if (!selectedDeck) return;
         // A limit of 0 serves nothing, and says so (ADR-0026 rule 3).
         if (!cram && anki.sessionLimitReached(selectedDeck, 0)) {
@@ -322,7 +322,7 @@
         }
     }
 
-    async function submitReview(rating) {
+    async function submitReview(/** @type {number} */ rating) {
         if (!reviewCard) return;
         // Counted when given, not once the next card is on the board: the next card shows before
         // its board has loaded, and a grade given on it then must not overtake this one's count.
@@ -449,12 +449,12 @@
         }
     }
 
-    function startEditing(deck, event) {
+    function startEditing(/** @type {import("../services/ankiService.js").Deck} */ deck, /** @type {Event} */ event) {
         event.stopPropagation();
         deckEdit.start(deck.id, { name: deck.name, description: deck.description || '' });
     }
 
-    async function syncDeck(deck, event) {
+    async function syncDeck(/** @type {import("../services/ankiService.js").Deck} */ deck, /** @type {Event} */ event) {
         event.stopPropagation();
         try {
             await anki.syncDeckCards(deck);
@@ -465,7 +465,7 @@
         }
     }
 
-    async function resetDeck(deck, event) {
+    async function resetDeck(/** @type {import("../services/ankiService.js").Deck} */ deck, /** @type {Event} */ event) {
         event.stopPropagation();
         if (!(await confirmAction($t('anki.confirmResetDeck', { name: deck.name }), { confirmLabel: $t('common.reset') }))) return;
         try {
@@ -782,8 +782,8 @@
             columns={deckColumns}
             selectedKey={selectedDeck?.id}
             pointerRows
-            onSelect={(deck) => selectDeck(deck)}
-            onActivate={(deck) => {
+            onSelect={(/** @type {import("../services/ankiService.js").Deck} */ deck) => selectDeck(deck)}
+            onActivate={(/** @type {import("../services/ankiService.js").Deck} */ deck) => {
                 selectDeck(deck);
                 startSession(false);
             }}

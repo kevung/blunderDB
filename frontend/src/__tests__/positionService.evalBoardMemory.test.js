@@ -75,7 +75,7 @@ function libraryPosition(id = 42) {
 /** How many checkers the board carries, as a cheap identity for these tests. */
 function checkerSignature(position) {
     return position.board.points
-        .map((p, i) => (p.checkers ? `${i}:${p.checkers}` : ''))
+        .map((p, /** @type {number} */ i) => (p.checkers ? `${i}:${p.checkers}` : ''))
         .filter(Boolean)
         .join(',');
 }

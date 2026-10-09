@@ -3,6 +3,10 @@
 // rest of the app reads. The panel keeps UI state and status messages.
 // Pure helpers first, then the functions calling Wails and writing stores.
 
+/** @typedef {Partial<import('../../wailsjs/go/models').domain.AnkiDeck> & { id: number }} Deck */
+/** @typedef {Partial<import('../../wailsjs/go/models').domain.AnkiReviewCard> & Pick<import('../../wailsjs/go/models').domain.AnkiReviewCard, 'card' | 'position'>} Card */
+/** @typedef {(key: string, params?: Record<string, unknown>) => string} Translate */
+
 import { get } from 'svelte/store';
 import {
     CreateAnkiDeck,
@@ -77,7 +81,7 @@ export function parseSourceCommand(sourceCommand) {
     };
 }
 
-function parseLegacyIds(text) {
+function parseLegacyIds(/** @type {string} */ text) {
     return String(text ?? '')
         .split(',')
         .map((s) => parseInt(s.trim(), 10))
@@ -105,7 +109,7 @@ export function buildSearchSource(lastSearch, positionIds, list = null) {
 }
 
 /** Search results plus every stored id not among them, in that order, without duplicates. */
-export function mergeIds(searchIds, storedIds) {
+export function mergeIds(/** @type {number[]} */ searchIds, /** @type {number[]} */ storedIds) {
     const seen = new Set();
     const out = [];
     for (const id of [...searchIds, ...storedIds]) {
@@ -119,12 +123,12 @@ export function mergeIds(searchIds, storedIds) {
 const STATE_KEYS = ['anki.state.new', 'anki.state.learning', 'anki.state.review', 'anki.state.relearning'];
 
 /** The FSRS card state as a word, in the user's language (`t` is the i18n translate function). */
-export function stateLabel(state, t) {
+export function stateLabel(/** @type {number} */ state, /** @type {Translate} */ t) {
     return STATE_KEYS[state] ? t(STATE_KEYS[state]) : '?';
 }
 
 /** What a deck draws its cards from, as shown in the deck list. */
-export function sourceLabel(deck, collections = [], t) {
+export function sourceLabel(/** @type {Deck} */ deck, /** @type {{ id: number, name: string }[]} */ collections = [], /** @type {Translate} */ t) {
     if (deck.sourceType === 'collection') {
         const coll = collections.find((c) => c.id === deck.sourceId);
         return coll ? coll.name : t('anki.sourceCollectionN', { id: deck.sourceId });
@@ -142,7 +146,7 @@ export function sourceLabel(deck, collections = [], t) {
 export const SOURCE_SCORES = 'scores';
 
 /** A card that asks about a score rather than about a position. */
-export function isScoreCard(card) {
+export function isScoreCard(/** @type {Card} */ card) {
     return card?.card?.kind === 'score';
 }
 
@@ -150,9 +154,9 @@ export function isScoreCard(card) {
  * The two aways of a score card, smaller first, or null. Read from the key:
  * the deck states its scores, the view only renders.
  */
-export function scoreCardAways(card) {
+export function scoreCardAways(/** @type {Card} */ card) {
     const key = card?.card?.key ?? '';
-    const [a, b] = key.split(':').map((n) => Number.parseInt(n, 10));
+    const [a, b] = key.split(':').map((/** @type {string} */ n) => Number.parseInt(n, 10));
     if (!Number.isFinite(a) || !Number.isFinite(b)) return null;
     return a <= b ? [a, b] : [b, a];
 }
@@ -161,7 +165,7 @@ export function scoreCardAways(card) {
  * Where a paused FSRS session on the same deck left off, else zero. Cram never
  * resumes.
  */
-export function resumedSessionCount(pausedSession, deck, cram = false) {
+export function resumedSessionCount(/** @type {{ deckId: number, sessionCount: number } | null | undefined} */ pausedSession, /** @type {Deck} */ deck, cram = false) {
     if (cram || !pausedSession || !deck || pausedSession.deckId !== deck.id) return 0;
     return pausedSession.sessionCount;
 }
@@ -171,7 +175,7 @@ export function resumedSessionCount(pausedSession, deck, cram = false) {
  * other than 0 (ADR-0026 rule 3) — otherwise the button is inactive. A null
  * limit is no limit.
  */
-export function canStudy(stats, deck) {
+export function canStudy(/** @type {import("../../wailsjs/go/models").domain.AnkiDeckStats | null | undefined} */ stats, /** @type {Deck} */ deck) {
     if (!stats || stats.dueCount <= 0) return false;
     return sessionLimitOf(deck) !== 0;
 }
@@ -179,7 +183,7 @@ export function canStudy(stats, deck) {
 /**
  * The session limit, or null for none. `0` is a limit, hence no `||`.
  */
-export function sessionLimitOf(deck) {
+export function sessionLimitOf(/** @type {Deck} */ deck) {
     const v = deck?.sessionLimit;
     return v === null || v === undefined ? null : v;
 }
@@ -188,13 +192,13 @@ export function sessionLimitOf(deck) {
  * Whether `count` served cards reach the limit. Cram is never bounded
  * (ADR-0026 rule 2): it schedules nothing.
  */
-export function sessionLimitReached(deck, count, { cram = false } = {}) {
+export function sessionLimitReached(/** @type {Deck} */ deck, /** @type {number} */ count, { cram = false } = {}) {
     if (cram) return false;
     const limit = sessionLimitOf(deck);
     return limit !== null && count >= limit;
 }
 
-export function canCram(stats) {
+export function canCram(/** @type {import("../../wailsjs/go/models").domain.AnkiDeckStats | null | undefined} */ stats) {
     return !!stats && stats.totalCount > 0;
 }
 
@@ -215,7 +219,7 @@ export async function loadDecks() {
  * Re-run a search deck's stored search: the current results plus every stored
  * id. On error, an empty list, which `syncDeckCards` reads as "leave it alone".
  */
-export async function resolveSearchDeckIds(sourceCommand) {
+export async function resolveSearchDeckIds(/** @type {string} */ sourceCommand) {
     try {
         const { ids: storedIds, command, position, payload: listPayload, library } = parseSourceCommand(sourceCommand);
         // The list the deck was made from, when it was browsed by windows: its descriptor.
@@ -250,7 +254,7 @@ export async function resolveSearchDeckIds(sourceCommand) {
  * A living collection is re-evaluated by the backend under a declared ceiling;
  * when the ceiling cuts it short the user is told, never left to guess.
  */
-export async function syncDeckCards(deck) {
+export async function syncDeckCards(/** @type {Deck} */ deck) {
     if (deck.sourceType === 'search' && deck.sourceCommand) {
         const ids = await resolveSearchDeckIds(deck.sourceCommand);
         if (ids.length > 0) await SyncAnkiDeckWithPositions(deck.id, ids);
@@ -298,7 +302,7 @@ export async function createDeck({ name, sourceType, sourceId, lastSearch = null
 }
 
 /** Delete a deck; if it was the selected one, leave the detail and review views. */
-export async function deleteDeck(deckId) {
+export async function deleteDeck(/** @type {number} */ deckId) {
     await DeleteAnkiDeck(deckId);
     if (get(selectedAnkiDeckStore)?.id === deckId) clearSelection();
     await loadDecks();
@@ -311,7 +315,7 @@ export function clearSelection() {
     ankiViewModeStore.set('list');
 }
 
-export async function refreshDeckStats(deckId) {
+export async function refreshDeckStats(/** @type {number} */ deckId) {
     const stats = await GetAnkiDeckStats(deckId);
     ankiDeckStatsStore.set(stats);
     return stats;
@@ -321,7 +325,7 @@ export async function refreshDeckStats(deckId) {
  * Add one position's card to a deck. SyncWithPositions is `INSERT OR IGNORE`,
  * so this is safe on any sourceType and never touches the other cards.
  */
-export async function addPositionToDeck(deckId, positionId) {
+export async function addPositionToDeck(/** @type {number} */ deckId, /** @type {number} */ positionId) {
     await SyncAnkiDeckWithPositions(deckId, [positionId]);
     // Refresh the visible stats only if this is the deck currently open in
     // the Anki panel — otherwise there is nothing on screen to update, and
@@ -345,14 +349,14 @@ export async function selectDeck(deck, filter = '') {
 }
 
 /** Wipe a deck's schedule; refresh its stats if it is the selected one. */
-export async function resetDeck(deckId) {
+export async function resetDeck(/** @type {number} */ deckId) {
     await ResetAnkiDeck(deckId);
     await loadDecks();
     if (get(selectedAnkiDeckStore)?.id === deckId) await refreshDeckStats(deckId);
 }
 
 /** Save FSRS parameters and refresh the selected deck from the reloaded list. */
-export async function saveDeckParams(deckId, { requestRetention, maximumInterval, enableFuzz, sessionLimit = null }) {
+export async function saveDeckParams(/** @type {number} */ deckId, { requestRetention, maximumInterval, enableFuzz, sessionLimit = null }) {
     await UpdateAnkiDeckParams(deckId, requestRetention, maximumInterval, enableFuzz, sessionLimit);
     const decks = await loadDecks();
     const updated = decks.find((d) => d.id === deckId);
@@ -365,7 +369,7 @@ export async function saveDeckParams(deckId, { requestRetention, maximumInterval
  * hand, the Analysis tab would show the previously browsed position's numbers
  * during review (ADR-0025 rule 1).
  */
-export async function showCard(card) {
+export async function showCard(/** @type {Card} */ card) {
     // A score card has no position: leave the board as is; the review view
     // renders the score sheet.
     if (isScoreCard(card)) return;
@@ -389,7 +393,7 @@ function newQuestion() {
  * first card (next due, or random when cramming).
  * @returns {Promise<object | null>} the first card, or null when there is none
  */
-export async function startSession(deck, { cram = false } = {}) {
+export async function startSession(/** @type {Deck} */ deck, { cram = false } = {}) {
     await syncDeckCards(deck);
     await positionsStore.setSource(deckSource(deck.id));
     const card = cram ? await GetRandomAnkiCard(deck.id, 0) : await GetNextAnkiCard(deck.id);
@@ -410,7 +414,7 @@ export async function startSession(deck, { cram = false } = {}) {
  *
  * @returns {Promise<object | null>} the next card, or null when the session is over
  */
-export async function reviewCard(card, rating, { cram = false } = {}) {
+export async function reviewCard(/** @type {Card} */ card, /** @type {number} */ rating, { cram = false } = {}) {
     const next = await ReviewAnkiCard(card.card.id, rating);
     if (!cram) {
         let linked = null;
@@ -477,14 +481,14 @@ export async function removeCard(card, deck, { cram = false } = {}) {
 }
 
 /** Draw the next random card of a cram session, never the one just shown. */
-export async function nextCramCard(deck, card) {
+export async function nextCramCard(/** @type {Deck} */ deck, /** @type {Card} */ card) {
     // The exclusion names the POSITION just served, so a card that has none
     // excludes nothing — a score deck simply draws freely from its 36 cards.
     const next = await GetRandomAnkiCard(deck.id, isScoreCard(card) ? 0 : card.position.id);
     return await advance(next);
 }
 
-async function advance(next) {
+async function advance(/** @type {Card | null} */ next) {
     if (next) {
         ankiReviewCardStore.set(next);
         newQuestion();
@@ -502,6 +506,6 @@ async function advance(next) {
  */
 export const RETENTION_MIN_SAMPLE = 20;
 
-export async function deckRetention(deckId) {
+export async function deckRetention(/** @type {number} */ deckId) {
     return await GetAnkiDeckRetention(deckId);
 }

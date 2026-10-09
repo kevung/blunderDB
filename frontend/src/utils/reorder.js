@@ -24,12 +24,12 @@ export function moveItem(list, from, to) {
 }
 
 /** A copy of `list` with the item at `index` moved one step up, or `null` if it is first. */
-export function moveUp(list, index) {
+export function moveUp(list, /** @type {number} */ index) {
     return moveItem(list, index, index - 1);
 }
 
 /** A copy of `list` with the item at `index` moved one step down, or `null` if it is last. */
-export function moveDown(list, index) {
+export function moveDown(list, /** @type {number} */ index) {
     return moveItem(list, index, index + 1);
 }
 
@@ -59,8 +59,8 @@ export function createReorder({ get, set, persist, label = 'items' }) {
     }
     return {
         /** @returns {Promise<boolean>} whether a move happened */
-        moveUp: (index) => commit(moveUp(get(), index), index, index - 1),
-        moveDown: (index) => commit(moveDown(get(), index), index, index + 1),
+        moveUp: (/** @type {number} */ index) => commit(moveUp(get(), index), index, index - 1),
+        moveDown: (/** @type {number} */ index) => commit(moveDown(get(), index), index, index + 1),
         /** dragReorder's onReorder signature. */
         reorder: (from, to) => commit(moveItem(get(), from, to), from, to)
     };

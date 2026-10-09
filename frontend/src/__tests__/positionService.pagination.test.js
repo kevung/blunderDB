@@ -49,7 +49,7 @@ import { databasePathStore } from '../stores/databaseStore.js';
 import { useLibrary } from '../__mocks__/wails.js';
 import { loadAllPositions, nextPosition, previousPosition, firstPosition, lastPosition, deletePosition } from '../services/positionService.js';
 
-const range = (n) => Array.from({ length: n }, (_, i) => i + 1);
+const range = (/** @type {number} */ n) => Array.from({ length: n }, (_, i) => i + 1);
 // Prefetches are fire-and-forget and reach the binding through a dynamic
 // import: give the event loop a turn before counting calls.
 const flush = () => new Promise((resolve) => setTimeout(resolve, 0));

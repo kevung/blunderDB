@@ -127,7 +127,7 @@ function cardValue(result, metric, kind) {
     return '—';
 }
 
-function rollingAvail(result, n) {
+function rollingAvail(result, /** @type {number} */ n) {
     if (!result || !result.Totals) return false;
     return result.Totals.NumDecisions >= n;
 }

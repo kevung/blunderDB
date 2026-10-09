@@ -162,7 +162,7 @@
     }
 
     /** Right-click elsewhere in the panel: the selection, or the whole position (its cube decision). */
-    function handleContentContextMenu(event) {
+    function handleContentContextMenu(/** @type {Event} */ event) {
         if (event.defaultPrevented || $analysisMaskStore) return;
         openPanelMenu(event, rolloutSelection());
     }
@@ -205,7 +205,7 @@
         selectedMoveStore.set(null);
     });
 
-    function handleKeyDown(event) {
+    function handleKeyDown(/** @type {KeyboardEvent} */ event) {
         // A field of the rollout settings keeps its own keys (the arrows are not move navigation)
         // and its own Escape, which only leaves the field.
         if (event.target?.matches?.('input, select, textarea')) return;

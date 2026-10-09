@@ -93,7 +93,8 @@ describe('MatchPanel — the Transcript carries the time of every decision', () 
         openPanels.set(new Set());
     });
 
-    const col = (container, name, game = 0) => [...container.querySelectorAll('details.game-section')[game].querySelectorAll(`[data-testid="move-time-${name}"]`)].map((c) => c.textContent.trim());
+    const col = (container, /** @type {string} */ name, game = 0) =>
+        [...container.querySelectorAll('details.game-section')[game].querySelectorAll(`[data-testid="move-time-${name}"]`)].map((c) => c.textContent.trim());
 
     test('cube, play and clock are three columns, a time not taken reads as a dash', async () => {
         const container = await openTranscript();

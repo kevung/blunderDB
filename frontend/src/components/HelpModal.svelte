@@ -22,8 +22,9 @@
     // appVersion/dbVersion are spliced into raw HTML below ({@html}); escape them even
     // though today's sources (metaStore, GetDatabaseVersion()) are trusted, so a future
     // caller can't turn this interpolation into an XSS hole without also touching this line.
+    /** @param {unknown} value */
     function escapeHtml(value) {
-        return String(value).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+        return String(value).replace(/[&<>"']/g, (/** @type {string} */ c) => /** @type {Record<string, string>} */ ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
     }
 
     let aboutHtml = $derived(($help.about || '').replace(/\{appVersion\}/g, escapeHtml(applicationVersion)).replace(/\{dbVersion\}/g, escapeHtml(databaseVersion)));
@@ -51,7 +52,9 @@
     // Every occurrence is counted, but a one-letter query would paint tens of thousands of
     // ranges for nothing a reader can use: the highlight stops at a cap, stepping reaches the rest.
     const HIGHLIGHT_CAP = 500;
+    /** @type {{ count: number, ranges: Range[], at: (i: number) => Range | null }} */
     let found = { count: 0, ranges: [], at: () => null };
+    /** @type {ReturnType<typeof createHelpIndex> | null} */
     let helpIndex = null;
     // The index holds the text nodes of what is on screen: a new tab, language or corpus replaces them.
     $effect(() => {
@@ -59,10 +62,12 @@
         helpIndex = null;
     });
 
+    /** @param {number} index */
     function showMatch(index) {
         if (found.count === 0) return;
         matchIndex = (index + found.count) % found.count;
         const range = found.at(matchIndex);
+        if (!range) return;
         const selection = window.getSelection();
         selection?.removeAllRanges();
         selection?.addRange(range);
@@ -90,6 +95,7 @@
         found.ranges[0]?.startContainer.parentElement?.scrollIntoView?.({ block: 'center' });
     }
 
+    /** @type {ReturnType<typeof setTimeout> | undefined} */
     let searchTimer;
     let searchPending = false;
     function onSearchInput() {
@@ -102,6 +108,7 @@
         if (typeof CSS !== 'undefined' && CSS.highlights) CSS.highlights.delete(HIGHLIGHT);
     });
 
+    /** @param {KeyboardEvent} event */
     function onSearchKeyDown(event) {
         if (event.key === 'Enter') {
             event.preventDefault();
@@ -112,6 +119,7 @@
         if (event.key !== 'Escape') event.stopPropagation();
     }
 
+    /** @param {string} tab */
     function switchTab(tab) {
         activeTab = tab;
         found = { count: 0, ranges: [], at: () => null };
@@ -122,6 +130,7 @@
 
     // Every key pressed while the help is open belongs to it. Escape is Modal's; the
     // rest is handled here and stopped so the global dispatcher never sees it.
+    /** @param {KeyboardEvent} event */
     function handleKeyDown(event) {
         if (event.target === searchInput) return;
         if (event.key === '/' && !event.ctrlKey) {
@@ -162,12 +171,14 @@
         }
     }
 
+    /** @param {number} direction */
     function navigateTabs(direction) {
         const currentIndex = tabs.indexOf(activeTab);
         const newIndex = (currentIndex + direction + tabs.length) % tabs.length;
         switchTab(tabs[newIndex]);
     }
 
+    /** @param {number | 'bottom' | 'top' | 'page'} direction */
     function scrollContent(direction) {
         if (contentArea) {
             const scrollAmount = 60; // Pixels to scroll per key press

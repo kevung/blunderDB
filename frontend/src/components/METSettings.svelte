@@ -25,7 +25,7 @@
 
     onMount(load);
 
-    async function onChoose(event) {
+    async function onChoose(/** @type {Event & { currentTarget: HTMLInputElement }} */ event) {
         const id = Number(event.currentTarget.value);
         error = '';
         try {

@@ -63,7 +63,7 @@
     }
 
     /** Return the rolling value for N decisions. */
-    function rollingValue(n) {
+    function rollingValue(/** @type {number} */ n) {
         if (!result) return null;
         const map = metric === 'pr' ? result.PRRolling : result.MWCRolling;
         if (!map) return null;
@@ -72,13 +72,13 @@
     }
 
     /** How many decisions are actually available for rolling N. */
-    function rollingDecisions(n) {
+    function rollingDecisions(/** @type {number} */ n) {
         if (!result || !result.Totals) return 0;
         return Math.min(n, result.Totals.NumDecisions);
     }
 
     /** Format rolling value for display. */
-    function fmtRolling(n) {
+    function fmtRolling(/** @type {number} */ n) {
         const v = rollingValue(n);
         if (v == null) return '—';
         return metric === 'pr' ? v.toFixed(2) : (v * 100).toFixed(2) + '%';
@@ -92,7 +92,7 @@
     }
 
     /** Calendar day in the interface language. */
-    function shortDate(dateStr) {
+    function shortDate(/** @type {string} */ dateStr) {
         return formatIsoDay(dateStr);
     }
 
@@ -106,17 +106,17 @@
         await loadPositionsFromStatsSelection(filter, { Kind: kind, OnlyWithError: false });
     }
 
-    async function openRollingN(n) {
+    async function openRollingN(/** @type {number} */ n) {
         const filter = get(statsFilterStore);
         await loadPositionsFromStatsSelection(filter, { Kind: 'last_n', LastN: n });
     }
 
-    async function openBlunder(positionID) {
+    async function openBlunder(/** @type {number} */ positionID) {
         const filter = get(statsFilterStore);
         await loadPositionsFromStatsSelection(filter, { Kind: 'position', PositionID: positionID });
     }
 
-    function openMatch(matchID) {
+    function openMatch(/** @type {number} */ matchID) {
         openMatchInPanel(matchID);
     }
 </script>

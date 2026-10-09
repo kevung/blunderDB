@@ -106,7 +106,7 @@ function drawBoard(position) {
 }
 
 /** The analysis of the position studied before: an XG match position. */
-function studiedAnalysis(positionId) {
+function studiedAnalysis(/** @type {number} */ positionId) {
     return {
         ...emptyAnalysis(),
         positionId,

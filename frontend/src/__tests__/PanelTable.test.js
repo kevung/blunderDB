@@ -223,7 +223,7 @@ describe('virtualization', () => {
         data[from].dispatchEvent(down((lead + from) * 28 + 5));
         win('pointermove', (lead + to) * 28 + 5);
         win('pointerup', (lead + to) * 28 + 5);
-        const index = (name) => Number(name.slice(1)) - 1;
+        const index = (/** @type {string} */ name) => Number(name.slice(1)) - 1;
         expect(onReorder).toHaveBeenCalledWith(index(names[from]), index(names[to]));
         expect(index(names[from])).toBeGreaterThan(19000);
     });

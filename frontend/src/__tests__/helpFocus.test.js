@@ -21,7 +21,7 @@ test('a click in the search field focuses it and typing keeps the focus', async 
     expect(document.activeElement).toBe(input);
 
     await user.keyboard('posi');
-    expect(input.value).toBe('posi');
+    expect(/** @type {HTMLInputElement} */ (input).value).toBe('posi');
     expect(document.activeElement).toBe(input);
     await new Promise((r) => setTimeout(r, 300));
     expect(document.activeElement).toBe(input);

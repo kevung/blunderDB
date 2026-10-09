@@ -30,7 +30,7 @@
     let activeSubTab = $state('search'); // 'search', 'history', 'saved', 'assistant'
 
     // Filter state
-    let filterEnabled = $state({});
+    let filterEnabled = $state(/** @type {Record<string, boolean>} */ ({}));
     let searchInCurrentResults = $state(false);
     let openInNewTab = $state(false);
 
@@ -39,15 +39,15 @@
     // exclusive — combining them only yields redundant or contradictory queries.
     let commentMode = $state('contains');
     let movePattern = $state('');
-    let matchIDsSelected = $state([]);
-    let tournamentIDsSelected = $state([]);
+    let matchIDsSelected = $state(/** @type {number[]} */ ([]));
+    let tournamentIDsSelected = $state(/** @type {number[]} */ ([]));
     let showPickerModal = $state(false);
     let playerName = $state('');
 
     // Numeric filters, one reactive entry per key declared in services/filterModel.js.
     let numeric = $state(createFilterState());
     // Backend arguments `${key}Filter`, read from a parse result keyed by short name.
-    const numericArgs = (get) => Object.fromEntries(NUMERIC_FILTERS.map((f) => [`${f.key}Filter`, get(f.short)]));
+    const numericArgs = (/** @type {(short: string) => unknown} */ get) => Object.fromEntries(NUMERIC_FILTERS.map((f) => [`${f.key}Filter`, get(f.short)]));
     let diceRollOption = $state('both'); // 'both' | 'first'
     // Decision-type filter: decisionMode follows the board (checker/cube);
     // cubeSubType refines a cube decision (all / double / take-pass).
@@ -62,7 +62,7 @@
 
     // History state — mirrors of stores, always current
     let searchHistory = $derived($searchHistoryStore);
-    let selectedSearch = $state(null);
+    let selectedSearch = $state(/** @type {{ command: string, position: string, excludePosition: string, timestamp: number } | null} */ (null));
     let showSaveDialog = $state(false);
     let filterName = $state('');
 
@@ -113,6 +113,7 @@
     ];
 
     // Filter names are English logic keys; these maps give only the i18n slug of the label.
+    /** @type {Record<string, string>} */
     const filterKeySlug = {
         'Include Cube': 'includeCube',
         'Include Score': 'includeScore',
@@ -148,6 +149,7 @@
         'Matches & Tournaments': 'matchesTournaments',
         Player: 'player'
     };
+    /** @type {Record<string, string>} */
     const groupKeySlug = {
         Display: 'display',
         Position: 'position',
@@ -160,11 +162,11 @@
         'Text / Pattern': 'textPattern',
         Other: 'other'
     };
-    function filterLabel(filter) {
+    function filterLabel(/** @type {string | { name?: string } | null | undefined} */ filter) {
         const name = typeof filter === 'string' ? filter : (filter?.name ?? '');
         return filterKeySlug[name] ? $t('search.filters.' + filterKeySlug[name]) : name;
     }
-    function groupLabel(group) {
+    function groupLabel(/** @type {unknown} */ group) {
         const name = String(group ?? '');
         return groupKeySlug[name] ? $t('search.filterGroups.' + groupKeySlug[name]) : name;
     }
@@ -245,7 +247,7 @@
 
     // Panel → board: choosing Pions/Cube edits the include board (and remembers the
     // last real roll so toggling back to Pions restores it).
-    function selectDecisionMode(mode) {
+    function selectDecisionMode(/** @type {string} */ mode) {
         if (structureMode !== 'include') return;
         positionStore.update((p) => {
             if (mode === 'cube') {
@@ -282,7 +284,7 @@
 
     // Panel → cube sub-type. Take/pass needs the board cube rendered/edited as a
     // centered offered cube; double/all use the normal owner-based cube.
-    function selectCubeSubType(value) {
+    function selectCubeSubType(/** @type {string} */ value) {
         cubeSubType = value;
         if (value === 'takepass') {
             applyOfferedCube();
@@ -305,7 +307,7 @@
     });
 
     // Back to 'include' editing, loading the entry's "Sauf" board (or an empty one).
-    function restoreExcludeStructure(excludePositionJSON) {
+    function restoreExcludeStructure(/** @type {string} */ excludePositionJSON) {
         structureMode = 'include';
         searchStructureModeStore.set('include');
         includeBoardStash = null;
@@ -321,7 +323,7 @@
     }
 
     // switchStructureMode swaps which checker structure the main board edits.
-    function switchStructureMode(mode) {
+    function switchStructureMode(/** @type {string} */ mode) {
         if (mode === structureMode) return;
         if (mode === 'exclude') {
             includeBoardStash = JSON.parse(JSON.stringify($positionStore));
@@ -356,7 +358,7 @@
         await loadFilterLibrary();
     }
 
-    function isInFilterLibrary(search) {
+    function isInFilterLibrary(/** @type {{ command: string, position: string, excludePosition: string, timestamp: number }} */ search) {
         return savedFilters.some((f) => f.command === search.command);
     }
 
@@ -413,7 +415,7 @@
                 filters: activeFilters.length > 0 ? transformedFilters : [],
                 includeCube: parsed.incCube,
                 includeScore: parsed.incScore,
-                ...numericArgs((short) => parsed[`${short}Filter`]),
+                ...numericArgs((/** @type {string} */ short) => parsed[`${short}Filter`]),
                 // Only 'contains' sends text; a stale disabled box must not add a content filter.
                 searchText: commentMode === 'contains' && searchText ? `t"${searchText}"` : '',
                 decisionTypeFilter: parsed.dtFilter,
@@ -469,7 +471,7 @@
     }
 
     // History functions
-    function selectSearch(search) {
+    function selectSearch(/** @type {{ command: string, position: string, excludePosition: string, timestamp: number }} */ search) {
         if (selectedSearch === search) {
             selectedSearch = null;
             if ($positionBeforeFilterLibraryStore) {
@@ -494,7 +496,7 @@
         }
     }
 
-    function executeSearch(search) {
+    function executeSearch(/** @type {{ command: string, position: string, excludePosition: string, timestamp: number }} */ search) {
         if (search.position) {
             positionStore.set(JSON.parse(search.position));
         }
@@ -511,11 +513,11 @@
         }
     }
 
-    function handleDoubleClick(search) {
+    function handleDoubleClick(/** @type {{ command: string, position: string, excludePosition: string, timestamp: number }} */ search) {
         executeSearch(search);
     }
 
-    function showAddToLibraryDialog(search) {
+    function showAddToLibraryDialog(/** @type {{ command: string, position: string, excludePosition: string, timestamp: number }} */ search) {
         selectedSearch = search;
         showSaveDialog = true;
         filterName = '';
@@ -539,7 +541,7 @@
         cancelSaveDialog();
     }
 
-    async function deleteSearch(search, event) {
+    async function deleteSearch(/** @type {{ command: string, position: string, excludePosition: string, timestamp: number }} */ search, /** @type {Event} */ event) {
         event.stopPropagation();
         try {
             await DeleteSearchHistoryEntry(search.timestamp);
@@ -550,12 +552,12 @@
         }
     }
 
-    function formatTimestamp(timestamp) {
+    function formatTimestamp(/** @type {number | string} */ timestamp) {
         return formatDateTime(timestamp);
     }
 
     // --- Saved filter (bookmarked search) functions ---
-    async function selectSavedFilter(filter) {
+    async function selectSavedFilter(/** @type {{ id: number, name: string, command: string }} */ filter) {
         if (selectedSavedFilter && selectedSavedFilter.id === filter.id) {
             selectedSavedFilter = null;
             if ($positionBeforeFilterLibraryStore) {
@@ -582,7 +584,7 @@
         currentPositionIndexStore.set(-1);
     }
 
-    async function executeSavedFilter(filter) {
+    async function executeSavedFilter(/** @type {{ id: number, name: string, command: string }} */ filter) {
         const editPosition = await LoadEditPosition(filter.name);
         if (editPosition) {
             positionStore.set(JSON.parse(editPosition));
@@ -612,11 +614,11 @@
         }
     }
 
-    function handleKeyDown(event) {
+    function handleKeyDown(/** @type {KeyboardEvent} */ event) {
         if ($activeTabStore !== 'search') return;
         // Already handled: a dialog delegated on the app root runs first and claims its keys this way.
         if (event.defaultPrevented) return;
-        if (event.target.matches('input, textarea, select')) {
+        if (/** @type {HTMLElement} */ (event.target).matches('input, textarea, select')) {
             // Escape reaches the global dispatcher (keyDispatch.js), which blurs the
             // field. Tab is stopped here so it moves between this form's fields.
             if (event.key === 'Escape') return;
@@ -1047,7 +1049,7 @@
     visible={showPickerModal}
     {matchIDsSelected}
     {tournamentIDsSelected}
-    onApply={(matches, tournaments) => {
+    onApply={(/** @type {number[]} */ matches, /** @type {number[]} */ tournaments) => {
         matchIDsSelected = matches;
         tournamentIDsSelected = tournaments;
         showPickerModal = false;

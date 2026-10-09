@@ -62,7 +62,7 @@ function mount(exportOptions) {
 
 // Typing a word one character at a time is the whole point: a mirror that re-seeds on each
 // keystroke keeps only the last character, and the element loses focus every time.
-async function typeInto(input, text) {
+async function typeInto(input, /** @type {string} */ text) {
     for (const char of text) {
         await fireEvent.input(input, { target: { value: input.value + char } });
         await tick();

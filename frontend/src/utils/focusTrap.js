@@ -19,7 +19,7 @@ function focusableIn(node) {
 export function trapFocus(node) {
     const previouslyFocused = document.activeElement;
 
-    function handleKeydown(e) {
+    function handleKeydown(/** @type {KeyboardEvent} */ e) {
         if (e.key !== 'Tab') return;
         const focusable = focusableIn(node);
         if (focusable.length === 0) return;

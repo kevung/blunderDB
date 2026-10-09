@@ -48,7 +48,7 @@ export async function refreshLibraryCounts() {
 }
 
 /** Le nombre tel qu'on l'affiche : « ≈ » devant une estimation, « ? » quand il n'est pas connu. */
-export function formatCount(n, approximate = false) {
+export function formatCount(/** @type {number} */ n, approximate = false) {
     if (n == null) return '?';
     return approximate ? `≈ ${n}` : String(n);
 }

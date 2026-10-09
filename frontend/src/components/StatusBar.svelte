@@ -59,7 +59,7 @@
         selectedSuggestion = 0;
     });
 
-    function applySuggestion(index) {
+    function applySuggestion(/** @type {number} */ index) {
         const cmd = suggestions[index];
         if (!cmd) return;
         commandTextStore.set(cmd.name);
@@ -176,7 +176,7 @@
         historyIndex = -1;
     }
 
-    function handleKeyDown(event) {
+    function handleKeyDown(/** @type {KeyboardEvent} */ event) {
         if (event.code === 'Tab') {
             // Tab / Shift-Tab cycle through autocompletion matches.
             event.stopPropagation();

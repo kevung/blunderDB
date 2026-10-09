@@ -89,7 +89,7 @@ describe('les thèmes nommés', () => {
 
 // WCAG 2.x contrast of two #rrggbb colours.
 function luminance(hex) {
-    const channel = (i) => {
+    const channel = (/** @type {number} */ i) => {
         const c = parseInt(hex.slice(1 + 2 * i, 3 + 2 * i), 16) / 255;
         return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
     };

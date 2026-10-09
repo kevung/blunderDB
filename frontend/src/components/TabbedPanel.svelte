@@ -90,14 +90,14 @@
         activeTabStore.set(tabId);
     }
 
-    function focusTabAt(index) {
+    function focusTabAt(/** @type {number} */ index) {
         const buttons = tabBarEl?.children;
         if (!buttons || !buttons[index]) return;
         rovingIndex = index;
         /** @type {HTMLElement} */ (buttons[index]).focus();
     }
 
-    function handleTabKeyDown(event, index) {
+    function handleTabKeyDown(/** @type {KeyboardEvent} */ event, /** @type {number} */ index) {
         switch (event.key) {
             case 'Enter':
             case ' ':
@@ -128,7 +128,7 @@
     }
 
     // Scrollbar hidden: vertical wheel scrolls the tabs horizontally.
-    function handleTabBarWheel(e) {
+    function handleTabBarWheel(/** @type {WheelEvent} */ e) {
         if (!tabBarEl) return;
         if (tabBarEl.scrollWidth <= tabBarEl.clientWidth) return;
         if (e.deltaY === 0) return;
@@ -148,13 +148,13 @@
         return null;
     }
 
-    function handleMouseDown(e, index) {
+    function handleMouseDown(/** @type {MouseEvent} */ e, /** @type {number} */ index) {
         e.preventDefault();
         draggedIndex = index;
         dragStartX = e.clientX;
         isDragging = false;
 
-        function onMouseMove(ev) {
+        function onMouseMove(/** @type {MouseEvent} */ ev) {
             ev.preventDefault();
             if (Math.abs(ev.clientX - dragStartX) > 4) {
                 isDragging = true;
@@ -164,7 +164,7 @@
             }
         }
 
-        function onMouseUp(_ev) {
+        function onMouseUp(/** @type {Event} */ _ev) {
             window.removeEventListener('mousemove', onMouseMove);
             window.removeEventListener('mouseup', onMouseUp);
 
@@ -195,7 +195,7 @@
     }
 
     // ── Hide / show tabs ────────────────────────────────────────────────────
-    function handleTabContextMenu(event, index) {
+    function handleTabContextMenu(/** @type {MouseEvent} */ event, /** @type {number} */ index) {
         event.preventDefault();
         const tab = visibleTabs[index];
         if (!tab) return;
@@ -223,7 +223,7 @@
         SaveHiddenTabs([...hiddenIds]).catch((err) => logger.error('Failed to save hidden tabs:', err));
     }
 
-    function openHiddenTabsMenu(event) {
+    function openHiddenTabsMenu(/** @type {MouseEvent} */ event) {
         const hidden = tabs.filter((tab) => hiddenIds.has(tab.id));
         if (hidden.length === 0) return;
         hiddenMenu = {

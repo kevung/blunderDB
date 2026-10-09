@@ -89,7 +89,7 @@ const { fileImportResultsStore, fileImportModeStore } = await import('../stores/
 let rows = [];
 let nextID = 1;
 
-function txtFile(name) {
+function txtFile(/** @type {string} */ name) {
     return `/import/${name}.txt`;
 }
 

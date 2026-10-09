@@ -26,7 +26,7 @@ import { DEFAULT_PANEL_HEIGHT, DEFAULT_PANEL_WIDTH, DEFAULT_PANEL_POSITION } fro
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 const configGo = fs.readFileSync(path.join(ROOT, 'config.go'), 'utf8');
 
-function goConst(name) {
+function goConst(/** @type {string} */ name) {
     const m = new RegExp(`\\b${name}\\s*=\\s*([^\\n]+)`).exec(configGo);
     if (!m) throw new Error(`${name} not found in config.go`);
     return m[1].trim();

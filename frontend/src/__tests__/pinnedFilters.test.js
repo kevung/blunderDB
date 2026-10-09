@@ -79,7 +79,7 @@ function useLibrary(lib = LIBRARY, board = drawnBoard()) {
     bindings.LoadEditPosition.mockResolvedValue(board ? JSON.stringify(board) : null);
 }
 
-function altDigit(n) {
+function altDigit(/** @type {number} */ n) {
     return new KeyboardEvent('keydown', { code: `Digit${n}`, key: String(n), altKey: true, cancelable: true, bubbles: true });
 }
 

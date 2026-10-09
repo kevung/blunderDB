@@ -24,7 +24,7 @@ afterEach(() => {
 const ROW_HEIGHT = 20;
 
 function layoutRows(rows) {
-    rows.forEach((row, i) => {
+    rows.forEach((row, /** @type {number} */ i) => {
         row.getBoundingClientRect = () => ({
             top: i * ROW_HEIGHT,
             bottom: (i + 1) * ROW_HEIGHT,

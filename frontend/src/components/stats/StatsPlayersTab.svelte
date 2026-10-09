@@ -123,12 +123,12 @@
         if (compared.some((n) => !names.has(n))) compared = compared.filter((n) => names.has(n));
     });
 
-    function selectPlayer(name) {
+    function selectPlayer(/** @type {string} */ name) {
         statsFilterStore.update((f) => ({ ...f, playerName: name }));
         onSelectPlayer?.(name);
     }
 
-    function onRowKey(event, name) {
+    function onRowKey(/** @type {KeyboardEvent} */ event, /** @type {string} */ name) {
         if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
             selectPlayer(name);

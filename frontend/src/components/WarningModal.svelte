@@ -10,7 +10,7 @@
      */
     let { message = '', visible = false, onClose = () => {}, mode = 'info', onConfirm = () => {}, confirmLabel = '', cancelLabel = '', choices = [], onChoose = () => {}, tone = 'danger' } = $props();
 
-    function handleKeyDown(event) {
+    function handleKeyDown(/** @type {KeyboardEvent} */ event) {
         if (mode === 'confirm' && event.key === 'Enter') {
             // preventDefault so a focused button's own native Enter-activates-click doesn't
             // also fire — this handler is the single source of truth for what Enter does here.
