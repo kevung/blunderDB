@@ -1,7 +1,8 @@
 /**
  * youtubePlayerPage.test.js — the page the desktop serves around YouTube's IFrame Player
  * (internal/gui/youtube_player.html), run against a fake player: a seek reaches the player
- * whatever its state, and the instant it reports is the one asked.
+ * whatever its state, without starting one that has not started, and the instant it reports is
+ * the one asked.
  */
 
 import { describe, test, expect, vi } from 'vitest';
@@ -76,12 +77,18 @@ describe('the hosted YouTube page', () => {
         expect(load().player.cfg.playerVars.fs).toBe(0);
     });
 
-    test('a seek on a player not started yet keeps it paused and reports the instant asked', () => {
-        const page = load({ state: 5, search: '?origin=http%3A%2F%2Fwails.localhost' });
+    test.each([
+        [-1, 'unstarted'],
+        [5, 'cued']
+    ])('a seek on a player not started yet (%i, %s) leaves it untouched and reports the instant asked', (state) => {
+        const page = load({ state, search: '?origin=http%3A%2F%2Fwails.localhost' });
         page.ready();
         page.say({ type: 'seek', time: 120 });
-        expect(page.player.seekTo).toHaveBeenCalledWith(120, true);
-        expect(page.player.pauseVideo).toHaveBeenCalled();
+        // seekTo there autoplays, WebKitGTK refuses it without a gesture, and pausing what
+        // never started leaves the player on a black frame that a click no longer starts.
+        expect(page.player.seekTo).not.toHaveBeenCalled();
+        expect(page.player.pauseVideo).not.toHaveBeenCalled();
+        expect(page.player.playVideo).not.toHaveBeenCalled();
         page.tick();
         expect(page.last('time')?.m.time).toBe(120);
         // Play starts from the instant asked, not from 0.

@@ -2,8 +2,9 @@
 // Relays the IFrame Player with the parent through postMessage: the instant, play/pause, seek
 // and the speed. The player has no full screen of its own (fs: 0): the transcription's theatre
 // owns the window. A seek asked before the player is ready waits for it. A player that has not
-// started yet reports 0 and plays on seekTo: the asked instant is kept and reported, the player
-// stays paused, and the first playing state starts from there.
+// started yet is not touched: seekTo there tries to autoplay, the webview refuses it without a
+// gesture, and the player is left on a black frame that a click no longer starts. The asked
+// instant is kept and reported, and the first playing state starts from there.
 var player, ready = false, want = null;
 function onYouTubeIframeAPIReady() {
     player = new YT.Player('p', {
@@ -30,9 +31,9 @@ function now() { return want !== null ? want : player.getCurrentTime(); }
 function seek(t) {
     if (!ready) { want = t; return; }
     var s = player.getPlayerState();
-    player.seekTo(t, true);
-    // -1 unstarted, 5 cued: getCurrentTime stays at 0 there, and seekTo starts the playback.
-    if (s === -1 || s === 5) { want = t; player.pauseVideo(); } else want = null;
+    // -1 unstarted, 5 cued: getCurrentTime stays at 0 there, and seekTo would start the playback.
+    if (s === -1 || s === 5) want = t;
+    else { want = null; player.seekTo(t, true); }
     post({ type: 'time', time: t });
 }
 // The parent's origin: the one it passes, else the referrer's. Only an http(s) origin is
