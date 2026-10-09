@@ -69,6 +69,19 @@ describe('AnalysisPanel — the challenge mask', () => {
         expect(container.querySelector('button.answer-mask')).not.toBeNull();
     });
 
+    test('a position left then come back to is masked again', async () => {
+        toggleAnalysisChallenge();
+        const { container } = render(AnalysisPanel);
+        await tick();
+        await fireEvent.click(/** @type {HTMLElement} */ (container.querySelector('button.answer-mask')));
+        const a = get(positionStore);
+        positionStore.set(withDice(6, 5));
+        await tick();
+        positionStore.set({ ...a });
+        await tick();
+        expect(container.querySelector('button.answer-mask')).not.toBeNull();
+    });
+
     test('revealing writes nothing to the database', async () => {
         toggleAnalysisChallenge();
         revealAnalysis();

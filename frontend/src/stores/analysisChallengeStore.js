@@ -23,6 +23,16 @@ export function challengeKey(position) {
 /** La clé de la position dévoilée ; toute autre position est masquée. */
 const revealedKeyStore = writable(/** @type {string|null} */ (null));
 
+// Le dévoilement vaut pour la position où il a eu lieu, tant qu'on y reste : la quitter l'oublie,
+// sans quoi y revenir (k après j, un clic dans une liste) la montrerait dévoilée sans clic.
+let shownKey = challengeKey(get(positionStore));
+positionStore.subscribe((position) => {
+    const key = challengeKey(position);
+    if (key === shownKey) return;
+    shownKey = key;
+    revealedKeyStore.set(null);
+});
+
 /**
  * Le masque du panneau Analyse : `'training'` tant qu'une question d'entraînement attend sa
  * réponse (inerte : le verdict dévoile), `'challenge'` tant que le défi n'est pas relevé sur cette
