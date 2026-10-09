@@ -48,6 +48,7 @@ const POSITION = {
     decision_type: 0
 };
 
+/** @param {any} source */
 function annotated(source) {
     return {
         document: { header: { match_length: 7, player1: 'Kévin', player2: 'Alice', video_source: source }, actions: [], cursor: 0 },
@@ -67,7 +68,8 @@ async function settle(times = 10) {
     }
 }
 
-const dice = () => /** @type {any} */ (ApplyTranscriptionGesture).mock.calls.map((/** @type {any} */ c) => c[1]).filter((g) => g.Kind === 'enter_die');
+/** @returns {any[]} */
+const dice = () => /** @type {any} */ (ApplyTranscriptionGesture).mock.calls.map((/** @type {any} */ c) => c[1]).filter((/** @type {any} */ g) => g.Kind === 'enter_die');
 
 async function draftWithVideo(/** @type {string} */ source, /** @type {'board' | 'panel'} */ placement) {
     setVideoPlacement(placement);

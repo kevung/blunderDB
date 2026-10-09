@@ -15,6 +15,12 @@ afterEach(() => {
     studyPlanStore.set(null);
 });
 
+/**
+ * @param {string} theme
+ * @param {number} recoverable
+ * @param {number} low
+ * @param {number[]} ids
+ */
 const family = (theme, recoverable, low, ids) => ({
     GameType: 'holding',
     Kind: 'checker',

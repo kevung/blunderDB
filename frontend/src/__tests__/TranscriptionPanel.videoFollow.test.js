@@ -82,6 +82,7 @@ function annotated(/** @type {number} */ cursor) {
     };
 }
 
+/** @returns {any[]} */
 const gestures = () => /** @type {any} */ (ApplyTranscriptionGesture).mock.calls.map((/** @type {any} */ call) => call[1]);
 const seeksOfCursor = () => gestures().filter((g) => g.Kind === 'seek_cursor');
 

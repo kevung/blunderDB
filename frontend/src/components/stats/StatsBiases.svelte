@@ -15,7 +15,7 @@
               ]
             : []
     );
-    let scoreCells = $derived((biases?.DoublesByScore ?? []).filter((c) => c.Decisions >= (biases?.MinDecisions ?? 20)));
+    let scoreCells = $derived((biases?.DoublesByScore ?? []).filter((/** @type {any} */ c) => c.Decisions >= (biases?.MinDecisions ?? 20)));
 
     /** Share of the decisions → signed percentage points. */
     /** @param {number} x */

@@ -13,7 +13,7 @@ import { finalScore, isSectionOpen } from '../utils/matchSheet.js';
 
 const moves = [100, 101, 102, 103].map((id, i) => ({ move_id: id, player_on_roll: i % 2, game_number: 1, move_number: i + 1 }));
 const losses = moves.map((m, i) => ({ move_id: m.move_id, mwc_loss: [0.012, 0.034, 0, 0.021][i], difficulty: 0.002, avoidable: i === 1 }));
-const player = (seat) => ({
+const player = (/** @type {number} */ seat) => ({
     pr: seat ? 7.35 : 4.82,
     pr_interval: { available: true, low: 2.9, high: 6.7, units: 3 },
     decisions: 2,

@@ -11,6 +11,12 @@ afterEach(() => {
     biasesStore.set(null);
 });
 
+/**
+ * @param {number} decisions
+ * @param {number} plus
+ * @param {number} minus
+ * @param {string} verdict
+ */
 const bias = (decisions, plus, minus, verdict) => ({
     Decisions: decisions,
     Plus: plus,

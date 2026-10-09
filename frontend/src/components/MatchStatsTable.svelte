@@ -27,7 +27,7 @@
         </thead>
         <tbody>
             {#each MATCH_STAT_ROWS as row, i (i)}
-                {#if row.section}
+                {#if 'section' in row}
                     <tr class="stats-section-header"><td colspan="3">{$t(row.section)}</td></tr>
                 {:else}
                     <tr>

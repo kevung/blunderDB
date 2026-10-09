@@ -47,6 +47,7 @@
     let pendingMs = untrack(() => startMs);
 
     // Container by extension, with the MIME type canPlayType is asked about.
+    /** @type {Record<string, [string, string]>} */
     const CONTAINERS = {
         mp4: ['MP4', 'video/mp4'],
         m4v: ['MP4', 'video/mp4'],
@@ -56,11 +57,13 @@
         ogv: ['Ogg', 'video/ogg']
     };
 
+    /** @param {string} path */
     function containerOf(path) {
-        const ext = String(path).split('.').pop().toLowerCase();
+        const ext = (String(path).split('.').pop() ?? '').toLowerCase();
         return CONTAINERS[ext] || [ext.toUpperCase(), ''];
     }
 
+    /** @param {MessageEvent} event */
     function onYouTubeMessage(event) {
         if (!ytOrigin || event.origin !== ytOrigin || event.source !== frame?.contentWindow) return;
         const m = event.data;
@@ -92,11 +95,13 @@
         return false;
     }
 
+    /** @param {Record<string, unknown>} message */
     function postToPlayer(message) {
         if (!frame?.contentWindow || !ytOrigin) return;
         frame.contentWindow.postMessage(message, ytOrigin);
     }
 
+    /** @param {string} url */
     function release(url) {
         if (!url) return;
         try {
@@ -124,7 +129,7 @@
             try {
                 const k = await VideoSourceKind(current);
                 if (cancelled) return;
-                kind = k;
+                kind = /** @type {typeof kind} */ (k);
                 if (k === 'file' || k === 'youtube') {
                     const url = await (k === 'file' ? MediaURL(current) : YouTubeEmbedURL(current));
                     // Closed or re-sourced while the host answered: nobody will play it.
@@ -147,8 +152,8 @@
             } catch (error) {
                 if (cancelled) return;
                 logger.error('video source:', error);
-                status = kind === 'file' ? 'missing' : 'error';
-                detail = String(error?.message || error);
+                status = /** @type {string} */ (kind) === 'file' ? 'missing' : 'error';
+                detail = String((error instanceof Error && error.message) || error);
             }
         })();
         return () => {

@@ -45,6 +45,7 @@ export function emptyAnalysis() {
 export const analysisStore = writable(emptyAnalysis());
 
 // Store for tracking the selected move in the analysis panel
+/** @type {import('svelte/store').Writable<string | null>} */
 export const selectedMoveStore = writable(null);
 
 // The Eval panel's live gammonNet result, in analysisStore's shape plus the panel's

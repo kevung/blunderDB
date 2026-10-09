@@ -100,6 +100,7 @@ const RANKED = [
     { index: 0, move: '24/23 13/11', equity: -0.1, equityError: 0.22 }
 ];
 
+/** @returns {any[]} */
 const gestures = () => /** @type {any} */ (ApplyTranscriptionGesture).mock.calls.map((/** @type {any} */ call) => call[1]);
 
 async function settle(times = 10) {

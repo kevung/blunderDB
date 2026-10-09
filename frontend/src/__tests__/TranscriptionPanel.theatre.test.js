@@ -84,6 +84,7 @@ function annotated(/** @type {number} */ cursor) {
     };
 }
 
+/** @returns {any[]} */
 const gestures = () => /** @type {any} */ (ApplyTranscriptionGesture).mock.calls.map((/** @type {any} */ call) => call[1]);
 
 async function settle(times = 10) {
