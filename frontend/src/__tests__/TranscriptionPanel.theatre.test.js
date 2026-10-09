@@ -1,6 +1,6 @@
 /**
  * TranscriptionPanel.theatre.test.js — the theatre of the transcription: the video over the
- * whole window and a floating board, opened from the Video menu, the video's button or F11,
+ * whole window and a floating board, opened from the video's button or F11,
  * left by F11, Escape or its button; the transcription keys stay live inside it.
  */
 
@@ -106,10 +106,6 @@ async function openedPanel(cursor = ACTIONS.length) {
 }
 
 const panel = () => /** @type {HTMLElement} */ (document.getElementById('transcriptionPanel'));
-const videoButton = () => /** @type {HTMLElement} */ (document.querySelector('[data-testid="transcription-video-button"]'));
-const videoMenu = () => document.querySelector('[data-testid="transcription-video-menu"]');
-const item = (/** @type {Element | null} */ menu, /** @type {RegExp} */ name) =>
-    /** @type {HTMLElement} */ ([...(menu?.querySelectorAll('[role="menuitem"]') ?? [])].find((b) => name.test(b.textContent ?? '')));
 
 beforeEach(() => {
     vi.clearAllMocks();
@@ -136,14 +132,12 @@ const dock = () => /** @type {HTMLElement} */ (document.querySelector('[data-tes
 const key = (/** @type {string} */ k, init = {}) => new KeyboardEvent('keydown', { key: k, cancelable: true, ...init });
 
 async function openFromMenu() {
-    await fireEvent.click(videoButton());
-    await settle();
-    await fireEvent.click(item(videoMenu(), /Theatre mode/));
+    await fireEvent.click(/** @type {HTMLElement} */ (document.querySelector('[data-testid="video-theatre"]')));
     await settle();
 }
 
 describe('the theatre of the transcription', () => {
-    test('the Video menu opens it: the video moves over the whole window, the mini-board floats over it', async () => {
+    test('the button on the video opens it: the video moves over the whole window, the mini-board floats over it', async () => {
         await openedPanel();
         await openFromMenu();
         expect(get(theatreStore)).toBe(true);

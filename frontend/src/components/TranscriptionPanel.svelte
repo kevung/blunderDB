@@ -645,18 +645,8 @@
     let videoMenuItems = $derived([
         { label: $t('transcription.videoFile'), onClick: pickVideoFile },
         { label: $t('transcription.videoYouTube'), onClick: toggleYouTubeField, keepOpen: true },
-        ...(videoSource
-            ? [
-                  { label: $t('theatre.menuItem'), shortcut: 'F11', onClick: openTheatre },
-                  { label: $t('transcription.videoDetach'), onClick: () => attachVideo('') }
-              ]
-            : [])
+        ...(videoSource ? [{ label: $t('transcription.videoRemove'), separatorBefore: true, onClick: () => attachVideo('') }] : [])
     ]);
-
-    function openTheatre() {
-        closeVideoMenu();
-        enterTheatre();
-    }
 
     // The theatre opens over a draft with its video, on this tab; losing any of the three ends it.
     $effect(() => {

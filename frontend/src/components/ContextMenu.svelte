@@ -122,6 +122,7 @@
 
 <div bind:this={menuEl} class="context-menu" style="left:{left}px; top:{top}px" role="menu" aria-label={$t('common.contextMenu')} data-testid={testid}>
     {#each items as item (item.label)}
+        {#if item.separatorBefore}<hr class="context-menu-sep" />{/if}
         <button class="context-menu-item" role="menuitem" disabled={item.disabled} onclick={() => handleItemClick(item)}>
             {item.label}{#if item.shortcut}<kbd>{item.shortcut}</kbd>{/if}
         </button>
@@ -141,6 +142,11 @@
         padding: 3px 0;
     }
 
+    .context-menu-sep {
+        margin: 4px 0;
+        border: 0;
+        border-top: 1px solid var(--color-border, rgb(128 128 128 / 0.4));
+    }
     .context-menu-item {
         display: block;
         width: 100%;

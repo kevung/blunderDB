@@ -1502,7 +1502,7 @@
         "moreActions": "Plus d’actions",
         "videoFile": "Fichier local…",
         "videoYouTube": "Lien YouTube…",
-        "videoDetach": "Détacher",
+        "videoRemove": "Retirer la vidéo",
         "videoAttach": "Attacher",
         "videoResize": "Hauteur du volet vidéo"
     },
@@ -3286,7 +3286,6 @@
         "noDecision": "Aucune décision chiffrée de ce joueur dans le tournoi"
     },
     "theatre": {
-        "menuItem": "Mode théâtre",
         "enter": "Mode théâtre : la vidéo en plein écran (F11)",
         "exit": "Quitter le mode théâtre (F11 ou Échap)",
         "region": "Mode théâtre",

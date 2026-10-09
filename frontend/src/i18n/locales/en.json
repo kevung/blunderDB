@@ -1502,7 +1502,7 @@
         "moreActions": "More actions",
         "videoFile": "Local file…",
         "videoYouTube": "YouTube link…",
-        "videoDetach": "Detach",
+        "videoRemove": "Remove video",
         "videoAttach": "Attach",
         "videoResize": "Video pane height"
     },
@@ -3286,7 +3286,6 @@
         "noDecision": "No counted decision of this player in the tournament"
     },
     "theatre": {
-        "menuItem": "Theatre mode",
         "enter": "Theatre mode: the video full screen (F11)",
         "exit": "Leave theatre mode (F11 or Esc)",
         "region": "Theatre mode",

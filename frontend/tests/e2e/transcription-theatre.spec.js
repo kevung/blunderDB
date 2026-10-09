@@ -38,11 +38,7 @@ test('F11 ouvre le théâtre : la vidéo couvre la fenêtre, le mini-plateau est
 });
 
 test('la saisie continue dans le théâtre, et Échap en sort', async ({ page }) => {
-    await page.locator('[data-testid="transcription-video-button"]').click();
-    await page
-        .locator('[data-testid="transcription-video-menu"]')
-        .getByRole('menuitem', { name: /Theatre mode/ })
-        .click();
+    await page.locator('[data-testid="video-theatre"]').click();
     await expect(theatre(page)).toBeVisible();
     await resetGestures(page);
     await page.keyboard.press('3');

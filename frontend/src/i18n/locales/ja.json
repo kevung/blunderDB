@@ -1502,7 +1502,7 @@
         "moreActions": "その他の操作",
         "videoFile": "ローカルファイル…",
         "videoYouTube": "YouTube リンク…",
-        "videoDetach": "解除",
+        "videoRemove": "動画を外す",
         "videoAttach": "添付",
         "videoResize": "動画欄の高さ"
     },
@@ -3286,7 +3286,6 @@
         "noDecision": "このプレイヤーのトーナメント内の判断はありません"
     },
     "theatre": {
-        "menuItem": "シアターモード",
         "enter": "シアターモード：動画を全画面表示 (F11)",
         "exit": "シアターモードを終了 (F11 または Esc)",
         "region": "シアターモード",
