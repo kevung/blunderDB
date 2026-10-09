@@ -6,9 +6,13 @@
 //
 // `LegalMoves` déduplique par position résultante et ne rend qu'UN ordre des
 // pas (« 24/23 13/11 ») : filtrer par préfixe refuserait l'autre ordre, légal.
-// La compatibilité se juge donc sur le MULTI-ENSEMBLE des pas. L'ordre reste
-// contraint par le plateau courant (pas de 11/8 sans pion en 11), et les points
-// adverses bloqués le restent : aucune séquence acceptée n'est illégale.
+// La compatibilité se juge donc sur le MULTI-ENSEMBLE des pas, puis l'ORDRE
+// joué est éprouvé sur les plateaux intermédiaires : la suite des pas doit être
+// le début d'un ordre jouable d'un coup du moteur (`orderFits`). Un pion à la
+// barre entre avant tout autre ; un pion ne sort que si tous sont dans le jan
+// à ce pas-là, et d'un dé plus fort que la distance seulement s'il n'en reste
+// aucun plus loin. Les points adverses bloqués le restent : aucune séquence
+// acceptée n'est illégale.
 
 /** Destination d'un pion sorti. Même sentinelle que `domain.Off`. */
 export const OFF = -1;
@@ -65,7 +69,10 @@ function contains(sup, sub) {
  *
  * @typedef {{from: number, to: number, hit?: boolean}} Step
  * @typedef {{steps: Step[], notation: string, result: any}} Play
- * @typedef {{plays: Play[], mover: number, board: any, steps: Step[], selected: number|null}} PlayState
+ * `start` : le plateau avant tout pas ; `dice` : le jet de la position (le
+ * `rolled` d'une transcription le remplace), qui borne les sorties.
+ *
+ * @typedef {{plays: Play[], mover: number, board: any, steps: Step[], selected: number|null, start?: any, dice?: number[]|null, rolled?: number[]|null}} PlayState
  */
 
 /**
@@ -80,6 +87,8 @@ export function newPlay(position, plays) {
         plays: plays ?? [],
         mover: position?.player_on_roll ?? BLACK,
         board: cloneBoard(position?.board),
+        start: cloneBoard(position?.board),
+        dice: position?.dice ? [position.dice[0], position.dice[1]] : null,
         steps: [],
         selected: null
     };
@@ -160,11 +169,113 @@ function remainingSteps(state) {
         for (const step of play.steps) {
             const k = stepKey(step);
             if ((left.get(k) ?? 0) <= 0 || seen.has(k)) continue;
+            if (!orderFits(state, play, step)) continue;
             seen.add(k);
             out.push(step);
         }
     }
     return out;
+}
+
+// ── L'ordre des pas ──────────────────────────────────────────────────────────
+// `LegalMoves` rend chaque coup dans UN ordre ; le joueur peut en jouer un
+// autre, pourvu que chaque pas soit jouable sur le plateau où il tombe.
+
+/**
+ * Les dés du jet, quatre pour un double ; null quand le jet est inconnu (une
+ * transcription sans dés saisis) : seules la barre et le jan sont alors vérifiés.
+ * @param {PlayState} state
+ * @returns {number[]|null}
+ */
+function rollDice(state) {
+    const d = state.rolled ?? state.dice;
+    if (!d || !(d[0] >= 1) || !(d[1] >= 1)) return null;
+    return d[0] === d[1] ? [d[0], d[0], d[0], d[0]] : [d[0], d[1]];
+}
+
+/**
+ * Le joueur a-t-il un pion sur l'un des points de `points` ?
+ * @param {any} board
+ * @param {number} mover
+ * @param {(p: number) => boolean} where
+ */
+function anyChecker(board, mover, where) {
+    const pts = board?.points ?? [];
+    for (let i = 0; i < pts.length; i++) {
+        if (where(i) && pts[i]?.checkers > 0 && pts[i].color === mover) return true;
+    }
+    return false;
+}
+
+/**
+ * Les dés (valeurs) qui jouent `step` sur `board` parmi `left` ; `[0]` quand le
+ * jet est inconnu et que la barre et le jan le permettent ; vide sinon.
+ * @param {any} board
+ * @param {number} mover
+ * @param {Step} step
+ * @param {number[]|null} left
+ * @returns {number[]}
+ */
+function diceFor(board, mover, step, left) {
+    const p = board?.points?.[step.from];
+    if (!p || p.checkers <= 0 || p.color !== mover) return [];
+    const bar = barOf(mover);
+    if (step.from !== bar && anyChecker(board, mover, (i) => i === bar)) return [];
+    if (step.to !== OFF) {
+        if (!left) return [0];
+        const d = Math.abs(step.to - step.from);
+        return left.includes(d) ? [d] : [];
+    }
+    // Sortie : tous les pions dans le jan, celui-ci compris.
+    const outside = mover === BLACK ? (/** @type {number} */ i) => i > 6 : (/** @type {number} */ i) => i < 19;
+    if (anyChecker(board, mover, outside)) return [];
+    if (!left) return [0];
+    const d = mover === BLACK ? step.from : 25 - step.from;
+    const farther = anyChecker(board, mover, mover === BLACK ? (i) => i > step.from : (i) => i < step.from);
+    return [...new Set(left)].filter((die) => die === d || (die > d && !farther));
+}
+
+/**
+ * Les pas `seq`, dans cet ordre, puis `rest` dans un ordre quelconque, se
+ * jouent-ils de `board`, chaque pas d'un dé encore libre ?
+ * @param {any} board
+ * @param {number} mover
+ * @param {Step[]} seq
+ * @param {Step[]} rest
+ * @param {number[]|null} left
+ * @returns {boolean}
+ */
+function playable(board, mover, seq, rest, left) {
+    const [step, ...more] = seq.length ? seq : rest;
+    if (!step) return true;
+    const tries = seq.length ? [[step, more, rest]] : rest.map((s, i) => [s, [], [...rest.slice(0, i), ...rest.slice(i + 1)]]);
+    for (const [st, nextSeq, nextRest] of /** @type {[Step, Step[], Step[]][]} */ (tries)) {
+        for (const die of diceFor(board, mover, st, left)) {
+            const nextLeft = left ? [...left.slice(0, left.indexOf(die)), ...left.slice(left.indexOf(die) + 1)] : null;
+            if (playable(applyStep(board, st, mover), mover, nextSeq, nextRest, nextLeft)) return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * Jouer `step` après les pas déjà joués laisse-t-il un début d'ordre jouable
+ * de `play` ? Un état sans plateau de départ ne juge que le pas sur le plateau
+ * courant.
+ * @param {PlayState} state
+ * @param {Play} play
+ * @param {Step} step
+ */
+function orderFits(state, play, step) {
+    const seq = [...state.steps, step];
+    const rest = [...play.steps];
+    for (const s of seq) {
+        const i = rest.findIndex((r) => stepKey(r) === stepKey(s));
+        if (i < 0) return false;
+        rest.splice(i, 1);
+    }
+    if (!state.start) return diceFor(state.board, state.mover, step, null).length > 0;
+    return playable(state.start, state.mover, seq, rest, rollDice(state));
 }
 
 /**

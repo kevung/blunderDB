@@ -103,6 +103,67 @@ describe("quizPlay — l'ordre des pas appartient au joueur", () => {
         s = playHop(s, 13, 11);
         expect(playHop(s, 11, 8).steps).toHaveLength(2);
     });
+
+    it('un pion à la barre entre avant tout autre pas', () => {
+        const pos = { ...position({ 25: [1, BLACK], 13: [5, BLACK] }), dice: [4, 2] };
+        const plays = [
+            play([
+                [25, 23],
+                [13, 9]
+            ])
+        ];
+        let s = newPlay(pos, plays);
+        expect(playHop(s, 13, 9)).toBe(s);
+        expect(sources(s)).toEqual(new Set([25]));
+        s = playHop(s, 25, 23);
+        s = playHop(s, 13, 9);
+        expect(completedPlay(s)).not.toBeNull();
+    });
+
+    it('une sortie attend que tous les pions soient dans le jan, dans le même coup', () => {
+        // 5-3 : 8/3 rentre le dernier pion, puis 3/off.
+        const pos = { ...position({ 8: [1, BLACK], 3: [2, BLACK] }), dice: [5, 3] };
+        const plays = [
+            play([
+                [8, 3],
+                [3, OFF]
+            ])
+        ];
+        let s = newPlay(pos, plays);
+        expect(playHop(s, 3, OFF)).toBe(s);
+        s = playHop(s, 8, 3);
+        s = playHop(s, 3, OFF);
+        expect(completedPlay(s)).not.toBeNull();
+    });
+
+    it('une sortie d’un dé plus fort attend qu’aucun pion ne reste plus loin', () => {
+        // 6-2 : 3/off du 6 n'est légal qu'une fois le 5 vidé par 5/3.
+        const pos = { ...position({ 5: [1, BLACK], 3: [1, BLACK] }), dice: [6, 2] };
+        const plays = [
+            play([
+                [5, 3],
+                [3, OFF]
+            ])
+        ];
+        let s = newPlay(pos, plays);
+        expect(playHop(s, 3, OFF)).toBe(s);
+        s = playHop(s, 5, 3);
+        s = playHop(s, 3, OFF);
+        expect(completedPlay(s)).not.toBeNull();
+    });
+
+    it('Blanc : même règle, de l’autre côté du plateau', () => {
+        const pos = { ...position({ 0: [1, WHITE], 12: [5, WHITE] }, WHITE), dice: [4, 2] };
+        const plays = [
+            play([
+                [0, 2],
+                [12, 16]
+            ])
+        ];
+        const s = newPlay(pos, plays);
+        expect(playHop(s, 12, 16)).toBe(s);
+        expect(playHop(s, 0, 2).steps).toHaveLength(1);
+    });
 });
 
 describe('quizPlay — ce que le plateau montre', () => {

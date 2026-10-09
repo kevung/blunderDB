@@ -111,7 +111,7 @@ describe('un clic sur un pion', () => {
         expect(play.board.points[3].checkers).toBe(0);
     });
 
-    test('un pion sur la barre entre du dé de gauche, sinon de l’autre', () => {
+    test('un pion sur la barre entre du dé de gauche, sinon de l’autre ; ailleurs, rien avant l’entrée', () => {
         // 4-2, un pion de Noir sur la barre (25) : tout coup légal commence par l'entrée.
         const pos = position({ 25: [1, 0], 13: [5, 0] }, [4, 2]);
         const legal = plays([
@@ -129,6 +129,8 @@ describe('un clic sur un pion', () => {
             ]
         ]);
         const play = newPlay(pos, legal);
+        // Rien ne bouge tant que le pion de la barre n'est pas entré.
+        expect(playClickedChecker(play, 13, [4, 2])).toBe(play);
         expect(playClickedChecker(play, 25, [4, 2]).steps).toEqual([{ from: 25, to: 21, die: 4 }]);
         // Le 21 fermé par Blanc : le 4 n'entre pas, le 2 est essayé.
         const blocked = newPlay(
@@ -141,6 +143,26 @@ describe('un clic sur un pion', () => {
             ])
         );
         expect(playClickedChecker(blocked, 25, [4, 2]).steps).toEqual([{ from: 25, to: 23, die: 2 }]);
+    });
+
+    test('sortie refusée tant qu’un pion est hors du jan, acceptée une fois qu’il y est entré', () => {
+        // 5-3 : un pion sur le 8, deux sur le 3.
+        const pos = position({ 8: [1, 0], 3: [2, 0] }, [5, 3]);
+        let play = newPlay(
+            pos,
+            plays([
+                [
+                    [8, 3],
+                    [3, OFF]
+                ]
+            ])
+        );
+        expect(playClickedChecker(play, 3, [3, 5])).toBe(play);
+        play = playClickedChecker(play, 8, [3, 5]);
+        expect(play.steps).toEqual([{ from: 8, to: 3, die: 5 }]);
+        play = playClickedChecker(play, 3, [3, 5]);
+        expect(play.steps[1]).toEqual({ from: 3, to: OFF, die: 3 });
+        expect(playIsDone(play, [3, 5])).toBe(true);
     });
 
     test('règle du plus grand dé : le petit dé à gauche est refusé, le grand joue, et le coup partiel est achevé', () => {
