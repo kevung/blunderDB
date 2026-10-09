@@ -174,3 +174,36 @@ test.describe('dock latéral, en-tête du brouillon ouvert', () => {
         expect(await fullyVisibleRows(page)).toBeGreaterThanOrEqual(2);
     });
 });
+
+/**
+ * Vidéo attachée, à la hauteur la plus grande que la poignée accorde : la
+ * liste garde son plancher, c'est la vidéo qui cède.
+ */
+for (const [name, config] of [
+    ['dock latéral étroit', { GetPanelPosition: 'side', GetPanelWidth: 420 }],
+    ['dock latéral élargi', { GetPanelPosition: 'side', GetPanelWidth: 520 }],
+    ['dock bas, plancher', { GetPanelPosition: 'bottom', GetTabPanelHeights: { '*': 280 } }]
+]) {
+    test.describe(`${name}, vidéo attachée`, () => {
+        test.beforeEach(async ({ page }) => {
+            await page.addInitScript(() => localStorage.setItem('blunderdb.transcription.videoHeight', '900'));
+            await installWailsMock(page, openLibraryMock({ config }));
+            await installTranscriptionEngine(page, { video: '/videos/match.mp4' });
+            await page.goto('/');
+            await page.locator('[data-testid="tab-transcription"]').click();
+            await page.locator('#transcriptionPanel tbody tr').first().click();
+            await expect(page.locator('#transcriptionPanel .video-slot')).toBeVisible();
+            await page.keyboard.press('Digit3');
+            await page.keyboard.press('Digit1');
+            await expect(page.locator('[data-testid="transcription-candidates"] tbody tr').first()).toBeVisible();
+        });
+
+        test('le panneau ne défile pas', async ({ page }) => {
+            expect(await overflow(page)).toBe(0);
+        });
+
+        test('la liste garde au moins deux lignes entières', async ({ page }) => {
+            expect(await fullyVisibleRows(page)).toBeGreaterThanOrEqual(2);
+        });
+    });
+}
