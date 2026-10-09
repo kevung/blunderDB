@@ -4,12 +4,19 @@ import { get } from 'svelte/store';
 // Mock Wails Database binding
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
     ComputeStats: vi.fn(),
-    ComputeStudyPlan: vi.fn()
+    ComputeStudyPlan: vi.fn(),
+    ComputeStudyEffect: vi.fn(),
+    ComputeDirectionalBiases: vi.fn()
 }));
 
-import { ComputeStats, ComputeStudyPlan } from '../../wailsjs/go/database/Database.js';
+import { ComputeStats, ComputeStudyPlan, ComputeStudyEffect, ComputeDirectionalBiases } from '../../wailsjs/go/database/Database.js';
 import {
     refreshStudyPlan,
+    refreshStudyLoop,
+    studyEffectStore,
+    biasesStore,
+    studyLoopLoadingStore,
+    studyLoopErrorStore,
     studyPlanStore,
     statsFilterStore,
     statsResultStore,
@@ -103,6 +110,24 @@ describe('refreshStudyPlan', () => {
         resolveOld({ tag: 'old' });
         await first;
         expect(get(studyPlanStore)).toEqual({ tag: 'new' });
+    });
+});
+
+describe('refreshStudyLoop', () => {
+    test('a slower, older reply does not overwrite the latest nor clear loading', async () => {
+        let resolveOld;
+        ComputeStudyEffect.mockImplementationOnce(() => new Promise((r) => (resolveOld = r)));
+        ComputeStudyEffect.mockImplementationOnce(() => Promise.resolve({ tag: 'new' }));
+        ComputeDirectionalBiases.mockImplementationOnce(() => Promise.resolve({ tag: 'old' }));
+        ComputeDirectionalBiases.mockImplementationOnce(() => Promise.resolve({ tag: 'new' }));
+        const first = refreshStudyLoop({ a: 1 }, 1);
+        await refreshStudyLoop({ a: 2 }, 1);
+        resolveOld({ tag: 'old' });
+        await first;
+        expect(get(studyEffectStore)).toEqual({ tag: 'new' });
+        expect(get(biasesStore)).toEqual({ tag: 'new' });
+        expect(get(studyLoopLoadingStore)).toBe(false);
+        expect(get(studyLoopErrorStore)).toBeNull();
     });
 });
 
