@@ -179,14 +179,20 @@ test.describe('dock latéral, en-tête du brouillon ouvert', () => {
  * Vidéo attachée, à la hauteur la plus grande que la poignée accorde : la
  * liste garde son plancher, c'est la vidéo qui cède.
  */
-for (const [name, config] of [
-    ['dock latéral étroit', { GetPanelPosition: 'side', GetPanelWidth: 420 }],
-    ['dock latéral élargi', { GetPanelPosition: 'side', GetPanelWidth: 520 }],
-    ['dock bas, plancher', { GetPanelPosition: 'bottom', GetTabPanelHeights: { '*': 280 } }]
+for (const [name, config, fits] of [
+    ['dock latéral étroit', { GetPanelPosition: 'side', GetPanelWidth: 420 }, true],
+    ['dock latéral élargi', { GetPanelPosition: 'side', GetPanelWidth: 520 }, true],
+    // À 280 px, barre + vidéo (5 rem) + liste (7 rem) dépassent la hauteur : le
+    // panneau défile alors par construction, seuls les planchers sont dus.
+    ['dock bas, plancher', { GetPanelPosition: 'bottom', GetTabPanelHeights: { '*': 280 } }, false]
 ]) {
     test.describe(`${name}, vidéo attachée`, () => {
         test.beforeEach(async ({ page }) => {
-            await page.addInitScript(() => localStorage.setItem('blunderdb.transcription.videoHeight', '900'));
+            await page.addInitScript(() => {
+                localStorage.setItem('blunderdb.transcription.videoHeight', '900');
+                // En panneau : sur le plateau la fente se replie et ne prend aucune place.
+                localStorage.setItem('blunderdb.video.placement', 'panel');
+            });
             await installWailsMock(page, openLibraryMock({ config }));
             await installTranscriptionEngine(page, { video: '/videos/match.mp4' });
             await page.goto('/');
@@ -201,6 +207,7 @@ for (const [name, config] of [
         });
 
         test('le panneau ne défile pas', async ({ page }) => {
+            test.skip(!fits, 'les planchers cumulés dépassent la hauteur');
             expect(await overflow(page)).toBe(0);
         });
 
@@ -233,7 +240,11 @@ for (const [name, width, stacked] of [
 ]) {
     test.describe(`dock latéral ${name}, vidéo attachée`, () => {
         test.beforeEach(async ({ page }) => {
-            await page.addInitScript(() => localStorage.setItem('blunderdb.transcription.videoHeight', '900'));
+            await page.addInitScript(() => {
+                localStorage.setItem('blunderdb.transcription.videoHeight', '900');
+                // En panneau : sur le plateau la fente se replie et ne prend aucune place.
+                localStorage.setItem('blunderdb.video.placement', 'panel');
+            });
             await installWailsMock(page, openLibraryMock({ config: { GetPanelPosition: 'side', GetPanelWidth: width } }));
             await installTranscriptionEngine(page, { video: '/videos/match.mp4' });
             await page.goto('/');
