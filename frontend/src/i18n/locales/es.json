@@ -718,6 +718,7 @@
         "livingNeedsSearch": "Lance primero una búsqueda: es lo que la colección guardará.",
         "livingSet": "Colección viva: {query}",
         "livingCleared": "Colección devuelta a su lista hecha a mano.",
+        "livingCapped": "Mazo «{name}»: la colección viva selecciona {total} posiciones; se alcanzó el tope de {count} y solo las primeras alimentan el mazo.",
         "freezeTitle": "Congelar: conservar el resultado de hoy como colección ordinaria.",
         "frozen": "Colección congelada en {count} posición(es).",
         "newButton": "Nueva colección",

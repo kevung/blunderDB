@@ -52,7 +52,7 @@ func TestCommitImportDatabase_Collections(t *testing.T) {
 		t.Fatal(err)
 	}
 	tLive, _ := d.CreateCollection("Vivante", "")
-	if err := d.SetCollectionFilter(tLive, "s>0"); err != nil {
+	if err := d.SetCollectionFilter(tLive, "s n<1"); err != nil {
 		t.Fatal(err)
 	}
 

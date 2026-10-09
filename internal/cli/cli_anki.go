@@ -12,6 +12,7 @@ import (
 	"text/tabwriter"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // runAnki handles the anki command: the read-only and maintenance side of the
@@ -325,17 +326,18 @@ func (cli *CLI) runAnkiSync(args []string) error {
 		return err
 	}
 
-	if deck.SourceType == AnkiSourceSearch {
-		if ids, ok := ankiSearchStoredIDs(deck.SourceCommand); ok {
-			if err := cli.db.SyncAnkiDeckWithPositions(deck.ID, ids); err != nil {
-				return fmt.Errorf("failed to sync deck: %w", err)
-			}
-			fmt.Fprintln(os.Stderr, "Note: a search deck is resynchronised from the position ids stored with it; the GUI re-runs the search itself.")
-		} else if err := cli.db.SyncAnkiDeck(deck.ID); err != nil {
+	var report *storage.DeckSync
+	if ids, ok := ankiSearchStoredIDs(deck.SourceCommand); ok && deck.SourceType == AnkiSourceSearch {
+		if err := cli.db.SyncAnkiDeckWithPositions(deck.ID, ids); err != nil {
 			return fmt.Errorf("failed to sync deck: %w", err)
 		}
-	} else if err := cli.db.SyncAnkiDeck(deck.ID); err != nil {
+		fmt.Fprintln(os.Stderr, "Note: a search deck is resynchronised from the position ids stored with it; the GUI re-runs the search itself.")
+	} else if report, err = cli.db.SyncAnkiDeck(deck.ID); err != nil {
 		return fmt.Errorf("failed to sync deck: %w", err)
+	}
+	if report != nil && report.Source != nil && report.Source.Truncated {
+		fmt.Fprintf(os.Stderr, "Note: the living collection selects %d positions; the deck was fed the first %d (the declared ceiling).\n",
+			report.Source.Total, len(report.Source.PositionIDs))
 	}
 
 	after, err := cli.ankiDeck(deck.ID)
