@@ -1196,9 +1196,10 @@ filtré. Cocher un tournoi coche automatiquement (et grise) ses matchs membres
 dans la liste des matchs, rendant visible le fait qu'un tournoi équivaut à
 l'ensemble de ses matchs.
 
-Le panneau de recherche comporte trois onglets sur son bord gauche :
-*Critères* (les filtres), *Historique* et *Enregistrés* — et un quatrième,
-*Assistant*, quand l'assistant interne est activé. L'onglet
+La bande du panneau de recherche porte un sélecteur *Critères* (les filtres) |
+*Historique* | *Enregistrés* — avec un quatrième segment, *Assistant*, quand
+l'assistant interne est activé — et, sur *Critères*, le bouton **Rechercher**
+à son extrémité droite. L'onglet
 **Historique** liste les recherches passées avec leur date et leur commande :
 un clic sélectionne une recherche et affiche la position associée sur le
 plateau, un double-clic la ré-exécute. Chaque entrée peut être enregistrée

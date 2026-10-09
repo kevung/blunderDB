@@ -430,6 +430,8 @@
         "movePatternHint": "Meilleur coup ou décision de videau",
         "name": "Nom",
         "newTab": "Ouvrir dans un nouvel onglet",
+        "newTabShort": "Nouvel onglet",
+        "inResultsShort": "Dans les résultats",
         "noHistory": "Aucun historique de recherche",
         "noSaved": "Aucun filtre enregistré",
         "noPinnedAt": "Aucun filtre épinglé au rang {n}",

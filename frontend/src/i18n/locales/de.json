@@ -430,6 +430,8 @@
         "movePatternHint": "Bester Zug oder Cube-Entscheidung",
         "name": "Name",
         "newTab": "In neuem Tab öffnen",
+        "newTabShort": "Neuer Tab",
+        "inResultsShort": "In Ergebnissen",
         "noHistory": "Kein Suchverlauf",
         "noSaved": "Keine gespeicherten Filter",
         "noPinnedAt": "Kein angehefteter Filter an Position {n}",

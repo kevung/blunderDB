@@ -430,6 +430,8 @@
         "movePatternHint": "Miglior mossa o decisione sul cube",
         "name": "Nome",
         "newTab": "Apri in una nuova scheda",
+        "newTabShort": "Nuova scheda",
+        "inResultsShort": "Nei risultati",
         "noHistory": "Nessuna cronologia di ricerca",
         "noSaved": "Nessun filtro salvato",
         "noPinnedAt": "Nessun filtro fissato in posizione {n}",

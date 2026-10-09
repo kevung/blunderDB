@@ -430,6 +430,8 @@
         "movePatternHint": "Paras siirto tai cube-päätös",
         "name": "Nimi",
         "newTab": "Avaa uudessa välilehdessä",
+        "newTabShort": "Uusi välilehti",
+        "inResultsShort": "Tuloksista",
         "noHistory": "Ei hakuhistoriaa",
         "noSaved": "Ei tallennettuja suodattimia",
         "noPinnedAt": "Kohdassa {n} ei ole kiinnitettyä suodatinta",

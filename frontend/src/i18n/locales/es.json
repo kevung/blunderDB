@@ -430,6 +430,8 @@
         "movePatternHint": "Mejor jugada o decisión de cube",
         "name": "Nombre",
         "newTab": "Abrir en una pestaña nueva",
+        "newTabShort": "Nueva pestaña",
+        "inResultsShort": "En los resultados",
         "noHistory": "Sin historial de búsqueda",
         "noSaved": "Sin filtros guardados",
         "noPinnedAt": "Ningún filtro fijado en la posición {n}",

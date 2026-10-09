@@ -430,6 +430,8 @@
         "movePatternHint": "ベストムーブまたはキューブの判断",
         "name": "名前",
         "newTab": "新しいタブで開く",
+        "newTabShort": "新しいタブ",
+        "inResultsShort": "結果内",
         "noHistory": "検索履歴がありません",
         "noSaved": "保存済みフィルターがありません",
         "noPinnedAt": "{n} 番目にピン留めしたフィルターはありません",

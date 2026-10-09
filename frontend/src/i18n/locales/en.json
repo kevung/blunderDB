@@ -430,6 +430,8 @@
         "movePatternHint": "Best move or cube decision",
         "name": "Name",
         "newTab": "Open in new tab",
+        "newTabShort": "New tab",
+        "inResultsShort": "In results",
         "noHistory": "No search history",
         "noSaved": "No saved filters",
         "noPinnedAt": "No pinned filter at rank {n}",
