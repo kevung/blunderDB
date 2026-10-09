@@ -371,11 +371,29 @@ type importRun struct {
 	srcMET   map[int64]int64
 	signed   bool
 	targetOf map[int64]int64
+	// sourceVersion is the source's schema version, which tells whether its
+	// gammonNet verdicts on take/pass positions are stale
+	// (ingest.StaleResponseVerdict).
+	sourceVersion string
+}
+
+// sourceAnalysis reads the source's analysis of position id, which stands
+// as pos; sql.ErrNoRows when it has none or when ingest.StaleResponseVerdict
+// leaves it behind.
+func (r *importRun) sourceAnalysis(id int64, pos *Position) ([]byte, error) {
+	var data []byte
+	if err := r.importDB.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, id).Scan(&data); err != nil {
+		return nil, err
+	}
+	if a, err := decodeAnalysisFromStorage(data); err == nil && ingest.StaleResponseVerdict(r.sourceVersion, pos, &a) {
+		return nil, sql.ErrNoRows
+	}
+	return data, nil
 }
 
 // mergeExisting folds a source position the target already holds into it:
 // provenance flag, analysis, then comments. It reports whether anything changed.
-func (r *importRun) mergeExisting(id, existingPositionID int64, sourceIndividual bool) (bool, error) {
+func (r *importRun) mergeExisting(id, existingPositionID int64, importPosition *Position, sourceIndividual bool) (bool, error) {
 	ctx, tx, stx, importDB, carrier, srcMET, signed := r.ctx, r.tx, r.stx, r.importDB, r.carrier, r.srcMET, r.signed
 	r.targetOf[id] = existingPositionID
 	var err error
@@ -393,8 +411,7 @@ func (r *importRun) mergeExisting(id, existingPositionID int64, sourceIndividual
 	}
 
 	// Merge analysis if it exists
-	var importAnalysisData []byte
-	err = importDB.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, id).Scan(&importAnalysisData)
+	importAnalysisData, err := r.sourceAnalysis(id, importPosition)
 
 	if err == nil {
 		// Load existing analysis from current database (using transaction)
@@ -495,8 +512,7 @@ func (r *importRun) addNew(id int64, importPosition *Position, sourceIndividual 
 	r.targetOf[id] = newPositionID
 
 	// Copy analysis if it exists
-	var importAnalysisData []byte
-	err = importDB.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, id).Scan(&importAnalysisData)
+	importAnalysisData, err := r.sourceAnalysis(id, importPosition)
 	if err == nil {
 		// Update position_id in the analysis JSON
 		analysis, _ := decodeAnalysisFromStorage(importAnalysisData)
@@ -628,7 +644,7 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 	// targetOf maps each source position id to the id it holds here, for the
 	// collections merged after the positions.
 	targetOf := map[int64]int64{}
-	run := &importRun{ctx: ctx, tx: tx, stx: stx, importDB: importDB, carrier: carrier, srcMET: srcMET, signed: signed, targetOf: targetOf}
+	run := &importRun{ctx: ctx, tx: tx, stx: stx, importDB: importDB, carrier: carrier, srcMET: srcMET, signed: signed, targetOf: targetOf, sourceVersion: importDBVersion}
 
 	for rows.Next() {
 		// Check for cancellation
@@ -672,7 +688,7 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 
 		if existsInCurrent {
 			var changed bool
-			if changed, err = run.mergeExisting(id, existingPositionID, sourceIndividual); err != nil {
+			if changed, err = run.mergeExisting(id, existingPositionID, &importPosition, sourceIndividual); err != nil {
 				return nil, err
 			}
 			if changed {

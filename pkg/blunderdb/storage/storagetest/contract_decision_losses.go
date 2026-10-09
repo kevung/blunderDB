@@ -181,10 +181,10 @@ func testStatsMatchDecisionLosses(t *testing.T, s storage.Storage) {
 
 // testStatsMatchDecisionLossesCube runs the cube decisions end to end: a
 // double, a pass and a take, each a 100 mP error with a single rival option.
-// The answer sits on the position after the double, whose cube is twice the
-// doubler's; it is priced at the cube the double was offered at, so a pass
-// costs what the double cost at the same score. The difficulty weighs the
-// deciding player's two options, as for a checker play.
+// The answer sits on the position after the double, the cube turned to twice
+// the doubler's and held by no one; it is priced at the cube the double was
+// offered at, so a pass costs what the double cost at the same score. The
+// difficulty weighs the deciding player's two options, as for a checker play.
 func testStatsMatchDecisionLossesCube(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 	m := domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: 7,
@@ -220,10 +220,10 @@ func testStatsMatchDecisionLossesCube(t *testing.T, s storage.Storage) {
 	double := cubePos(4, 0, domain.None, &domain.DoublingCubeAnalysis{
 		CubefulNoDoubleEquity: 0.5, CubefulDoubleTakeEquity: 0.4, CubefulDoublePassEquity: 1.0,
 		CubefulDoubleTakeError: 0.1, CubefulDoublePassError: 0.5}, "Double")
-	pass := cubePos(4, 1, domain.White, &domain.DoublingCubeAnalysis{
+	pass := cubePos(4, 1, domain.None, &domain.DoublingCubeAnalysis{
 		CubefulNoDoubleEquity: 0.5, CubefulDoubleTakeEquity: 0.9, CubefulDoublePassEquity: 1.0,
 		CubefulDoubleTakeError: 0.4, CubefulDoublePassError: 0.5}, "Pass")
-	take := cubePos(3, 1, domain.White, &domain.DoublingCubeAnalysis{
+	take := cubePos(3, 1, domain.None, &domain.DoublingCubeAnalysis{
 		CubefulNoDoubleEquity: 0.5, CubefulDoubleTakeEquity: 1.1, CubefulDoublePassEquity: 1.0,
 		CubefulDoubleTakeError: 0.6, CubefulDoublePassError: 0.5}, "Take")
 	moves := []struct {

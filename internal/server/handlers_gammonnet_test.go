@@ -307,3 +307,54 @@ func TestGammonNetSweepStaleKeepsRollouts(t *testing.T) {
 		t.Errorf("rollouts %+v, cube %+v — want the 1-ply analysis beside the kept rollout", got.Rollouts, got.DoublingCubeAnalysis)
 	}
 }
+
+// TestGammonNetAnalyzeMissingScoresAReplyAsTheDoublersDecision: the sweep
+// evaluates a take/pass position (the turned cube held by no one) as the
+// doubler's cube decision it answers, chances turned to the answerer — never
+// as the answerer's own redouble.
+func TestGammonNetAnalyzeMissingScoresAReplyAsTheDoublersDecision(t *testing.T) {
+	ctx := context.Background()
+	srv, s := newGammonNetTestServer(t)
+
+	doubler := bearoffRacePosition()
+	doubler.DecisionType = domain.CubeAction
+	doubler.Cube = domain.Cube{Owner: domain.Black, Value: 1}
+	answer := doubler
+	answer.PlayerOnRoll = domain.White
+	answer.Cube = domain.Cube{Owner: domain.None, Value: 2}
+
+	doublerID, err := s.Positions().Save(ctx, "t", &doubler)
+	if err != nil {
+		t.Fatal(err)
+	}
+	answerID, err := s.Positions().Save(ctx, "t", &answer)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if doublerID == answerID {
+		t.Fatal("the reply and the double share a row")
+	}
+
+	events := postNDJSON(t, srv, "/v1/gammonnet.analyzeMissing", "")
+	if last := events[len(events)-1]; last["event"] != "done" || int(last["evaluated"].(float64)) != 2 {
+		t.Fatalf("last event = %v, want done with 2 evaluated", last)
+	}
+
+	d, err := s.Analyses().Load(ctx, "t", doublerID)
+	if err != nil || d.DoublingCubeAnalysis == nil {
+		t.Fatalf("doubler analysis: %v", err)
+	}
+	r, err := s.Analyses().Load(ctx, "t", answerID)
+	if err != nil || r.DoublingCubeAnalysis == nil {
+		t.Fatalf("reply analysis: %v", err)
+	}
+	dc, rc := d.DoublingCubeAnalysis, r.DoublingCubeAnalysis
+	if rc.CubefulNoDoubleEquity != dc.CubefulNoDoubleEquity || rc.CubefulDoubleTakeEquity != dc.CubefulDoubleTakeEquity ||
+		rc.CubefulDoublePassEquity != dc.CubefulDoublePassEquity || rc.BestCubeAction != dc.BestCubeAction {
+		t.Errorf("reply equities %+v, want the doubler's %+v", rc, dc)
+	}
+	if rc.PlayerWinChances != dc.OpponentWinChances || rc.OpponentWinChances != dc.PlayerWinChances {
+		t.Errorf("reply chances %v/%v, want the doubler's turned %v/%v",
+			rc.PlayerWinChances, rc.OpponentWinChances, dc.OpponentWinChances, dc.PlayerWinChances)
+	}
+}

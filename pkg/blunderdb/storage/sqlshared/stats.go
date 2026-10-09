@@ -73,12 +73,15 @@ func UnscoredPlaySQL(pos, mv string) string {
 // no one), but its equities, like the doubler's, are counted in units of the
 // cube before the double: XG converts both sides of a double at that value,
 // and a response converted at the doubled cube costs twice the MWC it should.
+// A take an .xg file without its raw cube segment left on the doubler's own
+// row stands at the cube before the double already, an owned one: only the
+// turned cube held by no one steps down.
 // The CAST keeps the shift an integer operation on PostgreSQL, where
 // cube_value is BIGINT and `1 << bigint` is not defined; SQLite accepts it as
 // written.
 var cubeMultiplierExpr = "(1 << CAST(CASE WHEN " + ActionCodeOrEmptySQL("mv.cube_action") + " IN (" +
 	fmt.Sprint(fixedActionCode("Take")) + ", " + fmt.Sprint(fixedActionCode("Pass")) +
-	") AND COALESCE(p.cube_value, 0) > 0 THEN p.cube_value - 1 ELSE COALESCE(p.cube_value, 0) END AS INTEGER))"
+	") AND COALESCE(p.cube_value, 0) > 0 AND p.cube_owner = -1 THEN p.cube_value - 1 ELSE COALESCE(p.cube_value, 0) END AS INTEGER))"
 
 // statsBaseJoin is the FROM + JOIN fragment shared by all stats queries.
 const statsBaseJoin = `FROM position p

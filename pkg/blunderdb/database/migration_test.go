@@ -4617,3 +4617,316 @@ func TestMigrate_2_39_0_to_2_40_0_MatchVideo(t *testing.T) {
 		t.Fatalf("set a video source on a migrated library: %v", err)
 	}
 }
+
+// TestMigrate_2_40_0_to_2_41_0_AnsweredDoubles opens a 2.40.0 library whose
+// transcribed take and pass stand on the answerer's own redouble row, and
+// checks the step moves them onto the ownerless cube: the take merges into
+// an importer's reply row, the pass's row is purged with its stale analysis,
+// imported moves stay, and the moved take is rescored by its new row.
+func TestMigrate_2_40_0_to_2_41_0_AnsweredDoubles(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	dbPath := filepath.Join(tempDir(t), "test_v2400.db")
+	d := NewDatabase()
+	if err := d.SetupDatabase(dbPath); err != nil {
+		t.Fatalf("setup: %v", err)
+	}
+	s := sqlite.New(d.db)
+	owned := func(variant int) domain.Position {
+		p := domain.InitializePosition()
+		p.DecisionType = domain.CubeAction
+		p.Board.Points[1] = domain.Point{Checkers: 1, Color: domain.White}
+		p.Board.Points[5+variant] = domain.Point{Checkers: 1, Color: domain.Black}
+		p.PlayerOnRoll = domain.Black
+		p.Cube = domain.Cube{Owner: domain.Black, Value: 1}
+		return p
+	}
+	save := func(p domain.Position) int64 {
+		id, err := s.Positions().Save(ctx, "", &p)
+		if err != nil {
+			t.Fatalf("save position: %v", err)
+		}
+		return id
+	}
+	analyse := func(id int64, engineLabel string) {
+		a := &domain.PositionAnalysis{AnalysisType: "DoublingCube", AnalysisEngineVersion: engineLabel,
+			DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{AnalysisDepth: "0-ply", AnalysisEngine: engineLabel, BestCubeAction: "No Double"}}
+		if err := s.Analyses().Save(ctx, "", id, a); err != nil {
+			t.Fatalf("save analysis: %v", err)
+		}
+	}
+	move := func(filePath, action string, posID int64) int64 {
+		mid, err := s.Matches().Save(ctx, "", &domain.Match{Player1Name: "A", Player2Name: "B", MatchLength: 7, FilePath: filePath})
+		if err != nil {
+			t.Fatalf("save match: %v", err)
+		}
+		gid, err := s.Matches().CreateGame(ctx, "", &domain.Game{MatchID: mid, GameNumber: 1})
+		if err != nil {
+			t.Fatalf("create game: %v", err)
+		}
+		mvID, err := s.Matches().CreateMove(ctx, "", &domain.Move{GameID: gid, MoveNumber: 1, MoveType: "cube", PositionID: posID, Player: -1, CubeAction: action})
+		if err != nil {
+			t.Fatalf("create move: %v", err)
+		}
+		return mvID
+	}
+	doubler := owned(9)
+	doubler.PlayerOnRoll, doubler.Cube = domain.White, domain.Cube{Owner: domain.None, Value: 0}
+	doublerID := save(doubler)
+	// answered records an answer the transcription's way: right after the
+	// opponent's Double, on the doubler's own row.
+	answered := func(filePath, action string, posID int64) int64 {
+		mvID := move(filePath, action, posID)
+		if _, err := d.db.Exec(`UPDATE move SET move_number = 2 WHERE id = ?`, mvID); err != nil {
+			t.Fatal(err)
+		}
+		var gid int64
+		if err := d.db.QueryRow(`SELECT game_id FROM move WHERE id = ?`, mvID).Scan(&gid); err != nil {
+			t.Fatal(err)
+		}
+		if _, err := s.Matches().CreateMove(ctx, "", &domain.Move{GameID: gid, MoveNumber: 1, MoveType: "cube", PositionID: doublerID, Player: 1, CubeAction: "Double"}); err != nil {
+			t.Fatalf("create double: %v", err)
+		}
+		return mvID
+	}
+	positionOf := func(d *Database, moveID int64) (pid int64, errMP sql.NullInt64) {
+		t.Helper()
+		if err := d.db.QueryRow(`SELECT position_id, decision_error_mp FROM move WHERE id = ?`, moveID).Scan(&pid, &errMP); err != nil {
+			t.Fatal(err)
+		}
+		return pid, errMP
+	}
+
+	shared := owned(0)
+	sharedID := save(shared)
+	analyse(sharedID, "XG")
+	reply := shared
+	reply.Cube.Owner = domain.None
+	replyID := save(reply)
+	// An importer without a separate response: the take falls back onto
+	// the doubler's row, which the double of its game stands on too.
+	importedTake := move("b.xg", "Take", sharedID)
+	var importedGame int64
+	if err := d.db.QueryRow(`SELECT game_id FROM move WHERE id = ?`, importedTake).Scan(&importedGame); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := s.Matches().CreateMove(ctx, "", &domain.Move{GameID: importedGame, MoveNumber: 0, MoveType: "cube", PositionID: sharedID, Player: 1, CubeAction: "Double"}); err != nil {
+		t.Fatalf("create double: %v", err)
+	}
+	// Its statistics, converted the take's MWC at half its cube: a sentinel
+	// the migration must not keep.
+	if _, err := d.db.Exec(`INSERT INTO match_stats (match_id, seat, error_mp)
+		SELECT match_id, 1, 999999 FROM game WHERE id = ?`, importedGame); err != nil {
+		t.Fatalf("seed match stats: %v", err)
+	}
+	transcribedTake := answered("", "Take", sharedID)
+	loneID := save(owned(1))
+	analyse(loneID, "XG")
+	transcribedPass := answered("", "Pass", loneID)
+	// An imported match corrected through a transcription: its file stays,
+	// its take stands the transcript's way.
+	correctedID := save(owned(2))
+	correctedTake := answered("c.xg", "Take", correctedID)
+	// Take/pass rows gammonNet scored as the answerer's centred-cube
+	// decision, beside one XG scored as the doubler's.
+	gnReply := owned(3)
+	gnReply.Cube.Owner = domain.None
+	gnReplyID := save(gnReply)
+	analyse(gnReplyID, "gammonNet v1.6.0")
+	gnTake := move("d.xg", "Take", gnReplyID)
+	xgReply := owned(4)
+	xgReply.Cube.Owner = domain.None
+	xgReplyID := save(xgReply)
+	analyse(xgReplyID, "XG")
+	// The error the take was scored with against the redouble's analysis;
+	// the reply row has none, so the rescore must clear it.
+	for _, stmt := range []string{
+		fmt.Sprintf(`UPDATE move SET decision_error_mp = 999 WHERE id IN (%d, %d)`, transcribedTake, gnTake),
+		`UPDATE metadata SET value = '2.40.0' WHERE key = 'database_version'`,
+	} {
+		if _, err := d.db.Exec(stmt); err != nil {
+			t.Fatalf("%s: %v", stmt, err)
+		}
+	}
+	if err := d.Close(); err != nil {
+		t.Fatalf("close: %v", err)
+	}
+
+	d = NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open v2.40.0 database: %v", err)
+	}
+	closeOnCleanup(t, d)
+	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {
+		t.Fatalf("version after migration = %q, %v; want %q", v, err, DatabaseVersion)
+	}
+	if pid, errMP := positionOf(d, transcribedTake); pid != replyID || errMP.Valid {
+		t.Errorf("transcribed take on %d scored %v, want the reply row %d unscored", pid, errMP, replyID)
+	}
+	if pid, _ := positionOf(d, importedTake); pid != sharedID {
+		t.Errorf("imported take moved to %d, want %d", pid, sharedID)
+	}
+	var stale int
+	if err := d.db.QueryRow(`SELECT COUNT(*) FROM match_stats WHERE error_mp = 999999`).Scan(&stale); err != nil || stale != 0 {
+		t.Errorf("the statistics of a take on the doubler's row survive the migration: %d rows, %v", stale, err)
+	}
+	passID, _ := positionOf(d, transcribedPass)
+	var owner, left, analyses int
+	if err := d.db.QueryRow(`SELECT cube_owner FROM position WHERE id = ?`, passID).Scan(&owner); err != nil || owner != int(domain.None) {
+		t.Errorf("pass stands on cube owner %d (%v), want none", owner, err)
+	}
+	if err := d.db.QueryRow(`SELECT COUNT(*) FROM position WHERE id = ?`, loneID).Scan(&left); err != nil || left != 0 {
+		t.Errorf("row only the pass held survives: %d (%v)", left, err)
+	}
+	if err := d.db.QueryRow(`SELECT COUNT(*) FROM analysis WHERE position_id IN (?, ?)`, loneID, passID).Scan(&analyses); err != nil || analyses != 0 {
+		t.Errorf("the pass kept the redouble's analysis: %d (%v)", analyses, err)
+	}
+	if pid, _ := positionOf(d, correctedTake); pid == correctedID {
+		t.Errorf("the corrected imported match's take stayed on the answerer's owned cube")
+	}
+	if pid, errMP := positionOf(d, gnTake); pid != gnReplyID || errMP.Valid {
+		t.Errorf("take on gammonNet's response row: on %d scored %v, want %d unscored", pid, errMP, gnReplyID)
+	}
+	var engines []string
+	rows, err := d.db.Query(`SELECT analysis_engine FROM analysis WHERE position_id IN (?, ?) ORDER BY position_id`, gnReplyID, xgReplyID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var e string
+		if err := rows.Scan(&e); err != nil {
+			t.Fatal(err)
+		}
+		engines = append(engines, e)
+	}
+	if err := rows.Err(); err != nil {
+		t.Fatal(err)
+	}
+	if !slices.Equal(engines, []string{"XG"}) {
+		t.Errorf("analyses left on the response rows: %v, want XG's alone", engines)
+	}
+	if err := d.db.QueryRow(`SELECT COUNT(*) FROM metadata WHERE key = ?`, answeredDoublesPendingKey).Scan(&left); err != nil || left != 0 {
+		t.Errorf("pending key left after success: %d rows, %v", left, err)
+	}
+}
+
+// TestAnsweredDoubles_ResumeAndClean opens a 2.41.0 library left with its
+// pending key raised: the open drops gammonNet's verdict on the response row,
+// finishes the move and lowers the key. Raised again on the library now
+// clean, the passes change nothing. A verdict gammonNet gives afterwards, the
+// doubler's, survives the next open.
+func TestAnsweredDoubles_ResumeAndClean(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	dbPath := filepath.Join(tempDir(t), "test_resume_answers.db")
+	d := NewDatabase()
+	if err := d.SetupDatabase(dbPath); err != nil {
+		t.Fatalf("setup: %v", err)
+	}
+	s := sqlite.New(d.db)
+	save := func(p domain.Position) int64 {
+		id, err := s.Positions().Save(ctx, "", &p)
+		if err != nil {
+			t.Fatalf("save position: %v", err)
+		}
+		return id
+	}
+	owned := domain.InitializePosition()
+	owned.DecisionType = domain.CubeAction
+	owned.Board.Points[6] = domain.Point{Checkers: 1, Color: domain.Black}
+	owned.PlayerOnRoll, owned.Cube = domain.Black, domain.Cube{Owner: domain.Black, Value: 1}
+	ownedID := save(owned)
+	reply := owned
+	reply.Cube.Owner = domain.None
+	replyID := save(reply)
+	verdict := func(store interface {
+		Analyses() storage.AnalysisStore
+	}) {
+		t.Helper()
+		a := &domain.PositionAnalysis{AnalysisType: "DoublingCube", AnalysisEngineVersion: "gammonNet v1.6.0",
+			DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{AnalysisDepth: "0-ply", AnalysisEngine: "gammonNet v1.6.0", BestCubeAction: "Double, Take"}}
+		if err := store.Analyses().Save(ctx, "", replyID, a); err != nil {
+			t.Fatal(err)
+		}
+	}
+	verdict(s)
+	doubler := owned
+	doubler.PlayerOnRoll, doubler.Cube = domain.White, domain.Cube{Owner: domain.None}
+	doublerID := save(doubler)
+	mid, err := s.Matches().Save(ctx, "", &domain.Match{Player1Name: "A", Player2Name: "B", MatchLength: 7})
+	if err != nil {
+		t.Fatal(err)
+	}
+	gid, err := s.Matches().CreateGame(ctx, "", &domain.Game{MatchID: mid, GameNumber: 1})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := s.Matches().CreateMove(ctx, "", &domain.Move{GameID: gid, MoveNumber: 1, MoveType: "cube", PositionID: doublerID, Player: 1, CubeAction: "Double"}); err != nil {
+		t.Fatal(err)
+	}
+	take, err := s.Matches().CreateMove(ctx, "", &domain.Move{GameID: gid, MoveNumber: 2, MoveType: "cube", PositionID: ownedID, Player: -1, CubeAction: "Take"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	reopen := func(pending bool) {
+		t.Helper()
+		if pending {
+			if _, err := d.db.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES (?, '1')`, answeredDoublesPendingKey); err != nil {
+				t.Fatal(err)
+			}
+		}
+		if err := d.Close(); err != nil {
+			t.Fatal(err)
+		}
+		d = NewDatabase()
+		if err := d.OpenDatabase(dbPath); err != nil {
+			t.Fatalf("open: %v", err)
+		}
+		var left int
+		if err := d.db.QueryRow(`SELECT COUNT(*) FROM metadata WHERE key = ?`, answeredDoublesPendingKey).Scan(&left); err != nil || left != 0 {
+			t.Errorf("pending key left after the open: %d rows, %v", left, err)
+		}
+	}
+	// snapshot is every move's row and every analysis' row.
+	snapshot := func() string {
+		t.Helper()
+		var out string
+		if err := d.db.QueryRow(`SELECT COALESCE(group_concat(x, ';'), '') FROM (
+			SELECT 'm' || id || ':' || position_id || ':' || COALESCE(decision_error_mp, '') AS x FROM move
+			UNION ALL SELECT 'a' || position_id || ':' || analysis_engine FROM analysis
+			UNION ALL SELECT 'p' || id FROM position ORDER BY 1)`).Scan(&out); err != nil {
+			t.Fatal(err)
+		}
+		return out
+	}
+
+	analysed := func() bool {
+		t.Helper()
+		var n int
+		if err := d.db.QueryRow(`SELECT COUNT(*) FROM analysis WHERE position_id = ?`, replyID).Scan(&n); err != nil {
+			t.Fatal(err)
+		}
+		return n > 0
+	}
+
+	reopen(true)
+	if analysed() {
+		t.Errorf("gammonNet's verdict on the response row survives the resumed open")
+	}
+	var pid int64
+	if err := d.db.QueryRow(`SELECT position_id FROM move WHERE id = ?`, take).Scan(&pid); err != nil || pid != replyID {
+		t.Fatalf("resumed open left the take on %d (%v), want the reply row %d", pid, err, replyID)
+	}
+	clean := snapshot()
+	reopen(true)
+	if got := snapshot(); got != clean {
+		t.Errorf("the passes changed a clean library:\n got %s\nwant %s", got, clean)
+	}
+	verdict(d.store)
+	reopen(false)
+	closeOnCleanup(t, d)
+	if !analysed() {
+		t.Errorf("the doubler's verdict given after the drop did not survive an open")
+	}
+}

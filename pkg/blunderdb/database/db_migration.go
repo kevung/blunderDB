@@ -92,6 +92,7 @@ var migrationSteps = []migrationStep{
 	{"2.37.0", "2.38.0", (*Database).migrate_2_37_0_to_2_38_0},
 	{"2.38.0", "2.39.0", (*Database).migrate_2_38_0_to_2_39_0},
 	{"2.39.0", "2.40.0", (*Database).migrate_2_39_0_to_2_40_0},
+	{"2.40.0", "2.41.0", (*Database).migrate_2_40_0_to_2_41_0},
 }
 
 // findMigrationStep returns the registered step that starts from the given
@@ -215,6 +216,11 @@ func (d *Database) runMigrationChain(ctx context.Context) error {
 	}
 	if err := d.backfillAnalysisProvenance(ctx); err != nil {
 		return fmt.Errorf("deriving the provenance of the stored analyses: %w", err)
+	}
+	// After the provenance pass: it reads analysis_engine to tell gammonNet's
+	// verdicts on take/pass rows from the other engines'.
+	if err := d.finishAnsweredDoubles(ctx); err != nil {
+		return err
 	}
 	// match_stats last: it reads the provenance just derived. Missing rows
 	// are the to-do list, so an interrupted fill resumes on the next open,

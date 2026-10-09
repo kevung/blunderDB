@@ -22,6 +22,9 @@ tracking holders buys a remedy nobody uses at the price of surveillance.
    database. The recipient enters it once and gets an ordinary database.
 3. **The recipient's side records nothing**: no registry, log, counter or lineage. Every
    mechanism is a write by the producer, on a file they are making, before anyone else has it.
+   One exception, ADR-0083: opening a library from before schema 2.41.0 drops gammonNet's
+   verdicts on take/pass positions, which judge the wrong decision; the recipient regains a
+   right verdict by analysing again. No origin, registry or lineage is written.
 4. The Watermark is the exact signed canonical JSON in one `metadata` row — no table, no
    `DatabaseVersion` bump, nothing for the serve daemon.
 5. Export copies metadata by allow-list (`issuance.CarriedMetadataKeys` / `issuance.Carried`),

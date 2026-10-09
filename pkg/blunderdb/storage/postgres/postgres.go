@@ -310,7 +310,7 @@ const goBackfillsKey = "go_backfills"
 // goBackfillsGeneration names the set of Go-side passes. Bump it when a pass
 // is added or must run again: a library that recorded an older generation
 // runs them once more.
-const goBackfillsGeneration = "2"
+const goBackfillsGeneration = "3"
 
 // runGoBackfills runs, once per library, the passes the SQL chain cannot:
 // each lifts FORCE, which takes an ACCESS EXCLUSIVE lock on the tables it
@@ -328,7 +328,12 @@ func runGoBackfills(ctx context.Context, conn migrationConn) error {
 	}
 	complete := true
 	for _, pass := range []func(context.Context, beginner) (bool, error){
-		dropOlderShapeMatchStats, backfillAnalysisProvenance, recountDecisions,
+		// The drop first: until it has committed, a verdict gammonNet gives
+		// on a take/pass row would fall to it, so no other pass's lock wait
+		// may stand before it.
+		dropGammonNetResponseAnalyses,
+		dropOlderShapeMatchStats, backfillAnalysisProvenance,
+		reanchorAnsweredDoubles, recountDecisions,
 	} {
 		all, err := pass(ctx, conn)
 		if errors.Is(err, errUnforcedLockTimeout) {
