@@ -455,7 +455,8 @@
 
     .fb-select {
         cursor: pointer;
-        height: 26px;
+        height: auto;
+        line-height: 1.4;
         padding: 2px 6px;
     }
 
