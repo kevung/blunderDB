@@ -266,6 +266,18 @@ describe('a Lesson being read', () => {
 });
 
 describe('openDatabaseByPath', () => {
+    test('a failed open keeps the previously open path and re-reads the counts', async () => {
+        databasePathStore.set('/tmp/old.db');
+        OpenDatabase.mockRejectedValue(new Error('corrupt'));
+        refreshLibraryCounts.mockClear();
+
+        await openDatabaseByPath('/tmp/bad.db');
+
+        expect(get(databasePathStore)).toBe('/tmp/old.db');
+        expect(refreshLibraryCounts).toHaveBeenCalledTimes(1);
+        OpenDatabase.mockReset();
+    });
+
     test('the library counts are refreshed once the database is open, not before', async () => {
         /** @type {string[]} */
         const order = [];

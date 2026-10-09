@@ -99,9 +99,9 @@ export async function newDatabase() {
                 logger.log('No existing file to delete or error deleting file:', error);
             }
 
+            await SetupDatabase(filePath);
             databasePathStore.set(filePath);
             logger.log('databasePathStore:', filePath);
-            await SetupDatabase(filePath);
             refreshLibraryCounts();
             setStatusBarMessage(tMsg('commands.dbCreated'));
             const filename = getFilenameFromPath(filePath);
@@ -120,6 +120,8 @@ export async function newDatabase() {
     } catch (error) {
         logger.error('Error opening file dialog:', error);
         setStatusBarMessage(tMsg('commands.errorCreatingDb'));
+        // The displayed path stays the one actually open; the counter is re-read to match it.
+        refreshLibraryCounts();
     } finally {
         statusBarModeStore.set('NORMAL');
     }
@@ -179,11 +181,10 @@ export async function openDatabaseByPath(filePath) {
         resetTranscriptionStores();
 
         (await import('../stores/directionStore.js')).forgetDirection();
-        databasePathStore.set(filePath);
-        logger.log('databasePathStore:', filePath);
-
         await SaveLastDatabasePath(filePath);
         await OpenDatabase(filePath);
+        databasePathStore.set(filePath);
+        logger.log('databasePathStore:', filePath);
         refreshLibraryCounts();
 
         const dbVersion = await CheckDatabaseVersion();
@@ -220,6 +221,8 @@ export async function openDatabaseByPath(filePath) {
         logger.error('Error opening database:', error);
         setStatusBarMessage(tMsg('commands.errorOpeningDb'));
         statusBarModeStore.set('NORMAL');
+        // The displayed path stays the one actually open; the counter is re-read to match it.
+        refreshLibraryCounts();
     }
 }
 
