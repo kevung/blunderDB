@@ -181,8 +181,8 @@ export async function openDatabaseByPath(filePath) {
         resetTranscriptionStores();
 
         (await import('../stores/directionStore.js')).forgetDirection();
-        await SaveLastDatabasePath(filePath);
         await OpenDatabase(filePath);
+        await SaveLastDatabasePath(filePath);
         databasePathStore.set(filePath);
         logger.log('databasePathStore:', filePath);
         refreshLibraryCounts();

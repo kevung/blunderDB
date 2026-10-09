@@ -276,6 +276,7 @@ describe('openDatabaseByPath', () => {
 
         expect(get(databasePathStore)).toBe('/tmp/old.db');
         expect(refreshLibraryCounts).toHaveBeenCalledTimes(1);
+        expect(SaveLastDatabasePath).not.toHaveBeenCalled();
     });
 
     test('the library counts are refreshed once the database is open, not before', async () => {
