@@ -1475,7 +1475,9 @@
                                                                     data-testid="move-avoidable">!</span
                                                                 >{/if}</td
                                                         >
-                                                        <td class="transcript-time" data-testid="move-difficulty">{difficulty === null ? '—' : difficulty > 0 ? fmtLoss(difficulty) : '0'}</td>
+                                                        <td class="transcript-time" data-testid="move-difficulty"
+                                                            >{gradeHidden(globalIdx) ? '···' : difficulty === null ? '—' : difficulty > 0 ? fmtLoss(difficulty) : '0'}</td
+                                                        >
                                                     {/if}
                                                 </tr>
                                             {/each}

@@ -36,6 +36,13 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
         ])
     ),
     GetMatchDetailStats: vi.fn(() => Promise.resolve(null)),
+    GetMatchDecisionLosses: vi.fn(() =>
+        Promise.resolve([
+            { move_id: 101, game_number: 1, move_number: 1, player: 0, decision_type: 'checker', mwc_loss: 0.01, difficulty: 0.004, avoidable: false },
+            { move_id: 102, game_number: 1, move_number: 2, player: 1, decision_type: 'checker', mwc_loss: 0.05, difficulty: 0.002, avoidable: false },
+            { move_id: 103, game_number: 1, move_number: 3, player: 0, decision_type: 'cube', mwc_loss: 0.02, difficulty: 0.003, avoidable: false }
+        ])
+    ),
     GetMatchMoveGrades: vi.fn(() => Promise.resolve(GRADES)),
     GetMatchTimeSummary: vi.fn(() => Promise.resolve(null)),
     GetMatchOrigin: vi.fn(() => Promise.resolve(null)),
@@ -95,6 +102,25 @@ describe('MatchPanel — the challenge hides the Transcript grades', () => {
         await vi.waitFor(() => expect(rowsOf(container)[i].classList.contains('current-move')).toBe(true));
         await tick();
     }
+
+    test('the difficulty column follows the same rule as the losses', async () => {
+        const container = await openTranscript();
+        const diff = (/** @type {number} */ i) => rowsOf(container)[i].querySelector('[data-testid="move-difficulty"]')?.textContent?.trim();
+        expect(diff(1)).not.toBe('···');
+        analysisChallengeStore.set(true);
+        await tick();
+        expect([0, 1, 2].map(diff)).toEqual(['···', '···', '···']);
+        await goTo(container, 1);
+        await vi.waitFor(() => expect(diff(1)).toBe('···'));
+        revealAnalysis();
+        await tick();
+        expect(diff(1)).not.toBe('···');
+        expect(diff(2)).toBe('···');
+        await goTo(container, 2);
+        analysisChallengeStore.set(false);
+        await tick();
+        expect(diff(2)).not.toBe('···');
+    });
 
     test('on, every mark is hidden; the current move shows its own once its analysis is revealed', async () => {
         const container = await openTranscript();
