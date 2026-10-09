@@ -455,6 +455,7 @@ describe('parseFilters', () => {
 // processCommand — needs store + callback mocking
 // ---------------------------------------------------------------------------
 describe('processCommand', () => {
+    /** @type {Record<string, ReturnType<typeof vi.fn>>} */
     let callbacks;
 
     beforeEach(() => {

@@ -94,6 +94,7 @@
     import { initMCPHost } from './services/mcpHostService.js';
     import { initTheme } from './stores/themeStore.js';
 
+    /** @type {HTMLElement | undefined} */
     let mainArea;
     // The Direction view (and everything under direction/) is a separate chunk,
     // fetched the first time the Tournoi tab shows it; the board stays up meanwhile.
@@ -130,6 +131,7 @@
     let showDropOverlay = $state(false);
     // Écarté pour la session : le panneau Eval fonctionne sans base.
     let positionCount = 0;
+    /** @type {ReturnType<typeof setTimeout> | null} */
     let saveSessionTimeout = null;
     let tabInitialized = false;
     let previousTab = '';

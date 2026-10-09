@@ -15,6 +15,7 @@ function keydown(target, key, opts = {}) {
     return event;
 }
 
+/** @type {HTMLElement | null} */
 let container;
 
 afterEach(() => {

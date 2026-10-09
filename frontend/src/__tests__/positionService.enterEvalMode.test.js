@@ -111,6 +111,7 @@ function installSetSpies(storeMap, callOrder) {
 // ── Tests enterEvalMode ────────────────────────────────────────────────────────
 
 describe('enterEvalMode — ordre des set', () => {
+    /** @type {Array<{ store: string, value: unknown }>} */
     let callOrder;
     let spies;
 
@@ -168,6 +169,7 @@ describe('enterEvalMode — ordre des set', () => {
 // ── Tests exitEvalMode ─────────────────────────────────────────────────────────
 
 describe('exitEvalMode — ordre des set', () => {
+    /** @type {Array<{ store: string, value: unknown }>} */
     let callOrder;
     let spies;
 

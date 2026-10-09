@@ -2,6 +2,7 @@
 import { test, expect, vi, afterEach } from 'vitest';
 import { get } from 'svelte/store';
 
+/** @type {((value?: unknown) => void) | undefined} */
 let release;
 vi.mock('../../wailsjs/go/database/Database.js', async (importOriginal) => {
     const orig = await importOriginal();

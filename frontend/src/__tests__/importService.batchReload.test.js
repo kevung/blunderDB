@@ -86,6 +86,7 @@ const { fileImportResultsStore, fileImportModeStore } = await import('../stores/
 
 // The rows the fake backend holds; the fake loadAllPositions hands them to the
 // store exactly like positionService.js does (and lands on the matches tab).
+/** @type {Array<{ id: number, xgid: string }>} */
 let rows = [];
 let nextID = 1;
 

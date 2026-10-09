@@ -12,6 +12,7 @@ import { answerConfirm } from './confirmHelper.js';
 import { confirmModalStore } from '../services/confirmService.js';
 
 const MATCH = { id: 7, player1_name: 'Alice', player2_name: 'Bob', match_length: 7, match_date: '2026-01-15', game_count: 2 };
+/** @type {unknown[]} */
 const MOVES = [];
 
 // ModalHost brings every application modal, each importing its own bindings: keep them all, stub the ones used here.

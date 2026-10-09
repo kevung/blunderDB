@@ -9,6 +9,7 @@
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 import { get } from 'svelte/store';
 
+/** @type {((files: unknown) => void) | null} */
 let emitFiles = null;
 
 vi.mock('../../wailsjs/runtime/runtime.js', () => ({
@@ -34,7 +35,9 @@ vi.mock('../../wailsjs/go/main/Config.js', () => ({
     SaveWatchFolder: (...a) => SaveWatchFolder(...a)
 }));
 
+/** @type {unknown[]} */
 let importedBatches = [];
+/** @type {(() => void) | null} */
 let importResolve = null;
 // Un seul import peut être retenu à la fois, et seulement le premier : un
 // import laissé en suspens à la fin d'un test bloquerait la file du module

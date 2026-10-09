@@ -67,6 +67,7 @@ function drawnBoard() {
     return p;
 }
 
+/** @type {Promise<unknown> | undefined} */
 let pending;
 function trackedLoad(opts) {
     pending = loadPositionsByFilters(opts);

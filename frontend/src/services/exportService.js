@@ -20,6 +20,7 @@ import {
 import { setStatusBarMessage } from './databaseService.js';
 import { logger } from '../utils/logger.js';
 
+/** @type {string | null} */
 let pendingExportPath = null;
 
 export async function exportDatabase() {

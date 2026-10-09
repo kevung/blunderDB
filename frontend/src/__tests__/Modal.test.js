@@ -15,6 +15,7 @@ import { tick } from 'svelte';
 
 import ModalFixture from './fixtures/ModalFixture.svelte';
 
+/** @type {HTMLButtonElement} */
 let outside;
 
 beforeEach(() => {

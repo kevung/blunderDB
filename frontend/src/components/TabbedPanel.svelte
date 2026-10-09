@@ -74,6 +74,7 @@
     let dragOverIndex = $state(null);
     let isDragging = $state(false);
     let dragStartX = 0;
+    /** @type {HTMLElement | undefined} */
     let tabBarEl;
     let tabMenu = $state(null);
     let hiddenMenu = $state(null);

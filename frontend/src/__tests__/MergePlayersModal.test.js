@@ -32,8 +32,11 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
 
 import MergePlayersModal from '../components/MergePlayersModal.svelte';
 
+/** @type {ReturnType<typeof vi.fn>} */
 let onClose;
+/** @type {ReturnType<typeof vi.fn>} */
 let onMerged;
+/** @type {HTMLButtonElement} */
 let outside;
 
 async function mount() {

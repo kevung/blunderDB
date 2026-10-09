@@ -26,6 +26,7 @@ import { matchContextStore, positionStore } from '../stores/positionStore.js';
 const NO_MATCH = { isMatchMode: false, matchID: null, movePositions: [], currentIndex: 0, player1Name: '', player2Name: '' };
 const IN_MATCH = { ...NO_MATCH, isMatchMode: true, matchID: 7, player1Name: 'Alice', player2Name: 'Bob' };
 
+/** @type {FrameRequestCallback[]} */
 let pendingFrames;
 function flushFrames() {
     const frames = [...pendingFrames];
@@ -33,6 +34,7 @@ function flushFrames() {
     for (const cb of frames) cb();
 }
 
+/** @type {number} */
 let resizes;
 const onResize = () => resizes++;
 

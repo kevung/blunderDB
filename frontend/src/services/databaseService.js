@@ -36,6 +36,7 @@ function setStatusBarMessage(message) {
 // A confirmation, not a state: left up, it would still read "opened" an hour later and
 // hide every later message. It leaves only if nothing else has replaced it.
 const OPEN_NOTICE_MS = 4000;
+/** @type {ReturnType<typeof setTimeout> | undefined} */
 let openNoticeTimer;
 function setTransientStatusBarMessage(message) {
     setStatusBarMessage(message);

@@ -51,6 +51,7 @@
 
     const MATCH_LENGTHS = [1, 3, 5, 7, 9, 11, 13, 15, 21];
 
+    /** @type {ReturnType<typeof setTimeout> | null} */
     let saveTimer = null;
 
     /** Debounced save to Config.yaml. */

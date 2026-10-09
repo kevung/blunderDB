@@ -103,6 +103,7 @@
     // 0-ply synchronously (~376µs, ADR-0011), then the display depth after
     // 500 ms of rest, cancelled by any newer gesture.
     const EVAL_REST_DELAY_MS = 500;
+    /** @type {ReturnType<typeof setTimeout> | null} */
     let evalRestTimer = null;
     let evalGeneration = 0; // guards a late "done" against a position the user already left
 
@@ -216,6 +217,7 @@
         evalPreRoll = result?.preRoll ?? null;
     }
 
+    /** @type {Array<() => void>} */
     let unsubEval = [];
     onMount(() => {
         // A rollout outlives the panel: ask what runs, then listen.

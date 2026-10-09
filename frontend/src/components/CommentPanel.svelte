@@ -19,7 +19,9 @@
     let displayedComments = $state([]);
     // « Votre nom »: the thread of a position lists the user's own comments first.
     let myName = $state('');
+    /** @type {HTMLElement | undefined} */
     let feedEl;
+    /** @type {HTMLTextAreaElement | undefined} */
     let promptEl;
     let editingCommentId = $state(null);
     let editingText = $state('');

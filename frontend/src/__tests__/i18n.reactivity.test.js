@@ -30,6 +30,7 @@ describe('i18n reactivity', () => {
     });
 
     test('derived t re-emits when language changes', async () => {
+        /** @type {string[]} */
         const seen = [];
         const unsub = t.subscribe((fn) => seen.push(fn('common.back')));
         await initLanguage('fr');

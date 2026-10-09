@@ -17,6 +17,7 @@ import { tick } from 'svelte';
  */
 export function resizable(node, params) {
     let current = params;
+    /** @type {(() => void) | null} */
     let cleanupDrag = null;
 
     function clamp(side, /** @type {number} */ size) {

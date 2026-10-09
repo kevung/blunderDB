@@ -38,6 +38,7 @@ describe('keyDispatch', () => {
     });
 
     test('scopes run by tier, whatever the order they registered in', () => {
+        /** @type {string[]} */
         const order = [];
         reg('global', () => order.push('global'));
         reg('boardEdit', () => order.push('board'));
@@ -49,6 +50,7 @@ describe('keyDispatch', () => {
     });
 
     test('the capture tiers run before the focused element, the others after it', () => {
+        /** @type {string[]} */
         const order = [];
         reg('overlay', () => order.push('overlay'));
         reg('global', () => order.push('global'));

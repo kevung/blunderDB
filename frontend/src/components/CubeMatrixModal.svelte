@@ -25,6 +25,7 @@
      *  celle qu'on a demandée. */
     let ply = $state(0);
 
+    /** @type {ReturnType<typeof setTimeout> | null} */
     let restTimer = null;
     let generation = 0;
 

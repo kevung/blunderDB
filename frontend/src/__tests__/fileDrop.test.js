@@ -17,6 +17,7 @@ vi.mock('../../wailsjs/runtime/runtime.js', () => ({
 
 import { fileDrop } from '../utils/fileDrop.js';
 
+/** @type {HTMLElement} */
 let node;
 let action;
 

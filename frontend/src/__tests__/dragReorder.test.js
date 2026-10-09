@@ -7,6 +7,7 @@
 import { describe, test, expect, afterEach, vi } from 'vitest';
 import { dragReorder } from '../utils/dragReorder.js';
 
+/** @type {HTMLElement | null} */
 let container;
 
 afterEach(() => {

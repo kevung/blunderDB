@@ -218,6 +218,7 @@ describe('NORMAL → EDIT → NORMAL', () => {
     test('exitEditMode revient en NORMAL et fait repasser l’index par -1 pour forcer le redessin', async () => {
         setLibrary();
         await enterEditMode();
+        /** @type {unknown[]} */
         const seen = [];
         const orig = currentPositionIndexStore.set;
         vi.spyOn(currentPositionIndexStore, 'set').mockImplementation((v) => {
@@ -372,6 +373,7 @@ describe('MATCH → EVAL → MATCH', () => {
     test('le mode est restauré avant la position (l’effet EVAL ne doit pas voir la position restaurée sous le mode EVAL)', async () => {
         setMatch(1);
         enterEvalMode();
+        /** @type {string[]} */
         const order = [];
         for (const [name, store] of Object.entries({ statusBarModeStore, positionStore })) {
             const orig = store.set;

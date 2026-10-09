@@ -8,6 +8,7 @@ import { writable } from 'svelte/store';
  */
 export const confirmModalStore = writable(null);
 
+/** @type {((result: unknown) => void) | null} */
 let pendingResolve = null;
 
 /**

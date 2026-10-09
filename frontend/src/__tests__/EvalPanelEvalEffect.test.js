@@ -41,6 +41,7 @@ import EvalPanel from '../components/EvalPanel.svelte';
 describe('EvalPanel eval-escalation effect', () => {
     /** @type {string[]} */
     let svelteErrors;
+    /** @type {(() => void) | undefined} */
     let restore;
 
     beforeEach(() => {
