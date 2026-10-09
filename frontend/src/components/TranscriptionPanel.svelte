@@ -2199,7 +2199,8 @@
         margin-left: 0;
     }
     .video-slot {
-        flex: 0 0 auto;
+        flex: 0 1 auto;
+        min-height: 5rem;
         overflow: hidden;
         /* However far the handle went, the draft below keeps room to be typed in. */
         max-height: 60%;
@@ -2302,6 +2303,7 @@
        sans défilement. Le Transcript partage la rangée du triangle dès 485 px
        (triangle 211 px + Transcript 250 px) ; en dessous il serait rogné. */
     .draft-body {
+        --candidates-floor: 7rem;
         display: flex;
         flex: 1;
         flex-direction: column;
@@ -2319,14 +2321,16 @@
         min-height: 0;
     }
 
+    /* Le plancher de la liste : la vidéo, l'en-tête et la palette cèdent avant elle. */
     .candidates-col {
         flex: 1 1 auto;
+        min-height: var(--candidates-floor);
         grid-area: candidates;
     }
 
     /* Sous le plancher, la palette défile seule ; la ligne du jet reste visible. */
     .palette-col {
-        flex: 0 0 auto;
+        flex: 0 1 auto;
         overflow: auto;
         grid-area: palette;
     }
@@ -2341,7 +2345,7 @@
         .draft-body {
             display: grid;
             grid-template-columns: max-content minmax(0, 1fr);
-            grid-template-rows: minmax(0, 1fr) auto;
+            grid-template-rows: minmax(var(--candidates-floor), 1fr) minmax(0, auto);
             grid-template-areas:
                 'candidates candidates'
                 'palette    transcript';
