@@ -241,7 +241,7 @@ func (d *Database) ComputeStatsCtx(ctx context.Context, filter StatsFilter) (*St
 type SelectionSpec struct {
 	Kind string // "all", "checker", "cube", "cube_action", "cube_direction",
 	// "error_bucket", "tournament", "match",
-	// "last_n", "position", "top_blunders"
+	// "last_n", "position", "top_blunders", "breakdown"
 	CubeAction string // matches analysis.best_cube_action verbatim ("No Double", "Double, Take"…)
 	// CubeCell, for Kind "cube_direction", names one cell of the cube matrix:
 	// "offer_right" | "offer_missed" | "offer_premature" |
@@ -254,6 +254,39 @@ type SelectionSpec struct {
 	LastN         int
 	PositionID    int64
 	OnlyWithError bool // for "cube_action", "checker", "cube" → error > 0
+	// Breakdown ("phase", "game_type", "tag", "score") and BreakdownKey name
+	// one breakdown row for Kind "breakdown"; OnlyBlunders keeps its
+	// positions holding a blunder (storage.SelectionSpec).
+	Breakdown    string
+	BreakdownKey string
+	OnlyBlunders bool
+}
+
+// BreakdownPositionCount mirrors storage.BreakdownPositionCount.
+type BreakdownPositionCount struct {
+	Positions int `json:"Positions"`
+	Blunders  int `json:"Blunders"`
+}
+
+// GetStatsBreakdownPositionCounts counts the positions behind each breakdown
+// row: dimension → row key → counts. Each figure is the length of the list a
+// "breakdown" selection of that row loads.
+func (d *Database) GetStatsBreakdownPositionCounts(filter StatsFilter) (map[string]map[string]BreakdownPositionCount, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	r, err := d.store.Stats().BreakdownPositionCounts(context.Background(), "", toStorageStatsFilter(filter))
+	if err != nil {
+		return nil, err
+	}
+	out := make(map[string]map[string]BreakdownPositionCount, len(r))
+	for dim, rows := range r {
+		m := make(map[string]BreakdownPositionCount, len(rows))
+		for k, c := range rows {
+			m[k] = BreakdownPositionCount(c)
+		}
+		out[dim] = m
+	}
+	return out, nil
 }
 
 // GetPositionIDsByStatsSelection resolves a user selection made in the Stats

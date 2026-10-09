@@ -572,6 +572,16 @@
         "avoidableTooltip": "Erreur évitable : une erreur que la position n'excusait pas (difficulté au plus un dixième de la perte)",
         "avoidableCount": "Évitables",
         "chartOpen": "Cliquer pour ouvrir cette décision",
+        "gameShort": "P{n}",
+        "legendDifficulty": "difficulté (perte attendue)",
+        "lossSoFar": "Cumul : {loss}",
+        "timesPerDecision": "Durée par décision",
+        "tabsLabel": "Vues du match",
+        "tabTranscript": "Transcription",
+        "tabCharts": "Graphes",
+        "tabReview": "À revoir",
+        "tabDetails": "Détails",
+        "tabStats": "Stats",
         "originPlayedHere": "Joué ici",
         "originStopped": "Arrêté avant la fin",
         "originLostOnTime": "Perdu au temps ({name})",
@@ -639,7 +649,6 @@
         "writtenBy": "Écrit par",
         "score": "Score",
         "sourceFile": "Fichier source",
-        "stats": "Statistiques",
         "swapPlayers": "Échanger les joueurs",
         "takeDecisions": "Décisions de prise",
         "takesBlunders": "Prises (blunders)",
@@ -1942,7 +1951,12 @@
             "prCube": "PR videau"
         },
         "interval95": "IC 95 %",
-        "intervalHint": "Intervalle de confiance à 95 % : rééchantillonne les matchs d'une sélection, les parties d'un match. Une ligne sans intervalle (moins de trois matchs ou parties, ou toutes au même PR) est grisée."
+        "intervalHint": "Intervalle de confiance à 95 % : rééchantillonne les matchs d'une sélection, les parties d'un match. Une ligne sans intervalle (moins de trois matchs ou parties, ou toutes au même PR) est grisée.",
+        "positions": "Positions",
+        "breakdownOpenPositions": "Ouvrir ces {n} positions ({decisions} décisions)",
+        "breakdownOpenBlunders": "Ouvrir les {n} positions à bourde ({decisions} bourdes)",
+        "breakdownBlundersHint": "Positions où au moins une décision est une bourde",
+        "planOutsideShort": "Hors plan : {unthemed} sans thème · {unpriced} non chiffrées"
     },
     "resumeBatch": {
         "title": "Reprendre un import",
@@ -3201,13 +3215,13 @@
         "pace": "Erreurs : {hasty} précipitées ({hastyLoss}), {deliberate} réfléchies ({deliberateLoss}), {unknown} sans temps",
         "paceDiscipline": "plutôt de la discipline : ralentir",
         "paceKnowledge": "plutôt de la connaissance : étudier ces positions",
-        "details": "Détails du bilan",
         "prInterval": "PR, intervalle à 95 %",
         "mwc7Label": "Perte de MWC ramenée à 7 pts",
         "mwc7Hint": "La perte de MWC ramenée à un match en 7 points, pour comparer des matchs de longueurs différentes.",
         "adjustedShort": "corrigé de la chance {adjusted}",
         "mwcLossHint": "Chances de gagner le match perdues par les décisions de ce joueur dans ce match",
-        "toReview": "Décisions à revoir"
+        "toReview": "Décisions à revoir",
+        "nothingToReview": "Aucune décision à revoir."
     },
     "video": {
         "notPlayable": "Cette source n'est pas lisible ici.",

@@ -29,3 +29,22 @@ export function stepIndex(key, current, count) {
     const step = key === 'ArrowRight' ? 1 : -1;
     return Math.min(count - 1, Math.max(0, (current ?? (step > 0 ? -1 : count)) + step));
 }
+
+/**
+ * The games along the decision axis: where each starts and ends, so a chart
+ * can mark the boundaries and name each stretch. `movePositions` must be in
+ * match order.
+ *
+ * @param {readonly { game_number: number }[]} movePositions
+ * @returns {{ game: number, from: number, to: number }[]} `to` is exclusive
+ */
+export function gameSpans(movePositions) {
+    /** @type {{ game: number, from: number, to: number }[]} */
+    const spans = [];
+    movePositions.forEach((mp, i) => {
+        const last = spans[spans.length - 1];
+        if (last && last.game === mp.game_number) last.to = i + 1;
+        else spans.push({ game: mp.game_number, from: i, to: i + 1 });
+    });
+    return spans;
+}

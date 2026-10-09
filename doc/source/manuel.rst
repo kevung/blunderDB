@@ -1571,18 +1571,27 @@ Chaque match peut être exporté en transcription Jellyfish ``.mat`` via le
 bouton ⬇ de la liste des matchs ou l'entrée *Exporter en .mat* du menu ⋯ de la
 fiche du match.
 
-Un clic sur un match ouvre sa fiche, qui se lit de haut en bas. Une ligne
+Un clic sur un match ouvre sa fiche. Une ligne
 d'en-tête donne les joueurs, le score final (le vainqueur en gras, son nom au
 survol), la longueur, la cadence s'il y en a une et la date ; le tournoi, la
 ronde et le lieu s'affichent au survol. À droite, l'icône 🎞 d'un match qui a
 une vidéo, le bouton **Revoir** et le menu ⋯, qui porte *Exporter en .mat*,
-*Éditer la transcription* et *Supprimer le match*. Viennent ensuite la
-synthèse du :ref:`bilan du match <bilan_match>`, les graphiques, puis la
-**transcription**, qui liste les coups partie par partie : un clic sur un coup
-y amène la revue. Tout le reste est rangé dans des sections repliées sous la
-transcription : **Détails du bilan**, **Provenance** (un match joué ici),
-**Infos** et **Statistiques**. Elles sont fermées par défaut ; une section laissée
-ouverte l'est encore au match suivant.
+*Éditer la transcription* et *Supprimer le match*. Vient ensuite la
+synthèse du :ref:`bilan du match <bilan_match>`, puis une barre d'onglets :
+**Transcription**, qui liste les coups partie par partie (un clic sur un coup y
+amène la revue), **Graphes**, **À revoir**, **Détails**, **Infos** et **Stats**.
+L'onglet choisi occupe toute la hauteur restante du panneau et défile seul,
+l'en-tête et la synthèse restant en place ; quand un onglet a le focus, les
+flèches gauche et droite passent au précédent ou au suivant. L'onglet laissé ouvert l'est encore au match suivant. Un
+onglet sans contenu n'apparaît pas : un match sans analyse n'a ni **À revoir**
+ni **Détails**, un match sans perte ni durée connue n'a pas de **Graphes**.
+
+.. figure:: img/panel_match_sheet.png
+   :width: 100%
+   :alt: Fiche d'un match, onglet Graphes
+
+   La fiche d'un match : l'en-tête, la synthèse du bilan par joueur, puis
+   l'onglet *Graphes*, une décision survolée.
 
 Chaque coup de la transcription porte sa **gravité** : ``?`` pour une erreur, ``??`` pour un blunder, un filet de
 couleur en marge de la ligne, et le coût du coup en équité au survol de la
@@ -1601,16 +1610,19 @@ dont le score n'a pas de valeur dans la table d'équité du match (jeu en
 money, décision hors statistiques). Un clic sur l'en-tête **MWC** trie les
 coups de chaque partie de la perte la plus lourde à la plus légère, puis
 l'inverse, puis rend l'ordre du match ; les décisions non notées passent en
-dernier, et ce tri remplace celui de la durée. Au-dessus des parties, deux
-graphiques en pleine largeur partagent l'axe de décisions de celui des
-durées : une barre par décision, puis la perte
-cumulée de chaque joueur, qui s'arrête sur son total (trait plein pour le
-premier joueur, pointillé pour le second). Une décision non notée porte un
+dernier, et ce tri remplace celui de la durée. L'onglet **Graphes** montre
+deux graphiques en pleine largeur sur l'axe de décisions de celui des durées :
+une barre par décision, puis la perte cumulée de chaque joueur, qui s'arrête
+sur son total (trait plein pour le premier joueur, pointillé pour le second).
+Chaque graphique a son titre, sa légende, son échelle à gauche et, sous l'axe,
+le numéro de chaque partie (P1, P2…), un trait pointillé marquant le passage
+d'une partie à la suivante. Une décision non notée porte un
 petit repère à la base de la barre, sans hauteur. Survoler une décision, ou la
-parcourir avec les flèches (les touches Début et Fin mènent aux extrémités), la marque sur les deux
-graphiques et sur sa ligne de la transcription et affiche la partie, le coup, le
-joueur et la perte ; un clic, ou Entrée, y amène la revue et fait défiler la
-transcription jusqu'à la ligne. Il en va de même pour le graphique des
+parcourir avec les flèches (les touches Début et Fin mènent aux extrémités), la marque sur tous les
+graphiques et sur sa ligne de la transcription, et une info-bulle donne la
+partie, le coup, le joueur et la perte ; l'info-bulle se place du côté où elle
+tient entière dans le cadre du graphique, même dans un panneau étroit. Un clic,
+ou Entrée, y amène la revue. Il en va de même pour le graphique des
 durées. Hors de l'interface, ``match --format json`` ajoute ``decision_losses``
 (une entrée par coup, ``mwc_loss`` valant ``null`` pour un coup non noté),
 ``--format text`` une ligne « MWC loss » par coup noté et ``--format summary`` le
@@ -1645,7 +1657,7 @@ options, le joueur de référence ne la commettrait pas une fois sur dix. Sur le
 graphique par décision, la difficulté est un trait horizontal sur chaque barre :
 une barre qui monte loin au-dessus de son trait signale une erreur évitable.
 
-Le tableau des **Détails du bilan** donne, pour chaque joueur, sa perte MWC
+Le tableau de l'onglet **Détails** donne, pour chaque joueur, sa perte MWC
 totale (celle de la liste des matchs), le nombre de décisions notées et, sur les
 décisions qui ont une perte et une difficulté : la **difficulté** totale,
 l'**excès** Σ(perte − difficulté), en MWC, ce que le joueur a perdu au-delà du
@@ -1687,13 +1699,15 @@ qu'on se pose après un match : qu'est-ce que je revois, ai-je perdu à cause de
 dés ou du jeu, et mes erreurs viennent-elles de la précipitation ou d'une
 lacune ? Les seuils ont été fixés avant tout examen de résultats.
 
-En tête de la fiche, au-dessus des graphiques, une synthèse place les joueurs
+En tête de la fiche, au-dessus des onglets, une synthèse place les joueurs
 côte à côte (l'un sous l'autre quand le panneau est étroit) : le nom, avec le
 trait qui le désigne sur le graphique cumulé, le PR, la perte MWC du match et,
 pour un match terminé, le verdict de la chance en clair (« gagné par le jeu »,
 « perdu par les dés »…) suivi du seul résultat ajusté. Le survol du PR donne son
 intervalle ; celui du verdict, les composantes du résultat ajusté. Le reste
-est dans la section repliée **Détails du bilan**, sous la transcription :
+se répartit entre deux onglets : **Détails** donne les intervalles, la perte
+ramenée à 7 pts et la chance ; **À revoir**, les décisions à revoir et le
+partage des erreurs entre précipitées et réfléchies :
 
 * **PR et perte de MWC ramenée à 7 pts, avec leur intervalle à 95 %**, calculé
   en rééchantillonnant les parties du match. La perte ramenée à 7 points est
@@ -1728,8 +1742,8 @@ est dans la section repliée **Détails du bilan**, sous la transcription :
   Une majorité précipitée appelle de la discipline (ralentir sur ces positions) ;
   une majorité réfléchie, de la connaissance (étudier la famille de positions).
 
-Les détails se terminent sur le tableau des pertes et de la difficulté décrit
-plus haut. ``match --format summary`` imprime le même bilan, et le serveur le
+L'onglet **Détails** se termine sur le tableau des pertes et de la difficulté
+décrit plus haut. ``match --format summary`` imprime le même bilan, et le serveur le
 sert par ``/v1/stats.matchReview``.
 
 Quand le match a gardé la durée de ses décisions (un match joué contre un bot),
@@ -1746,8 +1760,8 @@ quand la réserve est comptée par point restant. Un clic sur l'en-tête **Jeu**
 au plus court, puis du plus court au plus long, puis rend l'ordre du match ; une
 case sans durée (pas de décision de videau à ce tour, ou coup joué par
 l'Arbitre seul) porte un tiret, et ces coups passent en dernier. L'Horloge
-part de zéro dès le premier coup. Au-dessus des parties, un résumé
-donne pour chaque joueur le total, la moyenne par coup de pions et par décision
+part de zéro dès le premier coup. L'onglet **Graphes** commence par un résumé
+qui donne pour chaque joueur le total, la moyenne par coup de pions et par décision
 de videau, et, si le match a une cadence, une marque pour le joueur dont la
 réserve s'est épuisée en premier (le Duel n'enregistre que celui-là) ; un
 graphique place la durée
@@ -1755,14 +1769,14 @@ de chaque décision au fil du match. En revue, la durée de la décision jouée 
 lit discrètement sous l'analyse. La recherche la filtre avec ``tm>30`` (en
 secondes), qui se combine avec ``E>x`` : ``s tm>30 E>80`` retient les coups
 longuement réfléchis et pourtant faux, la durée et l'erreur étant celles du
-même coup joué. La section **Statistiques**, sous les erreurs récurrentes, croise
+même coup joué. L'onglet **Stats**, sous les erreurs récurrentes, croise
 le temps et l'erreur : pour chaque joueur et chaque tranche de durée connue
 (moins de 5 s, 5 à 15 s, 15 à 30 s, plus de 30 s), le nombre de décisions,
 l'erreur moyenne et la part de blunders. Une décision dont l'erreur n'est pas
 enregistrée est comptée sans entrer dans la moyenne.
 
-Un match joué ici, issu d'un Duel, porte son origine dans la section
-**Provenance** de sa fiche, sur une ligne, même s'il n'a aucun coup : « Joué ici », puis,
+Un match joué ici, issu d'un Duel, porte son origine dans l'onglet **Infos** de
+sa fiche, sous le titre **Provenance**, sur une ligne, même s'il n'a aucun coup : « Joué ici », puis,
 s'il y a lieu, « Perdu au temps » avec le joueur dont la réserve s'est épuisée
 sous une cadence qui fait perdre le match, ou « Arrêté avant la fin » pour un
 Match qu'un Duel arrêté a laissé inachevé, la cadence, le joueur dont la réserve s'est épuisée en premier et
@@ -1771,9 +1785,9 @@ clic déplie le départ (la position initiale ou le XGID choisi), le germe des
 dés révélé et son SHA-256, à comparer avec l'empreinte publiée à la création
 du Duel : s'ils concordent, le germe permet de recalculer chaque lancer sans
 faire confiance à blunderDB. Un match qui n'a pas été joué ici n'a pas
-d'origine et n'a pas cette section.
+d'origine, et son onglet **Infos** n'a pas ce titre.
 
-La section **Infos** de la fiche rappelle l'en-tête du match. Il y ajoute ce que
+L'onglet **Infos** de la fiche rappelle l'en-tête du match. Il y ajoute ce que
 le fichier source dit des joueurs et de la session, quand il le dit — un
 fichier eXtreme Gammon le dit toujours : le classement Elo de chaque joueur et
 son expérience entre parenthèses, le transcripteur, les règles Jacoby et Beaver
@@ -3101,6 +3115,10 @@ Onglet Tableau de bord
 ~~~~~~~~~~~~~~~~~~~~~~
 
 L'onglet **Tableau de bord** donne une vue synthétique des indicateurs clés.
+Il se lit de haut en bas : les cartes de niveau, puis ce qui se travaille (plan
+d'étude, top blunders), puis les lectures (PR glissant, avant/après l'étude,
+biais signés). L'explication de chaque carte est dans l'info-bulle de son
+titre.
 
 .. figure:: img/panel_stats_dashboard.png
    :width: 100%
@@ -3151,14 +3169,21 @@ une tendance. Le plan corrige les deux.
   à partir de **5 erreurs** et d'un intervalle entièrement au-dessus de zéro ;
   le plan est classé par la borne basse de l'intervalle, si bien qu'à
   récupérable égal la famille la mieux établie passe devant. Les autres sont
-  nommées sous le tableau, **à confirmer**, sans rang : le plan ne vous pousse
-  pas vers du bruit.
+  nommées sous la liste, **à confirmer**, sans rang : le plan ne vous pousse
+  pas vers du bruit. La même ligne compte les erreurs **hors plan** (sans
+  thème, non chiffrées).
+
+Chaque ligne du plan montre son rang, la famille, une barre dont la longueur
+est son MWC récupérable rapporté à celui de la première, ce MWC avec son
+intervalle, et le nombre d'erreurs. Chaque compte de positions du plan (par
+famille, à confirmer, hors plan) est cliquable : il charge exactement ces
+positions dans la liste.
 
 Chaque famille propose trois gestes : **Étudier** ouvre la file d'étude sur
 ses positions, l'écart au joueur de référence le plus grand d'abord ; **Quiz**
 lance l'exercice Décision du panneau :ref:`Entraînement <panneau_entrainement>`
-sur vingt d'entre elles ; **Anki** en fait un paquet de cartes. Au-dessus du
-tableau, **Quiz sur les trois premières familles** tire vingt positions parmi
+sur vingt d'entre elles ; **Anki** en fait un paquet de cartes. En tête de la
+carte, **Quiz sur les trois premières familles** tire vingt positions parmi
 celles des trois familles de tête. Le plan suit le filtre du panneau : réglez
 le joueur pour obtenir *votre* plan. En ligne de commande :
 ``blunderdb stats plan`` (voir :ref:`cli_stats`).
@@ -3454,6 +3479,13 @@ ce serait un second PR sous le même nom.
   donc du côté de celui qui décide. La ligne *Money* est la partie d'argent.
   Une cellule sans intervalle est **grisée avec son effectif visible**
   plutôt que cachée (voir ci-dessous).
+
+Les colonnes **Positions** et **Bourdes** comptent des positions distinctes, et
+chaque chiffre est un lien : un clic charge exactement ces positions dans le
+panneau d'analyse, comme les compteurs de la barre d'état. *Bourdes* compte les
+positions où au moins une décision est une bourde. Une position jouée dans
+plusieurs matchs (une ouverture, par exemple) n'y compte qu'une fois ; la
+colonne **Décisions** la compte à chaque fois, car c'est le dénominateur du PR.
 
 Chaque ligne porte son **intervalle de confiance à 95 %** (colonne *IC 95 %*),
 qui remplace le seuil fixe de dix décisions : il dit ce que vaut un PR, pas

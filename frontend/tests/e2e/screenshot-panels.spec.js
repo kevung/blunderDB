@@ -27,6 +27,8 @@ import { fileURLToPath } from 'node:url';
 import { installWailsMock, overrideDbMethodByArg } from './helpers/wailsMock.js';
 import { showcaseGalleryMock, showcaseAnalyses, showcasePlayedMove } from './helpers/showcase.js';
 import { captureAndOptimise } from './helpers/screenshotTools.js';
+import { openLibraryMock, matchSample, matchGames } from './helpers/fixtures.js';
+import { reviewMoves, reviewLosses, reviewSummary } from './helpers/matchReviewFixture.js';
 
 const IMG_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../doc/source/img');
 const MAX_BYTES = 500 * 1024;
@@ -178,4 +180,33 @@ test('galerie de captures panneau par panneau', async ({ page }) => {
     for (const [name, size] of Object.entries(sizes)) {
         expect(size, `panel_${name}.png`).toBeLessThanOrEqual(MAX_BYTES);
     }
+});
+
+// La fiche d'un match analysé, onglet Graphes, une décision survolée : le jeu
+// vitrine n'a pas de bilan, celui de match-sheet.spec.js en a un (L₇ compris).
+test("capture de la fiche d'un match, onglet Graphes", async ({ page }) => {
+    await page.setViewportSize(VIEWPORT);
+    await installWailsMock(
+        page,
+        openLibraryMock({
+            database: {
+                GetAllMatches: [{ ...matchSample, tournament_name: 'Open de Lyon', round: '3', location: 'Lyon' }],
+                GetMatchMovePositions: reviewMoves,
+                GetGamesByMatch: matchGames,
+                GetMatchDecisionLosses: reviewLosses,
+                GetMatchReview: reviewSummary
+            },
+            config: { GetTabPanelHeights: { '*': 620 } }
+        })
+    );
+    await page.goto('/');
+    const panel = page.getByRole('region', { name: 'Match navigator' });
+    await panel.getByRole('row', { name: /Alice/ }).getByRole('cell', { name: /Alice/ }).click();
+    await panel.getByRole('tab', { name: 'Charts' }).click();
+    const plot = panel.getByTestId('loss-plot-per');
+    const box = await plot.boundingBox();
+    await page.mouse.move(box.x + box.width * 0.6, box.y + box.height * 0.5);
+    await expect(plot.getByRole('tooltip')).toBeVisible();
+    const size = await captureAndOptimise(page, outputFor('match_sheet'));
+    expect(size, 'panel_match_sheet.png').toBeLessThanOrEqual(MAX_BYTES);
 });
