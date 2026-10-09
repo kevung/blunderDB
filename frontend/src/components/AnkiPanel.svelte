@@ -39,6 +39,7 @@
     import AnalysisView from './AnalysisView.svelte';
     import ScoreCard from './ScoreCard.svelte';
     import ExplanationLine from './ExplanationLine.svelte';
+    import AnswerMask from './AnswerMask.svelte';
     import { buildScoreCard, UNORDERED_SCORES } from '../services/scoreCard.js';
 
     // Read-only store mirrors.
@@ -614,7 +615,7 @@
                     <!-- Silencieuse quand aucune règle ne s'applique. -->
                     <ExplanationLine {analysis} played={$boardState?.phase === 'graded' ? $boardState.verdict.notation : ''} neighbours={false} />
                 {:else}
-                    <button class="answer-masked" onclick={showAnkiAnswer} title={$t('anki.clickToReveal')}>···</button>
+                    <div class="answer-slot"><AnswerMask class="answer-masked" onReveal={showAnkiAnswer} title={$t('anki.clickToReveal')} /></div>
                 {/if}
             </div>
         </div>
@@ -1081,22 +1082,9 @@
         padding-top: 10px;
     }
 
-    /* One opaque stand-in (ADR-0025 rule 3): masking rows in place would still
-       reveal the best move by its position. */
-    .answer-masked {
+    .answer-slot {
         width: 100%;
         max-width: 320px;
-        padding: 14px 0;
-        border: 1px dashed var(--color-border);
-        border-radius: 3px;
-        background: var(--color-surface-alt);
-        color: var(--color-text-muted);
-        letter-spacing: 3px;
-        cursor: pointer;
-    }
-    .answer-masked:hover {
-        background: color-mix(in srgb, var(--color-text) 6%, var(--color-surface-alt));
-        color: var(--color-text-muted);
     }
 
     .answer-absent {

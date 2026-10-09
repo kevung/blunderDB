@@ -36,6 +36,10 @@ vi.mock('../services/pileService.js', async () => {
     const { writable } = await import('svelte/store');
     return { togglePile: vi.fn(), onPileStore: writable(false) };
 });
+vi.mock('../stores/analysisChallengeStore.js', async () => {
+    const { writable } = await import('svelte/store');
+    return { toggleAnalysisChallenge: vi.fn(), analysisChallengeStore: writable(false) };
+});
 
 import Toolbar from '../components/Toolbar.svelte';
 import { databasePathStore } from '../stores/databaseStore.js';
@@ -47,6 +51,7 @@ import * as clipboardService from '../services/clipboardService.js';
 import * as positionService from '../services/positionService.js';
 import * as keyboardService from '../services/keyboardService.js';
 import * as pileService from '../services/pileService.js';
+import * as analysisChallenge from '../stores/analysisChallengeStore.js';
 
 // One entry per toolbar button, in DOM order.
 const EXPECTED = [
@@ -70,6 +75,7 @@ const EXPECTED = [
     positionService.lastPosition,
     positionService.gotoPosition,
     positionService.togglePipcount,
+    analysisChallenge.toggleAnalysisChallenge,
     positionService.loadRandomPosition,
     positionService.showTrainingPanel,
     positionService.showDuelPanel,
