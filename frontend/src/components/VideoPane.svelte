@@ -37,10 +37,17 @@
     let root = $state(null);
     // The speed applied, as the player reports it, and the speeds the source accepts.
     let rate = $state(1);
-    // The sound the viewer chose, kept across a speed change, a reload of the player or a new
-    // source: null until they touch it.
-    /** @type {{ muted: boolean, volume: number } | null} */
-    let sound = null;
+    // WebKitGTK unmutes the element when the speed changes (and fires volumechange for it). The
+    // viewer's mute is remembered, and put back when it is undone inside the window that a speed
+    // change opens: an unmute outside it is the viewer's own.
+    let userMuted = false;
+    let rateWindowEnd = 0;
+    function keepMuted() {
+        if (!video) return;
+        if (performance.now() < rateWindowEnd) {
+            if (userMuted && !video.muted) video.muted = true;
+        } else userMuted = video.muted;
+    }
     /** @type {readonly number[]} */
     let rates = $state(VIDEO_RATES);
     // The speed shows a moment after each change, and for as long as it is not 1×.
@@ -80,10 +87,7 @@
             // A frame moved in the DOM reloads its page: it resumes where it was, at its speed.
             const at = ytTime > 0 ? ytTime * 1000 : pendingMs;
             if (at > 0) seek(at);
-            if (sound) postToPlayer({ type: 'volume', ...sound });
             if (rate !== 1) postToPlayer({ type: 'rate', rate });
-        } else if (m.type === 'volume') {
-            sound = { muted: !!m.muted, volume: m.volume };
         } else if (m.type === 'rate' && typeof m.rate === 'number') {
             showRate(m.rate);
         } else if (m.type === 'state') {
@@ -205,17 +209,6 @@
         status = 'ready';
         if (pendingMs > 0 && video) video.currentTime = pendingMs / 1000;
         if (video) video.playbackRate = rate;
-        applySound();
-    }
-
-    function applySound() {
-        if (!video || !sound) return;
-        if (video.muted !== sound.muted) video.muted = sound.muted;
-        if (video.volume !== sound.volume) video.volume = sound.volume;
-    }
-
-    function onVolumeChange() {
-        if (video) sound = { muted: video.muted, volume: video.volume };
     }
 
     // What the webview cannot read is named by its container and by the packages that give a
@@ -272,8 +265,8 @@
             // The shown speed is the one the player answers with, not the one asked.
             postToPlayer({ type: 'rate', rate: next });
         } else if (video) {
+            rateWindowEnd = performance.now() + 500;
             video.playbackRate = next;
-            applySound();
             showRate(video.playbackRate);
         }
     }
@@ -311,12 +304,12 @@
             onerror={onVideoError}
             onended={() => onended?.()}
             onfocus={reclaimFocus}
+            onvolumechange={keepMuted}
             onratechange={() => {
                 if (!video) return;
-                applySound();
+                keepMuted();
                 showRate(video.playbackRate);
             }}
-            onvolumechange={onVolumeChange}
         ></video>
     {:else if kind === 'youtube' && src}
         <iframe bind:this={frame} {src} title={$t('video.player')} allow="autoplay; encrypted-media"></iframe>

@@ -121,20 +121,29 @@ describe('VideoPane', () => {
         expect(container.querySelector('[data-testid="video-rate"]')?.textContent).toBe('1.25×');
     });
 
-    test('a muted file stays muted and keeps its volume through a speed change', async () => {
+    test('a muted file stays muted through a speed change that WebKit unmutes', async () => {
         const { container, component } = render(VideoPane, { props: { source: '/v/final.mp4' } });
         const video = await vi.waitFor(() => container.querySelector('video') ?? expect.fail('no video'));
         await fireEvent(video, new Event('loadedmetadata'));
-        video.volume = 0.4;
         video.muted = true;
         await fireEvent(video, new Event('volumechange'));
-        // The webview resets the sound when the speed changes.
-        video.muted = false;
-        video.volume = 1;
         component.stepRate(1);
+        // WebKitGTK drops the mute on the speed change and says so with volumechange.
+        video.muted = false;
+        await fireEvent(video, new Event('volumechange'));
         await fireEvent(video, new Event('ratechange'));
         expect(video.muted).toBe(true);
-        expect(video.volume).toBeCloseTo(0.4);
+    });
+
+    test('an unmute that is not part of a speed change is left alone', async () => {
+        const { container } = render(VideoPane, { props: { source: '/v/final.mp4' } });
+        const video = await vi.waitFor(() => container.querySelector('video') ?? expect.fail('no video'));
+        await fireEvent(video, new Event('loadedmetadata'));
+        video.muted = true;
+        await fireEvent(video, new Event('volumechange'));
+        video.muted = false;
+        await fireEvent(video, new Event('volumechange'));
+        expect(video.muted).toBe(false);
     });
 
     test('a file steps its speed by quarters up to 4×, shows it, and holds at the ends', async () => {

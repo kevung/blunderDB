@@ -48,12 +48,11 @@ function load({ state = 5, search = '', referrer = '' } = {}) {
         getAvailablePlaybackRates: () => [1],
         setPlaybackRate: vi.fn(),
         muted: false,
-        volume: 100,
+        pipelineMuted: false,
         isMuted: () => player.muted,
-        getVolume: () => player.volume,
-        mute: vi.fn(() => (player.muted = true)),
-        unMute: vi.fn(() => (player.muted = false)),
-        setVolume: vi.fn((/** @type {number} */ v) => (player.volume = v)),
+        // The player reports muted while its pipeline is only really muted if it was told so.
+        mute: vi.fn(() => (player.pipelineMuted = player.muted = true)),
+        unMute: vi.fn(() => (player.pipelineMuted = player.muted = false)),
         getPlaybackRate: () => 1
     };
     const YT = {
@@ -139,29 +138,26 @@ describe('the hosted YouTube page', () => {
         expect(page.player.seekTo).not.toHaveBeenCalled();
     });
 
-    test('a speed change keeps the sound muted and the volume the viewer chose', () => {
+    test('a speed change that unmutes the webview re-mutes a player the viewer had muted', () => {
         const page = load({ state: 2, search: '?origin=http%3A%2F%2Fwails.localhost' });
         page.ready();
-        page.player.muted = true;
-        page.player.volume = 40;
-        page.tick();
-        // The player drops its mute when the speed changes.
+        page.player.mute();
         page.player.setPlaybackRate.mockImplementation(() => {
+            page.player.pipelineMuted = false;
             page.player.muted = false;
-            page.player.volume = 100;
+            page.player.events.onPlaybackRateChange({ data: 1.5 });
         });
         page.say({ type: 'rate', rate: 1.5 });
         expect(page.player.muted).toBe(true);
-        expect(page.player.volume).toBe(40);
-        page.tick();
-        expect(page.player.muted).toBe(true);
+        expect(page.player.pipelineMuted).toBe(true);
     });
 
-    test('the sound the parent restores after a reload is applied once the player is ready', () => {
+    test('a speed change on a player that is not muted leaves its sound alone', () => {
         const page = load({ state: 2, search: '?origin=http%3A%2F%2Fwails.localhost' });
         page.ready();
-        page.say({ type: 'volume', muted: true, volume: 30 });
-        expect(page.player.muted).toBe(true);
-        expect(page.player.volume).toBe(30);
+        page.player.setPlaybackRate.mockImplementation(() => page.player.events.onPlaybackRateChange({ data: 1.5 }));
+        page.say({ type: 'rate', rate: 1.5 });
+        expect(page.player.mute).not.toHaveBeenCalled();
+        expect(page.player.unMute).not.toHaveBeenCalled();
     });
 });
