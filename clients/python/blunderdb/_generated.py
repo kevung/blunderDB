@@ -1090,6 +1090,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/stats.biases — JSON."
         return self._call("/v1/stats.biases", payload)
 
+    def stats_breakdown_position_counts(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/stats.breakdownPositionCounts — JSON."
+        return self._call("/v1/stats.breakdownPositionCounts", payload)
+
     def stats_compute(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/stats.compute — JSON."
         return self._call("/v1/stats.compute", payload)

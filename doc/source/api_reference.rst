@@ -309,6 +309,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/session.save                         JSON
    stats
      POST /v1/stats.biases                         JSON
+     POST /v1/stats.breakdownPositionCounts        JSON
      POST /v1/stats.compute                        JSON
      POST /v1/stats.dateRange                      JSON
      POST /v1/stats.headToHead                     JSON

@@ -93,6 +93,7 @@ import { openPanels, PANEL } from '../stores/uiStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { lastVisitedMatchStore, matchContextStore } from '../stores/positionStore.js';
 import { ListMatches, GetMatchDecisionLosses, LoadAnalysis } from '../../wailsjs/go/database/Database.js';
+import { openTab } from './matchTabHelper.js';
 import MatchPanel from '../components/MatchPanel.svelte';
 
 async function openTranscript() {
@@ -113,6 +114,7 @@ async function openTranscript() {
 describe('MatchPanel — the Transcript carries the MWC loss of every decision', () => {
     beforeEach(() => {
         vi.clearAllMocks();
+        localStorage.clear();
         databasePathStore.set('/tmp/test.db');
         openPanels.set(new Set([PANEL.MATCH]));
         lastVisitedMatchStore.set({ matchID: 7, currentIndex: 0, gameNumber: 1 });
@@ -180,13 +182,39 @@ describe('MatchPanel — the Transcript carries the MWC loss of every decision',
         expect(cell('ratio-1')).toBe('—'); // 0.3 % of difficulty: under the floor
     });
 
-    test('the sheet reads top down: the charts, the transcript, then the review details folded', async () => {
+    test('the header sits above a tab bar; the transcript is shown, the other tabs wait mounted', async () => {
         const container = await openTranscript();
-        const order = ['match-losses', 'move-loss', 'match-section-review', 'match-section-info', 'match-section-stats'].map((id) => container.querySelector(`[data-testid="${id}"]`));
-        order.forEach((el) => expect(el).not.toBeNull());
-        for (let i = 1; i < order.length; i++) expect(order[i - 1].compareDocumentPosition(order[i]) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-        expect(container.querySelector('[data-testid="match-section-review"]').open).toBe(false);
+        const header = container.querySelector('[data-testid="match-detail-header"]');
+        const tablist = container.querySelector('[role="tablist"]');
+        expect(header.compareDocumentPosition(tablist) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+        // The review scored no decision: there is nothing to revisit, so no such tab.
+        const tabs = [...tablist.querySelectorAll('[role="tab"]')].map((b) => b.getAttribute('data-testid'));
+        expect(tabs).toEqual(['match-tab-transcript', 'match-tab-charts', 'match-tab-details', 'match-tab-info', 'match-tab-stats']);
+        const panel = (/** @type {string} */ id) => container.querySelector(`#match-tabpanel-${id}`);
+        expect(panel('transcript').hidden).toBe(false);
+        expect(panel('charts').hidden).toBe(true);
+        expect(panel('charts').querySelector('[data-testid="match-losses"]')).not.toBeNull();
         expect(container.querySelector('[data-testid="match-losses"] table')).toBeNull();
+    });
+
+    test('a tab shown is remembered for the next match', async () => {
+        const container = await openTranscript();
+        await openTab(container, 'details');
+        expect(container.querySelector('#match-tabpanel-details').hidden).toBe(false);
+        expect(container.querySelector('#match-tabpanel-transcript').hidden).toBe(true);
+        expect(container.querySelector('[data-testid="match-tab-details"]').getAttribute('aria-selected')).toBe('true');
+        expect(localStorage.getItem('blunderdb.matchTab')).toBe('details');
+    });
+
+    test('the arrow keys walk the tabs and never reach the match', async () => {
+        const container = await openTranscript();
+        const before = get(matchContextStore).currentIndex;
+        const tab = container.querySelector('[data-testid="match-tab-transcript"]');
+        await fireEvent.keyDown(tab, { key: 'ArrowRight' });
+        expect(container.querySelector('#match-tabpanel-charts').hidden).toBe(false);
+        await fireEvent.keyDown(tab, { key: 'End' });
+        expect(container.querySelector('#match-tabpanel-stats').hidden).toBe(false);
+        expect(get(matchContextStore).currentIndex).toBe(before);
     });
 
     test('Enter on a chart jumps to the decision: the review opens it and the row is marked', async () => {

@@ -1,29 +1,22 @@
 <script>
-    // The folded part of a match's review: what the summary keeps for a second
+    // The details of a match's review, what the summary keeps for a second
     // look. Per player, the PR and the 7-point loss with their interval over
-    // the games, the luck-adjusted result and its components, the decisions
-    // most worth revisiting (one click shows the decision), the split of the
-    // errors by time; then the table of losses against difficulty.
+    // the games, the luck-adjusted result and its components; then the table of
+    // losses against difficulty. The decisions to revisit are MatchReviewDecisions.
     import { t } from '../i18n';
     import { fmtPRInterval } from '../utils/interval.js';
     import { fmtMwc7Full, mwc7Tooltip } from '../utils/mwc7.js';
     import { fmtExcess, fmtLoss, lossSeries, servedDifficulty } from '../utils/decisionLoss.js';
-    import { hasReview, luckVerdict, paceHint, signedPct } from '../utils/matchReview.js';
+    import { hasReview, luckVerdict, signedPct } from '../utils/matchReview.js';
 
-    /** @type {{ review: any | null, losses: any[] | null, movePositions: any[], player1: string, player2: string, onselect?: (index: number) => void }} */
-    let { review, losses, movePositions, player1, player2, onselect = () => {} } = $props();
+    /** @type {{ review: any | null, losses: any[] | null, movePositions: any[], player1: string, player2: string }} */
+    let { review, losses, movePositions, player1, player2 } = $props();
 
     let names = $derived([player1, player2]);
     let series = $derived(lossSeries(movePositions, losses));
     // The difficulty summary is the review's, computed in Go: the excess and
     // the ratio are the ones `match --format summary` prints.
     let served = $derived(servedDifficulty(review));
-
-    /** @param {number} moveId */
-    function select(moveId) {
-        const i = movePositions.findIndex((mp) => mp.move_id === moveId);
-        if (i >= 0) onselect(i);
-    }
 </script>
 
 <div class="review-details" data-testid="match-review-details">
@@ -59,31 +52,6 @@
                             {#if p.luck.rolls_measured < p.luck.rolls}
                                 <span class="muted">{$t('matchReview.luckPartial', { measured: p.luck.rolls_measured, rolls: p.luck.rolls })}</span>
                             {/if}
-                        </div>
-                    {/if}
-                    {#if p.to_review?.length}
-                        <div class="muted">{$t('matchReview.toReview')}</div>
-                        <ol class="to-review">
-                            {#each p.to_review as d (d.move_id)}
-                                <li>
-                                    <button class="link" data-testid="review-decision" onclick={() => select(d.move_id)} title={$t('matchReview.showDecision')}>
-                                        {$t('matchReview.decision', { game: d.game_number, move: d.move_number, kind: $t(d.decision_type === 'cube' ? 'matchReview.cube' : 'matchReview.checker') })}
-                                    </button>
-                                    {$t('matchReview.lossAvoidable', { loss: fmtLoss(d.mwc_loss), avoidable: fmtLoss(d.avoidable_loss) })}
-                                </li>
-                            {/each}
-                        </ol>
-                    {/if}
-                    {#if p.pace && p.pace.hasty + p.pace.deliberate + p.pace.unknown > 0}
-                        <div class="pace" data-testid="error-pace">
-                            {$t('matchReview.pace', {
-                                hasty: p.pace.hasty,
-                                hastyLoss: fmtLoss(p.pace.hasty_loss) || '0 %',
-                                deliberate: p.pace.deliberate,
-                                deliberateLoss: fmtLoss(p.pace.deliberate_loss) || '0 %',
-                                unknown: p.pace.unknown
-                            })}
-                            {#if paceHint(p.pace)}<em>{$t(paceHint(p.pace))}</em>{/if}
                         </div>
                     {/if}
                 </div>
@@ -130,6 +98,7 @@
 
 <style>
     .review-details {
+        padding: 8px 12px;
         font-size: var(--font-size-small);
         text-align: left;
     }
@@ -154,18 +123,6 @@
     .facts,
     .muted {
         color: var(--color-text-muted);
-    }
-    .to-review {
-        margin: 2px 0;
-        padding-left: 20px;
-    }
-    .link {
-        background: none;
-        border: none;
-        padding: 0;
-        color: inherit;
-        cursor: pointer;
-        text-decoration: underline;
     }
     em {
         margin-left: 4px;

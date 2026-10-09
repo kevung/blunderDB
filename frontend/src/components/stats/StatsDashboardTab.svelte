@@ -152,26 +152,9 @@
         {$t('stats.decisions')}
     </p>
 
-    <!-- ── Study plan: what to work on now (ADR-0077) ───────────────── -->
+    <!-- ── Study plan: what to work on now (ADR-0077). First after the
+         headline: it is the one block that ends in an action. ── -->
     <StatsStudyPlan />
-
-    <!-- ── Before/after the study, and which way the decisions err (ADR-0079) ── -->
-    <StatsStudyEffect />
-    <StatsBiases />
-
-    <!-- ── Rolling N ────────────────────────────────────────────── -->
-    <section class="rolling-section">
-        <h3 class="section-title">{$t('stats.rolling', { metric: metric === 'pr' ? 'PR' : 'MWC loss' })}</h3>
-        <div class="rolling-row">
-            {#each ROLLING_NS as n (n)}
-                {@const avail = rollingDecisions(n) >= n}
-                <button class="rolling-cell" class:unavailable={!avail} onclick={() => avail && openRollingN(n)} disabled={!avail} title="{rollingDecisions(n)} decisions used">
-                    <span class="rolling-n">N={n}</span>
-                    <span class="rolling-val">{avail ? fmtRolling(n) : '—'}</span>
-                </button>
-            {/each}
-        </div>
-    </section>
 
     <!-- ── Top blunders ─────────────────────────────────────────── -->
     {#if result.TopBlunders && result.TopBlunders.length > 0}
@@ -201,6 +184,25 @@
             </ol>
         </section>
     {/if}
+
+    <!-- ── Rolling N ────────────────────────────────────────────── -->
+    <section class="rolling-section">
+        <h3 class="section-title">{$t('stats.rolling', { metric: metric === 'pr' ? 'PR' : 'MWC loss' })}</h3>
+        <div class="rolling-row">
+            {#each ROLLING_NS as n (n)}
+                {@const avail = rollingDecisions(n) >= n}
+                <button class="rolling-cell" class:unavailable={!avail} onclick={() => avail && openRollingN(n)} disabled={!avail} title="{rollingDecisions(n)} decisions used">
+                    <span class="rolling-n">N={n}</span>
+                    <span class="rolling-val">{avail ? fmtRolling(n) : '—'}</span>
+                </button>
+            {/each}
+        </div>
+    </section>
+
+    <!-- ── Before/after the study, and which way the decisions err (ADR-0079):
+         readings, so below the blocks that act. ── -->
+    <StatsStudyEffect />
+    <StatsBiases />
 {/if}
 
 <style>
