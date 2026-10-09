@@ -698,7 +698,6 @@
         "moveDown": "Move down",
         "moveUp": "Move up",
         "newCollectionPlaceholder": "New collection…",
-        "posCount": "{count} pos",
         "removeFromCollection": "Remove from collection",
         "removePositionTooltip": "Remove position from collection",
         "title": "Collections",
@@ -748,7 +747,9 @@
         "suggestKeepCollection": "Create the collection ({n})",
         "suggestKeepDeck": "Anki deck",
         "suggestQuiz": "Quiz",
-        "suggestDefaultName": "References {date}"
+        "suggestDefaultName": "References {date}",
+        "browsePositions": "Browse these positions",
+        "inThisCollection": "in this collection"
     },
     "tournament": {
         "addMatchPlaceholder": "Add match…",
@@ -920,7 +921,9 @@
         "hintPlayerBackgammon": "Player: chance to win a backgammon",
         "hintOpponentWin": "Opponent: chance to win",
         "hintOpponentGammon": "Opponent: chance to win a gammon",
-        "hintOpponentBackgammon": "Opponent: chance to win a backgammon"
+        "hintOpponentBackgammon": "Opponent: chance to win a backgammon",
+        "empty": "No analysis",
+        "evaluate": "Evaluate"
     },
     "rollout": {
         "title": "Rollout",

@@ -698,7 +698,6 @@
         "moveDown": "Μετακίνηση κάτω",
         "moveUp": "Μετακίνηση πάνω",
         "newCollectionPlaceholder": "Νέα συλλογή…",
-        "posCount": "{count} θέσεις",
         "removeFromCollection": "Αφαίρεση από τη συλλογή",
         "removePositionTooltip": "Αφαίρεση θέσης από τη συλλογή",
         "title": "Συλλογές",
@@ -748,7 +747,9 @@
         "suggestKeepCollection": "Δημιουργία συλλογής ({n})",
         "suggestKeepDeck": "Τράπουλα Anki",
         "suggestQuiz": "Κουίζ",
-        "suggestDefaultName": "Αναφορές {date}"
+        "suggestDefaultName": "Αναφορές {date}",
+        "browsePositions": "Περιήγηση σε αυτές τις θέσεις",
+        "inThisCollection": "σε αυτή τη συλλογή"
     },
     "tournament": {
         "addMatchPlaceholder": "Προσθήκη αγώνα…",
@@ -920,7 +921,9 @@
         "hintPlayerBackgammon": "Παίκτης: πιθανότητα μπάκγκαμον",
         "hintOpponentWin": "Αντίπαλος: πιθανότητα νίκης",
         "hintOpponentGammon": "Αντίπαλος: πιθανότητα γκάμον",
-        "hintOpponentBackgammon": "Αντίπαλος: πιθανότητα μπάκγκαμον"
+        "hintOpponentBackgammon": "Αντίπαλος: πιθανότητα μπάκγκαμον",
+        "empty": "Χωρίς ανάλυση",
+        "evaluate": "Αξιολόγηση"
     },
     "rollout": {
         "title": "Rollout",

@@ -84,6 +84,8 @@
         emptyActions = false,
         /** With `emptyActions`: a way to lift the filter that emptied the list, in place of the import. */
         emptyClear = null,
+        /** With `emptyActions`: the panel's own primary action, in place of the import. */
+        emptyAction = null,
         class: className = '',
         /** Rendered above the table in a `.detail-header` strip. */
         header = undefined,
@@ -275,7 +277,7 @@
             </tbody>
         </table>
         {#if rows.length === 0 && emptyText}
-            <EmptyState text={emptyText} actions={emptyActions} clear={emptyClear} />
+            <EmptyState text={emptyText} actions={emptyActions} clear={emptyClear} action={emptyAction} />
         {/if}
     </div>
 </div>

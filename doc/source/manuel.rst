@@ -773,6 +773,9 @@ un match, le coup effectivement joué est mis en évidence dans la liste des
 alternatives. Appuyer sur *CTRL-L* ou exécuter la commande ``list`` pour
 afficher ou masquer le panneau.
 
+Une position sans analyse l'indique, avec un bouton **Évaluer** qui l'ouvre
+dans le panneau Eval.
+
 Sous les tableaux, une **phrase** dit parfois ce que la décision jouée a
 coûté et pourquoi : « Vous perdez 120 mp : le coup joué laisse trois blots
 là où 13/7 8/7 n'en laisse qu'un. » Elle est produite par six règles
@@ -929,7 +932,7 @@ paperasse.
 
 Ce qui manquait, c'était l'autre moitié : **voir** le vocabulaire qu'on s'est
 construit, et cliquer un tag plutôt que se rappeler comment on l'écrivait. La
-commande ``tags``, ou le bouton ``#`` de la zone de saisie, ouvre la fenêtre du
+commande ``tags``, ou le bouton ``#`` de l'en-tête du panneau, ouvre la fenêtre du
 vocabulaire : les tags de cette base, chacun avec le **nombre de positions**
 qui le portent, cliquables pour lancer la recherche correspondante. Sous la
 liste figurent les tags recommandés que la base n'utilise pas encore — un
@@ -1253,6 +1256,11 @@ positions de la collection ouverte ; *Esc* ramène ensuite à la collection
 positions au sein des collections peut être modifié par glisser-déposer.
 Appuyer sur *CTRL-B* ou exécuter la commande ``collection`` pour afficher ou
 masquer le panneau.
+
+En tête d'une collection ouverte, le nombre de positions est un lien qui les
+remet dans le parcours, depuis la première ; la case **dans cette collection**
+y ajoute ou en retire la position affichée. Une liste vide propose
+**+ Nouvelle collection**.
 
 La **Pile** est la collection du geste « à revoir plus tard » : un double-clic
 hors du plateau, la touche *b* ou le bouton marque-page de la barre d'outils

@@ -11,6 +11,8 @@
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
     import { t } from '../i18n';
     import { formatDateTime } from '../utils/format.js';
+    import PanelHeader from './panels/PanelHeader.svelte';
+    import EmptyState from './panels/EmptyState.svelte';
 
     let allComments = $state([]);
     let searchQuery = $state('');
@@ -334,8 +336,7 @@
 </script>
 
 <div class="comment-panel">
-    <!-- Search bar -->
-    <div class="search-strip">
+    <PanelHeader>
         <span class="search-icon">⌕</span>
         <input type="text" bind:value={searchQuery} placeholder={$t('comment.searchPlaceholder')} onkeydown={handleSearchKeyDown} class="search-input" />
         {#if searchQuery}
@@ -346,12 +347,15 @@
                 }}>×</button
             >
         {/if}
-    </div>
+        {#snippet actions()}
+            <button type="button" class="tag-vocabulary-button" onclick={() => openModal(MODAL.TAGS)} title={$t('tags.title')}>#</button>
+        {/snippet}
+    </PanelHeader>
 
     <!-- Message feed -->
     <div class="feed" bind:this={feedEl}>
         {#if displayedComments.length === 0}
-            <div class="empty-msg">{searchQuery.trim() ? $t('comment.noMatches') : $t('comment.noComments')}</div>
+            <EmptyState text={searchQuery.trim() ? $t('comment.noMatches') : $t('comment.noComments')} actions={false} />
         {:else}
             {#each displayedComments as comment (comment.id)}
                 {#if editingCommentId === comment.id}
@@ -421,7 +425,6 @@
             oninput={refreshTagSuggestions}
             onblur={() => (tagSuggestions = [])}
             rows="2"></textarea>
-        <button type="button" class="tag-vocabulary-button" onclick={() => openModal(MODAL.TAGS)} title={$t('tags.title')}>#</button>
     </div>
 </div>
 
@@ -456,7 +459,7 @@
 
     .tag-vocabulary-button {
         cursor: pointer;
-        padding: 0 0.5em;
+        padding: 0 var(--space-2);
     }
 
     .comment-panel {
@@ -468,16 +471,7 @@
         font-size: var(--font-size-base);
     }
 
-    /* Search strip */
-    .search-strip {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        padding: 3px 8px;
-        border-bottom: 1px solid var(--color-border);
-        flex-shrink: 0;
-        background: var(--color-surface-alt);
-    }
+    /* Search, in the header strip */
     .search-icon {
         color: var(--color-text-muted);
         font-size: var(--font-size-base);
@@ -607,14 +601,6 @@
     }
     .msg-edit-input:focus {
         border-color: var(--color-primary);
-    }
-
-    .empty-msg {
-        text-align: center;
-        color: var(--color-text-muted);
-        padding: 20px;
-        font-size: var(--font-size-small);
-        font-style: italic;
     }
 
     /* Prompt */

@@ -847,6 +847,26 @@ can open it. Its header is cleartext, so a Watermark stays readable without the 
 Nothing records who holds a database, who opened it, or where its contents came from. The
 recipient's side writes nothing at all. This is a decision, not an omission: see ADR-0007.
 
+### Who the interface is for
+
+The three people a panel is designed for (ADR-0085). A panel names the one it serves first;
+its header strip puts that person's next gesture at the right end.
+
+**Reviewer**:
+The competitor who reviews: imports their tournament matches, looks for their errors,
+comments on them and files them. Typical task: "go over Saturday's match, keep the five worst
+errors". Matches, Tournaments, Analysis, Comments, Collections, Search, Stats.
+
+**Trainee**:
+The player who trains: short sessions, hands on the keyboard, eyes on the board. Typical
+task: "today's cards, then a duel against gammonNet". Anki, Training, Duel, Eval.
+
+**Coach**:
+The coach or club organiser: transcribes filmed matches, runs tournaments, prepares series of
+positions for students. Typical task: "transcribe the final, attach it to the tournament,
+export a collection". Transcription, Tournaments, Collections, Metadata, Search.
+_Avoid_: user — say which of the three.
+
 ## The host environment
 
 **Watched folder**:

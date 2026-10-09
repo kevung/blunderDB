@@ -698,7 +698,6 @@
         "moveDown": "Nach unten verschieben",
         "moveUp": "Nach oben verschieben",
         "newCollectionPlaceholder": "Neue Sammlung…",
-        "posCount": "{count} Pos.",
         "removeFromCollection": "Aus Sammlung entfernen",
         "removePositionTooltip": "Position aus Sammlung entfernen",
         "title": "Sammlungen",
@@ -748,7 +747,9 @@
         "suggestKeepCollection": "Sammlung erstellen ({n})",
         "suggestKeepDeck": "Anki-Deck",
         "suggestQuiz": "Quiz",
-        "suggestDefaultName": "Referenzen {date}"
+        "suggestDefaultName": "Referenzen {date}",
+        "browsePositions": "Diese Stellungen durchblättern",
+        "inThisCollection": "in dieser Sammlung"
     },
     "tournament": {
         "addMatchPlaceholder": "Match hinzufügen…",
@@ -920,7 +921,9 @@
         "hintPlayerBackgammon": "Spieler: Backgammon-Chance",
         "hintOpponentWin": "Gegner: Gewinnchance",
         "hintOpponentGammon": "Gegner: Gammon-Chance",
-        "hintOpponentBackgammon": "Gegner: Backgammon-Chance"
+        "hintOpponentBackgammon": "Gegner: Backgammon-Chance",
+        "empty": "Keine Analyse",
+        "evaluate": "Bewerten"
     },
     "rollout": {
         "title": "Rollout",

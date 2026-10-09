@@ -252,8 +252,8 @@ describe('CollectionPanel — detail view', () => {
         render(CollectionPanel, { props: {} });
         await tick();
 
-        expect(screen.getByText('Backgames', { selector: '.detail-title' })).toBeTruthy();
-        expect(document.querySelector('.detail-count').textContent).toContain('2');
+        expect(screen.getByText('Backgames', { selector: '.panel-title' })).toBeTruthy();
+        expect(screen.getByTestId('count-link').textContent).toContain('2');
     });
 
     test('the back button returns to the list view without touching stores', async () => {

@@ -698,7 +698,6 @@
         "moveDown": "Siirrä alas",
         "moveUp": "Siirrä ylös",
         "newCollectionPlaceholder": "Uusi kokoelma…",
-        "posCount": "{count} asemaa",
         "removeFromCollection": "Poista kokoelmasta",
         "removePositionTooltip": "Poista asema kokoelmasta",
         "title": "Kokoelmat",
@@ -748,7 +747,9 @@
         "suggestKeepCollection": "Luo kokoelma ({n})",
         "suggestKeepDeck": "Anki-pakka",
         "suggestQuiz": "Visa",
-        "suggestDefaultName": "Viitteet {date}"
+        "suggestDefaultName": "Viitteet {date}",
+        "browsePositions": "Selaa näitä asemia",
+        "inThisCollection": "tässä kokoelmassa"
     },
     "tournament": {
         "addMatchPlaceholder": "Lisää ottelu…",
@@ -920,7 +921,9 @@
         "hintPlayerBackgammon": "Pelaaja: backgammonin todennäköisyys",
         "hintOpponentWin": "Vastustaja: voittotodennäköisyys",
         "hintOpponentGammon": "Vastustaja: gammonin todennäköisyys",
-        "hintOpponentBackgammon": "Vastustaja: backgammonin todennäköisyys"
+        "hintOpponentBackgammon": "Vastustaja: backgammonin todennäköisyys",
+        "empty": "Ei analyysia",
+        "evaluate": "Arvioi"
     },
     "rollout": {
         "title": "Rollout",

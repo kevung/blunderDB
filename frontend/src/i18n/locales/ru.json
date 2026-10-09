@@ -698,7 +698,6 @@
         "moveDown": "Переместить вниз",
         "moveUp": "Переместить вверх",
         "newCollectionPlaceholder": "Новая коллекция…",
-        "posCount": "{count} поз.",
         "removeFromCollection": "Удалить из коллекции",
         "removePositionTooltip": "Удалить позицию из коллекции",
         "title": "Коллекции",
@@ -748,7 +747,9 @@
         "suggestKeepCollection": "Создать коллекцию ({n})",
         "suggestKeepDeck": "Колода Anki",
         "suggestQuiz": "Квиз",
-        "suggestDefaultName": "Эталоны {date}"
+        "suggestDefaultName": "Эталоны {date}",
+        "browsePositions": "Просмотреть эти позиции",
+        "inThisCollection": "в этой коллекции"
     },
     "tournament": {
         "addMatchPlaceholder": "Добавить матч…",
@@ -920,7 +921,9 @@
         "hintPlayerBackgammon": "Игрок: шанс выиграть бэкгаммон",
         "hintOpponentWin": "Соперник: шанс на победу",
         "hintOpponentGammon": "Соперник: шанс выиграть гаммон",
-        "hintOpponentBackgammon": "Соперник: шанс выиграть бэкгаммон"
+        "hintOpponentBackgammon": "Соперник: шанс выиграть бэкгаммон",
+        "empty": "Нет анализа",
+        "evaluate": "Оценить"
     },
     "rollout": {
         "title": "Роллаут",

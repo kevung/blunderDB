@@ -134,7 +134,8 @@
     th,
     td {
         padding: 2px 10px;
-        text-align: center;
+        /* Numbers line up on their units (ADR-0085, G4). */
+        text-align: right;
         white-space: nowrap;
     }
 

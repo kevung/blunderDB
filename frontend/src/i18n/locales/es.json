@@ -698,7 +698,6 @@
         "moveDown": "Mover abajo",
         "moveUp": "Mover arriba",
         "newCollectionPlaceholder": "Nueva colección…",
-        "posCount": "{count} pos",
         "removeFromCollection": "Quitar de la colección",
         "removePositionTooltip": "Quitar posición de la colección",
         "title": "Colecciones",
@@ -748,7 +747,9 @@
         "suggestKeepCollection": "Crear la colección ({n})",
         "suggestKeepDeck": "Mazo Anki",
         "suggestQuiz": "Quiz",
-        "suggestDefaultName": "Referencias {date}"
+        "suggestDefaultName": "Referencias {date}",
+        "browsePositions": "Recorrer estas posiciones",
+        "inThisCollection": "en esta colección"
     },
     "tournament": {
         "addMatchPlaceholder": "Añadir partida…",
@@ -920,7 +921,9 @@
         "hintPlayerBackgammon": "Jugador: probabilidad de backgammon",
         "hintOpponentWin": "Rival: probabilidad de ganar",
         "hintOpponentGammon": "Rival: probabilidad de gammon",
-        "hintOpponentBackgammon": "Rival: probabilidad de backgammon"
+        "hintOpponentBackgammon": "Rival: probabilidad de backgammon",
+        "empty": "Sin análisis",
+        "evaluate": "Evaluar"
     },
     "rollout": {
         "title": "Rollout",

@@ -20,6 +20,8 @@
     // Le même remplaçant que le panneau Eval en mode Défi (ADR-0018 règle 6).
     const HIDDEN = '···';
     import AnalysisView from './AnalysisView.svelte';
+    import EmptyState from './panels/EmptyState.svelte';
+    import { sendPositionToEval } from '../services/positionService.js';
     import EngineComparison from './EngineComparison.svelte';
     import RolloutStrip from './RolloutStrip.svelte';
     import RolloutResults from './RolloutResults.svelte';
@@ -466,6 +468,12 @@
 
     // The tab decides, else the record's type; here because only the panel knows MATCH mode.
     let viewKind = $derived(showTabs ? activeTab : analysisData.analysisType === 'DoublingCube' ? 'cube' : 'checker');
+
+    // Nothing to show: AnalysisView would draw nothing for this kind (the empty record carries a
+    // zeroed cube analysis, so the cube needs a real analysis type), and no rollout is stored,
+    // pending or running.
+    let showsAnalysis = $derived(viewKind === 'cube' ? !!(analysisData?.allCubeAnalyses?.length || analysisData?.doublingCubeAnalysis) : !!hasCheckerAnalysis);
+    let isEmpty = $derived(!showsAnalysis && storedRollouts.length === 0 && !unsavedRollout && !(liveCandidates?.length > 0) && !playedTime && !rollout.running);
 </script>
 
 <!-- Keyboard delegation on a focus container; no ARIA role fits, hence the ignore. -->
@@ -476,6 +484,10 @@
         {#if $trainingAnalysisHiddenStore}
             <!-- Question de Décision ouverte : la réponse est masquée (ADR-0018 règle 6). -->
             <div class="quiz-masked">{HIDDEN}</div>
+        {:else if isEmpty}
+            <!-- A position without analysis still says what to do: evaluate it (ADR-0085, G5). -->
+            <EmptyState text={$t('analysis.empty')} action={$positionStore ? { label: $t('analysis.evaluate'), onClick: () => sendPositionToEval($positionStore) } : null} actions={!!$positionStore} />
+            <RolloutStrip here={onBoard.here} />
         {:else}
             <EngineComparison analysis={analysisData} kind={viewKind} />
             <AnalysisView

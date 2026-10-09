@@ -698,7 +698,6 @@
         "moveDown": "下へ移動",
         "moveUp": "上へ移動",
         "newCollectionPlaceholder": "新規コレクション…",
-        "posCount": "{count} 件",
         "removeFromCollection": "コレクションから削除",
         "removePositionTooltip": "ポジションをコレクションから削除",
         "title": "コレクション",
@@ -748,7 +747,9 @@
         "suggestKeepCollection": "コレクションを作成（{n}）",
         "suggestKeepDeck": "Anki デッキ",
         "suggestQuiz": "クイズ",
-        "suggestDefaultName": "参照 {date}"
+        "suggestDefaultName": "参照 {date}",
+        "browsePositions": "これらの局面を表示",
+        "inThisCollection": "このコレクションに含む"
     },
     "tournament": {
         "addMatchPlaceholder": "マッチを追加…",
@@ -920,7 +921,9 @@
         "hintPlayerBackgammon": "プレイヤー: バックギャモン勝率",
         "hintOpponentWin": "相手: 勝率",
         "hintOpponentGammon": "相手: ギャモン勝率",
-        "hintOpponentBackgammon": "相手: バックギャモン勝率"
+        "hintOpponentBackgammon": "相手: バックギャモン勝率",
+        "empty": "解析なし",
+        "evaluate": "評価"
     },
     "rollout": {
         "title": "ロールアウト",
