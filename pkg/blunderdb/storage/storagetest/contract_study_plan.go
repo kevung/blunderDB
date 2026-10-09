@@ -62,6 +62,11 @@ func testStatsStudyPlan(t *testing.T, s storage.Storage) {
 	if plan.Unthemed != 1 || plan.Unpriced != 1 {
 		t.Errorf("Unthemed %d, Unpriced %d; want 1, 1", plan.Unthemed, plan.Unpriced)
 	}
+	// The counts outside the plan open their positions: one error each, so
+	// one position each.
+	if len(plan.UnthemedPositions) != 1 || len(plan.UnpricedPositions) != 1 {
+		t.Errorf("UnthemedPositions %v, UnpricedPositions %v; want one each", plan.UnthemedPositions, plan.UnpricedPositions)
+	}
 	if len(plan.Families) != 1 {
 		t.Fatalf("Families = %+v, want the gammon family alone", plan.Families)
 	}

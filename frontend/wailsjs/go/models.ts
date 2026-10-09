@@ -7851,6 +7851,8 @@ export namespace storage {
 	    Tentative: StudyPlanFamily[];
 	    Unthemed: number;
 	    Unpriced: number;
+	    UnthemedPositions: number[];
+	    UnpricedPositions: number[];
 	
 	    static createFrom(source: any = {}) {
 	        return new StudyPlan(source);
@@ -7865,6 +7867,8 @@ export namespace storage {
 	        this.Tentative = this.convertValues(source["Tentative"], StudyPlanFamily);
 	        this.Unthemed = source["Unthemed"];
 	        this.Unpriced = source["Unpriced"];
+	        this.UnthemedPositions = source["UnthemedPositions"];
+	        this.UnpricedPositions = source["UnpricedPositions"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
