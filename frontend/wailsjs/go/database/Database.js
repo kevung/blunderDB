@@ -1522,6 +1522,10 @@ export function TrashCommentEntry(arg1) {
   return window['go']['database']['Database']['TrashCommentEntry'](arg1);
 }
 
+export function TrashMatch(arg1) {
+  return window['go']['database']['Database']['TrashMatch'](arg1);
+}
+
 export function TrashPosition(arg1) {
   return window['go']['database']['Database']['TrashPosition'](arg1);
 }

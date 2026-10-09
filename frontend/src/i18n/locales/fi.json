@@ -655,13 +655,13 @@
         "errorSwapping": "Virhe pelaajien vaihtamisessa",
         "errorUpdating": "Virhe ottelun päivittämisessä",
         "errorUpdatingComment": "Virhe kommentin päivittämisessä",
-        "matchDeleted": "Ottelu poistettu",
+        "matchDeleted": "Ottelu siirretty roskakoriin — palautettavissa (komento ”trash”)",
         "matchUpdated": "Ottelu päivitetty",
         "noMovesFound": "Tälle ottelulle ei löytynyt siirtoja",
         "swappedPlayers": "Pelaajat vaihdettu",
         "tournamentCleared": "Turnaus poistettu ottelusta",
         "tournamentSet": "Turnaus \"{name}\" asetettu",
-        "confirmDelete": "Poistetaanko ottelu pelaajien {player1} ja {player2} välillä?",
+        "confirmDelete": "Siirretäänkö ottelu {player1} – {player2} roskakoriin? Sen voi palauttaa (komento ”trash”).",
         "enrichFromFile": "Rikasta tiedostosta…",
         "editTranscription": "Muokkaa litterointia",
         "editTranscriptionTooltip": "Avaa tämä ottelu litterointiluonnoksena; sen vieminen valmiiksi korvaa ottelun",
@@ -1957,7 +1957,11 @@
         "kindCollection": "Kokoelma",
         "kindComment": "Kommentti",
         "kindAnkiCard": "Anki-kortti",
+        "kindMatch": "Ottelu",
         "restored": "Palautettu: {what}",
+        "restoredSlotTaken": "Palautettu: {what} — sen paikka johtamisessa on toisen ottelun, se palasi ilman sitä",
+        "restoredSlotGone": "Palautettu: {what} — sen paikkaa johtamisessa ei enää ole tai siinä on muut pelaajat, se palasi ilman sitä",
+        "restoredTournamentGone": "Palautettu: {what} — sen turnaus on poistettu, se palasi ilman turnausta",
         "restoreFailed": "Palautus ei onnistunut: {error}"
     },
     "tags": {
@@ -3251,5 +3255,17 @@
         "noFamily": "Mikään virheperhe ei pidä tässä turnauksessa ({tentative} vahvistettavana)",
         "tentative": "{tentative} muuta vahvistettavana",
         "noDecision": "Ei pelaajan laskettuja päätöksiä turnauksessa"
+    },
+    "theatre": {
+        "menuItem": "Teatteritila",
+        "enter": "Teatteritila: video koko näytöllä (F11)",
+        "exit": "Poistu teatteritilasta (F11 tai Esc)",
+        "region": "Teatteritila",
+        "hint": "F11 tai Esc poistuu",
+        "board": "Lauta",
+        "boardMove": "Siirrä lautaa vetämällä",
+        "boardSize": "Muuta laudan kokoa",
+        "boardHide": "Pienennä lauta",
+        "boardShow": "Näytä lauta"
     }
 }

@@ -29,6 +29,8 @@ function load({ state = 5, search = '', referrer = '' } = {}) {
         time: 0,
         /** @type {any} */
         events: null,
+        /** @type {any} */
+        cfg: null,
         seekTo: vi.fn(function (/** @type {number} */ t) {
             // An unstarted player starts playing on seekTo and keeps reporting 0 for a while.
             if (player.state === -1 || player.state === 5) return;
@@ -49,6 +51,7 @@ function load({ state = 5, search = '', referrer = '' } = {}) {
     const YT = {
         Player: function (/** @type {string} */ _id, /** @type {any} */ cfg) {
             player.events = cfg.events;
+            player.cfg = cfg;
             return player;
         }
     };
@@ -69,6 +72,10 @@ function load({ state = 5, search = '', referrer = '' } = {}) {
 }
 
 describe('the hosted YouTube page', () => {
+    test('the player has no full screen of its own: the theatre owns the window', () => {
+        expect(load().player.cfg.playerVars.fs).toBe(0);
+    });
+
     test('a seek on a player not started yet keeps it paused and reports the instant asked', () => {
         const page = load({ state: 5, search: '?origin=http%3A%2F%2Fwails.localhost' });
         page.ready();

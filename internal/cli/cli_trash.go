@@ -26,7 +26,7 @@ func (cli *CLI) runTrash(args []string) error {
 	dbPath := fs.String("db", "", "Path to the database file (required)")
 	format := fs.String("format", "text", "Output format: text or json")
 	id := fs.Int64("id", 0, "Trash entry (restore, discard) or object (delete) id")
-	kind := fs.String("kind", "", "Narrow the listing: position, collection, comment, anki_card")
+	kind := fs.String("kind", "", "Narrow the listing: position, collection, comment, match, anki_card")
 	limit := fs.Int("limit", 50, "Maximum entries listed")
 	olderThan := fs.Int("older-than", 0, "empty: drop only entries older than this many days (0 = all)")
 	fs.Usage = printTrashUsage
@@ -60,12 +60,16 @@ func (cli *CLI) runTrash(args []string) error {
 			return fmt.Errorf("restore: %w", err)
 		}
 		if text {
-			fmt.Printf("Restored as id %d.\n", restored)
+			fmt.Printf("Restored as id %d.\n", restored.ID)
+			for _, w := range restored.Warnings {
+				fmt.Printf("Warning: %s.\n", w.Message)
+			}
 			return nil
 		}
 		return printJSON(struct {
-			Restored int64 `json:"restored"`
-		}{restored})
+			Restored int64                 `json:"restored"`
+			Warnings []domain.TrashWarning `json:"warnings,omitempty"`
+		}{restored.ID, restored.Warnings})
 	case "discard":
 		if *id == 0 {
 			return fmt.Errorf("discard: missing required flag: --id")
@@ -142,8 +146,10 @@ func (cli *CLI) trashDelete(kind string, id int64, text bool) error {
 		trashID, err = cli.db.TrashCollection(id)
 	case domain.TrashComment:
 		trashID, err = cli.db.TrashCommentEntry(id)
+	case domain.TrashMatch:
+		trashID, err = cli.db.TrashMatch(id)
 	default:
-		return fmt.Errorf("delete: --kind must be one of position, collection, comment")
+		return fmt.Errorf("delete: --kind must be one of position, collection, comment, match")
 	}
 	if err != nil {
 		return fmt.Errorf("delete: %w", err)
@@ -174,7 +180,7 @@ func printTrashUsage() {
 	fmt.Println()
 	fmt.Println("Options:")
 	fmt.Println("  --db string          Path to the database file (required)")
-	fmt.Println("  --kind string        position, collection, comment (delete); narrows list, which also takes anki_card")
+	fmt.Println("  --kind string        position, collection, comment, match (delete); narrows list, which also takes anki_card")
 	fmt.Println("  --limit int          Maximum entries listed (default 50)")
 	fmt.Println("  --format string      text (default) or json")
 	fmt.Println()
@@ -183,6 +189,7 @@ func printTrashUsage() {
 	fmt.Println()
 	fmt.Println("Examples:")
 	fmt.Println("  blunderdb trash delete --db base.db --kind position --id 412")
+	fmt.Println("  blunderdb trash delete --db base.db --kind match --id 12")
 	fmt.Println("  blunderdb trash list --db base.db")
 	fmt.Println("  blunderdb trash restore --db base.db --id 3")
 	fmt.Println("  blunderdb trash empty --db base.db --older-than 30")

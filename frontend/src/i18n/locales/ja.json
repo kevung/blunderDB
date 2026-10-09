@@ -655,13 +655,13 @@
         "errorSwapping": "プレイヤーの入れ替え中にエラーが発生しました",
         "errorUpdating": "マッチの更新中にエラーが発生しました",
         "errorUpdatingComment": "コメントの更新中にエラーが発生しました",
-        "matchDeleted": "マッチを削除しました",
+        "matchDeleted": "マッチをごみ箱に移動しました — 復元できます（コマンド「trash」）",
         "matchUpdated": "マッチを更新しました",
         "noMovesFound": "このマッチには手が見つかりません",
         "swappedPlayers": "プレイヤーを入れ替えました",
         "tournamentCleared": "マッチからトーナメントを解除しました",
         "tournamentSet": "トーナメント「{name}」を設定しました",
-        "confirmDelete": "{player1}と{player2}のマッチを削除しますか?",
+        "confirmDelete": "{player1} と {player2} のマッチをごみ箱に移動しますか？復元できます（コマンド「trash」）。",
         "enrichFromFile": "ファイルから補完…",
         "editTranscription": "記譜を編集",
         "editTranscriptionTooltip": "このマッチを記譜の下書きとして開きます。完了するとマッチが置き換えられます",
@@ -1957,7 +1957,11 @@
         "kindCollection": "コレクション",
         "kindComment": "コメント",
         "kindAnkiCard": "Anki カード",
+        "kindMatch": "マッチ",
         "restored": "復元しました：{what}",
+        "restoredSlotTaken": "復元しました: {what} — ディレクションの枠は別のマッチが使用中のため、枠なしで戻しました",
+        "restoredSlotGone": "復元しました: {what} — ディレクションの枠がなくなったか別の対戦になったため、枠なしで戻しました",
+        "restoredTournamentGone": "復元しました: {what} — 大会が削除されたため、大会なしで戻しました",
         "restoreFailed": "復元できませんでした：{error}"
     },
     "tags": {
@@ -3251,5 +3255,17 @@
         "noFamily": "このトーナメントで成立するエラーファミリーはありません(確認待ち {tentative})",
         "tentative": "ほかに確認待ち {tentative}",
         "noDecision": "このプレイヤーのトーナメント内の判断はありません"
+    },
+    "theatre": {
+        "menuItem": "シアターモード",
+        "enter": "シアターモード：動画を全画面表示 (F11)",
+        "exit": "シアターモードを終了 (F11 または Esc)",
+        "region": "シアターモード",
+        "hint": "F11 または Esc で終了",
+        "board": "盤面",
+        "boardMove": "ドラッグして盤面を移動",
+        "boardSize": "盤面のサイズを変更",
+        "boardHide": "盤面を折りたたむ",
+        "boardShow": "盤面を表示"
     }
 }

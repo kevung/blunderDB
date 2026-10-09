@@ -2215,13 +2215,13 @@ recherche, aucune statistique, aucune règle de rétention.
 * ``empty [--older-than J]`` — Vide la corbeille, ou seulement ce qui a plus de
   J jours.
 * ``delete --kind K --id N`` — Supprime un objet **par la corbeille**, pour que
-  le geste soit annulable. ``K`` vaut ``position``, ``collection`` ou
-  ``comment``.
+  le geste soit annulable. ``K`` vaut ``position``, ``collection``,
+  ``comment`` ou ``match``.
 
 **Options communes:** ``--db`` (obligatoire), ``--kind``, ``--limit``
 (défaut 50), ``--format`` (``text`` ou ``json``). Pour ``list``, ``--kind``
 restreint la liste à un type d'objet : ``position``, ``collection``,
-``comment`` ou ``anki_card``.
+``comment``, ``match`` ou ``anki_card``.
 
 .. note:: ``blunderdb delete`` supprime toujours **sans** filet : un script qui
    supprime une position s'attend à ce qu'elle disparaisse, et laisser un
@@ -2229,9 +2229,14 @@ restreint la liste à un type d'objet : ``position``, ``collection``,
    voir grossir. C'est ``trash delete`` qui garde l'annulation.
 
 Une restauration de position repasse par la déduplication Zobrist : elle ne
-crée jamais de doublon, mais elle ne rend pas son ancien identifiant — la ligne
-d'origine n'existe plus. Une position restaurée est la même position, sous un
-nouveau numéro.
+crée jamais de doublon. Une position restaurée reprend son ancien numéro ; si
+la même position a été enregistrée entre-temps, c'est celle-là qui est gardée,
+et elle reçoit ce qui lui manque. Un match restauré reprend lui aussi son
+numéro d'origine, avec ses parties, ses coups, ses analyses et ses positions ;
+il est refusé si un autre match occupe ce numéro, ou si un match de même
+empreinte de fichier a été importé entre-temps. Ce qu'une restauration réussie
+n'a pas pu remettre — une place de Direction prise ou disparue, un tournoi
+supprimé — est signalé par un avertissement.
 
 Ce qui a plus de trente jours est supprimé par ``blunderdb vacuum`` — jamais à
 l'ouverture d'une base.

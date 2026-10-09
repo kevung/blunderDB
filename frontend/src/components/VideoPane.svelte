@@ -281,6 +281,7 @@
             bind:this={video}
             {src}
             controls
+            controlslist="nofullscreen"
             preload="metadata"
             onloadedmetadata={onLoadedMetadata}
             onerror={onVideoError}
@@ -289,7 +290,7 @@
             onratechange={() => video && showRate(video.playbackRate)}
         ></video>
     {:else if kind === 'youtube' && src}
-        <iframe bind:this={frame} {src} title={$t('video.player')} allow="autoplay; encrypted-media; fullscreen"></iframe>
+        <iframe bind:this={frame} {src} title={$t('video.player')} allow="autoplay; encrypted-media"></iframe>
     {/if}
     {#if status === 'ready' && rateFlash}
         {#key rate}

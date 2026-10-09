@@ -655,13 +655,13 @@
         "errorSwapping": "Errore durante lo scambio dei giocatori",
         "errorUpdating": "Errore durante l'aggiornamento del match",
         "errorUpdatingComment": "Errore durante l'aggiornamento del commento",
-        "matchDeleted": "Match eliminato",
+        "matchDeleted": "Match spostato nel cestino — recuperabile (comando «trash»)",
         "matchUpdated": "Match aggiornato",
         "noMovesFound": "Nessuna mossa trovata per questo match",
         "swappedPlayers": "Giocatori scambiati",
         "tournamentCleared": "Torneo rimosso dal match",
         "tournamentSet": "Torneo \"{name}\" assegnato",
-        "confirmDelete": "Eliminare il match tra {player1} e {player2}?",
+        "confirmDelete": "Spostare nel cestino il match tra {player1} e {player2}? Potrà essere ripristinato (comando «trash»).",
         "enrichFromFile": "Arricchire da un file…",
         "editTranscription": "Modifica la trascrizione",
         "editTranscriptionTooltip": "Aprire questo match come bozza di trascrizione; terminarla sostituisce il match",
@@ -1957,7 +1957,11 @@
         "kindCollection": "Collezione",
         "kindComment": "Commento",
         "kindAnkiCard": "Carta Anki",
+        "kindMatch": "Match",
         "restored": "Ripristinato: {what}",
+        "restoredSlotTaken": "Ripristinato: {what} — il suo posto nella Direzione è occupato da un altro match, torna senza",
+        "restoredSlotGone": "Ripristinato: {what} — il suo posto nella Direzione non esiste più o accoppia altri giocatori, torna senza",
+        "restoredTournamentGone": "Ripristinato: {what} — il suo torneo è stato eliminato, torna fuori da ogni torneo",
         "restoreFailed": "Ripristino impossibile: {error}"
     },
     "tags": {
@@ -3251,5 +3255,17 @@
         "noFamily": "Nessuna famiglia di errori regge in questo torneo ({tentative} da confermare)",
         "tentative": "altre {tentative} da confermare",
         "noDecision": "Nessuna decisione contata di questo giocatore nel torneo"
+    },
+    "theatre": {
+        "menuItem": "Modalità cinema",
+        "enter": "Modalità cinema: il video a schermo intero (F11)",
+        "exit": "Esci dalla modalità cinema (F11 o Esc)",
+        "region": "Modalità cinema",
+        "hint": "F11 o Esc per uscire",
+        "board": "Tavoliere",
+        "boardMove": "Trascina per spostare il tavoliere",
+        "boardSize": "Cambia la dimensione del tavoliere",
+        "boardHide": "Riduci il tavoliere",
+        "boardShow": "Mostra il tavoliere"
     }
 }

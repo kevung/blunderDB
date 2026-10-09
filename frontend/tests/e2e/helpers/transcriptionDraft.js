@@ -151,16 +151,25 @@ export const draftRow = {
 /**
  * Installe le faux moteur. À appeler après `installWailsMock` (il complète
  * `window.go`), avant `page.goto`. `expects` pose l'Action attendue (`'take'`,
- * `'checker'`) ; `cursor` où le Cursor commence (fin du document par défaut).
+ * `'checker'`) ; `cursor` où le Cursor commence (fin du document par défaut) ; `video` la
+ * source attachée au brouillon, servie à `/__e2e/video` (la spec la route ou la laisse
+ * introuvable).
  *
  * @param {import('@playwright/test').Page} page
- * @param {{expects?: string, cursor?: number}} [opts]
+ * @param {{expects?: string, cursor?: number, video?: string}} [opts]
  */
 export async function installTranscriptionEngine(page, opts = {}) {
     await page.addInitScript(
-        ({ doc, row, plays, moves, expects, cursor }) => {
+        ({ doc, row, plays, moves, expects, cursor, video }) => {
             const db = window.go.database.Database;
             const app = window.go.gui.App;
+
+            if (video) {
+                doc.document.header.video_source = video;
+                app.VideoSourceKind = () => Promise.resolve('file');
+                app.MediaURL = () => Promise.resolve('/__e2e/video');
+                app.ReleaseMedia = () => Promise.resolve();
+            }
 
             let at = cursor;
             let waiting = expects;
@@ -202,7 +211,8 @@ export async function installTranscriptionEngine(page, opts = {}) {
             plays: legalPlays,
             moves: rankedMoves,
             expects: opts.expects ?? 'checker',
-            cursor: opts.cursor ?? ACTION_COUNT
+            cursor: opts.cursor ?? ACTION_COUNT,
+            video: opts.video ?? ''
         }
     );
 }

@@ -11,7 +11,7 @@
     import { SvelteSet } from 'svelte/reactivity';
     import {
         GetMatchByID,
-        DeleteMatch,
+        TrashMatch,
         UpdateMatch,
         UpdateMatchComment,
         GetMatchMovePositions,
@@ -812,7 +812,8 @@
         event.stopPropagation();
         if (!(await confirmAction(get(t)('match.confirmDelete', { player1: match.player1_name, player2: match.player2_name }), { confirmLabel: get(t)('common.delete') }))) return;
         try {
-            await DeleteMatch(match.id);
+            // Through the trash: restorable from the `trash` command.
+            await TrashMatch(match.id);
             await loadMatches();
             if (selectedMatch && selectedMatch.id === match.id) {
                 selectedMatch = null;

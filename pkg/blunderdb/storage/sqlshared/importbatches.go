@@ -560,3 +560,79 @@ func (s *ImportBatchStore) Files(ctx context.Context, scope string, batchID int6
 	}
 	return out, nil
 }
+
+// StudyMark — see storage.ImportBatchStore.
+func (s *ImportBatchStore) StudyMark(ctx context.Context, scope string, positionID int64) (int64, error) {
+	tenant, targs := s.DB.TenantFilter("", scope)
+	var at int64
+	err := s.DB.QueryRow(ctx, `SELECT marked_at FROM study_mark WHERE position_id = ? AND `+tenant,
+		append([]any{positionID}, targs...)...).Scan(&at)
+	if errors.Is(err, ErrNoRows) {
+		return 0, nil
+	}
+	if err != nil {
+		return 0, errf(s.DB, "read study mark", err)
+	}
+	return at, nil
+}
+
+// RestoreStudyMark — see storage.ImportBatchStore.
+func (s *ImportBatchStore) RestoreStudyMark(ctx context.Context, scope string, positionID, markedAt int64) error {
+	if err := RequireOwned(ctx, s.DB, scope, "position", positionID); err != nil {
+		return err
+	}
+	cols, args := s.DB.TenantColumns(scope)
+	cols = append(cols, "position_id", "marked_at")
+	args = append(args, positionID, markedAt)
+	if _, err := s.DB.Exec(ctx, `INSERT INTO study_mark (`+strings.Join(cols, ", ")+`) VALUES (`+
+		Placeholders(len(cols))+`) ON CONFLICT DO NOTHING`, args...); err != nil {
+		return errf(s.DB, "restore study mark", err)
+	}
+	return nil
+}
+
+// FilesOfMatch — see storage.ImportBatchStore.
+func (s *ImportBatchStore) FilesOfMatch(ctx context.Context, scope string, matchID int64) ([]int64, error) {
+	tenant, targs := s.DB.TenantFilter("", scope)
+	return queryIDs(ctx, s.DB, "list journal lines of match",
+		`SELECT id FROM import_batch_file WHERE match_id = ? AND `+tenant+` ORDER BY id`,
+		append([]any{matchID}, targs...))
+}
+
+// RelinkFiles — see storage.ImportBatchStore.
+func (s *ImportBatchStore) RelinkFiles(ctx context.Context, scope string, fileIDs []int64, matchID int64) error {
+	if len(fileIDs) == 0 {
+		return nil
+	}
+	if err := RequireOwned(ctx, s.DB, scope, "match", matchID); err != nil {
+		return err
+	}
+	tenant, targs := s.DB.TenantFilter("", scope)
+	args := append([]any{matchID}, int64Args(fileIDs)...)
+	if _, err := s.DB.Exec(ctx, `UPDATE import_batch_file SET match_id = ? WHERE match_id IS NULL AND id IN (`+
+		Placeholders(len(fileIDs))+`) AND `+tenant, append(args, targs...)...); err != nil {
+		return errf(s.DB, "relink journal lines", err)
+	}
+	return nil
+}
+
+// queryIDs runs a query that selects one id column.
+func queryIDs(ctx context.Context, db Execer, what, query string, args []any) ([]int64, error) {
+	rows, err := db.Query(ctx, query, args...)
+	if err != nil {
+		return nil, errf(db, what, err)
+	}
+	defer rows.Close()
+	var ids []int64
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			return nil, errf(db, what, err)
+		}
+		ids = append(ids, id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, errf(db, what, err)
+	}
+	return ids, nil
+}

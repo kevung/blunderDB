@@ -655,13 +655,13 @@
         "errorSwapping": "Error al intercambiar jugadores",
         "errorUpdating": "Error al actualizar la partida",
         "errorUpdatingComment": "Error al actualizar el comentario",
-        "matchDeleted": "Partida eliminada",
+        "matchDeleted": "Partido movido a la papelera — recuperable (comando «trash»)",
         "matchUpdated": "Partida actualizada",
         "noMovesFound": "No se encontraron jugadas para esta partida",
         "swappedPlayers": "Jugadores intercambiados",
         "tournamentCleared": "Torneo eliminado de la partida",
         "tournamentSet": "Torneo \"{name}\" asignado",
-        "confirmDelete": "¿Eliminar la partida entre {player1} y {player2}?",
+        "confirmDelete": "¿Mover a la papelera el partido entre {player1} y {player2}? Podrá restaurarse (comando «trash»).",
         "enrichFromFile": "Enriquecer desde un fichero…",
         "editTranscription": "Editar la transcripción",
         "editTranscriptionTooltip": "Abrir este match como borrador de transcripción; terminarlo reemplaza el match",
@@ -1957,7 +1957,11 @@
         "kindCollection": "Colección",
         "kindComment": "Comentario",
         "kindAnkiCard": "Tarjeta Anki",
+        "kindMatch": "Partido",
         "restored": "Restaurado: {what}",
+        "restoredSlotTaken": "Restaurado: {what} — su plaza de Dirección la ocupa otro match, vuelve sin ella",
+        "restoredSlotGone": "Restaurado: {what} — su plaza de Dirección ya no existe o enfrenta a otros jugadores, vuelve sin ella",
+        "restoredTournamentGone": "Restaurado: {what} — su torneo fue eliminado, vuelve fuera de todo torneo",
         "restoreFailed": "No se pudo restaurar: {error}"
     },
     "tags": {
@@ -3251,5 +3255,17 @@
         "noFamily": "Ninguna familia de errores se sostiene en este torneo ({tentative} por confirmar)",
         "tentative": "{tentative} más por confirmar",
         "noDecision": "Ninguna decisión contada de este jugador en el torneo"
+    },
+    "theatre": {
+        "menuItem": "Modo cine",
+        "enter": "Modo cine: el vídeo a pantalla completa (F11)",
+        "exit": "Salir del modo cine (F11 o Esc)",
+        "region": "Modo cine",
+        "hint": "F11 o Esc para salir",
+        "board": "Tablero",
+        "boardMove": "Arrastrar para mover el tablero",
+        "boardSize": "Cambiar el tamaño del tablero",
+        "boardHide": "Plegar el tablero",
+        "boardShow": "Mostrar el tablero"
     }
 }

@@ -1346,6 +1346,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/trash.deleteComment — JSON."
         return self._call("/v1/trash.deleteComment", payload)
 
+    def trash_delete_match(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/trash.deleteMatch — JSON."
+        return self._call("/v1/trash.deleteMatch", payload)
+
     def trash_delete_position(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/trash.deletePosition — JSON."
         return self._call("/v1/trash.deletePosition", payload)

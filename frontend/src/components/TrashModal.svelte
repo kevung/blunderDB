@@ -7,7 +7,7 @@
     import { ListTrash, RestoreFromTrash, DiscardFromTrash, EmptyTrash } from '../../wailsjs/go/database/Database.js';
     import { setStatusBarMessage } from '../services/databaseService.js';
     import { reloadAllPositions } from '../services/positionService.js';
-    import { dbMutationCounterStore } from '../stores/uiStore';
+    import { dbMutationCounterStore, matchPanelRefreshTriggerStore } from '../stores/uiStore';
     import { logger } from '../utils/logger.js';
     import { t, tMsg } from '../i18n';
 
@@ -45,18 +45,35 @@
                 return $t('trash.kindComment');
             case 'anki_card':
                 return $t('trash.kindAnkiCard');
+            case 'match':
+                return $t('trash.kindMatch');
             default:
                 return kind;
         }
+    }
+
+    // A restore that left something out says so, the gravest loss first.
+    const WARNING_KEYS = [
+        ['tournament_gone', 'trash.restoredTournamentGone'],
+        ['direction_slot_gone', 'trash.restoredSlotGone'],
+        ['direction_slot_taken', 'trash.restoredSlotTaken']
+    ];
+
+    /** @param {{code: string}[]} warnings */
+    function restoredMessageKey(warnings) {
+        const codes = new Set(warnings.map((w) => w.code));
+        return WARNING_KEYS.find(([code]) => codes.has(code))?.[1] ?? 'trash.restored';
     }
 
     /** @param {TrashEntry} entry */
     async function restore(entry) {
         busy = true;
         try {
-            await RestoreFromTrash(entry.id);
-            setStatusBarMessage(tMsg('trash.restored', { what: entry.label }));
+            const result = await RestoreFromTrash(entry.id);
+            setStatusBarMessage(tMsg(restoredMessageKey(result?.warnings ?? []), { what: entry.label }));
             dbMutationCounterStore.update((n) => n + 1);
+            // The match panel reloads on its own trigger, not on the mutation counter.
+            if (entry.kind === 'match') matchPanelRefreshTriggerStore.update((n) => n + 1);
             await reloadAllPositions();
             await load();
         } catch (error) {

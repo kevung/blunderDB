@@ -92,6 +92,15 @@ type TrainingStore interface {
 	// exercise that still reach a position, oldest first: the date of their
 	// session, the position's plan of play and the cost of the answer.
 	DecisionErrors(ctx context.Context, scope string) ([]TrainingDecisionError, error)
+
+	// ItemsOfPosition returns the ids of the items asked on the position, so
+	// that a delete through the trash can tie them to it again: the delete
+	// leaves them without a position.
+	ItemsOfPosition(ctx context.Context, scope string, positionID int64) ([]int64, error)
+	// RelinkItems ties the items of itemIDs that name no position to
+	// positionID. An item deleted since, or tied to another position, is left
+	// as it is.
+	RelinkItems(ctx context.Context, scope string, itemIDs []int64, positionID int64) error
 }
 
 // TrainingDecisionError is one judged decision question, seen from the

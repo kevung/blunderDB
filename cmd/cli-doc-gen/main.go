@@ -87,7 +87,7 @@ func captureHelp(args []string) string {
 
 	w.Close()
 	os.Stdout, os.Stderr = savedOut, savedErr
-	return <-done
+	return strings.ReplaceAll(<-done, fmt.Sprintf("(default %d)", cpuSentinel), "(default: the number of CPUs)")
 }
 
 func main() {
@@ -136,7 +136,12 @@ func commandList() (string, error) {
 	return b.String(), nil
 }
 
+// cpuSentinel stands for the core count while the help is captured: a value
+// no flag defaults to, which run rewrites into words.
+const cpuSentinel = 7919
+
 func run() error {
+	cli.NumCPU = func() int { return cpuSentinel }
 	var out bytes.Buffer
 	out.WriteString(beginMarker + "\n\n")
 	out.WriteString("Captured verbatim from each subcommand's `--help`. Regenerate with " +

@@ -59,6 +59,7 @@
     import TranscriptionMetadata from './TranscriptionMetadata.svelte';
     import VideoDock from './VideoDock.svelte';
     import { rateKeyDirection } from '../utils/videoRate.js';
+    import { theatreAvailableStore, theatreStore, theatreTargetStore, theatreHolds, enterTheatre } from '../services/transcriptionTheatre.js';
     import { fmtClock } from '../utils/decisionTime.js';
     import {
         transcriptionListStore,
@@ -644,8 +645,28 @@
     let videoMenuItems = $derived([
         { label: $t('transcription.videoFile'), onClick: pickVideoFile },
         { label: $t('transcription.videoYouTube'), onClick: toggleYouTubeField, keepOpen: true },
-        ...(videoSource ? [{ label: $t('transcription.videoDetach'), onClick: () => attachVideo('') }] : [])
+        ...(videoSource
+            ? [
+                  { label: $t('theatre.menuItem'), shortcut: 'F11', onClick: openTheatre },
+                  { label: $t('transcription.videoDetach'), onClick: () => attachVideo('') }
+              ]
+            : [])
     ]);
+
+    function openTheatre() {
+        closeVideoMenu();
+        enterTheatre();
+    }
+
+    // The theatre opens over a draft with its video, on this tab; losing any of the three ends it.
+    $effect(() => {
+        theatreAvailableStore.set($activeTabStore === 'transcription' && !!draft && !!videoSource);
+    });
+
+    // In the theatre the panel is hidden, its keys are not: the focus comes back to it.
+    $effect(() => {
+        if ($theatreStore && !untrack(ownsFocus)) panelEl?.focus({ preventScroll: true });
+    });
 
     let moreMenuItems = $derived([
         { label: $t('transcription.matModal'), onClick: () => (matOpen = true) },
@@ -1151,7 +1172,7 @@
     // The video is the panel's even beside the board: focus there keeps the panel's keys.
     function ownsFocus() {
         const active = document.activeElement;
-        return !!panelEl?.contains(active) || !!videoPane?.holds?.(active);
+        return !!panelEl?.contains(active) || !!videoPane?.holds?.(active) || theatreHolds(active);
     }
 
     /** @param {KeyboardEvent} event */
@@ -1344,6 +1365,7 @@
 
     onDestroy(() => {
         unregisterKeys?.();
+        theatreAvailableStore.set(false);
         clearTimeout(matCopyTimer);
         clearTranscriptionNotice();
         selectedMoveStore.set(null);
@@ -1893,6 +1915,8 @@
                             source={videoSource}
                             startMs={videoStart}
                             onrelocate={(/** @type {string} */ path) => attachVideo(path)}
+                            theatreTarget={$theatreStore ? $theatreTargetStore : null}
+                            ontheatre={enterTheatre}
                         />
                     {/key}
                 </div>

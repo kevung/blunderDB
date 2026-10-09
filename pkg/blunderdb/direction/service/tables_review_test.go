@@ -84,7 +84,8 @@ func TestRestoringARencontreKeepsRunningMatchesInTheirRooms(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	back, err := svc2.RestoreFromTrash(ctx2, trash2)
+	restoredBack, err := svc2.RestoreFromTrash(ctx2, trash2)
+	back := restoredBack.ID
 	if err != nil {
 		t.Fatal(err)
 	}

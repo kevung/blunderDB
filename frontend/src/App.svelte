@@ -71,6 +71,7 @@
     import Board from './components/Board.svelte';
     import VideoStage from './components/VideoStage.svelte';
     import DirectionFullscreenToggle from './components/direction/DirectionFullscreenToggle.svelte';
+    import TranscriptionTheatre from './components/TranscriptionTheatre.svelte';
     import { directionFullscreenStore } from './services/directionFullscreen.js';
     import { directionPageShownStore, directionViewLoadedStore } from './stores/directionStore';
     import MatchInfoBar from './components/MatchInfoBar.svelte';
@@ -522,6 +523,8 @@
     <div class="chrome"><StatusBar onCommand={(cmd) => processCommand(cmd)} /></div>
 
     <DirectionFullscreenToggle />
+
+    <TranscriptionTheatre />
 </main>
 
 <style>

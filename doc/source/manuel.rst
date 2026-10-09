@@ -959,27 +959,42 @@ tags`` (voir :ref:`cli`).
 La corbeille
 ------------
 
-Supprimer une position, une collection, un commentaire ou une carte Anki passe par une
-**corbeille** : la suppression a bien lieu, mais une copie de ce qui
+Supprimer une position, une collection, un commentaire, une carte Anki ou un
+match passe par une **corbeille** : la suppression a bien lieu, mais une copie de ce qui
 disparaît est gardée trente jours. La commande ``trash`` ouvre la fenêtre qui
 les liste, avec pour chacune *Restaurer* et *Supprimer*, et un bouton
 *Vider la corbeille*.
 
 Une position restaurée revient avec **son analyse et ses commentaires** — la
-rendre nue serait une restauration de nom seulement. Elle ne revient pas sous
-son ancien numéro : la ligne d'origine n'existe plus, et blunderDB la
-réenregistre par son empreinte, ce qui garantit qu'elle ne crée jamais de
-doublon mais lui donne un nouvel identifiant. Une collection revient avec sa
+rendre nue serait une restauration de nom seulement —, sa marque « étudiée »
+et les réponses d'entraînement données sur elle. Elle reprend son ancien
+numéro ; si la même position a été enregistrée entre-temps, c'est celle-là qui
+est gardée, car une position n'existe qu'une fois : elle reçoit la marque, les
+réponses et les commentaires qui lui manquent, et garde son analyse si elle en
+a une. Si son numéro est pris par une autre, elle en reçoit un nouveau. Une collection revient avec sa
 liste ; les positions qu'elle contenait, elles, n'avaient jamais été
 supprimées — une collection est une vue sur elles.
+
+Un match supprimé emporte ses parties, ses coups, leurs analyses et les
+positions que plus rien d'autre ne retient, avec les notes venues du fichier
+source : la corbeille garde tout cela. Restauré, il revient sous son numéro
+et sa date d'import d'origine, avec ses parties, ses coups et ses
+statistiques, et le journal de son import le nomme de nouveau ; les positions
+que la suppression avait purgées reviennent comme une position restaurée,
+celles restées dans la bibliothèque restent telles qu'elles sont devenues. Il
+reprend sa place dans son tournoi ; si le tournoi a été supprimé, il revient
+hors tournoi. Il reprend sa place de Direction si elle existe encore, oppose
+les mêmes joueurs et est libre ; sinon elle reste au directeur et le match
+revient sans elle. Dans ces cas, la barre d'état le signale. La
+restauration est refusée, et l'entrée reste dans la corbeille, si un autre
+match occupe son numéro, ou si un match de même empreinte de fichier a été
+importé entre-temps ; un match sans empreinte, saisi ou joué dans blunderDB,
+n'est pas comparé ainsi.
 
 Ce qui a plus de trente jours est supprimé par la commande ``vacuum``, jamais à
 l'ouverture d'une base : ne pas faire de ``vacuum``, c'est tout garder.
 
-.. note:: La corbeille ne voyage pas. Un export ne l'emporte pas, et supprimer
-   un match n'y met rien : la purge des positions orphelines qui suit une
-   suppression de match est un nettoyage automatique, pas un geste de
-   l'utilisateur — voir la règle de rétention dans :ref:`panneau_matchs`.
+.. note:: La corbeille ne voyage pas : un export ne l'emporte pas.
 
 .. _panneau_recherche:
 
@@ -2158,6 +2173,27 @@ l'une y place la vidéo. *ÉCHAP*, ou lâcher hors de la zone, annule. Le platea
 lui, ne se déplace pas : y glisser déplace les pions. Le côté est retenu d'une
 session à l'autre, et la largeur reste celle de la vidéo, de quelque côté
 qu'elle soit. La poignée et le bouton laissent le clavier au panneau.
+
+.. _transcription_theatre:
+
+**Le mode théâtre.** Pour suivre le match en grand, *F11*, l'entrée **Mode
+théâtre** du menu **Vidéo** ou le bouton du coin supérieur droit de la vidéo,
+à gauche de celui qui la remet dans le panneau, passent la fenêtre en plein
+écran et donnent toute la place à la vidéo. Un petit plateau flotte par-dessus,
+dans le coin inférieur droit : il montre la position de la transcription, les dés
+saisis, le coup en cours au plateau et les flèches du candidat sélectionné, dont
+la notation s'affiche dans son bandeau. On le déplace en le glissant ; un bouton
+de son bandeau lui fait prendre trois tailles, un autre le replie en un onglet
+qui le rouvre. Sa place, sa taille et son repli sont retenus. Le clavier reste
+celui du panneau : les dés, les candidats, la validation, le curseur et les
+touches de la vidéo (*ESPACE*, *[*, *]*, …) gardent leur effet, et ni le
+plateau ni les boutons ne prennent le focus. *F11*, *ÉCHAP* ou le bouton en
+haut à droite sortent du mode théâtre et rendent la fenêtre à son état
+précédent : dans le théâtre, *ÉCHAP* sert à sortir, et *RETOUR ARRIERE* efface
+les dés saisis. Détacher la vidéo, quitter le brouillon ou changer d'onglet y
+met fin aussi. Le lecteur n'a pas de plein écran à lui, YouTube compris : seul
+le mode théâtre change l'écran. Le mode n'existe que dans la Transcription,
+avec une vidéo attachée.
 
 Avec une vidéo, chaque action **nouvelle** porte des **repères** : l'instant
 du jet, posé par la première touche de dé, et l'instant de l'action, posé par

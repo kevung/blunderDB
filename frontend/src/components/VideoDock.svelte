@@ -15,10 +15,14 @@
      *   startMs?: number,
      *   onrelocate?: (path: string) => void,
      *   onended?: () => void,
-     *   onBoard?: boolean
+     *   onBoard?: boolean,
+     *   theatreTarget?: HTMLElement | null,
+     *   ontheatre?: () => void
      * }}
      */
-    let { owner, source, startMs = 0, onrelocate = undefined, onended = undefined, onBoard = $bindable(false) } = $props();
+    // `theatreTarget`: a whole-window place the owner opens for its video, over any other;
+    // `ontheatre` offers the button that opens it, for the owners that have one.
+    let { owner, source, startMs = 0, onrelocate = undefined, onended = undefined, onBoard = $bindable(false), theatreTarget = null, ontheatre = undefined } = $props();
 
     /** @type {any} */
     let pane = $state(null);
@@ -34,10 +38,12 @@
         return () => releaseVideoStage(me);
     });
 
-    const target = $derived(wantsBoard && $videoStageOwnerStore === owner ? $videoStageTargetStore : null);
+    const boardTarget = $derived(wantsBoard && $videoStageOwnerStore === owner ? $videoStageTargetStore : null);
+    const inTheatre = $derived(theatreTarget !== null);
+    const target = $derived(theatreTarget ?? boardTarget);
 
     $effect(() => {
-        onBoard = target !== null;
+        onBoard = boardTarget !== null;
     });
 
     // A focused node moved in the DOM loses the focus; the video keeps it when it had it.
@@ -79,26 +85,41 @@
     }
 </script>
 
-<div class="video-dock" class:on-board={onBoard} data-testid="video-dock" data-placement={onBoard ? 'board' : 'panel'} bind:this={dock} use:portal={target}>
+<div class="video-dock" class:on-board={onBoard} data-testid="video-dock" data-placement={inTheatre ? 'theatre' : onBoard ? 'board' : 'panel'} bind:this={dock} use:portal={target}>
     <VideoPane bind:this={pane} {source} {startMs} {onrelocate} {onended} />
-    <button
-        class="video-dock-place"
-        data-testid="video-placement"
-        onmousedown={(event) => event.preventDefault()}
-        onclick={togglePlacement}
-        aria-pressed={wantsBoard}
-        title={wantsBoard ? $t('video.placePanel') : $t('video.placeBoard')}
-        aria-label={wantsBoard ? $t('video.placePanel') : $t('video.placeBoard')}>{wantsBoard ? '⇲' : '⇱'}</button
-    >
-    {#if onBoard}
+    {#if !inTheatre}
+        {#if ontheatre}
+            <button
+                class="video-dock-place video-dock-theatre"
+                data-testid="video-theatre"
+                onmousedown={(event) => event.preventDefault()}
+                onclick={ontheatre}
+                title={$t('theatre.enter')}
+                aria-label={$t('theatre.enter')}
+                ><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"
+                    ><path d="M3 9V5a2 2 0 0 1 2-2h4M15 3h4a2 2 0 0 1 2 2v4M21 15v4a2 2 0 0 1-2 2h-4M9 21H5a2 2 0 0 1-2-2v-4" /></svg
+                ></button
+            >
+        {/if}
         <button
-            class="video-dock-place video-dock-swap"
-            data-testid="video-swap-side"
+            class="video-dock-place"
+            data-testid="video-placement"
             onmousedown={(event) => event.preventDefault()}
-            onclick={swapVideoSide}
-            title={$t('video.swapSide')}
-            aria-label={$t('video.swapSide')}>⇄</button
+            onclick={togglePlacement}
+            aria-pressed={wantsBoard}
+            title={wantsBoard ? $t('video.placePanel') : $t('video.placeBoard')}
+            aria-label={wantsBoard ? $t('video.placePanel') : $t('video.placeBoard')}>{wantsBoard ? '⇲' : '⇱'}</button
         >
+        {#if onBoard}
+            <button
+                class="video-dock-place video-dock-swap"
+                data-testid="video-swap-side"
+                onmousedown={(event) => event.preventDefault()}
+                onclick={swapVideoSide}
+                title={$t('video.swapSide')}
+                aria-label={$t('video.swapSide')}>⇄</button
+            >
+        {/if}
     {/if}
 </div>
 
@@ -123,6 +144,16 @@
     }
     .video-dock-swap {
         right: 38px;
+    }
+    /* Left of the placement button, one slot further when the swap button shows. */
+    .video-dock-theatre {
+        right: 38px;
+        display: flex;
+        align-items: center;
+        height: 1.6em;
+    }
+    .video-dock.on-board .video-dock-theatre {
+        right: 70px;
     }
     .video-dock:hover .video-dock-place,
     .video-dock-place:focus-visible {
