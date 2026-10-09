@@ -6,6 +6,32 @@
 // gesture, and the player is left on a black frame that a click no longer starts. The asked
 // instant is kept and reported, and the first playing state starts from there.
 var player, ready = false, want = null;
+// The sound the viewer chose (mute, volume) is read from the player and put back after every
+// speed change, which can reset it: a muted video must stay muted. `settle` holds the reading
+// still while a speed change settles.
+var sound = null, settle = 0;
+function readSound() { return { muted: !!player.isMuted(), volume: player.getVolume() }; }
+function restoreSound() {
+    if (!ready || !sound) return;
+    if (!!player.isMuted() !== sound.muted) { if (sound.muted) player.mute(); else player.unMute(); }
+    if (typeof sound.volume === 'number' && player.getVolume() !== sound.volume) player.setVolume(sound.volume);
+}
+function watchSound() {
+    if (Date.now() < settle) { restoreSound(); return; }
+    var s = readSound();
+    if (!sound || s.muted !== sound.muted || s.volume !== sound.volume) {
+        sound = s;
+        post({ type: 'volume', muted: s.muted, volume: s.volume });
+    }
+}
+function setRate(r) {
+    if (!sound) sound = readSound();
+    settle = Date.now() + 1500;
+    player.setPlaybackRate(r);
+    restoreSound();
+    setTimeout(restoreSound, 100);
+    setTimeout(restoreSound, 500);
+}
 function onYouTubeIframeAPIReady() {
     player = new YT.Player('p', {
         width: '100%', height: '100%', videoId: '__VIDEO_ID__', playerVars: { playsinline: 1, rel: 0, fs: 0 },
@@ -15,7 +41,7 @@ function onYouTubeIframeAPIReady() {
                 if (want !== null) seek(want);
                 post({ type: 'ready', duration: player.getDuration(), rates: player.getAvailablePlaybackRates() });
             },
-            onPlaybackRateChange: function (e) { post({ type: 'rate', rate: e.data }); },
+            onPlaybackRateChange: function (e) { restoreSound(); post({ type: 'rate', rate: e.data }); },
             onStateChange: function (e) {
                 if (e.data === 1 && want !== null) {
                     var w = want;
@@ -44,7 +70,7 @@ try { origin = new URLSearchParams(location.search).get('origin') || ''; } catch
 if (!/^https?:\/\//.test(origin)) { try { origin = new URL(document.referrer).origin; } catch (e) {} }
 var checked = /^https?:\/\//.test(origin);
 function post(m) { m.source = 'blunderdb-yt'; parent.postMessage(m, checked ? origin : '*'); }
-setInterval(function () { if (ready) post({ type: 'time', time: now() }); }, 250);
+setInterval(function () { if (ready) { post({ type: 'time', time: now() }); watchSound(); } }, 250);
 addEventListener('message', function (e) {
     if (e.source !== parent || (checked && e.origin !== origin)) return;
     var m = e.data || {};
@@ -52,6 +78,7 @@ addEventListener('message', function (e) {
     if (!ready) return;
     if (m.type === 'play') player.playVideo();
     else if (m.type === 'pause') player.pauseVideo();
-    else if (m.type === 'rate') { player.setPlaybackRate(m.rate); post({ type: 'rate', rate: player.getPlaybackRate() }); }
+    else if (m.type === 'volume') { sound = { muted: !!m.muted, volume: m.volume }; restoreSound(); }
+    else if (m.type === 'rate') { setRate(m.rate); post({ type: 'rate', rate: player.getPlaybackRate() }); }
 });
 </script></body></html>
