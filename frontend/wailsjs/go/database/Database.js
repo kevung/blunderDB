@@ -298,6 +298,10 @@ export function CreateLesson(arg1, arg2) {
   return window['go']['database']['Database']['CreateLesson'](arg1, arg2);
 }
 
+export function CreateLivingCollection(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['CreateLivingCollection'](arg1, arg2, arg3);
+}
+
 export function CreateRencontre(arg1, arg2, arg3, arg4) {
   return window['go']['database']['Database']['CreateRencontre'](arg1, arg2, arg3, arg4);
 }
@@ -452,6 +456,10 @@ export function EnterResult(arg1, arg2, arg3, arg4, arg5, arg6) {
 
 export function EntrySuggestions() {
   return window['go']['database']['Database']['EntrySuggestions']();
+}
+
+export function EvaluateCollection(arg1, arg2) {
+  return window['go']['database']['Database']['EvaluateCollection'](arg1, arg2);
 }
 
 export function ExplainDecision(arg1, arg2) {

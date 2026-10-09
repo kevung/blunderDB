@@ -156,7 +156,7 @@ func lockGuardPopulatedFixture(t *testing.T) []byte {
 	if err != nil {
 		t.Fatalf("CreateAnkiDeck: %v", err)
 	}
-	if err := db.SyncAnkiDeck(deckID); err != nil {
+	if _, err := db.SyncAnkiDeck(deckID); err != nil {
 		t.Fatalf("SyncAnkiDeck: %v", err)
 	}
 	if err := db.SaveFilter("guard filter", "s"); err != nil {

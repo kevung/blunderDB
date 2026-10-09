@@ -167,6 +167,8 @@ export function CreateDuel(arg1:duel.Settings):Promise<database.DuelState>;
 
 export function CreateLesson(arg1:string,arg2:string):Promise<number>;
 
+export function CreateLivingCollection(arg1:string,arg2:string,arg3:string):Promise<number>;
+
 export function CreateRencontre(arg1:string,arg2:string,arg3:string,arg4:number):Promise<service.RencontreView>;
 
 export function CreateStudyDeck(arg1:string,arg2:Array<number>):Promise<number>;
@@ -244,6 +246,8 @@ export function EnterParticipants(arg1:number,arg2:string):Promise<void>;
 export function EnterResult(arg1:number,arg2:string,arg3:string,arg4:number,arg5:number,arg6:string):Promise<service.DirectionView>;
 
 export function EntrySuggestions():Promise<Array<service.EntrySuggestion>>;
+
+export function EvaluateCollection(arg1:number,arg2:number):Promise<storage.CollectionEvaluation>;
 
 export function ExplainDecision(arg1:number,arg2:string):Promise<engine.Explanation>;
 
@@ -763,7 +767,7 @@ export function SuspendDuel(arg1:number):Promise<void>;
 
 export function SwapMatchPlayers(arg1:number):Promise<void>;
 
-export function SyncAnkiDeck(arg1:number):Promise<void>;
+export function SyncAnkiDeck(arg1:number):Promise<storage.DeckSync>;
 
 export function SyncAnkiDeckWithPositions(arg1:number,arg2:Array<number>):Promise<void>;
 

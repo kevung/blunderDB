@@ -6683,6 +6683,30 @@ export namespace storage {
 	        this.aliases = source["aliases"];
 	    }
 	}
+	export class CollectionEvaluation {
+	    collectionId: number;
+	    living: boolean;
+	    filterQuery: string;
+	    positionIds: number[];
+	    total: number;
+	    cap: number;
+	    truncated: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new CollectionEvaluation(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.collectionId = source["collectionId"];
+	        this.living = source["living"];
+	        this.filterQuery = source["filterQuery"];
+	        this.positionIds = source["positionIds"];
+	        this.total = source["total"];
+	        this.cap = source["cap"];
+	        this.truncated = source["truncated"];
+	    }
+	}
 	export class Comparison {
 	    verdict: string;
 	    delta: number;
@@ -6760,6 +6784,38 @@ export namespace storage {
 	        this.duration_ms = source["duration_ms"];
 	        this.away = source["away"];
 	    }
+	}
+	export class DeckSync {
+	    deckId: number;
+	    source?: CollectionEvaluation;
+	
+	    static createFrom(source: any = {}) {
+	        return new DeckSync(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.deckId = source["deckId"];
+	        this.source = this.convertValues(source["source"], CollectionEvaluation);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
 	}
 	export class DeclaredBot {
 	    player: number;

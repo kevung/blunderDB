@@ -54,6 +54,14 @@ type deckPositionReq struct {
 	PositionID int64 `json:"positionId"`
 }
 
+// deckSyncResp is the report of a sync. ok stays so that a client reading
+// only it keeps working.
+type deckSyncResp struct {
+	OK     bool                          `json:"ok"`
+	DeckID int64                         `json:"deckId"`
+	Source *storage.CollectionEvaluation `json:"source,omitempty"`
+}
+
 type deckSyncPositionsReq struct {
 	DeckID      int64   `json:"deckId"`
 	PositionIDs []int64 `json:"positionIds"`
@@ -130,8 +138,14 @@ func (s *Server) ankiRoutes() []route {
 		{http.MethodPost, "/v1/anki.resetDeck", rpcVoid(func(ctx context.Context, scope string, req deckIDReq) error {
 			return as().ResetDeck(ctx, scope, req.DeckID)
 		})},
-		{http.MethodPost, "/v1/anki.sync", rpcVoid(func(ctx context.Context, scope string, req deckIDReq) error {
-			return as().Sync(ctx, scope, req.DeckID)
+		// Un paquet adossé à une collection vivante réévalue sa requête ici ;
+		// ok reste pour qu'un client qui ne lit que lui fonctionne.
+		{http.MethodPost, "/v1/anki.sync", rpc(func(ctx context.Context, scope string, req deckIDReq) (deckSyncResp, error) {
+			report, err := storage.SyncDeck(ctx, s.opts.Storage, scope, req.DeckID)
+			if err != nil {
+				return deckSyncResp{}, err
+			}
+			return deckSyncResp{OK: true, DeckID: report.DeckID, Source: report.Source}, nil
 		})},
 		{http.MethodPost, "/v1/anki.syncWithPositions", rpcVoid(func(ctx context.Context, scope string, req deckSyncPositionsReq) error {
 			return as().SyncWithPositions(ctx, scope, req.DeckID, req.PositionIDs)

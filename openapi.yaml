@@ -811,7 +811,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/okResp"
+                $ref: "#/components/schemas/deckSyncResp"
   /v1/anki.syncWithPositions:
     post:
       operationId: anki.syncWithPositions
@@ -994,6 +994,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/collections.evaluate:
+    post:
+      operationId: collections.evaluate
+      tags: [collections]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/collectionEvaluateReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/storage_CollectionEvaluation"
+                nullable: true
   /v1/collections.freeze:
     post:
       operationId: collections.freeze
@@ -7696,6 +7714,18 @@ components:
           type: string
         description:
           type: string
+        filterQuery:
+          type: string
+          nullable: true
+    collectionEvaluateReq:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        limit:
+          type: integer
+          format: int32
     collectionFilterReq:
       type: object
       properties:
@@ -7865,6 +7895,17 @@ components:
           items:
             type: integer
             format: int64
+    deckSyncResp:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        deckId:
+          type: integer
+          format: int64
+        source:
+          $ref: "#/components/schemas/storage_CollectionEvaluation"
+          nullable: true
     deckUpdateReq:
       type: object
       properties:
@@ -9095,6 +9136,9 @@ components:
     storage_Collection:
       type: object
       description: "Opaque: see the Go type storage.Collection (defined outside internal/server, not expanded here)."
+    storage_CollectionEvaluation:
+      type: object
+      description: "Opaque: see the Go type storage.CollectionEvaluation (defined outside internal/server, not expanded here)."
     storage_Counts:
       type: object
       description: "Opaque: see the Go type storage.Counts (defined outside internal/server, not expanded here)."

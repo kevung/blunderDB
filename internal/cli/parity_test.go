@@ -470,6 +470,8 @@ var databaseParity = map[string]parityEntry{
 	"IsPositionOnPile":                  {CLI: "collection pile", Server: "/v1/pile.state"},
 	"PileCollectionID":                  {CLI: "collection pile", Why: "the Pile's id, read by the GUI to open it; the daemon lists collections"},
 	"FreezeCollection":                  {CLI: "collection freeze", Server: "/v1/collections.freeze"},
+	"CreateLivingCollection":            {CLI: "collection create --query", Server: "/v1/collections.create"},
+	"EvaluateCollection":                {CLI: "collection evaluate", Server: "/v1/collections.evaluate"},
 	"StudyImpact":                       {CLI: "list --type study", Why: whyStudyImpact},
 	"SimilarPositions":                  {CLI: "search --query 's like42'", Server: "/v1/positions.similar"},
 	"RankPositionsByFilters":            {CLI: "search --query 's like42'", Server: "/v1/positions.similar"},
