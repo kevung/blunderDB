@@ -5,7 +5,7 @@
 // started yet is not touched: seekTo there tries to autoplay, the webview refuses it without a
 // gesture, and the player is left on a black frame that a click no longer starts. The asked
 // instant is kept and reported, and the first playing state starts from there.
-var player, ready = false, want = null;
+var player, ready = false, want = null, wasMuted = false, muteWindow = 0;
 function onYouTubeIframeAPIReady() {
     player = new YT.Player('p', {
         width: '100%', height: '100%', videoId: '__VIDEO_ID__', playerVars: { playsinline: 1, rel: 0, fs: 0 },
@@ -15,7 +15,11 @@ function onYouTubeIframeAPIReady() {
                 if (want !== null) seek(want);
                 post({ type: 'ready', duration: player.getDuration(), rates: player.getAvailablePlaybackRates() });
             },
-            onPlaybackRateChange: function (e) { post({ type: 'rate', rate: e.data }); },
+            onPlaybackRateChange: function (e) {
+                // The webview rewrites the mute of its media element on a speed change, even
+                // when the player keeps reporting muted: a mute asked just before is put back.
+                if (Date.now() < muteWindow && wasMuted) { if (player.isMuted()) player.unMute(); player.mute(); }
+                post({ type: 'rate', rate: e.data }); },
             onStateChange: function (e) {
                 if (e.data === 1 && want !== null) {
                     var w = want;
@@ -52,6 +56,6 @@ addEventListener('message', function (e) {
     if (!ready) return;
     if (m.type === 'play') player.playVideo();
     else if (m.type === 'pause') player.pauseVideo();
-    else if (m.type === 'rate') { player.setPlaybackRate(m.rate); post({ type: 'rate', rate: player.getPlaybackRate() }); }
+    else if (m.type === 'rate') { wasMuted = player.isMuted(); muteWindow = Date.now() + 1000; player.setPlaybackRate(m.rate); post({ type: 'rate', rate: player.getPlaybackRate() }); }
 });
 </script></body></html>
