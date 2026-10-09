@@ -6,7 +6,24 @@ Chaque tranche livre sa documentation (`raccourcis.rst`, `manuel.rst` et leurs h
 règles de `doc/CLAUDE.md`). Modèle : Opus pour T1 (règle silencieuse : un dé mal choisi reste
 un coup légal), Sonnet pour T2-T5.
 
-## T1 — La grammaire, pure, et son câblage commun
+## T1 — La grammaire, pure, et son câblage commun (faite)
+
+Livrée derrière un interrupteur par mode, pour qu'aucun mode ne change avant sa tranche : un mode
+passe à la grammaire en armant son coup par `armBoardMove(play, validate)` (`quizPlayStore.js`),
+qui pose `quizPlayValidateStore`. Rappel posé, `boardInteractions` joue le clic de
+`boardMove.playClickedChecker` (pression-relâché : clic sur place, glissé ailleurs via `dragStep`),
+`diceClick` sur les dés, `boardRightClick` au clic droit du damier ; `Board.svelte` dessine les dés
+dans l'ordre `swapped` avec `diceShade` (opacité par dé), n'allume plus de cible et retire
+*Recommencer* du menu. Rappel nul : comportement inchangé. Le jet du coup est `play.rolled`,
+sinon les dés de la position. En conséquence :
+- `quizPlayTargetsStore`, `selectSource` et la branche source/destination de `quizClick` restent
+  tant qu'un mode s'en sert ; la dernière tranche les retire.
+- La documentation utilisateur (`raccourcis.rst`, `manuel.rst`, `.po`) n'a pas changé en T1 :
+  chaque tranche décrit la grammaire pour son mode quand elle le bascule.
+- Le Duel garde `usedDice` (sans demi-voile ni dés gris d'un coup partiel) jusqu'à T2, qui passe
+  à `diceShade`.
+
+Plan d'origine :
 
 - Nouveau `frontend/src/services/boardMove.js` : `orderedDice`, `spentDice`, `usedDice`
   (avec dés gris d'un coup partiel forcé et d'une danse, ADR-0086 §5, et le demi-voile du
@@ -51,7 +68,8 @@ un coup légal), Sonnet pour T2-T5.
 
 - `frontend/src/services/ankiBoardAnswer.js` : `validatePlay` = `validateBoardAnswer(card)`.
 - `frontend/src/components/AnkiPanel.svelte` : bouton *Valider* (`anki-board-validate`)
-  retiré ; Entrée valide le coup achevé (à ajouter si le panneau ne la lie pas déjà).
+  retiré ; Entrée valide le coup achevé, comme le clic sur les dés (décision : à ajouter si le
+  panneau ne la lie pas déjà).
 - Tests : `ankiBoardAnswer.test.js`, `frontend/tests/e2e/anki-review-session.spec.js`.
 - Doc : `manuel.rst` (Anki, réponse au plateau), `raccourcis.rst` « Panneau Anki », `.po`.
 
@@ -98,6 +116,8 @@ Mécanisme existant :
 Travail :
 - `Board.svelte` : entrée « Évaluer dans un nouvel onglet » (hors Duel) =
   `viewStore.addView()` puis `sendPositionToEval(getDisplayPosition())` dans la vue neuve.
+  L'onglet de la vue neuve s'appelle « Variante de #n », n étant le numéro de la vue d'origine
+  (clé i18n avec paramètre `n`).
 - `viewStore.js` / `modeMachine.js` : la vue neuve part en Eval sans que la vue d'origine
   perde sa position, sa liste ni son analyse ; un aller-retour entre les deux vues rend à
   chacune son plateau (le contexte Eval global ne doit pas fuir d'une vue à l'autre — le

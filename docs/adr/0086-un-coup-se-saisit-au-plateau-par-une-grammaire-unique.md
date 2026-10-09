@@ -53,8 +53,9 @@ et un coup achevé part seul en Transcription quand rien ne l'annonce.
    **Aucun coup légal** (danse) : les dés sont gris d'emblée.
 6. **Validation** : clic sur les dés quand le coup est achevé (`completedPlay`). Les
    équivalents clavier restent : Entrée (Entraînement, Anki, Transcription, Duel), Espace
-   (Duel). Les boutons *Valider* d'Entraînement et d'Anki sont retirés : les dés en tiennent
-   lieu. **Plus aucun coup ne part seul.**
+   (Duel). En Anki, Entrée valide le coup achevé comme le clic sur les dés. Les boutons
+   *Valider* d'Entraînement et d'Anki sont retirés : les dés en tiennent lieu. **Plus aucun
+   coup ne part seul.**
 7. **Transcription.** Le coup est validé par un clic sur les dés, ou par la saisie du jet
    suivant (premier chiffre) quand il est achevé. Un chiffre tapé sur un coup inachevé garde
    son sens clavier actuel : il valide le candidat présélectionné (ADR-0052 §2), qui contient
@@ -79,11 +80,16 @@ et un coup achevé part seul en Transcription quand rien ne l'annonce.
 10. **Analyse : aucune saisie de coup.** On y lit une position et son analyse ; jouer une
     variante se fait ailleurs. Le menu du plateau gagne **« Évaluer dans un nouvel onglet »** :
     une vue neuve (`viewStore.addView`) reçoit la position affichée en Eval (plateau
-    brouillon, `sendPositionToEval`), où l'on pose librement des variantes ; la vue d'origine
+    brouillon, `sendPositionToEval`), où l'on pose librement des variantes. Son onglet
+    s'appelle **« Variante de #n »**, n étant le numéro de la vue d'origine ; la vue d'origine
     garde sa position, sa liste et son analyse. *Évaluer cette position*, qui remplace la vue
     courante, reste à côté. Absent pendant un Duel (les vues y sont verrouillées).
 
 ## Conséquences
+
+- Les modes basculent un par un : un mode passe à la grammaire en armant son coup avec son
+  rappel de validation (`armBoardMove`, `quizPlayValidateStore`). Sans rappel, le plateau garde
+  la saisie source puis destination ; un coup désarmé efface le rappel.
 
 - `quizPlay.selectSource` et `quizPlayTargetsStore` (cibles allumées) n'ont plus d'appelant au
   plateau ; `playHop` reste l'unique point d'entrée d'un pas contraint.

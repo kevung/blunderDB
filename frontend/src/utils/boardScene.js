@@ -548,14 +548,16 @@ const USED_DIE_OPACITY = 0.35;
  * @param {BoardMetrics} geom
  * @param {BoardConfig} cfg
  * @param {BoardPosition} position
- * @param {boolean[] | null} [used] a die already played is drawn faded (a Duel's move)
+ * @param {(boolean|number)[] | null} [used] how much of each die is played, drawn faded: true or 1
+ *   fully, 0.5 half (a double's die after its first step)
  */
 export function drawDice(two, geom, cfg, position, used = null) {
     const side = sideLayout(geom, cfg, position.player_on_roll);
     const { diceSize, diceGap, diceY } = side;
     position.dice.forEach((die, index) => {
         const dieX = side.diceX + index * (diceSize + diceGap);
-        const opacity = used?.[index] ? USED_DIE_OPACITY : 1;
+        const spent = used?.[index] === true ? 1 : Number(used?.[index] ?? 0) || 0;
+        const opacity = 1 - spent * (1 - USED_DIE_OPACITY);
         const face = two.makeRectangle(dieX, diceY, diceSize, diceSize);
         face.fill = cfg.dice.fill;
         face.stroke = cfg.stroke; // follows the board border colour
@@ -711,7 +713,7 @@ export function drawPlayHighlights(two, geom, cfg, position, opts = {}) {
  * @param {BoardMetrics} geom
  * @param {BoardConfig} cfg
  * @param {BoardPosition} position
- * @param {{ text?: SceneText, offeredCube?: boolean, showPipcount?: boolean, diceUsed?: boolean[] | null, moves?: StepMove[] | null, play?: { targets?: Iterable<number>, selected?: number | null } }} [opts]
+ * @param {{ text?: SceneText, offeredCube?: boolean, showPipcount?: boolean, diceUsed?: (boolean|number)[] | null, moves?: StepMove[] | null, play?: { targets?: Iterable<number>, selected?: number | null } }} [opts]
  * @returns {CubeBox}
  */
 export function drawDynamicScene(two, geom, cfg, position, opts = {}) {
