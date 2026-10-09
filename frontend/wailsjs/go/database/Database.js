@@ -702,6 +702,10 @@ export function GetRencontre(arg1) {
   return window['go']['database']['Database']['GetRencontre'](arg1);
 }
 
+export function GetStatsBreakdownPositionCounts(arg1) {
+  return window['go']['database']['Database']['GetStatsBreakdownPositionCounts'](arg1);
+}
+
 export function GetStatsDateRange() {
   return window['go']['database']['Database']['GetStatsDateRange']();
 }

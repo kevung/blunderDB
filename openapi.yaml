@@ -6003,6 +6003,23 @@ paths:
               schema:
                 $ref: "#/components/schemas/storage_DirectionalBiases"
                 nullable: true
+  /v1/stats.breakdownPositionCounts:
+    post:
+      operationId: stats.breakdownPositionCounts
+      tags: [stats]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/statsComputeReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/storage_BreakdownPositionCounts"
   /v1/stats.compute:
     post:
       operationId: stats.compute
@@ -9180,6 +9197,9 @@ components:
     storage_AliasSuggestion:
       type: object
       description: "Opaque: see the Go type storage.AliasSuggestion (defined outside internal/server, not expanded here)."
+    storage_BreakdownPositionCounts:
+      type: object
+      description: "Opaque: see the Go type storage.BreakdownPositionCounts (defined outside internal/server, not expanded here)."
     storage_ClubPlayer:
       type: object
       description: "Opaque: see the Go type storage.ClubPlayer (defined outside internal/server, not expanded here)."

@@ -263,6 +263,7 @@ var databaseParity = map[string]parityEntry{
 	"GetPositionCollections":            {Server: "/v1/collections.collectionsOf", Why: "the GUI's 'in collections…' label; `collection show` lists the other direction"},
 	"GetPositionIDsByMatch":             {Server: "/v1/stats.positionIdsByMatch", Why: "the CLI selects a match's positions with `search --match-ids`, which filters and prints them"},
 	"GetPositionIDsByStatsSelection":    {Server: "/v1/stats.positionIdsBySelection", Why: "drill-down from a statistics figure to the board; the CLI's `search` takes the same filters directly"},
+	"GetStatsBreakdownPositionCounts":   {Server: "/v1/stats.breakdownPositionCounts", Why: "the clickable figures of the GUI's Breakdowns tab, each the length of a drill-down; the CLI's `search` takes the same filters directly"},
 	"GetPositionIDsByTournament":        {Server: "/v1/stats.positionIdsByTournament", Why: "the CLI selects a tournament's positions with `search --tournament-ids`, which filters and prints them"},
 	"GetPositionIndexMap":               {CLI: "collection show", Server: "/v1/collections.positionIndexMap"},
 	"GetPositionProvenance":             {Why: "the GUI's 'this position comes from matches…' tooltip; neither the CLI nor the daemon has a reader for it, and matches.movePositions covers the other direction"},

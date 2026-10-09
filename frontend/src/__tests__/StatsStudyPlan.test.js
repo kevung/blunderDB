@@ -2,11 +2,13 @@ import { describe, test, expect, vi, afterEach } from 'vitest';
 import { render, cleanup, screen, fireEvent } from '@testing-library/svelte';
 
 vi.mock('../services/studyQueueService.js', () => ({ startStudyPlanQueue: vi.fn() }));
+vi.mock('../services/positionLoader.js', () => ({ loadPositionsFromSelection: vi.fn() }));
 vi.mock('../services/recurringStudy.js', () => ({ quizOnPlan: vi.fn(), deckFromIds: vi.fn() }));
 
 import StatsStudyPlan from '../components/stats/StatsStudyPlan.svelte';
 import { studyPlanStore } from '../stores/statsStore.js';
 import { startStudyPlanQueue } from '../services/studyQueueService.js';
+import { loadPositionsFromSelection } from '../services/positionLoader.js';
 import { quizOnPlan, deckFromIds } from '../services/recurringStudy.js';
 
 afterEach(() => {
@@ -40,12 +42,14 @@ const plan = {
     Families: [family('blots', 0.1117, 0.0074, [412, 484]), family('gammon', 0.08, 0.001, [9])],
     Tentative: [{ ...family('point', 0.02, -0.01, [5]), Errors: 2 }],
     Unthemed: 41,
-    Unpriced: 3
+    Unpriced: 3,
+    UnthemedPositions: [{ PositionID: 71 }, { PositionID: 72 }],
+    UnpricedPositions: [{ PositionID: 81 }]
 };
 
 describe('StatsStudyPlan', () => {
     test('only unpriced errors: says how many were left out', () => {
-        studyPlanStore.set({ ...plan, Families: [], Tentative: [], Unthemed: 0, Unpriced: 7 });
+        studyPlanStore.set({ ...plan, Families: [], Tentative: [], Unthemed: 0, Unpriced: 7, UnpricedPositions: Array.from({ length: 7 }, (_, i) => ({ PositionID: i + 1 })) });
         render(StatsStudyPlan);
         expect(screen.getByTestId('plan-unpriced-only').textContent).toContain('7');
     });
@@ -63,7 +67,7 @@ describe('StatsStudyPlan', () => {
         studyPlanStore.set(plan);
         render(StatsStudyPlan);
         expect(screen.getAllByTestId('plan-family')).toHaveLength(2);
-        expect(screen.getByTestId('study-plan').textContent).toMatch(/\(2\)/);
+        expect(screen.getByTestId('plan-tentative').textContent).toMatch(/\(1\)/);
     });
 
     test('each family feeds the study queue, a quiz and a deck', async () => {
@@ -85,5 +89,20 @@ describe('StatsStudyPlan', () => {
         render(StatsStudyPlan);
         expect(screen.queryAllByTestId('plan-family')).toHaveLength(0);
         expect(screen.queryByTestId('plan-quiz-first')).toBeNull();
+    });
+
+    test('every position count loads exactly the positions it counts', async () => {
+        studyPlanStore.set(plan);
+        render(StatsStudyPlan);
+        const links = screen.getAllByTestId('plan-family-positions');
+        expect(links.map((l) => l.textContent)).toEqual(['2', '1']);
+        await fireEvent.click(links[0]);
+        expect(loadPositionsFromSelection).toHaveBeenLastCalledWith([412, 484]);
+        await fireEvent.click(screen.getByTestId('plan-tentative-positions'));
+        expect(loadPositionsFromSelection).toHaveBeenLastCalledWith([5]);
+        await fireEvent.click(screen.getByTestId('plan-unthemed'));
+        expect(loadPositionsFromSelection).toHaveBeenLastCalledWith([71, 72]);
+        await fireEvent.click(screen.getByTestId('plan-unpriced'));
+        expect(loadPositionsFromSelection).toHaveBeenLastCalledWith([81]);
     });
 });

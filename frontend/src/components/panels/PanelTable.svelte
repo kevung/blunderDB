@@ -443,6 +443,12 @@
         -webkit-user-select: none;
     }
 
+    /* A column declared `align: 'right'` holds numbers: its cells follow its header. */
+    .panel-table :global(td.align-right) {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+    }
+
     .panel-table :global(.index-cell) {
         text-align: center;
         color: var(--color-text-muted);

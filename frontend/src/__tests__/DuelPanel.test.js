@@ -65,6 +65,13 @@ describe('DuelPanel', () => {
         expect(/** @type {any} */ (startDuel).mock.calls[0][0].matchLength).toBe(7);
     });
 
+    test('Play ends the band; nothing suspended, no section', async () => {
+        const { container } = render(DuelPanel);
+        await tick();
+        expect(container.querySelector('[data-testid="panel-header"] .panel-actions [data-testid="duel-play"]')).not.toBeNull();
+        expect(container.querySelector('[data-testid="duel-suspended"]')).toBeNull();
+    });
+
     test('the suspended Duels resume', async () => {
         duelListStore.set([{ id: 9, label: 'Kévin vs gammonNet normal, 7 points', createdAt: '', updatedAt: '', open: false }]);
         const { getByText } = render(DuelPanel);
@@ -111,6 +118,8 @@ describe('DuelPanel', () => {
         await tick();
         expect(container.textContent).not.toContain('ab12cd34');
         expect(queryByTestId('duel-hint').getAttribute('title')).toContain('ab12cd34');
+        // The strip may cut the hint short: the tooltip gives it whole.
+        expect(queryByTestId('duel-hint').getAttribute('title')).toContain(queryByTestId('duel-hint').textContent.trim());
         // Without a Cadence there is no clock line, so no score either.
         expect(queryByTestId('duel-clocks')).toBeNull();
     });

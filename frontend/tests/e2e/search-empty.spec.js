@@ -18,14 +18,14 @@ test('recherche sans résultat : état vide dans le panneau, bouton primaire, so
     await expect(statusBar(page)).toContainText('3 / 3');
     await page.keyboard.press('Control+f');
 
-    await expect(page.getByRole('button', { name: 'Criteria', exact: true })).toBeVisible();
-    await expect(page.locator('.top-action-bar').getByRole('button', { name: 'Search', exact: true })).toBeVisible();
+    await expect(page.getByRole('tab', { name: 'Criteria', exact: true })).toBeVisible();
+    await expect(page.getByTestId('search-run')).toBeVisible();
     await expect(page.locator('.no-results')).toHaveCount(0);
 
     const pipDiff = page.locator('.filter-item', { hasText: 'Pipcount Difference' });
     await pipDiff.getByRole('checkbox').check();
     await pipDiff.getByRole('spinbutton').first().fill('10');
-    await page.locator('.top-action-bar').getByRole('button', { name: 'Search', exact: true }).click();
+    await page.getByTestId('search-run').click();
 
     const empty = page.locator('.no-results');
     await expect(empty).toContainText('No position matches');
@@ -36,12 +36,12 @@ test('recherche sans résultat : état vide dans le panneau, bouton primaire, so
     // The banner reports a search; listing the whole library ends that search too.
     await pipDiff.getByRole('checkbox').check();
     await pipDiff.getByRole('spinbutton').first().fill('10');
-    await page.locator('.top-action-bar').getByRole('button', { name: 'Search', exact: true }).click();
+    await page.getByTestId('search-run').click();
     await expect(page.locator('.no-results')).toBeVisible();
     await page.keyboard.press('Control+r');
     await expect(statusBar(page)).toContainText('3 / 3');
     // Ctrl+R lands on the Analysis tab once the library is listed; back on Search, the banner is gone.
-    const searchButton = page.locator('.top-action-bar').getByRole('button', { name: 'Search', exact: true });
+    const searchButton = page.getByTestId('search-run');
     // Not merely « Search hidden »: the reload passes through the Matches tab before Analysis.
     await expect(page.getByTestId('tab-analysis')).toHaveAttribute('aria-selected', 'true');
     await page.keyboard.press('Control+f');

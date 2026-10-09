@@ -34,9 +34,12 @@
     import StatsPlayersTab from './StatsPlayersTab.svelte';
     import StatsTrainingTab from './StatsTrainingTab.svelte';
     import StatsCorpusTab from './StatsCorpusTab.svelte';
+    import EmptyState from '../panels/EmptyState.svelte';
 
     /** Currently active inner tab. */
     let activeTab = $state('dashboard');
+    /** No match imported yet: the filter bar reports it, the match-based tabs show it. */
+    let dbEmpty = $state(false);
 
     $effect(() => {
         const filter = $statsFilterStore;
@@ -111,13 +114,14 @@
                 >{$t('mwc7.short')}</button
             >
         </div>
+        <span class="spacer"></span>
         <!-- Le rapport porte le filtre courant, donc il vit là où le
              filtre se règle. -->
         <button class="report-btn" onclick={() => exportHTMLReport()}>{$t('report.action')}</button>
         <button class="close-btn" onclick={handleClose} aria-label={$t('stats.closePanel')}>✕</button>
     </header>
 
-    <StatsFilterBar playersTab={activeTab === 'players'} />
+    <StatsFilterBar playersTab={activeTab === 'players'} bind:dbEmpty />
 
     <div class="tabs" role="tablist">
         <button class="tab-btn" class:active={activeTab === 'dashboard'} role="tab" aria-selected={activeTab === 'dashboard'} onclick={() => (activeTab = 'dashboard')}
@@ -139,6 +143,9 @@
         <!-- Le corpus calcule à la demande : il ne dépend pas du calcul du tableau de bord. -->
         {#if activeTab === 'corpus'}
             <StatsCorpusTab filter={$statsFilterStore} />
+        {:else if dbEmpty && activeTab !== 'training'}
+            <!-- The training tab reads the quizzes, not the matches: it has something to show. -->
+            <EmptyState text={$t('match.noMatchesImported')} />
         {:else if $statsLoadingStore}
             <p class="loading-msg">{$t('stats.loading')}</p>
         {:else if activeTab === 'dashboard'}
@@ -193,6 +200,11 @@
         font-size: var(--font-size-base);
         font-weight: 600;
         color: var(--color-text);
+    }
+
+    /* The title stays at its width (ADR-0085, G2): the metric toggle follows it, the actions
+       sit at the right end. */
+    .spacer {
         flex: 1;
     }
 

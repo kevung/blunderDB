@@ -9,6 +9,7 @@
     import StatsStudyPlan from './StatsStudyPlan.svelte';
     import StatsStudyEffect from './StatsStudyEffect.svelte';
     import StatsBiases from './StatsBiases.svelte';
+    import EmptyState from '../panels/EmptyState.svelte';
 
     /** @type {{ result: import('../../stores/statsStore.js').StatsResult|null, metric: string }} */
     let { result = null, metric = 'pr' } = $props();
@@ -121,7 +122,7 @@
 </script>
 
 {#if !result || result.Totals.NumDecisions === 0}
-    <p class="empty-state">{$t('stats.noDecisionsEmpty')}</p>
+    <EmptyState text={$t('stats.noDecisionsEmpty')} actions={false} />
 {:else}
     <!-- ── Main cards ────────────────────────────────────────────── -->
     <div class="cards-grid">
@@ -133,14 +134,14 @@
                 {#if card.kind === 'all' && cardInterval()}<span class="card-unit" title={$t('stats.intervalHint')}>{cardInterval()}</span>{/if}
             </button>
         {/each}
+        <!-- 7-point MWC loss: a figure of its own whatever the metric toggle, drawn as the
+             tiles beside it. It opens nothing, so it is not a button. -->
+        <div class="stat-card static" data-testid="stats-mwc7" title={mwc7Tooltip(result.MWC7, $t)}>
+            <span class="card-value">{fmtMwc7(result.MWC7)}</span>
+            <span class="card-label">{$t('mwc7.name')}</span>
+            {#if fmtMwc7Interval(result.MWC7)}<span class="card-unit">{fmtMwc7Interval(result.MWC7)}</span>{/if}
+        </div>
     </div>
-
-    <!-- ── 7-point MWC loss: a figure of its own, whatever the metric toggle ── -->
-    <p class="mwc7-line" title={mwc7Tooltip(result.MWC7, $t)}>
-        <span class="mwc7-name">{$t('mwc7.name')}</span>
-        <b class="mwc7-value">{fmtMwc7(result.MWC7)}</b>
-        {#if fmtMwc7Interval(result.MWC7)}<span class="mwc7-interval">{fmtMwc7Interval(result.MWC7)}</span>{/if}
-    </p>
 
     <!-- ── Totals line ──────────────────────────────────────────── -->
     <p class="stats-totals">
@@ -152,26 +153,9 @@
         {$t('stats.decisions')}
     </p>
 
-    <!-- ── Study plan: what to work on now (ADR-0077) ───────────────── -->
+    <!-- ── Study plan: what to work on now (ADR-0077). First after the
+         headline: it is the one block that ends in an action. ── -->
     <StatsStudyPlan />
-
-    <!-- ── Before/after the study, and which way the decisions err (ADR-0079) ── -->
-    <StatsStudyEffect />
-    <StatsBiases />
-
-    <!-- ── Rolling N ────────────────────────────────────────────── -->
-    <section class="rolling-section">
-        <h3 class="section-title">{$t('stats.rolling', { metric: metric === 'pr' ? 'PR' : 'MWC loss' })}</h3>
-        <div class="rolling-row">
-            {#each ROLLING_NS as n (n)}
-                {@const avail = rollingDecisions(n) >= n}
-                <button class="rolling-cell" class:unavailable={!avail} onclick={() => avail && openRollingN(n)} disabled={!avail} title="{rollingDecisions(n)} decisions used">
-                    <span class="rolling-n">N={n}</span>
-                    <span class="rolling-val">{avail ? fmtRolling(n) : '—'}</span>
-                </button>
-            {/each}
-        </div>
-    </section>
 
     <!-- ── Top blunders ─────────────────────────────────────────── -->
     {#if result.TopBlunders && result.TopBlunders.length > 0}
@@ -201,39 +185,39 @@
             </ol>
         </section>
     {/if}
+
+    <!-- ── Rolling N ────────────────────────────────────────────── -->
+    <section class="rolling-section">
+        <h3 class="section-title">{$t('stats.rolling', { metric: metric === 'pr' ? 'PR' : 'MWC loss' })}</h3>
+        <div class="rolling-row">
+            {#each ROLLING_NS as n (n)}
+                {@const avail = rollingDecisions(n) >= n}
+                <button class="rolling-cell" class:unavailable={!avail} onclick={() => avail && openRollingN(n)} disabled={!avail} title="{rollingDecisions(n)} decisions used">
+                    <span class="rolling-n">N={n}</span>
+                    <span class="rolling-val">{avail ? fmtRolling(n) : '—'}</span>
+                </button>
+            {/each}
+        </div>
+    </section>
+
+    <!-- ── Before/after the study, and which way the decisions err (ADR-0079):
+         readings, so below the blocks that act. ── -->
+    <StatsStudyEffect />
+    <StatsBiases />
 {/if}
 
 <style>
-    /* ── Empty state ── */
-    .empty-state {
-        color: var(--color-text-muted);
-        font-size: var(--font-size-base);
-        text-align: center;
-        padding: 32px 16px;
-    }
-
     /* ── Cards ── */
-    .mwc7-line {
-        font-size: var(--font-size-base);
-        padding: 8px 16px 0;
-        margin: 0;
-    }
-
-    .mwc7-name,
-    .mwc7-interval {
-        color: var(--color-text-muted);
-    }
-
     .cards-grid {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(4, 1fr);
         gap: 12px;
         padding: 16px 16px 0;
     }
 
     @media (max-width: 600px) {
         .cards-grid {
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(2, 1fr);
         }
     }
 
@@ -251,7 +235,11 @@
         transition: background 0.15s;
     }
 
-    .stat-card:hover {
+    .stat-card.static {
+        cursor: default;
+    }
+
+    .stat-card:not(.static):hover {
         background: color-mix(in srgb, var(--color-text) 6%, var(--color-surface-alt));
     }
 
@@ -289,7 +277,7 @@
     }
 
     .section-title {
-        font-size: var(--font-size-base);
+        font-size: var(--font-size-small);
         font-weight: 600;
         color: var(--color-text-muted);
         text-transform: uppercase;

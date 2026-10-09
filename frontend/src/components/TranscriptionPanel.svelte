@@ -1467,8 +1467,8 @@
     // ── what the panel reads ─────────────────────────────────────────────
 
     const columns = $derived([
-        { key: 'updated', label: $t('transcription.updated') },
-        { key: 'players', label: $t('transcription.players') },
+        { key: 'updated', label: $t('transcription.updated'), narrow: true },
+        { key: 'players', label: $t('transcription.players'), elastic: true },
         { key: 'length', label: $t('transcription.length'), narrow: true, align: 'right' },
         { key: 'actions', label: $t('transcription.actionCount'), narrow: true, align: 'right' },
         { key: 'match', label: $t('transcription.match'), narrow: true }
@@ -1816,7 +1816,15 @@
 
 <section class="transcription-panel" id="transcriptionPanel" aria-label={$t('transcription.title')} tabindex="-1" bind:this={panelEl}>
     {#if !draft}
-        <PanelTable rows={$transcriptionListStore} {columns} emptyText={$t('transcription.empty')} pointerRows onSelect={openDraft}>
+        <PanelTable
+            rows={$transcriptionListStore}
+            {columns}
+            emptyText={$t('transcription.empty')}
+            emptyActions={$databaseLoadedStore}
+            emptyAction={busy || !$databaseLoadedStore ? null : { label: $t('transcription.new'), onClick: openForm }}
+            pointerRows
+            onSelect={openDraft}
+        >
             {#snippet header()}
                 <span class="detail-title">{$t('transcription.title')}</span>
                 <NewButton label={$t('transcription.new')} title={$t('transcription.newTooltip')} disabled={busy || !$databaseLoadedStore} onclick={openForm} />
@@ -1856,7 +1864,8 @@
             <!-- Barre du brouillon : les gestes qui le font sortir, l'état du Match
                  et l'annulation à la souris (ADR-0048 décisions 2, 3 et 11). -->
             <div class="draft-bar">
-                <!-- Navigation à gauche, outils de saisie au centre, sortie du brouillon à droite. -->
+                <!-- Les outils de saisie suivent le contexte qu'ils modifient ; la sortie du
+                     brouillon est en bout de bande, l'action qui le termine la dernière (ADR-0085). -->
                 <div class="bar-group bar-nav">
                     <button class="new-btn" onclick={backToList}>{$t('transcription.backToList')}</button>
                     <span class="save-state" title={$t(exitState.key, exitState.params)}>{$t(exitState.key, exitState.params)}</span>
@@ -1887,8 +1896,6 @@
                     >
                 </div>
                 <div class="bar-group bar-exit">
-                    <button class="primary-btn" onclick={handleFinish} disabled={busy} title={$t('transcription.finishTooltip')}>{$t('transcription.finish')}</button>
-                    <button class="danger-btn" onclick={handleAbandon} disabled={busy} title={$t('transcription.abandonTooltip')}>{$t('transcription.abandon')}</button>
                     <button
                         class="icon-btn more-btn"
                         class:active={moreMenu !== null}
@@ -1899,6 +1906,8 @@
                         aria-expanded={moreMenu !== null}
                         data-testid="transcription-more-button">⋯</button
                     >
+                    <button class="danger-btn" onclick={handleAbandon} disabled={busy} title={$t('transcription.abandonTooltip')}>{$t('transcription.abandon')}</button>
+                    <button class="primary-btn" onclick={handleFinish} disabled={busy} title={$t('transcription.finishTooltip')}>{$t('transcription.finish')}</button>
                 </div>
             </div>
 
@@ -2202,8 +2211,8 @@
         background: var(--color-border);
         touch-action: none;
     }
-    /* Trois groupes, chacun d'un bloc : la saisie au centre, entre deux ailes de même
-       largeur ; l'état du brouillon cède la place (tronqué, entier au survol). */
+    /* Trois groupes, chacun d'un bloc : le contexte et ses outils à gauche, la sortie
+       poussée au bord droit ; l'état du brouillon cède la place (tronqué, entier au survol). */
     .draft-bar {
         display: flex;
         flex-wrap: wrap;
@@ -2221,12 +2230,12 @@
         min-width: 0;
     }
 
-    .bar-nav,
-    .bar-exit {
-        flex: 1 1 0;
+    .bar-nav {
+        flex: 0 1 auto;
     }
 
     .bar-exit {
+        flex: 1 0 auto;
         justify-content: flex-end;
     }
 

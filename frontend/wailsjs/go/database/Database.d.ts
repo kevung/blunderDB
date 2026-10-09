@@ -369,6 +369,8 @@ export function GetRandomAnkiCard(arg1:number,arg2:number):Promise<domain.AnkiRe
 
 export function GetRencontre(arg1:number):Promise<service.RencontreView>;
 
+export function GetStatsBreakdownPositionCounts(arg1:database.StatsFilter):Promise<Record<string, Record<string, database.BreakdownPositionCount>>>;
+
 export function GetStatsDateRange():Promise<database.StatsDateRange>;
 
 export function GetTimeErrors():Promise<Array<storage.TimeErrorRow>>;

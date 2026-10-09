@@ -17,3 +17,22 @@ export function trackWidth(node, onwidth) {
         destroy: () => observer.disconnect()
     };
 }
+
+/**
+ * Like trackWidth, for a chart that also takes the height its container
+ * gives it.
+ *
+ * @param {HTMLElement} node
+ * @param {(width: number, height: number) => void} onsize
+ */
+export function trackSize(node, onsize) {
+    let report = onsize;
+    report(node.clientWidth, node.clientHeight);
+    if (typeof ResizeObserver === 'undefined') return { update: (/** @type {(width: number, height: number) => void} */ fn) => (report = fn) };
+    const observer = new ResizeObserver(() => report(node.clientWidth, node.clientHeight));
+    observer.observe(node);
+    return {
+        update: (/** @type {(width: number, height: number) => void} */ fn) => (report = fn),
+        destroy: () => observer.disconnect()
+    };
+}

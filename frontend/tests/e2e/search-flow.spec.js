@@ -57,7 +57,7 @@ test('recherche : deux filtres numériques + structure, résultats, navigation, 
     await expect(page.getByTestId('status-bar-message')).toHaveText('Position pasted to board from clipboard');
 
     // Lancer
-    await page.locator('.top-action-bar').getByRole('button', { name: 'Search', exact: true }).click();
+    await page.getByTestId('search-run').click();
     await expect(statusBar(page)).toContainText('1 / 2');
     await expect(tab(page, 'analysis')).toHaveClass(/active/);
 
@@ -83,7 +83,7 @@ test('recherche : deux filtres numériques + structure, résultats, navigation, 
     // Réinitialisation des filtres
     await page.keyboard.press('Control+f');
     await expect(tab(page, 'search')).toHaveClass(/active/);
-    await page.locator('.top-action-bar').getByRole('button', { name: 'Clear' }).click();
+    await page.getByTestId('search-clear').click();
     await expect(pipDiff.getByRole('checkbox')).not.toBeChecked();
     await expect(absPips.getByRole('checkbox')).not.toBeChecked();
     await expect(page.locator('.active-count')).toHaveText('0 active');
@@ -103,7 +103,7 @@ test('recherche sans résultat : message et plateau d’édition conservé', asy
 
     await page.keyboard.press('Control+f');
     await filterItem(page, 'Pipcount Difference').getByRole('checkbox').check();
-    await page.locator('.top-action-bar').getByRole('button', { name: 'Search', exact: true }).click();
+    await page.getByTestId('search-run').click();
 
     await expect(page.getByTestId('status-bar-message')).toHaveText('No matching positions found');
     await expect(tab(page, 'search')).toHaveClass(/active/);

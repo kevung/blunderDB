@@ -210,15 +210,6 @@ const (
 	AnkiFilterPastDue AnkiCardFilter = "pastDue"
 )
 
-// Valid reports whether f names one of the counters above.
-func (f AnkiCardFilter) Valid() bool {
-	switch f {
-	case AnkiFilterAll, AnkiFilterNew, AnkiFilterLearning, AnkiFilterReview, AnkiFilterDue, AnkiFilterUnseen, AnkiFilterPastDue:
-		return true
-	}
-	return false
-}
-
 // Tournament represents a tournament that organizes matches
 type Tournament struct {
 	ID         int64   `json:"id"`

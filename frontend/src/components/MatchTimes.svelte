@@ -2,21 +2,18 @@
     // The time a match took, per player, and the decisions over the match.
     // Nothing is drawn for a match that recorded no time.
     import { t } from '../i18n';
-    import { indexAt, stepIndex } from '../utils/chartAxis.js';
     import { fmtDuration, fmtMean, timeBars } from '../utils/decisionTime.js';
-    import { trackWidth } from '../utils/trackWidth.js';
+    import MatchChart from './MatchChart.svelte';
 
     /** @type {{ summary: any, movePositions: any[], player1: string, player2: string, hovered?: number | null, onhover?: (moveId: number | null) => void, onselect?: (index: number) => void }} */
     let { summary, movePositions, player1, player2, hovered = null, onhover = () => {}, onselect = () => {} } = $props();
 
-    // Drawn at the sheet's pixel width, on the same axis as the loss plots below.
-    const H = 56;
-    let plotWidth = $state(0);
-    let W = $derived(Math.max(160, Math.round(plotWidth) || 320));
+    // On the same decision axis as the loss charts.
+    const MIN_H = 100;
 
     let bars = $derived(timeBars(movePositions));
     let peak = $derived(Math.max(1, ...bars.map((b) => b.ms)));
-    let slot = $derived(W / Math.max(1, movePositions.length));
+    let byIndex = $derived(new Map(bars.map((b) => [b.index, b])));
     let players = $derived([
         { name: player1, p: summary?.players?.[0] },
         { name: player2, p: summary?.players?.[1] }
@@ -30,19 +27,6 @@
     /** @param {number | null} i */
     const setFocus = (i) => onhover(i === null ? null : (movePositions[i]?.move_id ?? null));
 
-    /** @param {KeyboardEvent} e */
-    function onKey(e) {
-        const next = stepIndex(e.key, focus, movePositions.length);
-        if (next !== null) {
-            e.preventDefault();
-            setFocus(next);
-        } else if (e.key === 'Enter' && focus !== null) {
-            e.preventDefault();
-            onselect(focus);
-        } else if (e.key === 'Escape') {
-            setFocus(null);
-        }
-    }
     let known = $derived(players.some(({ p }) => p && p.checker_count + p.cube_count > 0));
 </script>
 
@@ -74,56 +58,63 @@
                 {/each}
             </tbody>
         </table>
-        <!-- A chart: walked with the arrow keys, opened with Enter. -->
-        <!-- svelte-ignore a11y_no_noninteractive_tabindex, a11y_no_noninteractive_element_interactions -->
-        <div
-            class="times-plot"
-            role="group"
-            tabindex="0"
-            aria-label={$t('match.timesChart')}
-            title={$t('match.chartOpen')}
-            data-testid="times-plot"
-            use:trackWidth={(w) => (plotWidth = w)}
-            onmousemove={(e) => setFocus(indexAt(e, movePositions.length))}
-            onmouseleave={() => setFocus(null)}
-            onclick={(e) => onselect(indexAt(e, movePositions.length))}
-            onkeydown={onKey}
-            onblur={() => setFocus(null)}
-        >
-            <svg class="times-chart" viewBox="0 0 {W} {H}" role="img" aria-label={$t('match.timesChart')}>
-                {#each bars as b (b.index)}
-                    {@const h = Math.max(1, (b.ms / peak) * (H - 2))}
-                    <rect
-                        class="bar"
-                        class:player1={b.player === 0}
-                        class:player2={b.player === 1}
-                        class:hot={b.index === focus}
-                        x={b.index * slot}
-                        y={H - h}
-                        width={Math.max(1, slot - 0.5)}
-                        height={h}
-                    >
-                        <title>{fmtDuration(b.ms)}</title>
-                    </rect>
-                {/each}
-                {#if focus !== null}
-                    <line class="cross" x1={(focus + 0.5) * slot} y1="0" x2={(focus + 0.5) * slot} y2={H} />
-                {/if}
-            </svg>
+        <div class="times-chart">
+            <MatchChart
+                testid="times-plot"
+                title={$t('match.timesPerDecision')}
+                label={$t('match.timesChart')}
+                minHeight={MIN_H}
+                {movePositions}
+                ticks={[
+                    { at: 1, text: fmtDuration(peak) },
+                    { at: 0, text: '0' }
+                ]}
+                {focus}
+                onfocus={setFocus}
+                {onselect}
+            >
+                {#snippet legend()}
+                    {#each players as { name }, i (i)}
+                        <span><span class="key" class:player1={i === 0} class:player2={i === 1}></span>{name}</span>
+                    {/each}
+                {/snippet}
+                {#snippet marks({ slot, H })}
+                    {#each bars as b (b.index)}
+                        {@const h = Math.max(1, (b.ms / peak) * (H - 2))}
+                        <rect
+                            class="bar"
+                            class:player1={b.player === 0}
+                            class:player2={b.player === 1}
+                            class:hot={b.index === focus}
+                            x={b.index * slot}
+                            y={H - h}
+                            width={Math.max(1, slot - 0.5)}
+                            height={h}
+                        />
+                    {/each}
+                {/snippet}
+                {#snippet tip(i)}
+                    {@const mp = movePositions[i]}
+                    {@const b = byIndex.get(i)}
+                    <div><b>{$t('match.lossWhere', { game: mp.game_number, move: mp.move_number })}</b> · {players[mp.player_on_roll === 1 ? 1 : 0].name}</div>
+                    <div>{b ? fmtDuration(b.ms) : '—'}</div>
+                {/snippet}
+            </MatchChart>
         </div>
     </div>
 {/if}
 
 <style>
     .match-times {
+        flex: 2 1 0;
         display: flex;
-        flex-wrap: wrap;
-        gap: 4px 12px;
-        align-items: flex-end;
-        padding: 6px 12px;
+        flex-direction: column;
+        gap: 4px;
+        padding: 6px 12px 0;
         font-size: var(--font-size-small);
     }
     .times-table {
+        align-self: flex-start;
         border-collapse: collapse;
     }
     .times-table th,
@@ -139,19 +130,25 @@
         text-align: left;
     }
     .times-chart {
-        display: block;
-        width: 100%;
-        height: 56px;
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        margin: 0 -12px;
     }
-    .times-plot {
-        flex: 1 1 100%;
-        width: 100%;
-        cursor: pointer;
-        outline-offset: 2px;
+    .key {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        margin-right: 5px;
+        vertical-align: middle;
     }
-    .cross {
-        stroke: var(--color-text-muted, currentColor);
-        stroke-width: 1;
+    .key.player1 {
+        background: var(--player1-color, currentColor);
+    }
+    .key.player2 {
+        background: var(--player2-color, currentColor);
+        opacity: 0.6;
     }
     .bar.hot {
         stroke: var(--color-text, currentColor);

@@ -53,6 +53,12 @@ import * as serviceModule from '../services/trainingTabService.js';
 import { quizPlayStore } from '../stores/quizPlayStore.js';
 import { newPlay, playHop } from '../services/quizPlay.js';
 import en from '../i18n/locales/en.json';
+import { buildScoreCard, scoreCardNumbers } from '../services/scoreCard.js';
+
+function scoresQuestion() {
+    const card = buildScoreCard(3, 5);
+    return { kind: 'scores', key: '3:5', card, numbers: scoreCardNumbers(card) };
+}
 import * as missedModule from '../services/trainingMissed.js';
 
 const service = vi.mocked(serviceModule);
@@ -94,6 +100,12 @@ describe('au repos', () => {
         expect(container.querySelector('[data-testid="training-start"]')).not.toBeNull();
         expect(container.querySelector('[data-testid="training-summary-scores"]')).not.toBeNull();
     });
+
+    test('« Démarrer » ferme la bande ; les réglages sont une grille libellé │ contrôle', () => {
+        const { container } = render(TrainingPanel);
+        expect(container.querySelector('[data-testid="panel-header"] .panel-actions [data-testid="training-start"]')).not.toBeNull();
+        expect(container.querySelector('[data-testid="form-grid"] [data-testid="training-exercise-scores"]')).not.toBeNull();
+    });
 });
 
 describe('pendant une question', () => {
@@ -106,11 +118,25 @@ describe('pendant une question', () => {
         expect(container.querySelector('[data-testid="training-start"]')).toBeNull();
     });
 
+    test('ses gestes sont dans la bande, la primaire en bout, toujours au même endroit', () => {
+        trainingSessionStore.set(askQuestion(newSession({ exercise: 'pips', seedSource: 'board' }), pipsQuestion(), 0));
+        const { container } = render(TrainingPanel);
+        const ids = [...container.querySelectorAll('[data-testid="panel-header"] .panel-actions button')].map((b) => b.dataset.testid);
+        expect(ids).toEqual(['training-quit', 'training-finish', 'training-reveal']);
+    });
+
     test('la consigne de cochage est à l’écran une fois révélée, pas seulement dans une infobulle', () => {
         const asked = askQuestion(newSession({ exercise: 'pips', seedSource: 'board' }), pipsQuestion(), 0);
         trainingSessionStore.set(reveal(asked, 1000));
         const { container } = render(TrainingPanel);
         expect(container.querySelector('.hint')).not.toBeNull();
+    });
+
+    test('à Scores, la consigne reste en infobulle une fois révélée, quand on coche ses fautes', () => {
+        const asked = askQuestion(newSession({ exercise: 'scores', seedSource: 'pool' }), scoresQuestion(), 0);
+        trainingSessionStore.set(reveal(asked, 1000));
+        const { getByTestId } = render(TrainingPanel);
+        expect(getByTestId('training-fault-hint').getAttribute('title')).toBe(en.training.scoresInstruction);
     });
 });
 
