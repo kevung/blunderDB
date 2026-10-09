@@ -226,19 +226,16 @@ const PLAY = {
 describe('une décision de pions', () => {
     beforeEach(() => vi.clearAllMocks());
 
-    test('se joue sur le plateau, et « Valider » attend un coup complet', async () => {
+    test('se joue sur le plateau : pas de bouton « Valider », les dés valident', async () => {
         trainingSessionStore.set(decisionSession('checker'));
         quizPlayStore.set(newPlay(POSITION, [PLAY]));
         const panel = render(TrainingPanel);
         expect(panel.container.textContent).toContain(en.training.playOnBoard);
-        const validate = /** @type {HTMLButtonElement} */ (panel.getByTestId('training-validate-move'));
-        expect(validate.disabled).toBe(true);
-
+        expect(panel.queryByTestId('training-validate-move')).toBeNull();
         quizPlayStore.update((s) => (s ? playHop(playHop(s, 6, 4), 6, 3) : s));
         await tick();
-        expect(validate.disabled).toBe(false);
-        validate.click();
-        expect(service.answerDecisionBoard).toHaveBeenCalled();
+        expect(panel.queryByTestId('training-validate-move')).toBeNull();
+        expect(service.answerDecisionBoard).not.toHaveBeenCalled();
     });
 
     test('« Annuler le pas » et « Recommencer » sont des boutons du panneau', async () => {

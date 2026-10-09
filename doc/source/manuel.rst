@@ -4579,19 +4579,18 @@ n'est jamais demandé ici, il a son propre exercice. Le journal compte les deux
 nombres à part : on peut bien estimer une position et mal lire son videau.
 
 *Décision* se **choisit**. Sur une décision de pions, **jouez le coup sur le
-damier** : cliquez le point de départ puis la destination, ou glissez le pion,
-autant de fois qu'il y a de dés. Le damier n'offre que ce qui est jouable — un
-clic qu'aucun coup légal n'autorise ne déplace rien. Dans le panneau,
-« Annuler le pas » revient d'un dé, « Recommencer » remet la position telle que
-la question la pose (le menu du clic droit propose aussi *Recommencer*), et
-« Valider », actif une fois le coup complet, le fait juger. Le champ de
-notation accepte aussi le coup tapé (``13/7 8/7``, la notation de la
-transcription) : les pas se posent sur le damier à chaque frappe, un champ
-rougi dit qu'un pas n'est pas jouable, et ENTRÉE valide le coup complet. Le
-panneau ayant le focus, RETOUR ARRIÈRE défait un pas, ÉCHAP recommence le coup et
-ENTRÉE le valide. Sur une décision de
-videau, cliquez *Pas de double*, *Double, prend* ou *Double, passe* : le clic
-est la réponse.
+damier** : un clic sur un pion le joue du premier dé non joué (le dé de gauche,
+puis celui de droite), ou du suivant si le premier ne le déplace pas ; si aucun
+dé ne le peut, rien ne bouge. Vous pouvez aussi glisser le pion. Un clic sur les
+dés intervertit les dés restant à jouer, et fait juger le coup une fois complet.
+Le clic droit sur le damier reprend les pas joués. Dans le panneau, « Annuler le
+pas » revient d'un dé et « Recommencer » remet la position telle que la question
+la pose. Le champ de notation accepte aussi le coup tapé (``13/7 8/7``, la
+notation de la transcription) : les pas se posent sur le damier à chaque frappe,
+un champ rougi dit qu'un pas n'est pas jouable, et ENTRÉE valide le coup
+complet. Le panneau ayant le focus, RETOUR ARRIÈRE défait un pas, ÉCHAP
+recommence le coup et ENTRÉE le valide. Sur une décision de videau, cliquez *Pas
+de double*, *Double, prend* ou *Double, passe* : le clic est la réponse.
 
 La correction distingue trois issues, et les confondre mentirait. Un **coup
 illégal** n'est pas un coup mal choisi — c'est une faute de règle. Un **coup
