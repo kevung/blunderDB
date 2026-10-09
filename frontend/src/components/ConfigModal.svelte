@@ -96,6 +96,27 @@
         { id: 'identity', labelKey: 'config.identityTitle' }
     ];
     let activeTab = $state('interface');
+    // The one scrolling box is shared by every tab; each tab's offset is kept aside so a tab
+    // reopens where it was left, and a tab never seen starts at the top.
+    let tabBody = $state(null);
+    let shownTab = 'interface';
+    let tabScroll = {};
+
+    $effect.pre(() => {
+        const next = activeTab;
+        if (next === shownTab) return;
+        if (tabBody) tabScroll[shownTab] = tabBody.scrollTop;
+        shownTab = next;
+    });
+
+    $effect(() => {
+        const next = activeTab;
+        if (tabBody) tabBody.scrollTop = tabScroll[next] ?? 0;
+    });
+
+    $effect(() => {
+        if (!visible) tabScroll = {};
+    });
 
     $effect(() => {
         if (visible) {
@@ -706,7 +727,7 @@
             {/each}
         </div>
 
-        <div class="tab-body">
+        <div class="tab-body" bind:this={tabBody}>
             {#if activeTab === 'interface'}
                 <!-- `system` par défaut : le bureau a déjà choisi clair ou sombre. -->
                 <div class="setting-row">
