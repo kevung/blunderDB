@@ -566,3 +566,222 @@ func TestMigrate_DecisionRecountUnderRLS(t *testing.T) {
 		})
 	}
 }
+
+// TestMigrate_AnsweredDoublesUnderRLS upgrades a two-tenant library of
+// generation 2 whose transcribed takes stand on the answerer's own redouble
+// row: each tenant's take must land on the ownerless cube, and a row that
+// tenant still holds by a comment must survive the purge — a retention
+// check that cannot see the tenant's rows would drop it.
+func TestMigrate_AnsweredDoublesUnderRLS(t *testing.T) {
+	ctx := context.Background()
+	s, conn, _ := openAsRLSOwner(t)
+	ms := s.Matches()
+	takes := map[string]int64{}
+	owned := map[string]int64{}
+	for i, scope := range []string{"1", "2"} {
+		matchID, err := ms.Save(ctx, scope, &domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: 7})
+		if err != nil {
+			t.Fatal(err)
+		}
+		gameID, err := ms.CreateGame(ctx, scope, &domain.Game{MatchID: matchID, GameNumber: 1})
+		if err != nil {
+			t.Fatal(err)
+		}
+		p := domain.InitializePosition()
+		p.DecisionType = domain.CubeAction
+		p.Board.Points[4+i].Checkers = 2
+		p.PlayerOnRoll = domain.Black
+		p.Cube = domain.Cube{Owner: domain.Black, Value: 1}
+		pid, err := s.Positions().Save(ctx, scope, &p)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if _, err := s.Comments().Add(ctx, scope, pid, "redouble"); err != nil {
+			t.Fatal(err)
+		}
+		// The opponent's Double precedes the answer, as a transcription
+		// records it.
+		d := p
+		d.Board.Points[14].Checkers = 1
+		d.PlayerOnRoll, d.Cube = domain.White, domain.Cube{Owner: domain.None}
+		did, err := s.Positions().Save(ctx, scope, &d)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if _, err := ms.CreateMove(ctx, scope, &domain.Move{GameID: gameID, MoveNumber: 1, MoveType: "cube",
+			PositionID: did, Player: 1, CubeAction: "Double"}); err != nil {
+			t.Fatal(err)
+		}
+		mv, err := ms.CreateMove(ctx, scope, &domain.Move{GameID: gameID, MoveNumber: 2, MoveType: "cube",
+			PositionID: pid, Player: -1, CubeAction: "Take"})
+		if err != nil {
+			t.Fatal(err)
+		}
+		takes[scope], owned[scope] = mv, pid
+		// Response rows: gammonNet's verdict goes, XG's stays.
+		for j, label := range []string{"gammonNet v1.6.0", "XG"} {
+			r := p
+			r.Board.Points[10+j].Checkers = 1
+			r.Cube.Owner = domain.None
+			rid, err := s.Positions().Save(ctx, scope, &r)
+			if err != nil {
+				t.Fatal(err)
+			}
+			a := domain.PositionAnalysis{AnalysisType: "DoublingCube", AnalysisEngineVersion: label,
+				DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{AnalysisDepth: "0-ply", AnalysisEngine: label}}
+			if err := s.Analyses().Save(ctx, scope, rid, &a); err != nil {
+				t.Fatal(err)
+			}
+		}
+	}
+	if err := s.ApplyRLS(ctx); err != nil {
+		t.Fatalf("ApplyRLS: %v", err)
+	}
+	// Back to a library from before the drop.
+	execUnforced(t, conn, nil, []string{`UPDATE metadata SET value = '2' WHERE key = 'go_backfills'`,
+		`DELETE FROM metadata WHERE key = 'gammonnet_response_analyses_dropped'`})
+
+	if err := s.Migrate(ctx); err != nil {
+		t.Fatalf("Migrate under RLS: %v", err)
+	}
+	assertForced(t, conn, "position", "move", "comment")
+	for _, scope := range []string{"1", "2"} {
+		asTenant(t, conn, scope, func() {
+			var owner int
+			var held int
+			if err := conn.QueryRow(ctx, `SELECT p.cube_owner, (SELECT count(*) FROM position WHERE id = $2)
+				   FROM move mv JOIN position p ON p.id = mv.position_id WHERE mv.id = $1`,
+				takes[scope], owned[scope]).Scan(&owner, &held); err != nil {
+				t.Fatal(err)
+			}
+			if owner != int(domain.None) {
+				t.Errorf("tenant %s: take stands on cube owner %d, want none", scope, owner)
+			}
+			if held != 1 {
+				t.Errorf("tenant %s: the commented redouble row was purged", scope)
+			}
+			var engines string
+			if err := conn.QueryRow(ctx, `SELECT string_agg(a.analysis_engine, ',') FROM analysis a
+				JOIN position p ON p.id = a.position_id WHERE p.cube_owner = -1`).Scan(&engines); err != nil {
+				t.Fatal(err)
+			}
+			if engines != "XG" {
+				t.Errorf("tenant %s: analyses left on response rows %q, want XG's alone", scope, engines)
+			}
+		})
+	}
+}
+
+// TestMigrate_ResponseAnalysesDroppedOnce: gammonNet's verdicts on take/pass
+// rows are dropped once per library. One given after the drop is the
+// doubler's, so a later generation of the Go-side passes leaves it.
+func TestMigrate_ResponseAnalysesDroppedOnce(t *testing.T) {
+	ctx := context.Background()
+	s, dsn := openMatchStore(t)
+	r := domain.InitializePosition()
+	r.DecisionType = domain.CubeAction
+	r.PlayerOnRoll, r.Cube = domain.White, domain.Cube{Owner: domain.None, Value: 1}
+	rid, err := s.Positions().Save(ctx, "", &r)
+	if err != nil {
+		t.Fatal(err)
+	}
+	a := domain.PositionAnalysis{AnalysisType: "DoublingCube", AnalysisEngineVersion: "gammonNet v1.7.0",
+		DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{AnalysisDepth: "0-ply", AnalysisEngine: "gammonNet v1.7.0"}}
+	if err := s.Analyses().Save(ctx, "", rid, &a); err != nil {
+		t.Fatal(err)
+	}
+	conn, err := pgx.Connect(ctx, dsn)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer conn.Close(ctx)
+	if _, err := conn.Exec(ctx, `UPDATE metadata SET value = '2' WHERE key = 'go_backfills'`); err != nil {
+		t.Fatal(err)
+	}
+	if err := s.Migrate(ctx); err != nil {
+		t.Fatalf("Migrate: %v", err)
+	}
+	if _, err := s.Analyses().Load(ctx, "", rid); err != nil {
+		t.Errorf("gammonNet's verdict given after the drop was dropped again: %v", err)
+	}
+}
+
+// TestMigrate_ResponseAnalysesDropWaitsForAFullView: a role that neither
+// owns the tables nor bypasses RLS sees one tenant at most. Its Migrate drops
+// none of gammonNet's verdicts on take/pass rows and leaves the drop's key
+// unwritten, so a start that sees every tenant drops them all at once.
+func TestMigrate_ResponseAnalysesDropWaitsForAFullView(t *testing.T) {
+	ctx := context.Background()
+	s, conn, ownerDSN := openAsRLSOwner(t)
+	for i, scope := range []string{"1", "2"} {
+		r := domain.InitializePosition()
+		r.DecisionType = domain.CubeAction
+		r.Board.Points[10+i].Checkers = 1
+		r.Cube = domain.Cube{Owner: domain.None, Value: 1}
+		rid, err := s.Positions().Save(ctx, scope, &r)
+		if err != nil {
+			t.Fatal(err)
+		}
+		a := domain.PositionAnalysis{AnalysisType: "DoublingCube", AnalysisEngineVersion: "gammonNet v1.6.0",
+			DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{AnalysisDepth: "0-ply", AnalysisEngine: "gammonNet v1.6.0"}}
+		if err := s.Analyses().Save(ctx, scope, rid, &a); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := s.ApplyRLS(ctx); err != nil {
+		t.Fatalf("ApplyRLS: %v", err)
+	}
+	u, err := url.Parse(ownerDSN)
+	if err != nil {
+		t.Fatal(err)
+	}
+	u.User = url.UserPassword("test", "test")
+	admin, err := pgx.Connect(ctx, u.String())
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, stmt := range []string{
+		`CREATE ROLE rls_app LOGIN PASSWORD 'app' NOSUPERUSER NOBYPASSRLS`,
+		`GRANT USAGE, CREATE ON SCHEMA public TO rls_app`,
+	} {
+		if _, err := admin.Exec(ctx, stmt); err != nil {
+			t.Fatal(err)
+		}
+	}
+	admin.Close(ctx)
+	execUnforced(t, conn, nil, []string{
+		`UPDATE metadata SET value = '2' WHERE key = 'go_backfills'`,
+		`DELETE FROM metadata WHERE key = 'gammonnet_response_analyses_dropped'`,
+		`GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO rls_app`,
+		`GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO rls_app`,
+	})
+	u.User = url.UserPassword("rls_app", "app")
+	app, err := pg.Open(ctx, u.String(), nil)
+	if err != nil {
+		t.Fatalf("Open as rls_app: %v", err)
+	}
+	defer func() { _ = app.Close() }()
+	if err := app.Migrate(ctx); err != nil {
+		t.Fatalf("Migrate as rls_app: %v", err)
+	}
+	var keys, verdicts int
+	if err := conn.QueryRow(ctx, `SELECT count(*) FROM metadata WHERE key = 'gammonnet_response_analyses_dropped'`).Scan(&keys); err != nil {
+		t.Fatal(err)
+	}
+	if keys != 0 {
+		t.Error("the drop's key was written by a role that sees part of the rows")
+	}
+	if _, err := conn.Exec(ctx, `ALTER TABLE analysis NO FORCE ROW LEVEL SECURITY`); err != nil {
+		t.Fatal(err)
+	}
+	err = conn.QueryRow(ctx, `SELECT count(*) FROM analysis WHERE analysis_engine LIKE 'gammonNet%'`).Scan(&verdicts)
+	if _, rerr := conn.Exec(ctx, `ALTER TABLE analysis FORCE ROW LEVEL SECURITY`); rerr != nil {
+		t.Fatal(rerr)
+	}
+	if err != nil {
+		t.Fatal(err)
+	}
+	if verdicts != 2 {
+		t.Errorf("%d of gammonNet's two verdicts on take/pass rows left, want both", verdicts)
+	}
+}

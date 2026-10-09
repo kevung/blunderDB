@@ -940,4 +940,4 @@ func legacyGetMatchDetailStats(d *Database, matchID int64) (*MatchDetailStats, e
 // cube before the double. Spelt with the action labels, apart from the
 // production expression, so the oracle does not inherit its mistakes.
 var oracleDecisionCubeSQL = `(1 << CASE WHEN ` + sqlshared.ActionLabelOrEmptySQL("mv.cube_action") +
-	` IN ('Take', 'Pass') AND COALESCE(p.cube_value, 0) > 0 THEN p.cube_value - 1 ELSE COALESCE(p.cube_value, 0) END)`
+	` IN ('Take', 'Pass') AND COALESCE(p.cube_value, 0) > 0 AND p.cube_owner = -1 THEN p.cube_value - 1 ELSE COALESCE(p.cube_value, 0) END)`

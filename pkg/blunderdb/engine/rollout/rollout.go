@@ -68,7 +68,8 @@ type Estimate struct {
 	// difference: to the best play for a checker rollout; for the cube, see
 	// CubeResult.
 	JSD float64 `json:"jsd"`
-	// Chances are the mean outcome, root's view, in [0,1], nested as
+	// Chances are the mean outcome, root's view (the answerer's for a
+	// take/pass position), in [0,1], nested as
 	// gammonnet's outputs are; not luck-corrected, and cubeful games end on
 	// a pass, so they are not true cubeless chances.
 	Chances [gammonnet.NumOutputs]float64 `json:"chances"`
@@ -180,6 +181,13 @@ func Run(ctx context.Context, pos domain.Position, s Settings, opt Options) (*Re
 	if err := s.Validate(); err != nil {
 		return nil, err
 	}
+	// A take/pass position is the second half of the doubler's cube
+	// decision: it is rolled out from the doubler's side before the double,
+	// as gammonNet evaluates it and every importer stores it.
+	answer := !hasDice(&pos) && gammonnet.IsResponsePosition(&pos)
+	if answer {
+		pos = gammonnet.DoublerPosition(pos)
+	}
 	gnPos, err := gammonnet.FromDomain(&pos)
 	if err != nil {
 		return nil, err
@@ -198,6 +206,7 @@ func Run(ctx context.Context, pos domain.Position, s Settings, opt Options) (*Re
 		rootCube: 1 << uint(pos.Cube.Value),
 		settings: s,
 		jacoby:   state == nil && pos.HasJacoby != 0,
+		answer:   answer,
 	}
 	if state != nil {
 		t.match = true
@@ -253,7 +262,7 @@ func Run(ctx context.Context, pos domain.Position, s Settings, opt Options) (*Re
 
 	accs, stop, runErr := t.rollAll(ctx, branches, res.Kind, opt.Progress, names, scale)
 	res.Stop = stop
-	res.Candidates = candidates(names, accs, scale)
+	res.Candidates = t.candidates(names, accs, scale)
 	for _, a := range accs {
 		res.Games = max(res.Games, a.n)
 	}
@@ -430,7 +439,7 @@ func (t *table) rollAll(ctx context.Context, branches []branch, kind Kind, progr
 		done += size
 
 		if progress != nil {
-			progress(Progress{Games: done, MaxGames: s.MaxGames, Candidates: candidates(names, accs, scale)})
+			progress(Progress{Games: done, MaxGames: s.MaxGames, Candidates: t.candidates(names, accs, scale)})
 		}
 		if s.JSDLimit > 0 && done >= s.MinGames && done < s.MaxGames {
 			if t.stopByJSD(kind, accs, active) {
@@ -538,6 +547,28 @@ func (t *table) nativeDoublePass() float64 {
 // correlate them positively, so this overstates the spread: conservative.
 func jsd(a, sa, b, sb float64) float64 {
 	return math.Abs(a-b) / math.Max(math.Sqrt(sa*sa+sb*sb), jsdFloor)
+}
+
+// candidates reads accs, its chances turned to the answerer when the
+// rollout is of a take/pass position.
+func (t *table) candidates(names []string, accs []accumulator, scale gammonnet.EquityScale) []Candidate {
+	out := candidates(names, accs, scale)
+	if t.answer {
+		for i := range out {
+			out[i].Chances = turnChances(out[i].Chances)
+		}
+	}
+	return out
+}
+
+// turnChances reads p, nested as gammonnet's outputs, from the opponent's
+// side.
+func turnChances(p [gammonnet.NumOutputs]float64) [gammonnet.NumOutputs]float64 {
+	var q [gammonnet.NumOutputs]float64
+	q[gammonnet.PWin] = 1 - p[gammonnet.PWin]
+	q[gammonnet.PWinGammon], q[gammonnet.PLoseGammon] = p[gammonnet.PLoseGammon], p[gammonnet.PWinGammon]
+	q[gammonnet.PWinBackgammon], q[gammonnet.PLoseBackgammon] = p[gammonnet.PLoseBackgammon], p[gammonnet.PWinBackgammon]
+	return q
 }
 
 func candidates(names []string, accs []accumulator, scale gammonnet.EquityScale) []Candidate {

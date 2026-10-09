@@ -245,6 +245,8 @@ describe('le texte .mat', () => {
         expect(document.querySelector('.mat-text')).toBeNull();
         expect(TranscriptionMAT).not.toHaveBeenCalled();
 
+        // .mat text and the export live in the bar's ⋯ menu.
+        await fireEvent.click(/** @type {HTMLElement} */ (document.querySelector('[data-testid="transcription-more-button"]')));
         await fireEvent.click(buttonNamed('.mat text'));
         await vi.waitFor(() => expect(document.querySelector('.mat-text')?.textContent).toBe(MAT));
     });

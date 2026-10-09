@@ -289,3 +289,11 @@ func (s *Storage) Migrate(ctx context.Context) error {
 func RescorePlayedDecisions(ctx context.Context, db *sql.DB) (int, error) {
 	return sqlshared.RescoreAllPlayedDecisions(ctx, binder{db}.shared())
 }
+
+// DropGammonNetResponseAnalyses empties the gammonNet verdicts stored on
+// take/pass positions (sqlshared.DropGammonNetResponseAnalyses): the
+// migration step that moves the transcribed answers runs it on the raw
+// handle.
+func DropGammonNetResponseAnalyses(ctx context.Context, db *sql.DB) (int, error) {
+	return sqlshared.DropGammonNetResponseAnalyses(ctx, binder{db}.shared())
+}

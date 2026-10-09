@@ -141,6 +141,8 @@ describe('la file des gestes', () => {
         await press('Digit2');
         await vi.waitFor(() => expect(ApplyTranscriptionGesture).toHaveBeenCalledTimes(1));
 
+        // .mat text and the export live in the bar's ⋯ menu.
+        await fireEvent.click(/** @type {HTMLElement} */ (document.querySelector('[data-testid="transcription-more-button"]')));
         await fireEvent.click(/** @type {HTMLElement} */ (buttonNamed('Export .mat')));
         await tick();
         expect(exportDraftMat).not.toHaveBeenCalled();

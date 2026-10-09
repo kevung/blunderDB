@@ -120,7 +120,12 @@
 
     /** @type {any} */
     let videoPane = $state(null);
-    let videoMenuOpen = $state(false);
+    // The bar's two menus open under their button; null while closed.
+    /** @type {{ x: number, y: number } | null} */
+    let videoMenu = $state(null);
+    /** @type {{ x: number, y: number } | null} */
+    let moreMenu = $state(null);
+    let videoMenuOpen = $derived(videoMenu !== null);
     // The video shows beside the board rather than in this panel.
     let videoOnBoard = $state(false);
     let youtubeOpen = $state(false);
@@ -599,16 +604,63 @@
         window.addEventListener('pointerup', up);
     }
 
+    /** @param {HTMLElement} button */
+    function below(button) {
+        const r = button.getBoundingClientRect();
+        return { x: r.left, y: r.bottom + 2 };
+    }
+
+    /** @param {MouseEvent} event */
+    function toggleVideoMenu(event) {
+        youtubeOpen = false;
+        videoMenu = videoMenu ? null : below(/** @type {HTMLElement} */ (event.currentTarget));
+    }
+
+    /** @param {MouseEvent} event */
+    function toggleMoreMenu(event) {
+        moreMenu = moreMenu ? null : below(/** @type {HTMLElement} */ (event.currentTarget));
+    }
+
+    function closeVideoMenu() {
+        videoMenu = null;
+        youtubeOpen = false;
+    }
+
+    // The bar's button says which video is attached: a file by its name, a link by its site.
+    let videoLabel = $derived.by(() => {
+        const src = videoSource;
+        if (!src) return '';
+        if (/(^|[/.])(youtube\.com|youtu\.be)(\/|$)/i.test(src)) return 'YouTube';
+        if (/^https?:\/\//i.test(src)) {
+            try {
+                return new URL(src).hostname;
+            } catch (_e) {
+                return src;
+            }
+        }
+        return src.split(/[\\/]/).pop() || src;
+    });
+
+    let videoMenuItems = $derived([
+        { label: $t('transcription.videoFile'), onClick: pickVideoFile },
+        { label: $t('transcription.videoYouTube'), onClick: toggleYouTubeField, keepOpen: true },
+        ...(videoSource ? [{ label: $t('transcription.videoDetach'), onClick: () => attachVideo('') }] : [])
+    ]);
+
+    let moreMenuItems = $derived([
+        { label: $t('transcription.matModal'), onClick: () => (matOpen = true) },
+        { label: $t('transcription.exportMat'), onClick: handleExport, disabled: busy }
+    ]);
+
     /** @param {string} source a local path or an http(s) URL; '' detaches */
     function attachVideo(source) {
-        videoMenuOpen = false;
-        youtubeOpen = false;
+        closeVideoMenu();
         sendGesture({ Kind: 'set_video', VideoSource: source });
         panelEl?.focus({ preventScroll: true });
     }
 
     async function pickVideoFile() {
-        videoMenuOpen = false;
+        closeVideoMenu();
         try {
             const path = await PickTranscriptionVideo();
             if (path) attachVideo(path);
@@ -1106,6 +1158,8 @@
     function handleKeyDown(event) {
         // Already handled: a dialog delegated on the app root runs first and claims its keys this way.
         if (event.defaultPrevented) return;
+        // An open menu keeps its keys: Enter and Space choose an item, digits do not reach the dice.
+        if (document.activeElement?.closest('[role="menu"]')) return;
         if (!draft) return handleListKeyDown(event);
         // Ctrl+Entrée (Ctrl+S est pris globalement) : lu avant panelKeyGuard,
         // qui laisse passer tout combo Ctrl, puis arrêté.
@@ -1780,48 +1834,51 @@
             <!-- Barre du brouillon : les gestes qui le font sortir, l'état du Match
                  et l'annulation à la souris (ADR-0048 décisions 2, 3 et 11). -->
             <div class="draft-bar">
-                <button class="new-btn" onclick={backToList}>{$t('transcription.backToList')}</button>
-                <span class="save-state">{$t(exitState.key, exitState.params)}</span>
-                <span class="bar-gap"></span>
-                <button
-                    class="icon-btn"
-                    class:active={$transcriptionBoardSwapStore}
-                    onclick={() => transcriptionBoardSwapStore.update((v) => !v)}
-                    title={$t('transcription.boardSwapTooltip')}
-                    aria-label={$t('transcription.boardSwap')}
-                    aria-pressed={$transcriptionBoardSwapStore}>⇅</button
-                >
-                <button class="icon-btn" onclick={() => runCommand(COMMAND.UNDO)} title={$t('transcription.undoTooltip')} aria-label={$t('transcription.undo')}>↶</button>
-                <button class="icon-btn" onclick={() => runCommand(COMMAND.REDO)} title={$t('transcription.redoTooltip')} aria-label={$t('transcription.redo')}>↷</button>
-                <button class="new-btn" class:active={videoMenuOpen} onclick={() => (videoMenuOpen = !videoMenuOpen)} title={$t('transcription.videoTooltip')} aria-expanded={videoMenuOpen}
-                    >{$t('transcription.video')}</button
-                >
-                <button class="new-btn" onclick={() => (metaOpen = !metaOpen)} title={$t('transcription.metadataTooltip')}>{$t('transcription.metadata')}</button>
-                <button class="new-btn" onclick={() => (matOpen = true)} title={$t('transcription.matModalTooltip')}>{$t('transcription.matModal')}</button>
-                <button class="new-btn" onclick={handleExport} disabled={busy} title={$t('transcription.exportMatTooltip')}>{$t('transcription.exportMat')}</button>
-                <button class="primary-btn" onclick={handleFinish} disabled={busy} title={$t('transcription.finishTooltip')}>{$t('transcription.finish')}</button>
-                <button class="danger-btn" onclick={handleAbandon} disabled={busy} title={$t('transcription.abandonTooltip')}>{$t('transcription.abandon')}</button>
-            </div>
-
-            {#if videoMenuOpen}
-                <div class="video-menu" data-testid="transcription-video-menu">
-                    <button class="new-btn" onclick={pickVideoFile}>{$t('transcription.videoFile')}</button>
-                    <button class="new-btn" onclick={toggleYouTubeField}>{$t('transcription.videoYouTube')}</button>
-                    {#if videoSource}<button class="new-btn" onclick={() => attachVideo('')}>{$t('transcription.videoDetach')}</button>{/if}
-                    {#if youtubeOpen}
-                        <form
-                            class="video-url"
-                            onsubmit={(event) => {
-                                event.preventDefault();
-                                submitYouTube();
-                            }}
-                        >
-                            <input type="url" bind:this={youtubeInput} bind:value={youtubeField} placeholder="https://www.youtube.com/watch?v=…" aria-label={$t('transcription.videoYouTube')} />
-                            <button class="new-btn" type="submit">{$t('transcription.videoAttach')}</button>
-                        </form>
-                    {/if}
+                <!-- Navigation à gauche, outils de saisie au centre, sortie du brouillon à droite. -->
+                <div class="bar-group bar-nav">
+                    <button class="new-btn" onclick={backToList}>{$t('transcription.backToList')}</button>
+                    <span class="save-state" title={$t(exitState.key, exitState.params)}>{$t(exitState.key, exitState.params)}</span>
                 </div>
-            {/if}
+                <div class="bar-group bar-entry">
+                    <button
+                        class="icon-btn"
+                        class:active={$transcriptionBoardSwapStore}
+                        onclick={() => transcriptionBoardSwapStore.update((v) => !v)}
+                        title={$t('transcription.boardSwapTooltip')}
+                        aria-label={$t('transcription.boardSwap')}
+                        aria-pressed={$transcriptionBoardSwapStore}>⇅</button
+                    >
+                    <button class="icon-btn" onclick={() => runCommand(COMMAND.UNDO)} title={$t('transcription.undoTooltip')} aria-label={$t('transcription.undo')}>↶</button>
+                    <button class="icon-btn" onclick={() => runCommand(COMMAND.REDO)} title={$t('transcription.redoTooltip')} aria-label={$t('transcription.redo')}>↷</button>
+                    <button
+                        class="new-btn menu-btn video-btn"
+                        class:active={videoMenuOpen}
+                        class:attached={!!videoSource}
+                        onclick={toggleVideoMenu}
+                        title={videoSource ? `${$t('transcription.videoTooltip')} — ${videoSource}` : $t('transcription.videoTooltip')}
+                        aria-haspopup="menu"
+                        aria-expanded={videoMenuOpen}
+                        data-testid="transcription-video-button"><span class="btn-label">{videoLabel || $t('transcription.video')}</span><span class="caret" aria-hidden="true">▾</span></button
+                    >
+                    <button class="new-btn" class:active={metaOpen} aria-pressed={metaOpen} onclick={() => (metaOpen = !metaOpen)} title={$t('transcription.metadataTooltip')}
+                        >{$t('transcription.metadata')}</button
+                    >
+                </div>
+                <div class="bar-group bar-exit">
+                    <button class="primary-btn" onclick={handleFinish} disabled={busy} title={$t('transcription.finishTooltip')}>{$t('transcription.finish')}</button>
+                    <button class="danger-btn" onclick={handleAbandon} disabled={busy} title={$t('transcription.abandonTooltip')}>{$t('transcription.abandon')}</button>
+                    <button
+                        class="icon-btn more-btn"
+                        class:active={moreMenu !== null}
+                        onclick={toggleMoreMenu}
+                        title={$t('transcription.moreActions')}
+                        aria-label={$t('transcription.moreActions')}
+                        aria-haspopup="menu"
+                        aria-expanded={moreMenu !== null}
+                        data-testid="transcription-more-button">⋯</button
+                    >
+                </div>
+            </div>
 
             {#if videoSource}
                 <!-- Replié tant qu'aucune source n'est attachée (ADR-0082 règle 3). -->
@@ -1937,6 +1994,26 @@
     {/if}
     {#if error}
         <p class="error">{error}</p>
+    {/if}
+    <!-- Hors de .draft : un conteneur de requêtes y fausserait la position fixe. -->
+    {#if videoMenu}
+        <ContextMenu x={videoMenu.x} y={videoMenu.y} items={videoMenuItems} onClose={closeVideoMenu} returnFocus={panelEl} testid="transcription-video-menu">
+            {#if youtubeOpen}
+                <form
+                    class="video-url"
+                    onsubmit={(event) => {
+                        event.preventDefault();
+                        submitYouTube();
+                    }}
+                >
+                    <input type="url" bind:this={youtubeInput} bind:value={youtubeField} placeholder="https://www.youtube.com/watch?v=…" aria-label={$t('transcription.videoYouTube')} />
+                    <button class="new-btn" type="submit">{$t('transcription.videoAttach')}</button>
+                </form>
+            {/if}
+        </ContextMenu>
+    {/if}
+    {#if moreMenu}
+        <ContextMenu x={moreMenu.x} y={moreMenu.y} items={moreMenuItems} onClose={() => (moreMenu = null)} returnFocus={panelEl} testid="transcription-more-menu" />
     {/if}
     {#if transcriptMenu}
         <ContextMenu x={transcriptMenu.x} y={transcriptMenu.y} items={transcriptMenuItems} onClose={() => (transcriptMenu = null)} />
@@ -2073,21 +2150,20 @@
         container-type: inline-size;
     }
 
-    .video-menu {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: 6px;
-        padding: 4px 0;
-    }
+    /* Le champ d'URL s'ouvre dans le menu Vidéo, sous ses entrées. */
     .video-url {
         display: flex;
-        gap: 6px;
-        flex: 1 1 260px;
+        gap: var(--space-1);
+        width: min(24rem, calc(100vw - 2 * var(--space-2)));
+        padding: var(--space-1) var(--space-2) var(--space-2);
+        box-sizing: border-box;
     }
     .video-url input {
         flex: 1;
         min-width: 0;
+    }
+    .video-url .new-btn {
+        margin-left: 0;
     }
     .video-slot {
         flex: 0 0 auto;
@@ -2102,25 +2178,90 @@
         background: var(--color-border);
         touch-action: none;
     }
+    /* Trois groupes, chacun d'un bloc : la saisie au centre, entre deux ailes de même
+       largeur ; l'état du brouillon cède la place (tronqué, entier au survol). */
     .draft-bar {
         display: flex;
         flex-wrap: wrap;
         align-items: center;
+        column-gap: var(--space-3);
+        row-gap: var(--space-1);
+        flex: 0 0 auto;
+    }
+
+    .bar-group {
+        display: flex;
+        align-items: center;
         gap: var(--space-1);
         flex: 0 0 auto;
+        min-width: 0;
+    }
+
+    .bar-nav,
+    .bar-exit {
+        flex: 1 1 0;
+    }
+
+    .bar-exit {
+        justify-content: flex-end;
+    }
+
+    /* Étroit (dock latéral) : navigation et sortie sur la première ligne, la saisie
+       sur la seconde, plutôt que trois lignes ou un état écrasé. */
+    @container (max-width: 640px) {
+        .bar-nav,
+        .bar-exit {
+            flex: 1 1 auto;
+        }
+
+        .bar-entry {
+            order: 3;
+            flex-basis: 100%;
+        }
+
+        .menu-btn {
+            max-width: 10em;
+        }
     }
 
     .draft-bar .new-btn {
         margin-left: 0;
+        white-space: nowrap;
     }
 
-    /* Gestes à droite, l'état à gauche près de son bouton. */
-    .bar-gap {
-        flex: 1 1 auto;
+    .new-btn.active {
+        border-color: var(--color-primary);
+        color: var(--color-primary);
     }
 
     .save-state {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
         color: var(--color-text-muted);
+    }
+
+    /* Le nom d'un fichier vidéo peut être long : le bouton le tronque. */
+    .menu-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-1);
+        max-width: 14em;
+    }
+
+    .menu-btn .btn-label {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .caret {
+        color: var(--color-text-muted);
+    }
+
+    .more-btn {
+        font-weight: 600;
     }
 
     /* Étroit : les trois régions se suivent ; les points de rupture les posent

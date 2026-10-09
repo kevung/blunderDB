@@ -70,6 +70,8 @@ describe('Dialogue du texte .mat', () => {
         transcriptionStore.set({ id: 1, annotated });
         render(TranscriptionPanel);
         await tick();
+        // .mat text and the export live in the bar's ⋯ menu.
+        await fireEvent.click(/** @type {HTMLElement} */ (document.querySelector('[data-testid="transcription-more-button"]')));
         await fireEvent.click(/** @type {HTMLElement} */ (buttonNamed('.mat text')));
         await tick();
         const overlay = /** @type {HTMLElement} */ (document.querySelector('.modal-overlay'));

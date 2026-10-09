@@ -127,12 +127,8 @@ func (b *Bot) Decide(ctx context.Context, d Decision) (Play, bool, error) {
 		// The policy reads a double from the doubler's side, on roll before
 		// the turn; the Decision is the taker's, with the cube turned.
 		pending = gammonnet.PendingTake
-		pos.PlayerOnRoll = 1 - d.Side
-		pos.Cube.Value--
-		pos.Cube.Owner = domain.None
-		if pos.Cube.Value > 0 {
-			pos.Cube.Owner = pos.PlayerOnRoll
-		}
+		pos.PlayerOnRoll = d.Side
+		pos = gammonnet.DoublerPosition(pos)
 	default:
 		return Play{}, false, fmt.Errorf("bot: no policy for a %q decision", d.Kind)
 	}

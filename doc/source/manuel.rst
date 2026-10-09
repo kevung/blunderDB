@@ -463,6 +463,14 @@ gammonNet à la profondeur d'analyse configurée. Un bouton **Analyser
 maintenant** relance manuellement le même rattrapage, utile pour une
 bibliothèque constituée avant l'existence de cette fonctionnalité.
 
+Une prise ou un refus est évalué par gammonNet sur la décision du doubleur,
+avant le double. Un verdict gammonNet écrit sur une telle réponse par une
+version antérieure de blunderDB jugeait le redouble du receveur : il est
+supprimé à l'ouverture de la bibliothèque, ou à l'import d'une base qui le
+porte. La prise ou le refus redevient une position sans analyse, absente des
+statistiques jusqu'à ce que **Analyser maintenant** (ou l'analyse automatique
+après import) la réévalue.
+
 Un second bouton, **Ré-analyser les positions périmées**, couvre le cas
 inverse : une position déjà analysée par gammonNet, mais dont l'analyse
 stockée a été écrite par une version de moteur plus ancienne que celle en
@@ -1838,9 +1846,11 @@ au-dessus du plateau : c'est là que le regard se trouve déjà quand on se dema
 qui est au trait. L'action attendue, elle, est écrite en toutes lettres dans la
 **barre d'état** : « dés de Kévin », « réponse d'Alice au double ».
 
-La **barre du brouillon**, en tête du panneau, ne porte que les gestes qui font
-sortir le brouillon de lui-même, les deux flèches d'annulation et le sens du
-plateau.
+La **barre du brouillon**, en tête du panneau, se lit en trois groupes. À
+gauche, **Brouillons** ramène à la liste. Au centre, ce qui sert pendant la
+saisie : le sens du plateau, les deux flèches d'annulation, **Vidéo** et
+**Métadonnées**. À droite, les gestes qui font sortir le brouillon de lui-même
+et le menu **⋯**. Dans un panneau étroit, la saisie passe sur une seconde ligne.
 
 Le **joueur 1 reste en bas du plateau**, quel que soit le camp au trait. Un
 match qui se transcrit est une partie qui se déroule : le trait change à chaque
@@ -2083,9 +2093,10 @@ barre dit ce que Terminer fera — un nouveau match, ou le remplacement du match
 #\ *n*. Elle ne dit rien du salut du brouillon lui-même : il est écrit dans la
 base après chaque action, et revenir à la liste le laisse à reprendre plus tard.
 
-« **Texte .mat** » ouvre le fichier Jellyfish tel qu'il serait écrit, dans une
-fenêtre assez large pour que ses colonnes restent alignées, avec un bouton pour
-le copier. « **Exporter .mat** » écrit ce même fichier sur le disque. Les deux
+Le menu **⋯** de la barre tient « **Texte .mat** », qui ouvre le fichier
+Jellyfish tel qu'il serait écrit, dans une fenêtre assez large pour que ses
+colonnes restent alignées, avec un bouton pour le copier, et « **Exporter
+.mat** », qui écrit ce même fichier sur le disque. Les deux
 flèches **↶** et **↷** annulent et rétablissent, comme *CTRL-Z* et
 *CTRL-MAJ-Z*.
 
@@ -2110,11 +2121,14 @@ commentaires qu'un ``.mat`` ne porte pas : avant d'ouvrir, un dialogue dit
 jusqu'à combien, et que terminer le brouillon peut les perdre.
 
 Un match se transcrit aussi **depuis une vidéo**. Le bouton **Vidéo** de la
-barre du brouillon propose **Fichier…** pour choisir une vidéo sur le disque,
-**Lien YouTube…** pour coller une adresse, et **Détacher** pour retirer la
-source. Tant qu'aucune source n'est attachée, le panneau reste tel qu'il est
-décrit plus haut : ni volet, ni touche de plus. Une fois la source attachée, la
-vidéo s'affiche à côté du plateau. Un fichier introuvable se relocalise depuis
+barre du brouillon ouvre un menu : **Fichier local…** pour choisir une vidéo sur
+le disque, **Lien YouTube…** pour coller une adresse dans le champ qui s'ouvre
+dans le menu, et **Détacher** pour retirer la source. *ECHAP* ou un clic
+ailleurs ferme le menu et rend la saisie au panneau. Tant qu'aucune source n'est
+attachée, le panneau reste tel qu'il est décrit plus haut : ni volet, ni touche
+de plus. Une fois la source attachée, le bouton porte son nom court — le nom du
+fichier, ou « YouTube » — et la vidéo s'affiche à côté du plateau. Un fichier
+introuvable se relocalise depuis
 la vidéo par **Choisir le fichier…**. Sur une vidéo YouTube déjà attachée,
 **Lien YouTube…** s'ouvre sur son adresse, sélectionnée : un collage la remplace.
 Un brouillon rouvert retrouve sa vidéo en pause là où on l'avait laissée sur ce
