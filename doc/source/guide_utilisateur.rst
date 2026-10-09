@@ -172,7 +172,7 @@ cartes à réviser selon l'algorithme FSRS (répétition espacée).
    (facile). FSRS espace la prochaine présentation en conséquence. Rien
    n'oblige à dévoiler la réponse pour continuer si vous êtes sûr de vous.
 
-#. **S'échauffer sans perturber l'échéancier** (bouton *Entraînement*) : présente des
+#. **S'échauffer sans perturber l'échéancier** (bouton *Bachoter*) : présente des
    positions aléatoires du paquet sans toucher au planning FSRS — pratique
    avant un tournoi, ou pour réviser intensément sans décaler les
    échéances des autres cartes.
@@ -188,7 +188,7 @@ Ce tutoriel va de la salle vide à la première ronde lancée.
 
 #. **Créer le tournoi.** Panneau Tournois (*CTRL-Y*), bouton *+ Nouveau
    tournoi* en en-tête, taper le nom du tournoi, *Entrée*. Ouvrir la ligne créée, puis
-   **Diriger ce tournoi** : le tournoi remplace le plateau au centre de la
+   **Diriger** : le tournoi remplace le plateau au centre de la
    fenêtre.
 
 #. **Choisir le format.** L'onglet *Réglages* s'ouvre sur six formats de club.

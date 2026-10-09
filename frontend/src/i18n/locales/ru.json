@@ -784,7 +784,9 @@
         "noMovesFound": "Для этого матча не найдено ходов",
         "swappedPlayers": "Игроки поменялись местами",
         "confirmDelete": "Удалить турнир «{name}»?",
-        "newButton": "Новый турнир"
+        "newButton": "Новый турнир",
+        "matchCountOne": "1 матч",
+        "matchCountMany": "{n} матчей"
     },
     "anki": {
         "limitSession": "Ограничить сессию",
@@ -818,7 +820,7 @@
         "deckSettingsTooltip": "Настройки колоды",
         "deleteDeckTooltip": "Удалить колоду",
         "easy": "Легко",
-        "empty": "Колод пока нет. Создайте одну из коллекции или текущего поиска.",
+        "empty": "Нет колод",
         "enableFuzz": "Включить разброс (рандомизировать интервалы)",
         "good": "Хорошо",
         "hard": "Трудно",
@@ -828,7 +830,6 @@
         "positionsCount": "{count} позиций",
         "renameTooltip": "Переименовать",
         "resetTooltip": "Сбросить все карточки в новые",
-        "resume": "Продолжить ({due} к повторению, {reviewed} просмотрено)",
         "retentionTarget": "Целевое удержание",
         "selectCollection": "-- Выберите коллекцию --",
         "settingsTitle": "Настройки: {name}",
@@ -838,11 +839,6 @@
         "scoresCount": "{count} счётов",
         "scoreQuestion": "Счёт {a}/{b}",
         "badScoreKey": "Не удалось прочитать счёт этой карточки",
-        "statLearning": "Изучение",
-        "statNew": "Новые",
-        "statReview": "Повторение",
-        "statTotal": "Всего",
-        "study": "Учить ({due} к повторению)",
         "cram": "Тренировка",
         "cramTooltip": "Свободная тренировка: случайные позиции, без влияния на график повторений",
         "cramBadge": "Тренировка",
@@ -884,7 +880,13 @@
             "relearning": "Переучивание"
         },
         "sourceSearch": "Поиск",
-        "sourceCollectionN": "Коллекция № {id}"
+        "sourceCollectionN": "Коллекция № {id}",
+        "title": "Anki",
+        "studyShort": "Учить",
+        "resumeShort": "Продолжить ({reviewed})",
+        "dueShort": "{n} к повторению",
+        "cardsShort": "{n} карточек",
+        "allDecks": "Все колоды"
     },
     "analysis": {
         "menuCopy": "Копировать позицию и анализ",
@@ -1031,7 +1033,8 @@
         "created": "Создано",
         "description": "Описание",
         "user": "Пользователь",
-        "version": "Версия"
+        "version": "Версия",
+        "title": "Метаданные базы"
     },
     "issuance": {
         "originLabel": "Происхождение",
@@ -2183,7 +2186,7 @@
     },
     "direction": {
         "title": "Управление",
-        "direct": "Провести этот турнир",
+        "direct": "Провести",
         "open": "Открыть управление",
         "close": "Закрыть управление",
         "fullscreen": {

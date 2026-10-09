@@ -45,7 +45,7 @@ async function coveredBy(locator, scroll = false) {
 
 test('panneau Tournoi : « ← » et « Diriger » mesurent au moins 24 px de haut', async ({ page }) => {
     await open(page, { width: 1920, height: 1080 });
-    for (const sel of ['#tournamentPanel .back-btn', '#tournamentPanel .direction-btn']) {
+    for (const sel of ['#tournamentPanel [data-testid="panel-back"]', '#tournamentPanel .direction-btn']) {
         const s = await size(page.locator(sel).first());
         expect(s.h, `${sel} : ${s.w}×${s.h}`).toBeGreaterThanOrEqual(MIN);
         expect(s.w, `${sel} : ${s.w}×${s.h}`).toBeGreaterThanOrEqual(MIN);

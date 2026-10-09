@@ -74,7 +74,7 @@ async function startReview(page, { reviewReturns = CARD_11, side = false } = {})
     await page.click('[data-testid="tab-anki"]');
     await expect(page.locator('[data-testid="tab-anki"]')).toHaveClass(/active/);
     await page.click('tbody tr');
-    await page.click('.btn-study');
+    await page.click('[data-testid="anki-study"]');
     await expect(page.locator('.review-body')).toBeVisible();
 }
 
@@ -262,7 +262,7 @@ async function startBoardReview(page, { option = true } = {}) {
     await overrideDbMethodByArg(page, 'LoadAnalysis', { [positionA.id]: ANALYSIS_A }, null);
     await page.click('[data-testid="tab-anki"]');
     await page.click('tbody tr');
-    await page.click('.btn-study');
+    await page.click('[data-testid="anki-study"]');
     await expect(page.locator('.review-body')).toBeVisible();
 }
 

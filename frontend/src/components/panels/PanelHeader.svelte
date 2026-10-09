@@ -66,6 +66,13 @@
         color: var(--color-text-muted);
         padding: 0 var(--space-1);
         line-height: 1;
+        /* A pointer target is at least 24 px square (WCAG 2.5.8). */
+        min-width: 24px;
+        min-height: 24px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
     }
     .back-btn:hover {
         color: var(--color-text);

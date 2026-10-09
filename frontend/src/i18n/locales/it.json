@@ -784,7 +784,9 @@
         "noMovesFound": "Nessuna mossa trovata per questo match",
         "swappedPlayers": "Giocatori scambiati",
         "confirmDelete": "Eliminare il torneo \"{name}\"?",
-        "newButton": "Nuovo torneo"
+        "newButton": "Nuovo torneo",
+        "matchCountOne": "1 partita",
+        "matchCountMany": "{n} partite"
     },
     "anki": {
         "limitSession": "Limitare la sessione",
@@ -818,7 +820,7 @@
         "deckSettingsTooltip": "Impostazioni del mazzo",
         "deleteDeckTooltip": "Elimina mazzo",
         "easy": "Facile",
-        "empty": "Ancora nessun mazzo. Creane uno da una collezione o dalla ricerca corrente.",
+        "empty": "Nessun mazzo",
         "enableFuzz": "Abilita fuzz (intervalli casuali)",
         "good": "Buona",
         "hard": "Difficile",
@@ -828,7 +830,6 @@
         "positionsCount": "{count} posizioni",
         "renameTooltip": "Rinomina",
         "resetTooltip": "Reimposta tutte le carte come nuove",
-        "resume": "Riprendi ({due} in scadenza, {reviewed} riviste)",
         "retentionTarget": "Obiettivo di ritenzione",
         "selectCollection": "-- Seleziona collezione --",
         "settingsTitle": "Impostazioni: {name}",
@@ -838,11 +839,6 @@
         "scoresCount": "{count} punteggi",
         "scoreQuestion": "Punteggio {a}/{b}",
         "badScoreKey": "Punteggio illeggibile su questa scheda",
-        "statLearning": "In apprendimento",
-        "statNew": "Nuove",
-        "statReview": "Da rivedere",
-        "statTotal": "Totale",
-        "study": "Studia ({due} in scadenza)",
         "cram": "Allenamento",
         "cramTooltip": "Allenamento libero: posizioni casuali, senza effetti sul programma di ripasso",
         "cramBadge": "Libero",
@@ -884,7 +880,13 @@
             "relearning": "Riapprendimento"
         },
         "sourceSearch": "Ricerca",
-        "sourceCollectionN": "Raccolta n. {id}"
+        "sourceCollectionN": "Raccolta n. {id}",
+        "title": "Anki",
+        "studyShort": "Studia",
+        "resumeShort": "Riprendi ({reviewed})",
+        "dueShort": "{n} in scadenza",
+        "cardsShort": "{n} carte",
+        "allDecks": "Tutti i mazzi"
     },
     "analysis": {
         "menuCopy": "Copia la posizione e l'analisi",
@@ -1031,7 +1033,8 @@
         "created": "Creato",
         "description": "Descrizione",
         "user": "Utente",
-        "version": "Versione"
+        "version": "Versione",
+        "title": "Metadati del database"
     },
     "issuance": {
         "originLabel": "Origine",
@@ -2183,7 +2186,7 @@
     },
     "direction": {
         "title": "Direzione",
-        "direct": "Dirigi questo torneo",
+        "direct": "Dirigi",
         "open": "Apri la direzione",
         "close": "Chiudi la direzione",
         "fullscreen": {

@@ -784,7 +784,9 @@
         "noMovesFound": "このマッチには手が見つかりません",
         "swappedPlayers": "プレイヤーを入れ替えました",
         "confirmDelete": "トーナメント「{name}」を削除しますか?",
-        "newButton": "新しいトーナメント"
+        "newButton": "新しいトーナメント",
+        "matchCountOne": "1 試合",
+        "matchCountMany": "{n} 試合"
     },
     "anki": {
         "limitSession": "1 セッションの枚数を制限する",
@@ -818,7 +820,7 @@
         "deckSettingsTooltip": "デッキ設定",
         "deleteDeckTooltip": "デッキを削除",
         "easy": "簡単",
-        "empty": "デッキがまだありません。コレクションまたは現在の検索から作成してください。",
+        "empty": "デッキがありません",
         "enableFuzz": "ファズを有効化（間隔をランダム化）",
         "good": "普通",
         "hard": "難しい",
@@ -828,7 +830,6 @@
         "positionsCount": "{count} 件のポジション",
         "renameTooltip": "名前を変更",
         "resetTooltip": "すべてのカードを新規にリセット",
-        "resume": "再開（{due} 件期限、{reviewed} 件レビュー済み）",
         "retentionTarget": "保持率の目標",
         "selectCollection": "-- コレクションを選択 --",
         "settingsTitle": "設定: {name}",
@@ -838,11 +839,6 @@
         "scoresCount": "{count} 件のスコア",
         "scoreQuestion": "スコア {a}/{b}",
         "badScoreKey": "このカードのスコアを読み取れません",
-        "statLearning": "学習中",
-        "statNew": "新規",
-        "statReview": "復習",
-        "statTotal": "合計",
-        "study": "学習（{due} 件期限）",
         "cram": "練習",
         "cramTooltip": "フリー練習：ランダムな局面で、復習スケジュールには影響しません",
         "cramBadge": "練習",
@@ -884,7 +880,13 @@
             "relearning": "再学習"
         },
         "sourceSearch": "検索",
-        "sourceCollectionN": "コレクション #{id}"
+        "sourceCollectionN": "コレクション #{id}",
+        "title": "Anki",
+        "studyShort": "学習",
+        "resumeShort": "再開（{reviewed}）",
+        "dueShort": "{n} 件期限",
+        "cardsShort": "{n} 枚",
+        "allDecks": "すべてのデッキ"
     },
     "analysis": {
         "menuCopy": "局面と解析をコピー",
@@ -1031,7 +1033,8 @@
         "created": "作成日",
         "description": "説明",
         "user": "ユーザー",
-        "version": "バージョン"
+        "version": "バージョン",
+        "title": "データベースのメタデータ"
     },
     "issuance": {
         "originLabel": "出所",
@@ -2183,7 +2186,7 @@
     },
     "direction": {
         "title": "進行",
-        "direct": "この大会を進行する",
+        "direct": "進行する",
         "open": "進行を開く",
         "close": "進行を閉じる",
         "fullscreen": {

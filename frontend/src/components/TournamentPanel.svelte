@@ -12,6 +12,9 @@
     import EntityAutocomplete from './EntityAutocomplete.svelte';
     import TournamentReview from './TournamentReview.svelte';
     import PanelTable, { navigationDelta, stepSelection } from './panels/PanelTable.svelte';
+    import PanelHeader from './panels/PanelHeader.svelte';
+    import CountLink from './panels/CountLink.svelte';
+    import { loadPositionsFromTournament } from '../services/positionLoader.js';
     import {
         GetAllTournaments,
         CreateTournament,
@@ -268,6 +271,14 @@
             const cmp = typeof valA === 'number' ? valA - valB : valA.localeCompare(valB);
             return sortOrder === 'asc' ? cmp : -cmp;
         });
+    }
+
+    // Back from a tournament's matches to the list of tournaments.
+    function leaveTournament() {
+        selectedTournamentStore.set(null);
+        tournamentMatchesStore.set([]);
+        addMatchSearch = '';
+        tournamentCommentEdit.cancel();
     }
 
     /** @param {Tournament} tournament */
@@ -604,6 +615,11 @@
         {#if !selectedTournament}
             <!-- Tournaments list -->
             <div class="tournament-list-pane">
+                <PanelHeader title={$t('tournament.title')} count={tournaments.length > 0 ? String(tournaments.length) : null}>
+                    {#snippet actions()}
+                        <NewButton label={$t('tournament.newButton')} onclick={() => (creating = true)} />
+                    {/snippet}
+                </PanelHeader>
                 <PanelTable
                     bind:this={listTable}
                     rows={sortedTournaments}
@@ -619,10 +635,6 @@
                     emptyText={$t('tournament.noTournaments')}
                     emptyActions
                 >
-                    {#snippet header()}
-                        <span class="detail-title">{$t('tournament.title')}</span>
-                        <NewButton label={$t('tournament.newButton')} onclick={() => (creating = true)} />
-                    {/snippet}
                     {#snippet cells(tournament)}
                         {#if tournamentEdit.isEditing(tournament.id)}
                             <td><input class="edit-input" type="text" bind:value={tournamentEdit.draft.name} onkeydown={tournamentEdit.onKeyDown} use:autofocus /></td>
@@ -727,50 +739,68 @@
         {:else}
             <!-- Matches for selected tournament -->
             <div class="tournament-list-pane">
-                {#if reviewOpen}
-                    <TournamentReview tournamentId={selectedTournament.id} players={tournamentPlayers} />
-                {/if}
-                <PanelTable rows={tournamentMatches} columns={matchColumns} onActivate={openMatch} onReorder={matchOrder.reorder} emptyText={$t('tournament.noMatches')}>
-                    {#snippet header()}
-                        <button
-                            class="back-btn"
-                            onclick={() => {
-                                selectedTournamentStore.set(null);
-                                tournamentMatchesStore.set([]);
-                                addMatchSearch = '';
-                                tournamentCommentEdit.cancel();
-                            }}
-                            title={$t('tournament.backToTournaments')}>←</button
-                        >
-                        <span class="header-name" title={selectedTournament.name}>{selectedTournament.name}</span>
-                        {#if selectedTournament.date || selectedTournament.location}
-                            <span class="header-meta">
-                                {#if selectedTournament.date}{selectedTournament.date}{/if}
-                                {#if selectedTournament.date && selectedTournament.location}
-                                    ·
-                                {/if}
-                                {#if selectedTournament.location}{selectedTournament.location}{/if}
-                            </span>
+                <!-- Notes and the director sit before the review, the one primary action, at the
+                     strip's right end (ADR-0085, G3). -->
+                <PanelHeader title={selectedTournament.name} onBack={leaveTournament} backHint={$t('tournament.backToTournaments')}>
+                    {#if selectedTournament.date || selectedTournament.location}
+                        <span class="header-meta">
+                            {#if selectedTournament.date}{selectedTournament.date}{/if}
+                            {#if selectedTournament.date && selectedTournament.location}
+                                ·
+                            {/if}
+                            {#if selectedTournament.location}{selectedTournament.location}{/if}
+                        </span>
+                    {/if}
+                    {#if tournamentMatches.length > 0}
+                        <CountLink
+                            label={tournamentMatches.length === 1 ? $t('tournament.matchCountOne') : $t('tournament.matchCountMany', { n: tournamentMatches.length })}
+                            title={$t('stats.openPositions')}
+                            onclick={() => loadPositionsFromTournament(selectedTournament.id)}
+                        />
+                    {/if}
+                    <button
+                        class="icon-btn edit-header-btn"
+                        onclick={(e) => {
+                            e.stopPropagation();
+                            // Back to the list first: the editable row only renders there.
+                            const t = selectedTournament;
+                            leaveTournament();
+                            startEdit(t, e);
+                        }}
+                        title={$t('common.edit')}>✎</button
+                    >
+                    {#if selectedDirection}
+                        <span class="direction-badge" title={$t('direction.title')}>
+                            {$t('direction.directed')} &middot;
+                            {$t(`direction.state.${selectedDirection.state}`)}
+                        </span>
+                    {/if}
+                    {#snippet actions()}
+                        {#if tournamentCommentEdit.isEditing(selectedTournament.id)}
+                            <input
+                                class="tournament-comment-inline"
+                                type="text"
+                                bind:value={tournamentCommentEdit.draft}
+                                onkeydown={tournamentCommentEdit.onKeyDown}
+                                onblur={tournamentCommentEdit.onBlur}
+                                placeholder={$t('tournament.notesPlaceholder')}
+                                use:autofocus
+                            />
+                        {:else}
+                            <button
+                                type="button"
+                                class="tournament-comment-text"
+                                class:has-comment={selectedTournament.comment}
+                                onclick={(e) => {
+                                    e.stopPropagation();
+                                    tournamentCommentEdit.start(selectedTournament.id, selectedTournament.comment || '');
+                                }}
+                                title={selectedTournament.comment || $t('tournament.clickToAddNotes')}
+                            >
+                                {selectedTournament.comment || $t('tournament.notesPlaceholder')}
+                            </button>
                         {/if}
-                        <button
-                            class="icon-btn edit-header-btn"
-                            onclick={(e) => {
-                                e.stopPropagation();
-                                // Back to the list first: the editable row only renders there.
-                                const t = selectedTournament;
-                                selectedTournamentStore.set(null);
-                                tournamentMatchesStore.set([]);
-                                addMatchSearch = '';
-                                tournamentCommentEdit.cancel();
-                                startEdit(t, e);
-                            }}
-                            title={$t('common.edit')}>✎</button
-                        >
                         {#if selectedDirection}
-                            <span class="direction-badge" title={$t('direction.title')}>
-                                {$t('direction.directed')} &middot;
-                                {$t(`direction.state.${selectedDirection.state}`)}
-                            </span>
                             <button
                                 class="direction-btn"
                                 data-testid="tournament-direction-toggle"
@@ -801,32 +831,12 @@
                             }}
                             title={$t('tournamentReview.toggleHint')}>{$t('tournamentReview.toggle')}</button
                         >
-                        <span class="header-spacer"></span>
-                        {#if tournamentCommentEdit.isEditing(selectedTournament.id)}
-                            <input
-                                class="tournament-comment-inline"
-                                type="text"
-                                bind:value={tournamentCommentEdit.draft}
-                                onkeydown={tournamentCommentEdit.onKeyDown}
-                                onblur={tournamentCommentEdit.onBlur}
-                                placeholder={$t('tournament.notesPlaceholder')}
-                                use:autofocus
-                            />
-                        {:else}
-                            <button
-                                type="button"
-                                class="tournament-comment-text"
-                                class:has-comment={selectedTournament.comment}
-                                onclick={(e) => {
-                                    e.stopPropagation();
-                                    tournamentCommentEdit.start(selectedTournament.id, selectedTournament.comment || '');
-                                }}
-                                title={selectedTournament.comment || $t('tournament.clickToAddNotes')}
-                            >
-                                {selectedTournament.comment || $t('tournament.notesPlaceholder')}
-                            </button>
-                        {/if}
                     {/snippet}
+                </PanelHeader>
+                {#if reviewOpen}
+                    <TournamentReview tournamentId={selectedTournament.id} players={tournamentPlayers} />
+                {/if}
+                <PanelTable rows={tournamentMatches} columns={matchColumns} onActivate={openMatch} onReorder={matchOrder.reorder} emptyText={$t('tournament.noMatches')}>
                     {#snippet cells(match, index)}
                         <td class="index-cell narrow-col no-select">{index + 1}</td>
                         <td class="no-select">{match.player1_name}</td>
@@ -932,22 +942,28 @@
         white-space: nowrap;
     }
 
-    .review-btn.active {
-        background: var(--color-primary);
-        color: var(--color-surface);
-    }
-
     .direction-btn,
     .review-btn {
         font-size: var(--font-size-small);
-        padding: 0.1rem 0.5rem;
-        min-height: 24px;
-        border: 1px solid var(--color-primary);
+        padding: var(--space-1) var(--space-2);
+        border: 1px solid var(--color-border);
         border-radius: var(--radius);
         background: var(--color-surface);
         color: var(--color-text);
         cursor: pointer;
         white-space: nowrap;
+        min-height: 24px;
+    }
+
+    /* The review is what a player opens a tournament for: the strip's primary action, drawn
+       full (ADR-0085, G3); pressed while it shows. */
+    .review-btn {
+        border-color: var(--color-primary);
+        background: var(--color-primary);
+        color: white;
+    }
+    .review-btn.active {
+        box-shadow: inset 0 0 0 2px color-mix(in srgb, black 25%, var(--color-primary));
     }
 
     .tournament-panel {
@@ -998,28 +1014,7 @@
         outline: none;
     }
 
-    /* Detail header for match view (the strip itself is PanelTable's) */
-    .back-btn {
-        border: none;
-        background: none;
-        cursor: pointer;
-        font-size: var(--font-size-base);
-        color: var(--color-text-muted);
-        padding: 0 4px;
-        line-height: 1;
-        flex-shrink: 0;
-        min-width: 24px;
-        min-height: 24px;
-    }
-    .back-btn:hover {
-        color: var(--color-text);
-    }
-    .header-name {
-        font-weight: 600;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
+    /* Detail strip (PanelHeader's) of a tournament's matches */
     .header-meta {
         font-size: var(--font-size-small);
         color: var(--color-text-muted);
@@ -1029,17 +1024,13 @@
         visibility: hidden;
         flex-shrink: 0;
     }
-    .tournament-panel :global(.detail-header:hover .edit-header-btn) {
+    :global(.panel-header:hover) .edit-header-btn {
         visibility: visible;
-    }
-    .header-spacer {
-        flex: 1;
     }
 
     /* Inline tournament comment in header */
     .tournament-comment-inline {
-        flex: 1;
-        min-width: 80px;
+        width: 200px;
         padding: 1px 4px;
         border: 1px solid var(--color-primary);
         border-radius: 2px;

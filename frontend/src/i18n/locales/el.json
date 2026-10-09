@@ -784,7 +784,9 @@
         "noMovesFound": "Δεν βρέθηκαν κινήσεις για αυτόν τον αγώνα",
         "swappedPlayers": "Οι παίκτες εναλλάχθηκαν",
         "confirmDelete": "Διαγραφή του τουρνουά «{name}»;",
-        "newButton": "Νέο τουρνουά"
+        "newButton": "Νέο τουρνουά",
+        "matchCountOne": "1 αγώνας",
+        "matchCountMany": "{n} αγώνες"
     },
     "anki": {
         "limitSession": "Περιορισμός της συνεδρίας",
@@ -818,7 +820,7 @@
         "deckSettingsTooltip": "Ρυθμίσεις τράπουλας",
         "deleteDeckTooltip": "Διαγραφή τράπουλας",
         "easy": "Εύκολο",
-        "empty": "Δεν υπάρχουν ακόμη τράπουλες. Δημιουργήστε μία από μια συλλογή ή την τρέχουσα αναζήτηση.",
+        "empty": "Καμία τράπουλα",
         "enableFuzz": "Ενεργοποίηση fuzz (τυχαία διαστήματα)",
         "good": "Καλό",
         "hard": "Δύσκολο",
@@ -828,7 +830,6 @@
         "positionsCount": "{count} θέσεις",
         "renameTooltip": "Μετονομασία",
         "resetTooltip": "Επαναφορά όλων των καρτών σε νέες",
-        "resume": "Συνέχεια ({due} προς εξέταση, {reviewed} εξετάστηκαν)",
         "retentionTarget": "Στόχος διατήρησης",
         "selectCollection": "-- Επιλέξτε συλλογή --",
         "settingsTitle": "Ρυθμίσεις: {name}",
@@ -838,11 +839,6 @@
         "scoresCount": "{count} σκορ",
         "scoreQuestion": "Σκορ {a}/{b}",
         "badScoreKey": "Μη αναγνώσιμο σκορ σε αυτή την κάρτα",
-        "statLearning": "Εκμάθηση",
-        "statNew": "Νέες",
-        "statReview": "Επανεξέταση",
-        "statTotal": "Σύνολο",
-        "study": "Μελέτη ({due} προς εξέταση)",
         "cram": "Εξάσκηση",
         "cramTooltip": "Ελεύθερη εξάσκηση: τυχαίες θέσεις, χωρίς επίδραση στο πρόγραμμα επανάληψης",
         "cramBadge": "Εξάσκηση",
@@ -884,7 +880,13 @@
             "relearning": "Επανεκμάθηση"
         },
         "sourceSearch": "Αναζήτηση",
-        "sourceCollectionN": "Συλλογή #{id}"
+        "sourceCollectionN": "Συλλογή #{id}",
+        "title": "Anki",
+        "studyShort": "Μελέτη",
+        "resumeShort": "Συνέχεια ({reviewed})",
+        "dueShort": "{n} προς εξέταση",
+        "cardsShort": "{n} κάρτες",
+        "allDecks": "Όλες οι τράπουλες"
     },
     "analysis": {
         "menuCopy": "Αντιγραφή θέσης και ανάλυσης",
@@ -1031,7 +1033,8 @@
         "created": "Δημιουργήθηκε",
         "description": "Περιγραφή",
         "user": "Χρήστης",
-        "version": "Έκδοση"
+        "version": "Έκδοση",
+        "title": "Μεταδεδομένα βάσης"
     },
     "issuance": {
         "originLabel": "Προέλευση",
@@ -2183,7 +2186,7 @@
     },
     "direction": {
         "title": "Διεύθυνση",
-        "direct": "Διεύθυνση αυτού του τουρνουά",
+        "direct": "Διεύθυνση",
         "open": "Άνοιγμα της διεύθυνσης",
         "close": "Κλείσιμο της διεύθυνσης",
         "fullscreen": {

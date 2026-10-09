@@ -86,9 +86,9 @@ describe('the study button', () => {
         selectedAnkiDeckStore.set(deckWith(0));
         const { container } = render(AnkiPanel);
         await settle();
-        expect(container.querySelector('.btn-study').disabled).toBe(true);
+        expect(container.querySelector('[data-testid="anki-study"]').disabled).toBe(true);
         // Cram is not bounded by the setting, so it stays available.
-        expect(container.querySelector('.btn-cram').disabled).toBe(false);
+        expect(container.querySelector('[data-testid="anki-cram"]').disabled).toBe(false);
     });
 
     test('is active on a deck with a positive limit', async () => {
@@ -96,7 +96,7 @@ describe('the study button', () => {
         selectedAnkiDeckStore.set(deckWith(2));
         const { container } = render(AnkiPanel);
         await settle();
-        expect(container.querySelector('.btn-study').disabled).toBe(false);
+        expect(container.querySelector('[data-testid="anki-study"]').disabled).toBe(false);
     });
 });
 
@@ -180,7 +180,7 @@ describe('the setting in the deck settings view', () => {
         // Through the gear: that is what loads the deck's own values into the
         // form. Setting the view mode by hand would test the initial state of
         // the component instead.
-        await fireEvent.click(container.querySelector('.detail-actions .btn-outline'));
+        await fireEvent.click(container.querySelector('[data-testid="anki-settings"]'));
         await settle();
 
         const checkboxes = container.querySelectorAll('.settings-row input[type="checkbox"]');
@@ -198,7 +198,7 @@ describe('the setting in the deck settings view', () => {
         selectedAnkiDeckStore.set(deck);
         const { container } = render(AnkiPanel);
         await settle();
-        await fireEvent.click(container.querySelector('.detail-actions .btn-outline'));
+        await fireEvent.click(container.querySelector('[data-testid="anki-settings"]'));
         await settle();
 
         const checkboxes = container.querySelectorAll('.settings-row input[type="checkbox"]');

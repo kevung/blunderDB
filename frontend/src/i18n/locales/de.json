@@ -784,7 +784,9 @@
         "noMovesFound": "Keine Züge für dieses Match gefunden",
         "swappedPlayers": "Spieler getauscht",
         "confirmDelete": "Turnier „{name}“ löschen?",
-        "newButton": "Neues Turnier"
+        "newButton": "Neues Turnier",
+        "matchCountOne": "1 Match",
+        "matchCountMany": "{n} Matches"
     },
     "anki": {
         "limitSession": "Sitzung begrenzen",
@@ -818,7 +820,7 @@
         "deckSettingsTooltip": "Stapeleinstellungen",
         "deleteDeckTooltip": "Stapel löschen",
         "easy": "Leicht",
-        "empty": "Noch keine Stapel. Erstellen Sie einen aus einer Sammlung oder der aktuellen Suche.",
+        "empty": "Keine Stapel",
         "enableFuzz": "Streuung aktivieren (Intervalle zufällig variieren)",
         "good": "Gut",
         "hard": "Schwer",
@@ -828,7 +830,6 @@
         "positionsCount": "{count} Positionen",
         "renameTooltip": "Umbenennen",
         "resetTooltip": "Alle Karten auf neu zurücksetzen",
-        "resume": "Fortsetzen ({due} fällig, {reviewed} wiederholt)",
         "retentionTarget": "Behaltensziel",
         "selectCollection": "-- Sammlung auswählen --",
         "settingsTitle": "Einstellungen: {name}",
@@ -838,11 +839,6 @@
         "scoresCount": "{count} Stände",
         "scoreQuestion": "Stand {a}/{b}",
         "badScoreKey": "Unlesbarer Stand auf dieser Karte",
-        "statLearning": "Lernen",
-        "statNew": "Neu",
-        "statReview": "Wiederholung",
-        "statTotal": "Gesamt",
-        "study": "Lernen ({due} fällig)",
         "cram": "Üben",
         "cramTooltip": "Freies Üben: zufällige Stellungen, ohne den Wiederholungsplan zu verändern",
         "cramBadge": "Üben",
@@ -884,7 +880,13 @@
             "relearning": "Wiederlernen"
         },
         "sourceSearch": "Suche",
-        "sourceCollectionN": "Sammlung Nr. {id}"
+        "sourceCollectionN": "Sammlung Nr. {id}",
+        "title": "Anki",
+        "studyShort": "Lernen",
+        "resumeShort": "Fortsetzen ({reviewed})",
+        "dueShort": "{n} fällig",
+        "cardsShort": "{n} Karten",
+        "allDecks": "Alle Stapel"
     },
     "analysis": {
         "menuCopy": "Position und Analyse kopieren",
@@ -1031,7 +1033,8 @@
         "created": "Erstellt",
         "description": "Beschreibung",
         "user": "Benutzer",
-        "version": "Version"
+        "version": "Version",
+        "title": "Metadaten der Datenbank"
     },
     "issuance": {
         "originLabel": "Herkunft",
@@ -2183,7 +2186,7 @@
     },
     "direction": {
         "title": "Leitung",
-        "direct": "Dieses Turnier leiten",
+        "direct": "Leiten",
         "open": "Leitung öffnen",
         "close": "Leitung schließen",
         "fullscreen": {

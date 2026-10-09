@@ -2290,8 +2290,9 @@ Appuyer sur *CTRL-Y* pour afficher ou masquer le panneau.
 
 **Nouveau tournoi** ouvre le champ de création, qui prend le focus ; *ÉCHAP* ou
 **Annuler** le referme. Un clic surligne une ligne, un double-clic ou *ENTRÉE*
-ouvre le tournoi : ses notes, puis ses matchs, un par ligne, qu'un double-clic
-ouvre, que ▲ et ▼ réordonnent, que ⇄ échange de joueurs et que × retire du
+ouvre le tournoi. Son en-tête porte la date, le lieu et le nombre de matchs, qu'un
+clic change en liste des positions du tournoi ; à droite, les notes, **Diriger**
+et **Bilan**. Dessous, ses matchs, un par ligne, qu'un double-clic ouvre, que ▲ et ▼ réordonnent, que ⇄ échange de joueurs et que × retire du
 tournoi. Le champ **Ajouter un match…** y range un match de la base, et ←
 ramène à la liste des tournois.
 
@@ -2358,8 +2359,8 @@ son interface et garde ses matchs. Le bouton **ⓘ** de l'en-tête de la Directi
 rappelle ce crédit et mène au dépôt et à la documentation du moteur.
 
 Un tournoi dirigé se choisit dans le panneau :ref:`panneau_tournois`
-(*CTRL-Y*, commande ``direct``) : ouvrir un tournoi, puis **Diriger ce
-tournoi**. Un tournoi déjà dirigé porte son état à côté de son nom et le bouton
+(*CTRL-Y*, commande ``direct``) : ouvrir un tournoi, puis
+**Diriger**. Un tournoi déjà dirigé porte son état à côté de son nom et le bouton
 devient **Ouvrir la direction**. Tant qu'une direction est ouverte, la zone principale montre
 le tournoi **à la place du plateau** — c'est la seule exception de blunderDB à
 cette règle ; passer sur n'importe quel autre onglet ramène le plateau.
@@ -4215,6 +4216,11 @@ fait **tenir dans le temps** et n'en mesure rien. Les deux histoires restent
 séparées : le journal de l'Entraînement ignore les révisions Anki, et les
 statistiques d'Anki ignorent les sessions d'Entraînement.
 
+**Un paquet sélectionné prend l'en-tête du panneau** : son nom, le nombre de ses
+positions, qu'un clic ouvre, et le nombre de cartes à réviser ; à droite, les
+paramètres (⚙), la remise à zéro (↻), *Bachoter* et *Étudier*. ← revient à la
+liste des paquets.
+
 **Révision :** Sélectionnez un paquet puis cliquez sur *Étudier* (ou double-cliquez
 sur un paquet) pour commencer la révision des cartes dues. Une carte de position
 affiche la position sur le plateau ; une carte de score annonce le score et
@@ -4224,7 +4230,7 @@ pour arrêter et revenir à la liste des paquets.
 
 Deux comptes portent des noms distincts : la colonne **Échues** de la liste
 compte toutes les cartes dont l'échéance est passée, y compris les cartes
-suspendues ou enterrées ; le chiffre du bouton *Étudier* ne compte que celles qui
+suspendues ou enterrées ; le compte *à réviser* de l'en-tête ne retient que celles qui
 sont disponibles maintenant, et peut donc être plus petit.
 
 **Les décisions de videau font deux cartes, enchaînées.** Une décision de
@@ -4287,7 +4293,7 @@ quelques séances, dont le volume quotidien est déjà borné par sa taille. Un
 plafond par jour n'y mordrait jamais, ou bien créerait un retard sur un paquet
 qui tenait en une séance.
 
-**Entraînement libre (cram) :** Le bouton *Entraînement*, à côté de *Étudier*, lance une
+**Entraînement libre (cram) :** Le bouton *Bachoter*, à côté de *Étudier*, lance une
 session d'entraînement libre : des positions aléatoires du paquet vous sont
 présentées sans tenir compte de l'échéancier FSRS. Ce mode **ne modifie jamais
 le planning de révision espacée** — idéal pour s'échauffer avant un tournoi ou

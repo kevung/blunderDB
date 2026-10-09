@@ -62,7 +62,7 @@ test('deux cartes notées au clavier, puis le bilan et le retour aux paquets', a
 
     await page.getByTestId('tab-anki').click();
     await page.click('tbody tr');
-    await page.click('.btn-study');
+    await page.click('[data-testid="anki-study"]');
     await expect(page.locator('.review-body')).toBeVisible();
 
     await page.keyboard.press('Space');

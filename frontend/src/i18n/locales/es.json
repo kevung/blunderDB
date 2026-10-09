@@ -784,7 +784,9 @@
         "noMovesFound": "No se encontraron jugadas para esta partida",
         "swappedPlayers": "Jugadores intercambiados",
         "confirmDelete": "¿Eliminar el torneo \"{name}\"?",
-        "newButton": "Nuevo torneo"
+        "newButton": "Nuevo torneo",
+        "matchCountOne": "1 partida",
+        "matchCountMany": "{n} partidas"
     },
     "anki": {
         "limitSession": "Limitar la sesión",
@@ -818,7 +820,7 @@
         "deckSettingsTooltip": "Ajustes del mazo",
         "deleteDeckTooltip": "Eliminar mazo",
         "easy": "Fácil",
-        "empty": "Aún no hay mazos. Crea uno a partir de una colección o de la búsqueda actual.",
+        "empty": "Ningún mazo",
         "enableFuzz": "Activar variación (intervalos aleatorios)",
         "good": "Bien",
         "hard": "Difícil",
@@ -828,7 +830,6 @@
         "positionsCount": "{count} posiciones",
         "renameTooltip": "Renombrar",
         "resetTooltip": "Restablecer todas las tarjetas como nuevas",
-        "resume": "Reanudar ({due} pendientes, {reviewed} revisadas)",
         "retentionTarget": "Objetivo de retención",
         "selectCollection": "-- Selecciona una colección --",
         "settingsTitle": "Ajustes: {name}",
@@ -838,11 +839,6 @@
         "scoresCount": "{count} marcadores",
         "scoreQuestion": "Marcador {a}/{b}",
         "badScoreKey": "Marcador ilegible en esta tarjeta",
-        "statLearning": "Aprendiendo",
-        "statNew": "Nuevas",
-        "statReview": "Repaso",
-        "statTotal": "Total",
-        "study": "Estudiar ({due} pendientes)",
         "cram": "Práctica",
         "cramTooltip": "Práctica libre: posiciones aleatorias, sin afectar al calendario de repaso",
         "cramBadge": "Práctica",
@@ -884,7 +880,13 @@
             "relearning": "Reaprendiendo"
         },
         "sourceSearch": "Búsqueda",
-        "sourceCollectionN": "Colección n.º {id}"
+        "sourceCollectionN": "Colección n.º {id}",
+        "title": "Anki",
+        "studyShort": "Estudiar",
+        "resumeShort": "Reanudar ({reviewed})",
+        "dueShort": "{n} pendientes",
+        "cardsShort": "{n} tarjetas",
+        "allDecks": "Todos los mazos"
     },
     "analysis": {
         "menuCopy": "Copiar la posición y el análisis",
@@ -1031,7 +1033,8 @@
         "created": "Creada",
         "description": "Descripción",
         "user": "Usuario",
-        "version": "Versión"
+        "version": "Versión",
+        "title": "Metadatos de la base"
     },
     "issuance": {
         "originLabel": "Origen",
@@ -2183,7 +2186,7 @@
     },
     "direction": {
         "title": "Dirección",
-        "direct": "Dirigir este torneo",
+        "direct": "Dirigir",
         "open": "Abrir la dirección",
         "close": "Cerrar la dirección",
         "fullscreen": {

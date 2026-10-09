@@ -784,7 +784,9 @@
         "noMovesFound": "Tälle ottelulle ei löytynyt siirtoja",
         "swappedPlayers": "Pelaajat vaihdettu",
         "confirmDelete": "Poistetaanko turnaus \"{name}\"?",
-        "newButton": "Uusi turnaus"
+        "newButton": "Uusi turnaus",
+        "matchCountOne": "1 ottelu",
+        "matchCountMany": "{n} ottelua"
     },
     "anki": {
         "limitSession": "Rajoita istuntoa",
@@ -818,7 +820,7 @@
         "deckSettingsTooltip": "Pakan asetukset",
         "deleteDeckTooltip": "Poista pakka",
         "easy": "Helppo",
-        "empty": "Ei vielä pakkoja. Luo yksi kokoelmasta tai nykyisestä hausta.",
+        "empty": "Ei pakkoja",
         "enableFuzz": "Ota käyttöön hajonta (satunnaista välit)",
         "good": "Hyvä",
         "hard": "Vaikea",
@@ -828,7 +830,6 @@
         "positionsCount": "{count} asemaa",
         "renameTooltip": "Nimeä uudelleen",
         "resetTooltip": "Palauta kaikki kortit uusiksi",
-        "resume": "Jatka ({due} erääntynyt, {reviewed} tarkasteltu)",
         "retentionTarget": "Muistitavoite",
         "selectCollection": "-- Valitse kokoelma --",
         "settingsTitle": "Asetukset: {name}",
@@ -838,11 +839,6 @@
         "scoresCount": "{count} tilannetta",
         "scoreQuestion": "Tilanne {a}/{b}",
         "badScoreKey": "Tämän kortin tilannetta ei voi lukea",
-        "statLearning": "Opetellaan",
-        "statNew": "Uudet",
-        "statReview": "Kertaus",
-        "statTotal": "Yhteensä",
-        "study": "Opiskele ({due} erääntynyt)",
         "cram": "Harjoittele",
         "cramTooltip": "Vapaa harjoittelu: satunnaisia asemia, ei vaikuta kertausaikatauluun",
         "cramBadge": "Harjoitus",
@@ -884,7 +880,13 @@
             "relearning": "Uudelleenopiskelu"
         },
         "sourceSearch": "Haku",
-        "sourceCollectionN": "Kokoelma #{id}"
+        "sourceCollectionN": "Kokoelma #{id}",
+        "title": "Anki",
+        "studyShort": "Opiskele",
+        "resumeShort": "Jatka ({reviewed})",
+        "dueShort": "{n} erääntynyt",
+        "cardsShort": "{n} korttia",
+        "allDecks": "Kaikki pakat"
     },
     "analysis": {
         "menuCopy": "Kopioi asema ja analyysi",
@@ -1031,7 +1033,8 @@
         "created": "Luotu",
         "description": "Kuvaus",
         "user": "Käyttäjä",
-        "version": "Versio"
+        "version": "Versio",
+        "title": "Tietokannan metatiedot"
     },
     "issuance": {
         "originLabel": "Alkuperä",
@@ -2183,7 +2186,7 @@
     },
     "direction": {
         "title": "Johtaminen",
-        "direct": "Johda tätä turnausta",
+        "direct": "Johda",
         "open": "Avaa johtaminen",
         "close": "Sulje johtaminen",
         "fullscreen": {

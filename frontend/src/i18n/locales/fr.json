@@ -784,7 +784,9 @@
         "noMovesFound": "Aucun coup trouvé pour ce match",
         "swappedPlayers": "Joueurs échangés",
         "confirmDelete": "Supprimer le tournoi « {name} » ?",
-        "newButton": "Nouveau tournoi"
+        "newButton": "Nouveau tournoi",
+        "matchCountOne": "1 match",
+        "matchCountMany": "{n} matchs"
     },
     "anki": {
         "limitSession": "Limiter la séance",
@@ -818,7 +820,7 @@
         "deckSettingsTooltip": "Paramètres du paquet",
         "deleteDeckTooltip": "Supprimer le paquet",
         "easy": "Facile",
-        "empty": "Aucun paquet pour le moment. Créez-en un à partir d'une collection ou de la recherche actuelle.",
+        "empty": "Aucun paquet",
         "enableFuzz": "Activer le flou (randomiser les intervalles)",
         "good": "Correct",
         "hard": "Difficile",
@@ -828,7 +830,6 @@
         "positionsCount": "{count} positions",
         "renameTooltip": "Renommer",
         "resetTooltip": "Réinitialiser toutes les cartes comme nouvelles",
-        "resume": "Reprendre ({due} à réviser, {reviewed} révisées)",
         "retentionTarget": "Objectif de rétention",
         "selectCollection": "-- Sélectionner une collection --",
         "settingsTitle": "Paramètres : {name}",
@@ -838,12 +839,7 @@
         "scoresCount": "{count} scores",
         "scoreQuestion": "Score {a}/{b}",
         "badScoreKey": "Score illisible sur cette carte",
-        "statLearning": "En apprentissage",
-        "statNew": "Nouvelles",
-        "statReview": "À réviser",
-        "statTotal": "Total",
-        "study": "Étudier ({due} à réviser)",
-        "cram": "Entraînement",
+        "cram": "Bachoter",
         "cramTooltip": "Entraînement libre : positions aléatoires, sans effet sur le planning de révision",
         "cramBadge": "Libre",
         "next": "Suivant",
@@ -884,7 +880,13 @@
             "relearning": "Ré-apprentissage"
         },
         "sourceSearch": "Recherche",
-        "sourceCollectionN": "Collection n° {id}"
+        "sourceCollectionN": "Collection n° {id}",
+        "title": "Anki",
+        "studyShort": "Étudier",
+        "resumeShort": "Reprendre ({reviewed})",
+        "dueShort": "{n} à réviser",
+        "cardsShort": "{n} cartes",
+        "allDecks": "Tous les paquets"
     },
     "analysis": {
         "menuCopy": "Copier la position et l'analyse",
@@ -1031,7 +1033,8 @@
         "created": "Créé",
         "description": "Description",
         "user": "Utilisateur",
-        "version": "Version"
+        "version": "Version",
+        "title": "Métadonnées de la base"
     },
     "issuance": {
         "originLabel": "Origine",
@@ -2183,7 +2186,7 @@
     },
     "direction": {
         "title": "Direction",
-        "direct": "Diriger ce tournoi",
+        "direct": "Diriger",
         "open": "Ouvrir la direction",
         "close": "Fermer la direction",
         "fullscreen": {

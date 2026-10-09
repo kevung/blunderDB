@@ -33,6 +33,8 @@
     import { t, tMsg } from '../i18n';
     import { UpdateAnkiDeck, GetAnkiReviewLog } from '../../wailsjs/go/database/Database.js';
     import PanelTable from './panels/PanelTable.svelte';
+    import PanelHeader from './panels/PanelHeader.svelte';
+    import CountLink from './panels/CountLink.svelte';
     import ContextMenu from './ContextMenu.svelte';
     import AnalysisView from './AnalysisView.svelte';
     import ScoreCard from './ScoreCard.svelte';
@@ -51,6 +53,8 @@
     let lastSearch = $derived($lastSearchStore);
     let pausedSession = $derived($ankiPausedSessionStore);
     let answerShown = $derived($ankiAnswerShownStore);
+    // A score deck's cards are scores, not positions: its count opens nothing.
+    const isScoreDeck = (deck) => deck?.sourceType === anki.SOURCE_SCORES;
 
     // The answer of the card under review (ADR-0025). Board/analysis reads below
     // concern position cards; a score card's answer is the Training tab's sheet (ADR-0042).
@@ -143,9 +147,9 @@
         { key: 'name', label: $t('anki.colName') },
         { key: 'description', label: $t('anki.colDescription') },
         { key: 'source', label: $t('anki.colSource') },
-        { key: 'cards', label: $t('anki.colCards'), narrow: true, align: 'center' },
-        { key: 'new', label: $t('anki.colNew'), narrow: true, align: 'center' },
-        { key: 'due', label: $t('anki.colDue'), title: $t('anki.colDueTooltip'), narrow: true, align: 'center' },
+        { key: 'cards', label: $t('anki.colCards'), narrow: true, align: 'right' },
+        { key: 'new', label: $t('anki.colNew'), narrow: true, align: 'right' },
+        { key: 'due', label: $t('anki.colDue'), title: $t('anki.colDueTooltip'), narrow: true, align: 'right' },
         { key: 'actions', label: $t('anki.colActions'), actions: true }
     ]);
 
@@ -677,11 +681,41 @@
             <div class="settings-note">{$t('anki.reviewLogCount', { n: reviewLog.length, limit: REVIEW_LOG_LIMIT })}</div>
         {/if}
     {:else}
-        <!-- Deck List Mode -->
-        <div class="deck-toolbar">
-            {#if !showCreateForm}
-                <NewButton label={$t('anki.newDeck')} title={$t('anki.createNewDeckTooltip')} onclick={() => (showCreateForm = true)} />
-            {:else}
+        <!-- Deck List Mode. A selected deck takes over the strip: its counts, its settings and
+             the study that Enter would start (ADR-0085, G1-G3). -->
+        {#if selectedDeck && stats}
+            <PanelHeader title={selectedDeck.name} onBack={() => anki.clearSelection()} backHint={$t('anki.allDecks')}>
+                {#if isScoreDeck(selectedDeck)}
+                    <span class="band-count">{$t('anki.cardsShort', { n: stats.totalCount })}</span>
+                {:else}
+                    <CountLink label={$t('statusBar.countPositions', { n: stats.totalCount })} title={$t('collection.browsePositions')} onclick={() => selectDeck(selectedDeck)} />
+                {/if}
+                <span class="band-count" data-testid="anki-due">{$t('anki.dueShort', { n: stats.dueCount })}</span>
+                {#snippet actions()}
+                    <button class="icon-btn" data-testid="anki-settings" onclick={openSettings} title={$t('anki.deckSettingsTooltip')}>{@render icon(ICON.gear)}</button>
+                    <button class="icon-btn" onclick={(e) => resetDeck(selectedDeck, e)} title={$t('anki.resetTooltip')}>{@render icon(ICON.sync)}</button>
+                    <button class="btn-outline" data-testid="anki-cram" onclick={() => startSession(true)} disabled={!anki.canCram(stats)} title={$t('anki.cramTooltip')}>{$t('anki.cram')}</button>
+                    <button class="btn-launch" data-testid="anki-study" onclick={() => startSession(false)} disabled={!anki.canStudy(stats, selectedDeck)}>
+                        {@render icon(ICON.play, 12)}
+                        {#if pausedSession && pausedSession.deckId === selectedDeck.id}
+                            {$t('anki.resumeShort', { reviewed: pausedSession.sessionCount })}
+                        {:else}
+                            {$t('anki.studyShort')}
+                        {/if}
+                    </button>
+                {/snippet}
+            </PanelHeader>
+        {:else}
+            <PanelHeader title={$t('anki.title')} count={decks.length > 0 ? String(decks.length) : null}>
+                {#snippet actions()}
+                    {#if !showCreateForm}
+                        <NewButton label={$t('anki.newDeck')} title={$t('anki.createNewDeckTooltip')} onclick={() => (showCreateForm = true)} />
+                    {/if}
+                {/snippet}
+            </PanelHeader>
+        {/if}
+        {#if showCreateForm}
+            <div class="deck-toolbar">
                 <div class="create-form">
                     <input
                         type="text"
@@ -714,8 +748,8 @@
                     <button class="btn-outline" onclick={createDeck} title={$t('common.create')}>{@render icon(ICON.check)}</button>
                     <button class="btn-outline" onclick={() => (showCreateForm = false)}>{@render icon(ICON.cross)}</button>
                 </div>
-            {/if}
-        </div>
+            </div>
+        {/if}
 
         <PanelTable
             rows={decks}
@@ -729,6 +763,7 @@
             }}
             emptyText={$t('anki.empty')}
             emptyActions
+            emptyAction={{ label: $t('anki.newDeck'), onClick: () => (showCreateForm = true) }}
         >
             {#snippet cells(deck)}
                 {#if deckEdit.isEditing(deck.id)}
@@ -743,9 +778,22 @@
                     <td class="name-cell"><span class="deck-name">{deck.name}</span></td>
                     <td class="desc-cell">{deck.description || ''}</td>
                     <td class="source-cell">{anki.sourceLabel(deck, collections, $t)}</td>
-                    <td class="narrow-col count-cell">{deck.cardCount}</td>
-                    <td class="narrow-col count-cell">{deck.newCount || ''}</td>
-                    <td class="narrow-col count-cell">{deck.dueCount || ''}</td>
+                    <td class="narrow-col count-cell num">
+                        {#if isScoreDeck(deck) || !deck.cardCount}
+                            {deck.cardCount}
+                        {:else}
+                            <CountLink
+                                label={String(deck.cardCount)}
+                                title={$t('collection.browsePositions')}
+                                onclick={(e) => {
+                                    e?.stopPropagation();
+                                    selectDeck(deck);
+                                }}
+                            />
+                        {/if}
+                    </td>
+                    <td class="narrow-col count-cell num">{deck.newCount || ''}</td>
+                    <td class="narrow-col count-cell num">{deck.dueCount || ''}</td>
                     <td class="actions-col">
                         <span class="item-actions">
                             <button class="icon-btn" onclick={(e) => startEditing(deck, e)} title={$t('anki.renameTooltip')}>{@render icon(ICON.edit, 12)}</button>
@@ -756,36 +804,6 @@
                 {/if}
             {/snippet}
         </PanelTable>
-
-        <!-- Deck detail panel (shown when a deck is selected) -->
-        {#if selectedDeck && stats}
-            <div class="deck-detail">
-                <div class="detail-stats">
-                    {#each [['newCount', 'anki.statNew'], ['learningCount', 'anki.statLearning'], ['reviewCount', 'anki.statReview'], ['totalCount', 'anki.statTotal']] as [field, labelKey] (field)}
-                        <div class="stat-box">
-                            <div class="stat-number">{stats[field]}</div>
-                            <div class="stat-label">{$t(labelKey)}</div>
-                        </div>
-                    {/each}
-                </div>
-                <div class="detail-actions">
-                    <button class="btn-primary btn-study" onclick={() => startSession(false)} disabled={!anki.canStudy(stats, selectedDeck)}>
-                        {@render icon(ICON.play)}
-                        {#if pausedSession && pausedSession.deckId === selectedDeck.id}
-                            {$t('anki.resume', { due: stats.dueCount, reviewed: pausedSession.sessionCount })}
-                        {:else}
-                            {$t('anki.study', { due: stats.dueCount })}
-                        {/if}
-                    </button>
-                    <button class="btn-cram" onclick={() => startSession(true)} disabled={!anki.canCram(stats)} title={$t('anki.cramTooltip')}>
-                        {@render icon(ICON.sync)}
-                        {$t('anki.cram')}
-                    </button>
-                    <button class="btn-outline" onclick={openSettings} title={$t('anki.deckSettingsTooltip')}>{@render icon(ICON.gear)}</button>
-                    <button class="btn-outline" onclick={(e) => resetDeck(selectedDeck, e)} title={$t('anki.resetTooltip')}>{@render icon(ICON.sync)}</button>
-                </div>
-            </div>
-        {/if}
     {/if}
 
     {#if cardMenu}
@@ -822,8 +840,12 @@
         cursor: pointer;
         font-size: var(--font-size-small);
     }
-    .btn-outline:hover {
+    .btn-outline:hover:not(:disabled) {
         background: var(--color-surface-alt);
+    }
+    .btn-outline:disabled {
+        opacity: 0.5;
+        cursor: default;
     }
 
     .btn-primary {
@@ -917,71 +939,35 @@
         width: 100%;
     }
 
-    /* --- Deck detail --- */
-    .deck-detail {
-        border-top: 1px solid var(--color-border);
-        padding: 6px 8px;
-        background: var(--color-surface-alt);
+    /* Numbers read down a column when they align on their units (ADR-0085, G4). */
+    .anki-panel td.num {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+    }
+
+    /* --- Selected deck's strip --- */
+    .band-count {
         flex-shrink: 0;
+        font-variant-numeric: tabular-nums;
     }
 
-    .detail-stats {
-        display: flex;
-        gap: 8px;
-        margin-bottom: 6px;
-    }
-
-    .stat-box {
-        flex: 1;
-        text-align: center;
-        padding: 3px;
-        border-radius: 3px;
-        background: var(--color-surface);
-        border: 1px solid var(--color-border);
-    }
-
-    .stat-number {
-        font-size: var(--font-size-base);
-        font-weight: 600;
-        color: var(--color-text);
-    }
-    .stat-label {
-        font-size: var(--font-size-small);
-        color: var(--color-text-muted);
-        text-transform: uppercase;
-    }
-
-    .detail-actions {
-        display: flex;
-        gap: 6px;
+    /* The strip's primary action launches a session: drawn full, the one filled button of the
+       view (ADR-0085, G3). */
+    .btn-launch {
+        display: inline-flex;
         align-items: center;
-    }
-
-    .btn-study {
-        flex: 1;
-        justify-content: center;
-    }
-
-    .btn-cram {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        padding: 4px 12px;
-        border: 1px solid #17a2b8;
-        border-radius: 3px;
-        background: var(--color-surface);
-        color: #17a2b8;
+        gap: var(--space-1);
+        padding: var(--space-1) var(--space-2);
+        border: 1px solid var(--color-primary);
+        border-radius: var(--radius);
+        background: var(--color-primary);
+        color: white;
         cursor: pointer;
-        font-size: var(--font-size-base);
-        justify-content: center;
+        font-size: var(--font-size-small);
     }
-    .btn-cram:hover {
-        background: color-mix(in srgb, #17a2b8 10%, var(--color-surface));
-    }
-    .btn-cram:disabled {
-        border-color: var(--color-border);
-        color: var(--color-border);
-        cursor: default;
+    .btn-launch:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
     }
 
     /* --- Review and settings views --- */

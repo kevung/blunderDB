@@ -784,7 +784,9 @@
         "noMovesFound": "No moves found for this match",
         "swappedPlayers": "Players swapped",
         "confirmDelete": "Delete tournament \"{name}\"?",
-        "newButton": "New tournament"
+        "newButton": "New tournament",
+        "matchCountOne": "1 match",
+        "matchCountMany": "{n} matches"
     },
     "anki": {
         "limitSession": "Limit the session",
@@ -818,7 +820,7 @@
         "deckSettingsTooltip": "Deck settings",
         "deleteDeckTooltip": "Delete deck",
         "easy": "Easy",
-        "empty": "No decks yet. Create one from a collection or current search.",
+        "empty": "No decks",
         "enableFuzz": "Enable fuzz (randomize intervals)",
         "good": "Good",
         "hard": "Hard",
@@ -828,7 +830,6 @@
         "positionsCount": "{count} positions",
         "renameTooltip": "Rename",
         "resetTooltip": "Reset all cards to new",
-        "resume": "Resume ({due} due, {reviewed} reviewed)",
         "retentionTarget": "Retention target",
         "selectCollection": "-- Select collection --",
         "settingsTitle": "Settings: {name}",
@@ -838,11 +839,6 @@
         "scoresCount": "{count} scores",
         "scoreQuestion": "Score {a}/{b}",
         "badScoreKey": "Unreadable score on this card",
-        "statLearning": "Learning",
-        "statNew": "New",
-        "statReview": "Review",
-        "statTotal": "Total",
-        "study": "Study ({due} due)",
         "cram": "Cram",
         "cramTooltip": "Free drill: random positions, no effect on the review schedule",
         "cramBadge": "Cram",
@@ -884,7 +880,13 @@
             "relearning": "Relearning"
         },
         "sourceSearch": "Search",
-        "sourceCollectionN": "Collection #{id}"
+        "sourceCollectionN": "Collection #{id}",
+        "title": "Anki",
+        "studyShort": "Study",
+        "resumeShort": "Resume ({reviewed})",
+        "dueShort": "{n} due",
+        "cardsShort": "{n} cards",
+        "allDecks": "All decks"
     },
     "analysis": {
         "menuCopy": "Copy position and analysis",
@@ -1031,7 +1033,8 @@
         "created": "Created",
         "description": "Description",
         "user": "User",
-        "version": "Version"
+        "version": "Version",
+        "title": "Database metadata"
     },
     "issuance": {
         "originLabel": "Origin",
@@ -2183,7 +2186,7 @@
     },
     "direction": {
         "title": "Direction",
-        "direct": "Direct this tournament",
+        "direct": "Direct",
         "open": "Open the direction",
         "close": "Close the direction",
         "fullscreen": {

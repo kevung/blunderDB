@@ -92,10 +92,10 @@ describe('AnkiPanel', () => {
         expect(get(selectedAnkiDeckStore)).toEqual(DECKS[0]);
         expect(db.GetAnkiDeckStats).toHaveBeenCalledWith(1);
         expect(container.querySelector('tbody tr').classList.contains('selected')).toBe(true);
-        const detail = container.querySelector('.deck-detail');
-        expect(detail).not.toBeNull();
-        expect(detail.querySelectorAll('.stat-number')).toHaveLength(4);
-        expect(detail.querySelector('.btn-study').disabled).toBe(false);
+        // The selected deck takes over the strip: its counts, and the study it starts.
+        expect(container.querySelector('[data-testid="panel-header"] .panel-title').textContent).toBe('Alpha');
+        expect(container.querySelector('[data-testid="anki-due"]')).not.toBeNull();
+        expect(container.querySelector('[data-testid="anki-study"]').disabled).toBe(false);
     });
 
     test('the study button is disabled with nothing due; cram only needs cards', async () => {
@@ -104,8 +104,8 @@ describe('AnkiPanel', () => {
         ankiDeckStatsStore.set({ newCount: 0, learningCount: 0, reviewCount: 1, totalCount: 1, dueCount: 0 });
         const { container } = render(AnkiPanel);
         await settle();
-        expect(container.querySelector('.btn-study').disabled).toBe(true);
-        expect(container.querySelector('.btn-cram').disabled).toBe(false);
+        expect(container.querySelector('[data-testid="anki-study"]').disabled).toBe(true);
+        expect(container.querySelector('[data-testid="anki-cram"]').disabled).toBe(false);
     });
 
     test('the review view shows the current card and routes the rating keys to the service', async () => {
@@ -148,8 +148,7 @@ describe('AnkiPanel', () => {
         const { container } = render(AnkiPanel);
         await settle();
 
-        // The gear button is the first outlined button of the detail actions.
-        await fireEvent.click(container.querySelector('.detail-actions .btn-outline'));
+        await fireEvent.click(container.querySelector('[data-testid="anki-settings"]'));
         await settle();
         expect(get(ankiViewModeStore)).toBe('settings');
         expect(container.querySelector('.settings-row input[type="number"]').value).toBe('0.85');
