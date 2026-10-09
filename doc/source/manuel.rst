@@ -2233,7 +2233,8 @@ dans le coin inférieur droit : il montre la position de la transcription, les d
 saisis, le coup en cours au plateau et les flèches du candidat sélectionné, dont
 la notation s'affiche dans son bandeau. On le déplace en le glissant ; un bouton
 de son bandeau lui fait prendre trois tailles, un autre le replie en un onglet
-qui le rouvre. Sa place, sa taille et son repli sont retenus. Le clavier reste
+qui le rouvre. Sa place et sa taille sont retenues ; replié, il se rouvre à la
+prochaine entrée dans le théâtre. Le clavier reste
 celui du panneau : les dés, les candidats, la validation, le curseur et les
 touches de la vidéo (*ESPACE*, *[*, *]*, …) gardent leur effet, et ni le
 plateau ni les boutons ne prennent le focus. *F11*, *ÉCHAP* ou le bouton en

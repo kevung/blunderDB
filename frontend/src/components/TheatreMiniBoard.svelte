@@ -2,7 +2,9 @@
     // The floating board of the theatre: the transcription's position, the move being played on
     // the board and the arrows of the selected candidate (services/theatreBoard.js), drawn by
     // the board's own scene functions (services/diagramService.js). It is dragged anywhere, takes
-    // three sizes and folds into a tab; where it sits is remembered. It never takes the focus:
+    // three sizes and folds into a tab; where it sits and its size are remembered. The fold is
+    // not: a tab folded in an earlier theatre is easily missed over a video, and the board is what
+    // the theatre is for, so each theatre opens with it unfolded. It never takes the focus:
     // the transcription keys stay live while it is handled.
     import { t } from '../i18n';
     import { positionStore } from '../stores/positionStore.js';
@@ -18,6 +20,9 @@
     const MARGIN = 16;
     // Above the bottom edge, where a player draws its controls.
     const BOTTOM = 64;
+    // The folded tab's box, enough to keep it whole inside the window.
+    const TAB_W = 110;
+    const TAB_H = 34;
     /** Widths of the three sizes; the height follows the board's own ratio. */
     const SIZES = /** @type {const} */ ({ s: 240, m: 340, l: 460 });
     // The nominal diagram is centred on its board, whose point numbers hang below it and
@@ -25,21 +30,21 @@
     const DRAW_HEIGHT = DIAGRAM_HEIGHT + 24;
     /** @typedef {keyof typeof SIZES} Size */
 
-    /** @type {{ x: number | null, y: number | null, size: Size, hidden: boolean }} */
+    /** @type {{ x: number | null, y: number | null, size: Size }} */
     const saved = readSaved();
     // Fractions of the window, so the board keeps its corner when the window changes size;
     // null until dragged, the bottom-right corner.
     let fx = $state(saved.x);
     let fy = $state(saved.y);
     let size = $state(saved.size);
-    let hidden = $state(saved.hidden);
+    let hidden = $state(false);
     let dragging = $state(false);
     // The layer's own size, in its CSS pixels: the theatre sits inside the interface's `zoom`,
     // so a window pixel is `scale` of them and a place computed in window pixels lands off screen.
     let viewW = $state(window.innerWidth);
     let viewH = $state(window.innerHeight);
     let scale = 1;
-    /** @type {HTMLDivElement | null} */
+    /** @type {HTMLElement | null} */
     let card = $state(null);
 
     $effect(() => {
@@ -69,6 +74,12 @@
         return `left: ${left}px; top: ${top}px; width: ${width}px;`;
     });
 
+    // Folded, the tab stands where the board stood, in the window: that is where it is looked for.
+    const tabStyle = $derived.by(() => {
+        if (fx === null || fy === null) return `right: ${MARGIN}px; bottom: ${BOTTOM}px;`;
+        return `left: ${clamp(fx * viewW, viewW - TAB_W)}px; top: ${clamp(fy * viewH, viewH - TAB_H)}px;`;
+    });
+
     /**
      * @param {number} v
      * @param {number} max
@@ -82,17 +93,17 @@
             const v = JSON.parse(localStorage.getItem(STORE_KEY) || 'null');
             if (v && typeof v === 'object') {
                 const ok = (/** @type {unknown} */ n) => typeof n === 'number' && n >= 0 && n <= 1;
-                return { x: ok(v.x) ? v.x : null, y: ok(v.y) ? v.y : null, size: v.size in SIZES ? v.size : 'm', hidden: v.hidden === true };
+                return { x: ok(v.x) ? v.x : null, y: ok(v.y) ? v.y : null, size: v.size in SIZES ? v.size : 'm' };
             }
         } catch (_e) {
             /* storage unavailable or unreadable: the defaults */
         }
-        return { x: null, y: null, size: /** @type {Size} */ ('m'), hidden: false };
+        return { x: null, y: null, size: /** @type {Size} */ ('m') };
     }
 
     function save() {
         try {
-            localStorage.setItem(STORE_KEY, JSON.stringify({ x: fx, y: fy, size, hidden }));
+            localStorage.setItem(STORE_KEY, JSON.stringify({ x: fx, y: fy, size }));
         } catch (_e) {
             /* storage unavailable: the place lasts the session */
         }
@@ -137,7 +148,6 @@
 
     function toggleHidden() {
         hidden = !hidden;
-        save();
     }
 
     function measure() {
@@ -155,7 +165,16 @@
 <svelte:window onresize={measure} />
 
 {#if hidden}
-    <button class="theatre-board-tab" data-testid="theatre-board-show" onmousedown={keepFocus} onclick={toggleHidden} title={$t('theatre.boardShow')} aria-label={$t('theatre.boardShow')}>
+    <button
+        class="theatre-board-tab"
+        bind:this={card}
+        style={tabStyle}
+        data-testid="theatre-board-show"
+        onmousedown={keepFocus}
+        onclick={toggleHidden}
+        title={$t('theatre.boardShow')}
+        aria-label={$t('theatre.boardShow')}
+    >
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"
             ><rect x="3" y="5" width="18" height="14" rx="1.5" /><path d="M12 5v14" /></svg
         >
@@ -252,18 +271,21 @@
         width: 100%;
         height: 100%;
     }
+    /* Over a video, a discreet tab passes for part of the picture: it stands out in the
+       application's own colour. */
     .theatre-board-tab {
-        right: 16px;
-        bottom: 64px;
         display: flex;
         align-items: center;
         gap: var(--space-1);
-        padding: 4px 10px;
+        padding: 6px 12px;
+        font-weight: 600;
+        color: white;
+        background: var(--color-primary);
+        border: 2px solid white;
         cursor: pointer;
-        opacity: 0.85;
     }
     .theatre-board-tab:hover,
     .theatre-board-tab:focus-visible {
-        opacity: 1;
+        filter: brightness(1.15);
     }
 </style>
