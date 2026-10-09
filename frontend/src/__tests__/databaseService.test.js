@@ -40,6 +40,7 @@ vi.mock('../../wailsjs/go/main/Config.js', () => ({
 
 // Dynamically imported from within databaseService.js — mocked so the
 // orchestration under test never pulls in the real (much heavier) modules.
+vi.mock('../stores/libraryCountsStore.js', () => ({ refreshLibraryCounts: vi.fn() }));
 vi.mock('../services/positionService.js', () => ({
     loadAllPositions: vi.fn().mockResolvedValue(undefined)
 }));
@@ -62,6 +63,7 @@ import {
 } from '../../wailsjs/go/database/Database.js';
 import { WindowSetTitle, Quit } from '../../wailsjs/runtime/runtime.js';
 import { SaveLastDatabasePath } from '../../wailsjs/go/main/Config.js';
+import { refreshLibraryCounts } from '../stores/libraryCountsStore.js';
 import { loadAllPositions } from '../services/positionService.js';
 import { restoreSessionState, saveSessionState } from '../services/sessionService.js';
 import { openDirectionIdStore } from '../stores/directionStore.js';
@@ -264,6 +266,18 @@ describe('a Lesson being read', () => {
 });
 
 describe('openDatabaseByPath', () => {
+    test('the library counts are refreshed once the database is open, not before', async () => {
+        /** @type {string[]} */
+        const order = [];
+        OpenDatabase.mockImplementation(async () => void order.push('open'));
+        refreshLibraryCounts.mockImplementation(() => void order.push('counts'));
+
+        await openDatabaseByPath('/tmp/counts.db');
+
+        expect(order).toEqual(['open', 'counts']);
+        refreshLibraryCounts.mockReset();
+    });
+
     test('the session (and the Direction in it) is restored only once the database is open', async () => {
         /** @type {string[]} */
         const order = [];

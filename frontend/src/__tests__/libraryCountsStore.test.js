@@ -41,4 +41,16 @@ describe('compteur de bibliothèque', () => {
         expect(formatCount(c.blunders)).toBe('?');
         expect(formatCount(c.matches, c.approximate.matches)).toBe('40');
     });
+
+    it('une réponse périmée n écrase pas une plus récente', async () => {
+        let resolveOld;
+        estimate.mockImplementationOnce(() => new Promise((r) => (resolveOld = r)));
+        const old = refreshLibraryCounts();
+        await vi.waitFor(() => expect(estimate).toHaveBeenCalledTimes(1));
+        estimate.mockResolvedValueOnce({ position_count: 2064, match_count: 11, blunder_count: 87, approximate: [] });
+        await refreshLibraryCounts();
+        resolveOld({ position_count: 0, match_count: 0, blunder_count: 0, approximate: [] });
+        await old;
+        expect(get(libraryCountsStore).positions).toBe(2064);
+    });
 });

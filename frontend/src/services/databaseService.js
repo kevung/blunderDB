@@ -14,6 +14,7 @@ import { WindowSetTitle, Quit } from '../../wailsjs/runtime/runtime.js';
 import { SaveLastDatabasePath } from '../../wailsjs/go/main/Config.js';
 
 import { databasePathStore } from '../stores/databaseStore.js';
+import { refreshLibraryCounts } from '../stores/libraryCountsStore.js';
 import { analysisStore, emptyAnalysis, selectedMoveStore } from '../stores/analysisStore.js';
 import { statusBarTextStore, statusBarModeStore, commentTextStore, openModal, closeModal, MODAL, matchPanelRefreshTriggerStore } from '../stores/uiStore.js';
 import { searchEmptyStore } from '../stores/searchParamsStore.js';
@@ -101,6 +102,7 @@ export async function newDatabase() {
             databasePathStore.set(filePath);
             logger.log('databasePathStore:', filePath);
             await SetupDatabase(filePath);
+            refreshLibraryCounts();
             setStatusBarMessage(tMsg('commands.dbCreated'));
             const filename = getFilenameFromPath(filePath);
             WindowSetTitle(`blunderDB - ${filename}`);
@@ -182,6 +184,7 @@ export async function openDatabaseByPath(filePath) {
 
         await SaveLastDatabasePath(filePath);
         await OpenDatabase(filePath);
+        refreshLibraryCounts();
 
         const dbVersion = await CheckDatabaseVersion();
         const modelVersion = await GetDatabaseVersion();
