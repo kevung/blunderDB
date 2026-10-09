@@ -70,8 +70,7 @@ un coup légal), Sonnet pour T2-T5.
   du mini-plateau si elles y sont dessinées.
 - Tests : `TranscriptionPanel.boardPlay.test.js`, `TranscriptionPanel.directPlay.test.js`,
   `transcriptionPlay.test.js`, e2e `transcription-budgets.spec.js` (budgets KLM à refaire).
-- Doc : `manuel.rst` l. ~1974-2010, `raccourcis.rst` l. 384-389, `.po`. ADR-0052 : statut
-  « §3 abrogé, §4 révisé par ADR-0086 ».
+- Doc : `manuel.rst` l. ~1974-2010, `raccourcis.rst` l. 384-389, `.po`.
 
 ## T6 — Analyse (en attente)
 
