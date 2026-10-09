@@ -241,7 +241,7 @@
             id="fb-player"
             class="fb-select"
             disabled={dbEmpty || playersTab}
-            title={playersTab ? $t('stats.filterDisabledOnPlayersTab') : undefined}
+            title={playersTab ? $t('stats.filterDisabledOnPlayersTab') : localFilter.playerName || undefined}
             value={localFilter.playerName}
             onchange={(e) => {
                 localFilter = { ...localFilter, playerName: e.target.value };
@@ -250,7 +250,7 @@
         >
             <option value="">{$t('stats.allPerspectives')}</option>
             {#each playerList as p (p.Name)}
-                <option value={p.Name}>{p.Name} ({p.Count})</option>
+                <option value={p.Name} title={p.Name}>{p.Name} ({p.Count})</option>
             {/each}
         </select>
 
@@ -431,6 +431,17 @@
         color: var(--color-text-muted);
     }
 
+    /* A long name is cut with an ellipsis, never allowed to widen the bar; the whole select is
+       the hit area. */
+    #fb-player {
+        flex: 0 1 18em;
+        min-width: 8em;
+        max-width: 100%;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
     .fb-select,
     .fb-date {
         font-size: var(--font-size-small);
@@ -440,6 +451,16 @@
         background: var(--color-surface);
         color: inherit;
         height: 22px;
+    }
+
+    .fb-select {
+        cursor: pointer;
+        height: 26px;
+        padding: 2px 6px;
+    }
+
+    .fb-select:disabled {
+        cursor: default;
     }
 
     .fb-date.date-error {
