@@ -120,14 +120,35 @@ describe('Modal — closing', () => {
         const onclose = vi.fn();
         const { container, rerender } = render(ModalFixture, { props: { open: true, onclose } });
 
-        await fireEvent.click(container.querySelector('.modal-scroll'));
+        const click = async (el) => {
+            await fireEvent.mouseDown(el);
+            await fireEvent.mouseUp(el);
+            await fireEvent.click(el);
+        };
+        await click(container.querySelector('.modal-scroll'));
         expect(onclose).not.toHaveBeenCalled();
 
         await rerender({ open: true, onclose, closeOnOverlay: true });
-        await fireEvent.click(container.querySelector('.modal-box'));
-        await fireEvent.click(container.querySelector('#first'));
+        await click(container.querySelector('.modal-box'));
+        await click(container.querySelector('#first'));
         expect(onclose).not.toHaveBeenCalled();
-        await fireEvent.click(container.querySelector('.modal-scroll'));
+        await click(container.querySelector('.modal-scroll'));
+        expect(onclose).toHaveBeenCalledTimes(1);
+    });
+
+    test('a drag that starts in the box and ends on the backdrop does not close', async () => {
+        const onclose = vi.fn();
+        const { container } = render(ModalFixture, { props: { open: true, onclose, closeOnOverlay: true } });
+        const scroll = container.querySelector('.modal-scroll');
+
+        await fireEvent.mouseDown(container.querySelector('#first'));
+        await fireEvent.mouseUp(scroll);
+        await fireEvent.click(scroll);
+        expect(onclose).not.toHaveBeenCalled();
+
+        await fireEvent.mouseDown(scroll);
+        await fireEvent.mouseUp(scroll);
+        await fireEvent.click(scroll);
         expect(onclose).toHaveBeenCalledTimes(1);
     });
 
