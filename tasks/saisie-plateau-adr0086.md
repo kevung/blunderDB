@@ -1,7 +1,7 @@
 # Saisie d'un coup au plateau — plan de tranches (ADR-0086)
 
 Une tranche = un ouvrier, un worktree, une branche. T1 d'abord ; T2 à T5 ensuite, indépendantes
-entre elles (chacune ne touche que son mode et sa doc). T6 attend la réponse de l'utilisateur.
+entre elles (chacune ne touche que son mode et sa doc). T6 (onglet d'évaluation) est indépendante de toutes.
 Chaque tranche livre sa documentation (`raccourcis.rst`, `manuel.rst` et leurs huit `.po`,
 règles de `doc/CLAUDE.md`). Modèle : Opus pour T1 (règle silencieuse : un dé mal choisi reste
 un coup légal), Sonnet pour T2-T5.
@@ -16,7 +16,8 @@ un coup légal), Sonnet pour T2-T5.
 - `frontend/src/utils/boardInteractions.js` : `quizClick` joue `playClickedChecker` au lieu de
   source/destination ; clic sur les dés (`hitTestSideControls`) quand un coup est armé →
   `diceClick` (la validation passe par un rappel `deps.validatePlay()` fourni par le mode) ;
-  `onContextMenu` sur le damier, coup armé → reprise, menu seulement hors du cadre.
+  `onContextMenu` sur le damier, coup armé avec au moins un pas → reprise ; sans pas joué,
+  le menu comme aujourd'hui.
 - `frontend/src/stores/quizPlayStore.js` : `swapped` dans l'état ; `quizPlayTargetsStore`
   retiré ; un magasin `quizPlayValidateStore` (rappel du mode armé) ou équivalent.
 - `frontend/src/components/Board.svelte` : `diceUsed` dessiné pour tout coup armé ; dés dans
@@ -25,10 +26,8 @@ un coup légal), Sonnet pour T2-T5.
 - `frontend/src/utils/boardScene.js` : `drawDice` accepte un demi-voile (opacité par dé).
 - Tests : `boardMove.test.js` (nouveau), `duelBoard.test.js`, `boardInteractions.test.js`,
   `boardScene.test.js`, `quizPlay.test.js`.
-- Sans doc utilisateur propre : T1 ne change aucun mode tant qu'aucun ne fournit
-  `validatePlay` — sauf le clic source/destination, qui bascule ici pour tous. **Donc T1
-  livre aussi la doc commune** (`raccourcis.rst` lignes du menu du plateau, `manuel.rst` §menu
-  du plateau, ~l. 123-135).
+- Le clic source/destination bascule ici pour tous les modes : **T1 livre la doc commune**
+  (`raccourcis.rst` l. 50-52, menu du plateau ; `manuel.rst` l. ~123-135 ; `.po`).
 
 ## T2 — Duel
 
@@ -43,15 +42,16 @@ un coup légal), Sonnet pour T2-T5.
 
 - `frontend/src/services/trainingTabService.js` : fournit `validatePlay` = `answerDecisionBoard` ;
   `playDecisionNotation` inchangé (notation tapée).
-- `frontend/src/components/TrainingPanel.svelte` : bouton *Valider* et Entrée gardés ;
-  *Recommencer* reste au panneau.
+- `frontend/src/components/TrainingPanel.svelte` : bouton *Valider*
+  (`training-validate-move`) retiré, Entrée gardée ; *Recommencer* reste au panneau.
 - Tests : tests de `TrainingPanel`, `frontend/tests/e2e/training-decision.spec.js`.
 - Doc : `manuel.rst` (Entraînement, décision de pions), `raccourcis.rst` panneau Entraînement, `.po`.
 
 ## T4 — Anki (réponse au plateau)
 
 - `frontend/src/services/ankiBoardAnswer.js` : `validatePlay` = `validateBoardAnswer(card)`.
-- `frontend/src/components/AnkiPanel.svelte` : bouton *Valider* gardé.
+- `frontend/src/components/AnkiPanel.svelte` : bouton *Valider* (`anki-board-validate`)
+  retiré ; Entrée valide le coup achevé (à ajouter si le panneau ne la lie pas déjà).
 - Tests : `ankiBoardAnswer.test.js`, `frontend/tests/e2e/anki-review-session.spec.js`.
 - Doc : `manuel.rst` (Anki, réponse au plateau), `raccourcis.rst` « Panneau Anki », `.po`.
 
@@ -62,17 +62,49 @@ un coup légal), Sonnet pour T2-T5.
 - `frontend/src/components/TranscriptionPanel.svelte` : supprimer l'`$effect` de départ
   automatique (`deducedDice` → `sendPlay`) ; fournir `validatePlay` (coup achevé ou libre →
   `sendPlay`/`commitFreePlay`) ; le premier chiffre sur un coup achevé valide (étendre la
-  branche « coup libre + chiffre » au coup légal achevé) ; sans jet saisi, coup achevé →
-  attendre la case du triangle.
+  branche « coup libre + chiffre » au coup légal achevé) ; **sans jet saisi, aucun coup armé**
+  (`boardPlayOpen` exige `boardRoll`) : plus de `loadBoardPlay` sur les 21 jets, plus de
+  `rollsAllowed`, `pickDice` ne choisit plus parmi les jets d'un coup joué.
 - `frontend/src/services/transcriptionPlay.js` : `freeClick` remplacé par le clic de la
-  grammaire en coup libre (`playClickedChecker` libre) ; `freeSelect` retiré.
+  grammaire en coup libre (`playClickedChecker` libre) ; `freeSelect` retiré ;
+  `ROLLS`, `newBoardPlay` multi-jets, `compatibleRolls`, `choosableRolls`, `deducedDice`
+  retirés ou réduits à un jet (vérifier les appelants hors panneau avant de retirer).
 - `frontend/src/services/transcriptionTheatre.js`, `TheatreMiniBoard.svelte` : cibles retirées
   du mini-plateau si elles y sont dessinées.
 - Tests : `TranscriptionPanel.boardPlay.test.js`, `TranscriptionPanel.directPlay.test.js`,
   `transcriptionPlay.test.js`, e2e `transcription-budgets.spec.js` (budgets KLM à refaire).
-- Doc : `manuel.rst` l. ~1974-2010, `raccourcis.rst` l. 384-389, `.po`.
+- Doc : `manuel.rst` l. ~1974-2010 — le paragraphe « Le coup joué au plateau dispense de
+  lire les dés » est réécrit : le jet d'abord (clavier ou triangle), puis le pion cliqué part
+  du dé de gauche, les dés se grisent, un clic sur les dés ou le jet suivant enregistre ; le
+  glissé hors des règles reste. `raccourcis.rst` l. 384-389 (la ligne « aucun dé saisi » est
+  retirée), et leurs huit `.po`.
 
-## T6 — Analyse (en attente)
+## T6 — « Évaluer dans un nouvel onglet » (ADR-0086 §10)
 
-Aucun coup ne s'y saisit aujourd'hui (clic sans effet en mode normal). À ouvrir seulement si
-l'utilisateur précise ce qu'un coup joué y ferait (sélectionner le candidat correspondant ?).
+Analyse ne saisit aucun coup. Les variantes se jouent dans une vue neuve en Eval.
+
+Mécanisme existant :
+- Vues (onglets de position) : `frontend/src/stores/viewStore.js` — `addView()` copie la vue
+  courante (position, analyse, liste partagée, onglet, mode) puis `restoreViewState` ;
+  `switchTo`, `closeView` ; vues verrouillées pendant un Duel (`viewsLocked`). Le mode EVAL/EDIT
+  d'une vue est restauré en NORMAL, l'effet d'onglet d'`App.svelte` le rétablit.
+- Eval sur un plateau brouillon : `sendPositionToEval(position)`
+  (`frontend/src/services/modeMachine.js` l. ~521, réexporté par `positionService.js`) — id 0,
+  `evalSeed`, bascule sur l'onglet `eval`. Son contexte (`savedContext.beforeEval`,
+  `lastEvalBoard`, `evalSeed`) est **global au module, pas propre à une vue**.
+- Menu du plateau : `openContextMenu` de `frontend/src/components/Board.svelte`, qui porte déjà
+  *Évaluer cette position*, *Évaluer la position miroir* et *Nouvelle vue*.
+
+Travail :
+- `Board.svelte` : entrée « Évaluer dans un nouvel onglet » (hors Duel) =
+  `viewStore.addView()` puis `sendPositionToEval(getDisplayPosition())` dans la vue neuve.
+- `viewStore.js` / `modeMachine.js` : la vue neuve part en Eval sans que la vue d'origine
+  perde sa position, sa liste ni son analyse ; un aller-retour entre les deux vues rend à
+  chacune son plateau (le contexte Eval global ne doit pas fuir d'une vue à l'autre — le
+  porter dans la vue, ou le sauver/restaurer avec elle). Voir la mémoire « Plateaux
+  brouillons : analysisStore périmé ».
+- i18n : la clé dans `frontend/src/i18n/locales/*.json` (toutes les langues).
+- Tests : `viewStore` (aller-retour), menu de `Board.svelte`, un e2e court.
+- Doc : `manuel.rst` l. ~123-135 (menu du plateau), `raccourcis.rst` si une ligne cite le
+  menu, `.po`.
+- Modèle : Opus (un contexte global qui fuit d'une vue à l'autre ne se voit pas en rouge).
