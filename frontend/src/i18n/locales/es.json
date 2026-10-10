@@ -808,7 +808,6 @@
         "boardAnswerOption": "Responder en el tablero",
         "boardAnswerOptionHint": "Se juega la jugada en el tablero; el motor la juzga y propone una nota, que puede corregir antes de calificar. Desactivado por defecto: usted se califica. Las tarjetas de cubo y de marcador siguen autocalificadas.",
         "boardAnswerHint": "Juegue su jugada en el tablero",
-        "boardAnswerValidate": "Validar",
         "boardAnswerSuggest": "Nota sugerida: {rating} (error {error} mp)",
         "boardAnswerIllegal": "Esta jugada no es legal",
         "boardAnswerUnranked": "Jugada legal que el análisis no clasifica: califíquese usted",

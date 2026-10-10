@@ -808,7 +808,6 @@
         "boardAnswerOption": "盤面で答える",
         "boardAnswerOptionHint": "手を盤面で指すと、エンジンが判定して評価を提案します。評価する前に変更できます。既定ではオフで、自分で評価します。キューブとスコアのカードは自己評価のままです。",
         "boardAnswerHint": "盤面で手を指してください",
-        "boardAnswerValidate": "確認",
         "boardAnswerSuggest": "提案された評価: {rating}(誤り {error} mp)",
         "boardAnswerIllegal": "この手は合法ではありません",
         "boardAnswerUnranked": "解析が順位付けしていない合法手です。自分で評価してください",

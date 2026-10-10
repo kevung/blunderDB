@@ -28,7 +28,6 @@
     import * as anki from '../services/ankiService.js';
     import { invalidateTrainingStats } from '../stores/statsStore.js';
     import * as boardAnswer from '../services/ankiBoardAnswer.js';
-    import { quizPlayCompleteStore } from '../stores/quizPlayStore.js';
     import { logger } from '../utils/logger.js';
     import { t, tMsg } from '../i18n';
     import { UpdateAnkiDeck, GetAnkiReviewLog } from '../../wailsjs/go/database/Database.js';
@@ -212,6 +211,8 @@
             ankiReviewActionStore.set(null);
             if (v === 'back') {
                 backToList();
+            } else if (v === 'validate') {
+                if (reviewCard) boardAnswer.validateBoardAnswer(reviewCard);
             } else if (typeof v === 'number' && v >= 1 && v <= 4) {
                 submitReview(v);
             }
@@ -573,9 +574,6 @@
             {#if $boardState?.phase === 'play'}
                 <div class="board-answer" data-testid="anki-board-play">
                     <span>{$t('anki.boardAnswerHint')}</span>
-                    <button type="button" class="btn-primary" data-testid="anki-board-validate" disabled={!$quizPlayCompleteStore} onclick={() => boardAnswer.validateBoardAnswer(reviewCard)}
-                        >{$t('anki.boardAnswerValidate')}</button
-                    >
                 </div>
             {:else if $boardState?.phase === 'graded'}
                 <div class="board-answer" data-testid="anki-board-verdict">

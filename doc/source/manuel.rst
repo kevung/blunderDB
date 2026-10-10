@@ -4328,7 +4328,9 @@ masquée.
 **Répondre au damier.** Par défaut, vous vous notez vous-même. Dans les
 Paramètres d'un paquet de positions, cochez *Répondre au damier* : pour une
 carte de pions, vous jouez alors le coup sur le damier, comme dans l'exercice
-Décision, puis *Valider*. Le moteur juge le coup contre l'analyse enregistrée,
+Décision (un clic sur un pion le joue du premier dé non joué, un clic sur les
+dés intervertit les dés restants, le clic droit reprend les pas), puis le coup
+complet se valide par un clic sur les dés ou par ENTRÉE. Le moteur juge le coup contre l'analyse enregistrée,
 dévoile la réponse et **propose une note** : *Facile* pour une bonne réponse
 rapide, *Correct* pour une bonne réponse plus lente, *Difficile* pour une erreur
 sous le seuil du blunder, *À revoir* pour un blunder ou un coup illégal. La note

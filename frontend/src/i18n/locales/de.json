@@ -808,7 +808,6 @@
         "boardAnswerOption": "Am Brett antworten",
         "boardAnswerOptionHint": "Der Zug wird auf dem Brett gespielt; die Engine beurteilt ihn und schlägt eine Note vor, die Sie vor der Bewertung ändern können. Standardmäßig aus: Sie bewerten sich selbst. Doppelwürfel- und Spielstandkarten bleiben selbstbewertet.",
         "boardAnswerHint": "Spielen Sie Ihren Zug auf dem Brett",
-        "boardAnswerValidate": "Prüfen",
         "boardAnswerSuggest": "Vorgeschlagene Note: {rating} (Fehler {error} mp)",
         "boardAnswerIllegal": "Dieser Zug ist nicht regelgerecht",
         "boardAnswerUnranked": "Regelgerechter Zug, den die Analyse nicht einordnet: bewerten Sie selbst",

@@ -808,7 +808,6 @@
         "boardAnswerOption": "Rispondere sulla scacchiera",
         "boardAnswerOptionHint": "La mossa si gioca sulla scacchiera; il motore la giudica e propone un voto, che puoi correggere prima di valutare. Disattivato per impostazione predefinita: ti valuti da solo. Le carte del cubo e del punteggio restano autovalutate.",
         "boardAnswerHint": "Gioca la tua mossa sulla scacchiera",
-        "boardAnswerValidate": "Convalida",
         "boardAnswerSuggest": "Voto suggerito: {rating} (errore {error} mp)",
         "boardAnswerIllegal": "Questa mossa non è legale",
         "boardAnswerUnranked": "Mossa legale che l'analisi non classifica: valutati da solo",

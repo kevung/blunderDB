@@ -70,7 +70,7 @@ Plan d'origine :
 - Tests : tests de `TrainingPanel`, `frontend/tests/e2e/training-decision.spec.js`.
 - Doc : `manuel.rst` (Entraînement, décision de pions), `raccourcis.rst` panneau Entraînement, `.po`.
 
-## T4 — Anki (réponse au plateau)
+## T4 — Anki (réponse au plateau) (faite)
 
 - `frontend/src/services/ankiBoardAnswer.js` : `validatePlay` = `validateBoardAnswer(card)`.
 - `frontend/src/components/AnkiPanel.svelte` : bouton *Valider* (`anki-board-validate`)

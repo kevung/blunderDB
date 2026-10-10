@@ -23,7 +23,7 @@ vi.mock('../../wailsjs/go/gui/App.js', () => ({
 }));
 
 import * as bg from '../services/ankiBoardAnswer.js';
-import { quizPlayStore } from '../stores/quizPlayStore.js';
+import { quizPlayStore, quizPlayValidateStore } from '../stores/quizPlayStore.js';
 import { hideAnkiAnswer } from '../stores/ankiStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { GradeQuizChecker } from '../../wailsjs/go/database/Database.js';
@@ -139,5 +139,15 @@ describe("l'armement du damier", () => {
         const first = get(quizPlayStore);
         await bg.armBoardAnswer({ id: 5 }, card(7));
         expect(get(quizPlayStore)).toBe(first);
+    });
+
+    test("le damier est armé avec un rappel de validation, et l'ordre des dés choisi survit", async () => {
+        await bg.setBoardAnswer(8, true);
+        await bg.armBoardAnswer({ id: 8 }, card(11));
+        expect(get(quizPlayValidateStore)).toBeTypeOf('function');
+        quizPlayStore.update((st) => ({ ...st, swapped: true }));
+        expect(get(quizPlayStore).swapped).toBe(true);
+        bg.disarmBoardAnswer();
+        expect(get(quizPlayValidateStore)).toBeNull();
     });
 });
