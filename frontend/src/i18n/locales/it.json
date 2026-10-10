@@ -2089,7 +2089,7 @@
         "finishedDecision": "Decisione terminata: {correct}/{n}, PR di sessione {pr}.",
         "undoHop": "Annulla passo",
         "resetPlay": "Ricomincia",
-        "playOnBoard": "Gioca la mossa sulla tavola, poi verificala.",
+        "playOnBoard": "Gioca la mossa sulla tavola, poi clicca i dadi.",
         "notationPlaceholder": "Mossa in notazione, es. 13/7 8/7",
         "notationLabel": "Mossa digitata in notazione",
         "cubePrompt": "Scegli l'azione di cubo.",

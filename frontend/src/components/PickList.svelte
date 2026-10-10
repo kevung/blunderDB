@@ -12,6 +12,21 @@
 <script>
     import { t } from '../i18n';
 
+    /**
+     * @typedef {object} PickListProps
+     * @property {string} header
+     * @property {any[]} items
+     * @property {(id: any) => boolean} isChecked
+     * @property {(item: any) => boolean} [isDisabled]
+     * @property {(...args: any[]) => void} toggle
+     * @property {() => void} selectAll
+     * @property {() => void} selectNone
+     * @property {(item: any) => { name: string, count?: string, partial?: boolean }} describe
+     * @property {string} [filterValue]
+     * @property {string} [filterPlaceholder]
+     */
+
+    /** @type {PickListProps} */
     let {
         header,
         items,

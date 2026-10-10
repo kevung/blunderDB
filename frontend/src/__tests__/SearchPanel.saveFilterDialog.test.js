@@ -40,7 +40,7 @@ async function openSaveDialog() {
 
     const bookmarkBtn = utils.container.querySelector('.action-btn');
     expect(bookmarkBtn).not.toBeNull();
-    await fireEvent.click(bookmarkBtn);
+    await fireEvent.click(must(bookmarkBtn));
     await tick();
 
     return utils;
@@ -64,7 +64,7 @@ describe('SearchPanel — save-filter dialog accessibility', () => {
         const { container } = await openSaveDialog();
 
         const dialog = container.querySelector('[role="dialog"]');
-        await fireEvent.keyDown(dialog, { key: 'Escape' });
+        await fireEvent.keyDown(must(dialog), { key: 'Escape' });
         await tick();
 
         expect(container.querySelector('[role="dialog"]')).toBeNull();

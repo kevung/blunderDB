@@ -53,6 +53,7 @@ import { databasePathStore } from '../stores/databaseStore.js';
 import { lastVisitedMatchStore, matchContextStore } from '../stores/positionStore.js';
 import { ListMatches } from '../../wailsjs/go/database/Database.js';
 import MatchPanel from '../components/MatchPanel.svelte';
+import { must } from './helpers/must.js';
 
 async function settle() {
     await vi.waitFor(() => expect(ListMatches).toHaveBeenCalledTimes(2));
@@ -84,7 +85,7 @@ describe('MatchPanel — every game of the transcript collapses, game 1 included
         // would toggle the selection off.
         if (!container.querySelector('tbody tr.selected')) {
             const cell = [...container.querySelectorAll('tbody tr td')].find((td) => td.textContent.includes('Alice'));
-            await fireEvent.click(cell);
+            await fireEvent.click(must(cell));
         }
         await vi.waitFor(() => expect(container.querySelector('[data-testid="match-detail-header"]')).not.toBeNull());
         for (let i = 0; i < 4; i++) await tick();
@@ -117,7 +118,7 @@ describe('MatchPanel — every game of the transcript collapses, game 1 included
 
         if (!container.querySelector('tbody tr.selected')) {
             const cell = [...container.querySelectorAll('tbody tr td')].find((td) => td.textContent.includes('Alice'));
-            await fireEvent.click(cell);
+            await fireEvent.click(must(cell));
         }
         await vi.waitFor(() => expect(container.querySelector('[data-testid="match-detail-header"]')).not.toBeNull());
         for (let i = 0; i < 4; i++) await tick();
@@ -156,7 +157,7 @@ describe('MatchPanel — every game of the transcript collapses, game 1 included
 
         if (!container.querySelector('tbody tr.selected')) {
             const cell = [...container.querySelectorAll('tbody tr td')].find((td) => td.textContent.includes('Alice'));
-            await fireEvent.click(cell);
+            await fireEvent.click(must(cell));
         }
         await vi.waitFor(() => expect(container.querySelector('[data-testid="match-detail-header"]')).not.toBeNull());
         for (let i = 0; i < 4; i++) await tick();

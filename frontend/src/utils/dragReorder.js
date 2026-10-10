@@ -14,6 +14,7 @@
  * @param {string}  [params.draggingClass='dragging'] - Class added to the dragged row
  * @param {number}  [params.deadZone=5] - Pixels of movement before drag activates
  * @param {boolean} [params.enabled=true] - Whether drag is enabled
+ * @param {number}  [params.indexOffset=0] - Index of the first rendered item
  */
 export function dragReorder(node, params) {
     /** @type {(from: number, to: number) => void} */

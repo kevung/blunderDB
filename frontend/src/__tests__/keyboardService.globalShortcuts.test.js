@@ -32,8 +32,8 @@ vi.mock('../stores/viewStore.js', async (importOriginal) => {
         ...actual,
         viewStore: {
             ...must(actual).viewStore,
-            selectPreviousView: (...a) => selectPreviousView(...a),
-            selectNextView: (...a) => selectNextView(...a)
+            selectPreviousView: (/** @type {any[]} */ ...a) => selectPreviousView(...a),
+            selectNextView: (/** @type {any[]} */ ...a) => selectNextView(...a)
         }
     };
 });

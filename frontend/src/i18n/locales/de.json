@@ -2089,7 +2089,7 @@
         "finishedDecision": "Entscheidung beendet: {correct}/{n}, Sitzungs-PR {pr}.",
         "undoHop": "Schritt zurück",
         "resetPlay": "Neu beginnen",
-        "playOnBoard": "Spielen Sie den Zug auf dem Brett und prüfen Sie ihn dann.",
+        "playOnBoard": "Spielen Sie den Zug auf dem Brett und klicken Sie dann auf die Würfel.",
         "notationPlaceholder": "Zug in Notation, z. B. 13/7 8/7",
         "notationLabel": "Zug in Notation",
         "cubePrompt": "Wählen Sie die Doppelentscheidung.",

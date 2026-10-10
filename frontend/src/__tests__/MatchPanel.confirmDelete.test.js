@@ -85,12 +85,12 @@ describe('MatchPanel — deleting a match', () => {
             return b;
         });
 
-        await fireEvent.click(del);
+        await fireEvent.click(must(del));
         const message = await answerConfirm(false);
         expect(message).toContain('Alice');
         expect(TrashMatch).not.toHaveBeenCalled();
 
-        await fireEvent.click(del);
+        await fireEvent.click(must(del));
         await answerConfirm(true);
         await vi.waitFor(() => expect(TrashMatch).toHaveBeenCalledWith(7));
     });
@@ -106,9 +106,9 @@ describe('MatchPanel — deleting a match', () => {
             expect(r).not.toBeNull();
             return r;
         });
-        await fireEvent.click(row);
+        await fireEvent.click(must(row));
         const del = container.querySelector('button.icon-btn.delete');
-        await fireEvent.click(del);
+        await fireEvent.click(must(del));
         const dialog = await vi.waitFor(() => {
             const d = document.querySelector('[role="dialog"]');
             expect(d).not.toBeNull();
@@ -116,7 +116,7 @@ describe('MatchPanel — deleting a match', () => {
             return d;
         });
         const loadsBefore = vi.mocked(GetMatchMovePositions).mock.calls.length;
-        await fireEvent.keyDown(document.activeElement, { key: 'Enter' });
+        await fireEvent.keyDown(must(document.activeElement), { key: 'Enter' });
         await vi.waitFor(() => expect(TrashMatch).toHaveBeenCalledWith(7));
         await new Promise((r) => setTimeout(r, 50));
         expect(vi.mocked(GetMatchMovePositions).mock.calls.length).toBe(loadsBefore);

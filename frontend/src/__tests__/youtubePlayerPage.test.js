@@ -47,6 +47,12 @@ function load({ state = 5, search = '', referrer = '' } = {}) {
         getDuration: () => 600,
         getAvailablePlaybackRates: () => [1],
         setPlaybackRate: vi.fn(),
+        muted: false,
+        pipelineMuted: false,
+        isMuted: () => player.muted,
+        // The player reports muted while its pipeline is only really muted if it was told so.
+        mute: vi.fn(() => (player.pipelineMuted = player.muted = true)),
+        unMute: vi.fn(() => (player.pipelineMuted = player.muted = false)),
         getPlaybackRate: () => 1
     };
     const YT = {
@@ -130,5 +136,28 @@ describe('the hosted YouTube page', () => {
         expect(page.last('ready')?.target).toBe('http://wails.localhost');
         page.say({ type: 'seek', time: 9 }, 'http://evil.example');
         expect(page.player.seekTo).not.toHaveBeenCalled();
+    });
+
+    test('a speed change that unmutes the webview re-mutes a player the viewer had muted', () => {
+        const page = load({ state: 2, search: '?origin=http%3A%2F%2Fwails.localhost' });
+        page.ready();
+        page.player.mute();
+        page.player.setPlaybackRate.mockImplementation(() => {
+            page.player.pipelineMuted = false;
+            page.player.muted = false;
+            page.player.events.onPlaybackRateChange({ data: 1.5 });
+        });
+        page.say({ type: 'rate', rate: 1.5 });
+        expect(page.player.muted).toBe(true);
+        expect(page.player.pipelineMuted).toBe(true);
+    });
+
+    test('a speed change on a player that is not muted leaves its sound alone', () => {
+        const page = load({ state: 2, search: '?origin=http%3A%2F%2Fwails.localhost' });
+        page.ready();
+        page.player.setPlaybackRate.mockImplementation(() => page.player.events.onPlaybackRateChange({ data: 1.5 }));
+        page.say({ type: 'rate', rate: 1.5 });
+        expect(page.player.mute).not.toHaveBeenCalled();
+        expect(page.player.unMute).not.toHaveBeenCalled();
     });
 });

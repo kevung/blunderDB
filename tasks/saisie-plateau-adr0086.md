@@ -61,7 +61,7 @@ Plan d'origine :
 - Tests : `duelBoard.test.js`, `duelBoardService.test.js`, `DuelPanel.test.js`.
 - Doc : `raccourcis.rst` « Duel au plateau » (l. 150-164), section Duel de `manuel.rst`, `.po`.
 
-## T3 — Entraînement (décision de pions)
+## T3 — Entraînement (décision de pions) (faite)
 
 - `frontend/src/services/trainingTabService.js` : fournit `validatePlay` = `answerDecisionBoard` ;
   `playDecisionNotation` inchangé (notation tapée).

@@ -23,16 +23,16 @@ const StartFolderWatch = vi.fn(() => Promise.resolve({ running: true, folder: '/
 const StopFolderWatch = vi.fn(() => Promise.resolve(undefined));
 const FolderWatchStatus = vi.fn(() => Promise.resolve({ running: false, folder: '', intervalSeconds: 0 }));
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
-    StartFolderWatch: (...a) => StartFolderWatch(...a),
-    StopFolderWatch: (...a) => StopFolderWatch(...a),
-    FolderWatchStatus: (...a) => FolderWatchStatus(...a)
+    StartFolderWatch: (/** @type {any[]} */ ...a) => StartFolderWatch(...a),
+    StopFolderWatch: (/** @type {any[]} */ ...a) => StopFolderWatch(...a),
+    FolderWatchStatus: (/** @type {any[]} */ ...a) => FolderWatchStatus(...a)
 }));
 
 let watchSetting = { on: false, path: '', intervalSeconds: 0 };
 const SaveWatchFolder = vi.fn(() => Promise.resolve(undefined));
 vi.mock('../../wailsjs/go/main/Config.js', () => ({
     GetWatchFolder: () => Promise.resolve(watchSetting),
-    SaveWatchFolder: (...a) => SaveWatchFolder(...a)
+    SaveWatchFolder: (/** @type {any[]} */ ...a) => SaveWatchFolder(...a)
 }));
 
 /** @type {unknown[]} */
@@ -52,7 +52,7 @@ const importWatchedFiles = vi.fn((files) => {
     return Promise.resolve({ succeeded: files.length, skipped: 0, failed: 0 });
 });
 vi.mock('../services/importService.js', () => ({
-    importWatchedFiles: (...a) => importWatchedFiles(...a)
+    importWatchedFiles: (/** @type {any[]} */ ...a) => importWatchedFiles(...a)
 }));
 
 import { databasePathStore } from '../stores/databaseStore.js';

@@ -31,6 +31,7 @@ import StatsCorpusTab from '../components/stats/StatsCorpusTab.svelte';
 import StatsFilterBar from '../components/stats/StatsFilterBar.svelte';
 import { statsFilterStore } from '../stores/statsStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
+import { must } from './helpers/must.js';
 
 const filter = { playerName: '', tournamentIDs: [], dateFrom: '', dateTo: '', decisionType: -1, matchLength: [], analysisEngine: 'gnubg', minAnalysisDepth: 2 };
 
@@ -45,7 +46,7 @@ describe('StatsCorpusTab', () => {
         const { container, getByLabelText, findByText } = render(StatsCorpusTab, { props: { filter } });
         await fireEvent.input(getByLabelText('Player A'), { target: { value: 'Alice' } });
         await fireEvent.input(getByLabelText('Player B'), { target: { value: 'Bob' } });
-        await fireEvent.click(container.querySelector('section:nth-of-type(1) button'));
+        await fireEvent.click(must(container.querySelector('section:nth-of-type(1) button')));
         expect(HeadToHead).toHaveBeenCalledWith('Alice', 'Bob', filter);
         expect(await findByText('2025-01-02')).toBeTruthy();
         expect(container.textContent).toContain('Alice 2 – 1 Bob');
@@ -54,7 +55,7 @@ describe('StatsCorpusTab', () => {
     test('calendar windows pass the chosen width in months', async () => {
         const { container, getByLabelText, findByText } = render(StatsCorpusTab, { props: { filter } });
         await fireEvent.change(getByLabelText('Months per window'), { target: { value: '6' } });
-        await fireEvent.click(container.querySelector('section:nth-of-type(2) button'));
+        await fireEvent.click(must(container.querySelector('section:nth-of-type(2) button')));
         expect(PRByWindow).toHaveBeenCalledWith(filter, 6);
         expect(await findByText('5.12')).toBeTruthy();
     });
@@ -62,7 +63,7 @@ describe('StatsCorpusTab', () => {
     test('ranking passes the decision floor and shows the ranked rows', async () => {
         const { container, getByLabelText, findByText } = render(StatsCorpusTab, { props: { filter } });
         await fireEvent.input(getByLabelText('Min. decisions'), { target: { value: '100' } });
-        await fireEvent.click(container.querySelector('section:nth-of-type(3) button'));
+        await fireEvent.click(must(container.querySelector('section:nth-of-type(3) button')));
         expect(PlayerRanking).toHaveBeenCalledWith(filter, 100);
         expect(await findByText('2–1')).toBeTruthy();
     });

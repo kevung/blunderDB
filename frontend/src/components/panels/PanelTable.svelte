@@ -51,12 +51,41 @@
      * @property {boolean} [narrow]   sized to its content (`.narrow-col`)
      * @property {boolean} [actions]  the icon-button column (`.actions-col`)
      * @property {boolean} [elastic]  the one column that takes the leftover width (ADR-0085, G4)
-     * @property {'left'|'center'|'right'} [align]
+     * @property {string} [align]
      * @property {string} [title]
      * @property {string} [class]     extra class on the header cell
-     * @property {'asc'|'desc'} [defaultDir] direction when this column is first picked
+     * @property {string} [defaultDir] direction when this column is first picked
      */
 
+    /**
+     * @typedef {object} PanelTableProps
+     * @property {any[]} [rows]
+     * @property {(row: any) => any} [rowKey]
+     * @property {Column[]} [columns]
+     * @property {any} [sort]
+     * @property {any} [sortOptions]
+     * @property {any} [selectedKey]
+     * @property {(row: any, index: number) => string} [rowClass]
+     * @property {(row: any, index: number) => Record<string, any>} [rowAttrs]
+     * @property {boolean} [pointerRows]
+     * @property {(row: any, index: number, event?: Event) => void} [onSelect]
+     * @property {(row: any, index: number, event?: Event) => void} [onActivate]
+     * @property {(from: number, to: number) => void} [onReorder]
+     * @property {string} [emptyText]
+     * @property {boolean} [emptyActions]
+     * @property {any} [emptyClear]
+     * @property {any} [emptyAction]
+     * @property {string} [class]
+     * @property {import('svelte').Snippet} [header]
+     * @property {import('svelte').Snippet} [subheader]
+     * @property {number} [rowHeight]
+     * @property {number} [virtualizeAbove]
+     * @property {number} [buffer]
+     * @property {() => void} [onNearEnd]
+     * @property {import('svelte').Snippet<[any, number]>} cells
+     */
+
+    /** @type {PanelTableProps} */
     let {
         rows = [],
         rowKey = (row) => row.id,
@@ -115,7 +144,9 @@
         return columns.findLastIndex((c) => !c.actions);
     });
 
+    /** @type {HTMLElement | null} */
     let tbodyEl = $state(null);
+    /** @type {HTMLElement | null} */
     let scrollEl = $state(null);
     let scrollTop = $state(0);
     let viewportHeight = $state(0);
@@ -147,30 +178,38 @@
     }
 
     $effect(() => {
-        if (!scrollEl) return;
-        viewportHeight = scrollEl.clientHeight;
+        const el = scrollEl;
+        if (!el) return;
+        viewportHeight = el.clientHeight;
         if (typeof ResizeObserver === 'undefined') return;
-        const ro = new ResizeObserver(() => (viewportHeight = scrollEl.clientHeight));
-        ro.observe(scrollEl);
+        const ro = new ResizeObserver(() => (viewportHeight = el.clientHeight));
+        ro.observe(el);
         return () => ro.disconnect();
     });
 
+    /** @param {Column} col */
     function handleSort(col) {
         if (!col.sortable) return;
-        sort = nextSort(sort?.column ?? null, sort?.direction ?? 'asc', col.key, { tristate: !!sortOptions.tristate, defaultDir: col.defaultDir ?? 'asc' });
+        sort = nextSort(sort?.column ?? null, sort?.direction ?? 'asc', col.key, { tristate: !!sortOptions.tristate, defaultDir: /** @type {'asc' | 'desc'} */ (col.defaultDir ?? 'asc') });
     }
 
+    /** @param {Column} col */
     function ariaSort(col) {
         if (!col.sortable) return undefined;
         if (sort?.column !== col.key) return 'none';
         return sort.direction === 'asc' ? 'ascending' : 'descending';
     }
 
+    /** @param {any} row */
     function isSelected(row) {
         return selectedKey !== undefined && selectedKey !== null && rowKey(row) === selectedKey;
     }
 
     /** Scroll the row into view once the DOM reflects the current selection. */
+    /**
+     * @param {any} row
+     * @param {ScrollLogicalPosition} [block]
+     */
     export async function scrollToRow(row, block = 'nearest') {
         await tick();
         const key = rowKey(row);
@@ -194,6 +233,7 @@
     }
 
     /** Move the keyboard focus onto the row (it must be activatable, i.e. carry a tabindex). */
+    /** @param {any} row */
     export async function focusRow(row) {
         await scrollToRow(row);
         await tick();
@@ -203,6 +243,7 @@
         /** @type {HTMLElement | undefined} */ (els[index - first])?.focus();
     }
 
+    /** @param {ScrollLogicalPosition} [block] */
     export function scrollToSelected(block = 'nearest') {
         const row = rows.find((r) => isSelected(r));
         if (row) scrollToRow(row, block);
@@ -212,6 +253,7 @@
      * Move the selection by `delta` rows (j/k), reporting it through `onSelect`
      * and scrolling it into view. Returns whether a row was reached.
      */
+    /** @param {number} delta */
     export function navigate(delta) {
         const next = stepSelection(rows, rowKey, selectedKey, delta);
         if (!next) return false;

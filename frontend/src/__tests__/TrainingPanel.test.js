@@ -60,6 +60,7 @@ function scoresQuestion() {
     return { kind: 'scores', key: '3:5', card, numbers: scoreCardNumbers(card) };
 }
 import * as missedModule from '../services/trainingMissed.js';
+import { must } from './helpers/must.js';
 
 const service = vi.mocked(serviceModule);
 
@@ -226,19 +227,16 @@ const PLAY = {
 describe('une décision de pions', () => {
     beforeEach(() => vi.clearAllMocks());
 
-    test('se joue sur le plateau, et « Valider » attend un coup complet', async () => {
+    test('se joue sur le plateau : pas de bouton « Valider », les dés valident', async () => {
         trainingSessionStore.set(decisionSession('checker'));
         quizPlayStore.set(newPlay(POSITION, [PLAY]));
         const panel = render(TrainingPanel);
         expect(panel.container.textContent).toContain(en.training.playOnBoard);
-        const validate = /** @type {HTMLButtonElement} */ (panel.getByTestId('training-validate-move'));
-        expect(validate.disabled).toBe(true);
-
+        expect(panel.queryByTestId('training-validate-move')).toBeNull();
         quizPlayStore.update((s) => (s ? playHop(playHop(s, 6, 4), 6, 3) : s));
         await tick();
-        expect(validate.disabled).toBe(false);
-        validate.click();
-        expect(service.answerDecisionBoard).toHaveBeenCalled();
+        expect(panel.queryByTestId('training-validate-move')).toBeNull();
+        expect(service.answerDecisionBoard).not.toHaveBeenCalled();
     });
 
     test('« Annuler le pas » et « Recommencer » sont des boutons du panneau', async () => {
@@ -538,7 +536,7 @@ describe('une question d’Évaluation (#322)', () => {
         trainingJournalStore.set({ decision: { sessions: [{ exercise: 'decision', numbersAsked: 5, faults: 2, deviations: 0, meanDeviation: 0, medianMs: 3000, pr: 6.5 }], numbers: [] } });
         const panel = render(TrainingPanel);
         expect(panel.queryByTestId('training-missed')).toBeNull();
-        await fireEvent.click(panel.getByTestId('training-summary-decision').querySelector('button.disclose'));
+        await fireEvent.click(must(panel.getByTestId('training-summary-decision').querySelector('button.disclose')));
         await fireEvent.click(panel.getByTestId('training-missed-retake'));
         await fireEvent.click(panel.getByTestId('training-missed-deck'));
         await fireEvent.click(panel.getByTestId('training-missed-collection'));

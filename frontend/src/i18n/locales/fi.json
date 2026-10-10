@@ -2089,7 +2089,7 @@
         "finishedDecision": "Päätös valmis: {correct}/{n}, istunnon PR {pr}.",
         "undoHop": "Kumoa siirto",
         "resetPlay": "Aloita alusta",
-        "playOnBoard": "Pelaa siirto laudalla ja tarkista se sitten.",
+        "playOnBoard": "Pelaa siirto laudalla ja napsauta sitten noppia.",
         "notationPlaceholder": "Siirto merkintänä, esim. 13/7 8/7",
         "notationLabel": "Merkintänä kirjoitettu siirto",
         "cubePrompt": "Valitse kuutiopäätös.",

@@ -236,10 +236,6 @@
                                     bind:this={revealButton}
                                     onclick={() => revealQuestion()}>{entered ? $t('training.validate') : $t('training.reveal')}</button
                                 >
-                            {:else if question.prompt === 'checker'}
-                                <button type="button" class="launch" data-testid="training-validate-move" disabled={!$quizPlayCompleteStore} onclick={() => answerDecisionBoard()}
-                                    >{$t('training.validate')}</button
-                                >
                             {/if}
                         {:else if another}
                             <button type="button" class="launch" data-testid="training-next" bind:this={nextButton} onclick={() => nextTrainingQuestion()}>{$t('training.next')}</button>

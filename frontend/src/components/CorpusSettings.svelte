@@ -8,10 +8,13 @@
     // The aliases of a kind ("player" or "event") are edited here; the merge of
     // players in the match panel records the same aliases.
     let kind = $state('player');
+    /** @type {import('../../wailsjs/go/models').domain.PlayerAlias[]} */
     let aliases = $state([]);
+    /** @type {import('../../wailsjs/go/models').storage.AliasSuggestion[] | null} */
     let suggestions = $state(null);
     let aliasInput = $state('');
     let canonicalInput = $state('');
+    /** @type {import('../../wailsjs/go/models').domain.DuplicateSuspect[] | null} */
     let suspects = $state(null);
     let busy = $state(false);
     let error = $state('');
@@ -38,14 +41,14 @@
         }
     }
 
-    async function selectKind(next) {
+    async function selectKind(/** @type {string} */ next) {
         kind = next;
         suggestions = null;
         error = '';
         await loadAliases();
     }
 
-    async function addAlias(alias, canonical) {
+    async function addAlias(/** @type {string} */ alias, /** @type {string} */ canonical) {
         error = '';
         try {
             await SetAlias(kind, alias, canonical);
@@ -58,7 +61,7 @@
         }
     }
 
-    async function removeAlias(alias) {
+    async function removeAlias(/** @type {string} */ alias) {
         error = '';
         try {
             await RemoveAlias(kind, alias);
@@ -90,10 +93,11 @@
     }
 
     // Suspect pairs whose aliases were recorded, keyed like the list.
+    /** @type {Record<string, boolean>} */
     let paired = $state({});
 
     /** Record every player alias of one reading of a same-dice pair. */
-    async function applyPairing(suspect, pairing) {
+    async function applyPairing(/** @type {import('../../wailsjs/go/models').domain.DuplicateSuspect} */ suspect, /** @type {import('../../wailsjs/go/models').domain.AliasPairing} */ pairing) {
         error = '';
         try {
             for (const a of pairing.aliases) {
@@ -182,7 +186,11 @@
                         {:else}
                             {#each d.pairings ?? [] as p, i (i)}
                                 <div class="pairing">
-                                    <span>{p.aliases.map((a) => $t('corpus.pairingAlias', { alias: a.alias, canonical: a.canonical })).join(', ')}</span>
+                                    <span
+                                        >{p.aliases
+                                            .map((/** @type {import('../../wailsjs/go/models').domain.PlayerAlias} */ a) => $t('corpus.pairingAlias', { alias: a.alias, canonical: a.canonical }))
+                                            .join(', ')}</span
+                                    >
                                     <button type="button" class="secondary-button" data-testid="apply-pairing" onclick={() => applyPairing(d, p)}>{$t('corpus.applyPairing')}</button>
                                 </div>
                             {/each}

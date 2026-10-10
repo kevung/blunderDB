@@ -27,7 +27,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
             { Name: 'Bob', Count: 2 }
         ])
     ),
-    MergePlayers: (...args) => MergePlayers(...args)
+    MergePlayers: (/** @type {any[]} */ ...args) => MergePlayers(...args)
 }));
 
 import MergePlayersModal from '../components/MergePlayersModal.svelte';
@@ -129,7 +129,7 @@ describe('MergePlayersModal — merging', () => {
         expect(rows[1].classList.contains('selected')).toBe(true);
         expect(rows[2].classList.contains('selected')).toBe(false);
 
-        await fireEvent.click(mergeButton);
+        await fireEvent.click(must(mergeButton));
         await tick();
         await tick();
 
@@ -149,7 +149,7 @@ describe('MergePlayersModal — merging', () => {
         await fireEvent.click(rows[1]); // untick 'alice'
         await tick();
 
-        await fireEvent.click(container.querySelector('.btn-merge'));
+        await fireEvent.click(must(container.querySelector('.btn-merge')));
         await tick();
         await tick();
 
@@ -163,10 +163,10 @@ describe('MergePlayersModal — merging', () => {
         await fireEvent.click(rows[0]);
         await fireEvent.click(rows[1]);
         const canonical = container.querySelector('#canonical-input');
-        await fireEvent.input(canonical, { target: { value: 'Alice Martin' } });
+        await fireEvent.input(must(canonical), { target: { value: 'Alice Martin' } });
         await tick();
 
-        await fireEvent.click(container.querySelector('.btn-merge'));
+        await fireEvent.click(must(container.querySelector('.btn-merge')));
         await tick();
         await tick();
 
@@ -177,7 +177,7 @@ describe('MergePlayersModal — merging', () => {
         const { container } = await mount();
         const dialog = container.querySelector('[role="dialog"]');
 
-        await fireEvent.keyDown(dialog, { key: 'Escape' });
+        await fireEvent.keyDown(must(dialog), { key: 'Escape' });
 
         expect(onClose).toHaveBeenCalledTimes(1);
         expect(MergePlayers).not.toHaveBeenCalled();

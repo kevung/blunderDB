@@ -265,7 +265,7 @@ export async function loadAnalysisForPosition(position) {
         const analysis = await LoadAnalysis(position.id);
         if (generation !== displayGeneration) return;
         if (analysis) {
-            analysisStore.set(analysis);
+            analysisStore.set(/** @type {import('../stores/analysisStore.js').AnalysisRecord} */ (analysis));
         } else {
             analysisStore.set({
                 positionId: position.id,

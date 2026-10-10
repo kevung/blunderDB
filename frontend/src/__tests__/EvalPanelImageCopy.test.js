@@ -10,7 +10,7 @@ import { get } from 'svelte/store';
 const evaluatePositionImmediate = vi.fn();
 
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
-    EvaluatePositionImmediate: (...args) => evaluatePositionImmediate(...args),
+    EvaluatePositionImmediate: (/** @type {any[]} */ ...args) => evaluatePositionImmediate(...args),
     StartEvaluationAtRest: vi.fn().mockResolvedValue(undefined),
     CancelEvaluationAtRest: vi.fn().mockResolvedValue(undefined)
 }));

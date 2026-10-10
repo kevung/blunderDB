@@ -96,7 +96,7 @@ describe('issuance fields, mounted the way the application mounts them', () => {
         expect(document.activeElement).toBe(input);
 
         // The value reaches the object the export service reads when the user confirms.
-        await fireEvent.click(container.querySelector('.btn-export'));
+        await fireEvent.click(must(container.querySelector('.btn-export')));
         expect(get(optionsStore).watermark).toBe('Cours de Jean Dupont');
     });
 
@@ -115,7 +115,7 @@ describe('issuance fields, mounted the way the application mounts them', () => {
         expect(/** @type {HTMLInputElement} */ (must(input)).value).toBe('mot-de-passe');
         expect(document.activeElement).toBe(input);
 
-        await fireEvent.click(container.querySelector('.btn-export'));
+        await fireEvent.click(must(container.querySelector('.btn-export')));
         expect(get(optionsStore).password).toBe('mot-de-passe');
     });
 });
@@ -166,7 +166,7 @@ describe('issuance fields in the export modal', () => {
         expect(container.querySelector('#export-origin')).toBe(input);
         expect(/** @type {HTMLInputElement} */ (must(input)).value).toBe('Cours de Jean');
         expect(document.activeElement).toBe(input);
-        await fireEvent.click(container.querySelector('.btn-export'));
+        await fireEvent.click(must(container.querySelector('.btn-export')));
         expect(options.watermark).toBe('Cours de Jean');
     });
 
@@ -183,7 +183,7 @@ describe('issuance fields in the export modal', () => {
 
         expect(/** @type {HTMLInputElement} */ (must(input)).value).toBe('Ne pas rediffuser');
         expect(document.activeElement).toBe(input);
-        await fireEvent.click(container.querySelector('.btn-export'));
+        await fireEvent.click(must(container.querySelector('.btn-export')));
         expect(options.watermarkNote).toBe('Ne pas rediffuser');
     });
 
@@ -200,7 +200,7 @@ describe('issuance fields in the export modal', () => {
 
         expect(/** @type {HTMLInputElement} */ (must(input)).value).toBe('s3cret');
         expect(document.activeElement).toBe(input);
-        await fireEvent.click(container.querySelector('.btn-export'));
+        await fireEvent.click(must(container.querySelector('.btn-export')));
         expect(options.password).toBe('s3cret');
     });
 
@@ -210,7 +210,7 @@ describe('issuance fields in the export modal', () => {
         await tick();
 
         expect(container.querySelector('#export-origin')).toBeNull();
-        await fireEvent.click(container.querySelector('#export-watermark'));
+        await fireEvent.click(must(container.querySelector('#export-watermark')));
         await tick();
         expect(container.querySelector('#export-origin')).not.toBeNull();
     });

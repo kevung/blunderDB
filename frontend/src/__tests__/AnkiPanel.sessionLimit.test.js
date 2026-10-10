@@ -181,14 +181,14 @@ describe('the setting in the deck settings view', () => {
         // Through the gear: that is what loads the deck's own values into the
         // form. Setting the view mode by hand would test the initial state of
         // the component instead.
-        await fireEvent.click(container.querySelector('[data-testid="anki-settings"]'));
+        await fireEvent.click(must(container.querySelector('[data-testid="anki-settings"]')));
         await settle();
 
         const checkboxes = container.querySelectorAll('.settings-row input[type="checkbox"]');
         const limited = checkboxes[checkboxes.length - 1];
         expect(/** @type {HTMLInputElement} */ (limited).checked).toBe(false);
 
-        await fireEvent.click(container.querySelector('.settings-actions .btn-primary'));
+        await fireEvent.click(must(container.querySelector('.settings-actions .btn-primary')));
         await settle();
         expect(db.UpdateAnkiDeckParams).toHaveBeenCalledWith(1, 0.9, 365, true, null);
     });
@@ -199,13 +199,13 @@ describe('the setting in the deck settings view', () => {
         selectedAnkiDeckStore.set(deck);
         const { container } = render(AnkiPanel);
         await settle();
-        await fireEvent.click(container.querySelector('[data-testid="anki-settings"]'));
+        await fireEvent.click(must(container.querySelector('[data-testid="anki-settings"]')));
         await settle();
 
         const checkboxes = container.querySelectorAll('.settings-row input[type="checkbox"]');
         expect(/** @type {HTMLInputElement} */ (checkboxes[checkboxes.length - 1]).checked).toBe(true);
 
-        await fireEvent.click(container.querySelector('.settings-actions .btn-primary'));
+        await fireEvent.click(must(container.querySelector('.settings-actions .btn-primary')));
         await settle();
         expect(db.UpdateAnkiDeckParams).toHaveBeenCalledWith(1, 0.9, 365, true, 7);
     });

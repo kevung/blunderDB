@@ -1,14 +1,15 @@
 import { describe, test, expect, vi, afterEach } from 'vitest';
 import { render, cleanup, fireEvent, waitFor } from '@testing-library/svelte';
+import { must } from './helpers/must.js';
 
 const contrast = vi.fn();
 const load = vi.fn();
 const score = vi.fn();
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
-    PlayerContrast: (...args) => contrast(...args),
-    ScoreMoves: (...args) => score(...args)
+    PlayerContrast: (/** @type {any[]} */ ...args) => contrast(...args),
+    ScoreMoves: (/** @type {any[]} */ ...args) => score(...args)
 }));
-vi.mock('../services/positionLoader.js', () => ({ loadPositionsFromSelection: (...args) => load(...args) }));
+vi.mock('../services/positionLoader.js', () => ({ loadPositionsFromSelection: (/** @type {any[]} */ ...args) => load(...args) }));
 
 const { default: PlayerComparison } = await import('../components/stats/PlayerComparison.svelte');
 
@@ -35,7 +36,7 @@ describe('PlayerComparison contrast', () => {
         });
         const { container } = render(PlayerComparison, { a: row('Alice'), b: row('Bob') });
         expect(contrast).not.toHaveBeenCalled();
-        await fireEvent.click(container.querySelector('[data-testid="player-contrast"] button'));
+        await fireEvent.click(must(container.querySelector('[data-testid="player-contrast"] button')));
         await waitFor(() => expect(contrast).toHaveBeenCalledTimes(1));
         expect(contrast.mock.calls[0].slice(0, 2)).toEqual(['Alice', 'Bob']);
         const open = await waitFor(() => container.querySelectorAll('[data-testid="player-contrast"] button')[0]);
@@ -46,7 +47,7 @@ describe('PlayerComparison contrast', () => {
     test('says so when no common position contrasts', async () => {
         contrast.mockResolvedValue({ common_positions: 5, positions: [] });
         const { container } = render(PlayerComparison, { a: row('Alice'), b: row('Bob') });
-        await fireEvent.click(container.querySelector('[data-testid="player-contrast"] button'));
+        await fireEvent.click(must(container.querySelector('[data-testid="player-contrast"] button')));
         await waitFor(() => expect(container.querySelector('[data-testid="player-contrast"] p')).not.toBeNull());
         expect(container.querySelector('[data-testid="player-contrast"] button')).toBeNull();
     });
@@ -57,9 +58,9 @@ describe('PlayerComparison contrast', () => {
             .mockResolvedValueOnce({ common_positions: 4, positions: [{ position_id: 7, well_played: 'b' }], unscored_moves: 0 });
         score.mockResolvedValue(9);
         const { container } = render(PlayerComparison, { a: row('Alice'), b: row('Bob') });
-        await fireEvent.click(container.querySelector('[data-testid="player-contrast"] button'));
+        await fireEvent.click(must(container.querySelector('[data-testid="player-contrast"] button')));
         await waitFor(() => expect(container.querySelector('[data-testid="contrast-unscored"]')).not.toBeNull());
-        await fireEvent.click(container.querySelector('[data-testid="player-contrast"] button'));
+        await fireEvent.click(must(container.querySelector('[data-testid="player-contrast"] button')));
         await waitFor(() => expect(contrast).toHaveBeenCalledTimes(2));
         expect(score).toHaveBeenCalledTimes(1);
         await waitFor(() => expect(container.querySelector('[data-testid="contrast-unscored"]')).toBeNull());
