@@ -801,7 +801,12 @@
         "confirmDelete": "Turnier „{name}“ löschen?",
         "newButton": "Neues Turnier",
         "matchCountOne": "1 Match",
-        "matchCountMany": "{n} Matches"
+        "matchCountMany": "{n} Matches",
+        "countOfTotal": "{shown} / {total}",
+        "filterPlaceholder": "Filter: Name, Ort, Datum…",
+        "filterAria": "Turniere filtern",
+        "noTournamentsFiltered": "Kein passendes Turnier.",
+        "gone": "Dieses Turnier existiert nicht mehr."
     },
     "anki": {
         "limitSession": "Sitzung begrenzen",

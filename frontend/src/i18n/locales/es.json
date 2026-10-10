@@ -801,7 +801,12 @@
         "confirmDelete": "¿Eliminar el torneo \"{name}\"?",
         "newButton": "Nuevo torneo",
         "matchCountOne": "1 partida",
-        "matchCountMany": "{n} partidas"
+        "matchCountMany": "{n} partidas",
+        "countOfTotal": "{shown} / {total}",
+        "filterPlaceholder": "Filtrar: nombre, lugar, fecha…",
+        "filterAria": "Filtrar torneos",
+        "noTournamentsFiltered": "Ningún torneo coincide.",
+        "gone": "Este torneo ya no existe."
     },
     "anki": {
         "limitSession": "Limitar la sesión",

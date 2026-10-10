@@ -1,6 +1,7 @@
 <script>
     import { logger } from '../utils/logger.js';
     import Modal from './Modal.svelte';
+    import { tick } from 'svelte';
     import { SvelteSet } from 'svelte/reactivity';
     import { get } from 'svelte/store';
     import { GetAllPlayerNames, MergePlayers } from '../../wailsjs/go/database/Database.js';
@@ -24,6 +25,10 @@
     let loading = $state(true);
     let saving = $state(false);
     let error = $state('');
+    // Short feedback on the last merge, "A, B → C"; the window stays open for the next one.
+    let lastMerge = $state('');
+    /** @type {HTMLInputElement | undefined} */
+    let filterInput = $state();
 
     // Filtered view of the player list
     let filteredPlayers = $derived.by(() => {
@@ -33,8 +38,8 @@
     });
 
     // Load player list on mount
-    async function loadPlayers() {
-        loading = true;
+    async function loadPlayers(silent = false) {
+        if (!silent) loading = true;
         error = '';
         try {
             const result = await GetAllPlayerNames();
@@ -81,8 +86,14 @@
         try {
             await MergePlayers(namesToMerge, target);
             statusBarTextStore.set(tMsg('merge.merged', { n: namesToMerge.length, target }));
-            onMerged();
-            onClose();
+            lastMerge = `${namesToMerge.join(', ')} → ${target}`;
+            selectedNames.clear();
+            canonicalName = '';
+            filterText = '';
+            await onMerged();
+            await loadPlayers(true);
+            await tick();
+            filterInput?.focus();
         } catch (e) {
             logger.error('MergePlayersModal: merge failed', e);
             error = String(e);
@@ -101,6 +112,7 @@
     <input
         class="filter-input"
         type="text"
+        bind:this={filterInput}
         placeholder={$t('merge.filterPlaceholder')}
         bind:value={filterText}
         onkeydown={(e) => {
@@ -155,6 +167,8 @@
 
     {#if error}
         <div class="error-msg">{error}</div>
+    {:else if lastMerge}
+        <div class="merge-done" role="status">{lastMerge}</div>
     {/if}
 
     <!-- Summary of selection -->
@@ -166,7 +180,7 @@
     {/if}
 
     {#snippet footer()}
-        <button onclick={onClose} disabled={saving}>{$t('common.cancel')}</button>
+        <button class="btn-close" onclick={onClose} disabled={saving}>{$t('common.close')}</button>
         <button class="btn-merge primary" onclick={doMerge} disabled={saving || selectedNames.size < 2 || !canonicalName.trim()}>
             {saving ? $t('merge.merging') : $t('merge.mergeButton', { n: selectedNames.size > 0 ? selectedNames.size : '' })}
         </button>
@@ -297,6 +311,15 @@
         background: #ffebee;
         padding: 4px 8px;
         border-radius: 3px;
+    }
+
+    .merge-done {
+        font-size: var(--font-size-small);
+        color: var(--color-text-muted);
+        padding: 4px 8px;
+        border-radius: 3px;
+        background: var(--color-surface-alt);
+        word-break: break-word;
     }
 
     .selection-summary {

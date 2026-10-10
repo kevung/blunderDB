@@ -54,6 +54,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Analysis/SaveAndCompress", testAnalysisSaveAndCompress},
 		{"Analysis/SaveIsAnUpsert", testAnalysisSaveIsAnUpsert},
 		{"Analysis/WithEngineSkipsOtherEngines", testAnalysisWithEngineSkipsOtherEngines},
+		{"Stats/AnalysisEngines", testStatsAnalysisEngines},
 		{"Analysis/MergeSkipsAnIdenticalResult", testAnalysisMergeSkipsAnIdenticalResult},
 		{"Analysis/MergeTakesPlayedFromTheCaller", testAnalysisMergeTakesPlayedFromTheCaller},
 		{"Analysis/RolloutIsASecondAnalysis", testRolloutIsASecondAnalysis},

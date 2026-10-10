@@ -78,6 +78,13 @@
     import { databaseLoadedStore, databasePathStore } from '../stores/databaseStore';
     import { libraryCountsStore } from '../stores/libraryCountsStore.js';
 
+    /**
+     * `embeddedMatchId`: the panel is hosted by another panel (Tournaments) and shows only the sheet of that
+     * match; the list, the global loading and the keyboard registration stay with the real Matches panel.
+     */
+    let { embeddedMatchId = null, onDeleted = null } = $props();
+    const embedded = $derived(embeddedMatchId != null);
+
     /** @type {any[]} */
     // The page(s) of the shared match list, filtered and ordered by SQL.
     const matches = $derived($matchListStore.rows);
@@ -277,7 +284,7 @@
     // Reload matches when a new match is imported (trigger increments from 0)
     $effect(() => {
         const trigger = $matchPanelRefreshTriggerStore;
-        if (trigger === 0) return; // skip initial run
+        if (trigger === 0 || embedded) return; // skip initial run
         if (untrack(() => !visible || !databaseLoaded)) return;
         loadMatches().then(async () => {
             const lvm = lastVisitedMatch;
@@ -298,6 +305,7 @@
         onChange(
             () => visible, // $derived — tracked
             (/** @type {boolean} */ opened) => {
+                if (embedded) return;
                 if (opened && databaseLoaded) {
                     loadMatches().then(async () => {
                         const lvm = lastVisitedMatch;
@@ -369,6 +377,7 @@
     // Order is the database's (or the store's, for PR/MWC): follow the header.
     $effect(() => {
         const { column, direction } = sort;
+        if (untrack(() => embedded)) return;
         untrack(() => matchListStore.setSort(column, direction));
     });
 
@@ -862,7 +871,7 @@
     // the list is loaded; the request is consumed even if the match is gone.
     $effect(() => {
         const requested = $matchOpenRequestStore;
-        if (requested == null || !visible || !$matchListStore.loaded) return;
+        if (embedded || requested == null || !visible || !$matchListStore.loaded) return;
         untrack(() => {
             matchOpenRequestStore.set(null);
             // Held while the match is fetched: the list's own reselect must not run meanwhile.
@@ -895,6 +904,7 @@
                 detailGames = [];
                 detailStats = null;
             }
+            onDeleted?.(match);
             // Trigger match panel refresh to update all dependent components
             matchPanelRefreshTriggerStore.update((n) => n + 1);
             dbMutationCounterStore.update((n) => n + 1);
@@ -953,6 +963,32 @@
 
     function closeMatchPanel() {
         closePanel(PANEL.MATCH);
+    }
+
+    /**
+     * The keys of the sheet itself, for the host panel of an embedded sheet: video speed ([ ]) and `v`.
+     * Returns true when the key was claimed.
+     */
+    export function handleSheetKey(/** @type {KeyboardEvent} */ event) {
+        const typing = event.target instanceof Element && event.target.matches('input, textarea, select, [contenteditable]');
+        if (typing) return false;
+        const rateStep = rateKeyDirection(event);
+        if (rateStep !== 0 && videoOpen && videoPane) {
+            event.stopPropagation();
+            event.preventDefault();
+            videoPane.stepRate(rateStep);
+            return true;
+        }
+        if (isBareLetter(event, 'v') && videoSource && selectedIdx >= 0) {
+            const mp = detailMovePositions[selectedIdx];
+            if (moveTickMs(mp) !== null) {
+                event.stopPropagation();
+                event.preventDefault();
+                viewInVideo(mp);
+                return true;
+            }
+        }
+        return false;
     }
 
     function handleKeyDown(/** @type {KeyboardEvent} */ event) {
@@ -1068,7 +1104,7 @@
     }
 
     $effect(() => {
-        if (visible) {
+        if (visible && !embedded) {
             const id = setTimeout(() => {
                 // Deferred, so the user may be typing by then: never take their field (utils/panelFocus.js).
                 focusPanelUnlessTyping(document.getElementById('matchPanel'));
@@ -1082,21 +1118,37 @@
     let unregisterKeys = null;
 
     onMount(async () => {
+        if (embedded) return;
         if (visible) await loadMatches();
         document.addEventListener('click', handleClickOutside);
         unregisterKeys = registerKeys('matchPanel', handleKeyDown);
     });
 
+    // The hosted sheet follows the match the host designates.
+    $effect(() => {
+        const id = embeddedMatchId;
+        if (id == null) return;
+        untrack(() => {
+            findMatch(id).then((match) => {
+                if (embeddedMatchId !== id) return;
+                selectedMatch = match;
+                if (match) loadMatchDetail(match);
+                else detailMatch = null;
+            });
+        });
+    });
+
     onDestroy(() => {
+        if (embedded) return;
         document.removeEventListener('click', handleClickOutside);
         unregisterKeys?.();
     });
 </script>
 
-<section class="match-panel" aria-label={$t('match.ariaLabel')} id="matchPanel" tabindex="-1">
+<section class="match-panel" class:embedded aria-label={$t('match.ariaLabel')} id={embedded ? undefined : 'matchPanel'} tabindex="-1">
     <div class="match-panel-content">
         <!-- Match list (left pane) -->
-        <div class="match-list-pane" class:has-detail={detailMatch}>
+        <div class="match-list-pane" class:has-detail={detailMatch} hidden={embedded}>
             <div class="match-list-toolbar">
                 <input
                     bind:this={filterInput}
@@ -1806,6 +1858,15 @@
     }
 
     /* --- Detail pane (right) --- */
+    /* Hosted by the Tournaments panel: the sheet alone, at full width. */
+    .match-panel.embedded .match-list-pane {
+        display: none;
+    }
+    .match-panel.embedded .detail-pane {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+
     .detail-pane {
         flex: 0 0 55%;
         max-width: 55%;

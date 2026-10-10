@@ -25,6 +25,7 @@ vi.mock('../stores/uiStore.js', () => {
             STATS: 'stats'
         },
         statusBarTextStore: writable(''),
+        matchOpenRequestStore: writable(null),
         currentPositionIndexStore: writable(0)
     };
 });
@@ -33,7 +34,8 @@ vi.mock('../stores/uiStore.js', () => {
 vi.mock('../stores/tournamentStore.js', () => {
     const { writable } = require('svelte/store');
     return {
-        selectedTournamentStore: writable(null)
+        selectedTournamentStore: writable(null),
+        tournamentOpenRequestStore: writable(null)
     };
 });
 
@@ -82,8 +84,8 @@ import {
 
 import { statsFilterStore } from '../stores/statsStore.js';
 
-import { activeTabStore } from '../stores/uiStore.js';
-import { selectedTournamentStore } from '../stores/tournamentStore.js';
+import { activeTabStore, matchOpenRequestStore } from '../stores/uiStore.js';
+import { tournamentOpenRequestStore } from '../stores/tournamentStore.js';
 import { positionsStore } from '../stores/positionStore.js';
 
 describe('loadPositionsFromStatsSelection', () => {
@@ -195,9 +197,9 @@ describe('loadPositionsFromSelection', () => {
 });
 
 describe('openTournamentInPanel', () => {
-    test('sets selectedTournamentStore and switches to tournaments tab', () => {
+    test('requests the tournament and switches to tournaments tab', () => {
         openTournamentInPanel(7);
-        expect(get(selectedTournamentStore)).toBe(7);
+        expect(get(tournamentOpenRequestStore)).toBe(7);
         expect(get(activeTabStore)).toBe('tournaments');
     });
 });
@@ -206,6 +208,7 @@ describe('openMatchInPanel', () => {
     test('switches to matches tab', () => {
         activeTabStore.set('analysis');
         openMatchInPanel(12);
+        expect(get(matchOpenRequestStore)).toBe(12);
         expect(get(activeTabStore)).toBe('matches');
     });
 });

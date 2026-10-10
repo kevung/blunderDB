@@ -165,6 +165,9 @@ func (s *Server) statsRoutes() []route {
 			ids, err := ss().PositionIDsByMatch(ctx, scope, req.MatchID)
 			return idsResp{PositionIDs: ids}, err
 		})},
+		{http.MethodPost, "/v1/stats.analysisEngines", rpc(func(ctx context.Context, scope string, _ struct{}) ([]string, error) {
+			return ss().AnalysisEngines(ctx, scope)
+		})},
 		{http.MethodPost, "/v1/stats.playerNames", rpc(func(ctx context.Context, scope string, _ struct{}) ([]storage.PlayerFrequency, error) {
 			return ss().PlayerNames(ctx, scope)
 		})},

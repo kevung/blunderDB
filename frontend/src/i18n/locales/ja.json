@@ -801,7 +801,12 @@
         "confirmDelete": "トーナメント「{name}」を削除しますか?",
         "newButton": "新しいトーナメント",
         "matchCountOne": "1 試合",
-        "matchCountMany": "{n} 試合"
+        "matchCountMany": "{n} 試合",
+        "countOfTotal": "{shown} / {total}",
+        "filterPlaceholder": "絞り込み: 名前、場所、日付…",
+        "filterAria": "トーナメントを絞り込む",
+        "noTournamentsFiltered": "該当するトーナメントなし。",
+        "gone": "このトーナメントはもう存在しません。"
     },
     "anki": {
         "limitSession": "1 セッションの枚数を制限する",

@@ -801,7 +801,12 @@
         "confirmDelete": "Supprimer le tournoi « {name} » ?",
         "newButton": "Nouveau tournoi",
         "matchCountOne": "1 match",
-        "matchCountMany": "{n} matchs"
+        "matchCountMany": "{n} matchs",
+        "countOfTotal": "{shown} / {total}",
+        "filterPlaceholder": "Filtrer : nom, lieu, date…",
+        "filterAria": "Filtrer les tournois",
+        "noTournamentsFiltered": "Aucun tournoi correspondant.",
+        "gone": "Ce tournoi n'existe plus."
     },
     "anki": {
         "limitSession": "Limiter la séance",

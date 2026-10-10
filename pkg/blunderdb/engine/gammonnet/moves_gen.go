@@ -5,8 +5,20 @@ package gammonnet
 // maxLevel bounds the number of DISTINCT positions reachable after k sub-moves.
 // Deduplicating level by level rather than at the end is what keeps this small:
 // a double can be played in tens of thousands of orders, but they land on a few
-// hundred distinct positions at most.
-const maxLevel = 1024
+// thousand distinct positions at most.
+//
+// The bound is proven, not observed. A play of k sub-moves with one die gives
+// each checker a number of steps; the resulting position — hits included, since
+// a checker lands on every point it passes through — depends only on the
+// multiset of (starting point, steps) pairs. Checkers sharing a point are
+// interchangeable, so a point holding n checkers contributes the partitions of
+// its steps into at most n parts, and spreading the fifteen checkers one per
+// point maximises the count: C(k+14, k) — 15, 120, 680, then 3060 for the four
+// sub-moves of a double (TestGenerationCapacityCoversEveryDouble computes it
+// over every spread). A non-double stays far below: at most 15 + 15 + 15×15.
+// Hits break the coincidences that keep real boards lower, and a rollout does
+// reach more than 2048 distinct plays for a 1-1.
+const maxLevel = 3072
 
 type levelEntry struct {
 	pos   Position
@@ -22,7 +34,7 @@ type levelEntry struct {
 // Open addressing with linear probing, and an epoch instead of a clear: a
 // slot counts only if its stamp matches; cleared only on epoch wraparound.
 const (
-	dedupBits  = 11 // 2048 slots for at most maxLevel = 1024 entries
+	dedupBits  = 12 // 4096 slots: at most maxLevel = 3072 entries, a load of 3/4
 	dedupSlots = 1 << dedupBits
 	dedupMask  = dedupSlots - 1
 
@@ -89,7 +101,7 @@ func dedupHash(p *Position) uint64 {
 // goroutine and reuse it; generating then allocates nothing.
 //
 // The two working levels sit in one array and generation ALTERNATES between
-// them: swapping them by value would copy 147 Ko per die played.
+// them: swapping them by value would copy a whole level per die played.
 type Generator struct {
 	levels [2][maxLevel]levelEntry
 	side   int // which half of levels is the current one

@@ -1098,6 +1098,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/session.save — JSON."
         return self._call("/v1/session.save", payload)
 
+    def stats_analysis_engines(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/stats.analysisEngines — JSON."
+        return self._call("/v1/stats.analysisEngines", payload)
+
     def stats_biases(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/stats.biases — JSON."
         return self._call("/v1/stats.biases", payload)

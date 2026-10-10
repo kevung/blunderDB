@@ -1836,7 +1836,7 @@ installer (voir :ref:`telecharge_install`). Un match sans source ne change pas.
 Le bouton **Fusionner les joueurs** de la barre d'outils du panneau ouvre une
 fenêtre listant tous les noms de joueurs de la base avec leur nombre de
 matchs : sélectionner les variantes d'orthographe d'un même joueur, choisir le
-nom canonique à conserver, puis fusionner. La fusion crée un alias par
+nom canonique à conserver, puis fusionner. La fenêtre reste ouverte pour enchaîner d'autres fusions ; **Fermer** (ou *Échap*) la referme. La fusion crée un alias par
 variante : les matchs gardent les noms de leurs fichiers, mais les statistiques,
 la table Joueurs et la recherche ``pl"…"`` lisent toutes les variantes comme un
 seul joueur, et les imports suivants enregistrent le nom canonique. Retirer
@@ -2325,11 +2325,15 @@ assignés. Les statistiques du panneau Stats peuvent être filtrées par tournoi
 Appuyer sur *CTRL-Y* pour afficher ou masquer le panneau.
 
 **Nouveau tournoi** ouvre le champ de création, qui prend le focus ; *ÉCHAP* ou
-**Annuler** le referme. Un clic surligne une ligne, un double-clic ou *ENTRÉE*
-ouvre le tournoi. Son en-tête porte la date, le lieu et le nombre de matchs, qu'un
+**Annuler** le referme. Le champ de filtre, dans la bande d'en-tête, restreint
+la liste à la frappe : tous les mots saisis doivent se retrouver dans le nom, le
+lieu ou la date, le compteur indique « affichés / total » et *ÉCHAP* efface le
+champ. Un clic surligne une ligne, un double-clic ou *ENTRÉE* ouvre le tournoi. Son en-tête porte la date, le lieu et le nombre de matchs, qu'un
 clic change en liste des positions du tournoi ; à droite, les notes, **Diriger**
-et **Bilan**. Dessous, ses matchs, un par ligne, qu'un double-clic ouvre, que ▲ et ▼ réordonnent, que ⇄ échange de joueurs et que × retire du
-tournoi. Le champ **Ajouter un match…** y range un match de la base, et ←
+et **Bilan**. Dessous, ses matchs, un par ligne, que ▲ et ▼ réordonnent, que ⇄ échange de joueurs et que × retire du
+tournoi. Un clic sur un match affiche sous la table sa fiche, la même que dans le
+panneau Matchs (onglets Transcription, Graphes, À revoir, Détails, Infos, Stats) ;
+un second clic ou *ÉCHAP* la referme, un double-clic ou *ENTRÉE* ouvre le match dans le plateau. Le champ **Ajouter un match…** y range un match de la base, et ←
 ramène à la liste des tournois.
 
 Les tournois se remplissent d'eux-mêmes à l'import. Les fichiers XG, GnuBG et
@@ -3641,6 +3645,15 @@ sur chaque décision, et les chiffres qu'il touche sont alors recalculés depuis
 les décisions. Le face-à-face et le PR par fenêtre ne l'acceptent pas : tant
 qu'il est actif, ils refusent de se calculer. Comme le reste de la barre, il
 est conservé d'une session à l'autre.
+
+Dans l'onglet Corpus, chaque ligne ouvre ce qu'elle résume. Une ligne de
+face-à-face ouvre ses matchs dans le panneau Matchs, qui porte alors le bouton
+« N matchs ouverts depuis les Stats × » : il rend la liste complète. Une ligne
+du classement ouvre les matchs du joueur et son nombre de décisions ouvre les
+positions comptées ; une ligne de fenêtre ouvre ses positions et son nombre de
+matchs ouvre les matchs. Un compte de positions du panneau Stats, quel que soit
+l'onglet, quitte d'abord le match en cours avant d'ouvrir sa liste ; la commande
+``m`` rouvre ensuite le match au coup sauvegardé.
 
 .. important::
    Un tiret (« — ») signale une valeur **jamais mesurée**, à ne pas confondre

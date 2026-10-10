@@ -10,6 +10,7 @@ import { get } from 'svelte/store';
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
     GetAllPlayerNames: vi.fn().mockResolvedValue([{ Name: 'Ada', Count: 1 }]),
     GetAllTournaments: vi.fn().mockResolvedValue([]),
+    GetStatsAnalysisEngines: vi.fn().mockResolvedValue(['XG', 'GNUbg']),
     GetStatsDateRange: vi.fn().mockResolvedValue(null)
 }));
 
@@ -39,5 +40,23 @@ describe('StatsFilterBar provenance persistence', () => {
         await fireEvent.change(depth);
         await waitFor(() => expect(SaveStatsFilter).toHaveBeenCalled(), { timeout: 2000 });
         expect(SaveStatsFilter).toHaveBeenLastCalledWith(expect.objectContaining({ analysis_engine: 'XG', min_analysis_depth: 4 }));
+    });
+
+    test('the engine is a menu of the stored labels, and choosing one sets the filter', async () => {
+        const { container } = render(StatsFilterBar);
+        const menu = /** @type {HTMLSelectElement} */ (container.querySelector('select#fb-engine'));
+        await waitFor(() => expect(menu.options.length).toBe(3));
+        expect(Array.from(menu.options).map((o) => [o.value, o.textContent])).toEqual([
+            ['', 'any'],
+            ['XG', 'eXtreme Gammon'],
+            ['GNUbg', 'GNU Backgammon']
+        ]);
+        await waitFor(() => expect(menu.value).toBe('XG'));
+        menu.value = 'GNUbg';
+        await fireEvent.change(menu);
+        await waitFor(() => expect(/** @type {any} */ (get(statsFilterStore)).analysisEngine).toBe('GNUbg'));
+        menu.value = '';
+        await fireEvent.change(menu);
+        await waitFor(() => expect(/** @type {any} */ (get(statsFilterStore)).analysisEngine).toBe(''));
     });
 });

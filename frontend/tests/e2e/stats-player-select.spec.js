@@ -12,7 +12,10 @@ import { openLibraryMock, statsResult } from './helpers/fixtures.js';
 const LONG = 'Alexandre-Maximilien de la Tour-Dupont-Castelnau';
 
 test('le nom du joueur n’est pas coupé en hauteur et reste tronqué en largeur', async ({ page }) => {
-    await installWailsMock(page, openLibraryMock({ database: { ComputeStats: statsResult, GetAllPlayerNames: [{ Name: LONG, Count: 12 }], GetAllTournaments: [], GetStatsDateRange: null } }));
+    await installWailsMock(
+        page,
+        openLibraryMock({ database: { ComputeStats: statsResult, GetAllPlayerNames: [{ Name: LONG, Count: 12 }], GetAllTournaments: [], GetStatsDateRange: null, GetStatsAnalysisEngines: [] } })
+    );
     await page.goto('/');
     await expect(page.getByTestId('status-bar')).toContainText('3 / 3');
     await page.getByTestId('tab-stats').click();

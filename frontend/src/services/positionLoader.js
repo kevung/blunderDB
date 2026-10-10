@@ -14,10 +14,10 @@ import { get } from 'svelte/store';
 // `translate` helper; already-displayed messages do not retranslate on language change.
 import { tMsg } from '../i18n';
 import { GetPositionIDsByStatsSelection, GetPositionIDsByTournament, GetPositionIDsByMatch, LoadPositionIDsByFilters } from '../../wailsjs/go/database/Database.js';
-import { activeTabStore, statusBarTextStore } from '../stores/uiStore.js';
+import { activeTabStore, statusBarTextStore, matchOpenRequestStore } from '../stores/uiStore.js';
 import { positionsStore } from '../stores/positionStore.js';
 import { currentPositionIndexStore } from '../stores/uiStore.js';
-import { selectedTournamentStore } from '../stores/tournamentStore.js';
+import { tournamentOpenRequestStore } from '../stores/tournamentStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { statsFilterStore } from '../stores/statsStore.js';
 import { leaveStudiedModeForList, forgetSubSearchOrigin } from './modeMachine.js';
@@ -114,7 +114,8 @@ export async function loadPositionsFromMatch(matchID) {
  * @param {number} tournamentID
  */
 export function openTournamentInPanel(tournamentID) {
-    selectedTournamentStore.set(tournamentID);
+    // The Tournaments panel opens it once its list is loaded (it resets its selection when shown).
+    tournamentOpenRequestStore.set(tournamentID);
     activeTabStore.set('tournaments');
 }
 
@@ -136,14 +137,13 @@ export async function openMatchListInPanel(ids) {
 }
 
 /**
- * Navigate the UI to the Match panel and show the given match.
+ * Open the given match as a double-click on its row does: the Matches panel loads it,
+ * enters match mode and the board switches to the analysis view.
  *
  * @param {number} matchID
  */
 export function openMatchInPanel(matchID) {
-    // matchID is passed for future use (e.g. scroll-into-view within the panel).
-    // Currently we just switch to the matches tab; the panel can pick up the ID
-    // from the store added in a later sheet.
-    void matchID;
+    // The Matches panel opens it once its list is loaded, as the command palette does.
+    matchOpenRequestStore.set(matchID);
     activeTabStore.set('matches');
 }

@@ -22,6 +22,7 @@ vi.mock('../stores/positionStore.js', async (importOriginal) => {
 
 import StatsDashboardTab from '../components/stats/StatsDashboardTab.svelte';
 import { positionsStore } from '../stores/positionStore.js';
+import { activeTabStore, matchOpenRequestStore } from '../stores/uiStore.js';
 import { GetPositionIDsByStatsSelection } from '../../wailsjs/go/database/Database.js';
 
 // The same position can be a top blunder in two matches: its id alone is not a row key.
@@ -50,5 +51,13 @@ describe('StatsDashboardTab — top blunders', () => {
         await fireEvent.click(rows[1]);
         await waitFor(() => expect(get(positionsStore)).toEqual([42]));
         expect(GetPositionIDsByStatsSelection).toHaveBeenLastCalledWith(expect.anything(), { Kind: 'position', PositionID: 42 });
+    });
+
+    test('the arrow beside a blunder opens its match: a request for the Matches panel, which enters match mode', async () => {
+        matchOpenRequestStore.set(null);
+        render(StatsDashboardTab, { props: { result, metric: 'pr' } });
+        await fireEvent.click(document.querySelectorAll('.blunder-open-match')[1]);
+        expect(get(matchOpenRequestStore)).toBe(2);
+        expect(get(activeTabStore)).toBe('matches');
     });
 });

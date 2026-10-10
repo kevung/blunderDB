@@ -512,6 +512,7 @@ export function showcaseGalleryMock() {
             // StatsFilterBar treats an empty GetAllPlayerNames as "database
             // empty" and replaces the whole filter row with an import hint.
             GetAllPlayerNames: showcasePlayerNames,
+            GetStatsAnalysisEngines: ['XG'],
             GetStatsDateRange: { DateFrom: '2026-01-18', DateTo: '2026-03-14' }
         }
     };
