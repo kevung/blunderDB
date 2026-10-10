@@ -7,7 +7,7 @@
     import { createInlineEdit } from '../utils/inlineEdit.svelte.js';
     import { autofocus } from '../utils/autofocus.js';
     import { onChange } from '../utils/onChange.js';
-    import { onMount, onDestroy } from 'svelte';
+    import { onMount, onDestroy, untrack } from 'svelte';
     import { createReorder } from '../utils/reorder.js';
     import EntityAutocomplete from './EntityAutocomplete.svelte';
     import TournamentReview from './TournamentReview.svelte';
@@ -34,7 +34,7 @@
         GetPositionIDsByTournament
     } from '../../wailsjs/go/database/Database.js';
     import { openPanels, PANEL, closePanel, statusBarTextStore, statusBarModeStore } from '../stores/uiStore';
-    import { tournamentsStore, selectedTournamentStore, tournamentMatchesStore } from '../stores/tournamentStore';
+    import { tournamentsStore, selectedTournamentStore, tournamentMatchesStore, tournamentOpenRequestStore } from '../stores/tournamentStore';
     import {
         directionSummariesStore,
         openDirectionIdStore,
@@ -196,6 +196,7 @@
                     selectedTournamentStore.set(null);
                     tournamentMatchesStore.set([]);
                 } else {
+                    listLoaded = false;
                     selectedTournamentStore.set(null);
                     tournamentMatchesStore.set([]);
                     tournamentEdit.cancel();
@@ -206,12 +207,17 @@
         )
     );
 
+    // True once the list has been fetched since the panel was shown: an open request is judged against it, not a stale list.
+    let listLoaded = $state(false);
+
     async function loadTournaments() {
         try {
             const loaded = await GetAllTournaments();
             tournamentsStore.set(loaded || []);
         } catch (error) {
             logger.error('Error loading tournaments:', error);
+        } finally {
+            listLoaded = true;
         }
     }
 
@@ -311,6 +317,11 @@
             addMatchSearch = '';
             return;
         }
+        await openTournament(tournament);
+    }
+
+    /** Opens the tournament's detail, whatever was open before. @param {Tournament} tournament */
+    async function openTournament(tournament) {
         selectedTournamentStore.set(tournament);
         addMatchSearch = '';
         await loadAllMatches();
@@ -321,6 +332,17 @@
             logger.error('Error loading tournament matches:', error);
         }
     }
+
+    // A tournament requested by another panel (Stats) opens as a click on its row does, once the list is loaded.
+    $effect(() => {
+        const requested = $tournamentOpenRequestStore;
+        if (requested == null || !$openPanels.has(PANEL.TOURNAMENT) || !listLoaded) return;
+        untrack(() => {
+            tournamentOpenRequestStore.set(null);
+            const found = tournaments.find((tr) => tr.id === requested);
+            if (found) openTournament(found);
+        });
+    });
 
     function cancelCreation() {
         newTournamentName = '';

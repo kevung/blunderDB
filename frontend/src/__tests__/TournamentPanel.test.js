@@ -50,7 +50,7 @@ import {
 
 import TournamentPanel from '../components/TournamentPanel.svelte';
 import { openPanels, PANEL, statusBarTextStore } from '../stores/uiStore.js';
-import { tournamentsStore, selectedTournamentStore, tournamentMatchesStore } from '../stores/tournamentStore.js';
+import { tournamentsStore, selectedTournamentStore, tournamentMatchesStore, tournamentOpenRequestStore } from '../stores/tournamentStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { matchContextStore } from '../stores/positionStore.js';
 
@@ -60,6 +60,7 @@ function resetStores() {
     tournamentsStore.set([]);
     selectedTournamentStore.set(null);
     tournamentMatchesStore.set([]);
+    tournamentOpenRequestStore.set(null);
     openPanels.set(new Set());
     statusBarTextStore.set('');
     databasePathStore.set('/fake/db.sqlite');
@@ -401,5 +402,38 @@ describe('TournamentPanel — focus after creation', () => {
         await fireEvent.keyDown(nameInput, { key: 'Enter' });
 
         await vi.waitFor(() => expect(document.activeElement?.closest('tr')?.textContent).toContain('Zeta Trophy'));
+    });
+});
+
+// ── Open request from another panel (Stats) ───────────────────────────────────
+
+describe('TournamentPanel — open request', () => {
+    test('request made before the panel is mounted opens that tournament', async () => {
+        tournamentOpenRequestStore.set(2);
+        renderOpen();
+
+        await vi.waitFor(() => expect(get(selectedTournamentStore)?.id).toBe(2));
+        expect(get(tournamentOpenRequestStore)).toBeNull();
+        expect(GetTournamentMatches).toHaveBeenCalledWith(2);
+    });
+
+    test('request while the panel shows another tournament switches to the requested one', async () => {
+        renderOpen();
+        await fireEvent.dblClick(await screen.findByText('Blunder Cup'));
+        await vi.waitFor(() => expect(get(selectedTournamentStore)?.id).toBe(1));
+
+        tournamentOpenRequestStore.set(2);
+
+        await vi.waitFor(() => expect(get(selectedTournamentStore)?.id).toBe(2));
+        expect(get(tournamentOpenRequestStore)).toBeNull();
+    });
+
+    test('request for a vanished tournament is consumed without opening anything', async () => {
+        renderOpen();
+        await screen.findByText('Blunder Cup');
+        tournamentOpenRequestStore.set(99);
+
+        await vi.waitFor(() => expect(get(tournamentOpenRequestStore)).toBeNull());
+        expect(get(selectedTournamentStore)).toBeNull();
     });
 });
