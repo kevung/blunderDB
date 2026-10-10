@@ -54,6 +54,7 @@ func (cli *CLI) statsHandlers() map[string]func([]string) error {
 		"progression": cli.runStatsProgression,
 		"breakdown":   cli.runStatsBreakdown,
 		"report":      cli.runStatsReport,
+		"engines":     cli.runStatsEngines,
 	}
 }
 
@@ -88,6 +89,7 @@ func (cli *CLI) printStatsUsage() {
 	fmt.Println("  progression  PR per match, per tournament and rolling (Progression tab)")
 	fmt.Println("  breakdown  PR by phase, plan of play, tag, score and cube action (Breakdowns tab)")
 	fmt.Println("  report     Self-contained HTML report of the filter (--html)")
+	fmt.Println("  engines    Analysis engines present in the database, as --engine expects them")
 }
 
 func (cli *CLI) runStatsRecurring(args []string) error {

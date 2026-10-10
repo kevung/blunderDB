@@ -219,6 +219,7 @@ var databaseParity = map[string]parityEntry{
 	"GetAllMatches":                     {CLI: "list --type matches", Server: "/v1/matches.list"},
 	"ListMatches":                       {CLI: "list --type matches", Server: "/v1/matches.list"},
 	"CountMatches":                      {CLI: "list --type matches", Server: "/v1/matches.count"},
+	"GetStatsAnalysisEngines":           {CLI: "stats engines", Server: "/v1/stats.analysisEngines"},
 	"GetAllPlayerNames":                 {Server: "/v1/stats.playerNames", Why: "autocomplete for the GUI's player filter; `list --type players` prints every player with its figures"},
 	"GetAllTournaments":                 {CLI: "list --type tournaments", Server: "/v1/tournaments.list"},
 	"ListAnkiDeckPositionIDs":           {Server: "/v1/anki.deckPositionIds", Why: "the id windows the GUI browses a deck with; a script lists a deck's source (`collection show`, `search`)"},
