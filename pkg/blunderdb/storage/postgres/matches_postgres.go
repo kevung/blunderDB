@@ -632,9 +632,13 @@ func (s *matchStore) PurgeOrphanPositions(ctx context.Context, scope string, ids
 // SwapPlayers swaps player 1 and player 2 for the match — see
 // storage.MatchStore. Positions are stored from the side on roll, so no
 // position, analysis or played-decision score changes: only what names a seat.
+// A match with a draft open on it, or played here, is refused.
 func (s *matchStore) SwapPlayers(ctx context.Context, scope string, id int64) error {
 	tenant := tenantID(scope)
 	return s.inTx(ctx, "swap players", func(tx pgx.Tx) error {
+		if err := sqlshared.SwapRefusal(ctx, binder{tx}.shared(), scope, id); err != nil {
+			return err
+		}
 		// The seats trade places: each row now describes the other player.
 		if _, err := tx.Exec(ctx, `DELETE FROM match_stats WHERE match_id = $1 AND tenant_id = $2`, id, tenant); err != nil {
 			return fmt.Errorf("invalidate match stats: %w", err)
@@ -660,7 +664,7 @@ func (s *matchStore) SwapPlayers(ctx context.Context, scope string, id int64) er
 			   AND game_id IN (SELECT id FROM game WHERE match_id = $1)`, id, tenant); err != nil {
 			return fmt.Errorf("swap move players: %w", err)
 		}
-		return sqlshared.SwapOriginSeats(ctx, binder{tx}.shared(), scope, id)
+		return nil
 	})
 }
 

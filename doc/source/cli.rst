@@ -2716,6 +2716,8 @@ du nom canonique, comme autant de ``players alias add``.
 **players swap** — L'inversion des deux joueurs d'un match, que le fichier avait
 nommés dans le mauvais ordre (route ``matches.swapPlayers``). Aucune position ni
 aucune analyse ne change : chaque joueur garde ses statistiques, sous l'autre siège.
+L'inversion est refusée tant qu'un brouillon de transcription est ouvert sur le
+match, et pour un match joué dans blunderDB.
 
 .. code-block:: bash
 

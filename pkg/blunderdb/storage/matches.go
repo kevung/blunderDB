@@ -165,11 +165,12 @@ type MatchStore interface {
 
 	// SwapPlayers swaps player 1 and player 2 for the match: the names, the
 	// rating and experience of each seat, every game's initial score and
-	// winner, every move's player and the seat the origin names (who ran over
-	// time, who declared a Bot). A position is stored from the side on roll,
-	// so no position, analysis or played-decision score changes: each person
-	// keeps their statistics under the other seat, and swapping twice gives
-	// back the match as it was. Invalidates the match's stats.
+	// winner, and every move's player. A position is stored from the side on
+	// roll, so no position, analysis or played-decision score changes: each
+	// person keeps their statistics under the other seat, and swapping twice
+	// gives back the match as it was. Invalidates the match's stats. Refused
+	// with ErrSwapDraftOpen while a Transcription draft is open on the match,
+	// and with ErrSwapPlayedHere for a match played here (it has an origin).
 	SwapPlayers(ctx context.Context, scope string, id int64) error
 
 	// MergePlayers makes every other given player name an alias of the

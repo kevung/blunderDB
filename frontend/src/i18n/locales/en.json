@@ -665,6 +665,8 @@
         "errorDeleting": "Error deleting match",
         "errorSettingTournament": "Error setting tournament",
         "errorSwapping": "Error swapping players",
+        "swapDraftOpen": "Swap refused: a transcription draft is open on this match. Finish or delete it first.",
+        "swapPlayedHere": "Swap refused: this match was played in blunderDB; its seats are those it was played with.",
         "errorUpdating": "Error updating match",
         "errorUpdatingComment": "Error updating comment",
         "matchDeleted": "Match moved to the trash — recoverable (command “trash”)",

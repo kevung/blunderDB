@@ -665,6 +665,8 @@
         "errorDeleting": "Error al eliminar la partida",
         "errorSettingTournament": "Error al asignar el torneo",
         "errorSwapping": "Error al intercambiar jugadores",
+        "swapDraftOpen": "Intercambio rechazado: hay un borrador de transcripción abierto en este match. Termínelo o elimínelo primero.",
+        "swapPlayedHere": "Intercambio rechazado: este match se jugó en blunderDB; sus asientos son los de la partida jugada.",
         "errorUpdating": "Error al actualizar la partida",
         "errorUpdatingComment": "Error al actualizar el comentario",
         "matchDeleted": "Partido movido a la papelera — recuperable (comando «trash»)",

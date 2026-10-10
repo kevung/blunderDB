@@ -47,12 +47,8 @@ func TestScoreCheck(t *testing.T) {
 			t.Logf("  scan error: %v", err2)
 			continue
 		}
-		fMove := 0
-		if player == -1 {
-			fMove = 1
-		}
 		cur0, cur1 := ml-s1, ml-s2
-		mwc := ConvertEMGLossToMWCLoss(int(errMP), cur0, cur1, fMove, 1<<cv, ml)
+		mwc := ConvertEMGLossToMWCLoss(int(errMP), cur0, cur1, 0, 1<<cv, ml)
 		if math.IsNaN(mwc) {
 			mwc = 0
 		}

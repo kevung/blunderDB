@@ -2,8 +2,8 @@ package storagetest
 
 import (
 	"context"
+	"errors"
 	"fmt"
-	"math"
 	"reflect"
 	"testing"
 
@@ -13,7 +13,10 @@ import (
 
 // swapSeat is everything the readers say of one seat of a match.
 type swapSeat struct {
-	Name     string
+	Name string
+	// Per game, in order: the seat's initial score and whether it won.
+	Scores   []int32
+	Won      []bool
 	Elo      *float64
 	Exp      *int
 	Detail   storage.MatchPlayerDetailStats
@@ -37,13 +40,15 @@ type swapSnapshot struct {
 	Positions    map[int64]domain.Position
 	Analyses     map[int64]*domain.PositionAnalysis
 	PositionRows int
+	Origin       *storage.MatchOrigin
 }
 
 // testMatchSwapKeepsPositions: a position is stored from the side on roll
 // (domain.Position.NormalizeForStorage), so swapping a match's seats must
 // change no position, no analysis and no played-decision score — each person
-// keeps every metric, under the other seat — and swapping twice must give the
-// match back exactly.
+// keeps every metric, to the bit, under the other seat — and swapping twice
+// must give the match back exactly. The match crosses the Crawford game, and
+// a draft open on it or an origin (a match played here) refuses the swap.
 func testMatchSwapKeepsPositions(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 	ms := s.Matches()
@@ -127,9 +132,37 @@ func testMatchSwapKeepsPositions(t *testing.T, s storage.Storage) {
 			t.Fatalf("CreateMove %d: %v", i, err)
 		}
 	}
-	if err := s.Duels().SetOrigin(ctx, "", &storage.MatchOrigin{MatchID: matchID, DiceSeed: "seed", OverTime: 2,
-		DeclaredBots: []storage.DeclaredBot{{Player: 2, Configuration: "thorough", Engine: "v1"}}}); err != nil {
-		t.Fatalf("SetOrigin: %v", err)
+
+	// The Crawford game (Kevin 1-away, no cube), then a post-Crawford game,
+	// where the trailer's double is priced at the stored PostCrawford sentinel.
+	crawford, err := ms.CreateGame(ctx, "", &domain.Game{MatchID: matchID, GameNumber: 2,
+		InitialScore: [2]int32{6, 3}, Winner: -1, PointsWon: 1})
+	if err != nil {
+		t.Fatalf("CreateGame Crawford: %v", err)
+	}
+	postCrawford, err := ms.CreateGame(ctx, "", &domain.Game{MatchID: matchID, GameNumber: 3,
+		InitialScore: [2]int32{6, 4}, Winner: 1, PointsWon: 2})
+	if err != nil {
+		t.Fatalf("CreateGame post-Crawford: %v", err)
+	}
+	none := domain.Cube{Value: 0, Owner: domain.None}
+	later := []domain.Move{
+		{GameID: crawford, MoveType: "checker", Player: 1, Dice: [2]int32{1, 4}, CheckerMove: "13/11 24/23", LuckMP: i32(55),
+			PositionID: checker(3, [2]int{domain.Crawford, 4}, none, "13/11 24/23", 0.07)},
+		{GameID: crawford, MoveType: "checker", Player: -1, Dice: [2]int32{1, 5}, CheckerMove: "13/11 24/23", LuckMP: i32(-210),
+			PositionID: checker(4, [2]int{4, domain.Crawford}, none, "13/11 24/23", 0.09)},
+		{GameID: postCrawford, MoveType: "cube", Player: -1, CubeAction: "Double",
+			PositionID: cubeDecision([2]int{3, domain.PostCrawford}, none, "Double", domain.DoublingCubeAnalysis{
+				CubefulNoDoubleEquity: 0.5, CubefulDoubleTakeEquity: 0.3, CubefulDoublePassEquity: 1.0,
+				CubefulDoubleTakeError: 0.2, CubefulDoublePassError: 0.5})},
+		{GameID: postCrawford, MoveType: "checker", Player: 1, Dice: [2]int32{1, 6}, CheckerMove: "13/11 24/23", LuckMP: i32(15),
+			PositionID: checker(5, [2]int{domain.PostCrawford, 3}, domain.Cube{Value: 1, Owner: 0}, "13/11 24/23", 0.11)},
+	}
+	for i := range later {
+		later[i].MoveNumber = int32(i + 1)
+		if _, err := ms.CreateMove(ctx, "", &later[i]); err != nil {
+			t.Fatalf("CreateMove (later game) %d: %v", i, err)
+		}
 	}
 
 	// Another match reaches the opening position: it must not see the swap.
@@ -198,14 +231,14 @@ func testMatchSwapKeepsPositions(t *testing.T, s storage.Storage) {
 			t.Errorf("move %d: decision loss on seat %d after the swap, was %d", id, l.Player, wl.Player)
 		}
 		l.Player = wl.Player
-		if !seatEqual(l, wl) {
+		if !reflect.DeepEqual(l, wl) {
 			t.Errorf("move %d: decision loss changed beyond its seat:\n got %+v\nwant %+v", id, l, wl)
 		}
 	}
 	for seat := range 2 {
 		got, want := after.Seats[seat], before.Seats[1-seat]
 		got.Row.Seat = want.Row.Seat
-		if !seatEqual(got, want) {
+		if !reflect.DeepEqual(got, want) {
 			t.Errorf("seat %d after the swap is not seat %d before:\n got %+v\nwant %+v", seat+1, 2-seat, got, want)
 		}
 	}
@@ -217,6 +250,34 @@ func testMatchSwapKeepsPositions(t *testing.T, s storage.Storage) {
 	if again := snap("after two swaps", matchID); !reflect.DeepEqual(again, before) {
 		t.Errorf("two swaps do not give the match back:\n got %+v\nwant %+v", again, before)
 	}
+
+	refused := func(stage string, want error, was swapSnapshot) {
+		t.Helper()
+		err := ms.SwapPlayers(ctx, "", matchID)
+		if !errors.Is(err, want) || !errors.Is(err, storage.ErrInvalid) {
+			t.Errorf("%s: SwapPlayers = %v, want %v", stage, err, want)
+		}
+		if got := snap(stage, matchID); !reflect.DeepEqual(got, was) {
+			t.Errorf("%s: the refused swap changed the match", stage)
+		}
+	}
+	// A draft open on the match replaces it at its Finish, in the order the
+	// draft holds: the swap would be silently undone.
+	draft, err := s.Transcriptions().Save(ctx, "", &storage.Transcription{FormatVersion: "1",
+		MatchID: matchID, Label: "Kevin — Gildas", Document: "{}"})
+	if err != nil {
+		t.Fatalf("Save draft: %v", err)
+	}
+	refused("draft open", storage.ErrSwapDraftOpen, before)
+	if err := s.Transcriptions().Delete(ctx, "", draft); err != nil {
+		t.Fatalf("Delete draft: %v", err)
+	}
+	// A match played here: its origin names the seats as they were played.
+	if err := s.Duels().SetOrigin(ctx, "", &storage.MatchOrigin{MatchID: matchID, DiceSeed: "seed", OverTime: 2,
+		DeclaredBots: []storage.DeclaredBot{{Player: 2, Configuration: "thorough", Engine: "v1"}}}); err != nil {
+		t.Fatalf("SetOrigin: %v", err)
+	}
+	refused("played here", storage.ErrSwapPlayedHere, snap("with an origin", matchID))
 }
 
 func takeSwapSnapshot(ctx context.Context, s storage.Storage, matchID int64) (swapSnapshot, error) {
@@ -229,6 +290,22 @@ func takeSwapSnapshot(ctx context.Context, s storage.Storage, matchID int64) (sw
 	sn.Seats[0].Name, sn.Seats[1].Name = m.Player1Name, m.Player2Name
 	sn.Seats[0].Elo, sn.Seats[1].Elo = m.Player1Elo, m.Player2Elo
 	sn.Seats[0].Exp, sn.Seats[1].Exp = m.Player1Experience, m.Player2Experience
+
+	for g, err := range s.Matches().Games(ctx, "", matchID) {
+		if err != nil {
+			return sn, fmt.Errorf("games: %w", err)
+		}
+		for seat, side := range [2]int32{1, -1} {
+			sn.Seats[seat].Scores = append(sn.Seats[seat].Scores, g.InitialScore[seat])
+			sn.Seats[seat].Won = append(sn.Seats[seat].Won, g.Winner == side)
+		}
+	}
+	switch o, err := s.Duels().Origin(ctx, "", matchID); {
+	case err == nil:
+		sn.Origin = o
+	case !errors.Is(err, storage.ErrNotFound):
+		return sn, fmt.Errorf("origin: %w", err)
+	}
 
 	var ids []int64
 	for mv, err := range s.Matches().MovesByMatch(ctx, "", matchID) {
@@ -294,61 +371,4 @@ func takeSwapSnapshot(ctx context.Context, s storage.Storage, matchID int64) (sw
 		sn.LossByMove[l.MoveID] = l
 	}
 	return sn, nil
-}
-
-// seatEqual is reflect.DeepEqual with floats compared to a relative 1e-6:
-// the MET lookup behind an MWC loss takes the seat on roll
-// (engine.ConvertEMGLossToMWCLoss), and the float32 table gives the same
-// win-lose gap from either seat only up to its own precision.
-func seatEqual(a, b any) bool {
-	return seatEqualValue(reflect.ValueOf(a), reflect.ValueOf(b))
-}
-
-func seatEqualValue(a, b reflect.Value) bool {
-	if a.Kind() != b.Kind() || a.Type() != b.Type() {
-		return false
-	}
-	switch a.Kind() {
-	case reflect.Float32, reflect.Float64:
-		x, y := a.Float(), b.Float()
-		return x == y || math.Abs(x-y) <= 1e-6*math.Max(math.Abs(x), math.Abs(y))
-	case reflect.Pointer, reflect.Interface:
-		if a.IsNil() || b.IsNil() {
-			return a.IsNil() == b.IsNil()
-		}
-		return seatEqualValue(a.Elem(), b.Elem())
-	case reflect.Struct:
-		for i := range a.NumField() {
-			if !seatEqualValue(a.Field(i), b.Field(i)) {
-				return false
-			}
-		}
-		return true
-	case reflect.Slice, reflect.Array:
-		if a.Kind() == reflect.Slice && a.IsNil() != b.IsNil() {
-			return false
-		}
-		if a.Len() != b.Len() {
-			return false
-		}
-		for i := range a.Len() {
-			if !seatEqualValue(a.Index(i), b.Index(i)) {
-				return false
-			}
-		}
-		return true
-	case reflect.Map:
-		if a.Len() != b.Len() {
-			return false
-		}
-		for _, k := range a.MapKeys() {
-			bv := b.MapIndex(k)
-			if !bv.IsValid() || !seatEqualValue(a.MapIndex(k), bv) {
-				return false
-			}
-		}
-		return true
-	default:
-		return reflect.DeepEqual(a.Interface(), b.Interface())
-	}
 }

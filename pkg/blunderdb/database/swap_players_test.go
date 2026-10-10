@@ -1,7 +1,6 @@
 package database
 
 import (
-	"math"
 	"path/filepath"
 	"testing"
 )
@@ -52,7 +51,7 @@ func matchByID(t *testing.T, db *Database, id int64) Match {
 
 // TestSwapMatchPlayers_RealMatchKeepsAnalyses holds the seat swap on an XG
 // match analysed at a match score: every analysis stays, each person keeps
-// their PR, MWC loss and decision count under the other seat, the row the
+// their PR, MWC loss and decision count, to the bit, under the other seat, the row the
 // list re-reads (GetMatchByID) carries the badges as they now are, and a
 // second swap gives the match back.
 func TestSwapMatchPlayers_RealMatchKeepsAnalyses(t *testing.T) {
@@ -99,7 +98,6 @@ func TestSwapMatchPlayers_RealMatchKeepsAnalyses(t *testing.T) {
 			{m.Player2Name, m.PR2, m.MWCLoss2, m.MWC7P2.Loss, detail.Player2.TotalDecisions},
 		}
 	}
-	near := func(a, b float64) bool { return math.Abs(a-b) <= 1e-6*math.Max(math.Abs(a), math.Abs(b)) }
 
 	analyses, positions := counts()
 	before := read()
@@ -115,10 +113,8 @@ func TestSwapMatchPlayers_RealMatchKeepsAnalyses(t *testing.T) {
 	}
 	after := read()
 	for i := range 2 {
-		got, want := after[i], before[1-i]
-		if got.name != want.name || got.decisions != want.decisions ||
-			!near(got.pr, want.pr) || !near(got.mwc, want.mwc) || !near(got.l7, want.l7) {
-			t.Errorf("seat %d after the swap: %+v, want seat %d before: %+v", i+1, got, 2-i, want)
+		if got, want := after[i], before[1-i]; got != want {
+			t.Errorf("seat %d after the swap: %+v, want seat %d before: %+v", i+1, after[i], 2-i, before[1-i])
 		}
 	}
 

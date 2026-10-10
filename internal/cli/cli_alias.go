@@ -69,6 +69,7 @@ func (cli *CLI) runPlayersSwap(args []string) error {
 		fmt.Println()
 		fmt.Println("Swap the two players of a match: the file named them in the wrong order.")
 		fmt.Println("No position or analysis changes: each player keeps their statistics, under the other seat.")
+		fmt.Println("Refused while a transcription draft is open on the match, and for a match played here.")
 		fmt.Println()
 		fmt.Println("Options:")
 		fs.PrintDefaults()

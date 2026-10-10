@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"iter"
-	"sort"
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -232,48 +231,23 @@ func boolInt(v bool) int {
 	return 0
 }
 
-// SwapOriginSeats makes a Match's origin follow its players when their seats
-// trade places: OverTime and each DeclaredBot name a player by seat. The
-// Contributions stay in the order the combined seed was computed over, and
-// Start is the Position the first game began at, which no seat names.
-// A Match without an origin is left alone.
-func SwapOriginSeats(ctx context.Context, db Execer, scope string, matchID int64) error {
-	what := fmt.Sprintf("swap origin seats of match %d", matchID)
-	tenant, targs := db.TenantFilter("", scope)
-	var overTime int
-	var declared string
-	err := db.QueryRow(ctx,
-		`SELECT over_time, declared_bots FROM match_origin WHERE match_id = ? AND `+tenant,
-		append([]any{matchID}, targs...)...).Scan(&overTime, &declared)
-	if errors.Is(err, ErrNoRows) {
-		return nil
-	}
-	if err != nil {
-		return errf(db, what, err)
-	}
-	if overTime == 1 || overTime == 2 {
-		overTime = 3 - overTime
-	}
-	if declared != "" {
-		var bots []storage.DeclaredBot
-		if err := json.Unmarshal([]byte(declared), &bots); err != nil {
-			return errf(db, what, err)
+// SwapRefusal is why MatchStore.SwapPlayers refuses matchID, nil when it
+// does not: a Transcription draft open on it (storage.ErrSwapDraftOpen) or an
+// origin, the mark of a match played here (storage.ErrSwapPlayedHere).
+func SwapRefusal(ctx context.Context, db Execer, scope string, matchID int64) error {
+	for _, c := range []struct {
+		table string
+		err   error
+	}{{"transcription", storage.ErrSwapDraftOpen}, {"match_origin", storage.ErrSwapPlayedHere}} {
+		tenant, targs := db.TenantFilter("", scope)
+		var n int
+		if err := db.QueryRow(ctx, `SELECT COUNT(*) FROM `+c.table+` WHERE match_id = ? AND `+tenant,
+			append([]any{matchID}, targs...)...).Scan(&n); err != nil {
+			return errf(db, fmt.Sprintf("swap refusal of match %d", matchID), err)
 		}
-		for i := range bots {
-			if bots[i].Player == 1 || bots[i].Player == 2 {
-				bots[i].Player = 3 - bots[i].Player
-			}
+		if n > 0 {
+			return fmt.Errorf("match %d: %w", matchID, c.err)
 		}
-		// Kept in player order, as SetOrigin writes them.
-		sort.SliceStable(bots, func(i, j int) bool { return bots[i].Player < bots[j].Player })
-		if declared, err = encodeJSONColumn(bots); err != nil {
-			return errf(db, what, err)
-		}
-	}
-	if _, err := db.Exec(ctx,
-		`UPDATE match_origin SET over_time = ?, declared_bots = ? WHERE match_id = ? AND `+tenant,
-		append([]any{overTime, declared, matchID}, targs...)...); err != nil {
-		return errf(db, what, err)
 	}
 	return nil
 }

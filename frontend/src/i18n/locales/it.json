@@ -665,6 +665,8 @@
         "errorDeleting": "Errore durante l'eliminazione del match",
         "errorSettingTournament": "Errore durante l'assegnazione del torneo",
         "errorSwapping": "Errore durante lo scambio dei giocatori",
+        "swapDraftOpen": "Scambio rifiutato: una bozza di trascrizione è aperta su questo match. Completala o eliminala prima.",
+        "swapPlayedHere": "Scambio rifiutato: questo match è stato giocato in blunderDB; i suoi posti sono quelli con cui è stato giocato.",
         "errorUpdating": "Errore durante l'aggiornamento del match",
         "errorUpdatingComment": "Errore durante l'aggiornamento del commento",
         "matchDeleted": "Match spostato nel cestino — recuperabile (comando «trash»)",

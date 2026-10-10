@@ -2,6 +2,7 @@
     import { confirmAction } from '../services/confirmService.js';
     import NewButton from './panels/NewButton.svelte';
     import { logger } from '../utils/logger.js';
+    import { swapPlayersErrorKey } from '../utils/swapPlayersError.js';
     import { focusPanelUnlessTyping } from '../utils/panelFocus.js';
     import { fmtMwc7, mwc7Tooltip, mwc7Percent } from '../utils/mwc7.js';
     import { createInlineEdit } from '../utils/inlineEdit.svelte.js';
@@ -451,7 +452,7 @@
             statusBarTextStore.set(tMsg('tournament.swappedPlayers'));
         } catch (error) {
             logger.error('Error swapping match players:', error);
-            statusBarTextStore.set(tMsg('tournament.errorSwapping'));
+            statusBarTextStore.set(tMsg(swapPlayersErrorKey(error, 'tournament.errorSwapping')));
         }
     }
 
