@@ -22,6 +22,7 @@
  *   enterEditMode       NORMAL | MATCH | COLLECTION | EVAL → EDIT
  *   exitEditMode        EDIT → the mode it was entered from
  *   enterEvalMode       NORMAL | MATCH | COLLECTION | EDIT → EVAL
+ *   enterEvalOnDisplayed the same, on the position displayed (the Duel launcher)
  *   exitEvalMode        EVAL → the mode it was entered from
  *   toggleEvalMode      EVAL → (exit + analysis tab) | * → Eval tab
  *   enterTranscribeMode NORMAL | MATCH | COLLECTION | EDIT | EVAL → TRANSCRIBE
@@ -31,6 +32,7 @@
  *   toggleMatchMode     MATCH → NORMAL | * → MATCH
  *   handleOpenCollection * → COLLECTION
  *   exitCollectionMode  COLLECTION → NORMAL
+ *   leaveStudiedModeForList MATCH | COLLECTION → NORMAL, before another list is shown
  *   leaveSubSearchResults NORMAL (results of an `ss` run from a collection or
  *                       match) → that COLLECTION | MATCH
  *
@@ -61,6 +63,7 @@ import { showPosition, loadAllPositions, loadAnalysisForPosition, setSearchState
 import { logger } from '../utils/logger.js';
 import { tMsg, translate } from '../i18n';
 import { viewStore } from '../stores/viewStore.js';
+import { duelHoldsBoardStore } from '../stores/duelStore.js';
 
 export const MODE = Object.freeze({
     NORMAL: 'NORMAL',
@@ -580,6 +583,20 @@ export function evaluateInNewView(position) {
 }
 
 /**
+ * The Duel launcher starting from the board: the board becomes Eval's scratch board — the same
+ * editing, not a copy of it — on the position displayed. Already in EVAL, the scratch board stays.
+ */
+export async function enterEvalOnDisplayed() {
+    if (currentMode() === MODE.EVAL || currentMode() === MODE.DUEL) return;
+    const shown = get(positionStore);
+    // The query board (EDIT) and a draft's Cursor (TRANSCRIBE) are not the position studied.
+    if (shown && currentMode() !== MODE.EDIT && currentMode() !== MODE.TRANSCRIBE) {
+        savedContext.evalSeed = { ...JSON.parse(JSON.stringify(shown)), id: 0 };
+    }
+    await enterEvalMode();
+}
+
+/**
  * NORMAL | MATCH | COLLECTION | EDIT → EVAL. EVAL is set before the scratch
  * board lands in positionStore, in one synchronous run, or updateEPC fires on
  * the wrong position. The only await (leaving EDIT) sits before that run.
@@ -840,6 +857,27 @@ export async function toggleMatchMode() {
             setStatusBarMessage(tMsg('status.errorEnteringMatchMode'));
         }
     }
+}
+
+/**
+ * Whether the board follows the library index (App's navigation effect). In MATCH it follows the
+ * match navigation and the index is stale; a Duel holds the board.
+ */
+export function boardFollowsLibraryIndex() {
+    return currentMode() !== MODE.MATCH && !get(duelHoldsBoardStore);
+}
+
+/**
+ * MATCH | COLLECTION → NORMAL, for a caller about to put another list of positions on screen.
+ * In MATCH the board follows matchContextStore and ignores the library index, so a list loaded
+ * without leaving it would be counted by the status bar while the board, the navigation and the
+ * Analysis panel stay on the match. The match's cursor is saved, as on any exit from MATCH.
+ */
+export function leaveStudiedModeForList() {
+    void persistLastVisitedMatchPosition();
+    statusBarModeStore.set(MODE.NORMAL);
+    matchContextStore.set({ ...NO_MATCH_CONTEXT });
+    activeCollectionStore.set(null);
 }
 
 // ── COLLECTION ───────────────────────────────────────────────────────────────

@@ -2,8 +2,10 @@
     // Vues de corpus : face-à-face de deux joueurs, PR par fenêtre
     // calendaire, classement. Chaque vue se calcule à la demande — ce sont
     // des agrégats sur toute la base, trop chers pour suivre chaque frappe.
-    import { HeadToHead, PRByWindow, PlayerRanking, GetAllPlayerNames } from '../../../wailsjs/go/database/Database.js';
+    import { HeadToHead, PRByWindow, PlayerRanking, GetAllPlayerNames, StatsMatchIDs } from '../../../wailsjs/go/database/Database.js';
     import { t } from '../../i18n/index.js';
+    import { loadPositionsFromStatsSelection, openMatchListInPanel } from '../../services/positionLoader.js';
+    import CountLink from '../panels/CountLink.svelte';
 
     /** @type {{ filter: object }} */
     let { filter } = $props();
@@ -11,7 +13,7 @@
     let players = $state([]);
     let playerA = $state('');
     let playerB = $state('');
-    let h2h = $state(null);
+    let h2h = $state(/** @type {any} */ (null));
     let h2hError = $state('');
 
     let months = $state(3);
@@ -78,6 +80,41 @@
         });
     }
 
+    // A row opens what it sums up: a match row or a player's record opens
+    // matches in the Match panel, a window's decisions open their positions.
+    // A count inside a row opens the other half and stops there.
+
+    /** The filter narrowed to a window's months (both ends inclusive). */
+    function windowFilter(/** @type {any} */ w) {
+        const f = /** @type {any} */ (filter);
+        const [y, m] = String(w.to).split('-').map(Number);
+        const lastDay = new Date(Date.UTC(y, m, 0)).getUTCDate();
+        const from = `${w.from}-01`;
+        const to = `${w.to}-${String(lastDay).padStart(2, '0')}`;
+        return { ...f, dateFrom: f?.dateFrom && f.dateFrom > from ? f.dateFrom : from, dateTo: f?.dateTo && f.dateTo < to ? f.dateTo : to };
+    }
+
+    const playerFilter = (/** @type {string} */ name) => ({ ...filter, playerName: name });
+
+    const openPositions = (/** @type {object} */ f) => loadPositionsFromStatsSelection(f, { Kind: 'all', OnlyWithError: false });
+
+    async function openCountedMatches(/** @type {object} */ f) {
+        await openMatchListInPanel((await StatsMatchIDs(/** @type {any} */ (f))) ?? []);
+    }
+
+    /** Enter or Space on a focused row does what a click does. */
+    function onRowKey(/** @type {KeyboardEvent} */ e, /** @type {() => void} */ open) {
+        if (e.target !== e.currentTarget || (e.key !== 'Enter' && e.key !== ' ')) return;
+        e.preventDefault();
+        open();
+    }
+
+    /** A count inside a clickable row: its own target, not the row's. */
+    function countClick(/** @type {Event} */ e, /** @type {() => void} */ open) {
+        e.stopPropagation();
+        open();
+    }
+
     function outcomeLabel(o) {
         if (o > 0) return playerA;
         if (o < 0) return playerB;
@@ -104,7 +141,18 @@
             <p class="corpus-error">{h2hError}</p>
         {:else if h2h}
             <p class="corpus-summary">
-                {$t('stats.corpus.h2hSummary', { a: h2h.player_a, b: h2h.player_b, winsA: h2h.wins_a, winsB: h2h.wins_b, prA: fmt(h2h.pr_a), prB: fmt(h2h.pr_b) })}
+                {#if (h2h.matches ?? []).length > 0}
+                    <button
+                        type="button"
+                        class="corpus-summary-link"
+                        data-testid="corpus-h2h-summary"
+                        title={$t('stats.corpus.openMatches')}
+                        onclick={() => openMatchListInPanel(h2h.matches.map((m) => m.id))}
+                        >{$t('stats.corpus.h2hSummary', { a: h2h.player_a, b: h2h.player_b, winsA: h2h.wins_a, winsB: h2h.wins_b, prA: fmt(h2h.pr_a), prB: fmt(h2h.pr_b) })}</button
+                    >
+                {:else}
+                    {$t('stats.corpus.h2hSummary', { a: h2h.player_a, b: h2h.player_b, winsA: h2h.wins_a, winsB: h2h.wins_b, prA: fmt(h2h.pr_a), prB: fmt(h2h.pr_b) })}
+                {/if}
             </p>
             {#if (h2h.matches ?? []).length === 0}
                 <p class="corpus-empty">{$t('stats.corpus.h2hNone')}</p>
@@ -121,7 +169,15 @@
                     </thead>
                     <tbody>
                         {#each h2h.matches as m (m.id)}
-                            <tr>
+                            <tr
+                                class="clickable"
+                                data-testid="corpus-h2h-row"
+                                role="button"
+                                tabindex="0"
+                                title={$t('stats.corpus.openMatches')}
+                                onclick={() => openMatchListInPanel([m.id])}
+                                onkeydown={(e) => onRowKey(e, () => openMatchListInPanel([m.id]))}
+                            >
                                 <td>{m.date}</td>
                                 <td>{m.match_length}</td>
                                 <td>{outcomeLabel(m.outcome)}</td>
@@ -164,10 +220,24 @@
                     </thead>
                     <tbody>
                         {#each windows as w (w.from)}
-                            <tr>
+                            <tr
+                                class="clickable"
+                                data-testid="corpus-window-row"
+                                role="button"
+                                tabindex="0"
+                                title={$t('stats.corpus.openPositions')}
+                                onclick={() => openPositions(windowFilter(w))}
+                                onkeydown={(e) => onRowKey(e, () => openPositions(windowFilter(w)))}
+                            >
                                 <td>{w.from}</td>
                                 <td>{w.to}</td>
-                                <td>{w.num_matches}</td>
+                                <td
+                                    >{#if w.num_matches > 0}<CountLink
+                                            label={String(w.num_matches)}
+                                            title={$t('stats.corpus.openMatches')}
+                                            onclick={(/** @type {Event} */ e) => countClick(e, () => openCountedMatches(windowFilter(w)))}
+                                        />{:else}0{/if}</td
+                                >
                                 <td>{w.num_decisions}</td>
                                 <td>{fmt(w.pr)}</td>
                             </tr>
@@ -206,12 +276,26 @@
                     </thead>
                     <tbody>
                         {#each ranking as r (r.name)}
-                            <tr>
+                            <tr
+                                class="clickable"
+                                data-testid="corpus-ranking-row"
+                                role="button"
+                                tabindex="0"
+                                title={$t('stats.corpus.openMatches')}
+                                onclick={() => openCountedMatches(playerFilter(r.name))}
+                                onkeydown={(e) => onRowKey(e, () => openCountedMatches(playerFilter(r.name)))}
+                            >
                                 <td>{r.rank}</td>
                                 <td>{r.name}</td>
                                 <td>{r.matches}</td>
                                 <td>{r.wins}–{r.losses}</td>
-                                <td>{r.decisions}</td>
+                                <td
+                                    >{#if r.decisions > 0}<CountLink
+                                            label={String(r.decisions)}
+                                            title={$t('stats.corpus.openPositions')}
+                                            onclick={(/** @type {Event} */ e) => countClick(e, () => openPositions(playerFilter(r.name)))}
+                                        />{:else}0{/if}</td
+                                >
                                 <td>{fmt(r.pr)}</td>
                                 <td>{fmt(r.pr_checker)}</td>
                                 <td>{fmt(r.pr_cube)}</td>
@@ -228,6 +312,17 @@
 </div>
 
 <style>
+    .corpus-table tr.clickable {
+        cursor: pointer;
+    }
+    .corpus-summary-link {
+        all: unset;
+        cursor: pointer;
+        text-decoration: underline dotted;
+    }
+    .corpus-summary-link:focus-visible {
+        outline: 2px solid var(--color-accent, currentColor);
+    }
     .corpus-tab {
         display: flex;
         flex-direction: column;

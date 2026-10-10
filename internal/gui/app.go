@@ -196,6 +196,24 @@ func (a *App) OpenExportMatDialog(defaultName string) (string, error) {
 	return filePath, nil
 }
 
+// OpenExportApkgDialog opens a save dialog pre-filled with defaultName,
+// ensures a .apkg extension, "" on cancel.
+func (a *App) OpenExportApkgDialog(defaultName string) (string, error) {
+	filePath, err := runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{
+		Title:                "Export Anki package (.apkg)",
+		DefaultFilename:      defaultName,
+		Filters:              []runtime.FileFilter{{DisplayName: "Anki packages (*.apkg)", Pattern: "*.apkg"}},
+		CanCreateDirectories: true,
+	})
+	if err != nil || filePath == "" {
+		return filePath, err
+	}
+	if !strings.HasSuffix(strings.ToLower(filePath), ".apkg") {
+		filePath += ".apkg"
+	}
+	return filePath, nil
+}
+
 // deletableExtensions is DeleteFile's allow-list: both of blunderDB's own
 // database file shapes, never an arbitrary suffix.
 var deletableExtensions = map[string]bool{".db": true, ".dbx": true}

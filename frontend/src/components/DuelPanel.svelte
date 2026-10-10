@@ -6,12 +6,34 @@
   évaluation n'est montrée tant que le Duel court (règle 9).
 -->
 <script>
-    import { onMount } from 'svelte';
+    import { onMount, untrack } from 'svelte';
+    import { get } from 'svelte/store';
     import { t } from '../i18n';
-    import { duelStore, duelListStore, duelAnimatingStore } from '../stores/duelStore.js';
+    import { duelStore, duelListStore, duelAnimatingStore, duelHoldsBoardStore } from '../stores/duelStore.js';
     import { databasePathStore } from '../stores/databaseStore.js';
-    import { BOT_LEVELS, MAX_MATCH_LENGTH, START, humanSide, normalizeForm, levelLabelParts } from '../services/duel.js';
-    import { loadDuelForm, duelOffer, refreshDuels, startDuel, resumeDuel, suspendDuel, confirmForfeitDuel, confirmCancelDuel } from '../services/duelService.js';
+    import { statusBarModeStore } from '../stores/uiStore.js';
+    import { positionStore } from '../stores/positionStore.js';
+    import {
+        BOT_LEVELS,
+        MAX_MATCH_LENGTH,
+        START,
+        CRAWFORD,
+        POST_CRAWFORD,
+        humanSide,
+        normalizeForm,
+        levelLabelParts,
+        cadenceChoices,
+        chooseCadence,
+        saveCadence,
+        deleteCadence,
+        awayChoices,
+        formFromBoard,
+        boardFromForm,
+        boardHasDice,
+        boardCubeDecision
+    } from '../services/duel.js';
+    import { loadDuelForm, saveDuelForm, duelOffer, refreshDuels, startDuel, resumeDuel, suspendDuel, confirmForfeitDuel, confirmCancelDuel } from '../services/duelService.js';
+    import { enterEvalOnDisplayed, exitEvalMode } from '../services/modeMachine.js';
     import TranscriptView from './TranscriptView.svelte';
     import DuelClocks from './DuelClocks.svelte';
     import PanelHeader from './panels/PanelHeader.svelte';
@@ -19,7 +41,9 @@
     import FormRow from './panels/FormRow.svelte';
 
     let form = $state(normalizeForm(null));
+    let loaded = $state(false);
     let cadences = $state(/** @type {any[]} */ ([]));
+    let cadenceName = $state('');
 
     let open = $derived($duelStore);
     let duel = $derived(open?.state ?? null);
@@ -39,16 +63,92 @@
     let hintTitle = $derived([hint, duel?.fingerprint ? $t('duel.fingerprintTitle', { fingerprint: duel.fingerprint }) : ''].filter(Boolean).join('\n') || undefined);
     let lengthChoices = Array.from({ length: MAX_MATCH_LENGTH }, (_, i) => i + 1);
 
+    // The board, while the launcher starts from it: Eval's scratch board.
+    let board = $derived(!duel && form.start === START.BOARD && $statusBarModeStore === 'EVAL' ? $positionStore : null);
+    let showDice = $derived(!!board && boardHasDice(board));
+    let showCube = $derived(!!board && boardCubeDecision(board, form));
+    let choices = $derived(cadenceChoices(form, cadences));
+    let chosen = $derived(choices.find((c) => c.name === form.cadence) ?? null);
+    let awayOptions = $derived(awayChoices(form.matchLength));
+
     onMount(async () => {
         refreshDuels();
         form = await loadDuelForm();
+        loaded = true;
         const offer = await duelOffer();
         cadences = offer?.cadences ?? [];
         levels = offer?.levels ?? [];
     });
 
+    // Starting from the board, the board is edited as in Eval; starting from the opening, it is not.
+    $effect(() => {
+        if (!loaded || duel || $duelHoldsBoardStore) return;
+        const mode = $statusBarModeStore;
+        const fromBoard = form.start === START.BOARD;
+        untrack(() => {
+            if (fromBoard && mode !== 'EVAL' && mode !== 'DUEL') enterEvalOnDisplayed();
+            else if (!fromBoard && mode === 'EVAL') exitEvalMode();
+        });
+    });
+
+    // The board's score, edited on the board, fills the fields.
+    $effect(() => {
+        if (!board) return;
+        const next = formFromBoard(
+            untrack(() => form),
+            board
+        );
+        untrack(() => {
+            if (next !== form) form = next;
+        });
+    });
+
+    /** The fields' score, edited here, goes onto the board. */
+    function scoreEdited() {
+        if (!board) return;
+        const next = boardFromForm(get(positionStore), form);
+        if (next !== get(positionStore)) positionStore.set(next);
+    }
+
+    /** @param {number} previous the length before the change */
+    function lengthEdited(previous) {
+        const L = form.matchLength;
+        // The start of the match follows the length; a score keeps within it.
+        if (form.away[0] === previous && form.away[1] === previous) form.away = [L, L];
+        else form.away = form.away.map((/** @type {number} */ a) => Math.min(a, L));
+        if (L === 1) form.away = [CRAWFORD, CRAWFORD];
+        scoreEdited();
+    }
+
+    /** @param {number} a */
+    function awayLabel(a) {
+        if (a === CRAWFORD && form.matchLength > 1) return $t('duel.awayCrawford');
+        if (a === POST_CRAWFORD) return $t('duel.awayPostCrawford');
+        return String(a);
+    }
+
+    /** @type {Record<string, string>} */
+    const PRESET_LABELS = { standard: 'duel.cadencePreset.standard', speed: 'duel.cadencePreset.speed' };
+
+    /** @param {any} c */
+    function cadenceLabel(c) {
+        const name = c.preset ? $t(PRESET_LABELS[c.name] ?? c.name) : c.name;
+        return $t('duel.cadenceLabel', { name, minutes: c.minutesPerPoint, delay: c.delay });
+    }
+
+    function storeCadence() {
+        form = saveCadence(form, cadenceName);
+        cadenceName = '';
+        saveDuelForm(form);
+    }
+
+    function dropCadence() {
+        if (!chosen || chosen.preset) return;
+        form = deleteCadence(form, chosen.name);
+        saveDuelForm(form);
+    }
+
     function play() {
-        form = normalizeForm(form);
         startDuel(form, cadences);
     }
 </script>
@@ -79,6 +179,35 @@
         </div>
     {:else}
         <PanelHeader title={$t('tabbedPanel.duel')}>
+            <span class="band" data-testid="duel-band">
+                <select bind:value={form.start} aria-label={$t('duel.start')} title={$t('duel.start')} data-testid="duel-start">
+                    <option value={START.OPENING}>{$t('duel.startOpening')}</option>
+                    <option value={START.BOARD}>{$t('duel.startBoard')}</option>
+                </select>
+                {#if showDice}
+                    <select bind:value={form.reroll} aria-label={$t('duel.dice')} title={$t('duel.dice')} data-testid="duel-dice">
+                        <option value={false}>{$t('duel.diceBoard')}</option>
+                        <option value={true}>{$t('duel.diceReroll')}</option>
+                    </select>
+                {/if}
+                {#if showCube}
+                    <select bind:value={form.afterCube} aria-label={$t('duel.cubeTiming')} title={$t('duel.cubeTiming')} data-testid="duel-cube">
+                        <option value={false}>{$t('duel.cubeBefore')}</option>
+                        <option value={true}>{$t('duel.cubeAfter')}</option>
+                    </select>
+                {/if}
+                <select
+                    value={form.cadence}
+                    onchange={(e) => (form = chooseCadence(form, /** @type {HTMLSelectElement} */ (e.currentTarget).value, cadences))}
+                    disabled={form.money}
+                    aria-label={$t('duel.cadence')}
+                    title={$t('duel.cadence')}
+                    data-testid="duel-cadence"
+                >
+                    <option value="">{$t('duel.noCadence')}</option>
+                    {#each choices as c (c.name)}<option value={c.name}>{cadenceLabel(c)}</option>{/each}
+                </select>
+            </span>
             {#snippet actions()}
                 <button type="submit" form="duel-form" class="launch" data-testid="duel-play" disabled={!$databasePathStore}><span aria-hidden="true">▶</span> <span>{$t('duel.play')}</span></button>
             {/snippet}
@@ -94,30 +223,34 @@
             >
                 <FormGrid>
                     <FormRow label={$t('duel.type')}>
-                        <label class="field"><input type="radio" bind:group={form.money} value={false} /> {$t('duel.match')}</label>
-                        <select bind:value={form.matchLength} disabled={form.money} aria-label={$t('duel.matchLength')}>
+                        <label class="field"><input type="radio" bind:group={form.money} value={false} onchange={scoreEdited} /> {$t('duel.match')}</label>
+                        <select
+                            value={form.matchLength}
+                            onchange={(e) => {
+                                const previous = form.matchLength;
+                                form.matchLength = Number(/** @type {HTMLSelectElement} */ (e.currentTarget).value);
+                                lengthEdited(previous);
+                            }}
+                            disabled={form.money}
+                            aria-label={$t('duel.matchLength')}
+                            data-testid="duel-length"
+                        >
                             {#each lengthChoices as n (n)}<option value={n}>{$t('duel.lengthPoints', { n })}</option>{/each}
                         </select>
-                        <label class="field"><input type="radio" bind:group={form.money} value={true} /> {$t('duel.moneySession')}</label>
+                        <label class="field"><input type="radio" bind:group={form.money} value={true} onchange={scoreEdited} /> {$t('duel.moneySession')}</label>
                         <label class="field"><input type="checkbox" bind:checked={form.jacoby} disabled={!form.money} /> {$t('duel.jacoby')}</label>
                     </FormRow>
 
-                    <FormRow label={$t('duel.start')} for="duel-start">
-                        <select id="duel-start" bind:value={form.start}>
-                            <option value={START.OPENING}>{$t('duel.startOpening')}</option>
-                            <option value={START.BOARD}>{$t('duel.startBoard')}</option>
-                            <option value={START.SCORE} disabled={form.money}>{$t('duel.startScore')}</option>
-                        </select>
-                        {#if form.start === START.SCORE && !form.money}
+                    <FormRow label={$t('duel.score')}>
+                        {#each [0, 1] as p (p)}
                             <label class="field"
-                                >{$t('duel.awayPlayer1')}
-                                <input type="number" min="1" max={form.matchLength} bind:value={form.away[0]} />
+                                >{$t(p === 0 ? 'duel.awayPlayer1' : 'duel.awayPlayer2')}
+                                <select bind:value={form.away[p]} onchange={scoreEdited} disabled={form.money} data-testid="duel-away-{p + 1}">
+                                    {#each awayOptions as a (a)}<option value={a}>{awayLabel(a)}</option>{/each}
+                                </select>
                             </label>
-                            <label class="field"
-                                >{$t('duel.awayPlayer2')}
-                                <input type="number" min="1" max={form.matchLength} bind:value={form.away[1]} />
-                            </label>
-                        {/if}
+                        {/each}
+                        <label class="field"><input type="checkbox" bind:checked={form.singleGame} data-testid="duel-single-game" /> {$t('duel.singleGame')}</label>
                     </FormRow>
 
                     <FormRow label={$t('duel.side')}>
@@ -134,19 +267,25 @@
                         </select>
                     </FormRow>
 
-                    <FormRow label={$t('duel.cadence')} for="duel-cadence">
-                        <select id="duel-cadence" bind:value={form.cadence}>
-                            <option value="">{$t('duel.noCadence')}</option>
-                            {#each cadences as c (c.name)}<option value={c.name}>{c.name}</option>{/each}
-                        </select>
-                    </FormRow>
-
-                    {#if form.cadence}
-                        <FormRow label={$t('duel.timeOut')} for="duel-timeout">
-                            <select id="duel-timeout" bind:value={form.timeOut}>
+                    {#if form.cadence && !form.money}
+                        <FormRow label={$t('duel.cadence')}>
+                            <label class="field"
+                                >{$t('duel.minutesPerPoint')}
+                                <input type="number" min="0.1" max="60" step="0.1" bind:value={form.minutesPerPoint} data-testid="duel-minutes" />
+                            </label>
+                            <label class="field"
+                                >{$t('duel.delaySeconds')}
+                                <input type="number" min="0" max="600" step="1" bind:value={form.delay} data-testid="duel-delay" />
+                            </label>
+                            <select bind:value={form.timeOut} aria-label={$t('duel.timeOut')} title={$t('duel.timeOut')}>
                                 <option value="continue">{$t('duel.timeContinue')}</option>
                                 <option value="lose_match">{$t('duel.timeLose')}</option>
                             </select>
+                            <input type="text" class="name" bind:value={cadenceName} placeholder={$t('duel.cadenceName')} aria-label={$t('duel.cadenceName')} data-testid="duel-cadence-name" />
+                            <button type="button" onclick={storeCadence} disabled={!cadenceName.trim()} data-testid="duel-cadence-save">{$t('duel.cadenceSave')}</button>
+                            {#if chosen && !chosen.preset}
+                                <button type="button" class="danger" onclick={dropCadence} data-testid="duel-cadence-delete">{$t('duel.cadenceDelete')}</button>
+                            {/if}
                         </FormRow>
                     {/if}
 
@@ -156,6 +295,7 @@
 
                     <FormRow label="">
                         <label class="field"><input type="checkbox" bind:checked={form.record} /> {$t('duel.record')}</label>
+                        <label class="field"><input type="checkbox" bind:checked={form.pipcount} data-testid="duel-pipcount" /> {$t('duel.pipcount')}</label>
                     </FormRow>
                 </FormGrid>
             </form>
@@ -170,7 +310,7 @@
                                 <span>{item.label}</span>
                                 <span class="hint">{item.updatedAt}</span>
                                 <span class="spacer"></span>
-                                <button type="button" onclick={() => resumeDuel(item.id)}>{$t('duel.resume')}</button>
+                                <button type="button" onclick={() => resumeDuel(item.id, form)}>{$t('duel.resume')}</button>
                             </li>
                         {/each}
                     </ul>
@@ -250,7 +390,19 @@
     }
 
     input[type='number'] {
-        width: 4em;
+        width: 4.5em;
+    }
+
+    input.name {
+        width: 8em;
+    }
+
+    .band {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-1);
+        min-width: 0;
+        flex-wrap: wrap;
     }
 
     button {

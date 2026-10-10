@@ -409,7 +409,8 @@
         "searchWouldReplaceCollection": "s はライブラリ全体を検索し、表示中のコレクションを置き換えてしまいます。コレクション内を検索するには ss を使ってください。",
         "searchWouldReplaceMatch": "s はライブラリ全体を検索し、表示中のマッチ (match) を置き換えてしまいます。マッチ内を検索するには ss を使ってください。",
         "tagsAdded": "タグを追加しました: {tags}",
-        "unknown": "不明なコマンド: {command}"
+        "unknown": "不明なコマンド: {command}",
+        "noMatchesFound": "マッチが見つかりません"
     },
     "search": {
         "actions": "操作",
@@ -665,6 +666,8 @@
         "errorDeleting": "マッチの削除中にエラーが発生しました",
         "errorSettingTournament": "トーナメントの設定中にエラーが発生しました",
         "errorSwapping": "プレイヤーの入れ替え中にエラーが発生しました",
+        "swapDraftOpen": "入れ替えを拒否しました: このマッチには書き起こしの下書きが開いています。先に完了するか削除してください。",
+        "swapPlayedHere": "入れ替えを拒否しました: このマッチは blunderDB で対局されたもので、席は対局時のままです。",
         "errorUpdating": "マッチの更新中にエラーが発生しました",
         "errorUpdatingComment": "コメントの更新中にエラーが発生しました",
         "matchDeleted": "マッチをごみ箱に移動しました — 復元できます（コマンド「trash」）",
@@ -690,7 +693,9 @@
         "moreActions": "その他の操作",
         "deleteMatch": "マッチを削除",
         "finalScore": "最終スコア",
-        "matchWonBy": "{player} がマッチに勝利"
+        "matchWonBy": "{player} がマッチに勝利",
+        "idsFilter": "統計から開いた {n} 件のマッチ",
+        "idsFilterClear": "すべてのマッチを表示"
     },
     "collection": {
         "addDescription": "説明を追加…",
@@ -867,6 +872,8 @@
         "reviewComplete": "復習完了！{count}枚のカードを復習しました。",
         "settingsSaved": "設定を保存しました",
         "deckSynced": "デッキ「{name}」を同期しました",
+        "exportApkgTooltip": "Anki パッケージとして書き出す (.apkg)",
+        "apkgExported": "デッキ「{name}」を書き出しました：{count} 枚",
         "deckReset": "デッキ「{name}」をリセットしました",
         "confirmDeleteDeck": "デッキ「{name}」を削除しますか?",
         "confirmResetDeck": "デッキ「{name}」をリセットしますか? すべての進捗が失われます。",
@@ -1962,7 +1969,9 @@
             "player": "プレイヤー",
             "record": "勝敗",
             "prChecker": "チェッカー PR",
-            "prCube": "キューブ PR"
+            "prCube": "キューブ PR",
+            "openMatches": "これらのマッチを開く",
+            "openPositions": "これらの局面を開く"
         },
         "interval95": "95 % 信頼区間",
         "intervalHint": "95 % 信頼区間：選択範囲ではマッチを、1 マッチではゲームを再標本化します。区間のない行（マッチまたはゲームが 3 未満、またはすべて同じ PR）は灰色で示します。",
@@ -3165,7 +3174,27 @@
         "start": "開始",
         "startOpening": "初期配置",
         "startBoard": "盤上の局面",
-        "startScore": "スコアのみ",
+        "score": "スコア",
+        "awayCrawford": "1（クロフォード）",
+        "awayPostCrawford": "1（ポストクロフォード）",
+        "singleGame": "1ゲームのみ",
+        "dice": "ダイス",
+        "diceBoard": "盤面のダイス",
+        "diceReroll": "振り直す",
+        "cubeTiming": "キューブ判断",
+        "cubeBefore": "キューブ前",
+        "cubeAfter": "キューブ後",
+        "minutesPerPoint": "1ポイントあたり分",
+        "delaySeconds": "ディレイ（秒）",
+        "cadenceName": "名前",
+        "cadenceSave": "保存",
+        "cadenceDelete": "削除",
+        "cadenceLabel": "{name} · {minutes} min/pt + {delay} s",
+        "pipcount": "ピップカウント",
+        "cadencePreset": {
+            "standard": "標準",
+            "speed": "スピード"
+        },
         "awayPlayer1": "プレイヤー1 残り",
         "awayPlayer2": "プレイヤー2 残り",
         "side": "担当する側",
@@ -3251,6 +3280,7 @@
         "placePanel": "動画をパネルに戻す",
         "stageResize": "動画のサイズを変更",
         "swapSide": "動画を盤の反対側に移動",
+        "rotate": "動画を回転 (O)",
         "stageMove": "ドラッグして動画を左または右に配置",
         "rate": "再生速度"
     },

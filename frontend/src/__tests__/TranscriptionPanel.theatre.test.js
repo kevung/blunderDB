@@ -174,6 +174,19 @@ describe('the theatre of the transcription', () => {
         expect(dock().querySelector('[data-testid="video-pane"] [data-testid="video-placement"]')).toBeNull();
     });
 
+    test('the theatre bar turns the video too, sharing the dock’s angle', async () => {
+        await openedPanel();
+        await openFromMenu();
+        const button = /** @type {HTMLElement} */ (document.querySelector('[data-testid="transcription-theatre"] [data-testid="video-rotate"]'));
+        expect(button).not.toBeNull();
+        await fireEvent.click(button);
+        await settle();
+        expect(localStorage.getItem('blunderdb.transcription.videoRotation.1')).toBe('90');
+        await fireEvent.click(button);
+        await settle();
+        expect(localStorage.getItem('blunderdb.transcription.videoRotation.1')).toBe('180');
+    });
+
     test('the button on the video opens it too, without taking the focus', async () => {
         await openedPanel();
         const button = /** @type {HTMLElement} */ (document.querySelector('[data-testid="video-theatre"]'));

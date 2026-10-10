@@ -13,7 +13,8 @@ import { describe, test, expect, vi, beforeEach } from 'vitest';
 import { get } from 'svelte/store';
 
 vi.mock('../services/positionService.js', () => ({
-    showPosition: vi.fn(() => Promise.resolve())
+    showPosition: vi.fn(() => Promise.resolve()),
+    leaveStudiedModeForList: vi.fn()
 }));
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
     CreateAnkiDeck: vi.fn(),

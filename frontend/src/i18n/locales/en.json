@@ -409,7 +409,8 @@
         "searchWouldReplaceCollection": "s searches the whole library and would replace the collection on screen: use ss to search within the collection.",
         "searchWouldReplaceMatch": "s searches the whole library and would replace the match on screen: use ss to search within the match.",
         "tagsAdded": "Tags added: {tags}",
-        "unknown": "Unknown command: {command}"
+        "unknown": "Unknown command: {command}",
+        "noMatchesFound": "No matches found"
     },
     "search": {
         "actions": "Actions",
@@ -665,6 +666,8 @@
         "errorDeleting": "Error deleting match",
         "errorSettingTournament": "Error setting tournament",
         "errorSwapping": "Error swapping players",
+        "swapDraftOpen": "Swap refused: a transcription draft is open on this match. Finish or delete it first.",
+        "swapPlayedHere": "Swap refused: this match was played in blunderDB; its seats are those it was played with.",
         "errorUpdating": "Error updating match",
         "errorUpdatingComment": "Error updating comment",
         "matchDeleted": "Match moved to the trash — recoverable (command “trash”)",
@@ -690,7 +693,9 @@
         "moreActions": "More actions",
         "deleteMatch": "Delete the match",
         "finalScore": "Final score",
-        "matchWonBy": "{player} won the match"
+        "matchWonBy": "{player} won the match",
+        "idsFilter": "{n} matches opened from Stats",
+        "idsFilterClear": "Show all matches"
     },
     "collection": {
         "addDescription": "Add a description…",
@@ -867,6 +872,8 @@
         "reviewComplete": "Review complete! {count} cards reviewed.",
         "settingsSaved": "Settings saved",
         "deckSynced": "Deck \"{name}\" synced",
+        "exportApkgTooltip": "Export as an Anki package (.apkg)",
+        "apkgExported": "Deck \"{name}\" exported: {count} card(s)",
         "deckReset": "Deck \"{name}\" reset",
         "confirmDeleteDeck": "Delete deck \"{name}\"?",
         "confirmResetDeck": "Reset deck \"{name}\"? All progress will be lost.",
@@ -1962,7 +1969,9 @@
             "player": "Player",
             "record": "Record",
             "prChecker": "Checker PR",
-            "prCube": "Cube PR"
+            "prCube": "Cube PR",
+            "openMatches": "Open these matches",
+            "openPositions": "Open these positions"
         },
         "interval95": "95 % CI",
         "intervalHint": "95 % confidence interval: resamples the matches of a selection, the games of a match. A row without one (fewer than three matches or games, or all at the same PR) is greyed.",
@@ -3165,7 +3174,27 @@
         "start": "Start",
         "startOpening": "Opening position",
         "startBoard": "Position on the board",
-        "startScore": "Score only",
+        "score": "Score",
+        "awayCrawford": "1 (Crawford)",
+        "awayPostCrawford": "1 (post-Crawford)",
+        "singleGame": "Single game",
+        "dice": "Dice",
+        "diceBoard": "Board dice",
+        "diceReroll": "Reroll",
+        "cubeTiming": "Cube decision",
+        "cubeBefore": "Before the cube",
+        "cubeAfter": "After the cube",
+        "minutesPerPoint": "Min per point",
+        "delaySeconds": "Delay (s)",
+        "cadenceName": "Name",
+        "cadenceSave": "Save",
+        "cadenceDelete": "Delete",
+        "cadenceLabel": "{name} · {minutes} min/pt + {delay} s",
+        "pipcount": "Pip count",
+        "cadencePreset": {
+            "standard": "Standard",
+            "speed": "Speed"
+        },
         "awayPlayer1": "Player 1 away",
         "awayPlayer2": "Player 2 away",
         "side": "Side played",
@@ -3251,6 +3280,7 @@
         "placePanel": "Put the video back in the panel",
         "stageResize": "Resize the video",
         "swapSide": "Move the video to the other side of the board",
+        "rotate": "Rotate the video (O)",
         "stageMove": "Drag to put the video on the left or the right",
         "rate": "Playback speed"
     },

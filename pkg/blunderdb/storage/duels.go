@@ -85,9 +85,9 @@ type MatchOrigin struct {
 	// Arbiter played itself. Nil when no Side declared one.
 	DeclaredBots []DeclaredBot `json:"declared_bots,omitempty"`
 	// Contributions are what each Side contributed to a combined seed, in
-	// player order ("" for a delegated Side); the rolls were computed from
-	// duel.CombinedSeed over DiceSeed and them. Nil when the Duel rolled from
-	// DiceSeed alone.
+	// the order of the seats as played ("" for a delegated Side); the rolls
+	// were computed from duel.CombinedSeed over DiceSeed and them. Nil when
+	// the Duel rolled from DiceSeed alone.
 	Contributions []string `json:"contributions,omitempty"`
 }
 

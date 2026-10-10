@@ -31,9 +31,15 @@ func (s *StatsStore) MatchReview(ctx context.Context, scope string, matchID int6
 	if err != nil {
 		return storage.MatchReview{}, errf(s.DB, "MatchReview match", err)
 	}
-	startMWC := 0.5
+	// Each seat's chances are looked up from that seat, never as one minus
+	// the other's: the float32 table is symmetric only to its rounding, and a
+	// person's result must not move when the seats are swapped.
+	startMWC := [2]float64{0.5, 0.5}
 	if length > 0 && length <= 64 && (start1 != 0 || start2 != 0) && start1 < length && start2 < length {
-		startMWC = engine.GnuBGGetME(start1, start2, length, 0, 0, 0, false)
+		startMWC = [2]float64{
+			engine.GnuBGGetME(start1, start2, length, 0, 0, 0, false),
+			engine.GnuBGGetME(start2, start1, length, 0, 0, 0, false),
+		}
 	}
 	outcome := storage.MatchOutcome(int32(length), int32(end1), int32(end2))
 	if length <= 0 {

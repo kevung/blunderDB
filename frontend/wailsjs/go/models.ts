@@ -1,3 +1,26 @@
+export namespace apkg {
+	
+	export class Result {
+	    name: string;
+	    notes: number;
+	    total: number;
+	    truncated: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new Result(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.name = source["name"];
+	        this.notes = source["notes"];
+	        this.total = source["total"];
+	        this.truncated = source["truncated"];
+	    }
+	}
+
+}
+
 export namespace assistant {
 	
 	export class Entry {
@@ -3524,6 +3547,10 @@ export namespace duel {
 	    matchLength: number;
 	    jacoby: boolean;
 	    start?: domain.Position;
+	    away?: number[];
+	    reroll?: boolean;
+	    afterCube?: boolean;
+	    singleGame?: boolean;
 	    sides: SideSpec[];
 	    discardAtEnd?: boolean;
 	    cadence?: Cadence;
@@ -3538,6 +3565,10 @@ export namespace duel {
 	        this.matchLength = source["matchLength"];
 	        this.jacoby = source["jacoby"];
 	        this.start = this.convertValues(source["start"], domain.Position);
+	        this.away = source["away"];
+	        this.reroll = source["reroll"];
+	        this.afterCube = source["afterCube"];
+	        this.singleGame = source["singleGame"];
 	        this.sides = this.convertValues(source["sides"], SideSpec);
 	        this.discardAtEnd = source["discardAtEnd"];
 	        this.cadence = this.convertValues(source["cadence"], Cadence);
@@ -3568,6 +3599,7 @@ export namespace duel {
 	    revision: number;
 	    header: transcript.Header;
 	    start?: domain.Position;
+	    singleGame?: boolean;
 	    sides: SideSpec[];
 	    fingerprint: string;
 	    actions: transcript.Action[];
@@ -3590,6 +3622,7 @@ export namespace duel {
 	        this.revision = source["revision"];
 	        this.header = this.convertValues(source["header"], transcript.Header);
 	        this.start = this.convertValues(source["start"], domain.Position);
+	        this.singleGame = source["singleGame"];
 	        this.sides = this.convertValues(source["sides"], SideSpec);
 	        this.fingerprint = source["fingerprint"];
 	        this.actions = this.convertValues(source["actions"], transcript.Action);
@@ -7097,6 +7130,7 @@ export namespace storage {
 	    Text: string;
 	    Unassigned: boolean;
 	    TournamentIDs: number[];
+	    IDs: number[];
 	    DateFrom: string;
 	    DateTo: string;
 	    MatchLength: number[];
@@ -7116,6 +7150,7 @@ export namespace storage {
 	        this.Text = source["Text"];
 	        this.Unassigned = source["Unassigned"];
 	        this.TournamentIDs = source["TournamentIDs"];
+	        this.IDs = source["IDs"];
 	        this.DateFrom = source["DateFrom"];
 	        this.DateTo = source["DateTo"];
 	        this.MatchLength = source["MatchLength"];

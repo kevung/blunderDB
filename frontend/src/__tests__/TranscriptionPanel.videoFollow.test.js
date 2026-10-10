@@ -208,6 +208,20 @@ describe('the Cursor follows the video', () => {
         expect(duration.textContent).toBe('4 s · 4 s');
     });
 
+    test('O turns the video one quarter, kept for the draft', async () => {
+        localStorage.clear();
+        await openedPanel();
+        const press = () => fireEvent.keyDown(document.activeElement ?? document, { code: 'KeyO', key: 'o', bubbles: true, cancelable: true });
+        await press();
+        await settle(5);
+        expect(localStorage.getItem('blunderdb.transcription.videoRotation.1')).toBe('90');
+        await press();
+        await press();
+        await press();
+        await settle(5);
+        expect(localStorage.getItem('blunderdb.transcription.videoRotation.1')).toBeNull();
+    });
+
     test('after a click on a timed play, the Cursor holds until the video leaves it', async () => {
         await openedPanel();
         await playTo(40000);

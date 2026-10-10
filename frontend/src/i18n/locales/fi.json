@@ -409,7 +409,8 @@
         "searchWouldReplaceCollection": "s hakee koko kirjastosta ja korvaisi näytetyn kokoelman: käytä ss-komentoa hakeaksesi kokoelman sisältä.",
         "searchWouldReplaceMatch": "s hakee koko kirjastosta ja korvaisi näytetyn ottelun: käytä ss-komentoa hakeaksesi ottelun sisältä.",
         "tagsAdded": "Tunnisteet lisätty: {tags}",
-        "unknown": "Tuntematon komento: {command}"
+        "unknown": "Tuntematon komento: {command}",
+        "noMatchesFound": "Otteluita ei löytynyt"
     },
     "search": {
         "actions": "Toiminnot",
@@ -665,6 +666,8 @@
         "errorDeleting": "Virhe ottelun poistamisessa",
         "errorSettingTournament": "Virhe turnauksen asettamisessa",
         "errorSwapping": "Virhe pelaajien vaihtamisessa",
+        "swapDraftOpen": "Vaihto hylätty: tähän otteluun on avoinna litteroinnin luonnos. Viimeistele tai poista se ensin.",
+        "swapPlayedHere": "Vaihto hylätty: tämä ottelu pelattiin blunderDB:ssä; sen paikat ovat ne, joilla se pelattiin.",
         "errorUpdating": "Virhe ottelun päivittämisessä",
         "errorUpdatingComment": "Virhe kommentin päivittämisessä",
         "matchDeleted": "Ottelu siirretty roskakoriin — palautettavissa (komento ”trash”)",
@@ -690,7 +693,9 @@
         "moreActions": "Lisää toimintoja",
         "deleteMatch": "Poista ottelu",
         "finalScore": "Lopputulos",
-        "matchWonBy": "{player} voitti ottelun"
+        "matchWonBy": "{player} voitti ottelun",
+        "idsFilter": "{n} ottelua avattu tilastoista",
+        "idsFilterClear": "Näytä kaikki ottelut"
     },
     "collection": {
         "addDescription": "Lisää kuvaus…",
@@ -867,6 +872,8 @@
         "reviewComplete": "Kertaus valmis! {count} korttia kerrattu.",
         "settingsSaved": "Asetukset tallennettu",
         "deckSynced": "Pakka \"{name}\" synkronoitu",
+        "exportApkgTooltip": "Vie Anki-pakettina (.apkg)",
+        "apkgExported": "Pakka \"{name}\" viety: {count} kortti(a)",
         "deckReset": "Pakka \"{name}\" nollattu",
         "confirmDeleteDeck": "Poistetaanko pakka \"{name}\"?",
         "confirmResetDeck": "Nollataanko pakka \"{name}\"? Kaikki edistyminen menetetään.",
@@ -1962,7 +1969,9 @@
             "player": "Pelaaja",
             "record": "Tulos",
             "prChecker": "Siirtojen PR",
-            "prCube": "Kuution PR"
+            "prCube": "Kuution PR",
+            "openMatches": "Avaa nämä ottelut",
+            "openPositions": "Avaa nämä asemat"
         },
         "interval95": "95 %:n LV",
         "intervalHint": "95 %:n luottamusväli: otantaa uudelleen valinnan otteluista tai ottelun peleistä. Rivi ilman väliä (alle kolme ottelua tai peliä, tai kaikilla sama PR) on harmaannettu.",
@@ -3165,7 +3174,27 @@
         "start": "Lähtö",
         "startOpening": "Alkuasema",
         "startBoard": "Laudan asema",
-        "startScore": "Vain tilanne",
+        "score": "Tilanne",
+        "awayCrawford": "1 (Crawford)",
+        "awayPostCrawford": "1 (Crawfordin jälkeen)",
+        "singleGame": "Vain yksi peli",
+        "dice": "Nopat",
+        "diceBoard": "Laudan nopat",
+        "diceReroll": "Heitä uudelleen",
+        "cubeTiming": "Kuutiopäätös",
+        "cubeBefore": "Ennen kuutiota",
+        "cubeAfter": "Kuution jälkeen",
+        "minutesPerPoint": "Min/piste",
+        "delaySeconds": "Viive (s)",
+        "cadenceName": "Nimi",
+        "cadenceSave": "Tallenna",
+        "cadenceDelete": "Poista",
+        "cadenceLabel": "{name} · {minutes} min/pt + {delay} s",
+        "pipcount": "Pip-laskenta",
+        "cadencePreset": {
+            "standard": "Normaali",
+            "speed": "Speed"
+        },
         "awayPlayer1": "Pelaaja 1 tarvitsee",
         "awayPlayer2": "Pelaaja 2 tarvitsee",
         "side": "Pelattava puoli",
@@ -3251,6 +3280,7 @@
         "placePanel": "Palauta video paneeliin",
         "stageResize": "Muuta videon kokoa",
         "swapSide": "Siirrä video laudan toiselle puolelle",
+        "rotate": "Käännä videota (O)",
         "stageMove": "Vedä sijoittaaksesi video vasemmalle tai oikealle",
         "rate": "Toistonopeus"
     },

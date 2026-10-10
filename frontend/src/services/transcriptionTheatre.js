@@ -21,6 +21,9 @@ export const theatreAvailableStore = writable(false);
 /** @type {import('svelte/store').Writable<HTMLElement | null>} La place offerte au lecteur. */
 export const theatreTargetStore = writable(null);
 
+/** @type {import('svelte/store').Writable<(() => void) | null>} Le geste de rotation que tient le panneau, offert à la barre du théâtre. */
+export const theatreRotateStore = writable(null);
+
 const mode = createFullscreenMode(theatreAvailableStore);
 
 /** Le théâtre est-il ouvert ? */

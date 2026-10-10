@@ -917,6 +917,13 @@ measures and resynchronises.
   0 holds every overdue card; `--deck 0` (the default) covers every deck
 - `sync --deck <id>` - Add a card for every position of the deck's source that
   has none yet; existing cards keep their scheduling state
+- `export --deck <id> | --collection <id> --out <file.apkg> [--format apkg]
+  [--lang <code>]` - Write a deck or a collection as an Anki package (.apkg)
+  that Anki imports on desktop or phone: one card per position, the board,
+  score, cube and dice on the front, the best move or cube decision, its
+  equity and the played move's error on the back. A living collection is
+  evaluated at export. Nothing is written to the database; re-importing a
+  later export into Anki updates its notes instead of duplicating them
 
 A deck built from a collection re-reads its collection. A deck built from a
 search stores the search as the GUI saved it (command, board and the position
@@ -930,6 +937,7 @@ the GUI to re-run the search itself.
 ./blunderDB anki stats --db database.db --deck 2 --format json
 ./blunderDB anki forecast --db database.db --deck 2 --days 14
 ./blunderDB anki sync --db database.db --deck 2
+./blunderDB anki export --db database.db --deck 2 --out deck.apkg
 ```
 
 **Example output (`forecast`):**
@@ -2135,6 +2143,34 @@ Examples:
   blunderdb anki decks --db database.db --format csv
 ```
 
+### `blunderdb anki export`
+
+```
+Usage: blunderdb anki export [options]
+
+Write a study deck or a collection as an Anki package (.apkg).
+A living collection's query is evaluated at export. Re-importing a later
+export into Anki updates its notes instead of duplicating them.
+
+Options:
+  -collection int
+    	Collection ID (this or --deck)
+  -db string
+    	Path to the database file (required)
+  -deck int
+    	Deck ID (this or --collection)
+  -format string
+    	Package format: apkg (default "apkg")
+  -lang string
+    	Language of the cards: fr, en, de, el, es, fi, it, ja, ru (default "en")
+  -out string
+    	Path of the .apkg to write (required)
+
+Examples:
+  blunderdb anki export --db database.db --deck 2 --out deck.apkg
+  blunderdb anki export --db database.db --collection 5 --out cubes.apkg --lang en
+```
+
 ### `blunderdb anki forecast`
 
 ```
@@ -2764,10 +2800,16 @@ Usage: blunderdb duel create [options]
 Start a Duel and play on to the first Decision of an external Side.
 
 Options:
+  -after-cube
+    	Begin after --start's cube decision: the side on roll rolls at once, a double offered is taken
+  -away string
+    	The score the first game is played at, as two Away scores "player1,player2" (1: the Crawford game, 0: one point away after it); replaces --start's score
   -combined-seed
     	Roll nothing before each external Side has contributed to the seed (duel contribute)
   -db string
     	Path to the database file (required)
+  -delay int
+    	Time control: the delay per move, in seconds (standard 12, speed 10)
   -discard-at-end
     	Throw the draft away when the match is won instead of writing the Match
   -format string
@@ -2776,18 +2818,26 @@ Options:
     	With --money: play the Jacoby rule
   -length int
     	Match length in points, 1 to 25
+  -minutes-per-point float
+    	Time control: each side's reserve in minutes per point of the match (standard 2, speed 0.4); 0 plays without a clock
   -money
     	A money session instead of a match
   -name1 string
     	Player 1's name
   -name2 string
     	Player 2's name
+  -reroll
+    	Draw the roll again instead of playing the one --start carries
   -side1 string
     	Player 1's Side: external, external:<configuration>@<engine> (an external Side declaring its Bot), or bot:<level> (instant, normal, thorough) (default "external")
   -side2 string
     	Player 2's Side: external, external:<configuration>@<engine> (an external Side declaring its Bot), or bot:<level> (instant, normal, thorough); two Bots play the whole match in this call (default "external")
+  -single-game
+    	End the Duel with its first game
   -start string
     	XGID of the Position the first game begins at (default: the opening position)
+  -time-out string
+    	Time control: what running out does, continue or lose_match (default "continue")
 
 Examples:
   blunderdb duel create --db database.db --length 5 --name1 Alice --name2 Bob
@@ -2795,6 +2845,8 @@ Examples:
   blunderdb duel create --db database.db --length 7 --side2 bot:normal
   blunderdb duel create --db database.db --length 5 --name1 Alice --side2 external:normal@v1.6.0
   blunderdb duel create --db database.db --length 3 --side1 bot:instant --side2 bot:instant
+  blunderdb duel create --db database.db --length 7 --away 1,4 --single-game --side2 bot:normal
+  blunderdb duel create --db database.db --length 7 --start XGID=... --reroll --after-cube --side2 bot:normal
 ```
 
 ### `blunderdb duel discard`
@@ -3652,6 +3704,8 @@ Options:
     	Output format: text, json or csv (stats, players and imports only) (default "text")
   -from string
     	Start date filter YYYY-MM-DD (stats only)
+  -ids stats matches
+    	With --type matches: keep only these match IDs, comma-separated (as stats matches prints them)
   -limit int
     	Maximum number of items to list (default 10)
   -metric string
@@ -4273,6 +4327,25 @@ Examples:
   blunderdb stats effect --db database.db --player "Alice" --format json
 ```
 
+### `blunderdb stats engines`
+
+```
+Usage: blunderdb stats engines --db <file> [options]
+
+The analysis engines present in the database, by the exact name --engine
+expects.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+
+Examples:
+  blunderdb stats engines --db database.db
+  blunderdb stats engines --db database.db --format json
+```
+
 ### `blunderdb stats h2h`
 
 ```
@@ -4306,6 +4379,40 @@ Options:
 Examples:
   blunderdb stats h2h --db database.db --player "Alice" --opponent "Bob"
   blunderdb stats h2h --db database.db --player "Alice" --opponent "Bob" --format json
+```
+
+### `blunderdb stats matches`
+
+```
+Usage: blunderdb stats matches --db <file> [options]
+
+The matches a corpus figure counts (a ranking line, a window), oldest first:
+those where the player, or any player, holds a counted decision.
+Their IDs feed `list --type matches --ids`.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -decision-type string
+    	Decision type: all, checker, or cube (default "all")
+  -engine string
+    	Only the decisions analysed by this engine (exact name, as stored)
+  -format string
+    	Output format: text or json (default "text")
+  -from string
+    	Start date filter YYYY-MM-DD (matches)
+  -min-depth int
+    	Only the decisions analysed at least this deep (plies)
+  -player string
+    	Only the matches where this player holds a counted decision
+  -to string
+    	End date filter YYYY-MM-DD (matches)
+  -tournament string
+    	Filter the matches by tournament IDs, comma-separated
+
+Examples:
+  blunderdb stats matches --db database.db --player "Alice" --from 2025-01-01 --to 2025-03-31
+  blunderdb stats matches --db database.db --player "Alice" --format json
 ```
 
 ### `blunderdb stats plan`

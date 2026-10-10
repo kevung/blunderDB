@@ -19,14 +19,9 @@ import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
 
 const MergePlayers = vi.fn(() => Promise.resolve());
+const GetAllPlayerNames = vi.hoisted(() => vi.fn());
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
-    GetAllPlayerNames: vi.fn(() =>
-        Promise.resolve([
-            { Name: 'Alice', Count: 3 },
-            { Name: 'alice', Count: 1 },
-            { Name: 'Bob', Count: 2 }
-        ])
-    ),
+    GetAllPlayerNames: (/** @type {any[]} */ ...args) => GetAllPlayerNames(...args),
     MergePlayers: (/** @type {any[]} */ ...args) => MergePlayers(...args)
 }));
 
@@ -47,6 +42,10 @@ async function mount() {
     return result;
 }
 
+async function settle() {
+    for (let i = 0; i < 6; i++) await tick();
+}
+
 function tab(target, shiftKey = false) {
     const event = new KeyboardEvent('keydown', { key: 'Tab', shiftKey, bubbles: true, cancelable: true });
     target.dispatchEvent(event);
@@ -57,6 +56,12 @@ beforeEach(() => {
     onClose = vi.fn();
     onMerged = vi.fn();
     MergePlayers.mockClear();
+    GetAllPlayerNames.mockReset();
+    GetAllPlayerNames.mockResolvedValue([
+        { Name: 'Alice', Count: 3 },
+        { Name: 'alice', Count: 1 },
+        { Name: 'Bob', Count: 2 }
+    ]);
     // Something focusable outside the dialog — where Tab used to escape to.
     outside = document.createElement('button');
     outside.id = 'outside';
@@ -108,7 +113,7 @@ describe('MergePlayersModal — focus', () => {
 });
 
 describe('MergePlayersModal — merging', () => {
-    test('the ticked names and the canonical name reach the binding, then the parent refreshes and closes', async () => {
+    test('the ticked names and the canonical name reach the binding, then the parent refreshes and the window stays open', async () => {
         const { container } = await mount();
 
         const rows = [...container.querySelectorAll('.player-row')];
@@ -136,6 +141,60 @@ describe('MergePlayersModal — merging', () => {
         expect(MergePlayers).toHaveBeenCalledTimes(1);
         expect(MergePlayers).toHaveBeenCalledWith(['Alice', 'alice'], 'Alice');
         expect(onMerged).toHaveBeenCalledTimes(1);
+        expect(onClose).not.toHaveBeenCalled();
+    });
+
+    test('two merges in a row without closing: list reloaded, selection cleared, feedback shown, focus back on the filter', async () => {
+        GetAllPlayerNames.mockResolvedValueOnce([
+            { Name: 'Alice', Count: 3 },
+            { Name: 'alice', Count: 1 },
+            { Name: 'Bob', Count: 2 },
+            { Name: 'bob', Count: 1 }
+        ]);
+        GetAllPlayerNames.mockResolvedValueOnce([
+            { Name: 'Alice', Count: 4 },
+            { Name: 'Bob', Count: 2 },
+            { Name: 'bob', Count: 1 }
+        ]);
+        GetAllPlayerNames.mockResolvedValueOnce([
+            { Name: 'Alice', Count: 4 },
+            { Name: 'Bob', Count: 3 }
+        ]);
+        const { container } = await mount();
+        const names = () => [...container.querySelectorAll('.player-name')].map((n) => n.textContent);
+        const merge = () => /** @type {HTMLButtonElement} */ (must(container.querySelector('.btn-merge')));
+
+        let rows = [...container.querySelectorAll('.player-row')];
+        await fireEvent.click(rows[0]);
+        await fireEvent.click(rows[1]);
+        await fireEvent.click(merge());
+        await settle();
+
+        expect(MergePlayers).toHaveBeenLastCalledWith(['Alice', 'alice'], 'Alice');
+        expect(names()).toEqual(['Alice', 'Bob', 'bob']);
+        expect(container.querySelectorAll('.player-row.selected').length).toBe(0);
+        expect(/** @type {HTMLInputElement} */ (must(container.querySelector('#canonical-input'))).value).toBe('');
+        expect(must(container.querySelector('.merge-done')).textContent).toBe('Alice, alice → Alice');
+        expect(merge().disabled).toBe(true);
+        expect(document.activeElement).toBe(container.querySelector('.filter-input'));
+        expect(onClose).not.toHaveBeenCalled();
+
+        rows = [...container.querySelectorAll('.player-row')];
+        await fireEvent.click(rows[1]);
+        await fireEvent.click(rows[2]);
+        await fireEvent.click(merge());
+        await settle();
+
+        expect(MergePlayers).toHaveBeenCalledTimes(2);
+        expect(MergePlayers).toHaveBeenLastCalledWith(['Bob', 'bob'], 'Bob');
+        expect(names()).toEqual(['Alice', 'Bob']);
+        expect(onMerged).toHaveBeenCalledTimes(2);
+        expect(onClose).not.toHaveBeenCalled();
+    });
+
+    test('the Close button closes the window', async () => {
+        const { container } = await mount();
+        await fireEvent.click(must(container.querySelector('.btn-close')));
         expect(onClose).toHaveBeenCalledTimes(1);
     });
 

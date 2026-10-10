@@ -409,7 +409,8 @@
         "searchWouldReplaceCollection": "s ищет по всей библиотеке и заменит показанную коллекцию: используйте ss, чтобы искать внутри коллекции.",
         "searchWouldReplaceMatch": "s ищет по всей библиотеке и заменит показанный матч (match): используйте ss, чтобы искать внутри матча.",
         "tagsAdded": "Добавлены теги: {tags}",
-        "unknown": "Неизвестная команда: {command}"
+        "unknown": "Неизвестная команда: {command}",
+        "noMatchesFound": "Матчи не найдены"
     },
     "search": {
         "actions": "Действия",
@@ -665,6 +666,8 @@
         "errorDeleting": "Ошибка удаления матча",
         "errorSettingTournament": "Ошибка назначения турнира",
         "errorSwapping": "Ошибка смены игроков",
+        "swapDraftOpen": "Обмен отклонён: для этого матча открыт черновик транскрипции. Сначала завершите или удалите его.",
+        "swapPlayedHere": "Обмен отклонён: этот матч сыгран в blunderDB; его места — те, на которых он был сыгран.",
         "errorUpdating": "Ошибка обновления матча",
         "errorUpdatingComment": "Ошибка обновления комментария",
         "matchDeleted": "Матч перемещён в корзину — его можно восстановить (команда «trash»)",
@@ -690,7 +693,9 @@
         "moreActions": "Другие действия",
         "deleteMatch": "Удалить матч",
         "finalScore": "Итоговый счёт",
-        "matchWonBy": "{player} выиграл(а) матч"
+        "matchWonBy": "{player} выиграл(а) матч",
+        "idsFilter": "{n} матчей открыто из статистики",
+        "idsFilterClear": "Показать все матчи"
     },
     "collection": {
         "addDescription": "Добавить описание…",
@@ -867,6 +872,8 @@
         "reviewComplete": "Повторение завершено! Повторено карточек: {count}.",
         "settingsSaved": "Настройки сохранены",
         "deckSynced": "Колода «{name}» синхронизирована",
+        "exportApkgTooltip": "Экспортировать как пакет Anki (.apkg)",
+        "apkgExported": "Колода «{name}» экспортирована: карточек {count}",
         "deckReset": "Колода «{name}» сброшена",
         "confirmDeleteDeck": "Удалить колоду «{name}»?",
         "confirmResetDeck": "Сбросить колоду «{name}»? Весь прогресс будет потерян.",
@@ -1962,7 +1969,9 @@
             "player": "Игрок",
             "record": "Итог",
             "prChecker": "PR шашек",
-            "prCube": "PR куба"
+            "prCube": "PR куба",
+            "openMatches": "Открыть эти матчи",
+            "openPositions": "Открыть эти позиции"
         },
         "interval95": "ДИ 95 %",
         "intervalHint": "95-процентный доверительный интервал: перевыборка матчей выборки или партий матча. Строка без интервала (меньше трёх матчей или партий, или все с одинаковым PR) показана серым.",
@@ -3165,7 +3174,27 @@
         "start": "Старт",
         "startOpening": "Начальная позиция",
         "startBoard": "Позиция на доске",
-        "startScore": "Только счёт",
+        "score": "Счёт",
+        "awayCrawford": "1 (Кроуфорд)",
+        "awayPostCrawford": "1 (после Кроуфорда)",
+        "singleGame": "Одна партия",
+        "dice": "Кости",
+        "diceBoard": "Кости с доски",
+        "diceReroll": "Перебросить",
+        "cubeTiming": "Решение по кубу",
+        "cubeBefore": "До куба",
+        "cubeAfter": "После куба",
+        "minutesPerPoint": "Мин на очко",
+        "delaySeconds": "Задержка (с)",
+        "cadenceName": "Название",
+        "cadenceSave": "Сохранить",
+        "cadenceDelete": "Удалить",
+        "cadenceLabel": "{name} · {minutes} min/pt + {delay} s",
+        "pipcount": "Подсчёт пипсов",
+        "cadencePreset": {
+            "standard": "Стандарт",
+            "speed": "Скоростной"
+        },
         "awayPlayer1": "Игроку 1 осталось",
         "awayPlayer2": "Игроку 2 осталось",
         "side": "Ваша сторона",
@@ -3251,6 +3280,7 @@
         "placePanel": "Вернуть видео в панель",
         "stageResize": "Изменить размер видео",
         "swapSide": "Переместить видео на другую сторону доски",
+        "rotate": "Повернуть видео (O)",
         "stageMove": "Перетащите, чтобы поместить видео слева или справа",
         "rate": "Скорость воспроизведения"
     },

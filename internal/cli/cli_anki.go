@@ -11,6 +11,7 @@ import (
 	"strings"
 	"text/tabwriter"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/apkg"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -47,6 +48,7 @@ func (cli *CLI) ankiHandlers() map[string]func([]string) error {
 		"retention": cli.runAnkiRetention,
 		"card":      cli.runAnkiCard,
 		"log":       cli.runAnkiLog,
+		"export":    cli.runAnkiExport,
 	}
 }
 
@@ -74,6 +76,7 @@ func (cli *CLI) printAnkiUsage() {
 	fmt.Println("  forecast  Cards coming due per day over the next N days")
 	fmt.Println("  sync      Resynchronise a deck with its collection or stored search")
 	fmt.Println("  retention Measured retention of one deck against its target")
+	fmt.Println("  export    Write a deck or a collection as an Anki package (.apkg)")
 	fmt.Println()
 	fmt.Println("Examples:")
 	fmt.Println("  blunderdb anki decks --db database.db")
@@ -81,6 +84,7 @@ func (cli *CLI) printAnkiUsage() {
 	fmt.Println("  blunderdb anki forecast --db database.db --deck 2 --days 14")
 	fmt.Println("  blunderdb anki sync --db database.db --deck 2")
 	fmt.Println("  blunderdb anki retention --db database.db --deck 2")
+	fmt.Println("  blunderdb anki export --db database.db --deck 2 --out deck.apkg")
 	fmt.Println()
 	fmt.Println("Use 'blunderdb anki <sub-command> --help' for the options of a sub-command.")
 }
@@ -518,4 +522,45 @@ func ankiGradeLabel(rating int) string {
 	default:
 		return fmt.Sprintf("?%d", rating)
 	}
+}
+
+// ── export ───────────────────────────────────────────────────────────────────
+
+// runAnkiExport writes a deck or a collection as an Anki package, the file
+// Anki imports on a desktop or a phone. It reads the database and writes only
+// the package.
+func (cli *CLI) runAnkiExport(args []string) error {
+	fs, dbPath := ankiFlagSet("export", "Write a study deck or a collection as an Anki package (.apkg).\n"+
+		"A living collection's query is evaluated at export. Re-importing a later\n"+
+		"export into Anki updates its notes instead of duplicating them.",
+		"blunderdb anki export --db database.db --deck 2 --out deck.apkg",
+		"blunderdb anki export --db database.db --collection 5 --out cubes.apkg --lang en")
+	deckID := fs.Int64("deck", 0, "Deck ID (this or --collection)")
+	collectionID := fs.Int64("collection", 0, "Collection ID (this or --deck)")
+	out := fs.String("out", "", "Path of the .apkg to write (required)")
+	format := fs.String("format", "apkg", "Package format: apkg")
+	lang := fs.String("lang", "en", "Language of the cards: "+strings.Join(apkg.Languages(), ", "))
+	if err := cli.collectionOpen(fs, dbPath, args); err != nil {
+		return err
+	}
+	if (*deckID == 0) == (*collectionID == 0) {
+		fs.Usage()
+		return fmt.Errorf("give exactly one of --deck and --collection")
+	}
+	if *out == "" {
+		fs.Usage()
+		return fmt.Errorf("missing required flag: --out")
+	}
+	if *format != "apkg" {
+		return fmt.Errorf("unknown --format %q: apkg is the only package format", *format)
+	}
+	res, err := cli.db.ExportAnkiPackage(*deckID, *collectionID, *lang, *out)
+	if err != nil {
+		return fmt.Errorf("failed to export: %w", err)
+	}
+	if res.Truncated {
+		fmt.Fprintf(os.Stderr, "Note: the living collection selects %d positions; the package holds the first %d (the declared ceiling).\n", res.Total, res.Notes)
+	}
+	fmt.Printf("Exported %s: %d card(s) to %s\n", res.Name, res.Notes, *out)
+	return nil
 }

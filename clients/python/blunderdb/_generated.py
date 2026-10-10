@@ -122,6 +122,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/anki.deleteDeck — JSON."
         return self._call("/v1/anki.deleteDeck", payload)
 
+    def anki_export_apkg(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/anki.exportApkg — hand-written handler — see openapi.yaml."
+        return self._call("/v1/anki.exportApkg", payload)
+
     def anki_filtered_position_count(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/anki.filteredPositionCount — JSON."
         return self._call("/v1/anki.filteredPositionCount", payload)
@@ -1133,6 +1137,10 @@ class GeneratedAPI(BaseClient):
     def stats_match_detail(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/stats.matchDetail — JSON."
         return self._call("/v1/stats.matchDetail", payload)
+
+    def stats_match_ids(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/stats.matchIds — JSON."
+        return self._call("/v1/stats.matchIds", payload)
 
     def stats_match_move_grades(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/stats.matchMoveGrades — JSON."

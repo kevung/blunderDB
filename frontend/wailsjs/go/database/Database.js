@@ -482,6 +482,10 @@ export function ExportDatabaseCtx(arg1, arg2) {
   return window['go']['database']['Database']['ExportDatabaseCtx'](arg1, arg2);
 }
 
+export function ExportAnkiPackage(arg1, arg2, arg3, arg4) {
+  return window['go']['database']['Database']['ExportAnkiPackage'](arg1, arg2, arg3, arg4);
+}
+
 export function ExportMatchMAT(arg1, arg2) {
   return window['go']['database']['Database']['ExportMatchMAT'](arg1, arg2);
 }
@@ -1452,6 +1456,14 @@ export function StartMatchManually(arg1, arg2, arg3, arg4, arg5) {
 
 export function StartTranscriptionFromSlot(arg1, arg2) {
   return window['go']['database']['Database']['StartTranscriptionFromSlot'](arg1, arg2);
+}
+
+export function StatsMatchIDs(arg1) {
+  return window['go']['database']['Database']['StatsMatchIDs'](arg1);
+}
+
+export function StatsMatchIDsCtx(arg1, arg2) {
+  return window['go']['database']['Database']['StatsMatchIDsCtx'](arg1, arg2);
 }
 
 export function StatsReportHTML(arg1, arg2, arg3) {

@@ -230,3 +230,24 @@ func boolInt(v bool) int {
 	}
 	return 0
 }
+
+// SwapRefusal is why MatchStore.SwapPlayers refuses matchID, nil when it
+// does not: a Transcription draft open on it (storage.ErrSwapDraftOpen) or an
+// origin, the mark of a match played here (storage.ErrSwapPlayedHere).
+func SwapRefusal(ctx context.Context, db Execer, scope string, matchID int64) error {
+	for _, c := range []struct {
+		table string
+		err   error
+	}{{"transcription", storage.ErrSwapDraftOpen}, {"match_origin", storage.ErrSwapPlayedHere}} {
+		tenant, targs := db.TenantFilter("", scope)
+		var n int
+		if err := db.QueryRow(ctx, `SELECT COUNT(*) FROM `+c.table+` WHERE match_id = ? AND `+tenant,
+			append([]any{matchID}, targs...)...).Scan(&n); err != nil {
+			return errf(db, fmt.Sprintf("swap refusal of match %d", matchID), err)
+		}
+		if n > 0 {
+			return fmt.Errorf("match %d: %w", matchID, c.err)
+		}
+	}
+	return nil
+}

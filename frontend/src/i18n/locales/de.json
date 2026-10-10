@@ -409,7 +409,8 @@
         "searchWouldReplaceCollection": "s durchsucht die ganze Bibliothek und würde die angezeigte Sammlung ersetzen: Mit ss suchen Sie innerhalb der Sammlung.",
         "searchWouldReplaceMatch": "s durchsucht die ganze Bibliothek und würde das angezeigte Match ersetzen: Mit ss suchen Sie innerhalb des Matches.",
         "tagsAdded": "Tags hinzugefügt: {tags}",
-        "unknown": "Unbekannter Befehl: {command}"
+        "unknown": "Unbekannter Befehl: {command}",
+        "noMatchesFound": "Keine Matches gefunden"
     },
     "search": {
         "actions": "Aktionen",
@@ -665,6 +666,8 @@
         "errorDeleting": "Fehler beim Löschen des Matches",
         "errorSettingTournament": "Fehler beim Zuweisen des Turniers",
         "errorSwapping": "Fehler beim Tauschen der Spieler",
+        "swapDraftOpen": "Tausch abgelehnt: Für dieses Match ist ein Transkriptionsentwurf offen. Schließen oder löschen Sie ihn zuerst.",
+        "swapPlayedHere": "Tausch abgelehnt: Dieses Match wurde in blunderDB gespielt; seine Plätze sind die, mit denen es gespielt wurde.",
         "errorUpdating": "Fehler beim Aktualisieren des Matches",
         "errorUpdatingComment": "Fehler beim Aktualisieren des Kommentars",
         "matchDeleted": "Match in den Papierkorb verschoben — wiederherstellbar (Befehl „trash“)",
@@ -690,7 +693,9 @@
         "moreActions": "Weitere Aktionen",
         "deleteMatch": "Match löschen",
         "finalScore": "Endstand",
-        "matchWonBy": "{player} hat das Match gewonnen"
+        "matchWonBy": "{player} hat das Match gewonnen",
+        "idsFilter": "{n} Matches aus der Statistik geöffnet",
+        "idsFilterClear": "Alle Matches anzeigen"
     },
     "collection": {
         "addDescription": "Beschreibung hinzufügen…",
@@ -867,6 +872,8 @@
         "reviewComplete": "Wiederholung abgeschlossen! {count} Karten wiederholt.",
         "settingsSaved": "Einstellungen gespeichert",
         "deckSynced": "Stapel „{name}“ synchronisiert",
+        "exportApkgTooltip": "Als Anki-Paket exportieren (.apkg)",
+        "apkgExported": "Stapel „{name}“ exportiert: {count} Karte(n)",
         "deckReset": "Stapel „{name}“ zurückgesetzt",
         "confirmDeleteDeck": "Stapel „{name}“ löschen?",
         "confirmResetDeck": "Stapel „{name}“ zurücksetzen? Der gesamte Fortschritt geht verloren.",
@@ -1962,7 +1969,9 @@
             "player": "Spieler",
             "record": "Bilanz",
             "prChecker": "PR Züge",
-            "prCube": "PR Doppler"
+            "prCube": "PR Doppler",
+            "openMatches": "Diese Matches öffnen",
+            "openPositions": "Diese Positionen öffnen"
         },
         "interval95": "95-%-KI",
         "intervalHint": "95-%-Konfidenzintervall: zieht die Matches einer Auswahl bzw. die Spiele eines Matches neu. Eine Zeile ohne Intervall (weniger als drei Matches oder Spiele, oder alle mit demselben PR) ist ausgegraut.",
@@ -3165,7 +3174,27 @@
         "start": "Start",
         "startOpening": "Ausgangsstellung",
         "startBoard": "Stellung auf dem Brett",
-        "startScore": "Nur Spielstand",
+        "score": "Spielstand",
+        "awayCrawford": "1 (Crawford)",
+        "awayPostCrawford": "1 (Post-Crawford)",
+        "singleGame": "Nur eine Partie",
+        "dice": "Würfel",
+        "diceBoard": "Würfel des Bretts",
+        "diceReroll": "Neu würfeln",
+        "cubeTiming": "Doppelentscheidung",
+        "cubeBefore": "Vor dem Doppler",
+        "cubeAfter": "Nach dem Doppler",
+        "minutesPerPoint": "Min pro Punkt",
+        "delaySeconds": "Verzögerung (s)",
+        "cadenceName": "Name",
+        "cadenceSave": "Speichern",
+        "cadenceDelete": "Löschen",
+        "cadenceLabel": "{name} · {minutes} min/pt + {delay} s",
+        "pipcount": "Pipcount",
+        "cadencePreset": {
+            "standard": "Standard",
+            "speed": "Speed"
+        },
         "awayPlayer1": "Spieler 1 braucht",
         "awayPlayer2": "Spieler 2 braucht",
         "side": "Gespielte Seite",
@@ -3251,6 +3280,7 @@
         "placePanel": "Video zurück ins Panel legen",
         "stageResize": "Videogröße ändern",
         "swapSide": "Video auf die andere Brettseite verschieben",
+        "rotate": "Video drehen (O)",
         "stageMove": "Ziehen, um das Video links oder rechts zu platzieren",
         "rate": "Wiedergabegeschwindigkeit"
     },

@@ -58,6 +58,7 @@ var boundAppMethods = []string{
 	"OpenDatabaseDialog",
 	"OpenDirectionOutputDialog",
 	"OpenExportDatabaseDialog",
+	"OpenExportApkgDialog",
 	"OpenExportMatDialog",
 	"OpenImportDatabaseDialog",
 	"OpenMETDialog",

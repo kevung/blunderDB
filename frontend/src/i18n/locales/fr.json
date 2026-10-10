@@ -409,7 +409,8 @@
         "searchWouldReplaceCollection": "s cherche dans toute la bibliothèque et remplacerait la collection affichée : utilisez ss pour chercher dans la collection.",
         "searchWouldReplaceMatch": "s cherche dans toute la bibliothèque et remplacerait le match affiché : utilisez ss pour chercher dans le match.",
         "tagsAdded": "Étiquettes ajoutées : {tags}",
-        "unknown": "Commande inconnue : {command}"
+        "unknown": "Commande inconnue : {command}",
+        "noMatchesFound": "Aucun match trouvé"
     },
     "search": {
         "actions": "Actions",
@@ -665,6 +666,8 @@
         "errorDeleting": "Erreur lors de la suppression du match",
         "errorSettingTournament": "Erreur lors de l'attribution du tournoi",
         "errorSwapping": "Erreur lors de l'échange des joueurs",
+        "swapDraftOpen": "Inversion refusée : un brouillon de transcription est ouvert sur ce match. Terminez-le ou supprimez-le d'abord.",
+        "swapPlayedHere": "Inversion refusée : ce match a été joué dans blunderDB, ses sièges sont ceux du jeu.",
         "errorUpdating": "Erreur lors de la mise à jour du match",
         "errorUpdatingComment": "Erreur lors de la mise à jour du commentaire",
         "matchDeleted": "Match mis à la corbeille — récupérable (commande « trash »)",
@@ -690,7 +693,9 @@
         "moreActions": "Autres actions",
         "deleteMatch": "Supprimer le match",
         "finalScore": "Score final",
-        "matchWonBy": "{player} a gagné le match"
+        "matchWonBy": "{player} a gagné le match",
+        "idsFilter": "{n} matchs ouverts depuis les Stats",
+        "idsFilterClear": "Montrer tous les matchs"
     },
     "collection": {
         "addDescription": "Ajouter une description…",
@@ -867,6 +872,8 @@
         "reviewComplete": "Révision terminée ! {count} cartes révisées.",
         "settingsSaved": "Paramètres enregistrés",
         "deckSynced": "Paquet « {name} » synchronisé",
+        "exportApkgTooltip": "Exporter en paquet Anki (.apkg)",
+        "apkgExported": "Paquet « {name} » exporté : {count} carte(s)",
         "deckReset": "Paquet « {name} » réinitialisé",
         "confirmDeleteDeck": "Supprimer le paquet « {name} » ?",
         "confirmResetDeck": "Réinitialiser le paquet « {name} » ? Toute la progression sera perdue.",
@@ -1962,7 +1969,9 @@
             "player": "Joueur",
             "record": "Bilan",
             "prChecker": "PR pions",
-            "prCube": "PR videau"
+            "prCube": "PR videau",
+            "openMatches": "Ouvrir ces matchs",
+            "openPositions": "Ouvrir ces positions"
         },
         "interval95": "IC 95 %",
         "intervalHint": "Intervalle de confiance à 95 % : rééchantillonne les matchs d'une sélection, les parties d'un match. Une ligne sans intervalle (moins de trois matchs ou parties, ou toutes au même PR) est grisée.",
@@ -3165,7 +3174,27 @@
         "start": "Départ",
         "startOpening": "Position initiale",
         "startBoard": "Position au plateau",
-        "startScore": "Score seul",
+        "score": "Score",
+        "awayCrawford": "1 (Crawford)",
+        "awayPostCrawford": "1 (post-Crawford)",
+        "singleGame": "Une seule partie",
+        "dice": "Dés",
+        "diceBoard": "Dés du plateau",
+        "diceReroll": "Relancer",
+        "cubeTiming": "Décision de videau",
+        "cubeBefore": "Avant le videau",
+        "cubeAfter": "Après le videau",
+        "minutesPerPoint": "Min par point",
+        "delaySeconds": "Délai (s)",
+        "cadenceName": "Nom",
+        "cadenceSave": "Enregistrer",
+        "cadenceDelete": "Supprimer",
+        "cadenceLabel": "{name} · {minutes} min/pt + {delay} s",
+        "pipcount": "Pipcount",
+        "cadencePreset": {
+            "standard": "Standard",
+            "speed": "Speed"
+        },
         "awayPlayer1": "Joueur 1 à",
         "awayPlayer2": "Joueur 2 à",
         "side": "Côté joué",
@@ -3251,6 +3280,7 @@
         "placePanel": "Remettre la vidéo dans le panneau",
         "stageResize": "Redimensionner la vidéo",
         "swapSide": "Déplacer la vidéo de l'autre côté du plateau",
+        "rotate": "Tourner la vidéo (O)",
         "stageMove": "Glisser pour placer la vidéo à gauche ou à droite",
         "rate": "Vitesse de lecture"
     },

@@ -16,7 +16,7 @@ func TestReadOriginRevealsTheSeedOfTheFingerprint(t *testing.T) {
 	ctx := context.Background()
 	st := newStore(t)
 	svc := newService(t, st, 5)
-	cad, _ := NamedCadence("rapid-3+12")
+	cad := Cadence{Name: "rapid-3+12", Reserve: 180, Delay: 12}
 	s, err := svc.Create(ctx, "", Settings{MatchLength: 5, Cadence: &cad,
 		Sides: [2]SideSpec{external("A"), external("B")}})
 	if err != nil {

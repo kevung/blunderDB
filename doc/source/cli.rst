@@ -1221,6 +1221,16 @@ reste dans l'interface graphique ; la CLI liste, mesure et resynchronise.
   paquets ; ``--limit`` vaut 20 par défaut). Le journal est ce que le
   planificateur a réellement reçu, par opposition à ce qu'il prévoit
   aujourd'hui : c'est le seul endroit où une note entrée par erreur se voit.
+* ``export --deck <id> | --collection <id> --out <fichier.apkg> [--format apkg]
+  [--lang <langue>]`` — Écrit un paquet, ou une collection, en paquet Anki
+  **.apkg** que l'application Anki importe sur ordinateur ou téléphone : une
+  carte par position, le plateau, le score, le videau et les dés au recto, le
+  meilleur coup ou la bonne décision de videau, son équité et l'erreur du coup
+  joué au verso, libellés dans la langue ``--lang`` (``en`` par défaut). Une
+  collection vivante est évaluée à l'export, sous son plafond. L'export n'écrit
+  rien dans la base ; un réexport importé dans Anki met ses cartes à jour au
+  lieu de les dupliquer. Le daemon sert le même fichier sur
+  ``POST /v1/anki.exportApkg``.
 
 Un paquet fondé sur une collection relit sa collection ; fondé sur une
 collection vivante, il rejoue sa requête sous le même plafond de 5 000
@@ -1242,6 +1252,7 @@ recherche elle-même.
    ./blunderdb anki sync --db base.db --deck 2
    ./blunderdb anki card --db base.db --id 12 --action suspend
    ./blunderdb anki log --db base.db --deck 2 --limit 50
+   ./blunderdb anki export --db base.db --deck 2 --out paquet.apkg --lang fr
 
    # Day         Due
    # ---         ---
@@ -1444,6 +1455,14 @@ défaut) ; deux PR égaux partagent un rang. ``--limit N`` garde les N premiers.
 
    ./blunderdb stats ranking --db <fichier> [--min-decisions 1000] [--limit 20]
 
+**stats engines** — Les moteurs d'analyse présents dans la base, sous le nom
+exact que ``--engine`` attend ; le même choix que le menu *Moteur* du panneau
+Stats.
+
+.. code-block:: bash
+
+   ./blunderdb stats engines --db <fichier> [--format json]
+
 **Options communes:** ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``,
 ``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube``,
 ``--format text|json``, et le filtre de provenance ``--engine <nom>`` (le
@@ -1461,6 +1480,16 @@ filtre de provenance, qui porte sur chaque décision.
    ./blunderdb stats windows --db base.db --player "Alice" --window quarter --format json
    ./blunderdb stats ranking --db base.db --min-decisions 1000 --limit 20
    ./blunderdb list --type stats --db base.db --player "Alice" --min-depth 3
+
+**stats matches** — Les matchs qu'un chiffre du corpus compte : ceux où le
+joueur (tout joueur sans ``--player``) a une décision comptée sous le filtre,
+du plus ancien au plus récent. Leurs identifiants se passent à
+``list --type matches --ids``.
+
+.. code-block:: bash
+
+   ./blunderdb stats matches --db base.db --player "Alice" --from 2025-01-01 --to 2025-03-31
+   ./blunderdb list --type matches --db base.db --ids 12,15,31
 
 **stats progression** — Le PR de chaque match par ordre de date, le PR de
 chaque tournoi et le PR glissant sur les N dernières décisions : l'onglet
@@ -2063,13 +2092,13 @@ duel — Jouer un Duel
 --------------------
 
 Joue un Duel sans interface, une Action par appel. Chaque appel est son propre
-processus : il reprend le Duel dans la base, joue une Action et la réécrit. Un
-Duel joué ainsi n'a ni Cadence ni durée de décision (les durées de ses coups
-sont inconnues, jamais nulles).
+processus : il reprend le Duel dans la base, joue une Action et la réécrit. Les
+durées des coups d'un Duel joué ainsi sont inconnues, jamais nulles.
 
 .. code-block:: bash
 
    ./blunderdb duel create --db <path> (--length <n> | --money [--jacoby]) [--side1 <côté>] [--side2 <côté>]
+   ./blunderdb duel create --db <path> --length <n> [--start <XGID>] [--away <j1>,<j2>] [--reroll] [--after-cube] [--single-game] [--minutes-per-point <min> --delay <s>]
    ./blunderdb duel show --db <path> --id <id>
    ./blunderdb duel list --db <path>
    ./blunderdb duel move --db <path> --id <id> --play "24/18 13/11"
@@ -2088,9 +2117,24 @@ sont inconnues, jamais nulles).
   déclare le Bot qui joue derrière lui : l'origine du Match l'enregistre comme
   déclaré, non attesté) ; ``--discard-at-end`` jette le brouillon à la fin au lieu
   d'écrire le Match ; ``--combined-seed`` ne lance aucun dé avant l'apport de
-  chaque Côté externe au germe. Avec deux Bots, le match se joue en entier dans cet appel
+  chaque Côté externe au germe. ``--away`` donne le score de la première
+  partie en points manquants, ``joueur1,joueur2`` (``1`` : la partie Crawford,
+  ``0`` : un point après elle), et remplace celui de ``--start`` ; sans
+  ``--start``, la partie part de la position initiale à ce score.
+  ``--reroll`` fait tirer à nouveau le jet que porte ``--start`` ;
+  ``--after-cube`` commence après la décision de videau du Départ (le joueur
+  au trait lance aussitôt, un double offert est pris) — par défaut le Duel
+  commence avant elle, et un double offert attend la réponse de
+  l'adversaire. ``--single-game`` arrête le Duel à la fin de sa première
+  partie, écrite seule comme Match. ``--minutes-per-point`` et ``--delay``
+  fixent la cadence : la réserve de chaque joueur en minutes par point du
+  match (Standard 2, Speed 0,4) et le délai par coup en secondes (12, 10) ;
+  ``--time-out`` (``continue`` ou ``lose_match``) ce que fait une réserve
+  épuisée. Un Départ que les règles n'admettent pas (pions, score hors de la
+  longueur, deux joueurs en partie Crawford, videau) est refusé avec son motif.
+  Avec deux Bots, le match se joue en entier dans cet appel
   (``--side1 bot:instant --side2 bot:instant``) ; une session en argent entre
-  deux Bots est refusée, car elle ne finirait jamais.
+  deux Bots est refusée, car elle ne finirait jamais, sauf en une seule partie.
 * ``show`` — Score, ce que le Duel attend et, pour un coup, les jeux légaux. Le
   germe des dés n'est jamais affiché avant la fin : l'empreinte le représente.
 * ``list`` — Les Duels en suspens.
@@ -2714,8 +2758,10 @@ du nom canonique, comme autant de ``players alias add``.
    ./blunderdb players merge --db <chemin> --into <CANONIQUE> <NOM> [<NOM>...]
 
 **players swap** — L'inversion des deux joueurs d'un match, que le fichier avait
-nommés dans le mauvais ordre (route ``matches.swapPlayers``). Chaque position du
-match est réécrite du point de vue de l'autre joueur.
+nommés dans le mauvais ordre (route ``matches.swapPlayers``). Aucune position ni
+aucune analyse ne change : chaque joueur garde ses statistiques, sous l'autre siège.
+L'inversion est refusée tant qu'un brouillon de transcription est ouvert sur le
+match, et pour un match joué dans blunderDB.
 
 .. code-block:: bash
 

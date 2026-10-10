@@ -28,6 +28,7 @@ func (cli *CLI) runList(args []string) error {
 
 	// Matches filter and order, applied in SQL like the match panel's search box
 	matchQuery := listCmd.String("query", "", "With --type matches: keep matches whose players, event, location, round, tournament or date contain this text")
+	matchIDs := listCmd.String("ids", "", "With --type matches: keep only these match IDs, comma-separated (as `stats matches` prints them)")
 	matchSort := listCmd.String("sort", "", "With --type matches: date (default), date_asc, length_asc, length_desc, player1, player1_desc, player2, player2_desc, tournament, tournament_desc, opponent")
 
 	// Stats-specific flags (only used when --type stats)
@@ -124,7 +125,14 @@ func (cli *CLI) runList(args []string) error {
 
 	switch strings.ToLower(*listType) {
 	case "matches":
-		return cli.listMatches(*limit, *matchQuery, *matchSort)
+		var ids []int64
+		if *matchIDs != "" {
+			var err error
+			if ids, err = parseIDList(*matchIDs); err != nil {
+				return fmt.Errorf("invalid --ids: %w", err)
+			}
+		}
+		return cli.listMatches(*limit, *matchQuery, *matchSort, ids)
 	case "tournaments":
 		return cli.listTournaments(*limit)
 	case "positions":
@@ -195,10 +203,10 @@ func (cli *CLI) runList(args []string) error {
 	}
 }
 
-// listMatches lists the matches satisfying query (empty: all), in the order
-// named by sort, at most limit of them (0: no bound).
-func (cli *CLI) listMatches(limit int, query, sort string) error {
-	opts := storage.MatchListOpts{Text: query, Sort: sort, Limit: limit}
+// listMatches lists the matches satisfying query (empty: all), among ids when
+// not nil, in the order named by sort, at most limit of them (0: no bound).
+func (cli *CLI) listMatches(limit int, query, sort string, ids []int64) error {
+	opts := storage.MatchListOpts{Text: query, Sort: sort, Limit: limit, IDs: ids}
 	matches, err := cli.db.ListMatches(opts)
 	if err != nil {
 		return fmt.Errorf("failed to get matches: %w", err)

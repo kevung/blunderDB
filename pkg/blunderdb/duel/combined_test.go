@@ -43,7 +43,7 @@ func TestCombinedSeedDuel(t *testing.T) {
 	st := newStore(t)
 	now := time.Date(2026, 10, 6, 12, 0, 0, 0, time.UTC)
 	svc := New(st, Options{Sides: testSides, Rand: fixedRand(5), Now: func() time.Time { return now }})
-	cad, _ := NamedCadence("rapid-3+12")
+	cad := Cadence{Name: "rapid-3+12", Reserve: 180, Delay: 12}
 	s, err := svc.Create(ctx, "", Settings{MatchLength: 5, Cadence: &cad, CombinedSeed: true,
 		Sides: [2]SideSpec{external("A"), external("B")}})
 	if err != nil {

@@ -213,10 +213,46 @@ func TestCadenceCharge(t *testing.T) {
 	}
 }
 
-// TestNamedCadences: the tournament reserve is 2 min per point of the
+// TestSpeedClock: under the speed preset a 5-point match gives each side
+// 2 min; a turn spends its 10 s delay first, then the reserve, and a turn
+// past the reserve leaves it at zero, the side noted over time.
+func TestSpeedClock(t *testing.T) {
+	ctx := context.Background()
+	c := newClock()
+	svc := clockedService(t, newStore(t), c)
+	speed, _ := NamedCadence("speed")
+	s, err := svc.Create(ctx, "", Settings{MatchLength: 5, Cadence: &speed, Sides: [2]SideSpec{external("A"), external("B")}})
+	if err != nil {
+		t.Fatalf("Create: %v", err)
+	}
+	if s.Clock == nil || s.Clock.Reserve != [2]int64{120000, 120000} {
+		t.Fatalf("reserves %+v, want 2 min each", s.Clock)
+	}
+	side := s.Awaiting.Side
+	s = playAfter(t, svc, c, s, 10, answer(*s.Awaiting))
+	if s.Clock.Reserve[side] != 120000 {
+		t.Fatalf("a turn inside the delay took %d ms of the reserve", 120000-s.Clock.Reserve[side])
+	}
+	side = s.Awaiting.Side
+	s = playAfter(t, svc, c, s, 2, Play{Side: side, Kind: PlayRoll})
+	s = playAfter(t, svc, c, s, 13, answer(*s.Awaiting))
+	if s.Clock.Reserve[side] != 115000 {
+		t.Fatalf("a turn of 15 s under a 10 s delay: reserve %d, want 115000", s.Clock.Reserve[side])
+	}
+	side = s.Awaiting.Side
+	if s.Awaiting.Kind == DecideCube {
+		s = playAfter(t, svc, c, s, 0, Play{Side: side, Kind: PlayRoll})
+	}
+	s = playAfter(t, svc, c, s, 10+121, answer(*s.Awaiting))
+	if s.Clock.Reserve[side] != 0 || s.Clock.OverTime != side+1 || s.Ended != nil {
+		t.Fatalf("past the reserve: reserve %d, over time %d, ended %+v", s.Clock.Reserve[side], s.Clock.OverTime, s.Ended)
+	}
+}
+
+// TestNamedCadences: the standard reserve is 2 min per point of the
 // average length left at the score the Duel starts from.
 func TestNamedCadences(t *testing.T) {
-	tour, ok := NamedCadence("tournament")
+	tour, ok := NamedCadence("standard")
 	if !ok || tour.Delay != 12 || tour.TimeOut != "" {
 		t.Fatalf("tournament = %+v, %v", tour, ok)
 	}
@@ -226,10 +262,18 @@ func TestNamedCadences(t *testing.T) {
 	if got := tour.reserveMS(7, [2]int{4, 2}); got != 8*60000 {
 		t.Errorf("7 points from 4-2: %d ms, want 8 min", got)
 	}
-	for _, name := range []string{"rapid-3+12", "rapid-2+12", "rapid-3+15"} {
-		if c, ok := NamedCadence(name); !ok || c.check(0) != nil {
-			t.Errorf("%s = %+v, %v", name, c, ok)
-		}
+	speed, ok := NamedCadence("speed")
+	if !ok || speed.Delay != 10 {
+		t.Fatalf("speed = %+v, %v", speed, ok)
+	}
+	if got := speed.reserveMS(5, [2]int{0, 0}); got != 2*60000 {
+		t.Errorf("speed, 5 points: %d ms, want 2 min", got)
+	}
+	if got := speed.reserveMS(11, [2]int{0, 0}); got != 11*24000 {
+		t.Errorf("speed, 11 points: %d ms, want 0.4 min a point", got)
+	}
+	if names := NamedCadences(); len(names) != 2 || names[0].Name != "standard" || names[1].Name != "speed" {
+		t.Errorf("the presets: %+v", names)
 	}
 	for _, bad := range []struct {
 		c      Cadence

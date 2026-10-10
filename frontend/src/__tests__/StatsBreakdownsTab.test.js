@@ -12,6 +12,9 @@ const rows = {
     score: { money: { all: [7, 8], blunders: [8] }, '3-5': { all: [9, 10, 11, 12], blunders: [9, 12] } }
 };
 
+// Leaving MATCH is modeMachine's concern (countLinkLeavesMatch.test.js); here only the loading is exercised.
+vi.mock('../services/modeMachine.js', () => ({ leaveStudiedModeForList: vi.fn(), forgetSubSearchOrigin: vi.fn() }));
+
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
     GetStatsBreakdownPositionCounts: vi.fn(async () =>
         Object.fromEntries(Object.entries(rows).map(([dim, keys]) => [dim, Object.fromEntries(Object.entries(keys).map(([k, r]) => [k, { Positions: r.all.length, Blunders: r.blunders.length }]))]))

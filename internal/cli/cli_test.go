@@ -237,7 +237,7 @@ func TestCLI_ListMatches(t *testing.T) {
 	}
 
 	out := captureStdout(t, func() {
-		if err := cli.listMatches(10, "", ""); err != nil {
+		if err := cli.listMatches(10, "", "", nil); err != nil {
 			t.Fatalf("listMatches: %v", err)
 		}
 	})
@@ -258,7 +258,7 @@ func TestCLI_ListMatchesQueryAndSort(t *testing.T) {
 	}
 
 	miss := captureStdout(t, func() {
-		if err := cli.listMatches(10, "no-such-player-anywhere", "player1_desc"); err != nil {
+		if err := cli.listMatches(10, "no-such-player-anywhere", "player1_desc", nil); err != nil {
 			t.Fatalf("listMatches: %v", err)
 		}
 	})
@@ -267,7 +267,7 @@ func TestCLI_ListMatchesQueryAndSort(t *testing.T) {
 	}
 
 	all := captureStdout(t, func() {
-		if err := cli.listMatches(10, "", "length_desc"); err != nil {
+		if err := cli.listMatches(10, "", "length_desc", nil); err != nil {
 			t.Fatalf("listMatches: %v", err)
 		}
 	})

@@ -71,7 +71,7 @@ func (s *StatsStore) MatchDecisionLosses(ctx context.Context, scope string, matc
 		d.Away = [2]int{away0, away1}
 		d.Rolled = hasPosition == 1 && d.DecisionType == "checker"
 		if luckMP != nil && d.Rolled {
-			if luck := decisionMWCLoss(*luckMP, away0, away1, rawPlayer, cubeValue, matchLength); !math.IsNaN(luck) {
+			if luck := decisionMWCLoss(*luckMP, away0, away1, cubeValue, matchLength); !math.IsNaN(luck) {
 				d.Luck = &luck
 			}
 		}
@@ -79,7 +79,7 @@ func (s *StatsStore) MatchDecisionLosses(ctx context.Context, scope string, matc
 			e := errMP
 			d.ErrorMP = &e
 			d.Error = errMP >= int64(settings.ErrorThresholdMP)
-			if loss := decisionMWCLoss(errMP, away0, away1, rawPlayer, cubeValue, matchLength); !math.IsNaN(loss) {
+			if loss := decisionMWCLoss(errMP, away0, away1, cubeValue, matchLength); !math.IsNaN(loss) {
 				d.MWCLoss = &loss
 				analysis, seen := decoded[positionID]
 				if !seen {
@@ -91,7 +91,7 @@ func (s *StatsStore) MatchDecisionLosses(ctx context.Context, scope string, matc
 				if costs := decisionCosts(analysis, d.DecisionType, cubeAction); costs != nil {
 					// The conversion is linear in equity: its price of one unit
 					// turns the reference loss into the unit of the play's loss.
-					perUnit := decisionMWCLoss(1000, away0, away1, rawPlayer, cubeValue, matchLength)
+					perUnit := decisionMWCLoss(1000, away0, away1, cubeValue, matchLength)
 					diff := perUnit * storage.ReferenceExpectedLoss(costs, storage.DifficultyTemperature)
 					d.Difficulty = &diff
 					d.Avoidable = storage.IsAvoidable(loss, diff, errMP >= int64(settings.ErrorThresholdMP))

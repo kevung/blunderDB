@@ -5,14 +5,14 @@
  */
 import { describe, test, expect } from 'vitest';
 import { newPlay } from '../services/quizPlay.js';
-import { scoreStart } from '../services/duel.js';
+import { openingPosition } from './helpers/opening.js';
 import { playClickedChecker } from '../services/boardMove.js';
 import { boardPress, canValidateMove, boardContext, boardPrompt, drawnDice } from '../services/duelBoard.js';
 
 /** @param {[number, number][]} pairs */
 const steps = (pairs) => pairs.map(([from, to]) => ({ from, to }));
 
-const opening = { ...scoreStart(7, [7, 7]), dice: [3, 1], decision_type: 0 };
+const opening = { ...openingPosition([7, 7]), dice: [3, 1], decision_type: 0 };
 // 3-1 at the opening, Black (player 0) moving high to low.
 /** @type {any[]} */
 const plays31 = [

@@ -582,7 +582,7 @@ func (s *StatsStore) computeMWCPass(ctx context.Context, q statsQuery, result *s
 
 				rowIdx++
 
-				mwcLoss := decisionMWCLoss(errMP, awayScore0, awayScore1, rawPlayer, cubeValue, matchLength)
+				mwcLoss := decisionMWCLoss(errMP, awayScore0, awayScore1, cubeValue, matchLength)
 
 				if !math.IsNaN(mwcLoss) {
 					mwcAvailable = true

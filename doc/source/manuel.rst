@@ -1836,7 +1836,7 @@ installer (voir :ref:`telecharge_install`). Un match sans source ne change pas.
 Le bouton **Fusionner les joueurs** de la barre d'outils du panneau ouvre une
 fenêtre listant tous les noms de joueurs de la base avec leur nombre de
 matchs : sélectionner les variantes d'orthographe d'un même joueur, choisir le
-nom canonique à conserver, puis fusionner. La fusion crée un alias par
+nom canonique à conserver, puis fusionner. La fenêtre reste ouverte pour enchaîner d'autres fusions ; **Fermer** (ou *Échap*) la referme. La fusion crée un alias par
 variante : les matchs gardent les noms de leurs fichiers, mais les statistiques,
 la table Joueurs et la recherche ``pl"…"`` lisent toutes les variantes comme un
 seul joueur, et les imports suivants enregistrent le nom canonique. Retirer
@@ -2264,6 +2264,11 @@ du jet. *ESPACE* lance ou met en pause la vidéo ; *MAJ-GAUCHE* et
 par pas de 0,25 entre 0,25× et 4× ; une vidéo YouTube ne propose que les
 vitesses de son lecteur, jusqu'à 2×. La vitesse s'affiche dans le coin de la
 vidéo quand elle n'est pas de 1×, et une nouvelle source repart à 1×.
+
+Une vidéo filmée de travers se redresse par le bouton ⟳ de la barre vidéo ou
+par *o* : un quart de tour à chaque appui, de 0° à 270°. L'image reste entière,
+dans la vidéo d'un fichier comme dans le cadre YouTube. L'angle est retenu pour
+le brouillon, sur cet ordinateur seulement ; il n'est pas écrit dans la base.
 
 Des repères se déduisent les **durées** de décision : la décision de pions va
 du jet à la fin du coup, la décision de videau de l'action précédente au jet, un
@@ -3656,6 +3661,15 @@ les décisions. Le face-à-face et le PR par fenêtre ne l'acceptent pas : tant
 qu'il est actif, ils refusent de se calculer. Comme le reste de la barre, il
 est conservé d'une session à l'autre.
 
+Dans l'onglet Corpus, chaque ligne ouvre ce qu'elle résume. Une ligne de
+face-à-face ouvre ses matchs dans le panneau Matchs, qui porte alors le bouton
+« N matchs ouverts depuis les Stats × » : il rend la liste complète. Une ligne
+du classement ouvre les matchs du joueur et son nombre de décisions ouvre les
+positions comptées ; une ligne de fenêtre ouvre ses positions et son nombre de
+matchs ouvre les matchs. Un compte de positions du panneau Stats, quel que soit
+l'onglet, quitte d'abord le match en cours avant d'ouvrir sa liste ; la commande
+``m`` rouvre ensuite le match au coup sauvegardé.
+
 .. important::
    Un tiret (« — ») signale une valeur **jamais mesurée**, à ne pas confondre
    avec zéro. C'est notamment le cas de la colonne Chance pour tout match
@@ -4298,6 +4312,17 @@ positions, qu'un clic ouvre, et le nombre de cartes dues ; à droite, les
 paramètres (⚙), la remise à zéro (↻), *Bachoter* et *Étudier*. ← revient à la
 liste des paquets.
 
+**Exporter vers Anki :** le bouton ⤓ d'une ligne de la liste écrit le paquet
+en fichier **.apkg**, que l'application Anki importe sur un ordinateur ou un
+téléphone (AnkiDroid, AnkiMobile). Chaque position devient une carte
+recto-verso : au recto le plateau, le score vu du joueur au trait (placé en
+bas), le videau et les dés ; au verso le meilleur coup ou la bonne décision de
+videau, son équité et l'erreur du coup joué. Les libellés suivent la langue de
+l'interface. Le paquet s'exporte tel qu'il est, sans synchronisation, et
+l'export n'écrit rien dans la base. Réimporter un export plus récent dans Anki
+met les cartes à jour au lieu de les dupliquer. En ligne de commande :
+``blunderdb anki export``, qui exporte aussi une collection (voir :doc:`cli`).
+
 **Révision :** Sélectionnez un paquet puis cliquez sur *Étudier* (ou double-cliquez
 sur un paquet) pour commencer la révision des cartes dues. Une carte de position
 affiche la position sur le plateau ; une carte de score annonce le score et
@@ -4692,21 +4717,51 @@ d'outils, ou par la commande ``duel``. Une base doit être ouverte : le Duel s'y
 écrit après chaque décision.
 
 Sans Duel ouvert, le panneau montre le formulaire, mémorisé d'un Duel à
-l'autre, un réglage par ligne, « Jouer » au bout de la bande d'en-tête, et,
-s'il y en a, la liste des Duels en suspens :
+l'autre, et, s'il y en a, la liste des Duels en suspens. La bande d'en-tête
+porte le **Départ**, les choix que la position de départ appelle, la
+**cadence**, et « Jouer » à son bout :
+
+* **Départ** : la position initiale, ou la position au plateau. Partant du
+  plateau, celui-ci s'édite comme dans le panneau Eval (même plateau
+  brouillon, mêmes gestes) : les pions, le videau et son propriétaire, les dés
+  — posés du côté d'un joueur, ils lui donnent le trait — et le score.
+* **Dés** (départ du plateau portant des dés) : « Dés du plateau », par défaut,
+  joue le jet posé ; « Relancer » le fait tirer à nouveau par l'Arbitre.
+* **Décision de videau** (départ du plateau sans dés à jouer, quand le joueur
+  au trait peut doubler ou qu'un double est offert au plateau) : « Avant le
+  videau », par défaut, commence par cette décision — le joueur au trait
+  double ou lance, ou l'adversaire répond au double offert ; « Après le
+  videau » passe au lancer, un double offert étant alors pris.
+* **Cadence** : sans cadence, **Standard** (2 min par point + 12 s),
+  **Speed** (0,4 min par point, soit 2 min pour un match en 5 points,
+  + 10 s), ou une cadence enregistrée.
+
+Le formulaire, un réglage par ligne :
 
 * **Match** de 1 à 25 points, ou **session en argent** (Jacoby au choix).
-* **Départ** : la position initiale, la position au plateau, ou la position
-  initiale à un score choisi.
+* **Score** : ce qu'il manque à chaque joueur, par défaut la longueur du match
+  (début de match) ; « 1 (Crawford) » est la partie Crawford, « 1
+  (post-Crawford) » une partie qui la suit. Partant du plateau, ces champs et
+  le score du plateau ne font qu'un : changer l'un change l'autre, et un
+  plateau en argent fait une session en argent. **Une seule partie** arrête le
+  Duel à la fin de sa première partie, pour s'entraîner à un score : le Match
+  écrit ne compte que cette partie.
+* **Cadence** (une cadence choisie) : **minutes par point** et **délai** en
+  secondes. Chaque joueur dispose de minutes par point × longueur du match
+  (moins, à un score de départ : la longueur moyenne restant à jouer) ; à
+  chaque tour, le délai s'écoule d'abord, puis la réserve. Une réserve épuisée
+  reste à zéro, et le temps écoulé continue en le notant, ou fait perdre le
+  match. Un nom et « Enregistrer » gardent les deux nombres comme cadence du
+  menu, dans les réglages de l'utilisateur ; « Supprimer » retire la cadence
+  enregistrée choisie. Une session en argent se joue sans cadence.
 * **Côté joué** (joueur 1 ou 2) et **niveau du Bot** (``instant``, ``normal``,
   ``thorough``, ceux de l'analyse). Le sélecteur dit la profondeur de chaque
   niveau, par exemple « instant (0 coup) » ou « normal (2 coups, élagué) » ; plus profond, c'est plus
   fort et plus lent.
-* **Cadence** : sans cadence, ou une cadence nommée (une réserve par joueur et
-  un délai gratuit à chaque tour), et ce que fait le temps écoulé : continuer
-  en le notant, ou perdre le match.
 * **Votre nom** et **Enregistrer le match** : décoché, le Duel terminé est
   jeté au lieu de devenir un Match.
+* **Pipcount** : décoché, le pipcount reste masqué pendant le Duel, même par
+  le bouton de la barre d'outils ou ``P`` ; il revient à la sortie du Duel.
 
 « Reprendre » rouvre un Duel en suspens au même point, avec les mêmes dés à
 venir ; ses horloges étaient arrêtées.
@@ -4727,7 +4782,7 @@ se lit dans l'infobulle de l'invite de la bande d'en-tête, puis avec le germe d
 passe en mode **DUEL** : la bibliothèque ne se parcourt plus, l'édition, le
 panneau Eval et les autres onglets ne s'ouvrent pas, et le moteur se tait —
 aucune évaluation, aucun candidat. Seules restent la Pile (``B``), le
-pipcount (``P``) et l'aide.
+pipcount (``P``, sauf s'il est masqué pour le Duel) et l'aide.
 
 * Avant le lancer, un clic sur le plateau, sur les dés ou sur un pion les
   lance ; seul un clic sur le videau propose de doubler, et le plateau demande « Doubler » ou « Annuler ». Quand

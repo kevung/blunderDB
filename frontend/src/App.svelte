@@ -25,6 +25,7 @@
     import { newDatabase, openDatabase, openDatabaseByPath, loadDemoDatabase, exitApp, setStatusBarMessage } from './services/databaseService.js';
     import {
         showPosition,
+        boardFollowsLibraryIndex,
         loadAllPositions,
         reloadAllPositions,
         loadPositionsByFilters,
@@ -177,7 +178,7 @@
     $effect(() => {
         const value = $currentPositionIndexStore;
         let cancelled = false;
-        if (get(statusBarModeStore) === 'MATCH' || get(duelHoldsBoardStore)) return;
+        if (!boardFollowsLibraryIndex()) return;
         if (positionCount > 0 && value >= 0 && value < positionCount) {
             // Loads the window around `value` on a miss; a stale callback is dropped.
             positionsStore
@@ -219,8 +220,10 @@
                     if (tab === 'search' && $statusBarModeStore !== 'EDIT') enterEditMode();
                     else if (prevTab === 'search' && tab !== 'search' && $statusBarModeStore === 'EDIT') exitEditMode();
                 }
+                // The Duel launcher edits the board as Eval does (DuelPanel enters and leaves EVAL):
+                // the scratch board passes between the two tabs, and leaves with the last of them.
                 if (tab === 'eval' && $statusBarModeStore !== 'EVAL') logger.perf('App:evalSync', () => enterEvalMode());
-                else if (!isFirstRun && prevTab === 'eval' && tab !== 'eval' && $statusBarModeStore === 'EVAL') exitEvalMode();
+                else if (!isFirstRun && (prevTab === 'eval' || prevTab === 'duel') && tab !== 'eval' && tab !== 'duel' && $statusBarModeStore === 'EVAL') exitEvalMode();
                 // Transcription is a scratch mode too: the board belongs to the draft's Cursor (ADR-0045).
                 if (tab === 'transcription' && $statusBarModeStore !== 'TRANSCRIBE') enterTranscribeMode();
                 else if (!isFirstRun && prevTab === 'transcription' && tab !== 'transcription' && $statusBarModeStore === 'TRANSCRIBE') exitTranscribeMode();

@@ -93,6 +93,12 @@ propre issue le jour où il est lancé.
   ~15 fixtures des contrats (`storagetest/contract_schema_2_31.go`, `contract_met_*.go`)
   passent des sources factices (`<met/>`, digest `"aaa"`) à réécrire en tables gnubg
   valides, sur les deux backends. Effort S-M, test de contrat « digest incohérent refusé ».
+- **Export `.apkg` : mémoire et allers-retours** (`pkg/blunderdb/apkg`). Les SVG de tous les
+  plateaux sont gardés en mémoire jusqu'à l'écriture du zip, et le daemon tamponne le paquet
+  entier avant de répondre ; écrire chaque média dans le zip au fil des positions (et la
+  collection en flux) bornerait la mémoire d'un gros paquet. Les analyses se chargent une par
+  position (`Analyses().Load`) : N allers-retours sous PostgreSQL, à remplacer par un
+  chargement par lot sur le contrat de stockage.
 
 ## Ouvert — Moteur
 

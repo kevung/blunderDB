@@ -13,6 +13,8 @@
      *   owner: string,
      *   source: string,
      *   startMs?: number,
+     *   rotation?: number,
+     *   onrotate?: () => void,
      *   onrelocate?: (path: string) => void,
      *   onended?: () => void,
      *   onBoard?: boolean,
@@ -23,7 +25,18 @@
     // `theatreTarget`: set while the owner's theatre is open; the dock then covers the window by
     // CSS where it stands, never moved in the DOM (a moved <iframe> reloads, a moved player
     // loses its instant); `ontheatre` offers the button that opens it, for the owners that have one.
-    let { owner, source, startMs = 0, onrelocate = undefined, onended = undefined, onBoard = $bindable(false), theatreTarget = null, ontheatre = undefined } = $props();
+    let {
+        owner,
+        source,
+        startMs = 0,
+        rotation = 0,
+        onrotate = undefined,
+        onrelocate = undefined,
+        onended = undefined,
+        onBoard = $bindable(false),
+        theatreTarget = null,
+        ontheatre = undefined
+    } = $props();
 
     /** @type {any} */
     let pane = $state(null);
@@ -110,6 +123,16 @@
                     ></button
                 >
             {/if}
+            {#if onrotate}
+                <button
+                    class="video-dock-place video-dock-rotate"
+                    data-testid="video-rotate"
+                    onmousedown={(event) => event.preventDefault()}
+                    onclick={onrotate}
+                    title={$t('video.rotate')}
+                    aria-label={$t('video.rotate')}>⟳</button
+                >
+            {/if}
             {#if onBoard}
                 <button
                     class="video-dock-place video-dock-swap"
@@ -131,7 +154,7 @@
             >
         </div>
     {/if}
-    <div class="video-dock-stage"><VideoPane bind:this={pane} {source} {startMs} {onrelocate} {onended} /></div>
+    <div class="video-dock-stage"><VideoPane bind:this={pane} {source} {startMs} {rotation} {onrelocate} {onended} /></div>
 </div>
 
 <style>

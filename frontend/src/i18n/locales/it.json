@@ -409,7 +409,8 @@
         "searchWouldReplaceCollection": "s cerca in tutta la libreria e sostituirebbe la collezione visualizzata: usa ss per cercare nella collezione.",
         "searchWouldReplaceMatch": "s cerca in tutta la libreria e sostituirebbe il match visualizzato: usa ss per cercare nel match.",
         "tagsAdded": "Tag aggiunti: {tags}",
-        "unknown": "Comando sconosciuto: {command}"
+        "unknown": "Comando sconosciuto: {command}",
+        "noMatchesFound": "Nessuna partita trovata"
     },
     "search": {
         "actions": "Azioni",
@@ -665,6 +666,8 @@
         "errorDeleting": "Errore durante l'eliminazione del match",
         "errorSettingTournament": "Errore durante l'assegnazione del torneo",
         "errorSwapping": "Errore durante lo scambio dei giocatori",
+        "swapDraftOpen": "Scambio rifiutato: una bozza di trascrizione è aperta su questo match. Completala o eliminala prima.",
+        "swapPlayedHere": "Scambio rifiutato: questo match è stato giocato in blunderDB; i suoi posti sono quelli con cui è stato giocato.",
         "errorUpdating": "Errore durante l'aggiornamento del match",
         "errorUpdatingComment": "Errore durante l'aggiornamento del commento",
         "matchDeleted": "Match spostato nel cestino — recuperabile (comando «trash»)",
@@ -690,7 +693,9 @@
         "moreActions": "Altre azioni",
         "deleteMatch": "Elimina il match",
         "finalScore": "Punteggio finale",
-        "matchWonBy": "{player} ha vinto il match"
+        "matchWonBy": "{player} ha vinto il match",
+        "idsFilter": "{n} partite aperte dalle Statistiche",
+        "idsFilterClear": "Mostra tutte le partite"
     },
     "collection": {
         "addDescription": "Aggiungi una descrizione…",
@@ -867,6 +872,8 @@
         "reviewComplete": "Ripasso completato! {count} carte ripassate.",
         "settingsSaved": "Impostazioni salvate",
         "deckSynced": "Mazzo \"{name}\" sincronizzato",
+        "exportApkgTooltip": "Esporta come pacchetto Anki (.apkg)",
+        "apkgExported": "Mazzo \"{name}\" esportato: {count} carta/e",
         "deckReset": "Mazzo \"{name}\" reimpostato",
         "confirmDeleteDeck": "Eliminare il mazzo \"{name}\"?",
         "confirmResetDeck": "Reimpostare il mazzo \"{name}\"? Tutti i progressi andranno persi.",
@@ -1962,7 +1969,9 @@
             "player": "Giocatore",
             "record": "Bilancio",
             "prChecker": "PR pedine",
-            "prCube": "PR cubo"
+            "prCube": "PR cubo",
+            "openMatches": "Apri queste partite",
+            "openPositions": "Apri queste posizioni"
         },
         "interval95": "IC 95 %",
         "intervalHint": "Intervallo di confidenza al 95 %: ricampiona i match di una selezione, le partite di un match. Una riga senza intervallo (meno di tre match o partite, o tutti con lo stesso PR) è in grigio.",
@@ -3165,7 +3174,27 @@
         "start": "Partenza",
         "startOpening": "Posizione iniziale",
         "startBoard": "Posizione sul tavoliere",
-        "startScore": "Solo punteggio",
+        "score": "Punteggio",
+        "awayCrawford": "1 (Crawford)",
+        "awayPostCrawford": "1 (post-Crawford)",
+        "singleGame": "Una sola partita",
+        "dice": "Dadi",
+        "diceBoard": "Dadi del tavoliere",
+        "diceReroll": "Rilanciare",
+        "cubeTiming": "Decisione di cubo",
+        "cubeBefore": "Prima del cubo",
+        "cubeAfter": "Dopo il cubo",
+        "minutesPerPoint": "Min per punto",
+        "delaySeconds": "Ritardo (s)",
+        "cadenceName": "Nome",
+        "cadenceSave": "Salva",
+        "cadenceDelete": "Elimina",
+        "cadenceLabel": "{name} · {minutes} min/pt + {delay} s",
+        "pipcount": "Conteggio pip",
+        "cadencePreset": {
+            "standard": "Standard",
+            "speed": "Speed"
+        },
         "awayPlayer1": "Giocatore 1 a",
         "awayPlayer2": "Giocatore 2 a",
         "side": "Lato giocato",
@@ -3251,6 +3280,7 @@
         "placePanel": "Riporta il video nel pannello",
         "stageResize": "Ridimensiona il video",
         "swapSide": "Sposta il video sull'altro lato della scacchiera",
+        "rotate": "Ruota il video (O)",
         "stageMove": "Trascina per mettere il video a sinistra o a destra",
         "rate": "Velocità di riproduzione"
     },

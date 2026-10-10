@@ -2,6 +2,7 @@
     /** @typedef {import('../../wailsjs/go/models').domain.Match} Match */
     import { confirmAction, confirmModalStore } from '../services/confirmService.js';
     import { logger } from '../utils/logger.js';
+    import { swapPlayersErrorKey } from '../utils/swapPlayersError.js';
     import { focusPanelUnlessTyping } from '../utils/panelFocus.js';
     import { analysisChallengeStore, analysisChallengeHiddenStore } from '../stores/analysisChallengeStore.js';
     import { toDateInputValue, formatDate, formatDiceShort, GRADE_MARKS, indexMoveGrades, countGrades, fmtGradeCost } from '../utils/matchTable.js';
@@ -953,7 +954,7 @@
             statusBarTextStore.set(tMsg('match.swappedPlayers'));
         } catch (error) {
             logger.error('Error swapping match players:', error);
-            statusBarTextStore.set(tMsg('match.errorSwapping'));
+            statusBarTextStore.set(tMsg(swapPlayersErrorKey(error, 'match.errorSwapping')));
         }
     }
 
@@ -1165,6 +1166,11 @@
                     placeholder={$t('match.filterPlaceholder')}
                     aria-label={$t('match.filterAria')}
                 />
+                {#if $matchListStore.ids}
+                    <button type="button" class="toolbar-btn match-ids-chip" data-testid="match-ids-filter" onclick={() => matchListStore.setIDs(null)} title={$t('match.idsFilterClear')}
+                        >{$t('match.idsFilter', { n: $matchListStore.ids.length })} ×</button
+                    >
+                {/if}
                 {#if matches.length > 0 && matches.length < matchTotal}<span class="match-count">{$t('match.countOfTotal', { shown: matches.length, total: matchTotal })}</span>{/if}
                 <button class="toolbar-btn" onclick={() => (showMergePlayersModal = true)} title={$t('match.mergePlayersTitle')} disabled={matches.length === 0}>⇢ {$t('match.mergePlayers')}</button>
             </div>

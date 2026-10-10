@@ -44,9 +44,12 @@ type MatchListOpts struct {
 	// Unassigned keeps only matches that belong to no tournament.
 	Unassigned    bool
 	TournamentIDs []int64
-	DateFrom      string // ISO "YYYY-MM-DD", inclusive
-	DateTo        string // ISO "YYYY-MM-DD", inclusive
-	MatchLength   []int
+	// IDs, when non-nil, keeps only these matches: a list another view
+	// computed (a corpus row, a face-à-face). Empty and non-nil keeps none.
+	IDs         []int64
+	DateFrom    string // ISO "YYYY-MM-DD", inclusive
+	DateTo      string // ISO "YYYY-MM-DD", inclusive
+	MatchLength []int
 	// Sort is a key understood by domain.MatchOrderByClause ("" = most recent
 	// first). PR/MWC are not match columns (they are computed badges), so they
 	// are not sortable here.
@@ -155,7 +158,7 @@ type MatchStore interface {
 	// transcript's way — the turned cube owned by the answerer, on a row no
 	// double of its game stands on — onto
 	// the position importers record it on: the same, the cube held by no one
-	// (sqlshared.AnsweredOwnedCubeMovesSQL). Copy-on-write, as SwapPlayers: the
+	// (sqlshared.AnsweredOwnedCubeMovesSQL). Copy-on-write: the
 	// row it leaves keeps its id and analysis for whatever else holds it — a
 	// redouble on the same board — and is purged when nothing does, its stale
 	// analysis with it; its provenance flags stay behind. The moved moves are
@@ -163,8 +166,14 @@ type MatchStore interface {
 	// touches and returns how many moves moved.
 	ReanchorAnsweredDoubles(ctx context.Context, scope string) (int, error)
 
-	// SwapPlayers swaps player 1 and player 2 for the match (and mirrors the
-	// stored positions accordingly).
+	// SwapPlayers swaps player 1 and player 2 for the match: the names, the
+	// rating and experience of each seat, every game's initial score and
+	// winner, and every move's player. A position is stored from the side on
+	// roll, so no position, analysis or played-decision score changes: each
+	// person keeps their statistics under the other seat, and swapping twice
+	// gives back the match as it was. Invalidates the match's stats. Refused
+	// with ErrSwapDraftOpen while a Transcription draft is open on the match,
+	// and with ErrSwapPlayedHere for a match played here (it has an origin).
 	SwapPlayers(ctx context.Context, scope string, id int64) error
 
 	// MergePlayers makes every other given player name an alias of the

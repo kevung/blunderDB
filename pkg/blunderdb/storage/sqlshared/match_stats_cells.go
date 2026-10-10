@@ -76,15 +76,13 @@ func errorBucket(errMP int64) int64 {
 
 // decisionMWCLoss converts one decision's EMG error into the match winning
 // chances it cost, NaN where the table has no value (money, a score outside
-// the match). awayScore0/1 are the position's stored away scores, rawPlayer
-// move.player, cubeValue the cube multiplier.
-func decisionMWCLoss(errMP int64, awayScore0, awayScore1, rawPlayer, cubeValue, matchLength int) float64 {
-	// XG encodes player 0 (bottom) as 1 and player 1 (top) as -1;
-	// gnuBG fMove is 0 or 1.
-	fMove := 0
-	if rawPlayer == -1 {
-		fMove = 1
-	}
+// the match). awayScore0/1 are the position's stored away scores, the side on
+// roll's first, cubeValue the cube multiplier. The seat that played it does
+// not enter: the gap between winning and losing cubeValue points is the same
+// from either side (ME₁ = 1 − ME₀), so the lookup is always made from the
+// side on roll as player 0 — which keeps the loss identical, to the bit, when
+// a match's seats are swapped.
+func decisionMWCLoss(errMP int64, awayScore0, awayScore1, cubeValue, matchLength int) float64 {
 	// p.score_1/score_2 are away scores; ConvertEMGLossToMWCLoss expects
 	// current scores (games already won). domain.PointsAway decodes the
 	// Crawford sentinel first: a stored 0 is one point away, post-Crawford,
@@ -92,7 +90,7 @@ func decisionMWCLoss(errMP int64, awayScore0, awayScore1, rawPlayer, cubeValue, 
 	// silently dropping the row.
 	currentScore0 := matchLength - domain.PointsAway(awayScore0)
 	currentScore1 := matchLength - domain.PointsAway(awayScore1)
-	return engine.ConvertEMGLossToMWCLoss(int(errMP), currentScore0, currentScore1, fMove, cubeValue, matchLength)
+	return engine.ConvertEMGLossToMWCLoss(int(errMP), currentScore0, currentScore1, 0, cubeValue, matchLength)
 }
 
 type cellKey struct {
@@ -190,7 +188,7 @@ func writeMatchStatsCells(ctx context.Context, tx Execer, scope, ph string, ids 
 			if score2 != nil {
 				away1 = int(*score2)
 			}
-			loss := decisionMWCLoss(errMP, away0, away1, rawPlayer, cubeValue, matchLength)
+			loss := decisionMWCLoss(errMP, away0, away1, cubeValue, matchLength)
 			base := cellKey{match: match, seat: seat, dt: dt, met: met}
 			for _, k := range []struct {
 				kind   int
