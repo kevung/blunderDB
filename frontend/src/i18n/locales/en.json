@@ -409,7 +409,8 @@
         "searchWouldReplaceCollection": "s searches the whole library and would replace the collection on screen: use ss to search within the collection.",
         "searchWouldReplaceMatch": "s searches the whole library and would replace the match on screen: use ss to search within the match.",
         "tagsAdded": "Tags added: {tags}",
-        "unknown": "Unknown command: {command}"
+        "unknown": "Unknown command: {command}",
+        "noMatchesFound": "No matches found"
     },
     "search": {
         "actions": "Actions",
@@ -690,7 +691,9 @@
         "moreActions": "More actions",
         "deleteMatch": "Delete the match",
         "finalScore": "Final score",
-        "matchWonBy": "{player} won the match"
+        "matchWonBy": "{player} won the match",
+        "idsFilter": "{n} matches opened from Stats",
+        "idsFilterClear": "Show all matches"
     },
     "collection": {
         "addDescription": "Add a description…",
@@ -1962,7 +1965,9 @@
             "player": "Player",
             "record": "Record",
             "prChecker": "Checker PR",
-            "prCube": "Cube PR"
+            "prCube": "Cube PR",
+            "openMatches": "Open these matches",
+            "openPositions": "Open these positions"
         },
         "interval95": "95 % CI",
         "intervalHint": "95 % confidence interval: resamples the matches of a selection, the games of a match. A row without one (fewer than three matches or games, or all at the same PR) is greyed.",

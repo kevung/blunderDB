@@ -409,7 +409,8 @@
         "searchWouldReplaceCollection": "s busca en toda la biblioteca y reemplazaría la colección mostrada: use ss para buscar dentro de la colección.",
         "searchWouldReplaceMatch": "s busca en toda la biblioteca y reemplazaría el match mostrado: use ss para buscar dentro del match.",
         "tagsAdded": "Etiquetas añadidas: {tags}",
-        "unknown": "Comando desconocido: {command}"
+        "unknown": "Comando desconocido: {command}",
+        "noMatchesFound": "No se encontraron partidas"
     },
     "search": {
         "actions": "Acciones",
@@ -690,7 +691,9 @@
         "moreActions": "Más acciones",
         "deleteMatch": "Eliminar el match",
         "finalScore": "Marcador final",
-        "matchWonBy": "{player} ganó el match"
+        "matchWonBy": "{player} ganó el match",
+        "idsFilter": "{n} partidas abiertas desde Estadísticas",
+        "idsFilterClear": "Mostrar todas las partidas"
     },
     "collection": {
         "addDescription": "Añadir una descripción…",
@@ -1962,7 +1965,9 @@
             "player": "Jugador",
             "record": "Balance",
             "prChecker": "PR fichas",
-            "prCube": "PR cubo"
+            "prCube": "PR cubo",
+            "openMatches": "Abrir estas partidas",
+            "openPositions": "Abrir estas posiciones"
         },
         "interval95": "IC 95 %",
         "intervalHint": "Intervalo de confianza del 95 %: remuestrea los matches de una selección, las partidas de un match. Una fila sin intervalo (menos de tres matches o partidas, o todos con el mismo PR) aparece en gris.",

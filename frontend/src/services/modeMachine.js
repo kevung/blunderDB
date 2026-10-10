@@ -32,6 +32,7 @@
  *   toggleMatchMode     MATCH → NORMAL | * → MATCH
  *   handleOpenCollection * → COLLECTION
  *   exitCollectionMode  COLLECTION → NORMAL
+ *   leaveStudiedModeForList MATCH | COLLECTION → NORMAL, before another list is shown
  *   leaveSubSearchResults NORMAL (results of an `ss` run from a collection or
  *                       match) → that COLLECTION | MATCH
  *
@@ -62,6 +63,7 @@ import { showPosition, loadAllPositions, loadAnalysisForPosition, setSearchState
 import { logger } from '../utils/logger.js';
 import { tMsg, translate } from '../i18n';
 import { viewStore } from '../stores/viewStore.js';
+import { duelHoldsBoardStore } from '../stores/duelStore.js';
 
 export const MODE = Object.freeze({
     NORMAL: 'NORMAL',
@@ -855,6 +857,27 @@ export async function toggleMatchMode() {
             setStatusBarMessage(tMsg('status.errorEnteringMatchMode'));
         }
     }
+}
+
+/**
+ * Whether the board follows the library index (App's navigation effect). In MATCH it follows the
+ * match navigation and the index is stale; a Duel holds the board.
+ */
+export function boardFollowsLibraryIndex() {
+    return currentMode() !== MODE.MATCH && !get(duelHoldsBoardStore);
+}
+
+/**
+ * MATCH | COLLECTION → NORMAL, for a caller about to put another list of positions on screen.
+ * In MATCH the board follows matchContextStore and ignores the library index, so a list loaded
+ * without leaving it would be counted by the status bar while the board, the navigation and the
+ * Analysis panel stay on the match. The match's cursor is saved, as on any exit from MATCH.
+ */
+export function leaveStudiedModeForList() {
+    void persistLastVisitedMatchPosition();
+    statusBarModeStore.set(MODE.NORMAL);
+    matchContextStore.set({ ...NO_MATCH_CONTEXT });
+    activeCollectionStore.set(null);
 }
 
 // ── COLLECTION ───────────────────────────────────────────────────────────────

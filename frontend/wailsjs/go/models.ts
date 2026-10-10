@@ -7105,6 +7105,7 @@ export namespace storage {
 	    Text: string;
 	    Unassigned: boolean;
 	    TournamentIDs: number[];
+	    IDs: number[];
 	    DateFrom: string;
 	    DateTo: string;
 	    MatchLength: number[];
@@ -7124,6 +7125,7 @@ export namespace storage {
 	        this.Text = source["Text"];
 	        this.Unassigned = source["Unassigned"];
 	        this.TournamentIDs = source["TournamentIDs"];
+	        this.IDs = source["IDs"];
 	        this.DateFrom = source["DateFrom"];
 	        this.DateTo = source["DateTo"];
 	        this.MatchLength = source["MatchLength"];

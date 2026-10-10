@@ -51,6 +51,7 @@ func (cli *CLI) statsHandlers() map[string]func([]string) error {
 		"tournament":  cli.runStatsTournament,
 		"training":    cli.runStatsTraining,
 		"windows":     cli.runStatsWindows,
+		"matches":     cli.runStatsMatches,
 		"progression": cli.runStatsProgression,
 		"breakdown":   cli.runStatsBreakdown,
 		"report":      cli.runStatsReport,

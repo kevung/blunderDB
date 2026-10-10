@@ -11,7 +11,6 @@ import {
     SearchPositionIDs,
     RankPositionIDsByFilters,
     ComputeEPCFromPosition,
-    SaveLastVisitedPosition,
     SaveEditPosition,
     SaveExcludePosition,
     SaveFilter,
@@ -31,12 +30,11 @@ import { viewStore } from '../stores/viewStore.js';
 import { currentPositionIndexStore, statusBarTextStore, statusBarModeStore, commentTextStore, activeTabStore } from '../stores/uiStore.js';
 import { rankedDistancesStore, rankedTargetStore } from '../stores/rankedStore.js';
 import { GetLikeLimit, GetLikeMaxDistance } from '../../wailsjs/go/main/Config.js';
-import { activeCollectionStore } from '../stores/collectionStore.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { confirmAction } from './confirmService.js';
 import { logger } from '../utils/logger.js';
 import { closeOnEscape } from './escapeService.js';
-import { forgetContextBeforeEval, forgetSubSearchOrigin, noteSubSearchOrigin, takeEvalContext, giveEvalContext } from './modeMachine.js';
+import { forgetContextBeforeEval, forgetSubSearchOrigin, noteSubSearchOrigin, leaveStudiedModeForList, takeEvalContext, giveEvalContext } from './modeMachine.js';
 // Ctrl-G status line (keyboardService imports it from here).
 export { showDatesAndMetadata } from './metadataStatus.js';
 
@@ -58,7 +56,9 @@ export {
     leaveSubSearchResults,
     canLeaveSubSearchResults,
     displayedPositionIDs,
-    withDisplayedPositionIDs
+    withDisplayedPositionIDs,
+    leaveStudiedModeForList,
+    boardFollowsLibraryIndex
 } from './modeMachine.js';
 // NOTE: these UI messages are translated at emission time via the non-reactive
 // `translate` helper; already-displayed messages do not retranslate on language change.
@@ -311,24 +311,9 @@ export async function loadAllPositions({ focusId = null } = {}) {
         const total = await openLibrary({ reset: true });
         const focusIdx = total > 0 && focusId != null ? await positionsStore.findIndex(focusId) : -1;
 
-        const matchCtx = get(matchContextStore);
-        if (get(statusBarModeStore) === 'MATCH' && matchCtx.isMatchMode && matchCtx.matchID) {
-            SaveLastVisitedPosition(matchCtx.matchID, matchCtx.currentIndex).catch((e) => {
-                logger.error('Error persisting last visited position:', e);
-            });
-        }
-        statusBarModeStore.set('NORMAL');
-        matchContextStore.set({
-            isMatchMode: false,
-            matchID: null,
-            movePositions: [],
-            currentIndex: 0,
-            player1Name: '',
-            player2Name: ''
-        });
+        leaveStudiedModeForList();
         forgetContextBeforeEval();
         forgetSubSearchOrigin();
-        activeCollectionStore.set(null);
 
         listOriginStore.set(LIBRARY_ORIGIN);
         if (total > 0) {
@@ -762,16 +747,7 @@ export async function loadPositionsByFilters({
             // match remembers it, so that leaving the results returns there.
             const subSearchOrigin = noteSubSearchOrigin(Boolean(restrictToPositionIDs), Array.isArray(ids) ? ids : []);
 
-            statusBarModeStore.set('NORMAL');
-            matchContextStore.set({
-                isMatchMode: false,
-                matchID: null,
-                movePositions: [],
-                currentIndex: 0,
-                player1Name: '',
-                player2Name: ''
-            });
-            activeCollectionStore.set(null);
+            leaveStudiedModeForList();
 
             if (source) {
                 positionsStore.adoptFirstPage(source, firstPage);

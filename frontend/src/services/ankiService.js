@@ -35,7 +35,7 @@ import { positionsStore, deckSource } from '../stores/positionStore.js';
 import { selectedMoveStore } from '../stores/analysisStore.js';
 import { currentPositionIndexStore, statusBarTextStore } from '../stores/uiStore.js';
 import { tMsg } from '../i18n';
-import { showPosition } from './positionService.js';
+import { showPosition, leaveStudiedModeForList } from './positionService.js';
 import { parseFilters } from '../commandProcessor.js';
 import { buildSearchFilterPayload } from './searchFilterService.js';
 import { logger } from '../utils/logger.js';
@@ -344,8 +344,13 @@ export async function addPositionToDeck(/** @type {number} */ deckId, /** @type 
 export async function selectDeck(deck, filter = '') {
     selectedAnkiDeckStore.set(deck);
     await refreshDeckStats(deck.id);
+    leaveStudiedModeForList();
     const total = await positionsStore.setSource(deckSource(deck.id, filter));
-    if (total > 0) currentPositionIndexStore.set(0);
+    if (total > 0) {
+        // Through -1: an index already at 0 would not redraw the board on the new list.
+        currentPositionIndexStore.set(-1);
+        currentPositionIndexStore.set(0);
+    }
 }
 
 /** Wipe a deck's schedule; refresh its stats if it is the selected one. */
@@ -395,6 +400,7 @@ function newQuestion() {
  */
 export async function startSession(/** @type {Deck} */ deck, { cram = false } = {}) {
     await syncDeckCards(deck);
+    leaveStudiedModeForList();
     await positionsStore.setSource(deckSource(deck.id));
     const card = cram ? await GetRandomAnkiCard(deck.id, 0) : await GetNextAnkiCard(deck.id);
     if (!card) return null;

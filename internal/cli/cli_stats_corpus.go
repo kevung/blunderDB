@@ -199,6 +199,61 @@ func (cli *CLI) runStatsContrast(args []string) error {
 	return w.Flush()
 }
 
+// runStatsMatches lists the matches a corpus figure counts: those where the
+// player (every player when none) holds a counted decision under the filter.
+func (cli *CLI) runStatsMatches(args []string) error {
+	fs := flag.NewFlagSet("stats matches", flag.ContinueOnError)
+	player := fs.String("player", "", "Only the matches where this player holds a counted decision")
+	c := newCorpusStatsFlags(fs)
+	fs.Usage = func() {
+		fmt.Println("Usage: blunderdb stats matches --db <file> [options]")
+		fmt.Println()
+		fmt.Println("The matches a corpus figure counts (a ranking line, a window), oldest first:")
+		fmt.Println("those where the player, or any player, holds a counted decision.")
+		fmt.Println("Their IDs feed `list --type matches --ids`.")
+		fmt.Println()
+		fmt.Println("Options:")
+		fs.PrintDefaults()
+		fmt.Println()
+		fmt.Println("Examples:")
+		fmt.Println("  blunderdb stats matches --db database.db --player \"Alice\" --from 2025-01-01 --to 2025-03-31")
+		fmt.Println("  blunderdb stats matches --db database.db --player \"Alice\" --format json")
+	}
+	if err := fs.Parse(args); err != nil {
+		return err
+	}
+	filter, err := c.open(cli, fs, *player)
+	if err != nil {
+		return err
+	}
+	var ids []int64
+	err = withInterruptibleContext(func() {}, func(ctx context.Context) error {
+		var err error
+		ids, err = cli.db.StatsMatchIDsCtx(ctx, filter)
+		return err
+	})
+	if err != nil {
+		return statsErr("matches", err)
+	}
+	if c.json() {
+		return printJSON(map[string][]int64{"match_ids": ids})
+	}
+	if len(ids) == 0 {
+		fmt.Println("No match with a counted decision in this filter.")
+		return nil
+	}
+	matches, err := cli.db.ListMatches(storage.MatchListOpts{IDs: ids, Sort: "date_asc"})
+	if err != nil {
+		return fmt.Errorf("failed to get matches: %w", err)
+	}
+	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+	fmt.Fprintln(w, "ID\tDATE\tLENGTH\tPLAYER 1\tPLAYER 2")
+	for _, m := range matches {
+		fmt.Fprintf(w, "%d\t%s\t%d\t%s\t%s\n", m.ID, m.MatchDate.Format("2006-01-02"), m.MatchLength, m.Player1Name, m.Player2Name)
+	}
+	return w.Flush()
+}
+
 func (cli *CLI) runStatsWindows(args []string) error {
 	fs := flag.NewFlagSet("stats windows", flag.ContinueOnError)
 	player := fs.String("player", "", "Only this player's decisions")

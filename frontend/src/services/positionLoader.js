@@ -20,6 +20,7 @@ import { currentPositionIndexStore } from '../stores/uiStore.js';
 import { tournamentOpenRequestStore } from '../stores/tournamentStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { statsFilterStore } from '../stores/statsStore.js';
+import { leaveStudiedModeForList, forgetSubSearchOrigin } from './modeMachine.js';
 
 /**
  * Push a list of position IDs into the analysis view.
@@ -45,6 +46,9 @@ export async function loadPositionsFromSelection(ids, { focusIndex = 0 } = {}) {
         return;
     }
 
+    // Out of MATCH first: there the board ignores the index set below.
+    leaveStudiedModeForList();
+    forgetSubSearchOrigin();
     positionsStore.setIds(Array.isArray(resultIds) ? resultIds : []);
     listOriginStore.set(LIBRARY_ORIGIN);
 
@@ -113,6 +117,23 @@ export function openTournamentInPanel(tournamentID) {
     // The Tournaments panel opens it once its list is loaded (it resets its selection when shown).
     tournamentOpenRequestStore.set(tournamentID);
     activeTabStore.set('tournaments');
+}
+
+/**
+ * Show exactly these matches in the Match panel's list (a Stats corpus row). The
+ * panel offers to clear the restriction.
+ *
+ * @param {number[]} ids
+ */
+export async function openMatchListInPanel(ids) {
+    if (!ids || ids.length === 0) {
+        statusBarTextStore.set(tMsg('commands.noMatchesFound'));
+        return;
+    }
+    activeTabStore.set('matches');
+    // Imported here: the match list binds ListMatches at load, which a Stats drill-down never needs.
+    const { matchListStore } = await import('../stores/matchListStore.js');
+    await matchListStore.setIDs(ids);
 }
 
 /**

@@ -312,6 +312,17 @@ func buildMatchListWhere(opts storage.MatchListOpts) (whereSQL string, args []an
 			args = append(args, id)
 		}
 	}
+	if opts.IDs != nil {
+		if len(opts.IDs) == 0 {
+			clauses = append(clauses, "1 = 0")
+		} else {
+			ph := strings.TrimSuffix(strings.Repeat("?,", len(opts.IDs)), ",")
+			clauses = append(clauses, "m.id IN ("+ph+")")
+			for _, id := range opts.IDs {
+				args = append(args, id)
+			}
+		}
+	}
 	// Compare on the date part so an inclusive DateTo matches later that day.
 	// substr, not date(): match_date carries a timezone suffix date() refuses.
 	if opts.DateFrom != "" {

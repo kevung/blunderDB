@@ -320,6 +320,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/stats.matchBadges                    JSON
      POST /v1/stats.matchDecisionLosses            JSON
      POST /v1/stats.matchDetail                    JSON
+     POST /v1/stats.matchIds                       JSON
      POST /v1/stats.matchMoveGrades                JSON
      POST /v1/stats.matchReview                    JSON
      POST /v1/stats.matchTimeSummary               JSON

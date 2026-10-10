@@ -22,6 +22,20 @@ func (d *Database) PRByWindowCtx(ctx context.Context, filter StatsFilter, months
 	return d.store.Stats().PRByWindow(ctx, "", toStorageStatsFilter(filter), months)
 }
 
+// StatsMatchIDsCtx lists the matches a corpus figure counts under filter
+// (storage.StatsStore.MatchIDs): what a ranking row, a window or a player
+// opens in the match list.
+func (d *Database) StatsMatchIDsCtx(ctx context.Context, filter StatsFilter) ([]int64, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	return d.store.Stats().MatchIDs(ctx, "", toStorageStatsFilter(filter))
+}
+
+// StatsMatchIDs is StatsMatchIDsCtx for the GUI binding, which passes no context.
+func (d *Database) StatsMatchIDs(filter StatsFilter) ([]int64, error) {
+	return d.StatsMatchIDsCtx(context.Background(), filter)
+}
+
 // PlayerRankingCtx ranks the players of the filter by PR above a floor of
 // counted decisions (storage.RankPlayers over the players table).
 func (d *Database) PlayerRankingCtx(ctx context.Context, filter StatsFilter, minDecisions int) ([]storage.RankedPlayer, error) {

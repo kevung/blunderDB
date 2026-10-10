@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"slices"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -366,6 +367,25 @@ func testHeadToHeadWindowsRanking(t *testing.T, s storage.Storage) {
 	}
 	if len(storage.RankPlayers(rows, 1<<30)) != 0 {
 		t.Error("a floor above every player's decisions still ranks someone")
+	}
+
+	// MatchIDs lists the matches a window or a ranking line counts.
+	ids, err := s.Stats().MatchIDs(ctx, "", alice)
+	if err != nil || len(ids) != win[0].NumMatches {
+		t.Errorf("MatchIDs(Alice) = %v, %v; want the %d matches of her window", ids, err, win[0].NumMatches)
+	}
+	for _, r := range ranked {
+		ids, err := s.Stats().MatchIDs(ctx, "", storage.StatsFilter{DecisionType: -1, PlayerName: r.Name})
+		if err != nil || len(ids) != r.Matches {
+			t.Errorf("MatchIDs(%s) = %v, %v; want the %d matches of the ranking", r.Name, ids, err, r.Matches)
+		}
+	}
+	bob, err := s.Stats().MatchIDs(ctx, "", storage.StatsFilter{DecisionType: -1, PlayerName: "Bob"})
+	if err != nil || len(bob) != 2 || !slices.Contains(bob, matchB) {
+		t.Errorf("MatchIDs(Bob) = %v, %v; want his 2 matches, %d among them", bob, err, matchB)
+	}
+	if _, err := s.Stats().MatchIDs(ctx, "", storage.StatsFilter{DecisionType: -1, AnalysisEngine: "x"}); !errors.Is(err, storage.ErrInvalid) {
+		t.Errorf("MatchIDs with a provenance filter: %v, want ErrInvalid", err)
 	}
 }
 

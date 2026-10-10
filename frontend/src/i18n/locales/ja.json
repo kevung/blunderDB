@@ -409,7 +409,8 @@
         "searchWouldReplaceCollection": "s はライブラリ全体を検索し、表示中のコレクションを置き換えてしまいます。コレクション内を検索するには ss を使ってください。",
         "searchWouldReplaceMatch": "s はライブラリ全体を検索し、表示中のマッチ (match) を置き換えてしまいます。マッチ内を検索するには ss を使ってください。",
         "tagsAdded": "タグを追加しました: {tags}",
-        "unknown": "不明なコマンド: {command}"
+        "unknown": "不明なコマンド: {command}",
+        "noMatchesFound": "マッチが見つかりません"
     },
     "search": {
         "actions": "操作",
@@ -690,7 +691,9 @@
         "moreActions": "その他の操作",
         "deleteMatch": "マッチを削除",
         "finalScore": "最終スコア",
-        "matchWonBy": "{player} がマッチに勝利"
+        "matchWonBy": "{player} がマッチに勝利",
+        "idsFilter": "統計から開いた {n} 件のマッチ",
+        "idsFilterClear": "すべてのマッチを表示"
     },
     "collection": {
         "addDescription": "説明を追加…",
@@ -1962,7 +1965,9 @@
             "player": "プレイヤー",
             "record": "勝敗",
             "prChecker": "チェッカー PR",
-            "prCube": "キューブ PR"
+            "prCube": "キューブ PR",
+            "openMatches": "これらのマッチを開く",
+            "openPositions": "これらの局面を開く"
         },
         "interval95": "95 % 信頼区間",
         "intervalHint": "95 % 信頼区間：選択範囲ではマッチを、1 マッチではゲームを再標本化します。区間のない行（マッチまたはゲームが 3 未満、またはすべて同じ PR）は灰色で示します。",

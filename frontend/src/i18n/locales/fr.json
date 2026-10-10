@@ -409,7 +409,8 @@
         "searchWouldReplaceCollection": "s cherche dans toute la bibliothèque et remplacerait la collection affichée : utilisez ss pour chercher dans la collection.",
         "searchWouldReplaceMatch": "s cherche dans toute la bibliothèque et remplacerait le match affiché : utilisez ss pour chercher dans le match.",
         "tagsAdded": "Étiquettes ajoutées : {tags}",
-        "unknown": "Commande inconnue : {command}"
+        "unknown": "Commande inconnue : {command}",
+        "noMatchesFound": "Aucun match trouvé"
     },
     "search": {
         "actions": "Actions",
@@ -690,7 +691,9 @@
         "moreActions": "Autres actions",
         "deleteMatch": "Supprimer le match",
         "finalScore": "Score final",
-        "matchWonBy": "{player} a gagné le match"
+        "matchWonBy": "{player} a gagné le match",
+        "idsFilter": "{n} matchs ouverts depuis les Stats",
+        "idsFilterClear": "Montrer tous les matchs"
     },
     "collection": {
         "addDescription": "Ajouter une description…",
@@ -1962,7 +1965,9 @@
             "player": "Joueur",
             "record": "Bilan",
             "prChecker": "PR pions",
-            "prCube": "PR videau"
+            "prCube": "PR videau",
+            "openMatches": "Ouvrir ces matchs",
+            "openPositions": "Ouvrir ces positions"
         },
         "interval95": "IC 95 %",
         "intervalHint": "Intervalle de confiance à 95 % : rééchantillonne les matchs d'une sélection, les parties d'un match. Une ligne sans intervalle (moins de trois matchs ou parties, ou toutes au même PR) est grisée.",

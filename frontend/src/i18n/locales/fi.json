@@ -409,7 +409,8 @@
         "searchWouldReplaceCollection": "s hakee koko kirjastosta ja korvaisi näytetyn kokoelman: käytä ss-komentoa hakeaksesi kokoelman sisältä.",
         "searchWouldReplaceMatch": "s hakee koko kirjastosta ja korvaisi näytetyn ottelun: käytä ss-komentoa hakeaksesi ottelun sisältä.",
         "tagsAdded": "Tunnisteet lisätty: {tags}",
-        "unknown": "Tuntematon komento: {command}"
+        "unknown": "Tuntematon komento: {command}",
+        "noMatchesFound": "Otteluita ei löytynyt"
     },
     "search": {
         "actions": "Toiminnot",
@@ -690,7 +691,9 @@
         "moreActions": "Lisää toimintoja",
         "deleteMatch": "Poista ottelu",
         "finalScore": "Lopputulos",
-        "matchWonBy": "{player} voitti ottelun"
+        "matchWonBy": "{player} voitti ottelun",
+        "idsFilter": "{n} ottelua avattu tilastoista",
+        "idsFilterClear": "Näytä kaikki ottelut"
     },
     "collection": {
         "addDescription": "Lisää kuvaus…",
@@ -1962,7 +1965,9 @@
             "player": "Pelaaja",
             "record": "Tulos",
             "prChecker": "Siirtojen PR",
-            "prCube": "Kuution PR"
+            "prCube": "Kuution PR",
+            "openMatches": "Avaa nämä ottelut",
+            "openPositions": "Avaa nämä asemat"
         },
         "interval95": "95 %:n LV",
         "intervalHint": "95 %:n luottamusväli: otantaa uudelleen valinnan otteluista tai ottelun peleistä. Rivi ilman väliä (alle kolme ottelua tai peliä, tai kaikilla sama PR) on harmaannettu.",

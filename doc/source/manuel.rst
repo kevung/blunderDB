@@ -3651,6 +3651,15 @@ les décisions. Le face-à-face et le PR par fenêtre ne l'acceptent pas : tant
 qu'il est actif, ils refusent de se calculer. Comme le reste de la barre, il
 est conservé d'une session à l'autre.
 
+Dans l'onglet Corpus, chaque ligne ouvre ce qu'elle résume. Une ligne de
+face-à-face ouvre ses matchs dans le panneau Matchs, qui porte alors le bouton
+« N matchs ouverts depuis les Stats × » : il rend la liste complète. Une ligne
+du classement ouvre les matchs du joueur et son nombre de décisions ouvre les
+positions comptées ; une ligne de fenêtre ouvre ses positions et son nombre de
+matchs ouvre les matchs. Un compte de positions du panneau Stats, quel que soit
+l'onglet, quitte d'abord le match en cours avant d'ouvrir sa liste ; la commande
+``m`` rouvre ensuite le match au coup sauvegardé.
+
 .. important::
    Un tiret (« — ») signale une valeur **jamais mesurée**, à ne pas confondre
    avec zéro. C'est notamment le cas de la colonne Chance pour tout match
