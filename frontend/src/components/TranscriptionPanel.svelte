@@ -60,7 +60,7 @@
     import TranscriptionMetadata from './TranscriptionMetadata.svelte';
     import VideoDock from './VideoDock.svelte';
     import { rateKeyDirection } from '../utils/videoRate.js';
-    import { theatreAvailableStore, theatreStore, theatreTargetStore, theatreHolds, enterTheatre } from '../services/transcriptionTheatre.js';
+    import { theatreAvailableStore, theatreStore, theatreTargetStore, theatreHolds, theatreRotateStore, enterTheatre } from '../services/transcriptionTheatre.js';
     import { fmtClock } from '../utils/decisionTime.js';
     import {
         transcriptionListStore,
@@ -557,6 +557,13 @@
         videoRotation = nextRotation(videoRotation);
         saveVideoRotation(draftId, videoRotation);
     }
+
+    // The theatre's bar turns the same video, with the same angle.
+    $effect(() => {
+        if (!videoSource) return;
+        theatreRotateStore.set(rotateVideo);
+        return () => theatreRotateStore.set(null);
+    });
 
     /**
      * The video keys, live only while a source is attached and read by their position
