@@ -61,7 +61,7 @@ func (shared) LimitOffset(limit, offset int) (string, []any) {
 }
 func (shared) TimestampArg() string                 { return "?" }
 func (shared) InstantArg(t time.Time) (string, any) { return "?", t.Unix() }
-func (shared) DateText(col string) string           { return "COALESCE(" + col + ",'')" }
+func (shared) DateText(col string) string           { return "COALESCE(SUBSTR(" + col + ",1,10),'')" }
 func (shared) TimestampText(col string) string      { return "COALESCE(" + col + ",'')" }
 func (shared) Referenced(err error) error           { return referenced(err) }
 

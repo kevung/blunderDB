@@ -2336,10 +2336,18 @@ panneau Matchs (onglets Transcription, Graphes, À revoir, Détails, Infos, Stat
 un second clic ou *ÉCHAP* la referme, un double-clic ou *ENTRÉE* ouvre le match dans le plateau. Le champ **Ajouter un match…** y range un match de la base, et ←
 ramène à la liste des tournois.
 
+Chaque ligne commence par son rang (#) et sa date, comme dans le panneau
+Matchs : la liste va du plus récent au plus ancien, et un clic sur un en-tête
+la trie. Un tournoi sans date prend celle du plus ancien de ses matchs,
+affichée en grisé ; elle est lue, jamais écrite dans la base. Le formulaire
+d'édition la propose, et elle ne devient la date du tournoi qu'à
+l'enregistrement.
+
 Les tournois se remplissent d'eux-mêmes à l'import. Les fichiers XG, GnuBG et
 BGF nomment leur événement ; à l'import d'un match nouveau, blunderDB le classe
-dans le tournoi de ce nom et crée celui-ci s'il n'existe pas encore. La date et
-le lieu du tournoi restent vides — c'est ici qu'on les renseigne. Un match déjà
+dans le tournoi de ce nom et crée celui-ci s'il n'existe pas encore. Le lieu
+reste vide, et la date est celle du plus ancien match tant qu'on ne la
+renseigne pas ici. Un match déjà
 présent dans la base n'est jamais reclassé : réimporter son fichier ne défait
 pas le rangement fait à la main.
 
@@ -3324,9 +3332,10 @@ table de clés et de valeurs, lisible par ``blunderdb info`` comme par le démon
 Courbe par tournoi
 ^^^^^^^^^^^^^^^^^^
 
-Un graphique en ligne affiche le PR (ou MWC) pour chaque tournoi (axe X :
-ordre des tournois, axe Y : valeur de la métrique). Des bandes de couleur
-matérialisent les seuils de niveau.
+Un graphique en ligne affiche le PR (ou MWC) de chaque tournoi : un point par
+tournoi, étiqueté de son nom, dans l'ordre chronologique de sa date — à défaut,
+celle de son plus ancien match (axe Y : valeur de la métrique). Des bandes de
+couleur matérialisent les seuils de niveau.
 
 Cliquer sur un point du graphique ouvre un menu contextuel avec deux options :
 
@@ -3339,6 +3348,7 @@ Scatter plot par match
 
 Un nuage de points représente chaque match (axe X : date, axe Y : PR ou MWC).
 La taille du point est proportionnelle au nombre de décisions dans le match.
+Un match sans date n'y figure pas.
 
 Cliquer sur un point ouvre un menu contextuel :
 

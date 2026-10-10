@@ -132,7 +132,7 @@
         toggle={toggleTournament}
         selectAll={selectAllTournaments}
         selectNone={selectNoTournaments}
-        describe={(tournament) => ({ name: tournament.name, count: `(${tournament.matchCount}) ${tournament.date || ''} ${tournament.location || ''}`.trim() })}
+        describe={(tournament) => ({ name: tournament.name, count: `(${tournament.matchCount}) ${tournament.date || tournament.effectiveDate || ''} ${tournament.location || ''}`.trim() })}
         bind:filterValue={tournamentFilterText}
         filterPlaceholder={$t('search.pickerFilterPlaceholder')}
     />

@@ -212,17 +212,22 @@ const (
 
 // Tournament represents a tournament that organizes matches
 type Tournament struct {
-	ID         int64   `json:"id"`
-	Name       string  `json:"name"`
-	Date       string  `json:"date"`
-	Location   string  `json:"location"`
-	SortOrder  int     `json:"sortOrder"`
-	CreatedAt  string  `json:"createdAt"`
-	UpdatedAt  string  `json:"updatedAt"`
-	MatchCount int     `json:"matchCount"`
-	Comment    string  `json:"comment"`
-	PR         float64 `json:"pr"`
-	MWCLoss    float64 `json:"mwc_loss"`
+	ID   int64  `json:"id"`
+	Name string `json:"name"`
+	// Date is the date the user entered; empty when none was.
+	Date string `json:"date"`
+	// EffectiveDate is Date, else the day of the tournament's earliest match
+	// (YYYY-MM-DD), derived on read and never stored. Empty when neither
+	// exists. The date is derived exactly when Date is empty and this is not.
+	EffectiveDate string  `json:"effectiveDate"`
+	Location      string  `json:"location"`
+	SortOrder     int     `json:"sortOrder"`
+	CreatedAt     string  `json:"createdAt"`
+	UpdatedAt     string  `json:"updatedAt"`
+	MatchCount    int     `json:"matchCount"`
+	Comment       string  `json:"comment"`
+	PR            float64 `json:"pr"`
+	MWCLoss       float64 `json:"mwc_loss"`
 	// RefPlayer is the player whose PR/MWCLoss the badge reports: the person
 	// present in the most of the tournament's matches. Empty when unknown.
 	RefPlayer string `json:"ref_player"`

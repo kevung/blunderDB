@@ -70,6 +70,8 @@ export function sortMatches(matches, column, direction) {
     return sorted;
 }
 
+const ISO_DAY = /^(\d{4})-(\d{2})-(\d{2})/;
+
 /**
  * Convert a date string to a `yyyy-mm-dd` value for a date <input>; '' if invalid.
  * @param {string | number | Date | null | undefined} dateStr
@@ -77,6 +79,10 @@ export function sortMatches(matches, column, direction) {
  */
 export function toDateInputValue(dateStr) {
     if (!dateStr) return '';
+    // A backend date text carries its day first; reading it whole fails under WebKitGTK for Go's
+    // time.String format, and through a Date it can slide a day with the time zone.
+    const day = ISO_DAY.exec(String(dateStr));
+    if (day) return `${day[1]}-${day[2]}-${day[3]}`;
     try {
         const date = new Date(dateStr);
         if (isNaN(date.getTime())) return '';
@@ -93,6 +99,8 @@ export function toDateInputValue(dateStr) {
  */
 export function formatDate(dateStr) {
     if (!dateStr) return '-';
+    const day = ISO_DAY.exec(String(dateStr));
+    if (day) return day[1] === '0001' ? '-' : `${day[1]}/${day[2]}/${day[3]}`;
     const date = new Date(dateStr);
     if (isNaN(date.getTime())) return '-';
     const y = date.getFullYear();

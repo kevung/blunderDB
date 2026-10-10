@@ -10,23 +10,29 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
 
 type tournamentStore struct{ db execer }
 
 var _ storage.TournamentStore = (*tournamentStore)(nil)
 
-// tournamentSelectCols reads a domain.Tournament; the correlated subquery
-// supplies the match count.
-const tournamentSelectCols = `t.id, t.name, COALESCE(t.date,''), COALESCE(t.location,''),
+// tournamentEffectiveDate is the entered date, else the day of the
+// tournament's earliest match: derived on read, never written (ADR-0007).
+var tournamentEffectiveDate = sqlshared.TournamentEffectiveDate(shared{}.DateText)
+
+// tournamentSelectCols reads a domain.Tournament; the correlated subqueries
+// supply the match count and the effective date.
+var tournamentSelectCols = `t.id, t.name, COALESCE(t.date,''), COALESCE(t.location,''),
 	COALESCE(t.sort_order,0), COALESCE(t.created_at,''), COALESCE(t.updated_at,''),
 	(SELECT COUNT(*) FROM match m WHERE m.tournament_id = t.id),
-	COALESCE(t.comment,'')`
+	COALESCE(t.comment,''), ` + tournamentEffectiveDate
 
 func scanTournament(sc interface{ Scan(...any) error }) (domain.Tournament, error) {
 	var t domain.Tournament
 	if err := sc.Scan(&t.ID, &t.Name, &t.Date, &t.Location,
-		&t.SortOrder, &t.CreatedAt, &t.UpdatedAt, &t.MatchCount, &t.Comment); err != nil {
+		&t.SortOrder, &t.CreatedAt, &t.UpdatedAt, &t.MatchCount, &t.Comment,
+		&t.EffectiveDate); err != nil {
 		return domain.Tournament{}, err
 	}
 	return t, nil
@@ -67,12 +73,13 @@ func (s *tournamentStore) Get(ctx context.Context, scope string, id int64) (*dom
 	return &t, nil
 }
 
-// List streams every tournament, most recent first.
+// List streams every tournament, most recent effective date first; undated
+// tournaments come last.
 func (s *tournamentStore) List(ctx context.Context, scope string, opts storage.ListOpts) iter.Seq2[*domain.Tournament, error] {
 	return func(yield func(*domain.Tournament, error) bool) {
 		rows, err := s.db.QueryContext(ctx,
 			`SELECT `+tournamentSelectCols+` FROM tournament t
-			 ORDER BY t.date DESC, t.created_at DESC, t.id DESC`+opts.SQL("LIMIT -1"))
+			 ORDER BY `+tournamentEffectiveDate+` DESC, t.created_at DESC, t.id DESC`+opts.SQL("LIMIT -1"))
 		if err != nil {
 			yield(nil, fmt.Errorf("sqlite: list tournaments: %w", err))
 			return

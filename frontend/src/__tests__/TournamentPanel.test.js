@@ -323,6 +323,34 @@ describe('TournamentPanel — list view', () => {
         expect(UpdateTournament).toHaveBeenCalledWith(1, 'Blunder Cup (2026)', '2026-01-01', 'Paris');
     });
 
+    test('# and Date lead the row; a date read from the matches is greyed, offered in the form, entered on save', async () => {
+        vi.mocked(GetAllTournaments).mockResolvedValue([/** @type {any} */ ({ id: 9, name: 'Undated Open', date: '', effectiveDate: '2024-05-10', location: 'Nice', matchCount: 2 })]);
+        renderOpen();
+        const row = must((await screen.findByText('Undated Open')).closest('tr'));
+        const cells = [...row.querySelectorAll('td')];
+        expect(cells[0].textContent).toBe('1');
+        expect(cells[1].textContent).toBe('2024-05-10');
+        expect(cells[1].classList.contains('derived-date')).toBe(true);
+        expect(cells[2].textContent).toBe('Undated Open');
+
+        await fireEvent.click(within(row).getByTitle(/^edit$/i));
+        const dateInput = within(row).getByDisplayValue('2024-05-10');
+        await fireEvent.keyDown(dateInput, { key: 'Enter' });
+        await vi.waitFor(() => expect(UpdateTournament).toHaveBeenCalledWith(9, 'Undated Open', '2024-05-10', 'Nice'));
+    });
+
+    test('sorting by date reads the effective date', async () => {
+        vi.mocked(GetAllTournaments).mockResolvedValue([
+            /** @type {any} */ ({ id: 1, name: 'Late', date: '2025-03-01', effectiveDate: '2025-03-01', location: '', matchCount: 0 }),
+            /** @type {any} */ ({ id: 2, name: 'Early', date: '', effectiveDate: '2024-05-10', location: '', matchCount: 1 })
+        ]);
+        renderOpen();
+        await screen.findByText('Late');
+        await fireEvent.click(screen.getByRole('button', { name: /^date/i }));
+        await tick();
+        expect([...document.querySelectorAll('tbody tr td:nth-child(3)')].map((td) => td.textContent)).toEqual(['Early', 'Late']);
+    });
+
     test('sorting by name toggles ascending/descending', async () => {
         renderOpen();
         await screen.findByText('Blunder Cup');
@@ -331,12 +359,12 @@ describe('TournamentPanel — list view', () => {
         await fireEvent.click(sortBtn);
         await tick();
 
-        const namesAsc = [...document.querySelectorAll('tbody tr td:first-child')].map((td) => td.textContent);
+        const namesAsc = [...document.querySelectorAll('tbody tr td:nth-child(3)')].map((td) => td.textContent);
         expect(namesAsc).toEqual(['Amsterdam Open', 'Blunder Cup']);
 
         await fireEvent.click(sortBtn);
         await tick();
-        const namesDesc = [...document.querySelectorAll('tbody tr td:first-child')].map((td) => td.textContent);
+        const namesDesc = [...document.querySelectorAll('tbody tr td:nth-child(3)')].map((td) => td.textContent);
         expect(namesDesc).toEqual(['Blunder Cup', 'Amsterdam Open']);
     });
 });

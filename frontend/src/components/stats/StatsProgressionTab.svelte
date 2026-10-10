@@ -1,7 +1,7 @@
 <script>
     import { loadPositionsFromTournament, loadPositionsFromMatch, openTournamentInPanel, openMatchInPanel } from '../../services/positionLoader.js';
     import { t, translate } from '../../i18n/index.js';
-    import { formatIsoDay, formatUtcDay, formatNumber } from '../../utils/format.js';
+    import { formatIsoDay, formatUtcDay, formatNumber, parseIsoDayUtc } from '../../utils/format.js';
     import { mwc7Percent } from '../../utils/mwc7.js';
     import LineChart from './charts/LineChart.svelte';
     import ScatterChart from './charts/ScatterChart.svelte';
@@ -28,7 +28,8 @@
 
     // ── Derived data ──────────────────────────────────────────────────────────
     let tournaments = $derived(result?.PerTournament ?? []);
-    let matches = $derived(result?.PerMatch ?? []);
+    // An undated match has no place on a time axis: left out rather than drawn at 1970.
+    let matches = $derived((result?.PerMatch ?? []).filter((/** @type {any} */ m) => parseIsoDayUtc(m.Date) != null));
 
     // Objectif de progression : une cible, une échéance, une tendance — rien de plus.
     /** @type {{target: number, weeks: number, setAt: string} | null} */
@@ -110,7 +111,7 @@
         {
             label: metric === 'mwc7' ? metricLabel() : metric === 'pr' ? 'PR per match' : 'MWC loss per match',
             data: matches.map((m) => ({
-                x: parseDateMs(m.Date),
+                x: /** @type {number} */ (parseIsoDayUtc(m.Date)),
                 y: metricValue(m)
             })),
             backgroundColor: PRIMARY_ALPHA,
@@ -150,11 +151,6 @@
 
     function clampRadius(/** @type {number} */ n) {
         return Math.max(4, Math.min(12, 4 + (n / 500) * 8));
-    }
-
-    function parseDateMs(/** @type {string} */ dateStr) {
-        if (!dateStr) return 0;
-        return new Date(dateStr).getTime();
     }
 
     function fmtTimestamp(/** @type {number} */ ms) {

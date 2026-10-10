@@ -229,22 +229,20 @@ func (s *StatsStore) computeSnowieGlobal(ctx context.Context, q statsQuery, resu
 	return nil
 }
 
-// computePerTournament fills PerTournament.
+// computePerTournament fills PerTournament, one row per tournament in the
+// chronological order of its effective date (undated last).
 //
-// tournament.date is TEXT (a date string) in both schemas, unlike
-// match.match_date — use it verbatim. The GROUP BY names every selected
-// tournament column: PostgreSQL requires it, SQLite accepts it.
+// The GROUP BY names every tournament column the effective date and the
+// order read: PostgreSQL requires it, SQLite accepts it.
 func (s *StatsStore) computePerTournament(ctx context.Context, q statsQuery, result *storage.StatsResult) error {
 	d := s.DB
 	var scanErr error
-	// tournament.date is TEXT (a date string) in both schemas, unlike
-	// match.match_date — use it verbatim. The GROUP BY names every selected
-	// tournament column: PostgreSQL requires it, SQLite accepts it.
+	eff := TournamentEffectiveDate(d.DateText)
 	rows, err := s.DB.Query(ctx,
-		`SELECT m.tournament_id, COALESCE(t.name,''), COALESCE(t.date,''), `+d.Bigint(`SUM(`+statsErrExpr+`)`)+`, COUNT(*) `+
+		`SELECT m.tournament_id, COALESCE(t.name,''), `+eff+`, `+d.Bigint(`SUM(`+statsErrExpr+`)`)+`, COUNT(*) `+
 			q.join+q.whereSQL+
 			` AND m.tournament_id IS NOT NULL`+
-			` GROUP BY m.tournament_id, t.name, t.date, t.created_at ORDER BY t.date, t.created_at`,
+			` GROUP BY m.tournament_id, t.id, t.name, t.date, t.created_at`+tournamentChronology(eff),
 		q.baseArgs...,
 	)
 	if err != nil {

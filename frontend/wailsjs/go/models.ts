@@ -3107,6 +3107,7 @@ export namespace domain {
 	    id: number;
 	    name: string;
 	    date: string;
+	    effectiveDate: string;
 	    location: string;
 	    sortOrder: number;
 	    createdAt: string;
@@ -3127,6 +3128,7 @@ export namespace domain {
 	        this.id = source["id"];
 	        this.name = source["name"];
 	        this.date = source["date"];
+	        this.effectiveDate = source["effectiveDate"];
 	        this.location = source["location"];
 	        this.sortOrder = source["sortOrder"];
 	        this.createdAt = source["createdAt"];
