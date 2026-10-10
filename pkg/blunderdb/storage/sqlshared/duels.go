@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"iter"
+	"sort"
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -229,4 +230,50 @@ func boolInt(v bool) int {
 		return 1
 	}
 	return 0
+}
+
+// SwapOriginSeats makes a Match's origin follow its players when their seats
+// trade places: OverTime and each DeclaredBot name a player by seat. The
+// Contributions stay in the order the combined seed was computed over, and
+// Start is the Position the first game began at, which no seat names.
+// A Match without an origin is left alone.
+func SwapOriginSeats(ctx context.Context, db Execer, scope string, matchID int64) error {
+	what := fmt.Sprintf("swap origin seats of match %d", matchID)
+	tenant, targs := db.TenantFilter("", scope)
+	var overTime int
+	var declared string
+	err := db.QueryRow(ctx,
+		`SELECT over_time, declared_bots FROM match_origin WHERE match_id = ? AND `+tenant,
+		append([]any{matchID}, targs...)...).Scan(&overTime, &declared)
+	if errors.Is(err, ErrNoRows) {
+		return nil
+	}
+	if err != nil {
+		return errf(db, what, err)
+	}
+	if overTime == 1 || overTime == 2 {
+		overTime = 3 - overTime
+	}
+	if declared != "" {
+		var bots []storage.DeclaredBot
+		if err := json.Unmarshal([]byte(declared), &bots); err != nil {
+			return errf(db, what, err)
+		}
+		for i := range bots {
+			if bots[i].Player == 1 || bots[i].Player == 2 {
+				bots[i].Player = 3 - bots[i].Player
+			}
+		}
+		// Kept in player order, as SetOrigin writes them.
+		sort.SliceStable(bots, func(i, j int) bool { return bots[i].Player < bots[j].Player })
+		if declared, err = encodeJSONColumn(bots); err != nil {
+			return errf(db, what, err)
+		}
+	}
+	if _, err := db.Exec(ctx,
+		`UPDATE match_origin SET over_time = ?, declared_bots = ? WHERE match_id = ? AND `+tenant,
+		append([]any{overTime, declared, matchID}, targs...)...); err != nil {
+		return errf(db, what, err)
+	}
+	return nil
 }

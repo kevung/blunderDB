@@ -68,7 +68,7 @@ func (cli *CLI) runPlayersSwap(args []string) error {
 		fmt.Println("Usage: blunderdb players swap --db FILE MATCH_ID")
 		fmt.Println()
 		fmt.Println("Swap the two players of a match: the file named them in the wrong order.")
-		fmt.Println("Every position of the match is rewritten from the other player's side.")
+		fmt.Println("No position or analysis changes: each player keeps their statistics, under the other seat.")
 		fmt.Println()
 		fmt.Println("Options:")
 		fs.PrintDefaults()

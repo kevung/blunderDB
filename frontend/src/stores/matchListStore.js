@@ -36,9 +36,10 @@ export function sqlSortKey(column, direction) {
     return direction === 'desc' ? keys[1] : keys[0];
 }
 
-// Fields an edit can change, copied from a fresh read of the row. PR and MWC
-// stay: they come from the page badges, which GetMatchByID does not compute.
-const ROW_FIELDS = ['player1_name', 'player2_name', 'match_date', 'tournament_id', 'tournament_name', 'event', 'comment'];
+// Fields an edit can change, copied from a fresh read of the row. The badges
+// are among them: GetMatchByID computes them as the page does, and swapping
+// the seats moves each person's PR and MWC to the other column.
+const ROW_FIELDS = ['player1_name', 'player2_name', 'match_date', 'tournament_id', 'tournament_name', 'event', 'comment', 'pr', 'mwc_loss', 'pr2', 'mwc_loss2', 'mwc7', 'mwc7_p2'];
 
 /**
  * @param {object} [deps]

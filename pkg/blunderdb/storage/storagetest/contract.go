@@ -75,7 +75,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Match/DiceSequences", testMatchDiceSequences},
 		{"Match/SourceMetadata", testMatchSourceMetadata},
 		{"Match/ListPlayerAliases", testMatchListPlayerAliases},
-		{"Match/SwapCopyOnWrite", testMatchSwapCopyOnWrite},
+		{"Match/SwapKeepsPositions", testMatchSwapKeepsPositions},
 		{"Match/ReanchorAnsweredDoubles", testMatchReanchorAnsweredDoubles},
 		{"Match/ListFilterSortPaginate", testMatchListFilterSortPaginate},
 		{"Tournament/AddRemoveMatch", testTournamentAddRemoveMatch},

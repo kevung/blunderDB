@@ -71,16 +71,25 @@ describe('createMatchList', () => {
         expect(get(store).rows).toHaveLength(10);
     });
 
-    test('refreshRow replaces one row and keeps the others and the badges', async () => {
+    test('refreshRow replaces one row and keeps the others', async () => {
         const { store } = make(3);
         await store.reload();
         const before = get(store).rows;
         await store.refreshRow(2);
         const after = get(store).rows;
         expect(after[1].player1_name).toBe('Renamed');
-        expect(after[1].pr).toBe(0);
         expect(after[0]).toBe(before[0]);
         expect(after[2]).toBe(before[2]);
+    });
+
+    test('refreshRow shows the badges as the backend recomputed them, seat by seat', async () => {
+        const mwc7 = (/** @type {number} */ loss) => ({ available: true, loss });
+        const list = vi.fn(async () => [{ id: 1, player1_name: 'Kevin', player2_name: 'Gildas', pr: 9.2, mwc_loss: 0.19, pr2: 13.2, mwc_loss2: 0.2, mwc7: mwc7(0.19), mwc7_p2: mwc7(0.2) }]);
+        const getByID = vi.fn(async () => ({ id: 1, player1_name: 'Gildas', player2_name: 'Kevin', pr: 13.2, mwc_loss: 0.2, pr2: 9.2, mwc_loss2: 0.19, mwc7: mwc7(0.2), mwc7_p2: mwc7(0.19) }));
+        const store = createMatchList({ list, count: async () => 1, getByID, pageSize: 10 });
+        await store.reload();
+        await store.refreshRow(1);
+        expect(get(store).rows[0]).toMatchObject({ player1_name: 'Gildas', pr: 13.2, mwc_loss: 0.2, mwc7: mwc7(0.2), player2_name: 'Kevin', pr2: 9.2, mwc_loss2: 0.19, mwc7_p2: mwc7(0.19) });
     });
 
     test('an older answer never overwrites a newer one', async () => {
