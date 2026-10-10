@@ -362,6 +362,7 @@ export const showcaseStatsResult = {
     MWCCube: 0.041,
     MWCRolling: { 5: 0.03, 10: 0.036, 50: 0.045, 100: 0.047, 250: 0.048 },
     MWCAvailable: true,
+    MWC7: { available: true, loss: 0.034, has_interval: true, low: 0.022, high: 0.055, elo: 1880, elo_low: 1750, elo_high: 1990, elo_floored: false, matches: 9 },
     MWC7Checker: { available: true, loss: 0.028, has_interval: true, low: 0.015, high: 0.049, elo: 1900, elo_low: 1770, elo_high: 2010, elo_floored: false, matches: 9 },
     MWC7Cube: { available: true, loss: 0.041, has_interval: true, low: 0.02, high: 0.08, elo: 1850, elo_low: 1720, elo_high: 1960, elo_floored: false, matches: 9 },
     PerTournament: [
