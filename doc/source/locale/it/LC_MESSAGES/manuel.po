@@ -8269,15 +8269,13 @@ msgstr ""
 
 #: ../../source/manuel.rst:3530
 msgid ""
-"La partie Crawford n'est pas distinguée : blunderDB n'enregistre pas cet "
-"indicateur sur une position. L'effet pratique est faible — une partie "
-"Crawford n'a aucune décision de videau — mais l'omission est réelle et "
-"vaut mieux d'être écrite que laissée à deviner."
+"Dans la ventilation par score, un score post-Crawford est lu comme "
+"1-away : la partie Crawford et les parties post-Crawford au même score "
+"tombent dans la même cellule."
 msgstr ""
-"La partita Crawford non è distinta: blunderDB non registra questo "
-"indicatore su una posizione. L'effetto pratico è modesto — una partita "
-"Crawford non ha alcuna decisione di cubo — ma l'omissione è reale e vale "
-"meglio scriverla che lasciarla indovinare."
+"Nella ripartizione per punteggio, un punteggio post-Crawford è letto "
+"come 1-away: la partita Crawford e le partite post-Crawford allo stesso "
+"punteggio finiscono nella stessa cella."
 
 #: ../../source/manuel.rst:3536
 msgid "Étude et jeu réel"

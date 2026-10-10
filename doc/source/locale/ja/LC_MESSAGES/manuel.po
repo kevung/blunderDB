@@ -6687,13 +6687,12 @@ msgstr ""
 
 #: ../../source/manuel.rst:3530
 msgid ""
-"La partie Crawford n'est pas distinguée : blunderDB n'enregistre pas cet "
-"indicateur sur une position. L'effet pratique est faible — une partie "
-"Crawford n'a aucune décision de videau — mais l'omission est réelle et "
-"vaut mieux d'être écrite que laissée à deviner."
+"Dans la ventilation par score, un score post-Crawford est lu comme "
+"1-away : la partie Crawford et les parties post-Crawford au même score "
+"tombent dans la même cellule."
 msgstr ""
-"クロフォードゲームは区別されない\\ ：blunderDB "
-"は局面にその印を記録しない。実務上の影響は小さい——クロフォードゲームにはキューブ判断がそもそも存在しない——が、省略は本物であり、推測に委ねるより書いておくほうがよい。"
+"スコア別の内訳では、ポストクロフォードのスコアは 1-away "
+"として読まれます。同じスコアのクロフォードゲームとポストクロフォードのゲームは、同じセルに入ります。"
 
 #: ../../source/manuel.rst:3536
 msgid "Étude et jeu réel"

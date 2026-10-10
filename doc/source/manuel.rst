@@ -3527,10 +3527,9 @@ une faiblesse établie ; une ligne à l'intervalle large ne justifie pas encore 
 plan de travail. Le PR global du tableau de bord porte le même intervalle, sous
 sa carte.
 
-.. note:: La partie Crawford n'est pas distinguée : blunderDB n'enregistre pas
-   cet indicateur sur une position. L'effet pratique est faible — une partie
-   Crawford n'a aucune décision de videau — mais l'omission est réelle et vaut
-   mieux d'être écrite que laissée à deviner.
+.. note:: Dans la ventilation par score, un score post-Crawford est lu comme
+   1-away : la partie Crawford et les parties post-Crawford au même score
+   tombent dans la même cellule.
 
 Étude et jeu réel
 ~~~~~~~~~~~~~~~~~
