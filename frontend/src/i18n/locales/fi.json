@@ -862,6 +862,8 @@
         "reviewComplete": "Kertaus valmis! {count} korttia kerrattu.",
         "settingsSaved": "Asetukset tallennettu",
         "deckSynced": "Pakka \"{name}\" synkronoitu",
+        "exportApkgTooltip": "Vie Anki-pakettina (.apkg)",
+        "apkgExported": "Pakka \"{name}\" viety: {count} kortti(a)",
         "deckReset": "Pakka \"{name}\" nollattu",
         "confirmDeleteDeck": "Poistetaanko pakka \"{name}\"?",
         "confirmResetDeck": "Nollataanko pakka \"{name}\"? Kaikki edistyminen menetetään.",

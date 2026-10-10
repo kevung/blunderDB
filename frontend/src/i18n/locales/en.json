@@ -862,6 +862,8 @@
         "reviewComplete": "Review complete! {count} cards reviewed.",
         "settingsSaved": "Settings saved",
         "deckSynced": "Deck \"{name}\" synced",
+        "exportApkgTooltip": "Export as an Anki package (.apkg)",
+        "apkgExported": "Deck \"{name}\" exported: {count} card(s)",
         "deckReset": "Deck \"{name}\" reset",
         "confirmDeleteDeck": "Delete deck \"{name}\"?",
         "confirmResetDeck": "Reset deck \"{name}\"? All progress will be lost.",

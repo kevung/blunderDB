@@ -1,3 +1,26 @@
+export namespace apkg {
+	
+	export class Result {
+	    name: string;
+	    notes: number;
+	    total: number;
+	    truncated: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new Result(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.name = source["name"];
+	        this.notes = source["notes"];
+	        this.total = source["total"];
+	        this.truncated = source["truncated"];
+	    }
+	}
+
+}
+
 export namespace assistant {
 	
 	export class Entry {

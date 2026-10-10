@@ -862,6 +862,8 @@
         "reviewComplete": "復習完了！{count}枚のカードを復習しました。",
         "settingsSaved": "設定を保存しました",
         "deckSynced": "デッキ「{name}」を同期しました",
+        "exportApkgTooltip": "Anki パッケージとして書き出す (.apkg)",
+        "apkgExported": "デッキ「{name}」を書き出しました：{count} 枚",
         "deckReset": "デッキ「{name}」をリセットしました",
         "confirmDeleteDeck": "デッキ「{name}」を削除しますか?",
         "confirmResetDeck": "デッキ「{name}」をリセットしますか? すべての進捗が失われます。",

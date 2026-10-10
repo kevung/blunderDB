@@ -862,6 +862,8 @@
         "reviewComplete": "Ripasso completato! {count} carte ripassate.",
         "settingsSaved": "Impostazioni salvate",
         "deckSynced": "Mazzo \"{name}\" sincronizzato",
+        "exportApkgTooltip": "Esporta come pacchetto Anki (.apkg)",
+        "apkgExported": "Mazzo \"{name}\" esportato: {count} carta/e",
         "deckReset": "Mazzo \"{name}\" reimpostato",
         "confirmDeleteDeck": "Eliminare il mazzo \"{name}\"?",
         "confirmResetDeck": "Reimpostare il mazzo \"{name}\"? Tutti i progressi andranno persi.",
