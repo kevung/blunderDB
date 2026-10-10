@@ -184,6 +184,11 @@
         font-size: var(--font-size-base);
     }
 
+    /* The row under the pointer, in every table of the tabs (hand-written, unlike PanelTable's). */
+    .stats-panel :global(tbody tr:not(.selected, .spacer, .editing-row):hover) {
+        background-color: var(--color-row-hover);
+    }
+
     /* ── Header ── */
     .stats-header {
         display: flex;
