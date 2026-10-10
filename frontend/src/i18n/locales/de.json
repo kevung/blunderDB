@@ -3251,6 +3251,7 @@
         "placePanel": "Video zurück ins Panel legen",
         "stageResize": "Videogröße ändern",
         "swapSide": "Video auf die andere Brettseite verschieben",
+        "rotate": "Video drehen (O)",
         "stageMove": "Ziehen, um das Video links oder rechts zu platzieren",
         "rate": "Wiedergabegeschwindigkeit"
     },

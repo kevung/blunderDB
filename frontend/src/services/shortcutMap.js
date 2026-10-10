@@ -109,6 +109,7 @@ export const SHORTCUTS = {
             'Ctrl+Shift+ArrowRight',
             'v',
             'Shift+V',
+            'o',
             '[',
             ']'
         ],

@@ -92,6 +92,7 @@
     import { get } from 'svelte/store';
     import { createCursorFollower, isTyping } from '../services/videoFollow.js';
     import { saveVideoResume, videoResumeMs } from '../services/videoResume.js';
+    import { loadVideoRotation, nextRotation, saveVideoRotation } from '../services/videoRotation.js';
 
     // Mirrors Go's transcript.DefaultMatchLength: the form shows it before any call.
     /** @typedef {import('../services/transcriptionKeys.js').KeyState} KeyState */
@@ -545,6 +546,18 @@
         };
     });
 
+    // The angle the draft's video is turned to, 0 to 270, kept for the draft on this machine.
+    let videoRotation = $state(0);
+    $effect(() => {
+        const id = draftId;
+        videoRotation = untrack(() => loadVideoRotation(id));
+    });
+
+    function rotateVideo() {
+        videoRotation = nextRotation(videoRotation);
+        saveVideoRotation(draftId, videoRotation);
+    }
+
     /**
      * The video keys, live only while a source is attached and read by their position
      * for the arrows (event.code), whatever the layout: Space plays or pauses,
@@ -578,6 +591,10 @@
         }
         // A letter follows its label, as every letter shortcut does; only the arrows are read
         // by their place.
+        if (event.key === 'o' && !event.ctrlKey && !event.shiftKey) {
+            rotateVideo();
+            return true;
+        }
         if ((event.key === 'v' || event.key === 'V') && !event.ctrlKey) {
             stampCursor(event.key === 'V' || event.shiftKey);
             return true;
@@ -1910,6 +1927,8 @@
                             owner="transcription"
                             source={videoSource}
                             startMs={videoStart}
+                            rotation={videoRotation}
+                            onrotate={rotateVideo}
                             onrelocate={(/** @type {string} */ path) => attachVideo(path)}
                             theatreTarget={$theatreStore ? $theatreTargetStore : null}
                             ontheatre={enterTheatre}

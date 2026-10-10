@@ -10,8 +10,11 @@
     import { logger } from '../utils/logger.js';
     import { VIDEO_RATES, stepRate as nextRate } from '../utils/videoRate.js';
 
-    /** @type {{ source: string, startMs?: number, onrelocate?: (path: string) => void, onended?: () => void }} */
-    let { source, startMs = 0, onrelocate = undefined, onended = undefined } = $props();
+    // `rotation`: 0, 90, 180 or 270 degrees clockwise. The media turns inside the box (the
+    // player's own controls with it); at 90 and 270 it takes the box's height as its width and
+    // the reverse, so the picture stays whole.
+    /** @type {{ source: string, startMs?: number, rotation?: number, onrelocate?: (path: string) => void, onended?: () => void }} */
+    let { source, startMs = 0, rotation = 0, onrelocate = undefined, onended = undefined } = $props();
 
     /** @type {'' | 'file' | 'youtube' | 'url'} */
     let kind = $state('');
@@ -304,6 +307,10 @@
             onerror={onVideoError}
             onended={() => onended?.()}
             onfocus={reclaimFocus}
+            class:turned={rotation !== 0}
+            class:sideways={rotation === 90 || rotation === 270}
+            style:--turn="{rotation}deg"
+            data-rotation={rotation}
             onvolumechange={keepMuted}
             onratechange={() => {
                 if (!video) return;
@@ -312,7 +319,16 @@
             }}
         ></video>
     {:else if kind === 'youtube' && src}
-        <iframe bind:this={frame} {src} title={$t('video.player')} allow="autoplay; encrypted-media"></iframe>
+        <iframe
+            bind:this={frame}
+            {src}
+            title={$t('video.player')}
+            allow="autoplay; encrypted-media"
+            class:turned={rotation !== 0}
+            class:sideways={rotation === 90 || rotation === 270}
+            style:--turn="{rotation}deg"
+            data-rotation={rotation}
+        ></iframe>
     {/if}
     {#if status === 'ready' && rateFlash}
         {#key rate}
@@ -393,6 +409,19 @@
         border: 0;
         display: block;
         object-fit: contain;
+    }
+    /* Turned about the box's centre; sideways, the element is as wide as the box is high. */
+    video.turned,
+    iframe.turned {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(var(--turn));
+    }
+    video.sideways,
+    iframe.sideways {
+        width: 100cqh;
+        height: 100cqw;
     }
     .video-note {
         position: absolute;

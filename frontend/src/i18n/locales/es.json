@@ -3251,6 +3251,7 @@
         "placePanel": "Devolver el vídeo al panel",
         "stageResize": "Redimensionar el vídeo",
         "swapSide": "Mover el vídeo al otro lado del tablero",
+        "rotate": "Girar el vídeo (O)",
         "stageMove": "Arrastrar para poner el vídeo a la izquierda o a la derecha",
         "rate": "Velocidad de reproducción"
     },

@@ -3251,6 +3251,7 @@
         "placePanel": "Put the video back in the panel",
         "stageResize": "Resize the video",
         "swapSide": "Move the video to the other side of the board",
+        "rotate": "Rotate the video (O)",
         "stageMove": "Drag to put the video on the left or the right",
         "rate": "Playback speed"
     },

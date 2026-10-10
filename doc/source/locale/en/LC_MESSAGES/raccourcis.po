@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-10 21:44+0200\n"
+"POT-Creation-Date: 2026-10-10 23:52+0200\n"
 "PO-Revision-Date: 2025-11-01 23:50+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -1779,6 +1779,18 @@ msgstr ""
 " (up to 2× for YouTube)."
 
 #: ../../source/raccourcis.rst:1
+msgid "o (vidéo attachée)"
+msgstr "o (video attached)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Faire pivoter la vidéo d'un quart de tour (0°, 90°, 180°, 270°), comme le"
+" bouton ⟳ de la barre vidéo."
+msgstr ""
+"Rotate the video by a quarter turn (0°, 90°, 180°, 270°), like the ⟳ "
+"button of the video bar."
+
+#: ../../source/raccourcis.rst:1
 msgid "F11 (vidéo attachée)"
 msgstr "F11 (video attached)"
 
@@ -1794,7 +1806,7 @@ msgstr ""
 "the theatre, BACKSPACE clears the dice entered (:ref:`details "
 "<transcription_theatre>`)."
 
-#: ../../source/raccourcis.rst:421
+#: ../../source/raccourcis.rst:422
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -1802,7 +1814,7 @@ msgstr ""
 "A roll that allows no play records the dance on its own, with no extra "
 "keystroke."
 
-#: ../../source/raccourcis.rst:424
+#: ../../source/raccourcis.rst:425
 msgid ""
 "Avec une vidéo attachée, seule une validation explicite — *ENTREE*, le "
 "double-clic sur un candidat, le coup achevé au plateau — pose l'instant "
@@ -1820,7 +1832,7 @@ msgstr ""
 "typed, *ALTGR* included on a keyboard that places them that way. Without "
 "a video, these keys keep their usual meaning."
 
-#: ../../source/raccourcis.rst:432
+#: ../../source/raccourcis.rst:433
 msgid ""
 "Le chiffre a un seul sens : **il commence un jet là où le curseur est**. "
 "En bout de document il n'y a rien sous le curseur, donc il valide le coup"
@@ -1847,7 +1859,7 @@ msgstr ""
 "following decision, as at the end of the document, and ENTER leads there "
 "too."
 
-#: ../../source/raccourcis.rst:443
+#: ../../source/raccourcis.rst:444
 msgid ""
 "Ce qui est en train d'être tapé se dessine dans le transcript, en "
 "pointillés, à la place où il sera écrit : une correction recouvre la "
@@ -1860,7 +1872,7 @@ msgstr ""
 "insertion opens a cell between its two neighbours, and the side is read "
 "from the column. Nothing is recorded before the validation."
 
-#: ../../source/raccourcis.rst:448
+#: ../../source/raccourcis.rst:449
 msgid ""
 "Une insertion au milieu du document continue d'insérer : la validation "
 "ouvre une cellule vide à la suite, et l'action suivante s'insère à son "
@@ -1872,7 +1884,7 @@ msgstr ""
 "in its turn instead of overwriting the one that follows. The end of the "
 "game or moving the cursor puts an end to it."
 
-#: ../../source/raccourcis.rst:453
+#: ../../source/raccourcis.rst:454
 msgid ""
 "Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
 "rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
@@ -1884,7 +1896,7 @@ msgstr ""
 " the document. The sentence clears itself and gives the place back to the"
 " expected action."
 
-#: ../../source/raccourcis.rst:458
+#: ../../source/raccourcis.rst:459
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était — "
@@ -1904,7 +1916,7 @@ msgstr ""
 "review” until it is validated. Moving the cursor forward or back after "
 "changing something records the correction on the way."
 
-#: ../../source/raccourcis.rst:466
+#: ../../source/raccourcis.rst:467
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1930,7 +1942,7 @@ msgstr ""
 "inserted for the side it was missing from. The undo stack lives in "
 "memory: it is lost when the draft is closed."
 
-#: ../../source/raccourcis.rst:477
+#: ../../source/raccourcis.rst:478
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1940,7 +1952,7 @@ msgstr ""
 "transcript and the draft bar — is described in "
 ":ref:`panneau_transcription`."
 
-#: ../../source/raccourcis.rst:484
+#: ../../source/raccourcis.rst:485
 msgid "Planche-contact"
 msgstr "Contact sheet"
 
@@ -1988,7 +2000,7 @@ msgstr "Open the position on the board and close the sheet."
 msgid "Refermer la planche."
 msgstr "Close the sheet."
 
-#: ../../source/raccourcis.rst:501
+#: ../../source/raccourcis.rst:502
 msgid "Panneau d'aide"
 msgstr "Help Panel"
 
