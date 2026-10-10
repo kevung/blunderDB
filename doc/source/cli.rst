@@ -983,6 +983,32 @@ portent leur intervalle à 95 % sur les matchs (colonne ``95 % CI``), et
    ./blunderdb match --db base.db --id 1 --format text
    ./blunderdb match --db base.db --id 1 --output match1.json
 
+**match repair** — Réécrit les positions, les analyses et les erreurs d'un match
+à partir de son fichier source, celui que l'onglet **Infos** de sa fiche nomme.
+Le match garde son identifiant, son tournoi, les noms des joueurs tels qu'ils
+sont enregistrés (alias, corrections, inversion), sa date, son commentaire, sa
+vidéo et ses repères, sa transcription, et les commentaires écrits sur ses
+positions : un commentaire laissé sur une position que la réparation quitte
+passe sur celle que le fichier nomme pour le même coup. ``--dry-run`` dit ce qui
+changerait sans rien écrire. ``--list`` passe en revue tous les matchs qui
+nomment un fichier source et donne ceux qui en diffèrent, avec le nombre de
+coups dont la position change et la part de coups analysés avant et après, ainsi
+que ceux dont le fichier est introuvable ; il n'écrit rien. Un chemin relatif
+est cherché depuis le dossier de la base, puis depuis le dossier courant. La
+réparation est refusée quand le fichier est introuvable ou ne contient plus le
+match (son empreinte n'est plus celle du match enregistré). Le serveur la sert
+par ``/v1/matches.repair``, le fichier source envoyé dans la requête.
+
+.. code-block:: bash
+
+   ./blunderdb match repair --db <chemin> (--id <ID> [--dry-run] | --list) [--format text|json]
+
+.. code-block:: bash
+
+   ./blunderdb match repair --db base.db --list
+   ./blunderdb match repair --db base.db --id 42 --dry-run
+   ./blunderdb match repair --db base.db --id 42
+
 .. _cli_collection:
 
 collection — Gérer les collections

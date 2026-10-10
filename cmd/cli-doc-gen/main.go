@@ -59,6 +59,10 @@ func composite(name string) []string {
 		return cli.NewCLI().StatsSubcommands()
 	case "training":
 		return cli.NewCLI().TrainingSubcommands()
+	case "match":
+		// "" is the command's own flags, which it keeps beside its
+		// sub-command.
+		return append([]string{""}, cli.NewCLI().MatchSubcommands()...)
 	default:
 		return nil
 	}
@@ -155,6 +159,10 @@ func run() error {
 		}
 		if subs := composite(name); subs != nil {
 			for _, sub := range subs {
+				if sub == "" {
+					writeSection(&out, name, captureHelp([]string{name, "--help"}))
+					continue
+				}
 				writeSection(&out, fmt.Sprintf("%s %s", name, sub),
 					captureHelp([]string{name, sub, "--help"}))
 			}

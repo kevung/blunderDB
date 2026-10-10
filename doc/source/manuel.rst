@@ -1819,6 +1819,16 @@ n'en nomme pas ; l'horloge et la table d'équité ne sont pas importées. La
 fiche affiche cet auteur à côté du commentaire, et l'export le copie avec lui ;
 modifier le commentaire le signe de **Votre nom** (réglages).
 
+La ligne **Fichier source** porte le bouton ⟲ quand le match en nomme un : il
+relit ce fichier et réécrit les positions, les analyses et les erreurs du match
+comme un import neuf, en gardant tout ce qui a été saisi depuis (tournoi, noms,
+inversion des joueurs, commentaires, transcription, vidéo et repères). Un match
+conforme à son fichier le dit dans la barre d'état ; sinon une confirmation
+donne le nombre de coups qui changent de position et la part de coups analysés
+avant et après. La réparation est refusée quand le fichier est introuvable ou ne
+contient plus ce match. La commande ``match repair`` fait la même chose, et
+``match repair --list`` trouve les matchs qui diffèrent de leur fichier.
+
 Un match transcrit depuis une vidéo en porte la **source** : une URL http(s)
 (YouTube, par exemple) ou le chemin d'un fichier. La ligne **Vidéo** de la section
 **Infos** la modifie : saisir une URL ou un chemin puis *ENTREE*, **Fichier…**

@@ -3800,6 +3800,33 @@ Examples:
   blunderdb match --db database.db --id 1 --output match.json
 ```
 
+### `blunderdb match repair`
+
+```
+Usage: blunderdb match repair --db FILE (--id N [--dry-run] | --list)
+
+Rewrite a match's positions, analyses and errors from its source file,
+keeping its id, tournament, names, comments, transcription and video marks.
+Refused when the source file is missing or no longer holds the match.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -dry-run
+    	Say what the repair would change, without writing
+  -format string
+    	Output format: text, json (default "text")
+  -id int
+    	Match ID to repair
+  -list
+    	List the matches that differ from their source file (writes nothing)
+
+Examples:
+  blunderdb match repair --db base.db --list
+  blunderdb match repair --db base.db --id 42 --dry-run
+  blunderdb match repair --db base.db --id 42
+```
+
 ### `blunderdb mcp`
 
 ```

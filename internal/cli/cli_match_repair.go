@@ -9,6 +9,10 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 )
 
+// MatchSubcommands lists the sub-commands of `match`, beside its own flags
+// (CLI_USAGE.md is generated from it).
+func (cli *CLI) MatchSubcommands() []string { return []string{"repair"} }
+
 // runMatchRepair is `match repair`: the match panel's repair, through the
 // same RepairMatch as the daemon's matches.repair.
 func (cli *CLI) runMatchRepair(args []string) error {
