@@ -66,7 +66,7 @@ export default {
 <li>kunkin pelaajan pistetilanteen,</li>
 <li>pelattavat nopat. Jos nopilla ei näy arvoja, noppien sijainti osoittaa, kummalla pelaajalla on vuoro ja että asema on kuutiopäätös. Kun kuutiopäätös on vastaus tuplaukseen (hyväksy/luovuta), tarjottu kuutio näytetään laudan keskellä tarjotulla arvolla.</li>
 </ul>
-<p>Hiiren oikea napsautus laudalla avaa valikon, joka tarjoaa: näytetyn aseman arvioinnin Eval-paneelissa, sen peilikuvan arvioinnin, laudan kuvan ja sen analyysin kopioinnin leikepöydälle (<em>CTRL-X CTRL-X</em>:n vastine, vaikeampi löytää), <strong>kuvan tallennuksen tiedostoon</strong> SVG- tai PNG-muodossa, uuden näkymän avaamisen tähän asemaan, ja — jos asema tulee jo tietokannasta — sen lisäämisen Anki-pakkaan (välein toistaminen) tai sen <strong>naapuriasemien</strong> järjestämisen (ks. Hakupaneeli). Laudalla pelatun siirron aikana (tietovisa, Transkriptio) valikko alkaa kohdalla <em>Aloita alusta</em>, joka nollaa siirron koskematta asemaan. Muokkauksessa ja Evalissa, joissa oikea napsautus laudalla asettaa nappuloita, valikko avautuu oikealla napsautuksella laudan ulkopuolella — noppien, tuplauskuution ja pistetilanteiden ulkopuolella — ja tarjoaa vain kohdat <em>Tyhjennä asema</em> (kuten <em>ASKELPALAUTIN</em>) ja <em>Aloitusasema</em>, joka asettaa uuden pelin nappulat.</p>
+<p>Hiiren oikea napsautus laudalla avaa valikon, joka tarjoaa: näytetyn aseman arvioinnin Eval-paneelissa, sen peilikuvan arvioinnin, laudan kuvan ja sen analyysin kopioinnin leikepöydälle (<em>CTRL-X CTRL-X</em>:n vastine, vaikeampi löytää), <strong>kuvan tallennuksen tiedostoon</strong> SVG- tai PNG-muodossa, uuden näkymän avaamisen tähän asemaan, ja — jos asema tulee jo tietokannasta — sen lisäämisen Anki-pakkaan (välein toistaminen) tai sen <strong>naapuriasemien</strong> järjestämisen (ks. Hakupaneeli). Laudalla pelatun siirron aikana (tietovisa, Transkriptio) oikea napsautus laudalla aloittaa koko siirron alusta koskematta asemaan; valikko avautuu siellä vasta ennen ensimmäistä askelta. Muokkauksessa ja Evalissa, joissa oikea napsautus laudalla asettaa nappuloita, valikko avautuu oikealla napsautuksella laudan ulkopuolella — noppien, tuplauskuution ja pistetilanteiden ulkopuolella — ja tarjoaa vain kohdat <em>Tyhjennä asema</em> (kuten <em>ASKELPALAUTIN</em>) ja <em>Aloitusasema</em>, joka asettaa uuden pelin nappulat.</p>
 <p>Leikepöytä on arkinen ele; tallentaminen on se toinen tarve — kuvitus artikkeliin, foorumiviestiin, oppituntiin. <strong>SVG</strong> tarjotaan siksi, että lauta on sellainen: se on muoto joka kestää suurentamisen, se jonka voi panna asiakirjaan sumentumatta. PNG johdetaan siitä, kuten leikepöydälle kopiointikin: yksi renderöinti, kolme määränpäätä, joten yksikään ei voi ajautua muista erilleen. Tämä valikko ei ilmesty Eval-paneelissa eikä Haku-paneelissa, joissa oikea painike jo asettaa toisen värin nappuloita. Katso Aseman tuominen Eval-paneeliin aseman tuomisesta Eval-paneeliin.</p>
 <p>Tilarivi on jäsennelty vasemmalta oikealle seuraavin tiedoin:</p>
 <ul>
@@ -1197,7 +1197,7 @@ export default {
 </tr>
 <tr>
 <td>Oikea napsautus laudalla (laudalla pelattu siirto)</td>
-<td>Avaa laudan valikko, joka alkaa kohdalla <em>Aloita alusta</em>: siirto nollataan, ei asemaa.</td>
+<td>Aloita koko siirto alusta, asema muuttumattomana. Kunnes yhtään askelta on pelattu, laudan valikko avautuu tavalliseen tapaan.</td>
 </tr>
 </tbody>
 </table>

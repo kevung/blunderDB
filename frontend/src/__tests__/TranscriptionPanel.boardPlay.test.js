@@ -37,7 +37,7 @@ import { quizPlayStore, quizPlayValidateStore } from '../stores/quizPlayStore.js
 import { selectedMoveStore } from '../stores/analysisStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { activeTabStore, statusBarModeStore } from '../stores/uiStore.js';
-import { selectSource, playHop } from '../services/quizPlay.js';
+import { playHop } from '../services/quizPlay.js';
 
 const BLACK = 0;
 const WHITE = 1;
@@ -112,7 +112,7 @@ async function armed(first = 'Digit6', second = 'Digit1') {
 
 /** Un pas joué au plateau, tel que le clic le joue. */
 function hop(/** @type {number} */ from, /** @type {number} */ to) {
-    quizPlayStore.update((/** @type {any} */ s) => playHop(selectSource(s, from), from, to));
+    quizPlayStore.update((/** @type {any} */ s) => playHop(s, from, to));
 }
 
 const diceCells = () => [...document.querySelectorAll('.dice-triangle button')];

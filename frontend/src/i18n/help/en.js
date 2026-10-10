@@ -66,7 +66,7 @@ export default {
 <li>the score of each player,</li>
 <li>the dice to play. If no values are shown on the dice, the position of the dice indicates which player is on roll and that the position is a cube decision. When the cube decision is a response to a double (take/pass), the offered cube is shown in the centre of the board, at the offered value.</li>
 </ul>
-<p>A right click on the board opens a context menu offering: evaluate the position as displayed in the Eval panel, evaluate its mirror, copy the board image with its analysis to the clipboard (the equivalent of <em>CTRL-X CTRL-X</em>, harder to discover), <strong>save the image to a file</strong> as SVG or PNG, open a new view on this position, and — if the position already comes from the database — add it to an Anki deck (spaced repetition) or rank its <strong>neighbouring positions</strong> (see Search Panel). During a move played on the board (quiz, Transcription), the menu starts with <em>Start over</em>, which resets the move without touching the position. In edit mode and in Eval, where a right click on the board places checkers, the menu opens with a right click outside the board — outside the dice, the cube and the scores — and offers only <em>Clear the position</em> (like <em>BACKSPACE</em>) and <em>Starting position</em>, which sets up the checkers of a new game.</p>
+<p>A right click on the board opens a context menu offering: evaluate the position as displayed in the Eval panel, evaluate its mirror, copy the board image with its analysis to the clipboard (the equivalent of <em>CTRL-X CTRL-X</em>, harder to discover), <strong>save the image to a file</strong> as SVG or PNG, open a new view on this position, and — if the position already comes from the database — add it to an Anki deck (spaced repetition) or rank its <strong>neighbouring positions</strong> (see Search Panel). During a move played on the board (quiz, Transcription), a right click on the board starts the whole move over without touching the position; the menu opens there only before the first step. In edit mode and in Eval, where a right click on the board places checkers, the menu opens with a right click outside the board — outside the dice, the cube and the scores — and offers only <em>Clear the position</em> (like <em>BACKSPACE</em>) and <em>Starting position</em>, which sets up the checkers of a new game.</p>
 <p>The clipboard is the everyday gesture; saving is the other need — the illustration for an article, a forum post, a lesson. <strong>SVG</strong> is offered because the board is one: it is the form that survives being enlarged, the one you put in a document without blurring it. PNG derives from it, as does the clipboard copy: one rendering, three destinations, so none of them can drift from the others. This menu does not appear in the Eval panel or in the Search panel, where the right button already places the other colour's checkers. See Bringing a position into the Eval panel for bringing a position into the Eval panel.</p>
 <p>The status bar is structured from left to right with the following information:</p>
 <ul>
@@ -1197,7 +1197,7 @@ export default {
 </tr>
 <tr>
 <td>Right-click on the board (move played on the board)</td>
-<td>Open the board menu, which starts with <em>Start over</em>: the move is reset, not the position.</td>
+<td>Start the whole move over from the beginning, the position unchanged. As long as no step is played, the board menu opens as usual.</td>
 </tr>
 </tbody>
 </table>

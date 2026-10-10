@@ -14,7 +14,7 @@
     import { get } from 'svelte/store';
     import { statusBarModeStore, isAnyModalOpen, activeModal, MODAL, pipcountVisibleStore, activeTabStore } from '../stores/uiStore';
     import { subscribeBoardRedrawTriggers as subscribeSharedRedrawTriggers } from '../services/boardRedraw.js';
-    import { boardIsMirrored, labelsFlipped, screenOfModelPoint, screenOfNotationPoint } from '../services/boardOrientation.js';
+    import { boardIsMirrored, labelsFlipped, screenOfNotationPoint } from '../services/boardOrientation.js';
     import { searchStructureModeStore, searchOfferedCubeStore } from '../stores/searchExcludePositionStore';
     import { boardColorsStore } from '../stores/boardColorsStore';
     import { sendPositionToEval, evaluateInNewView } from '../services/positionService.js';
@@ -23,7 +23,7 @@
     import { viewStore } from '../stores/viewStore.js';
     import * as anki from '../services/ankiService.js';
     import { ankiDecksStore } from '../stores/ankiStore.js';
-    import { quizPlayStore, quizPlayTargetsStore, quizPlayValidateStore } from '../stores/quizPlayStore.js';
+    import { quizPlayStore, quizPlayValidateStore } from '../stores/quizPlayStore.js';
     import { diceShade, orderedDice } from '../services/boardMove.js';
     import { transcriptionCubeRequestStore, transcriptionBoardSwapStore } from '../stores/transcriptionStore.js';
     import { resetBoardPlay } from '../services/transcriptionPlay.js';
@@ -519,20 +519,6 @@
         return acts.some(isResponseCubeAction);
     }
 
-    // Points offerts par le coup en cours, en numéros affichés : les pas de
-    // `LegalMoves` sont absolus, convertis par le même `mirrored` que le clic.
-    /** @param {boolean} mirrored */
-    function playHighlights(mirrored) {
-        const play = get(quizPlayStore);
-        // La grammaire d'ADR-0086 n'allume aucune cible : le pion cliqué part aussitôt.
-        if (!play || get(quizPlayValidateStore)) return {};
-        const shown = (/** @type {number} */ point) => screenOfModelPoint(point, mirrored);
-        return {
-            targets: [...$quizPlayTargetsStore].map(shown),
-            selected: play.selected === null || play.selected === undefined ? null : shown(play.selected)
-        };
-    }
-
     // Les dés joués, grisés, pour tout coup armé selon la grammaire d'ADR-0086 (demi-voile d'un
     // double, dés gris d'un coup achevé). Le miroir ne change pas les dés.
     /** @param {BoardPosition} position */
@@ -598,7 +584,6 @@
         if (dx !== promptAnchor.dx || dy !== promptAnchor.dy) promptAnchor = { dx, dy };
         // `mirrored` convertit un point absolu, `flip` un point de notation (boardOrientation.js).
         const flip = isPlayer2Perspective(position);
-        const mirrored = displayMirrored();
         logger.log('drawBoard', width, height, 'decision_type:', position.decision_type);
 
         const dynamic = !staticLayer || !dynamicLayer || staticFlip !== flip ? rebuildStaticLayers(two, geom, flip) : dynamicLayer;
@@ -607,7 +592,6 @@
             text: sceneText,
             offeredCube: isOfferedCube(position),
             showPipcount,
-            play: playHighlights(mirrored),
             moves: selectedMoveArrows(flip),
             diceUsed: playedDice(position)
         });

@@ -673,6 +673,7 @@ describe('the quiz move is played on the board', () => {
     function mountQuiz({ mirrored = false, plays, position }) {
         const b = mount({ mode: 'NORMAL', position, mirrored });
         b.stores.quizPlay.set(newPlay(position, plays));
+        b.stores.quizPlayValidate.set(() => {});
         return b;
     }
 
@@ -691,13 +692,12 @@ describe('the quiz move is played on the board', () => {
     // 2-1 : le moteur ne rend que 13/11, le 1 restant injouable dans ce plateau de test.
     const play13to11 = [{ steps: [{ from: 13, to: 11, hit: false }], notation: '13/11', result: {} }];
 
-    test('the clicked source and destination move the checker', () => {
+    test('the clicked checker moves by the first die', () => {
         const position = { ...posWith({ 13: [5, 0] }), dice: [2, 1] };
         const b = mountQuiz({ plays: play13to11, position });
         b.click(b.slot(13, 0));
-        b.click(b.slot(11, 0));
         const state = get(b.stores.quizPlay);
-        expect(state.steps).toEqual([{ from: 13, to: 11 }]);
+        expect(state.steps).toEqual([{ from: 13, to: 11, die: 2 }]);
         expect(state.board.points[11].checkers).toBe(1);
         b.detach();
     });
@@ -707,8 +707,7 @@ describe('the quiz move is played on the board', () => {
         const b = mountQuiz({ mirrored: true, plays: play13to11, position });
         // En miroir, le point 13 du modèle est dessiné là où le 12 le serait.
         b.click(b.slot(12, 0));
-        b.click(b.slot(14, 0));
-        expect(get(b.stores.quizPlay).steps).toEqual([{ from: 13, to: 11 }]);
+        expect(get(b.stores.quizPlay).steps).toEqual([{ from: 13, to: 11, die: 2 }]);
         b.detach();
     });
 
@@ -716,7 +715,6 @@ describe('the quiz move is played on the board', () => {
         const position = { ...posWith({ 13: [5, 0] }), dice: [2, 1] };
         const b = mountQuiz({ plays: play13to11, position });
         b.click(b.slot(13, 0));
-        b.click(b.slot(11, 0));
         expect(b.pos().board.points[13].checkers).toBe(5);
         b.detach();
     });
@@ -724,7 +722,6 @@ describe('the quiz move is played on the board', () => {
     test('a click no legal play offers moves nothing, and says nothing', () => {
         const position = { ...posWith({ 13: [5, 0] }), dice: [2, 1] };
         const b = mountQuiz({ plays: play13to11, position });
-        b.click(b.slot(13, 0));
         b.click(b.slot(9, 0));
         expect(get(b.stores.quizPlay).steps).toEqual([]);
         b.detach();
@@ -765,6 +762,7 @@ describe('le coup joué au plateau d’une transcription (T2.3, ADR-0052)', () =
      */
     function mountPlay({ rolled = false } = {}) {
         const b = mount({ mode: 'TRANSCRIBE', position: POSITION });
+        b.stores.quizPlayValidate.set(() => {});
         b.stores.quizPlay.set(rolled ? newBoardPlay(POSITION, [BY_ROLL[0]], { rolled: [6, 1] }) : newBoardPlay(POSITION, BY_ROLL));
         return b;
     }
@@ -779,17 +777,11 @@ describe('le coup joué au plateau d’une transcription (T2.3, ADR-0052)', () =
         b.detach();
     });
 
-    test('deux clics font exactement ce que fait le glissé', () => {
-        const dragged = mountPlay();
-        dragged.drag(dragged.slot(13, 0), dragged.slot(7, 0));
-        const byDrag = get(dragged.stores.quizPlay);
-        dragged.detach();
-
-        const clicked = mountPlay();
-        clicked.click(clicked.slot(13, 0));
-        clicked.click(clicked.slot(7, 0));
-        expect(get(clicked.stores.quizPlay).steps).toEqual(byDrag.steps);
-        clicked.detach();
+    test('un clic joue le pion par le premier dé du jet', () => {
+        const b = mountPlay({ rolled: true });
+        b.click(b.slot(13, 0));
+        expect(get(b.stores.quizPlay).steps).toEqual([{ from: 13, to: 7, die: 6 }]);
+        b.detach();
     });
 
     // La recette de la fiche : quatre pas, quatre gestes, et les deux dés du
@@ -967,11 +959,11 @@ describe('ADR-0086: the play follows the one grammar once its mode opts in', () 
         ])
     ];
 
-    function mountGrammar({ optIn = true } = {}) {
+    function mountGrammar() {
         const b = mount({ mode: 'NORMAL', position });
         const validate = vi.fn();
         b.stores.quizPlay.set(newPlay(position, plays));
-        if (optIn) b.stores.quizPlayValidate.set(validate);
+        b.stores.quizPlayValidate.set(validate);
         const dice = sideTargets(b.geom, b.cfg, 0);
         return { b, validate, dice };
     }
@@ -1024,14 +1016,6 @@ describe('ADR-0086: the play follows the one grammar once its mode opts in', () 
         expect(get(b.stores.quizPlay).steps).toEqual([]);
         expect(get(b.stores.quizPlay).board.points[8].checkers).toBe(3);
         expect(b.deps.openContextMenu).toHaveBeenCalledTimes(1);
-        b.detach();
-    });
-
-    test('without the opt-in the click still chooses a source', () => {
-        const { b } = mountGrammar({ optIn: false });
-        b.click(b.slot(8, 0));
-        expect(steps(b)).toEqual([]);
-        expect(get(b.stores.quizPlay).selected).toBe(8);
         b.detach();
     });
 });

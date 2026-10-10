@@ -1,8 +1,8 @@
 import { writable, derived } from 'svelte/store';
-import { completedPlay, destinationsFrom } from '../services/quizPlay.js';
+import { completedPlay } from '../services/quizPlay.js';
 
-// Le coup joué SUR LE PLATEAU, par une question de pions de quiz ou une transcription (dés déduits
-// des pas, ou déplacement libre d'un coup illégal, ADR-0052) : un seul magasin, un seul réducteur.
+// Le coup joué SUR LE PLATEAU, par une question de pions de quiz ou une transcription (pas joués selon la
+// grammaire d'ADR-0086, ou déplacement libre d'un coup illégal, ADR-0052) : un seul magasin, un seul réducteur.
 // Non nul UNIQUEMENT pendant un coup au plateau — c'est le signal ; le mode de l'application ne
 // change pas.
 
@@ -12,13 +12,9 @@ export const quizPlayStore = writable(null);
 /** Le coup est-il complet, donc prêt à être jugé (ou enregistré) ? */
 export const quizPlayCompleteStore = derived(quizPlayStore, ($s) => ($s ? completedPlay($s) !== null : false));
 
-/** Les destinations offertes par la source choisie, s'il y en a une. */
-export const quizPlayTargetsStore = derived(quizPlayStore, ($s) => ($s && !$s.free && $s.selected !== null ? destinationsFrom($s, $s.selected) : new Set()));
-
-// Le rappel de validation du mode qui a armé le coup. Non nul, il fait suivre au plateau la
-// grammaire d'ADR-0086 (services/boardMove.js : clic sur un pion, clic sur les dés, clic droit) ;
-// nul, le coup garde la saisie source puis destination, tant que son mode n'a pas basculé.
-// Le coup désarmé l'efface : un mode qui arme sans rappel ne reçoit pas celui d'un autre.
+// Le rappel de validation du mode qui a armé le coup : il fait suivre au plateau la grammaire
+// d'ADR-0086 (services/boardMove.js : clic sur un pion, clic sur les dés, clic droit). Le coup
+// désarmé l'efface : un mode ne reçoit pas celui d'un autre.
 /** @type {import('svelte/store').Writable<(() => void)|null>} */
 export const quizPlayValidateStore = writable(null);
 

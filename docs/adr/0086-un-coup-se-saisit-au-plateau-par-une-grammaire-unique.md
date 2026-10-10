@@ -88,15 +88,14 @@ et un coup achevé part seul en Transcription quand rien ne l'annonce.
 ## Conséquences
 
 - Les modes basculent un par un : un mode passe à la grammaire en armant son coup avec son
-  rappel de validation (`armBoardMove`, `quizPlayValidateStore`). Sans rappel, le plateau garde
-  la saisie source puis destination ; un coup désarmé efface le rappel.
+  rappel de validation (`armBoardMove`, `quizPlayValidateStore`) ; un coup désarmé efface le
+  rappel. Tous les modes ont basculé : la saisie source puis destination est retirée.
 
-- `quizPlay.selectSource` et `quizPlayTargetsStore` (cibles allumées) n'ont plus d'appelant au
-  plateau ; `playHop` reste l'unique point d'entrée d'un pas contraint.
+- `quizPlay.selectSource` et `quizPlayTargetsStore` (cibles allumées) sont retirés ; `playHop` reste l'unique point d'entrée d'un pas contraint.
 - L'état du coup porte l'ordre des dés (`swapped`) hors du Duel aussi ; `diceUsed` se dessine
   pour tout coup armé, pas seulement en Duel.
 - Transcription : un coup lointain coûte un clic de plus (la validation) ; c'est le prix d'un
-  coup qui ne part jamais sans qu'on le dise. La note KLM d'ADR-0052 est à refaire.
+  coup qui ne part jamais sans qu'on le dise. La note KLM d'ADR-0052 est refaite (≈ 5,3 s).
 - Pendant un coup, le menu du plateau ne s'ouvre sur le damier qu'avant le premier pas : la
   documentation (`raccourcis.rst`, `manuel.rst`) change avec chaque tranche.
 - La Transcription perd « le coup joué au plateau dispense de lire les dés » : tout coup au

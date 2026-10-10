@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { OFF, alivePlays, applyStep, completedPlay, destinationsFrom, newPlay, playHop, playStepsInAnyOrder, resetPlay, selectSource, sources, undoLast } from '../services/quizPlay.js';
+import { OFF, alivePlays, applyStep, completedPlay, newPlay, playHop, playStepsInAnyOrder, resetPlay, undoLast } from '../services/quizPlay.js';
 
 const BLACK = 0;
 const WHITE = 1;
@@ -40,19 +40,6 @@ describe('quizPlay — ce que le moteur offre, et rien de plus', () => {
         const state = newPlay(pos, [play([[13, 11]])]);
         expect(playHop(state, 13, 10)).toBe(state);
         expect(playHop(state, 13, 11).steps).toHaveLength(1);
-    });
-
-    it('ne sélectionne pas un point qui ne peut rien donner', () => {
-        const pos = position({ 13: [5, BLACK], 6: [2, BLACK] });
-        const state = newPlay(pos, [play([[13, 11]])]);
-        expect(selectSource(state, 6)).toBe(state);
-        expect(selectSource(state, 13).selected).toBe(13);
-    });
-
-    it('déselectionne au second clic sur la même source', () => {
-        const pos = position({ 13: [5, BLACK] });
-        const state = selectSource(newPlay(pos, [play([[13, 11]])]), 13);
-        expect(selectSource(state, 13).selected).toBeNull();
     });
 });
 
@@ -114,7 +101,6 @@ describe("quizPlay — l'ordre des pas appartient au joueur", () => {
         ];
         let s = newPlay(pos, plays);
         expect(playHop(s, 13, 9)).toBe(s);
-        expect(sources(s)).toEqual(new Set([25]));
         s = playHop(s, 25, 23);
         s = playHop(s, 13, 9);
         expect(completedPlay(s)).not.toBeNull();
@@ -295,28 +281,10 @@ describe('quizPlay — revenir en arrière', () => {
 });
 
 describe('quizPlay — ce que l’interface met en avant', () => {
-    it('offre les sources, puis les destinations de la source choisie', () => {
-        const pos = position({ 13: [5, BLACK], 24: [2, BLACK] });
-        const s = newPlay(pos, [
-            play([
-                [13, 11],
-                [24, 23]
-            ]),
-            play([
-                [13, 11],
-                [13, 12]
-            ])
-        ]);
-        expect([...sources(s)].sort()).toEqual([13, 24]);
-        expect([...destinationsFrom(s, 13)].sort()).toEqual([11, 12]);
-        expect([...destinationsFrom(s, 6)]).toEqual([]);
-    });
-
     it("n'a plus rien à offrir quand le coup est complet", () => {
         const pos = position({ 13: [5, BLACK] });
         let s = newPlay(pos, [play([[13, 11]])]);
         s = playHop(s, 13, 11);
-        expect([...sources(s)]).toEqual([]);
         expect(completedPlay(s)).not.toBeNull();
     });
 

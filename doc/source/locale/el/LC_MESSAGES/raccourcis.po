@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-10 02:25+0200\n"
+"POT-Creation-Date: 2026-10-10 02:34+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -239,11 +239,11 @@ msgstr "Δεξί κλικ στη σκακιέρα (κίνηση που παίζ�
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Ouvrir le menu du plateau, qui commence par *Recommencer* : le coup est "
-"remis à zéro, pas la position."
+"Reprendre tout le coup depuis le début, la position inchangée. Tant "
+"qu'aucun pas n'est joué, le menu du plateau s'ouvre comme d'habitude."
 msgstr ""
-"Άνοιγμα του μενού της σκακιέρας, που ξεκινά με το *Από την αρχή*: "
-"μηδενίζεται η κίνηση, όχι η θέση."
+"Επανάληψη ολόκληρης της κίνησης από την αρχή, με τη θέση αμετάβλητη. Όσο "
+"δεν έχει παιχτεί κανένα βήμα, το μενού του ταμπλό ανοίγει κανονικά."
 
 #: ../../source/raccourcis.rst:57
 msgid "Navigation"
@@ -2382,3 +2382,12 @@ msgstr "Κλείσιμο της βοήθειας."
 
 #~ msgid "ENTREE (coup hors des règles)"
 #~ msgstr "ENTER (κίνηση εκτός κανόνων)"
+
+#~ msgid ""
+#~ "Ouvrir le menu du plateau, qui "
+#~ "commence par *Recommencer* : le coup "
+#~ "est remis à zéro, pas la position."
+#~ msgstr ""
+#~ "Άνοιγμα του μενού της σκακιέρας, που "
+#~ "ξεκινά με το *Από την αρχή*: "
+#~ "μηδενίζεται η κίνηση, όχι η θέση."

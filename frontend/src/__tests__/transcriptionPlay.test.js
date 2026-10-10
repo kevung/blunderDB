@@ -12,8 +12,8 @@
  */
 
 import { describe, test, expect } from 'vitest';
-import { selectSource, playHop, completedPlay } from '../services/quizPlay.js';
-import { rollKey, newBoardPlay, dragStep, canPlayFree, resetBoardPlay, undoBoardStep, stepsFromNotation, boardAfterSteps } from '../services/transcriptionPlay.js';
+import { playHop, completedPlay } from '../services/quizPlay.js';
+import { newBoardPlay, dragStep, canPlayFree, resetBoardPlay, undoBoardStep, stepsFromNotation, boardAfterSteps } from '../services/transcriptionPlay.js';
 
 const BLACK = 0;
 const WHITE = 1;
@@ -53,7 +53,7 @@ const BY_ROLL = [
 
 /** Un glissé : la source est choisie, le pion est lâché sur la destination. */
 function drag(/** @type {any} */ state, /** @type {number} */ from, /** @type {number} */ to) {
-    return playHop(selectSource(state, from), from, to);
+    return playHop(state, from, to);
 }
 
 const done = (/** @type {any} */ state) => completedPlay(state) !== null;
@@ -197,12 +197,5 @@ describe('la notation (ADR-0052)', () => {
         expect(board.points[7]).toEqual({ checkers: 2, color: BLACK });
         // Le blot frappé est sur la barre de l'adversaire (le point 0 pour blanc).
         expect(board.points[0]).toEqual({ checkers: 1, color: WHITE });
-    });
-});
-
-describe('les jets du triangle', () => {
-    test('3-1 et 1-3 sont le même jet', () => {
-        expect(rollKey([1, 3])).toBe('31');
-        expect(rollKey([3, 1])).toBe('31');
     });
 });

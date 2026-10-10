@@ -7,8 +7,8 @@
 import { get } from 'svelte/store';
 import { boardMetrics, boardMouseToDrawing, checkerPointAndCountAt } from './boardGeometry.js';
 import { EXCLUDE_EMPTY, sideLayout } from './boardScene.js';
-import { OFF, playHop, selectSource } from '../services/quizPlay.js';
-import { canPlayFree, dragStep, hasMoverChecker, resetBoardPlay } from '../services/transcriptionPlay.js';
+import { OFF } from '../services/quizPlay.js';
+import { dragStep, resetBoardPlay } from '../services/transcriptionPlay.js';
 import { boardRightClick, diceClick, orderedDice, playClickedChecker } from '../services/boardMove.js';
 
 // A second click on the same Except point within this delay blocks it. Detected by hand: each
@@ -269,10 +269,6 @@ export function attachBoardInteractions(canvas, deps) {
     let startMousePos = null;
     /** @type {{ point: number, time: number }|null} */
     let lastExceptClick = null;
-    // Le point d'où un glissé est parti, quand la pression a choisi une source.
-    /** @type {number|null} */
-    let boardPress = null;
-
     const editable = () => isEditable(deps.getMode());
     const metrics = () => {
         const { width, height } = deps.getSize();
@@ -385,37 +381,6 @@ export function attachBoardInteractions(canvas, deps) {
     }
 
     /**
-     * Joue le clic sur le coup en cours. Rend `true` quand le quiz a pris la main (l'édition ne
-     * doit pas voir ce clic). Un clic qu'aucun coup légal n'autorise ne fait rien, sans message.
-     * @param {MouseEvent} event
-     * @param {number} x
-     * @param {number} y
-     */
-    function quizClick(event, x, y) {
-        const state = stores.quizPlay ? get(stores.quizPlay) : null;
-        if (!state) return false;
-        if (event.button !== 0) return true;
-        const target = quizTargetAt(x, y);
-        if (target === null) return true;
-        stores.quizPlay.update((/** @type {any} */ s) => {
-            if (s.selected === null) return selectSource(s, target);
-            const played = playHop(s, s.selected, target);
-            // Un clic qui ne joue rien re-choisit une source, sans déselection préalable.
-            return played === s ? selectSource(s, target) : played;
-        });
-        // Une pression qui vient de choisir une source ouvre un glissé : relâché ailleurs, le pas
-        // est joué en un geste (ux.md §4.1). Deux clics donnent le même état.
-        const after = get(stores.quizPlay);
-        boardPress = state.selected === null && after?.selected === target ? target : null;
-        // Jet connu : une pression sur un pion du camp au trait sans coup légal ouvre aussi un
-        // glissé, qui pose le pion hors règles (ADR-0052). La pression seule ne choisit rien.
-        if (boardPress === null && after && canPlayFree(after) && after.steps.length === state.steps.length && hasMoverChecker(after, target)) {
-            boardPress = target;
-        }
-        return true;
-    }
-
-    /**
      * Le coup armé selon la grammaire d'ADR-0086 (`quizPlayValidate` posé par son mode), ou null.
      */
     function grammarPlay() {
@@ -474,22 +439,6 @@ export function attachBoardInteractions(canvas, deps) {
             if (target === null || target === from) return playClickedChecker(s, from, drawnDice(s));
             return dragStep(s, from, target);
         });
-        return true;
-    }
-
-    /**
-     * Fin d'un glissé sur `to`. Rend `true` si c'était un glissé du coup en cours. Un pas légal
-     * est joué ; sinon, jet connu, le pion est posé où il est lâché (`dragStep`, ADR-0052).
-     * @param {MouseEvent} event
-     */
-    function boardPlayDrop(event) {
-        const from = boardPress;
-        boardPress = null;
-        if (from === null || !stores.quizPlay) return false;
-        const { x, y } = toDrawing(event);
-        const target = quizTargetAt(x, y);
-        if (target === null || target === from) return true;
-        stores.quizPlay.update((/** @type {any} */ s) => (s ? dragStep(s, from, target) : s));
         return true;
     }
 
@@ -557,7 +506,6 @@ export function attachBoardInteractions(canvas, deps) {
             // plateau ne le vise pas, et il avale le clic.
             if (transcriptionCubeClick(event, x, y)) return;
             if (grammarMouseDown(event, x, y)) return;
-            if (quizClick(event, x, y)) return;
         }
         if (!editable()) return;
         const { x, y } = toDrawing(event);
@@ -581,7 +529,6 @@ export function attachBoardInteractions(canvas, deps) {
         // Avant la garde d'édition : le coup joué au plateau vit dans des modes qui n'éditent pas
         // la position (TRANSCRIBE, quiz).
         if (grammarMouseUp(event)) return;
-        if (boardPlayDrop(event)) return;
         if (!editable() || !startMousePos) return;
         const end = { ...toDrawing(event), button: event.button };
 

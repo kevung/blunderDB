@@ -127,34 +127,6 @@ export function completedPlay(state) {
 }
 
 /**
- * Les points d'où un pas peut encore partir.
- * @param {PlayState} state
- * @returns {Set<number>}
- */
-export function sources(state) {
-    const out = new Set();
-    for (const step of remainingSteps(state)) {
-        if (hasMoverChecker(state, step.from)) out.add(step.from);
-    }
-    return out;
-}
-
-/**
- * Les destinations d'un pas partant de `from`.
- * @param {PlayState} state
- * @param {number} from
- * @returns {Set<number>}
- */
-export function destinationsFrom(state, from) {
-    const out = new Set();
-    if (!hasMoverChecker(state, from)) return out;
-    for (const step of remainingSteps(state)) {
-        if (step.from === from) out.add(step.to);
-    }
-    return out;
-}
-
-/**
  * Les pas que les coups vivants offrent encore, une fois retiré ce qui est joué.
  * @param {PlayState} state
  * @returns {Step[]}
@@ -285,19 +257,6 @@ function orderFits(state, play, step) {
 function hasMoverChecker(state, point) {
     const p = state.board?.points?.[point];
     return !!p && p.checkers > 0 && p.color === state.mover;
-}
-
-/**
- * Le clic sur un point : choisit une source, en change, ou désélectionne. Un
- * point sans pas offert n'est pas sélectionnable, sauf la barre.
- * @param {PlayState} state
- * @param {number} point
- * @returns {PlayState}
- */
-export function selectSource(state, point) {
-    if (state.selected === point) return { ...state, selected: null };
-    if (!sources(state).has(point)) return state;
-    return { ...state, selected: point };
 }
 
 /**

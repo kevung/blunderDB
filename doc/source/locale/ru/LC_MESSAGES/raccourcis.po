@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-10 02:25+0200\n"
+"POT-Creation-Date: 2026-10-10 02:34+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -238,11 +238,11 @@ msgstr "Щелчок правой кнопкой по доске (ход, сыг
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Ouvrir le menu du plateau, qui commence par *Recommencer* : le coup est "
-"remis à zéro, pas la position."
+"Reprendre tout le coup depuis le début, la position inchangée. Tant "
+"qu'aucun pas n'est joué, le menu du plateau s'ouvre comme d'habitude."
 msgstr ""
-"Открыть меню доски, которое начинается с пункта *Заново*: сбрасывается "
-"ход, а не позиция."
+"Начать весь ход заново, позиция остаётся прежней. Пока не сыгран ни один "
+"шаг, меню доски открывается как обычно."
 
 #: ../../source/raccourcis.rst:57
 msgid "Navigation"
@@ -2312,3 +2312,12 @@ msgstr "Закрыть справку."
 
 #~ msgid "ENTREE (coup hors des règles)"
 #~ msgstr "ENTER (ход вне правил)"
+
+#~ msgid ""
+#~ "Ouvrir le menu du plateau, qui "
+#~ "commence par *Recommencer* : le coup "
+#~ "est remis à zéro, pas la position."
+#~ msgstr ""
+#~ "Открыть меню доски, которое начинается с"
+#~ " пункта *Заново*: сбрасывается ход, а "
+#~ "не позиция."

@@ -17,7 +17,7 @@ dans l'ordre `swapped` avec `diceShade` (opacité par dé), n'allume plus de cib
 *Recommencer* du menu. Rappel nul : comportement inchangé. Le jet du coup est `play.rolled`,
 sinon les dés de la position. En conséquence :
 - `quizPlayTargetsStore`, `selectSource` et la branche source/destination de `quizClick` restent
-  tant qu'un mode s'en sert ; la dernière tranche les retire.
+  tant qu'un mode s'en sert ; T5, dernière tranche, les a retirés.
 - La documentation utilisateur (`raccourcis.rst`, `manuel.rst`, `.po`) n'a pas changé en T1 :
   chaque tranche décrit la grammaire pour son mode quand elle le bascule.
 
@@ -84,9 +84,10 @@ Plan d'origine :
 Le panneau arme le coup du seul jet saisi par `armBoardMove(play, validatePlay)` ; sans jet, rien
 n'est armé. `validatePlay` enregistre le coup achevé ou libre (clic sur les dés, Entrée, premier
 chiffre ou case du triangle du jet suivant). `ROLLS`, `compatibleRolls`, `choosableRolls`,
-`deducedDice`, `freeClick`, `freeSelect` et la branche libre de `quizClick` sont retirés.
-`quizPlayTargetsStore`, `selectSource` et la branche source/destination restent tant qu'Anki
-(T4) n'a pas basculé : le dernier à fusionner les retire. Plan d'origine :
+`deducedDice`, `freeClick`, `freeSelect`, `rollKey` et la prop `allowed` du triangle sont retirés,
+et avec eux, T5 étant la dernière tranche, `quizClick`, `boardPress`, `boardPlayDrop`,
+`selectSource`, `sources`, `destinationsFrom`, `quizPlayTargetsStore` et les cibles allumées
+(`drawPlayHighlights`). Plan d'origine :
 
 - `frontend/src/components/TranscriptionPanel.svelte` : supprimer l'`$effect` de départ
   automatique (`deducedDice` → `sendPlay`) ; fournir `validatePlay` (coup achevé ou libre →

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-10 02:25+0200\n"
+"POT-Creation-Date: 2026-10-10 02:34+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -227,9 +227,9 @@ msgstr "盤面を右クリック（盤上で打った手）"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Ouvrir le menu du plateau, qui commence par *Recommencer* : le coup est "
-"remis à zéro, pas la position."
-msgstr "盤面のメニューを開く。先頭は\\ *やり直す*\\ で、リセットされるのは手であり、局面ではありません。"
+"Reprendre tout le coup depuis le début, la position inchangée. Tant "
+"qu'aucun pas n'est joué, le menu du plateau s'ouvre comme d'habitude."
+msgstr "手全体を最初からやり直します。局面は変わりません。まだ一歩も進めていない間は、盤のメニューがいつもどおり開きます。"
 
 #: ../../source/raccourcis.rst:57
 msgid "Navigation"
@@ -2065,3 +2065,9 @@ msgstr "ヘルプを閉じる。"
 
 #~ msgid "ENTREE (coup hors des règles)"
 #~ msgstr "ENTER（ルール外の手）"
+
+#~ msgid ""
+#~ "Ouvrir le menu du plateau, qui "
+#~ "commence par *Recommencer* : le coup "
+#~ "est remis à zéro, pas la position."
+#~ msgstr "盤面のメニューを開く。先頭は\\ *やり直す*\\ で、リセットされるのは手であり、局面ではありません。"

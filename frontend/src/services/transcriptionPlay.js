@@ -30,15 +30,6 @@ const WHITE = 1;
  */
 
 /**
- * La clé d'un jet, dé fort d'abord (3-1 = 1-3), étiquette de la case du triangle.
- * @param {number[]} dice
- */
-export function rollKey(dice) {
-    const [a, b] = dice ?? [0, 0];
-    return a >= b ? `${a}${b}` : `${b}${a}`;
-}
-
-/**
  * L'état de départ : l'union des coups légaux des jets de `byRoll` (réponse du
  * moteur, `{ dice, plays }` par jet ; une danse n'apporte rien). `rolled`, le
  * jet saisi, ouvre le glissé hors des règles.

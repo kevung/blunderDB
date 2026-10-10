@@ -127,8 +127,9 @@ CTRL-X*, moins facile à découvrir), **enregistrer l'image dans un fichier**
 en SVG ou en PNG, ouvrir une nouvelle vue sur cette position, et — si la
 position vient déjà de la base — l'ajouter à un paquet Anki (répétition
 espacée) ou classer ses **positions voisines** (voir :ref:`panneau_recherche`).
-Pendant un coup joué au plateau (quiz, Transcription), le menu commence par
-*Recommencer*, qui remet le coup à zéro sans toucher la position. En édition
+Pendant un coup joué au plateau (quiz, Transcription), un clic droit sur le
+damier reprend tout le coup sans toucher la position ; le menu ne s'y ouvre
+qu'avant le premier pas. En édition
 et en Eval, où le clic droit sur le plateau pose des pions, le menu s'ouvre
 d'un clic droit hors du plateau — hors des dés, du videau et des scores — et
 propose seulement *Effacer la position* (comme *RETOUR ARRIERE*) et *Position

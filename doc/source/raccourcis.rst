@@ -49,7 +49,7 @@ Position
    "b", "Mettre la position affichée sur la Pile (collection « à revoir plus tard »), ou l'en retirer."
    "Double-clic hors du plateau", "Mettre la position affichée sur la Pile, ou l'en retirer, dans tous les modes."
    "Clic droit hors du plateau (édition, Eval)", "Ouvrir le menu du plateau : *Effacer la position*, comme RETOUR ARRIERE, ou *Position de départ*."
-   "Clic droit sur le plateau (coup joué au plateau)", "Ouvrir le menu du plateau, qui commence par *Recommencer* : le coup est remis à zéro, pas la position."
+   "Clic droit sur le plateau (coup joué au plateau)", "Reprendre tout le coup depuis le début, la position inchangée. Tant qu'aucun pas n'est joué, le menu du plateau s'ouvre comme d'habitude."
 
 .. _raccourcis_navigation:
 
