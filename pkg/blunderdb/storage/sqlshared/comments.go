@@ -133,6 +133,18 @@ func (s *CommentStore) DeleteForPosition(ctx context.Context, scope string, posi
 	return nil
 }
 
+// Rehome — see storage.CommentStore.
+func (s *CommentStore) Rehome(ctx context.Context, scope string, from, to int64) (int, error) {
+	tenant, targs := s.DB.TenantFilter("", scope)
+	n, err := s.DB.Exec(ctx,
+		`UPDATE comment SET position_id = ? WHERE position_id = ? AND origin = 'user' AND `+tenant,
+		append([]any{to, from}, targs...)...)
+	if err != nil {
+		return 0, errf(s.DB, fmt.Sprintf("rehome comments of position %d", from), err)
+	}
+	return int(n), nil
+}
+
 // Text returns the non-empty comment entries of a position joined with blank
 // lines, or "" when the position has no comment.
 func (s *CommentStore) Text(ctx context.Context, scope string, positionID int64) (string, error) {

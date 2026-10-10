@@ -31,6 +31,13 @@ type CommentStore interface {
 	// DeleteForPosition removes every comment entry of a position.
 	DeleteForPosition(ctx context.Context, scope string, positionID int64) error
 
+	// Rehome moves the comments the user wrote (origin 'user') on position
+	// from onto position to, keeping their id, dates and author, and returns
+	// how many moved. Imported comments stay where they are: the file that
+	// brought them brings them again. A repair uses it when a match's move
+	// leaves a position for the one its source file names.
+	Rehome(ctx context.Context, scope string, from, to int64) (int, error)
+
 	// Upsert writes text as the position's primary comment — its oldest
 	// non-empty entry — rewriting that entry in place when there is one and
 	// appending a new entry otherwise. It returns the id of the entry
