@@ -324,10 +324,6 @@
                 <label for="export-comments">{$t('export.includeComments')}</label>
             </div>
             <div class="checkbox-item">
-                <input type="checkbox" id="export-filter-library" bind:checked={exportOptions.includeFilterLibrary} />
-                <label for="export-filter-library">{$t('export.includeFilterLibrary')}</label>
-            </div>
-            <div class="checkbox-item">
                 <input type="checkbox" id="export-played-moves" bind:checked={exportOptions.includePlayedMoves} disabled={!exportOptions.includeAnalysis} />
                 <label for="export-played-moves">{$t('export.includePlayedMoves')}</label>
             </div>

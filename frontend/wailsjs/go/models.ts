@@ -2024,6 +2024,7 @@ export namespace domain {
 	    positions: Position[];
 	    positionIDs: number[];
 	    allPositions: boolean;
+	    wholeLibrary: boolean;
 	    metadata: Record<string, string>;
 	    includeAnalysis: boolean;
 	    includeComments: boolean;
@@ -2034,6 +2035,8 @@ export namespace domain {
 	    collectionIDs: number[];
 	    matchIDs: number[];
 	    tournamentIDs: number[];
+	    includeTournaments: boolean;
+	    includeAnkiDecks: boolean;
 	    includeLessons: boolean;
 	    lessonIDs: number[];
 	    deckIDs: number[];
@@ -2051,6 +2054,7 @@ export namespace domain {
 	        this.positions = this.convertValues(source["positions"], Position);
 	        this.positionIDs = source["positionIDs"];
 	        this.allPositions = source["allPositions"];
+	        this.wholeLibrary = source["wholeLibrary"];
 	        this.metadata = source["metadata"];
 	        this.includeAnalysis = source["includeAnalysis"];
 	        this.includeComments = source["includeComments"];
@@ -2061,6 +2065,8 @@ export namespace domain {
 	        this.collectionIDs = source["collectionIDs"];
 	        this.matchIDs = source["matchIDs"];
 	        this.tournamentIDs = source["tournamentIDs"];
+	        this.includeTournaments = source["includeTournaments"];
+	        this.includeAnkiDecks = source["includeAnkiDecks"];
 	        this.includeLessons = source["includeLessons"];
 	        this.lessonIDs = source["lessonIDs"];
 	        this.deckIDs = source["deckIDs"];

@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"slices"
+	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
@@ -34,10 +36,44 @@ func (d *Database) ExportDatabaseCtx(ctx context.Context, opts ExportOptions) er
 		return fmt.Errorf("cannot sign the watermark: %w", err)
 	}
 
+	plan, err := d.exportPlan(ctx, opts)
+	if err != nil {
+		return err
+	}
+	plan.Metadata = opts.Metadata
+	plan.Watermark = watermarkDocument
+	plan.Password = opts.Password
+	// A Direction travels with its tournament. The copy is ours and not ingest's: the
+	// direction tables belong to the desktop wrapper, and the daemon exposes none of them.
+	plan.AfterWrite = d.directionAfterWrite()
+	_, err = ingest.ExportSQLite(ctx, d.store, "", opts.ExportPath, plan)
+	return err
+}
+
+// exportPlan maps the GUI's and the CLI's options onto what ingest exports.
+//
+// The whole library is ingest.WholeTenant, the daemon's export, so the three entry points
+// cannot disagree on what "everything" carries; a family the caller turns off or narrows to
+// some ids is then taken out of it. Anything else is a list of positions, and the matches
+// it carries are, unless named, those its positions were played in.
+func (d *Database) exportPlan(ctx context.Context, opts ExportOptions) (ingest.ExportOptions, error) {
+	if opts.WholeLibrary {
+		return wholeLibraryPlan(opts), nil
+	}
+	plan := ingest.ExportOptions{
+		Format:        ingest.FormatSQLite,
+		Analysis:      opts.IncludeAnalysis,
+		Comments:      opts.IncludeComments,
+		PlayedMoves:   opts.IncludePlayedMoves,
+		FilterLibrary: opts.IncludeFilterLibrary,
+	}
 	sel := ingest.Selection{
 		AllPositions:  opts.AllPositions,
 		PositionIDs:   opts.PositionIDs,
 		TournamentIDs: opts.TournamentIDs,
+		// A match leaves with the positions its moves were played in: without them its
+		// moves would point at nothing in the file.
+		MatchPositions: true,
 	}
 	// Positions wins over PositionIDs when set: callers holding positions
 	// that are not in the database keep working.
@@ -51,43 +87,113 @@ func (d *Database) ExportDatabaseCtx(ctx context.Context, opts ExportOptions) er
 	if opts.IncludeCollections {
 		sel.CollectionIDs = opts.CollectionIDs
 	}
-	// IncludeMatches with no ids means every match (the CLI's --match-ids
-	// empty=all convention; the GUI collapses an empty pick to
-	// IncludeMatches=false itself).
 	if opts.IncludeMatches {
-		sel.MatchIDs = opts.MatchIDs
-		sel.AllMatches = len(opts.MatchIDs) == 0
+		switch {
+		case len(opts.MatchIDs) > 0:
+			sel.MatchIDs = opts.MatchIDs
+		case sel.AllPositions:
+			sel.AllMatches = true
+		default:
+			ids := sel.PositionIDs
+			for _, p := range sel.Positions {
+				ids = append(ids, p.ID)
+			}
+			reached, err := d.matchIDsReachedBy(ctx, ids)
+			if err != nil {
+				return plan, err
+			}
+			sel.MatchIDs = reached
+		}
 	}
-
 	sel.DeckIDs, sel.DeckPositions = opts.DeckIDs, len(opts.DeckIDs) > 0
-
 	if opts.IncludeLessons {
 		sel.LessonIDs = opts.LessonIDs
 		sel.AllLessons = len(opts.LessonIDs) == 0
 		sel.LessonContents = true
-	} else if sel.AllPositions {
-		// A whole-library export is a backup: Lessons travel with it, as with the
-		// daemon's whole-tenant export, instead of being lost without a word.
-		sel.AllLessons = true
-		sel.LessonContents = true
 	}
+	plan.Selection = sel
+	return plan, nil
+}
 
-	_, err = ingest.ExportSQLite(ctx, d.store, "", opts.ExportPath, ingest.ExportOptions{
-		Format:        ingest.FormatSQLite,
-		Selection:     sel,
-		Analysis:      opts.IncludeAnalysis,
-		Comments:      opts.IncludeComments,
-		PlayedMoves:   opts.IncludePlayedMoves,
-		FilterLibrary: opts.IncludeFilterLibrary,
-		Metadata:      opts.Metadata,
-		Watermark:     watermarkDocument,
-		Password:      opts.Password,
-		// A Direction travels with its tournament. The copy is ours and not ingest's:
-		// the direction tables belong to the desktop wrapper, and the daemon exposes none of
-		// them.
-		AfterWrite: d.directionAfterWrite(),
-	})
-	return err
+// wholeLibraryPlan is ingest.WholeTenant less what opts leaves out. Each family follows the
+// same rule: off drops it, a list of ids narrows it to them, on with no ids keeps all of it.
+func wholeLibraryPlan(opts ExportOptions) ingest.ExportOptions {
+	plan := ingest.WholeTenant(ingest.FormatSQLite)
+	plan.Analysis = opts.IncludeAnalysis
+	plan.Comments = opts.IncludeComments
+	plan.PlayedMoves = opts.IncludePlayedMoves
+	plan.FilterLibrary = opts.IncludeFilterLibrary
+	sel := &plan.Selection
+	sel.AllMatches, sel.MatchIDs = narrow(opts.IncludeMatches, opts.MatchIDs)
+	sel.AllCollections, sel.CollectionIDs = narrow(opts.IncludeCollections, opts.CollectionIDs)
+	sel.AllTournaments, sel.TournamentIDs = narrow(opts.IncludeTournaments, opts.TournamentIDs)
+	sel.AllLessons, sel.LessonIDs = narrow(opts.IncludeLessons, opts.LessonIDs)
+	sel.LessonContents = opts.IncludeLessons
+	plan.AnkiDecks, sel.DeckIDs = narrow(opts.IncludeAnkiDecks, opts.DeckIDs)
+	return plan
+}
+
+// narrow reads one family of a whole-library export: all of it, the listed ids, or none.
+func narrow(include bool, ids []int64) (all bool, picked []int64) {
+	if !include {
+		return false, nil
+	}
+	if len(ids) > 0 {
+		return false, ids
+	}
+	return true, nil
+}
+
+// matchIDsReachedBy returns the matches whose moves were played in one of these positions,
+// in id order. The caller holds d.mu.
+func (d *Database) matchIDsReachedBy(ctx context.Context, positionIDs []int64) ([]int64, error) {
+	seen := make(map[int64]bool)
+	const chunk = 500
+	for start := 0; start < len(positionIDs); start += chunk {
+		if err := d.collectMatchIDs(ctx, positionIDs[start:min(start+chunk, len(positionIDs))], seen); err != nil {
+			return nil, fmt.Errorf("matches reached by the exported positions: %w", err)
+		}
+	}
+	ids := make([]int64, 0, len(seen))
+	for id := range seen {
+		ids = append(ids, id)
+	}
+	slices.Sort(ids)
+	return ids, nil
+}
+
+// collectMatchIDs adds to seen the matches whose moves were played in one of positionIDs.
+func (d *Database) collectMatchIDs(ctx context.Context, positionIDs []int64, seen map[int64]bool) error {
+	args := make([]any, len(positionIDs))
+	for i, id := range positionIDs {
+		args[i] = id
+	}
+	rows, err := d.db.QueryContext(ctx, `
+		SELECT DISTINCT g.match_id FROM move mv JOIN game g ON g.id = mv.game_id
+		WHERE mv.position_id IN (?`+strings.Repeat(",?", len(positionIDs)-1)+`)`, args...)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			return err
+		}
+		seen[id] = true
+	}
+	return rows.Err()
+}
+
+// MatchIDsReachedBy returns the matches whose moves were played in one of these positions:
+// what an export of these positions carries when its matches are left unnamed.
+func (d *Database) MatchIDsReachedBy(positionIDs []int64) ([]int64, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	if d.db == nil {
+		return nil, fmt.Errorf("no database is currently open")
+	}
+	return d.matchIDsReachedBy(context.Background(), positionIDs)
 }
 
 // DeleteFile is a helper function to delete a file

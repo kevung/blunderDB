@@ -14,10 +14,11 @@ import (
 )
 
 // TestExportParity_GUIAndServerEntryPointsAgree covers the "same selection
-// -> same tables/rows" invariant: ExportDatabase/ExportCollections/
-// ExportTournaments (the GUI and CLI) call ExportSQLite directly, while the
-// daemon's exports.sqlite calls it through SQLiteExporter.Export. Both must
-// write the same content for the same source and the same Selection.
+// -> same tables/rows" invariant at this layer: ExportSQLite written to a path
+// and streamed through SQLiteExporter.Export must write the same content for
+// the same source and the same Selection. That the GUI, the CLI and the daemon
+// ask for the same Selection is TestExportParity_WholeLibraryFromGUICLIAndDaemon
+// (internal/cli).
 //
 // This is deliberately not a byte-for-byte file comparison (SQLite page
 // layout is not guaranteed stable across writers) but a comparison of the

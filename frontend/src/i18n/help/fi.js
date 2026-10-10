@@ -1053,7 +1053,8 @@ export default {
 <p>Vienti-ikkuna mahtuu yhdelle näytölle: lomake ja sen päälle kirjoituksen ajaksi asettuva edistymisnäkymä. Ikkuna sulkeutuu itsestään valmistuttuaan, ja tulos näkyy tilapalkissa.</p>
 <p>Kolme seikkaa ansaitsee huomiota:</p>
 <ul>
-<li><strong>Vienti koskee parhaillaan näkyvissä olevia asemia</strong>, ei koko tietokantaa. Haun jälkeen viedään vain tulokset — ikkuna muistuttaa siitä yläreunassa.</li>
+<li><strong>Vienti koskee parhaillaan näkyvissä olevia asemia</strong>, ei koko tietokantaa. Haun jälkeen viedään vain tulokset — ikkuna muistuttaa siitä yläreunassa — ja ottelulista tarjoaa vain ne ottelut, joissa nämä asemat on pelattu; jokainen valittu ottelu viedään kaikkine asemineen.</li>
+<li><strong>Kun näytetty luettelo on kirjasto</strong>, vienti on sama kuin palvelimen ja komennon <code>export --type database</code>: kaikki valintaruudut on valittu valmiiksi, ja Anki-pakat (ilman kertaushistoriaa) sekä käynnissä olevat litteroinnit viedään muun mukana.</li>
 <li><strong>Kokoelma, jonka asemat eivät kaikki sisälly valintaan, saapuu vaillinaisena.</strong> Siksi luettelo näyttää kunkin kokoelman katetun osuuden (”12/40”) ja merkitsee sen punaisella, kun se on osittainen.</li>
 <li><strong>Turnaukset voi viedä vain otteluiden kanssa</strong>: ilman niitä turnaus–ottelu-yhteyttä ei ole ja turnaus saapuisi tyhjänä. Valintaruutu pysyy poissa käytöstä, kunnes ”sisällytä ottelut” on valittu.</li>
 </ul>

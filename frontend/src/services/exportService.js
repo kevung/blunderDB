@@ -1,7 +1,18 @@
 import { tMsg } from '../i18n';
 import { get } from 'svelte/store';
 import { OpenExportDatabaseDialog, OpenExportMatDialog, ShowAlert } from '../../wailsjs/go/gui/App.js';
-import { ExportDatabase, CollectionCoverage, LoadMetadata, ExportMatchMAT, SuggestMatFilename, GetAllMatches, GetAllCollections, GetAllTournaments } from '../../wailsjs/go/database/Database.js';
+import {
+    ExportDatabase,
+    CollectionCoverage,
+    LoadMetadata,
+    ExportMatchMAT,
+    SuggestMatFilename,
+    GetAllMatches,
+    GetAllCollections,
+    GetAllTournaments,
+    ListLessons,
+    MatchIDsReachedBy
+} from '../../wailsjs/go/database/Database.js';
 
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionsStore, browsingLibrary, listedIds } from '../stores/positionStore.js';
@@ -53,9 +64,15 @@ export async function exportDatabase() {
         let listed = null;
         const exportedIds = () => (listed ??= listedIds());
 
+        // A list offers the matches its positions were played in; the library offers them all.
         try {
-            const matches = await GetAllMatches();
-            exportMatchesStore.set(matches || []);
+            /** @type {any[]} */
+            let matches = (await GetAllMatches()) || [];
+            if (!browsingLibrary()) {
+                const reached = new Set((await MatchIDsReachedBy(await exportedIds())) || []);
+                matches = matches.filter((m) => reached.has(m.id));
+            }
+            exportMatchesStore.set(/** @type {never[]} */ (matches));
         } catch (e) {
             logger.log('Could not get matches:', e);
             exportMatchesStore.set([]);
@@ -106,6 +123,10 @@ export async function exportDatabase() {
         // The ids the export will send, not the list's length: a search result still being
         // counted is only as long as its first page.
         exportPositionCountStore.set(browsingLibrary() ? get(positionsStore).length : (await exportedIds()).length);
+        // The whole library starts from what the daemon's export carries: every family ticked.
+        if (browsingLibrary()) {
+            exportOptionsStore.update((o) => ({ ...o, includeFilterLibrary: true, includeTournaments: true, includeCollections: true, includeLessons: true }));
+        }
         exportModalModeStore.set('metadata');
         openModal(MODAL.EXPORT_DATABASE);
     } catch (error) {
@@ -148,14 +169,27 @@ export async function handleExportCommit() {
     try {
         const metadata = get(exportMetadataStore);
         const exportOptions = get(exportOptionsStore);
+        const wholeLibrary = browsingLibrary();
+        const lessons = wholeLibrary && exportOptions.includeLessons ? (await ListLessons()) || [] : [];
+        // Each family: none when its box is off or its pick emptied by hand; in the whole
+        // library, a pick of every item is sent as no ids, which the backend reads as all of it.
+        const family = (/** @type {boolean} */ on, /** @type {number[] | undefined} */ picked, /** @type {{ id: number }[]} */ all) => {
+            const ids = picked || [];
+            const include = !!on && ids.length > 0;
+            const everything = wholeLibrary && all.length > 0 && all.every((x) => ids.includes(x.id));
+            return { include, ids: include && !everything ? ids : [] };
+        };
+        const matches = family(exportOptions.includeMatches, exportOptions.matchIDs, get(exportMatchesStore) || []);
+        const collections = family(exportOptions.includeCollections, exportOptions.collectionIDs, get(collectionsStore) || []);
+        const tournaments = family(exportOptions.includeTournaments, exportOptions.includeTournamentIDs, get(tournamentsStore) || []);
+        const lessonPick = family(exportOptions.includeLessons, exportOptions.lessonIDs, lessons);
         const baseOptions = {
             exportPath: pendingExportPath,
-            // Identifiers, not positions: the whole set can be tens of MB of
-            // JSON on the UI thread. The exporter reads its open database
-            // (ExportOptions.PositionIDs).
-            // The library is never held as ids (positionList.js): AllPositions says it.
-            allPositions: browsingLibrary(),
-            positionIDs: browsingLibrary() ? [] : await listedIds(),
+            // The library is the daemon's whole-tenant export (ExportOptions.WholeLibrary); a
+            // list goes as identifiers, not positions: the whole set can be tens of MB of JSON
+            // on the UI thread.
+            wholeLibrary,
+            positionIDs: wholeLibrary ? [] : await listedIds(),
             metadata: {
                 user: metadata.user || '',
                 description: metadata.description || '',
@@ -165,18 +199,16 @@ export async function handleExportCommit() {
             includeComments: exportOptions.includeComments,
             includeFilterLibrary: exportOptions.includeFilterLibrary,
             includePlayedMoves: exportOptions.includePlayedMoves,
-            // Backend: IncludeMatches with empty MatchIDs means ALL matches
-            // (CLI convention). In the GUI an empty selection means "None", so
-            // collapse it to includeMatches=false.
-            includeMatches: exportOptions.includeMatches && (exportOptions.matchIDs || []).length > 0,
-            includeCollections: exportOptions.includeCollections,
-            collectionIDs: exportOptions.collectionIDs || [],
-            // An empty lessonIDs means every Lesson to the backend: a selection emptied
-            // by hand must export none, so it turns the inclusion off.
-            includeLessons: !!exportOptions.includeLessons && (exportOptions.lessonIDs || []).length > 0,
-            lessonIDs: exportOptions.lessonIDs || [],
-            matchIDs: exportOptions.matchIDs || [],
-            tournamentIDs: exportOptions.includeTournamentIDs || []
+            includeMatches: matches.include,
+            matchIDs: matches.ids,
+            includeCollections: collections.include,
+            collectionIDs: collections.ids,
+            includeTournaments: tournaments.include,
+            tournamentIDs: wholeLibrary ? tournaments.ids : exportOptions.includeTournamentIDs || [],
+            includeLessons: lessonPick.include,
+            lessonIDs: lessonPick.ids,
+            // No deck picker yet: the whole library carries every deck, as the daemon's does.
+            includeAnkiDecks: wholeLibrary
         };
 
         // Both mechanisms are plain export options: the watermark is sealed and written by

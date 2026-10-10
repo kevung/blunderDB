@@ -25,11 +25,13 @@ func (cli *CLI) runExport(args []string) error {
 	includeFilterLibrary := exportCmd.Bool("filters", true, "Include filter library in database export (default: true)")
 	includePlayedMoves := exportCmd.Bool("played-moves", true, "Include played moves in analysis (default: true)")
 	includeMatches := exportCmd.Bool("matches", true, "Include matches in database export (default: true)")
-	includeCollections := exportCmd.Bool("collections", false, "Include collections in database export (default: false)")
-	collectionIDsStr := exportCmd.String("collection-ids", "", "Comma-separated list of collection IDs to export")
+	includeCollections := exportCmd.Bool("collections", true, "Include collections in database export (default: true)")
+	includeTournaments := exportCmd.Bool("tournaments", true, "Include tournaments in database export (default: true)")
+	includeDecks := exportCmd.Bool("decks", true, "Include Anki decks, without their review history, in database export (default: true)")
+	collectionIDsStr := exportCmd.String("collection-ids", "", "Comma-separated list of collection IDs to export (empty = all)")
 	matchIDsStr := exportCmd.String("match-ids", "", "Comma-separated list of match IDs to export (empty = all)")
-	deckIDsStr := exportCmd.String("deck-ids", "", "Comma-separated list of Anki deck IDs to export with their positions, without their review history")
-	tournamentIDsStr := exportCmd.String("tournament-ids", "", "Comma-separated list of tournament IDs to export")
+	deckIDsStr := exportCmd.String("deck-ids", "", "Comma-separated list of Anki deck IDs to export (empty = all)")
+	tournamentIDsStr := exportCmd.String("tournament-ids", "", "Comma-separated list of tournament IDs to export (empty = all)")
 	watermark := exportCmd.String("watermark", "", "Mark the exported file with where it comes from, e.g. \"Cours de Jean Dupont - 12 mars 2026\"")
 	watermarkNote := exportCmd.String("watermark-note", "", "Free text attached to the watermark (terms of use, contact)")
 	password := exportCmd.String("password", "", "Protect the exported file with a password (produces a .dbx container)")
@@ -44,7 +46,9 @@ func (cli *CLI) runExport(args []string) error {
 		exportCmd.PrintDefaults()
 		fmt.Println()
 		fmt.Println("Export Types:")
-		fmt.Println("  database   Export entire database (positions, analysis, comments, matches)")
+		fmt.Println("  database   Export the whole library, as the server's export does: positions, matches,")
+		fmt.Println("             tournaments, collections, lessons, Anki decks, transcriptions, filters.")
+		fmt.Println("             Each family can be left out (--matches=false) or narrowed (--match-ids=1,2).")
 		fmt.Println("  positions  Export positions to text file (JSON format)")
 		fmt.Println("  matches    Export only matches to a new database")
 		fmt.Println("  mat        Export match(es) as Jellyfish/gnubg .mat transcript(s)")
@@ -62,8 +66,11 @@ func (cli *CLI) runExport(args []string) error {
 		fmt.Println("  # Export with analysis but without played moves")
 		fmt.Println("  blunderdb export --db database.db --type database --file export.db --played-moves=false")
 		fmt.Println()
-		fmt.Println("  # Export with specific collections")
-		fmt.Println("  blunderdb export --db database.db --type database --file export.db --collections --collection-ids=1,2,3")
+		fmt.Println("  # Export with specific collections only")
+		fmt.Println("  blunderdb export --db database.db --type database --file export.db --collection-ids=1,2,3")
+		fmt.Println()
+		fmt.Println("  # Export without collections or Anki decks")
+		fmt.Println("  blunderdb export --db database.db --type database --file export.db --collections=false --decks=false")
 		fmt.Println()
 		fmt.Println("  # Export with specific tournaments")
 		fmt.Println("  blunderdb export --db database.db --type database --file export.db --tournament-ids=1,2")
@@ -161,9 +168,24 @@ func (cli *CLI) runExport(args []string) error {
 
 	switch strings.ToLower(*exportType) {
 	case "database":
-		return cli.exportDatabaseWithOptions(*outputFile, *includeAnalysis, *includeComments,
-			*includeFilterLibrary, *includePlayedMoves, *includeMatches,
-			*includeCollections, collectionIDs, matchIDs, tournamentIDs, deckIDs, marking, text)
+		// A list of ids names some of a family: it brings that family in.
+		return cli.exportDatabaseWithOptions(ExportOptions{
+			ExportPath:           *outputFile,
+			WholeLibrary:         true,
+			IncludeAnalysis:      *includeAnalysis,
+			IncludeComments:      *includeComments,
+			IncludeFilterLibrary: *includeFilterLibrary,
+			IncludePlayedMoves:   *includePlayedMoves,
+			IncludeMatches:       *includeMatches || len(matchIDs) > 0,
+			IncludeCollections:   *includeCollections || len(collectionIDs) > 0,
+			IncludeTournaments:   *includeTournaments || len(tournamentIDs) > 0,
+			IncludeAnkiDecks:     *includeDecks || len(deckIDs) > 0,
+			IncludeLessons:       true,
+			CollectionIDs:        collectionIDs,
+			MatchIDs:             matchIDs,
+			TournamentIDs:        tournamentIDs,
+			DeckIDs:              deckIDs,
+		}, marking, text)
 	case "positions":
 		return cli.exportPositions(*outputFile, text)
 	case "matches":
@@ -267,7 +289,6 @@ func fileExists(path string) bool {
 	return err == nil
 }
 
-// exportDatabaseWithOptions exports the database with configurable options
 // exportMarking bundles the two optional mechanisms an export can carry: a signed statement
 // of where the file comes from, and a password around it. Both are the producer's choice and
 // neither makes the recipient's side write anything.
@@ -277,50 +298,22 @@ type exportMarking struct {
 	password  string
 }
 
-func (cli *CLI) exportDatabaseWithOptions(outputFile string, includeAnalysis bool, includeComments bool,
-	includeFilterLibrary bool, includePlayedMoves bool, includeMatches bool,
-	includeCollections bool, collectionIDs []int64, matchIDs []int64, tournamentIDs []int64, deckIDs []int64,
-	marking exportMarking, text bool) error {
+// exportDatabaseWithOptions writes opts' export, stamped with this database's version and
+// the producer's marking.
+func (cli *CLI) exportDatabaseWithOptions(opts ExportOptions, marking exportMarking, text bool) error {
+	outputFile := opts.ExportPath
 	if text {
 		fmt.Printf("Exporting database to: %s\n", outputFile)
 	}
 
-	// Get all positions
-	positions, err := cli.db.LoadAllPositions()
-	if err != nil {
-		return fmt.Errorf("failed to load positions: %w", err)
+	opts.Metadata = make(map[string]string)
+	if version, err := cli.db.GetDatabaseVersion(); err == nil {
+		opts.Metadata["database_version"] = version
 	}
+	opts.Watermark, opts.WatermarkNote, opts.Password = marking.watermark, marking.note, marking.password
 
-	// Get metadata
-	metadata := make(map[string]string)
-	version, err := cli.db.GetDatabaseVersion()
-	if err == nil {
-		metadata["database_version"] = version
-	}
-
-	// Export with the specified options. Ctrl-C cancels a large export in
-	// flight instead of waiting it out.
-	opts := ExportOptions{
-		ExportPath:           outputFile,
-		Positions:            positions,
-		Metadata:             metadata,
-		IncludeAnalysis:      includeAnalysis,
-		IncludeComments:      includeComments,
-		IncludeFilterLibrary: includeFilterLibrary,
-		IncludePlayedMoves:   includePlayedMoves,
-		IncludeMatches:       includeMatches,
-		IncludeCollections:   includeCollections,
-		// The CLI's database export is the whole library: every Lesson goes with it.
-		IncludeLessons: true,
-		CollectionIDs:  collectionIDs,
-		MatchIDs:       matchIDs,
-		TournamentIDs:  tournamentIDs,
-		DeckIDs:        deckIDs,
-		Watermark:      marking.watermark,
-		WatermarkNote:  marking.note,
-		Password:       marking.password,
-	}
-	err = withInterruptibleContext(func() {
+	// Ctrl-C cancels a large export in flight instead of waiting it out.
+	err := withInterruptibleContext(func() {
 		if text {
 			fmt.Println("\nCancelling...")
 		}
@@ -382,23 +375,19 @@ func (cli *CLI) exportMatchesOnly(outputFile string, marking exportMarking, text
 		metadata["database_version"] = version
 	}
 
-	// We need to export positions that are linked to matches
-	// Get all positions linked to moves in the matches
-	positions, err := cli.db.LoadAllPositions()
-	if err != nil {
-		return fmt.Errorf("failed to load positions: %w", err)
-	}
-
-	// Export with positions, analysis, comments disabled, but matches enabled.
-	// Ctrl-C cancels it in flight instead of waiting it out.
+	// Every match with every position, read by the exporter from the database rather than
+	// loaded here. Ctrl-C cancels it in flight instead of waiting it out.
 	opts := ExportOptions{
 		ExportPath:         outputFile,
-		Positions:          positions,
+		AllPositions:       true,
 		Metadata:           metadata,
 		IncludeAnalysis:    true,
 		IncludeComments:    true,
 		IncludePlayedMoves: true,
 		IncludeMatches:     true,
+		Watermark:          marking.watermark,
+		WatermarkNote:      marking.note,
+		Password:           marking.password,
 	}
 	err = withInterruptibleContext(func() {
 		if text {

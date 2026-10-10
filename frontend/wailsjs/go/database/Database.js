@@ -1002,6 +1002,10 @@ export function MakeParticipantAvailable(arg1, arg2) {
   return window['go']['database']['Database']['MakeParticipantAvailable'](arg1, arg2);
 }
 
+export function MatchIDsReachedBy(arg1) {
+  return window['go']['database']['Database']['MatchIDsReachedBy'](arg1);
+}
+
 export function MatchMAT(arg1) {
   return window['go']['database']['Database']['MatchMAT'](arg1);
 }

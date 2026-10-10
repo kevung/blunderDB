@@ -215,3 +215,10 @@ describe('issuance fields in the export modal', () => {
         expect(container.querySelector('#export-origin')).not.toBeNull();
     });
 });
+
+describe('the saved-searches box', () => {
+    test('is offered once', () => {
+        const { container } = mount(baseOptions());
+        expect(container.querySelectorAll('#export-filter-library')).toHaveLength(1);
+    });
+});

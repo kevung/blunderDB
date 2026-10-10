@@ -4857,7 +4857,12 @@ Trois points méritent l'attention :
 
 * **L'export porte sur les positions actuellement affichées**, pas sur la base
   entière. Après une recherche, seuls les résultats partent — la fenêtre le
-  rappelle en tête.
+  rappelle en tête — et la liste des matchs ne propose que ceux où ces
+  positions ont été jouées ; chaque match coché part avec toutes ses positions.
+* **Quand la liste affichée est la bibliothèque**, l'export est le même que
+  celui du serveur et de ``export --type database`` : toutes les cases sont
+  cochées d'emblée, et les paquets Anki (sans historique de révision) et les
+  transcriptions en cours partent avec le reste.
 * **Une collection dont toutes les positions ne sont pas dans la sélection
   arrive tronquée.** La liste affiche donc, pour chaque collection, la part
   couverte (« 12/40 ») et la signale en rouge lorsqu'elle est partielle.
