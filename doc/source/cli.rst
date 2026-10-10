@@ -2758,8 +2758,10 @@ du nom canonique, comme autant de ``players alias add``.
    ./blunderdb players merge --db <chemin> --into <CANONIQUE> <NOM> [<NOM>...]
 
 **players swap** — L'inversion des deux joueurs d'un match, que le fichier avait
-nommés dans le mauvais ordre (route ``matches.swapPlayers``). Chaque position du
-match est réécrite du point de vue de l'autre joueur.
+nommés dans le mauvais ordre (route ``matches.swapPlayers``). Aucune position ni
+aucune analyse ne change : chaque joueur garde ses statistiques, sous l'autre siège.
+L'inversion est refusée tant qu'un brouillon de transcription est ouvert sur le
+match, et pour un match joué dans blunderDB.
 
 .. code-block:: bash
 

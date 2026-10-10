@@ -84,10 +84,10 @@ type LuckAdjusted struct {
 }
 
 // BuildMatchReview assembles a MatchReview from the match's decisions, as
-// MatchDecisionLosses lists them, its length (0 for money), the winning
-// chances of player 1 at its start, and its outcome (MatchOutcome: +1 for
+// MatchDecisionLosses lists them, its length (0 for money), each seat's
+// winning chances at its start, and its outcome (MatchOutcome: +1 for
 // player 1, -1 for player 2, 0 unfinished).
-func BuildMatchReview(matchID int64, decisions []DecisionLoss, matchLength int, startMWC float64, outcome int) MatchReview {
+func BuildMatchReview(matchID int64, decisions []DecisionLoss, matchLength int, startMWC [2]float64, outcome int) MatchReview {
 	r := MatchReview{MatchID: matchID}
 	var games []int
 	seen := map[int]bool{}
@@ -161,12 +161,9 @@ func BuildMatchReview(matchID int64, decisions []DecisionLoss, matchLength int, 
 		if matchLength <= 0 || outcome == 0 || measured == 0 {
 			continue
 		}
-		won, start := 0.0, startMWC
+		won, start := 0.0, startMWC[seat]
 		if (outcome > 0) == (seat == 0) {
 			won = 1
-		}
-		if seat == 1 {
-			start = 1 - startMWC
 		}
 		p.Luck.Available = true
 		p.Luck.Result = won - start

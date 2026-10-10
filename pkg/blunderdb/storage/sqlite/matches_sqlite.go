@@ -637,17 +637,24 @@ func (s *matchStore) PurgeOrphanPositions(ctx context.Context, scope string, ids
 	return nil
 }
 
-// SwapPlayers swaps player 1 and player 2 for the match: it swaps the header
-// names, the per-game scores and winner, the per-move player, and the score /
-// cube-owner columns of every position the match's moves reference.
+// SwapPlayers swaps player 1 and player 2 for the match — see
+// storage.MatchStore. Positions are stored from the side on roll, so no
+// position, analysis or played-decision score changes: only what names a seat.
+// A match with a draft open on it, or played here, is refused.
 func (s *matchStore) SwapPlayers(ctx context.Context, scope string, id int64) error {
 	err := withTx(ctx, s.db, func(tx execer) error {
+		if err := sqlshared.SwapRefusal(ctx, binder{tx}.shared(), scope, id); err != nil {
+			return err
+		}
 		// The seats trade places: each row now describes the other player.
 		if _, err := tx.ExecContext(ctx, sqlshared.InvalidateMatchStatsOfMatchesSQL+"(?)", id); err != nil {
 			return fmt.Errorf("invalidate match stats: %w", err)
 		}
 		if _, err := tx.ExecContext(ctx,
-			`UPDATE match SET player1_name = player2_name, player2_name = player1_name
+			`UPDATE match SET player1_name = player2_name, player2_name = player1_name,
+			                  player1_elo = player2_elo, player2_elo = player1_elo,
+			                  player1_experience = player2_experience,
+			                  player2_experience = player1_experience
 			 WHERE id = ?`, id); err != nil {
 			return fmt.Errorf("swap names: %w", err)
 		}
@@ -662,63 +669,6 @@ func (s *matchStore) SwapPlayers(ctx context.Context, scope string, id int64) er
 			`UPDATE move SET player = -player
 			 WHERE game_id IN (SELECT id FROM game WHERE match_id = ?)`, id); err != nil {
 			return fmt.Errorf("swap move players: %w", err)
-		}
-		// Positions swap by copy-on-write, NOT in place: a position may be
-		// shared with other matches and its score/cube are part of the Zobrist
-		// hash. Save a swapped copy (Save dedups) and repoint this match's moves.
-		posIDs, err := queryInt64s(ctx, tx,
-			`SELECT DISTINCT mv.position_id FROM move mv
-			 INNER JOIN game g ON mv.game_id = g.id
-			 WHERE g.match_id = ? AND mv.position_id IS NOT NULL`, id)
-		if err != nil {
-			return fmt.Errorf("collect swap positions: %w", err)
-		}
-
-		ps := &positionStore{db: tx}
-		// Loaded in one round trip; Save below stays per-position, since the
-		// Zobrist dedup decision is.
-		loaded, err := ps.LoadByIDs(ctx, scope, posIDs)
-		if err != nil {
-			return fmt.Errorf("load swap positions: %w", err)
-		}
-		byID := make(map[int64]*domain.Position, len(loaded))
-		for i := range loaded {
-			byID[loaded[i].ID] = &loaded[i]
-		}
-		// Positions repointed away from are orphan candidates, checked in one
-		// DELETE after the loop: a mid-loop check could not see later repoints.
-		var swappedAway, repointed []int64
-		for _, pid := range posIDs {
-			pos, ok := byID[pid]
-			if !ok {
-				return fmt.Errorf("load swap position %d: %w", pid, storage.ErrNotFound)
-			}
-			pos.Score[0], pos.Score[1] = pos.Score[1], pos.Score[0]
-			if pos.Cube.Owner != domain.None {
-				pos.Cube.Owner = 1 - pos.Cube.Owner
-			}
-			newID, err := ps.Save(ctx, scope, pos)
-			if err != nil {
-				return fmt.Errorf("save swapped position: %w", err)
-			}
-			if newID == pid {
-				continue // swap is a no-op for this position (self-mirrored)
-			}
-			if _, err := tx.ExecContext(ctx,
-				`UPDATE move SET position_id = ?
-				 WHERE position_id = ? AND game_id IN (SELECT id FROM game WHERE match_id = ?)`,
-				newID, pid, id); err != nil {
-				return fmt.Errorf("repoint swapped move: %w", err)
-			}
-			swappedAway = append(swappedAway, pid)
-			repointed = append(repointed, newID)
-		}
-		// The repointed moves are scored by their new position's analysis.
-		if _, err := sqlshared.RescorePlayedDecisionsOf(ctx, binder{tx}.shared(), repointed); err != nil {
-			return fmt.Errorf("rescore swapped moves: %w", err)
-		}
-		if err := deleteOrphanedPositions(ctx, tx, swappedAway); err != nil {
-			return fmt.Errorf("swap orphan cleanup: %w", err)
 		}
 		return nil
 	})

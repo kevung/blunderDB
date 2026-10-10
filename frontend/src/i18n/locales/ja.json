@@ -666,6 +666,8 @@
         "errorDeleting": "マッチの削除中にエラーが発生しました",
         "errorSettingTournament": "トーナメントの設定中にエラーが発生しました",
         "errorSwapping": "プレイヤーの入れ替え中にエラーが発生しました",
+        "swapDraftOpen": "入れ替えを拒否しました: このマッチには書き起こしの下書きが開いています。先に完了するか削除してください。",
+        "swapPlayedHere": "入れ替えを拒否しました: このマッチは blunderDB で対局されたもので、席は対局時のままです。",
         "errorUpdating": "マッチの更新中にエラーが発生しました",
         "errorUpdatingComment": "コメントの更新中にエラーが発生しました",
         "matchDeleted": "マッチをごみ箱に移動しました — 復元できます（コマンド「trash」）",

@@ -27,6 +27,22 @@ var (
 	ErrInternal = errors.New("storage: internal error")
 )
 
+// The refusals of MatchStore.SwapPlayers. Both match ErrInvalid; their
+// messages are part of the contract — the GUI recognises them to translate
+// them.
+var (
+	// ErrSwapDraftOpen — a Transcription draft is open on the match: its
+	// Finish would replace the match in the order the draft holds, and
+	// silently undo the swap.
+	ErrSwapDraftOpen = fmt.Errorf("%w: a transcription draft is open on the match", ErrInvalid)
+
+	// ErrSwapPlayedHere — the match was played here, in a Duel: its origin
+	// (the Start XGID, the seat that ran over time, the declared Bots, the
+	// seed contributions) names the seats as they were played (ADR-0072
+	// rule 5).
+	ErrSwapPlayedHere = fmt.Errorf("%w: the match was played here, under arbitration", ErrInvalid)
+)
+
 // DuplicatePositionError is what PositionStore.Update returns when the edited
 // position has become identical (same Zobrist hash) to another stored one.
 // Positions are identified by that hash, so the update would create a second

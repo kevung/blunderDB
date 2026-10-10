@@ -191,11 +191,11 @@ func (s *StatsStore) classifiedErrors(ctx context.Context, scope string, filter 
 		if priced {
 			row.Label = matchLabel(p1, p2, labelLength)
 			row.Day = day
-			if loss := decisionMWCLoss(errMP, away0, away1, rawPlayer, cubeValue, matchLength); !math.IsNaN(loss) {
+			if loss := decisionMWCLoss(errMP, away0, away1, cubeValue, matchLength); !math.IsNaN(loss) {
 				row.Loss = &loss
 				if costs := decisionCosts(analysisOf(id, data), row.Kind, cubeAction); costs != nil {
 					// As MatchDecisionLosses: the conversion is linear in equity.
-					perUnit := decisionMWCLoss(1000, away0, away1, rawPlayer, cubeValue, matchLength)
+					perUnit := decisionMWCLoss(1000, away0, away1, cubeValue, matchLength)
 					diff := perUnit * storage.ReferenceExpectedLoss(costs, storage.DifficultyTemperature)
 					row.Difficulty = &diff
 					row.Avoidable = storage.IsAvoidable(loss, diff, true)
