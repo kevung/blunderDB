@@ -870,6 +870,8 @@
         "reviewComplete": "Повторение завершено! Повторено карточек: {count}.",
         "settingsSaved": "Настройки сохранены",
         "deckSynced": "Колода «{name}» синхронизирована",
+        "exportApkgTooltip": "Экспортировать как пакет Anki (.apkg)",
+        "apkgExported": "Колода «{name}» экспортирована: карточек {count}",
         "deckReset": "Колода «{name}» сброшена",
         "confirmDeleteDeck": "Удалить колоду «{name}»?",
         "confirmResetDeck": "Сбросить колоду «{name}»? Весь прогресс будет потерян.",

@@ -1,7 +1,9 @@
 package cli
 
 import (
+	"archive/zip"
 	"encoding/json"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"testing"
@@ -266,5 +268,44 @@ func TestCLI_StatsPlan(t *testing.T) {
 		if err == nil {
 			t.Errorf("%v: want an error", args)
 		}
+	}
+}
+
+func TestCLI_AnkiExport(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	deckID, _ := seedDeck(t, cli, 3)
+	out := filepath.Join(t.TempDir(), "deck.apkg")
+	stdout := captureStdout(t, func() {
+		if err := cli.Run([]string{"anki", "export", "--db", dbPath, "--deck", strconv.FormatInt(deckID, 10), "--out", out, "--format", "apkg"}); err != nil {
+			t.Fatalf("anki export: %v", err)
+		}
+	})
+	if !strings.Contains(stdout, "3 card(s)") {
+		t.Errorf("stdout = %q", stdout)
+	}
+	zr, err := zip.OpenReader(out)
+	if err != nil {
+		t.Fatalf("not a zip: %v", err)
+	}
+	defer zr.Close()
+	names := map[string]bool{}
+	for _, f := range zr.File {
+		names[f.Name] = true
+	}
+	if !names["collection.anki2"] || !names["media"] {
+		t.Errorf("entries = %v", names)
+	}
+
+	for _, args := range [][]string{
+		{"anki", "export", "--db", dbPath, "--out", out},
+		{"anki", "export", "--db", dbPath, "--deck", "1", "--collection", "1", "--out", out},
+		{"anki", "export", "--db", dbPath, "--deck", "1"},
+		{"anki", "export", "--db", dbPath, "--deck", "1", "--out", out, "--format", "csv"},
+	} {
+		captureStdout(t, func() {
+			if err := cli.Run(args); err == nil {
+				t.Errorf("%v: want an error", args)
+			}
+		})
 	}
 }

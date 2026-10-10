@@ -870,6 +870,8 @@
         "reviewComplete": "Révision terminée ! {count} cartes révisées.",
         "settingsSaved": "Paramètres enregistrés",
         "deckSynced": "Paquet « {name} » synchronisé",
+        "exportApkgTooltip": "Exporter en paquet Anki (.apkg)",
+        "apkgExported": "Paquet « {name} » exporté : {count} carte(s)",
         "deckReset": "Paquet « {name} » réinitialisé",
         "confirmDeleteDeck": "Supprimer le paquet « {name} » ?",
         "confirmResetDeck": "Réinitialiser le paquet « {name} » ? Toute la progression sera perdue.",

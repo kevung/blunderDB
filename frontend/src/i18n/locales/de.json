@@ -870,6 +870,8 @@
         "reviewComplete": "Wiederholung abgeschlossen! {count} Karten wiederholt.",
         "settingsSaved": "Einstellungen gespeichert",
         "deckSynced": "Stapel „{name}“ synchronisiert",
+        "exportApkgTooltip": "Als Anki-Paket exportieren (.apkg)",
+        "apkgExported": "Stapel „{name}“ exportiert: {count} Karte(n)",
         "deckReset": "Stapel „{name}“ zurückgesetzt",
         "confirmDeleteDeck": "Stapel „{name}“ löschen?",
         "confirmResetDeck": "Stapel „{name}“ zurücksetzen? Der gesamte Fortschritt geht verloren.",

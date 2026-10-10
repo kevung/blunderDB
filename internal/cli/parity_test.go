@@ -461,6 +461,7 @@ var databaseParity = map[string]parityEntry{
 	"SetupDatabase":                     {CLI: "create", Why: "the daemon bootstraps its store at start-up (Storage.Migrate)"},
 	"SuggestMatFilename":                {CLI: "export --type mat", Server: "/v1/matches.exportMat"},
 	"SwapMatchPlayers":                  {CLI: "players swap", Server: "/v1/matches.swapPlayers"},
+	"ExportAnkiPackage":                 {CLI: "anki export", Server: "/v1/anki.exportApkg"},
 	"SyncAnkiDeck":                      {CLI: "anki sync", Server: "/v1/anki.sync"},
 	"SyncAnkiDeckWithPositions":         {CLI: "anki sync", Server: "/v1/anki.syncWithPositions"},
 	"UpdateAnkiDeck":                    {Server: "/v1/anki.updateDeck", Why: whyGUIEdit},

@@ -870,6 +870,8 @@
         "reviewComplete": "Η επανάληψη ολοκληρώθηκε! {count} κάρτες επαναλήφθηκαν.",
         "settingsSaved": "Οι ρυθμίσεις αποθηκεύτηκαν",
         "deckSynced": "Η τράπουλα «{name}» συγχρονίστηκε",
+        "exportApkgTooltip": "Εξαγωγή ως πακέτο Anki (.apkg)",
+        "apkgExported": "Η τράπουλα «{name}» εξήχθη: {count} κάρτα(ες)",
         "deckReset": "Η τράπουλα «{name}» επαναφέρθηκε",
         "confirmDeleteDeck": "Διαγραφή της τράπουλας «{name}»;",
         "confirmResetDeck": "Επαναφορά της τράπουλας «{name}»; Όλη η πρόοδος θα χαθεί.",

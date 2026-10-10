@@ -27,14 +27,16 @@ import {
     ResetAnkiDeck,
     GetAllCollections,
     ListPositionIDs,
-    LoadPositionIDsByFilters
+    LoadPositionIDsByFilters,
+    ExportAnkiPackage
 } from '../../wailsjs/go/database/Database.js';
+import { OpenExportApkgDialog } from '../../wailsjs/go/gui/App.js';
 import { ankiDecksStore, selectedAnkiDeckStore, ankiReviewCardStore, ankiDeckStatsStore, ankiViewModeStore, hideAnkiAnswer } from '../stores/ankiStore.js';
 import { collectionsStore } from '../stores/collectionStore.js';
 import { positionsStore, deckSource } from '../stores/positionStore.js';
 import { selectedMoveStore } from '../stores/analysisStore.js';
 import { currentPositionIndexStore, statusBarTextStore } from '../stores/uiStore.js';
-import { tMsg } from '../i18n';
+import { language, tMsg } from '../i18n';
 import { showPosition, leaveStudiedModeForList } from './positionService.js';
 import { parseFilters } from '../commandProcessor.js';
 import { buildSearchFilterPayload } from './searchFilterService.js';
@@ -514,4 +516,16 @@ export const RETENTION_MIN_SAMPLE = 20;
 
 export async function deckRetention(/** @type {number} */ deckId) {
     return await GetAnkiDeckRetention(deckId);
+}
+
+/**
+ * Writes a deck as an Anki package (.apkg) where the user chooses, its cards in
+ * the interface language. Resolves to null when the user cancels the dialog.
+ * @param {Deck} deck
+ * @returns {Promise<import("../../wailsjs/go/models").apkg.Result | null>}
+ */
+export async function exportDeckApkg(deck) {
+    const path = await OpenExportApkgDialog(`${deck.name}.apkg`);
+    if (!path) return null;
+    return ExportAnkiPackage(deck.id, 0, get(language), path);
 }

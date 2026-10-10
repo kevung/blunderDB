@@ -40,6 +40,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/anki.deckPositions                   NDJSON
      POST /v1/anki.deckStats                       JSON
      POST /v1/anki.deleteDeck                      JSON
+     POST /v1/anki.exportApkg                      custom
      POST /v1/anki.filteredPositionCount           JSON
      POST /v1/anki.filteredPositionIds             JSON
      POST /v1/anki.forecast                        JSON

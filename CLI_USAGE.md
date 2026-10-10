@@ -917,6 +917,13 @@ measures and resynchronises.
   0 holds every overdue card; `--deck 0` (the default) covers every deck
 - `sync --deck <id>` - Add a card for every position of the deck's source that
   has none yet; existing cards keep their scheduling state
+- `export --deck <id> | --collection <id> --out <file.apkg> [--format apkg]
+  [--lang <code>]` - Write a deck or a collection as an Anki package (.apkg)
+  that Anki imports on desktop or phone: one card per position, the board,
+  score, cube and dice on the front, the best move or cube decision, its
+  equity and the played move's error on the back. A living collection is
+  evaluated at export. Nothing is written to the database; re-importing a
+  later export into Anki updates its notes instead of duplicating them
 
 A deck built from a collection re-reads its collection. A deck built from a
 search stores the search as the GUI saved it (command, board and the position
@@ -930,6 +937,7 @@ the GUI to re-run the search itself.
 ./blunderDB anki stats --db database.db --deck 2 --format json
 ./blunderDB anki forecast --db database.db --deck 2 --days 14
 ./blunderDB anki sync --db database.db --deck 2
+./blunderDB anki export --db database.db --deck 2 --out deck.apkg
 ```
 
 **Example output (`forecast`):**
@@ -2133,6 +2141,34 @@ Options:
 Examples:
   blunderdb anki decks --db database.db
   blunderdb anki decks --db database.db --format csv
+```
+
+### `blunderdb anki export`
+
+```
+Usage: blunderdb anki export [options]
+
+Write a study deck or a collection as an Anki package (.apkg).
+A living collection's query is evaluated at export. Re-importing a later
+export into Anki updates its notes instead of duplicating them.
+
+Options:
+  -collection int
+    	Collection ID (this or --deck)
+  -db string
+    	Path to the database file (required)
+  -deck int
+    	Deck ID (this or --collection)
+  -format string
+    	Package format: apkg (default "apkg")
+  -lang string
+    	Language of the cards: fr, en, de, el, es, fi, it, ja, ru (default "en")
+  -out string
+    	Path of the .apkg to write (required)
+
+Examples:
+  blunderdb anki export --db database.db --deck 2 --out deck.apkg
+  blunderdb anki export --db database.db --collection 5 --out cubes.apkg --lang en
 ```
 
 ### `blunderdb anki forecast`

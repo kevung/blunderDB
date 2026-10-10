@@ -482,6 +482,10 @@ export function ExportDatabaseCtx(arg1, arg2) {
   return window['go']['database']['Database']['ExportDatabaseCtx'](arg1, arg2);
 }
 
+export function ExportAnkiPackage(arg1, arg2, arg3, arg4) {
+  return window['go']['database']['Database']['ExportAnkiPackage'](arg1, arg2, arg3, arg4);
+}
+
 export function ExportMatchMAT(arg1, arg2) {
   return window['go']['database']['Database']['ExportMatchMAT'](arg1, arg2);
 }
