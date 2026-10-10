@@ -2764,10 +2764,16 @@ Usage: blunderdb duel create [options]
 Start a Duel and play on to the first Decision of an external Side.
 
 Options:
+  -after-cube
+    	Begin after --start's cube decision: the side on roll rolls at once, a double offered is taken
+  -away string
+    	The score the first game is played at, as two Away scores "player1,player2" (1: the Crawford game, 0: one point away after it); replaces --start's score
   -combined-seed
     	Roll nothing before each external Side has contributed to the seed (duel contribute)
   -db string
     	Path to the database file (required)
+  -delay int
+    	Time control: the delay per move, in seconds (standard 12, speed 10)
   -discard-at-end
     	Throw the draft away when the match is won instead of writing the Match
   -format string
@@ -2776,18 +2782,26 @@ Options:
     	With --money: play the Jacoby rule
   -length int
     	Match length in points, 1 to 25
+  -minutes-per-point float
+    	Time control: each side's reserve in minutes per point of the match (standard 2, speed 0.4); 0 plays without a clock
   -money
     	A money session instead of a match
   -name1 string
     	Player 1's name
   -name2 string
     	Player 2's name
+  -reroll
+    	Draw the roll again instead of playing the one --start carries
   -side1 string
     	Player 1's Side: external, external:<configuration>@<engine> (an external Side declaring its Bot), or bot:<level> (instant, normal, thorough) (default "external")
   -side2 string
     	Player 2's Side: external, external:<configuration>@<engine> (an external Side declaring its Bot), or bot:<level> (instant, normal, thorough); two Bots play the whole match in this call (default "external")
+  -single-game
+    	End the Duel with its first game
   -start string
     	XGID of the Position the first game begins at (default: the opening position)
+  -time-out string
+    	Time control: what running out does, continue or lose_match (default "continue")
 
 Examples:
   blunderdb duel create --db database.db --length 5 --name1 Alice --name2 Bob
@@ -2795,6 +2809,8 @@ Examples:
   blunderdb duel create --db database.db --length 7 --side2 bot:normal
   blunderdb duel create --db database.db --length 5 --name1 Alice --side2 external:normal@v1.6.0
   blunderdb duel create --db database.db --length 3 --side1 bot:instant --side2 bot:instant
+  blunderdb duel create --db database.db --length 7 --away 1,4 --single-game --side2 bot:normal
+  blunderdb duel create --db database.db --length 7 --start XGID=... --reroll --after-cube --side2 bot:normal
 ```
 
 ### `blunderdb duel discard`

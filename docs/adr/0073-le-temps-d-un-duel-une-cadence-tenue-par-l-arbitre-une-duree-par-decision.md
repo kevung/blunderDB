@@ -1,6 +1,6 @@
 # ADR-0073 — Le temps d'un Duel : une Cadence tenue par l'Arbitre, une durée par décision
 
-Statut : acceptée.
+Statut : acceptée. Cadences nommées révisées par ADR-0087 (minutes par point + délai, standard et speed).
 Voir aussi : ADR-0072 (le Duel, ses Côtés, l'Arbitre), ADR-0046 (les seuils d'erreur, que la
 revue croise avec la durée).
 

@@ -171,11 +171,19 @@ export const positionReloadTriggerStore = writable(0);
 export const showPipcountStore = writable(true);
 
 /**
+ * Le Duel joué pipcount masqué : un masque que ni le bouton ni la touche `p` ne lèvent, posé à
+ * l'ouverture du Duel et levé à sa sortie ; la préférence n'est pas touchée et revient seule.
+ */
+export const duelPipcountHiddenStore = writable(false);
+
+/**
  * Le pipcount est-il visible ? La préférence (`showPipcountStore`, touche `p`), sauf pendant une
  * question de Pions qui la surcharge. Le plateau s'y abonne pour repeindre : `drawBoard()` lit
  * sa valeur impérativement, et une visibilité changée sans repaint ne changerait rien à l'écran.
  */
-export const pipcountVisibleStore = derived([showPipcountStore, trainingPipOverrideStore], ([$preference, $override]) => ($override === null ? $preference : $override));
+export const pipcountVisibleStore = derived([showPipcountStore, trainingPipOverrideStore, duelPipcountHiddenStore], ([$preference, $override, $duelHidden]) =>
+    $duelHidden ? false : $override === null ? $preference : $override
+);
 
 // The welcome screen is shown while no database is open, unless set aside; an empty panel can bring it back.
 export const homeDismissedStore = writable(false);

@@ -4678,21 +4678,51 @@ d'outils, ou par la commande ``duel``. Une base doit être ouverte : le Duel s'y
 écrit après chaque décision.
 
 Sans Duel ouvert, le panneau montre le formulaire, mémorisé d'un Duel à
-l'autre, un réglage par ligne, « Jouer » au bout de la bande d'en-tête, et,
-s'il y en a, la liste des Duels en suspens :
+l'autre, et, s'il y en a, la liste des Duels en suspens. La bande d'en-tête
+porte le **Départ**, les choix que la position de départ appelle, la
+**cadence**, et « Jouer » à son bout :
+
+* **Départ** : la position initiale, ou la position au plateau. Partant du
+  plateau, celui-ci s'édite comme dans le panneau Eval (même plateau
+  brouillon, mêmes gestes) : les pions, le videau et son propriétaire, les dés
+  — posés du côté d'un joueur, ils lui donnent le trait — et le score.
+* **Dés** (départ du plateau portant des dés) : « Dés du plateau », par défaut,
+  joue le jet posé ; « Relancer » le fait tirer à nouveau par l'Arbitre.
+* **Décision de videau** (départ du plateau sans dés à jouer, quand le joueur
+  au trait peut doubler ou qu'un double est offert au plateau) : « Avant le
+  videau », par défaut, commence par cette décision — le joueur au trait
+  double ou lance, ou l'adversaire répond au double offert ; « Après le
+  videau » passe au lancer, un double offert étant alors pris.
+* **Cadence** : sans cadence, **Standard** (2 min par point + 12 s),
+  **Speed** (0,4 min par point, soit 2 min pour un match en 5 points,
+  + 10 s), ou une cadence enregistrée.
+
+Le formulaire, un réglage par ligne :
 
 * **Match** de 1 à 25 points, ou **session en argent** (Jacoby au choix).
-* **Départ** : la position initiale, la position au plateau, ou la position
-  initiale à un score choisi.
+* **Score** : ce qu'il manque à chaque joueur, par défaut la longueur du match
+  (début de match) ; « 1 (Crawford) » est la partie Crawford, « 1
+  (post-Crawford) » une partie qui la suit. Partant du plateau, ces champs et
+  le score du plateau ne font qu'un : changer l'un change l'autre, et un
+  plateau en argent fait une session en argent. **Une seule partie** arrête le
+  Duel à la fin de sa première partie, pour s'entraîner à un score : le Match
+  écrit ne compte que cette partie.
+* **Cadence** (une cadence choisie) : **minutes par point** et **délai** en
+  secondes. Chaque joueur dispose de minutes par point × longueur du match
+  (moins, à un score de départ : la longueur moyenne restant à jouer) ; à
+  chaque tour, le délai s'écoule d'abord, puis la réserve. Une réserve épuisée
+  reste à zéro, et le temps écoulé continue en le notant, ou fait perdre le
+  match. Un nom et « Enregistrer » gardent les deux nombres comme cadence du
+  menu, dans les réglages de l'utilisateur ; « Supprimer » retire la cadence
+  enregistrée choisie. Une session en argent se joue sans cadence.
 * **Côté joué** (joueur 1 ou 2) et **niveau du Bot** (``instant``, ``normal``,
   ``thorough``, ceux de l'analyse). Le sélecteur dit la profondeur de chaque
   niveau, par exemple « instant (0 coup) » ou « normal (2 coups, élagué) » ; plus profond, c'est plus
   fort et plus lent.
-* **Cadence** : sans cadence, ou une cadence nommée (une réserve par joueur et
-  un délai gratuit à chaque tour), et ce que fait le temps écoulé : continuer
-  en le notant, ou perdre le match.
 * **Votre nom** et **Enregistrer le match** : décoché, le Duel terminé est
   jeté au lieu de devenir un Match.
+* **Pipcount** : décoché, le pipcount reste masqué pendant le Duel, même par
+  le bouton de la barre d'outils ou ``P`` ; il revient à la sortie du Duel.
 
 « Reprendre » rouvre un Duel en suspens au même point, avec les mêmes dés à
 venir ; ses horloges étaient arrêtées.
@@ -4713,7 +4743,7 @@ se lit dans l'infobulle de l'invite de la bande d'en-tête, puis avec le germe d
 passe en mode **DUEL** : la bibliothèque ne se parcourt plus, l'édition, le
 panneau Eval et les autres onglets ne s'ouvrent pas, et le moteur se tait —
 aucune évaluation, aucun candidat. Seules restent la Pile (``B``), le
-pipcount (``P``) et l'aide.
+pipcount (``P``, sauf s'il est masqué pour le Duel) et l'aide.
 
 * Avant le lancer, un clic sur le plateau, sur les dés ou sur un pion les
   lance ; seul un clic sur le videau propose de doubler, et le plateau demande « Doubler » ou « Annuler ». Quand

@@ -48,19 +48,18 @@ type Cadence struct {
 	TimeOut TimeOut `json:"timeOut,omitempty"`
 }
 
-// namedCadences are the Cadences a Duel offers by name.
+// namedCadences are the Cadences a Duel offers by name: a reserve per point
+// and a delay, the two numbers a time control is stated in; the reserve of a
+// match from 0-0 is the per-point reserve times its length.
 var namedCadences = []Cadence{
 	// USBGF in-person rules and WBGF 2.1 § 3.5 (v)-(vi): 2 min per point of
 	// the average length left, 12 s simple delay.
-	{Name: "tournament", ReservePerPoint: 120, Delay: 12},
-	// Presets of a third-party clock application (hansdezwart/bgclock), its
-	// author's declaration and nothing more: rapid play, no rulebook behind.
-	{Name: "rapid-3+12", Reserve: 180, Delay: 12},
-	{Name: "rapid-2+12", Reserve: 120, Delay: 12},
-	{Name: "rapid-3+15", Reserve: 180, Delay: 15},
+	{Name: "standard", ReservePerPoint: 120, Delay: 12},
+	// 2 min for a 5-point match, in proportion to the length, 10 s delay.
+	{Name: "speed", ReservePerPoint: 24, Delay: 10},
 }
 
-// NamedCadences returns the Cadences a Duel offers by name, the tournament
+// NamedCadences returns the Cadences a Duel offers by name, the standard
 // one first.
 func NamedCadences() []Cadence { return append([]Cadence(nil), namedCadences...) }
 

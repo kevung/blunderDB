@@ -1,6 +1,6 @@
 # ADR-0072 — Un Duel est un match joué ici, sous l'arbitrage de blunderDB
 
-Statut : acceptée. Remplace ADR-0037.
+Statut : acceptée. Remplace ADR-0037. Règle 12 révisée par ADR-0087 (score, dés, videau, une partie au Départ).
 Voir aussi : ADR-0073 (la Cadence et la durée de décision), ADR-0044 (transcrire n'est pas jouer), ADR-0045 (le brouillon), ADR-0057 (l'API
 offerte à un client externe), ADR-0015 (`serve` opère sur une bibliothèque), ADR-0060 (le
 rollout, qui joue déjà des parties).

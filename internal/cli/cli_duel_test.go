@@ -278,6 +278,18 @@ func TestCLI_DuelStartSettings(t *testing.T) {
 	if st.Ended == nil || st.Ended.MatchID == 0 || len(st.Games) != 1 || st.Start == nil || st.Start.Score != [2]int{1, 4} {
 		t.Fatalf("a single game at 1-away 4-away: ended %+v, games %+v", st.Ended, st.Games)
 	}
+	out = captureStdout(t, func() {
+		if err := cli.Run([]string{"duel", "create", "--db", dbPath, "--length", "5", "--minutes-per-point", "0.4", "--delay", "10", "--format", "json"}); err != nil {
+			t.Fatalf("duel create with a time control: %v", err)
+		}
+	})
+	st = duel.State{}
+	if err := json.Unmarshal([]byte(out), &st); err != nil {
+		t.Fatal(err)
+	}
+	if st.Clock == nil || st.Clock.Cadence.ReservePerPoint != 24 || st.Clock.Cadence.Delay != 10 || st.Clock.Reserve != [2]int64{120000, 120000} {
+		t.Fatalf("0.4 min a point and 10 s over 5 points: %+v", st.Clock)
+	}
 	for _, away := range []string{"8,4", "1,1", "x,2", "3"} {
 		if err := cli.Run([]string{"duel", "create", "--db", dbPath, "--length", "7", "--away", away}); err == nil {
 			t.Errorf("--away %s accepted", away)

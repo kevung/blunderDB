@@ -8,7 +8,7 @@ import { GetGammonNetAnalysisPly, GetGammonNetPruneK, GetDuelForm, SaveDuelForm 
 import { duelStore, duelListStore, duelNowStore, duelAnimatingStore, duelHoldsBoardStore, duelBoardStore } from '../stores/duelStore.js';
 import { quizPlayStore, armBoardMove } from '../stores/quizPlayStore.js';
 import { positionStore } from '../stores/positionStore.js';
-import { statusBarTextStore, activeTabStore, matchOpenRequestStore, matchPanelRefreshTriggerStore, dbMutationCounterStore } from '../stores/uiStore.js';
+import { statusBarTextStore, activeTabStore, matchOpenRequestStore, matchPanelRefreshTriggerStore, dbMutationCounterStore, duelPipcountHiddenStore } from '../stores/uiStore.js';
 import { newPlay, completedPlay, resetPlay, playHop } from './quizPlay.js';
 import { humanSide, framesBetween, clockView, normalizeForm, settingsFromForm } from './duel.js';
 import { boardPress, boardContext, canValidateMove, isMine } from './duelBoard.js';
@@ -28,6 +28,8 @@ let ticker = null;
 let flaggedAt = -1;
 /** A gesture is on its way to the Arbiter: a second one would play twice. */
 let busy = false;
+/** The pipcount hidden for the Duel being opened: the form's choice when it was started or resumed. */
+let hidePipcount = false;
 
 // ── The form, remembered from one Duel to the next ───────────────────────────
 
@@ -76,11 +78,17 @@ export async function refreshDuels() {
 export async function startDuel(form, cadences) {
     saveDuelForm(form);
     const settings = settingsFromForm(form, cadences, get(positionStore));
+    hidePipcount = form?.pipcount === false;
     await gesture(() => CreateDuel(settings), { fresh: true });
 }
 
 /** @param {number} id */
-export async function resumeDuel(id) {
+/**
+ * @param {number} id
+ * @param {any} [form] the form's display choices (the pipcount) apply to the Duel resumed
+ */
+export async function resumeDuel(id, form) {
+    hidePipcount = form?.pipcount === false;
     await gesture(() => OpenDuel(id), { fresh: true });
 }
 
@@ -276,7 +284,10 @@ async function gesture(call, { fresh = false } = {}) {
 async function draw(before, result) {
     const state = result?.state;
     if (!state) return;
-    if (!before) await enterDuelMode();
+    if (!before) {
+        await enterDuelMode();
+        duelPipcountHiddenStore.set(hidePipcount);
+    }
     quizPlayStore.set(null);
     duelBoardStore.set({ prompt: null });
 
@@ -354,6 +365,7 @@ async function finish(state) {
 /** @param {{restoreBoard: boolean}} options */
 async function leave(options) {
     stopTicker();
+    duelPipcountHiddenStore.set(false);
     quizPlayStore.set(null);
     duelStore.set(null);
     await exitDuelMode(options);
@@ -362,6 +374,7 @@ async function leave(options) {
 /** Forgets the Duel without a word to the Arbiter: the library closed under it, suspending it. */
 export function forgetDuel() {
     stopTicker();
+    duelPipcountHiddenStore.set(false);
     if (get(duelStore)) quizPlayStore.set(null);
     duelStore.set(null);
     duelListStore.set([]);

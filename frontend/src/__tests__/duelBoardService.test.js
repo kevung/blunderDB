@@ -25,10 +25,10 @@ import { duelStore, duelBoardStore, duelAnimatingStore } from '../stores/duelSto
 import { quizPlayStore } from '../stores/quizPlayStore.js';
 import { duelBoardPress, duelBoardContextMenu, duelBoardDrop, duelKeyGuard, confirmDouble, cancelDouble } from '../services/duelService.js';
 import { newPlay } from '../services/quizPlay.js';
-import { scoreStart } from '../services/duel.js';
+import { openingPosition } from './helpers/opening.js';
 import DuelBoardPrompt from '../components/DuelBoardPrompt.svelte';
 
-const opening = { ...scoreStart(7, [7, 7]), dice: [3, 1], decision_type: 0 };
+const opening = { ...openingPosition([7, 7]), dice: [3, 1], decision_type: 0 };
 /** @type {any[]} */
 const plays = [
     {

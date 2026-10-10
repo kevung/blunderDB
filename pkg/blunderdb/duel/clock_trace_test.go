@@ -28,7 +28,7 @@ func TestReplayChargesBeyondTheDelayPerTurnAndStopsAtZero(t *testing.T) {
 }
 
 func TestReplayCountsAReserveFromTheStartingScore(t *testing.T) {
-	c, _ := NamedCadence("tournament")
+	c, _ := NamedCadence("standard")
 	got := c.Replay(7, storage.MatchTurns{Score: [2]int32{1, 2}, Turns: []storage.MatchTurn{{Player: 1, PlayMS: i64p(32000)}}})
 	// 120 s × (14 − 3) / 2 = 660 s; 32 s − 12 s delay is charged.
 	if got.Start[0] != 660000 || got.Remaining[0] != 640000 {

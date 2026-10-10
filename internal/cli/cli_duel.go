@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"math"
 	"slices"
 	"sort"
 	"strconv"
@@ -169,6 +170,9 @@ func (cli *CLI) runDuelCreate(args []string) error {
 	away := fs.String("away", "", "The score the first game is played at, as two Away scores \"player1,player2\" (1: the Crawford game, 0: one point away after it); replaces --start's score")
 	reroll := fs.Bool("reroll", false, "Draw the roll again instead of playing the one --start carries")
 	afterCube := fs.Bool("after-cube", false, "Begin after --start's cube decision: the side on roll rolls at once, a double offered is taken")
+	minutes := fs.Float64("minutes-per-point", 0, "Time control: each side's reserve in minutes per point of the match (standard 2, speed 0.4); 0 plays without a clock")
+	delay := fs.Int("delay", 0, "Time control: the delay per move, in seconds (standard 12, speed 10)")
+	timeOut := fs.String("time-out", string(duel.TimeContinue), "Time control: what running out does, continue or lose_match")
 	single := fs.Bool("single-game", false, "End the Duel with its first game")
 	discard := fs.Bool("discard-at-end", false, "Throw the draft away when the match is won instead of writing the Match")
 	combined := fs.Bool("combined-seed", false, "Roll nothing before each external Side has contributed to the seed (duel contribute)")
@@ -182,6 +186,11 @@ func (cli *CLI) runDuelCreate(args []string) error {
 	set := duel.Settings{
 		MatchLength: *length, Jacoby: *jacoby, DiscardAtEnd: *discard, CombinedSeed: *combined,
 		Reroll: *reroll, AfterCube: *afterCube, SingleGame: *single,
+	}
+	if *minutes > 0 {
+		set.Cadence = &duel.Cadence{ReservePerPoint: int(math.Round(*minutes * 60)), Delay: *delay, TimeOut: duel.TimeOut(*timeOut)}
+	} else if *delay > 0 {
+		return fmt.Errorf("--delay needs --minutes-per-point")
 	}
 	if *away != "" {
 		a, err := parseAway(*away)

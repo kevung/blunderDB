@@ -3522,6 +3522,10 @@ export namespace duel {
 	    matchLength: number;
 	    jacoby: boolean;
 	    start?: domain.Position;
+	    away?: number[];
+	    reroll?: boolean;
+	    afterCube?: boolean;
+	    singleGame?: boolean;
 	    sides: SideSpec[];
 	    discardAtEnd?: boolean;
 	    cadence?: Cadence;
@@ -3536,6 +3540,10 @@ export namespace duel {
 	        this.matchLength = source["matchLength"];
 	        this.jacoby = source["jacoby"];
 	        this.start = this.convertValues(source["start"], domain.Position);
+	        this.away = source["away"];
+	        this.reroll = source["reroll"];
+	        this.afterCube = source["afterCube"];
+	        this.singleGame = source["singleGame"];
 	        this.sides = this.convertValues(source["sides"], SideSpec);
 	        this.discardAtEnd = source["discardAtEnd"];
 	        this.cadence = this.convertValues(source["cadence"], Cadence);
@@ -3566,6 +3574,7 @@ export namespace duel {
 	    revision: number;
 	    header: transcript.Header;
 	    start?: domain.Position;
+	    singleGame?: boolean;
 	    sides: SideSpec[];
 	    fingerprint: string;
 	    actions: transcript.Action[];
@@ -3588,6 +3597,7 @@ export namespace duel {
 	        this.revision = source["revision"];
 	        this.header = this.convertValues(source["header"], transcript.Header);
 	        this.start = this.convertValues(source["start"], domain.Position);
+	        this.singleGame = source["singleGame"];
 	        this.sides = this.convertValues(source["sides"], SideSpec);
 	        this.fingerprint = source["fingerprint"];
 	        this.actions = this.convertValues(source["actions"], transcript.Action);

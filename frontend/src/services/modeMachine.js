@@ -22,6 +22,7 @@
  *   enterEditMode       NORMAL | MATCH | COLLECTION | EVAL → EDIT
  *   exitEditMode        EDIT → the mode it was entered from
  *   enterEvalMode       NORMAL | MATCH | COLLECTION | EDIT → EVAL
+ *   enterEvalOnDisplayed the same, on the position displayed (the Duel launcher)
  *   exitEvalMode        EVAL → the mode it was entered from
  *   toggleEvalMode      EVAL → (exit + analysis tab) | * → Eval tab
  *   enterTranscribeMode NORMAL | MATCH | COLLECTION | EDIT | EVAL → TRANSCRIBE
@@ -584,6 +585,20 @@ export function evaluateInNewView(position) {
  * board lands in positionStore, in one synchronous run, or updateEPC fires on
  * the wrong position. The only await (leaving EDIT) sits before that run.
  */
+/**
+ * The Duel launcher starting from the board: the board becomes Eval's scratch board — the same
+ * editing, not a copy of it — on the position displayed. Already in EVAL, the scratch board stays.
+ */
+export async function enterEvalOnDisplayed() {
+    if (currentMode() === MODE.EVAL || currentMode() === MODE.DUEL) return;
+    const shown = get(positionStore);
+    // The query board (EDIT) and a draft's Cursor (TRANSCRIBE) are not the position studied.
+    if (shown && currentMode() !== MODE.EDIT && currentMode() !== MODE.TRANSCRIBE) {
+        savedContext.evalSeed = { ...JSON.parse(JSON.stringify(shown)), id: 0 };
+    }
+    await enterEvalMode();
+}
+
 export async function enterEvalMode() {
     if (currentMode() === MODE.EVAL) return;
 

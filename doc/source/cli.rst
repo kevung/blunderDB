@@ -2063,13 +2063,13 @@ duel — Jouer un Duel
 --------------------
 
 Joue un Duel sans interface, une Action par appel. Chaque appel est son propre
-processus : il reprend le Duel dans la base, joue une Action et la réécrit. Un
-Duel joué ainsi n'a ni Cadence ni durée de décision (les durées de ses coups
-sont inconnues, jamais nulles).
+processus : il reprend le Duel dans la base, joue une Action et la réécrit. Les
+durées des coups d'un Duel joué ainsi sont inconnues, jamais nulles.
 
 .. code-block:: bash
 
    ./blunderdb duel create --db <path> (--length <n> | --money [--jacoby]) [--side1 <côté>] [--side2 <côté>]
+   ./blunderdb duel create --db <path> --length <n> [--start <XGID>] [--away <j1>,<j2>] [--reroll] [--after-cube] [--single-game] [--minutes-per-point <min> --delay <s>]
    ./blunderdb duel show --db <path> --id <id>
    ./blunderdb duel list --db <path>
    ./blunderdb duel move --db <path> --id <id> --play "24/18 13/11"
@@ -2088,9 +2088,24 @@ sont inconnues, jamais nulles).
   déclare le Bot qui joue derrière lui : l'origine du Match l'enregistre comme
   déclaré, non attesté) ; ``--discard-at-end`` jette le brouillon à la fin au lieu
   d'écrire le Match ; ``--combined-seed`` ne lance aucun dé avant l'apport de
-  chaque Côté externe au germe. Avec deux Bots, le match se joue en entier dans cet appel
+  chaque Côté externe au germe. ``--away`` donne le score de la première
+  partie en points manquants, ``joueur1,joueur2`` (``1`` : la partie Crawford,
+  ``0`` : un point après elle), et remplace celui de ``--start`` ; sans
+  ``--start``, la partie part de la position initiale à ce score.
+  ``--reroll`` fait tirer à nouveau le jet que porte ``--start`` ;
+  ``--after-cube`` commence après la décision de videau du Départ (le joueur
+  au trait lance aussitôt, un double offert est pris) — par défaut le Duel
+  commence avant elle, et un double offert attend la réponse de
+  l'adversaire. ``--single-game`` arrête le Duel à la fin de sa première
+  partie, écrite seule comme Match. ``--minutes-per-point`` et ``--delay``
+  fixent la cadence : la réserve de chaque joueur en minutes par point du
+  match (Standard 2, Speed 0,4) et le délai par coup en secondes (12, 10) ;
+  ``--time-out`` (``continue`` ou ``lose_match``) ce que fait une réserve
+  épuisée. Un Départ que les règles n'admettent pas (pions, score hors de la
+  longueur, deux joueurs en partie Crawford, videau) est refusé avec son motif.
+  Avec deux Bots, le match se joue en entier dans cet appel
   (``--side1 bot:instant --side2 bot:instant``) ; une session en argent entre
-  deux Bots est refusée, car elle ne finirait jamais.
+  deux Bots est refusée, car elle ne finirait jamais, sauf en une seule partie.
 * ``show`` — Score, ce que le Duel attend et, pour un coup, les jeux légaux. Le
   germe des dés n'est jamais affiché avant la fin : l'empreinte le représente.
 * ``list`` — Les Duels en suspens.
