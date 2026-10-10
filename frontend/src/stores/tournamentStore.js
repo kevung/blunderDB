@@ -5,3 +5,6 @@ import { writable } from 'svelte/store';
 export const tournamentsStore = writable(/** @type {Tournament[]} */ ([]));
 export const selectedTournamentStore = writable(/** @type {Tournament | null} */ (null));
 export const tournamentMatchesStore = writable(/** @type {import('../../wailsjs/go/models').domain.Match[]} */ ([]));
+
+/** ID of a tournament another panel asks the Tournaments panel to open; the panel consumes it once its list is loaded. */
+export const tournamentOpenRequestStore = writable(/** @type {number | null} */ (null));

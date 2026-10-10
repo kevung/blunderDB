@@ -1352,7 +1352,7 @@ export async function resumeInterruptedImport() {
     await resumeImportBatch(interrupted.batchID, interrupted.files);
 }
 
-// A journal line that gave a match opens it in the matches panel.
+// A journal line that gave a match opens it as a double-click on its row does (match mode).
 /** @param {number} matchID */
 export function openJournalMatch(matchID) {
     showFileImportModalStore.set(false);
