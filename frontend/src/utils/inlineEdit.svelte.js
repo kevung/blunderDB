@@ -65,7 +65,7 @@ export function createInlineEdit({ onSave, onCancel, blurGroup } = {}) {
         onCancel?.(id);
     }
 
-    function onKeyDown(event) {
+    function onKeyDown(/** @type {KeyboardEvent} */ event) {
         if (event.key === 'Enter') {
             event.stopPropagation();
             event.preventDefault();

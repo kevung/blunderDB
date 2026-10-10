@@ -18,6 +18,7 @@
  * panel's navigation keys silently doing nothing.
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, cleanup } from '@testing-library/svelte';
 import { tick } from 'svelte';
@@ -86,8 +87,8 @@ describe('AnalysisPanel: selectedMoveStore does not survive leaving the tab', ()
 
         document.body.innerHTML = '<div id="board" tabindex="-1"></div>';
         const board = document.getElementById('board');
-        board.focus();
-        board.dispatchEvent(new KeyboardEvent('keydown', { key: 'j', bubbles: true, cancelable: true }));
+        must(board).focus();
+        must(board).dispatchEvent(new KeyboardEvent('keydown', { key: 'j', bubbles: true, cancelable: true }));
         await tick();
 
         expect(nextPosition).toHaveBeenCalledTimes(1);

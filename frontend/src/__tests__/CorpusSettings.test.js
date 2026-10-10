@@ -43,16 +43,17 @@ const calls = {
     )
 };
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
-    SetSkipDuplicates: (...a) => calls.SetSkipDuplicates(...a),
-    ListAliases: (...a) => calls.ListAliases(...a),
-    SetAlias: (...a) => calls.SetAlias(...a),
-    RemoveAlias: (...a) => calls.RemoveAlias(...a),
-    SuggestAliases: (...a) => calls.SuggestAliases(...a),
-    FindDuplicateMatches: (...a) => calls.FindDuplicateMatches(...a)
+    SetSkipDuplicates: (/** @type {any[]} */ ...a) => calls.SetSkipDuplicates(...a),
+    ListAliases: (/** @type {any[]} */ ...a) => calls.ListAliases(...a),
+    SetAlias: (/** @type {any[]} */ ...a) => calls.SetAlias(...a),
+    RemoveAlias: (/** @type {any[]} */ ...a) => calls.RemoveAlias(...a),
+    SuggestAliases: (/** @type {any[]} */ ...a) => calls.SuggestAliases(...a),
+    FindDuplicateMatches: (/** @type {any[]} */ ...a) => calls.FindDuplicateMatches(...a)
 }));
 
 import CorpusSettings from '../components/CorpusSettings.svelte';
 import { skipDuplicatesStore } from '../stores/corpusStore.js';
+import { must } from './helpers/must.js';
 
 async function settle() {
     for (let i = 0; i < 4; i++) await tick();
@@ -78,7 +79,7 @@ describe('CorpusSettings', () => {
         const { container } = render(CorpusSettings);
         await settle();
         const box = container.querySelector('#config-skip-duplicates');
-        await fireEvent.click(box);
+        await fireEvent.click(must(box));
         await settle();
         expect(calls.SetSkipDuplicates).toHaveBeenCalledWith(true);
         expect(get(skipDuplicatesStore)).toBe(true);
@@ -94,7 +95,7 @@ describe('CorpusSettings', () => {
         const [alias, canonical] = container.querySelectorAll('.alias-form input');
         await fireEvent.input(alias, { target: { value: 'Open 25' } });
         await fireEvent.input(canonical, { target: { value: 'Autumn Open 2025' } });
-        await fireEvent.click(container.querySelector('.alias-form button'));
+        await fireEvent.click(must(container.querySelector('.alias-form button')));
         await settle();
         expect(calls.SetAlias).toHaveBeenCalledWith('event', 'Open 25', 'Autumn Open 2025');
 
@@ -104,7 +105,7 @@ describe('CorpusSettings', () => {
         await settle();
         expect(calls.SuggestAliases).toHaveBeenCalledWith('player');
         await findByText(/alice/);
-        await fireEvent.click(container.querySelector('.suggestions button'));
+        await fireEvent.click(must(container.querySelector('.suggestions button')));
         await settle();
         expect(calls.SetAlias).toHaveBeenLastCalledWith('player', 'alice', 'Alice');
     });

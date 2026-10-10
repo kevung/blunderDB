@@ -9,7 +9,7 @@ import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { get } from 'svelte/store';
 
-const stub = vi.hoisted(() => (names) => Object.fromEntries(names.map((n) => [n, vi.fn()])));
+const stub = vi.hoisted(() => (names) => Object.fromEntries(names.map((/** @type {number} */ n) => [n, vi.fn()])));
 vi.mock('../services/databaseService.js', () => stub(['newDatabase', 'openDatabase', 'exitApp']));
 vi.mock('../services/importService.js', () => stub(['importDatabase', 'importPosition', 'importFolder', 'pastePosition']));
 vi.mock('../services/exportService.js', () => stub(['exportDatabase']));
@@ -36,6 +36,10 @@ vi.mock('../services/pileService.js', async () => {
     const { writable } = await import('svelte/store');
     return { togglePile: vi.fn(), onPileStore: writable(false) };
 });
+vi.mock('../stores/analysisChallengeStore.js', async () => {
+    const { writable } = await import('svelte/store');
+    return { toggleAnalysisChallenge: vi.fn(), analysisChallengeStore: writable(false) };
+});
 
 import Toolbar from '../components/Toolbar.svelte';
 import { databasePathStore } from '../stores/databaseStore.js';
@@ -47,6 +51,7 @@ import * as clipboardService from '../services/clipboardService.js';
 import * as positionService from '../services/positionService.js';
 import * as keyboardService from '../services/keyboardService.js';
 import * as pileService from '../services/pileService.js';
+import * as analysisChallenge from '../stores/analysisChallengeStore.js';
 
 // One entry per toolbar button, in DOM order.
 const EXPECTED = [
@@ -70,6 +75,7 @@ const EXPECTED = [
     positionService.lastPosition,
     positionService.gotoPosition,
     positionService.togglePipcount,
+    analysisChallenge.toggleAnalysisChallenge,
     positionService.loadRandomPosition,
     positionService.showTrainingPanel,
     positionService.showDuelPanel,
@@ -102,7 +108,7 @@ describe('Toolbar — service wiring', () => {
     test.each(EXPECTED.map((target, i) => [i, target]))('button %i reaches its action', async (i, target) => {
         const { container } = render(Toolbar);
         const button = container.querySelectorAll('.toolbar button')[i];
-        expect(button.disabled).toBe(false);
+        expect(/** @type {HTMLButtonElement | HTMLInputElement} */ (button).disabled).toBe(false);
         await fireEvent.click(button);
         if (typeof target === 'string') {
             expect(get(activeModal)).toBe(target);
@@ -119,14 +125,14 @@ describe('Toolbar — service wiring', () => {
         activeTabStore.set('eval');
         const { container } = render(Toolbar);
         const buttons = container.querySelectorAll('.toolbar button');
-        expect(buttons[EXPECTED.indexOf(positionService.saveCurrentPosition)].disabled).toBe(false);
-        expect(buttons[EXPECTED.indexOf(positionService.updatePosition)].disabled).toBe(true);
+        expect(/** @type {HTMLButtonElement | HTMLInputElement} */ (buttons[EXPECTED.indexOf(positionService.saveCurrentPosition)]).disabled).toBe(false);
+        expect(/** @type {HTMLButtonElement | HTMLInputElement} */ (buttons[EXPECTED.indexOf(positionService.updatePosition)]).disabled).toBe(true);
     });
 
     test('on the Matches tab, save is disabled', () => {
         activeTabStore.set('matches');
         const { container } = render(Toolbar);
         const buttons = container.querySelectorAll('.toolbar button');
-        expect(buttons[EXPECTED.indexOf(positionService.saveCurrentPosition)].disabled).toBe(true);
+        expect(/** @type {HTMLButtonElement | HTMLInputElement} */ (buttons[EXPECTED.indexOf(positionService.saveCurrentPosition)]).disabled).toBe(true);
     });
 });

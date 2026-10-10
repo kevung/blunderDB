@@ -6,6 +6,7 @@
  * comment panel does for a position's comments.
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
@@ -42,7 +43,7 @@ import { openPanels, PANEL } from '../stores/uiStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { ListMatches, GetMatchByID, UpdateMatchComment } from '../../wailsjs/go/database/Database.js';
 import MatchPanel from '../components/MatchPanel.svelte';
-import { openSection } from './matchSectionHelper.js';
+import { openTab } from './matchTabHelper.js';
 
 /**
  * The list is loaded twice at mount (onMount, then the visibility effect) and
@@ -55,12 +56,12 @@ async function settle() {
     for (let i = 0; i < 4; i++) await tick();
 }
 
-async function select(container, name) {
+async function select(container, /** @type {string} */ name) {
     const cell = () => [...container.querySelectorAll('tbody tr td')].find((td) => td.textContent.includes(name));
     await vi.waitFor(() => expect(cell()).toBeTruthy());
     await fireEvent.click(cell());
     await vi.waitFor(() => expect(container.querySelector('.detail-pane')).not.toBeNull());
-    await openSection(container, 'info');
+    await openTab(container, 'info');
     for (let i = 0; i < 4; i++) await tick();
     return container.querySelector('.detail-pane').textContent;
 }
@@ -77,7 +78,7 @@ describe('MatchPanel — the author of the match comment', () => {
         const { container } = render(MatchPanel);
         await settle();
         await select(container, 'Alice');
-        expect(container.querySelector('.match-comment-display').textContent).toContain('Opening notes');
+        expect(must(container.querySelector('.match-comment-display')).textContent).toContain('Opening notes');
         expect(container.querySelector('.match-comment-author')?.textContent).toBe('Carol');
     });
 
@@ -85,7 +86,7 @@ describe('MatchPanel — the author of the match comment', () => {
         const { container } = render(MatchPanel);
         await settle();
         await select(container, 'Dave');
-        expect(container.querySelector('.match-comment-display').textContent).toContain('Unsigned note');
+        expect(must(container.querySelector('.match-comment-display')).textContent).toContain('Unsigned note');
         expect(container.querySelector('.match-comment-author')).toBeNull();
     });
 
@@ -93,12 +94,12 @@ describe('MatchPanel — the author of the match comment', () => {
         const { container } = render(MatchPanel);
         await settle();
         await select(container, 'Alice');
-        GetMatchByID.mockResolvedValue({ id: 7, comment: 'Revised', comment_author: 'Ivy' });
-        await fireEvent.click(container.querySelector('.match-comment-display'));
+        vi.mocked(GetMatchByID).mockResolvedValue({ id: 7, comment: 'Revised', comment_author: 'Ivy' });
+        await fireEvent.click(must(container.querySelector('.match-comment-display')));
         await tick();
         const input = container.querySelector('.match-comment-input');
-        await fireEvent.input(input, { target: { value: 'Revised' } });
-        await fireEvent.keyDown(input, { key: 'Enter' });
+        await fireEvent.input(must(input), { target: { value: 'Revised' } });
+        await fireEvent.keyDown(must(input), { key: 'Enter' });
         await vi.waitFor(() => expect(UpdateMatchComment).toHaveBeenCalledWith(7, 'Revised'));
         await vi.waitFor(() => expect(container.querySelector('.match-comment-author')?.textContent).toBe('Ivy'));
     });

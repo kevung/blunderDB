@@ -40,8 +40,11 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/anki.deckPositions                   NDJSON
      POST /v1/anki.deckStats                       JSON
      POST /v1/anki.deleteDeck                      JSON
+     POST /v1/anki.filteredPositionCount           JSON
+     POST /v1/anki.filteredPositionIds             JSON
      POST /v1/anki.forecast                        JSON
      POST /v1/anki.indexOfDeckPosition             JSON
+     POST /v1/anki.indexOfFilteredPosition         JSON
      POST /v1/anki.linkedCard                      JSON
      POST /v1/anki.listDecks                       NDJSON
      POST /v1/anki.nextCard                        JSON
@@ -64,6 +67,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/collections.countPositions           JSON
      POST /v1/collections.create                   JSON  (Idempotency-Key)
      POST /v1/collections.delete                   JSON
+     POST /v1/collections.evaluate                 JSON
      POST /v1/collections.freeze                   JSON
      POST /v1/collections.get                      JSON
      POST /v1/collections.indexOfPosition          JSON
@@ -308,6 +312,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/session.save                         JSON
    stats
      POST /v1/stats.biases                         JSON
+     POST /v1/stats.breakdownPositionCounts        JSON
      POST /v1/stats.compute                        JSON
      POST /v1/stats.dateRange                      JSON
      POST /v1/stats.headToHead                     JSON

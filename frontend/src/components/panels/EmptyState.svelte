@@ -1,6 +1,7 @@
 <script>
-    // An empty list that says what to do next: import something, or go back to the welcome
-    // screen when no database is open. One component so every panel offers the same two ways out.
+    // An empty view that says what to do next (ADR-0085, G5): the panel's own primary action
+    // when it has one, else import something, or go back to the welcome screen when no database
+    // is open. The only centred block of a panel.
     import { t } from '../../i18n/index.js';
     import { databasePathStore } from '../../stores/databaseStore';
     import { homeDismissedStore } from '../../stores/uiStore';
@@ -8,9 +9,11 @@
     import { openDatabase } from '../../services/databaseService';
 
     // `clear` replaces the import gesture when the list is empty because of a filter, not
-    // because nothing was ever imported.
-    /** @type {{ text: string, actions?: boolean, clear?: { label: string, onClick: () => void } | null }} */
-    let { text, actions = true, clear = null } = $props();
+    // because nothing was ever imported. `action` replaces it when the panel's content is made
+    // here rather than imported (a new collection, a new deck).
+    /** @typedef {{ label: string, onClick: () => void }} EmptyAction */
+    /** @type {{ text: string, actions?: boolean, clear?: EmptyAction | null, action?: EmptyAction | null }} */
+    let { text, actions = true, clear = null, action = null } = $props();
 </script>
 
 <div class="empty-state" data-testid="empty-state">
@@ -19,6 +22,8 @@
         <span class="empty-actions">
             {#if clear}
                 <button type="button" class="empty-btn primary" data-testid="empty-clear" onclick={clear.onClick}>{clear.label}</button>
+            {:else if action}
+                <button type="button" class="empty-btn primary" data-testid="empty-action" onclick={action.onClick}>{action.label}</button>
             {:else if $databasePathStore}
                 <button type="button" class="empty-btn primary" onclick={() => importPosition()}>{$t('emptyState.import')}</button>
             {:else}

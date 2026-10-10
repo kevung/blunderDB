@@ -73,7 +73,9 @@ import { databasePathStore } from '../stores/databaseStore.js';
 import { lastVisitedMatchStore } from '../stores/positionStore.js';
 import { tournamentsStore } from '../stores/tournamentStore.js';
 
+/** @type {ReturnType<typeof vi.fn>} */
 let windowSpy;
+/** @type {() => void} */
 let unregisterSpy;
 
 beforeEach(() => {

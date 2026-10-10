@@ -17,9 +17,10 @@ import { tick } from 'svelte';
  */
 export function resizable(node, params) {
     let current = params;
+    /** @type {(() => void) | null} */
     let cleanupDrag = null;
 
-    function clamp(side, size) {
+    function clamp(side, /** @type {number} */ size) {
         return side ? Math.min(Math.max(150, size), window.innerWidth - 200) : Math.min(Math.max(80, size), window.innerHeight - 160);
     }
 
@@ -29,7 +30,7 @@ export function resizable(node, params) {
         tick().then(() => window.dispatchEvent(new Event('resize')));
     }
 
-    function onMouseDown(e) {
+    function onMouseDown(/** @type {MouseEvent} */ e) {
         e.preventDefault();
         const { side, size: startSize, onResize, onCommit } = current;
         document.body.style.cursor = side ? 'ew-resize' : 'ns-resize';
@@ -38,7 +39,7 @@ export function resizable(node, params) {
         let size = startSize;
         let moved = false;
 
-        function onMouseMove(e) {
+        function onMouseMove(/** @type {MouseEvent} */ e) {
             moved = true;
             size = clamp(side, startSize + (start - (side ? e.clientX : e.clientY)));
             onResize(size, side);

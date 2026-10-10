@@ -8,12 +8,14 @@
  * dispatcher must never see it), a click on the backdrop closes only when asked,
  * and the dialog is named by its title.
  */
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
 
 import ModalFixture from './fixtures/ModalFixture.svelte';
 
+/** @type {HTMLButtonElement} */
 let outside;
 
 beforeEach(() => {
@@ -40,18 +42,18 @@ describe('Modal — focus', () => {
         await tick();
 
         const dialog = container.querySelector('[role="dialog"]');
-        expect(dialog.getAttribute('aria-modal')).toBe('true');
+        expect(must(dialog).getAttribute('aria-modal')).toBe('true');
         const title = container.querySelector('.modal-title');
-        expect(dialog.getAttribute('aria-labelledby')).toBe(title.id);
-        expect(title.textContent).toBe('A title');
+        expect(must(dialog).getAttribute('aria-labelledby')).toBe(must(title).id);
+        expect(must(title).textContent).toBe('A title');
         expect(document.activeElement).toBe(container.querySelector('#first'));
     });
 
     test('falls back to aria-label when there is no title', () => {
         const { container } = render(ModalFixture, { props: { open: true, withTitle: false, label: 'Plain' } });
         const dialog = container.querySelector('[role="dialog"]');
-        expect(dialog.getAttribute('aria-label')).toBe('Plain');
-        expect(dialog.hasAttribute('aria-labelledby')).toBe(false);
+        expect(must(dialog).getAttribute('aria-label')).toBe('Plain');
+        expect(must(dialog).hasAttribute('aria-labelledby')).toBe(false);
     });
 
     test('Tab wraps inside the box, the close cross last', async () => {
@@ -60,7 +62,7 @@ describe('Modal — focus', () => {
         const first = container.querySelector('#first');
         const cross = container.querySelector('.modal-close');
 
-        cross.focus();
+        /** @type {HTMLElement} */ (must(cross)).focus();
         expect(tab(cross).defaultPrevented).toBe(true);
         expect(document.activeElement).toBe(first);
 
@@ -88,7 +90,7 @@ describe('Modal — closing', () => {
         window.addEventListener('keydown', seenByWindow);
         const { container } = render(ModalFixture, { props: { open: true, onclose } });
 
-        await fireEvent.keyDown(container.querySelector('#first'), { key: 'Escape' });
+        await fireEvent.keyDown(must(container.querySelector('#first')), { key: 'Escape' });
         expect(onclose).toHaveBeenCalledTimes(1);
         expect(seenByWindow).not.toHaveBeenCalled();
         window.removeEventListener('keydown', seenByWindow);
@@ -97,14 +99,14 @@ describe('Modal — closing', () => {
     test('Escape does nothing when closeOnEscape is off', async () => {
         const onclose = vi.fn();
         const { container } = render(ModalFixture, { props: { open: true, onclose, closeOnEscape: false } });
-        await fireEvent.keyDown(container.querySelector('[role="dialog"]'), { key: 'Escape' });
+        await fireEvent.keyDown(must(container.querySelector('[role="dialog"]')), { key: 'Escape' });
         expect(onclose).not.toHaveBeenCalled();
     });
 
     test('other keys reach the modal through onkeydown', async () => {
         const onkeydown = vi.fn();
         const { container } = render(ModalFixture, { props: { open: true, onkeydown } });
-        await fireEvent.keyDown(container.querySelector('#first'), { key: 'Enter' });
+        await fireEvent.keyDown(must(container.querySelector('#first')), { key: 'Enter' });
         expect(onkeydown).toHaveBeenCalledTimes(1);
         expect(onkeydown.mock.calls[0][0].key).toBe('Enter');
     });
@@ -112,7 +114,7 @@ describe('Modal — closing', () => {
     test('the close cross calls onclose', async () => {
         const onclose = vi.fn();
         const { container } = render(ModalFixture, { props: { open: true, onclose } });
-        await fireEvent.click(container.querySelector('.modal-close'));
+        await fireEvent.click(must(container.querySelector('.modal-close')));
         expect(onclose).toHaveBeenCalledTimes(1);
     });
 
@@ -120,14 +122,35 @@ describe('Modal — closing', () => {
         const onclose = vi.fn();
         const { container, rerender } = render(ModalFixture, { props: { open: true, onclose } });
 
-        await fireEvent.click(container.querySelector('.modal-scroll'));
+        const click = async (el) => {
+            await fireEvent.mouseDown(el);
+            await fireEvent.mouseUp(el);
+            await fireEvent.click(el);
+        };
+        await click(container.querySelector('.modal-scroll'));
         expect(onclose).not.toHaveBeenCalled();
 
         await rerender({ open: true, onclose, closeOnOverlay: true });
-        await fireEvent.click(container.querySelector('.modal-box'));
-        await fireEvent.click(container.querySelector('#first'));
+        await click(container.querySelector('.modal-box'));
+        await click(container.querySelector('#first'));
         expect(onclose).not.toHaveBeenCalled();
-        await fireEvent.click(container.querySelector('.modal-scroll'));
+        await click(container.querySelector('.modal-scroll'));
+        expect(onclose).toHaveBeenCalledTimes(1);
+    });
+
+    test('a drag that starts in the box and ends on the backdrop does not close', async () => {
+        const onclose = vi.fn();
+        const { container } = render(ModalFixture, { props: { open: true, onclose, closeOnOverlay: true } });
+        const scroll = container.querySelector('.modal-scroll');
+
+        await fireEvent.mouseDown(must(container.querySelector('#first')));
+        await fireEvent.mouseUp(must(scroll));
+        await fireEvent.click(must(scroll));
+        expect(onclose).not.toHaveBeenCalled();
+
+        await fireEvent.mouseDown(must(scroll));
+        await fireEvent.mouseUp(must(scroll));
+        await fireEvent.click(must(scroll));
         expect(onclose).toHaveBeenCalledTimes(1);
     });
 

@@ -5,6 +5,7 @@
     import { t, translate } from '../../i18n/index.js';
     import BarChart from './charts/BarChart.svelte';
     import Histogram from './charts/Histogram.svelte';
+    import EmptyState from '../panels/EmptyState.svelte';
     import { PRIMARY } from './charts/palette.js';
     import StatsRecurringErrors from './StatsRecurringErrors.svelte';
     import StatsTimeErrors from './StatsTimeErrors.svelte';
@@ -50,7 +51,7 @@
         scales: { y: { beginAtZero: true } }
     };
 
-    function handleCubeBarClick(dataIndex) {
+    function handleCubeBarClick(/** @type {number} */ dataIndex) {
         const c = cubeBreakdown[dataIndex];
         if (!c) return;
         const filter = get(statsFilterStore);
@@ -111,7 +112,7 @@
               ]
     );
 
-    function handleDirectionClick(cell, n) {
+    function handleDirectionClick(cell, /** @type {number} */ n) {
         if (n === 0) return; // nothing behind an empty cell
         const filter = get(statsFilterStore);
         loadPositionsFromStatsSelection(filter, { Kind: 'cube_direction', CubeCell: cell });
@@ -133,7 +134,7 @@
         scales: { y: { beginAtZero: true } }
     };
 
-    function handleCompBarClick(dataIndex) {
+    function handleCompBarClick(/** @type {number} */ dataIndex) {
         const kind = dataIndex === 0 ? 'checker' : 'cube';
         const filter = get(statsFilterStore);
         loadPositionsFromStatsSelection(filter, { Kind: kind, OnlyWithError: true });
@@ -159,7 +160,7 @@
         scales: { y: { beginAtZero: true } }
     };
 
-    function handleHistBarClick(dataIndex) {
+    function handleHistBarClick(/** @type {number} */ dataIndex) {
         const b = histogram[dataIndex];
         if (!b) return;
         const filter = get(statsFilterStore);
@@ -205,7 +206,7 @@
 </script>
 
 {#if !result || numDecisions === 0}
-    <p class="empty-state">{$t('stats.noDecisionsEmpty')}</p>
+    <EmptyState text={$t('stats.noDecisionsEmpty')} actions={false} />
 {:else}
     <StatsRecurringErrors data={recurring} loading={recurringLoading} error={recurringError} />
     <StatsTimeErrors />
@@ -278,13 +279,6 @@
 
 <style>
     /* ── Shared ── */
-    .empty-state {
-        color: var(--color-text-muted);
-        font-size: var(--font-size-base);
-        text-align: center;
-        padding: 32px 16px;
-    }
-
     .empty-subsection {
         color: #aaa;
         font-size: var(--font-size-base);
@@ -300,7 +294,7 @@
     }
 
     .section-title {
-        font-size: var(--font-size-base);
+        font-size: var(--font-size-small);
         font-weight: 600;
         color: var(--color-text-muted);
         text-transform: uppercase;

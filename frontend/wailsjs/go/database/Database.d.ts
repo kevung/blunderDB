@@ -135,6 +135,8 @@ export function CopyPositionToCollection(arg1:number,arg2:number):Promise<void>;
 
 export function CorrectResult(arg1:number,arg2:string,arg3:string,arg4:number,arg5:number,arg6:string):Promise<service.DirectionView>;
 
+export function CountAnkiDeckFilteredPositions(arg1:number,arg2:string):Promise<number>;
+
 export function CountAnkiDeckPositions(arg1:number):Promise<number>;
 
 export function CountCollectionPositions(arg1:number):Promise<number>;
@@ -166,6 +168,8 @@ export function CreateDirection(arg1:number,arg2:string,arg3:number):Promise<voi
 export function CreateDuel(arg1:duel.Settings):Promise<database.DuelState>;
 
 export function CreateLesson(arg1:string,arg2:string):Promise<number>;
+
+export function CreateLivingCollection(arg1:string,arg2:string,arg3:string):Promise<number>;
 
 export function CreateRencontre(arg1:string,arg2:string,arg3:string,arg4:number):Promise<service.RencontreView>;
 
@@ -244,6 +248,8 @@ export function EnterParticipants(arg1:number,arg2:string):Promise<void>;
 export function EnterResult(arg1:number,arg2:string,arg3:string,arg4:number,arg5:number,arg6:string):Promise<service.DirectionView>;
 
 export function EntrySuggestions():Promise<Array<service.EntrySuggestion>>;
+
+export function EvaluateCollection(arg1:number,arg2:number):Promise<storage.CollectionEvaluation>;
 
 export function ExplainDecision(arg1:number,arg2:string):Promise<engine.Explanation>;
 
@@ -363,6 +369,8 @@ export function GetRandomAnkiCard(arg1:number,arg2:number):Promise<domain.AnkiRe
 
 export function GetRencontre(arg1:number):Promise<service.RencontreView>;
 
+export function GetStatsBreakdownPositionCounts(arg1:database.StatsFilter):Promise<Record<string, Record<string, database.BreakdownPositionCount>>>;
+
 export function GetStatsDateRange():Promise<database.StatsDateRange>;
 
 export function GetTimeErrors():Promise<Array<storage.TimeErrorRow>>;
@@ -413,6 +421,8 @@ export function ImportXGMatch(arg1:string):Promise<number>;
 
 export function ImportXGPPosition(arg1:string):Promise<number>;
 
+export function IndexOfAnkiDeckFilteredPosition(arg1:number,arg2:string,arg3:number):Promise<number>;
+
 export function IndexOfAnkiDeckPosition(arg1:number,arg2:number):Promise<number>;
 
 export function IndexOfCollectionPosition(arg1:number,arg2:number):Promise<number>;
@@ -432,6 +442,8 @@ export function LastDecision(arg1:number):Promise<service.LastDecision>;
 export function LessonDoneSteps(arg1:number):Promise<Record<number, string>>;
 
 export function ListAliases(arg1:string):Promise<Array<storage.Alias>>;
+
+export function ListAnkiDeckFilteredPositionIDs(arg1:number,arg2:string,arg3:number,arg4:number):Promise<Array<number>>;
 
 export function ListAnkiDeckPositionIDs(arg1:number,arg2:number,arg3:number):Promise<Array<number>>;
 
@@ -761,7 +773,7 @@ export function SuspendDuel(arg1:number):Promise<void>;
 
 export function SwapMatchPlayers(arg1:number):Promise<void>;
 
-export function SyncAnkiDeck(arg1:number):Promise<void>;
+export function SyncAnkiDeck(arg1:number):Promise<storage.DeckSync>;
 
 export function SyncAnkiDeckWithPositions(arg1:number,arg2:Array<number>):Promise<void>;
 

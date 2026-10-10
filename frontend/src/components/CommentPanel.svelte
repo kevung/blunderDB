@@ -11,14 +11,21 @@
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
     import { t } from '../i18n';
     import { formatDateTime } from '../utils/format.js';
+    import PanelHeader from './panels/PanelHeader.svelte';
+    import EmptyState from './panels/EmptyState.svelte';
 
+    /** @type {import('../../wailsjs/go/models').domain.CommentEntry[]} */
     let allComments = $state([]);
     let searchQuery = $state('');
+    /** @type {import('../../wailsjs/go/models').domain.CommentEntry[]} */
     let displayedComments = $state([]);
     // « Votre nom »: the thread of a position lists the user's own comments first.
     let myName = $state('');
+    /** @type {HTMLElement | undefined} */
     let feedEl;
+    /** @type {HTMLTextAreaElement | undefined} */
     let promptEl;
+    /** @type {number | null} */
     let editingCommentId = $state(null);
     let editingText = $state('');
     let promptText = $state('');
@@ -128,7 +135,7 @@
     }
 
     // Provenance: 'user', 'xg'/'gnubg'/'bgf' or 'unknown'; the user's own notes get no badge.
-    function originLabel(origin) {
+    function originLabel(/** @type {string} */ origin) {
         switch (origin) {
             case 'xg':
                 return $t('comment.originXG');
@@ -143,7 +150,7 @@
         }
     }
 
-    function originTitle(origin) {
+    function originTitle(/** @type {string} */ origin) {
         switch (origin) {
             case 'xg':
                 return $t('comment.originTitleXG');
@@ -174,7 +181,7 @@
         }
     }
 
-    async function filterComments(q) {
+    async function filterComments(/** @type {string} */ q) {
         try {
             displayedComments = (await SearchComments(q)) || [];
         } catch (_error) {
@@ -182,7 +189,7 @@
         }
     }
 
-    async function navigateToComment(comment) {
+    async function navigateToComment(/** @type {import('../../wailsjs/go/models').domain.CommentEntry} */ comment) {
         try {
             const position = await LoadPosition(comment.positionId);
             if (position) {
@@ -191,7 +198,7 @@
                 try {
                     const analysis = await LoadAnalysis(comment.positionId);
                     if (analysis) {
-                        analysisStore.set(analysis);
+                        analysisStore.set(/** @type {import('../stores/analysisStore.js').AnalysisRecord} */ (analysis));
                     }
                 } catch (_e) {
                     /* ignored */
@@ -219,7 +226,7 @@
         }
     }
 
-    function handlePromptKeyDown(event) {
+    function handlePromptKeyDown(/** @type {KeyboardEvent} */ event) {
         // La liste ne capte que ses touches ; le reste va à la saisie.
         if (tagSuggestions.length > 0) {
             if (event.key === 'ArrowDown') {
@@ -253,24 +260,24 @@
             addNewComment();
         } else if (event.key === 'Escape') {
             event.stopPropagation();
-            event.currentTarget.blur();
+            /** @type {HTMLElement} */ (event.currentTarget).blur();
         }
     }
 
-    async function startEditComment(comment) {
+    async function startEditComment(/** @type {import('../../wailsjs/go/models').domain.CommentEntry} */ comment) {
         editingCommentId = comment.id;
         editingText = comment.text;
         // Move focus into the edit textarea so keystrokes go to the field and
         // don't leak to global keyboard shortcuts (board navigation, etc.).
         await tick();
-        const el = document.querySelector('.msg-edit-input');
+        const el = /** @type {HTMLTextAreaElement | null} */ (document.querySelector('.msg-edit-input'));
         if (el) {
             el.focus();
             el.setSelectionRange(el.value.length, el.value.length);
         }
     }
 
-    async function saveEditedComment(comment) {
+    async function saveEditedComment(/** @type {import('../../wailsjs/go/models').domain.CommentEntry} */ comment) {
         editingCommentId = null;
         if (editingText !== comment.text) {
             try {
@@ -282,7 +289,7 @@
         }
     }
 
-    function handleEditKeyDown(event, comment) {
+    function handleEditKeyDown(/** @type {KeyboardEvent} */ event, /** @type {import('../../wailsjs/go/models').domain.CommentEntry} */ comment) {
         if (event.key === 'Enter' && !event.shiftKey) {
             event.stopPropagation();
             event.preventDefault();
@@ -293,7 +300,7 @@
         }
     }
 
-    async function deleteComment(comment, event) {
+    async function deleteComment(/** @type {import('../../wailsjs/go/models').domain.CommentEntry} */ comment, /** @type {Event} */ event) {
         event.stopPropagation();
         try {
             // Through the trash: restorable from the `trash` command.
@@ -305,7 +312,7 @@
     }
 
     // Reactive formatter: depends on $t so labels re-render on language change.
-    let formatDate = $derived((dateStr) => {
+    let formatDate = $derived((/** @type {string} */ dateStr) => {
         if (!dateStr) return '';
         try {
             // SQLite CURRENT_TIMESTAMP returns "YYYY-MM-DD HH:MM:SS" which some
@@ -325,17 +332,16 @@
         }
     });
 
-    function handleSearchKeyDown(event) {
+    function handleSearchKeyDown(/** @type {KeyboardEvent} */ event) {
         if (event.key === 'Escape') {
             event.stopPropagation();
-            event.currentTarget.blur();
+            /** @type {HTMLElement} */ (event.currentTarget).blur();
         }
     }
 </script>
 
 <div class="comment-panel">
-    <!-- Search bar -->
-    <div class="search-strip">
+    <PanelHeader>
         <span class="search-icon">⌕</span>
         <input type="text" bind:value={searchQuery} placeholder={$t('comment.searchPlaceholder')} onkeydown={handleSearchKeyDown} class="search-input" />
         {#if searchQuery}
@@ -346,12 +352,15 @@
                 }}>×</button
             >
         {/if}
-    </div>
+        {#snippet actions()}
+            <button type="button" class="tag-vocabulary-button" onclick={() => openModal(MODAL.TAGS)} title={$t('tags.title')}>#</button>
+        {/snippet}
+    </PanelHeader>
 
     <!-- Message feed -->
     <div class="feed" bind:this={feedEl}>
         {#if displayedComments.length === 0}
-            <div class="empty-msg">{searchQuery.trim() ? $t('comment.noMatches') : $t('comment.noComments')}</div>
+            <EmptyState text={searchQuery.trim() ? $t('comment.noMatches') : $t('comment.noComments')} actions={false} />
         {:else}
             {#each displayedComments as comment (comment.id)}
                 {#if editingCommentId === comment.id}
@@ -421,7 +430,6 @@
             oninput={refreshTagSuggestions}
             onblur={() => (tagSuggestions = [])}
             rows="2"></textarea>
-        <button type="button" class="tag-vocabulary-button" onclick={() => openModal(MODAL.TAGS)} title={$t('tags.title')}>#</button>
     </div>
 </div>
 
@@ -456,7 +464,7 @@
 
     .tag-vocabulary-button {
         cursor: pointer;
-        padding: 0 0.5em;
+        padding: 0 var(--space-2);
     }
 
     .comment-panel {
@@ -468,16 +476,7 @@
         font-size: var(--font-size-base);
     }
 
-    /* Search strip */
-    .search-strip {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        padding: 3px 8px;
-        border-bottom: 1px solid var(--color-border);
-        flex-shrink: 0;
-        background: var(--color-surface-alt);
-    }
+    /* Search, in the header strip */
     .search-icon {
         color: var(--color-text-muted);
         font-size: var(--font-size-base);
@@ -607,14 +606,6 @@
     }
     .msg-edit-input:focus {
         border-color: var(--color-primary);
-    }
-
-    .empty-msg {
-        text-align: center;
-        color: var(--color-text-muted);
-        padding: 20px;
-        font-size: var(--font-size-small);
-        font-style: italic;
     }
 
     /* Prompt */

@@ -14,7 +14,7 @@ const MILLION = 1_000_000;
 
 // A generated library: ids are odd (gaps, as after deletions), computed rather than stored so the
 // test itself holds no million-entry array.
-const idOf = (i) => 2 * i + 1;
+const idOf = (/** @type {number} */ i) => 2 * i + 1;
 
 function makeSource(total = MILLION) {
     return {

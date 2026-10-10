@@ -314,6 +314,9 @@ func (s *StatsStore) PositionIDsBySelection(ctx context.Context, scope string, f
 	if err != nil {
 		return nil, fmt.Errorf("PositionIDsBySelection aliases: %w", err)
 	}
+	if sel.Kind == "breakdown" {
+		return s.breakdownSelectionIDs(ctx, scope, filter, sel)
+	}
 	whereSQL, baseArgs := s.buildStatsWhereClause(scope, filter)
 
 	// A cube-direction cell is decided by reading two free-form labels, stated

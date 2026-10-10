@@ -147,20 +147,20 @@ describe('Integration: filter change triggers ComputeStats', () => {
     beforeEach(resetAll);
 
     test('refreshStats is called with the current filter', async () => {
-        ComputeStats.mockResolvedValue(SAMPLE_RESULT);
+        vi.mocked(ComputeStats).mockResolvedValue(SAMPLE_RESULT);
         const filter = get(statsFilterStore);
         await refreshStats(filter);
         expect(ComputeStats).toHaveBeenCalledWith(filter);
     });
 
     test('after refreshStats, statsResultStore contains the result', async () => {
-        ComputeStats.mockResolvedValue(SAMPLE_RESULT);
+        vi.mocked(ComputeStats).mockResolvedValue(SAMPLE_RESULT);
         await refreshStats(get(statsFilterStore));
         expect(get(statsResultStore)).toEqual(SAMPLE_RESULT);
     });
 
     test('changing player filter produces a new ComputeStats call', async () => {
-        ComputeStats.mockResolvedValue(SAMPLE_RESULT);
+        vi.mocked(ComputeStats).mockResolvedValue(SAMPLE_RESULT);
 
         const filter1 = get(statsFilterStore);
         await refreshStats(filter1);
@@ -174,13 +174,13 @@ describe('Integration: filter change triggers ComputeStats', () => {
     });
 
     test('statsLoadingStore is false after a successful refresh', async () => {
-        ComputeStats.mockResolvedValue(SAMPLE_RESULT);
+        vi.mocked(ComputeStats).mockResolvedValue(SAMPLE_RESULT);
         await refreshStats(get(statsFilterStore));
         expect(get(statsLoadingStore)).toBe(false);
     });
 
     test('statsErrorStore is set and result cleared on backend failure', async () => {
-        ComputeStats.mockRejectedValue(new Error('db error'));
+        vi.mocked(ComputeStats).mockRejectedValue(new Error('db error'));
         await refreshStats(get(statsFilterStore));
         expect(get(statsErrorStore)).toBe('db error');
         expect(get(statsResultStore)).toBeNull();
@@ -207,8 +207,8 @@ describe('Integration: three Stats tabs exist', () => {
 describe('Integration: Dashboard card click triggers drill-down', () => {
     beforeEach(() => {
         resetAll();
-        GetPositionIDsByStatsSelection.mockResolvedValue([1, 2, 3]);
-        LoadPositionIDsByFilters.mockResolvedValue([1, 2, 3]);
+        vi.mocked(GetPositionIDsByStatsSelection).mockResolvedValue([1, 2, 3]);
+        vi.mocked(LoadPositionIDsByFilters).mockResolvedValue([1, 2, 3]);
     });
 
     test('clicking "all" card calls GetPositionIDsByStatsSelection with Kind=all', async () => {
@@ -248,8 +248,8 @@ describe('Integration: Dashboard card click triggers drill-down', () => {
 describe('Integration: rolling-N click triggers last_n drill-down', () => {
     beforeEach(() => {
         resetAll();
-        GetPositionIDsByStatsSelection.mockResolvedValue([10, 11, 12]);
-        LoadPositionIDsByFilters.mockResolvedValue([10, 11, 12]);
+        vi.mocked(GetPositionIDsByStatsSelection).mockResolvedValue([10, 11, 12]);
+        vi.mocked(LoadPositionIDsByFilters).mockResolvedValue([10, 11, 12]);
     });
 
     test('clicking N=10 calls GetPositionIDsByStatsSelection with Kind=last_n LastN=10', async () => {
@@ -270,17 +270,17 @@ describe('Integration: rolling-N click triggers last_n drill-down', () => {
 describe('Integration: PR/MWC toggle changes display without refetching', () => {
     beforeEach(() => {
         resetAll();
-        ComputeStats.mockResolvedValue(SAMPLE_RESULT);
+        vi.mocked(ComputeStats).mockResolvedValue(SAMPLE_RESULT);
     });
 
     test('toggling to mwc does NOT call ComputeStats again', async () => {
         await refreshStats(get(statsFilterStore));
-        const callsBefore = ComputeStats.mock.calls.length;
+        const callsBefore = vi.mocked(ComputeStats).mock.calls.length;
 
         // Simulate toggle
         statsMetricStore.set('mwc');
         // No await — toggle is synchronous
-        expect(ComputeStats.mock.calls.length).toBe(callsBefore);
+        expect(vi.mocked(ComputeStats).mock.calls.length).toBe(callsBefore);
     });
 
     test('in PR mode, result.PRGlobal is the displayed value for "all"', async () => {
@@ -311,8 +311,8 @@ describe('Integration: PR/MWC toggle changes display without refetching', () => 
 describe('Integration: Progression tab — tournament context menu', () => {
     beforeEach(() => {
         resetAll();
-        GetPositionIDsByTournament.mockResolvedValue([20, 21, 22]);
-        LoadPositionIDsByFilters.mockResolvedValue([20, 21, 22]);
+        vi.mocked(GetPositionIDsByTournament).mockResolvedValue([20, 21, 22]);
+        vi.mocked(LoadPositionIDsByFilters).mockResolvedValue([20, 21, 22]);
     });
 
     test('openTournamentInPanel sets selectedTournamentStore', () => {
@@ -342,8 +342,8 @@ describe('Integration: Progression tab — tournament context menu', () => {
 describe('Integration: Errors tab — cube action bar click', () => {
     beforeEach(() => {
         resetAll();
-        GetPositionIDsByStatsSelection.mockResolvedValue([30, 31]);
-        LoadPositionIDsByFilters.mockResolvedValue([30, 31]);
+        vi.mocked(GetPositionIDsByStatsSelection).mockResolvedValue([30, 31]);
+        vi.mocked(LoadPositionIDsByFilters).mockResolvedValue([30, 31]);
     });
 
     test('clicking DoubleTake bar calls loadPositionsFromStatsSelection with correct SelectionSpec', async () => {
@@ -390,9 +390,9 @@ describe('Integration: Errors tab — cube action bar click', () => {
 describe('Integration: full journey — filter, result, toggle, drill-down', () => {
     beforeEach(() => {
         resetAll();
-        ComputeStats.mockResolvedValue(SAMPLE_RESULT);
-        GetPositionIDsByStatsSelection.mockResolvedValue([5, 6, 7]);
-        LoadPositionIDsByFilters.mockResolvedValue([5, 6, 7]);
+        vi.mocked(ComputeStats).mockResolvedValue(SAMPLE_RESULT);
+        vi.mocked(GetPositionIDsByStatsSelection).mockResolvedValue([5, 6, 7]);
+        vi.mocked(LoadPositionIDsByFilters).mockResolvedValue([5, 6, 7]);
     });
 
     test('full scenario completes without error', async () => {

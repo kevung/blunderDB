@@ -6,9 +6,9 @@ const SetPositionStudied = vi.fn();
 const ImportStudyQueue = vi.fn();
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
-    StudyBacklog: (...a) => StudyBacklog(...a),
-    SetPositionStudied: (...a) => SetPositionStudied(...a),
-    ImportStudyQueue: (...a) => ImportStudyQueue(...a)
+    StudyBacklog: (/** @type {any[]} */ ...a) => StudyBacklog(...a),
+    SetPositionStudied: (/** @type {any[]} */ ...a) => SetPositionStudied(...a),
+    ImportStudyQueue: (/** @type {any[]} */ ...a) => ImportStudyQueue(...a)
 }));
 vi.mock('../services/importService.js', () => ({ showImportedPosition: vi.fn().mockResolvedValue(undefined) }));
 vi.mock('../services/databaseService.js', () => ({ setStatusBarMessage: vi.fn() }));

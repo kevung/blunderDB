@@ -429,7 +429,7 @@ describe('Board — side labels stay inside the canvas', () => {
         positionStore.set({ ...base, score: [0, 15], board: { ...base.board, bearoff: [15, 3] } });
         const { two } = await mountBoard();
 
-        const labels = two.makeText.mock.calls.map(([content, x], i) => ({ content, x, size: two.makeText.mock.results[i].value.size }));
+        const labels = two.makeText.mock.calls.map(([content, x], /** @type {number} */ i) => ({ content, x, size: two.makeText.mock.results[i].value.size }));
         expect(labels.length).toBeGreaterThan(30);
         for (const { content, x, size } of labels) {
             const half = estimateTextWidth(String(content), size) / 2;

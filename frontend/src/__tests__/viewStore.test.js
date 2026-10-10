@@ -20,6 +20,7 @@
  * emptyPosition() factory, used consistently everywhere a "no position yet"
  * value is needed.
  */
+import { must } from './helpers/must.js';
 import { describe, test, expect, beforeEach, vi } from 'vitest';
 import { get } from 'svelte/store';
 
@@ -211,8 +212,8 @@ describe('viewStore — snapshot/restore across views', () => {
         const views = get(ctx.viewStore.views);
         const renamed = views.find((v) => v.id === view2Id);
         const untouched = views.find((v) => v.id === 1);
-        expect(renamed.name).toBe('Search results');
-        expect(untouched.name).toBe('#1');
+        expect(must(renamed).name).toBe('Search results');
+        expect(must(untouched).name).toBe('#1');
     });
 
     test('selectNextView / selectPreviousView cycle through views, wrapping at the ends', async () => {

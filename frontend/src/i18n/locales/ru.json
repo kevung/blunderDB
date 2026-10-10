@@ -212,6 +212,7 @@
         "savePosition": "Сохранить позицию",
         "settings": "Настройки",
         "togglePipcount": "Переключить подсчёт pip",
+        "toggleAnalysisChallenge": "Испытание: скрыть анализ",
         "updatePosition": "Обновить позицию",
         "tour": "Обучающие туры",
         "importDatabaseTip": "Объединить другую базу с этой: общие позиции не дублируются, их анализы и комментарии объединяются",
@@ -430,6 +431,8 @@
         "movePatternHint": "Лучший ход или решение по cube",
         "name": "Имя",
         "newTab": "Открыть в новой вкладке",
+        "newTabShort": "Новая вкладка",
+        "inResultsShort": "В результатах",
         "noHistory": "История поиска отсутствует",
         "noSaved": "Нет сохранённых фильтров",
         "noPinnedAt": "Нет закреплённого фильтра под номером {n}",
@@ -572,6 +575,16 @@
         "avoidableTooltip": "Избегаемая ошибка: ошибка, которую позиция не оправдывала (сложность не больше десятой части потери)",
         "avoidableCount": "Избегаемые",
         "chartOpen": "Нажмите, чтобы открыть это решение",
+        "gameShort": "П{n}",
+        "legendDifficulty": "сложность (ожидаемая потеря)",
+        "lossSoFar": "Нарастающим итогом: {loss}",
+        "timesPerDecision": "Время на решение",
+        "tabsLabel": "Разделы матча",
+        "tabTranscript": "Запись",
+        "tabCharts": "Графики",
+        "tabReview": "К разбору",
+        "tabDetails": "Подробности",
+        "tabStats": "Статистика",
         "originPlayedHere": "Сыграно здесь",
         "originStopped": "Остановлено до конца",
         "originLostOnTime": "Проиграно по времени ({name})",
@@ -639,7 +652,6 @@
         "writtenBy": "Записано программой",
         "score": "Счёт",
         "sourceFile": "Исходный файл",
-        "stats": "Статистика",
         "swapPlayers": "Поменять игроков местами",
         "takeDecisions": "Решения take",
         "takesBlunders": "Take (blunders)",
@@ -698,7 +710,6 @@
         "moveDown": "Переместить вниз",
         "moveUp": "Переместить вверх",
         "newCollectionPlaceholder": "Новая коллекция…",
-        "posCount": "{count} поз.",
         "removeFromCollection": "Удалить из коллекции",
         "removePositionTooltip": "Удалить позицию из коллекции",
         "title": "Коллекции",
@@ -718,6 +729,7 @@
         "livingNeedsSearch": "Сначала выполните поиск: именно его сохранит подборка.",
         "livingSet": "Живая подборка: {query}",
         "livingCleared": "Подборке возвращён список, собранный вручную.",
+        "livingCapped": "Колода «{name}»: живая подборка отбирает {total} позиций; достигнут потолок в {count}, и в колоду попадают только первые.",
         "freezeTitle": "Зафиксировать: сохранить сегодняшний результат как обычную коллекцию.",
         "frozen": "Коллекция зафиксирована: позиций — {count}.",
         "newButton": "Новая коллекция",
@@ -747,7 +759,9 @@
         "suggestKeepCollection": "Создать коллекцию ({n})",
         "suggestKeepDeck": "Колода Anki",
         "suggestQuiz": "Квиз",
-        "suggestDefaultName": "Эталоны {date}"
+        "suggestDefaultName": "Эталоны {date}",
+        "browsePositions": "Просмотреть эти позиции",
+        "inThisCollection": "в этой коллекции"
     },
     "tournament": {
         "addMatchPlaceholder": "Добавить матч…",
@@ -782,7 +796,9 @@
         "noMovesFound": "Для этого матча не найдено ходов",
         "swappedPlayers": "Игроки поменялись местами",
         "confirmDelete": "Удалить турнир «{name}»?",
-        "newButton": "Новый турнир"
+        "newButton": "Новый турнир",
+        "matchCountOne": "1 матч",
+        "matchCountMany": "{n} матчей"
     },
     "anki": {
         "limitSession": "Ограничить сессию",
@@ -791,8 +807,7 @@
         "sessionLimitZero": "Для этой колоды задано 0 карточек за сессию.",
         "boardAnswerOption": "Отвечать на доске",
         "boardAnswerOptionHint": "Ход играется на доске; движок оценивает его и предлагает оценку, которую можно изменить перед выставлением. По умолчанию выключено: вы оцениваете себя сами. Карточки куба и счёта остаются с самооценкой.",
-        "boardAnswerHint": "Сыграйте свой ход на доске",
-        "boardAnswerValidate": "Проверить",
+        "boardAnswerHint": "Сыграйте свой ход на доске, затем щёлкните по костям или нажмите ВВОД",
         "boardAnswerSuggest": "Предложенная оценка: {rating} (ошибка {error} mp)",
         "boardAnswerIllegal": "Этот ход недопустим",
         "boardAnswerUnranked": "Допустимый ход, которого нет в анализе: оцените сами",
@@ -816,7 +831,7 @@
         "deckSettingsTooltip": "Настройки колоды",
         "deleteDeckTooltip": "Удалить колоду",
         "easy": "Легко",
-        "empty": "Колод пока нет. Создайте одну из коллекции или текущего поиска.",
+        "empty": "Нет колод",
         "enableFuzz": "Включить разброс (рандомизировать интервалы)",
         "good": "Хорошо",
         "hard": "Трудно",
@@ -826,7 +841,6 @@
         "positionsCount": "{count} позиций",
         "renameTooltip": "Переименовать",
         "resetTooltip": "Сбросить все карточки в новые",
-        "resume": "Продолжить ({due} к повторению, {reviewed} просмотрено)",
         "retentionTarget": "Целевое удержание",
         "selectCollection": "-- Выберите коллекцию --",
         "settingsTitle": "Настройки: {name}",
@@ -836,11 +850,6 @@
         "scoresCount": "{count} счётов",
         "scoreQuestion": "Счёт {a}/{b}",
         "badScoreKey": "Не удалось прочитать счёт этой карточки",
-        "statLearning": "Изучение",
-        "statNew": "Новые",
-        "statReview": "Повторение",
-        "statTotal": "Всего",
-        "study": "Учить ({due} к повторению)",
         "cram": "Тренировка",
         "cramTooltip": "Свободная тренировка: случайные позиции, без влияния на график повторений",
         "cramBadge": "Тренировка",
@@ -882,7 +891,16 @@
             "relearning": "Переучивание"
         },
         "sourceSearch": "Поиск",
-        "sourceCollectionN": "Коллекция № {id}"
+        "sourceCollectionN": "Коллекция № {id}",
+        "title": "Anki",
+        "studyShort": "Учить",
+        "resumeShort": "Продолжить ({reviewed})",
+        "dueShort": "{n} к повторению",
+        "cardsShort": "{n} карточек",
+        "allDecks": "Все колоды",
+        "newShort": "{n} новых",
+        "learningShort": "{n} изучаются",
+        "reviewShort": "{n} на повторении"
     },
     "analysis": {
         "menuCopy": "Копировать позицию и анализ",
@@ -919,7 +937,9 @@
         "hintPlayerBackgammon": "Игрок: шанс выиграть бэкгаммон",
         "hintOpponentWin": "Соперник: шанс на победу",
         "hintOpponentGammon": "Соперник: шанс выиграть гаммон",
-        "hintOpponentBackgammon": "Соперник: шанс выиграть бэкгаммон"
+        "hintOpponentBackgammon": "Соперник: шанс выиграть бэкгаммон",
+        "empty": "Нет анализа",
+        "evaluate": "Оценить"
     },
     "rollout": {
         "title": "Роллаут",
@@ -1027,7 +1047,8 @@
         "created": "Создано",
         "description": "Описание",
         "user": "Пользователь",
-        "version": "Версия"
+        "version": "Версия",
+        "title": "Метаданные базы"
     },
     "issuance": {
         "originLabel": "Происхождение",
@@ -1068,6 +1089,7 @@
         "menu": {
             "evaluate": "Оценить эту позицию",
             "evaluateMirror": "Оценить зеркальное отражение этой позиции",
+            "evaluateInNewView": "Оценить в новой вкладке",
             "copyImageWithAnalysis": "Скопировать изображение доски с анализом",
             "newView": "Новый вид",
             "addToAnkiDeck": "Добавить в колоду Anki: {deck}",
@@ -1128,6 +1150,8 @@
         "addPositionTooltip": "Добавить эту позицию в базу (Ctrl+S)",
         "addPositionNoDatabase": "Откройте базу, чтобы добавлять в неё позиции",
         "pending": "Оценка появится здесь.",
+        "emptyBoard": "Расставьте позицию",
+        "evaluating": "Оценка…",
         "failed": "Оценка не удалась: {error}",
         "panelLabel": "Панель расчёта",
         "inactive": "Панель расчёта неактивна. Измените доску, чтобы оценить позицию.",
@@ -1164,6 +1188,7 @@
     },
     "viewTabs": {
         "closeView": "Закрыть вид",
+        "variantOf": "Вариант #{n}",
         "newView": "Новый вид"
     },
     "goToPosition": {
@@ -1347,7 +1372,7 @@
         "title": "Записи",
         "new": "Новая запись",
         "newTooltip": "Создать черновик матча для записи",
-        "empty": "Черновиков нет. Создайте один, чтобы записать матч.",
+        "empty": "Черновиков нет",
         "updated": "Изменено",
         "players": "Игроки",
         "length": "Длина",
@@ -1479,7 +1504,7 @@
         "moreActions": "Другие действия",
         "videoFile": "Локальный файл…",
         "videoYouTube": "Ссылка YouTube…",
-        "videoDetach": "Открепить",
+        "videoRemove": "Убрать видео",
         "videoAttach": "Прикрепить",
         "videoResize": "Высота панели видео"
     },
@@ -1662,7 +1687,6 @@
         "tabErrors": "Ошибки",
         "tabTraining": "Тренировка",
         "tabPlayers": "Игроки",
-        "importMatchesHint": "Импортируйте партии для активации фильтров.",
         "playerLabel": "Игрок",
         "allPerspectives": "Все перспективы",
         "tournamentsLabel": "Турниры",
@@ -1684,7 +1708,7 @@
         "all": "Все",
         "resetFilters": "↺ Сбросить",
         "resetFiltersHint": "Сбросить фильтры",
-        "noDecisionsEmpty": "Нет решений в отфильтрованном периоде. Расширьте фильтры.",
+        "noDecisionsEmpty": "Нет решений для этих фильтров",
         "cardLabelAll": "PR Общий",
         "cardLabelChecker": "PR Шашка",
         "cardLabelCube": "PR Куб",
@@ -1936,7 +1960,14 @@
             "prCube": "PR куба"
         },
         "interval95": "ДИ 95 %",
-        "intervalHint": "95-процентный доверительный интервал: перевыборка матчей выборки или партий матча. Строка без интервала (меньше трёх матчей или партий, или все с одинаковым PR) показана серым."
+        "intervalHint": "95-процентный доверительный интервал: перевыборка матчей выборки или партий матча. Строка без интервала (меньше трёх матчей или партий, или все с одинаковым PR) показана серым.",
+        "positions": "Позиции",
+        "breakdownOpenPositions": "Открыть эти позиции: {n} ({decisions} решений)",
+        "breakdownOpenBlunders": "Открыть позиции с грубой ошибкой: {n} ({decisions} грубых ошибок)",
+        "breakdownCountsError": "Подсчёт недоступен: {error}",
+        "breakdownCountsMissing": "Строка отсутствует в подсчёте позиций",
+        "breakdownBlundersHint": "Позиции, где хотя бы одно решение — грубая ошибка",
+        "planOutsideShort": "Вне плана: без темы {unthemed} · без оценки {unpriced}"
     },
     "resumeBatch": {
         "title": "Возобновить импорт",
@@ -2057,7 +2088,7 @@
         "finishedDecision": "Решение окончено: {correct}/{n}, PR сессии {pr}.",
         "undoHop": "Отменить шаг",
         "resetPlay": "Заново",
-        "playOnBoard": "Сыграйте ход на доске, затем проверьте его.",
+        "playOnBoard": "Сыграйте ход на доске, затем щёлкните по костям.",
         "notationPlaceholder": "Ход в записи, напр. 13/7 8/7",
         "notationLabel": "Ход, введённый в записи",
         "cubePrompt": "Выберите решение по кубу.",
@@ -2179,7 +2210,7 @@
     },
     "direction": {
         "title": "Управление",
-        "direct": "Провести этот турнир",
+        "direct": "Провести",
         "open": "Открыть управление",
         "close": "Закрыть управление",
         "fullscreen": {
@@ -3104,6 +3135,7 @@
         "player2": "Игрок 2",
         "lengthPoints": "{n} оч.",
         "moneySession": "Игра на деньги",
+        "type": "Тип",
         "cubeValue": "Куб {n}",
         "delayLeft": "Задержка {s} с",
         "gestures": "Действия дуэли",
@@ -3145,7 +3177,6 @@
         "record": "Записать матч",
         "play": "Играть",
         "suspended": "Приостановленные дуэли",
-        "noneSuspended": "Нет приостановленных дуэлей.",
         "resume": "Продолжить игру",
         "conflict": "Дуэль изменилась в другом месте: вот её текущее состояние, ход не сделан.",
         "refused": "Отказано: {error}",
@@ -3195,13 +3226,13 @@
         "pace": "Ошибки: {hasty} поспешных ({hastyLoss}), {deliberate} обдуманных ({deliberateLoss}), {unknown} без времени",
         "paceDiscipline": "скорее дисциплина: играть медленнее",
         "paceKnowledge": "скорее знания: изучить эти позиции",
-        "details": "Подробности итога",
         "prInterval": "PR, интервал 95 %",
         "mwc7Label": "Потеря MWC в пересчёте на 7 очков",
         "mwc7Hint": "Потеря MWC, пересчитанная на матч до 7 очков, чтобы сравнивать матчи разной длины.",
         "adjustedShort": "с поправкой на удачу {adjusted}",
         "mwcLossHint": "Шансы на победу в матче, потерянные решениями этого игрока в этом матче",
-        "toReview": "Решения для разбора"
+        "toReview": "Решения для разбора",
+        "nothingToReview": "Нет решений для разбора."
     },
     "video": {
         "notPlayable": "Этот источник нельзя воспроизвести здесь.",
@@ -3257,7 +3288,6 @@
         "noDecision": "Нет учтённых решений этого игрока в турнире"
     },
     "theatre": {
-        "menuItem": "Режим кинотеатра",
         "enter": "Режим кинотеатра: видео на весь экран (F11)",
         "exit": "Выйти из режима кинотеатра (F11 или Esc)",
         "region": "Режим кинотеатра",

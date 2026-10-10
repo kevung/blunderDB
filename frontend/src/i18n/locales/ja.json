@@ -212,6 +212,7 @@
         "savePosition": "ポジションを保存",
         "settings": "設定",
         "togglePipcount": "pip カウント表示切替",
+        "toggleAnalysisChallenge": "チャレンジ：解析を隠す",
         "updatePosition": "ポジションを更新",
         "tour": "ガイドツアー",
         "importDatabaseTip": "別のデータベースをこれに統合する：共通する局面は重複せず、その解析とコメントは結合される",
@@ -430,6 +431,8 @@
         "movePatternHint": "ベストムーブまたはキューブの判断",
         "name": "名前",
         "newTab": "新しいタブで開く",
+        "newTabShort": "新しいタブ",
+        "inResultsShort": "結果内",
         "noHistory": "検索履歴がありません",
         "noSaved": "保存済みフィルターがありません",
         "noPinnedAt": "{n} 番目にピン留めしたフィルターはありません",
@@ -572,6 +575,16 @@
         "avoidableTooltip": "避けられたミス:ポジションが言い訳にならないミス(難度が損失の 10 分の 1 以下)",
         "avoidableCount": "避けられたミス数",
         "chartOpen": "クリックでこの判断を開く",
+        "gameShort": "第{n}局",
+        "legendDifficulty": "難易度（期待損失）",
+        "lossSoFar": "累計: {loss}",
+        "timesPerDecision": "決定ごとの時間",
+        "tabsLabel": "試合の表示",
+        "tabTranscript": "棋譜",
+        "tabCharts": "グラフ",
+        "tabReview": "見直し",
+        "tabDetails": "詳細",
+        "tabStats": "統計",
         "originPlayedHere": "ここで対局",
         "originStopped": "終了前に中断",
         "originLostOnTime": "時間切れ負け（{name}）",
@@ -639,7 +652,6 @@
         "writtenBy": "作成プログラム",
         "score": "スコア",
         "sourceFile": "元ファイル",
-        "stats": "統計",
         "swapPlayers": "プレイヤーを入れ替え",
         "takeDecisions": "take の判断",
         "takesBlunders": "take（ブランダー）",
@@ -698,7 +710,6 @@
         "moveDown": "下へ移動",
         "moveUp": "上へ移動",
         "newCollectionPlaceholder": "新規コレクション…",
-        "posCount": "{count} 件",
         "removeFromCollection": "コレクションから削除",
         "removePositionTooltip": "ポジションをコレクションから削除",
         "title": "コレクション",
@@ -718,6 +729,7 @@
         "livingNeedsSearch": "先に検索してください。それがコレクションに残るものです。",
         "livingSet": "生きたコレクション：{query}",
         "livingCleared": "コレクションを手作りのリストに戻しました。",
+        "livingCapped": "デッキ「{name}」：ライブコレクションは {total} 局面を選びます。上限 {count} に達したため、先頭の局面だけがデッキに入ります。",
         "freezeTitle": "固定: 現在の結果を通常のコレクションとして保持します。",
         "frozen": "{count} 件のポジションでコレクションを固定しました。",
         "newButton": "新しいコレクション",
@@ -747,7 +759,9 @@
         "suggestKeepCollection": "コレクションを作成（{n}）",
         "suggestKeepDeck": "Anki デッキ",
         "suggestQuiz": "クイズ",
-        "suggestDefaultName": "参照 {date}"
+        "suggestDefaultName": "参照 {date}",
+        "browsePositions": "これらの局面を表示",
+        "inThisCollection": "このコレクションに含む"
     },
     "tournament": {
         "addMatchPlaceholder": "マッチを追加…",
@@ -782,7 +796,9 @@
         "noMovesFound": "このマッチには手が見つかりません",
         "swappedPlayers": "プレイヤーを入れ替えました",
         "confirmDelete": "トーナメント「{name}」を削除しますか?",
-        "newButton": "新しいトーナメント"
+        "newButton": "新しいトーナメント",
+        "matchCountOne": "1 試合",
+        "matchCountMany": "{n} 試合"
     },
     "anki": {
         "limitSession": "1 セッションの枚数を制限する",
@@ -791,8 +807,7 @@
         "sessionLimitZero": "このデッキは 1 セッション 0 枚に設定されています。",
         "boardAnswerOption": "盤面で答える",
         "boardAnswerOptionHint": "手を盤面で指すと、エンジンが判定して評価を提案します。評価する前に変更できます。既定ではオフで、自分で評価します。キューブとスコアのカードは自己評価のままです。",
-        "boardAnswerHint": "盤面で手を指してください",
-        "boardAnswerValidate": "確認",
+        "boardAnswerHint": "盤面で手を指し、ダイスをクリックするか Enter を押してください",
         "boardAnswerSuggest": "提案された評価: {rating}(誤り {error} mp)",
         "boardAnswerIllegal": "この手は合法ではありません",
         "boardAnswerUnranked": "解析が順位付けしていない合法手です。自分で評価してください",
@@ -816,7 +831,7 @@
         "deckSettingsTooltip": "デッキ設定",
         "deleteDeckTooltip": "デッキを削除",
         "easy": "簡単",
-        "empty": "デッキがまだありません。コレクションまたは現在の検索から作成してください。",
+        "empty": "デッキがありません",
         "enableFuzz": "ファズを有効化（間隔をランダム化）",
         "good": "普通",
         "hard": "難しい",
@@ -826,7 +841,6 @@
         "positionsCount": "{count} 件のポジション",
         "renameTooltip": "名前を変更",
         "resetTooltip": "すべてのカードを新規にリセット",
-        "resume": "再開（{due} 件期限、{reviewed} 件レビュー済み）",
         "retentionTarget": "保持率の目標",
         "selectCollection": "-- コレクションを選択 --",
         "settingsTitle": "設定: {name}",
@@ -836,11 +850,6 @@
         "scoresCount": "{count} 件のスコア",
         "scoreQuestion": "スコア {a}/{b}",
         "badScoreKey": "このカードのスコアを読み取れません",
-        "statLearning": "学習中",
-        "statNew": "新規",
-        "statReview": "復習",
-        "statTotal": "合計",
-        "study": "学習（{due} 件期限）",
         "cram": "練習",
         "cramTooltip": "フリー練習：ランダムな局面で、復習スケジュールには影響しません",
         "cramBadge": "練習",
@@ -882,7 +891,16 @@
             "relearning": "再学習"
         },
         "sourceSearch": "検索",
-        "sourceCollectionN": "コレクション #{id}"
+        "sourceCollectionN": "コレクション #{id}",
+        "title": "Anki",
+        "studyShort": "学習",
+        "resumeShort": "再開（{reviewed}）",
+        "dueShort": "{n} 件期限",
+        "cardsShort": "{n} 枚",
+        "allDecks": "すべてのデッキ",
+        "newShort": "新規 {n}",
+        "learningShort": "学習中 {n}",
+        "reviewShort": "復習 {n}"
     },
     "analysis": {
         "menuCopy": "局面と解析をコピー",
@@ -919,7 +937,9 @@
         "hintPlayerBackgammon": "プレイヤー: バックギャモン勝率",
         "hintOpponentWin": "相手: 勝率",
         "hintOpponentGammon": "相手: ギャモン勝率",
-        "hintOpponentBackgammon": "相手: バックギャモン勝率"
+        "hintOpponentBackgammon": "相手: バックギャモン勝率",
+        "empty": "解析なし",
+        "evaluate": "評価"
     },
     "rollout": {
         "title": "ロールアウト",
@@ -1027,7 +1047,8 @@
         "created": "作成日",
         "description": "説明",
         "user": "ユーザー",
-        "version": "バージョン"
+        "version": "バージョン",
+        "title": "データベースのメタデータ"
     },
     "issuance": {
         "originLabel": "出所",
@@ -1068,6 +1089,7 @@
         "menu": {
             "evaluate": "この局面を評価",
             "evaluateMirror": "この局面の鏡像を評価する",
+            "evaluateInNewView": "新しいタブで評価",
             "copyImageWithAnalysis": "盤面画像と分析をコピー",
             "newView": "新しいビュー",
             "addToAnkiDeck": "Ankiデッキに追加: {deck}",
@@ -1128,6 +1150,8 @@
         "addPositionTooltip": "このポジションをデータベースに追加 (Ctrl+S)",
         "addPositionNoDatabase": "ポジションを追加するにはデータベースを開いてください",
         "pending": "評価はここに表示されます。",
+        "emptyBoard": "局面を配置してください",
+        "evaluating": "評価中…",
         "failed": "評価に失敗しました: {error}",
         "panelLabel": "評価パネル",
         "inactive": "評価パネルは無効です。局面を評価するには盤面を編集してください。",
@@ -1164,6 +1188,7 @@
     },
     "viewTabs": {
         "closeView": "ビューを閉じる",
+        "variantOf": "#{n} の変化",
         "newView": "新規ビュー"
     },
     "goToPosition": {
@@ -1347,7 +1372,7 @@
         "title": "記譜",
         "new": "新しい記譜",
         "newTooltip": "記譜するマッチの下書きを作成します",
-        "empty": "下書きがありません。作成してマッチを記譜してください。",
+        "empty": "下書きがありません",
         "updated": "更新日時",
         "players": "プレイヤー",
         "length": "マッチ長",
@@ -1479,7 +1504,7 @@
         "moreActions": "その他の操作",
         "videoFile": "ローカルファイル…",
         "videoYouTube": "YouTube リンク…",
-        "videoDetach": "解除",
+        "videoRemove": "動画を外す",
         "videoAttach": "添付",
         "videoResize": "動画欄の高さ"
     },
@@ -1662,7 +1687,6 @@
         "tabErrors": "エラー",
         "tabTraining": "トレーニング",
         "tabPlayers": "プレイヤー",
-        "importMatchesHint": "フィルターを有効にするには対局をインポートしてください。",
         "playerLabel": "プレイヤー",
         "allPerspectives": "全視点",
         "tournamentsLabel": "トーナメント",
@@ -1684,7 +1708,7 @@
         "all": "すべて",
         "resetFilters": "↺ リセット",
         "resetFiltersHint": "フィルターをリセット",
-        "noDecisionsEmpty": "フィルター期間中に決定がありません。フィルターを広げてください。",
+        "noDecisionsEmpty": "このフィルターに該当する決定はありません",
         "cardLabelAll": "PR 全体",
         "cardLabelChecker": "PR チェッカー",
         "cardLabelCube": "PR キューブ",
@@ -1936,7 +1960,14 @@
             "prCube": "キューブ PR"
         },
         "interval95": "95 % 信頼区間",
-        "intervalHint": "95 % 信頼区間：選択範囲ではマッチを、1 マッチではゲームを再標本化します。区間のない行（マッチまたはゲームが 3 未満、またはすべて同じ PR）は灰色で示します。"
+        "intervalHint": "95 % 信頼区間：選択範囲ではマッチを、1 マッチではゲームを再標本化します。区間のない行（マッチまたはゲームが 3 未満、またはすべて同じ PR）は灰色で示します。",
+        "positions": "局面",
+        "breakdownOpenPositions": "この {n} 局面を開く（{decisions} 判断）",
+        "breakdownOpenBlunders": "大悪手のある {n} 局面を開く（{decisions} 大悪手）",
+        "breakdownCountsError": "件数を取得できません: {error}",
+        "breakdownCountsMissing": "局面の件数にこの行がありません",
+        "breakdownBlundersHint": "少なくとも 1 つの判断が大悪手である局面",
+        "planOutsideShort": "計画外: テーマなし {unthemed} · 未評価 {unpriced}"
     },
     "resumeBatch": {
         "title": "インポートを再開",
@@ -2057,7 +2088,7 @@
         "finishedDecision": "判断終了：{correct}/{n}、セッション PR {pr}。",
         "undoHop": "1手戻す",
         "resetPlay": "やり直す",
-        "playOnBoard": "盤上で手を指してから判定してください。",
+        "playOnBoard": "盤上で手を指してから、ダイスをクリックしてください。",
         "notationPlaceholder": "表記で手を入力 例 13/7 8/7",
         "notationLabel": "表記で入力した手",
         "cubePrompt": "キューブアクションを選んでください。",
@@ -2179,7 +2210,7 @@
     },
     "direction": {
         "title": "進行",
-        "direct": "この大会を進行する",
+        "direct": "進行する",
         "open": "進行を開く",
         "close": "進行を閉じる",
         "fullscreen": {
@@ -3104,6 +3135,7 @@
         "player2": "プレイヤー2",
         "lengthPoints": "{n}ポイント",
         "moneySession": "マネー",
+        "type": "種類",
         "cubeValue": "キューブ {n}",
         "delayLeft": "遅延 {s} 秒",
         "gestures": "デュエルの操作",
@@ -3145,7 +3177,6 @@
         "record": "マッチを保存",
         "play": "対局",
         "suspended": "中断中のデュエル",
-        "noneSuspended": "中断中のデュエルはありません。",
         "resume": "再開",
         "conflict": "デュエルが別の場所で変更されました：現在の状態です。何も指されていません。",
         "refused": "拒否：{error}",
@@ -3195,13 +3226,13 @@
         "pace": "エラー：性急 {hasty}（{hastyLoss}）、熟考 {deliberate}（{deliberateLoss}）、時間なし {unknown}",
         "paceDiscipline": "むしろ規律：ゆっくり打つ",
         "paceKnowledge": "むしろ知識：これらの局面を学ぶ",
-        "details": "レビューの詳細",
         "prInterval": "PR・95 %区間",
         "mwc7Label": "7ポイント換算のMWC損失",
         "mwc7Hint": "MWC損失を7ポイントマッチに換算した値。長さの異なるマッチを比較するためのものです。",
         "adjustedShort": "運補正 {adjusted}",
         "mwcLossHint": "このマッチでこのプレイヤーの判断により失われたマッチ勝率",
-        "toReview": "見直す判断"
+        "toReview": "見直す判断",
+        "nothingToReview": "見直す決定はありません。"
     },
     "video": {
         "notPlayable": "このソースはここでは再生できません。",
@@ -3257,7 +3288,6 @@
         "noDecision": "このプレイヤーのトーナメント内の判断はありません"
     },
     "theatre": {
-        "menuItem": "シアターモード",
         "enter": "シアターモード：動画を全画面表示 (F11)",
         "exit": "シアターモードを終了 (F11 または Esc)",
         "region": "シアターモード",

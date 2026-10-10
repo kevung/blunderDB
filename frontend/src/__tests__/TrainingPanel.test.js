@@ -53,7 +53,14 @@ import * as serviceModule from '../services/trainingTabService.js';
 import { quizPlayStore } from '../stores/quizPlayStore.js';
 import { newPlay, playHop } from '../services/quizPlay.js';
 import en from '../i18n/locales/en.json';
+import { buildScoreCard, scoreCardNumbers } from '../services/scoreCard.js';
+
+function scoresQuestion() {
+    const card = buildScoreCard(3, 5);
+    return { kind: 'scores', key: '3:5', card, numbers: scoreCardNumbers(card) };
+}
 import * as missedModule from '../services/trainingMissed.js';
+import { must } from './helpers/must.js';
 
 const service = vi.mocked(serviceModule);
 
@@ -94,6 +101,12 @@ describe('au repos', () => {
         expect(container.querySelector('[data-testid="training-start"]')).not.toBeNull();
         expect(container.querySelector('[data-testid="training-summary-scores"]')).not.toBeNull();
     });
+
+    test('« Démarrer » ferme la bande ; les réglages sont une grille libellé │ contrôle', () => {
+        const { container } = render(TrainingPanel);
+        expect(container.querySelector('[data-testid="panel-header"] .panel-actions [data-testid="training-start"]')).not.toBeNull();
+        expect(container.querySelector('[data-testid="form-grid"] [data-testid="training-exercise-scores"]')).not.toBeNull();
+    });
 });
 
 describe('pendant une question', () => {
@@ -106,11 +119,25 @@ describe('pendant une question', () => {
         expect(container.querySelector('[data-testid="training-start"]')).toBeNull();
     });
 
+    test('ses gestes sont dans la bande, la primaire en bout, toujours au même endroit', () => {
+        trainingSessionStore.set(askQuestion(newSession({ exercise: 'pips', seedSource: 'board' }), pipsQuestion(), 0));
+        const { container } = render(TrainingPanel);
+        const ids = [...container.querySelectorAll('[data-testid="panel-header"] .panel-actions button')].map((b) => /** @type {HTMLElement} */ (b).dataset.testid);
+        expect(ids).toEqual(['training-quit', 'training-finish', 'training-reveal']);
+    });
+
     test('la consigne de cochage est à l’écran une fois révélée, pas seulement dans une infobulle', () => {
         const asked = askQuestion(newSession({ exercise: 'pips', seedSource: 'board' }), pipsQuestion(), 0);
         trainingSessionStore.set(reveal(asked, 1000));
         const { container } = render(TrainingPanel);
         expect(container.querySelector('.hint')).not.toBeNull();
+    });
+
+    test('à Scores, la consigne reste en infobulle une fois révélée, quand on coche ses fautes', () => {
+        const asked = askQuestion(newSession({ exercise: 'scores', seedSource: 'pool' }), scoresQuestion(), 0);
+        trainingSessionStore.set(reveal(asked, 1000));
+        const { getByTestId } = render(TrainingPanel);
+        expect(getByTestId('training-fault-hint').getAttribute('title')).toBe(en.training.scoresInstruction);
     });
 });
 
@@ -200,19 +227,16 @@ const PLAY = {
 describe('une décision de pions', () => {
     beforeEach(() => vi.clearAllMocks());
 
-    test('se joue sur le plateau, et « Valider » attend un coup complet', async () => {
+    test('se joue sur le plateau : pas de bouton « Valider », les dés valident', async () => {
         trainingSessionStore.set(decisionSession('checker'));
         quizPlayStore.set(newPlay(POSITION, [PLAY]));
         const panel = render(TrainingPanel);
         expect(panel.container.textContent).toContain(en.training.playOnBoard);
-        const validate = /** @type {HTMLButtonElement} */ (panel.getByTestId('training-validate-move'));
-        expect(validate.disabled).toBe(true);
-
+        expect(panel.queryByTestId('training-validate-move')).toBeNull();
         quizPlayStore.update((s) => (s ? playHop(playHop(s, 6, 4), 6, 3) : s));
         await tick();
-        expect(validate.disabled).toBe(false);
-        validate.click();
-        expect(service.answerDecisionBoard).toHaveBeenCalled();
+        expect(panel.queryByTestId('training-validate-move')).toBeNull();
+        expect(service.answerDecisionBoard).not.toHaveBeenCalled();
     });
 
     test('« Annuler le pas » et « Recommencer » sont des boutons du panneau', async () => {
@@ -512,7 +536,7 @@ describe('une question d’Évaluation (#322)', () => {
         trainingJournalStore.set({ decision: { sessions: [{ exercise: 'decision', numbersAsked: 5, faults: 2, deviations: 0, meanDeviation: 0, medianMs: 3000, pr: 6.5 }], numbers: [] } });
         const panel = render(TrainingPanel);
         expect(panel.queryByTestId('training-missed')).toBeNull();
-        await fireEvent.click(panel.getByTestId('training-summary-decision').querySelector('button.disclose'));
+        await fireEvent.click(must(panel.getByTestId('training-summary-decision').querySelector('button.disclose')));
         await fireEvent.click(panel.getByTestId('training-missed-retake'));
         await fireEvent.click(panel.getByTestId('training-missed-deck'));
         await fireEvent.click(panel.getByTestId('training-missed-collection'));

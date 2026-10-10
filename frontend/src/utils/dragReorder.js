@@ -14,10 +14,25 @@
  * @param {string}  [params.draggingClass='dragging'] - Class added to the dragged row
  * @param {number}  [params.deadZone=5] - Pixels of movement before drag activates
  * @param {boolean} [params.enabled=true] - Whether drag is enabled
+ * @param {number}  [params.indexOffset=0] - Index of the first rendered item
  */
 export function dragReorder(node, params) {
-    let onReorder, itemSelector, dragOverClass, draggingClass, deadZone, enabled, indexOffset;
+    /** @type {(from: number, to: number) => void} */
+    let onReorder;
+    /** @type {string} */
+    let itemSelector;
+    /** @type {string} */
+    let dragOverClass;
+    /** @type {string} */
+    let draggingClass;
+    /** @type {number} */
+    let deadZone;
+    /** @type {boolean} */
+    let enabled;
+    /** @type {number} */
+    let indexOffset;
 
+    /** @param {any} p */
     function updateParams(p) {
         onReorder = p.onReorder;
         itemSelector = p.itemSelector || 'tr';
@@ -35,13 +50,17 @@ export function dragReorder(node, params) {
     let active = false;
     let startX = 0;
     let startY = 0;
+    /** @type {number | null} */
     let pid = null;
 
     function getRows() {
         return Array.from(node.querySelectorAll(`:scope > ${itemSelector}`));
     }
 
-    /** Find row index at vertical position y */
+    /**
+     * Find row index at vertical position y
+     * @param {number} y
+     */
     function rowAtY(y) {
         const rows = getRows();
         for (let i = 0; i < rows.length; i++) {
@@ -53,6 +72,7 @@ export function dragReorder(node, params) {
         return rows.length - 1;
     }
 
+    /** @param {number} newOver */
     function updateIndicator(newOver) {
         if (newOver === overIdx) return;
         const rows = getRows();
@@ -71,12 +91,13 @@ export function dragReorder(node, params) {
         });
     }
 
+    /** @param {PointerEvent} e */
     function onDown(e) {
         if (!enabled || e.button !== 0) return;
-        if (e.target.closest('button, input, select, textarea, a, [contenteditable]')) return;
+        if (/** @type {Element} */ (e.target).closest('button, input, select, textarea, a, [contenteditable]')) return;
 
         const rows = getRows();
-        const row = e.target.closest(itemSelector);
+        const row = /** @type {Element} */ (e.target).closest(itemSelector);
         if (!row || !node.contains(row)) return;
         const idx = rows.indexOf(row);
         if (idx < 0) return;
@@ -91,6 +112,7 @@ export function dragReorder(node, params) {
         window.addEventListener('pointerup', onUp);
     }
 
+    /** @param {PointerEvent} e */
     function onMove(e) {
         if (e.pointerId !== pid) return;
 
@@ -105,6 +127,7 @@ export function dragReorder(node, params) {
         updateIndicator(rowAtY(e.clientY));
     }
 
+    /** @param {PointerEvent} e */
     function onUp(e) {
         if (e.pointerId !== pid) return;
 
@@ -133,6 +156,7 @@ export function dragReorder(node, params) {
         }
     }
 
+    /** @param {Event} e */
     function suppressClick(e) {
         e.stopPropagation();
         e.preventDefault();
@@ -141,6 +165,7 @@ export function dragReorder(node, params) {
     node.addEventListener('pointerdown', onDown);
 
     return {
+        /** @param {any} newParams */
         update(newParams) {
             updateParams(newParams);
         },

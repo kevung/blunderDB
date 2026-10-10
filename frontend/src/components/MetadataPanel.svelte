@@ -5,6 +5,9 @@
     import { activeTabStore } from '../stores/uiStore';
     import { databaseLoadedStore } from '../stores/databaseStore';
     import { t } from '../i18n';
+    import PanelHeader from './panels/PanelHeader.svelte';
+    import FormGrid from './panels/FormGrid.svelte';
+    import FormRow from './panels/FormRow.svelte';
 
     let user = $state('');
     let description = $state('');
@@ -73,49 +76,52 @@
 </script>
 
 <div class="metadata-panel">
-    <!-- One grid for the whole panel: label on the left, content on the right, in a single
-         pair of columns so every row lines up. The watermark block used to be laid out that
-         way while the fields below put their labels on top — two organisations in one
-         panel. A rule closes the watermark block; it is read-only and written by whoever
-         produced the file, everything under the rule belongs to whoever holds it. See
-         ADR-0007. -->
+    <PanelHeader title={$t('metadata.title')} />
+    <!-- One grid for the whole panel (ADR-0085, G6): label at the start, control after it, so
+         every row lines up. A rule closes the watermark block; it is read-only and written by
+         whoever produced the file, everything under the rule belongs to whoever holds it
+         (ADR-0007). Each field saves when it loses focus: no button, the mechanism is enough. -->
     <div class="fields">
-        {#if issuance?.watermark}
-            <span class="label">{$t('issuance.originLabel')}</span>
-            <span class="value strong">{issuance.watermark.origin}</span>
+        <FormGrid>
+            {#if issuance?.watermark}
+                <FormRow label={$t('issuance.originLabel')}><span class="value strong">{issuance.watermark.origin}</span></FormRow>
 
-            {#if issuance.watermark.note}
-                <span class="label">{$t('issuance.note')}</span>
-                <span class="value note">{issuance.watermark.note}</span>
+                {#if issuance.watermark.note}
+                    <FormRow label={$t('issuance.note')}><span class="value note">{issuance.watermark.note}</span></FormRow>
+                {/if}
+
+                <FormRow label={$t('issuance.signature')}>
+                    <span class="value">
+                        {issuance.watermark.issuerName}
+                        <span class="sep">·</span>
+                        <code>{issuance.watermark.issuerFingerprint}</code>
+                        <span class="mark" class:invalid={!issuance.watermark.signatureValid}>
+                            {verdictOf(issuance.watermark)}
+                        </span>
+                    </span>
+                </FormRow>
+
+                <FormRow label={$t('issuance.markedOn')}><span class="value">{shortDate(issuance.watermark.issuedAt)}</span></FormRow>
+
+                <hr />
             {/if}
 
-            <span class="label">{$t('issuance.signature')}</span>
-            <span class="value">
-                {issuance.watermark.issuerName}
-                <span class="sep">·</span>
-                <code>{issuance.watermark.issuerFingerprint}</code>
-                <span class="mark" class:invalid={!issuance.watermark.signatureValid}>
-                    {verdictOf(issuance.watermark)}
-                </span>
-            </span>
+            <FormRow label={$t('metadata.user')} for="meta-user">
+                <input id="meta-user" class="short" type="text" bind:value={user} onblur={saveMetadata} />
+            </FormRow>
 
-            <span class="label">{$t('issuance.markedOn')}</span>
-            <span class="value">{shortDate(issuance.watermark.issuedAt)}</span>
+            <FormRow label={$t('metadata.created')} for="meta-date">
+                <input id="meta-date" class="short" type="date" bind:value={dateOfCreation} onchange={saveMetadata} />
+            </FormRow>
 
-            <hr />
-        {/if}
+            <FormRow label={$t('metadata.version')} for="meta-version">
+                <input id="meta-version" class="short" type="text" bind:value={databaseVersion} readonly />
+            </FormRow>
 
-        <label class="label" for="meta-user">{$t('metadata.user')}</label>
-        <input id="meta-user" type="text" bind:value={user} onblur={saveMetadata} />
-
-        <label class="label" for="meta-date">{$t('metadata.created')}</label>
-        <input id="meta-date" type="date" bind:value={dateOfCreation} onchange={saveMetadata} />
-
-        <label class="label" for="meta-version">{$t('metadata.version')}</label>
-        <input id="meta-version" type="text" bind:value={databaseVersion} readonly />
-
-        <label class="label desc-label" for="meta-description">{$t('metadata.description')}</label>
-        <textarea id="meta-description" bind:value={description} onblur={saveMetadata} rows="2"></textarea>
+            <FormRow label={$t('metadata.description')} for="meta-description">
+                <textarea id="meta-description" bind:value={description} onblur={saveMetadata} rows="2"></textarea>
+            </FormRow>
+        </FormGrid>
     </div>
 </div>
 
@@ -125,35 +131,17 @@
        different family than everything around them. */
     .metadata-panel {
         font-size: var(--font-size-base);
-        padding: 6px 10px;
         height: 100%;
-        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
         background: var(--color-surface);
         box-sizing: border-box;
+        text-align: start;
     }
 
     .fields {
-        display: grid;
-        grid-template-columns: max-content minmax(0, 1fr);
-        gap: 3px 10px;
-        align-items: baseline;
-    }
-
-    .label {
-        font-size: inherit;
-        font-weight: 600;
-        color: var(--color-text-muted);
-        text-transform: uppercase;
-        letter-spacing: 0.3px;
-        user-select: none;
-        -webkit-user-select: none;
-    }
-
-    /* A textarea is taller than its label's line, so the label sits at the top of the row
-       rather than on the baseline of an empty box. */
-    .desc-label {
-        align-self: start;
-        padding-top: 3px;
+        overflow-y: auto;
+        min-height: 0;
     }
 
     input,
@@ -161,7 +149,15 @@
         min-width: 0;
     }
 
+    /* A name, a date or a version reads in two dozen characters; stretched across the dock it
+       sends the eye far from its label. The description is prose and keeps the full width. */
+    input.short {
+        width: 24ch;
+        max-width: 100%;
+    }
+
     textarea {
+        flex: 1;
         resize: vertical;
     }
 

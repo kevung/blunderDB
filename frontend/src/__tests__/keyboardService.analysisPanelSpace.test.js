@@ -1,3 +1,4 @@
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 
 // The analysis panel focuses itself when it opens, so its focus branch in the
@@ -66,7 +67,7 @@ describe('global shortcuts with the analysis panel focused', () => {
         activeModal.set(null);
         selectedMoveStore.set(null);
         document.body.innerHTML = '<section class="analysis-panel" id="analysisPanel" tabindex="-1"></section>';
-        document.getElementById('analysisPanel').focus();
+        must(document.getElementById('analysisPanel')).focus();
     });
 
     afterEach(() => {

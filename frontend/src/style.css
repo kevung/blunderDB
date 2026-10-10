@@ -25,7 +25,6 @@ html {
        same colour behind an exported board, so it follows the board palette, not a
        UI token (ADR-0031, ADR-0038). */
     background-color: rgba(247, 240, 230, 1);
-    text-align: center;
 }
 
 body {
@@ -63,7 +62,8 @@ body {
         url('assets/fonts/NotoSansJP-Regular.woff2') format('woff2');
 }
 
+/* No inherited centring: text starts at the start edge, and the few blocks that are
+   centred (an empty state, a dialog's buttons) say so themselves (ADR-0085). */
 #app {
     height: 100vh;
-    text-align: center;
 }

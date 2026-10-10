@@ -7,6 +7,7 @@
  * collé l'image quelque part.
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect, beforeEach, afterEach } from 'vitest';
 import { snapshotBoardSVG, boardImageFilename, BOARD_BACKGROUND } from '../services/boardSnapshot.js';
 
@@ -19,7 +20,7 @@ function mountBoard() {
         </div>`;
     // jsdom renders nothing, so getComputedStyle returns the initial values;
     // the point of the test is that they are COPIED, not what they are.
-    document.getElementById('pion').style.fill = 'rgb(1, 2, 3)';
+    must(document.getElementById('pion')).style.fill = 'rgb(1, 2, 3)';
 }
 
 beforeEach(() => {
@@ -42,9 +43,9 @@ describe('la copie du plateau', () => {
     test('porte ses dimensions et son espace de noms', () => {
         mountBoard();
         const snap = snapshotBoardSVG();
-        expect(snap.width).toBe(400);
-        expect(snap.height).toBe(300);
-        expect(snap.svg).toContain('http://www.w3.org/2000/svg');
+        expect(must(snap).width).toBe(400);
+        expect(must(snap).height).toBe(300);
+        expect(must(snap).svg).toContain('http://www.w3.org/2000/svg');
     });
 
     // Le fond est peint DANS le SVG : un fichier ouvert dans un navigateur ou
@@ -53,7 +54,7 @@ describe('la copie du plateau', () => {
     test('peint son propre fond', () => {
         mountBoard();
         const snap = snapshotBoardSVG();
-        expect(snap.svg).toContain(BOARD_BACKGROUND);
+        expect(must(snap).svg).toContain(BOARD_BACKGROUND);
     });
 
     // Les styles calculés doivent atterrir sur les éléments : c'est ce qui
@@ -61,7 +62,7 @@ describe('la copie du plateau', () => {
     test('recopie les styles calculés dans le clone', () => {
         mountBoard();
         const snap = snapshotBoardSVG();
-        expect(snap.svg).toContain('rgb(1, 2, 3)');
+        expect(must(snap).svg).toContain('rgb(1, 2, 3)');
     });
 
     test('propose un nom de fichier daté et lisible', () => {

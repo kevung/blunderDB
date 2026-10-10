@@ -37,14 +37,35 @@
         matches = []
     } = $props();
 
+    /**
+     * @typedef {object} ExportOptions
+     * @property {boolean} [includeAnalysis]
+     * @property {boolean} [includeComments]
+     * @property {boolean} [includeFilterLibrary]
+     * @property {boolean} [includePlayedMoves]
+     * @property {boolean} [includeMatches]
+     * @property {number[]} matchIDs
+     * @property {boolean} [includeTournaments]
+     * @property {number[]} includeTournamentIDs
+     * @property {boolean} [includeCollections]
+     * @property {number[]} collectionIDs
+     * @property {boolean} [includeLessons]
+     * @property {number[]} [lessonIDs]
+     * @property {boolean} [watermarkEnabled]
+     * @property {string} [watermark]
+     * @property {string} [watermarkNote]
+     * @property {boolean} [passwordEnabled]
+     * @property {string} [password]
+     */
+
     // The prop is a plain object Svelte 5 cannot track, so options are mirrored in
     // $state: seeded only on open (`untrack`, tied to `visible`) and written back
     // only on confirm — a two-way sync loops through the parent's store and drops focus.
-    let exportOptions = $state(untrack(() => ({ ...exportOptionsProp })));
+    let exportOptions = $state(/** @type {ExportOptions} */ (untrack(() => ({ ...exportOptionsProp }))));
     $effect(() => {
         if (visible) {
             untrack(() => {
-                exportOptions = { ...exportOptionsProp };
+                exportOptions = /** @type {ExportOptions} */ ({ ...exportOptionsProp });
             });
         }
     });
@@ -91,7 +112,7 @@
         }
     });
 
-    function toggleLessonSelection(lessonId) {
+    function toggleLessonSelection(/** @type {number} */ lessonId) {
         lessonsManuallyModified = true;
         const ids = exportOptions.lessonIDs ?? [];
         exportOptions.lessonIDs = ids.includes(lessonId) ? ids.filter((id) => id !== lessonId) : [...ids, lessonId];
@@ -105,11 +126,11 @@
 
     // How many of a collection's positions the current selection actually covers, and
     // whether that is fewer than the collection holds.
-    function covered(collection) {
-        const coverage = $exportCollectionCoverageStore ?? {};
+    function covered(/** @type {{ id: number, positionCount?: number }} */ collection) {
+        const coverage = /** @type {Record<string, number>} */ ($exportCollectionCoverageStore ?? {});
         return coverage[collection.id] ?? coverage[String(collection.id)] ?? 0;
     }
-    function isPartial(collection) {
+    function isPartial(/** @type {{ id: number, positionCount?: number }} */ collection) {
         return covered(collection) < (collection.positionCount ?? 0);
     }
 
@@ -196,7 +217,7 @@
                     ? tr('export.descCollectionsPlural', { count: exportOptions.collectionIDs.length })
                     : tr('export.descCollection', { count: exportOptions.collectionIDs.length })
             );
-        if (exportOptions.includeLessons && (exportOptions.lessonIDs ?? []).length > 0) parts.push(tr('export.descLessons', { count: exportOptions.lessonIDs.length }));
+        if (exportOptions.includeLessons && (exportOptions.lessonIDs ?? []).length > 0) parts.push(tr('export.descLessons', { count: (exportOptions.lessonIDs ?? []).length }));
 
         if (parts.length === 0) {
             return tr('export.descPositionsOnly');
@@ -209,7 +230,7 @@
         }
     });
 
-    function toggleMatchSelection(matchId) {
+    function toggleMatchSelection(/** @type {number} */ matchId) {
         matchesManuallyModified = true;
         if (exportOptions.matchIDs.includes(matchId)) {
             exportOptions.matchIDs = exportOptions.matchIDs.filter((id) => id !== matchId);
@@ -228,7 +249,7 @@
         exportOptions.matchIDs = [];
     }
 
-    function toggleCollectionSelection(collectionId) {
+    function toggleCollectionSelection(/** @type {number} */ collectionId) {
         collectionsManuallyModified = true;
         if (exportOptions.collectionIDs.includes(collectionId)) {
             exportOptions.collectionIDs = exportOptions.collectionIDs.filter((id) => id !== collectionId);
@@ -237,7 +258,7 @@
         }
     }
 
-    function toggleTournamentSelection(tournamentId) {
+    function toggleTournamentSelection(/** @type {number} */ tournamentId) {
         tournamentsManuallyModified = true;
         if (exportOptions.includeTournamentIDs.includes(tournamentId)) {
             exportOptions.includeTournamentIDs = exportOptions.includeTournamentIDs.filter((id) => id !== tournamentId);

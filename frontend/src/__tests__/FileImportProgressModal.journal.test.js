@@ -3,6 +3,7 @@
  * offers to resume an import the user stopped; a line that gave a match opens it.
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 
@@ -29,7 +30,7 @@ describe('FileImportProgressModal journal', () => {
         const { getByTestId } = mount();
         const box = getByTestId('import-journal');
         expect(box.querySelectorAll('.journal-item')).toHaveLength(4);
-        expect(box.querySelector('[data-outcome="error"]').textContent).toContain('not a match');
+        expect(must(box.querySelector('[data-outcome="error"]')).textContent).toContain('not a match');
         expect(box.textContent).toContain('d.xg');
     });
 

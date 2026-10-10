@@ -4,7 +4,7 @@
 
     let { visible = false, onClose, tables = [] } = $props();
 
-    function handleWheel(event) {
+    function handleWheel(/** @type {Event} */ event) {
         event.preventDefault();
     }
 

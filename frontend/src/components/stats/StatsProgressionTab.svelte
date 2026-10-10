@@ -17,7 +17,7 @@
     /** @type {{ x: number, y: number, items: Array<{ label: string, onClick: () => void }> } | null} */
     let contextMenu = $state(null);
 
-    function showMenu(nativeEvent, items) {
+    function showMenu(/** @type {{ clientX?: number, clientY?: number } | null | undefined} */ nativeEvent, /** @type {Array<{ label: string, onClick: () => void }>} */ items) {
         const x = nativeEvent?.clientX ?? 0;
         const y = nativeEvent?.clientY ?? 0;
         contextMenu = { x, y, items };
@@ -96,7 +96,7 @@
         }
     };
 
-    function handleTourClick(dataIndex, _dsIdx, nativeEvent) {
+    function handleTourClick(/** @type {number} */ dataIndex, /** @type {number} */ _dsIdx, /** @type {{ clientX?: number, clientY?: number } | null | undefined} */ nativeEvent) {
         const tour = tournaments[dataIndex];
         if (!tour) return;
         showMenu(nativeEvent, [
@@ -126,14 +126,14 @@
             x: {
                 type: 'linear',
                 ticks: {
-                    callback: (v) => fmtTimestamp(v)
+                    callback: (/** @type {number} */ v) => fmtTimestamp(v)
                 }
             },
             y: { beginAtZero: true }
         }
     };
 
-    function handleMatchClick(dataIndex, _dsIdx, nativeEvent) {
+    function handleMatchClick(/** @type {number} */ dataIndex, /** @type {number} */ _dsIdx, /** @type {{ clientX?: number, clientY?: number } | null | undefined} */ nativeEvent) {
         const m = matches[dataIndex];
         if (!m) return;
         showMenu(nativeEvent, [
@@ -143,26 +143,26 @@
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
-    function truncateLabel(name, max = 22) {
+    function truncateLabel(/** @type {string} */ name, max = 22) {
         if (!name) return '';
         return name.length > max ? name.slice(0, max - 1) + '…' : name;
     }
 
-    function clampRadius(n) {
+    function clampRadius(/** @type {number} */ n) {
         return Math.max(4, Math.min(12, 4 + (n / 500) * 8));
     }
 
-    function parseDateMs(dateStr) {
+    function parseDateMs(/** @type {string} */ dateStr) {
         if (!dateStr) return 0;
         return new Date(dateStr).getTime();
     }
 
-    function fmtTimestamp(ms) {
+    function fmtTimestamp(/** @type {number} */ ms) {
         if (!ms) return '';
         return formatUtcDay(ms);
     }
 
-    function fmtDate(dateStr) {
+    function fmtDate(/** @type {string} */ dateStr) {
         return formatIsoDay(dateStr);
     }
 
@@ -176,7 +176,7 @@
         return row.MWC;
     }
 
-    function fmtVal(v) {
+    function fmtVal(/** @type {number | null | undefined} */ v) {
         if (v == null || isNaN(v)) return '—';
         if (metric === 'mwc7') return formatNumber(v, { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' %';
         return metric === 'pr' ? v.toFixed(2) : (v * 100).toFixed(2) + '%';
@@ -331,7 +331,7 @@
 
     .section-title {
         margin: 0 0 6px;
-        font-size: var(--font-size-base);
+        font-size: var(--font-size-small);
         font-weight: 600;
         color: var(--color-text-muted);
         text-transform: uppercase;

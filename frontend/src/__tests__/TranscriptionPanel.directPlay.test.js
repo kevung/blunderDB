@@ -41,7 +41,7 @@ import { LegalMoves, EvaluatePositionImmediate } from '../../wailsjs/go/gui/App.
 
 import TranscriptionPanel from '../components/TranscriptionPanel.svelte';
 import { transcriptionListStore, transcriptionStore, clearTranscription } from '../stores/transcriptionStore.js';
-import { quizPlayStore } from '../stores/quizPlayStore.js';
+import { quizPlayStore, quizPlayValidateStore } from '../stores/quizPlayStore.js';
 import { selectedMoveStore } from '../stores/analysisStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { activeTabStore, statusBarModeStore } from '../stores/uiStore.js';
@@ -235,10 +235,13 @@ describe('le jet saisi, le plateau joue ses coups', () => {
         await vi.waitFor(() => expect(rows()).toHaveLength(3));
     });
 
-    test('un coup légal achevé part seul, avec les dés dans l’ordre tapé', async () => {
+    test('un coup légal achevé part à la validation, avec les dés dans l’ordre tapé', async () => {
         await rolled('Digit1', 'Digit6');
         drag(13, 7);
         drag(8, 7);
+        await settle();
+        expect(gestures().some((/** @type {any} */ g) => g.Kind === 'enter_play')).toBe(false);
+        press('Enter');
         await vi.waitFor(() => expect(gestures().some((/** @type {any} */ g) => g.Kind === 'validate')).toBe(true));
         const [die1, die2, play, validate] = recorded();
         expect(die1).toEqual({ Kind: 'enter_die', Die: 1 });
@@ -314,25 +317,23 @@ describe('le glissé hors des règles, puis Entrée', () => {
         expect(document.querySelector('[data-testid="transcription-free-hint"]')).toBeNull();
     });
 
-    test('sans jet saisi, le glissé reste contraint', async () => {
+    test('sans jet saisi, aucun coup n’est armé', async () => {
         transcriptionStore.set(state(atEnd()));
         render(TranscriptionPanel);
         await tick();
-        await vi.waitFor(() => expect(get(quizPlayStore)).not.toBeNull());
-        drag(13, 3);
-        await tick();
-        const play = /** @type {any} */ (get(quizPlayStore));
-        expect(play.free).toBe(false);
-        expect(play.steps).toEqual([]);
+        await settle();
+        expect(get(quizPlayStore)).toBeNull();
     });
 });
 
 describe('sur une Action relue', () => {
     /** Le brouillon, le Cursor mené sur la cellule par un clic. */
     async function onRecorded() {
-        /** @type {any} */ (ApplyTranscriptionGesture).mockImplementation((/** @type {any} */ _id, /** @type {any} */ gesture) =>
-            Promise.resolve(state(gesture.Kind === 'cursor_back' ? withOneAction(0) : withOneAction(1)))
-        );
+        let cursor = 1;
+        /** @type {any} */ (ApplyTranscriptionGesture).mockImplementation((/** @type {any} */ _id, /** @type {any} */ gesture) => {
+            if (gesture.Kind === 'cursor_back') cursor = 0;
+            return Promise.resolve(state(withOneAction(cursor)));
+        });
         transcriptionStore.set(state(withOneAction(1)));
         render(TranscriptionPanel);
         await tick();
@@ -345,8 +346,11 @@ describe('sur une Action relue', () => {
 
     test('ses dés arment le plateau, et un coup légal joué la REMPLACE', async () => {
         await onRecorded();
+        await settle(30);
         drag(13, 7);
         drag(13, 12);
+        await settle();
+        get(quizPlayValidateStore)?.();
         await vi.waitFor(() => expect(gestures().some((/** @type {any} */ g) => g.Kind === 'validate')).toBe(true));
         const sent = gestures();
         // Le Cursor sur la cellule, puis l'Action retapée à sa place.
@@ -378,9 +382,11 @@ describe('le coup tapé dans sa cellule (double-clic)', () => {
     }
 
     beforeEach(() => {
-        /** @type {any} */ (ApplyTranscriptionGesture).mockImplementation((/** @type {any} */ _id, /** @type {any} */ gesture) =>
-            Promise.resolve(state(gesture.Kind === 'cursor_back' ? withOneAction(0) : withOneAction(1)))
-        );
+        let cursor = 1;
+        /** @type {any} */ (ApplyTranscriptionGesture).mockImplementation((/** @type {any} */ _id, /** @type {any} */ gesture) => {
+            if (gesture.Kind === 'cursor_back') cursor = 0;
+            return Promise.resolve(state(withOneAction(cursor)));
+        });
     });
 
     test('la cellule devient un champ, pré-rempli de sa notation', async () => {

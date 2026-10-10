@@ -6,6 +6,7 @@
  * rules are pinned here once rather than observed three times.
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect } from 'vitest';
 import {
     formatEquity,
@@ -103,7 +104,7 @@ describe('cubeRows', () => {
         const live = cubeDecision({ cubeAnalysis: { ...storedCube, cubefulNoDoubleEquity: 1.2, cubefulDoubleTakeEquity: 1.1, cubefulDoublePassEquity: 1 }, verdictKey: 'too_good' });
         const block = cubeRows(live, { t });
         expect(block.verdict.text).toBe('cube.verdicts.too_good');
-        expect(block.rows.find((r) => r.best).key).toBe('no_double');
+        expect(must(block.rows.find((r) => r.best)).key).toBe('no_double');
     });
 
     test('a turned cube relabels the options as redoubles (cubeValue is the log2 exponent)', () => {
@@ -349,9 +350,18 @@ describe('checkerRows', () => {
     test('the baseline row: no error figure (ADR-0018 rule 3), a dash for a missing equity', () => {
         const baseline = { cubelessEquity: 0.05, playerWinChance: 52, playerGammonChance: 8, playerBackgammonChance: 0, opponentWinChance: 48, opponentGammonChance: 7, opponentBackgammonChance: 0 };
         const block = checkerRows(moves, { t, baseline });
-        expect(block.baseline.label).toBe('eval.baseline');
-        expect(block.baseline.cells).toEqual(['+0.050', '', '52.00', '8.00', '0.00', '48.00', '7.00', '0.00', '', '']);
-        expect(checkerRows(moves, { t, baseline: { ...baseline, cubelessEquity: null }, showProvenance: false }).baseline.cells).toEqual([DASH, '', '52.00', '8.00', '0.00', '48.00', '7.00', '0.00']);
+        expect(must(block.baseline).label).toBe('eval.baseline');
+        expect(must(block.baseline).cells).toEqual(['+0.050', '', '52.00', '8.00', '0.00', '48.00', '7.00', '0.00', '', '']);
+        expect(must(checkerRows(moves, { t, baseline: { ...baseline, cubelessEquity: null }, showProvenance: false }).baseline).cells).toEqual([
+            DASH,
+            '',
+            '52.00',
+            '8.00',
+            '0.00',
+            '48.00',
+            '7.00',
+            '0.00'
+        ]);
         expect(checkerRows(moves, { t }).baseline).toBeNull();
     });
 

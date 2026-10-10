@@ -56,7 +56,7 @@ import { openPanels, PANEL } from '../stores/uiStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { ListMatches } from '../../wailsjs/go/database/Database.js';
 import MatchPanel from '../components/MatchPanel.svelte';
-import { openSection } from './matchSectionHelper.js';
+import { openTab } from './matchTabHelper.js';
 
 /**
  * The list is loaded twice at mount (onMount, then the visibility effect) and
@@ -69,12 +69,12 @@ async function settle() {
     for (let i = 0; i < 4; i++) await tick();
 }
 
-async function select(container, name) {
+async function select(container, /** @type {string} */ name) {
     const cell = () => [...container.querySelectorAll('tbody tr td')].find((td) => td.textContent.includes(name));
     await vi.waitFor(() => expect(cell()).toBeTruthy());
     await fireEvent.click(cell());
     await vi.waitFor(() => expect(container.querySelector('.detail-pane')).not.toBeNull());
-    await openSection(container, 'info');
+    await openTab(container, 'info');
     for (let i = 0; i < 4; i++) await tick();
     return container.querySelector('.detail-pane').textContent;
 }

@@ -1,6 +1,6 @@
 /**
  * TranscriptionPanel.theatre.test.js — the theatre of the transcription: the video over the
- * whole window and a floating board, opened from the Video menu, the video's button or F11,
+ * whole window and a floating board, opened from the video's button or F11,
  * left by F11, Escape or its button; the transcription keys stay live inside it.
  */
 
@@ -106,10 +106,6 @@ async function openedPanel(cursor = ACTIONS.length) {
 }
 
 const panel = () => /** @type {HTMLElement} */ (document.getElementById('transcriptionPanel'));
-const videoButton = () => /** @type {HTMLElement} */ (document.querySelector('[data-testid="transcription-video-button"]'));
-const videoMenu = () => document.querySelector('[data-testid="transcription-video-menu"]');
-const item = (/** @type {Element | null} */ menu, /** @type {RegExp} */ name) =>
-    /** @type {HTMLElement} */ ([...(menu?.querySelectorAll('[role="menuitem"]') ?? [])].find((b) => name.test(b.textContent ?? '')));
 
 beforeEach(() => {
     vi.clearAllMocks();
@@ -136,22 +132,46 @@ const dock = () => /** @type {HTMLElement} */ (document.querySelector('[data-tes
 const key = (/** @type {string} */ k, init = {}) => new KeyboardEvent('keydown', { key: k, cancelable: true, ...init });
 
 async function openFromMenu() {
-    await fireEvent.click(videoButton());
-    await settle();
-    await fireEvent.click(item(videoMenu(), /Theatre mode/));
+    await fireEvent.click(/** @type {HTMLElement} */ (document.querySelector('[data-testid="video-theatre"]')));
     await settle();
 }
 
 describe('the theatre of the transcription', () => {
-    test('the Video menu opens it: the video moves over the whole window, the mini-board floats over it', async () => {
+    test('the button on the video opens it: the video moves over the whole window, the mini-board floats over it', async () => {
         await openedPanel();
         await openFromMenu();
         expect(get(theatreStore)).toBe(true);
-        expect(theatre()?.contains(dock())).toBe(true);
         expect(dock().dataset.placement).toBe('theatre');
+        expect(dock().classList.contains('in-theatre')).toBe(true);
         expect(document.querySelector('[data-testid="theatre-board"] svg')).not.toBeNull();
         // The dock's own buttons stay out of the theatre: it has its own way out.
         expect(document.querySelector('[data-testid="video-placement"]')).toBeNull();
+    });
+
+    test('the player is not moved by entering or leaving: same dock, same pane, so the instant and the play state stay', async () => {
+        await openedPanel();
+        const before = dock();
+        const pane = before.querySelector('[data-testid="video-pane"]');
+        const parent = before.parentNode;
+        await enterTheatre();
+        await settle();
+        expect(dock()).toBe(before);
+        expect(before.parentNode).toBe(parent);
+        expect(before.querySelector('[data-testid="video-pane"]')).toBe(pane);
+        handleEscapeCapture(key('Escape'));
+        await settle();
+        expect(dock()).toBe(before);
+        expect(before.parentNode).toBe(parent);
+        expect(before.querySelector('[data-testid="video-pane"]')).toBe(pane);
+    });
+
+    test('the dock’s buttons sit in a bar above the image, not over the video', async () => {
+        await openedPanel();
+        const bar = dock().querySelector('.video-dock-bar');
+        expect(bar).not.toBeNull();
+        expect(bar?.contains(document.querySelector('[data-testid="video-theatre"]'))).toBe(true);
+        expect(bar?.contains(document.querySelector('[data-testid="video-placement"]'))).toBe(true);
+        expect(dock().querySelector('[data-testid="video-pane"] [data-testid="video-placement"]')).toBeNull();
     });
 
     test('the button on the video opens it too, without taking the focus', async () => {
@@ -214,7 +234,7 @@ describe('the theatre of the transcription', () => {
         expect(get(theatreStore)).toBe(false);
     });
 
-    test('the mini-board names the selected candidate and folds into a tab, remembered', async () => {
+    test('the mini-board names the selected candidate and folds into a tab for this theatre only', async () => {
         await openedPanel();
         await enterTheatre();
         await settle();
@@ -224,9 +244,50 @@ describe('the theatre of the transcription', () => {
         await fireEvent.click(/** @type {HTMLElement} */ (document.querySelector('[data-testid="theatre-board-hide"]')));
         await settle();
         expect(document.querySelector('[data-testid="theatre-board"]')).toBeNull();
-        expect(JSON.parse(localStorage.getItem('blunderdb.theatre.board') ?? '{}').hidden).toBe(true);
         await fireEvent.click(/** @type {HTMLElement} */ (document.querySelector('[data-testid="theatre-board-show"]')));
         await settle();
         expect(document.querySelector('[data-testid="theatre-board"]')).not.toBeNull();
+        await fireEvent.click(/** @type {HTMLElement} */ (document.querySelector('[data-testid="theatre-board-hide"]')));
+        await exitTheatre();
+        await settle();
+        await enterTheatre();
+        await settle();
+        expect(document.querySelector('[data-testid="theatre-board"]')).not.toBeNull();
+    });
+
+    test('folded, the tab stands where the board stood, whole inside the window', async () => {
+        localStorage.setItem('blunderdb.theatre.board', JSON.stringify({ x: 0.25, y: 0.5, size: 'm' }));
+        await openedPanel();
+        await enterTheatre();
+        await settle();
+        const board = /** @type {HTMLElement} */ (document.querySelector('[data-testid="theatre-board"]'));
+        expect(board.style.left).toBe(`${Math.round(0.25 * window.innerWidth)}px`);
+        await fireEvent.click(/** @type {HTMLElement} */ (document.querySelector('[data-testid="theatre-board-hide"]')));
+        await settle();
+        const tab = /** @type {HTMLElement} */ (document.querySelector('[data-testid="theatre-board-show"]'));
+        expect(tab.style.left).toBe(`${Math.round(0.25 * window.innerWidth)}px`);
+        expect(tab.style.top).toBe(`${Math.round(0.5 * window.innerHeight)}px`);
+        localStorage.setItem('blunderdb.theatre.board', JSON.stringify({ x: 1, y: 1, size: 'm' }));
+        await exitTheatre();
+        await settle();
+        await enterTheatre();
+        await settle();
+        await fireEvent.click(/** @type {HTMLElement} */ (document.querySelector('[data-testid="theatre-board-hide"]')));
+        await settle();
+        const corner = /** @type {HTMLElement} */ (document.querySelector('[data-testid="theatre-board-show"]'));
+        expect(parseInt(corner.style.left, 10)).toBeLessThanOrEqual(window.innerWidth - 110);
+        expect(parseInt(corner.style.top, 10)).toBeLessThanOrEqual(window.innerHeight - 34);
+    });
+
+    test('a fold remembered by an earlier version does not hide the board: the theatre opens with it', async () => {
+        // The state read in a user's webview: placed, then folded in an earlier theatre.
+        localStorage.setItem('blunderdb.theatre.board', JSON.stringify({ x: 0.0453125, y: 0.17833333333333334, size: 'm', hidden: true }));
+        await openedPanel();
+        await enterTheatre();
+        await settle();
+        expect(document.querySelector('[data-testid="theatre-board-show"]')).toBeNull();
+        const board = /** @type {HTMLElement} */ (document.querySelector('[data-testid="theatre-board"]'));
+        expect(board).not.toBeNull();
+        expect(board.dataset.size).toBe('m');
     });
 });

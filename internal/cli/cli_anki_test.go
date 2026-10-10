@@ -18,7 +18,7 @@ func seedDeck(t *testing.T, cli *CLI, n int) (deckID int64, positionIDs []int64)
 	if err != nil {
 		t.Fatalf("CreateAnkiDeck: %v", err)
 	}
-	if err := cli.db.SyncAnkiDeck(deckID); err != nil {
+	if _, err := cli.db.SyncAnkiDeck(deckID); err != nil {
 		t.Fatalf("SyncAnkiDeck: %v", err)
 	}
 	return deckID, ids

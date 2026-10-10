@@ -3,8 +3,18 @@
     // les chiffres globaux, découpées par phase de partie, par étiquette et
     // par score. Aucune d'elles ne redéfinit ce qui compte comme une décision
     // — ce serait un second PR sous le même nom.
+    //
+    // Les colonnes Positions et Bourdes ouvrent ce qu'elles comptent : chaque
+    // chiffre est la longueur de la liste que charge la sélection « breakdown »
+    // (GetStatsBreakdownPositionCounts), une position atteinte par plusieurs
+    // décisions n'y comptant qu'une fois. Les décisions restent affichées :
+    // c'est le dénominateur du PR.
+    import { get } from 'svelte/store';
     import { t } from '../../i18n';
     import { fmtPRInterval, hasInterval } from '../../utils/interval.js';
+    import { statsFilterStore, statsResultFilterStore } from '../../stores/statsStore.js';
+    import { loadPositionsFromStatsSelection } from '../../services/positionLoader.js';
+    import { GetStatsBreakdownPositionCounts } from '../../../wailsjs/go/database/Database.js';
 
     let { result = null } = $props();
 
@@ -14,8 +24,53 @@
     // Le plan de jeu. Les lignes « inconnu » sont écartées : sur une
     // base dont les plans n'ont jamais été calculés elles seraient TOUTE la
     // table, et elles ne diraient rien qu'un `blunderdb repair` ne règle.
-    let gameTypes = $derived((result?.PerGameType ?? []).filter((g) => g.GameType !== 'unknown'));
+    let gameTypes = $derived((result?.PerGameType ?? []).filter((/** @type {any} */ g) => g.GameType !== 'unknown'));
 
+    /** @type {Record<string, Record<string, {Positions: number, Blunders: number}>> | null} */
+    let counts = $state(null);
+    /** Why the counts could not be read; shown on every cell instead of a wait. */
+    let countsError = $state('');
+    let countsFor = 0;
+
+    // Les lignes viennent du résultat : on compte et on ouvre sous le filtre
+    // qui l'a produit, pas sous celui de la barre, qui peut l'avoir devancé.
+    function resultFilter() {
+        return get(statsResultFilterStore) ?? get(statsFilterStore);
+    }
+
+    // Recompté à chaque résultat ; une réponse devancée par un résultat plus
+    // récent est ignorée.
+    $effect(() => {
+        if (!result) return;
+        const ticket = ++countsFor;
+        counts = null;
+        countsError = '';
+        Promise.resolve()
+            .then(() => GetStatsBreakdownPositionCounts(/** @type {any} */ (resultFilter())))
+            .then((c) => {
+                if (ticket === countsFor) counts = c ?? {};
+            })
+            .catch((/** @type {any} */ err) => {
+                if (ticket === countsFor) countsError = err?.message ?? String(err);
+            });
+    });
+
+    /**
+     * The counts of one row: null while they are read, 'missing' when the
+     * reply has no such row — the two reads disagree, which must show.
+     * @param {string} dim @param {string} key
+     */
+    function countOf(dim, key) {
+        if (counts == null) return null;
+        return counts[dim]?.[key] ?? 'missing';
+    }
+
+    /** @param {string} dim @param {string} key @param {boolean} onlyBlunders */
+    function open(dim, key, onlyBlunders) {
+        loadPositionsFromStatsSelection(resultFilter(), { Kind: 'breakdown', Breakdown: dim, BreakdownKey: key, OnlyBlunders: onlyBlunders });
+    }
+
+    /** @param {string} phase */
     function phaseLabel(phase) {
         switch (phase) {
             case 'opening':
@@ -31,46 +86,91 @@
         }
     }
 
+    /** @param {string} gameType */
     function gameTypeLabel(gameType) {
         const key = `stats.gameType_${gameType}`;
         const label = $t(key);
         return label === key ? gameType : label;
     }
 
+    /** @param {any} cell */
     function scoreLabel(cell) {
         if (cell.Money) return $t('stats.scoreMoney');
         return `${cell.MoverAway}-${cell.OpponentAway}`;
     }
+
+    /** The key a score cell is counted under (storage.BreakdownScore). @param {any} cell */
+    function scoreKey(cell) {
+        return cell.Money ? 'money' : `${cell.MoverAway}-${cell.OpponentAway}`;
+    }
 </script>
 
 <div class="breakdowns">
+    {#snippet countCell(/** @type {string} */ dim, /** @type {string} */ key, /** @type {boolean} */ onlyBlunders, /** @type {number} */ decisions)}
+        {@const c = countOf(dim, key)}
+        {@const n = c == null || c === 'missing' ? null : onlyBlunders ? c.Blunders : c.Positions}
+        <td class="num">
+            {#if countsError || c === 'missing'}
+                <span
+                    class="count-error"
+                    data-testid="breakdown-error-{onlyBlunders ? 'blunders' : 'positions'}-{dim}-{key}"
+                    title={countsError ? $t('stats.breakdownCountsError', { error: countsError }) : $t('stats.breakdownCountsMissing')}>?</span
+                >
+            {:else if n == null}
+                <span class="pending">…</span>
+            {:else if n === 0}
+                <span class="zero">0</span>
+            {:else}
+                <button
+                    type="button"
+                    class="count-link"
+                    data-testid="breakdown-{onlyBlunders ? 'blunders' : 'positions'}-{dim}-{key}"
+                    onclick={() => open(dim, key, onlyBlunders)}
+                    title={onlyBlunders ? $t('stats.breakdownOpenBlunders', { n, decisions }) : $t('stats.breakdownOpenPositions', { n, decisions })}>{n}</button
+                >
+            {/if}
+        </td>
+    {/snippet}
+
+    {#snippet table(/** @type {string} */ dim, /** @type {string} */ heading, /** @type {any[]} */ rows)}
+        <table>
+            <thead>
+                <tr>
+                    <th>{heading}</th>
+                    <th class="num">{$t('stats.positions')}</th>
+                    <th class="num" title={$t('stats.breakdownBlundersHint')}>{$t('stats.blunders')}</th>
+                    <th class="num">{$t('stats.decisions')}</th>
+                    <th class="num">PR</th>
+                    <th class="num" title={$t('stats.intervalHint')}>{$t('stats.interval95')}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {#each rows as r (r.key)}
+                    <!-- Une ligne trop maigre est grisée, jamais cachée : son
+                         effectif reste lisible, donc l'omission reste vérifiable. -->
+                    <tr class:thin={!hasInterval(r.row.PRInterval)}>
+                        <td>{r.label}</td>
+                        {@render countCell(dim, r.key, false, r.row.NumDecisions)}
+                        {@render countCell(dim, r.key, true, r.row.BlunderCount)}
+                        <td class="num decisions">{r.row.NumDecisions}</td>
+                        <td class="num">{r.row.PR.toFixed(2)}</td>
+                        <td class="num ci">{fmtPRInterval(r.row.PRInterval)}</td>
+                    </tr>
+                {/each}
+            </tbody>
+        </table>
+    {/snippet}
+
     <section>
         <h3>{$t('stats.byPhase')}</h3>
         {#if phases.length === 0}
             <p class="empty">{$t('stats.noData')}</p>
         {:else}
-            <table>
-                <thead>
-                    <tr>
-                        <th>{$t('stats.phase')}</th>
-                        <th class="num">{$t('stats.decisions')}</th>
-                        <th class="num">{$t('stats.blunders')}</th>
-                        <th class="num">PR</th>
-                        <th class="num" title={$t('stats.intervalHint')}>{$t('stats.interval95')}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {#each phases as p (p.Phase)}
-                        <tr class:thin={!hasInterval(p.PRInterval)}>
-                            <td>{phaseLabel(p.Phase)}</td>
-                            <td class="num">{p.NumDecisions}</td>
-                            <td class="num">{p.BlunderCount}</td>
-                            <td class="num">{p.PR.toFixed(2)}</td>
-                            <td class="num ci">{fmtPRInterval(p.PRInterval)}</td>
-                        </tr>
-                    {/each}
-                </tbody>
-            </table>
+            {@render table(
+                'phase',
+                $t('stats.phase'),
+                phases.map((/** @type {any} */ p) => ({ key: p.Phase, label: phaseLabel(p.Phase), row: p }))
+            )}
         {/if}
     </section>
 
@@ -79,28 +179,11 @@
         {#if gameTypes.length === 0}
             <p class="empty">{$t('stats.noGameTypes')}</p>
         {:else}
-            <table>
-                <thead>
-                    <tr>
-                        <th>{$t('stats.gameType')}</th>
-                        <th class="num">{$t('stats.decisions')}</th>
-                        <th class="num">{$t('stats.blunders')}</th>
-                        <th class="num">PR</th>
-                        <th class="num" title={$t('stats.intervalHint')}>{$t('stats.interval95')}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {#each gameTypes as g (g.GameType)}
-                        <tr class:thin={!hasInterval(g.PRInterval)}>
-                            <td>{gameTypeLabel(g.GameType)}</td>
-                            <td class="num">{g.NumDecisions}</td>
-                            <td class="num">{g.BlunderCount}</td>
-                            <td class="num">{g.PR.toFixed(2)}</td>
-                            <td class="num ci">{fmtPRInterval(g.PRInterval)}</td>
-                        </tr>
-                    {/each}
-                </tbody>
-            </table>
+            {@render table(
+                'game_type',
+                $t('stats.gameType'),
+                gameTypes.map((/** @type {any} */ g) => ({ key: g.GameType, label: gameTypeLabel(g.GameType), row: g }))
+            )}
         {/if}
     </section>
 
@@ -109,28 +192,11 @@
         {#if tags.length === 0}
             <p class="empty">{$t('stats.noTags')}</p>
         {:else}
-            <table>
-                <thead>
-                    <tr>
-                        <th>{$t('stats.tag')}</th>
-                        <th class="num">{$t('stats.decisions')}</th>
-                        <th class="num">{$t('stats.blunders')}</th>
-                        <th class="num">PR</th>
-                        <th class="num" title={$t('stats.intervalHint')}>{$t('stats.interval95')}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {#each tags as tag (tag.Tag)}
-                        <tr class:thin={!hasInterval(tag.PRInterval)}>
-                            <td>{tag.Tag}</td>
-                            <td class="num">{tag.NumDecisions}</td>
-                            <td class="num">{tag.BlunderCount}</td>
-                            <td class="num">{tag.PR.toFixed(2)}</td>
-                            <td class="num ci">{fmtPRInterval(tag.PRInterval)}</td>
-                        </tr>
-                    {/each}
-                </tbody>
-            </table>
+            {@render table(
+                'tag',
+                $t('stats.tag'),
+                tags.map((/** @type {any} */ tag) => ({ key: tag.Tag, label: tag.Tag, row: tag }))
+            )}
             <!-- Une étiquette qualifie, elle ne partitionne pas : le dire est
                  la différence entre un lecteur qui fait confiance à la colonne
                  et un lecteur qui l'additionne et conclut que l'outil ment. -->
@@ -143,31 +209,11 @@
         {#if cells.length === 0}
             <p class="empty">{$t('stats.noData')}</p>
         {:else}
-            <table>
-                <thead>
-                    <tr>
-                        <th>{$t('stats.score')}</th>
-                        <th class="num">{$t('stats.decisions')}</th>
-                        <th class="num">{$t('stats.blunders')}</th>
-                        <th class="num">PR</th>
-                        <th class="num" title={$t('stats.intervalHint')}>{$t('stats.interval95')}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {#each cells as cell ((cell.Money ? 'money' : '') + `${cell.MoverAway}-${cell.OpponentAway}`)}
-                        <!-- Une cellule trop maigre est grisée, jamais cachée :
-                             son effectif reste lisible, donc l'omission reste
-                             vérifiable. -->
-                        <tr class:thin={!hasInterval(cell.PRInterval)}>
-                            <td>{scoreLabel(cell)}</td>
-                            <td class="num">{cell.NumDecisions}</td>
-                            <td class="num">{cell.BlunderCount}</td>
-                            <td class="num">{cell.PR.toFixed(2)}</td>
-                            <td class="num ci">{fmtPRInterval(cell.PRInterval)}</td>
-                        </tr>
-                    {/each}
-                </tbody>
-            </table>
+            {@render table(
+                'score',
+                $t('stats.score'),
+                cells.map((/** @type {any} */ cell) => ({ key: scoreKey(cell), label: scoreLabel(cell), row: cell }))
+            )}
             <p class="note">{$t('stats.thinCells')}</p>
         {/if}
     </section>
@@ -204,6 +250,29 @@
     }
     .thin td {
         color: var(--color-text-muted);
+    }
+    .decisions,
+    .pending,
+    .zero {
+        color: var(--color-text-muted);
+    }
+    .count-error {
+        color: var(--color-danger, #c0392b);
+        cursor: help;
+    }
+    /* Le chiffre est le lien : même convention que les compteurs de la barre d'état. */
+    .count-link {
+        background: none;
+        border: none;
+        padding: 0;
+        color: inherit;
+        cursor: pointer;
+        font-variant-numeric: tabular-nums;
+        text-decoration: underline dotted;
+    }
+    .count-link:hover,
+    .count-link:focus-visible {
+        color: var(--color-primary);
     }
     .empty,
     .note {

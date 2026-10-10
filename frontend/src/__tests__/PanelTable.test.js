@@ -3,6 +3,7 @@
  * cycling through nextSort, row selection, j/k navigation that scrolls the
  * reached row into view, the empty state, and the two pure helpers.
  */
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { tick, createRawSnippet } from 'svelte';
@@ -67,39 +68,39 @@ describe('PanelTable', () => {
 
     test('shows the empty state under an empty table', () => {
         const { container } = mount({ rows: [], emptyText: 'Nothing here' });
-        expect(container.querySelector('.empty-state').textContent.trim()).toBe('Nothing here');
+        expect(must(container.querySelector('.empty-state')).textContent.trim()).toBe('Nothing here');
     });
 
     test('clicking a sortable header cycles the sort: asc, desc, then (tristate) cleared', async () => {
         const { container } = mount({ sortOptions: { tristate: true } });
         const th = container.querySelector('th');
-        const btn = th.querySelector('.sort-btn');
-        const arrow = () => th.querySelector('.sort-arrow')?.textContent ?? null;
+        const btn = must(th).querySelector('.sort-btn');
+        const arrow = () => must(th).querySelector('.sort-arrow')?.textContent ?? null;
 
-        expect(th.getAttribute('aria-sort')).toBe('none');
-        await fireEvent.click(btn);
+        expect(must(th).getAttribute('aria-sort')).toBe('none');
+        await fireEvent.click(must(btn));
         expect(arrow()).toBe('▲');
-        expect(th.getAttribute('aria-sort')).toBe('ascending');
-        await fireEvent.click(btn);
+        expect(must(th).getAttribute('aria-sort')).toBe('ascending');
+        await fireEvent.click(must(btn));
         expect(arrow()).toBe('▼');
-        expect(th.getAttribute('aria-sort')).toBe('descending');
-        await fireEvent.click(btn);
+        expect(must(th).getAttribute('aria-sort')).toBe('descending');
+        await fireEvent.click(must(btn));
         expect(arrow()).toBeNull();
-        expect(th.getAttribute('aria-sort')).toBe('none');
+        expect(must(th).getAttribute('aria-sort')).toBe('none');
     });
 
     test("a column's defaultDir is honoured when it is first picked", async () => {
         const { container } = mount();
         const th = container.querySelectorAll('th')[1];
-        await fireEvent.click(th.querySelector('.sort-btn'));
-        expect(th.querySelector('.sort-arrow').textContent).toBe('▼');
+        await fireEvent.click(must(th.querySelector('.sort-btn')));
+        expect(must(th.querySelector('.sort-arrow')).textContent).toBe('▼');
     });
 
     test('the sort button is reachable from the keyboard (#204)', async () => {
         const { container } = mount();
         const btn = container.querySelector('th .sort-btn');
-        expect(btn.hasAttribute('tabindex')).toBe(false);
-        expect(btn.tabIndex).toBeGreaterThanOrEqual(0);
+        expect(must(btn).hasAttribute('tabindex')).toBe(false);
+        expect(must(btn).tabIndex).toBeGreaterThanOrEqual(0);
     });
 
     test('a non-sortable header ignores clicks', async () => {
@@ -188,14 +189,14 @@ describe('virtualization', () => {
         await tick();
         await tick();
         const scroll = container.querySelector('.scroll');
-        expect(scroll.scrollTop).toBeGreaterThan(0);
+        expect(must(scroll).scrollTop).toBeGreaterThan(0);
     });
 
     test('scrolling shifts the window and passes absolute indexes to the cells', async () => {
         const { container } = mount({ rows: BIG });
         const scroll = container.querySelector('.scroll');
-        scroll.scrollTop = 28 * 20000;
-        await fireEvent.scroll(scroll);
+        must(scroll).scrollTop = 28 * 20000;
+        await fireEvent.scroll(must(scroll));
         const names = [...container.querySelectorAll('.name-cell')].map((e) => e.textContent);
         expect(names).toContain('P20001');
         expect(names).not.toContain('P1');
@@ -205,8 +206,8 @@ describe('virtualization', () => {
         const onReorder = vi.fn();
         const { container } = mount({ rows: BIG, onReorder });
         const scroll = container.querySelector('.scroll');
-        scroll.scrollTop = 28 * 20000;
-        await fireEvent.scroll(scroll);
+        must(scroll).scrollTop = 28 * 20000;
+        await fireEvent.scroll(must(scroll));
         const trs = [...container.querySelectorAll('tbody > tr')];
         // Lay the rendered rows out one under the other, spacers included.
         trs.forEach((tr, i) => {
@@ -222,8 +223,29 @@ describe('virtualization', () => {
         data[from].dispatchEvent(down((lead + from) * 28 + 5));
         win('pointermove', (lead + to) * 28 + 5);
         win('pointerup', (lead + to) * 28 + 5);
-        const index = (name) => Number(name.slice(1)) - 1;
+        const index = (/** @type {string} */ name) => Number(name.slice(1)) - 1;
         expect(onReorder).toHaveBeenCalledWith(index(names[from]), index(names[to]));
         expect(index(names[from])).toBeGreaterThan(19000);
+    });
+});
+
+describe('the elastic column', () => {
+    const elastic = (/** @type {HTMLElement} */ container) => [...container.querySelectorAll('th')].findIndex((th) => th.classList.contains('elastic-col'));
+
+    test('a table of short columns gives the slack to its last non-action column', () => {
+        const { container } = mount({
+            columns: [
+                { key: 'i', narrow: true },
+                { key: 'id', narrow: true },
+                { key: 'actions', actions: true }
+            ]
+        });
+        expect(elastic(container)).toBe(1);
+    });
+
+    test('a named column wins; a free text column needs no help', () => {
+        expect(elastic(mount({ columns: [{ key: 'a' }, { key: 'b', elastic: true }] }).container)).toBe(1);
+        cleanup();
+        expect(elastic(mount().container)).toBe(-1);
     });
 });

@@ -1,7 +1,7 @@
 <script>
-    // The theatre of the transcription (services/transcriptionTheatre.js): the video over the
-    // whole window, the floating board, and a way out. The transcription panel keeps its player
-    // and its keys; this layer only lends the player a place, as the board side does.
+    // The theatre of the transcription (services/transcriptionTheatre.js): a bar with the way
+    // out, the floating board, and the video, which the dock stretches over the window where it
+    // stands. The transcription panel keeps its player and its keys; the player is never moved.
     import { t } from '../i18n';
     import { theatreStore, theatreTargetStore, exitTheatre } from '../services/transcriptionTheatre.js';
     import TheatreMiniBoard from './TheatreMiniBoard.svelte';
@@ -14,33 +14,15 @@
         return () => theatreTargetStore.set(null);
     });
 
-    // The controls fade while the pointer rests, and come back as soon as it moves.
-    const IDLE_MS = 2500;
-    let idle = $state(false);
-    /** @type {ReturnType<typeof setTimeout> | undefined} */
-    let idleTimer;
-
-    function wake() {
-        idle = false;
-        clearTimeout(idleTimer);
-        idleTimer = setTimeout(() => (idle = true), IDLE_MS);
-    }
-
-    $effect(() => {
-        if (!$theatreStore) return;
-        wake();
-        return () => clearTimeout(idleTimer);
-    });
-
     /** @param {MouseEvent} event */
     const keepFocus = (event) => event.preventDefault();
 </script>
 
 {#if $theatreStore}
-    <div class="theatre" class:idle data-testid="transcription-theatre" role="region" aria-label={$t('theatre.region')} onpointermove={wake}>
-        <div class="theatre-video" bind:this={host}></div>
+    <div class="theatre" data-testid="transcription-theatre" role="region" aria-label={$t('theatre.region')}>
+        <div class="theatre-video" bind:this={host} hidden></div>
         <TheatreMiniBoard />
-        <div class="theatre-controls">
+        <div class="theatre-bar">
             <span class="theatre-hint">{$t('theatre.hint')}</span>
             <button class="theatre-exit" data-testid="theatre-exit" onmousedown={keepFocus} onclick={exitTheatre} title={$t('theatre.exit')} aria-label={$t('theatre.exit')}>
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"
@@ -52,47 +34,37 @@
 {/if}
 
 <style>
-    /* Over the application, under its menus (1000) and dialogs. */
+    /* Over the application, under its menus (1000) and dialogs. The video, stretched by its
+       dock just below this layer (899), shows through. */
     .theatre {
         position: fixed;
         inset: 0;
         z-index: 900;
-        background: black;
+        pointer-events: none;
     }
-    .theatre-video {
+    .theatre-bar {
         position: absolute;
-        inset: 0;
-    }
-    .theatre-controls {
-        position: absolute;
-        top: 12px;
-        right: 12px;
+        inset: 0 0 auto 0;
+        height: var(--theatre-bar-height, 32px);
         z-index: 3;
         display: flex;
         align-items: center;
+        justify-content: flex-end;
         gap: var(--space-2);
-        transition: opacity 0.4s;
-    }
-    .theatre.idle .theatre-controls {
-        opacity: 0;
-    }
-    .theatre-controls:hover,
-    .theatre-controls:focus-within {
-        opacity: 1;
+        padding: 0 8px;
+        background: black;
+        pointer-events: auto;
     }
     .theatre-hint {
-        padding: 3px 8px;
-        border-radius: var(--radius);
-        background: rgb(0 0 0 / 0.75);
-        color: white;
+        color: rgb(255 255 255 / 0.75);
         font-size: var(--font-size-small);
     }
     .theatre-exit {
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 36px;
-        height: 36px;
+        width: 26px;
+        height: 24px;
         padding: 0;
         border: 1px solid rgb(255 255 255 / 0.35);
         border-radius: 6px;
@@ -102,7 +74,6 @@
     }
     .theatre-exit:hover,
     .theatre-exit:focus-visible {
-        background: rgb(0 0 0 / 0.85);
         border-color: white;
     }
 </style>

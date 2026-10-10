@@ -6,6 +6,7 @@
  * doit refuser de se prononcer sur deux points.
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi } from 'vitest';
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
@@ -47,16 +48,16 @@ describe('la tendance', () => {
 
     test('voit une amélioration régulière', () => {
         const t = trend([9, 8, 7, 6], 2);
-        expect(t.slope).toBeCloseTo(-1, 5);
-        expect(t.projected).toBeCloseTo(4, 5);
+        expect(must(t).slope).toBeCloseTo(-1, 5);
+        expect(must(t).projected).toBeCloseTo(4, 5);
     });
 
     test('ne projette jamais un PR négatif', () => {
         const t = trend([3, 2, 1], 20);
-        expect(t.projected).toBe(0);
+        expect(must(t).projected).toBe(0);
     });
 
     test('ignore les points sans mesure', () => {
-        expect(trend([6, 0, 5, NaN, 4], 1).slope).toBeCloseTo(-1, 5);
+        expect(must(trend([6, 0, 5, NaN, 4], 1)).slope).toBeCloseTo(-1, 5);
     });
 });

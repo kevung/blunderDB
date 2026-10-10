@@ -56,6 +56,7 @@
     import CubeActionRow from './CubeActionRow.svelte';
     import ContextMenu from './ContextMenu.svelte';
     import TranscriptView from './TranscriptView.svelte';
+    import { closeOnEscape } from '../services/escapeService.js';
     import TranscriptionMetadata from './TranscriptionMetadata.svelte';
     import VideoDock from './VideoDock.svelte';
     import { rateKeyDirection } from '../utils/videoRate.js';
@@ -81,9 +82,9 @@
     } from '../stores/transcriptionStore.js';
     import Modal from './Modal.svelte';
     import { writeTextToClipboard } from '../services/clipboardService.js';
-    import { quizPlayStore } from '../stores/quizPlayStore.js';
-    import { ROLLS, newBoardPlay, deducedDice, choosableRolls, undoBoardStep, stepsFromNotation, boardAfterSteps } from '../services/transcriptionPlay.js';
-    import { containsSteps } from '../services/quizPlay.js';
+    import { quizPlayStore, armBoardMove } from '../stores/quizPlayStore.js';
+    import { newBoardPlay, undoBoardStep, stepsFromNotation, boardAfterSteps } from '../services/transcriptionPlay.js';
+    import { containsSteps, completedPlay } from '../services/quizPlay.js';
     import { ListTranscriptions, CreateTranscription, OpenTranscription, ApplyTranscriptionGesture, TranscriptionMAT } from '../../wailsjs/go/database/Database.js';
     import { LegalMoves, EvaluatePositionImmediate, PickTranscriptionVideo, YouTubeWatchURL } from '../../wailsjs/go/gui/App.js';
     import { GetGammonNetPruneK } from '../../wailsjs/go/main/Config.js';
@@ -114,6 +115,17 @@
     let panelEl = $state(/** @type {HTMLElement | null} */ (null));
     // Volet des métadonnées, replié par défaut ; l'en-tête vit dans le document.
     let metaOpen = $state(false);
+
+    // Échap referme le formulaire ; le blur valide d'abord le champ en cours de saisie.
+    $effect(() => {
+        if (!metaOpen) return;
+        return closeOnEscape(() => {
+            if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+            metaOpen = false;
+            // Le champ flou emportait le focus : sans lui le panneau ne reçoit plus les touches du jet.
+            panelEl?.focus({ preventScroll: true });
+        });
+    });
 
     // ── la vidéo (ADR-0082) ──────────────────────────────────────────────
     // Le volet n'est qu'un fournisseur d'instants : le moteur pose les Repères
@@ -645,18 +657,8 @@
     let videoMenuItems = $derived([
         { label: $t('transcription.videoFile'), onClick: pickVideoFile },
         { label: $t('transcription.videoYouTube'), onClick: toggleYouTubeField, keepOpen: true },
-        ...(videoSource
-            ? [
-                  { label: $t('theatre.menuItem'), shortcut: 'F11', onClick: openTheatre },
-                  { label: $t('transcription.videoDetach'), onClick: () => attachVideo('') }
-              ]
-            : [])
+        ...(videoSource ? [{ label: $t('transcription.videoRemove'), separatorBefore: true, onClick: () => attachVideo('') }] : [])
     ]);
-
-    function openTheatre() {
-        closeVideoMenu();
-        enterTheatre();
-    }
 
     // The theatre opens over a draft with its video, on this tab; losing any of the three ends it.
     $effect(() => {
@@ -981,14 +983,10 @@
      */
     function pickDice(high, low) {
         if (!draft) return;
-        // Coup déjà joué au plateau : la case choisit parmi les jets possibles.
-        const play = /** @type {BoardPlayState | null} */ (get(quizPlayStore));
-        if (play && !play.free && play.steps.length) {
-            sendPlay([high, low], play.steps, null);
-            panelEl?.focus({ preventScroll: true });
-            return;
-        }
-        applyMouseDice(enterDicePair(get(transcriptionKeyStore), high, low, keyContext));
+        // Le coup achevé au plateau est enregistré avant que le jet suivant ne commence.
+        const settled = validatePlay();
+        if (settled) settled.then(() => applyMouseDice(enterDicePair(get(transcriptionKeyStore), high, low, keyContext)));
+        else applyMouseDice(enterDicePair(get(transcriptionKeyStore), high, low, keyContext));
     }
 
     /**
@@ -1208,19 +1206,19 @@
             undoBoardPlayStep();
             return;
         }
-        // Coup hors des règles : Entrée l'enregistre avec son plateau (ADR-0052).
-        if (event.key === 'Enter' && $quizPlayStore?.free && $quizPlayStore.steps.length) {
+        // Coup achevé ou hors des règles : Entrée l'enregistre (avec son plateau s'il est libre).
+        if (event.key === 'Enter' && playSettled()) {
             event.preventDefault();
             event.stopPropagation();
-            commitFreePlay();
+            validatePlay();
             return;
         }
-        // Un coup libre est enregistré avant que le chiffre ne commence le jet
+        // Un coup achevé est enregistré avant que le chiffre ne commence le jet
         // suivant, sinon le candidat sélectionné le remplacerait.
-        if (dieOf(event) > 0 && $quizPlayStore?.free && $quizPlayStore.steps.length) {
+        if (dieOf(event) > 0 && playSettled()) {
             event.preventDefault();
             event.stopPropagation();
-            commitFreePlay()?.then(() => applyResult(pressKey(get(transcriptionKeyStore), event, keyContext)));
+            validatePlay()?.then(() => applyResult(pressKey(get(transcriptionKeyStore), event, keyContext)));
             return;
         }
 
@@ -1467,8 +1465,8 @@
     // ── what the panel reads ─────────────────────────────────────────────
 
     const columns = $derived([
-        { key: 'updated', label: $t('transcription.updated') },
-        { key: 'players', label: $t('transcription.players') },
+        { key: 'updated', label: $t('transcription.updated'), narrow: true },
+        { key: 'players', label: $t('transcription.players'), elastic: true },
         { key: 'length', label: $t('transcription.length'), narrow: true, align: 'right' },
         { key: 'actions', label: $t('transcription.actionCount'), narrow: true, align: 'right' },
         { key: 'match', label: $t('transcription.match'), narrow: true }
@@ -1605,7 +1603,8 @@
     let diceEntered = $derived(keys.dice[0] > 0 && keys.dice[1] > 0);
     // Le jet saisi (ou chargé par `settleCursor` sur une Action relue).
     let boardRoll = $derived(diceEntered && (keys.phase === PHASE.ROLL || keys.phase === PHASE.CANDIDATE) ? [keys.dice[0], keys.dice[1]] : null);
-    let boardPlayOpen = $derived(!!draft && !matchOver && !awaitingAnswer && !recordingPlay && expects === 'checker' && (keys.phase === PHASE.DICE || boardRoll !== null));
+    // Sans jet saisi, aucun coup n'est armé : tout coup au plateau commence par les dés.
+    let boardPlayOpen = $derived(!!draft && !matchOver && !awaitingAnswer && !recordingPlay && expects === 'checker' && boardRoll !== null);
 
     // Clé d'armement (place, camp, position, jet) — pas le document, qui change à chaque pas.
     let boardPlayKey = $derived.by(() => {
@@ -1616,19 +1615,17 @@
     });
 
     /**
-     * Coups légaux du jet saisi, ou union des 21 jets en une salve.
+     * Arme le coup du jet saisi : coups légaux de ce jet, grammaire commune du plateau.
      *
      * @param {any} pos
      * @param {number} generation
-     * @param {number[] | null} rolled
+     * @param {number[]} rolled
      */
     async function loadBoardPlay(pos, generation, rolled) {
-        const rolls = rolled ? [rolled] : ROLLS;
-        const answers = await Promise.all(rolls.map(([high, low]) => LegalMoves({ ...pos, dice: [high, low] }).catch(() => [])));
+        const plays = await LegalMoves({ ...pos, dice: [rolled[0], rolled[1]] }).catch(() => []);
         if (generation !== boardPlayGeneration) return;
-        const byRoll = rolls.map((dice, index) => ({ dice, plays: answers[index] ?? [] })).filter((entry) => entry.plays.length);
         stepsKey = '';
-        quizPlayStore.set(newBoardPlay(pos, byRoll, { rolled }));
+        armBoardMove(newBoardPlay(pos, plays?.length ? [{ dice: rolled, plays }] : [], { rolled }), () => void validatePlay());
         boardPlayArmed = true;
     }
 
@@ -1646,26 +1643,26 @@
         }
         const pos = entryPosition();
         if (!pos) return;
-        loadBoardPlay(pos, generation, rolled);
+        if (rolled) loadBoardPlay(pos, generation, rolled);
     });
+
+    /** Le coup du plateau est-il achevé (légal complet, ou posé hors des règles) ? */
+    function playSettled() {
+        const play = /** @type {BoardPlayState | null} */ (get(quizPlayStore));
+        if (!play?.rolled || !play.steps.length) return false;
+        return play.free || completedPlay(play) !== null;
+    }
 
     /**
-     * Coup achevé et un seul jet possible : l'Action part seule. Plusieurs jets :
-     * `deducedDice` rend `null` et le triangle tranche.
+     * Enregistre le coup achevé (clic sur les dés, Entrée, jet suivant). `null` quand il n'y en a pas.
+     * @returns {Promise<void>|null}
      */
-    $effect(() => {
-        const play = /** @type {BoardPlayState | null} */ ($quizPlayStore);
-        if (!play || play.free || recordingPlay) return;
-        const dice = deducedDice(play);
-        if (dice) sendPlay(play.rolled ?? dice, play.steps, null);
-    });
-
-    /** Les jets que l'utilisateur peut encore désigner, ou `null` pour tous. */
-    let rollsAllowed = $derived.by(() => {
-        const play = /** @type {BoardPlayState | null} */ ($quizPlayStore);
-        if (!play || play.free || play.rolled || play.steps.length === 0) return null;
-        return new Set(choosableRolls(play));
-    });
+    function validatePlay() {
+        if (!playSettled()) return null;
+        const play = /** @type {BoardPlayState} */ (get(quizPlayStore));
+        const rolled = /** @type {number[]} */ (play.rolled);
+        return sendPlay(rolled, play.steps, play.free ? play.board : null);
+    }
 
     /**
      * L'Action : dés, pas, et plateau si besoin. Les dés sont toujours renvoyés
@@ -1700,16 +1697,6 @@
             recordingPlay = false;
         }
         resetTranscriptionKeys();
-    }
-
-    /**
-     * Entrée sur un coup hors des règles (ADR-0052) : le plateau part avec les
-     * pas et tranche quand ils ne suffisent pas. Jamais envoyé seul.
-     */
-    function commitFreePlay() {
-        const play = /** @type {BoardPlayState | null} */ (get(quizPlayStore));
-        if (!play?.free || !play.steps.length || !play.rolled) return null;
-        return sendPlay(play.rolled, play.steps, play.board);
     }
 
     // Cellules dont le coup se tape (ADR-0052) : celles que `settleCursor` rejoue.
@@ -1816,7 +1803,15 @@
 
 <section class="transcription-panel" id="transcriptionPanel" aria-label={$t('transcription.title')} tabindex="-1" bind:this={panelEl}>
     {#if !draft}
-        <PanelTable rows={$transcriptionListStore} {columns} emptyText={$t('transcription.empty')} pointerRows onSelect={openDraft}>
+        <PanelTable
+            rows={$transcriptionListStore}
+            {columns}
+            emptyText={$t('transcription.empty')}
+            emptyActions={$databaseLoadedStore}
+            emptyAction={busy || !$databaseLoadedStore ? null : { label: $t('transcription.new'), onClick: openForm }}
+            pointerRows
+            onSelect={openDraft}
+        >
             {#snippet header()}
                 <span class="detail-title">{$t('transcription.title')}</span>
                 <NewButton label={$t('transcription.new')} title={$t('transcription.newTooltip')} disabled={busy || !$databaseLoadedStore} onclick={openForm} />
@@ -1856,7 +1851,8 @@
             <!-- Barre du brouillon : les gestes qui le font sortir, l'état du Match
                  et l'annulation à la souris (ADR-0048 décisions 2, 3 et 11). -->
             <div class="draft-bar">
-                <!-- Navigation à gauche, outils de saisie au centre, sortie du brouillon à droite. -->
+                <!-- Les outils de saisie suivent le contexte qu'ils modifient ; la sortie du
+                     brouillon est en bout de bande, l'action qui le termine la dernière (ADR-0085). -->
                 <div class="bar-group bar-nav">
                     <button class="new-btn" onclick={backToList}>{$t('transcription.backToList')}</button>
                     <span class="save-state" title={$t(exitState.key, exitState.params)}>{$t(exitState.key, exitState.params)}</span>
@@ -1887,8 +1883,6 @@
                     >
                 </div>
                 <div class="bar-group bar-exit">
-                    <button class="primary-btn" onclick={handleFinish} disabled={busy} title={$t('transcription.finishTooltip')}>{$t('transcription.finish')}</button>
-                    <button class="danger-btn" onclick={handleAbandon} disabled={busy} title={$t('transcription.abandonTooltip')}>{$t('transcription.abandon')}</button>
                     <button
                         class="icon-btn more-btn"
                         class:active={moreMenu !== null}
@@ -1899,13 +1893,15 @@
                         aria-expanded={moreMenu !== null}
                         data-testid="transcription-more-button">⋯</button
                     >
+                    <button class="danger-btn" onclick={handleAbandon} disabled={busy} title={$t('transcription.abandonTooltip')}>{$t('transcription.abandon')}</button>
+                    <button class="primary-btn" onclick={handleFinish} disabled={busy} title={$t('transcription.finishTooltip')}>{$t('transcription.finish')}</button>
                 </div>
             </div>
 
             {#if videoSource}
                 <!-- Replié tant qu'aucune source n'est attachée (ADR-0082 règle 3). -->
                 <!-- Beside the board the dock leaves this slot empty, and the slot folds. -->
-                <div class="video-slot" style={videoOnBoard ? '' : `height: ${videoHeight}px`}>
+                <div class="video-slot" class:folded={videoOnBoard} style={videoOnBoard ? '' : `height: ${videoHeight}px`}>
                     <!-- Another draft opens its own video where it was left: the player remounts. -->
                     {#key draftId}
                         <VideoDock
@@ -1926,77 +1922,85 @@
             {/if}
 
             {#if metaOpen}
-                <!-- En-tête du brouillon : rien n'y est exigé. -->
+                <!-- En-tête du brouillon : rien n'y est exigé. Il remplace la saisie. -->
                 <TranscriptionMetadata header={annotated?.document?.header ?? {}} apply={sendGesture} {busy} />
             {/if}
-
             <!-- Ordre du DOM = boîte étroite ; en large, `order` (ADR-0048 décision 5).
                  Rien ne s'intercale entre les cases du jet et le premier candidat. -->
-            <div class="draft-body">
-                <div class="candidates-col">
-                    {#if unranked && visible.length}
-                        <!-- Message sur la liste, donc dans son en-tête. -->
-                        <div class="list-head">
-                            <span class="list-note">{$t('transcription.unranked')}</span>
-                        </div>
-                    {/if}
-                    {#if playFree}
-                        <!-- Coup hors des règles : la touche qui l'enregistre (ADR-0052). -->
-                        <p class="list-note" data-testid="transcription-free-hint">{$t('transcription.freePlayHint')}</p>
-                    {/if}
-                    {#if visible.length}
-                        {#if unranked}
-                            <ol class="plain-candidates" data-testid="transcription-candidates">
-                                {#each visible as row, index (row.gen)}
-                                    <li>
-                                        <button class="plain-candidate" class:selected={index === keys.selected} onclick={() => chooseCandidate(index)} ondblclick={() => commitCandidate(index)}
-                                            >{row.move.move}</button
-                                        >
-                                    </li>
-                                {/each}
-                            </ol>
-                        {:else}
-                            <!-- Molette = `j`/`k` (décision 11). -->
-                            <div class="candidates" data-testid="transcription-candidates" role="listbox" tabindex="-1" aria-label={$t('transcription.candidatesLabel')} onwheel={wheelCandidates}>
-                                <CandidateMovesTable
-                                    moves={rankedMoves}
-                                    selectedMove={$selectedMoveStore}
-                                    onRowClick={(/** @type {any} */ move) => chooseCandidate(rankedMoves.indexOf(move))}
-                                    onRowDblClick={(/** @type {any} */ move) => commitCandidate(rankedMoves.indexOf(move))}
-                                    showProvenance={false}
-                                    baseline={null}
-                                    projection="identify"
-                                    {isMoney}
-                                />
+            <div class="draft-body" class:meta-open={metaOpen}>
+                {#if !metaOpen}
+                    <div class="candidates-col">
+                        {#if unranked && visible.length}
+                            <!-- Message sur la liste, donc dans son en-tête. -->
+                            <div class="list-head">
+                                <span class="list-note">{$t('transcription.unranked')}</span>
                             </div>
                         {/if}
-                    {/if}
-                </div>
-
-                <div class="palette-col" data-testid="transcription-palette">
-                    <!-- Dés et gestes de videau sur une ligne, triangle dessous (décision 7). -->
-                    <div class="entry-row" data-testid="transcription-dice">
-                        {#if !awaitingAnswer && keys.phase !== PHASE.RESIGN}
-                            <!-- Cliquables : Retour arrière à la souris. -->
-                            <button class="die" class:filled={keys.dice[0] > 0} onclick={clearDice} title={$t('transcription.clearDice')} aria-label={$t('transcription.clearDice')}
-                                >{dieCells[0]}</button
-                            >
-                            <button class="die" class:filled={keys.dice[1] > 0} onclick={clearDice} title={$t('transcription.clearDice')} aria-label={$t('transcription.clearDice')}
-                                >{dieCells[1]}</button
-                            >
+                        {#if playFree}
+                            <!-- Coup hors des règles : la touche qui l'enregistre (ADR-0052). -->
+                            <p class="list-note" data-testid="transcription-free-hint">{$t('transcription.freePlayHint')}</p>
+                        {/if}
+                        {#if visible.length}
+                            {#if unranked}
+                                <ol class="plain-candidates" data-testid="transcription-candidates">
+                                    {#each visible as row, index (row.gen)}
+                                        <li>
+                                            <button class="plain-candidate" class:selected={index === keys.selected} onclick={() => chooseCandidate(index)} ondblclick={() => commitCandidate(index)}
+                                                >{row.move.move}</button
+                                            >
+                                        </li>
+                                    {/each}
+                                </ol>
+                            {:else}
+                                <!-- Molette = `j`/`k` (décision 11). -->
+                                <div class="candidates" data-testid="transcription-candidates" role="listbox" tabindex="-1" aria-label={$t('transcription.candidatesLabel')} onwheel={wheelCandidates}>
+                                    <CandidateMovesTable
+                                        moves={rankedMoves}
+                                        selectedMove={$selectedMoveStore}
+                                        onRowClick={(/** @type {any} */ move) => chooseCandidate(rankedMoves.indexOf(move))}
+                                        onRowDblClick={(/** @type {any} */ move) => commitCandidate(rankedMoves.indexOf(move))}
+                                        showProvenance={false}
+                                        baseline={null}
+                                        projection="identify"
+                                        {isMoney}
+                                    />
+                                </div>
+                            {/if}
                         {/if}
                     </div>
 
-                    {#if cubeRowOpen}
-                        <CubeActionRow canAct={canCubeAct} canAnswer={canCubeAnswer} {resigning} onGesture={sendCube} onResign={startResign} onLevel={pickResignLevel} onCancelResign={abortResign} />
-                    {/if}
+                    <div class="palette-col" data-testid="transcription-palette">
+                        <!-- Dés et gestes de videau sur une ligne, triangle dessous (décision 7). -->
+                        <div class="entry-row" data-testid="transcription-dice">
+                            {#if !awaitingAnswer && keys.phase !== PHASE.RESIGN}
+                                <!-- Cliquables : Retour arrière à la souris. -->
+                                <button class="die" class:filled={keys.dice[0] > 0} onclick={clearDice} title={$t('transcription.clearDice')} aria-label={$t('transcription.clearDice')}
+                                    >{dieCells[0]}</button
+                                >
+                                <button class="die" class:filled={keys.dice[1] > 0} onclick={clearDice} title={$t('transcription.clearDice')} aria-label={$t('transcription.clearDice')}
+                                    >{dieCells[1]}</button
+                                >
+                            {/if}
+                        </div>
 
-                    {#if diceEntryOpen}
-                        <!-- Sous les cases du jet, jamais à leur place : le clavier reste deux fois plus rapide. -->
-                        <DiceTriangle single={gameStart} allowed={rollsAllowed} onPick={pickDice} onDie={pickDie} />
-                    {/if}
-                </div>
+                        {#if cubeRowOpen}
+                            <CubeActionRow
+                                canAct={canCubeAct}
+                                canAnswer={canCubeAnswer}
+                                {resigning}
+                                onGesture={sendCube}
+                                onResign={startResign}
+                                onLevel={pickResignLevel}
+                                onCancelResign={abortResign}
+                            />
+                        {/if}
 
+                        {#if diceEntryOpen}
+                            <!-- Sous les cases du jet, jamais à leur place : le clavier reste deux fois plus rapide. -->
+                            <DiceTriangle single={gameStart} onPick={pickDice} onDie={pickDie} />
+                        {/if}
+                    </div>
+                {/if}
                 <div class="transcript-col">
                     {#if lastFlags.length}
                         <!-- Incohérence marquée, jamais refusée (ADR-0044), visible sans chercher. -->
@@ -2190,10 +2194,15 @@
         margin-left: 0;
     }
     .video-slot {
-        flex: 0 0 auto;
+        flex: 0 1 auto;
+        min-height: 5rem;
         overflow: hidden;
         /* However far the handle went, the draft below keeps room to be typed in. */
         max-height: 60%;
+    }
+    /* The player sits beside the board: an empty slot keeps no floor. */
+    .video-slot.folded {
+        min-height: 0;
     }
     .video-resize {
         flex: 0 0 auto;
@@ -2202,8 +2211,8 @@
         background: var(--color-border);
         touch-action: none;
     }
-    /* Trois groupes, chacun d'un bloc : la saisie au centre, entre deux ailes de même
-       largeur ; l'état du brouillon cède la place (tronqué, entier au survol). */
+    /* Trois groupes, chacun d'un bloc : le contexte et ses outils à gauche, la sortie
+       poussée au bord droit ; l'état du brouillon cède la place (tronqué, entier au survol). */
     .draft-bar {
         display: flex;
         flex-wrap: wrap;
@@ -2221,12 +2230,12 @@
         min-width: 0;
     }
 
-    .bar-nav,
-    .bar-exit {
-        flex: 1 1 0;
+    .bar-nav {
+        flex: 0 1 auto;
     }
 
     .bar-exit {
+        flex: 1 0 auto;
         justify-content: flex-end;
     }
 
@@ -2293,6 +2302,7 @@
        sans défilement. Le Transcript partage la rangée du triangle dès 485 px
        (triangle 211 px + Transcript 250 px) ; en dessous il serait rogné. */
     .draft-body {
+        --candidates-floor: 7rem;
         display: flex;
         flex: 1;
         flex-direction: column;
@@ -2310,14 +2320,16 @@
         min-height: 0;
     }
 
+    /* Le plancher de la liste : la vidéo, l'en-tête et la palette cèdent avant elle. */
     .candidates-col {
         flex: 1 1 auto;
+        min-height: var(--candidates-floor);
         grid-area: candidates;
     }
 
     /* Sous le plancher, la palette défile seule ; la ligne du jet reste visible. */
     .palette-col {
-        flex: 0 0 auto;
+        flex: 0 1 auto;
         overflow: auto;
         grid-area: palette;
     }
@@ -2332,7 +2344,7 @@
         .draft-body {
             display: grid;
             grid-template-columns: max-content minmax(0, 1fr);
-            grid-template-rows: minmax(0, 1fr) auto;
+            grid-template-rows: minmax(var(--candidates-floor), 1fr) minmax(0, auto);
             grid-template-areas:
                 'candidates candidates'
                 'palette    transcript';
@@ -2346,6 +2358,12 @@
             grid-template-rows: minmax(0, 1fr);
             grid-template-areas: 'palette candidates transcript';
         }
+    }
+
+    /* Le formulaire a pris la saisie : le Transcript garde une bande sous lui. */
+    .draft-body.meta-open {
+        display: flex;
+        flex: 0 1 40%;
     }
 
     /* Les deux dés et les quatre gestes de videau sur une ligne. */

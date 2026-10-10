@@ -151,18 +151,19 @@
 
     /* Rows are picked with Ctrl/Shift+click and right-click: the cells must not
        be selected as text along the way. */
+    /* Columns at their content from the start edge, the leftover width left over (ADR-0021,
+       ADR-0085): spread over the panel, the numbers drifted away from their move. */
     .checker-table {
-        margin: 0 auto;
-        width: 100%;
         font-size: var(--font-size-base);
         border-collapse: collapse;
         user-select: none;
     }
 
+    /* The move reads from the start, the numbers line up on their units (ADR-0085, G4). */
     th,
     td {
         padding: 2px 10px;
-        text-align: center;
+        text-align: right;
         white-space: nowrap;
         font-variant-numeric: tabular-nums;
     }
@@ -188,6 +189,11 @@
         width: 150px;
     }
 
+    th:nth-child(1),
+    td:nth-child(1) {
+        text-align: left;
+    }
+
     th:nth-child(n + 2) {
         width: 60px;
     }
@@ -195,11 +201,6 @@
     /* `identify` : la notation prend la place libre (un double se tronquait à 150 px). */
     .checker-table.identify th:nth-child(1) {
         width: auto;
-        text-align: left;
-    }
-
-    .checker-table.identify td:nth-child(1) {
-        text-align: left;
     }
 
     .checker-table th:nth-child(3),

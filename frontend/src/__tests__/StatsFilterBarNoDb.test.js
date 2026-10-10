@@ -44,6 +44,7 @@ import StatsFilterBar from '../components/stats/StatsFilterBar.svelte';
 describe('StatsFilterBar with no database open', () => {
     /** @type {string[]} */
     let svelteErrors;
+    /** @type {(() => void) | undefined} */
     let restore;
 
     beforeEach(() => {

@@ -1003,7 +1003,10 @@ ou ``csv``, comme ``list``.
 * ``show --id <id>`` — Positions d'une collection : id, index (le numéro
   1-based affiché dans la barre d'état de l'interface graphique), score, type
   de décision et XGID.
-* ``create --name <nom> [--description <texte>]`` — Crée une collection vide.
+* ``create --name <nom> [--description <texte>] [--query <requête>]`` — Crée
+  une collection vide ou, avec ``--query``, une collection vivante d'emblée.
+  Une requête dont un jeton n'est reconnu par aucune règle est refusée avant
+  que rien ne soit écrit.
 * ``filter --id <id> --query <requête>`` — Rend une collection **vivante** :
   son contenu devient le résultat d'une recherche, réévalué chaque fois
   qu'elle est ouverte. La requête s'écrit dans la grammaire de recherche de
@@ -1012,6 +1015,13 @@ ou ``csv``, comme ``list``.
 * ``freeze --id <id>`` — Fige une collection vivante : les positions que sa
   requête sélectionne maintenant deviennent sa composition, la requête
   s'efface. Refusé sur une collection qui n'est pas vivante.
+* ``evaluate --id <id> [--limit <n>] [--format text|json]`` — Lit les
+  identifiants des positions d'une collection, en rejouant maintenant la
+  requête d'une collection vivante. La réponse est bornée par un plafond
+  déclaré de 5 000 positions (``--limit`` l'abaisse) et donne toujours le
+  nombre réel de positions et l'indicateur ``truncated`` : jamais de
+  troncature muette. En texte, les identifiants vont sur la sortie standard et
+  le décompte sur la sortie d'erreur.
 * ``pile [--position-id <id> | --xgid <XGID>]`` — Met une position sur la
   Pile (la collection « à revoir plus tard »), ou l'en retire quand elle y est ;
   une position donnée par XGID qui n'est pas dans la base y est d'abord écrite,
@@ -1212,7 +1222,9 @@ reste dans l'interface graphique ; la CLI liste, mesure et resynchronise.
   planificateur a réellement reçu, par opposition à ce qu'il prévoit
   aujourd'hui : c'est le seul endroit où une note entrée par erreur se voit.
 
-Un paquet fondé sur une collection relit sa collection. Un paquet fondé sur
+Un paquet fondé sur une collection relit sa collection ; fondé sur une
+collection vivante, il rejoue sa requête sous le même plafond de 5 000
+positions et signale sur la sortie d'erreur une source tronquée. Un paquet fondé sur
 une recherche conserve la recherche telle que l'interface graphique l'a
 enregistrée (commande, damier et identifiants des positions trouvées à ce
 moment-là) : la grammaire de recherche vit dans l'interface graphique, la CLI

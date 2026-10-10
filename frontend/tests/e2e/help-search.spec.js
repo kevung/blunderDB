@@ -30,3 +30,22 @@ test('« / » cherche dans l’aide, Entrée passe à l’occurrence suivante', 
     await expect(page.getByTestId('help-search-count')).toHaveText(/^2 \/ \d+$/);
     await expect(search).toBeVisible();
 });
+
+test('un clic dans le champ de l’aide y met le focus et la frappe le garde', async ({ page }) => {
+    await installWailsMock(page, openLibraryMock());
+    await page.goto('/');
+    await expect(page.getByTestId('status-bar')).toContainText('3 / 3');
+
+    await page.keyboard.press('?');
+    const search = page.getByTestId('help-search');
+    await expect(search).toBeVisible();
+    await expect(page.getByTestId('help-loading')).toHaveCount(0);
+
+    await search.click();
+    await expect(search).toBeFocused();
+    await page.keyboard.type('position');
+    await expect(search).toHaveValue('position');
+    await expect(search).toBeFocused();
+    await page.waitForTimeout(400);
+    await expect(search).toBeFocused();
+});

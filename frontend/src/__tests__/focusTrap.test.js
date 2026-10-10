@@ -5,6 +5,7 @@
  * tests exercise it directly against a jsdom DOM tree, no component render
  * needed.
  */
+import { must } from './helpers/must.js';
 import { describe, test, expect, afterEach } from 'vitest';
 import { trapFocus } from '../utils/focusTrap.js';
 
@@ -14,6 +15,7 @@ function keydown(target, key, opts = {}) {
     return event;
 }
 
+/** @type {HTMLElement | null} */
 let container;
 
 afterEach(() => {
@@ -35,7 +37,7 @@ describe('trapFocus', () => {
 
         trapFocus(container);
 
-        expect(document.activeElement.id).toBe('first');
+        expect(must(document.activeElement).id).toBe('first');
     });
 
     test('does nothing on mount when there is no focusable element', () => {
@@ -70,10 +72,10 @@ describe('trapFocus', () => {
         document.body.appendChild(container);
         trapFocus(container);
 
-        document.getElementById('last').focus();
+        must(document.getElementById('last')).focus();
         const event = keydown(container, 'Tab');
 
-        expect(document.activeElement.id).toBe('first');
+        expect(must(document.activeElement).id).toBe('first');
         expect(event.defaultPrevented).toBe(true);
     });
 
@@ -87,10 +89,10 @@ describe('trapFocus', () => {
         document.body.appendChild(container);
         trapFocus(container);
 
-        document.getElementById('first').focus();
+        must(document.getElementById('first')).focus();
         const event = keydown(container, 'Tab', { shiftKey: true });
 
-        expect(document.activeElement.id).toBe('last');
+        expect(must(document.activeElement).id).toBe('last');
         expect(event.defaultPrevented).toBe(true);
     });
 
@@ -104,7 +106,7 @@ describe('trapFocus', () => {
         document.body.appendChild(container);
         trapFocus(container);
 
-        document.getElementById('middle').focus();
+        must(document.getElementById('middle')).focus();
         const event = keydown(container, 'Tab');
 
         // Only the browser's native focus advancement would move focus here
@@ -119,11 +121,11 @@ describe('trapFocus', () => {
         document.body.appendChild(container);
         trapFocus(container);
 
-        document.getElementById('last').focus();
+        must(document.getElementById('last')).focus();
         const event = keydown(container, 'Enter');
 
         expect(event.defaultPrevented).toBe(false);
-        expect(document.activeElement.id).toBe('last');
+        expect(must(document.activeElement).id).toBe('last');
     });
 
     test('disabled inputs and negative tabindex are excluded from the focusable set', () => {
@@ -137,10 +139,10 @@ describe('trapFocus', () => {
         document.body.appendChild(container);
         trapFocus(container);
 
-        document.getElementById('last').focus();
+        must(document.getElementById('last')).focus();
         keydown(container, 'Tab');
 
-        expect(document.activeElement.id).toBe('first');
+        expect(must(document.activeElement).id).toBe('first');
     });
 
     test('destroy restores focus to the previously focused element', () => {
@@ -148,17 +150,17 @@ describe('trapFocus', () => {
         outsideButton.id = 'outside';
         document.body.appendChild(outsideButton);
         outsideButton.focus();
-        expect(document.activeElement.id).toBe('outside');
+        expect(must(document.activeElement).id).toBe('outside');
 
         container = document.createElement('div');
         container.innerHTML = `<button id="inside">Inside</button>`;
         document.body.appendChild(container);
 
         const action = trapFocus(container);
-        expect(document.activeElement.id).toBe('inside');
+        expect(must(document.activeElement).id).toBe('inside');
 
         action.destroy();
-        expect(document.activeElement.id).toBe('outside');
+        expect(must(document.activeElement).id).toBe('outside');
 
         outsideButton.remove();
     });
@@ -174,15 +176,15 @@ describe('trapFocus', () => {
         trapFocus(container);
 
         // Initial focus skips the hidden button.
-        expect(document.activeElement.id).toBe('first');
+        expect(must(document.activeElement).id).toBe('first');
 
-        document.getElementById('last').focus();
+        must(document.getElementById('last')).focus();
         keydown(container, 'Tab');
-        expect(document.activeElement.id).toBe('first');
+        expect(must(document.activeElement).id).toBe('first');
 
-        document.getElementById('first').focus();
+        must(document.getElementById('first')).focus();
         keydown(container, 'Tab', { shiftKey: true });
-        expect(document.activeElement.id).toBe('last');
+        expect(must(document.activeElement).id).toBe('last');
     });
 
     test("a match inside a display:none ancestor is excluded even though its own computed display is not 'none' (#204)", () => {
@@ -195,9 +197,9 @@ describe('trapFocus', () => {
         document.body.appendChild(container);
         trapFocus(container);
 
-        document.getElementById('last').focus();
+        must(document.getElementById('last')).focus();
         keydown(container, 'Tab');
-        expect(document.activeElement.id).toBe('first');
+        expect(must(document.activeElement).id).toBe('first');
     });
 
     test('destroy removes the keydown listener', () => {
@@ -208,7 +210,7 @@ describe('trapFocus', () => {
         const action = trapFocus(container);
         action.destroy();
 
-        document.getElementById('last').focus();
+        must(document.getElementById('last')).focus();
         const event = keydown(container, 'Tab');
 
         // After destroy, the trap must no longer intercept Tab.

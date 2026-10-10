@@ -12,7 +12,6 @@ import (
 	"text/tabwriter"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
-	"github.com/kevung/blunderdb/pkg/blunderdb/searchquery"
 )
 
 // runCollection handles the collection command. Collections are the GUI's
@@ -46,16 +45,17 @@ func (cli *CLI) runCollection(args []string) error {
 // collectionHandlers returns the sub-command table of `blunderdb collection`.
 func (cli *CLI) collectionHandlers() map[string]func([]string) error {
 	return map[string]func([]string) error{
-		"list":    cli.runCollectionList,
-		"show":    cli.runCollectionShow,
-		"create":  cli.runCollectionCreate,
-		"filter":  cli.runCollectionFilter,
-		"freeze":  cli.runCollectionFreeze,
-		"pile":    cli.runCollectionPile,
-		"rename":  cli.runCollectionRename,
-		"delete":  cli.runCollectionDelete,
-		"export":  cli.runCollectionExport,
-		"suggest": cli.runCollectionSuggest,
+		"list":     cli.runCollectionList,
+		"show":     cli.runCollectionShow,
+		"create":   cli.runCollectionCreate,
+		"filter":   cli.runCollectionFilter,
+		"freeze":   cli.runCollectionFreeze,
+		"evaluate": cli.runCollectionEvaluate,
+		"pile":     cli.runCollectionPile,
+		"rename":   cli.runCollectionRename,
+		"delete":   cli.runCollectionDelete,
+		"export":   cli.runCollectionExport,
+		"suggest":  cli.runCollectionSuggest,
 	}
 }
 
@@ -292,10 +292,12 @@ func (cli *CLI) showCollection(id int64, format string) error {
 // ── create / rename / delete ─────────────────────────────────────────────────
 
 func (cli *CLI) runCollectionCreate(args []string) error {
-	fs, dbPath := collectionFlagSet("create", "Create an empty collection.",
-		"blunderdb collection create --db database.db --name \"Blitz openings\"")
+	fs, dbPath := collectionFlagSet("create", "Create an empty collection, or a living one whose content is the result of a search query.",
+		"blunderdb collection create --db database.db --name \"Blitz openings\"",
+		"blunderdb collection create --db database.db --name \"Big blunders\" --query \"E>80\"")
 	name := fs.String("name", "", "Collection name (required)")
 	description := fs.String("description", "", "Collection description")
+	query := fs.String("query", "", "Make the collection living: a search query, in the application's own grammar")
 	if err := cli.collectionOpen(fs, dbPath, args); err != nil {
 		return err
 	}
@@ -303,7 +305,7 @@ func (cli *CLI) runCollectionCreate(args []string) error {
 		fs.Usage()
 		return fmt.Errorf("missing required flag: --name")
 	}
-	id, err := cli.db.CreateCollection(strings.TrimSpace(*name), *description)
+	id, err := cli.db.CreateLivingCollection(strings.TrimSpace(*name), *description, *query)
 	if err != nil {
 		return fmt.Errorf("failed to create collection: %w", err)
 	}
@@ -332,21 +334,6 @@ func (cli *CLI) runCollectionFilter(args []string) error {
 	} else if q == "" {
 		fs.Usage()
 		return fmt.Errorf("missing required flag: --query (or --clear)")
-	}
-	// A query nothing claims would make the collection everything in the
-	// library, silently. Refusing here is the same rule `search --query` follows.
-	if q != "" {
-		if _, diags := searchquery.Parse(q); len(diags) > 0 {
-			var unknown []string
-			for _, d := range diags {
-				if d.Kind == searchquery.DiagUnknown {
-					unknown = append(unknown, d.Token)
-				}
-			}
-			if len(unknown) > 0 {
-				return fmt.Errorf("the query carries tokens nothing claims (%s): a collection that means everything is worse than a refusal", strings.Join(unknown, ", "))
-			}
-		}
 	}
 	if err := cli.db.SetCollectionFilter(*id, q); err != nil {
 		return fmt.Errorf("failed to set the collection filter: %w", err)
@@ -378,6 +365,48 @@ func (cli *CLI) runCollectionFreeze(args []string) error {
 	}
 	fmt.Printf("Collection %d is a hand-made list again, frozen on %d position(s).\n", *id, n)
 	return nil
+}
+
+// runCollectionEvaluate reads a collection whole under the declared ceiling and
+// says whether the answer stops short of the true total.
+func (cli *CLI) runCollectionEvaluate(args []string) error {
+	fs, dbPath := collectionFlagSet("evaluate", "Read a collection's position ids, a living one by running its query now. The answer is bounded by a declared ceiling and always states the true total and whether it was truncated.",
+		"blunderdb collection evaluate --db database.db --id 3",
+		"blunderdb collection evaluate --db database.db --id 3 --limit 100 --format json")
+	id := fs.Int64("id", 0, "Collection ID (required)")
+	limit := fs.Int("limit", 0, "At most this many ids (0: the declared ceiling)")
+	format := fs.String("format", "text", "Output format: text, json")
+	if err := cli.collectionOpen(fs, dbPath, args); err != nil {
+		return err
+	}
+	if *id == 0 {
+		fs.Usage()
+		return fmt.Errorf("missing required flag: --id")
+	}
+	ev, err := cli.db.EvaluateCollection(*id, *limit)
+	if err != nil {
+		return fmt.Errorf("failed to evaluate the collection: %w", err)
+	}
+	switch *format {
+	case "json":
+		enc := json.NewEncoder(os.Stdout)
+		enc.SetIndent("", "  ")
+		return enc.Encode(ev)
+	case "text":
+		ids := make([]string, len(ev.PositionIDs))
+		for i, pid := range ev.PositionIDs {
+			ids[i] = strconv.FormatInt(pid, 10)
+		}
+		fmt.Println(strings.Join(ids, "\n"))
+		note := ""
+		if ev.Truncated {
+			note = fmt.Sprintf(" (truncated at the ceiling of %d)", ev.Cap)
+		}
+		fmt.Fprintf(os.Stderr, "%d of %d position(s)%s\n", len(ev.PositionIDs), ev.Total, note)
+		return nil
+	default:
+		return fmt.Errorf("unknown format: %s (must be 'text' or 'json')", *format)
+	}
 }
 
 // runCollectionPile is the Pile gesture: with a position it puts it on the

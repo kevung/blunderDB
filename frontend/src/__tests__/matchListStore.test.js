@@ -14,7 +14,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
 
 import { createMatchList, sqlSortKey } from '../stores/matchListStore.js';
 
-const rows = (from, n) => Array.from({ length: n }, (_, i) => ({ id: from + i, player1_name: `P${from + i}`, player2_name: 'Q', pr: 0, mwc_loss: 0 }));
+const rows = (from, /** @type {number} */ n) => Array.from({ length: n }, (_, i) => ({ id: from + i, player1_name: `P${from + i}`, player2_name: 'Q', pr: 0, mwc_loss: 0 }));
 
 function make(total = 1200, pageSize = 500) {
     const list = vi.fn(async ({ Offset, Limit }) => rows(Offset + 1, Limit === 0 ? total : Math.min(Limit, total - Offset)));

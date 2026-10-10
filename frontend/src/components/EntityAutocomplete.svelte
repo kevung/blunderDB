@@ -18,7 +18,7 @@
         /** Keeps the list keyed; defaults to the label. */
         key = (item) => label(item),
         /** Which items match the typed text. Empty text matches everything. */
-        filter = (item, query) => label(item).toLowerCase().includes(query.toLowerCase()),
+        filter = (item, /** @type {string} */ query) => label(item).toLowerCase().includes(query.toLowerCase()),
         /** An item was picked (mouse or Enter on a highlighted row). */
         onSelect = undefined,
         /** Enter with nothing highlighted: the typed text itself is the answer. */
@@ -110,7 +110,7 @@
         active = (active + delta + filtered.length) % filtered.length;
     }
 
-    function handleKeyDown(event) {
+    function handleKeyDown(/** @type {KeyboardEvent} */ event) {
         switch (event.key) {
             case 'ArrowDown':
             case 'ArrowUp':

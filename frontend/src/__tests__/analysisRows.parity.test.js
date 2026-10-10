@@ -18,6 +18,7 @@
  * does and actually exercises the two sides it claims to compare.
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, afterEach } from 'vitest';
 import { render, cleanup } from '@testing-library/svelte';
 
@@ -200,7 +201,7 @@ describe('the copied image paints exactly what the tables show', () => {
         expect(texts.slice(at)).toEqual(dom);
 
         // The same row is marked played on both surfaces.
-        const playedRows = [...container.querySelectorAll('tr.played')].map((tr) => tr.querySelector('td').textContent.trim());
+        const playedRows = [...container.querySelectorAll('tr.played')].map((tr) => must(tr.querySelector('td')).textContent.trim());
         expect(playedRows).toHaveLength(1);
         const paintedPlayed = painted.filter((p) => p.bg === PLAYED_BG).map((p) => p.text);
         expect(paintedPlayed[0]).toBe(playedRows[0]);
@@ -230,7 +231,7 @@ describe('the copied image paints exactly what the tables show', () => {
         expect(dom).toHaveLength(11 * 4);
         expect(texts).toEqual(dom);
 
-        const playedRows = [...container.querySelectorAll('tr.played')].map((tr) => tr.querySelector('td').textContent.trim());
+        const playedRows = [...container.querySelectorAll('tr.played')].map((tr) => must(tr.querySelector('td')).textContent.trim());
         expect(playedRows).toEqual(['24/23 13/10']);
         const paintedPlayed = painted.filter((p) => p.bg === PLAYED_BG).map((p) => p.text);
         expect(paintedPlayed).toHaveLength(11);

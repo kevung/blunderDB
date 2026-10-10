@@ -196,7 +196,7 @@ type ScoreCellStats struct {
 // SelectionSpec selects a subset of positions out of a stats result, e.g. the
 // decisions behind a histogram bucket or a tournament row.
 type SelectionSpec struct {
-	Kind string // "all","checker","cube","cube_action","cube_direction","error_bucket","tournament","match","last_n","position","top_blunders"
+	Kind string // "all","checker","cube","cube_action","cube_direction","error_bucket","tournament","match","last_n","position","top_blunders","breakdown"
 	// CubeAction matches analysis.best_cube_action VERBATIM, in whatever
 	// spelling the importer wrote ("No Double", "Double, Take"…) — not the
 	// canonical form.
@@ -211,7 +211,36 @@ type SelectionSpec struct {
 	LastN         int
 	PositionID    int64
 	OnlyWithError bool
+	// Breakdown and BreakdownKey, for Kind "breakdown", name one row of the
+	// breakdowns: Breakdown is one of the Breakdown* dimensions, BreakdownKey
+	// the row's key as BreakdownPositionCounts lists it. OnlyBlunders keeps
+	// the positions where a decision of the selection is a blunder.
+	Breakdown    string
+	BreakdownKey string
+	OnlyBlunders bool
 }
+
+// The dimensions of the breakdowns a SelectionSpec of Kind "breakdown" names.
+const (
+	BreakdownPhase    = "phase"     // key: the GamePhase token
+	BreakdownGameType = "game_type" // key: the GameType token
+	BreakdownTag      = "tag"       // key: the tag, "#" included
+	BreakdownScore    = "score"     // key: "money", or "<mover away>-<opponent away>"
+)
+
+// BreakdownPositionCount is what a breakdown row holds counted in distinct
+// positions, the unit a drill-down loads: a position reached by several
+// decisions counts once, where NumDecisions counts each decision.
+type BreakdownPositionCount struct {
+	Positions int `json:"Positions"`
+	// Blunders counts the positions where at least one decision of the
+	// selection is a blunder.
+	Blunders int `json:"Blunders"`
+}
+
+// BreakdownPositionCounts maps a Breakdown* dimension to its rows' counts, by
+// row key.
+type BreakdownPositionCounts map[string]map[string]BreakdownPositionCount
 
 // PlayerFrequency is a player name and how many matches they appear in.
 type PlayerFrequency struct {
@@ -551,6 +580,11 @@ type StatsStore interface {
 	// PositionIDsBySelection returns the position ids behind a selection of a
 	// previously computed stats result.
 	PositionIDsBySelection(ctx context.Context, scope string, filter StatsFilter, sel SelectionSpec) ([]int64, error)
+
+	// BreakdownPositionCounts counts, for every row of the breakdowns, the
+	// positions a "breakdown" selection of that row returns: the figure and
+	// the drill-down are one computation, so they cannot disagree.
+	BreakdownPositionCounts(ctx context.Context, scope string, filter StatsFilter) (BreakdownPositionCounts, error)
 
 	// PositionIDsByTournament returns the position ids of a tournament.
 	PositionIDsByTournament(ctx context.Context, scope string, tournamentID int64) ([]int64, error)

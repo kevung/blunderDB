@@ -4,11 +4,28 @@ import { get } from 'svelte/store';
 // Mock Wails Database binding
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
     ComputeStats: vi.fn(),
-    ComputeStudyPlan: vi.fn()
+    ComputeStudyPlan: vi.fn(),
+    ComputeStudyEffect: vi.fn(),
+    ComputeDirectionalBiases: vi.fn()
 }));
 
-import { ComputeStats, ComputeStudyPlan } from '../../wailsjs/go/database/Database.js';
-import { refreshStudyPlan, studyPlanStore, statsFilterStore, statsResultStore, statsLoadingStore, statsErrorStore, statsMetricStore, refreshStats } from '../stores/statsStore.js';
+import { ComputeStats, ComputeStudyPlan, ComputeStudyEffect, ComputeDirectionalBiases } from '../../wailsjs/go/database/Database.js';
+import {
+    refreshStudyPlan,
+    refreshStudyLoop,
+    studyEffectStore,
+    biasesStore,
+    studyLoopLoadingStore,
+    studyLoopErrorStore,
+    studyPlanStore,
+    statsFilterStore,
+    statsResultStore,
+    statsLoadingStore,
+    statsErrorStore,
+    statsMetricStore,
+    refreshStats,
+    statsResultFilterStore
+} from '../stores/statsStore.js';
 
 describe('statsStore — initial state', () => {
     test('statsResultStore starts null', () => {
@@ -48,7 +65,7 @@ describe('refreshStats()', () => {
 
     test('sets loading=true then false, populates result on success', async () => {
         let resolveCall;
-        ComputeStats.mockReturnValue(
+        vi.mocked(ComputeStats).mockReturnValue(
             new Promise((res) => {
                 resolveCall = res;
             })
@@ -66,7 +83,7 @@ describe('refreshStats()', () => {
     });
 
     test('sets error store and clears result on failure', async () => {
-        ComputeStats.mockRejectedValue(new Error('backend error'));
+        vi.mocked(ComputeStats).mockRejectedValue(new Error('backend error'));
 
         await refreshStats({});
 
@@ -76,7 +93,7 @@ describe('refreshStats()', () => {
     });
 
     test('calls ComputeStats with the provided filter', async () => {
-        ComputeStats.mockResolvedValue(fakeResult);
+        vi.mocked(ComputeStats).mockResolvedValue(fakeResult);
         const filter = { playerName: 'Alice', decisionType: 0 };
         await refreshStats(filter);
         expect(ComputeStats).toHaveBeenCalledWith(filter);
@@ -85,13 +102,59 @@ describe('refreshStats()', () => {
 
 describe('refreshStudyPlan', () => {
     test('a slower, older reply does not overwrite the latest', async () => {
-        let resolveOld;
-        ComputeStudyPlan.mockImplementationOnce(() => new Promise((r) => (resolveOld = r)));
-        ComputeStudyPlan.mockImplementationOnce(() => Promise.resolve({ tag: 'new' }));
+        let /** @type {((v: unknown) => void) | undefined} */ resolveOld;
+        vi.mocked(ComputeStudyPlan).mockImplementationOnce(() => new Promise((r) => (resolveOld = r)));
+        vi.mocked(ComputeStudyPlan).mockImplementationOnce(() => Promise.resolve({ tag: 'new' }));
         const first = refreshStudyPlan({ a: 1 }, 1);
         await refreshStudyPlan({ a: 2 }, 1);
-        resolveOld({ tag: 'old' });
+        resolveOld?.({ tag: 'old' });
         await first;
         expect(get(studyPlanStore)).toEqual({ tag: 'new' });
+    });
+});
+
+describe('refreshStudyLoop', () => {
+    test('a slower, older reply does not overwrite the latest nor clear loading', async () => {
+        let /** @type {((v: unknown) => void) | undefined} */ resolveOld;
+        /** @type {import('vitest').Mock} */ (ComputeStudyEffect).mockImplementationOnce(() => new Promise((r) => (resolveOld = r)));
+        /** @type {import('vitest').Mock} */ (ComputeStudyEffect).mockImplementationOnce(() => Promise.resolve({ tag: 'new' }));
+        /** @type {import('vitest').Mock} */ (ComputeDirectionalBiases).mockImplementationOnce(() => Promise.resolve({ tag: 'old' }));
+        /** @type {import('vitest').Mock} */ (ComputeDirectionalBiases).mockImplementationOnce(() => Promise.resolve({ tag: 'new' }));
+        const first = refreshStudyLoop({ a: 1 }, 1);
+        await refreshStudyLoop({ a: 2 }, 1);
+        resolveOld?.({ tag: 'old' });
+        await first;
+        expect(get(studyEffectStore)).toEqual({ tag: 'new' });
+        expect(get(biasesStore)).toEqual({ tag: 'new' });
+        expect(get(studyLoopLoadingStore)).toBe(false);
+        expect(get(studyLoopErrorStore)).toBeNull();
+    });
+});
+
+describe('refreshStats() — an older reply landing last', () => {
+    // Opening the panel computes the default filter, then the restored one;
+    // the default, wider, can answer after the restored one.
+    test('keeps the result and filter of the latest request', async () => {
+        statsResultStore.set(null);
+        vi.resetAllMocks();
+        /** @type {(v: any) => void} */
+        let resolveOld = () => {};
+        /** @type {(v: any) => void} */
+        let resolveNew = () => {};
+        vi.mocked(ComputeStats)
+            .mockImplementationOnce(() => new Promise((r) => (resolveOld = r)))
+            .mockImplementationOnce(() => new Promise((r) => (resolveNew = r)));
+        const oldFilter = { playerName: '' };
+        const newFilter = { playerName: 'Alice' };
+        const pOld = refreshStats(oldFilter, 'race');
+        const pNew = refreshStats(newFilter, 'race');
+        resolveNew({ who: 'new' });
+        await pNew;
+        expect(get(statsLoadingStore)).toBe(false);
+        resolveOld({ who: 'old' });
+        await pOld;
+        expect(get(statsResultStore)).toEqual({ who: 'new' });
+        expect(get(statsResultFilterStore)).toEqual(newFilter);
+        expect(get(statsLoadingStore)).toBe(false);
     });
 });

@@ -67,6 +67,10 @@ type StudyPlan struct {
 	// without an MWC loss or a difficulty (money play, missing options).
 	Unthemed int `json:"Unthemed"`
 	Unpriced int `json:"Unpriced"`
+	// UnthemedPositions and UnpricedPositions are the distinct positions of
+	// those errors, ascending, so the counts outside the plan open them.
+	UnthemedPositions []int64 `json:"UnthemedPositions"`
+	UnpricedPositions []int64 `json:"UnpricedPositions"`
 }
 
 // StudyPlanRow is one classified error with its price, as a backend hands it
@@ -96,13 +100,16 @@ func BuildStudyPlan(rows []StudyPlanRow, numDecisions, thresholdMP int) *StudyPl
 		Families: []StudyPlanFamily{}, Tentative: []StudyPlanFamily{}}
 	byKey := map[key]*acc{}
 	var order []key
+	unthemed, unpriced := map[int64]bool{}, map[int64]bool{}
 	for _, r := range rows {
 		if r.Loss == nil || r.Difficulty == nil {
 			plan.Unpriced++
+			unpriced[r.PositionID] = true
 			continue
 		}
 		if r.Theme == RecurringThemeNone {
 			plan.Unthemed++
+			unthemed[r.PositionID] = true
 			continue
 		}
 		k := key{r.GameType, r.Kind, r.Theme}
@@ -153,7 +160,19 @@ func BuildStudyPlan(rows []StudyPlanRow, numDecisions, thresholdMP int) *StudyPl
 	}
 	sortStudyFamilies(plan.Families, true)
 	sortStudyFamilies(plan.Tentative, false)
+	plan.UnthemedPositions = sortedIDs(unthemed)
+	plan.UnpricedPositions = sortedIDs(unpriced)
 	return plan
+}
+
+// sortedIDs is the set's ids in ascending order, never nil.
+func sortedIDs(set map[int64]bool) []int64 {
+	ids := make([]int64, 0, len(set))
+	for id := range set {
+		ids = append(ids, id)
+	}
+	sort.Slice(ids, func(i, j int) bool { return ids[i] < ids[j] })
+	return ids
 }
 
 // sortStudyFamilies ranks families in a total order, by the interval's lower

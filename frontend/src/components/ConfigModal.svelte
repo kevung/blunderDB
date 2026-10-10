@@ -71,7 +71,7 @@
     let { visible = false, onClose } = $props();
 
     // Created on the first watermarked export, never by opening settings (ADR-0007).
-    let identity = $state(null);
+    let identity = $state(/** @type {import('../../wailsjs/go/models').domain.IssuerIdentityInfo | null} */ (null));
     let identityPassphrase = $state('');
     let identityMessage = $state('');
     let identityError = $state('');
@@ -96,6 +96,28 @@
         { id: 'identity', labelKey: 'config.identityTitle' }
     ];
     let activeTab = $state('interface');
+    // The one scrolling box is shared by every tab; each tab's offset is kept aside so a tab
+    // reopens where it was left, and a tab never seen starts at the top.
+    let tabBody = $state(/** @type {HTMLDivElement | null} */ (null));
+    let shownTab = 'interface';
+    /** @type {Record<string, number>} */
+    let tabScroll = {};
+
+    $effect.pre(() => {
+        const next = activeTab;
+        if (next === shownTab) return;
+        if (tabBody) tabScroll[shownTab] = tabBody.scrollTop;
+        shownTab = next;
+    });
+
+    $effect(() => {
+        const next = activeTab;
+        if (tabBody) tabBody.scrollTop = tabScroll[next] ?? 0;
+    });
+
+    $effect(() => {
+        if (!visible) tabScroll = {};
+    });
 
     $effect(() => {
         if (visible) {
@@ -114,7 +136,7 @@
         }
     });
 
-    async function renameIdentity(event) {
+    async function renameIdentity(/** @type {Event & { currentTarget: HTMLInputElement }} */ event) {
         const name = event.currentTarget.value.trim();
         if (!name || name === identity?.name) return;
         try {
@@ -175,7 +197,7 @@
     const MAX_LIKE_LIMIT = 500;
     let commentAuthor = $state('');
 
-    async function onCommentAuthorChange(event) {
+    async function onCommentAuthorChange(/** @type {Event & { currentTarget: HTMLInputElement }} */ event) {
         commentAuthor = event.currentTarget.value;
         await SaveCommentAuthor(commentAuthor);
         commentAuthor = await GetCommentAuthor();
@@ -184,14 +206,14 @@
     let likeLimit = $state(30);
     let likeMaxDistance = $state(0);
 
-    async function onLikeLimitChange(event) {
+    async function onLikeLimitChange(/** @type {Event & { currentTarget: HTMLInputElement }} */ event) {
         const n = parseInt(event.currentTarget.value, 10);
         if (!Number.isFinite(n)) return;
         likeLimit = Math.min(Math.max(n, 1), MAX_LIKE_LIMIT);
         await SaveLikeLimit(likeLimit);
     }
 
-    async function onLikeMaxDistanceChange(event) {
+    async function onLikeMaxDistanceChange(/** @type {Event & { currentTarget: HTMLInputElement }} */ event) {
         const n = parseInt(event.currentTarget.value, 10);
         if (!Number.isFinite(n)) return;
         likeMaxDistance = Math.max(n, 0);
@@ -211,21 +233,21 @@
         { key: 'cube', labelKey: 'config.colorCube' }
     ];
 
-    function onLanguageChange(event) {
+    function onLanguageChange(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) {
         setLanguage(event.currentTarget.value);
     }
 
-    function onColorChange(key, event) {
+    function onColorChange(/** @type {string} */ key, /** @type {Event & { currentTarget: HTMLInputElement }} */ event) {
         setBoardColor(key, event.currentTarget.value);
     }
 
     // CSS-zoom preview while dragging...
-    function onUIScaleInput(event) {
+    function onUIScaleInput(/** @type {Event & { currentTarget: HTMLInputElement }} */ event) {
         previewUIScale(Number(event.currentTarget.value));
     }
 
     // ...and the expensive board re-fit + persistence only once, on release.
-    function onUIScaleChange(event) {
+    function onUIScaleChange(/** @type {Event & { currentTarget: HTMLInputElement }} */ event) {
         setUIScale(Number(event.currentTarget.value));
     }
 
@@ -235,7 +257,7 @@
         { value: PANEL_AUTO, labelKey: 'config.panelPositionAuto' }
     ];
 
-    function onPanelPositionChange(event) {
+    function onPanelPositionChange(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) {
         setPanelPosition(event.currentTarget.value);
     }
 
@@ -384,7 +406,7 @@
         }
     });
 
-    function onCheckForUpdatesChange(event) {
+    function onCheckForUpdatesChange(/** @type {Event & { currentTarget: HTMLInputElement }} */ event) {
         checkForUpdates = event.currentTarget.checked;
         SaveCheckForUpdates(checkForUpdates).catch((error) => logger.error('Error saving check-for-updates setting:', error));
     }
@@ -534,11 +556,11 @@
     let gnAutoAnalyze = $state(false);
     // Catch-up (ADR-0015): the after-import batch on demand; the count is
     // informational (StartGammonNetBatch re-derives its list).
-    let gnMissingCount = $state(null);
+    let gnMissingCount = $state(/** @type {number | null} */ (null));
     let gnCatchUpStarting = $state(false);
     // Stale gammonNet analyses (older EngineVersion or another depth). The count
     // is informational and depends on gnAnalysisPly, so it refreshes with it.
-    let gnStaleCount = $state(null);
+    let gnStaleCount = $state(/** @type {number | null} */ (null));
     let gnStaleStarting = $state(false);
 
     const GAMMONNET_PLY_OPTIONS = [0, 1, 2, 3, 4];
@@ -561,7 +583,7 @@
         await refreshWatchStatus();
     }
 
-    async function applyWatch(on, folder, seconds) {
+    async function applyWatch(/** @type {boolean} */ on, /** @type {string} */ folder, /** @type {number} */ seconds) {
         watchError = '';
         try {
             await saveWatchSetting(on, folder, seconds);
@@ -654,41 +676,41 @@
         }
     });
 
-    function onGnDisplayPlyChange(event) {
+    function onGnDisplayPlyChange(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) {
         gnDisplayPly = Number(event.currentTarget.value);
         SaveGammonNetDisplayPly(gnDisplayPly).catch((error) => logger.error('Error saving gammonNet display ply:', error));
     }
 
-    function onGnAnalysisPlyChange(event) {
+    function onGnAnalysisPlyChange(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) {
         gnAnalysisPly = Number(event.currentTarget.value);
         refreshGammonNetStaleCount();
         SaveGammonNetAnalysisPly(gnAnalysisPly).catch((error) => logger.error('Error saving gammonNet analysis ply:', error));
     }
 
-    function onGnPruneKChange(event) {
+    function onGnPruneKChange(/** @type {Event & { currentTarget: HTMLInputElement }} */ event) {
         const k = Number(event.currentTarget.value);
         if (!Number.isFinite(k) || k < 1) return;
         gnPruneK = k;
         SaveGammonNetPruneK(gnPruneK).catch((error) => logger.error('Error saving gammonNet prune k:', error));
     }
 
-    function onGnCandidatesChange(event) {
+    function onGnCandidatesChange(/** @type {Event & { currentTarget: HTMLInputElement }} */ event) {
         const n = Number(event.currentTarget.value);
         if (!Number.isFinite(n) || n < 1) return;
         gnCandidates = n;
         SaveGammonNetCandidates(gnCandidates).catch((error) => logger.error('Error saving gammonNet candidate count:', error));
     }
 
-    function onWatchToggle(event) {
+    function onWatchToggle(/** @type {Event & { currentTarget: HTMLInputElement }} */ event) {
         void applyWatch(event.currentTarget.checked, watchFolder, watchInterval);
     }
 
-    function onWatchIntervalChange(event) {
+    function onWatchIntervalChange(/** @type {Event & { currentTarget: HTMLInputElement }} */ event) {
         const seconds = parseInt(event.currentTarget.value, 10);
         void applyWatch(watchOn, watchFolder, Number.isFinite(seconds) ? seconds : 0);
     }
 
-    function onGnAutoAnalyzeChange(event) {
+    function onGnAutoAnalyzeChange(/** @type {Event & { currentTarget: HTMLInputElement }} */ event) {
         gnAutoAnalyze = event.currentTarget.checked;
         SaveGammonNetAutoAnalyze(gnAutoAnalyze).catch((error) => logger.error('Error saving gammonNet auto-analyze:', error));
     }
@@ -706,7 +728,7 @@
             {/each}
         </div>
 
-        <div class="tab-body">
+        <div class="tab-body" bind:this={tabBody}>
             {#if activeTab === 'interface'}
                 <!-- `system` par défaut : le bureau a déjà choisi clair ou sombre. -->
                 <div class="setting-row">

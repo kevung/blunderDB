@@ -72,7 +72,7 @@ export function closeLesson() {
 }
 
 /** Lit la progression déjà enregistrée ; une base sans progression n'en a simplement aucune. */
-async function loadDoneSteps(lessonId) {
+async function loadDoneSteps(/** @type {number} */ lessonId) {
     try {
         lessonDoneStore.set((await LessonDoneSteps(lessonId)) || {});
     } catch (error) {

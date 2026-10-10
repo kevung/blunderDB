@@ -13,11 +13,8 @@
     import { t } from '../i18n';
 
     // `single` : la rangée des six dés, sinon le triangle. `onPick(high, low)`,
-    // dé fort d'abord ; `onDie(die)` pour la rangée. `allowed` : clés « 31 »
-    // encore possibles (celles que les pas joués laissent), `null` = toutes.
-    let { single = false, allowed = null, onPick = () => {}, onDie = () => {} } = $props();
-
-    const enabled = (high, low) => allowed === null || allowed.has(`${high}${low}`);
+    // dé fort d'abord ; `onDie(die)` pour la rangée.
+    let { single = false, onPick = () => {}, onDie = () => {} } = $props();
 
     const FACES = [1, 2, 3, 4, 5, 6];
 </script>
@@ -37,7 +34,6 @@
                         type="button"
                         class="die-cell"
                         class:double={low === high}
-                        disabled={!enabled(high, low)}
                         title={$t('transcription.rollTitle', { a: high, b: low })}
                         aria-label={$t('transcription.rollTitle', { a: high, b: low })}
                         onclick={() => onPick(high, low)}>{high}{low}</button

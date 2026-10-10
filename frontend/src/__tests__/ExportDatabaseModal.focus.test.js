@@ -12,6 +12,7 @@
  * reads.
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
@@ -61,7 +62,7 @@ function mount(exportOptions) {
 
 // Typing a word one character at a time is the whole point: a mirror that re-seeds on each
 // keystroke keeps only the last character, and the element loses focus every time.
-async function typeInto(input, text) {
+async function typeInto(input, /** @type {string} */ text) {
     for (const char of text) {
         await fireEvent.input(input, { target: { value: input.value + char } });
         await tick();
@@ -86,16 +87,16 @@ describe('issuance fields, mounted the way the application mounts them', () => {
 
         const input = container.querySelector('#export-origin');
         expect(input).not.toBeNull();
-        input.focus();
+        /** @type {HTMLElement} */ (must(input)).focus();
         await typeInto(input, 'Cours de Jean Dupont');
         await tick();
 
         expect(container.querySelector('#export-origin')).toBe(input);
-        expect(input.value).toBe('Cours de Jean Dupont');
+        expect(/** @type {HTMLInputElement} */ (must(input)).value).toBe('Cours de Jean Dupont');
         expect(document.activeElement).toBe(input);
 
         // The value reaches the object the export service reads when the user confirms.
-        await fireEvent.click(container.querySelector('.btn-export'));
+        await fireEvent.click(must(container.querySelector('.btn-export')));
         expect(get(optionsStore).watermark).toBe('Cours de Jean Dupont');
     });
 
@@ -106,15 +107,15 @@ describe('issuance fields, mounted the way the application mounts them', () => {
         await tick();
 
         const input = container.querySelector('#export-password');
-        input.focus();
+        /** @type {HTMLElement} */ (must(input)).focus();
         await typeInto(input, 'mot-de-passe');
         await tick();
 
         expect(container.querySelector('#export-password')).toBe(input);
-        expect(input.value).toBe('mot-de-passe');
+        expect(/** @type {HTMLInputElement} */ (must(input)).value).toBe('mot-de-passe');
         expect(document.activeElement).toBe(input);
 
-        await fireEvent.click(container.querySelector('.btn-export'));
+        await fireEvent.click(must(container.querySelector('.btn-export')));
         expect(get(optionsStore).password).toBe('mot-de-passe');
     });
 });
@@ -133,7 +134,7 @@ describe('the dialog does not re-seed itself while it is open', () => {
         await tick();
 
         const input = container.querySelector('#export-origin');
-        input.focus();
+        /** @type {HTMLElement} */ (must(input)).focus();
         await typeInto(input, 'Cours');
         await tick();
 
@@ -143,7 +144,7 @@ describe('the dialog does not re-seed itself while it is open', () => {
         await tick();
 
         expect(container.querySelector('#export-origin')).toBe(input);
-        expect(input.value).toBe('Cours');
+        expect(/** @type {HTMLInputElement} */ (must(input)).value).toBe('Cours');
         expect(document.activeElement).toBe(input);
     });
 });
@@ -158,14 +159,14 @@ describe('issuance fields in the export modal', () => {
         const input = container.querySelector('#export-origin');
         expect(input).not.toBeNull();
 
-        input.focus();
+        /** @type {HTMLElement} */ (must(input)).focus();
         await typeInto(input, 'Cours de Jean');
         await tick();
 
         expect(container.querySelector('#export-origin')).toBe(input);
-        expect(input.value).toBe('Cours de Jean');
+        expect(/** @type {HTMLInputElement} */ (must(input)).value).toBe('Cours de Jean');
         expect(document.activeElement).toBe(input);
-        await fireEvent.click(container.querySelector('.btn-export'));
+        await fireEvent.click(must(container.querySelector('.btn-export')));
         expect(options.watermark).toBe('Cours de Jean');
     });
 
@@ -176,13 +177,13 @@ describe('issuance fields in the export modal', () => {
         await tick();
 
         const input = container.querySelector('#export-watermark-note');
-        input.focus();
+        /** @type {HTMLElement} */ (must(input)).focus();
         await typeInto(input, 'Ne pas rediffuser');
         await tick();
 
-        expect(input.value).toBe('Ne pas rediffuser');
+        expect(/** @type {HTMLInputElement} */ (must(input)).value).toBe('Ne pas rediffuser');
         expect(document.activeElement).toBe(input);
-        await fireEvent.click(container.querySelector('.btn-export'));
+        await fireEvent.click(must(container.querySelector('.btn-export')));
         expect(options.watermarkNote).toBe('Ne pas rediffuser');
     });
 
@@ -193,13 +194,13 @@ describe('issuance fields in the export modal', () => {
         await tick();
 
         const input = container.querySelector('#export-password');
-        input.focus();
+        /** @type {HTMLElement} */ (must(input)).focus();
         await typeInto(input, 's3cret');
         await tick();
 
-        expect(input.value).toBe('s3cret');
+        expect(/** @type {HTMLInputElement} */ (must(input)).value).toBe('s3cret');
         expect(document.activeElement).toBe(input);
-        await fireEvent.click(container.querySelector('.btn-export'));
+        await fireEvent.click(must(container.querySelector('.btn-export')));
         expect(options.password).toBe('s3cret');
     });
 
@@ -209,7 +210,7 @@ describe('issuance fields in the export modal', () => {
         await tick();
 
         expect(container.querySelector('#export-origin')).toBeNull();
-        await fireEvent.click(container.querySelector('#export-watermark'));
+        await fireEvent.click(must(container.querySelector('#export-watermark')));
         await tick();
         expect(container.querySelector('#export-origin')).not.toBeNull();
     });

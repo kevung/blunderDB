@@ -12,16 +12,28 @@
  * so the real template and helpers are what gets exercised.
  */
 
+import { must } from './helpers/must.js';
+import { partial } from './helpers/partial.js';
 import { describe, test, expect, vi, afterEach } from 'vitest';
 import { render, cleanup, screen } from '@testing-library/svelte';
 
+/** @type {any} */
+/** @type {any} */
 let lastCubeConfig = null;
+/** @type {any} */
+/** @type {any} */
 let lastCompConfig = null;
+/** @type {any} */
+/** @type {any} */
 let lastHistConfig = null;
 let constructionOrder = 0;
 
+/** @typedef {import('../stores/statsStore.js').StatsResult} StatsResult */
+/** @typedef {import('./helpers/partial.js').DeepPartial<StatsResult>} PartialResult */
+const statsResult = /** @type {(v: PartialResult) => StatsResult} */ (partial);
+
 class FakeChart {
-    constructor(canvas, config) {
+    constructor(/** @type {HTMLCanvasElement} */ canvas, /** @type {any} */ config) {
         constructionOrder += 1;
         // The three BarChart/Histogram instances mount in the same order the
         // markup declares them (cube breakdown, checker-vs-cube, histogram);
@@ -62,7 +74,7 @@ async function waitForCharts() {
     throw new Error('charts were never constructed');
 }
 
-const SAMPLE_RESULT = {
+const SAMPLE_RESULT = statsResult({
     Totals: { NumDecisions: 350 },
     PRChecker: 3.2,
     PRCube: 5.5,
@@ -76,7 +88,7 @@ const SAMPLE_RESULT = {
         { MinMP: 0, MaxMP: 5, Count: 120 },
         { MinMP: 100, MaxMP: -1, Count: 4 }
     ]
-};
+});
 
 describe('StatsErrorsTab — empty state', () => {
     test('no result: shows the empty-state message, no charts built', async () => {
@@ -87,7 +99,7 @@ describe('StatsErrorsTab — empty state', () => {
     });
 
     test('zero decisions: also treated as empty', async () => {
-        render(StatsErrorsTab, { props: { result: { Totals: { NumDecisions: 0 } }, metric: 'pr' } });
+        render(StatsErrorsTab, { props: { result: statsResult({ Totals: { NumDecisions: 0 } }), metric: 'pr' } });
         expect(screen.getByText(/no.*decision/i)).toBeTruthy();
     });
 });
@@ -150,13 +162,13 @@ describe('StatsErrorsTab — populated result', () => {
     });
 
     test('the tooltip reports the real blunder rate, including a zero-decision bucket', async () => {
-        const result = {
+        const result = statsResult({
             ...SAMPLE_RESULT,
             CubeActionBreakdown: [
                 { Action: 'NoDouble', PR: 3.5, MWC: 0.021, NumDecisions: 80, BlunderCount: 5 },
                 { Action: 'DoublePass', PR: 0, MWC: 0, NumDecisions: 0, BlunderCount: 0 }
             ]
-        };
+        });
         render(StatsErrorsTab, { props: { result, metric: 'pr' } });
         await waitForCharts();
 
@@ -166,7 +178,7 @@ describe('StatsErrorsTab — populated result', () => {
     });
 
     test('histogram bucket labels cover every boundary shape, not just the sample two', async () => {
-        const result = {
+        const result = statsResult({
             ...SAMPLE_RESULT,
             ErrorHistogram: [
                 { MinMP: 0, MaxMP: 5, Count: 1 },
@@ -174,7 +186,7 @@ describe('StatsErrorsTab — populated result', () => {
                 { MinMP: 25, MaxMP: 50, Count: 1 },
                 { MinMP: 100, MaxMP: -1, Count: 1 }
             ]
-        };
+        });
         render(StatsErrorsTab, { props: { result, metric: 'pr' } });
         await waitForCharts();
 
@@ -182,7 +194,7 @@ describe('StatsErrorsTab — populated result', () => {
     });
 
     test('no cube decisions: the breakdown chart is skipped, not rendered on empty data', async () => {
-        const result = { ...SAMPLE_RESULT, CubeActionBreakdown: [] };
+        const result = statsResult({ ...SAMPLE_RESULT, CubeActionBreakdown: [] });
         render(StatsErrorsTab, { props: { result, metric: 'pr' } });
         // Only the comparison chart (always shown) constructs; give the effects
         // a tick and confirm the cube-breakdown slot never got a config. Both
@@ -193,50 +205,50 @@ describe('StatsErrorsTab — populated result', () => {
     });
 
     test('all-zero histogram: the empty-subsection message is shown instead of the chart', async () => {
-        const result = { ...SAMPLE_RESULT, ErrorHistogram: SAMPLE_RESULT.ErrorHistogram.map((b) => ({ ...b, Count: 0 })) };
+        const result = statsResult({ ...SAMPLE_RESULT, ErrorHistogram: SAMPLE_RESULT.ErrorHistogram.map((b) => ({ ...b, Count: 0 })) });
         render(StatsErrorsTab, { props: { result, metric: 'pr' } });
         expect(screen.getByText(/no errors/i)).toBeTruthy();
     });
 });
 
 describe('StatsErrorsTab — cube error directions', () => {
-    const withDirections = {
+    const withDirections = statsResult({
         ...SAMPLE_RESULT,
         CubeDirections: {
             Offer: { Right: 10, Missed: 2, MissedMP: 500, Premature: 1, PrematureMP: 200 },
             Answer: { Right: 8, WrongPass: 3, WrongPassMP: 900, WrongTake: 0, WrongTakeMP: 0 }
         }
-    };
+    });
 
     test('renders one button per non-empty cell and none for the empty one', async () => {
         render(StatsErrorsTab, { props: { result: withDirections, metric: 'pr' } });
 
         const missedBtn = screen.getByText('2').closest('button');
-        expect(missedBtn.disabled).toBe(false);
+        expect(must(missedBtn).disabled).toBe(false);
 
         const wrongTakeBtn = screen.getByText('0').closest('button');
-        expect(wrongTakeBtn.disabled).toBe(true);
+        expect(must(wrongTakeBtn).disabled).toBe(true);
     });
 
     test('clicking a non-empty direction cell loads positions for it, an empty cell is inert', async () => {
         render(StatsErrorsTab, { props: { result: withDirections, metric: 'pr' } });
 
-        await screen.getByText('2').closest('button').click();
+        await must(screen.getByText('2').closest('button')).click();
         expect(loadPositionsFromStatsSelection).toHaveBeenCalledWith(expect.anything(), { Kind: 'cube_direction', CubeCell: 'offer_missed' });
 
-        loadPositionsFromStatsSelection.mockClear();
-        screen.getByText('0').closest('button').click();
+        vi.mocked(loadPositionsFromStatsSelection).mockClear();
+        must(screen.getByText('0').closest('button')).click();
         expect(loadPositionsFromStatsSelection).not.toHaveBeenCalled();
     });
 
     test('all directions at zero: shows the empty message instead of the table', () => {
-        const allZero = {
+        const allZero = statsResult({
             ...SAMPLE_RESULT,
             CubeDirections: {
                 Offer: { Right: 0, Missed: 0, MissedMP: 0, Premature: 0, PrematureMP: 0 },
                 Answer: { Right: 0, WrongPass: 0, WrongPassMP: 0, WrongTake: 0, WrongTakeMP: 0 }
             }
-        };
+        });
         render(StatsErrorsTab, { props: { result: allZero, metric: 'pr' } });
         expect(screen.getByText(/no cube decisions/i)).toBeTruthy();
     });

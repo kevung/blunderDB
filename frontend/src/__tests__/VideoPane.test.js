@@ -6,6 +6,7 @@
  * of leaving a black frame.
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 
@@ -71,11 +72,11 @@ describe('VideoPane', () => {
             expect(el).not.toBeNull();
             return el;
         });
-        expect(video.getAttribute('src')).toBe('http://127.0.0.1:1/m/tok');
+        expect(must(video).getAttribute('src')).toBe('http://127.0.0.1:1/m/tok');
         expect(component.currentTimeMs()).toBeNull();
-        await fireEvent(video, new Event('loadedmetadata'));
+        await fireEvent(must(video), new Event('loadedmetadata'));
         component.seek(12500);
-        expect(video.currentTime).toBe(12.5);
+        expect(must(video).currentTime).toBe(12.5);
         expect(component.currentTimeMs()).toBe(12500);
     });
 
@@ -97,7 +98,7 @@ describe('VideoPane', () => {
         const onrelocate = vi.fn();
         const { container } = render(VideoPane, { props: { source: '/gone.mp4', onrelocate } });
         const note = await vi.waitFor(() => container.querySelector('[data-testid="video-missing"]') ?? expect.fail('not missing'));
-        await fireEvent.click(note.querySelector('button'));
+        await fireEvent.click(must(note.querySelector('button')));
         await vi.waitFor(() => expect(onrelocate).toHaveBeenCalledWith('/new/place.mp4'));
     });
 
@@ -119,6 +120,31 @@ describe('VideoPane', () => {
         await vi.waitFor(() => expect(container.querySelector('[data-testid="video-rate-flash"]')?.textContent).toBe('1.25×'));
         await vi.waitFor(() => expect(container.querySelector('[data-testid="video-rate-flash"]')).toBeNull(), { timeout: 3000 });
         expect(container.querySelector('[data-testid="video-rate"]')?.textContent).toBe('1.25×');
+    });
+
+    test('a muted file stays muted through a speed change that WebKit unmutes', async () => {
+        const { container, component } = render(VideoPane, { props: { source: '/v/final.mp4' } });
+        const video = await vi.waitFor(() => container.querySelector('video') ?? expect.fail('no video'));
+        await fireEvent(video, new Event('loadedmetadata'));
+        video.muted = true;
+        await fireEvent(video, new Event('volumechange'));
+        component.stepRate(1);
+        // WebKitGTK drops the mute on the speed change and says so with volumechange.
+        video.muted = false;
+        await fireEvent(video, new Event('volumechange'));
+        await fireEvent(video, new Event('ratechange'));
+        expect(video.muted).toBe(true);
+    });
+
+    test('an unmute that is not part of a speed change is left alone', async () => {
+        const { container } = render(VideoPane, { props: { source: '/v/final.mp4' } });
+        const video = await vi.waitFor(() => container.querySelector('video') ?? expect.fail('no video'));
+        await fireEvent(video, new Event('loadedmetadata'));
+        video.muted = true;
+        await fireEvent(video, new Event('volumechange'));
+        video.muted = false;
+        await fireEvent(video, new Event('volumechange'));
+        expect(video.muted).toBe(false);
     });
 
     test('a file steps its speed by quarters up to 4×, shows it, and holds at the ends', async () => {

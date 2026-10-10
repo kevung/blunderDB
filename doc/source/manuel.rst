@@ -127,8 +127,9 @@ CTRL-X*, moins facile à découvrir), **enregistrer l'image dans un fichier**
 en SVG ou en PNG, ouvrir une nouvelle vue sur cette position, et — si la
 position vient déjà de la base — l'ajouter à un paquet Anki (répétition
 espacée) ou classer ses **positions voisines** (voir :ref:`panneau_recherche`).
-Pendant un coup joué au plateau (quiz, Transcription), le menu commence par
-*Recommencer*, qui remet le coup à zéro sans toucher la position. En édition
+Pendant un coup joué au plateau (quiz, Transcription), un clic droit sur le
+damier reprend tout le coup sans toucher la position ; le menu ne s'y ouvre
+qu'avant le premier pas. En édition
 et en Eval, où le clic droit sur le plateau pose des pions, le menu s'ouvre
 d'un clic droit hors du plateau — hors des dés, du videau et des scores — et
 propose seulement *Effacer la position* (comme *RETOUR ARRIERE*) et *Position
@@ -232,6 +233,11 @@ dans une vue tout en parcourant un match dans une autre.
 
 * **Renommer une vue** : double-cliquer sur l'onglet, saisir le nouveau nom
   et valider avec *ENTREE*.
+
+Une vue laissée dans le panneau Eval y revient telle qu'elle a été laissée :
+son plateau brouillon, et en sortant du panneau, la position qu'elle
+étudiait. Le dernier plateau brouillon du panneau Eval est lui aussi propre à
+chaque vue.
 
 Les vues sont enregistrées avec l'état de session de la base de données et
 restaurées à sa réouverture.
@@ -773,6 +779,19 @@ un match, le coup effectivement joué est mis en évidence dans la liste des
 alternatives. Appuyer sur *CTRL-L* ou exécuter la commande ``list`` pour
 afficher ou masquer le panneau.
 
+Une position sans analyse l'indique, avec un bouton **Évaluer** qui l'ouvre
+dans le panneau Eval.
+
+Le bouton **Défi** de la barre d'outils, placé après celui du pipcount (touche
+*m*), sert à se prononcer avant de voir l'analyse en parcourant des positions :
+résultats d'une recherche, revue d'un match, révision de ses erreurs. Activé,
+il recouvre d'une zone grise toute l'analyse du panneau, pions et videau ; un
+clic sur la zone la dévoile. Elle revient à chaque changement de position. Le
+défi est un masque d'affichage : dévoiler n'enregistre rien dans la base. Le
+réglage tient jusqu'à la fermeture de blunderDB, comme celui du pipcount.
+En revue de match, le défi masque aussi les marques, les pertes et la difficulté
+de la liste des coups ; celles du coup affiché se dévoilent avec son analyse.
+
 Sous les tableaux, une **phrase** dit parfois ce que la décision jouée a
 coûté et pourquoi : « Vous perdez 120 mp : le coup joué laisse trois blots
 là où 13/7 8/7 n'en laisse qu'un. » Elle est produite par six règles
@@ -929,7 +948,7 @@ paperasse.
 
 Ce qui manquait, c'était l'autre moitié : **voir** le vocabulaire qu'on s'est
 construit, et cliquer un tag plutôt que se rappeler comment on l'écrivait. La
-commande ``tags``, ou le bouton ``#`` de la zone de saisie, ouvre la fenêtre du
+commande ``tags``, ou le bouton ``#`` de l'en-tête du panneau, ouvre la fenêtre du
 vocabulaire : les tags de cette base, chacun avec le **nombre de positions**
 qui le portent, cliquables pour lancer la recherche correspondante. Sous la
 liste figurent les tags recommandés que la base n'utilise pas encore — un
@@ -1193,9 +1212,10 @@ filtré. Cocher un tournoi coche automatiquement (et grise) ses matchs membres
 dans la liste des matchs, rendant visible le fait qu'un tournoi équivaut à
 l'ensemble de ses matchs.
 
-Le panneau de recherche comporte trois onglets sur son bord gauche :
-*Critères* (les filtres), *Historique* et *Enregistrés* — et un quatrième,
-*Assistant*, quand l'assistant interne est activé. L'onglet
+La bande du panneau de recherche porte un sélecteur *Critères* (les filtres) |
+*Historique* | *Enregistrés* — avec un quatrième segment, *Assistant*, quand
+l'assistant interne est activé — et, sur *Critères*, le bouton **Rechercher**
+à son extrémité droite. L'onglet
 **Historique** liste les recherches passées avec leur date et leur commande :
 un clic sélectionne une recherche et affiche la position associée sur le
 plateau, un double-clic la ré-exécute. Chaque entrée peut être enregistrée
@@ -1254,6 +1274,11 @@ positions au sein des collections peut être modifié par glisser-déposer.
 Appuyer sur *CTRL-B* ou exécuter la commande ``collection`` pour afficher ou
 masquer le panneau.
 
+En tête d'une collection ouverte, le nombre de positions est un lien qui les
+remet dans le parcours, depuis la première ; la case **dans cette collection**
+y ajoute ou en retire la position affichée. Une liste vide propose
+**+ Nouvelle collection**.
+
 La **Pile** est la collection du geste « à revoir plus tard » : un double-clic
 hors du plateau, la touche *b* ou le bouton marque-page de la barre d'outils
 met la position affichée sur la Pile, et le même geste l'en retire. Un
@@ -1283,6 +1308,14 @@ Une collection vivante dont la requête porte un jeton que cette version ne
 connaît plus **refuse de s'ouvrir** en le disant, plutôt que de renvoyer toute
 la base. C'est la seule panne qu'un filtre enregistré ne doit pas avoir :
 s'élargir en silence.
+
+Un paquet de répétition espacée fondé sur une collection vivante rejoue sa
+requête à chaque ouverture de séance : les positions que la recherche
+sélectionne depuis la dernière fois y entrent, et les cartes déjà là gardent
+leur planification. Une évaluation est bornée par un **plafond** de 5 000
+positions ; quand la requête en sélectionne davantage, seules les premières,
+dans l'ordre de la recherche, alimentent le paquet, et la barre d'état le dit
+avec le nombre réel de positions sélectionnées.
 
 .. _positions_reference:
 
@@ -1555,18 +1588,27 @@ Chaque match peut être exporté en transcription Jellyfish ``.mat`` via le
 bouton ⬇ de la liste des matchs ou l'entrée *Exporter en .mat* du menu ⋯ de la
 fiche du match.
 
-Un clic sur un match ouvre sa fiche, qui se lit de haut en bas. Une ligne
+Un clic sur un match ouvre sa fiche. Une ligne
 d'en-tête donne les joueurs, le score final (le vainqueur en gras, son nom au
 survol), la longueur, la cadence s'il y en a une et la date ; le tournoi, la
 ronde et le lieu s'affichent au survol. À droite, l'icône 🎞 d'un match qui a
 une vidéo, le bouton **Revoir** et le menu ⋯, qui porte *Exporter en .mat*,
-*Éditer la transcription* et *Supprimer le match*. Viennent ensuite la
-synthèse du :ref:`bilan du match <bilan_match>`, les graphiques, puis la
-**transcription**, qui liste les coups partie par partie : un clic sur un coup
-y amène la revue. Tout le reste est rangé dans des sections repliées sous la
-transcription : **Détails du bilan**, **Provenance** (un match joué ici),
-**Infos** et **Statistiques**. Elles sont fermées par défaut ; une section laissée
-ouverte l'est encore au match suivant.
+*Éditer la transcription* et *Supprimer le match*. Vient ensuite la
+synthèse du :ref:`bilan du match <bilan_match>`, puis une barre d'onglets :
+**Transcription**, qui liste les coups partie par partie (un clic sur un coup y
+amène la revue), **Graphes**, **À revoir**, **Détails**, **Infos** et **Stats**.
+L'onglet choisi occupe toute la hauteur restante du panneau et défile seul,
+l'en-tête et la synthèse restant en place ; quand un onglet a le focus, les
+flèches gauche et droite passent au précédent ou au suivant. L'onglet laissé ouvert l'est encore au match suivant. Un
+onglet sans contenu n'apparaît pas : un match sans analyse n'a ni **À revoir**
+ni **Détails**, un match sans perte ni durée connue n'a pas de **Graphes**.
+
+.. figure:: img/panel_match_sheet.png
+   :width: 100%
+   :alt: Fiche d'un match, onglet Graphes
+
+   La fiche d'un match : l'en-tête, la synthèse du bilan par joueur, puis
+   l'onglet *Graphes*, une décision survolée.
 
 Chaque coup de la transcription porte sa **gravité** : ``?`` pour une erreur, ``??`` pour un blunder, un filet de
 couleur en marge de la ligne, et le coût du coup en équité au survol de la
@@ -1576,7 +1618,8 @@ position jouée deux fois dans le match reçoit deux jugements. Un coup que
 l'analyse ne note pas ne porte aucune marque.
 
 L'en-tête de chaque partie compte ses marques, qu'elle soit dépliée ou non :
-on voit sans l'ouvrir dans quelle partie se trouvent les blunders.
+on voit sans l'ouvrir dans quelle partie se trouvent les blunders. Un clic sur
+un compte charge ces positions dans le panneau d'analyse.
 
 Quand le match est analysé, la transcription ajoute la colonne **MWC**, les chances de
 gagner le match que la décision a coûtées, en pourcentage : ``0`` pour une
@@ -1585,16 +1628,19 @@ dont le score n'a pas de valeur dans la table d'équité du match (jeu en
 money, décision hors statistiques). Un clic sur l'en-tête **MWC** trie les
 coups de chaque partie de la perte la plus lourde à la plus légère, puis
 l'inverse, puis rend l'ordre du match ; les décisions non notées passent en
-dernier, et ce tri remplace celui de la durée. Au-dessus des parties, deux
-graphiques en pleine largeur partagent l'axe de décisions de celui des
-durées : une barre par décision, puis la perte
-cumulée de chaque joueur, qui s'arrête sur son total (trait plein pour le
-premier joueur, pointillé pour le second). Une décision non notée porte un
+dernier, et ce tri remplace celui de la durée. L'onglet **Graphes** montre
+deux graphiques en pleine largeur sur l'axe de décisions de celui des durées :
+une barre par décision, puis la perte cumulée de chaque joueur, qui s'arrête
+sur son total (trait plein pour le premier joueur, pointillé pour le second).
+Chaque graphique a son titre, sa légende, son échelle à gauche et, sous l'axe,
+le numéro de chaque partie (P1, P2…), un trait pointillé marquant le passage
+d'une partie à la suivante. Une décision non notée porte un
 petit repère à la base de la barre, sans hauteur. Survoler une décision, ou la
-parcourir avec les flèches (les touches Début et Fin mènent aux extrémités), la marque sur les deux
-graphiques et sur sa ligne de la transcription et affiche la partie, le coup, le
-joueur et la perte ; un clic, ou Entrée, y amène la revue et fait défiler la
-transcription jusqu'à la ligne. Il en va de même pour le graphique des
+parcourir avec les flèches (les touches Début et Fin mènent aux extrémités), la marque sur tous les
+graphiques et sur sa ligne de la transcription, et une info-bulle donne la
+partie, le coup, le joueur et la perte ; l'info-bulle se place du côté où elle
+tient entière dans le cadre du graphique, même dans un panneau étroit. Un clic,
+ou Entrée, y amène la revue. Il en va de même pour le graphique des
 durées. Hors de l'interface, ``match --format json`` ajoute ``decision_losses``
 (une entrée par coup, ``mwc_loss`` valant ``null`` pour un coup non noté),
 ``--format text`` une ligne « MWC loss » par coup noté et ``--format summary`` le
@@ -1629,7 +1675,7 @@ options, le joueur de référence ne la commettrait pas une fois sur dix. Sur le
 graphique par décision, la difficulté est un trait horizontal sur chaque barre :
 une barre qui monte loin au-dessus de son trait signale une erreur évitable.
 
-Le tableau des **Détails du bilan** donne, pour chaque joueur, sa perte MWC
+Le tableau de l'onglet **Détails** donne, pour chaque joueur, sa perte MWC
 totale (celle de la liste des matchs), le nombre de décisions notées et, sur les
 décisions qui ont une perte et une difficulté : la **difficulté** totale,
 l'**excès** Σ(perte − difficulté), en MWC, ce que le joueur a perdu au-delà du
@@ -1671,13 +1717,15 @@ qu'on se pose après un match : qu'est-ce que je revois, ai-je perdu à cause de
 dés ou du jeu, et mes erreurs viennent-elles de la précipitation ou d'une
 lacune ? Les seuils ont été fixés avant tout examen de résultats.
 
-En tête de la fiche, au-dessus des graphiques, une synthèse place les joueurs
+En tête de la fiche, au-dessus des onglets, une synthèse place les joueurs
 côte à côte (l'un sous l'autre quand le panneau est étroit) : le nom, avec le
 trait qui le désigne sur le graphique cumulé, le PR, la perte MWC du match et,
 pour un match terminé, le verdict de la chance en clair (« gagné par le jeu »,
 « perdu par les dés »…) suivi du seul résultat ajusté. Le survol du PR donne son
 intervalle ; celui du verdict, les composantes du résultat ajusté. Le reste
-est dans la section repliée **Détails du bilan**, sous la transcription :
+se répartit entre deux onglets : **Détails** donne les intervalles, la perte
+ramenée à 7 pts et la chance ; **À revoir**, les décisions à revoir et le
+partage des erreurs entre précipitées et réfléchies :
 
 * **PR et perte de MWC ramenée à 7 pts, avec leur intervalle à 95 %**, calculé
   en rééchantillonnant les parties du match. La perte ramenée à 7 points est
@@ -1712,8 +1760,8 @@ est dans la section repliée **Détails du bilan**, sous la transcription :
   Une majorité précipitée appelle de la discipline (ralentir sur ces positions) ;
   une majorité réfléchie, de la connaissance (étudier la famille de positions).
 
-Les détails se terminent sur le tableau des pertes et de la difficulté décrit
-plus haut. ``match --format summary`` imprime le même bilan, et le serveur le
+L'onglet **Détails** se termine sur le tableau des pertes et de la difficulté
+décrit plus haut. ``match --format summary`` imprime le même bilan, et le serveur le
 sert par ``/v1/stats.matchReview``.
 
 Quand le match a gardé la durée de ses décisions (un match joué contre un bot),
@@ -1730,8 +1778,8 @@ quand la réserve est comptée par point restant. Un clic sur l'en-tête **Jeu**
 au plus court, puis du plus court au plus long, puis rend l'ordre du match ; une
 case sans durée (pas de décision de videau à ce tour, ou coup joué par
 l'Arbitre seul) porte un tiret, et ces coups passent en dernier. L'Horloge
-part de zéro dès le premier coup. Au-dessus des parties, un résumé
-donne pour chaque joueur le total, la moyenne par coup de pions et par décision
+part de zéro dès le premier coup. L'onglet **Graphes** commence par un résumé
+qui donne pour chaque joueur le total, la moyenne par coup de pions et par décision
 de videau, et, si le match a une cadence, une marque pour le joueur dont la
 réserve s'est épuisée en premier (le Duel n'enregistre que celui-là) ; un
 graphique place la durée
@@ -1739,14 +1787,14 @@ de chaque décision au fil du match. En revue, la durée de la décision jouée 
 lit discrètement sous l'analyse. La recherche la filtre avec ``tm>30`` (en
 secondes), qui se combine avec ``E>x`` : ``s tm>30 E>80`` retient les coups
 longuement réfléchis et pourtant faux, la durée et l'erreur étant celles du
-même coup joué. La section **Statistiques**, sous les erreurs récurrentes, croise
+même coup joué. L'onglet **Stats**, sous les erreurs récurrentes, croise
 le temps et l'erreur : pour chaque joueur et chaque tranche de durée connue
 (moins de 5 s, 5 à 15 s, 15 à 30 s, plus de 30 s), le nombre de décisions,
 l'erreur moyenne et la part de blunders. Une décision dont l'erreur n'est pas
 enregistrée est comptée sans entrer dans la moyenne.
 
-Un match joué ici, issu d'un Duel, porte son origine dans la section
-**Provenance** de sa fiche, sur une ligne, même s'il n'a aucun coup : « Joué ici », puis,
+Un match joué ici, issu d'un Duel, porte son origine dans l'onglet **Infos** de
+sa fiche, sous le titre **Provenance**, sur une ligne, même s'il n'a aucun coup : « Joué ici », puis,
 s'il y a lieu, « Perdu au temps » avec le joueur dont la réserve s'est épuisée
 sous une cadence qui fait perdre le match, ou « Arrêté avant la fin » pour un
 Match qu'un Duel arrêté a laissé inachevé, la cadence, le joueur dont la réserve s'est épuisée en premier et
@@ -1755,9 +1803,9 @@ clic déplie le départ (la position initiale ou le XGID choisi), le germe des
 dés révélé et son SHA-256, à comparer avec l'empreinte publiée à la création
 du Duel : s'ils concordent, le germe permet de recalculer chaque lancer sans
 faire confiance à blunderDB. Un match qui n'a pas été joué ici n'a pas
-d'origine et n'a pas cette section.
+d'origine, et son onglet **Infos** n'a pas ce titre.
 
-La section **Infos** de la fiche rappelle l'en-tête du match. Il y ajoute ce que
+L'onglet **Infos** de la fiche rappelle l'en-tête du match. Il y ajoute ce que
 le fichier source dit des joueurs et de la session, quand il le dit — un
 fichier eXtreme Gammon le dit toujours : le classement Elo de chaque joueur et
 son expérience entre parenthèses, le transcripteur, les règles Jacoby et Beaver
@@ -1887,6 +1935,10 @@ bouton **Inverser les joueurs** échange les deux noms, donne toutes les actions
 au camp d'en face et retourne le plateau : c'est le même match, lu de l'autre
 côté.
 
+Ouvert, le formulaire prend la place de la saisie : les dés, la palette et les
+candidats sont masqués, la transcription reste visible, la vidéo reste en place. Le même
+bouton, ou *Échap*, rend la saisie.
+
 La **longueur du match** se change dans ce même volet, à tout moment : le score,
 la partie Crawford et le référentiel — les parties d'argent lorsque la longueur
 vaut ``0``, et les cases *Jacoby* et *Beaver* apparaissent alors — sont
@@ -1939,35 +1991,31 @@ clavier et non à sa place : deux chiffres restent deux fois plus rapides qu'un
 clic, et le triangle est là pour qui transcrit la souris à la main. Une case par
 jet, jamais deux : 3-1 et 1-3 sont le même jet.
 
-Le coup joué au plateau dispense de lire les dés. Tant qu'aucun dé n'est saisi,
-un clic sur un pion puis sur sa destination — ou un glissé de l'un à l'autre —
-joue le coup sur le damier, contraint aux coups légaux ; les destinations
-offertes par le pion choisi s'allument. Les deux dés se déduisent des pas :
-jouer 13/7 puis 8/7 dit 6-1 sans qu'un chiffre ait été tapé, et l'action est
-enregistrée dès que le coup est achevé. Retour arrière défait le dernier pas, un
-chiffre abandonne le coup et revient à la saisie par les dés, et *Recommencer*,
-en tête du menu du clic droit, le reprend depuis le début. Quand plusieurs jets produisent le
-même coup — une sortie que plusieurs dés couvrent, un dé qui n'est pas jouable —
-rien n'est enregistré et le triangle ne laisse cliquables que ces jets-là : le
-jet n'est jamais deviné à la place de celui qui regarde la partie.
+Tout coup joué au plateau commence par le jet, tapé au clavier ou cliqué au
+triangle : sans dés saisis, le damier ne joue rien. Les deux dés saisis, le
+plateau est contraint aux coups légaux de ce jet — en bout de document comme sur
+une action relue, dont le curseur a chargé les dés. Un clic sur un pion le joue
+du dé de gauche, ou du suivant quand le premier ne le peut pas ; un glissé le
+pose sur sa destination. Les dés joués se grisent, un clic sur les dés non joués
+les intervertit, et Retour arrière — ou le clic droit sur le damier, qui reprend
+tout le coup — défait le coup. Chaque pas joué ne garde dans la liste que les
+candidats qui le contiennent, le premier d'entre eux présélectionné : c'est le
+geste du coup lointain, là où descendre au douzième candidat coûte treize
+touches.
 
-Les deux dés saisis, le plateau joue aussi, contraint aux coups légaux de ce
-jet — en bout de document comme sur une action relue, dont le curseur a chargé
-les dés. Chaque pas joué ne garde dans la liste que les candidats qui le
-contiennent, le premier d'entre eux présélectionné : c'est le geste du coup
-lointain, là où descendre au douzième candidat coûte treize touches. Un coup
-légal achevé est enregistré aussitôt, avec les dés tels qu'ils ont été tapés ;
-sur une action relue, il la remplace.
+Le coup achevé n'est enregistré que par une validation : un clic sur les dés
+grisés, ENTREE, ou le jet suivant — un chiffre ou une case du triangle —, qui
+l'enregistre d'abord avec les dés tels qu'ils ont été tapés. Sur une action
+relue, il la remplace.
 
 Un coup illégal se transcrit tel qu'il a été joué, sans bouton ni changement de
-mode. Les dés saisis, un glissé qu'aucun coup légal n'offre pose le pion là où
-il est lâché — y compris depuis un point d'où aucun coup légal ne part, pourvu
-qu'il porte un pion du camp au trait. Le coup sort alors des règles : la suite
-se joue librement, au clic comme au glissé, la liste des candidats cède la place
-à une ligne qui le rappelle, et rien n'est enregistré avant ENTREE, qui écrit
-les dés saisis, les pas et le plateau obtenu. Retour arrière défait le dernier
-pas ; défaire le seul pas hors des règles rend la liste. Sans dés saisis, le
-glissé reste contraint : un coup illégal ne dit pas quel jet l'a produit.
+mode. Un glissé qu'aucun coup légal n'offre pose le pion là où il est lâché — y
+compris depuis un point d'où aucun coup légal ne part, pourvu qu'il porte un pion
+du camp au trait. Le coup sort alors des règles : la suite se joue librement, au
+clic comme au glissé, la liste des candidats cède la place à une ligne qui le
+rappelle, et la validation écrit les dés saisis, les pas et le plateau obtenu.
+Retour arrière défait le dernier pas ; défaire le seul pas hors des règles rend
+la liste.
 
 Le coup se tape aussi au clavier, dans le transcript. Un double-clic sur la
 cellule d'un coup — ou d'une danse, d'un coup non consigné — la change en champ,
@@ -2098,7 +2146,8 @@ menu du navigateur n'est retiré que là. Ils n'ont pas de boutons ailleurs : un
 bouton qui agirait sur « l'action du curseur » viserait une cellule que l'on ne
 voit pas forcément, quand le clic droit désigne la sienne.
 
-La barre du brouillon porte ses deux seules sorties. « **Terminer** »
+La barre du brouillon porte ses deux seules sorties, au bout à droite, après le
+menu « ⋯ ». « **Terminer** »
 (CTRL-ENTREE) écrit le match dans la bibliothèque et libère le brouillon ;
 l'analyse des seules positions nouvelles démarre aussitôt, avec sa progression
 et son annulation dans la barre d'état. « **Abandonner** » supprime le
@@ -2138,7 +2187,10 @@ jusqu'à combien, et que terminer le brouillon peut les perdre.
 Un match se transcrit aussi **depuis une vidéo**. Le bouton **Vidéo** de la
 barre du brouillon ouvre un menu : **Fichier local…** pour choisir une vidéo sur
 le disque, **Lien YouTube…** pour coller une adresse dans le champ qui s'ouvre
-dans le menu, et **Détacher** pour retirer la source. *ECHAP* ou un clic
+dans le menu, et, séparé, **Retirer la vidéo** pour retirer la source. Le menu
+ne porte que la source : le mode théâtre et la place de la vidéo se règlent par
+les boutons de la barre au-dessus de la vidéo, visible tant qu'une vidéo est
+chargée. *ECHAP* ou un clic
 ailleurs ferme le menu et rend la saisie au panneau. Tant qu'aucune source n'est
 attachée, le panneau reste tel qu'il est décrit plus haut : ni volet, ni touche
 de plus. Une fois la source attachée, le bouton porte son nom court — le nom du
@@ -2155,7 +2207,7 @@ qu'elle entre dans une autre action.
 plateau se partage : la vidéo à gauche, le plateau à droite, séparés par une
 barre verticale qu'on tire pour agrandir l'une ou l'autre ; la largeur reste la
 même d'une session à l'autre. La vidéo garde ses proportions et occupe au mieux
-la place qu'on lui donne. Le bouton placé dans son coin supérieur droit la
+la place qu'on lui donne. Le bouton placé dans la barre au-dessus d'elle la
 remet dans le panneau, au-dessus du transcript, et la ramène à côté du plateau ;
 ce choix aussi est retenu. Dans le panneau, la hauteur de la vidéo se règle en
 tirant la barre placée sous elle, sans jamais repousser la saisie hors de vue.
@@ -2176,21 +2228,21 @@ qu'elle soit. La poignée et le bouton laissent le clavier au panneau.
 
 .. _transcription_theatre:
 
-**Le mode théâtre.** Pour suivre le match en grand, *F11*, l'entrée **Mode
-théâtre** du menu **Vidéo** ou le bouton du coin supérieur droit de la vidéo,
+**Le mode théâtre.** Pour suivre le match en grand, *F11* ou le bouton de la barre au-dessus de la vidéo,
 à gauche de celui qui la remet dans le panneau, passent la fenêtre en plein
 écran et donnent toute la place à la vidéo. Un petit plateau flotte par-dessus,
 dans le coin inférieur droit : il montre la position de la transcription, les dés
 saisis, le coup en cours au plateau et les flèches du candidat sélectionné, dont
 la notation s'affiche dans son bandeau. On le déplace en le glissant ; un bouton
 de son bandeau lui fait prendre trois tailles, un autre le replie en un onglet
-qui le rouvre. Sa place, sa taille et son repli sont retenus. Le clavier reste
+qui le rouvre. Sa place et sa taille sont retenues ; replié, il se rouvre à la
+prochaine entrée dans le théâtre. Le clavier reste
 celui du panneau : les dés, les candidats, la validation, le curseur et les
 touches de la vidéo (*ESPACE*, *[*, *]*, …) gardent leur effet, et ni le
 plateau ni les boutons ne prennent le focus. *F11*, *ÉCHAP* ou le bouton en
 haut à droite sortent du mode théâtre et rendent la fenêtre à son état
 précédent : dans le théâtre, *ÉCHAP* sert à sortir, et *RETOUR ARRIERE* efface
-les dés saisis. Détacher la vidéo, quitter le brouillon ou changer d'onglet y
+les dés saisis. Retirer la vidéo, quitter le brouillon ou changer d'onglet y
 met fin aussi. Le lecteur n'a pas de plein écran à lui, YouTube compris : seul
 le mode théâtre change l'écran. Le mode n'existe que dans la Transcription,
 avec une vidéo attachée.
@@ -2274,8 +2326,9 @@ Appuyer sur *CTRL-Y* pour afficher ou masquer le panneau.
 
 **Nouveau tournoi** ouvre le champ de création, qui prend le focus ; *ÉCHAP* ou
 **Annuler** le referme. Un clic surligne une ligne, un double-clic ou *ENTRÉE*
-ouvre le tournoi : ses notes, puis ses matchs, un par ligne, qu'un double-clic
-ouvre, que ▲ et ▼ réordonnent, que ⇄ échange de joueurs et que × retire du
+ouvre le tournoi. Son en-tête porte la date, le lieu et le nombre de matchs, qu'un
+clic change en liste des positions du tournoi ; à droite, les notes, **Diriger**
+et **Bilan**. Dessous, ses matchs, un par ligne, qu'un double-clic ouvre, que ▲ et ▼ réordonnent, que ⇄ échange de joueurs et que × retire du
 tournoi. Le champ **Ajouter un match…** y range un match de la base, et ←
 ramène à la liste des tournois.
 
@@ -2342,8 +2395,8 @@ son interface et garde ses matchs. Le bouton **ⓘ** de l'en-tête de la Directi
 rappelle ce crédit et mène au dépôt et à la documentation du moteur.
 
 Un tournoi dirigé se choisit dans le panneau :ref:`panneau_tournois`
-(*CTRL-Y*, commande ``direct``) : ouvrir un tournoi, puis **Diriger ce
-tournoi**. Un tournoi déjà dirigé porte son état à côté de son nom et le bouton
+(*CTRL-Y*, commande ``direct``) : ouvrir un tournoi, puis
+**Diriger**. Un tournoi déjà dirigé porte son état à côté de son nom et le bouton
 devient **Ouvrir la direction**. Tant qu'une direction est ouverte, la zone principale montre
 le tournoi **à la place du plateau** — c'est la seule exception de blunderDB à
 cette règle ; passer sur n'importe quel autre onglet ramène le plateau.
@@ -3085,6 +3138,10 @@ Onglet Tableau de bord
 ~~~~~~~~~~~~~~~~~~~~~~
 
 L'onglet **Tableau de bord** donne une vue synthétique des indicateurs clés.
+Il se lit de haut en bas : les cartes de niveau, puis ce qui se travaille (plan
+d'étude, top blunders), puis les lectures (PR glissant, avant/après l'étude,
+biais signés). L'explication de chaque carte est dans l'info-bulle de son
+titre.
 
 .. figure:: img/panel_stats_dashboard.png
    :width: 100%
@@ -3102,7 +3159,9 @@ Trois cartes affichent le PR (ou MWC) pour :
 * **PR videau** — décisions de videau seulement.
 
 Cliquer sur une carte charge dans le panneau d'analyse les positions du
-sous-ensemble correspondant (drill-down).
+sous-ensemble correspondant (drill-down). Une quatrième carte, **Perte MWC (éq.
+7 pts)**, donne cette perte quel que soit le choix du bouton PR / MWC, avec son
+intervalle ; elle ne charge rien.
 
 .. note::
    Le nombre total de décisions est affiché en bas de chaque carte au survol.
@@ -3135,14 +3194,21 @@ une tendance. Le plan corrige les deux.
   à partir de **5 erreurs** et d'un intervalle entièrement au-dessus de zéro ;
   le plan est classé par la borne basse de l'intervalle, si bien qu'à
   récupérable égal la famille la mieux établie passe devant. Les autres sont
-  nommées sous le tableau, **à confirmer**, sans rang : le plan ne vous pousse
-  pas vers du bruit.
+  nommées sous la liste, **à confirmer**, sans rang : le plan ne vous pousse
+  pas vers du bruit. La même ligne compte les erreurs **hors plan** (sans
+  thème, non chiffrées).
+
+Chaque ligne du plan montre son rang, la famille, une barre dont la longueur
+est son MWC récupérable rapporté à celui de la première, ce MWC avec son
+intervalle, et le nombre d'erreurs. Chaque compte de positions du plan (par
+famille, à confirmer, hors plan) est cliquable : il charge exactement ces
+positions dans la liste.
 
 Chaque famille propose trois gestes : **Étudier** ouvre la file d'étude sur
 ses positions, l'écart au joueur de référence le plus grand d'abord ; **Quiz**
 lance l'exercice Décision du panneau :ref:`Entraînement <panneau_entrainement>`
-sur vingt d'entre elles ; **Anki** en fait un paquet de cartes. Au-dessus du
-tableau, **Quiz sur les trois premières familles** tire vingt positions parmi
+sur vingt d'entre elles ; **Anki** en fait un paquet de cartes. En tête de la
+carte, **Quiz sur les trois premières familles** tire vingt positions parmi
 celles des trois familles de tête. Le plan suit le filtre du panneau : réglez
 le joueur pour obtenir *votre* plan. En ligne de commande :
 ``blunderdb stats plan`` (voir :ref:`cli_stats`).
@@ -3439,6 +3505,13 @@ ce serait un second PR sous le même nom.
   Une cellule sans intervalle est **grisée avec son effectif visible**
   plutôt que cachée (voir ci-dessous).
 
+Les colonnes **Positions** et **Bourdes** comptent des positions distinctes, et
+chaque chiffre est un lien : un clic charge exactement ces positions dans le
+panneau d'analyse, comme les compteurs de la barre d'état. *Bourdes* compte les
+positions où au moins une décision est une bourde. Une position jouée dans
+plusieurs matchs (une ouverture, par exemple) n'y compte qu'une fois ; la
+colonne **Décisions** la compte à chaque fois, car c'est le dénominateur du PR.
+
 Chaque ligne porte son **intervalle de confiance à 95 %** (colonne *IC 95 %*),
 qui remplace le seuil fixe de dix décisions : il dit ce que vaut un PR, pas
 seulement combien de décisions le portent. Il rééchantillonne les **matchs** de
@@ -3660,10 +3733,12 @@ toujours présent, dés posés ou non, porte l'EPC, le pip count, le wastage,
 le nombre moyen de lancers et l'écart type ; ces cinq colonnes ne migrent
 jamais. Les deux tableaux sont empilés et partagent la même grille de
 colonnes : mêmes bords, mêmes repères de colonne, une seule colonne de
-pastilles — ils se lisent comme un seul objet à deux étages. Le bouton
-*Ajouter à la base*, le badge de régime, l'attribution du moteur (la
-profondeur de la dernière évaluation y figure aussi) et la case *Défi*
-forment une bande à part, alignée à droite au-dessus des tableaux.
+pastilles — ils se lisent comme un seul objet à deux étages. Au-dessus des
+tableaux, la bande d'en-tête porte le titre, le badge de régime et
+l'attribution du moteur (la profondeur de la dernière évaluation y figure
+aussi), puis, à droite, la case *Défi* et le bouton *Ajouter à la base*.
+Tant que gammonNet n'a rien rendu, le panneau le dit en une ligne :
+« Évaluation… », ou « Posez une position » sur un plateau vide.
 
 Seule la liste des coups candidats défile — la ligne *avant le jet*, elle
 aussi, reste épinglée au-dessus d'elle ; le reste du panneau (faits, badge,
@@ -3894,7 +3969,7 @@ Amener une position dans le panneau Eval
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Le panneau s'ouvre par défaut sur une position de bearoff, mais l'étude part
-le plus souvent d'une position déjà en main. Trois gestes l'y amènent :
+le plus souvent d'une position déjà en main. Quatre gestes l'y amènent :
 
 * **Clic droit sur le plateau**, dans un panneau d'analyse ou pendant la
   navigation d'un match, puis *Évaluer cette position* : le panneau Eval
@@ -3903,6 +3978,12 @@ le plus souvent d'une position déjà en main. Trois gestes l'y amènent :
   menu contextuel n'apparaît pas dans le panneau Eval ni dans le panneau
   Recherche, où le bouton droit sert déjà à poser les pions de l'autre
   couleur.
+
+* **Clic droit sur le plateau, puis** *Évaluer dans un nouvel onglet* : une
+  nouvelle vue, nommée *Variante de #n* (n étant le numéro de la vue
+  d'origine), s'ouvre dans le panneau Eval sur la position affichée, où
+  poser librement des variantes. La vue d'origine garde sa position, sa liste
+  et son analyse. Ce choix n'est pas offert dans le panneau Transcription.
 
 * **CTRL-C puis CTRL-V** : copier la position depuis le panneau d'analyse,
   puis la coller une fois dans le panneau Eval. Le collage accepte aussi un
@@ -3997,7 +4078,7 @@ défaut à tout moment. Rien n'est enregistré dans la base au passage — le
 brouillon n'a pas d'identité de position, et son évaluation est recalculée à
 l'arrivée plutôt que transportée.
 
-**Mode défi.** La case *Défi*, dans la bande de badges, active un mode
+**Mode défi.** La case *Défi*, dans la bande d'en-tête, active un mode
 entraînement : à chaque modification de la position, les valeurs de trois
 zones sont masquées (remplacées par « ··· ») ; un clic sur une zone révèle
 cette zone seulement. Sans dés, ce sont la ligne du joueur du bas, la ligne
@@ -4199,6 +4280,11 @@ fait **tenir dans le temps** et n'en mesure rien. Les deux histoires restent
 séparées : le journal de l'Entraînement ignore les révisions Anki, et les
 statistiques d'Anki ignorent les sessions d'Entraînement.
 
+**Un paquet sélectionné prend l'en-tête du panneau** : son nom, le nombre de ses
+positions, qu'un clic ouvre, et le nombre de cartes dues ; à droite, les
+paramètres (⚙), la remise à zéro (↻), *Bachoter* et *Étudier*. ← revient à la
+liste des paquets.
+
 **Révision :** Sélectionnez un paquet puis cliquez sur *Étudier* (ou double-cliquez
 sur un paquet) pour commencer la révision des cartes dues. Une carte de position
 affiche la position sur le plateau ; une carte de score annonce le score et
@@ -4208,8 +4294,14 @@ pour arrêter et revenir à la liste des paquets.
 
 Deux comptes portent des noms distincts : la colonne **Échues** de la liste
 compte toutes les cartes dont l'échéance est passée, y compris les cartes
-suspendues ou enterrées ; le chiffre du bouton *Étudier* ne compte que celles qui
+suspendues ou enterrées ; le compte *dues* de l'en-tête ne retient que celles qui
 sont disponibles maintenant, et peut donc être plus petit.
+
+Les comptes d'Anki sont des liens : un clic sur les cartes dues, nouvelles, en
+cours ou en révision de la bande, ou sur une valeur des colonnes **Cartes**,
+**Nouvelles** et **Échues** de la liste, charge les positions correspondantes.
+De même, dans un tournoi ouvert, le nombre de positions ouvre exactement ces
+positions.
 
 **Les décisions de videau font deux cartes, enchaînées.** Une décision de
 videau est deux questions — « double ? », puis « prend ? » — et blunderDB les
@@ -4244,7 +4336,9 @@ masquée.
 **Répondre au damier.** Par défaut, vous vous notez vous-même. Dans les
 Paramètres d'un paquet de positions, cochez *Répondre au damier* : pour une
 carte de pions, vous jouez alors le coup sur le damier, comme dans l'exercice
-Décision, puis *Valider*. Le moteur juge le coup contre l'analyse enregistrée,
+Décision (un clic sur un pion le joue du premier dé non joué, un clic sur les
+dés intervertit les dés restants, le clic droit reprend les pas), puis le coup
+complet se valide par un clic sur les dés ou par ENTRÉE. Le moteur juge le coup contre l'analyse enregistrée,
 dévoile la réponse et **propose une note** : *Facile* pour une bonne réponse
 rapide, *Correct* pour une bonne réponse plus lente, *Difficile* pour une erreur
 sous le seuil du blunder, *À revoir* pour un blunder ou un coup illégal. La note
@@ -4271,7 +4365,7 @@ quelques séances, dont le volume quotidien est déjà borné par sa taille. Un
 plafond par jour n'y mordrait jamais, ou bien créerait un retard sur un paquet
 qui tenait en une séance.
 
-**Entraînement libre (cram) :** Le bouton *Entraînement*, à côté de *Étudier*, lance une
+**Entraînement libre (cram) :** Le bouton *Bachoter*, à côté de *Étudier*, lance une
 session d'entraînement libre : des positions aléatoires du paquet vous sont
 présentées sans tenir compte de l'échéancier FSRS. Ce mode **ne modifie jamais
 le planning de révision espacée** — idéal pour s'échauffer avant un tournoi ou
@@ -4353,7 +4447,7 @@ Au repos, le panneau montre le lanceur et le bilan des sessions passées.
 Le lanceur
 ~~~~~~~~~~
 
-Trois choix, puis « Démarrer » :
+Trois réglages, un par ligne ; « Démarrer » est au bout de la bande d'en-tête :
 
 * l'**exercice** — *Scores*, *Comptage des pips*, *Bearoff*, *Évaluation* ou *Décision* ;
 * la **source** de la question, quand l'exercice en a plusieurs — *Vivier*
@@ -4380,8 +4474,8 @@ affiche une **fiche de score** : deux colonnes — *Vous* et *L'adversaire* — 
 sept lignes — le point de prise au videau 2 puis au videau 4, chacun en course
 longue et au dernier lancer, puis la valeur du gammon aux videaux 1, 2 et 4.
 
-Une ligne de consigne rappelle le geste — estimer chaque nombre de tête, puis
-*Révéler*, puis cliquer ceux qu'on a ratés —, et le plateau montre le score
+L'infobulle de « Révéler » rappelle le geste — estimer chaque nombre de tête,
+puis *Révéler*, puis cliquer ceux qu'on a ratés —, et le plateau montre le score
 tiré sur une table vide.
 
 Chaque colonne ne porte que les cases que les tables de référence — celles
@@ -4495,19 +4589,18 @@ n'est jamais demandé ici, il a son propre exercice. Le journal compte les deux
 nombres à part : on peut bien estimer une position et mal lire son videau.
 
 *Décision* se **choisit**. Sur une décision de pions, **jouez le coup sur le
-damier** : cliquez le point de départ puis la destination, ou glissez le pion,
-autant de fois qu'il y a de dés. Le damier n'offre que ce qui est jouable — un
-clic qu'aucun coup légal n'autorise ne déplace rien. Dans le panneau,
-« Annuler le pas » revient d'un dé, « Recommencer » remet la position telle que
-la question la pose (le menu du clic droit propose aussi *Recommencer*), et
-« Valider », actif une fois le coup complet, le fait juger. Le champ de
-notation accepte aussi le coup tapé (``13/7 8/7``, la notation de la
-transcription) : les pas se posent sur le damier à chaque frappe, un champ
-rougi dit qu'un pas n'est pas jouable, et ENTRÉE valide le coup complet. Le
-panneau ayant le focus, RETOUR ARRIÈRE défait un pas, ÉCHAP recommence le coup et
-ENTRÉE le valide. Sur une décision de
-videau, cliquez *Pas de double*, *Double, prend* ou *Double, passe* : le clic
-est la réponse.
+damier** : un clic sur un pion le joue du premier dé non joué (le dé de gauche,
+puis celui de droite), ou du suivant si le premier ne le déplace pas ; si aucun
+dé ne le peut, rien ne bouge. Vous pouvez aussi glisser le pion. Un clic sur les
+dés intervertit les dés restant à jouer, et fait juger le coup une fois complet.
+Le clic droit sur le damier reprend les pas joués. Dans le panneau, « Annuler le
+pas » revient d'un dé et « Recommencer » remet la position telle que la question
+la pose. Le champ de notation accepte aussi le coup tapé (``13/7 8/7``, la
+notation de la transcription) : les pas se posent sur le damier à chaque frappe,
+un champ rougi dit qu'un pas n'est pas jouable, et ENTRÉE valide le coup
+complet. Le panneau ayant le focus, RETOUR ARRIÈRE défait un pas, ÉCHAP
+recommence le coup et ENTRÉE le valide. Sur une décision de videau, cliquez *Pas
+de double*, *Double, prend* ou *Double, passe* : le clic est la réponse.
 
 La correction distingue trois issues, et les confondre mentirait. Un **coup
 illégal** n'est pas un coup mal choisi — c'est une faute de règle. Un **coup
@@ -4528,8 +4621,11 @@ coup, et n'entre pas dans le PR de la session.
 
 « Suivante » enregistre la question et en pose une autre. La session n'a pas de
 longueur fixée : elle dure jusqu'à « Terminer », qui l'écrit au journal, ou
-« Quitter », qui la jette. Tous les boutons sont dans le panneau ; le plateau
-montre la question et sa réponse, il ne porte aucune commande.
+« Quitter », qui la jette. Tous les boutons sont dans la bande d'en-tête du
+panneau, avec l'exercice, le numéro de la question et le chronomètre :
+« Quitter », « Terminer », puis, toujours au bout, l'action de la question
+(« Révéler », « Valider » ou « Suivante »). Le plateau montre la question et sa
+réponse, il ne porte aucune commande.
 
 Tant qu'une question est posée sur le plateau, révélée ou non, les touches qui
 parcourent la liste ne la font pas défiler : la question garde le plateau
@@ -4583,7 +4679,8 @@ d'outils, ou par la commande ``duel``. Une base doit être ouverte : le Duel s'y
 écrit après chaque décision.
 
 Sans Duel ouvert, le panneau montre le formulaire, mémorisé d'un Duel à
-l'autre, et la liste des Duels en suspens :
+l'autre, un réglage par ligne, « Jouer » au bout de la bande d'en-tête, et,
+s'il y en a, la liste des Duels en suspens :
 
 * **Match** de 1 à 25 points, ou **session en argent** (Jacoby au choix).
 * **Départ** : la position initiale, la position au plateau, ou la position
@@ -4606,14 +4703,14 @@ pas, parce que ses dés à venir ne doivent sortir par aucune voie avant la fin.
 Un Duel terminé part comme tout Match.
 
 Le Duel se joue au plateau. Le panneau montre la feuille de match en deux
-colonnes, comme la Transcription, les horloges quand une cadence court, une
-ligne qui dit ce qui est attendu, et « Abandonner le match », « Mettre en
-pause », « Annuler le match ». Un match en points ne s'enregistre qu'entier :
+colonnes, comme la Transcription, et les horloges quand une cadence court ;
+sa bande d'en-tête nomme les joueurs, dit ce qui est attendu, et porte à
+droite « Abandonner le match », « Mettre en pause », « Annuler le match ». Un match en points ne s'enregistre qu'entier :
 il n'y a pas d'arrêt qui garde un match inachevé. Le score et le videau sont
 ceux du plateau ; le score et les horloges restent dans la barre d'état quand
 l'onglet est replié.
 L'empreinte SHA-256 du germe des dés, publiée par l'Arbitre dès la création,
-se lit dans l'infobulle de la ligne d'invite du panneau, puis avec le germe dans l'origine du Match terminé. Le plateau
+se lit dans l'infobulle de l'invite de la bande d'en-tête, puis avec le germe dans l'origine du Match terminé. Le plateau
 passe en mode **DUEL** : la bibliothèque ne se parcourt plus, l'édition, le
 panneau Eval et les autres onglets ne s'ouvrent pas, et le moteur se tait —
 aucune évaluation, aucun candidat. Seules restent la Pile (``B``), le
@@ -4623,18 +4720,21 @@ pipcount (``P``) et l'aide.
   lance ; seul un clic sur le videau propose de doubler, et le plateau demande « Doubler » ou « Annuler ». Quand
   le videau n'est pas disponible, le lancer est automatique.
 * Face à un double du Bot, le plateau demande « Prendre » ou « Passer ».
-* Un clic sur un pion le joue avec le dé de gauche encore libre, ou avec
-  l'autre quand celui-ci ne peut pas le jouer ; un double se joue en quatre
-  clics. Un pion peut aussi se glisser vers sa destination. Un dé joué est
-  grisé. Seuls passent les pas d'un coup légal.
-* Avant de jouer, un clic sur les dés, ou un clic droit sur le plateau,
-  intervertit leur ordre. Pendant le coup, le clic droit sur le plateau
-  reprend tous les pions joués (``RETOUR ARRIÈRE`` aussi).
+* Un clic sur un pion le joue aussitôt avec le dé de gauche encore libre, ou
+  avec l'autre quand celui-ci ne peut pas le jouer ; un pion sur la barre
+  entre, un double se joue en quatre clics. Un pion peut aussi se glisser
+  vers sa destination. Seuls passent les pas d'un coup légal.
+* Un dé se grise quand il est joué ; sur un double, chaque dé vaut deux pas
+  et se voile à moitié au premier. Le coup complet grise tous les dés, y
+  compris ceux que la règle ne permet pas de jouer.
+* Tant que le coup n'est pas complet, un clic sur les dés intervertit les
+  dés restant à jouer. Le clic droit sur le plateau reprend tous les pions
+  joués (``RETOUR ARRIÈRE`` aussi) ; sans pion joué, il ouvre le menu du Duel.
 * Le coup complet se valide par un clic sur les dés, par « Valider » sur le
   plateau, ou par ``ENTRÉE`` ou ``ESPACE``. Rien ne se reprend après.
 * Le Bot répond aussitôt ; ses coups sont rejoués au plateau, lentement.
-* Le clic droit hors du plateau, ou sur le plateau hors de son coup, ouvre le
-  menu du Duel : mettre la position sur la Pile ou l'en retirer, abandonner la
+* Le clic droit hors du plateau, ou sur le plateau hors de son coup ou sans
+  pion joué, ouvre le menu du Duel : mettre la position sur la Pile ou l'en retirer, abandonner la
   partie pour un simple, un gammon ou un backgammon (à son tour, après
   confirmation), abandonner le match, le mettre en pause, l'annuler. Ce menu
   n'offre ni évaluation ni édition.

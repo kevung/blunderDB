@@ -6,6 +6,7 @@
  * fournit — le filtre courant, la langue, un diagramme par décision.
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 
 let stats = {};
@@ -15,7 +16,7 @@ const StatsReportHTML = vi.fn(() => Promise.resolve('<!doctype html><html></html
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
     ComputeStats: () => Promise.resolve(stats),
     LoadPositionsByIDs: () => Promise.resolve(positions),
-    StatsReportHTML: (...args) => StatsReportHTML(...args)
+    StatsReportHTML: (/** @type {any[]} */ ...args) => StatsReportHTML(...args)
 }));
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
     SaveBoardImageDialog: vi.fn(() => Promise.resolve('')),
@@ -62,6 +63,6 @@ describe('le rapport HTML', () => {
         expect(filter).toBeDefined();
         expect(typeof lang).toBe('string');
         expect(Object.keys(diagrams)).toEqual(['7']);
-        expect(diagrams[7]).toContain('<svg');
+        expect(must(diagrams)[7]).toContain('<svg');
     });
 });

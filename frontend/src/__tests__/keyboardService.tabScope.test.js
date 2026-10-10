@@ -1,3 +1,4 @@
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 
 // #204: bare Tab used to be hijacked into "open the search panel"
@@ -89,7 +90,7 @@ describe('bare Tab only opens the search panel while focus is on the board (#204
 
     test('focus inside .scrollable-content — Tab still opens the search panel', () => {
         document.body.innerHTML = '<div class="scrollable-content"><div id="in-board" tabindex="0"></div></div>';
-        document.getElementById('in-board').focus();
+        must(document.getElementById('in-board')).focus();
         const event = tab();
         expect(get(activeTabStore)).toBe('search');
         expect(event.defaultPrevented).toBe(true);
@@ -100,7 +101,7 @@ describe('bare Tab only opens the search panel while focus is on the board (#204
     test('focus in a field of the Direction page — Tab moves focus normally', () => {
         activeTabStore.set('tournaments');
         document.body.innerHTML = '<div class="scrollable-content"><div class="direction-view"><input id="score-a" /><input id="score-b" /></div></div>';
-        document.getElementById('score-a').focus();
+        must(document.getElementById('score-a')).focus();
         const event = tab();
         expect(get(activeTabStore)).toBe('tournaments');
         expect(event.defaultPrevented).toBe(false);
@@ -108,7 +109,7 @@ describe('bare Tab only opens the search panel while focus is on the board (#204
 
     test('focus on an unrelated button — Tab is left alone for native focus navigation', () => {
         document.body.innerHTML = '<button id="toolbar-btn">Toolbar</button>';
-        document.getElementById('toolbar-btn').focus();
+        must(document.getElementById('toolbar-btn')).focus();
         const event = tab();
         expect(get(activeTabStore)).toBe('matches');
         expect(event.defaultPrevented).toBe(false);
@@ -117,7 +118,7 @@ describe('bare Tab only opens the search panel while focus is on the board (#204
     test('focus inside the comment panel textarea — Tab moves focus normally, not to the search tab', () => {
         activeTabStore.set('comments');
         document.body.innerHTML = '<div class="comment-panel"><textarea id="commentTextArea"></textarea><button id="next-field"></button></div>';
-        document.getElementById('commentTextArea').focus();
+        must(document.getElementById('commentTextArea')).focus();
         const event = tab();
         expect(get(activeTabStore)).toBe('comments');
         expect(event.defaultPrevented).toBe(false);
@@ -139,7 +140,7 @@ describe('Ctrl-Tab toggles the matches panel like the other seven Ctrl+letter to
 
     test('fires regardless of where focus is (unlike bare Tab)', () => {
         document.body.innerHTML = '<button id="toolbar-btn">Toolbar</button>';
-        document.getElementById('toolbar-btn').focus();
+        must(document.getElementById('toolbar-btn')).focus();
         const event = tab({ ctrlKey: true });
         expect(toggleMatchPanel).toHaveBeenCalledTimes(1);
         expect(event.defaultPrevented).toBe(true);

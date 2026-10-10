@@ -14,23 +14,24 @@
     import { get } from 'svelte/store';
     import { statusBarModeStore, isAnyModalOpen, activeModal, MODAL, pipcountVisibleStore, activeTabStore } from '../stores/uiStore';
     import { subscribeBoardRedrawTriggers as subscribeSharedRedrawTriggers } from '../services/boardRedraw.js';
-    import { boardIsMirrored, labelsFlipped, screenOfModelPoint, screenOfNotationPoint } from '../services/boardOrientation.js';
+    import { boardIsMirrored, labelsFlipped, screenOfNotationPoint } from '../services/boardOrientation.js';
     import { searchStructureModeStore, searchOfferedCubeStore } from '../stores/searchExcludePositionStore';
     import { boardColorsStore } from '../stores/boardColorsStore';
-    import { sendPositionToEval } from '../services/positionService.js';
+    import { sendPositionToEval, evaluateInNewView } from '../services/positionService.js';
     import { copyBoardWithAnalysisImage, exportBoardImage } from '../services/clipboardService.js';
     import { setStatusBarMessage } from '../services/databaseService.js';
     import { viewStore } from '../stores/viewStore.js';
     import * as anki from '../services/ankiService.js';
     import { ankiDecksStore } from '../stores/ankiStore.js';
-    import { quizPlayStore, quizPlayTargetsStore } from '../stores/quizPlayStore.js';
+    import { quizPlayStore, quizPlayValidateStore } from '../stores/quizPlayStore.js';
+    import { diceShade, orderedDice } from '../services/boardMove.js';
     import { transcriptionCubeRequestStore, transcriptionBoardSwapStore } from '../stores/transcriptionStore.js';
     import { resetBoardPlay } from '../services/transcriptionPlay.js';
     import ContextMenu from './ContextMenu.svelte';
     import { onPileStore, refreshPileState, togglePile } from '../services/pileService.js';
-    import { duelHoldsBoardStore, duelBoardStore, duelStore } from '../stores/duelStore.js';
+    import { duelHoldsBoardStore, duelStore } from '../stores/duelStore.js';
     import { duelBoardPress, duelBoardDrop, duelBoardContextMenu, duelBoardContext, suspendDuel, confirmForfeitDuel, confirmCancelDuel, resignDuel } from '../services/duelService.js';
-    import { orderedDice, usedDice, isMine } from '../services/duelBoard.js';
+    import { isMine } from '../services/duelBoard.js';
     import DuelBoardPrompt from './DuelBoardPrompt.svelte';
     import { registerKeys } from '../services/keyDispatch.js';
 
@@ -285,6 +286,8 @@
                 offeredCube: searchOfferedCubeStore,
                 anyModalOpen: isAnyModalOpen,
                 quizPlay: quizPlayStore,
+                // Non nul : le coup armé suit la grammaire d'ADR-0086.
+                quizPlayValidate: quizPlayValidateStore,
                 // Transcription : le plateau pose la demande, le panneau décide.
                 transcriptionCube: transcriptionCubeRequestStore
             },
@@ -355,7 +358,8 @@
         /** @type {MenuItem[]} */
         const items = [];
         // A play in progress (quiz, Transcription): its reset clears the play, not the position.
-        if (get(quizPlayStore)) {
+        // Under ADR-0086's grammar the right click on the board takes the play back instead.
+        if (get(quizPlayStore) && !get(quizPlayValidateStore)) {
             items.push({
                 label: $t('training.resetPlay'),
                 onClick: () => quizPlayStore.update((s) => (s ? resetBoardPlay(s, get(positionStore)) : s))
@@ -371,6 +375,8 @@
                 label: $t('board.menu.evaluateMirror'),
                 onClick: () => sendPositionToEval(mirrorPosition(getDisplayPosition()))
             },
+            // A studied position only (ADR-0086 §10): a scratch or Transcription board is not one.
+            ...(mode === 'NORMAL' || mode === 'MATCH' || mode === 'COLLECTION' ? [{ label: $t('board.menu.evaluateInNewView'), onClick: () => evaluateInNewView(getDisplayPosition()) }] : []),
             {
                 label: $t('board.menu.copyImageWithAnalysis'),
                 onClick: () => copyBoardWithAnalysisImage()
@@ -477,8 +483,9 @@
         // Quiz : seul le damier suit le coup en cours ; le reste vient de la position.
         const play = get(quizPlayStore);
         let position = play ? { ...stored, board: play.board } : stored;
-        // Duel : les dés dans l'ordre où le joueur les a rangés (le premier est celui qu'un clic joue).
-        if (get(duelHoldsBoardStore) && get(duelBoardStore).swapped) position = { ...position, dice: orderedDice(position.dice, true) };
+        // Grammaire d'ADR-0086 : le jet du coup, dans l'ordre que le joueur a choisi (le dé de
+        // gauche est celui qu'un clic joue).
+        if (play && get(quizPlayValidateStore)) position = { ...position, dice: orderedDice(play.rolled ?? position.dice, !!play.swapped) };
         return displayIsMirrored(position) ? mirrorPosition(position) : position;
     }
 
@@ -512,17 +519,13 @@
         return acts.some(isResponseCubeAction);
     }
 
-    // Points offerts par le coup en cours, en numéros affichés : les pas de
-    // `LegalMoves` sont absolus, convertis par le même `mirrored` que le clic.
-    /** @param {boolean} mirrored */
-    function playHighlights(mirrored) {
+    // Les dés joués, grisés, pour tout coup armé selon la grammaire d'ADR-0086 (demi-voile d'un
+    // double, dés gris d'un coup achevé). Le miroir ne change pas les dés.
+    /** @param {BoardPosition} position */
+    function playedDice(position) {
         const play = get(quizPlayStore);
-        if (!play) return {};
-        const shown = (/** @type {number} */ point) => screenOfModelPoint(point, mirrored);
-        return {
-            targets: [...$quizPlayTargetsStore].map(shown),
-            selected: play.selected === null || play.selected === undefined ? null : shown(play.selected)
-        };
+        if (play && get(quizPlayValidateStore)) return diceShade(play, position.dice);
+        return null;
     }
 
     // Flèches : la notation est dans la numérotation du camp au trait, donc
@@ -581,7 +584,6 @@
         if (dx !== promptAnchor.dx || dy !== promptAnchor.dy) promptAnchor = { dx, dy };
         // `mirrored` convertit un point absolu, `flip` un point de notation (boardOrientation.js).
         const flip = isPlayer2Perspective(position);
-        const mirrored = displayMirrored();
         logger.log('drawBoard', width, height, 'decision_type:', position.decision_type);
 
         const dynamic = !staticLayer || !dynamicLayer || staticFlip !== flip ? rebuildStaticLayers(two, geom, flip) : dynamicLayer;
@@ -590,10 +592,8 @@
             text: sceneText,
             offeredCube: isOfferedCube(position),
             showPipcount,
-            play: playHighlights(mirrored),
             moves: selectedMoveArrows(flip),
-            // Duel : un dé joué est grisé.
-            diceUsed: get(duelHoldsBoardStore) ? usedDice(get(quizPlayStore), position.dice) : null
+            diceUsed: playedDice(position)
         });
 
         two.update();

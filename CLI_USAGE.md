@@ -2332,7 +2332,7 @@ Examples:
 ```
 Usage: blunderdb collection create [options]
 
-Create an empty collection.
+Create an empty collection, or a living one whose content is the result of a search query.
 
 Options:
   -db string
@@ -2341,9 +2341,12 @@ Options:
     	Collection description
   -name string
     	Collection name (required)
+  -query string
+    	Make the collection living: a search query, in the application's own grammar
 
 Examples:
   blunderdb collection create --db database.db --name "Blitz openings"
+  blunderdb collection create --db database.db --name "Big blunders" --query "E>80"
 ```
 
 ### `blunderdb collection delete`
@@ -2363,6 +2366,28 @@ Options:
 
 Examples:
   blunderdb collection delete --db database.db --id 3 --confirm
+```
+
+### `blunderdb collection evaluate`
+
+```
+Usage: blunderdb collection evaluate [options]
+
+Read a collection's position ids, a living one by running its query now. The answer is bounded by a declared ceiling and always states the true total and whether it was truncated.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text, json (default "text")
+  -id int
+    	Collection ID (required)
+  -limit int
+    	At most this many ids (0: the declared ceiling)
+
+Examples:
+  blunderdb collection evaluate --db database.db --id 3
+  blunderdb collection evaluate --db database.db --id 3 --limit 100 --format json
 ```
 
 ### `blunderdb collection export`

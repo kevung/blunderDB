@@ -38,8 +38,14 @@
 </script>
 
 <section class="chart-section study-effect" data-testid="study-effect">
-    <h3 class="section-title">{$t('stats.effectTitle')}</h3>
-    <p class="hint">{$t('stats.effectHint', { n: effect?.MinDecisions ?? 30 })}</p>
+    <h3
+        class="section-title"
+        title="{$t('stats.effectHint', { n: effect?.MinDecisions ?? 30 })}
+
+{$t('stats.effectCaveat')}"
+    >
+        {$t('stats.effectTitle')}
+    </h3>
     {#if $studyLoopLoadingStore}
         <p class="empty-subsection">{$t('stats.loading')}</p>
     {:else if $studyLoopErrorStore}
@@ -77,7 +83,6 @@
     {#if effect?.Unstudied > 0}
         <p class="aside">{$t('stats.effectUnstudied', { n: effect.Unstudied })}</p>
     {/if}
-    <p class="aside">{$t('stats.effectCaveat')}</p>
 </section>
 
 <style>
@@ -86,15 +91,15 @@
     }
 
     .section-title {
-        font-size: var(--font-size-base);
+        font-size: var(--font-size-small);
         font-weight: 600;
         color: var(--color-text-muted);
         text-transform: uppercase;
         letter-spacing: 0.05em;
         margin: 0 0 8px;
+        cursor: help;
     }
 
-    .hint,
     .aside {
         font-size: var(--font-size-small);
         color: var(--color-text-muted);

@@ -89,11 +89,23 @@ export function collectionSource(collectionId) {
 
 /**
  * An Anki deck browsed by windows: the positions its cards link, counted, windowed and ranked by
- * the backend.
+ * the backend. A filter narrows it to the cards one of the deck's counters counts ("new",
+ * "learning", "review", "due", "unseen", "pastDue"), so a number opens exactly what it counts.
  * @param {number} deckId
+ * @param {string} [filter] '' for every card
  * @returns {import('./positionList.js').IdSource}
  */
-export function deckSource(deckId) {
+export function deckSource(deckId, filter = '') {
+    if (filter) {
+        return {
+            count: async () => (await (await database()).CountAnkiDeckFilteredPositions(deckId, filter)) || 0,
+            window: async (offset, limit) => (await (await database()).ListAnkiDeckFilteredPositionIDs(deckId, filter, offset, limit)) || [],
+            indexOf: async (id) => {
+                const index = await (await database()).IndexOfAnkiDeckFilteredPosition(deckId, filter, id);
+                return Number.isInteger(index) ? index : -1;
+            }
+        };
+    }
     return {
         count: async () => (await (await database()).CountAnkiDeckPositions(deckId)) || 0,
         window: async (offset, limit) => (await (await database()).ListAnkiDeckPositionIDs(deckId, offset, limit)) || [],

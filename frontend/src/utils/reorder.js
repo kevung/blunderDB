@@ -23,12 +23,22 @@ export function moveItem(list, from, to) {
     return next;
 }
 
-/** A copy of `list` with the item at `index` moved one step up, or `null` if it is first. */
+/**
+ * A copy of `list` with the item at `index` moved one step up, or `null` if it is first.
+ * @template T
+ * @param {T[] | null | undefined} list
+ * @param {number} index
+ */
 export function moveUp(list, index) {
     return moveItem(list, index, index - 1);
 }
 
-/** A copy of `list` with the item at `index` moved one step down, or `null` if it is last. */
+/**
+ * A copy of `list` with the item at `index` moved one step down, or `null` if it is last.
+ * @template T
+ * @param {T[] | null | undefined} list
+ * @param {number} index
+ */
 export function moveDown(list, index) {
     return moveItem(list, index, index + 1);
 }
@@ -47,7 +57,7 @@ export function moveDown(list, index) {
  * @param {string} [opts.label] Named in the error log ("Error reordering <label>:").
  */
 export function createReorder({ get, set, persist, label = 'items' }) {
-    async function commit(next, from, to) {
+    async function commit(/** @type {T[] | null} */ next, /** @type {number} */ from, /** @type {number} */ to) {
         if (!next) return false;
         set(next, from, to);
         try {
@@ -59,9 +69,9 @@ export function createReorder({ get, set, persist, label = 'items' }) {
     }
     return {
         /** @returns {Promise<boolean>} whether a move happened */
-        moveUp: (index) => commit(moveUp(get(), index), index, index - 1),
-        moveDown: (index) => commit(moveDown(get(), index), index, index + 1),
+        moveUp: (/** @type {number} */ index) => commit(moveUp(get(), index), index, index - 1),
+        moveDown: (/** @type {number} */ index) => commit(moveDown(get(), index), index, index + 1),
         /** dragReorder's onReorder signature. */
-        reorder: (from, to) => commit(moveItem(get(), from, to), from, to)
+        reorder: (/** @type {number} */ from, /** @type {number} */ to) => commit(moveItem(get(), from, to), from, to)
     };
 }

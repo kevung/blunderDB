@@ -5,12 +5,14 @@
  * confirmed answer reaches the backend.
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { answerConfirm } from './confirmHelper.js';
 import { confirmModalStore } from '../services/confirmService.js';
 
 const MATCH = { id: 7, player1_name: 'Alice', player2_name: 'Bob', match_length: 7, match_date: '2026-01-15', game_count: 2 };
+/** @type {unknown[]} */
 const MOVES = [];
 
 // ModalHost brings every application modal, each importing its own bindings: keep them all, stub the ones used here.
@@ -83,12 +85,12 @@ describe('MatchPanel — deleting a match', () => {
             return b;
         });
 
-        await fireEvent.click(del);
+        await fireEvent.click(must(del));
         const message = await answerConfirm(false);
         expect(message).toContain('Alice');
         expect(TrashMatch).not.toHaveBeenCalled();
 
-        await fireEvent.click(del);
+        await fireEvent.click(must(del));
         await answerConfirm(true);
         await vi.waitFor(() => expect(TrashMatch).toHaveBeenCalledWith(7));
     });
@@ -104,20 +106,20 @@ describe('MatchPanel — deleting a match', () => {
             expect(r).not.toBeNull();
             return r;
         });
-        await fireEvent.click(row);
+        await fireEvent.click(must(row));
         const del = container.querySelector('button.icon-btn.delete');
-        await fireEvent.click(del);
+        await fireEvent.click(must(del));
         const dialog = await vi.waitFor(() => {
             const d = document.querySelector('[role="dialog"]');
             expect(d).not.toBeNull();
-            expect(d.contains(document.activeElement)).toBe(true);
+            expect(must(d).contains(document.activeElement)).toBe(true);
             return d;
         });
-        const loadsBefore = GetMatchMovePositions.mock.calls.length;
-        await fireEvent.keyDown(document.activeElement, { key: 'Enter' });
+        const loadsBefore = vi.mocked(GetMatchMovePositions).mock.calls.length;
+        await fireEvent.keyDown(must(document.activeElement), { key: 'Enter' });
         await vi.waitFor(() => expect(TrashMatch).toHaveBeenCalledWith(7));
         await new Promise((r) => setTimeout(r, 50));
-        expect(GetMatchMovePositions.mock.calls.length).toBe(loadsBefore);
-        expect(dialog.isConnected).toBe(false);
+        expect(vi.mocked(GetMatchMovePositions).mock.calls.length).toBe(loadsBefore);
+        expect(must(dialog).isConnected).toBe(false);
     });
 });

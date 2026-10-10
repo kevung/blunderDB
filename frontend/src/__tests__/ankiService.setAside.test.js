@@ -34,7 +34,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     GetAllCollections: vi.fn(() => Promise.resolve([])),
     LoadPositionIDsByFilters: vi.fn(() => Promise.resolve([]))
 }));
-vi.mock('../utils/logger.js', () => ({ logger: { error: vi.fn(), perf: (_n, f) => f() } }));
+vi.mock('../utils/logger.js', () => ({ logger: { error: vi.fn(), perf: (/** @type {number} */ _n, f) => f() } }));
 
 import * as db from '../../wailsjs/go/database/Database.js';
 import { suspendCard, buryCard, removeCard } from '../services/ankiService.js';
@@ -47,8 +47,8 @@ describe('setting a card aside', () => {
     beforeEach(() => {
         vi.clearAllMocks();
         ankiReviewCardStore.set(card);
-        db.GetNextAnkiCard.mockResolvedValue(null);
-        db.GetRandomAnkiCard.mockResolvedValue(null);
+        vi.mocked(db.GetNextAnkiCard).mockResolvedValue(null);
+        vi.mocked(db.GetRandomAnkiCard).mockResolvedValue(null);
     });
 
     test('suspend calls the right backend and never grades', async () => {
@@ -71,7 +71,7 @@ describe('setting a card aside', () => {
 
     test('the session moves on to the next due card', async () => {
         const next = { card: { id: 43 }, position: { id: 101 } };
-        db.GetNextAnkiCard.mockResolvedValue(next);
+        vi.mocked(db.GetNextAnkiCard).mockResolvedValue(next);
         const got = await buryCard(card, deck);
         expect(db.GetNextAnkiCard).toHaveBeenCalledWith(7);
         expect(got).toBe(next);
@@ -86,7 +86,7 @@ describe('setting a card aside', () => {
 
     test('cramming draws at random, never the card just set aside', async () => {
         const next = { card: { id: 44 }, position: { id: 102 } };
-        db.GetRandomAnkiCard.mockResolvedValue(next);
+        vi.mocked(db.GetRandomAnkiCard).mockResolvedValue(next);
         await removeCard(card, deck, { cram: true });
         expect(db.GetRandomAnkiCard).toHaveBeenCalledWith(7, 100);
         expect(db.GetNextAnkiCard).not.toHaveBeenCalled();

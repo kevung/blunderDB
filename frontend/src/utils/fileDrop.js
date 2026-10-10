@@ -26,7 +26,7 @@ export function fileDrop(_node, params) {
         overlayShown = visible;
         current.onOverlayChange(visible);
     }
-    function onDragOver(e) {
+    function onDragOver(/** @type {Event} */ e) {
         e.preventDefault();
         if (!overlayShown) {
             dragCounter++;
@@ -40,7 +40,7 @@ export function fileDrop(_node, params) {
             setOverlay(false);
         }
     }
-    function onDrop(e) {
+    function onDrop(/** @type {Event} */ e) {
         e.preventDefault();
         dragCounter = 0;
         setOverlay(false);

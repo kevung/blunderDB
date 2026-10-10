@@ -6,6 +6,7 @@
  * service. The service is mocked so no Wails backend is needed.
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
@@ -64,13 +65,13 @@ describe('LessonBar', () => {
         lessonStore.set(lesson);
         const { container } = render(LessonBar);
         const [previous, next] = container.querySelectorAll('.actions button');
-        expect(previous.disabled).toBe(true);
-        expect(next.disabled).toBe(false);
+        expect(/** @type {HTMLButtonElement | HTMLInputElement} */ (previous).disabled).toBe(true);
+        expect(/** @type {HTMLButtonElement | HTMLInputElement} */ (next).disabled).toBe(false);
 
         lessonStepIndexStore.set(1);
         await tick();
-        expect(previous.disabled).toBe(false);
-        expect(next.disabled).toBe(true);
+        expect(/** @type {HTMLButtonElement | HTMLInputElement} */ (previous).disabled).toBe(false);
+        expect(/** @type {HTMLButtonElement | HTMLInputElement} */ (next).disabled).toBe(true);
     });
 
     test('the buttons call the reading service', async () => {
@@ -90,15 +91,15 @@ describe('LessonBar', () => {
         lessonDoneStore.set({ 10: '2026-10-04' });
         const { container } = render(LessonBar);
         const box = container.querySelector('.done input');
-        expect(box.checked).toBe(true);
-        expect(container.querySelector('.done-count').textContent).toContain('1');
+        expect(/** @type {HTMLInputElement} */ (must(box)).checked).toBe(true);
+        expect(must(container.querySelector('.done-count')).textContent).toContain('1');
 
         lessonStepIndexStore.set(1);
         await tick();
-        expect(box.checked).toBe(false);
+        expect(/** @type {HTMLInputElement} */ (must(box)).checked).toBe(false);
         // Moving between steps writes nothing.
         expect(service.toggleStepDone).not.toHaveBeenCalled();
-        await fireEvent.click(box);
+        await fireEvent.click(must(box));
         expect(service.toggleStepDone).toHaveBeenCalledWith(11);
     });
 });

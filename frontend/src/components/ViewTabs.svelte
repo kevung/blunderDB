@@ -108,7 +108,7 @@
             {/each}
         </div>
     {/if}
-    <button class="add-btn" onclick={addView} title={$t('viewTabs.newView')}
+    <button class="add-btn" onclick={() => addView()} title={$t('viewTabs.newView')}
         >+{#if $views.length <= 1}<span class="add-label">{$t('viewTabs.newView')}</span>{/if}</button
     >
 </div>

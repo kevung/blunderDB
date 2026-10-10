@@ -6,6 +6,7 @@
  * throughout. A card whose position has no stored analysis says so plainly
  * instead of offering a mask that reveals nothing.
  */
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
@@ -121,7 +122,7 @@ describe('the answer of a review card', () => {
         const { container } = render(AnkiPanel);
         await settle();
 
-        await fireEvent.click(container.querySelector('.answer-masked'));
+        await fireEvent.click(must(container.querySelector('.answer-masked')));
         await settle();
 
         expect(container.querySelector('.answer-masked')).toBeNull();
@@ -136,7 +137,7 @@ describe('the answer of a review card', () => {
         expect(container.querySelector('.explanation')).toBeNull();
         expect(ExplainDecision).not.toHaveBeenCalledWith(10, '24/18 13/12');
 
-        await fireEvent.click(container.querySelector('.answer-masked'));
+        await fireEvent.click(must(container.querySelector('.answer-masked')));
         await settle();
 
         expect(ExplainDecision).toHaveBeenCalledWith(10, '24/18 13/12');
@@ -148,7 +149,7 @@ describe('the answer of a review card', () => {
         reviewing(CHECKER_ANALYSIS);
         const { container } = render(AnkiPanel);
         await settle();
-        await fireEvent.click(container.querySelector('.answer-masked'));
+        await fireEvent.click(must(container.querySelector('.answer-masked')));
         await settle();
 
         expect(container.querySelector('.explanation')).toBeNull();
@@ -160,7 +161,7 @@ describe('the answer of a review card', () => {
         await settle();
 
         expect(container.querySelector('.answer-masked')).not.toBeNull();
-        await fireEvent.click(container.querySelector('.answer-masked'));
+        await fireEvent.click(must(container.querySelector('.answer-masked')));
         await settle();
 
         expect(container.querySelectorAll('table').length).toBeGreaterThan(0);
@@ -175,7 +176,7 @@ describe('the answer of a review card', () => {
         expect(container.querySelector('.answer-masked')).not.toBeNull();
         const buttons = container.querySelectorAll('.btn-rating');
         expect(buttons).toHaveLength(4);
-        for (const b of buttons) expect(b.disabled).toBe(false);
+        for (const b of buttons) expect(/** @type {HTMLButtonElement | HTMLInputElement} */ (b).disabled).toBe(false);
     });
 
     test('the grading strip sits above the answer, and only the answer scrolls', async () => {
@@ -184,7 +185,7 @@ describe('the answer of a review card', () => {
         await settle();
 
         const body = container.querySelector('.review-body');
-        const children = [...body.children];
+        const children = [...must(body).children];
         expect(children[0].classList.contains('review-strip')).toBe(true);
         expect(children[1].classList.contains('review-answer')).toBe(true);
     });
@@ -202,7 +203,7 @@ describe('the answer of a review card', () => {
         reviewing(CHECKER_ANALYSIS);
         const first = render(AnkiPanel);
         await settle();
-        await fireEvent.click(first.container.querySelector('.answer-masked'));
+        await fireEvent.click(must(first.container.querySelector('.answer-masked')));
         await settle();
         expect(get(ankiAnswerShownStore)).toBe(true);
         cleanup();
@@ -223,7 +224,7 @@ describe('the answer of a review card', () => {
         await settle();
         expect(get(selectedMoveStore)).toBe('13/7 8/7');
 
-        await fireEvent.click(container.querySelector('.btn-back'));
+        await fireEvent.click(must(container.querySelector('.btn-back')));
         await settle();
         expect(get(selectedMoveStore)).toBeNull();
         expect(get(ankiAnswerShownStore)).toBe(false);

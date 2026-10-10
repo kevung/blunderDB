@@ -13,6 +13,7 @@
  * irrelevant here, only the contextmenu handler and the menu it renders are.
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, cleanup, screen } from '@testing-library/svelte';
 import { tick } from 'svelte';
@@ -82,7 +83,7 @@ async function rightClickBoard() {
     await tick();
     const canvas = document.getElementById('backgammon-board');
     const event = new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 120, clientY: 80 });
-    canvas.dispatchEvent(event);
+    must(canvas).dispatchEvent(event);
     await tick();
     return event;
 }
@@ -111,7 +112,7 @@ describe('Board context menu', () => {
         item.click();
 
         expect(sendPositionToEval).toHaveBeenCalledTimes(1);
-        expect(sendPositionToEval.mock.calls[0][0].id).toBe(42);
+        expect(vi.mocked(sendPositionToEval).mock.calls[0][0].id).toBe(42);
     });
 
     test('offers "evaluate the mirror of this position", sending the mirrored board', async () => {
@@ -120,7 +121,7 @@ describe('Board context menu', () => {
         screen.getByRole('menuitem', { name: 'Evaluate the mirror of this position' }).click();
 
         expect(sendPositionToEval).toHaveBeenCalledTimes(1);
-        const sent = sendPositionToEval.mock.calls[0][0];
+        const sent = vi.mocked(sendPositionToEval).mock.calls[0][0];
         // player_on_roll flips under mirroring; the position stays the one on
         // screen (id preserved) but the checkers are swapped.
         expect(sent.player_on_roll).toBe(1);

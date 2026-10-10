@@ -49,7 +49,7 @@ Position
    "b", "Mettre la position affichée sur la Pile (collection « à revoir plus tard »), ou l'en retirer."
    "Double-clic hors du plateau", "Mettre la position affichée sur la Pile, ou l'en retirer, dans tous les modes."
    "Clic droit hors du plateau (édition, Eval)", "Ouvrir le menu du plateau : *Effacer la position*, comme RETOUR ARRIERE, ou *Position de départ*."
-   "Clic droit sur le plateau (coup joué au plateau)", "Ouvrir le menu du plateau, qui commence par *Recommencer* : le coup est remis à zéro, pas la position."
+   "Clic droit sur le plateau (coup joué au plateau)", "Reprendre tout le coup depuis le début, la position inchangée. Tant qu'aucun pas n'est joué, le menu du plateau s'ouvre comme d'habitude."
 
 .. _raccourcis_navigation:
 
@@ -77,8 +77,8 @@ Tant qu'une question du :ref:`panneau Entraînement <panneau_entrainement>` est
 posée sur le plateau, les touches qui parcourent la liste ne la font pas
 défiler : la question garde le plateau. Sur une décision de pions, le panneau
 ayant le focus : RETOUR ARRIÈRE défait le dernier pas, ÉCHAP recommence le coup,
-ENTRÉE le valide quand il est complet ; dans le champ de notation, ENTRÉE valide
-le coup tapé (``13/7 8/7``).
+ENTRÉE le valide quand il est complet, comme un clic sur les dés ; dans le champ
+de notation, ENTRÉE valide le coup tapé (``13/7 8/7``).
 
 .. _raccourcis_affichage:
 
@@ -93,6 +93,7 @@ Affichage
    "CTRL-GAUCHE", "Orientation du board à gauche."
    "CTRL-DROITE", "Orientation du board à droite."
    "p", "Afficher/cacher le compte de course."
+   "m", "Activer/désactiver le défi : l'analyse du panneau Analyse est masquée jusqu'à un clic, à chaque position."
 
 .. _raccourcis_modes:
 
@@ -157,10 +158,10 @@ Duel au plateau
 
    "Clic sur le plateau ou sur les dés (avant le lancer)", "Lancer les dés. Le videau garde son sens : il propose de doubler."
    "Clic sur le videau (avant le lancer)", "Proposer de doubler ; « Doubler » ou « Annuler » confirme sur le plateau."
-   "Clic sur un pion", "Le jouer avec le dé de gauche encore libre, ou avec l'autre si celui-ci ne peut pas le jouer. Un dé joué est grisé."
+   "Clic sur un pion", "Le jouer aussitôt avec le dé de gauche encore libre, ou avec l'autre si celui-ci ne peut pas le jouer. Un dé joué est grisé ; le coup complet grise tous les dés."
    "Glisser un pion", "Le jouer vers le point où il est lâché, si un coup légal le permet."
-   "Clic sur les dés (coup en cours)", "Aucun dé joué : intervertir leur ordre. Coup complet : le valider."
-   "Clic droit sur le plateau (coup en cours)", "Reprendre tous les pions joués ; sans pion joué, intervertir les dés."
+   "Clic sur les dés (coup en cours)", "Coup complet : le valider. Sinon : intervertir les dés restant à jouer."
+   "Clic droit sur le plateau (coup en cours)", "Reprendre tous les pions joués ; sans pion joué, ouvrir le menu du Duel."
    "Clic droit hors du plateau, ou hors de son coup", "Ouvrir le menu du Duel : Pile, abandon, suspension, arrêt."
 
 .. _raccourcis_vues:
@@ -293,6 +294,7 @@ Panneau Anki (répétition espacée)
    :align: center
 
    "ESPACE, Clic", "Afficher la réponse (l'analyse enregistrée de la position)."
+   "ENTRÉE", "Valider le coup joué au plateau (réponse au damier), comme un clic sur les dés."
    "1", "Évaluer : À revoir (échec, revoir bientôt)."
    "2", "Évaluer : Difficile."
    "3", "Évaluer : Bien."
@@ -382,10 +384,9 @@ veille ne demande pas la souris.
    "Clic (sur une ligne)", "Sélectionner ce candidat."
    "Double-clic (sur une ligne)", "Valider ce candidat."
    "Clic (sur le triangle des jets)", "Saisir le jet d'un seul geste : la case porte les deux dés, doubles sur la diagonale. Sur le premier coup d'une partie, le triangle laisse la place à une rangée de six dés, un clic donnant le dé d'un camp."
-   "Clic, glisser (aucun dé saisi)", "Jouer le coup directement sur le damier : le pion va du point cliqué à sa destination, contraint aux coups légaux, et les deux dés se déduisent des pas joués."
-   "Clic, glisser (jet saisi)", "Jouer le coup sur le damier, contraint aux coups légaux de ce jet : chaque pas joué ne garde dans la liste que les candidats qui le contiennent, et un coup légal achevé est enregistré aussitôt. Sur une action relue, il la remplace."
+   "Clic, glisser (jet saisi)", "Jouer le coup sur le damier, contraint aux coups légaux de ce jet : un clic joue le pion du dé de gauche, un glissé le pose sur sa destination, et chaque pas ne garde dans la liste que les candidats qui le contiennent. Sans jet saisi, le damier ne joue rien."
    "Glisser hors des règles (jet saisi)", "Poser le pion là où il est lâché, même depuis un point d'où aucun coup légal ne part, pour transcrire un coup illégal. La suite du coup se joue librement, au clic comme au glissé, et la liste des candidats cède la place à une ligne qui le rappelle."
-   "ENTREE (coup hors des règles)", "Enregistrer le coup avec les dés saisis et le plateau obtenu, marqué coup illégal si aucun coup légal n'atteint ce plateau. Un coup hors des règles n'est jamais enregistré de lui-même."
+   "Clic sur les dés, ENTREE (coup achevé)", "Enregistrer le coup achevé avec les dés saisis — et, hors des règles, le plateau obtenu, marqué coup illégal si aucun coup légal n'atteint ce plateau. Le jet suivant, chiffre ou case du triangle, l'enregistre aussi. Sur une action relue, il la remplace. Un coup n'est jamais enregistré de lui-même."
    "RETOUR ARRIERE (coup en cours au plateau)", "Défaire le dernier pas joué au plateau. Les pas restants sont rejoués contraints tant qu'un coup légal les contient : défaire le seul pas hors des règles rend la liste."
    "ENTREE", "Valider le coup sélectionné (dernier coup d'une partie)."
    "RETOUR ARRIERE", "Effacer les deux dés saisis. C'est par là que passe la reprise d'un jet mal lu, puisqu'un chiffre valide."
@@ -511,5 +512,5 @@ Panneau d'aide
    "ESPACE", "Page suivante."
    "Page préc.", "Haut du contenu."
    "Page suiv.", "Bas du contenu."
-   "/", "Chercher dans l'aide : Entrée passe à l'occurrence suivante, MAJ-Entrée à la précédente."
+   "/", "Chercher dans l'aide : les occurrences sont comptées et surlignées à la frappe ; Entrée passe à l'occurrence suivante, MAJ-Entrée à la précédente."
    "?, CTRL-F, Esc", "Fermer l'aide."

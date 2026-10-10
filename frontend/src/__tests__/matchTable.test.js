@@ -1,3 +1,4 @@
+import { must } from './helpers/must.js';
 import { describe, test, expect } from 'vitest';
 import {
     compareValues,
@@ -209,9 +210,9 @@ describe('MATCH_STAT_ROWS', () => {
 
     test('overall PR row formats the sample correctly', () => {
         const overall = MATCH_STAT_ROWS.find((r) => r.label === 'match.overallPr');
-        expect(overall.fmt(sample)).toBe('4.50');
-        expect(overall.valClass).toBe('pr-val');
-        expect(overall.bullet).toBe(true);
+        expect(must(overall).fmt(sample)).toBe('4.50');
+        expect(must(overall).valClass).toBe('pr-val');
+        expect(must(overall).bullet).toBe(true);
     });
 });
 
@@ -224,8 +225,8 @@ describe('Transcript marks (#287)', () => {
             { move_id: 4, error_mp: 5, grade: 'something else' }
         ]);
         expect([...byMove.keys()]).toEqual([2, 3]);
-        expect(GRADE_MARKS[byMove.get(2).grade]).toBe('?');
-        expect(GRADE_MARKS[byMove.get(3).grade]).toBe('??');
+        expect(GRADE_MARKS[must(byMove.get(2)).grade]).toBe('?');
+        expect(GRADE_MARKS[must(byMove.get(3)).grade]).toBe('??');
     });
 
     test('a missing list indexes nothing', () => {

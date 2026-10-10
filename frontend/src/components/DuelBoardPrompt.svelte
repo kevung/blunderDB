@@ -26,7 +26,6 @@
         human: humanSide($duelStore?.state),
         animating: $duelAnimatingStore,
         play: $quizPlayStore,
-        swapped: $duelBoardStore.swapped,
         prompt: $duelBoardStore.prompt
     });
     let prompt = $derived(boardPrompt(ctx));

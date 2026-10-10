@@ -14,17 +14,22 @@ import { writable } from 'svelte/store';
 export const libraryCountsStore = writable(null);
 
 /** Rafraîchit le compteur ; sans base ouverte il disparaît plutôt que de garder d'anciens chiffres. */
+let refreshSeq = 0;
+
 export async function refreshLibraryCounts() {
+    // Une réponse n'est appliquée que si aucun rafraîchissement plus récent n'a démarré.
+    const seq = ++refreshSeq;
     const { get } = await import('svelte/store');
     const { databasePathStore } = await import('./databaseStore.js');
     if (!get(databasePathStore)) {
-        libraryCountsStore.set(null);
+        if (seq === refreshSeq) libraryCountsStore.set(null);
         return;
     }
     try {
         const { GetDatabaseStatsEstimate } = await import('../../wailsjs/go/database/Database.js');
         const { loadLibrarySettings } = await import('../services/librarySettingsService.js');
         const [stats, settings] = await Promise.all([GetDatabaseStatsEstimate().then((s) => s || {}), loadLibrarySettings()]);
+        if (seq !== refreshSeq) return;
         libraryCountsStore.set({
             positions: Number(stats.position_count || 0),
             blunders: stats.blunder_count == null ? null : Number(stats.blunder_count),
@@ -38,12 +43,12 @@ export async function refreshLibraryCounts() {
     } catch {
         // Un compteur est un confort : s'il échoue, il s'efface au lieu de
         // s'interposer.
-        libraryCountsStore.set(null);
+        if (seq === refreshSeq) libraryCountsStore.set(null);
     }
 }
 
 /** Le nombre tel qu'on l'affiche : « ≈ » devant une estimation, « ? » quand il n'est pas connu. */
-export function formatCount(n, approximate = false) {
+export function formatCount(/** @type {number} */ n, approximate = false) {
     if (n == null) return '?';
     return approximate ? `≈ ${n}` : String(n);
 }

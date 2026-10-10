@@ -234,6 +234,10 @@ export function CorrectResult(arg1, arg2, arg3, arg4, arg5, arg6) {
   return window['go']['database']['Database']['CorrectResult'](arg1, arg2, arg3, arg4, arg5, arg6);
 }
 
+export function CountAnkiDeckFilteredPositions(arg1, arg2) {
+  return window['go']['database']['Database']['CountAnkiDeckFilteredPositions'](arg1, arg2);
+}
+
 export function CountAnkiDeckPositions(arg1) {
   return window['go']['database']['Database']['CountAnkiDeckPositions'](arg1);
 }
@@ -296,6 +300,10 @@ export function CreateDuel(arg1) {
 
 export function CreateLesson(arg1, arg2) {
   return window['go']['database']['Database']['CreateLesson'](arg1, arg2);
+}
+
+export function CreateLivingCollection(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['CreateLivingCollection'](arg1, arg2, arg3);
 }
 
 export function CreateRencontre(arg1, arg2, arg3, arg4) {
@@ -452,6 +460,10 @@ export function EnterResult(arg1, arg2, arg3, arg4, arg5, arg6) {
 
 export function EntrySuggestions() {
   return window['go']['database']['Database']['EntrySuggestions']();
+}
+
+export function EvaluateCollection(arg1, arg2) {
+  return window['go']['database']['Database']['EvaluateCollection'](arg1, arg2);
 }
 
 export function ExplainDecision(arg1, arg2) {
@@ -690,6 +702,10 @@ export function GetRencontre(arg1) {
   return window['go']['database']['Database']['GetRencontre'](arg1);
 }
 
+export function GetStatsBreakdownPositionCounts(arg1) {
+  return window['go']['database']['Database']['GetStatsBreakdownPositionCounts'](arg1);
+}
+
 export function GetStatsDateRange() {
   return window['go']['database']['Database']['GetStatsDateRange']();
 }
@@ -790,6 +806,10 @@ export function ImportXGPPosition(arg1) {
   return window['go']['database']['Database']['ImportXGPPosition'](arg1);
 }
 
+export function IndexOfAnkiDeckFilteredPosition(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['IndexOfAnkiDeckFilteredPosition'](arg1, arg2, arg3);
+}
+
 export function IndexOfAnkiDeckPosition(arg1, arg2) {
   return window['go']['database']['Database']['IndexOfAnkiDeckPosition'](arg1, arg2);
 }
@@ -828,6 +848,10 @@ export function LessonDoneSteps(arg1) {
 
 export function ListAliases(arg1) {
   return window['go']['database']['Database']['ListAliases'](arg1);
+}
+
+export function ListAnkiDeckFilteredPositionIDs(arg1, arg2, arg3, arg4) {
+  return window['go']['database']['Database']['ListAnkiDeckFilteredPositionIDs'](arg1, arg2, arg3, arg4);
 }
 
 export function ListAnkiDeckPositionIDs(arg1, arg2, arg3) {

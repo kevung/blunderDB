@@ -57,7 +57,7 @@ describe('CommentPanel — no infinite effect loop on mount', () => {
 
 describe('CommentPanel — thread of a position', () => {
     test('lists every author, the user own comments first', async () => {
-        GetCommentsByPosition.mockResolvedValue([
+        vi.mocked(GetCommentsByPosition).mockResolvedValue([
             { id: 1, positionId: 7, text: 'from Bob', author: 'Bob', origin: 'user', createdAt: '2026-01-01 10:00:00' },
             { id: 2, positionId: 7, text: 'from Alice', author: 'Alice', origin: 'user', createdAt: '2026-01-02 10:00:00' }
         ]);

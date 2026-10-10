@@ -548,14 +548,16 @@ const USED_DIE_OPACITY = 0.35;
  * @param {BoardMetrics} geom
  * @param {BoardConfig} cfg
  * @param {BoardPosition} position
- * @param {boolean[] | null} [used] a die already played is drawn faded (a Duel's move)
+ * @param {(boolean|number)[] | null} [used] how much of each die is played, drawn faded: true or 1
+ *   fully, 0.5 half (a double's die after its first step)
  */
 export function drawDice(two, geom, cfg, position, used = null) {
     const side = sideLayout(geom, cfg, position.player_on_roll);
     const { diceSize, diceGap, diceY } = side;
     position.dice.forEach((die, index) => {
         const dieX = side.diceX + index * (diceSize + diceGap);
-        const opacity = used?.[index] ? USED_DIE_OPACITY : 1;
+        const spent = used?.[index] === true ? 1 : Number(used?.[index] ?? 0) || 0;
+        const opacity = 1 - spent * (1 - USED_DIE_OPACITY);
         const face = two.makeRectangle(dieX, diceY, diceSize, diceSize);
         face.fill = cfg.dice.fill;
         face.stroke = cfg.stroke; // follows the board border colour
@@ -664,54 +666,14 @@ export function drawMoveArrows(two, geom, cfg, position, moves) {
 }
 
 /**
- * Les points qu'offre le coup en cours (Duel, transcription) : un anneau autour du pion choisi,
- * un disque là où il irait — rien d'autre que `quizPlayTargetsStore`. Les pions jouables ne sont
- * pas marqués : presque tous le sont à chaque jet. Dessiné après les pions (sinon invisible) et avant les flèches.
- *
- * @param {Surface} two
- * @param {BoardMetrics} geom
- * @param {BoardConfig} cfg
- * @param {BoardPosition} position
- * @param {{targets?: Iterable<number>, selected?: number|null}} opts
- */
-export function drawPlayHighlights(two, geom, cfg, position, opts = {}) {
-    const targets = [...(opts.targets ?? [])];
-    const selected = opts.selected ?? null;
-    if (selected === null && targets.length === 0) return;
-
-    const cs = geom.checkerSize;
-    const radius = cs * 0.42;
-    const count = (/** @type {number} */ point) => (point === BEAROFF_POINT ? 0 : (position.board.points[point]?.checkers ?? 0));
-
-    for (const point of targets) {
-        const centre = stackSlotCenter(geom, cfg, point, Math.min(count(point), 4));
-        if (!centre) continue;
-        const disc = two.makeCircle(centre.x, centre.y, radius);
-        disc.fill = 'rgba(255, 214, 102, 0.38)';
-        disc.stroke = 'rgba(255, 214, 102, 0.9)';
-        disc.linewidth = Math.max(cs * 0.06, 1.5);
-    }
-
-    if (selected !== null) {
-        const centre = stackSlotCenter(geom, cfg, selected, Math.min(Math.max(count(selected) - 1, 0), 4));
-        if (centre) {
-            const ring = two.makeCircle(centre.x, centre.y, radius);
-            ring.fill = 'transparent';
-            ring.stroke = 'rgba(255, 107, 107, 0.95)';
-            ring.linewidth = Math.max(cs * 0.12, 2);
-        }
-    }
-}
-
-/**
  * Everything that depends on the position. `opts`: offeredCube, showPipcount, moves (arrows),
- * play (highlights of the move in progress). Returns the cube's box for hit-testing.
+ * Returns the cube's box for hit-testing.
  *
  * @param {Surface} two
  * @param {BoardMetrics} geom
  * @param {BoardConfig} cfg
  * @param {BoardPosition} position
- * @param {{ text?: SceneText, offeredCube?: boolean, showPipcount?: boolean, diceUsed?: boolean[] | null, moves?: StepMove[] | null, play?: { targets?: Iterable<number>, selected?: number | null } }} [opts]
+ * @param {{ text?: SceneText, offeredCube?: boolean, showPipcount?: boolean, diceUsed?: (boolean|number)[] | null, moves?: StepMove[] | null}} [opts]
  * @returns {CubeBox}
  */
 export function drawDynamicScene(two, geom, cfg, position, opts = {}) {
@@ -721,7 +683,6 @@ export function drawDynamicScene(two, geom, cfg, position, opts = {}) {
     if (opts.showPipcount) drawPipCounts(two, geom, position, opts.text);
     drawDice(two, geom, cfg, position, opts.diceUsed ?? null);
     drawScores(two, geom, cfg, position, opts.text);
-    drawPlayHighlights(two, geom, cfg, position, opts.play ?? {});
     drawMoveArrows(two, geom, cfg, position, opts.moves);
     return box;
 }

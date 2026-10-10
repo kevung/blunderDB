@@ -46,7 +46,7 @@
     );
 
     /** Value a row sorts by for a given column; null means "nothing measured". */
-    function sortValue(row, key) {
+    function sortValue(/** @type {any} */ row, /** @type {string} */ key) {
         switch (key) {
             case 'name':
                 return row.name?.toLowerCase() ?? '';
@@ -95,13 +95,13 @@
     });
 
     /** A rate with nothing behind it is shown as unknown, never as a zero. */
-    function fmtRate(value, known) {
+    function fmtRate(/** @type {number|null|undefined} */ value, /** @type {boolean} */ known) {
         if (!known || value == null || isNaN(value)) return '—';
         return value.toFixed(2);
     }
 
     /** Luck, in signed millipoints per measured roll. */
-    function fmtLuck(row) {
+    function fmtLuck(/** @type {any} */ row) {
         if (!row.luck_known) return '—';
         const v = row.luck_rate_mp;
         return (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(1);
@@ -123,12 +123,12 @@
         if (compared.some((n) => !names.has(n))) compared = compared.filter((n) => names.has(n));
     });
 
-    function selectPlayer(name) {
+    function selectPlayer(/** @type {string} */ name) {
         statsFilterStore.update((f) => ({ ...f, playerName: name }));
         onSelectPlayer?.(name);
     }
 
-    function onRowKey(event, name) {
+    function onRowKey(/** @type {KeyboardEvent} */ event, /** @type {string} */ name) {
         if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
             selectPlayer(name);
@@ -149,7 +149,7 @@
             {columns}
             bind:sort
             pointerRows
-            rowAttrs={(row) => ({ tabindex: 0, role: 'button', title: $t('stats.playersRowHint', { name: row.name }), onkeydown: (e) => onRowKey(e, row.name) })}
+            rowAttrs={(row) => ({ tabindex: 0, role: 'button', title: $t('stats.playersRowHint', { name: row.name }), onkeydown: (/** @type {KeyboardEvent} */ e) => onRowKey(e, row.name) })}
             onSelect={(row) => selectPlayer(row.name)}
         >
             {#snippet cells(row)}

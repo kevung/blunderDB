@@ -94,6 +94,7 @@
     import { initMCPHost } from './services/mcpHostService.js';
     import { initTheme } from './stores/themeStore.js';
 
+    /** @type {HTMLElement | undefined} */
     let mainArea;
     // The Direction view (and everything under direction/) is a separate chunk,
     // fetched the first time the Tournoi tab shows it; the board stays up meanwhile.
@@ -130,6 +131,7 @@
     let showDropOverlay = $state(false);
     // Écarté pour la session : le panneau Eval fonctionne sans base.
     let positionCount = 0;
+    /** @type {ReturnType<typeof setTimeout> | null} */
     let saveSessionTimeout = null;
     let tabInitialized = false;
     let previousTab = '';
@@ -230,11 +232,11 @@
     // ── UI event handlers ──────────────────────────────────────────
 
     // Resize-handle drag (utils/resizeHandle.js).
-    function setPanelSize(size, side) {
+    function setPanelSize(/** @type {number} */ size, side) {
         if (side) panelWidth = size;
         else panelHeight = size;
     }
-    function savePanelSize(size, side) {
+    function savePanelSize(/** @type {number} */ size, side) {
         if (side) savePanelWidth(size);
         else rememberPanelHeight(size);
     }
@@ -242,7 +244,7 @@
     // A trackpad fires many wheel events per gesture, each a Wails round trip; 60 ms between
     // navigations keeps one gesture to a handful of steps.
     let lastWheelNavTime = 0;
-    function handleWheel(event) {
+    function handleWheel(/** @type {WheelEvent} */ event) {
         if ($isAnyModalOpen || $statusBarModeStore === 'EDIT' || $statusBarModeStore === 'EVAL' || $duelHoldsBoardStore) return;
         // La page Direction remplace le plateau dans la même zone : la molette y défile.
         if (!isOnBoard(event.target)) return;

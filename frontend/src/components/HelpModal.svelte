@@ -3,11 +3,11 @@
     import Modal from './Modal.svelte';
     import { logger } from '../utils/logger.js';
     import { isBareLetter } from '../utils/keys.js';
-    import { onMount, tick } from 'svelte';
+    import { onMount, onDestroy, tick } from 'svelte';
     import { metaStore } from '../stores/metaStore'; // Import metaStore
     import { t, language } from '../i18n';
     import { help, loadHelpFor } from '../i18n/help/index.js';
-    import { findInHelp } from '../utils/helpSearch.js';
+    import { createHelpIndex } from '../utils/helpSearch.js';
     import { GetDatabaseVersion } from '../../wailsjs/go/database/Database'; // Correct import path
 
     let { visible = false, onClose } = $props();
@@ -22,8 +22,9 @@
     // appVersion/dbVersion are spliced into raw HTML below ({@html}); escape them even
     // though today's sources (metaStore, GetDatabaseVersion()) are trusted, so a future
     // caller can't turn this interpolation into an XSS hole without also touching this line.
+    /** @param {unknown} value */
     function escapeHtml(value) {
-        return String(value).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+        return String(value).replace(/[&<>"']/g, (/** @type {string} */ c) => /** @type {Record<string, string>} */ ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
     }
 
     let aboutHtml = $derived(($help.about || '').replace(/\{appVersion\}/g, escapeHtml(applicationVersion)).replace(/\{dbVersion\}/g, escapeHtml(databaseVersion)));
@@ -43,48 +44,93 @@
 
     // Search: Enter steps to the next occurrence, Shift+Enter to the previous one. The match
     // is shown as the page's own selection, so no markup is added to the generated corpus.
+    const SEARCH_DEBOUNCE_MS = 50;
     let searchQuery = $state('');
     let searchInput = $state();
     let matchCount = $state(0);
     let matchIndex = $state(0);
-    let matches = [];
+    // Every occurrence is counted, but a one-letter query would paint tens of thousands of
+    // ranges for nothing a reader can use: the highlight stops at a cap, stepping reaches the rest.
+    const HIGHLIGHT_CAP = 500;
+    /** @type {{ count: number, ranges: Range[], at: (i: number) => Range | null }} */
+    let found = { count: 0, ranges: [], at: () => null };
+    /** @type {ReturnType<typeof createHelpIndex> | null} */
+    let helpIndex = null;
+    // The index holds the text nodes of what is on screen: a new tab, language or corpus replaces them.
+    $effect(() => {
+        void [$help, activeTab, $language, aboutHtml];
+        helpIndex = null;
+    });
 
+    /** @param {number} index */
     function showMatch(index) {
-        if (matches.length === 0) return;
-        matchIndex = (index + matches.length) % matches.length;
-        const range = matches[matchIndex];
+        if (found.count === 0) return;
+        matchIndex = (index + found.count) % found.count;
+        const range = found.at(matchIndex);
+        if (!range) return;
         const selection = window.getSelection();
         selection?.removeAllRanges();
         selection?.addRange(range);
         range.startContainer.parentElement?.scrollIntoView?.({ block: 'center' });
     }
 
-    function runSearch() {
-        matches = findInHelp(contentArea, searchQuery);
-        matchCount = matches.length;
-        // Typing only counts: moving the page's selection under the caret would cut the word short.
-        matchIndex = -1;
+    // Highlights go through the CSS Custom Highlight API: unlike the page selection they do not
+    // pull focus from the field, so every keystroke can refresh them.
+    const HIGHLIGHT = 'help-search';
+    function paintMatches() {
+        if (typeof CSS === 'undefined' || !CSS.highlights || typeof Highlight === 'undefined') return;
+        if (found.count === 0) CSS.highlights.delete(HIGHLIGHT);
+        else CSS.highlights.set(HIGHLIGHT, new Highlight(...found.ranges));
     }
 
+    function runSearch() {
+        clearTimeout(searchTimer);
+        searchPending = false;
+        helpIndex ??= createHelpIndex(contentArea);
+        found = helpIndex.search(searchQuery, HIGHLIGHT_CAP);
+        matchCount = found.count;
+        // Typing only counts and paints: moving the page's selection under the caret would cut the word short.
+        matchIndex = -1;
+        paintMatches();
+        found.ranges[0]?.startContainer.parentElement?.scrollIntoView?.({ block: 'center' });
+    }
+
+    /** @type {ReturnType<typeof setTimeout> | undefined} */
+    let searchTimer;
+    let searchPending = false;
+    function onSearchInput() {
+        clearTimeout(searchTimer);
+        searchPending = true;
+        searchTimer = setTimeout(runSearch, SEARCH_DEBOUNCE_MS);
+    }
+    onDestroy(() => {
+        clearTimeout(searchTimer);
+        if (typeof CSS !== 'undefined' && CSS.highlights) CSS.highlights.delete(HIGHLIGHT);
+    });
+
+    /** @param {KeyboardEvent} event */
     function onSearchKeyDown(event) {
         if (event.key === 'Enter') {
             event.preventDefault();
-            if (matches.length === 0) runSearch();
+            if (searchPending || found.count === 0) runSearch();
             showMatch(matchIndex < 0 ? (event.shiftKey ? -1 : 0) : matchIndex + (event.shiftKey ? -1 : 1));
         }
         // Everything else a field needs (letters, arrows, Escape for Modal) is left alone.
         if (event.key !== 'Escape') event.stopPropagation();
     }
 
+    /** @param {string} tab */
     function switchTab(tab) {
         activeTab = tab;
-        matches = [];
+        found = { count: 0, ranges: [], at: () => null };
         matchCount = 0;
+        paintMatches();
         if (searchQuery) tick().then(runSearch);
     }
 
     // Every key pressed while the help is open belongs to it. Escape is Modal's; the
     // rest is handled here and stopped so the global dispatcher never sees it.
+    /** @param {KeyboardEvent} event */
     function handleKeyDown(event) {
         if (event.target === searchInput) return;
         if (event.key === '/' && !event.ctrlKey) {
@@ -125,12 +171,14 @@
         }
     }
 
+    /** @param {number} direction */
     function navigateTabs(direction) {
         const currentIndex = tabs.indexOf(activeTab);
         const newIndex = (currentIndex + direction + tabs.length) % tabs.length;
         switchTab(tabs[newIndex]);
     }
 
+    /** @param {number | 'bottom' | 'top' | 'page'} direction */
     function scrollContent(direction) {
         if (contentArea) {
             const scrollAmount = 60; // Pixels to scroll per key press
@@ -169,7 +217,7 @@
             type="search"
             bind:this={searchInput}
             bind:value={searchQuery}
-            oninput={runSearch}
+            oninput={onSearchInput}
             onkeydown={onSearchKeyDown}
             placeholder={$t('help.searchPlaceholder')}
             aria-label={$t('help.searchPlaceholder')}
@@ -237,6 +285,11 @@
     .tab-header button.active {
         background-color: var(--color-border);
         font-weight: bold;
+    }
+
+    :global(::highlight(help-search)) {
+        background: #ffd54a;
+        color: #000;
     }
 
     .help-search {

@@ -16,16 +16,16 @@ const openDatabase = vi.fn(() => Promise.resolve());
 const openDatabaseByPath = vi.fn(() => Promise.resolve());
 const loadDemoDatabase = vi.fn(() => Promise.resolve());
 vi.mock('../services/databaseService.js', () => ({
-    newDatabase: (...a) => newDatabase(...a),
-    openDatabase: (...a) => openDatabase(...a),
-    openDatabaseByPath: (...a) => openDatabaseByPath(...a),
-    loadDemoDatabase: (...a) => loadDemoDatabase(...a),
+    newDatabase: (/** @type {any[]} */ ...a) => newDatabase(...a),
+    openDatabase: (/** @type {any[]} */ ...a) => openDatabase(...a),
+    openDatabaseByPath: (/** @type {any[]} */ ...a) => openDatabaseByPath(...a),
+    loadDemoDatabase: (/** @type {any[]} */ ...a) => loadDemoDatabase(...a),
     setStatusBarMessage: vi.fn()
 }));
 
 const importPosition = vi.fn(() => Promise.resolve());
 vi.mock('../services/importService.js', () => ({
-    importPosition: (...a) => importPosition(...a)
+    importPosition: (/** @type {any[]} */ ...a) => importPosition(...a)
 }));
 
 let lastPath = '';

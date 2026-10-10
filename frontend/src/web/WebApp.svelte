@@ -67,7 +67,7 @@
         });
     }
 
-    async function grade(rating) {
+    async function grade(/** @type {number} */ rating) {
         await run(async () => {
             await call('anki.reviewCard', { cardId: card.card.id, rating });
             // L'autre moitié d'une décision de videau vient tout de suite

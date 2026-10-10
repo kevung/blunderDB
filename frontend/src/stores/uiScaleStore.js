@@ -12,7 +12,7 @@ export const UI_SCALE_STEP = 10;
 export const uiScaleStore = writable(DEFAULT_UI_SCALE);
 
 // Coerce any value into a valid, integral percentage within bounds.
-function sanitize(scale) {
+function sanitize(/** @type {number} */ scale) {
     const n = Math.round(Number(scale));
     if (!Number.isFinite(n) || n === 0) return DEFAULT_UI_SCALE;
     return Math.min(MAX_UI_SCALE, Math.max(MIN_UI_SCALE, n));
@@ -20,7 +20,7 @@ function sanitize(scale) {
 
 // Push the scale into the DOM via the CSS variable consumed by .main-container.
 // This is cheap (a single reflow) and is safe to call on every slider tick.
-function applyVar(scale) {
+function applyVar(/** @type {number} */ scale) {
     if (typeof document === 'undefined') return;
     document.documentElement.style.setProperty('--ui-scale', String(scale / 100));
 }
@@ -50,14 +50,14 @@ export async function initUIScale() {
 // Live preview while dragging: update the store + CSS zoom only. The whole UI
 // (board SVG included) scales via `zoom` for instant feedback, but the board is
 // not re-fitted and nothing is persisted until the value is committed.
-export function previewUIScale(scale) {
+export function previewUIScale(/** @type {number} */ scale) {
     const next = sanitize(scale);
     uiScaleStore.set(next);
     applyVar(next);
 }
 
 // Commit the interface scale: apply it, re-fit the board once and persist it.
-export function setUIScale(scale) {
+export function setUIScale(/** @type {number} */ scale) {
     const next = sanitize(scale);
     uiScaleStore.set(next);
     applyVar(next);

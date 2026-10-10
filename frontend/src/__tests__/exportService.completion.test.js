@@ -73,7 +73,7 @@ describe('a successful export', () => {
         await exportDatabase();
         await handleExportCommit();
 
-        const sent = ExportDatabase.mock.calls[0][0];
+        const sent = vi.mocked(ExportDatabase).mock.calls[0][0];
         expect(sent.positionIDs).toEqual([1, 2, 3]);
         expect(sent.positions).toBeUndefined();
     });
@@ -90,7 +90,7 @@ describe('a successful export', () => {
         }));
         await handleExportCommit();
 
-        const sent = ExportDatabase.mock.calls[0][0];
+        const sent = vi.mocked(ExportDatabase).mock.calls[0][0];
         expect(sent.watermark).toBe('Cours de Jean');
         expect(sent.watermarkNote).toBe('Ne pas rediffuser');
         expect(sent.password).toBe('s3cret');
@@ -107,7 +107,7 @@ describe('a successful export', () => {
         }));
         await handleExportCommit();
 
-        const sent = ExportDatabase.mock.calls[0][0];
+        const sent = vi.mocked(ExportDatabase).mock.calls[0][0];
         expect(sent.watermark).toBe('');
         expect(sent.password).toBe('');
     });

@@ -122,6 +122,14 @@ class GeneratedAPI(BaseClient):
         "POST /v1/anki.deleteDeck — JSON."
         return self._call("/v1/anki.deleteDeck", payload)
 
+    def anki_filtered_position_count(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/anki.filteredPositionCount — JSON."
+        return self._call("/v1/anki.filteredPositionCount", payload)
+
+    def anki_filtered_position_ids(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/anki.filteredPositionIds — JSON."
+        return self._call("/v1/anki.filteredPositionIds", payload)
+
     def anki_forecast(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/anki.forecast — JSON."
         return self._call("/v1/anki.forecast", payload)
@@ -129,6 +137,10 @@ class GeneratedAPI(BaseClient):
     def anki_index_of_deck_position(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/anki.indexOfDeckPosition — JSON."
         return self._call("/v1/anki.indexOfDeckPosition", payload)
+
+    def anki_index_of_filtered_position(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/anki.indexOfFilteredPosition — JSON."
+        return self._call("/v1/anki.indexOfFilteredPosition", payload)
 
     def anki_linked_card(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/anki.linkedCard — JSON."
@@ -213,6 +225,10 @@ class GeneratedAPI(BaseClient):
     def collections_delete(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/collections.delete — JSON."
         return self._call("/v1/collections.delete", payload)
+
+    def collections_evaluate(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/collections.evaluate — JSON."
+        return self._call("/v1/collections.evaluate", payload)
 
     def collections_freeze(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/collections.freeze — JSON."
@@ -1085,6 +1101,10 @@ class GeneratedAPI(BaseClient):
     def stats_biases(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/stats.biases — JSON."
         return self._call("/v1/stats.biases", payload)
+
+    def stats_breakdown_position_counts(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/stats.breakdownPositionCounts — JSON."
+        return self._call("/v1/stats.breakdownPositionCounts", payload)
 
     def stats_compute(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/stats.compute — JSON."

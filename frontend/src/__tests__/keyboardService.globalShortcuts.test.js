@@ -14,6 +14,7 @@
  * narrowed later without a failure.
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 
 vi.mock('../services/importService.js', () => ({
@@ -30,9 +31,9 @@ vi.mock('../stores/viewStore.js', async (importOriginal) => {
     return {
         ...actual,
         viewStore: {
-            ...actual.viewStore,
-            selectPreviousView: (...a) => selectPreviousView(...a),
-            selectNextView: (...a) => selectNextView(...a)
+            ...must(actual).viewStore,
+            selectPreviousView: (/** @type {any[]} */ ...a) => selectPreviousView(...a),
+            selectNextView: (/** @type {any[]} */ ...a) => selectNextView(...a)
         }
     };
 });

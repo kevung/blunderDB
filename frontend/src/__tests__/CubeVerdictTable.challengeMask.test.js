@@ -14,6 +14,7 @@
  * exercise be solved by looking for it.
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect, afterEach } from 'vitest';
 import { render, cleanup } from '@testing-library/svelte';
 import CubeVerdictTable from '../components/CubeVerdictTable.svelte';
@@ -48,7 +49,7 @@ describe('CubeVerdictTable under Défi', () => {
 
     test('the verdict is masked too, not merely the figures', () => {
         const { container } = masked();
-        expect(container.querySelector('td.verdict').textContent.trim()).toBe('···');
+        expect(must(container.querySelector('td.verdict')).textContent.trim()).toBe('···');
     });
 
     test('the best-option emphasis is suppressed — it would give the answer away', () => {

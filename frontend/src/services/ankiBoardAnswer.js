@@ -1,7 +1,7 @@
 import { writable, get } from 'svelte/store';
 import { LoadMetadata, SaveMetadata, GradeQuizChecker } from '../../wailsjs/go/database/Database.js';
 import { LegalMoves } from '../../wailsjs/go/gui/App.js';
-import { quizPlayStore } from '../stores/quizPlayStore.js';
+import { quizPlayStore, armBoardMove } from '../stores/quizPlayStore.js';
 import { ankiAnswerShownStore, showAnkiAnswer } from '../stores/ankiStore.js';
 import { newPlay, completedPlay } from './quizPlay.js';
 import { databasePathStore } from '../stores/databaseStore.js';
@@ -119,7 +119,7 @@ export async function armBoardAnswer(deck, card) {
     }
     // La carte a pu changer pendant l'aller-retour.
     if (armedCardId !== id || !plays?.length) return;
-    quizPlayStore.set(newPlay(card.position, plays));
+    armBoardMove(newPlay(card.position, plays), () => void validateBoardAnswer(card));
     ownsBoard = true;
     armedAt = Date.now();
     ankiBoardAnswerStore.set({ phase: 'play' });

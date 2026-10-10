@@ -7,6 +7,7 @@
  * here is the button — where it stands, when it is disabled and why.
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeAll, beforeEach, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
@@ -41,6 +42,7 @@ import { databasePathStore } from '../stores/databaseStore.js';
 import { epcDataStore } from '../stores/epcStore.js';
 import { enterEvalMode, exitEvalMode } from '../services/modeMachine.js';
 import EvalPanel from '../components/EvalPanel.svelte';
+import { EvaluatePositionImmediate } from '../../wailsjs/go/gui/App.js';
 
 function validBoard() {
     const points = Array.from({ length: 26 }, () => ({ checkers: 0, color: -1 }));
@@ -61,7 +63,7 @@ function validBoard() {
 }
 
 /** @param {HTMLElement} container */
-const addButton = (container) => /** @type {HTMLButtonElement} */ (container.querySelector('.badges-strip .add-position'));
+const addButton = (container) => /** @type {HTMLButtonElement} */ (container.querySelector('[data-testid="panel-header"] .add-position'));
 
 // The board the Eval panel opens on the first time: the default bearoff,
 // fifteen top checkers borne off. Taken before any test runs, because leaving
@@ -90,12 +92,12 @@ afterEach(async () => {
 });
 
 describe('the Eval panel’s add-to-database button (#399)', () => {
-    test('leads the badge strip, with its label', async () => {
+    test('ends the band, the primary action, with its label', async () => {
         const { container } = render(EvalPanel);
         await tick();
 
-        const strip = container.querySelector('.badges-strip');
-        expect(strip.firstElementChild).toBe(addButton(container));
+        const actions = container.querySelector('[data-testid="panel-header"] .panel-actions');
+        expect(actions?.lastElementChild).toBe(addButton(container));
         expect(addButton(container).textContent.trim()).toBe(en.eval.addPosition);
         expect(addButton(container).querySelector('svg')).not.toBeNull();
     });
@@ -157,8 +159,47 @@ describe('the Eval panel’s add-to-database button (#399)', () => {
         const { container } = render(EvalPanel);
         await tick();
 
-        expect(container.querySelector('.error-text').textContent).toBe('boom');
+        expect(must(container.querySelector('.error-text')).textContent).toBe('boom');
         expect(addButton(container)).not.toBeNull();
         expect(addButton(container).disabled).toBe(false);
+    });
+});
+
+describe('the Eval panel before the engine has said anything', () => {
+    test('one line says so, instead of a grid of dashes', async () => {
+        vi.mocked(EvaluatePositionImmediate).mockReturnValueOnce(new Promise(() => {}));
+        positionStore.set(validBoard());
+        const { container } = render(EvalPanel);
+        await tick();
+        expect(must(container.querySelector('[data-testid="empty-state"]')).textContent.trim()).toBe(en.eval.evaluating);
+        expect(container.querySelector('.cube-table')).toBeNull();
+    });
+
+    test('an empty board asks for a position', async () => {
+        const board = validBoard();
+        board.board.points = board.board.points.map(() => ({ checkers: 0, color: -1 }));
+        positionStore.set(board);
+        const { container } = render(EvalPanel);
+        await tick();
+        expect(must(container.querySelector('[data-testid="empty-state"]')).textContent.trim()).toBe(en.eval.emptyBoard);
+    });
+
+    test('an empty answer settles: its table shows, never an evaluation without end', async () => {
+        positionStore.set(validBoard());
+        const { container } = render(EvalPanel);
+        await vi.waitFor(() => expect(EvaluatePositionImmediate).toHaveBeenCalled());
+        await vi.waitFor(() => expect(container.querySelector('[data-testid="empty-state"]')).toBeNull());
+        expect(container.querySelector('.cube-table')).not.toBeNull();
+    });
+
+    test('the race facts do not wait for the engine', async () => {
+        vi.mocked(EvaluatePositionImmediate).mockReturnValueOnce(new Promise(() => {}));
+        positionStore.set(validBoard());
+        const epc = { epc: 20.5, pipCount: 15, wastage: 5.5, meanRolls: 3.2, stdDev: 0.8 };
+        epcDataStore.set({ bottomEPC: epc, topEPC: epc, race: null, error: null, bottomPoints: 5, topPoints: 5 });
+        const { container } = render(EvalPanel);
+        await tick();
+        expect(container.querySelector('[data-testid="empty-state"]')).not.toBeNull();
+        expect(container.textContent).toContain('20.50');
     });
 });

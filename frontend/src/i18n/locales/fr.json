@@ -212,6 +212,7 @@
         "savePosition": "Enregistrer la position",
         "settings": "Paramètres",
         "togglePipcount": "Afficher/masquer le pipcount",
+        "toggleAnalysisChallenge": "Défi : masquer l'analyse",
         "updatePosition": "Mettre à jour la position",
         "tour": "Visites guidées",
         "importDatabaseTip": "Fusionner une autre base dans celle-ci : les positions communes ne sont pas dupliquées, leurs analyses et commentaires sont combinés",
@@ -430,6 +431,8 @@
         "movePatternHint": "Meilleur coup ou décision de videau",
         "name": "Nom",
         "newTab": "Ouvrir dans un nouvel onglet",
+        "newTabShort": "Nouvel onglet",
+        "inResultsShort": "Dans les résultats",
         "noHistory": "Aucun historique de recherche",
         "noSaved": "Aucun filtre enregistré",
         "noPinnedAt": "Aucun filtre épinglé au rang {n}",
@@ -572,6 +575,16 @@
         "avoidableTooltip": "Erreur évitable : une erreur que la position n'excusait pas (difficulté au plus un dixième de la perte)",
         "avoidableCount": "Évitables",
         "chartOpen": "Cliquer pour ouvrir cette décision",
+        "gameShort": "P{n}",
+        "legendDifficulty": "difficulté (perte attendue)",
+        "lossSoFar": "Cumul : {loss}",
+        "timesPerDecision": "Durée par décision",
+        "tabsLabel": "Vues du match",
+        "tabTranscript": "Transcription",
+        "tabCharts": "Graphes",
+        "tabReview": "À revoir",
+        "tabDetails": "Détails",
+        "tabStats": "Stats",
         "originPlayedHere": "Joué ici",
         "originStopped": "Arrêté avant la fin",
         "originLostOnTime": "Perdu au temps ({name})",
@@ -639,7 +652,6 @@
         "writtenBy": "Écrit par",
         "score": "Score",
         "sourceFile": "Fichier source",
-        "stats": "Statistiques",
         "swapPlayers": "Échanger les joueurs",
         "takeDecisions": "Décisions de prise",
         "takesBlunders": "Prises (blunders)",
@@ -698,7 +710,6 @@
         "moveDown": "Descendre",
         "moveUp": "Monter",
         "newCollectionPlaceholder": "Nouvelle collection…",
-        "posCount": "{count} pos",
         "removeFromCollection": "Retirer de la collection",
         "removePositionTooltip": "Retirer la position de la collection",
         "title": "Collections",
@@ -718,6 +729,7 @@
         "livingNeedsSearch": "Lancez d'abord une recherche : c'est elle que la collection gardera.",
         "livingSet": "Collection vivante : {query}",
         "livingCleared": "Collection rendue à sa liste faite à la main.",
+        "livingCapped": "Paquet « {name} » : la collection vivante retient {total} positions ; le plafond de {count} a été atteint et seules les premières alimentent le paquet.",
         "freezeTitle": "Figer : garder le résultat d'aujourd'hui comme collection ordinaire.",
         "frozen": "Collection figée sur {count} position(s).",
         "newButton": "Nouvelle collection",
@@ -747,7 +759,9 @@
         "suggestKeepCollection": "Créer la collection ({n})",
         "suggestKeepDeck": "Paquet Anki",
         "suggestQuiz": "Quiz",
-        "suggestDefaultName": "Références {date}"
+        "suggestDefaultName": "Références {date}",
+        "browsePositions": "Parcourir ces positions",
+        "inThisCollection": "dans cette collection"
     },
     "tournament": {
         "addMatchPlaceholder": "Ajouter un match…",
@@ -782,7 +796,9 @@
         "noMovesFound": "Aucun coup trouvé pour ce match",
         "swappedPlayers": "Joueurs échangés",
         "confirmDelete": "Supprimer le tournoi « {name} » ?",
-        "newButton": "Nouveau tournoi"
+        "newButton": "Nouveau tournoi",
+        "matchCountOne": "1 match",
+        "matchCountMany": "{n} matchs"
     },
     "anki": {
         "limitSession": "Limiter la séance",
@@ -791,8 +807,7 @@
         "sessionLimitZero": "Ce paquet est réglé sur 0 carte par séance.",
         "boardAnswerOption": "Répondre au damier",
         "boardAnswerOptionHint": "Joue le coup sur le damier ; le moteur le juge et propose une note, que vous pouvez corriger avant de noter. Désactivé par défaut : vous vous notez vous-même. Les cartes de videau et de score restent en auto-notation.",
-        "boardAnswerHint": "Jouez votre coup sur le damier",
-        "boardAnswerValidate": "Valider",
+        "boardAnswerHint": "Jouez votre coup sur le damier, puis cliquez les dés ou ENTRÉE",
         "boardAnswerSuggest": "Note suggérée : {rating} (erreur {error} mp)",
         "boardAnswerIllegal": "Ce coup n'est pas légal",
         "boardAnswerUnranked": "Coup légal que l'analyse ne classe pas : notez-vous vous-même",
@@ -816,7 +831,7 @@
         "deckSettingsTooltip": "Paramètres du paquet",
         "deleteDeckTooltip": "Supprimer le paquet",
         "easy": "Facile",
-        "empty": "Aucun paquet pour le moment. Créez-en un à partir d'une collection ou de la recherche actuelle.",
+        "empty": "Aucun paquet",
         "enableFuzz": "Activer le flou (randomiser les intervalles)",
         "good": "Correct",
         "hard": "Difficile",
@@ -826,7 +841,6 @@
         "positionsCount": "{count} positions",
         "renameTooltip": "Renommer",
         "resetTooltip": "Réinitialiser toutes les cartes comme nouvelles",
-        "resume": "Reprendre ({due} à réviser, {reviewed} révisées)",
         "retentionTarget": "Objectif de rétention",
         "selectCollection": "-- Sélectionner une collection --",
         "settingsTitle": "Paramètres : {name}",
@@ -836,12 +850,7 @@
         "scoresCount": "{count} scores",
         "scoreQuestion": "Score {a}/{b}",
         "badScoreKey": "Score illisible sur cette carte",
-        "statLearning": "En apprentissage",
-        "statNew": "Nouvelles",
-        "statReview": "À réviser",
-        "statTotal": "Total",
-        "study": "Étudier ({due} à réviser)",
-        "cram": "Entraînement",
+        "cram": "Bachoter",
         "cramTooltip": "Entraînement libre : positions aléatoires, sans effet sur le planning de révision",
         "cramBadge": "Libre",
         "next": "Suivant",
@@ -882,7 +891,16 @@
             "relearning": "Ré-apprentissage"
         },
         "sourceSearch": "Recherche",
-        "sourceCollectionN": "Collection n° {id}"
+        "sourceCollectionN": "Collection n° {id}",
+        "title": "Anki",
+        "studyShort": "Étudier",
+        "resumeShort": "Reprendre ({reviewed})",
+        "dueShort": "{n} dues",
+        "cardsShort": "{n} cartes",
+        "allDecks": "Tous les paquets",
+        "newShort": "{n} nouvelles",
+        "learningShort": "{n} en cours",
+        "reviewShort": "{n} en révision"
     },
     "analysis": {
         "menuCopy": "Copier la position et l'analyse",
@@ -919,7 +937,9 @@
         "hintPlayerBackgammon": "Joueur : chances de gagner un backgammon",
         "hintOpponentWin": "Adversaire : chances de gagner",
         "hintOpponentGammon": "Adversaire : chances de gagner un gammon",
-        "hintOpponentBackgammon": "Adversaire : chances de gagner un backgammon"
+        "hintOpponentBackgammon": "Adversaire : chances de gagner un backgammon",
+        "empty": "Pas d'analyse",
+        "evaluate": "Évaluer"
     },
     "rollout": {
         "title": "Rollout",
@@ -1027,7 +1047,8 @@
         "created": "Créé",
         "description": "Description",
         "user": "Utilisateur",
-        "version": "Version"
+        "version": "Version",
+        "title": "Métadonnées de la base"
     },
     "issuance": {
         "originLabel": "Origine",
@@ -1068,6 +1089,7 @@
         "menu": {
             "evaluate": "Évaluer cette position",
             "evaluateMirror": "Évaluer le miroir de cette position",
+            "evaluateInNewView": "Évaluer dans un nouvel onglet",
             "copyImageWithAnalysis": "Copier l'image du plateau et l'analyse",
             "newView": "Nouvelle vue",
             "addToAnkiDeck": "Ajouter au paquet Anki : {deck}",
@@ -1128,6 +1150,8 @@
         "addPositionTooltip": "Ajouter cette position à la base (Ctrl+S)",
         "addPositionNoDatabase": "Ouvrez une base pour y ajouter des positions",
         "pending": "L'évaluation apparaîtra ici.",
+        "emptyBoard": "Posez une position",
+        "evaluating": "Évaluation…",
         "failed": "L'évaluation a échoué : {error}",
         "panelLabel": "Panneau Eval",
         "inactive": "Le panneau Eval est inactif. Modifiez le plateau pour évaluer la position.",
@@ -1164,6 +1188,7 @@
     },
     "viewTabs": {
         "closeView": "Fermer la vue",
+        "variantOf": "Variante de #{n}",
         "newView": "Nouvelle vue"
     },
     "goToPosition": {
@@ -1347,7 +1372,7 @@
         "title": "Transcriptions",
         "new": "Nouvelle transcription",
         "newTooltip": "Créer un brouillon de match à transcrire",
-        "empty": "Aucun brouillon. Créez-en un pour transcrire un match.",
+        "empty": "Aucun brouillon",
         "updated": "Modifié",
         "players": "Joueurs",
         "length": "Longueur",
@@ -1479,7 +1504,7 @@
         "moreActions": "Plus d’actions",
         "videoFile": "Fichier local…",
         "videoYouTube": "Lien YouTube…",
-        "videoDetach": "Détacher",
+        "videoRemove": "Retirer la vidéo",
         "videoAttach": "Attacher",
         "videoResize": "Hauteur du volet vidéo"
     },
@@ -1662,7 +1687,6 @@
         "tabErrors": "Erreurs",
         "tabTraining": "Entraînement",
         "tabPlayers": "Joueurs",
-        "importMatchesHint": "Importez des matchs pour activer les filtres.",
         "playerLabel": "Joueur",
         "allPerspectives": "Toutes perspectives",
         "tournamentsLabel": "Tournois",
@@ -1684,7 +1708,7 @@
         "all": "Tout",
         "resetFilters": "↺ Réinitialiser",
         "resetFiltersHint": "Réinitialiser les filtres",
-        "noDecisionsEmpty": "Aucune décision sur la période filtrée. Élargissez les filtres.",
+        "noDecisionsEmpty": "Aucune décision pour ces filtres",
         "cardLabelAll": "PR global",
         "cardLabelChecker": "PR pions",
         "cardLabelCube": "PR videau",
@@ -1936,7 +1960,14 @@
             "prCube": "PR videau"
         },
         "interval95": "IC 95 %",
-        "intervalHint": "Intervalle de confiance à 95 % : rééchantillonne les matchs d'une sélection, les parties d'un match. Une ligne sans intervalle (moins de trois matchs ou parties, ou toutes au même PR) est grisée."
+        "intervalHint": "Intervalle de confiance à 95 % : rééchantillonne les matchs d'une sélection, les parties d'un match. Une ligne sans intervalle (moins de trois matchs ou parties, ou toutes au même PR) est grisée.",
+        "positions": "Positions",
+        "breakdownOpenPositions": "Ouvrir ces {n} positions ({decisions} décisions)",
+        "breakdownOpenBlunders": "Ouvrir les {n} positions à bourde ({decisions} bourdes)",
+        "breakdownCountsError": "Comptes indisponibles : {error}",
+        "breakdownCountsMissing": "Ligne absente des comptes de positions",
+        "breakdownBlundersHint": "Positions où au moins une décision est une bourde",
+        "planOutsideShort": "Hors plan : {unthemed} sans thème · {unpriced} non chiffrées"
     },
     "resumeBatch": {
         "title": "Reprendre un import",
@@ -2057,7 +2088,7 @@
         "finishedDecision": "Décision terminée : {correct}/{n}, PR de session {pr}.",
         "undoHop": "Annuler le pas",
         "resetPlay": "Recommencer",
-        "playOnBoard": "Jouez le coup sur le plateau, puis validez.",
+        "playOnBoard": "Jouez le coup sur le plateau, puis cliquez les dés.",
         "notationPlaceholder": "Coup en notation, ex. 13/7 8/7",
         "notationLabel": "Coup tapé en notation",
         "cubePrompt": "Choisissez l'action de videau.",
@@ -2179,7 +2210,7 @@
     },
     "direction": {
         "title": "Direction",
-        "direct": "Diriger ce tournoi",
+        "direct": "Diriger",
         "open": "Ouvrir la direction",
         "close": "Fermer la direction",
         "fullscreen": {
@@ -3104,6 +3135,7 @@
         "player2": "Joueur 2",
         "lengthPoints": "{n} pts",
         "moneySession": "Argent",
+        "type": "Type",
         "cubeValue": "Videau {n}",
         "delayLeft": "Délai {s} s",
         "gestures": "Gestes du Duel",
@@ -3145,7 +3177,6 @@
         "record": "Enregistrer le match",
         "play": "Jouer",
         "suspended": "Duels en suspens",
-        "noneSuspended": "Aucun Duel en suspens.",
         "resume": "Reprendre",
         "conflict": "Le Duel a changé ailleurs : le voici tel qu'il est, rien n'a été joué.",
         "refused": "Refusé : {error}",
@@ -3195,13 +3226,13 @@
         "pace": "Erreurs : {hasty} précipitées ({hastyLoss}), {deliberate} réfléchies ({deliberateLoss}), {unknown} sans temps",
         "paceDiscipline": "plutôt de la discipline : ralentir",
         "paceKnowledge": "plutôt de la connaissance : étudier ces positions",
-        "details": "Détails du bilan",
         "prInterval": "PR, intervalle à 95 %",
         "mwc7Label": "Perte de MWC ramenée à 7 pts",
         "mwc7Hint": "La perte de MWC ramenée à un match en 7 points, pour comparer des matchs de longueurs différentes.",
         "adjustedShort": "corrigé de la chance {adjusted}",
         "mwcLossHint": "Chances de gagner le match perdues par les décisions de ce joueur dans ce match",
-        "toReview": "Décisions à revoir"
+        "toReview": "Décisions à revoir",
+        "nothingToReview": "Aucune décision à revoir."
     },
     "video": {
         "notPlayable": "Cette source n'est pas lisible ici.",
@@ -3257,7 +3288,6 @@
         "noDecision": "Aucune décision chiffrée de ce joueur dans le tournoi"
     },
     "theatre": {
-        "menuItem": "Mode théâtre",
         "enter": "Mode théâtre : la vidéo en plein écran (F11)",
         "exit": "Quitter le mode théâtre (F11 ou Échap)",
         "region": "Mode théâtre",

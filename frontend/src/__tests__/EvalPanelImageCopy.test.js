@@ -2,6 +2,7 @@
  * In EVAL mode analysisStore describes another position: the image copy
  * (C-X C-X) reads the panel's live evaluation through evalAnalysisStore.
  */
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, cleanup } from '@testing-library/svelte';
 import { get } from 'svelte/store';
@@ -9,7 +10,7 @@ import { get } from 'svelte/store';
 const evaluatePositionImmediate = vi.fn();
 
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
-    EvaluatePositionImmediate: (...args) => evaluatePositionImmediate(...args),
+    EvaluatePositionImmediate: (/** @type {any[]} */ ...args) => evaluatePositionImmediate(...args),
     StartEvaluationAtRest: vi.fn().mockResolvedValue(undefined),
     CancelEvaluationAtRest: vi.fn().mockResolvedValue(undefined)
 }));
@@ -66,8 +67,8 @@ describe('EvalPanel hands its evaluation to the image copy', () => {
         await vi.advanceTimersByTimeAsync(0);
 
         const analysis = get(evalAnalysisStore);
-        expect(analysis.analysisType).toBe('CheckerMove');
-        expect(analysis.checkerAnalysis.moves).toEqual([move]);
+        expect(must(analysis).analysisType).toBe('CheckerMove');
+        expect(must(analysis).checkerAnalysis.moves).toEqual([move]);
         expect(analysisStrip(analysis)).toEqual({ kind: 'checker', rows: 2 });
     });
 
@@ -78,9 +79,9 @@ describe('EvalPanel hands its evaluation to the image copy', () => {
         await vi.advanceTimersByTimeAsync(0);
 
         const analysis = get(evalAnalysisStore);
-        expect(analysis.analysisType).toBe('DoublingCube');
-        expect(analysis.doublingCubeAnalysis.playerWinChances).toBe(70);
-        expect(analysis.decision.state).not.toBe('pending');
+        expect(must(analysis).analysisType).toBe('DoublingCube');
+        expect(must(analysis).doublingCubeAnalysis.playerWinChances).toBe(70);
+        expect(must(analysis).decision.state).not.toBe('pending');
         expect(analysisStrip(analysis)).toEqual({ kind: 'cube', rows: 6 });
     });
 

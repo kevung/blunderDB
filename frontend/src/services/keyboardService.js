@@ -12,6 +12,7 @@ import { directionOwnsKey, directionTabKey, directionLeavesToPage, directionSear
 import { directionFullscreenKey, toggleDirectionFullscreen } from './directionFullscreen.js';
 import { theatreKey, toggleTheatre } from './transcriptionTheatre.js';
 import { trainingHoldsBoardStore } from '../stores/trainingTabStore.js';
+import { toggleAnalysisChallenge } from '../stores/analysisChallengeStore.js';
 
 import { newDatabase, openDatabase, exitApp } from './databaseService.js';
 import {
@@ -265,6 +266,10 @@ export function handleKeyDown(event) {
             // unintended grade and pollute the schedule.
             event.preventDefault();
             showAnkiAnswer();
+        } else if (event.code === 'Enter' && !(event.target instanceof HTMLButtonElement)) {
+            // Validates a move played on the board; a no-op when none is armed.
+            event.preventDefault();
+            ankiReviewActionStore.set('validate');
         } else if (event.code === 'Escape') {
             event.preventDefault();
             ankiReviewActionStore.set('back');
@@ -298,6 +303,8 @@ export function handleKeyDown(event) {
     if (document.activeElement?.closest('.analysis-panel')) {
         if (isAlwaysGlobal(event) || event.key === 'Escape' || event.key === 'Tab') {
             // Let shortcut through
+        } else if (isBareLetter(event, 'm')) {
+            // The challenge toggle acts on this very panel: it must work where the focus sits.
         } else {
             if (isBoardNavigationKey(event) && !get(selectedMoveStore)) {
                 // No move selected - allow position navigation
@@ -509,6 +516,8 @@ export function handleKeyDown(event) {
         viewStore.selectNextView();
     } else if (!event.ctrlKey && letter('p')) {
         togglePipcount();
+    } else if (!event.ctrlKey && letter('m')) {
+        toggleAnalysisChallenge();
     } else if (!event.ctrlKey && letter('r') && !event.defaultPrevented) {
         // A panel that claimed `r` (a rollout from the Eval panel) keeps it.
         loadRandomPosition();

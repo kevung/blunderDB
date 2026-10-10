@@ -34,6 +34,6 @@ describe('MET de la base', () => {
     test('les réglages sélectionnent la table courante', async () => {
         render(METSettings);
         const select = await waitFor(() => screen.getByRole('combobox'));
-        await waitFor(() => expect(select.value).toBe('3'));
+        await waitFor(() => expect(/** @type {HTMLInputElement} */ (select).value).toBe('3'));
     });
 });

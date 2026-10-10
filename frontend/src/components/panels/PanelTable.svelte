@@ -50,12 +50,42 @@
      * @property {boolean} [sortable]
      * @property {boolean} [narrow]   sized to its content (`.narrow-col`)
      * @property {boolean} [actions]  the icon-button column (`.actions-col`)
-     * @property {'left'|'center'|'right'} [align]
+     * @property {boolean} [elastic]  the one column that takes the leftover width (ADR-0085, G4)
+     * @property {string} [align]
      * @property {string} [title]
      * @property {string} [class]     extra class on the header cell
-     * @property {'asc'|'desc'} [defaultDir] direction when this column is first picked
+     * @property {string} [defaultDir] direction when this column is first picked
      */
 
+    /**
+     * @typedef {object} PanelTableProps
+     * @property {any[]} [rows]
+     * @property {(row: any) => any} [rowKey]
+     * @property {Column[]} [columns]
+     * @property {any} [sort]
+     * @property {any} [sortOptions]
+     * @property {any} [selectedKey]
+     * @property {(row: any, index: number) => string} [rowClass]
+     * @property {(row: any, index: number) => Record<string, any>} [rowAttrs]
+     * @property {boolean} [pointerRows]
+     * @property {(row: any, index: number, event?: Event) => void} [onSelect]
+     * @property {(row: any, index: number, event?: Event) => void} [onActivate]
+     * @property {(from: number, to: number) => void} [onReorder]
+     * @property {string} [emptyText]
+     * @property {boolean} [emptyActions]
+     * @property {any} [emptyClear]
+     * @property {any} [emptyAction]
+     * @property {string} [class]
+     * @property {import('svelte').Snippet} [header]
+     * @property {import('svelte').Snippet} [subheader]
+     * @property {number} [rowHeight]
+     * @property {number} [virtualizeAbove]
+     * @property {number} [buffer]
+     * @property {() => void} [onNearEnd]
+     * @property {import('svelte').Snippet<[any, number]>} cells
+     */
+
+    /** @type {PanelTableProps} */
     let {
         rows = [],
         rowKey = (row) => row.id,
@@ -84,6 +114,8 @@
         emptyActions = false,
         /** With `emptyActions`: a way to lift the filter that emptied the list, in place of the import. */
         emptyClear = null,
+        /** With `emptyActions`: the panel's own primary action, in place of the import. */
+        emptyAction = null,
         class: className = '',
         /** Rendered above the table in a `.detail-header` strip. */
         header = undefined,
@@ -101,7 +133,20 @@
         cells
     } = $props();
 
+    // One column takes the leftover width, so short columns stay at their content and the
+    // actions column sits at the right edge. A panel names it (`elastic`); a table of short
+    // columns only gets its last non-action column, else the browser spreads the slack over
+    // every column and the actions float mid-row.
+    let elasticIndex = $derived.by(() => {
+        const named = columns.findIndex((c) => c.elastic);
+        if (named >= 0) return named;
+        if (columns.some((c) => !c.narrow && !c.actions)) return -1;
+        return columns.findLastIndex((c) => !c.actions);
+    });
+
+    /** @type {HTMLElement | null} */
     let tbodyEl = $state(null);
+    /** @type {HTMLElement | null} */
     let scrollEl = $state(null);
     let scrollTop = $state(0);
     let viewportHeight = $state(0);
@@ -133,30 +178,38 @@
     }
 
     $effect(() => {
-        if (!scrollEl) return;
-        viewportHeight = scrollEl.clientHeight;
+        const el = scrollEl;
+        if (!el) return;
+        viewportHeight = el.clientHeight;
         if (typeof ResizeObserver === 'undefined') return;
-        const ro = new ResizeObserver(() => (viewportHeight = scrollEl.clientHeight));
-        ro.observe(scrollEl);
+        const ro = new ResizeObserver(() => (viewportHeight = el.clientHeight));
+        ro.observe(el);
         return () => ro.disconnect();
     });
 
+    /** @param {Column} col */
     function handleSort(col) {
         if (!col.sortable) return;
-        sort = nextSort(sort?.column ?? null, sort?.direction ?? 'asc', col.key, { tristate: !!sortOptions.tristate, defaultDir: col.defaultDir ?? 'asc' });
+        sort = nextSort(sort?.column ?? null, sort?.direction ?? 'asc', col.key, { tristate: !!sortOptions.tristate, defaultDir: /** @type {'asc' | 'desc'} */ (col.defaultDir ?? 'asc') });
     }
 
+    /** @param {Column} col */
     function ariaSort(col) {
         if (!col.sortable) return undefined;
         if (sort?.column !== col.key) return 'none';
         return sort.direction === 'asc' ? 'ascending' : 'descending';
     }
 
+    /** @param {any} row */
     function isSelected(row) {
         return selectedKey !== undefined && selectedKey !== null && rowKey(row) === selectedKey;
     }
 
     /** Scroll the row into view once the DOM reflects the current selection. */
+    /**
+     * @param {any} row
+     * @param {ScrollLogicalPosition} [block]
+     */
     export async function scrollToRow(row, block = 'nearest') {
         await tick();
         const key = rowKey(row);
@@ -180,6 +233,7 @@
     }
 
     /** Move the keyboard focus onto the row (it must be activatable, i.e. carry a tabindex). */
+    /** @param {any} row */
     export async function focusRow(row) {
         await scrollToRow(row);
         await tick();
@@ -189,6 +243,7 @@
         /** @type {HTMLElement | undefined} */ (els[index - first])?.focus();
     }
 
+    /** @param {ScrollLogicalPosition} [block] */
     export function scrollToSelected(block = 'nearest') {
         const row = rows.find((r) => isSelected(r));
         if (row) scrollToRow(row, block);
@@ -198,6 +253,7 @@
      * Move the selection by `delta` rows (j/k), reporting it through `onSelect`
      * and scrolling it into view. Returns whether a row was reached.
      */
+    /** @param {number} delta */
     export function navigate(delta) {
         const next = stepSelection(rows, rowKey, selectedKey, delta);
         if (!next) return false;
@@ -218,12 +274,13 @@
         <table>
             <thead>
                 <tr>
-                    {#each columns as col (col.key)}
+                    {#each columns as col, i (col.key)}
                         <th
                             class="no-select {col.class ?? ''}"
                             class:sortable={col.sortable}
                             class:narrow-col={col.narrow}
                             class:actions-col={col.actions}
+                            class:elastic-col={i === elasticIndex}
                             class:align-center={col.align === 'center'}
                             class:align-right={col.align === 'right'}
                             title={col.title}
@@ -275,7 +332,7 @@
             </tbody>
         </table>
         {#if rows.length === 0 && emptyText}
-            <EmptyState text={emptyText} actions={emptyActions} clear={emptyClear} />
+            <EmptyState text={emptyText} actions={emptyActions} clear={emptyClear} action={emptyAction} />
         {/if}
     </div>
 </div>
@@ -418,9 +475,20 @@
         padding: 0 4px;
     }
 
+    /* A percentage beats the cells' 1px: this column takes the slack, the others their content. */
+    .panel-table th.elastic-col {
+        width: 100%;
+    }
+
     .panel-table :global(.no-select) {
         user-select: none;
         -webkit-user-select: none;
+    }
+
+    /* A column declared `align: 'right'` holds numbers: its cells follow its header. */
+    .panel-table :global(td.align-right) {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
     }
 
     .panel-table :global(.index-cell) {

@@ -6,6 +6,7 @@
  * player above the games, with the turns past the Cadence's reserve.
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
@@ -61,7 +62,7 @@ import { databasePathStore } from '../stores/databaseStore.js';
 import { lastVisitedMatchStore, matchContextStore } from '../stores/positionStore.js';
 import { ListMatches, GetMatchOrigin } from '../../wailsjs/go/database/Database.js';
 import MatchPanel from '../components/MatchPanel.svelte';
-import { openSection } from './matchSectionHelper.js';
+import { openTab } from './matchTabHelper.js';
 
 async function openTranscript() {
     const view = render(MatchPanel);
@@ -71,7 +72,7 @@ async function openTranscript() {
     for (let i = 0; i < 6; i++) await tick();
     if (!container.querySelector('tbody tr.selected')) {
         const cell = [...container.querySelectorAll('tbody tr td')].find((td) => td.textContent.includes('Alice'));
-        await fireEvent.click(cell);
+        await fireEvent.click(must(cell));
     }
     await vi.waitFor(() => expect(container.querySelector('details.game-section')).not.toBeNull());
     for (let i = 0; i < 4; i++) await tick();
@@ -92,7 +93,8 @@ describe('MatchPanel — the Transcript carries the time of every decision', () 
         openPanels.set(new Set());
     });
 
-    const col = (container, name, game = 0) => [...container.querySelectorAll('details.game-section')[game].querySelectorAll(`[data-testid="move-time-${name}"]`)].map((c) => c.textContent.trim());
+    const col = (container, /** @type {string} */ name, game = 0) =>
+        [...container.querySelectorAll('details.game-section')[game].querySelectorAll(`[data-testid="move-time-${name}"]`)].map((c) => c.textContent.trim());
 
     test('cube, play and clock are three columns, a time not taken reads as a dash', async () => {
         const container = await openTranscript();
@@ -104,12 +106,12 @@ describe('MatchPanel — the Transcript carries the time of every decision', () 
     test('the Play header orders the rows by time, the unknown ones last, the clock keeps the match order', async () => {
         const container = await openTranscript();
         const header = container.querySelector('button.time-sort');
-        await fireEvent.click(header);
+        await fireEvent.click(must(header));
         expect(col(container, 'cube')).toEqual(['12.0 s', '1.0 s', '—']);
         expect(col(container, 'clock')).toEqual(['0:18', '0:06', '0:00']);
-        await fireEvent.click(header);
+        await fireEvent.click(must(header));
         expect(col(container, 'cube')).toEqual(['1.0 s', '12.0 s', '—']);
-        await fireEvent.click(header);
+        await fireEvent.click(must(header));
         expect(col(container, 'cube')).toEqual(['1.0 s', '—', '12.0 s']);
     });
 
@@ -121,19 +123,19 @@ describe('MatchPanel — the Transcript carries the time of every decision', () 
         });
         const container = await openTranscript();
         expect(col(container, 'clock')).toEqual(['1:57', '2:00', '1:40']);
-        expect(container.querySelector('[data-testid="header-cadence"]').textContent).toContain('2:00');
-        await openSection(container, 'info');
+        expect(must(container.querySelector('[data-testid="header-cadence"]')).textContent).toContain('2:00');
+        await openTab(container, 'info');
         const row = container.querySelector('[data-testid="meta-cadence"]');
-        expect(row.textContent).toContain('rapid-2+12');
-        expect(container.querySelector('[data-testid="meta-bank"]').textContent).toContain('2:00 each');
+        expect(must(row).textContent).toContain('rapid-2+12');
+        expect(must(container.querySelector('[data-testid="meta-bank"]')).textContent).toContain('2:00 each');
     });
 
     test('the summary marks the player whose reserve ran out, and leaves an unknown mean empty', async () => {
         const container = await openTranscript();
         const summary = container.querySelector('[data-testid="match-times"]');
         expect(summary).not.toBeNull();
-        expect(summary.querySelector('[data-testid="overrun-0"]').textContent).toBe('●');
-        const bob = [...summary.querySelectorAll('tbody tr')][1];
+        expect(must(summary.querySelector('[data-testid="overrun-0"]')).textContent).toBe('●');
+        const bob = [...must(summary).querySelectorAll('tbody tr')][1];
         expect([...bob.querySelectorAll('td')].slice(1, 4).map((c) => c.textContent)).toEqual(['', '', '']);
     });
 });

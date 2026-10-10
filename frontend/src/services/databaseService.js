@@ -14,6 +14,7 @@ import { WindowSetTitle, Quit } from '../../wailsjs/runtime/runtime.js';
 import { SaveLastDatabasePath } from '../../wailsjs/go/main/Config.js';
 
 import { databasePathStore } from '../stores/databaseStore.js';
+import { refreshLibraryCounts } from '../stores/libraryCountsStore.js';
 import { analysisStore, emptyAnalysis, selectedMoveStore } from '../stores/analysisStore.js';
 import { statusBarTextStore, statusBarModeStore, commentTextStore, openModal, closeModal, MODAL, matchPanelRefreshTriggerStore } from '../stores/uiStore.js';
 import { searchEmptyStore } from '../stores/searchParamsStore.js';
@@ -28,15 +29,16 @@ import { translate, tMsg } from '../i18n';
 
 export const warningMessageStore = writable('');
 
-function setStatusBarMessage(message) {
+function setStatusBarMessage(/** @type {string | import('../i18n').StatusMessage} */ message) {
     statusBarTextStore.set(message);
 }
 
 // A confirmation, not a state: left up, it would still read "opened" an hour later and
 // hide every later message. It leaves only if nothing else has replaced it.
 const OPEN_NOTICE_MS = 4000;
+/** @type {ReturnType<typeof setTimeout> | undefined} */
 let openNoticeTimer;
-function setTransientStatusBarMessage(message) {
+function setTransientStatusBarMessage(/** @type {string | import('../i18n').StatusMessage} */ message) {
     setStatusBarMessage(message);
     clearTimeout(openNoticeTimer);
     openNoticeTimer = setTimeout(() => {
@@ -44,7 +46,7 @@ function setTransientStatusBarMessage(message) {
     }, OPEN_NOTICE_MS);
 }
 
-function getFilenameFromPath(filePath) {
+function getFilenameFromPath(/** @type {string} */ filePath) {
     return filePath.split('/').pop();
 }
 
@@ -78,12 +80,21 @@ function resetAnalysisAndCommentStores() {
     searchEmptyStore.set(false);
 }
 
-function getMajorVersion(version) {
+// The backend closes the open database before trying another and leaves none open when the
+// attempt fails: nothing is open then, so the path, the title and the counter say so.
+function showNoDatabaseOpen() {
+    databasePathStore.set('');
+    WindowSetTitle('blunderDB');
+    refreshLibraryCounts();
+}
+
+function getMajorVersion(/** @type {string} */ version) {
     return version.split('.')[0];
 }
 
 export async function newDatabase() {
     logger.log('newDatabase');
+    let setupFailed = false;
     try {
         const filePath = await SaveDatabaseDialog();
         if (filePath) {
@@ -98,9 +109,15 @@ export async function newDatabase() {
                 logger.log('No existing file to delete or error deleting file:', error);
             }
 
+            try {
+                await SetupDatabase(filePath);
+            } catch (error) {
+                setupFailed = true;
+                throw error;
+            }
             databasePathStore.set(filePath);
             logger.log('databasePathStore:', filePath);
-            await SetupDatabase(filePath);
+            refreshLibraryCounts();
             setStatusBarMessage(tMsg('commands.dbCreated'));
             const filename = getFilenameFromPath(filePath);
             WindowSetTitle(`blunderDB - ${filename}`);
@@ -118,6 +135,7 @@ export async function newDatabase() {
     } catch (error) {
         logger.error('Error opening file dialog:', error);
         setStatusBarMessage(tMsg('commands.errorCreatingDb'));
+        if (setupFailed) showNoDatabaseOpen();
     } finally {
         statusBarModeStore.set('NORMAL');
     }
@@ -159,7 +177,7 @@ export async function loadDemoDatabase() {
 export const protectedCopyPathStore = writable('');
 export const protectedCopyErrorStore = writable('');
 
-export async function openDatabaseByPath(filePath) {
+export async function openDatabaseByPath(/** @type {string} */ filePath) {
     if (await IsProtectedCopyPath(filePath).catch(() => false)) {
         protectedCopyErrorStore.set('');
         protectedCopyPathStore.set(filePath);
@@ -171,17 +189,23 @@ export async function openDatabaseByPath(filePath) {
     // after restoreSessionState's microtasks and overwrite the EVAL/EDIT mode
     // it re-enters.
     statusBarModeStore.set('NORMAL');
+    let openFailed = false;
     try {
         resetAnalysisAndCommentStores();
         resetAnkiStores();
         resetTranscriptionStores();
 
         (await import('../stores/directionStore.js')).forgetDirection();
+        try {
+            await OpenDatabase(filePath);
+        } catch (error) {
+            openFailed = true;
+            throw error;
+        }
+        await SaveLastDatabasePath(filePath);
         databasePathStore.set(filePath);
         logger.log('databasePathStore:', filePath);
-
-        await SaveLastDatabasePath(filePath);
-        await OpenDatabase(filePath);
+        refreshLibraryCounts();
 
         const dbVersion = await CheckDatabaseVersion();
         const modelVersion = await GetDatabaseVersion();
@@ -217,6 +241,8 @@ export async function openDatabaseByPath(filePath) {
         logger.error('Error opening database:', error);
         setStatusBarMessage(tMsg('commands.errorOpeningDb'));
         statusBarModeStore.set('NORMAL');
+        // A failure after a successful open leaves the database open, and its path displayed.
+        if (openFailed) showNoDatabaseOpen();
     }
 }
 
@@ -237,14 +263,14 @@ export { setStatusBarMessage };
 // Errors cross the bridge as strings and are matched on this project's own
 // constants (issuance.ErrWrongPassphrase, ErrPassphraseRequired); anything
 // else is shown as-is.
-function protectedCopyMessage(error) {
+function protectedCopyMessage(/** @type {unknown} */ error) {
     const text = String(error);
     if (text.includes('wrong passphrase')) return translate('issuance.wrongPassword');
     if (text.includes('protected by a passphrase')) return translate('issuance.passwordRequiredToOpen');
     return text;
 }
 
-export async function unlockProtectedCopy(password, removeContainer = false) {
+export async function unlockProtectedCopy(/** @type {string} */ password, removeContainer = false) {
     const source = get(protectedCopyPathStore);
     if (!source) return;
     try {

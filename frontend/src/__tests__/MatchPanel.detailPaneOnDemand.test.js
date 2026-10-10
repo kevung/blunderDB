@@ -14,6 +14,7 @@
  * selection is dropped.
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
@@ -73,22 +74,22 @@ describe('MatchPanel — the detail pane appears only for a selected match', () 
         const detail = () => container.querySelector('.detail-pane');
         expect(list).not.toBeNull();
         expect(detail(), 'nothing is selected, so there is no pane to show').toBeNull();
-        expect(list.classList.contains('has-detail'), 'the list spans the full width').toBe(false);
+        expect(must(list).classList.contains('has-detail'), 'the list spans the full width').toBe(false);
 
         const cell = () => [...container.querySelectorAll('tbody tr td')].find((td) => td.textContent.includes('Alice'));
         expect(cell()).toBeTruthy();
-        await fireEvent.click(cell());
+        await fireEvent.click(must(cell()));
         await vi.waitFor(() => expect(container.querySelector('tbody tr.selected')).not.toBeNull());
 
         expect(detail(), 'the selection opens the pane').not.toBeNull();
-        expect(detail().querySelector('.detail-header')).not.toBeNull();
-        expect(detail().textContent).toContain('Alice');
-        expect(list.classList.contains('has-detail'), 'the list makes room for it').toBe(true);
+        expect(must(detail()).querySelector('.detail-header')).not.toBeNull();
+        expect(must(detail()).textContent).toContain('Alice');
+        expect(must(list).classList.contains('has-detail'), 'the list makes room for it').toBe(true);
 
         // Dropping the selection closes the pane and gives the width back.
-        await fireEvent.click(cell());
+        await fireEvent.click(must(cell()));
         await vi.waitFor(() => expect(container.querySelector('tbody tr.selected')).toBeNull());
         expect(detail()).toBeNull();
-        expect(list.classList.contains('has-detail')).toBe(false);
+        expect(must(list).classList.contains('has-detail')).toBe(false);
     });
 });

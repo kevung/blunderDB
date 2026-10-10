@@ -16,7 +16,7 @@ import { get } from 'svelte/store';
 
 const SaveLanguage = vi.fn(() => Promise.resolve(undefined));
 vi.mock('../../wailsjs/go/main/Config.js', () => ({
-    SaveLanguage: (...args) => SaveLanguage(...args),
+    SaveLanguage: (/** @type {any[]} */ ...args) => SaveLanguage(...args),
     GetLanguage: vi.fn(() => Promise.resolve('en'))
 }));
 
@@ -30,6 +30,7 @@ describe('i18n reactivity', () => {
     });
 
     test('derived t re-emits when language changes', async () => {
+        /** @type {string[]} */
         const seen = [];
         const unsub = t.subscribe((fn) => seen.push(fn('common.back')));
         await initLanguage('fr');

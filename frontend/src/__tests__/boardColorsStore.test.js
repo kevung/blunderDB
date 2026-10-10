@@ -1,3 +1,4 @@
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 import { get } from 'svelte/store';
 
@@ -5,8 +6,8 @@ const GetBoardColors = vi.fn();
 const SaveBoardColors = vi.fn(() => Promise.resolve(undefined));
 
 vi.mock('../../wailsjs/go/main/Config.js', () => ({
-    GetBoardColors: (...args) => GetBoardColors(...args),
-    SaveBoardColors: (...args) => SaveBoardColors(...args)
+    GetBoardColors: (/** @type {any[]} */ ...args) => GetBoardColors(...args),
+    SaveBoardColors: (/** @type {any[]} */ ...args) => SaveBoardColors(...args)
 }));
 
 import { boardColorsStore, DEFAULT_BOARD_COLORS, initBoardColors, setBoardColor, resetBoardColors } from '../stores/boardColorsStore.js';
@@ -48,7 +49,7 @@ describe('boardColorsStore', () => {
         setBoardColor('checker1', '#ff0000');
         expect(get(boardColorsStore).checker1).toBe('#ff0000');
         expect(SaveBoardColors).toHaveBeenCalledTimes(1);
-        expect(SaveBoardColors.mock.calls[0][0].checker1).toBe('#ff0000');
+        expect(must(SaveBoardColors.mock.calls[0][0]).checker1).toBe('#ff0000');
     });
 
     test('setBoardColor ignores unknown keys', () => {

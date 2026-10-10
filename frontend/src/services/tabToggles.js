@@ -47,6 +47,7 @@ const DEFAULT_TAB = 'matches';
 // The tab active before the last toggleTab() switched away: one memory shared
 // by all shortcuts, so Ctrl-L, Ctrl-P, Ctrl-L returns to "comments". The
 // current tab is read fresh from activeTabStore, whatever changed it.
+/** @type {string | null} */
 let previousTab = null;
 
 /**

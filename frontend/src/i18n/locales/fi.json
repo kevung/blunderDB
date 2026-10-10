@@ -212,6 +212,7 @@
         "savePosition": "Tallenna asema",
         "settings": "Asetukset",
         "togglePipcount": "Näytä/piilota pip-laskuri",
+        "toggleAnalysisChallenge": "Haaste: piilota analyysi",
         "updatePosition": "Päivitä asema",
         "tour": "Opastetut kierrokset",
         "importDatabaseTip": "Yhdistä toinen tietokanta tähän: yhteisiä asemia ei kahdenneta, niiden analyysit ja kommentit yhdistetään",
@@ -430,6 +431,8 @@
         "movePatternHint": "Paras siirto tai cube-päätös",
         "name": "Nimi",
         "newTab": "Avaa uudessa välilehdessä",
+        "newTabShort": "Uusi välilehti",
+        "inResultsShort": "Tuloksista",
         "noHistory": "Ei hakuhistoriaa",
         "noSaved": "Ei tallennettuja suodattimia",
         "noPinnedAt": "Kohdassa {n} ei ole kiinnitettyä suodatinta",
@@ -572,6 +575,16 @@
         "avoidableTooltip": "Vältettävä virhe: virhe, jota asema ei selittänyt (vaikeus enintään kymmenesosa menetyksestä)",
         "avoidableCount": "Vältettävät",
         "chartOpen": "Avaa tämä päätös napsauttamalla",
+        "gameShort": "P{n}",
+        "legendDifficulty": "vaikeus (odotettu menetys)",
+        "lossSoFar": "Kertymä: {loss}",
+        "timesPerDecision": "Aika päätöstä kohden",
+        "tabsLabel": "Ottelun näkymät",
+        "tabTranscript": "Transkriptio",
+        "tabCharts": "Kaaviot",
+        "tabReview": "Tarkistettavat",
+        "tabDetails": "Yksityiskohdat",
+        "tabStats": "Tilastot",
         "originPlayedHere": "Pelattu täällä",
         "originStopped": "Keskeytetty ennen loppua",
         "originLostOnTime": "Hävitty ajalla ({name})",
@@ -639,7 +652,6 @@
         "writtenBy": "Kirjoittanut",
         "score": "Tilanne",
         "sourceFile": "Lähdetiedosto",
-        "stats": "Tilastot",
         "swapPlayers": "Vaihda pelaajat",
         "takeDecisions": "Take-päätökset",
         "takesBlunders": "Taket (blunderit)",
@@ -698,7 +710,6 @@
         "moveDown": "Siirrä alas",
         "moveUp": "Siirrä ylös",
         "newCollectionPlaceholder": "Uusi kokoelma…",
-        "posCount": "{count} asemaa",
         "removeFromCollection": "Poista kokoelmasta",
         "removePositionTooltip": "Poista asema kokoelmasta",
         "title": "Kokoelmat",
@@ -718,6 +729,7 @@
         "livingNeedsSearch": "Tee ensin haku: sen kokoelma säilyttää.",
         "livingSet": "Elävä kokoelma: {query}",
         "livingCleared": "Kokoelma palautettiin käsin tehdyksi listaksi.",
+        "livingCapped": "Pakka ”{name}”: elävä kokoelma valitsee {total} asemaa; {count} aseman katto täyttyi, ja vain ensimmäiset päätyvät pakkaan.",
         "freezeTitle": "Jäädytä: säilytä tämän päivän tulos tavallisena kokoelmana.",
         "frozen": "Kokoelma jäädytetty: {count} asemaa.",
         "newButton": "Uusi kokoelma",
@@ -747,7 +759,9 @@
         "suggestKeepCollection": "Luo kokoelma ({n})",
         "suggestKeepDeck": "Anki-pakka",
         "suggestQuiz": "Visa",
-        "suggestDefaultName": "Viitteet {date}"
+        "suggestDefaultName": "Viitteet {date}",
+        "browsePositions": "Selaa näitä asemia",
+        "inThisCollection": "tässä kokoelmassa"
     },
     "tournament": {
         "addMatchPlaceholder": "Lisää ottelu…",
@@ -782,7 +796,9 @@
         "noMovesFound": "Tälle ottelulle ei löytynyt siirtoja",
         "swappedPlayers": "Pelaajat vaihdettu",
         "confirmDelete": "Poistetaanko turnaus \"{name}\"?",
-        "newButton": "Uusi turnaus"
+        "newButton": "Uusi turnaus",
+        "matchCountOne": "1 ottelu",
+        "matchCountMany": "{n} ottelua"
     },
     "anki": {
         "limitSession": "Rajoita istuntoa",
@@ -791,8 +807,7 @@
         "sessionLimitZero": "Tämä pakka on asetettu 0 korttiin istuntoa kohden.",
         "boardAnswerOption": "Vastaa laudalla",
         "boardAnswerOptionHint": "Siirto pelataan laudalla; moottori arvioi sen ja ehdottaa arvosanaa, jota voit muuttaa ennen arviointia. Oletuksena pois: arvioit itse. Kuutio- ja tulloskortit pysyvät itsearvioituina.",
-        "boardAnswerHint": "Pelaa siirtosi laudalla",
-        "boardAnswerValidate": "Tarkista",
+        "boardAnswerHint": "Pelaa siirtosi laudalla, napsauta sitten noppia tai paina ENTER",
         "boardAnswerSuggest": "Ehdotettu arvosana: {rating} (virhe {error} mp)",
         "boardAnswerIllegal": "Tämä siirto ei ole laillinen",
         "boardAnswerUnranked": "Laillinen siirto, jota analyysi ei luokittele: arvioi itse",
@@ -816,7 +831,7 @@
         "deckSettingsTooltip": "Pakan asetukset",
         "deleteDeckTooltip": "Poista pakka",
         "easy": "Helppo",
-        "empty": "Ei vielä pakkoja. Luo yksi kokoelmasta tai nykyisestä hausta.",
+        "empty": "Ei pakkoja",
         "enableFuzz": "Ota käyttöön hajonta (satunnaista välit)",
         "good": "Hyvä",
         "hard": "Vaikea",
@@ -826,7 +841,6 @@
         "positionsCount": "{count} asemaa",
         "renameTooltip": "Nimeä uudelleen",
         "resetTooltip": "Palauta kaikki kortit uusiksi",
-        "resume": "Jatka ({due} erääntynyt, {reviewed} tarkasteltu)",
         "retentionTarget": "Muistitavoite",
         "selectCollection": "-- Valitse kokoelma --",
         "settingsTitle": "Asetukset: {name}",
@@ -836,11 +850,6 @@
         "scoresCount": "{count} tilannetta",
         "scoreQuestion": "Tilanne {a}/{b}",
         "badScoreKey": "Tämän kortin tilannetta ei voi lukea",
-        "statLearning": "Opetellaan",
-        "statNew": "Uudet",
-        "statReview": "Kertaus",
-        "statTotal": "Yhteensä",
-        "study": "Opiskele ({due} erääntynyt)",
         "cram": "Harjoittele",
         "cramTooltip": "Vapaa harjoittelu: satunnaisia asemia, ei vaikuta kertausaikatauluun",
         "cramBadge": "Harjoitus",
@@ -882,7 +891,16 @@
             "relearning": "Uudelleenopiskelu"
         },
         "sourceSearch": "Haku",
-        "sourceCollectionN": "Kokoelma #{id}"
+        "sourceCollectionN": "Kokoelma #{id}",
+        "title": "Anki",
+        "studyShort": "Opiskele",
+        "resumeShort": "Jatka ({reviewed})",
+        "dueShort": "{n} erääntynyt",
+        "cardsShort": "{n} korttia",
+        "allDecks": "Kaikki pakat",
+        "newShort": "{n} uutta",
+        "learningShort": "{n} opittavana",
+        "reviewShort": "{n} kertauksessa"
     },
     "analysis": {
         "menuCopy": "Kopioi asema ja analyysi",
@@ -919,7 +937,9 @@
         "hintPlayerBackgammon": "Pelaaja: backgammonin todennäköisyys",
         "hintOpponentWin": "Vastustaja: voittotodennäköisyys",
         "hintOpponentGammon": "Vastustaja: gammonin todennäköisyys",
-        "hintOpponentBackgammon": "Vastustaja: backgammonin todennäköisyys"
+        "hintOpponentBackgammon": "Vastustaja: backgammonin todennäköisyys",
+        "empty": "Ei analyysia",
+        "evaluate": "Arvioi"
     },
     "rollout": {
         "title": "Rollout",
@@ -1027,7 +1047,8 @@
         "created": "Luotu",
         "description": "Kuvaus",
         "user": "Käyttäjä",
-        "version": "Versio"
+        "version": "Versio",
+        "title": "Tietokannan metatiedot"
     },
     "issuance": {
         "originLabel": "Alkuperä",
@@ -1068,6 +1089,7 @@
         "menu": {
             "evaluate": "Arvioi tämä asema",
             "evaluateMirror": "Arvioi tämän aseman peilikuva",
+            "evaluateInNewView": "Arvioi uudessa välilehdessä",
             "copyImageWithAnalysis": "Kopioi laudan kuva analyysin kanssa",
             "newView": "Uusi näkymä",
             "addToAnkiDeck": "Lisää Anki-pakkaan: {deck}",
@@ -1128,6 +1150,8 @@
         "addPositionTooltip": "Lisää tämä asema tietokantaan (Ctrl+S)",
         "addPositionNoDatabase": "Avaa tietokanta lisätäksesi siihen asemia",
         "pending": "Arviointi tulee tähän.",
+        "emptyBoard": "Aseta asema",
+        "evaluating": "Arvioidaan…",
         "failed": "Arviointi epäonnistui: {error}",
         "panelLabel": "Eval-paneeli",
         "inactive": "Eval-paneeli ei ole käytössä. Muokkaa lautaa arvioidaksesi aseman.",
@@ -1164,6 +1188,7 @@
     },
     "viewTabs": {
         "closeView": "Sulje näkymä",
+        "variantOf": "Muunnelma näkymästä #{n}",
         "newView": "Uusi näkymä"
     },
     "goToPosition": {
@@ -1347,7 +1372,7 @@
         "title": "Litteroinnit",
         "new": "Uusi litterointi",
         "newTooltip": "Luo luonnos litteroitavasta ottelusta",
-        "empty": "Ei luonnoksia. Luo yksi litteroidaksesi ottelun.",
+        "empty": "Ei luonnoksia",
         "updated": "Muokattu",
         "players": "Pelaajat",
         "length": "Pituus",
@@ -1479,7 +1504,7 @@
         "moreActions": "Lisää toimintoja",
         "videoFile": "Paikallinen tiedosto…",
         "videoYouTube": "YouTube-linkki…",
-        "videoDetach": "Irrota",
+        "videoRemove": "Poista video",
         "videoAttach": "Liitä",
         "videoResize": "Videoruudun korkeus"
     },
@@ -1662,7 +1687,6 @@
         "tabErrors": "Virheet",
         "tabTraining": "Harjoittelu",
         "tabPlayers": "Pelaajat",
-        "importMatchesHint": "Tuo otteluita aktivoidaksesi suodattimet.",
         "playerLabel": "Pelaaja",
         "allPerspectives": "Kaikki näkökulmat",
         "tournamentsLabel": "Turnaukset",
@@ -1684,7 +1708,7 @@
         "all": "Kaikki",
         "resetFilters": "↺ Palauta",
         "resetFiltersHint": "Nollaa suodattimet",
-        "noDecisionsEmpty": "Ei päätöksiä suodatetulla ajanjaksolla. Laajenna suodattimia.",
+        "noDecisionsEmpty": "Ei päätöksiä näillä suodattimilla",
         "cardLabelAll": "PR Yhteensä",
         "cardLabelChecker": "PR Nappula",
         "cardLabelCube": "PR Kuutio",
@@ -1936,7 +1960,14 @@
             "prCube": "Kuution PR"
         },
         "interval95": "95 %:n LV",
-        "intervalHint": "95 %:n luottamusväli: otantaa uudelleen valinnan otteluista tai ottelun peleistä. Rivi ilman väliä (alle kolme ottelua tai peliä, tai kaikilla sama PR) on harmaannettu."
+        "intervalHint": "95 %:n luottamusväli: otantaa uudelleen valinnan otteluista tai ottelun peleistä. Rivi ilman väliä (alle kolme ottelua tai peliä, tai kaikilla sama PR) on harmaannettu.",
+        "positions": "Asemat",
+        "breakdownOpenPositions": "Avaa nämä {n} asemaa ({decisions} päätöstä)",
+        "breakdownOpenBlunders": "Avaa {n} asemaa, joissa on vakava virhe ({decisions} vakavaa virhettä)",
+        "breakdownCountsError": "Lukumäärät eivät ole saatavilla: {error}",
+        "breakdownCountsMissing": "Rivi puuttuu asemien lukumääristä",
+        "breakdownBlundersHint": "Asemat, joissa vähintään yksi päätös on vakava virhe",
+        "planOutsideShort": "Suunnitelman ulkopuolella: {unthemed} ilman teemaa · {unpriced} hinnoittelematta"
     },
     "resumeBatch": {
         "title": "Jatka tuontia",
@@ -2057,7 +2088,7 @@
         "finishedDecision": "Päätös valmis: {correct}/{n}, istunnon PR {pr}.",
         "undoHop": "Kumoa siirto",
         "resetPlay": "Aloita alusta",
-        "playOnBoard": "Pelaa siirto laudalla ja tarkista se sitten.",
+        "playOnBoard": "Pelaa siirto laudalla ja napsauta sitten noppia.",
         "notationPlaceholder": "Siirto merkintänä, esim. 13/7 8/7",
         "notationLabel": "Merkintänä kirjoitettu siirto",
         "cubePrompt": "Valitse kuutiopäätös.",
@@ -2179,7 +2210,7 @@
     },
     "direction": {
         "title": "Johtaminen",
-        "direct": "Johda tätä turnausta",
+        "direct": "Johda",
         "open": "Avaa johtaminen",
         "close": "Sulje johtaminen",
         "fullscreen": {
@@ -3104,6 +3135,7 @@
         "player2": "Pelaaja 2",
         "lengthPoints": "{n} p",
         "moneySession": "Rahapeli",
+        "type": "Tyyppi",
         "cubeValue": "Kuutio {n}",
         "delayLeft": "Viive {s} s",
         "gestures": "Kaksintaistelun toiminnot",
@@ -3145,7 +3177,6 @@
         "record": "Tallenna ottelu",
         "play": "Pelaa",
         "suspended": "Keskeytetyt kaksintaistelut",
-        "noneSuspended": "Ei keskeytettyjä kaksintaisteluja.",
         "resume": "Jatka peliä",
         "conflict": "Kaksintaistelu muuttui muualla: tässä sen nykytila, mitään ei pelattu.",
         "refused": "Hylätty: {error}",
@@ -3195,13 +3226,13 @@
         "pace": "Virheet: {hasty} hätäisiä ({hastyLoss}), {deliberate} harkittuja ({deliberateLoss}), {unknown} ilman aikaa",
         "paceDiscipline": "pikemminkin kurinalaisuutta: hidasta",
         "paceKnowledge": "pikemminkin tietoa: tutki näitä asemia",
-        "details": "Yhteenvedon tiedot",
         "prInterval": "PR, 95 %:n väli",
         "mwc7Label": "MWC-menetys 7 pisteeseen skaalattuna",
         "mwc7Hint": "MWC-menetys skaalattuna 7 pisteen otteluun, jotta eripituisia otteluita voi verrata.",
         "adjustedShort": "onnella korjattu {adjusted}",
         "mwcLossHint": "Pelaajan tämän ottelun päätöksillä menettämät ottelun voittomahdollisuudet",
-        "toReview": "Tarkistettavat päätökset"
+        "toReview": "Tarkistettavat päätökset",
+        "nothingToReview": "Ei tarkistettavia päätöksiä."
     },
     "video": {
         "notPlayable": "Tätä lähdettä ei voi toistaa täällä.",
@@ -3257,7 +3288,6 @@
         "noDecision": "Ei pelaajan laskettuja päätöksiä turnauksessa"
     },
     "theatre": {
-        "menuItem": "Teatteritila",
         "enter": "Teatteritila: video koko näytöllä (F11)",
         "exit": "Poistu teatteritilasta (F11 tai Esc)",
         "region": "Teatteritila",

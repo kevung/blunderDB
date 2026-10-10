@@ -47,9 +47,9 @@
     const show = (/** @type {boolean} */ masked, /** @type {any} */ v) => (masked ? HIDDEN : (v ?? DASH));
     const pct = (/** @type {number|null|undefined} */ x) => (x == null ? null : (100 * x).toFixed(2));
     const eq = (/** @type {number|null|undefined} */ x) => (x == null ? null : (x >= 0 ? '+' : '') + x.toFixed(3));
-    const sd = (x, digits) => (x == null ? null : (x >= 0 ? '+' : '') + x.toFixed(digits));
+    const sd = (/** @type {number|null|undefined} */ x, /** @type {number} */ digits) => (x == null ? null : (x >= 0 ? '+' : '') + x.toFixed(digits));
 
-    function delta(a, b, fmt) {
+    function delta(/** @type {number|null|undefined} */ a, /** @type {number|null|undefined} */ b, /** @type {(v: number) => string|null} */ fmt) {
         if (a == null || b == null) return null;
         return fmt(a - b);
     }
@@ -60,10 +60,10 @@
         bottom: [pct(bottom?.win), pct(bottom?.gammon), pct(bottom?.backgammon), eq(bottom?.cubeless)],
         top: [pct(top?.win), pct(top?.gammon), pct(top?.backgammon), eq(top?.cubeless)],
         delta: [
-            delta(bottom?.win, top?.win, (v) => sd(100 * v, 2)),
-            delta(bottom?.gammon, top?.gammon, (v) => sd(100 * v, 2)),
-            delta(bottom?.backgammon, top?.backgammon, (v) => sd(100 * v, 2)),
-            delta(bottom?.cubeless, top?.cubeless, (v) => sd(v, 3))
+            delta(bottom?.win, top?.win, (/** @type {number} */ v) => sd(100 * v, 2)),
+            delta(bottom?.gammon, top?.gammon, (/** @type {number} */ v) => sd(100 * v, 2)),
+            delta(bottom?.backgammon, top?.backgammon, (/** @type {number} */ v) => sd(100 * v, 2)),
+            delta(bottom?.cubeless, top?.cubeless, (/** @type {number} */ v) => sd(v, 3))
         ]
     });
 
@@ -71,9 +71,9 @@
         bottom: [bottomEPC?.epc?.toFixed(2), bottomEPC?.pipCount, bottomEPC?.wastage?.toFixed(2), bottomEPC?.meanRolls?.toFixed(3), bottomEPC?.stdDev?.toFixed(3)],
         top: [topEPC?.epc?.toFixed(2), topEPC?.pipCount, topEPC?.wastage?.toFixed(2), topEPC?.meanRolls?.toFixed(3), topEPC?.stdDev?.toFixed(3)],
         delta: [
-            delta(bottomEPC?.epc, topEPC?.epc, (v) => sd(v, 2)),
-            delta(bottomEPC?.pipCount, topEPC?.pipCount, (v) => sd(v, 0)),
-            delta(bottomEPC?.wastage, topEPC?.wastage, (v) => sd(v, 2)),
+            delta(bottomEPC?.epc, topEPC?.epc, (/** @type {number} */ v) => sd(v, 2)),
+            delta(bottomEPC?.pipCount, topEPC?.pipCount, (/** @type {number} */ v) => sd(v, 0)),
+            delta(bottomEPC?.wastage, topEPC?.wastage, (/** @type {number} */ v) => sd(v, 2)),
             DASH,
             DASH
         ]
@@ -134,7 +134,8 @@
     th,
     td {
         padding: 2px 10px;
-        text-align: center;
+        /* Numbers line up on their units (ADR-0085, G4). */
+        text-align: right;
         white-space: nowrap;
     }
 

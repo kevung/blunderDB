@@ -13,6 +13,7 @@ import { render, cleanup, fireEvent } from '@testing-library/svelte';
 
 import ImportProgressModal from '../components/ImportProgressModal.svelte';
 import FileImportProgressModal from '../components/FileImportProgressModal.svelte';
+import { must } from './helpers/must.js';
 
 afterEach(cleanup);
 
@@ -22,7 +23,7 @@ describe('ImportProgressModal — Escape', () => {
         const { container } = render(ImportProgressModal, {
             props: { visible: true, mode: 'analyzing', onCancel: vi.fn(), onCommit: vi.fn(), onClose }
         });
-        await fireEvent.keyDown(container.querySelector('.modal-overlay'), { key: 'Escape' });
+        await fireEvent.keyDown(must(container.querySelector('.modal-overlay')), { key: 'Escape' });
         expect(onClose).not.toHaveBeenCalled();
     });
 
@@ -31,7 +32,7 @@ describe('ImportProgressModal — Escape', () => {
         const { container } = render(ImportProgressModal, {
             props: { visible: true, mode: 'committing', onCancel: vi.fn(), onCommit: vi.fn(), onClose }
         });
-        await fireEvent.keyDown(container.querySelector('.modal-overlay'), { key: 'Escape' });
+        await fireEvent.keyDown(must(container.querySelector('.modal-overlay')), { key: 'Escape' });
         expect(onClose).not.toHaveBeenCalled();
     });
 
@@ -47,7 +48,7 @@ describe('ImportProgressModal — Escape', () => {
                 onClose
             }
         });
-        await fireEvent.keyDown(container.querySelector('.modal-overlay'), { key: 'Escape' });
+        await fireEvent.keyDown(must(container.querySelector('.modal-overlay')), { key: 'Escape' });
         expect(onClose).not.toHaveBeenCalled();
     });
 
@@ -63,7 +64,7 @@ describe('ImportProgressModal — Escape', () => {
                 onClose
             }
         });
-        await fireEvent.keyDown(container.querySelector('.modal-overlay'), { key: 'Escape' });
+        await fireEvent.keyDown(must(container.querySelector('.modal-overlay')), { key: 'Escape' });
         expect(onClose).toHaveBeenCalledTimes(1);
     });
 
@@ -72,7 +73,7 @@ describe('ImportProgressModal — Escape', () => {
         const { container } = render(ImportProgressModal, {
             props: { visible: true, mode: 'completed', onCancel: vi.fn(), onCommit: vi.fn(), onClose }
         });
-        await fireEvent.keyDown(container.querySelector('.modal-overlay'), { key: 'Escape' });
+        await fireEvent.keyDown(must(container.querySelector('.modal-overlay')), { key: 'Escape' });
         expect(onClose).toHaveBeenCalledTimes(1);
     });
 });
@@ -83,7 +84,7 @@ describe('FileImportProgressModal — Escape', () => {
         const { container } = render(FileImportProgressModal, {
             props: { visible: true, mode: 'importing', totalFiles: 5, currentIndex: 2, onCancel: vi.fn(), onClose }
         });
-        await fireEvent.keyDown(container.querySelector('.modal-overlay'), { key: 'Escape' });
+        await fireEvent.keyDown(must(container.querySelector('.modal-overlay')), { key: 'Escape' });
         expect(onClose).not.toHaveBeenCalled();
     });
 
@@ -98,7 +99,7 @@ describe('FileImportProgressModal — Escape', () => {
                 onClose
             }
         });
-        await fireEvent.keyDown(container.querySelector('.modal-overlay'), { key: 'Escape' });
+        await fireEvent.keyDown(must(container.querySelector('.modal-overlay')), { key: 'Escape' });
         expect(onClose).toHaveBeenCalledTimes(1);
     });
 });

@@ -552,3 +552,91 @@ func testAnkiDeckIDWindows(t *testing.T, s storage.Storage) {
 		t.Errorf("IndexOfDeckPosition of a position the deck lacks: found=%v err=%v", found, err)
 	}
 }
+
+// Every deck counter lists the positions it counts: the filtered window's
+// count is the counter's own number, and the window holds that many ids, in
+// rank order. Suspended, buried, learning and reviewed cards spread the deck
+// over every counter.
+func testAnkiFilteredWindowsMatchCounters(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	ids := make([]int64, 6)
+	for i := range ids {
+		p := provenancePos(i + 1)
+		id, err := s.Positions().Save(ctx, "", &p)
+		if err != nil {
+			t.Fatalf("Save position %d: %v", i, err)
+		}
+		ids[i] = id
+	}
+	deck, err := s.Anki().CreateDeck(ctx, "", "counters", "", domain.AnkiSourceSearch, 0, "")
+	if err != nil {
+		t.Fatalf("CreateDeck: %v", err)
+	}
+	if err := s.Anki().SyncWithPositions(ctx, "", deck, ids); err != nil {
+		t.Fatalf("SyncWithPositions: %v", err)
+	}
+	// Again (learning), Easy (review, not due), then one suspended and one
+	// buried new card; the other two stay new and available.
+	for _, step := range []func(cardID int64) error{
+		func(id int64) error { _, err := s.Anki().ReviewCard(ctx, "", id, 1); return err },
+		func(id int64) error { _, err := s.Anki().ReviewCard(ctx, "", id, 4); return err },
+		func(id int64) error { return s.Anki().SetCardSuspended(ctx, "", id, true) },
+		func(id int64) error { return s.Anki().BuryCard(ctx, "", id) },
+	} {
+		next, err := s.Anki().NextCard(ctx, "", deck)
+		if err != nil {
+			t.Fatalf("NextCard: %v", err)
+		}
+		if err := step(next.Card.ID); err != nil {
+			t.Fatalf("card %d: %v", next.Card.ID, err)
+		}
+	}
+
+	stats, err := s.Anki().DeckStats(ctx, "", deck)
+	if err != nil {
+		t.Fatalf("DeckStats: %v", err)
+	}
+	var listed *domain.AnkiDeck
+	for d, err := range s.Anki().ListDecks(ctx, "") {
+		if err != nil {
+			t.Fatalf("ListDecks: %v", err)
+		}
+		if d.ID == deck {
+			listed = d
+		}
+	}
+	if listed == nil {
+		t.Fatalf("ListDecks lacks deck %d", deck)
+	}
+	counters := map[domain.AnkiCardFilter]int{
+		domain.AnkiFilterAll:      stats.TotalCount,
+		domain.AnkiFilterNew:      stats.NewCount,
+		domain.AnkiFilterLearning: stats.LearningCount,
+		domain.AnkiFilterReview:   stats.ReviewCount,
+		domain.AnkiFilterDue:      stats.DueCount,
+		domain.AnkiFilterUnseen:   listed.NewCount,
+		domain.AnkiFilterPastDue:  listed.DueCount,
+	}
+	if stats.NewCount == listed.NewCount || stats.LearningCount == 0 {
+		t.Fatalf("the fixture does not separate the counters: stats %+v, deck new %d", *stats, listed.NewCount)
+	}
+	for filter, want := range counters {
+		n, err := s.Anki().FilteredDeckPositionCount(ctx, "", deck, filter)
+		if err != nil || n != want {
+			t.Errorf("FilteredDeckPositionCount(%q) = %d, %v; the counter says %d", filter, n, err, want)
+		}
+		got, err := s.Anki().FilteredDeckPositionIDs(ctx, "", deck, filter, storage.ListOpts{})
+		if err != nil || len(got) != want {
+			t.Errorf("FilteredDeckPositionIDs(%q) = %v, %v; want %d ids", filter, got, err, want)
+		}
+		for rank, id := range got {
+			r, found, err := s.Anki().IndexOfFilteredDeckPosition(ctx, "", deck, filter, id)
+			if err != nil || !found || r != rank {
+				t.Errorf("IndexOfFilteredDeckPosition(%q, %d) = %d, %v, %v; want %d", filter, id, r, found, err, rank)
+			}
+		}
+	}
+	if _, err := s.Anki().FilteredDeckPositionCount(ctx, "", deck, "overdue"); !errors.Is(err, storage.ErrInvalid) {
+		t.Errorf("an unknown filter: got %v, want ErrInvalid", err)
+	}
+}

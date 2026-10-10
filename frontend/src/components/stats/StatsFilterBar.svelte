@@ -1,6 +1,5 @@
 <script>
     import { onMount, untrack } from 'svelte';
-    import EmptyState from '../panels/EmptyState.svelte';
     import { get } from 'svelte/store';
     import { statsFilterStore, statsMetricStore, statsInvalidationKeyStore } from '../../stores/statsStore.js';
     import { databaseLoadedStore } from '../../stores/databaseStore.js';
@@ -11,15 +10,16 @@
     /**
      * Players tab on screen: player selection and decision type are disabled,
      * since that table covers every player and splits checker from cube.
-     * @type {{ playersTab?: boolean }}
+     * @type {{ playersTab?: boolean, dbEmpty?: boolean }}
      */
-    let { playersTab = false } = $props();
+    // `dbEmpty`: no match imported yet. The panel then shows its empty state in place of the
+    // filters, which have nothing to filter.
+    let { playersTab = false, dbEmpty = $bindable(false) } = $props();
 
     /** @type {Array<{Name: string, Count: number}>} */
     let playerList = $state([]);
     /** @type {Array<{id: number, name: string}>} */
     let tournamentList = $state([]);
-    let dbEmpty = $state(false);
     /** @type {string} earliest match date for input min/placeholder */
     let dateRangeMin = $state('');
     /** @type {string} latest match date for input max/placeholder */
@@ -51,6 +51,7 @@
 
     const MATCH_LENGTHS = [1, 3, 5, 7, 9, 11, 13, 15, 21];
 
+    /** @type {ReturnType<typeof setTimeout> | null} */
     let saveTimer = null;
 
     /** Debounced save to Config.yaml. */
@@ -233,17 +234,15 @@
     });
 </script>
 
-<div class="filter-bar" aria-label={$t('stats.title')}>
-    {#if dbEmpty}
-        <EmptyState text={$t('stats.importMatchesHint')} />
-    {:else}
+{#if !dbEmpty}
+    <div class="filter-bar" aria-label={$t('stats.title')}>
         <!-- Player -->
         <label class="fb-label" for="fb-player">{$t('stats.playerLabel')}</label>
         <select
             id="fb-player"
             class="fb-select"
             disabled={dbEmpty || playersTab}
-            title={playersTab ? $t('stats.filterDisabledOnPlayersTab') : undefined}
+            title={playersTab ? $t('stats.filterDisabledOnPlayersTab') : localFilter.playerName || undefined}
             value={localFilter.playerName}
             onchange={(e) => {
                 localFilter = { ...localFilter, playerName: e.target.value };
@@ -252,7 +251,7 @@
         >
             <option value="">{$t('stats.allPerspectives')}</option>
             {#each playerList as p (p.Name)}
-                <option value={p.Name}>{p.Name} ({p.Count})</option>
+                <option value={p.Name} title={p.Name}>{p.Name} ({p.Count})</option>
             {/each}
         </select>
 
@@ -396,8 +395,8 @@
 
         <!-- Reset -->
         <button class="fb-reset" onclick={resetFilters} title={$t('stats.resetFiltersHint')}>{$t('stats.resetFilters')}</button>
-    {/if}
-</div>
+    </div>
+{/if}
 
 <style>
     .fb-engine {
@@ -433,6 +432,17 @@
         color: var(--color-text-muted);
     }
 
+    /* A long name is cut with an ellipsis, never allowed to widen the bar; the whole select is
+       the hit area. */
+    #fb-player {
+        flex: 0 1 18em;
+        min-width: 8em;
+        max-width: 100%;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
     .fb-select,
     .fb-date {
         font-size: var(--font-size-small);
@@ -441,7 +451,14 @@
         padding: 1px 4px;
         background: var(--color-surface);
         color: inherit;
-        height: 22px;
+    }
+
+    .fb-select {
+        cursor: pointer;
+    }
+
+    .fb-select:disabled {
+        cursor: default;
     }
 
     .fb-date.date-error {
@@ -461,7 +478,6 @@
         background: var(--color-surface);
         cursor: pointer;
         white-space: nowrap;
-        height: 22px;
         color: var(--color-text-muted);
     }
 
@@ -583,5 +599,23 @@
 
     .fb-reset:hover {
         background: color-mix(in srgb, var(--color-text) 6%, var(--color-surface-alt));
+    }
+
+    /* Every control of the bar takes its height from its content, so none clips its text and
+       they all line up. */
+    .fb-select,
+    .fb-date,
+    .fb-engine,
+    .fb-depth,
+    .fb-tour-btn,
+    .fb-ml-btn,
+    .fb-ml-all,
+    .fb-reset {
+        box-sizing: border-box;
+        height: auto;
+        min-height: calc(1.4em + 12px);
+        font-size: var(--font-size-small);
+        line-height: 1.4;
+        padding: 2px 6px;
     }
 </style>

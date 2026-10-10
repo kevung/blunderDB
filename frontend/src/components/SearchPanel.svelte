@@ -18,6 +18,8 @@
     import { databaseLoadedStore } from '../stores/databaseStore';
     import { withDisplayedPositionIDs } from '../services/positionService.js';
     import AssistantPanel from './AssistantPanel.svelte';
+    import PanelHeader from './panels/PanelHeader.svelte';
+    import EmptyState from './panels/EmptyState.svelte';
     import { assistantSettingsStore, loadAssistantSettings } from '../services/assistantService.js';
     import { SaveSearchHistory, LoadSearchHistory, DeleteSearchHistoryEntry, DeleteFilter, LoadEditPosition, LoadExcludePosition } from '../../wailsjs/go/database/Database.js';
     import { registerKeys } from '../services/keyDispatch.js';
@@ -28,7 +30,7 @@
     let activeSubTab = $state('search'); // 'search', 'history', 'saved', 'assistant'
 
     // Filter state
-    let filterEnabled = $state({});
+    let filterEnabled = $state(/** @type {Record<string, boolean>} */ ({}));
     let searchInCurrentResults = $state(false);
     let openInNewTab = $state(false);
 
@@ -37,15 +39,15 @@
     // exclusive — combining them only yields redundant or contradictory queries.
     let commentMode = $state('contains');
     let movePattern = $state('');
-    let matchIDsSelected = $state([]);
-    let tournamentIDsSelected = $state([]);
+    let matchIDsSelected = $state(/** @type {number[]} */ ([]));
+    let tournamentIDsSelected = $state(/** @type {number[]} */ ([]));
     let showPickerModal = $state(false);
     let playerName = $state('');
 
     // Numeric filters, one reactive entry per key declared in services/filterModel.js.
     let numeric = $state(createFilterState());
     // Backend arguments `${key}Filter`, read from a parse result keyed by short name.
-    const numericArgs = (get) => Object.fromEntries(NUMERIC_FILTERS.map((f) => [`${f.key}Filter`, get(f.short)]));
+    const numericArgs = (/** @type {(short: string) => unknown} */ get) => Object.fromEntries(NUMERIC_FILTERS.map((f) => [`${f.key}Filter`, get(f.short)]));
     let diceRollOption = $state('both'); // 'both' | 'first'
     // Decision-type filter: decisionMode follows the board (checker/cube);
     // cubeSubType refines a cube decision (all / double / take-pass).
@@ -60,7 +62,7 @@
 
     // History state — mirrors of stores, always current
     let searchHistory = $derived($searchHistoryStore);
-    let selectedSearch = $state(null);
+    let selectedSearch = $state(/** @type {{ command: string, position: string, excludePosition: string, timestamp: number } | null} */ (null));
     let showSaveDialog = $state(false);
     let filterName = $state('');
 
@@ -111,6 +113,7 @@
     ];
 
     // Filter names are English logic keys; these maps give only the i18n slug of the label.
+    /** @type {Record<string, string>} */
     const filterKeySlug = {
         'Include Cube': 'includeCube',
         'Include Score': 'includeScore',
@@ -146,6 +149,7 @@
         'Matches & Tournaments': 'matchesTournaments',
         Player: 'player'
     };
+    /** @type {Record<string, string>} */
     const groupKeySlug = {
         Display: 'display',
         Position: 'position',
@@ -158,11 +162,11 @@
         'Text / Pattern': 'textPattern',
         Other: 'other'
     };
-    function filterLabel(filter) {
+    function filterLabel(/** @type {string | { name?: string } | null | undefined} */ filter) {
         const name = typeof filter === 'string' ? filter : (filter?.name ?? '');
         return filterKeySlug[name] ? $t('search.filters.' + filterKeySlug[name]) : name;
     }
-    function groupLabel(group) {
+    function groupLabel(/** @type {unknown} */ group) {
         const name = String(group ?? '');
         return groupKeySlug[name] ? $t('search.filterGroups.' + groupKeySlug[name]) : name;
     }
@@ -198,6 +202,17 @@
     [...availableFilters, 'Matches & Tournaments'].forEach((f) => (filterEnabled[f] = false));
     restoreSearchState();
 
+    // The sub-views sit in the header strip (ADR-0085, G8): the dock is too short for a rail.
+    let subTabs = $derived([
+        { id: 'search', label: $t('search.criteriaTab') },
+        { id: 'history', label: $t('search.historyTab') },
+        { id: 'saved', label: $t('search.savedTab') },
+        ...($assistantSettingsStore.on ? [{ id: 'assistant', label: $t('assistant.tab') }] : [])
+    ]);
+    let headerCount = $derived(
+        activeSubTab === 'history' && searchHistory.length > 0 ? String(searchHistory.length) : activeSubTab === 'saved' && savedFilters.length > 0 ? String(savedFilters.length) : null
+    );
+    let toCriteria = $derived({ label: $t('search.criteriaTab'), onClick: () => (activeSubTab = 'search') });
     let activeFilterCount = $derived(availableFilters.filter((f) => filterEnabled[f]).length + (filterEnabled['Matches & Tournaments'] ? 1 : 0));
     // Track the board only while on the search tab: leaving it swaps positionStore
     // to a DB position before onDestroy, which must not overwrite savedSearchPosition.
@@ -232,7 +247,7 @@
 
     // Panel → board: choosing Pions/Cube edits the include board (and remembers the
     // last real roll so toggling back to Pions restores it).
-    function selectDecisionMode(mode) {
+    function selectDecisionMode(/** @type {string} */ mode) {
         if (structureMode !== 'include') return;
         positionStore.update((p) => {
             if (mode === 'cube') {
@@ -269,7 +284,7 @@
 
     // Panel → cube sub-type. Take/pass needs the board cube rendered/edited as a
     // centered offered cube; double/all use the normal owner-based cube.
-    function selectCubeSubType(value) {
+    function selectCubeSubType(/** @type {string} */ value) {
         cubeSubType = value;
         if (value === 'takepass') {
             applyOfferedCube();
@@ -292,7 +307,7 @@
     });
 
     // Back to 'include' editing, loading the entry's "Sauf" board (or an empty one).
-    function restoreExcludeStructure(excludePositionJSON) {
+    function restoreExcludeStructure(/** @type {string} */ excludePositionJSON) {
         structureMode = 'include';
         searchStructureModeStore.set('include');
         includeBoardStash = null;
@@ -308,7 +323,7 @@
     }
 
     // switchStructureMode swaps which checker structure the main board edits.
-    function switchStructureMode(mode) {
+    function switchStructureMode(/** @type {string} */ mode) {
         if (mode === structureMode) return;
         if (mode === 'exclude') {
             includeBoardStash = JSON.parse(JSON.stringify($positionStore));
@@ -343,7 +358,7 @@
         await loadFilterLibrary();
     }
 
-    function isInFilterLibrary(search) {
+    function isInFilterLibrary(/** @type {{ command: string, position: string, excludePosition: string, timestamp: number }} */ search) {
         return savedFilters.some((f) => f.command === search.command);
     }
 
@@ -400,7 +415,7 @@
                 filters: activeFilters.length > 0 ? transformedFilters : [],
                 includeCube: parsed.incCube,
                 includeScore: parsed.incScore,
-                ...numericArgs((short) => parsed[`${short}Filter`]),
+                ...numericArgs((/** @type {string} */ short) => parsed[`${short}Filter`]),
                 // Only 'contains' sends text; a stale disabled box must not add a content filter.
                 searchText: commentMode === 'contains' && searchText ? `t"${searchText}"` : '',
                 decisionTypeFilter: parsed.dtFilter,
@@ -456,7 +471,7 @@
     }
 
     // History functions
-    function selectSearch(search) {
+    function selectSearch(/** @type {{ command: string, position: string, excludePosition: string, timestamp: number }} */ search) {
         if (selectedSearch === search) {
             selectedSearch = null;
             if ($positionBeforeFilterLibraryStore) {
@@ -481,7 +496,7 @@
         }
     }
 
-    function executeSearch(search) {
+    function executeSearch(/** @type {{ command: string, position: string, excludePosition: string, timestamp: number }} */ search) {
         if (search.position) {
             positionStore.set(JSON.parse(search.position));
         }
@@ -498,11 +513,11 @@
         }
     }
 
-    function handleDoubleClick(search) {
+    function handleDoubleClick(/** @type {{ command: string, position: string, excludePosition: string, timestamp: number }} */ search) {
         executeSearch(search);
     }
 
-    function showAddToLibraryDialog(search) {
+    function showAddToLibraryDialog(/** @type {{ command: string, position: string, excludePosition: string, timestamp: number }} */ search) {
         selectedSearch = search;
         showSaveDialog = true;
         filterName = '';
@@ -526,7 +541,7 @@
         cancelSaveDialog();
     }
 
-    async function deleteSearch(search, event) {
+    async function deleteSearch(/** @type {{ command: string, position: string, excludePosition: string, timestamp: number }} */ search, /** @type {Event} */ event) {
         event.stopPropagation();
         try {
             await DeleteSearchHistoryEntry(search.timestamp);
@@ -537,12 +552,12 @@
         }
     }
 
-    function formatTimestamp(timestamp) {
+    function formatTimestamp(/** @type {number | string} */ timestamp) {
         return formatDateTime(timestamp);
     }
 
     // --- Saved filter (bookmarked search) functions ---
-    async function selectSavedFilter(filter) {
+    async function selectSavedFilter(/** @type {{ id: number, name: string, command: string }} */ filter) {
         if (selectedSavedFilter && selectedSavedFilter.id === filter.id) {
             selectedSavedFilter = null;
             if ($positionBeforeFilterLibraryStore) {
@@ -569,7 +584,7 @@
         currentPositionIndexStore.set(-1);
     }
 
-    async function executeSavedFilter(filter) {
+    async function executeSavedFilter(/** @type {{ id: number, name: string, command: string }} */ filter) {
         const editPosition = await LoadEditPosition(filter.name);
         if (editPosition) {
             positionStore.set(JSON.parse(editPosition));
@@ -599,11 +614,11 @@
         }
     }
 
-    function handleKeyDown(event) {
+    function handleKeyDown(/** @type {KeyboardEvent} */ event) {
         if ($activeTabStore !== 'search') return;
         // Already handled: a dialog delegated on the app root runs first and claims its keys this way.
         if (event.defaultPrevented) return;
-        if (event.target.matches('input, textarea, select')) {
+        if (/** @type {HTMLElement} */ (event.target).matches('input, textarea, select')) {
             // Escape reaches the global dispatcher (keyDispatch.js), which blurs the
             // field. Tab is stopped here so it moves between this form's fields.
             if (event.key === 'Escape') return;
@@ -699,53 +714,55 @@
 </script>
 
 <div class="search-panel">
-    <!-- Left sub-tab sidebar -->
-    <div class="sub-tab-sidebar">
-        <button class="sub-tab-btn" class:active={activeSubTab === 'search'} onclick={() => (activeSubTab = 'search')}>{$t('search.criteriaTab')}</button>
-        <button class="sub-tab-btn" class:active={activeSubTab === 'history'} onclick={() => (activeSubTab = 'history')}>{$t('search.historyTab')}</button>
-        <button class="sub-tab-btn" class:active={activeSubTab === 'saved'} onclick={() => (activeSubTab = 'saved')}>{$t('search.savedTab')}</button>
-        {#if $assistantSettingsStore.on}
-            <button class="sub-tab-btn" class:active={activeSubTab === 'assistant'} onclick={() => (activeSubTab = 'assistant')}>{$t('assistant.tab')}</button>
-        {/if}
-    </div>
-
-    <!-- Content area -->
-    <div class="sub-tab-content">
-        {#if pinned.length > 0}
-            <div class="pinned-bar" role="toolbar" aria-label={$t('search.pinnedBar')} data-testid="pinned-bar">
-                {#each pinned as pf, i (pf.id)}
-                    <button class="pinned-chip" onclick={() => executeSavedFilter(pf)} title={i < 9 ? $t('search.pinnedChipTitle', { command: pf.command, n: i + 1 }) : pf.command}>
-                        {#if i < 9}<span class="pinned-rank">{i + 1}</span>{/if}{pf.name}
-                    </button>
-                {/each}
+    <PanelHeader title={$t('tabbedPanel.search')} count={headerCount}>
+        <div class="segmented" role="tablist" aria-label={$t('tabbedPanel.search')}>
+            {#each subTabs as tab (tab.id)}
+                <button type="button" role="tab" class="sub-tab-btn" class:active={activeSubTab === tab.id} aria-selected={activeSubTab === tab.id} onclick={() => (activeSubTab = tab.id)}
+                    >{tab.label}</button
+                >
+            {/each}
+        </div>
+        {#if activeSubTab === 'search'}
+            <div class="segmented structure-toggle" class:exclude-active={structureMode === 'exclude'}>
+                <button type="button" class="structure-btn" class:active={structureMode === 'include'} onclick={() => switchStructureMode('include')} title={$t('search.atLeastTooltip')}
+                    >{$t('search.atLeast')}</button
+                >
+                <button type="button" class="structure-btn exclude" class:active={structureMode === 'exclude'} onclick={() => switchStructureMode('exclude')} title={$t('search.exceptTooltip')}
+                    >{$t('search.except')}</button
+                >
             </div>
         {/if}
+        {#snippet actions()}
+            {#if activeSubTab === 'search'}
+                <button type="button" class="btn-clear" data-testid="search-clear" onclick={clearFilters}>{$t('common.clear')}</button>
+                <button type="button" class="btn-search" data-testid="search-run" onclick={handleSearch}>{$t('common.search')}</button>
+            {/if}
+        {/snippet}
+    </PanelHeader>
+    {#if pinned.length > 0}
+        <div class="pinned-bar" role="toolbar" aria-label={$t('search.pinnedBar')} data-testid="pinned-bar">
+            {#each pinned as pf, i (pf.id)}
+                <button class="pinned-chip" onclick={() => executeSavedFilter(pf)} title={i < 9 ? $t('search.pinnedChipTitle', { command: pf.command, n: i + 1 }) : pf.command}>
+                    {#if i < 9}<span class="pinned-rank">{i + 1}</span>{/if}{pf.name}
+                </button>
+            {/each}
+        </div>
+    {/if}
+    <div class="sub-tab-content">
         <div class="sub-tab-body">
             {#if activeSubTab === 'search'}
-                <!-- Filter Builder with checkboxes -->
                 <div class="filter-section">
-                    <div class="structure-toggle" class:exclude-active={structureMode === 'exclude'}>
-                        <button class="structure-btn" class:active={structureMode === 'include'} onclick={() => switchStructureMode('include')} title={$t('search.atLeastTooltip')}
-                            >{$t('search.atLeast')}</button
-                        >
-                        <button class="structure-btn exclude" class:active={structureMode === 'exclude'} onclick={() => switchStructureMode('exclude')} title={$t('search.exceptTooltip')}
-                            >{$t('search.except')}</button
-                        >
+                    <div class="options-row" class:exclude-active={structureMode === 'exclude'}>
+                        <label class="search-in-results" title={$t('search.inResults')}><input type="checkbox" bind:checked={searchInCurrentResults} /> {$t('search.inResultsShort')}</label>
+                        <label class="search-in-results" title={$t('search.newTab')}><input type="checkbox" bind:checked={openInNewTab} /> {$t('search.newTabShort')}</label>
+                        <span class="active-count">{$t('search.activeCount', { n: activeFilterCount })}</span>
                         {#if boardHasCheckers($searchExcludePositionStore) || structureMode === 'exclude'}
                             <span class="structure-hint">{structureMode === 'exclude' ? $t('search.editingExcluded') : $t('search.exclusionSet')}</span>
                         {/if}
                     </div>
-                    <div class="action-bar top-action-bar">
-                        <label class="search-in-results"><input type="checkbox" bind:checked={searchInCurrentResults} /> {$t('search.inResults')}</label>
-                        <label class="search-in-results"><input type="checkbox" bind:checked={openInNewTab} /> {$t('search.newTab')}</label>
-                        <span class="active-count">{$t('search.activeCount', { n: activeFilterCount })}</span>
-                        <button class="btn-clear" onclick={clearFilters}>{$t('common.clear')}</button>
-                        <button class="btn-search" onclick={handleSearch}>{$t('common.search')}</button>
-                    </div>
                     {#if $searchEmptyStore}
                         <div class="no-results" role="status">
-                            <strong>{$t('search.noResultsTitle')}</strong>
-                            <span>{$t('search.noResultsHint')}</span>
+                            <strong title={$t('search.noResultsHint')}>{$t('search.noResultsTitle')}</strong>
                             <button class="btn-clear" onclick={clearFilters}>{$t('search.clearFilters')}</button>
                         </div>
                     {/if}
@@ -839,12 +856,24 @@
                                                     </div>
                                                     {#if commentMode === 'contains'}
                                                         <div class="text-control">
-                                                            <span class="hint">{$t('search.searchTextHint')}</span><input type="text" bind:value={searchText} class="text-input" />
+                                                            <input
+                                                                type="text"
+                                                                bind:value={searchText}
+                                                                class="text-input"
+                                                                placeholder={$t('search.searchTextHint')}
+                                                                title={$t('search.searchTextHint')}
+                                                            />
                                                         </div>
                                                     {/if}
                                                 {:else if filter === 'Best Move or Cube Decision'}
                                                     <div class="text-control">
-                                                        <span class="hint">{$t('search.movePatternHint')}</span><input type="text" bind:value={movePattern} class="text-input" />
+                                                        <input
+                                                            type="text"
+                                                            bind:value={movePattern}
+                                                            class="text-input"
+                                                            placeholder={$t('search.movePatternHint')}
+                                                            title={$t('search.movePatternHint')}
+                                                        />
                                                     </div>
                                                 {:else if filter === 'Creation Date'}
                                                     <div class="minmax-controls">
@@ -869,7 +898,7 @@
                                                     </div>
                                                 {:else if filter === 'Player'}
                                                     <div class="text-control">
-                                                        <span class="hint">{$t('search.playerHint')}</span><input type="text" bind:value={playerName} class="text-input" />
+                                                        <input type="text" bind:value={playerName} class="text-input" placeholder={$t('search.playerHint')} title={$t('search.playerHint')} />
                                                     </div>
                                                 {/if}
                                             </div>
@@ -883,7 +912,7 @@
             {:else if activeSubTab === 'history'}
                 <div class="history-section">
                     {#if searchHistory.length === 0}
-                        <p class="empty-message">{$t('search.noHistory')}</p>
+                        <EmptyState text={$t('search.noHistory')} action={toCriteria} />
                     {:else}
                         <div class="history-table-container">
                             <table class="history-table">
@@ -947,7 +976,7 @@
             {:else if activeSubTab === 'saved'}
                 <div class="saved-section">
                     {#if savedFilters.length === 0}
-                        <p class="empty-message">{$t('search.noSaved')}</p>
+                        <EmptyState text={$t('search.noSaved')} action={toCriteria} />
                     {:else}
                         <div class="saved-list" role="listbox" aria-label={$t('search.savedTab')}>
                             {#each savedFilters as sf (sf.id)}
@@ -1020,7 +1049,7 @@
     visible={showPickerModal}
     {matchIDsSelected}
     {tournamentIDsSelected}
-    onApply={(matches, tournaments) => {
+    onApply={(/** @type {number[]} */ matches, /** @type {number[]} */ tournaments) => {
         matchIDsSelected = matches;
         tournamentIDsSelected = tournaments;
         showPickerModal = false;
@@ -1044,7 +1073,9 @@
 <style>
     .search-panel {
         display: flex;
+        flex-direction: column;
         height: 100%;
+        text-align: start;
         background: var(--color-surface);
         overflow: hidden;
         font-size: var(--font-size-base);
@@ -1055,35 +1086,41 @@
         user-select: text;
         -webkit-user-select: text;
     }
-    .sub-tab-sidebar {
-        display: flex;
-        flex-direction: column;
-        width: 70px;
+    /* A segmented control in the header strip: sub-views, then At least │ Except. */
+    .segmented {
+        display: inline-flex;
         flex-shrink: 0;
-        background: var(--color-surface-alt);
-        border-right: 1px solid var(--color-border);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        overflow: hidden;
     }
-    .sub-tab-btn {
+    .sub-tab-btn,
+    .structure-btn {
         border: none;
-        background: transparent;
-        padding: 8px 4px;
+        background: var(--color-surface);
+        padding: 2px var(--space-2);
         font-size: var(--font-size-small);
         color: var(--color-text-muted);
         cursor: pointer;
-        border-left: 2px solid transparent;
-        text-align: center;
-        transition: background 0.15s;
-        user-select: none;
-        -webkit-user-select: none;
+        white-space: nowrap;
     }
-    .sub-tab-btn:hover {
-        background: color-mix(in srgb, var(--color-text) 6%, var(--color-surface-alt));
+    .sub-tab-btn + .sub-tab-btn,
+    .structure-btn + .structure-btn {
+        border-left: 1px solid var(--color-border);
     }
-    .sub-tab-btn.active {
+    .sub-tab-btn:hover,
+    .structure-btn:hover {
+        color: var(--color-text);
+    }
+    .sub-tab-btn.active,
+    .structure-btn.active {
         color: var(--color-text);
         font-weight: 600;
-        background: var(--color-surface);
-        border-left-color: var(--color-text-muted);
+        background: color-mix(in srgb, var(--color-text) 10%, var(--color-surface));
+    }
+    .structure-btn.exclude.active {
+        color: #fff;
+        background: #c0392b;
     }
     .sub-tab-content {
         flex: 1;
@@ -1141,57 +1178,27 @@
         flex-direction: column;
         height: 100%;
     }
-    .structure-toggle {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        padding: 6px 8px;
-        border-bottom: 1px solid var(--color-border);
-        background: var(--color-surface-alt);
-        position: sticky;
-        top: 0;
-        z-index: 3;
-    }
     .structure-toggle.exclude-active {
-        background: color-mix(in srgb, var(--color-danger) 10%, var(--color-surface));
-        border-bottom-color: color-mix(in srgb, var(--color-danger) 35%, var(--color-surface));
-    }
-    .structure-btn {
-        font-size: var(--font-size-small);
-        padding: 3px 10px;
-        border: 1px solid var(--color-border);
-        background: var(--color-surface);
-        color: var(--color-text-muted);
-        border-radius: 3px;
-        cursor: pointer;
-    }
-    .structure-btn:hover {
-        background: var(--color-surface-alt);
-    }
-    .structure-btn.active {
-        color: var(--color-text);
-        font-weight: 600;
-        border-color: var(--color-text-muted);
-        background: var(--color-surface);
-    }
-    .structure-btn.exclude.active {
-        color: #fff;
-        background: #c0392b;
         border-color: #c0392b;
     }
-    .structure-hint {
-        margin-left: auto;
-        font-size: var(--font-size-small);
-        color: var(--color-danger);
-        font-style: italic;
-    }
-    .top-action-bar {
+    .options-row {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: var(--space-1) var(--space-2);
+        padding: var(--space-1) var(--space-2);
+        border-bottom: 1px solid var(--color-border);
+        background: var(--color-surface);
         position: sticky;
         top: 0;
-        background: var(--color-surface);
         z-index: 2;
-        border-bottom: 1px solid var(--color-border);
-        padding: 6px 8px;
+    }
+    .options-row.exclude-active {
+        background: color-mix(in srgb, var(--color-danger) 10%, var(--color-surface));
+    }
+    .structure-hint {
+        font-size: var(--font-size-small);
+        color: var(--color-danger);
     }
     .filter-groups {
         flex: 1;
@@ -1203,10 +1210,8 @@
     }
     .group-header {
         font-size: var(--font-size-small);
-        font-weight: 700;
+        font-weight: 600;
         color: var(--color-text-muted);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
         padding: 6px 0 2px;
         border-bottom: 1px solid var(--color-border);
         margin-bottom: 2px;
@@ -1244,15 +1249,10 @@
     .filter-params {
         margin: 2px 0 4px 22px;
     }
-    .action-bar {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
     .active-count {
         font-size: var(--font-size-small);
         color: var(--color-text-muted);
-        margin-right: auto;
+        font-variant-numeric: tabular-nums;
     }
     .search-in-results {
         display: flex;
@@ -1265,7 +1265,7 @@
         -webkit-user-select: none;
     }
     .btn-search {
-        padding: 4px 14px;
+        padding: 2px var(--space-2);
         border: none;
         border-radius: 3px;
         cursor: pointer;
@@ -1290,7 +1290,7 @@
         background: var(--color-surface-alt);
     }
     .btn-clear {
-        padding: 4px 12px;
+        padding: 2px var(--space-2);
         border: none;
         border-radius: 3px;
         cursor: pointer;
@@ -1384,12 +1384,6 @@
         overflow: hidden;
         padding: 4px;
     }
-    .empty-message {
-        text-align: center;
-        color: var(--color-text-muted);
-        font-size: var(--font-size-small);
-        padding: 12px;
-    }
     .history-table-container {
         flex: 1;
         overflow-y: auto;
@@ -1406,7 +1400,7 @@
     }
     .history-table th {
         padding: 2px 4px;
-        text-align: center;
+        text-align: start;
         font-weight: bold;
         font-size: var(--font-size-small);
         border: 1px solid var(--color-border);
@@ -1415,7 +1409,7 @@
     .history-table td {
         padding: 2px 4px;
         border: 1px solid var(--color-border);
-        text-align: center;
+        text-align: start;
         font-size: var(--font-size-small);
     }
     .history-table tbody tr {
@@ -1450,6 +1444,11 @@
     }
     .actions-cell {
         width: 60px;
+        white-space: nowrap;
+    }
+    .history-table td.actions-cell,
+    .history-table th:last-child {
+        text-align: end;
     }
     .action-btn {
         background: none;

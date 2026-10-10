@@ -15,8 +15,8 @@ import { boardMetrics } from '../utils/boardGeometry.js';
 import { defaultBoardConfig } from '../utils/boardConfig.js';
 import { EXCLUDE_EMPTY, stackSlotCenter, cubeBox, sideLayout } from '../utils/boardScene.js';
 import { attachBoardInteractions, hitTestSideControls, applyCheckerEdit, applyCubeClick, applyScoreClick, applyStartingCheckers } from '../utils/boardInteractions.js';
-import { newPlay } from '../services/quizPlay.js';
-import { newBoardPlay, deducedDice } from '../services/transcriptionPlay.js';
+import { newPlay, completedPlay } from '../services/quizPlay.js';
+import { newBoardPlay } from '../services/transcriptionPlay.js';
 
 const W = 1000;
 const H = 720;
@@ -62,7 +62,10 @@ function mount({ mode = 'EDIT', orientation = 'right', scale = 1, position = emp
         quizPlay: writable(/** @type {any} */ (null)),
         // Le videau cliqué pendant une transcription (T2.5) : null tant que
         // rien n'a été demandé, et le panneau le remet à null en servant.
-        transcriptionCube: writable(/** @type {string|null} */ (null))
+        transcriptionCube: writable(/** @type {string|null} */ (null)),
+        // Le rappel de validation d'un mode passé à la grammaire d'ADR-0086 : null, la saisie
+        // source puis destination reste.
+        quizPlayValidate: writable(/** @type {(() => void)|null} */ (null))
     };
     const state = { mode, previousDice: [3, 1], cubeBox: cubeBox(geom, position, false) };
     const deps = {
@@ -670,6 +673,7 @@ describe('the quiz move is played on the board', () => {
     function mountQuiz({ mirrored = false, plays, position }) {
         const b = mount({ mode: 'NORMAL', position, mirrored });
         b.stores.quizPlay.set(newPlay(position, plays));
+        b.stores.quizPlayValidate.set(() => {});
         return b;
     }
 
@@ -685,42 +689,39 @@ describe('the quiz move is played on the board', () => {
         return p;
     }
 
+    // 2-1 : le moteur ne rend que 13/11, le 1 restant injouable dans ce plateau de test.
     const play13to11 = [{ steps: [{ from: 13, to: 11, hit: false }], notation: '13/11', result: {} }];
 
-    test('the clicked source and destination move the checker', () => {
-        const position = posWith({ 13: [5, 0] });
+    test('the clicked checker moves by the first die', () => {
+        const position = { ...posWith({ 13: [5, 0] }), dice: [2, 1] };
         const b = mountQuiz({ plays: play13to11, position });
         b.click(b.slot(13, 0));
-        b.click(b.slot(11, 0));
         const state = get(b.stores.quizPlay);
-        expect(state.steps).toEqual([{ from: 13, to: 11 }]);
+        expect(state.steps).toEqual([{ from: 13, to: 11, die: 2 }]);
         expect(state.board.points[11].checkers).toBe(1);
         b.detach();
     });
 
     test('a mirrored board maps the clicked point back to the model', () => {
-        const position = posWith({ 13: [5, 0] });
+        const position = { ...posWith({ 13: [5, 0] }), dice: [2, 1] };
         const b = mountQuiz({ mirrored: true, plays: play13to11, position });
         // En miroir, le point 13 du modèle est dessiné là où le 12 le serait.
         b.click(b.slot(12, 0));
-        b.click(b.slot(14, 0));
-        expect(get(b.stores.quizPlay).steps).toEqual([{ from: 13, to: 11 }]);
+        expect(get(b.stores.quizPlay).steps).toEqual([{ from: 13, to: 11, die: 2 }]);
         b.detach();
     });
 
     test('the position itself never moves: it is the question', () => {
-        const position = posWith({ 13: [5, 0] });
+        const position = { ...posWith({ 13: [5, 0] }), dice: [2, 1] };
         const b = mountQuiz({ plays: play13to11, position });
         b.click(b.slot(13, 0));
-        b.click(b.slot(11, 0));
         expect(b.pos().board.points[13].checkers).toBe(5);
         b.detach();
     });
 
     test('a click no legal play offers moves nothing, and says nothing', () => {
-        const position = posWith({ 13: [5, 0] });
+        const position = { ...posWith({ 13: [5, 0] }), dice: [2, 1] };
         const b = mountQuiz({ plays: play13to11, position });
-        b.click(b.slot(13, 0));
         b.click(b.slot(9, 0));
         expect(get(b.stores.quizPlay).steps).toEqual([]);
         b.detach();
@@ -761,6 +762,7 @@ describe('le coup joué au plateau d’une transcription (T2.3, ADR-0052)', () =
      */
     function mountPlay({ rolled = false } = {}) {
         const b = mount({ mode: 'TRANSCRIBE', position: POSITION });
+        b.stores.quizPlayValidate.set(() => {});
         b.stores.quizPlay.set(rolled ? newBoardPlay(POSITION, [BY_ROLL[0]], { rolled: [6, 1] }) : newBoardPlay(POSITION, BY_ROLL));
         return b;
     }
@@ -775,17 +777,11 @@ describe('le coup joué au plateau d’une transcription (T2.3, ADR-0052)', () =
         b.detach();
     });
 
-    test('deux clics font exactement ce que fait le glissé', () => {
-        const dragged = mountPlay();
-        dragged.drag(dragged.slot(13, 0), dragged.slot(7, 0));
-        const byDrag = get(dragged.stores.quizPlay);
-        dragged.detach();
-
-        const clicked = mountPlay();
-        clicked.click(clicked.slot(13, 0));
-        clicked.click(clicked.slot(7, 0));
-        expect(get(clicked.stores.quizPlay).steps).toEqual(byDrag.steps);
-        clicked.detach();
+    test('un clic joue le pion par le premier dé du jet', () => {
+        const b = mountPlay({ rolled: true });
+        b.click(b.slot(13, 0));
+        expect(get(b.stores.quizPlay).steps).toEqual([{ from: 13, to: 7, die: 6 }]);
+        b.detach();
     });
 
     // La recette de la fiche : quatre pas, quatre gestes, et les deux dés du
@@ -806,7 +802,7 @@ describe('le coup joué au plateau d’une transcription (T2.3, ADR-0052)', () =
         expect(gestures).toBe(4);
         const state = get(b.stores.quizPlay);
         expect(state.steps).toHaveLength(4);
-        expect(deducedDice(state)).toEqual([6, 6]);
+        expect(completedPlay(state)).not.toBeNull();
         b.detach();
     });
 
@@ -855,19 +851,7 @@ describe('le coup joué au plateau d’une transcription (T2.3, ADR-0052)', () =
         b.drag(b.slot(8, 0), b.slot(7, 1));
         const state = get(b.stores.quizPlay);
         expect(state.free).toBe(false);
-        expect(deducedDice(state)).toEqual([6, 1]);
-        b.detach();
-    });
-
-    test('une fois libre, deux clics déplacent sans rien vérifier', () => {
-        const b = mountPlay({ rolled: true });
-        b.drag(b.slot(13, 0), b.slot(3, 0));
-        b.click(b.slot(8, 0));
-        b.click(b.slot(4, 0));
-        expect(get(b.stores.quizPlay).steps).toEqual([
-            { from: 13, to: 3 },
-            { from: 8, to: 4 }
-        ]);
+        expect(completedPlay(state)).not.toBeNull();
         b.detach();
     });
 
@@ -940,6 +924,98 @@ describe('le clic sur le videau, en transcription', () => {
         b.stores.quizPlay.set(newBoardPlay(b.pos(), [], { rolled: [3, 1] }));
         b.click(b.state.cubeBox, 0);
         expect(cubeOf(b)).toBe('double');
+        b.detach();
+    });
+});
+
+// ── La grammaire d'ADR-0086 au plateau ───────────────────────────────────────
+//
+// Un mode qui pose son rappel de validation passe à la grammaire : le pion cliqué part du
+// premier dé non joué, le clic sur les dés intervertit ou valide, le clic droit reprend. Sans
+// rappel, rien ne change (les modes basculent un par un).
+describe('ADR-0086: the play follows the one grammar once its mode opts in', () => {
+    /** @param {Record<number, [number, number]>} stacks */
+    function posWith(stacks) {
+        const p = emptyPos();
+        p.board.bearoff = [0, 0];
+        for (const [pt, [n, color]] of Object.entries(stacks)) p.board.points[Number(pt)] = { checkers: n, color };
+        return p;
+    }
+    const position = posWith({ 13: [5, 0], 8: [3, 0], 6: [5, 0] });
+    /** @param {[number, number][]} list */
+    const play = (list) => ({ steps: list.map(([from, to]) => ({ from, to })), notation: '', result: {} });
+    const plays = [
+        play([
+            [8, 5],
+            [6, 5]
+        ]),
+        play([
+            [13, 10],
+            [10, 9]
+        ]),
+        play([
+            [8, 7],
+            [8, 5]
+        ])
+    ];
+
+    function mountGrammar() {
+        const b = mount({ mode: 'NORMAL', position });
+        const validate = vi.fn();
+        b.stores.quizPlay.set(newPlay(position, plays));
+        b.stores.quizPlayValidate.set(validate);
+        const dice = sideTargets(b.geom, b.cfg, 0);
+        return { b, validate, dice };
+    }
+    const steps = (/** @type {any} */ b) => get(b.stores.quizPlay).steps.map((/** @type {any} */ s) => [s.from, s.to]);
+
+    test('a click on a checker moves it by the left die, then the right one', () => {
+        const { b } = mountGrammar();
+        b.click(b.slot(8, 0));
+        expect(steps(b)).toEqual([[8, 5]]);
+        expect(get(b.stores.quizPlay).selected).toBeNull();
+        b.click(b.slot(6, 0));
+        expect(steps(b)).toEqual([
+            [8, 5],
+            [6, 5]
+        ]);
+        b.detach();
+    });
+
+    test('a click on the dice swaps them before the play, and validates it once finished', () => {
+        const { b, validate, dice } = mountGrammar();
+        b.click(dice.die(0));
+        expect(get(b.stores.quizPlay).swapped).toBe(true);
+        b.click(b.slot(8, 0));
+        expect(steps(b)).toEqual([[8, 7]]);
+        expect(validate).not.toHaveBeenCalled();
+        b.click(b.slot(8, 0));
+        expect(steps(b)).toEqual([
+            [8, 7],
+            [8, 5]
+        ]);
+        b.detach();
+    });
+
+    test('a finished play is validated by a click on the dice, never on its own', () => {
+        const { b, validate, dice } = mountGrammar();
+        b.click(b.slot(8, 0));
+        b.click(b.slot(6, 0));
+        expect(validate).not.toHaveBeenCalled();
+        b.click(dice.die(1));
+        expect(validate).toHaveBeenCalledTimes(1);
+        b.detach();
+    });
+
+    test('a right click on the board takes the play back; with nothing played it opens the menu', () => {
+        const { b } = mountGrammar();
+        b.fire('contextmenu', b.slot(13, 0), 2);
+        expect(b.deps.openContextMenu).toHaveBeenCalledTimes(1);
+        b.click(b.slot(8, 0));
+        b.fire('contextmenu', b.slot(13, 0), 2);
+        expect(get(b.stores.quizPlay).steps).toEqual([]);
+        expect(get(b.stores.quizPlay).board.points[8].checkers).toBe(3);
+        expect(b.deps.openContextMenu).toHaveBeenCalledTimes(1);
         b.detach();
     });
 });

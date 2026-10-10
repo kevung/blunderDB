@@ -25,7 +25,7 @@
         return label === key ? theme : label;
     }
 
-    const orNull = (count, value) => (count > 0 ? value : null);
+    const orNull = (/** @type {number} */ count, value) => (count > 0 ? value : null);
 
     let labels = $derived(periods.map((p) => p.Start));
     let datasets = $derived([
@@ -67,7 +67,7 @@
         }
     };
 
-    const fmt = (count, value, digits = 2) => (count > 0 ? value.toFixed(digits) : '–');
+    const fmt = (/** @type {number} */ count, value, digits = 2) => (count > 0 ? value.toFixed(digits) : '–');
 </script>
 
 <section class="chart-section training">
@@ -140,7 +140,7 @@
     }
 
     .section-title {
-        font-size: var(--font-size-base);
+        font-size: var(--font-size-small);
         font-weight: 600;
         color: var(--color-text-muted);
         text-transform: uppercase;

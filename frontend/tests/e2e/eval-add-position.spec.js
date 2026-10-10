@@ -1,7 +1,7 @@
 /**
  * eval-add-position.spec.js — « Ajouter à la base » in the Eval panel.
  *
- * The button is a labelled one, at the head of the badge strip, precisely so
+ * The button is a labelled one, at the end of the band, the primary action, precisely so
  * it is seen; a label costs width, and the strip is one line (ADR-0020 rule 8,
  * ADR-0021). So the claim is measured where it is tightest: at blunderDB's
  * default window width (1024 px, config.go), in French and in German, the
@@ -53,13 +53,13 @@ async function openEval(page, mock) {
     await dismissHomeScreen(page);
     await page.click('[data-testid="tab-eval"]');
     await expect(page.locator('[data-testid="tab-eval"]')).toHaveClass(/active/);
-    await expect(page.locator('.eval-panel .badges-strip .badge')).toBeVisible({ timeout: 4000 });
+    await expect(page.locator('.eval-panel [data-testid="panel-header"] .badge')).toBeVisible({ timeout: 4000 });
 }
 
-/** Every child of the strip, as the rectangles the browser laid out. */
+/** Every child of the band, as the rectangles the browser laid out. */
 async function stripLayout(page) {
-    return page.locator('.eval-panel .badges-strip').evaluate((strip) => ({
-        firstIsButton: strip.firstElementChild?.classList.contains('add-position') ?? false,
+    return page.locator('.eval-panel [data-testid="panel-header"]').evaluate((strip) => ({
+        lastIsButton: strip.querySelector('.panel-actions')?.lastElementChild?.classList.contains('add-position') ?? false,
         children: [...strip.children].map((el) => {
             const r = el.getBoundingClientRect();
             return { cls: el.className, top: r.top, bottom: r.bottom, left: r.left, right: r.right };
@@ -72,7 +72,7 @@ async function stripLayout(page) {
 }
 
 function expectOneLine(layout) {
-    expect(layout.firstIsButton).toBe(true);
+    expect(layout.lastIsButton).toBe(true);
     expect(layout.children.length).toBeGreaterThanOrEqual(4);
     // One line: every pill's vertical centre within a couple of pixels of the others.
     const centres = layout.children.map((c) => (c.top + c.bottom) / 2);
@@ -91,7 +91,7 @@ test.describe("at blunderDB's default window width", () => {
     test('French, no database: the strip is one line and the button says to open a database', async ({ page }) => {
         await openEval(page, { config: { GetLanguage: 'fr' } });
 
-        const button = page.locator('.eval-panel .badges-strip .add-position');
+        const button = page.locator('.eval-panel [data-testid="panel-header"] .add-position');
         await expect(button).toHaveText(fr.eval.addPosition);
         await expect(button).toBeDisabled();
         await expect(button).toHaveAttribute('title', fr.eval.addPositionNoDatabase);
@@ -102,7 +102,7 @@ test.describe("at blunderDB's default window width", () => {
     test('German, a database open, the default board: one line, and the refusal as the reason', async ({ page }) => {
         await openEval(page, openLibraryMock({ config: { GetLanguage: 'de' } }));
 
-        const button = page.locator('.eval-panel .badges-strip .add-position');
+        const button = page.locator('.eval-panel [data-testid="panel-header"] .add-position');
         await expect(button).toHaveText(de.eval.addPosition);
         await expect(button).toBeDisabled();
         await expect(button).toHaveAttribute('title', de.status.invalidP2BorneOff);

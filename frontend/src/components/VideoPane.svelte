@@ -37,6 +37,17 @@
     let root = $state(null);
     // The speed applied, as the player reports it, and the speeds the source accepts.
     let rate = $state(1);
+    // WebKitGTK unmutes the element when the speed changes (and fires volumechange for it). The
+    // viewer's mute is remembered, and put back when it is undone inside the window that a speed
+    // change opens: an unmute outside it is the viewer's own.
+    let userMuted = false;
+    let rateWindowEnd = 0;
+    function keepMuted() {
+        if (!video) return;
+        if (performance.now() < rateWindowEnd) {
+            if (userMuted && !video.muted) video.muted = true;
+        } else userMuted = video.muted;
+    }
     /** @type {readonly number[]} */
     let rates = $state(VIDEO_RATES);
     // The speed shows a moment after each change, and for as long as it is not 1×.
@@ -254,6 +265,7 @@
             // The shown speed is the one the player answers with, not the one asked.
             postToPlayer({ type: 'rate', rate: next });
         } else if (video) {
+            rateWindowEnd = performance.now() + 500;
             video.playbackRate = next;
             showRate(video.playbackRate);
         }
@@ -292,7 +304,12 @@
             onerror={onVideoError}
             onended={() => onended?.()}
             onfocus={reclaimFocus}
-            onratechange={() => video && showRate(video.playbackRate)}
+            onvolumechange={keepMuted}
+            onratechange={() => {
+                if (!video) return;
+                keepMuted();
+                showRate(video.playbackRate);
+            }}
         ></video>
     {:else if kind === 'youtube' && src}
         <iframe bind:this={frame} {src} title={$t('video.player')} allow="autoplay; encrypted-media"></iframe>

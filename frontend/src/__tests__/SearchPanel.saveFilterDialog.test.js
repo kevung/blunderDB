@@ -9,6 +9,7 @@
  * autofocuses the name field), and Escape closes it.
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
@@ -39,7 +40,7 @@ async function openSaveDialog() {
 
     const bookmarkBtn = utils.container.querySelector('.action-btn');
     expect(bookmarkBtn).not.toBeNull();
-    await fireEvent.click(bookmarkBtn);
+    await fireEvent.click(must(bookmarkBtn));
     await tick();
 
     return utils;
@@ -51,8 +52,8 @@ describe('SearchPanel — save-filter dialog accessibility', () => {
 
         const dialog = container.querySelector('[role="dialog"]');
         expect(dialog).not.toBeNull();
-        expect(dialog.getAttribute('aria-modal')).toBe('true');
-        expect(dialog.hasAttribute('aria-label')).toBe(true);
+        expect(must(dialog).getAttribute('aria-modal')).toBe('true');
+        expect(must(dialog).hasAttribute('aria-label')).toBe(true);
 
         const input = container.querySelector('#filterNameInput');
         expect(input).not.toBeNull();
@@ -63,7 +64,7 @@ describe('SearchPanel — save-filter dialog accessibility', () => {
         const { container } = await openSaveDialog();
 
         const dialog = container.querySelector('[role="dialog"]');
-        await fireEvent.keyDown(dialog, { key: 'Escape' });
+        await fireEvent.keyDown(must(dialog), { key: 'Escape' });
         await tick();
 
         expect(container.querySelector('[role="dialog"]')).toBeNull();

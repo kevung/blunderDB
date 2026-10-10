@@ -69,6 +69,27 @@ async function clickPoint(page, point) {
     await page.mouse.click(at.x, at.y);
 }
 
+/**
+ * Clique le premier dé dessiné (la position est celle de positionA : joueur 1 au trait).
+ * @param {import('@playwright/test').Page} page
+ */
+async function clickDice(page) {
+    const at = await page.evaluate(async (roller) => {
+        const { boardMetrics } = await import('/src/utils/boardGeometry.js');
+        const { sideLayout } = await import('/src/utils/boardScene.js');
+        const { defaultBoardConfig } = await import('/src/utils/boardConfig.js');
+        const host = /** @type {HTMLElement} */ (document.getElementById('backgammon-board'));
+        const drawing = /** @type {Element} */ (host.firstElementChild);
+        const width = Number(drawing.getAttribute('width'));
+        const height = Number(drawing.getAttribute('height'));
+        const rect = host.getBoundingClientRect();
+        const cfg = defaultBoardConfig();
+        const side = sideLayout(boardMetrics(width, height, cfg.widthFactor), cfg, roller);
+        return { x: rect.left + (side.diceX * rect.width) / width, y: rect.top + (side.diceY * rect.height) / height };
+    }, positionA.player_on_roll);
+    await page.mouse.click(at.x, at.y);
+}
+
 test.beforeEach(async ({ page }) => {
     await installWailsMock(
         page,
@@ -85,26 +106,20 @@ test.beforeEach(async ({ page }) => {
     await overrideDbMethodByArg(page, 'LoadPosition', Object.fromEntries(libraryPositions.map((p) => [p.id, p])), null);
 });
 
-test('train decision : le coup se joue sur le plateau, se valide dans le panneau, et le verdict se lit', async ({ page }) => {
+test('train decision : le coup se joue sur le plateau, se valide par les dés, et le verdict se lit', async ({ page }) => {
     await page.keyboard.press('Space');
     await page.locator('.command-input').fill('train decision');
     await page.keyboard.press('Enter');
 
     const panel = page.getByTestId('training-panel');
-    const validate = panel.getByTestId('training-validate-move');
-    await expect(validate).toBeVisible();
-    await expect(validate, 'rien n’est joué : rien à valider').toBeDisabled();
+    await expect(panel.getByTestId('training-validate-move'), 'les dés valident : pas de bouton').toHaveCount(0);
     await expect(page.locator('[data-testid="tab-training"]')).toHaveClass(/active/);
 
-    // Deux dés, deux pas, chacun source puis destination.
+    // Deux dés, deux pas : un clic sur le pion le joue du premier dé non joué (3, puis 1).
     await clickPoint(page, 6);
-    await clickPoint(page, 3);
     await expect(panel.getByTestId('training-undo-step')).toBeEnabled();
     await clickPoint(page, 4);
-    await clickPoint(page, 3);
-
-    await expect(validate).toBeEnabled();
-    await validate.click();
+    await clickDice(page);
 
     const verdict = panel.getByTestId('training-verdict');
     await expect(verdict).toContainText('42 mp');

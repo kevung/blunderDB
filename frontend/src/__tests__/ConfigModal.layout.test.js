@@ -2,6 +2,7 @@
  * ConfigModal.svelte : les neuf onglets se montent en colonne (aria-orientation) et chacun
  * ouvre son corps. Le débordement lui-même est géométrique (e2e) ; ce test tient le montage.
  */
+import { must } from './helpers/must.js';
 import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 
@@ -30,8 +31,8 @@ describe('ConfigModal tabs', () => {
     test('nine tabs in a vertical tablist, each selectable', async () => {
         const { container } = render(ConfigModal, { visible: true, onClose: () => {} });
         const list = container.ownerDocument.querySelector('[role="tablist"]');
-        expect(list.getAttribute('aria-orientation')).toBe('vertical');
-        const tabs = [...list.querySelectorAll('[role="tab"]')];
+        expect(must(list).getAttribute('aria-orientation')).toBe('vertical');
+        const tabs = [...must(list).querySelectorAll('[role="tab"]')];
         expect(tabs).toHaveLength(9);
         expect(tabs[0].getAttribute('aria-selected')).toBe('true');
         await fireEvent.click(tabs[7]);
@@ -47,5 +48,41 @@ describe('ConfigModal tabs', () => {
         await fireEvent.change(select, { target: { value: '10%' } });
         expect(get(pageStepStore)).toBe('10%');
         pageStepStore.set(PAGE_STEP_DEFAULT);
+    });
+});
+
+describe('ConfigModal scroll', () => {
+    test('each tab keeps its own scroll offset; a tab never seen starts at the top', async () => {
+        const store = new WeakMap();
+        const desc = Object.getOwnPropertyDescriptor(Element.prototype, 'scrollTop');
+        Object.defineProperty(Element.prototype, 'scrollTop', {
+            configurable: true,
+            get() {
+                return store.get(this) ?? 0;
+            },
+            set(v) {
+                store.set(this, v);
+            }
+        });
+        try {
+            const { container } = render(ConfigModal, { visible: true, onClose: () => {} });
+            const doc = container.ownerDocument;
+            const tabs = [...doc.querySelectorAll('[role="tab"]')];
+            const body = doc.querySelector('.tab-body');
+            must(body).scrollTop = 120;
+            await fireEvent.click(tabs[1]);
+            await Promise.resolve();
+            expect(must(body).scrollTop).toBe(0);
+            must(body).scrollTop = 40;
+            await fireEvent.click(tabs[0]);
+            await Promise.resolve();
+            expect(must(body).scrollTop).toBe(120);
+            await fireEvent.click(tabs[1]);
+            await Promise.resolve();
+            expect(must(body).scrollTop).toBe(40);
+        } finally {
+            if (desc) Object.defineProperty(Element.prototype, 'scrollTop', desc);
+            else delete Element.prototype.scrollTop;
+        }
     });
 });

@@ -111,6 +111,7 @@ function installSetSpies(storeMap, callOrder) {
 // ── Tests enterEvalMode ────────────────────────────────────────────────────────
 
 describe('enterEvalMode — ordre des set', () => {
+    /** @type {Array<{ store: string, value: unknown }>} */
     let callOrder;
     let spies;
 
@@ -168,6 +169,7 @@ describe('enterEvalMode — ordre des set', () => {
 // ── Tests exitEvalMode ─────────────────────────────────────────────────────────
 
 describe('exitEvalMode — ordre des set', () => {
+    /** @type {Array<{ store: string, value: unknown }>} */
     let callOrder;
     let spies;
 
@@ -208,8 +210,8 @@ describe('exitEvalMode — ordre des set', () => {
     test('T6 — exitEvalMode recharge l’analyse de la position restaurée (bug X2)', async () => {
         // Sans ce rechargement, le panneau d’analyse restait vide après un aller-retour
         // position → EVAL → analyse (l’effet de nav ne redessine plus en mode match).
-        LoadAnalysis.mockClear();
-        LoadAnalysis.mockResolvedValueOnce({ positionId: 99, checkerAnalysis: { moves: [] } });
+        vi.mocked(LoadAnalysis).mockClear();
+        vi.mocked(LoadAnalysis).mockResolvedValueOnce({ positionId: 99, checkerAnalysis: { moves: [] } });
 
         await exitEvalMode();
 

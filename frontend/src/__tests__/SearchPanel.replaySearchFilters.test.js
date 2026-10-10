@@ -18,6 +18,7 @@ import { tick } from 'svelte';
 import SearchPanel from '../components/SearchPanel.svelte';
 import { searchHistoryStore } from '../stores/searchHistoryStore.js';
 import { filterLibraryStore } from '../stores/filterLibraryStore.js';
+import { must } from './helpers/must.js';
 
 afterEach(() => {
     cleanup();
@@ -38,7 +39,7 @@ async function replayHistoryEntry(command) {
 
     const row = utils.container.querySelector('.history-table tbody tr');
     expect(row).not.toBeNull();
-    await fireEvent.dblClick(row);
+    await fireEvent.dblClick(must(row));
     await tick();
 
     expect(onLoadPositionsByFilters).toHaveBeenCalledTimes(1);

@@ -148,6 +148,11 @@ func (s *Server) statsRoutes() []route {
 			ids, err := ss().PositionIDsBySelection(ctx, scope, req.Filter, req.Selection)
 			return idsResp{PositionIDs: ids}, err
 		})},
+		// Les positions de chaque ligne des ventilations : le chiffre cliquable
+		// est la longueur de la liste que charge la sélection "breakdown".
+		{http.MethodPost, "/v1/stats.breakdownPositionCounts", rpc(func(ctx context.Context, scope string, req statsComputeReq) (storage.BreakdownPositionCounts, error) {
+			return ss().BreakdownPositionCounts(ctx, scope, req.Filter)
+		})},
 		{http.MethodPost, "/v1/stats.positionIdsByTournament", rpc(func(ctx context.Context, scope string, req tournamentIDReq) (idsResp, error) {
 			ids, err := ss().PositionIDsByTournament(ctx, scope, req.TournamentID)
 			return idsResp{PositionIDs: ids}, err

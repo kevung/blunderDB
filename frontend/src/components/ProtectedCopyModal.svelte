@@ -23,7 +23,7 @@
         if (password) onSubmit(password, removeContainer);
     }
 
-    function handleKeyDown(event) {
+    function handleKeyDown(/** @type {KeyboardEvent} */ event) {
         if (event.key === 'Enter') {
             event.stopImmediatePropagation();
             submit();

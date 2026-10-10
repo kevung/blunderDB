@@ -52,7 +52,7 @@
     // abandon it: the user has Annuler for that, deliberately.
     let closable = $derived(mode === 'completed');
 
-    function basename(path) {
+    function basename(/** @type {string} */ path) {
         if (!path) return '';
         return path.split('/').pop().split('\\').pop();
     }

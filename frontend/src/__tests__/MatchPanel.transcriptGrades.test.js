@@ -7,6 +7,7 @@
  * where the blunders are.
  */
 
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
@@ -71,7 +72,7 @@ async function openTranscript() {
     for (let i = 0; i < 6; i++) await tick();
     if (!container.querySelector('tbody tr.selected')) {
         const cell = [...container.querySelectorAll('tbody tr td')].find((td) => td.textContent.includes('Alice'));
-        await fireEvent.click(cell);
+        await fireEvent.click(must(cell));
     }
     await vi.waitFor(() => expect(container.querySelector('details.game-section')).not.toBeNull());
     for (let i = 0; i < 4; i++) await tick();
@@ -101,18 +102,18 @@ describe('MatchPanel — the Transcript carries the grade of every Move (#287)',
         expect(rows[0].querySelector('.grade-mark')).toBeNull();
 
         expect(rows[1].classList.contains('graded-blunder')).toBe(true);
-        expect(rows[1].querySelector('.grade-mark').textContent).toBe('??');
-        expect(rows[1].querySelector('.grade-mark').getAttribute('title')).toContain('0.152');
+        expect(must(rows[1].querySelector('.grade-mark')).textContent).toBe('??');
+        expect(must(rows[1].querySelector('.grade-mark')).getAttribute('title')).toContain('0.152');
 
         // A cube Move is graded like a checker Move.
         expect(rows[2].classList.contains('graded-error')).toBe(true);
-        expect(rows[2].querySelector('.grade-mark').textContent).toBe('?');
+        expect(must(rows[2].querySelector('.grade-mark')).textContent).toBe('?');
     });
 
     test('each game header counts its marks, a collapsed game included', async () => {
         const container = await openTranscript();
         const sections = [...container.querySelectorAll('details.game-section')];
-        expect(sections[1].open, 'game 2 is collapsed').toBe(false);
+        expect(/** @type {HTMLDetailsElement} */ (sections[1]).open, 'game 2 is collapsed').toBe(false);
 
         const marks = (section) => [...section.querySelectorAll('summary .game-marks')].map((m) => m.textContent.trim());
         expect(marks(sections[0])).toEqual(['1 ??', '1 ?']);
@@ -121,9 +122,9 @@ describe('MatchPanel — the Transcript carries the grade of every Move (#287)',
 
     test('a change of the library counter (thresholds moved, import landed) re-reads the grades', async () => {
         await openTranscript();
-        const before = GetMatchMoveGrades.mock.calls.length;
+        const before = vi.mocked(GetMatchMoveGrades).mock.calls.length;
         libraryCountsStore.set({ positions: 1, blunders: 2, matches: 1 });
-        await vi.waitFor(() => expect(GetMatchMoveGrades.mock.calls.length).toBeGreaterThan(before));
+        await vi.waitFor(() => expect(vi.mocked(GetMatchMoveGrades).mock.calls.length).toBeGreaterThan(before));
         expect(GetMatchMoveGrades).toHaveBeenLastCalledWith(7);
     });
 });

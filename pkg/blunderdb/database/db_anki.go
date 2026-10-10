@@ -80,15 +80,17 @@ func (d *Database) DeleteAnkiDeck(id int64) error {
 	return d.store.Anki().DeleteDeck(context.Background(), "", id)
 }
 
-// SyncAnkiDeck populates cards from the deck's source (collection or search)
-func (d *Database) SyncAnkiDeck(deckID int64) error {
+// SyncAnkiDeck populates cards from the deck's source (collection or search).
+// A deck fed by a living collection re-evaluates its query here, and the
+// report says whether the declared ceiling cut it short.
+func (d *Database) SyncAnkiDeck(deckID int64) (*storage.DeckSync, error) {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
 	if d.db == nil {
-		return fmt.Errorf("no database is currently open")
+		return nil, fmt.Errorf("no database is currently open")
 	}
-	return d.store.Anki().Sync(context.Background(), "", deckID)
+	return storage.SyncDeck(context.Background(), d.store, "", deckID)
 }
 
 // SyncAnkiDeckWithPositions syncs a deck with explicit position IDs (for search-based decks)
@@ -156,6 +158,49 @@ func (d *Database) IndexOfAnkiDeckPosition(deckID, positionID int64) (int, error
 		return -1, fmt.Errorf("no database is currently open")
 	}
 	index, found, err := d.store.Anki().IndexOfDeckPosition(context.Background(), "", deckID, positionID)
+	if err != nil || !found {
+		return -1, err
+	}
+	return index, nil
+}
+
+// ListAnkiDeckFilteredPositionIDs, CountAnkiDeckFilteredPositions and
+// IndexOfAnkiDeckFilteredPosition browse the positions behind one of a deck's
+// counters (domain.AnkiCardFilter: "", "new", "learning", "review", "due",
+// "unseen", "pastDue"), so a number the GUI shows opens exactly the positions
+// it counts.
+func (d *Database) ListAnkiDeckFilteredPositionIDs(deckID int64, filter string, offset, limit int) ([]int64, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	if d.db == nil {
+		return nil, fmt.Errorf("no database is currently open")
+	}
+	return d.store.Anki().FilteredDeckPositionIDs(context.Background(), "", deckID, domain.AnkiCardFilter(filter), storage.ListOpts{Offset: offset, Limit: limit})
+}
+
+// CountAnkiDeckFilteredPositions returns how many positions the cards one
+// counter counts link.
+func (d *Database) CountAnkiDeckFilteredPositions(deckID int64, filter string) (int, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	if d.db == nil {
+		return 0, fmt.Errorf("no database is currently open")
+	}
+	return d.store.Anki().FilteredDeckPositionCount(context.Background(), "", deckID, domain.AnkiCardFilter(filter))
+}
+
+// IndexOfAnkiDeckFilteredPosition returns the rank of a position in
+// ListAnkiDeckFilteredPositionIDs's order, or -1 when the filter leaves it out.
+func (d *Database) IndexOfAnkiDeckFilteredPosition(deckID int64, filter string, positionID int64) (int, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	if d.db == nil {
+		return -1, fmt.Errorf("no database is currently open")
+	}
+	index, found, err := d.store.Anki().IndexOfFilteredDeckPosition(context.Background(), "", deckID, domain.AnkiCardFilter(filter), positionID)
 	if err != nil || !found {
 		return -1, err
 	}

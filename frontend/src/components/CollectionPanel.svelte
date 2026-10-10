@@ -1,6 +1,7 @@
 <script>
     import { logger } from '../utils/logger.js';
     import NewButton from './panels/NewButton.svelte';
+    import PanelHeader from './panels/PanelHeader.svelte';
     import { formatDateTime } from '../utils/format.js';
     import { onMount, onDestroy } from 'svelte';
     import { SvelteSet } from 'svelte/reactivity';
@@ -545,7 +546,7 @@
             if (position) positionStore.set(position);
             const analysis = await LoadAnalysis(row.id);
             if (analysis) {
-                analysisStore.set(analysis);
+                analysisStore.set(/** @type {import('../stores/analysisStore.js').AnalysisRecord} */ (analysis));
             }
         } catch (error) {
             logger.error('Error loading analysis:', error);
@@ -690,6 +691,14 @@
     {#if view === 'list'}
         <!-- Collections list -->
         <div class="table-wrapper">
+            <PanelHeader title={$t('collection.title')} count={collections.length > 0 ? String(collections.length) : null}>
+                {#snippet actions()}
+                    <button type="button" class="secondary-btn" data-testid="collection-suggest" onclick={() => (view = 'suggest')} title={$t('collection.suggestHint')}
+                        >{$t('collection.suggestButton')}</button
+                    >
+                    <NewButton label={$t('collection.newButton')} onclick={() => (creating = true)} />
+                {/snippet}
+            </PanelHeader>
             <PanelTable
                 rows={collections}
                 columns={collectionColumns}
@@ -700,14 +709,8 @@
                 onReorder={collectionOrder.reorder}
                 emptyText={$t('collection.empty')}
                 emptyActions
+                emptyAction={{ label: $t('collection.newButton'), onClick: () => (creating = true) }}
             >
-                {#snippet header()}
-                    <span class="detail-title">{$t('collection.title')}</span>
-                    <NewButton label={$t('collection.newButton')} onclick={() => (creating = true)} />
-                    <button type="button" class="suggest-btn" data-testid="collection-suggest" onclick={() => (view = 'suggest')} title={$t('collection.suggestHint')}
-                        >{$t('collection.suggestButton')}</button
-                    >
-                {/snippet}
                 {#snippet cells(collection, index)}
                     <td class="name-cell">
                         {#if collectionEdit.isEditing(collection.id)}
@@ -810,6 +813,30 @@
     {:else if view === 'detail' && activeCollection}
         <!-- Positions in active collection -->
         <div class="table-wrapper">
+            <PanelHeader
+                title={activeCollection.name}
+                onBack={goBackToList}
+                backHint={$t('collection.backToCollections')}
+                count={$t('statusBar.countPositions', { n: collectionTotal })}
+                onCount={reopenActive}
+                countHint={$t('collection.browsePositions')}
+            >
+                <!-- Collection vivante : la dernière recherche, réévaluée à chaque ouverture. -->
+                <button class="icon-btn" onclick={toggleLiving} title={livingTitle}>
+                    {activeCollection.filterQuery ? '◈' : '◇'}
+                </button>
+                {#if activeCollection.filterQuery}
+                    <button class="icon-btn" onclick={freezeLiving} title={$t('collection.freezeTitle')}>❄</button>
+                {/if}
+                {#snippet actions()}
+                    {#if currentPosition && currentPosition.id}
+                        <label class="membership" title={positionCollectionIds.includes(activeCollection.id) ? $t('collection.removePositionTooltip') : $t('collection.addPositionTooltip')}>
+                            <input type="checkbox" checked={positionCollectionIds.includes(activeCollection.id)} onclick={(e) => togglePositionInCollection(activeCollection.id, e)} />
+                            {$t('collection.inThisCollection')}
+                        </label>
+                    {/if}
+                {/snippet}
+            </PanelHeader>
             <PanelTable
                 rows={collectionPositions}
                 onNearEnd={loadMoreRows}
@@ -819,26 +846,6 @@
                 onReorder={handlePositionReorder}
                 emptyText={$t('collection.emptyCollection')}
             >
-                {#snippet header()}
-                    <button class="back-btn" onclick={goBackToList} title={$t('collection.backToCollections')}>←</button>
-                    <span class="detail-title" title={activeCollection.name}>{activeCollection.name}</span>
-                    <span class="detail-count">{$t('collection.posCount', { count: collectionTotal })}</span>
-                    {#if currentPosition && currentPosition.id}
-                        <input
-                            type="checkbox"
-                            checked={positionCollectionIds.includes(activeCollection.id)}
-                            onclick={(e) => togglePositionInCollection(activeCollection.id, e)}
-                            title={positionCollectionIds.includes(activeCollection.id) ? $t('collection.removePositionTooltip') : $t('collection.addPositionTooltip')}
-                        />
-                    {/if}
-                    <!-- Collection vivante : la dernière recherche, réévaluée à chaque ouverture. -->
-                    <button class="icon-btn" onclick={toggleLiving} title={livingTitle}>
-                        {activeCollection.filterQuery ? '◈' : '◇'}
-                    </button>
-                    {#if activeCollection.filterQuery}
-                        <button class="icon-btn" onclick={freezeLiving} title={$t('collection.freezeTitle')}>❄</button>
-                    {/if}
-                {/snippet}
                 {#snippet subheader()}
                     {#if collectionEdit.isEditing(activeCollection.id)}
                         <div class="desc-bar">
@@ -1026,32 +1033,21 @@
         border-color: var(--color-text-muted);
     }
 
-    /* Detail header (the strip itself is PanelTable's) */
-    .back-btn {
-        background: none;
-        border: none;
-        cursor: pointer;
-        font-size: var(--font-size-title);
-        color: var(--color-text-muted);
-        padding: 2px 6px;
-        line-height: 1;
-    }
-    .back-btn:hover {
+    /* Header strip (PanelHeader's): a secondary action drawn as NewButton, the primary. */
+    .secondary-btn {
+        padding: var(--space-1) var(--space-2);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        background: var(--color-surface);
         color: var(--color-text);
-    }
-    .detail-title {
-        font-size: var(--font-size-base);
-        font-weight: 600;
-        color: var(--color-text);
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        flex: 1;
-    }
-    .detail-count {
         font-size: var(--font-size-small);
-        color: var(--color-text-muted);
-        flex-shrink: 0;
+        cursor: pointer;
+    }
+    .membership {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-1);
+        cursor: pointer;
     }
 
     /* Description bar */
@@ -1059,11 +1055,6 @@
         padding: 3px 8px 3px 32px;
         border-bottom: 1px solid var(--color-border);
         flex-shrink: 0;
-    }
-    .suggest-btn {
-        font-size: var(--font-size-small);
-        padding: 1px 8px;
-        margin-left: 6px;
     }
     /* A <button> (click-to-edit, reachable with Tab and Enter) drawn as the
        plain bar it replaced. */

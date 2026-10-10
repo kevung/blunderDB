@@ -121,7 +121,7 @@ export const SHORTCUTS = {
     viewTabs: { tier: TIER.LOCAL, keys: digits('Ctrl+', 1, 9) },
     directionUndo: { tier: TIER.LOCAL, group: 'direction', keys: ['Ctrl+z'], shadows: ['Ctrl+z'] },
 
-    // The Anki review keys (1-4, Space, Escape, p) are handled inside the global dispatcher
+    // The Anki review keys (1-4, Space, Enter, Escape, p) are handled inside the global dispatcher
     // (keyboardService.handleKeyDown): no scope of their own, 1-4 are bound under `global`.
 
     // keyboardService.handleKeyDown.
@@ -184,6 +184,7 @@ export const SHORTCUTS = {
             'Shift+K',
             'b',
             'p',
+            'm',
             'r',
             'F11',
             '/'
@@ -212,6 +213,7 @@ export const TOOLBAR_CHORDS = {
     nextPosition: ['ArrowRight', 'j'],
     lastPosition: ['PageDown', 'l'],
     togglePipcount: ['p'],
+    toggleAnalysisChallenge: ['m'],
     randomPosition: ['r'],
     training: ['Ctrl+J'],
     duel: ['Ctrl+H'],

@@ -17,6 +17,9 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     CountAnkiDeckPositions: vi.fn(() => Promise.resolve(N)),
     ListAnkiDeckPositionIDs: vi.fn((/** @type {number} */ _id, offset = 0, limit = 0) => Promise.resolve(windowOf(offset, limit))),
     IndexOfAnkiDeckPosition: vi.fn((/** @type {number} */ _id, /** @type {number} */ position) => Promise.resolve(position - 1)),
+    CountAnkiDeckFilteredPositions: vi.fn(() => Promise.resolve(2)),
+    ListAnkiDeckFilteredPositionIDs: vi.fn(() => Promise.resolve([4, 9])),
+    IndexOfAnkiDeckFilteredPosition: vi.fn(() => Promise.resolve(1)),
     LoadPositionsByIDs: vi.fn((/** @type {number[]} */ ids) => Promise.resolve(ids.map((id) => ({ id, board: {} })))),
     LoadAnalysis: vi.fn(() => Promise.resolve(null)),
     GetAnkiDeckStats: vi.fn(() => Promise.resolve({ dueCount: 0, totalCount: N })),
@@ -83,5 +86,15 @@ describe('an Anki deck of a million positions', () => {
         expect(await source.count()).toBe(N);
         expect(await source.window(5, 2)).toEqual([6, 7]);
         expect(await source.indexOf(8)).toBe(7);
+    });
+
+    test('a filtered deck source lists the cards one counter counts', async () => {
+        const source = deckSource(3, 'due');
+        expect(await source.count()).toBe(2);
+        expect(await source.window(0, 0)).toEqual([4, 9]);
+        expect(await source.indexOf(9)).toBe(1);
+        expect(db.CountAnkiDeckFilteredPositions).toHaveBeenCalledWith(3, 'due');
+        expect(db.ListAnkiDeckFilteredPositionIDs).toHaveBeenCalledWith(3, 'due', 0, 0);
+        expect(db.IndexOfAnkiDeckFilteredPosition).toHaveBeenCalledWith(3, 'due', 9);
     });
 });

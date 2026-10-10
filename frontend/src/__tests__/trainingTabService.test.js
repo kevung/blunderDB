@@ -8,6 +8,7 @@
  * de Pions est ouverte. Trois critères d'acceptation, trois assertions sur ce
  * qui part vers la base ou vers le plateau — pas sur un rendu.
  */
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 import { get } from 'svelte/store';
 
@@ -43,7 +44,7 @@ import * as dbModule from '../../wailsjs/go/database/Database.js';
 import * as appModule from '../../wailsjs/go/gui/App.js';
 import * as importServiceModule from '../services/importService.js';
 import * as databaseServiceModule from '../services/databaseService.js';
-import { quizPlayStore } from '../stores/quizPlayStore.js';
+import { quizPlayStore, quizPlayValidateStore } from '../stores/quizPlayStore.js';
 import { playHop } from '../services/quizPlay.js';
 import fr from '../i18n/locales/fr.json';
 import { positionStore, positionsStore, searchSource } from '../stores/positionStore.js';
@@ -173,7 +174,7 @@ describe('une session de Scores', () => {
         expect(row.numbersAsked).toBeLessThanOrEqual(14);
         expect(row.items).toHaveLength(row.numbersAsked);
         expect(row.faults).toBe(1);
-        expect(row.items.filter((/** @type {any} */ i) => i.wrong)).toHaveLength(1);
+        expect(must(row.items).filter((/** @type {any} */ i) => i.wrong)).toHaveLength(1);
         // Aucun écart en mode déclaré : la moyenne des écarts reste vide.
         expect(row.deviations).toBe(0);
         expect(get(trainingSessionStore)).toBeNull();
@@ -211,7 +212,7 @@ describe('une session de Pions sur le plateau', () => {
         schedule.mockClear();
 
         expect(await startTrainingSession({ exercise: 'pips', seedSource: 'board' })).toBe(true);
-        expect(current().question.numbers.map((n) => n.type)).toEqual(['pips.bottom', 'pips.top']);
+        expect(current().question.numbers.map((/** @type {number} */ n) => n.type)).toEqual(['pips.bottom', 'pips.top']);
         expect(get(pipcountVisibleStore), 'le plateau porte la réponse').toBe(false);
         expect(schedule, 'masquer sans repeindre ne masque rien').toHaveBeenCalled();
 
@@ -564,7 +565,7 @@ describe('une session de Bearoff', () => {
         const row = db.SaveTrainingSession.mock.calls[0][0];
         expect(row.exercise).toBe('bearoff');
         expect(row.deviations).toBe(2);
-        expect(row.items.map((i) => i.deviation)).toEqual([3, 0]);
+        expect(must(row.items).map((i) => i.deviation)).toEqual([3, 0]);
     });
 
     // ADR-0041 règle 3 : le refus NOMME le domaine, et rien ne démarre.
@@ -901,6 +902,28 @@ describe('une session de Décision (#323)', () => {
             expect(current().revealed).toBe(false);
         });
 
+        test('le coup est armé selon la grammaire commune : le clic sur les dés juge', async () => {
+            library({ 7: CHECKER });
+            await startTrainingSession({ exercise: 'decision', seedSource: 'library' });
+            const validate = get(quizPlayValidateStore);
+            expect(validate, 'le rappel de validation est posé').toBeTypeOf('function');
+            playOnBoard();
+            db.GradeQuizChecker.mockResolvedValue(/** @type {any} */ (verdict()));
+            validate?.();
+            await vi.waitFor(() => expect(db.GradeQuizChecker).toHaveBeenCalled());
+        });
+
+        test('annuler un pas ou tout reprendre garde l’ordre donné aux dés', async () => {
+            library({ 7: CHECKER });
+            await startTrainingSession({ exercise: 'decision', seedSource: 'library' });
+            quizPlayStore.update((s) => (s ? { ...s, swapped: true } : s));
+            playOnBoard();
+            undoDecisionStep();
+            expect(get(quizPlayStore)?.swapped).toBe(true);
+            resetDecisionPlay();
+            expect(get(quizPlayStore)?.swapped).toBe(true);
+        });
+
         test('annuler un pas, puis tout reprendre', async () => {
             library({ 7: CHECKER });
             await startTrainingSession({ exercise: 'decision', seedSource: 'library' });
@@ -920,6 +943,32 @@ describe('une session de Décision (#323)', () => {
             db.GradeQuizChecker.mockResolvedValue(/** @type {any} */ (verdict()));
             await answerDecisionBoard();
             expect(db.GradeQuizChecker).toHaveBeenCalled();
+        });
+
+        test('l’ordre écrit ne compte pas : « 24/18 bar/22 » se joue en entrant d’abord', async () => {
+            library({ 7: CHECKER });
+            const barPos = board();
+            barPos.board.points[25] = { checkers: 1, color: 0 };
+            barPos.board.points[24] = { checkers: 1, color: 0 };
+            db.LoadPosition.mockImplementation((/** @type {any} */ id) => Promise.resolve({ ...barPos, dice: [6, 3], id }));
+            app.LegalMoves.mockResolvedValue(
+                /** @type {any} */ ([
+                    {
+                        notation: 'bar/22 24/18',
+                        steps: [
+                            { from: 25, to: 22, hit: false },
+                            { from: 24, to: 18, hit: false }
+                        ],
+                        result: {}
+                    }
+                ])
+            );
+            await startTrainingSession({ exercise: 'decision', seedSource: 'library' });
+            expect(playDecisionNotation('24/18 bar/22')).toBe('ok');
+            expect(get(quizPlayStore)?.steps).toEqual([
+                { from: 25, to: 22 },
+                { from: 24, to: 18 }
+            ]);
         });
 
         test('un pas que les coups légaux n’offrent pas arrête la pose là', async () => {

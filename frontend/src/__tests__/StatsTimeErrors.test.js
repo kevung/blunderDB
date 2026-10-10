@@ -7,7 +7,7 @@ const ROWS = [
     { player: 'Alice', bucket: 3, decisions: 2, scored: 0, mean_error_mp: 0, blunders: 0 }
 ];
 const GetTimeErrors = vi.fn(() => Promise.resolve(ROWS));
-vi.mock('../../wailsjs/go/database/Database.js', () => ({ GetTimeErrors: (...a) => GetTimeErrors(...a) }));
+vi.mock('../../wailsjs/go/database/Database.js', () => ({ GetTimeErrors: (/** @type {any[]} */ ...a) => GetTimeErrors(...a) }));
 
 import StatsTimeErrors from '../components/stats/StatsTimeErrors.svelte';
 

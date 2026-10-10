@@ -37,4 +37,14 @@ describe('StatsFilterBar with the showcase player list', () => {
             expect(names).toEqual(showcasePlayerNames.map((p) => p.Name));
         });
     });
+
+    test('a long name keeps its full text as the option title', async () => {
+        const long = 'Alexandre-Jean-Baptiste de la Tour du Pin Gouvernet de La Charce';
+        /** @type {any} */ (GetAllPlayerNames).mockResolvedValue([{ Name: long, Count: 3 }]);
+        const { container } = render(StatsFilterBar);
+        await waitFor(() => {
+            const opt = /** @type {HTMLOptionElement | null} */ (container.querySelector('#fb-player option[value^="Alexandre"]'));
+            expect(opt?.title).toBe(long);
+        });
+    });
 });

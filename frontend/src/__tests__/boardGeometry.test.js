@@ -112,7 +112,7 @@ describe('computePipCount', () => {
 
 // Réplique des formules de drawCheckers() (Board.svelte) : centre de la
 // colonne du point `index` en coordonnées de dessin.
-function drawnColumnCenter(index, width, height, widthFactor, orientation) {
+function drawnColumnCenter(/** @type {number} */ index, width, height, widthFactor, orientation) {
     const boardWidth = widthFactor * width;
     const boardHeight = (11 / 13) * boardWidth;
     const cs = boardHeight / 11;

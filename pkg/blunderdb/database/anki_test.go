@@ -113,7 +113,7 @@ func TestDeleteAnkiDeck(t *testing.T) {
 	db, colID, _ := setupAnkiCollectionWithPositions(t, 3)
 
 	id, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
-	_ = db.SyncAnkiDeck(id)
+	_, _ = db.SyncAnkiDeck(id)
 
 	if err := db.DeleteAnkiDeck(id); err != nil {
 		t.Fatalf("DeleteAnkiDeck: %v", err)
@@ -141,7 +141,7 @@ func TestSyncAnkiDeck_Collection(t *testing.T) {
 	db, colID, ids := setupAnkiCollectionWithPositions(t, 5)
 
 	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
-	if err := db.SyncAnkiDeck(deckID); err != nil {
+	if _, err := db.SyncAnkiDeck(deckID); err != nil {
 		t.Fatalf("SyncAnkiDeck: %v", err)
 	}
 
@@ -159,8 +159,8 @@ func TestSyncAnkiDeck_Idempotent(t *testing.T) {
 	db, colID, _ := setupAnkiCollectionWithPositions(t, 3)
 
 	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
-	_ = db.SyncAnkiDeck(deckID)
-	_ = db.SyncAnkiDeck(deckID) // second sync
+	_, _ = db.SyncAnkiDeck(deckID)
+	_, _ = db.SyncAnkiDeck(deckID) // second sync
 
 	stats, _ := db.GetAnkiDeckStats(deckID)
 	if stats.TotalCount != 3 {
@@ -173,7 +173,7 @@ func TestSyncAnkiDeck_AddNew(t *testing.T) {
 	db, colID, ids := setupAnkiCollectionWithPositions(t, 3)
 
 	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
-	_ = db.SyncAnkiDeck(deckID)
+	_, _ = db.SyncAnkiDeck(deckID)
 
 	// Add another position to the collection
 	moreIDs := getPositionIDs(t, db, 5)
@@ -195,7 +195,7 @@ func TestSyncAnkiDeck_AddNew(t *testing.T) {
 		t.Skip("no additional position available")
 	}
 	_ = db.AddPositionToCollection(colID, newID)
-	_ = db.SyncAnkiDeck(deckID)
+	_, _ = db.SyncAnkiDeck(deckID)
 
 	stats, _ := db.GetAnkiDeckStats(deckID)
 	if stats.TotalCount != 4 {
@@ -208,7 +208,7 @@ func TestGetNextAnkiCard(t *testing.T) {
 	db, colID, _ := setupAnkiCollectionWithPositions(t, 3)
 
 	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
-	_ = db.SyncAnkiDeck(deckID)
+	_, _ = db.SyncAnkiDeck(deckID)
 
 	card, err := db.GetNextAnkiCard(deckID)
 	if err != nil {
@@ -246,7 +246,7 @@ func TestGetRandomAnkiCard(t *testing.T) {
 	db, colID, _ := setupAnkiCollectionWithPositions(t, 3)
 
 	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
-	_ = db.SyncAnkiDeck(deckID)
+	_, _ = db.SyncAnkiDeck(deckID)
 
 	card, err := db.GetRandomAnkiCard(deckID, 0)
 	if err != nil {
@@ -283,7 +283,7 @@ func TestGetRandomAnkiCard_DoesNotMutateSchedule(t *testing.T) {
 	db, colID, _ := setupAnkiCollectionWithPositions(t, 3)
 
 	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
-	_ = db.SyncAnkiDeck(deckID)
+	_, _ = db.SyncAnkiDeck(deckID)
 
 	before, err := db.GetAnkiDeckStats(deckID)
 	if err != nil {
@@ -316,7 +316,7 @@ func TestGetRandomAnkiCard_ExcludePosition(t *testing.T) {
 	// Two-card deck: excluding one must return the other (deterministic).
 	db, colID, ids := setupAnkiCollectionWithPositions(t, 2)
 	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
-	_ = db.SyncAnkiDeck(deckID)
+	_, _ = db.SyncAnkiDeck(deckID)
 
 	got, err := db.GetRandomAnkiCard(deckID, ids[0])
 	if err != nil {
@@ -329,7 +329,7 @@ func TestGetRandomAnkiCard_ExcludePosition(t *testing.T) {
 	// Single-card deck: excluding the only card falls back to serving it.
 	db1, col1, ids1 := setupAnkiCollectionWithPositions(t, 1)
 	deck1, _ := db1.CreateAnkiDeck("D", "", "collection", col1, "")
-	_ = db1.SyncAnkiDeck(deck1)
+	_, _ = db1.SyncAnkiDeck(deck1)
 
 	only, err := db1.GetRandomAnkiCard(deck1, ids1[0])
 	if err != nil {
@@ -345,7 +345,7 @@ func TestReviewAnkiCard_Again(t *testing.T) {
 	db, colID, _ := setupAnkiCollectionWithPositions(t, 1)
 
 	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
-	_ = db.SyncAnkiDeck(deckID)
+	_, _ = db.SyncAnkiDeck(deckID)
 
 	card, _ := db.GetNextAnkiCard(deckID)
 	if card == nil {
@@ -378,7 +378,7 @@ func TestReviewAnkiCard_Good(t *testing.T) {
 	db, colID, _ := setupAnkiCollectionWithPositions(t, 1)
 
 	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
-	_ = db.SyncAnkiDeck(deckID)
+	_, _ = db.SyncAnkiDeck(deckID)
 
 	card, _ := db.GetNextAnkiCard(deckID)
 	if card == nil {
@@ -410,7 +410,7 @@ func TestReviewAnkiCard_Easy(t *testing.T) {
 	db, colID, _ := setupAnkiCollectionWithPositions(t, 1)
 
 	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
-	_ = db.SyncAnkiDeck(deckID)
+	_, _ = db.SyncAnkiDeck(deckID)
 
 	card, _ := db.GetNextAnkiCard(deckID)
 	if card == nil {
@@ -438,7 +438,7 @@ func TestReviewAnkiCard_Progression(t *testing.T) {
 	db, colID, _ := setupAnkiCollectionWithPositions(t, 1)
 
 	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
-	_ = db.SyncAnkiDeck(deckID)
+	_, _ = db.SyncAnkiDeck(deckID)
 
 	card, _ := db.GetNextAnkiCard(deckID)
 	if card == nil {
@@ -468,7 +468,7 @@ func TestResetAnkiDeck(t *testing.T) {
 	db, colID, _ := setupAnkiCollectionWithPositions(t, 3)
 
 	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
-	_ = db.SyncAnkiDeck(deckID)
+	_, _ = db.SyncAnkiDeck(deckID)
 
 	// Review a card
 	card, _ := db.GetNextAnkiCard(deckID)
@@ -497,7 +497,7 @@ func TestGetAnkiDeckStats(t *testing.T) {
 	db, colID, _ := setupAnkiCollectionWithPositions(t, 5)
 
 	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
-	_ = db.SyncAnkiDeck(deckID)
+	_, _ = db.SyncAnkiDeck(deckID)
 
 	stats, err := db.GetAnkiDeckStats(deckID)
 	if err != nil {
@@ -517,7 +517,7 @@ func TestGetAnkiDeckPositions(t *testing.T) {
 	db, colID, ids := setupAnkiCollectionWithPositions(t, 3)
 
 	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
-	_ = db.SyncAnkiDeck(deckID)
+	_, _ = db.SyncAnkiDeck(deckID)
 
 	positions, err := db.GetAnkiDeckPositions(deckID)
 	if err != nil {

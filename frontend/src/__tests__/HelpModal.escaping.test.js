@@ -9,6 +9,7 @@
  * string containing markup renders as inert text, never as a live element/attribute.
  */
 
+import { must } from './helpers/must.js';
 import { test, expect, vi, afterEach } from 'vitest';
 import { render, screen, cleanup } from '@testing-library/svelte';
 import { tick } from 'svelte';
@@ -48,8 +49,8 @@ test('malicious databaseVersion/applicationVersion render as inert text in the A
     expect(window.__pwned).toBeUndefined();
 
     // The escaped source text is still visible to the user, just as text, not markup.
-    expect(document.querySelector('.tab-content').textContent).toContain('<img src=x onerror=alert(1)>');
-    expect(document.querySelector('.tab-content').textContent).toContain('<script>window.__pwned = true</script>');
+    expect(must(document.querySelector('.tab-content')).textContent).toContain('<img src=x onerror=alert(1)>');
+    expect(must(document.querySelector('.tab-content')).textContent).toContain('<script>window.__pwned = true</script>');
 });
 
 test('the manual renders once the on-demand bundles have loaded', async () => {

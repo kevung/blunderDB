@@ -17,6 +17,6 @@ test("Collections : le champ de création s'ouvre depuis « + New collection »"
 
     const panel = page.locator('#collectionPanel');
     await expect(panel.locator('.add-input')).toHaveCount(0);
-    await panel.getByRole('button', { name: 'New collection' }).click();
+    await panel.getByTestId('panel-new').click();
     await expect(panel.locator('.add-input').first()).toBeFocused();
 });

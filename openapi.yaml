@@ -567,6 +567,44 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/anki.filteredPositionCount:
+    post:
+      operationId: anki.filteredPositionCount
+      tags: [anki]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/deckFilterReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int32
+  /v1/anki.filteredPositionIds:
+    post:
+      operationId: anki.filteredPositionIds
+      tags: [anki]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/deckFilterReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: integer
+                  format: int64
   /v1/anki.forecast:
     post:
       operationId: anki.forecast
@@ -596,6 +634,24 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/deckPositionReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int32
+  /v1/anki.indexOfFilteredPosition:
+    post:
+      operationId: anki.indexOfFilteredPosition
+      tags: [anki]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/deckFilterReq"
       responses:
         "200":
           description: OK
@@ -811,7 +867,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/okResp"
+                $ref: "#/components/schemas/deckSyncResp"
   /v1/anki.syncWithPositions:
     post:
       operationId: anki.syncWithPositions
@@ -994,6 +1050,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/collections.evaluate:
+    post:
+      operationId: collections.evaluate
+      tags: [collections]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/collectionEvaluateReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/storage_CollectionEvaluation"
+                nullable: true
   /v1/collections.freeze:
     post:
       operationId: collections.freeze
@@ -5929,6 +6003,23 @@ paths:
               schema:
                 $ref: "#/components/schemas/storage_DirectionalBiases"
                 nullable: true
+  /v1/stats.breakdownPositionCounts:
+    post:
+      operationId: stats.breakdownPositionCounts
+      tags: [stats]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/statsComputeReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/storage_BreakdownPositionCounts"
   /v1/stats.compute:
     post:
       operationId: stats.compute
@@ -7679,6 +7770,18 @@ components:
           type: string
         description:
           type: string
+        filterQuery:
+          type: string
+          nullable: true
+    collectionEvaluateReq:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        limit:
+          type: integer
+          format: int32
     collectionFilterReq:
       type: object
       properties:
@@ -7792,6 +7895,23 @@ components:
           format: int64
         sourceCommand:
           type: string
+    deckFilterReq:
+      type: object
+      properties:
+        deckId:
+          type: integer
+          format: int64
+        filter:
+          type: string
+        limit:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int32
+        positionId:
+          type: integer
+          format: int64
     deckIDReq:
       type: object
       properties:
@@ -7848,6 +7968,17 @@ components:
           items:
             type: integer
             format: int64
+    deckSyncResp:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        deckId:
+          type: integer
+          format: int64
+        source:
+          $ref: "#/components/schemas/storage_CollectionEvaluation"
+          nullable: true
     deckUpdateReq:
       type: object
       properties:
@@ -9066,6 +9197,9 @@ components:
     storage_AliasSuggestion:
       type: object
       description: "Opaque: see the Go type storage.AliasSuggestion (defined outside internal/server, not expanded here)."
+    storage_BreakdownPositionCounts:
+      type: object
+      description: "Opaque: see the Go type storage.BreakdownPositionCounts (defined outside internal/server, not expanded here)."
     storage_ClubPlayer:
       type: object
       description: "Opaque: see the Go type storage.ClubPlayer (defined outside internal/server, not expanded here)."
@@ -9075,6 +9209,9 @@ components:
     storage_Collection:
       type: object
       description: "Opaque: see the Go type storage.Collection (defined outside internal/server, not expanded here)."
+    storage_CollectionEvaluation:
+      type: object
+      description: "Opaque: see the Go type storage.CollectionEvaluation (defined outside internal/server, not expanded here)."
     storage_Counts:
       type: object
       description: "Opaque: see the Go type storage.Counts (defined outside internal/server, not expanded here)."

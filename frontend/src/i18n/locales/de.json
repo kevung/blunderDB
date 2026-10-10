@@ -212,6 +212,7 @@
         "savePosition": "Position speichern",
         "settings": "Einstellungen",
         "togglePipcount": "Pipcount ein-/ausblenden",
+        "toggleAnalysisChallenge": "Herausforderung: Analyse verbergen",
         "updatePosition": "Position aktualisieren",
         "tour": "Geführte Touren",
         "importDatabaseTip": "Eine andere Datenbank in diese zusammenführen: gemeinsame Stellungen werden nicht dupliziert, ihre Analysen und Kommentare werden vereint",
@@ -430,6 +431,8 @@
         "movePatternHint": "Bester Zug oder Cube-Entscheidung",
         "name": "Name",
         "newTab": "In neuem Tab öffnen",
+        "newTabShort": "Neuer Tab",
+        "inResultsShort": "In Ergebnissen",
         "noHistory": "Kein Suchverlauf",
         "noSaved": "Keine gespeicherten Filter",
         "noPinnedAt": "Kein angehefteter Filter an Position {n}",
@@ -572,6 +575,16 @@
         "avoidableTooltip": "Vermeidbarer Fehler: ein Fehler, den die Stellung nicht entschuldigte (Schwierigkeit höchstens ein Zehntel des Verlusts)",
         "avoidableCount": "Vermeidbar",
         "chartOpen": "Klicken, um diese Entscheidung zu öffnen",
+        "gameShort": "S{n}",
+        "legendDifficulty": "Schwierigkeit (erwarteter Verlust)",
+        "lossSoFar": "Kumuliert: {loss}",
+        "timesPerDecision": "Zeit pro Entscheidung",
+        "tabsLabel": "Ansichten des Matches",
+        "tabTranscript": "Transkript",
+        "tabCharts": "Diagramme",
+        "tabReview": "Zu prüfen",
+        "tabDetails": "Details",
+        "tabStats": "Statistik",
         "originPlayedHere": "Hier gespielt",
         "originStopped": "Vor dem Ende abgebrochen",
         "originLostOnTime": "Auf Zeit verloren ({name})",
@@ -639,7 +652,6 @@
         "writtenBy": "Erstellt mit",
         "score": "Spielstand",
         "sourceFile": "Quelldatei",
-        "stats": "Statistiken",
         "swapPlayers": "Spieler tauschen",
         "takeDecisions": "Take-Entscheidungen",
         "takesBlunders": "Takes (Blunder)",
@@ -698,7 +710,6 @@
         "moveDown": "Nach unten verschieben",
         "moveUp": "Nach oben verschieben",
         "newCollectionPlaceholder": "Neue Sammlung…",
-        "posCount": "{count} Pos.",
         "removeFromCollection": "Aus Sammlung entfernen",
         "removePositionTooltip": "Position aus Sammlung entfernen",
         "title": "Sammlungen",
@@ -718,6 +729,7 @@
         "livingNeedsSearch": "Führen Sie zuerst eine Suche aus: Sie ist es, was die Sammlung behält.",
         "livingSet": "Lebendige Sammlung: {query}",
         "livingCleared": "Die Sammlung hat ihre handgemachte Liste zurück.",
+        "livingCapped": "Stapel „{name}“: Die lebende Sammlung wählt {total} Positionen aus; die Obergrenze von {count} wurde erreicht, nur die ersten speisen den Stapel.",
         "freezeTitle": "Einfrieren: das heutige Ergebnis als gewöhnliche Sammlung behalten.",
         "frozen": "Sammlung auf {count} Position(en) eingefroren.",
         "newButton": "Neue Sammlung",
@@ -747,7 +759,9 @@
         "suggestKeepCollection": "Sammlung erstellen ({n})",
         "suggestKeepDeck": "Anki-Deck",
         "suggestQuiz": "Quiz",
-        "suggestDefaultName": "Referenzen {date}"
+        "suggestDefaultName": "Referenzen {date}",
+        "browsePositions": "Diese Stellungen durchblättern",
+        "inThisCollection": "in dieser Sammlung"
     },
     "tournament": {
         "addMatchPlaceholder": "Match hinzufügen…",
@@ -782,7 +796,9 @@
         "noMovesFound": "Keine Züge für dieses Match gefunden",
         "swappedPlayers": "Spieler getauscht",
         "confirmDelete": "Turnier „{name}“ löschen?",
-        "newButton": "Neues Turnier"
+        "newButton": "Neues Turnier",
+        "matchCountOne": "1 Match",
+        "matchCountMany": "{n} Matches"
     },
     "anki": {
         "limitSession": "Sitzung begrenzen",
@@ -791,8 +807,7 @@
         "sessionLimitZero": "Dieses Deck ist auf 0 Karten pro Sitzung eingestellt.",
         "boardAnswerOption": "Am Brett antworten",
         "boardAnswerOptionHint": "Der Zug wird auf dem Brett gespielt; die Engine beurteilt ihn und schlägt eine Note vor, die Sie vor der Bewertung ändern können. Standardmäßig aus: Sie bewerten sich selbst. Doppelwürfel- und Spielstandkarten bleiben selbstbewertet.",
-        "boardAnswerHint": "Spielen Sie Ihren Zug auf dem Brett",
-        "boardAnswerValidate": "Prüfen",
+        "boardAnswerHint": "Spielen Sie Ihren Zug auf dem Brett, dann klicken Sie die Würfel oder drücken EINGABE",
         "boardAnswerSuggest": "Vorgeschlagene Note: {rating} (Fehler {error} mp)",
         "boardAnswerIllegal": "Dieser Zug ist nicht regelgerecht",
         "boardAnswerUnranked": "Regelgerechter Zug, den die Analyse nicht einordnet: bewerten Sie selbst",
@@ -816,7 +831,7 @@
         "deckSettingsTooltip": "Stapeleinstellungen",
         "deleteDeckTooltip": "Stapel löschen",
         "easy": "Leicht",
-        "empty": "Noch keine Stapel. Erstellen Sie einen aus einer Sammlung oder der aktuellen Suche.",
+        "empty": "Keine Stapel",
         "enableFuzz": "Streuung aktivieren (Intervalle zufällig variieren)",
         "good": "Gut",
         "hard": "Schwer",
@@ -826,7 +841,6 @@
         "positionsCount": "{count} Positionen",
         "renameTooltip": "Umbenennen",
         "resetTooltip": "Alle Karten auf neu zurücksetzen",
-        "resume": "Fortsetzen ({due} fällig, {reviewed} wiederholt)",
         "retentionTarget": "Behaltensziel",
         "selectCollection": "-- Sammlung auswählen --",
         "settingsTitle": "Einstellungen: {name}",
@@ -836,11 +850,6 @@
         "scoresCount": "{count} Stände",
         "scoreQuestion": "Stand {a}/{b}",
         "badScoreKey": "Unlesbarer Stand auf dieser Karte",
-        "statLearning": "Lernen",
-        "statNew": "Neu",
-        "statReview": "Wiederholung",
-        "statTotal": "Gesamt",
-        "study": "Lernen ({due} fällig)",
         "cram": "Üben",
         "cramTooltip": "Freies Üben: zufällige Stellungen, ohne den Wiederholungsplan zu verändern",
         "cramBadge": "Üben",
@@ -882,7 +891,16 @@
             "relearning": "Wiederlernen"
         },
         "sourceSearch": "Suche",
-        "sourceCollectionN": "Sammlung Nr. {id}"
+        "sourceCollectionN": "Sammlung Nr. {id}",
+        "title": "Anki",
+        "studyShort": "Lernen",
+        "resumeShort": "Fortsetzen ({reviewed})",
+        "dueShort": "{n} fällig",
+        "cardsShort": "{n} Karten",
+        "allDecks": "Alle Stapel",
+        "newShort": "{n} neu",
+        "learningShort": "{n} in Lernphase",
+        "reviewShort": "{n} in Wiederholung"
     },
     "analysis": {
         "menuCopy": "Position und Analyse kopieren",
@@ -919,7 +937,9 @@
         "hintPlayerBackgammon": "Spieler: Backgammon-Chance",
         "hintOpponentWin": "Gegner: Gewinnchance",
         "hintOpponentGammon": "Gegner: Gammon-Chance",
-        "hintOpponentBackgammon": "Gegner: Backgammon-Chance"
+        "hintOpponentBackgammon": "Gegner: Backgammon-Chance",
+        "empty": "Keine Analyse",
+        "evaluate": "Bewerten"
     },
     "rollout": {
         "title": "Rollout",
@@ -1027,7 +1047,8 @@
         "created": "Erstellt",
         "description": "Beschreibung",
         "user": "Benutzer",
-        "version": "Version"
+        "version": "Version",
+        "title": "Metadaten der Datenbank"
     },
     "issuance": {
         "originLabel": "Herkunft",
@@ -1068,6 +1089,7 @@
         "menu": {
             "evaluate": "Diese Position auswerten",
             "evaluateMirror": "Das Spiegelbild dieser Stellung auswerten",
+            "evaluateInNewView": "In einem neuen Tab auswerten",
             "copyImageWithAnalysis": "Brettbild mit Analyse kopieren",
             "newView": "Neue Ansicht",
             "addToAnkiDeck": "Zum Anki-Stapel hinzufügen: {deck}",
@@ -1128,6 +1150,8 @@
         "addPositionTooltip": "Diese Position zur Datenbank hinzufügen (Ctrl+S)",
         "addPositionNoDatabase": "Öffnen Sie eine Datenbank, um Positionen hinzuzufügen",
         "pending": "Die Auswertung erscheint hier.",
+        "emptyBoard": "Stellung aufbauen",
+        "evaluating": "Bewertung…",
         "failed": "Auswertung fehlgeschlagen: {error}",
         "panelLabel": "Eval-Panel",
         "inactive": "Das Eval-Panel ist inaktiv. Bearbeiten Sie das Brett, um die Position zu bewerten.",
@@ -1164,6 +1188,7 @@
     },
     "viewTabs": {
         "closeView": "Ansicht schließen",
+        "variantOf": "Variante von #{n}",
         "newView": "Neue Ansicht"
     },
     "goToPosition": {
@@ -1347,7 +1372,7 @@
         "title": "Transkriptionen",
         "new": "Neue Transkription",
         "newTooltip": "Einen Entwurf für ein zu transkribierendes Match anlegen",
-        "empty": "Noch kein Entwurf. Legen Sie einen an, um ein Match zu transkribieren.",
+        "empty": "Noch kein Entwurf",
         "updated": "Geändert",
         "players": "Spieler",
         "length": "Länge",
@@ -1479,7 +1504,7 @@
         "moreActions": "Weitere Aktionen",
         "videoFile": "Lokale Datei…",
         "videoYouTube": "YouTube-Link…",
-        "videoDetach": "Lösen",
+        "videoRemove": "Video entfernen",
         "videoAttach": "Anhängen",
         "videoResize": "Höhe des Videobereichs"
     },
@@ -1662,7 +1687,6 @@
         "tabErrors": "Fehler",
         "tabTraining": "Training",
         "tabPlayers": "Spieler",
-        "importMatchesHint": "Importieren Sie Matches, um Filter zu aktivieren.",
         "playerLabel": "Spieler",
         "allPerspectives": "Alle Perspektiven",
         "tournamentsLabel": "Turniere",
@@ -1684,7 +1708,7 @@
         "all": "Alle",
         "resetFilters": "↺ Zurücksetzen",
         "resetFiltersHint": "Filter zurücksetzen",
-        "noDecisionsEmpty": "Keine Entscheidungen im gefilterten Zeitraum. Filter erweitern.",
+        "noDecisionsEmpty": "Keine Entscheidungen für diese Filter",
         "cardLabelAll": "PR Global",
         "cardLabelChecker": "PR Stein",
         "cardLabelCube": "PR Doppler",
@@ -1936,7 +1960,14 @@
             "prCube": "PR Doppler"
         },
         "interval95": "95-%-KI",
-        "intervalHint": "95-%-Konfidenzintervall: zieht die Matches einer Auswahl bzw. die Spiele eines Matches neu. Eine Zeile ohne Intervall (weniger als drei Matches oder Spiele, oder alle mit demselben PR) ist ausgegraut."
+        "intervalHint": "95-%-Konfidenzintervall: zieht die Matches einer Auswahl bzw. die Spiele eines Matches neu. Eine Zeile ohne Intervall (weniger als drei Matches oder Spiele, oder alle mit demselben PR) ist ausgegraut.",
+        "positions": "Positionen",
+        "breakdownOpenPositions": "Diese {n} Positionen öffnen ({decisions} Entscheidungen)",
+        "breakdownOpenBlunders": "Die {n} Positionen mit Patzer öffnen ({decisions} Patzer)",
+        "breakdownCountsError": "Zählungen nicht verfügbar: {error}",
+        "breakdownCountsMissing": "Zeile fehlt in den Positionszählungen",
+        "breakdownBlundersHint": "Positionen, in denen mindestens eine Entscheidung ein Patzer ist",
+        "planOutsideShort": "Außerhalb des Plans: {unthemed} ohne Thema · {unpriced} unbewertet"
     },
     "resumeBatch": {
         "title": "Import fortsetzen",
@@ -2057,7 +2088,7 @@
         "finishedDecision": "Entscheidung beendet: {correct}/{n}, Sitzungs-PR {pr}.",
         "undoHop": "Schritt zurück",
         "resetPlay": "Neu beginnen",
-        "playOnBoard": "Spielen Sie den Zug auf dem Brett und prüfen Sie ihn dann.",
+        "playOnBoard": "Spielen Sie den Zug auf dem Brett und klicken Sie dann auf die Würfel.",
         "notationPlaceholder": "Zug in Notation, z. B. 13/7 8/7",
         "notationLabel": "Zug in Notation",
         "cubePrompt": "Wählen Sie die Doppelentscheidung.",
@@ -2179,7 +2210,7 @@
     },
     "direction": {
         "title": "Leitung",
-        "direct": "Dieses Turnier leiten",
+        "direct": "Leiten",
         "open": "Leitung öffnen",
         "close": "Leitung schließen",
         "fullscreen": {
@@ -3104,6 +3135,7 @@
         "player2": "Spieler 2",
         "lengthPoints": "{n} Pkt.",
         "moneySession": "Geldspiel",
+        "type": "Art",
         "cubeValue": "Doppler {n}",
         "delayLeft": "Verzögerung {s} s",
         "gestures": "Duell-Aktionen",
@@ -3145,7 +3177,6 @@
         "record": "Match speichern",
         "play": "Spielen",
         "suspended": "Unterbrochene Duelle",
-        "noneSuspended": "Kein unterbrochenes Duell.",
         "resume": "Fortsetzen",
         "conflict": "Das Duell wurde anderswo geändert: hier ist sein aktueller Stand, nichts wurde gespielt.",
         "refused": "Abgelehnt: {error}",
@@ -3195,13 +3226,13 @@
         "pace": "Fehler: {hasty} überhastet ({hastyLoss}), {deliberate} überlegt ({deliberateLoss}), {unknown} ohne Zeit",
         "paceDiscipline": "eher Disziplin: langsamer spielen",
         "paceKnowledge": "eher Wissen: diese Stellungen studieren",
-        "details": "Details der Bilanz",
         "prInterval": "PR, 95-%-Intervall",
         "mwc7Label": "MWC-Verlust auf 7 Pkt. umgerechnet",
         "mwc7Hint": "Der MWC-Verlust auf ein 7-Punkte-Match umgerechnet, um Matches unterschiedlicher Länge zu vergleichen.",
         "adjustedShort": "glücksbereinigt {adjusted}",
         "mwcLossHint": "Durch die Entscheidungen dieses Spielers in diesem Match verlorene Matchgewinnchancen",
-        "toReview": "Zu überprüfende Entscheidungen"
+        "toReview": "Zu überprüfende Entscheidungen",
+        "nothingToReview": "Keine Entscheidung zu prüfen."
     },
     "video": {
         "notPlayable": "Diese Quelle kann hier nicht abgespielt werden.",
@@ -3257,7 +3288,6 @@
         "noDecision": "Keine gezählte Entscheidung dieses Spielers im Turnier"
     },
     "theatre": {
-        "menuItem": "Kinomodus",
         "enter": "Kinomodus: das Video im Vollbild (F11)",
         "exit": "Kinomodus verlassen (F11 oder Esc)",
         "region": "Kinomodus",

@@ -1,3 +1,4 @@
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, afterEach } from 'vitest';
 import { render, cleanup, screen, fireEvent } from '@testing-library/svelte';
 
@@ -28,9 +29,9 @@ describe('StatsTrainingTab', () => {
     test('lists the quiz PR by plan of play, worst first', () => {
         render(StatsTrainingTab, { props: { data } });
         const row = screen.getByText('Blitz').closest('tr');
-        expect(row.textContent).toContain('200.00');
-        expect(row.textContent).toContain('(2)');
-        expect(row.textContent).toContain('2026-10-12');
+        expect(must(row).textContent).toContain('200.00');
+        expect(must(row).textContent).toContain('(2)');
+        expect(must(row).textContent).toContain('2026-10-12');
     });
 
     test('puts the three series side by side, one row per window', () => {

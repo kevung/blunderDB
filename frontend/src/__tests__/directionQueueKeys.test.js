@@ -18,6 +18,7 @@ import { get } from 'svelte/store';
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
     GetAllTournaments: vi.fn().mockResolvedValue([]),
     GetTournamentMatches: vi.fn().mockResolvedValue([]),
+    GetPositionIDsByTournament: vi.fn().mockResolvedValue([]),
     GetAllMatches: vi.fn().mockResolvedValue([]),
     ListMatches: vi.fn(() => Promise.resolve([])),
     CountMatches: vi.fn(() => Promise.resolve(0)),

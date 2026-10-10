@@ -127,7 +127,7 @@ function cardValue(result, metric, kind) {
     return '—';
 }
 
-function rollingAvail(result, n) {
+function rollingAvail(result, /** @type {number} */ n) {
     if (!result || !result.Totals) return false;
     return result.Totals.NumDecisions >= n;
 }
@@ -242,7 +242,7 @@ describe('StatsDashboardTab — empty state condition', () => {
 describe('StatsDashboardTab — drill-down calls (via positionLoader)', () => {
     beforeEach(() => {
         vi.resetAllMocks();
-        GetPositionIDsByStatsSelection.mockResolvedValue([10, 20]);
+        vi.mocked(GetPositionIDsByStatsSelection).mockResolvedValue([10, 20]);
         statsFilterStore.set({ playerName: '', tournamentIDs: [], dateFrom: '', dateTo: '', decisionType: -1, matchLength: [] });
     });
 
@@ -277,9 +277,9 @@ describe('StatsDashboardTab — drill-down calls (via positionLoader)', () => {
     });
 
     test('successful drill-down switches to analysis tab', async () => {
-        GetPositionIDsByStatsSelection.mockResolvedValue([10, 20]);
+        vi.mocked(GetPositionIDsByStatsSelection).mockResolvedValue([10, 20]);
         const { LoadPositionIDsByFilters } = await import('../../wailsjs/go/database/Database.js');
-        LoadPositionIDsByFilters.mockResolvedValue([10, 20]);
+        vi.mocked(LoadPositionIDsByFilters).mockResolvedValue([10, 20]);
         const filter = get(statsFilterStore);
         await loadPositionsFromStatsSelection(filter, { Kind: 'all', OnlyWithError: false });
         expect(get(activeTabStore)).toBe('analysis');

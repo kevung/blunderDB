@@ -2,6 +2,7 @@
  * inlineEdit.test.js — createInlineEdit, the one start/save/cancel state
  * machine behind every inline-editable cell of the list panels.
  */
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, afterEach } from 'vitest';
 import { createInlineEdit } from '../utils/inlineEdit.svelte.js';
 
@@ -137,14 +138,14 @@ describe('createInlineEdit', () => {
         edit.start(1, { name: 'n' });
 
         // Tab from a to b: same row, still editing.
-        document.getElementById('b').focus();
+        must(document.getElementById('b')).focus();
         edit.onBlur({ target: a });
         vi.runAllTimers();
         expect(onSave).not.toHaveBeenCalled();
         expect(edit.editingId).toBe(1);
 
         // Click outside the row: the edit is committed.
-        document.getElementById('outside').focus();
+        must(document.getElementById('outside')).focus();
         edit.onBlur({ target: a });
         vi.runAllTimers();
         expect(onSave).toHaveBeenCalledWith(1, { name: 'n' });

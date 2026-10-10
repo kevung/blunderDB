@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-09 02:11+0200\n"
+"POT-Creation-Date: 2026-10-10 02:34+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -239,11 +239,12 @@ msgstr "Clic derecho en el tablero (jugada hecha en el tablero)"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Ouvrir le menu du plateau, qui commence par *Recommencer* : le coup est "
-"remis à zéro, pas la position."
+"Reprendre tout le coup depuis le début, la position inchangée. Tant "
+"qu'aucun pas n'est joué, le menu du plateau s'ouvre comme d'habitude."
 msgstr ""
-"Abrir el menú del tablero, que empieza por *Empezar de nuevo*: se pone a "
-"cero la jugada, no la posición."
+"Retomar toda la jugada desde el principio, con la posición sin cambios. "
+"Mientras no se haya jugado ningún paso, el menú del tablero se abre como "
+"de costumbre."
 
 #: ../../source/raccourcis.rst:57
 msgid "Navigation"
@@ -362,16 +363,16 @@ msgid ""
 "parcourent la liste ne la font pas défiler : la question garde le "
 "plateau. Sur une décision de pions, le panneau ayant le focus : RETOUR "
 "ARRIÈRE défait le dernier pas, ÉCHAP recommence le coup, ENTRÉE le valide"
-" quand il est complet ; dans le champ de notation, ENTRÉE valide le coup "
-"tapé (``13/7 8/7``)."
+" quand il est complet, comme un clic sur les dés ; dans le champ de "
+"notation, ENTRÉE valide le coup tapé (``13/7 8/7``)."
 msgstr ""
 "Mientras una pregunta del :ref:`panel Entrenamiento "
 "<panneau_entrainement>` está planteada en el tablero, las teclas que "
 "recorren la lista no la hacen avanzar: la pregunta conserva el tablero. "
 "En una decisión de fichas, con el foco en el panel: RETROCESO deshace el "
 "último paso, ESC reinicia el movimiento, INTRO lo valida cuando está "
-"completo; en el campo de notación, INTRO valida el movimiento tecleado "
-"(``13/7 8/7``)."
+"completo, como un clic en los dados; en el campo de notación, INTRO "
+"valida el movimiento tecleado (``13/7 8/7``)."
 
 #: ../../source/raccourcis.rst:86
 msgid "Affichage"
@@ -401,7 +402,19 @@ msgstr "p"
 msgid "Afficher/cacher le compte de course."
 msgstr "Mostrar/ocultar el recuento de pips."
 
-#: ../../source/raccourcis.rst:100
+#: ../../source/raccourcis.rst:1
+msgid "m"
+msgstr "m"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Activer/désactiver le défi : l'analyse du panneau Analyse est masquée "
+"jusqu'à un clic, à chaque position."
+msgstr ""
+"Activar/desactivar el desafío: el análisis del panel Análisis queda "
+"oculto hasta un clic, en cada posición."
+
+#: ../../source/raccourcis.rst:101
 msgid "Actions"
 msgstr "Acciones"
 
@@ -429,7 +442,7 @@ msgstr "ALT-1 … ALT-9"
 msgid "Lancer le filtre épinglé de ce rang dans la bibliothèque de filtres."
 msgstr "Lanzar el filtro fijado de ese rango en la biblioteca de filtros."
 
-#: ../../source/raccourcis.rst:114
+#: ../../source/raccourcis.rst:115
 msgid "Outils"
 msgstr "Herramientas"
 
@@ -668,7 +681,7 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "Mostrar/ocultar la ayuda."
 
-#: ../../source/raccourcis.rst:151
+#: ../../source/raccourcis.rst:152
 msgid "Duel au plateau"
 msgstr "Duelo en el tablero"
 
@@ -698,11 +711,13 @@ msgstr "Clic en una ficha"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Le jouer avec le dé de gauche encore libre, ou avec l'autre si celui-ci "
-"ne peut pas le jouer. Un dé joué est grisé."
+"Le jouer aussitôt avec le dé de gauche encore libre, ou avec l'autre si "
+"celui-ci ne peut pas le jouer. Un dé joué est grisé ; le coup complet "
+"grise tous les dés."
 msgstr ""
-"Jugarla con el dado izquierdo aún libre, o con el otro si el izquierdo no"
-" puede jugarla. Un dado jugado se atenúa."
+"Jugarla en el acto con el dado izquierdo aún libre, o con el otro si el "
+"izquierdo no puede jugarla. Un dado jugado se atenúa; la jugada completa "
+"atenúa todos los dados."
 
 #: ../../source/raccourcis.rst:1
 msgid "Glisser un pion"
@@ -717,16 +732,20 @@ msgid "Clic sur les dés (coup en cours)"
 msgstr "Clic en los dados (jugada en curso)"
 
 #: ../../source/raccourcis.rst:1
-msgid "Aucun dé joué : intervertir leur ordre. Coup complet : le valider."
-msgstr "Ningún dado jugado: invertir su orden. Jugada completa: validarla."
+msgid "Coup complet : le valider. Sinon : intervertir les dés restant à jouer."
+msgstr ""
+"Jugada completa: validarla. Si no: invertir los dados que quedan por "
+"jugar."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic droit sur le plateau (coup en cours)"
 msgstr "Clic derecho en el tablero (jugada en curso)"
 
 #: ../../source/raccourcis.rst:1
-msgid "Reprendre tous les pions joués ; sans pion joué, intervertir les dés."
-msgstr "Recuperar todas las fichas jugadas; sin ficha jugada, invertir los dados."
+msgid "Reprendre tous les pions joués ; sans pion joué, ouvrir le menu du Duel."
+msgstr ""
+"Recuperar todas las fichas jugadas; sin ficha jugada, abrir el menú del "
+"Duelo."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic droit hors du plateau, ou hors de son coup"
@@ -736,7 +755,7 @@ msgstr "Clic derecho fuera del tablero, o fuera de su jugada"
 msgid "Ouvrir le menu du Duel : Pile, abandon, suspension, arrêt."
 msgstr "Abrir el menú del Duelo: Pila, abandono, suspensión, parada."
 
-#: ../../source/raccourcis.rst:169
+#: ../../source/raccourcis.rst:170
 msgid "Onglets de vues"
 msgstr "Pestañas de vistas"
 
@@ -788,7 +807,7 @@ msgstr "Doble clic en la pestaña"
 msgid "Renommer la vue."
 msgstr "Renombrar la vista."
 
-#: ../../source/raccourcis.rst:186
+#: ../../source/raccourcis.rst:187
 msgid "Ligne de commande"
 msgstr "Línea de comandos"
 
@@ -812,7 +831,7 @@ msgstr "Recorrer el historial de comandos hacia abajo."
 msgid "Pendant une recherche : l'interrompre."
 msgstr "Durante una búsqueda: interrumpirla."
 
-#: ../../source/raccourcis.rst:200
+#: ../../source/raccourcis.rst:201
 msgid "Historique de recherche"
 msgstr "Historial de búsqueda"
 
@@ -832,7 +851,7 @@ msgstr "Doble clic"
 msgid "Exécuter la recherche."
 msgstr "Ejecutar la búsqueda."
 
-#: ../../source/raccourcis.rst:213
+#: ../../source/raccourcis.rst:214
 msgid "Bibliothèque de filtres"
 msgstr "Biblioteca de filtros"
 
@@ -860,7 +879,7 @@ msgstr "Clic (en una etiqueta fijada)"
 msgid "Exécuter la recherche du filtre épinglé."
 msgstr "Ejecutar la búsqueda del filtro fijado."
 
-#: ../../source/raccourcis.rst:228
+#: ../../source/raccourcis.rst:229
 msgid "Panneau d'analyse"
 msgstr "Panel de análisis"
 
@@ -941,7 +960,7 @@ msgstr ""
 "resultados de una búsqueda ``ss``: volver desde ahí a la colección o al "
 "partido."
 
-#: ../../source/raccourcis.rst:248
+#: ../../source/raccourcis.rst:249
 msgid "Panneau Eval"
 msgstr "Panel Eval"
 
@@ -949,7 +968,7 @@ msgstr "Panel Eval"
 msgid "Arrêter le rollout en cours, sinon désélectionner le coup."
 msgstr "Detener el rollout en curso; si no, deseleccionar la jugada."
 
-#: ../../source/raccourcis.rst:267
+#: ../../source/raccourcis.rst:268
 msgid "Panneau des matchs"
 msgstr "Panel de partidas"
 
@@ -1021,7 +1040,7 @@ msgstr ""
 msgid "Désélectionner/fermer le panneau."
 msgstr "Deseleccionar/cerrar el panel."
 
-#: ../../source/raccourcis.rst:288
+#: ../../source/raccourcis.rst:289
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Panel Anki (repetición espaciada)"
 
@@ -1032,6 +1051,14 @@ msgstr "ESPACIO, Clic"
 #: ../../source/raccourcis.rst:1
 msgid "Afficher la réponse (l'analyse enregistrée de la position)."
 msgstr "Mostrar la respuesta (el análisis registrado de la posición)."
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Valider le coup joué au plateau (réponse au damier), comme un clic sur "
+"les dés."
+msgstr ""
+"Validar la jugada hecha en el tablero (respuesta en el tablero), como un "
+"clic en los dados."
 
 #: ../../source/raccourcis.rst:1
 msgid "1"
@@ -1079,7 +1106,7 @@ msgstr ""
 "Detener la revisión y volver a la lista de mazos (se puede reanudar más "
 "tarde)."
 
-#: ../../source/raccourcis.rst:306
+#: ../../source/raccourcis.rst:308
 msgid "Panneau des tournois"
 msgstr "Panel de torneos"
 
@@ -1123,11 +1150,11 @@ msgstr ""
 "Cancelar la edición en curso, si no borrar la búsqueda de añadir partida,"
 " si no deseleccionar el torneo, si no cerrar el panel (por etapas)."
 
-#: ../../source/raccourcis.rst:322
+#: ../../source/raccourcis.rst:324
 msgid "Page Direction"
 msgstr "Página Dirección"
 
-#: ../../source/raccourcis.rst:324
+#: ../../source/raccourcis.rst:326
 msgid ""
 "Sous la page Direction, *J*, *K*, *HAUT*, *BAS* et *ENTRÉE* vont à la "
 "file des propositions, sauf quand le focus est sur une case de la grille "
@@ -1245,7 +1272,7 @@ msgstr ""
 " y el mismo arrastrar y soltar actúan sobre la mesa de cualquier prueba; "
 "un intercambio con otra prueba nombra a las dos en la confirmación."
 
-#: ../../source/raccourcis.rst:346
+#: ../../source/raccourcis.rst:348
 msgid "Panneau des collections"
 msgstr "Panel de colecciones"
 
@@ -1273,11 +1300,11 @@ msgstr ""
 "Volver a la lista de colecciones, si no deseleccionar la colección, si no"
 " cerrar el panel (por etapas)."
 
-#: ../../source/raccourcis.rst:361
+#: ../../source/raccourcis.rst:363
 msgid "Panneau Transcription"
 msgstr "Panel de transcripción"
 
-#: ../../source/raccourcis.rst:363
+#: ../../source/raccourcis.rst:365
 msgid ""
 "Le panneau prend ces touches lorsqu'il a le focus. Devant la liste des "
 "brouillons il en prend déjà quelques-unes, pour que reprendre le travail "
@@ -1421,34 +1448,21 @@ msgstr ""
 " un bando."
 
 #: ../../source/raccourcis.rst:1
-msgid "Clic, glisser (aucun dé saisi)"
-msgstr "Clic, arrastrar (ningún dado introducido)"
-
-#: ../../source/raccourcis.rst:1
-msgid ""
-"Jouer le coup directement sur le damier : le pion va du point cliqué à sa"
-" destination, contraint aux coups légaux, et les deux dés se déduisent "
-"des pas joués."
-msgstr ""
-"Jugar la jugada directamente en el tablero: la ficha va del punto pulsado"
-" a su destino, limitada a las jugadas legales, y los dos dados se deducen"
-" de los pasos jugados."
-
-#: ../../source/raccourcis.rst:1
 msgid "Clic, glisser (jet saisi)"
 msgstr "Clic, arrastrar (tirada introducida)"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Jouer le coup sur le damier, contraint aux coups légaux de ce jet : "
-"chaque pas joué ne garde dans la liste que les candidats qui le "
-"contiennent, et un coup légal achevé est enregistré aussitôt. Sur une "
-"action relue, il la remplace."
+"Jouer le coup sur le damier, contraint aux coups légaux de ce jet : un "
+"clic joue le pion du dé de gauche, un glissé le pose sur sa destination, "
+"et chaque pas ne garde dans la liste que les candidats qui le "
+"contiennent. Sans jet saisi, le damier ne joue rien."
 msgstr ""
 "Jugar la jugada en el tablero, limitada a las jugadas legales de esa "
-"tirada: cada paso jugado solo deja en la lista los candidatos que lo "
-"contienen, y una jugada legal completa se registra en el acto. En una "
-"acción releída, la sustituye."
+"tirada: un clic juega la ficha con el dado de la izquierda, un arrastre "
+"la coloca en su destino, y cada paso conserva en la lista solo los "
+"candidatos que lo contienen. Sin tirada introducida, el tablero no juega "
+"nada."
 
 #: ../../source/raccourcis.rst:1
 msgid "Glisser hors des règles (jet saisi)"
@@ -1467,18 +1481,22 @@ msgstr ""
 "candidatos cede su lugar a una línea que lo recuerda."
 
 #: ../../source/raccourcis.rst:1
-msgid "ENTREE (coup hors des règles)"
-msgstr "INTRO (jugada fuera de las reglas)"
+msgid "Clic sur les dés, ENTREE (coup achevé)"
+msgstr "Clic en los dados, ENTRAR (jugada terminada)"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Enregistrer le coup avec les dés saisis et le plateau obtenu, marqué coup"
-" illégal si aucun coup légal n'atteint ce plateau. Un coup hors des "
-"règles n'est jamais enregistré de lui-même."
+"Enregistrer le coup achevé avec les dés saisis — et, hors des règles, le "
+"plateau obtenu, marqué coup illégal si aucun coup légal n'atteint ce "
+"plateau. Le jet suivant, chiffre ou case du triangle, l'enregistre aussi."
+" Sur une action relue, il la remplace. Un coup n'est jamais enregistré de"
+" lui-même."
 msgstr ""
-"Registrar la jugada con los dados introducidos y el tablero obtenido, "
-"marcada como movimiento ilegal si ninguna jugada legal alcanza ese "
-"tablero. Una jugada fuera de las reglas nunca se registra sola."
+"Registrar la jugada terminada con los dados introducidos — y, fuera de "
+"las reglas, el tablero obtenido, marcado como jugada ilegal si ninguna "
+"jugada legal alcanza ese tablero. La tirada siguiente, un dígito o una "
+"casilla del triángulo, también la registra. En una acción releída, la "
+"sustituye. Una jugada nunca se registra por sí sola."
 
 #: ../../source/raccourcis.rst:1
 msgid "RETOUR ARRIERE (coup en cours au plateau)"
@@ -1799,7 +1817,7 @@ msgstr ""
 "ESC también sale; en el modo cine, RETROCESO borra los dados introducidos"
 " (:ref:`detalle <transcription_theatre>`)."
 
-#: ../../source/raccourcis.rst:420
+#: ../../source/raccourcis.rst:421
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -1807,7 +1825,7 @@ msgstr ""
 "Una tirada que no permite ningún movimiento registra el baile por sí "
 "sola, sin pulsación adicional."
 
-#: ../../source/raccourcis.rst:423
+#: ../../source/raccourcis.rst:424
 msgid ""
 "Avec une vidéo attachée, seule une validation explicite — *ENTREE*, le "
 "double-clic sur un candidat, le coup achevé au plateau — pose l'instant "
@@ -1825,7 +1843,7 @@ msgstr ""
 " leen por el carácter tecleado, *ALTGR* incluido en un teclado que los "
 "coloca así. Sin vídeo, estas teclas conservan su significado habitual."
 
-#: ../../source/raccourcis.rst:431
+#: ../../source/raccourcis.rst:432
 msgid ""
 "Le chiffre a un seul sens : **il commence un jet là où le curseur est**. "
 "En bout de document il n'y a rien sous le curseur, donc il valide le coup"
@@ -1852,7 +1870,7 @@ msgstr ""
 "decisión siguiente, como al final del documento, e INTRO lleva allí "
 "también."
 
-#: ../../source/raccourcis.rst:442
+#: ../../source/raccourcis.rst:443
 msgid ""
 "Ce qui est en train d'être tapé se dessine dans le transcript, en "
 "pointillés, à la place où il sera écrit : une correction recouvre la "
@@ -1865,7 +1883,7 @@ msgstr ""
 "celda que reemplaza, una inserción abre una celda entre sus dos vecinas, "
 "y el bando se lee en la columna. Nada se registra antes de la validación."
 
-#: ../../source/raccourcis.rst:447
+#: ../../source/raccourcis.rst:448
 msgid ""
 "Une insertion au milieu du document continue d'insérer : la validation "
 "ouvre une cellule vide à la suite, et l'action suivante s'insère à son "
@@ -1877,7 +1895,7 @@ msgstr ""
 "vez en lugar de sobrescribir la de después. El final de la partida o "
 "mover el cursor le pone fin."
 
-#: ../../source/raccourcis.rst:452
+#: ../../source/raccourcis.rst:453
 msgid ""
 "Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
 "rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
@@ -1889,7 +1907,7 @@ msgstr ""
 "cursor» al final del documento. La frase se borra sola y devuelve el "
 "sitio a la acción esperada."
 
-#: ../../source/raccourcis.rst:457
+#: ../../source/raccourcis.rst:458
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était — "
@@ -1909,7 +1927,7 @@ msgstr ""
 " «por revisar» hasta la validación. Avanzar o retroceder el cursor "
 "después de haber cambiado algo registra la corrección de paso."
 
-#: ../../source/raccourcis.rst:465
+#: ../../source/raccourcis.rst:466
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1935,7 +1953,7 @@ msgstr ""
 " inserta para el bando al que le faltaba. La pila de deshacer vive en "
 "memoria: se pierde al cerrar el borrador."
 
-#: ../../source/raccourcis.rst:476
+#: ../../source/raccourcis.rst:477
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1945,7 +1963,7 @@ msgstr ""
 "transcripción y la barra del borrador — se describe en "
 ":ref:`panneau_transcription`."
 
-#: ../../source/raccourcis.rst:483
+#: ../../source/raccourcis.rst:484
 msgid "Planche-contact"
 msgstr "Hoja de contactos"
 
@@ -1993,7 +2011,7 @@ msgstr "Abrir la posición en el tablero y cerrar la hoja."
 msgid "Refermer la planche."
 msgstr "Cerrar la hoja."
 
-#: ../../source/raccourcis.rst:500
+#: ../../source/raccourcis.rst:501
 msgid "Panneau d'aide"
 msgstr "Panel de ayuda"
 
@@ -2027,11 +2045,12 @@ msgstr "Final del contenido."
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Chercher dans l'aide : Entrée passe à l'occurrence suivante, MAJ-Entrée à"
-" la précédente."
+"Chercher dans l'aide : les occurrences sont comptées et surlignées à la "
+"frappe ; Entrée passe à l'occurrence suivante, MAJ-Entrée à la "
+"précédente."
 msgstr ""
-"Buscar en la ayuda: Intro pasa a la ocurrencia siguiente, MAYÚS-Intro a "
-"la anterior."
+"Buscar en la ayuda: las apariciones se cuentan y resaltan al escribir; "
+"Intro pasa a la siguiente, MAYÚS-Intro a la anterior."
 
 #: ../../source/raccourcis.rst:1
 msgid "?, CTRL-F, Esc"
@@ -2313,3 +2332,36 @@ msgstr "Cerrar la ayuda."
 
 #~ msgid ", / . (vidéo attachée)"
 #~ msgstr ", / . (vídeo adjunto)"
+
+#~ msgid "Aucun dé joué : intervertir leur ordre. Coup complet : le valider."
+#~ msgstr "Ningún dado jugado: invertir su orden. Jugada completa: validarla."
+
+#~ msgid "Clic, glisser (aucun dé saisi)"
+#~ msgstr "Clic, arrastrar (ningún dado introducido)"
+
+#~ msgid ""
+#~ "Jouer le coup directement sur le "
+#~ "damier : le pion va du point "
+#~ "cliqué à sa destination, contraint aux"
+#~ " coups légaux, et les deux dés "
+#~ "se déduisent des pas joués."
+#~ msgstr ""
+#~ "Jugar la jugada directamente en el "
+#~ "tablero: la ficha va del punto "
+#~ "pulsado a su destino, limitada a "
+#~ "las jugadas legales, y los dos "
+#~ "dados se deducen de los pasos "
+#~ "jugados."
+
+#~ msgid "ENTREE (coup hors des règles)"
+#~ msgstr "INTRO (jugada fuera de las reglas)"
+
+#~ msgid ""
+#~ "Ouvrir le menu du plateau, qui "
+#~ "commence par *Recommencer* : le coup "
+#~ "est remis à zéro, pas la position."
+#~ msgstr ""
+#~ "Abrir el menú del tablero, que "
+#~ "empieza por *Empezar de nuevo*: se "
+#~ "pone a cero la jugada, no la "
+#~ "posición."

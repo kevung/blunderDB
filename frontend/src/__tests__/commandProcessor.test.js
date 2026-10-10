@@ -455,6 +455,7 @@ describe('parseFilters', () => {
 // processCommand — needs store + callback mocking
 // ---------------------------------------------------------------------------
 describe('processCommand', () => {
+    /** @type {Record<string, ReturnType<typeof vi.fn>>} */
     let callbacks;
 
     beforeEach(() => {
@@ -562,12 +563,12 @@ describe('processCommand', () => {
 
     test('# command saves the comment to the current position id (not the array index)', () => {
         // Regression: SaveComment expects a position *id*, not the array index.
-        SaveComment.mockClear();
+        vi.mocked(SaveComment).mockClear();
         positionsStore.set([{ id: 10 }, { id: 20 }, { id: 30 }]);
         currentPositionIndexStore.set(1); // index 1 -> position id 20
         processCommand('#blunder');
         expect(SaveComment).toHaveBeenCalledTimes(1);
-        expect(SaveComment.mock.calls[0][0]).toBe(20);
+        expect(vi.mocked(SaveComment).mock.calls[0][0]).toBe(20);
     });
 
     // -- simple callback commands --------------------------------------------

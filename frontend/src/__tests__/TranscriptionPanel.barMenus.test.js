@@ -5,6 +5,7 @@
  * so the next keystroke is a transcription key.
  */
 
+import { handleEscapeCapture } from '../services/escapeService.js';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
@@ -139,13 +140,13 @@ describe('the Video button', () => {
         expect(videoButton().textContent).toContain('Video');
     });
 
-    test('opens a menu under it: a local file, a YouTube link, and the theatre and Detach while a video is attached', async () => {
+    test('opens a menu under it: a local file, a YouTube link, and Remove the video while one is attached', async () => {
         await openedPanel();
         await fireEvent.click(videoButton());
         await settle();
         expect(videoMenu()?.getAttribute('role')).toBe('menu');
         expect(videoButton().getAttribute('aria-expanded')).toBe('true');
-        expect(itemsOf(videoMenu())).toEqual(['Local file…', 'YouTube link…', 'Theatre modeF11', 'Detach']);
+        expect(itemsOf(videoMenu())).toEqual(['Local file…', 'YouTube link…', 'Remove video']);
         expect(videoMenu()?.contains(document.activeElement)).toBe(true);
         cleanup();
         source = '';
@@ -190,11 +191,11 @@ describe('the Video button', () => {
         expect(document.activeElement).toBe(panel());
     });
 
-    test('Detach detaches the video', async () => {
+    test('Remove video detaches the video', async () => {
         await openedPanel();
         await fireEvent.click(videoButton());
         await settle();
-        await fireEvent.click(item(videoMenu(), /Detach/));
+        await fireEvent.click(item(videoMenu(), /Remove video/));
         await settle();
         expect(gestures()).toContainEqual({ Kind: 'set_video', VideoSource: '' });
         expect(document.activeElement).toBe(panel());
@@ -260,5 +261,30 @@ describe('the ⋯ menu', () => {
         await settle();
         expect(moreMenu()).toBeNull();
         expect(document.querySelector('.mat-text')).not.toBeNull();
+    });
+});
+
+describe('the Metadata button', () => {
+    const metadataButton = () => /** @type {HTMLElement} */ ([...document.querySelectorAll('.draft-bar button')].find((b) => b.textContent?.trim() === 'Metadata'));
+
+    test('the open form replaces the entry; the same button and Escape bring it back', async () => {
+        await openedPanel();
+        expect(document.querySelector('[data-testid="transcription-dice"]')).not.toBeNull();
+        await fireEvent.click(metadataButton());
+        await settle();
+        expect(document.querySelector('[data-testid="transcription-metadata"]')).not.toBeNull();
+        expect(document.querySelector('[data-testid="transcription-dice"]')).toBeNull();
+        expect(document.querySelector('[data-testid="transcription-candidates"]')).toBeNull();
+        expect(document.querySelector('.transcript-col')).not.toBeNull();
+        await fireEvent.click(metadataButton());
+        await settle();
+        expect(document.querySelector('[data-testid="transcription-metadata"]')).toBeNull();
+        expect(document.querySelector('[data-testid="transcription-dice"]')).not.toBeNull();
+        await fireEvent.click(metadataButton());
+        await settle();
+        handleEscapeCapture(new KeyboardEvent('keydown', { key: 'Escape', cancelable: true }));
+        await settle();
+        expect(document.querySelector('[data-testid="transcription-metadata"]')).toBeNull();
+        expect(document.querySelector('[data-testid="transcription-dice"]')).not.toBeNull();
     });
 });

@@ -1,3 +1,4 @@
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, afterEach } from 'vitest';
 import { render, cleanup } from '@testing-library/svelte';
 import { tick } from 'svelte';
@@ -19,7 +20,7 @@ describe('AnalysisPanel — the time of the played decision', () => {
         matchContextStore.set(ctx([{ move_type: 'checker', decision_ms: 5200, cube_decision_ms: 1000, position: {} }]));
         const { container } = render(AnalysisPanel);
         await tick();
-        expect(container.querySelector('[data-testid="played-time"]').textContent).toContain('◇ 1.0 s · 5.2 s');
+        expect(must(container.querySelector('[data-testid="played-time"]')).textContent).toContain('◇ 1.0 s · 5.2 s');
     });
 
     test('absent, not zero, when unknown', async () => {

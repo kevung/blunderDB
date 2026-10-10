@@ -49,7 +49,7 @@
 
     loadPlayers();
 
-    function toggleSelect(name) {
+    function toggleSelect(/** @type {string} */ name) {
         if (selectedNames.has(name)) {
             selectedNames.delete(name);
         } else {
@@ -61,7 +61,7 @@
         }
     }
 
-    function useAsCanonical(name) {
+    function useAsCanonical(/** @type {string} */ name) {
         canonicalName = name ?? '';
     }
 

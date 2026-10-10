@@ -12,6 +12,7 @@ import ReferenceSuggest from '../components/ReferenceSuggest.svelte';
 import { SuggestReferencePositions } from '../../wailsjs/go/database/Database.js';
 import { collectionFromIds, quizOnIds } from '../services/recurringStudy.js';
 import { statsFilterStore } from '../stores/statsStore.js';
+import { must } from './helpers/must.js';
 
 afterEach(() => {
     cleanup();
@@ -49,11 +50,11 @@ const proposal = {
 describe('ReferenceSuggest', () => {
     test('asks the engine for the Statistics player over the whole library, then words each reason', async () => {
         statsFilterStore.set({ playerName: 'Alice', tournamentIDs: [4], dateFrom: '2025-01-01', dateTo: '', decisionType: 0, matchLength: [] });
-        SuggestReferencePositions.mockResolvedValue(proposal);
+        vi.mocked(SuggestReferencePositions).mockResolvedValue(proposal);
         render(ReferenceSuggest);
         await fireEvent.click(screen.getByTestId('suggest-run'));
         await waitFor(() => expect(screen.getAllByTestId('suggest-row')).toHaveLength(2));
-        const [filter, matchIDs, size] = SuggestReferencePositions.mock.calls[0];
+        const [filter, matchIDs, size] = vi.mocked(SuggestReferencePositions).mock.calls[0];
         expect(filter.playerName).toBe('Alice');
         expect(filter.tournamentIDs).toEqual([]);
         expect(filter.dateFrom).toBe('');
@@ -66,23 +67,23 @@ describe('ReferenceSuggest', () => {
     });
 
     test('keeps only the checked positions, as a collection or a quiz', async () => {
-        SuggestReferencePositions.mockResolvedValue(proposal);
-        collectionFromIds.mockResolvedValue(true);
+        vi.mocked(SuggestReferencePositions).mockResolvedValue(proposal);
+        vi.mocked(collectionFromIds).mockResolvedValue(true);
         const onCollectionCreated = vi.fn();
         render(ReferenceSuggest, { props: { onCollectionCreated } });
         await fireEvent.click(screen.getByTestId('suggest-run'));
         await waitFor(() => expect(screen.getAllByTestId('suggest-row')).toHaveLength(2));
-        await fireEvent.click(screen.getAllByTestId('suggest-row')[0].querySelector('input[type=checkbox]'));
+        await fireEvent.click(must(screen.getAllByTestId('suggest-row')[0].querySelector('input[type=checkbox]')));
         await fireEvent.click(screen.getByTestId('suggest-quiz'));
         expect(quizOnIds).toHaveBeenCalledWith([9]);
         await fireEvent.click(screen.getByTestId('suggest-collection'));
         await waitFor(() => expect(collectionFromIds).toHaveBeenCalled());
-        expect(collectionFromIds.mock.calls[0][1]).toEqual([9]);
+        expect(vi.mocked(collectionFromIds).mock.calls[0][1]).toEqual([9]);
         await waitFor(() => expect(onCollectionCreated).toHaveBeenCalled());
     });
 
     test('says so when nothing is left to propose', async () => {
-        SuggestReferencePositions.mockResolvedValue({ ...proposal, References: [] });
+        vi.mocked(SuggestReferencePositions).mockResolvedValue({ ...proposal, References: [] });
         render(ReferenceSuggest);
         await fireEvent.click(screen.getByTestId('suggest-run'));
         await waitFor(() => expect(screen.getByTestId('reference-suggest').textContent).toMatch(/30/));

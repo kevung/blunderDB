@@ -9,6 +9,7 @@
  * ticking of faults here, because Anki schedules a memory and does not
  * measure a calculation.
  */
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
@@ -80,7 +81,7 @@ describe('a review card that is a score', () => {
         const { container } = render(AnkiPanel);
         await settle();
 
-        expect(container.querySelector('.review-position-id').textContent).toContain('3/5');
+        expect(must(container.querySelector('.review-position-id')).textContent).toContain('3/5');
         expect(container.querySelector('.answer-masked')).not.toBeNull();
         expect(container.querySelector('.score-card')).toBeNull();
     });
@@ -90,16 +91,16 @@ describe('a review card that is a score', () => {
         const { container } = render(AnkiPanel);
         await settle();
 
-        await fireEvent.click(container.querySelector('.answer-masked'));
+        await fireEvent.click(must(container.querySelector('.answer-masked')));
         await settle();
 
         const sheet = container.querySelector('.score-card');
         expect(sheet).not.toBeNull();
-        const cells = sheet.querySelectorAll('button.number-cell');
+        const cells = must(sheet).querySelectorAll('button.number-cell');
         expect(cells.length).toBeGreaterThan(0);
         // Locked: revealed numbers, and not one of them clickable — the
         // faults are the Training tab's business (ADR-0042 rule 3).
-        for (const cell of cells) expect(cell.disabled).toBe(true);
+        for (const cell of cells) expect(/** @type {HTMLButtonElement | HTMLInputElement} */ (cell).disabled).toBe(true);
     });
 
     test('says so plainly when the key is not a score, rather than drawing an empty sheet', async () => {

@@ -96,7 +96,7 @@
         onClose(); // Close the modal after going to the position
     }
 
-    function handleKeyDown(event) {
+    function handleKeyDown(/** @type {KeyboardEvent} */ event) {
         if (event.key === 'Enter') {
             handleGoToPosition();
         }

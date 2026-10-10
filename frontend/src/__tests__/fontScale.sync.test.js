@@ -52,6 +52,7 @@ function declaredTokens() {
 
 // Every `font-size:` / `font:` declaration in the sources, with its location.
 function declarations() {
+    /** @type {Array<{ file: string, line: number, property: string, value: string }>} */
     const found = [];
     for (const file of svelteFiles(SRC)) {
         const rel = path.relative(SRC, file).split(path.sep).join('/');

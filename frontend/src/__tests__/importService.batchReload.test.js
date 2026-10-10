@@ -1,3 +1,4 @@
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 import { get } from 'svelte/store';
 
@@ -31,7 +32,7 @@ const ImportFiles = vi.fn(async (paths) => {
             summary.succeeded++;
         } catch (error) {
             summary.failed++;
-            summary.errors.push({ file: path, message: error.message });
+            summary.errors.push({ file: path, message: must(error).message });
         }
     }
     return summary;
@@ -85,10 +86,11 @@ const { fileImportResultsStore, fileImportModeStore } = await import('../stores/
 
 // The rows the fake backend holds; the fake loadAllPositions hands them to the
 // store exactly like positionService.js does (and lands on the matches tab).
+/** @type {Array<{ id: number, xgid: string }>} */
 let rows = [];
 let nextID = 1;
 
-function txtFile(name) {
+function txtFile(/** @type {string} */ name) {
     return `/import/${name}.txt`;
 }
 

@@ -400,6 +400,34 @@ export const showcaseStatsResult = {
     ]
 };
 
+/** Carte Plan d'étude du Dashboard (ComputeStudyPlan), forme de storage.StudyPlan. */
+const planFamily = (gameType, kind, theme, errors, recoverable, low, high) => ({
+    GameType: gameType,
+    Kind: kind,
+    Theme: theme,
+    Errors: errors,
+    Avoidable: errors - 1,
+    Recoverable: recoverable,
+    Low: low,
+    High: high,
+    Positions: [{ PositionID: showcasePositionId }]
+});
+export const showcaseStudyPlan = {
+    NumDecisions: 486,
+    ThresholdMP: 50,
+    MinErrors: 5,
+    Families: [
+        planFamily('holding', 'checker', 'blots', 14, 0.1117, 0.0074, 0.216),
+        planFamily('blitz', 'checker', 'gammon', 9, 0.08, 0.01, 0.15),
+        planFamily('race', 'cube', 'offer_missed', 6, 0.031, 0.002, 0.06)
+    ],
+    Tentative: [planFamily('backgame', 'checker', 'point', 2, 0.02, -0.01, 0.05)],
+    Unthemed: 41,
+    Unpriced: 3,
+    UnthemedPositions: [{ PositionID: showcasePositionId }],
+    UnpricedPositions: [{ PositionID: showcasePositionId }]
+};
+
 /** Onglet Joueurs (GetPlayerTable). */
 export const showcasePlayerTable = [
     {
@@ -478,6 +506,7 @@ export function showcaseGalleryMock() {
             GetAllAnkiDecks: showcaseAnkiDecks,
             GetCommentsByPosition: showcaseComments,
             ComputeStats: showcaseStatsResult,
+            ComputeStudyPlan: showcaseStudyPlan,
             GetPlayerTable: showcasePlayerTable,
             // StatsFilterBar treats an empty GetAllPlayerNames as "database
             // empty" and replaces the whole filter row with an import hint.
