@@ -90,6 +90,7 @@ export default {
 <li><strong>Näkymän vaihtaminen</strong>: napsauta välilehteä, paina <em>CTRL-PageUp</em> / <em>CTRL-PageDown</em> (tai <em>SHIFT-J</em> / <em>SHIFT-K</em>) siirtyäksesi edelliseen / seuraavaan näkymään, tai <em>CTRL-1</em> – <em>CTRL-9</em> siirtyäksesi suoraan n:nteen näkymään.</li>
 <li><strong>Näkymän uudelleennimeäminen</strong>: kaksoisnapsauta välilehteä, kirjoita uusi nimi ja vahvista painamalla <em>ENTER</em>.</li>
 </ul>
+<p>Eval-paneeliin jätetty näkymä palaa siihen sellaisena kuin se jätettiin: luonnoslautoineen ja, paneelista poistuttaessa, tutkimansa aseman kera. Myös Eval-paneelin viimeisin luonnoslauta on kunkin näkymän oma.</p>
 <p>Näkymät tallennetaan tietokannan istuntotilan mukana ja palautetaan sen uudelleenavauksen yhteydessä.</p>
 <h3>Asetukset</h3>
 <p>Työkalurivin asetuspainike (rataskuvake), ohjepainikkeen vasemmalla puolella, avaa blunderDB:n asetusikkunan. Se on jaettu yhdeksään välilehteen:</p>
@@ -867,9 +868,10 @@ export default {
 <p>Jokainen ruutu on oma hakunsa. Moottori ottaa pistetilanteen huomioon — se ei pelaa samaa peliä tilanteessa 2-away kuin 7-away — joten yksi ainoa haku luettuna eri otteluekviteettien läpi olisi väärässä juuri siellä, missä pistetilanne merkitsee. Ruudukko saapuu ensin 0-plyllä ja laskeutuu uudelleen määritetyllä näyttösyvyydellä, kun ikkuna on levossa: sama porrastus kuin muualla paneelissa, ja 9 pisteen ruudukko maksaa noin puolitoista sekuntia.</p>
 <p>Sama ruudukko lasketaan käyttöliittymän ulkopuolella komentorivin komennolla cubematrix.</p>
 <h4>Aseman tuominen Eval-paneeliin</h4>
-<p>Paneeli avautuu oletuksena bearoff-asemaan, mutta tutkiminen alkaa useimmiten jo käsillä olevasta asemasta. Kolme elettä tuo sen paneeliin:</p>
+<p>Paneeli avautuu oletuksena bearoff-asemaan, mutta tutkiminen alkaa useimmiten jo käsillä olevasta asemasta. Neljä elettä tuo sen paneeliin:</p>
 <ul>
 <li><strong>Oikea napsautus laudalla</strong> analyysipaneelissa tai ottelua selattaessa ja sitten <em>Arvioi tämä asema</em>: Eval-paneeli avautuu suoraan tähän asemaan sellaisena kuin se näytetään; <em>Arvioi tämän aseman peilikuva</em> avaa sen siihen toisen puolen näkökulmasta. Pikavalikko ei ilmesty Eval-paneelissa eikä Hakupaneelissa, joissa oikea painike on jo varattu toisen värin nappuloiden asettamiseen.</li>
+<li><strong>Napsauta lautaa hiiren oikealla painikkeella ja valitse</strong> <em>Arvioi uudessa välilehdessä</em>: uusi näkymä nimeltä <em>Muunnelma näkymästä #n</em> (n on alkuperäisen näkymän numero) avautuu Eval-paneeliin näytetyssä asemassa, jossa muunnelmia voi asetella vapaasti. Alkuperäinen näkymä säilyttää asemansa, luettelonsa ja analyysinsa. Tätä valintaa ei tarjota Transkriptio-paneelissa.</li>
 <li><strong>CTRL-C ja sitten CTRL-V</strong>: kopioi asema analyysipaneelista ja liitä se sitten Eval-paneelissa. Liittäminen hyväksyy myös muualta tulevan tunnisteen — XGID:n (eXtreme Gammon, GNU Backgammon, toinen blunderDB-instanssi) tai OGID:n (OpenGammon): riittää, että se on leikepöydällä.</li>
 <li><strong>Komento</strong> <code>import XGID=…</code> (tai <code>import OGID=…</code>) siihen tapaukseen, ettei tunniste ole leikepöydällä vaan viestissä, päätteessä luetulla foorumilla tai skriptin tuottamana. Se on sama verbi kuin pelkkä <code>import</code>: ilman argumenttia se avaa tiedostovalitsimen, argumentin kanssa se lukee tunnisteen. Polku on sen jälkeen sama kuin liittämisessä — sama luku, sama kaksoiskappaleiden poisto, sama tuodun aseman avaus.</li>
 </ul>
@@ -934,7 +936,7 @@ export default {
 <p><strong>Vastauksen näyttäminen:</strong> Kortti esittää kysymyksen — mikä siirto pelataan tai mikä kuutiotoimi tehdään. Mieti, ja paina sitten <em>VÄLILYÖNTI</em> (tai napsauta peitettyä aluetta) paljastaaksesi vastauksen: aseman tallennetun analyysin sellaisena kuin Analyysi-välilehti sen esittää. Se ilmestyy arviointipainikkeiden alle, jotka pysyvät paikoillaan ja ulottuvilla. Listan siirron napsauttaminen näyttää sen laudalla.</p>
 <p>Mikään ei pakota paljastamaan vastausta arviointia varten: jos olet varma, näppäimet <em>1</em>–<em>4</em> pysyvät käytössä. Vastaus peittyy uudelleen seuraavan kortin kohdalla, mutta ei silloin, kun vain vaihdat välilehteä — käy katsomassa Eval-paneelia tai aseman kommenttia, vastaus odottaa palatessasi.</p>
 <p>Asema, jolla ei ole tallennettua analyysiä, ilmoittaa sen suoraan ilman peitettyä aluetta.</p>
-<p><strong>Vastaaminen laudalla.</strong> Oletuksena arvioit itse itsesi. Valitse asemapakan asetuksissa <em>Vastaa laudalla</em>: nappulakortilla pelaat siirron laudalla kuten Päätös-harjoituksessa ja painat sitten <em>Vahvista</em>. Moottori arvioi siirron tallennettua analyysia vasten, paljastaa vastauksen ja <strong>ehdottaa arvosanaa</strong>: <em>Helppo</em> nopeasta oikeasta vastauksesta, <em>Hyvä</em> hitaammasta oikeasta, <em>Vaikea</em> blunder-rajan alittavasta virheestä, <em>Uudelleen</em> blunderista tai laittomasta siirrosta. Ehdotettu arvosana korostetaan; hallinta pysyy sinulla ja arvioit haluamasi näppäimillä <em>1</em>–<em>4</em>. Laillinen siirto, jota analyysi ei luokittele, ei ehdota mitään. Kuutiokortit, tuloskortit ja tulostaulukkopakat pysyvät itsearvioituina. Vastauksen paljastaminen pelaamatta luovuttaa siirron.</p>
+<p><strong>Vastaaminen laudalla.</strong> Oletuksena arvioit itse itsesi. Valitse asemapakan asetuksissa <em>Vastaa laudalla</em>: nappulakortilla pelaat siirron laudalla kuten Päätös-harjoituksessa (napsautus nappulaa pelaa sen ensimmäisellä pelaamattomalla nopalla, napsautus nopilla vaihtaa jäljellä olevat nopat, oikea napsautus perii askeleet takaisin), ja valmis siirto vahvistetaan napsauttamalla noppia tai painamalla ENTER. Moottori arvioi siirron tallennettua analyysia vasten, paljastaa vastauksen ja <strong>ehdottaa arvosanaa</strong>: <em>Helppo</em> nopeasta oikeasta vastauksesta, <em>Hyvä</em> hitaammasta oikeasta, <em>Vaikea</em> blunder-rajan alittavasta virheestä, <em>Uudelleen</em> blunderista tai laittomasta siirrosta. Ehdotettu arvosana korostetaan; hallinta pysyy sinulla ja arvioit haluamasi näppäimillä <em>1</em>–<em>4</em>. Laillinen siirto, jota analyysi ei luokittele, ei ehdota mitään. Kuutiokortit, tuloskortit ja tulostaulukkopakat pysyvät itsearvioituina. Vastauksen paljastaminen pelaamatta luovuttaa siirron.</p>
 <p><strong>Istunnon rajaaminen.</strong> Oletuksena kertausistunto käy läpi kaikki erääntyneet kortit. Voit rajata sen korttimäärään pakkakohtaisesti Asetuksissa: rastita <em>Rajaa istunto</em> ja ilmoita, montako korttia istunnon tulee tarjota. Kun raja täyttyy, istunto päättyy ja kertoo siitä — viesti erottaa tilanteen ”raja täynnä, näin monta korttia yhä erääntyneenä” aidosti tyhjästä jonosta. Jos haluat silti jatkaa, vapaa harjoittelu on olemassa: se tarjoaa muita asemia muuttamatta aikataulusta mitään.</p>
 <p>Raja <strong>0</strong> ei tarjoa yhtään korttia: se on oma tilansa, hyödyllinen pakan jäädyttämiseen turnaukseen valmistautumisen ajaksi, eikä se ole sama asia kuin ”ei rajaa”. <em>Opiskele</em>-painike on tällöin pois käytöstä.</p>
 <p>Raja koskee <strong>istuntoa</strong>, ei päivää. blunderDB-pakka rakentuu kokoelman tai haun varaan: se on äärellinen aineisto, joka esitellään muutamassa istunnossa ja jonka päivittäistä määrää sen koko jo rajaa. Päiväkatto ei puraisi koskaan, tai sitten se loisi ruuhkan pakalle, joka mahtui yhteen istuntoon.</p>
@@ -1716,6 +1718,10 @@ export default {
 <tr>
 <td>VÄLILYÖNTI, Napsautus</td>
 <td>Näytä vastaus (aseman tallennettu analyysi).</td>
+</tr>
+<tr>
+<td>ENTER</td>
+<td>Vahvista laudalla pelattu siirto (vastaaminen laudalla), kuten napsautus nopilla.</td>
 </tr>
 <tr>
 <td>1</td>

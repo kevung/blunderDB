@@ -36,7 +36,7 @@ import { setStatusBarMessage } from './databaseService.js';
 import { confirmAction } from './confirmService.js';
 import { logger } from '../utils/logger.js';
 import { closeOnEscape } from './escapeService.js';
-import { forgetContextBeforeEval, forgetSubSearchOrigin, noteSubSearchOrigin } from './modeMachine.js';
+import { forgetContextBeforeEval, forgetSubSearchOrigin, noteSubSearchOrigin, takeEvalContext, giveEvalContext } from './modeMachine.js';
 // Ctrl-G status line (keyboardService imports it from here).
 export { showDatesAndMetadata } from './metadataStatus.js';
 
@@ -47,6 +47,7 @@ export {
     exitEditMode,
     toggleEvalMode,
     sendPositionToEval,
+    evaluateInNewView,
     enterEvalMode,
     exitEvalMode,
     enterTranscribeMode,
@@ -454,6 +455,7 @@ export async function settleList({ source, count, positionId }) {
 }
 
 viewStore.setListSettler(settleList);
+viewStore.setEvalContextKeeper({ take: () => takeEvalContext(), give: (context) => giveEvalContext(context) });
 
 // One options object, not positional arguments: a wrong index would silently
 // shift every later filter and answer a different question.

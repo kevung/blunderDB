@@ -41,6 +41,7 @@ vi.mock('../stores/viewStore', async () => {
         selectPreviousView: vi.fn(),
         selectNextView: vi.fn(),
         setListSettler: vi.fn(),
+        setEvalContextKeeper: vi.fn(),
         settleActive: vi.fn()
     });
     return { viewStore: viewStoreMock };

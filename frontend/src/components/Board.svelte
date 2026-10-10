@@ -17,7 +17,7 @@
     import { boardIsMirrored, labelsFlipped, screenOfModelPoint, screenOfNotationPoint } from '../services/boardOrientation.js';
     import { searchStructureModeStore, searchOfferedCubeStore } from '../stores/searchExcludePositionStore';
     import { boardColorsStore } from '../stores/boardColorsStore';
-    import { sendPositionToEval } from '../services/positionService.js';
+    import { sendPositionToEval, evaluateInNewView } from '../services/positionService.js';
     import { copyBoardWithAnalysisImage, exportBoardImage } from '../services/clipboardService.js';
     import { setStatusBarMessage } from '../services/databaseService.js';
     import { viewStore } from '../stores/viewStore.js';
@@ -375,6 +375,8 @@
                 label: $t('board.menu.evaluateMirror'),
                 onClick: () => sendPositionToEval(mirrorPosition(getDisplayPosition()))
             },
+            // A studied position only (ADR-0086 §10): a scratch or Transcription board is not one.
+            ...(mode === 'NORMAL' || mode === 'MATCH' || mode === 'COLLECTION' ? [{ label: $t('board.menu.evaluateInNewView'), onClick: () => evaluateInNewView(getDisplayPosition()) }] : []),
             {
                 label: $t('board.menu.copyImageWithAnalysis'),
                 onClick: () => copyBoardWithAnalysisImage()

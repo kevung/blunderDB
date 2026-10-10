@@ -807,8 +807,7 @@
         "sessionLimitZero": "Tämä pakka on asetettu 0 korttiin istuntoa kohden.",
         "boardAnswerOption": "Vastaa laudalla",
         "boardAnswerOptionHint": "Siirto pelataan laudalla; moottori arvioi sen ja ehdottaa arvosanaa, jota voit muuttaa ennen arviointia. Oletuksena pois: arvioit itse. Kuutio- ja tulloskortit pysyvät itsearvioituina.",
-        "boardAnswerHint": "Pelaa siirtosi laudalla",
-        "boardAnswerValidate": "Tarkista",
+        "boardAnswerHint": "Pelaa siirtosi laudalla, napsauta sitten noppia tai paina ENTER",
         "boardAnswerSuggest": "Ehdotettu arvosana: {rating} (virhe {error} mp)",
         "boardAnswerIllegal": "Tämä siirto ei ole laillinen",
         "boardAnswerUnranked": "Laillinen siirto, jota analyysi ei luokittele: arvioi itse",
@@ -1090,6 +1089,7 @@
         "menu": {
             "evaluate": "Arvioi tämä asema",
             "evaluateMirror": "Arvioi tämän aseman peilikuva",
+            "evaluateInNewView": "Arvioi uudessa välilehdessä",
             "copyImageWithAnalysis": "Kopioi laudan kuva analyysin kanssa",
             "newView": "Uusi näkymä",
             "addToAnkiDeck": "Lisää Anki-pakkaan: {deck}",
@@ -1188,6 +1188,7 @@
     },
     "viewTabs": {
         "closeView": "Sulje näkymä",
+        "variantOf": "Muunnelma näkymästä #{n}",
         "newView": "Uusi näkymä"
     },
     "goToPosition": {

@@ -294,6 +294,7 @@ Panneau Anki (répétition espacée)
    :align: center
 
    "ESPACE, Clic", "Afficher la réponse (l'analyse enregistrée de la position)."
+   "ENTRÉE", "Valider le coup joué au plateau (réponse au damier), comme un clic sur les dés."
    "1", "Évaluer : À revoir (échec, revoir bientôt)."
    "2", "Évaluer : Difficile."
    "3", "Évaluer : Bien."

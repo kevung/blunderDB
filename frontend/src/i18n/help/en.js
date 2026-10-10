@@ -90,6 +90,7 @@ export default {
 <li><strong>Switch view</strong>: click a tab, press <em>CTRL-PageUp</em> / <em>CTRL-PageDown</em> (or <em>SHIFT-J</em> / <em>SHIFT-K</em>) to move to the previous / next view, or <em>CTRL-1</em> to <em>CTRL-9</em> to jump directly to the n-th view.</li>
 <li><strong>Rename a view</strong>: double-click the tab, type the new name and confirm with <em>ENTER</em>.</li>
 </ul>
+<p>A view left in the Eval panel comes back to it as it was left: its scratch board and, on leaving the panel, the position it was studying. The last scratch board of the Eval panel also belongs to each view.</p>
 <p>Views are saved with the database session state and restored when it is reopened.</p>
 <h3>Configuration</h3>
 <p>The settings button (gear icon) in the toolbar, to the left of the help button, opens blunderDB's settings window. It is organised in nine tabs:</p>
@@ -867,9 +868,10 @@ export default {
 <p>Every cell is its own search. The engine is match-aware — it does not play the same game at 2-away as at 7-away — so a single search read through different match equities would be wrong exactly where the score matters. The grid arrives at 0-ply first, then recomputes at the configured display depth once the window is at rest: the same escalation as the rest of the panel, for a 9-point grid costing about a second and a half.</p>
 <p>The same grid is computed outside the interface, with the command line's cubematrix command.</p>
 <h4>Bringing a position into the Eval panel</h4>
-<p>The panel opens by default on a bearoff position, but a study most often starts from a position already at hand. Three gestures bring it there:</p>
+<p>The panel opens by default on a bearoff position, but a study most often starts from a position already at hand. Four gestures bring it there:</p>
 <ul>
 <li><strong>Right click on the board</strong>, in an analysis panel or while navigating a match, then <em>Evaluate this position</em>: the Eval panel opens directly on that position, as displayed; <em>Evaluate the mirror of this position</em> opens it there seen from the other side. The context menu does not appear in the Eval panel or in the Search panel, where the right button already serves to place checkers of the other colour.</li>
+<li><strong>Right-click on the board, then</strong> <em>Evaluate in a new tab</em>: a new view, named <em>Variant of #n</em> (n being the number of the original view), opens in the Eval panel on the displayed position, where variants can be set up freely. The original view keeps its position, its list and its analysis. This choice is not offered in the Transcription panel.</li>
 <li><strong>CTRL-C then CTRL-V</strong>: copy the position from the analysis panel, then paste it once in the Eval panel. Pasting also accepts an identifier from elsewhere — an XGID (eXtreme Gammon, GNU Backgammon, another instance of blunderDB) or an OGID (OpenGammon): it only has to be in the clipboard.</li>
 <li><strong>The command</strong> <code>import XGID=…</code> (or <code>import OGID=…</code>) for when the identifier is not in the clipboard but in a message, on a forum read in a terminal, or produced by a script. It is the same verb as plain <code>import</code>: with no argument it opens a file picker, with one it reads the identifier. The path is then identical to pasting — same reading, same deduplication, same opening of the imported position.</li>
 </ul>
@@ -934,7 +936,7 @@ export default {
 <p><strong>Showing the answer:</strong> The card asks a question — which move to play, or which cube action. Think, then press <em>SPACE</em> (or click the masked area) to reveal the answer: the recorded analysis of the position, as the Analysis tab presents it. It appears below the rating buttons, which stay in place and within reach. Clicking a move in the list shows it on the board.</p>
 <p>Nothing forces you to reveal the answer in order to rate: if you are sure of yourself, the <em>1</em> to <em>4</em> keys stay active. The answer is masked again on the next card, but not if you simply switch tabs — go and consult the Eval panel or the position's comment, it will be waiting for you when you return.</p>
 <p>A position without a recorded analysis says so directly, with no masked area.</p>
-<p><strong>Answering on the board.</strong> By default you grade yourself. In the Settings of a position deck, tick <em>Answer on the board</em>: for a checker card you then play the move on the board, as in the Decision exercise, and press <em>Check</em>. The engine judges the move against the stored analysis, reveals the answer and <strong>proposes a grade</strong>: <em>Easy</em> for a quick correct answer, <em>Good</em> for a slower correct one, <em>Hard</em> for an error under the blunder threshold, <em>Again</em> for a blunder or an illegal move. The proposed grade is highlighted; you stay in control and grade what you want with <em>1</em> to <em>4</em>. A legal move the analysis does not rank proposes nothing. Cube cards, score cards and decks of score sheets stay self-graded. Revealing the answer without playing gives up the move.</p>
+<p><strong>Answering on the board.</strong> By default you grade yourself. In the Settings of a position deck, tick <em>Answer on the board</em>: for a checker card you then play the move on the board, as in the Decision exercise (a click on a checker plays it with the first unplayed die, a click on the dice swaps the remaining dice, a right click takes the steps back), then the complete move is validated by a click on the dice or with ENTER. The engine judges the move against the stored analysis, reveals the answer and <strong>proposes a grade</strong>: <em>Easy</em> for a quick correct answer, <em>Good</em> for a slower correct one, <em>Hard</em> for an error under the blunder threshold, <em>Again</em> for a blunder or an illegal move. The proposed grade is highlighted; you stay in control and grade what you want with <em>1</em> to <em>4</em>. A legal move the analysis does not rank proposes nothing. Cube cards, score cards and decks of score sheets stay self-graded. Revealing the answer without playing gives up the move.</p>
 <p><strong>Limiting the session.</strong> By default a review session runs through every card that is due. You can cap it at a number of cards, per deck, in the Settings: tick <em>Limit session</em> and give how many cards a session should serve. When the limit is reached the session stops and says so — the message tells “limit reached, so many cards still due” apart from a queue that is genuinely empty. To carry on anyway, free drill is there: it serves other positions without changing anything in the schedule.</p>
 <p>A limit of <strong>0</strong> serves no card at all: it is a state in its own right, useful to freeze a deck while preparing for a tournament, and it is not the same thing as “no limit”. The <em>Study</em> button is then disabled.</p>
 <p>The limit applies to the <strong>session</strong>, not to the day. A blunderDB deck is built on a collection or on a search: it is a finite corpus, introduced over a few sessions, whose daily volume is already bounded by its size. A daily cap would never bite, or else would build a backlog on a deck that fitted in a single session.</p>
@@ -1716,6 +1718,10 @@ export default {
 <tr>
 <td>SPACE, Click</td>
 <td>Show the answer (the recorded analysis of the position).</td>
+</tr>
+<tr>
+<td>ENTER</td>
+<td>Validate the move played on the board (answer on the board), like a click on the dice.</td>
 </tr>
 <tr>
 <td>1</td>

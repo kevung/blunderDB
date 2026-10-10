@@ -266,6 +266,10 @@ export function handleKeyDown(event) {
             // unintended grade and pollute the schedule.
             event.preventDefault();
             showAnkiAnswer();
+        } else if (event.code === 'Enter' && !(event.target instanceof HTMLButtonElement)) {
+            // Validates a move played on the board; a no-op when none is armed.
+            event.preventDefault();
+            ankiReviewActionStore.set('validate');
         } else if (event.code === 'Escape') {
             event.preventDefault();
             ankiReviewActionStore.set('back');

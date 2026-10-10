@@ -807,8 +807,7 @@
         "sessionLimitZero": "このデッキは 1 セッション 0 枚に設定されています。",
         "boardAnswerOption": "盤面で答える",
         "boardAnswerOptionHint": "手を盤面で指すと、エンジンが判定して評価を提案します。評価する前に変更できます。既定ではオフで、自分で評価します。キューブとスコアのカードは自己評価のままです。",
-        "boardAnswerHint": "盤面で手を指してください",
-        "boardAnswerValidate": "確認",
+        "boardAnswerHint": "盤面で手を指し、ダイスをクリックするか Enter を押してください",
         "boardAnswerSuggest": "提案された評価: {rating}(誤り {error} mp)",
         "boardAnswerIllegal": "この手は合法ではありません",
         "boardAnswerUnranked": "解析が順位付けしていない合法手です。自分で評価してください",
@@ -1090,6 +1089,7 @@
         "menu": {
             "evaluate": "この局面を評価",
             "evaluateMirror": "この局面の鏡像を評価する",
+            "evaluateInNewView": "新しいタブで評価",
             "copyImageWithAnalysis": "盤面画像と分析をコピー",
             "newView": "新しいビュー",
             "addToAnkiDeck": "Ankiデッキに追加: {deck}",
@@ -1188,6 +1188,7 @@
     },
     "viewTabs": {
         "closeView": "ビューを閉じる",
+        "variantOf": "#{n} の変化",
         "newView": "新規ビュー"
     },
     "goToPosition": {

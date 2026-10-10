@@ -53,7 +53,30 @@ function baseView(/** @type {number} */ id) {
         activeTab: 'matches',
         commentText: '',
         mode: 'NORMAL',
-        matchContext: createDefaultMatchContext()
+        matchContext: createDefaultMatchContext(),
+        // The view's Eval slots (modeMachine's takeEvalContext): its way back and its last
+        // scratch board. Not persisted: a scratch board lives as long as the session.
+        evalContext: /** @type {EvalContext | null} */ (null)
+    };
+}
+
+/** @typedef {{ beforeEval: any, lastEvalBoard: any, evalSeed: any }} EvalContext */
+
+/**
+ * A copy a second view can own. The way back's list is shared, not copied: a paged list's
+ * source is functions; it is a snapshot nobody mutates.
+ *
+ * @param {EvalContext | null | undefined} context
+ * @returns {EvalContext | null}
+ */
+function copyEvalContext(context) {
+    if (!context) return null;
+    const clone = (/** @type {any} */ value) => (value ? JSON.parse(JSON.stringify(value)) : null);
+    const before = context.beforeEval;
+    return {
+        beforeEval: before ? { ...clone({ ...before, list: null }), list: before.list } : null,
+        lastEvalBoard: clone(context.lastEvalBoard),
+        evalSeed: clone(context.evalSeed)
     };
 }
 
@@ -72,6 +95,15 @@ function createViewStore() {
     /** @param {ListSettler} fn */
     function setListSettler(fn) {
         settleList = fn;
+    }
+
+    // The Eval slots live in modeMachine (which imports this store): handed in, as the settler.
+    /** @type {{ take: () => EvalContext | null, give: (context: EvalContext | null) => void }} */
+    let evalContextKeeper = { take: () => null, give: () => {} };
+
+    /** @param {{ take: () => EvalContext | null, give: (context: EvalContext | null) => void }} keeper */
+    function setEvalContextKeeper(keeper) {
+        evalContextKeeper = keeper;
     }
 
     // A view whose list or position is still to be found asks for it once it is on screen; only
@@ -135,7 +167,8 @@ function createViewStore() {
                         activeTab: get(activeTabStore),
                         commentText: get(commentTextStore),
                         mode: get(statusBarModeStore),
-                        matchContext: JSON.parse(JSON.stringify(get(matchContextStore)))
+                        matchContext: JSON.parse(JSON.stringify(get(matchContextStore))),
+                        evalContext: evalContextKeeper.take()
                     };
                 }
                 return v;
@@ -143,7 +176,33 @@ function createViewStore() {
         );
     }
 
-    function restoreViewState(/** @type {any} */ view) {
+    /**
+     * @param {any} view
+     * @param {{ replayIndex?: boolean }} [options] replayIndex false leaves the index alone: the
+     *        index effect would fetch the list's record onto the board, too late for a board
+     *        about to be replaced by a scratch one
+     */
+    function restoreViewState(view, { replayIndex = true } = {}) {
+        evalContextKeeper.give(view.evalContext ?? null);
+        // A view left in Eval this session resumes there, its scratch board and its way back
+        // intact: the tab handler's entry would photograph the scratch board as the way back.
+        // Eval is set before the board lands, as enterEvalMode does. Every scratch board has
+        // id 0 in the shared cache, so the list is the board itself, never the snapshot.
+        if (view.mode === 'EVAL' && view.evalContext?.beforeEval && view.position) {
+            const board = JSON.parse(JSON.stringify(view.position));
+            statusBarModeStore.set('EVAL');
+            positionsStore.set([board]);
+            listOriginStore.set(view.origin || LIBRARY_ORIGIN);
+            positionStore.set(board);
+            analysisStore.set(view.analysis);
+            selectedMoveStore.set(view.selectedMove ?? null);
+            activeTabStore.set(view.activeTab || 'eval');
+            commentTextStore.set(view.commentText || '');
+            matchContextStore.set(view.matchContext || createDefaultMatchContext());
+            currentPositionIndexStore.set(-1);
+            currentPositionIndexStore.set(0);
+            return;
+        }
         // The position cache is shared by every view (keyed by id): only the list moves.
         positionsStore.restoreList(view.list);
         listOriginStore.set(view.origin || LIBRARY_ORIGIN);
@@ -159,6 +218,7 @@ function createViewStore() {
         activeTabStore.set(view.activeTab || 'matches');
         commentTextStore.set(view.commentText || '');
         matchContextStore.set(view.matchContext || createDefaultMatchContext());
+        if (!replayIndex) return;
         currentPositionIndexStore.set(-1);
         currentPositionIndexStore.set(view.positionIndex || 0);
     }
@@ -180,23 +240,35 @@ function createViewStore() {
         }
     }
 
-    function addView() {
-        if (viewsLocked()) return;
+    /**
+     * Open a copy of the view on screen and show it.
+     *
+     * @param {{ name?: (id: number, originId: number) => string, scratch?: boolean }} [options]
+     *        `name` names the new tab (default `#id`) from its id and the id of the view it was
+     *        copied from; `scratch` opens a view whose board Eval replaces at once. Its index is
+     *        not replayed: a record fetched for it would land over the scratch board (with its
+     *        real id, which a later save would overwrite).
+     * @returns {number | null} the new view's id, null while views are locked
+     */
+    function addView(options = {}) {
+        if (viewsLocked()) return null;
         saveCurrentViewState();
-        const id = nextViewId++;
         const currentId = get(activeViewId);
-        const vs = get(views);
-        const current = vs.find((v) => v.id === currentId);
+        const current = get(views).find((v) => v.id === currentId);
+        if (!current) return null;
+        const id = nextViewId++;
         const newView = {
-            ...JSON.parse(JSON.stringify({ ...current, list: null })),
+            ...JSON.parse(JSON.stringify({ ...current, list: null, evalContext: null })),
             // A paged list's source is functions, which JSON drops: the list is shared, not copied.
-            list: current?.list,
+            list: current.list,
+            evalContext: copyEvalContext(current.evalContext),
             id,
-            name: `#${id}`
+            name: options.name ? options.name(id, currentId) : `#${id}`
         };
         views.update((vs) => [...vs, newView]);
         activeViewId.set(id);
-        restoreViewState(newView);
+        restoreViewState(newView, { replayIndex: !options.scratch });
+        return id;
     }
 
     function closeView(/** @type {number} */ viewId) {
@@ -347,6 +419,7 @@ function createViewStore() {
         serialize,
         deserialize,
         setListSettler,
+        setEvalContextKeeper,
         settleActive
     };
 }

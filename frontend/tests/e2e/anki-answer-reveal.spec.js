@@ -269,16 +269,14 @@ async function startBoardReview(page, { option = true } = {}) {
 test('répondre au damier : le coup se joue, le quiz le juge, la note est proposée et reste corrigeable', async ({ page }) => {
     await startBoardReview(page);
 
-    const validate = page.getByTestId('anki-board-validate');
-    await expect(validate).toBeDisabled();
+    await expect(page.getByTestId('anki-board-validate')).toHaveCount(0);
     await expect(page.locator('.answer-masked'), 'la réponse reste masquée tant que rien n’est joué').toBeVisible();
 
     await clickPoint(page, 6);
     await clickPoint(page, 3);
     await clickPoint(page, 4);
     await clickPoint(page, 3);
-    await expect(validate).toBeEnabled();
-    await validate.click();
+    await page.keyboard.press('Enter');
 
     await expect(page.getByTestId('anki-board-verdict')).toContainText('42');
     await expect(page.locator('.checker-table')).toBeVisible();
