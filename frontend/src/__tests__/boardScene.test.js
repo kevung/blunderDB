@@ -30,7 +30,8 @@ import {
     drawBearoff,
     drawPipCounts,
     drawMoveArrows,
-    drawFrame
+    drawFrame,
+    estimateTextWidth
 } from '../utils/boardScene.js';
 
 // ── Fixtures ────────────────────────────────────────────────────────────────
@@ -542,5 +543,60 @@ describe('drawDynamicScene', () => {
         expect(two.of('text').map((t) => t.args[0])).toContain('pip: 167');
         expect(two.of('line')).toHaveLength(2);
         expect(two.of('path')).toHaveLength(2);
+    });
+});
+
+// A panel raised over the board shrinks the checker while a fixed font size stays: the labels
+// would then spill over the next column, the cube face and the checker they sit on.
+describe('text follows the size of the board', () => {
+    const small = boardMetrics(300, 220, 0.75);
+    const scs = small.checkerSize;
+
+    test('a point number never grows past its column on a small board', () => {
+        const two = recorder();
+        drawLabels(two, small, makeCfg(), false);
+        for (const label of two.of('text')) {
+            expect(estimateTextWidth(label.args[0], label.size)).toBeLessThanOrEqual(scs);
+        }
+    });
+
+    test('the numbers under points 1-12 stay inside the canvas on a small board', () => {
+        const two = recorder();
+        drawLabels(two, small, makeCfg(), false);
+        for (const label of two.of('text').filter((t) => t.baseline === 'top')) {
+            expect(label.args[2] + label.size).toBeLessThanOrEqual(small.height);
+        }
+    });
+
+    test('the cube face holds its number on a small board', () => {
+        const two = recorder();
+        const pos = emptyPos();
+        pos.cube = { owner: -1, value: 6 };
+        const box = drawDoublingCube(two, small, makeCfg(), pos, false);
+        const [label] = two.of('text');
+        expect(estimateTextWidth(label.args[0], label.size)).toBeLessThanOrEqual(box.size);
+        expect(label.size).toBeLessThanOrEqual(box.size);
+    });
+
+    test('the count on a tall stack stays inside its checker on a small board', () => {
+        const two = recorder();
+        const pos = emptyPos();
+        pos.board.points[6] = { checkers: 15, color: 0 };
+        drawCheckers(two, small, makeCfg(), pos);
+        const [count] = two.of('text');
+        expect(estimateTextWidth(count.args[0], count.size)).toBeLessThanOrEqual(scs);
+    });
+
+    test('a full-size board keeps the configured sizes', () => {
+        const two = recorder();
+        const pos = startPos();
+        pos.board.points[6] = { checkers: 12, color: 0 };
+        pos.cube = { owner: -1, value: 6 };
+        drawLabels(two, geom, makeCfg(), false);
+        drawCheckers(two, geom, makeCfg(), pos);
+        drawDoublingCube(two, geom, makeCfg(), pos, false);
+        const sizes = two.of('text').map((t) => t.size);
+        expect(sizes.slice(0, 24)).toEqual(Array(24).fill(20));
+        expect(sizes.slice(24)).toEqual([20, 34]);
     });
 });

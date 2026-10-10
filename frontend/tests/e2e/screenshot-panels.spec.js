@@ -184,19 +184,23 @@ test('galerie de captures panneau par panneau', async ({ page }) => {
 
 // La fiche d'un match analysé, onglet Graphes, une décision survolée : le jeu
 // vitrine n'a pas de bilan, celui de match-sheet.spec.js en a un (L₇ compris).
+// La liste lit les badges que GetAllMatches calcule (applyMatchBadges) : la
+// maquette les recopie du bilan, sans quoi la ligne contredirait la fiche.
 test("capture de la fiche d'un match, onglet Graphes", async ({ page }) => {
+    const [p1, p2] = reviewSummary.players;
+    const badges = { pr: p1.pr, pr2: p2.pr, mwc_loss: p1.mwc_loss, mwc_loss2: p2.mwc_loss, mwc7: p1.mwc7, mwc7_p2: p2.mwc7 };
     await page.setViewportSize(VIEWPORT);
     await installWailsMock(
         page,
         openLibraryMock({
             database: {
-                GetAllMatches: [{ ...matchSample, tournament_name: 'Open de Lyon', round: '3', location: 'Lyon' }],
+                GetAllMatches: [{ ...matchSample, ...badges, tournament_name: 'Open de Lyon', round: '3', location: 'Lyon' }],
                 GetMatchMovePositions: reviewMoves,
                 GetGamesByMatch: matchGames,
                 GetMatchDecisionLosses: reviewLosses,
                 GetMatchReview: reviewSummary
             },
-            config: { GetTabPanelHeights: { '*': 620 } }
+            config: { GetTabPanelHeights: { '*': 540 } }
         })
     );
     await page.goto('/');

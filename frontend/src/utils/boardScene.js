@@ -175,10 +175,13 @@ export function drawTriangles(two, geom, cfg) {
 export function drawLabels(two, geom, cfg, flip) {
     const { originY, boardHeight, checkerSize } = geom;
     const offset = 0.5 * boardHeight + cfg.label.distanceToBoard * checkerSize;
+    // The numbers sit in the strip between board and canvas edge, under a 1-12 baseline 'top'.
+    const strip = (geom.height - boardHeight) / 2 - cfg.label.distanceToBoard * checkerSize;
+    const size = Math.max(0, Math.min(fittedTextSize(['24'], 0.9 * checkerSize, cfg.label.size), strip));
     for (let p = 1; p <= 24; p++) {
         const bottom = p <= 12;
         const t = two.makeText((flip ? 25 - p : p).toString(), pointColumnX(geom, cfg.orientation, p), bottom ? originY + offset : originY - offset);
-        t.size = cfg.label.size;
+        t.size = size;
         t.alignment = 'center';
         t.baseline = bottom ? 'top' : 'middle';
     }
@@ -297,7 +300,7 @@ export function drawCheckers(two, geom, cfg, position) {
             checker.linewidth = cfg.checker.linewidth;
             if (i === 4 && point.checkers > 5) {
                 const text = two.makeText(point.checkers.toString(), x, y);
-                text.size = 20;
+                text.size = fittedTextSize([point.checkers.toString()], 1.6 * radius, 20);
                 text.alignment = 'center';
                 text.baseline = 'middle';
                 text.weight = 'bold';
@@ -349,8 +352,9 @@ export function drawDoublingCube(two, geom, cfg, position, offered) {
     cube.fill = cfg.cube.fill;
     cube.stroke = cfg.stroke; // follows the board border colour
     cube.linewidth = 2.5;
-    const text = two.makeText(Math.pow(2, position.cube.value).toString(), box.x, box.y);
-    text.size = 34;
+    const face = Math.pow(2, position.cube.value).toString();
+    const text = two.makeText(face, box.x, box.y);
+    text.size = Math.min(fittedTextSize([face], box.size, 34), 0.8 * box.size);
     text.alignment = 'center';
     text.baseline = 'middle';
     text.translation.set(box.x, box.y + 0.05 * box.size); // optically centred
@@ -391,6 +395,20 @@ export function estimateTextWidth(content, size) {
     let em = 0;
     for (const ch of content) em += /** @type {number} */ (ch.codePointAt(0)) >= 0x2e80 ? 1 : 0.62;
     return em * size;
+}
+
+/**
+ * The configured font size `max`, shrunk so the widest of `contents` stays within `room`: the
+ * point numbers, cube face and stack count are sized by the checker, which shrinks with the panel
+ * above the board, and a fixed size would overflow their column, face or checker.
+ *
+ * @param {string[]} contents
+ * @param {number} room
+ * @param {number} max
+ */
+export function fittedTextSize(contents, room, max) {
+    const widest = Math.max(...contents.map((c) => estimateTextWidth(c, 1)));
+    return Math.min(max, room / widest);
 }
 
 /**
