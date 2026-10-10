@@ -395,6 +395,14 @@ func (d *Database) GetPlayerTable(filter StatsFilter) ([]PlayerRow, error) {
 	return out, nil
 }
 
+// GetStatsAnalysisEngines returns the engine labels present in the analyses,
+// the options of the Stats engine filter.
+func (d *Database) GetStatsAnalysisEngines() ([]string, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	return d.store.Stats().AnalysisEngines(context.Background(), "")
+}
+
 // GetAllPlayerNames returns all player names found in the match table, ranked by
 // the total number of matches (player1 + player2 appearances) descending.
 // Ties are sorted alphabetically.

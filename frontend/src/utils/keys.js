@@ -38,3 +38,13 @@ export function isShiftLetter(event, ch) {
 export function isBareLetter(event, ch) {
     return !event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey && isLetter(event, ch);
 }
+
+/**
+ * The rollout key, MAJ-R: bare `r` is the random position, so a panel never claims it.
+ *
+ * @param {KeyboardEvent} event
+ * @returns {boolean}
+ */
+export function isRolloutKey(event) {
+    return !event.ctrlKey && !event.metaKey && !event.altKey && isShiftLetter(event, 'r');
+}

@@ -18,11 +18,11 @@ export function analysisMenuItems(moves, options = {}) {
     const preset = tr(`rollout.${choice === 'custom' || choice === 'fast' ? choice : 'standard'}`);
     /** @type {{ label: string, shortcut?: string, onClick: () => void }[]} */
     const items = get(rolloutStore).running
-        ? [{ label: tr('rollout.menuCancel'), shortcut: 'R', onClick: cancelRollout }]
+        ? [{ label: tr('rollout.menuCancel'), shortcut: 'Shift+R', onClick: cancelRollout }]
         : [
               {
                   label: moves.length > 1 ? tr('rollout.menuStartMoves', { preset, n: moves.length }) : tr('rollout.menuStart', { preset }),
-                  shortcut: 'R',
+                  shortcut: 'Shift+R',
                   onClick: () => toggleRollout(moves, options)
               }
           ];

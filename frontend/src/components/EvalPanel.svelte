@@ -11,7 +11,7 @@
     import { EvaluatePositionImmediate, StartEvaluationAtRest, CancelEvaluationAtRest } from '../../wailsjs/go/gui/App.js';
     import { EventsOn, BrowserOpenURL } from '../../wailsjs/runtime/runtime.js';
     import { logger } from '../utils/logger.js';
-    import { isBareLetter } from '../utils/keys.js';
+    import { isBareLetter, isRolloutKey } from '../utils/keys.js';
     import { onChange } from '../utils/onChange.js';
     import { t } from '../i18n';
     import { moverFactsToSides } from '../utils/positionFacts.js';
@@ -356,8 +356,8 @@
             return;
         }
 
-        // `r` rolls out the selected plays (the position when none is), or stops the rollout running.
-        if (isBareLetter(event, 'r') && isActive) {
+        // Shift+R rolls out the selected plays (the position when none is), or stops the rollout running.
+        if (isRolloutKey(event) && isActive) {
             event.preventDefault();
             toggleRollout(rolloutSelection(), UNSAVED);
             return;

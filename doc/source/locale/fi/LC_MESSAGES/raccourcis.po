@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-10 02:34+0200\n"
+"POT-Creation-Date: 2026-10-10 21:44+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -931,6 +931,10 @@ msgid ""
 msgstr ""
 "Vaihda nappuloiden ja tuplauskuution analyysin välillä (vain "
 "ottelunavigoinnissa)."
+
+#: ../../source/raccourcis.rst:1
+msgid "Maj+R"
+msgstr "Vaihto+R"
 
 #: ../../source/raccourcis.rst:1
 msgid ""

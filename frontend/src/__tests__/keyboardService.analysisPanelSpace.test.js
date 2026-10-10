@@ -92,4 +92,12 @@ describe('global shortcuts with the analysis panel focused', () => {
         press({ key: '?' });
         expect(get(activeModal)).toBe(MODAL.HELP);
     });
+
+    test("'r' loads a random position, Shift+R does not", async () => {
+        const { loadRandomPosition } = await import('../services/positionService.js');
+        press({ key: 'r' });
+        expect(loadRandomPosition).toHaveBeenCalledTimes(1);
+        press({ key: 'R', shiftKey: true });
+        expect(loadRandomPosition).toHaveBeenCalledTimes(1);
+    });
 });

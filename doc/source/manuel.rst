@@ -857,11 +857,11 @@ des coups candidats, *Ctrl+clic* ajoute ou retire un coup de la sélection et
 coup, comme d'ordinaire. Un **clic droit** sur la sélection — ou sur un autre
 coup, qui devient la sélection — ouvre un menu dont l'entrée **Rollout
 (Standard)** lance aussitôt le rollout des coups sélectionnés avec le réglage
-choisi. Sur une décision de videau, le clic droit roule la décision entière. La
-touche *r* du panneau fait de même (sans sélection, elle roule les meilleurs
+choisi. Sur une décision de videau, le clic droit roule la décision entière. Le
+raccourci *Maj+R* du panneau fait de même (sans sélection, elle roule les meilleurs
 candidats de la position), comme la commande ``rollout`` (alias ``ro``).
 Pendant le rollout, une barre fine sous la table suit les parties jouées ;
-**Annuler**, l'entrée **Annuler le rollout** du menu, *Échap* ou *r* de nouveau
+**Annuler**, l'entrée **Annuler le rollout** du menu, *Échap* ou *Maj+R* de nouveau
 l'arrêtent sans rien écrire. Le réglage — **Rapide**, **Standard** ou
 **Libre** — se choisit dans l'onglet **gammonNet** de la configuration
 (voir :ref:`configuration <rollout_reglage>`).
@@ -1836,7 +1836,7 @@ installer (voir :ref:`telecharge_install`). Un match sans source ne change pas.
 Le bouton **Fusionner les joueurs** de la barre d'outils du panneau ouvre une
 fenêtre listant tous les noms de joueurs de la base avec leur nombre de
 matchs : sélectionner les variantes d'orthographe d'un même joueur, choisir le
-nom canonique à conserver, puis fusionner. La fusion crée un alias par
+nom canonique à conserver, puis fusionner. La fenêtre reste ouverte pour enchaîner d'autres fusions ; **Fermer** (ou *Échap*) la referme. La fusion crée un alias par
 variante : les matchs gardent les noms de leurs fichiers, mais les statistiques,
 la table Joueurs et la recherche ``pl"…"`` lisent toutes les variantes comme un
 seul joueur, et les imports suivants enregistrent le nom canonique. Retirer
@@ -2325,11 +2325,15 @@ assignés. Les statistiques du panneau Stats peuvent être filtrées par tournoi
 Appuyer sur *CTRL-Y* pour afficher ou masquer le panneau.
 
 **Nouveau tournoi** ouvre le champ de création, qui prend le focus ; *ÉCHAP* ou
-**Annuler** le referme. Un clic surligne une ligne, un double-clic ou *ENTRÉE*
-ouvre le tournoi. Son en-tête porte la date, le lieu et le nombre de matchs, qu'un
+**Annuler** le referme. Le champ de filtre, dans la bande d'en-tête, restreint
+la liste à la frappe : tous les mots saisis doivent se retrouver dans le nom, le
+lieu ou la date, le compteur indique « affichés / total » et *ÉCHAP* efface le
+champ. Un clic surligne une ligne, un double-clic ou *ENTRÉE* ouvre le tournoi. Son en-tête porte la date, le lieu et le nombre de matchs, qu'un
 clic change en liste des positions du tournoi ; à droite, les notes, **Diriger**
-et **Bilan**. Dessous, ses matchs, un par ligne, qu'un double-clic ouvre, que ▲ et ▼ réordonnent, que ⇄ échange de joueurs et que × retire du
-tournoi. Le champ **Ajouter un match…** y range un match de la base, et ←
+et **Bilan**. Dessous, ses matchs, un par ligne, que ▲ et ▼ réordonnent, que ⇄ échange de joueurs et que × retire du
+tournoi. Un clic sur un match affiche sous la table sa fiche, la même que dans le
+panneau Matchs (onglets Transcription, Graphes, À revoir, Détails, Infos, Stats) ;
+un second clic ou *ÉCHAP* la referme, un double-clic ou *ENTRÉE* ouvre le match dans le plateau. Le champ **Ajouter un match…** y range un match de la base, et ←
 ramène à la liste des tournois.
 
 Les tournois se remplissent d'eux-mêmes à l'import. Les fichiers XG, GnuBG et
@@ -3782,7 +3786,7 @@ l'aide.
 Le panneau **roule** la position comme le panneau Analyse (voir
 :ref:`rollouts`) : *Ctrl+clic* et *Maj+clic* sélectionnent des coups, le
 clic droit ouvre le même menu — rollout, copie de la position et de
-l'évaluation, ou de la position et des coups sélectionnés —, *r* lance ou
+l'évaluation, ou de la position et des coups sélectionnés —, *Maj+R* lance ou
 arrête le rollout et *Échap* l'annule ; une barre fine suit les parties
 jouées, et chaque coup roulé porte son résultat dans la colonne **Rollout**
 (sans dés, sous la décision de videau). Le plateau étant un brouillon, le

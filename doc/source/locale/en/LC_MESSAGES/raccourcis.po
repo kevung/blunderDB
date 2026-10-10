@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-10 02:34+0200\n"
+"POT-Creation-Date: 2026-10-10 21:44+0200\n"
 "PO-Revision-Date: 2025-11-01 23:50+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -923,6 +923,10 @@ msgid ""
 "Basculer entre l'analyse des coups et du cube (navigation match "
 "uniquement)."
 msgstr "Toggle between checker and cube analysis (match navigation only)."
+
+#: ../../source/raccourcis.rst:1
+msgid "Maj+R"
+msgstr "Shift+R"
 
 #: ../../source/raccourcis.rst:1
 msgid ""

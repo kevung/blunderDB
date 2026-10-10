@@ -332,13 +332,13 @@ describe('the candidate moves table', () => {
         expect(startRollout).not.toHaveBeenCalled();
     });
 
-    test('r rolls out the selection; Escape cancels the rollout running', async () => {
+    test('Shift+R rolls out the selection; Escape cancels the rollout running', async () => {
         withCheckerAnalysis();
         const { container } = await renderPanel();
         await fireEvent.click(row('24/18 13/11'));
         rolloutStatus.mockResolvedValue({ running: true, job: 1, kind: 'position', positionId: 7, games: 0, maxGames: 1296 });
         const panel = /** @type {HTMLElement} */ (container.querySelector('#analysisPanel'));
-        await fireEvent.keyDown(panel, { key: 'r' });
+        await fireEvent.keyDown(panel, { key: 'R', shiftKey: true });
         await waitFor(() => expect(startRollout).toHaveBeenCalledTimes(1));
         expect(startRollout.mock.calls[0][0].moves).toEqual(['24/18 13/11']);
         await waitFor(() => expect(get(rolloutStore).running).toBe(true));

@@ -141,10 +141,10 @@ describe('EvalPanel rollouts', () => {
         expect(screen.queryByText('Copy position and selected moves')).toBeNull();
     });
 
-    test('r starts, the strip follows, Escape cancels', async () => {
+    test('Shift+R starts, the strip follows, Escape cancels', async () => {
         const { container } = await mount();
         const panel = /** @type {HTMLElement} */ (container.querySelector('.eval-panel'));
-        await fireEvent.keyDown(panel, { key: 'r' });
+        await fireEvent.keyDown(panel, { key: 'R', shiftKey: true });
         await waitFor(() => expect(startRollout).toHaveBeenCalledTimes(1));
         expect(startRollout.mock.calls[0][0].moves).toEqual([]);
         handlers['rollout:progress']({ job: 1, positionId: 0, games: 108, maxGames: 216, candidates: [] });
@@ -156,7 +156,7 @@ describe('EvalPanel rollouts', () => {
 
     test('the result is read in its row, and goes when the board changes', async () => {
         await mount();
-        await fireEvent.keyDown(/** @type {HTMLElement} */ (document.querySelector('.eval-panel')), { key: 'r' });
+        await fireEvent.keyDown(/** @type {HTMLElement} */ (document.querySelector('.eval-panel')), { key: 'R', shiftKey: true });
         await waitFor(() => expect(startRollout).toHaveBeenCalledTimes(1));
         handlers['rollout:done']({ job: 1, positionId: 0, stored: false, record: record(0.321) });
         await waitFor(() => expect(screen.getByTestId('rollout-cell').textContent).toContain('0.321'));
@@ -166,7 +166,7 @@ describe('EvalPanel rollouts', () => {
 
     test('a rollout of a board since edited shows nothing on the new one', async () => {
         await mount();
-        await fireEvent.keyDown(/** @type {HTMLElement} */ (document.querySelector('.eval-panel')), { key: 'r' });
+        await fireEvent.keyDown(/** @type {HTMLElement} */ (document.querySelector('.eval-panel')), { key: 'R', shiftKey: true });
         await waitFor(() => expect(startRollout).toHaveBeenCalledTimes(1));
         positionStore.update((p) => ({ ...p, dice: [5, 2] }));
         handlers['rollout:progress']({ job: 1, positionId: 0, games: 36, maxGames: 216, candidates: record(0.5).candidates });

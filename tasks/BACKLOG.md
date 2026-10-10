@@ -133,6 +133,10 @@ une machine arm64 ne les a pas débloqués ; le registre des décisions amont et
 
 ## Ouvert — Frontend
 
+- **Extraire la fiche de `MatchPanel` dans un composant `MatchSheet`**, avant que deux panneaux
+  puissent coexister : le panneau Tournois héberge un `MatchPanel` (`embeddedMatchId`) et chaque
+  effet global y est coupé par un garde `embedded` (liste, tri partagé, clavier, ids DOM `match-tab-*`
+  en double). Ces gardes sont fragiles : un effet ajouté sans garde touche l'état du vrai panneau.
 - **`openPanels` dérivé d'`activeTabStore`** : deux sources de vérité pour le panneau visible
   (`openPanels` est un `writable` séparé dans `stores/uiStore.js`, tenu par
   `services/tabHandler.js`) ; un état incohérent est atteignable (onglet surligné, panneau

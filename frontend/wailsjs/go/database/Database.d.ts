@@ -292,6 +292,8 @@ export function GetAllComments():Promise<Array<domain.CommentEntry>>;
 
 export function GetAllMatches():Promise<Array<domain.Match>>;
 
+export function GetStatsAnalysisEngines():Promise<Array<string>>;
+
 export function GetAllPlayerNames():Promise<Array<database.PlayerFrequency>>;
 
 export function GetAllTournaments():Promise<Array<domain.Tournament>>;

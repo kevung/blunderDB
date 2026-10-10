@@ -3,7 +3,7 @@
     import { logger } from '../utils/logger.js';
     import { focusPanelUnlessTyping } from '../utils/panelFocus.js';
     import { nextSort } from '../utils/tableSort.js';
-    import { isLetter, isBareLetter } from '../utils/keys.js';
+    import { isLetter, isBareLetter, isRolloutKey } from '../utils/keys.js';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore'; // Import analysisStore and selectedMoveStore
     import { positionStore, matchContextStore } from '../stores/positionStore'; // Import positionStore and matchContextStore
     import { fmtDuration } from '../utils/decisionTime.js';
@@ -228,9 +228,9 @@
             return;
         }
 
-        // `r` rolls out the selected plays (the position when none is), or stops the rollout
+        // Shift+R rolls out the selected plays (the position when none is), or stops the rollout
         // running; a refusal is shown under the table (the store carries it).
-        if (isBareLetter(event, 'r')) {
+        if (isRolloutKey(event)) {
             event.preventDefault();
             toggleRollout(rolloutSelection());
             return;

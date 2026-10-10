@@ -5998,6 +5998,25 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/stats.analysisEngines:
+    post:
+      operationId: stats.analysisEngines
+      tags: [stats]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
   /v1/stats.biases:
     post:
       operationId: stats.biases

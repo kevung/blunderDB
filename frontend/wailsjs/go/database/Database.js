@@ -546,6 +546,10 @@ export function GetAllMatches() {
   return window['go']['database']['Database']['GetAllMatches']();
 }
 
+export function GetStatsAnalysisEngines() {
+  return window['go']['database']['Database']['GetStatsAnalysisEngines']();
+}
+
 export function GetAllPlayerNames() {
   return window['go']['database']['Database']['GetAllPlayerNames']();
 }

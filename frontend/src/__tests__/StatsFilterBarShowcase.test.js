@@ -12,6 +12,7 @@ import { showcasePlayerNames } from '../../tests/e2e/helpers/showcasePlayers.js'
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
     GetAllPlayerNames: vi.fn().mockResolvedValue([]),
     GetAllTournaments: vi.fn().mockResolvedValue([]),
+    GetStatsAnalysisEngines: vi.fn().mockResolvedValue([]),
     GetStatsDateRange: vi.fn().mockResolvedValue({ DateFrom: '2025-01-01', DateTo: '2026-01-01' })
 }));
 
