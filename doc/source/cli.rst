@@ -2803,7 +2803,7 @@ deux façons, et la seconde était comprise comme un vrai double — la colonne
 portait alors l'erreur d'un double qui n'avait jamais eu lieu. Et une analyse
 que blunderDB avait calculée lui-même ne savait pas quel coup avait été joué,
 si bien qu'un match importé sans analyse gardait une erreur nulle partout et
-un PR de 0,00 ; la colonne se recalcule maintenant à partir des coups du
+un PR de 0,00 ; la colonne se recalcule à partir des coups du
 match. Corriger la lecture ne change rien aux lignes déjà écrites ; cette
 commande les refait.
 
