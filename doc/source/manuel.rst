@@ -857,11 +857,11 @@ des coups candidats, *Ctrl+clic* ajoute ou retire un coup de la sélection et
 coup, comme d'ordinaire. Un **clic droit** sur la sélection — ou sur un autre
 coup, qui devient la sélection — ouvre un menu dont l'entrée **Rollout
 (Standard)** lance aussitôt le rollout des coups sélectionnés avec le réglage
-choisi. Sur une décision de videau, le clic droit roule la décision entière. La
-touche *r* du panneau fait de même (sans sélection, elle roule les meilleurs
+choisi. Sur une décision de videau, le clic droit roule la décision entière. Le
+raccourci *Maj+R* du panneau fait de même (sans sélection, elle roule les meilleurs
 candidats de la position), comme la commande ``rollout`` (alias ``ro``).
 Pendant le rollout, une barre fine sous la table suit les parties jouées ;
-**Annuler**, l'entrée **Annuler le rollout** du menu, *Échap* ou *r* de nouveau
+**Annuler**, l'entrée **Annuler le rollout** du menu, *Échap* ou *Maj+R* de nouveau
 l'arrêtent sans rien écrire. Le réglage — **Rapide**, **Standard** ou
 **Libre** — se choisit dans l'onglet **gammonNet** de la configuration
 (voir :ref:`configuration <rollout_reglage>`).
@@ -3782,7 +3782,7 @@ l'aide.
 Le panneau **roule** la position comme le panneau Analyse (voir
 :ref:`rollouts`) : *Ctrl+clic* et *Maj+clic* sélectionnent des coups, le
 clic droit ouvre le même menu — rollout, copie de la position et de
-l'évaluation, ou de la position et des coups sélectionnés —, *r* lance ou
+l'évaluation, ou de la position et des coups sélectionnés —, *Maj+R* lance ou
 arrête le rollout et *Échap* l'annule ; une barre fine suit les parties
 jouées, et chaque coup roulé porte son résultat dans la colonne **Rollout**
 (sans dés, sous la décision de videau). Le plateau étant un brouillon, le

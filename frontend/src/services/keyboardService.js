@@ -305,6 +305,8 @@ export function handleKeyDown(event) {
             // Let shortcut through
         } else if (isBareLetter(event, 'm')) {
             // The challenge toggle acts on this very panel: it must work where the focus sits.
+        } else if (isBareLetter(event, 'r')) {
+            // The random position: the panel's rollout key is Shift+R.
         } else {
             if (isBoardNavigationKey(event) && !get(selectedMoveStore)) {
                 // No move selected - allow position navigation
@@ -518,8 +520,8 @@ export function handleKeyDown(event) {
         togglePipcount();
     } else if (!event.ctrlKey && letter('m')) {
         toggleAnalysisChallenge();
-    } else if (!event.ctrlKey && letter('r') && !event.defaultPrevented) {
-        // A panel that claimed `r` (a rollout from the Eval panel) keeps it.
+    } else if (!event.ctrlKey && letter('r') && !event.shiftKey && !event.defaultPrevented) {
+        // Shift+R is the rollout key of the Analysis and Eval panels; a panel that claimed r keeps it.
         loadRandomPosition();
     }
 }
