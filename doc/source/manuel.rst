@@ -1836,7 +1836,7 @@ installer (voir :ref:`telecharge_install`). Un match sans source ne change pas.
 Le bouton **Fusionner les joueurs** de la barre d'outils du panneau ouvre une
 fenêtre listant tous les noms de joueurs de la base avec leur nombre de
 matchs : sélectionner les variantes d'orthographe d'un même joueur, choisir le
-nom canonique à conserver, puis fusionner. La fusion crée un alias par
+nom canonique à conserver, puis fusionner. La fenêtre reste ouverte pour enchaîner d'autres fusions ; **Fermer** (ou *Échap*) la referme. La fusion crée un alias par
 variante : les matchs gardent les noms de leurs fichiers, mais les statistiques,
 la table Joueurs et la recherche ``pl"…"`` lisent toutes les variantes comme un
 seul joueur, et les imports suivants enregistrent le nom canonique. Retirer
