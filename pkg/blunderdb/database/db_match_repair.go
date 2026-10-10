@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"fmt"
+	"path/filepath"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -34,6 +35,7 @@ func (d *Database) repairMatch(ctx context.Context, matchID int64, dryRun bool) 
 		return ingest.RepairReport{}, fmt.Errorf("no database is currently open")
 	}
 	m, err := d.store.Matches().Get(ctx, "", matchID)
+	dir := d.libraryDir(ctx)
 	d.mu.RUnlock()
 	if err != nil {
 		return ingest.RepairReport{MatchID: matchID}, err
@@ -41,7 +43,7 @@ func (d *Database) repairMatch(ctx context.Context, matchID int64, dryRun bool) 
 
 	// The file is read without the lock: the transaction checks that it
 	// still holds the match.
-	graph, err := ingest.MapMatchSource(m.FilePath)
+	graph, err := ingest.MapMatchSource(m.FilePath, dir)
 	if err != nil {
 		return ingest.RepairReport{MatchID: matchID, FilePath: m.FilePath}, err
 	}
@@ -103,4 +105,15 @@ func (d *Database) FindMatchesToRepair() ([]MatchRepair, error) {
 		}
 	}
 	return out, nil
+}
+
+// libraryDir is the directory of the open SQLite file, "" for an in-memory
+// one: where a relative source path is looked for first. Callers hold d.mu.
+func (d *Database) libraryDir(ctx context.Context) string {
+	var seq int
+	var name, file string
+	if err := d.db.QueryRowContext(ctx, `PRAGMA database_list`).Scan(&seq, &name, &file); err != nil || file == "" {
+		return ""
+	}
+	return filepath.Dir(file)
 }

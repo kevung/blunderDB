@@ -73,18 +73,31 @@ func MapMatchFile(path string) (*MatchGraph, error) {
 }
 
 // MapMatchSource reads the source file a stored match names (its
-// file_path). ErrRepairNoSource when it names none or the file is gone.
-func MapMatchSource(path string) (*MatchGraph, error) {
+// file_path). A relative path was relative to the directory the import ran
+// from, which nothing recorded: it is looked for under each of dirs in turn
+// (the library's directory, the working directory), and the hash check of
+// RepairMatch refuses a file that is not the match. ErrRepairNoSource when
+// the match names no file or none is found.
+func MapMatchSource(path string, dirs ...string) (*MatchGraph, error) {
 	if strings.TrimSpace(path) == "" {
 		return nil, ErrRepairNoSource
 	}
-	if _, err := os.Stat(path); err != nil {
-		if errors.Is(err, os.ErrNotExist) {
-			return nil, fmt.Errorf("%w (%s)", ErrRepairNoSource, path)
+	candidates := []string{path}
+	if !filepath.IsAbs(path) {
+		candidates = candidates[:0]
+		for _, d := range dirs {
+			candidates = append(candidates, filepath.Join(d, path))
 		}
-		return nil, err
+		candidates = append(candidates, path)
 	}
-	return MapMatchFile(path)
+	for _, c := range candidates {
+		if _, err := os.Stat(c); err == nil {
+			return MapMatchFile(c)
+		} else if !errors.Is(err, os.ErrNotExist) {
+			return nil, err
+		}
+	}
+	return nil, fmt.Errorf("%w (%s)", ErrRepairNoSource, path)
 }
 
 // moveKey names a move across a rewrite: a double and its answer share a
