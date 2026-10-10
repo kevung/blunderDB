@@ -26,10 +26,11 @@ const (
 	Bar = -1
 	Off = -2
 
-	// MaxPlays bounds a legal-play buffer. The largest count observed upstream
-	// over its corpus is far below this; reaching it means something is wrong,
-	// and generation refuses rather than truncating.
-	MaxPlays = 2048
+	// MaxPlays bounds a legal-play buffer. It holds the proven maximum of
+	// distinct plays (3060, for a double: see maxLevel), so a full buffer
+	// cannot happen on a valid position; generation still refuses rather than
+	// truncating.
+	MaxPlays = 3072
 )
 
 // Move is one die's worth of movement.
