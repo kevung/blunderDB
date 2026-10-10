@@ -5,6 +5,7 @@ import { get } from 'svelte/store';
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
     GetAllPlayerNames: vi.fn(() => Promise.resolve([{ Name: 'Alice' }, { Name: 'Bob' }])),
     GetAllTournaments: vi.fn(() => Promise.resolve([])),
+    GetStatsAnalysisEngines: vi.fn().mockResolvedValue(['XG']),
     GetStatsDateRange: vi.fn(() => Promise.resolve({ DateFrom: '', DateTo: '' })),
     HeadToHead: vi.fn(() =>
         Promise.resolve({
@@ -74,8 +75,9 @@ describe('StatsFilterBar — provenance', () => {
         databasePathStore.set('/tmp/x.db');
         const { findByLabelText } = render(StatsFilterBar);
         const engine = await findByLabelText('Engine');
-        await fireEvent.change(engine, { target: { value: ' xg ' } });
-        await waitFor(() => expect(get(statsFilterStore).analysisEngine).toBe('xg'));
+        await waitFor(() => expect(engine.querySelectorAll('option').length).toBe(2));
+        await fireEvent.change(engine, { target: { value: 'XG' } });
+        await waitFor(() => expect(get(statsFilterStore).analysisEngine).toBe('XG'));
         const depth = await findByLabelText('Min. depth');
         await fireEvent.change(depth, { target: { value: '3' } });
         await waitFor(() => expect(get(statsFilterStore).minAnalysisDepth).toBe(3));

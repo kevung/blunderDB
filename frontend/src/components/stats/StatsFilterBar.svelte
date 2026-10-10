@@ -4,7 +4,7 @@
     import { statsFilterStore, statsMetricStore, statsInvalidationKeyStore } from '../../stores/statsStore.js';
     import { databaseLoadedStore } from '../../stores/databaseStore.js';
     import { t } from '../../i18n/index.js';
-    import { GetAllPlayerNames, GetAllTournaments, GetStatsDateRange } from '../../../wailsjs/go/database/Database.js';
+    import { GetAllPlayerNames, GetAllTournaments, GetStatsAnalysisEngines, GetStatsDateRange } from '../../../wailsjs/go/database/Database.js';
     import { GetStatsFilter, SaveStatsFilter } from '../../../wailsjs/go/main/Config.js';
 
     /**
@@ -21,6 +21,12 @@
     /** @type {Array<{id: number, name: string}>} */
     let tournamentList = $state([]);
     /** @type {string} earliest match date for input min/placeholder */
+    /** Engine labels stored in the analyses: the options of the engine menu. */
+    /** @type {string[]} */
+    let engineList = $state([]);
+    /** Product names for the labels the importers write; any other label shows as stored. */
+    /** @type {Record<string, string>} */
+    const ENGINE_NAMES = { XG: 'eXtreme Gammon', GNUbg: 'GNU Backgammon' };
     let dateRangeMin = $state('');
     /** @type {string} latest match date for input max/placeholder */
     let dateRangeMax = $state('');
@@ -38,6 +44,9 @@
         analysisEngine: '',
         minAnalysisDepth: 0
     });
+
+    /** The stored labels, plus the retained one when the database no longer holds it. */
+    let engineOptions = $derived(localFilter.analysisEngine && !engineList.includes(localFilter.analysisEngine) ? [...engineList, localFilter.analysisEngine] : engineList);
     let dateError = $state(false);
     let mounted = $state(false);
 
@@ -155,13 +164,16 @@
      */
     async function loadLists() {
         const dbLoaded = get(databaseLoadedStore);
-        const [players, tournaments, dateRange] = dbLoaded ? await Promise.all([GetAllPlayerNames(), GetAllTournaments(), GetStatsDateRange()]) : [[], [], null];
+        const [players, tournaments, dateRange, engines] = dbLoaded
+            ? await Promise.all([GetAllPlayerNames(), GetAllTournaments(), GetStatsDateRange(), GetStatsAnalysisEngines()])
+            : [[], [], null, []];
 
         // Derive from the local value, never playerList: without a database this
         // runs synchronously, and reading back what it wrote loops the caller
         // effect (effect_update_depth_exceeded).
         const loadedPlayers = players ?? [];
         playerList = loadedPlayers;
+        engineList = engines ?? [];
         tournamentList = (tournaments ?? []).map((t) => ({ id: t.id, name: t.name }));
         dbEmpty = loadedPlayers.length === 0;
         dateRangeMin = dateRange?.DateFrom ?? '';
@@ -367,18 +379,21 @@
 
         <!-- Provenance: which engine analysed the decisions, and how deep -->
         <label class="fb-label" for="fb-engine">{$t('stats.engineLabel')}</label>
-        <input
+        <select
             id="fb-engine"
-            class="fb-engine"
-            type="text"
-            value={localFilter.analysisEngine}
-            placeholder={$t('stats.engineAny')}
+            class="fb-select"
             title={$t('stats.engineHint')}
+            value={localFilter.analysisEngine}
             onchange={(e) => {
-                localFilter = { ...localFilter, analysisEngine: e.target.value.trim() };
+                localFilter = { ...localFilter, analysisEngine: e.target.value };
                 applyFilter();
             }}
-        />
+        >
+            <option value="">{$t('stats.engineAny')}</option>
+            {#each engineOptions as eng (eng)}
+                <option value={eng} title={eng}>{ENGINE_NAMES[eng] ?? eng}</option>
+            {/each}
+        </select>
         <label class="fb-label" for="fb-min-depth">{$t('stats.minDepthLabel')}</label>
         <input
             id="fb-min-depth"
@@ -399,9 +414,6 @@
 {/if}
 
 <style>
-    .fb-engine {
-        width: 7em;
-    }
     .fb-depth {
         width: 4em;
     }
@@ -605,7 +617,6 @@
        they all line up. */
     .fb-select,
     .fb-date,
-    .fb-engine,
     .fb-depth,
     .fb-tour-btn,
     .fb-ml-btn,
