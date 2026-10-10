@@ -3,9 +3,11 @@ package apkg
 // DefaultLanguage is used when the requested language has no catalogue.
 const DefaultLanguage = "en"
 
-// labels are the words a card is written in; %d stands for a number.
+// labels are the words a card is written in; %d stands for a number. "sep"
+// is the label separator, whose spacing is typographic per language.
 var labels = map[string]map[string]string{
 	"fr": {
+		"crawford": "1 away (Crawford)", "postCrawford": "1 away (post-Crawford)", "sep": "\u00a0: ",
 		"money": "Partie libre", "score": "Score", "away": "%d away", "cube": "Videau",
 		"centred": "au centre", "ownOnRoll": "au joueur au trait", "ownOpp": "à l'adversaire",
 		"toPlay": "%d-%d à jouer", "cubeDecision": "Décision de videau", "onRoll": "Au trait : le joueur du bas",
@@ -14,6 +16,7 @@ var labels = map[string]map[string]string{
 		"equity": "Équité", "played": "Joué", "error": "erreur", "noAnalysis": "Pas d'analyse",
 	},
 	"en": {
+		"crawford": "1 away (Crawford)", "postCrawford": "1 away (post-Crawford)", "sep": ": ",
 		"money": "Money game", "score": "Score", "away": "%d away", "cube": "Cube",
 		"centred": "centred", "ownOnRoll": "owned by the player on roll", "ownOpp": "owned by the opponent",
 		"toPlay": "%d-%d to play", "cubeDecision": "Cube decision", "onRoll": "On roll: the player at the bottom",
@@ -22,6 +25,7 @@ var labels = map[string]map[string]string{
 		"equity": "Equity", "played": "Played", "error": "error", "noAnalysis": "No analysis",
 	},
 	"de": {
+		"crawford": "1 away (Crawford)", "postCrawford": "1 away (Post-Crawford)", "sep": ": ",
 		"money": "Money-Spiel", "score": "Spielstand", "away": "%d away", "cube": "Doppler",
 		"centred": "in der Mitte", "ownOnRoll": "beim Spieler am Zug", "ownOpp": "beim Gegner",
 		"toPlay": "%d-%d zu ziehen", "cubeDecision": "Dopplerentscheidung", "onRoll": "Am Zug: der untere Spieler",
@@ -30,6 +34,7 @@ var labels = map[string]map[string]string{
 		"equity": "Equity", "played": "Gespielt", "error": "Fehler", "noAnalysis": "Keine Analyse",
 	},
 	"el": {
+		"crawford": "1 away (Crawford)", "postCrawford": "1 away (μετά το Crawford)", "sep": ": ",
 		"money": "Παιχνίδι money", "score": "Σκορ", "away": "%d away", "cube": "Κύβος",
 		"centred": "στο κέντρο", "ownOnRoll": "του παίκτη που παίζει", "ownOpp": "του αντιπάλου",
 		"toPlay": "%d-%d για παίξιμο", "cubeDecision": "Απόφαση κύβου", "onRoll": "Παίζει: ο παίκτης κάτω",
@@ -38,6 +43,7 @@ var labels = map[string]map[string]string{
 		"equity": "Equity", "played": "Παίχτηκε", "error": "σφάλμα", "noAnalysis": "Χωρίς ανάλυση",
 	},
 	"es": {
+		"crawford": "1 away (Crawford)", "postCrawford": "1 away (post-Crawford)", "sep": ": ",
 		"money": "Partida libre", "score": "Marcador", "away": "%d away", "cube": "Cubo",
 		"centred": "en el centro", "ownOnRoll": "del jugador al turno", "ownOpp": "del rival",
 		"toPlay": "%d-%d por jugar", "cubeDecision": "Decisión de cubo", "onRoll": "Al turno: el jugador de abajo",
@@ -46,6 +52,7 @@ var labels = map[string]map[string]string{
 		"equity": "Equity", "played": "Jugado", "error": "error", "noAnalysis": "Sin análisis",
 	},
 	"fi": {
+		"crawford": "1 away (Crawford)", "postCrawford": "1 away (Crawfordin jälkeen)", "sep": ": ",
 		"money": "Rahapeli", "score": "Tilanne", "away": "%d away", "cube": "Kuutio",
 		"centred": "keskellä", "ownOnRoll": "vuorossa olevalla", "ownOpp": "vastustajalla",
 		"toPlay": "%d-%d pelattavana", "cubeDecision": "Kuutiopäätös", "onRoll": "Vuorossa: alempi pelaaja",
@@ -54,6 +61,7 @@ var labels = map[string]map[string]string{
 		"equity": "Equity", "played": "Pelattu", "error": "virhe", "noAnalysis": "Ei analyysiä",
 	},
 	"it": {
+		"crawford": "1 away (Crawford)", "postCrawford": "1 away (post-Crawford)", "sep": ": ",
 		"money": "Partita libera", "score": "Punteggio", "away": "%d away", "cube": "Cubo",
 		"centred": "al centro", "ownOnRoll": "del giocatore di turno", "ownOpp": "dell'avversario",
 		"toPlay": "%d-%d da giocare", "cubeDecision": "Decisione di cubo", "onRoll": "Di turno: il giocatore in basso",
@@ -62,6 +70,7 @@ var labels = map[string]map[string]string{
 		"equity": "Equity", "played": "Giocato", "error": "errore", "noAnalysis": "Nessuna analisi",
 	},
 	"ja": {
+		"crawford": "1 away (クロフォード)", "postCrawford": "1 away (ポストクロフォード)", "sep": "：",
 		"money": "マネーゲーム", "score": "スコア", "away": "%d away", "cube": "キューブ",
 		"centred": "中央", "ownOnRoll": "手番のプレイヤー側", "ownOpp": "相手側",
 		"toPlay": "%d-%d を動かす", "cubeDecision": "キューブの判断", "onRoll": "手番：下側のプレイヤー",
@@ -70,6 +79,7 @@ var labels = map[string]map[string]string{
 		"equity": "エクイティ", "played": "実際の手", "error": "誤差", "noAnalysis": "解析なし",
 	},
 	"ru": {
+		"crawford": "1 away (Кроуфорд)", "postCrawford": "1 away (после Кроуфорда)", "sep": ": ",
 		"money": "Игра на деньги", "score": "Счёт", "away": "%d away", "cube": "Куб",
 		"centred": "в центре", "ownOnRoll": "у игрока на ходу", "ownOpp": "у соперника",
 		"toPlay": "%d-%d — ход", "cubeDecision": "Решение по кубу", "onRoll": "На ходу: нижний игрок",

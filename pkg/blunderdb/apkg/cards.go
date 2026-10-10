@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"hash/fnv"
 	"html"
 	"io"
 	"strings"
@@ -60,7 +59,7 @@ func Export(ctx context.Context, st storage.Storage, scope string, src Source, l
 		return nil, fmt.Errorf("apkg: metadata: %w", err)
 	}
 	pkg := Package{
-		DeckID:          DeckID(res.Name),
+		DeckID:          now.UnixMilli(),
 		DeckName:        res.Name,
 		DeckDescription: description(issuance.Carried(md)),
 		Modified:        now,
@@ -158,26 +157,9 @@ func description(md map[string]string) string {
 	return strings.Join(parts, "<br>")
 }
 
-// DeckID is the Anki deck id of a package named name: derived from the name,
-// so a re-export lands in the deck the first import created.
-func DeckID(name string) int64 {
-	h := fnv.New64a()
-	_, _ = h.Write([]byte("blunderdb-deck:" + name))
-	return stableID(h.Sum64())
-}
-
-// stableID folds a 64-bit hash into a positive id below 2^53, the integers
-// every Anki client (JavaScript included) holds exactly. Zero and one are
-// Anki's own default ids, so they are avoided.
-func stableID(h uint64) int64 {
-	return int64(h&(1<<53-1)) | 1<<52
-}
-
-// NoteID and NoteGUID are a position's note identity, derived from its
-// Zobrist hash: a re-export updates the note instead of duplicating it.
-func NoteID(p *domain.Position) int64 { return stableID(engine.ZobristHash(p)) }
-
-// NoteGUID is the guid Anki matches a re-imported note on.
+// NoteGUID is a position's note identity, derived from its Zobrist hash:
+// Anki matches a re-imported note on its guid alone, so a re-export updates
+// the note instead of duplicating it.
 func NoteGUID(p *domain.Position) string {
 	return fmt.Sprintf("blunderdb-%016x", engine.ZobristHash(p))
 }
@@ -196,7 +178,6 @@ func card(p *domain.Position, a *domain.PositionAnalysis, lang string) (Note, Me
 		kind = "cube"
 	}
 	n := Note{
-		ID:   NoteID(p),
 		GUID: NoteGUID(p),
 		Fields: []string{
 			html.EscapeString(ident),
@@ -207,6 +188,18 @@ func card(p *domain.Position, a *domain.PositionAnalysis, lang string) (Note, Me
 		Tags: []string{"blunderDB", "blunderDB::" + kind},
 	}
 	return n, Media{Name: img, Data: []byte(report.Diagram(p))}
+}
+
+// away names a player's distance from match end. The domain stores a 1-away
+// player as Crawford (1) or post-Crawford (0), so neither number reads as is.
+func away(n int, lang string) string {
+	switch n {
+	case domain.PostCrawford:
+		return label(lang, "postCrawford")
+	case domain.Crawford:
+		return label(lang, "crawford")
+	}
+	return fmt.Sprintf(label(lang, "away"), n)
 }
 
 // situation is the front's text: score, cube, dice and the side on roll. The
@@ -220,10 +213,10 @@ func situation(p *domain.Position, lang string) string {
 		if p.PlayerOnRoll == domain.White {
 			me, opp = opp, me
 		}
-		lines = append(lines, fmt.Sprintf("%s : %s – %s", label(lang, "score"),
-			fmt.Sprintf(label(lang, "away"), me), fmt.Sprintf(label(lang, "away"), opp)))
+		lines = append(lines, label(lang, "score")+label(lang, "sep")+
+			away(me, lang)+" – "+away(opp, lang))
 	}
-	cube := fmt.Sprintf("%s : %d", label(lang, "cube"), 1<<max(p.Cube.Value, 0))
+	cube := fmt.Sprintf("%s%s%d", label(lang, "cube"), label(lang, "sep"), 1<<max(p.Cube.Value, 0))
 	switch p.Cube.Owner {
 	case p.PlayerOnRoll:
 		cube += " " + label(lang, "ownOnRoll")
@@ -260,10 +253,10 @@ func back(p *domain.Position, a *domain.PositionAnalysis, lang string) (answer, 
 	moves := a.CheckerAnalysis.Moves
 	best := moves[0]
 	answer = html.EscapeString(best.Move)
-	equity = fmt.Sprintf("%s : %+.3f", html.EscapeString(label(lang, "equity")), best.Equity)
+	equity = fmt.Sprintf("%s%s%+.3f", html.EscapeString(label(lang, "equity")), label(lang, "sep"), best.Equity)
 	if pms := playedMoves(a); len(pms) > 0 {
 		pm := pms[0]
-		played = fmt.Sprintf("%s : %s", html.EscapeString(label(lang, "played")), html.EscapeString(pm))
+		played = fmt.Sprintf("%s%s%s", html.EscapeString(label(lang, "played")), label(lang, "sep"), html.EscapeString(pm))
 		for _, m := range moves {
 			if engine.CanonicalMove(m.Move) == engine.CanonicalMove(pm) {
 				played += fmt.Sprintf(" (%s %.3f)", html.EscapeString(label(lang, "error")), best.Equity-m.Equity)
@@ -303,7 +296,7 @@ func cubeBack(a *domain.PositionAnalysis, lang string) (answer, equity, played s
 		actions = []string{a.PlayedCubeAction}
 	}
 	if len(actions) > 0 {
-		played = fmt.Sprintf("%s : %s", html.EscapeString(label(lang, "played")), html.EscapeString(actions[0]))
+		played = fmt.Sprintf("%s%s%s", html.EscapeString(label(lang, "played")), label(lang, "sep"), html.EscapeString(actions[0]))
 		if e, ok := engine.CubeActionError(d, actions[0]); ok {
 			played += fmt.Sprintf(" (%s %.3f)", html.EscapeString(label(lang, "error")), e)
 		}

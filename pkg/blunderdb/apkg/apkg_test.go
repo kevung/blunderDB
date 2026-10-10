@@ -244,7 +244,7 @@ func TestPackageFollowsAnkiSchema11(t *testing.T) {
 	var notes, cards, orphan int
 	_ = u.db.QueryRow(`SELECT count(*) FROM notes`).Scan(&notes)
 	_ = u.db.QueryRow(`SELECT count(*) FROM cards`).Scan(&cards)
-	_ = u.db.QueryRow(`SELECT count(*) FROM cards WHERE nid NOT IN (SELECT id FROM notes) OR did != ?`, apkg.DeckID("Ouvertures")).Scan(&orphan)
+	_ = u.db.QueryRow(`SELECT count(*) FROM cards WHERE nid NOT IN (SELECT id FROM notes) OR did != ?`, stamp.UnixMilli()).Scan(&orphan)
 	if notes != 2 || cards != 2 || orphan != 0 {
 		t.Errorf("notes %d, cards %d, orphan cards %d", notes, cards, orphan)
 	}
@@ -294,7 +294,7 @@ func TestReExportKeepsTheNoteIdentity(t *testing.T) {
 	second, _ := export(t, f, apkg.Source{DeckID: f.deckID}, stamp.Add(time.Hour))
 	ids := func(data []byte) (string, int64) {
 		u := unpack(t, data)
-		out := column(t, u.db, `SELECT id || ':' || guid FROM notes ORDER BY id`)
+		out := column(t, u.db, `SELECT guid FROM notes ORDER BY guid`)
 		var mod int64
 		_ = u.db.QueryRow(`SELECT max(mod) FROM notes`).Scan(&mod)
 		return strings.Join(out, ","), mod
@@ -360,13 +360,17 @@ func TestSourceIsRequired(t *testing.T) {
 
 // TestAnkiImportsThePackage is the oracle: Anki's own importer. It runs only
 // when BLUNDERDB_ANKI_PYTHON names a Python with the "anki" package
-// (scripts/anki-apkg-check.py), so CI does not depend on it.
+// (scripts/anki-apkg-check.py): the nightly anki-apkg job sets it.
 func TestAnkiImportsThePackage(t *testing.T) {
 	python := os.Getenv("BLUNDERDB_ANKI_PYTHON")
 	if python == "" {
 		t.Skip("BLUNDERDB_ANKI_PYTHON not set")
 	}
 	f := setup(t)
+	crawford := oneAway(t, f, [2]int{domain.Crawford, 4})
+	if err := f.st.Anki().SyncWithPositions(context.Background(), "", f.deckID, []int64{f.checker.ID, f.cube.ID, crawford}); err != nil {
+		t.Fatal(err)
+	}
 	dir := t.TempDir()
 	first, _ := export(t, f, apkg.Source{DeckID: f.deckID}, stamp)
 	second, _ := export(t, f, apkg.Source{DeckID: f.deckID}, stamp.Add(time.Hour))
@@ -378,7 +382,50 @@ func TestAnkiImportsThePackage(t *testing.T) {
 		t.Fatalf("anki import: %v\n%s", err, out)
 	}
 	t.Logf("%s", out)
-	if !strings.Contains(string(out), "b.apkg: new=0 updated=2") || !strings.Contains(string(out), "notes=2 cards=2 media=2") {
+	if !strings.Contains(string(out), "b.apkg: new=0 updated=3") || !strings.Contains(string(out), "notes=3 cards=3 media=3") {
 		t.Errorf("anki import:\n%s", out)
+	}
+}
+
+// oneAway saves a checker position at score, the player on roll first.
+func oneAway(t *testing.T, f fixture, score [2]int) int64 {
+	t.Helper()
+	p := domain.InitializePosition()
+	p.Score = score
+	p.Board.Points[6] = domain.Point{Checkers: 4, Color: p.PlayerOnRoll}
+	id, err := f.st.Positions().Save(context.Background(), "", &p)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return id
+}
+
+// A 1-away player is stored as Crawford (1) or post-Crawford (0): the card
+// names which, never "0 away".
+func TestOneAwayNamesCrawfordAndPostCrawford(t *testing.T) {
+	f := setup(t)
+	ctx := context.Background()
+	ids := []int64{oneAway(t, f, [2]int{domain.Crawford, 4}), oneAway(t, f, [2]int{domain.PostCrawford, 3})}
+	if err := f.st.Collections().AddPositions(ctx, "", f.handMade, ids); err != nil {
+		t.Fatal(err)
+	}
+	for _, c := range []struct{ lang, crawford, post, score string }{
+		{"fr", "Score\u00a0: 1 away (Crawford) – 4 away", "Score\u00a0: 1 away (post-Crawford) – 3 away", "Videau\u00a0: 1"},
+		{"en", "Score: 1 away (Crawford) – 4 away", "Score: 1 away (post-Crawford) – 3 away", "Cube: 1"},
+	} {
+		var buf bytes.Buffer
+		if _, err := apkg.Export(ctx, f.st, "", apkg.Source{CollectionID: f.handMade}, c.lang, stamp, &buf); err != nil {
+			t.Fatal(err)
+		}
+		u := unpack(t, buf.Bytes())
+		all := strings.Join(column(t, u.db, `SELECT flds FROM notes`), "\n")
+		for _, want := range []string{c.crawford, c.post, c.score} {
+			if !strings.Contains(all, want) {
+				t.Errorf("%s: no %q in\n%s", c.lang, want, all)
+			}
+		}
+		if strings.Contains(all, "0 away") {
+			t.Errorf("%s: a post-Crawford score reads as 0 away", c.lang)
+		}
 	}
 }

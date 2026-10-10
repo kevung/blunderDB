@@ -32,7 +32,6 @@ var Fields = []string{"Position", "Board", "Situation", "Answer", "Equity", "Pla
 
 // Note is one note of the package: one position, one card.
 type Note struct {
-	ID     int64    // stable across exports, see NoteID
 	GUID   string   // stable across exports: what Anki matches a re-import on
 	Fields []string // in the order of Fields
 	Tags   []string
@@ -46,7 +45,7 @@ type Media struct {
 
 // Package is everything Write puts in an .apkg.
 type Package struct {
-	DeckID          int64
+	DeckID          int64 // Anki matches a deck on its name and gives an unknown one a new id
 	DeckName        string
 	DeckDescription string
 	Notes           []Note
@@ -181,14 +180,18 @@ func fill(ctx context.Context, db *sql.DB, p Package) error {
 		if len(n.Tags) > 0 {
 			tags = " " + strings.Join(n.Tags, " ") + " "
 		}
+		// Ids are creation times in milliseconds to Anki and need only be
+		// unique in the package: the importer matches a note on its guid and
+		// renumbers what collides with its own ids.
+		id := modMS + int64(i)
 		if _, err := tx.ExecContext(ctx, `INSERT INTO notes VALUES (?, ?, ?, ?, -1, ?, ?, ?, ?, 0, '')`,
-			n.ID, n.GUID, ModelID, mod, tags, strings.Join(n.Fields, "\x1f"), sfld, checksum(sfld)); err != nil {
+			id, n.GUID, ModelID, mod, tags, strings.Join(n.Fields, "\x1f"), sfld, checksum(sfld)); err != nil {
 			return fmt.Errorf("apkg: note %s: %w", n.GUID, err)
 		}
 		// A new card (type 0, queue 0) whose due is its rank: Anki shows new
 		// cards in the deck's order.
 		if _, err := tx.ExecContext(ctx, `INSERT INTO cards VALUES (?, ?, ?, 0, ?, -1, 0, 0, ?, 0, 0, 0, 0, 0, 0, 0, 0, '')`,
-			n.ID, n.ID, p.DeckID, mod, i+1); err != nil {
+			id, id, p.DeckID, mod, i+1); err != nil {
 			return fmt.Errorf("apkg: card %s: %w", n.GUID, err)
 		}
 	}
