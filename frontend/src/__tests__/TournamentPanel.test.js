@@ -339,6 +339,24 @@ describe('TournamentPanel — list view', () => {
         await vi.waitFor(() => expect(UpdateTournament).toHaveBeenCalledWith(9, 'Undated Open', '2024-05-10', 'Nice'));
     });
 
+    test('clearing the entered date shows the date read from the matches, not the old one', async () => {
+        const dated = /** @type {any} */ ({ id: 9, name: 'Open', date: '2025-01-01', effectiveDate: '2025-01-01', location: 'Nice', matchCount: 2 });
+        vi.mocked(GetAllTournaments).mockResolvedValue([dated]);
+        renderOpen();
+        const row = must((await screen.findByText('Open')).closest('tr'));
+        await fireEvent.click(within(row).getByTitle(/^edit$/i));
+        const dateInput = within(row).getByDisplayValue('2025-01-01');
+        await fireEvent.input(dateInput, { target: { value: '' } });
+
+        vi.mocked(GetAllTournaments).mockResolvedValue([{ ...dated, date: '', effectiveDate: '2024-05-10' }]);
+        // The tournament is opened in its sheet while the edit is saved.
+        vi.mocked(UpdateTournament).mockImplementationOnce(async () => selectedTournamentStore.set(dated));
+        await fireEvent.keyDown(dateInput, { key: 'Enter' });
+
+        await vi.waitFor(() => expect(UpdateTournament).toHaveBeenCalledWith(9, 'Open', '', 'Nice'));
+        await vi.waitFor(() => expect(get(selectedTournamentStore)).toMatchObject({ id: 9, date: '', effectiveDate: '2024-05-10' }));
+    });
+
     test('sorting by date reads the effective date', async () => {
         vi.mocked(GetAllTournaments).mockResolvedValue([
             /** @type {any} */ ({ id: 1, name: 'Late', date: '2025-03-01', effectiveDate: '2025-03-01', location: '', matchCount: 0 }),

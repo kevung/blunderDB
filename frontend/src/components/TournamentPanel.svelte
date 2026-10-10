@@ -156,9 +156,10 @@
                 await UpdateTournament(id, name, draft.date, draft.location.trim());
                 await loadTournaments();
                 if (selectedTournament && selectedTournament.id === id) {
-                    selectedTournamentStore.set(
-                        /** @type {any} */ ({ ...selectedTournament, name, date: draft.date, effectiveDate: draft.date || selectedTournament.effectiveDate, location: draft.location.trim() })
-                    );
+                    // The effective date is derived by the database: only the
+                    // reloaded row knows it once the entered date is cleared.
+                    const saved = get(tournamentsStore).find((tr) => tr.id === id);
+                    if (saved) selectedTournamentStore.set(saved);
                 }
             } catch (error) {
                 logger.error('Error updating tournament:', error);
