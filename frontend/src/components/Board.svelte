@@ -17,7 +17,7 @@
     import { boardIsMirrored, labelsFlipped, screenOfModelPoint, screenOfNotationPoint } from '../services/boardOrientation.js';
     import { searchStructureModeStore, searchOfferedCubeStore } from '../stores/searchExcludePositionStore';
     import { boardColorsStore } from '../stores/boardColorsStore';
-    import { sendPositionToEval } from '../services/positionService.js';
+    import { sendPositionToEval, evaluateInNewView } from '../services/positionService.js';
     import { copyBoardWithAnalysisImage, exportBoardImage } from '../services/clipboardService.js';
     import { setStatusBarMessage } from '../services/databaseService.js';
     import { viewStore } from '../stores/viewStore.js';
@@ -336,13 +336,6 @@
     // boardInteractions.js's.
     /** @type {{ x: number, y: number, items: MenuItem[] } | null} */
     let boardMenu = $state(null);
-
-    // The view on screen keeps its position, list and analysis; the variant is played in a copy.
-    /** @param {any} position */
-    function evaluateInNewView(position) {
-        const id = viewStore.addView({ name: (_id, originId) => $t('viewTabs.variantOf', { n: originId }) });
-        if (id != null) sendPositionToEval(position);
-    }
 
     /** @param {{ x: number, y: number }} at client coordinates */
     function openContextMenu({ x, y }) {

@@ -167,7 +167,13 @@ function createViewStore() {
         );
     }
 
-    function restoreViewState(view) {
+    /**
+     * @param {any} view
+     * @param {{ replayIndex?: boolean }} [options] replayIndex false leaves the index alone: the
+     *        index effect would fetch the list's record onto the board, too late for a board
+     *        about to be replaced by a scratch one
+     */
+    function restoreViewState(view, { replayIndex = true } = {}) {
         evalContextKeeper.give(view.evalContext ?? null);
         // A view left in Eval this session resumes there, its scratch board and its way back
         // intact: the tab handler's entry would photograph the scratch board as the way back.
@@ -203,6 +209,7 @@ function createViewStore() {
         activeTabStore.set(view.activeTab || 'matches');
         commentTextStore.set(view.commentText || '');
         matchContextStore.set(view.matchContext || createDefaultMatchContext());
+        if (!replayIndex) return;
         currentPositionIndexStore.set(-1);
         currentPositionIndexStore.set(view.positionIndex || 0);
     }
@@ -227,8 +234,11 @@ function createViewStore() {
     /**
      * Open a copy of the view on screen and show it.
      *
-     * @param {{ name?: (id: number, originId: number) => string }} [options] names the new tab
-     *        (default `#id`), from its id and the id of the view it was copied from
+     * @param {{ name?: (id: number, originId: number) => string, scratch?: boolean }} [options]
+     *        `name` names the new tab (default `#id`) from its id and the id of the view it was
+     *        copied from; `scratch` opens a view whose board Eval replaces at once. Its index is
+     *        not replayed: a record fetched for it would land over the scratch board (with its
+     *        real id, which a later save would overwrite).
      * @returns {number | null} the new view's id, null while views are locked
      */
     function addView(options = {}) {
@@ -248,7 +258,7 @@ function createViewStore() {
         };
         views.update((vs) => [...vs, newView]);
         activeViewId.set(id);
-        restoreViewState(newView);
+        restoreViewState(newView, { replayIndex: !options.scratch });
         return id;
     }
 

@@ -27,6 +27,7 @@
  *   enterTranscribeMode NORMAL | MATCH | COLLECTION | EDIT | EVAL → TRANSCRIBE
  *   exitTranscribeMode  TRANSCRIBE → the mode it was entered from
  *   sendPositionToEval  * → EVAL on a given position (id cleared)
+ *   evaluateInNewView   the same, in a new view « Variante de #n »
  *   toggleMatchMode     MATCH → NORMAL | * → MATCH
  *   handleOpenCollection * → COLLECTION
  *   exitCollectionMode  COLLECTION → NORMAL
@@ -58,7 +59,8 @@ import { activeCollectionStore, collectionPositionsStore, selectedCollectionStor
 import { setStatusBarMessage } from './databaseService.js';
 import { showPosition, loadAllPositions, loadAnalysisForPosition, setSearchState, getSearchState } from './positionService.js';
 import { logger } from '../utils/logger.js';
-import { tMsg } from '../i18n';
+import { tMsg, translate } from '../i18n';
+import { viewStore } from '../stores/viewStore.js';
 
 export const MODE = Object.freeze({
     NORMAL: 'NORMAL',
@@ -560,6 +562,21 @@ export function sendPositionToEval(position) {
     // and the tab effect never runs: enter directly.
     if (get(activeTabStore) === 'eval') enterEvalMode();
     else activeTabStore.set('eval');
+}
+
+/**
+ * sendPositionToEval in a new view, named after the view it came from: that
+ * view keeps its position, list and analysis (ADR-0086 §10).
+ *
+ * @param {any} position
+ * @returns {number | null} the new view's id, null while views are locked (Duel)
+ */
+export function evaluateInNewView(position) {
+    if (!position) return null;
+    const seed = JSON.parse(JSON.stringify(position));
+    const id = viewStore.addView({ scratch: true, name: (_id, originId) => translate('viewTabs.variantOf', { n: originId }) });
+    if (id != null) sendPositionToEval(seed);
+    return id;
 }
 
 /**

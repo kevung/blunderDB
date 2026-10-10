@@ -47,6 +47,7 @@ export {
     exitEditMode,
     toggleEvalMode,
     sendPositionToEval,
+    evaluateInNewView,
     enterEvalMode,
     exitEvalMode,
     enterTranscribeMode,

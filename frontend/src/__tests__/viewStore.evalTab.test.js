@@ -56,20 +56,20 @@ function makePosition(id, bearoff = [3, 3]) {
 }
 
 // Fresh modules per test: viewStore and the machine's slots are singletons.
-async function setup() {
+async function setup(index = 1) {
     vi.resetModules();
     const ui = await import('../stores/uiStore.js');
     const ps = await import('../stores/positionStore.js');
     const { viewStore } = await import('../stores/viewStore.js');
     const machine = await import('../services/modeMachine.js');
     // Wires viewStore to the machine's Eval slots, as at start-up.
-    await import('../services/positionService.js');
+    const positionService = await import('../services/positionService.js');
     (await import('../stores/databaseStore.js')).databasePathStore.set('/fake/db.sqlite');
 
     const lib = [makePosition(1), makePosition(2), makePosition(3)];
     ps.positionsStore.set(lib);
-    ps.positionStore.set(structuredClone(lib[1]));
-    ui.currentPositionIndexStore.set(1);
+    ps.positionStore.set(structuredClone(lib[index]));
+    ui.currentPositionIndexStore.set(index);
     ui.statusBarModeStore.set('NORMAL');
     ui.activeTabStore.set('analysis');
 
@@ -77,12 +77,29 @@ async function setup() {
     const openEvalTab = () => machine.enterEvalMode();
     /** Board menu « Évaluer dans un nouvel onglet ». */
     const evaluateInNewView = () => {
-        const position = get(ps.positionStore);
-        const id = viewStore.addView({ name: (_id, originId) => `Variante de #${originId}` });
-        machine.sendPositionToEval(position);
+        const id = machine.evaluateInNewView(get(ps.positionStore));
         return { id, entered: openEvalTab() };
     };
-    return { ui, ps, viewStore, machine, openEvalTab, evaluateInNewView };
+
+    // App.svelte's index effect: each new index fetches its record onto the board, and only a
+    // later index cancels that fetch.
+    const indexEffect = () => {
+        let fetch = { cancelled: false };
+        /** @type {Promise<unknown>[]} */
+        const pending = [];
+        const unsubscribe = ui.currentPositionIndexStore.subscribe((value) => {
+            fetch.cancelled = true;
+            const mine = (fetch = { cancelled: false });
+            if (value < 0 || value >= get(ps.positionsStore).length) return;
+            pending.push(
+                ps.positionsStore.getPosition(value).then((position) => {
+                    if (!mine.cancelled && position) return positionService.showPosition(position);
+                })
+            );
+        });
+        return { settled: () => Promise.all(pending), stop: unsubscribe };
+    };
+    return { ui, ps, viewStore, machine, openEvalTab, evaluateInNewView, indexEffect };
 }
 
 /** @param {any} position */
@@ -93,6 +110,20 @@ beforeEach(() => {
 });
 
 describe('viewStore — onglet « Variante de #n »', () => {
+    test('la position d’origine à l’index 0 n’écrase pas le brouillon : il garde l’id 0', async () => {
+        const { ps, evaluateInNewView, indexEffect } = await setup(0);
+        const effect = indexEffect();
+        await effect.settled(); // the origin's own record, fetched long before the menu
+
+        await (
+            await evaluateInNewView()
+        ).entered;
+        await effect.settled();
+        effect.stop();
+
+        expect(get(ps.positionStore).id).toBe(0);
+    });
+
     test('la vue neuve s’appelle « Variante de #n », s’ouvre en Eval ; la vue d’origine garde sa position', async () => {
         const { ui, ps, viewStore, evaluateInNewView } = await setup();
 
@@ -100,7 +131,7 @@ describe('viewStore — onglet « Variante de #n »', () => {
         await entered;
 
         expect(id).toBe(2);
-        expect(get(viewStore.views).map((v) => v.name)).toEqual(['#1', 'Variante de #1']);
+        expect(get(viewStore.views).map((v) => v.name)).toEqual(['#1', 'Variant of #1']);
         expect(get(ui.statusBarModeStore)).toBe('EVAL');
         expect(get(ps.positionStore).id).toBe(0);
 
