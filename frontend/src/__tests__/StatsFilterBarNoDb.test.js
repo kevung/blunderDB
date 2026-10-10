@@ -17,6 +17,7 @@ import { render, waitFor } from '@testing-library/svelte';
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
     GetAllPlayerNames: vi.fn().mockResolvedValue([]),
     GetAllTournaments: vi.fn().mockResolvedValue([]),
+    GetStatsAnalysisEngines: vi.fn().mockResolvedValue([]),
     GetStatsDateRange: vi.fn().mockResolvedValue(null),
     ComputeStats: vi.fn().mockResolvedValue({}),
     GetPlayerTable: vi.fn().mockResolvedValue([])

@@ -372,6 +372,33 @@ func (s *StatsStore) PositionIDsByMatch(ctx context.Context, scope string, match
 	return scanPositionIDs(rows)
 }
 
+// AnalysisEngines returns the distinct, non-empty analysis_engine labels of
+// the tenant's positions, sorted.
+func (s *StatsStore) AnalysisEngines(ctx context.Context, scope string) ([]string, error) {
+	tenant, targs := s.DB.TenantFilter("p", scope)
+	rows, err := s.DB.Query(ctx, `
+		SELECT DISTINCT a.analysis_engine
+		FROM analysis a JOIN position p ON p.id = a.position_id
+		WHERE `+tenant+` AND a.analysis_engine IS NOT NULL AND a.analysis_engine != ''
+		ORDER BY a.analysis_engine`, targs...)
+	if err != nil {
+		return nil, fmt.Errorf("AnalysisEngines: %w", err)
+	}
+	defer rows.Close()
+	out := []string{}
+	for rows.Next() {
+		var e string
+		if err := rows.Scan(&e); err != nil {
+			return nil, fmt.Errorf("AnalysisEngines scan: %w", err)
+		}
+		out = append(out, e)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("AnalysisEngines rows: %w", err)
+	}
+	return out, nil
+}
+
 // PlayerNames returns all player names found in the tenant's matches, ranked
 // by the total number of matches (player1 + player2 appearances) descending;
 // ties break alphabetically.
