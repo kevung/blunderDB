@@ -260,3 +260,27 @@ func TestCLI_DuelCombinedSeed(t *testing.T) {
 		t.Errorf("origin lacks the contributions:\n%s", out)
 	}
 }
+
+// TestCLI_DuelStartSettings: the score, the single game and the start's
+// choices reach the Arbiter, and a score the length does not hold is refused.
+func TestCLI_DuelStartSettings(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	var st duel.State
+	out := captureStdout(t, func() {
+		if err := cli.Run([]string{"duel", "create", "--db", dbPath, "--length", "7", "--away", "1,4", "--single-game",
+			"--side1", "bot:instant", "--side2", "bot:instant", "--format", "json"}); err != nil {
+			t.Fatalf("duel create: %v", err)
+		}
+	})
+	if err := json.Unmarshal([]byte(out), &st); err != nil {
+		t.Fatal(err)
+	}
+	if st.Ended == nil || st.Ended.MatchID == 0 || len(st.Games) != 1 || st.Start == nil || st.Start.Score != [2]int{1, 4} {
+		t.Fatalf("a single game at 1-away 4-away: ended %+v, games %+v", st.Ended, st.Games)
+	}
+	for _, away := range []string{"8,4", "1,1", "x,2", "3"} {
+		if err := cli.Run([]string{"duel", "create", "--db", dbPath, "--length", "7", "--away", away}); err == nil {
+			t.Errorf("--away %s accepted", away)
+		}
+	}
+}

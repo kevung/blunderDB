@@ -326,8 +326,6 @@ func TestDuelStart(t *testing.T) {
 		start *domain.Position
 		want  transcript.RefusalKind
 	}{
-		{"double in the middle", at([2]int{5, 5}, domain.Cube{Owner: domain.None, Value: 1}, domain.CubeAction, [2]int{}), RefusedStartPendingDouble},
-		{"opponent's cube", at([2]int{5, 5}, domain.Cube{Owner: domain.White, Value: 1}, domain.CubeAction, [2]int{}), RefusedStartPendingDouble},
 		{"cube decision with a roll", at([2]int{5, 5}, domain.Cube{Owner: domain.Black, Value: 1}, domain.CubeAction, [2]int{3, 1}), RefusedStartDecision},
 		{"cube decision in the Crawford game", at([2]int{1, 5}, domain.Cube{Owner: domain.None}, domain.CubeAction, [2]int{}), RefusedStartDecision},
 	}

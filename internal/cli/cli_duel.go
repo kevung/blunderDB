@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"slices"
 	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
@@ -154,7 +155,9 @@ func (cli *CLI) runDuelCreate(args []string) error {
 		"blunderdb duel create --db database.db --money --jacoby",
 		"blunderdb duel create --db database.db --length 7 --side2 bot:normal",
 		"blunderdb duel create --db database.db --length 5 --name1 Alice --side2 external:normal@v1.6.0",
-		"blunderdb duel create --db database.db --length 3 --side1 bot:instant --side2 bot:instant")
+		"blunderdb duel create --db database.db --length 3 --side1 bot:instant --side2 bot:instant",
+		"blunderdb duel create --db database.db --length 7 --away 1,4 --single-game --side2 bot:normal",
+		"blunderdb duel create --db database.db --length 7 --start XGID=... --reroll --after-cube --side2 bot:normal")
 	length := fs.Int("length", 0, "Match length in points, 1 to 25")
 	money := fs.Bool("money", false, "A money session instead of a match")
 	jacoby := fs.Bool("jacoby", false, "With --money: play the Jacoby rule")
@@ -163,6 +166,10 @@ func (cli *CLI) runDuelCreate(args []string) error {
 	name1 := fs.String("name1", "", "Player 1's name")
 	name2 := fs.String("name2", "", "Player 2's name")
 	start := fs.String("start", "", "XGID of the Position the first game begins at (default: the opening position)")
+	away := fs.String("away", "", "The score the first game is played at, as two Away scores \"player1,player2\" (1: the Crawford game, 0: one point away after it); replaces --start's score")
+	reroll := fs.Bool("reroll", false, "Draw the roll again instead of playing the one --start carries")
+	afterCube := fs.Bool("after-cube", false, "Begin after --start's cube decision: the side on roll rolls at once, a double offered is taken")
+	single := fs.Bool("single-game", false, "End the Duel with its first game")
 	discard := fs.Bool("discard-at-end", false, "Throw the draft away when the match is won instead of writing the Match")
 	combined := fs.Bool("combined-seed", false, "Roll nothing before each external Side has contributed to the seed (duel contribute)")
 	svc, err := cli.duelOpen(fs, dbPath, format, args)
@@ -174,6 +181,14 @@ func (cli *CLI) runDuelCreate(args []string) error {
 	}
 	set := duel.Settings{
 		MatchLength: *length, Jacoby: *jacoby, DiscardAtEnd: *discard, CombinedSeed: *combined,
+		Reroll: *reroll, AfterCube: *afterCube, SingleGame: *single,
+	}
+	if *away != "" {
+		a, err := parseAway(*away)
+		if err != nil {
+			return err
+		}
+		set.Away = &a
 	}
 	for i, v := range []struct{ spec, name string }{{*side1, *name1}, {*side2, *name2}} {
 		if set.Sides[i], err = parseSide(v.spec, v.name); err != nil {
@@ -192,6 +207,23 @@ func (cli *CLI) runDuelCreate(args []string) error {
 		return fmt.Errorf("creating the duel: %w", err)
 	}
 	return printDuel(st, *format)
+}
+
+// parseAway reads "<player 1>,<player 2>" Away scores.
+func parseAway(v string) ([2]int, error) {
+	var a [2]int
+	p1, p2, ok := strings.Cut(v, ",")
+	if !ok {
+		return a, fmt.Errorf("invalid --away %q: two Away scores, \"player1,player2\"", v)
+	}
+	for i, f := range []string{p1, p2} {
+		n, err := strconv.Atoi(strings.TrimSpace(f))
+		if err != nil || n < 0 {
+			return a, fmt.Errorf("invalid --away %q: %q is no Away score", v, f)
+		}
+		a[i] = n
+	}
+	return a, nil
 }
 
 // parseSide reads "external", "external:<configuration>@<engine>" or

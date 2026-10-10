@@ -26,6 +26,19 @@ type Settings struct {
 	// Start is the Position the first game begins at; nil is the opening
 	// position at the start of the match.
 	Start *domain.Position `json:"start,omitempty"`
+	// Away is the score, in Away scores (Crawford sentinels included), the
+	// first game is played at: it replaces the Start's, and without a Start
+	// the first game begins at the opening position at that score.
+	Away *[2]int `json:"away,omitempty"`
+	// Reroll drops the Start's roll: the Arbiter draws it.
+	Reroll bool `json:"reroll,omitempty"`
+	// AfterCube begins after the Start's cube decision: the side on roll
+	// rolls at once, and a double the Start shows offered is taken. By
+	// default the Duel begins before it, the decision being what is trained.
+	AfterCube bool `json:"afterCube,omitempty"`
+	// SingleGame ends the Duel with its first game, written alone as the
+	// Match (or thrown away): training at one score.
+	SingleGame bool `json:"singleGame,omitempty"`
 	// Sides are player 1's and player 2's; a Side without a kind is external.
 	Sides [2]SideSpec `json:"sides"`
 	// DiscardAtEnd throws the draft away when the match is won, instead of
@@ -139,6 +152,7 @@ type State struct {
 	Revision    int64                 `json:"revision"`
 	Header      transcript.Header     `json:"header"`
 	Start       *domain.Position      `json:"start,omitempty"`
+	SingleGame  bool                  `json:"singleGame,omitempty"`
 	Sides       [2]SideSpec           `json:"sides"`
 	Fingerprint string                `json:"fingerprint"`
 	Actions     []transcript.Action   `json:"actions"`
@@ -230,11 +244,15 @@ func (s *Service) Create(ctx context.Context, scope string, set Settings) (*Stat
 	if set.CombinedSeed && set.Sides[0].Kind != SideExternal && set.Sides[1].Kind != SideExternal {
 		return nil, fmt.Errorf("a combined seed takes the contribution of an external Side, and both are delegated: %w", storage.ErrInvalid)
 	}
-	if set.MatchLength == 0 && set.Sides[0].Kind != SideExternal && set.Sides[1].Kind != SideExternal {
+	if set.MatchLength == 0 && !set.SingleGame && set.Sides[0].Kind != SideExternal && set.Sides[1].Kind != SideExternal {
 		// Nobody would ever be awaited and a money session never ends: the
 		// call would play forever.
 		return nil, &transcript.Refusal{Kind: RefusedEndless,
 			Detail: "a money session between two delegated Sides never ends"}
+	}
+	start, doubled, err := resolveStart(set)
+	if err != nil {
+		return nil, err
 	}
 	doc := document{
 		FormatVersion: FormatVersion,
@@ -243,7 +261,8 @@ func (s *Service) Create(ctx context.Context, scope string, set Settings) (*Stat
 			Player1: set.Sides[0].Name, Player2: set.Sides[1].Name,
 			Date: s.opts.Now(),
 		},
-		Start:        set.Start,
+		Start:        start,
+		SingleGame:   set.SingleGame,
 		Sides:        set.Sides,
 		DiscardAtEnd: set.DiscardAtEnd,
 		Fingerprint:  fp,
@@ -255,6 +274,9 @@ func (s *Service) Create(ctx context.Context, scope string, set Settings) (*Stat
 		return nil, err
 	}
 	g.now = s.opts.Now
+	if err := g.beginStart(doubled, set.AfterCube); err != nil {
+		return nil, err
+	}
 	g.setReserves()
 	sides, err := s.sides(g.doc.Sides)
 	if err != nil {
@@ -597,7 +619,7 @@ func (s *Service) load(ctx context.Context, scope string, id int64) (*storage.Du
 		return nil, nil, fmt.Errorf("duel %d: document format %d, this build reads %d: %w",
 			id, doc.FormatVersion, FormatVersion, storage.ErrInvalid)
 	}
-	// A version 1 draft is a version 2 one without Cadence or clock.
+	// An older draft is a current one without what later versions added.
 	doc.FormatVersion = FormatVersion
 	g, err := loadGame(doc, row.DiceSeed)
 	if err != nil {
@@ -652,6 +674,7 @@ func state(row *storage.Duel, g *game) *State {
 		Revision:    row.Revision,
 		Header:      g.doc.Header,
 		Start:       g.doc.Start,
+		SingleGame:  g.doc.SingleGame,
 		Sides:       g.doc.Sides,
 		Fingerprint: g.doc.Fingerprint,
 		Actions:     append([]transcript.Action(nil), g.doc.Actions...),

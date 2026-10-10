@@ -14,8 +14,10 @@ import (
 // FormatVersion versions the draft's document, as transcript.FormatVersion
 // versions a Transcription's: a change to its shape is a version of the
 // document, never a DatabaseVersion migration. Version 2 adds the Cadence and
-// the clock; a version 1 draft reads as one without them.
-const FormatVersion = 2
+// the clock, version 3 the single game; an older draft reads as one without
+// them, and an older build refuses a version 3 draft rather than play past
+// its single game.
+const FormatVersion = 3
 
 // The Duel refuses, by name, a Start whose decision the rules do not leave to
 // the side on roll. The rule machine reads no DecisionType; the Duel does.
@@ -47,13 +49,15 @@ var ErrUnknownSide = errors.New("unknown kind of side")
 // document is what a Duel's draft holds, as JSON. The seed is not in it: the
 // store keeps it in a column of its own.
 type document struct {
-	FormatVersion int                 `json:"format_version"`
-	Header        transcript.Header   `json:"header"`
-	Start         *domain.Position    `json:"start,omitempty"`
-	Sides         [2]SideSpec         `json:"sides"`
-	DiscardAtEnd  bool                `json:"discard_at_end,omitempty"`
-	Fingerprint   string              `json:"fingerprint"`
-	Actions       []transcript.Action `json:"actions"`
+	FormatVersion int               `json:"format_version"`
+	Header        transcript.Header `json:"header"`
+	Start         *domain.Position  `json:"start,omitempty"`
+	// SingleGame: the Duel ends with its first game.
+	SingleGame   bool                `json:"single_game,omitempty"`
+	Sides        [2]SideSpec         `json:"sides"`
+	DiscardAtEnd bool                `json:"discard_at_end,omitempty"`
+	Fingerprint  string              `json:"fingerprint"`
+	Actions      []transcript.Action `json:"actions"`
 	// Rolls is the rank of the next roll drawn from the seed.
 	Rolls int `json:"rolls"`
 	// Dice is the roll on the board, waiting for DiceSide's play; zero when
@@ -146,11 +150,17 @@ func (g *game) apply(a transcript.Action) error {
 	return nil
 }
 
-// finished reports whether the match is won. A money session is only once
-// forfeited.
+// finished reports whether the Duel's play is over: the match won — a money
+// session only once forfeited — or, for a single game, that game ended.
 func (g *game) finished() bool {
-	over, _ := g.m.Finished()
-	return over
+	if over, _ := g.m.Finished(); over {
+		return true
+	}
+	if !g.doc.SingleGame {
+		return false
+	}
+	games := g.m.Games()
+	return len(games) > 0 && games[0].Finished
 }
 
 // forfeitedBy is the player (1 or 2) whose forfeit ended the match, 0 none.
