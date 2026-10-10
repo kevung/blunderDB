@@ -36,16 +36,16 @@ ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
   du receveur ; le rattrapage les récrit comme la décision du doubleur avant le
   double.
 
-0.39.0 (2026-10-09)
+0.39.0 (2026-10-10)
 -------------------
 
 - **La vidéo d'un match** : un fichier local ou un lien YouTube s'attache à un match, et le panneau Matchs ouvre la vidéo une seconde avant le jet de la décision étudiée (icône de la ligne ou touche *v*).
 - **La vidéo à côté du plateau** : la zone du plateau se partage entre la vidéo et le plateau, de part et d'autre d'une poignée dont la place est retenue ; ⇄ ou la poignée choisit le côté de la vidéo, *[* et *]* règlent sa vitesse, qu'un grand indicateur affiche au centre de la vidéo.
 - **La Transcription suit une vidéo** : le volet vidéo pose les repères de chaque action (instant du jet, instant de l'action), *ESPACE*, *MAJ* avec les flèches, *v* et *MAJ-V* pilotent la lecture et les repères, un clic sur une cellule amène la vidéo à son repère, et le Curseur suit la vidéo pendant la lecture.
 - **La durée de chaque coup** se lit dans une colonne de la transcription, déduite des repères ; un coup sans instant d'action a une durée estimée, affichée comme les autres.
-- **La barre de la Transcription** se lit en trois groupes : les brouillons, la saisie avec le menu *Vidéo* (fichier local, lien YouTube, détacher), puis *Terminer*, *Abandonner* et un menu ⋯ qui tient le texte et l'export ``.mat``.
+- **La barre de la Transcription** se lit en trois groupes : les brouillons, la saisie avec le menu *Vidéo* (fichier local, lien YouTube, retirer la vidéo), puis *Terminer*, *Abandonner* et un menu ⋯ qui tient le texte et l'export ``.mat``.
 - **Le mode théâtre** : *F11* passe la fenêtre en plein écran avec la vidéo, un mini-plateau flottant par-dessus, le clavier de saisie restant actif.
-- **La fiche d'un match se lit de haut en bas** : l'en-tête, la synthèse du bilan par joueur, les graphiques en pleine largeur, la transcription, puis des sections repliées dont l'état est retenu, à la place des onglets.
+- **La fiche d'un match en onglets** : l'en-tête et la synthèse du bilan par joueur restent en haut, et dessous les onglets *Transcription*, *Graphes*, *À revoir*, *Détails*, *Infos* et *Stats* défilent chacun seul ; l'onglet choisi est retenu, et les graphiques se partagent la hauteur de l'onglet *Graphes*.
 - **Le bilan du match** : les décisions à revoir, le résultat ajusté de la chance converti en MWC, le rythme des erreurs (précipitées ou réfléchies, à la médiane des durées du joueur) et le PR et la perte L₇ avec leurs intervalles ; ``blunderdb match --format summary`` et la route ``stats.matchReview`` le donnent aussi.
 - **La perte MWC rapportée à un match en 7 points** (L₇) se lit à côté du PR dans la liste des matchs, les statistiques du match, les tournois, le tableau de bord et la progression, ainsi que dans ``blunderdb stats``, ``stats progression`` et ``match``.
 - **La difficulté de chaque décision** et l'**erreur évitable** : la transcription et le graphique de perte les montrent, et l'en-tête du match donne par joueur la difficulté, l'excès, le ratio et le nombre d'erreurs évitables.
@@ -56,8 +56,18 @@ ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
 - **Les positions de référence** : le bouton *Proposer…* du panneau Collections propose les positions à étudier sur une portée (base, match en cours, tournoi, filtre des Statistiques), pour en faire une collection, un paquet Anki ou un quiz ; ``blunderdb collection suggest`` en est l'autre forme.
 - **Un match passe par la corbeille** : supprimé, il se restaure à l'identique, avec son numéro, sa date d'import, ses parties, ses analyses et ses positions ; ``blunderdb trash delete --kind match`` fait le même geste.
 - **Une page Métriques** donne la définition, la formule et les limites de chaque mesure : erreur, PR, perte MWC, difficulté, intervalles, bilans, plan d'étude, positions de référence, avant/après et biais.
+- **Un coup se saisit au plateau de la même façon partout** : dans le Duel, l'Entraînement, la réponse au damier d'Anki et la Transcription, un clic sur un pion le joue avec le dé de gauche encore libre, un clic sur les dés intervertit leur ordre puis valide le coup achevé, comme *ENTRÉE*, et le clic droit reprend le coup en cours ; la saisie source puis destination disparaît.
+- **Anki et l'Entraînement valident au plateau** : *ENTRÉE* ou un clic sur les dés juge le coup joué, à la place du bouton *Valider*.
+- **La Transcription demande les dés avant le coup** : sans dés saisis, le damier ne joue rien ; les deux dés saisis, le coup se joue au plateau comme dans les autres modes.
+- **Évaluer dans un nouvel onglet** : le clic droit sur le plateau ouvre une vue *Variante de #n* dans le panneau Eval, sur la position affichée, et la vue d'origine garde sa position, sa liste et son analyse ; chaque vue retrouve son propre plateau d'Eval.
+- **Le défi** : le bouton *Défi* de la barre d'outils (touche *m*) recouvre l'analyse du panneau Analyse jusqu'à un clic, à chaque changement de position ; en revue de match, il masque aussi les marques, les pertes et la difficulté de la liste des coups.
+- **Chaque compte de positions s'ouvre d'un clic** : les colonnes *Positions* et *Bourdes* des ventilations, les familles du plan d'étude (devenu une liste d'actions *Étudier*, *Quiz*, *Anki*), les compteurs d'un paquet Anki (dues, nouvelles, en cours, en révision), le compte d'un tournoi et les marques d'une partie chargent exactement les positions comptées.
+- **Les panneaux partagent une même bande d'en-tête** : titre, compteur et filtres à gauche, action primaire au bout droit (*Rechercher*, *Démarrer*, *Jouer*…) ; la Recherche range *Critères*, *Historique* et *Enregistrés* dans sa bande.
+- **Une collection vivante se crée avec sa requête** : ``blunderdb collection create --query`` et la route ``collections.create`` ; ``collection evaluate`` la lit entière jusqu'à 5 000 positions en donnant le total réel, et un paquet Anki tiré d'une collection vivante rejoue sa requête à chaque séance.
+- **Le formulaire Metadata de la Transcription** occupe le corps du brouillon, en deux colonnes quand la largeur le permet, la transcription restant visible ; le même bouton ou *ÉCHAP* rend la saisie.
+- **La recherche de l'aide** compte et surligne les occurrences à la frappe.
 - **Schéma 2.41.0** : la source vidéo du match et les repères de chaque coup ; chaque coup porte l'erreur de sa propre décision, et le PR des matchs déjà en base se recalcule selon les règles d'eXtreme Gammon. La migration depuis 2.36.0 est automatique à l'ouverture et sans retour possible (:ref:`annexe_db_migration`).
-- Corrections notables : gammonNet analyse une prise ou un refus comme la décision du doubleur avant le double, rollouts compris, et la migration efface les verdicts gammonNet périmés de ces positions ; le PR compte les coups forcés, les décisions de videau et les erreurs non notées comme eXtreme Gammon ; un fichier ``.xg`` tronqué est refusé avec le code ``invalid``.
+- Corrections notables : gammonNet analyse une prise ou un refus comme la décision du doubleur avant le double, rollouts compris, et la migration efface les verdicts gammonNet périmés de ces positions ; le PR compte les coups forcés, les décisions de videau et les erreurs non notées comme eXtreme Gammon ; un fichier ``.xg`` tronqué est refusé avec le code ``invalid`` ; le son coupé et le volume de la vidéo survivent à un changement de vitesse ; un glissé parti d'une boîte de dialogue et relâché sur le fond ne la ferme plus ; chaque onglet de la configuration garde sa position de défilement.
 - Voir :ref:`manuel`, :ref:`metriques`, :ref:`cli` et :ref:`headless`.
 
 0.38.0 (2026-10-06)
