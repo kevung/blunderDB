@@ -78,7 +78,7 @@ describe('MatchPanel — the detail pane appears only for a selected match', () 
 
         const cell = () => [...container.querySelectorAll('tbody tr td')].find((td) => td.textContent.includes('Alice'));
         expect(cell()).toBeTruthy();
-        await fireEvent.click(cell());
+        await fireEvent.click(must(cell()));
         await vi.waitFor(() => expect(container.querySelector('tbody tr.selected')).not.toBeNull());
 
         expect(detail(), 'the selection opens the pane').not.toBeNull();
@@ -87,7 +87,7 @@ describe('MatchPanel — the detail pane appears only for a selected match', () 
         expect(must(list).classList.contains('has-detail'), 'the list makes room for it').toBe(true);
 
         // Dropping the selection closes the pane and gives the width back.
-        await fireEvent.click(cell());
+        await fireEvent.click(must(cell()));
         await vi.waitFor(() => expect(container.querySelector('tbody tr.selected')).toBeNull());
         expect(detail()).toBeNull();
         expect(must(list).classList.contains('has-detail')).toBe(false);

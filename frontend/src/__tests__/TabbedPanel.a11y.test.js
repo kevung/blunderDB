@@ -85,7 +85,7 @@ describe('TabbedPanel — keyboard activation (Enter/Space)', () => {
         const { container } = mount();
         const tournamentsTab = container.querySelector('[data-testid="tab-tournaments"]');
 
-        await fireEvent.keyDown(tournamentsTab, { key: 'Enter' });
+        await fireEvent.keyDown(must(tournamentsTab), { key: 'Enter' });
         await tick();
 
         expect(get(activeTabStore)).toBe('tournaments');
@@ -96,7 +96,7 @@ describe('TabbedPanel — keyboard activation (Enter/Space)', () => {
         const { container } = mount();
         const collectionsTab = container.querySelector('[data-testid="tab-collections"]');
 
-        await fireEvent.keyDown(collectionsTab, { key: ' ' });
+        await fireEvent.keyDown(must(collectionsTab), { key: ' ' });
         await tick();
 
         expect(get(activeTabStore)).toBe('collections');
@@ -118,7 +118,7 @@ describe('TabbedPanel — roving tabindex + arrow navigation', () => {
         const tournamentsTab = container.querySelector('[data-testid="tab-tournaments"]');
 
         /** @type {HTMLElement} */ (must(matchesTab)).focus();
-        await fireEvent.keyDown(matchesTab, { key: 'ArrowRight' });
+        await fireEvent.keyDown(must(matchesTab), { key: 'ArrowRight' });
         await tick();
 
         expect(document.activeElement).toBe(tournamentsTab);
@@ -148,7 +148,7 @@ describe('TabbedPanel — roving tabindex + arrow navigation', () => {
         const matchesTab = container.querySelector('[data-testid="tab-matches"]');
 
         /** @type {HTMLElement} */ (must(tournamentsTab)).focus();
-        await fireEvent.keyDown(tournamentsTab, { key: 'Enter' });
+        await fireEvent.keyDown(must(tournamentsTab), { key: 'Enter' });
         await tick();
 
         expect(must(tournamentsTab).getAttribute('tabindex')).toBe('0');

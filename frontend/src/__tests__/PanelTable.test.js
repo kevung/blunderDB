@@ -78,13 +78,13 @@ describe('PanelTable', () => {
         const arrow = () => must(th).querySelector('.sort-arrow')?.textContent ?? null;
 
         expect(must(th).getAttribute('aria-sort')).toBe('none');
-        await fireEvent.click(btn);
+        await fireEvent.click(must(btn));
         expect(arrow()).toBe('▲');
         expect(must(th).getAttribute('aria-sort')).toBe('ascending');
-        await fireEvent.click(btn);
+        await fireEvent.click(must(btn));
         expect(arrow()).toBe('▼');
         expect(must(th).getAttribute('aria-sort')).toBe('descending');
-        await fireEvent.click(btn);
+        await fireEvent.click(must(btn));
         expect(arrow()).toBeNull();
         expect(must(th).getAttribute('aria-sort')).toBe('none');
     });
@@ -92,7 +92,7 @@ describe('PanelTable', () => {
     test("a column's defaultDir is honoured when it is first picked", async () => {
         const { container } = mount();
         const th = container.querySelectorAll('th')[1];
-        await fireEvent.click(th.querySelector('.sort-btn'));
+        await fireEvent.click(must(th.querySelector('.sort-btn')));
         expect(must(th.querySelector('.sort-arrow')).textContent).toBe('▼');
     });
 
@@ -196,7 +196,7 @@ describe('virtualization', () => {
         const { container } = mount({ rows: BIG });
         const scroll = container.querySelector('.scroll');
         must(scroll).scrollTop = 28 * 20000;
-        await fireEvent.scroll(scroll);
+        await fireEvent.scroll(must(scroll));
         const names = [...container.querySelectorAll('.name-cell')].map((e) => e.textContent);
         expect(names).toContain('P20001');
         expect(names).not.toContain('P1');
@@ -207,7 +207,7 @@ describe('virtualization', () => {
         const { container } = mount({ rows: BIG, onReorder });
         const scroll = container.querySelector('.scroll');
         must(scroll).scrollTop = 28 * 20000;
-        await fireEvent.scroll(scroll);
+        await fireEvent.scroll(must(scroll));
         const trs = [...container.querySelectorAll('tbody > tr')];
         // Lay the rendered rows out one under the other, spacers included.
         trs.forEach((tr, i) => {

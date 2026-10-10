@@ -182,7 +182,7 @@ describe('StatusBar — réactivité', () => {
         await tick();
 
         const input = container.querySelector('.command-input');
-        fireEvent.keyDown(input, { code: 'ArrowUp' });
+        fireEvent.keyDown(must(input), { code: 'ArrowUp' });
         await tick();
 
         expect(get(commandTextStore)).toBe('cmd_new');

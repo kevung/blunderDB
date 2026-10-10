@@ -72,7 +72,7 @@ async function openTranscript() {
     for (let i = 0; i < 6; i++) await tick();
     if (!container.querySelector('tbody tr.selected')) {
         const cell = [...container.querySelectorAll('tbody tr td')].find((td) => td.textContent.includes('Alice'));
-        await fireEvent.click(cell);
+        await fireEvent.click(must(cell));
     }
     await vi.waitFor(() => expect(container.querySelector('details.game-section')).not.toBeNull());
     for (let i = 0; i < 4; i++) await tick();

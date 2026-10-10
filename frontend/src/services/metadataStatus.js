@@ -23,14 +23,14 @@ import { takePoint4LastTable } from '../stores/takePoint4LastTable';
 // Indexed by (away score − offset); outside the table reads 'N/A'. The
 // post-Crawford sentinel is decoded first (pointsAway): a stored 0 is one
 // point away.
-function lookup(table, score, rowOffset, colOffset, decimals) {
+function lookup(/** @type {number[][]} */ table, /** @type {number[]} */ score, /** @type {number} */ rowOffset, /** @type {number} */ colOffset, /** @type {number} */ decimals) {
     const row = pointsAway(score[0]) - rowOffset;
     const col = pointsAway(score[1]) - colOffset;
     if (row < 0 || row >= table.length || col < 0 || col >= table[0].length) return 'N/A';
     return table[row][col].toFixed(decimals);
 }
 
-function formatDate(date) {
+function formatDate(/** @type {Date | string | number | null | undefined} */ date) {
     return formatDateTime(date);
 }
 

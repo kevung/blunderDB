@@ -7,10 +7,10 @@ const GetPanelWidth = vi.fn();
 const SavePanelWidth = vi.fn(() => Promise.resolve(undefined));
 
 vi.mock('../../wailsjs/go/main/Config.js', () => ({
-    GetPanelPosition: (...args) => GetPanelPosition(...args),
-    SavePanelPosition: (...args) => SavePanelPosition(...args),
-    GetPanelWidth: (...args) => GetPanelWidth(...args),
-    SavePanelWidth: (...args) => SavePanelWidth(...args)
+    GetPanelPosition: (/** @type {any[]} */ ...args) => GetPanelPosition(...args),
+    SavePanelPosition: (/** @type {any[]} */ ...args) => SavePanelPosition(...args),
+    GetPanelWidth: (/** @type {any[]} */ ...args) => GetPanelWidth(...args),
+    SavePanelWidth: (/** @type {any[]} */ ...args) => SavePanelWidth(...args)
 }));
 
 import { panelWidthStore, DEFAULT_PANEL_WIDTH, initPanelSize, savePanelWidth } from '../stores/panelLayoutStore.js';

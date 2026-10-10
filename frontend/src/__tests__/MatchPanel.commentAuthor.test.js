@@ -95,11 +95,11 @@ describe('MatchPanel — the author of the match comment', () => {
         await settle();
         await select(container, 'Alice');
         vi.mocked(GetMatchByID).mockResolvedValue({ id: 7, comment: 'Revised', comment_author: 'Ivy' });
-        await fireEvent.click(container.querySelector('.match-comment-display'));
+        await fireEvent.click(must(container.querySelector('.match-comment-display')));
         await tick();
         const input = container.querySelector('.match-comment-input');
-        await fireEvent.input(input, { target: { value: 'Revised' } });
-        await fireEvent.keyDown(input, { key: 'Enter' });
+        await fireEvent.input(must(input), { target: { value: 'Revised' } });
+        await fireEvent.keyDown(must(input), { key: 'Enter' });
         await vi.waitFor(() => expect(UpdateMatchComment).toHaveBeenCalledWith(7, 'Revised'));
         await vi.waitFor(() => expect(container.querySelector('.match-comment-author')?.textContent).toBe('Ivy'));
     });

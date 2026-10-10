@@ -30,7 +30,16 @@ function createDefaultMatchContext() {
     return { isMatchMode: false, matchID: null, movePositions: [], currentIndex: 0, player1Name: '', player2Name: '' };
 }
 
+/**
+ * @typedef {ReturnType<typeof baseView> & { pendingPositionId?: number | null, previousMode?: string }} ViewState
+ */
+
+/** @param {number} id */
 function createDefaultView(id) {
+    return /** @type {ViewState} */ (baseView(id));
+}
+
+function baseView(/** @type {number} */ id) {
     return {
         id,
         name: `#${id}`,
@@ -38,7 +47,7 @@ function createDefaultView(id) {
         positionId: /** @type {number | null} */ (null),
         origin: LIBRARY_ORIGIN,
         positionIndex: 0,
-        position: emptyPosition(),
+        position: /** @type {ReturnType<typeof emptyPosition> | null} */ (emptyPosition()),
         analysis: createDefaultAnalysis(),
         selectedMove: null,
         activeTab: 'matches',
@@ -51,7 +60,7 @@ function createDefaultView(id) {
 let nextViewId = 2;
 
 function createViewStore() {
-    const views = writable([createDefaultView(1)]);
+    const views = writable(/** @type {ViewState[]} */ ([createDefaultView(1)]));
     const activeViewId = writable(1);
     // Counts a paged list put back before its length was known and ranks a position in it
     // (positionService, which imports this store: handed in rather than imported). Resolves to
@@ -134,7 +143,7 @@ function createViewStore() {
         );
     }
 
-    function restoreViewState(view) {
+    function restoreViewState(/** @type {any} */ view) {
         // The position cache is shared by every view (keyed by id): only the list moves.
         positionsStore.restoreList(view.list);
         listOriginStore.set(view.origin || LIBRARY_ORIGIN);
@@ -181,7 +190,7 @@ function createViewStore() {
         const newView = {
             ...JSON.parse(JSON.stringify({ ...current, list: null })),
             // A paged list's source is functions, which JSON drops: the list is shared, not copied.
-            list: current.list,
+            list: current?.list,
             id,
             name: `#${id}`
         };
@@ -204,7 +213,7 @@ function createViewStore() {
         }
     }
 
-    function renameView(/** @type {number} */ viewId, newName) {
+    function renameView(/** @type {number} */ viewId, /** @type {string} */ newName) {
         views.update((vs) => vs.map((v) => (v.id === viewId ? { ...v, name: newName } : v)));
     }
 
@@ -240,7 +249,7 @@ function createViewStore() {
     // Restore views: each list is rebuilt by replaying its origin (resolveListFn(origin) → a
     // positionList snapshot), and the current position is found again by id, the saved index
     // being the fallback.
-    async function deserialize(json, resolveListFn) {
+    async function deserialize(/** @type {string} */ json, /** @type {(origin: any) => Promise<any>} */ resolveListFn) {
         try {
             const data = JSON.parse(json);
             if (!data || !data.views || data.views.length === 0) return false;
@@ -248,7 +257,7 @@ function createViewStore() {
             nextViewId = data.nextViewId || data.views.length + 1;
 
             // Side by side: each replay reads at most a first window, as a search does.
-            const lists = await Promise.all(data.views.map(async (sv) => (await resolveListFn(sv.origin || LIBRARY_ORIGIN)) || { ids: [] }));
+            const lists = await Promise.all(data.views.map(async (/** @type {any} */ sv) => (await resolveListFn(sv.origin || LIBRARY_ORIGIN)) || { ids: [] }));
             const restoredViews = [];
             for (const [i, sv] of data.views.entries()) {
                 const origin = sv.origin || LIBRARY_ORIGIN;

@@ -74,7 +74,7 @@ describe('VideoPane', () => {
         });
         expect(must(video).getAttribute('src')).toBe('http://127.0.0.1:1/m/tok');
         expect(component.currentTimeMs()).toBeNull();
-        await fireEvent(video, new Event('loadedmetadata'));
+        await fireEvent(must(video), new Event('loadedmetadata'));
         component.seek(12500);
         expect(must(video).currentTime).toBe(12.5);
         expect(component.currentTimeMs()).toBe(12500);
@@ -98,7 +98,7 @@ describe('VideoPane', () => {
         const onrelocate = vi.fn();
         const { container } = render(VideoPane, { props: { source: '/gone.mp4', onrelocate } });
         const note = await vi.waitFor(() => container.querySelector('[data-testid="video-missing"]') ?? expect.fail('not missing'));
-        await fireEvent.click(note.querySelector('button'));
+        await fireEvent.click(must(note.querySelector('button')));
         await vi.waitFor(() => expect(onrelocate).toHaveBeenCalledWith('/new/place.mp4'));
     });
 

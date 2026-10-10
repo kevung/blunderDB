@@ -99,7 +99,7 @@ describe('LessonBar', () => {
         expect(/** @type {HTMLInputElement} */ (must(box)).checked).toBe(false);
         // Moving between steps writes nothing.
         expect(service.toggleStepDone).not.toHaveBeenCalled();
-        await fireEvent.click(box);
+        await fireEvent.click(must(box));
         expect(service.toggleStepDone).toHaveBeenCalledWith(11);
     });
 });

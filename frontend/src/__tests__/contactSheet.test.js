@@ -18,6 +18,7 @@ import ContactSheetModal from '../components/ContactSheetModal.svelte';
 import { positionsStore } from '../stores/positionStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { currentPositionIndexStore, statusBarModeStore, activeModal, MODAL } from '../stores/uiStore.js';
+import { must } from './helpers/must.js';
 
 function position(id) {
     const points = Array.from({ length: 26 }, () => ({ checkers: 0, color: -1 }));
@@ -133,16 +134,16 @@ describe('la planche montée', () => {
             const { container } = render(ContactSheetModal, { visible: true, onClose });
             const focusOpts = { timeout: DRAW_TIMEOUT };
             await waitFor(() => expect(document.activeElement?.getAttribute('data-index')).toBe('2'), focusOpts);
-            await fireEvent.keyDown(document.activeElement, { key: 'ArrowRight' });
+            await fireEvent.keyDown(must(document.activeElement), { key: 'ArrowRight' });
             await waitFor(() => expect(document.activeElement?.getAttribute('data-index')).toBe('3'), focusOpts);
             // Une seule vignette dans l'ordre de tabulation : celle qui a le focus.
             expect(container.querySelectorAll('.tile[tabindex="0"]').length).toBe(1);
 
-            await fireEvent.keyDown(document.activeElement, { key: 'PageDown' });
+            await fireEvent.keyDown(must(document.activeElement), { key: 'PageDown' });
             await waitFor(() => expect(document.activeElement?.getAttribute('data-index')).toBe(String(PAGE_SIZE + 3)), focusOpts);
             expect(container.querySelectorAll('.tile').length).toBe(30 - PAGE_SIZE);
 
-            await fireEvent.click(document.activeElement);
+            await fireEvent.click(must(document.activeElement));
             expect(get(currentPositionIndexStore)).toBe(PAGE_SIZE + 3);
             expect(onClose).toHaveBeenCalled();
         },

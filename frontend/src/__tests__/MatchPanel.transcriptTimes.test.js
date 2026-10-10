@@ -72,7 +72,7 @@ async function openTranscript() {
     for (let i = 0; i < 6; i++) await tick();
     if (!container.querySelector('tbody tr.selected')) {
         const cell = [...container.querySelectorAll('tbody tr td')].find((td) => td.textContent.includes('Alice'));
-        await fireEvent.click(cell);
+        await fireEvent.click(must(cell));
     }
     await vi.waitFor(() => expect(container.querySelector('details.game-section')).not.toBeNull());
     for (let i = 0; i < 4; i++) await tick();
@@ -106,12 +106,12 @@ describe('MatchPanel — the Transcript carries the time of every decision', () 
     test('the Play header orders the rows by time, the unknown ones last, the clock keeps the match order', async () => {
         const container = await openTranscript();
         const header = container.querySelector('button.time-sort');
-        await fireEvent.click(header);
+        await fireEvent.click(must(header));
         expect(col(container, 'cube')).toEqual(['12.0 s', '1.0 s', '—']);
         expect(col(container, 'clock')).toEqual(['0:18', '0:06', '0:00']);
-        await fireEvent.click(header);
+        await fireEvent.click(must(header));
         expect(col(container, 'cube')).toEqual(['1.0 s', '12.0 s', '—']);
-        await fireEvent.click(header);
+        await fireEvent.click(must(header));
         expect(col(container, 'cube')).toEqual(['1.0 s', '—', '12.0 s']);
     });
 

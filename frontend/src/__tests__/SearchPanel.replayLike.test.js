@@ -110,7 +110,7 @@ async function replayHistory(command, board) {
     const { container } = await mountOn('history');
     const row = container.querySelector('.history-table tbody tr');
     expect(row).not.toBeNull();
-    await fireEvent.dblClick(row);
+    await fireEvent.dblClick(must(row));
     await tick();
     if (pending) await pending;
 }
@@ -124,7 +124,7 @@ async function replaySaved(command, board) {
     const { container } = await mountOn('saved');
     const item = container.querySelector('.saved-item');
     expect(item).not.toBeNull();
-    await fireEvent.dblClick(item);
+    await fireEvent.dblClick(must(item));
     // executeSavedFilter attend LoadEditPosition et LoadExcludePosition.
     for (let i = 0; i < 5 && !pending; i++) await tick();
     if (pending) await pending;
