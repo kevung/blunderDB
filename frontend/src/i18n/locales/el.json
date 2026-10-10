@@ -798,7 +798,11 @@
         "confirmDelete": "Διαγραφή του τουρνουά «{name}»;",
         "newButton": "Νέο τουρνουά",
         "matchCountOne": "1 αγώνας",
-        "matchCountMany": "{n} αγώνες"
+        "matchCountMany": "{n} αγώνες",
+        "countOfTotal": "{shown} / {total}",
+        "filterPlaceholder": "Φίλτρο: όνομα, τοποθεσία, ημερομηνία…",
+        "filterAria": "Φιλτράρισμα τουρνουά",
+        "noTournamentsFiltered": "Κανένα τουρνουά δεν ταιριάζει με το φίλτρο."
     },
     "anki": {
         "limitSession": "Περιορισμός της συνεδρίας",

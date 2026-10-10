@@ -16,6 +16,20 @@ import { tick } from 'svelte';
 import { get } from 'svelte/store';
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
+    GetMatchByID: vi.fn().mockResolvedValue(null),
+    GetGamesByMatch: vi.fn().mockResolvedValue([]),
+    GetMatchDetailStats: vi.fn().mockResolvedValue(null),
+    GetMatchMoveGrades: vi.fn().mockResolvedValue([]),
+    GetMatchTimeSummary: vi.fn().mockResolvedValue(null),
+    GetMatchOrigin: vi.fn().mockResolvedValue(null),
+    GetMatchDecisionLosses: vi.fn().mockResolvedValue([]),
+    GetMatchReview: vi.fn().mockResolvedValue(null),
+    TrashMatch: vi.fn().mockResolvedValue(undefined),
+    UpdateMatch: vi.fn().mockResolvedValue(undefined),
+    SetMatchTournamentByName: vi.fn().mockResolvedValue(undefined),
+    ListTranscriptions: vi.fn().mockResolvedValue([]),
+    LoadCommandHistory: vi.fn().mockResolvedValue([]),
+    SaveCommand: vi.fn().mockResolvedValue(undefined),
     GetAllTournaments: vi.fn().mockResolvedValue([]),
     GetTournamentMatches: vi.fn().mockResolvedValue([]),
     GetPositionIDsByTournament: vi.fn().mockResolvedValue([]),

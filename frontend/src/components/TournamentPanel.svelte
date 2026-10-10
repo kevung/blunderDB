@@ -11,6 +11,7 @@
     import { createReorder } from '../utils/reorder.js';
     import EntityAutocomplete from './EntityAutocomplete.svelte';
     import TournamentReview from './TournamentReview.svelte';
+    import MatchPanel from './MatchPanel.svelte';
     import PanelTable, { navigationDelta, stepSelection } from './panels/PanelTable.svelte';
     import PanelHeader from './panels/PanelHeader.svelte';
     import CountLink from './panels/CountLink.svelte';
@@ -99,7 +100,17 @@
     let sort = $state(/** @type {{ column: string | null, direction: string }} */ ({ column: null, direction: 'asc' }));
     let highlightedId = $state(/** @type {number | null} */ (null)); // a single click only highlights; opening is the double-click
     let listTable = $state(/** @type {{ scrollToRow: (row: Tournament) => Promise<void>, focusRow: (row: Tournament) => Promise<void> } | null} */ (null)); // PanelTable of the tournament list, mounted while none is selected
-    const sortedTournaments = $derived(sortTournaments(tournaments, sort));
+    // The list narrows as the user types: name, location or date, every word must match.
+    let filterText = $state('');
+    const filteredTournaments = $derived.by(() => {
+        const words = filterText.toLowerCase().split(/\s+/).filter(Boolean);
+        if (words.length === 0) return tournaments;
+        return tournaments.filter((tr) => {
+            const haystack = `${tr.name ?? ''} ${tr.location ?? ''} ${tr.date ?? ''}`.toLowerCase();
+            return words.every((w) => haystack.includes(w));
+        });
+    });
+    const sortedTournaments = $derived(sortTournaments(filteredTournaments, sort));
 
     const tournamentColumns = $derived([
         { key: 'name', label: $t('tournament.name'), sortable: true },
@@ -209,6 +220,14 @@
 
     // True once the list has been fetched since the panel was shown: an open request is judged against it, not a stale list.
     let listLoaded = $state(false);
+
+    $effect(() => {
+        void selectedTournament?.id;
+        untrack(() => (sheetMatchId = null));
+    });
+
+    // The match whose sheet (the Matches panel's own) sits under the table: one click on its row.
+    let sheetMatchId = $state(/** @type {number | null} */ (null));
 
     async function loadTournaments() {
         try {
@@ -659,7 +678,28 @@
         {#if !selectedTournament}
             <!-- Tournaments list -->
             <div class="tournament-list-pane">
-                <PanelHeader title={$t('tournament.title')} count={tournaments.length > 0 ? String(tournaments.length) : null}>
+                <PanelHeader
+                    title={$t('tournament.title')}
+                    count={tournaments.length === 0
+                        ? null
+                        : filterText.trim()
+                          ? $t('tournament.countOfTotal', { shown: filteredTournaments.length, total: tournaments.length })
+                          : String(tournaments.length)}
+                >
+                    <input
+                        class="tournament-filter"
+                        type="search"
+                        data-testid="tournament-filter"
+                        bind:value={filterText}
+                        onkeydown={(e) => {
+                            if (e.key === 'Escape' && filterText) {
+                                e.stopPropagation();
+                                filterText = '';
+                            }
+                        }}
+                        placeholder={$t('tournament.filterPlaceholder')}
+                        aria-label={$t('tournament.filterAria')}
+                    />
                     {#snippet actions()}
                         <NewButton label={$t('tournament.newButton')} onclick={() => (creating = true)} />
                     {/snippet}
@@ -676,7 +716,7 @@
                     onActivate={(tournament) => {
                         if (!tournamentEdit.isEditing(tournament.id)) selectTournament(tournament);
                     }}
-                    emptyText={$t('tournament.noTournaments')}
+                    emptyText={filterText.trim() ? $t('tournament.noTournamentsFiltered') : $t('tournament.noTournaments')}
                     emptyActions
                 >
                     {#snippet cells(tournament)}
@@ -885,7 +925,15 @@
                 {#if reviewOpen}
                     <TournamentReview tournamentId={selectedTournament.id} players={tournamentPlayers} />
                 {/if}
-                <PanelTable rows={tournamentMatches} columns={matchColumns} onActivate={openMatch} onReorder={matchOrder.reorder} emptyText={$t('tournament.noMatches')}>
+                <PanelTable
+                    rows={tournamentMatches}
+                    columns={matchColumns}
+                    selectedKey={sheetMatchId}
+                    onSelect={(match) => (sheetMatchId = match.id)}
+                    onActivate={openMatch}
+                    onReorder={matchOrder.reorder}
+                    emptyText={$t('tournament.noMatches')}
+                >
                     {#snippet cells(match, index)}
                         <td class="index-cell narrow-col no-select">{index + 1}</td>
                         <td class="no-select">{match.player1_name}</td>
@@ -952,6 +1000,11 @@
                         </td>
                     {/snippet}
                 </PanelTable>
+                {#if sheetMatchId != null && tournamentMatches.some((m) => m.id === sheetMatchId)}
+                    <div class="match-sheet" data-testid="tournament-match-sheet">
+                        <MatchPanel embeddedMatchId={sheetMatchId} />
+                    </div>
+                {/if}
                 <div class="add-area">
                     <div class="add-match-wrap">
                         <EntityAutocomplete
@@ -1031,6 +1084,24 @@
         height: 100%;
         display: flex;
         overflow: hidden;
+    }
+
+    .tournament-filter {
+        flex: 0 1 280px;
+        min-width: 0;
+        padding: 2px 6px;
+        font-size: var(--font-size-small);
+        background: var(--color-surface);
+        color: var(--color-text);
+        border: 1px solid var(--color-border);
+        border-radius: 3px;
+    }
+
+    .match-sheet {
+        flex: 1 1 55%;
+        min-height: 0;
+        overflow: hidden;
+        border-top: 1px solid var(--color-border);
     }
 
     .open-hint.concealed {

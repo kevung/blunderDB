@@ -798,7 +798,11 @@
         "confirmDelete": "Poistetaanko turnaus \"{name}\"?",
         "newButton": "Uusi turnaus",
         "matchCountOne": "1 ottelu",
-        "matchCountMany": "{n} ottelua"
+        "matchCountMany": "{n} ottelua",
+        "countOfTotal": "{shown} / {total}",
+        "filterPlaceholder": "Suodata: nimi, paikka, päivä…",
+        "filterAria": "Suodata turnauksia",
+        "noTournamentsFiltered": "Mikään turnaus ei vastaa suodatinta."
     },
     "anki": {
         "limitSession": "Rajoita istuntoa",

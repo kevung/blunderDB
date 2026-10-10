@@ -798,7 +798,11 @@
         "confirmDelete": "Delete tournament \"{name}\"?",
         "newButton": "New tournament",
         "matchCountOne": "1 match",
-        "matchCountMany": "{n} matches"
+        "matchCountMany": "{n} matches",
+        "countOfTotal": "{shown} / {total}",
+        "filterPlaceholder": "Filter: name, location, date…",
+        "filterAria": "Filter tournaments",
+        "noTournamentsFiltered": "No tournament matches the filter."
     },
     "anki": {
         "limitSession": "Limit the session",
