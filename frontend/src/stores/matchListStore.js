@@ -52,6 +52,8 @@ export function createMatchList({ list = ListMatches, count = CountMatches, getB
         rows: /** @type {any[]} */ ([]),
         total: 0,
         text: '',
+        // The matches another view opened (a Stats corpus row): null lists them all.
+        ids: /** @type {number[] | null} */ (null),
         column: /** @type {string | null} */ (null),
         direction: 'asc',
         loading: false,
@@ -61,7 +63,7 @@ export function createMatchList({ list = ListMatches, count = CountMatches, getB
     let generation = 0;
 
     function opts(/** @type {any} */ state, /** @type {number} */ offset, /** @type {number} */ limit) {
-        return { Text: state.text, Sort: sqlSortKey(state.column, state.direction) ?? '', Limit: limit, Offset: offset };
+        return { Text: state.text, ...(state.ids ? { IDs: state.ids } : {}), Sort: sqlSortKey(state.column, state.direction) ?? '', Limit: limit, Offset: offset };
     }
 
     /** Load the first page again, under the current filter and order. */
@@ -105,6 +107,12 @@ export function createMatchList({ list = ListMatches, count = CountMatches, getB
         return reload();
     }
 
+    /** Keep only these matches (null: all of them). */
+    function setIDs(/** @type {number[] | null} */ ids) {
+        update((s) => ({ ...s, ids: ids ? [...ids] : null }));
+        return reload();
+    }
+
     function setSort(/** @type {string|null} */ column, /** @type {string} */ direction) {
         const s = get(store);
         if (s.column === column && s.direction === direction) return Promise.resolve();
@@ -128,7 +136,7 @@ export function createMatchList({ list = ListMatches, count = CountMatches, getB
         update((s) => ({ ...s, rows: s.rows.map((r) => (r.id === id ? { ...r, ...patch } : r)) }));
     }
 
-    return { subscribe, reload, loadMore, setText, setSort, refreshRow, patchRow };
+    return { subscribe, reload, loadMore, setText, setIDs, setSort, refreshRow, patchRow };
 }
 
 export const matchListStore = createMatchList();

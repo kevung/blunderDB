@@ -75,6 +75,7 @@ type matchListReq struct {
 	Text               string  `json:"text"`
 	Unassigned         bool    `json:"unassigned"`
 	TournamentIDs      []int64 `json:"tournamentIds"`
+	IDs                []int64 `json:"ids"`
 	DateFrom           string  `json:"dateFrom"`
 	DateTo             string  `json:"dateTo"`
 	MatchLength        []int   `json:"matchLength"`
@@ -98,6 +99,7 @@ func (r matchListReq) opts() storage.MatchListOpts {
 		Text:               r.Text,
 		Unassigned:         r.Unassigned,
 		TournamentIDs:      r.TournamentIDs,
+		IDs:                r.IDs,
 		DateFrom:           r.DateFrom,
 		DateTo:             r.DateTo,
 		MatchLength:        r.MatchLength,

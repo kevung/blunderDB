@@ -288,6 +288,19 @@ func buildMatchListWhere(opts storage.MatchListOpts, next int) (whereSQL string,
 		}
 		clauses = append(clauses, "m.tournament_id IN ("+strings.Join(ph, ",")+")")
 	}
+	if opts.IDs != nil {
+		if len(opts.IDs) == 0 {
+			clauses = append(clauses, "1 = 0")
+		} else {
+			ph := make([]string, len(opts.IDs))
+			for i, id := range opts.IDs {
+				ph[i] = fmt.Sprintf("$%d", next)
+				args = append(args, id)
+				next++
+			}
+			clauses = append(clauses, "m.id IN ("+strings.Join(ph, ",")+")")
+		}
+	}
 	// Compare on the date part so an inclusive DateTo (e.g. a whole-year filter
 	// "…-12-31") still matches a match timestamped later that same day.
 	if opts.DateFrom != "" {

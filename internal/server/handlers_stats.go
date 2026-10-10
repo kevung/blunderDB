@@ -19,6 +19,10 @@ type statsHeadToHeadReq struct {
 	Filter  storage.StatsFilter `json:"filter"`
 }
 
+type matchIDsResp struct {
+	MatchIDs []int64 `json:"match_ids"`
+}
+
 type statsWindowReq struct {
 	Filter storage.StatsFilter `json:"filter"`
 	Months int                 `json:"months"`
@@ -178,6 +182,11 @@ func (s *Server) statsRoutes() []route {
 		// Le PR sur une fenêtre calendaire glissante de Months mois.
 		{http.MethodPost, "/v1/stats.prByWindow", rpc(func(ctx context.Context, scope string, req statsWindowReq) ([]storage.WindowStats, error) {
 			return ss().PRByWindow(ctx, scope, req.Filter, req.Months)
+		})},
+		// Les matchs qu'un chiffre du corpus compte : ce qu'ouvre une ligne.
+		{http.MethodPost, "/v1/stats.matchIds", rpc(func(ctx context.Context, scope string, req statsComputeReq) (matchIDsResp, error) {
+			ids, err := ss().MatchIDs(ctx, scope, req.Filter)
+			return matchIDsResp{MatchIDs: ids}, err
 		})},
 		// Le classement par PR des joueurs d'au moins MinDecisions décisions comptées.
 		{http.MethodPost, "/v1/stats.ranking", rpc(func(ctx context.Context, scope string, req statsRankingReq) ([]storage.RankedPlayer, error) {

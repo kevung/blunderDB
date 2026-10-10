@@ -133,6 +133,8 @@ func testMatchListFilterSortPaginate(t *testing.T, s storage.Storage) {
 	eq("length 3 or 7", ids(storage.MatchListOpts{MatchLength: []int{3, 7}, Sort: "date_asc"}), []int64{oldID, midID})
 	// Tournament.
 	eq("tournament", ids(storage.MatchListOpts{TournamentIDs: []int64{tID}}), []int64{midID})
+	eq("ids", ids(storage.MatchListOpts{IDs: []int64{oldID, recentID}}), []int64{recentID, oldID})
+	eq("ids empty", ids(storage.MatchListOpts{IDs: []int64{}}), nil)
 	// Pagination over the default order.
 	eq("limit 2", ids(storage.MatchListOpts{Limit: 2}), []int64{recentID, midID})
 	eq("limit 2 offset 1", ids(storage.MatchListOpts{Limit: 2, Offset: 1}), []int64{midID, oldID})
@@ -163,6 +165,7 @@ func testMatchListFilterSortPaginate(t *testing.T, s storage.Storage) {
 		{storage.MatchListOpts{Limit: 1, Offset: 1}, 3},
 		{storage.MatchListOpts{Text: "ali"}, 2},
 		{storage.MatchListOpts{Unassigned: true, Text: "bob"}, 1},
+		{storage.MatchListOpts{IDs: []int64{midID}}, 1},
 	} {
 		got, err := ms.Count(ctx, "", c.opts)
 		if err != nil || got != c.want {

@@ -119,6 +119,23 @@ export function openTournamentInPanel(tournamentID) {
 }
 
 /**
+ * Show exactly these matches in the Match panel's list (a Stats corpus row). The
+ * panel offers to clear the restriction.
+ *
+ * @param {number[]} ids
+ */
+export async function openMatchListInPanel(ids) {
+    if (!ids || ids.length === 0) {
+        statusBarTextStore.set(tMsg('commands.noMatchesFound'));
+        return;
+    }
+    activeTabStore.set('matches');
+    // Imported here: the match list binds ListMatches at load, which a Stats drill-down never needs.
+    const { matchListStore } = await import('../stores/matchListStore.js');
+    await matchListStore.setIDs(ids);
+}
+
+/**
  * Navigate the UI to the Match panel and show the given match.
  *
  * @param {number} matchID

@@ -409,7 +409,8 @@
         "searchWouldReplaceCollection": "s durchsucht die ganze Bibliothek und würde die angezeigte Sammlung ersetzen: Mit ss suchen Sie innerhalb der Sammlung.",
         "searchWouldReplaceMatch": "s durchsucht die ganze Bibliothek und würde das angezeigte Match ersetzen: Mit ss suchen Sie innerhalb des Matches.",
         "tagsAdded": "Tags hinzugefügt: {tags}",
-        "unknown": "Unbekannter Befehl: {command}"
+        "unknown": "Unbekannter Befehl: {command}",
+        "noMatchesFound": "Keine Matches gefunden"
     },
     "search": {
         "actions": "Aktionen",
@@ -690,7 +691,9 @@
         "moreActions": "Weitere Aktionen",
         "deleteMatch": "Match löschen",
         "finalScore": "Endstand",
-        "matchWonBy": "{player} hat das Match gewonnen"
+        "matchWonBy": "{player} hat das Match gewonnen",
+        "idsFilter": "{n} Matches aus der Statistik geöffnet",
+        "idsFilterClear": "Alle Matches anzeigen"
     },
     "collection": {
         "addDescription": "Beschreibung hinzufügen…",
@@ -1957,7 +1960,9 @@
             "player": "Spieler",
             "record": "Bilanz",
             "prChecker": "PR Züge",
-            "prCube": "PR Doppler"
+            "prCube": "PR Doppler",
+            "openMatches": "Diese Matches öffnen",
+            "openPositions": "Diese Positionen öffnen"
         },
         "interval95": "95-%-KI",
         "intervalHint": "95-%-Konfidenzintervall: zieht die Matches einer Auswahl bzw. die Spiele eines Matches neu. Eine Zeile ohne Intervall (weniger als drei Matches oder Spiele, oder alle mit demselben PR) ist ausgegraut.",

@@ -44,9 +44,12 @@ type MatchListOpts struct {
 	// Unassigned keeps only matches that belong to no tournament.
 	Unassigned    bool
 	TournamentIDs []int64
-	DateFrom      string // ISO "YYYY-MM-DD", inclusive
-	DateTo        string // ISO "YYYY-MM-DD", inclusive
-	MatchLength   []int
+	// IDs, when non-nil, keeps only these matches: a list another view
+	// computed (a corpus row, a face-à-face). Empty and non-nil keeps none.
+	IDs         []int64
+	DateFrom    string // ISO "YYYY-MM-DD", inclusive
+	DateTo      string // ISO "YYYY-MM-DD", inclusive
+	MatchLength []int
 	// Sort is a key understood by domain.MatchOrderByClause ("" = most recent
 	// first). PR/MWC are not match columns (they are computed badges), so they
 	// are not sortable here.

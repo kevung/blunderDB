@@ -743,6 +743,10 @@ export function StartMatchManually(arg1:number,arg2:string,arg3:string,arg4:numb
 
 export function StartTranscriptionFromSlot(arg1:number,arg2:string):Promise<database.TranscriptionState>;
 
+export function StatsMatchIDs(arg1:database.StatsFilter):Promise<Array<number>>;
+
+export function StatsMatchIDsCtx(arg1:context.Context,arg2:database.StatsFilter):Promise<Array<number>>;
+
 export function StatsReportHTML(arg1:database.StatsFilter,arg2:string,arg3:Record<number, string>):Promise<string>;
 
 export function StatsReportHTMLCtx(arg1:context.Context,arg2:database.StatsFilter,arg3:string,arg4:Record<number, string>):Promise<string>;

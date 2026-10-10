@@ -1462,6 +1462,16 @@ filtre de provenance, qui porte sur chaque décision.
    ./blunderdb stats ranking --db base.db --min-decisions 1000 --limit 20
    ./blunderdb list --type stats --db base.db --player "Alice" --min-depth 3
 
+**stats matches** — Les matchs qu'un chiffre du corpus compte : ceux où le
+joueur (tout joueur sans ``--player``) a une décision comptée sous le filtre,
+du plus ancien au plus récent. Leurs identifiants se passent à
+``list --type matches --ids``.
+
+.. code-block:: bash
+
+   ./blunderdb stats matches --db base.db --player "Alice" --from 2025-01-01 --to 2025-03-31
+   ./blunderdb list --type matches --db base.db --ids 12,15,31
+
 **stats progression** — Le PR de chaque match par ordre de date, le PR de
 chaque tournoi et le PR glissant sur les N dernières décisions : l'onglet
 *Progression* du panneau Stats (voir :ref:`stats`).

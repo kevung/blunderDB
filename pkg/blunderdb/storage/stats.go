@@ -725,6 +725,12 @@ type StatsStore interface {
 	// provenance filter is refused with ErrInvalid.
 	PRByWindow(ctx context.Context, scope string, filter StatsFilter, months int) ([]WindowStats, error)
 
+	// MatchIDs lists the matches a corpus figure counts: those where a seat
+	// of the filter's players (every player when none) holds a counted
+	// decision, oldest first. Read as PRByWindow reads; a provenance filter
+	// is refused with ErrInvalid.
+	MatchIDs(ctx context.Context, scope string, filter StatsFilter) ([]int64, error)
+
 	// RefreshMatchStats recomputes the rows of matchIDs now — what an import
 	// does for the match it has just written, inside its transaction.
 	RefreshMatchStats(ctx context.Context, scope string, matchIDs []int64) error

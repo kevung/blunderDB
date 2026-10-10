@@ -1450,6 +1450,14 @@ export function StartTranscriptionFromSlot(arg1, arg2) {
   return window['go']['database']['Database']['StartTranscriptionFromSlot'](arg1, arg2);
 }
 
+export function StatsMatchIDs(arg1) {
+  return window['go']['database']['Database']['StatsMatchIDs'](arg1);
+}
+
+export function StatsMatchIDsCtx(arg1, arg2) {
+  return window['go']['database']['Database']['StatsMatchIDsCtx'](arg1, arg2);
+}
+
 export function StatsReportHTML(arg1, arg2, arg3) {
   return window['go']['database']['Database']['StatsReportHTML'](arg1, arg2, arg3);
 }

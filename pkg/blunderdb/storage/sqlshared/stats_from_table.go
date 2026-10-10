@@ -340,6 +340,38 @@ func (s *StatsStore) headToHead(ctx context.Context, scope, playerA, playerB str
 	return out, nil
 }
 
+// MatchIDs — see storage.StatsStore.
+func (s *StatsStore) MatchIDs(ctx context.Context, scope string, filter storage.StatsFilter) ([]int64, error) {
+	if !fromMatchStats(filter) {
+		return nil, fmt.Errorf("match ids with a provenance filter: %w", storage.ErrInvalid)
+	}
+	filter, err := s.withPlayerAliases(ctx, scope, filter)
+	if err != nil {
+		return nil, err
+	}
+	from, fromArgs, err := s.matchStatsSource(ctx, scope)
+	if err != nil {
+		return nil, err
+	}
+	d := s.DB
+	where, args := s.matchStatsWhere(scope, filter, true)
+	ids := []int64{}
+	err = scanEach(ctx, d,
+		`SELECT m.id`+from+where+` AND ms.decisions > 0 GROUP BY m.id, m.match_date ORDER BY m.match_date, m.id`,
+		append(fromArgs, args...), func(r Rows) error {
+			var id int64
+			if err := r.Scan(&id); err != nil {
+				return err
+			}
+			ids = append(ids, id)
+			return nil
+		})
+	if err != nil {
+		return nil, errf(d, "match ids", err)
+	}
+	return ids, nil
+}
+
 // PRByWindow — see storage.StatsStore.
 func (s *StatsStore) PRByWindow(ctx context.Context, scope string, filter storage.StatsFilter, months int) ([]storage.WindowStats, error) {
 	return inReadSnapshot(ctx, s, func(s *StatsStore) ([]storage.WindowStats, error) {

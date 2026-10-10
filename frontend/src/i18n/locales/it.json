@@ -409,7 +409,8 @@
         "searchWouldReplaceCollection": "s cerca in tutta la libreria e sostituirebbe la collezione visualizzata: usa ss per cercare nella collezione.",
         "searchWouldReplaceMatch": "s cerca in tutta la libreria e sostituirebbe il match visualizzato: usa ss per cercare nel match.",
         "tagsAdded": "Tag aggiunti: {tags}",
-        "unknown": "Comando sconosciuto: {command}"
+        "unknown": "Comando sconosciuto: {command}",
+        "noMatchesFound": "Nessuna partita trovata"
     },
     "search": {
         "actions": "Azioni",
@@ -690,7 +691,9 @@
         "moreActions": "Altre azioni",
         "deleteMatch": "Elimina il match",
         "finalScore": "Punteggio finale",
-        "matchWonBy": "{player} ha vinto il match"
+        "matchWonBy": "{player} ha vinto il match",
+        "idsFilter": "{n} partite aperte dalle Statistiche",
+        "idsFilterClear": "Mostra tutte le partite"
     },
     "collection": {
         "addDescription": "Aggiungi una descrizione…",
@@ -1957,7 +1960,9 @@
             "player": "Giocatore",
             "record": "Bilancio",
             "prChecker": "PR pedine",
-            "prCube": "PR cubo"
+            "prCube": "PR cubo",
+            "openMatches": "Apri queste partite",
+            "openPositions": "Apri queste posizioni"
         },
         "interval95": "IC 95 %",
         "intervalHint": "Intervallo di confidenza al 95 %: ricampiona i match di una selezione, le partite di un match. Una riga senza intervallo (meno di tre match o partite, o tutti con lo stesso PR) è in grigio.",

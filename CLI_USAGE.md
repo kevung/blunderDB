@@ -3652,6 +3652,8 @@ Options:
     	Output format: text, json or csv (stats, players and imports only) (default "text")
   -from string
     	Start date filter YYYY-MM-DD (stats only)
+  -ids stats matches
+    	With --type matches: keep only these match IDs, comma-separated (as stats matches prints them)
   -limit int
     	Maximum number of items to list (default 10)
   -metric string
@@ -4306,6 +4308,40 @@ Options:
 Examples:
   blunderdb stats h2h --db database.db --player "Alice" --opponent "Bob"
   blunderdb stats h2h --db database.db --player "Alice" --opponent "Bob" --format json
+```
+
+### `blunderdb stats matches`
+
+```
+Usage: blunderdb stats matches --db <file> [options]
+
+The matches a corpus figure counts (a ranking line, a window), oldest first:
+those where the player, or any player, holds a counted decision.
+Their IDs feed `list --type matches --ids`.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -decision-type string
+    	Decision type: all, checker, or cube (default "all")
+  -engine string
+    	Only the decisions analysed by this engine (exact name, as stored)
+  -format string
+    	Output format: text or json (default "text")
+  -from string
+    	Start date filter YYYY-MM-DD (matches)
+  -min-depth int
+    	Only the decisions analysed at least this deep (plies)
+  -player string
+    	Only the matches where this player holds a counted decision
+  -to string
+    	End date filter YYYY-MM-DD (matches)
+  -tournament string
+    	Filter the matches by tournament IDs, comma-separated
+
+Examples:
+  blunderdb stats matches --db database.db --player "Alice" --from 2025-01-01 --to 2025-03-31
+  blunderdb stats matches --db database.db --player "Alice" --format json
 ```
 
 ### `blunderdb stats plan`

@@ -6127,6 +6127,23 @@ paths:
               schema:
                 $ref: "#/components/schemas/storage_MatchDetailStats"
                 nullable: true
+  /v1/stats.matchIds:
+    post:
+      operationId: stats.matchIds
+      tags: [stats]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/statsComputeReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/matchIDsResp"
   /v1/stats.matchMoveGrades:
     post:
       operationId: stats.matchMoveGrades
@@ -8668,6 +8685,14 @@ components:
         matchId:
           type: integer
           format: int64
+    matchIDsResp:
+      type: object
+      properties:
+        match_ids:
+          type: array
+          items:
+            type: integer
+            format: int64
     matchListReq:
       type: object
       properties:
@@ -8680,6 +8705,11 @@ components:
         unassigned:
           type: boolean
         tournamentIds:
+          type: array
+          items:
+            type: integer
+            format: int64
+        ids:
           type: array
           items:
             type: integer
