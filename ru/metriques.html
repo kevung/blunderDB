@@ -1,0 +1,383 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Метрики и инструменты для изучения &mdash; документация blunderDB 0.39.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=80716bab"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=cd1d70c9"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="Список команд" href="cmd_mode.html" />
+    <link rel="prev" title="Руководство" href="manuel.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Логотип"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Языки">
+  <a href="../fr/metriques.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/metriques.html" lang="en" hreflang="en">English</a>
+  <a href="../de/metriques.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/metriques.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/metriques.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/metriques.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/metriques.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/metriques.html" lang="ja" hreflang="ja">日本語</a>
+  <span class="current" lang="ru" aria-current="true">Русский</span>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">Начало работы</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Загрузка и установка</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Руководство пользователя</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Справочник</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Руководство</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Метрики и инструменты для изучения</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#l-erreur-et-la-perte-d-une-decision">Ошибка и потеря решения</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pr-performance-rating">PR (<em>Performance Rating</em>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#perte-de-mwc-par-decision-et-graphique-du-match">Потеря MWC на решение и график матча</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#perte-mwc-eq-7-pts-l7-et-elo-face-au-moteur">Потеря MWC (экв. 7 очков) L₇ и Elo против движка</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#difficulte-erreurs-evitables-exces-et-ratio">Сложность, устранимые ошибки, избыток и отношение</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#intervalles-a-95">95 % интервалы</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bilan-du-match">Итог матча</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#plan-d-etude">План изучения</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#positions-de-reference">Эталонные позиции</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#avant-apres-l-etude">До и после изучения</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#biais-signes">Знаковые смещения</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bilan-du-tournoi">Итог турнира</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Список команд</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Горячие клавиши</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Интерфейс командной строки (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Глоссарий</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Часто задаваемые вопросы</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Безголовый режим (сервер)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Контракт API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Приложения</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Приложение: Расширенное использование фильтров</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Приложение Windows: что делать, если Windows блокирует запуск</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Приложение Mac: возможная блокировка blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Приложение: Схема базы данных</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">История версий</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">О программе</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Метрики и инструменты для изучения</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="metriques-et-outils-d-etude">
+<span id="metriques"></span><h1>Метрики и инструменты для изучения<a class="headerlink" href="#metriques-et-outils-d-etude" title="Ссылка на этот заголовок"></a></h1>
+<p>Каждое число, которое blunderDB показывает о вашей игре, отвечает на вопрос. Эта страница собирает их вместе: для каждого — вопрос, на который оно отвечает, и что оно даёт для изучения, определение, точная формула, что считается решением, единица измерения, чтение, неопределённость, ограничения и чем оно отличается от чисел eXtreme Gammon (XG) и GNU Backgammon (gnuBG). Экраны, которые их показывают, описаны в <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Руководство</span></a>; ссылки ведут туда.</p>
+<p>Пороги и параметры этой страницы были зафиксированы до какого-либо изучения реальных результатов: подгонять их постфактум означало бы заставлять числа говорить то, что от них ждут.</p>
+<nav class="contents local" id="id1">
+<ul class="simple">
+<li><p><a class="reference internal" href="#l-erreur-et-la-perte-d-une-decision" id="id2">Ошибка и потеря решения</a></p></li>
+<li><p><a class="reference internal" href="#pr-performance-rating" id="id3">PR (<em>Performance Rating</em>)</a></p></li>
+<li><p><a class="reference internal" href="#perte-de-mwc-par-decision-et-graphique-du-match" id="id4">Потеря MWC на решение и график матча</a></p></li>
+<li><p><a class="reference internal" href="#perte-mwc-eq-7-pts-l7-et-elo-face-au-moteur" id="id5">Потеря MWC (экв. 7 очков) L₇ и Elo против движка</a></p></li>
+<li><p><a class="reference internal" href="#difficulte-erreurs-evitables-exces-et-ratio" id="id6">Сложность, устранимые ошибки, избыток и отношение</a></p></li>
+<li><p><a class="reference internal" href="#intervalles-a-95" id="id7">95 % интервалы</a></p></li>
+<li><p><a class="reference internal" href="#bilan-du-match" id="id8">Итог матча</a></p></li>
+<li><p><a class="reference internal" href="#plan-d-etude" id="id9">План изучения</a></p></li>
+<li><p><a class="reference internal" href="#positions-de-reference" id="id10">Эталонные позиции</a></p></li>
+<li><p><a class="reference internal" href="#avant-apres-l-etude" id="id11">До и после изучения</a></p></li>
+<li><p><a class="reference internal" href="#biais-signes" id="id12">Знаковые смещения</a></p></li>
+<li><p><a class="reference internal" href="#bilan-du-tournoi" id="id13">Итог турнира</a></p></li>
+</ul>
+</nav>
+<section id="l-erreur-et-la-perte-d-une-decision">
+<span id="metrique-erreur"></span><h2><a class="toc-backref" href="#id2" role="doc-backlink">Ошибка и потеря решения</a><a class="headerlink" href="#l-erreur-et-la-perte-d-une-decision" title="Ссылка на этот заголовок"></a></h2>
+<p>Все измерения исходят из двух величин на решение.</p>
+<p><strong>Ошибка e</strong> — то, сколько эквити стоило сыгранное решение по сравнению с лучшим решением импортированного анализа (XG или gnuBG; blunderDB не переанализирует матчи для своей статистики). Она выражается в <strong>нормализованном эквити</strong>: ±1 равно текущему кубу, как в игре на деньги, так и при счёте матча (EMG по счёту матча). Округляется до тысячных (миллипункт, mpt).</p>
+<ul class="simple">
+<li><p>Ход фишками: эквити лучшего кандидата минус эквити сыгранного хода.</p></li>
+<li><p>Без удвоения: ошибка «без удвоения», данная анализом.</p></li>
+<li><p>Удвоение: меньшая из ошибок «удвоение, взятие» и «удвоение, отказ» — удваивающий оценивается по лучшему ответу соперника.</p></li>
+<li><p>Взятие или отказ: разница между сыгранным ответом и лучшим из двух.</p></li>
+</ul>
+<p>Ошибка — это ошибка <strong>хода, сыгранного в данном матче</strong>. Позиция, встретившаяся в двух матчах и сыгранная по-разному, несёт две ошибки; ни одна не затирает другую. Сыгранный ход, который анализ не называет ни среди одного из своих кандидатов, не имеет ошибки: он не оценивается и исключается из всех подсчётов.</p>
+<p><strong>Потеря MWC ℓ</strong> — та же ошибка, выраженная в шансах выиграть матч (<em>Match Winning Chances</em>). При счёте и кубе v решения:</p>
+<div class="math notranslate nohighlight">
+\[\ell = e \times \frac{\mathrm{MWC}_{+v} - \mathrm{MWC}_{-v}}{2}\]</div>
+<p>где <span class="math notranslate nohighlight">\(\mathrm{MWC}_{+v}\)</span> и <span class="math notranslate nohighlight">\(\mathrm{MWC}_{-v}\)</span> — шансы выиграть матч, если игрок выигрывает или проигрывает v очков при этом счёте. Таблица эквити матча (MET) — Kazaross-XG2, продолженная за пределы 25 очков формулой Задеха; счёт пост-Кроуфорд читается как таковой. Взятие или отказ пересчитывается по кубу <strong>до</strong> удвоения, как для удваивающего и как в XG: при пересчёте по удвоенному кубу ошибка ответа стоила бы вдвое больше. У игры на деньги нет MWC: ℓ в ней не существует.</p>
+<p>Эти две величины аддитивны. Все метрики ниже — их суммы, отнесённые к разным знаменателям или сопоставленные с эталоном.</p>
+</section>
+<section id="pr-performance-rating">
+<span id="metrique-pr"></span><h2><a class="toc-backref" href="#id3" role="doc-backlink">PR (<em>Performance Rating</em>)</a><a class="headerlink" href="#pr-performance-rating" title="Ссылка на этот заголовок"></a></h2>
+<p><strong>Вопрос.</strong> Каков мой уровень по шкале, которую знают все? PR — число рейтингов, форумов и клубов; он позволяет оценить себя и сравнить два матча, проанализированных XG.</p>
+<p><strong>Формула.</strong> По учитываемым решениям игрока:</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{PR} = 500 \times \frac{\sum_i e_i}{N_\text{compté}}\]</div>
+<p>Множитель 500 — соглашение XG: PR 5,0 соответствует средней ошибке 0,010, то есть 10 mpt на учитываемое решение. PR — среднее, без единицы; чем он ниже, тем лучше сыграно.</p>
+<p><strong>Что считается решением.</strong> Правила — как в XG, проверенные матч за матчем по его цифрам (<a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</span></a>):</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Решение</p></th>
+<th class="head"><p>Учитывается, если</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Ход фишками</p></td>
+<td><p>он не вынужденный и сыгранный ход оценён</p></td>
+</tr>
+<tr class="row-odd"><td><p>Предложенное удвоение</p></td>
+<td><p>всегда</p></td>
+</tr>
+<tr class="row-even"><td><p>Взятие, отказ</p></td>
+<td><p>всегда</p></td>
+</tr>
+<tr class="row-odd"><td><p>Без удвоения</p></td>
+<td><p>ND &gt; 0 и ND − min(D/T, D/P) &lt; 0,200</p></td>
+</tr>
+</tbody>
+</table>
+<ul class="simple">
+<li><p>Ход фишками <strong>вынужденный</strong>, если по броску есть лишь один допустимый ход, либо если анализ охватывает все допустимые ходы (подсчитанные генератором ходов blunderDB) и все они равны по эквити с точностью до тысячных: выбор, который ничего не стоит при любом ходе, не является решением. Это правило XG для ходов «не вынужденных, но без ставки» (решённый конец гонки, съём, где всё равноценно). Когда допустимые ходы подсчитать невозможно, вынужденным делает ход только единственный кандидат.</p></li>
+<li><p><strong>Без удвоения</strong> считается, когда игрок был близок к удвоению: его эквити без удвоения (ND) положительно и превышает менее чем на 0,200 лучший исход удвоения для соперника, min(D/T, D/P). Сравнение с этим минимумом, а не только с D/T, оставляет решением позицию «слишком хорошую», пока она остаётся в пределах 0,200 от отказа.</p></li>
+<li><p>Условие <strong>ND &gt; 0</strong> исключает позиции, где игрок на ходу проигрывает: удвоение ему рассматривать не нужно. XG их тоже исключает, чего нет в его руководстве; это видно по эталонным матчам.</p></li>
+<li><p>Решение по кубу без анализа куба никогда не считается «без удвоения».</p></li>
+</ul>
+<p><strong>Чтение.</strong> Полосы уровней панели Stats (<a class="reference internal" href="manuel.html#stats"><span class="std std-ref">Панель Stats</span></a>) — ориентир, свойственный blunderDB, а не опубликованная норма. PR сравнивается прежде всего с вашими собственными PR: тот же анализатор, тот же тип соперников, те же длины.</p>
+<p><strong>Неопределённость.</strong> PR одного матча очень шумный: стандартная ошибка матча до 7 очков порядка 1,5 PR. blunderDB даёт 95 % интервал (<a class="reference internal" href="#metrique-intervalles"><span class="std std-ref">95 % интервалы</span></a>), ресэмплируя партии матча и матчи агрегата.</p>
+<p><strong>Ограничения.</strong> Числитель ни от чего не зависит, но знаменатель зависит от того, что считать: пороги 0,001 и 0,200 произвольны. PR можно снизить, не играя лучше: взяв тесный отказ, чтобы добавить решений в гонку, или выбрав при съёме ход, создающий ещё одно решение. PR оценивает ошибку при кубе 8 так же, как при кубе 1 (эквити нормализовано по кубу), и ошибку при DMP так же, как при 0-0. Он наследует недостатки движка, а соперник, создающий трудные позиции, повышает PR другого. <a class="reference internal" href="#metrique-l7"><span class="std std-ref">Потеря MWC</span></a> и <a class="reference internal" href="#metrique-difficulte"><span class="std std-ref">сложность</span></a> отвечают на эти три недостатка.</p>
+<p><strong>XG и gnuBG.</strong> Для файла XG PR blunderDB — это PR XG с точностью до отображения, за исключением расхождений, объяснённых в <a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</span></a>. gnuBG делит ту же сумму на другое число: каждый ход, имеющий более одного допустимого хода, и решения по кубу, которые он считает близкими по собственному окну. Его показатель на решение поэтому нельзя сравнивать с PR XG, даже по тому же анализу. <em>Snowie Error Rate</em> (<a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</span></a>) делит на все ходы обоих игроков: он не зависит ни от каких правил подсчёта, но примерно вдвое меньше PR.</p>
+</section>
+<section id="perte-de-mwc-par-decision-et-graphique-du-match">
+<span id="metrique-perte-mwc"></span><h2><a class="toc-backref" href="#id4" role="doc-backlink">Потеря MWC на решение и график матча</a><a class="headerlink" href="#perte-de-mwc-par-decision-et-graphique-du-match" title="Ссылка на этот заголовок"></a></h2>
+<p><strong>Вопрос.</strong> Какие решения стоили мне этот матч? PR ставит все ошибки на одну шкалу; ℓ взвешивает их по счёту, при котором они допущены. Ошибка 0,040 при 4-4 в матче до 5 очков стоит не столько же, сколько при 0-0 в матче до 17. Для изучения столбец и график указывают несколько решений, решивших матч, а кумулятивная кривая показывает, где он переломился.</p>
+<p><strong>Определение.</strong> ℓ (<a class="reference internal" href="#metrique-erreur"><span class="std std-ref">Ошибка и потеря решения</span></a>) для каждого решения, учитываемого в PR; потеря игрока в матче — это Σℓ по этим решениям. У решения вне подсчёта (вынужденный ход, отказ от удвоения вне окна) нет ℓ: оно в любом случае не стоило бы ничего или почти ничего.</p>
+<p><strong>Единица.</strong> Процент шансов выиграть матч: 2,5 означает 2,5 % потерянного MWC.</p>
+<p><strong>Чтение.</strong> Столбец <strong>MWC</strong> транскрипции, полоса на решение и кумулятивная кривая каждого игрока описаны в <a class="reference internal" href="manuel.html#panneau-matchs"><span class="std std-ref">Панель матчей</span></a>. Одинокая высокая полоса — решение для пересмотра; равномерно растущая кривая говорит о матче средних ошибок, а не о случайности.</p>
+<p><strong>Неопределённость.</strong> ℓ точна относительно анализа: её неопределённость — это неопределённость самого анализа (глубина, роллаут или нет) и MET.</p>
+<p><strong>Ограничения.</strong> ℓ зависит от MET: две программы, использующие разные таблицы, дают разные потери. У игры на деньги её нет, а анализ, вычисленный с другой MET, чем у базы, остаётся вне статистики. Неоценённое решение несёт прочерк, никогда не ноль.</p>
+<p><strong>XG и gnuBG.</strong> Сумма — это потеря MWC, которую XG показывает для матча: ходы фишек, удвоения и ответы совпадают на эталонных матчах с точностью отображения XG (расхождение ограничено набором тестов значением 0,06 процентного пункта), за исключением игроков с известными остаточными расхождениями из <a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</span></a>, до 0,45 пункта. gnuBG выполняет то же преобразование со своими эквити: в матче, который он проанализировал, его цифры отличаются от цифр XG из-за анализа, а не из-за формулы.</p>
+</section>
+<section id="perte-mwc-eq-7-pts-l7-et-elo-face-au-moteur">
+<span id="metrique-l7"></span><h2><a class="toc-backref" href="#id5" role="doc-backlink">Потеря MWC (экв. 7 очков) L₇ и Elo против движка</a><a class="headerlink" href="#perte-mwc-eq-7-pts-l7-et-elo-face-au-moteur" title="Ссылка на этот заголовок"></a></h2>
+<p><strong>Вопрос.</strong> Сколько матча я потерял из-за своих ошибок независимо от способа подсчёта решений и как сравнить матч до 5 очков с матчем до 11? L₇ не делится ни на какое число решений: её нельзя поправить добавлением лёгких решений, и она весит каждую ошибку ровно во столько, во сколько та обошлась.</p>
+<p><strong>Определение.</strong> При идеальной игре шансы выиграть матч меняются без смещения: против идеального соперника игрок, потерявший за матч L MWC, сохраняет q = 0,5 − L шансов. Модель формулы FIBS говорит, что при равной силе потеря растёт как корень из длины N. Поэтому L приводится к матчу до 7 очков, самой распространённой длине турнира:</p>
+<div class="math notranslate nohighlight">
+\[L_7 = L \times \sqrt{7 / N}
+\qquad
+L_7^\text{agrégat} = \sqrt{7} \times \frac{\sum L}{\sum \sqrt{N}}\]</div>
+<p>Агрегат (несколько матчей, один игрок, один турнир) суммирует потери и корни длин перед вычислением отношения: матч до 7 очков весит больше матча до 1 очка, а один матч даёт собственное значение. Без фильтра по игроку две стороны матча весят по √N каждая, но образуют одну единицу интервала.</p>
+<p><strong>Elo против движка</strong> обращает формулу FIBS при 7 очках:</p>
+<div class="math notranslate nohighlight">
+\[D = \frac{2000}{\sqrt{7}} \log_{10} \frac{q}{1 - q}, \qquad q = 0{,}5 - L_7\]</div>
+<p>В линеаризованном виде D ≈ −3474 × L / √N. При L₇ ≥ 50 % у q нет конечной обратной величины; начиная с L₇ &gt; 49 % q ограничивается снизу значением 1 % (D ≥ −1509), а Elo отображается как «≤». У L₇ нижнего предела нет. Оба показателя упорядочивают игроков одинаково.</p>
+<p><strong>Единица.</strong> L₇: процент MWC. D: очки Elo, отрицательные, ожидаемый разрыв между игроком и движком.</p>
+<p><strong>Чтение.</strong> 12,3 %: вместо 50 % шансов против движка у игрока осталось лишь 37,7 % в матче до 7 очков. Значок, подробности, статистика, турнир и прогресс показывают это (<a class="reference internal" href="manuel.html#perte-mwc-7pts"><span class="std std-ref">Потеря MWC (экв. 7 очков)</span></a>).</p>
+<p><strong>Неопределённость.</strong> 95 % интервал по партиям для матча, по матчам для агрегата (<a class="reference internal" href="#metrique-intervalles"><span class="std std-ref">95 % интервалы</span></a>), затем то же преобразование, что и для значения. У строки статистики по одному матчу его нет: это одна единица; итог матча несёт интервал по партиям.</p>
+<p><strong>Ограничения.</strong> Модель по √N приблизительна ниже 7 очков и вокруг Кроуфорда. L₇ зависит от MET. У игры на деньги нет длины, а значит, нет L₇: экран говорит об этом вместо показа числа. Реальные игроки теряют больше полматча, поскольку ошибки, сделанные после перелома шансов, складываются: тогда Elo достигает нижней границы.</p>
+<p><strong>XG и gnuBG.</strong> Для матча до 7 очков L₇ — ровно та потеря MWC, которую показывает XG. Ни одна из программ не приводит потерю к эталонной длине и не переводит её в Elo. Этот Elo измеряет отрыв от движка, а не рейтинг FIBS или BMAB среди людей.</p>
+</section>
+<section id="difficulte-erreurs-evitables-exces-et-ratio">
+<span id="metrique-difficulte"></span><h2><a class="toc-backref" href="#id6" role="doc-backlink">Сложность, устранимые ошибки, избыток и отношение</a><a class="headerlink" href="#difficulte-erreurs-evitables-exces-et-ratio" title="Ссылка на этот заголовок"></a></h2>
+<p><strong>Вопрос.</strong> Была ли эта ошибка простительной? Одна и та же потеря 2 % — невнимательность в очевидной позиции и ошибка, которую сделал бы любой хороший игрок, в позиции, где четыре хода отличаются на тысячные. Для изучения сложность сортирует ошибки: устранимые ошибки (невнимательность, плохо знакомое правило) быстро исправляются и идут первыми; потери на трудных решениях — предмет основательной работы.</p>
+<p><strong>Определение.</strong> Сложность d — это потеря, которую в среднем понёс бы в той же позиции <strong>эталонный игрок</strong>, выбирающий каждый вариант i с вероятностью тем меньшей, чем он дороже:</p>
+<div class="math notranslate nohighlight">
+\[\pi(i) = \frac{e^{-\Delta_i/\tau}}{\sum_j e^{-\Delta_j/\tau}},
+\qquad d = \sum_i \pi(i)\,\Delta_i,
+\qquad \tau = 0{,}025\]</div>
+<p>Δᵢ — стоимость варианта i относительно лучшего в нормализованном эквити. Варианты: кандидаты анализа для хода фишками; «без удвоения» и «удвоение» (против лучшего ответа) для игрока, владеющего кубом; «взять» и «отказаться» для получающего удвоение. d переводится в MWC так же, как ℓ: обе в одной единице, а у сыгранного варианта стоимость ровно ℓ.</p>
+<p>τ = 0,025 — априорное допущение сильного игрока: для двух вариантов, разделённых Δ, d = Δ / (1 + e^{Δ/τ}) максимальна при Δ ≈ 0,032, между «сомнительным» и «ошибкой»; разрыв 0,1 стоит уже лишь 0,002; пять кандидатов с шагом 0,01 дают d ≈ 0,012, что примерно равно средней ошибке игрока с PR 6.</p>
+<ul class="simple">
+<li><p><strong>Устранимая ошибка</strong>: потеря достигает порога Ошибка базы и d ≤ ℓ / 10 — при двух вариантах эталонный игрок не совершил бы её один раз из десяти.</p></li>
+<li><p><strong>Избыток</strong> игрока в матче: Σ(ℓ − d), то, что он потерял сверх эталона (отрицателен, если он сыграл лучше).</p></li>
+<li><p><strong>Отношение</strong>: Σℓ / Σd; 1 означает «играет как эталон», 2 — «теряет вдвое больше». Оно не выдаётся при Σd &lt; 0,5 % MWC: в слишком лёгком матче оно измеряет лишь шум, избыток остаётся.</p></li>
+</ul>
+<p><strong>Что учитывается.</strong> Решения, учитываемые в PR, потеря по которым оценивается и переводится в MWC; в остальных случаях сложность отсутствует, но никогда не равна нулю. Вынужденный ход или отказ от удвоения вне окна PR, таким образом, не имеет ни потери, ни сложности. Среди учитываемых решений никакой дополнительный порог не выделяет очевидное решение: его сложность и так близка к нулю.</p>
+<p><strong>Единица.</strong> d и избыток: процент MWC. Отношение: без единицы.</p>
+<p><strong>Чтение.</strong> Потеря, намного превышающая свою сложность, — ошибка, которую позиция не оправдывала; потеря, близкая к своей сложности, — общая ошибка. Избыток и отношение корректируют PR на сложность встреченных позиций, а значит, отчасти на стиль соперника (<a class="reference internal" href="manuel.html#panneau-matchs"><span class="std std-ref">Панель матчей</span></a>).</p>
+<p><strong>Неопределённость.</strong> В матче избыток и отношение опираются на немного решений и сильно колеблются: это тенденция, а не рейтинг.</p>
+<p><strong>Ограничения.</strong> Сложность зависит от модели игрока и τ, заданных один раз: их изменение меняет все числа. Она знает лишь кандидатов, сохранённых анализом (несколько у XG, по его фильтрам у gnuBG): отсутствующие варианты ничего не весят, и d тогда является нижней оценкой. Она наследует ошибку анализа, особенно при малой глубине.</p>
+<p><strong>XG и gnuBG.</strong> Ни тот, ни другой не вычисляют сложность. Идея взята из индексов правдоподобия в шахматах (Regan); τ не откалибрована по популяции игроков.</p>
+</section>
+<section id="intervalles-a-95">
+<span id="metrique-intervalles"></span><h2><a class="toc-backref" href="#id7" role="doc-backlink">95 % интервалы</a><a class="headerlink" href="#intervalles-a-95" title="Ссылка на этот заголовок"></a></h2>
+<p><strong>Вопрос.</strong> Говорит ли это число что-то или это шум? PR 4,2 в одном матче и PR 4,2 в сорока матчах стоят не одно и то же. Интервал позволяет не строить план работы на ячейке, которая ни на чём не основана, и не читать рейтинг по отдельному матчу.</p>
+<p><strong>Определение.</strong> Интервал ресэмплирует наибольшую независимую единицу: <strong>партии</strong> матча, <strong>матчи</strong> агрегата (общий PR, ячейки по фазам, план игры, ярлык и счёт, L₇ агрегата). Партии одного матча делят соперника, сессию и усталость: ресэмплировать их отдельно в агрегате значило бы ошибочно сужать интервал. Без фильтра по игроку два места матча образуют одну единицу, поскольку играют те же позиции.</p>
+<p><strong>Формула.</strong> Для отношения R = Σeᵤ / Σnᵤ по G единицам (eᵤ — сумма ошибок, nᵤ — число решений единицы) дисперсия бутстрепа вычисляется без выборок:</p>
+<div class="math notranslate nohighlight">
+\[\widehat{\mathrm{Var}}(R) = \frac{G}{G-1} \cdot
+\frac{\sum_u (e_u - R\,n_u)^2}{\left(\sum_u n_u\right)^2}\]</div>
+<p>а интервал равен R ± 1,96 × √Var, нижняя граница никогда не ниже 0, затем то же преобразование, что и для значения (× 500 для PR). L₇ агрегата следует тому же правилу, с L вместо e и √N вместо n; у матча это сумма по его G партиям с дисперсией G/(G−1) × Σ(l_g − l̄)², где l_g — потеря партии g. Вычисление детерминировано: одна и та же база всегда даёт один и тот же интервал на обоих движках хранения.</p>
+<p><strong>Что нужно.</strong> Не менее <strong>трёх единиц</strong> и ненулевая ширина. При двух разброс опирается на одну степень свободы, и интервал был бы в несколько раз слишком узким; единицы с одинаковым отношением говорят, что они согласуются, а не что значение точно. Без интервала ячейка выделена серым, её объём виден (<a class="reference internal" href="manuel.html#stats"><span class="std std-ref">Панель Stats</span></a>).</p>
+<p><strong>Чтение.</strong> Два сильно перекрывающихся интервала ничего не разделяют. Семейство, интервал которого остаётся выше вашего общего PR, — установленная слабость.</p>
+<p><strong>Ограничения.</strong> Нормальное приближение грубо при малом числе единиц, а ошибки распределены асимметрично (несколько крупных ошибок): при трёх-четырёх единицах интервал носит ориентировочный характер.</p>
+<p><strong>XG и gnuBG.</strong> Ни тот, ни другой интервал не дают.</p>
+</section>
+<section id="bilan-du-match">
+<span id="metrique-bilan-match"></span><h2><a class="toc-backref" href="#id8" role="doc-backlink">Итог матча</a><a class="headerlink" href="#bilan-du-match" title="Ссылка на этот заголовок"></a></h2>
+<p><strong>Вопрос.</strong> После матча: что мне пересмотреть, проиграл ли я из-за кубиков или из-за игры, и происходят ли мои ошибки от спешки или от пробела в знаниях? Экраны: <a class="reference internal" href="manuel.html#bilan-match"><span class="std std-ref">итог матча</span></a>.</p>
+<p><strong>Три решения для пересмотра.</strong> Среди ошибок игрока (порог базы), потеря которых оценена, три с наибольшей <strong>устранимой частью</strong> ℓ − d = ℓ × (1 − d/ℓ), положительной: потеря, умноженная на её устранимость. Неизвестная сложность считается нулём; при равенстве — большая потеря, затем порядок в матче. Ошибка, которую сделал бы и эталонный игрок, не стоит занятия.</p>
+<p><strong>Результат с поправкой на удачу</strong> для завершённого матча, в очках MWC игрока:</p>
+<div class="math notranslate nohighlight">
+\[A = R - C, \quad R = \text{issue} - \mathrm{MWC}_\text{départ}, \quad
+C = \sum \text{chance de ses jets} - \sum \text{chance des jets adverses}\]</div>
+<p>Исход равен 1 при выигрыше, 0 при проигрыше; стартовая MWC — для начального счёта (50 % при 0-0). Каждый бросок переводится в MWC как потеря, при счёте и кубе его позиции. При идеальной игре математическое ожидание A равно потере соперника минус ваша: итог показывает рядом <em>разность ошибок</em> для сверки. A &gt; 0 в проигранном матче: проигран из-за кубиков; A &lt; 0: проигран из-за игры. Удача — та, что записал анализатор (<a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</span></a>): без удачи строки нет, а покрытие (измеренные броски из сыгранных) показывается, так как частичная удача смещает A. Строки нет и для игры на деньги или незавершённого матча.</p>
+<p><strong>Спешные и обдуманные ошибки.</strong> По игроку и по типу (фишки, куб) порогом служит медиана известных длительностей его оценённых решений этого типа в матче: ошибка, сыгранная быстрее, считается спешной, остальные — обдуманными. Медиана своя, в этом матче: она не зависит от темпа, а без связи скорости с ошибкой ошибки делятся пополам. Спешное большинство требует дисциплины; обдуманное — знаний.</p>
+<p><strong>Ограничения.</strong> Матч — небольшая выборка: PR и L₇ несут здесь интервал по партиям (не менее трёх партий). Результат с поправкой зависит от MET и от удачи в файле. Длительность существует только для матча, который её сохранил (матч против бота).</p>
+<p><strong>XG и gnuBG.</strong> XG и gnuBG показывают общую удачу каждого игрока, но не результат с поправкой в MWC, не отбор решений для пересмотра и не разделение по длительности.</p>
+</section>
+<section id="plan-d-etude">
+<span id="metrique-plan-etude"></span><h2><a class="toc-backref" href="#id9" role="doc-backlink">План изучения</a><a class="headerlink" href="#plan-d-etude" title="Ссылка на этот заголовок"></a></h2>
+<p><strong>Вопрос.</strong> Над чем мне работать сейчас? Ранжирование ошибок по стоимости говорит, где проиграно больше всего, а не где изучение даёт больше всего: семейство действительно трудных позиций стоит всем, а три ошибки не образуют тенденции. Экраны: <a class="reference internal" href="manuel.html#plan-etude"><span class="std std-ref">План обучения</span></a>.</p>
+<p><strong>Определение.</strong> <strong>Семейство</strong> — тройка (план игры, характер решения, тема) повторяющихся ошибок; его члены — ошибки фильтра, учитываемые решения, стоящие не меньше порога Ошибка. Ошибка без темы не входит ни в какое семейство. Член <strong>оценён</strong>, если несёт ℓ и d; ошибка в игре на деньги считается «неоценённой» и не входит ни в какой приоритет.</p>
+<p><strong>Формула.</strong> <strong>Возвращаемый MWC</strong> и его интервал:</p>
+<div class="math notranslate nohighlight">
+\[R = \sum_i (\ell_i - d_i), \qquad
+R \pm 1{,}96 \sqrt{\textstyle\sum_i (\ell_i - d_i)^2}\]</div>
+<p>R — частота семейства, умноженная на его среднюю потерю сверх сложности: то, что вернули бы, играя эти позиции как эталонный игрок. Сумма знаковая, без отсечения. Интервал рассматривает число членов как пуассоновский счёт.</p>
+<p><strong>Что входит в план.</strong> Не менее <strong>5 оценённых членов</strong> и <strong>строго положительная нижняя граница</strong>. План упорядочен по убыванию нижней границы: при равном возвращаемом лучше установленное семейство идёт впереди. Остальные — «требуют подтверждения», без ранга.</p>
+<p><strong>Единица.</strong> Процент MWC, накопленный по фильтру.</p>
+<p><strong>Чтение.</strong> Семейство устранимых ошибок поднимается; семейство позиций, где ошибаются все, опускается. Новый игрок сначала видит семейства «требуют подтверждения»: план не толкает к шуму.</p>
+<p><strong>Ограничения.</strong> Тема берётся из классификатора blunderDB: неверно классифицированная ошибка попадает в неверное семейство, ошибка без темы не входит ни в одно. R наследует ограничения ℓ и d (MET, усечение кандидатов).</p>
+<p><strong>XG и gnuBG.</strong> Ни тот, ни другой не предлагают плана изучения.</p>
+</section>
+<section id="positions-de-reference">
+<span id="metrique-positions-reference"></span><h2><a class="toc-backref" href="#id10" role="doc-backlink">Эталонные позиции</a><a class="headerlink" href="#positions-de-reference" title="Ссылка на этот заголовок"></a></h2>
+<p><strong>Вопрос.</strong> Какие позиции положить в коллекцию, чтобы проработать план? Десять худших ошибок часто дают десять вариантов одной и той же проблемы. Хорошая эталонная позиция находится в центре многих ваших устранимых ошибок, несёт ясный урок и ещё не изучалась. Экраны: <a class="reference internal" href="manuel.html#positions-reference"><span class="std std-ref">эталонные позиции</span></a>.</p>
+<p><strong>Определение.</strong> Кандидаты — оценённые тематические ошибки фильтра, сведённые по позициям; избыток позиции — сумма положительных избытков ℓ − d её ошибок. Две кандидатки одного семейства — а для куба и одного счёта — являются <strong>соседними</strong> на расстоянии не более ρ = 12 пип-шагов <code class="docutils literal notranslate"><span class="pre">like</span></code> (один бросок кубиков стоит 8–16).</p>
+<p><strong>Формула.</strong> Выигрыш кандидатки p равен</p>
+<div class="math notranslate nohighlight">
+\[G(p) = c(p) \times \sum_{q \,\in\, \text{voisinage}(p),\ q\ \text{non couverte}} \text{excès}(q)\]</div>
+<p>в доле MWC: репрезентативность, частота и устранимая стоимость в одной величине. c(p) начинается с 1 и умножается на ½, если урок <strong>узкий</strong> (вторая по качеству опция стоит меньше половины порога Ошибка), и ещё на ½, если он <strong>нестабилен</strong> (другая глубина анализа куба или роллаут даёт иной вердикт): ¼, когда оба условия совпадают. Подтверждающий роллаут ничего не повышает: он разделяет при равном выигрыше.</p>
+<p><strong>Отбор.</strong> Жадный по предельному выигрышу: каждая выбранная позиция покрывает своих соседок, которые больше ничего не дают следующим, а её почти-дубликаты отбрасываются даже вне её семейства. Позиция, уже проработанная (комментарий, карточка Anki, коллекция, отметка «изучена»), никогда не предлагается и считается уже выбранной.</p>
+<p><strong>Единица.</strong> Покрытый MWC, в процентах.</p>
+<p><strong>Ограничения.</strong> Радиус и множители заданы, а не обучены. Расстояние <code class="docutils literal notranslate"><span class="pre">like</span></code> сравнивает структуры фишек, а не идеи: две позиции с одним уроком, но далёкой структурой не покрывают друг друга.</p>
+<p><strong>XG и gnuBG.</strong> Аналога нет.</p>
+</section>
+<section id="avant-apres-l-etude">
+<span id="metrique-avant-apres"></span><h2><a class="toc-backref" href="#id11" role="doc-backlink">До и после изучения</a><a class="headerlink" href="#avant-apres-l-etude" title="Ссылка на этот заголовок"></a></h2>
+<p><strong>Вопрос.</strong> Стоит ли мне то, над чем я работал, меньше в реальном матче? Без измерения изучение оценивается по ощущениям; семейство, которое не сдвигается несмотря на работу, говорит, что нужно менять метод. Экраны: <a class="reference internal" href="manuel.html#avant-apres-etude"><span class="std std-ref">До/после обучения</span></a>.</p>
+<p><strong>Определение.</strong> Измеряется каждое тематическое семейство фильтра — как входящие в план, так и «требующие подтверждения». Семейство <strong>изучено</strong> в день (UTC) первого учебного действия над одной из его позиций: отметка «изучено», повторение в Anki независимо от оценки, ответ на квиз. Создание карточки или помещение позиции в коллекцию таким действием не является. Окно <em>до</em>: матчи с датой строго раньше этого дня; <em>после</em>: строго позже; сам этот день и матчи без даты отбрасываются.</p>
+<p><strong>Формула.</strong> В каждом окне показатель потери r = Σℓ / N: ℓ — потери ошибок семейства, N — решения, учитываемые в матче, того же плана игры и того же характера (тема существует только у ошибки). Выигрыш и его интервал:</p>
+<div class="math notranslate nohighlight">
+\[\Delta = r_\text{avant} - r_\text{après}, \qquad
+\Delta \pm 1{,}96 \sqrt{\frac{\sum \ell^2_\text{avant}}{N^2_\text{avant}}
++ \frac{\sum \ell^2_\text{après}}{N^2_\text{après}}}\]</div>
+<p><strong>Вердикт.</strong> Не менее <strong>30 решений</strong> в каждом окне, иначе «недостаточно». «Прогресс», если нижняя граница Δ положительна, «регресс», если верхняя граница отрицательна, «неопределённо» в остальных случаях.</p>
+<p><strong>Единица.</strong> Очки MWC на 100 решений.</p>
+<p><strong>Ограничения.</strong> Изменение, а не эффект. Семейство изучается <em>потому что</em> оно стоило: регрессия к среднему завышает выигрыш. Ничто не контролирует соперников, формат и кубики.</p>
+<p><strong>XG и gnuBG.</strong> Аналога нет.</p>
+</section>
+<section id="biais-signes">
+<span id="metrique-biais"></span><h2><a class="toc-backref" href="#id12" role="doc-backlink">Знаковые смещения</a><a class="headerlink" href="#biais-signes" title="Ссылка на этот заголовок"></a></h2>
+<p><strong>Вопрос.</strong> В какую сторону я ошибаюсь? «Вы берёте слишком много» исправляется лучше, чем PR: правило для пересмотра названо. Экраны: <a class="reference internal" href="manuel.html#biais-signes"><span class="std std-ref">Знаковые смещения</span></a>.</p>
+<p><strong>Формула.</strong> Каждое учитываемое решение несёт x = +1 (ошибка от избытка смелости), −1 (от избытка осторожности) или 0. Если P и M — два счёта по N решениям:</p>
+<div class="math notranslate nohighlight">
+\[B = \frac{P - M}{N}, \qquad
+B \pm 1{,}96 \sqrt{\frac{(P + M)/N - B^2}{N}}\]</div>
+<p>Не менее <strong>20 решений</strong>; «слишком» если нижняя граница положительна, «недостаточно» если верхняя граница отрицательна, «сбалансировано» в остальных случаях. Стоимость P и M (в mpt) сопровождает счета. Знак и стоимость — у хода, сыгранного в своём матче.</p>
+<ul class="simple">
+<li><p><strong>Взятие / отказ</strong>: по ответам на куб; P = ошибочные взятия, M = ошибочные отказы. B — ровно ваша частота взятий минус частота бота в тех же позициях.</p></li>
+<li><p><strong>Удвоения</strong>: по решениям по кубу владельца, учитываемым в PR; P = преждевременные удвоения (без удвоения или слишком хорошо), M = пропущенные удвоения. Смещение даётся также по ячейкам счёта (ваши оставшиеся очки, очки соперника; пост-Кроуфорд считается за 1; игра на деньги отдельно).</p></li>
+<li><p><strong>Блоты</strong>: по ходам фишками с контактом; x — знак (ваши блоты после сыгранного хода − ваши блоты после лучшего хода). Ход распознаётся по оставляемой им доске; ненайденный ход исключается из подсчёта, а его доля показывается.</p></li>
+</ul>
+<p><strong>Единица.</strong> Разность долей, без единицы.</p>
+<p><strong>Ограничения.</strong> Большинство ячеек счёта остаются немыми: это честный ответ. Смещение по блотам считает блоты, не взвешивая их уязвимость, а отброшенные ходы не являются нейтральной выборкой.</p>
+<p><strong>XG и gnuBG.</strong> Аналога нет; XG и gnuBG считают ошибки куба по типам (пропущенное удвоение, ошибочное взятие…) без интервала и вердикта.</p>
+</section>
+<section id="bilan-du-tournoi">
+<span id="metrique-bilan-tournoi"></span><h2><a class="toc-backref" href="#id13" role="doc-backlink">Итог турнира</a><a class="headerlink" href="#bilan-du-tournoi" title="Ссылка на этот заголовок"></a></h2>
+<p><strong>Вопрос.</strong> Играл ли я на своём уровне, а если нет, где он просел: в последних раундах, в длинных концовках матчей, при счётах, где решает одно очко, в цейтноте? Экраны: <a class="reference internal" href="manuel.html#bilan-tournoi"><span class="std std-ref">итог турнира</span></a>.</p>
+<p><strong>Определение.</strong> <strong>Обычный уровень</strong> — это игрок по его матчам до очков за <strong>365 дней</strong>, предшествующих турниру (его дата, а при её отсутствии дата его первого матча), без матчей самого турнира; нужно не менее <strong>5 матчей</strong>. У турнира и обычного уровня есть свои PR и L₇ с интервалом по матчам (<a class="reference internal" href="#metrique-intervalles"><span class="std std-ref">95 % интервалы</span></a>).</p>
+<p><strong>Формула.</strong> Δ = турнир − обычный, со стандартным отклонением √(σₜ² + σₕ²), каждое σ считывается по верхней полуширине своего интервала. «Хуже», если нижняя граница Δ положительна, «лучше», если верхняя отрицательна, «в норме» в остальных случаях. Вердикт требует интервала и не менее <strong>20 решений</strong> с каждой стороны; иначе «недостаточно», числа видны.</p>
+<p><strong>Разбивки</strong>, в PR: по раундам, каждый матч относительно общего привычного PR; затем каждая ячейка относительно той же ячейки привычного уровня, по порядковому номеру решения в матче (срезы по 30: усталость); по счёту (DMP, партия Кроуфорда, пост-Кроуфорд, прочие); по темпу (по обе стороны от медианы ваших затрат времени в матче). Не более трёх семейств плана обучения, ограниченного турниром.</p>
+<p><strong>Ограничения.</strong> Турнир из трёх матчей почти никогда не говорит «хуже»: так задумано. Обе стороны считаются независимыми, что расширяет интервал: правило осторожное. Запас часов не записывается по ходам: давление оставшегося времени не измеряется.</p>
+<p><strong>XG и gnuBG.</strong> Аналога нет.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="manuel.html" class="btn btn-neutral float-left" title="Руководство" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+        <a href="cmd_mode.html" class="btn btn-neutral float-right" title="Список команд" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;. </p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

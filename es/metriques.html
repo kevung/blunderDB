@@ -1,0 +1,383 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="es" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Métricas y herramientas de estudio &mdash; documentación de blunderDB - 0.39.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=55e5d528"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=f85f4cfb"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Índice" href="genindex.html" />
+    <link rel="search" title="Búsqueda" href="search.html" />
+    <link rel="next" title="Lista de comandos" href="cmd_mode.html" />
+    <link rel="prev" title="Manual" href="manuel.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logotipo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Buscar documentos" aria-label="Buscar documentos" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Idiomas">
+  <a href="../fr/metriques.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/metriques.html" lang="en" hreflang="en">English</a>
+  <a href="../de/metriques.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/metriques.html" lang="el" hreflang="el">Ελληνικά</a>
+  <span class="current" lang="es" aria-current="true">Español</span>
+  <a href="../fi/metriques.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/metriques.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/metriques.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/metriques.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Primeros pasos</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Descarga e instalación</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Guía del usuario</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Referencia</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Manual</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Métricas y herramientas de estudio</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#l-erreur-et-la-perte-d-une-decision">El error y la pérdida de una decisión</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pr-performance-rating">PR (<em>Performance Rating</em>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#perte-de-mwc-par-decision-et-graphique-du-match">Pérdida de MWC por decisión y gráfico del match</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#perte-mwc-eq-7-pts-l7-et-elo-face-au-moteur">Pérdida de MWC (eq. 7 pts) L₇ y Elo frente al motor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#difficulte-erreurs-evitables-exces-et-ratio">Dificultad, errores evitables, exceso y ratio</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#intervalles-a-95">Intervalos al 95 %</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bilan-du-match">Balance del match</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#plan-d-etude">Plan de estudio</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#positions-de-reference">Posiciones de referencia</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#avant-apres-l-etude">Antes/después del estudio</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#biais-signes">Sesgos con signo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bilan-du-tournoi">Balance del torneo</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Lista de comandos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Atajos de teclado</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Interfaz de línea de comandos (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Glosario</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Preguntas frecuentes (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Modo headless (servidor)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Contrato de la API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Anexos</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Anexo: Uso avanzado de los filtros</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Anexo Windows: qué hacer si Windows bloquea el inicio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Anexo Mac: posible bloqueo de blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Anexo: Esquema de la base de datos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Anexo: Modelo de estadísticas — alineación XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Historial de versiones</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Acerca de</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Métricas y herramientas de estudio</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="metriques-et-outils-d-etude">
+<span id="metriques"></span><h1>Métricas y herramientas de estudio<a class="headerlink" href="#metriques-et-outils-d-etude" title="Link to this heading"></a></h1>
+<p>Cada cifra que blunderDB muestra sobre su juego responde a una pregunta. Esta página las reúne: para cada una, la pregunta a la que responde y lo que aporta al estudio, su definición, su fórmula exacta, lo que cuenta como decisión, su unidad, su lectura, su incertidumbre, sus límites y lo que la distingue de las cifras de eXtreme Gammon (XG) y de GNU Backgammon (gnuBG). Las pantallas que las muestran se describen en el <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Manual</span></a>; los enlaces llevan hasta ellas.</p>
+<p>Los umbrales y los parámetros de esta página se fijaron antes de examinar resultados reales: ajustarlos a posteriori equivaldría a hacer decir a las cifras lo que se espera de ellas.</p>
+<nav class="contents local" id="contenido">
+<ul class="simple">
+<li><p><a class="reference internal" href="#l-erreur-et-la-perte-d-une-decision" id="id1">El error y la pérdida de una decisión</a></p></li>
+<li><p><a class="reference internal" href="#pr-performance-rating" id="id2">PR (<em>Performance Rating</em>)</a></p></li>
+<li><p><a class="reference internal" href="#perte-de-mwc-par-decision-et-graphique-du-match" id="id3">Pérdida de MWC por decisión y gráfico del match</a></p></li>
+<li><p><a class="reference internal" href="#perte-mwc-eq-7-pts-l7-et-elo-face-au-moteur" id="id4">Pérdida de MWC (eq. 7 pts) L₇ y Elo frente al motor</a></p></li>
+<li><p><a class="reference internal" href="#difficulte-erreurs-evitables-exces-et-ratio" id="id5">Dificultad, errores evitables, exceso y ratio</a></p></li>
+<li><p><a class="reference internal" href="#intervalles-a-95" id="id6">Intervalos al 95 %</a></p></li>
+<li><p><a class="reference internal" href="#bilan-du-match" id="id7">Balance del match</a></p></li>
+<li><p><a class="reference internal" href="#plan-d-etude" id="id8">Plan de estudio</a></p></li>
+<li><p><a class="reference internal" href="#positions-de-reference" id="id9">Posiciones de referencia</a></p></li>
+<li><p><a class="reference internal" href="#avant-apres-l-etude" id="id10">Antes/después del estudio</a></p></li>
+<li><p><a class="reference internal" href="#biais-signes" id="id11">Sesgos con signo</a></p></li>
+<li><p><a class="reference internal" href="#bilan-du-tournoi" id="id12">Balance del torneo</a></p></li>
+</ul>
+</nav>
+<section id="l-erreur-et-la-perte-d-une-decision">
+<span id="metrique-erreur"></span><h2><a class="toc-backref" href="#id1" role="doc-backlink">El error y la pérdida de una decisión</a><a class="headerlink" href="#l-erreur-et-la-perte-d-une-decision" title="Link to this heading"></a></h2>
+<p>Todas las medidas parten de dos magnitudes por decisión.</p>
+<p><strong>El error e</strong> es lo que la decisión jugada ha costado en equidad, comparada con la mejor decisión del análisis importado (XG o gnuBG; blunderDB no reanaliza los matches para sus estadísticas). Se expresa en <strong>equidad normalizada</strong>: ±1 equivale al cubo actual, tanto en partida de dinero como al marcador de un match (EMG al marcador). Se redondea al milésimo (el milipunto, mpt).</p>
+<ul class="simple">
+<li><p>Movimiento de fichas: equidad del mejor candidato menos equidad de la jugada realizada.</p></li>
+<li><p>No doblar: el error de «no doblar» dado por el análisis.</p></li>
+<li><p>Doble: el menor de los errores de «doble, aceptación» y «doble, rechazo»: el que dobla se juzga por la mejor respuesta del adversario.</p></li>
+<li><p>Aceptación o rechazo: la diferencia entre la respuesta jugada y la mejor de las dos.</p></li>
+</ul>
+<p>El error es el <strong>de la jugada realizada en ese match</strong>. Una posición alcanzada en dos matches y jugada de forma distinta lleva dos errores; ninguno anula al otro. Una jugada realizada que el análisis no nombra entre ninguno de sus candidatos no tiene error: no se evalúa y queda fuera de todos los recuentos.</p>
+<p><strong>La pérdida de MWC ℓ</strong> es el mismo error expresado en probabilidades de ganar el match (<em>Match Winning Chances</em>). Con el marcador y el cubo v de la decisión:</p>
+<div class="math notranslate nohighlight">
+\[\ell = e \times \frac{\mathrm{MWC}_{+v} - \mathrm{MWC}_{-v}}{2}\]</div>
+<p>donde <span class="math notranslate nohighlight">\(\mathrm{MWC}_{+v}\)</span> y <span class="math notranslate nohighlight">\(\mathrm{MWC}_{-v}\)</span> son las probabilidades de ganar el match si el jugador gana, o pierde, v puntos con ese marcador. La tabla de equidad de match (MET) es la Kazaross-XG2, prolongada más allá de 25 puntos con la fórmula de Zadeh; un marcador post-Crawford se lee como tal. Una aceptación o un rechazo se convierte con el cubo <strong>previo</strong> al doble, como el que dobla y como XG: convertido con el cubo doblado, un error de respuesta costaría el doble. Una partida de dinero no tiene MWC: ℓ no existe en ella.</p>
+<p>Estas dos magnitudes son aditivas. Todas las métricas que siguen son sumas de ellas, referidas a denominadores distintos o comparadas con una referencia.</p>
+</section>
+<section id="pr-performance-rating">
+<span id="metrique-pr"></span><h2><a class="toc-backref" href="#id2" role="doc-backlink">PR (<em>Performance Rating</em>)</a><a class="headerlink" href="#pr-performance-rating" title="Link to this heading"></a></h2>
+<p><strong>La pregunta.</strong> ¿Cuál es mi nivel, en la escala que todo el mundo conoce? El PR es la cifra de las clasificaciones, los foros y los clubes; permite situarse y comparar dos matches analizados por XG.</p>
+<p><strong>La fórmula.</strong> Sobre las decisiones contadas del jugador:</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{PR} = 500 \times \frac{\sum_i e_i}{N_\text{compté}}\]</div>
+<p>El factor 500 es la convención de XG: un PR de 5,0 equivale a un error medio de 0,010, es decir, 10 mpt por decisión contada. El PR es un promedio, sin unidad; cuanto más bajo, mejor se ha jugado.</p>
+<p><strong>Qué cuenta como decisión.</strong> Las reglas son las de XG, verificadas match por match con sus cifras (<a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">Anexo: Modelo de estadísticas — alineación XG / gnuBG / blunderDB</span></a>):</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Decisión</p></th>
+<th class="head"><p>Se cuenta si</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Movimiento de fichas</p></td>
+<td><p>no es forzado y la jugada realizada está evaluada</p></td>
+</tr>
+<tr class="row-odd"><td><p>Doble propuesto</p></td>
+<td><p>siempre</p></td>
+</tr>
+<tr class="row-even"><td><p>Aceptación, rechazo</p></td>
+<td><p>siempre</p></td>
+</tr>
+<tr class="row-odd"><td><p>No doblar</p></td>
+<td><p>ND &gt; 0 y ND − min(D/T, D/P) &lt; 0,200</p></td>
+</tr>
+</tbody>
+</table>
+<ul class="simple">
+<li><p>Un movimiento de fichas es <strong>forzado</strong> cuando la tirada solo ofrece una jugada legal, o cuando el análisis cubre todas las jugadas legales (contadas por el generador de jugadas de blunderDB) y todas valen la misma equidad al milésimo: una elección que no cuesta nada, sea cual sea la jugada, no es una decisión. Es la regla de XG para las jugadas «no forzadas pero sin trascendencia» (final de carrera decidido, bear-off en el que todo vale lo mismo). Cuando no se pueden contar las jugadas legales, solo un candidato único hace forzada la jugada.</p></li>
+<li><p>Un <strong>no doblar</strong> se cuenta cuando el jugador estaba cerca de doblar: su equidad sin doblar (ND) es positiva y supera en menos de 0,200 el mejor resultado del doble para el adversario, min(D/T, D/P). Medir contra este mínimo en lugar de contra D/T solo mantiene como decisión una posición «demasiado buena» mientras siga a menos de 0,200 del cobro.</p></li>
+<li><p>La condición <strong>ND &gt; 0</strong> descarta las posiciones en las que el jugador con el turno va por detrás: no tiene ningún doble que considerar. XG también las descarta, cosa que su manual no dice; los matches de referencia lo muestran.</p></li>
+<li><p>Una decisión de cubo sin análisis de cubo nunca es un no doblar contado.</p></li>
+</ul>
+<p><strong>Lectura.</strong> Las bandas de nivel del panel Stats (<a class="reference internal" href="manuel.html#stats"><span class="std std-ref">Panel Stats</span></a>) son una referencia propia de blunderDB, no una norma publicada. Un PR se compara primero con sus propios PR: mismo analizador, mismo tipo de adversarios, mismas longitudes.</p>
+<p><strong>Incertidumbre.</strong> El PR de un match es muy ruidoso: el error típico de un match a 7 puntos es del orden de 1,5 PR. blunderDB da un intervalo al 95 % (<a class="reference internal" href="#metrique-intervalles"><span class="std std-ref">Intervalos al 95 %</span></a>) remuestreando las partidas de un match, y los matches de un agregado.</p>
+<p><strong>Límites.</strong> El numerador no depende de nada, pero el denominador depende de lo que se cuenta: los umbrales de 0,001 y 0,200 son arbitrarios. Se puede bajar el PR sin jugar mejor, aceptando un rechazo ajustado para añadir decisiones a una carrera, o eligiendo en el bear-off una jugada que cree una decisión más. El PR pesa un error con el cubo a 8 igual que un error con el cubo a 1 (la equidad está normalizada al cubo), y un error en el DMP igual que uno a 0-0. Hereda las imperfecciones del motor, y el adversario que crea posiciones difíciles hace subir el PR del otro. La <a class="reference internal" href="#metrique-l7"><span class="std std-ref">pérdida de MWC</span></a> y la <a class="reference internal" href="#metrique-difficulte"><span class="std std-ref">dificultad</span></a> responden a estos tres defectos.</p>
+<p><strong>XG y gnuBG.</strong> Sobre un archivo XG, el PR de blunderDB es el de XG, salvo la precisión de la visualización y las desviaciones explicadas en <a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">Anexo: Modelo de estadísticas — alineación XG / gnuBG / blunderDB</span></a>. gnuBG divide la misma suma por otro número: cada jugada con más de una jugada legal, y las decisiones de cubo que juzga cercanas según su propia ventana. Su tasa por decisión no es, pues, comparable con el PR de XG, ni siquiera sobre el mismo análisis. El <em>Snowie Error Rate</em> (<a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">Anexo: Modelo de estadísticas — alineación XG / gnuBG / blunderDB</span></a>) divide por todas las jugadas de ambos jugadores: no depende de ninguna regla de recuento, pero vale aproximadamente la mitad del PR.</p>
+</section>
+<section id="perte-de-mwc-par-decision-et-graphique-du-match">
+<span id="metrique-perte-mwc"></span><h2><a class="toc-backref" href="#id3" role="doc-backlink">Pérdida de MWC por decisión y gráfico del match</a><a class="headerlink" href="#perte-de-mwc-par-decision-et-graphique-du-match" title="Link to this heading"></a></h2>
+<p><strong>La pregunta.</strong> ¿Qué decisiones me costaron este match? El PR pone todos los errores en la misma escala; ℓ los pondera con el marcador en que se cometieron. Un error de 0,040 a 4-4 en un match a 5 puntos no cuesta lo que cuesta a 0-0 en uno a 17. Para el estudio, la columna y el gráfico señalan las pocas decisiones que decidieron el match, y la curva acumulada muestra dónde se inclinó.</p>
+<p><strong>Definición.</strong> ℓ (<a class="reference internal" href="#metrique-erreur"><span class="std std-ref">El error y la pérdida de una decisión</span></a>) para cada decisión contada en el PR; la pérdida de un jugador en el match es Σℓ sobre estas decisiones. Una decisión fuera del recuento (jugada forzada, no doblar fuera de la ventana) no tiene ℓ: de todos modos no habría costado nada, o casi nada.</p>
+<p><strong>Unidad.</strong> Un porcentaje de probabilidades de ganar el match: 2,5 significa 2,5 % de MWC perdido.</p>
+<p><strong>Lectura.</strong> La columna <strong>MWC</strong> de la transcripción, la barra por decisión y la curva acumulada de cada jugador se describen en <a class="reference internal" href="manuel.html#panneau-matchs"><span class="std std-ref">Panel de Partidas</span></a>. Una barra aislada y alta es una decisión que conviene revisar; una curva que sube con regularidad indica un match de errores medios, no de accidentes.</p>
+<p><strong>Incertidumbre.</strong> ℓ es exacto respecto al análisis: su incertidumbre es la del propio análisis (profundidad, rollout o no) y la de la MET.</p>
+<p><strong>Límites.</strong> ℓ depende de la MET: dos programas que no usan la misma tabla no dan la misma pérdida. Una partida de dinero no la tiene, y un análisis calculado con una MET distinta a la de la base queda fuera de las estadísticas. Una decisión no evaluada lleva un guion, nunca cero.</p>
+<p><strong>XG y gnuBG.</strong> La suma es la pérdida de MWC que XG muestra para el match: jugadas de fichas, dobles y respuestas coinciden en los matches de referencia con la precisión de visualización de XG (desviación acotada a 0,06 puntos porcentuales por la batería de pruebas), salvo los jugadores con las desviaciones residuales conocidas de <a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">Anexo: Modelo de estadísticas — alineación XG / gnuBG / blunderDB</span></a>, de hasta 0,45 puntos. gnuBG hace la misma conversión, con sus propias equidades: en un match que ha analizado, sus cifras difieren de las de XG por el análisis, no por la fórmula.</p>
+</section>
+<section id="perte-mwc-eq-7-pts-l7-et-elo-face-au-moteur">
+<span id="metrique-l7"></span><h2><a class="toc-backref" href="#id4" role="doc-backlink">Pérdida de MWC (eq. 7 pts) L₇ y Elo frente al motor</a><a class="headerlink" href="#perte-mwc-eq-7-pts-l7-et-elo-face-au-moteur" title="Link to this heading"></a></h2>
+<p><strong>La pregunta.</strong> ¿Cuánto match he perdido por mis errores, sea cual sea la forma de contar las decisiones, y cómo comparar un match a 5 puntos con uno a 11? L₇ no divide por ningún número de decisiones: no se manipula añadiendo decisiones fáciles, y pondera cada error por lo que costó.</p>
+<p><strong>Definición.</strong> Con juego perfecto, las probabilidades de ganar el match evolucionan sin sesgo: contra un adversario perfecto, un jugador que pierde L de MWC en el match conserva q = 0,5 − L de probabilidades. El modelo de la fórmula FIBS dice que, a igual fuerza, la pérdida crece como la raíz de la longitud N. L se reduce, pues, a un match a 7 puntos, la longitud de torneo más habitual:</p>
+<div class="math notranslate nohighlight">
+\[L_7 = L \times \sqrt{7 / N}
+\qquad
+L_7^\text{agrégat} = \sqrt{7} \times \frac{\sum L}{\sum \sqrt{N}}\]</div>
+<p>El agregado (varios matches, un jugador, un torneo) suma las pérdidas y las raíces de las longitudes antes de dividir: un match a 7 puntos pesa más que un match a 1 punto, y un solo match devuelve su propio valor. Sin filtro de jugador, los dos asientos de un match pesan cada uno √N, pero forman una única unidad del intervalo.</p>
+<p><strong>El Elo frente al motor</strong> invierte la fórmula FIBS a 7 puntos:</p>
+<div class="math notranslate nohighlight">
+\[D = \frac{2000}{\sqrt{7}} \log_{10} \frac{q}{1 - q}, \qquad q = 0{,}5 - L_7\]</div>
+<p>Linealizado, D ≈ −3474 × L / √N. A partir de L₇ ≥ 50 %, q no tiene inversa finita; desde L₇ &gt; 49 %, q se fija en un mínimo de 1 % (D ≥ −1509) y el Elo se muestra «≤». L₇ no tiene mínimo. Ambos ordenan a los jugadores de la misma manera.</p>
+<p><strong>Unidad.</strong> L₇: un porcentaje de MWC. D: puntos Elo, negativos, la diferencia esperada entre el jugador y el motor.</p>
+<p><strong>Lectura.</strong> 12,3 %: en lugar del 50 % de probabilidades contra el motor, el jugador solo tenía 37,7 % en un match a 7 puntos. La insignia, el detalle, las estadísticas, el torneo y la progresión lo muestran (<a class="reference internal" href="manuel.html#perte-mwc-7pts"><span class="std std-ref">Pérdida de MWC (eq. 7 pts)</span></a>).</p>
+<p><strong>Incertidumbre.</strong> Intervalo al 95 % por partidas para un match, por matches para un agregado (<a class="reference internal" href="#metrique-intervalles"><span class="std std-ref">Intervalos al 95 %</span></a>), con la misma transformación que el valor. Una fila por match de las estadísticas no lo tiene: es una sola unidad; el balance del match lleva el intervalo por partidas.</p>
+<p><strong>Límites.</strong> El modelo en √N es aproximado por debajo de 7 puntos y en torno al Crawford. L₇ depende de la MET. Una partida de dinero no tiene longitud, por tanto no tiene L₇: la pantalla lo indica en lugar de mostrar un número. Los jugadores reales pierden más de medio match, porque los errores cometidos tras un vuelco de la suerte se acumulan: el Elo alcanza entonces su suelo.</p>
+<p><strong>XG y gnuBG.</strong> Para un match a 7 puntos, L₇ es exactamente la pérdida de MWC que muestra XG. Ninguno de los dos programas reduce la pérdida a una longitud de referencia ni la convierte en Elo. Este Elo mide la distancia al motor, no una clasificación FIBS o BMAB entre jugadores humanos.</p>
+</section>
+<section id="difficulte-erreurs-evitables-exces-et-ratio">
+<span id="metrique-difficulte"></span><h2><a class="toc-backref" href="#id5" role="doc-backlink">Dificultad, errores evitables, exceso y ratio</a><a class="headerlink" href="#difficulte-erreurs-evitables-exces-et-ratio" title="Link to this heading"></a></h2>
+<p><strong>La pregunta.</strong> ¿Era perdonable este error? Una misma pérdida de 2 % es un descuido en una posición evidente, y una falta que cualquier buen jugador cometería en una posición donde cuatro jugadas se sostienen a pocas milésimas. Para el estudio, la dificultad clasifica las faltas: los errores evitables (descuido, regla mal sabida) se corrigen rápido y van primero; las pérdidas en decisiones difíciles son trabajo de fondo.</p>
+<p><strong>Definición.</strong> La dificultad d es la pérdida que habría sufrido en promedio, en la misma posición, un <strong>jugador de referencia</strong> que elige cada opción i con una probabilidad tanto más baja cuanto más cara es:</p>
+<div class="math notranslate nohighlight">
+\[\pi(i) = \frac{e^{-\Delta_i/\tau}}{\sum_j e^{-\Delta_j/\tau}},
+\qquad d = \sum_i \pi(i)\,\Delta_i,
+\qquad \tau = 0{,}025\]</div>
+<p>Δᵢ es el coste de la opción i respecto a la mejor, en equidad normalizada. Las opciones son los candidatos del análisis para un movimiento de fichas; no doblar y doblar (contra la mejor respuesta) para el jugador que tiene el cubo; aceptar y pasar para quien recibe el doble. d se convierte en MWC como ℓ: ambas están en la misma unidad, y la opción jugada tiene exactamente por coste ℓ.</p>
+<p>τ = 0,025 es un a priori de jugador fuerte: con dos opciones separadas por Δ, d = Δ / (1 + e^{Δ/τ}) es máxima hacia Δ ≈ 0,032, entre «dudoso» y «error»; una diferencia de 0,1 solo cuesta ya 0,002; cinco candidatos espaciados 0,01 dan d ≈ 0,012, el error medio de un jugador de PR 6 aproximadamente.</p>
+<ul class="simple">
+<li><p><strong>Error evitable</strong>: la pérdida alcanza el umbral Error de la base y d ≤ ℓ / 10 — con dos opciones, el jugador de referencia no lo cometería una vez de cada diez.</p></li>
+<li><p><strong>Exceso</strong> de un jugador en un match: Σ(ℓ − d), lo que ha perdido por encima de la referencia (negativo cuando lo ha hecho mejor).</p></li>
+<li><p><strong>Ratio</strong>: Σℓ / Σd; 1 significa «juega como la referencia», 2 «pierde el doble». No se da cuando Σd &lt; 0,5 % de MWC: en un match demasiado fácil solo mide ruido; el exceso se mantiene.</p></li>
+</ul>
+<p><strong>Qué cuenta.</strong> Las decisiones contadas en el PR cuya pérdida se valora y se convierte en MWC; en los demás casos la dificultad está ausente, nunca es nula. Una jugada forzada o un no doblar fuera de la ventana del PR no tiene, por tanto, ni pérdida ni dificultad. Entre las decisiones contadas, ningún umbral adicional aparta una decisión evidente: su dificultad ya es cercana a cero por sí misma.</p>
+<p><strong>Unidad.</strong> d y el exceso: un porcentaje de MWC. El ratio: sin unidad.</p>
+<p><strong>Lectura.</strong> Una pérdida muy por encima de su dificultad es una falta que la posición no excusaba; una pérdida cercana a su dificultad, una falta compartida. Exceso y ratio corrigen el PR por la dificultad de las posiciones encontradas y, por tanto, en parte por el estilo del adversario (<a class="reference internal" href="manuel.html#panneau-matchs"><span class="std std-ref">Panel de Partidas</span></a>).</p>
+<p><strong>Incertidumbre.</strong> En un match, exceso y ratio se apoyan en pocas decisiones y varían mucho: una tendencia, no una clasificación.</p>
+<p><strong>Límites.</strong> La dificultad depende de un modelo de jugador y de τ, fijados una vez: cambiarlos cambia todas las cifras. Solo conoce los candidatos que el análisis ha conservado (unos pocos en XG, según sus filtros en gnuBG): las opciones ausentes no pesan nada, y d es entonces una cota inferior. Hereda el error del análisis, sobre todo a poca profundidad.</p>
+<p><strong>XG y gnuBG.</strong> Ninguno de los dos calcula la dificultad. La idea procede de los índices de verosimilitud del ajedrez (Regan); τ no está calibrado sobre una población de jugadores.</p>
+</section>
+<section id="intervalles-a-95">
+<span id="metrique-intervalles"></span><h2><a class="toc-backref" href="#id6" role="doc-backlink">Intervalos al 95 %</a><a class="headerlink" href="#intervalles-a-95" title="Link to this heading"></a></h2>
+<p><strong>La pregunta.</strong> ¿Esta cifra dice algo, o es ruido? Un PR de 4,2 en un match y un PR de 4,2 en cuarenta matches no valen lo mismo. El intervalo evita construir un plan de trabajo sobre una casilla que no se apoya en nada, y leer un rango en un match aislado.</p>
+<p><strong>Definición.</strong> El intervalo remuestrea la mayor unidad independiente: las <strong>partidas</strong> de un match, los <strong>matches</strong> de un agregado (PR global, casillas por fase, plan de juego, etiqueta y marcador, L₇ de un agregado). Las partidas de un mismo match comparten adversario, sesión y cansancio: remuestrearlas por separado en un agregado estrecharía el intervalo indebidamente. Sin filtro de jugador, los dos asientos de un match forman una sola unidad, porque juegan las mismas posiciones.</p>
+<p><strong>La fórmula.</strong> Para una razón R = Σeᵤ / Σnᵤ sobre G unidades (eᵤ la suma de errores, nᵤ el número de decisiones de la unidad), la varianza del bootstrap se calcula sin sorteo:</p>
+<div class="math notranslate nohighlight">
+\[\widehat{\mathrm{Var}}(R) = \frac{G}{G-1} \cdot
+\frac{\sum_u (e_u - R\,n_u)^2}{\left(\sum_u n_u\right)^2}\]</div>
+<p>y el intervalo vale R ± 1,96 × √Var, con el límite inferior nunca por debajo de 0, y luego la misma transformación que el valor (× 500 para el PR). El L₇ de un agregado sigue la misma regla, con L en lugar de e y √N en lugar de n; el de un match es una suma sobre sus G partidas, de varianza G/(G−1) × Σ(l_g − l̄)², siendo l_g la pérdida de la partida g. El cálculo es determinista: la misma base da siempre el mismo intervalo, en ambos motores de almacenamiento.</p>
+<p><strong>Qué se necesita.</strong> Al menos <strong>tres unidades</strong> y una anchura no nula. Con dos, la dispersión se apoya en un solo grado de libertad y el intervalo sería varias veces demasiado estrecho; unidades todas con la misma razón dicen que concuerdan, no que el valor sea exacto. Sin intervalo, la casilla se muestra en gris, con su tamaño visible (<a class="reference internal" href="manuel.html#stats"><span class="std std-ref">Panel Stats</span></a>).</p>
+<p><strong>Lectura.</strong> Dos intervalos que se solapan ampliamente no deciden nada. Una familia cuyo intervalo se mantiene por encima de su PR global es una debilidad establecida.</p>
+<p><strong>Límites.</strong> La aproximación normal es burda con pocas unidades, y los errores tienen una distribución asimétrica (unas pocas faltas grandes): con tres o cuatro unidades, el intervalo es indicativo.</p>
+<p><strong>XG y gnuBG.</strong> Ninguno de los dos da un intervalo.</p>
+</section>
+<section id="bilan-du-match">
+<span id="metrique-bilan-match"></span><h2><a class="toc-backref" href="#id7" role="doc-backlink">Balance del match</a><a class="headerlink" href="#bilan-du-match" title="Link to this heading"></a></h2>
+<p><strong>La pregunta.</strong> Tras un match: ¿qué repaso?, ¿perdí por los dados o por el juego?, ¿mis errores vienen de la precipitación o de una laguna? Las pantallas: <a class="reference internal" href="manuel.html#bilan-match"><span class="std std-ref">balance del match</span></a>.</p>
+<p><strong>Tres decisiones por revisar.</strong> Entre los errores del jugador (umbral de la base) cuya pérdida está cuantificada, las tres de mayor <strong>parte evitable</strong> ℓ − d = ℓ × (1 − d/ℓ), positiva: la pérdida multiplicada por su carácter evitable. Una dificultad desconocida cuenta cero; en caso de empate, la mayor pérdida y luego el orden del match. Un error que el jugador de referencia también cometería no vale una sesión.</p>
+<p><strong>Resultado ajustado por la suerte</strong>, para un match terminado, en puntos de MWC del jugador:</p>
+<div class="math notranslate nohighlight">
+\[A = R - C, \quad R = \text{issue} - \mathrm{MWC}_\text{départ}, \quad
+C = \sum \text{chance de ses jets} - \sum \text{chance des jets adverses}\]</div>
+<p>El resultado vale 1 si se gana y 0 si se pierde; la MWC de partida es la del marcador inicial (50 % a 0-0). Cada tirada se convierte en MWC como una pérdida, con el marcador y el cubo de su posición. Con juego perfecto, la esperanza de A es la pérdida del adversario menos la suya: el balance da la <em>diferencia de errores</em> al lado para contrastar. A &gt; 0 en un match perdido: perdido por los dados; A &lt; 0: perdido por el juego. La suerte es la que el analizador escribió (<a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">Anexo: Modelo de estadísticas — alineación XG / gnuBG / blunderDB</span></a>): sin suerte, no hay línea, y se muestra la cobertura (tiradas medidas sobre tiradas jugadas), porque una suerte parcial sesga A. Tampoco hay línea para una partida de dinero o un match inacabado.</p>
+<p><strong>Errores precipitados y reflexionados.</strong> Por jugador y por tipo (fichas, cubo), el umbral es la mediana de las duraciones conocidas de sus decisiones cuantificadas de ese tipo en el match: un error jugado más rápido es precipitado, los demás reflexionados. La mediana es la suya, en ese match: no depende del ritmo, y sin relación entre velocidad y error los errores se reparten mitad y mitad. Una mayoría precipitada pide disciplina; una mayoría reflexionada, conocimiento.</p>
+<p><strong>Límites.</strong> Un match es una muestra pequeña: PR y L₇ llevan en él su intervalo por partidas (al menos tres partidas). El resultado ajustado depende de la MET y de la suerte del archivo. La duración solo existe para un match que la ha conservado (un match jugado contra un bot).</p>
+<p><strong>XG y gnuBG.</strong> XG y gnuBG muestran la suerte total de cada jugador, pero ni un resultado ajustado en MWC, ni una selección de las decisiones por revisar, ni un reparto por duración.</p>
+</section>
+<section id="plan-d-etude">
+<span id="metrique-plan-etude"></span><h2><a class="toc-backref" href="#id8" role="doc-backlink">Plan de estudio</a><a class="headerlink" href="#plan-d-etude" title="Link to this heading"></a></h2>
+<p><strong>La pregunta.</strong> ¿Qué debo trabajar ahora? Clasificar los errores por coste dice dónde se ha perdido más, no dónde el estudio rinde más: una familia de posiciones realmente difíciles cuesta a todo el mundo, y tres errores no hacen una tendencia. Las pantallas: <a class="reference internal" href="manuel.html#plan-etude"><span class="std std-ref">Plan de estudio</span></a>.</p>
+<p><strong>Definición.</strong> Una <strong>familia</strong> es un triplete (plan de juego, naturaleza de la decisión, tema) de errores recurrentes; sus miembros son los errores del filtro, decisiones contadas que cuestan al menos el umbral Error. Un error sin tema no entra en ninguna familia. Un miembro está <strong>cuantificado</strong> si lleva ℓ y d; un error en partida de dinero se cuenta como «no cuantificado» y no entra en ninguna prioridad.</p>
+<p><strong>La fórmula.</strong> El <strong>MWC recuperable</strong> y su intervalo:</p>
+<div class="math notranslate nohighlight">
+\[R = \sum_i (\ell_i - d_i), \qquad
+R \pm 1{,}96 \sqrt{\textstyle\sum_i (\ell_i - d_i)^2}\]</div>
+<p>R es la frecuencia de la familia multiplicada por su pérdida media por encima de la dificultad: lo que se recuperaría jugando estas posiciones como el jugador de referencia. La suma es con signo, sin recorte. El intervalo trata el número de miembros como un recuento de Poisson.</p>
+<p><strong>Qué entra en el plan.</strong> Al menos <strong>5 miembros cuantificados</strong> y un <strong>límite inferior estrictamente positivo</strong>. El plan se ordena por límite inferior decreciente: a igual recuperable, pasa delante la familia mejor establecida. Las demás están «por confirmar», sin rango.</p>
+<p><strong>Unidad.</strong> Un porcentaje de MWC, acumulado sobre el filtro.</p>
+<p><strong>Lectura.</strong> Una familia de errores evitables sube; una familia de posiciones en las que todo el mundo se equivoca baja. Un jugador nuevo ve primero familias «por confirmar»: el plan no empuja hacia el ruido.</p>
+<p><strong>Límites.</strong> El tema procede del clasificador de blunderDB: un error mal clasificado cae en una familia equivocada, un error sin tema no está en ninguna. R hereda los límites de ℓ y d (MET, truncamiento de los candidatos).</p>
+<p><strong>XG y gnuBG.</strong> Ninguno de los dos propone un plan de estudio.</p>
+</section>
+<section id="positions-de-reference">
+<span id="metrique-positions-reference"></span><h2><a class="toc-backref" href="#id9" role="doc-backlink">Posiciones de referencia</a><a class="headerlink" href="#positions-de-reference" title="Link to this heading"></a></h2>
+<p><strong>La pregunta.</strong> ¿Qué posiciones poner en una colección para trabajar el plan? Los diez peores errores suelen dar diez variantes de un mismo problema. Una buena posición de referencia está en el centro de muchos de sus errores evitables, lleva una lección nítida y no está ya estudiada. Las pantallas: <a class="reference internal" href="manuel.html#positions-reference"><span class="std std-ref">posiciones de referencia</span></a>.</p>
+<p><strong>Definición.</strong> Las candidatas son los errores cuantificados y con tema del filtro, reunidos por posición; el exceso de una posición es la suma de los excesos positivos ℓ − d de sus errores. Dos candidatas de una misma familia —y, para el cubo, del mismo marcador— son <strong>vecinas</strong> a una distancia <code class="docutils literal notranslate"><span class="pre">like</span></code> de como máximo ρ = 12 pasos de pip (una tirada de dados vale de 8 a 16).</p>
+<p><strong>La fórmula.</strong> La ganancia de una candidata p es</p>
+<div class="math notranslate nohighlight">
+\[G(p) = c(p) \times \sum_{q \,\in\, \text{voisinage}(p),\ q\ \text{non couverte}} \text{excès}(q)\]</div>
+<p>en fracción de MWC: la representatividad, la frecuencia y el coste evitable en una sola cantidad. c(p) parte de 1 y se multiplica por ½ si la lección es <strong>ajustada</strong> (la segunda opción cuesta menos de la mitad del umbral Error), y de nuevo por ½ si es <strong>inestable</strong> (otra profundidad de análisis del cubo o un rollout da otro veredicto): ¼ cuando se acumulan ambas. Un rollout que confirma no eleva nada: desempata a igual ganancia.</p>
+<p><strong>Selección.</strong> Voraz por ganancia marginal: cada posición elegida cubre a sus vecinas, que ya no aportan nada a las siguientes, y sus casi duplicados se descartan incluso fuera de su familia. Una posición ya trabajada (comentario, tarjeta Anki, colección, marca «estudiada») nunca se propone y cuenta como ya elegida.</p>
+<p><strong>Unidad.</strong> El MWC cubierto, en porcentaje.</p>
+<p><strong>Límites.</strong> El radio y los factores son fijos, no aprendidos. La distancia <code class="docutils literal notranslate"><span class="pre">like</span></code> compara estructuras de fichas, no ideas: dos posiciones con la misma lección pero de estructura alejada no se cubren.</p>
+<p><strong>XG y gnuBG.</strong> Sin equivalente.</p>
+</section>
+<section id="avant-apres-l-etude">
+<span id="metrique-avant-apres"></span><h2><a class="toc-backref" href="#id10" role="doc-backlink">Antes/después del estudio</a><a class="headerlink" href="#avant-apres-l-etude" title="Link to this heading"></a></h2>
+<p><strong>La pregunta.</strong> ¿Lo que he trabajado me cuesta menos en match real? Sin medida, el estudio se juzga por la impresión; una familia que no se mueve pese al trabajo indica que hay que cambiar de método. Las pantallas: <a class="reference internal" href="manuel.html#avant-apres-etude"><span class="std std-ref">Antes/después del estudio</span></a>.</p>
+<p><strong>Definición.</strong> Se mide cada familia temática del filtro, tanto las del plan como las «por confirmar». Una familia está <strong>estudiada</strong> el día (UTC) de la primera acción de estudio sobre una de sus posiciones: marca «estudiada», repaso Anki sea cual sea la nota, respuesta de quiz. Crear una tarjeta o guardar una posición en una colección no cuenta. Ventana <em>antes</em>: los matches con fecha estrictamente anterior a ese día; <em>después</em>: estrictamente posterior; el propio día y los matches sin fecha se descartan.</p>
+<p><strong>La fórmula.</strong> En cada ventana, la tasa de pérdida r = Σℓ / N: ℓ las pérdidas de los errores de la familia, N las decisiones contadas en match del mismo plan de juego y de la misma naturaleza (el tema solo existe para un error). La ganancia y su intervalo:</p>
+<div class="math notranslate nohighlight">
+\[\Delta = r_\text{avant} - r_\text{après}, \qquad
+\Delta \pm 1{,}96 \sqrt{\frac{\sum \ell^2_\text{avant}}{N^2_\text{avant}}
++ \frac{\sum \ell^2_\text{après}}{N^2_\text{après}}}\]</div>
+<p><strong>Veredicto.</strong> Al menos <strong>30 decisiones</strong> en cada ventana, si no «insuficiente». «En progreso» si el límite inferior de Δ es positivo, «en retroceso» si el límite superior es negativo, «indeterminado» en los demás casos.</p>
+<p><strong>Unidad.</strong> Puntos de MWC por 100 decisiones.</p>
+<p><strong>Límites.</strong> Un cambio, no un efecto. Una familia se estudia <em>porque</em> costaba: la regresión a la media infla la ganancia. Nada controla los adversarios, el formato ni los dados.</p>
+<p><strong>XG y gnuBG.</strong> Sin equivalente.</p>
+</section>
+<section id="biais-signes">
+<span id="metrique-biais"></span><h2><a class="toc-backref" href="#id11" role="doc-backlink">Sesgos con signo</a><a class="headerlink" href="#biais-signes" title="Link to this heading"></a></h2>
+<p><strong>La pregunta.</strong> ¿En qué sentido me equivoco? «Acepta demasiado» se corrige mejor que un PR: se nombra la regla que hay que revisar. Las pantallas: <a class="reference internal" href="manuel.html#biais-signes"><span class="std std-ref">Sesgos con signo</span></a>.</p>
+<p><strong>La fórmula.</strong> Cada decisión contada lleva x = +1 (error por exceso de audacia), −1 (por exceso de prudencia) o 0. Con P y M los dos recuentos sobre N decisiones:</p>
+<div class="math notranslate nohighlight">
+\[B = \frac{P - M}{N}, \qquad
+B \pm 1{,}96 \sqrt{\frac{(P + M)/N - B^2}{N}}\]</div>
+<p>Al menos <strong>20 decisiones</strong>; «demasiado» si el límite inferior es positivo, «demasiado poco» si el límite superior es negativo, «equilibrado» en los demás casos. El coste de P y de M (en mpt) acompaña a los recuentos. El signo y el coste son los de la jugada realizada en su match.</p>
+<ul class="simple">
+<li><p><strong>Aceptar / pasar</strong>: sobre las respuestas al cubo; P = aceptaciones erróneas, M = rechazos erróneos. B es exactamente su tasa de aceptación menos la del bot sobre las mismas posiciones.</p></li>
+<li><p><strong>Dobles</strong>: sobre las decisiones de cubo del poseedor contadas en el PR; P = dobles prematuros (no doblar, o demasiado bueno), M = dobles omitidos. El sesgo se da también por casilla de marcador (sus puntos restantes, los del adversario; post-Crawford contado como 1; la partida de dinero aparte).</p></li>
+<li><p><strong>Blots</strong>: sobre los movimientos de fichas con contacto; x es el signo de (sus blots tras la jugada realizada − sus blots tras la mejor jugada). Una jugada se reconoce por el tablero que deja; una jugada no encontrada sale del recuento, y se muestra su proporción.</p></li>
+</ul>
+<p><strong>Unidad.</strong> Una diferencia de proporciones, sin unidad.</p>
+<p><strong>Límites.</strong> La mayoría de las casillas de marcador permanecen mudas: es la respuesta honesta. El sesgo de los blots cuenta los blots sin ponderar su exposición, y las jugadas descartadas no son un sorteo neutro.</p>
+<p><strong>XG y gnuBG.</strong> Sin equivalente; XG y gnuBG cuentan los errores de cubo por tipo (doble omitido, aceptación errónea…) sin intervalo ni veredicto.</p>
+</section>
+<section id="bilan-du-tournoi">
+<span id="metrique-bilan-tournoi"></span><h2><a class="toc-backref" href="#id12" role="doc-backlink">Balance del torneo</a><a class="headerlink" href="#bilan-du-tournoi" title="Link to this heading"></a></h2>
+<p><strong>La pregunta.</strong> ¿He jugado a mi nivel y, si no, dónde ha cedido: las últimas rondas, los finales de match largos, los marcadores donde un punto decide, el reloj? Las pantallas: <a class="reference internal" href="manuel.html#bilan-tournoi"><span class="std std-ref">balance del torneo</span></a>.</p>
+<p><strong>Definición.</strong> El <strong>nivel habitual</strong> es el del jugador en sus matches a puntos de los <strong>365 días</strong> anteriores al torneo (su fecha, o en su defecto la de su primer match), con exclusión de los del torneo; se necesitan al menos <strong>5 matches</strong>. El torneo y el nivel habitual tienen cada uno su PR y su L₇, con el intervalo por matches (<a class="reference internal" href="#metrique-intervalles"><span class="std std-ref">Intervalos al 95 %</span></a>).</p>
+<p><strong>La fórmula.</strong> Δ = torneo − habitual, de desviación típica √(σₜ² + σₕ²), leyéndose cada σ en la semianchura superior de su intervalo. «Peor» si el límite inferior de Δ es positivo, «mejor» si su límite superior es negativo, «dentro de lo habitual» en los demás casos. El veredicto exige un intervalo y al menos <strong>20 decisiones</strong> a cada lado; si no, «insuficiente», con las cifras visibles.</p>
+<p><strong>Desgloses</strong>, en PR: por ronda, cada match frente al PR habitual global; luego cada casilla frente a la misma casilla del nivel habitual, por posición de la decisión en el match (tramos de 30: la fatiga); por marcador (DMP, partida Crawford, post-Crawford, otros); por ritmo (a uno y otro lado de la mediana de sus tiempos en el match). Como máximo tres familias del plan de estudio restringido al torneo.</p>
+<p><strong>Límites.</strong> Un torneo de tres matches casi nunca dice «peor»: es deliberado. Los dos lados se tratan como independientes, lo que ensancha el intervalo: la regla es prudente. La reserva del reloj no se registra jugada a jugada: la presión del tiempo restante no se puede medir.</p>
+<p><strong>XG y gnuBG.</strong> Sin equivalente.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Pie de página">
+        <a href="manuel.html" class="btn btn-neutral float-left" title="Manual" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Anterior</a>
+        <a href="cmd_mode.html" class="btn btn-neutral float-right" title="Lista de comandos" accesskey="n" rel="next">Siguiente <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Derechos de autor 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

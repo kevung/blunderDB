@@ -1,0 +1,551 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="it" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contratto API &mdash; Documentazione blunderDB 0.39.0 </title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=88899734"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=45930005"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Indice" href="genindex.html" />
+    <link rel="search" title="Cerca" href="search.html" />
+    <link rel="next" title="Appendice: Utilizzo avanzato dei filtri" href="annexe_filtres.html" />
+    <link rel="prev" title="Modalità headless (server)" href="mode_headless.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Cerca documenti" aria-label="Cerca documenti" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Lingue">
+  <a href="../fr/api_reference.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/api_reference.html" lang="en" hreflang="en">English</a>
+  <a href="../de/api_reference.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/api_reference.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/api_reference.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/api_reference.html" lang="fi" hreflang="fi">Suomi</a>
+  <span class="current" lang="it" aria-current="true">Italiano</span>
+  <a href="../ja/api_reference.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/api_reference.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Menu di navigazione">
+              <p class="caption" role="heading"><span class="caption-text">Primi passi</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Download e installazione</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Guida utente</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Riferimento</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Manuale</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Metriche e strumenti di studio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Elenco dei comandi</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Scorciatoie da tastiera</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Interfaccia a riga di comando (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Glossario</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Domande frequenti (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Modalità headless (server)</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Contratto API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#idempotence">Idempotenza</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#lectures-conditionnelles">Letture condizionali</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reperes-d-une-transcription">Marcatori temporali di una trascrizione</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Appendici</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Appendice: Utilizzo avanzato dei filtri</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Appendice Windows: cosa fare se Windows blocca l’avvio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Appendice Mac: possibile blocco di blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Appendice: Schema del database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Appendice: modello statistico — allineamento XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Cronologia delle versioni</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Informazioni</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Menu navigazione dispositivi mobili" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Naviga tra le pagine">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Contratto API</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="contrat-d-api">
+<span id="api-reference"></span><h1>Contratto API<a class="headerlink" href="#contrat-d-api" title="Link to this heading"></a></h1>
+<p>Questa appendice è generata dal codice sorgente (<code class="docutils literal notranslate"><span class="pre">go</span> <span class="pre">run</span> <span class="pre">./cmd/openapi-gen</span></code>; vedere <code class="docutils literal notranslate"><span class="pre">openapi.yaml</span></code> alla radice del repository per il contratto completo, schemi inclusi): non modificarla direttamente, la generazione successiva sovrascriverebbe qualsiasi modifica. Ogni famiglia raggruppa i metodi <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/&lt;famiglia&gt;.&lt;metodo&gt;</span></code> esposti dal demone (vedere <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Modalità headless (server)</span></a>), con la loro forma di risposta (JSON, o NDJSON per un elenco in streaming) e, quando esiste, una nota sull’intestazione opzionale <code class="docutils literal notranslate"><span class="pre">Idempotency-Key</span></code>.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>across
+  POST /v1/across.analysesLoadByIds             JSON
+  POST /v1/across.clubRanking                   JSON
+  POST /v1/across.collectionPositions           NDJSON
+  POST /v1/across.collectionsList               NDJSON
+  POST /v1/across.commentsByZobrist             NDJSON
+  POST /v1/across.matchMovePositions            NDJSON
+  POST /v1/across.matchesGet                    JSON
+  POST /v1/across.matchesList                   NDJSON
+  POST /v1/across.playerTable                   JSON
+  POST /v1/across.searchFind                    NDJSON
+  POST /v1/across.statsCompute                  JSON
+analyses
+  POST /v1/analyses.delete                      JSON
+  POST /v1/analyses.load                        JSON
+  POST /v1/analyses.loadByIds                   JSON
+  POST /v1/analyses.repair                      JSON
+  POST /v1/analyses.save                        JSON
+anki
+  POST /v1/anki.buryCard                        JSON
+  POST /v1/anki.createDeck                      JSON
+  POST /v1/anki.createStudyDeck                 JSON
+  POST /v1/anki.deckPositionCount               JSON
+  POST /v1/anki.deckPositionIds                 JSON
+  POST /v1/anki.deckPositions                   NDJSON
+  POST /v1/anki.deckStats                       JSON
+  POST /v1/anki.deleteDeck                      JSON
+  POST /v1/anki.filteredPositionCount           JSON
+  POST /v1/anki.filteredPositionIds             JSON
+  POST /v1/anki.forecast                        JSON
+  POST /v1/anki.indexOfDeckPosition             JSON
+  POST /v1/anki.indexOfFilteredPosition         JSON
+  POST /v1/anki.linkedCard                      JSON
+  POST /v1/anki.listDecks                       NDJSON
+  POST /v1/anki.nextCard                        JSON
+  POST /v1/anki.removeCard                      JSON
+  POST /v1/anki.resetDeck                       JSON
+  POST /v1/anki.retention                       JSON
+  POST /v1/anki.reviewCard                      JSON  (Idempotency-Key)
+  POST /v1/anki.reviewLog                       NDJSON
+  POST /v1/anki.reviewsByGameType               JSON
+  POST /v1/anki.suspendCard                     JSON
+  POST /v1/anki.sync                            JSON
+  POST /v1/anki.syncWithPositions               JSON
+  POST /v1/anki.updateDeck                      JSON
+  POST /v1/anki.updateDeckParams                JSON
+collections
+  POST /v1/collections.addPosition              JSON
+  POST /v1/collections.addPositions             JSON
+  POST /v1/collections.collectionsOf            NDJSON
+  POST /v1/collections.copyPosition             JSON
+  POST /v1/collections.countPositions           JSON
+  POST /v1/collections.create                   JSON  (Idempotency-Key)
+  POST /v1/collections.delete                   JSON
+  POST /v1/collections.evaluate                 JSON
+  POST /v1/collections.freeze                   JSON
+  POST /v1/collections.get                      JSON
+  POST /v1/collections.indexOfPosition          JSON
+  POST /v1/collections.list                     NDJSON
+  POST /v1/collections.movePosition             JSON
+  POST /v1/collections.positionIds              JSON
+  POST /v1/collections.positionIndexMap         JSON
+  POST /v1/collections.positions                NDJSON
+  POST /v1/collections.removePosition           JSON
+  POST /v1/collections.removePositions          JSON
+  POST /v1/collections.reorder                  JSON
+  POST /v1/collections.reorderPositions         JSON
+  POST /v1/collections.setFilter                JSON
+  POST /v1/collections.suggest                  JSON
+  POST /v1/collections.update                   JSON
+comments
+  POST /v1/comments.add                         JSON
+  POST /v1/comments.byPosition                  NDJSON
+  POST /v1/comments.delete                      JSON
+  POST /v1/comments.deleteForPosition           JSON
+  POST /v1/comments.listAll                     NDJSON
+  POST /v1/comments.search                      NDJSON
+  POST /v1/comments.tags                        JSON
+  POST /v1/comments.text                        JSON
+  POST /v1/comments.update                      JSON
+directions
+  POST /v1/directions.addNote                   JSON  (Idempotency-Key)  (If-Match)
+  POST /v1/directions.addPair                   JSON  (Idempotency-Key)  (If-Match)
+  POST /v1/directions.addParticipant            JSON  (Idempotency-Key)  (If-Match)
+  POST /v1/directions.attachMatch               JSON  (Idempotency-Key)  (If-Match)
+  POST /v1/directions.brackets                  JSON  (ETag)
+  POST /v1/directions.cancelMatch               JSON  (Idempotency-Key)  (If-Match)
+  POST /v1/directions.clock                     JSON  (ETag)
+  POST /v1/directions.close                     JSON  (Idempotency-Key)  (If-Match)
+  POST /v1/directions.confirmAllProposals       JSON  (Idempotency-Key)  (If-Match)
+  POST /v1/directions.confirmProposal           JSON  (Idempotency-Key)  (If-Match)
+  POST /v1/directions.correctResult             JSON  (Idempotency-Key)  (If-Match)
+  POST /v1/directions.create                    JSON  (Idempotency-Key)
+  POST /v1/directions.detachMatch               JSON  (Idempotency-Key)  (If-Match)
+  POST /v1/directions.directory                 JSON  (ETag)
+  POST /v1/directions.enterForfeit              JSON  (Idempotency-Key)  (If-Match)
+  POST /v1/directions.enterParticipants         JSON  (Idempotency-Key)  (If-Match)
+  POST /v1/directions.enterResult               JSON  (Idempotency-Key)  (If-Match)
+  POST /v1/directions.freeParticipants          JSON  (ETag)
+  POST /v1/directions.get                       JSON  (ETag)
+  POST /v1/directions.history                   JSON  (ETag)
+  POST /v1/directions.lastDecision              JSON  (ETag)
+  POST /v1/directions.list                      JSON  (ETag)
+  POST /v1/directions.makeAbsent                JSON  (Idempotency-Key)  (If-Match)
+  POST /v1/directions.makeAvailable             JSON  (Idempotency-Key)  (If-Match)
+  POST /v1/directions.moveMatchToTable          JSON  (Idempotency-Key)  (If-Match)
+  POST /v1/directions.pageHtml                  JSON  (ETag)
+  POST /v1/directions.pairingSheetHtml          JSON  (ETag)
+  POST /v1/directions.participants              JSON  (ETag)
+  POST /v1/directions.previewConfig             JSON
+  POST /v1/directions.reinstate                 JSON  (Idempotency-Key)  (If-Match)
+  POST /v1/directions.reopen                    JSON  (Idempotency-Key)  (If-Match)
+  POST /v1/directions.setConfig                 JSON  (Idempotency-Key)  (If-Match)
+  POST /v1/directions.setTables                 JSON  (Idempotency-Key)  (If-Match)
+  POST /v1/directions.slots                     JSON  (ETag)
+  POST /v1/directions.standings                 JSON  (ETag)
+  POST /v1/directions.standingsCsv              JSON  (ETag)
+  POST /v1/directions.startMatch                JSON  (Idempotency-Key)  (If-Match)
+  POST /v1/directions.tableGrid                 JSON  (ETag)
+  POST /v1/directions.updatePair                JSON  (Idempotency-Key)  (If-Match)
+  POST /v1/directions.updateParticipant         JSON  (Idempotency-Key)  (If-Match)
+  POST /v1/directions.withdraw                  JSON  (Idempotency-Key)  (If-Match)
+duels
+  POST /v1/duels.act                            custom
+  POST /v1/duels.contribute                     custom
+  POST /v1/duels.create                         JSON  (Idempotency-Key)
+  POST /v1/duels.discard                        custom
+  POST /v1/duels.flag                           custom
+  POST /v1/duels.forfeit                        custom
+  POST /v1/duels.get                            custom
+  POST /v1/duels.list                           JSON
+  POST /v1/duels.open                           custom
+  POST /v1/duels.stop                           custom
+  POST /v1/duels.suspend                        custom
+events
+  POST /v1/events.alias.list                    JSON
+  POST /v1/events.alias.remove                  JSON
+  POST /v1/events.alias.set                     JSON
+  POST /v1/events.alias.suggest                 JSON
+exports
+  POST /v1/exports.json                         custom
+  POST /v1/exports.sqlite                       custom
+filters
+  POST /v1/filters.delete                       JSON
+  POST /v1/filters.list                         NDJSON
+  POST /v1/filters.loadEditPosition             JSON
+  POST /v1/filters.loadExcludePosition          JSON
+  POST /v1/filters.save                         JSON
+  POST /v1/filters.saveEditPosition             JSON
+  POST /v1/filters.saveExcludePosition          JSON
+  POST /v1/filters.setPinned                    JSON
+  POST /v1/filters.update                       JSON
+gammonnet
+  POST /v1/gammonnet.analyzeMissing             custom
+  POST /v1/gammonnet.analyzeMissing.cancel      custom
+  POST /v1/gammonnet.compare                    custom
+  POST /v1/gammonnet.cubeMatrix                 custom
+  POST /v1/gammonnet.evaluate                   custom
+  POST /v1/gammonnet.sweepStale                 custom
+history
+  POST /v1/history.clear                        JSON
+  POST /v1/history.load                         JSON
+  POST /v1/history.save                         JSON
+imports
+  POST /v1/imports.batch                        custom
+  POST /v1/imports.batch.cancel                 JSON
+  POST /v1/imports.batch.status                 JSON
+  POST /v1/imports.bgf                          custom
+  POST /v1/imports.cancel                       custom
+  POST /v1/imports.db                           custom
+  POST /v1/imports.files                        JSON
+  POST /v1/imports.gnubg                        custom
+  POST /v1/imports.json                         custom
+  POST /v1/imports.list                         JSON
+  POST /v1/imports.ogxm                         custom
+  POST /v1/imports.position                     custom
+  POST /v1/imports.report                       JSON
+  POST /v1/imports.studyQueue                   JSON
+  POST /v1/imports.xg                           custom
+lessons
+  POST /v1/lessons.addStep                      JSON  (Idempotency-Key)
+  POST /v1/lessons.create                       JSON  (Idempotency-Key)
+  POST /v1/lessons.delete                       JSON
+  POST /v1/lessons.doneSteps                    JSON
+  POST /v1/lessons.get                          JSON
+  POST /v1/lessons.list                         JSON
+  POST /v1/lessons.removeStep                   JSON
+  POST /v1/lessons.reorderSteps                 JSON
+  POST /v1/lessons.setStepDone                  JSON
+  POST /v1/lessons.update                       JSON
+  POST /v1/lessons.updateStep                   JSON
+librarySettings
+  POST /v1/librarySettings.load                 JSON
+  POST /v1/librarySettings.save                 JSON
+maintenance
+  POST /ops/maintenance.vacuum                  custom
+  POST /v1/maintenance.reencode                 custom
+matches
+  POST /v1/matches.count                        JSON
+  POST /v1/matches.createGame                   JSON
+  POST /v1/matches.createMove                   JSON
+  POST /v1/matches.delete                       JSON
+  POST /v1/matches.duplicates                   JSON
+  POST /v1/matches.exportMat                    custom
+  POST /v1/matches.findByHash                   JSON
+  POST /v1/matches.games                        NDJSON
+  POST /v1/matches.get                          JSON
+  POST /v1/matches.lastVisited                  JSON
+  POST /v1/matches.list                         NDJSON
+  POST /v1/matches.mergePlayers                 JSON
+  POST /v1/matches.movePositions                NDJSON
+  POST /v1/matches.moves                        NDJSON
+  POST /v1/matches.movesByMatch                 NDJSON
+  POST /v1/matches.origin                       JSON
+  POST /v1/matches.save                         JSON
+  POST /v1/matches.scoreMoves                   JSON
+  POST /v1/matches.setLastVisitedPosition       JSON
+  POST /v1/matches.setVideoSource               JSON
+  POST /v1/matches.swapPlayers                  JSON
+  POST /v1/matches.update                       JSON
+  POST /v1/matches.updateComment                JSON
+met
+  POST /v1/met.import                           JSON
+  POST /v1/met.list                             JSON
+  POST /v1/met.ofAnalysis                       JSON
+  POST /v1/met.setCurrent                       JSON
+metadata
+  POST /v1/metadata.counts                      JSON
+  POST /v1/metadata.countsEstimate              JSON
+  POST /v1/metadata.version                     JSON
+pile
+  POST /v1/pile.state                           JSON
+  POST /v1/pile.toggle                          JSON
+players
+  POST /v1/players.alias.list                   JSON
+  POST /v1/players.alias.remove                 JSON
+  POST /v1/players.alias.set                    JSON
+  POST /v1/players.alias.suggest                JSON
+positions
+  POST /v1/positions.count                      JSON
+  POST /v1/positions.delete                     JSON
+  POST /v1/positions.epc                        JSON
+  POST /v1/positions.exists                     JSON
+  POST /v1/positions.explain                    JSON
+  POST /v1/positions.fromOGID                   JSON
+  POST /v1/positions.fromXGID                   JSON
+  POST /v1/positions.fromXGP                    JSON
+  POST /v1/positions.indexOf                    JSON
+  POST /v1/positions.legalMoves                 JSON
+  POST /v1/positions.list                       NDJSON
+  POST /v1/positions.listIds                    JSON
+  POST /v1/positions.load                       JSON
+  POST /v1/positions.loadByIds                  JSON
+  POST /v1/positions.parseText                  JSON
+  POST /v1/positions.reclassifyPhases           JSON
+  POST /v1/positions.repairCrawford             JSON
+  POST /v1/positions.save                       JSON  (Idempotency-Key)
+  POST /v1/positions.similar                    JSON
+  POST /v1/positions.update                     JSON
+quiz
+  POST /v1/quiz.gradeChecker                    JSON
+  POST /v1/quiz.gradeCheckerMove                JSON
+  POST /v1/quiz.gradeCube                       JSON
+rencontres
+  POST /v1/rencontres.attach                    JSON  (Idempotency-Key)  (If-Match)
+  POST /v1/rencontres.create                    JSON  (Idempotency-Key)
+  POST /v1/rencontres.detach                    JSON  (Idempotency-Key)  (If-Match)
+  POST /v1/rencontres.get                       JSON  (ETag)
+  POST /v1/rencontres.list                      JSON  (ETag)
+  POST /v1/rencontres.pageHtml                  JSON  (ETag)
+  POST /v1/rencontres.ranking                   JSON
+  POST /v1/rencontres.setBreaks                 JSON  (Idempotency-Key)  (If-Match)
+  POST /v1/rencontres.setEventRooms             JSON  (Idempotency-Key)  (If-Match)
+  POST /v1/rencontres.setTableOutOfService      JSON  (Idempotency-Key)  (If-Match)
+  POST /v1/rencontres.setTables                 JSON  (Idempotency-Key)  (If-Match)
+  POST /v1/rencontres.trash                     JSON  (Idempotency-Key)  (If-Match)
+  POST /v1/rencontres.update                    JSON  (Idempotency-Key)  (If-Match)
+rollout
+  POST /v1/rollout.filter                       custom
+  POST /v1/rollout.filter.cancel                custom
+  POST /v1/rollout.list                         JSON
+  POST /v1/rollout.position                     custom
+search
+  POST /v1/search.count                         JSON
+  POST /v1/search.find                          NDJSON
+  POST /v1/search.ids                           JSON
+  POST /v1/search.indexOf                       JSON
+  POST /v1/search.parse                         JSON
+  POST /v1/search.query                         custom
+searchHistory
+  POST /v1/searchHistory.deleteEntry            JSON
+  POST /v1/searchHistory.list                   NDJSON
+  POST /v1/searchHistory.save                   JSON
+session
+  POST /v1/session.clear                        JSON
+  POST /v1/session.load                         JSON
+  POST /v1/session.save                         JSON
+stats
+  POST /v1/stats.analysisEngines                JSON
+  POST /v1/stats.biases                         JSON
+  POST /v1/stats.breakdownPositionCounts        JSON
+  POST /v1/stats.compute                        JSON
+  POST /v1/stats.dateRange                      JSON
+  POST /v1/stats.headToHead                     JSON
+  POST /v1/stats.matchBadges                    JSON
+  POST /v1/stats.matchDecisionLosses            JSON
+  POST /v1/stats.matchDetail                    JSON
+  POST /v1/stats.matchMoveGrades                JSON
+  POST /v1/stats.matchReview                    JSON
+  POST /v1/stats.matchTimeSummary               JSON
+  POST /v1/stats.playerContrast                 JSON
+  POST /v1/stats.playerNames                    JSON
+  POST /v1/stats.playerTable                    JSON
+  POST /v1/stats.positionIdsByMatch             JSON
+  POST /v1/stats.positionIdsBySelection         JSON
+  POST /v1/stats.positionIdsByTournament        JSON
+  POST /v1/stats.prByWindow                     JSON
+  POST /v1/stats.ranking                        JSON
+  POST /v1/stats.rebuildMatchStats              JSON
+  POST /v1/stats.recurringErrors                JSON
+  POST /v1/stats.report                         JSON
+  POST /v1/stats.studyEffect                    JSON
+  POST /v1/stats.studyIds                       JSON
+  POST /v1/stats.studyPlan                      JSON
+  POST /v1/stats.studyPlanIds                   JSON
+  POST /v1/stats.studyPlanQueue                 JSON
+  POST /v1/stats.timeErrors                     JSON
+  POST /v1/stats.tournamentBadges               JSON
+  POST /v1/stats.tournamentReview               JSON
+  POST /v1/stats.training                       JSON
+study
+  POST /v1/study.backlog                        JSON
+  POST /v1/study.setStudied                     JSON
+tenant
+  POST /ops/tenant.purge                        custom
+tenants
+  POST /v1/tenants.quota                        JSON
+tournaments
+  POST /v1/tournaments.addMatch                 JSON
+  POST /v1/tournaments.create                   JSON  (Idempotency-Key)
+  POST /v1/tournaments.delete                   JSON
+  POST /v1/tournaments.get                      JSON
+  POST /v1/tournaments.list                     NDJSON
+  POST /v1/tournaments.matches                  NDJSON
+  POST /v1/tournaments.removeMatch              JSON
+  POST /v1/tournaments.reorderMatches           JSON
+  POST /v1/tournaments.setMatchByName           JSON
+  POST /v1/tournaments.tournamentOf             JSON
+  POST /v1/tournaments.update                   JSON
+  POST /v1/tournaments.updateComment            JSON
+training
+  POST /v1/training.missed                      JSON
+  POST /v1/training.numberStats                 JSON
+  POST /v1/training.save                        JSON  (Idempotency-Key)
+  POST /v1/training.sessions                    JSON
+transcriptions
+  POST /v1/transcriptions.abandon               JSON  (Idempotency-Key)  (If-Match)
+  POST /v1/transcriptions.apply                 JSON  (Idempotency-Key)  (If-Match)
+  POST /v1/transcriptions.close                 JSON
+  POST /v1/transcriptions.create                JSON
+  POST /v1/transcriptions.editMatch             JSON
+  POST /v1/transcriptions.exportMat             JSON
+  POST /v1/transcriptions.finish                JSON  (Idempotency-Key)  (If-Match)
+  POST /v1/transcriptions.get                   custom
+  POST /v1/transcriptions.list                  JSON
+  POST /v1/transcriptions.losses                JSON
+  POST /v1/transcriptions.materialize           JSON  (Idempotency-Key)
+  POST /v1/transcriptions.open                  JSON
+  POST /v1/transcriptions.redo                  JSON  (Idempotency-Key)  (If-Match)
+  POST /v1/transcriptions.undo                  JSON  (Idempotency-Key)  (If-Match)
+trash
+  POST /v1/trash.count                          JSON
+  POST /v1/trash.deleteCollection               JSON
+  POST /v1/trash.deleteComment                  JSON
+  POST /v1/trash.deleteMatch                    JSON
+  POST /v1/trash.deletePosition                 JSON
+  POST /v1/trash.discard                        JSON
+  POST /v1/trash.empty                          JSON
+  POST /v1/trash.list                           JSON
+  POST /v1/trash.restore                        JSON
+events
+  GET  /v1/events                               SSE
+</pre></div>
+</div>
+<section id="idempotence">
+<h2>Idempotenza<a class="headerlink" href="#idempotence" title="Link to this heading"></a></h2>
+<p>La maggior parte dei metodi non richiede alcun meccanismo particolare: le letture non hanno effetti collaterali e le scritture di <code class="docutils literal notranslate"><span class="pre">positions.*</span></code> sono idempotenti nel loro effetto grazie all’hash Zobrist del contenuto — salvare due volte la stessa posizione restituisce la stessa riga, mai un duplicato. 48 metodi accettano un’intestazione <code class="docutils literal notranslate"><span class="pre">Idempotency-Key</span></code> facoltativa: quelli le cui due chiamate sono due effetti distinti, e <code class="docutils literal notranslate"><span class="pre">positions.save</span></code>, la cui risposta dice se la chiamata ha creato la posizione (<code class="docutils literal notranslate"><span class="pre">created</span></code>) e lo direbbe in modo errato se fosse ripetuta dopo una risposta persa. Una chiamata ripetuta con la stessa chiave restituisce il risultato del primo tentativo invece di ripeterne l’effetto — vedi il contrassegno «(Idempotency-Key)» nella tabella qui sopra. Nessun altro metodo richiede o accetta questa intestazione.</p>
+</section>
+<section id="lectures-conditionnelles">
+<h2>Letture condizionali<a class="headerlink" href="#lectures-conditionnelles" title="Link to this heading"></a></h2>
+<p>I metodi contrassegnati «(ETag)» restituiscono un’intestazione <code class="docutils literal notranslate"><span class="pre">ETag</span></code>. Rinviarla in <code class="docutils literal notranslate"><span class="pre">If-None-Match</span></code> ottiene una risposta <code class="docutils literal notranslate"><span class="pre">304</span></code> senza corpo finché non è cambiato nulla di ciò che il metodo legge — vedere <a class="reference internal" href="mode_headless.html#headless-direction"><span class="std std-ref">Direzione dei tornei ed eventi</span></a>.</p>
+</section>
+<section id="reperes-d-une-transcription">
+<h2>Marcatori temporali di una trascrizione<a class="headerlink" href="#reperes-d-une-transcription" title="Link to this heading"></a></h2>
+<p>Un gesto di <code class="docutils literal notranslate"><span class="pre">transcriptions.apply</span></code> può portare l’istante del video in cui viene compiuto, in millisecondi dall’inizio del media: <code class="docutils literal notranslate"><span class="pre">TickMS</span></code>, letto solo quando <code class="docutils literal notranslate"><span class="pre">HasTick</span></code> vale <code class="docutils literal notranslate"><span class="pre">true</span></code> (0 è un istante). <code class="docutils literal notranslate"><span class="pre">enter_die</span></code> ne fa il marcatore temporale del lancio (conta il primo tasto di dado); <code class="docutils literal notranslate"><span class="pre">enter_play</span></code>, <code class="docutils literal notranslate"><span class="pre">validate</span></code>, <code class="docutils literal notranslate"><span class="pre">dance</span></code>, <code class="docutils literal notranslate"><span class="pre">double</span></code>, <code class="docutils literal notranslate"><span class="pre">take</span></code>, <code class="docutils literal notranslate"><span class="pre">pass</span></code> e <code class="docutils literal notranslate"><span class="pre">resign</span></code> ne fanno il marcatore temporale dell’azione, solo su un’azione nuova: una correzione sul posto conserva i marcatori che aveva. Il gesto <code class="docutils literal notranslate"><span class="pre">set_timecode</span></code> imposta <code class="docutils literal notranslate"><span class="pre">TickMS</span></code> (con <code class="docutils literal notranslate"><span class="pre">HasTick</span></code>) e <code class="docutils literal notranslate"><span class="pre">RollTickMS</span></code> (con <code class="docutils literal notranslate"><span class="pre">HasRollTick</span></code>) sull’azione del cursore; un valore negativo cancella il marcatore. Il gesto <code class="docutils literal notranslate"><span class="pre">set_video</span></code> associa la sorgente video indicata da <code class="docutils literal notranslate"><span class="pre">VideoSource</span></code> (URL http(s) o percorso locale), una stringa vuota la dissocia; <code class="docutils literal notranslate"><span class="pre">set_header</span></code> la imposta anche quando la sua intestazione ne indica una, senza mai cancellarla.</p>
+<p>Il gesto <code class="docutils literal notranslate"><span class="pre">seek_cursor</span></code> posa il cursore sull’azione di rango <code class="docutils literal notranslate"><span class="pre">At</span></code>, alla fine del documento oltre l’ultima, senza scrivere nulla né impilarsi sulla pila di annullamento: è così che il cursore segue un video in riproduzione. Un <code class="docutils literal notranslate"><span class="pre">decision_ms</span></code> accompagnato da <code class="docutils literal notranslate"><span class="pre">decision_estimated</span></code> è una stima: una mossa senza riferimento d’azione, misurata dal tiro al primo istante dell’azione successiva.</p>
+<p>Lo stato renderizzato porta la sorgente in <code class="docutils literal notranslate"><span class="pre">header.video_source</span></code>, i marcatori temporali di ogni azione in <code class="docutils literal notranslate"><span class="pre">roll_tick_ms</span></code> e <code class="docutils literal notranslate"><span class="pre">tick_ms</span></code> e, su ogni azione annotata, le durate <code class="docutils literal notranslate"><span class="pre">decision_ms</span></code> e <code class="docutils literal notranslate"><span class="pre">cube_decision_ms</span></code>: misurate dall’Arbitro (Arbiter) quando lo sono, altrimenti dedotte dai marcatori. Un marcatore anteriore al precedente è segnalato dall’incoerenza <code class="docutils literal notranslate"><span class="pre">timecode_backwards</span></code> e lascia sconosciute le durate che ne dipendono.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Piè di pagina">
+        <a href="mode_headless.html" class="btn btn-neutral float-left" title="Modalità headless (server)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Precedente</a>
+        <a href="annexe_filtres.html" class="btn btn-neutral float-right" title="Appendice: Utilizzo avanzato dei filtri" accesskey="n" rel="next">Prossimo <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

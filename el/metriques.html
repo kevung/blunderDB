@@ -1,0 +1,383 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="el" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Μετρικές και εργαλεία μελέτης &mdash; Τεκμηρίωση του blunderDB - 0.39.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=f06e4b5c"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=e109e2be"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Ευρετήριο" href="genindex.html" />
+    <link rel="search" title="Αναζήτηση" href="search.html" />
+    <link rel="next" title="Λίστα εντολών" href="cmd_mode.html" />
+    <link rel="prev" title="Εγχειρίδιο" href="manuel.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Γλώσσες">
+  <a href="../fr/metriques.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/metriques.html" lang="en" hreflang="en">English</a>
+  <a href="../de/metriques.html" lang="de" hreflang="de">Deutsch</a>
+  <span class="current" lang="el" aria-current="true">Ελληνικά</span>
+  <a href="../es/metriques.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/metriques.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/metriques.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/metriques.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/metriques.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Πρώτα βήματα</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Λήψη και εγκατάσταση</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Οδηγός χρήσης</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Αναφορά</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Εγχειρίδιο</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Μετρικές και εργαλεία μελέτης</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#l-erreur-et-la-perte-d-une-decision">Το σφάλμα και η απώλεια μιας απόφασης</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pr-performance-rating">PR (<em>Performance Rating</em>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#perte-de-mwc-par-decision-et-graphique-du-match">Απώλεια MWC ανά απόφαση και γράφημα του αγώνα</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#perte-mwc-eq-7-pts-l7-et-elo-face-au-moteur">Απώλεια MWC (ισοδ. 7 πόντων) L₇ και Elo έναντι της μηχανής</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#difficulte-erreurs-evitables-exces-et-ratio">Δυσκολία, αποφεύξιμα σφάλματα, περίσσεια και λόγος</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#intervalles-a-95">Διαστήματα 95 %</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bilan-du-match">Ισοζύγιο του αγώνα</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#plan-d-etude">Σχέδιο μελέτης</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#positions-de-reference">Θέσεις αναφοράς</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#avant-apres-l-etude">Πριν/μετά τη μελέτη</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#biais-signes">Προσημασμένες μεροληψίες</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bilan-du-tournoi">Ισοζύγιο του τουρνουά</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Λίστα εντολών</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Συντομεύσεις πληκτρολογίου</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Διεπαφή γραμμής εντολών (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Γλωσσάρι</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Συχνές ερωτήσεις (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Σύμβαση API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Παραρτήματα</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Παράρτημα: Προχωρημένη χρήση των φίλτρων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Παράρτημα Windows: τι να κάνετε αν τα Windows μπλοκάρουν την εκκίνηση</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Παράρτημα: Σχήμα της βάσης δεδομένων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Ιστορικό εκδόσεων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Σχετικά</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Μετρικές και εργαλεία μελέτης</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="metriques-et-outils-d-etude">
+<span id="metriques"></span><h1>Μετρικές και εργαλεία μελέτης<a class="headerlink" href="#metriques-et-outils-d-etude" title="Link to this heading"></a></h1>
+<p>Κάθε αριθμός που εμφανίζει το blunderDB για το παιχνίδι σας απαντά σε ένα ερώτημα. Η σελίδα αυτή τους συγκεντρώνει: για καθέναν, το ερώτημα στο οποίο απαντά και τι προσφέρει στη μελέτη, τον ορισμό του, τον ακριβή τύπο, τι μετρά ως απόφαση, τη μονάδα του, την ανάγνωσή του, την αβεβαιότητά του, τα όριά του και ό,τι τον διακρίνει από τους αριθμούς του eXtreme Gammon (XG) και του GNU Backgammon (gnuBG). Οι οθόνες που τους δείχνουν περιγράφονται στο <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Εγχειρίδιο</span></a>· οι σύνδεσμοι οδηγούν εκεί.</p>
+<p>Τα όρια και οι παράμετροι αυτής της σελίδας ορίστηκαν πριν από οποιαδήποτε εξέταση πραγματικών αποτελεσμάτων: το να τα προσαρμόσουμε εκ των υστέρων θα σήμαινε να κάνουμε τους αριθμούς να λένε ό,τι περιμένουμε από αυτούς.</p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#l-erreur-et-la-perte-d-une-decision" id="id1">Το σφάλμα και η απώλεια μιας απόφασης</a></p></li>
+<li><p><a class="reference internal" href="#pr-performance-rating" id="id2">PR (<em>Performance Rating</em>)</a></p></li>
+<li><p><a class="reference internal" href="#perte-de-mwc-par-decision-et-graphique-du-match" id="id3">Απώλεια MWC ανά απόφαση και γράφημα του αγώνα</a></p></li>
+<li><p><a class="reference internal" href="#perte-mwc-eq-7-pts-l7-et-elo-face-au-moteur" id="id4">Απώλεια MWC (ισοδ. 7 πόντων) L₇ και Elo έναντι της μηχανής</a></p></li>
+<li><p><a class="reference internal" href="#difficulte-erreurs-evitables-exces-et-ratio" id="id5">Δυσκολία, αποφεύξιμα σφάλματα, περίσσεια και λόγος</a></p></li>
+<li><p><a class="reference internal" href="#intervalles-a-95" id="id6">Διαστήματα 95 %</a></p></li>
+<li><p><a class="reference internal" href="#bilan-du-match" id="id7">Ισοζύγιο του αγώνα</a></p></li>
+<li><p><a class="reference internal" href="#plan-d-etude" id="id8">Σχέδιο μελέτης</a></p></li>
+<li><p><a class="reference internal" href="#positions-de-reference" id="id9">Θέσεις αναφοράς</a></p></li>
+<li><p><a class="reference internal" href="#avant-apres-l-etude" id="id10">Πριν/μετά τη μελέτη</a></p></li>
+<li><p><a class="reference internal" href="#biais-signes" id="id11">Προσημασμένες μεροληψίες</a></p></li>
+<li><p><a class="reference internal" href="#bilan-du-tournoi" id="id12">Ισοζύγιο του τουρνουά</a></p></li>
+</ul>
+</nav>
+<section id="l-erreur-et-la-perte-d-une-decision">
+<span id="metrique-erreur"></span><h2><a class="toc-backref" href="#id1" role="doc-backlink">Το σφάλμα και η απώλεια μιας απόφασης</a><a class="headerlink" href="#l-erreur-et-la-perte-d-une-decision" title="Link to this heading"></a></h2>
+<p>Όλες οι μετρήσεις ξεκινούν από δύο μεγέθη ανά απόφαση.</p>
+<p><strong>Το σφάλμα e</strong> είναι ό,τι κόστισε σε equity η απόφαση που παίχτηκε, σε σύγκριση με την καλύτερη απόφαση της εισαγόμενης ανάλυσης (XG ή gnuBG· το blunderDB δεν αναλύει ξανά τους αγώνες για τις στατιστικές του). Εκφράζεται σε <strong>κανονικοποιημένο equity</strong>: το ±1 ισούται με τον τρέχοντα κύβο, τόσο στο money όσο και στο σκορ αγώνα (EMG στο σκορ). Στρογγυλοποιείται στο χιλιοστό (ο χιλιοστόποντος, mpt).</p>
+<ul class="simple">
+<li><p>Κίνηση πούλιων: equity του καλύτερου υποψηφίου μείον equity της κίνησης που παίχτηκε.</p></li>
+<li><p>Όχι διπλάσιο: το σφάλμα «όχι διπλάσιο» που δίνει η ανάλυση.</p></li>
+<li><p>Διπλάσιο: το μικρότερο από τα σφάλματα «διπλάσιο, αποδοχή» και «διπλάσιο, άρνηση» — αυτός που διπλασιάζει κρίνεται με την καλύτερη απάντηση του αντιπάλου.</p></li>
+<li><p>Αποδοχή ή άρνηση: η διαφορά ανάμεσα στην απάντηση που δόθηκε και την καλύτερη από τις δύο.</p></li>
+</ul>
+<p>Το σφάλμα είναι αυτό <strong>της κίνησης που παίχτηκε σε αυτόν τον αγώνα</strong>. Μια θέση που εμφανίστηκε σε δύο αγώνες και παίχτηκε διαφορετικά φέρει δύο σφάλματα· κανένα δεν σβήνει το άλλο. Μια κίνηση που παίχτηκε και δεν κατονομάζεται από την ανάλυση ανάμεσα στους υποψηφίους της δεν έχει σφάλμα: δεν βαθμολογείται και βγαίνει από όλες τις μετρήσεις.</p>
+<p><strong>Η απώλεια MWC ℓ</strong> είναι το ίδιο σφάλμα εκφρασμένο σε πιθανότητες νίκης στον αγώνα (<em>Match Winning Chances</em>). Στο σκορ και στον κύβο v της απόφασης:</p>
+<div class="math notranslate nohighlight">
+\[\ell = e \times \frac{\mathrm{MWC}_{+v} - \mathrm{MWC}_{-v}}{2}\]</div>
+<p>όπου <span class="math notranslate nohighlight">\(\mathrm{MWC}_{+v}\)</span> και <span class="math notranslate nohighlight">\(\mathrm{MWC}_{-v}\)</span> είναι οι πιθανότητες νίκης στον αγώνα αν ο παίκτης κερδίσει, ή χάσει, v πόντους σε αυτό το σκορ. Ο πίνακας ισοδυναμίας αγώνα (MET) είναι ο Kazaross-XG2, επεκτεινόμενος πέρα από τους 25 πόντους με τον τύπο του Zadeh· ένα σκορ post-Crawford διαβάζεται ως τέτοιο. Μια αποδοχή ή άρνηση μετατρέπεται με τον κύβο <strong>πριν</strong> από το διπλάσιο, όπως ο παίκτης που διπλασιάζει και όπως το XG: μετατρεμμένο με τον διπλασιασμένο κύβο, ένα σφάλμα απάντησης θα κόστιζε διπλάσια. Ένα παιχνίδι money δεν έχει MWC: το ℓ δεν υπάρχει εκεί.</p>
+<p>Τα δύο αυτά μεγέθη είναι προσθετικά. Όλες οι παρακάτω μετρικές είναι αθροίσματά τους, διαιρεμένα με διαφορετικούς παρονομαστές ή συγκρινόμενα με μια αναφορά.</p>
+</section>
+<section id="pr-performance-rating">
+<span id="metrique-pr"></span><h2><a class="toc-backref" href="#id2" role="doc-backlink">PR (<em>Performance Rating</em>)</a><a class="headerlink" href="#pr-performance-rating" title="Link to this heading"></a></h2>
+<p><strong>Το ερώτημα.</strong> Ποιο είναι το επίπεδό μου, στην κλίμακα που ξέρουν όλοι; Το PR είναι ο αριθμός των κατατάξεων, των φόρουμ και των συλλόγων· επιτρέπει να τοποθετηθείτε και να συγκρίνετε δύο αγώνες αναλυμένους από το XG.</p>
+<p><strong>Ο τύπος.</strong> Στις μετρούμενες αποφάσεις του παίκτη:</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{PR} = 500 \times \frac{\sum_i e_i}{N_\text{compté}}\]</div>
+<p>Ο παράγοντας 500 είναι η σύμβαση του XG: ένα PR 5,0 ισοδυναμεί με μέσο σφάλμα 0,010, δηλαδή 10 mpt ανά μετρούμενη απόφαση. Το PR είναι μέσος όρος, χωρίς μονάδα· όσο χαμηλότερο, τόσο καλύτερα παίχτηκε.</p>
+<p><strong>Τι μετρά ως απόφαση.</strong> Οι κανόνες είναι του XG, επαληθευμένοι αγώνα προς αγώνα με τους αριθμούς του (<a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB</span></a>):</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Απόφαση</p></th>
+<th class="head"><p>Μετράται αν</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Κίνηση πούλιων</p></td>
+<td><p>δεν είναι υποχρεωτική και η κίνηση που παίχτηκε βαθμολογείται</p></td>
+</tr>
+<tr class="row-odd"><td><p>Προτεινόμενο διπλάσιο</p></td>
+<td><p>πάντα</p></td>
+</tr>
+<tr class="row-even"><td><p>Αποδοχή, άρνηση</p></td>
+<td><p>πάντα</p></td>
+</tr>
+<tr class="row-odd"><td><p>Όχι διπλάσιο</p></td>
+<td><p>ND &gt; 0 et ND − min(D/T, D/P) &lt; 0,200</p></td>
+</tr>
+</tbody>
+</table>
+<ul class="simple">
+<li><p>Μια κίνηση πούλιων είναι <strong>υποχρεωτική</strong> όταν η ρίψη προσφέρει μία μόνο νόμιμη κίνηση, ή όταν η ανάλυση καλύπτει όλες τις νόμιμες κινήσεις (μετρημένες από τη γεννήτρια κινήσεων του blunderDB) και όλες έχουν το ίδιο equity στο χιλιοστό: μια επιλογή που δεν κοστίζει τίποτα, όποια κίνηση κι αν γίνει, δεν είναι απόφαση. Είναι ο κανόνας του XG για τις κινήσεις «μη υποχρεωτικές αλλά χωρίς διακύβευμα» (αποφασισμένο τέλος αγώνα δρόμου, έξοδος όπου όλα είναι ισοδύναμα). Όταν οι νόμιμες κινήσεις δεν μπορούν να μετρηθούν, μόνο ένας μοναδικός υποψήφιος κάνει την κίνηση υποχρεωτική.</p></li>
+<li><p>Ένα <strong>όχι διπλάσιο</strong> μετράται όταν ο παίκτης ήταν κοντά στο διπλάσιο: το equity του χωρίς διπλάσιο (ND) είναι θετικό και ξεπερνά κατά λιγότερο από 0,200 το καλύτερο αποτέλεσμα του διπλασίου για τον αντίπαλο, min(D/T, D/P). Η μέτρηση απέναντι σε αυτό το ελάχιστο αντί για το D/T μόνο διατηρεί ως απόφαση μια θέση «υπερβολικά καλή» όσο μένει σε απόσταση μικρότερη από 0,200 από την είσπραξη.</p></li>
+<li><p>Η συνθήκη <strong>ND &gt; 0</strong> αποκλείει τις θέσεις όπου ο παίκτης που έχει σειρά χάνει: δεν έχει κανένα διπλάσιο να εξετάσει. Το XG τις αποκλείει επίσης, κάτι που το εγχειρίδιό του δεν λέει· οι αγώνες αναφοράς το δείχνουν.</p></li>
+<li><p>Μια απόφαση κύβου χωρίς ανάλυση κύβου δεν είναι ποτέ μετρούμενο «όχι διπλάσιο».</p></li>
+</ul>
+<p><strong>Ανάγνωση.</strong> Οι ζώνες επιπέδου του πίνακα Στατιστικών (<a class="reference internal" href="manuel.html#stats"><span class="std std-ref">Πίνακας Stats</span></a>) είναι σημείο αναφοράς του blunderDB, όχι δημοσιευμένο πρότυπο. Ένα PR συγκρίνεται πρώτα με τα δικά σας PR: ίδιος αναλυτής, ίδιο είδος αντιπάλων, ίδια μήκη.</p>
+<p><strong>Αβεβαιότητα.</strong> Το PR ενός αγώνα έχει πολύ θόρυβο: το τυπικό σφάλμα ενός αγώνα 7 πόντων είναι της τάξης του 1,5 PR. Το blunderDB δίνει διάστημα 95 % (<a class="reference internal" href="#metrique-intervalles"><span class="std std-ref">Διαστήματα 95 %</span></a>) με επαναδειγματοληψία των παρτίδων ενός αγώνα και των αγώνων ενός συνόλου.</p>
+<p><strong>Όρια.</strong> Ο αριθμητής δεν εξαρτάται από τίποτα, ο παρονομαστής όμως εξαρτάται από ό,τι μετράμε: τα όρια 0,001 και 0,200 είναι αυθαίρετα. Μπορεί κανείς να χαμηλώσει το PR του χωρίς να παίζει καλύτερα, παίρνοντας μια οριακή άρνηση για να προσθέσει αποφάσεις σε έναν αγώνα δρόμου, ή επιλέγοντας στο bear-off μια κίνηση που δημιουργεί μία απόφαση παραπάνω. Το PR ζυγίζει ένα σφάλμα με κύβο 8 όπως ένα σφάλμα με κύβο 1 (το equity κανονικοποιείται με τον κύβο), και ένα σφάλμα στο DMP όπως ένα σφάλμα στο 0-0. Κληρονομεί τις ατέλειες της μηχανής, και ο αντίπαλος που δημιουργεί δύσκολες θέσεις ανεβάζει το PR του άλλου. Η <a class="reference internal" href="#metrique-l7"><span class="std std-ref">απώλεια MWC</span></a> και η <a class="reference internal" href="#metrique-difficulte"><span class="std std-ref">δυσκολία</span></a> απαντούν σε αυτά τα τρία ελαττώματα.</p>
+<p><strong>XG και gnuBG.</strong> Σε αρχείο XG, το PR του blunderDB είναι αυτό του XG, με ακρίβεια εμφάνισης, εκτός από τις εξηγημένες αποκλίσεις του <a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB</span></a>. Το gnuBG διαιρεί το ίδιο άθροισμα με άλλον αριθμό: κάθε κίνηση που έχει περισσότερες από μία νόμιμες κινήσεις, και τις αποφάσεις κύβου που κρίνει κοντινές σύμφωνα με το δικό του παράθυρο. Ο ρυθμός του ανά απόφαση δεν συγκρίνεται λοιπόν με το PR του XG, ακόμη και στην ίδια ανάλυση. Το <em>Snowie Error Rate</em> (<a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB</span></a>) διαιρεί με όλες τις κινήσεις των δύο παικτών: δεν εξαρτάται από κανέναν κανόνα μέτρησης, αλλά ισούται περίπου με το μισό του PR.</p>
+</section>
+<section id="perte-de-mwc-par-decision-et-graphique-du-match">
+<span id="metrique-perte-mwc"></span><h2><a class="toc-backref" href="#id3" role="doc-backlink">Απώλεια MWC ανά απόφαση και γράφημα του αγώνα</a><a class="headerlink" href="#perte-de-mwc-par-decision-et-graphique-du-match" title="Link to this heading"></a></h2>
+<p><strong>Το ερώτημα.</strong> Ποιες αποφάσεις μου κόστισαν αυτόν τον αγώνα; Το PR βάζει όλα τα σφάλματα στην ίδια κλίμακα· το ℓ τα ζυγίζει στο σκορ όπου έγιναν. Ένα σφάλμα 0,040 στο 4-4 σε αγώνα 5 πόντων δεν κοστίζει ό,τι κοστίζει στο 0-0 σε αγώνα 17. Για τη μελέτη, η στήλη και το γράφημα υποδεικνύουν τις λίγες αποφάσεις που έκριναν τον αγώνα, και η σωρευτική καμπύλη δείχνει πού ανατράπηκε.</p>
+<p><strong>Ορισμός.</strong> ℓ (<a class="reference internal" href="#metrique-erreur"><span class="std std-ref">Το σφάλμα και η απώλεια μιας απόφασης</span></a>) για κάθε απόφαση που μετράται στο PR· η απώλεια ενός παίκτη στον αγώνα είναι Σℓ πάνω σε αυτές τις αποφάσεις. Μια απόφαση εκτός της μέτρησης (αναγκαστική κίνηση, μη διπλασιασμός εκτός παραθύρου) δεν έχει ℓ: θα είχε κοστίσει έτσι κι αλλιώς τίποτα, ή σχεδόν τίποτα.</p>
+<p><strong>Μονάδα.</strong> Ένα ποσοστό πιθανοτήτων νίκης στον αγώνα: το 2,5 σημαίνει 2,5 % MWC χαμένο.</p>
+<p><strong>Ανάγνωση.</strong> Η στήλη <strong>MWC</strong> της απομαγνητοφώνησης, η ράβδος ανά απόφαση και η σωρευτική καμπύλη κάθε παίκτη περιγράφονται στο <a class="reference internal" href="manuel.html#panneau-matchs"><span class="std std-ref">Πίνακας Αγώνων</span></a>. Μια μεμονωμένη ψηλή ράβδος είναι απόφαση προς επανεξέταση· μια καμπύλη που ανεβαίνει σταθερά δείχνει έναν αγώνα μέτριων σφαλμάτων, όχι ατυχήματος.</p>
+<p><strong>Αβεβαιότητα.</strong> Το ℓ είναι ακριβές ως προς την ανάλυση: η αβεβαιότητά του είναι αυτή της ίδιας της ανάλυσης (βάθος, rollout ή όχι) και του MET.</p>
+<p><strong>Όρια.</strong> Το ℓ εξαρτάται από το MET: δύο προγράμματα που δεν χρησιμοποιούν τον ίδιο πίνακα δεν δίνουν την ίδια απώλεια. Ένα παιχνίδι money δεν έχει ℓ, και μια ανάλυση υπολογισμένη με άλλο MET από αυτό της βάσης μένει εκτός στατιστικών. Μια μη βαθμολογημένη απόφαση φέρει παύλα, ποτέ μηδέν.</p>
+<p><strong>XG και gnuBG.</strong> Το άθροισμα είναι η απώλεια MWC που εμφανίζει το XG για τον αγώνα: κινήσεις πούλιων, διπλασιασμοί και απαντήσεις συμφωνούν στους αγώνες αναφοράς με την ακρίβεια εμφάνισης του XG (απόκλιση φραγμένη στις 0,06 ποσοστιαίες μονάδες από τη σουίτα δοκιμών), εκτός από τους παίκτες με τις γνωστές υπολειπόμενες αποκλίσεις του <a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB</span></a>, έως 0,45 πόντους. Το gnuBG κάνει την ίδια μετατροπή, με τις δικές του ισοτιμίες equity: σε έναν αγώνα που έχει αναλύσει, οι αριθμοί του διαφέρουν από του XG λόγω της ανάλυσης, όχι λόγω του τύπου.</p>
+</section>
+<section id="perte-mwc-eq-7-pts-l7-et-elo-face-au-moteur">
+<span id="metrique-l7"></span><h2><a class="toc-backref" href="#id4" role="doc-backlink">Απώλεια MWC (ισοδ. 7 πόντων) L₇ και Elo έναντι της μηχανής</a><a class="headerlink" href="#perte-mwc-eq-7-pts-l7-et-elo-face-au-moteur" title="Link to this heading"></a></h2>
+<p><strong>Το ερώτημα.</strong> Πόσο από τον αγώνα έχασα με τα σφάλματά μου, όποιος κι αν είναι ο τρόπος μέτρησης των αποφάσεων, και πώς συγκρίνεται ένας αγώνας 5 πόντων με έναν των 11; Το L₇ δεν διαιρεί με κανέναν αριθμό αποφάσεων: δεν χειραγωγείται προσθέτοντας εύκολες αποφάσεις, και ζυγίζει κάθε σφάλμα όσο κόστισε.</p>
+<p><strong>Ορισμός.</strong> Υπό τέλειο παιχνίδι, οι πιθανότητες νίκης στον αγώνα εξελίσσονται χωρίς προκατάληψη: απέναντι σε τέλειο αντίπαλο, ένας παίκτης που χάνει L MWC στον αγώνα διατηρεί q = 0,5 − L πιθανότητες. Το μοντέλο του τύπου FIBS λέει ότι, με ίση δύναμη, η απώλεια αυξάνεται όπως η τετραγωνική ρίζα του μήκους N. Το L ανάγεται λοιπόν σε αγώνα 7 πόντων, το πιο συνηθισμένο μήκος τουρνουά:</p>
+<div class="math notranslate nohighlight">
+\[L_7 = L \times \sqrt{7 / N}
+\qquad
+L_7^\text{agrégat} = \sqrt{7} \times \frac{\sum L}{\sum \sqrt{N}}\]</div>
+<p>Το σύνολο (πολλοί αγώνες, ένας παίκτης, ένα τουρνουά) αθροίζει τις απώλειες και τις ρίζες των μηκών πριν από τον λόγο: ένας αγώνας 7 πόντων ζυγίζει περισσότερο από έναν αγώνα 1 πόντου, και ένας μόνο αγώνας επιστρέφει τη δική του τιμή. Χωρίς φίλτρο παίκτη, οι δύο θέσεις ενός αγώνα ζυγίζουν η καθεμία √N, αλλά αποτελούν μία μόνο μονάδα του διαστήματος.</p>
+<p><strong>Το Elo έναντι της μηχανής</strong> αντιστρέφει τον τύπο FIBS στους 7 πόντους:</p>
+<div class="math notranslate nohighlight">
+\[D = \frac{2000}{\sqrt{7}} \log_{10} \frac{q}{1 - q}, \qquad q = 0{,}5 - L_7\]</div>
+<p>Γραμμικοποιημένο, D ≈ −3474 × L / √N. Από L₇ ≥ 50 %, το q δεν έχει πεπερασμένο αντίστροφο· από L₇ &gt; 49 %, το q περιορίζεται κάτω στο 1 % (D ≥ −1509) και το Elo εμφανίζεται «≤». Το L₇ δεν έχει κάτω όριο. Και τα δύο κατατάσσουν τους παίκτες με την ίδια σειρά.</p>
+<p><strong>Μονάδα.</strong> L₇: ένα ποσοστό MWC. D: πόντοι Elo, αρνητικοί, η αναμενόμενη διαφορά ανάμεσα στον παίκτη και τη μηχανή.</p>
+<p><strong>Ανάγνωση.</strong> 12,3 %: αντί για 50 % πιθανότητες απέναντι στη μηχανή, ο παίκτης είχε πια μόνο 37,7 % σε αγώνα 7 πόντων. Το σήμα, η λεπτομέρεια, οι στατιστικές, το τουρνουά και η πρόοδος το εμφανίζουν (<a class="reference internal" href="manuel.html#perte-mwc-7pts"><span class="std std-ref">Απώλεια MWC (ισοδ. 7 πόντων)</span></a>).</p>
+<p><strong>Αβεβαιότητα.</strong> Διάστημα 95 % μέσω των παρτίδων για έναν αγώνα, μέσω των αγώνων για ένα σύνολο (<a class="reference internal" href="#metrique-intervalles"><span class="std std-ref">Διαστήματα 95 %</span></a>), και μετά ο ίδιος μετασχηματισμός με την τιμή. Μια γραμμή ανά αγώνα στις στατιστικές δεν έχει διάστημα: είναι μία μόνη μονάδα· το ισοζύγιο του αγώνα φέρει το διάστημα ανά παρτίδες.</p>
+<p><strong>Όρια.</strong> Το μοντέλο √N είναι προσεγγιστικό κάτω από 7 πόντους και γύρω από το Crawford. Το L₇ εξαρτάται από το MET. Ένα παιχνίδι money δεν έχει μήκος, άρα ούτε L₇: η οθόνη το λέει αντί να εμφανίσει έναν αριθμό. Πραγματικοί παίκτες χάνουν περισσότερο από μισό αγώνα, διότι τα σφάλματα μετά από μια ανατροπή της τύχης αθροίζονται: το Elo φτάνει τότε στο κατώτατο όριό του.</p>
+<p><strong>XG και gnuBG.</strong> Για αγώνα 7 πόντων, το L₇ είναι ακριβώς η απώλεια MWC που εμφανίζει το XG. Κανένα από τα δύο προγράμματα δεν ανάγει την απώλεια σε μήκος αναφοράς ούτε τη μετατρέπει σε Elo. Αυτό το Elo μετρά την απόσταση από τη μηχανή, όχι μια κατάταξη FIBS ή BMAB μεταξύ ανθρώπων παικτών.</p>
+</section>
+<section id="difficulte-erreurs-evitables-exces-et-ratio">
+<span id="metrique-difficulte"></span><h2><a class="toc-backref" href="#id5" role="doc-backlink">Δυσκολία, αποφεύξιμα σφάλματα, περίσσεια και λόγος</a><a class="headerlink" href="#difficulte-erreurs-evitables-exces-et-ratio" title="Link to this heading"></a></h2>
+<p><strong>Το ερώτημα.</strong> Ήταν συγχωρητό αυτό το σφάλμα; Η ίδια απώλεια 2 % είναι απροσεξία σε μια προφανή θέση, και λάθος που θα έκανε κάθε καλός παίκτης σε μια θέση όπου τέσσερις κινήσεις απέχουν λίγα χιλιοστά. Για τη μελέτη, η δυσκολία ταξινομεί τα λάθη: τα αποφεύξιμα σφάλματα (απροσεξία, κανόνας που δεν ξέρουμε καλά) διορθώνονται γρήγορα και προηγούνται· οι απώλειες σε δύσκολες αποφάσεις ανήκουν στη δουλειά βάθους.</p>
+<p><strong>Ορισμός.</strong> Η δυσκολία d είναι η απώλεια που θα είχε υποστεί κατά μέσο όρο, στην ίδια θέση, ένας <strong>παίκτης αναφοράς</strong> που επιλέγει κάθε επιλογή i με πιθανότητα τόσο μικρότερη όσο πιο ακριβά κοστίζει:</p>
+<div class="math notranslate nohighlight">
+\[\pi(i) = \frac{e^{-\Delta_i/\tau}}{\sum_j e^{-\Delta_j/\tau}},
+\qquad d = \sum_i \pi(i)\,\Delta_i,
+\qquad \tau = 0{,}025\]</div>
+<p>Το Δᵢ είναι το κόστος της επιλογής i σε σχέση με την καλύτερη, σε κανονικοποιημένο equity. Οι επιλογές είναι οι υποψήφιοι της ανάλυσης για μια κίνηση πούλιων· όχι διπλάσιο και διπλάσιο (απέναντι στην καλύτερη απάντηση) για τον παίκτη που έχει τον κύβο· αποδοχή και άρνηση για αυτόν που δέχεται το διπλάσιο. Το d μετατρέπεται σε MWC όπως το ℓ: τα δύο έχουν την ίδια μονάδα, και η επιλογή που παίχτηκε έχει κόστος ακριβώς ℓ.</p>
+<p>Το τ = 0,025 είναι a priori ενός δυνατού παίκτη: για δύο επιλογές που απέχουν Δ, το d = Δ / (1 + e^{Δ/τ}) είναι μέγιστο περίπου στο Δ ≈ 0,032, ανάμεσα στο «αμφίβολο» και το «σφάλμα»· μια απόσταση 0,1 κοστίζει πια μόνο 0,002· πέντε υποψήφιοι σε απόσταση 0,01 ο ένας από τον άλλο δίνουν d ≈ 0,012, περίπου το μέσο σφάλμα ενός παίκτη με PR 6.</p>
+<ul class="simple">
+<li><p><strong>Αποφεύξιμο σφάλμα</strong>: η απώλεια φτάνει το όριο Σφάλμα της βάσης και d ≤ ℓ / 10 — σε δύο επιλογές, ο παίκτης αναφοράς δεν θα το έκανε μία φορά στις δέκα.</p></li>
+<li><p><strong>Περίσσεια</strong> ενός παίκτη σε έναν αγώνα: Σ(ℓ − d), ό,τι έχασε πέρα από την αναφορά (αρνητική όταν έπαιξε καλύτερα).</p></li>
+<li><p><strong>Λόγος</strong>: Σℓ / Σd· το 1 σημαίνει «παίζει όπως η αναφορά», το 2 «χάνει διπλάσια». Δεν δίνεται όταν Σd &lt; 0,5 % MWC: σε υπερβολικά εύκολο αγώνα μετρά μόνο θόρυβο, η περίσσεια παραμένει.</p></li>
+</ul>
+<p><strong>Τι μετράει.</strong> Οι αποφάσεις που μετρούν στο PR, των οποίων η απώλεια βαθμολογείται και μετατρέπεται σε MWC· αλλού η δυσκολία απουσιάζει, ποτέ δεν είναι μηδενική. Μια αναγκαστική κίνηση ή ένας μη διπλασιασμός εκτός του παραθύρου του PR δεν έχει επομένως ούτε απώλεια ούτε δυσκολία. Ανάμεσα στις αποφάσεις που μετρούν, κανένα πρόσθετο όριο δεν ξεχωρίζει μια προφανή απόφαση: η δυσκολία της είναι από μόνη της κοντά στο μηδέν.</p>
+<p><strong>Μονάδα.</strong> Το d και η περίσσεια: ένα ποσοστό MWC. Ο λόγος: χωρίς μονάδα.</p>
+<p><strong>Ανάγνωση.</strong> Μια απώλεια πολύ πάνω από τη δυσκολία της είναι λάθος που η θέση δεν δικαιολογούσε· μια απώλεια κοντά στη δυσκολία της, κοινό λάθος. Η περίσσεια και ο λόγος διορθώνουν το PR κατά τη δυσκολία των θέσεων που συναντήθηκαν, άρα εν μέρει κατά το στυλ του αντιπάλου (<a class="reference internal" href="manuel.html#panneau-matchs"><span class="std std-ref">Πίνακας Αγώνων</span></a>).</p>
+<p><strong>Αβεβαιότητα.</strong> Σε έναν αγώνα, η περίσσεια και ο λόγος στηρίζονται σε λίγες αποφάσεις και ποικίλλουν πολύ: μια τάση, όχι μια κατάταξη.</p>
+<p><strong>Όρια.</strong> Η δυσκολία εξαρτάται από ένα μοντέλο παίκτη και από το τ, ορισμένα μία φορά: η αλλαγή τους αλλάζει όλους τους αριθμούς. Γνωρίζει μόνο τους υποψηφίους που κράτησε η ανάλυση (λίγους στο XG, ανάλογα με τα φίλτρα του στο gnuBG): οι απούσες επιλογές δεν ζυγίζουν τίποτα, και το d είναι τότε κάτω φράγμα. Κληρονομεί το σφάλμα της ανάλυσης, ιδίως σε μικρό βάθος.</p>
+<p><strong>XG και gnuBG.</strong> Κανένα από τα δύο δεν υπολογίζει δυσκολία. Η ιδέα προέρχεται από τους δείκτες πιθανοφάνειας του σκακιού (Regan)· το τ δεν είναι βαθμονομημένο σε πληθυσμό παικτών.</p>
+</section>
+<section id="intervalles-a-95">
+<span id="metrique-intervalles"></span><h2><a class="toc-backref" href="#id6" role="doc-backlink">Διαστήματα 95 %</a><a class="headerlink" href="#intervalles-a-95" title="Link to this heading"></a></h2>
+<p><strong>Το ερώτημα.</strong> Λέει κάτι αυτός ο αριθμός, ή είναι θόρυβος; Ένα PR 4,2 σε έναν αγώνα και ένα PR 4,2 σε σαράντα αγώνες δεν έχουν την ίδια αξία. Το διάστημα αποτρέπει να χτίσει κανείς σχέδιο εργασίας πάνω σε ένα κελί που δεν στηρίζεται σε τίποτα, και να διαβάσει κατάταξη σε έναν μεμονωμένο αγώνα.</p>
+<p><strong>Ορισμός.</strong> Το διάστημα επαναδειγματοληπτεί τη μεγαλύτερη ανεξάρτητη μονάδα: τις <strong>παρτίδες</strong> ενός αγώνα, τους <strong>αγώνες</strong> ενός συνόλου (συνολικό PR, κελιά ανά φάση, σχέδιο παιχνιδιού, ετικέτα και σκορ, L₇ ενός συνόλου). Οι παρτίδες του ίδιου αγώνα μοιράζονται αντίπαλο, συνεδρία και κόπωση: η ξεχωριστή επαναδειγματοληψία τους σε ένα σύνολο θα στένευε άδικα το διάστημα. Χωρίς φίλτρο παίκτη, οι δύο θέσεις ενός αγώνα αποτελούν μία μονάδα, διότι παίζουν τις ίδιες θέσεις.</p>
+<p><strong>Ο τύπος.</strong> Για έναν λόγο R = Σeᵤ / Σnᵤ σε G μονάδες (eᵤ το άθροισμα σφαλμάτων, nᵤ ο αριθμός αποφάσεων της μονάδας), η διακύμανση του bootstrap υπολογίζεται, χωρίς κλήρωση:</p>
+<div class="math notranslate nohighlight">
+\[\widehat{\mathrm{Var}}(R) = \frac{G}{G-1} \cdot
+\frac{\sum_u (e_u - R\,n_u)^2}{\left(\sum_u n_u\right)^2}\]</div>
+<p>και το διάστημα ισούται με R ± 1,96 × √Var, με το κάτω άκρο ποτέ κάτω από 0, και μετά ο ίδιος μετασχηματισμός με την τιμή (× 500 για το PR). Το L₇ ενός συνόλου ακολουθεί τον ίδιο κανόνα, με L στη θέση του e και √N στη θέση του n· αυτό ενός αγώνα είναι άθροισμα στις G παρτίδες του, με διακύμανση G/(G−1) × Σ(l_g − l̄)², όπου l_g η απώλεια της παρτίδας g. Ο υπολογισμός είναι ντετερμινιστικός: η ίδια βάση δίνει πάντα το ίδιο διάστημα, και στις δύο μηχανές αποθήκευσης.</p>
+<p><strong>Τι χρειάζεται.</strong> Τουλάχιστον <strong>τρεις μονάδες</strong> και μη μηδενικό πλάτος. Με δύο, η διασπορά στηρίζεται σε έναν μόνο βαθμό ελευθερίας και το διάστημα θα ήταν πολλές φορές υπερβολικά στενό· μονάδες που έχουν όλες τον ίδιο λόγο λένε ότι συμφωνούν, όχι ότι η τιμή είναι ακριβής. Χωρίς διάστημα, το κελί γκριζάρει και το μέγεθος του δείγματος παραμένει ορατό (<a class="reference internal" href="manuel.html#stats"><span class="std std-ref">Πίνακας Stats</span></a>).</p>
+<p><strong>Ανάγνωση.</strong> Δύο διαστήματα που επικαλύπτονται ευρέως δεν ξεχωρίζουν τίποτα. Μια οικογένεια της οποίας το διάστημα μένει πάνω από το συνολικό σας PR είναι αποδεδειγμένη αδυναμία.</p>
+<p><strong>Όρια.</strong> Η κανονική προσέγγιση είναι αδρή με λίγες μονάδες, και τα σφάλματα έχουν ασύμμετρη κατανομή (λίγα μεγάλα λάθη): με τρεις ή τέσσερις μονάδες, το διάστημα είναι ενδεικτικό.</p>
+<p><strong>XG και gnuBG.</strong> Κανένα από τα δύο δεν δίνει διάστημα.</p>
+</section>
+<section id="bilan-du-match">
+<span id="metrique-bilan-match"></span><h2><a class="toc-backref" href="#id7" role="doc-backlink">Ισοζύγιο του αγώνα</a><a class="headerlink" href="#bilan-du-match" title="Link to this heading"></a></h2>
+<p><strong>Το ερώτημα.</strong> Μετά από έναν αγώνα: τι ξαναβλέπω, έχασα εξαιτίας των ζαριών ή του παιχνιδιού, και τα σφάλματά μου προέρχονται από βιασύνη ή από κενό γνώσης; Οι οθόνες: <a class="reference internal" href="manuel.html#bilan-match"><span class="std std-ref">ισοζύγιο του αγώνα</span></a>.</p>
+<p><strong>Τρεις αποφάσεις προς επανεξέταση.</strong> Ανάμεσα στα σφάλματα του παίκτη (όριο της βάσης) των οποίων η απώλεια είναι υπολογισμένη, οι τρεις με το μεγαλύτερο <strong>αποφεύξιμο μέρος</strong> ℓ − d = ℓ × (1 − d/ℓ), θετικό: η απώλεια πολλαπλασιασμένη με τον αποφεύξιμο χαρακτήρα της. Άγνωστη δυσκολία μετρά μηδέν· σε ισοβαθμία, η μεγαλύτερη απώλεια, μετά η σειρά του αγώνα. Ένα σφάλμα που θα έκανε και ο παίκτης αναφοράς δεν αξίζει μια συνεδρία.</p>
+<p><strong>Αποτέλεσμα προσαρμοσμένο στην τύχη</strong>, για ολοκληρωμένο αγώνα, σε πόντους MWC του παίκτη:</p>
+<div class="math notranslate nohighlight">
+\[A = R - C, \quad R = \text{issue} - \mathrm{MWC}_\text{départ}, \quad
+C = \sum \text{chance de ses jets} - \sum \text{chance des jets adverses}\]</div>
+<p>Το αποτέλεσμα (issue) ισούται με 1 για νίκη, 0 για ήττα· το MWC εκκίνησης είναι αυτό του αρχικού σκορ (50 % στο 0-0). Κάθε ρίψη μετατρέπεται σε MWC ως απώλεια, στο σκορ και τον κύβο της θέσης της. Υπό τέλειο παιχνίδι, η προσδοκία του A είναι η απώλεια του αντιπάλου μείον τη δική σας: το ισοζύγιο δίνει την <em>απόκλιση σφαλμάτων</em> δίπλα για διασταύρωση. A &gt; 0 σε χαμένο αγώνα: χάθηκε από τα ζάρια· A &lt; 0: χάθηκε από το παιχνίδι. Η τύχη είναι αυτή που έγραψε ο αναλυτής (<a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB</span></a>): χωρίς τύχη, καμία γραμμή, και η κάλυψη (ρίψεις που μετρήθηκαν προς ρίψεις που παίχτηκαν) εμφανίζεται, επειδή μια μερική τύχη μεροληπτεί το A. Καμία γραμμή επίσης για παιχνίδι money ή ημιτελή αγώνα.</p>
+<p><strong>Βιαστικά και σκεπτόμενα σφάλματα.</strong> Ανά παίκτη και ανά τύπο (πούλια, κύβος), το όριο είναι ο διάμεσος των γνωστών διαρκειών των βαθμολογημένων αποφάσεών του αυτού του τύπου στον αγώνα: ένα σφάλμα που παίχτηκε ταχύτερα είναι βιαστικό, τα υπόλοιπα σκεπτόμενα. Ο διάμεσος είναι δικός του, σε αυτόν τον αγώνα: δεν εξαρτάται από τον ρυθμό, και χωρίς σχέση ανάμεσα στην ταχύτητα και το σφάλμα τα σφάλματα μοιράζονται μισά-μισά. Μια βιαστική πλειονότητα απαιτεί πειθαρχία· μια σκεπτόμενη πλειονότητα, γνώση.</p>
+<p><strong>Όρια.</strong> Ένας αγώνας είναι μικρό δείγμα: το PR και το L₇ φέρουν εκεί το διάστημά τους ανά παρτίδες (τουλάχιστον τρεις παρτίδες). Το προσαρμοσμένο αποτέλεσμα εξαρτάται από το MET και την τύχη του αρχείου. Η διάρκεια υπάρχει μόνο για αγώνα που την κράτησε (αγώνας που παίχτηκε εναντίον bot).</p>
+<p><strong>XG και gnuBG.</strong> Το XG και το gnuBG εμφανίζουν τη συνολική τύχη κάθε παίκτη, αλλά ούτε προσαρμοσμένο αποτέλεσμα σε MWC, ούτε επιλογή αποφάσεων προς επανεξέταση, ούτε κατανομή ανά διάρκεια.</p>
+</section>
+<section id="plan-d-etude">
+<span id="metrique-plan-etude"></span><h2><a class="toc-backref" href="#id8" role="doc-backlink">Σχέδιο μελέτης</a><a class="headerlink" href="#plan-d-etude" title="Link to this heading"></a></h2>
+<p><strong>Το ερώτημα.</strong> Τι πρέπει να δουλέψω τώρα; Η κατάταξη των σφαλμάτων ανά κόστος δείχνει πού χάθηκε περισσότερο, όχι πού η μελέτη αποδίδει περισσότερο: μια οικογένεια πραγματικά δύσκολων θέσεων κοστίζει σε όλους, και τρία σφάλματα δεν κάνουν τάση. Οι οθόνες: <a class="reference internal" href="manuel.html#plan-etude"><span class="std std-ref">Πλάνο μελέτης</span></a>.</p>
+<p><strong>Ορισμός.</strong> Μια <strong>οικογένεια</strong> είναι μια τριάδα (σχέδιο παιχνιδιού, φύση της απόφασης, θέμα) επαναλαμβανόμενων σφαλμάτων· τα μέλη της είναι τα σφάλματα του φίλτρου, μετρούμενες αποφάσεις που κοστίζουν τουλάχιστον το όριο Σφάλμα. Ένα σφάλμα χωρίς θέμα δεν μπαίνει σε καμία οικογένεια. Ένα μέλος είναι <strong>υπολογισμένο</strong> αν φέρει ℓ και d· ένα σφάλμα σε παιχνίδι money μετριέται «μη υπολογισμένο» και δεν μπαίνει σε καμία προτεραιότητα.</p>
+<p><strong>Ο τύπος.</strong> Το <strong>ανακτήσιμο MWC</strong> και το διάστημά του:</p>
+<div class="math notranslate nohighlight">
+\[R = \sum_i (\ell_i - d_i), \qquad
+R \pm 1{,}96 \sqrt{\textstyle\sum_i (\ell_i - d_i)^2}\]</div>
+<p>Το R είναι η συχνότητα της οικογένειας πολλαπλασιασμένη με τη μέση απώλειά της πέρα από τη δυσκολία: ό,τι θα ανακτούσαμε παίζοντας αυτές τις θέσεις όπως ο παίκτης αναφοράς. Το άθροισμα είναι προσημασμένο, χωρίς περικοπή. Το διάστημα αντιμετωπίζει τον αριθμό των μελών ως μέτρηση Poisson.</p>
+<p><strong>Τι μπαίνει στο σχέδιο.</strong> Τουλάχιστον <strong>5 υπολογισμένα μέλη</strong> και <strong>αυστηρά θετικό κάτω άκρο</strong>. Το σχέδιο ταξινομείται κατά φθίνον κάτω άκρο: με ίσο ανακτήσιμο, προηγείται η πιο τεκμηριωμένη οικογένεια. Οι υπόλοιπες είναι «προς επιβεβαίωση», χωρίς κατάταξη.</p>
+<p><strong>Μονάδα.</strong> Ένα ποσοστό MWC, σωρευμένο στο φίλτρο.</p>
+<p><strong>Ανάγνωση.</strong> Μια οικογένεια αποφεύξιμων σφαλμάτων ανεβαίνει· μια οικογένεια θέσεων όπου όλοι κάνουν λάθος κατεβαίνει. Ένας νέος παίκτης βλέπει πρώτα οικογένειες «προς επιβεβαίωση»: το σχέδιο δεν σπρώχνει προς τον θόρυβο.</p>
+<p><strong>Όρια.</strong> Το θέμα προέρχεται από τον ταξινομητή του blunderDB: ένα κακώς ταξινομημένο σφάλμα πέφτει σε λάθος οικογένεια, ένα σφάλμα χωρίς θέμα δεν είναι σε καμία. Το R κληρονομεί τα όρια των ℓ και d (MET, περικοπή των υποψηφίων).</p>
+<p><strong>XG και gnuBG.</strong> Κανένα από τα δύο δεν προτείνει σχέδιο μελέτης.</p>
+</section>
+<section id="positions-de-reference">
+<span id="metrique-positions-reference"></span><h2><a class="toc-backref" href="#id9" role="doc-backlink">Θέσεις αναφοράς</a><a class="headerlink" href="#positions-de-reference" title="Link to this heading"></a></h2>
+<p><strong>Το ερώτημα.</strong> Ποιες θέσεις να βάλω σε μια συλλογή για να δουλέψω το σχέδιο; Τα δέκα χειρότερα σφάλματα δίνουν συχνά δέκα παραλλαγές του ίδιου προβλήματος. Μια καλή θέση αναφοράς βρίσκεται στο κέντρο πολλών αποφεύξιμων σφαλμάτων σας, φέρει ξεκάθαρο μάθημα και δεν έχει ήδη μελετηθεί. Οι οθόνες: <a class="reference internal" href="manuel.html#positions-reference"><span class="std std-ref">θέσεις αναφοράς</span></a>.</p>
+<p><strong>Ορισμός.</strong> Οι υποψήφιες είναι τα υπολογισμένα και θεματοποιημένα σφάλματα του φίλτρου, ομαδοποιημένα ανά θέση· η περίσσεια μιας θέσης είναι το άθροισμα των θετικών περισσειών ℓ − d των σφαλμάτων της. Δύο υποψήφιες της ίδιας οικογένειας — και, για τον κύβο, του ίδιου σκορ — είναι <strong>γειτονικές</strong> σε απόσταση το πολύ ρ = 12 pip-steps της απόστασης <code class="docutils literal notranslate"><span class="pre">like</span></code> (μια ρίψη ζαριών αξίζει 8 έως 16).</p>
+<p><strong>Ο τύπος.</strong> Το κέρδος μιας υποψήφιας p είναι</p>
+<div class="math notranslate nohighlight">
+\[G(p) = c(p) \times \sum_{q \,\in\, \text{voisinage}(p),\ q\ \text{non couverte}} \text{excès}(q)\]</div>
+<p>ως κλάσμα MWC: η αντιπροσωπευτικότητα, η συχνότητα και το αποφεύξιμο κόστος σε ένα μόνο μέγεθος. Το c(p) ξεκινά από 1 και πολλαπλασιάζεται επί ½ αν το μάθημα είναι <strong>οριακό</strong> (η δεύτερη επιλογή κοστίζει λιγότερο από το μισό του ορίου Σφάλμα), και πάλι επί ½ αν είναι <strong>ασταθές</strong> (άλλο βάθος ανάλυσης του κύβου ή ένα rollout δίνει άλλη κρίση): ¼ όταν συντρέχουν και τα δύο. Ένα rollout που επιβεβαιώνει δεν ανεβάζει τίποτα: ξεχωρίζει σε ισοβαθμία κέρδους.</p>
+<p><strong>Επιλογή.</strong> Άπληστη κατά το οριακό κέρδος: κάθε θέση που κρατιέται καλύπτει τις γειτονικές της, που δεν αποφέρουν πια τίποτα στις επόμενες, και οι σχεδόν-διπλότυπές της απορρίπτονται ακόμη και εκτός της οικογένειάς της. Μια θέση που έχει ήδη αντιμετωπιστεί (σχόλιο, κάρτα Anki, συλλογή, σήμανση «μελετημένη») δεν προτείνεται ποτέ και μετρά ως ήδη κρατημένη.</p>
+<p><strong>Μονάδα.</strong> Το MWC που καλύπτεται, σε ποσοστό.</p>
+<p><strong>Όρια.</strong> Η ακτίνα και οι παράγοντες είναι σταθεροί, όχι μαθημένοι. Η απόσταση <code class="docutils literal notranslate"><span class="pre">like</span></code> συγκρίνει δομές πούλιων, όχι ιδέες: δύο θέσεις με το ίδιο μάθημα αλλά απομακρυσμένης δομής δεν καλύπτουν η μία την άλλη.</p>
+<p><strong>XG και gnuBG.</strong> Κανένα αντίστοιχο.</p>
+</section>
+<section id="avant-apres-l-etude">
+<span id="metrique-avant-apres"></span><h2><a class="toc-backref" href="#id10" role="doc-backlink">Πριν/μετά τη μελέτη</a><a class="headerlink" href="#avant-apres-l-etude" title="Link to this heading"></a></h2>
+<p><strong>Το ερώτημα.</strong> Αυτό που δούλεψα μου κοστίζει λιγότερο σε πραγματικό αγώνα; Χωρίς μέτρηση, η μελέτη κρίνεται από την εντύπωση· μια οικογένεια που δεν κινείται παρά τη δουλειά λέει ότι πρέπει να αλλάξει η μέθοδος. Οι οθόνες: <a class="reference internal" href="manuel.html#avant-apres-etude"><span class="std std-ref">Πριν/μετά τη μελέτη</span></a>.</p>
+<p><strong>Ορισμός.</strong> Κάθε θεματική οικογένεια του φίλτρου μετριέται, τόσο εκείνες του προγράμματος όσο και εκείνες «προς επιβεβαίωση». Μια οικογένεια είναι <strong>μελετημένη</strong> την ημέρα (UTC) της πρώτης ενέργειας μελέτης σε μία από τις θέσεις της: σήμανση «μελετημένη», επανάληψη Anki ανεξαρτήτως βαθμού, απάντηση σε κουίζ. Η δημιουργία μιας κάρτας ή η τοποθέτηση μιας θέσης σε συλλογή δεν είναι τέτοια ενέργεια. Παράθυρο <em>πριν</em>: οι αγώνες με ημερομηνία αυστηρά πριν από εκείνη την ημέρα· <em>μετά</em>: αυστηρά μετά· η ίδια η ημέρα και οι αγώνες χωρίς ημερομηνία απορρίπτονται.</p>
+<p><strong>Ο τύπος.</strong> Σε κάθε παράθυρο, ο ρυθμός απώλειας r = Σℓ / N: τα ℓ οι απώλειες των σφαλμάτων της οικογένειας, N οι μετρούμενες αποφάσεις σε αγώνα του ίδιου σχεδίου παιχνιδιού και της ίδιας φύσης (το θέμα υπάρχει μόνο για ένα σφάλμα). Το κέρδος και το διάστημά του:</p>
+<div class="math notranslate nohighlight">
+\[\Delta = r_\text{avant} - r_\text{après}, \qquad
+\Delta \pm 1{,}96 \sqrt{\frac{\sum \ell^2_\text{avant}}{N^2_\text{avant}}
++ \frac{\sum \ell^2_\text{après}}{N^2_\text{après}}}\]</div>
+<p><strong>Κρίση.</strong> Τουλάχιστον <strong>30 αποφάσεις</strong> σε κάθε παράθυρο, αλλιώς «ανεπαρκές». «Σε πρόοδο» αν το κάτω άκρο του Δ είναι θετικό, «σε υποχώρηση» αν το άνω άκρο είναι αρνητικό, «αδιευκρίνιστο» διαφορετικά.</p>
+<p><strong>Μονάδα.</strong> Πόντοι MWC ανά 100 αποφάσεις.</p>
+<p><strong>Όρια.</strong> Μια αλλαγή, όχι ένα αποτέλεσμα. Μια οικογένεια μελετάται <em>επειδή</em> κόστιζε: η παλινδρόμηση προς τον μέσο όρο φουσκώνει το κέρδος. Τίποτα δεν ελέγχει τους αντιπάλους, τη μορφή ή τα ζάρια.</p>
+<p><strong>XG και gnuBG.</strong> Κανένα αντίστοιχο.</p>
+</section>
+<section id="biais-signes">
+<span id="metrique-biais"></span><h2><a class="toc-backref" href="#id11" role="doc-backlink">Προσημασμένες μεροληψίες</a><a class="headerlink" href="#biais-signes" title="Link to this heading"></a></h2>
+<p><strong>Το ερώτημα.</strong> Προς ποια κατεύθυνση κάνω λάθος; Το «δέχεστε υπερβολικά» διορθώνεται καλύτερα από ένα PR: ο κανόνας προς επανεξέταση κατονομάζεται. Οι οθόνες: <a class="reference internal" href="manuel.html#biais-signes"><span class="std std-ref">Προσημασμένες μεροληψίες</span></a>.</p>
+<p><strong>Ο τύπος.</strong> Κάθε μετρούμενη απόφαση φέρει x = +1 (σφάλμα από υπερβολική τόλμη), −1 (από υπερβολική σύνεση) ή 0. Με P και M τις δύο μετρήσεις σε N αποφάσεις:</p>
+<div class="math notranslate nohighlight">
+\[B = \frac{P - M}{N}, \qquad
+B \pm 1{,}96 \sqrt{\frac{(P + M)/N - B^2}{N}}\]</div>
+<p>Τουλάχιστον <strong>20 αποφάσεις</strong>· «υπερβολικά» αν το κάτω άκρο είναι θετικό, «ανεπαρκώς» αν το άνω άκρο είναι αρνητικό, «ισορροπημένο» διαφορετικά. Το κόστος των P και M (σε mpt) συνοδεύει τις μετρήσεις. Το πρόσημο και το κόστος είναι αυτά της κίνησης που παίχτηκε στον αγώνα της.</p>
+<ul class="simple">
+<li><p><strong>Αποδοχή / άρνηση</strong>: στις απαντήσεις στον κύβο· P = λανθασμένες αποδοχές, M = λανθασμένες αρνήσεις. Το B είναι ακριβώς ο ρυθμός αποδοχής σας μείον αυτός του bot στις ίδιες θέσεις.</p></li>
+<li><p><strong>Διπλάσια</strong>: στις αποφάσεις κύβου του κατόχου που μετρούν στο PR· P = πρόωρα διπλάσια (όχι διπλάσιο, ή υπερβολικά καλή θέση), M = χαμένα διπλάσια. Η μεροληψία δίνεται επίσης ανά κελί σκορ (οι εναπομείνοντες πόντοι σας, του αντιπάλου· το post-Crawford μετράται ως 1· το παιχνίδι money χωριστά).</p></li>
+<li><p><strong>Blots</strong>: στις κινήσεις πούλιων με επαφή· το x είναι το πρόσημο του (τα blots σας μετά την κίνηση που παίχτηκε − τα blots σας μετά την καλύτερη κίνηση). Μια κίνηση αναγνωρίζεται από το ταμπλό που αφήνει· μια κίνηση που δεν βρίσκεται βγαίνει από τη μέτρηση, και το μερίδιό της εμφανίζεται.</p></li>
+</ul>
+<p><strong>Μονάδα.</strong> Μια διαφορά αναλογιών, χωρίς μονάδα.</p>
+<p><strong>Όρια.</strong> Τα περισσότερα κελιά σκορ μένουν βουβά: είναι η ειλικρινής απάντηση. Η μεροληψία των blots μετρά τα blots χωρίς να ζυγίζει την έκθεσή τους, και οι κινήσεις που απορρίφθηκαν δεν αποτελούν ουδέτερη κλήρωση.</p>
+<p><strong>XG και gnuBG.</strong> Κανένα αντίστοιχο· το XG και το gnuBG μετρούν τα σφάλματα κύβου ανά τύπο (χαμένο διπλάσιο, λανθασμένη αποδοχή…) χωρίς διάστημα ή κρίση.</p>
+</section>
+<section id="bilan-du-tournoi">
+<span id="metrique-bilan-tournoi"></span><h2><a class="toc-backref" href="#id12" role="doc-backlink">Ισοζύγιο του τουρνουά</a><a class="headerlink" href="#bilan-du-tournoi" title="Link to this heading"></a></h2>
+<p><strong>Το ερώτημα.</strong> Έπαιξα στο επίπεδό μου, και αν όχι, πού υποχώρησε: οι τελευταίοι γύροι, τα μεγάλα φινάλε αγώνων, τα σκορ όπου ένας πόντος κρίνει, το ρολόι; Οι οθόνες: <a class="reference internal" href="manuel.html#bilan-tournoi"><span class="std std-ref">ισοζύγιο του τουρνουά</span></a>.</p>
+<p><strong>Ορισμός.</strong> Το <strong>συνηθισμένο επίπεδο</strong> είναι ο παίκτης στους αγώνες σε πόντους των <strong>365 ημερών</strong> που προηγούνται του τουρνουά (η ημερομηνία του, ελλείψει της, αυτή του πρώτου αγώνα του), με τους αγώνες του τουρνουά αποκλεισμένους· χρειάζονται τουλάχιστον <strong>5 αγώνες</strong>. Το τουρνουά και το συνηθισμένο επίπεδο έχουν το καθένα PR και L₇, με το διάστημα ανά αγώνες (<a class="reference internal" href="#metrique-intervalles"><span class="std std-ref">Διαστήματα 95 %</span></a>).</p>
+<p><strong>Ο τύπος.</strong> Δ = τουρνουά − συνηθισμένο, με τυπική απόκλιση √(σₜ² + σₕ²), όπου κάθε σ διαβάζεται από το άνω μισό πλάτος του διαστήματός του. «Χειρότερα» αν το κάτω άκρο του Δ είναι θετικό, «καλύτερα» αν το άνω άκρο του είναι αρνητικό, «στα συνηθισμένα» διαφορετικά. Η κρίση απαιτεί διάστημα και τουλάχιστον <strong>20 αποφάσεις</strong> σε κάθε πλευρά· αλλιώς «ανεπαρκές», με ορατούς τους αριθμούς.</p>
+<p><strong>Αναλύσεις</strong>, σε PR: ανά γύρο, κάθε αγώνας έναντι του συνολικού συνήθους PR· έπειτα, κάθε κελί έναντι του ίδιου κελιού του συνήθους επιπέδου, ανά σειρά της απόφασης στον αγώνα (τμήματα των 30: η κόπωση)· ανά σκορ (DMP, παιχνίδι Crawford, post-Crawford, άλλα)· ανά ρυθμό (εκατέρωθεν της διαμέσου των χρόνων σας στον αγώνα). Το πολύ τρεις οικογένειες του προγράμματος μελέτης περιορισμένου στο τουρνουά.</p>
+<p><strong>Όρια.</strong> Ένα τουρνουά τριών αγώνων σχεδόν ποτέ δεν λέει «χειρότερα»: είναι σκόπιμο. Οι δύο πλευρές αντιμετωπίζονται ως ανεξάρτητες, κάτι που διευρύνει το διάστημα: ο κανόνας είναι συντηρητικός. Το απόθεμα του ρολογιού δεν καταγράφεται κίνηση προς κίνηση: η πίεση του υπολειπόμενου χρόνου δεν μετριέται.</p>
+<p><strong>XG και gnuBG.</strong> Κανένα αντίστοιχο.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="manuel.html" class="btn btn-neutral float-left" title="Εγχειρίδιο" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cmd_mode.html" class="btn btn-neutral float-right" title="Λίστα εντολών" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

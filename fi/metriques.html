@@ -1,0 +1,383 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="fi" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mittarit ja opiskelutyökalut &mdash; blunderDB 0.39.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=ff423f62"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=aa74d7ce"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Sisällysluettelo" href="genindex.html" />
+    <link rel="search" title="Etsi" href="search.html" />
+    <link rel="next" title="Komentoluettelo" href="cmd_mode.html" />
+    <link rel="prev" title="Käyttöopas" href="manuel.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Kielet">
+  <a href="../fr/metriques.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/metriques.html" lang="en" hreflang="en">English</a>
+  <a href="../de/metriques.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/metriques.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/metriques.html" lang="es" hreflang="es">Español</a>
+  <span class="current" lang="fi" aria-current="true">Suomi</span>
+  <a href="../it/metriques.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/metriques.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/metriques.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Aloitus</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Lataaminen ja asentaminen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Käyttöopas</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Viiteopas</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Käyttöopas</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Mittarit ja opiskelutyökalut</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#l-erreur-et-la-perte-d-une-decision">Päätöksen virhe ja menetys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pr-performance-rating">PR (<em>Performance Rating</em>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#perte-de-mwc-par-decision-et-graphique-du-match">MWC-menetys päätöstä kohden ja ottelukaavio</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#perte-mwc-eq-7-pts-l7-et-elo-face-au-moteur">MWC-menetys (7 pisteen ekv.) L₇ ja Elo moottoria vastaan</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#difficulte-erreurs-evitables-exces-et-ratio">Vaikeus, vältettävissä olevat virheet, ylijäämä ja suhde</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#intervalles-a-95">95 %:n välit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bilan-du-match">Ottelun yhteenveto</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#plan-d-etude">Opiskelusuunnitelma</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#positions-de-reference">Viiteasemat</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#avant-apres-l-etude">Ennen/jälkeen opiskelun</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#biais-signes">Etumerkilliset vinoumat</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bilan-du-tournoi">Turnauksen yhteenveto</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Komentoluettelo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Näppäimistöoikotiet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Komentoriviliittymä (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Sanasto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Usein kysytyt kysymykset (UKK)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Headless-tila (palvelin)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API-sopimus</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Liitteet</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Liite: Suodattimien edistynyt käyttö</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows-liite: mitä tehdä, jos Windows estää käynnistyksen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac-liite: blunderDB:n mahdollinen esto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Liite: Tietokannan skeema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Versiohistoria</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Tietoja</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Mittarit ja opiskelutyökalut</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="metriques-et-outils-d-etude">
+<span id="metriques"></span><h1>Mittarit ja opiskelutyökalut<a class="headerlink" href="#metriques-et-outils-d-etude" title="Link to this heading"></a></h1>
+<p>Jokainen luku, jonka blunderDB näyttää pelistäsi, vastaa johonkin kysymykseen. Tämä sivu kokoaa ne yhteen: kustakin luvusta kerrotaan kysymys, johon se vastaa, ja mitä se antaa opiskelulle, sen määritelmä, tarkka kaava, mikä lasketaan päätökseksi, yksikkö, tulkinta, epävarmuus, rajat sekä se, mikä erottaa sen eXtreme Gammonin (XG) ja GNU Backgammonin (gnuBG) luvuista. Ne näyttävät näkymät on kuvattu <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">käsikirjassa</span></a>; linkit johtavat sinne.</p>
+<p>Tämän sivun rajat ja parametrit on asetettu ennen todellisten tulosten tarkastelua: niiden säätäminen jälkikäteen merkitsisi sitä, että luvut saataisiin sanomaan se, mitä niiltä odotetaan.</p>
+<nav class="contents local" id="sisallys">
+<ul class="simple">
+<li><p><a class="reference internal" href="#l-erreur-et-la-perte-d-une-decision" id="id1">Päätöksen virhe ja menetys</a></p></li>
+<li><p><a class="reference internal" href="#pr-performance-rating" id="id2">PR (<em>Performance Rating</em>)</a></p></li>
+<li><p><a class="reference internal" href="#perte-de-mwc-par-decision-et-graphique-du-match" id="id3">MWC-menetys päätöstä kohden ja ottelukaavio</a></p></li>
+<li><p><a class="reference internal" href="#perte-mwc-eq-7-pts-l7-et-elo-face-au-moteur" id="id4">MWC-menetys (7 pisteen ekv.) L₇ ja Elo moottoria vastaan</a></p></li>
+<li><p><a class="reference internal" href="#difficulte-erreurs-evitables-exces-et-ratio" id="id5">Vaikeus, vältettävissä olevat virheet, ylijäämä ja suhde</a></p></li>
+<li><p><a class="reference internal" href="#intervalles-a-95" id="id6">95 %:n välit</a></p></li>
+<li><p><a class="reference internal" href="#bilan-du-match" id="id7">Ottelun yhteenveto</a></p></li>
+<li><p><a class="reference internal" href="#plan-d-etude" id="id8">Opiskelusuunnitelma</a></p></li>
+<li><p><a class="reference internal" href="#positions-de-reference" id="id9">Viiteasemat</a></p></li>
+<li><p><a class="reference internal" href="#avant-apres-l-etude" id="id10">Ennen/jälkeen opiskelun</a></p></li>
+<li><p><a class="reference internal" href="#biais-signes" id="id11">Etumerkilliset vinoumat</a></p></li>
+<li><p><a class="reference internal" href="#bilan-du-tournoi" id="id12">Turnauksen yhteenveto</a></p></li>
+</ul>
+</nav>
+<section id="l-erreur-et-la-perte-d-une-decision">
+<span id="metrique-erreur"></span><h2><a class="toc-backref" href="#id1" role="doc-backlink">Päätöksen virhe ja menetys</a><a class="headerlink" href="#l-erreur-et-la-perte-d-une-decision" title="Link to this heading"></a></h2>
+<p>Kaikki mittaukset lähtevät kahdesta päätöskohtaisesta suureesta.</p>
+<p><strong>Virhe e</strong> on se, mitä pelattu päätös maksoi equityssä verrattuna tuodun analyysin (XG tai gnuBG; blunderDB ei analysoi otteluita uudelleen tilastojaan varten) parhaaseen päätökseen. Se ilmaistaan <strong>normalisoituna equitynä</strong>: ±1 vastaa voimassa olevaa kuutiota sekä rahapelissä että ottelupistetilanteessa (EMG pistetilanteessa). Se pyöristetään tuhannesosaan (millipiste, mpt).</p>
+<ul class="simple">
+<li><p>Nappulasiirto: parhaan ehdokkaan equity miinus pelatun siirron equity.</p></li>
+<li><p>Ei tuplausta: analyysin antama ”ei tuplausta” -virhe.</p></li>
+<li><p>Tuplaus: pienempi virheistä ”tuplaus, vastaanotto” ja ”tuplaus, hylkäys” — tuplaaja arvioidaan vastustajan parhaan vastauksen mukaan.</p></li>
+<li><p>Vastaanotto tai hylkäys: pelatun vastauksen ja kahdesta paremman välinen ero.</p></li>
+</ul>
+<p>Virhe on <strong>ottelussa pelatun siirron</strong> virhe. Asema, joka on saavutettu kahdessa ottelussa ja pelattu eri tavoin, saa kaksi virhettä; kumpikaan ei kumoa toista. Pelatulla siirrolla, jota analyysi ei nimeä ehdokkaidensa joukossa, ei ole virhettä: sitä ei arvioida, ja se jää kaikkien laskentojen ulkopuolelle.</p>
+<p><strong>MWC-menetys ℓ</strong> on sama virhe ilmaistuna ottelun voittotodennäköisyyksinä (<em>Match Winning Chances</em>). Päätöksen pistetilanteessa ja kuutiolla v:</p>
+<div class="math notranslate nohighlight">
+\[\ell = e \times \frac{\mathrm{MWC}_{+v} - \mathrm{MWC}_{-v}}{2}\]</div>
+<p>missä <span class="math notranslate nohighlight">\(\mathrm{MWC}_{+v}\)</span> ja <span class="math notranslate nohighlight">\(\mathrm{MWC}_{-v}\)</span> ovat ottelun voittotodennäköisyydet, jos pelaaja voittaa tai häviää v pistettä tässä pistetilanteessa. Ottelun ekvivalenssitaulukko (MET) on Kazaross-XG2, jota jatketaan yli 25 pisteen Zadehin kaavalla; Crawford-pelin jälkeinen pistetilanne luetaan sellaisenaan. Vastaanotto tai hylkäys muunnetaan kuutiolla <strong>ennen</strong> tuplausta, kuten tuplaaja ja kuten XG: tuplatulla kuutiolla muunnettuna vastausvirhe maksaisi kaksi kertaa liikaa. Rahapelillä ei ole MWC:tä: ℓ:ää ei siellä ole.</p>
+<p>Nämä kaksi suuretta ovat additiivisia. Kaikki alla olevat mittarit ovat niiden summia, jaettuina eri nimittäjillä tai verrattuina vertailuarvoon.</p>
+</section>
+<section id="pr-performance-rating">
+<span id="metrique-pr"></span><h2><a class="toc-backref" href="#id2" role="doc-backlink">PR (<em>Performance Rating</em>)</a><a class="headerlink" href="#pr-performance-rating" title="Link to this heading"></a></h2>
+<p><strong>Kysymys.</strong> Mikä on tasoni kaikkien tuntemalla asteikolla? PR on rankingien, foorumien ja kerhojen luku; sen avulla voi sijoittaa itsensä ja verrata kahta XG:n analysoimaa ottelua.</p>
+<p><strong>Kaava.</strong> Pelaajan lasketuille päätöksille:</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{PR} = 500 \times \frac{\sum_i e_i}{N_\text{compté}}\]</div>
+<p>Kerroin 500 on XG:n käytäntö: PR 5,0 vastaa keskimääräistä virhettä 0,010, eli 10 mpt laskettua päätöstä kohden. PR on keskiarvo ilman yksikköä; mitä pienempi, sitä paremmin on pelattu.</p>
+<p><strong>Mikä lasketaan päätökseksi.</strong> Säännöt ovat XG:n, varmistettuina ottelu ottelulta sen lukuja vasten (<a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</span></a>):</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Päätös</p></th>
+<th class="head"><p>Lasketaan, jos</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Nappulasiirto</p></td>
+<td><p>se ei ole pakotettu ja pelattu siirto on arvioitu</p></td>
+</tr>
+<tr class="row-odd"><td><p>Ehdotettu tuplaus</p></td>
+<td><p>aina</p></td>
+</tr>
+<tr class="row-even"><td><p>Vastaanotto, hylkäys</p></td>
+<td><p>aina</p></td>
+</tr>
+<tr class="row-odd"><td><p>Ei tuplausta</p></td>
+<td><p>ND &gt; 0 et ND − min(D/T, D/P) &lt; 0,200</p></td>
+</tr>
+</tbody>
+</table>
+<ul class="simple">
+<li><p>Nappulasiirto on <strong>pakotettu</strong>, kun heitto sallii vain yhden laillisen siirron, tai kun analyysi kattaa kaikki laillisat siirrot (blunderDB:n siirtogeneraattorin laskemina) ja kaikilla on sama equity tuhannesosan tarkkuudella: valinta, joka ei maksa mitään siirrosta riippumatta, ei ole päätös. Tämä on XG:n sääntö ”ei pakotetuille mutta merkityksettömille” siirroille (ratkennut kilpajuoksun loppu, poisto, jossa kaikki on yhtä hyvää). Kun laillisia siirtoja ei voi laskea, vain yksittäinen ehdokas tekee siirrosta pakotetun.</p></li>
+<li><p><strong>Ei tuplausta</strong> lasketaan, kun pelaaja oli lähellä tuplausta: hänen equitynsä ilman tuplausta (ND) on positiivinen ja ylittää alle 0,200:lla tuplauksen parhaan lopputuloksen vastustajalle, min(D/T, D/P). Mittaaminen tätä minimiä vastaan pelkän D/T:n sijaan pitää ”liian hyvän” aseman päätöksenä niin kauan kuin se on alle 0,200 päässä loppuunmyynnistä.</p></li>
+<li><p>Ehto <strong>ND &gt; 0</strong> sulkee pois asemat, joissa vuorossa oleva pelaaja on häviöllä: hänellä ei ole tuplausta harkittavana. XG sulkee ne pois myös, mitä sen käsikirja ei kerro; vertailuottelut osoittavat sen.</p></li>
+<li><p>Kuutiopäätös ilman kuutioanalyysiä ei ole koskaan laskettu ”ei tuplausta” -päätös.</p></li>
+</ul>
+<p><strong>Tulkinta.</strong> Tilastot-paneelin tasoluokat (<a class="reference internal" href="manuel.html#stats"><span class="std std-ref">Stats-paneeli</span></a>) ovat blunderDB:n oma viitearvo, eivät julkaistu standardi. PR:ää verrataan ensin omiin PR-arvoihin: sama analysoija, samanlaiset vastustajat, samat pituudet.</p>
+<p><strong>Epävarmuus.</strong> Yhden ottelun PR on hyvin kohinainen: 7 pisteen ottelun keskivirhe on noin 1,5 PR. blunderDB antaa 95 %:n välin (<a class="reference internal" href="#metrique-intervalles"><span class="std std-ref">95 %:n välit</span></a>) poimimalla ottelun pelit uudelleen ja kokonaisuuden ottelut uudelleen.</p>
+<p><strong>Rajat.</strong> Osoittaja ei riipu mistään, mutta nimittäjä riippuu siitä, mitä lasketaan: rajat 0,001 ja 0,200 ovat mielivaltaisia. PR:ää voi laskea pelaamatta paremmin, ottamalla niukan hylkäyksen lisätäkseen päätöksiä kilpajuoksuun, tai valitsemalla bear-off-vaiheessa siirron, joka luo yhden päätöksen lisää. PR painottaa kuution 8 virhettä kuten kuution 1 virhettä (equity on normalisoitu kuutioon), ja DMP:n virhettä kuten 0-0:n virhettä. Se perii moottorin puutteet, ja vaikeita asemia luova vastustaja nostaa toisen PR:ää. <a class="reference internal" href="#metrique-l7"><span class="std std-ref">MWC-menetys</span></a> ja <a class="reference internal" href="#metrique-difficulte"><span class="std std-ref">vaikeus</span></a> vastaavat näihin kolmeen puutteeseen.</p>
+<p><strong>XG ja gnuBG.</strong> XG-tiedostossa blunderDB:n PR on XG:n PR näytön tarkkuudella, lukuun ottamatta sivun <a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</span></a> selitettyjä poikkeamia. gnuBG jakaa saman summan toisella luvulla: jokainen siirto, jolla on useampi kuin yksi laillinen siirto, sekä kuutiopäätökset, jotka se katsoo lähellä oleviksi oman ikkunansa mukaan. Sen päätöskohtainen virheprosentti ei siis ole verrattavissa XG:n PR:ään, vaikka analyysi olisi sama. <em>Snowie Error Rate</em> (<a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</span></a>) jakaa molempien pelaajien kaikilla siirroilla: se ei riipu mistään laskentasäännöstä, mutta on noin puolet PR:stä.</p>
+</section>
+<section id="perte-de-mwc-par-decision-et-graphique-du-match">
+<span id="metrique-perte-mwc"></span><h2><a class="toc-backref" href="#id3" role="doc-backlink">MWC-menetys päätöstä kohden ja ottelukaavio</a><a class="headerlink" href="#perte-de-mwc-par-decision-et-graphique-du-match" title="Link to this heading"></a></h2>
+<p><strong>Kysymys.</strong> Mitkä päätökset maksoivat minulle tämän ottelun? PR asettaa kaikki virheet samalle asteikolle; ℓ painottaa ne pistetilanteen mukaan, jossa ne tehtiin. 0,040:n virhe tilanteessa 4-4 5 pisteen ottelussa ei maksa sitä, mitä se maksaa tilanteessa 0-0 17 pisteen ottelussa. Opiskelua varten sarake ja kaavio osoittavat ne harvat päätökset, jotka ratkaisivat ottelun, ja kumulatiivinen käyrä näyttää, missä se kääntyi.</p>
+<p><strong>Määritelmä.</strong> ℓ (<a class="reference internal" href="#metrique-erreur"><span class="std std-ref">Päätöksen virhe ja menetys</span></a>) jokaiselle PR:ssä lasketulle päätökselle; pelaajan menetys ottelussa on Σℓ näiden päätösten yli. Laskennan ulkopuolisella päätöksellä (pakotettu siirto, tuplaamatta jättäminen ikkunan ulkopuolella) ei ole ℓ:ää: se ei olisi joka tapauksessa maksanut mitään tai melkein mitään.</p>
+<p><strong>Yksikkö.</strong> Prosentti ottelun voittotodennäköisyydestä: 2,5 tarkoittaa 2,5 % menetettyä MWC:tä.</p>
+<p><strong>Tulkinta.</strong> Litteroinnin <strong>MWC</strong>-sarake, päätöskohtainen palkki ja kunkin pelaajan kumulatiivinen käyrä on kuvattu kohdassa <a class="reference internal" href="manuel.html#panneau-matchs"><span class="std std-ref">Ottelupaneeli</span></a>. Yksittäinen korkea palkki on päätös, joka kannattaa käydä läpi uudelleen; tasaisesti nouseva käyrä kertoo ottelusta, jossa oli keskinkertaisia virheitä, ei onnettomuutta.</p>
+<p><strong>Epävarmuus.</strong> ℓ on analyysiin nähden tarkka: sen epävarmuus on itse analyysin (syvyys, rollout vai ei) ja MET:n epävarmuus.</p>
+<p><strong>Rajat.</strong> ℓ riippuu MET:stä: kaksi ohjelmaa, jotka eivät käytä samaa taulukkoa, eivät anna samaa menetystä. Rahapelillä sitä ei ole, ja tietokannan MET:stä poikkeavalla MET:llä laskettu analyysi jää tilastojen ulkopuolelle. Arvioimaton päätös saa viivan, ei koskaan nollaa.</p>
+<p><strong>XG ja gnuBG.</strong> Summa on MWC-menetys, jonka XG näyttää ottelulle: nappulasiirrot, tuplat ja vastaukset täsmäävät vertailuotteluissa XG:n näyttötarkkuudella (poikkeama rajattu testisarjassa 0,06 prosenttiyksikköön), lukuun ottamatta pelaajia, joilla on <a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</span></a>-luvun tunnetut jäännöspoikkeamat, enintään 0,45 pistettä. gnuBG tekee saman muunnoksen omilla ekvityillään: sen analysoimassa ottelussa sen luvut eroavat XG:n luvuista analyysin, eivät kaavan vuoksi.</p>
+</section>
+<section id="perte-mwc-eq-7-pts-l7-et-elo-face-au-moteur">
+<span id="metrique-l7"></span><h2><a class="toc-backref" href="#id4" role="doc-backlink">MWC-menetys (7 pisteen ekv.) L₇ ja Elo moottoria vastaan</a><a class="headerlink" href="#perte-mwc-eq-7-pts-l7-et-elo-face-au-moteur" title="Link to this heading"></a></h2>
+<p><strong>Kysymys.</strong> Kuinka paljon ottelusta menetin virheilläni, päätösten laskentatavasta riippumatta, ja miten 5 pisteen ottelua verrataan 11 pisteen otteluun? L₇ ei jaa millään päätösmäärällä: sitä ei voi manipuloida lisäämällä helppoja päätöksiä, ja se painottaa jokaisen virheen sen todellisen hinnan mukaan.</p>
+<p><strong>Määritelmä.</strong> Täydellisessä pelissä ottelun voittotodennäköisyydet kehittyvät harhattomasti: täydellistä vastustajaa vastaan pelaaja, joka menettää L MWC:tä ottelussa, säilyttää todennäköisyyden q = 0,5 − L. FIBS-kaavan malli sanoo, että yhtä vahvoilla menetys kasvaa pituuden N neliöjuuren mukana. L palautetaan siksi 7 pisteen otteluun, yleisimpään turnauspituuteen:</p>
+<div class="math notranslate nohighlight">
+\[L_7 = L \times \sqrt{7 / N}
+\qquad
+L_7^\text{agrégat} = \sqrt{7} \times \frac{\sum L}{\sum \sqrt{N}}\]</div>
+<p>Koonti (useita otteluita, yksi pelaaja, yksi turnaus) laskee yhteen menetykset ja pituuksien neliöjuuret ennen suhdetta: 7 pisteen ottelu painaa enemmän kuin 1 pisteen ottelu, ja yksittäinen ottelu antaa oman arvonsa. Ilman pelaajasuodatinta ottelun molemmat paikat painavat kumpikin √N, mutta muodostavat yhden välin yksikön.</p>
+<p><strong>Elo moottoria vastaan</strong> kääntää FIBS-kaavan 7 pisteen kohdalla:</p>
+<div class="math notranslate nohighlight">
+\[D = \frac{2000}{\sqrt{7}} \log_{10} \frac{q}{1 - q}, \qquad q = 0{,}5 - L_7\]</div>
+<p>Linearisoituna D ≈ −3474 × L / √N. Kun L₇ ≥ 50 %, q:lla ei ole äärellistä käänteisarvoa; kun L₇ &gt; 49 %, q rajataan alhaalta 1 %:iin (D ≥ −1509) ja Elo näytetään muodossa ”≤”. L₇:llä ei ole alarajaa. Molemmat asettavat pelaajat samaan järjestykseen.</p>
+<p><strong>Yksikkö.</strong> L₇: prosentti MWC:stä. D: Elo-pisteitä, negatiivisia, pelaajan ja moottorin välinen odotettu ero.</p>
+<p><strong>Tulkinta.</strong> 12,3 %: 50 %:n todennäköisyyden sijaan moottoria vastaan pelaajalla oli 7 pisteen ottelussa enää 37,7 %. Merkki, yksityiskohdat, tilastot, turnaus ja edistyminen näyttävät sen (<a class="reference internal" href="manuel.html#perte-mwc-7pts"><span class="std std-ref">MWC-menetys (7 pisteen ekv.)</span></a>).</p>
+<p><strong>Epävarmuus.</strong> 95 %:n väli pelien perusteella yhdelle ottelulle, otteluiden perusteella kokonaisuudelle (<a class="reference internal" href="#metrique-intervalles"><span class="std std-ref">95 %:n välit</span></a>), sitten sama muunnos kuin arvolle. Tilastojen ottelukohtaisella rivillä ei ole väliä: se on yksi yksikkö; ottelun yhteenveto sisältää pelikohtaisen välin.</p>
+<p><strong>Rajat.</strong> √N-malli on likimääräinen alle 7 pisteen otteluissa ja Crawford-pelin ympärillä. L₇ riippuu MET:stä. Rahapelillä ei ole pituutta, joten ei L₇:ääkään: näkymä kertoo sen luvun näyttämisen sijaan. Todelliset pelaajat menettävät yli puoli ottelua, koska tuurin kääntymisen jälkeen tehdyt virheet kasautuvat: Elo saavuttaa silloin lattiansa.</p>
+<p><strong>XG ja gnuBG.</strong> 7 pisteen ottelussa L₇ on täsmälleen XG:n näyttämä MWC-menetys. Kumpikaan ohjelma ei palauta menetystä vertailupituuteen eikä muunna sitä Eloksi. Tämä Elo mittaa etäisyyttä moottoriin, ei ihmispelaajien välistä FIBS- tai BMAB-rankingia.</p>
+</section>
+<section id="difficulte-erreurs-evitables-exces-et-ratio">
+<span id="metrique-difficulte"></span><h2><a class="toc-backref" href="#id5" role="doc-backlink">Vaikeus, vältettävissä olevat virheet, ylijäämä ja suhde</a><a class="headerlink" href="#difficulte-erreurs-evitables-exces-et-ratio" title="Link to this heading"></a></h2>
+<p><strong>Kysymys.</strong> Oliko tämä virhe anteeksiannettava? Sama 2 %:n menetys on huolimattomuutta ilmeisessä asemassa ja virhe, jonka jokainen hyvä pelaaja tekisi asemassa, jossa neljä siirtoa on muutaman tuhannesosan sisällä. Opiskelua varten vaikeus lajittelee virheet: vältettävissä olevat virheet (huolimattomuus, väärin osattu sääntö) korjataan nopeasti ja ne tulevat ensin; vaikeiden päätösten menetykset kuuluvat perustyöhön.</p>
+<p><strong>Määritelmä.</strong> Vaikeus d on menetys, jonka <strong>vertailupelaaja</strong> kärsisi keskimäärin samassa asemassa, kun hän valitsee kunkin vaihtoehdon i sitä pienemmällä todennäköisyydellä, mitä kalliimmaksi se tulee:</p>
+<div class="math notranslate nohighlight">
+\[\pi(i) = \frac{e^{-\Delta_i/\tau}}{\sum_j e^{-\Delta_j/\tau}},
+\qquad d = \sum_i \pi(i)\,\Delta_i,
+\qquad \tau = 0{,}025\]</div>
+<p>Δᵢ on vaihtoehdon i hinta parhaaseen verrattuna normalisoidussa equityssä. Vaihtoehdot ovat analyysin ehdokkaat nappulasiirrolle; ei tuplausta ja tuplaus (parasta vastausta vastaan) kuution haltijalle; ota ja hylkää tuplauksen vastaanottajalle. d muunnetaan MWC:ksi kuten ℓ: molemmat ovat samassa yksikössä, ja pelatun vaihtoehdon hinta on täsmälleen ℓ.</p>
+<p>τ = 0,025 on vahvan pelaajan priori: kahdelle vaihtoehdolle, joiden ero on Δ, d = Δ / (1 + e^{Δ/τ}) on suurimmillaan noin Δ ≈ 0,032, ”epäilyttävän” ja ”virheen” välissä; ero 0,1 maksaa enää 0,002; viisi 0,01:n välein olevaa ehdokasta antaa d ≈ 0,012, noin PR 6 -pelaajan keskimääräisen virheen.</p>
+<ul class="simple">
+<li><p><strong>Vältettävissä oleva virhe</strong>: menetys saavuttaa tietokannan Virhe-rajan ja d ≤ ℓ / 10 — kahden vaihtoehdon välillä vertailupelaaja ei tekisi sitä kertaakaan kymmenestä.</p></li>
+<li><p>Pelaajan <strong>ylijäämä</strong> ottelussa: Σ(ℓ − d), se mitä hän menetti vertailun yli (negatiivinen, kun hän pelasi paremmin).</p></li>
+<li><p><strong>Suhde</strong>: Σℓ / Σd; 1 tarkoittaa ”pelaa kuten vertailu”, 2 ”menettää kaksi kertaa enemmän”. Sitä ei anneta, kun Σd &lt; 0,5 % MWC:tä: liian helpossa ottelussa se mittaa vain kohinaa, ylijäämä säilyy.</p></li>
+</ul>
+<p><strong>Mikä lasketaan.</strong> PR:ssä lasketut päätökset, joiden menetys arvioidaan ja muunnetaan MWC:ksi; muualla vaikeus puuttuu, se ei ole koskaan nolla. Pakotetulla siirrolla tai PR-ikkunan ulkopuolisella tuplaamatta jättämisellä ei siis ole menetystä eikä vaikeutta. Laskettujen päätösten joukossa mikään lisäkynnys ei erota ilmeistä päätöstä: sen vaikeus on itsestään lähellä nollaa.</p>
+<p><strong>Yksikkö.</strong> d ja ylijäämä: prosentti MWC:stä. Suhde: ei yksikköä.</p>
+<p><strong>Tulkinta.</strong> Vaikeuttaan selvästi suurempi menetys on virhe, jota asema ei puolustanut; vaikeuttaan lähellä oleva menetys on jaettu virhe. Ylijäämä ja suhde korjaavat PR:ää kohdattujen asemien vaikeudella, siis osin vastustajan tyylillä (<a class="reference internal" href="manuel.html#panneau-matchs"><span class="std std-ref">Ottelupaneeli</span></a>).</p>
+<p><strong>Epävarmuus.</strong> Yhdessä ottelussa ylijäämä ja suhde perustuvat harvoihin päätöksiin ja vaihtelevat paljon: suuntaus, ei ranking.</p>
+<p><strong>Rajat.</strong> Vaikeus riippuu pelaajamallista ja τ:sta, jotka on asetettu kerran: niiden muuttaminen muuttaa kaikki luvut. Se tuntee vain ehdokkaat, jotka analyysi on säilyttänyt (muutaman XG:ssä, gnuBG:ssä sen suodattimien mukaan): puuttuvat vaihtoehdot eivät paina mitään, ja d on silloin alaraja. Se perii analyysin virheen, etenkin pienellä syvyydellä.</p>
+<p><strong>XG ja gnuBG.</strong> Kumpikaan ei laske vaikeutta. Idea tulee shakin uskottavuusindekseistä (Regan); τ:aa ei ole kalibroitu pelaajapopulaatiolla.</p>
+</section>
+<section id="intervalles-a-95">
+<span id="metrique-intervalles"></span><h2><a class="toc-backref" href="#id6" role="doc-backlink">95 %:n välit</a><a class="headerlink" href="#intervalles-a-95" title="Link to this heading"></a></h2>
+<p><strong>Kysymys.</strong> Kertooko tämä luku jotain, vai onko se kohinaa? PR 4,2 yhdessä ottelussa ja PR 4,2 neljässäkymmenessä ottelussa eivät ole yhtä arvokkaita. Väli estää rakentamasta työsuunnitelmaa ruudun varaan, joka ei perustu mihinkään, ja lukemasta rankingia yksittäisestä ottelusta.</p>
+<p><strong>Määritelmä.</strong> Väli poimii uudelleen suurimman riippumattoman yksikön: ottelun <strong>pelit</strong>, kokonaisuuden <strong>ottelut</strong> (kokonais-PR, vaihekohtaiset ruudut, pelisuunnitelma, tunniste ja pistetilanne, kokonaisuuden L₇). Saman ottelun pelit jakavat vastustajan, istunnon ja väsymyksen: niiden erillinen uudelleenpoiminta kokonaisuudessa kaventaisi väliä virheellisesti. Ilman pelaajasuodatinta ottelun kaksi paikkaa muodostavat yhden yksikön, koska ne pelaavat samat asemat.</p>
+<p><strong>Kaava.</strong> Suhteelle R = Σeᵤ / Σnᵤ G yksikön yli (eᵤ virheiden summa, nᵤ yksikön päätösten määrä) bootstrap-varianssi lasketaan ilman arvontaa:</p>
+<div class="math notranslate nohighlight">
+\[\widehat{\mathrm{Var}}(R) = \frac{G}{G-1} \cdot
+\frac{\sum_u (e_u - R\,n_u)^2}{\left(\sum_u n_u\right)^2}\]</div>
+<p>ja väli on R ± 1,96 × √Var, alaraja ei koskaan alle 0, sitten sama muunnos kuin arvolle (× 500 PR:lle). Kokonaisuuden L₇ noudattaa samaa sääntöä, L e:n ja √N n:n paikalla; ottelun L₇ on summa sen G pelin yli, varianssi G/(G−1) × Σ(l_g − l̄)², missä l_g on pelin g menetys. Laskenta on deterministinen: sama tietokanta antaa aina saman välin molemmilla tallennusmoottoreilla.</p>
+<p><strong>Mitä tarvitaan.</strong> Vähintään <strong>kolme yksikköä</strong> ja nollasta poikkeava leveys. Kahdella hajonta perustuu yhteen vapausasteeseen ja väli olisi moninkertaisesti liian kapea; yksiköt, joilla kaikilla on sama suhde, kertovat olevansa yhtä mieltä, eivät sitä, että arvo on tarkka. Ilman väliä ruutu harmaantuu ja sen otoskoko pysyy näkyvissä (<a class="reference internal" href="manuel.html#stats"><span class="std std-ref">Stats-paneeli</span></a>).</p>
+<p><strong>Tulkinta.</strong> Kaksi laajasti päällekkäistä väliä ei erottele mitään. Perhe, jonka väli pysyy kokonais-PR:äsi yläpuolella, on todettu heikkous.</p>
+<p><strong>Rajat.</strong> Normaaliapproksimaatio on karkea harvoilla yksiköillä, ja virheiden jakauma on epäsymmetrinen (muutama iso virhe): kolmella tai neljällä yksiköllä väli on suuntaa-antava.</p>
+<p><strong>XG ja gnuBG.</strong> Kumpikaan ei anna väliä.</p>
+</section>
+<section id="bilan-du-match">
+<span id="metrique-bilan-match"></span><h2><a class="toc-backref" href="#id7" role="doc-backlink">Ottelun yhteenveto</a><a class="headerlink" href="#bilan-du-match" title="Link to this heading"></a></h2>
+<p><strong>Kysymys.</strong> Ottelun jälkeen: mitä katson uudelleen, hävisinkö nopan vai pelin takia, ja johtuvatko virheeni kiireestä vai tiedon aukosta? Näkymät: <a class="reference internal" href="manuel.html#bilan-match"><span class="std std-ref">ottelun yhteenveto</span></a>.</p>
+<p><strong>Kolme päätöstä tarkistettavaksi.</strong> Pelaajan virheistä (tietokannan raja), joiden menetys on laskettu, kolme suurinta <strong>vältettävissä olevaa osuutta</strong> ℓ − d = ℓ × (1 − d/ℓ), positiivinen: menetys kerrottuna sen vältettävyydellä. Tuntematon vaikeus lasketaan nollaksi; tasatilanteessa suurempi menetys, sitten ottelun järjestys. Virhe, jonka vertailupelaajakin tekisi, ei ansaitse harjoitusta.</p>
+<p><strong>Tuurilla oikaistu tulos</strong> päättyneelle ottelulle, pelaajan MWC-pisteinä:</p>
+<div class="math notranslate nohighlight">
+\[A = R - C, \quad R = \text{issue} - \mathrm{MWC}_\text{départ}, \quad
+C = \sum \text{chance de ses jets} - \sum \text{chance des jets adverses}\]</div>
+<p>Lopputulos on 1 voitto, 0 tappio; lähtö-MWC on alkupistetilanteen (50 % tilanteessa 0-0). Jokainen heitto muunnetaan MWC:ksi kuten menetys, asemansa pistetilanteessa ja kuutiolla. Täydellisessä pelissä A:n odotusarvo on vastustajan menetys miinus oma menetyksesi: yhteenveto antaa vierellä <em>virheiden eron</em> ristiintarkistusta varten. A &gt; 0 hävityssä ottelussa: hävitty nopilla; A &lt; 0: hävitty pelillä. Tuuri on se, jonka analysoija on kirjoittanut (<a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</span></a>): ilman tuuria ei riviä, ja kattavuus (mitatut heitot pelatuista heitoista) näytetään, koska osittainen tuuri vinouttaa A:ta. Riviä ei ole myöskään rahapelille eikä keskeneräiselle ottelulle.</p>
+<p><strong>Kiireessä ja harkiten tehdyt virheet.</strong> Pelaajakohtaisesti ja tyypeittäin (nappulat, kuutio) raja on hänen tämän tyypin arvioitujen päätösten tunnettujen kestojen mediaani ottelussa: nopeammin pelattu virhe on kiireessä tehty, muut harkittuja. Mediaani on hänen omansa, tässä ottelussa: se ei riipu tahdista, ja ilman yhteyttä nopeuden ja virheen välillä virheet jakautuvat puoliksi. Kiireessä tehtyjen enemmistö vaatii kuria; harkittujen enemmistö tietoa.</p>
+<p><strong>Rajat.</strong> Ottelu on pieni otos: PR ja L₇ sisältävät siinä pelikohtaisen välinsä (vähintään kolme peliä). Oikaistu tulos riippuu MET:stä ja tiedoston tuurista. Kesto on olemassa vain ottelulle, joka on sen säilyttänyt (bottia vastaan pelattu ottelu).</p>
+<p><strong>XG ja gnuBG.</strong> XG ja gnuBG näyttävät kunkin pelaajan kokonaistuurin, mutta eivät MWC:nä oikaistua tulosta, tarkistettavien päätösten valintaa eivätkä keston mukaista jakoa.</p>
+</section>
+<section id="plan-d-etude">
+<span id="metrique-plan-etude"></span><h2><a class="toc-backref" href="#id8" role="doc-backlink">Opiskelusuunnitelma</a><a class="headerlink" href="#plan-d-etude" title="Link to this heading"></a></h2>
+<p><strong>Kysymys.</strong> Mitä minun pitäisi harjoitella nyt? Virheiden järjestäminen hinnan mukaan kertoo, missä menetettiin eniten, ei missä opiskelu tuottaa eniten: todella vaikeiden asemien perhe maksaa kaikille, ja kolme virhettä ei tee suuntausta. Näkymät: <a class="reference internal" href="manuel.html#plan-etude"><span class="std std-ref">Opintosuunnitelma</span></a>.</p>
+<p><strong>Määritelmä.</strong> <strong>Perhe</strong> on toistuvien virheiden kolmikko (pelisuunnitelma, päätöksen luonne, teema); sen jäsenet ovat suodattimen virheet, lasketut päätökset, jotka maksavat vähintään Virhe-rajan. Virhe ilman teemaa ei kuulu mihinkään perheeseen. Jäsen on <strong>arvioitu</strong>, jos sillä on ℓ ja d; rahapelin virhe lasketaan ”arvioimattomaksi” eikä se kuulu mihinkään prioriteettiin.</p>
+<p><strong>Kaava.</strong> <strong>Palautettavissa oleva MWC</strong> ja sen väli:</p>
+<div class="math notranslate nohighlight">
+\[R = \sum_i (\ell_i - d_i), \qquad
+R \pm 1{,}96 \sqrt{\textstyle\sum_i (\ell_i - d_i)^2}\]</div>
+<p>R on perheen esiintymistiheys kerrottuna sen keskimääräisellä menetyksellä vaikeuden yli: se, minkä saisi takaisin pelaamalla nämä asemat kuten vertailupelaaja. Summa on etumerkillinen, ilman leikkausta. Väli käsittelee jäsenmäärää Poisson-laskentana.</p>
+<p><strong>Mikä pääsee suunnitelmaan.</strong> Vähintään <strong>5 arvioitua jäsentä</strong> ja <strong>ehdottoman positiivinen alaraja</strong>. Suunnitelma järjestetään laskevan alarajan mukaan: samalla palautettavalla perhe, joka on paremmin perusteltu, tulee ensin. Muut ovat ”vahvistettavia”, ilman sijaa.</p>
+<p><strong>Yksikkö.</strong> Prosentti MWC:stä, kumuloituna suodattimen yli.</p>
+<p><strong>Tulkinta.</strong> Vältettävissä olevien virheiden perhe nousee; asemien perhe, joissa kaikki erehtyvät, laskee. Uusi pelaaja näkee ensin ”vahvistettavia” perheitä: suunnitelma ei työnnä kohti kohinaa.</p>
+<p><strong>Rajat.</strong> Teema tulee blunderDB:n luokittelijalta: väärin luokiteltu virhe päätyy väärään perheeseen, virhe ilman teemaa ei ole missään. R perii ℓ:n ja d:n rajat (MET, ehdokkaiden typistys).</p>
+<p><strong>XG ja gnuBG.</strong> Kumpikaan ei tarjoa opiskelusuunnitelmaa.</p>
+</section>
+<section id="positions-de-reference">
+<span id="metrique-positions-reference"></span><h2><a class="toc-backref" href="#id9" role="doc-backlink">Viiteasemat</a><a class="headerlink" href="#positions-de-reference" title="Link to this heading"></a></h2>
+<p><strong>Kysymys.</strong> Mitkä asemat kannattaa laittaa kokoelmaan suunnitelman työstämiseksi? Kymmenen pahinta virhettä antavat usein kymmenen muunnelmaa samasta ongelmasta. Hyvä viiteasema on monen vältettävissä olevan virheesi keskellä, sisältää selkeän opetuksen eikä ole jo opiskeltu. Näkymät: <a class="reference internal" href="manuel.html#positions-reference"><span class="std std-ref">viiteasemat</span></a>.</p>
+<p><strong>Määritelmä.</strong> Ehdokkaat ovat suodattimen arvioidut ja teemoitetut virheet, ryhmiteltyinä asemittain; aseman ylijäämä on sen virheiden positiivisten ylijäämien ℓ − d summa. Kaksi saman perheen ehdokasta — ja kuutiolle samaa pistetilannetta — ovat <strong>naapureita</strong>, kun niiden <code class="docutils literal notranslate"><span class="pre">like</span></code>-etäisyys on enintään ρ = 12 pip-askelta (yksi nopanheitto on 8–16).</p>
+<p><strong>Kaava.</strong> Ehdokkaan p hyöty on</p>
+<div class="math notranslate nohighlight">
+\[G(p) = c(p) \times \sum_{q \,\in\, \text{voisinage}(p),\ q\ \text{non couverte}} \text{excès}(q)\]</div>
+<p>MWC:n osuutena: edustavuus, esiintymistiheys ja vältettävissä oleva hinta yhdessä suureessa. c(p) alkaa arvosta 1 ja kerrotaan ½:lla, jos opetus on <strong>tiukka</strong> (toinen valinta maksaa alle puolet Virhe-rajasta), ja vielä ½:lla, jos se on <strong>epävakaa</strong> (toinen kuution analyysisyvyys tai rollout antaa toisen tuomion): ¼, kun molemmat kasautuvat. Vahvistava rollout ei nosta mitään: se ratkaisee tasatilanteen hyödyn ollessa sama.</p>
+<p><strong>Valinta.</strong> Ahne marginaalihyödyn mukaan: jokainen valittu asema kattaa naapurinsa, jotka eivät enää tuota mitään seuraaville, ja sen lähes kaksoiskappaleet hylätään jopa perheensä ulkopuolella. Jo käsitelty asema (kommentti, Anki-kortti, kokoelma, ”opiskeltu”-merkintä) ei koskaan ehdoteta ja se lasketaan jo valituksi.</p>
+<p><strong>Yksikkö.</strong> Katettu MWC prosentteina.</p>
+<p><strong>Rajat.</strong> Säde ja kertoimet on asetettu, ei opittu. <code class="docutils literal notranslate"><span class="pre">like</span></code>-etäisyys vertaa nappularakenteita, ei ideoita: kaksi samanlaisen opetuksen mutta kaukaisen rakenteen asemaa eivät kata toisiaan.</p>
+<p><strong>XG ja gnuBG.</strong> Ei vastinetta.</p>
+</section>
+<section id="avant-apres-l-etude">
+<span id="metrique-avant-apres"></span><h2><a class="toc-backref" href="#id10" role="doc-backlink">Ennen/jälkeen opiskelun</a><a class="headerlink" href="#avant-apres-l-etude" title="Link to this heading"></a></h2>
+<p><strong>Kysymys.</strong> Maksaako se, mitä harjoittelin, minulle vähemmän todellisessa ottelussa? Ilman mittausta opiskelua arvioidaan vaikutelman mukaan; perhe, joka ei liiku työstä huolimatta, kertoo, että menetelmää on vaihdettava. Näkymät: <a class="reference internal" href="manuel.html#avant-apres-etude"><span class="std std-ref">Ennen/jälkeen opiskelun</span></a>.</p>
+<p><strong>Määritelmä.</strong> Jokainen suodattimen teemoitettu perhe mitataan, sekä suunnitelman että ”vahvistettavat” perheet. Perhe on <strong>opiskeltu</strong> sen jonkin aseman ensimmäisen opiskelutoimen päivänä (UTC): ”opiskeltu”-merkintä, Anki-kertaus arvosanasta riippumatta, tietovisan vastaus. Kortin luominen tai aseman asettaminen kokoelmaan ei ole sellainen. <em>Ennen</em>-ikkuna: ottelut, joiden päiväys on tiukasti ennen kyseistä päivää; <em>jälkeen</em>: tiukasti sen jälkeen; itse päivä ja päiväämättömät ottelut jätetään pois.</p>
+<p><strong>Kaava.</strong> Kussakin ikkunassa menetysaste r = Σℓ / N: ℓ perheen virheiden menetykset, N samaan pelisuunnitelmaan ja samaan luonteeseen kuuluvat ottelussa lasketut päätökset (teema on olemassa vain virheelle). Hyöty ja sen väli:</p>
+<div class="math notranslate nohighlight">
+\[\Delta = r_\text{avant} - r_\text{après}, \qquad
+\Delta \pm 1{,}96 \sqrt{\frac{\sum \ell^2_\text{avant}}{N^2_\text{avant}}
++ \frac{\sum \ell^2_\text{après}}{N^2_\text{après}}}\]</div>
+<p><strong>Tuomio.</strong> Vähintään <strong>30 päätöstä</strong> kummassakin ikkunassa, muuten ”riittämätön”. ”Edistyy”, jos Δ:n alaraja on positiivinen, ”taantuu”, jos yläraja on negatiivinen, muuten ”epäselvä”.</p>
+<p><strong>Yksikkö.</strong> MWC-pistettä 100 päätöstä kohden.</p>
+<p><strong>Rajat.</strong> Muutos, ei vaikutus. Perhe opiskellaan, <em>koska</em> se maksoi: regressio keskiarvoon paisuttaa hyötyä. Mikään ei kontrolloi vastustajia, muotoa tai noppia.</p>
+<p><strong>XG ja gnuBG.</strong> Ei vastinetta.</p>
+</section>
+<section id="biais-signes">
+<span id="metrique-biais"></span><h2><a class="toc-backref" href="#id11" role="doc-backlink">Etumerkilliset vinoumat</a><a class="headerlink" href="#biais-signes" title="Link to this heading"></a></h2>
+<p><strong>Kysymys.</strong> Mihin suuntaan erehdyn? ”Otat liikaa” korjautuu paremmin kuin PR: tarkistettava sääntö nimetään. Näkymät: <a class="reference internal" href="manuel.html#biais-signes"><span class="std std-ref">Etumerkilliset vinoumat</span></a>.</p>
+<p><strong>Kaava.</strong> Jokaisella lasketulla päätöksellä on x = +1 (virhe liiasta rohkeudesta), −1 (liiasta varovaisuudesta) tai 0. Kun P ja M ovat kaksi lukumäärää N päätöksestä:</p>
+<div class="math notranslate nohighlight">
+\[B = \frac{P - M}{N}, \qquad
+B \pm 1{,}96 \sqrt{\frac{(P + M)/N - B^2}{N}}\]</div>
+<p>Vähintään <strong>20 päätöstä</strong>; ”liikaa”, jos alaraja on positiivinen, ”liian vähän”, jos yläraja on negatiivinen, muuten ”tasapainoinen”. P:n ja M:n hinta (mpt) liitetään lukumääriin. Etumerkki ja hinta ovat ottelussaan pelatun siirron.</p>
+<ul class="simple">
+<li><p><strong>Vastaanotto / hylkäys</strong>: kuutiovastauksissa; P = virheelliset vastaanotot, M = virheelliset hylkäykset. B on täsmälleen sinun vastaanottoasteesi miinus botin vastaanottoaste samoissa asemissa.</p></li>
+<li><p><strong>Tuplaukset</strong>: PR:ssä laskettuihin haltijan kuutiopäätöksiin; P = ennenaikaiset tuplaukset (ei tuplausta tai liian hyvä), M = väliin jääneet tuplaukset. Vinouma annetaan myös pistetilanneruuduittain (sinun jäljellä olevat pisteesi, vastustajan; Crawford-pelin jälkeinen lasketaan 1:ksi; rahapeli erikseen).</p></li>
+<li><p><strong>Blotit</strong>: kontaktillisissa nappulasiirroissa; x on merkki lausekkeesta (blottisi pelatun siirron jälkeen − blottisi parhaan siirron jälkeen). Siirto tunnistetaan sen jättämästä laudasta; löytymätön siirto jää laskennan ulkopuolelle, ja sen osuus näytetään.</p></li>
+</ul>
+<p><strong>Yksikkö.</strong> Osuuksien erotus, ei yksikköä.</p>
+<p><strong>Rajat.</strong> Useimmat pistetilanneruudut jäävät mykiksi: se on rehellinen vastaus. Blottien vinouma laskee blotit painottamatta niiden altistusta, eikä hylätyt siirrot ole neutraali otanta.</p>
+<p><strong>XG ja gnuBG.</strong> Ei vastinetta; XG ja gnuBG laskevat kuutiovirheet tyypeittäin (väliin jäänyt tuplaus, virheellinen vastaanotto…) ilman väliä tai tuomiota.</p>
+</section>
+<section id="bilan-du-tournoi">
+<span id="metrique-bilan-tournoi"></span><h2><a class="toc-backref" href="#id12" role="doc-backlink">Turnauksen yhteenveto</a><a class="headerlink" href="#bilan-du-tournoi" title="Link to this heading"></a></h2>
+<p><strong>Kysymys.</strong> Pelasinko tasollani, ja jos en, missä se petti: viimeiset kierrokset, pitkät ottelun loppuvaiheet, pistetilanteet, joissa yksi piste ratkaisee, kello? Näkymät: <a class="reference internal" href="manuel.html#bilan-tournoi"><span class="std std-ref">turnauksen yhteenveto</span></a>.</p>
+<p><strong>Määritelmä.</strong> <strong>Tavanomainen taso</strong> on pelaaja turnausta edeltävien <strong>365 päivän</strong> pisteottelussa (turnauksen päiväys, tai sen puuttuessa sen ensimmäisen ottelun päiväys), turnauksen ottelut pois lukien; tarvitaan vähintään <strong>5 ottelua</strong>. Turnauksella ja tavanomaisella tasolla on kummallakin oma PR ja L₇, otteluittain laskettu väli mukana (<a class="reference internal" href="#metrique-intervalles"><span class="std std-ref">95 %:n välit</span></a>).</p>
+<p><strong>Kaava.</strong> Δ = turnaus − tavanomainen, keskihajonta √(σₜ² + σₕ²), kukin σ luettuna välinsä ylemmästä puolileveydestä. ”Huonommin”, jos Δ:n alaraja on positiivinen, ”paremmin”, jos sen yläraja on negatiivinen, muuten ”tavanomaisella tasolla”. Tuomio vaatii välin ja vähintään <strong>20 päätöstä</strong> kummallakin puolella; muuten ”riittämätön”, luvut näkyvissä.</p>
+<p><strong>Erittelyt</strong> PR:nä: kierroksen mukaan, kukin ottelu suhteessa yleiseen tavanomaiseen PR:ään; sitten kukin solu suhteessa tavanomaisen tason samaan soluun, päätöksen sijainnin mukaan ottelussa (30 päätöksen osiot: väsymys); tuloksen mukaan (DMP, Crawford-peli, Crawfordin jälkeinen, muut); tahdin mukaan (ottelussa käyttämiesi aikojen mediaanin molemmin puolin). Enintään kolme turnaukseen rajatun opiskelusuunnitelman perhettä.</p>
+<p><strong>Rajat.</strong> Kolmen ottelun turnaus ei lähes koskaan sano ”huonommin”: se on tarkoituksellista. Molempia puolia käsitellään riippumattomina, mikä levittää väliä: sääntö on varovainen. Kellon varaa ei tallenneta siirto siirrolta: jäljellä olevan ajan painetta ei voi mitata.</p>
+<p><strong>XG ja gnuBG.</strong> Ei vastinetta.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="manuel.html" class="btn btn-neutral float-left" title="Käyttöopas" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cmd_mode.html" class="btn btn-neutral float-right" title="Komentoluettelo" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

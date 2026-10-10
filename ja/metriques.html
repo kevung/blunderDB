@@ -1,0 +1,383 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>指標と学習ツール &mdash; blunderDB 0.39.0 ドキュメント</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=776df2ca"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=4755f45a"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="コマンド一覧" href="cmd_mode.html" />
+    <link rel="prev" title="マニュアル" href="manuel.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="ロゴ"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="ドキュメント内を検索" aria-label="ドキュメント内を検索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="言語">
+  <a href="../fr/metriques.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/metriques.html" lang="en" hreflang="en">English</a>
+  <a href="../de/metriques.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/metriques.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/metriques.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/metriques.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/metriques.html" lang="it" hreflang="it">Italiano</a>
+  <span class="current" lang="ja" aria-current="true">日本語</span>
+  <a href="../ru/metriques.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="ナビゲーションメニュー">
+              <p class="caption" role="heading"><span class="caption-text">はじめに</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">ダウンロードとインストール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">ユーザーガイド</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">リファレンス</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">マニュアル</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">指標と学習ツール</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#l-erreur-et-la-perte-d-une-decision">判断の誤差と損失</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pr-performance-rating">PR (<em>Performance Rating</em>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#perte-de-mwc-par-decision-et-graphique-du-match">判断あたりの MWC 損失とマッチのグラフ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#perte-mwc-eq-7-pts-l7-et-elo-face-au-moteur">MWC 損失（7 点等価）L₇ とエンジンに対する Elo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#difficulte-erreurs-evitables-exces-et-ratio">難易度、回避可能な誤り、超過、比</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#intervalles-a-95">95 % 区間</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bilan-du-match">マッチの総括</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#plan-d-etude">学習プラン</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#positions-de-reference">基準局面</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#avant-apres-l-etude">学習の前後</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#biais-signes">符号付きバイアス</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bilan-du-tournoi">トーナメントの総括</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">コマンド一覧</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">キーボードショートカット</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">コマンドラインインターフェース（CLI）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">用語集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">よくある質問（FAQ）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">ヘッドレスモード（サーバー）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API コントラクト</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">付録</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">付録：フィルターの高度な使い方</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows 付録：Windows が起動をブロックしたときの対処</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac 付録：blunderDB の起動ブロックについて</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">付録: データベーススキーマ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">付録：統計モデル — XG / gnuBG / blunderDB の整合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">バージョン履歴</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">blunderDB について</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="モバイル用ナビゲーションメニュー" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="ページナビゲーション">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">指標と学習ツール</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="metriques-et-outils-d-etude">
+<span id="metriques"></span><h1>指標と学習ツール<a class="headerlink" href="#metriques-et-outils-d-etude" title="この見出しへのリンク"></a></h1>
+<p>blunderDB があなたのプレイについて表示する各数値は、ひとつの問いに答えます。このページはそれらをまとめ、各数値について、答える問いと学習への貢献、定義、正確な式、何を判断として数えるか、単位、読み方、不確実性、限界、eXtreme Gammon (XG) と GNU Backgammon (gnuBG) の数値との違いを示します。数値を表示する画面は <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">マニュアル</span></a> で説明しており、リンクはそこへ誘導します。</p>
+<p>このページの閾値とパラメータは、実際の結果を調べる前に決めました。後から調整すると、数値に期待どおりのことを言わせることになってしまいます。</p>
+<nav class="contents local" id="id1">
+<ul class="simple">
+<li><p><a class="reference internal" href="#l-erreur-et-la-perte-d-une-decision" id="id2">判断の誤差と損失</a></p></li>
+<li><p><a class="reference internal" href="#pr-performance-rating" id="id3">PR (<em>Performance Rating</em>)</a></p></li>
+<li><p><a class="reference internal" href="#perte-de-mwc-par-decision-et-graphique-du-match" id="id4">判断あたりの MWC 損失とマッチのグラフ</a></p></li>
+<li><p><a class="reference internal" href="#perte-mwc-eq-7-pts-l7-et-elo-face-au-moteur" id="id5">MWC 損失（7 点等価）L₇ とエンジンに対する Elo</a></p></li>
+<li><p><a class="reference internal" href="#difficulte-erreurs-evitables-exces-et-ratio" id="id6">難易度、回避可能な誤り、超過、比</a></p></li>
+<li><p><a class="reference internal" href="#intervalles-a-95" id="id7">95 % 区間</a></p></li>
+<li><p><a class="reference internal" href="#bilan-du-match" id="id8">マッチの総括</a></p></li>
+<li><p><a class="reference internal" href="#plan-d-etude" id="id9">学習プラン</a></p></li>
+<li><p><a class="reference internal" href="#positions-de-reference" id="id10">基準局面</a></p></li>
+<li><p><a class="reference internal" href="#avant-apres-l-etude" id="id11">学習の前後</a></p></li>
+<li><p><a class="reference internal" href="#biais-signes" id="id12">符号付きバイアス</a></p></li>
+<li><p><a class="reference internal" href="#bilan-du-tournoi" id="id13">トーナメントの総括</a></p></li>
+</ul>
+</nav>
+<section id="l-erreur-et-la-perte-d-une-decision">
+<span id="metrique-erreur"></span><h2><a class="toc-backref" href="#id2" role="doc-backlink">判断の誤差と損失</a><a class="headerlink" href="#l-erreur-et-la-perte-d-une-decision" title="この見出しへのリンク"></a></h2>
+<p>すべての測定は、判断ごとの 2 つの量から出発します。</p>
+<p><strong>誤差 e</strong> は、インポートした解析 (XG または gnuBG。blunderDB は統計のためにマッチを再解析しません) の最善の判断と比べて、指した判断がエクイティで何を失ったかです。<strong>正規化エクイティ</strong>で表し、±1 は現在のキューブに相当します。マネーでもマッチスコアでも同じです (スコア時の EMG)。千分の 1 (ミリポイント、mpt) に丸めます。</p>
+<ul class="simple">
+<li><p>チェッカー移動：最善候補のエクイティから指した手のエクイティを引いた値。</p></li>
+<li><p>ノーダブル：解析が示す「ノーダブル」の誤差。</p></li>
+<li><p>ダブル：「ダブル、テイク」と「ダブル、パス」の誤差のうち小さい方。ダブルを提案した側は、相手の最善の応答で判断されます。</p></li>
+<li><p>テイクまたはパス：指した応答と 2 つのうちの最善との差。</p></li>
+</ul>
+<p>誤差は<strong>そのマッチで指した手</strong>のものです。2 つのマッチに現れ、異なる指し方をされた局面には 2 つの誤差があり、どちらも他方を上書きしません。指した手が解析のどの候補にも挙がっていない場合、誤差はありません。評価されず、すべてのカウントから外れます。</p>
+<p><strong>MWC 損失 ℓ</strong> は、同じ誤差をマッチの勝率 (<em>Match Winning Chances</em>) で表したものです。判断時のスコアとキューブ v では次のようになります。</p>
+<div class="math notranslate nohighlight">
+\[\ell = e \times \frac{\mathrm{MWC}_{+v} - \mathrm{MWC}_{-v}}{2}\]</div>
+<p>ここで <span class="math notranslate nohighlight">\(\mathrm{MWC}_{+v}\)</span> と <span class="math notranslate nohighlight">\(\mathrm{MWC}_{-v}\)</span> は、このスコアでプレイヤーが v 点を獲得または失った場合のマッチ勝率です。マッチ・エクイティ・テーブル (MET) は Kazaross-XG2 で、25 点を超える部分は Zadeh の式で延長しています。ポスト・クロフォードのスコアはそのまま読みます。テイクまたはパスは、ダブル提案者や XG と同様、ダブル<strong>前</strong>のキューブで換算します。ダブル後のキューブで換算すると、応答の誤差は 2 倍のコストになってしまいます。マネーゲームには MWC がなく、ℓ は存在しません。</p>
+<p>この 2 つの量は加法的です。以下のすべての指標は、それらの和を異なる分母で割るか、基準と比較したものです。</p>
+</section>
+<section id="pr-performance-rating">
+<span id="metrique-pr"></span><h2><a class="toc-backref" href="#id3" role="doc-backlink">PR (<em>Performance Rating</em>)</a><a class="headerlink" href="#pr-performance-rating" title="この見出しへのリンク"></a></h2>
+<p><strong>問い。</strong> 誰もが知っている尺度で、自分の実力はどのくらいか。PR はランキング、フォーラム、クラブで使われる数値で、自分の位置を知り、XG が解析した 2 つのマッチを比較できます。</p>
+<p><strong>式。</strong> プレイヤーのカウントした判断について：</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{PR} = 500 \times \frac{\sum_i e_i}{N_\text{compté}}\]</div>
+<p>係数 500 は XG の慣例です。PR 5.0 は平均誤差 0.010、つまりカウントした判断 1 回あたり 10 mpt に相当します。PR は単位のない平均で、低いほど良いプレイです。</p>
+<p><strong>判断として数えるもの。</strong> 規則は XG のものであり、その数値とマッチごとに照合して検証しています (<a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">付録：統計モデル — XG / gnuBG / blunderDB の整合</span></a>)。</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>判断</p></th>
+<th class="head"><p>カウントされる条件</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>チェッカー移動</p></td>
+<td><p>強制でなく、指した手が評価されている</p></td>
+</tr>
+<tr class="row-odd"><td><p>ダブルの提案</p></td>
+<td><p>常に</p></td>
+</tr>
+<tr class="row-even"><td><p>テイク、パス</p></td>
+<td><p>常に</p></td>
+</tr>
+<tr class="row-odd"><td><p>ノーダブル</p></td>
+<td><p>ND &gt; 0 かつ ND − min(D/T, D/P) &lt; 0.200</p></td>
+</tr>
+</tbody>
+</table>
+<ul class="simple">
+<li><p>チェッカー移動が<strong>強制</strong>なのは、ロールで合法手が 1 つしかない場合、または解析がすべての合法手 (blunderDB の手生成器で数えます) をカバーし、すべてが千分の 1 まで同じエクイティの場合です。どの手でもコストがかからない選択は、判断ではありません。これは「強制ではないが影響のない」手 (勝負がついたレースの終盤、どれを選んでも同じベアオフ) に関する XG の規則です。合法手を数えられない場合は、候補が 1 つだけのときに限り、その手は強制となります。</p></li>
+<li><p><strong>ノーダブル</strong>は、プレイヤーがダブルに近かったときに数えます。ダブルしない場合のエクイティ (ND) が正であり、相手にとってのダブルの最善の結果 min(D/T, D/P) を 0.200 未満の差で上回っている場合です。D/T だけでなくこの最小値と比べることで、「強すぎる」局面も、パスの値から 0.200 以内にある限り判断として残ります。</p></li>
+<li><p>条件 <strong>ND &gt; 0</strong> は、手番のプレイヤーが劣勢で、ダブルを考える余地のない局面を除外します。XG も同様に除外しますが、そのマニュアルには書かれておらず、基準マッチがそれを示しています。</p></li>
+<li><p>キューブ解析のないキューブ判断は、数えられるノーダブルになりません。</p></li>
+</ul>
+<p><strong>読み方。</strong> Stats パネルのレベル帯 (<a class="reference internal" href="manuel.html#stats"><span class="std std-ref">Stats パネル</span></a>) は blunderDB 独自の目安であり、公表された基準ではありません。PR はまず自分の PR と比較してください。同じ解析器、同じタイプの相手、同じ長さで比べます。</p>
+<p><strong>不確実性。</strong> 1 マッチの PR はノイズが非常に大きく、7 点マッチの標準誤差は PR で 1.5 程度です。blunderDB はマッチのゲーム、および集計のマッチを再標本化して 95 % 区間 (<a class="reference internal" href="#metrique-intervalles"><span class="std std-ref">95 % 区間</span></a>) を示します。</p>
+<p><strong>限界。</strong> 分子は何にも依存しませんが、分母は何を数えるかに依存します。0.001 と 0.200 の閾値は恣意的です。上達しなくても PR を下げることはできます。レースに判断を加えるために接戦のパスを選んだり、ベアオフで判断がひとつ増える手を選んだりする場合です。PR はキューブ 8 での誤差をキューブ 1 での誤差と同じ重みで扱い (エクイティはキューブで正規化されています)、DMP での誤差を 0-0 での誤差と同じに扱います。エンジンの不完全さを引き継ぎ、難しい局面を作る相手は他方の PR を押し上げます。<a class="reference internal" href="#metrique-l7"><span class="std std-ref">MWC 損失</span></a> と <a class="reference internal" href="#metrique-difficulte"><span class="std std-ref">難易度</span></a> は、この 3 つの欠点に対応します。</p>
+<p><strong>XG と gnuBG。</strong> XG ファイルでは、blunderDB の PR は、<a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">付録：統計モデル — XG / gnuBG / blunderDB の整合</span></a> で説明した差を除き、XG の表示精度の範囲で XG の PR と一致します。gnuBG は同じ和を別の数で割ります。合法手が複数あるすべての手と、独自の窓で近いと判断したキューブ判断です。したがってその判断あたりの率は、同じ解析でも XG の PR とは比較できません。<em>Snowie Error Rate</em> (<a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">付録：統計モデル — XG / gnuBG / blunderDB の整合</span></a>) は両プレイヤーのすべての手で割ります。カウント規則に依存しませんが、PR のおよそ半分の値になります。</p>
+</section>
+<section id="perte-de-mwc-par-decision-et-graphique-du-match">
+<span id="metrique-perte-mwc"></span><h2><a class="toc-backref" href="#id4" role="doc-backlink">判断あたりの MWC 損失とマッチのグラフ</a><a class="headerlink" href="#perte-de-mwc-par-decision-et-graphique-du-match" title="この見出しへのリンク"></a></h2>
+<p><strong>問い。</strong> このマッチで、どの判断が私に損をさせたか。PR はすべての誤差を同じ尺度に載せ、ℓ は誤差が起きたスコアで重みづけします。5 点マッチの 4-4 での 0.040 の誤差は、17 点マッチの 0-0 での同じ誤差と同じコストではありません。学習のために、列とグラフはマッチを決めた少数の判断を示し、累積曲線はマッチがどこで傾いたかを示します。</p>
+<p><strong>定義。</strong>ℓ(<a class="reference internal" href="#metrique-erreur"><span class="std std-ref">判断の誤差と損失</span></a>)を PR に数えられる各判断について求めます。マッチにおけるプレイヤーの損失は、これらの判断にわたる Σℓ です。集計対象外の判断(強制手、ウィンドウ外のノーダブル)には ℓ がありません。いずれにせよ、損失はゼロかほぼゼロだからです。</p>
+<p><strong>単位。</strong> マッチ勝率のパーセンテージ。2.5 は MWC を 2.5 % 失ったことを意味します。</p>
+<p><strong>読み方。</strong> トランスクリプトの <strong>MWC</strong> 列、判断ごとのバー、各プレイヤーの累積曲線は <a class="reference internal" href="manuel.html#panneau-matchs"><span class="std std-ref">マッチパネル</span></a> で説明しています。突出して高い孤立したバーは見直すべき判断です。着実に上昇する曲線は、事故ではなく平均的な誤差が重なったマッチを表します。</p>
+<p><strong>不確実性。</strong> ℓ は解析に対して正確です。その不確実性は解析自体（深さ、ロールアウトの有無）と MET の不確実性です。</p>
+<p><strong>限界。</strong> ℓ は MET に依存します。異なるテーブルを使う 2 つのソフトウェアは同じ損失を出しません。マネーゲームにはなく、データベースと異なる MET で計算された解析は統計の対象外のままです。評価されていない判断にはハイフンが付き、ゼロにはなりません。</p>
+<p><strong>XG と gnuBG。</strong>この合計は、XG がマッチについて表示する MWC 損失です。基準マッチでは、チェッカームーブ、ダブル、応答のいずれも XG の表示精度で一致します(差はテストスイートにより 0.06 パーセントポイント以内)。ただし、<a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">付録：統計モデル — XG / gnuBG / blunderDB の整合</span></a> に記載の既知の残差があるプレイヤーは例外で、最大 0.45 ポイントです。gnuBG も独自のエクイティで同じ換算を行います。gnuBG が解析したマッチでは、XG との数値の違いは公式ではなく解析によるものです。</p>
+</section>
+<section id="perte-mwc-eq-7-pts-l7-et-elo-face-au-moteur">
+<span id="metrique-l7"></span><h2><a class="toc-backref" href="#id5" role="doc-backlink">MWC 損失（7 点等価）L₇ とエンジンに対する Elo</a><a class="headerlink" href="#perte-mwc-eq-7-pts-l7-et-elo-face-au-moteur" title="この見出しへのリンク"></a></h2>
+<p><strong>問い。</strong> 判断の数え方にかかわらず、自分の誤りでマッチをどれだけ失ったか。5 点マッチと 11 点マッチをどう比較するか。L₇ は判断数で割りません。簡単な判断を足しても操作できず、各誤差をそれが実際に失ったとおりに重みづけます。</p>
+<p><strong>定義。</strong> 完全なプレイの下では、マッチの勝率は偏りなく推移します。完全な相手に対して、マッチで MWC を L 失ったプレイヤーは、q = 0.5 − L の勝率を保ちます。FIBS の式のモデルによれば、実力が同じなら損失は長さ N の平方根に比例して増えます。そこで L を、トーナメントで最も一般的な長さである 7 点マッチに換算します。</p>
+<div class="math notranslate nohighlight">
+\[L_7 = L \times \sqrt{7 / N}
+\qquad
+L_7^\text{agrégat} = \sqrt{7} \times \frac{\sum L}{\sum \sqrt{N}}\]</div>
+<p>集計(複数のマッチ、1 人のプレイヤー、1 つのトーナメント)は、比を取る前に損失と長さの平方根をそれぞれ合算します。7 ポイントマッチは 1 ポイントマッチより重く、単一マッチはそのマッチ自身の値を返します。プレイヤーフィルターがない場合、マッチの 2 つの席はそれぞれ √N の重みを持ちますが、区間では 1 単位として扱われます。</p>
+<p><strong>エンジンに対する Elo</strong> は、FIBS の式を 7 点で逆算します。</p>
+<div class="math notranslate nohighlight">
+\[D = \frac{2000}{\sqrt{7}} \log_{10} \frac{q}{1 - q}, \qquad q = 0{,}5 - L_7\]</div>
+<p>線形化すると D ≈ −3474 × L / √N です。L₇ ≥ 50 % では q に有限の逆関数がありません。L₇ &gt; 49 % から q は 1 % を下限とし(D ≥ −1509)、Elo は「≤」付きで表示されます。L₇ 自体に下限はありません。どちらも同じ順序でプレイヤーを並べます。</p>
+<p><strong>単位。</strong> L₇：MWC のパーセンテージ。D：Elo ポイント。負の値で、プレイヤーとエンジンの間の期待される差です。</p>
+<p><strong>読み方。</strong> 12.3 %：エンジンに対して 50 % の勝率があるはずが、7 点マッチで 37.7 % しかなかったということです。バッジ、詳細、統計、トーナメント、進捗に表示されます (<a class="reference internal" href="manuel.html#perte-mwc-7pts"><span class="std std-ref">MWC 損失（7 点等価）</span></a>)。</p>
+<p><strong>不確実性。</strong> 1 マッチではゲーム、集計ではマッチによる 95 % 区間 (<a class="reference internal" href="#metrique-intervalles"><span class="std std-ref">95 % 区間</span></a>) で、値と同じ変換を適用します。統計のマッチごとの行には区間がありません。単位が 1 つだからです。マッチの総括がゲームによる区間を示します。</p>
+<p><strong>限界。</strong> √N モデルは 7 点未満とクロフォード付近では近似的です。L₇ は MET に依存します。マネーゲームには長さがないため L₇ もなく、画面は数値を表示する代わりにそのことを伝えます。実際のプレイヤーは半マッチ以上を失うことがあります。形勢が逆転した後の誤りが積み重なるためで、その場合 Elo は下限に達します。</p>
+<p><strong>XG と gnuBG。</strong> 7 点マッチでは、L₇ は XG が表示する MWC 損失そのものです。どちらのソフトウェアも、損失を基準の長さに換算したり Elo に変換したりしません。この Elo はエンジンとの差を測るもので、人間のプレイヤー間の FIBS や BMAB のレーティングではありません。</p>
+</section>
+<section id="difficulte-erreurs-evitables-exces-et-ratio">
+<span id="metrique-difficulte"></span><h2><a class="toc-backref" href="#id6" role="doc-backlink">難易度、回避可能な誤り、超過、比</a><a class="headerlink" href="#difficulte-erreurs-evitables-exces-et-ratio" title="この見出しへのリンク"></a></h2>
+<p><strong>問い。</strong> この誤りは許容できるものだったか。同じ 2 % の損失でも、自明な局面では不注意であり、4 つの手が千分の 1 の差で並ぶ局面ではどんな上級者でもする誤りです。学習のために、難易度は誤りを仕分けします。回避可能な誤り（不注意、覚え違いの規則）はすぐ直せるので先に扱い、難しい判断での損失は基礎的な取り組みの対象です。</p>
+<p><strong>定義。</strong> 難易度 d は、同じ局面で<strong>基準プレイヤー</strong>が平均して被る損失です。基準プレイヤーは各選択肢 i を、コストが高いほど低い確率で選びます。</p>
+<div class="math notranslate nohighlight">
+\[\pi(i) = \frac{e^{-\Delta_i/\tau}}{\sum_j e^{-\Delta_j/\tau}},
+\qquad d = \sum_i \pi(i)\,\Delta_i,
+\qquad \tau = 0{,}025\]</div>
+<p>Δᵢ は、正規化エクイティで見た、最善に対する選択肢 i のコストです。選択肢は、チェッカー移動では解析の候補手、キューブを持つプレイヤーではノーダブルとダブル (最善の応答に対する)、ダブルを受ける側ではテイクとパスです。d は ℓ と同様に MWC に換算されるため、両者は同じ単位であり、指した選択肢のコストはちょうど ℓ です。</p>
+<p>τ = 0.025 は強いプレイヤーの事前分布です。Δ だけ離れた 2 つの選択肢では、d = Δ / (1 + e^{Δ/τ}) は Δ ≈ 0.032 付近、つまり「疑問手」と「誤り」の間で最大になります。差 0.1 では 0.002 にしかなりません。0.01 間隔の 5 つの候補は d ≈ 0.012 となり、PR 6 程度のプレイヤーの平均誤差にあたります。</p>
+<ul class="simple">
+<li><p><strong>回避可能な誤り</strong>：損失がデータベースの誤り閾値に達し、かつ d ≤ ℓ / 10 であるもの。2 つの選択肢では、基準プレイヤーは 10 回に 1 回もその誤りをしません。</p></li>
+<li><p>マッチにおけるプレイヤーの<strong>超過</strong>：Σ(ℓ − d)。基準を超えて失った量です（基準より良かった場合は負）。</p></li>
+<li><p><strong>比</strong>：Σℓ / Σd。1 は「基準と同じようにプレイ」、2 は「2 倍失う」を意味します。Σd &lt; 0.5 % MWC の場合は示しません。簡単すぎるマッチではノイズしか測れないためで、超過は残ります。</p></li>
+</ul>
+<p><strong>対象。</strong>PR に数えられる判断のうち、損失が評価されて MWC に換算されるものです。それ以外では難易度は存在せず、ゼロになることもありません。したがって、強制手や PR のウィンドウ外のノーダブルには、損失も難易度もありません。数えられる判断の中で、自明な判断を別扱いする追加のしきい値はありません。その難易度は、もともとゼロに近いからです。</p>
+<p><strong>単位。</strong> d と超過：MWC のパーセンテージ。比：単位なし。</p>
+<p><strong>読み方。</strong> 難易度を大きく上回る損失は、局面が許さなかった誤りです。難易度に近い損失は、誰にでも起こりうる誤りです。超過と比は PR を出会った局面の難易度で補正するため、一部は相手のスタイルを補正することにもなります (<a class="reference internal" href="manuel.html#panneau-matchs"><span class="std std-ref">マッチパネル</span></a>)。</p>
+<p><strong>不確実性。</strong> 1 マッチでは、超過と比は少数の判断に基づき大きく変動します。順位ではなく傾向を示します。</p>
+<p><strong>限界。</strong> 難易度はプレイヤーモデルと τ に依存し、これらは一度固定されます。変えるとすべての数値が変わります。解析が保持した候補手（XG では数個、gnuBG ではフィルタ次第）しか知らないため、欠けた選択肢は重みを持たず、d は下限になります。特に深さが浅い場合、解析の誤差を引き継ぎます。</p>
+<p><strong>XG と gnuBG。</strong> どちらも難易度を計算しません。考え方はチェスの尤度指標 (Regan) に由来します。τ はプレイヤー集団で較正されていません。</p>
+</section>
+<section id="intervalles-a-95">
+<span id="metrique-intervalles"></span><h2><a class="toc-backref" href="#id7" role="doc-backlink">95 % 区間</a><a class="headerlink" href="#intervalles-a-95" title="この見出しへのリンク"></a></h2>
+<p><strong>問い。</strong> この数値は何かを語っているのか、それともノイズか。1 マッチでの PR 4.2 と 40 マッチでの PR 4.2 は同じ価値ではありません。区間は、何の根拠もないセルに学習計画を立てたり、1 マッチから順位を読み取ったりするのを防ぎます。</p>
+<p><strong>定義。</strong> 区間は、最大の独立した単位を再標本化します。マッチでは<strong>ゲーム</strong>、集計では<strong>マッチ</strong>です (全体の PR、フェーズ別のセル、ゲームプラン、ラベルとスコア、集計の L₇)。同じマッチのゲームは、相手、セッション、疲労を共有します。集計でそれらを別々に再標本化すると、区間が不当に狭くなります。プレイヤーフィルタがない場合、マッチの 2 つの席は同じ局面をプレイするので、1 つの単位になります。</p>
+<p><strong>式。</strong> G 個の単位についての比 R = Σeᵤ / Σnᵤ (eᵤ は単位の誤差の和、nᵤ はその判断数) では、ブートストラップの分散を抽出なしで計算します。</p>
+<div class="math notranslate nohighlight">
+\[\widehat{\mathrm{Var}}(R) = \frac{G}{G-1} \cdot
+\frac{\sum_u (e_u - R\,n_u)^2}{\left(\sum_u n_u\right)^2}\]</div>
+<p>区間は R ± 1.96 × √Var で、下限は 0 を下回らず、その後は値と同じ変換を適用します (PR では × 500)。集計の L₇ も同じ規則に従い、e の代わりに L、n の代わりに √N を使います。マッチの L₇ は G 個のゲームの和で、分散は G/(G−1) × Σ(l_g − l̄)² です（l_g はゲーム g の損失）。計算は決定的で、同じデータベースは 2 つのストレージエンジンのどちらでも常に同じ区間を与えます。</p>
+<p><strong>必要なもの。</strong> 少なくとも <strong>3 つの単位</strong>と、ゼロでない幅。2 つでは、ばらつきが自由度 1 に依存し、区間は数倍狭くなってしまいます。すべての単位が同じ比であることは、それらが一致していることを示すだけで、値が正確であることを示しません。区間がない場合、セルはグレー表示になり、サンプル数は見えるままです (<a class="reference internal" href="manuel.html#stats"><span class="std std-ref">Stats パネル</span></a>)。</p>
+<p><strong>読み方。</strong> 大きく重なる 2 つの区間は何も区別しません。区間が全体の PR を上回ったままのファミリーは、確かな弱点です。</p>
+<p><strong>限界。</strong> 単位が少ないと正規近似は粗く、誤差の分布は非対称です（少数の大きな誤り）。3 つか 4 つの単位では、区間は目安にすぎません。</p>
+<p><strong>XG と gnuBG。</strong> どちらも区間を示しません。</p>
+</section>
+<section id="bilan-du-match">
+<span id="metrique-bilan-match"></span><h2><a class="toc-backref" href="#id8" role="doc-backlink">マッチの総括</a><a class="headerlink" href="#bilan-du-match" title="この見出しへのリンク"></a></h2>
+<p><strong>問い。</strong> マッチの後、何を見直すべきか。ダイスのせいで負けたのかプレイのせいか。誤りは焦りからか、知識の穴からか。画面：<a class="reference internal" href="manuel.html#bilan-match"><span class="std std-ref">マッチの総括</span></a>。</p>
+<p><strong>見直すべき 3 つの判断。</strong> 損失が算出されたプレイヤーの誤り（データベースの閾値）のうち、正の<strong>回避可能分</strong> ℓ − d = ℓ × (1 − d/ℓ) が大きい上位 3 つ。損失に回避可能性を掛けたものです。難易度が不明なら 0 として扱います。同順位では損失の大きい方、次にマッチ内の順序です。基準プレイヤーもするであろう誤りは、学習時間をかける価値がありません。</p>
+<p>終了したマッチの<strong>運を調整した結果</strong>。プレイヤーの MWC の点数で表します。</p>
+<div class="math notranslate nohighlight">
+\[A = R - C, \quad R = \text{issue} - \mathrm{MWC}_\text{départ}, \quad
+C = \sum \text{chance de ses jets} - \sum \text{chance des jets adverses}\]</div>
+<p>結果は勝ちが 1、負けが 0 です。開始時 MWC は初期スコアのもの (0-0 で 50 %) です。各ロールは損失と同様に、その局面のスコアとキューブで MWC に換算します。完全なプレイの下では、A の期待値は相手の損失から自分の損失を引いたものです。そのため総括は照合用に<em>誤りの差</em>を並べて示します。負けたマッチで A &gt; 0：ダイスで負けた。A &lt; 0：プレイで負けた。運は解析器が書いたものです (<a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">付録：統計モデル — XG / gnuBG / blunderDB の整合</span></a>)。運がなければ行はなく、カバレッジ（プレイしたロールに対する測定したロール）が表示されます。部分的な運は A を偏らせるためです。マネーゲームや未完了のマッチにも行はありません。</p>
+<p><strong>急いだ誤りと熟考した誤り。</strong> プレイヤーとタイプ（チェッカー、キューブ）ごとに、閾値はそのマッチでの、そのタイプの評価済み判断の既知の所要時間の中央値です。それより速く指した誤りは急いだ誤り、それ以外は熟考した誤りです。中央値はそのマッチでの自分自身のものなので、ペースには依存しません。速さと誤りに関係がなければ、誤りは半々に分かれます。急いだ誤りが多数なら規律、熟考した誤りが多数なら知識が必要です。</p>
+<p><strong>限界。</strong> 1 マッチは小さな標本です。PR と L₇ にはゲームによる区間が付きます（ゲームは 3 つ以上）。調整後の結果は MET とファイルの運に依存します。所要時間は、それを保持したマッチ（ボットと指したマッチ）にしか存在しません。</p>
+<p><strong>XG と gnuBG。</strong> XG と gnuBG は各プレイヤーの運の合計を表示しますが、MWC での調整後の結果も、見直す判断の選択も、所要時間による分割もありません。</p>
+</section>
+<section id="plan-d-etude">
+<span id="metrique-plan-etude"></span><h2><a class="toc-backref" href="#id9" role="doc-backlink">学習プラン</a><a class="headerlink" href="#plan-d-etude" title="この見出しへのリンク"></a></h2>
+<p><strong>問い。</strong> 今、何に取り組むべきか。誤りをコストで並べると、どこで最も失ったかはわかりますが、どこで学習が最も報われるかはわかりません。本当に難しい局面のファミリーは誰にとってもコストがかかり、3 つの誤りは傾向にはなりません。画面：<a class="reference internal" href="manuel.html#plan-etude"><span class="std std-ref">学習プラン</span></a>。</p>
+<p><strong>定義。</strong> <strong>ファミリー</strong>は、繰り返される誤りの組 (ゲームプラン、判断の種類、テーマ) です。メンバーはフィルタの誤り、すなわち誤り閾値以上のコストがかかるカウントされた判断です。テーマのない誤りはどのファミリーにも入りません。メンバーは ℓ と d を持つ場合に<strong>算出済み</strong>です。マネーゲームの誤りは「未算出」としてカウントされ、どの優先度にも入りません。</p>
+<p><strong>式。</strong> <strong>回収可能な MWC</strong> とその区間：</p>
+<div class="math notranslate nohighlight">
+\[R = \sum_i (\ell_i - d_i), \qquad
+R \pm 1{,}96 \sqrt{\textstyle\sum_i (\ell_i - d_i)^2}\]</div>
+<p>R は、ファミリーの頻度に、難易度を超えた平均損失を掛けたものです。基準プレイヤーのようにこれらの局面を指した場合に取り戻せる量です。合計は符号付きで、クリッピングはしません。区間はメンバー数をポアソン計数として扱います。</p>
+<p><strong>プランに入るもの。</strong> 少なくとも <strong>5 つの算出済みメンバー</strong>と、<strong>厳密に正の下限</strong>。プランは下限の降順で並びます。回収可能量が同じなら、より確かなファミリーが先になります。それ以外は「要確認」で、順位はありません。</p>
+<p><strong>単位。</strong> フィルタ全体で累積した MWC のパーセンテージ。</p>
+<p><strong>読み方。</strong> 回避可能な誤りのファミリーは上がり、誰もが間違える局面のファミリーは下がります。新しいプレイヤーはまず「要確認」のファミリーを見ます。プランはノイズに向かって押しません。</p>
+<p><strong>限界。</strong> テーマは blunderDB の分類器に由来します。誤って分類された誤りは誤ったファミリーに入り、テーマのない誤りはどこにも入りません。R は ℓ と d の限界（MET、候補手の切り捨て）を引き継ぎます。</p>
+<p><strong>XG と gnuBG。</strong> どちらも学習プランを提供しません。</p>
+</section>
+<section id="positions-de-reference">
+<span id="metrique-positions-reference"></span><h2><a class="toc-backref" href="#id10" role="doc-backlink">基準局面</a><a class="headerlink" href="#positions-de-reference" title="この見出しへのリンク"></a></h2>
+<p><strong>問い。</strong> プランに取り組むには、どの局面をコレクションに入れるべきか。最悪の誤り 10 件は、しばしば同じ問題の 10 の変形になります。良い基準局面は、あなたの回避可能な誤りの多くの中心にあり、明確な教訓を持ち、まだ学習されていないものです。画面：<a class="reference internal" href="manuel.html#positions-reference"><span class="std std-ref">基準局面</span></a>。</p>
+<p><strong>定義。</strong> 候補は、フィルタ内の算出済みでテーマのある誤りを局面ごとにまとめたものです。局面の超過は、その誤りの正の超過 ℓ − d の合計です。同じファミリー（キューブでは同じスコアも）の 2 つの候補は、<code class="docutils literal notranslate"><span class="pre">like</span></code> 距離で ρ = 12 ピップステップ以内にあるとき<strong>近傍</strong>です（ダイスの 1 振りは 8 から 16 に相当します）。</p>
+<p><strong>式。</strong> 候補 p のゲインは</p>
+<div class="math notranslate nohighlight">
+\[G(p) = c(p) \times \sum_{q \,\in\, \text{voisinage}(p),\ q\ \text{non couverte}} \text{excès}(q)\]</div>
+<p>MWC の割合で表され、代表性、頻度、回避可能なコストを 1 つの量にまとめます。c(p) は 1 から始まり、教訓が<strong>僅差</strong>（次善の手のコストが誤り閾値の半分未満）なら ½ 倍し、さらに<strong>不安定</strong>（別のキューブ解析の深さまたはロールアウトで異なる判定になる）なら ½ 倍します。両方が重なると ¼ です。確認するロールアウトは何も引き上げません。ゲインが同じときの順位決めに使います。</p>
+<p><strong>選択。</strong> 限界ゲインによる貪欲法です。選ばれた各局面は近傍をカバーし、近傍は後続の局面には何ももたらさなくなります。ほぼ重複する局面は、ファミリーの外でも除外されます。すでに扱った局面（コメント、Anki カード、コレクション、「学習済み」マーク）は提案されず、すでに選ばれたものとして数えます。</p>
+<p><strong>単位。</strong> カバーした MWC。パーセンテージ。</p>
+<p><strong>限界。</strong> 半径と係数は固定されており、学習されたものではありません。<code class="docutils literal notranslate"><span class="pre">like</span></code> 距離は考え方ではなくチェッカー構造を比較します。同じ教訓でも構造が離れた 2 つの局面は互いをカバーしません。</p>
+<p><strong>XG と gnuBG。</strong> 同等のものはありません。</p>
+</section>
+<section id="avant-apres-l-etude">
+<span id="metrique-avant-apres"></span><h2><a class="toc-backref" href="#id11" role="doc-backlink">学習の前後</a><a class="headerlink" href="#avant-apres-l-etude" title="この見出しへのリンク"></a></h2>
+<p><strong>問い。</strong> 取り組んだことは、実戦で私のコストを減らしたか。測定がなければ、学習は印象で判断されます。努力しても動かないファミリーは、方法を変える必要があることを示します。画面：<a class="reference internal" href="manuel.html#avant-apres-etude"><span class="std std-ref">学習の前後</span></a>。</p>
+<p><strong>定義。</strong>フィルターのテーマ別ファミリーはすべて、プランのものも「要確認」のものも測定します。ファミリーは、その局面のいずれかに対する最初の学習アクションの日(UTC)に<strong>学習済み</strong>となります。「学習済み」マーク、評価を問わない Anki の復習、クイズへの回答が該当します。カードの作成や局面のコレクションへの整理は該当しません。<em>前</em>ウィンドウは、その日より厳密に前の日付のマッチ、<em>後</em>は厳密に後のマッチで、当日と日付のないマッチは除外されます。</p>
+<p><strong>式。</strong> 各窓で、損失率 r = Σℓ / N。ℓ はファミリーの誤りの損失、N は同じゲームプランかつ同じ種類のマッチでカウントされた判断です（テーマは誤りにしか存在しません）。ゲインとその区間：</p>
+<div class="math notranslate nohighlight">
+\[\Delta = r_\text{avant} - r_\text{après}, \qquad
+\Delta \pm 1{,}96 \sqrt{\frac{\sum \ell^2_\text{avant}}{N^2_\text{avant}}
++ \frac{\sum \ell^2_\text{après}}{N^2_\text{après}}}\]</div>
+<p><strong>判定。</strong> 各窓に少なくとも <strong>30 判断</strong>。なければ「不十分」です。Δ の下限が正なら「改善」、上限が負なら「悪化」、それ以外は「不確定」です。</p>
+<p><strong>単位。</strong> 100 判断あたりの MWC ポイント。</p>
+<p><strong>限界。</strong> 変化であって効果ではありません。ファミリーはコストがかかったから学習されます。平均への回帰がゲインを膨らませます。相手、フォーマット、ダイスは何も統制されません。</p>
+<p><strong>XG と gnuBG。</strong> 同等のものはありません。</p>
+</section>
+<section id="biais-signes">
+<span id="metrique-biais"></span><h2><a class="toc-backref" href="#id12" role="doc-backlink">符号付きバイアス</a><a class="headerlink" href="#biais-signes" title="この見出しへのリンク"></a></h2>
+<p><strong>問い。</strong> 私はどちらの方向に間違えているか。「テイクしすぎ」は PR より修正しやすい指摘です。見直すべき規則に名前が付くからです。画面：<a class="reference internal" href="manuel.html#biais-signes"><span class="std std-ref">符号付きバイアス</span></a>。</p>
+<p><strong>式。</strong> カウントされた各判断は x = +1（強気すぎる誤り）、−1（慎重すぎる誤り）、または 0 を持ちます。N 判断における 2 つのカウントを P と M とすると：</p>
+<div class="math notranslate nohighlight">
+\[B = \frac{P - M}{N}, \qquad
+B \pm 1{,}96 \sqrt{\frac{(P + M)/N - B^2}{N}}\]</div>
+<p>少なくとも <strong>20 判断</strong>。下限が正なら「多すぎ」、上限が負なら「足りない」、それ以外は「均衡」です。P と M のコスト (mpt) がカウントに添えられます。符号とコストは、そのマッチで指した手のものです。</p>
+<ul class="simple">
+<li><p><strong>テイク / パス</strong>：キューブへの応答について。P = 誤ったテイク、M = 誤ったパス。B は、同じ局面での自分のテイク率からボットのテイク率を引いた値そのものです。</p></li>
+<li><p><strong>ダブル</strong>：PR にカウントされた、キューブ保持者のキューブ判断について。P = 早すぎるダブル（ノーダブル、または強すぎる）、M = 逃したダブル。バイアスはスコアのセルごと（自分の残り点数、相手の残り点数。ポスト・クロフォードは 1 として扱う。マネーゲームは別）にも示されます。</p></li>
+<li><p><strong>ブロット</strong>：接触のあるチェッカー移動について。x は（指した手の後の自分のブロット数 − 最善手の後の自分のブロット数）の符号です。手は残す盤面で識別します。見つからない手はカウントから外れ、その割合が表示されます。</p></li>
+</ul>
+<p><strong>単位。</strong> 割合の差。単位なし。</p>
+<p><strong>限界。</strong> スコアのセルの大半は沈黙したままです。それが誠実な答えです。ブロットのバイアスは、露出度を考慮せずにブロットを数え、除外された手は中立な抽出ではありません。</p>
+<p><strong>XG と gnuBG。</strong> 同等のものはありません。XG と gnuBG はキューブの誤りをタイプ別（逃したダブル、誤ったテイクなど）に数えますが、区間も判定もありません。</p>
+</section>
+<section id="bilan-du-tournoi">
+<span id="metrique-bilan-tournoi"></span><h2><a class="toc-backref" href="#id13" role="doc-backlink">トーナメントの総括</a><a class="headerlink" href="#bilan-du-tournoi" title="この見出しへのリンク"></a></h2>
+<p><strong>問い。</strong> 自分のレベルでプレイできたか。そうでなければ、どこで崩れたか。最終ラウンドか、長いマッチ終盤か、1 点が勝負を決めるスコアか、時計か。画面：<a class="reference internal" href="manuel.html#bilan-tournoi"><span class="std std-ref">トーナメントの総括</span></a>。</p>
+<p><strong>定義。</strong> <strong>通常のレベル</strong>は、トーナメント（その日付、なければ最初のマッチの日付）の前の <strong>365 日間</strong>のポイントマッチでのプレイヤーで、トーナメントのマッチは除きます。<strong>5 マッチ</strong>以上が必要です。トーナメントと通常のレベルにはそれぞれ PR と L₇ があり、マッチによる区間 (<a class="reference internal" href="#metrique-intervalles"><span class="std std-ref">95 % 区間</span></a>) が付きます。</p>
+<p><strong>式。</strong> Δ = トーナメント − 通常。標準偏差は √(σₜ² + σₕ²) で、各 σ は区間の上側の半幅から読みます。Δ の下限が正なら「悪い」、上限が負なら「良い」、それ以外は「いつもどおり」です。判定には区間と、両側それぞれ少なくとも <strong>20 判断</strong>が必要です。なければ「不十分」で、数値は表示されます。</p>
+<p><strong>内訳</strong>(PR 単位):ラウンド別では、各マッチを全体の通常 PR と比較します。続いて、各セルを通常レベルの同じセルと比較し、マッチ内での判断の順位別(30 手ごとの区間:疲労)、スコア別(DMP、クロフォードゲーム、ポストクロフォード、その他)、ペース別(マッチでのあなたの所要時間の中央値の前後)に分けます。トーナメントに限定した学習プランのファミリーは最大 3 つです。</p>
+<p><strong>限界。</strong> 3 マッチのトーナメントが「悪い」と言うことはほとんどありません。意図したものです。両側は独立として扱われ、それが区間を広げます。規則は慎重です。時計の持ち時間は手ごとには記録されないため、残り時間によるプレッシャーは測れません。</p>
+<p><strong>XG と gnuBG。</strong> 同等のものはありません。</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="フッター">
+        <a href="manuel.html" class="btn btn-neutral float-left" title="マニュアル" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 前へ</a>
+        <a href="cmd_mode.html" class="btn btn-neutral float-right" title="コマンド一覧" accesskey="n" rel="next">次へ <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
