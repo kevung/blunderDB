@@ -28,7 +28,7 @@ describe('WarningModal with choices — Enter', () => {
         const { container, onChoose } = mount();
         const primary = container.querySelector('[data-testid="choice-merge"]');
         await vi.waitFor(() => expect(document.activeElement).toBe(primary));
-        await fireEvent.keyDown(document.activeElement, { key: 'Enter' });
+        await fireEvent.keyDown(must(document.activeElement), { key: 'Enter' });
         expect(onChoose).toHaveBeenCalledExactlyOnceWith('merge');
     });
 
@@ -36,7 +36,7 @@ describe('WarningModal with choices — Enter', () => {
         const { container, onChoose, onClose } = mount();
         const cancel = [...container.querySelectorAll('.modal-footer button')].find((b) => !b.dataset.testid);
         /** @type {HTMLElement} */ (must(cancel)).focus();
-        await fireEvent.keyDown(cancel, { key: 'Enter' });
+        await fireEvent.keyDown(must(cancel), { key: 'Enter' });
         expect(onClose).toHaveBeenCalledOnce();
         expect(onChoose).not.toHaveBeenCalled();
     });
@@ -45,7 +45,7 @@ describe('WarningModal with choices — Enter', () => {
         const { container, onChoose } = mount();
         const open = container.querySelector('[data-testid="choice-open"]');
         /** @type {HTMLElement} */ (must(open)).focus();
-        await fireEvent.keyDown(open, { key: 'Enter' });
+        await fireEvent.keyDown(must(open), { key: 'Enter' });
         expect(onChoose).toHaveBeenCalledExactlyOnceWith('open');
     });
 });

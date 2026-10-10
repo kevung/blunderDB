@@ -17,11 +17,13 @@
 import { describe, test, expect, vi, afterEach } from 'vitest';
 import { render, cleanup, screen, fireEvent } from '@testing-library/svelte';
 
+/** @type {any} */
 let lastLineConfig = null;
+/** @type {any} */
 let lastScatterConfig = null;
 
 class FakeChart {
-    constructor(canvas, config) {
+    constructor(/** @type {HTMLCanvasElement} */ canvas, /** @type {any} */ config) {
         if (config.type === 'line') lastLineConfig = config;
         else lastScatterConfig = config;
     }
@@ -41,6 +43,10 @@ vi.mock('../services/positionLoader.js', () => ({
 
 import StatsProgressionTab from '../components/stats/StatsProgressionTab.svelte';
 import { loadPositionsFromTournament, openTournamentInPanel, openMatchInPanel } from '../services/positionLoader.js';
+import { partial } from './helpers/partial.js';
+
+/** @typedef {import('../stores/statsStore.js').StatsResult} statsResult_T */
+const statsResult = /** @type {(v: import('./helpers/partial.js').DeepPartial<statsResult_T>) => statsResult_T} */ (partial);
 
 afterEach(() => {
     cleanup();
@@ -50,7 +56,7 @@ afterEach(() => {
 });
 
 /** Poll until a chart has been constructed. */
-async function waitFor(getConfig) {
+async function waitFor(/** @type {() => any} */ getConfig) {
     for (let i = 0; i < 50; i++) {
         if (getConfig()) return;
         await new Promise((r) => setTimeout(r, 0));
@@ -69,7 +75,7 @@ const MATCHES = [
     { ID: 11, Date: '2025-02-20T15:30:00Z', PlayerName: 'Bob', PR: 5.0, MWC: 0.031, NumDecisions: 28 }
 ];
 
-const RESULT = { PerTournament: TOURNAMENTS, PerMatch: MATCHES };
+const RESULT = statsResult({ PerTournament: TOURNAMENTS, PerMatch: MATCHES });
 
 describe('StatsProgressionTab — empty state', () => {
     test('no result: shows the empty-state message, no chart built', async () => {
@@ -80,7 +86,7 @@ describe('StatsProgressionTab — empty state', () => {
     });
 
     test('empty tournaments and matches: also treated as empty', async () => {
-        render(StatsProgressionTab, { props: { result: { PerTournament: [], PerMatch: [] }, metric: 'pr' } });
+        render(StatsProgressionTab, { props: { result: statsResult({ PerTournament: [], PerMatch: [] }), metric: 'pr' } });
         expect(screen.getByText(/no data for the filtered period/i)).toBeTruthy();
     });
 });
@@ -123,7 +129,7 @@ describe('StatsProgressionTab — tournament line chart', () => {
 });
 
 describe('StatsProgressionTab — single tournament fallback', () => {
-    const single = { PerTournament: [TOURNAMENTS[0]], PerMatch: [] };
+    const single = statsResult({ PerTournament: [TOURNAMENTS[0]], PerMatch: [] });
 
     test('shows a card instead of a chart, with the PR value and grade', async () => {
         render(StatsProgressionTab, { props: { result: single, metric: 'pr' } });
@@ -151,7 +157,7 @@ describe('StatsProgressionTab — match scatter chart', () => {
         render(StatsProgressionTab, { props: { result: RESULT, metric: 'pr' } });
         await waitFor(() => lastScatterConfig);
 
-        expect(lastScatterConfig.data.datasets[0].data.map((p) => p.y)).toEqual([3.2, 5.0]);
+        expect(lastScatterConfig.data.datasets[0].data.map((/** @type {{ y: number }} */ p) => p.y)).toEqual([3.2, 5.0]);
         for (const r of lastScatterConfig.data.datasets[0].pointRadius) {
             expect(r).toBeGreaterThanOrEqual(4);
             expect(r).toBeLessThanOrEqual(12);

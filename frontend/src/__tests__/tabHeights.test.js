@@ -4,7 +4,7 @@ const saved = vi.fn(() => Promise.resolve());
 let stored = {};
 vi.mock('../../wailsjs/go/main/Config.js', () => ({
     GetTabPanelHeights: () => Promise.resolve(stored),
-    SaveTabPanelHeight: (...a) => saved(...a)
+    SaveTabPanelHeight: (/** @type {any[]} */ ...a) => saved(...a)
 }));
 
 import { initTabHeights, panelHeightValue, rememberPanelHeight } from '../utils/tabHeights.js';

@@ -1089,6 +1089,7 @@
         "menu": {
             "evaluate": "Diese Position auswerten",
             "evaluateMirror": "Das Spiegelbild dieser Stellung auswerten",
+            "evaluateInNewView": "In einem neuen Tab auswerten",
             "copyImageWithAnalysis": "Brettbild mit Analyse kopieren",
             "newView": "Neue Ansicht",
             "addToAnkiDeck": "Zum Anki-Stapel hinzufügen: {deck}",
@@ -1187,6 +1188,7 @@
     },
     "viewTabs": {
         "closeView": "Ansicht schließen",
+        "variantOf": "Variante von #{n}",
         "newView": "Neue Ansicht"
     },
     "goToPosition": {

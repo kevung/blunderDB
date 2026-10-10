@@ -1089,6 +1089,7 @@
         "menu": {
             "evaluate": "Arvioi tämä asema",
             "evaluateMirror": "Arvioi tämän aseman peilikuva",
+            "evaluateInNewView": "Arvioi uudessa välilehdessä",
             "copyImageWithAnalysis": "Kopioi laudan kuva analyysin kanssa",
             "newView": "Uusi näkymä",
             "addToAnkiDeck": "Lisää Anki-pakkaan: {deck}",
@@ -1187,6 +1188,7 @@
     },
     "viewTabs": {
         "closeView": "Sulje näkymä",
+        "variantOf": "Muunnelma näkymästä #{n}",
         "newView": "Uusi näkymä"
     },
     "goToPosition": {

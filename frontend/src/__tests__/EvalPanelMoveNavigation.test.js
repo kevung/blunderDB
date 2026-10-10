@@ -42,6 +42,7 @@ import { statusBarModeStore } from '../stores/uiStore.js';
 import { positionStore, emptyPosition } from '../stores/positionStore.js';
 import { selectedMoveStore } from '../stores/analysisStore.js';
 import EvalPanel from '../components/EvalPanel.svelte';
+import { must } from './helpers/must.js';
 
 async function mountWithMoves() {
     const { container } = render(EvalPanel);
@@ -74,34 +75,34 @@ describe('EvalPanel candidate-list keyboard navigation', () => {
         await fireEvent.click(rows[0]);
         expect(get(selectedMoveStore)).toBe(MOVES[0].move);
 
-        await fireEvent.keyDown(panel, { key: 'j' });
+        await fireEvent.keyDown(must(panel), { key: 'j' });
         expect(get(selectedMoveStore)).toBe(MOVES[1].move);
 
-        await fireEvent.keyDown(panel, { key: 'ArrowDown' });
+        await fireEvent.keyDown(must(panel), { key: 'ArrowDown' });
         expect(get(selectedMoveStore)).toBe(MOVES[2].move);
 
         // The ends of the list hold.
-        await fireEvent.keyDown(panel, { key: 'ArrowDown' });
+        await fireEvent.keyDown(must(panel), { key: 'ArrowDown' });
         expect(get(selectedMoveStore)).toBe(MOVES[2].move);
 
-        await fireEvent.keyDown(panel, { key: 'k' });
+        await fireEvent.keyDown(must(panel), { key: 'k' });
         expect(get(selectedMoveStore)).toBe(MOVES[1].move);
 
-        await fireEvent.keyDown(panel, { key: 'ArrowUp' });
+        await fireEvent.keyDown(must(panel), { key: 'ArrowUp' });
         expect(get(selectedMoveStore)).toBe(MOVES[0].move);
 
-        await fireEvent.keyDown(panel, { key: 'ArrowUp' });
+        await fireEvent.keyDown(must(panel), { key: 'ArrowUp' });
         expect(get(selectedMoveStore)).toBe(MOVES[0].move);
     });
 
     test('Escape drops the selection, and nothing moves without one', async () => {
         const { panel, rows } = await mountWithMoves();
 
-        await fireEvent.keyDown(panel, { key: 'j' });
+        await fireEvent.keyDown(must(panel), { key: 'j' });
         expect(get(selectedMoveStore)).toBeNull();
 
         await fireEvent.click(rows[1]);
-        await fireEvent.keyDown(panel, { key: 'Escape' });
+        await fireEvent.keyDown(must(panel), { key: 'Escape' });
         expect(get(selectedMoveStore)).toBeNull();
     });
 

@@ -29,7 +29,7 @@ import { translate, tMsg } from '../i18n';
 
 export const warningMessageStore = writable('');
 
-function setStatusBarMessage(message) {
+function setStatusBarMessage(/** @type {string | import('../i18n').StatusMessage} */ message) {
     statusBarTextStore.set(message);
 }
 
@@ -38,7 +38,7 @@ function setStatusBarMessage(message) {
 const OPEN_NOTICE_MS = 4000;
 /** @type {ReturnType<typeof setTimeout> | undefined} */
 let openNoticeTimer;
-function setTransientStatusBarMessage(message) {
+function setTransientStatusBarMessage(/** @type {string | import('../i18n').StatusMessage} */ message) {
     setStatusBarMessage(message);
     clearTimeout(openNoticeTimer);
     openNoticeTimer = setTimeout(() => {
@@ -46,7 +46,7 @@ function setTransientStatusBarMessage(message) {
     }, OPEN_NOTICE_MS);
 }
 
-function getFilenameFromPath(filePath) {
+function getFilenameFromPath(/** @type {string} */ filePath) {
     return filePath.split('/').pop();
 }
 
@@ -88,7 +88,7 @@ function showNoDatabaseOpen() {
     refreshLibraryCounts();
 }
 
-function getMajorVersion(version) {
+function getMajorVersion(/** @type {string} */ version) {
     return version.split('.')[0];
 }
 
@@ -177,7 +177,7 @@ export async function loadDemoDatabase() {
 export const protectedCopyPathStore = writable('');
 export const protectedCopyErrorStore = writable('');
 
-export async function openDatabaseByPath(filePath) {
+export async function openDatabaseByPath(/** @type {string} */ filePath) {
     if (await IsProtectedCopyPath(filePath).catch(() => false)) {
         protectedCopyErrorStore.set('');
         protectedCopyPathStore.set(filePath);
@@ -263,14 +263,14 @@ export { setStatusBarMessage };
 // Errors cross the bridge as strings and are matched on this project's own
 // constants (issuance.ErrWrongPassphrase, ErrPassphraseRequired); anything
 // else is shown as-is.
-function protectedCopyMessage(error) {
+function protectedCopyMessage(/** @type {unknown} */ error) {
     const text = String(error);
     if (text.includes('wrong passphrase')) return translate('issuance.wrongPassword');
     if (text.includes('protected by a passphrase')) return translate('issuance.passwordRequiredToOpen');
     return text;
 }
 
-export async function unlockProtectedCopy(password, removeContainer = false) {
+export async function unlockProtectedCopy(/** @type {string} */ password, removeContainer = false) {
     const source = get(protectedCopyPathStore);
     if (!source) return;
     try {

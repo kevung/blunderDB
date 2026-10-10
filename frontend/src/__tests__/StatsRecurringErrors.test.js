@@ -14,6 +14,7 @@ vi.mock('../services/recurringStudy.js', () => ({
 import StatsRecurringErrors from '../components/stats/StatsRecurringErrors.svelte';
 import { loadPositionsFromSelection } from '../services/positionLoader.js';
 import { quizOnIds, quizOnWorstGroups, deckFromIds, collectionFromIds } from '../services/recurringStudy.js';
+import { must } from './helpers/must.js';
 
 afterEach(() => {
     cleanup();
@@ -69,7 +70,7 @@ describe('StatsRecurringErrors', () => {
         expect(screen.getAllByRole('row').slice(1)).toHaveLength(2);
         const item = screen.getByRole('listitem');
         expect(item.textContent).toContain('45.00');
-        await fireEvent.click(item.querySelector('button'));
+        await fireEvent.click(must(item.querySelector('button')));
         expect(loadPositionsFromSelection).toHaveBeenCalledWith([4, 5]);
     });
 

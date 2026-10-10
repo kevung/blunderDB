@@ -6,8 +6,8 @@ const GetBoardColors = vi.fn();
 const SaveBoardColors = vi.fn(() => Promise.resolve(undefined));
 
 vi.mock('../../wailsjs/go/main/Config.js', () => ({
-    GetBoardColors: (...args) => GetBoardColors(...args),
-    SaveBoardColors: (...args) => SaveBoardColors(...args)
+    GetBoardColors: (/** @type {any[]} */ ...args) => GetBoardColors(...args),
+    SaveBoardColors: (/** @type {any[]} */ ...args) => SaveBoardColors(...args)
 }));
 
 import { boardColorsStore, DEFAULT_BOARD_COLORS, initBoardColors, setBoardColor, resetBoardColors } from '../stores/boardColorsStore.js';

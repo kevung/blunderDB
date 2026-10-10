@@ -42,6 +42,8 @@ export function emptyAnalysis() {
     };
 }
 
+/** @typedef {ReturnType<typeof emptyAnalysis>} AnalysisRecord */
+
 export const analysisStore = writable(emptyAnalysis());
 
 // Store for tracking the selected move in the analysis panel

@@ -1089,6 +1089,7 @@
         "menu": {
             "evaluate": "この局面を評価",
             "evaluateMirror": "この局面の鏡像を評価する",
+            "evaluateInNewView": "新しいタブで評価",
             "copyImageWithAnalysis": "盤面画像と分析をコピー",
             "newView": "新しいビュー",
             "addToAnkiDeck": "Ankiデッキに追加: {deck}",
@@ -1187,6 +1188,7 @@
     },
     "viewTabs": {
         "closeView": "ビューを閉じる",
+        "variantOf": "#{n} の変化",
         "newView": "新規ビュー"
     },
     "goToPosition": {

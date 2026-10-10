@@ -546,7 +546,7 @@
             if (position) positionStore.set(position);
             const analysis = await LoadAnalysis(row.id);
             if (analysis) {
-                analysisStore.set(analysis);
+                analysisStore.set(/** @type {import('../stores/analysisStore.js').AnalysisRecord} */ (analysis));
             }
         } catch (error) {
             logger.error('Error loading analysis:', error);

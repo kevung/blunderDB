@@ -63,7 +63,7 @@ describe('EntityAutocomplete', () => {
         await fireEvent.input(input, { target: { value: 'dee' } });
         expect(options(container)).toEqual(['Cid vs Dee']);
 
-        await fireEvent.mouseDown(container.querySelector('.option'));
+        await fireEvent.mouseDown(must(container.querySelector('.option')));
         expect(onSelect).toHaveBeenCalledWith(items[1]);
         expect(input.value).toBe('Cid vs Dee');
     });

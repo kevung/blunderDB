@@ -1089,6 +1089,7 @@
         "menu": {
             "evaluate": "Αξιολόγηση αυτής της θέσης",
             "evaluateMirror": "Αξιολόγηση του καθρέφτη αυτής της θέσης",
+            "evaluateInNewView": "Αξιολόγηση σε νέα καρτέλα",
             "copyImageWithAnalysis": "Αντιγραφή εικόνας ταμπλό με την ανάλυση",
             "newView": "Νέα προβολή",
             "addToAnkiDeck": "Προσθήκη στην τράπουλα Anki: {deck}",
@@ -1187,6 +1188,7 @@
     },
     "viewTabs": {
         "closeView": "Κλείσιμο προβολής",
+        "variantOf": "Παραλλαγή της #{n}",
         "newView": "Νέα προβολή"
     },
     "goToPosition": {

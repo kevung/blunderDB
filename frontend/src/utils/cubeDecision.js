@@ -25,7 +25,7 @@ export const DECISION_STATE = {
 // isMoneyPosition is THE money/match predicate on the frontend (twin of gammonnet.IsMoneyPosition);
 // callers must not re-derive it: `score[0] < 0 && score[1] < 0` and `score[0] !== -1 || …`
 // diverge when only one side carries the money sentinel.
-export function isMoneyPosition(position) {
+export function isMoneyPosition(/** @type {{ score?: number[], player_on_roll?: number, cube?: { owner?: number } } | null | undefined} */ position) {
     const score = position?.score ?? [-1, -1];
     return score[0] < 0 && score[1] < 0;
 }
@@ -33,7 +33,7 @@ export function isMoneyPosition(position) {
 // cubeTurnability reports whether the player on roll can turn the cube at all — a rule of the
 // game read off the board, not an engine output. Crawford is read from the away-score sentinel
 // like MatchStateFromPosition: either side raw 1 = Crawford game (0 = 1-away post-Crawford, CONTEXT.md).
-export function cubeTurnability(position) {
+export function cubeTurnability(/** @type {{ score?: number[], player_on_roll?: number, cube?: { owner?: number } } | null | undefined} */ position) {
     if (!position) return null;
     const score = position.score ?? [-1, -1];
     const isMoney = isMoneyPosition(position);
@@ -50,12 +50,12 @@ export function cubeTurnability(position) {
 // of the very same decision. Null for money, the Crawford game (raw 1; the grid is post-Crawford,
 // raw 0 is its row 1) and an away beyond the grid. Returns `{ awayOnRoll, awayOpponent }`: the
 // player on roll decides, so it holds the rows.
-export function currentScoreCell(position, gridLength) {
+export function currentScoreCell(/** @type {{ score?: number[], player_on_roll?: number, cube?: { owner?: number } } | null | undefined} */ position, /** @type {number} */ gridLength) {
     if (!position || !(gridLength > 0)) return null;
     const score = position.score ?? [-1, -1];
     if (isMoneyPosition(position)) return null;
     if (score[0] === 1 || score[1] === 1) return null; // Crawford: no cube in play
-    const away = (raw) => (raw === 0 ? 1 : raw); // post-Crawford 1-away sentinel
+    const away = (/** @type {number} */ raw) => (raw === 0 ? 1 : raw); // post-Crawford 1-away sentinel
     const onRoll = position.player_on_roll === 1 ? 1 : 0;
     const mine = away(score[onRoll]);
     const theirs = away(score[1 - onRoll]);
@@ -66,7 +66,7 @@ export function currentScoreCell(position, gridLength) {
 
 // fromRaceMoney maps a race.Money onto the common shape. Cubeless is dropped: it is a position
 // fact (ADR-0017 rule 1).
-function fromRaceMoney(money) {
+function fromRaceMoney(/** @type {any} */ money) {
     return {
         equities: {
             no_double: money.no_double,
@@ -77,7 +77,7 @@ function fromRaceMoney(money) {
     };
 }
 
-function fromCubeAnalysis(cube, verdictKey) {
+function fromCubeAnalysis(/** @type {any} */ cube, /** @type {string} */ verdictKey) {
     return {
         equities: {
             no_double: cube.cubefulNoDoubleEquity ?? null,
@@ -98,7 +98,7 @@ function fromCubeAnalysis(cube, verdictKey) {
 // bestOption is derived from the equities: the doubling branch is worth the CHEAPER of take/pass,
 // the best is the higher of that and no-double (as domaineval.go and xgmap.go's
 // computeBestCubeAction). "Too good" is a verdict, not an option: it marks the no-double row.
-function bestOption(equities) {
+function bestOption(/** @type {any} */ equities) {
     const { no_double: nd, double_take: dt, double_pass: dp } = equities;
     if (nd == null || dt == null || dp == null) return null;
     const doubling = Math.min(dt, dp);
@@ -108,7 +108,7 @@ function bestOption(equities) {
 
 // bestFromLabel maps a stored best-action string onto a canonical row via normalizeCubeAction.
 // Unparseable marks nothing, never a row at random.
-function bestFromLabel(label) {
+function bestFromLabel(/** @type {string | undefined} */ label) {
     const parts = normalizeCubeAction(label);
     if (!parts.length) return null;
     if (parts.includes('take')) return 'double_take';
@@ -122,12 +122,12 @@ function bestFromLabel(label) {
  * `{ state, options, verdict, best }`; options are always the three canonical rows with
  * `equity`/`error` null until a value lands (ADR-0017 rule 3).
  * @param {object}  args
- * @param {object=} args.race         race.Eval currently on display (displayRace), when the position is a race
+ * @param {{ money?: any } | null=} args.race         race.Eval currently on display (displayRace), when the position is a race
  * @param {boolean=} args.isRace      whether the position is a pure bearoff at all
  * @param {Partial<import('../../wailsjs/go/models').domain.DoublingCubeAnalysis> | null=} args.cubeAnalysis domain.DoublingCubeAnalysis from the live evaluation
  * @param {string=} args.verdictKey   the live evaluation's typed verdict (ADR-0020 rule 3)
  * @param {boolean=} args.refused     the engine declined this position
- * @param {string=} args.turnability  cubeTurnability(position)
+ * @param {string | null=} args.turnability  cubeTurnability(position)
  * @param {boolean=} args.stored      the record is an imported/stored analysis, not our own computation
  * @param {boolean=} args.settled     an evaluation has come back for THIS position
  */
@@ -136,6 +136,7 @@ export function cubeDecision({ race = null, isRace = false, cubeAnalysis = null,
 
     if (refused) return { state: DECISION_STATE.REFUSED, options: empty, verdict: null, best: null };
 
+    /** @type {{ equities: Record<string, number | null>, errors?: Record<string, number | null>, verdict: string | null, verdictText?: string } | null} */
     let source = null;
     if (isRace) {
         if (race?.money) source = fromRaceMoney(race.money);

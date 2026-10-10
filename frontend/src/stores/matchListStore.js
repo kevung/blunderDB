@@ -31,7 +31,7 @@ const SQL_SORT = {
  */
 export function sqlSortKey(column, direction) {
     if (!column) return '';
-    const keys = SQL_SORT[column];
+    const keys = /** @type {Record<string, string[]>} */ (SQL_SORT)[column];
     if (!keys) return null;
     return direction === 'desc' ? keys[1] : keys[0];
 }
@@ -42,8 +42,8 @@ const ROW_FIELDS = ['player1_name', 'player2_name', 'match_date', 'tournament_id
 
 /**
  * @param {object} [deps]
- * @param {(opts: object) => Promise<any[]>} [deps.list]
- * @param {(opts: object) => Promise<number>} [deps.count]
+ * @param {(opts: any) => Promise<any[]>} [deps.list]
+ * @param {(opts: any) => Promise<number>} [deps.count]
  * @param {(id: number) => Promise<any>} [deps.getByID]
  * @param {number} [deps.pageSize]
  */
@@ -60,7 +60,7 @@ export function createMatchList({ list = ListMatches, count = CountMatches, getB
     const { subscribe, update } = store;
     let generation = 0;
 
-    function opts(state, offset, limit) {
+    function opts(/** @type {any} */ state, /** @type {number} */ offset, /** @type {number} */ limit) {
         return { Text: state.text, Sort: sqlSortKey(state.column, state.direction) ?? '', Limit: limit, Offset: offset };
     }
 
@@ -105,7 +105,7 @@ export function createMatchList({ list = ListMatches, count = CountMatches, getB
         return reload();
     }
 
-    function setSort(column, direction) {
+    function setSort(/** @type {string|null} */ column, /** @type {string} */ direction) {
         const s = get(store);
         if (s.column === column && s.direction === direction) return Promise.resolve();
         update((st) => ({ ...st, column, direction }));
@@ -113,7 +113,7 @@ export function createMatchList({ list = ListMatches, count = CountMatches, getB
     }
 
     /** Re-read one row and replace it in place; the others are untouched. */
-    async function refreshRow(id) {
+    async function refreshRow(/** @type {number} */ id) {
         try {
             const fresh = await getByID(id);
             if (!fresh) return;
@@ -124,7 +124,7 @@ export function createMatchList({ list = ListMatches, count = CountMatches, getB
         }
     }
 
-    function patchRow(id, patch) {
+    function patchRow(/** @type {number} */ id, /** @type {Record<string, any>} */ patch) {
         update((s) => ({ ...s, rows: s.rows.map((r) => (r.id === id ? { ...r, ...patch } : r)) }));
     }
 

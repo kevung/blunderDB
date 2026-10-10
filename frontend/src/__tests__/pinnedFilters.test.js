@@ -175,7 +175,7 @@ describe('ALT-n pose la question du double-clic', () => {
         await tick();
         await fireEvent.click(container.querySelectorAll('.sub-tab-btn')[2]);
         await tick();
-        await fireEvent.dblClick(container.querySelector('.saved-item'));
+        await fireEvent.dblClick(must(container.querySelector('.saved-item')));
         for (let i = 0; i < 10 && !pending; i++) await tick();
         await pending;
         expect(bindings.SearchPositionIDs).toHaveBeenCalledTimes(1);
@@ -228,7 +228,7 @@ describe('le panneau de recherche', () => {
         await tick();
         const star = container.querySelector('.saved-item .pin-btn');
         expect(must(star).getAttribute('aria-pressed')).toBe('false');
-        await fireEvent.click(star);
+        await fireEvent.click(must(star));
         await settle();
         expect(bindings.SetFilterPinned).toHaveBeenCalledWith(1, true);
         expect(must(container.querySelector('.saved-item .pin-btn')).getAttribute('aria-pressed')).toBe('true');

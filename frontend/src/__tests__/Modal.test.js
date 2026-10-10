@@ -90,7 +90,7 @@ describe('Modal — closing', () => {
         window.addEventListener('keydown', seenByWindow);
         const { container } = render(ModalFixture, { props: { open: true, onclose } });
 
-        await fireEvent.keyDown(container.querySelector('#first'), { key: 'Escape' });
+        await fireEvent.keyDown(must(container.querySelector('#first')), { key: 'Escape' });
         expect(onclose).toHaveBeenCalledTimes(1);
         expect(seenByWindow).not.toHaveBeenCalled();
         window.removeEventListener('keydown', seenByWindow);
@@ -99,14 +99,14 @@ describe('Modal — closing', () => {
     test('Escape does nothing when closeOnEscape is off', async () => {
         const onclose = vi.fn();
         const { container } = render(ModalFixture, { props: { open: true, onclose, closeOnEscape: false } });
-        await fireEvent.keyDown(container.querySelector('[role="dialog"]'), { key: 'Escape' });
+        await fireEvent.keyDown(must(container.querySelector('[role="dialog"]')), { key: 'Escape' });
         expect(onclose).not.toHaveBeenCalled();
     });
 
     test('other keys reach the modal through onkeydown', async () => {
         const onkeydown = vi.fn();
         const { container } = render(ModalFixture, { props: { open: true, onkeydown } });
-        await fireEvent.keyDown(container.querySelector('#first'), { key: 'Enter' });
+        await fireEvent.keyDown(must(container.querySelector('#first')), { key: 'Enter' });
         expect(onkeydown).toHaveBeenCalledTimes(1);
         expect(onkeydown.mock.calls[0][0].key).toBe('Enter');
     });
@@ -114,7 +114,7 @@ describe('Modal — closing', () => {
     test('the close cross calls onclose', async () => {
         const onclose = vi.fn();
         const { container } = render(ModalFixture, { props: { open: true, onclose } });
-        await fireEvent.click(container.querySelector('.modal-close'));
+        await fireEvent.click(must(container.querySelector('.modal-close')));
         expect(onclose).toHaveBeenCalledTimes(1);
     });
 
@@ -143,14 +143,14 @@ describe('Modal — closing', () => {
         const { container } = render(ModalFixture, { props: { open: true, onclose, closeOnOverlay: true } });
         const scroll = container.querySelector('.modal-scroll');
 
-        await fireEvent.mouseDown(container.querySelector('#first'));
-        await fireEvent.mouseUp(scroll);
-        await fireEvent.click(scroll);
+        await fireEvent.mouseDown(must(container.querySelector('#first')));
+        await fireEvent.mouseUp(must(scroll));
+        await fireEvent.click(must(scroll));
         expect(onclose).not.toHaveBeenCalled();
 
-        await fireEvent.mouseDown(scroll);
-        await fireEvent.mouseUp(scroll);
-        await fireEvent.click(scroll);
+        await fireEvent.mouseDown(must(scroll));
+        await fireEvent.mouseUp(must(scroll));
+        await fireEvent.click(must(scroll));
         expect(onclose).toHaveBeenCalledTimes(1);
     });
 

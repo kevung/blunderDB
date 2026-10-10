@@ -1089,6 +1089,7 @@
         "menu": {
             "evaluate": "Évaluer cette position",
             "evaluateMirror": "Évaluer le miroir de cette position",
+            "evaluateInNewView": "Évaluer dans un nouvel onglet",
             "copyImageWithAnalysis": "Copier l'image du plateau et l'analyse",
             "newView": "Nouvelle vue",
             "addToAnkiDeck": "Ajouter au paquet Anki : {deck}",
@@ -1187,6 +1188,7 @@
     },
     "viewTabs": {
         "closeView": "Fermer la vue",
+        "variantOf": "Variante de #{n}",
         "newView": "Nouvelle vue"
     },
     "goToPosition": {

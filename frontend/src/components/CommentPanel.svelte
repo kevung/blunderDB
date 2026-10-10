@@ -14,8 +14,10 @@
     import PanelHeader from './panels/PanelHeader.svelte';
     import EmptyState from './panels/EmptyState.svelte';
 
+    /** @type {import('../../wailsjs/go/models').domain.CommentEntry[]} */
     let allComments = $state([]);
     let searchQuery = $state('');
+    /** @type {import('../../wailsjs/go/models').domain.CommentEntry[]} */
     let displayedComments = $state([]);
     // « Votre nom »: the thread of a position lists the user's own comments first.
     let myName = $state('');
@@ -23,6 +25,7 @@
     let feedEl;
     /** @type {HTMLTextAreaElement | undefined} */
     let promptEl;
+    /** @type {number | null} */
     let editingCommentId = $state(null);
     let editingText = $state('');
     let promptText = $state('');
@@ -132,7 +135,7 @@
     }
 
     // Provenance: 'user', 'xg'/'gnubg'/'bgf' or 'unknown'; the user's own notes get no badge.
-    function originLabel(origin) {
+    function originLabel(/** @type {string} */ origin) {
         switch (origin) {
             case 'xg':
                 return $t('comment.originXG');
@@ -147,7 +150,7 @@
         }
     }
 
-    function originTitle(origin) {
+    function originTitle(/** @type {string} */ origin) {
         switch (origin) {
             case 'xg':
                 return $t('comment.originTitleXG');
@@ -178,7 +181,7 @@
         }
     }
 
-    async function filterComments(q) {
+    async function filterComments(/** @type {string} */ q) {
         try {
             displayedComments = (await SearchComments(q)) || [];
         } catch (_error) {
@@ -186,7 +189,7 @@
         }
     }
 
-    async function navigateToComment(comment) {
+    async function navigateToComment(/** @type {import('../../wailsjs/go/models').domain.CommentEntry} */ comment) {
         try {
             const position = await LoadPosition(comment.positionId);
             if (position) {
@@ -195,7 +198,7 @@
                 try {
                     const analysis = await LoadAnalysis(comment.positionId);
                     if (analysis) {
-                        analysisStore.set(analysis);
+                        analysisStore.set(/** @type {import('../stores/analysisStore.js').AnalysisRecord} */ (analysis));
                     }
                 } catch (_e) {
                     /* ignored */
@@ -257,24 +260,24 @@
             addNewComment();
         } else if (event.key === 'Escape') {
             event.stopPropagation();
-            event.currentTarget.blur();
+            /** @type {HTMLElement} */ (event.currentTarget).blur();
         }
     }
 
-    async function startEditComment(comment) {
+    async function startEditComment(/** @type {import('../../wailsjs/go/models').domain.CommentEntry} */ comment) {
         editingCommentId = comment.id;
         editingText = comment.text;
         // Move focus into the edit textarea so keystrokes go to the field and
         // don't leak to global keyboard shortcuts (board navigation, etc.).
         await tick();
-        const el = document.querySelector('.msg-edit-input');
+        const el = /** @type {HTMLTextAreaElement | null} */ (document.querySelector('.msg-edit-input'));
         if (el) {
             el.focus();
             el.setSelectionRange(el.value.length, el.value.length);
         }
     }
 
-    async function saveEditedComment(comment) {
+    async function saveEditedComment(/** @type {import('../../wailsjs/go/models').domain.CommentEntry} */ comment) {
         editingCommentId = null;
         if (editingText !== comment.text) {
             try {
@@ -286,7 +289,7 @@
         }
     }
 
-    function handleEditKeyDown(/** @type {KeyboardEvent} */ event, comment) {
+    function handleEditKeyDown(/** @type {KeyboardEvent} */ event, /** @type {import('../../wailsjs/go/models').domain.CommentEntry} */ comment) {
         if (event.key === 'Enter' && !event.shiftKey) {
             event.stopPropagation();
             event.preventDefault();
@@ -297,7 +300,7 @@
         }
     }
 
-    async function deleteComment(comment, /** @type {Event} */ event) {
+    async function deleteComment(/** @type {import('../../wailsjs/go/models').domain.CommentEntry} */ comment, /** @type {Event} */ event) {
         event.stopPropagation();
         try {
             // Through the trash: restorable from the `trash` command.
@@ -332,7 +335,7 @@
     function handleSearchKeyDown(/** @type {KeyboardEvent} */ event) {
         if (event.key === 'Escape') {
             event.stopPropagation();
-            event.currentTarget.blur();
+            /** @type {HTMLElement} */ (event.currentTarget).blur();
         }
     }
 </script>
