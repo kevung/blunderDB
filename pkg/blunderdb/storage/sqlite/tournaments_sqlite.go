@@ -17,16 +17,19 @@ type tournamentStore struct{ db execer }
 
 var _ storage.TournamentStore = (*tournamentStore)(nil)
 
-// tournamentEffectiveDate is the entered date, else the day of the
-// tournament's earliest match: derived on read, never written (ADR-0007).
-var tournamentEffectiveDate = sqlshared.TournamentEffectiveDate(shared{}.DateText)
-
-// tournamentSelectCols reads a domain.Tournament; the correlated subqueries
-// supply the match count and the effective date.
+// tournamentSelectCols reads a domain.Tournament from tournament t joined to
+// tournamentFrom's match aggregate, which supplies the match count and the
+// effective date.
 var tournamentSelectCols = `t.id, t.name, COALESCE(t.date,''), COALESCE(t.location,''),
 	COALESCE(t.sort_order,0), COALESCE(t.created_at,''), COALESCE(t.updated_at,''),
-	(SELECT COUNT(*) FROM match m WHERE m.tournament_id = t.id),
-	COALESCE(t.comment,''), ` + tournamentEffectiveDate
+	` + sqlshared.TournamentMatchCount + `,
+	COALESCE(t.comment,''), ` + sqlshared.TournamentEffectiveDate
+
+// tournamentFrom is the FROM clause tournamentSelectCols reads; matchFilter
+// confines the matches aggregated (alias tm).
+func tournamentFrom(matchFilter string) string {
+	return ` FROM tournament t` + sqlshared.TournamentMatchAgg(shared{}.DateText, matchFilter, false)
+}
 
 func scanTournament(sc interface{ Scan(...any) error }) (domain.Tournament, error) {
 	var t domain.Tournament
@@ -62,7 +65,7 @@ func (s *tournamentStore) Create(ctx context.Context, scope string, name, date, 
 // Get returns the tournament with the given id, or ErrNotFound.
 func (s *tournamentStore) Get(ctx context.Context, scope string, id int64) (*domain.Tournament, error) {
 	row := s.db.QueryRowContext(ctx,
-		`SELECT `+tournamentSelectCols+` FROM tournament t WHERE t.id = ?`, id)
+		`SELECT `+tournamentSelectCols+tournamentFrom("tm.tournament_id = ?")+` WHERE t.id = ?`, id, id)
 	t, err := scanTournament(row)
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, fmt.Errorf("sqlite: get tournament %d: %w", id, storage.ErrNotFound)
@@ -78,8 +81,8 @@ func (s *tournamentStore) Get(ctx context.Context, scope string, id int64) (*dom
 func (s *tournamentStore) List(ctx context.Context, scope string, opts storage.ListOpts) iter.Seq2[*domain.Tournament, error] {
 	return func(yield func(*domain.Tournament, error) bool) {
 		rows, err := s.db.QueryContext(ctx,
-			`SELECT `+tournamentSelectCols+` FROM tournament t
-			 ORDER BY `+tournamentEffectiveDate+` DESC, t.created_at DESC, t.id DESC`+opts.SQL("LIMIT -1"))
+			`SELECT `+tournamentSelectCols+tournamentFrom("1=1")+`
+			 ORDER BY `+sqlshared.TournamentEffectiveDate+` DESC, t.created_at DESC, t.id DESC`+opts.SQL("LIMIT -1"))
 		if err != nil {
 			yield(nil, fmt.Errorf("sqlite: list tournaments: %w", err))
 			return

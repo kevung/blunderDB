@@ -237,13 +237,14 @@ func (s *StatsStore) computeSnowieGlobal(ctx context.Context, q statsQuery, resu
 func (s *StatsStore) computePerTournament(ctx context.Context, q statsQuery, result *storage.StatsResult) error {
 	d := s.DB
 	var scanErr error
-	eff := TournamentEffectiveDate(d.DateText)
+	eff := TournamentEffectiveDate
+	agg, aggArgs := tournamentMatchAgg(d, q.scope, "")
 	rows, err := s.DB.Query(ctx,
 		`SELECT m.tournament_id, COALESCE(t.name,''), `+eff+`, `+d.Bigint(`SUM(`+statsErrExpr+`)`)+`, COUNT(*) `+
-			q.join+q.whereSQL+
+			q.join+agg+q.whereSQL+
 			` AND m.tournament_id IS NOT NULL`+
-			` GROUP BY m.tournament_id, t.id, t.name, t.date, t.created_at`+tournamentChronology(eff),
-		q.baseArgs...,
+			` GROUP BY m.tournament_id, t.id, t.name, t.date, t.created_at, tma.first_day`+tournamentChronology(eff),
+		append(aggArgs, q.baseArgs...)...,
 	)
 	if err != nil {
 		return fmt.Errorf("PR per tournament query: %w", err)

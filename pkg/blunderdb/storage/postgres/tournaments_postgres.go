@@ -25,17 +25,19 @@ func tsTime(t time.Time) string {
 	return t.Format("2006-01-02 15:04:05")
 }
 
-// tournamentEffectiveDate is the entered date, else the UTC day of the
-// tournament's earliest match: derived on read, never written (ADR-0007).
-var tournamentEffectiveDate = sqlshared.TournamentEffectiveDate(shared{}.DateText)
-
-// tournamentSelectExpr reads a domain.Tournament. The correlated subqueries
-// count the tournament's matches and derive its effective date; both rows
-// carry the same tenant_id.
+// tournamentSelectExpr reads a domain.Tournament from tournament t joined to
+// tournamentFrom's match aggregate, which supplies the match count and the
+// effective date.
 var tournamentSelectExpr = `t.id, t.name, COALESCE(t.date,''), COALESCE(t.location,''),
 	COALESCE(t.sort_order,0), t.created_at, t.updated_at,
-	(SELECT COUNT(*) FROM match m WHERE m.tournament_id = t.id AND m.tenant_id = t.tenant_id),
-	COALESCE(t.comment,''), ` + tournamentEffectiveDate
+	` + sqlshared.TournamentMatchCount + `,
+	COALESCE(t.comment,''), ` + sqlshared.TournamentEffectiveDate
+
+// tournamentFrom is the FROM clause tournamentSelectExpr reads; matchFilter
+// confines the matches aggregated (alias tm) to the tenant, and more.
+func tournamentFrom(matchFilter string) string {
+	return ` FROM tournament t` + sqlshared.TournamentMatchAgg(shared{}.DateText, matchFilter, true)
+}
 
 func scanTournament(sc scanner) (domain.Tournament, error) {
 	var t domain.Tournament
@@ -73,7 +75,7 @@ func (s *tournamentStore) Create(ctx context.Context, scope string, name, date, 
 // Get returns the tournament with the given id, or ErrNotFound.
 func (s *tournamentStore) Get(ctx context.Context, scope string, id int64) (*domain.Tournament, error) {
 	row := s.db.QueryRow(ctx,
-		`SELECT `+tournamentSelectExpr+` FROM tournament t WHERE t.id = $1 AND t.tenant_id = $2`,
+		`SELECT `+tournamentSelectExpr+tournamentFrom("tm.tenant_id = $2 AND tm.tournament_id = $1")+` WHERE t.id = $1 AND t.tenant_id = $2`,
 		id, tenantID(scope))
 	t, err := scanTournament(row)
 	if errors.Is(err, pgx.ErrNoRows) {
@@ -90,9 +92,9 @@ func (s *tournamentStore) Get(ctx context.Context, scope string, id int64) (*dom
 func (s *tournamentStore) List(ctx context.Context, scope string, opts storage.ListOpts) iter.Seq2[*domain.Tournament, error] {
 	return func(yield func(*domain.Tournament, error) bool) {
 		rows, err := s.db.Query(ctx,
-			`SELECT `+tournamentSelectExpr+` FROM tournament t
+			`SELECT `+tournamentSelectExpr+tournamentFrom("tm.tenant_id = $1")+`
 			 WHERE t.tenant_id = $1
-			 ORDER BY `+tournamentEffectiveDate+` DESC, t.created_at DESC, t.id DESC`+opts.SQL(""), tenantID(scope))
+			 ORDER BY `+sqlshared.TournamentEffectiveDate+` DESC, t.created_at DESC, t.id DESC`+opts.SQL(""), tenantID(scope))
 		if err != nil {
 			yield(nil, fmt.Errorf("postgres: list tournaments: %w", err))
 			return
