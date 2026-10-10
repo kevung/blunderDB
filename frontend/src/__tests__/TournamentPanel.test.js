@@ -18,6 +18,21 @@ import { tick } from 'svelte';
 import { get } from 'svelte/store';
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
+    CountMatches: vi.fn().mockResolvedValue(0),
+    GetMatchByID: vi.fn().mockResolvedValue(null),
+    GetGamesByMatch: vi.fn().mockResolvedValue([]),
+    GetMatchDetailStats: vi.fn().mockResolvedValue(null),
+    GetMatchMoveGrades: vi.fn().mockResolvedValue([]),
+    GetMatchTimeSummary: vi.fn().mockResolvedValue(null),
+    GetMatchOrigin: vi.fn().mockResolvedValue(null),
+    GetMatchDecisionLosses: vi.fn().mockResolvedValue([]),
+    GetMatchReview: vi.fn().mockResolvedValue(null),
+    TrashMatch: vi.fn().mockResolvedValue(undefined),
+    UpdateMatch: vi.fn().mockResolvedValue(undefined),
+    SetMatchTournamentByName: vi.fn().mockResolvedValue(undefined),
+    ListTranscriptions: vi.fn().mockResolvedValue([]),
+    LoadCommandHistory: vi.fn().mockResolvedValue([]),
+    SaveCommand: vi.fn().mockResolvedValue(undefined),
     GetAllTournaments: vi.fn().mockResolvedValue([]),
     CreateTournament: vi.fn().mockResolvedValue(undefined),
     DeleteTournament: vi.fn().mockResolvedValue(undefined),
@@ -50,7 +65,7 @@ import {
 
 import TournamentPanel from '../components/TournamentPanel.svelte';
 import { openPanels, PANEL, statusBarTextStore } from '../stores/uiStore.js';
-import { tournamentsStore, selectedTournamentStore, tournamentMatchesStore } from '../stores/tournamentStore.js';
+import { tournamentsStore, selectedTournamentStore, tournamentMatchesStore, tournamentOpenRequestStore } from '../stores/tournamentStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { matchContextStore } from '../stores/positionStore.js';
 
@@ -60,6 +75,7 @@ function resetStores() {
     tournamentsStore.set([]);
     selectedTournamentStore.set(null);
     tournamentMatchesStore.set([]);
+    tournamentOpenRequestStore.set(null);
     openPanels.set(new Set());
     statusBarTextStore.set('');
     databasePathStore.set('/fake/db.sqlite');
@@ -401,5 +417,74 @@ describe('TournamentPanel — focus after creation', () => {
         await fireEvent.keyDown(nameInput, { key: 'Enter' });
 
         await vi.waitFor(() => expect(document.activeElement?.closest('tr')?.textContent).toContain('Zeta Trophy'));
+    });
+});
+
+// ── Open request from another panel (Stats) ───────────────────────────────────
+
+describe('TournamentPanel — open request', () => {
+    test('request made before the panel is mounted opens that tournament', async () => {
+        tournamentOpenRequestStore.set(2);
+        renderOpen();
+
+        await vi.waitFor(() => expect(get(selectedTournamentStore)?.id).toBe(2));
+        expect(get(tournamentOpenRequestStore)).toBeNull();
+        expect(GetTournamentMatches).toHaveBeenCalledWith(2);
+    });
+
+    test('request while the panel shows another tournament switches to the requested one', async () => {
+        renderOpen();
+        await fireEvent.dblClick(await screen.findByText('Blunder Cup'));
+        await vi.waitFor(() => expect(get(selectedTournamentStore)?.id).toBe(1));
+
+        tournamentOpenRequestStore.set(2);
+
+        await vi.waitFor(() => expect(get(selectedTournamentStore)?.id).toBe(2));
+        expect(get(tournamentOpenRequestStore)).toBeNull();
+    });
+
+    test('request for a vanished tournament is consumed without opening anything', async () => {
+        renderOpen();
+        await screen.findByText('Blunder Cup');
+        tournamentOpenRequestStore.set(99);
+
+        await vi.waitFor(() => expect(get(tournamentOpenRequestStore)).toBeNull());
+        expect(get(selectedTournamentStore)).toBeNull();
+    });
+});
+
+// ── Filter field in the header strip ──────────────────────────────────────────
+
+describe('TournamentPanel — filter', () => {
+    test('typing narrows the list by name, location or date, with a shown/total counter', async () => {
+        renderOpen();
+        await screen.findByText('Blunder Cup');
+        const field = /** @type {HTMLInputElement} */ (screen.getByTestId('tournament-filter'));
+
+        await fireEvent.input(field, { target: { value: 'amst' } });
+        expect(screen.queryByText('Blunder Cup')).toBeNull();
+        expect(screen.getByText('Amsterdam Open')).toBeTruthy();
+        expect(screen.getByText('1 / 2')).toBeTruthy();
+
+        await fireEvent.input(field, { target: { value: 'paris' } });
+        expect(screen.getByText('Blunder Cup')).toBeTruthy();
+        expect(screen.queryByText('Amsterdam Open')).toBeNull();
+
+        await fireEvent.input(field, { target: { value: '2026-02' } });
+        expect(screen.getByText('Amsterdam Open')).toBeTruthy();
+        expect(screen.queryByText('Blunder Cup')).toBeNull();
+    });
+
+    test('Escape empties the field and restores the list', async () => {
+        renderOpen();
+        await screen.findByText('Blunder Cup');
+        const field = /** @type {HTMLInputElement} */ (screen.getByTestId('tournament-filter'));
+        await fireEvent.input(field, { target: { value: 'zzz' } });
+        expect(screen.queryByText('Blunder Cup')).toBeNull();
+
+        await fireEvent.keyDown(field, { key: 'Escape' });
+        expect(field.value).toBe('');
+        expect(screen.getByText('Blunder Cup')).toBeTruthy();
+        expect(screen.getByText('Amsterdam Open')).toBeTruthy();
     });
 });

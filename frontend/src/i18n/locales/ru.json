@@ -798,7 +798,12 @@
         "confirmDelete": "Удалить турнир «{name}»?",
         "newButton": "Новый турнир",
         "matchCountOne": "1 матч",
-        "matchCountMany": "{n} матчей"
+        "matchCountMany": "{n} матчей",
+        "countOfTotal": "{shown} / {total}",
+        "filterPlaceholder": "Фильтр: название, место, дата…",
+        "filterAria": "Фильтр турниров",
+        "noTournamentsFiltered": "Подходящих турниров нет.",
+        "gone": "Этого турнира больше нет."
     },
     "anki": {
         "limitSession": "Ограничить сессию",

@@ -7,10 +7,11 @@
     import { createInlineEdit } from '../utils/inlineEdit.svelte.js';
     import { autofocus } from '../utils/autofocus.js';
     import { onChange } from '../utils/onChange.js';
-    import { onMount, onDestroy } from 'svelte';
+    import { onMount, onDestroy, untrack } from 'svelte';
     import { createReorder } from '../utils/reorder.js';
     import EntityAutocomplete from './EntityAutocomplete.svelte';
     import TournamentReview from './TournamentReview.svelte';
+    import MatchPanel from './MatchPanel.svelte';
     import PanelTable, { navigationDelta, stepSelection } from './panels/PanelTable.svelte';
     import PanelHeader from './panels/PanelHeader.svelte';
     import CountLink from './panels/CountLink.svelte';
@@ -34,7 +35,7 @@
         GetPositionIDsByTournament
     } from '../../wailsjs/go/database/Database.js';
     import { openPanels, PANEL, closePanel, statusBarTextStore, statusBarModeStore } from '../stores/uiStore';
-    import { tournamentsStore, selectedTournamentStore, tournamentMatchesStore } from '../stores/tournamentStore';
+    import { tournamentsStore, selectedTournamentStore, tournamentMatchesStore, tournamentOpenRequestStore } from '../stores/tournamentStore';
     import {
         directionSummariesStore,
         openDirectionIdStore,
@@ -99,7 +100,17 @@
     let sort = $state(/** @type {{ column: string | null, direction: string }} */ ({ column: null, direction: 'asc' }));
     let highlightedId = $state(/** @type {number | null} */ (null)); // a single click only highlights; opening is the double-click
     let listTable = $state(/** @type {{ scrollToRow: (row: Tournament) => Promise<void>, focusRow: (row: Tournament) => Promise<void> } | null} */ (null)); // PanelTable of the tournament list, mounted while none is selected
-    const sortedTournaments = $derived(sortTournaments(tournaments, sort));
+    // The list narrows as the user types: name, location or date, every word must match.
+    let filterText = $state('');
+    const filteredTournaments = $derived.by(() => {
+        const words = filterText.toLowerCase().split(/\s+/).filter(Boolean);
+        if (words.length === 0) return tournaments;
+        return tournaments.filter((tr) => {
+            const haystack = `${tr.name ?? ''} ${tr.location ?? ''} ${tr.date ?? ''}`.toLowerCase();
+            return words.every((w) => haystack.includes(w));
+        });
+    });
+    const sortedTournaments = $derived(sortTournaments(filteredTournaments, sort));
 
     const tournamentColumns = $derived([
         { key: 'name', label: $t('tournament.name'), sortable: true },
@@ -196,6 +207,7 @@
                     selectedTournamentStore.set(null);
                     tournamentMatchesStore.set([]);
                 } else {
+                    listLoaded = false;
                     selectedTournamentStore.set(null);
                     tournamentMatchesStore.set([]);
                     tournamentEdit.cancel();
@@ -206,12 +218,41 @@
         )
     );
 
+    // True once the list has been fetched since the panel was shown: an open request is judged against it, not a stale list.
+    let listLoaded = $state(false);
+
+    $effect(() => {
+        void selectedTournament?.id;
+        untrack(() => (sheetMatchId = null));
+    });
+
+    // The match whose sheet (the Matches panel's own) sits under the table: one click on its row.
+    let sheetMatchId = $state(/** @type {number | null} */ (null));
+    // Bumped when the sheet's match changed under it (players swapped): the sheet is read again.
+    let sheetVersion = $state(0);
+    /** @type {{ handleSheetKey: (e: KeyboardEvent) => boolean } | undefined} */
+    let sheet = $state();
+
+    /** The sheet follows the match list after a deletion made from the sheet itself. */
+    async function onSheetDeleted() {
+        sheetMatchId = null;
+        if (!selectedTournament) return;
+        try {
+            tournamentMatchesStore.set((await GetTournamentMatches(selectedTournament.id)) || []);
+            await loadTournaments();
+        } catch (error) {
+            logger.error('Error reloading tournament matches:', error);
+        }
+    }
+
     async function loadTournaments() {
         try {
             const loaded = await GetAllTournaments();
             tournamentsStore.set(loaded || []);
         } catch (error) {
             logger.error('Error loading tournaments:', error);
+        } finally {
+            listLoaded = true;
         }
     }
 
@@ -311,6 +352,11 @@
             addMatchSearch = '';
             return;
         }
+        await openTournament(tournament);
+    }
+
+    /** Opens the tournament's detail, whatever was open before. @param {Tournament} tournament */
+    async function openTournament(tournament) {
         selectedTournamentStore.set(tournament);
         addMatchSearch = '';
         await loadAllMatches();
@@ -321,6 +367,18 @@
             logger.error('Error loading tournament matches:', error);
         }
     }
+
+    // A tournament requested by another panel (Stats) opens as a click on its row does, once the list is loaded.
+    $effect(() => {
+        const requested = $tournamentOpenRequestStore;
+        if (requested == null || !$openPanels.has(PANEL.TOURNAMENT) || !listLoaded) return;
+        untrack(() => {
+            tournamentOpenRequestStore.set(null);
+            const found = tournaments.find((tr) => tr.id === requested);
+            if (found) openTournament(found);
+            else statusBarTextStore.set(tMsg('tournament.gone'));
+        });
+    });
 
     function cancelCreation() {
         newTournamentName = '';
@@ -424,6 +482,7 @@
     async function swapMatchPlayersInTournament(match) {
         try {
             await SwapMatchPlayers(match.id);
+            sheetVersion += 1;
             // Reload tournament matches
             if (selectedTournament) {
                 const matches = await GetTournamentMatches(selectedTournament.id);
@@ -563,6 +622,10 @@
         // Already handled: a dialog delegated on the app root runs first and claims its keys this way.
         if (event.defaultPrevented) return;
 
+        // The open match sheet owns its video keys ([ ] and v), read before panelKeyGuard
+        // as in the Matches panel (AltGr arrives as Ctrl+Alt on Windows).
+        if (sheetMatchId != null && sheet?.handleSheetKey(event)) return;
+
         // Let Ctrl/Meta combos, Space, '?' and typing in an editable field pass
         // through to the global handler — see keyboardService.panelKeyGuard.
         if (panelKeyGuard(event)) return;
@@ -583,6 +646,8 @@
                 tournamentEdit.cancel();
             } else if (addMatchSearch) {
                 addMatchSearch = '';
+            } else if (sheetMatchId != null) {
+                sheetMatchId = null;
             } else if (selectedTournament) {
                 selectedTournamentStore.set(null);
                 tournamentMatchesStore.set([]);
@@ -637,7 +702,28 @@
         {#if !selectedTournament}
             <!-- Tournaments list -->
             <div class="tournament-list-pane">
-                <PanelHeader title={$t('tournament.title')} count={tournaments.length > 0 ? String(tournaments.length) : null}>
+                <PanelHeader
+                    title={$t('tournament.title')}
+                    count={tournaments.length === 0
+                        ? null
+                        : filterText.trim()
+                          ? $t('tournament.countOfTotal', { shown: filteredTournaments.length, total: tournaments.length })
+                          : String(tournaments.length)}
+                >
+                    <input
+                        class="tournament-filter"
+                        type="search"
+                        data-testid="tournament-filter"
+                        bind:value={filterText}
+                        onkeydown={(e) => {
+                            if (e.key === 'Escape' && filterText) {
+                                e.stopPropagation();
+                                filterText = '';
+                            }
+                        }}
+                        placeholder={$t('tournament.filterPlaceholder')}
+                        aria-label={$t('tournament.filterAria')}
+                    />
                     {#snippet actions()}
                         <NewButton label={$t('tournament.newButton')} onclick={() => (creating = true)} />
                     {/snippet}
@@ -654,8 +740,9 @@
                     onActivate={(tournament) => {
                         if (!tournamentEdit.isEditing(tournament.id)) selectTournament(tournament);
                     }}
-                    emptyText={$t('tournament.noTournaments')}
+                    emptyText={filterText.trim() ? $t('tournament.noTournamentsFiltered') : $t('tournament.noTournaments')}
                     emptyActions
+                    emptyClear={filterText.trim() ? { label: $t('emptyState.clearFilter'), onClick: () => (filterText = '') } : null}
                 >
                     {#snippet cells(tournament)}
                         {#if tournamentEdit.isEditing(tournament.id)}
@@ -863,7 +950,15 @@
                 {#if reviewOpen}
                     <TournamentReview tournamentId={selectedTournament.id} players={tournamentPlayers} />
                 {/if}
-                <PanelTable rows={tournamentMatches} columns={matchColumns} onActivate={openMatch} onReorder={matchOrder.reorder} emptyText={$t('tournament.noMatches')}>
+                <PanelTable
+                    rows={tournamentMatches}
+                    columns={matchColumns}
+                    selectedKey={sheetMatchId}
+                    onSelect={(match) => (sheetMatchId = sheetMatchId === match.id ? null : match.id)}
+                    onActivate={openMatch}
+                    onReorder={matchOrder.reorder}
+                    emptyText={$t('tournament.noMatches')}
+                >
                     {#snippet cells(match, index)}
                         <td class="index-cell narrow-col no-select">{index + 1}</td>
                         <td class="no-select">{match.player1_name}</td>
@@ -930,6 +1025,13 @@
                         </td>
                     {/snippet}
                 </PanelTable>
+                {#if sheetMatchId != null && tournamentMatches.some((m) => m.id === sheetMatchId)}
+                    <div class="match-sheet" data-testid="tournament-match-sheet">
+                        {#key sheetVersion}
+                            <MatchPanel bind:this={sheet} embeddedMatchId={sheetMatchId} onDeleted={onSheetDeleted} />
+                        {/key}
+                    </div>
+                {/if}
                 <div class="add-area">
                     <div class="add-match-wrap">
                         <EntityAutocomplete
@@ -1009,6 +1111,24 @@
         height: 100%;
         display: flex;
         overflow: hidden;
+    }
+
+    .tournament-filter {
+        flex: 0 1 280px;
+        min-width: 0;
+        padding: var(--space-1) var(--space-2);
+        font-size: var(--font-size-small);
+        background: var(--color-surface);
+        color: var(--color-text);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+    }
+
+    .match-sheet {
+        flex: 1 1 55%;
+        min-height: 0;
+        overflow: hidden;
+        border-top: 1px solid var(--color-border);
     }
 
     .open-hint.concealed {

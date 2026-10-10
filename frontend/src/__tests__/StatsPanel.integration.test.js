@@ -36,6 +36,7 @@ vi.mock('../stores/uiStore.js', () => {
             STATS: 'stats'
         },
         statusBarTextStore: writable(''),
+        matchOpenRequestStore: writable(null),
         currentPositionIndexStore: writable(0),
         openPanels: writable(new Set()),
         dbMutationCounterStore: writable(0)
@@ -44,7 +45,7 @@ vi.mock('../stores/uiStore.js', () => {
 
 vi.mock('../stores/tournamentStore.js', () => {
     const { writable } = require('svelte/store');
-    return { selectedTournamentStore: writable(null) };
+    return { selectedTournamentStore: writable(null), tournamentOpenRequestStore: writable(null) };
 });
 
 vi.mock('../stores/databaseStore.js', () => {
@@ -67,7 +68,7 @@ import { statsFilterStore, statsResultStore, statsLoadingStore, statsErrorStore,
 import { loadPositionsFromStatsSelection, loadPositionsFromTournament, openTournamentInPanel } from '../services/positionLoader.js';
 
 import { activeTabStore } from '../stores/uiStore.js';
-import { selectedTournamentStore } from '../stores/tournamentStore.js';
+import { selectedTournamentStore, tournamentOpenRequestStore } from '../stores/tournamentStore.js';
 import { positionsStore } from '../stores/positionStore.js';
 
 // ── Fixture ───────────────────────────────────────────────────────────────────
@@ -315,10 +316,10 @@ describe('Integration: Progression tab — tournament context menu', () => {
         vi.mocked(LoadPositionIDsByFilters).mockResolvedValue([20, 21, 22]);
     });
 
-    test('openTournamentInPanel sets selectedTournamentStore', () => {
+    test('openTournamentInPanel requests the tournament', () => {
         const tourID = SAMPLE_RESULT.PerTournament[0].ID; // 10
         openTournamentInPanel(tourID);
-        expect(get(selectedTournamentStore)).toBe(tourID);
+        expect(get(tournamentOpenRequestStore)).toBe(tourID);
     });
 
     test('openTournamentInPanel switches active tab to tournaments', () => {

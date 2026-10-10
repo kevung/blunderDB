@@ -592,6 +592,11 @@ type StatsStore interface {
 	// PositionIDsByMatch returns the position ids of a match.
 	PositionIDsByMatch(ctx context.Context, scope string, matchID int64) ([]int64, error)
 
+	// AnalysisEngines returns the distinct engine labels the analyses of the
+	// scope carry (the values StatsFilter.AnalysisEngine matches exactly),
+	// sorted. Unlabelled analyses are left out.
+	AnalysisEngines(ctx context.Context, scope string) ([]string, error)
+
 	// PlayerNames returns every player name ranked by match frequency.
 	PlayerNames(ctx context.Context, scope string) ([]PlayerFrequency, error)
 
