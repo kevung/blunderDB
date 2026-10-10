@@ -802,7 +802,8 @@
         "countOfTotal": "{shown} / {total}",
         "filterPlaceholder": "Filtrer : nom, lieu, date…",
         "filterAria": "Filtrer les tournois",
-        "noTournamentsFiltered": "Aucun tournoi ne correspond au filtre."
+        "noTournamentsFiltered": "Aucun tournoi correspondant.",
+        "gone": "Ce tournoi n'existe plus."
     },
     "anki": {
         "limitSession": "Limiter la séance",

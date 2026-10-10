@@ -802,7 +802,8 @@
         "countOfTotal": "{shown} / {total}",
         "filterPlaceholder": "Фильтр: название, место, дата…",
         "filterAria": "Фильтр турниров",
-        "noTournamentsFiltered": "Нет турниров, соответствующих фильтру."
+        "noTournamentsFiltered": "Подходящих турниров нет.",
+        "gone": "Этого турнира больше нет."
     },
     "anki": {
         "limitSession": "Ограничить сессию",

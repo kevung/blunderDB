@@ -116,7 +116,8 @@ export function openTournamentInPanel(tournamentID) {
 }
 
 /**
- * Navigate the UI to the Match panel and show the given match.
+ * Open the given match as a double-click on its row does: the Matches panel loads it,
+ * enters match mode and the board switches to the analysis view.
  *
  * @param {number} matchID
  */

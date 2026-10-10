@@ -2333,7 +2333,7 @@ clic change en liste des positions du tournoi ; à droite, les notes, **Diriger*
 et **Bilan**. Dessous, ses matchs, un par ligne, que ▲ et ▼ réordonnent, que ⇄ échange de joueurs et que × retire du
 tournoi. Un clic sur un match affiche sous la table sa fiche, la même que dans le
 panneau Matchs (onglets Transcription, Graphes, À revoir, Détails, Infos, Stats) ;
-un double-clic ou *ENTRÉE* ouvre le match dans le plateau. Le champ **Ajouter un match…** y range un match de la base, et ←
+un second clic ou *ÉCHAP* la referme, un double-clic ou *ENTRÉE* ouvre le match dans le plateau. Le champ **Ajouter un match…** y range un match de la base, et ←
 ramène à la liste des tournois.
 
 Les tournois se remplissent d'eux-mêmes à l'import. Les fichiers XG, GnuBG et

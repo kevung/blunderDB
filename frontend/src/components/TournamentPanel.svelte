@@ -228,6 +228,22 @@
 
     // The match whose sheet (the Matches panel's own) sits under the table: one click on its row.
     let sheetMatchId = $state(/** @type {number | null} */ (null));
+    // Bumped when the sheet's match changed under it (players swapped): the sheet is read again.
+    let sheetVersion = $state(0);
+    /** @type {{ handleSheetKey: (e: KeyboardEvent) => boolean } | undefined} */
+    let sheet = $state();
+
+    /** The sheet follows the match list after a deletion made from the sheet itself. */
+    async function onSheetDeleted() {
+        sheetMatchId = null;
+        if (!selectedTournament) return;
+        try {
+            tournamentMatchesStore.set((await GetTournamentMatches(selectedTournament.id)) || []);
+            await loadTournaments();
+        } catch (error) {
+            logger.error('Error reloading tournament matches:', error);
+        }
+    }
 
     async function loadTournaments() {
         try {
@@ -360,6 +376,7 @@
             tournamentOpenRequestStore.set(null);
             const found = tournaments.find((tr) => tr.id === requested);
             if (found) openTournament(found);
+            else statusBarTextStore.set(tMsg('tournament.gone'));
         });
     });
 
@@ -465,6 +482,7 @@
     async function swapMatchPlayersInTournament(match) {
         try {
             await SwapMatchPlayers(match.id);
+            sheetVersion += 1;
             // Reload tournament matches
             if (selectedTournament) {
                 const matches = await GetTournamentMatches(selectedTournament.id);
@@ -604,6 +622,10 @@
         // Already handled: a dialog delegated on the app root runs first and claims its keys this way.
         if (event.defaultPrevented) return;
 
+        // The open match sheet owns its video keys ([ ] and v), read before panelKeyGuard
+        // as in the Matches panel (AltGr arrives as Ctrl+Alt on Windows).
+        if (sheetMatchId != null && sheet?.handleSheetKey(event)) return;
+
         // Let Ctrl/Meta combos, Space, '?' and typing in an editable field pass
         // through to the global handler — see keyboardService.panelKeyGuard.
         if (panelKeyGuard(event)) return;
@@ -624,6 +646,8 @@
                 tournamentEdit.cancel();
             } else if (addMatchSearch) {
                 addMatchSearch = '';
+            } else if (sheetMatchId != null) {
+                sheetMatchId = null;
             } else if (selectedTournament) {
                 selectedTournamentStore.set(null);
                 tournamentMatchesStore.set([]);
@@ -718,6 +742,7 @@
                     }}
                     emptyText={filterText.trim() ? $t('tournament.noTournamentsFiltered') : $t('tournament.noTournaments')}
                     emptyActions
+                    emptyClear={filterText.trim() ? { label: $t('emptyState.clearFilter'), onClick: () => (filterText = '') } : null}
                 >
                     {#snippet cells(tournament)}
                         {#if tournamentEdit.isEditing(tournament.id)}
@@ -929,7 +954,7 @@
                     rows={tournamentMatches}
                     columns={matchColumns}
                     selectedKey={sheetMatchId}
-                    onSelect={(match) => (sheetMatchId = match.id)}
+                    onSelect={(match) => (sheetMatchId = sheetMatchId === match.id ? null : match.id)}
                     onActivate={openMatch}
                     onReorder={matchOrder.reorder}
                     emptyText={$t('tournament.noMatches')}
@@ -1002,7 +1027,9 @@
                 </PanelTable>
                 {#if sheetMatchId != null && tournamentMatches.some((m) => m.id === sheetMatchId)}
                     <div class="match-sheet" data-testid="tournament-match-sheet">
-                        <MatchPanel embeddedMatchId={sheetMatchId} />
+                        {#key sheetVersion}
+                            <MatchPanel bind:this={sheet} embeddedMatchId={sheetMatchId} onDeleted={onSheetDeleted} />
+                        {/key}
                     </div>
                 {/if}
                 <div class="add-area">
@@ -1089,12 +1116,12 @@
     .tournament-filter {
         flex: 0 1 280px;
         min-width: 0;
-        padding: 2px 6px;
+        padding: var(--space-1) var(--space-2);
         font-size: var(--font-size-small);
         background: var(--color-surface);
         color: var(--color-text);
         border: 1px solid var(--color-border);
-        border-radius: 3px;
+        border-radius: var(--radius);
     }
 
     .match-sheet {

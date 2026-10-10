@@ -802,7 +802,8 @@
         "countOfTotal": "{shown} / {total}",
         "filterPlaceholder": "Suodata: nimi, paikka, päivä…",
         "filterAria": "Suodata turnauksia",
-        "noTournamentsFiltered": "Mikään turnaus ei vastaa suodatinta."
+        "noTournamentsFiltered": "Ei vastaavaa turnausta.",
+        "gone": "Tätä turnausta ei ole enää olemassa."
     },
     "anki": {
         "limitSession": "Rajoita istuntoa",

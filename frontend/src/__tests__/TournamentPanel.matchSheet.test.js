@@ -41,7 +41,8 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     AddMatchToTournament: vi.fn(() => Promise.resolve()),
     UpdateTournament: vi.fn(() => Promise.resolve()),
     CreateTournament: vi.fn(() => Promise.resolve()),
-    DeleteTournament: vi.fn(() => Promise.resolve())
+    DeleteTournament: vi.fn(() => Promise.resolve()),
+    TrashMatch: vi.fn(() => Promise.resolve())
 }));
 
 import TournamentPanel from '../components/TournamentPanel.svelte';
@@ -49,6 +50,10 @@ import { openPanels, PANEL } from '../stores/uiStore.js';
 import { tournamentsStore, selectedTournamentStore, tournamentMatchesStore, tournamentOpenRequestStore } from '../stores/tournamentStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { matchContextStore } from '../stores/positionStore.js';
+import { matchListStore } from '../stores/matchListStore.js';
+import { statusBarTextStore } from '../stores/uiStore.js';
+import { answerConfirm } from './confirmHelper.js';
+import { GetTournamentMatches, GetMatchMovePositions, TrashMatch, SwapMatchPlayers } from '../../wailsjs/go/database/Database.js';
 
 beforeEach(() => {
     vi.clearAllMocks();
@@ -96,5 +101,77 @@ describe('TournamentPanel — match sheet', () => {
         const row = await openTournamentDetail();
         await fireEvent.dblClick(row);
         await vi.waitFor(() => expect(get(matchContextStore).isMatchMode).toBe(true));
+    });
+});
+
+describe('TournamentPanel — hosted sheet', () => {
+    test('mounting it touches nothing global: no shared sort, no list load, no key registration', async () => {
+        const setSort = vi.spyOn(matchListStore, 'setSort');
+        const row = await openTournamentDetail();
+        await fireEvent.click(row);
+        await screen.findByTestId('match-tab-info');
+
+        expect(setSort).not.toHaveBeenCalled();
+        // The Matches panel's own `v` handler is not registered: one `v` reaches one handler.
+        const stop = vi.fn();
+        const ev = new KeyboardEvent('keydown', { key: 'v', bubbles: true, cancelable: true });
+        ev.stopPropagation = stop;
+        document.body.dispatchEvent(ev);
+        expect(stop).not.toHaveBeenCalled();
+    });
+
+    test('a second click on the same row closes the sheet', async () => {
+        const row = await openTournamentDetail();
+        await fireEvent.click(row);
+        await screen.findByTestId('match-tab-info');
+        await fireEvent.click(row);
+        expect(screen.queryByTestId('match-tab-info')).toBeNull();
+    });
+
+    test('Escape closes the sheet first, then the tournament', async () => {
+        const row = await openTournamentDetail();
+        await fireEvent.click(row);
+        await screen.findByTestId('match-tab-info');
+
+        await fireEvent.keyDown(document.body, { key: 'Escape' });
+        expect(screen.queryByTestId('match-tab-info')).toBeNull();
+        expect(get(selectedTournamentStore)).not.toBeNull();
+
+        await fireEvent.keyDown(document.body, { key: 'Escape' });
+        expect(get(selectedTournamentStore)).toBeNull();
+    });
+
+    test('swapping the players reads the sheet again', async () => {
+        const row = await openTournamentDetail();
+        await fireEvent.click(row);
+        await screen.findByTestId('match-tab-info');
+        const before = vi.mocked(GetMatchMovePositions).mock.calls.length;
+
+        await fireEvent.click(screen.getAllByTitle(/swap/i)[0]);
+
+        await vi.waitFor(() => expect(SwapMatchPlayers).toHaveBeenCalledWith(7));
+        await vi.waitFor(() => expect(vi.mocked(GetMatchMovePositions).mock.calls.length).toBeGreaterThan(before));
+    });
+
+    test('deleting the match from its sheet reloads the tournament and closes the sheet', async () => {
+        const row = await openTournamentDetail();
+        await fireEvent.click(row);
+        await screen.findByTestId('match-tab-info');
+        vi.mocked(GetTournamentMatches).mockResolvedValue(/** @type {any} */ ([OTHER]));
+
+        await fireEvent.click(screen.getByTestId('match-more'));
+        await fireEvent.click(await screen.findByText(/delete the match/i));
+        await answerConfirm(true);
+
+        await vi.waitFor(() => expect(TrashMatch).toHaveBeenCalledWith(7));
+        await vi.waitFor(() => expect(screen.queryByText('Bob')).toBeNull());
+        expect(screen.queryByTestId('match-tab-info')).toBeNull();
+    });
+
+    test('a requested tournament that no longer exists says so in the status bar', async () => {
+        statusBarTextStore.set('');
+        tournamentOpenRequestStore.set(99);
+        render(TournamentPanel, { props: {} });
+        await vi.waitFor(() => expect(JSON.stringify(get(statusBarTextStore))).toContain('tournament.gone'));
     });
 });

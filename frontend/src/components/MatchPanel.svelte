@@ -82,7 +82,7 @@
      * `embeddedMatchId`: the panel is hosted by another panel (Tournaments) and shows only the sheet of that
      * match; the list, the global loading and the keyboard registration stay with the real Matches panel.
      */
-    let { embeddedMatchId = null } = $props();
+    let { embeddedMatchId = null, onDeleted = null } = $props();
     const embedded = $derived(embeddedMatchId != null);
 
     /** @type {any[]} */
@@ -377,6 +377,7 @@
     // Order is the database's (or the store's, for PR/MWC): follow the header.
     $effect(() => {
         const { column, direction } = sort;
+        if (untrack(() => embedded)) return;
         untrack(() => matchListStore.setSort(column, direction));
     });
 
@@ -903,6 +904,7 @@
                 detailGames = [];
                 detailStats = null;
             }
+            onDeleted?.(match);
             // Trigger match panel refresh to update all dependent components
             matchPanelRefreshTriggerStore.update((n) => n + 1);
             dbMutationCounterStore.update((n) => n + 1);
@@ -961,6 +963,32 @@
 
     function closeMatchPanel() {
         closePanel(PANEL.MATCH);
+    }
+
+    /**
+     * The keys of the sheet itself, for the host panel of an embedded sheet: video speed ([ ]) and `v`.
+     * Returns true when the key was claimed.
+     */
+    export function handleSheetKey(/** @type {KeyboardEvent} */ event) {
+        const typing = event.target instanceof Element && event.target.matches('input, textarea, select, [contenteditable]');
+        if (typing) return false;
+        const rateStep = rateKeyDirection(event);
+        if (rateStep !== 0 && videoOpen && videoPane) {
+            event.stopPropagation();
+            event.preventDefault();
+            videoPane.stepRate(rateStep);
+            return true;
+        }
+        if (isBareLetter(event, 'v') && videoSource && selectedIdx >= 0) {
+            const mp = detailMovePositions[selectedIdx];
+            if (moveTickMs(mp) !== null) {
+                event.stopPropagation();
+                event.preventDefault();
+                viewInVideo(mp);
+                return true;
+            }
+        }
+        return false;
     }
 
     function handleKeyDown(/** @type {KeyboardEvent} */ event) {

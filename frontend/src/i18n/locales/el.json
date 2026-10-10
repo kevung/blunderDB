@@ -802,7 +802,8 @@
         "countOfTotal": "{shown} / {total}",
         "filterPlaceholder": "Φίλτρο: όνομα, τοποθεσία, ημερομηνία…",
         "filterAria": "Φιλτράρισμα τουρνουά",
-        "noTournamentsFiltered": "Κανένα τουρνουά δεν ταιριάζει με το φίλτρο."
+        "noTournamentsFiltered": "Κανένα τουρνουά δεν ταιριάζει.",
+        "gone": "Αυτό το τουρνουά δεν υπάρχει πλέον."
     },
     "anki": {
         "limitSession": "Περιορισμός της συνεδρίας",

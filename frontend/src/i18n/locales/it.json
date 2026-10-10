@@ -802,7 +802,8 @@
         "countOfTotal": "{shown} / {total}",
         "filterPlaceholder": "Filtra: nome, luogo, data…",
         "filterAria": "Filtra i tornei",
-        "noTournamentsFiltered": "Nessun torneo corrisponde al filtro."
+        "noTournamentsFiltered": "Nessun torneo corrispondente.",
+        "gone": "Questo torneo non esiste più."
     },
     "anki": {
         "limitSession": "Limitare la sessione",
