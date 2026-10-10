@@ -470,6 +470,10 @@ export function ExplainDecision(arg1, arg2) {
   return window['go']['database']['Database']['ExplainDecision'](arg1, arg2);
 }
 
+export function ExportAnkiPackage(arg1, arg2, arg3, arg4) {
+  return window['go']['database']['Database']['ExportAnkiPackage'](arg1, arg2, arg3, arg4);
+}
+
 export function ExportCollections(arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
   return window['go']['database']['Database']['ExportCollections'](arg1, arg2, arg3, arg4, arg5, arg6, arg7);
 }
@@ -480,10 +484,6 @@ export function ExportDatabase(arg1) {
 
 export function ExportDatabaseCtx(arg1, arg2) {
   return window['go']['database']['Database']['ExportDatabaseCtx'](arg1, arg2);
-}
-
-export function ExportAnkiPackage(arg1, arg2, arg3, arg4) {
-  return window['go']['database']['Database']['ExportAnkiPackage'](arg1, arg2, arg3, arg4);
 }
 
 export function ExportMatchMAT(arg1, arg2) {
@@ -500,6 +500,10 @@ export function ExportTranscriptionMAT(arg1, arg2) {
 
 export function FindDuplicateMatches() {
   return window['go']['database']['Database']['FindDuplicateMatches']();
+}
+
+export function FindMatchesToRepair() {
+  return window['go']['database']['Database']['FindMatchesToRepair']();
 }
 
 export function FinishImportBatch(arg1, arg2) {
@@ -544,10 +548,6 @@ export function GetAllComments() {
 
 export function GetAllMatches() {
   return window['go']['database']['Database']['GetAllMatches']();
-}
-
-export function GetStatsAnalysisEngines() {
-  return window['go']['database']['Database']['GetStatsAnalysisEngines']();
 }
 
 export function GetAllPlayerNames() {
@@ -708,6 +708,10 @@ export function GetRandomAnkiCard(arg1, arg2) {
 
 export function GetRencontre(arg1) {
   return window['go']['database']['Database']['GetRencontre'](arg1);
+}
+
+export function GetStatsAnalysisEngines() {
+  return window['go']['database']['Database']['GetStatsAnalysisEngines']();
 }
 
 export function GetStatsBreakdownPositionCounts(arg1) {
@@ -1224,6 +1228,10 @@ export function RepairCrawfordSentinel() {
 
 export function RepairGamePhases() {
   return window['go']['database']['Database']['RepairGamePhases']();
+}
+
+export function RepairMatch(arg1, arg2) {
+  return window['go']['database']['Database']['RepairMatch'](arg1, arg2);
 }
 
 export function ResetAnkiDeck(arg1) {

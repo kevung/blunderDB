@@ -3,6 +3,7 @@
     import { confirmAction, confirmModalStore } from '../services/confirmService.js';
     import { logger } from '../utils/logger.js';
     import { swapPlayersErrorKey } from '../utils/swapPlayersError.js';
+    import { repairCounts, repairDiffers, repairMatchErrorKey } from '../utils/repairMatch.js';
     import { focusPanelUnlessTyping } from '../utils/panelFocus.js';
     import { analysisChallengeStore, analysisChallengeHiddenStore } from '../stores/analysisChallengeStore.js';
     import { toDateInputValue, formatDate, formatDiceShort, GRADE_MARKS, indexMoveGrades, countGrades, fmtGradeCost } from '../utils/matchTable.js';
@@ -24,6 +25,7 @@
         SetMatchTournamentByName,
         SetMatchVideoSource,
         SwapMatchPlayers,
+        RepairMatch,
         SaveLastVisitedPosition,
         GetMatchDetailStats,
         GetMatchMoveGrades,
@@ -918,6 +920,30 @@
         }
     }
 
+    // The dry run first: nothing to confirm when the match is its file.
+    async function repairFromSource(/** @type {Match} */ match) {
+        try {
+            const plan = await RepairMatch(match.id, true);
+            if (!repairDiffers(plan)) {
+                statusBarTextStore.set(tMsg('match.repairUpToDate'));
+                return;
+            }
+            const question = get(t)('match.confirmRepair', repairCounts(plan));
+            if (!(await confirmAction(question, { confirmLabel: get(t)('match.repair') }))) return;
+            const done = await RepairMatch(match.id, false);
+            await matchListStore.refreshRow(match.id);
+            if (detailMatch && detailMatch.id === match.id) {
+                detailMatch = matches.find((m) => m.id === match.id) || detailMatch;
+                await loadMatchDetail(detailMatch);
+            }
+            dbMutationCounterStore.update((n) => n + 1);
+            statusBarTextStore.set(tMsg('match.repaired', repairCounts(done)));
+        } catch (error) {
+            logger.error('Error repairing match:', error);
+            statusBarTextStore.set(tMsg(repairMatchErrorKey(error)));
+        }
+    }
+
     async function swapMatchPlayers(/** @type {Match} */ match, /** @type {Event} */ event) {
         event.stopPropagation();
         try {
@@ -1671,7 +1697,20 @@
                                 {#if detailMatch.engine_version}
                                     <tr><td class="meta-label">{$t('match.writtenBy')}</td><td class="meta-value">{detailMatch.engine_version}</td></tr>
                                 {/if}
-                                <tr><td class="meta-label">{$t('match.sourceFile')}</td><td class="meta-value source-file">{detailMatch.file_path || '—'}</td></tr>
+                                <tr
+                                    ><td class="meta-label">{$t('match.sourceFile')}</td><td class="meta-value source-file"
+                                        >{detailMatch.file_path || '—'}
+                                        {#if detailMatch.file_path}
+                                            <button
+                                                class="icon-btn"
+                                                data-testid="match-repair"
+                                                onclick={() => repairFromSource(detailMatch)}
+                                                title={$t('match.repairTooltip')}
+                                                aria-label={$t('match.repair')}>⟲</button
+                                            >
+                                        {/if}</td
+                                    ></tr
+                                >
                                 <tr><td class="meta-label">{$t('match.importDate')}</td><td class="meta-value">{formatDate(detailMatch.import_date)}</td></tr>
                                 <tr><td class="meta-label">{$t('match.matchId')}</td><td class="meta-value id-value">{detailMatch.id}</td></tr>
                             </tbody>
