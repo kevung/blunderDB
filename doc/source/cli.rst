@@ -1444,6 +1444,14 @@ défaut) ; deux PR égaux partagent un rang. ``--limit N`` garde les N premiers.
 
    ./blunderdb stats ranking --db <fichier> [--min-decisions 1000] [--limit 20]
 
+**stats engines** — Les moteurs d'analyse présents dans la base, sous le nom
+exact que ``--engine`` attend ; le même choix que le menu *Moteur* du panneau
+Stats.
+
+.. code-block:: bash
+
+   ./blunderdb stats engines --db <fichier> [--format json]
+
 **Options communes:** ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``,
 ``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube``,
 ``--format text|json``, et le filtre de provenance ``--engine <nom>`` (le

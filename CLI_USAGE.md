@@ -4273,6 +4273,25 @@ Examples:
   blunderdb stats effect --db database.db --player "Alice" --format json
 ```
 
+### `blunderdb stats engines`
+
+```
+Usage: blunderdb stats engines --db <file> [options]
+
+The analysis engines present in the database, by the exact name --engine
+expects.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+
+Examples:
+  blunderdb stats engines --db database.db
+  blunderdb stats engines --db database.db --format json
+```
+
 ### `blunderdb stats h2h`
 
 ```

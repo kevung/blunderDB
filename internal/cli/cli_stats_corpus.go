@@ -315,3 +315,50 @@ func (cli *CLI) runStatsRanking(args []string) error {
 	}
 	return w.Flush()
 }
+
+func (cli *CLI) runStatsEngines(args []string) error {
+	fs := flag.NewFlagSet("stats engines", flag.ContinueOnError)
+	dbPath := fs.String("db", "", "Path to the database file (required)")
+	format := fs.String("format", "text", "Output format: text or json")
+	fs.Usage = func() {
+		fmt.Println("Usage: blunderdb stats engines --db <file> [options]")
+		fmt.Println()
+		fmt.Println("The analysis engines present in the database, by the exact name --engine")
+		fmt.Println("expects.")
+		fmt.Println()
+		fmt.Println("Options:")
+		fs.PrintDefaults()
+		fmt.Println()
+		fmt.Println("Examples:")
+		fmt.Println("  blunderdb stats engines --db database.db")
+		fmt.Println("  blunderdb stats engines --db database.db --format json")
+	}
+	if err := fs.Parse(args); err != nil {
+		return err
+	}
+	if *dbPath == "" {
+		fs.Usage()
+		return fmt.Errorf("missing required flag: --db")
+	}
+	if err := cli.initDatabase(*dbPath); err != nil {
+		return err
+	}
+	engines, err := cli.db.GetStatsAnalysisEngines()
+	if err != nil {
+		return statsErr("engines", err)
+	}
+	if engines == nil {
+		engines = []string{}
+	}
+	if strings.ToLower(*format) == "json" {
+		return printJSON(engines)
+	}
+	if len(engines) == 0 {
+		fmt.Println("No analysis in this database.")
+		return nil
+	}
+	for _, e := range engines {
+		fmt.Println(e)
+	}
+	return nil
+}
