@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-10 01:54+0200\n"
+"POT-Creation-Date: 2026-10-10 02:22+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -1445,34 +1445,21 @@ msgstr ""
 "πλευράς."
 
 #: ../../source/raccourcis.rst:1
-msgid "Clic, glisser (aucun dé saisi)"
-msgstr "Κλικ, σύρσιμο (κανένα ζάρι δεν έχει εισαχθεί)"
-
-#: ../../source/raccourcis.rst:1
-msgid ""
-"Jouer le coup directement sur le damier : le pion va du point cliqué à sa"
-" destination, contraint aux coups légaux, et les deux dés se déduisent "
-"des pas joués."
-msgstr ""
-"Παίξτε την κίνηση απευθείας στο ταμπλό: το πούλι πηγαίνει από το σημείο "
-"που πατήθηκε στον προορισμό του, περιορισμένο στις νόμιμες κινήσεις, και "
-"τα δύο ζάρια προκύπτουν από τα βήματα που παίχτηκαν."
-
-#: ../../source/raccourcis.rst:1
 msgid "Clic, glisser (jet saisi)"
 msgstr "Κλικ, σύρσιμο (ζαριά εισηγμένη)"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Jouer le coup sur le damier, contraint aux coups légaux de ce jet : "
-"chaque pas joué ne garde dans la liste que les candidats qui le "
-"contiennent, et un coup légal achevé est enregistré aussitôt. Sur une "
-"action relue, il la remplace."
+"Jouer le coup sur le damier, contraint aux coups légaux de ce jet : un "
+"clic joue le pion du dé de gauche, un glissé le pose sur sa destination, "
+"et chaque pas ne garde dans la liste que les candidats qui le "
+"contiennent. Sans jet saisi, le damier ne joue rien."
 msgstr ""
 "Παίξτε την κίνηση στο ταμπλό, περιορισμένη στις νόμιμες κινήσεις αυτής "
-"της ζαριάς: κάθε βήμα που παίζεται κρατά στη λίστα μόνο τις υποψήφιες "
-"κινήσεις που το περιέχουν, και μια ολοκληρωμένη νόμιμη κίνηση "
-"καταγράφεται αμέσως. Σε μια ενέργεια που επανεξετάζεται, την αντικαθιστά."
+"της ζαριάς: ένα κλικ παίζει το πούλι με το αριστερό ζάρι, μια μεταφορά το"
+" τοποθετεί στον προορισμό του, και κάθε βήμα κρατά στη λίστα μόνο τους "
+"υποψήφιους που το περιέχουν. Χωρίς εισαγμένη ζαριά, το ταμπλό δεν παίζει "
+"τίποτα."
 
 #: ../../source/raccourcis.rst:1
 msgid "Glisser hors des règles (jet saisi)"
@@ -1492,19 +1479,22 @@ msgstr ""
 "το υπενθυμίζει."
 
 #: ../../source/raccourcis.rst:1
-msgid "ENTREE (coup hors des règles)"
-msgstr "ENTER (κίνηση εκτός κανόνων)"
+msgid "Clic sur les dés, ENTREE (coup achevé)"
+msgstr "Κλικ στα ζάρια, ENTER (ολοκληρωμένη κίνηση)"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Enregistrer le coup avec les dés saisis et le plateau obtenu, marqué coup"
-" illégal si aucun coup légal n'atteint ce plateau. Un coup hors des "
-"règles n'est jamais enregistré de lui-même."
+"Enregistrer le coup achevé avec les dés saisis — et, hors des règles, le "
+"plateau obtenu, marqué coup illégal si aucun coup légal n'atteint ce "
+"plateau. Le jet suivant, chiffre ou case du triangle, l'enregistre aussi."
+" Sur une action relue, il la remplace. Un coup n'est jamais enregistré de"
+" lui-même."
 msgstr ""
-"Καταγραφή της κίνησης με τα ζάρια που εισήχθησαν και το ταμπλό που "
-"προέκυψε, σημειωμένη ως παράνομη κίνηση αν καμία νόμιμη κίνηση δεν φτάνει"
-" σε αυτό το ταμπλό. Μια κίνηση εκτός κανόνων δεν καταγράφεται ποτέ από "
-"μόνη της."
+"Καταγραφή της ολοκληρωμένης κίνησης με τα εισαγμένα ζάρια — και, εκτός "
+"κανόνων, του ταμπλό που προέκυψε, σημειωμένου ως παράνομη κίνηση αν καμία"
+" νόμιμη κίνηση δεν φτάνει σε αυτό το ταμπλό. Η επόμενη ζαριά, ψηφίο ή "
+"κελί του τριγώνου, την καταγράφει επίσης. Σε μια ξαναδιαβασμένη ενέργεια,"
+" την αντικαθιστά. Μια κίνηση δεν καταγράφεται ποτέ αυτόματα."
 
 #: ../../source/raccourcis.rst:1
 msgid "RETOUR ARRIERE (coup en cours au plateau)"
@@ -1832,7 +1822,7 @@ msgstr ""
 "BACKSPACE σβήνει τα ζάρια που εισήχθησαν (:ref:`λεπτομέρειες "
 "<transcription_theatre>`)."
 
-#: ../../source/raccourcis.rst:421
+#: ../../source/raccourcis.rst:420
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -1840,7 +1830,7 @@ msgstr ""
 "Μια ζαριά που δεν επιτρέπει καμία κίνηση καταγράφει τον χορό από μόνη "
 "της, χωρίς επιπλέον πλήκτρο."
 
-#: ../../source/raccourcis.rst:424
+#: ../../source/raccourcis.rst:423
 msgid ""
 "Avec une vidéo attachée, seule une validation explicite — *ENTREE*, le "
 "double-clic sur un candidat, le coup achevé au plateau — pose l'instant "
@@ -1859,7 +1849,7 @@ msgstr ""
 "συμπεριλαμβανομένου του *ALTGR* σε πληκτρολόγιο που τα τοποθετεί έτσι. "
 "Χωρίς βίντεο, τα πλήκτρα αυτά κρατούν τη συνηθισμένη τους σημασία."
 
-#: ../../source/raccourcis.rst:432
+#: ../../source/raccourcis.rst:431
 msgid ""
 "Le chiffre a un seul sens : **il commence un jet là où le curseur est**. "
 "En bout de document il n'y a rien sous le curseur, donc il valide le coup"
@@ -1887,7 +1877,7 @@ msgstr ""
 "ανοίγει την επόμενη απόφαση, όπως στο τέλος του εγγράφου, και το ENTER "
 "οδηγεί επίσης εκεί."
 
-#: ../../source/raccourcis.rst:443
+#: ../../source/raccourcis.rst:442
 msgid ""
 "Ce qui est en train d'être tapé se dessine dans le transcript, en "
 "pointillés, à la place où il sera écrit : une correction recouvre la "
@@ -1901,7 +1891,7 @@ msgstr ""
 "της, και η πλευρά διαβάζεται από τη στήλη. Τίποτα δεν καταγράφεται πριν "
 "από την επικύρωση."
 
-#: ../../source/raccourcis.rst:448
+#: ../../source/raccourcis.rst:447
 msgid ""
 "Une insertion au milieu du document continue d'insérer : la validation "
 "ouvre une cellule vide à la suite, et l'action suivante s'insère à son "
@@ -1913,7 +1903,7 @@ msgstr ""
 "τη σειρά της αντί να αντικαταστήσει την επόμενη. Το τέλος της παρτίδας ή "
 "η μετακίνηση του δρομέα το τερματίζει."
 
-#: ../../source/raccourcis.rst:453
+#: ../../source/raccourcis.rst:452
 msgid ""
 "Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
 "rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
@@ -1925,7 +1915,7 @@ msgstr ""
 " από τον δρομέα» στο τέλος του εγγράφου. Η φράση σβήνεται μόνη της και "
 "δίνει τη θέση της στην αναμενόμενη ενέργεια."
 
-#: ../../source/raccourcis.rst:458
+#: ../../source/raccourcis.rst:457
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était — "
@@ -1946,7 +1936,7 @@ msgstr ""
 "μετακίνηση του δρομέα εμπρός ή πίσω μετά από κάποια αλλαγή καταγράφει τη "
 "διόρθωση στο πέρασμα."
 
-#: ../../source/raccourcis.rst:466
+#: ../../source/raccourcis.rst:465
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1974,7 +1964,7 @@ msgstr ""
 "οποία έλειπε. Η στοίβα αναιρέσεων ζει στη μνήμη: χάνεται με το κλείσιμο "
 "του πρόχειρου."
 
-#: ../../source/raccourcis.rst:477
+#: ../../source/raccourcis.rst:476
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1984,7 +1974,7 @@ msgstr ""
 "καταγραφή και η γραμμή του προσχεδίου — περιγράφεται στο "
 ":ref:`panneau_transcription`."
 
-#: ../../source/raccourcis.rst:484
+#: ../../source/raccourcis.rst:483
 msgid "Planche-contact"
 msgstr "Φύλλο επαφής"
 
@@ -2032,7 +2022,7 @@ msgstr "Άνοιγμα της θέσης στο ταμπλό και κλείσι
 msgid "Refermer la planche."
 msgstr "Κλείσιμο του φύλλου."
 
-#: ../../source/raccourcis.rst:501
+#: ../../source/raccourcis.rst:500
 msgid "Panneau d'aide"
 msgstr "Πίνακας βοήθειας"
 
@@ -2364,3 +2354,23 @@ msgstr "Κλείσιμο της βοήθειας."
 #~ "Κανένα ζάρι δεν παίχτηκε: αντιστροφή της"
 #~ " σειράς τους. Πλήρης κίνηση: επικύρωσή "
 #~ "της."
+
+#~ msgid "Clic, glisser (aucun dé saisi)"
+#~ msgstr "Κλικ, σύρσιμο (κανένα ζάρι δεν έχει εισαχθεί)"
+
+#~ msgid ""
+#~ "Jouer le coup directement sur le "
+#~ "damier : le pion va du point "
+#~ "cliqué à sa destination, contraint aux"
+#~ " coups légaux, et les deux dés "
+#~ "se déduisent des pas joués."
+#~ msgstr ""
+#~ "Παίξτε την κίνηση απευθείας στο ταμπλό:"
+#~ " το πούλι πηγαίνει από το σημείο "
+#~ "που πατήθηκε στον προορισμό του, "
+#~ "περιορισμένο στις νόμιμες κινήσεις, και "
+#~ "τα δύο ζάρια προκύπτουν από τα "
+#~ "βήματα που παίχτηκαν."
+
+#~ msgid "ENTREE (coup hors des règles)"
+#~ msgstr "ENTER (κίνηση εκτός κανόνων)"

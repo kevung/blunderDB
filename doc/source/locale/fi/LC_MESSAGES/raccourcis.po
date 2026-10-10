@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-10 01:54+0200\n"
+"POT-Creation-Date: 2026-10-10 02:22+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -1427,34 +1427,20 @@ msgstr ""
 "rivin tieltä, ja yksi napsautus antaa yhden puolen nopan."
 
 #: ../../source/raccourcis.rst:1
-msgid "Clic, glisser (aucun dé saisi)"
-msgstr "Napsautus, vetäminen (ei syötettyä noppaa)"
-
-#: ../../source/raccourcis.rst:1
-msgid ""
-"Jouer le coup directement sur le damier : le pion va du point cliqué à sa"
-" destination, contraint aux coups légaux, et les deux dés se déduisent "
-"des pas joués."
-msgstr ""
-"Pelaa siirto suoraan laudalla: nappula kulkee napsautetusta pisteestä "
-"kohteeseensa laillisten siirtojen rajoissa, ja molemmat nopat päätellään "
-"pelatuista askelista."
-
-#: ../../source/raccourcis.rst:1
 msgid "Clic, glisser (jet saisi)"
 msgstr "Napsautus, vetäminen (heitto syötetty)"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Jouer le coup sur le damier, contraint aux coups légaux de ce jet : "
-"chaque pas joué ne garde dans la liste que les candidats qui le "
-"contiennent, et un coup légal achevé est enregistré aussitôt. Sur une "
-"action relue, il la remplace."
+"Jouer le coup sur le damier, contraint aux coups légaux de ce jet : un "
+"clic joue le pion du dé de gauche, un glissé le pose sur sa destination, "
+"et chaque pas ne garde dans la liste que les candidats qui le "
+"contiennent. Sans jet saisi, le damier ne joue rien."
 msgstr ""
-"Pelaa siirto laudalla tämän heiton laillisten siirtojen rajoissa: "
-"jokainen pelattu askel jättää listaan vain sen sisältävät ehdokkaat, ja "
-"valmis laillinen siirto kirjataan heti. Uudelleen tarkasteltavassa "
-"toiminnossa se korvaa toiminnon."
+"Pelaa siirto laudalla rajoitettuna kyseisen heiton sallittuihin "
+"siirtoihin: napsautus pelaa nappulan vasemmalla nopalla, veto asettaa sen"
+" kohteeseensa, ja jokainen askel säilyttää luettelossa vain sen "
+"sisältävät ehdokkaat. Ilman syötettyä heittoa lauta ei pelaa mitään."
 
 #: ../../source/raccourcis.rst:1
 msgid "Glisser hors des règles (jet saisi)"
@@ -1473,18 +1459,22 @@ msgstr ""
 " rivin tieltä, joka muistuttaa siitä."
 
 #: ../../source/raccourcis.rst:1
-msgid "ENTREE (coup hors des règles)"
-msgstr "ENTER (sääntöjen vastainen siirto)"
+msgid "Clic sur les dés, ENTREE (coup achevé)"
+msgstr "Napsautus noppiin, ENTER (valmis siirto)"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Enregistrer le coup avec les dés saisis et le plateau obtenu, marqué coup"
-" illégal si aucun coup légal n'atteint ce plateau. Un coup hors des "
-"règles n'est jamais enregistré de lui-même."
+"Enregistrer le coup achevé avec les dés saisis — et, hors des règles, le "
+"plateau obtenu, marqué coup illégal si aucun coup légal n'atteint ce "
+"plateau. Le jet suivant, chiffre ou case du triangle, l'enregistre aussi."
+" Sur une action relue, il la remplace. Un coup n'est jamais enregistré de"
+" lui-même."
 msgstr ""
-"Kirjaa siirto syötetyillä nopilla ja saadulla laudalla, laittomaksi "
-"siirroksi merkittynä, jos mikään laillinen siirto ei johda tähän lautaan."
-" Sääntöjen vastaista siirtoa ei koskaan kirjata itsestään."
+"Tallenna valmis siirto syötetyillä nopilla — ja sääntöjen ulkopuolella "
+"saavutettu lauta, merkittynä sääntöjen vastaiseksi siirroksi, jos mikään "
+"sallittu siirto ei saavuta kyseistä lautaa. Myös seuraava heitto, numero "
+"tai kolmion ruutu, tallentaa sen. Uudelleen luetussa toiminnossa se "
+"korvaa toiminnon. Siirtoa ei koskaan tallenneta itsestään."
 
 #: ../../source/raccourcis.rst:1
 msgid "RETOUR ARRIERE (coup en cours au plateau)"
@@ -1801,7 +1791,7 @@ msgstr ""
 "poistuu myös; teatteritilassa ASKELPALAUTIN tyhjentää syötetyt nopat "
 "(:ref:`lisätiedot <transcription_theatre>`)."
 
-#: ../../source/raccourcis.rst:421
+#: ../../source/raccourcis.rst:420
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -1809,7 +1799,7 @@ msgstr ""
 "Heitto, joka ei salli yhtään siirtoa, kirjaa tanssin itsestään ilman "
 "lisänäppäintä."
 
-#: ../../source/raccourcis.rst:424
+#: ../../source/raccourcis.rst:423
 msgid ""
 "Avec une vidéo attachée, seule une validation explicite — *ENTREE*, le "
 "double-clic sur un candidat, le coup achevé au plateau — pose l'instant "
@@ -1827,7 +1817,7 @@ msgstr ""
 "*ALTGR* mukaan lukien näppäimistöllä, joka sijoittaa ne näin. Ilman "
 "videota nämä näppäimet säilyttävät tavallisen merkityksensä."
 
-#: ../../source/raccourcis.rst:432
+#: ../../source/raccourcis.rst:431
 msgid ""
 "Le chiffre a un seul sens : **il commence un jet là où le curseur est**. "
 "En bout de document il n'y a rien sous le curseur, donc il valide le coup"
@@ -1853,7 +1843,7 @@ msgstr ""
 "heitto on kirjoitettu uudelleen, seuraava numero vahvistaa sen ja avaa "
 "seuraavan päätöksen, kuten asiakirjan lopussa, ja ENTER vie myös sinne."
 
-#: ../../source/raccourcis.rst:443
+#: ../../source/raccourcis.rst:442
 msgid ""
 "Ce qui est en train d'être tapé se dessine dans le transcript, en "
 "pointillés, à la place où il sera écrit : une correction recouvre la "
@@ -1866,7 +1856,7 @@ msgstr ""
 "korvaa, lisäys avaa solun kahden naapurinsa väliin, ja puoli luetaan "
 "sarakkeesta. Mitään ei kirjata ennen vahvistusta."
 
-#: ../../source/raccourcis.rst:448
+#: ../../source/raccourcis.rst:447
 msgid ""
 "Une insertion au milieu du document continue d'insérer : la validation "
 "ouvre une cellule vide à la suite, et l'action suivante s'insère à son "
@@ -1878,7 +1868,7 @@ msgstr ""
 "että se korvaisi jälkimmäisen. Pelin loppu tai kohdistimen siirtäminen "
 "päättää sen."
 
-#: ../../source/raccourcis.rst:453
+#: ../../source/raccourcis.rst:452
 msgid ""
 "Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
 "rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
@@ -1890,7 +1880,7 @@ msgstr ""
 "asiakirjan lopussa. Lause pyyhkiytyy itsestään ja antaa paikan takaisin "
 "odotetulle toiminnolle."
 
-#: ../../source/raccourcis.rst:458
+#: ../../source/raccourcis.rst:457
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était — "
@@ -1911,7 +1901,7 @@ msgstr ""
 "siirtäminen eteen- tai taaksepäin muutoksen jälkeen tallentaa korjauksen "
 "samalla."
 
-#: ../../source/raccourcis.rst:466
+#: ../../source/raccourcis.rst:465
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1938,7 +1928,7 @@ msgstr ""
 "sille puolelle, jolta se puuttui. Kumoamispino elää muistissa: se "
 "menetetään, kun luonnos suljetaan."
 
-#: ../../source/raccourcis.rst:477
+#: ../../source/raccourcis.rst:476
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1947,7 +1937,7 @@ msgstr ""
 "Paneeli itse — luonnosten luettelo, luonti, syöttö, siirtoluettelo ja "
 "luonnospalkki — kuvataan kohdassa :ref:`panneau_transcription`."
 
-#: ../../source/raccourcis.rst:484
+#: ../../source/raccourcis.rst:483
 msgid "Planche-contact"
 msgstr "Vedosarkki"
 
@@ -1995,7 +1985,7 @@ msgstr "Avaa asema laudalle ja sulje sarkki."
 msgid "Refermer la planche."
 msgstr "Sulje sarkki."
 
-#: ../../source/raccourcis.rst:501
+#: ../../source/raccourcis.rst:500
 msgid "Panneau d'aide"
 msgstr "Ohjepaneeli"
 
@@ -2308,3 +2298,21 @@ msgstr "Sulje ohje."
 #~ "Yhtään noppaa ei pelattu: niiden "
 #~ "järjestyksen vaihto. Täysi siirto: sen "
 #~ "vahvistus."
+
+#~ msgid "Clic, glisser (aucun dé saisi)"
+#~ msgstr "Napsautus, vetäminen (ei syötettyä noppaa)"
+
+#~ msgid ""
+#~ "Jouer le coup directement sur le "
+#~ "damier : le pion va du point "
+#~ "cliqué à sa destination, contraint aux"
+#~ " coups légaux, et les deux dés "
+#~ "se déduisent des pas joués."
+#~ msgstr ""
+#~ "Pelaa siirto suoraan laudalla: nappula "
+#~ "kulkee napsautetusta pisteestä kohteeseensa "
+#~ "laillisten siirtojen rajoissa, ja molemmat "
+#~ "nopat päätellään pelatuista askelista."
+
+#~ msgid "ENTREE (coup hors des règles)"
+#~ msgstr "ENTER (sääntöjen vastainen siirto)"

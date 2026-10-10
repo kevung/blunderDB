@@ -12,22 +12,8 @@
  */
 
 import { describe, test, expect } from 'vitest';
-import { selectSource, playHop } from '../services/quizPlay.js';
-import {
-    ROLLS,
-    rollKey,
-    newBoardPlay,
-    freeClick,
-    dragStep,
-    canPlayFree,
-    resetBoardPlay,
-    undoBoardStep,
-    compatibleRolls,
-    choosableRolls,
-    deducedDice,
-    stepsFromNotation,
-    boardAfterSteps
-} from '../services/transcriptionPlay.js';
+import { selectSource, playHop, completedPlay } from '../services/quizPlay.js';
+import { rollKey, newBoardPlay, dragStep, canPlayFree, resetBoardPlay, undoBoardStep, stepsFromNotation, boardAfterSteps } from '../services/transcriptionPlay.js';
 
 const BLACK = 0;
 const WHITE = 1;
@@ -70,31 +56,24 @@ function drag(/** @type {any} */ state, /** @type {number} */ from, /** @type {n
     return playHop(selectSource(state, from), from, to);
 }
 
-describe('les jets se réduisent avec les pas', () => {
-    test('avant tout pas, tous les jets qui ont un coup sont possibles', () => {
-        const state = newBoardPlay(POSITION, BY_ROLL);
-        expect(compatibleRolls(state)).toEqual(['21', '61', '62', '66']);
-        expect(deducedDice(state)).toBeNull();
+const done = (/** @type {any} */ state) => completedPlay(state) !== null;
+
+describe('le coup d’un jet se joue pas à pas', () => {
+    const rolled = () => newBoardPlay(POSITION, [BY_ROLL[0]], { rolled: [6, 1] });
+
+    test('un pas ne laisse que les coups légaux qui le contiennent', () => {
+        const state = drag(rolled(), 13, 7);
+        expect(state.steps).toEqual([{ from: 13, to: 7 }]);
+        expect(done(state)).toBe(false);
     });
 
-    test('un pas ne garde que les jets dont un coup légal le contient', () => {
-        const state = drag(newBoardPlay(POSITION, BY_ROLL), 13, 7);
-        // 2-1 n'a aucun coup qui déplace un pion de 13 à 7 : il tombe.
-        expect(compatibleRolls(state)).toEqual(['61', '62', '66']);
-        // Aucun de ces trois coups n'est achevé en un pas : rien à enregistrer.
-        expect(choosableRolls(state)).toEqual([]);
-        expect(deducedDice(state)).toBeNull();
+    test('le second pas achève le coup', () => {
+        const state = drag(drag(rolled(), 13, 7), 8, 7);
+        expect(done(state)).toBe(true);
     });
 
-    test('le second pas laisse un seul jet, et les dés se déduisent', () => {
-        let state = drag(newBoardPlay(POSITION, BY_ROLL), 13, 7);
-        state = drag(state, 8, 7);
-        expect(compatibleRolls(state)).toEqual(['61']);
-        expect(deducedDice(state)).toEqual([6, 1]);
-    });
-
-    test('les quatre pas d’un double se déduisent en 6-6', () => {
-        let state = /** @type {any} */ (newBoardPlay(POSITION, BY_ROLL));
+    test('les quatre pas d’un double achèvent le coup', () => {
+        let state = /** @type {any} */ (newBoardPlay(POSITION, [BY_ROLL[2]], { rolled: [6, 6] }));
         for (const [from, to] of [
             [13, 7],
             [13, 7],
@@ -103,98 +82,24 @@ describe('les jets se réduisent avec les pas', () => {
         ]) {
             state = drag(state, from, to);
         }
-        expect(deducedDice(state)).toEqual([6, 6]);
+        expect(done(state)).toBe(true);
         expect(state.steps).toHaveLength(4);
     });
 
-    // L'ordre est libre : `LegalMoves` déduplique par plateau résultant et ne
-    // rend qu'un ordre des deux pas, mais les deux se jouent (quizPlay.js).
-    test('l’ordre des pas ne change pas le jet déduit', () => {
-        let state = /** @type {any} */ (newBoardPlay(POSITION, BY_ROLL));
-        state = drag(state, 8, 7);
-        state = drag(state, 13, 7);
-        expect(deducedDice(state)).toEqual([6, 1]);
-    });
-});
-
-describe('rien n’est deviné', () => {
-    // Deux jets dont le second dé n'est pas jouable : le même pas unique les
-    // achève tous les deux. Le plateau ne peut pas trancher, et il ne tranche pas.
-    const AMBIGUOUS = [
-        { dice: [6, 1], plays: [play(step(13, 7))] },
-        { dice: [6, 2], plays: [play(step(13, 7))] }
-    ];
-
-    test('deux jets achèvent le même coup : aucun dé n’est déduit', () => {
-        const state = drag(newBoardPlay(POSITION, AMBIGUOUS), 13, 7);
-        expect(deducedDice(state)).toBeNull();
-        // Ce sont eux, et eux seuls, que le triangle laisse cliquables.
-        expect(choosableRolls(state)).toEqual(['61', '62']);
+    test('l’ordre des pas est libre', () => {
+        expect(done(drag(drag(rolled(), 8, 7), 13, 7))).toBe(true);
     });
 
-    test('un pas qu’aucun coup n’offre ne fait rien, et ne plante pas', () => {
-        const state = drag(newBoardPlay(POSITION, BY_ROLL), 13, 7);
-        const after = drag(state, 6, 5);
-        expect(after.steps).toEqual([{ from: 13, to: 7 }]);
-        expect(deducedDice(after)).toBeNull();
-    });
-
-    test('un coup laissé à moitié n’enregistre rien', () => {
-        const state = drag(newBoardPlay(POSITION, BY_ROLL), 13, 7);
-        expect(choosableRolls(state)).toEqual([]);
-        expect(deducedDice(state)).toBeNull();
+    test('un pas qu’aucun coup n’offre ne fait rien contraint', () => {
+        const state = drag(rolled(), 13, 7);
+        expect(drag(state, 6, 5).steps).toEqual([{ from: 13, to: 7 }]);
     });
 
     test('le dernier pas se défait sans reprendre le coup au début', () => {
-        let state = drag(newBoardPlay(POSITION, BY_ROLL), 13, 7);
-        state = drag(state, 8, 7);
-        const back = undoBoardStep(state);
+        const back = undoBoardStep(drag(drag(rolled(), 13, 7), 8, 7));
         expect(back.steps).toEqual([{ from: 13, to: 7 }]);
         expect(back.board.points[7].checkers).toBe(1);
         expect(back.free).toBe(false);
-    });
-});
-
-describe('le budget d’ux.md §4.1 : quatre pas à la souris ≤ 6 s', () => {
-    // Les valeurs de Card, Moran & Newell (ux.md §1). Un glissé est un P — viser
-    // le pion — et un clic, soit deux B ; les deux H sont le passage clavier ↔
-    // souris, au début et à la fin du coup. M est hors comparaison.
-    const P = 1.1;
-    const B = 0.1;
-    const H = 0.4;
-    const cost = (/** @type {any} */ gestures) => Math.round((2 * H + gestures * (P + 2 * B)) * 100) / 100;
-
-    /** Le coup joué en comptant les gestes, un glissé par pas. */
-    function playByDragging(/** @type {any} */ state, /** @type {any} */ hops) {
-        let gestures = 0;
-        for (const [from, to] of hops) {
-            state = drag(state, from, to);
-            gestures += 1;
-        }
-        return { state, gestures };
-    }
-
-    test('un double se joue en quatre gestes, et aucun dé n’est tapé', () => {
-        const { state, gestures } = playByDragging(newBoardPlay(POSITION, BY_ROLL), [
-            [13, 7],
-            [13, 7],
-            [8, 2],
-            [8, 2]
-        ]);
-        expect(gestures).toBe(4);
-        expect(cost(gestures)).toBeLessThanOrEqual(6);
-        // Les dés sont déduits : le budget ne paie que les pas.
-        expect(deducedDice(state)).toEqual([6, 6]);
-    });
-
-    test('un jet ordinaire se joue en deux gestes', () => {
-        const { state, gestures } = playByDragging(newBoardPlay(POSITION, BY_ROLL), [
-            [13, 7],
-            [8, 7]
-        ]);
-        expect(gestures).toBe(2);
-        expect(cost(gestures)).toBeLessThanOrEqual(3.4);
-        expect(deducedDice(state)).toEqual([6, 1]);
     });
 });
 
@@ -215,7 +120,7 @@ describe('le jet saisi : ses coups, et le glissé hors des règles (ADR-0052)', 
         expect(state.free).toBe(false);
         state = dragStep(state, 8, 7);
         expect(state.free).toBe(false);
-        expect(deducedDice(state)).toEqual([6, 1]);
+        expect(done(state)).toBe(true);
     });
 
     test('un glissé qu’aucun coup n’offre pose le pion, et le coup devient libre', () => {
@@ -225,8 +130,6 @@ describe('le jet saisi : ses coups, et le glissé hors des règles (ADR-0052)', 
         expect(state.steps).toEqual([{ from: 13, to: 3 }]);
         expect(state.board.points[3]).toEqual({ checkers: 1, color: BLACK });
         expect(state.board.points[13].checkers).toBe(4);
-        // Un coup libre ne se déduit jamais : c'est Entrée qui l'enregistre.
-        expect(deducedDice(state)).toBeNull();
     });
 
     test('depuis un point qui n’est pas une source légale, pourvu qu’il porte un pion du camp', () => {
@@ -242,17 +145,6 @@ describe('le jet saisi : ses coups, et le glissé hors des règles (ADR-0052)', 
         const state = dragStep(newBoardPlay(POSITION, BY_ROLL), 13, 3);
         expect(state.steps).toEqual([]);
         expect(state.free).toBe(false);
-    });
-
-    test('une fois libre, le clic déplace aussi sans rien vérifier', () => {
-        let state = dragStep(rolled(), 13, 3);
-        state = freeClick(freeClick(state, 8), 4);
-        expect(state.steps).toEqual([
-            { from: 13, to: 3 },
-            { from: 8, to: 4 }
-        ]);
-        // Un point sans pion du camp au trait ne se choisit pas.
-        expect(freeClick(state, 5).selected).toBeNull();
     });
 
     test('défaire le pas hors des règles rend un coup contraint', () => {
@@ -309,11 +201,6 @@ describe('la notation (ADR-0052)', () => {
 });
 
 describe('les jets du triangle', () => {
-    test('les vingt et un jets distincts, dé fort d’abord', () => {
-        expect(ROLLS).toHaveLength(21);
-        expect(ROLLS.every(([high, low]) => high >= low)).toBe(true);
-    });
-
     test('3-1 et 1-3 sont le même jet', () => {
         expect(rollKey([1, 3])).toBe('31');
         expect(rollKey([3, 1])).toBe('31');

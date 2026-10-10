@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-10 01:54+0200\n"
+"POT-Creation-Date: 2026-10-10 02:22+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -1416,33 +1416,20 @@ msgstr ""
 "один щелчок даёт кость одной стороны."
 
 #: ../../source/raccourcis.rst:1
-msgid "Clic, glisser (aucun dé saisi)"
-msgstr "Щелчок, перетаскивание (кости не введены)"
-
-#: ../../source/raccourcis.rst:1
-msgid ""
-"Jouer le coup directement sur le damier : le pion va du point cliqué à sa"
-" destination, contraint aux coups légaux, et les deux dés se déduisent "
-"des pas joués."
-msgstr ""
-"Сыграть ход прямо на доске: шашка идёт из выбранного пункта к своей цели "
-"в пределах законных ходов, а обе кости выводятся из сыгранных шагов."
-
-#: ../../source/raccourcis.rst:1
 msgid "Clic, glisser (jet saisi)"
 msgstr "Щелчок, перетаскивание (бросок введён)"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Jouer le coup sur le damier, contraint aux coups légaux de ce jet : "
-"chaque pas joué ne garde dans la liste que les candidats qui le "
-"contiennent, et un coup légal achevé est enregistré aussitôt. Sur une "
-"action relue, il la remplace."
+"Jouer le coup sur le damier, contraint aux coups légaux de ce jet : un "
+"clic joue le pion du dé de gauche, un glissé le pose sur sa destination, "
+"et chaque pas ne garde dans la liste que les candidats qui le "
+"contiennent. Sans jet saisi, le damier ne joue rien."
 msgstr ""
-"Сыграть ход на доске в пределах законных ходов этого броска: каждый "
-"сыгранный шаг оставляет в списке только варианты, которые его содержат, а"
-" завершённый законный ход записывается сразу. На пересматриваемом "
-"действии он заменяет это действие."
+"Сыграть ход на доске, ограниченный допустимыми ходами этого броска: "
+"щелчок играет шашку левой костью, перетаскивание ставит её на место "
+"назначения, а каждый шаг оставляет в списке только содержащие его "
+"варианты. Без введённого броска доска ничего не играет."
 
 #: ../../source/raccourcis.rst:1
 msgid "Glisser hors des règles (jet saisi)"
@@ -1461,18 +1448,22 @@ msgstr ""
 "уступает место строке, которая об этом напоминает."
 
 #: ../../source/raccourcis.rst:1
-msgid "ENTREE (coup hors des règles)"
-msgstr "ENTER (ход вне правил)"
+msgid "Clic sur les dés, ENTREE (coup achevé)"
+msgstr "Щелчок по костям, ВВОД (завершённый ход)"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Enregistrer le coup avec les dés saisis et le plateau obtenu, marqué coup"
-" illégal si aucun coup légal n'atteint ce plateau. Un coup hors des "
-"règles n'est jamais enregistré de lui-même."
+"Enregistrer le coup achevé avec les dés saisis — et, hors des règles, le "
+"plateau obtenu, marqué coup illégal si aucun coup légal n'atteint ce "
+"plateau. Le jet suivant, chiffre ou case du triangle, l'enregistre aussi."
+" Sur une action relue, il la remplace. Un coup n'est jamais enregistré de"
+" lui-même."
 msgstr ""
-"Записать ход с введёнными костями и полученной доской, с пометкой "
-"«недопустимый ход», если ни один законный ход не приводит к этой доске. "
-"Ход вне правил никогда не записывается сам."
+"Записать завершённый ход с введёнными костями — а вне правил и полученную"
+" доску, с пометкой недопустимого хода, если ни один допустимый ход не "
+"приводит к этой доске. Следующий бросок, цифра или клетка треугольника, "
+"тоже его записывает. На перечитанном действии он его заменяет. Ход "
+"никогда не записывается сам по себе."
 
 #: ../../source/raccourcis.rst:1
 msgid "RETOUR ARRIERE (coup en cours au plateau)"
@@ -1790,7 +1781,7 @@ msgstr ""
 "него. ESC тоже выходит; в режиме кинотеатра BACKSPACE стирает введённые "
 "кости (:ref:`подробнее <transcription_theatre>`)."
 
-#: ../../source/raccourcis.rst:421
+#: ../../source/raccourcis.rst:420
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -1798,7 +1789,7 @@ msgstr ""
 "Бросок, не допускающий ни одного хода, записывает пропуск сам, без "
 "дополнительной клавиши."
 
-#: ../../source/raccourcis.rst:424
+#: ../../source/raccourcis.rst:423
 msgid ""
 "Avec une vidéo attachée, seule une validation explicite — *ENTREE*, le "
 "double-clic sur un candidat, le coup achevé au plateau — pose l'instant "
@@ -1816,7 +1807,7 @@ msgstr ""
 "включая *ALTGR* на клавиатуре, которая размещает их так. Без видео эти "
 "клавиши сохраняют обычное значение."
 
-#: ../../source/raccourcis.rst:432
+#: ../../source/raccourcis.rst:431
 msgid ""
 "Le chiffre a un seul sens : **il commence un jet là où le curseur est**. "
 "En bout de document il n'y a rien sous le curseur, donc il valide le coup"
@@ -1842,7 +1833,7 @@ msgstr ""
 "следующая цифра подтверждает его и открывает следующее решение, как в "
 "конце документа, и ENTER тоже ведёт туда."
 
-#: ../../source/raccourcis.rst:443
+#: ../../source/raccourcis.rst:442
 msgid ""
 "Ce qui est en train d'être tapé se dessine dans le transcript, en "
 "pointillés, à la place où il sera écrit : une correction recouvre la "
@@ -1855,7 +1846,7 @@ msgstr ""
 "открывает ячейку между двумя соседними, а сторона читается по столбцу. До"
 " подтверждения ничего не записывается."
 
-#: ../../source/raccourcis.rst:448
+#: ../../source/raccourcis.rst:447
 msgid ""
 "Une insertion au milieu du document continue d'insérer : la validation "
 "ouvre une cellule vide à la suite, et l'action suivante s'insère à son "
@@ -1867,7 +1858,7 @@ msgstr ""
 " не затирает идущее за ним. Конец партии или перемещение курсора это "
 "прекращает."
 
-#: ../../source/raccourcis.rst:453
+#: ../../source/raccourcis.rst:452
 msgid ""
 "Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
 "rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
@@ -1879,7 +1870,7 @@ msgstr ""
 "действия» в конце документа. Фраза стирается сама и возвращает место "
 "ожидаемому действию."
 
-#: ../../source/raccourcis.rst:458
+#: ../../source/raccourcis.rst:457
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était — "
@@ -1899,7 +1890,7 @@ msgstr ""
 "Перемещение курсора вперёд или назад после изменения записывает "
 "исправление попутно."
 
-#: ../../source/raccourcis.rst:466
+#: ../../source/raccourcis.rst:465
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1925,7 +1916,7 @@ msgstr ""
 "там, вставляется за ту сторону, которой он недоставал. Стек отмены живёт "
 "в памяти: он теряется при закрытии черновика."
 
-#: ../../source/raccourcis.rst:477
+#: ../../source/raccourcis.rst:476
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1934,7 +1925,7 @@ msgstr ""
 "Сама панель — список черновиков, создание, ввод, запись и панель "
 "черновика — описана в :ref:`panneau_transcription`."
 
-#: ../../source/raccourcis.rst:484
+#: ../../source/raccourcis.rst:483
 msgid "Planche-contact"
 msgstr "Контактный лист"
 
@@ -1982,7 +1973,7 @@ msgstr "Открыть позицию на доске и закрыть лист
 msgid "Refermer la planche."
 msgstr "Закрыть лист."
 
-#: ../../source/raccourcis.rst:501
+#: ../../source/raccourcis.rst:500
 msgid "Panneau d'aide"
 msgstr "Панель справки"
 
@@ -2295,3 +2286,21 @@ msgstr "Закрыть справку."
 #~ msgstr ""
 #~ "Ни одна кость не сыграна: поменять "
 #~ "их порядок. Полный ход: подтвердить его."
+
+#~ msgid "Clic, glisser (aucun dé saisi)"
+#~ msgstr "Щелчок, перетаскивание (кости не введены)"
+
+#~ msgid ""
+#~ "Jouer le coup directement sur le "
+#~ "damier : le pion va du point "
+#~ "cliqué à sa destination, contraint aux"
+#~ " coups légaux, et les deux dés "
+#~ "se déduisent des pas joués."
+#~ msgstr ""
+#~ "Сыграть ход прямо на доске: шашка "
+#~ "идёт из выбранного пункта к своей "
+#~ "цели в пределах законных ходов, а "
+#~ "обе кости выводятся из сыгранных шагов."
+
+#~ msgid "ENTREE (coup hors des règles)"
+#~ msgstr "ENTER (ход вне правил)"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-10 01:54+0200\n"
+"POT-Creation-Date: 2026-10-10 02:22+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -1437,34 +1437,21 @@ msgstr ""
 "posto a una fila di sei dadi, e un clic dà il dado di un campo."
 
 #: ../../source/raccourcis.rst:1
-msgid "Clic, glisser (aucun dé saisi)"
-msgstr "Clic, trascinamento (nessun dado inserito)"
-
-#: ../../source/raccourcis.rst:1
-msgid ""
-"Jouer le coup directement sur le damier : le pion va du point cliqué à sa"
-" destination, contraint aux coups légaux, et les deux dés se déduisent "
-"des pas joués."
-msgstr ""
-"Giocare la mossa direttamente sul tavoliere: la pedina va dal punto "
-"cliccato alla sua destinazione, vincolata alle mosse legali, e i due dadi"
-" si deducono dai passi giocati."
-
-#: ../../source/raccourcis.rst:1
 msgid "Clic, glisser (jet saisi)"
 msgstr "Clic, trascinamento (lancio inserito)"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Jouer le coup sur le damier, contraint aux coups légaux de ce jet : "
-"chaque pas joué ne garde dans la liste que les candidats qui le "
-"contiennent, et un coup légal achevé est enregistré aussitôt. Sur une "
-"action relue, il la remplace."
+"Jouer le coup sur le damier, contraint aux coups légaux de ce jet : un "
+"clic joue le pion du dé de gauche, un glissé le pose sur sa destination, "
+"et chaque pas ne garde dans la liste que les candidats qui le "
+"contiennent. Sans jet saisi, le damier ne joue rien."
 msgstr ""
-"Giocare la mossa sul tavoliere, vincolata alle mosse legali di quel "
-"lancio: ogni passo giocato lascia nella lista solo i candidati che lo "
-"contengono, e una mossa legale completa viene registrata subito. Su "
-"un'azione rivista, la sostituisce."
+"Giocare la mossa sul tavoliere, vincolata alle mosse legali di quel tiro:"
+" un clic gioca la pedina con il dado di sinistra, un trascinamento la "
+"posiziona sulla sua destinazione, e ogni passo mantiene nell'elenco solo "
+"i candidati che lo contengono. Senza tiro inserito, il tavoliere non "
+"gioca nulla."
 
 #: ../../source/raccourcis.rst:1
 msgid "Glisser hors des règles (jet saisi)"
@@ -1483,18 +1470,22 @@ msgstr ""
 "e la lista dei candidati lascia il posto a una riga che lo ricorda."
 
 #: ../../source/raccourcis.rst:1
-msgid "ENTREE (coup hors des règles)"
-msgstr "INVIO (mossa fuori dalle regole)"
+msgid "Clic sur les dés, ENTREE (coup achevé)"
+msgstr "Clic sui dadi, INVIO (mossa completata)"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Enregistrer le coup avec les dés saisis et le plateau obtenu, marqué coup"
-" illégal si aucun coup légal n'atteint ce plateau. Un coup hors des "
-"règles n'est jamais enregistré de lui-même."
+"Enregistrer le coup achevé avec les dés saisis — et, hors des règles, le "
+"plateau obtenu, marqué coup illégal si aucun coup légal n'atteint ce "
+"plateau. Le jet suivant, chiffre ou case du triangle, l'enregistre aussi."
+" Sur une action relue, il la remplace. Un coup n'est jamais enregistré de"
+" lui-même."
 msgstr ""
-"Registrare la mossa con i dadi inseriti e il tavoliere ottenuto, marcata "
-"mossa illegale se nessuna mossa legale raggiunge quel tavoliere. Una "
-"mossa fuori dalle regole non viene mai registrata da sola."
+"Registrare la mossa completata con i dadi inseriti — e, fuori dalle "
+"regole, il tavoliere ottenuto, contrassegnato come mossa illegale se "
+"nessuna mossa legale raggiunge quel tavoliere. Anche il tiro successivo, "
+"cifra o casella del triangolo, la registra. Su un'azione riletta, la "
+"sostituisce. Una mossa non viene mai registrata da sola."
 
 #: ../../source/raccourcis.rst:1
 msgid "RETOUR ARRIERE (coup en cours au plateau)"
@@ -1818,7 +1809,7 @@ msgstr ""
 " uscirne. Anche ESC ne esce; nella modalità cinema, BACKSPACE cancella i "
 "dadi inseriti (:ref:`dettaglio <transcription_theatre>`)."
 
-#: ../../source/raccourcis.rst:421
+#: ../../source/raccourcis.rst:420
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -1826,7 +1817,7 @@ msgstr ""
 "Un tiro che non consente alcuna mossa registra la danza da sé, senza un "
 "tasto in più."
 
-#: ../../source/raccourcis.rst:424
+#: ../../source/raccourcis.rst:423
 msgid ""
 "Avec une vidéo attachée, seule une validation explicite — *ENTREE*, le "
 "double-clic sur un candidat, le coup achevé au plateau — pose l'instant "
@@ -1845,7 +1836,7 @@ msgstr ""
 "tastiera che li colloca così. Senza video, questi tasti mantengono il "
 "loro significato abituale."
 
-#: ../../source/raccourcis.rst:432
+#: ../../source/raccourcis.rst:431
 msgid ""
 "Le chiffre a un seul sens : **il commence un jet là où le curseur est**. "
 "En bout de document il n'y a rien sous le curseur, donc il valide le coup"
@@ -1872,7 +1863,7 @@ msgstr ""
 "la decisione seguente, come in fondo al documento, e anche INVIO porta "
 "lì."
 
-#: ../../source/raccourcis.rst:443
+#: ../../source/raccourcis.rst:442
 msgid ""
 "Ce qui est en train d'être tapé se dessine dans le transcript, en "
 "pointillés, à la place où il sera écrit : une correction recouvre la "
@@ -1885,7 +1876,7 @@ msgstr ""
 "sostituisce, un inserimento apre una cella tra le sue due vicine, e il "
 "campo si legge dalla colonna. Nulla è registrato prima della convalida."
 
-#: ../../source/raccourcis.rst:448
+#: ../../source/raccourcis.rst:447
 msgid ""
 "Une insertion au milieu du document continue d'insérer : la validation "
 "ouvre une cellule vide à la suite, et l'action suivante s'insère à son "
@@ -1897,7 +1888,7 @@ msgstr ""
 " volta invece di sovrascrivere quella dopo. La fine della partita o lo "
 "spostamento del cursore vi mette fine."
 
-#: ../../source/raccourcis.rst:453
+#: ../../source/raccourcis.rst:452
 msgid ""
 "Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
 "rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
@@ -1909,7 +1900,7 @@ msgstr ""
 "cursore» in fondo al documento. La frase si cancella da sola e rende il "
 "posto all'azione attesa."
 
-#: ../../source/raccourcis.rst:458
+#: ../../source/raccourcis.rst:457
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était — "
@@ -1929,7 +1920,7 @@ msgstr ""
 "fino alla convalida. Avanzare o arretrare il cursore dopo aver cambiato "
 "qualcosa registra la correzione al passaggio."
 
-#: ../../source/raccourcis.rst:466
+#: ../../source/raccourcis.rst:465
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1955,7 +1946,7 @@ msgstr ""
 "per il campo a cui mancava. La pila di annullamento vive in memoria: va "
 "persa alla chiusura della bozza."
 
-#: ../../source/raccourcis.rst:477
+#: ../../source/raccourcis.rst:476
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1965,7 +1956,7 @@ msgstr ""
 "la trascrizione e la barra della bozza — è descritto in "
 ":ref:`panneau_transcription`."
 
-#: ../../source/raccourcis.rst:484
+#: ../../source/raccourcis.rst:483
 msgid "Planche-contact"
 msgstr "Provino"
 
@@ -2013,7 +2004,7 @@ msgstr "Aprire la posizione sul tavoliere e chiudere il provino."
 msgid "Refermer la planche."
 msgstr "Chiudere il provino."
 
-#: ../../source/raccourcis.rst:501
+#: ../../source/raccourcis.rst:500
 msgid "Panneau d'aide"
 msgstr "Pannello di aiuto"
 
@@ -2334,3 +2325,22 @@ msgstr "Chiudi la guida."
 
 #~ msgid "Aucun dé joué : intervertir leur ordre. Coup complet : le valider."
 #~ msgstr "Nessun dado giocato: invertirne l'ordine. Mossa completa: convalidarla."
+
+#~ msgid "Clic, glisser (aucun dé saisi)"
+#~ msgstr "Clic, trascinamento (nessun dado inserito)"
+
+#~ msgid ""
+#~ "Jouer le coup directement sur le "
+#~ "damier : le pion va du point "
+#~ "cliqué à sa destination, contraint aux"
+#~ " coups légaux, et les deux dés "
+#~ "se déduisent des pas joués."
+#~ msgstr ""
+#~ "Giocare la mossa direttamente sul "
+#~ "tavoliere: la pedina va dal punto "
+#~ "cliccato alla sua destinazione, vincolata "
+#~ "alle mosse legali, e i due dadi"
+#~ " si deducono dai passi giocati."
+
+#~ msgid "ENTREE (coup hors des règles)"
+#~ msgstr "INVIO (mossa fuori dalle regole)"

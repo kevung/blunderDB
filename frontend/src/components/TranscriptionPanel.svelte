@@ -82,9 +82,9 @@
     } from '../stores/transcriptionStore.js';
     import Modal from './Modal.svelte';
     import { writeTextToClipboard } from '../services/clipboardService.js';
-    import { quizPlayStore } from '../stores/quizPlayStore.js';
-    import { ROLLS, newBoardPlay, deducedDice, choosableRolls, undoBoardStep, stepsFromNotation, boardAfterSteps } from '../services/transcriptionPlay.js';
-    import { containsSteps } from '../services/quizPlay.js';
+    import { quizPlayStore, armBoardMove } from '../stores/quizPlayStore.js';
+    import { newBoardPlay, undoBoardStep, stepsFromNotation, boardAfterSteps } from '../services/transcriptionPlay.js';
+    import { containsSteps, completedPlay } from '../services/quizPlay.js';
     import { ListTranscriptions, CreateTranscription, OpenTranscription, ApplyTranscriptionGesture, TranscriptionMAT } from '../../wailsjs/go/database/Database.js';
     import { LegalMoves, EvaluatePositionImmediate, PickTranscriptionVideo, YouTubeWatchURL } from '../../wailsjs/go/gui/App.js';
     import { GetGammonNetPruneK } from '../../wailsjs/go/main/Config.js';
@@ -122,6 +122,8 @@
         return closeOnEscape(() => {
             if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
             metaOpen = false;
+            // Le champ flou emportait le focus : sans lui le panneau ne reçoit plus les touches du jet.
+            panelEl?.focus({ preventScroll: true });
         });
     });
 
@@ -981,14 +983,10 @@
      */
     function pickDice(high, low) {
         if (!draft) return;
-        // Coup déjà joué au plateau : la case choisit parmi les jets possibles.
-        const play = /** @type {BoardPlayState | null} */ (get(quizPlayStore));
-        if (play && !play.free && play.steps.length) {
-            sendPlay([high, low], play.steps, null);
-            panelEl?.focus({ preventScroll: true });
-            return;
-        }
-        applyMouseDice(enterDicePair(get(transcriptionKeyStore), high, low, keyContext));
+        // Le coup achevé au plateau est enregistré avant que le jet suivant ne commence.
+        const settled = validatePlay();
+        if (settled) settled.then(() => applyMouseDice(enterDicePair(get(transcriptionKeyStore), high, low, keyContext)));
+        else applyMouseDice(enterDicePair(get(transcriptionKeyStore), high, low, keyContext));
     }
 
     /**
@@ -1208,19 +1206,19 @@
             undoBoardPlayStep();
             return;
         }
-        // Coup hors des règles : Entrée l'enregistre avec son plateau (ADR-0052).
-        if (event.key === 'Enter' && $quizPlayStore?.free && $quizPlayStore.steps.length) {
+        // Coup achevé ou hors des règles : Entrée l'enregistre (avec son plateau s'il est libre).
+        if (event.key === 'Enter' && playSettled()) {
             event.preventDefault();
             event.stopPropagation();
-            commitFreePlay();
+            validatePlay();
             return;
         }
-        // Un coup libre est enregistré avant que le chiffre ne commence le jet
+        // Un coup achevé est enregistré avant que le chiffre ne commence le jet
         // suivant, sinon le candidat sélectionné le remplacerait.
-        if (dieOf(event) > 0 && $quizPlayStore?.free && $quizPlayStore.steps.length) {
+        if (dieOf(event) > 0 && playSettled()) {
             event.preventDefault();
             event.stopPropagation();
-            commitFreePlay()?.then(() => applyResult(pressKey(get(transcriptionKeyStore), event, keyContext)));
+            validatePlay()?.then(() => applyResult(pressKey(get(transcriptionKeyStore), event, keyContext)));
             return;
         }
 
@@ -1605,7 +1603,8 @@
     let diceEntered = $derived(keys.dice[0] > 0 && keys.dice[1] > 0);
     // Le jet saisi (ou chargé par `settleCursor` sur une Action relue).
     let boardRoll = $derived(diceEntered && (keys.phase === PHASE.ROLL || keys.phase === PHASE.CANDIDATE) ? [keys.dice[0], keys.dice[1]] : null);
-    let boardPlayOpen = $derived(!!draft && !matchOver && !awaitingAnswer && !recordingPlay && expects === 'checker' && (keys.phase === PHASE.DICE || boardRoll !== null));
+    // Sans jet saisi, aucun coup n'est armé : tout coup au plateau commence par les dés.
+    let boardPlayOpen = $derived(!!draft && !matchOver && !awaitingAnswer && !recordingPlay && expects === 'checker' && boardRoll !== null);
 
     // Clé d'armement (place, camp, position, jet) — pas le document, qui change à chaque pas.
     let boardPlayKey = $derived.by(() => {
@@ -1616,19 +1615,17 @@
     });
 
     /**
-     * Coups légaux du jet saisi, ou union des 21 jets en une salve.
+     * Arme le coup du jet saisi : coups légaux de ce jet, grammaire commune du plateau.
      *
      * @param {any} pos
      * @param {number} generation
-     * @param {number[] | null} rolled
+     * @param {number[]} rolled
      */
     async function loadBoardPlay(pos, generation, rolled) {
-        const rolls = rolled ? [rolled] : ROLLS;
-        const answers = await Promise.all(rolls.map(([high, low]) => LegalMoves({ ...pos, dice: [high, low] }).catch(() => [])));
+        const plays = await LegalMoves({ ...pos, dice: [rolled[0], rolled[1]] }).catch(() => []);
         if (generation !== boardPlayGeneration) return;
-        const byRoll = rolls.map((dice, index) => ({ dice, plays: answers[index] ?? [] })).filter((entry) => entry.plays.length);
         stepsKey = '';
-        quizPlayStore.set(newBoardPlay(pos, byRoll, { rolled }));
+        armBoardMove(newBoardPlay(pos, plays?.length ? [{ dice: rolled, plays }] : [], { rolled }), () => void validatePlay());
         boardPlayArmed = true;
     }
 
@@ -1646,26 +1643,26 @@
         }
         const pos = entryPosition();
         if (!pos) return;
-        loadBoardPlay(pos, generation, rolled);
+        if (rolled) loadBoardPlay(pos, generation, rolled);
     });
+
+    /** Le coup du plateau est-il achevé (légal complet, ou posé hors des règles) ? */
+    function playSettled() {
+        const play = /** @type {BoardPlayState | null} */ (get(quizPlayStore));
+        if (!play?.rolled || !play.steps.length) return false;
+        return play.free || completedPlay(play) !== null;
+    }
 
     /**
-     * Coup achevé et un seul jet possible : l'Action part seule. Plusieurs jets :
-     * `deducedDice` rend `null` et le triangle tranche.
+     * Enregistre le coup achevé (clic sur les dés, Entrée, jet suivant). `null` quand il n'y en a pas.
+     * @returns {Promise<void>|null}
      */
-    $effect(() => {
-        const play = /** @type {BoardPlayState | null} */ ($quizPlayStore);
-        if (!play || play.free || recordingPlay) return;
-        const dice = deducedDice(play);
-        if (dice) sendPlay(play.rolled ?? dice, play.steps, null);
-    });
-
-    /** Les jets que l'utilisateur peut encore désigner, ou `null` pour tous. */
-    let rollsAllowed = $derived.by(() => {
-        const play = /** @type {BoardPlayState | null} */ ($quizPlayStore);
-        if (!play || play.free || play.rolled || play.steps.length === 0) return null;
-        return new Set(choosableRolls(play));
-    });
+    function validatePlay() {
+        if (!playSettled()) return null;
+        const play = /** @type {BoardPlayState} */ (get(quizPlayStore));
+        const rolled = /** @type {number[]} */ (play.rolled);
+        return sendPlay(rolled, play.steps, play.free ? play.board : null);
+    }
 
     /**
      * L'Action : dés, pas, et plateau si besoin. Les dés sont toujours renvoyés
@@ -1700,16 +1697,6 @@
             recordingPlay = false;
         }
         resetTranscriptionKeys();
-    }
-
-    /**
-     * Entrée sur un coup hors des règles (ADR-0052) : le plateau part avec les
-     * pas et tranche quand ils ne suffisent pas. Jamais envoyé seul.
-     */
-    function commitFreePlay() {
-        const play = /** @type {BoardPlayState | null} */ (get(quizPlayStore));
-        if (!play?.free || !play.steps.length || !play.rolled) return null;
-        return sendPlay(play.rolled, play.steps, play.board);
     }
 
     // Cellules dont le coup se tape (ADR-0052) : celles que `settleCursor` rejoue.
@@ -2010,7 +1997,7 @@
 
                         {#if diceEntryOpen}
                             <!-- Sous les cases du jet, jamais à leur place : le clavier reste deux fois plus rapide. -->
-                            <DiceTriangle single={gameStart} allowed={rollsAllowed} onPick={pickDice} onDie={pickDie} />
+                            <DiceTriangle single={gameStart} onPick={pickDice} onDie={pickDie} />
                         {/if}
                     </div>
                 {/if}

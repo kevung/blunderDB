@@ -38,8 +38,9 @@ bascule et un bouton de confirmation loin de la cellule écrite.
 
 - Aucun changement moteur : `enter_play` avec `BoardAfter` accepte un coup illégal et le
   jette quand un coup légal atteint ce plateau (`transcript.validate`).
-- Un coup lointain au plateau coûte ≈ 4,0 s (KLM) contre 3,6 s au clavier seul : le gain est
-  l'absence de mode, pas le temps.
+- Un coup lointain au plateau coûte ≈ 5,3 s (KLM : 2 K, 2 glissés, un clic de validation sur
+  les dés, deux changements de main) contre 3,6 s au clavier seul : le gain est l'absence de
+  mode, pas le temps (ADR-0086 : les dés d'abord, la validation par un clic).
 - `selectAction` ne relance pas un chemin déjà en route vers la même cellule (double-clic) ;
   le panneau ne reprend pas le focus à un champ qui l'a.
 - Écartés : garder le filtre (deux sens pour un clic) ; un coup libre qui part seul (rien ne

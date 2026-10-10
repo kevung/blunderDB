@@ -79,9 +79,14 @@ Plan d'origine :
 - Tests : `ankiBoardAnswer.test.js`, `frontend/tests/e2e/anki-review-session.spec.js`.
 - Doc : `manuel.rst` (Anki, réponse au plateau), `raccourcis.rst` « Panneau Anki », `.po`.
 
-## T5 — Transcription
+## T5 — Transcription (faite)
 
-**Bloquée tant qu'un autre agent tient `TranscriptionPanel.svelte`.**
+Le panneau arme le coup du seul jet saisi par `armBoardMove(play, validatePlay)` ; sans jet, rien
+n'est armé. `validatePlay` enregistre le coup achevé ou libre (clic sur les dés, Entrée, premier
+chiffre ou case du triangle du jet suivant). `ROLLS`, `compatibleRolls`, `choosableRolls`,
+`deducedDice`, `freeClick`, `freeSelect` et la branche libre de `quizClick` sont retirés.
+`quizPlayTargetsStore`, `selectSource` et la branche source/destination restent tant qu'Anki
+(T4) n'a pas basculé : le dernier à fusionner les retire. Plan d'origine :
 
 - `frontend/src/components/TranscriptionPanel.svelte` : supprimer l'`$effect` de départ
   automatique (`deducedDice` → `sendPlay`) ; fournir `validatePlay` (coup achevé ou libre →

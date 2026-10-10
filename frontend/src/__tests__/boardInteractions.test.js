@@ -15,8 +15,8 @@ import { boardMetrics } from '../utils/boardGeometry.js';
 import { defaultBoardConfig } from '../utils/boardConfig.js';
 import { EXCLUDE_EMPTY, stackSlotCenter, cubeBox, sideLayout } from '../utils/boardScene.js';
 import { attachBoardInteractions, hitTestSideControls, applyCheckerEdit, applyCubeClick, applyScoreClick, applyStartingCheckers } from '../utils/boardInteractions.js';
-import { newPlay } from '../services/quizPlay.js';
-import { newBoardPlay, deducedDice } from '../services/transcriptionPlay.js';
+import { newPlay, completedPlay } from '../services/quizPlay.js';
+import { newBoardPlay } from '../services/transcriptionPlay.js';
 
 const W = 1000;
 const H = 720;
@@ -810,7 +810,7 @@ describe('le coup joué au plateau d’une transcription (T2.3, ADR-0052)', () =
         expect(gestures).toBe(4);
         const state = get(b.stores.quizPlay);
         expect(state.steps).toHaveLength(4);
-        expect(deducedDice(state)).toEqual([6, 6]);
+        expect(completedPlay(state)).not.toBeNull();
         b.detach();
     });
 
@@ -859,19 +859,7 @@ describe('le coup joué au plateau d’une transcription (T2.3, ADR-0052)', () =
         b.drag(b.slot(8, 0), b.slot(7, 1));
         const state = get(b.stores.quizPlay);
         expect(state.free).toBe(false);
-        expect(deducedDice(state)).toEqual([6, 1]);
-        b.detach();
-    });
-
-    test('une fois libre, deux clics déplacent sans rien vérifier', () => {
-        const b = mountPlay({ rolled: true });
-        b.drag(b.slot(13, 0), b.slot(3, 0));
-        b.click(b.slot(8, 0));
-        b.click(b.slot(4, 0));
-        expect(get(b.stores.quizPlay).steps).toEqual([
-            { from: 13, to: 3 },
-            { from: 8, to: 4 }
-        ]);
+        expect(completedPlay(state)).not.toBeNull();
         b.detach();
     });
 

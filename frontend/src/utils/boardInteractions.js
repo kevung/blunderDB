@@ -8,7 +8,7 @@ import { get } from 'svelte/store';
 import { boardMetrics, boardMouseToDrawing, checkerPointAndCountAt } from './boardGeometry.js';
 import { EXCLUDE_EMPTY, sideLayout } from './boardScene.js';
 import { OFF, playHop, selectSource } from '../services/quizPlay.js';
-import { canPlayFree, dragStep, freeClick, hasMoverChecker, resetBoardPlay } from '../services/transcriptionPlay.js';
+import { canPlayFree, dragStep, hasMoverChecker, resetBoardPlay } from '../services/transcriptionPlay.js';
 import { boardRightClick, diceClick, orderedDice, playClickedChecker } from '../services/boardMove.js';
 
 // A second click on the same Except point within this delay blocks it. Detected by hand: each
@@ -398,8 +398,6 @@ export function attachBoardInteractions(canvas, deps) {
         const target = quizTargetAt(x, y);
         if (target === null) return true;
         stores.quizPlay.update((/** @type {any} */ s) => {
-            // Coup SORTI DES RÈGLES (ADR-0052) : même geste, sans coup légal pour le contraindre.
-            if (s.free) return freeClick(s, target);
             if (s.selected === null) return selectSource(s, target);
             const played = playHop(s, s.selected, target);
             // Un clic qui ne joue rien re-choisit une source, sans déselection préalable.

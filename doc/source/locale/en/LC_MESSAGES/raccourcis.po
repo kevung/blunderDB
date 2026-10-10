@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-10 01:54+0200\n"
+"POT-Creation-Date: 2026-10-10 02:22+0200\n"
 "PO-Revision-Date: 2025-11-01 23:50+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -1417,34 +1417,20 @@ msgstr ""
 "of six dice, one click giving one side's die."
 
 #: ../../source/raccourcis.rst:1
-msgid "Clic, glisser (aucun dé saisi)"
-msgstr "Click, drag (no die entered)"
-
-#: ../../source/raccourcis.rst:1
-msgid ""
-"Jouer le coup directement sur le damier : le pion va du point cliqué à sa"
-" destination, contraint aux coups légaux, et les deux dés se déduisent "
-"des pas joués."
-msgstr ""
-"Play the move straight on the board: the checker goes from the clicked "
-"point to its destination, constrained to the legal plays, and the two "
-"dice follow from the steps played."
-
-#: ../../source/raccourcis.rst:1
 msgid "Clic, glisser (jet saisi)"
 msgstr "Click, drag (roll entered)"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Jouer le coup sur le damier, contraint aux coups légaux de ce jet : "
-"chaque pas joué ne garde dans la liste que les candidats qui le "
-"contiennent, et un coup légal achevé est enregistré aussitôt. Sur une "
-"action relue, il la remplace."
+"Jouer le coup sur le damier, contraint aux coups légaux de ce jet : un "
+"clic joue le pion du dé de gauche, un glissé le pose sur sa destination, "
+"et chaque pas ne garde dans la liste que les candidats qui le "
+"contiennent. Sans jet saisi, le damier ne joue rien."
 msgstr ""
 "Play the move on the board, constrained to the legal plays of that roll: "
-"each step played keeps in the list only the candidates that contain it, "
-"and a complete legal move is recorded at once. On an action being "
-"reviewed, it replaces it."
+"a click plays the checker with the left die, a drag puts it on its "
+"destination, and each step keeps in the list only the candidates that "
+"contain it. With no dice entered, the board plays nothing."
 
 #: ../../source/raccourcis.rst:1
 msgid "Glisser hors des règles (jet saisi)"
@@ -1463,18 +1449,22 @@ msgstr ""
 " line that says so."
 
 #: ../../source/raccourcis.rst:1
-msgid "ENTREE (coup hors des règles)"
-msgstr "ENTER (move outside the rules)"
+msgid "Clic sur les dés, ENTREE (coup achevé)"
+msgstr "Click on the dice, ENTER (completed move)"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Enregistrer le coup avec les dés saisis et le plateau obtenu, marqué coup"
-" illégal si aucun coup légal n'atteint ce plateau. Un coup hors des "
-"règles n'est jamais enregistré de lui-même."
+"Enregistrer le coup achevé avec les dés saisis — et, hors des règles, le "
+"plateau obtenu, marqué coup illégal si aucun coup légal n'atteint ce "
+"plateau. Le jet suivant, chiffre ou case du triangle, l'enregistre aussi."
+" Sur une action relue, il la remplace. Un coup n'est jamais enregistré de"
+" lui-même."
 msgstr ""
-"Record the move with the dice entered and the board reached, marked an "
-"illegal move if no legal play reaches that board. A move outside the "
-"rules is never recorded on its own."
+"Record the completed move with the dice entered — and, outside the rules,"
+" the board reached, marked an illegal move if no legal play reaches that "
+"board. The next roll, a digit or a cell of the triangle, records it too. "
+"On a reviewed action, it replaces it. A move is never recorded on its "
+"own."
 
 #: ../../source/raccourcis.rst:1
 msgid "RETOUR ARRIERE (coup en cours au plateau)"
@@ -1792,7 +1782,7 @@ msgstr ""
 "the theatre, BACKSPACE clears the dice entered (:ref:`details "
 "<transcription_theatre>`)."
 
-#: ../../source/raccourcis.rst:421
+#: ../../source/raccourcis.rst:420
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -1800,7 +1790,7 @@ msgstr ""
 "A roll that allows no play records the dance on its own, with no extra "
 "keystroke."
 
-#: ../../source/raccourcis.rst:424
+#: ../../source/raccourcis.rst:423
 msgid ""
 "Avec une vidéo attachée, seule une validation explicite — *ENTREE*, le "
 "double-clic sur un candidat, le coup achevé au plateau — pose l'instant "
@@ -1818,7 +1808,7 @@ msgstr ""
 "typed, *ALTGR* included on a keyboard that places them that way. Without "
 "a video, these keys keep their usual meaning."
 
-#: ../../source/raccourcis.rst:432
+#: ../../source/raccourcis.rst:431
 msgid ""
 "Le chiffre a un seul sens : **il commence un jet là où le curseur est**. "
 "En bout de document il n'y a rien sous le curseur, donc il valide le coup"
@@ -1845,7 +1835,7 @@ msgstr ""
 "following decision, as at the end of the document, and ENTER leads there "
 "too."
 
-#: ../../source/raccourcis.rst:443
+#: ../../source/raccourcis.rst:442
 msgid ""
 "Ce qui est en train d'être tapé se dessine dans le transcript, en "
 "pointillés, à la place où il sera écrit : une correction recouvre la "
@@ -1858,7 +1848,7 @@ msgstr ""
 "insertion opens a cell between its two neighbours, and the side is read "
 "from the column. Nothing is recorded before the validation."
 
-#: ../../source/raccourcis.rst:448
+#: ../../source/raccourcis.rst:447
 msgid ""
 "Une insertion au milieu du document continue d'insérer : la validation "
 "ouvre une cellule vide à la suite, et l'action suivante s'insère à son "
@@ -1870,7 +1860,7 @@ msgstr ""
 "in its turn instead of overwriting the one that follows. The end of the "
 "game or moving the cursor puts an end to it."
 
-#: ../../source/raccourcis.rst:453
+#: ../../source/raccourcis.rst:452
 msgid ""
 "Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
 "rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
@@ -1882,7 +1872,7 @@ msgstr ""
 " the document. The sentence clears itself and gives the place back to the"
 " expected action."
 
-#: ../../source/raccourcis.rst:458
+#: ../../source/raccourcis.rst:457
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était — "
@@ -1902,7 +1892,7 @@ msgstr ""
 "review” until it is validated. Moving the cursor forward or back after "
 "changing something records the correction on the way."
 
-#: ../../source/raccourcis.rst:466
+#: ../../source/raccourcis.rst:465
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1928,7 +1918,7 @@ msgstr ""
 "inserted for the side it was missing from. The undo stack lives in "
 "memory: it is lost when the draft is closed."
 
-#: ../../source/raccourcis.rst:477
+#: ../../source/raccourcis.rst:476
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1938,7 +1928,7 @@ msgstr ""
 "transcript and the draft bar — is described in "
 ":ref:`panneau_transcription`."
 
-#: ../../source/raccourcis.rst:484
+#: ../../source/raccourcis.rst:483
 msgid "Planche-contact"
 msgstr "Contact sheet"
 
@@ -1986,7 +1976,7 @@ msgstr "Open the position on the board and close the sheet."
 msgid "Refermer la planche."
 msgstr "Close the sheet."
 
-#: ../../source/raccourcis.rst:501
+#: ../../source/raccourcis.rst:500
 msgid "Panneau d'aide"
 msgstr "Help Panel"
 
@@ -2304,3 +2294,23 @@ msgstr "Close the help."
 
 #~ msgid "Aucun dé joué : intervertir leur ordre. Coup complet : le valider."
 #~ msgstr "No die played: swap their order. Complete move: validate it."
+
+#~ msgid "Clic, glisser (aucun dé saisi)"
+#~ msgstr "Click, drag (no die entered)"
+
+#~ msgid ""
+#~ "Jouer le coup directement sur le "
+#~ "damier : le pion va du point "
+#~ "cliqué à sa destination, contraint aux"
+#~ " coups légaux, et les deux dés "
+#~ "se déduisent des pas joués."
+#~ msgstr ""
+#~ "Play the move straight on the "
+#~ "board: the checker goes from the "
+#~ "clicked point to its destination, "
+#~ "constrained to the legal plays, and "
+#~ "the two dice follow from the steps"
+#~ " played."
+
+#~ msgid "ENTREE (coup hors des règles)"
+#~ msgstr "ENTER (move outside the rules)"

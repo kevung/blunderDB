@@ -9,8 +9,7 @@
  * `helpers/transcriptionDraft.js` : seul le NOMBRE et la NATURE des gestes
  * émis est vérifié ici, jamais le contenu du document.
  *
- * Non couvert ici : la déduction des dés (§4.1) est dans
- * `transcriptionPlay.test.js` ; le rang joué au plateau (ADR-0052) vise ses
+ * Non couvert ici : le rang joué au plateau (ADR-0052) vise ses
  * points via les fonctions qui le dessinent (`pointAt`), indépendant de la
  * taille de fenêtre ; la cible souris du videau (§4.2) attend T2.5.
  */
@@ -34,6 +33,27 @@ async function openDraft(page, opts = {}) {
 
 const panel = '#transcriptionPanel';
 const candidates = `${panel} table.checker-table tbody tr`;
+
+/**
+ * Le centre du dé de gauche, en pixels de la page : le clic qui valide le coup achevé.
+ *
+ * @param {import('@playwright/test').Page} page
+ */
+async function dieAt(page) {
+    return page.evaluate(async () => {
+        const { boardMetrics } = await import('/src/utils/boardGeometry.js');
+        const { sideLayout } = await import('/src/utils/boardScene.js');
+        const { defaultBoardConfig } = await import('/src/utils/boardConfig.js');
+        const host = /** @type {HTMLElement} */ (document.getElementById('backgammon-board'));
+        const drawing = /** @type {Element} */ (host.firstElementChild);
+        const width = Number(drawing.getAttribute('width'));
+        const height = Number(drawing.getAttribute('height'));
+        const rect = host.getBoundingClientRect();
+        const cfg = defaultBoardConfig();
+        const side = sideLayout(boardMetrics(width, height, cfg.widthFactor), cfg, 0);
+        return { x: rect.left + (side.diceX * rect.width) / width, y: rect.top + (side.diceY * rect.height) / height };
+    });
+}
 
 /**
  * Le centre du premier pion du point `point` du modèle, en pixels de la page.
@@ -154,11 +174,10 @@ test.describe('ux.md §4.1 — un tour de pions', () => {
         expect(await selectedRank(page)).toBe(12);
     });
 
-    // « coup loin dans la liste, joué au plateau | 3 1 H 2 × (P B B) H | 2 K +
-    // 2 H + 2 (P + 0,2) ≈ 4,0 s » (ADR-0052). Deux touches, deux glissés, et
-    // rien d'autre : chaque pas réduit la liste, le second achève le coup et
-    // l'Action part seule — ni `j`, ni validation.
-    test('le rang douze se joue au plateau en deux touches et deux glissés', async ({ page }) => {
+    // « coup loin dans la liste, joué au plateau | 3 1 H 2 × (P B B) H P B B | 2 K +
+    // 3 clics » (ADR-0086). Les dés d'abord, deux glissés, puis un clic sur les
+    // dés grisés qui enregistre : ni `j`, ni touche de validation.
+    test('le rang douze se joue au plateau en deux touches, deux glissés et un clic de validation', async ({ page }) => {
         const count = await countGestures(page, async (g) => {
             await g.press('Digit3');
             await g.press('Digit1');
@@ -167,10 +186,14 @@ test.describe('ux.md §4.1 — un tour de pions', () => {
             // Le premier pas a réduit la liste aux coups qui le contiennent.
             await expect(page.locator(candidates)).toHaveCount(4);
             await g.drag(await pointAt(page, 8), await pointAt(page, 7));
+            // Le coup achevé attend la validation : rien n'est encore enregistré.
+            expect(await sentKinds(page)).not.toContain('enter_play');
+            const die = await dieAt(page);
+            await page.mouse.click(die.x, die.y);
             await expect.poll(() => sentKinds(page)).toContain('validate');
         });
         expect(count.keys).toBe(2);
-        expect(count.clicks).toBe(2);
+        expect(count.clicks).toBe(3);
         const gestures = await sentGestures(page);
         const played = gestures.find((x) => x.Kind === 'enter_play');
         expect(played.Steps.map((s) => [s.from, s.to])).toEqual([

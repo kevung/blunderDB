@@ -1985,35 +1985,31 @@ clavier et non à sa place : deux chiffres restent deux fois plus rapides qu'un
 clic, et le triangle est là pour qui transcrit la souris à la main. Une case par
 jet, jamais deux : 3-1 et 1-3 sont le même jet.
 
-Le coup joué au plateau dispense de lire les dés. Tant qu'aucun dé n'est saisi,
-un clic sur un pion puis sur sa destination — ou un glissé de l'un à l'autre —
-joue le coup sur le damier, contraint aux coups légaux ; les destinations
-offertes par le pion choisi s'allument. Les deux dés se déduisent des pas :
-jouer 13/7 puis 8/7 dit 6-1 sans qu'un chiffre ait été tapé, et l'action est
-enregistrée dès que le coup est achevé. Retour arrière défait le dernier pas, un
-chiffre abandonne le coup et revient à la saisie par les dés, et *Recommencer*,
-en tête du menu du clic droit, le reprend depuis le début. Quand plusieurs jets produisent le
-même coup — une sortie que plusieurs dés couvrent, un dé qui n'est pas jouable —
-rien n'est enregistré et le triangle ne laisse cliquables que ces jets-là : le
-jet n'est jamais deviné à la place de celui qui regarde la partie.
+Tout coup joué au plateau commence par le jet, tapé au clavier ou cliqué au
+triangle : sans dés saisis, le damier ne joue rien. Les deux dés saisis, le
+plateau est contraint aux coups légaux de ce jet — en bout de document comme sur
+une action relue, dont le curseur a chargé les dés. Un clic sur un pion le joue
+du dé de gauche, ou du suivant quand le premier ne le peut pas ; un glissé le
+pose sur sa destination. Les dés joués se grisent, un clic sur les dés non joués
+les intervertit, et Retour arrière — ou le clic droit sur le damier, qui reprend
+tout le coup — défait le coup. Chaque pas joué ne garde dans la liste que les
+candidats qui le contiennent, le premier d'entre eux présélectionné : c'est le
+geste du coup lointain, là où descendre au douzième candidat coûte treize
+touches.
 
-Les deux dés saisis, le plateau joue aussi, contraint aux coups légaux de ce
-jet — en bout de document comme sur une action relue, dont le curseur a chargé
-les dés. Chaque pas joué ne garde dans la liste que les candidats qui le
-contiennent, le premier d'entre eux présélectionné : c'est le geste du coup
-lointain, là où descendre au douzième candidat coûte treize touches. Un coup
-légal achevé est enregistré aussitôt, avec les dés tels qu'ils ont été tapés ;
-sur une action relue, il la remplace.
+Le coup achevé n'est enregistré que par une validation : un clic sur les dés
+grisés, ENTREE, ou le jet suivant — un chiffre ou une case du triangle —, qui
+l'enregistre d'abord avec les dés tels qu'ils ont été tapés. Sur une action
+relue, il la remplace.
 
 Un coup illégal se transcrit tel qu'il a été joué, sans bouton ni changement de
-mode. Les dés saisis, un glissé qu'aucun coup légal n'offre pose le pion là où
-il est lâché — y compris depuis un point d'où aucun coup légal ne part, pourvu
-qu'il porte un pion du camp au trait. Le coup sort alors des règles : la suite
-se joue librement, au clic comme au glissé, la liste des candidats cède la place
-à une ligne qui le rappelle, et rien n'est enregistré avant ENTREE, qui écrit
-les dés saisis, les pas et le plateau obtenu. Retour arrière défait le dernier
-pas ; défaire le seul pas hors des règles rend la liste. Sans dés saisis, le
-glissé reste contraint : un coup illégal ne dit pas quel jet l'a produit.
+mode. Un glissé qu'aucun coup légal n'offre pose le pion là où il est lâché — y
+compris depuis un point d'où aucun coup légal ne part, pourvu qu'il porte un pion
+du camp au trait. Le coup sort alors des règles : la suite se joue librement, au
+clic comme au glissé, la liste des candidats cède la place à une ligne qui le
+rappelle, et la validation écrit les dés saisis, les pas et le plateau obtenu.
+Retour arrière défait le dernier pas ; défaire le seul pas hors des règles rend
+la liste.
 
 Le coup se tape aussi au clavier, dans le transcript. Un double-clic sur la
 cellule d'un coup — ou d'une danse, d'un coup non consigné — la change en champ,
