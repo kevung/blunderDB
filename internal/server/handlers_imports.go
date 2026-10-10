@@ -239,6 +239,7 @@ func uploadPaths() map[string]bool {
 		m[u.pattern] = true
 	}
 	m["/v1/imports.batch"] = true
+	m["/v1/matches.repair"] = true
 	return m
 }
 

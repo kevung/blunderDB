@@ -159,6 +159,7 @@ func (s *Server) matchRoutes() []route {
 		{http.MethodPost, "/v1/matches.delete", rpcVoid(func(ctx context.Context, scope string, req idReq) error {
 			return ms().DeleteCascade(ctx, scope, req.ID)
 		})},
+		{http.MethodPost, "/v1/matches.repair", s.handleMatchRepair},
 		{http.MethodPost, "/v1/matches.swapPlayers", rpcVoid(func(ctx context.Context, scope string, req idReq) error {
 			return ms().SwapPlayers(ctx, scope, req.ID)
 		})},

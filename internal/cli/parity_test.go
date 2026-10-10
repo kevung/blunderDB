@@ -461,6 +461,8 @@ var databaseParity = map[string]parityEntry{
 	"SetupDatabase":                     {CLI: "create", Why: "the daemon bootstraps its store at start-up (Storage.Migrate)"},
 	"SuggestMatFilename":                {CLI: "export --type mat", Server: "/v1/matches.exportMat"},
 	"SwapMatchPlayers":                  {CLI: "players swap", Server: "/v1/matches.swapPlayers"},
+	"RepairMatch":                       {CLI: "match repair --id", Server: "/v1/matches.repair"},
+	"FindMatchesToRepair":               {CLI: "match repair --list", Why: "it reads every match's source file on the desktop's disk; the daemon never opens a path a tenant stored, its client uploads one file per matches.repair"},
 	"ExportAnkiPackage":                 {CLI: "anki export", Server: "/v1/anki.exportApkg"},
 	"SyncAnkiDeck":                      {CLI: "anki sync", Server: "/v1/anki.sync"},
 	"SyncAnkiDeckWithPositions":         {CLI: "anki sync", Server: "/v1/anki.syncWithPositions"},

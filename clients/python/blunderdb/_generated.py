@@ -814,6 +814,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/matches.origin — JSON."
         return self._call("/v1/matches.origin", payload)
 
+    def matches_repair(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/matches.repair — hand-written handler — see openapi.yaml."
+        return self._call("/v1/matches.repair", payload)
+
     def matches_save(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/matches.save — JSON."
         return self._call("/v1/matches.save", payload)

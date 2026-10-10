@@ -54,6 +54,7 @@ var customContentTypes = map[string][]string{
 	"/v1/exports.json":                    {ndjsonContentType},
 	"/v1/exports.sqlite":                  {"application/octet-stream"},
 	"/v1/matches.exportMat":               {"text/plain"},
+	"/v1/matches.repair":                  {"application/json"},
 	"/v1/anki.exportApkg":                 {"application/octet-stream", "application/json"},
 	"/ops/tenant.purge":                   {"application/json"},
 	"/ops/maintenance.vacuum":             {"application/json"},

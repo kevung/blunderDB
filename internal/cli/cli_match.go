@@ -13,6 +13,9 @@ import (
 
 // runMatch handles the match command
 func (cli *CLI) runMatch(args []string) error {
+	if len(args) > 0 && strings.EqualFold(args[0], "repair") {
+		return cli.runMatchRepair(args[1:])
+	}
 	matchCmd := flag.NewFlagSet("match", flag.ContinueOnError)
 
 	// Define flags
