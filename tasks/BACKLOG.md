@@ -202,18 +202,9 @@ et l'effet de l'étude n'est jamais mesuré. Ordre proposé ci-dessous ; s'appui
 MWC par décision (#597), M1 (L₇, #598) et M3 (difficulté par décision, #599). Chaque seuil se fixe dans une ADR
 *avant* de regarder les résultats ; chaque métrique est documentée en détail dans le manuel.
 
-- **Intervalles de confiance partout, et bilan de match** (#600). Afficher la bande (IC 95 %,
-  bootstrap par parties) du PR, de L₇ et des cellules de ventilation, à la place du seul
-  grisage « < 10 décisions ». Au niveau du match : un encart « 3 décisions à revoir » (perte ×
-  caractère évitable M3, un clic vers le coup), le résultat ajusté de la chance à côté du
-  score (la chance est déjà importée), et la distinction erreur précipitée / erreur réfléchie
-  (temps de décision : discipline contre connaissance).
 - **Familles par similarité du plan d'étude** (suite de #602). La grille de voisinage de
   l'ADR-0080 (`storage/reference.go`, 0,5 s pour 50 000 erreurs en 20 groupes) rend
   abordable un regroupement par distance `like` ; le plan d'étude groupe encore par thème seul.
-- **Bilan de tournoi** (#604). L₇ avec IC comparé au niveau habituel, 2-3 familles d'erreurs de
-  l'épreuve, erreur selon la ronde et selon le rang de la décision dans le match (fatigue),
-  aux scores de pression (DMP, Crawford) et sous la pendule.
 
 ## Historique — items faits
 
