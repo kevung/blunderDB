@@ -4702,7 +4702,7 @@ msgstr ""
 "cuesta al menos eso es un blunder."
 
 #: ../../source/cli.rst:2446
-#, no-python-brace-format
+#, no-python-brace-format, python-brace-format
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
 "(``{\"changes\": [...]}``)."
@@ -4906,7 +4906,7 @@ msgstr ""
 " base, porque su coste es imprevisible en una base grande."
 
 #: ../../source/cli.rst:2608
-#, no-python-brace-format
+#, no-python-brace-format, python-brace-format
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
 "(``{\"size_before\", \"size_after\", \"reclaimed\"}``, en octets)."
@@ -5032,7 +5032,7 @@ msgstr ""
 "``vacuum``, o en un servidor PostgreSQL, que no tiene ``vacuum``."
 
 #: ../../source/cli.rst:2693
-#, no-python-brace-format
+#, no-python-brace-format, python-brace-format
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
 "(``{\"rewritten\"}``, le nombre d'analyses réécrites)."
@@ -5272,7 +5272,7 @@ msgstr ""
 " si esta contabilidad llegara a fallar."
 
 #: ../../source/cli.rst:2830
-#, no-python-brace-format
+#, no-python-brace-format, python-brace-format
 msgid ""
 "**Doublons probables.** ``repair --duplicates`` compare les matchs par "
 "leurs dés, jamais par leurs noms. Deux cas sont signalés : la même "
@@ -5420,7 +5420,7 @@ msgid "``--confirm`` — Supprimer sans demander de confirmation."
 msgstr "``--confirm`` — Eliminar sin pedir confirmación."
 
 #: ../../source/cli.rst:2908
-#, no-python-brace-format
+#, no-python-brace-format, python-brace-format
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
 "(``{\"match_id\": N, \"deleted\": true}``)."

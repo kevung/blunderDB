@@ -4636,7 +4636,7 @@ msgstr ""
 " не меньше этого, является бландером."
 
 #: ../../source/cli.rst:2446
-#, no-python-brace-format
+#, no-python-brace-format, python-brace-format
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
 "(``{\"changes\": [...]}``)."
@@ -4840,7 +4840,7 @@ msgstr ""
 "большой базе его стоимость непредсказуема."
 
 #: ../../source/cli.rst:2608
-#, no-python-brace-format
+#, no-python-brace-format, python-brace-format
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
 "(``{\"size_before\", \"size_after\", \"reclaimed\"}``, en octets)."
@@ -4962,7 +4962,7 @@ msgstr ""
 "``vacuum``."
 
 #: ../../source/cli.rst:2693
-#, no-python-brace-format
+#, no-python-brace-format, python-brace-format
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
 "(``{\"rewritten\"}``, le nombre d'analyses réécrites)."
@@ -5203,7 +5203,7 @@ msgstr ""
 "собьётся."
 
 #: ../../source/cli.rst:2830
-#, no-python-brace-format
+#, no-python-brace-format, python-brace-format
 msgid ""
 "**Doublons probables.** ``repair --duplicates`` compare les matchs par "
 "leurs dés, jamais par leurs noms. Deux cas sont signalés : la même "
@@ -5345,7 +5345,7 @@ msgid "``--confirm`` — Supprimer sans demander de confirmation."
 msgstr "``--confirm`` — Удалить без запроса подтверждения."
 
 #: ../../source/cli.rst:2908
-#, no-python-brace-format
+#, no-python-brace-format, python-brace-format
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
 "(``{\"match_id\": N, \"deleted\": true}``)."
