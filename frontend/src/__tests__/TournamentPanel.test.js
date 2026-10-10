@@ -323,7 +323,7 @@ describe('TournamentPanel — list view', () => {
         expect(UpdateTournament).toHaveBeenCalledWith(1, 'Blunder Cup (2026)', '2026-01-01', 'Paris');
     });
 
-    test('# and Date lead the row; a date read from the matches is greyed, offered in the form, entered on save', async () => {
+    test('# and Date lead the row; a date read from the matches is greyed, shown beside the empty form field, never written unless typed', async () => {
         vi.mocked(GetAllTournaments).mockResolvedValue([/** @type {any} */ ({ id: 9, name: 'Undated Open', date: '', effectiveDate: '2024-05-10', location: 'Nice', matchCount: 2 })]);
         renderOpen();
         const row = must((await screen.findByText('Undated Open')).closest('tr'));
@@ -334,9 +334,13 @@ describe('TournamentPanel — list view', () => {
         expect(cells[2].textContent).toBe('Undated Open');
 
         await fireEvent.click(within(row).getByTitle(/^edit$/i));
-        const dateInput = within(row).getByDisplayValue('2024-05-10');
-        await fireEvent.keyDown(dateInput, { key: 'Enter' });
-        await vi.waitFor(() => expect(UpdateTournament).toHaveBeenCalledWith(9, 'Undated Open', '2024-05-10', 'Nice'));
+        const dateInput = /** @type {HTMLInputElement} */ (row.querySelector('input[type="date"]'));
+        expect(dateInput.value).toBe('');
+        expect(within(row).getByTestId('derived-date').textContent).toBe('2024-05-10');
+        const nameInput = within(row).getByDisplayValue('Undated Open');
+        await fireEvent.input(nameInput, { target: { value: 'Renamed Open' } });
+        await fireEvent.keyDown(nameInput, { key: 'Enter' });
+        await vi.waitFor(() => expect(UpdateTournament).toHaveBeenCalledWith(9, 'Renamed Open', '', 'Nice'));
     });
 
     test('clearing the entered date shows the date read from the matches, not the old one', async () => {

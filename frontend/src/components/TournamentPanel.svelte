@@ -154,7 +154,7 @@
             const name = draft.name.trim();
             if (!name) return false; // a tournament keeps its name until a new one is typed
             try {
-                await UpdateTournament(id, name, draft.date, draft.location.trim());
+                await UpdateTournament(id, name, draft.date.trim(), draft.location.trim());
                 await loadTournaments();
                 if (selectedTournament && selectedTournament.id === id) {
                     // The effective date is derived by the database: only the
@@ -441,9 +441,17 @@
      */
     function startEdit(tournament, event) {
         event.stopPropagation();
-        // A derived date is offered in the form and becomes the tournament's own on save.
-        tournamentEdit.start(tournament.id, { name: tournament.name, date: tournament.date || tournament.effectiveDate || '', location: tournament.location || '' });
+        // The derived date is only a placeholder: the form's date stays empty until one is typed.
+        tournamentEdit.start(tournament.id, {
+            name: tournament.name,
+            date: tournament.date || '',
+
+            location: tournament.location || ''
+        });
     }
+
+    /** The date typed in the edit form (the draft is typed as a bare string by the helper). */
+    const draftDate = () => /** @type {any} */ (tournamentEdit.draft).date;
 
     /** @param {number} matchId */
     async function addMatchToTournament(matchId) {
@@ -753,7 +761,12 @@
                     {#snippet cells(tournament, /** @type {number} */ index)}
                         {#if tournamentEdit.isEditing(tournament.id)}
                             <td class="index-cell narrow-col no-select">{index + 1}</td>
-                            <td class="narrow-col"><input class="edit-input" type="date" bind:value={tournamentEdit.draft.date} onkeydown={tournamentEdit.onKeyDown} /></td>
+                            <td class="narrow-col"
+                                ><input class="edit-input" type="date" bind:value={tournamentEdit.draft.date} onkeydown={tournamentEdit.onKeyDown} />{#if !draftDate() && tournament.effectiveDate}<span
+                                        class="derived-date"
+                                        data-testid="derived-date">{tournament.effectiveDate}</span
+                                    >{/if}</td
+                            >
                             <td><input class="edit-input" type="text" bind:value={tournamentEdit.draft.name} onkeydown={tournamentEdit.onKeyDown} use:autofocus /></td>
                             <td class="narrow-col"></td>
                             <td><input class="edit-input" type="text" bind:value={tournamentEdit.draft.location} placeholder={$t('tournament.location')} onkeydown={tournamentEdit.onKeyDown} /></td>

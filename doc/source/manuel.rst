@@ -2344,9 +2344,9 @@ ramène à la liste des tournois.
 Chaque ligne commence par son rang (#) et sa date, comme dans le panneau
 Matchs : la liste va du plus récent au plus ancien, et un clic sur un en-tête
 la trie. Un tournoi sans date prend celle du plus ancien de ses matchs,
-affichée en grisé ; elle est lue, jamais écrite dans la base. Le formulaire
-d'édition la propose, et elle ne devient la date du tournoi qu'à
-l'enregistrement.
+affichée en grisé ; elle est lue, jamais écrite dans la base. Le champ date du formulaire
+d'édition reste vide tant que rien n'y est saisi : la date lue ne
+paraît qu'en grisé, à côté du champ, et l'enregistrement n'écrit une date que saisie.
 
 Les tournois se remplissent d'eux-mêmes à l'import. Les fichiers XG, GnuBG et
 BGF nomment leur événement ; à l'import d'un match nouveau, blunderDB le classe
