@@ -4284,6 +4284,17 @@ positions, qu'un clic ouvre, et le nombre de cartes dues ; à droite, les
 paramètres (⚙), la remise à zéro (↻), *Bachoter* et *Étudier*. ← revient à la
 liste des paquets.
 
+**Exporter vers Anki :** le bouton ⤓ d'une ligne de la liste écrit le paquet
+en fichier **.apkg**, que l'application Anki importe sur un ordinateur ou un
+téléphone (AnkiDroid, AnkiMobile). Chaque position devient une carte
+recto-verso : au recto le plateau, le score vu du joueur au trait (placé en
+bas), le videau et les dés ; au verso le meilleur coup ou la bonne décision de
+videau, son équité et l'erreur du coup joué. Les libellés suivent la langue de
+l'interface. Le paquet s'exporte tel qu'il est, sans synchronisation, et
+l'export n'écrit rien dans la base. Réimporter un export plus récent dans Anki
+met les cartes à jour au lieu de les dupliquer. En ligne de commande :
+``blunderdb anki export``, qui exporte aussi une collection (voir :doc:`cli`).
+
 **Révision :** Sélectionnez un paquet puis cliquez sur *Étudier* (ou double-cliquez
 sur un paquet) pour commencer la révision des cartes dues. Une carte de position
 affiche la position sur le plateau ; une carte de score annonce le score et

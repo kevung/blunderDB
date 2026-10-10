@@ -1221,6 +1221,16 @@ reste dans l'interface graphique ; la CLI liste, mesure et resynchronise.
   paquets ; ``--limit`` vaut 20 par défaut). Le journal est ce que le
   planificateur a réellement reçu, par opposition à ce qu'il prévoit
   aujourd'hui : c'est le seul endroit où une note entrée par erreur se voit.
+* ``export --deck <id> | --collection <id> --out <fichier.apkg> [--format apkg]
+  [--lang <langue>]`` — Écrit un paquet, ou une collection, en paquet Anki
+  **.apkg** que l'application Anki importe sur ordinateur ou téléphone : une
+  carte par position, le plateau, le score, le videau et les dés au recto, le
+  meilleur coup ou la bonne décision de videau, son équité et l'erreur du coup
+  joué au verso, libellés dans la langue ``--lang`` (``en`` par défaut). Une
+  collection vivante est évaluée à l'export, sous son plafond. L'export n'écrit
+  rien dans la base ; un réexport importé dans Anki met ses cartes à jour au
+  lieu de les dupliquer. Le daemon sert le même fichier sur
+  ``POST /v1/anki.exportApkg``.
 
 Un paquet fondé sur une collection relit sa collection ; fondé sur une
 collection vivante, il rejoue sa requête sous le même plafond de 5 000
@@ -1242,6 +1252,7 @@ recherche elle-même.
    ./blunderdb anki sync --db base.db --deck 2
    ./blunderdb anki card --db base.db --id 12 --action suspend
    ./blunderdb anki log --db base.db --deck 2 --limit 50
+   ./blunderdb anki export --db base.db --deck 2 --out paquet.apkg --lang fr
 
    # Day         Due
    # ---         ---
