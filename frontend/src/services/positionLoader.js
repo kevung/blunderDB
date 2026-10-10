@@ -20,6 +20,7 @@ import { currentPositionIndexStore } from '../stores/uiStore.js';
 import { selectedTournamentStore } from '../stores/tournamentStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { statsFilterStore } from '../stores/statsStore.js';
+import { leaveStudiedModeForList, forgetSubSearchOrigin } from './modeMachine.js';
 
 /**
  * Push a list of position IDs into the analysis view.
@@ -45,6 +46,9 @@ export async function loadPositionsFromSelection(ids, { focusIndex = 0 } = {}) {
         return;
     }
 
+    // Out of MATCH first: there the board ignores the index set below.
+    leaveStudiedModeForList();
+    forgetSubSearchOrigin();
     positionsStore.setIds(Array.isArray(resultIds) ? resultIds : []);
     listOriginStore.set(LIBRARY_ORIGIN);
 

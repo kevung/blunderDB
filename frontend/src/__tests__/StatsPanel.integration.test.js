@@ -15,6 +15,9 @@ import { get } from 'svelte/store';
 
 // ── Mocks ────────────────────────────────────────────────────────────────────
 
+// Leaving MATCH is modeMachine's concern (countLinkLeavesMatch.test.js); here only the loading is exercised.
+vi.mock('../services/modeMachine.js', () => ({ leaveStudiedModeForList: vi.fn(), forgetSubSearchOrigin: vi.fn() }));
+
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
     ComputeStats: vi.fn(),
     GetPositionIDsByStatsSelection: vi.fn(),

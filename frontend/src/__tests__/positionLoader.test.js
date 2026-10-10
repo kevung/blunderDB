@@ -2,6 +2,9 @@ import { describe, test, expect, vi, beforeEach } from 'vitest';
 import { get } from 'svelte/store';
 
 // Mock Wails Database binding
+// Leaving MATCH is modeMachine's concern (countLinkLeavesMatch.test.js); here only the loading is exercised.
+vi.mock('../services/modeMachine.js', () => ({ leaveStudiedModeForList: vi.fn(), forgetSubSearchOrigin: vi.fn() }));
+
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
     GetPositionIDsByStatsSelection: vi.fn(),
     GetPositionIDsByTournament: vi.fn(),
