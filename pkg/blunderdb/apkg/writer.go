@@ -3,7 +3,7 @@ package apkg
 import (
 	"archive/zip"
 	"context"
-	"crypto/sha1" //nolint:gosec // Anki's checksum column is defined as SHA-1; it is not a security use.
+	"crypto/sha1" // Anki defines its checksum column as SHA-1; no security rests on it
 	"database/sql"
 	"encoding/hex"
 	"encoding/json"
@@ -205,7 +205,7 @@ func stripHTML(s string) string {
 // checksum is Anki's csum: the first 8 hex digits of the SHA-1 of the sort
 // field, as an integer.
 func checksum(s string) int64 {
-	sum := sha1.Sum([]byte(s)) //nolint:gosec // Anki's definition of csum
+	sum := sha1.Sum([]byte(s))
 	v, _ := strconv.ParseInt(hex.EncodeToString(sum[:])[:8], 16, 64)
 	return v
 }

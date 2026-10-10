@@ -165,6 +165,28 @@ func unpack(t *testing.T, data []byte) unpacked {
 	return u
 }
 
+// column reads a one-column query as strings.
+func column(t *testing.T, db *sql.DB, query string, args ...any) []string {
+	t.Helper()
+	rows, err := db.Query(query, args...)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer rows.Close()
+	var out []string
+	for rows.Next() {
+		var s string
+		if err := rows.Scan(&s); err != nil {
+			t.Fatal(err)
+		}
+		out = append(out, s)
+	}
+	if err := rows.Err(); err != nil {
+		t.Fatal(err)
+	}
+	return out
+}
+
 func keys(m map[string][]byte) []string {
 	var out []string
 	for k := range m {
@@ -189,17 +211,7 @@ func TestPackageFollowsAnkiSchema11(t *testing.T) {
 		"graves": {"usn", "oid", "type"},
 	}
 	for table, cols := range want {
-		rows, err := u.db.Query(`SELECT name FROM pragma_table_info(?)`, table)
-		if err != nil {
-			t.Fatal(err)
-		}
-		var got []string
-		for rows.Next() {
-			var n string
-			_ = rows.Scan(&n)
-			got = append(got, n)
-		}
-		_ = rows.Close()
+		got := column(t, u.db, `SELECT name FROM pragma_table_info(?)`, table)
 		if strings.Join(got, ",") != strings.Join(cols, ",") {
 			t.Errorf("%s columns = %v, want %v", table, got, cols)
 		}
@@ -282,17 +294,7 @@ func TestReExportKeepsTheNoteIdentity(t *testing.T) {
 	second, _ := export(t, f, apkg.Source{DeckID: f.deckID}, stamp.Add(time.Hour))
 	ids := func(data []byte) (string, int64) {
 		u := unpack(t, data)
-		rows, err := u.db.Query(`SELECT id || ':' || guid FROM notes ORDER BY id`)
-		if err != nil {
-			t.Fatal(err)
-		}
-		defer rows.Close()
-		var out []string
-		for rows.Next() {
-			var s string
-			_ = rows.Scan(&s)
-			out = append(out, s)
-		}
+		out := column(t, u.db, `SELECT id || ':' || guid FROM notes ORDER BY id`)
 		var mod int64
 		_ = u.db.QueryRow(`SELECT max(mod) FROM notes`).Scan(&mod)
 		return strings.Join(out, ","), mod
