@@ -107,8 +107,8 @@ func TestLessonStepHoldsItsPosition(t *testing.T) {
 	}
 }
 
-// A whole-library export carries every Lesson without being asked: a backup
-// made from the desktop must not lose them.
+// A whole-library export carries every Lesson, and a subset of positions none:
+// a backup made from the desktop must not lose them.
 func TestWholeLibraryExportCarriesLessons(t *testing.T) {
 	isolateIdentity(t)
 	src := newTestDB(t)
@@ -127,7 +127,7 @@ func TestWholeLibraryExportCarriesLessons(t *testing.T) {
 	}
 
 	path := exportTo(t, src, filepath.Join(t.TempDir(), "sauvegarde.db"), ExportOptions{
-		AllPositions: true, IncludeAnalysis: true, IncludeComments: true,
+		WholeLibrary: true, IncludeLessons: true, IncludeAnalysis: true, IncludeComments: true,
 	})
 	dst := newTestDB(t)
 	if _, err := dst.CommitImportDatabase(path); err != nil {

@@ -271,11 +271,19 @@ Each position is exported as a JSON object on a separate line.
 - `--filters` - Include filter library in database export (default: true)
 - `--played-moves` - Include played moves in analysis (default: true)
 - `--matches` - Include matches in database export (default: true)
-- `--collections` - Include collections in database export (default: false)
-- `--collection-ids` - Comma-separated collection IDs to export
+- `--collections` - Include collections in database export (default: true)
+- `--tournaments` - Include tournaments in database export (default: true)
+- `--decks` - Include Anki decks, without their review history, in database export (default: true)
+- `--collection-ids` - Comma-separated collection IDs to export (empty = all)
 - `--match-ids` - Comma-separated match IDs to export (empty = all)
-- `--tournament-ids` - Comma-separated tournament IDs to export
+- `--tournament-ids` - Comma-separated tournament IDs to export (empty = all)
+- `--deck-ids` - Comma-separated Anki deck IDs to export (empty = all)
 - `--format` - Output format: `text` (default) or `json` (a summary document — file path, byte count, counts)
+
+`--type database` exports the whole library, as the server's export and the GUI's export of the
+library do: positions, matches, tournaments, collections, lessons, Anki decks, transcriptions and
+the filter library. A flag set to `false` leaves its family out; a list of IDs narrows it to those
+and brings it in.
 
 ### Export Database Without Matches
 
@@ -291,9 +299,11 @@ Export only match data (with linked positions) to a new database:
 
 ```bash
 ./blunderDB export --db database.db --type matches --file matches.db
+./blunderDB export --db database.db --type matches --file selection.db --match-ids 1,3,5
 ```
 
-This creates a new database containing only the match structure and linked positions.
+This creates a new database containing only the match structure and linked positions: every
+match, or those `--match-ids` names.
 
 ### Export Matches as .mat Transcripts
 
@@ -3199,15 +3209,17 @@ Options:
   -analysis
     	Include analysis in database export (default: true) (default true)
   -collection-ids string
-    	Comma-separated list of collection IDs to export
+    	Comma-separated list of collection IDs to export (empty = all)
   -collections
-    	Include collections in database export (default: false)
+    	Include collections in database export (default: true) (default true)
   -comments
     	Include comments in database export (default: true) (default true)
   -db string
     	Path to the database file (required)
   -deck-ids string
-    	Comma-separated list of Anki deck IDs to export with their positions, without their review history
+    	Comma-separated list of Anki deck IDs to export (empty = all)
+  -decks
+    	Include Anki decks, without their review history, in database export (default: true) (default true)
   -dir string
     	Output directory for .mat batch export (type=mat, multiple matches)
   -file string
@@ -3225,7 +3237,9 @@ Options:
   -played-moves
     	Include played moves in analysis (default: true) (default true)
   -tournament-ids string
-    	Comma-separated list of tournament IDs to export
+    	Comma-separated list of tournament IDs to export (empty = all)
+  -tournaments
+    	Include tournaments in database export (default: true) (default true)
   -type string
     	Export type: database, positions, matches, mat (required)
   -watermark string
@@ -3234,7 +3248,9 @@ Options:
     	Free text attached to the watermark (terms of use, contact)
 
 Export Types:
-  database   Export entire database (positions, analysis, comments, matches)
+  database   Export the whole library, as the server's export does: positions, matches,
+             tournaments, collections, lessons, Anki decks, transcriptions, filters.
+             Each family can be left out (--matches=false) or narrowed (--match-ids=1,2).
   positions  Export positions to text file (JSON format)
   matches    Export only matches to a new database
   mat        Export match(es) as Jellyfish/gnubg .mat transcript(s)
@@ -3252,8 +3268,11 @@ Examples:
   # Export with analysis but without played moves
   blunderdb export --db database.db --type database --file export.db --played-moves=false
 
-  # Export with specific collections
-  blunderdb export --db database.db --type database --file export.db --collections --collection-ids=1,2,3
+  # Export with specific collections only
+  blunderdb export --db database.db --type database --file export.db --collection-ids=1,2,3
+
+  # Export without collections or Anki decks
+  blunderdb export --db database.db --type database --file export.db --collections=false --decks=false
 
   # Export with specific tournaments
   blunderdb export --db database.db --type database --file export.db --tournament-ids=1,2

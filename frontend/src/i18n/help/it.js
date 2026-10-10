@@ -1054,7 +1054,8 @@ export default {
 <p>La finestra di esportazione sta in una sola schermata: il modulo e, sovrapposto ad esso durante la scrittura, un indicatore di avanzamento. Si chiude da sola al termine e il risultato appare nella barra di stato.</p>
 <p>Tre punti meritano attenzione:</p>
 <ul>
-<li><strong>L'esportazione riguarda le posizioni attualmente visualizzate</strong>, non l'intero database. Dopo una ricerca vengono esportati solo i risultati: la finestra lo ricorda in alto.</li>
+<li><strong>L'esportazione riguarda le posizioni attualmente visualizzate</strong>, non l'intero database. Dopo una ricerca vengono esportati solo i risultati (la finestra lo ricorda in alto) e l'elenco dei match propone solo quelli in cui sono state giocate queste posizioni; ogni match selezionato viene esportato con tutte le sue posizioni.</li>
+<li><strong>Quando l'elenco visualizzato è la libreria</strong>, l'esportazione è la stessa del server e di <code>export --type database</code>: tutte le caselle sono selezionate fin dall'inizio, e i mazzi Anki (senza cronologia di ripasso) e le trascrizioni in corso vengono esportati insieme al resto. Una trascrizione collegata a un video locale porta con sé solo il nome del file, senza la sua cartella; un link web viene esportato così com'è.</li>
 <li><strong>Una raccolta le cui posizioni non siano tutte nella selezione arriva troncata.</strong> L'elenco mostra quindi, per ogni raccolta, la parte coperta («12/40») e la segnala in rosso quando è parziale.</li>
 <li><strong>I tornei possono essere esportati solo insieme ai match</strong>: senza di essi il collegamento torneo–match non esiste e il torneo arriverebbe vuoto. La casella resta disattivata finché non è selezionato «includi i match».</li>
 </ul>

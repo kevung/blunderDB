@@ -1054,7 +1054,8 @@ export default {
 <p>La ventana de exportación cabe en una sola pantalla: el formulario y, sobre él, una barra de progreso durante la escritura. Se cierra sola al terminar y el resultado aparece en la barra de estado.</p>
 <p>Tres puntos merecen atención:</p>
 <ul>
-<li><strong>La exportación afecta a las posiciones mostradas actualmente</strong>, no a toda la base. Tras una búsqueda solo se exportan los resultados: la ventana lo recuerda en la parte superior.</li>
+<li><strong>La exportación afecta a las posiciones mostradas actualmente</strong>, no a toda la base. Tras una búsqueda solo se exportan los resultados (la ventana lo recuerda en la parte superior) y la lista de partidas solo ofrece aquellas en las que se jugaron esas posiciones; cada partida marcada se exporta con todas sus posiciones.</li>
+<li><strong>Cuando la lista mostrada es la biblioteca</strong>, la exportación es la misma que la del servidor y la de <code>export --type database</code>: todas las casillas están marcadas desde el principio, y los mazos de Anki (sin historial de repaso) y las transcripciones en curso se exportan con el resto. Una transcripción vinculada a un vídeo local solo lleva el nombre del archivo, sin su carpeta; un enlace web se exporta tal cual.</li>
 <li><strong>Una colección cuyas posiciones no estén todas en la selección llega truncada.</strong> Por eso la lista muestra, para cada colección, la parte cubierta («12/40») y la señala en rojo cuando es parcial.</li>
 <li><strong>Los torneos solo pueden exportarse junto con los partidos</strong>: sin ellos no existe el vínculo torneo–partido y el torneo llegaría vacío. La casilla permanece desactivada mientras no se marque «incluir los partidos».</li>
 </ul>

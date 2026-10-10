@@ -1054,7 +1054,8 @@ export default {
 <p>Das Exportfenster kommt mit einer einzigen Ansicht aus: dem Formular und einer Fortschrittsanzeige, die sich während des Schreibens darüberlegt. Es schließt sich nach Abschluss von selbst, und das Ergebnis erscheint in der Statusleiste.</p>
 <p>Drei Punkte verdienen Beachtung:</p>
 <ul>
-<li><strong>Der Export umfasst die aktuell angezeigten Positionen</strong>, nicht die gesamte Datenbank. Nach einer Suche werden nur die Treffer exportiert — das Fenster weist oben darauf hin.</li>
+<li><strong>Der Export umfasst die aktuell angezeigten Positionen</strong>, nicht die gesamte Datenbank. Nach einer Suche werden nur die Treffer exportiert — das Fenster weist oben darauf hin —, und die Match-Liste bietet nur die Matches an, in denen diese Positionen gespielt wurden; jedes angehakte Match wird mit allen seinen Positionen exportiert.</li>
+<li><strong>Wenn die angezeigte Liste die Bibliothek ist</strong>, entspricht der Export dem des Servers und <code>export --type database</code>: Alle Kontrollkästchen sind von Anfang an angehakt, und die Anki-Decks (ohne Wiederholungsverlauf) sowie die laufenden Transkriptionen werden mit dem Rest exportiert. Eine mit einem lokalen Video verknüpfte Transkription enthält nur den Dateinamen, ohne den Ordner; ein Weblink wird unverändert exportiert.</li>
 <li><strong>Eine Sammlung, deren Positionen nicht alle in der Auswahl enthalten sind, kommt unvollständig an.</strong> Die Liste zeigt deshalb für jede Sammlung den abgedeckten Anteil („12/40“) und hebt ihn rot hervor, wenn er unvollständig ist.</li>
 <li><strong>Turniere lassen sich nur zusammen mit den Partien exportieren</strong>: ohne sie gibt es die Verknüpfung Turnier–Partie nicht, und das Turnier käme leer an. Das Kästchen bleibt deaktiviert, solange „Partien einschließen“ nicht angehakt ist.</li>
 </ul>

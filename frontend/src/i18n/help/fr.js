@@ -1054,7 +1054,8 @@ export default {
 <p>La fenêtre d'export tient en un seul écran : le formulaire, puis une progression qui se superpose à lui le temps de l'écriture. Elle se ferme d'elle-même une fois terminée, et le résultat s'affiche dans la barre d'état.</p>
 <p>Trois points méritent l'attention :</p>
 <ul>
-<li><strong>L'export porte sur les positions actuellement affichées</strong>, pas sur la base entière. Après une recherche, seuls les résultats partent — la fenêtre le rappelle en tête.</li>
+<li><strong>L'export porte sur les positions actuellement affichées</strong>, pas sur la base entière. Après une recherche, seuls les résultats partent — la fenêtre le rappelle en tête — et la liste des matchs ne propose que ceux où ces positions ont été jouées ; chaque match coché part avec toutes ses positions.</li>
+<li><strong>Quand la liste affichée est la bibliothèque</strong>, l'export est le même que celui du serveur et de <code>export --type database</code> : toutes les cases sont cochées d'emblée, et les paquets Anki (sans historique de révision) et les transcriptions en cours partent avec le reste. Une transcription liée à une vidéo locale n'emporte que le nom du fichier, sans son dossier ; un lien web part tel quel.</li>
 <li><strong>Une collection dont toutes les positions ne sont pas dans la sélection arrive tronquée.</strong> La liste affiche donc, pour chaque collection, la part couverte (« 12/40 ») et la signale en rouge lorsqu'elle est partielle.</li>
 <li><strong>Les tournois ne peuvent être exportés qu'avec les matchs</strong> : sans eux, le lien tournoi–match n'existe pas et le tournoi arriverait vide. La case est désactivée tant que « inclure les matchs » ne l'est pas.</li>
 </ul>
