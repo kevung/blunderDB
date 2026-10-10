@@ -37,7 +37,7 @@ func (s *StatsStore) playerMWC7(ctx context.Context, scope string, f storage.Sta
 			if name == "" || !domain.MWC7Defined(matchN) {
 				return nil
 			}
-			if loss := decisionMWCLoss(errMP, away0, away1, rawPlayer, cube, length); !math.IsNaN(loss) {
+			if loss := decisionMWCLoss(errMP, away0, away1, cube, length); !math.IsNaN(loss) {
 				losses[unit{match, aliases.Canonical(name), matchN}] += loss
 			}
 			return nil

@@ -550,7 +550,7 @@ func (s *StatsStore) MatchDetail(ctx context.Context, scope string, matchID int6
 		}
 		// The conversion the badges, the cells and the per-decision losses
 		// share, so the detail's MWC loss is theirs to the last digit.
-		mwcLoss := decisionMWCLoss(errMP, awayScore0, awayScore1, rawPlayer, cubeValue, matchLength)
+		mwcLoss := decisionMWCLoss(errMP, awayScore0, awayScore1, cubeValue, matchLength)
 		games.add(fMove, gameID, mwcLoss)
 		if math.IsNaN(mwcLoss) {
 			mwcLoss = 0
@@ -754,7 +754,7 @@ func (s *StatsStore) MatchBadges(ctx context.Context, scope string, matchIDs []i
 			a = &matchAcc{games: newGameLosses(), length: matchN}
 			acc[matchID] = a
 		}
-		mwcLoss := decisionMWCLoss(errMP, awayScore0, awayScore1, rawPlayer, cubeValue, matchLength)
+		mwcLoss := decisionMWCLoss(errMP, awayScore0, awayScore1, cubeValue, matchLength)
 		pa, seat := &a.p1, 0
 		if rawPlayer != 1 { // player2 on roll (rawPlayer == -1)
 			pa, seat = &a.p2, 1
@@ -830,7 +830,7 @@ func (s *StatsStore) TournamentBadges(ctx context.Context, scope string) (map[in
 		a.SumErr += errMP
 		a.Cnt++
 		a.Matches[matchID] = struct{}{}
-		if mwcLoss := decisionMWCLoss(errMP, awayScore0, awayScore1, rawPlayer, cubeValue, matchLength); !math.IsNaN(mwcLoss) {
+		if mwcLoss := decisionMWCLoss(errMP, awayScore0, awayScore1, cubeValue, matchLength); !math.IsNaN(mwcLoss) {
 			a.MWC += mwcLoss
 			a.MatchMWC[matchID] += mwcLoss
 			a.MatchLength[matchID] = matchLength

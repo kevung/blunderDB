@@ -666,6 +666,8 @@
         "errorDeleting": "Virhe ottelun poistamisessa",
         "errorSettingTournament": "Virhe turnauksen asettamisessa",
         "errorSwapping": "Virhe pelaajien vaihtamisessa",
+        "swapDraftOpen": "Vaihto hylätty: tähän otteluun on avoinna litteroinnin luonnos. Viimeistele tai poista se ensin.",
+        "swapPlayedHere": "Vaihto hylätty: tämä ottelu pelattiin blunderDB:ssä; sen paikat ovat ne, joilla se pelattiin.",
         "errorUpdating": "Virhe ottelun päivittämisessä",
         "errorUpdatingComment": "Virhe kommentin päivittämisessä",
         "matchDeleted": "Ottelu siirretty roskakoriin — palautettavissa (komento ”trash”)",

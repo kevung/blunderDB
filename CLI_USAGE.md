@@ -278,12 +278,12 @@ Each position is exported as a JSON object on a separate line.
 - `--match-ids` - Comma-separated match IDs to export (empty = all)
 - `--tournament-ids` - Comma-separated tournament IDs to export (empty = all)
 - `--deck-ids` - Comma-separated Anki deck IDs to export (empty = all)
+- `--format` - Output format: `text` (default) or `json` (a summary document — file path, byte count, counts)
 
 `--type database` exports the whole library, as the server's export and the GUI's export of the
 library do: positions, matches, tournaments, collections, lessons, Anki decks, transcriptions and
 the filter library. A flag set to `false` leaves its family out; a list of IDs narrows it to those
 and brings it in.
-- `--format` - Output format: `text` (default) or `json` (a summary document — file path, byte count, counts)
 
 ### Export Database Without Matches
 
@@ -299,9 +299,11 @@ Export only match data (with linked positions) to a new database:
 
 ```bash
 ./blunderDB export --db database.db --type matches --file matches.db
+./blunderDB export --db database.db --type matches --file selection.db --match-ids 1,3,5
 ```
 
-This creates a new database containing only the match structure and linked positions.
+This creates a new database containing only the match structure and linked positions: every
+match, or those `--match-ids` names.
 
 ### Export Matches as .mat Transcripts
 

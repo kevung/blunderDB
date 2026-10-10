@@ -2,6 +2,7 @@
     /** @typedef {import('../../wailsjs/go/models').domain.Match} Match */
     import { confirmAction, confirmModalStore } from '../services/confirmService.js';
     import { logger } from '../utils/logger.js';
+    import { swapPlayersErrorKey } from '../utils/swapPlayersError.js';
     import { focusPanelUnlessTyping } from '../utils/panelFocus.js';
     import { analysisChallengeStore, analysisChallengeHiddenStore } from '../stores/analysisChallengeStore.js';
     import { toDateInputValue, formatDate, formatDiceShort, GRADE_MARKS, indexMoveGrades, countGrades, fmtGradeCost } from '../utils/matchTable.js';
@@ -953,7 +954,7 @@
             statusBarTextStore.set(tMsg('match.swappedPlayers'));
         } catch (error) {
             logger.error('Error swapping match players:', error);
-            statusBarTextStore.set(tMsg('match.errorSwapping'));
+            statusBarTextStore.set(tMsg(swapPlayersErrorKey(error, 'match.errorSwapping')));
         }
     }
 

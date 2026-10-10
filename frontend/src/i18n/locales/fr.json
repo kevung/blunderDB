@@ -666,6 +666,8 @@
         "errorDeleting": "Erreur lors de la suppression du match",
         "errorSettingTournament": "Erreur lors de l'attribution du tournoi",
         "errorSwapping": "Erreur lors de l'échange des joueurs",
+        "swapDraftOpen": "Inversion refusée : un brouillon de transcription est ouvert sur ce match. Terminez-le ou supprimez-le d'abord.",
+        "swapPlayedHere": "Inversion refusée : ce match a été joué dans blunderDB, ses sièges sont ceux du jeu.",
         "errorUpdating": "Erreur lors de la mise à jour du match",
         "errorUpdatingComment": "Erreur lors de la mise à jour du commentaire",
         "matchDeleted": "Match mis à la corbeille — récupérable (commande « trash »)",

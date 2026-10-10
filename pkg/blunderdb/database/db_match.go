@@ -87,7 +87,8 @@ func (d *Database) CountMatches(opts storage.MatchListOpts) (int, error) {
 
 // GetMatchByID returns a specific match by ID, including the name of the
 // tournament it is assigned to (empty when unassigned) so callers can display
-// the full provenance without a second lookup.
+// the full provenance without a second lookup, and the PR/MWC badges a list
+// row shows, so that a row re-read after an edit shows them as they now are.
 func (d *Database) GetMatchByID(matchID int64) (*Match, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
@@ -99,7 +100,11 @@ func (d *Database) GetMatchByID(matchID int64) (*Match, error) {
 	if err != nil {
 		return nil, err
 	}
-	return m, nil
+	one := []Match{*m}
+	if err := d.applyMatchBadges(one); err != nil {
+		slog.Warn("computing match stats", "err", err)
+	}
+	return &one[0], nil
 }
 
 // GetPositionProvenance returns the matches that reference the given position
@@ -643,8 +648,8 @@ func (d *Database) UpdateMatch(matchID int64, player1Name, player2Name, matchDat
 	return tx.Commit()
 }
 
-// SwapMatchPlayers swaps the two players in a match: player1 becomes player2 and vice versa.
-// This updates player names, game scores, game winners, and move player assignments.
+// SwapMatchPlayers swaps the two players in a match: player1 becomes player2
+// and vice versa (storage.MatchStore.SwapPlayers).
 func (d *Database) SwapMatchPlayers(matchID int64) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
@@ -652,8 +657,6 @@ func (d *Database) SwapMatchPlayers(matchID int64) error {
 	if d.db == nil {
 		return fmt.Errorf("no database is currently open")
 	}
-	// The store swaps each position copy-on-write with a recomputed Zobrist:
-	// positions are shared across matches, and score/cube are hashed.
 	return d.store.Matches().SwapPlayers(context.Background(), "", matchID)
 }
 

@@ -666,6 +666,8 @@
         "errorDeleting": "Fehler beim Löschen des Matches",
         "errorSettingTournament": "Fehler beim Zuweisen des Turniers",
         "errorSwapping": "Fehler beim Tauschen der Spieler",
+        "swapDraftOpen": "Tausch abgelehnt: Für dieses Match ist ein Transkriptionsentwurf offen. Schließen oder löschen Sie ihn zuerst.",
+        "swapPlayedHere": "Tausch abgelehnt: Dieses Match wurde in blunderDB gespielt; seine Plätze sind die, mit denen es gespielt wurde.",
         "errorUpdating": "Fehler beim Aktualisieren des Matches",
         "errorUpdatingComment": "Fehler beim Aktualisieren des Kommentars",
         "matchDeleted": "Match in den Papierkorb verschoben — wiederherstellbar (Befehl „trash“)",

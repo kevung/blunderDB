@@ -22,7 +22,7 @@ func TestBuildMatchReview(t *testing.T) {
 		// not a roll the coverage misses.
 		{MoveID: 6, GameNumber: 2, MoveNumber: 4, Player: 1, DecisionType: "checker"},
 	}
-	r := BuildMatchReview(9, d, 5, 0.5, -1)
+	r := BuildMatchReview(9, d, 5, [2]float64{0.5, 0.5}, -1)
 	p := r.Players[0]
 	l := p.Luck
 	if !l.Available || l.Result != -0.5 || math.Abs(l.Luck+0.30) > 1e-12 || math.Abs(l.Adjusted+0.20) > 1e-12 {
@@ -54,7 +54,7 @@ func TestBuildMatchReview(t *testing.T) {
 	if r.Players[0].Difficulty.Decisions != 1 {
 		t.Errorf("player 1's difficulty covers move 3 only: %+v", r.Players[0].Difficulty)
 	}
-	if m := BuildMatchReview(9, d, 0, 0.5, 1); m.Players[0].Luck.Available {
+	if m := BuildMatchReview(9, d, 0, [2]float64{0.5, 0.5}, 1); m.Players[0].Luck.Available {
 		t.Error("money play has no luck-adjusted result")
 	}
 }

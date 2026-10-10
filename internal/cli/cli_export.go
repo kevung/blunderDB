@@ -189,7 +189,7 @@ func (cli *CLI) runExport(args []string) error {
 	case "positions":
 		return cli.exportPositions(*outputFile, text)
 	case "matches":
-		return cli.exportMatchesOnly(*outputFile, marking, text)
+		return cli.exportMatchesOnly(*outputFile, matchIDs, marking, text)
 	case "mat":
 		return cli.exportMatchesMAT(matchIDs, *outputFile, *outputDir, text)
 	default:
@@ -348,24 +348,29 @@ func (cli *CLI) exportDatabaseWithOptions(opts ExportOptions, marking exportMark
 	return nil
 }
 
-// exportMatchesOnly exports only the matches to a new database
-func (cli *CLI) exportMatchesOnly(outputFile string, marking exportMarking, text bool) error {
+// exportMatchesOnly exports matches — those of matchIDs, every match when it is empty — to a
+// new database, each with the positions its moves were played in and nothing else.
+func (cli *CLI) exportMatchesOnly(outputFile string, matchIDs []int64, marking exportMarking, text bool) error {
 	if text {
 		fmt.Printf("Exporting matches to: %s\n", outputFile)
 	}
 
-	// Get matches count first
-	matches, err := cli.db.GetAllMatches()
-	if err != nil {
-		return fmt.Errorf("failed to load matches: %w", err)
+	ids := matchIDs
+	if len(ids) == 0 {
+		matches, err := cli.db.GetAllMatches()
+		if err != nil {
+			return fmt.Errorf("failed to load matches: %w", err)
+		}
+		for _, m := range matches {
+			ids = append(ids, m.ID)
+		}
 	}
-
-	if len(matches) == 0 {
+	if len(ids) == 0 {
 		return fmt.Errorf("no matches found in database")
 	}
 
 	if text {
-		fmt.Printf("Found %d match(es) to export\n", len(matches))
+		fmt.Printf("Found %d match(es) to export\n", len(ids))
 	}
 
 	// Export with empty positions but with matches
@@ -375,11 +380,11 @@ func (cli *CLI) exportMatchesOnly(outputFile string, marking exportMarking, text
 		metadata["database_version"] = version
 	}
 
-	// Every match with every position, read by the exporter from the database rather than
-	// loaded here. Ctrl-C cancels it in flight instead of waiting it out.
+	// The matches carry their own positions (ExportDatabase sets MatchPositions); the
+	// exporter reads them from the database. Ctrl-C cancels it in flight.
 	opts := ExportOptions{
 		ExportPath:         outputFile,
-		AllPositions:       true,
+		MatchIDs:           ids,
 		Metadata:           metadata,
 		IncludeAnalysis:    true,
 		IncludeComments:    true,
@@ -414,7 +419,7 @@ func (cli *CLI) exportMatchesOnly(outputFile string, marking exportMarking, text
 			File    string `json:"file"`
 			Bytes   int64  `json:"bytes"`
 			Matches int    `json:"matches"`
-		}{File: outputFile, Bytes: size, Matches: len(matches)})
+		}{File: outputFile, Bytes: size, Matches: len(ids)})
 	}
 	if size > 0 {
 		fmt.Printf("Successfully exported matches (%d bytes)\n", size)

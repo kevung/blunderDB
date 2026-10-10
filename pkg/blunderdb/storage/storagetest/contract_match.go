@@ -5,7 +5,6 @@ package storagetest
 
 import (
 	"context"
-	"errors"
 	"testing"
 	"time"
 
@@ -171,127 +170,6 @@ func testMatchListFilterSortPaginate(t *testing.T, s storage.Storage) {
 		if err != nil || got != c.want {
 			t.Errorf("Count(%+v) = %d, %v; want %d", c.opts, got, err, c.want)
 		}
-	}
-}
-
-// testMatchSwapCopyOnWrite: swapping a match's players must not mutate
-// a position shared with another match, and the swapped position must keep a
-// consistent Zobrist hash (score/cube are hashed). Two matches reference the same
-// position; after swapping match A, match B's position is untouched and A's is a
-// correctly-hashed swapped copy.
-func testMatchSwapCopyOnWrite(t *testing.T, s storage.Storage) {
-	ctx := context.Background()
-
-	// A shared position with an asymmetric score so the swap is observable.
-	p := checkerPos()
-	p.Score = [2]int{3, 1}
-	sharedID, err := s.Positions().Save(ctx, "", &p)
-	if err != nil {
-		t.Fatalf("Save position: %v", err)
-	}
-
-	makeMatch := func(p1, p2 string, posID int64) int64 {
-		m := domain.Match{Player1Name: p1, Player2Name: p2, MatchLength: 7}
-		mid, err := s.Matches().Save(ctx, "", &m)
-		if err != nil {
-			t.Fatalf("Save match: %v", err)
-		}
-		g := domain.Game{MatchID: mid, GameNumber: 1, InitialScore: [2]int32{3, 1}, Winner: 1, PointsWon: 1}
-		gid, err := s.Matches().CreateGame(ctx, "", &g)
-		if err != nil {
-			t.Fatalf("CreateGame: %v", err)
-		}
-		mv := domain.Move{GameID: gid, MoveNumber: 1, MoveType: "checker", PositionID: posID, Player: 1, Dice: [2]int32{3, 1}, CheckerMove: "8/5 6/5"}
-		if _, err := s.Matches().CreateMove(ctx, "", &mv); err != nil {
-			t.Fatalf("CreateMove: %v", err)
-		}
-		return mid
-	}
-	matchA := makeMatch("Alice", "Bob", sharedID)
-	matchB := makeMatch("Carol", "Dave", sharedID)
-
-	if err := s.Matches().SwapPlayers(ctx, "", matchA); err != nil {
-		t.Fatalf("SwapPlayers: %v", err)
-	}
-
-	// The position id each match's move now points at.
-	posOf := func(matchID int64) (int64, domain.Position) {
-		t.Helper()
-		var pid int64
-		for mv, err := range s.Matches().MovesByMatch(ctx, "", matchID) {
-			if err != nil {
-				t.Fatalf("MovesByMatch: %v", err)
-			}
-			pid = mv.PositionID
-		}
-		pos, err := s.Positions().Load(ctx, "", pid)
-		if err != nil {
-			t.Fatalf("Load position %d: %v", pid, err)
-		}
-		return pid, *pos
-	}
-
-	// Match B (not swapped) must keep the original shared position, unchanged.
-	bID, bPos := posOf(matchB)
-	if bID != sharedID {
-		t.Errorf("match B position moved from %d to %d (should be untouched)", sharedID, bID)
-	}
-	if bPos.Score != [2]int{3, 1} {
-		t.Errorf("shared position corrupted by swap: score = %v, want [3 1]", bPos.Score)
-	}
-
-	// Match A now points at a swapped copy with the mirrored score.
-	aID, aPos := posOf(matchA)
-	if aID == sharedID {
-		t.Errorf("swap mutated the shared position in place (A still on %d)", sharedID)
-	}
-	if aPos.Score != [2]int{1, 3} {
-		t.Errorf("swapped position score = %v, want [1 3]", aPos.Score)
-	}
-
-	// Zobrist consistency: re-saving A's swapped content must dedup back to the
-	// same row (a stale hash would create a new row, returning a different id).
-	reSaved, err := s.Positions().Save(ctx, "", &aPos)
-	if err != nil {
-		t.Fatalf("re-save swapped position: %v", err)
-	}
-	if reSaved != aID {
-		t.Errorf("swapped position has a stale Zobrist: re-save returned %d, want %d", reSaved, aID)
-	}
-
-	// The swap's orphan cleanup mirrors DeleteCascade's (see positionIsHeldSQL):
-	// a position that was only this match's, and that nothing else holds once
-	// the move repoints to the swapped copy, must be purged under its old id.
-	orphan := checkerPos()
-	orphan.Score = [2]int{2, 0}
-	orphanID, err := s.Positions().Save(ctx, "", &orphan)
-	if err != nil {
-		t.Fatalf("Save orphan position: %v", err)
-	}
-	matchC := makeMatch("Eve", "Frank", orphanID)
-	if err := s.Matches().SwapPlayers(ctx, "", matchC); err != nil {
-		t.Fatalf("SwapPlayers (orphan case): %v", err)
-	}
-	if _, err := s.Positions().Load(ctx, "", orphanID); !errors.Is(err, storage.ErrNotFound) {
-		t.Errorf("swap did not purge the orphaned old position: got %v, want ErrNotFound", err)
-	}
-
-	// A retained position (flagged, ADR-0006) must survive the swap under its
-	// old id even though no move points at it any more: positionIsHeldSQL keeps
-	// it alive the same way it would across a match deletion.
-	retained := checkerPos()
-	retained.Score = [2]int{4, 0}
-	retained.Flagged = true
-	retainedID, err := s.Positions().Save(ctx, "", &retained)
-	if err != nil {
-		t.Fatalf("Save retained position: %v", err)
-	}
-	matchD := makeMatch("Gina", "Hank", retainedID)
-	if err := s.Matches().SwapPlayers(ctx, "", matchD); err != nil {
-		t.Fatalf("SwapPlayers (retained case): %v", err)
-	}
-	if _, err := s.Positions().Load(ctx, "", retainedID); err != nil {
-		t.Errorf("swap purged a flagged position that should have been retained: %v", err)
 	}
 }
 

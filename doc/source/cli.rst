@@ -385,11 +385,6 @@ Exporte le contenu de la base vers des fichiers.
 * ``--deck-ids`` — IDs de paquets Anki à exporter avec leurs positions
   (séparés par des virgules, vide = tous).
 
-``--type database`` exporte toute la bibliothèque, comme l'export du serveur
-et comme la fenêtre d'export quand la liste affichée est la bibliothèque :
-positions, matchs, tournois, collections, leçons, paquets Anki, transcriptions
-et filtres. Une option à ``false`` retire sa famille (``--collections=false``) ;
-une liste d'IDs la restreint à ces éléments et l'inclut.
 * ``--password`` — Enveloppe le résultat dans un conteneur chiffré (``.dbx``).
 * ``--watermark`` — Écrit une déclaration d'origine **signée** dans le fichier
   exporté (voir :ref:`diffusion_controlee`).
@@ -397,6 +392,12 @@ une liste d'IDs la restreint à ces éléments et l'inclut.
   d'usage, contact) ; utilisé avec ``--watermark``.
 * ``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` (document
   résumant l'export: chemin, taille en octets, nombres).
+
+``--type database`` exporte toute la bibliothèque, comme l'export du serveur
+et comme la fenêtre d'export quand la liste affichée est la bibliothèque :
+positions, matchs, tournois, collections, leçons, paquets Anki, transcriptions
+et filtres. Une option à ``false`` retire sa famille (``--collections=false``) ;
+une liste d'IDs la restreint à ces éléments et l'inclut.
 
 **Exemples:**
 
@@ -2769,8 +2770,10 @@ du nom canonique, comme autant de ``players alias add``.
    ./blunderdb players merge --db <chemin> --into <CANONIQUE> <NOM> [<NOM>...]
 
 **players swap** — L'inversion des deux joueurs d'un match, que le fichier avait
-nommés dans le mauvais ordre (route ``matches.swapPlayers``). Chaque position du
-match est réécrite du point de vue de l'autre joueur.
+nommés dans le mauvais ordre (route ``matches.swapPlayers``). Aucune position ni
+aucune analyse ne change : chaque joueur garde ses statistiques, sous l'autre siège.
+L'inversion est refusée tant qu'un brouillon de transcription est ouvert sur le
+match, et pour un match joué dans blunderDB.
 
 .. code-block:: bash
 

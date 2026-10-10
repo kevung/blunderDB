@@ -54,6 +54,9 @@ func TestExportParity_WholeLibraryFromGUICLIAndDaemon(t *testing.T) {
 		t.Fatalf("the daemon's export lacks a seeded family: %d transcriptions, %d decks, %d collections",
 			len(want["transcription"]), len(want["anki_deck"]), len(want["collection"]))
 	}
+	if drafts := strings.Join(want["transcription"], "\n"); strings.Contains(drafts, "/home/producteur") || !strings.Contains(drafts, "finale.mp4") {
+		t.Errorf("the exported draft should name its video, not locate it: %s", drafts)
+	}
 	for name, path := range map[string]string{"GUI": gui, "CLI": cliOut} {
 		got := dumpTables(t, path)
 		for table, rows := range want {
@@ -103,7 +106,7 @@ func seedWholeLibrary(t *testing.T, cli *CLI) {
 	if _, err := cli.db.SyncAnkiDeck(deckID); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := cli.db.CreateTranscription(transcript.Header{MatchLength: 7}); err != nil {
+	if _, err := cli.db.CreateTranscription(transcript.Header{MatchLength: 7, VideoSource: "/home/producteur/Vidéos/finale.mp4"}); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -244,5 +247,54 @@ func TestCLI_DatabaseExportFamilies(t *testing.T) {
 	}
 	if n := len(run()["collection"]); n != 2 {
 		t.Errorf("--collections with no ids exported %d collections, want both", n)
+	}
+}
+
+// `export --type matches --match-ids` writes those matches alone, each with its positions.
+func TestCLI_MatchesExportByIDs(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	first, err := cli.db.ImportXGMatch(testdataPath("test.xg"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := cli.db.ImportXGMatch(testdataPath("HsbtMarseille_main_ronde4_LamourDeCaslouGildas_UngerKevin_7p.xg")); err != nil {
+		t.Fatal(err)
+	}
+	export := func(args ...string) *sql.DB {
+		t.Helper()
+		out := filepath.Join(t.TempDir(), "matchs.db")
+		captureStdout(t, func() {
+			if err := cli.Run(append([]string{"export", "--db", dbPath, "--type", "matches", "--file", out}, args...)); err != nil {
+				t.Fatalf("export %v: %v", args, err)
+			}
+		})
+		db, err := sql.Open("sqlite", out)
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() { db.Close() })
+		return db
+	}
+	count := func(db *sql.DB, query string) int {
+		t.Helper()
+		var n int
+		if err := db.QueryRow(query).Scan(&n); err != nil {
+			t.Fatal(err)
+		}
+		return n
+	}
+
+	one := export("--match-ids", fmt.Sprint(first))
+	if n := count(one, `SELECT COUNT(*) FROM match`); n != 1 {
+		t.Errorf("--match-ids %d exported %d matches, want 1", first, n)
+	}
+	if n := count(one, `SELECT COUNT(*) FROM move WHERE position_id IS NOT NULL AND position_id NOT IN (SELECT id FROM position)`); n != 0 {
+		t.Errorf("%d moves point at no position", n)
+	}
+	if n := count(export(), `SELECT COUNT(*) FROM match`); n != 2 {
+		t.Errorf("without --match-ids, %d matches exported, want 2", n)
+	}
+	if count(one, `SELECT COUNT(*) FROM position`) >= count(export(), `SELECT COUNT(*) FROM position`) {
+		t.Error("one match carried as many positions as both")
 	}
 }
