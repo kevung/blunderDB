@@ -2265,6 +2265,11 @@ par pas de 0,25 entre 0,25× et 4× ; une vidéo YouTube ne propose que les
 vitesses de son lecteur, jusqu'à 2×. La vitesse s'affiche dans le coin de la
 vidéo quand elle n'est pas de 1×, et une nouvelle source repart à 1×.
 
+Une vidéo filmée de travers se redresse par le bouton ⟳ de la barre vidéo ou
+par *o* : un quart de tour à chaque appui, de 0° à 270°. L'image reste entière,
+dans la vidéo d'un fichier comme dans le cadre YouTube. L'angle est retenu pour
+le brouillon, sur cet ordinateur seulement ; il n'est pas écrit dans la base.
+
 Des repères se déduisent les **durées** de décision : la décision de pions va
 du jet à la fin du coup, la décision de videau de l'action précédente au jet, un
 double ou une réponse de l'action précédente à la leur. Une cellule qui porte

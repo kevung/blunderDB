@@ -416,6 +416,7 @@ veille ne demande pas la souris.
    "v (vidéo attachée)", "Poser l'instant courant de la vidéo comme instant de l'action du curseur."
    "MAJ-V (vidéo attachée)", "Poser l'instant courant de la vidéo comme instant du jet de l'action du curseur."
    "[ / ] (vidéo attachée)", "Ralentir ou accélérer la lecture, par pas de 0,25 entre 0,25× et 4× (jusqu'à 2× pour YouTube)."
+   "o (vidéo attachée)", "Faire pivoter la vidéo d'un quart de tour (0°, 90°, 180°, 270°), comme le bouton ⟳ de la barre vidéo."
    "F11 (vidéo attachée)", "Passer en mode théâtre — la vidéo en plein écran, un petit plateau flottant par-dessus, le clavier de saisie toujours actif — ou en sortir. ÉCHAP en sort aussi ; dans le théâtre, RETOUR ARRIERE efface les dés saisis (:ref:`détail <transcription_theatre>`)."
 
 Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans touche
