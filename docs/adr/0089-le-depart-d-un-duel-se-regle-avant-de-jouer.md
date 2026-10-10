@@ -1,4 +1,4 @@
-# ADR-0087 — Le Départ d'un Duel se règle avant de jouer : score, dés, videau, une partie, cadence
+# ADR-0089 — Le Départ d'un Duel se règle avant de jouer : score, dés, videau, une partie, cadence
 
 Statut : acceptée. Révise ADR-0072 règle 12 (double offert au Départ, CLI sans Cadence) et
 ADR-0073 (cadences nommées). Voir aussi : ADR-0007, ADR-0085.
@@ -32,8 +32,9 @@ Départ montrant un double offert était refusé (`start_pending_double`).
    jeté) — un match inachevé comme une session en argent gardée, au score où la partie s'est
    jouée. Rien de plus n'est enregistré : l'origine du Match (le Départ en XGID) et son
    unique partie disent ce qu'il fut. Une session en argent entre deux Bots devient permise
-   en une seule partie, puisqu'elle finit. Une version antérieure refuse un brouillon v3
-   plutôt que de jouer au-delà de la partie.
+   en une seule partie, puisqu'elle finit. Seul un brouillon en une partie s'écrit
+   en version 3 ; les autres restent en version 2, même relus et réécrits, pour qu'une
+   version antérieure ne refuse que le brouillon dont elle jouerait au-delà de la partie.
 4. **Une cadence se dit en deux nombres** : minutes de réserve par point du match et délai
    par coup en secondes ; le total d'un match à 0-0 vaut minutes par point × longueur.
    Préréglages : *standard* (2 min + 12 s, les règles USBGF/WBGF) et *speed* (0,4 min,

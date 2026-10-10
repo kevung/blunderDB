@@ -82,7 +82,6 @@ export async function startDuel(form, cadences) {
     await gesture(() => CreateDuel(settings), { fresh: true });
 }
 
-/** @param {number} id */
 /**
  * @param {number} id
  * @param {any} [form] the form's display choices (the pipcount) apply to the Duel resumed

@@ -15,9 +15,19 @@ import (
 // versions a Transcription's: a change to its shape is a version of the
 // document, never a DatabaseVersion migration. Version 2 adds the Cadence and
 // the clock, version 3 the single game; an older draft reads as one without
-// them, and an older build refuses a version 3 draft rather than play past
-// its single game.
+// them. FormatVersion is the newest this build reads; a draft is written at
+// the oldest version that holds it (see document.version), so an older build
+// refuses only the single-game draft it would play past its game.
 const FormatVersion = 3
+
+// version is the oldest document format holding doc: 3 only for a single
+// game, 2 otherwise.
+func (doc document) version() int {
+	if doc.SingleGame {
+		return 3
+	}
+	return 2
+}
 
 // The Duel refuses, by name, a Start whose decision the rules do not leave to
 // the side on roll. The rule machine reads no DecisionType; the Duel does.

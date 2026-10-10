@@ -2,6 +2,7 @@ package duel
 
 import (
 	"context"
+	"encoding/json"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -181,5 +182,50 @@ func TestDuelSingleGame(t *testing.T) {
 		Sides: pair(SideSpec{Kind: sideFirst, Name: "A"}, SideSpec{Kind: sideFirst, Name: "B"})})
 	if err != nil || s.Ended == nil || !s.Ended.Discarded || len(s.Games) != 1 {
 		t.Fatalf("a single money game between two delegated Sides: %+v, %v", s, err)
+	}
+}
+
+// TestDuelDraftVersion: a draft is written at the oldest format holding it —
+// 3 only for a single game — so an older build refuses no more than it must,
+// and a version 2 draft replayed and saved stays version 2.
+func TestDuelDraftVersion(t *testing.T) {
+	ctx := context.Background()
+	st := newStore(t)
+	svc := newService(t, st, 5)
+	version := func(id int64) (string, int) {
+		t.Helper()
+		row, err := st.Duels().Get(ctx, "", id)
+		if err != nil {
+			t.Fatalf("Get row: %v", err)
+		}
+		var doc struct {
+			FormatVersion int `json:"format_version"`
+		}
+		if err := json.Unmarshal([]byte(row.Document), &doc); err != nil {
+			t.Fatalf("document: %v", err)
+		}
+		return row.FormatVersion, doc.FormatVersion
+	}
+
+	s, err := svc.Create(ctx, "", Settings{MatchLength: 7, Sides: pair(external("A"), SideSpec{Kind: sideFirst, Name: "Bot"})})
+	if err != nil || s.Awaiting == nil {
+		t.Fatalf("Create: %+v, %v", s, err)
+	}
+	if row, doc := version(s.ID); row != "2" || doc != 2 {
+		t.Errorf("a match draft is written at version %s/%d, want 2", row, doc)
+	}
+	if s, err = svc.Play(ctx, "", s.ID, s.Revision, answer(*s.Awaiting)); err != nil {
+		t.Fatalf("Play: %v", err)
+	}
+	if row, doc := version(s.ID); row != "2" || doc != 2 {
+		t.Errorf("replayed and saved, the draft is at version %s/%d, want 2", row, doc)
+	}
+
+	s, err = svc.Create(ctx, "", Settings{MatchLength: 7, SingleGame: true, Sides: pair(external("A"), SideSpec{Kind: sideFirst, Name: "Bot"})})
+	if err != nil {
+		t.Fatalf("Create single game: %v", err)
+	}
+	if row, doc := version(s.ID); row != "3" || doc != 3 {
+		t.Errorf("a single-game draft is written at version %s/%d, want 3", row, doc)
 	}
 }

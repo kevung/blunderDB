@@ -255,7 +255,6 @@ func (s *Service) Create(ctx context.Context, scope string, set Settings) (*Stat
 		return nil, err
 	}
 	doc := document{
-		FormatVersion: FormatVersion,
 		Header: transcript.Header{
 			MatchLength: set.MatchLength, Jacoby: set.Jacoby,
 			Player1: set.Sides[0].Name, Player2: set.Sides[1].Name,
@@ -269,6 +268,7 @@ func (s *Service) Create(ctx context.Context, scope string, set Settings) (*Stat
 		Cadence:      set.Cadence,
 		CombinedSeed: set.CombinedSeed,
 	}
+	doc.FormatVersion = doc.version()
 	g, err := newGame(doc, seed)
 	if err != nil {
 		return nil, err
@@ -285,7 +285,7 @@ func (s *Service) Create(ctx context.Context, scope string, set Settings) (*Stat
 	if err := g.settle(ctx, sides); err != nil {
 		return nil, err
 	}
-	row := &storage.Duel{FormatVersion: strconv.Itoa(FormatVersion), Label: label(g.doc.Header), DiceSeed: seed, Open: true}
+	row := &storage.Duel{FormatVersion: strconv.Itoa(doc.FormatVersion), Label: label(g.doc.Header), DiceSeed: seed, Open: true}
 	if row.Document, err = encode(g.doc); err != nil {
 		return nil, err
 	}
@@ -619,8 +619,9 @@ func (s *Service) load(ctx context.Context, scope string, id int64) (*storage.Du
 		return nil, nil, fmt.Errorf("duel %d: document format %d, this build reads %d: %w",
 			id, doc.FormatVersion, FormatVersion, storage.ErrInvalid)
 	}
-	// An older draft is a current one without what later versions added.
-	doc.FormatVersion = FormatVersion
+	// An older draft is a current one without what later versions added; it
+	// is rewritten at the oldest version holding it, never raised further.
+	doc.FormatVersion = doc.version()
 	g, err := loadGame(doc, row.DiceSeed)
 	if err != nil {
 		return nil, nil, fmt.Errorf("duel %d: %w", id, err)

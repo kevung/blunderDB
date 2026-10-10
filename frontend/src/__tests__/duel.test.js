@@ -73,6 +73,11 @@ describe('settingsFromForm', () => {
         expect(settingsFromForm({ ...chooseCadence(DEFAULT_FORM, 'speed', CADENCES), money: true }, CADENCES).cadence).toBeUndefined();
     });
 
+    test('minutes per point are kept to the whole second the Arbiter counts', () => {
+        expect(normalizeForm({ minutesPerPoint: 1.234 }).minutesPerPoint * 60).toBe(74);
+        expect(normalizeForm({ minutesPerPoint: 0.4 }).minutesPerPoint).toBe(0.4);
+    });
+
     test('the Start: the board without its id, at the form score, its roll and cube choices', () => {
         const board = { id: 42, board: { points: [] }, score: [3, 3], dice: [6, 5] };
         const form = { ...DEFAULT_FORM, start: START.BOARD, away: [3, 3] };

@@ -581,11 +581,6 @@ export function evaluateInNewView(position) {
 }
 
 /**
- * NORMAL | MATCH | COLLECTION | EDIT → EVAL. EVAL is set before the scratch
- * board lands in positionStore, in one synchronous run, or updateEPC fires on
- * the wrong position. The only await (leaving EDIT) sits before that run.
- */
-/**
  * The Duel launcher starting from the board: the board becomes Eval's scratch board — the same
  * editing, not a copy of it — on the position displayed. Already in EVAL, the scratch board stays.
  */
@@ -599,6 +594,11 @@ export async function enterEvalOnDisplayed() {
     await enterEvalMode();
 }
 
+/**
+ * NORMAL | MATCH | COLLECTION | EDIT → EVAL. EVAL is set before the scratch
+ * board lands in positionStore, in one synchronous run, or updateEPC fires on
+ * the wrong position. The only await (leaving EDIT) sits before that run.
+ */
 export async function enterEvalMode() {
     if (currentMode() === MODE.EVAL) return;
 

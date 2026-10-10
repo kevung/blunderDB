@@ -57,13 +57,13 @@ function clamp(n, lo, hi, d) {
 }
 
 /**
- * Minutes per point, to the tenth: the Arbiter counts whole seconds.
+ * Minutes per point, to the whole second: the Arbiter counts whole seconds.
  * @param {any} v
  * @param {number} d
  */
 function minutes(v, d) {
     const n = Number(v);
-    return Number.isFinite(n) && n > 0 ? Math.min(60, Math.round(n * 600) / 600) : d;
+    return Number.isFinite(n) && n > 0 ? Math.min(60, Math.round(n * 60) / 60) : d;
 }
 
 /**
