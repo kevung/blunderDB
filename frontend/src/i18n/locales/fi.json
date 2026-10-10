@@ -807,7 +807,7 @@
         "sessionLimitZero": "Tämä pakka on asetettu 0 korttiin istuntoa kohden.",
         "boardAnswerOption": "Vastaa laudalla",
         "boardAnswerOptionHint": "Siirto pelataan laudalla; moottori arvioi sen ja ehdottaa arvosanaa, jota voit muuttaa ennen arviointia. Oletuksena pois: arvioit itse. Kuutio- ja tulloskortit pysyvät itsearvioituina.",
-        "boardAnswerHint": "Pelaa siirtosi laudalla",
+        "boardAnswerHint": "Pelaa siirtosi laudalla, napsauta sitten noppia tai paina ENTER",
         "boardAnswerSuggest": "Ehdotettu arvosana: {rating} (virhe {error} mp)",
         "boardAnswerIllegal": "Tämä siirto ei ole laillinen",
         "boardAnswerUnranked": "Laillinen siirto, jota analyysi ei luokittele: arvioi itse",
