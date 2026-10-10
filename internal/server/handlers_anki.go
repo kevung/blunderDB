@@ -1,9 +1,14 @@
 package server
 
 import (
+	"bytes"
 	"context"
+	"mime"
 	"net/http"
+	"strconv"
+	"time"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/apkg"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -228,5 +233,35 @@ func (s *Server) ankiRoutes() []route {
 		{http.MethodPost, "/v1/anki.retention", rpc(func(ctx context.Context, scope string, req retentionReq) (*domain.AnkiRetention, error) {
 			return as().Retention(ctx, scope, req.DeckID)
 		})},
+		{http.MethodPost, "/v1/anki.exportApkg", s.exportApkgHandler},
 	}
+}
+
+// exportApkgReq names the deck or the collection to export, and the language
+// of the cards.
+type exportApkgReq struct {
+	apkg.Source
+	Language string `json:"language"`
+}
+
+// exportApkgHandler serves POST /v1/anki.exportApkg {deckId | collectionId,
+// language}: the Anki package itself, as an attachment. The package is built
+// whole first, so a failure is still a JSON error and never half a zip.
+func (s *Server) exportApkgHandler(w http.ResponseWriter, r *http.Request) {
+	var req exportApkgReq
+	if err := decodeJSON(r, &req); err != nil {
+		writeErrorCode(w, CodeInvalid, "invalid request body")
+		return
+	}
+	var buf bytes.Buffer
+	res, err := apkg.Export(r.Context(), s.opts.Storage, scopeOf(r), req.Source, req.Language, time.Now(), &buf)
+	if err != nil {
+		writeStorageError(w, err)
+		return
+	}
+	w.Header().Set("Content-Type", "application/octet-stream")
+	w.Header().Set("Content-Disposition", mime.FormatMediaType("attachment", map[string]string{"filename": res.Name + ".apkg"}))
+	w.Header().Set("X-Anki-Notes", strconv.Itoa(res.Notes))
+	w.Header().Set("X-Anki-Total", strconv.Itoa(res.Total))
+	_, _ = w.Write(buf.Bytes())
 }
