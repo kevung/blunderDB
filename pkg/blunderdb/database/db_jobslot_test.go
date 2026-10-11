@@ -5,12 +5,13 @@ import (
 	"errors"
 	"path/filepath"
 
-	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
-	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"sync"
 	"sync/atomic"
 	"testing"
 	"time"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // Of jobs racing for the library, exactly one gets it; the others are
