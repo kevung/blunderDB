@@ -6,6 +6,7 @@ import (
 	"math"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -198,18 +199,22 @@ func (s *StatsStore) buildBaseWhereClauseSeat(scope string, filter storage.Stats
 
 // appendDateClauses adds the filter's match_date bounds. The bound strings are
 // compared as text on SQLite and cast to timestamptz on PostgreSQL
-// (Dialect.TimestampArg).
+// (Dialect.TimestampArg). A day DateTo is half-open on the next day, so a
+// match timed on the last day still counts (ADR-0071).
 func appendDateClauses(d Dialect, clauses []string, args []any, filter storage.StatsFilter) ([]string, []any) {
 	ts := d.TimestampArg()
-	if filter.DateFrom != "" && filter.DateTo != "" {
-		clauses = append(clauses, "m.match_date BETWEEN "+ts+" AND "+ts)
-		args = append(args, filter.DateFrom, filter.DateTo)
-	} else if filter.DateFrom != "" {
+	if filter.DateFrom != "" {
 		clauses = append(clauses, "m.match_date >= "+ts)
 		args = append(args, filter.DateFrom)
-	} else if filter.DateTo != "" {
-		clauses = append(clauses, "m.match_date <= "+ts)
-		args = append(args, filter.DateTo)
+	}
+	if filter.DateTo != "" {
+		if day, err := time.Parse(time.DateOnly, filter.DateTo); err == nil {
+			clauses = append(clauses, "m.match_date < "+ts)
+			args = append(args, day.AddDate(0, 0, 1).Format(time.DateOnly))
+		} else {
+			clauses = append(clauses, "m.match_date <= "+ts)
+			args = append(args, filter.DateTo)
+		}
 	}
 	return clauses, args
 }
@@ -355,17 +360,37 @@ func (s *StatsStore) PositionIDsBySelection(ctx context.Context, scope string, f
 	return scanPositionIDs(rows)
 }
 
-// TournamentIDs — see storage.StatsStore. Read from the decisions, as
-// computeTotals counts them, so it agrees with Totals.NumTournaments under
-// every filter, a provenance filter included.
+// TournamentIDs — see storage.StatsStore. Read from match_stats as MatchIDs
+// reads it; a provenance filter, which match_stats cannot apply, reads the
+// decisions as computeTotals counts them.
 func (s *StatsStore) TournamentIDs(ctx context.Context, scope string, filter storage.StatsFilter) ([]int64, error) {
 	filter, err := s.withPlayerAliases(ctx, scope, filter)
 	if err != nil {
 		return nil, fmt.Errorf("TournamentIDs aliases: %w", err)
 	}
-	whereSQL, args := s.buildStatsWhereClause(scope, filter)
-	rows, err := s.DB.Query(ctx,
-		"SELECT DISTINCT m.tournament_id "+statsBaseJoin+whereSQL+" AND m.tournament_id IS NOT NULL ORDER BY m.tournament_id", args...)
+	var query string
+	var args []any
+	if fromMatchStats(filter) {
+		from, fromArgs, err := s.matchStatsSource(ctx, scope)
+		if err != nil {
+			return nil, err
+		}
+		counted := "ms.decisions"
+		switch filter.DecisionType {
+		case 0:
+			counted = "ms.checker_decisions"
+		case 1:
+			counted = "ms.cube_decisions"
+		}
+		where, whereArgs := s.matchStatsWhere(scope, filter, true)
+		query = "SELECT DISTINCT m.tournament_id" + from + where + " AND " + counted + " > 0 AND m.tournament_id IS NOT NULL ORDER BY m.tournament_id"
+		args = append(fromArgs, whereArgs...)
+	} else {
+		whereSQL, whereArgs := s.buildStatsWhereClause(scope, filter)
+		query = "SELECT DISTINCT m.tournament_id " + statsBaseJoin + whereSQL + " AND m.tournament_id IS NOT NULL ORDER BY m.tournament_id"
+		args = whereArgs
+	}
+	rows, err := s.DB.Query(ctx, query, args...)
 	if err != nil {
 		return nil, fmt.Errorf("TournamentIDs: %w", err)
 	}
