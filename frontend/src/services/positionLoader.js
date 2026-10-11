@@ -19,7 +19,7 @@ import { positionsStore } from '../stores/positionStore.js';
 import { currentPositionIndexStore } from '../stores/uiStore.js';
 import { tournamentOpenRequestStore, tournamentIDsFilterStore } from '../stores/tournamentStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
-import { statsFilterStore, statsResultFilterStore } from '../stores/statsStore.js';
+import { statsFilterStore, statsResultFilterStore, playerTableFilterStore } from '../stores/statsStore.js';
 import { leaveStudiedModeForList, forgetSubSearchOrigin } from './modeMachine.js';
 
 /**
@@ -131,6 +131,7 @@ export function openTournamentListInPanel(ids) {
         return;
     }
     if (ids.length === 1) {
+        tournamentIDsFilterStore.set(null);
         openTournamentInPanel(ids[0]);
         return;
     }
@@ -150,12 +151,14 @@ export async function openStatsTournaments() {
 }
 
 /**
- * Open the positions a Players row's Blunders column counts. The table ignores the decision type.
+ * Open the positions a Players row's Blunders column counts, under the filter the table was read
+ * with. The table ignores the decision type.
  *
  * @param {string} playerName
  */
 export async function openStatsPlayerBlunders(playerName) {
-    await loadPositionsFromStatsSelection({ ...shownStatsFilter(), playerName, decisionType: -1 }, { Kind: 'blunders' });
+    const filter = get(playerTableFilterStore) ?? shownStatsFilter();
+    await loadPositionsFromStatsSelection({ ...filter, playerName, decisionType: -1 }, { Kind: 'blunders' });
 }
 
 /**

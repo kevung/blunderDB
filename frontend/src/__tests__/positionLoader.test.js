@@ -69,7 +69,8 @@ vi.mock('../stores/statsStore.js', () => {
     const { writable } = require('svelte/store');
     return {
         statsFilterStore: writable({ decisionType: -1, playerName: '', tournamentIDs: [], dateFrom: '', dateTo: '', matchLength: [] }),
-        statsResultFilterStore: writable(null)
+        statsResultFilterStore: writable(null),
+        playerTableFilterStore: writable(null)
     };
 });
 
@@ -88,7 +89,7 @@ import {
     openStatsPlayerBlunders
 } from '../services/positionLoader.js';
 
-import { statsFilterStore, statsResultFilterStore } from '../stores/statsStore.js';
+import { statsFilterStore, statsResultFilterStore, playerTableFilterStore } from '../stores/statsStore.js';
 
 import { activeTabStore, matchOpenRequestStore } from '../stores/uiStore.js';
 import { tournamentOpenRequestStore, tournamentIDsFilterStore } from '../stores/tournamentStore.js';
@@ -226,7 +227,8 @@ describe('openTournamentListInPanel', () => {
         activeTabStore.set('stats');
     });
 
-    test('a single tournament opens instead of a one-row list', () => {
+    test('a single tournament opens instead of a one-row list, dropping an earlier restriction', () => {
+        tournamentIDsFilterStore.set([3, 9]);
         openTournamentListInPanel([5]);
         expect(get(tournamentOpenRequestStore)).toBe(5);
         expect(get(tournamentIDsFilterStore)).toBeNull();
@@ -272,5 +274,17 @@ describe('Stats counts', () => {
         await openStatsPlayerBlunders('Bob');
 
         expect(GetPositionIDsByStatsSelection).toHaveBeenCalledWith(expect.objectContaining({ playerName: 'Bob', decisionType: -1, tournamentIDs: [2] }), { Kind: 'blunders' });
+    });
+
+    test('the blunders open under the filter the players table was read with', async () => {
+        playerTableFilterStore.set(/** @type {any} */ ({ decisionType: -1, playerName: '', tournamentIDs: [8], dateFrom: '', dateTo: '', matchLength: [] }));
+        statsFilterStore.set(/** @type {any} */ ({ decisionType: -1, playerName: '', tournamentIDs: [9], dateFrom: '', dateTo: '', matchLength: [] }));
+        vi.mocked(GetPositionIDsByStatsSelection).mockResolvedValue([1]);
+        vi.mocked(LoadPositionIDsByFilters).mockResolvedValue([1]);
+
+        await openStatsPlayerBlunders('Bob');
+
+        expect(GetPositionIDsByStatsSelection).toHaveBeenCalledWith(expect.objectContaining({ playerName: 'Bob', tournamentIDs: [8] }), { Kind: 'blunders' });
+        playerTableFilterStore.set(null);
     });
 });
