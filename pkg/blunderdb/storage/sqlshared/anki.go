@@ -784,6 +784,33 @@ func scanReviewLog(sc interface{ Scan(...any) error }) (domain.AnkiReviewLog, er
 	return l, nil
 }
 
+// DeckCards streams a deck's cards with their scheduling state, in id order.
+func (s *AnkiStore) DeckCards(ctx context.Context, scope string, deckID int64) iter.Seq2[*domain.AnkiCard, error] {
+	return func(yield func(*domain.AnkiCard, error) bool) {
+		tenant, targs := s.DB.TenantFilter("", scope)
+		rows, err := s.DB.Query(ctx, `SELECT `+s.ankiCardCols()+` FROM anki_card WHERE `+tenant+` AND deck_id = ? ORDER BY id`,
+			append(targs, deckID)...)
+		if err != nil {
+			yield(nil, errf(s.DB, "anki deck cards", err))
+			return
+		}
+		defer rows.Close()
+		for rows.Next() {
+			c, err := scanAnkiCard(rows)
+			if err != nil {
+				yield(nil, errf(s.DB, "anki deck cards", err))
+				return
+			}
+			if !yield(&c, nil) {
+				return
+			}
+		}
+		if err := rows.Err(); err != nil {
+			yield(nil, errf(s.DB, "anki deck cards", err))
+		}
+	}
+}
+
 // ReviewLog streams the recorded review events, most recent first. A deckID
 // of 0 spans every deck in the tenant; limit <= 0 means no limit.
 func (s *AnkiStore) ReviewLog(ctx context.Context, scope string, deckID int64, limit int) iter.Seq2[*domain.AnkiReviewLog, error] {

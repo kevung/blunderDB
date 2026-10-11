@@ -5,6 +5,7 @@ package storagetest
 import (
 	"context"
 	"errors"
+	"fmt"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -638,5 +639,42 @@ func testAnkiFilteredWindowsMatchCounters(t *testing.T, s storage.Storage) {
 	}
 	if _, err := s.Anki().FilteredDeckPositionCount(ctx, "", deck, "overdue"); !errors.Is(err, storage.ErrInvalid) {
 		t.Errorf("an unknown filter: got %v, want ErrInvalid", err)
+	}
+}
+
+// testAnkiDeckCardsListsTheDeck pins DeckCards: a deck's own cards with their
+// schedule, and nothing of another deck.
+func testAnkiDeckCardsListsTheDeck(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	p := checkerPos()
+	posID, err := s.Positions().Save(ctx, "", &p)
+	if err != nil {
+		t.Fatalf("Save position: %v", err)
+	}
+	var decks [2]int64
+	for i := range decks {
+		if decks[i], err = s.Anki().CreateDeck(ctx, "", fmt.Sprintf("deck %d", i), "", domain.AnkiSourceSearch, 0, ""); err != nil {
+			t.Fatalf("CreateDeck: %v", err)
+		}
+		if err := s.Anki().SyncWithPositions(ctx, "", decks[i], []int64{posID}); err != nil {
+			t.Fatalf("SyncWithPositions: %v", err)
+		}
+	}
+	next, err := s.Anki().NextCard(ctx, "", decks[0])
+	if err != nil {
+		t.Fatalf("NextCard: %v", err)
+	}
+	if _, err := s.Anki().ReviewCard(ctx, "", next.Card.ID, 4); err != nil {
+		t.Fatalf("ReviewCard: %v", err)
+	}
+	var got []*domain.AnkiCard
+	for c, err := range s.Anki().DeckCards(ctx, "", decks[0]) {
+		if err != nil {
+			t.Fatalf("DeckCards: %v", err)
+		}
+		got = append(got, c)
+	}
+	if len(got) != 1 || got[0].ID != next.Card.ID || got[0].DeckID != decks[0] || got[0].PositionID != posID || got[0].Reps != 1 {
+		t.Errorf("DeckCards = %+v, want the one reviewed card of deck %d", got, decks[0])
 	}
 }

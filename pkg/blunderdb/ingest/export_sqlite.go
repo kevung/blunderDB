@@ -78,7 +78,7 @@ type Selection struct {
 
 	// DeckIDs exports these Anki decks even when ExportOptions.AnkiDecks is
 	// off — a deck handed to someone else, without the sender's other decks.
-	// Like every deck, it travels without its review history.
+	// It travels without its review history unless ExportOptions.AnkiHistory.
 	DeckIDs []int64
 	// DeckPositions adds the members of the decks in DeckIDs to the positions
 	// exported.
@@ -114,7 +114,7 @@ func WholeTenant(format Format) ExportOptions {
 			AllLessons: true,
 		},
 		Analysis: true, Comments: true, PlayedMoves: true, FilterLibrary: true, AnkiDecks: true,
-		Transcriptions: true, Aliases: true,
+		Transcriptions: true, Aliases: true, AnkiHistory: true,
 	}
 }
 
@@ -1382,9 +1382,10 @@ func (e *exporter) writeMatchOrigins() error {
 	return nil
 }
 
-// writeAnkiDecks rebuilds each deck from its exported member positions. The
-// review history is intentionally left behind: an export is a fresh study
-// copy, not a scheduler snapshot.
+// writeAnkiDecks rebuilds each deck from its exported member positions. By
+// default the review history stays behind — an export is a fresh study copy —
+// and ExportOptions.AnkiHistory carries it: a backup, or one's own decks moved
+// to another machine.
 func (e *exporter) writeAnkiDecks() error {
 	if !e.opts.AnkiDecks && len(e.deckIDs) == 0 {
 		return nil
@@ -1441,9 +1442,93 @@ func (e *exporter) writeAnkiDecks() error {
 		if err := e.dst.Anki().UpdateDeckParams(e.ctx, "", newID, sd.d.RequestRetention, sd.d.MaximumInterval, sd.d.EnableFuzz, sd.d.SessionLimit); err != nil {
 			return fmt.Errorf("ingest: deck %q parameters: %w", sd.d.Name, err)
 		}
+		if e.opts.AnkiHistory {
+			if err := e.writeAnkiHistory(sd.d.ID, newID); err != nil {
+				return fmt.Errorf("ingest: deck %q history: %w", sd.d.Name, err)
+			}
+		}
 		e.report.AnkiDecks++
 	}
 	return nil
+}
+
+// writeAnkiHistory gives the file's cards of a deck the scheduling state of
+// their source cards, and the file the review events of those cards. A card
+// is matched on its question — kind and key, a position key renumbered to the
+// file's position — since the file's deck was rebuilt from its members; a
+// card whose position stayed behind has no counterpart, and its events none
+// either.
+func (e *exporter) writeAnkiHistory(srcDeck, dstDeck int64) error {
+	cardMap := make(map[int64]int64)
+	for c, err := range e.src.Anki().DeckCards(e.ctx, e.scope, srcDeck) {
+		if err != nil {
+			return err
+		}
+		key, _, ok := e.ankiKey(c.Kind, c.Key, c.PositionID)
+		if !ok {
+			continue
+		}
+		var dstID int64
+		err := e.tx.QueryRowContext(e.ctx,
+			`UPDATE anki_card SET due = ?, stability = ?, difficulty = ?, elapsed_days = ?, scheduled_days = ?,
+			 reps = ?, lapses = ?, state = ?, last_review = ?
+			 WHERE deck_id = ? AND kind = ? AND key = ? RETURNING id`,
+			c.Due, c.Stability, c.Difficulty, c.ElapsedDays, c.ScheduledDays,
+			c.Reps, c.Lapses, c.State, c.LastReview, dstDeck, c.Kind, key).Scan(&dstID)
+		if errors.Is(err, sql.ErrNoRows) {
+			continue
+		}
+		if err != nil {
+			return err
+		}
+		cardMap[c.ID] = dstID
+	}
+	var logs []*domain.AnkiReviewLog
+	for l, err := range e.src.Anki().ReviewLog(e.ctx, e.scope, srcDeck, 0) {
+		if err != nil {
+			return err
+		}
+		logs = append(logs, l)
+	}
+	// The source streams most recent first; the file keeps the order of events.
+	for i := len(logs) - 1; i >= 0; i-- {
+		l := logs[i]
+		card, ok := cardMap[l.CardID]
+		if !ok {
+			continue
+		}
+		key, posID, ok := e.ankiKey(l.Kind, l.Key, l.PositionID)
+		if !ok {
+			continue
+		}
+		var position any
+		if posID != 0 {
+			position = posID
+		}
+		if _, err := e.tx.ExecContext(e.ctx,
+			`INSERT INTO anki_review_log (card_id, deck_id, kind, key, position_id, rating, state,
+			 stability, difficulty, elapsed_days, scheduled_days, reviewed_at)
+			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+			card, dstDeck, l.Kind, key, position, l.Rating, l.State,
+			l.Stability, l.Difficulty, l.ElapsedDays, l.ScheduledDays, l.ReviewedAt); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// ankiKey renumbers a card's question onto the file: a position card names
+// the file's position, any other card keeps its key. ok is false for a
+// position the file does not hold.
+func (e *exporter) ankiKey(kind, key string, positionID int64) (string, int64, bool) {
+	if kind != domain.AnkiKindPosition {
+		return key, 0, true
+	}
+	to, ok := e.posMap[positionID]
+	if !ok {
+		return "", 0, false
+	}
+	return strconv.FormatInt(to, 10), to, true
 }
 
 // remapIDList rewrites a comma-separated position-id list from source ids to
