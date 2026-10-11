@@ -8,6 +8,11 @@
     import LineChart from './charts/LineChart.svelte';
     import { PRIMARY } from './charts/palette.js';
     import PanelTable from '../panels/PanelTable.svelte';
+    import { get } from 'svelte/store';
+    import { statsFilterStore } from '../../stores/statsStore.js';
+    import { loadPositionsFromStatsSelection } from '../../services/positionLoader.js';
+    import { narrowToPeriod } from '../../utils/statsWindow.js';
+    import CountLink from '../panels/CountLink.svelte';
 
     /** @type {{ data: { Window: string, Sessions: Array<object>, Periods: Array<object> }|null, loading?: boolean, error?: string|null, period?: string }} */
     let { data = null, loading = false, error = null, period = $bindable('week') } = $props();
@@ -16,7 +21,7 @@
     const QUIZ = '#e65100';
     const RETENTION = '#2e7d32';
 
-    let periods = $derived(data?.Periods ?? []);
+    let periods = $derived(/** @type {any[]} */ (data?.Periods ?? []));
     let sessions = $derived(data?.Sessions ?? []);
     let themes = $derived(data?.Themes ?? []);
 
@@ -24,6 +29,12 @@
         const key = `stats.gameType_${theme}`;
         const label = $t(key);
         return label === key ? theme : label;
+    }
+
+    /** A period's match decisions: the current filter, narrowed to the period's days. */
+    function openMatchDecisions(/** @type {string} */ start) {
+        const f = narrowToPeriod(get(statsFilterStore), start, data?.Window ?? period);
+        loadPositionsFromStatsSelection(f, { Kind: 'all', OnlyWithError: false });
     }
 
     const orNull = (/** @type {number} */ count, value) => (count > 0 ? value : null);
@@ -123,7 +134,12 @@
             {#snippet cells(/** @type {any} */ p)}
                 <td>{p.Start}</td>
                 <td class="align-right">{fmt(p.QuizDecisions, p.QuizPR)} <span class="count">({p.QuizDecisions})</span></td>
-                <td class="align-right">{fmt(p.MatchDecisions, p.MatchPR)} <span class="count">({p.MatchDecisions})</span></td>
+                <td class="align-right"
+                    >{fmt(p.MatchDecisions, p.MatchPR)}
+                    <span class="count"
+                        >({#if p.MatchDecisions > 0}<CountLink label={String(p.MatchDecisions)} onclick={() => openMatchDecisions(p.Start)} />{:else}0{/if})</span
+                    ></td
+                >
                 <td class="align-right">{p.AnkiReviews > 0 ? `${(p.AnkiRetention * 100).toFixed(1)} %` : '–'} <span class="count">({p.AnkiReviews})</span></td>
             {/snippet}
         </PanelTable>

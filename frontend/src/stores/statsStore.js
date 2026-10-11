@@ -2,28 +2,174 @@ import { writable, derived, get } from 'svelte/store';
 import { ComputeStats, ComputeRecurringErrors, ComputeStudyPlan, ComputeStudyEffect, ComputeDirectionalBiases, ComputeTrainingStats, GetPlayerTable } from '../../wailsjs/go/database/Database.js';
 import { databasePathStore } from './databaseStore.js';
 import { dbMutationCounterStore } from './uiStore.js';
+import { GetStatsFilter, SaveStatsFilter } from '../../wailsjs/go/main/Config.js';
 
 /** @typedef {import('../../wailsjs/go/models').database.StatsResult} StatsResult the engine result; consumers narrow it field by field */
 
-const defaultFilter = {
-    playerName: '',
-    tournamentIDs: [],
-    dateFrom: '',
-    dateTo: '',
-    decisionType: -1, // -1 = all, 0 = checker, 1 = cube
-    matchLength: []
-};
+/**
+ * @typedef {{ playerName: string, tournamentIDs: number[], dateFrom: string, dateTo: string, decisionType: number,
+ *   matchLength: number[], analysisEngine: string, minAnalysisDepth: number }} StatsFilterState
+ */
 
-export const statsFilterStore = writable(defaultFilter);
+/** The filter of a fresh install, and what "Reset" returns to (the player aside). */
+export const defaultStatsFilter = /** @type {Readonly<StatsFilterState>} */ (
+    Object.freeze({
+        playerName: '',
+        tournamentIDs: [],
+        dateFrom: '',
+        dateTo: '',
+        decisionType: -1, // -1 = all, 0 = checker, 1 = cube
+        matchLength: [],
+        analysisEngine: '',
+        minAnalysisDepth: 0
+    })
+);
+
+/**
+ * The one Stats filter every tab, drill-down and incoming link reads. Written only through
+ * patchStatsFilter / resetStatsFilter, which also persist it.
+ */
+export const statsFilterStore = writable(/** @type {StatsFilterState} */ ({ ...defaultStatsFilter }));
 export const statsResultStore = writable(/** @type {any} */ (null));
 export const statsLoadingStore = writable(false);
 export const statsErrorStore = writable(/** @type {any} */ (null));
 /** The filter statsResultStore was computed under: a tab drilling into the result asks with it. */
 export const statsResultFilterStore = writable(/** @type {any} */ (null));
 
-// Toggle global PR / MWC display (persisted via Config.yaml in fiche 09)
+/** The filter a drill-down asks with: the one the figures on screen were computed under. */
+export function drillDownFilter() {
+    return get(statsResultFilterStore) ?? get(statsFilterStore);
+}
+
 // 'pr' | 'mwc' | 'mwc7'
 export const statsMetricStore = writable('pr');
+const METRICS = ['pr', 'mwc', 'mwc7'];
+
+/** The Stats panel's inner tab, so a link from another panel can open a given one. */
+export const statsTabStore = writable('dashboard');
+
+/** @type {Promise<void> | null} */
+let _initPromise = null;
+let _initialised = false;
+/** What was patched while the saved filter was being read: it is applied over the restored one. */
+let _patchDuringInit = {};
+/** @type {ReturnType<typeof setTimeout> | undefined} */
+let _saveTimer;
+
+/** Config.yaml's shape → the store's. decision_type is a *int in Go: null means all. */
+function fromPersisted(/** @type {any} */ p) {
+    return {
+        playerName: p.player_name ?? '',
+        tournamentIDs: p.tournament_ids ?? [],
+        dateFrom: p.date_from ?? '',
+        dateTo: p.date_to ?? '',
+        decisionType: p.decision_type ?? -1,
+        matchLength: p.match_length ?? [],
+        analysisEngine: p.analysis_engine ?? '',
+        minAnalysisDepth: p.min_analysis_depth ?? 0
+    };
+}
+
+function scheduleSave() {
+    clearTimeout(_saveTimer);
+    _saveTimer = setTimeout(saveNow, 500);
+}
+
+/** A save still waiting on its pause is written at once: closing the window must not lose it. */
+export function flushStatsFilterSave() {
+    if (_saveTimer === undefined) return;
+    clearTimeout(_saveTimer);
+    saveNow();
+}
+
+if (typeof window !== 'undefined') window.addEventListener('beforeunload', flushStatsFilterSave);
+
+function saveNow() {
+    _saveTimer = undefined;
+    const f = get(statsFilterStore);
+    SaveStatsFilter(
+        /** @type {any} */ ({
+            player_name: f.playerName,
+            tournament_ids: f.tournamentIDs,
+            date_from: f.dateFrom,
+            date_to: f.dateTo,
+            decision_type: f.decisionType === -1 ? null : f.decisionType,
+            match_length: f.matchLength,
+            metric: get(statsMetricStore),
+            analysis_engine: f.analysisEngine,
+            min_analysis_depth: f.minAnalysisDepth
+        })
+    ).catch(console.error); // eslint-disable-line no-console
+}
+
+/**
+ * Restore the saved filter and metric from Config.yaml, once: later calls return the same
+ * promise, so the app start and a link into Stats can both wait on it.
+ */
+export function initStatsFilter() {
+    if (!_initPromise) {
+        _initPromise = (async () => {
+            try {
+                const persisted = await GetStatsFilter();
+                if (persisted) statsFilterStore.set({ ...fromPersisted(persisted), ..._patchDuringInit });
+                if (persisted && METRICS.includes(persisted.metric)) statsMetricStore.set(persisted.metric);
+            } catch (err) {
+                console.error('initStatsFilter:', err); // eslint-disable-line no-console
+            } finally {
+                _initialised = true;
+            }
+        })();
+    }
+    return _initPromise;
+}
+
+statsMetricStore.subscribe(() => {
+    if (_initialised) scheduleSave();
+});
+
+/**
+ * Merge `patch` into the filter and save it (debounced). A date range that ends before it
+ * starts is refused: the filter is left as it was and the call returns false.
+ *
+ * @param {Partial<StatsFilterState>} patch
+ * @returns {boolean}
+ */
+export function patchStatsFilter(patch) {
+    const next = { ...get(statsFilterStore), ...patch };
+    if (next.dateFrom && next.dateTo && next.dateFrom > next.dateTo) return false;
+    if (!_initialised) _patchDuringInit = { ..._patchDuringInit, ...patch };
+    statsFilterStore.set(next);
+    scheduleSave();
+    return true;
+}
+
+/** Back to the defaults, keeping the player: a reset narrows nothing, it widens. */
+export function resetStatsFilter() {
+    return patchStatsFilter({ ...defaultStatsFilter, playerName: get(statsFilterStore).playerName });
+}
+
+/**
+ * Drop a selected player the database no longer holds (merged, deleted), or the filter would
+ * silently match nothing.
+ *
+ * @param {string[]} names - every player name of the database
+ */
+export function dropMissingPlayer(names) {
+    const current = get(statsFilterStore).playerName;
+    if (current && !names.includes(current)) patchStatsFilter({ playerName: '' });
+}
+
+/** Test hook: forget the restore and any pending save, as at app start. */
+export function _resetStatsFilterForTests() {
+    clearTimeout(_saveTimer);
+    _saveTimer = undefined;
+    _initPromise = null;
+    _initialised = false;
+    _patchDuringInit = {};
+    statsFilterStore.set({ ...defaultStatsFilter });
+    statsMetricStore.set('pr');
+    statsTabStore.set('dashboard');
+}
 
 /** Opaque key (database path + mutation counter) that refreshStats uses to detect a stale cache. */
 export const statsInvalidationKeyStore = derived([databasePathStore, dbMutationCounterStore], ([$path, $mutation]) => `${$path}::${$mutation}`);
@@ -83,7 +229,8 @@ let _playerSeq = 0;
 
 /**
  * Fetch the players table. The cache key keeps only the filter parts the backend honours (dates,
- * tournaments, match lengths): picking a player elsewhere must not refetch an identical table.
+ * tournaments, match lengths, provenance): picking a player elsewhere must not refetch an
+ * identical table.
  *
  * @param {any} filter          - StatsFilter object
  * @param {string} invalidationKey - value of statsInvalidationKeyStore
@@ -94,7 +241,9 @@ export async function refreshPlayerTable(filter, invalidationKey) {
             tournamentIDs: filter.tournamentIDs,
             dateFrom: filter.dateFrom,
             dateTo: filter.dateTo,
-            matchLength: filter.matchLength
+            matchLength: filter.matchLength,
+            analysisEngine: filter.analysisEngine,
+            minAnalysisDepth: filter.minAnalysisDepth
         }) +
         '||' +
         invalidationKey;

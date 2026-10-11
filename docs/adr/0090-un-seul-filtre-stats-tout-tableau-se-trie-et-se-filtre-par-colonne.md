@@ -9,6 +9,10 @@ Les tableaux du panneau Stats étaient écrits à la main, onglet par onglet : l
 l'ordre du backend, aucun filtrable. D'où une section *Classement* dans Corpus, avec son
 propre seuil de décisions, qui recalculait à la demande ce que l'onglet Joueurs montre déjà.
 
+Le filtre lui-même avait deux copies : la barre travaillait sur la sienne et ne relisait
+jamais le store. Un clic sur un joueur de l'onglet Joueurs changeait les chiffres, la barre
+restait sur « Toutes perspectives », et le choix n'était pas sauvegardé.
+
 ## Décision
 
 1. **Tout tableau se trie et se filtre par colonne.** `panels/PanelTable.svelte` reçoit un
@@ -30,6 +34,15 @@ propre seuil de décisions, qui recalculait à la demande ce que l'onglet Joueur
 5. **Un compte est un `CountLink`** (ADR-0085, G7) dans les tableaux Stats aussi ; plus de
    CSS de lien maison.
 
+6. **Un seul filtre Stats, et un seul propriétaire** : `stores/statsStore.js`. Tout l'écrit
+   par `patchStatsFilter` (fusion, plage de dates inversée refusée, sauvegarde différée dans
+   Config.yaml, écrite aussi à la fermeture) ; la barre le lit sans copie locale.
+   `initStatsFilter` le restaure une fois, au démarrage de l'application, et un choix fait
+   pendant la restauration s'applique par-dessus. `statsTabStore` porte l'onglet du panneau.
+   Un lien d'un autre panneau passe par `openStatsFor` (positionLoader), qui attend la
+   restauration : un nom de joueur pose le joueur et vide tournois et dates ; le bouton Stats
+   d'un tournoi pose ce tournoi, vide les dates et garde le joueur.
+
 ## Conséquences
 
 - La section *Classement* de Corpus disparaît : l'onglet Joueurs trié par PR, colonne
@@ -37,5 +50,9 @@ propre seuil de décisions, qui recalculait à la demande ce que l'onglet Joueur
   `/v1/stats.ranking` restent, la ligne de commande n'ayant pas de tableau à trier.
 - Un nouveau tableau Stats se déclare par ses colonnes et un `viewId` ; il n'écrit ni tri ni
   filtre.
+- Le joueur du filtre est actif sur tous les onglets ; dans Joueurs, il marque sa ligne au
+  lieu de réduire le tableau.
+- Un compte n'est un lien que s'il ouvre exactement ce qu'il compte ; sinon il reste un
+  nombre (matchs et bilan d'un joueur, qui comptent aussi les matchs sans décision analysée).
 - Le tableau de direction de l'onglet Erreurs et le bloc de comparaison de deux joueurs
   restent écrits à la main : ce sont des grilles fixes, pas des listes.

@@ -547,10 +547,8 @@ export default {
 <h4>Filter bar</h4>
 <p>The filter bar at the top of the panel restricts the computation to a subset of positions.</p>
 <h5>Player perspective</h5>
-<p>The <strong>Player</strong> drop-down filters statistics to the analysed player. blunderDB automatically selects the player whose name appears most often in the database — changeable at any time.</p>
-<div class="admonition tip">
-<p>Changing the player does not cause any data loss; simply re-select the previous player in the list.</p>
-</div>
+<p>The <strong>Player</strong> field filters the statistics by the analysed player. Typing a few letters narrows the list to the names containing them; a click or <em>Enter</em> picks the player, <strong>✕</strong> or an emptied field returns to all perspectives.</p>
+<p>The filter is <strong>one single</strong> filter for all the tabs of the panel and it is kept from one session to the next. It can also be set from the other panels: a player's name in a match header or in the bar above the board opens all their statistics (tournaments and dates are cleared), and the <strong>Stats</strong> button in a tournament header opens those of that whole tournament (dates cleared, player kept). An end date earlier than the start date is refused: the field takes back the applied date.</p>
 <h5>Available filters</h5>
 <ul>
 <li><strong>Tournament(s)</strong> — restrict to one or more tournaments. Multiple tournaments can be selected simultaneously.</li>
@@ -559,7 +557,7 @@ export default {
 <li><strong>Match length</strong> — restrict to specific match lengths (1, 3, 5, 7, 9, 11, 13, 15, 21 points). Multiple lengths can be combined.</li>
 <li><strong>Engine</strong> and <strong>Min. depth</strong> — keep only the decisions analysed by a given engine (gnubg, xg…), or at least at a given depth, in plies.</li>
 </ul>
-<p>A <strong>↺ Reset</strong> button clears all filters (except the auto-detected player).</p>
+<p>A <strong>↺ Reset</strong> button clears all filters except the player.</p>
 <div class="admonition note">
 <p>Filters are saved in the blunderDB configuration (<code>config.yaml</code>) and restored on the next launch.</p>
 </div>
@@ -644,6 +642,7 @@ export default {
 </ul>
 <p>Clicking a card loads the positions in the corresponding subset into the analysis panel (drill-down). A fourth card, <strong>MWC loss (7-pt eq.)</strong>, gives this loss whatever the PR / MWC button is set to, with its interval; it loads nothing.</p>
 <p>Below the cards, the totals line counts the filter's tournaments, matches and decisions. The tournament count opens those tournaments in the Tournaments panel: a single tournament opens directly; several restrict the list, which then carries the button « N tournaments opened from Stats × »: it restores the full list.</p>
+<p>The number of decisions opens their positions; the number of matches opens those matches in the Matches panel, except when a decision type or a provenance filter is active: it then counts fewer matches than the list would open and stays a plain number.</p>
 <div class="admonition note">
 <p>The total number of decisions is shown at the bottom of each card on hover.</p>
 </div>
@@ -709,7 +708,7 @@ export default {
 <li>An error that no rule names with confidence is not guessed: it leaves the ranking and appears apart, under the table, as one line per game plan ("no theme identified: N errors, cost X"), clickable too. This remainder is often the heaviest, because the explanation only speaks from 60 mp, above the <em>Error</em> threshold: ranked with the others, it would top a table that said nothing.</li>
 <li>The <strong>cost</strong> is the share of the filter's PR that the group represents: the PR formula applied to the group's errors, divided by all counted decisions. The costs of the groups therefore never exceed the PR.</li>
 </ul>
-<p>Clicking a group loads its positions, from the most costly to the least costly. The theme is recomputed at every display, never stored: like the game plan, it is a derived label that cannot be edited. On the command line: <code>blunderdb stats recurring</code> (see stats — Recurring errors).</p>
+<p>Clicking a group, or its error count, loads its positions, from the most costly to the least costly. The theme is recomputed at every display, never stored: like the game plan, it is a derived label that cannot be edited. On the command line: <code>blunderdb stats recurring</code> (see stats — Recurring errors).</p>
 <p>Each row offers three ways to go from the error to study: <strong>Quiz this group</strong> starts the Decision exercise of the Training panel on the group's positions, <strong>Anki deck</strong> makes a deck of cards from them, <strong>Collection</strong> files them in a new collection. Above the table, <strong>Quiz my three worst groups</strong> draws twenty positions at random from those of the three costliest groups. On the command line, <code>stats recurring --quiz</code> draws these positions and <code>--deck</code> creates the deck.</p>
 <h5>Breakdown by cube action</h5>
 <p>A bar chart displays the PR (or MWC) for each type of cube decision: <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Each bar also shows the number of decisions and the blunder rate in a tooltip.</p>
@@ -738,7 +737,7 @@ export default {
 <li>the <strong>Anki retention</strong>: the share of reviews of already learned cards graded <em>Hard</em> or better, read on the right axis (in %).</li>
 </ul>
 <p>Below the chart, the <strong>quiz PR by plan of play</strong> lists the quiz decisions drawn from library positions, the worst plans first, with the PR of the last window in which the plan was played.</p>
-<p>In parentheses, the number of decisions or reviews behind each value: a window without samples has no value — a dash, not a zero. The filter restricts the matches only; the quiz and Anki journals are yours and carry no player. Nothing more is recorded: the three series are read back from the existing journals. On the command line: <code>blunderdb stats training</code> (see stats — Recurring errors).</p>
+<p>In parentheses, the number of decisions or reviews behind each value: a window without samples has no value — a dash, not a zero. A window's number of match decisions opens their positions. The filter restricts the matches only; the quiz and Anki journals are yours and carry no player. Nothing more is recorded: the three series are read back from the existing journals. On the command line: <code>blunderdb stats training</code> (see stats — Recurring errors).</p>
 <h4>Breakdowns tab</h4>
 <p>The <strong>Breakdowns</strong> tab slices the same decisions the global figures count along four axes. None of them redefines what counts as a decision: that would be a second PR wearing the same name.</p>
 <ul>
@@ -810,6 +809,7 @@ export default {
 <li><strong>Sort</strong> — click a column header. The table opens sorted by ascending PR, best player first, and remembers the last sort chosen from one session to the next. Players for whom nothing was measured stay at the bottom whichever way the sort goes: a zero for lack of data is not a perfect performance.</li>
 <li><strong>Filter by column</strong> — the row of fields under the headers filters each column: a piece of a name for text, a bound for numbers (<code>&gt;=500</code>, <code>&gt;500</code>, <code>&lt;2.5</code>, <code>&lt;=2</code>), a range (<code>3-7</code>) or an exact value (<code>5</code>). An unreadable field is outlined in red and filters nothing; a value never measured passes no bound. Column filters last for the session. The player <strong>ranking</strong> reads like this: sort by PR, <em>Decisions</em> column filtered by <code>&gt;=500</code>. All the tables of the Stats panel — breakdowns, corpus, recurring errors, thinking time, training, bias, study effect — are sorted and filtered the same way.</li>
 <li><strong>Open a player's detail</strong> — click a row. The player is selected in the filter bar and the display switches to the Dashboard tab.</li>
+<li><strong>Open one's decisions</strong> — the number of decisions opens their positions, under the table's filters. The number of matches and the W–L record remain plain numbers: they also count matches without any analysed decision, which no match list reproduces.</li>
 <li><strong>Narrow the period</strong> — the date, tournament and match-length filters apply as usual, which makes it possible to bound the table to the dates of a competition.</li>
 <li><strong>Compare two players</strong> — tick the box in the first column on two rows. A block appears above the table and sets their figures face to face; ticking a third player replaces the older of the two. The box does not select the row: ticking compares, clicking opens the detail.</li>
 <li><strong>See the positions where one played better</strong> — the button of the comparison block lists the positions both players had to play and where one played well (below the library's Error threshold) and the other did not, widest gap first; a player is judged on their worst play of the position. <em>Open these positions</em> loads them into the analysis view. The command line and the server give the same list (<code>stats contrast</code>).</li>
@@ -818,10 +818,10 @@ export default {
 <p>In that block, <strong>only the rates get a verdict</strong>, and the better of the two is set in bold. Three figures never get one, and it is worth saying why. <strong>Luck</strong> is not a quality: a luckier player is not a better one. <strong>Matches, record and decisions</strong> say what the rates are worth, but putting them in competition would let whoever simply played more win. The <strong>blunder count</strong> does not compare raw — twelve out of a thousand decisions beat ten out of a hundred — so the block adds a <em>Blunders / 100 dec.</em> line, which does compare, and leaves the count beside it as context.</p>
 <p>A tie is not a win: it is set in bold on neither side. A rate with nothing behind it shows as “—” and decides nothing.</p>
 <div class="admonition note">
-<p>In this tab, the <strong>Player</strong> list and the <strong>decision type</strong> choice are disabled: the table shows every player, and already splits checker and cube decisions into separate columns.</p>
+<p>In this tab, the <strong>decision type</strong> choice is disabled: the table already breaks checker and cube decisions down into separate columns. The player of the filter bar stays active: the table always shows all the players, and this player's row is highlighted and scrolled into view.</p>
 </div>
 <p>Two corpus views are in the panel's <strong>Corpus</strong> tab, on the command line and through the daemon API (see stats — Recurring errors): the <strong>head-to-head</strong> of two players (common matches, each one's PR, record) and the rolling <strong>PR per calendar window</strong> (1, 3, 6 or 12 months). The Corpus tab computes each view on demand, under the current filter. The PR <strong>ranking</strong> is read in the Players tab, sorted by PR and filtered on the <em>Decisions</em> column; the command line and the API also give it (<code>stats ranking</code>). A <strong>provenance filter</strong> (<em>Engine</em> and <em>Min. depth</em> fields of the filter bar) restricts the statistics to decisions analysed that way; it applies to each decision, and the figures it affects are then recomputed from the decisions. The head-to-head and the PR per window do not accept it: while it is active, they refuse to compute. Like the rest of the bar, it is kept from one session to the next.</p>
-<p>In the Corpus tab, each row opens what it summarises. A head-to-head row opens its matches in the Matches panel, which then carries the button "N matches opened from Stats ×": it restores the full list. A window row opens its positions and its match count opens the matches. A position count in the Stats panel, in whichever tab, first leaves the current match before opening its list; the <code>m</code> command then reopens the match at the saved move.</p>
+<p>In the Corpus tab, each row opens what it summarises. The head-to-head record opens its matches in the Matches panel, which then carries the button "N matches opened from Stats ×": it restores the full list; a head-to-head row opens its match. The first player of the head-to-head is by default the one of the filter bar. A window row and its decision count open its positions, its match count opens the matches. A position count in the Stats panel, in whichever tab, first leaves the current match before opening its list; the <code>m</code> command then reopens the match at the saved move.</p>
 <div class="admonition important">
 <p>A dash ("—") marks a value that was <strong>never measured</strong>, not to be confused with zero. That is notably the case of the Luck column for any match imported before schema version 2.15.0: luck was not stored then, and nothing allows it to be reconstructed afterwards. Re-importing the source file is not enough: the import recognises a duplicate and applies only the study marks newly raised (the report gives their number). The match must be deleted, then imported again. Formats that do not carry it (BGF, Jellyfish <code>.mat</code>) never will.</p>
 </div>

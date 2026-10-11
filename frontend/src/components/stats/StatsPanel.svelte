@@ -20,7 +20,8 @@
         trainingStatsLoadingStore,
         trainingStatsErrorStore,
         trainingWindowStore,
-        refreshTrainingStats
+        refreshTrainingStats,
+        statsTabStore
     } from '../../stores/statsStore.js';
     import { activeTabStore } from '../../stores/uiStore.js';
     import { databaseLoadedStore } from '../../stores/databaseStore.js';
@@ -36,8 +37,6 @@
     import StatsCorpusTab from './StatsCorpusTab.svelte';
     import EmptyState from '../panels/EmptyState.svelte';
 
-    /** Currently active inner tab. */
-    let activeTab = $state('dashboard');
     /** No match imported yet: the filter bar reports it, the match-based tabs show it. */
     let dbEmpty = $state(false);
 
@@ -54,7 +53,7 @@
     $effect(() => {
         const filter = $statsFilterStore;
         const key = $statsInvalidationKeyStore;
-        if (!$databaseLoadedStore || activeTab !== 'players') return;
+        if (!$databaseLoadedStore || $statsTabStore !== 'players') return;
         logger.perf('StatsPanel:refreshPlayerTable', () => refreshPlayerTable(filter, key));
     });
 
@@ -63,7 +62,7 @@
     $effect(() => {
         const filter = $statsFilterStore;
         const key = $statsInvalidationKeyStore;
-        if (!$databaseLoadedStore || activeTab !== 'errors') return;
+        if (!$databaseLoadedStore || $statsTabStore !== 'errors') return;
         logger.perf('StatsPanel:refreshRecurringErrors', () => refreshRecurringErrors(filter, key));
     });
 
@@ -72,7 +71,7 @@
     $effect(() => {
         const filter = $statsFilterStore;
         const key = $statsInvalidationKeyStore;
-        if (!$databaseLoadedStore || activeTab !== 'dashboard') return;
+        if (!$databaseLoadedStore || $statsTabStore !== 'dashboard') return;
         logger.perf('StatsPanel:refreshStudyPlan', () => refreshStudyPlan(filter, key));
     });
 
@@ -80,7 +79,7 @@
     $effect(() => {
         const filter = $statsFilterStore;
         const key = $statsInvalidationKeyStore;
-        if (!$databaseLoadedStore || activeTab !== 'dashboard') return;
+        if (!$databaseLoadedStore || $statsTabStore !== 'dashboard') return;
         logger.perf('StatsPanel:refreshStudyLoop', () => refreshStudyLoop(filter, key));
     });
 
@@ -89,13 +88,13 @@
         const filter = $statsFilterStore;
         const key = $statsInvalidationKeyStore;
         const windowKind = $trainingWindowStore;
-        if (!$databaseLoadedStore || activeTab !== 'training') return;
+        if (!$databaseLoadedStore || $statsTabStore !== 'training') return;
         logger.perf('StatsPanel:refreshTrainingStats', () => refreshTrainingStats(filter, key, windowKind));
     });
 
     /** Follow a player from the table into their own dashboard. */
     function showPlayerDashboard() {
-        activeTab = 'dashboard';
+        $statsTabStore = 'dashboard';
     }
 
     function handleClose() {
@@ -121,38 +120,46 @@
         <button class="close-btn" onclick={handleClose} aria-label={$t('stats.closePanel')}>✕</button>
     </header>
 
-    <StatsFilterBar playersTab={activeTab === 'players'} bind:dbEmpty />
+    <StatsFilterBar playersTab={$statsTabStore === 'players'} bind:dbEmpty />
 
     <div class="tabs" role="tablist">
-        <button class="tab-btn" class:active={activeTab === 'dashboard'} role="tab" aria-selected={activeTab === 'dashboard'} onclick={() => (activeTab = 'dashboard')}
+        <button class="tab-btn" class:active={$statsTabStore === 'dashboard'} role="tab" aria-selected={$statsTabStore === 'dashboard'} onclick={() => ($statsTabStore = 'dashboard')}
             >{$t('stats.tabDashboard')}</button
         >
-        <button class="tab-btn" class:active={activeTab === 'progression'} role="tab" aria-selected={activeTab === 'progression'} onclick={() => (activeTab = 'progression')}
+        <button class="tab-btn" class:active={$statsTabStore === 'progression'} role="tab" aria-selected={$statsTabStore === 'progression'} onclick={() => ($statsTabStore = 'progression')}
             >{$t('stats.tabProgression')}</button
         >
-        <button class="tab-btn" class:active={activeTab === 'errors'} role="tab" aria-selected={activeTab === 'errors'} onclick={() => (activeTab = 'errors')}>{$t('stats.tabErrors')}</button>
-        <button class="tab-btn" class:active={activeTab === 'training'} role="tab" aria-selected={activeTab === 'training'} onclick={() => (activeTab = 'training')}>{$t('stats.tabTraining')}</button>
-        <button class="tab-btn" class:active={activeTab === 'breakdowns'} role="tab" aria-selected={activeTab === 'breakdowns'} onclick={() => (activeTab = 'breakdowns')}
+        <button class="tab-btn" class:active={$statsTabStore === 'errors'} role="tab" aria-selected={$statsTabStore === 'errors'} onclick={() => ($statsTabStore = 'errors')}
+            >{$t('stats.tabErrors')}</button
+        >
+        <button class="tab-btn" class:active={$statsTabStore === 'training'} role="tab" aria-selected={$statsTabStore === 'training'} onclick={() => ($statsTabStore = 'training')}
+            >{$t('stats.tabTraining')}</button
+        >
+        <button class="tab-btn" class:active={$statsTabStore === 'breakdowns'} role="tab" aria-selected={$statsTabStore === 'breakdowns'} onclick={() => ($statsTabStore = 'breakdowns')}
             >{$t('stats.tabBreakdowns')}</button
         >
-        <button class="tab-btn" class:active={activeTab === 'players'} role="tab" aria-selected={activeTab === 'players'} onclick={() => (activeTab = 'players')}>{$t('stats.tabPlayers')}</button>
-        <button class="tab-btn" class:active={activeTab === 'corpus'} role="tab" aria-selected={activeTab === 'corpus'} onclick={() => (activeTab = 'corpus')}>{$t('stats.tabCorpus')}</button>
+        <button class="tab-btn" class:active={$statsTabStore === 'players'} role="tab" aria-selected={$statsTabStore === 'players'} onclick={() => ($statsTabStore = 'players')}
+            >{$t('stats.tabPlayers')}</button
+        >
+        <button class="tab-btn" class:active={$statsTabStore === 'corpus'} role="tab" aria-selected={$statsTabStore === 'corpus'} onclick={() => ($statsTabStore = 'corpus')}
+            >{$t('stats.tabCorpus')}</button
+        >
     </div>
 
     <div class="tab-content" role="tabpanel">
         <!-- Le corpus calcule à la demande : il ne dépend pas du calcul du tableau de bord. -->
-        {#if activeTab === 'corpus'}
+        {#if $statsTabStore === 'corpus'}
             <StatsCorpusTab filter={$statsFilterStore} />
-        {:else if dbEmpty && activeTab !== 'training'}
+        {:else if dbEmpty && $statsTabStore !== 'training'}
             <!-- The training tab reads the quizzes, not the matches: it has something to show. -->
             <EmptyState text={$t('match.noMatchesImported')} />
         {:else if $statsLoadingStore}
             <p class="loading-msg">{$t('stats.loading')}</p>
-        {:else if activeTab === 'dashboard'}
+        {:else if $statsTabStore === 'dashboard'}
             <StatsDashboardTab result={$statsResultStore} metric={$statsMetricStore} />
-        {:else if activeTab === 'progression'}
+        {:else if $statsTabStore === 'progression'}
             <StatsProgressionTab result={$statsResultStore} metric={$statsMetricStore} />
-        {:else if activeTab === 'errors'}
+        {:else if $statsTabStore === 'errors'}
             <StatsErrorsTab
                 result={$statsResultStore}
                 metric={$statsMetricStore}
@@ -160,11 +167,11 @@
                 recurringLoading={$recurringErrorsLoadingStore}
                 recurringError={$recurringErrorsErrorStore}
             />
-        {:else if activeTab === 'training'}
+        {:else if $statsTabStore === 'training'}
             <StatsTrainingTab data={$trainingStatsStore} loading={$trainingStatsLoadingStore} error={$trainingStatsErrorStore} bind:period={$trainingWindowStore} />
-        {:else if activeTab === 'breakdowns'}
+        {:else if $statsTabStore === 'breakdowns'}
             <StatsBreakdownsTab result={$statsResultStore} />
-        {:else if activeTab === 'players'}
+        {:else if $statsTabStore === 'players'}
             {#if $playerTableLoadingStore}
                 <p class="loading-msg">{$t('stats.loading')}</p>
             {:else}

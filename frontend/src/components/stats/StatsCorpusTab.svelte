@@ -4,8 +4,11 @@
     // par colonne sur les décisions. Chaque vue se calcule à la demande — ce sont
     // des agrégats sur toute la base, trop chers pour suivre chaque frappe.
     import { HeadToHead, PRByWindow, GetAllPlayerNames, StatsMatchIDs } from '../../../wailsjs/go/database/Database.js';
+    import { untrack } from 'svelte';
     import { t } from '../../i18n/index.js';
-    import { loadPositionsFromStatsSelection, openMatchListInPanel } from '../../services/positionLoader.js';
+    import { loadPositionsFromStatsSelection, openMatchListInPanel, openMatchInPanel } from '../../services/positionLoader.js';
+    import EntityAutocomplete from '../EntityAutocomplete.svelte';
+    import { narrowToMonths } from '../../utils/statsWindow.js';
     import CountLink from '../panels/CountLink.svelte';
     import PanelTable from '../panels/PanelTable.svelte';
 
@@ -13,7 +16,8 @@
     let { filter } = $props();
 
     let players = $state([]);
-    let playerA = $state('');
+    // The filter's player is the obvious first side of a head-to-head.
+    let playerA = $state(untrack(() => /** @type {any} */ (filter)?.playerName ?? ''));
     let playerB = $state('');
     let h2h = $state(/** @type {any} */ (null));
     let h2hError = $state('');
@@ -71,14 +75,7 @@
     // A count inside a row opens the other half and stops there.
 
     /** The filter narrowed to a window's months (both ends inclusive). */
-    function windowFilter(/** @type {any} */ w) {
-        const f = /** @type {any} */ (filter);
-        const [y, m] = String(w.to).split('-').map(Number);
-        const lastDay = new Date(Date.UTC(y, m, 0)).getUTCDate();
-        const from = `${w.from}-01`;
-        const to = `${w.to}-${String(lastDay).padStart(2, '0')}`;
-        return { ...f, dateFrom: f?.dateFrom && f.dateFrom > from ? f.dateFrom : from, dateTo: f?.dateTo && f.dateTo < to ? f.dateTo : to };
-    }
+    const windowFilter = (/** @type {any} */ w) => narrowToMonths(/** @type {any} */ (filter), w);
 
     const openPositions = (/** @type {object} */ f) => loadPositionsFromStatsSelection(f, { Kind: 'all', OnlyWithError: false });
 
@@ -169,14 +166,9 @@
         <h3 id="corpus-h2h-title">{$t('stats.corpus.h2hTitle')}</h3>
         <div class="corpus-controls">
             <label for="corpus-a">{$t('stats.corpus.playerA')}</label>
-            <input id="corpus-a" list="corpus-players" bind:value={playerA} />
+            <div class="corpus-player"><EntityAutocomplete id="corpus-a" variant="field" bind:value={playerA} items={players} label={(/** @type {string} */ n) => n} /></div>
             <label for="corpus-b">{$t('stats.corpus.playerB')}</label>
-            <input id="corpus-b" list="corpus-players" bind:value={playerB} />
-            <datalist id="corpus-players">
-                {#each players as name (name)}
-                    <option value={name}></option>
-                {/each}
-            </datalist>
+            <div class="corpus-player"><EntityAutocomplete id="corpus-b" variant="field" bind:value={playerB} items={players} label={(/** @type {string} */ n) => n} /></div>
             <button onclick={loadH2H} disabled={!playerA || !playerB || busy !== ''}>{$t('stats.corpus.compute')}</button>
         </div>
         {#if h2hError}
@@ -204,8 +196,8 @@
                     rows={h2h.matches}
                     columns={h2hColumns}
                     pointerRows
-                    rowAttrs={(m) => rowControl('corpus-h2h-row', $t('stats.corpus.openMatches'), () => openMatchListInPanel([m.id]))}
-                    onSelect={(m) => openMatchListInPanel([m.id])}
+                    rowAttrs={(m) => rowControl('corpus-h2h-row', $t('stats.openMatch'), () => openMatchInPanel(m.id))}
+                    onSelect={(m) => openMatchInPanel(m.id)}
                 >
                     {#snippet cells(/** @type {any} */ m)}
                         <td>{m.date}</td>
@@ -255,7 +247,13 @@
                                     onclick={(/** @type {Event} */ e) => countClick(e, () => openCountedMatches(windowFilter(w)))}
                                 />{:else}0{/if}</td
                         >
-                        <td class="align-right">{w.num_decisions}</td>
+                        <td class="align-right"
+                            ><CountLink
+                                label={String(w.num_decisions)}
+                                title={$t('stats.corpus.openPositions')}
+                                onclick={(/** @type {Event} */ e) => countClick(e, () => openPositions(windowFilter(w)))}
+                            /></td
+                        >
                         <td class="align-right">{fmt(w.pr)}</td>
                     {/snippet}
                 </PanelTable>
@@ -287,6 +285,9 @@
         margin: 0 0 4px;
         font-size: var(--font-size-base);
         font-weight: 600;
+    }
+    .corpus-player {
+        width: 12em;
     }
     .corpus-controls {
         display: flex;

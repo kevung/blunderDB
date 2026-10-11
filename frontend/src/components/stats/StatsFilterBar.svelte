@@ -1,15 +1,15 @@
 <script>
     import { onMount, untrack } from 'svelte';
     import { get } from 'svelte/store';
-    import { statsFilterStore, statsMetricStore, statsInvalidationKeyStore } from '../../stores/statsStore.js';
+    import { statsFilterStore, statsInvalidationKeyStore, initStatsFilter, patchStatsFilter, resetStatsFilter, dropMissingPlayer } from '../../stores/statsStore.js';
     import { databaseLoadedStore } from '../../stores/databaseStore.js';
     import { t } from '../../i18n/index.js';
     import { GetAllPlayerNames, GetAllTournaments, GetStatsAnalysisEngines, GetStatsDateRange } from '../../../wailsjs/go/database/Database.js';
-    import { GetStatsFilter, SaveStatsFilter } from '../../../wailsjs/go/main/Config.js';
+    import EntityAutocomplete from '../EntityAutocomplete.svelte';
 
     /**
-     * Players tab on screen: player selection and decision type are disabled,
-     * since that table covers every player and splits checker from cube.
+     * Players tab on screen: the decision type is disabled, since that table splits checker
+     * from cube itself. The player stays active: it marks the player's row.
      * @type {{ playersTab?: boolean, dbEmpty?: boolean }}
      */
     // `dbEmpty`: no match imported yet. The panel then shows its empty state in place of the
@@ -20,93 +20,64 @@
     let playerList = $state([]);
     /** @type {Array<{id: number, name: string}>} */
     let tournamentList = $state([]);
-    /** @type {string} earliest match date for input min/placeholder */
     /** Engine labels stored in the analyses: the options of the engine menu. */
     /** @type {string[]} */
     let engineList = $state([]);
     /** Product names for the labels the importers write; any other label shows as stored. */
     /** @type {Record<string, string>} */
     const ENGINE_NAMES = { XG: 'eXtreme Gammon', GNUbg: 'GNU Backgammon' };
+    /** @type {string} earliest match date for input min/placeholder */
     let dateRangeMin = $state('');
     /** @type {string} latest match date for input max/placeholder */
     let dateRangeMax = $state('');
     /** whether the tournament dropdown is open */
     let tourOpen = $state(false);
 
-    // Local mirror of the filter store (for controlled inputs)
-    let localFilter = $state({
-        playerName: '',
-        tournamentIDs: [],
-        dateFrom: '',
-        dateTo: '',
-        decisionType: -1,
-        matchLength: [],
-        analysisEngine: '',
-        minAnalysisDepth: 0
-    });
+    const filter = $derived($statsFilterStore);
+
+    /** The text of the player field: typing overrides it until the filter changes. */
+    let playerDraft = $derived(filter.playerName);
 
     /** The stored labels, plus the retained one when the database no longer holds it. */
-    let engineOptions = $derived(localFilter.analysisEngine && !engineList.includes(localFilter.analysisEngine) ? [...engineList, localFilter.analysisEngine] : engineList);
+    let engineOptions = $derived(filter.analysisEngine && !engineList.includes(filter.analysisEngine) ? [...engineList, filter.analysisEngine] : engineList);
     let dateError = $state(false);
     let mounted = $state(false);
 
-    // When the metric toggles after mount, persist it. Reading the store here
-    // (discarded via void) is what makes the effect re-run on metric changes.
-    $effect(() => {
-        void $statsMetricStore;
-        if (!mounted) return;
-        scheduleSave();
-    });
-
     const MATCH_LENGTHS = [1, 3, 5, 7, 9, 11, 13, 15, 21];
 
-    /** @type {ReturnType<typeof setTimeout> | null} */
-    let saveTimer = null;
-
-    /** Debounced save to Config.yaml. */
-    function scheduleSave() {
-        clearTimeout(saveTimer);
-        saveTimer = setTimeout(() => {
-            const persisted = {
-                player_name: localFilter.playerName,
-                tournament_ids: localFilter.tournamentIDs,
-                date_from: localFilter.dateFrom,
-                date_to: localFilter.dateTo,
-                // send null when -1 so Go *int receives nil
-                decision_type: localFilter.decisionType === -1 ? null : localFilter.decisionType,
-                match_length: localFilter.matchLength,
-                metric: $statsMetricStore,
-                analysis_engine: localFilter.analysisEngine,
-                min_analysis_depth: localFilter.minAnalysisDepth
-            };
-            SaveStatsFilter(persisted).catch(console.error); // eslint-disable-line no-console
-        }, 500);
+    /** @param {Partial<import('../../stores/statsStore.js').StatsFilterState>} patch */
+    function apply(patch) {
+        dateError = !patchStatsFilter(patch);
+        return !dateError;
     }
 
-    /** Push localFilter → statsFilterStore (triggers refreshStats via StatsPanel). */
-    function applyFilter() {
-        if (localFilter.dateFrom && localFilter.dateTo && localFilter.dateFrom > localFilter.dateTo) {
-            dateError = true;
-            return;
-        }
-        dateError = false;
-        statsFilterStore.set({ ...localFilter });
-        scheduleSave();
+    /**
+     * A refused date leaves the filter as it was; the field goes back to the applied date, so it
+     * never shows a range the figures do not cover.
+     */
+    function applyDate(/** @type {Event} */ e, /** @type {'dateFrom' | 'dateTo'} */ field) {
+        const input = /** @type {HTMLInputElement} */ (e.currentTarget);
+        if (!apply({ [field]: input.value })) input.value = filter[field];
     }
 
-    function resetFilters() {
-        localFilter = {
-            playerName: localFilter.playerName,
-            tournamentIDs: [],
-            dateFrom: '',
-            dateTo: '',
-            decisionType: -1,
-            matchLength: [],
-            analysisEngine: '',
-            minAnalysisDepth: 0
-        };
-        dateError = false;
-        applyFilter();
+    /** @param {string} name */
+    function choosePlayer(name) {
+        playerDraft = name;
+        apply({ playerName: name });
+    }
+
+    /** Enter on the typed text: an exact name picks it, an empty field means every player. */
+    function submitPlayer(/** @type {string} */ text) {
+        const typed = text.trim();
+        if (typed === '') return choosePlayer('');
+        const match = playerList.find((p) => p.Name.toLowerCase() === typed.toLowerCase());
+        if (match) choosePlayer(match.Name);
+        else playerDraft = filter.playerName;
+    }
+
+    /** Opening the list on the chosen name shows every player, not just that one. */
+    function playerMatches(/** @type {{Name: string}} */ p, /** @type {string} */ query) {
+        return query === filter.playerName || p.Name.toLowerCase().includes(query.toLowerCase());
     }
 
     /**
@@ -115,47 +86,30 @@
      *   enter exclusive mode with only that length selected.
      * - Deselecting the last selected length goes back to "all" (empty array).
      */
-    function toggleMatchLength(ml) {
-        if (localFilter.matchLength.length === 0) {
-            // Currently "all" — select only this one
-            localFilter = { ...localFilter, matchLength: [ml] };
-        } else {
-            const idx = localFilter.matchLength.indexOf(ml);
-            if (idx === -1) {
-                localFilter = { ...localFilter, matchLength: [...localFilter.matchLength, ml] };
-            } else {
-                const next = localFilter.matchLength.filter((v) => v !== ml);
-                // If we just removed the last selected one, go back to "all"
-                localFilter = { ...localFilter, matchLength: next };
-            }
-        }
-        applyFilter();
+    function toggleMatchLength(/** @type {number} */ ml) {
+        const current = filter.matchLength;
+        if (current.length === 0) apply({ matchLength: [ml] });
+        else if (!current.includes(ml)) apply({ matchLength: [...current, ml] });
+        else apply({ matchLength: current.filter((v) => v !== ml) });
     }
 
     /** Whether a match-length button appears active (selected). */
-    function mlActive(ml) {
-        // "All" mode: every button is highlighted
-        if (localFilter.matchLength.length === 0) return true;
-        return localFilter.matchLength.includes(ml);
+    function mlActive(/** @type {number} */ ml) {
+        return filter.matchLength.length === 0 || filter.matchLength.includes(ml);
     }
 
-    function toggleTournament(id) {
-        const idx = localFilter.tournamentIDs.indexOf(id);
-        if (idx === -1) {
-            localFilter = { ...localFilter, tournamentIDs: [...localFilter.tournamentIDs, id] };
-        } else {
-            localFilter = { ...localFilter, tournamentIDs: localFilter.tournamentIDs.filter((v) => v !== id) };
-        }
-        applyFilter();
+    function toggleTournament(/** @type {number} */ id) {
+        const ids = filter.tournamentIDs;
+        apply({ tournamentIDs: ids.includes(id) ? ids.filter((v) => v !== id) : [...ids, id] });
     }
 
     /** Label for the tournament dropdown button. */
     let tourLabel = $derived(
-        localFilter.tournamentIDs.length === 0
+        filter.tournamentIDs.length === 0
             ? $t('stats.allTournaments')
-            : localFilter.tournamentIDs.length === 1
-              ? (tournamentList.find((tour) => tour.id === localFilter.tournamentIDs[0])?.name ?? $t('stats.tournament'))
-              : $t('stats.nTournaments', { n: localFilter.tournamentIDs.length })
+            : filter.tournamentIDs.length === 1
+              ? (tournamentList.find((tour) => tour.id === filter.tournamentIDs[0])?.name ?? $t('stats.tournament'))
+              : $t('stats.nTournaments', { n: filter.tournamentIDs.length })
     );
 
     /**
@@ -178,17 +132,12 @@
         dbEmpty = loadedPlayers.length === 0;
         dateRangeMin = dateRange?.DateFrom ?? '';
         dateRangeMax = dateRange?.DateTo ?? '';
+        return loadedPlayers;
     }
 
-    /**
-     * Drop a selected player who no longer exists (e.g. merged), or the filter
-     * would silently match nothing.
-     */
-    function dropMissingPlayerSelection() {
-        if (!localFilter.playerName) return;
-        if (playerList.some((p) => p.Name === localFilter.playerName)) return;
-        localFilter = { ...localFilter, playerName: '' };
-        applyFilter();
+    /** Without a database the list is empty, not authoritative: the saved player stays. */
+    function dropMissing(/** @type {Array<{Name: string}>} */ players) {
+        if (get(databaseLoadedStore)) dropMissingPlayer(players.map((p) => p.Name));
     }
 
     // Re-read on every database mutation: the key is the effect's only
@@ -198,7 +147,7 @@
         untrack(() => {
             if (!mounted) return; // onMount does the first load
             loadLists()
-                .then(dropMissingPlayerSelection)
+                .then(dropMissing)
                 // eslint-disable-next-line no-console
                 .catch((err) => console.error('StatsFilterBar reload error:', err));
         });
@@ -206,38 +155,10 @@
 
     onMount(async () => {
         try {
-            // Skip the DB-backed lookups when no database is open (they would
-            // otherwise error); the persisted filter still comes from Config.
-            await loadLists();
-            const persisted = await GetStatsFilter();
-
-            // Restore persisted filter
-            // decision_type is now *int in Go: null means all (-1), 0 = checker, 1 = cube
-            if (persisted) {
-                localFilter = {
-                    playerName: persisted.player_name ?? '',
-                    tournamentIDs: persisted.tournament_ids ?? [],
-                    dateFrom: persisted.date_from ?? '',
-                    dateTo: persisted.date_to ?? '',
-                    decisionType: persisted.decision_type ?? -1,
-                    matchLength: persisted.match_length ?? [],
-                    analysisEngine: persisted.analysis_engine ?? '',
-                    minAnalysisDepth: persisted.min_analysis_depth ?? 0
-                };
-
-                if (persisted.metric && (persisted.metric === 'pr' || persisted.metric === 'mwc' || persisted.metric === 'mwc7')) {
-                    statsMetricStore.set(persisted.metric);
-                }
-            }
-
-            // A persisted filter can name a player who has since been merged
-            // away or whose matches were deleted.
-            if (localFilter.playerName && !playerList.some((p) => p.Name === localFilter.playerName)) {
-                localFilter = { ...localFilter, playerName: '' };
-            }
-
-            // Sync to store
-            statsFilterStore.set({ ...localFilter });
+            const [players] = await Promise.all([loadLists(), initStatsFilter()]);
+            // A saved filter can name a player who has since been merged away or whose
+            // matches were deleted.
+            dropMissing(players);
             mounted = true;
         } catch (err) {
             // eslint-disable-next-line no-console
@@ -248,49 +169,48 @@
 
 {#if !dbEmpty}
     <div class="filter-bar" aria-label={$t('stats.title')}>
-        <!-- Player -->
+        <!-- Player: empty means every perspective -->
         <label class="fb-label" for="fb-player">{$t('stats.playerLabel')}</label>
-        <select
-            id="fb-player"
-            class="fb-select"
-            disabled={dbEmpty || playersTab}
-            title={playersTab ? $t('stats.filterDisabledOnPlayersTab') : localFilter.playerName || undefined}
-            value={localFilter.playerName}
-            onchange={(e) => {
-                localFilter = { ...localFilter, playerName: e.target.value };
-                applyFilter();
-            }}
-        >
-            <option value="">{$t('stats.allPerspectives')}</option>
-            {#each playerList as p (p.Name)}
-                <option value={p.Name} title={p.Name}>{p.Name} ({p.Count})</option>
-            {/each}
-        </select>
+        <div class="fb-player" title={filter.playerName || undefined}>
+            <EntityAutocomplete
+                id="fb-player"
+                variant="field"
+                bind:value={playerDraft}
+                items={playerList}
+                label={(/** @type {{Name: string}} */ p) => p.Name}
+                key={(/** @type {{Name: string}} */ p) => p.Name}
+                filter={playerMatches}
+                placeholder={$t('stats.allPerspectives')}
+                maxHeight={240}
+                onSelect={(/** @type {{Name: string}} */ p) => choosePlayer(p.Name)}
+                onSubmit={submitPlayer}
+                onCancel={() => (playerDraft = filter.playerName)}
+                onDismiss={() => (playerDraft = filter.playerName)}
+            >
+                {#snippet item(/** @type {{Name: string, Count: number}} */ p)}<span title={p.Name}>{p.Name} ({p.Count})</span>{/snippet}
+            </EntityAutocomplete>
+        </div>
+        {#if filter.playerName}
+            <button class="fb-clear" onclick={() => choosePlayer('')} aria-label={$t('stats.allPerspectives')} title={$t('stats.allPerspectives')}>✕</button>
+        {/if}
 
         <!-- Tournaments -->
         {#if tournamentList.length > 0}
             <span class="fb-label">{$t('stats.tournamentsLabel')}</span>
             <div class="fb-tour-wrap" class:open={tourOpen}>
-                <button class="fb-tour-btn" class:filtered={localFilter.tournamentIDs.length > 0} onclick={() => (tourOpen = !tourOpen)} aria-expanded={tourOpen} aria-haspopup="listbox"
+                <button class="fb-tour-btn" class:filtered={filter.tournamentIDs.length > 0} onclick={() => (tourOpen = !tourOpen)} aria-expanded={tourOpen} aria-haspopup="listbox"
                     >{tourLabel} ▾</button
                 >
                 {#if tourOpen}
                     <div class="fb-tour-dropdown" role="listbox" aria-multiselectable="true">
                         <label class="fb-check-label fb-tour-all">
-                            <input
-                                type="checkbox"
-                                checked={localFilter.tournamentIDs.length === 0}
-                                onchange={() => {
-                                    localFilter = { ...localFilter, tournamentIDs: [] };
-                                    applyFilter();
-                                }}
-                            />
+                            <input type="checkbox" checked={filter.tournamentIDs.length === 0} onchange={() => apply({ tournamentIDs: [] })} />
                             {$t('stats.allTournaments')}
                         </label>
                         <hr class="fb-tour-sep" />
                         {#each tournamentList as t (t.id)}
                             <label class="fb-check-label">
-                                <input type="checkbox" checked={localFilter.tournamentIDs.includes(t.id)} onchange={() => toggleTournament(t.id)} />
+                                <input type="checkbox" checked={filter.tournamentIDs.includes(t.id)} onchange={() => toggleTournament(t.id)} />
                                 {t.name}
                             </label>
                         {/each}
@@ -305,16 +225,13 @@
             id="fb-date-from"
             type="date"
             class="fb-date"
-            class:date-error={dateError && localFilter.dateFrom > localFilter.dateTo}
-            value={localFilter.dateFrom}
+            class:date-error={dateError}
+            value={filter.dateFrom}
             min={dateRangeMin}
             max={dateRangeMax}
             placeholder={dateRangeMin}
             title={dateRangeMin ? $t('stats.firstMatchDate', { date: dateRangeMin }) : ''}
-            onchange={(e) => {
-                localFilter = { ...localFilter, dateFrom: e.target.value };
-                applyFilter();
-            }}
+            onchange={(e) => applyDate(e, 'dateFrom')}
         />
         <label class="fb-label" for="fb-date-to">{$t('stats.dateToLabel')}</label>
         <input
@@ -322,15 +239,12 @@
             type="date"
             class="fb-date"
             class:date-error={dateError}
-            value={localFilter.dateTo}
+            value={filter.dateTo}
             min={dateRangeMin}
             max={dateRangeMax}
             placeholder={dateRangeMax}
             title={dateRangeMax ? $t('stats.lastMatchDate', { date: dateRangeMax }) : ''}
-            onchange={(e) => {
-                localFilter = { ...localFilter, dateTo: e.target.value };
-                applyFilter();
-            }}
+            onchange={(e) => applyDate(e, 'dateTo')}
         />
 
         <!-- Decision type -->
@@ -338,16 +252,7 @@
             <legend class="fb-label-inline">{$t('stats.decisionLegend')}</legend>
             {#each [[-1, $t('stats.decisionAll')], [0, $t('stats.decisionChecker')], [1, $t('stats.decisionCube')]] as [val, lbl] (val)}
                 <label class="fb-radio-label">
-                    <input
-                        type="radio"
-                        name="decision-type"
-                        value={val}
-                        checked={localFilter.decisionType === val}
-                        onchange={() => {
-                            localFilter = { ...localFilter, decisionType: Number(val) };
-                            applyFilter();
-                        }}
-                    />
+                    <input type="radio" name="decision-type" value={val} checked={filter.decisionType === val} onchange={() => apply({ decisionType: Number(val) })} />
                     {lbl}
                 </label>
             {/each}
@@ -362,33 +267,17 @@
                     class:active={mlActive(ml)}
                     onclick={() => toggleMatchLength(ml)}
                     aria-pressed={mlActive(ml)}
-                    title={localFilter.matchLength.length === 0 ? $t('stats.filterLengthHint') : ''}>{ml}</button
+                    title={filter.matchLength.length === 0 ? $t('stats.filterLengthHint') : ''}>{ml}</button
                 >
             {/each}
-            {#if localFilter.matchLength.length > 0}
-                <button
-                    class="fb-ml-all"
-                    onclick={() => {
-                        localFilter = { ...localFilter, matchLength: [] };
-                        applyFilter();
-                    }}
-                    title={$t('stats.selectAllLengths')}>{$t('stats.all')}</button
-                >
+            {#if filter.matchLength.length > 0}
+                <button class="fb-ml-all" onclick={() => apply({ matchLength: [] })} title={$t('stats.selectAllLengths')}>{$t('stats.all')}</button>
             {/if}
         </div>
 
         <!-- Provenance: which engine analysed the decisions, and how deep -->
         <label class="fb-label" for="fb-engine">{$t('stats.engineLabel')}</label>
-        <select
-            id="fb-engine"
-            class="fb-select"
-            title={$t('stats.engineHint')}
-            value={localFilter.analysisEngine}
-            onchange={(e) => {
-                localFilter = { ...localFilter, analysisEngine: e.target.value };
-                applyFilter();
-            }}
-        >
+        <select id="fb-engine" class="fb-select" title={$t('stats.engineHint')} value={filter.analysisEngine} onchange={(e) => apply({ analysisEngine: e.target.value })}>
             <option value="">{$t('stats.engineAny')}</option>
             {#each engineOptions as eng (eng)}
                 <option value={eng} title={eng}>{ENGINE_NAMES[eng] ?? eng}</option>
@@ -400,16 +289,13 @@
             class="fb-depth"
             type="number"
             min="0"
-            value={localFilter.minAnalysisDepth}
+            value={filter.minAnalysisDepth}
             title={$t('stats.minDepthHint')}
-            onchange={(e) => {
-                localFilter = { ...localFilter, minAnalysisDepth: Math.max(0, Number(e.target.value) || 0) };
-                applyFilter();
-            }}
+            onchange={(e) => apply({ minAnalysisDepth: Math.max(0, Number(e.target.value) || 0) })}
         />
 
         <!-- Reset -->
-        <button class="fb-reset" onclick={resetFilters} title={$t('stats.resetFiltersHint')}>{$t('stats.resetFilters')}</button>
+        <button class="fb-reset" onclick={() => (dateError = !resetStatsFilter())} title={$t('stats.resetFiltersHint')}>{$t('stats.resetFilters')}</button>
     </div>
 {/if}
 
@@ -446,13 +332,24 @@
 
     /* A long name is cut with an ellipsis, never allowed to widen the bar; the whole select is
        the hit area. */
-    #fb-player {
+    .fb-player {
         flex: 0 1 18em;
         min-width: 8em;
         max-width: 100%;
+    }
+
+    .fb-player :global(input) {
         text-overflow: ellipsis;
-        white-space: nowrap;
-        overflow: hidden;
+        min-height: calc(1.4em + 12px);
+    }
+
+    .fb-clear {
+        border: none;
+        background: none;
+        color: var(--color-text-muted);
+        cursor: pointer;
+        padding: 0 2px;
+        margin-left: -6px;
     }
 
     .fb-select,

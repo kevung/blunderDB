@@ -16,7 +16,7 @@
     import PanelTable, { navigationDelta, stepSelection } from './panels/PanelTable.svelte';
     import PanelHeader from './panels/PanelHeader.svelte';
     import CountLink from './panels/CountLink.svelte';
-    import { loadPositionsFromSelection } from '../services/positionLoader.js';
+    import { loadPositionsFromSelection, openStatsFor } from '../services/positionLoader.js';
     import {
         GetAllTournaments,
         CreateTournament,
@@ -948,6 +948,15 @@
                                 {selectedTournament.comment || $t('tournament.notesPlaceholder')}
                             </button>
                         {/if}
+                        <button
+                            class="direction-btn"
+                            data-testid="tournament-stats"
+                            onclick={(e) => {
+                                e.stopPropagation();
+                                openStatsFor({ tournamentIDs: [selectedTournament.id] });
+                            }}
+                            title={$t('stats.openTournamentStats')}>{$t('stats.openStatsButton')}</button
+                        >
                         {#if selectedDirection}
                             <button
                                 class="direction-btn"
