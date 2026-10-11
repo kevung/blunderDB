@@ -1066,7 +1066,7 @@ export default {
 <li><strong>Una colección cuyas posiciones no estén todas en la selección llega truncada.</strong> Por eso la lista muestra, para cada colección, la parte cubierta («12/40») y la señala en rojo cuando es parcial.</li>
 <li><strong>Los torneos solo pueden exportarse junto con los partidos</strong>: sin ellos no existe el vínculo torneo–partido y el torneo llegaría vacío. La casilla permanece desactivada mientras no se marque «incluir los partidos».</li>
 </ul>
-<p>Los campos <em>Usuario</em>, <em>Descripción</em> y <em>Fecha de creación</em> describen el <strong>archivo producido</strong>; se rellenan previamente a partir de la base de origen. La casilla <em>Mis filtros guardados</em> es distinta de las demás: no exporta contenido, sino sus propias búsquedas guardadas, que no sirven de nada en la base de otra persona.</p>
+<p>Los campos <em>Usuario</em>, <em>Descripción</em> y <em>Fecha de creación</em> describen el <strong>archivo producido</strong>; se rellenan previamente a partir de la base de origen. La casilla <em>Mis filtros guardados</em> es distinta de las demás: no exporta contenido, sino sus propias búsquedas guardadas, que no sirven de nada en la base de otra persona. Un filtro que designa una posición, una partida o un torneo por su número se renumera para el archivo; si designa uno que no se exporta, se queda con usted.</p>
 <p>Al marcar <strong>Marcar este archivo con su origen</strong> aparecen dos campos:</p>
 <ul>
 <li><strong>Origen</strong> — qué es este archivo y de dónde viene, con tus palabras: «Clase de Jean Dupont — 12 de marzo de 2026». Este campo es <strong>obligatorio</strong>: mientras esté vacío, el botón de exportación permanece inactivo.</li>

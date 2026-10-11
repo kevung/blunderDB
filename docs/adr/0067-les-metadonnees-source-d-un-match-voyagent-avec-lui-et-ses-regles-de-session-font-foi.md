@@ -33,7 +33,9 @@ ce que devient un match importé avant que ces colonnes existent.
    (`id`, `import_batch_id`, `dice_hash`, `direction_match_id`). Un test échoue tant qu'une
    colonne nouvelle n'est rangée dans aucune des deux : jamais d'export par exclusion. Les
    métadonnées source sont dans la liste blanche : c'est ce que le fichier disait du match,
-   elles le suivent. Le receveur les relit en ouvrant l'export, par le même
+   elles le suivent. `file_path` voyage réduit au nom du fichier (`issuance.CarriedFileName`) :
+   le nom suffit à retrouver le fichier dans la bibliothèque du receveur, le chemin au-dessus
+   décrit le disque du producteur. Le receveur les relit en ouvrant l'export, par le même
    `MatchStore.Get` ; l'import d'une base dans une autre ne porte pas de matchs et n'a donc
    rien à relire.
 4. **Réimporter complète sans écraser.** Un doublon exact ou un enrichissement inter-format

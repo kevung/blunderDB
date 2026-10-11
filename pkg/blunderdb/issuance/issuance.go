@@ -63,6 +63,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"strings"
 	"time"
 )
@@ -91,8 +92,8 @@ var CarriedCommentColumns = []string{"text", "created_at", "modified_at", "autho
 var CarriedMatchCommentColumns = []string{"comment", "comment_author"}
 
 // CarriedVideoSource is the video source an exported match carries: an
-// http(s) URL as it is, a local file by its name alone, nil when there is
-// none (ADR-0082). The name lets the recipient relocate the match onto their
+// http(s) URL without the credentials it may embed, a local file by its name
+// alone, nil when there is none (ADR-0082). The name lets the recipient relocate the match onto their
 // own copy of the video; the directories above it are the producer's and
 // stay home. The Repères keep their meaning either way.
 func CarriedVideoSource(src *string) *string {
@@ -103,6 +104,14 @@ func CarriedVideoSource(src *string) *string {
 	lower := strings.ToLower(v)
 	if !strings.HasPrefix(lower, "http://") && !strings.HasPrefix(lower, "https://") {
 		v = CarriedFileName(v)
+	} else if u, err := url.Parse(v); err != nil {
+		// A URL that does not parse cannot be told free of credentials.
+		return nil
+	} else if u.User != nil {
+		// Credentials written into the URL are the producer's; the query
+		// (a YouTube ?v=) is what names the video and stays.
+		u.User = nil
+		v = u.String()
 	}
 	if v == "" {
 		return nil

@@ -1066,7 +1066,7 @@ export default {
 <li><strong>Une collection dont toutes les positions ne sont pas dans la sélection arrive tronquée.</strong> La liste affiche donc, pour chaque collection, la part couverte (« 12/40 ») et la signale en rouge lorsqu'elle est partielle.</li>
 <li><strong>Les tournois ne peuvent être exportés qu'avec les matchs</strong> : sans eux, le lien tournoi–match n'existe pas et le tournoi arriverait vide. La case est désactivée tant que « inclure les matchs » ne l'est pas.</li>
 </ul>
-<p>Les champs <em>Utilisateur</em>, <em>Description</em> et <em>Date de création</em> décrivent le <strong>fichier produit</strong> ; ils sont préremplis depuis la base source. La case <em>Mes filtres enregistrés</em> est à part des autres : elle n'exporte pas du contenu mais vos propres recherches enregistrées, sans utilité dans la base de quelqu'un d'autre.</p>
+<p>Les champs <em>Utilisateur</em>, <em>Description</em> et <em>Date de création</em> décrivent le <strong>fichier produit</strong> ; ils sont préremplis depuis la base source. La case <em>Mes filtres enregistrés</em> est à part des autres : elle n'exporte pas du contenu mais vos propres recherches enregistrées, sans utilité dans la base de quelqu'un d'autre. Un filtre qui désigne une position, un match ou un tournoi par son numéro est renuméroté pour le fichier ; s'il en désigne un qui ne part pas, il reste chez vous.</p>
 <p>Cocher <strong>Marquer ce fichier de son origine</strong> fait apparaître deux champs :</p>
 <ul>
 <li><strong>Origine</strong> — ce qu'est ce fichier et d'où il vient, dans vos mots : « Cours de Jean Dupont — 12 mars 2026 ». Ce champ est <strong>obligatoire</strong> : tant qu'il est vide, le bouton d'export reste inactif.</li>

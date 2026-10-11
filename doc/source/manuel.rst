@@ -4965,7 +4965,9 @@ Les champs *Utilisateur*, *Description* et *Date de création* décrivent le **f
 produit** ; ils sont préremplis depuis la base source. La case *Mes filtres
 enregistrés* est à part des autres : elle n'exporte pas du contenu mais vos
 propres recherches enregistrées, sans utilité dans la base de quelqu'un
-d'autre.
+d'autre. Un filtre qui désigne une position, un match ou un tournoi par son
+numéro est renuméroté pour le fichier ; s'il en désigne un qui ne part pas,
+il reste chez vous.
 
 Cocher **Marquer ce fichier de son origine** fait apparaître deux champs :
 

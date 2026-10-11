@@ -1066,7 +1066,7 @@ export default {
 <li><strong>Kokoelma, jonka asemat eivät kaikki sisälly valintaan, saapuu vaillinaisena.</strong> Siksi luettelo näyttää kunkin kokoelman katetun osuuden (”12/40”) ja merkitsee sen punaisella, kun se on osittainen.</li>
 <li><strong>Turnaukset voi viedä vain otteluiden kanssa</strong>: ilman niitä turnaus–ottelu-yhteyttä ei ole ja turnaus saapuisi tyhjänä. Valintaruutu pysyy poissa käytöstä, kunnes ”sisällytä ottelut” on valittu.</li>
 </ul>
-<p>Kentät <em>Käyttäjä</em>, <em>Kuvaus</em> ja <em>Luontipäivä</em> kuvaavat <strong>syntyvää tiedostoa</strong>; ne on esitäytetty lähdetietokannasta. Valintaruutu <em>Omat tallennetut suodattimet</em> on erillinen muista: se ei vie sisältöä vaan omat tallennetut hakusi, joista ei ole hyötyä jonkun toisen tietokannassa.</p>
+<p>Kentät <em>Käyttäjä</em>, <em>Kuvaus</em> ja <em>Luontipäivä</em> kuvaavat <strong>syntyvää tiedostoa</strong>; ne on esitäytetty lähdetietokannasta. Valintaruutu <em>Omat tallennetut suodattimet</em> on erillinen muista: se ei vie sisältöä vaan omat tallennetut hakusi, joista ei ole hyötyä jonkun toisen tietokannassa. Suodatin, joka nimeää aseman, ottelun tai turnauksen numerolla, numeroidaan uudelleen tiedostoa varten; jos se nimeää jonkin, jota ei viedä, se jää sinulle.</p>
 <p>Valinta <strong>Merkitse tämä tiedosto alkuperällään</strong> tuo näkyviin kaksi kenttää:</p>
 <ul>
 <li><strong>Alkuperä</strong> — mikä tämä tiedosto on ja mistä se tulee, omin sanoin: ”Jean Dupontin oppitunti — 12. maaliskuuta 2026”. Tämä kenttä on <strong>pakollinen</strong>: niin kauan kuin se on tyhjä, vientipainike pysyy passiivisena.</li>

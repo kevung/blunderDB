@@ -1066,7 +1066,7 @@ export default {
 <li><strong>Una raccolta le cui posizioni non siano tutte nella selezione arriva troncata.</strong> L'elenco mostra quindi, per ogni raccolta, la parte coperta («12/40») e la segnala in rosso quando è parziale.</li>
 <li><strong>I tornei possono essere esportati solo insieme ai match</strong>: senza di essi il collegamento torneo–match non esiste e il torneo arriverebbe vuoto. La casella resta disattivata finché non è selezionato «includi i match».</li>
 </ul>
-<p>I campi <em>Utente</em>, <em>Descrizione</em> e <em>Data di creazione</em> descrivono il <strong>file prodotto</strong>; sono precompilati dal database sorgente. La casella <em>I miei filtri salvati</em> è a parte rispetto alle altre: non esporta contenuto ma le vostre ricerche salvate, inutili nel database di qualcun altro.</p>
+<p>I campi <em>Utente</em>, <em>Descrizione</em> e <em>Data di creazione</em> descrivono il <strong>file prodotto</strong>; sono precompilati dal database sorgente. La casella <em>I miei filtri salvati</em> è a parte rispetto alle altre: non esporta contenuto ma le vostre ricerche salvate, inutili nel database di qualcun altro. Un filtro che indica una posizione, un match o un torneo con il suo numero viene rinumerato per il file; se ne indica uno che non parte, resta da te.</p>
 <p>Selezionando <strong>Contrassegna questo file con la sua origine</strong> compaiono due campi:</p>
 <ul>
 <li><strong>Origine</strong> — che cos'è questo file e da dove proviene, con parole tue: «Lezione di Jean Dupont — 12 marzo 2026». Questo campo è <strong>obbligatorio</strong>: finché è vuoto, il pulsante di esportazione resta inattivo.</li>
