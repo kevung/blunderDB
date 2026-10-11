@@ -6,7 +6,8 @@
     import { quizOnIds, quizOnWorstGroups, deckFromIds, collectionFromIds } from '../../services/recurringStudy.js';
     import { t } from '../../i18n/index.js';
 
-    /** @type {{ data: { NumDecisions: number, Groups: Array<object> }|null, loading?: boolean, error?: string|null }} */
+    /** @typedef {{ GameType: string, Kind: string, Theme: string, SumErrorMP: number, Count: number, PRCost: number, PositionIDs?: number[] }} RecurringGroup */
+    /** @type {{ data: { NumDecisions: number, Groups: Array<RecurringGroup>, Unthemed?: Array<RecurringGroup> }|null, loading?: boolean, error?: string|null }} */
     let { data = null, loading = false, error = null } = $props();
 
     let groups = $derived(data?.Groups ?? []);
@@ -15,6 +16,7 @@
     // Erreur, et ce reste coifferait sinon un classement qui ne dit rien.
     let unthemed = $derived(data?.Unthemed ?? []);
 
+    /** @param {string} gameType */
     function gameTypeLabel(gameType) {
         const key = `stats.gameType_${gameType}`;
         const label = $t(key);
@@ -23,6 +25,7 @@
 
     // Les thèmes de videau sont les cases d'erreur de la matrice de direction :
     // mêmes libellés qu'elle, pour qu'un même fait ne porte pas deux noms.
+    /** @type {Record<string, string>} */
     const CUBE_LABELS = {
         offer_missed: 'stats.cubeOfferMissed',
         offer_premature: 'stats.cubeOfferPremature',
@@ -30,16 +33,19 @@
         answer_wrong_take: 'stats.cubeAnswerWrongTake'
     };
 
+    /** @param {RecurringGroup} g */
     function themeLabel(g) {
         const key = g.Kind === 'cube' && CUBE_LABELS[g.Theme] ? CUBE_LABELS[g.Theme] : `stats.recurringTheme_${g.Theme}`;
         const label = $t(key);
         return label === key ? g.Theme : label;
     }
 
+    /** @param {RecurringGroup} g */
     function studyName(g) {
         return $t('stats.recurringStudyName', { name: `${gameTypeLabel(g.GameType)} · ${$t(`stats.recurringKind_${g.Kind}`)} · ${themeLabel(g)}` });
     }
 
+    /** @param {RecurringGroup} g */
     function open(g) {
         if (!g.PositionIDs?.length) return;
         loadPositionsFromSelection(g.PositionIDs);

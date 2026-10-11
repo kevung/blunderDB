@@ -277,6 +277,7 @@
     }
 
     // Column definitions for sorting
+    /** @type {Record<string, { key: string, type: string }>} */
     const sortableColumns = {
         move: { key: 'move', type: 'string' },
         equity: { key: 'equity', type: 'number' },
@@ -291,6 +292,7 @@
         engine: { key: 'analysisEngine', type: 'string' }
     };
 
+    /** @param {string} column */
     function handleSort(column) {
         const next = nextSort(sortColumn, sortDirection, column, {
             // Default direction: desc for numeric, asc for string
