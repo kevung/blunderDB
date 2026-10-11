@@ -427,7 +427,8 @@ export default {
 <h3>Tournaments Panel</h3>
 <p>The <strong>Tournaments</strong> panel (<em>CTRL-Y</em>) groups matches into tournaments for organised tracking and per-event statistical analysis. Tournaments can be created, renamed, and deleted; matches can be assigned to them. Stats panel statistics can be filtered by tournament. Press <em>CTRL-Y</em> to show or hide the panel.</p>
 <p><strong>New tournament</strong> opens the creation field, which takes focus; <em>ESC</em> or <strong>Cancel</strong> closes it. The filter field, in the header strip, narrows the list as you type: every word typed must appear in the name, the venue or the date, the counter reads "shown / total" and <em>ESC</em> clears the field. A click highlights a row, a double-click or <em>ENTER</em> opens the tournament. Its header shows the date, the venue and the number of matches, which a click turns into the list of the tournament's positions; on the right, the notes, <strong>Direct</strong> and <strong>Review</strong>. Below, its matches, one per line, which ▲ and ▼ reorder, which ⇄ swaps the players of and which × removes from the tournament. A click on a match shows its sheet under the table, the same as in the Matches panel (Transcript, Charts, Review, Details, Info, Stats tabs); a second click or <em>ESC</em> closes it, a double-click or <em>ENTER</em> opens the match on the board. The <strong>Add a match…</strong> field files a match from the database there, and ← returns to the tournament list.</p>
-<p>Tournaments fill themselves at import time. XG, GnuBG and BGF files name their event; when a new match is imported, blunderDB files it under the tournament of that name, creating it if it does not exist yet. The tournament's date and location are left empty — this panel is where they are filled in. A match already in the database is never refiled: re-importing its file does not undo what was arranged by hand.</p>
+<p>Each row starts with its rank (#) and its date, as in the Matches panel: the list runs from the most recent to the oldest, and a click on a header sorts it. A tournament without a date takes that of its oldest match, shown greyed out; it is read, never written to the database. The date field of the edit form stays empty until something is typed in it: the date read appears only greyed out, beside the field, and saving writes a date only if one was typed.</p>
+<p>Tournaments fill themselves on import. XG, GnuBG and BGF files name their event; when a new match is imported, blunderDB files it in the tournament of that name and creates the tournament if it does not exist yet. The location stays empty, and the date is that of the oldest match until you enter one here. A match already in the database is never refiled: re-importing its file does not undo filing done by hand.</p>
 <p>The <strong>PR</strong> and <strong>MWC</strong> columns of each tournament show the PR and the MWC loss of the <strong>reference player</strong> — that is, the player appearing in the greatest number of the tournament's matches (in case of a tie, the one who made the most decisions). The PR therefore does not mix your play with your opponents': for your own tournaments, it reflects your performance alone. The reference player's name appears in a tooltip when hovering over the value.</p>
 <p><strong>Tournament review.</strong> The <strong>Review</strong> button, in the header of an open tournament, answers the question one asks coming home from an event: did I play at my level, and if not, where did it give way? The player defaults to the one most present in the tournament's matches; the <strong>Player</strong> menu picks another. The thresholds were fixed before any results were examined.</p>
 <ul>
@@ -681,14 +682,14 @@ export default {
 <p>The <strong>trend</strong> is a least-squares fit over your matches' PR, projected to the deadline. It refuses to speak below three matches: drawing a line between two points would be a claim that cannot be held. And the sentence says so every time — <em>a trend is not a prediction</em>.</p>
 <p>The goal is stored in the <strong>database's metadata</strong>, not in the configuration: it is about that library, so it follows the file rather than the machine. No schema change: <code>metadata</code> is already a key/value table, readable by <code>blunderdb info</code> as by the daemon.</p>
 <h5>Tournament line chart</h5>
-<p>A line chart displays the PR (or MWC) for each tournament (X axis: tournament order, Y axis: metric value). Colour bands materialise the level thresholds.</p>
+<p>A line chart shows the PR (or MWC) of each tournament: one point per tournament, labelled with its name, in the chronological order of its date — failing that, the date of its oldest match (Y axis: the metric's value). Coloured bands mark the level thresholds.</p>
 <p>Clicking a point on the chart opens a context menu with two options:</p>
 <ul>
 <li><strong>Open tournament</strong> — opens the tournament in the Tournaments panel.</li>
 <li><strong>Open positions</strong> — loads all positions from the tournament into the analysis panel.</li>
 </ul>
 <h5>Match scatter plot</h5>
-<p>A scatter plot represents each match (X axis: date, Y axis: PR or MWC). Point size is proportional to the number of decisions in the match.</p>
+<p>A scatter plot shows each match (X axis: date, Y axis: PR or MWC). The size of each point is proportional to the number of decisions in the match. A match without a date does not appear.</p>
 <p>Clicking a point opens a context menu:</p>
 <ul>
 <li><strong>Open match</strong> — opens the match in the Matches panel.</li>
@@ -1054,7 +1055,8 @@ export default {
 <p>The export dialog fits on a single screen: the form, then a progress overlay laid over it while the file is written. It closes by itself when finished, and the result appears in the status bar.</p>
 <p>Three points deserve attention:</p>
 <ul>
-<li><strong>The export covers the positions currently displayed</strong>, not the whole database. After a search, only the results go out — the dialog says so at the top.</li>
+<li><strong>The export covers the positions currently displayed</strong>, not the whole database. After a search, only the results go out — the dialog says so at the top — and the match list only offers the matches in which these positions were played; each checked match goes out with all its positions.</li>
+<li><strong>When the displayed list is the library</strong>, the export is the same as the server's and as <code>export --type database</code>: all the boxes are checked from the start, and the Anki decks (without review history) and the transcriptions in progress go out with the rest. A transcription linked to a local video carries only the file name, without its folder; a web link goes out as is.</li>
 <li><strong>A collection whose positions are not all in the selection arrives truncated.</strong> The list therefore shows, for each collection, how much of it is covered (“12/40”), in red when it is partial.</li>
 <li><strong>Tournaments can only be exported together with matches</strong>: without them the tournament–match link does not exist and the tournament would arrive empty. The box stays disabled until “include matches” is ticked.</li>
 </ul>

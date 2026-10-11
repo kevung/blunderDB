@@ -522,3 +522,18 @@ func TestProtectedIdentityFileRecordsItsDerivationParameters(t *testing.T) {
 		t.Fatal("an identity file without a version must be refused")
 	}
 }
+
+func TestCarriedTranscriptVideoSource(t *testing.T) {
+	for in, want := range map[string]string{
+		"https://youtu.be/abc":          "https://youtu.be/abc",
+		" http://example.org/v.mp4 ":    "http://example.org/v.mp4",
+		"/home/kevin/Vidéos/finale.mp4": "finale.mp4",
+		`C:\Users\kevin\demi.mkv`:       "demi.mkv",
+		"seul.webm":                     "seul.webm",
+		"":                              "",
+	} {
+		if got := CarriedTranscriptVideoSource(in); got != want {
+			t.Errorf("CarriedTranscriptVideoSource(%q) = %q, want %q", in, got, want)
+		}
+	}
+}

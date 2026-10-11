@@ -12,6 +12,7 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
 
 type tournamentStore struct{ db execer }
@@ -24,18 +25,26 @@ func tsTime(t time.Time) string {
 	return t.Format("2006-01-02 15:04:05")
 }
 
-// tournamentSelectExpr reads a domain.Tournament. The correlated subquery
-// counts the tournament's matches; both rows carry the same tenant_id.
-const tournamentSelectExpr = `t.id, t.name, COALESCE(t.date,''), COALESCE(t.location,''),
+// tournamentSelectExpr reads a domain.Tournament from tournament t joined to
+// tournamentFrom's match aggregate, which supplies the match count and the
+// effective date.
+var tournamentSelectExpr = `t.id, t.name, COALESCE(t.date,''), COALESCE(t.location,''),
 	COALESCE(t.sort_order,0), t.created_at, t.updated_at,
-	(SELECT COUNT(*) FROM match m WHERE m.tournament_id = t.id AND m.tenant_id = t.tenant_id),
-	COALESCE(t.comment,'')`
+	` + sqlshared.TournamentMatchCount + `,
+	COALESCE(t.comment,''), ` + sqlshared.TournamentEffectiveDate
+
+// tournamentFrom is the FROM clause tournamentSelectExpr reads; matchFilter
+// confines the matches aggregated (alias tm) to the tenant, and more.
+func tournamentFrom(matchFilter string) string {
+	return ` FROM tournament t` + sqlshared.TournamentMatchAgg(shared{}.DateText, matchFilter, true)
+}
 
 func scanTournament(sc scanner) (domain.Tournament, error) {
 	var t domain.Tournament
 	var createdAt, updatedAt time.Time
 	if err := sc.Scan(&t.ID, &t.Name, &t.Date, &t.Location,
-		&t.SortOrder, &createdAt, &updatedAt, &t.MatchCount, &t.Comment); err != nil {
+		&t.SortOrder, &createdAt, &updatedAt, &t.MatchCount, &t.Comment,
+		&t.EffectiveDate); err != nil {
 		return domain.Tournament{}, err
 	}
 	t.CreatedAt = tsTime(createdAt)
@@ -66,7 +75,7 @@ func (s *tournamentStore) Create(ctx context.Context, scope string, name, date, 
 // Get returns the tournament with the given id, or ErrNotFound.
 func (s *tournamentStore) Get(ctx context.Context, scope string, id int64) (*domain.Tournament, error) {
 	row := s.db.QueryRow(ctx,
-		`SELECT `+tournamentSelectExpr+` FROM tournament t WHERE t.id = $1 AND t.tenant_id = $2`,
+		`SELECT `+tournamentSelectExpr+tournamentFrom("tm.tenant_id = $2 AND tm.tournament_id = $1")+` WHERE t.id = $1 AND t.tenant_id = $2`,
 		id, tenantID(scope))
 	t, err := scanTournament(row)
 	if errors.Is(err, pgx.ErrNoRows) {
@@ -78,13 +87,14 @@ func (s *tournamentStore) Get(ctx context.Context, scope string, id int64) (*dom
 	return &t, nil
 }
 
-// List streams every tournament, most recent first.
+// List streams every tournament, most recent effective date first; undated
+// tournaments come last.
 func (s *tournamentStore) List(ctx context.Context, scope string, opts storage.ListOpts) iter.Seq2[*domain.Tournament, error] {
 	return func(yield func(*domain.Tournament, error) bool) {
 		rows, err := s.db.Query(ctx,
-			`SELECT `+tournamentSelectExpr+` FROM tournament t
+			`SELECT `+tournamentSelectExpr+tournamentFrom("tm.tenant_id = $1")+`
 			 WHERE t.tenant_id = $1
-			 ORDER BY t.date DESC, t.created_at DESC, t.id DESC`+opts.SQL(""), tenantID(scope))
+			 ORDER BY `+sqlshared.TournamentEffectiveDate+` DESC, t.created_at DESC, t.id DESC`+opts.SQL(""), tenantID(scope))
 		if err != nil {
 			yield(nil, fmt.Errorf("postgres: list tournaments: %w", err))
 			return

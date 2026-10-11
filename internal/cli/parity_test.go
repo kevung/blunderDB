@@ -140,6 +140,7 @@ var serverOnly = map[string]string{
 // databaseParity is the allow-list. Keep it sorted by method name.
 var databaseParity = map[string]parityEntry{
 	"AddComment":                        {CLI: "comment add", Server: "/v1/comments.add"},
+	"MatchIDsReachedBy":                 {Why: "feeds the GUI export dialog's list of the matches a filtered list reaches; the CLI and the daemon export the whole library, and ExportDatabase applies the same rule to an unnamed match selection"},
 	"SetCommentAuthor":                  {Why: "the signature of the comments this process writes: the desktop sets it from « Votre nom », the CLI from --author; the daemon reads X-User-Name per request instead"},
 	"AddMatchToTournament":              {Server: "/v1/tournaments.addMatch", Why: whyGUIEdit},
 	"BuryAnkiCard":                      {CLI: "anki card", Server: "/v1/anki.buryCard"},

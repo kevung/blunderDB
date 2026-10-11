@@ -26,8 +26,11 @@ func (s *StatsStore) TournamentReview(ctx context.Context, scope string, tournam
 	tenant, args := s.DB.TenantFilter("t", scope)
 	var name, date string
 	found := false
-	err := scanEach(ctx, s.DB, `SELECT t.name, COALESCE(t.date, '') FROM tournament t WHERE `+tenant+` AND t.id = ?`,
-		append(args, tournamentID), func(r Rows) error {
+	agg, aggArgs := tournamentMatchAgg(s.DB, scope, "tm.tournament_id = ?", tournamentID)
+	// The review is dated like the list: a tournament left undated takes
+	// the day of its earliest match.
+	err := scanEach(ctx, s.DB, `SELECT t.name, `+TournamentEffectiveDate+` FROM tournament t`+agg+` WHERE `+tenant+` AND t.id = ?`,
+		append(append(aggArgs, args...), tournamentID), func(r Rows) error {
 			found = true
 			return r.Scan(&name, &date)
 		})

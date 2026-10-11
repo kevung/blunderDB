@@ -212,17 +212,22 @@ const (
 
 // Tournament represents a tournament that organizes matches
 type Tournament struct {
-	ID         int64   `json:"id"`
-	Name       string  `json:"name"`
-	Date       string  `json:"date"`
-	Location   string  `json:"location"`
-	SortOrder  int     `json:"sortOrder"`
-	CreatedAt  string  `json:"createdAt"`
-	UpdatedAt  string  `json:"updatedAt"`
-	MatchCount int     `json:"matchCount"`
-	Comment    string  `json:"comment"`
-	PR         float64 `json:"pr"`
-	MWCLoss    float64 `json:"mwc_loss"`
+	ID   int64  `json:"id"`
+	Name string `json:"name"`
+	// Date is the date the user entered; empty when none was.
+	Date string `json:"date"`
+	// EffectiveDate is Date, else the day of the tournament's earliest match
+	// (YYYY-MM-DD), derived on read and never stored. Empty when neither
+	// exists. The date is derived exactly when Date is empty and this is not.
+	EffectiveDate string  `json:"effectiveDate"`
+	Location      string  `json:"location"`
+	SortOrder     int     `json:"sortOrder"`
+	CreatedAt     string  `json:"createdAt"`
+	UpdatedAt     string  `json:"updatedAt"`
+	MatchCount    int     `json:"matchCount"`
+	Comment       string  `json:"comment"`
+	PR            float64 `json:"pr"`
+	MWCLoss       float64 `json:"mwc_loss"`
 	// RefPlayer is the player whose PR/MWCLoss the badge reports: the person
 	// present in the most of the tournament's matches. Empty when unknown.
 	RefPlayer string `json:"ref_player"`
@@ -601,9 +606,14 @@ type ExportOptions struct {
 	// callers holding positions that are not in the database.
 	PositionIDs []int64 `json:"positionIDs"`
 	// AllPositions exports every position of the database without listing
-	// them (the CLI's `export --type database`). Positions and PositionIDs win
-	// over it when set.
-	AllPositions         bool              `json:"allPositions"`
+	// them. Positions and PositionIDs win over it when set.
+	AllPositions bool `json:"allPositions"`
+	// WholeLibrary exports the whole library, as the daemon's export does
+	// (ingest.WholeTenant): every family that carries no flag of its own goes
+	// with it. Positions, PositionIDs and AllPositions are then ignored; each
+	// Include… flag still drops its family and each …IDs list narrows it, an
+	// empty list keeping all of it.
+	WholeLibrary         bool              `json:"wholeLibrary"`
 	Metadata             map[string]string `json:"metadata"`
 	IncludeAnalysis      bool              `json:"includeAnalysis"`
 	IncludeComments      bool              `json:"includeComments"`
@@ -614,13 +624,19 @@ type ExportOptions struct {
 	CollectionIDs        []int64           `json:"collectionIDs"`
 	MatchIDs             []int64           `json:"matchIDs"`
 	TournamentIDs        []int64           `json:"tournamentIDs"`
+	// IncludeTournaments and IncludeAnkiDecks drop those families from a
+	// WholeLibrary export when false. Outside it, TournamentIDs and DeckIDs
+	// alone say which leave.
+	IncludeTournaments bool `json:"includeTournaments"`
+	IncludeAnkiDecks   bool `json:"includeAnkiDecks"`
 	// IncludeLessons exports the Lessons named by LessonIDs — every Lesson
 	// when it is empty — with the collections and positions their steps show
 	// (ADR-0066).
 	IncludeLessons bool    `json:"includeLessons"`
 	LessonIDs      []int64 `json:"lessonIDs"`
 	// DeckIDs exports these Anki decks with their positions, without their
-	// review history; empty exports no deck.
+	// review history; empty exports no deck, or every deck in a WholeLibrary
+	// export.
 	DeckIDs []int64 `json:"deckIDs"`
 
 	// Watermark, WatermarkNote and Password are the two optional mechanisms an export can

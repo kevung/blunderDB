@@ -163,10 +163,11 @@ type Dialect interface {
 	// a TIMESTAMPTZ in PostgreSQL.
 	InstantArg(t time.Time) (placeholder string, arg any)
 
-	// DateText renders a match_date column as a text date (YYYY-MM-DD…, '' for
+	// DateText renders a match_date column as a text day (YYYY-MM-DD, '' for
 	// NULL) and TimestampText a created_at/modified_at column as text
-	// ('' for NULL). SQLite stores both as text already; PostgreSQL formats
-	// its TIMESTAMPTZ in UTC.
+	// ('' for NULL). SQLite cuts the driver's time.String text to its day,
+	// which a WebKit Date cannot parse whole; PostgreSQL formats its
+	// TIMESTAMPTZ in UTC.
 	DateText(col string) string
 	TimestampText(col string) string
 

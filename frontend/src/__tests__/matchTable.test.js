@@ -108,6 +108,10 @@ describe('toDateInputValue', () => {
         expect(toDateInputValue('2026-03-15T10:00:00Z')).toBe('2026-03-15');
     });
 
+    test("Go's time.String text, which WebKitGTK cannot parse, keeps its day", () => {
+        expect(toDateInputValue('2025-05-17 00:00:00 +0000 UTC')).toBe('2025-05-17');
+    });
+
     test('empty or invalid → empty string', () => {
         expect(toDateInputValue('')).toBe('');
         expect(toDateInputValue(null)).toBe('');
@@ -120,6 +124,11 @@ describe('formatDate', () => {
         // No trailing Z → parsed as local time, so the local getDate() is
         // timezone-independent for this assertion.
         expect(formatDate('2026-03-05T12:00:00')).toBe('2026/03/05');
+    });
+
+    test("a day-first text is read as its day, Go's time.String included", () => {
+        expect(formatDate('2025-05-17 00:00:00 +0000 UTC')).toBe('2025/05/17');
+        expect(formatDate('2025-05-17T00:00:00Z')).toBe('2025/05/17');
     });
 
     test('empty or invalid → dash', () => {

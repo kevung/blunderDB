@@ -107,16 +107,17 @@
         const words = filterText.toLowerCase().split(/\s+/).filter(Boolean);
         if (words.length === 0) return tournaments;
         return tournaments.filter((tr) => {
-            const haystack = `${tr.name ?? ''} ${tr.location ?? ''} ${tr.date ?? ''}`.toLowerCase();
+            const haystack = `${tr.name ?? ''} ${tr.location ?? ''} ${tr.date || tr.effectiveDate || ''}`.toLowerCase();
             return words.every((w) => haystack.includes(w));
         });
     });
     const sortedTournaments = $derived(sortTournaments(filteredTournaments, sort));
 
     const tournamentColumns = $derived([
+        { key: 'index', label: '#', narrow: true },
+        { key: 'date', label: $t('tournament.date'), sortable: true, narrow: true },
         { key: 'name', label: $t('tournament.name'), sortable: true },
         { key: 'matches', label: $t('tournament.matches'), sortable: true, narrow: true },
-        { key: 'date', label: $t('tournament.date'), sortable: true, narrow: true },
         { key: 'location', label: $t('tournament.location'), sortable: true },
         { key: 'pr', label: 'PR', sortable: true, narrow: true },
         { key: 'mwc', label: 'MWC', sortable: true, narrow: true },
@@ -153,10 +154,13 @@
             const name = draft.name.trim();
             if (!name) return false; // a tournament keeps its name until a new one is typed
             try {
-                await UpdateTournament(id, name, draft.date, draft.location.trim());
+                await UpdateTournament(id, name, draft.date.trim(), draft.location.trim());
                 await loadTournaments();
                 if (selectedTournament && selectedTournament.id === id) {
-                    selectedTournamentStore.set(/** @type {any} */ ({ ...selectedTournament, name, date: draft.date, location: draft.location.trim() }));
+                    // The effective date is derived by the database: only the
+                    // reloaded row knows it once the entered date is cleared.
+                    const saved = get(tournamentsStore).find((tr) => tr.id === id);
+                    if (saved) selectedTournamentStore.set(saved);
                 }
             } catch (error) {
                 logger.error('Error updating tournament:', error);
@@ -291,8 +295,8 @@
                 valA = (a.name || '').toLowerCase();
                 valB = (b.name || '').toLowerCase();
             } else if (sortBy === 'date') {
-                valA = a.date || '';
-                valB = b.date || '';
+                valA = a.effectiveDate || a.date || '';
+                valB = b.effectiveDate || b.date || '';
             } else if (sortBy === 'location') {
                 valA = (a.location || '').toLowerCase();
                 valB = (b.location || '').toLowerCase();
@@ -437,8 +441,17 @@
      */
     function startEdit(tournament, event) {
         event.stopPropagation();
-        tournamentEdit.start(tournament.id, { name: tournament.name, date: tournament.date || '', location: tournament.location || '' });
+        // The derived date is only a placeholder: the form's date stays empty until one is typed.
+        tournamentEdit.start(tournament.id, {
+            name: tournament.name,
+            date: tournament.date || '',
+
+            location: tournament.location || ''
+        });
     }
+
+    /** The date typed in the edit form (the draft is typed as a bare string by the helper). */
+    const draftDate = () => /** @type {any} */ (tournamentEdit.draft).date;
 
     /** @param {number} matchId */
     async function addMatchToTournament(matchId) {
@@ -745,11 +758,17 @@
                     emptyActions
                     emptyClear={filterText.trim() ? { label: $t('emptyState.clearFilter'), onClick: () => (filterText = '') } : null}
                 >
-                    {#snippet cells(tournament)}
+                    {#snippet cells(tournament, /** @type {number} */ index)}
                         {#if tournamentEdit.isEditing(tournament.id)}
+                            <td class="index-cell narrow-col no-select">{index + 1}</td>
+                            <td class="narrow-col"
+                                ><input class="edit-input" type="date" bind:value={tournamentEdit.draft.date} onkeydown={tournamentEdit.onKeyDown} />{#if !draftDate() && tournament.effectiveDate}<span
+                                        class="derived-date"
+                                        data-testid="derived-date">{tournament.effectiveDate}</span
+                                    >{/if}</td
+                            >
                             <td><input class="edit-input" type="text" bind:value={tournamentEdit.draft.name} onkeydown={tournamentEdit.onKeyDown} use:autofocus /></td>
                             <td class="narrow-col"></td>
-                            <td class="narrow-col"><input class="edit-input" type="date" bind:value={tournamentEdit.draft.date} onkeydown={tournamentEdit.onKeyDown} /></td>
                             <td><input class="edit-input" type="text" bind:value={tournamentEdit.draft.location} placeholder={$t('tournament.location')} onkeydown={tournamentEdit.onKeyDown} /></td>
                             <td class="narrow-col no-select"></td>
                             <td class="narrow-col no-select"></td>
@@ -760,9 +779,10 @@
                                 </span>
                             </td>
                         {:else}
+                            <td class="index-cell narrow-col no-select">{index + 1}</td>
+                            <td class="narrow-col no-select" class:derived-date={!tournament.date && tournament.effectiveDate}>{tournament.date || tournament.effectiveDate || ''}</td>
                             <td class="no-select">{tournament.name}</td>
                             <td class="narrow-col no-select count-cell">{tournament.matchCount || 0}</td>
-                            <td class="narrow-col no-select">{tournament.date || ''}</td>
                             <td class="no-select">{tournament.location || ''}</td>
                             <td class="narrow-col no-select stat-col" title={tournament.pr > 0 && tournament.ref_player ? $t('tournament.prReferencePlayer', { player: tournament.ref_player }) : ''}
                                 >{tournament.pr > 0 ? tournament.pr.toFixed(2) : '—'}</td
@@ -852,10 +872,10 @@
                 <!-- Notes and the director sit before the review, the one primary action, at the
                      strip's right end (ADR-0085, G3). -->
                 <PanelHeader title={selectedTournament.name} onBack={leaveTournament} backHint={$t('tournament.backToTournaments')}>
-                    {#if selectedTournament.date || selectedTournament.location}
+                    {#if selectedTournament.date || selectedTournament.effectiveDate || selectedTournament.location}
                         <span class="header-meta">
-                            {#if selectedTournament.date}{selectedTournament.date}{/if}
-                            {#if selectedTournament.date && selectedTournament.location}
+                            {#if selectedTournament.date}{selectedTournament.date}{:else if selectedTournament.effectiveDate}<span class="derived-date">{selectedTournament.effectiveDate}</span>{/if}
+                            {#if (selectedTournament.date || selectedTournament.effectiveDate) && selectedTournament.location}
                                 ·
                             {/if}
                             {#if selectedTournament.location}{selectedTournament.location}{/if}
@@ -1163,6 +1183,11 @@
     }
 
     /* Detail strip (PanelHeader's) of a tournament's matches */
+    /* A date read from the matches, not entered: greyed, the way a placeholder is. */
+    .derived-date {
+        color: var(--color-text-muted);
+    }
+
     .header-meta {
         font-size: var(--font-size-small);
         color: var(--color-text-muted);

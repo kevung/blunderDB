@@ -106,6 +106,18 @@ func CarriedVideoSource(src *string) *string {
 	return &v
 }
 
+// CarriedTranscriptVideoSource is the video source an exported transcription
+// carries: an http(s) URL as it is, a local file by its name alone. The name
+// lets the recipient point the draft at their own copy of the video; the
+// directories above it are the producer's and stay home.
+func CarriedTranscriptVideoSource(src string) string {
+	v := strings.TrimSpace(src)
+	if CarriedVideoSource(&v) != nil {
+		return v
+	}
+	return v[strings.LastIndexAny(v, `/\`)+1:]
+}
+
 // Carried returns the subset of md that may travel inside an exported file.
 func Carried(md map[string]string) map[string]string {
 	out := make(map[string]string, len(CarriedMetadataKeys))

@@ -274,8 +274,11 @@ func (cli *CLI) listTournaments(limit int) error {
 		tour := tournaments[i]
 		fmt.Printf("ID: %d\n", tour.ID)
 		fmt.Printf("  Name: %s\n", tour.Name)
-		if tour.Date != "" {
+		switch {
+		case tour.Date != "":
 			fmt.Printf("  Date: %s\n", tour.Date)
+		case tour.EffectiveDate != "":
+			fmt.Printf("  Date: %s (earliest match)\n", tour.EffectiveDate)
 		}
 		if tour.Location != "" {
 			fmt.Printf("  Location: %s\n", tour.Location)

@@ -373,12 +373,18 @@ Exporte le contenu de la base vers des fichiers.
 * ``--filters`` — Inclure la bibliothèque de filtres (défaut: oui).
 * ``--played-moves`` — Inclure les coups joués (défaut: oui).
 * ``--matches`` — Inclure les matchs (défaut: oui).
-* ``--collections`` — Inclure les collections (défaut: non).
-* ``--collection-ids`` — IDs de collections à exporter (séparés par des virgules).
+* ``--collections`` — Inclure les collections (défaut: oui).
+* ``--tournaments`` — Inclure les tournois (défaut: oui).
+* ``--decks`` — Inclure les paquets Anki, sans leur historique de révision
+  (défaut: oui).
+* ``--collection-ids`` — IDs de collections à exporter (séparés par des
+  virgules, vide = toutes).
 * ``--match-ids`` — IDs de matchs à exporter (séparés par des virgules, vide = tous).
-* ``--tournament-ids`` — IDs de tournois à exporter (séparés par des virgules).
-* ``--deck-ids`` — IDs de paquets Anki à exporter avec leurs positions, sans
-  leur historique de révision (séparés par des virgules).
+* ``--tournament-ids`` — IDs de tournois à exporter (séparés par des virgules,
+  vide = tous).
+* ``--deck-ids`` — IDs de paquets Anki à exporter avec leurs positions
+  (séparés par des virgules, vide = tous).
+
 * ``--password`` — Enveloppe le résultat dans un conteneur chiffré (``.dbx``).
 * ``--watermark`` — Écrit une déclaration d'origine **signée** dans le fichier
   exporté (voir :ref:`diffusion_controlee`).
@@ -386,6 +392,12 @@ Exporte le contenu de la base vers des fichiers.
   d'usage, contact) ; utilisé avec ``--watermark``.
 * ``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` (document
   résumant l'export: chemin, taille en octets, nombres).
+
+``--type database`` exporte toute la bibliothèque, comme l'export du serveur
+et comme la fenêtre d'export quand la liste affichée est la bibliothèque :
+positions, matchs, tournois, collections, leçons, paquets Anki, transcriptions
+et filtres. Une option à ``false`` retire sa famille (``--collections=false``) ;
+une liste d'IDs la restreint à ces éléments et l'inclut.
 
 **Exemples:**
 

@@ -102,3 +102,17 @@ describe('formatIsoDay', () => {
         expect(formatIsoDay('n/a')).toBe('n/a');
     });
 });
+
+describe('parseIsoDayUtc', () => {
+    test('reads the UTC day a backend date text starts with, null without one', async () => {
+        const { parseIsoDayUtc } = await import('../utils/format.js');
+        const day = Date.UTC(2025, 4, 17);
+        // Go's time.String text, which WebKitGTK's Date refuses whole.
+        expect(parseIsoDayUtc('2025-05-17 00:00:00 +0000 UTC')).toBe(day);
+        expect(parseIsoDayUtc('2025-05-17T23:30:00-05:00')).toBe(day);
+        expect(parseIsoDayUtc('2025-05-17')).toBe(day);
+        expect(parseIsoDayUtc('')).toBeNull();
+        expect(parseIsoDayUtc(null)).toBeNull();
+        expect(parseIsoDayUtc('n/a')).toBeNull();
+    });
+});

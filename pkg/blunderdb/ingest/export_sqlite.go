@@ -3,6 +3,7 @@ package ingest
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -1105,6 +1106,12 @@ func (e *exporter) writeTranscriptions() error {
 	for _, d := range drafts {
 		d.ID = 0
 		d.MatchID = e.matchMap[d.MatchID] // 0 when the match did not export
+		doc, err := carriedTranscriptDocument(d.Document)
+		if err != nil {
+			e.skip("reading transcription", "label", d.Label, "err", err)
+			continue
+		}
+		d.Document = doc
 		if _, err := e.dst.Transcriptions().Save(e.ctx, "", d); err != nil {
 			e.skip("inserting transcription", "label", d.Label, "err", err)
 			continue
@@ -1112,6 +1119,35 @@ func (e *exporter) writeTranscriptions() error {
 		e.report.Transcriptions++
 	}
 	return nil
+}
+
+// carriedTranscriptDocument is a draft's document as it leaves: its header's
+// video source goes through issuance.CarriedTranscriptVideoSource, every other
+// field as written. The document is otherwise opaque here, so only that one key
+// is rewritten and the rest is passed through unread.
+func carriedTranscriptDocument(document string) (string, error) {
+	var doc map[string]json.RawMessage
+	if err := json.Unmarshal([]byte(document), &doc); err != nil {
+		return "", err
+	}
+	var header map[string]json.RawMessage
+	if raw, ok := doc["header"]; !ok || json.Unmarshal(raw, &header) != nil {
+		return document, nil
+	}
+	var source string
+	if raw, ok := header["video_source"]; !ok || json.Unmarshal(raw, &source) != nil {
+		return document, nil
+	}
+	carried, err := json.Marshal(issuance.CarriedTranscriptVideoSource(source))
+	if err != nil {
+		return "", err
+	}
+	header["video_source"] = carried
+	if doc["header"], err = json.Marshal(header); err != nil {
+		return "", err
+	}
+	out, err := json.Marshal(doc)
+	return string(out), err
 }
 
 // writeMatchOrigins copies the origin of every exported Match played here,

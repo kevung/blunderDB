@@ -427,7 +427,8 @@ export default {
 <h3>Turnauspaneeli</h3>
 <p><strong>Turnauspaneeli</strong> (<em>CTRL-Y</em>) mahdollistaa otteluiden ryhmittelyn turnauksiin järjestelmällistä seurantaa ja tapahtumakohtaista tilastollista analyysiä varten. Turnauksia voi luoda, nimetä uudelleen ja poistaa; otteluita voi liittää niihin. Stats-paneelin tilastoja voi suodattaa turnauksen mukaan. Näytä tai piilota paneeli painamalla <em>CTRL-Y</em>.</p>
 <p><strong>Uusi turnaus</strong> avaa luontikentän, joka saa kohdistuksen; <em>ESC</em> tai <strong>Peruuta</strong> sulkee sen. Otsikkokaistan suodatinkenttä rajaa luetteloa kirjoitettaessa: jokaisen kirjoitetun sanan on löydyttävä nimestä, paikasta tai päivästä, laskuri näyttää »näytetyt / yhteensä» ja <em>ESC</em> tyhjentää kentän. Napsautus korostaa rivin, kaksoisnapsautus tai <em>ENTER</em> avaa turnauksen. Sen otsikossa ovat päivämäärä, paikka ja otteluiden määrä, jonka napsautus muuttaa turnauksen asemien luetteloksi; oikealla ovat muistiinpanot, <strong>Johda</strong> ja <strong>Yhteenveto</strong>. Sen alla ovat sen ottelut, yksi per rivi, ▲ ja ▼ järjestävät uudelleen, ⇄ vaihtaa pelaajia ja × poistaa turnauksesta. Napsautus ottelun kohdalla näyttää taulukon alla sen kortin, saman kuin Ottelut-paneelissa (välilehdet Transkriptio, Kaaviot, Tarkistettavat, Yksityiskohdat, Tiedot, Tilastot); toinen napsautus tai <em>ESC</em> sulkee sen, kaksoisnapsautus tai <em>ENTER</em> avaa ottelun laudalle. Kenttä <strong>Lisää ottelu…</strong> sijoittaa siihen tietokannan ottelun, ja ← palauttaa turnausluetteloon.</p>
-<p>Turnaukset täyttyvät itsestään tuonnin yhteydessä. XG-, GnuBG- ja BGF-tiedostot nimeävät tapahtumansa; kun uusi ottelu tuodaan, blunderDB sijoittaa sen tämännimiseen turnaukseen ja luo turnauksen, jos sitä ei vielä ole. Turnauksen päivämäärä ja paikka jäävät tyhjiksi — ne täytetään täällä. Tietokannassa jo olevaa ottelua ei koskaan siirretä: sen tiedoston tuominen uudelleen ei kumoa käsin tehtyä järjestelyä.</p>
+<p>Jokainen rivi alkaa järjestysnumerollaan (#) ja päivämäärällään, kuten Ottelut-paneelissa: luettelo etenee uusimmasta vanhimpaan, ja otsikon napsautus lajittelee sen. Turnaus, jolla ei ole päivämäärää, saa vanhimman ottelunsa päivämäärän harmaana näytettynä; se luetaan, eikä sitä koskaan kirjoiteta tietokantaan. Muokkauslomakkeen päivämääräkenttä pysyy tyhjänä, kunnes siihen kirjoitetaan jotain: luettu päivämäärä näkyy vain harmaana, kentän vieressä, ja tallennus kirjoittaa päivämäärän vain, jos se on kirjoitettu.</p>
+<p>Turnaukset täyttyvät itsestään tuonnissa. XG-, GnuBG- ja BGF-tiedostot nimeävät tapahtumansa; kun uusi ottelu tuodaan, blunderDB sijoittaa sen samannimiseen turnaukseen ja luo turnauksen, jos sitä ei vielä ole. Paikka jää tyhjäksi, ja päivämäärä on vanhimman ottelun päivämäärä, kunnes se syötetään tässä. Tietokannassa jo olevaa ottelua ei koskaan sijoiteta uudelleen: sen tiedoston tuominen uudelleen ei kumoa käsin tehtyä sijoittelua.</p>
 <p>Kunkin turnauksen <strong>PR</strong>- ja <strong>MWC</strong>-sarakkeet näyttävät <strong>viitepelaajan</strong> PR-arvon ja MWC-menetyksen — eli sen pelaajan, joka esiintyy turnauksen useimmissa otteluissa (tasatilanteessa se, joka teki eniten päätöksiä). PR ei siis sekoita omaa peliäsi vastustajiesi peliin: omissa turnauksissasi se kuvastaa yksin sinun suoritustasi. Viitepelaajan nimi näkyy työkaluvihjeenä, kun viet osoittimen arvon päälle.</p>
 <p><strong>Turnauksen yhteenveto.</strong> Avoimen turnauksen otsikossa oleva <strong>Yhteenveto</strong>-painike vastaa kysymykseen, jonka esittää itselleen kilpailusta palatessaan: pelasinko omalla tasollani, ja jos en, missä se petti? Pelaaja on oletuksena turnauksen otteluissa eniten mukana ollut; <strong>Pelaaja</strong>-valikosta valitaan toinen. Kynnysarvot vahvistettiin ennen minkään tuloksen tarkastelua.</p>
 <ul>
@@ -681,14 +682,14 @@ export default {
 <p><strong>Suuntaus</strong> on pienimmän neliösumman sovitus otteluidesi PR-lukuihin, projisoituna määräaikaan. Se kieltäytyy lausumasta alle kolmen ottelun: suoran vetäminen kahden pisteen välille olisi väite jota ei voi pitää. Ja lause sanoo sen joka kerta — <em>suuntaus ei ole ennuste</em>.</p>
 <p>Tavoite tallennetaan <strong>tietokannan metatietoihin</strong>, ei asetuksiin: se koskee sitä kirjastoa, joten se seuraa tiedostoa eikä konetta. Ei skeemamuutosta: <code>metadata</code> on jo avain/arvo-taulu, jonka lukevat sekä <code>blunderdb info</code> että demoni.</p>
 <h5>Turnauskohtainen viivakaavio</h5>
-<p>Viivakaavio näyttää PR:n (tai MWC:n) jokaiselle turnaukselle (X-akseli: turnausten järjestys, Y-akseli: mittarin arvo). Värivyöhykkeet havainnollistavat tasorajat.</p>
+<p>Viivakaavio näyttää jokaisen turnauksen PR:n (tai MWC:n): yksi piste turnausta kohden, nimellään merkittynä, turnauksen päivämäärän mukaisessa aikajärjestyksessä — sen puuttuessa vanhimman ottelun päivämäärän mukaan (Y-akseli: mittarin arvo). Värilliset kaistat osoittavat tasorajat.</p>
 <p>Kaavion pisteen napsauttaminen avaa pikavalikon, jossa on kaksi vaihtoehtoa:</p>
 <ul>
 <li><strong>Avaa turnaus</strong> — avaa turnauksen Turnaukset-paneelissa.</li>
 <li><strong>Avaa asemat</strong> — lataa turnauksen kaikki asemat analyysipaneeliin.</li>
 </ul>
 <h5>Ottelukohtainen hajontakaavio</h5>
-<p>Hajontakaavio esittää jokaisen ottelun (X-akseli: päivämäärä, Y-akseli: PR tai MWC). Pisteen koko on verrannollinen ottelun päätösten määrään.</p>
+<p>Hajontakaavio esittää jokaisen ottelun (X-akseli: päivämäärä, Y-akseli: PR tai MWC). Pisteen koko on verrannollinen ottelun päätösten määrään. Ottelu, jolla ei ole päivämäärää, ei näy kaaviossa.</p>
 <p>Pisteen napsauttaminen avaa pikavalikon:</p>
 <ul>
 <li><strong>Avaa ottelu</strong> — avaa ottelun Ottelut-paneelissa.</li>
@@ -1054,7 +1055,8 @@ export default {
 <p>Vienti-ikkuna mahtuu yhdelle näytölle: lomake ja sen päälle kirjoituksen ajaksi asettuva edistymisnäkymä. Ikkuna sulkeutuu itsestään valmistuttuaan, ja tulos näkyy tilapalkissa.</p>
 <p>Kolme seikkaa ansaitsee huomiota:</p>
 <ul>
-<li><strong>Vienti koskee parhaillaan näkyvissä olevia asemia</strong>, ei koko tietokantaa. Haun jälkeen viedään vain tulokset — ikkuna muistuttaa siitä yläreunassa.</li>
+<li><strong>Vienti koskee parhaillaan näkyvissä olevia asemia</strong>, ei koko tietokantaa. Haun jälkeen viedään vain tulokset — ikkuna muistuttaa siitä yläreunassa — ja ottelulista tarjoaa vain ne ottelut, joissa nämä asemat on pelattu; jokainen valittu ottelu viedään kaikkine asemineen.</li>
+<li><strong>Kun näytetty luettelo on kirjasto</strong>, vienti on sama kuin palvelimen ja komennon <code>export --type database</code>: kaikki valintaruudut on valittu valmiiksi, ja Anki-pakat (ilman kertaushistoriaa) sekä käynnissä olevat litteroinnit viedään muun mukana. Paikalliseen videoon liitetty litterointi sisältää vain tiedostonimen ilman kansiota; verkkolinkki viedään sellaisenaan.</li>
 <li><strong>Kokoelma, jonka asemat eivät kaikki sisälly valintaan, saapuu vaillinaisena.</strong> Siksi luettelo näyttää kunkin kokoelman katetun osuuden (”12/40”) ja merkitsee sen punaisella, kun se on osittainen.</li>
 <li><strong>Turnaukset voi viedä vain otteluiden kanssa</strong>: ilman niitä turnaus–ottelu-yhteyttä ei ole ja turnaus saapuisi tyhjänä. Valintaruutu pysyy poissa käytöstä, kunnes ”sisällytä ottelut” on valittu.</li>
 </ul>

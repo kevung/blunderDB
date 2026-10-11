@@ -522,6 +522,8 @@ export function MakeParticipantAbsent(arg1:number,arg2:string,arg3:string,arg4:n
 
 export function MakeParticipantAvailable(arg1:number,arg2:string):Promise<service.DirectionView>;
 
+export function MatchIDsReachedBy(arg1:Array<number>):Promise<Array<number>>;
+
 export function MatchMAT(arg1:number):Promise<string>;
 
 export function MatchTranscriptionLosses(arg1:number):Promise<database.TranscriptionLosses>;

@@ -2074,6 +2074,7 @@ export namespace domain {
 	    positions: Position[];
 	    positionIDs: number[];
 	    allPositions: boolean;
+	    wholeLibrary: boolean;
 	    metadata: Record<string, string>;
 	    includeAnalysis: boolean;
 	    includeComments: boolean;
@@ -2084,6 +2085,8 @@ export namespace domain {
 	    collectionIDs: number[];
 	    matchIDs: number[];
 	    tournamentIDs: number[];
+	    includeTournaments: boolean;
+	    includeAnkiDecks: boolean;
 	    includeLessons: boolean;
 	    lessonIDs: number[];
 	    deckIDs: number[];
@@ -2101,6 +2104,7 @@ export namespace domain {
 	        this.positions = this.convertValues(source["positions"], Position);
 	        this.positionIDs = source["positionIDs"];
 	        this.allPositions = source["allPositions"];
+	        this.wholeLibrary = source["wholeLibrary"];
 	        this.metadata = source["metadata"];
 	        this.includeAnalysis = source["includeAnalysis"];
 	        this.includeComments = source["includeComments"];
@@ -2111,6 +2115,8 @@ export namespace domain {
 	        this.collectionIDs = source["collectionIDs"];
 	        this.matchIDs = source["matchIDs"];
 	        this.tournamentIDs = source["tournamentIDs"];
+	        this.includeTournaments = source["includeTournaments"];
+	        this.includeAnkiDecks = source["includeAnkiDecks"];
 	        this.includeLessons = source["includeLessons"];
 	        this.lessonIDs = source["lessonIDs"];
 	        this.deckIDs = source["deckIDs"];
@@ -3180,6 +3186,7 @@ export namespace domain {
 	    id: number;
 	    name: string;
 	    date: string;
+	    effectiveDate: string;
 	    location: string;
 	    sortOrder: number;
 	    createdAt: string;
@@ -3200,6 +3207,7 @@ export namespace domain {
 	        this.id = source["id"];
 	        this.name = source["name"];
 	        this.date = source["date"];
+	        this.effectiveDate = source["effectiveDate"];
 	        this.location = source["location"];
 	        this.sortOrder = source["sortOrder"];
 	        this.createdAt = source["createdAt"];

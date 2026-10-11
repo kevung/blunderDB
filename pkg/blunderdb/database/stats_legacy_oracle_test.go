@@ -18,6 +18,10 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
+// oracleTournamentDate is a tournament's effective date: the entered one,
+// else the day of its earliest match.
+const oracleTournamentDate = `COALESCE(NULLIF(t.date,''), (SELECT MIN(NULLIF(SUBSTR(tm.match_date,1,10),'')) FROM match tm WHERE tm.tournament_id = t.id), '')`
+
 func legacyGetStatsDateRange(d *Database) StatsDateRange {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
@@ -229,10 +233,10 @@ func legacyComputeStats(d *Database, filter StatsFilter) (*StatsResult, error) {
 
 	// ── 3. PR per tournament ──────────────────────────────────────────────────
 	rows, err = d.db.Query(
-		`SELECT m.tournament_id, COALESCE(t.name,''), COALESCE(t.date,''), SUM(`+statsErrExpr+`), COUNT(*) `+
+		`SELECT m.tournament_id, COALESCE(t.name,''), `+oracleTournamentDate+`, SUM(`+statsErrExpr+`), COUNT(*) `+
 			statsBaseJoin+whereSQL+
 			` AND m.tournament_id IS NOT NULL`+
-			` GROUP BY m.tournament_id ORDER BY t.date, t.created_at`,
+			` GROUP BY m.tournament_id ORDER BY `+oracleTournamentDate+` = '', `+oracleTournamentDate+`, t.created_at, t.id`,
 		baseArgs...,
 	)
 	if err != nil {
@@ -255,7 +259,7 @@ func legacyComputeStats(d *Database, filter StatsFilter) (*StatsResult, error) {
 
 	// ── 4. PR per match ───────────────────────────────────────────────────────
 	rows, err = d.db.Query(
-		`SELECT m.id, COALESCE(m.match_date,''), SUM(`+statsErrExpr+`), COUNT(*) `+
+		`SELECT m.id, COALESCE(SUBSTR(m.match_date,1,10),''), SUM(`+statsErrExpr+`), COUNT(*) `+
 			statsBaseJoin+whereSQL+
 			` GROUP BY m.id ORDER BY m.match_date`,
 		baseArgs...,
@@ -385,7 +389,7 @@ func legacyComputeStats(d *Database, filter StatsFilter) (*StatsResult, error) {
 	rows, err = d.db.Query(
 		`SELECT p.id, m.id, COALESCE(m.tournament_id, 0), (`+statsErrExpr+`) as emg,`+
 			` p.decision_type,`+
-			` COALESCE(m.match_date, '') as match_date,`+
+			` COALESCE(SUBSTR(m.match_date,1,10), '') as match_date,`+
 			` COALESCE(m.player1_name, '') || ' vs ' || COALESCE(m.player2_name, '') as player_names `+
 			statsBaseJoin+whereSQL+
 			` ORDER BY emg DESC LIMIT 10`,

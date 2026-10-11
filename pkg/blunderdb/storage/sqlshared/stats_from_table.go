@@ -146,12 +146,14 @@ func (s *StatsStore) perTournamentFromTable(ctx context.Context, q statsQuery, r
 	d := s.DB
 	where, args := s.matchStatsWhere(q.scope, q.filter, true)
 	sumErr, count := tableErrDecisions(d, q.filter.DecisionType)
+	eff := TournamentEffectiveDate
+	agg, aggArgs := tournamentMatchAgg(d, q.scope, "")
 	return scanEach(ctx, d,
-		`SELECT m.tournament_id, COALESCE(t.name,''), COALESCE(t.date,''), `+sumErr+`, `+count+
-			matchStatsJoin+` LEFT JOIN tournament t ON t.id = m.tournament_id`+where+
+		`SELECT m.tournament_id, COALESCE(t.name,''), `+eff+`, `+sumErr+`, `+count+
+			matchStatsJoin+` LEFT JOIN tournament t ON t.id = m.tournament_id`+agg+where+
 			` AND m.tournament_id IS NOT NULL`+
-			` GROUP BY m.tournament_id, t.name, t.date, t.created_at HAVING `+count+` > 0 ORDER BY t.date, t.created_at`,
-		args, func(r Rows) error {
+			` GROUP BY m.tournament_id, t.id, t.name, t.date, t.created_at, tma.first_day HAVING `+count+` > 0`+tournamentChronology(eff),
+		append(aggArgs, args...), func(r Rows) error {
 			var ts storage.TournamentStats
 			var sum, n int64
 			if err := r.Scan(&ts.ID, &ts.Name, &ts.Date, &sum, &n); err != nil {

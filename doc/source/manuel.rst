@@ -2354,10 +2354,18 @@ panneau Matchs (onglets Transcription, Graphes, À revoir, Détails, Infos, Stat
 un second clic ou *ÉCHAP* la referme, un double-clic ou *ENTRÉE* ouvre le match dans le plateau. Le champ **Ajouter un match…** y range un match de la base, et ←
 ramène à la liste des tournois.
 
+Chaque ligne commence par son rang (#) et sa date, comme dans le panneau
+Matchs : la liste va du plus récent au plus ancien, et un clic sur un en-tête
+la trie. Un tournoi sans date prend celle du plus ancien de ses matchs,
+affichée en grisé ; elle est lue, jamais écrite dans la base. Le champ date du formulaire
+d'édition reste vide tant que rien n'y est saisi : la date lue ne
+paraît qu'en grisé, à côté du champ, et l'enregistrement n'écrit une date que saisie.
+
 Les tournois se remplissent d'eux-mêmes à l'import. Les fichiers XG, GnuBG et
 BGF nomment leur événement ; à l'import d'un match nouveau, blunderDB le classe
-dans le tournoi de ce nom et crée celui-ci s'il n'existe pas encore. La date et
-le lieu du tournoi restent vides — c'est ici qu'on les renseigne. Un match déjà
+dans le tournoi de ce nom et crée celui-ci s'il n'existe pas encore. Le lieu
+reste vide, et la date est celle du plus ancien match tant qu'on ne la
+renseigne pas ici. Un match déjà
 présent dans la base n'est jamais reclassé : réimporter son fichier ne défait
 pas le rangement fait à la main.
 
@@ -3342,9 +3350,10 @@ table de clés et de valeurs, lisible par ``blunderdb info`` comme par le démon
 Courbe par tournoi
 ^^^^^^^^^^^^^^^^^^
 
-Un graphique en ligne affiche le PR (ou MWC) pour chaque tournoi (axe X :
-ordre des tournois, axe Y : valeur de la métrique). Des bandes de couleur
-matérialisent les seuils de niveau.
+Un graphique en ligne affiche le PR (ou MWC) de chaque tournoi : un point par
+tournoi, étiqueté de son nom, dans l'ordre chronologique de sa date — à défaut,
+celle de son plus ancien match (axe Y : valeur de la métrique). Des bandes de
+couleur matérialisent les seuils de niveau.
 
 Cliquer sur un point du graphique ouvre un menu contextuel avec deux options :
 
@@ -3357,6 +3366,7 @@ Scatter plot par match
 
 Un nuage de points représente chaque match (axe X : date, axe Y : PR ou MWC).
 La taille du point est proportionnelle au nombre de décisions dans le match.
+Un match sans date n'y figure pas.
 
 Cliquer sur un point ouvre un menu contextuel :
 
@@ -4870,7 +4880,14 @@ Trois points méritent l'attention :
 
 * **L'export porte sur les positions actuellement affichées**, pas sur la base
   entière. Après une recherche, seuls les résultats partent — la fenêtre le
-  rappelle en tête.
+  rappelle en tête — et la liste des matchs ne propose que ceux où ces
+  positions ont été jouées ; chaque match coché part avec toutes ses positions.
+* **Quand la liste affichée est la bibliothèque**, l'export est le même que
+  celui du serveur et de ``export --type database`` : toutes les cases sont
+  cochées d'emblée, et les paquets Anki (sans historique de révision) et les
+  transcriptions en cours partent avec le reste. Une transcription liée à une
+  vidéo locale n'emporte que le nom du fichier, sans son dossier ; un lien web
+  part tel quel.
 * **Une collection dont toutes les positions ne sont pas dans la sélection
   arrive tronquée.** La liste affiche donc, pour chaque collection, la part
   couverte (« 12/40 ») et la signale en rouge lorsqu'elle est partielle.

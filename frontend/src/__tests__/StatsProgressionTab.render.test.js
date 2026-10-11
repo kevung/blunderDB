@@ -176,6 +176,30 @@ describe('StatsProgressionTab — match scatter chart', () => {
     });
 });
 
+describe('StatsProgressionTab — match dates', () => {
+    test('places each match on its UTC day, whatever text the backend sends; an undated match is left out', async () => {
+        const result = statsResult({
+            PerTournament: [],
+            PerMatch: [
+                { ID: 20, Date: '2025-05-17 00:00:00 +0000 UTC', PR: 3, MWC: 0.02, NumDecisions: 30 },
+                { ID: 21, Date: '', PR: 9, MWC: 0.05, NumDecisions: 30 },
+                { ID: 22, Date: '2025-06-01', PR: 4, MWC: 0.02, NumDecisions: 30 }
+            ]
+        });
+        render(StatsProgressionTab, { props: { result, metric: 'pr' } });
+        await waitFor(() => lastScatterConfig);
+
+        expect(lastScatterConfig.data.datasets[0].data).toEqual([
+            { x: Date.UTC(2025, 4, 17), y: 3 },
+            { x: Date.UTC(2025, 5, 1), y: 4 }
+        ]);
+        lastScatterConfig.options.onClick({ native: { clientX: 5, clientY: 5 } }, [{ datasetIndex: 0, index: 1 }]);
+        await new Promise((r) => setTimeout(r, 0));
+        await fireEvent.click(screen.getByText('Open match'));
+        expect(openMatchInPanel).toHaveBeenCalledWith(22);
+    });
+});
+
 describe('StatsProgressionTab — grade legend', () => {
     test('renders all 6 grade bands', async () => {
         render(StatsProgressionTab, { props: { result: RESULT, metric: 'pr' } });

@@ -28,6 +28,18 @@ export function formatDate(/** @type {Date | string | number | null | undefined}
 }
 
 /**
+ * The UTC-midnight timestamp of the day a backend date text starts with ("YYYY-MM-DD", RFC 3339,
+ * or Go's "2025-05-17 00:00:00 +0000 UTC"), or null when it does not start with one. Read the day,
+ * never the whole text: WebKitGTK's Date refuses Go's time.String format where V8 accepts it.
+ */
+export function parseIsoDayUtc(/** @type {string | null | undefined} */ value) {
+    if (!value) return null;
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(value));
+    if (!m) return null;
+    return Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+}
+
+/**
  * Format the calendar day of an ISO string ("YYYY-MM-DD", "YYYY-MM-DDT00:00:00Z") in the active
  * language. The day is read from the first ten characters and built as a local date, so a UTC
  * midnight does not slide to the day before west of Greenwich. Anything else comes back as is.
