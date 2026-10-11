@@ -241,6 +241,12 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 	res.Enriched = enrich
 	res.Replaced = replace
 
+	// A replacement folds the file's analyses into a position stored before
+	// it under the rule of a re-import; one it creates is a fresh import.
+	var createdHere map[int64]bool
+	if replace {
+		createdHere = map[int64]bool{}
+	}
 	counter := Progress{Matches: 1}
 	commentCtx := storage.WithCommentAuthor(ctx, importedCommentAuthor(g))
 	for gi := range g.Games {
@@ -260,7 +266,7 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 			mg := &gg.Moves[mi]
 			if mg.Position != nil {
 				played := &storage.PlayedActions{CheckerMove: mg.Move.CheckerMove, CubeAction: mg.Move.CubeAction, Position: mg.Position}
-				posID, err := savePositionWithAnalyses(commentCtx, tx, scope, mg.Position, played, mg.Analyses, mg.Comments, g.CommentOrigin, replace)
+				posID, err := savePositionWithAnalyses(commentCtx, tx, scope, mg.Position, played, mg.Analyses, mg.Comments, g.CommentOrigin, createdHere)
 				if err != nil {
 					return res, err
 				}
@@ -313,15 +319,20 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 // as storage would round it, so equity errors are recomputed from rounded
 // equities exactly as when each fragment was saved on its own.
 //
-// With keepStored the fragments fold by deepenAnalysis instead: a match
-// rewritten in place brings back the analyses of its own file, and what the
-// library holds deeper (a rollout run since the import, an edited analysis)
-// must survive it; on a position not stored yet the two folds agree.
-func savePositionWithAnalyses(ctx context.Context, tx storage.Tx, scope string, pos *domain.Position, played *storage.PlayedActions, analyses []*domain.PositionAnalysis, comments []string, origin domain.CommentOrigin, keepStored bool) (int64, error) {
-	posID, err := tx.Positions().Save(ctx, scope, pos)
+// With createdHere (a match rewritten in place) a position stored before the
+// rewrite folds the fragments by deepenAnalysis instead: the file is the
+// same engine's view, and what the library holds deeper (a rollout run since
+// the import) or edited at the same depth must survive it. A position the
+// rewrite creates is recorded in createdHere and merged as an import would.
+func savePositionWithAnalyses(ctx context.Context, tx storage.Tx, scope string, pos *domain.Position, played *storage.PlayedActions, analyses []*domain.PositionAnalysis, comments []string, origin domain.CommentOrigin, createdHere map[int64]bool) (int64, error) {
+	posID, created, err := tx.Positions().SaveCreated(ctx, scope, pos)
 	if err != nil {
 		return 0, err
 	}
+	if created && createdHere != nil {
+		createdHere[posID] = true
+	}
+	keepStored := createdHere != nil && !createdHere[posID]
 	frags := make([]*domain.PositionAnalysis, 0, len(analyses))
 	for _, frag := range analyses {
 		if frag != nil {

@@ -2,6 +2,7 @@ package ingest
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -164,7 +165,11 @@ func RepairMatch(ctx context.Context, store TxBeginner, scope string, matchID in
 	// Each pass adds at least one position to keep, and a position is kept
 	// at most once: the bound is a guard, not a budget.
 	for range 8 {
-		rep, held, err := repairOnce(ctx, store, scope, matchID, cloneGraph(g), dryRun, keep)
+		pass, err := cloneGraph(g)
+		if err != nil {
+			return RepairReport{MatchID: matchID, DryRun: dryRun}, err
+		}
+		rep, held, err := repairOnce(ctx, store, scope, matchID, pass, dryRun, keep)
 		if err != nil || len(held) == 0 {
 			return rep, err
 		}
@@ -176,14 +181,34 @@ func RepairMatch(ctx context.Context, store TxBeginner, scope string, matchID in
 }
 
 // cloneGraph copies what a repair pass rewrites in g (the header, the seats,
-// the moves' ids), so a pass rolled back leaves g as the file mapped it.
-func cloneGraph(g *MatchGraph) *MatchGraph {
+// the moves' ids, and the analysis fragments, whose plays a merge sorts and
+// rounds in place), so a pass rolled back leaves g as the file mapped it.
+func cloneGraph(g *MatchGraph) (*MatchGraph, error) {
 	c := *g
 	c.Games = make([]GameGraph, len(g.Games))
 	for i, gg := range g.Games {
-		c.Games[i] = GameGraph{Game: gg.Game, Moves: append([]MoveGraph(nil), gg.Moves...)}
+		moves := append([]MoveGraph(nil), gg.Moves...)
+		for mi := range moves {
+			frags := make([]*domain.PositionAnalysis, len(moves[mi].Analyses))
+			for fi, f := range moves[mi].Analyses {
+				if f == nil {
+					continue
+				}
+				b, err := json.Marshal(f)
+				if err != nil {
+					return nil, err
+				}
+				var a domain.PositionAnalysis
+				if err := json.Unmarshal(b, &a); err != nil {
+					return nil, err
+				}
+				frags[fi] = &a
+			}
+			moves[mi].Analyses = frags
+		}
+		c.Games[i] = GameGraph{Game: gg.Game, Moves: moves}
 	}
-	return &c
+	return &c, nil
 }
 
 // repairOnce is one pass of RepairMatch. It returns, without committing,

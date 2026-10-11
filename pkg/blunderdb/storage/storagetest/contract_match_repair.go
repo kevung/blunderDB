@@ -223,16 +223,7 @@ func testMatchRepairFromSource(t *testing.T, s storage.Storage) {
 	if err != nil {
 		t.Fatalf("transcription: %v", err)
 	}
-	var damagedPos int64
-	for mv, err := range ms.MovesByMatch(ctx, "", matchID) {
-		if err != nil {
-			t.Fatalf("MovesByMatch: %v", err)
-		}
-		if mv.PositionID != 0 && !freshPos[mv.PositionID] {
-			damagedPos = mv.PositionID
-			break
-		}
-	}
+	damagedPos := unheldDamagedPosition(t, s, matchID, freshPos)
 	if _, err := s.Comments().Add(ctx, "", damagedPos, "after the swap"); err != nil {
 		t.Fatalf("Add comment: %v", err)
 	}
@@ -275,7 +266,7 @@ func testMatchRepairFromSource(t *testing.T, s storage.Storage) {
 		t.Fatalf("repair: %v", err)
 	}
 	if rep.RehomedComments != 1 {
-		t.Errorf("rehomed comments = %d, want 1", rep.RehomedComments)
+		t.Errorf("rehomed comments = %d, want 1 (%+v)", rep.RehomedComments, rep)
 	}
 
 	repaired := takeRepairSnapshot(t, s, matchID)
@@ -386,6 +377,34 @@ func repairFootprint(t *testing.T, s storage.Storage, matchID int64) ([]int64, [
 	return ids, dates
 }
 
+// unheldDamagedPosition is a position the damage created that nothing but
+// its move holds: the source tool's study mark, copied with a flagged
+// position, would keep it past the purge.
+func unheldDamagedPosition(t *testing.T, s storage.Storage, matchID int64, fresh map[int64]bool) int64 {
+	t.Helper()
+	ctx := context.Background()
+	var ids []int64
+	for mv, err := range s.Matches().MovesByMatch(ctx, "", matchID) {
+		if err != nil {
+			t.Fatalf("MovesByMatch: %v", err)
+		}
+		if mv.PositionID != 0 && !fresh[mv.PositionID] {
+			ids = append(ids, mv.PositionID)
+		}
+	}
+	ps, err := s.Positions().LoadByIDs(ctx, "", ids)
+	if err != nil {
+		t.Fatalf("LoadByIDs: %v", err)
+	}
+	for _, p := range ps {
+		if !p.Flagged {
+			return p.ID
+		}
+	}
+	t.Fatalf("every damaged position is flagged")
+	return 0
+}
+
 // repairGraph maps a fixture for RepairMatch.
 func repairGraph(t *testing.T, path string) *ingest.MatchGraph {
 	t.Helper()
@@ -402,19 +421,24 @@ func repairGraph(t *testing.T, path string) *ingest.MatchGraph {
 func sharedAnalysedPosition(t *testing.T, s storage.Storage, matchID int64, fresh map[int64]bool) int64 {
 	t.Helper()
 	ctx := context.Background()
+	// The ids first: an in-memory store has one connection, which the open
+	// cursor holds.
+	var ids []int64
 	for mv, err := range s.Matches().MovesByMatch(ctx, "", matchID) {
 		if err != nil {
 			t.Fatalf("MovesByMatch: %v", err)
 		}
-		if mv.PositionID == 0 || !fresh[mv.PositionID] {
-			continue
+		if mv.PositionID != 0 && fresh[mv.PositionID] {
+			ids = append(ids, mv.PositionID)
 		}
-		a, err := s.Analyses().Load(ctx, "", mv.PositionID)
+	}
+	for _, id := range ids {
+		a, err := s.Analyses().Load(ctx, "", id)
 		if err != nil || a == nil {
 			continue
 		}
 		if a.CheckerAnalysis != nil && len(a.CheckerAnalysis.Moves) > 0 && a.DoublingCubeAnalysis != nil {
-			return mv.PositionID
+			return id
 		}
 	}
 	t.Fatalf("no position with checker and cube analysis survives the damage")
@@ -439,7 +463,7 @@ func testMatchRepairKeepsDeeperAnalysis(t *testing.T, s storage.Storage) {
 	damageLikeTheOldSwap(t, s, matchID, path, 1)
 	posID := sharedAnalysedPosition(t, s, matchID, fresh)
 
-	const edited = 0.4321
+	const edited = 0.432
 	var play string
 	if _, err := s.Analyses().Merge(ctx, "", posID, nil, func(a *domain.PositionAnalysis) *domain.PositionAnalysis {
 		c := *a
@@ -528,6 +552,7 @@ func testMatchRepairKeepsCommentsOfAHeldPosition(t *testing.T, s storage.Storage
 	ctx := context.Background()
 	path := repoTestdata("test.xg")
 	matchID := importForRepair(t, s, path)
+	freshSnap := takeRepairSnapshot(t, s, matchID)
 	fresh := map[int64]bool{}
 	for mv, err := range s.Matches().MovesByMatch(ctx, "", matchID) {
 		if err != nil {
@@ -536,24 +561,9 @@ func testMatchRepairKeepsCommentsOfAHeldPosition(t *testing.T, s storage.Storage
 		fresh[mv.PositionID] = true
 	}
 	damageLikeTheOldSwap(t, s, matchID, path, 1)
-	var held, moved int64
-	for mv, err := range s.Matches().MovesByMatch(ctx, "", matchID) {
-		if err != nil {
-			t.Fatalf("MovesByMatch: %v", err)
-		}
-		if mv.PositionID == 0 || fresh[mv.PositionID] {
-			continue
-		}
-		if held == 0 {
-			held = mv.PositionID
-		} else if mv.PositionID != held {
-			moved = mv.PositionID
-			break
-		}
-	}
-	if held == 0 || moved == 0 {
-		t.Fatalf("the damage left too few new positions")
-	}
+	moved := unheldDamagedPosition(t, s, matchID, fresh)
+	fresh[moved] = true
+	held := unheldDamagedPosition(t, s, matchID, fresh)
 	if _, err := s.Comments().Add(ctx, "", held, "kept with the card"); err != nil {
 		t.Fatalf("Add comment: %v", err)
 	}
@@ -587,6 +597,14 @@ func testMatchRepairKeepsCommentsOfAHeldPosition(t *testing.T, s storage.Storage
 	}
 	if ps, err := s.Positions().LoadByIDs(ctx, "", []int64{held, moved}); err != nil || len(ps) != 1 || ps[0].ID != held {
 		t.Errorf("positions left: %v, %v", ps, err)
+	}
+	// The pass run again to leave the comment is the same import.
+	after := takeRepairSnapshot(t, s, matchID)
+	for k, want := range freshSnap.Moves {
+		got := after.Moves[k]
+		if got.Zobrist != want.Zobrist || got.Analysis != want.Analysis || got.ErrorMP != want.ErrorMP {
+			t.Fatalf("move %v after a second pass: %+v, fresh %+v", k, got, want)
+		}
 	}
 }
 

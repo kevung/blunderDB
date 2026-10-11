@@ -107,7 +107,7 @@ func TestFragmentsOfOnePositionAreWrittenOnce(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	posID, err := savePositionWithAnalyses(ctx, tx, "", pos, nil, []*domain.PositionAnalysis{checker, nil, cube}, nil, domain.CommentOriginUnknown, false)
+	posID, err := savePositionWithAnalyses(ctx, tx, "", pos, nil, []*domain.PositionAnalysis{checker, nil, cube}, nil, domain.CommentOriginUnknown, nil)
 	if err != nil {
 		t.Fatalf("savePositionWithAnalyses: %v", err)
 	}
