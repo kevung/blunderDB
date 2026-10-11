@@ -1167,6 +1167,12 @@
         },
         "raceDomainTooltip": "EPC leído de la tabla {domain}: una ficha está fuera del cuadro."
     },
+    "jobs": {
+        "busy": "Base de datos ocupada: {job} en curso",
+        "maintenance": "una operación de mantenimiento",
+        "gammonnet": "un análisis gammonNet",
+        "rollout": "un rollout"
+    },
     "eval": {
         "addPosition": "Añadir a la base",
         "addPositionTooltip": "Añadir esta posición a la base (Ctrl+S)",
@@ -1182,6 +1188,8 @@
         "batchProgressAt": "gammonNet analizando {depth}: {done}/{total}",
         "batchCancel": "Cancelar",
         "batchDone": "gammonNet: {evaluated} analizada(s), {refused} rechazada(s), {failed} fallida(s)",
+        "batchWaiting": "gammonNet en espera: {job} en curso",
+        "batchFailed": "gammonNet: análisis no realizado — {error}",
         "baseline": "Antes de la tirada",
         "baselineTooltip": "Valores antes de la tirada, en el eje de la lista — una referencia, no una jugada candidata. La diferencia con esta fila es la suerte de la tirada, no el mérito de una jugada."
     },

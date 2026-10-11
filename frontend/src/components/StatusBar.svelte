@@ -1,5 +1,6 @@
 <script>
     import { gammonNetBatchLabel } from '../utils/gammonNetBatchLabel.js';
+    import { busyMessage } from '../utils/busyMessage.js';
     import { onDestroy, tick } from 'svelte';
     import { statusBarTextStore, currentPositionIndexStore, commandTextStore, showCommandInputStore, dbMutationCounterStore, activeTabStore } from '../stores/uiStore';
     import { libraryCountsStore, refreshLibraryCounts, formatCount } from '../stores/libraryCountsStore.js';
@@ -157,7 +158,13 @@
             statusBarTextStore.set(tMsg('eval.batchDone', summary ?? { evaluated: 0, refused: 0, failed: 0 }));
         }),
         EventsOn('gammonnet-batch:cancelled', () => gammonNetBatchStore.set(null)),
-        EventsOn('gammonnet-batch:error', () => gammonNetBatchStore.set(null)),
+        // An automatic batch queued behind the job writing the library says so until it starts.
+        EventsOn('gammonnet-batch:waiting', (w) => gammonNetBatchStore.set({ done: 0, total: 0, ...w })),
+        EventsOn('gammonnet-batch:error', (e) => {
+            gammonNetBatchStore.set(null);
+            const message = e?.message ?? '';
+            statusBarTextStore.set(tMsg('eval.batchFailed', { error: busyMessage(message) ?? message }));
+        }),
         // A gesture stood but its display page could not be rewritten (a folder gone, a disk full).
         EventsOn('direction:page-warning', () => statusBarTextStore.set(tMsg('direction.display.error')))
     ];

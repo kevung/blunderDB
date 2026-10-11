@@ -1167,6 +1167,12 @@
         },
         "raceDomainTooltip": "{domain} の表から求めた EPC。駒が内奥の外にあります。"
     },
+    "jobs": {
+        "busy": "データベース使用中：{job}を実行中",
+        "maintenance": "メンテナンス処理",
+        "gammonnet": "gammonNet 解析",
+        "rollout": "ロールアウト"
+    },
     "eval": {
         "addPosition": "データベースに追加",
         "addPositionTooltip": "このポジションをデータベースに追加 (Ctrl+S)",
@@ -1182,6 +1188,8 @@
         "batchProgressAt": "gammonNet 解析中 {depth}: {done}/{total}",
         "batchCancel": "キャンセル",
         "batchDone": "gammonNet: {evaluated} 件解析、{refused} 件却下、{failed} 件失敗",
+        "batchWaiting": "gammonNet 待機中：{job}を実行中",
+        "batchFailed": "gammonNet：解析を実行できません — {error}",
         "baseline": "ロール前",
         "baselineTooltip": "ロール前の数値。リストと同じ軸で表示される基準値であり、候補手ではありません。この行との差はロールの運であり、指し手の巧拙ではありません。"
     },

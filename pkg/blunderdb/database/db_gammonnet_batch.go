@@ -68,6 +68,13 @@ func (d *Database) positionIDsWithoutAnalysis() ([]int64, error) {
 // onProgress runs on the single writer goroutine with a monotone count of
 // positions PROCESSED (evaluated, refused and failed alike).
 func (d *Database) AnalyzeMissingWithGammonNet(ctx context.Context, ply, pruneK, candidates, jobs int, yield func(), onProgress func(done, total int)) (GammonNetBatchSummary, error) {
+	// The slot comes before the snapshot: a queued batch may wait behind
+	// another job, and must list the positions as they are once it runs.
+	release, err := d.acquireJob(ctx, JobGammonNet, nil)
+	if err != nil {
+		return GammonNetBatchSummary{}, err
+	}
+	defer release()
 	gen := d.currentGeneration()
 	ids, err := d.positionIDsWithoutAnalysis()
 	if err != nil {
@@ -111,6 +118,13 @@ func (d *Database) CountPositionsWithStaleGammonNet(ply int) (int, error) {
 // contract as AnalyzeMissingWithGammonNet; a separate pass so ADR-0013 is never
 // read as licensing a general re-analysis switch.
 func (d *Database) AnalyzeStaleGammonNet(ctx context.Context, ply, pruneK, candidates, jobs int, yield func(), onProgress func(done, total int)) (GammonNetBatchSummary, error) {
+	// The slot comes before the snapshot: a queued batch may wait behind
+	// another job, and must list the positions as they are once it runs.
+	release, err := d.acquireJob(ctx, JobGammonNet, nil)
+	if err != nil {
+		return GammonNetBatchSummary{}, err
+	}
+	defer release()
 	gen := d.currentGeneration()
 	ids, err := d.positionIDsWithStaleGammonNet(gammonnet.DepthLabel(ply))
 	if err != nil {
@@ -162,6 +176,7 @@ type gammonNetBatchResult struct {
 // analyzeIDsWithGammonNet is the batch both passes run: jobs goroutines take
 // ids from a shared counter, each reusing ONE searcher (~5.5 MB to allocate;
 // its cache is bit-neutral, so keeping it warm cannot change an answer).
+// Its caller holds the job slot.
 //
 // Every write goes through a single goroutine: Database.mu would serialise N
 // writers anyway, and write order is irrelevant.
@@ -173,11 +188,6 @@ func (d *Database) analyzeIDsWithGammonNet(ctx context.Context, gen uint64, ids 
 	if total == 0 {
 		return GammonNetBatchSummary{}, ctx.Err()
 	}
-	release, err := d.acquireJob(ctx, "a gammonNet analysis", nil)
-	if err != nil {
-		return GammonNetBatchSummary{}, err
-	}
-	defer release()
 
 	// Prefetch every position in batched round trips. An id missing from the
 	// result was deleted since the snapshot and is reported as a failure.
@@ -379,6 +389,13 @@ func (d *Database) CountMatchPositionsToAnalyze(matchID int64) (int, error) {
 // batch: a "0 means everything" sentinel is how a scoped batch silently
 // becomes a full one.
 func (d *Database) AnalyzeMatchWithGammonNet(ctx context.Context, matchID int64, ply, pruneK, candidates, jobs int, yield func(), onProgress func(done, total int)) (GammonNetBatchSummary, error) {
+	// The slot comes before the snapshot: a queued batch may wait behind
+	// another job, and must list the positions as they are once it runs.
+	release, err := d.acquireJob(ctx, JobGammonNet, nil)
+	if err != nil {
+		return GammonNetBatchSummary{}, err
+	}
+	defer release()
 	gen := d.currentGeneration()
 	ids, err := d.positionIDsWithoutAnalysisForMatch(matchID)
 	if err != nil {

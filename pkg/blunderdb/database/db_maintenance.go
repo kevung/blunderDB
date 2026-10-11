@@ -65,7 +65,7 @@ func (d *Database) RunMaintenanceWithProgress(kind string, fn func(done, total i
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	release, err := d.acquireJob(ctx, "a maintenance operation", cancel)
+	release, err := d.acquireJob(ctx, JobMaintenance, cancel)
 	if err != nil {
 		return maintenance.Run{}, err
 	}

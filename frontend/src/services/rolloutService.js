@@ -10,6 +10,7 @@ import { databasePathStore } from '../stores/databaseStore.js';
 import { confirmAction } from './confirmService.js';
 import { tMsg, t } from '../i18n';
 import { logger } from '../utils/logger.js';
+import { busyMessage } from '../utils/busyMessage.js';
 import { EventsOn } from '../../wailsjs/runtime/runtime.js';
 import { StartRollout, StartRolloutIDs, CancelRollout, RolloutPresets, RolloutStatus, CountRolloutIDs } from '../../wailsjs/go/gui/App.js';
 import { GetRolloutChoice, SaveRolloutChoice } from '../../wailsjs/go/main/Config.js';
@@ -48,7 +49,8 @@ const READ_ONLY = 'database is read-only';
  */
 export function failure(err) {
     const message = err?.message ?? String(err ?? '');
-    return message.includes(READ_ONLY) ? get(t)('rollout.readOnly') : message;
+    if (message.includes(READ_ONLY)) return get(t)('rollout.readOnly');
+    return busyMessage(message) ?? message;
 }
 
 /** Events that arrive while a start call is in flight, before the job it was given is known. */

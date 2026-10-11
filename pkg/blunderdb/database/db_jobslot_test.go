@@ -4,6 +4,9 @@ import (
 	"context"
 	"errors"
 	"path/filepath"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"sync"
 	"sync/atomic"
 	"testing"
@@ -74,8 +77,10 @@ func TestAcquireJob_SharedWithMaintenanceAndReplacement(t *testing.T) {
 	finished := make(chan struct{})
 	go func() {
 		time.Sleep(20 * time.Millisecond)
-		release()
+		// Closed first: once release runs, the maintenance may return before
+		// this goroutine is scheduled again.
 		close(finished)
+		release()
 	}()
 	r, err := d.RunMaintenance("stats.matches")
 	if err != nil {
@@ -122,5 +127,98 @@ func TestStopMaintenance_CancelsOnlyMaintenance(t *testing.T) {
 	d.cancelMu.Unlock()
 	if held != nil {
 		t.Error("StopMaintenance returned before the run released the library")
+	}
+}
+
+// A refusal names the job holding the library, and is a storage conflict.
+func TestAcquireJob_RefusalNamesTheHolder(t *testing.T) {
+	t.Parallel()
+	d := NewDatabase()
+	release, err := d.acquireJob(context.Background(), JobRollout, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer release()
+	_, err = d.acquireJob(context.Background(), JobGammonNet, nil)
+	var busy *BusyError
+	if !errors.As(err, &busy) || busy.Job != JobRollout {
+		t.Fatalf("refusal %v, want a BusyError naming the rollout", err)
+	}
+	if !errors.Is(err, ErrDatabaseBusy) || !errors.Is(err, storage.ErrConflict) {
+		t.Errorf("%v is not ErrDatabaseBusy and ErrConflict", err)
+	}
+	if err.Error() != "database is busy: rollout" {
+		t.Errorf("message %q", err.Error())
+	}
+}
+
+// startQueuedBatch runs AnalyzeMissingWithGammonNet under a queued ctx while
+// a stored rollout holds the library, and returns once the batch waits.
+func startQueuedBatch(t *testing.T, d *Database, ctx context.Context) (releaseRollout func(), result <-chan error, summary *GammonNetBatchSummary) {
+	t.Helper()
+	p := racePosition(8, 17, domain.White)
+	if _, err := d.SavePosition(&p); err != nil {
+		t.Fatal(err)
+	}
+	releaseRollout, err := d.acquireJob(context.Background(), JobRollout, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	waiting := make(chan string, 1)
+	done := make(chan error, 1)
+	summary = new(GammonNetBatchSummary)
+	go func() {
+		s, err := d.AnalyzeMissingWithGammonNet(WaitForDatabase(ctx, func(job string) { waiting <- job }), 0, 0, 0, 1, nil, nil)
+		*summary = s
+		done <- err
+	}()
+	select {
+	case job := <-waiting:
+		if job != JobRollout {
+			t.Errorf("waits behind %q, want %q", job, JobRollout)
+		}
+	case err := <-done:
+		t.Fatalf("the queued batch did not wait: %v", err)
+	case <-time.After(10 * time.Second):
+		t.Fatal("the queued batch neither waited nor ran")
+	}
+	return releaseRollout, done, summary
+}
+
+// An automatic batch started during a stored rollout runs once it ends.
+func TestQueuedBatch_RunsAfterTheRollout(t *testing.T) {
+	t.Parallel()
+	d := newBatchTestDB(t)
+	releaseRollout, done, summary := startQueuedBatch(t, d, context.Background())
+	select {
+	case err := <-done:
+		t.Fatalf("the batch ran during the rollout: %v", err)
+	case <-time.After(20 * time.Millisecond):
+	}
+	releaseRollout()
+	if err := <-done; err != nil {
+		t.Fatalf("queued batch: %v", err)
+	}
+	if summary.Evaluated != 1 {
+		t.Errorf("summary %+v, want one position evaluated", *summary)
+	}
+}
+
+// Cancelling a waiting batch ends it without touching the job ahead.
+func TestQueuedBatch_CancelledWhileWaiting(t *testing.T) {
+	t.Parallel()
+	d := newBatchTestDB(t)
+	ctx, cancel := context.WithCancel(context.Background())
+	releaseRollout, done, _ := startQueuedBatch(t, d, ctx)
+	defer releaseRollout()
+	cancel()
+	if err := <-done; !errors.Is(err, context.Canceled) {
+		t.Fatalf("cancelled wait: %v, want context.Canceled", err)
+	}
+	d.cancelMu.Lock()
+	held := d.job
+	d.cancelMu.Unlock()
+	if held == nil || held.name != JobRollout {
+		t.Error("cancelling the waiting batch disturbed the rollout")
 	}
 }

@@ -19,4 +19,8 @@ describe('gammonNetBatchLabel', () => {
         expect(label).toBe('gammonNet analyse : 3/10');
         expect(label).not.toMatch(/ {2}/);
     });
+
+    it('names the job it waits behind while queued', () => {
+        expect(gammonNetBatchLabel(t, { done: 0, total: 0, ply: 2, job: 'rollout' })).toBe('gammonNet en attente : un rollout en cours');
+    });
 });

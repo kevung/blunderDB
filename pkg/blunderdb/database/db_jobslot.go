@@ -2,15 +2,45 @@ package database
 
 import (
 	"context"
-	"fmt"
+	"errors"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// ErrDatabaseBusy is a job that writes the library — a maintenance run, a
-// gammonNet batch, a stored rollout — asked for while another one runs: one
-// at a time, as the daemon holds one slot per tenant (ADR-0088).
-var ErrDatabaseBusy = fmt.Errorf("another job is writing the database: %w", storage.ErrConflict)
+// The jobs that write the library one at a time, as the daemon holds one
+// slot per tenant (ADR-0088). The code travels in BusyError's message, which
+// the frontend matches to name the job in the user's language.
+const (
+	JobMaintenance = "maintenance"
+	JobGammonNet   = "gammonnet"
+	JobRollout     = "rollout"
+)
+
+// ErrDatabaseBusy matches every BusyError under errors.Is.
+var ErrDatabaseBusy = errors.New("database is busy")
+
+// BusyError refuses a job asked for while Job holds the library. It is also
+// storage.ErrConflict, so the daemon and the CLI report it as a conflict.
+type BusyError struct{ Job string }
+
+func (e *BusyError) Error() string { return "database is busy: " + e.Job }
+
+func (e *BusyError) Is(target error) bool {
+	return target == ErrDatabaseBusy || target == storage.ErrConflict
+}
+
+type waitKey struct{}
+
+// WaitForDatabase marks ctx's job as one that queues for the library instead
+// of being refused: an automatic batch the user did not ask for at that
+// moment. onWait (nil for none) is told which job it waits behind, once.
+// Only cancelling ctx ends the wait.
+func WaitForDatabase(ctx context.Context, onWait func(job string)) context.Context {
+	if onWait == nil {
+		onWait = func(string) {}
+	}
+	return context.WithValue(ctx, waitKey{}, onWait)
+}
 
 // jobSlot is the job holding the library. ctx is the holder's: once it is
 // done the holder is only finishing, and a newcomer waits for done rather
@@ -23,14 +53,18 @@ type jobSlot struct {
 	done   chan struct{}
 }
 
-// acquireJob takes the slot for a job named name running under ctx, or
-// returns ErrDatabaseBusy. release must be called once the job has ended.
-func (d *Database) acquireJob(ctx context.Context, name string, cancel context.CancelFunc) (func(), error) {
+// acquireJob takes the slot for job (one of the Job codes) running under
+// ctx. While another job runs it returns a *BusyError, or waits for it when
+// ctx was marked by WaitForDatabase. release must be called once the job
+// has ended.
+func (d *Database) acquireJob(ctx context.Context, job string, cancel context.CancelFunc) (func(), error) {
+	onWait, queued := ctx.Value(waitKey{}).(func(string))
+	told := false
 	for {
 		d.cancelMu.Lock()
 		held := d.job
 		if held == nil {
-			j := &jobSlot{name: name, ctx: ctx, cancel: cancel, done: make(chan struct{})}
+			j := &jobSlot{name: job, ctx: ctx, cancel: cancel, done: make(chan struct{})}
 			d.job = j
 			d.cancelMu.Unlock()
 			return func() {
@@ -44,7 +78,13 @@ func (d *Database) acquireJob(ctx context.Context, name string, cancel context.C
 		}
 		d.cancelMu.Unlock()
 		if held.ctx.Err() == nil {
-			return nil, fmt.Errorf("%w (%s is running)", ErrDatabaseBusy, held.name)
+			if !queued {
+				return nil, &BusyError{Job: held.name}
+			}
+			if !told {
+				told = true
+				onWait(held.name)
+			}
 		}
 		select {
 		case <-held.done:

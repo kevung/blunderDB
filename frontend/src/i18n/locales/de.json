@@ -1167,6 +1167,12 @@
         },
         "raceDomainTooltip": "EPC aus der Tabelle {domain}: ein Stein steht außerhalb des Heimfelds."
     },
+    "jobs": {
+        "busy": "Datenbank belegt: {job} läuft",
+        "maintenance": "ein Wartungsvorgang",
+        "gammonnet": "eine gammonNet-Analyse",
+        "rollout": "ein Rollout"
+    },
     "eval": {
         "addPosition": "Zur Datenbank hinzufügen",
         "addPositionTooltip": "Diese Position zur Datenbank hinzufügen (Ctrl+S)",
@@ -1182,6 +1188,8 @@
         "batchProgressAt": "gammonNet analysiert {depth}: {done}/{total}",
         "batchCancel": "Abbrechen",
         "batchDone": "gammonNet: {evaluated} analysiert, {refused} abgelehnt, {failed} fehlgeschlagen",
+        "batchWaiting": "gammonNet wartet: {job} läuft",
+        "batchFailed": "gammonNet: Analyse nicht ausgeführt — {error}",
         "baseline": "Vor dem Wurf",
         "baselineTooltip": "Werte vor dem Wurf, in der Achse der Liste — ein Bezugspunkt, kein Zugkandidat. Der Abstand zu dieser Zeile ist das Würfelglück, nicht das Verdienst eines Zuges."
     },

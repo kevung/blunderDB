@@ -29,7 +29,7 @@ func (d *Database) RolloutPosition(ctx context.Context, positionID int64, s roll
 		if err := d.RefuseReadOnly(); err != nil {
 			return nil, err
 		}
-		release, err := d.acquireJob(ctx, "a rollout", nil)
+		release, err := d.acquireJob(ctx, JobRollout, nil)
 		if err != nil {
 			return nil, err
 		}
@@ -178,7 +178,7 @@ func (d *Database) rolloutPositionsAt(ctx context.Context, gen uint64, positions
 	if err := d.RefuseReadOnly(); err != nil {
 		return rollouts.Summary{}, err
 	}
-	release, err := d.acquireJob(ctx, "a rollout", nil)
+	release, err := d.acquireJob(ctx, JobRollout, nil)
 	if err != nil {
 		return rollouts.Summary{}, err
 	}

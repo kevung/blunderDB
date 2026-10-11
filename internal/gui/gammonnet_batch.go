@@ -14,6 +14,7 @@ import (
 // The gammonNet batch (ADR-0013): the loops live on *database.Database, shared
 // with the CLI and daemon; this file is the GUI shell and its events:
 //
+//	gammonnet-batch:waiting   {job, ply}
 //	gammonnet-batch:progress  {done, total, ply}
 //	gammonnet-batch:done      {evaluated, refused, failed}
 //	gammonnet-batch:cancelled {}
@@ -23,27 +24,40 @@ import (
 const gnYieldPoll = 50 * time.Millisecond
 
 // StartGammonNetBatch analyses every position without an analysis, in the
-// background, cancelling any batch in flight. No-op when db is nil.
+// background, cancelling any batch in flight. No-op when db is nil. The user
+// asked for it: refused while another job writes the library.
 func (a *App) StartGammonNetBatch(ply, pruneK, candidates int) {
-	a.runGammonNetBatch(ply, func(ctx context.Context, onProgress func(done, total int)) (database.GammonNetBatchSummary, error) {
+	a.runGammonNetBatch(ply, false, a.missingBatch(ply, pruneK, candidates))
+}
+
+// QueueGammonNetBatch is StartGammonNetBatch for the analysis an import
+// starts on its own: it waits for the job writing the library instead of
+// being refused (ADR-0088).
+func (a *App) QueueGammonNetBatch(ply, pruneK, candidates int) {
+	a.runGammonNetBatch(ply, true, a.missingBatch(ply, pruneK, candidates))
+}
+
+func (a *App) missingBatch(ply, pruneK, candidates int) func(context.Context, func(done, total int)) (database.GammonNetBatchSummary, error) {
+	return func(ctx context.Context, onProgress func(done, total int)) (database.GammonNetBatchSummary, error) {
 		return a.db.AnalyzeMissingWithGammonNet(ctx, ply, pruneK, candidates, a.effectiveBatchJobs(),
 			a.waitForInteractiveEvaluation, onProgress)
-	})
+	}
 }
 
 // StartGammonNetStaleBatch re-runs gammonNet on every position whose analysis
 // is entirely its own but stale: another EngineVersion, or another depth.
 func (a *App) StartGammonNetStaleBatch(ply, pruneK, candidates int) {
-	a.runGammonNetBatch(ply, func(ctx context.Context, onProgress func(done, total int)) (database.GammonNetBatchSummary, error) {
+	a.runGammonNetBatch(ply, false, func(ctx context.Context, onProgress func(done, total int)) (database.GammonNetBatchSummary, error) {
 		return a.db.AnalyzeStaleGammonNet(ctx, ply, pruneK, candidates, a.effectiveBatchJobs(),
 			a.waitForInteractiveEvaluation, onProgress)
 	})
 }
 
 // StartGammonNetMatchBatch is StartGammonNetBatch scoped to one match: the
-// batch a transcription's save starts (ADR-0045 §8). The caller sets depth.
+// batch a transcription's or a duel's save starts (ADR-0045 §8). The caller
+// sets depth. Started on its own, it waits for the job writing the library.
 func (a *App) StartGammonNetMatchBatch(matchID int64, ply, pruneK, candidates int) {
-	a.runGammonNetBatch(ply, func(ctx context.Context, onProgress func(done, total int)) (database.GammonNetBatchSummary, error) {
+	a.runGammonNetBatch(ply, true, func(ctx context.Context, onProgress func(done, total int)) (database.GammonNetBatchSummary, error) {
 		return a.db.AnalyzeMatchWithGammonNet(ctx, matchID, ply, pruneK, candidates, a.effectiveBatchJobs(),
 			a.waitForInteractiveEvaluation, onProgress)
 	})
@@ -66,8 +80,9 @@ func (a *App) effectiveBatchJobs() int {
 }
 
 // runGammonNetBatch is the shell every batch shares: run does the work, this
-// owns the single-in-flight bookkeeping and the events.
-func (a *App) runGammonNetBatch(ply int, run func(ctx context.Context, onProgress func(done, total int)) (database.GammonNetBatchSummary, error)) {
+// owns the single-in-flight bookkeeping and the events. A queued batch waits
+// for the job writing the library; any other is refused while one runs.
+func (a *App) runGammonNetBatch(ply int, queued bool, run func(ctx context.Context, onProgress func(done, total int)) (database.GammonNetBatchSummary, error)) {
 	if a.db == nil {
 		return
 	}
@@ -75,9 +90,9 @@ func (a *App) runGammonNetBatch(ply int, run func(ctx context.Context, onProgres
 	// A rollout batch takes every core as this one does: refused, as the
 	// daemon refuses a second exclusive job.
 	a.roMu.Lock()
-	if a.rolloutBatchRunning() {
+	if !queued && a.rolloutBatchRunning() {
 		a.roMu.Unlock()
-		a.emitBatch("gammonnet-batch:error", map[string]string{"message": "a rollout batch is already running"})
+		a.emitBatch("gammonnet-batch:error", map[string]string{"message": (&database.BusyError{Job: database.JobRollout}).Error()})
 		return
 	}
 	a.gnBatchMu.Lock()
@@ -85,6 +100,11 @@ func (a *App) runGammonNetBatch(ply int, run func(ctx context.Context, onProgres
 		a.gnBatchCancel()
 	}
 	ctx, cancel := context.WithCancel(a.batchCtx())
+	if queued {
+		ctx = database.WaitForDatabase(ctx, func(job string) {
+			a.emitBatch("gammonnet-batch:waiting", map[string]any{"job": job, "ply": ply})
+		})
+	}
 	stopped := make(chan struct{})
 	a.gnBatchCancel = cancel
 	a.gnBatchDone = stopped

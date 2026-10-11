@@ -90,6 +90,7 @@ var boundAppMethods = []string{
 	"StopFolderWatch",
 	"SuggestWatchFolder",
 	"StartEvaluationAtRest",
+	"QueueGammonNetBatch",
 	"StartGammonNetBatch",
 	"StartGammonNetMatchBatch",
 	"StartGammonNetStaleBatch",

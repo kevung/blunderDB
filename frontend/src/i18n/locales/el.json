@@ -1167,6 +1167,12 @@
         },
         "raceDomainTooltip": "EPC από τον πίνακα {domain}: ένα πούλι είναι εκτός του σπιτιού."
     },
+    "jobs": {
+        "busy": "Η βάση είναι απασχολημένη: {job} σε εξέλιξη",
+        "maintenance": "μια εργασία συντήρησης",
+        "gammonnet": "μια ανάλυση gammonNet",
+        "rollout": "ένα rollout"
+    },
     "eval": {
         "addPosition": "Προσθήκη στη βάση",
         "addPositionTooltip": "Προσθήκη αυτής της θέσης στη βάση (Ctrl+S)",
@@ -1182,6 +1188,8 @@
         "batchProgressAt": "gammonNet αναλύει {depth}: {done}/{total}",
         "batchCancel": "Ακύρωση",
         "batchDone": "gammonNet: {evaluated} αναλύθηκαν, {refused} απορρίφθηκαν, {failed} απέτυχαν",
+        "batchWaiting": "gammonNet σε αναμονή: {job} σε εξέλιξη",
+        "batchFailed": "gammonNet: η ανάλυση δεν εκτελέστηκε — {error}",
         "baseline": "Πριν τη ζαριά",
         "baselineTooltip": "Τιμές πριν τη ζαριά, στον άξονα της λίστας — σημείο αναφοράς, όχι υποψήφια κίνηση. Η απόσταση από αυτή τη γραμμή είναι η τύχη της ζαριάς, όχι η αξία μιας κίνησης."
     },

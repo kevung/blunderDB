@@ -120,6 +120,8 @@ export function PickTranscriptionVideo():Promise<string>;
 
 export function PrepareDemoDatabase():Promise<string>;
 
+export function QueueGammonNetBatch(arg1:number,arg2:number,arg3:number):Promise<void>;
+
 export function ReadFileContent(arg1:string):Promise<gui.FileDialogResponse>;
 
 export function ReadLogTail(arg1:number):Promise<Array<string>>;

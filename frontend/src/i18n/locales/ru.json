@@ -1167,6 +1167,12 @@
         },
         "raceDomainTooltip": "EPC из таблицы {domain}: шашка вне дома."
     },
+    "jobs": {
+        "busy": "База занята: выполняется {job}",
+        "maintenance": "обслуживание",
+        "gammonnet": "анализ gammonNet",
+        "rollout": "роллаут"
+    },
     "eval": {
         "addPosition": "Добавить в базу",
         "addPositionTooltip": "Добавить эту позицию в базу (Ctrl+S)",
@@ -1182,6 +1188,8 @@
         "batchProgressAt": "gammonNet анализирует {depth}: {done}/{total}",
         "batchCancel": "Отмена",
         "batchDone": "gammonNet: проанализировано {evaluated}, отклонено {refused}, не удалось {failed}",
+        "batchWaiting": "gammonNet ждёт: выполняется {job}",
+        "batchFailed": "gammonNet: анализ не выполнен — {error}",
         "baseline": "До броска",
         "baselineTooltip": "Значения до броска, в той же оси, что и список — ориентир, а не кандидат хода. Разница с этой строкой — удача броска, а не заслуга хода."
     },

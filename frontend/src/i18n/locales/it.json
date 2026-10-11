@@ -1167,6 +1167,12 @@
         },
         "raceDomainTooltip": "EPC letto dalla tabella {domain}: una pedina è fuori dalla casa."
     },
+    "jobs": {
+        "busy": "Database occupato: {job} in corso",
+        "maintenance": "un'operazione di manutenzione",
+        "gammonnet": "un'analisi gammonNet",
+        "rollout": "un rollout"
+    },
     "eval": {
         "addPosition": "Aggiungi al database",
         "addPositionTooltip": "Aggiungi questa posizione al database (Ctrl+S)",
@@ -1182,6 +1188,8 @@
         "batchProgressAt": "gammonNet sta analizzando {depth}: {done}/{total}",
         "batchCancel": "Annulla",
         "batchDone": "gammonNet: {evaluated} analizzata/e, {refused} rifiutata/e, {failed} fallita/e",
+        "batchWaiting": "gammonNet in attesa: {job} in corso",
+        "batchFailed": "gammonNet: analisi non eseguita — {error}",
         "baseline": "Prima del tiro",
         "baselineTooltip": "Valori prima del tiro, nello stesso asse della lista — un riferimento, non una mossa candidata. Lo scarto rispetto a questa riga è la fortuna del tiro, non il merito di una mossa."
     },

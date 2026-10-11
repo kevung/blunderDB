@@ -1167,6 +1167,12 @@
         },
         "raceDomainTooltip": "EPC luettu taulukosta {domain}: nappula on kotialueen ulkopuolella."
     },
+    "jobs": {
+        "busy": "Tietokanta varattu: {job} käynnissä",
+        "maintenance": "huoltotoimenpide",
+        "gammonnet": "gammonNet-analyysi",
+        "rollout": "rollout"
+    },
     "eval": {
         "addPosition": "Lisää tietokantaan",
         "addPositionTooltip": "Lisää tämä asema tietokantaan (Ctrl+S)",
@@ -1182,6 +1188,8 @@
         "batchProgressAt": "gammonNet analysoi {depth}: {done}/{total}",
         "batchCancel": "Peruuta",
         "batchDone": "gammonNet: {evaluated} analysoitu, {refused} hylätty, {failed} epäonnistui",
+        "batchWaiting": "gammonNet odottaa: {job} käynnissä",
+        "batchFailed": "gammonNet: analyysia ei tehty — {error}",
         "baseline": "Ennen heittoa",
         "baselineTooltip": "Arvot ennen heittoa, listan akselissa — vertailukohta, ei ehdokassiirto. Ero tähän riviin on heiton onni, ei siirron ansio."
     },

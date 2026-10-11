@@ -40,7 +40,7 @@ import {
     ImportReport
 } from '../../wailsjs/go/database/Database.js';
 import { GetGammonNetAutoAnalyze, GetGammonNetAnalysisPly, GetGammonNetPruneK } from '../../wailsjs/go/main/Config.js';
-import { StartGammonNetBatch } from '../../wailsjs/go/gui/App.js';
+import { QueueGammonNetBatch } from '../../wailsjs/go/gui/App.js';
 import { ClipboardGetText, EventsOn } from '../../wailsjs/runtime/runtime.js';
 
 import { latestJournalEntries } from './importJournal.js';
@@ -120,7 +120,7 @@ export async function maybeAutoAnalyzeAfterImport() {
         const remaining = await CountPositionsWithoutAnalysis();
         if (!remaining) return;
         const [ply, pruneK] = await Promise.all([GetGammonNetAnalysisPly(), GetGammonNetPruneK()]);
-        await StartGammonNetBatch(ply, pruneK, 0);
+        await QueueGammonNetBatch(ply, pruneK, 0);
     } catch (error) {
         logger.error('gammonNet auto-analyze check failed:', error);
     }
@@ -1368,14 +1368,14 @@ export async function openImportedPosition(positionID) {
 }
 
 // The report's one action: analyse what came in without analysis. The batch
-// covers the whole database's unanalysed set (StartGammonNetBatch has no
+// covers the whole database's unanalysed set (QueueGammonNetBatch has no
 // narrowing).
 export async function analyzeRemainingAfterImport() {
     showFileImportModalStore.set(false);
     fileImportModeStore.set('idle');
     try {
         const [ply, pruneK] = await Promise.all([GetGammonNetAnalysisPly(), GetGammonNetPruneK()]);
-        await StartGammonNetBatch(ply, pruneK, 0);
+        await QueueGammonNetBatch(ply, pruneK, 0);
     } catch (error) {
         logger.error('could not start the analysis after import:', error);
         setStatusBarMessage(tMsg('status.errorStartingAnalysis', { error }));

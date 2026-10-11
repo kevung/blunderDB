@@ -1167,6 +1167,12 @@
         },
         "raceDomainTooltip": "EPC read from the {domain} table: a chequer is outside the home board."
     },
+    "jobs": {
+        "busy": "Database busy: {job} in progress",
+        "maintenance": "a maintenance operation",
+        "gammonnet": "a gammonNet analysis",
+        "rollout": "a rollout"
+    },
     "eval": {
         "addPosition": "Add to database",
         "addPositionTooltip": "Add this position to the database (Ctrl+S)",
@@ -1182,6 +1188,8 @@
         "batchProgressAt": "gammonNet analyzing {depth}: {done}/{total}",
         "batchCancel": "Cancel",
         "batchDone": "gammonNet: {evaluated} analyzed, {refused} refused, {failed} failed",
+        "batchWaiting": "gammonNet waiting: {job} in progress",
+        "batchFailed": "gammonNet: analysis not run — {error}",
         "baseline": "Before the roll",
         "baselineTooltip": "Pre-roll figures, in the axis of the list — a reference, not a candidate move. The gap to this row is the luck of the roll, not the merit of a play."
     },
