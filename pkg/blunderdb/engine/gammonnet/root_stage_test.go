@@ -3,6 +3,7 @@
 package gammonnet
 
 import (
+	"fmt"
 	"math"
 	"os"
 	"testing"
@@ -212,5 +213,41 @@ func TestPreRollEquityIgnoresTheStage(t *testing.T) {
 		if got[0] != got[1] {
 			t.Errorf("the stage moved the pre-roll probabilities: %v vs %v", got[0], got[1])
 		}
+	}
+}
+
+// The policy's "ply3" and "ply4" levels search exactly DefaultConfig's tree,
+// staged root included, and so pick the same play.
+func TestPolicyDeepLevelsCarryTheStage(t *testing.T) {
+	p, err := NewPolicy()
+	if err != nil {
+		t.Fatal(err)
+	}
+	c := rootStageCorpus(t, 4)[1]
+	for _, ply := range []int{3, 4} {
+		level := mustLevel(fmt.Sprintf("ply%d", ply))
+		d := PolicyDecision{Position: c.pos, Pending: PendingMove, D1: int(c.d1), D2: int(c.d2), Cube: 1}
+		if !p.configure(&level, &d) {
+			t.Fatalf("ply%d refused", ply)
+		}
+		if p.s.cfg != DefaultConfig(ply) {
+			t.Errorf("ply%d: policy config %+v, DefaultConfig %+v", ply, p.s.cfg, DefaultConfig(ply))
+		}
+	}
+	if testing.Short() {
+		return
+	}
+	d := PolicyDecision{Position: c.pos, Pending: PendingMove, D1: int(c.d1), D2: int(c.d2), Cube: 1}
+	got, err := p.Decide("ply3", &d)
+	if err != nil {
+		t.Fatal(err)
+	}
+	s, err := NewSearcher(DefaultConfig(3))
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := rankingOf(t, s, c)[0]
+	if !samePolicyPlay(&got.Play, &want.Play) {
+		t.Errorf("Decide(ply3) played %v, DefaultConfig(3) %v", got.Play.Result, want.Play.Result)
 	}
 }

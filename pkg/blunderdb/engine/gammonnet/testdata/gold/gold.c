@@ -4,7 +4,9 @@
  * at depth 2 (accept 1, extra 2, threshold 0.04), plain 5 at depths 3-4.
  * Two corpus formats -- see the magic check below.
  * A fifth argument "stage" also stages the root (1 ply, triplet (0, 4, 0.2)),
- * which writes search_stage_gold.bin. */
+ * which writes search_stage_gold.bin; "ply3" answers only the first
+ * DEEP_CASES at the published level gn_search_level("ply3"), as
+ * gn_policy.c's level_config builds it, which writes search_ply3_gold.bin. */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -15,10 +17,12 @@
 #include "gn_cube.h"
 
 #define TOPK 5
+#define DEEP_CASES 10
 
 int main(int argc, char **argv) {
     if (argc < 5) { fprintf(stderr, "usage: gold corpus.bin model.bin prune.bin out.bin [stage]\n"); return 2; }
     const int stage = argc > 5 && !strcmp(argv[5], "stage");
+    const int ply3 = argc > 5 && !strcmp(argv[5], "ply3");
     FILE *f = fopen(argv[1], "rb");
     if (!f) { perror("corpus"); return 1; }
     char magic[4]; int count;
@@ -36,6 +40,7 @@ int main(int argc, char **argv) {
     GnNetwork *prune = gn_network_load(argv[3]);
     if (!net || !prune) { fprintf(stderr,"model load failed\n"); return 1; }
 
+    if (ply3 && count > DEEP_CASES) count = DEEP_CASES;
     FILE *o = fopen(argv[4], "wb");
     fwrite("GNGD",1,4,o); fwrite(&count,4,1,o);
 
@@ -62,6 +67,18 @@ int main(int argc, char **argv) {
         cfg.filter[0]=0; cfg.filter[1]=1; cfg.filter[3]=5; cfg.filter[4]=5;
         if (gn_search_set_filter(&cfg, 2, 1, 2, 0.04) != 0) { fprintf(stderr,"filter refused\n"); return 1; }
         gn_search_use_prune(&cfg, prune, 12);
+        if (ply3) {
+            const GnSearchLevel *lv = gn_search_level("ply3");
+            if (wide || lv == NULL) { fprintf(stderr,"ply3: money corpus only\n"); return 1; }
+            cfg = gn_search_config(lv->ply);
+            memcpy(cfg.filter, lv->filter, sizeof(cfg.filter));
+            memcpy(cfg.filter_extra, lv->filter_extra, sizeof(cfg.filter_extra));
+            memcpy(cfg.filter_threshold, lv->filter_threshold, sizeof(cfg.filter_threshold));
+            if (gn_search_set_root_stage(&cfg, lv->root_stage_ply, lv->root_stage_filter,
+                                         lv->root_stage_filter_extra,
+                                         lv->root_stage_filter_threshold) != 0) { fprintf(stderr,"stage refused\n"); return 1; }
+            gn_search_use_prune(&cfg, prune, lv->prune_k);
+        }
         if (stage && gn_search_set_root_stage(&cfg, 1, 0, 4, 0.2) != 0) { fprintf(stderr,"stage refused\n"); return 1; }
         if (wide && buf[37]) {
             double x; memcpy(&x, buf+40, 8);

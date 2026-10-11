@@ -58,9 +58,14 @@ two moving targets.
           $M/strehl-prob5-512-512-256-256_v1.6.0_2026-10-06.bin \
           $M/strehl-prune-32_v1.0.1_2026-08-27.bin \
           $M/testdata/search_stage_gold.bin stage
+   ./gold $M/testdata/search_corpus.bin \
+          $M/strehl-prob5-512-512-256-256_v1.6.0_2026-10-06.bin \
+          $M/strehl-prune-32_v1.0.1_2026-08-27.bin \
+          $M/testdata/search_ply3_gold.bin ply3
    ```
 
-   The third run stages the root (1 ply, triplet (0, 4, 0.2)) and needs a gammonNet that has
+   The third run stages the root (1 ply, triplet (0, 4, 0.2)); the fourth answers the first ten
+   cases at the published `ply3` level (about forty seconds). Both need a gammonNet that has
    `gn_search_set_root_stage` (commit 9c74d82, after v1.6.0); the first two files come out
    byte-identical from that commit.
 

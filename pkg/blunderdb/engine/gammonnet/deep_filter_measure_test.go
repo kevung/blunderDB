@@ -42,7 +42,8 @@ import (
 //	4:r0.8.16       314        6 274 014     (ref, 9 decisions)
 //	4:default        93        1 970 309      8/9    0.00020 / 0.00181
 //
-// The 4-ply legacy filter did not finish a decision in 900 s.
+// The 4-ply legacy filter did not finish a decision in 900 s. Pre-roll (cube)
+// distributions at 3 ply: 10.4 s -> 4.9 s, mean |dWin| 0.00037.
 //
 // With the root staged (DefaultConfig at 3 and 4 ply), the first 20 decisions
 // of the gate corpus, one at a time, configs alternated 2,3,3u,4,2,3 (3u is
@@ -52,9 +53,7 @@ import (
 //	2:default        0.27         11 400
 //	3:default        3.9         159 322     (ref)
 //	3:r1.2.04        4.9         199 048     20/20
-//	4:default       70         2 778 018 Pre-roll (cube)
-//
-// distributions at 3 ply: 10.4 s -> 4.9 s, mean |dWin| 0.00037.
+//	4:default       70         2 778 018
 func TestDeepFilterMeasure(t *testing.T) {
 	if os.Getenv("BLUNDERDB_DEEP") == "" {
 		t.Skip("set BLUNDERDB_DEEP to measure; this test asserts nothing")

@@ -25,6 +25,8 @@ const (
 	goldPath  = "testdata/search_gold.bin"
 	// stageGoldPath is the same corpus answered with the root staged.
 	stageGoldPath = "testdata/search_stage_gold.bin"
+	// ply3GoldPath is the corpus's first ten cases at the "ply3" level.
+	ply3GoldPath = "testdata/search_ply3_gold.bin"
 
 	// goldTolerance is the equity agreement required. It is also the tie zone:
 	// two plays whose equities agree to within it are indistinguishable AT THIS
@@ -96,6 +98,14 @@ func TestSearchMatchesTheGoldFile(t *testing.T) {
 
 	// The same corpus with the root staged through 1 ply, triplet (0, 4,
 	// 0.2): the staged path against the C's own (testdata/gold/README.md).
+	// The first ten cases at the published "ply3" level: the staged root as
+	// DefaultConfig(3) builds it, against gn_search_level("ply3").
+	t.Run("ply3", func(t *testing.T) {
+		replayGoldWith(t, decodeCorpus(t, raw)[:10], loadGold(t, ply3GoldPath), func(cfg *SearchConfig) {
+			*cfg = DefaultConfig(3)
+		})
+	})
+
 	t.Run("root-stage", func(t *testing.T) {
 		replayGoldWith(t, decodeCorpus(t, raw), loadGold(t, stageGoldPath), func(cfg *SearchConfig) {
 			if err := cfg.SetRootStage(1, 0, 4, 0.2); err != nil {

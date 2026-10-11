@@ -116,7 +116,8 @@ func NewPolicy() (*Policy, error) {
 	return p, nil
 }
 
-// Decide answers d at the named level ("instant", "normal", "thorough"). An
+// Decide answers d at the named level ("instant", "normal", "thorough",
+// "ply3", "ply4"). An
 // unknown level or an invalid decision is ErrPolicyRefused.
 func (p *Policy) Decide(level string, d *PolicyDecision) (PolicyAction, error) {
 	shape, ok := Level(level)
@@ -195,6 +196,12 @@ func (p *Policy) configure(level *SearchLevel, d *PolicyDecision) bool {
 	copy(cfg.Filter[:], level.Filter)
 	copy(cfg.FilterExtra[:], level.FilterExtra)
 	copy(cfg.FilterThreshold[:], level.FilterThreshold)
+	// The staged root is part of the level's shape (gn_policy.c's
+	// level_config): without it "ply3" would search another tree.
+	if cfg.SetRootStage(level.RootStagePly, level.RootStageFilter,
+		level.RootStageFilterExtra, level.RootStageFilterThreshold) != nil {
+		return false
+	}
 	return p.s.Reconfigure(cfg) == nil
 }
 

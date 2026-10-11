@@ -4349,7 +4349,7 @@ n'ont pas de mesure publiée : ce qui précède ne se transporte pas à ces cas.
 **Pourquoi pas plus profond que 2 plis ?** Parce que la mesure dit que cela ne
 rapporte rien. Une décision de pions à 3 plis évalue le réseau **14 fois plus**
 qu'à 2 plis (159 000 évaluations contre 11 400, moyenne sur vingt décisions
-réelles) et prend environ 15 fois plus de temps (3,9 s contre 0,27 s sur un
+réelles) et prend environ 14 fois plus de temps (3,9 s contre 0,27 s sur un
 seul cœur de la même machine). Sur quarante décisions réelles rejouées aux
 deux profondeurs, la recherche plus profonde a changé d'avis **deux fois**, et
 les deux fois le gain qu'elle s'attribuait à elle-même valait au plus 0,0002
