@@ -2087,6 +2087,7 @@ export namespace domain {
 	    includeAliases: boolean;
 	    includeCollections: boolean;
 	    collectionIDs: number[];
+	    includeCollectionPositions: boolean;
 	    matchIDs: number[];
 	    tournamentIDs: number[];
 	    includeTournaments: boolean;
@@ -2094,6 +2095,7 @@ export namespace domain {
 	    includeLessons: boolean;
 	    lessonIDs: number[];
 	    deckIDs: number[];
+	    includeAnkiHistory: boolean;
 	    watermark: string;
 	    watermarkNote: string;
 	    password: string;
@@ -2119,6 +2121,7 @@ export namespace domain {
 	        this.includeAliases = source["includeAliases"];
 	        this.includeCollections = source["includeCollections"];
 	        this.collectionIDs = source["collectionIDs"];
+	        this.includeCollectionPositions = source["includeCollectionPositions"];
 	        this.matchIDs = source["matchIDs"];
 	        this.tournamentIDs = source["tournamentIDs"];
 	        this.includeTournaments = source["includeTournaments"];
@@ -2126,6 +2129,7 @@ export namespace domain {
 	        this.includeLessons = source["includeLessons"];
 	        this.lessonIDs = source["lessonIDs"];
 	        this.deckIDs = source["deckIDs"];
+	        this.includeAnkiHistory = source["includeAnkiHistory"];
 	        this.watermark = source["watermark"];
 	        this.watermarkNote = source["watermarkNote"];
 	        this.password = source["password"];
