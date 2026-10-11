@@ -241,7 +241,8 @@ func (d *Database) ComputeStatsCtx(ctx context.Context, filter StatsFilter) (*St
 type SelectionSpec struct {
 	Kind string // "all", "checker", "cube", "cube_action", "cube_direction",
 	// "error_bucket", "tournament", "match",
-	// "last_n", "position", "top_blunders", "breakdown"
+	// "last_n", "position", "top_blunders", "breakdown", "blunders"
+	// ("blunders": the decisions at or above the library's blunder threshold)
 	CubeAction string // matches analysis.best_cube_action verbatim ("No Double", "Double, Take"…)
 	// CubeCell, for Kind "cube_direction", names one cell of the cube matrix:
 	// "offer_right" | "offer_missed" | "offer_premature" |

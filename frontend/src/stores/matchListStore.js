@@ -7,6 +7,7 @@ import { writable, get } from 'svelte/store';
 import { ListMatches, CountMatches, GetMatchByID } from '../../wailsjs/go/database/Database.js';
 import { sortMatches } from '../utils/matchTable.js';
 import { logger } from '../utils/logger.js';
+import { databasePathStore } from './databaseStore.js';
 
 export const MATCH_PAGE_SIZE = 500;
 
@@ -137,7 +138,19 @@ export function createMatchList({ list = ListMatches, count = CountMatches, getB
         update((s) => ({ ...s, rows: s.rows.map((r) => (r.id === id ? { ...r, ...patch } : r)) }));
     }
 
-    return { subscribe, reload, loadMore, setText, setIDs, setSort, refreshRow, patchRow };
+    /** Forget the restriction without reloading: the panel reloads a newly opened database itself. */
+    function dropIDs() {
+        update((s) => (s.ids ? { ...s, ids: null } : s));
+    }
+
+    return { subscribe, reload, loadMore, setText, setIDs, setSort, refreshRow, patchRow, dropIDs };
 }
 
 export const matchListStore = createMatchList();
+
+// The ids name matches of one database: another one opens unrestricted.
+let shownPath = /** @type {string | undefined} */ (undefined);
+databasePathStore.subscribe((path) => {
+    if (shownPath !== undefined && path !== shownPath) matchListStore.dropIDs();
+    shownPath = path;
+});

@@ -23,6 +23,10 @@ type matchIDsResp struct {
 	MatchIDs []int64 `json:"match_ids"`
 }
 
+type tournamentIDsResp struct {
+	TournamentIDs []int64 `json:"tournament_ids"`
+}
+
 type statsWindowReq struct {
 	Filter storage.StatsFilter `json:"filter"`
 	Months int                 `json:"months"`
@@ -190,6 +194,11 @@ func (s *Server) statsRoutes() []route {
 		{http.MethodPost, "/v1/stats.matchIds", rpc(func(ctx context.Context, scope string, req statsComputeReq) (matchIDsResp, error) {
 			ids, err := ss().MatchIDs(ctx, scope, req.Filter)
 			return matchIDsResp{MatchIDs: ids}, err
+		})},
+		// Les tournois que Totals.NumTournaments compte : ce qu'ouvre ce chiffre.
+		{http.MethodPost, "/v1/stats.tournamentIds", rpc(func(ctx context.Context, scope string, req statsComputeReq) (tournamentIDsResp, error) {
+			ids, err := ss().TournamentIDs(ctx, scope, req.Filter)
+			return tournamentIDsResp{TournamentIDs: ids}, err
 		})},
 		// Le classement par PR des joueurs d'au moins MinDecisions décisions comptées.
 		{http.MethodPost, "/v1/stats.ranking", rpc(func(ctx context.Context, scope string, req statsRankingReq) ([]storage.RankedPlayer, error) {

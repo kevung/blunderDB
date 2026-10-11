@@ -1321,6 +1321,15 @@ connaît plus **refuse de s'ouvrir** en le disant, plutôt que de renvoyer toute
 la base. C'est la seule panne qu'un filtre enregistré ne doit pas avoir :
 s'élargir en silence.
 
+Une collection vivante **reste vivante dans un export** de la base : sa requête
+voyage avec elle et se réévalue, chez le destinataire, sur les positions du
+fichier. Quand l'export emporte les positions des collections, il emporte
+celles que la requête sélectionne au moment de l'export, jusqu'au plafond de
+5 000 positions. Une requête qui désigne des positions, des matchs ou des
+tournois par leur numéro est réécrite sur les numéros du fichier ; si l'un
+d'eux reste hors du fichier, la collection part **figée**, avec les positions
+que la requête sélectionne au moment de l'export.
+
 Un paquet de répétition espacée fondé sur une collection vivante rejoue sa
 requête à chaque ouverture de séance : les positions que la recherche
 sélectionne depuis la dernière fois y entrent, et les cartes déjà là gardent
@@ -3205,6 +3214,12 @@ sous-ensemble correspondant (drill-down). Une quatrième carte, **Perte MWC (éq
 7 pts)**, donne cette perte quel que soit le choix du bouton PR / MWC, avec son
 intervalle ; elle ne charge rien.
 
+Sous les cartes, la ligne des totaux compte les tournois, les matchs et les
+décisions du filtre. Le nombre de tournois ouvre ces tournois dans le panneau
+Tournois : un tournoi seul s'ouvre directement ; plusieurs restreignent la
+liste, qui porte alors le bouton « N tournois ouverts depuis les Stats × » : il
+rend la liste complète.
+
 .. note::
    Le nombre total de décisions est affiché en bas de chaque carte au survol.
 
@@ -3625,7 +3640,7 @@ Colonnes, dans l'ordre :
    "PR", "Performance Rating global."
    "PR pions, PR videau", "Le PR ventilé par type de décision."
    "Snowie", "Snowie Error Rate (voir :ref:`stats_parity`)."
-   "Blunders", "Nombre d'erreurs atteignant le seuil de blunder de la bibliothèque (0,100 EMG par défaut)."
+   "Blunders", "Nombre d'erreurs atteignant le seuil de blunder de la bibliothèque (0,100 EMG par défaut). Cliquer sur ce nombre charge ces positions dans le panneau d'analyse."
    "Chance", "Chance moyenne par lancer, en millipoints (mpt), signée : positive si les dés ont été favorables."
 
 Utilisation :
@@ -4900,7 +4915,7 @@ La fenêtre d'export tient en un seul écran : le formulaire, puis une
 progression qui se superpose à lui le temps de l'écriture. Elle se ferme
 d'elle-même une fois terminée, et le résultat s'affiche dans la barre d'état.
 
-Trois points méritent l'attention :
+Cinq points méritent l'attention :
 
 * **L'export porte sur les positions actuellement affichées**, pas sur la base
   entière. Après une recherche, seuls les résultats partent — la fenêtre le
@@ -4909,9 +4924,13 @@ Trois points méritent l'attention :
 * **Quand la liste affichée est la bibliothèque**, l'export est le même que
   celui du serveur et de ``export --type database`` : toutes les cases sont
   cochées d'emblée, et les paquets Anki (sans historique de révision) et les
-  transcriptions en cours partent avec le reste. Une transcription liée à une
-  vidéo locale n'emporte que le nom du fichier, sans son dossier ; un lien web
-  part tel quel.
+  transcriptions en cours partent avec le reste.
+* **Un match part avec son brouillon de transcription**, quelle que soit la
+  liste affichée : la case *Avec leurs brouillons de transcription*, sous
+  celle des matchs, est cochée d'emblée. Un brouillon qui n'a pas encore
+  produit de match ne part qu'avec la bibliothèque entière. Une transcription
+  liée à une vidéo locale n'emporte que le nom du fichier, sans son dossier ;
+  un lien web part tel quel.
 * **Une collection dont toutes les positions ne sont pas dans la sélection
   arrive tronquée.** La liste affiche donc, pour chaque collection, la part
   couverte (« 12/40 ») et la signale en rouge lorsqu'elle est partielle.

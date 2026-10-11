@@ -818,6 +818,8 @@
         "filterPlaceholder": "Filtrer : nom, lieu, date…",
         "filterAria": "Filtrer les tournois",
         "noTournamentsFiltered": "Aucun tournoi correspondant.",
+        "idsFilter": "{n} tournois ouverts depuis les Stats",
+        "idsFilterClear": "Montrer tous les tournois",
         "gone": "Ce tournoi n'existe plus."
     },
     "anki": {
@@ -1240,6 +1242,7 @@
         "includeComments": "Inclure les commentaires",
         "includeFilterLibrary": "Mes filtres enregistrés",
         "includeMatches": "Inclure les matchs ({count})",
+        "includeTranscriptions": "Avec leurs brouillons de transcription",
         "includePlayedMoves": "Inclure les coups joués",
         "includeTournaments": "Inclure les tournois ({count})",
         "mayTakeMoments": "Cela peut prendre quelques instants.",

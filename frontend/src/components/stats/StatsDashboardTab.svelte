@@ -10,6 +10,8 @@
     import StatsStudyEffect from './StatsStudyEffect.svelte';
     import StatsBiases from './StatsBiases.svelte';
     import EmptyState from '../panels/EmptyState.svelte';
+    import CountLink from '../panels/CountLink.svelte';
+    import { openStatsTournaments } from '../../services/positionLoader.js';
 
     /** @type {{ result: import('../../stores/statsStore.js').StatsResult|null, metric: string }} */
     let { result = null, metric = 'pr' } = $props();
@@ -145,7 +147,7 @@
 
     <!-- ── Totals line ──────────────────────────────────────────── -->
     <p class="stats-totals">
-        {result.Totals.NumTournaments}
+        {#if result.Totals.NumTournaments > 0}<CountLink label={String(result.Totals.NumTournaments)} onclick={openStatsTournaments} />{:else}0{/if}
         {$t('stats.tournaments')} ·
         {result.Totals.NumMatches}
         {$t('stats.matches')} ·

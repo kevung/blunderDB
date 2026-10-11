@@ -18,7 +18,9 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/issuance"
 	"github.com/kevung/blunderdb/pkg/blunderdb/mets"
+	"github.com/kevung/blunderdb/pkg/blunderdb/searchquery"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/searchfilter"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
@@ -112,6 +114,7 @@ func WholeTenant(format Format) ExportOptions {
 			AllLessons: true,
 		},
 		Analysis: true, Comments: true, PlayedMoves: true, FilterLibrary: true, AnkiDecks: true,
+		Transcriptions: true,
 	}
 }
 
@@ -241,6 +244,7 @@ func writeExport(ctx context.Context, src storage.Storage, scope, path string, o
 		ctx: ctx, src: src, scope: scope, tx: tx, dst: sqlite.WrapTx(tx), opts: opts,
 		posMap: make(map[int64]int64), written: make(map[int64]bool),
 		collMap: make(map[int64]int64), tourMap: make(map[int64]int64), matchMap: make(map[int64]int64),
+		livingEvals: make(map[int64]*storage.CollectionEvaluation),
 	}
 	for _, step := range []func() error{
 		e.writeMetadata,
@@ -250,6 +254,7 @@ func writeExport(ctx context.Context, src storage.Storage, scope, path string, o
 		e.writeLessons,
 		e.writeTournaments,
 		e.writeMatches,
+		e.writeLivingQueries,
 		e.writeMatchOrigins,
 		// No Duel in suspense: its seed is every roll to come, and it leaves
 		// by no route before the end (ADR-0072 rule 11). A finished Duel
@@ -330,7 +335,11 @@ type exporter struct {
 	collMap  map[int64]int64
 	tourMap  map[int64]int64
 	matchMap map[int64]int64
-	tables   *mets.Carrier // the tables the exported analyses cite, built on first use
+	// living holds the LIVING collections written without their query, and
+	// livingEvals each one's evaluation at the source, read once.
+	living      []livingCollection
+	livingEvals map[int64]*storage.CollectionEvaluation
+	tables      *mets.Carrier // the tables the exported analyses cite, built on first use
 
 	report ExportReport
 }
@@ -382,15 +391,6 @@ func (e *exporter) writeMetadata() error {
 		}
 	}
 	return nil
-}
-
-// wholeScope reports whether the export is the whole of the source scope —
-// every position, collection, match and tournament — as WholeTenant and the
-// GUI's "export everything" ask for. Families that no Selection flag can
-// address travel only in that case.
-func (e *exporter) wholeScope() bool {
-	sel := e.opts.Selection
-	return sel.AllPositions && sel.AllCollections && sel.AllMatches && sel.AllTournaments
 }
 
 // resolveSelection turns the Selection into ordered id lists, following the
@@ -480,15 +480,14 @@ func (e *exporter) resolveSelection() error {
 	if sel.CollectionPositions {
 		reach = e.collectionIDs
 	}
-	{
-		for _, cid := range reach {
-			for p, err := range e.src.Collections().Positions(e.ctx, e.scope, cid, storage.ListOpts{}) {
-				if err != nil {
-					return fmt.Errorf("ingest: list positions of collection %d: %w", cid, err)
-				}
-				if !explicit[p.ID] {
-					extra[p.ID] = true
-				}
+	for _, cid := range reach {
+		ids, err := e.collectionMembers(cid)
+		if err != nil {
+			return err
+		}
+		for _, pid := range ids {
+			if !explicit[pid] {
+				extra[pid] = true
 			}
 		}
 	}
@@ -755,8 +754,48 @@ func foldPlayedMoves(a *domain.PositionAnalysis, moves []*domain.Move) {
 	sort.Strings(a.PlayedCubeActions)
 }
 
+// collectionMembers lists the positions a collection shows: the rows of a
+// hand-made list, or what the query of a LIVING one selects now, so that the
+// recipient's evaluation of the copied query finds them in the file.
+func (e *exporter) collectionMembers(cid int64) ([]int64, error) {
+	c, err := e.src.Collections().Get(e.ctx, e.scope, cid)
+	if err != nil {
+		return nil, fmt.Errorf("ingest: read collection %d: %w", cid, err)
+	}
+	if strings.TrimSpace(c.FilterQuery) != "" {
+		return e.evaluateLiving(cid).PositionIDs, nil
+	}
+	ids, err := e.src.Collections().PositionIDs(e.ctx, e.scope, cid, storage.ListOpts{})
+	if err != nil {
+		return nil, fmt.Errorf("ingest: list positions of collection %d: %w", cid, err)
+	}
+	return ids, nil
+}
+
+// evaluateLiving evaluates a LIVING collection once per export, under the
+// ceiling every evaluation obeys (storage.LivingCollectionCap). A query the
+// source cannot evaluate selects nothing here, as it opens nothing there.
+func (e *exporter) evaluateLiving(cid int64) *storage.CollectionEvaluation {
+	if ev, ok := e.livingEvals[cid]; ok {
+		return ev
+	}
+	ev, err := storage.EvaluateCollection(e.ctx, e.src, e.scope, cid, 0)
+	if err != nil {
+		e.skip("evaluating living collection", "collectionID", cid, "err", err)
+		ev = &storage.CollectionEvaluation{CollectionID: cid}
+	}
+	if ev.Truncated {
+		slog.Warn("export: living collection holds more positions than an evaluation reads; the first ones travel",
+			"collectionID", cid, "total", ev.Total, "cap", ev.Cap)
+	}
+	e.livingEvals[cid] = ev
+	return ev
+}
+
 // writeCollections copies the selected collections and, for each, the
-// memberships whose position was exported, in the collection's order.
+// memberships whose position was exported, in the collection's order. A
+// LIVING collection is settled later, by writeLivingQueries: its query may
+// name matches and tournaments, which are numbered after it.
 func (e *exporter) writeCollections() error {
 	for _, id := range e.collectionIDs {
 		c, err := e.src.Collections().Get(e.ctx, e.scope, id)
@@ -779,27 +818,129 @@ func (e *exporter) writeCollections() error {
 		e.collMap[id] = newID
 		e.report.Collections++
 
-		var members []int64
-		for p, err := range e.src.Collections().Positions(e.ctx, e.scope, id, storage.ListOpts{}) {
-			if err != nil {
-				return fmt.Errorf("ingest: list positions of collection %d: %w", id, err)
-			}
-			if dstID, ok := e.posMap[p.ID]; ok {
-				members = append(members, dstID)
-			}
+		hand, err := e.src.Collections().PositionIDs(e.ctx, e.scope, id, storage.ListOpts{})
+		if err != nil {
+			return fmt.Errorf("ingest: list positions of collection %d: %w", id, err)
 		}
-		for i, pid := range members {
-			if _, err := e.tx.ExecContext(e.ctx,
-				`INSERT OR IGNORE INTO collection_position (collection_id, position_id, sort_order) VALUES (?, ?, ?)`,
-				newID, pid, i); err != nil {
-				e.skip("inserting collection membership", "collectionID", id, "err", err)
-			}
+		if query := strings.TrimSpace(c.FilterQuery); query != "" {
+			e.living = append(e.living, livingCollection{src: id, dst: newID, query: query, hand: hand})
+			continue
 		}
+		e.writeMembers(id, newID, hand)
 	}
 	if len(e.collectionIDs) > 0 {
 		slog.Info("exported collections", "collections", e.report.Collections)
 	}
 	return nil
+}
+
+// livingCollection is a LIVING collection written without its query yet.
+type livingCollection struct {
+	src, dst int64
+	query    string
+	hand     []int64 // the rows it kept from before it was living
+}
+
+// writeMembers writes the memberships of an exported collection, in the
+// order given, for the positions the file holds.
+func (e *exporter) writeMembers(srcID, dstID int64, positions []int64) {
+	order := 0
+	for _, pid := range positions {
+		to, ok := e.posMap[pid]
+		if !ok {
+			continue
+		}
+		if _, err := e.tx.ExecContext(e.ctx,
+			`INSERT OR IGNORE INTO collection_position (collection_id, position_id, sort_order) VALUES (?, ?, ?)`,
+			dstID, to, order); err != nil {
+			e.skip("inserting collection membership", "collectionID", srcID, "err", err)
+		}
+		order++
+	}
+}
+
+// writeLivingQueries settles each LIVING collection once positions, matches
+// and tournaments have their numbers in the file. A query naming none of them
+// travels as written; one naming them travels rewritten onto the file's
+// numbers. When one of those has no number in the file, the query cannot say
+// in the file what it said at the source — dropping the token would widen it,
+// keeping it would aim at another row — so the collection leaves FROZEN: what
+// its query selects now, as an ordinary list.
+func (e *exporter) writeLivingQueries() error {
+	for _, lc := range e.living {
+		query, ok := carriedLivingQuery(lc.query, e.posMap, e.matchMap, e.tourMap)
+		if !ok {
+			slog.Warn("export: living collection names rows the file does not hold; it leaves frozen",
+				"collectionID", lc.src)
+			e.writeMembers(lc.src, lc.dst, e.evaluateLiving(lc.src).PositionIDs)
+			continue
+		}
+		if _, err := e.tx.ExecContext(e.ctx,
+			`UPDATE collection SET filter_query = ? WHERE id = ?`, query, lc.dst); err != nil {
+			e.skip("writing living collection query", "collectionID", lc.src, "err", err)
+			continue
+		}
+		e.writeMembers(lc.src, lc.dst, lc.hand)
+	}
+	return nil
+}
+
+// carriedLivingQuery rewrites a living query's row ids — `like<n>`, `id<n>`,
+// `ma<n>`, `tn<n>` — from the source's numbers to the file's. ok is false
+// when the rewritten query could not select in the file what it selects at
+// the source, or when the query also holds a token the parser does not read:
+// rewriting goes through Parse and Format, which would drop it.
+func carriedLivingQuery(query string, positions, matches, tournaments map[int64]int64) (string, bool) {
+	f, diags := searchquery.Parse(query)
+	if f.LikeTargetID == 0 && f.PositionIDsFilter == "" && f.MatchIDsFilter == "" && f.TournamentIDsFilter == "" {
+		return query, true
+	}
+	for _, d := range diags {
+		if d.Kind == searchquery.DiagUnknown {
+			return "", false
+		}
+	}
+	if f.LikeTargetID != 0 {
+		to, ok := positions[f.LikeTargetID]
+		if !ok {
+			return "", false
+		}
+		f.LikeTargetID = to
+	}
+	// A position the file does not hold is selected by nothing in the file,
+	// so its id drops from an `id` list without changing what the list
+	// selects there — as long as one id remains, for an empty list selects
+	// everything. A match or a tournament left behind may still have
+	// positions in the file, which its id selected at the source: it freezes.
+	for _, field := range []struct {
+		list     *string
+		m        map[int64]int64
+		dropMiss bool
+	}{{&f.PositionIDsFilter, positions, true}, {&f.MatchIDsFilter, matches, false}, {&f.TournamentIDsFilter, tournaments, false}} {
+		if *field.list == "" {
+			continue
+		}
+		ids, err := searchfilter.ParseFilterIDList(*field.list)
+		if err != nil {
+			return "", false
+		}
+		// An explicit list: a range of source ids is no range of file ids.
+		out := make([]string, 0, len(ids))
+		for _, id := range ids {
+			to, ok := field.m[id]
+			if !ok && !field.dropMiss {
+				return "", false
+			}
+			if ok {
+				out = append(out, strconv.FormatInt(to, 10))
+			}
+		}
+		if len(out) == 0 {
+			return "", false
+		}
+		*field.list = strings.Join(out, ";")
+	}
+	return searchquery.Format(f), true
 }
 
 // resolveLessons lists the selected lessons and, under LessonContents, adds
@@ -1086,15 +1227,17 @@ func (e *exporter) writeFilters() error {
 	return nil
 }
 
-// writeTranscriptions copies the drafts (ADR-0045) — but only when the export
-// is the WHOLE scope: no Selection flag reaches a draft, so a filtered export
-// cannot tell which ones belong. The link to the produced match goes through
-// matchMap; a draft whose match did not export keeps its typing and loses the
-// link.
+// writeTranscriptions copies the drafts (ADR-0045) under opts.Transcriptions:
+// a draft travels with the match it produced, the link going through
+// matchMap. A draft that belongs to no exported match — never saved, or its
+// match left behind — travels only when every match and every position do,
+// and then without a link: a narrower export cannot tell whose it is.
 func (e *exporter) writeTranscriptions() error {
-	if !e.wholeScope() {
+	if !e.opts.Transcriptions {
 		return nil
 	}
+	sel := e.opts.Selection
+	unattached := sel.AllMatches && sel.AllPositions
 	var drafts []*storage.Transcription
 	for tr, err := range e.src.Transcriptions().List(e.ctx, e.scope) {
 		if err != nil {
@@ -1104,8 +1247,12 @@ func (e *exporter) writeTranscriptions() error {
 		drafts = append(drafts, &d)
 	}
 	for _, d := range drafts {
+		match, exported := e.matchMap[d.MatchID]
+		if !exported && !unattached {
+			continue
+		}
 		d.ID = 0
-		d.MatchID = e.matchMap[d.MatchID] // 0 when the match did not export
+		d.MatchID = match // 0 when the match did not export: the typing travels, the link does not
 		doc, err := carriedTranscriptDocument(d.Document)
 		if err != nil {
 			e.skip("reading transcription", "label", d.Label, "err", err)

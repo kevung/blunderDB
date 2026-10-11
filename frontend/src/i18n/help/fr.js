@@ -292,6 +292,7 @@ export default {
 <p>Une collection peut être <strong>vivante</strong> : sa composition n'est plus une liste faite à la main mais le résultat d'une <strong>recherche</strong>, réévalué chaque fois qu'on l'ouvre. Le bouton ◇ en tête de la collection la rend vivante avec la dernière recherche lancée ; ◈ signale qu'elle l'est déjà, et le même bouton la rend à sa liste. Rien n'est détruit en la rendant vivante : les positions qu'elle contenait sont toujours là quand on revient en arrière.</p>
 <p>Le bouton ❄, visible sur une collection vivante, la <strong>fige</strong> : les positions que la recherche sélectionne à cet instant deviennent la composition d'une collection ordinaire, dans l'ordre de la recherche, et la requête s'efface. Les positions qu'elle contenait avant d'être vivante sont remplacées.</p>
 <p>Une collection vivante dont la requête porte un jeton que cette version ne connaît plus <strong>refuse de s'ouvrir</strong> en le disant, plutôt que de renvoyer toute la base. C'est la seule panne qu'un filtre enregistré ne doit pas avoir : s'élargir en silence.</p>
+<p>Une collection vivante <strong>reste vivante dans un export</strong> de la base : sa requête voyage avec elle et se réévalue, chez le destinataire, sur les positions du fichier. Quand l'export emporte les positions des collections, il emporte celles que la requête sélectionne au moment de l'export, jusqu'au plafond de 5 000 positions. Une requête qui désigne des positions, des matchs ou des tournois par leur numéro est réécrite sur les numéros du fichier ; si l'un d'eux reste hors du fichier, la collection part <strong>figée</strong>, avec les positions que la requête sélectionne au moment de l'export.</p>
 <p>Un paquet de répétition espacée fondé sur une collection vivante rejoue sa requête à chaque ouverture de séance : les positions que la recherche sélectionne depuis la dernière fois y entrent, et les cartes déjà là gardent leur planification. Une évaluation est bornée par un <strong>plafond</strong> de 5 000 positions ; quand la requête en sélectionne davantage, seules les premières, dans l'ordre de la recherche, alimentent le paquet, et la barre d'état le dit avec le nombre réel de positions sélectionnées.</p>
 <p>Le bouton <strong>Proposer…</strong> de l'en-tête ouvre les <strong>positions de référence</strong> : une courte liste de positions à étudier, choisie parmi vos erreurs pour que chacune en résume beaucoup. Étudier les dix pires erreurs donne souvent dix variantes d'un même problème, ou des positions singulières qui n'apprennent rien sur les autres ; une position de référence est au centre de plusieurs de vos erreurs, de structure voisine, et sa leçon sert à toutes.</p>
 <ul>
@@ -642,6 +643,7 @@ export default {
 <li><strong>PR videau</strong> — décisions de videau seulement.</li>
 </ul>
 <p>Cliquer sur une carte charge dans le panneau d'analyse les positions du sous-ensemble correspondant (drill-down). Une quatrième carte, <strong>Perte MWC (éq. 7 pts)</strong>, donne cette perte quel que soit le choix du bouton PR / MWC, avec son intervalle ; elle ne charge rien.</p>
+<p>Sous les cartes, la ligne des totaux compte les tournois, les matchs et les décisions du filtre. Le nombre de tournois ouvre ces tournois dans le panneau Tournois : un tournoi seul s'ouvre directement ; plusieurs restreignent la liste, qui porte alors le bouton « N tournois ouverts depuis les Stats × » : il rend la liste complète.</p>
 <div class="admonition note">
 <p>Le nombre total de décisions est affiché en bas de chaque carte au survol.</p>
 </div>
@@ -795,7 +797,7 @@ export default {
 </tr>
 <tr>
 <td>Blunders</td>
-<td>Nombre d'erreurs atteignant le seuil de blunder de la bibliothèque (0,100 EMG par défaut).</td>
+<td>Nombre d'erreurs atteignant le seuil de blunder de la bibliothèque (0,100 EMG par défaut). Cliquer sur ce nombre charge ces positions dans le panneau d'analyse.</td>
 </tr>
 <tr>
 <td>Chance</td>
@@ -1055,10 +1057,11 @@ export default {
 </div>
 <h4>Marquer une base de son origine</h4>
 <p>La fenêtre d'export tient en un seul écran : le formulaire, puis une progression qui se superpose à lui le temps de l'écriture. Elle se ferme d'elle-même une fois terminée, et le résultat s'affiche dans la barre d'état.</p>
-<p>Trois points méritent l'attention :</p>
+<p>Cinq points méritent l'attention :</p>
 <ul>
 <li><strong>L'export porte sur les positions actuellement affichées</strong>, pas sur la base entière. Après une recherche, seuls les résultats partent — la fenêtre le rappelle en tête — et la liste des matchs ne propose que ceux où ces positions ont été jouées ; chaque match coché part avec toutes ses positions.</li>
-<li><strong>Quand la liste affichée est la bibliothèque</strong>, l'export est le même que celui du serveur et de <code>export --type database</code> : toutes les cases sont cochées d'emblée, et les paquets Anki (sans historique de révision) et les transcriptions en cours partent avec le reste. Une transcription liée à une vidéo locale n'emporte que le nom du fichier, sans son dossier ; un lien web part tel quel.</li>
+<li><strong>Quand la liste affichée est la bibliothèque</strong>, l'export est le même que celui du serveur et de <code>export --type database</code> : toutes les cases sont cochées d'emblée, et les paquets Anki (sans historique de révision) et les transcriptions en cours partent avec le reste.</li>
+<li><strong>Un match part avec son brouillon de transcription</strong>, quelle que soit la liste affichée : la case <em>Avec leurs brouillons de transcription</em>, sous celle des matchs, est cochée d'emblée. Un brouillon qui n'a pas encore produit de match ne part qu'avec la bibliothèque entière. Une transcription liée à une vidéo locale n'emporte que le nom du fichier, sans son dossier ; un lien web part tel quel.</li>
 <li><strong>Une collection dont toutes les positions ne sont pas dans la sélection arrive tronquée.</strong> La liste affiche donc, pour chaque collection, la part couverte (« 12/40 ») et la signale en rouge lorsqu'elle est partielle.</li>
 <li><strong>Les tournois ne peuvent être exportés qu'avec les matchs</strong> : sans eux, le lien tournoi–match n'existe pas et le tournoi arriverait vide. La case est désactivée tant que « inclure les matchs » ne l'est pas.</li>
 </ul>

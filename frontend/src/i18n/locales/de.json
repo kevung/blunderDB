@@ -818,6 +818,8 @@
         "filterPlaceholder": "Filter: Name, Ort, Datum…",
         "filterAria": "Turniere filtern",
         "noTournamentsFiltered": "Kein passendes Turnier.",
+        "idsFilter": "{n} Turniere aus der Statistik geöffnet",
+        "idsFilterClear": "Alle Turniere anzeigen",
         "gone": "Dieses Turnier existiert nicht mehr."
     },
     "anki": {
@@ -1240,6 +1242,7 @@
         "includeComments": "Kommentare einbeziehen",
         "includeFilterLibrary": "Meine gespeicherten Filter",
         "includeMatches": "Matches einbeziehen ({count})",
+        "includeTranscriptions": "Mit ihren Transkriptionsentwürfen",
         "includePlayedMoves": "Gespielte Züge einbeziehen",
         "includeTournaments": "Turniere einbeziehen ({count})",
         "mayTakeMoments": "Dies kann einen Moment dauern.",
