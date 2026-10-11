@@ -4,6 +4,7 @@
     // avec son intervalle ; un sens n'est nommé que si l'intervalle exclut zéro.
     import { biasesStore, studyLoopLoadingStore, studyLoopErrorStore } from '../../stores/statsStore.js';
     import { t } from '../../i18n/index.js';
+    import PanelTable from '../panels/PanelTable.svelte';
 
     let biases = $derived($biasesStore);
     let rows = $derived(
@@ -33,6 +34,51 @@
     function score(c) {
         return c.Money ? $t('stats.biasesMoney') : `${c.MoverAway}-${c.OpponentAway}`;
     }
+
+    /**
+     * The figures every bias table shares, read from a row's bias by `of`.
+     * @param {(row: any) => any} of
+     * @param {(row: any) => string} verdictOf
+     */
+    function figureColumns(of, verdictOf) {
+        const num = /** @type {const} */ ('number');
+        return [
+            { key: 'decisions', label: $t('stats.biasesDecisions'), sortable: true, defaultDir: 'desc', align: 'right', filter: num, value: (/** @type {any} */ r) => of(r).Decisions },
+            { key: 'plus', sortable: true, defaultDir: 'desc', align: 'right', filter: num, value: (/** @type {any} */ r) => of(r).Plus },
+            { key: 'minus', sortable: true, defaultDir: 'desc', align: 'right', filter: num, value: (/** @type {any} */ r) => of(r).Minus },
+            { key: 'bias', label: $t('stats.biasesValue'), sortable: true, align: 'right', filter: num, value: (/** @type {any} */ r) => 100 * of(r).Bias },
+            { key: 'interval', label: $t('stats.planInterval'), align: 'right' },
+            { key: 'verdict', label: $t('stats.effectVerdict'), sortable: true, filter: /** @type {const} */ ('text'), value: verdictOf }
+        ];
+    }
+
+    const axisColumns = $derived.by(() => {
+        const [decisions, plus, minus, ...rest] = figureColumns(
+            (r) => r.b,
+            (r) => verdict(r.id, r.b)
+        );
+        return [
+            { key: 'bias', label: $t('stats.biasesBias'), sortable: true, filter: /** @type {const} */ ('text'), value: (/** @type {any} */ r) => $t(`stats.biases_${r.id}`) },
+            decisions,
+            { ...plus, label: $t('stats.biasesTooMuch') },
+            { ...minus, label: $t('stats.biasesTooLittle') },
+            ...rest.map((c) => (c.key === 'bias' ? { ...c, key: 'value' } : c))
+        ];
+    });
+
+    const scoreColumns = $derived.by(() => {
+        const [decisions, plus, minus, ...rest] = figureColumns(
+            (c) => c,
+            (c) => verdict('doubles', c)
+        );
+        return [
+            { key: 'score', label: $t('stats.biasesScore'), sortable: true, filter: /** @type {const} */ ('text'), value: score },
+            decisions,
+            { ...plus, label: $t('stats.biases_doubles_plus') },
+            { ...minus, label: $t('stats.biases_doubles_minus') },
+            ...rest
+        ];
+    });
 </script>
 
 <section class="chart-section biases" data-testid="biases">
@@ -42,32 +88,17 @@
     {:else if $studyLoopErrorStore}
         <p class="empty-subsection">{$studyLoopErrorStore}</p>
     {:else if biases}
-        <table>
-            <thead>
-                <tr>
-                    <th>{$t('stats.biasesBias')}</th>
-                    <th class="num">{$t('stats.biasesDecisions')}</th>
-                    <th class="num">{$t('stats.biasesTooMuch')}</th>
-                    <th class="num">{$t('stats.biasesTooLittle')}</th>
-                    <th class="num">{$t('stats.biasesValue')}</th>
-                    <th class="num">{$t('stats.planInterval')}</th>
-                    <th>{$t('stats.effectVerdict')}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {#each rows as r (r.id)}
-                    <tr class="family-row" data-testid="bias-row">
-                        <td>{$t(`stats.biases_${r.id}`)}</td>
-                        <td class="num">{r.b.Decisions}</td>
-                        <td class="num" title={$t(`stats.biases_${r.id}_plus`)}>{r.b.Plus} <span class="count">({r.b.PlusMP} mp)</span></td>
-                        <td class="num" title={$t(`stats.biases_${r.id}_minus`)}>{r.b.Minus} <span class="count">({r.b.MinusMP} mp)</span></td>
-                        <td class="num"><b>{pp(r.b.Bias)}</b></td>
-                        <td class="num interval">[{pp(r.b.Low)}, {pp(r.b.High)}]</td>
-                        <td class="verdict {r.b.Verdict}">{verdict(r.id, r.b)}</td>
-                    </tr>
-                {/each}
-            </tbody>
-        </table>
+        <PanelTable viewId="stats.biases.axes" {rows} columns={axisColumns} rowAttrs={() => ({ 'data-testid': 'bias-row' })}>
+            {#snippet cells(/** @type {any} */ r)}
+                <td>{$t(`stats.biases_${r.id}`)}</td>
+                <td class="align-right">{r.b.Decisions}</td>
+                <td class="align-right" title={$t(`stats.biases_${r.id}_plus`)}>{r.b.Plus} <span class="count">({r.b.PlusMP} mp)</span></td>
+                <td class="align-right" title={$t(`stats.biases_${r.id}_minus`)}>{r.b.Minus} <span class="count">({r.b.MinusMP} mp)</span></td>
+                <td class="align-right"><b>{pp(r.b.Bias)}</b></td>
+                <td class="align-right interval">[{pp(r.b.Low)}, {pp(r.b.High)}]</td>
+                <td class="verdict {r.b.Verdict}">{verdict(r.id, r.b)}</td>
+            {/snippet}
+        </PanelTable>
         {#if biases.BlotsUnread > 0}
             <p class="aside" data-testid="bias-unread">
                 {$t('stats.biasesUnread', {
@@ -79,32 +110,23 @@
         {/if}
         {#if scoreCells.length > 0}
             <h4 class="sub-title">{$t('stats.biasesByScore')}</h4>
-            <table>
-                <thead>
-                    <tr>
-                        <th>{$t('stats.biasesScore')}</th>
-                        <th class="num">{$t('stats.biasesDecisions')}</th>
-                        <th class="num">{$t('stats.biases_doubles_plus')}</th>
-                        <th class="num">{$t('stats.biases_doubles_minus')}</th>
-                        <th class="num">{$t('stats.biasesValue')}</th>
-                        <th class="num">{$t('stats.planInterval')}</th>
-                        <th>{$t('stats.effectVerdict')}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {#each scoreCells as c ((c.Money ? 'money' : '') + c.MoverAway + '-' + c.OpponentAway)}
-                        <tr class="family-row" data-testid="bias-score">
-                            <td>{score(c)}</td>
-                            <td class="num">{c.Decisions}</td>
-                            <td class="num">{c.Plus}</td>
-                            <td class="num">{c.Minus}</td>
-                            <td class="num"><b>{pp(c.Bias)}</b></td>
-                            <td class="num interval">[{pp(c.Low)}, {pp(c.High)}]</td>
-                            <td class="verdict {c.Verdict}">{verdict('doubles', c)}</td>
-                        </tr>
-                    {/each}
-                </tbody>
-            </table>
+            <PanelTable
+                viewId="stats.biases.scores"
+                rows={scoreCells}
+                rowKey={(c) => (c.Money ? 'money' : '') + c.MoverAway + '-' + c.OpponentAway}
+                columns={scoreColumns}
+                rowAttrs={() => ({ 'data-testid': 'bias-score' })}
+            >
+                {#snippet cells(/** @type {any} */ c)}
+                    <td>{score(c)}</td>
+                    <td class="align-right">{c.Decisions}</td>
+                    <td class="align-right">{c.Plus}</td>
+                    <td class="align-right">{c.Minus}</td>
+                    <td class="align-right"><b>{pp(c.Bias)}</b></td>
+                    <td class="align-right interval">[{pp(c.Low)}, {pp(c.High)}]</td>
+                    <td class="verdict {c.Verdict}">{verdict('doubles', c)}</td>
+                {/snippet}
+            </PanelTable>
         {:else}
             <p class="aside">{$t('stats.biasesByScoreEmpty', { n: biases.MinDecisions })}</p>
         {/if}
@@ -147,30 +169,9 @@
         font-style: italic;
     }
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    th,
-    td {
-        text-align: left;
-        padding: 3px 6px;
-        border-bottom: 1px solid var(--color-border);
-    }
-
-    .num {
-        text-align: right;
-        font-variant-numeric: tabular-nums;
-    }
-
     .interval {
         color: var(--color-text-muted);
         white-space: nowrap;
-    }
-
-    .family-row:hover {
-        background: var(--color-surface-alt);
     }
 
     .count {

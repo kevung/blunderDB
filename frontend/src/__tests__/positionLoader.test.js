@@ -218,7 +218,7 @@ describe('openMatchInPanel', () => {
 });
 
 describe('openStatsFor', () => {
-    test('restores the saved filter first, then puts the player on it and opens Stats', async () => {
+    test('restores the saved filter first, then puts the player on it with no tournament or date, and opens Stats', async () => {
         /** @type {() => void} */
         let restored = () => {};
         vi.mocked(initStatsFilter).mockImplementation(() => new Promise((r) => (restored = () => r(undefined))));
@@ -229,15 +229,15 @@ describe('openStatsFor', () => {
         expect(patchStatsFilter).not.toHaveBeenCalled();
         restored();
         await opening;
-        expect(patchStatsFilter).toHaveBeenCalledWith({ playerName: 'Alice' });
+        expect(patchStatsFilter).toHaveBeenCalledWith({ playerName: 'Alice', tournamentIDs: [], dateFrom: '', dateTo: '' });
         expect(get(statsTabStore)).toBe('dashboard');
         expect(get(activeTabStore)).toBe('stats');
     });
 
-    test('a tournament narrows the filter to it, on the asked tab', async () => {
+    test('a tournament narrows the filter to it, clears the dates and keeps the player, on the asked tab', async () => {
         vi.mocked(initStatsFilter).mockResolvedValue(undefined);
         await openStatsFor({ tournamentIDs: [4], tab: 'players' });
-        expect(patchStatsFilter).toHaveBeenLastCalledWith({ tournamentIDs: [4] });
+        expect(patchStatsFilter).toHaveBeenLastCalledWith({ tournamentIDs: [4], dateFrom: '', dateTo: '' });
         expect(get(statsTabStore)).toBe('players');
     });
 });

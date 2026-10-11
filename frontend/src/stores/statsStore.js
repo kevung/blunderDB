@@ -51,8 +51,8 @@ export const statsTabStore = writable('dashboard');
 /** @type {Promise<void> | null} */
 let _initPromise = null;
 let _initialised = false;
-/** A patch landed while the saved filter was being read: the user's choice wins over the restore. */
-let _patchedDuringInit = false;
+/** What was patched while the saved filter was being read: it is applied over the restored one. */
+let _patchDuringInit = {};
 /** @type {ReturnType<typeof setTimeout> | undefined} */
 let _saveTimer;
 
@@ -72,22 +72,34 @@ function fromPersisted(/** @type {any} */ p) {
 
 function scheduleSave() {
     clearTimeout(_saveTimer);
-    _saveTimer = setTimeout(() => {
-        const f = get(statsFilterStore);
-        SaveStatsFilter(
-            /** @type {any} */ ({
-                player_name: f.playerName,
-                tournament_ids: f.tournamentIDs,
-                date_from: f.dateFrom,
-                date_to: f.dateTo,
-                decision_type: f.decisionType === -1 ? null : f.decisionType,
-                match_length: f.matchLength,
-                metric: get(statsMetricStore),
-                analysis_engine: f.analysisEngine,
-                min_analysis_depth: f.minAnalysisDepth
-            })
-        ).catch(console.error); // eslint-disable-line no-console
-    }, 500);
+    _saveTimer = setTimeout(saveNow, 500);
+}
+
+/** A save still waiting on its pause is written at once: closing the window must not lose it. */
+export function flushStatsFilterSave() {
+    if (_saveTimer === undefined) return;
+    clearTimeout(_saveTimer);
+    saveNow();
+}
+
+if (typeof window !== 'undefined') window.addEventListener('beforeunload', flushStatsFilterSave);
+
+function saveNow() {
+    _saveTimer = undefined;
+    const f = get(statsFilterStore);
+    SaveStatsFilter(
+        /** @type {any} */ ({
+            player_name: f.playerName,
+            tournament_ids: f.tournamentIDs,
+            date_from: f.dateFrom,
+            date_to: f.dateTo,
+            decision_type: f.decisionType === -1 ? null : f.decisionType,
+            match_length: f.matchLength,
+            metric: get(statsMetricStore),
+            analysis_engine: f.analysisEngine,
+            min_analysis_depth: f.minAnalysisDepth
+        })
+    ).catch(console.error); // eslint-disable-line no-console
 }
 
 /**
@@ -99,9 +111,7 @@ export function initStatsFilter() {
         _initPromise = (async () => {
             try {
                 const persisted = await GetStatsFilter();
-                if (persisted && !_patchedDuringInit) {
-                    statsFilterStore.set(fromPersisted(persisted));
-                }
+                if (persisted) statsFilterStore.set({ ...fromPersisted(persisted), ..._patchDuringInit });
                 if (persisted && METRICS.includes(persisted.metric)) statsMetricStore.set(persisted.metric);
             } catch (err) {
                 console.error('initStatsFilter:', err); // eslint-disable-line no-console
@@ -127,7 +137,7 @@ statsMetricStore.subscribe(() => {
 export function patchStatsFilter(patch) {
     const next = { ...get(statsFilterStore), ...patch };
     if (next.dateFrom && next.dateTo && next.dateFrom > next.dateTo) return false;
-    if (!_initialised) _patchedDuringInit = true;
+    if (!_initialised) _patchDuringInit = { ..._patchDuringInit, ...patch };
     statsFilterStore.set(next);
     scheduleSave();
     return true;
@@ -152,9 +162,10 @@ export function dropMissingPlayer(names) {
 /** Test hook: forget the restore and any pending save, as at app start. */
 export function _resetStatsFilterForTests() {
     clearTimeout(_saveTimer);
+    _saveTimer = undefined;
     _initPromise = null;
     _initialised = false;
-    _patchedDuringInit = false;
+    _patchDuringInit = {};
     statsFilterStore.set({ ...defaultStatsFilter });
     statsMetricStore.set('pr');
     statsTabStore.set('dashboard');
@@ -216,7 +227,8 @@ let _playerSeq = 0;
 
 /**
  * Fetch the players table. The cache key keeps only the filter parts the backend honours (dates,
- * tournaments, match lengths): picking a player elsewhere must not refetch an identical table.
+ * tournaments, match lengths, provenance): picking a player elsewhere must not refetch an
+ * identical table.
  *
  * @param {any} filter          - StatsFilter object
  * @param {string} invalidationKey - value of statsInvalidationKeyStore
@@ -227,7 +239,9 @@ export async function refreshPlayerTable(filter, invalidationKey) {
             tournamentIDs: filter.tournamentIDs,
             dateFrom: filter.dateFrom,
             dateTo: filter.dateTo,
-            matchLength: filter.matchLength
+            matchLength: filter.matchLength,
+            analysisEngine: filter.analysisEngine,
+            minAnalysisDepth: filter.minAnalysisDepth
         }) +
         '||' +
         invalidationKey;

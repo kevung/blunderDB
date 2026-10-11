@@ -1,6 +1,6 @@
 /**
  * A Corpus row opens what it sums up: a match or a face-à-face opens matches in the Match panel,
- * a player's ranking line opens his matches, a window opens its decisions' positions. A count
+ * a window opens its decisions' positions. A count
  * inside a row opens the other half, and only that.
  */
 import { must } from './helpers/must.js';
@@ -41,7 +41,7 @@ import StatsCorpusTab from '../components/stats/StatsCorpusTab.svelte';
 const filter = { playerName: '', tournamentIDs: [], dateFrom: '', dateTo: '', decisionType: -1, matchLength: [] };
 const ALL = { Kind: 'all', OnlyWithError: false };
 
-/** Render the tab and compute one section (1 h2h, 2 windows, 3 ranking). */
+/** Render the tab and compute one section (1 h2h, 2 windows). */
 async function computed(/** @type {number} */ section, props = { filter }) {
     const r = render(StatsCorpusTab, { props });
     if (section === 1) {
@@ -103,22 +103,5 @@ describe('Corpus › windows', () => {
         expect(StatsMatchIDs).toHaveBeenCalledWith({ ...filter, dateFrom: '2024-12-01', dateTo: '2025-02-28' });
         await waitFor(() => expect(openMatchListInPanel).toHaveBeenCalledWith([3, 4, 5]));
         expect(loadPositionsFromStatsSelection).not.toHaveBeenCalled();
-    });
-});
-
-describe('Corpus › ranking', () => {
-    test('a player row opens his matches under the filter', async () => {
-        const { findByTestId } = await computed(3);
-        await fireEvent.click(await findByTestId('corpus-ranking-row'));
-        expect(StatsMatchIDs).toHaveBeenCalledWith({ ...filter, playerName: 'Alice' });
-        await waitFor(() => expect(openMatchListInPanel).toHaveBeenCalledWith([3, 4, 5]));
-    });
-
-    test('his decisions count opens his positions, not his matches', async () => {
-        const { findByTestId } = await computed(3);
-        const row = await findByTestId('corpus-ranking-row');
-        await fireEvent.click(/** @type {HTMLElement} */ (row.querySelector('.count-link')));
-        expect(loadPositionsFromStatsSelection).toHaveBeenCalledWith({ ...filter, playerName: 'Alice' }, ALL);
-        expect(StatsMatchIDs).not.toHaveBeenCalled();
     });
 });

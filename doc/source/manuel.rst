@@ -3008,8 +3008,10 @@ perspectives.
 Le filtre est **un seul** pour tous les onglets du panneau et il est conservé
 d'une session à l'autre. Il se règle aussi depuis les autres panneaux : le nom
 d'un joueur dans l'en-tête d'un match ou dans la barre au-dessus du plateau
-ouvre ses statistiques, et le bouton **Stats** de l'en-tête d'un tournoi ouvre
-celles de ce tournoi.
+ouvre toutes ses statistiques (tournois et dates sont vidés), et le bouton
+**Stats** de l'en-tête d'un tournoi ouvre celles de ce tournoi entier (dates
+vidées, joueur conservé). Une date de fin antérieure à la date de début est
+refusée : le champ reprend la date appliquée.
 
 Filtres disponibles
 ^^^^^^^^^^^^^^^^^^^
@@ -3632,15 +3634,27 @@ Colonnes, dans l'ordre :
 Utilisation :
 
 * **Trier** — cliquez sur un en-tête de colonne. Le tableau s'ouvre trié par PR
-  croissant, meilleur joueur en tête. Les joueurs dont rien n'a été mesuré
+  croissant, meilleur joueur en tête, et retient d'une session à l'autre le
+  dernier tri choisi. Les joueurs dont rien n'a été mesuré
   restent en bas quel que soit le sens du tri : un zéro faute de données n'est
   pas une performance parfaite.
+* **Filtrer par colonne** — la ligne de champs sous les en-têtes filtre chaque
+  colonne : un morceau de nom pour le texte, une borne pour les nombres
+  (``>=500``, ``>500``, ``<2.5``, ``<=2``), un intervalle (``3-7``) ou une
+  valeur exacte (``5``). Un champ illisible est encadré de rouge et ne filtre
+  rien ; une valeur jamais mesurée ne passe aucune borne. Les filtres de colonne
+  durent le temps de la session. Le **classement** des joueurs se lit ainsi :
+  tri par PR, colonne *Décisions* filtrée par ``>=500``. Tous les tableaux du
+  panneau Stats — ventilations, corpus, erreurs récurrentes, temps de
+  réflexion, entraînement, biais, effet de l'étude — se trient et se filtrent
+  de la même façon.
 * **Ouvrir le détail d'un joueur** — cliquez sur une ligne. Le joueur est
   sélectionné dans la barre de filtres et l'affichage bascule sur l'onglet
   Tableau de bord.
-* **Ouvrir ses matchs ou ses décisions** — le nombre de matchs et le bilan V–D
-  ouvrent ses matchs dans le panneau Matchs, le nombre de décisions ouvre leurs
-  positions.
+* **Ouvrir ses décisions** — le nombre de décisions ouvre leurs positions, sous
+  les filtres du tableau. Le nombre de matchs et le bilan V–D restent de simples
+  nombres : ils comptent aussi les matchs sans décision analysée, qu'aucune
+  liste de matchs ne reproduit.
 * **Restreindre la période** — les filtres de dates, de tournois et de longueur
   de match s'appliquent normalement, ce qui permet de borner le tableau aux
   dates d'une compétition.
@@ -3679,13 +3693,14 @@ taux qui n'a rien derrière lui s'affiche « — » et ne départage rien.
    les joueurs, et la ligne de celui-ci est mise en évidence et amenée à
    l'écran.
 
-Trois vues de
+Deux vues de
 corpus figurent dans l'onglet **Corpus** du panneau, en ligne de
 commande et par l'API du démon (voir :ref:`cli_stats`) : le **face-à-face** de deux joueurs (matchs communs, PR de
-chacun, bilan), le **PR par fenêtre calendaire** glissante (1, 3, 6 ou 12 mois)
-et le **classement** par PR des joueurs qui ont au moins un nombre donné de
-décisions comptées. L'onglet Corpus calcule chaque vue à la demande, sous le
-filtre courant. Un **filtre de provenance** (champs *Moteur* et *Profondeur
+chacun, bilan) et le **PR par fenêtre calendaire** glissante (1, 3, 6 ou 12 mois).
+L'onglet Corpus calcule chaque vue à la demande, sous le
+filtre courant. Le **classement** par PR se lit dans l'onglet Joueurs, trié par PR
+et filtré sur la colonne *Décisions* ; la ligne de commande et l'API le donnent
+aussi (``stats ranking``). Un **filtre de provenance** (champs *Moteur* et *Profondeur
 min.* de la barre de filtres) restreint les statistiques aux décisions analysées ainsi ; il porte
 sur chaque décision, et les chiffres qu'il touche sont alors recalculés depuis
 les décisions. Le face-à-face et le PR par fenêtre ne l'acceptent pas : tant
@@ -3696,10 +3711,8 @@ Dans l'onglet Corpus, chaque ligne ouvre ce qu'elle résume. Le bilan du
 face-à-face ouvre ses matchs dans le panneau Matchs, qui porte alors le bouton
 « N matchs ouverts depuis les Stats × » : il rend la liste complète ; une ligne
 de face-à-face ouvre son match. Le premier joueur du face-à-face est d'emblée
-celui de la barre de filtres. Une ligne
-du classement ouvre les matchs du joueur et son nombre de décisions ouvre les
-positions comptées ; une ligne de fenêtre et son nombre de décisions ouvrent
-ses positions, son nombre de matchs ouvre les matchs. Un compte de positions du panneau Stats, quel que soit
+celui de la barre de filtres. Une ligne de fenêtre et son nombre de décisions
+ouvrent ses positions, son nombre de matchs ouvre les matchs. Un compte de positions du panneau Stats, quel que soit
 l'onglet, quitte d'abord le match en cours avant d'ouvrir sa liste ; la commande
 ``m`` rouvre ensuite le match au coup sauvegardé.
 

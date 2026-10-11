@@ -588,6 +588,7 @@ export namespace database {
 	    after: ingest.RepairCounts;
 	    changed_moves: number;
 	    rehomed_comments: number;
+	    kept_comments: number;
 	    dry_run: boolean;
 	    player1_name: string;
 	    player2_name: string;
@@ -606,6 +607,7 @@ export namespace database {
 	        this.after = this.convertValues(source["after"], ingest.RepairCounts);
 	        this.changed_moves = source["changed_moves"];
 	        this.rehomed_comments = source["rehomed_comments"];
+	        this.kept_comments = source["kept_comments"];
 	        this.dry_run = source["dry_run"];
 	        this.player1_name = source["player1_name"];
 	        this.player2_name = source["player2_name"];
@@ -4507,6 +4509,7 @@ export namespace ingest {
 	    after: RepairCounts;
 	    changed_moves: number;
 	    rehomed_comments: number;
+	    kept_comments: number;
 	    dry_run: boolean;
 	
 	    static createFrom(source: any = {}) {
@@ -4522,6 +4525,7 @@ export namespace ingest {
 	        this.after = this.convertValues(source["after"], RepairCounts);
 	        this.changed_moves = source["changed_moves"];
 	        this.rehomed_comments = source["rehomed_comments"];
+	        this.kept_comments = source["kept_comments"];
 	        this.dry_run = source["dry_run"];
 	    }
 	
@@ -4630,6 +4634,20 @@ export namespace main {
 		    return a;
 		}
 	}
+	export class TableSort {
+	    column: string;
+	    direction: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new TableSort(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.column = source["column"];
+	        this.direction = source["direction"];
+	    }
+	}
 	export class StatsFilterPersisted {
 	    player_name: string;
 	    tournament_ids: number[];
@@ -4680,6 +4698,7 @@ export namespace main {
 	    tab_order?: string[];
 	    duel_form?: string;
 	    hidden_tabs?: string[];
+	    table_sorts?: Record<string, TableSort>;
 	    bearoff_ts_path?: string;
 	    bearoff_rate?: number;
 	    bearoff_cores?: number;
@@ -4732,6 +4751,7 @@ export namespace main {
 	        this.tab_order = source["tab_order"];
 	        this.duel_form = source["duel_form"];
 	        this.hidden_tabs = source["hidden_tabs"];
+	        this.table_sorts = this.convertValues(source["table_sorts"], TableSort, true);
 	        this.bearoff_ts_path = source["bearoff_ts_path"];
 	        this.bearoff_rate = source["bearoff_rate"];
 	        this.bearoff_cores = source["bearoff_cores"];

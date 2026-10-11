@@ -11,7 +11,17 @@ vi.mock('../../wailsjs/go/main/Config.js', () => ({
 }));
 
 import { GetStatsFilter, SaveStatsFilter } from '../../wailsjs/go/main/Config.js';
-import { statsFilterStore, statsMetricStore, defaultStatsFilter, initStatsFilter, patchStatsFilter, resetStatsFilter, dropMissingPlayer, _resetStatsFilterForTests } from '../stores/statsStore.js';
+import {
+    statsFilterStore,
+    statsMetricStore,
+    defaultStatsFilter,
+    initStatsFilter,
+    patchStatsFilter,
+    resetStatsFilter,
+    dropMissingPlayer,
+    flushStatsFilterSave,
+    _resetStatsFilterForTests
+} from '../stores/statsStore.js';
 
 beforeEach(() => {
     vi.useFakeTimers();
@@ -56,12 +66,23 @@ describe('statsFilterStore', () => {
         expect(SaveStatsFilter).not.toHaveBeenCalled();
     });
 
-    test('a choice made while the saved filter loads is not overwritten by it', async () => {
-        vi.mocked(GetStatsFilter).mockResolvedValue(/** @type {any} */ ({ player_name: 'Bob' }));
+    test('a choice made while the saved filter loads is applied over it', async () => {
+        vi.mocked(GetStatsFilter).mockResolvedValue(/** @type {any} */ ({ player_name: 'Bob', decision_type: 1, match_length: [7] }));
         const init = initStatsFilter();
         patchStatsFilter({ playerName: 'Alice' });
         await init;
-        expect(get(statsFilterStore).playerName).toBe('Alice');
+        expect(get(statsFilterStore)).toMatchObject({ playerName: 'Alice', decisionType: 1, matchLength: [7] });
+    });
+
+    test('a save still waiting is written at once when the window closes', async () => {
+        await initStatsFilter();
+        patchStatsFilter({ playerName: 'Alice' });
+        window.dispatchEvent(new Event('beforeunload'));
+        expect(SaveStatsFilter).toHaveBeenCalledTimes(1);
+        expect(SaveStatsFilter).toHaveBeenCalledWith(expect.objectContaining({ player_name: 'Alice' }));
+        vi.advanceTimersByTime(500);
+        flushStatsFilterSave();
+        expect(SaveStatsFilter).toHaveBeenCalledTimes(1);
     });
 
     test('a metric change is saved with the filter', async () => {

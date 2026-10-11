@@ -1981,12 +1981,6 @@
             "matches": "Матчи",
             "decisions": "Решения",
             "noData": "Нет данных для этого фильтра.",
-            "rankingTitle": "Рейтинг",
-            "minDecisions": "Мин. решений",
-            "player": "Игрок",
-            "record": "Итог",
-            "prChecker": "PR шашек",
-            "prCube": "PR куба",
             "openMatches": "Открыть эти матчи",
             "openPositions": "Открыть эти позиции"
         },
@@ -3349,5 +3343,9 @@
         "boardSize": "Изменить размер доски",
         "boardHide": "Свернуть доску",
         "boardShow": "Показать доску"
+    },
+    "table": {
+        "filteredOut": "Ни одна строка не проходит фильтры столбцов.",
+        "numericFilterHint": "≥500, >500, <2,5, ≤2, 3-7, 5"
     }
 }

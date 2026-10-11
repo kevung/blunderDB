@@ -1,30 +1,28 @@
 /**
  * Picking a player in the Players table puts them on the shared filter: the bar shows the name
- * and the choice is saved. The filter's player is marked in the full table, and the row's counts
- * open that player's matches or decisions.
+ * and the choice is saved. The filter's player is marked in the full table, and the row's decision
+ * count opens that player's positions.
  */
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { get } from 'svelte/store';
 import { render, cleanup, fireEvent, waitFor } from '@testing-library/svelte';
 
-vi.mock('../../wailsjs/go/database/Database.js', async () => {
-    const { createDatabaseMock } = await import('../__mocks__/wails.js');
-    return createDatabaseMock({
-        GetAllPlayerNames: vi.fn(() =>
-            Promise.resolve([
-                { Name: 'Alice', Count: 3 },
-                { Name: 'Bob', Count: 2 }
-            ])
-        ),
-        GetAllTournaments: vi.fn(() => Promise.resolve([])),
-        GetStatsAnalysisEngines: vi.fn(() => Promise.resolve([])),
-        GetStatsDateRange: vi.fn(() => Promise.resolve(null)),
-        StatsMatchIDs: vi.fn(() => Promise.resolve([5, 6]))
-    });
-});
+vi.mock('../../wailsjs/go/database/Database.js', () => ({
+    GetAllPlayerNames: vi.fn(() =>
+        Promise.resolve([
+            { Name: 'Alice', Count: 3 },
+            { Name: 'Bob', Count: 2 }
+        ])
+    ),
+    GetAllTournaments: vi.fn(() => Promise.resolve([])),
+    GetStatsAnalysisEngines: vi.fn(() => Promise.resolve([])),
+    GetStatsDateRange: vi.fn(() => Promise.resolve(null))
+}));
 vi.mock('../../wailsjs/go/main/Config.js', () => ({
     GetStatsFilter: vi.fn(() => Promise.resolve(null)),
-    SaveStatsFilter: vi.fn(() => Promise.resolve())
+    SaveStatsFilter: vi.fn(() => Promise.resolve()),
+    GetTableSorts: vi.fn(() => Promise.resolve({})),
+    SaveTableSort: vi.fn(() => Promise.resolve())
 }));
 vi.mock('../stores/databaseStore.js', () => {
     const { writable } = require('svelte/store');
@@ -36,8 +34,7 @@ vi.mock('../services/positionLoader.js', () => ({
 }));
 
 import { SaveStatsFilter } from '../../wailsjs/go/main/Config.js';
-import { StatsMatchIDs } from '../../wailsjs/go/database/Database.js';
-import { loadPositionsFromStatsSelection, openMatchListInPanel } from '../services/positionLoader.js';
+import { loadPositionsFromStatsSelection } from '../services/positionLoader.js';
 import { statsFilterStore, patchStatsFilter, _resetStatsFilterForTests } from '../stores/statsStore.js';
 import StatsFilterBar from '../components/stats/StatsFilterBar.svelte';
 import StatsPlayersTab from '../components/stats/StatsPlayersTab.svelte';
@@ -80,6 +77,17 @@ describe('Players › shared filter', () => {
         await waitFor(() => expect(SaveStatsFilter).toHaveBeenCalledWith(expect.objectContaining({ player_name: 'Bob' })), { timeout: 2000 });
     });
 
+    test('a refused date puts the field back to the applied one', async () => {
+        const { container } = render(StatsFilterBar);
+        const from = /** @type {HTMLInputElement} */ (await waitFor(() => container.querySelector('#fb-date-from')));
+        const to = /** @type {HTMLInputElement} */ (container.querySelector('#fb-date-to'));
+        await fireEvent.change(from, { target: { value: '2025-03-01' } });
+        await fireEvent.change(to, { target: { value: '2025-01-01' } });
+        expect(get(statsFilterStore).dateTo).toBe('');
+        expect(to.value).toBe('');
+        expect(from.value).toBe('2025-03-01');
+    });
+
     test("the filter's player is marked in the full table", async () => {
         patchStatsFilter({ playerName: 'Bob' });
         const { container } = render(StatsPlayersTab, { props: { rows: ROWS } });
@@ -89,19 +97,20 @@ describe('Players › shared filter', () => {
         expect(container.querySelectorAll('tbody tr')).toHaveLength(2);
     });
 
-    test("a row's counts open that player's matches and decisions, not the dashboard", async () => {
-        patchStatsFilter({ dateFrom: '2025-01-01', decisionType: 1 });
+    test("a row's decisions open that player's positions, under the table's filter, not the dashboard", async () => {
+        patchStatsFilter({ dateFrom: '2025-01-01', decisionType: 1, analysisEngine: 'XG', minAnalysisDepth: 2 });
         const onSelectPlayer = vi.fn();
         const { container } = render(StatsPlayersTab, { props: { rows: ROWS, onSelectPlayer } });
-        const links = /** @type {HTMLElement[]} */ ([...container.querySelectorAll('tbody tr')[0].querySelectorAll('[data-testid="count-link"]')]);
-        expect(links.map((l) => l.textContent)).toEqual(['3', '2–1', '120']);
+        const row = [...container.querySelectorAll('tbody tr')].find((tr) => tr.textContent?.includes('Alice'));
+        // Matches also count those without an analysed decision: no match list reproduces them.
+        const links = /** @type {HTMLElement[]} */ ([...(row?.querySelectorAll('[data-testid="count-link"]') ?? [])]);
+        expect(links.map((l) => l.textContent)).toEqual(['120']);
 
         await fireEvent.click(links[0]);
-        expect(StatsMatchIDs).toHaveBeenCalledWith(expect.objectContaining({ playerName: 'Alice', dateFrom: '2025-01-01', decisionType: -1 }));
-        await waitFor(() => expect(openMatchListInPanel).toHaveBeenCalledWith([5, 6]));
-
-        await fireEvent.click(links[2]);
-        expect(loadPositionsFromStatsSelection).toHaveBeenCalledWith(expect.objectContaining({ playerName: 'Alice', decisionType: -1 }), { Kind: 'all', OnlyWithError: false });
+        expect(loadPositionsFromStatsSelection).toHaveBeenCalledWith(
+            expect.objectContaining({ playerName: 'Alice', dateFrom: '2025-01-01', decisionType: -1, analysisEngine: 'XG', minAnalysisDepth: 2 }),
+            { Kind: 'all', OnlyWithError: false }
+        );
         expect(onSelectPlayer).not.toHaveBeenCalled();
         expect(get(statsFilterStore).playerName).toBe('');
     });

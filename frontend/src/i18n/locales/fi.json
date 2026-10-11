@@ -1981,12 +1981,6 @@
             "matches": "Ottelut",
             "decisions": "Päätökset",
             "noData": "Ei tietoja tällä suodattimella.",
-            "rankingTitle": "Ranking",
-            "minDecisions": "Min. päätökset",
-            "player": "Pelaaja",
-            "record": "Tulos",
-            "prChecker": "Siirtojen PR",
-            "prCube": "Kuution PR",
             "openMatches": "Avaa nämä ottelut",
             "openPositions": "Avaa nämä asemat"
         },
@@ -3349,5 +3343,9 @@
         "boardSize": "Muuta laudan kokoa",
         "boardHide": "Pienennä lauta",
         "boardShow": "Näytä lauta"
+    },
+    "table": {
+        "filteredOut": "Mikään rivi ei läpäise sarakesuodattimia.",
+        "numericFilterHint": "≥500, >500, <2,5, ≤2, 3-7, 5"
     }
 }

@@ -603,9 +603,11 @@ type StatsStore interface {
 	// PlayerTable computes one row per player over the matches the filter
 	// retains, for the players table of the Stats panel.
 	//
-	// It honours the filter's date range, tournaments and match lengths only;
-	// PlayerName/PlayerAliases and DecisionType are ignored by design (every
-	// player at once, checker and cube in their own columns).
+	// It honours the filter's date range, tournaments and match lengths, and
+	// its provenance (AnalysisEngine, MinAnalysisDepth) for the decision
+	// figures; PlayerName/PlayerAliases and DecisionType are ignored by design
+	// (every player at once, checker and cube in their own columns). Matches,
+	// wins and losses count every match of the player, analysed or not.
 	//
 	// Rows come back sorted by PR ascending, players with no counted decision
 	// last. Nothing is hidden: the decision count says what a PR is worth.

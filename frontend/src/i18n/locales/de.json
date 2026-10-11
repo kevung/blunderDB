@@ -1981,12 +1981,6 @@
             "matches": "Matches",
             "decisions": "Entscheidungen",
             "noData": "Keine Daten für diesen Filter.",
-            "rankingTitle": "Rangliste",
-            "minDecisions": "Min. Entscheidungen",
-            "player": "Spieler",
-            "record": "Bilanz",
-            "prChecker": "PR Züge",
-            "prCube": "PR Doppler",
             "openMatches": "Diese Matches öffnen",
             "openPositions": "Diese Positionen öffnen"
         },
@@ -3349,5 +3343,9 @@
         "boardSize": "Brettgröße ändern",
         "boardHide": "Brett einklappen",
         "boardShow": "Brett anzeigen"
+    },
+    "table": {
+        "filteredOut": "Keine Zeile passt zu den Spaltenfiltern.",
+        "numericFilterHint": "≥500, >500, <2,5, ≤2, 3-7, 5"
     }
 }

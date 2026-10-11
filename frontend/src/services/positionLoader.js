@@ -151,14 +151,16 @@ export function openMatchInPanel(matchID) {
 /**
  * Open the Stats panel on a player or on tournaments: the shared filter takes them, so the bar
  * shows what the figures cover. The saved filter is restored first, or it would overwrite them.
+ * A player's name asks for the whole career: tournaments and dates are cleared. A tournament asks
+ * for the whole tournament, with the chosen player kept: dates are cleared.
  *
  * @param {{ playerName?: string, tournamentIDs?: number[], tab?: string }} target
  */
 export async function openStatsFor({ playerName, tournamentIDs, tab = 'dashboard' }) {
     await initStatsFilter();
     /** @type {Record<string, any>} */
-    const patch = {};
-    if (playerName !== undefined) patch.playerName = playerName;
+    const patch = { dateFrom: '', dateTo: '' };
+    if (playerName !== undefined) Object.assign(patch, { playerName, tournamentIDs: [] });
     if (tournamentIDs !== undefined) patch.tournamentIDs = tournamentIDs;
     patchStatsFilter(patch);
     statsTabStore.set(tab);

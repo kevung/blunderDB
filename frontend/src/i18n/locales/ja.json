@@ -1981,12 +1981,6 @@
             "matches": "マッチ",
             "decisions": "判断",
             "noData": "このフィルターのデータはありません。",
-            "rankingTitle": "ランキング",
-            "minDecisions": "最小判断数",
-            "player": "プレイヤー",
-            "record": "勝敗",
-            "prChecker": "チェッカー PR",
-            "prCube": "キューブ PR",
             "openMatches": "これらのマッチを開く",
             "openPositions": "これらの局面を開く"
         },
@@ -3349,5 +3343,9 @@
         "boardSize": "盤面のサイズを変更",
         "boardHide": "盤面を折りたたむ",
         "boardShow": "盤面を表示"
+    },
+    "table": {
+        "filteredOut": "列フィルターに一致する行はありません。",
+        "numericFilterHint": "≥500, >500, <2.5, ≤2, 3-7, 5"
     }
 }

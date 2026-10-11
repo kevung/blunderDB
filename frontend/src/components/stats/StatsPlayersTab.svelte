@@ -2,8 +2,7 @@
     import { tick } from 'svelte';
     import { get } from 'svelte/store';
     import { statsFilterStore, patchStatsFilter, defaultStatsFilter } from '../../stores/statsStore.js';
-    import { StatsMatchIDs } from '../../../wailsjs/go/database/Database.js';
-    import { loadPositionsFromStatsSelection, openMatchListInPanel } from '../../services/positionLoader.js';
+    import { loadPositionsFromStatsSelection } from '../../services/positionLoader.js';
     import CountLink from '../panels/CountLink.svelte';
     import { fmtMwc7, mwc7Percent, mwc7Tooltip } from '../../utils/mwc7.js';
     import { t } from '../../i18n/index.js';
@@ -18,27 +17,28 @@
      */
     let { rows = null, onSelectPlayer = undefined } = $props();
 
+    /** A rate is measured only with decisions behind it; unmeasured sorts last and fails a filter. */
+    const rated = (/** @type {string} */ key, /** @type {string} */ count) => (/** @type {any} */ row) => (row[count] > 0 ? row[key] : null);
+
     /**
-     * Columns in display order. `rate` columns keep unmeasured players (zero)
-     * at the bottom in both sort directions.
+     * Columns in display order, each with the value it sorts and filters by. First click
+     * sorts in the natural direction (rate ascending, count descending).
      */
     const COLUMNS = [
         { key: 'compare', labelKey: 'stats.compareColumn', hintKey: 'stats.compareColumnHint', align: 'left', plain: true },
-        { key: 'name', labelKey: 'stats.playersColPlayer', align: 'left' },
-        { key: 'matches', labelKey: 'stats.playersColMatches' },
-        { key: 'record', labelKey: 'stats.playersColRecord' },
-        { key: 'decisions', labelKey: 'stats.playersColDecisions' },
-        { key: 'pr', labelKey: 'stats.playersColPR', hintKey: 'stats.playersColPRHint', rate: true },
-        { key: 'pr_checker', labelKey: 'stats.playersColPRChecker', hintKey: 'stats.playersColPRHint', rate: true },
-        { key: 'pr_cube', labelKey: 'stats.playersColPRCube', hintKey: 'stats.playersColPRHint', rate: true },
-        { key: 'snowie_er', labelKey: 'stats.playersColSnowie', rate: true },
-        { key: 'mwc7', labelKey: 'mwc7.short', hintKey: 'mwc7.name', rate: true },
-        { key: 'blunders', labelKey: 'stats.playersColBlunders' },
-        { key: 'luck', labelKey: 'stats.playersColLuck', hintKey: 'stats.playersColLuckHint', rate: true }
+        { key: 'name', labelKey: 'stats.playersColPlayer', align: 'left', filter: 'text', value: (/** @type {any} */ r) => r.name ?? '' },
+        { key: 'matches', labelKey: 'stats.playersColMatches', filter: 'number' },
+        { key: 'record', labelKey: 'stats.playersColRecord', value: (/** @type {any} */ r) => r.wins - r.losses },
+        { key: 'decisions', labelKey: 'stats.playersColDecisions', filter: 'number' },
+        { key: 'pr', labelKey: 'stats.playersColPR', hintKey: 'stats.playersColPRHint', rate: true, filter: 'number', value: rated('pr', 'decisions') },
+        { key: 'pr_checker', labelKey: 'stats.playersColPRChecker', hintKey: 'stats.playersColPRHint', rate: true, filter: 'number', value: rated('pr_checker', 'checker_decisions') },
+        { key: 'pr_cube', labelKey: 'stats.playersColPRCube', hintKey: 'stats.playersColPRHint', rate: true, filter: 'number', value: rated('pr_cube', 'cube_decisions') },
+        { key: 'snowie_er', labelKey: 'stats.playersColSnowie', rate: true, filter: 'number', value: rated('snowie_er', 'decisions') },
+        { key: 'mwc7', labelKey: 'mwc7.short', hintKey: 'mwc7.name', rate: true, filter: 'number', value: (/** @type {any} */ r) => mwc7Percent(r.mwc7) },
+        { key: 'blunders', labelKey: 'stats.playersColBlunders', filter: 'number' },
+        { key: 'luck', labelKey: 'stats.playersColLuck', hintKey: 'stats.playersColLuckHint', rate: true, filter: 'number', value: (/** @type {any} */ r) => (r.luck_known ? r.luck_rate_mp : null) }
     ];
 
-    // First click sorts in the natural direction (rate ascending, count descending).
-    let sort = $state({ column: 'pr', direction: 'asc' });
     const columns = $derived(
         COLUMNS.map((col) => ({
             key: col.key,
@@ -46,58 +46,11 @@
             title: col.hintKey ? $t(col.hintKey) : undefined,
             sortable: !col.plain,
             align: col.align === 'left' ? 'left' : 'right',
-            defaultDir: col.rate || col.key === 'name' ? 'asc' : 'desc'
+            defaultDir: col.rate || col.key === 'name' ? 'asc' : 'desc',
+            filter: /** @type {'number' | 'text' | undefined} */ (col.filter),
+            value: col.value ?? ((/** @type {any} */ r) => r[col.key] ?? 0)
         }))
     );
-
-    /** Value a row sorts by for a given column; null means "nothing measured". */
-    function sortValue(/** @type {any} */ row, /** @type {string} */ key) {
-        switch (key) {
-            case 'name':
-                return row.name?.toLowerCase() ?? '';
-            case 'record':
-                return row.wins - row.losses;
-            case 'luck':
-                return row.luck_known ? row.luck_rate_mp : null;
-            case 'pr':
-            case 'pr_checker':
-            case 'pr_cube':
-            case 'snowie_er':
-                return row.decisions > 0 ? row[key] : null;
-            case 'mwc7':
-                return mwc7Percent(row.mwc7);
-            default:
-                return row[key] ?? 0;
-        }
-    }
-
-    const sorted = $derived.by(() => {
-        if (!rows) return [];
-        const sortKey = sort.column;
-        const sortAsc = sort.direction === 'asc';
-        const col = COLUMNS.find((c) => c.key === sortKey);
-        const copy = [...rows];
-        copy.sort((a, b) => {
-            const va = sortValue(a, sortKey);
-            const vb = sortValue(b, sortKey);
-            // Unmeasured rows sink to the bottom whichever way the column is
-            // sorted, so a missing figure never reads as a leading score.
-            if (col?.rate) {
-                if (va === null && vb === null) return a.name.localeCompare(b.name);
-                if (va === null) return 1;
-                if (vb === null) return -1;
-            }
-            let cmp;
-            if (typeof va === 'string' || typeof vb === 'string') {
-                cmp = String(va).localeCompare(String(vb));
-            } else {
-                cmp = va - vb;
-            }
-            if (cmp === 0) return a.name.localeCompare(b.name);
-            return sortAsc ? cmp : -cmp;
-        });
-        return copy;
-    });
 
     /** A rate with nothing behind it is shown as unknown, never as a zero. */
     function fmtRate(/** @type {number|null|undefined} */ value, /** @type {boolean} */ known) {
@@ -139,29 +92,26 @@
 
     // The filter's player is marked in the full table and brought into view.
     $effect(() => {
-        if (!selectedName || !table || sorted.length === 0) return;
+        if (!selectedName || !table || !rows?.length) return;
         tick().then(() => table?.scrollToSelected('center'));
     });
 
     /**
-     * The filter the table was computed under, narrowed to one player: the table honours the
-     * dates, tournaments and match lengths only, and counts every decision type.
+     * The filter the table was computed under, narrowed to one player: every decision type,
+     * since the table counts them all. Its match count also holds matches without an analysed
+     * decision, which no match list reproduces: it stays a number.
      */
     function playerFilter(/** @type {string} */ name) {
-        const f = get(statsFilterStore);
-        return { ...defaultStatsFilter, tournamentIDs: f.tournamentIDs, dateFrom: f.dateFrom, dateTo: f.dateTo, matchLength: f.matchLength, playerName: name };
+        return { ...defaultStatsFilter, ...get(statsFilterStore), decisionType: -1, playerName: name };
     }
 
     /** A link inside a row opens its own target, not the player's dashboard. */
-    function linkTo(/** @type {() => any} */ open) {
+    function openDecisions(/** @type {string} */ name) {
         return (/** @type {MouseEvent} */ e) => {
             e.stopPropagation();
-            open();
+            loadPositionsFromStatsSelection(playerFilter(name), { Kind: 'all', OnlyWithError: false });
         };
     }
-
-    const openMatches = (/** @type {string} */ name) => linkTo(async () => openMatchListInPanel((await StatsMatchIDs(/** @type {any} */ (playerFilter(name)))) ?? []));
-    const openDecisions = (/** @type {string} */ name) => linkTo(() => loadPositionsFromStatsSelection(playerFilter(name), { Kind: 'all', OnlyWithError: false }));
 
     function onRowKey(/** @type {KeyboardEvent} */ event, /** @type {string} */ name) {
         // Enter on a link of the row is that link's, not the row's.
@@ -182,11 +132,12 @@
         {/if}
         <PanelTable
             bind:this={table}
-            rows={sorted}
+            {rows}
             selectedKey={selectedName || undefined}
+            viewId="stats.players"
             rowKey={(row) => row.name}
             {columns}
-            bind:sort
+            sort={{ column: 'pr', direction: 'asc' }}
             pointerRows
             rowAttrs={(row) => ({ tabindex: 0, role: 'button', title: $t('stats.playersRowHint', { name: row.name }), onkeydown: (/** @type {KeyboardEvent} */ e) => onRowKey(e, row.name) })}
             onSelect={(row) => selectPlayer(row.name)}
@@ -206,8 +157,8 @@
                     />
                 </td>
                 <td class="name">{row.name}</td>
-                <td class="numeric"><CountLink label={String(row.matches)} onclick={openMatches(row.name)} /></td>
-                <td class="numeric"><CountLink label={`${row.wins}–${row.losses}`} onclick={openMatches(row.name)} /></td>
+                <td class="numeric">{row.matches}</td>
+                <td class="numeric">{row.wins}–{row.losses}</td>
                 <td class="numeric"><CountLink label={String(row.decisions)} onclick={openDecisions(row.name)} /></td>
                 <td class="numeric strong">{fmtRate(row.pr, row.decisions > 0)}</td>
                 <td class="numeric">{fmtRate(row.pr_checker, row.checker_decisions > 0)}</td>

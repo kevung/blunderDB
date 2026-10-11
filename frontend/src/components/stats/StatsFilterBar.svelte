@@ -48,6 +48,16 @@
     /** @param {Partial<import('../../stores/statsStore.js').StatsFilterState>} patch */
     function apply(patch) {
         dateError = !patchStatsFilter(patch);
+        return !dateError;
+    }
+
+    /**
+     * A refused date leaves the filter as it was; the field goes back to the applied date, so it
+     * never shows a range the figures do not cover.
+     */
+    function applyDate(/** @type {Event} */ e, /** @type {'dateFrom' | 'dateTo'} */ field) {
+        const input = /** @type {HTMLInputElement} */ (e.currentTarget);
+        if (!apply({ [field]: input.value })) input.value = filter[field];
     }
 
     /** @param {string} name */
@@ -221,7 +231,7 @@
             max={dateRangeMax}
             placeholder={dateRangeMin}
             title={dateRangeMin ? $t('stats.firstMatchDate', { date: dateRangeMin }) : ''}
-            onchange={(e) => apply({ dateFrom: e.target.value })}
+            onchange={(e) => applyDate(e, 'dateFrom')}
         />
         <label class="fb-label" for="fb-date-to">{$t('stats.dateToLabel')}</label>
         <input
@@ -234,7 +244,7 @@
             max={dateRangeMax}
             placeholder={dateRangeMax}
             title={dateRangeMax ? $t('stats.lastMatchDate', { date: dateRangeMax }) : ''}
-            onchange={(e) => apply({ dateTo: e.target.value })}
+            onchange={(e) => applyDate(e, 'dateTo')}
         />
 
         <!-- Decision type -->

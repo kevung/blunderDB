@@ -1981,12 +1981,6 @@
             "matches": "Matches",
             "decisions": "Decisions",
             "noData": "No data for this filter.",
-            "rankingTitle": "Ranking",
-            "minDecisions": "Min. decisions",
-            "player": "Player",
-            "record": "Record",
-            "prChecker": "Checker PR",
-            "prCube": "Cube PR",
             "openMatches": "Open these matches",
             "openPositions": "Open these positions"
         },
@@ -3349,5 +3343,9 @@
         "boardSize": "Change the board size",
         "boardHide": "Fold the board",
         "boardShow": "Show the board"
+    },
+    "table": {
+        "filteredOut": "No row matches the column filters.",
+        "numericFilterHint": "≥500, >500, <2.5, ≤2, 3-7, 5"
     }
 }

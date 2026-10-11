@@ -5,6 +5,7 @@
     import { loadPositionsFromSelection } from '../../services/positionLoader.js';
     import { quizOnIds, quizOnWorstGroups, deckFromIds, collectionFromIds } from '../../services/recurringStudy.js';
     import { t } from '../../i18n/index.js';
+    import PanelTable from '../panels/PanelTable.svelte';
     import CountLink from '../panels/CountLink.svelte';
 
     /** @typedef {{ GameType: string, Kind: string, Theme: string, SumErrorMP: number, Count: number, PRCost: number, PositionIDs?: number[] }} RecurringGroup */
@@ -46,6 +47,37 @@
         return $t('stats.recurringStudyName', { name: `${gameTypeLabel(g.GameType)} · ${$t(`stats.recurringKind_${g.Kind}`)} · ${themeLabel(g)}` });
     }
 
+    const columns = $derived([
+        { key: 'gameType', label: $t('stats.gameType'), sortable: true, filter: /** @type {const} */ ('text'), value: (/** @type {RecurringGroup} */ g) => gameTypeLabel(g.GameType) },
+        {
+            key: 'theme',
+            label: $t('stats.recurringTheme'),
+            sortable: true,
+            elastic: true,
+            filter: /** @type {const} */ ('text'),
+            value: (/** @type {RecurringGroup} */ g) => `${$t(`stats.recurringKind_${g.Kind}`)} · ${themeLabel(g)}`
+        },
+        {
+            key: 'decisions',
+            label: $t('stats.decisions'),
+            sortable: true,
+            defaultDir: 'desc',
+            align: 'right',
+            filter: /** @type {const} */ ('number'),
+            value: (/** @type {RecurringGroup} */ g) => g.Count
+        },
+        {
+            key: 'cost',
+            label: $t('stats.recurringCost'),
+            sortable: true,
+            defaultDir: 'desc',
+            align: 'right',
+            filter: /** @type {const} */ ('number'),
+            value: (/** @type {RecurringGroup} */ g) => g.PRCost
+        },
+        { key: 'actions', label: $t('stats.recurringActions'), actions: true }
+    ]);
+
     /** @param {RecurringGroup} g */
     function open(g) {
         if (!g.PositionIDs?.length) return;
@@ -65,36 +97,23 @@
     {:else}
         {#if groups.length > 0}
             <button type="button" class="study-btn worst" data-testid="recurring-quiz-worst" onclick={() => quizOnWorstGroups()}>{$t('stats.recurringQuizWorst')}</button>
-            <table>
-                <thead>
-                    <tr>
-                        <th>{$t('stats.gameType')}</th>
-                        <th>{$t('stats.recurringTheme')}</th>
-                        <th class="num">{$t('stats.decisions')}</th>
-                        <th class="num">{$t('stats.recurringCost')}</th>
-                        <th>{$t('stats.recurringActions')}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {#each groups as g (g.GameType + '/' + g.Kind + '/' + g.Theme)}
-                        <tr class="group-row" title={`${(g.SumErrorMP / 1000).toFixed(3)}`}>
-                            <td>{gameTypeLabel(g.GameType)}</td>
-                            <td>
-                                <button type="button" class="group-link" onclick={() => open(g)}>
-                                    {$t(`stats.recurringKind_${g.Kind}`)} · {themeLabel(g)}
-                                </button>
-                            </td>
-                            <td class="num"><CountLink label={String(g.Count)} onclick={() => loadPositionsFromSelection(g.PositionIDs ?? [])} /></td>
-                            <td class="num">{g.PRCost.toFixed(2)}</td>
-                            <td class="actions">
-                                <button type="button" class="study-btn" onclick={() => quizOnIds(g.PositionIDs ?? [])}>{$t('stats.recurringQuiz')}</button>
-                                <button type="button" class="study-btn" onclick={() => deckFromIds(studyName(g), g.PositionIDs ?? [])}>{$t('stats.recurringDeck')}</button>
-                                <button type="button" class="study-btn" onclick={() => collectionFromIds(studyName(g), g.PositionIDs ?? [])}>{$t('stats.recurringCollection')}</button>
-                            </td>
-                        </tr>
-                    {/each}
-                </tbody>
-            </table>
+            <PanelTable viewId="stats.recurring" rows={groups} rowKey={(g) => g.GameType + '/' + g.Kind + '/' + g.Theme} {columns} rowAttrs={(g) => ({ title: `${(g.SumErrorMP / 1000).toFixed(3)}` })}>
+                {#snippet cells(/** @type {RecurringGroup} */ g)}
+                    <td>{gameTypeLabel(g.GameType)}</td>
+                    <td>
+                        <button type="button" class="group-link" onclick={() => open(g)}>
+                            {$t(`stats.recurringKind_${g.Kind}`)} · {themeLabel(g)}
+                        </button>
+                    </td>
+                    <td class="align-right"><CountLink label={String(g.Count)} onclick={() => loadPositionsFromSelection(g.PositionIDs ?? [])} /></td>
+                    <td class="align-right">{g.PRCost.toFixed(2)}</td>
+                    <td class="actions-col">
+                        <button type="button" class="study-btn" onclick={() => quizOnIds(g.PositionIDs ?? [])}>{$t('stats.recurringQuiz')}</button>
+                        <button type="button" class="study-btn" onclick={() => deckFromIds(studyName(g), g.PositionIDs ?? [])}>{$t('stats.recurringDeck')}</button>
+                        <button type="button" class="study-btn" onclick={() => collectionFromIds(studyName(g), g.PositionIDs ?? [])}>{$t('stats.recurringCollection')}</button>
+                    </td>
+                {/snippet}
+            </PanelTable>
         {/if}
         {#if unthemed.length > 0}
             <ul class="unthemed">
@@ -139,37 +158,12 @@
         font-style: italic;
     }
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    th,
-    td {
-        text-align: left;
-        padding: 3px 6px;
-        border-bottom: 1px solid var(--color-border);
-    }
-
-    .num {
-        text-align: right;
-        font-variant-numeric: tabular-nums;
-    }
-
-    .group-row:hover {
-        background: var(--color-surface-alt);
-    }
-
     .unthemed {
         list-style: none;
         margin: 8px 0 0;
         padding: 0;
         font-size: var(--font-size-small);
         color: var(--color-text-muted);
-    }
-
-    .actions {
-        white-space: nowrap;
     }
 
     .study-btn {

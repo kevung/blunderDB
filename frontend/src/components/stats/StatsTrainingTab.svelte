@@ -7,6 +7,7 @@
     import { t } from '../../i18n/index.js';
     import LineChart from './charts/LineChart.svelte';
     import { PRIMARY } from './charts/palette.js';
+    import PanelTable from '../panels/PanelTable.svelte';
     import { get } from 'svelte/store';
     import { statsFilterStore } from '../../stores/statsStore.js';
     import { loadPositionsFromStatsSelection } from '../../services/positionLoader.js';
@@ -30,7 +31,7 @@
         return label === key ? theme : label;
     }
 
-    /** A period's match decisions, under the filter the series were computed with. */
+    /** A period's match decisions: the current filter, narrowed to the period's days. */
     function openMatchDecisions(/** @type {string} */ start) {
         const f = narrowToPeriod(get(statsFilterStore), start, data?.Window ?? period);
         loadPositionsFromStatsSelection(f, { Kind: 'all', OnlyWithError: false });
@@ -79,6 +80,37 @@
     };
 
     const fmt = (/** @type {number} */ count, value, digits = 2) => (count > 0 ? value.toFixed(digits) : '–');
+
+    /** @param {any} th */
+    const lastPeriod = (th) => th.Periods[th.Periods.length - 1];
+
+    const periodColumns = $derived([
+        { key: 'period', label: $t('stats.trainingPeriod'), sortable: true, filter: /** @type {const} */ ('text'), value: (/** @type {any} */ p) => p.Start },
+        { key: 'quiz', label: $t('stats.trainingQuizPR'), sortable: true, align: 'right', filter: /** @type {const} */ ('number'), value: (/** @type {any} */ p) => orNull(p.QuizDecisions, p.QuizPR) },
+        {
+            key: 'match',
+            label: $t('stats.trainingMatchPR'),
+            sortable: true,
+            align: 'right',
+            filter: /** @type {const} */ ('number'),
+            value: (/** @type {any} */ p) => orNull(p.MatchDecisions, p.MatchPR)
+        },
+        {
+            key: 'retention',
+            label: $t('stats.trainingRetention'),
+            sortable: true,
+            defaultDir: 'desc',
+            align: 'right',
+            filter: /** @type {const} */ ('number'),
+            value: (/** @type {any} */ p) => orNull(p.AnkiReviews, p.AnkiRetention * 100)
+        }
+    ]);
+
+    const themeColumns = $derived([
+        { key: 'theme', label: $t('stats.trainingTheme'), sortable: true, filter: /** @type {const} */ ('text'), value: (/** @type {any} */ th) => themeLabel(th.Theme) },
+        { key: 'quiz', label: $t('stats.trainingQuizPR'), sortable: true, align: 'right', filter: /** @type {const} */ ('number'), value: (/** @type {any} */ th) => th.PR },
+        { key: 'last', label: $t('stats.trainingPeriod'), sortable: true, align: 'right', filter: /** @type {const} */ ('number'), value: (/** @type {any} */ th) => lastPeriod(th)?.PR ?? null }
+    ]);
 </script>
 
 <section class="chart-section training">
@@ -98,54 +130,31 @@
         <div class="chart-wrap">
             <LineChart {labels} {datasets} {options} />
         </div>
-        <table>
-            <thead>
-                <tr>
-                    <th>{$t('stats.trainingPeriod')}</th>
-                    <th class="num">{$t('stats.trainingQuizPR')}</th>
-                    <th class="num">{$t('stats.trainingMatchPR')}</th>
-                    <th class="num">{$t('stats.trainingRetention')}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {#each periods as p (p.Start)}
-                    <tr>
-                        <td>{p.Start}</td>
-                        <td class="num">{fmt(p.QuizDecisions, p.QuizPR)} <span class="count">({p.QuizDecisions})</span></td>
-                        <td class="num"
-                            >{fmt(p.MatchDecisions, p.MatchPR)}
-                            <span class="count"
-                                >({#if p.MatchDecisions > 0}<CountLink label={String(p.MatchDecisions)} onclick={() => openMatchDecisions(p.Start)} />{:else}0{/if})</span
-                            ></td
-                        >
-                        <td class="num">{p.AnkiReviews > 0 ? `${(p.AnkiRetention * 100).toFixed(1)} %` : '–'} <span class="count">({p.AnkiReviews})</span></td>
-                    </tr>
-                {/each}
-            </tbody>
-        </table>
+        <PanelTable viewId="stats.training.periods" rows={periods} rowKey={(p) => p.Start} columns={periodColumns}>
+            {#snippet cells(/** @type {any} */ p)}
+                <td>{p.Start}</td>
+                <td class="align-right">{fmt(p.QuizDecisions, p.QuizPR)} <span class="count">({p.QuizDecisions})</span></td>
+                <td class="align-right"
+                    >{fmt(p.MatchDecisions, p.MatchPR)}
+                    <span class="count"
+                        >({#if p.MatchDecisions > 0}<CountLink label={String(p.MatchDecisions)} onclick={() => openMatchDecisions(p.Start)} />{:else}0{/if})</span
+                    ></td
+                >
+                <td class="align-right">{p.AnkiReviews > 0 ? `${(p.AnkiRetention * 100).toFixed(1)} %` : '–'} <span class="count">({p.AnkiReviews})</span></td>
+            {/snippet}
+        </PanelTable>
         <p class="hint">{$t('stats.trainingSessions', { n: sessions.length })}</p>
         {#if themes.length > 0}
             <h3 class="section-title">{$t('stats.trainingThemes')}</h3>
             <p class="hint">{$t('stats.trainingThemesHint')}</p>
-            <table class="themes">
-                <thead>
-                    <tr>
-                        <th>{$t('stats.trainingTheme')}</th>
-                        <th class="num">{$t('stats.trainingQuizPR')}</th>
-                        <th class="num">{$t('stats.trainingPeriod')}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {#each themes as th (th.Theme)}
-                        {@const last = th.Periods[th.Periods.length - 1]}
-                        <tr>
-                            <td>{themeLabel(th.Theme)}</td>
-                            <td class="num">{th.PR.toFixed(2)} <span class="count">({th.Decisions})</span></td>
-                            <td class="num">{last ? `${last.PR.toFixed(2)} (${last.Decisions}) · ${last.Start}` : '–'}</td>
-                        </tr>
-                    {/each}
-                </tbody>
-            </table>
+            <PanelTable viewId="stats.training.themes" class="themes" rows={themes} rowKey={(th) => th.Theme} columns={themeColumns}>
+                {#snippet cells(/** @type {any} */ th)}
+                    {@const last = lastPeriod(th)}
+                    <td>{themeLabel(th.Theme)}</td>
+                    <td class="align-right">{th.PR.toFixed(2)} <span class="count">({th.Decisions})</span></td>
+                    <td class="align-right">{last ? `${last.PR.toFixed(2)} (${last.Decisions}) · ${last.Start}` : '–'}</td>
+                {/snippet}
+            </PanelTable>
         {/if}
     {/if}
 </section>
@@ -199,23 +208,6 @@
         padding: 12px 16px;
         margin: 0;
         font-style: italic;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    th,
-    td {
-        text-align: left;
-        padding: 3px 6px;
-        border-bottom: 1px solid var(--color-border);
-    }
-
-    .num {
-        text-align: right;
-        font-variant-numeric: tabular-nums;
     }
 
     .count {
