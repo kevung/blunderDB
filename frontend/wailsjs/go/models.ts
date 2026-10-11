@@ -2083,6 +2083,7 @@ export namespace domain {
 	    includeFilterLibrary: boolean;
 	    includePlayedMoves: boolean;
 	    includeMatches: boolean;
+	    includeTranscriptions: boolean;
 	    includeCollections: boolean;
 	    collectionIDs: number[];
 	    matchIDs: number[];
@@ -2113,6 +2114,7 @@ export namespace domain {
 	        this.includeFilterLibrary = source["includeFilterLibrary"];
 	        this.includePlayedMoves = source["includePlayedMoves"];
 	        this.includeMatches = source["includeMatches"];
+	        this.includeTranscriptions = source["includeTranscriptions"];
 	        this.includeCollections = source["includeCollections"];
 	        this.collectionIDs = source["collectionIDs"];
 	        this.matchIDs = source["matchIDs"];
@@ -4602,6 +4604,20 @@ export namespace main {
 	        this.cube = source["cube"];
 	    }
 	}
+	export class TableSort {
+	    column: string;
+	    direction: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new TableSort(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.column = source["column"];
+	        this.direction = source["direction"];
+	    }
+	}
 	export class RolloutChoice {
 	    preset: string;
 	    custom?: rollout.Settings;
@@ -4633,20 +4649,6 @@ export namespace main {
 		    }
 		    return a;
 		}
-	}
-	export class TableSort {
-	    column: string;
-	    direction: string;
-	
-	    static createFrom(source: any = {}) {
-	        return new TableSort(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.column = source["column"];
-	        this.direction = source["direction"];
-	    }
 	}
 	export class StatsFilterPersisted {
 	    player_name: string;
@@ -4812,6 +4814,7 @@ export namespace main {
 	        this.write = source["write"];
 	    }
 	}
+	
 	
 	
 	export class WatchFolderSettings {

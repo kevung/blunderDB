@@ -34,7 +34,7 @@ func TestExportParity_WholeLibraryFromGUICLIAndDaemon(t *testing.T) {
 		ExportPath: gui, WholeLibrary: true,
 		IncludeAnalysis: true, IncludeComments: true, IncludePlayedMoves: true, IncludeFilterLibrary: true,
 		IncludeMatches: true, IncludeCollections: true, IncludeTournaments: true, IncludeLessons: true,
-		IncludeAnkiDecks: true,
+		IncludeAnkiDecks: true, IncludeTranscriptions: true,
 	}); err != nil {
 		t.Fatalf("GUI export: %v", err)
 	}

@@ -78,6 +78,7 @@ describe('the whole library', () => {
             wholeLibrary: true,
             positionIDs: [],
             includeMatches: true,
+            includeTranscriptions: true,
             matchIDs: [],
             includeCollections: true,
             collectionIDs: [],
@@ -113,6 +114,22 @@ describe('a filtered list', () => {
         await handleExportCommit();
 
         const sent = vi.mocked(ExportDatabase).mock.calls[0][0];
-        expect(sent).toMatchObject({ wholeLibrary: false, positionIDs: [11, 12], includeMatches: true, matchIDs: [2], includeAnkiDecks: false });
+        expect(sent).toMatchObject({ wholeLibrary: false, positionIDs: [11, 12], includeMatches: true, includeTranscriptions: true, matchIDs: [2], includeAnkiDecks: false });
+    });
+
+    test('sends the drafts only with their matches, and not once unticked', async () => {
+        library = false;
+        await exportDatabase();
+        pickEverything();
+        exportOptionsStore.update((/** @type {any} */ o) => ({ ...o, includeTranscriptions: false }));
+        await handleExportCommit();
+        expect(vi.mocked(ExportDatabase).mock.calls[0][0]).toMatchObject({ includeMatches: true, includeTranscriptions: false });
+
+        vi.clearAllMocks();
+        await exportDatabase();
+        pickEverything();
+        exportOptionsStore.update((/** @type {any} */ o) => ({ ...o, includeMatches: false, matchIDs: [] }));
+        await handleExportCommit();
+        expect(vi.mocked(ExportDatabase).mock.calls[0][0]).toMatchObject({ includeMatches: false, includeTranscriptions: false });
     });
 });

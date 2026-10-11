@@ -196,7 +196,7 @@ type ScoreCellStats struct {
 // SelectionSpec selects a subset of positions out of a stats result, e.g. the
 // decisions behind a histogram bucket or a tournament row.
 type SelectionSpec struct {
-	Kind string // "all","checker","cube","cube_action","cube_direction","error_bucket","tournament","match","last_n","position","top_blunders","breakdown"
+	Kind string // "all","checker","cube","cube_action","cube_direction","error_bucket","tournament","match","last_n","position","top_blunders","breakdown","blunders"
 	// CubeAction matches analysis.best_cube_action VERBATIM, in whatever
 	// spelling the importer wrote ("No Double", "Double, Take"…) — not the
 	// canonical form.
@@ -737,6 +737,10 @@ type StatsStore interface {
 	// decision, oldest first. Read as PRByWindow reads; a provenance filter
 	// is refused with ErrInvalid.
 	MatchIDs(ctx context.Context, scope string, filter StatsFilter) ([]int64, error)
+
+	// TournamentIDs lists the tournaments Totals.NumTournaments counts under
+	// filter: those holding a counted decision of the selection, by id.
+	TournamentIDs(ctx context.Context, scope string, filter StatsFilter) ([]int64, error)
 
 	// RefreshMatchStats recomputes the rows of matchIDs now — what an import
 	// does for the match it has just written, inside its transaction.

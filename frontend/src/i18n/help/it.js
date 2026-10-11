@@ -291,6 +291,7 @@ export default {
 <p>Una raccolta può essere <strong>viva</strong>: il suo contenuto non è più una lista fatta a mano ma il risultato di una <strong>ricerca</strong>, rivalutato ogni volta che la si apre. Il pulsante ◇ in testa alla raccolta la rende viva con l'ultima ricerca lanciata; ◈ segnala che lo è già, e lo stesso pulsante le restituisce la lista. Nulla viene distrutto: le posizioni che conteneva sono ancora lì quando si torna indietro.</p>
 <p>Il pulsante ❄, visibile su una raccolta viva, la <strong>congela</strong>: le posizioni che la ricerca seleziona in quel momento diventano il contenuto di una raccolta ordinaria, nell'ordine della ricerca, e la query viene cancellata. Le posizioni che conteneva prima di essere viva vengono sostituite.</p>
 <p>Una raccolta viva la cui interrogazione porta un token che questa versione non conosce più <strong>rifiuta di aprirsi</strong> e lo dice, invece di restituire l'intera base. È l'unico guasto che un filtro salvato non deve avere: allargarsi in silenzio.</p>
+<p>Una collezione viva <strong>resta viva in un'esportazione</strong> del database: la sua query viaggia con essa e viene rivalutata, presso il destinatario, sulle posizioni del file. Quando l'esportazione porta con sé le posizioni delle collezioni, porta quelle che la query seleziona al momento dell'esportazione, fino al tetto di 5000 posizioni. Una query che indica posizioni, match o tornei con il loro numero viene riscritta sui numeri del file; se uno di essi resta fuori dal file, la collezione parte <strong>congelata</strong>, con le posizioni che la query seleziona al momento dell'esportazione.</p>
 <p>Un mazzo di ripetizione dilazionata basato su una raccolta viva riesegue la sua interrogazione a ogni apertura di sessione: le posizioni che la ricerca seleziona dall'ultima volta vi entrano, e le carte già presenti conservano la loro pianificazione. Una valutazione è limitata da un <strong>tetto</strong> di 5.000 posizioni; quando l'interrogazione ne seleziona di più, solo le prime, nell'ordine della ricerca, alimentano il mazzo, e la barra di stato lo segnala insieme al numero reale di posizioni selezionate.</p>
 <p>Il pulsante <strong>Proponi…</strong> dell'intestazione apre le <strong>posizioni di riferimento</strong>: una breve lista di posizioni da studiare, scelta tra i tuoi errori in modo che ciascuna ne riassuma molti. Studiare i dieci errori peggiori dà spesso dieci varianti di uno stesso problema, o posizioni singolari che non insegnano nulla sulle altre; una posizione di riferimento sta al centro di più dei tuoi errori, di struttura simile, e la sua lezione serve a tutti.</p>
 <ul>
@@ -639,10 +640,11 @@ export default {
 <li><strong>PR Cubo</strong> — solo decisioni di cubo.</li>
 </ul>
 <p>Cliccando su una scheda si caricano nel pannello di analisi le posizioni del sottoinsieme corrispondente (drill-down). Una quarta scheda, <strong>Perdita MWC (eq. 7 pt)</strong>, fornisce questa perdita qualunque sia la scelta del pulsante PR / MWC, con il suo intervallo; non carica nulla.</p>
+<p>Sotto le schede, la riga dei totali conta i tornei, le partite e le decisioni del filtro. Il numero di tornei apre questi tornei nel pannello Tornei: un torneo solo si apre direttamente; più tornei restringono l'elenco, che porta allora il pulsante « N tornei aperti dalle Statistiche × »: ripristina l'elenco completo.</p>
+<p>Il numero di decisioni apre le loro posizioni; il numero di partite apre quelle partite nel pannello Partite, salvo quando è attivo un tipo di decisione o un filtro di provenienza: conta allora meno partite di quante ne aprirebbe l'elenco e resta un semplice numero.</p>
 <div class="admonition note">
 <p>Il numero totale di decisioni viene visualizzato in fondo a ciascuna scheda al passaggio del mouse.</p>
 </div>
-<p>Sotto le schede, la riga dei totali conta i tornei, le partite e le decisioni del filtro. Il numero di decisioni apre le loro posizioni; il numero di partite apre quelle partite nel pannello Partite, salvo quando è attivo un tipo di decisione o un filtro di provenienza: conta allora meno partite di quante ne aprirebbe l'elenco e resta un semplice numero.</p>
 <h5>Piano di studio</h5>
 <p>La scheda <strong>Piano di studio</strong> risponde a «che cosa devo lavorare adesso?». Gli errori ricorrenti (scheda Errori) dicono dove il filtro ha perso di più; non dicono dove lo studio rende di più. Una famiglia di posizioni davvero difficili costa cara a tutti, e tre errori non fanno una tendenza. Il piano corregge entrambe le cose.</p>
 <ul>
@@ -793,7 +795,7 @@ export default {
 </tr>
 <tr>
 <td>Blunder</td>
-<td>Numero di errori che raggiungono la soglia di blunder della libreria (0,100 EMG per impostazione predefinita).</td>
+<td>Numero di errori che raggiungono la soglia di blunder della libreria (0,100 EMG per impostazione predefinita). Un clic su questo numero carica quelle posizioni nel pannello di analisi.</td>
 </tr>
 <tr>
 <td>Fortuna</td>
@@ -1054,10 +1056,11 @@ export default {
 </div>
 <h4>Contrassegnare un database con la sua origine</h4>
 <p>La finestra di esportazione sta in una sola schermata: il modulo e, sovrapposto ad esso durante la scrittura, un indicatore di avanzamento. Si chiude da sola al termine e il risultato appare nella barra di stato.</p>
-<p>Tre punti meritano attenzione:</p>
+<p>Cinque punti meritano attenzione:</p>
 <ul>
 <li><strong>L'esportazione riguarda le posizioni attualmente visualizzate</strong>, non l'intero database. Dopo una ricerca vengono esportati solo i risultati (la finestra lo ricorda in alto) e l'elenco dei match propone solo quelli in cui sono state giocate queste posizioni; ogni match selezionato viene esportato con tutte le sue posizioni.</li>
-<li><strong>Quando l'elenco visualizzato è la libreria</strong>, l'esportazione è la stessa del server e di <code>export --type database</code>: tutte le caselle sono selezionate fin dall'inizio, e i mazzi Anki (senza cronologia di ripasso) e le trascrizioni in corso vengono esportati insieme al resto. Una trascrizione collegata a un video locale porta con sé solo il nome del file, senza la sua cartella; un link web viene esportato così com'è.</li>
+<li><strong>Quando l'elenco visualizzato è la libreria</strong>, l'esportazione è la stessa del server e di <code>export --type database</code>: tutte le caselle sono selezionate fin dall'inizio, e i mazzi Anki (senza cronologia di ripasso) e le trascrizioni in corso vengono esportati insieme al resto.</li>
+<li><strong>Un match parte con la sua bozza di trascrizione</strong>, qualunque sia l'elenco visualizzato: la casella <em>Con le loro bozze di trascrizione</em>, sotto quella dei match, è selezionata fin dall'inizio. Una bozza che non ha ancora prodotto un match parte solo con l'intera libreria. Una trascrizione collegata a un video locale porta con sé solo il nome del file, senza la sua cartella; un link web viene esportato così com'è.</li>
 <li><strong>Una raccolta le cui posizioni non siano tutte nella selezione arriva troncata.</strong> L'elenco mostra quindi, per ogni raccolta, la parte coperta («12/40») e la segnala in rosso quando è parziale.</li>
 <li><strong>I tornei possono essere esportati solo insieme ai match</strong>: senza di essi il collegamento torneo–match non esiste e il torneo arriverebbe vuoto. La casella resta disattivata finché non è selezionato «includi i match».</li>
 </ul>

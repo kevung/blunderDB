@@ -373,6 +373,8 @@ Exporte le contenu de la base vers des fichiers.
 * ``--filters`` — Inclure la bibliothèque de filtres (défaut: oui).
 * ``--played-moves`` — Inclure les coups joués (défaut: oui).
 * ``--matches`` — Inclure les matchs (défaut: oui).
+* ``--transcriptions`` — Inclure le brouillon de transcription de chaque match
+  exporté (défaut: oui).
 * ``--collections`` — Inclure les collections (défaut: oui).
 * ``--tournaments`` — Inclure les tournois (défaut: oui).
 * ``--decks`` — Inclure les paquets Anki, sans leur historique de révision
@@ -398,6 +400,9 @@ et comme la fenêtre d'export quand la liste affichée est la bibliothèque :
 positions, matchs, tournois, collections, leçons, paquets Anki, transcriptions
 et filtres. Une option à ``false`` retire sa famille (``--collections=false``) ;
 une liste d'IDs la restreint à ces éléments et l'inclut.
+Un brouillon de transcription part avec le match qu'il a produit ; un brouillon
+qui n'a pas encore produit de match ne part que si tous les matchs partent.
+``--type matches`` emporte aussi le brouillon de chaque match.
 
 **Exemples:**
 
@@ -1533,6 +1538,15 @@ du plus ancien au plus récent. Leurs identifiants se passent à
 
    ./blunderdb stats matches --db base.db --player "Alice" --from 2025-01-01 --to 2025-03-31
    ./blunderdb list --type matches --db base.db --ids 12,15,31
+
+**stats tournaments** — Les tournois que compte le nombre de tournois du
+Tableau de bord : ceux qui portent une décision comptée du joueur (de tout
+joueur sans ``--player``) sous le filtre, par identifiant.
+
+.. code-block:: bash
+
+   ./blunderdb stats tournaments --db base.db --player "Alice" --from 2025-01-01
+   ./blunderdb stats tournaments --db base.db --format json
 
 **stats progression** — Le PR de chaque match par ordre de date, le PR de
 chaque tournoi et le PR glissant sur les N dernières décisions : l'onglet

@@ -1,12 +1,12 @@
 <script>
     import { tick } from 'svelte';
     import { get } from 'svelte/store';
-    import { statsFilterStore, patchStatsFilter, defaultStatsFilter } from '../../stores/statsStore.js';
-    import { loadPositionsFromStatsSelection } from '../../services/positionLoader.js';
-    import CountLink from '../panels/CountLink.svelte';
+    import { statsFilterStore, patchStatsFilter, defaultStatsFilter, playerTableFilterStore } from '../../stores/statsStore.js';
+    import { loadPositionsFromStatsSelection, openStatsPlayerBlunders } from '../../services/positionLoader.js';
     import { fmtMwc7, mwc7Percent, mwc7Tooltip } from '../../utils/mwc7.js';
     import { t } from '../../i18n/index.js';
     import PanelTable from '../panels/PanelTable.svelte';
+    import CountLink from '../panels/CountLink.svelte';
     import PlayerComparison from './PlayerComparison.svelte';
 
     /**
@@ -102,7 +102,7 @@
      * decision, which no match list reproduces: it stays a number.
      */
     function playerFilter(/** @type {string} */ name) {
-        return { ...defaultStatsFilter, ...get(statsFilterStore), decisionType: -1, playerName: name };
+        return { ...defaultStatsFilter, ...(get(playerTableFilterStore) ?? get(statsFilterStore)), decisionType: -1, playerName: name };
     }
 
     /** A link inside a row opens its own target, not the player's dashboard. */
@@ -114,7 +114,7 @@
     }
 
     function onRowKey(/** @type {KeyboardEvent} */ event, /** @type {string} */ name) {
-        // Enter on a link of the row is that link's, not the row's.
+        // A key on a control of the row (checkbox, link) is that control's, not the row's.
         if (event.target !== event.currentTarget) return;
         if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
@@ -165,7 +165,16 @@
                 <td class="numeric">{fmtRate(row.pr_cube, row.cube_decisions > 0)}</td>
                 <td class="numeric">{fmtRate(row.snowie_er, row.decisions > 0)}</td>
                 <td class="numeric" title={mwc7Tooltip(row.mwc7, $t)}>{fmtMwc7(row.mwc7)}</td>
-                <td class="numeric">{row.blunders}</td>
+                <td class="numeric"
+                    >{#if row.blunders > 0}<CountLink
+                            label={String(row.blunders)}
+                            onclick={(e) => {
+                                // Open the player's blunders, not the row's player filter.
+                                e.stopPropagation();
+                                openStatsPlayerBlunders(row.name);
+                            }}
+                        />{:else}0{/if}</td
+                >
                 <td class="numeric" title={row.luck_known ? $t('stats.playersLuckRolls', { n: row.luck_rolls }) : $t('stats.playersLuckUnknown')}>
                     {fmtLuck(row)}
                 </td>

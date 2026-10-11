@@ -30,12 +30,13 @@ vi.mock('../stores/databaseStore.js', () => {
 });
 vi.mock('../services/positionLoader.js', () => ({
     loadPositionsFromStatsSelection: vi.fn(() => Promise.resolve()),
-    openMatchListInPanel: vi.fn(() => Promise.resolve())
+    openMatchListInPanel: vi.fn(() => Promise.resolve()),
+    openStatsPlayerBlunders: vi.fn(() => Promise.resolve())
 }));
 
 import { SaveStatsFilter } from '../../wailsjs/go/main/Config.js';
-import { loadPositionsFromStatsSelection } from '../services/positionLoader.js';
-import { statsFilterStore, patchStatsFilter, _resetStatsFilterForTests } from '../stores/statsStore.js';
+import { loadPositionsFromStatsSelection, openStatsPlayerBlunders } from '../services/positionLoader.js';
+import { statsFilterStore, playerTableFilterStore, patchStatsFilter, _resetStatsFilterForTests } from '../stores/statsStore.js';
 import StatsFilterBar from '../components/stats/StatsFilterBar.svelte';
 import StatsPlayersTab from '../components/stats/StatsPlayersTab.svelte';
 
@@ -104,7 +105,7 @@ describe('Players › shared filter', () => {
         const row = [...container.querySelectorAll('tbody tr')].find((tr) => tr.textContent?.includes('Alice'));
         // Matches also count those without an analysed decision: no match list reproduces them.
         const links = /** @type {HTMLElement[]} */ ([...(row?.querySelectorAll('[data-testid="count-link"]') ?? [])]);
-        expect(links.map((l) => l.textContent)).toEqual(['120']);
+        expect(links.map((l) => l.textContent)).toEqual(['120', '4']);
 
         await fireEvent.click(links[0]);
         expect(loadPositionsFromStatsSelection).toHaveBeenCalledWith(
@@ -113,5 +114,22 @@ describe('Players › shared filter', () => {
         );
         expect(onSelectPlayer).not.toHaveBeenCalled();
         expect(get(statsFilterStore).playerName).toBe('');
+    });
+});
+
+describe('Players › counts read with the table', () => {
+    afterEach(() => playerTableFilterStore.set(null));
+
+    test('decisions and blunders open under the filter the table was read with, not the bar', async () => {
+        playerTableFilterStore.set(/** @type {any} */ ({ decisionType: -1, playerName: '', tournamentIDs: [8], dateFrom: '', dateTo: '', matchLength: [] }));
+        patchStatsFilter({ tournamentIDs: [9] });
+        const { container } = render(StatsPlayersTab, { props: { rows: ROWS } });
+        const row = [...container.querySelectorAll('tbody tr')].find((tr) => tr.textContent?.includes('Alice'));
+        const [decisions, blunders] = /** @type {HTMLElement[]} */ ([...(row?.querySelectorAll('[data-testid="count-link"]') ?? [])]);
+
+        await fireEvent.click(decisions);
+        expect(loadPositionsFromStatsSelection).toHaveBeenCalledWith(expect.objectContaining({ playerName: 'Alice', tournamentIDs: [8] }), { Kind: 'all', OnlyWithError: false });
+        await fireEvent.click(blunders);
+        expect(openStatsPlayerBlunders).toHaveBeenCalledWith('Alice');
     });
 });

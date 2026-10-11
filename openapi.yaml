@@ -6564,6 +6564,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/tournamentBadgesResp"
+  /v1/stats.tournamentIds:
+    post:
+      operationId: stats.tournamentIds
+      tags: [stats]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/statsComputeReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/tournamentIDsResp"
   /v1/stats.tournamentReview:
     post:
       operationId: stats.tournamentReview
@@ -9510,6 +9527,14 @@ components:
         tournamentId:
           type: integer
           format: int64
+    tournamentIDsResp:
+      type: object
+      properties:
+        tournament_ids:
+          type: array
+          items:
+            type: integer
+            format: int64
     tournamentMatchReq:
       type: object
       properties:

@@ -291,6 +291,7 @@ export default {
 <p>Una colección puede estar <strong>viva</strong>: su contenido ya no es una lista hecha a mano sino el resultado de una <strong>búsqueda</strong>, reevaluado cada vez que se abre. El botón ◇ en la cabecera de la colección la hace viva con la última búsqueda lanzada; ◈ indica que ya lo está, y el mismo botón le devuelve su lista. Nada se destruye al hacerla viva: las posiciones que contenía siguen ahí al volver atrás.</p>
 <p>El botón ❄, visible en una colección viva, la <strong>congela</strong>: las posiciones que la búsqueda selecciona en ese instante pasan a ser el contenido de una colección ordinaria, en el orden de la búsqueda, y la consulta se borra. Las posiciones que contenía antes de ser viva se sustituyen.</p>
 <p>Una colección viva cuya consulta lleva un token que esta versión ya no conoce <strong>se niega a abrirse</strong> y lo dice, en vez de devolver toda la base. Es el único fallo que un filtro guardado no debe tener: ensancharse en silencio.</p>
+<p>Una colección viva <strong>sigue viva en una exportación</strong> de la base: su consulta viaja con ella y se reevalúa, en el destinatario, sobre las posiciones del archivo. Cuando la exportación lleva las posiciones de las colecciones, lleva las que la consulta selecciona en el momento de la exportación, hasta el tope de 5000 posiciones. Una consulta que designa posiciones, partidas o torneos por su número se reescribe con los números del archivo; si alguno queda fuera del archivo, la colección se exporta <strong>congelada</strong>, con las posiciones que la consulta selecciona en el momento de la exportación.</p>
 <p>Un mazo de repetición espaciada basado en una colección viva reproduce su consulta cada vez que se abre una sesión: las posiciones que la búsqueda selecciona desde la última vez entran en él, y las tarjetas que ya estaban conservan su planificación. Una evaluación está acotada por un <strong>tope</strong> de 5.000 posiciones; cuando la consulta selecciona más, solo las primeras, en el orden de la búsqueda, alimentan el mazo, y la barra de estado lo indica junto con el número real de posiciones seleccionadas.</p>
 <p>El botón <strong>Proponer…</strong> del encabezado abre las <strong>posiciones de referencia</strong>: una lista corta de posiciones para estudiar, elegida entre sus errores para que cada una resuma muchos. Estudiar los diez peores errores suele dar diez variantes de un mismo problema, o posiciones singulares que no enseñan nada sobre las demás; una posición de referencia está en el centro de varios de sus errores, de estructura parecida, y su lección sirve para todos.</p>
 <ul>
@@ -639,10 +640,11 @@ export default {
 <li><strong>PR Cubo</strong> — solo decisiones de cubo.</li>
 </ul>
 <p>Hacer clic en una tarjeta carga en el panel de análisis las posiciones del subconjunto correspondiente (drill-down). Una cuarta tarjeta, <strong>Pérdida MWC (eq. 7 pts)</strong>, da esa pérdida sea cual sea la elección del botón PR / MWC, con su intervalo; no carga nada.</p>
+<p>Bajo las tarjetas, la línea de totales cuenta los torneos, las partidas y las decisiones del filtro. El número de torneos abre esos torneos en el panel Torneos: un torneo solo se abre directamente; varios restringen la lista, que lleva entonces el botón « N torneos abiertos desde Estadísticas × »: devuelve la lista completa.</p>
+<p>El número de decisiones abre sus posiciones; el número de partidas abre esas partidas en el panel Partidas, salvo cuando hay un tipo de decisión o un filtro de procedencia activo: cuenta entonces menos partidas de las que abriría la lista y queda como un simple número.</p>
 <div class="admonition note">
 <p>El número total de decisiones se muestra en la parte inferior de cada tarjeta al pasar el cursor.</p>
 </div>
-<p>Bajo las tarjetas, la línea de totales cuenta los torneos, las partidas y las decisiones del filtro. El número de decisiones abre sus posiciones; el número de partidas abre esas partidas en el panel Partidas, salvo cuando hay un tipo de decisión o un filtro de procedencia activo: cuenta entonces menos partidas de las que abriría la lista y queda como un simple número.</p>
 <h5>Plan de estudio</h5>
 <p>La tarjeta <strong>Plan de estudio</strong> responde a «¿qué debo trabajar ahora?». Los errores recurrentes (pestaña Errores) dicen dónde perdió más el filtro; no dicen dónde rinde más el estudio. Una familia de posiciones realmente difíciles cuesta caro a todo el mundo, y tres errores no hacen una tendencia. El plan corrige ambas cosas.</p>
 <ul>
@@ -793,7 +795,7 @@ export default {
 </tr>
 <tr>
 <td>Blunders</td>
-<td>Número de errores que alcanzan el umbral de blunder de la biblioteca (0,100 EMG por defecto).</td>
+<td>Número de errores que alcanzan el umbral de blunder de la biblioteca (0,100 EMG por defecto). Al hacer clic en este número se cargan esas posiciones en el panel de análisis.</td>
 </tr>
 <tr>
 <td>Suerte</td>
@@ -1054,10 +1056,11 @@ export default {
 </div>
 <h4>Marcar una base de datos con su origen</h4>
 <p>La ventana de exportación cabe en una sola pantalla: el formulario y, sobre él, una barra de progreso durante la escritura. Se cierra sola al terminar y el resultado aparece en la barra de estado.</p>
-<p>Tres puntos merecen atención:</p>
+<p>Cinco puntos merecen atención:</p>
 <ul>
 <li><strong>La exportación afecta a las posiciones mostradas actualmente</strong>, no a toda la base. Tras una búsqueda solo se exportan los resultados (la ventana lo recuerda en la parte superior) y la lista de partidas solo ofrece aquellas en las que se jugaron esas posiciones; cada partida marcada se exporta con todas sus posiciones.</li>
-<li><strong>Cuando la lista mostrada es la biblioteca</strong>, la exportación es la misma que la del servidor y la de <code>export --type database</code>: todas las casillas están marcadas desde el principio, y los mazos de Anki (sin historial de repaso) y las transcripciones en curso se exportan con el resto. Una transcripción vinculada a un vídeo local solo lleva el nombre del archivo, sin su carpeta; un enlace web se exporta tal cual.</li>
+<li><strong>Cuando la lista mostrada es la biblioteca</strong>, la exportación es la misma que la del servidor y la de <code>export --type database</code>: todas las casillas están marcadas desde el principio, y los mazos de Anki (sin historial de repaso) y las transcripciones en curso se exportan con el resto.</li>
+<li><strong>Una partida se exporta con su borrador de transcripción</strong>, sea cual sea la lista mostrada: la casilla <em>Con sus borradores de transcripción</em>, bajo la de las partidas, está marcada desde el principio. Un borrador que aún no ha producido ninguna partida solo se exporta con la biblioteca entera. Una transcripción vinculada a un vídeo local solo lleva el nombre del archivo, sin su carpeta; un enlace web se exporta tal cual.</li>
 <li><strong>Una colección cuyas posiciones no estén todas en la selección llega truncada.</strong> Por eso la lista muestra, para cada colección, la parte cubierta («12/40») y la señala en rojo cuando es parcial.</li>
 <li><strong>Los torneos solo pueden exportarse junto con los partidos</strong>: sin ellos no existe el vínculo torneo–partido y el torneo llegaría vacío. La casilla permanece desactivada mientras no se marque «incluir los partidos».</li>
 </ul>

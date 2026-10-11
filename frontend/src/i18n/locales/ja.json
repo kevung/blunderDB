@@ -818,6 +818,8 @@
         "filterPlaceholder": "絞り込み: 名前、場所、日付…",
         "filterAria": "トーナメントを絞り込む",
         "noTournamentsFiltered": "該当するトーナメントなし。",
+        "idsFilter": "統計から開いた {n} 件のトーナメント",
+        "idsFilterClear": "すべてのトーナメントを表示",
         "gone": "このトーナメントはもう存在しません。"
     },
     "anki": {
@@ -1232,6 +1234,7 @@
         "includeComments": "コメントを含める",
         "includeFilterLibrary": "保存した自分のフィルター",
         "includeMatches": "マッチを含める（{count}）",
+        "includeTranscriptions": "書き起こしの下書きも含める",
         "includePlayedMoves": "実際のムーブを含める",
         "includeTournaments": "トーナメントを含める（{count}）",
         "mayTakeMoments": "少々時間がかかる場合があります。",

@@ -222,3 +222,15 @@ describe('the saved-searches box', () => {
         expect(container.querySelectorAll('#export-filter-library')).toHaveLength(1);
     });
 });
+
+describe('the transcriptions box', () => {
+    test('sits under the matches and follows them', () => {
+        const off = mount(baseOptions());
+        expect(/** @type {HTMLInputElement} */ (off.container.querySelector('#export-transcriptions')).disabled).toBe(true);
+        cleanup();
+        const on = mount({ ...baseOptions(), includeMatches: true, includeTranscriptions: true });
+        const box = /** @type {HTMLInputElement} */ (on.container.querySelector('#export-transcriptions'));
+        expect(box.disabled).toBe(false);
+        expect(box.checked).toBe(true);
+    });
+});

@@ -1486,6 +1486,14 @@ export function StatsReportHTMLCtx(arg1, arg2, arg3, arg4) {
   return window['go']['database']['Database']['StatsReportHTMLCtx'](arg1, arg2, arg3, arg4);
 }
 
+export function StatsTournamentIDs(arg1) {
+  return window['go']['database']['Database']['StatsTournamentIDs'](arg1);
+}
+
+export function StatsTournamentIDsCtx(arg1, arg2) {
+  return window['go']['database']['Database']['StatsTournamentIDsCtx'](arg1, arg2);
+}
+
 export function StopDuel(arg1, arg2, arg3) {
   return window['go']['database']['Database']['StopDuel'](arg1, arg2, arg3);
 }

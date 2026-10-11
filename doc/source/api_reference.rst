@@ -344,6 +344,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/stats.studyPlanQueue                 JSON
      POST /v1/stats.timeErrors                     JSON
      POST /v1/stats.tournamentBadges               JSON
+     POST /v1/stats.tournamentIds                  JSON
      POST /v1/stats.tournamentReview               JSON
      POST /v1/stats.training                       JSON
    study

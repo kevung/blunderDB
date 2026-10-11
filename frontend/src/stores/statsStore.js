@@ -216,6 +216,8 @@ export async function refreshStats(filter, invalidationKey) {
 }
 
 export const playerTableStore = writable(/** @type {any} */ (null));
+/** The filter the shown players table was read under: what its counts open. */
+export const playerTableFilterStore = writable(/** @type {any} */ (null));
 export const playerTableLoadingStore = writable(false);
 export const playerTableErrorStore = writable(/** @type {any} */ (null));
 
@@ -256,6 +258,7 @@ export async function refreshPlayerTable(filter, invalidationKey) {
         const rows = await GetPlayerTable(filter);
         if (seq !== _playerSeq) return;
         playerTableStore.set(rows ?? []);
+        playerTableFilterStore.set(filter);
     } catch (err) {
         if (seq !== _playerSeq) return;
         _cachedPlayerKey = null; // allow retry on error

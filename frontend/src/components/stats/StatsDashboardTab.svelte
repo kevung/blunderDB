@@ -3,7 +3,7 @@
     import { StatsMatchIDs } from '../../../wailsjs/go/database/Database.js';
     import CountLink from '../panels/CountLink.svelte';
     import { formatIsoDay } from '../../utils/format.js';
-    import { loadPositionsFromStatsSelection, openMatchInPanel, openMatchListInPanel } from '../../services/positionLoader.js';
+    import { loadPositionsFromStatsSelection, openMatchInPanel, openMatchListInPanel, openStatsTournaments } from '../../services/positionLoader.js';
     import { t } from '../../i18n/index.js';
     import { fmtMwc7, fmtMwc7Interval, mwc7Tooltip } from '../../utils/mwc7.js';
     import { fmtPRInterval } from '../../utils/interval.js';
@@ -165,7 +165,7 @@
 
     <!-- ── Totals line ──────────────────────────────────────────── -->
     <p class="stats-totals">
-        {result.Totals.NumTournaments}
+        {#if result.Totals.NumTournaments > 0}<CountLink label={String(result.Totals.NumTournaments)} onclick={openStatsTournaments} />{:else}0{/if}
         {$t('stats.tournaments')} ·
         {#if matchesOpenable}<CountLink label={String(result.Totals.NumMatches)} onclick={openMatches} />{:else}{result.Totals.NumMatches}{/if}
         {$t('stats.matches')} ·
