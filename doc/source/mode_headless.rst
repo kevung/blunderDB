@@ -1889,7 +1889,8 @@ Compactage et pool de connexions
 --------------------------------
 
 ``POST /ops/maintenance.vacuum`` compacte le fichier SQLite du
-daemon — le pendant du bouton « Compacter la base » de l'interface graphique
+daemon — le pendant de la ligne « Espace récupérable » de l'onglet *Maintenance*
+de l'interface graphique
 et de la commande ``blunderdb vacuum`` (voir :ref:`cli`), avec la même garde
 d'espace disque — et renvoie les tailles avant et après (``sizeBefore``,
 ``sizeAfter``, en octets). Elle n'est disponible qu'avec le backend SQLite ;

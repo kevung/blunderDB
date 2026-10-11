@@ -119,10 +119,14 @@
             openModal(MODAL.TRASH);
             return;
         }
-        const ids = line.kind === STALE ? staleIDs : ((await MaintenanceIDs(line.kind)) ?? []);
-        onLeave();
-        if (line.unit === 'matches') await openMatchListInPanel(ids);
-        else openPositionIDs(ids);
+        try {
+            const ids = line.kind === STALE ? staleIDs : ((await MaintenanceIDs(line.kind)) ?? []);
+            onLeave();
+            if (line.unit === 'matches') await openMatchListInPanel(ids);
+            else openPositionIDs(ids);
+        } catch (error) {
+            statusBarTextStore.set(tMsg('maintenance.failed', { op: get(t)(`maintenance.line_${labelKey(line.kind)}`), error: String(error) }));
+        }
     }
 
     /** @param {Line} line */
@@ -199,7 +203,7 @@
 </script>
 
 <div class="maintenance" data-testid="maintenance-tab">
-    <PanelHeader title={$t('maintenance.title')}>
+    <PanelHeader>
         {#snippet actions()}
             <button type="button" class="secondary-button" onclick={refresh} title={$t('maintenance.refresh')} aria-label={$t('maintenance.refresh')}>↻</button>
         {/snippet}
@@ -233,7 +237,7 @@
                         <span title={$t('maintenance.changed', { n: line.last.changed })}>{lastLabel(line.last)}</span>
                     {/if}
                 </td>
-                <td class="actions-col">
+                <td class="actions-col maint-action">
                     {#if actionKey(line)}
                         <button
                             type="button"
@@ -255,6 +259,13 @@
         display: flex;
         flex-direction: column;
         gap: var(--space-2);
+    }
+    /* Right-aligned and of one width, the buttons line up as one column. */
+    td.maint-action {
+        text-align: right;
+    }
+    .maint-action .secondary-button {
+        min-width: 96px;
     }
     .nowrap {
         white-space: nowrap;

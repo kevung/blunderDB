@@ -183,7 +183,7 @@ var databaseParity = map[string]parityEntry{
 	"CountPositionsWithoutAnalysis":     {CLI: "analyze", Server: "/v1/gammonnet.analyzeMissing"},
 	"CountMatchPositionsToAnalyze":      {CLI: "analyze --match", Why: whyMatchScoped},
 	"CountPositionsWithStaleGammonNet":  {CLI: "analyze --stale", Server: "/v1/gammonnet.sweepStale"},
-	"StaleGammonNetIDs":                 {CLI: "analyze --stale", Server: "/v1/gammonnet.sweepStale"},
+	"StaleGammonNetIDs":                 {Why: "the list a click on the stale count opens in the Maintenance tab"},
 	"CreateAnkiDeck":                    {Server: "/v1/anki.createDeck", Why: "a deck is created from the GUI's current collection or search; the CLI lists, inspects and syncs decks"},
 	"CreateCollection":                  {CLI: "collection create", Server: "/v1/collections.create"},
 	"CreateLesson":                      {CLI: "lesson create", Server: "/v1/lessons.create"},

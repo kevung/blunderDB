@@ -540,8 +540,8 @@ L'annulation comme la fermeture interrompent aussi la position en cours de
 calcul, qui reste sans analyse.
 
 Un seul travail écrit la bibliothèque à la fois : un lot gammonNet, un rollout
-stocké ou une opération de maintenance. Le lot lancé avec **Analyser
-maintenant** est refusé tant qu'un autre travail est en cours, et la barre de
+stocké ou une opération de maintenance. Un lot ou une opération lancés depuis
+l'onglet *Maintenance* sont refusés tant qu'un autre travail est en cours, et la barre de
 statut nomme ce travail ; le lot que lance un import, une transcription ou un
 duel attend au contraire qu'il finisse, et la barre de statut l'annonce
 « en attente » jusqu'à son départ.

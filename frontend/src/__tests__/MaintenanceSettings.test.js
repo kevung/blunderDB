@@ -58,6 +58,8 @@ vi.mock('../services/positionLoader.js', () => ({
 import MaintenanceSettings from '../components/MaintenanceSettings.svelte';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { maintenanceStore } from '../stores/maintenanceStore.js';
+import { statusBarTextStore } from '../stores/uiStore';
+import { get } from 'svelte/store';
 
 async function settle() {
     for (let i = 0; i < 6; i++) await tick();
@@ -131,6 +133,17 @@ describe('MaintenanceSettings', () => {
         await settle();
         expect(calls.StartMaintenance).toHaveBeenCalledWith('analysis.columns');
         expect(/** @type {HTMLButtonElement} */ (byId(container, 'maintenance-run-stats.matches')).disabled).toBe(true);
+    });
+
+    test('a list that cannot be read says so and stays on the tab', async () => {
+        calls.MaintenanceIDs.mockImplementationOnce(() => Promise.reject(new Error('boom')));
+        const onLeave = vi.fn();
+        const { container } = render(MaintenanceSettings, { props: { onLeave } });
+        await settle();
+        await fireEvent.click(byId(container, 'maintenance-open-stats.matches'));
+        await settle();
+        expect(onLeave).not.toHaveBeenCalled();
+        expect(JSON.stringify(get(statusBarTextStore))).toContain('boom');
     });
 
     test('a read-only library disables every action', async () => {

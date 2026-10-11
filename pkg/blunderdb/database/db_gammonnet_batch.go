@@ -114,12 +114,11 @@ func (d *Database) CountPositionsWithStaleGammonNet(ply int) (int, error) {
 
 // StaleGammonNetIDs lists the positions CountPositionsWithStaleGammonNet
 // counts: one scan gives the Maintenance tab both the count and the list its
-// click opens.
+// click opens. The scan reads the backend's own pool, without d.mu, as the
+// count does: held for minutes, the read lock would stall every write.
 func (d *Database) StaleGammonNetIDs(ply int) ([]int64, error) {
-	d.mu.RLock()
-	defer d.mu.RUnlock()
-	if d.store == nil {
-		return nil, errors.New("stale gammonNet: no database open")
+	if _, err := d.openStore("stale gammonNet"); err != nil {
+		return nil, err
 	}
 	return d.positionIDsWithStaleGammonNet(gammonnet.DepthLabel(ply))
 }
