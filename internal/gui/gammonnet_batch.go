@@ -183,9 +183,9 @@ func (a *App) stopBackgroundJobs(grace time.Duration) {
 	a.stopDatabaseJobs(grace)
 }
 
-// stopDatabaseJobs cancels the gammonNet batch and the rollout, the jobs that
-// write the database, and waits for them up to grace, shared: before shutdown
-// and before the open file changes.
+// stopDatabaseJobs cancels the gammonNet batch, the rollout and the
+// maintenance run, the jobs that write the database, and waits for them up to
+// grace, shared: before shutdown and before the open file changes.
 func (a *App) stopDatabaseJobs(grace time.Duration) {
 	// One context for the whole grace period: unlike a timer channel, which
 	// delivers its value once, it stays done for every job still waited on.
@@ -203,5 +203,8 @@ func (a *App) stopDatabaseJobs(grace time.Duration) {
 		case <-deadline.Done():
 			slog.Warn("a job writing the database did not stop within the grace period; going ahead", "job", name, "grace", grace)
 		}
+	}
+	if a.db != nil {
+		a.db.StopMaintenance(deadline)
 	}
 }

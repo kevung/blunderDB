@@ -32,7 +32,8 @@ var prunedIndexes2_31 = []string{
 // lesson_progress (ADR-0069), study_mark (the study queue's explicit "seen"
 // gesture), move.error_mp and the per-match breakdowns beside match_stats
 // (match_stats_cell, match_stats_position), all added NULL or empty; the
-// open fills the breakdowns with match_stats (DropOlderShapeMatchStatsSQL). Scoring the
+// open drops the match_stats rows without them (DropOlderShapeMatchStatsSQL),
+// which readers or the stats.matches maintenance line recompute. Scoring the
 // existing moves is not part of it: that is the resumable
 // MatchStore.ScoreMoves pass, run outside the open.
 //

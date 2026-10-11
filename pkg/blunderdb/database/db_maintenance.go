@@ -8,10 +8,6 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// ErrMaintenanceBusy is a second maintenance run while one is in flight:
-// one operation at a time (ADR-0088).
-var ErrMaintenanceBusy = fmt.Errorf("a maintenance operation is already running: %w", storage.ErrConflict)
-
 // openStore returns the backend under a read lock, or an error when no
 // database is open. The maintenance calls then run without d.mu: the counts
 // are reads of the backend's own pool, and a run takes the lock per batch
@@ -69,18 +65,11 @@ func (d *Database) RunMaintenanceWithProgress(kind string, fn func(done, total i
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	d.cancelMu.Lock()
-	if d.maintenanceCancel != nil {
-		d.cancelMu.Unlock()
-		return maintenance.Run{}, ErrMaintenanceBusy
+	release, err := d.acquireJob(ctx, "a maintenance operation", cancel)
+	if err != nil {
+		return maintenance.Run{}, err
 	}
-	d.maintenanceCancel = cancel
-	d.cancelMu.Unlock()
-	defer func() {
-		d.cancelMu.Lock()
-		d.maintenanceCancel = nil
-		d.cancelMu.Unlock()
-	}()
+	defer release()
 	return maintenance.RunKind(ctx, st, "", maintenance.Kind(kind), maintenance.Opts{
 		Before: func() func() {
 			d.mu.Lock()
@@ -90,12 +79,30 @@ func (d *Database) RunMaintenanceWithProgress(kind string, fn func(done, total i
 	})
 }
 
-// CancelMaintenance ends the in-flight maintenance run; no-op when idle.
+// CancelMaintenance ends the in-flight maintenance run between two batches;
+// no-op when idle or when the job holding the library is not maintenance.
 func (d *Database) CancelMaintenance() {
 	d.cancelMu.Lock()
-	cancel := d.maintenanceCancel
+	j := d.job
 	d.cancelMu.Unlock()
-	if cancel != nil {
-		cancel()
+	if j != nil && j.cancel != nil {
+		j.cancel()
+	}
+}
+
+// StopMaintenance cancels the in-flight maintenance run and waits for it to
+// end, or for ctx: the desktop calls it before the open file changes, so a
+// pass never writes into the next library.
+func (d *Database) StopMaintenance(ctx context.Context) {
+	d.cancelMu.Lock()
+	j := d.job
+	d.cancelMu.Unlock()
+	if j == nil || j.cancel == nil {
+		return
+	}
+	j.cancel()
+	select {
+	case <-j.done:
+	case <-ctx.Done():
 	}
 }

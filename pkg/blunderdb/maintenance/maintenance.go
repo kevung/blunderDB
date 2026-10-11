@@ -277,6 +277,28 @@ func IDs(ctx context.Context, st storage.Storage, scope string, kind Kind) ([]in
 	return ids, nil
 }
 
+// Runnable reports why RunKind would refuse kind on st, or nil: an unknown
+// kind, a line without an action here, or one the backend has nothing to do
+// for. A caller asks it before taking a slot or opening a stream.
+func Runnable(st storage.Storage, kind Kind) error {
+	_, err := runnable(st, kind)
+	return err
+}
+
+func runnable(st storage.Storage, kind Kind) (spec, error) {
+	s, err := lookup(kind)
+	if err != nil {
+		return spec{}, err
+	}
+	if s.run == nil {
+		return spec{}, fmt.Errorf("%s has no action here: %w", kind, storage.ErrInvalid)
+	}
+	if !s.applicable(st) {
+		return spec{}, fmt.Errorf("%s does not apply to this backend: %w", kind, storage.ErrInvalid)
+	}
+	return s, nil
+}
+
 // now is the journal's clock; a test pins it.
 var now = time.Now
 
@@ -285,15 +307,9 @@ var now = time.Now
 // error is the action's; a journal that cannot be written is reported only
 // when the action itself succeeded.
 func RunKind(ctx context.Context, st storage.Storage, scope string, kind Kind, o Opts) (Run, error) {
-	s, err := lookup(kind)
+	s, err := runnable(st, kind)
 	if err != nil {
 		return Run{}, err
-	}
-	if s.run == nil {
-		return Run{}, fmt.Errorf("%s has no action here: %w", kind, storage.ErrInvalid)
-	}
-	if !s.applicable(st) {
-		return Run{}, fmt.Errorf("%s does not apply to this backend: %w", kind, storage.ErrInvalid)
 	}
 	r := Run{Kind: kind, StartedAt: now().Unix()}
 	changed, runErr := s.run(ctx, st, scope, o)

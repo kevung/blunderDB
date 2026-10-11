@@ -64,8 +64,9 @@ const InvalidateMatchStatsOfPositionsSuffix = `)`
 // columns (they are NULL there and nowhere else), or before the breakdown
 // cells were written beside them (a seat with a counted decision and no
 // phase cell, see match_stats_cells.go). Run at every open, after
-// the columns exist; the fill that follows recomputes those matches, so the
-// repair is idempotent and costs one scan of the table once done.
+// the columns exist; the matches it empties are then missing, recomputed by
+// the next reader or the stats.matches maintenance line, so the repair is
+// idempotent and costs one scan of the table once done.
 const DropOlderShapeMatchStatsSQL = `DELETE FROM match_stats WHERE ` + OlderShapeMatchStatsPredicate
 
 // OlderShapeMatchStatsPredicate selects those rows, for a probe that writes

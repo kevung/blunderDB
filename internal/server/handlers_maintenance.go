@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"slices"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/maintenance"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -103,8 +102,8 @@ func (s *Server) handleMaintenanceRun(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	kind := maintenance.Kind(req.Kind)
-	if !slices.Contains(maintenance.Kinds(), kind) {
-		writeErrorCode(w, CodeInvalid, fmt.Sprintf("unknown maintenance operation %q", req.Kind))
+	if err := maintenance.Runnable(s.opts.Storage, kind); err != nil {
+		writeStorageError(w, err)
 		return
 	}
 	ctx, cancel := context.WithCancel(r.Context())

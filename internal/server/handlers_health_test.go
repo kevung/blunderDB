@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"encoding/json"
 	"net/http"
+	"strings"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/maintenance"
@@ -69,15 +70,21 @@ func TestMaintenanceRun_SharesTheTenantSlot(t *testing.T) {
 
 func TestMaintenanceRefusesUnknownAndCountless(t *testing.T) {
 	ts, _ := newTestServerAndHandler(t)
-	for path, kind := range map[string]string{
-		"/v1/maintenance.run":   "nope",
-		"/v1/maintenance.count": "analysis.columns",
-		"/v1/maintenance.ids":   "trash",
+	for _, c := range []struct{ path, kind string }{
+		{"/v1/maintenance.run", "nope"},
+		{"/v1/maintenance.run", "trash"},
+		{"/v1/maintenance.run", "analysis.missing"},
+		{"/v1/maintenance.run", "vacuum"},
+		{"/v1/maintenance.count", "analysis.columns"},
+		{"/v1/maintenance.ids", "trash"},
 	} {
-		resp := post(t, ts, path, map[string]any{"kind": kind})
+		resp := post(t, ts, c.path, map[string]any{"kind": c.kind})
 		resp.Body.Close()
 		if resp.StatusCode != http.StatusBadRequest {
-			t.Errorf("%s %s: status %d, want 400", path, kind, resp.StatusCode)
+			t.Errorf("%s %s: status %d, want 400", c.path, c.kind, resp.StatusCode)
+		}
+		if ct := resp.Header.Get("Content-Type"); strings.Contains(ct, "ndjson") {
+			t.Errorf("%s %s: the refusal opened a stream", c.path, c.kind)
 		}
 	}
 }

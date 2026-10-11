@@ -19,5 +19,6 @@
 //     since Database.mu is not reentrant, and the daemon passes nothing.
 //   - One operation at a time per tenant is the caller's rule, not the
 //     package's: the daemon shares its slot with the gammonNet sweeps and
-//     the rollouts, the desktop with its batch analysis.
+//     the rollouts, the desktop wrapper (Database.acquireJob) with its
+//     gammonNet batches and its stored rollouts.
 package maintenance

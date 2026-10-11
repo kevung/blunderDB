@@ -173,6 +173,11 @@ func (d *Database) analyzeIDsWithGammonNet(ctx context.Context, gen uint64, ids 
 	if total == 0 {
 		return GammonNetBatchSummary{}, ctx.Err()
 	}
+	release, err := d.acquireJob(ctx, "a gammonNet analysis", nil)
+	if err != nil {
+		return GammonNetBatchSummary{}, err
+	}
+	defer release()
 
 	// Prefetch every position in batched round trips. An id missing from the
 	// result was deleted since the snapshot and is reported as a failure.

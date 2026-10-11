@@ -1514,6 +1514,10 @@ export function StopDuel(arg1, arg2, arg3) {
   return window['go']['database']['Database']['StopDuel'](arg1, arg2, arg3);
 }
 
+export function StopMaintenance(arg1) {
+  return window['go']['database']['Database']['StopMaintenance'](arg1);
+}
+
 export function StudyBacklog(arg1) {
   return window['go']['database']['Database']['StudyBacklog'](arg1);
 }

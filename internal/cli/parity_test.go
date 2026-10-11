@@ -519,6 +519,7 @@ var databaseParity = map[string]parityEntry{
 	"RunMaintenance":                    {CLI: "maintenance run", Server: "/v1/maintenance.run"},
 	"RunMaintenanceWithProgress":        {CLI: "maintenance run", Server: "/v1/maintenance.run"},
 	"CancelMaintenance":                 {Server: "/v1/maintenance.cancel", Why: "the CLI runs in the foreground: Ctrl-C cancels its run between two batches"},
+	"StopMaintenance":                   {Why: "desktop lifecycle: the GUI stops a run before the open file changes; the CLI's run ends with its process and the daemon's with its request (Server.Run cancels every job at shutdown)"},
 	"ImportMET":                         {CLI: "met --import", Server: "/v1/met.import"},
 	"ListMETs":                          {CLI: "met", Server: "/v1/met.list"},
 	"SetCurrentMET":                     {CLI: "met --use", Server: "/v1/met.setCurrent"},

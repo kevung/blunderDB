@@ -777,6 +777,8 @@ export function StatsReportHTMLCtx(arg1:context.Context,arg2:database.StatsFilte
 
 export function StopDuel(arg1:number,arg2:number,arg3:boolean):Promise<database.DuelState>;
 
+export function StopMaintenance(arg1:context.Context):Promise<void>;
+
 export function StudyBacklog(arg1:number):Promise<Array<domain.StudyQueueEntry>>;
 
 export function StudyImpact(arg1:number):Promise<Array<database.StudyImpactRow>>;

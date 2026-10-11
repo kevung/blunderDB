@@ -261,7 +261,7 @@ func (s *Server) handleGammonNetAnalyzeCancel(w http.ResponseWriter, r *http.Req
 		return
 	}
 	if !s.gammonnetJobs.cancel(scopeOf(r), req.JobID) {
-		writeErrorCode(w, CodeNotFound, "no in-flight analysis with that id")
+		writeErrorCode(w, CodeNotFound, "no in-flight job with that id")
 		return
 	}
 	writeJSONResp(w, okResp{OK: true})
