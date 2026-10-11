@@ -1234,6 +1234,7 @@
         "includeComments": "Включить комментарии",
         "includeFilterLibrary": "Мои сохранённые фильтры",
         "includeMatches": "Включить матчи ({count})",
+        "includeTranscriptions": "Вместе с черновиками транскрипции",
         "includePlayedMoves": "Включить сыгранные ходы",
         "includeTournaments": "Включить турниры ({count})",
         "mayTakeMoments": "Это может занять несколько секунд.",

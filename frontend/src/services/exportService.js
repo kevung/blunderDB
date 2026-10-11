@@ -201,6 +201,8 @@ export async function handleExportCommit() {
             includePlayedMoves: exportOptions.includePlayedMoves,
             includeMatches: matches.include,
             matchIDs: matches.ids,
+            // A draft follows its match: without the match it has nothing to travel with.
+            includeTranscriptions: matches.include && !!exportOptions.includeTranscriptions,
             includeCollections: collections.include,
             collectionIDs: collections.ids,
             includeTournaments: tournaments.include,

@@ -1234,6 +1234,7 @@
         "includeComments": "Inclure les commentaires",
         "includeFilterLibrary": "Mes filtres enregistrés",
         "includeMatches": "Inclure les matchs ({count})",
+        "includeTranscriptions": "Avec leurs brouillons de transcription",
         "includePlayedMoves": "Inclure les coups joués",
         "includeTournaments": "Inclure les tournois ({count})",
         "mayTakeMoments": "Cela peut prendre quelques instants.",

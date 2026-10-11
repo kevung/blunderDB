@@ -1234,6 +1234,7 @@
         "includeComments": "Sisällytä kommentit",
         "includeFilterLibrary": "Omat tallennetut suodattimet",
         "includeMatches": "Sisällytä ottelut ({count})",
+        "includeTranscriptions": "Transkriptioluonnosten kanssa",
         "includePlayedMoves": "Sisällytä pelatut siirrot",
         "includeTournaments": "Sisällytä turnaukset ({count})",
         "mayTakeMoments": "Tämä voi kestää hetken.",

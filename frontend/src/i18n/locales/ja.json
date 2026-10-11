@@ -1234,6 +1234,7 @@
         "includeComments": "コメントを含める",
         "includeFilterLibrary": "保存した自分のフィルター",
         "includeMatches": "マッチを含める（{count}）",
+        "includeTranscriptions": "書き起こしの下書きも含める",
         "includePlayedMoves": "実際のムーブを含める",
         "includeTournaments": "トーナメントを含める（{count}）",
         "mayTakeMoments": "少々時間がかかる場合があります。",
