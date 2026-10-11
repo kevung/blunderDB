@@ -1478,6 +1478,10 @@ export function Slots(arg1) {
   return window['go']['database']['Database']['Slots'](arg1);
 }
 
+export function StaleGammonNetIDs(arg1) {
+  return window['go']['database']['Database']['StaleGammonNetIDs'](arg1);
+}
+
 export function Standings(arg1) {
   return window['go']['database']['Database']['Standings'](arg1);
 }

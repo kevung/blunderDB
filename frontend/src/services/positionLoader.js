@@ -46,13 +46,39 @@ export async function loadPositionsFromSelection(ids, { focusIndex = 0 } = {}) {
         return;
     }
 
+    showPositionIDs(resultIds, focusIndex);
+}
+
+/**
+ * Open exactly these positions, in this order, without a round trip through the search: a
+ * list of any length (a Maintenance count), where a filter's CSV restriction would not hold.
+ *
+ * @param {number[]} ids
+ */
+export function openPositionIDs(ids) {
+    if (!get(databasePathStore)) {
+        statusBarTextStore.set(tMsg('commands.noDatabaseLoaded'));
+        return;
+    }
+    if (!ids || ids.length === 0) {
+        statusBarTextStore.set(tMsg('commands.noPositionsFound'));
+        return;
+    }
+    showPositionIDs(ids, 0);
+}
+
+/**
+ * @param {number[]} ids
+ * @param {number} focusIndex
+ */
+function showPositionIDs(ids, focusIndex) {
     // Out of MATCH first: there the board ignores the index set below.
     leaveStudiedModeForList();
     forgetSubSearchOrigin();
-    positionsStore.setIds(Array.isArray(resultIds) ? resultIds : []);
+    positionsStore.setIds(Array.isArray(ids) ? ids : []);
     listOriginStore.set(LIBRARY_ORIGIN);
 
-    const clampedIndex = Math.max(0, Math.min(focusIndex, resultIds.length - 1));
+    const clampedIndex = Math.max(0, Math.min(focusIndex, ids.length - 1));
     // Force a re-render even if the index was already at the same value.
     currentPositionIndexStore.set(-1);
     currentPositionIndexStore.set(clampedIndex);

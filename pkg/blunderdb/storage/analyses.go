@@ -79,6 +79,11 @@ type AnalysisStore interface {
 	// it first. A fresh call finds whatever is still missing (ADR-0013 resume).
 	WithoutAnalysis(ctx context.Context, scope string, opts ListOpts) iter.Seq2[*domain.Position, error]
 
+	// WithoutAnalysisIDs is WithoutAnalysis's ids, ascending, without decoding
+	// a position: a large library holds millions of them, and a client that
+	// only lists them pays for the ids alone.
+	WithoutAnalysisIDs(ctx context.Context, scope string) ([]int64, error)
+
 	// WithEngine streams, by ascending position id, the analyses whose
 	// provenance column (analysis_engine) starts with enginePrefix or is not
 	// derived yet (NULL). Rows of any other engine are skipped on the column
