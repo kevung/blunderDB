@@ -131,7 +131,7 @@ func TestRunGammonNetBatchSignalsItsEnd(t *testing.T) {
 	a := NewApp(d)
 
 	release := make(chan struct{})
-	a.runGammonNetBatch(func(ctx context.Context, _ func(done, total int)) (database.GammonNetBatchSummary, error) {
+	a.runGammonNetBatch(2, func(ctx context.Context, _ func(done, total int)) (database.GammonNetBatchSummary, error) {
 		<-release
 		return database.GammonNetBatchSummary{}, ctx.Err()
 	})

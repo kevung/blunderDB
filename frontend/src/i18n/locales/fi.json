@@ -1178,7 +1178,7 @@
         "panelLabel": "Eval-paneeli",
         "inactive": "Eval-paneeli ei ole käytössä. Muokkaa lautaa arvioidaksesi aseman.",
         "engineTooltip": "gammonNet",
-        "batchProgress": "gammonNet analysoi: {done}/{total}",
+        "batchProgress": "gammonNet analysoi {depth}: {done}/{total}",
         "batchCancel": "Peruuta",
         "batchDone": "gammonNet: {evaluated} analysoitu, {refused} hylätty, {failed} epäonnistui",
         "baseline": "Ennen heittoa",

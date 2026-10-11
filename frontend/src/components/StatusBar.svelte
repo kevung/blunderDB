@@ -162,6 +162,11 @@
     ];
     onDestroy(() => unsubGammonNetBatch.forEach((off) => off && off()));
 
+    // The depth the batch runs at: a deep one is slow, and the chip says why.
+    function batchDepth(batch) {
+        return Number.isInteger(batch?.ply) ? `${batch.ply}-ply` : '';
+    }
+
     function cancelGammonNetBatch() {
         CancelGammonNetBatch();
     }
@@ -323,8 +328,8 @@
         <span class="duel-chip"><DuelClocks duel={$duelStore.state} compact /></span>
     {/if}
     {#if gammonNetBatch}
-        <span class="gammonnet-batch-chip" title={$t('eval.batchProgress', { done: gammonNetBatch.done, total: gammonNetBatch.total })}>
-            {$t('eval.batchProgress', { done: gammonNetBatch.done, total: gammonNetBatch.total })}
+        <span class="gammonnet-batch-chip" title={$t('eval.batchProgress', { done: gammonNetBatch.done, total: gammonNetBatch.total, depth: batchDepth(gammonNetBatch) })}>
+            {$t('eval.batchProgress', { done: gammonNetBatch.done, total: gammonNetBatch.total, depth: batchDepth(gammonNetBatch) })}
             <button type="button" class="gammonnet-batch-cancel" onclick={cancelGammonNetBatch}>{$t('eval.batchCancel')}</button>
         </span>
     {/if}

@@ -458,7 +458,9 @@ séparément — abaisser l'une ne modifie jamais l'autre :
 * **Profondeur d'analyse** — ce que le lot d'analyse après import écrit dans
   l'Analyse d'une position.
 
-Les deux valent par défaut **2-ply**, la configuration canonique. L'onglet
+Les deux valent par défaut **2-ply**, la configuration canonique. Le menu
+marque d'un ⚠ les profondeurs 3-ply et 4-ply, dont le coût par position
+dépasse de loin celui de 2-ply. L'onglet
 propose aussi l'**élagage** (par défaut ``k=12``) et le **nombre de coups
 candidats affichés** (par défaut 10), ainsi qu'une case **analyser
 automatiquement après import** qui, une fois activée, vérifie après chaque
@@ -490,7 +492,8 @@ analyse, positions périmées) est purement informatif ; le lot recalcule sa
 propre liste au moment de démarrer.
 
 Les deux lots sont **bornés, visibles et annulables, jamais un démon
-silencieux** : leur progression (``positions analysées / total``) et un
+silencieux** : leur profondeur, leur progression (``positions analysées / total``,
+dès ``0`` au lancement) et un
 bouton d'annulation apparaissent dans la barre de statut pendant toute leur
 durée, et disparaissent une fois terminés au profit d'un message résumant le
 résultat — combien de positions ont été **analysées**, combien ont été
@@ -500,6 +503,8 @@ combien ont **échoué** (retentées, inchangées, au prochain lancement).
 Fermer l'application pendant l'un ou l'autre ne perd rien : chaque position
 analysée est écrite au fil de l'eau, et un prochain lancement reprend
 exactement là où l'analyse s'était arrêtée, sans aucun journal à tenir.
+L'annulation comme la fermeture interrompent aussi la position en cours de
+calcul, qui reste sans analyse.
 
 .. _rollout_reglage:
 

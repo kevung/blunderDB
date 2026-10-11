@@ -564,6 +564,8 @@
     let gnStaleStarting = $state(false);
 
     const GAMMONNET_PLY_OPTIONS = [0, 1, 2, 3, 4];
+    // Measured per position, one core: 0.3 s at 2-ply, 10 s at 3-ply, over 15 min at 4-ply.
+    const GAMMONNET_SLOW_PLY = 3;
 
     // Dossier surveillé : rien n'est deviné ; « proposer » n'offre qu'un chemin existant.
     let watchOn = $state(false);
@@ -1005,7 +1007,7 @@
                     <label for="config-gn-display-ply">{$t('config.gammonnetDisplayPly')}</label>
                     <select id="config-gn-display-ply" class="setting-select" value={gnDisplayPly} onchange={onGnDisplayPlyChange}>
                         {#each GAMMONNET_PLY_OPTIONS as ply (ply)}
-                            <option value={ply}>{$t('config.gammonnetPly', { n: ply })}</option>
+                            <option value={ply}>{$t('config.gammonnetPly', { n: ply })}{ply >= GAMMONNET_SLOW_PLY ? ' ⚠' : ''}</option>
                         {/each}
                     </select>
                 </div>
@@ -1014,7 +1016,7 @@
                     <label for="config-gn-analysis-ply">{$t('config.gammonnetAnalysisPly')}</label>
                     <select id="config-gn-analysis-ply" class="setting-select" value={gnAnalysisPly} onchange={onGnAnalysisPlyChange}>
                         {#each GAMMONNET_PLY_OPTIONS as ply (ply)}
-                            <option value={ply}>{$t('config.gammonnetPly', { n: ply })}</option>
+                            <option value={ply}>{$t('config.gammonnetPly', { n: ply })}{ply >= GAMMONNET_SLOW_PLY ? ' ⚠' : ''}</option>
                         {/each}
                     </select>
                 </div>

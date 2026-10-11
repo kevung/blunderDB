@@ -199,6 +199,12 @@ func (d *Database) analyzeIDsWithGammonNet(ctx context.Context, gen uint64, ids 
 		jobs = total
 	}
 
+	// 0/total at once: the first position of a deep batch can take minutes,
+	// and the caller shows the batch from its start.
+	if onProgress != nil {
+		onProgress(0, total)
+	}
+
 	var next atomic.Int64
 	results := make(chan gammonNetBatchResult, jobs)
 

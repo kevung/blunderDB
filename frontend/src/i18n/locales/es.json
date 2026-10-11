@@ -1178,7 +1178,7 @@
         "panelLabel": "Panel Eval",
         "inactive": "El panel Eval está inactivo. Edita el tablero para evaluar la posición.",
         "engineTooltip": "gammonNet",
-        "batchProgress": "gammonNet analizando: {done}/{total}",
+        "batchProgress": "gammonNet analizando {depth}: {done}/{total}",
         "batchCancel": "Cancelar",
         "batchDone": "gammonNet: {evaluated} analizada(s), {refused} rechazada(s), {failed} fallida(s)",
         "baseline": "Antes de la tirada",
