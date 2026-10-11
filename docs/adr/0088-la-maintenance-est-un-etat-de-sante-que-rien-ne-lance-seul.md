@@ -31,9 +31,15 @@ ce qui écrit dans la base à l'ouverture.
    et la ligne `stats.matches` le reste.
 5. **Une opération à la fois par tenant**, annulable par contexte, avec progression.
    L'emplacement est partagé avec le lot gammonNet et les rollouts : le daemon répond 409,
-   le bureau (`Database.acquireJob`) refuse de même. Une passe annulée qui finit son lot
-   n'est pas un refus : celle qui la remplace attend qu'elle rende la main. Changer de
-   base arrête la passe de maintenance (`StopMaintenance`).
+   le bureau (`Database.acquireJob`) refuse de même, d'un `BusyError` qui nomme le travail
+   en cours (`maintenance`, `gammonnet`, `rollout`) et que l'interface traduit. Une passe
+   annulée qui finit son lot n'est pas un refus : celle qui la remplace attend qu'elle rende
+   la main. **Une action demandée est refusée, un lot qui part seul attend** : la
+   maintenance, un rollout, le lot gammonNet lancé depuis la configuration sont refusés tant
+   qu'un autre travail écrit ; le lot gammonNet que lancent un import, une transcription ou un
+   duel (`database.WaitForDatabase`) attend l'emplacement, l'annonce dans la barre d'état, et
+   ne liste ses positions qu'une fois l'emplacement pris. Changer de base arrête la passe de
+   maintenance (`StopMaintenance`) et le lot, même en attente.
    Le paquet ne prend jamais de verrou ; `Opts.Before` encadre chaque lot que la passe
    valide, et le wrapper de bureau y passe `Database.mu`, qui n'est pas réentrant.
 6. **La dernière exécution s'écrit à la fin d'une action demandée**, quel qu'en soit l'issue,
