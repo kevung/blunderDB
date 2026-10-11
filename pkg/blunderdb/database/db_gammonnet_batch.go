@@ -112,6 +112,17 @@ func (d *Database) CountPositionsWithStaleGammonNet(ply int) (int, error) {
 	return len(ids), nil
 }
 
+// StaleGammonNetIDs lists the positions CountPositionsWithStaleGammonNet
+// counts: one scan gives the Maintenance tab both the count and the list its
+// click opens. The scan reads the backend's own pool, without d.mu, as the
+// count does: held for minutes, the read lock would stall every write.
+func (d *Database) StaleGammonNetIDs(ply int) ([]int64, error) {
+	if _, err := d.openStore("stale gammonNet"); err != nil {
+		return nil, err
+	}
+	return d.positionIDsWithStaleGammonNet(gammonnet.DepthLabel(ply))
+}
+
 // AnalyzeStaleGammonNet re-runs gammonNet on every position whose analysis is
 // entirely its own, at an older EngineVersion or another depth than ply: an
 // older engine can be silently wrong at a match score (ADR-0016). Same

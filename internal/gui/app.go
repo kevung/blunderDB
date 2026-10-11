@@ -41,6 +41,9 @@ type App struct {
 	// db is used only by jobs that need both the database and Wails events
 	// (the gammonNet batch); other App methods stay database-free.
 	db *database.Database
+	// emitHook, when set, receives the background jobs' events in place of
+	// Wails: a test has no window to listen on.
+	emitHook func(name string, payload ...any)
 
 	// gnEvalMu/gnEvalCancel govern the Eval panel's at-rest search
 	// (gammonnet_eval.go); gnLivePool is its shared searcher.

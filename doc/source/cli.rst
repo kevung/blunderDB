@@ -1899,8 +1899,8 @@ rattrapage d'une bibliothèque constituée avant que cette fonctionnalité
 existe (`ADR-0013 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md>`__,
 `ADR-0015 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0015-blunderdb-serve-operates-on-a-library-it-does-not-expose-an-evaluator.md>`__).
 C'est la même opération que le déclenchement
-automatique après import et le bouton « Analyser maintenant » de l'interface
-graphique, et que le point d'accès ``/v1/gammonnet.analyzeMissing`` du démon
+automatique après import et la ligne « Positions sans analyse » de l'onglet
+*Maintenance* de l'interface graphique, et que le point d'accès ``/v1/gammonnet.analyzeMissing`` du démon
 ``serve`` pour un tenant — trois formes différentes de la même opération, pas
 trois logiques distinctes (voir :ref:`headless`).
 

@@ -23,7 +23,10 @@
         refreshTrainingStats,
         statsTabStore
     } from '../../stores/statsStore.js';
-    import { activeTabStore } from '../../stores/uiStore.js';
+    import { activeTabStore, configInitialTabStore, openModal, MODAL } from '../../stores/uiStore.js';
+    import { maintenanceEndedStore } from '../../stores/maintenanceStore.js';
+    import { MaintenanceStatus } from '../../../wailsjs/go/database/Database.js';
+    import CountLink from '../panels/CountLink.svelte';
     import { databaseLoadedStore } from '../../stores/databaseStore.js';
     import { t } from '../../i18n/index.js';
     import { exportHTMLReport } from '../../services/reportService.js';
@@ -46,6 +49,36 @@
         if (!$databaseLoadedStore) return;
         logger.perf('StatsPanel:refreshStats', () => refreshStats(filter, key));
     });
+
+    // Matches without match_stats are computed on the first read, slowly on a large library:
+    // their count leads to the Maintenance line that fills them all at once.
+    let matchesWithoutStats = $state(0);
+    // Only the latest request answers: an older one arriving last would show a stale count.
+    let statusSeq = 0;
+    $effect(() => {
+        $statsInvalidationKeyStore;
+        $maintenanceEndedStore;
+        if (!$databaseLoadedStore) {
+            statusSeq++;
+            matchesWithoutStats = 0;
+            return;
+        }
+        const seq = ++statusSeq;
+        MaintenanceStatus()
+            .then((lines) => {
+                if (seq !== statusSeq) return;
+                const line = (lines ?? []).find((l) => l.kind === 'stats.matches');
+                matchesWithoutStats = line?.count ?? 0;
+            })
+            .catch(() => {
+                if (seq === statusSeq) matchesWithoutStats = 0;
+            });
+    });
+
+    function openMaintenance() {
+        configInitialTabStore.set('maintenance');
+        openModal(MODAL.CONFIG);
+    }
 
     // The players table is fetched only while its tab is open: it is a
     // whole-database aggregate, and computing it behind the other three tabs
@@ -114,6 +147,9 @@
             >
         </div>
         <span class="spacer"></span>
+        {#if matchesWithoutStats > 0}
+            <CountLink label={$t('maintenance.statsMissing', { n: matchesWithoutStats })} onclick={openMaintenance} title={$t('maintenance.title')} testid="stats-missing-match-stats" />
+        {/if}
         <!-- Le rapport porte le filtre courant, donc il vit là où le
              filtre se règle. -->
         <button class="report-btn" onclick={() => exportHTMLReport()}>{$t('report.action')}</button>

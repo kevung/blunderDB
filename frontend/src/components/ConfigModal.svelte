@@ -3,11 +3,12 @@
     import CorpusSettings from './CorpusSettings.svelte';
     import METSettings from './METSettings.svelte';
     import RolloutSettings from './RolloutSettings.svelte';
+    import MaintenanceSettings from './MaintenanceSettings.svelte';
     import { get } from 'svelte/store';
     import { configInitialTabStore, statusBarTextStore, pageStepStore, PAGE_STEPS } from '../stores/uiStore';
     import { setPageStep } from '../services/pageStepSetting.js';
     import Modal from './Modal.svelte';
-    import { t, tMsg, language, setLanguage, LOCALES, LANGUAGE_LABELS } from '../i18n';
+    import { t, language, setLanguage, LOCALES, LANGUAGE_LABELS } from '../i18n';
     import { boardColorsStore, setBoardColor, resetBoardColors } from '../stores/boardColorsStore';
     import { uiScaleStore, setUIScale, previewUIScale, MIN_UI_SCALE, MAX_UI_SCALE, UI_SCALE_STEP } from '../stores/uiScaleStore';
     import { panelPositionStore, setPanelPosition, PANEL_BOTTOM, PANEL_SIDE, PANEL_AUTO } from '../stores/panelLayoutStore';
@@ -30,13 +31,10 @@
         DiscardBearoffCheckpoint,
         DeleteBearoffTable,
         OpenBearoffFileDialog,
-        StartGammonNetBatch,
-        StartGammonNetStaleBatch,
         OpenLogsFolder,
         OpenPositionFolderDialog,
         SuggestWatchFolder
     } from '../../wailsjs/go/gui/App.js';
-    import { Vacuum, RepairAnalyses, CountPositionsWithoutAnalysis, CountPositionsWithStaleGammonNet } from '../../wailsjs/go/database/Database.js';
     import { GetBearoffTSPath, SaveBearoffTSPath, GetBearoffRate, SaveBearoffRate, GetBearoffCores, SaveBearoffCores } from '../../wailsjs/go/main/Config.js';
     import { bearoffProgressStore, bearoffErrorStore, remainingSeconds } from '../stores/bearoffStore.js';
     import {
@@ -78,16 +76,12 @@
     // Two-step: the first click explains what regenerating does and does not do.
     let confirmingRegenerate = $state(false);
 
-    // VACUUM is slow and needs disk headroom: confirmed like a destructive action,
-    // reported in the status bar (the modal is usually closed by then).
-    let vacuumBusy = $state(false);
-    let repairBusy = $state(false);
-
     // One tab per concern, each with its own action area and one primary button in place.
     const TABS = [
         { id: 'interface', labelKey: 'config.interface' },
         { id: 'colors', labelKey: 'config.colors' },
         { id: 'library', labelKey: 'config.libraryTitle' },
+        { id: 'maintenance', labelKey: 'maintenance.title' },
         { id: 'corpus', labelKey: 'config.corpusTitle' },
         { id: 'bearoff', labelKey: 'config.bearoffTitle' },
         { id: 'gammonnet', labelKey: 'config.gammonnetTitle' },
@@ -478,43 +472,6 @@
         }
     }
 
-    async function vacuumDatabase() {
-        if (!(await confirmAction(get(t)('config.vacuumConfirm'), { confirmLabel: get(t)('config.vacuumConfirmButton') }))) return;
-        vacuumBusy = true;
-        try {
-            const result = await Vacuum();
-            const reclaimed = Math.max(0, (result?.SizeBefore ?? 0) - (result?.SizeAfter ?? 0));
-            if (reclaimed > 0) {
-                statusBarTextStore.set(tMsg('config.vacuumDone', { mb: (reclaimed / 1e6).toFixed(1) }));
-            } else {
-                statusBarTextStore.set(tMsg('config.vacuumNothing'));
-            }
-        } catch (error) {
-            statusBarTextStore.set(tMsg('config.vacuumError', { error: String(error) }));
-        } finally {
-            vacuumBusy = false;
-        }
-    }
-
-    // Database.RepairAnalyses, as `blunderdb repair` (CLI/GUI parity): rewrites
-    // every analysis's scalar columns, so it is confirmed.
-    async function repairAnalyses() {
-        if (!(await confirmAction(get(t)('config.repairConfirm'), { confirmLabel: get(t)('config.repairConfirmButton') }))) return;
-        repairBusy = true;
-        try {
-            const changed = await RepairAnalyses();
-            if (changed > 0) {
-                statusBarTextStore.set(tMsg('config.repairDone', { n: changed }));
-            } else {
-                statusBarTextStore.set(tMsg('config.repairNothing'));
-            }
-        } catch (error) {
-            statusBarTextStore.set(tMsg('config.repairError', { error: String(error) }));
-        } finally {
-            repairBusy = false;
-        }
-    }
-
     // Opens the GUI log folder ($XDG_STATE_HOME/blunderDB, internal/applog):
     // stderr is invisible when launched without a terminal.
     async function openLogsFolder() {
@@ -554,14 +511,6 @@
     let gnPruneK = $state(12);
     let gnCandidates = $state(10);
     let gnAutoAnalyze = $state(false);
-    // Catch-up (ADR-0015): the after-import batch on demand; the count is
-    // informational (StartGammonNetBatch re-derives its list).
-    let gnMissingCount = $state(/** @type {number | null} */ (null));
-    let gnCatchUpStarting = $state(false);
-    // Stale gammonNet analyses (older EngineVersion or another depth). The count
-    // is informational and depends on gnAnalysisPly, so it refreshes with it.
-    let gnStaleCount = $state(/** @type {number | null} */ (null));
-    let gnStaleStarting = $state(false);
 
     const GAMMONNET_PLY_OPTIONS = [0, 1, 2, 3, 4];
     // From this depth a position costs seconds to minutes on one core, against a fraction of a second at 2-ply.
@@ -633,42 +582,6 @@
         } catch (error) {
             logger.error('Error loading gammonNet settings:', error);
         }
-        try {
-            gnMissingCount = await CountPositionsWithoutAnalysis();
-        } catch (error) {
-            logger.error('Error counting positions without analysis:', error);
-            gnMissingCount = null;
-        }
-        await refreshGammonNetStaleCount();
-    }
-
-    async function refreshGammonNetStaleCount() {
-        try {
-            gnStaleCount = await CountPositionsWithStaleGammonNet(gnAnalysisPly);
-        } catch (error) {
-            logger.error('Error counting stale gammonNet positions:', error);
-            gnStaleCount = null;
-        }
-    }
-
-    // Fire-and-forget: StatusBar.svelte shows every batch's progress and cancel.
-    async function startGammonNetCatchUp() {
-        gnCatchUpStarting = true;
-        try {
-            StartGammonNetBatch(gnAnalysisPly, gnPruneK, gnCandidates);
-        } finally {
-            gnCatchUpStarting = false;
-        }
-    }
-
-    // Same shape; shares gnBatchCancel with the catch-up, so only one runs at a time.
-    async function startGammonNetStaleRerun() {
-        gnStaleStarting = true;
-        try {
-            StartGammonNetStaleBatch(gnAnalysisPly, gnPruneK, gnCandidates);
-        } finally {
-            gnStaleStarting = false;
-        }
     }
 
     $effect(() => {
@@ -685,7 +598,6 @@
 
     function onGnAnalysisPlyChange(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) {
         gnAnalysisPly = Number(event.currentTarget.value);
-        refreshGammonNetStaleCount();
         SaveGammonNetAnalysisPly(gnAnalysisPly).catch((error) => logger.error('Error saving gammonNet analysis ply:', error));
     }
 
@@ -859,19 +771,9 @@
                             </button>
                         {/each}
                     </div>
-                    <p class="setting-note">{$t('config.vacuumIntro')}</p>
-                    <div class="tab-actions">
-                        <button class="secondary-button" onclick={vacuumDatabase} disabled={vacuumBusy}>
-                            {vacuumBusy ? $t('config.vacuumRunning') : $t('config.vacuumButton')}
-                        </button>
-                    </div>
-                    <p class="setting-note">{$t('config.repairIntro')}</p>
-                    <div class="tab-actions">
-                        <button class="secondary-button" onclick={repairAnalyses} disabled={repairBusy}>
-                            {repairBusy ? $t('config.repairRunning') : $t('config.repairButton')}
-                        </button>
-                    </div>
                 {/if}
+            {:else if activeTab === 'maintenance'}
+                <MaintenanceSettings ply={gnAnalysisPly} pruneK={gnPruneK} candidates={gnCandidates} onLeave={onClose} />
             {:else if activeTab === 'bearoff'}
                 <p class="setting-note">{$t('config.bearoffIntro')}</p>
                 {#if bearoff}
@@ -1034,24 +936,6 @@
                     <input id="config-gn-auto-analyze" type="checkbox" checked={gnAutoAnalyze} onchange={onGnAutoAnalyzeChange} />
                 </div>
                 <p class="setting-note">{$t('config.gammonnetAutoAnalyzeNote')}</p>
-                <div class="setting-row">
-                    <span class="setting-label">
-                        {gnMissingCount === null ? $t('config.gammonnetCatchUpUnknown') : $t('config.gammonnetCatchUpCount', { n: gnMissingCount })}
-                    </span>
-                    <button class="secondary-button" disabled={gnCatchUpStarting || gnMissingCount === 0} onclick={startGammonNetCatchUp}>
-                        {$t('config.gammonnetCatchUpStart')}
-                    </button>
-                </div>
-                <p class="setting-note">{$t('config.gammonnetCatchUpNote')}</p>
-                <div class="setting-row">
-                    <span class="setting-label">
-                        {gnStaleCount === null ? $t('config.gammonnetStaleUnknown') : $t('config.gammonnetStaleCount', { n: gnStaleCount })}
-                    </span>
-                    <button class="secondary-button" disabled={gnStaleStarting || gnStaleCount === 0} onclick={startGammonNetStaleRerun}>
-                        {$t('config.gammonnetStaleStart')}
-                    </button>
-                </div>
-                <p class="setting-note">{$t('config.gammonnetStaleNote')}</p>
                 <METSettings />
                 <RolloutSettings />
             {:else if activeTab === 'watch'}

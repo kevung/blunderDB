@@ -249,14 +249,16 @@ Configuration
 
 Le bouton de configuration (icône en forme de rouage) situé dans la barre
 d'outils, à gauche du bouton d'aide, ouvre la fenêtre de configuration de
-blunderDB. Elle est organisée en neuf onglets :
+blunderDB. Elle est organisée en dix onglets :
 
 * **Interface** — thème, langue, échelle d'affichage, position du panneau, pas de
   PageUp / PageDown (10, 50, 100, 500 ou 1 000 positions, ou 10 % de la liste),
   journaux, vérification des mises à jour, votre nom et positions voisines ;
 * **Couleurs** — les couleurs du plateau ;
 * **Bibliothèque** — ce qui appartient à la base ouverte : les seuils
-  d'erreur et de blunder, le compactage et la réparation, décrits ci-dessous ;
+  d'erreur et de blunder, décrits ci-dessous ;
+* **Maintenance** — l'état de santé de la base, une ligne par opération,
+  décrit ci-dessous ;
 * **Corpus** — les doublons à l'import, les alias de joueurs et d'événements
   et la recherche des doublons probables (voir l'import de matchs) ;
 * **Bearoff** — les tables de sortie utilisées par le panneau Eval ;
@@ -320,7 +322,8 @@ d'état et la recherche que son lien prépare, les colonnes « Erreurs » et
 coups dans la fiche d'un match (:ref:`panneau_matchs`), et la liste des positions que
 blunderDB propose de revoir après un import.
 
-Le même onglet propose aussi le bouton **Compacter la base**, qui récupère
+La ligne **Espace récupérable** de l'onglet *Maintenance* porte le bouton
+**Compacter**, qui récupère
 l'espace disque laissé par les suppressions (matchs, tournois, purges) : la
 base de données ne rétrécit jamais toute seule quand on supprime des données,
 il faut demander explicitement ce compactage. L'opération peut prendre du
@@ -441,13 +444,42 @@ L'onglet permet enfin de pointer vers un fichier ``.bd`` two-sided externe, par
 exemple une base produite par gnubg lui-même : la table au domaine le plus
 large l'emporte.
 
-L'onglet *Bibliothèque* porte enfin **Réparer les analyses** : les colonnes
-d'analyse que la recherche et les statistiques interrogent sont une projection
-des analyses stockées, lesquelles restent intactes. Un défaut de projection se
-répare donc sans rien réimporter. C'est explicite et jamais automatique —
-réécrire les colonnes d'analyse de quelqu'un au seul motif qu'il ouvre sa base
-n'est pas une chose qu'un outil doit faire dans son dos. Le même
-``blunderdb repair`` est disponible en ligne de commande.
+.. _onglet_maintenance:
+
+L'onglet **Maintenance** montre l'état de santé de la base : une ligne par
+opération, avec son compte, sa dernière exécution (date et issue : terminée,
+annulée ou en échec) et son action. Rien n'y est lancé tout seul.
+
+* **Positions sans analyse** — les positions qui ne portent aucune analyse ;
+  l'action est l'analyse gammonNet décrite plus bas. Les positions que
+  gammonNet refuse d'évaluer (une danse, un score hors de la table de match)
+  restent dans ce compte, qui n'atteint donc pas forcément zéro.
+* **Analyses gammonNet périmées** — décrites plus bas.
+* **Matchs sans statistiques** — les matchs dont les statistiques ne sont pas
+  encore calculées ; l'action les calcule tous. Sinon, la première lecture des
+  statistiques les calcule, ce qui peut être long sur une grosse base : le
+  panneau Statistiques affiche alors ce nombre, qui ouvre cet onglet.
+* **Colonnes d'analyse** — les colonnes que la recherche et les statistiques
+  interrogent sont une projection des analyses stockées, lesquelles restent
+  intactes : l'action les recalcule sans rien réimporter.
+* **Erreurs des coups joués** — note les coups joués qui n'ont pas encore
+  d'erreur.
+* **Analyses à l'ancien format** — réécrit au format binaire les analyses
+  qu'une version antérieure stockait en JSON.
+* **Corbeille** — le nombre d'entrées de la corbeille, qui l'ouvre.
+* **Espace récupérable** — l'espace libre du fichier, que le compactage
+  décrit plus haut rend au disque.
+
+Un compte coûteux (il lit une table entière) attend le bouton **Compter**.
+Un compte de positions ouvre ces positions dans la liste ; celui des matchs
+sans statistiques ouvre ces matchs dans le panneau des matchs. Une opération
+tourne en arrière-plan : sa progression et un bouton d'annulation s'affichent
+dans la barre d'état, et une seule opération qui écrit dans la base tourne à
+la fois — une analyse gammonNet, un rollout ou une autre opération de
+maintenance en cours fait refuser la suivante, avec le nom de celle qui
+occupe la base. Sur une base ouverte en lecture seule, les actions sont
+désactivées. Les mêmes opérations existent en ligne de commande
+(``blunderdb maintenance``).
 
 L'onglet **gammonNet** règle l'évaluateur embarqué (voir `ADR-0011 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0011-gammonnet-is-ported-to-go-and-the-representation-boundary-sits-at-the-evaluator-s-edge.md>`__). Deux
 profondeurs de recherche y sont réglables, nommées et conservées
@@ -467,28 +499,29 @@ automatiquement après import** qui, une fois activée, vérifie après chaque
 import s'il reste des positions **sans aucune analyse** (ni gammonNet, ni XG,
 ni GNUbg, ni BGBlitz — la règle est « une évaluation ne comble qu'un trou »,
 jamais un remplacement) et, le cas échéant, lance en tâche de fond une analyse
-gammonNet à la profondeur d'analyse configurée. Un bouton **Analyser
-maintenant** relance manuellement le même rattrapage, utile pour une
-bibliothèque constituée avant l'existence de cette fonctionnalité.
+gammonNet à la profondeur d'analyse configurée. La ligne **Positions sans
+analyse** de l'onglet *Maintenance* relance manuellement le même rattrapage,
+utile pour une bibliothèque constituée avant l'existence de cette
+fonctionnalité.
 
 Une prise ou un refus est évalué par gammonNet sur la décision du doubleur,
 avant le double. Un verdict gammonNet écrit sur une telle réponse par une
 version antérieure de blunderDB jugeait le redouble du receveur : il est
 supprimé à l'ouverture de la bibliothèque, ou à l'import d'une base qui le
 porte. La prise ou le refus redevient une position sans analyse, absente des
-statistiques jusqu'à ce que **Analyser maintenant** (ou l'analyse automatique
-après import) la réévalue.
+statistiques jusqu'à ce que la ligne *Positions sans analyse* de l'onglet
+*Maintenance* (ou l'analyse automatique après import) la réévalue.
 
-Un second bouton, **Ré-analyser les positions périmées**, couvre le cas
+La ligne **Analyses gammonNet périmées** de l'onglet *Maintenance* couvre le cas
 inverse : une position déjà analysée par gammonNet, mais dont l'analyse
 stockée a été écrite par une version de moteur plus ancienne que celle en
 cours d'exécution, ou à une profondeur différente de la profondeur d'analyse
 configurée ci-dessus, y est signalée comme périmée et réévaluée. Une position
 portant en plus une analyse XG, GNUbg ou BGBlitz n'est jamais touchée par ce
-bouton, quel que soit son contenu gammonNet — la protection
+lot, quel que soit son contenu gammonNet — la protection
 d'`ADR-0013 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md>`__
-reste inconditionnelle. Le nombre affiché à côté de chaque bouton (positions sans
-analyse, positions périmées) est purement informatif ; le lot recalcule sa
+reste inconditionnelle. Le compte des positions périmées lit chaque analyse
+gammonNet de la base : il attend le bouton **Compter**. Le lot recalcule sa
 propre liste au moment de démarrer.
 
 Les deux lots sont **bornés, visibles et annulables, jamais un démon
@@ -507,8 +540,8 @@ L'annulation comme la fermeture interrompent aussi la position en cours de
 calcul, qui reste sans analyse.
 
 Un seul travail écrit la bibliothèque à la fois : un lot gammonNet, un rollout
-stocké ou une opération de maintenance. Le lot lancé avec **Analyser
-maintenant** est refusé tant qu'un autre travail est en cours, et la barre de
+stocké ou une opération de maintenance. Un lot ou une opération lancés depuis
+l'onglet *Maintenance* sont refusés tant qu'un autre travail est en cours, et la barre de
 statut nomme ce travail ; le lot que lance un import, une transcription ou un
 duel attend au contraire qu'il finisse, et la barre de statut l'annonce
 « en attente » jusqu'à son départ.
@@ -1443,7 +1476,7 @@ ne remplace pas ce qui est déjà là.
   ses équités, ses erreurs, ses probabilités et la chance du lancer. La règle
   est « une évaluation ne comble qu'un trou » : l'analyse automatique après
   import ne visite que les positions sans **aucune** analyse, et
-  *Ré-analyser les positions périmées* laisse intacte toute position portant
+  la réanalyse des analyses gammonNet périmées laisse intacte toute position portant
   une analyse importée (voir :ref:`configuration`).
 
 * **Réimporter un match déjà présent n'apporte que du plus profond.** Le match

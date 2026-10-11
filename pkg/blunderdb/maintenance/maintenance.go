@@ -363,12 +363,5 @@ func begin(o Opts) func() {
 }
 
 func positionsWithoutAnalysis(ctx context.Context, st storage.Storage, scope string) ([]int64, error) {
-	var ids []int64
-	for p, err := range st.Analyses().WithoutAnalysis(ctx, scope, storage.ListOpts{}) {
-		if err != nil {
-			return nil, err
-		}
-		ids = append(ids, p.ID)
-	}
-	return ids, ctx.Err()
+	return st.Analyses().WithoutAnalysisIDs(ctx, scope)
 }

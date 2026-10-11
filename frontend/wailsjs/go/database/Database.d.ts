@@ -759,6 +759,8 @@ export function SlotOfMatch(arg1:number):Promise<service.MatchSlot>;
 
 export function Slots(arg1:number):Promise<Array<service.SlotRow>>;
 
+export function StaleGammonNetIDs(arg1:number):Promise<Array<number>>;
+
 export function Standings(arg1:number):Promise<service.StandingsView>;
 
 export function StandingsCSV(arg1:number):Promise<string>;

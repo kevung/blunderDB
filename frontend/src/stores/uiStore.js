@@ -107,7 +107,7 @@ export const activeModal = writable(null);
 
 // Initial tab requested for the Config modal (e.g. the Eval panel's download
 // hint opens straight onto the Bearoff tab). Consumed once by ConfigModal.
-export const configInitialTabStore = writable(null);
+export const configInitialTabStore = writable(/** @type {string | null} */ (null));
 
 // ── Panel set (multiple panels can be open) ──
 /** @type {import('svelte/store').Writable<Set<string>>} */

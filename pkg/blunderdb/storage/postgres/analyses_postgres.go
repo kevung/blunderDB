@@ -546,6 +546,28 @@ func (s *analysisStore) WithoutAnalysis(ctx context.Context, scope string, opts 
 	}
 }
 
+// WithoutAnalysisIDs is WithoutAnalysis's predicate over the ids alone.
+func (s *analysisStore) WithoutAnalysisIDs(ctx context.Context, scope string) ([]int64, error) {
+	rows, err := s.db.Query(ctx, `SELECT p.id
+		 FROM position p LEFT JOIN analysis a
+		   ON a.position_id = p.id AND a.tenant_id = p.tenant_id
+		 WHERE p.tenant_id = $1 AND a.position_id IS NULL
+		 ORDER BY p.id`, tenantID(scope))
+	if err != nil {
+		return nil, fmt.Errorf("postgres: list ids without analysis: %w", err)
+	}
+	defer rows.Close()
+	var ids []int64
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			return nil, fmt.Errorf("postgres: list ids without analysis: %w", err)
+		}
+		ids = append(ids, id)
+	}
+	return ids, rows.Err()
+}
+
 // invalidateMatchStatsOnAnalysis drops the match_stats rows of every match
 // reaching positionID when the analysis about to be written changes a column
 // those rows summarise (or the position had no analysis). An unchanged

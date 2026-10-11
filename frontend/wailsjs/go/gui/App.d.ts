@@ -34,6 +34,8 @@ export function CancelEvaluationAtRest():Promise<void>;
 
 export function CancelGammonNetBatch():Promise<void>;
 
+export function CancelMaintenance():Promise<void>;
+
 export function CancelRollout():Promise<void>;
 
 export function CheckForUpdate():Promise<gui.UpdateCheckResult>;
@@ -159,6 +161,8 @@ export function StartGammonNetBatch(arg1:number,arg2:number,arg3:number):Promise
 export function StartGammonNetMatchBatch(arg1:number,arg2:number,arg3:number,arg4:number):Promise<void>;
 
 export function StartGammonNetStaleBatch(arg1:number,arg2:number,arg3:number):Promise<void>;
+
+export function StartMaintenance(arg1:string):Promise<void>;
 
 export function StartRollout(arg1:gui.RolloutRequest):Promise<number>;
 

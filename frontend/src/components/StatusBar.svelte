@@ -17,8 +17,9 @@
     import { positionsStore, matchContextStore } from '../stores/positionStore';
     import { commandHistoryStore } from '../stores/commandHistoryStore';
     import { gammonNetBatchStore } from '../stores/gammonNetBatchStore';
+    import { maintenanceStore, maintenanceEndedStore } from '../stores/maintenanceStore.js';
     import { LoadCommandHistory, SaveCommand } from '../../wailsjs/go/database/Database.js';
-    import { CancelGammonNetBatch } from '../../wailsjs/go/gui/App.js';
+    import { CancelGammonNetBatch, CancelMaintenance } from '../../wailsjs/go/gui/App.js';
     import { EventsOn } from '../../wailsjs/runtime/runtime.js';
     import { t, tMsg, resolveStatusMessage } from '../i18n';
     import { getCommandSuggestions } from '../commandVocabulary.js';
@@ -169,6 +170,32 @@
         EventsOn('direction:page-warning', () => statusBarTextStore.set(tMsg('direction.display.error')))
     ];
     onDestroy(() => unsubGammonNetBatch.forEach((off) => off && off()));
+
+    // A maintenance pass (ADR-0088): its progress and its cancel live here, as the batch's.
+    let maintenance = $derived($maintenanceStore);
+    /** @param {string} kind */
+    const maintenanceOp = (kind) => $t(`maintenance.line_${String(kind ?? '').replace('.', '_')}`);
+    /** @param {() => void} report */
+    function endMaintenance(report) {
+        maintenanceStore.set(null);
+        maintenanceEndedStore.update((n) => n + 1);
+        report();
+    }
+    const unsubMaintenance = [
+        EventsOn('maintenance:progress', (p) => maintenanceStore.set(p)),
+        EventsOn('maintenance:done', (run) => endMaintenance(() => statusBarTextStore.set(tMsg('maintenance.done', { op: maintenanceOp(run?.kind), n: run?.changed ?? 0 })))),
+        EventsOn('maintenance:cancelled', (e) => endMaintenance(() => statusBarTextStore.set(tMsg('maintenance.cancelled', { op: maintenanceOp(e?.kind) })))),
+        EventsOn('maintenance:error', (e) =>
+            endMaintenance(() => {
+                const message = e?.message ?? '';
+                statusBarTextStore.set(tMsg('maintenance.failed', { op: maintenanceOp(e?.kind), error: busyMessage(message) ?? message }));
+            })
+        )
+    ];
+    onDestroy(() => unsubMaintenance.forEach((off) => off && off()));
+    let maintenanceLabel = $derived(
+        maintenance ? `${maintenanceOp(maintenance.kind)} ${maintenance.total > 0 ? `${maintenance.done}/${maintenance.total}` : maintenance.done > 0 ? maintenance.done : '…'}` : ''
+    );
 
     function cancelGammonNetBatch() {
         CancelGammonNetBatch();
@@ -334,6 +361,12 @@
         <span class="gammonnet-batch-chip" title={gammonNetBatchLabel($t, gammonNetBatch)}>
             {gammonNetBatchLabel($t, gammonNetBatch)}
             <button type="button" class="gammonnet-batch-cancel" onclick={cancelGammonNetBatch}>{$t('eval.batchCancel')}</button>
+        </span>
+    {/if}
+    {#if maintenance}
+        <span class="gammonnet-batch-chip" data-testid="maintenance-chip" title={maintenanceLabel}>
+            {maintenanceLabel}
+            <button type="button" class="gammonnet-batch-cancel" onclick={() => CancelMaintenance()}>{$t('eval.batchCancel')}</button>
         </span>
     {/if}
     {#if $matchContextStore.isMatchMode && $matchContextStore.movePositions.length > 0}

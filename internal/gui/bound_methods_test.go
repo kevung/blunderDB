@@ -21,6 +21,7 @@ var boundAppMethods = []string{
 	"CancelCubeMatrix",
 	"CancelEvaluationAtRest",
 	"CancelGammonNetBatch",
+	"CancelMaintenance",
 	"CancelRollout",
 	"RolloutPresets",
 	"RolloutStatus",
@@ -94,6 +95,7 @@ var boundAppMethods = []string{
 	"StartGammonNetBatch",
 	"StartGammonNetMatchBatch",
 	"StartGammonNetStaleBatch",
+	"StartMaintenance",
 	"StartupFilePath",
 }
 
