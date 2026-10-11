@@ -588,6 +588,7 @@ export namespace database {
 	    after: ingest.RepairCounts;
 	    changed_moves: number;
 	    rehomed_comments: number;
+	    kept_comments: number;
 	    dry_run: boolean;
 	    player1_name: string;
 	    player2_name: string;
@@ -606,6 +607,7 @@ export namespace database {
 	        this.after = this.convertValues(source["after"], ingest.RepairCounts);
 	        this.changed_moves = source["changed_moves"];
 	        this.rehomed_comments = source["rehomed_comments"];
+	        this.kept_comments = source["kept_comments"];
 	        this.dry_run = source["dry_run"];
 	        this.player1_name = source["player1_name"];
 	        this.player2_name = source["player2_name"];
@@ -4507,6 +4509,7 @@ export namespace ingest {
 	    after: RepairCounts;
 	    changed_moves: number;
 	    rehomed_comments: number;
+	    kept_comments: number;
 	    dry_run: boolean;
 	
 	    static createFrom(source: any = {}) {
@@ -4522,6 +4525,7 @@ export namespace ingest {
 	        this.after = this.convertValues(source["after"], RepairCounts);
 	        this.changed_moves = source["changed_moves"];
 	        this.rehomed_comments = source["rehomed_comments"];
+	        this.kept_comments = source["kept_comments"];
 	        this.dry_run = source["dry_run"];
 	    }
 	

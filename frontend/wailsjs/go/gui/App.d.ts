@@ -90,9 +90,9 @@ export function OpenDatabaseDialog():Promise<string>;
 
 export function OpenDirectionOutputDialog():Promise<string>;
 
-export function OpenExportDatabaseDialog():Promise<string>;
-
 export function OpenExportApkgDialog(arg1:string):Promise<string>;
+
+export function OpenExportDatabaseDialog():Promise<string>;
 
 export function OpenExportMatDialog(arg1:string):Promise<string>;
 
