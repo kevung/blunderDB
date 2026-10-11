@@ -61,12 +61,10 @@ describe('StatsCorpusTab', () => {
         expect(await findByText('5.12')).toBeTruthy();
     });
 
-    test('ranking passes the decision floor and shows the ranked rows', async () => {
-        const { container, getByLabelText, findByText } = render(StatsCorpusTab, { props: { filter } });
-        await fireEvent.input(getByLabelText('Min. decisions'), { target: { value: '100' } });
-        await fireEvent.click(must(container.querySelector('section:nth-of-type(3) button')));
-        expect(PlayerRanking).toHaveBeenCalledWith(filter, 100);
-        expect(await findByText('2–1')).toBeTruthy();
+    test('the ranking is the Players tab: Corpus has no section of its own for it', () => {
+        const { container } = render(StatsCorpusTab, { props: { filter } });
+        expect(container.querySelectorAll('section')).toHaveLength(2);
+        expect(PlayerRanking).not.toHaveBeenCalled();
     });
 });
 

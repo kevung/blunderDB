@@ -114,6 +114,10 @@ export function GetTabPanelHeights() {
   return window['go']['main']['Config']['GetTabPanelHeights']();
 }
 
+export function GetTableSorts() {
+  return window['go']['main']['Config']['GetTableSorts']();
+}
+
 export function GetTheme() {
   return window['go']['main']['Config']['GetTheme']();
 }
@@ -248,6 +252,10 @@ export function SaveTabOrder(arg1) {
 
 export function SaveTabPanelHeight(arg1, arg2) {
   return window['go']['main']['Config']['SaveTabPanelHeight'](arg1, arg2);
+}
+
+export function SaveTableSort(arg1, arg2, arg3) {
+  return window['go']['main']['Config']['SaveTableSort'](arg1, arg2, arg3);
 }
 
 export function SaveTheme(arg1) {

@@ -15,12 +15,14 @@
     import { statsFilterStore, statsResultFilterStore } from '../../stores/statsStore.js';
     import { loadPositionsFromStatsSelection } from '../../services/positionLoader.js';
     import { GetStatsBreakdownPositionCounts } from '../../../wailsjs/go/database/Database.js';
+    import PanelTable from '../panels/PanelTable.svelte';
+    import CountLink from '../panels/CountLink.svelte';
 
     let { result = null } = $props();
 
     let phases = $derived(result?.PerPhase ?? []);
     let tags = $derived(result?.PerTag ?? []);
-    let cells = $derived(result?.PerScore ?? []);
+    let scoreCells = $derived(result?.PerScore ?? []);
     // Le plan de jeu. Les lignes « inconnu » sont écartées : sur une
     // base dont les plans n'ont jamais été calculés elles seraient TOUTE la
     // table, et elles ne diraient rien qu'un `blunderdb repair` ne règle.
@@ -70,6 +72,58 @@
         loadPositionsFromStatsSelection(resultFilter(), { Kind: 'breakdown', Breakdown: dim, BreakdownKey: key, OnlyBlunders: onlyBlunders });
     }
 
+    /**
+     * One count of a row, or null while it is read or when it cannot be.
+     * @param {string} dim
+     * @param {string} key
+     * @param {boolean} onlyBlunders
+     */
+    function countValue(dim, key, onlyBlunders) {
+        const c = countOf(dim, key);
+        return c == null || c === 'missing' ? null : onlyBlunders ? c.Blunders : c.Positions;
+    }
+
+    /**
+     * The columns of one breakdown table; sorted and filtered by PanelTable.
+     * @param {string} dim
+     * @param {string} heading
+     */
+    function columnsFor(dim, heading) {
+        return [
+            { key: 'label', label: heading, sortable: true, filter: /** @type {const} */ ('text'), value: (/** @type {any} */ r) => r.label },
+            {
+                key: 'positions',
+                label: $t('stats.positions'),
+                sortable: true,
+                defaultDir: 'desc',
+                align: 'right',
+                filter: /** @type {const} */ ('number'),
+                value: (/** @type {any} */ r) => countValue(dim, r.key, false)
+            },
+            {
+                key: 'blunders',
+                label: $t('stats.blunders'),
+                title: $t('stats.breakdownBlundersHint'),
+                sortable: true,
+                defaultDir: 'desc',
+                align: 'right',
+                filter: /** @type {const} */ ('number'),
+                value: (/** @type {any} */ r) => countValue(dim, r.key, true)
+            },
+            {
+                key: 'decisions',
+                label: $t('stats.decisions'),
+                sortable: true,
+                defaultDir: 'desc',
+                align: 'right',
+                filter: /** @type {const} */ ('number'),
+                value: (/** @type {any} */ r) => r.row.NumDecisions
+            },
+            { key: 'pr', label: 'PR', sortable: true, align: 'right', filter: /** @type {const} */ ('number'), value: (/** @type {any} */ r) => r.row.PR },
+            { key: 'interval', label: $t('stats.interval95'), title: $t('stats.intervalHint'), align: 'right' }
+        ];
+    }
+
     /** @param {string} phase */
     function phaseLabel(phase) {
         switch (phase) {
@@ -109,7 +163,7 @@
     {#snippet countCell(/** @type {string} */ dim, /** @type {string} */ key, /** @type {boolean} */ onlyBlunders, /** @type {number} */ decisions)}
         {@const c = countOf(dim, key)}
         {@const n = c == null || c === 'missing' ? null : onlyBlunders ? c.Blunders : c.Positions}
-        <td class="num">
+        <td class="align-right">
             {#if countsError || c === 'missing'}
                 <span
                     class="count-error"
@@ -121,44 +175,29 @@
             {:else if n === 0}
                 <span class="zero">0</span>
             {:else}
-                <button
-                    type="button"
-                    class="count-link"
-                    data-testid="breakdown-{onlyBlunders ? 'blunders' : 'positions'}-{dim}-{key}"
+                <CountLink
+                    label={n}
+                    testid="breakdown-{onlyBlunders ? 'blunders' : 'positions'}-{dim}-{key}"
                     onclick={() => open(dim, key, onlyBlunders)}
-                    title={onlyBlunders ? $t('stats.breakdownOpenBlunders', { n, decisions }) : $t('stats.breakdownOpenPositions', { n, decisions })}>{n}</button
-                >
+                    title={onlyBlunders ? $t('stats.breakdownOpenBlunders', { n, decisions }) : $t('stats.breakdownOpenPositions', { n, decisions })}
+                />
             {/if}
         </td>
     {/snippet}
 
     {#snippet table(/** @type {string} */ dim, /** @type {string} */ heading, /** @type {any[]} */ rows)}
-        <table>
-            <thead>
-                <tr>
-                    <th>{heading}</th>
-                    <th class="num">{$t('stats.positions')}</th>
-                    <th class="num" title={$t('stats.breakdownBlundersHint')}>{$t('stats.blunders')}</th>
-                    <th class="num">{$t('stats.decisions')}</th>
-                    <th class="num">PR</th>
-                    <th class="num" title={$t('stats.intervalHint')}>{$t('stats.interval95')}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {#each rows as r (r.key)}
-                    <!-- Une ligne trop maigre est grisée, jamais cachée : son
-                         effectif reste lisible, donc l'omission reste vérifiable. -->
-                    <tr class:thin={!hasInterval(r.row.PRInterval)}>
-                        <td>{r.label}</td>
-                        {@render countCell(dim, r.key, false, r.row.NumDecisions)}
-                        {@render countCell(dim, r.key, true, r.row.BlunderCount)}
-                        <td class="num decisions">{r.row.NumDecisions}</td>
-                        <td class="num">{r.row.PR.toFixed(2)}</td>
-                        <td class="num ci">{fmtPRInterval(r.row.PRInterval)}</td>
-                    </tr>
-                {/each}
-            </tbody>
-        </table>
+        <PanelTable viewId="stats.breakdown.{dim}" {rows} rowKey={(r) => r.key} columns={columnsFor(dim, heading)} rowClass={(r) => (hasInterval(r.row.PRInterval) ? '' : 'thin')}>
+            <!-- Une ligne trop maigre est grisée, jamais cachée : son
+                 effectif reste lisible, donc l'omission reste vérifiable. -->
+            {#snippet cells(/** @type {any} */ r)}
+                <td>{r.label}</td>
+                {@render countCell(dim, r.key, false, r.row.NumDecisions)}
+                {@render countCell(dim, r.key, true, r.row.BlunderCount)}
+                <td class="align-right decisions">{r.row.NumDecisions}</td>
+                <td class="align-right">{r.row.PR.toFixed(2)}</td>
+                <td class="align-right ci">{fmtPRInterval(r.row.PRInterval)}</td>
+            {/snippet}
+        </PanelTable>
     {/snippet}
 
     <section>
@@ -206,13 +245,13 @@
 
     <section>
         <h3>{$t('stats.byScore')}</h3>
-        {#if cells.length === 0}
+        {#if scoreCells.length === 0}
             <p class="empty">{$t('stats.noData')}</p>
         {:else}
             {@render table(
                 'score',
                 $t('stats.score'),
-                cells.map((/** @type {any} */ cell) => ({ key: scoreKey(cell), label: scoreLabel(cell), row: cell }))
+                scoreCells.map((/** @type {any} */ cell) => ({ key: scoreKey(cell), label: scoreLabel(cell), row: cell }))
             )}
             <p class="note">{$t('stats.thinCells')}</p>
         {/if}
@@ -230,25 +269,7 @@
         font-size: var(--font-size-base);
         margin: 0 0 var(--space-1) 0;
     }
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-    th,
-    td {
-        text-align: left;
-        padding: 2px var(--space-2);
-        border-bottom: 1px solid var(--color-border);
-    }
-    th {
-        color: var(--color-text-muted);
-        font-weight: 400;
-    }
-    .num {
-        text-align: right;
-        font-variant-numeric: tabular-nums;
-    }
-    .thin td {
+    .breakdowns :global(.thin td) {
         color: var(--color-text-muted);
     }
     .decisions,
@@ -259,20 +280,6 @@
     .count-error {
         color: var(--color-danger, #c0392b);
         cursor: help;
-    }
-    /* Le chiffre est le lien : même convention que les compteurs de la barre d'état. */
-    .count-link {
-        background: none;
-        border: none;
-        padding: 0;
-        color: inherit;
-        cursor: pointer;
-        font-variant-numeric: tabular-nums;
-        text-decoration: underline dotted;
-    }
-    .count-link:hover,
-    .count-link:focus-visible {
-        color: var(--color-primary);
     }
     .empty,
     .note {

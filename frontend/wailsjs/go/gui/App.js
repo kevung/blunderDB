@@ -166,12 +166,12 @@ export function OpenDirectionOutputDialog() {
   return window['go']['gui']['App']['OpenDirectionOutputDialog']();
 }
 
-export function OpenExportDatabaseDialog() {
-  return window['go']['gui']['App']['OpenExportDatabaseDialog']();
-}
-
 export function OpenExportApkgDialog(arg1) {
   return window['go']['gui']['App']['OpenExportApkgDialog'](arg1);
+}
+
+export function OpenExportDatabaseDialog() {
+  return window['go']['gui']['App']['OpenExportDatabaseDialog']();
 }
 
 export function OpenExportMatDialog(arg1) {

@@ -3,7 +3,9 @@
     // statistics panels: sticky sortable header (nextSort), click/j/k selection,
     // icon actions column, empty state. Panels describe columns and render cells
     // via the `cells` snippet. Row helpers are exported from the module script
-    // for panels whose table is not always mounted.
+    // for panels whose table is not always mounted. With a `viewId` the table owns
+    // its view (ADR-0090): it sorts and filters the rows by column itself, under a
+    // filter row, and remembers the sort; without one the panel sorts through `bind:sort`.
 
     import { isBareLetter } from '../../utils/keys.js';
 
@@ -38,10 +40,13 @@
 </script>
 
 <script>
-    import { tick } from 'svelte';
+    import { tick, untrack } from 'svelte';
     import EmptyState from './EmptyState.svelte';
     import { nextSort } from '../../utils/tableSort.js';
     import { dragReorder } from '../../utils/dragReorder.js';
+    import { applyColumnView, filterIsInvalid } from '../../utils/columnView.js';
+    import { loadTableSorts, rememberTableSort, sessionFilters, rememberSessionFilters } from '../../stores/tableViewStore.js';
+    import { t } from '../../i18n/index.js';
 
     /**
      * @typedef {object} Column
@@ -55,11 +60,14 @@
      * @property {string} [title]
      * @property {string} [class]     extra class on the header cell
      * @property {string} [defaultDir] direction when this column is first picked
+     * @property {(row: any) => any} [value] with `viewId`: the value sorted and filtered; null = not measured
+     * @property {'number' | 'text'} [filter] with `viewId`: the column gets a filter field
      */
 
     /**
      * @typedef {object} PanelTableProps
      * @property {any[]} [rows]
+     * @property {string} [viewId]
      * @property {(row: any) => any} [rowKey]
      * @property {Column[]} [columns]
      * @property {any} [sort]
@@ -87,7 +95,9 @@
 
     /** @type {PanelTableProps} */
     let {
-        rows = [],
+        rows: sourceRows = [],
+        /** Names the table's view: it then sorts and filters its rows itself (see the module comment). */
+        viewId = undefined,
         rowKey = (row) => row.id,
         /** @type {Column[]} */
         columns = [],
@@ -99,7 +109,7 @@
         selectedKey = undefined,
         /** Extra classes for a row: (row, index) => string. */
         rowClass = undefined,
-        /** Extra attributes spread on a row: (row, index) => object. Not `class`. */
+        /** Extra attributes spread on a row, over the table's own handlers: (row, index) => object. Not `class`. */
         rowAttrs = undefined,
         /** Rows show a pointer cursor. */
         pointerRows = false,
@@ -137,6 +147,38 @@
     // actions column sits at the right edge. A panel names it (`elastic`); a table of short
     // columns only gets its last non-action column, else the browser spreads the slack over
     // every column and the actions float mid-row.
+    // Session filters come back with the table; the remembered sort once Config answers,
+    // unless the user sorted first.
+    let filters = $state(/** @type {Record<string, string>} */ (untrack(() => (viewId ? sessionFilters(viewId) : {}))));
+    let userSorted = false;
+    $effect(() => {
+        const id = viewId;
+        if (!id) return;
+        loadTableSorts().then((stored) => {
+            const s = stored[id];
+            if (userSorted || !s) return;
+            if (columns.some((c) => c.key === s.column && c.sortable)) sort = { column: s.column, direction: s.direction };
+        });
+    });
+
+    const filterable = $derived(!!viewId && columns.some((c) => c.filter));
+    const rows = $derived(viewId ? applyColumnView(sourceRows, columns, { sort, filters }) : sourceRows);
+    const filtersActive = $derived(Object.values(filters).some((v) => v && v.trim()));
+
+    /**
+     * @param {string} key
+     * @param {string} value
+     */
+    function setFilter(key, value) {
+        filters = { ...filters, [key]: value };
+        if (viewId) rememberSessionFilters(viewId, filters);
+    }
+
+    function clearFilters() {
+        filters = {};
+        if (viewId) rememberSessionFilters(viewId, filters);
+    }
+
     let elasticIndex = $derived.by(() => {
         const named = columns.findIndex((c) => c.elastic);
         if (named >= 0) return named;
@@ -191,6 +233,10 @@
     function handleSort(col) {
         if (!col.sortable) return;
         sort = nextSort(sort?.column ?? null, sort?.direction ?? 'asc', col.key, { tristate: !!sortOptions.tristate, defaultDir: /** @type {'asc' | 'desc'} */ (col.defaultDir ?? 'asc') });
+        if (viewId) {
+            userSorted = true;
+            rememberTableSort(viewId, sort);
+        }
     }
 
     /** @param {Column} col */
@@ -297,6 +343,28 @@
                         </th>
                     {/each}
                 </tr>
+                {#if filterable}
+                    <tr class="filter-row">
+                        {#each columns as col (col.key)}
+                            <th class:narrow-col={col.narrow} class:actions-col={col.actions}>
+                                {#if col.filter}
+                                    <input
+                                        type="search"
+                                        class="col-filter"
+                                        class:invalid={filterIsInvalid(col, filters[col.key])}
+                                        class:numeric={col.filter === 'number'}
+                                        aria-label={col.label ?? col.key}
+                                        aria-invalid={filterIsInvalid(col, filters[col.key]) || undefined}
+                                        placeholder={col.filter === 'number' ? '≥ …' : '…'}
+                                        title={col.filter === 'number' ? $t('table.numericFilterHint') : undefined}
+                                        value={filters[col.key] ?? ''}
+                                        oninput={(e) => setFilter(col.key, /** @type {HTMLInputElement} */ (e.currentTarget).value)}
+                                    />
+                                {/if}
+                            </th>
+                        {/each}
+                    </tr>
+                {/if}
             </thead>
             <tbody bind:this={tbodyEl} use:dragReorder={{ onReorder: onReorder ?? (() => {}), enabled: !!onReorder, itemSelector: 'tr:not(.spacer)', indexOffset: first }}>
                 {#if virtual && first > 0}
@@ -310,7 +378,6 @@
                         class:selected={isSelected(row)}
                         class:pointer={pointerRows}
                         tabindex={onActivate ? 0 : undefined}
-                        {...rowAttrs?.(row, index)}
                         onclick={onSelect ? (e) => onSelect(row, index, e) : undefined}
                         ondblclick={onActivate ? (e) => onActivate(row, index, e) : undefined}
                         onkeydown={onActivate
@@ -322,6 +389,7 @@
                                   }
                               }
                             : undefined}
+                        {...rowAttrs?.(row, index)}
                     >
                         {@render cells(row, index)}
                     </tr>
@@ -331,7 +399,9 @@
                 {/if}
             </tbody>
         </table>
-        {#if rows.length === 0 && emptyText}
+        {#if rows.length === 0 && filtersActive && sourceRows.length > 0}
+            <EmptyState text={$t('table.filteredOut')} clear={{ label: $t('emptyState.clearFilter'), onClick: clearFilters }} />
+        {:else if rows.length === 0 && emptyText}
             <EmptyState text={emptyText} actions={emptyActions} clear={emptyClear} action={emptyAction} />
         {/if}
     </div>
@@ -406,6 +476,32 @@
         font-weight: inherit;
         font-size: inherit;
         cursor: pointer;
+    }
+
+    .filter-row th {
+        padding: 2px 4px;
+        font-weight: normal;
+    }
+
+    .col-filter {
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+        padding: 1px 4px;
+        font-size: var(--font-size-small);
+        border: 1px solid var(--color-border);
+        border-radius: 3px;
+        background: var(--color-surface);
+        color: var(--color-text);
+    }
+
+    .col-filter.numeric {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .col-filter.invalid {
+        border-color: var(--color-danger);
     }
 
     .sort-arrow {
