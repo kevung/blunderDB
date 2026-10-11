@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -17,7 +18,7 @@ func testStatsCountDrilldowns(t *testing.T, s storage.Storage) {
 	matchA, posA := statsFixtureMatch(t, s, 0, "Alice", "Bob")
 	matchB, posB := statsFixtureMatch(t, s, 2, "Alice", "Carol")
 	// Played late on the last day of June: a filter ending that day keeps it.
-	matchC, _ := statsFixtureMatchOn(t, s, 4, "Dave", "Erin", 0, time.Date(2025, 6, 30, 18, 0, 0, 0, time.UTC))
+	matchC, posC := statsFixtureMatchOn(t, s, 4, "Dave", "Erin", 0, time.Date(2025, 6, 30, 18, 0, 0, 0, time.UTC))
 	_, posD := statsFixtureMatch(t, s, 6, "Alice", "Dave") // in no tournament
 
 	cup, err := s.Tournaments().Create(ctx, "", "Cup", "2025-06-01", "Paris")
@@ -137,6 +138,37 @@ func testStatsCountDrilldowns(t *testing.T, s storage.Storage) {
 		if r.Name == "Bob" && r.Blunders != 2 {
 			t.Errorf("Bob's Blunders = %d, want his 2 decisions on one position", r.Blunders)
 		}
+	}
+
+	// One of the Open match's analyses valued with another table than the
+	// current one: the totals keep the match by its other decision, and so
+	// must the lists they open.
+	met, err := s.MatchEquityTables().Save(ctx, "", domain.MatchEquityTable{Name: "Other", Digest: "other", Source: "<met/>"})
+	if err != nil {
+		t.Fatalf("Save MET: %v", err)
+	}
+	if err := s.MatchEquityTables().TagAnalyses(ctx, "", met, posC[:1]); err != nil {
+		t.Fatalf("TagAnalyses: %v", err)
+	}
+	for _, f := range []storage.StatsFilter{
+		{DecisionType: -1},
+		{DecisionType: -1, PlayerName: "Erin"},
+		{DecisionType: -1, PlayerName: "Dave"},
+		{DecisionType: -1, TournamentIDs: []int64{open}},
+	} {
+		res, err := s.Stats().Compute(ctx, "", f)
+		if err != nil {
+			t.Fatalf("Compute(%+v) with a mixed match: %v", f, err)
+		}
+		if ids, err := s.Stats().TournamentIDs(ctx, "", f); err != nil || len(ids) != res.Totals.NumTournaments {
+			t.Errorf("TournamentIDs(%+v) with a mixed match = %v, %v; want %d", f, ids, err, res.Totals.NumTournaments)
+		}
+		if ids, err := s.Stats().MatchIDs(ctx, "", f); err != nil || len(ids) != res.Totals.NumMatches {
+			t.Errorf("MatchIDs(%+v) with a mixed match = %v, %v; want %d", f, ids, err, res.Totals.NumMatches)
+		}
+	}
+	if res, err := s.Stats().Compute(ctx, "", storage.StatsFilter{DecisionType: -1, PlayerName: "Erin"}); err != nil || res.Totals.NumTournaments != 1 {
+		t.Errorf("Erin's tournaments with Dave's decision tagged = %v, %v; want her Open", res, err)
 	}
 }
 

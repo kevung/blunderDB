@@ -360,39 +360,41 @@ func (s *StatsStore) PositionIDsBySelection(ctx context.Context, scope string, f
 	return scanPositionIDs(rows)
 }
 
-// TournamentIDs — see storage.StatsStore. Read from match_stats as MatchIDs
-// reads it; a provenance filter, which match_stats cannot apply, reads the
-// decisions as computeTotals counts them.
+// TournamentIDs — see storage.StatsStore.
 func (s *StatsStore) TournamentIDs(ctx context.Context, scope string, filter storage.StatsFilter) ([]int64, error) {
+	return s.countedIDs(ctx, scope, filter, "m.tournament_id",
+		" AND m.tournament_id IS NOT NULL GROUP BY m.tournament_id ORDER BY m.tournament_id")
+}
+
+// countedIDs lists col over the decisions Compute's totals count, read where
+// Compute reads them: the phase cells when match_stats serves the filter, as
+// totalsFromCells does, else the decisions themselves, as computeTotals does.
+// Both keep a decision by the table of its own analysis, never by its match's.
+func (s *StatsStore) countedIDs(ctx context.Context, scope string, filter storage.StatsFilter, col, tail string) ([]int64, error) {
 	filter, err := s.withPlayerAliases(ctx, scope, filter)
 	if err != nil {
-		return nil, fmt.Errorf("TournamentIDs aliases: %w", err)
+		return nil, fmt.Errorf("counted ids aliases: %w", err)
+	}
+	useCells := false
+	if fromMatchStats(filter) {
+		if useCells, err = s.matchStatsReadable(ctx, scope); err != nil {
+			return nil, err
+		}
 	}
 	var query string
 	var args []any
-	if fromMatchStats(filter) {
-		from, fromArgs, err := s.matchStatsSource(ctx, scope)
-		if err != nil {
-			return nil, err
-		}
-		counted := "ms.decisions"
-		switch filter.DecisionType {
-		case 0:
-			counted = "ms.checker_decisions"
-		case 1:
-			counted = "ms.cube_decisions"
-		}
-		where, whereArgs := s.matchStatsWhere(scope, filter, true)
-		query = "SELECT DISTINCT m.tournament_id" + from + where + " AND " + counted + " > 0 AND m.tournament_id IS NOT NULL ORDER BY m.tournament_id"
-		args = append(fromArgs, whereArgs...)
+	if useCells {
+		where, whereArgs := s.cellsWhere(scope, filter)
+		query = "SELECT " + col + cellsJoin + cellKind(where, cellPhase) + tail
+		args = whereArgs
 	} else {
-		whereSQL, whereArgs := s.buildStatsWhereClause(scope, filter)
-		query = "SELECT DISTINCT m.tournament_id " + statsBaseJoin + whereSQL + " AND m.tournament_id IS NOT NULL ORDER BY m.tournament_id"
+		where, whereArgs := s.buildStatsWhereClause(scope, filter)
+		query = "SELECT " + col + " " + statsBaseJoin + where + tail
 		args = whereArgs
 	}
 	rows, err := s.DB.Query(ctx, query, args...)
 	if err != nil {
-		return nil, fmt.Errorf("TournamentIDs: %w", err)
+		return nil, fmt.Errorf("counted ids (%s): %w", col, err)
 	}
 	ids, err := scanPositionIDs(rows)
 	if ids == nil && err == nil {
