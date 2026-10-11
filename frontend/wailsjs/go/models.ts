@@ -588,6 +588,7 @@ export namespace database {
 	    after: ingest.RepairCounts;
 	    changed_moves: number;
 	    rehomed_comments: number;
+	    kept_comments: number;
 	    dry_run: boolean;
 	    player1_name: string;
 	    player2_name: string;
@@ -606,6 +607,7 @@ export namespace database {
 	        this.after = this.convertValues(source["after"], ingest.RepairCounts);
 	        this.changed_moves = source["changed_moves"];
 	        this.rehomed_comments = source["rehomed_comments"];
+	        this.kept_comments = source["kept_comments"];
 	        this.dry_run = source["dry_run"];
 	        this.player1_name = source["player1_name"];
 	        this.player2_name = source["player2_name"];
@@ -4507,6 +4509,7 @@ export namespace ingest {
 	    after: RepairCounts;
 	    changed_moves: number;
 	    rehomed_comments: number;
+	    kept_comments: number;
 	    dry_run: boolean;
 	
 	    static createFrom(source: any = {}) {
@@ -4522,6 +4525,7 @@ export namespace ingest {
 	        this.after = this.convertValues(source["after"], RepairCounts);
 	        this.changed_moves = source["changed_moves"];
 	        this.rehomed_comments = source["rehomed_comments"];
+	        this.kept_comments = source["kept_comments"];
 	        this.dry_run = source["dry_run"];
 	    }
 	
@@ -4809,6 +4813,75 @@ export namespace main {
 	        this.path = source["path"];
 	        this.intervalSeconds = source["intervalSeconds"];
 	    }
+	}
+
+}
+
+export namespace maintenance {
+	
+	export class Run {
+	    kind: string;
+	    startedAt: number;
+	    finishedAt: number;
+	    changed: number;
+	    outcome: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new Run(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.kind = source["kind"];
+	        this.startedAt = source["startedAt"];
+	        this.finishedAt = source["finishedAt"];
+	        this.changed = source["changed"];
+	        this.outcome = source["outcome"];
+	    }
+	}
+	export class Line {
+	    kind: string;
+	    tier: string;
+	    count?: number;
+	    unit?: string;
+	    listable: boolean;
+	    runnable: boolean;
+	    applicable: boolean;
+	    last?: Run;
+	
+	    static createFrom(source: any = {}) {
+	        return new Line(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.kind = source["kind"];
+	        this.tier = source["tier"];
+	        this.count = source["count"];
+	        this.unit = source["unit"];
+	        this.listable = source["listable"];
+	        this.runnable = source["runnable"];
+	        this.applicable = source["applicable"];
+	        this.last = this.convertValues(source["last"], Run);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
 	}
 
 }

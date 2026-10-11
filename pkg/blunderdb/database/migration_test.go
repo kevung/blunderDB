@@ -3580,6 +3580,10 @@ func TestOpen_2_30_0_RepairsMatchStatsShape(t *testing.T) {
 		if err := d.OpenDatabase(dbPath); err != nil {
 			t.Fatalf("open %d: %v", open, err)
 		}
+		// The open leaves missing rows to the stats.matches line (ADR-0088).
+		if _, err := d.RunMaintenance("stats.matches"); err != nil {
+			t.Fatalf("open %d: fill match_stats: %v", open, err)
+		}
 		var version string
 		if err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&version); err != nil || version != DatabaseVersion {
 			t.Fatalf("open %d: version %q, %v; want %s", open, version, err, DatabaseVersion)
@@ -3657,6 +3661,10 @@ func TestOpen_2_31_0_AddsMatchStatsCells(t *testing.T) {
 		d = NewDatabase()
 		if err := d.OpenDatabase(dbPath); err != nil {
 			t.Fatalf("open %d: %v", open, err)
+		}
+		// The open leaves missing rows to the stats.matches line (ADR-0088).
+		if _, err := d.RunMaintenance("stats.matches"); err != nil {
+			t.Fatalf("open %d: fill match_stats: %v", open, err)
 		}
 		if got := snapshot(d, stats); !slices.Equal(got, wantStats) {
 			t.Errorf("open %d: match_stats %v, want %v", open, got, wantStats)
@@ -3746,6 +3754,10 @@ func TestOpen_2_31_0_ReclustersMatchStatsCells(t *testing.T) {
 		d = NewDatabase()
 		if err := d.OpenDatabase(dbPath); err != nil {
 			t.Fatalf("open %d: %v", open, err)
+		}
+		// The open leaves missing rows to the stats.matches line (ADR-0088).
+		if _, err := d.RunMaintenance("stats.matches"); err != nil {
+			t.Fatalf("open %d: fill match_stats: %v", open, err)
 		}
 		for _, table := range []string{"match_stats_cell", "match_stats_position"} {
 			var ddl string
@@ -4416,6 +4428,10 @@ func TestMigrate_2_37_0_to_2_38_0_CubeResponseMWC(t *testing.T) {
 	closeOnCleanup(t, d)
 	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {
 		t.Fatalf("version after migration = %q, %v; want %q", v, err, DatabaseVersion)
+	}
+	// The open leaves the dropped rows to the stats.matches line (ADR-0088).
+	if _, err := d.RunMaintenance("stats.matches"); err != nil {
+		t.Fatalf("fill match_stats: %v", err)
 	}
 	if gotN, got := mwc(d); gotN != n || math.Abs(got-want) > 1e-9 {
 		t.Errorf("match_stats_cell after migration = %d rows, MWC %.6f; want %d rows, MWC %.6f", gotN, got, n, want)

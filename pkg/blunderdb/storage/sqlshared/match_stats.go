@@ -423,7 +423,7 @@ func (s *StatsStore) FillMatchStats(ctx context.Context, scope string, progress 
 	// A reader that cannot write must not answer from an incomplete table:
 	// the figures would quietly leave out the matches it lacks.
 	if RefusesWrites(ctx, s.DB) {
-		return 0, fmt.Errorf("%w: %d match(es) have no statistics yet and the database is open read-only; open it for writing once", ErrMatchStatsIncomplete, len(ids))
+		return 0, fmt.Errorf("%w: %d match(es) have no statistics yet and the database is open read-only; open it for writing and run the stats.matches maintenance once", ErrMatchStatsIncomplete, len(ids))
 	}
 	settings, err := librarySettings(ctx, s.DB, scope)
 	if err != nil {

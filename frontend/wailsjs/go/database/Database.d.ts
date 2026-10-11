@@ -16,6 +16,7 @@ import {engine} from '../models';
 import {apkg} from '../models';
 import {tournoi} from '../models';
 import {ingest} from '../models';
+import {maintenance} from '../models';
 import {parser} from '../models';
 import {rollout} from '../models';
 import {rollouts} from '../models';
@@ -63,6 +64,8 @@ export function Brackets(arg1:number):Promise<Array<service.BracketPhase>>;
 export function BuryAnkiCard(arg1:number):Promise<void>;
 
 export function CancelImport():Promise<void>;
+
+export function CancelMaintenance():Promise<void>;
 
 export function CancelMatch(arg1:number,arg2:string):Promise<service.DirectionView>;
 
@@ -141,6 +144,8 @@ export function CountAnkiDeckFilteredPositions(arg1:number,arg2:string):Promise<
 export function CountAnkiDeckPositions(arg1:number):Promise<number>;
 
 export function CountCollectionPositions(arg1:number):Promise<number>;
+
+export function CountMaintenance(arg1:string):Promise<number>;
 
 export function CountMatchPositionsToAnalyze(arg1:number):Promise<number>;
 
@@ -518,6 +523,10 @@ export function LoadTrainingNumberStats(arg1:string):Promise<Array<storage.Train
 
 export function LoadTrainingSessions(arg1:string,arg2:number):Promise<Array<storage.TrainingSession>>;
 
+export function MaintenanceIDs(arg1:string):Promise<Array<number>>;
+
+export function MaintenanceStatus():Promise<Array<maintenance.Line>>;
+
 export function MakeParticipantAbsent(arg1:number,arg2:string,arg3:string,arg4:number):Promise<service.DirectionView>;
 
 export function MakeParticipantAvailable(arg1:number,arg2:string):Promise<service.DirectionView>;
@@ -651,6 +660,10 @@ export function RolloutFiltered(arg1:context.Context,arg2:domain.SearchFilters,a
 export function RolloutPosition(arg1:context.Context,arg2:number,arg3:rollout.Settings,arg4:Array<string>,arg5:boolean,arg6:any):Promise<rollout.Result>;
 
 export function RolloutPositions(arg1:context.Context,arg2:Array<domain.Position>,arg3:rollout.Settings,arg4:any):Promise<rollouts.Summary>;
+
+export function RunMaintenance(arg1:string):Promise<maintenance.Run>;
+
+export function RunMaintenanceWithProgress(arg1:string,arg2:any):Promise<maintenance.Run>;
 
 export function RunRolloutPlan(arg1:context.Context,arg2:database.RolloutPlan,arg3:rollout.Settings,arg4:any):Promise<rollouts.Summary>;
 

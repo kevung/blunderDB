@@ -121,6 +121,7 @@ func (cli *CLI) handlers() map[string]func([]string) error {
 		"vacuum":      cli.runVacuum,
 		"repair":      cli.runRepair,
 		"reencode":    cli.runReencode,
+		"maintenance": cli.runMaintenance,
 		"met":         cli.runMET,
 		"analyze":     cli.runAnalyze,
 		"transcribe":  cli.runTranscribe,
@@ -203,6 +204,7 @@ func (cli *CLI) printUsage() {
 	fmt.Println("  repair    Recompute the analysis columns from the analyses themselves")
 	fmt.Println("  met       List, import or choose the database's match equity table")
 	fmt.Println("  reencode  Rewrite analyses stored by older releases in the compact format")
+	fmt.Println("  maintenance  State of health: counters, actions and last runs (status, count, ids, run)")
 	fmt.Println("  delete    Delete data from the database")
 	fmt.Println("  comment   Comments on a position, signed by their author (add, list)")
 	fmt.Println("  trash     What was deleted through the trash, and how to put it back")

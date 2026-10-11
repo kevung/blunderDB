@@ -2,9 +2,12 @@ package server
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
+	"slices"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/maintenance"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -50,5 +53,92 @@ func (s *Server) reencodeRoutes() []route {
 			}
 			writeJSONResp(w, map[string]int{"rewritten": n})
 		}},
+	}
+}
+
+// maintenanceKindReq names one line of the state of health.
+type maintenanceKindReq struct {
+	Kind string `json:"kind"`
+}
+
+type maintenanceCountResp struct {
+	Kind  string `json:"kind"`
+	Count int64  `json:"count"`
+}
+
+// healthRoutes returns the state of health of ADR-0088: the daemon's side of
+// `blunderdb maintenance` and of the GUI's Maintenance tab, through the same
+// maintenance package. status, count and ids read only; run streams NDJSON
+// and shares the tenant's one slot with the gammonNet sweeps and the
+// rollouts (gammonnetJobs), so a second operation is a plain 409.
+func (s *Server) healthRoutes() []route {
+	return []route{
+		{http.MethodPost, "/v1/maintenance.status", rpc(func(ctx context.Context, scope string, _ struct{}) ([]maintenance.Line, error) {
+			return maintenance.Status(ctx, s.opts.Storage, scope)
+		})},
+		{http.MethodPost, "/v1/maintenance.count", rpc(func(ctx context.Context, scope string, req maintenanceKindReq) (maintenanceCountResp, error) {
+			n, err := maintenance.Count(ctx, s.opts.Storage, scope, maintenance.Kind(req.Kind))
+			return maintenanceCountResp{Kind: req.Kind, Count: n}, err
+		})},
+		{http.MethodPost, "/v1/maintenance.ids", rpc(func(ctx context.Context, scope string, req maintenanceKindReq) ([]int64, error) {
+			ids, err := maintenance.IDs(ctx, s.opts.Storage, scope, maintenance.Kind(req.Kind))
+			if ids == nil && err == nil {
+				ids = []int64{}
+			}
+			return ids, err
+		})},
+		{http.MethodPost, "/v1/maintenance.run", s.handleMaintenanceRun},
+		{http.MethodPost, "/v1/maintenance.cancel", s.handleGammonNetAnalyzeCancel},
+	}
+}
+
+// handleMaintenanceRun runs one line's action as an NDJSON stream: started
+// (with the job id maintenance.cancel takes), progress, then done, cancelled
+// or error. An unknown or inapplicable operation, and a tenant whose slot is
+// taken, are refused before the stream opens.
+func (s *Server) handleMaintenanceRun(w http.ResponseWriter, r *http.Request) {
+	var req maintenanceKindReq
+	if err := decodeJSON(r, &req); err != nil {
+		writeDecodeError(w, "invalid JSON body", err)
+		return
+	}
+	kind := maintenance.Kind(req.Kind)
+	if !slices.Contains(maintenance.Kinds(), kind) {
+		writeErrorCode(w, CodeInvalid, fmt.Sprintf("unknown maintenance operation %q", req.Kind))
+		return
+	}
+	ctx, cancel := context.WithCancel(r.Context())
+	defer cancel()
+	scope := scopeOf(r)
+	jobID, err := s.gammonnetJobs.startExclusive(scope, cancel)
+	if err != nil {
+		writeStorageError(w, err)
+		return
+	}
+	defer s.gammonnetJobs.finish(jobID)
+
+	w.Header().Set("Content-Type", ndjsonContentType)
+	w.WriteHeader(http.StatusOK)
+	enc := json.NewEncoder(w)
+	fl, _ := w.(http.Flusher)
+	emit := func(v any) {
+		_ = enc.Encode(v)
+		if fl != nil {
+			fl.Flush()
+		}
+	}
+	emit(map[string]any{"event": "started", "job_id": jobID})
+	run, err := maintenance.RunKind(ctx, s.opts.Storage, scope, kind, maintenance.Opts{
+		Progress: func(done, total int) {
+			emit(map[string]any{"event": "progress", "done": done, "total": total})
+		},
+	})
+	switch {
+	case run.Outcome == maintenance.OutcomeCancelled:
+		emit(map[string]any{"event": "cancelled", "run": run})
+	case err != nil:
+		emit(map[string]any{"event": "error", "error": errorBodyFor(w, err)})
+	default:
+		emit(map[string]any{"event": "done", "run": run})
 	}
 }

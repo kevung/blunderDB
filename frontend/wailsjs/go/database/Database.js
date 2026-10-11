@@ -90,6 +90,10 @@ export function CancelImport() {
   return window['go']['database']['Database']['CancelImport']();
 }
 
+export function CancelMaintenance() {
+  return window['go']['database']['Database']['CancelMaintenance']();
+}
+
 export function CancelMatch(arg1, arg2) {
   return window['go']['database']['Database']['CancelMatch'](arg1, arg2);
 }
@@ -244,6 +248,10 @@ export function CountAnkiDeckPositions(arg1) {
 
 export function CountCollectionPositions(arg1) {
   return window['go']['database']['Database']['CountCollectionPositions'](arg1);
+}
+
+export function CountMaintenance(arg1) {
+  return window['go']['database']['Database']['CountMaintenance'](arg1);
 }
 
 export function CountMatchPositionsToAnalyze(arg1) {
@@ -998,6 +1006,14 @@ export function LoadTrainingSessions(arg1, arg2) {
   return window['go']['database']['Database']['LoadTrainingSessions'](arg1, arg2);
 }
 
+export function MaintenanceIDs(arg1) {
+  return window['go']['database']['Database']['MaintenanceIDs'](arg1);
+}
+
+export function MaintenanceStatus() {
+  return window['go']['database']['Database']['MaintenanceStatus']();
+}
+
 export function MakeParticipantAbsent(arg1, arg2, arg3, arg4) {
   return window['go']['database']['Database']['MakeParticipantAbsent'](arg1, arg2, arg3, arg4);
 }
@@ -1264,6 +1280,14 @@ export function RolloutPosition(arg1, arg2, arg3, arg4, arg5, arg6) {
 
 export function RolloutPositions(arg1, arg2, arg3, arg4) {
   return window['go']['database']['Database']['RolloutPositions'](arg1, arg2, arg3, arg4);
+}
+
+export function RunMaintenance(arg1) {
+  return window['go']['database']['Database']['RunMaintenance'](arg1);
+}
+
+export function RunMaintenanceWithProgress(arg1, arg2) {
+  return window['go']['database']['Database']['RunMaintenanceWithProgress'](arg1, arg2);
 }
 
 export function RunRolloutPlan(arg1, arg2, arg3, arg4) {

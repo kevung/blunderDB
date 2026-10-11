@@ -75,7 +75,7 @@ func (reg *importRegistry) startExclusive(scope string, cancel context.CancelFun
 	defer reg.mu.Unlock()
 	for _, j := range reg.jobs {
 		if j.scope == scope {
-			return "", fmt.Errorf("%w: an analysis is already running for this tenant", storage.ErrConflict)
+			return "", fmt.Errorf("%w: an analysis, a rollout or a maintenance operation is already running for this tenant", storage.ErrConflict)
 		}
 	}
 	id := newImportID()

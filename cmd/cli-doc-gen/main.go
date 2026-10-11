@@ -59,6 +59,8 @@ func composite(name string) []string {
 		return cli.NewCLI().StatsSubcommands()
 	case "training":
 		return cli.NewCLI().TrainingSubcommands()
+	case "maintenance":
+		return cli.NewCLI().MaintenanceSubcommands()
 	case "match":
 		// "" is the command's own flags, which it keeps beside its
 		// sub-command.

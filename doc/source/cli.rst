@@ -106,6 +106,7 @@ Commandes disponibles
    "met", "Liste, importe et choisit la table d'équité de match de la base."
    "reencode", "Réécrit les analyses au format compact."
    "repair", "Recalcule ce que la base dérive de ce qu'elle stocke."
+   "maintenance", "L'état de santé de la base : compteurs, actions et dernières exécutions."
    "delete", "Supprime des données."
    "healthcheck", "Interroge un démon ``serve`` en marche : code 0 s'il est disponible."
    "mcp", "Offre les outils de la base à un assistant IA (Model Context Protocol)."
@@ -2750,6 +2751,66 @@ ne se lance jamais d'elle-même. Le démon expose la même opération sur la rou
    ./blunderdb reencode --db base.db
 
    #   Analyses rewritten: 15623468
+
+maintenance — L'état de santé de la base
+----------------------------------------
+
+Une ligne par opération de maintenance : ce qu'elle compte, son action et sa
+dernière exécution. Rien ne se lance de soi-même : ni à l'ouverture de la base,
+ni en lisant l'état.
+
+.. code-block:: bash
+
+   ./blunderdb maintenance status --db <path>
+   ./blunderdb maintenance count <opération> --db <path>
+   ./blunderdb maintenance ids <opération> --db <path>
+   ./blunderdb maintenance run <opération> --db <path>
+
+**Sous-commandes:**
+
+* ``status`` — Toutes les opérations, avec les compteurs gratuits et la
+  dernière exécution de chacune. Un compteur coûteux affiche
+  ``(count on demand)`` : ``count`` le calcule.
+* ``count`` — Calcule le compteur d'une opération, quel qu'en soit le coût.
+* ``ids`` — Liste les identifiants que l'opération compte (positions ou
+  matchs) ; leur nombre est la réponse de ``count``.
+* ``run`` — Lance l'action d'une opération et l'inscrit comme sa dernière
+  exécution (terminée, annulée ou en échec). Ctrl-C l'arrête entre deux lots.
+
+**Opérations:**
+
+.. csv-table::
+   :header: "Opération", "Compteur", "Action"
+   :widths: 22, 40, 38
+
+   "``analysis.missing``", "Positions sans aucune analyse, à la demande.", "La commande ``analyze``."
+   "``stats.matches``", "Matchs sans statistiques par match.", "Les calcule."
+   "``analysis.columns``", "—", "Recalcule les colonnes tirées des analyses."
+   "``moves.errors``", "—", "Note l'erreur des coups joués qui n'en ont pas."
+   "``analysis.legacy``", "—", "Réécrit les analyses au format compact (``reencode``)."
+   "``trash``", "Entrées de la corbeille.", "La commande ``trash``."
+   "``vacuum``", "Octets libres du fichier (SQLite).", "La commande ``vacuum``."
+
+**Options:**
+
+* ``--db`` — Base de données (obligatoire).
+* ``--format`` — Format de sortie: ``text`` (défaut) ou ``json``.
+
+La dernière exécution est rangée dans la base, avec ses réglages ; un export
+ne l'emporte pas. Une seule opération tourne à la fois. Le démon expose les
+mêmes sous-commandes sur les routes ``maintenance.status``,
+``maintenance.count``, ``maintenance.ids``, ``maintenance.run`` (en flux
+NDJSON, annulable par ``maintenance.cancel``), limitées au tenant de
+l'appelant ; une opération demandée pendant qu'une analyse gammonNet ou un
+rollout tourne pour ce tenant est refusée.
+
+**Exemple:**
+
+.. code-block:: bash
+
+   ./blunderdb maintenance run stats.matches --db base.db
+
+   #   stats.matches: done, 1204 changed
 
 players — Les graphies d'un joueur
 ----------------------------------

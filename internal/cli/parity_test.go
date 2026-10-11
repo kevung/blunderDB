@@ -513,6 +513,12 @@ var databaseParity = map[string]parityEntry{
 	"SetAnkiCardSuspended":              {CLI: "anki card", Server: "/v1/anki.suspendCard"},
 	"Vacuum":                            {CLI: "vacuum", Server: "/ops/maintenance.vacuum"},
 	"ReencodeAnalyses":                  {CLI: "reencode", Server: "/v1/maintenance.reencode"},
+	"MaintenanceStatus":                 {CLI: "maintenance status", Server: "/v1/maintenance.status"},
+	"CountMaintenance":                  {CLI: "maintenance count", Server: "/v1/maintenance.count"},
+	"MaintenanceIDs":                    {CLI: "maintenance ids", Server: "/v1/maintenance.ids"},
+	"RunMaintenance":                    {CLI: "maintenance run", Server: "/v1/maintenance.run"},
+	"RunMaintenanceWithProgress":        {CLI: "maintenance run", Server: "/v1/maintenance.run"},
+	"CancelMaintenance":                 {Server: "/v1/maintenance.cancel", Why: "the CLI runs in the foreground: Ctrl-C cancels its run between two batches"},
 	"ImportMET":                         {CLI: "met --import", Server: "/v1/met.import"},
 	"ListMETs":                          {CLI: "met", Server: "/v1/met.list"},
 	"SetCurrentMET":                     {CLI: "met --use", Server: "/v1/met.setCurrent"},
@@ -593,13 +599,14 @@ func TestDatabaseParity(t *testing.T) {
 	c := &CLI{}
 	commands := c.handlers()
 	subcommands := map[string]map[string]func([]string) error{
-		"collection": c.collectionHandlers(),
-		"anki":       c.ankiHandlers(),
-		"lesson":     c.lessonHandlers(),
-		"study":      c.studyHandlers(),
-		"stats":      c.statsHandlers(),
-		"training":   c.trainingHandlers(),
-		"comment":    c.commentHandlers(),
+		"collection":  c.collectionHandlers(),
+		"anki":        c.ankiHandlers(),
+		"lesson":      c.lessonHandlers(),
+		"study":       c.studyHandlers(),
+		"stats":       c.statsHandlers(),
+		"training":    c.trainingHandlers(),
+		"comment":     c.commentHandlers(),
+		"maintenance": c.maintenanceHandlers(),
 	}
 	paths := serverPaths(t)
 

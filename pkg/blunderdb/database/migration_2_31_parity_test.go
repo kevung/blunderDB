@@ -421,8 +421,9 @@ func resumesAfterCancel(t *testing.T, swap bool) {
 
 	// The table passes are cut on their second batch; the backfills, one
 	// batch on this library, on their first; the swap on its first DROP.
+	// match_stats is no phase of the open: it is left to maintenance.
 	cuts := map[string]int{"position_2_31": 2, "analysis_2_31": 2, "move_2_31": 2,
-		"position_match_date": 1, "analysis_provenance": 1, "match_stats": 1}
+		"position_match_date": 1, "analysis_provenance": 1}
 	if swap {
 		cuts[swapCut] = 1
 	}
