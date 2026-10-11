@@ -165,3 +165,44 @@ func testBlunderCountPromisesTheSearch(t *testing.T, s storage.Storage) {
 		t.Fatalf("Blunders = %d at a 500 mp threshold, want 0", counts.Blunders)
 	}
 }
+
+// testMaintenanceLogRoundTrip holds the journal of ADR-0088: a row is read
+// back under its key, a second write replaces it, the thresholds are neither
+// read as journal rows nor disturbed by them, and a key outside the prefix is
+// refused so the journal can never overwrite a setting.
+func testMaintenanceLogRoundTrip(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	ls := s.LibrarySettings()
+	got, err := ls.MaintenanceLog(ctx, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(got) != 0 {
+		t.Fatalf("fresh library journal: %v, want empty", got)
+	}
+	settings := storage.LibrarySettings{ErrorThresholdMP: 40, BlunderThresholdMP: 90}
+	if err := ls.Save(ctx, "", settings); err != nil {
+		t.Fatal(err)
+	}
+	key := storage.MaintenanceKeyPrefix + "stats.matches"
+	for _, v := range []string{`{"n":1}`, `{"n":2}`} {
+		if err := ls.RecordMaintenance(ctx, "", key, v); err != nil {
+			t.Fatal(err)
+		}
+	}
+	got, err = ls.MaintenanceLog(ctx, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(got) != 1 || got[key] != `{"n":2}` {
+		t.Errorf("journal %v, want only %s = {\"n\":2}", got, key)
+	}
+	if back, _ := ls.Load(ctx, ""); back != settings {
+		t.Errorf("thresholds %+v after journal writes, want %+v", back, settings)
+	}
+	for _, bad := range []string{storage.LibrarySettingBlunderKey, storage.MaintenanceKeyPrefix} {
+		if err := ls.RecordMaintenance(ctx, "", bad, "1"); !errors.Is(err, storage.ErrInvalid) {
+			t.Errorf("RecordMaintenance(%q): %v, want ErrInvalid", bad, err)
+		}
+	}
+}

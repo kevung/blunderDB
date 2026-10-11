@@ -47,6 +47,23 @@ var tenantIsolationCases = []tenantIsolationCase{
 	{"Schema231", checkSchema231Isolation},
 	{"TableSetting", checkTableSettingIsolation},
 	{"Training", checkTrainingIsolation},
+	{"MaintenanceLog", checkMaintenanceLogIsolation},
+}
+
+// checkMaintenanceLogIsolation: a run recorded for one tenant is not the
+// other's last run (ADR-0088, the journal is per tenant).
+func checkMaintenanceLogIsolation(t *testing.T, ctx context.Context, s storage.Storage, a, b string) {
+	key := storage.MaintenanceKeyPrefix + "trash"
+	if err := s.LibrarySettings().RecordMaintenance(ctx, a, key, "x"); err != nil {
+		t.Fatalf("RecordMaintenance(%s): %v", a, err)
+	}
+	got, err := s.LibrarySettings().MaintenanceLog(ctx, b)
+	if err != nil {
+		t.Fatalf("MaintenanceLog(%s): %v", b, err)
+	}
+	if len(got) != 0 {
+		t.Errorf("tenant %s reads tenant %s's journal: %v", b, a, got)
+	}
 }
 
 // RunTenantIsolationTests runs every family's isolation check against a

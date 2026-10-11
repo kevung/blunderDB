@@ -740,6 +740,10 @@ type StatsStore interface {
 	// does for the match it has just written, inside its transaction.
 	RefreshMatchStats(ctx context.Context, scope string, matchIDs []int64) error
 
+	// MissingMatchStats lists, in id order, the matches of the scope that
+	// have no match_stats row: what FillMatchStats would compute.
+	MissingMatchStats(ctx context.Context, scope string) ([]int64, error)
+
 	// FillMatchStats computes the rows of every match in scope that has none,
 	// in committed batches: an interrupted run resumes where it stopped.
 	// progress, when not nil, is told done/total after each batch. It returns

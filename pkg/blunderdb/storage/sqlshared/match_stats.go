@@ -393,8 +393,8 @@ func RefusesWrites(ctx context.Context, db Execer) bool {
 	return ok && w.RefusesWrites(ctx)
 }
 
-// missingMatchStats lists the matches of the scope without rows.
-func (s *StatsStore) missingMatchStats(ctx context.Context, scope string) ([]int64, error) {
+// MissingMatchStats — see storage.StatsStore.
+func (s *StatsStore) MissingMatchStats(ctx context.Context, scope string) ([]int64, error) {
 	tenant, args := s.DB.TenantFilter("m", scope)
 	var ids []int64
 	err := scanEach(ctx, s.DB,
@@ -416,7 +416,7 @@ func (s *StatsStore) missingMatchStats(ctx context.Context, scope string) ([]int
 
 // FillMatchStats — see storage.StatsStore.
 func (s *StatsStore) FillMatchStats(ctx context.Context, scope string, progress func(done, total int)) (int, error) {
-	ids, err := s.missingMatchStats(ctx, scope)
+	ids, err := s.MissingMatchStats(ctx, scope)
 	if err != nil || len(ids) == 0 {
 		return 0, err
 	}
@@ -447,7 +447,7 @@ func (s *StatsStore) FillMatchStats(ctx context.Context, scope string, progress 
 			}
 		}
 		filled += len(ids)
-		if ids, err = s.missingMatchStats(ctx, scope); err != nil {
+		if ids, err = s.MissingMatchStats(ctx, scope); err != nil {
 			return filled, err
 		}
 	}
@@ -468,7 +468,7 @@ func (s *StatsStore) matchStatsReadable(ctx context.Context, scope string) (bool
 		_, err := s.FillMatchStats(ctx, scope, nil)
 		return err == nil, err
 	}
-	ids, err := s.missingMatchStats(ctx, scope)
+	ids, err := s.MissingMatchStats(ctx, scope)
 	if err != nil || len(ids) > 0 {
 		return false, err
 	}

@@ -321,7 +321,7 @@ func (s *SearchStore) prOfMissingMatches(ctx context.Context, scope, filter stri
 		_, err := st.FillMatchStats(ctx, scope, nil)
 		return nil, err
 	}
-	ids, err := st.missingMatchStats(ctx, scope)
+	ids, err := st.MissingMatchStats(ctx, scope)
 	if err != nil || len(ids) == 0 {
 		return nil, err
 	}
