@@ -112,6 +112,7 @@ func WholeTenant(format Format) ExportOptions {
 			AllLessons: true,
 		},
 		Analysis: true, Comments: true, PlayedMoves: true, FilterLibrary: true, AnkiDecks: true,
+		Transcriptions: true,
 	}
 }
 
@@ -384,15 +385,6 @@ func (e *exporter) writeMetadata() error {
 	return nil
 }
 
-// wholeScope reports whether the export is the whole of the source scope —
-// every position, collection, match and tournament — as WholeTenant and the
-// GUI's "export everything" ask for. Families that no Selection flag can
-// address travel only in that case.
-func (e *exporter) wholeScope() bool {
-	sel := e.opts.Selection
-	return sel.AllPositions && sel.AllCollections && sel.AllMatches && sel.AllTournaments
-}
-
 // resolveSelection turns the Selection into ordered id lists, following the
 // closure flags: tournaments → matches → positions, collections → positions.
 // Every source iterator is drained before the next one starts — nesting two
@@ -480,15 +472,14 @@ func (e *exporter) resolveSelection() error {
 	if sel.CollectionPositions {
 		reach = e.collectionIDs
 	}
-	{
-		for _, cid := range reach {
-			for p, err := range e.src.Collections().Positions(e.ctx, e.scope, cid, storage.ListOpts{}) {
-				if err != nil {
-					return fmt.Errorf("ingest: list positions of collection %d: %w", cid, err)
-				}
-				if !explicit[p.ID] {
-					extra[p.ID] = true
-				}
+	for _, cid := range reach {
+		ids, err := e.collectionMembers(cid)
+		if err != nil {
+			return err
+		}
+		for _, pid := range ids {
+			if !explicit[pid] {
+				extra[pid] = true
 			}
 		}
 	}
@@ -755,8 +746,32 @@ func foldPlayedMoves(a *domain.PositionAnalysis, moves []*domain.Move) {
 	sort.Strings(a.PlayedCubeActions)
 }
 
+// collectionMembers lists the positions a collection shows: the rows of a
+// hand-made list, or what the query of a LIVING one selects now, so that the
+// recipient's evaluation of the copied query finds them in the file.
+func (e *exporter) collectionMembers(cid int64) ([]int64, error) {
+	filters, _, living, err := storage.LivingFilters(e.ctx, e.src, e.scope, cid)
+	if err != nil {
+		return nil, fmt.Errorf("ingest: read collection %d: %w", cid, err)
+	}
+	if living {
+		ids, err := e.src.Search().FindIDs(e.ctx, e.scope, filters, storage.ListOpts{})
+		if err != nil {
+			return nil, fmt.Errorf("ingest: evaluate living collection %d: %w", cid, err)
+		}
+		return ids, nil
+	}
+	ids, err := e.src.Collections().PositionIDs(e.ctx, e.scope, cid, storage.ListOpts{})
+	if err != nil {
+		return nil, fmt.Errorf("ingest: list positions of collection %d: %w", cid, err)
+	}
+	return ids, nil
+}
+
 // writeCollections copies the selected collections and, for each, the
-// memberships whose position was exported, in the collection's order.
+// memberships whose position was exported, in the collection's order. A
+// LIVING collection keeps its query: it stays living in the file, evaluated
+// against what the file holds.
 func (e *exporter) writeCollections() error {
 	for _, id := range e.collectionIDs {
 		c, err := e.src.Collections().Get(e.ctx, e.scope, id)
@@ -765,9 +780,9 @@ func (e *exporter) writeCollections() error {
 			continue
 		}
 		res, err := e.tx.ExecContext(e.ctx,
-			`INSERT INTO collection (name, description, sort_order, created_at, updated_at)
-			 VALUES (?, ?, ?, COALESCE(NULLIF(?, ''), CURRENT_TIMESTAMP), COALESCE(NULLIF(?, ''), CURRENT_TIMESTAMP))`,
-			c.Name, c.Description, c.SortOrder, c.CreatedAt, c.UpdatedAt)
+			`INSERT INTO collection (name, description, sort_order, created_at, updated_at, filter_query)
+			 VALUES (?, ?, ?, COALESCE(NULLIF(?, ''), CURRENT_TIMESTAMP), COALESCE(NULLIF(?, ''), CURRENT_TIMESTAMP), ?)`,
+			c.Name, c.Description, c.SortOrder, c.CreatedAt, c.UpdatedAt, strings.TrimSpace(c.FilterQuery))
 		if err != nil {
 			e.skip("inserting collection", "collectionID", id, "err", err)
 			continue
@@ -1086,15 +1101,17 @@ func (e *exporter) writeFilters() error {
 	return nil
 }
 
-// writeTranscriptions copies the drafts (ADR-0045) — but only when the export
-// is the WHOLE scope: no Selection flag reaches a draft, so a filtered export
-// cannot tell which ones belong. The link to the produced match goes through
-// matchMap; a draft whose match did not export keeps its typing and loses the
-// link.
+// writeTranscriptions copies the drafts (ADR-0045) under opts.Transcriptions:
+// a draft travels with the match it produced, the link going through
+// matchMap. A draft that belongs to no exported match — never saved, or its
+// match left behind — travels only when every match and every position do,
+// and then without a link: a narrower export cannot tell whose it is.
 func (e *exporter) writeTranscriptions() error {
-	if !e.wholeScope() {
+	if !e.opts.Transcriptions {
 		return nil
 	}
+	sel := e.opts.Selection
+	unattached := sel.AllMatches && sel.AllPositions
 	var drafts []*storage.Transcription
 	for tr, err := range e.src.Transcriptions().List(e.ctx, e.scope) {
 		if err != nil {
@@ -1104,8 +1121,12 @@ func (e *exporter) writeTranscriptions() error {
 		drafts = append(drafts, &d)
 	}
 	for _, d := range drafts {
+		match, exported := e.matchMap[d.MatchID]
+		if !exported && !unattached {
+			continue
+		}
 		d.ID = 0
-		d.MatchID = e.matchMap[d.MatchID] // 0 when the match did not export
+		d.MatchID = match // 0 when the match did not export: the typing travels, the link does not
 		doc, err := carriedTranscriptDocument(d.Document)
 		if err != nil {
 			e.skip("reading transcription", "label", d.Label, "err", err)

@@ -1232,6 +1232,7 @@
         "includeComments": "Incluir comentarios",
         "includeFilterLibrary": "Mis filtros guardados",
         "includeMatches": "Incluir partidas ({count})",
+        "includeTranscriptions": "Con sus borradores de transcripción",
         "includePlayedMoves": "Incluir jugadas realizadas",
         "includeTournaments": "Incluir torneos ({count})",
         "mayTakeMoments": "Esto puede tardar unos momentos.",

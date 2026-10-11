@@ -1314,6 +1314,11 @@ connaît plus **refuse de s'ouvrir** en le disant, plutôt que de renvoyer toute
 la base. C'est la seule panne qu'un filtre enregistré ne doit pas avoir :
 s'élargir en silence.
 
+Une collection vivante **reste vivante dans un export** de la base : sa requête
+voyage avec elle et se réévalue, chez le destinataire, sur les positions du
+fichier. Quand l'export emporte les positions des collections, il emporte
+celles que la requête sélectionne au moment de l'export.
+
 Un paquet de répétition espacée fondé sur une collection vivante rejoue sa
 requête à chaque ouverture de séance : les positions que la recherche
 sélectionne depuis la dernière fois y entrent, et les cartes déjà là gardent
@@ -4883,7 +4888,7 @@ La fenêtre d'export tient en un seul écran : le formulaire, puis une
 progression qui se superpose à lui le temps de l'écriture. Elle se ferme
 d'elle-même une fois terminée, et le résultat s'affiche dans la barre d'état.
 
-Trois points méritent l'attention :
+Cinq points méritent l'attention :
 
 * **L'export porte sur les positions actuellement affichées**, pas sur la base
   entière. Après une recherche, seuls les résultats partent — la fenêtre le
@@ -4892,9 +4897,13 @@ Trois points méritent l'attention :
 * **Quand la liste affichée est la bibliothèque**, l'export est le même que
   celui du serveur et de ``export --type database`` : toutes les cases sont
   cochées d'emblée, et les paquets Anki (sans historique de révision) et les
-  transcriptions en cours partent avec le reste. Une transcription liée à une
-  vidéo locale n'emporte que le nom du fichier, sans son dossier ; un lien web
-  part tel quel.
+  transcriptions en cours partent avec le reste.
+* **Un match part avec son brouillon de transcription**, quelle que soit la
+  liste affichée : la case *Avec leurs brouillons de transcription*, sous
+  celle des matchs, est cochée d'emblée. Un brouillon qui n'a pas encore
+  produit de match ne part qu'avec la bibliothèque entière. Une transcription
+  liée à une vidéo locale n'emporte que le nom du fichier, sans son dossier ;
+  un lien web part tel quel.
 * **Une collection dont toutes les positions ne sont pas dans la sélection
   arrive tronquée.** La liste affiche donc, pour chaque collection, la part
   couverte (« 12/40 ») et la signale en rouge lorsqu'elle est partielle.

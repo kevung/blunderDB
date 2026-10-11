@@ -3240,6 +3240,8 @@ Options:
     	Comma-separated list of tournament IDs to export (empty = all)
   -tournaments
     	Include tournaments in database export (default: true) (default true)
+  -transcriptions
+    	Include the transcription drafts of the exported matches in database export (default: true) (default true)
   -type string
     	Export type: database, positions, matches, mat (required)
   -watermark string

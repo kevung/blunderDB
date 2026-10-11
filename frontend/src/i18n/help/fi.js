@@ -291,6 +291,7 @@ export default {
 <p>Kokoelma voi olla <strong>elävä</strong>: sen sisältö ei ole enää käsin tehty lista vaan <strong>haun</strong> tulos, joka lasketaan uudelleen joka avauksella. Kokoelman otsikon ◇-painike tekee siitä elävän viimeisimmällä haulla; ◈ kertoo sen jo olevan, ja sama painike palauttaa listan. Mitään ei tuhota: sen sisältämät asemat ovat yhä tallella, kun palaat.</p>
 <p>Elävässä kokoelmassa näkyvä painike ❄ <strong>jäädyttää</strong> sen: haun sillä hetkellä valitsemista asemista tulee tavallisen kokoelman sisältö haun järjestyksessä, ja kysely tyhjennetään. Asemat, jotka kokoelmassa oli ennen sen muuttumista eläväksi, korvataan.</p>
 <p>Elävä kokoelma, jonka kysely sisältää tunnuksen jota tämä versio ei enää tunne, <strong>kieltäytyy avautumasta</strong> ja sanoo sen sen sijaan että palauttaisi koko tietokannan. Se on ainoa vika, jota tallennetulla suodattimella ei saa olla: laajeta hiljaisuudessa.</p>
+<p>Elävä kokoelma <strong>pysyy elävänä tietokannan viennissä</strong>: sen kysely kulkee sen mukana ja arvioidaan vastaanottajalla uudelleen tiedoston asemia vasten. Kun vienti ottaa mukaan kokoelmien asemat, se ottaa ne, jotka kysely valitsee viennin hetkellä.</p>
 <p>Elävään kokoelmaan perustuva harjoituspakka välitetylle toistolle suorittaa kyselynsä uudelleen aina, kun istunto avataan: asemat, jotka haku on valinnut edellisen kerran jälkeen, tulevat siihen, ja jo mukana olevat kortit säilyttävät ajoituksensa. Arviointi rajataan 5 000 aseman <strong>ylärajaan</strong>; kun kysely valitsee enemmän, vain ensimmäiset haun järjestyksessä syöttävät pakkaa, ja tilarivi kertoo tämän yhdessä valittujen asemien todellisen määrän kanssa.</p>
 <p>Otsikon <strong>Ehdota…</strong>-painike avaa <strong>viiteasemat</strong>: lyhyen luettelon opiskeltavia asemia, jotka on valittu virheidesi joukosta niin, että kukin tiivistää monta. Kymmenen pahimman virheen opiskelu tuottaa usein kymmenen saman ongelman muunnelmaa tai yksittäisiä asemia, jotka eivät opeta mitään muista; viiteasema on usean virheesi keskellä, rakenteeltaan samankaltaisena, ja sen opetus palvelee kaikkia.</p>
 <ul>
@@ -1053,10 +1054,11 @@ export default {
 </div>
 <h4>Tietokannan merkitseminen alkuperällään</h4>
 <p>Vienti-ikkuna mahtuu yhdelle näytölle: lomake ja sen päälle kirjoituksen ajaksi asettuva edistymisnäkymä. Ikkuna sulkeutuu itsestään valmistuttuaan, ja tulos näkyy tilapalkissa.</p>
-<p>Kolme seikkaa ansaitsee huomiota:</p>
+<p>Viisi seikkaa ansaitsee huomiota:</p>
 <ul>
 <li><strong>Vienti koskee parhaillaan näkyvissä olevia asemia</strong>, ei koko tietokantaa. Haun jälkeen viedään vain tulokset — ikkuna muistuttaa siitä yläreunassa — ja ottelulista tarjoaa vain ne ottelut, joissa nämä asemat on pelattu; jokainen valittu ottelu viedään kaikkine asemineen.</li>
-<li><strong>Kun näytetty luettelo on kirjasto</strong>, vienti on sama kuin palvelimen ja komennon <code>export --type database</code>: kaikki valintaruudut on valittu valmiiksi, ja Anki-pakat (ilman kertaushistoriaa) sekä käynnissä olevat litteroinnit viedään muun mukana. Paikalliseen videoon liitetty litterointi sisältää vain tiedostonimen ilman kansiota; verkkolinkki viedään sellaisenaan.</li>
+<li><strong>Kun näytetty luettelo on kirjasto</strong>, vienti on sama kuin palvelimen ja komennon <code>export --type database</code>: kaikki valintaruudut on valittu valmiiksi, ja Anki-pakat (ilman kertaushistoriaa) sekä käynnissä olevat litteroinnit viedään muun mukana.</li>
+<li><strong>Ottelu viedään litterointiluonnoksensa kanssa</strong> näytetystä luettelosta riippumatta: otteluiden alla oleva valintaruutu <em>Transkriptioluonnosten kanssa</em> on valittu valmiiksi. Luonnos, josta ei vielä ole syntynyt ottelua, viedään vain koko kirjaston mukana. Paikalliseen videoon liitetty litterointi sisältää vain tiedostonimen ilman kansiota; verkkolinkki viedään sellaisenaan.</li>
 <li><strong>Kokoelma, jonka asemat eivät kaikki sisälly valintaan, saapuu vaillinaisena.</strong> Siksi luettelo näyttää kunkin kokoelman katetun osuuden (”12/40”) ja merkitsee sen punaisella, kun se on osittainen.</li>
 <li><strong>Turnaukset voi viedä vain otteluiden kanssa</strong>: ilman niitä turnaus–ottelu-yhteyttä ei ole ja turnaus saapuisi tyhjänä. Valintaruutu pysyy poissa käytöstä, kunnes ”sisällytä ottelut” on valittu.</li>
 </ul>

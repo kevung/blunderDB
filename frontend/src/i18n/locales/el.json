@@ -1232,6 +1232,7 @@
         "includeComments": "Συμπερίληψη σχολίων",
         "includeFilterLibrary": "Τα αποθηκευμένα φίλτρα μου",
         "includeMatches": "Συμπερίληψη αγώνων ({count})",
+        "includeTranscriptions": "Μαζί με τα πρόχειρα μεταγραφής τους",
         "includePlayedMoves": "Συμπερίληψη παιγμένων κινήσεων",
         "includeTournaments": "Συμπερίληψη τουρνουά ({count})",
         "mayTakeMoments": "Αυτό μπορεί να διαρκέσει μερικά λεπτά.",

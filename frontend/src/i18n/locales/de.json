@@ -1232,6 +1232,7 @@
         "includeComments": "Kommentare einbeziehen",
         "includeFilterLibrary": "Meine gespeicherten Filter",
         "includeMatches": "Matches einbeziehen ({count})",
+        "includeTranscriptions": "Mit ihren Transkriptionsentwürfen",
         "includePlayedMoves": "Gespielte Züge einbeziehen",
         "includeTournaments": "Turniere einbeziehen ({count})",
         "mayTakeMoments": "Dies kann einen Moment dauern.",
