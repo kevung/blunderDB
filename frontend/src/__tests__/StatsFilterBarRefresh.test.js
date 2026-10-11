@@ -9,7 +9,7 @@
 
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 import { get } from 'svelte/store';
-import { render, waitFor } from '@testing-library/svelte';
+import { render, waitFor, fireEvent } from '@testing-library/svelte';
 
 // ── Mocks ────────────────────────────────────────────────────────────────────
 
@@ -41,7 +41,7 @@ vi.mock('../stores/databaseStore.js', () => {
 import { GetAllPlayerNames } from '../../wailsjs/go/database/Database.js';
 import { GetStatsFilter } from '../../wailsjs/go/main/Config.js';
 import { dbMutationCounterStore } from '../stores/uiStore.js';
-import { statsFilterStore } from '../stores/statsStore.js';
+import { statsFilterStore, _resetStatsFilterForTests } from '../stores/statsStore.js';
 import StatsFilterBar from '../components/stats/StatsFilterBar.svelte';
 
 const BEFORE_MERGE = [
@@ -58,33 +58,30 @@ describe('StatsFilterBar refresh', () => {
     beforeEach(() => {
         vi.clearAllMocks();
         dbMutationCounterStore.set(0);
-        statsFilterStore.set({
-            playerName: '',
-            tournamentIDs: [],
-            dateFrom: '',
-            dateTo: '',
-            decisionType: -1,
-            matchLength: []
-        });
+        _resetStatsFilterForTests();
         vi.mocked(GetStatsFilter).mockResolvedValue(null);
         vi.mocked(GetAllPlayerNames).mockResolvedValue(BEFORE_MERGE);
     });
 
+    /** The player names the field offers once focused. */
+    async function offered(/** @type {HTMLElement} */ container) {
+        const input = /** @type {HTMLInputElement} */ (container.querySelector('#fb-player'));
+        await fireEvent.focus(input);
+        return [...document.querySelectorAll('[role="option"] span')].map((o) => /** @type {HTMLElement} */ (o).title);
+    }
+
     test('re-reads the player list when the database changes', async () => {
         const { container } = render(StatsFilterBar);
-        await waitFor(() => {
-            expect(container.querySelector('#fb-player')).toBeTruthy();
-        });
-        await waitFor(() => {
-            expect(container.querySelectorAll('#fb-player option').length).toBe(BEFORE_MERGE.length + 1);
+        await waitFor(async () => {
+            expect(await offered(container)).toEqual(BEFORE_MERGE.map((p) => p.Name));
         });
 
         // A merge happened elsewhere in the app.
         vi.mocked(GetAllPlayerNames).mockResolvedValue(AFTER_MERGE);
         dbMutationCounterStore.update((n) => n + 1);
 
-        await waitFor(() => {
-            const names = [...container.querySelectorAll('#fb-player option')].map((o) => /** @type {HTMLInputElement} */ (o).value);
+        await waitFor(async () => {
+            const names = await offered(container);
             expect(names).not.toContain('K. Unger');
             expect(names).toContain('Kevin Unger');
         });

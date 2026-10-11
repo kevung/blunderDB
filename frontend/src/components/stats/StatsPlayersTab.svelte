@@ -1,10 +1,12 @@
 <script>
-    import { statsFilterStore } from '../../stores/statsStore.js';
+    import { tick } from 'svelte';
+    import { get } from 'svelte/store';
+    import { statsFilterStore, patchStatsFilter, defaultStatsFilter, playerTableFilterStore } from '../../stores/statsStore.js';
+    import { loadPositionsFromStatsSelection, openStatsPlayerBlunders } from '../../services/positionLoader.js';
     import { fmtMwc7, mwc7Percent, mwc7Tooltip } from '../../utils/mwc7.js';
     import { t } from '../../i18n/index.js';
     import PanelTable from '../panels/PanelTable.svelte';
     import CountLink from '../panels/CountLink.svelte';
-    import { openStatsPlayerBlunders } from '../../services/positionLoader.js';
     import PlayerComparison from './PlayerComparison.svelte';
 
     /**
@@ -80,12 +82,39 @@
     });
 
     function selectPlayer(/** @type {string} */ name) {
-        statsFilterStore.update((f) => ({ ...f, playerName: name }));
+        patchStatsFilter({ playerName: name });
         onSelectPlayer?.(name);
     }
 
+    /** @type {any} */
+    let table = $state();
+    const selectedName = $derived($statsFilterStore.playerName);
+
+    // The filter's player is marked in the full table and brought into view.
+    $effect(() => {
+        if (!selectedName || !table || !rows?.length) return;
+        tick().then(() => table?.scrollToSelected('center'));
+    });
+
+    /**
+     * The filter the table was computed under, narrowed to one player: every decision type,
+     * since the table counts them all. Its match count also holds matches without an analysed
+     * decision, which no match list reproduces: it stays a number.
+     */
+    function playerFilter(/** @type {string} */ name) {
+        return { ...defaultStatsFilter, ...(get(playerTableFilterStore) ?? get(statsFilterStore)), decisionType: -1, playerName: name };
+    }
+
+    /** A link inside a row opens its own target, not the player's dashboard. */
+    function openDecisions(/** @type {string} */ name) {
+        return (/** @type {MouseEvent} */ e) => {
+            e.stopPropagation();
+            loadPositionsFromStatsSelection(playerFilter(name), { Kind: 'all', OnlyWithError: false });
+        };
+    }
+
     function onRowKey(/** @type {KeyboardEvent} */ event, /** @type {string} */ name) {
-        // Une touche sur un contrôle de la ligne (case, lien) est la sienne.
+        // A key on a control of the row (checkbox, link) is that control's, not the row's.
         if (event.target !== event.currentTarget) return;
         if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
@@ -102,7 +131,9 @@
             <PlayerComparison a={comparedRows[0]} b={comparedRows[1]} onClear={() => (compared = [])} />
         {/if}
         <PanelTable
+            bind:this={table}
             {rows}
+            selectedKey={selectedName || undefined}
             viewId="stats.players"
             rowKey={(row) => row.name}
             {columns}
@@ -128,7 +159,7 @@
                 <td class="name">{row.name}</td>
                 <td class="numeric">{row.matches}</td>
                 <td class="numeric">{row.wins}–{row.losses}</td>
-                <td class="numeric">{row.decisions}</td>
+                <td class="numeric"><CountLink label={String(row.decisions)} onclick={openDecisions(row.name)} /></td>
                 <td class="numeric strong">{fmtRate(row.pr, row.decisions > 0)}</td>
                 <td class="numeric">{fmtRate(row.pr_checker, row.checker_decisions > 0)}</td>
                 <td class="numeric">{fmtRate(row.pr_cube, row.cube_decisions > 0)}</td>
@@ -138,7 +169,7 @@
                     >{#if row.blunders > 0}<CountLink
                             label={String(row.blunders)}
                             onclick={(e) => {
-                                // Ouvrir ses blunders, pas filtrer sur le joueur comme le clic de ligne.
+                                // Open the player's blunders, not the row's player filter.
                                 e.stopPropagation();
                                 openStatsPlayerBlunders(row.name);
                             }}

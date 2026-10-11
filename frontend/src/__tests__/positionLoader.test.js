@@ -64,13 +64,19 @@ vi.mock('../stores/positionStore.js', () => {
     };
 });
 
-// Mock statsStore (real module imports Wails bindings); expose only the filter.
+// Mock statsStore (real module imports Wails bindings); expose only the filter stores.
 vi.mock('../stores/statsStore.js', () => {
-    const { writable } = require('svelte/store');
+    const { writable, get } = require('svelte/store');
+    const statsFilterStore = writable({ decisionType: -1, playerName: '', tournamentIDs: [], dateFrom: '', dateTo: '', matchLength: [] });
+    const statsResultFilterStore = writable(null);
     return {
-        statsFilterStore: writable({ decisionType: -1, playerName: '', tournamentIDs: [], dateFrom: '', dateTo: '', matchLength: [] }),
-        statsResultFilterStore: writable(null),
-        playerTableFilterStore: writable(null)
+        statsFilterStore,
+        statsTabStore: writable('dashboard'),
+        initStatsFilter: vi.fn(() => Promise.resolve()),
+        patchStatsFilter: vi.fn(() => true),
+        statsResultFilterStore,
+        playerTableFilterStore: writable(null),
+        drillDownFilter: () => get(statsResultFilterStore) ?? get(statsFilterStore)
     };
 });
 
@@ -84,12 +90,13 @@ import {
     loadPositionsFromMatch,
     openTournamentInPanel,
     openMatchInPanel,
+    openStatsFor,
     openTournamentListInPanel,
     openStatsTournaments,
     openStatsPlayerBlunders
 } from '../services/positionLoader.js';
 
-import { statsFilterStore, statsResultFilterStore, playerTableFilterStore } from '../stores/statsStore.js';
+import { statsFilterStore, statsTabStore, initStatsFilter, patchStatsFilter, statsResultFilterStore, playerTableFilterStore } from '../stores/statsStore.js';
 
 import { activeTabStore, matchOpenRequestStore } from '../stores/uiStore.js';
 import { tournamentOpenRequestStore, tournamentIDsFilterStore } from '../stores/tournamentStore.js';
@@ -217,6 +224,31 @@ describe('openMatchInPanel', () => {
         openMatchInPanel(12);
         expect(get(matchOpenRequestStore)).toBe(12);
         expect(get(activeTabStore)).toBe('matches');
+    });
+});
+
+describe('openStatsFor', () => {
+    test('restores the saved filter first, then puts the player on it with no tournament or date, and opens Stats', async () => {
+        /** @type {() => void} */
+        let restored = () => {};
+        vi.mocked(initStatsFilter).mockImplementation(() => new Promise((r) => (restored = () => r(undefined))));
+        vi.mocked(patchStatsFilter).mockClear();
+        activeTabStore.set('matches');
+        const opening = openStatsFor({ playerName: 'Alice' });
+        // The restore would overwrite a patch made before it lands.
+        expect(patchStatsFilter).not.toHaveBeenCalled();
+        restored();
+        await opening;
+        expect(patchStatsFilter).toHaveBeenCalledWith({ playerName: 'Alice', tournamentIDs: [], dateFrom: '', dateTo: '' });
+        expect(get(statsTabStore)).toBe('dashboard');
+        expect(get(activeTabStore)).toBe('stats');
+    });
+
+    test('a tournament narrows the filter to it, clears the dates and keeps the player, on the asked tab', async () => {
+        vi.mocked(initStatsFilter).mockResolvedValue(undefined);
+        await openStatsFor({ tournamentIDs: [4], tab: 'players' });
+        expect(patchStatsFilter).toHaveBeenLastCalledWith({ tournamentIDs: [4], dateFrom: '', dateTo: '' });
+        expect(get(statsTabStore)).toBe('players');
     });
 });
 

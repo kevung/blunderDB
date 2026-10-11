@@ -8,6 +8,7 @@
     import { isOnBoard } from './services/boardArea.js';
     import { SaveWindowDimensions, GetLastDatabasePath, SaveLastDatabasePath, GetLanguage } from '../wailsjs/go/main/Config.js';
     import { PathExists, StartupFilePath, CheckForUpdate } from '../wailsjs/go/gui/App.js';
+    import { initStatsFilter } from './stores/statsStore.js';
     import { GetCheckForUpdates, GetTrainingSeedSources } from '../wailsjs/go/main/Config.js';
     import { metaStore } from './stores/metaStore.js';
     import { isNewerVersion } from './utils/semver.js';
@@ -380,6 +381,8 @@
         initPanelPosition();
         initPageStep();
         initRolloutChoice();
+        // Before any link into Stats: openStatsFor waits on the same promise.
+        initStatsFilter();
 
         // One-shot seed of the local $state: the resize-handle drag owns it afterwards.
         Promise.all([initPanelSize(), initTabHeights()]).then(() => {
