@@ -155,6 +155,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Stats/MatchDetail", testStatsMatchDetail},
 		{"Stats/MatchStatsOracle", testMatchStatsOracle},
 		{"Stats/HeadToHeadWindowsRanking", testHeadToHeadWindowsRanking},
+		{"Stats/CountDrilldowns", testStatsCountDrilldowns},
 		{"Stats/MatchMoveGrades", testStatsMatchMoveGrades},
 		{"Stats/MatchDecisionLosses", testStatsMatchDecisionLosses},
 		{"Stats/MatchDecisionLossesCube", testStatsMatchDecisionLossesCube},

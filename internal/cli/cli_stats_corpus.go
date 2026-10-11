@@ -254,6 +254,66 @@ func (cli *CLI) runStatsMatches(args []string) error {
 	return w.Flush()
 }
 
+// runStatsTournaments lists the tournaments the Dashboard's tournament count
+// counts: those holding a counted decision under the filter.
+func (cli *CLI) runStatsTournaments(args []string) error {
+	fs := flag.NewFlagSet("stats tournaments", flag.ContinueOnError)
+	player := fs.String("player", "", "Only the tournaments where this player holds a counted decision")
+	c := newCorpusStatsFlags(fs)
+	fs.Usage = func() {
+		fmt.Println("Usage: blunderdb stats tournaments --db <file> [options]")
+		fmt.Println()
+		fmt.Println("The tournaments the Dashboard's tournament count counts, by ID: those")
+		fmt.Println("holding a counted decision of the player, or of any player, under the filter.")
+		fmt.Println()
+		fmt.Println("Options:")
+		fs.PrintDefaults()
+		fmt.Println()
+		fmt.Println("Examples:")
+		fmt.Println("  blunderdb stats tournaments --db database.db --player \"Alice\" --from 2025-01-01")
+		fmt.Println("  blunderdb stats tournaments --db database.db --format json")
+	}
+	if err := fs.Parse(args); err != nil {
+		return err
+	}
+	filter, err := c.open(cli, fs, *player)
+	if err != nil {
+		return err
+	}
+	var ids []int64
+	err = withInterruptibleContext(func() {}, func(ctx context.Context) error {
+		var err error
+		ids, err = cli.db.StatsTournamentIDsCtx(ctx, filter)
+		return err
+	})
+	if err != nil {
+		return statsErr("tournaments", err)
+	}
+	if c.json() {
+		return printJSON(map[string][]int64{"tournament_ids": ids})
+	}
+	if len(ids) == 0 {
+		fmt.Println("No tournament with a counted decision in this filter.")
+		return nil
+	}
+	all, err := cli.db.GetAllTournaments()
+	if err != nil {
+		return fmt.Errorf("failed to get tournaments: %w", err)
+	}
+	keep := make(map[int64]bool, len(ids))
+	for _, id := range ids {
+		keep[id] = true
+	}
+	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+	fmt.Fprintln(w, "ID\tDATE\tMATCHES\tNAME")
+	for _, t := range all {
+		if keep[t.ID] {
+			fmt.Fprintf(w, "%d\t%s\t%d\t%s\n", t.ID, t.EffectiveDate, t.MatchCount, t.Name)
+		}
+	}
+	return w.Flush()
+}
+
 func (cli *CLI) runStatsWindows(args []string) error {
 	fs := flag.NewFlagSet("stats windows", flag.ContinueOnError)
 	player := fs.String("player", "", "Only this player's decisions")

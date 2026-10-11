@@ -317,6 +317,15 @@ func (s *StatsStore) PositionIDsBySelection(ctx context.Context, scope string, f
 	if sel.Kind == "breakdown" {
 		return s.breakdownSelectionIDs(ctx, scope, filter, sel)
 	}
+	// The blunder threshold is the library's, read where the Players table
+	// reads it, so the drill-down lists what its Blunders column counts.
+	if sel.Kind == "blunders" {
+		settings, err := librarySettings(ctx, s.DB, scope)
+		if err != nil {
+			return nil, fmt.Errorf("PositionIDsBySelection (blunders): %w", err)
+		}
+		sel = storage.SelectionSpec{Kind: "error_bucket", BucketMinMP: settings.BlunderThresholdMP, BucketMaxMP: -1}
+	}
 	whereSQL, baseArgs := s.buildStatsWhereClause(scope, filter)
 
 	// A cube-direction cell is decided by reading two free-form labels, stated
@@ -344,6 +353,27 @@ func (s *StatsStore) PositionIDsBySelection(ctx context.Context, scope string, f
 		return nil, fmt.Errorf("PositionIDsBySelection (%s): %w", sel.Kind, err)
 	}
 	return scanPositionIDs(rows)
+}
+
+// TournamentIDs — see storage.StatsStore. Read from the decisions, as
+// computeTotals counts them, so it agrees with Totals.NumTournaments under
+// every filter, a provenance filter included.
+func (s *StatsStore) TournamentIDs(ctx context.Context, scope string, filter storage.StatsFilter) ([]int64, error) {
+	filter, err := s.withPlayerAliases(ctx, scope, filter)
+	if err != nil {
+		return nil, fmt.Errorf("TournamentIDs aliases: %w", err)
+	}
+	whereSQL, args := s.buildStatsWhereClause(scope, filter)
+	rows, err := s.DB.Query(ctx,
+		"SELECT DISTINCT m.tournament_id "+statsBaseJoin+whereSQL+" AND m.tournament_id IS NOT NULL ORDER BY m.tournament_id", args...)
+	if err != nil {
+		return nil, fmt.Errorf("TournamentIDs: %w", err)
+	}
+	ids, err := scanPositionIDs(rows)
+	if ids == nil && err == nil {
+		ids = []int64{}
+	}
+	return ids, err
 }
 
 // PositionIDsByTournament returns all position IDs belonging to the given

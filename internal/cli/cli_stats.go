@@ -52,6 +52,7 @@ func (cli *CLI) statsHandlers() map[string]func([]string) error {
 		"training":    cli.runStatsTraining,
 		"windows":     cli.runStatsWindows,
 		"matches":     cli.runStatsMatches,
+		"tournaments": cli.runStatsTournaments,
 		"progression": cli.runStatsProgression,
 		"breakdown":   cli.runStatsBreakdown,
 		"report":      cli.runStatsReport,
@@ -87,6 +88,7 @@ func (cli *CLI) printStatsUsage() {
 	fmt.Println("  tournament One player's tournament against their usual level, by round, rank, score and pace")
 	fmt.Println("  training   Quiz PR and Anki retention against real PR, by calendar window")
 	fmt.Println("  windows    PR over a sliding calendar window (month, quarter)")
+	fmt.Println("  tournaments  Tournaments holding a counted decision under the filter (Dashboard count)")
 	fmt.Println("  progression  PR per match, per tournament and rolling (Progression tab)")
 	fmt.Println("  breakdown  PR by phase, plan of play, tag, score and cube action (Breakdowns tab)")
 	fmt.Println("  report     Self-contained HTML report of the filter (--html)")
