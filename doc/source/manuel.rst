@@ -3682,10 +3682,9 @@ corpus figurent dans l'onglet **Corpus** du panneau, en ligne de
 commande et par l'API du démon (voir :ref:`cli_stats`) : le **face-à-face** de deux joueurs (matchs communs, PR de
 chacun, bilan) et le **PR par fenêtre calendaire** glissante (1, 3, 6 ou 12 mois).
 L'onglet Corpus calcule chaque vue à la demande, sous le
-filtre courant. Le **classement** par PR des joueurs qui ont au moins un nombre
-donné de décisions n'a plus de section dans l'onglet Corpus : c'est l'onglet
-Joueurs, trié par PR et filtré sur la colonne *Décisions* ; la ligne de
-commande et l'API le donnent toujours (``stats ranking``). Un **filtre de provenance** (champs *Moteur* et *Profondeur
+filtre courant. Le **classement** par PR se lit dans l'onglet Joueurs, trié par PR
+et filtré sur la colonne *Décisions* ; la ligne de commande et l'API le donnent
+aussi (``stats ranking``). Un **filtre de provenance** (champs *Moteur* et *Profondeur
 min.* de la barre de filtres) restreint les statistiques aux décisions analysées ainsi ; il porte
 sur chaque décision, et les chiffres qu'il touche sont alors recalculés depuis
 les décisions. Le face-à-face et le PR par fenêtre ne l'acceptent pas : tant

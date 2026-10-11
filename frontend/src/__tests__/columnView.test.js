@@ -73,3 +73,14 @@ describe('applyColumnView', () => {
         expect(applyColumnView(ROWS, COLUMNS, {})).toEqual(ROWS);
     });
 });
+
+describe('a bare number', () => {
+    test('matches at the precision typed, not by float equality', () => {
+        expect(keeps('4.2', 4.2)).toBe(true);
+        expect(keeps('4.2', 4.1 + 0.1)).toBe(true);
+        expect(keeps('4.2', 4.24)).toBe(true);
+        expect(keeps('4.2', 4.26)).toBe(false);
+        expect(keeps('4.20', 4.204)).toBe(true);
+        expect(keeps('4.20', 4.206)).toBe(false);
+    });
+});

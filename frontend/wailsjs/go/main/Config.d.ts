@@ -54,11 +54,11 @@ export function GetRolloutChoice():Promise<main.RolloutChoice>;
 
 export function GetStatsFilter():Promise<main.StatsFilterPersisted>;
 
-export function GetTableSorts():Promise<Record<string, main.TableSort>>;
-
 export function GetTabOrder():Promise<Array<string>>;
 
 export function GetTabPanelHeights():Promise<Record<string, number>>;
+
+export function GetTableSorts():Promise<Record<string, main.TableSort>>;
 
 export function GetTheme():Promise<string>;
 
@@ -124,11 +124,11 @@ export function SaveRolloutChoice(arg1:main.RolloutChoice):Promise<void>;
 
 export function SaveStatsFilter(arg1:main.StatsFilterPersisted):Promise<void>;
 
-export function SaveTableSort(arg1:string,arg2:string,arg3:string):Promise<void>;
-
 export function SaveTabOrder(arg1:Array<string>):Promise<void>;
 
 export function SaveTabPanelHeight(arg1:string,arg2:number):Promise<void>;
+
+export function SaveTableSort(arg1:string,arg2:string,arg3:string):Promise<void>;
 
 export function SaveTheme(arg1:string):Promise<void>;
 

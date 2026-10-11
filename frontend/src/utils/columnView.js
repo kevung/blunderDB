@@ -53,8 +53,11 @@ export function parseNumericFilter(text) {
             return { test: (v) => v > n };
         case '<':
             return { test: (v) => v < n };
-        default:
-            return { test: (v) => v === n };
+        default: {
+            // A bare number matches at the precision typed: `4.2` keeps 4.15 < v < 4.25.
+            const half = 0.5 * 10 ** -(cmp[2].split(/[.,]/)[1]?.length ?? 0);
+            return { test: (v) => Math.abs(v - n) < half };
+        }
     }
 }
 
