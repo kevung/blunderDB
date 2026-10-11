@@ -3,7 +3,7 @@
     import { confirmAction, confirmModalStore } from '../services/confirmService.js';
     import { logger } from '../utils/logger.js';
     import { swapPlayersErrorKey } from '../utils/swapPlayersError.js';
-    import { repairCounts, repairDiffers, repairMatchErrorKey } from '../utils/repairMatch.js';
+    import { repairCounts, repairDiffers, repairDoneKey, repairMatchErrorKey } from '../utils/repairMatch.js';
     import { focusPanelUnlessTyping } from '../utils/panelFocus.js';
     import { analysisChallengeStore, analysisChallengeHiddenStore } from '../stores/analysisChallengeStore.js';
     import { toDateInputValue, formatDate, formatDiceShort, GRADE_MARKS, indexMoveGrades, countGrades, fmtGradeCost } from '../utils/matchTable.js';
@@ -937,7 +937,7 @@
                 await loadMatchDetail(detailMatch);
             }
             dbMutationCounterStore.update((n) => n + 1);
-            statusBarTextStore.set(tMsg('match.repaired', repairCounts(done)));
+            statusBarTextStore.set(tMsg(repairDoneKey(done), repairCounts(done)));
         } catch (error) {
             logger.error('Error repairing match:', error);
             statusBarTextStore.set(tMsg(repairMatchErrorKey(error)));

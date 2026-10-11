@@ -661,6 +661,8 @@
         "repairUpToDate": "Ottelu vastaa lähdetiedostoaan",
         "repairNoSource": "Korjaus hylätty: lähdetiedostoa ei löydy",
         "repairSourceChanged": "Korjaus hylätty: lähdetiedosto ei enää sisällä tätä ottelua",
+        "repairSeatsUnclear": "Korjaus hylätty: tallennetuista siirroista ei selviä, kumpi pelaaja on kumpi lähdetiedostossa",
+        "repairedKept": "Ottelu korjattu: {changed} siirtoa korjattu; analysoidut siirrot {before} % → {after} %; {kept} kommenttia jäi asemiin, joita kokoelma, kortti tai oppitunti pitää",
         "errorRepairing": "Virhe ottelun korjauksessa",
         "takeDecisions": "Take-päätökset",
         "takesBlunders": "Taket (blunderit)",

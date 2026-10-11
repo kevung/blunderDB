@@ -341,6 +341,253 @@ func testMatchRepairFromSource(t *testing.T, s storage.Storage) {
 	if rep.Differs() || !rep.Swapped {
 		t.Errorf("repaired match still differs: %+v", rep)
 	}
+
+	// Run again for real, it writes nothing: not a move id, not an
+	// analysis's modification date.
+	idsBefore, datesBefore := repairFootprint(t, s, matchID)
+	rep, err = ingest.RepairMatch(ctx, s, "", matchID, graph(path), false)
+	if err != nil {
+		t.Fatalf("second repair: %v", err)
+	}
+	if rep.Differs() {
+		t.Errorf("second repair differs: %+v", rep)
+	}
+	idsAfter, datesAfter := repairFootprint(t, s, matchID)
+	if !slices.Equal(idsBefore, idsAfter) || !slices.Equal(datesBefore, datesAfter) {
+		t.Errorf("second repair rewrote the match: moves %v → %v, dates %v → %v", idsBefore, idsAfter, datesBefore, datesAfter)
+	}
+}
+
+// repairFootprint is what a write leaves on a match even when it writes the
+// same content: its moves' ids and its analyses' modification dates.
+func repairFootprint(t *testing.T, s storage.Storage, matchID int64) ([]int64, []string) {
+	t.Helper()
+	ctx := context.Background()
+	var ids, pos []int64
+	for mv, err := range s.Matches().MovesByMatch(ctx, "", matchID) {
+		if err != nil {
+			t.Fatalf("MovesByMatch: %v", err)
+		}
+		ids = append(ids, mv.ID)
+		if mv.PositionID != 0 {
+			pos = append(pos, mv.PositionID)
+		}
+	}
+	analyses, err := s.Analyses().LoadMany(ctx, "", pos)
+	if err != nil {
+		t.Fatalf("LoadMany: %v", err)
+	}
+	var dates []string
+	for _, id := range pos {
+		if a := analyses[id]; a != nil {
+			dates = append(dates, a.LastModifiedDate.String())
+		}
+	}
+	return ids, dates
+}
+
+// repairGraph maps a fixture for RepairMatch.
+func repairGraph(t *testing.T, path string) *ingest.MatchGraph {
+	t.Helper()
+	g, err := ingest.MapMatchFile(path)
+	if err != nil {
+		t.Fatalf("map %s: %v", path, err)
+	}
+	return g
+}
+
+// sharedAnalysedPosition is a position the fresh import and the damaged
+// match both reach (a symmetric score, the cube in the middle) whose
+// analysis holds a checker play and a cube decision.
+func sharedAnalysedPosition(t *testing.T, s storage.Storage, matchID int64, fresh map[int64]bool) int64 {
+	t.Helper()
+	ctx := context.Background()
+	for mv, err := range s.Matches().MovesByMatch(ctx, "", matchID) {
+		if err != nil {
+			t.Fatalf("MovesByMatch: %v", err)
+		}
+		if mv.PositionID == 0 || !fresh[mv.PositionID] {
+			continue
+		}
+		a, err := s.Analyses().Load(ctx, "", mv.PositionID)
+		if err != nil || a == nil {
+			continue
+		}
+		if a.CheckerAnalysis != nil && len(a.CheckerAnalysis.Moves) > 0 && a.DoublingCubeAnalysis != nil {
+			return mv.PositionID
+		}
+	}
+	t.Fatalf("no position with checker and cube analysis survives the damage")
+	return 0
+}
+
+// testMatchRepairKeepsDeeperAnalysis: a position the repaired match shares
+// with what is stored keeps an analysis deeper than its file's (a cube
+// rollout) and one the user edited at the file's depth: the file is the
+// same engine's view, and only a strictly deeper one replaces it.
+func testMatchRepairKeepsDeeperAnalysis(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	path := repoTestdata("test.xg")
+	matchID := importForRepair(t, s, path)
+	fresh := map[int64]bool{}
+	for mv, err := range s.Matches().MovesByMatch(ctx, "", matchID) {
+		if err != nil {
+			t.Fatalf("MovesByMatch: %v", err)
+		}
+		fresh[mv.PositionID] = true
+	}
+	damageLikeTheOldSwap(t, s, matchID, path, 1)
+	posID := sharedAnalysedPosition(t, s, matchID, fresh)
+
+	const edited = 0.4321
+	var play string
+	if _, err := s.Analyses().Merge(ctx, "", posID, nil, func(a *domain.PositionAnalysis) *domain.PositionAnalysis {
+		c := *a
+		cube := *a.DoublingCubeAnalysis
+		cube.AnalysisDepth = "Rollout"
+		c.DoublingCubeAnalysis = &cube
+		c.AllCubeAnalyses = nil
+		moves := append([]domain.CheckerMove(nil), a.CheckerAnalysis.Moves...)
+		moves[0].Equity = edited
+		play = moves[0].Move
+		c.CheckerAnalysis = &domain.CheckerAnalysis{Moves: moves}
+		return &c
+	}); err != nil {
+		t.Fatalf("Merge: %v", err)
+	}
+
+	rep, err := ingest.RepairMatch(ctx, s, "", matchID, repairGraph(t, path), false)
+	if err != nil {
+		t.Fatalf("repair: %v", err)
+	}
+	if !rep.Differs() {
+		t.Fatalf("the damaged match does not differ: %+v", rep)
+	}
+	a, err := s.Analyses().Load(ctx, "", posID)
+	if err != nil {
+		t.Fatalf("Load: %v", err)
+	}
+	if a.DoublingCubeAnalysis == nil || a.DoublingCubeAnalysis.AnalysisDepth != "Rollout" {
+		t.Errorf("the cube rollout gave way to the file's analysis: %+v", a.DoublingCubeAnalysis)
+	}
+	at := slices.IndexFunc(a.CheckerAnalysis.Moves, func(m domain.CheckerMove) bool { return m.Move == play })
+	if at < 0 || a.CheckerAnalysis.Moves[at].Equity != edited {
+		t.Errorf("the edited play %q gave way to the file's: %+v", play, a.CheckerAnalysis.Moves)
+	}
+}
+
+// testMatchRepairSeatsUnclear: when the stored moves cannot tell which way
+// round the seats are, the repair refuses rather than guess.
+func testMatchRepairSeatsUnclear(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	path := repoTestdata("test.xg")
+	matchID := importForRepair(t, s, path)
+
+	// No stored move lines up with the file's.
+	g := repairGraph(t, path)
+	for gi := range g.Games {
+		for mi := range g.Games[gi].Moves {
+			g.Games[gi].Moves[mi].Move.MoveNumber += 1000
+		}
+	}
+	if _, err := ingest.RepairMatch(ctx, s, "", matchID, g, true); !errors.Is(err, ingest.ErrRepairSeatsUnclear) || !errors.Is(err, storage.ErrInvalid) {
+		t.Errorf("no vote: err = %v, want ErrRepairSeatsUnclear", err)
+	}
+
+	// The moves say swapped, the names as stored say not.
+	g = repairGraph(t, path)
+	for gi := range g.Games {
+		for mi := range g.Games[gi].Moves {
+			g.Games[gi].Moves[mi].Move.Player = -g.Games[gi].Moves[mi].Move.Player
+		}
+	}
+	if _, err := ingest.RepairMatch(ctx, s, "", matchID, g, true); !errors.Is(err, ingest.ErrRepairSeatsUnclear) {
+		t.Errorf("names against moves: err = %v, want ErrRepairSeatsUnclear", err)
+	}
+
+	// Half the moves each way.
+	g = repairGraph(t, path)
+	n := 0
+	for gi := range g.Games {
+		for mi := range g.Games[gi].Moves {
+			if n%2 == 0 {
+				g.Games[gi].Moves[mi].Move.Player = -g.Games[gi].Moves[mi].Move.Player
+			}
+			n++
+		}
+	}
+	if _, err := ingest.RepairMatch(ctx, s, "", matchID, g, true); !errors.Is(err, ingest.ErrRepairSeatsUnclear) {
+		t.Errorf("split vote: err = %v, want ErrRepairSeatsUnclear", err)
+	}
+}
+
+// testMatchRepairKeepsCommentsOfAHeldPosition: a position the repair leaves
+// that a collection still holds stays, and the user's comment stays on it;
+// the report counts it instead of moving it.
+func testMatchRepairKeepsCommentsOfAHeldPosition(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	path := repoTestdata("test.xg")
+	matchID := importForRepair(t, s, path)
+	fresh := map[int64]bool{}
+	for mv, err := range s.Matches().MovesByMatch(ctx, "", matchID) {
+		if err != nil {
+			t.Fatalf("MovesByMatch: %v", err)
+		}
+		fresh[mv.PositionID] = true
+	}
+	damageLikeTheOldSwap(t, s, matchID, path, 1)
+	var held, moved int64
+	for mv, err := range s.Matches().MovesByMatch(ctx, "", matchID) {
+		if err != nil {
+			t.Fatalf("MovesByMatch: %v", err)
+		}
+		if mv.PositionID == 0 || fresh[mv.PositionID] {
+			continue
+		}
+		if held == 0 {
+			held = mv.PositionID
+		} else if mv.PositionID != held {
+			moved = mv.PositionID
+			break
+		}
+	}
+	if held == 0 || moved == 0 {
+		t.Fatalf("the damage left too few new positions")
+	}
+	if _, err := s.Comments().Add(ctx, "", held, "kept with the card"); err != nil {
+		t.Fatalf("Add comment: %v", err)
+	}
+	if _, err := s.Comments().Add(ctx, "", moved, "follows the move"); err != nil {
+		t.Fatalf("Add comment: %v", err)
+	}
+	coll, err := s.Collections().Create(ctx, "", "Keep", "")
+	if err != nil {
+		t.Fatalf("Create collection: %v", err)
+	}
+	if err := s.Collections().AddPosition(ctx, "", coll, held); err != nil {
+		t.Fatalf("AddPosition: %v", err)
+	}
+
+	rep, err := ingest.RepairMatch(ctx, s, "", matchID, repairGraph(t, path), false)
+	if err != nil {
+		t.Fatalf("repair: %v", err)
+	}
+	if rep.KeptComments != 1 || rep.RehomedComments != 1 {
+		t.Errorf("kept %d, rehomed %d comments, want 1 and 1", rep.KeptComments, rep.RehomedComments)
+	}
+	got, err := s.Comments().ByPositions(ctx, "", []int64{held, moved})
+	if err != nil {
+		t.Fatalf("ByPositions: %v", err)
+	}
+	if len(got[held]) != 1 || got[held][0].Text != "kept with the card" {
+		t.Errorf("comments on the held position: %+v", got[held])
+	}
+	if len(got[moved]) != 0 {
+		t.Errorf("the purged position still has comments: %+v", got[moved])
+	}
+	if ps, err := s.Positions().LoadByIDs(ctx, "", []int64{held, moved}); err != nil || len(ps) != 1 || ps[0].ID != held {
+		t.Errorf("positions left: %v, %v", ps, err)
+	}
 }
 
 // repairKey names a move in a snapshot: a double and its answer share a

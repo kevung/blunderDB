@@ -91,8 +91,8 @@ func (cli *CLI) runMatchRepair(args []string) error {
 // repairLine is a report on one line: moves on a position and analysed
 // moves, before → after.
 func repairLine(r ingest.RepairReport) string {
-	return fmt.Sprintf("%d moves, %d changed, analysed %s → %s, comments moved %d",
-		r.After.Moves, r.ChangedMoves, pct(r.Before), pct(r.After), r.RehomedComments)
+	return fmt.Sprintf("%d moves, %d changed, analysed %s → %s, comments moved %d, comments kept on held positions %d",
+		r.After.Moves, r.ChangedMoves, pct(r.Before), pct(r.After), r.RehomedComments, r.KeptComments)
 }
 
 func pct(c ingest.RepairCounts) string {

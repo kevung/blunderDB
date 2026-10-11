@@ -260,7 +260,7 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 			mg := &gg.Moves[mi]
 			if mg.Position != nil {
 				played := &storage.PlayedActions{CheckerMove: mg.Move.CheckerMove, CubeAction: mg.Move.CubeAction, Position: mg.Position}
-				posID, err := savePositionWithAnalyses(commentCtx, tx, scope, mg.Position, played, mg.Analyses, mg.Comments, g.CommentOrigin)
+				posID, err := savePositionWithAnalyses(commentCtx, tx, scope, mg.Position, played, mg.Analyses, mg.Comments, g.CommentOrigin, replace)
 				if err != nil {
 					return res, err
 				}
@@ -312,7 +312,12 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 // what is already stored. Between two fragments the partial result is rounded
 // as storage would round it, so equity errors are recomputed from rounded
 // equities exactly as when each fragment was saved on its own.
-func savePositionWithAnalyses(ctx context.Context, tx storage.Tx, scope string, pos *domain.Position, played *storage.PlayedActions, analyses []*domain.PositionAnalysis, comments []string, origin domain.CommentOrigin) (int64, error) {
+//
+// With keepStored the fragments fold by deepenAnalysis instead: a match
+// rewritten in place brings back the analyses of its own file, and what the
+// library holds deeper (a rollout run since the import, an edited analysis)
+// must survive it; on a position not stored yet the two folds agree.
+func savePositionWithAnalyses(ctx context.Context, tx storage.Tx, scope string, pos *domain.Position, played *storage.PlayedActions, analyses []*domain.PositionAnalysis, comments []string, origin domain.CommentOrigin, keepStored bool) (int64, error) {
 	posID, err := tx.Positions().Save(ctx, scope, pos)
 	if err != nil {
 		return 0, err
@@ -327,6 +332,15 @@ func savePositionWithAnalyses(ctx context.Context, tx storage.Tx, scope string, 
 		if _, err := tx.Analyses().Merge(ctx, scope, posID, played, func(existing *domain.PositionAnalysis) *domain.PositionAnalysis {
 			cur := existing
 			for i, frag := range frags {
+				if keepStored {
+					next := deepenAnalysis(cur, *frag)
+					if next != cur && i < len(frags)-1 {
+						next.PositionID = int(posID)
+						engine.RoundAnalysisForStorage(next)
+					}
+					cur = next
+					continue
+				}
 				merged := mergeAnalysis(cur, *frag)
 				if i < len(frags)-1 {
 					merged.PositionID = int(posID)

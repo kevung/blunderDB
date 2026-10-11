@@ -23,6 +23,12 @@ var (
 	// neither its format hash nor its canonical hash is the stored one.
 	// Rewriting the match from it would replace one match with another.
 	ErrRepairSourceChanged = fmt.Errorf("%w: the source file no longer holds this match", storage.ErrInvalid)
+
+	// ErrRepairSeatsUnclear — the stored moves do not say which way round
+	// the stored match names the seats: too few of them line up with the
+	// file's, their players split, or they contradict the names. Guessing
+	// would give each player the other's figures.
+	ErrRepairSeatsUnclear = fmt.Errorf("%w: the seats of the stored match cannot be matched with its source file", storage.ErrInvalid)
 )
 
 // RepairCounts is what a repair report counts on one side of the repair:
@@ -50,8 +56,12 @@ type RepairReport struct {
 	ChangedMoves int `json:"changed_moves"`
 	// RehomedComments counts the user's comments moved from a position no
 	// move holds any more onto the one the file names.
-	RehomedComments int  `json:"rehomed_comments"`
-	DryRun          bool `json:"dry_run"`
+	RehomedComments int `json:"rehomed_comments"`
+	// KeptComments counts the user's comments left on a position the match
+	// no longer reaches but something else holds (a collection, an Anki
+	// card, a lesson, a mark): the position stays, and its comments with it.
+	KeptComments int  `json:"kept_comments"`
+	DryRun       bool `json:"dry_run"`
 }
 
 // Differs reports whether the stored match differs from its source file.
@@ -90,12 +100,20 @@ func MapMatchSource(path string, dirs ...string) (*MatchGraph, error) {
 		}
 		candidates = append(candidates, path)
 	}
+	// A candidate that cannot be stat'ed (a directory not readable, a path
+	// too long) is not the file: the next one may be.
+	var firstErr error
 	for _, c := range candidates {
-		if _, err := os.Stat(c); err == nil {
+		_, err := os.Stat(c)
+		if err == nil {
 			return MapMatchFile(c)
-		} else if !errors.Is(err, os.ErrNotExist) {
-			return nil, err
 		}
+		if firstErr == nil && !errors.Is(err, os.ErrNotExist) {
+			firstErr = err
+		}
+	}
+	if firstErr != nil {
+		return nil, fmt.Errorf("%w (%s): %w", ErrRepairNoSource, path, firstErr)
 	}
 	return nil, fmt.Errorf("%w (%s)", ErrRepairNoSource, path)
 }
@@ -132,12 +150,50 @@ type storedMove struct {
 //
 // The file must still hold the match: its format or canonical hash must be
 // the stored one, otherwise ErrRepairSourceChanged. With dryRun the
-// transaction is rolled back and the report says what would change.
+// transaction is rolled back and the report says what would change; a match
+// that already is its file is rolled back too, so a repair run twice writes
+// nothing the second time.
+//
+// Whether a position the match leaves is purged is the retention
+// predicate's call, and a user comment is one of the things that hold a
+// position: the comments are moved first, and a position still held after
+// the purge (a collection, a card) had to keep them. The repair is then
+// rolled back and run again, leaving those comments where they are.
 func RepairMatch(ctx context.Context, store TxBeginner, scope string, matchID int64, g *MatchGraph, dryRun bool) (RepairReport, error) {
+	keep := map[int64]bool{}
+	// Each pass adds at least one position to keep, and a position is kept
+	// at most once: the bound is a guard, not a budget.
+	for range 8 {
+		rep, held, err := repairOnce(ctx, store, scope, matchID, cloneGraph(g), dryRun, keep)
+		if err != nil || len(held) == 0 {
+			return rep, err
+		}
+		for _, id := range held {
+			keep[id] = true
+		}
+	}
+	return RepairReport{MatchID: matchID, DryRun: dryRun}, fmt.Errorf("ingest: repair of match %d does not settle which positions keep their comments", matchID)
+}
+
+// cloneGraph copies what a repair pass rewrites in g (the header, the seats,
+// the moves' ids), so a pass rolled back leaves g as the file mapped it.
+func cloneGraph(g *MatchGraph) *MatchGraph {
+	c := *g
+	c.Games = make([]GameGraph, len(g.Games))
+	for i, gg := range g.Games {
+		c.Games[i] = GameGraph{Game: gg.Game, Moves: append([]MoveGraph(nil), gg.Moves...)}
+	}
+	return &c
+}
+
+// repairOnce is one pass of RepairMatch. It returns, without committing,
+// the positions whose comments it moved but that the purge kept; keep names
+// the positions whose comments stay.
+func repairOnce(ctx context.Context, store TxBeginner, scope string, matchID int64, g *MatchGraph, dryRun bool, keep map[int64]bool) (RepairReport, []int64, error) {
 	rep := RepairReport{MatchID: matchID, DryRun: dryRun}
 	tx, err := store.BeginTx(ctx)
 	if err != nil {
-		return rep, err
+		return rep, nil, err
 	}
 	committed := false
 	defer func() {
@@ -149,26 +205,29 @@ func RepairMatch(ctx context.Context, store TxBeginner, scope string, matchID in
 	ms := tx.Matches()
 	stored, err := ms.Get(ctx, scope, matchID)
 	if err != nil {
-		return rep, err
+		return rep, nil, err
 	}
 	rep.FilePath = stored.FilePath
 	sameMatch := (stored.MatchHash != "" && stored.MatchHash == g.Match.MatchHash) ||
 		(stored.CanonicalHash != "" && stored.CanonicalHash == g.Match.CanonicalHash)
 	if !sameMatch {
-		return rep, ErrRepairSourceChanged
+		return rep, nil, ErrRepairSourceChanged
 	}
 
 	before, counts, err := readStoredMoves(ctx, ms, scope, matchID)
 	if err != nil {
-		return rep, err
+		return rep, nil, err
 	}
 	rep.Before = counts
 
 	// The seats: a move's player is what a swap changes and nothing else
-	// does, so the moves vote.
-	agree, disagree := 0, 0
+	// does, so the moves vote. Most of the file's moves must take part, the
+	// vote must be clear, and names that read the same on both sides (no
+	// alias, no edit) must not say otherwise.
+	agree, disagree, fileMoves := 0, 0, 0
 	for _, gg := range g.Games {
 		for _, mg := range gg.Moves {
+			fileMoves++
 			sm, ok := before[keyOf(gg.Game.GameNumber, &mg.Move)]
 			if !ok {
 				continue
@@ -180,7 +239,14 @@ func RepairMatch(ctx context.Context, store TxBeginner, scope string, matchID in
 			}
 		}
 	}
+	votes := agree + disagree
+	if votes == 0 || 2*votes < fileMoves || 4*min(agree, disagree) > votes {
+		return rep, nil, ErrRepairSeatsUnclear
+	}
 	rep.Swapped = disagree > agree
+	if byNames, ok := seatsByNames(stored, &g.Match); ok && byNames != rep.Swapped {
+		return rep, nil, ErrRepairSeatsUnclear
+	}
 
 	// The dice hash is the file's, whatever the seats.
 	if g.Match.DiceHash == "" {
@@ -212,12 +278,12 @@ func RepairMatch(ctx context.Context, store TxBeginner, scope string, matchID in
 
 	g.ReplaceMatchID = matchID
 	if _, err := WriteMatch(ctx, tx, scope, g, nil); err != nil {
-		return rep, err
+		return rep, nil, err
 	}
 
 	after, counts, err := readStoredMoves(ctx, ms, scope, matchID)
 	if err != nil {
-		return rep, err
+		return rep, nil, err
 	}
 	rep.After = counts
 
@@ -242,31 +308,84 @@ func RepairMatch(ctx context.Context, store TxBeginner, scope string, matchID in
 		}
 		held, err := ms.MovesByPositions(ctx, scope, ids)
 		if err != nil {
-			return rep, err
+			return rep, nil, err
 		}
+		var moved, kept []int64
 		for from, to := range left {
 			if len(held[from]) > 0 {
 				continue
 			}
+			if keep[from] {
+				kept = append(kept, from)
+				continue
+			}
 			n, err := tx.Comments().Rehome(ctx, scope, from, to)
 			if err != nil {
-				return rep, err
+				return rep, nil, err
+			}
+			if n > 0 {
+				moved = append(moved, from)
 			}
 			rep.RehomedComments += n
 		}
 		if err := ms.PurgeOrphanPositions(ctx, scope, ids); err != nil {
-			return rep, err
+			return rep, nil, err
+		}
+		if len(moved) > 0 {
+			survivors, err := tx.Positions().LoadByIDs(ctx, scope, moved)
+			if err != nil {
+				return rep, nil, err
+			}
+			if len(survivors) > 0 {
+				out := make([]int64, len(survivors))
+				for i := range survivors {
+					out[i] = survivors[i].ID
+				}
+				return rep, out, nil
+			}
+		}
+		if len(kept) > 0 {
+			comments, err := tx.Comments().ByPositions(ctx, scope, kept)
+			if err != nil {
+				return rep, nil, err
+			}
+			for _, cs := range comments {
+				for _, c := range cs {
+					if c.Origin == domain.CommentOriginUser {
+						rep.KeptComments++
+					}
+				}
+			}
 		}
 	}
 
-	if dryRun {
-		return rep, nil
+	if dryRun || !rep.Differs() {
+		return rep, nil, nil
 	}
 	if err := tx.Commit(); err != nil {
-		return rep, err
+		return rep, nil, err
 	}
 	committed = true
-	return rep, nil
+	return rep, nil, nil
+}
+
+// seatsByNames reads the seats from the names when both sides spell them
+// alike: ok is false when they do not (an alias, an edit, two equal names),
+// and the moves alone decide.
+func seatsByNames(stored, file *domain.Match) (swapped, ok bool) {
+	norm := func(s string) string { return strings.ToLower(strings.TrimSpace(s)) }
+	s1, s2 := norm(stored.Player1Name), norm(stored.Player2Name)
+	f1, f2 := norm(file.Player1Name), norm(file.Player2Name)
+	if s1 == s2 || f1 == f2 {
+		return false, false
+	}
+	switch {
+	case s1 == f1 && s2 == f2:
+		return false, true
+	case s1 == f2 && s2 == f1:
+		return true, true
+	}
+	return false, false
 }
 
 // swapGraphSeats turns g into the match MatchStore.SwapPlayers leaves: the

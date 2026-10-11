@@ -661,6 +661,8 @@
         "repairUpToDate": "The match matches its source file",
         "repairNoSource": "Repair refused: source file not found",
         "repairSourceChanged": "Repair refused: the source file no longer holds this match",
+        "repairSeatsUnclear": "Repair refused: the stored moves do not tell which player is which in the source file",
+        "repairedKept": "Match repaired: {changed} moves corrected; analysed moves {before}% → {after}%; {kept} comments left on positions a collection, card or lesson still holds",
         "errorRepairing": "Error repairing the match",
         "takeDecisions": "Take Decisions",
         "takesBlunders": "Takes (Blunders)",

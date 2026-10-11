@@ -661,6 +661,8 @@
         "repairUpToDate": "Il match corrisponde al suo file sorgente",
         "repairNoSource": "Riparazione rifiutata: file sorgente non trovato",
         "repairSourceChanged": "Riparazione rifiutata: il file sorgente non contiene più questo match",
+        "repairSeatsUnclear": "Riparazione rifiutata: le mosse salvate non dicono quale giocatore è quale nel file sorgente",
+        "repairedKept": "Match riparato: {changed} mosse corrette; mosse analizzate {before}% → {after}%; {kept} commenti restano su posizioni tenute da una collezione, carta o lezione",
         "errorRepairing": "Errore durante la riparazione del match",
         "takeDecisions": "Decisioni di take",
         "takesBlunders": "Take (blunder)",

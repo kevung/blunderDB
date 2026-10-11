@@ -661,6 +661,8 @@
         "repairUpToDate": "Das Match entspricht seiner Quelldatei",
         "repairNoSource": "Reparatur abgelehnt: Quelldatei nicht gefunden",
         "repairSourceChanged": "Reparatur abgelehnt: die Quelldatei enthält dieses Match nicht mehr",
+        "repairSeatsUnclear": "Reparatur abgelehnt: die gespeicherten Züge zeigen nicht, welcher Spieler in der Quelldatei welcher ist",
+        "repairedKept": "Match repariert: {changed} Züge korrigiert; analysierte Züge {before} % → {after} %; {kept} Kommentare bleiben auf Positionen, die eine Sammlung, Karte oder Lektion hält",
         "errorRepairing": "Fehler beim Reparieren des Matches",
         "takeDecisions": "Take-Entscheidungen",
         "takesBlunders": "Takes (Blunder)",

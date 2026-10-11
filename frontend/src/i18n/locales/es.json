@@ -661,6 +661,8 @@
         "repairUpToDate": "La partida coincide con su archivo fuente",
         "repairNoSource": "Reparación rechazada: archivo fuente no encontrado",
         "repairSourceChanged": "Reparación rechazada: el archivo fuente ya no contiene esta partida",
+        "repairSeatsUnclear": "Reparación rechazada: los movimientos guardados no indican qué jugador es cuál en el archivo fuente",
+        "repairedKept": "Partida reparada: {changed} movimientos corregidos; movimientos analizados {before} % → {after} %; {kept} comentarios quedan en posiciones que una colección, tarjeta o lección conserva",
         "errorRepairing": "Error al reparar la partida",
         "takeDecisions": "Decisiones de take",
         "takesBlunders": "Takes (blunders)",

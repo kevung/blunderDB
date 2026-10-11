@@ -661,6 +661,8 @@
         "repairUpToDate": "Le match est conforme à son fichier source",
         "repairNoSource": "Réparation refusée : fichier source introuvable",
         "repairSourceChanged": "Réparation refusée : le fichier source ne contient plus ce match",
+        "repairSeatsUnclear": "Réparation refusée : les coups enregistrés ne disent pas quel joueur est lequel dans le fichier source",
+        "repairedKept": "Match réparé : {changed} coups corrigés ; coups analysés {before} % → {after} % ; {kept} commentaires laissés sur des positions qu'une collection, une carte ou une leçon garde",
         "errorRepairing": "Erreur lors de la réparation du match",
         "takeDecisions": "Décisions de prise",
         "takesBlunders": "Prises (blunders)",

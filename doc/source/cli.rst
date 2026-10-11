@@ -989,14 +989,19 @@ Le match garde son identifiant, son tournoi, les noms des joueurs tels qu'ils
 sont enregistrés (alias, corrections, inversion), sa date, son commentaire, sa
 vidéo et ses repères, sa transcription, et les commentaires écrits sur ses
 positions : un commentaire laissé sur une position que la réparation quitte
-passe sur celle que le fichier nomme pour le même coup. ``--dry-run`` dit ce qui
+passe sur celle que le fichier nomme pour le même coup, sauf si une collection,
+une carte Anki ou une leçon garde encore cette position ; le commentaire y reste
+et le rapport le compte. Une analyse plus profonde que celle du fichier (un
+rollout lancé depuis l'import) ou corrigée à la main reste. Un match déjà
+conforme à son fichier n'est pas réécrit. ``--dry-run`` dit ce qui
 changerait sans rien écrire. ``--list`` passe en revue tous les matchs qui
 nomment un fichier source et donne ceux qui en diffèrent, avec le nombre de
 coups dont la position change et la part de coups analysés avant et après, ainsi
 que ceux dont le fichier est introuvable ; il n'écrit rien. Un chemin relatif
 est cherché depuis le dossier de la base, puis depuis le dossier courant. La
-réparation est refusée quand le fichier est introuvable ou ne contient plus le
-match (son empreinte n'est plus celle du match enregistré). Le serveur la sert
+réparation est refusée quand le fichier est introuvable, ne contient plus le
+match (son empreinte n'est plus celle du match enregistré), ou quand les coups
+enregistrés ne permettent pas de dire quel joueur du fichier est lequel. Le serveur la sert
 par ``/v1/matches.repair``, le fichier source envoyé dans la requête.
 
 .. code-block:: bash

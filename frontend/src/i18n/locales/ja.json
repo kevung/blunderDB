@@ -661,6 +661,8 @@
         "repairUpToDate": "マッチはソースファイルと一致しています",
         "repairNoSource": "修復できません：ソースファイルが見つかりません",
         "repairSourceChanged": "修復できません：ソースファイルにこのマッチがありません",
+        "repairSeatsUnclear": "修復を拒否しました：保存された手からはソースファイルのどちらのプレイヤーかを判別できません",
+        "repairedKept": "マッチを修復しました：{changed} 手を修正、分析済みの手 {before}% → {after}%、コレクション・カード・レッスンが保持する局面に {kept} 件のコメントを残しました",
         "errorRepairing": "マッチの修復中にエラーが発生しました",
         "takeDecisions": "take の判断",
         "takesBlunders": "take（ブランダー）",

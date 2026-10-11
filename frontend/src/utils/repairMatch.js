@@ -3,7 +3,7 @@
 
 /**
  * @typedef {{ moves: number, positioned: number, scored: number }} RepairCounts
- * @typedef {{ before: RepairCounts, after: RepairCounts, changed_moves: number }} RepairReport
+ * @typedef {{ before: RepairCounts, after: RepairCounts, changed_moves: number, kept_comments?: number }} RepairReport
  */
 
 /** @param {RepairCounts} c */
@@ -27,17 +27,28 @@ export function repairDiffers(r) {
  * @param {RepairReport} r
  */
 export function repairCounts(r) {
-    return { changed: r.changed_moves, before: percent(r.before), after: percent(r.after) };
+    return { changed: r.changed_moves, before: percent(r.before), after: percent(r.after), kept: r.kept_comments || 0 };
 }
 
 /**
- * The i18n key for what RepairMatch rejected with: its two refusals are
- * recognised by their message (ingest.ErrRepairNoSource / ErrRepairSourceChanged).
+ * The i18n key of the status after a repair: it names the comments left on
+ * a position something else still holds, when there are any.
+ * @param {RepairReport} r
+ */
+export function repairDoneKey(r) {
+    return r && r.kept_comments ? 'match.repairedKept' : 'match.repaired';
+}
+
+/**
+ * The i18n key for what RepairMatch rejected with: its refusals are
+ * recognised by their message (ingest.ErrRepairNoSource / ErrRepairSourceChanged /
+ * ErrRepairSeatsUnclear).
  * @param {unknown} error
  */
 export function repairMatchErrorKey(error) {
     const msg = String(error && typeof error === 'object' && 'message' in error ? error.message : error);
     if (msg.includes('source file of the match cannot be read')) return 'match.repairNoSource';
     if (msg.includes('source file no longer holds this match')) return 'match.repairSourceChanged';
+    if (msg.includes('cannot be matched with its source file')) return 'match.repairSeatsUnclear';
     return 'match.errorRepairing';
 }
