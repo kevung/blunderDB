@@ -1,4 +1,5 @@
 <script>
+    import { gammonNetBatchLabel } from '../utils/gammonNetBatchLabel.js';
     import { onDestroy, tick } from 'svelte';
     import { statusBarTextStore, currentPositionIndexStore, commandTextStore, showCommandInputStore, dbMutationCounterStore, activeTabStore } from '../stores/uiStore';
     import { libraryCountsStore, refreshLibraryCounts, formatCount } from '../stores/libraryCountsStore.js';
@@ -323,8 +324,8 @@
         <span class="duel-chip"><DuelClocks duel={$duelStore.state} compact /></span>
     {/if}
     {#if gammonNetBatch}
-        <span class="gammonnet-batch-chip" title={$t('eval.batchProgress', { done: gammonNetBatch.done, total: gammonNetBatch.total })}>
-            {$t('eval.batchProgress', { done: gammonNetBatch.done, total: gammonNetBatch.total })}
+        <span class="gammonnet-batch-chip" title={gammonNetBatchLabel($t, gammonNetBatch)}>
+            {gammonNetBatchLabel($t, gammonNetBatch)}
             <button type="button" class="gammonnet-batch-cancel" onclick={cancelGammonNetBatch}>{$t('eval.batchCancel')}</button>
         </span>
     {/if}

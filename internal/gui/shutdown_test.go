@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
 // recordingBind stands for the bound *database.Database, recording when it
@@ -130,7 +131,7 @@ func TestRunGammonNetBatchSignalsItsEnd(t *testing.T) {
 	a := NewApp(d)
 
 	release := make(chan struct{})
-	a.runGammonNetBatch(func(ctx context.Context, _ func(done, total int)) (database.GammonNetBatchSummary, error) {
+	a.runGammonNetBatch(2, func(ctx context.Context, _ func(done, total int)) (database.GammonNetBatchSummary, error) {
 		<-release
 		return database.GammonNetBatchSummary{}, ctx.Err()
 	})
@@ -198,5 +199,60 @@ func TestStopBackgroundJobsGraceCoversEveryJob(t *testing.T) {
 		}
 	case <-time.After(5 * time.Second):
 		t.Fatal("stopBackgroundJobs hangs on the second job that never stops")
+	}
+}
+
+// TestShutdownStopsADeepBatchAtOnce: a 4-ply batch mid-search is interrupted
+// inside the search, and the database's Close does not wait a second time.
+func TestShutdownStopsADeepBatchAtOnce(t *testing.T) {
+	if testing.Short() {
+		t.Skip("deep search")
+	}
+	d := database.NewDatabase()
+	if err := d.SetupDatabase(":memory:"); err != nil {
+		t.Fatalf("SetupDatabase: %v", err)
+	}
+	dp, err := domain.DecodeXGID("XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:0:10")
+	if err != nil {
+		t.Fatalf("DecodeXGID: %v", err)
+	}
+	dp.Dice = [2]int{0, 0}
+	if _, err := d.SavePosition(&dp); err != nil {
+		t.Fatalf("SavePosition: %v", err)
+	}
+
+	a := NewApp(d)
+	a.StartGammonNetBatch(4, 0, 0)
+	<-time.After(200 * time.Millisecond) // let the search get deep
+
+	start := time.Now()
+	shutdown(a, []interface{}{d})(context.Background())
+	elapsed := time.Since(start)
+	t.Logf("shutdown with a 4-ply batch in flight: %v", elapsed)
+	if elapsed > time.Second {
+		t.Fatalf("shutdown took %v with a 4-ply batch in flight", elapsed)
+	}
+}
+
+// TestShutdownCloseDoesNotWaitTwice: once shutdown has waited for the jobs,
+// the database's switch hook does not wait for them again.
+func TestShutdownCloseDoesNotWaitTwice(t *testing.T) {
+	d := database.NewDatabase()
+	if err := d.SetupDatabase(":memory:"); err != nil {
+		t.Fatalf("SetupDatabase: %v", err)
+	}
+	a := NewApp(d)
+	a.gnBatchMu.Lock()
+	a.gnBatchCancel = func() {}
+	a.gnBatchDone = make(chan struct{}) // never closed: the job never stops
+	a.gnBatchMu.Unlock()
+
+	a.closing.Store(true)
+	start := time.Now()
+	if err := d.Close(); err != nil {
+		t.Fatalf("Close: %v", err)
+	}
+	if elapsed := time.Since(start); elapsed > time.Second {
+		t.Fatalf("Close waited %v for jobs shutdown had already waited for", elapsed)
 	}
 }

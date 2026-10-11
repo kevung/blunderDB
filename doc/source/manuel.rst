@@ -458,7 +458,9 @@ séparément — abaisser l'une ne modifie jamais l'autre :
 * **Profondeur d'analyse** — ce que le lot d'analyse après import écrit dans
   l'Analyse d'une position.
 
-Les deux valent par défaut **2-ply**, la configuration canonique. L'onglet
+Les deux valent par défaut **2-ply**, la configuration canonique. Le menu
+marque d'un ⚠ les profondeurs 3-ply et 4-ply, dont le coût par position
+dépasse de loin celui de 2-ply. L'onglet
 propose aussi l'**élagage** (par défaut ``k=12``) et le **nombre de coups
 candidats affichés** (par défaut 10), ainsi qu'une case **analyser
 automatiquement après import** qui, une fois activée, vérifie après chaque
@@ -490,7 +492,8 @@ analyse, positions périmées) est purement informatif ; le lot recalcule sa
 propre liste au moment de démarrer.
 
 Les deux lots sont **bornés, visibles et annulables, jamais un démon
-silencieux** : leur progression (``positions analysées / total``) et un
+silencieux** : leur profondeur, leur progression (``positions analysées / total``,
+dès ``0`` au lancement) et un
 bouton d'annulation apparaissent dans la barre de statut pendant toute leur
 durée, et disparaissent une fois terminés au profit d'un message résumant le
 résultat — combien de positions ont été **analysées**, combien ont été
@@ -500,6 +503,8 @@ combien ont **échoué** (retentées, inchangées, au prochain lancement).
 Fermer l'application pendant l'un ou l'autre ne perd rien : chaque position
 analysée est écrite au fil de l'eau, et un prochain lancement reprend
 exactement là où l'analyse s'était arrêtée, sans aucun journal à tenir.
+L'annulation comme la fermeture interrompent aussi la position en cours de
+calcul, qui reste sans analyse.
 
 .. _rollout_reglage:
 
@@ -4260,8 +4265,8 @@ de match — que ce régime est seul à savoir rendre — et les positions de co
 n'ont pas de mesure publiée : ce qui précède ne se transporte pas à ces cas.
 
 **Pourquoi pas plus profond que 2 plis ?** Parce que la mesure dit que cela ne
-rapporte rien. Une décision de pions coûte 80 ms à 2 plis et 1,4 s à 3 plis sur
-la même machine — **18 fois plus**. Sur quarante décisions réelles rejouées aux
+rapporte rien. Une décision de pions coûte 99 ms à 2 plis et 1,4 s à 3 plis sur
+la même machine — **14 fois plus**. Sur quarante décisions réelles rejouées aux
 deux profondeurs, la recherche plus profonde a changé d'avis **deux fois**, et
 les deux fois le gain qu'elle s'attribuait à elle-même valait au plus 0,0002
 d'équité normalisée : deux ordres de grandeur sous 0,020, le seuil à partir
@@ -4272,7 +4277,7 @@ Les 2 plis restent donc le défaut ; 3 et 4 plis se choisissent dans l'onglet
 *gammonNet* de la configuration. À 3 et 4 plis, comme dans GNUbg, seule la
 racine compare plusieurs coups : à chaque nœud intérieur, la réplique retenue
 est la meilleure à 0 pli, seule approfondie. Il ne s'agit pas de dire que 3 plis ne vaut
-rien en général, mais que sur *ce* réseau, avec le filtre canonique, il ne paie
+rien en général, mais que sur *ce* réseau, avec ce filtre, il ne paie
 pas l'attente de quelqu'un devant un panneau. La mesure est reproductible
 (``TestThreePlyMeasure``) et la conclusion se rejugera si le réseau change.
 

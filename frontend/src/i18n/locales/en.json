@@ -1179,6 +1179,7 @@
         "inactive": "The Eval panel is inactive. Edit the board to evaluate the position.",
         "engineTooltip": "gammonNet",
         "batchProgress": "gammonNet analyzing: {done}/{total}",
+        "batchProgressAt": "gammonNet analyzing {depth}: {done}/{total}",
         "batchCancel": "Cancel",
         "batchDone": "gammonNet: {evaluated} analyzed, {refused} refused, {failed} failed",
         "baseline": "Before the roll",

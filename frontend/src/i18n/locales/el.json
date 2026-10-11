@@ -1179,6 +1179,7 @@
         "inactive": "Ο πίνακας Eval είναι ανενεργός. Επεξεργαστείτε το ταμπλό για να αξιολογηθεί η θέση.",
         "engineTooltip": "gammonNet",
         "batchProgress": "gammonNet αναλύει: {done}/{total}",
+        "batchProgressAt": "gammonNet αναλύει {depth}: {done}/{total}",
         "batchCancel": "Ακύρωση",
         "batchDone": "gammonNet: {evaluated} αναλύθηκαν, {refused} απορρίφθηκαν, {failed} απέτυχαν",
         "baseline": "Πριν τη ζαριά",

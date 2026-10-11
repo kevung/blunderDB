@@ -185,9 +185,14 @@ func (s *Server) runGammonNetSweep(w http.ResponseWriter, r *http.Request, gathe
 		next++
 		return func(get searcherFor) {
 			start := time.Now()
-			analysis, err := gammonnetEvaluateOne(get(req.Ply, req.PruneK), pos, met, req.Ply, req.PruneK, req.Candidates)
+			searcher, release := boundSearcher(ctx, get, req.Ply, req.PruneK)
+			analysis, err := gammonnetEvaluateOne(searcher, pos, met, req.Ply, req.PruneK, req.Candidates)
+			release()
 			if !spend(time.Since(start)) {
 				quotaSpent.Store(true)
+			}
+			if gammonnet.IsCanceled(err) {
+				return // not a failure: the position is picked up on the next sweep
 			}
 			oc := outcomeEvaluated
 			switch {

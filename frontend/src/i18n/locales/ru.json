@@ -1179,6 +1179,7 @@
         "inactive": "Панель расчёта неактивна. Измените доску, чтобы оценить позицию.",
         "engineTooltip": "gammonNet",
         "batchProgress": "gammonNet анализирует: {done}/{total}",
+        "batchProgressAt": "gammonNet анализирует {depth}: {done}/{total}",
         "batchCancel": "Отмена",
         "batchDone": "gammonNet: проанализировано {evaluated}, отклонено {refused}, не удалось {failed}",
         "baseline": "До броска",

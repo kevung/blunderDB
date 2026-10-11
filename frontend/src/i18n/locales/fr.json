@@ -1179,6 +1179,7 @@
         "inactive": "Le panneau Eval est inactif. Modifiez le plateau pour évaluer la position.",
         "engineTooltip": "gammonNet",
         "batchProgress": "gammonNet analyse : {done}/{total}",
+        "batchProgressAt": "gammonNet analyse {depth} : {done}/{total}",
         "batchCancel": "Annuler",
         "batchDone": "gammonNet : {evaluated} analysée(s), {refused} refusée(s), {failed} échouée(s)",
         "baseline": "Avant le jet",

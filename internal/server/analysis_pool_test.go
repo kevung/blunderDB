@@ -6,6 +6,9 @@ import (
 	"slices"
 	"sync"
 	"testing"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
 )
 
 // poolOrder runs, on a one-worker pool held until every job is queued, n
@@ -184,5 +187,43 @@ func TestAnalysisPoolRunSkipsAContextEndedInQueue(t *testing.T) {
 	held.wait()
 	if <-result {
 		t.Error("run reports a unit that did not run")
+	}
+}
+
+// TestBoundSearcherStopsOnCancel: a worker's searcher bound to a cancelled
+// request stops instead of finishing the search, and is free again after
+// release.
+func TestBoundSearcherStopsOnCancel(t *testing.T) {
+	s, err := gammonnet.NewBatchSearcher(2, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	get := func(int, int) *gammonnet.Searcher { return s }
+	pos, err := domain.DecodeXGID("XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:0:10")
+	if err != nil {
+		t.Fatal(err)
+	}
+	pos.Dice = [2]int{0, 0}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	searcher, release := boundSearcher(ctx, get, 2, 0)
+	_, err = gammonnet.EvaluatePositionWithMET(searcher, pos, nil, 2, 0, 0)
+	release()
+	if !gammonnet.IsCanceled(err) {
+		t.Fatalf("err = %v, want a cancelled search", err)
+	}
+
+	searcher, release = boundSearcher(context.Background(), get, 2, 0)
+	_, err = gammonnet.EvaluatePositionWithMET(searcher, pos, nil, 2, 0, 0)
+	release()
+	if err != nil {
+		t.Fatalf("after release: %v", err)
+	}
+
+	if s, release := boundSearcher(ctx, func(int, int) *gammonnet.Searcher { return nil }, 2, 0); s != nil {
+		t.Fatal("no searcher built, yet one returned")
+	} else {
+		release()
 	}
 }

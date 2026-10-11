@@ -59,8 +59,9 @@ func (d *Database) positionIDsWithoutAnalysis() ([]int64, error) {
 // serially: WithWorkers is the live panel's regime, and stacking both would
 // oversubscribe the cores.
 //
-// ctx is checked before each position, never mid-search (Searcher has no
-// cancellation checkpoint). Each goroutine calls yield before each position,
+// ctx is checked before each position and interrupts the search in flight
+// (Searcher.BindContext), so cancelling a deep batch returns at once; the
+// interrupted positions are left unwritten. Each goroutine calls yield before each position,
 // which blocks while the caller gives priority elsewhere; the batch thus
 // yields within at most jobs positions.
 //
@@ -165,8 +166,8 @@ type gammonNetBatchResult struct {
 // Every write goes through a single goroutine: Database.mu would serialise N
 // writers anyway, and write order is irrelevant.
 //
-// A cancelled run starts no further position and drains and writes the
-// results in flight.
+// A cancelled run starts no further position, interrupts the searches in
+// flight and writes the results already computed.
 func (d *Database) analyzeIDsWithGammonNet(ctx context.Context, gen uint64, ids []int64, ply, pruneK, candidates, jobs int, yield func(), onProgress func(done, total int)) (GammonNetBatchSummary, error) {
 	total := len(ids)
 	if total == 0 {
@@ -198,6 +199,12 @@ func (d *Database) analyzeIDsWithGammonNet(ctx context.Context, gen uint64, ids 
 		jobs = total
 	}
 
+	// 0/total at once: the first position of a deep batch can take minutes,
+	// and the caller shows the batch from its start.
+	if onProgress != nil {
+		onProgress(0, total)
+	}
+
 	var next atomic.Int64
 	results := make(chan gammonNetBatchResult, jobs)
 
@@ -214,6 +221,8 @@ func (d *Database) analyzeIDsWithGammonNet(ctx context.Context, gen uint64, ids 
 			if err != nil {
 				slog.Warn("gammonnet batch: building the shared searcher failed; this worker falls back to one searcher per position", "error", err)
 				searcher = nil
+			} else {
+				defer searcher.BindContext(ctx)()
 			}
 
 			for {
@@ -234,6 +243,9 @@ func (d *Database) analyzeIDsWithGammonNet(ctx context.Context, gen uint64, ids 
 				id := ids[i]
 
 				analysis, err := evaluateOnePositionWithGammonNet(positionsByID[id], id, searcher, met, ply, pruneK, candidates)
+				if gammonnet.IsCanceled(err) {
+					return // not a failure: the position is picked up on the next run
+				}
 				outcome := gnEvaluated
 				switch {
 				case err != nil:
