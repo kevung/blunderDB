@@ -641,6 +641,7 @@ export default {
 <li><strong>PR Cubo</strong> — solo decisioni di cubo.</li>
 </ul>
 <p>Cliccando su una scheda si caricano nel pannello di analisi le posizioni del sottoinsieme corrispondente (drill-down). Una quarta scheda, <strong>Perdita MWC (eq. 7 pt)</strong>, fornisce questa perdita qualunque sia la scelta del pulsante PR / MWC, con il suo intervallo; non carica nulla.</p>
+<p>Sotto le schede, la riga dei totali conta i tornei, le partite e le decisioni del filtro. Il numero di tornei apre questi tornei nel pannello Tornei: un torneo solo si apre direttamente; più tornei restringono l'elenco, che porta allora il pulsante « N tornei aperti dalle Statistiche × »: ripristina l'elenco completo.</p>
 <div class="admonition note">
 <p>Il numero totale di decisioni viene visualizzato in fondo a ciascuna scheda al passaggio del mouse.</p>
 </div>
@@ -794,7 +795,7 @@ export default {
 </tr>
 <tr>
 <td>Blunder</td>
-<td>Numero di errori che raggiungono la soglia di blunder della libreria (0,100 EMG per impostazione predefinita).</td>
+<td>Numero di errori che raggiungono la soglia di blunder della libreria (0,100 EMG per impostazione predefinita). Un clic su questo numero carica quelle posizioni nel pannello di analisi.</td>
 </tr>
 <tr>
 <td>Fortuna</td>

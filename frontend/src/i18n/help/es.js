@@ -641,6 +641,7 @@ export default {
 <li><strong>PR Cubo</strong> — solo decisiones de cubo.</li>
 </ul>
 <p>Hacer clic en una tarjeta carga en el panel de análisis las posiciones del subconjunto correspondiente (drill-down). Una cuarta tarjeta, <strong>Pérdida MWC (eq. 7 pts)</strong>, da esa pérdida sea cual sea la elección del botón PR / MWC, con su intervalo; no carga nada.</p>
+<p>Bajo las tarjetas, la línea de totales cuenta los torneos, las partidas y las decisiones del filtro. El número de torneos abre esos torneos en el panel Torneos: un torneo solo se abre directamente; varios restringen la lista, que lleva entonces el botón « N torneos abiertos desde Estadísticas × »: devuelve la lista completa.</p>
 <div class="admonition note">
 <p>El número total de decisiones se muestra en la parte inferior de cada tarjeta al pasar el cursor.</p>
 </div>
@@ -794,7 +795,7 @@ export default {
 </tr>
 <tr>
 <td>Blunders</td>
-<td>Número de errores que alcanzan el umbral de blunder de la biblioteca (0,100 EMG por defecto).</td>
+<td>Número de errores que alcanzan el umbral de blunder de la biblioteca (0,100 EMG por defecto). Al hacer clic en este número se cargan esas posiciones en el panel de análisis.</td>
 </tr>
 <tr>
 <td>Suerte</td>

@@ -65,7 +65,7 @@ import {
 
 import TournamentPanel from '../components/TournamentPanel.svelte';
 import { openPanels, PANEL, statusBarTextStore } from '../stores/uiStore.js';
-import { tournamentsStore, selectedTournamentStore, tournamentMatchesStore, tournamentOpenRequestStore } from '../stores/tournamentStore.js';
+import { tournamentsStore, selectedTournamentStore, tournamentMatchesStore, tournamentOpenRequestStore, tournamentIDsFilterStore } from '../stores/tournamentStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { matchContextStore } from '../stores/positionStore.js';
 
@@ -536,5 +536,22 @@ describe('TournamentPanel — filter', () => {
         expect(field.value).toBe('');
         expect(screen.getByText('Blunder Cup')).toBeTruthy();
         expect(screen.getByText('Amsterdam Open')).toBeTruthy();
+    });
+
+    test('a Stats count restricts the list until its chip is cleared', async () => {
+        tournamentIDsFilterStore.set([SAMPLE_TOURNAMENTS[1].id]);
+        try {
+            renderOpen();
+            await screen.findByText(SAMPLE_TOURNAMENTS[1].name);
+            expect(screen.queryByText(SAMPLE_TOURNAMENTS[0].name)).toBeNull();
+            expect(screen.getByText('1 / 2')).toBeTruthy();
+
+            await fireEvent.click(screen.getByTestId('tournament-ids-filter'));
+            expect(get(tournamentIDsFilterStore)).toBeNull();
+            expect(screen.getByText(SAMPLE_TOURNAMENTS[0].name)).toBeTruthy();
+            expect(screen.queryByTestId('tournament-ids-filter')).toBeNull();
+        } finally {
+            tournamentIDsFilterStore.set(null);
+        }
     });
 });

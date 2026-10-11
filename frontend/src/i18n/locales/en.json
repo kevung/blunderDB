@@ -818,6 +818,8 @@
         "filterPlaceholder": "Filter: name, location, date…",
         "filterAria": "Filter tournaments",
         "noTournamentsFiltered": "No matching tournament.",
+        "idsFilter": "{n} tournaments opened from Stats",
+        "idsFilterClear": "Show all tournaments",
         "gone": "This tournament no longer exists."
     },
     "anki": {

@@ -8,3 +8,6 @@ export const tournamentMatchesStore = writable(/** @type {import('../../wailsjs/
 
 /** ID of a tournament another panel asks the Tournaments panel to open; the panel consumes it once its list is loaded. */
 export const tournamentOpenRequestStore = writable(/** @type {number | null} */ (null));
+
+/** Tournaments the list is restricted to (a Stats count), or null for all of them. */
+export const tournamentIDsFilterStore = writable(/** @type {number[] | null} */ (null));

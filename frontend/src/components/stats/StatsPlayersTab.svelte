@@ -3,6 +3,8 @@
     import { fmtMwc7, mwc7Percent, mwc7Tooltip } from '../../utils/mwc7.js';
     import { t } from '../../i18n/index.js';
     import PanelTable from '../panels/PanelTable.svelte';
+    import CountLink from '../panels/CountLink.svelte';
+    import { openStatsPlayerBlunders } from '../../services/positionLoader.js';
     import PlayerComparison from './PlayerComparison.svelte';
 
     /**
@@ -129,6 +131,8 @@
     }
 
     function onRowKey(/** @type {KeyboardEvent} */ event, /** @type {string} */ name) {
+        // Une touche sur un contrôle de la ligne (case, lien) est la sienne.
+        if (event.target !== event.currentTarget) return;
         if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
             selectPlayer(name);
@@ -175,7 +179,16 @@
                 <td class="numeric">{fmtRate(row.pr_cube, row.cube_decisions > 0)}</td>
                 <td class="numeric">{fmtRate(row.snowie_er, row.decisions > 0)}</td>
                 <td class="numeric" title={mwc7Tooltip(row.mwc7, $t)}>{fmtMwc7(row.mwc7)}</td>
-                <td class="numeric">{row.blunders}</td>
+                <td class="numeric"
+                    >{#if row.blunders > 0}<CountLink
+                            label={String(row.blunders)}
+                            onclick={(e) => {
+                                // Ouvrir ses blunders, pas filtrer sur le joueur comme le clic de ligne.
+                                e.stopPropagation();
+                                openStatsPlayerBlunders(row.name);
+                            }}
+                        />{:else}0{/if}</td
+                >
                 <td class="numeric" title={row.luck_known ? $t('stats.playersLuckRolls', { n: row.luck_rolls }) : $t('stats.playersLuckUnknown')}>
                     {fmtLuck(row)}
                 </td>

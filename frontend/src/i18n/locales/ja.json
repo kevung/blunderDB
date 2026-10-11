@@ -818,6 +818,8 @@
         "filterPlaceholder": "絞り込み: 名前、場所、日付…",
         "filterAria": "トーナメントを絞り込む",
         "noTournamentsFiltered": "該当するトーナメントなし。",
+        "idsFilter": "統計から開いた {n} 件のトーナメント",
+        "idsFilterClear": "すべてのトーナメントを表示",
         "gone": "このトーナメントはもう存在しません。"
     },
     "anki": {

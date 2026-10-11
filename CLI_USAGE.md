@@ -4689,6 +4689,39 @@ Examples:
   blunderdb stats tournament --db database.db --id 3 --player "Alice" --format json
 ```
 
+### `blunderdb stats tournaments`
+
+```
+Usage: blunderdb stats tournaments --db <file> [options]
+
+The tournaments the Dashboard's tournament count counts, by ID: those
+holding a counted decision of the player, or of any player, under the filter.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -decision-type string
+    	Decision type: all, checker, or cube (default "all")
+  -engine string
+    	Only the decisions analysed by this engine (exact name, as stored)
+  -format string
+    	Output format: text or json (default "text")
+  -from string
+    	Start date filter YYYY-MM-DD (matches)
+  -min-depth int
+    	Only the decisions analysed at least this deep (plies)
+  -player string
+    	Only the tournaments where this player holds a counted decision
+  -to string
+    	End date filter YYYY-MM-DD (matches)
+  -tournament string
+    	Filter the matches by tournament IDs, comma-separated
+
+Examples:
+  blunderdb stats tournaments --db database.db --player "Alice" --from 2025-01-01
+  blunderdb stats tournaments --db database.db --format json
+```
+
 ### `blunderdb stats training`
 
 ```

@@ -1534,6 +1534,15 @@ du plus ancien au plus récent. Leurs identifiants se passent à
    ./blunderdb stats matches --db base.db --player "Alice" --from 2025-01-01 --to 2025-03-31
    ./blunderdb list --type matches --db base.db --ids 12,15,31
 
+**stats tournaments** — Les tournois que compte le nombre de tournois du
+Tableau de bord : ceux qui portent une décision comptée du joueur (de tout
+joueur sans ``--player``) sous le filtre, par identifiant.
+
+.. code-block:: bash
+
+   ./blunderdb stats tournaments --db base.db --player "Alice" --from 2025-01-01
+   ./blunderdb stats tournaments --db base.db --format json
+
 **stats progression** — Le PR de chaque match par ordre de date, le PR de
 chaque tournoi et le PR glissant sur les N dernières décisions : l'onglet
 *Progression* du panneau Stats (voir :ref:`stats`).

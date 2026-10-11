@@ -641,6 +641,7 @@ export default {
 <li><strong>PR Doppler</strong> — nur Doppler-Entscheidungen.</li>
 </ul>
 <p>Ein Klick auf eine Karte lädt die Stellungen der entsprechenden Teilmenge in das Analyse-Panel (Drill-down). Eine vierte Karte, <strong>MWC-Verlust (7-Punkte-Äq.)</strong>, gibt diesen Verlust unabhängig von der Wahl des PR-/MWC-Schalters samt Intervall an; sie lädt nichts.</p>
+<p>Unter den Karten zählt die Summenzeile die Turniere, Matches und Entscheidungen des Filters. Die Zahl der Turniere öffnet diese Turniere im Turnier-Panel: Ein einzelnes Turnier öffnet sich direkt; mehrere schränken die Liste ein, die dann die Schaltfläche « N Turniere aus der Statistik geöffnet × » trägt: Sie stellt die vollständige Liste wieder her.</p>
 <div class="admonition note">
 <p>Die Gesamtzahl der Entscheidungen wird beim Überfahren am unteren Rand jeder Karte angezeigt.</p>
 </div>
@@ -794,7 +795,7 @@ export default {
 </tr>
 <tr>
 <td>Blunders</td>
-<td>Anzahl der Fehler, welche die Blunder-Schwelle der Bibliothek erreichen (standardmäßig 0,100 EMG).</td>
+<td>Anzahl der Fehler, welche die Blunder-Schwelle der Bibliothek erreichen (standardmäßig 0,100 EMG). Ein Klick auf diese Zahl lädt diese Positionen in das Analyse-Panel.</td>
 </tr>
 <tr>
 <td>Glück</td>

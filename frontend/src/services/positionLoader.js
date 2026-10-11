@@ -13,13 +13,13 @@ import { get } from 'svelte/store';
 // NOTE: these UI messages are translated at emission time via the non-reactive
 // `translate` helper; already-displayed messages do not retranslate on language change.
 import { tMsg } from '../i18n';
-import { GetPositionIDsByStatsSelection, GetPositionIDsByTournament, GetPositionIDsByMatch, LoadPositionIDsByFilters } from '../../wailsjs/go/database/Database.js';
+import { GetPositionIDsByStatsSelection, GetPositionIDsByTournament, GetPositionIDsByMatch, LoadPositionIDsByFilters, StatsTournamentIDs } from '../../wailsjs/go/database/Database.js';
 import { activeTabStore, statusBarTextStore, matchOpenRequestStore } from '../stores/uiStore.js';
 import { positionsStore } from '../stores/positionStore.js';
 import { currentPositionIndexStore } from '../stores/uiStore.js';
-import { tournamentOpenRequestStore } from '../stores/tournamentStore.js';
+import { tournamentOpenRequestStore, tournamentIDsFilterStore } from '../stores/tournamentStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
-import { statsFilterStore } from '../stores/statsStore.js';
+import { statsFilterStore, statsResultFilterStore } from '../stores/statsStore.js';
 import { leaveStudiedModeForList, forgetSubSearchOrigin } from './modeMachine.js';
 
 /**
@@ -117,6 +117,45 @@ export function openTournamentInPanel(tournamentID) {
     // The Tournaments panel opens it once its list is loaded (it resets its selection when shown).
     tournamentOpenRequestStore.set(tournamentID);
     activeTabStore.set('tournaments');
+}
+
+/**
+ * Show exactly these tournaments in the Tournaments panel's list; a single one opens. The panel
+ * offers to clear the restriction.
+ *
+ * @param {number[]} ids
+ */
+export function openTournamentListInPanel(ids) {
+    if (!ids || ids.length === 0) {
+        statusBarTextStore.set(tMsg('tournament.noTournamentsFiltered'));
+        return;
+    }
+    if (ids.length === 1) {
+        openTournamentInPanel(ids[0]);
+        return;
+    }
+    tournamentIDsFilterStore.set([...ids]);
+    activeTabStore.set('tournaments');
+}
+
+// A count on screen comes from the result: it opens under the filter that produced it, not under
+// the bar's, which may have moved ahead of it.
+function shownStatsFilter() {
+    return get(statsResultFilterStore) ?? get(statsFilterStore);
+}
+
+/** Open the tournaments the Dashboard's tournament count counts. */
+export async function openStatsTournaments() {
+    openTournamentListInPanel((await StatsTournamentIDs(shownStatsFilter())) ?? []);
+}
+
+/**
+ * Open the positions a Players row's Blunders column counts. The table ignores the decision type.
+ *
+ * @param {string} playerName
+ */
+export async function openStatsPlayerBlunders(playerName) {
+    await loadPositionsFromStatsSelection({ ...shownStatsFilter(), playerName, decisionType: -1 }, { Kind: 'blunders' });
 }
 
 /**

@@ -641,6 +641,7 @@ export default {
 <li><strong>PR Cube</strong> — cube decisions only.</li>
 </ul>
 <p>Clicking a card loads the positions in the corresponding subset into the analysis panel (drill-down). A fourth card, <strong>MWC loss (7-pt eq.)</strong>, gives this loss whatever the PR / MWC button is set to, with its interval; it loads nothing.</p>
+<p>Below the cards, the totals line counts the filter's tournaments, matches and decisions. The tournament count opens those tournaments in the Tournaments panel: a single tournament opens directly; several restrict the list, which then carries the button « N tournaments opened from Stats × »: it restores the full list.</p>
 <div class="admonition note">
 <p>The total number of decisions is shown at the bottom of each card on hover.</p>
 </div>
@@ -794,7 +795,7 @@ export default {
 </tr>
 <tr>
 <td>Blunders</td>
-<td>Number of errors reaching the library's blunder threshold (0.100 EMG by default).</td>
+<td>Number of errors reaching the library's blunder threshold (0.100 EMG by default). Clicking this number loads those positions into the analysis panel.</td>
 </tr>
 <tr>
 <td>Luck</td>

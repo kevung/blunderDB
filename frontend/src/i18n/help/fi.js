@@ -641,6 +641,7 @@ export default {
 <li><strong>PR Kuutio</strong> — vain kuutiopäätökset.</li>
 </ul>
 <p>Kortin napsauttaminen lataa analyysipaneeliin vastaavan osajoukon asemat (drill-down). Neljäs kortti, <strong>MWC-tappio (7 pisteen ekv.)</strong>, antaa tämän tappion riippumatta PR / MWC -painikkeen valinnasta, välillään; se ei lataa mitään.</p>
+<p>Korttien alla summarivi laskee suodattimen turnaukset, ottelut ja päätökset. Turnausten määrä avaa nämä turnaukset Turnaukset-paneelissa: yksittäinen turnaus avautuu suoraan; useampi rajaa luettelon, jossa on silloin painike « N turnausta avattu tilastoista × »: se palauttaa koko luettelon.</p>
 <div class="admonition note">
 <p>Päätösten kokonaismäärä näytetään kunkin kortin alaosassa, kun osoitin on sen päällä.</p>
 </div>
@@ -794,7 +795,7 @@ export default {
 </tr>
 <tr>
 <td>Karkeat virheet</td>
-<td>Kirjaston blunderin kynnykseen yltävien virheiden määrä (oletuksena 0,100 EMG).</td>
+<td>Kirjaston blunderin kynnykseen yltävien virheiden määrä (oletuksena 0,100 EMG). Tämän luvun napsauttaminen lataa nämä asemat analyysipaneeliin.</td>
 </tr>
 <tr>
 <td>Tuuri</td>

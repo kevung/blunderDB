@@ -818,6 +818,8 @@
         "filterPlaceholder": "Filtrar: nombre, lugar, fecha…",
         "filterAria": "Filtrar torneos",
         "noTournamentsFiltered": "Ningún torneo coincide.",
+        "idsFilter": "{n} torneos abiertos desde Estadísticas",
+        "idsFilterClear": "Mostrar todos los torneos",
         "gone": "Este torneo ya no existe."
     },
     "anki": {

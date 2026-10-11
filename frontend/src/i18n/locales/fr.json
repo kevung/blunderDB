@@ -818,6 +818,8 @@
         "filterPlaceholder": "Filtrer : nom, lieu, date…",
         "filterAria": "Filtrer les tournois",
         "noTournamentsFiltered": "Aucun tournoi correspondant.",
+        "idsFilter": "{n} tournois ouverts depuis les Stats",
+        "idsFilterClear": "Montrer tous les tournois",
         "gone": "Ce tournoi n'existe plus."
     },
     "anki": {

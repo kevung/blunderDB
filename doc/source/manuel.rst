@@ -3198,6 +3198,12 @@ sous-ensemble correspondant (drill-down). Une quatrième carte, **Perte MWC (éq
 7 pts)**, donne cette perte quel que soit le choix du bouton PR / MWC, avec son
 intervalle ; elle ne charge rien.
 
+Sous les cartes, la ligne des totaux compte les tournois, les matchs et les
+décisions du filtre. Le nombre de tournois ouvre ces tournois dans le panneau
+Tournois : un tournoi seul s'ouvre directement ; plusieurs restreignent la
+liste, qui porte alors le bouton « N tournois ouverts depuis les Stats × » : il
+rend la liste complète.
+
 .. note::
    Le nombre total de décisions est affiché en bas de chaque carte au survol.
 
@@ -3618,7 +3624,7 @@ Colonnes, dans l'ordre :
    "PR", "Performance Rating global."
    "PR pions, PR videau", "Le PR ventilé par type de décision."
    "Snowie", "Snowie Error Rate (voir :ref:`stats_parity`)."
-   "Blunders", "Nombre d'erreurs atteignant le seuil de blunder de la bibliothèque (0,100 EMG par défaut)."
+   "Blunders", "Nombre d'erreurs atteignant le seuil de blunder de la bibliothèque (0,100 EMG par défaut). Cliquer sur ce nombre charge ces positions dans le panneau d'analyse."
    "Chance", "Chance moyenne par lancer, en millipoints (mpt), signée : positive si les dés ont été favorables."
 
 Utilisation :

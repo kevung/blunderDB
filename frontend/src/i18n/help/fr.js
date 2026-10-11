@@ -641,6 +641,7 @@ export default {
 <li><strong>PR videau</strong> — décisions de videau seulement.</li>
 </ul>
 <p>Cliquer sur une carte charge dans le panneau d'analyse les positions du sous-ensemble correspondant (drill-down). Une quatrième carte, <strong>Perte MWC (éq. 7 pts)</strong>, donne cette perte quel que soit le choix du bouton PR / MWC, avec son intervalle ; elle ne charge rien.</p>
+<p>Sous les cartes, la ligne des totaux compte les tournois, les matchs et les décisions du filtre. Le nombre de tournois ouvre ces tournois dans le panneau Tournois : un tournoi seul s'ouvre directement ; plusieurs restreignent la liste, qui porte alors le bouton « N tournois ouverts depuis les Stats × » : il rend la liste complète.</p>
 <div class="admonition note">
 <p>Le nombre total de décisions est affiché en bas de chaque carte au survol.</p>
 </div>
@@ -794,7 +795,7 @@ export default {
 </tr>
 <tr>
 <td>Blunders</td>
-<td>Nombre d'erreurs atteignant le seuil de blunder de la bibliothèque (0,100 EMG par défaut).</td>
+<td>Nombre d'erreurs atteignant le seuil de blunder de la bibliothèque (0,100 EMG par défaut). Cliquer sur ce nombre charge ces positions dans le panneau d'analyse.</td>
 </tr>
 <tr>
 <td>Chance</td>
