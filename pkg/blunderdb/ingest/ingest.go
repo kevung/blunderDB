@@ -101,13 +101,15 @@ type ExportOptions struct {
 	// PlayedMoves matters only with Analysis. FilterLibrary and AnkiDecks add
 	// those families whole. Transcriptions sends each exported match's draft
 	// with it, and the drafts that never became a match when every match and
-	// every position leave.
+	// every position leave. Aliases sends the player and event aliases that
+	// touch an exported match.
 	Analysis       bool
 	Comments       bool
 	PlayedMoves    bool
 	FilterLibrary  bool
 	AnkiDecks      bool
 	Transcriptions bool
+	Aliases        bool
 
 	// Metadata is copied by allow-list (issuance.Carried). Watermark is the
 	// sealed document to write verbatim (see SealWatermark), "" for none.

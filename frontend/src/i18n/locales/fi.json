@@ -1243,6 +1243,7 @@
         "includeFilterLibrary": "Omat tallennetut suodattimet",
         "includeMatches": "Sisällytä ottelut ({count})",
         "includeTranscriptions": "Transkriptioluonnosten kanssa",
+        "includeAliases": "Pelaajiensa ja tapahtumiensa aliasten kanssa",
         "includePlayedMoves": "Sisällytä pelatut siirrot",
         "includeTournaments": "Sisällytä turnaukset ({count})",
         "mayTakeMoments": "Tämä voi kestää hetken.",

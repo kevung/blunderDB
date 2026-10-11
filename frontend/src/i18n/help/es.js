@@ -1057,11 +1057,12 @@ export default {
 </div>
 <h4>Marcar una base de datos con su origen</h4>
 <p>La ventana de exportación cabe en una sola pantalla: el formulario y, sobre él, una barra de progreso durante la escritura. Se cierra sola al terminar y el resultado aparece en la barra de estado.</p>
-<p>Cinco puntos merecen atención:</p>
+<p>Seis puntos merecen atención:</p>
 <ul>
 <li><strong>La exportación afecta a las posiciones mostradas actualmente</strong>, no a toda la base. Tras una búsqueda solo se exportan los resultados (la ventana lo recuerda en la parte superior) y la lista de partidas solo ofrece aquellas en las que se jugaron esas posiciones; cada partida marcada se exporta con todas sus posiciones.</li>
 <li><strong>Cuando la lista mostrada es la biblioteca</strong>, la exportación es la misma que la del servidor y la de <code>export --type database</code>: todas las casillas están marcadas desde el principio, y los mazos de Anki (sin historial de repaso) y las transcripciones en curso se exportan con el resto.</li>
 <li><strong>Una partida se exporta con su borrador de transcripción</strong>, sea cual sea la lista mostrada: la casilla <em>Con sus borradores de transcripción</em>, bajo la de las partidas, está marcada desde el principio. Un borrador que aún no ha producido ninguna partida solo se exporta con la biblioteca entera. Una partida o una transcripción vinculadas a un vídeo local solo llevan el nombre del archivo, sin su carpeta, y el destinatario las reubica en su propia copia; un enlace web se exporta tal cual. El archivo del que se importó una partida también se exporta solo con su nombre.</li>
+<li><strong>Una partida se exporta con los alias de sus jugadores y de su evento</strong>: la casilla <em>Con los alias de sus jugadores y eventos</em>, marcada desde el principio, conserva la fusión de jugadores, y el destinatario lee un jugador fusionado como uno solo. Un alias que no nombra a nadie de las partidas exportadas se queda con usted.</li>
 <li><strong>Una colección cuyas posiciones no estén todas en la selección llega truncada.</strong> Por eso la lista muestra, para cada colección, la parte cubierta («12/40») y la señala en rojo cuando es parcial.</li>
 <li><strong>Los torneos solo pueden exportarse junto con los partidos</strong>: sin ellos no existe el vínculo torneo–partido y el torneo llegaría vacío. La casilla permanece desactivada mientras no se marque «incluir los partidos».</li>
 </ul>

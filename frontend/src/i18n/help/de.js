@@ -1057,11 +1057,12 @@ export default {
 </div>
 <h4>Eine Datenbank mit ihrer Herkunft kennzeichnen</h4>
 <p>Das Exportfenster kommt mit einer einzigen Ansicht aus: dem Formular und einer Fortschrittsanzeige, die sich während des Schreibens darüberlegt. Es schließt sich nach Abschluss von selbst, und das Ergebnis erscheint in der Statusleiste.</p>
-<p>Fünf Punkte verdienen Beachtung:</p>
+<p>Sechs Punkte verdienen Beachtung:</p>
 <ul>
 <li><strong>Der Export umfasst die aktuell angezeigten Positionen</strong>, nicht die gesamte Datenbank. Nach einer Suche werden nur die Treffer exportiert — das Fenster weist oben darauf hin —, und die Match-Liste bietet nur die Matches an, in denen diese Positionen gespielt wurden; jedes angehakte Match wird mit allen seinen Positionen exportiert.</li>
 <li><strong>Wenn die angezeigte Liste die Bibliothek ist</strong>, entspricht der Export dem des Servers und <code>export --type database</code>: Alle Kontrollkästchen sind von Anfang an angehakt, und die Anki-Decks (ohne Wiederholungsverlauf) sowie die laufenden Transkriptionen werden mit dem Rest exportiert.</li>
 <li><strong>Ein Match wird mit seinem Transkriptionsentwurf exportiert</strong>, unabhängig von der angezeigten Liste: Das Kontrollkästchen <em>Mit ihren Transkriptionsentwürfen</em> unter dem der Matches ist von Anfang an angehakt. Ein Entwurf, der noch kein Match erzeugt hat, wird nur mit der gesamten Bibliothek exportiert. Ein Match oder eine Transkription, die mit einem lokalen Video verknüpft sind, enthalten nur den Dateinamen, ohne den Ordner, und der Empfänger ordnet sie seiner eigenen Kopie neu zu; ein Weblink wird unverändert exportiert. Auch die Datei, aus der ein Match importiert wurde, wird nur mit ihrem Namen exportiert.</li>
+<li><strong>Ein Match wird mit den Aliassen seiner Spieler und seines Turniers exportiert</strong>: Das von Anfang an angehakte Kontrollkästchen <em>Mit den Aliassen ihrer Spieler und Turniere</em> nimmt die Zusammenführung von Spielern mit, und der Empfänger liest einen zusammengeführten Spieler als einen. Ein Alias, der niemanden aus den exportierten Matches benennt, bleibt bei Ihnen.</li>
 <li><strong>Eine Sammlung, deren Positionen nicht alle in der Auswahl enthalten sind, kommt unvollständig an.</strong> Die Liste zeigt deshalb für jede Sammlung den abgedeckten Anteil („12/40“) und hebt ihn rot hervor, wenn er unvollständig ist.</li>
 <li><strong>Turniere lassen sich nur zusammen mit den Partien exportieren</strong>: ohne sie gibt es die Verknüpfung Turnier–Partie nicht, und das Turnier käme leer an. Das Kästchen bleibt deaktiviert, solange „Partien einschließen“ nicht angehakt ist.</li>
 </ul>

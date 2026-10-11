@@ -1243,6 +1243,7 @@
         "includeFilterLibrary": "My saved filters",
         "includeMatches": "Include matches ({count})",
         "includeTranscriptions": "With their transcription drafts",
+        "includeAliases": "With their players' and events' aliases",
         "includePlayedMoves": "Include played moves",
         "includeTournaments": "Include tournaments ({count})",
         "mayTakeMoments": "This may take a few moments.",

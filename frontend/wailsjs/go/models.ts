@@ -2084,6 +2084,7 @@ export namespace domain {
 	    includePlayedMoves: boolean;
 	    includeMatches: boolean;
 	    includeTranscriptions: boolean;
+	    includeAliases: boolean;
 	    includeCollections: boolean;
 	    collectionIDs: number[];
 	    matchIDs: number[];
@@ -2115,6 +2116,7 @@ export namespace domain {
 	        this.includePlayedMoves = source["includePlayedMoves"];
 	        this.includeMatches = source["includeMatches"];
 	        this.includeTranscriptions = source["includeTranscriptions"];
+	        this.includeAliases = source["includeAliases"];
 	        this.includeCollections = source["includeCollections"];
 	        this.collectionIDs = source["collectionIDs"];
 	        this.matchIDs = source["matchIDs"];

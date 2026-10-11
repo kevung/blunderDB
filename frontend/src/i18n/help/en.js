@@ -1057,11 +1057,12 @@ export default {
 </div>
 <h4>Marking a database with its origin</h4>
 <p>The export dialog fits on a single screen: the form, then a progress overlay laid over it while the file is written. It closes by itself when finished, and the result appears in the status bar.</p>
-<p>Five points deserve attention:</p>
+<p>Six points deserve attention:</p>
 <ul>
 <li><strong>The export covers the positions currently displayed</strong>, not the whole database. After a search, only the results go out — the dialog says so at the top — and the match list only offers the matches in which these positions were played; each checked match goes out with all its positions.</li>
 <li><strong>When the displayed list is the library</strong>, the export is the same as the server's and as <code>export --type database</code>: all the boxes are checked from the start, and the Anki decks (without review history) and the transcriptions in progress go out with the rest.</li>
 <li><strong>A match leaves with its transcription draft</strong>, whatever the displayed list: the box <em>With their transcription drafts</em>, under the matches box, is ticked from the start. A draft that has not yet produced a match leaves only with the whole library. A match or a transcription linked to a local video carries only the file name, without its folder, which the recipient relocates onto their own copy; a web link goes out as is. The file a match was imported from likewise leaves by its name alone.</li>
+<li><strong>A match leaves with its players' and its event's aliases</strong>: the box <em>With their players' and events' aliases</em>, ticked from the start, carries the merging of players along, and the recipient reads a merged player as one. An alias that names nobody in the exported matches stays with you.</li>
 <li><strong>A collection whose positions are not all in the selection arrives truncated.</strong> The list therefore shows, for each collection, how much of it is covered (“12/40”), in red when it is partial.</li>
 <li><strong>Tournaments can only be exported together with matches</strong>: without them the tournament–match link does not exist and the tournament would arrive empty. The box stays disabled until “include matches” is ticked.</li>
 </ul>

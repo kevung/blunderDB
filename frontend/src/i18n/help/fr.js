@@ -1057,11 +1057,12 @@ export default {
 </div>
 <h4>Marquer une base de son origine</h4>
 <p>La fenêtre d'export tient en un seul écran : le formulaire, puis une progression qui se superpose à lui le temps de l'écriture. Elle se ferme d'elle-même une fois terminée, et le résultat s'affiche dans la barre d'état.</p>
-<p>Cinq points méritent l'attention :</p>
+<p>Six points méritent l'attention :</p>
 <ul>
 <li><strong>L'export porte sur les positions actuellement affichées</strong>, pas sur la base entière. Après une recherche, seuls les résultats partent — la fenêtre le rappelle en tête — et la liste des matchs ne propose que ceux où ces positions ont été jouées ; chaque match coché part avec toutes ses positions.</li>
 <li><strong>Quand la liste affichée est la bibliothèque</strong>, l'export est le même que celui du serveur et de <code>export --type database</code> : toutes les cases sont cochées d'emblée, et les paquets Anki (sans historique de révision) et les transcriptions en cours partent avec le reste.</li>
 <li><strong>Un match part avec son brouillon de transcription</strong>, quelle que soit la liste affichée : la case <em>Avec leurs brouillons de transcription</em>, sous celle des matchs, est cochée d'emblée. Un brouillon qui n'a pas encore produit de match ne part qu'avec la bibliothèque entière. Un match ou une transcription liés à une vidéo locale n'emportent que le nom du fichier, sans son dossier, que le destinataire relocalise sur sa propre copie ; un lien web part tel quel. Le fichier d'où un match a été importé ne part aussi que par son nom.</li>
+<li><strong>Un match part avec les alias de ses joueurs et de son événement</strong> : la case <em>Avec les alias de leurs joueurs et événements</em>, cochée d'emblée, fait suivre la fusion de joueurs, et le destinataire lit un joueur fusionné comme un seul. Un alias qui ne nomme personne des matchs exportés reste chez vous.</li>
 <li><strong>Une collection dont toutes les positions ne sont pas dans la sélection arrive tronquée.</strong> La liste affiche donc, pour chaque collection, la part couverte (« 12/40 ») et la signale en rouge lorsqu'elle est partielle.</li>
 <li><strong>Les tournois ne peuvent être exportés qu'avec les matchs</strong> : sans eux, le lien tournoi–match n'existe pas et le tournoi arriverait vide. La case est désactivée tant que « inclure les matchs » ne l'est pas.</li>
 </ul>

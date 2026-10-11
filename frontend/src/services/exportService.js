@@ -203,6 +203,8 @@ export async function handleExportCommit() {
             matchIDs: matches.ids,
             // A draft follows its match: without the match it has nothing to travel with.
             includeTranscriptions: matches.include && !!exportOptions.includeTranscriptions,
+            // An alias leaves only when it names someone an exported match writes.
+            includeAliases: matches.include && !!exportOptions.includeAliases,
             includeCollections: collections.include,
             collectionIDs: collections.ids,
             includeTournaments: tournaments.include,

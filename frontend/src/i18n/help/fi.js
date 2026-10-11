@@ -1057,11 +1057,12 @@ export default {
 </div>
 <h4>Tietokannan merkitseminen alkuperällään</h4>
 <p>Vienti-ikkuna mahtuu yhdelle näytölle: lomake ja sen päälle kirjoituksen ajaksi asettuva edistymisnäkymä. Ikkuna sulkeutuu itsestään valmistuttuaan, ja tulos näkyy tilapalkissa.</p>
-<p>Viisi seikkaa ansaitsee huomiota:</p>
+<p>Kuusi seikkaa ansaitsee huomiota:</p>
 <ul>
 <li><strong>Vienti koskee parhaillaan näkyvissä olevia asemia</strong>, ei koko tietokantaa. Haun jälkeen viedään vain tulokset — ikkuna muistuttaa siitä yläreunassa — ja ottelulista tarjoaa vain ne ottelut, joissa nämä asemat on pelattu; jokainen valittu ottelu viedään kaikkine asemineen.</li>
 <li><strong>Kun näytetty luettelo on kirjasto</strong>, vienti on sama kuin palvelimen ja komennon <code>export --type database</code>: kaikki valintaruudut on valittu valmiiksi, ja Anki-pakat (ilman kertaushistoriaa) sekä käynnissä olevat litteroinnit viedään muun mukana.</li>
 <li><strong>Ottelu viedään litterointiluonnoksensa kanssa</strong> näytetystä luettelosta riippumatta: otteluiden alla oleva valintaruutu <em>Transkriptioluonnosten kanssa</em> on valittu valmiiksi. Luonnos, josta ei vielä ole syntynyt ottelua, viedään vain koko kirjaston mukana. Paikalliseen videoon liitetty ottelu tai litterointi sisältää vain tiedostonimen ilman kansiota, ja vastaanottaja kohdistaa sen omaan kopioonsa; verkkolinkki viedään sellaisenaan. Myös tiedosto, josta ottelu tuotiin, viedään pelkällä nimellään.</li>
+<li><strong>Ottelu viedään pelaajiensa ja tapahtumansa aliasten kanssa</strong>: valmiiksi valittu ruutu <em>Pelaajiensa ja tapahtumiensa aliasten kanssa</em> vie pelaajien yhdistämisen mukana, ja vastaanottaja lukee yhdistetyn pelaajan yhtenä. Alias, joka ei nimeä ketään viedyistä otteluista, jää sinulle.</li>
 <li><strong>Kokoelma, jonka asemat eivät kaikki sisälly valintaan, saapuu vaillinaisena.</strong> Siksi luettelo näyttää kunkin kokoelman katetun osuuden (”12/40”) ja merkitsee sen punaisella, kun se on osittainen.</li>
 <li><strong>Turnaukset voi viedä vain otteluiden kanssa</strong>: ilman niitä turnaus–ottelu-yhteyttä ei ole ja turnaus saapuisi tyhjänä. Valintaruutu pysyy poissa käytöstä, kunnes ”sisällytä ottelut” on valittu.</li>
 </ul>

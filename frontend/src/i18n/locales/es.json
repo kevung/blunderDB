@@ -1243,6 +1243,7 @@
         "includeFilterLibrary": "Mis filtros guardados",
         "includeMatches": "Incluir partidas ({count})",
         "includeTranscriptions": "Con sus borradores de transcripción",
+        "includeAliases": "Con los alias de sus jugadores y eventos",
         "includePlayedMoves": "Incluir jugadas realizadas",
         "includeTournaments": "Incluir torneos ({count})",
         "mayTakeMoments": "Esto puede tardar unos momentos.",

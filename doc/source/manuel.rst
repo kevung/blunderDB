@@ -4915,7 +4915,7 @@ La fenêtre d'export tient en un seul écran : le formulaire, puis une
 progression qui se superpose à lui le temps de l'écriture. Elle se ferme
 d'elle-même une fois terminée, et le résultat s'affiche dans la barre d'état.
 
-Cinq points méritent l'attention :
+Six points méritent l'attention :
 
 * **L'export porte sur les positions actuellement affichées**, pas sur la base
   entière. Après une recherche, seuls les résultats partent — la fenêtre le
@@ -4933,6 +4933,10 @@ Cinq points méritent l'attention :
   sans son dossier, que le destinataire relocalise sur sa propre copie ; un
   lien web part tel quel. Le fichier d'où un match a été importé ne part
   aussi que par son nom.
+* **Un match part avec les alias de ses joueurs et de son événement** : la
+  case *Avec les alias de leurs joueurs et événements*, cochée d'emblée, fait
+  suivre la fusion de joueurs, et le destinataire lit un joueur fusionné comme
+  un seul. Un alias qui ne nomme personne des matchs exportés reste chez vous.
 * **Une collection dont toutes les positions ne sont pas dans la sélection
   arrive tronquée.** La liste affiche donc, pour chaque collection, la part
   couverte (« 12/40 ») et la signale en rouge lorsqu'elle est partielle.

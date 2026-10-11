@@ -26,6 +26,7 @@ func (cli *CLI) runExport(args []string) error {
 	includePlayedMoves := exportCmd.Bool("played-moves", true, "Include played moves in analysis (default: true)")
 	includeMatches := exportCmd.Bool("matches", true, "Include matches in database export (default: true)")
 	includeTranscriptions := exportCmd.Bool("transcriptions", true, "Include the transcription drafts of the exported matches in database export (default: true)")
+	includeAliases := exportCmd.Bool("aliases", true, "Include the player and event aliases the exported matches write in database export (default: true)")
 	includeCollections := exportCmd.Bool("collections", true, "Include collections in database export (default: true)")
 	includeTournaments := exportCmd.Bool("tournaments", true, "Include tournaments in database export (default: true)")
 	includeDecks := exportCmd.Bool("decks", true, "Include Anki decks, without their review history, in database export (default: true)")
@@ -48,7 +49,7 @@ func (cli *CLI) runExport(args []string) error {
 		fmt.Println()
 		fmt.Println("Export Types:")
 		fmt.Println("  database   Export the whole library, as the server's export does: positions, matches,")
-		fmt.Println("             tournaments, collections, lessons, Anki decks, transcriptions, filters.")
+		fmt.Println("             tournaments, collections, lessons, Anki decks, transcriptions, aliases, filters.")
 		fmt.Println("             Each family can be left out (--matches=false) or narrowed (--match-ids=1,2).")
 		fmt.Println("  positions  Export positions to text file (JSON format)")
 		fmt.Println("  matches    Export only matches to a new database")
@@ -179,6 +180,7 @@ func (cli *CLI) runExport(args []string) error {
 			IncludePlayedMoves:    *includePlayedMoves,
 			IncludeMatches:        *includeMatches || len(matchIDs) > 0,
 			IncludeTranscriptions: *includeTranscriptions,
+			IncludeAliases:        *includeAliases,
 			IncludeCollections:    *includeCollections || len(collectionIDs) > 0,
 			IncludeTournaments:    *includeTournaments || len(tournamentIDs) > 0,
 			IncludeAnkiDecks:      *includeDecks || len(deckIDs) > 0,
@@ -191,7 +193,7 @@ func (cli *CLI) runExport(args []string) error {
 	case "positions":
 		return cli.exportPositions(*outputFile, text)
 	case "matches":
-		return cli.exportMatchesOnly(*outputFile, matchIDs, *includeTranscriptions, marking, text)
+		return cli.exportMatchesOnly(*outputFile, matchIDs, *includeTranscriptions, *includeAliases, marking, text)
 	case "mat":
 		return cli.exportMatchesMAT(matchIDs, *outputFile, *outputDir, text)
 	default:
@@ -352,8 +354,8 @@ func (cli *CLI) exportDatabaseWithOptions(opts ExportOptions, marking exportMark
 
 // exportMatchesOnly exports matches — those of matchIDs, every match when it is empty — to a
 // new database, each with the positions its moves were played in and, under transcriptions,
-// the draft it was typed from.
-func (cli *CLI) exportMatchesOnly(outputFile string, matchIDs []int64, transcriptions bool, marking exportMarking, text bool) error {
+// the draft it was typed from; under aliases, the player and event aliases they write go too.
+func (cli *CLI) exportMatchesOnly(outputFile string, matchIDs []int64, transcriptions, aliases bool, marking exportMarking, text bool) error {
 	if text {
 		fmt.Printf("Exporting matches to: %s\n", outputFile)
 	}
@@ -394,6 +396,7 @@ func (cli *CLI) exportMatchesOnly(outputFile string, matchIDs []int64, transcrip
 		IncludePlayedMoves:    true,
 		IncludeMatches:        true,
 		IncludeTranscriptions: transcriptions,
+		IncludeAliases:        aliases,
 		Watermark:             marking.watermark,
 		WatermarkNote:         marking.note,
 		Password:              marking.password,
