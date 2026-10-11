@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-11 19:10+0200\n"
+"POT-Creation-Date: 2026-10-11 19:35+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -3344,21 +3344,21 @@ msgstr ""
 msgid ""
 "Une sauvegarde — l'export de toute la bibliothèque depuis la fenêtre "
 "d'export ou par la ligne de commande — emporte toutes les leçons. Dans la"
-" fenêtre d'export, la case *Inclure les leçons* les choisit une à une : "
-"chaque leçon cochée part avec les collections et les positions que ses "
-"étapes montrent, et le fichier peut être filigrané ou protégé par mot de "
-"passe (``.dbx``) comme tout export. Sans cette case, un export partiel "
-"(une sélection de positions, de collections ou de matchs) n'emporte pas "
-"les leçons."
+" fenêtre d'export, la ligne *Leçons* les choisit une à une : chaque leçon"
+" cochée part avec les collections et les positions que ses étapes "
+"montrent, et le fichier peut être filigrané ou protégé par mot de passe "
+"(``.dbx``) comme tout export. Sans cette case, un export partiel (une "
+"sélection de positions, de collections ou de matchs) n'emporte pas les "
+"leçons."
 msgstr ""
 "Ένα αντίγραφο ασφαλείας — η εξαγωγή ολόκληρης της βιβλιοθήκης από το "
-"παράθυρο εξαγωγής ή από τη γραμμή εντολών — περιλαμβάνει όλα τα μαθήματα."
-" Στο παράθυρο εξαγωγής, το πλαίσιο *Συμπερίληψη μαθημάτων* τα επιλέγει "
-"ένα προς ένα: κάθε μάθημα που επιλέγεται φεύγει μαζί με τις συλλογές και "
-"τις θέσεις που δείχνουν τα βήματά του, και το αρχείο μπορεί να φέρει "
-"σήμανση προέλευσης ή να προστατεύεται με κωδικό (``.dbx``) όπως κάθε "
-"εξαγωγή. Χωρίς αυτό το πλαίσιο, μια μερική εξαγωγή (μια επιλογή θέσεων, "
-"συλλογών ή αγώνων) δεν περιλαμβάνει τα μαθήματα."
+"παράθυρο εξαγωγής ή από τη γραμμή εντολών — μεταφέρει όλα τα μαθήματα. "
+"Στο παράθυρο εξαγωγής, η γραμμή *Μαθήματα* τα επιλέγει ένα προς ένα: κάθε"
+" μάθημα που είναι τσεκαρισμένο φεύγει μαζί με τις συλλογές και τις θέσεις"
+" που δείχνουν τα βήματά του, και το αρχείο μπορεί να φέρει υδατογράφημα ή"
+" να προστατεύεται με κωδικό (``.dbx``) όπως κάθε εξαγωγή. Χωρίς αυτό το "
+"πλαίσιο, μια μερική εξαγωγή (μια επιλογή θέσεων, συλλογών ή αγώνων) δεν "
+"μεταφέρει τα μαθήματα."
 
 #: ../../source/manuel.rst:1428
 msgid "Import : ce qui est écrit, ce qui ne l'est jamais"
@@ -11854,140 +11854,166 @@ msgstr "Σήμανση μιας βάσης με την προέλευσή της
 
 #: ../../source/manuel.rst:4931
 msgid ""
-"La fenêtre d'export tient en un seul écran : le formulaire, puis une "
-"progression qui se superpose à lui le temps de l'écriture. Elle se ferme "
-"d'elle-même une fois terminée, et le résultat s'affiche dans la barre "
+"La fenêtre d'export tient en un seul écran : une bande d'en-tête — le "
+"nombre de positions exportées, **Annuler** et **Exporter…** — puis une "
+"grille, une ligne par famille avec son compte. Le fichier se choisit en "
+"dernier, après **Exporter…** ; fermer ce choix sans nom revient à la "
+"grille. Une progression se superpose ensuite le temps de l'écriture, la "
+"fenêtre se ferme d'elle-même et le résultat s'affiche dans la barre "
 "d'état."
 msgstr ""
-"Το παράθυρο εξαγωγής χωράει σε μία μόνο οθόνη: η φόρμα και, πάνω της, μια"
-" ένδειξη προόδου κατά τη διάρκεια της εγγραφής. Κλείνει από μόνο του όταν"
-" ολοκληρωθεί και το αποτέλεσμα εμφανίζεται στη γραμμή κατάστασης."
+"Το παράθυρο εξαγωγής χωράει σε μία μόνο οθόνη: μια λωρίδα κεφαλίδας — ο "
+"αριθμός των εξαγόμενων θέσεων, **Ακύρωση** και **Εξαγωγή…** — και μετά "
+"ένα πλέγμα, με μία γραμμή ανά οικογένεια και το πλήθος της. Το αρχείο "
+"επιλέγεται τελευταίο, μετά το **Εξαγωγή…**· αν κλείσετε αυτή την επιλογή "
+"χωρίς όνομα, επιστρέφετε στο πλέγμα. Στη συνέχεια εμφανίζεται μια ένδειξη"
+" προόδου για όσο διαρκεί η εγγραφή, το παράθυρο κλείνει από μόνο του και "
+"το αποτέλεσμα εμφανίζεται στη γραμμή κατάστασης."
 
-#: ../../source/manuel.rst:4935
-msgid "Six points méritent l'attention :"
-msgstr "Έξι σημεία αξίζουν προσοχή:"
+#: ../../source/manuel.rst:4938
+msgid "Huit points méritent l'attention :"
+msgstr "Οκτώ σημεία αξίζουν προσοχή:"
 
-#: ../../source/manuel.rst:4937
+#: ../../source/manuel.rst:4940
 msgid ""
-"**L'export porte sur les positions actuellement affichées**, pas sur la "
-"base entière. Après une recherche, seuls les résultats partent — la "
-"fenêtre le rappelle en tête — et la liste des matchs ne propose que ceux "
-"où ces positions ont été jouées ; chaque match coché part avec toutes ses"
-" positions."
+"**La portée** : depuis une liste — une recherche, une collection —, la "
+"ligne *Portée* choisit entre la *Liste courante* et *Toute la "
+"bibliothèque*. La liste courante exporte ses positions, et la ligne "
+"*Matchs* ne propose que ceux où ces positions ont été jouées ; chaque "
+"match coché part avec toutes ses positions. Depuis la bibliothèque, la "
+"portée est la bibliothèque."
 msgstr ""
-"**Η εξαγωγή αφορά τις θέσεις που εμφανίζονται αυτή τη στιγμή**, όχι "
-"ολόκληρη τη βάση. Μετά από μια αναζήτηση εξάγονται μόνο τα αποτελέσματα —"
-" το παράθυρο το υπενθυμίζει στην κορυφή — και η λίστα των αγώνων "
-"προτείνει μόνο εκείνους όπου παίχτηκαν αυτές οι θέσεις· κάθε επιλεγμένος "
-"αγώνας εξάγεται με όλες τις θέσεις του."
-
-#: ../../source/manuel.rst:4941
-msgid ""
-"**Quand la liste affichée est la bibliothèque**, l'export est le même que"
-" celui du serveur et de ``export --type database`` : toutes les cases "
-"sont cochées d'emblée, et les paquets Anki (sans historique de révision) "
-"et les transcriptions en cours partent avec le reste."
-msgstr ""
-"**Όταν η εμφανιζόμενη λίστα είναι η βιβλιοθήκη**, η εξαγωγή είναι ίδια με"
-" αυτήν του διακομιστή και του ``export --type database``: όλα τα πλαίσια "
-"είναι εξαρχής επιλεγμένα, και οι τράπουλες Anki (χωρίς ιστορικό "
-"επανάληψης) και οι απομαγνητοφωνήσεις σε εξέλιξη εξάγονται μαζί με τα "
-"υπόλοιπα."
+"**Το εύρος**: από μια λίστα — μια αναζήτηση, μια συλλογή —, η γραμμή "
+"*Εύρος* επιλέγει ανάμεσα στην *Τρέχουσα λίστα* και στην *Ολόκληρη η "
+"βιβλιοθήκη*. Η τρέχουσα λίστα εξάγει τις θέσεις της, και η γραμμή "
+"*Αγώνες* προτείνει μόνο εκείνους στους οποίους παίχτηκαν αυτές οι θέσεις·"
+" κάθε αγώνας που είναι τσεκαρισμένος φεύγει με όλες τις θέσεις του. Από "
+"τη βιβλιοθήκη, το εύρος είναι η βιβλιοθήκη."
 
 #: ../../source/manuel.rst:4945
 msgid ""
-"**Un match part avec son brouillon de transcription**, quelle que soit la"
-" liste affichée : la case *Avec leurs brouillons de transcription*, sous "
-"celle des matchs, est cochée d'emblée. Un brouillon qui n'a pas encore "
-"produit de match ne part qu'avec la bibliothèque entière. Un match ou une"
-" transcription liés à une vidéo locale n'emportent que le nom du fichier,"
-" sans son dossier, que le destinataire relocalise sur sa propre copie ; "
-"un lien web part tel quel. Le fichier d'où un match a été importé ne part"
-" aussi que par son nom."
+"**Toute la bibliothèque** est l'export du serveur et de ``export --type "
+"database`` : toutes les familles sont cochées d'emblée, les paquets Anki "
+"avec leur historique de révision, et les transcriptions en cours partent "
+"avec le reste."
 msgstr ""
-"**Ένας αγώνας εξάγεται μαζί με το πρόχειρο απομαγνητοφώνησής του**, όποια"
-" κι αν είναι η εμφανιζόμενη λίστα: το πλαίσιο *Μαζί με τα πρόχειρα "
-"μεταγραφής τους*, κάτω από εκείνο των αγώνων, είναι εξαρχής επιλεγμένο. "
-"Ένα πρόχειρο που δεν έχει ακόμη παραγάγει αγώνα εξάγεται μόνο με ολόκληρη"
-" τη βιβλιοθήκη. Ένας αγώνας ή μια απομαγνητοφώνηση συνδεδεμένοι με τοπικό"
-" βίντεο μεταφέρουν μόνο το όνομα του αρχείου, χωρίς τον φάκελό του, και ο"
-" παραλήπτης τους αντιστοιχίζει στο δικό του αντίγραφο· ένας σύνδεσμος "
-"ιστού εξάγεται ως έχει. Και το αρχείο από το οποίο εισήχθη ένας αγώνας "
-"εξάγεται μόνο με το όνομά του."
+"**Ολόκληρη η βιβλιοθήκη** είναι η εξαγωγή του διακομιστή και της ``export"
+" --type database``: όλες οι οικογένειες είναι εξαρχής τσεκαρισμένες, οι "
+"τράπουλες Anki με το ιστορικό επανάληψής τους, και οι μεταγραφές που "
+"βρίσκονται σε εξέλιξη φεύγουν μαζί με τα υπόλοιπα."
 
-#: ../../source/manuel.rst:4953
+#: ../../source/manuel.rst:4949
+msgid ""
+"**Un match part avec son brouillon de transcription**, sous la case "
+"*Transcriptions* de la ligne *Matchs*, cochée d'emblée ; les matchs qu'un"
+" tournoi emporte aussi. Un brouillon qui n'a pas encore produit de match "
+"ne part qu'avec la bibliothèque entière. Un match ou une transcription "
+"liés à une vidéo locale n'emportent que le nom du fichier, sans son "
+"dossier, que le destinataire relocalise sur sa propre copie ; un lien web"
+" part tel quel. Le fichier d'où un match a été importé ne part aussi que "
+"par son nom."
+msgstr ""
+"**Ένας αγώνας φεύγει με το πρόχειρο μεταγραφής του**, κάτω από το πλαίσιο"
+" *Μεταγραφές* της γραμμής *Αγώνες*, εξαρχής τσεκαρισμένο· οι αγώνες που "
+"μεταφέρει επίσης ένα τουρνουά. Ένα πρόχειρο που δεν έχει ακόμη παραγάγει "
+"αγώνα φεύγει μόνο με ολόκληρη τη βιβλιοθήκη. Ένας αγώνας ή μια μεταγραφή "
+"συνδεδεμένα με τοπικό βίντεο μεταφέρουν μόνο το όνομα του αρχείου, χωρίς "
+"τον φάκελό του, που ο παραλήπτης επανατοποθετεί στο δικό του αντίγραφο· "
+"ένας σύνδεσμος ιστού φεύγει ως έχει. Το αρχείο από το οποίο εισήχθη ένας "
+"αγώνας φεύγει επίσης μόνο με το όνομά του."
+
+#: ../../source/manuel.rst:4956
 msgid ""
 "**Un match part avec les alias de ses joueurs et de son événement** : la "
-"case *Avec les alias de leurs joueurs et événements*, cochée d'emblée, "
-"fait suivre la fusion de joueurs, et le destinataire lit un joueur "
-"fusionné comme un seul. Un alias qui ne nomme personne des matchs "
-"exportés reste chez vous."
+"case *Alias*, cochée d'emblée, fait suivre la fusion de joueurs, et le "
+"destinataire lit un joueur fusionné comme un seul. Un alias qui ne nomme "
+"personne des matchs exportés reste chez vous."
 msgstr ""
-"**Ένας αγώνας εξάγεται μαζί με τα ψευδώνυμα των παικτών και της "
-"διοργάνωσής του**: το πλαίσιο *Μαζί με τα ψευδώνυμα των παικτών και των "
-"διοργανώσεών τους*, εξαρχής επιλεγμένο, μεταφέρει τη συγχώνευση παικτών, "
-"και ο παραλήπτης διαβάζει έναν συγχωνευμένο παίκτη ως έναν. Ένα ψευδώνυμο"
-" που δεν ονομάζει κανέναν από τους εξαγόμενους αγώνες μένει σε εσάς."
-
-#: ../../source/manuel.rst:4957
-msgid ""
-"**Une collection dont toutes les positions ne sont pas dans la sélection "
-"arrive tronquée.** La liste affiche donc, pour chaque collection, la part"
-" couverte (« 12/40 ») et la signale en rouge lorsqu'elle est partielle."
-msgstr ""
-"**Μια συλλογή της οποίας οι θέσεις δεν περιλαμβάνονται όλες στην επιλογή "
-"φτάνει περικομμένη.** Η λίστα δείχνει επομένως, για κάθε συλλογή, το "
-"καλυπτόμενο μέρος («12/40») και το επισημαίνει με κόκκινο όταν είναι "
-"μερικό."
+"**Ένας αγώνας φεύγει με τα ψευδώνυμα των παικτών και του γεγονότος του**:"
+" το πλαίσιο *Ψευδώνυμα*, εξαρχής τσεκαρισμένο, κάνει τη συγχώνευση "
+"παικτών να ακολουθεί, και ο παραλήπτης διαβάζει έναν συγχωνευμένο παίκτη "
+"ως έναν. Ένα ψευδώνυμο που δεν ονομάζει κανέναν από τους εξαγόμενους "
+"αγώνες μένει σε εσάς."
 
 #: ../../source/manuel.rst:4960
 msgid ""
+"**Une collection dont toutes les positions ne sont pas dans la liste "
+"arrive tronquée.** La liste des collections affiche, pour chacune, la "
+"part couverte (« 12/40 ») et la signale en rouge lorsqu'elle est "
+"partielle. La case *+ leurs positions* emporte les positions des "
+"collections cochées : celles d'une liste faite à la main, celles que la "
+"requête d'une collection vivante sélectionne."
+msgstr ""
+"**Μια συλλογή της οποίας οι θέσεις δεν βρίσκονται όλες στη λίστα φτάνει "
+"κομμένη.** Η λίστα των συλλογών εμφανίζει, για καθεμία, το μέρος που "
+"καλύπτεται («12/40») και το επισημαίνει με κόκκινο όταν είναι μερικό. Το "
+"πλαίσιο *+ οι θέσεις τους* μεταφέρει τις θέσεις των συλλογών που είναι "
+"τσεκαρισμένες: αυτές μιας λίστας φτιαγμένης με το χέρι, αυτές που "
+"επιλέγει το ερώτημα μιας ζωντανής συλλογής."
+
+#: ../../source/manuel.rst:4966
+msgid ""
 "**Les tournois ne peuvent être exportés qu'avec les matchs** : sans eux, "
 "le lien tournoi–match n'existe pas et le tournoi arriverait vide. La case"
-" est désactivée tant que « inclure les matchs » ne l'est pas."
+" reste inactive tant que celle des matchs ne l'est pas."
 msgstr ""
 "**Τα τουρνουά μπορούν να εξαχθούν μόνο μαζί με τους αγώνες**: χωρίς "
-"αυτούς δεν υπάρχει ο σύνδεσμος τουρνουά–αγώνα και το τουρνουά θα έφτανε "
-"κενό. Το πλαίσιο παραμένει απενεργοποιημένο όσο δεν έχει επιλεγεί το "
-"«συμπερίληψη των αγώνων»."
+"αυτούς, ο σύνδεσμος τουρνουά–αγώνα δεν υπάρχει και το τουρνουά θα έφτανε "
+"άδειο. Το πλαίσιο παραμένει ανενεργό όσο είναι και το πλαίσιο των αγώνων."
 
-#: ../../source/manuel.rst:4964
+#: ../../source/manuel.rst:4969
+msgid ""
+"**Un paquet Anki part avec ses positions**, en copie d'étude neuve. La "
+"case *avec mon historique* emporte en plus l'état de chaque carte et le "
+"journal de ses révisions : une sauvegarde, ou vos paquets passés sur une "
+"autre machine. Elle est décochée pour une liste, cochée pour la "
+"bibliothèque."
+msgstr ""
+"**Μια τράπουλα Anki φεύγει με τις θέσεις της**, ως καινούργιο αντίγραφο "
+"μελέτης. Το πλαίσιο *με το ιστορικό μου* μεταφέρει επιπλέον την κατάσταση"
+" κάθε κάρτας και το αρχείο καταγραφής των επαναλήψεών της: ένα αντίγραφο "
+"ασφαλείας, ή οι τράπουλές σας μεταφερμένες σε άλλο μηχάνημα. Είναι "
+"ξετσεκαρισμένο για μια λίστα, τσεκαρισμένο για τη βιβλιοθήκη."
+
+#: ../../source/manuel.rst:4973
+msgid ""
+"**Les filtres enregistrés** n'exportent pas du contenu mais vos propres "
+"recherches, sans utilité dans la base de quelqu'un d'autre ; la case est "
+"décochée pour une liste. Un filtre qui désigne une position, un match ou "
+"un tournoi par son numéro est renuméroté pour le fichier ; s'il en "
+"désigne un qui ne part pas, il reste chez vous."
+msgstr ""
+"**Τα αποθηκευμένα φίλτρα** δεν εξάγουν περιεχόμενο αλλά τις δικές σας "
+"αναζητήσεις, άχρηστες στη βάση κάποιου άλλου· το πλαίσιο είναι "
+"ξετσεκαρισμένο για μια λίστα. Ένα φίλτρο που υποδεικνύει μια θέση, έναν "
+"αγώνα ή ένα τουρνουά με τον αριθμό του αριθμείται εκ νέου για το αρχείο· "
+"αν υποδεικνύει κάτι που δεν φεύγει, μένει σε εσάς."
+
+#: ../../source/manuel.rst:4979
 msgid ""
 "Les champs *Utilisateur*, *Description* et *Date de création* décrivent "
-"le **fichier produit** ; ils sont préremplis depuis la base source. La "
-"case *Mes filtres enregistrés* est à part des autres : elle n'exporte pas"
-" du contenu mais vos propres recherches enregistrées, sans utilité dans "
-"la base de quelqu'un d'autre. Un filtre qui désigne une position, un "
-"match ou un tournoi par son numéro est renuméroté pour le fichier ; s'il "
-"en désigne un qui ne part pas, il reste chez vous."
+"le **fichier produit** ; ils sont préremplis depuis la base source."
 msgstr ""
 "Τα πεδία *Χρήστης*, *Περιγραφή* και *Ημερομηνία δημιουργίας* περιγράφουν "
-"το **αρχείο που παράγεται**· συμπληρώνονται εκ των προτέρων από τη βάση "
-"προέλευσης. Το πλαίσιο *Τα αποθηκευμένα φίλτρα μου* είναι ξεχωριστό από "
-"τα υπόλοιπα: δεν εξάγει περιεχόμενο αλλά τις δικές σας αποθηκευμένες "
-"αναζητήσεις, οι οποίες δεν χρησιμεύουν σε τίποτα στη βάση κάποιου άλλου. "
-"Ένα φίλτρο που ορίζει μια θέση, έναν αγώνα ή ένα τουρνουά με τον αριθμό "
-"του αναριθμείται για το αρχείο· αν ορίζει κάποιο που δεν εξάγεται, μένει "
-"σε εσάς."
+"το **παραγόμενο αρχείο**· είναι προσυμπληρωμένα από τη βάση προέλευσης."
 
-#: ../../source/manuel.rst:4972
-msgid "Cocher **Marquer ce fichier de son origine** fait apparaître deux champs :"
-msgstr ""
-"Η επιλογή **Σήμανση αυτού του αρχείου με την προέλευσή του** εμφανίζει "
-"δύο πεδία:"
+#: ../../source/manuel.rst:4982
+msgid "Cocher **Filigrane** fait apparaître deux champs :"
+msgstr "Η επιλογή **Υδατογράφημα** εμφανίζει δύο πεδία:"
 
-#: ../../source/manuel.rst:4974
+#: ../../source/manuel.rst:4984
 msgid ""
 "**Origine** — ce qu'est ce fichier et d'où il vient, dans vos mots : « "
 "Cours de Jean Dupont — 12 mars 2026 ». Ce champ est **obligatoire** : "
-"tant qu'il est vide, le bouton d'export reste inactif."
+"tant qu'il est vide, il est bordé de rouge et le bouton d'export reste "
+"inactif."
 msgstr ""
 "**Προέλευση** — τι είναι αυτό το αρχείο και από πού προέρχεται, με δικά "
 "σας λόγια: «Μάθημα του Jean Dupont — 12 Μαρτίου 2026». Το πεδίο αυτό "
-"είναι **υποχρεωτικό**: όσο παραμένει κενό, το κουμπί εξαγωγής μένει "
-"ανενεργό."
+"είναι **υποχρεωτικό**: όσο είναι κενό, περιβάλλεται από κόκκινο "
+"περίγραμμα και το κουμπί εξαγωγής παραμένει ανενεργό."
 
-#: ../../source/manuel.rst:4977
+#: ../../source/manuel.rst:4987
 msgid ""
 "**Note**, facultative — conditions d'utilisation, adresse de contact, une"
 " demande de ne pas rediffuser."
@@ -11995,7 +12021,7 @@ msgstr ""
 "**Σημείωση**, προαιρετική — όροι χρήσης, διεύθυνση επικοινωνίας, ένα "
 "αίτημα να μην αναδιανεμηθεί."
 
-#: ../../source/manuel.rst:4980
+#: ../../source/manuel.rst:4990
 msgid ""
 "La marque est signée avec votre identité d'émetteur. Elle est donc "
 "**inaltérable et infalsifiable** : nul ne peut la modifier, ni en "
@@ -12010,11 +12036,11 @@ msgstr ""
 "SQLite και το blunderDB είναι ελεύθερο λογισμικό. Δεν εμποδίζει τίποτε: "
 "λέει από πού προέρχεται το αρχείο."
 
-#: ../../source/manuel.rst:4987
+#: ../../source/manuel.rst:4997
 msgid "Identité d'émetteur"
 msgstr "Ταυτότητα εκδότη"
 
-#: ../../source/manuel.rst:4989
+#: ../../source/manuel.rst:4999
 msgid ""
 "Les marques sont signées avec votre **identité d'émetteur**, créée toute "
 "seule la première fois que vous marquez un fichier ; il n'y a rien à "
@@ -12028,7 +12054,7 @@ msgstr ""
 "σας τα αρχεία φέρουν το ίδιο δημόσιο αποτύπωμα, της μορφής "
 "``A3F1-9C24-7B05-E1D8``."
 
-#: ../../source/manuel.rst:4994
+#: ../../source/manuel.rst:5004
 msgid ""
 "Vous pouvez communiquer cette empreinte à vos destinataires pour qu'ils "
 "vérifient qu'un fichier vient bien de vous. L'identité se transporte d'un"
@@ -12043,7 +12069,7 @@ msgstr ""
 "**Το αρχείο αυτό επιτρέπει την υπογραφή στο όνομά σας: μην το "
 "μοιράζεστε.**"
 
-#: ../../source/manuel.rst:5000
+#: ../../source/manuel.rst:5010
 msgid ""
 "Dans les préférences (icône engrenage de la barre d'outils), l'onglet "
 "*Identité d'émetteur* affiche votre nom et votre empreinte, et propose "
@@ -12053,7 +12079,7 @@ msgstr ""
 "*Ταυτότητα εκδότη* εμφανίζει το όνομα και το αποτύπωμά σας και προσφέρει "
 "*Αποθήκευση ταυτότητας…*, *Φόρτωση ταυτότητας…* και *Αναδημιουργία…*."
 
-#: ../../source/manuel.rst:5006
+#: ../../source/manuel.rst:5016
 msgid ""
 "**Régénérer ne révoque rien.** Un filigrane embarque la clé publique qui "
 "l'a signé : il se vérifie donc pour toujours, tout seul. Si votre fichier"
@@ -12066,7 +12092,7 @@ msgstr ""
 "μπορεί να συνεχίσει να υπογράφει με το παλιό σας αποτύπωμα, και οι "
 "σημάνσεις αυτές θα παραμένουν έγκυρες."
 
-#: ../../source/manuel.rst:5011
+#: ../../source/manuel.rst:5021
 msgid ""
 "Ce qui vous protège après une fuite n'est pas logiciel : c'est de publier"
 " votre nouvelle empreinte et de désavouer l'ancienne auprès de vos "
@@ -12076,7 +12102,7 @@ msgstr ""
 "να δημοσιοποιήσετε το νέο σας αποτύπωμα και να αποκηρύξετε το παλιό "
 "απέναντι στους παραλήπτες σας."
 
-#: ../../source/manuel.rst:5015
+#: ../../source/manuel.rst:5025
 msgid ""
 "La régénération écrase la clé actuelle ; blunderDB propose de "
 "l'enregistrer avant de la remplacer."
@@ -12084,11 +12110,11 @@ msgstr ""
 "Η αναδημιουργία αντικαθιστά το τρέχον κλειδί· το blunderDB προτείνει να "
 "το αποθηκεύσετε πριν το αντικαταστήσει."
 
-#: ../../source/manuel.rst:5019
+#: ../../source/manuel.rst:5029
 msgid "Protéger une base par un mot de passe"
 msgstr "Προστασία μιας βάσης με κωδικό πρόσβασης"
 
-#: ../../source/manuel.rst:5021
+#: ../../source/manuel.rst:5031
 msgid ""
 "Le mot de passe se saisit masqué, ici comme à l'ouverture d'un fichier "
 "protégé ; l'icône en forme d'œil l'affiche **tant qu'on la maintient "
@@ -12098,25 +12124,23 @@ msgstr ""
 "προστατευμένου αρχείου· το εικονίδιο σε σχήμα ματιού τον εμφανίζει **όσο "
 "το κρατάτε πατημένο** και τον κρύβει ξανά μόλις το αφήσετε."
 
-#: ../../source/manuel.rst:5025
+#: ../../source/manuel.rst:5035
 msgid ""
-"Cocher **Protéger ce fichier par un mot de passe** produit un fichier "
-"d'extension ``.dbx`` — y compris si vous aviez choisi un nom en ``.db`` "
-"dans la fenêtre d'enregistrement, celle-ci s'ouvrant avant que le mot de "
-"passe ne soit demandé. Pour l'ouvrir, utilisez l'ouverture de base "
-"habituelle : la fenêtre de sélection accepte aussi bien les ``.db`` que "
-"les ``.dbx``. blunderDB demande alors le mot de passe et installe une "
-"base ordinaire à côté ; ensuite plus rien n'est demandé."
+"Cocher **Mot de passe** produit un fichier d'extension ``.dbx`` — y "
+"compris si le nom choisi dans la fenêtre d'enregistrement finit en "
+"``.db``. Pour l'ouvrir, utilisez l'ouverture de base habituelle : la "
+"fenêtre de sélection accepte aussi bien les ``.db`` que les ``.dbx``. "
+"blunderDB demande alors le mot de passe et installe une base ordinaire à "
+"côté ; ensuite plus rien n'est demandé."
 msgstr ""
-"Η επιλογή **Προστασία αυτού του αρχείου με κωδικό πρόσβασης** παράγει "
-"αρχείο με επέκταση ``.dbx`` — ακόμη και αν είχατε επιλέξει όνομα σε "
-"``.db`` στο παράθυρο αποθήκευσης, καθώς αυτό ανοίγει πριν ζητηθεί ο "
-"κωδικός. Για να το ανοίξετε, χρησιμοποιήστε το συνηθισμένο άνοιγμα βάσης:"
-" το παράθυρο επιλογής δέχεται τόσο ``.db`` όσο και ``.dbx``. Το blunderDB"
-" ζητά τότε τον κωδικό και εγκαθιστά δίπλα μια συνηθισμένη βάση· στη "
-"συνέχεια δεν ζητείται τίποτε άλλο."
+"Η επιλογή **Κωδικός** παράγει αρχείο με επέκταση ``.dbx`` — ακόμη κι αν "
+"το όνομα που επιλέχθηκε στο παράθυρο αποθήκευσης τελειώνει σε ``.db``. "
+"Για να το ανοίξετε, χρησιμοποιήστε το συνηθισμένο άνοιγμα βάσης: το "
+"παράθυρο επιλογής δέχεται εξίσου ``.db`` και ``.dbx``. Το blunderDB ζητά "
+"τότε τον κωδικό και εγκαθιστά δίπλα μια συνηθισμένη βάση· μετά δεν "
+"ζητείται τίποτε άλλο."
 
-#: ../../source/manuel.rst:5033
+#: ../../source/manuel.rst:5041
 msgid ""
 "La fenêtre propose de **supprimer le fichier protégé une fois ouvert** : "
 "sans cela vous conservez le même contenu sous deux noms. La case n'est "
@@ -12130,7 +12154,7 @@ msgstr ""
 "παραμένει δικό σας αν σκοπεύετε να το διαβιβάσετε — και η διαγραφή "
 "γίνεται μόνο μετά από επιτυχές άνοιγμα."
 
-#: ../../source/manuel.rst:5040
+#: ../../source/manuel.rst:5048
 msgid ""
 "Le mot de passe protège le **transport** du fichier, pas la base. Il "
 "empêche un tiers d'ouvrir un fichier qui traîne dans un dossier de "
@@ -12142,7 +12166,7 @@ msgstr ""
 "συνημμένο που προωθήθηκε κατά λάθος. Δεν προστατεύει από εκείνον στον "
 "οποίο δώσατε τον κωδικό."
 
-#: ../../source/manuel.rst:5045
+#: ../../source/manuel.rst:5053
 msgid ""
 "Le mot de passe est vérifié à **chaque** ouverture, y compris lorsque le "
 "fichier a déjà été ouvert auparavant sur ce poste."
@@ -12150,7 +12174,7 @@ msgstr ""
 "Ο κωδικός επαληθεύεται σε **κάθε** άνοιγμα, ακόμη και όταν το αρχείο έχει"
 " ήδη ανοιχτεί προηγουμένως σε αυτόν τον υπολογιστή."
 
-#: ../../source/manuel.rst:5048
+#: ../../source/manuel.rst:5056
 msgid ""
 "Techniquement, la base est chiffrée par **AES-256 en mode GCM**, avec une"
 " clé dérivée du mot de passe par **Argon2id** (64 Mio de mémoire, 3 "
@@ -12166,7 +12190,7 @@ msgstr ""
 " ως τέτοιος, όπως και κάθε αλλοίωση του κρυπτογραφημένου αρχείου — ποτέ "
 "δεν καταλήγει κανείς σιωπηλά με κατεστραμμένη βάση."
 
-#: ../../source/manuel.rst:5055
+#: ../../source/manuel.rst:5063
 msgid ""
 "L'en-tête du fichier protégé reste **en clair** : son origine demeure "
 "lisible sans le mot de passe."
@@ -12174,11 +12198,11 @@ msgstr ""
 "Η κεφαλίδα του προστατευμένου αρχείου παραμένει **μη κρυπτογραφημένη**: η"
 " προέλευσή του παραμένει αναγνώσιμη χωρίς τον κωδικό."
 
-#: ../../source/manuel.rst:5059
+#: ../../source/manuel.rst:5067
 msgid "Lire l'origine d'un fichier"
 msgstr "Ανάγνωση της προέλευσης ενός αρχείου"
 
-#: ../../source/manuel.rst:5061
+#: ../../source/manuel.rst:5069
 msgid ""
 "Dans l'application, ouvrez le fichier et affichez le panneau "
 "**Métadonnées** (commande ``meta``). Une section **Origine** apparaît en "
@@ -12190,11 +12214,11 @@ msgstr ""
 "μια ενότητα **Προέλευση**, μόνο για ανάγνωση, που δείχνει τι "
 "καταχωρήθηκε, από ποιον, πότε, και την κατάσταση της υπογραφής:"
 
-#: ../../source/manuel.rst:5066
+#: ../../source/manuel.rst:5074
 msgid "« ✓ marquée par vous » : le fichier porte votre marque, intacte ;"
 msgstr "«✓ σημάνθηκε από εσάς»: το αρχείο φέρει τη δική σας σήμανση, ανέπαφη·"
 
-#: ../../source/manuel.rst:5068
+#: ../../source/manuel.rst:5076
 msgid ""
 "« ✓ signature vérifiée » : la marque est intacte et vient d'une autre clé"
 " — comparez son empreinte à celle que le producteur vous a communiquée ;"
@@ -12203,15 +12227,15 @@ msgstr ""
 "άλλο κλειδί — συγκρίνετε το αποτύπωμά της με εκείνο που σας γνωστοποίησε "
 "ο δημιουργός·"
 
-#: ../../source/manuel.rst:5070
+#: ../../source/manuel.rst:5078
 msgid "« ⚠ signature invalide » : le document a été modifié ou contrefait."
 msgstr "«⚠ μη έγκυρη υπογραφή»: το έγγραφο τροποποιήθηκε ή πλαστογραφήθηκε."
 
-#: ../../source/manuel.rst:5072
+#: ../../source/manuel.rst:5080
 msgid "Cette section n'apparaît pas sur une base ordinaire."
 msgstr "Η ενότητα αυτή δεν εμφανίζεται σε μια συνηθισμένη βάση."
 
-#: ../../source/manuel.rst:5074
+#: ../../source/manuel.rst:5082
 msgid ""
 "En ligne de commande, ``blunderdb info --db fichier.db`` affiche "
 "l'origine et l'état de la signature, **sans jamais écrire dans le "
@@ -12226,11 +12250,11 @@ msgstr ""
 "``--password`` της ``export``, καθώς και για τις ``identity`` και "
 "``open``."
 
-#: ../../source/manuel.rst:5083
+#: ../../source/manuel.rst:5091
 msgid "Publier une base pour d'autres"
 msgstr "Δημοσίευση μιας βάσης για άλλους"
 
-#: ../../source/manuel.rst:5085
+#: ../../source/manuel.rst:5093
 msgid ""
 "Une base marquée se distribue comme n'importe quel fichier — courriel, "
 "site personnel, clé USB. blunderDB **ne fournit aucun service** : ni "
@@ -12247,7 +12271,7 @@ msgstr ""
 " θα υπήρχε λοιπόν τίποτα να αναφερθεί σε μια υπηρεσία, ακόμη κι αν "
 "υπήρχε."
 
-#: ../../source/manuel.rst:5091
+#: ../../source/manuel.rst:5099
 msgid ""
 "Ce qui rend une base publiée utilisable par quelqu'un d'autre tient à "
 "quatre champs, tous déjà là :"
@@ -12255,13 +12279,13 @@ msgstr ""
 "Αυτό που κάνει μια δημοσιευμένη βάση χρήσιμη σε κάποιον άλλο περιορίζεται"
 " σε τέσσερα πεδία, όλα ήδη παρόντα:"
 
-#: ../../source/manuel.rst:5094
+#: ../../source/manuel.rst:5102
 msgid ""
 "**Utilisateur** — qui l'a constituée, sous le nom que vous voulez voir "
 "cité."
 msgstr "**Χρήστης** — ποιος τη συγκρότησε, με το όνομα που θέλετε να αναφέρεται."
 
-#: ../../source/manuel.rst:5095
+#: ../../source/manuel.rst:5103
 msgid ""
 "**Description** — ce que la base contient, en une phrase qui tienne dans "
 "une liste : « 240 décisions de videau au score, commentées, niveau "
@@ -12270,7 +12294,7 @@ msgstr ""
 "**Περιγραφή** — τι περιέχει η βάση, σε μία φράση που χωράει σε μια λίστα:"
 " «240 αποφάσεις κύβου στο σκορ, σχολιασμένες, ενδιάμεσο επίπεδο»."
 
-#: ../../source/manuel.rst:5097
+#: ../../source/manuel.rst:5105
 msgid ""
 "**Origine** (du filigrane) — ce qu'est ce fichier et pour qui il a été "
 "produit. C'est ce que le destinataire lit en premier dans le panneau "
@@ -12280,7 +12304,7 @@ msgstr ""
 "ποιον παρήχθη. Είναι το πρώτο που διαβάζει ο παραλήπτης στον πίνακα "
 "*Μεταδεδομένα*."
 
-#: ../../source/manuel.rst:5100
+#: ../../source/manuel.rst:5108
 msgid ""
 "**Empreinte d'émetteur** — publiez-la à côté du fichier, pas dedans : "
 "c'est en la comparant que le destinataire vérifie que le fichier vient de"
@@ -12290,7 +12314,7 @@ msgstr ""
 "συγκρίνοντάς το ο παραλήπτης επαληθεύει ότι το αρχείο προέρχεται από εσάς"
 " και όχι από κάποιον που πήρε το όνομά σας."
 
-#: ../../source/manuel.rst:5104
+#: ../../source/manuel.rst:5112
 msgid ""
 "Une base publiée sans filigrane reste parfaitement utilisable ; elle est "
 "simplement anonyme, et le panneau *Métadonnées* n'affiche alors aucune "
@@ -12300,7 +12324,7 @@ msgstr ""
 "είναι απλώς ανώνυμη, και ο πίνακας *Μεταδεδομένα* δεν εμφανίζει τότε "
 "καμία ενότητα *Προέλευση*."
 
-#: ../../source/manuel.rst:5108
+#: ../../source/manuel.rst:5116
 msgid ""
 "Pour faire connaître une base, la catégorie *Show and tell* des "
 "`discussions du dépôt <https://github.com/kevung/blunderDB/discussions>`_"
@@ -13479,3 +13503,40 @@ msgstr ""
 #~ "πίνακας δείχνει όλους τους παίκτες και"
 #~ " ήδη διαχωρίζει τις αποφάσεις πουλιών "
 #~ "και κύβου σε ξεχωριστές στήλες."
+
+#~ msgid ""
+#~ "La fenêtre d'export tient en un "
+#~ "seul écran : le formulaire, puis "
+#~ "une progression qui se superpose à "
+#~ "lui le temps de l'écriture. Elle "
+#~ "se ferme d'elle-même une fois "
+#~ "terminée, et le résultat s'affiche dans"
+#~ " la barre d'état."
+#~ msgstr ""
+#~ "Το παράθυρο εξαγωγής χωράει σε μία "
+#~ "μόνο οθόνη: η φόρμα και, πάνω της,"
+#~ " μια ένδειξη προόδου κατά τη διάρκεια"
+#~ " της εγγραφής. Κλείνει από μόνο του"
+#~ " όταν ολοκληρωθεί και το αποτέλεσμα "
+#~ "εμφανίζεται στη γραμμή κατάστασης."
+
+#~ msgid ""
+#~ "**L'export porte sur les positions "
+#~ "actuellement affichées**, pas sur la "
+#~ "base entière. Après une recherche, seuls"
+#~ " les résultats partent — la fenêtre"
+#~ " le rappelle en tête — et la"
+#~ " liste des matchs ne propose que "
+#~ "ceux où ces positions ont été "
+#~ "jouées ; chaque match coché part "
+#~ "avec toutes ses positions."
+#~ msgstr ""
+#~ "**Η εξαγωγή αφορά τις θέσεις που "
+#~ "εμφανίζονται αυτή τη στιγμή**, όχι "
+#~ "ολόκληρη τη βάση. Μετά από μια "
+#~ "αναζήτηση εξάγονται μόνο τα αποτελέσματα "
+#~ "— το παράθυρο το υπενθυμίζει στην "
+#~ "κορυφή — και η λίστα των αγώνων"
+#~ " προτείνει μόνο εκείνους όπου παίχτηκαν "
+#~ "αυτές οι θέσεις· κάθε επιλεγμένος αγώνας"
+#~ " εξάγεται με όλες τις θέσεις του."

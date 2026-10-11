@@ -3256,6 +3256,8 @@ Options:
     	Include the player and event aliases the exported matches write in database export (default: true) (default true)
   -analysis
     	Include analysis in database export (default: true) (default true)
+  -anki-history
+    	Carry the review history of the exported Anki decks (default: true) (default true)
   -collection-ids string
     	Comma-separated list of collection IDs to export (empty = all)
   -collections
@@ -3267,7 +3269,7 @@ Options:
   -deck-ids string
     	Comma-separated list of Anki deck IDs to export (empty = all)
   -decks
-    	Include Anki decks, without their review history, in database export (default: true) (default true)
+    	Include Anki decks in database export (default: true) (default true)
   -dir string
     	Output directory for .mat batch export (type=mat, multiple matches)
   -file string

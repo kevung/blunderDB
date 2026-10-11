@@ -380,8 +380,9 @@ Exporte le contenu de la base vers des fichiers.
   exportés écrivent, pour que la fusion de joueurs les suive (défaut: oui).
 * ``--collections`` — Inclure les collections (défaut: oui).
 * ``--tournaments`` — Inclure les tournois (défaut: oui).
-* ``--decks`` — Inclure les paquets Anki, sans leur historique de révision
-  (défaut: oui).
+* ``--decks`` — Inclure les paquets Anki (défaut: oui).
+* ``--anki-history`` — Emporter l'historique de révision des paquets exportés :
+  l'état de chaque carte et le journal de ses révisions (défaut: oui).
 * ``--collection-ids`` — IDs de collections à exporter (séparés par des
   virgules, vide = toutes).
 * ``--match-ids`` — IDs de matchs à exporter (séparés par des virgules, vide = tous).

@@ -1009,7 +1009,11 @@ code ``invalid``. ``collectionIds`` restreint l'export à ces collections et à
 leurs positions, avec analyses, commentaires et coups joués, sans la
 bibliothèque de filtres ni les autres paquets Anki. ``deckIds`` fait de même
 pour des paquets Anki : chacun voyage avec ses positions, sans l'historique de
-révision de celui qui l'envoie. Les deux champs se combinent.
+révision de celui qui l'envoie. Les deux champs se combinent. ``ankiHistory``
+décide de cet historique : absent, tout le tenant l'emporte et des paquets
+choisis par ``deckIds`` partent sans. ``transcriptions`` et ``aliases`` à
+``false`` laissent sur place les brouillons de transcription des matchs
+exportés et les alias qu'ils écrivent ; absents, les deux voyagent.
 
 **Importer un dossier ou un corpus** se fait par ``imports.batch``, qui passe
 par le même pipeline que ``blunderdb import --type batch`` : mêmes matchs,
