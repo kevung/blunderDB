@@ -529,17 +529,34 @@ func testMatchRepairSeatsUnclear(t *testing.T, s storage.Storage) {
 		t.Errorf("names against moves: err = %v, want ErrRepairSeatsUnclear", err)
 	}
 
-	// Half the moves each way.
-	g = repairGraph(t, path)
-	n := 0
-	for gi := range g.Games {
-		for mi := range g.Games[gi].Moves {
-			if n%2 == 0 {
-				g.Games[gi].Moves[mi].Move.Player = -g.Games[gi].Moves[mi].Move.Player
+	// Half the moves each way: the names, read the same on both sides,
+	// settle it.
+	split := func() *ingest.MatchGraph {
+		g := repairGraph(t, path)
+		n := 0
+		for gi := range g.Games {
+			for mi := range g.Games[gi].Moves {
+				if n%2 == 0 {
+					g.Games[gi].Moves[mi].Move.Player = -g.Games[gi].Moves[mi].Move.Player
+				}
+				n++
 			}
-			n++
 		}
+		return g
 	}
+	if rep, err := ingest.RepairMatch(ctx, s, "", matchID, split(), true); err != nil || rep.Swapped {
+		t.Errorf("split vote, same names: %+v, %v; want the seats the names give", rep, err)
+	}
+
+	// Without names to settle it, a split vote is refused.
+	m, err := s.Matches().Get(ctx, "", matchID)
+	if err != nil {
+		t.Fatalf("Get: %v", err)
+	}
+	if err := s.Matches().Update(ctx, "", matchID, "Edited One", "Edited Two", m.MatchDate.Format("2006-01-02")); err != nil {
+		t.Fatalf("Update: %v", err)
+	}
+	g = split()
 	if _, err := ingest.RepairMatch(ctx, s, "", matchID, g, true); !errors.Is(err, ingest.ErrRepairSeatsUnclear) {
 		t.Errorf("split vote: err = %v, want ErrRepairSeatsUnclear", err)
 	}

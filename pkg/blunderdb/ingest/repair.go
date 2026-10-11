@@ -246,9 +246,10 @@ func repairOnce(ctx context.Context, store TxBeginner, scope string, matchID int
 	rep.Before = counts
 
 	// The seats: a move's player is what a swap changes and nothing else
-	// does, so the moves vote. Most of the file's moves must take part, the
-	// vote must be clear, and names that read the same on both sides (no
-	// alias, no edit) must not say otherwise.
+	// does, so the moves vote, and most of the file's moves must take part.
+	// Names that read the same on both sides (no alias, no edit) also tell:
+	// they settle a split vote and refuse a clear one that says otherwise.
+	// Without them, a split vote is refused.
 	agree, disagree, fileMoves := 0, 0, 0
 	for _, gg := range g.Games {
 		for _, mg := range gg.Moves {
@@ -265,11 +266,19 @@ func repairOnce(ctx context.Context, store TxBeginner, scope string, matchID int
 		}
 	}
 	votes := agree + disagree
-	if votes == 0 || 2*votes < fileMoves || 4*min(agree, disagree) > votes {
+	if votes == 0 || 2*votes < fileMoves {
 		return rep, nil, ErrRepairSeatsUnclear
 	}
-	rep.Swapped = disagree > agree
-	if byNames, ok := seatsByNames(stored, &g.Match); ok && byNames != rep.Swapped {
+	clear := 4*min(agree, disagree) <= votes
+	byNames, named := seatsByNames(stored, &g.Match)
+	switch {
+	case clear && named && byNames != (disagree > agree):
+		return rep, nil, ErrRepairSeatsUnclear
+	case clear:
+		rep.Swapped = disagree > agree
+	case named:
+		rep.Swapped = byNames
+	default:
 		return rep, nil, ErrRepairSeatsUnclear
 	}
 

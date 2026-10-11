@@ -15,7 +15,7 @@ import (
 )
 
 // postRepair uploads file as the source of match id to matches.repair.
-func postRepair(t *testing.T, ts *httptest.Server, id int64, name string, file []byte, dryRun bool) (*http.Response, map[string]any) {
+func postRepair(t *testing.T, ts *httptest.Server, id int64, name string, file []byte, dryRun bool) (int, map[string]any) {
 	t.Helper()
 	var body bytes.Buffer
 	mw := multipart.NewWriter(&body)
@@ -39,7 +39,7 @@ func postRepair(t *testing.T, ts *httptest.Server, id int64, name string, file [
 	defer resp.Body.Close()
 	var out map[string]any
 	_ = json.NewDecoder(resp.Body).Decode(&out)
-	return resp, out
+	return resp.StatusCode, out
 }
 
 func TestMatchRepairUpload(t *testing.T) {
@@ -51,9 +51,9 @@ func TestMatchRepairUpload(t *testing.T) {
 	events := uploadImportNamed(t, ts, "/v1/imports.xg", "test.xg", src)
 	id := int64(events[len(events)-1]["match_id"].(float64))
 
-	resp, rep := postRepair(t, ts, id, "test.xg", src, true)
-	if resp.StatusCode != http.StatusOK {
-		t.Fatalf("status = %d (%v), want 200", resp.StatusCode, rep)
+	status, rep := postRepair(t, ts, id, "test.xg", src, true)
+	if status != http.StatusOK {
+		t.Fatalf("status = %d (%v), want 200", status, rep)
 	}
 	if rep["changed_moves"].(float64) != 0 || rep["dry_run"] != true {
 		t.Errorf("a freshly imported match differs from its file: %v", rep)
@@ -63,7 +63,7 @@ func TestMatchRepairUpload(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if resp, body := postRepair(t, ts, id, "other.xg", other, false); resp.StatusCode != http.StatusBadRequest {
-		t.Errorf("another match's file: status = %d (%v), want 400", resp.StatusCode, body)
+	if status, body := postRepair(t, ts, id, "other.xg", other, false); status != http.StatusBadRequest {
+		t.Errorf("another match's file: status = %d (%v), want 400", status, body)
 	}
 }
