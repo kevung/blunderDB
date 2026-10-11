@@ -545,10 +545,8 @@ export default {
 <h4>Barra de filtro</h4>
 <p>La barra de filtro, en la parte superior del panel, permite restringir el cálculo a un subconjunto de posiciones.</p>
 <h5>Perspectiva del jugador</h5>
-<p>La lista desplegable <strong>Jugador</strong> permite filtrar las estadísticas según el jugador analizado. blunderDB selecciona automáticamente el jugador cuyo nombre aparece con más frecuencia en la base de datos, modificable en cualquier momento.</p>
-<div class="admonition tip">
-<p>Cambiar de jugador no provoca ninguna pérdida de datos; basta con volver a seleccionar el jugador anterior en la lista.</p>
-</div>
+<p>El campo <strong>Jugador</strong> filtra las estadísticas según el jugador analizado. Al escribir unas letras la lista se reduce a los nombres que las contienen; un clic o <em>Intro</em> elige al jugador, <strong>✕</strong> o un campo vaciado vuelve a todas las perspectivas.</p>
+<p>El filtro es <strong>uno solo</strong> para todas las pestañas del panel y se conserva de una sesión a otra. También se ajusta desde los demás paneles: el nombre de un jugador en la cabecera de una partida o en la barra sobre el tablero abre sus estadísticas, y el botón <strong>Stats</strong> de la cabecera de un torneo abre las de ese torneo.</p>
 <h5>Filtros disponibles</h5>
 <ul>
 <li><strong>Torneo(s)</strong> — restricción a uno o varios torneos. Pueden seleccionarse varios torneos simultáneamente.</li>
@@ -557,7 +555,7 @@ export default {
 <li><strong>Longitud de match</strong> — restricción a longitudes de match concretas (1, 3, 5, 7, 9, 11, 13, 15, 21 puntos). Pueden combinarse varias longitudes.</li>
 <li><strong>Motor</strong> y <strong>Profundidad mín.</strong> — conservar solo las decisiones analizadas por un motor dado (gnubg, xg…), o al menos a una profundidad dada, en plies.</li>
 </ul>
-<p>Un botón <strong>↺ Restablecer</strong> devuelve todos los filtros a cero (salvo el jugador autodetectado).</p>
+<p>Un botón <strong>↺ Restablecer</strong> devuelve todos los filtros a cero, salvo el jugador.</p>
 <div class="admonition note">
 <p>Los filtros se guardan en la configuración de blunderDB (<code>config.yaml</code>) y se restauran en el próximo inicio.</p>
 </div>
@@ -644,6 +642,7 @@ export default {
 <div class="admonition note">
 <p>El número total de decisiones se muestra en la parte inferior de cada tarjeta al pasar el cursor.</p>
 </div>
+<p>Bajo las tarjetas, la línea de totales cuenta los torneos, las partidas y las decisiones del filtro. El número de decisiones abre sus posiciones; el número de partidas abre esas partidas en el panel Partidas, salvo cuando hay un tipo de decisión o un filtro de procedencia activo: cuenta entonces menos partidas de las que abriría la lista y queda como un simple número.</p>
 <h5>Plan de estudio</h5>
 <p>La tarjeta <strong>Plan de estudio</strong> responde a «¿qué debo trabajar ahora?». Los errores recurrentes (pestaña Errores) dicen dónde perdió más el filtro; no dicen dónde rinde más el estudio. Una familia de posiciones realmente difíciles cuesta caro a todo el mundo, y tres errores no hacen una tendencia. El plan corrige ambas cosas.</p>
 <ul>
@@ -706,7 +705,7 @@ export default {
 <li>Un error que ninguna regla nombra con seguridad no se adivina: sale de la clasificación y aparece aparte, bajo la tabla, en una línea por plan de juego (« sin tema identificado: N errores, coste X »), también pulsable. Ese resto suele ser el más pesado, porque la explicación solo se pronuncia a partir de 60 mp, por encima del umbral <em>Error</em>: clasificado con los demás, encabezaría una tabla que no diría nada.</li>
 <li>El <strong>coste</strong> es la parte del PR del filtro que representa el grupo: la fórmula del PR aplicada a los errores del grupo, referida a todas las decisiones contadas. Los costes de los grupos nunca superan, pues, el PR.</li>
 </ul>
-<p>Al hacer clic en un grupo se cargan sus posiciones, de la más costosa a la menos costosa. El tema se recalcula en cada visualización y nunca se guarda: como el plan de juego, es una etiqueta derivada, no editable. En línea de comandos: <code>blunderdb stats recurring</code> (véase stats — Errores recurrentes).</p>
+<p>Al hacer clic en un grupo, o en su número de errores, se cargan sus posiciones, de la más costosa a la menos costosa. El tema se recalcula en cada visualización y nunca se guarda: como el plan de juego, es una etiqueta derivada, no editable. En línea de comandos: <code>blunderdb stats recurring</code> (véase stats — Errores recurrentes).</p>
 <p>Cada fila ofrece tres gestos para pasar del error al estudio: <strong>Quiz de este grupo</strong> inicia el ejercicio Decisión del panel Entrenamiento con las posiciones del grupo, <strong>Mazo Anki</strong> hace con ellas un mazo de tarjetas, <strong>Colección</strong> las guarda en una colección nueva. Sobre la tabla, <strong>Quiz de mis tres peores grupos</strong> sortea veinte posiciones entre las de los tres grupos más costosos. En la línea de comandos, <code>stats recurring --quiz</code> sortea esas posiciones y <code>--deck</code> crea el mazo.</p>
 <h5>Reparto por acción de cubo</h5>
 <p>Un diagrama de barras muestra el PR (o MWC) para cada tipo de decisión de cubo: <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Cada barra indica también el número de decisiones y la tasa de blunders en una información emergente.</p>
@@ -735,7 +734,7 @@ export default {
 <li>la <strong>retención de Anki</strong>: la parte de las revisiones de tarjetas ya aprendidas calificadas <em>Difícil</em> o mejor, leída en el eje derecho (en %).</li>
 </ul>
 <p>Bajo el gráfico, el <strong>PR del quiz por plan de juego</strong> ordena las decisiones del quiz sacadas de posiciones de la biblioteca, los peores planes primero, con el PR de la última ventana en que se jugó el plan.</p>
-<p>Entre paréntesis, el número de decisiones o de revisiones que hay detrás de cada valor: una ventana sin muestras no tiene valor — un guion, no un cero. El filtro solo restringe las partidas; el diario del quiz y el de Anki son suyos y no llevan jugador. No se registra nada más: las tres series se releen de los diarios existentes. En línea de comandos: <code>blunderdb stats training</code> (véase stats — Errores recurrentes).</p>
+<p>Entre paréntesis, el número de decisiones o de revisiones que hay detrás de cada valor: una ventana sin muestras no tiene valor — un guion, no un cero. El número de decisiones de partidas de una ventana abre sus posiciones. El filtro solo restringe las partidas; el diario del quiz y el de Anki son suyos y no llevan jugador. No se registra nada más: las tres series se releen de los diarios existentes. En línea de comandos: <code>blunderdb stats training</code> (véase stats — Errores recurrentes).</p>
 <h4>Pestaña Desgloses</h4>
 <p>La pestaña <strong>Desgloses</strong> divide las mismas decisiones que cuentan las cifras globales según cuatro ejes. Ninguno redefine qué cuenta como decisión: sería un segundo PR con el mismo nombre.</p>
 <ul>
@@ -806,6 +805,7 @@ export default {
 <ul>
 <li><strong>Ordenar</strong> — haga clic en un encabezado de columna. La tabla se abre ordenada por PR creciente, mejor jugador primero. Los jugadores de los que nada se ha medido permanecen abajo sea cual sea el sentido de la ordenación: un cero por falta de datos no es una actuación perfecta.</li>
 <li><strong>Abrir el detalle de un jugador</strong> — haga clic en una fila. El jugador queda seleccionado en la barra de filtros y la vista cambia a la pestaña Resumen.</li>
+<li><strong>Abrir sus partidas o sus decisiones</strong> — el número de partidas y el balance V–D abren sus partidas en el panel Partidas, el número de decisiones abre sus posiciones.</li>
 <li><strong>Restringir el periodo</strong> — los filtros de fechas, de torneos y de longitud de partida se aplican con normalidad, lo que permite acotar la tabla a las fechas de una competición.</li>
 <li><strong>Comparar dos jugadores</strong> — marque la casilla de la primera columna en dos filas. Sobre la tabla aparece un bloque que enfrenta sus indicadores; marcar a un tercer jugador sustituye al más antiguo de los dos. La casilla no selecciona la fila: marcar compara, hacer clic abre el detalle.</li>
 <li><strong>Ver las posiciones en las que uno jugó mejor</strong> — el botón del bloque de comparación lista las posiciones que ambos jugadores tuvieron que jugar y en las que uno jugó bien (por debajo del umbral de Error de la biblioteca) y el otro no, la mayor diferencia primero; un jugador se juzga por su peor jugada de la posición. <em>Abrir estas posiciones</em> las carga en la vista de análisis. La línea de comandos y el servidor dan la misma lista (<code>stats contrast</code>).</li>
@@ -814,10 +814,10 @@ export default {
 <p>En ese bloque <strong>solo las tasas reciben un veredicto</strong>, y la mejor de las dos va en negrita. Tres indicadores no lo reciben nunca, y vale la pena decir por qué. La <strong>suerte</strong> no es una cualidad: un jugador más afortunado no es mejor. Los <strong>partidos, el balance y las decisiones</strong> dicen lo que valen las tasas, pero ponerlos en competición haría ganar a quien simplemente jugó más. El <strong>número de blunders</strong> no se compara en bruto — doce sobre mil decisiones valen más que diez sobre cien —, por eso el bloque añade una línea <em>Blunders / 100 dec.</em> que sí se compara, y deja el recuento al lado como contexto.</p>
 <p>Un empate no es una victoria: no se pone en negrita en ningún lado. Una tasa sin nada detrás se muestra como «—» y no decide nada.</p>
 <div class="admonition note">
-<p>En esta pestaña, la lista <strong>Jugador</strong> y la elección del <strong>tipo de decisión</strong> están desactivadas: la tabla muestra a todos los jugadores y ya desglosa las decisiones de fichas y de cubo en columnas distintas.</p>
+<p>En esta pestaña, la elección del <strong>tipo de decisión</strong> está desactivada: la tabla ya reparte las decisiones de fichas y de cubo en columnas distintas. El jugador de la barra de filtros sigue activo: la tabla muestra siempre todos los jugadores, y la fila de este se resalta y se lleva a la pantalla.</p>
 </div>
 <p>Tres vistas de corpus figuran en la pestaña <strong>Corpus</strong> del panel, en la línea de comandos y en la API del demonio (véase stats — Errores recurrentes): el <strong>cara a cara</strong> de dos jugadores (partidos comunes, PR de cada uno, balance), el <strong>PR por ventana de calendario</strong> deslizante (1, 3, 6 o 12 meses) y la <strong>clasificación</strong> por PR de los jugadores que tienen al menos un número dado de decisiones contadas. La pestaña Corpus calcula cada vista bajo demanda, con el filtro actual. Un <strong>filtro de procedencia</strong> (campos <em>Motor</em> y <em>Profundidad mín.</em> de la barra de filtros) restringe las estadísticas a las decisiones analizadas así; actúa sobre cada decisión, y las cifras que afecta se recalculan entonces a partir de las decisiones. El cara a cara y el PR por ventana no lo aceptan: mientras está activo, se niegan a calcularse. Como el resto de la barra, se conserva de una sesión a otra.</p>
-<p>En la pestaña Corpus, cada fila abre lo que resume. Una fila de cara a cara abre sus partidas en el panel Partidas, que entonces muestra el botón «N partidas abiertas desde Stats ×»: devuelve la lista completa. Una fila de la clasificación abre las partidas del jugador y su número de decisiones abre las posiciones contadas; una fila de ventana abre sus posiciones y su número de partidas abre las partidas. Un recuento de posiciones del panel Stats, en cualquier pestaña, sale primero de la partida en curso antes de abrir su lista; el comando <code>m</code> reabre después la partida en la jugada guardada.</p>
+<p>En la pestaña Corpus, cada fila abre lo que resume. El balance del cara a cara abre sus partidas en el panel Partidas, que entonces muestra el botón «N partidas abiertas desde Stats ×»: devuelve la lista completa; una fila de cara a cara abre su partida. El primer jugador del cara a cara es de entrada el de la barra de filtros. Una fila de la clasificación abre las partidas del jugador y su número de decisiones abre las posiciones contadas; una fila de ventana y su número de decisiones abren sus posiciones, su número de partidas abre las partidas. Un recuento de posiciones del panel Stats, en cualquier pestaña, sale primero de la partida en curso antes de abrir su lista; el comando <code>m</code> reabre después la partida en la jugada guardada.</p>
 <div class="admonition important">
 <p>Un guion («—») señala un valor <strong>nunca medido</strong>, que no debe confundirse con cero. Es en particular el caso de la columna Suerte para toda partida importada antes de la versión 2.15.0 del esquema: la suerte no se conservaba entonces, y nada permite reconstruirla después. Reimportar el archivo de origen no basta: la importación reconoce un duplicado y solo aplica las marcas de estudio recién puestas (el informe da su número). Hay que eliminar la partida y luego volver a importarla. Los formatos que no la transportan (BGF, Jellyfish <code>.mat</code>) no la aportarán nunca.</p>
 </div>

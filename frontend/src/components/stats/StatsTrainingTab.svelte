@@ -20,7 +20,7 @@
     const QUIZ = '#e65100';
     const RETENTION = '#2e7d32';
 
-    let periods = $derived(data?.Periods ?? []);
+    let periods = $derived(/** @type {any[]} */ (data?.Periods ?? []));
     let sessions = $derived(data?.Sessions ?? []);
     let themes = $derived(data?.Themes ?? []);
 

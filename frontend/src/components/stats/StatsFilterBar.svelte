@@ -45,7 +45,7 @@
 
     const MATCH_LENGTHS = [1, 3, 5, 7, 9, 11, 13, 15, 21];
 
-    /** @param {Partial<typeof filter>} patch */
+    /** @param {Partial<import('../../stores/statsStore.js').StatsFilterState>} patch */
     function apply(patch) {
         dateError = !patchStatsFilter(patch);
     }
@@ -167,17 +167,17 @@
                 variant="field"
                 bind:value={playerDraft}
                 items={playerList}
-                label={(p) => p.Name}
-                key={(p) => p.Name}
+                label={(/** @type {{Name: string}} */ p) => p.Name}
+                key={(/** @type {{Name: string}} */ p) => p.Name}
                 filter={playerMatches}
                 placeholder={$t('stats.allPerspectives')}
                 maxHeight={240}
-                onSelect={(p) => choosePlayer(p.Name)}
+                onSelect={(/** @type {{Name: string}} */ p) => choosePlayer(p.Name)}
                 onSubmit={submitPlayer}
                 onCancel={() => (playerDraft = filter.playerName)}
                 onDismiss={() => (playerDraft = filter.playerName)}
             >
-                {#snippet item(p)}<span title={p.Name}>{p.Name} ({p.Count})</span>{/snippet}
+                {#snippet item(/** @type {{Name: string, Count: number}} */ p)}<span title={p.Name}>{p.Name} ({p.Count})</span>{/snippet}
             </EntityAutocomplete>
         </div>
         {#if filter.playerName}

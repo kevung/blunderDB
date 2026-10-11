@@ -6,23 +6,30 @@ import { GetStatsFilter, SaveStatsFilter } from '../../wailsjs/go/main/Config.js
 
 /** @typedef {import('../../wailsjs/go/models').database.StatsResult} StatsResult the engine result; consumers narrow it field by field */
 
+/**
+ * @typedef {{ playerName: string, tournamentIDs: number[], dateFrom: string, dateTo: string, decisionType: number,
+ *   matchLength: number[], analysisEngine: string, minAnalysisDepth: number }} StatsFilterState
+ */
+
 /** The filter of a fresh install, and what "Reset" returns to (the player aside). */
-export const defaultStatsFilter = Object.freeze({
-    playerName: '',
-    tournamentIDs: /** @type {number[]} */ ([]),
-    dateFrom: '',
-    dateTo: '',
-    decisionType: -1, // -1 = all, 0 = checker, 1 = cube
-    matchLength: /** @type {number[]} */ ([]),
-    analysisEngine: '',
-    minAnalysisDepth: 0
-});
+export const defaultStatsFilter = /** @type {Readonly<StatsFilterState>} */ (
+    Object.freeze({
+        playerName: '',
+        tournamentIDs: [],
+        dateFrom: '',
+        dateTo: '',
+        decisionType: -1, // -1 = all, 0 = checker, 1 = cube
+        matchLength: [],
+        analysisEngine: '',
+        minAnalysisDepth: 0
+    })
+);
 
 /**
  * The one Stats filter every tab, drill-down and incoming link reads. Written only through
  * patchStatsFilter / resetStatsFilter, which also persist it.
  */
-export const statsFilterStore = writable({ ...defaultStatsFilter });
+export const statsFilterStore = writable(/** @type {StatsFilterState} */ ({ ...defaultStatsFilter }));
 export const statsResultStore = writable(/** @type {any} */ (null));
 export const statsLoadingStore = writable(false);
 export const statsErrorStore = writable(/** @type {any} */ (null));
@@ -114,7 +121,7 @@ statsMetricStore.subscribe(() => {
  * Merge `patch` into the filter and save it (debounced). A date range that ends before it
  * starts is refused: the filter is left as it was and the call returns false.
  *
- * @param {Partial<typeof defaultStatsFilter>} patch
+ * @param {Partial<StatsFilterState>} patch
  * @returns {boolean}
  */
 export function patchStatsFilter(patch) {

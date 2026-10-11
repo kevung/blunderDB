@@ -545,10 +545,8 @@ export default {
 <h4>Suodatinpalkki</h4>
 <p>Paneelin yläosassa oleva suodatinpalkki mahdollistaa laskennan rajaamisen asemien osajoukkoon.</p>
 <h5>Pelaajanäkökulma</h5>
-<p>Pudotusvalikko <strong>Pelaaja</strong> suodattaa tilastot analysoitavan pelaajan mukaan. blunderDB valitsee automaattisesti pelaajan, jonka nimi esiintyy tietokannassa useimmin — vaihdettavissa milloin tahansa.</p>
-<div class="admonition tip">
-<p>Pelaajan vaihtaminen ei aiheuta tietojen menetystä; valitse vain aiempi pelaaja uudelleen luettelosta.</p>
-</div>
+<p><strong>Pelaaja</strong>-kenttä suodattaa tilastot analysoidun pelaajan mukaan. Muutaman kirjaimen kirjoittaminen supistaa luettelon niitä sisältäviin nimiin; napsautus tai <em>Enter</em> valitsee pelaajan, <strong>✕</strong> tai tyhjennetty kenttä palauttaa kaikki näkökulmat.</p>
+<p>Suodatin on <strong>yksi ja sama</strong> paneelin kaikille välilehdille ja se säilyy istunnosta toiseen. Sen voi asettaa myös muista paneeleista: pelaajan nimi ottelun otsikossa tai laudan yläpuolisessa palkissa avaa hänen tilastonsa, ja turnauksen otsikon <strong>Stats</strong>-painike avaa kyseisen turnauksen tilastot.</p>
 <h5>Saatavilla olevat suodattimet</h5>
 <ul>
 <li><strong>Turnaukset</strong> — rajaus yhteen tai useampaan turnaukseen. Useita turnauksia voi valita samanaikaisesti.</li>
@@ -557,7 +555,7 @@ export default {
 <li><strong>Ottelun pituus</strong> — rajaus tiettyihin ottelupituuksiin (1, 3, 5, 7, 9, 11, 13, 15, 21 pistettä). Useita pituuksia voi yhdistää.</li>
 <li><strong>Moottori</strong> ja <strong>Vähimmäissyvyys</strong> — säilytä vain tietyn moottorin (gnubg, xg…) analysoimat päätökset tai ne, jotka on analysoitu vähintään tietyllä syvyydellä, plyinä.</li>
 </ul>
-<p><strong>↺ Palauta</strong>-painike tyhjentää kaikki suodattimet (paitsi automaattisesti tunnistetun pelaajan).</p>
+<p><strong>↺ Palauta</strong>-painike tyhjentää kaikki suodattimet pelaajaa lukuun ottamatta.</p>
 <div class="admonition note">
 <p>Suodattimet tallennetaan blunderDB:n asetuksiin (<code>config.yaml</code>) ja palautetaan seuraavalla käynnistyskerralla.</p>
 </div>
@@ -644,6 +642,7 @@ export default {
 <div class="admonition note">
 <p>Päätösten kokonaismäärä näytetään kunkin kortin alaosassa, kun osoitin on sen päällä.</p>
 </div>
+<p>Korttien alla summarivi laskee suodattimen turnaukset, ottelut ja päätökset. Päätösten määrä avaa niiden asemat; otteluiden määrä avaa nuo ottelut Ottelut-paneelissa, paitsi kun päätöstyyppi tai alkuperäsuodatin on käytössä: silloin se laskee vähemmän otteluita kuin luettelo avaisi ja jää pelkäksi luvuksi.</p>
 <h5>Opintosuunnitelma</h5>
 <p><strong>Opintosuunnitelma</strong>-kortti vastaa kysymykseen ”mitä minun pitäisi harjoitella nyt?”. Toistuvat virheet (Erreurs-välilehti) kertovat, missä suodatin hävisi eniten; ne eivät kerro, missä opiskelu tuottaa eniten. Perheellinen todella vaikeita asemia maksaa kaikille paljon, eivätkä kolme virhettä tee trendiä. Suunnitelma korjaa molemmat.</p>
 <ul>
@@ -706,7 +705,7 @@ export default {
 <li>Virhettä, jota mikään sääntö ei nimeä varmasti, ei arvata: se jää pois luokituksesta ja näkyy erikseen taulukon alla, yhtenä rivinä pelisuunnitelmaa kohti (»tunnistamatonta teemaa ei ole: N virhettä, hinta X»), sekin napsautettavana. Tämä jäännös on usein raskain, koska selitys ottaa kantaa vasta 60 mp:stä alkaen, <em>Virhe</em>-kynnyksen yläpuolella: muiden joukossa luokiteltuna se johtaisi taulukkoa, joka ei kertoisi mitään.</li>
 <li><strong>Kustannus</strong> on osuus suodattimen PR:stä, jonka ryhmä edustaa: ryhmän virheisiin sovellettu PR-kaava suhteutettuna kaikkiin laskettuihin päätöksiin. Ryhmien kustannukset eivät siis koskaan ylitä PR:ää.</li>
 </ul>
-<p>Ryhmää napsauttamalla ladataan sen asemat, kalleimmasta halvimpaan. Teema lasketaan uudelleen jokaisella näytöllä eikä sitä tallenneta koskaan: pelisuunnitelman tavoin se on johdettu tunniste, jota ei voi muokata. Komentoriviltä: <code>blunderdb stats recurring</code> (ks. stats — Toistuvat virheet).</p>
+<p>Ryhmää tai sen virheiden määrää napsauttamalla ladataan sen asemat, kalleimmasta halvimpaan. Teema lasketaan uudelleen jokaisella näytöllä eikä sitä tallenneta koskaan: pelisuunnitelman tavoin se on johdettu tunniste, jota ei voi muokata. Komentoriviltä: <code>blunderdb stats recurring</code> (ks. stats — Toistuvat virheet).</p>
 <p>Jokainen rivi tarjoaa kolme tapaa siirtyä virheestä opiskeluun: <strong>Tietovisa tästä ryhmästä</strong> käynnistää Harjoittelu-paneelin Päätös-harjoituksen ryhmän asemilla, <strong>Anki-pakka</strong> tekee niistä korttipakan, <strong>Kokoelma</strong> tallentaa ne uuteen kokoelmaan. Taulukon yläpuolella <strong>Tietovisa kolmesta pahimmasta ryhmästäni</strong> arpoo kaksikymmentä asemaa kolmen kalleimman ryhmän asemista. Komentorivillä <code>stats recurring --quiz</code> arpoo nämä asemat ja <code>--deck</code> luo pakan.</p>
 <h5>Jakauma kuutiotoimen mukaan</h5>
 <p>Pylväskaavio näyttää PR:n (tai MWC:n) jokaiselle kuutiopäätöksen tyypille: <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Jokainen pylväs näyttää myös päätösten määrän ja blunder-osuuden työkaluvihjeessä.</p>
@@ -735,7 +734,7 @@ export default {
 <li><strong>Ankin pysyvyys</strong>: jo opittujen korttien kertausten osuus, jotka on arvioitu <em>Vaikea</em> tai paremmaksi, luettuna oikealta akselilta (%).</li>
 </ul>
 <p>Kaavion alla <strong>visan PR pelisuunnitelman mukaan</strong> listaa kirjaston asemista arvotut visan päätökset, huonoimmat suunnitelmat ensin, sekä viimeisen ikkunan PR:n, jossa suunnitelmaa pelattiin.</p>
-<p>Sulkeissa kunkin arvon takana oleva päätösten tai kertausten määrä: ikkunalla ilman otosta ei ole arvoa — viiva, ei nolla. Suodatin rajaa vain ottelut; visan ja Ankin lokit ovat omiasi eivätkä sisällä pelaajaa. Mitään ei tallenneta lisää: kolme sarjaa luetaan olemassa olevista lokeista. Komentorivillä: <code>blunderdb stats training</code> (katso stats — Toistuvat virheet).</p>
+<p>Sulkeissa kunkin arvon takana oleva päätösten tai kertausten määrä: ikkunalla ilman otosta ei ole arvoa — viiva, ei nolla. Ikkunan otteluiden päätösten määrä avaa niiden asemat. Suodatin rajaa vain ottelut; visan ja Ankin lokit ovat omiasi eivätkä sisällä pelaajaa. Mitään ei tallenneta lisää: kolme sarjaa luetaan olemassa olevista lokeista. Komentorivillä: <code>blunderdb stats training</code> (katso stats — Toistuvat virheet).</p>
 <h4>Erittelyt-välilehti</h4>
 <p><strong>Erittelyt</strong>-välilehti jakaa samat päätökset, jotka kokonaisluvut laskevat, neljälle akselille. Yksikään niistä ei määrittele uudelleen, mikä on päätös: se olisi toinen PR samalla nimellä.</p>
 <ul>
@@ -806,6 +805,7 @@ export default {
 <ul>
 <li><strong>Järjestä</strong> — napsauta sarakeotsikkoa. Taulukko avautuu nousevan PR:n mukaan, paras pelaaja ensin. Pelaajat, joista ei ole mitattu mitään, pysyvät alimpina järjestyssuunnasta riippumatta: tiedon puutteesta johtuva nolla ei ole täydellinen suoritus.</li>
 <li><strong>Avaa pelaajan tiedot</strong> — napsauta riviä. Pelaaja valitaan suodatinpalkissa ja näkymä vaihtuu Yleiskatsaus-välilehdelle.</li>
+<li><strong>Avaa omat ottelunsa tai päätöksensä</strong> — otteluiden määrä ja V–H-tase avaavat hänen otteluinsa Ottelut-paneelissa, päätösten määrä avaa niiden asemat.</li>
 <li><strong>Rajaa ajanjaksoa</strong> — päivämäärä-, turnaus- ja ottelupituussuodattimet toimivat tavalliseen tapaan, joten taulukon voi rajata yhden kilpailun päiviin.</li>
 <li><strong>Vertaa kahta pelaajaa</strong> — rastita ensimmäisen sarakkeen ruutu kahdella rivillä. Taulukon yläpuolelle ilmestyy lohko, joka asettaa heidän lukunsa vastakkain; kolmannen pelaajan rastittaminen korvaa vanhemman kahdesta. Ruutu ei valitse riviä: rastitus vertaa, napsautus avaa tiedot.</li>
 <li><strong>Katso paikat, joissa toinen pelasi paremmin</strong> — vertailulohkon painike listaa paikat, jotka molemmat pelaajat joutuivat pelaamaan ja joissa toinen pelasi hyvin (kirjaston Virhe-kynnyksen alapuolella) ja toinen ei, suurin ero ensin; pelaaja arvioidaan paikan huonoimman siirtonsa mukaan. <em>Avaa nämä paikat</em> lataa ne analyysinäkymään. Komentorivi ja palvelin antavat saman listan (<code>stats contrast</code>).</li>
@@ -814,10 +814,10 @@ export default {
 <p>Lohkossa <strong>vain suhdeluvut saavat tuomion</strong>, ja parempi kahdesta lihavoidaan. Kolme lukua ei saa sitä koskaan, ja syy kannattaa sanoa. <strong>Onni</strong> ei ole ansio: onnekkaampi pelaaja ei ole parempi. <strong>Ottelut, tulos ja päätökset</strong> kertovat mitä suhdeluvut ovat arvoltaan, mutta niiden kilpailuttaminen antaisi voiton sille, joka vain pelasi enemmän. <strong>Blundereiden määrää</strong> ei verrata raakana — kaksitoista tuhannesta päätöksestä on parempi kuin kymmenen sadasta —, joten lohko lisää rivin <em>Blunderit / 100 päät.</em>, joka on vertailukelpoinen, ja jättää määrän viereen taustaksi.</p>
 <p>Tasatulos ei ole voitto: sitä ei lihavoida kummallakaan puolella. Suhdeluku, jonka takana ei ole mitään, näkyy merkkinä ”—” eikä ratkaise mitään.</p>
 <div class="admonition note">
-<p>Tällä välilehdellä <strong>Pelaaja</strong>-luettelo ja <strong>päätöstyypin</strong> valinta ovat poissa käytöstä: taulukko näyttää kaikki pelaajat ja erittelee nappula- ja kuutiopäätökset jo omiin sarakkeisiinsa.</p>
+<p>Tässä välilehdessä <strong>päätöstyypin</strong> valinta on pois käytöstä: taulukko jakaa nappula- ja kuutiopäätökset jo erillisiin sarakkeisiin. Suodatinpalkin pelaaja pysyy aktiivisena: taulukko näyttää aina kaikki pelaajat, ja tämän pelaajan rivi korostetaan ja tuodaan näkyviin.</p>
 </div>
 <p>Paneelin <strong>Corpus</strong>-välilehdellä, komentorivillä ja daemonin API:n kautta (katso stats — Toistuvat virheet) on kolme korpusnäkymää: kahden pelaajan <strong>kasvokkain</strong>-vertailu (yhteiset ottelut, kummankin PR, tase), liukuva <strong>PR kalenteri-ikkunassa</strong> (1, 3, 6 tai 12 kuukautta) ja <strong>sijoitus</strong> PR:n mukaan niille pelaajille, joilla on vähintään tietty määrä laskettuja päätöksiä. Corpus-välilehti laskee kunkin näkymän pyydettäessä nykyisen suodattimen alla. <strong>Alkuperäsuodatin</strong> (suodatinpalkin kentät <em>Moottori</em> ja <em>Vähimmäissyvyys</em>) rajaa tilastot niin analysoituihin päätöksiin; se koskee jokaista päätöstä, ja sen koskettamat luvut lasketaan silloin uudelleen päätöksistä. Kasvokkain-vertailu ja ikkunakohtainen PR eivät hyväksy sitä: niin kauan kuin se on aktiivinen, ne kieltäytyvät laskemasta. Kuten muu palkki, se säilyy istunnosta toiseen.</p>
-<p>Corpus-välilehdellä jokainen rivi avaa sen, minkä se tiivistää. Kaksinpelirivi avaa ottelunsa Ottelut-paneelissa, jossa on silloin painike ”N ottelua avattu Statsista ×”: se palauttaa koko luettelon. Rankingrivi avaa pelaajan ottelut ja sen päätösten määrä avaa lasketut asemat; aikaikkunan rivi avaa sen asemat ja sen otteluiden määrä avaa ottelut. Stats-paneelin asemien määrä, millä välilehdellä tahansa, poistuu ensin käynnissä olevasta ottelusta ennen luettelonsa avaamista; komento <code>m</code> avaa ottelun sen jälkeen uudelleen tallennetun siirron kohdalla.</p>
+<p>Corpus-välilehdellä jokainen rivi avaa sen, minkä se tiivistää. Kaksinpelin tase avaa sen ottelut Ottelut-paneelissa, jossa on silloin painike ”N ottelua avattu Statsista ×”: se palauttaa koko luettelon; kaksinpelirivi avaa ottelunsa. Kaksinpelin ensimmäinen pelaaja on alun perin suodatinpalkin pelaaja. Rankingrivi avaa pelaajan ottelut ja sen päätösten määrä avaa lasketut asemat; aikaikkunan rivi ja sen päätösten määrä avaavat sen asemat, sen otteluiden määrä avaa ottelut. Stats-paneelin asemien määrä, millä välilehdellä tahansa, poistuu ensin käynnissä olevasta ottelusta ennen luettelonsa avaamista; komento <code>m</code> avaa ottelun sen jälkeen uudelleen tallennetun siirron kohdalla.</p>
 <div class="admonition important">
 <p>Viiva (”—”) merkitsee arvoa, jota <strong>ei ole koskaan mitattu</strong>; sitä ei pidä sekoittaa nollaan. Näin on erityisesti Tuuri-sarakkeen kohdalla kaikissa otteluissa, jotka tuotiin ennen skeemaversiota 2.15.0: tuuria ei silloin tallennettu, eikä mikään salli sen palauttamista jälkikäteen. Lähdetiedoston tuominen uudelleen ei riitä: tuonti tunnistaa kaksoiskappaleen ja ottaa käyttöön vain uudet opiskelumerkinnät (raportti kertoo niiden määrän). Ottelu on poistettava ja tuotava sitten uudelleen. Muodot, jotka eivät sitä kuljeta (BGF, Jellyfish <code>.mat</code>), eivät sitä koskaan tarjoa.</p>
 </div>

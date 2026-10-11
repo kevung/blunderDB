@@ -3,6 +3,7 @@
  * a player's ranking line opens his matches, a window opens its decisions' positions. A count
  * inside a row opens the other half, and only that.
  */
+import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, cleanup, fireEvent, waitFor } from '@testing-library/svelte';
 
@@ -77,7 +78,7 @@ describe('Corpus › windows', () => {
     test('its decisions count opens the window positions', async () => {
         const { findAllByTestId } = await computed(2);
         const links = await findAllByTestId('count-link');
-        await fireEvent.click(links.find((l) => l.textContent === '420'));
+        await fireEvent.click(must(links.find((l) => l.textContent === '420')));
         expect(loadPositionsFromStatsSelection).toHaveBeenCalledWith({ ...filter, dateFrom: '2024-12-01', dateTo: '2025-02-28' }, ALL);
     });
 

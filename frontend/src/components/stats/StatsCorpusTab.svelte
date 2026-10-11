@@ -124,9 +124,9 @@
         <h3 id="corpus-h2h-title">{$t('stats.corpus.h2hTitle')}</h3>
         <div class="corpus-controls">
             <label for="corpus-a">{$t('stats.corpus.playerA')}</label>
-            <div class="corpus-player"><EntityAutocomplete id="corpus-a" variant="field" bind:value={playerA} items={players} label={(n) => n} /></div>
+            <div class="corpus-player"><EntityAutocomplete id="corpus-a" variant="field" bind:value={playerA} items={players} label={(/** @type {string} */ n) => n} /></div>
             <label for="corpus-b">{$t('stats.corpus.playerB')}</label>
-            <div class="corpus-player"><EntityAutocomplete id="corpus-b" variant="field" bind:value={playerB} items={players} label={(n) => n} /></div>
+            <div class="corpus-player"><EntityAutocomplete id="corpus-b" variant="field" bind:value={playerB} items={players} label={(/** @type {string} */ n) => n} /></div>
             <button onclick={loadH2H} disabled={!playerA || !playerB || busy !== ''}>{$t('stats.corpus.compute')}</button>
         </div>
         {#if h2hError}
