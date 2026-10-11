@@ -91,9 +91,10 @@ var CarriedCommentColumns = []string{"text", "created_at", "modified_at", "autho
 var CarriedMatchCommentColumns = []string{"comment", "comment_author"}
 
 // CarriedVideoSource is the video source an exported match carries: an
-// http(s) URL travels, anything else — a local path — is nil (ADR-0082). A
-// path only reveals the producer's directory tree and opens nothing on the
-// recipient's machine; the Repères keep their meaning without it.
+// http(s) URL as it is, a local file by its name alone, nil when there is
+// none (ADR-0082). The name lets the recipient relocate the match onto their
+// own copy of the video; the directories above it are the producer's and
+// stay home. The Repères keep their meaning either way.
 func CarriedVideoSource(src *string) *string {
 	if src == nil {
 		return nil
@@ -101,20 +102,29 @@ func CarriedVideoSource(src *string) *string {
 	v := strings.TrimSpace(*src)
 	lower := strings.ToLower(v)
 	if !strings.HasPrefix(lower, "http://") && !strings.HasPrefix(lower, "https://") {
+		v = CarriedFileName(v)
+	}
+	if v == "" {
 		return nil
 	}
 	return &v
 }
 
-// CarriedTranscriptVideoSource is the video source an exported transcription
-// carries: an http(s) URL as it is, a local file by its name alone. The name
-// lets the recipient point the draft at their own copy of the video; the
-// directories above it are the producer's and stay home.
+// CarriedTranscriptVideoSource is CarriedVideoSource for a transcription's
+// header, where no video is the empty string.
 func CarriedTranscriptVideoSource(src string) string {
-	v := strings.TrimSpace(src)
-	if CarriedVideoSource(&v) != nil {
-		return v
+	if v := CarriedVideoSource(&src); v != nil {
+		return *v
 	}
+	return ""
+}
+
+// CarriedFileName is a producer's file path as an export carries it: the
+// file's name alone, whichever separator the producer's system used. The name
+// is enough to find the file again in the recipient's library; the path
+// above it describes the producer's disk.
+func CarriedFileName(path string) string {
+	v := strings.TrimSpace(path)
 	return v[strings.LastIndexAny(v, `/\`)+1:]
 }
 

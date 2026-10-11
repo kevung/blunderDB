@@ -11,11 +11,11 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
-// An export carries a match's video source only as an http(s) URL: a local
-// path stays with its author, it reveals a directory tree and opens nothing
-// on the recipient's machine. The Repères travel whatever the source
-// (ADR-0082).
-func TestExportCarriesVideoSourceOnlyAsURL(t *testing.T) {
+// An export carries a match's video source as an http(s) URL, or a local
+// file by its name alone: the recipient relocates it onto their own copy,
+// and the producer's directory tree stays home. The Repères travel whatever
+// the source (ADR-0082).
+func TestExportCarriesVideoSourceAsURLOrFileName(t *testing.T) {
 	str := func(s string) *string { return &s }
 	roll, done := int64(61_250), int64(64_800)
 	cases := []struct {
@@ -28,9 +28,11 @@ func TestExportCarriesVideoSourceOnlyAsURL(t *testing.T) {
 		{"upper-case scheme", str("HTTPS://example.org/m.mp4"), str("HTTPS://example.org/m.mp4")},
 		{"URL with surrounding blanks", str("  https://example.org/m.mp4\n"), str("https://example.org/m.mp4")},
 		{"blank", str("   "), nil},
-		{"local path", str("/home/alice/videos/finale.mkv"), nil},
-		{"Windows path", str(`C:\Users\alice\finale.mp4`), nil},
-		{"file URL", str("file:///home/alice/finale.mp4"), nil},
+		{"local path", str("/home/alice/videos/finale.mkv"), str("finale.mkv")},
+		{"Windows path", str(`C:\Users\alice\finale.mp4`), str("finale.mp4")},
+		{"file URL", str("file:///home/alice/finale.mp4"), str("finale.mp4")},
+		{"bare file name", str("finale.mp4"), str("finale.mp4")},
+		{"directory only", str("/home/alice/videos/"), nil},
 		{"no video", nil, nil},
 	}
 	for _, c := range cases {

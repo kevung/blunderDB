@@ -4928,9 +4928,11 @@ Cinq points méritent l'attention :
 * **Un match part avec son brouillon de transcription**, quelle que soit la
   liste affichée : la case *Avec leurs brouillons de transcription*, sous
   celle des matchs, est cochée d'emblée. Un brouillon qui n'a pas encore
-  produit de match ne part qu'avec la bibliothèque entière. Une transcription
-  liée à une vidéo locale n'emporte que le nom du fichier, sans son dossier ;
-  un lien web part tel quel.
+  produit de match ne part qu'avec la bibliothèque entière. Un match ou une
+  transcription liés à une vidéo locale n'emportent que le nom du fichier,
+  sans son dossier, que le destinataire relocalise sur sa propre copie ; un
+  lien web part tel quel. Le fichier d'où un match a été importé ne part
+  aussi que par son nom.
 * **Une collection dont toutes les positions ne sont pas dans la sélection
   arrive tronquée.** La liste affiche donc, pour chaque collection, la part
   couverte (« 12/40 ») et la signale en rouge lorsqu'elle est partielle.

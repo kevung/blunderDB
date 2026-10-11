@@ -1056,8 +1056,9 @@ func (e *exporter) writeTournaments() error {
 // reason — and TestExportMatchColumnsClassified fails until one of the
 // lists says so. The source metadata (ratings, experience, transcriber, session
 // rules, engine version) is what the file said of the match: it travels
-// with it (ADR-0067). The video source travels only as an http(s) URL
-// (issuance.CarriedVideoSource, ADR-0082).
+// with it (ADR-0067). The source file and a local video travel by their name
+// alone, an http(s) video as its URL (issuance.CarriedFileName,
+// issuance.CarriedVideoSource, ADR-0082).
 var exportedMatchColumns = []string{
 	"player1_name", "player2_name", "event", "location", "round", "match_length",
 	"match_date", "import_date", "file_path", "game_count", "match_hash", "canonical_hash",
@@ -1097,7 +1098,7 @@ func (e *exporter) writeMatches() error {
 			 VALUES (?, ?, ?, ?, ?, ?, ?, COALESCE(?, CURRENT_TIMESTAMP), ?, ?, NULLIF(?, ''), NULLIF(?, ''), ?, ?, ?,
 			         ?, ?, ?, ?, ?, ?, ?, ?, ?`+strings.Repeat(", ?", len(noteArgs))+`)`,
 			append([]any{m.Player1Name, m.Player2Name, m.Event, m.Location, m.Round, m.MatchLength,
-				nullableTime(m.MatchDate), nullableTime(m.ImportDate), m.FilePath, m.GameCount,
+				nullableTime(m.MatchDate), nullableTime(m.ImportDate), issuance.CarriedFileName(m.FilePath), m.GameCount,
 				m.MatchHash, m.CanonicalHash,
 				tournamentID, m.TournamentSortOrder, m.LastVisitedPosition,
 				m.Player1Elo, m.Player2Elo, m.Player1Experience, m.Player2Experience,
