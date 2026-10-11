@@ -7,6 +7,7 @@
     import { t } from '../../i18n/index.js';
     import { GetTimeErrors } from '../../../wailsjs/go/database/Database.js';
     import { logger } from '../../utils/logger.js';
+    import PanelTable from '../panels/PanelTable.svelte';
 
     /** @type {{ player: string, bucket: number, decisions: number, scored: number, mean_error_mp: number, blunders: number }[]} */
     let rows = $state([]);
@@ -25,52 +26,50 @@
     // An unscored band reads empty: there is no error to average, not a zero one.
     /** @typedef {(typeof rows)[number]} Row */
     const mean = (/** @type {Row} */ r) => (r.scored > 0 ? r.mean_error_mp.toFixed(1) : '');
-    const rate = (/** @type {Row} */ r) => (r.scored > 0 ? ((100 * r.blunders) / r.scored).toFixed(1) + ' %' : '');
+    const rateValue = (/** @type {Row} */ r) => (r.scored > 0 ? (100 * r.blunders) / r.scored : null);
+    const rate = (/** @type {Row} */ r) => (r.scored > 0 ? /** @type {number} */ (rateValue(r)).toFixed(1) + ' %' : '');
+
+    const columns = $derived([
+        { key: 'player', label: $t('stats.timePlayer'), sortable: true, filter: /** @type {const} */ ('text'), value: (/** @type {Row} */ r) => r.player },
+        { key: 'band', label: $t('stats.timeBand'), sortable: true, value: (/** @type {Row} */ r) => r.bucket },
+        {
+            key: 'decisions',
+            label: $t('stats.timeDecisions'),
+            sortable: true,
+            defaultDir: 'desc',
+            align: 'right',
+            filter: /** @type {const} */ ('number'),
+            value: (/** @type {Row} */ r) => r.decisions
+        },
+        {
+            key: 'mean',
+            label: $t('stats.timeMeanError'),
+            sortable: true,
+            align: 'right',
+            filter: /** @type {const} */ ('number'),
+            value: (/** @type {Row} */ r) => (r.scored > 0 ? r.mean_error_mp : null)
+        },
+        { key: 'rate', label: $t('stats.timeBlunderRate'), sortable: true, align: 'right', filter: /** @type {const} */ ('number'), value: rateValue }
+    ]);
 </script>
 
 {#if rows.length > 0}
     <section class="chart-section" data-testid="time-errors">
         <h3 class="section-title">{$t('stats.timeErrorsTitle')}</h3>
         <p class="hint">{$t('stats.timeErrorsHint')}</p>
-        <table class="time-errors">
-            <thead>
-                <tr>
-                    <th>{$t('stats.timePlayer')}</th>
-                    <th>{$t('stats.timeBand')}</th>
-                    <th>{$t('stats.timeDecisions')}</th>
-                    <th>{$t('stats.timeMeanError')}</th>
-                    <th>{$t('stats.timeBlunderRate')}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {#each rows as r (r.player + ':' + r.bucket)}
-                    <tr>
-                        <td>{r.player}</td>
-                        <td>{$t(BAND_KEYS[r.bucket])}</td>
-                        <td>{r.decisions}</td>
-                        <td>{mean(r)}</td>
-                        <td>{rate(r)}</td>
-                    </tr>
-                {/each}
-            </tbody>
-        </table>
+        <PanelTable viewId="stats.timeErrors" {rows} rowKey={(r) => r.player + ':' + r.bucket} {columns}>
+            {#snippet cells(/** @type {Row} */ r)}
+                <td>{r.player}</td>
+                <td>{$t(BAND_KEYS[r.bucket])}</td>
+                <td class="align-right">{r.decisions}</td>
+                <td class="align-right">{mean(r)}</td>
+                <td class="align-right">{rate(r)}</td>
+            {/snippet}
+        </PanelTable>
     </section>
 {/if}
 
 <style>
-    .time-errors {
-        border-collapse: collapse;
-        font-size: var(--font-size-small);
-    }
-    .time-errors th,
-    .time-errors td {
-        padding: 2px 10px;
-        text-align: right;
-    }
-    .time-errors th:first-child,
-    .time-errors td:first-child {
-        text-align: left;
-    }
     .hint {
         color: var(--color-text-muted);
         font-size: var(--font-size-small);

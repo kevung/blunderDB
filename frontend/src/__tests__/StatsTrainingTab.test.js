@@ -36,7 +36,7 @@ describe('StatsTrainingTab', () => {
 
     test('puts the three series side by side, one row per window', () => {
         render(StatsTrainingTab, { props: { data } });
-        const rows = screen.getAllByRole('row').slice(1, 3);
+        const rows = screen.getAllByRole('row').slice(2, 4);
         expect(rows).toHaveLength(2);
         expect(rows[0].textContent).toContain('8.00');
         expect(rows[0].textContent).toContain('6.00');
@@ -45,7 +45,7 @@ describe('StatsTrainingTab', () => {
 
     test('a window without sample shows a dash, never a zero', () => {
         render(StatsTrainingTab, { props: { data } });
-        const second = screen.getAllByRole('row')[2];
+        const second = screen.getAllByRole('row')[3];
         expect(second.textContent).toContain('–');
         expect(second.textContent).not.toContain('0.00');
     });

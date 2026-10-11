@@ -1977,12 +1977,6 @@
             "matches": "Matchs",
             "decisions": "Décisions",
             "noData": "Aucune donnée pour ce filtre.",
-            "rankingTitle": "Classement",
-            "minDecisions": "Décisions min.",
-            "player": "Joueur",
-            "record": "Bilan",
-            "prChecker": "PR pions",
-            "prCube": "PR videau",
             "openMatches": "Ouvrir ces matchs",
             "openPositions": "Ouvrir ces positions"
         },
@@ -3345,5 +3339,9 @@
         "boardSize": "Changer la taille du plateau",
         "boardHide": "Replier le plateau",
         "boardShow": "Afficher le plateau"
+    },
+    "table": {
+        "filteredOut": "Aucune ligne ne passe les filtres de colonne.",
+        "numericFilterHint": "≥500, >500, <2,5, ≤2, 3-7, 5"
     }
 }

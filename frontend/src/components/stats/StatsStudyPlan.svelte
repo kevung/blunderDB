@@ -9,6 +9,7 @@
     import { quizOnPlan, deckFromIds } from '../../services/recurringStudy.js';
     import { loadPositionsFromSelection } from '../../services/positionLoader.js';
     import { t } from '../../i18n/index.js';
+    import CountLink from '../panels/CountLink.svelte';
 
     let plan = $derived($studyPlanStore);
     let families = $derived(plan?.Families ?? []);
@@ -88,7 +89,7 @@
                     {#if part === '\uE000a'}
                         0
                     {:else if part === '\uE000b'}
-                        <button type="button" class="count-link" data-testid="plan-unpriced" onclick={() => load(unpricedPositions)}>{unpricedPositions.length}</button>
+                        <CountLink testid="plan-unpriced" onclick={() => load(unpricedPositions)} label={unpricedPositions.length} />
                     {:else}{part}{/if}
                 {/each}
             </p>
@@ -110,7 +111,7 @@
                             <small class="interval" title={$t('stats.planInterval')}>[{pct(f.Low)}, {pct(f.High)}]</small>
                         </span>
                         <span class="errors" title={$t('stats.planAvoidable', { n: f.Avoidable })}>
-                            <button type="button" class="count-link" data-testid="plan-family-positions" onclick={() => load(f.Positions)}>{(f.Positions ?? []).length}</button>
+                            <CountLink testid="plan-family-positions" onclick={() => load(f.Positions)} label={(f.Positions ?? []).length} />
                             <small>{f.Errors} {$t('stats.planErrors')}</small>
                         </span>
                         <span class="actions">
@@ -130,10 +131,7 @@
                         {#if part === '\uE000list'}
                             {#each tentative as f, k (f.GameType + '/' + f.Kind + '/' + f.Theme)}
                                 {familyName(f)}
-                                (<button type="button" class="count-link" data-testid="plan-tentative-positions" onclick={() => load(f.Positions)}>{(f.Positions ?? []).length}</button>){k <
-                                tentative.length - 1
-                                    ? ', '
-                                    : ''}
+                                (<CountLink testid="plan-tentative-positions" onclick={() => load(f.Positions)} label={(f.Positions ?? []).length} />){k < tentative.length - 1 ? ', ' : ''}
                             {/each}
                         {:else}{part}{/if}
                     {/each}
@@ -143,9 +141,9 @@
                 <span data-testid="plan-outside" title={$t('stats.planOutside', { unthemed: plan.Unthemed, unpriced: plan.Unpriced })}>
                     {#each $t('stats.planOutsideShort', { unthemed: '\uE000a', unpriced: '\uE000b' }).split(/(\uE000[ab])/) as part, i (i)}
                         {#if part === '\uE000a'}
-                            <button type="button" class="count-link" data-testid="plan-unthemed" onclick={() => load(unthemedPositions)}>{unthemedPositions.length}</button>
+                            <CountLink testid="plan-unthemed" onclick={() => load(unthemedPositions)} label={unthemedPositions.length} />
                         {:else if part === '\uE000b'}
-                            <button type="button" class="count-link" data-testid="plan-unpriced" onclick={() => load(unpricedPositions)}>{unpricedPositions.length}</button>
+                            <CountLink testid="plan-unpriced" onclick={() => load(unpricedPositions)} label={unpricedPositions.length} />
                         {:else}{part}{/if}
                     {/each}
                 </span>
@@ -315,20 +313,7 @@
         margin: 6px 0 0;
     }
 
-    .count-link {
-        background: none;
-        border: none;
-        padding: 0;
-        color: inherit;
-        cursor: pointer;
-        text-decoration: underline dotted;
-    }
-
-    .count-link:hover {
-        color: var(--color-primary);
-    }
-
-    .errors .count-link {
+    .errors :global(.count-link) {
         font-weight: 700;
     }
 
