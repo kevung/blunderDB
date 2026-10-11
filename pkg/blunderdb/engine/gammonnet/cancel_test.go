@@ -109,3 +109,62 @@ func TestBindContextStopsDeepSearch(t *testing.T) {
 		}
 	}
 }
+
+// A searcher interrupted mid-search, at several depths into it, then reused
+// answers bit for bit like a fresh one: cancelling leaves no state behind
+// (scratch, match states, cache) that a later search could read.
+func TestSearcherReusedAfterCancelMatchesFresh(t *testing.T) {
+	if testing.Short() {
+		t.Skip("several 2-ply searches")
+	}
+	pos := openingPosition(t)
+	for _, workers := range []int{0, 4} {
+		fresh, err := NewSearcher(DefaultConfig(2))
+		if err != nil {
+			t.Fatal(err)
+		}
+		fresh = fresh.WithWorkers(workers)
+		want := make([]Candidate, MaxPlays)
+		nw, err := fresh.Plays(&pos, 6, 4, want)
+		if err != nil {
+			t.Fatal(err)
+		}
+		wantProbs, ok := fresh.Probs(&pos)
+		if !ok {
+			t.Fatal("fresh probs failed")
+		}
+
+		for _, delay := range []time.Duration{0, time.Millisecond, 3 * time.Millisecond, 10 * time.Millisecond} {
+			s, err := NewSearcher(DefaultConfig(2))
+			if err != nil {
+				t.Fatal(err)
+			}
+			s = s.WithWorkers(workers)
+
+			ctx, cancel := context.WithTimeout(context.Background(), delay)
+			release := s.BindContext(ctx)
+			_, _ = s.Plays(&pos, 6, 4, make([]Candidate, MaxPlays))
+			_, _ = s.Probs(&pos)
+			release()
+			cancel()
+
+			got := make([]Candidate, MaxPlays)
+			ng, err := s.Plays(&pos, 6, 4, got)
+			if err != nil {
+				t.Fatalf("workers=%d delay=%v: reuse: %v", workers, delay, err)
+			}
+			if ng != nw {
+				t.Fatalf("workers=%d delay=%v: %d candidates, want %d", workers, delay, ng, nw)
+			}
+			for i := 0; i < nw; i++ {
+				if got[i].Equity != want[i].Equity || got[i].Play.Result != want[i].Play.Result {
+					t.Fatalf("workers=%d delay=%v: candidate %d differs from a fresh searcher", workers, delay, i)
+				}
+			}
+			gotProbs, ok := s.Probs(&pos)
+			if !ok || gotProbs != wantProbs {
+				t.Fatalf("workers=%d delay=%v: probs differ from a fresh searcher", workers, delay)
+			}
+		}
+	}
+}

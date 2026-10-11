@@ -564,7 +564,7 @@
     let gnStaleStarting = $state(false);
 
     const GAMMONNET_PLY_OPTIONS = [0, 1, 2, 3, 4];
-    // Measured per position, one core: 0.3 s at 2-ply, 10 s at 3-ply, over 15 min at 4-ply.
+    // From this depth a position costs seconds to minutes on one core, against a fraction of a second at 2-ply.
     const GAMMONNET_SLOW_PLY = 3;
 
     // Dossier surveillé : rien n'est deviné ; « proposer » n'offre qu'un chemin existant.
