@@ -37,6 +37,7 @@ const SRC = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 // the full leaf key used. Every subkey under one of these is assumed live.
 const DYNAMIC_PREFIXES = [
     'keyNames.', // utils/keyNames.js: t(`keyNames.${key}`)
+    'jobs.', // utils/busyMessage.js, gammonNetBatchLabel.js: the job code Go sends (database.BusyError)
     'board.scene.',
     'report.', // the document's labels are read by the Go report generator (pkg/blunderdb/report), which labels_test.go holds to this catalogue
     'search.filters.',

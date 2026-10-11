@@ -2,9 +2,11 @@ import { describe, expect, it, vi } from 'vitest';
 import fr from '../i18n/locales/fr.json';
 
 vi.mock('../i18n', () => ({
+    /** @param {string} key @param {Record<string, unknown>} [params] */
     translate: (key, params = {}) => {
-        const text = key.split('.').reduce((node, part) => node?.[part], fr) ?? key;
-        return text.replace(/\{(\w+)\}/g, (_, name) => String(params[name]));
+        /** @type {any} */
+        const text = key.split('.').reduce((/** @type {any} */ node, part) => node?.[part], fr) ?? key;
+        return String(text).replace(/\{(\w+)\}/g, (/** @type {string} */ _, /** @type {string} */ name) => String(params[name]));
     }
 }));
 
