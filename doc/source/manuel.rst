@@ -1317,7 +1317,11 @@ s'élargir en silence.
 Une collection vivante **reste vivante dans un export** de la base : sa requête
 voyage avec elle et se réévalue, chez le destinataire, sur les positions du
 fichier. Quand l'export emporte les positions des collections, il emporte
-celles que la requête sélectionne au moment de l'export.
+celles que la requête sélectionne au moment de l'export, jusqu'au plafond de
+5 000 positions. Une requête qui désigne des positions, des matchs ou des
+tournois par leur numéro est réécrite sur les numéros du fichier ; si l'un
+d'eux reste hors du fichier, la collection part **figée**, avec les positions
+que la requête sélectionne au moment de l'export.
 
 Un paquet de répétition espacée fondé sur une collection vivante rejoue sa
 requête à chaque ouverture de séance : les positions que la recherche
