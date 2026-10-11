@@ -23,6 +23,8 @@ import (
 const (
 	goldMagic = "GNGD"
 	goldPath  = "testdata/search_gold.bin"
+	// stageGoldPath is the same corpus answered with the root staged.
+	stageGoldPath = "testdata/search_stage_gold.bin"
 
 	// goldTolerance is the equity agreement required. It is also the tie zone:
 	// two plays whose equities agree to within it are indistinguishable AT THIS
@@ -92,6 +94,16 @@ func TestSearchMatchesTheGoldFile(t *testing.T) {
 	}
 	t.Run("money-cubeless", func(t *testing.T) { replayGold(t, decodeCorpus(t, raw), loadGold(t, goldPath)) })
 
+	// The same corpus with the root staged through 1 ply, triplet (0, 4,
+	// 0.2): the staged path against the C's own (testdata/gold/README.md).
+	t.Run("root-stage", func(t *testing.T) {
+		replayGoldWith(t, decodeCorpus(t, raw), loadGold(t, stageGoldPath), func(cfg *SearchConfig) {
+			if err := cfg.SetRootStage(1, 0, 4, 0.2); err != nil {
+				t.Fatal(err)
+			}
+		})
+	})
+
 	// The ADR-0023 corpus: match states and cube states, one searcher per
 	// case since the configuration is part of the question.
 	raw2, err := os.ReadFile(searchCubeCorpusPath)
@@ -103,6 +115,13 @@ func TestSearchMatchesTheGoldFile(t *testing.T) {
 
 func replayGold(t *testing.T, cases []goldCase, gold []goldEntry) {
 	t.Helper()
+	replayGoldWith(t, cases, gold, func(*SearchConfig) {})
+}
+
+// replayGoldWith is replayGold with each case's configuration adjusted by
+// tweak, as the C generator adjusted it.
+func replayGoldWith(t *testing.T, cases []goldCase, gold []goldEntry, tweak func(*SearchConfig)) {
+	t.Helper()
 	if len(cases) != len(gold) {
 		t.Fatalf("%d cases, %d gold entries — they are not the same question", len(cases), len(gold))
 	}
@@ -112,6 +131,7 @@ func replayGold(t *testing.T, cases []goldCase, gold []goldEntry) {
 	searchers := map[SearchConfig]*Searcher{}
 	searcherFor := func(c goldCase) *Searcher {
 		cfg := c.config()
+		tweak(&cfg)
 		if s, ok := searchers[cfg]; ok {
 			return s
 		}

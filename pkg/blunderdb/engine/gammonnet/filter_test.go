@@ -84,10 +84,10 @@ func TestSetFilterRefusesAnIncoherentTriplet(t *testing.T) {
 	}
 }
 
-// TestDefaultConfigDeepFilter pins the 3- and 4-ply vector: the published
-// filter below the root's depth stays exact up to 2 ply, and past it the root
-// carries the published root triplet while every interior depth from 2 down
-// deepens one reply. Depth 1 is the published triplet at every ply.
+// TestDefaultConfigDeepFilter pins the 3- and 4-ply vector to the published
+// "ply3"/"ply4" levels: one reply at every interior depth, the root
+// (0, 2, 0.04) over a stage (2, 0, 8, 0.16). 0 to 2 ply keep the "normal"
+// filter and no stage.
 func TestDefaultConfigDeepFilter(t *testing.T) {
 	triplet := func(c SearchConfig, d int) [3]float64 {
 		return [3]float64{float64(c.Filter[d]), float64(c.FilterExtra[d]), c.FilterThreshold[d]}
@@ -95,29 +95,32 @@ func TestDefaultConfigDeepFilter(t *testing.T) {
 	pub := func(d int) [3]float64 {
 		return [3]float64{float64(defaultLevel.Filter[d]), float64(defaultLevel.FilterExtra[d]), defaultLevel.FilterThreshold[d]}
 	}
-	root := pub(len(defaultLevel.Filter) - 1)
 	one := [3]float64{1, 0, 0}
 	for ply := 0; ply <= MaxPly; ply++ {
 		cfg := DefaultConfig(ply)
-		if got := triplet(cfg, 1); got != pub(1) {
-			t.Errorf("ply %d: depth 1 = %v, want the published %v", ply, got, pub(1))
+		if got := triplet(cfg, 1); got != one {
+			t.Errorf("ply %d: depth 1 = %v, want %v", ply, got, one)
 		}
 		if ply <= 2 {
 			if got := triplet(cfg, 2); got != pub(2) {
 				t.Errorf("ply %d: depth 2 = %v, want the published %v", ply, got, pub(2))
 			}
+			if cfg.RootStagePly != 0 || cfg.PruneK != DefaultPruneK {
+				t.Errorf("ply %d: stage %d, PruneK %d", ply, cfg.RootStagePly, cfg.PruneK)
+			}
 			continue
 		}
-		if got := triplet(cfg, ply); got != root {
-			t.Errorf("ply %d: root = %v, want the published root %v", ply, got, root)
+		if got := triplet(cfg, ply); got != [3]float64{0, 2, 0.04} {
+			t.Errorf("ply %d: root = %v, want (0, 2, 0.04)", ply, got)
 		}
 		for d := 2; d < ply; d++ {
 			if got := triplet(cfg, d); got != one {
 				t.Errorf("ply %d: interior depth %d = %v, want %v", ply, d, got, one)
 			}
 		}
-	}
-	if pub(1) != one {
-		t.Fatalf("the published depth-1 triplet is %v: the interior rule no longer means one reply", pub(1))
+		stage := [4]float64{float64(cfg.RootStagePly), float64(cfg.RootStageFilter), float64(cfg.RootStageFilterExtra), cfg.RootStageFilterThreshold}
+		if stage != [4]float64{2, 0, 8, 0.16} || cfg.PruneK != 12 {
+			t.Errorf("ply %d: stage %v, PruneK %d, want (2, 0, 8, 0.16) and 12", ply, stage, cfg.PruneK)
+		}
 	}
 }

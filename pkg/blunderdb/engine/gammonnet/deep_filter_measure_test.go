@@ -199,7 +199,7 @@ func parseDeepSpec(t *testing.T, spec string) (int, string) {
 
 // deepNamedConfig builds the named filter at ply. "legacy" is the plain count
 // of five at every depth past the published filter; "default" is
-// DefaultConfig; "rA.E.T" deepens A+E candidates within T at the root, and
+// DefaultConfig (staged root at 3 and 4 ply); "rA.E.T" deepens A+E candidates within T at the root, and
 // one (the shallow best) at every interior depth past the published filter;
 // "pA.E.T" is the same with the published depth-2 filter kept inside. A
 // "/kN" suffix sets PruneK to N.
@@ -213,10 +213,14 @@ func deepNamedConfig(t *testing.T, ply int, name string) SearchConfig {
 		cfg.PruneK = n
 		return cfg
 	}
+	if name == "default" {
+		return DefaultConfig(ply)
+	}
+	// Every other shape names an unstaged root: "r1.2.04" is the 3- and
+	// 4-ply default before the root was staged.
 	cfg := DefaultConfig(ply)
+	_ = cfg.SetRootStage(0, 0, 0, 0)
 	switch {
-	case name == "default":
-		return cfg
 	case name == "legacy":
 		for d := len(defaultLevel.Filter); d <= MaxPly; d++ {
 			_ = cfg.SetFilter(d, 5, 0, 0)

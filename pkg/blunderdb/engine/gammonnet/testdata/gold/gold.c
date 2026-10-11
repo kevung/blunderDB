@@ -2,7 +2,9 @@
  * Reads testdata/search_corpus.bin, writes search_gold.bin.
  * Canonical configuration: prune k=12, the "normal" level's filter triplet
  * at depth 2 (accept 1, extra 2, threshold 0.04), plain 5 at depths 3-4.
- * Two corpus formats -- see the magic check below. */
+ * Two corpus formats -- see the magic check below.
+ * A fifth argument "stage" also stages the root (1 ply, triplet (0, 4, 0.2)),
+ * which writes search_stage_gold.bin. */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -15,7 +17,8 @@
 #define TOPK 5
 
 int main(int argc, char **argv) {
-    if (argc < 5) { fprintf(stderr, "usage: gold corpus.bin model.bin prune.bin out.bin\n"); return 2; }
+    if (argc < 5) { fprintf(stderr, "usage: gold corpus.bin model.bin prune.bin out.bin [stage]\n"); return 2; }
+    const int stage = argc > 5 && !strcmp(argv[5], "stage");
     FILE *f = fopen(argv[1], "rb");
     if (!f) { perror("corpus"); return 1; }
     char magic[4]; int count;
@@ -59,6 +62,7 @@ int main(int argc, char **argv) {
         cfg.filter[0]=0; cfg.filter[1]=1; cfg.filter[3]=5; cfg.filter[4]=5;
         if (gn_search_set_filter(&cfg, 2, 1, 2, 0.04) != 0) { fprintf(stderr,"filter refused\n"); return 1; }
         gn_search_use_prune(&cfg, prune, 12);
+        if (stage && gn_search_set_root_stage(&cfg, 1, 0, 4, 0.2) != 0) { fprintf(stderr,"stage refused\n"); return 1; }
         if (wide && buf[37]) {
             double x; memcpy(&x, buf+40, 8);
             /* No shared two-sided table is loaded here (gn_bearoff_shared()

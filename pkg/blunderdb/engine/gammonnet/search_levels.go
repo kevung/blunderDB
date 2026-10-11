@@ -8,7 +8,8 @@ import (
 	"fmt"
 )
 
-// The canonical search levels ("instant", "normal", "thorough"): ply,
+// The canonical search levels ("instant", "normal", "thorough", "ply3",
+// "ply4"): ply,
 // the move filter triplet per depth, prune_k and the QUALITY pruning costs, attached to the same value.
 //
 // gammonNet is the source of truth: `gn_search_level` (src/gn_search.c) is
@@ -36,6 +37,15 @@ type SearchLevel struct {
 	PruneEquityLoss       float64
 	PruneEquityLossCILow  float64
 	PruneEquityLossCIHigh float64
+
+	// The staged root (gn_search.h's root_stage_*, filtre-de-coups-spec §8):
+	// the triplet that picks, on the 0-ply ranking, the plays scored at
+	// RootStagePly plies before the root's own filter. All zero when the
+	// level does not stage its root.
+	RootStagePly             int
+	RootStageFilter          int
+	RootStageFilterExtra     int
+	RootStageFilterThreshold float64
 }
 
 type searchLevelExport struct {
@@ -46,6 +56,9 @@ type searchLevelExport struct {
 	PruneK            int       `json:"prune_k"`
 	PruneEquityLoss   float64   `json:"prune_equity_loss"`
 	PruneEquityLossCI []float64 `json:"prune_equity_loss_ci"`
+	RootStagePly      int       `json:"root_stage_ply"`
+	// accept, extra, threshold: the export writes the triplet as one array.
+	RootStageFilter []float64 `json:"root_stage_filter"`
 }
 
 type searchLevelsExport struct {
@@ -77,13 +90,19 @@ func parseSearchLevels(raw []byte) map[string]SearchLevel {
 			level.PruneEquityLossCILow = entry.PruneEquityLossCI[0]
 			level.PruneEquityLossCIHigh = entry.PruneEquityLossCI[1]
 		}
+		level.RootStagePly = entry.RootStagePly
+		if len(entry.RootStageFilter) == 3 {
+			level.RootStageFilter = int(entry.RootStageFilter[0])
+			level.RootStageFilterExtra = int(entry.RootStageFilter[1])
+			level.RootStageFilterThreshold = entry.RootStageFilter[2]
+		}
 		out[name] = level
 	}
 	return out
 }
 
 // Level returns gammonNet's canonical named search level ("instant",
-// "normal", "thorough"), or false if name is not one of them — never a
+// "normal", "thorough", "ply3", "ply4"), or false if name is not one of them — never a
 // guessed default standing in for a typo.
 func Level(name string) (SearchLevel, bool) {
 	level, ok := searchLevels[name]
