@@ -19,6 +19,7 @@ import (
 	goruntime "runtime"
 	"strings"
 	"sync"
+	"sync/atomic"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 
@@ -45,7 +46,10 @@ type App struct {
 	// (gammonnet_eval.go); gnLivePool is its shared searcher.
 	gnEvalMu     sync.Mutex
 	gnEvalCancel context.CancelFunc
-	gnLivePool   gammonNetLivePool
+	// gnEvalSeq names the search gnEvalCancel belongs to, so a finishing
+	// search clears only its own.
+	gnEvalSeq  uint64
+	gnLivePool gammonNetLivePool
 
 	// gnBatchMu/gnBatchCancel: the same for the batch (gammonnet_batch.go).
 	gnBatchMu     sync.Mutex
@@ -54,6 +58,8 @@ type App struct {
 	// none runs): a cancelled batch still writes its in-flight results, so
 	// shutdown must wait on it before closing the database.
 	gnBatchDone chan struct{}
+	// closing is set once shutdown has stopped the jobs.
+	closing atomic.Bool
 
 	// roMu/roCancel/roDone: the rollout of one position (rollout.go), the
 	// same single-in-flight bookkeeping as the batch; a stored rollout
@@ -96,7 +102,13 @@ func NewApp(db *database.Database) *App {
 		// Opening, creating or closing a file stops the jobs writing the
 		// current one first; past the grace, the Database refuses their
 		// late writes (ErrDatabaseChanged).
-		db.SetBeforeSwitch(func() { a.stopDatabaseJobs(shutdownJobGrace) })
+		// At shutdown the jobs were already stopped and waited for: the
+		// database's Close must not pay the grace a second time.
+		db.SetBeforeSwitch(func() {
+			if !a.closing.Load() {
+				a.stopDatabaseJobs(shutdownJobGrace)
+			}
+		})
 	}
 	return a
 }

@@ -383,6 +383,9 @@ func notationForCandidate(c *Candidate, index map[Position]string) string {
 func evaluateCube(gnPos *Position, pos *domain.Position, searcher *Searcher, depthLabel string, state *MatchState, owner CubeOwner, scale EquityScale) (*domain.DoublingCubeAnalysis, *PreRollFacts, CubeAction, error) {
 	probs, ok := searcher.Probs(gnPos)
 	if !ok {
+		if searcher.stopped() {
+			return nil, nil, NoDouble, ErrCanceled
+		}
 		return nil, nil, NoDouble, fmt.Errorf("gammonnet: could not evaluate the position for a cube decision")
 	}
 	preRoll := &PreRollFacts{

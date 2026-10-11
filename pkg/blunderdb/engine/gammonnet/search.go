@@ -250,6 +250,10 @@ type Searcher struct {
 	// the read-only networks.
 	workers []*Searcher
 
+	// stop is shared with the workers: one context interrupts the whole
+	// search (cancel.go).
+	stop *stopSwitch
+
 	// La file aplatie de deepenGroups et ses résultats, gardées avec le
 	// brouillon pour ne pas allouer par décision.
 	// frontierBest[(groupOffset+i)*NumRolls+r] est la valeur du lancer r pour
@@ -338,6 +342,7 @@ func newSearcherWithCache(cfg SearchConfig, net, prune *Network, cacheLog2 uint)
 		ev:    NewEvaluator(net),
 		cache: newEvalCache(cacheLog2),
 		rolls: buildRolls(),
+		stop:  new(stopSwitch),
 	}
 	if prune != nil {
 		s.pruneEv = NewEvaluator(prune)
@@ -404,6 +409,9 @@ func (s *Searcher) Plays(pos *Position, d1, d2 int, out []Candidate) (int, error
 	}
 	n := s.rankPlays(pos, d1, d2, s.cfg.Ply, 0, s.matchState(), s.cfg.CubeOwner, out)
 	if n < 0 {
+		if s.stopped() {
+			return 0, ErrCanceled
+		}
 		return 0, fmt.Errorf("gammonnet: play generation refused or overflowed")
 	}
 	return n, nil
@@ -674,6 +682,9 @@ func (s *Searcher) positionEquity(pos *Position, depth, level int, state *MatchS
 // pos's own — unswapped, since pos and its mover are unchanged by which dice
 // came up.
 func (s *Searcher) oneRoll(pos *Position, depth, level, r int, state *MatchState, owner CubeOwner, cands []Candidate) (float64, bool) {
+	if s.stopped() {
+		return 0, false
+	}
 	roll := s.rolls[r]
 	n := s.rankPlays(pos, int(roll.d1), int(roll.d2), depth-1, level, state, owner, cands)
 	if n < 0 {
@@ -952,6 +963,7 @@ func (s *Searcher) WithWorkers(n int) *Searcher {
 	s.workers = make([]*Searcher, n)
 	for i := range s.workers {
 		s.workers[i] = newSearcherWithCache(s.cfg, s.net, s.prune, workerCacheLog2)
+		s.workers[i].stop = s.stop
 	}
 	return s
 }
