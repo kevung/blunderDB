@@ -111,6 +111,11 @@ type AnkiStore interface {
 	// RemoveCard deletes a single card from its deck.
 	RemoveCard(ctx context.Context, scope string, cardID int64) error
 
+	// DeckCards streams a deck's cards with their scheduling state, in id
+	// order. It is how an export carries a review history along with its
+	// deck; ErrNotFound is not raised for an unknown deck, which lists nothing.
+	DeckCards(ctx context.Context, scope string, deckID int64) iter.Seq2[*domain.AnkiCard, error]
+
 	// ReviewLog streams the recorded review events, most recent first. A deckID
 	// of 0 spans every deck in the tenant; limit <= 0 means no limit.
 	ReviewLog(ctx context.Context, scope string, deckID int64, limit int) iter.Seq2[*domain.AnkiReviewLog, error]

@@ -29,7 +29,8 @@ func (cli *CLI) runExport(args []string) error {
 	includeAliases := exportCmd.Bool("aliases", true, "Include the player and event aliases the exported matches write in database export (default: true)")
 	includeCollections := exportCmd.Bool("collections", true, "Include collections in database export (default: true)")
 	includeTournaments := exportCmd.Bool("tournaments", true, "Include tournaments in database export (default: true)")
-	includeDecks := exportCmd.Bool("decks", true, "Include Anki decks, without their review history, in database export (default: true)")
+	includeDecks := exportCmd.Bool("decks", true, "Include Anki decks in database export (default: true)")
+	includeAnkiHistory := exportCmd.Bool("anki-history", true, "Carry the review history of the exported Anki decks (default: true)")
 	collectionIDsStr := exportCmd.String("collection-ids", "", "Comma-separated list of collection IDs to export (empty = all)")
 	matchIDsStr := exportCmd.String("match-ids", "", "Comma-separated list of match IDs to export (empty = all)")
 	deckIDsStr := exportCmd.String("deck-ids", "", "Comma-separated list of Anki deck IDs to export (empty = all)")
@@ -184,6 +185,7 @@ func (cli *CLI) runExport(args []string) error {
 			IncludeCollections:    *includeCollections || len(collectionIDs) > 0,
 			IncludeTournaments:    *includeTournaments || len(tournamentIDs) > 0,
 			IncludeAnkiDecks:      *includeDecks || len(deckIDs) > 0,
+			IncludeAnkiHistory:    *includeAnkiHistory,
 			IncludeLessons:        true,
 			CollectionIDs:         collectionIDs,
 			MatchIDs:              matchIDs,

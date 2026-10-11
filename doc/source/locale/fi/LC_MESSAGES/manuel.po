@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-11 19:28+0200\n"
+"POT-Creation-Date: 2026-10-11 20:00+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -3342,21 +3342,20 @@ msgstr ""
 msgid ""
 "Une sauvegarde — l'export de toute la bibliothèque depuis la fenêtre "
 "d'export ou par la ligne de commande — emporte toutes les leçons. Dans la"
-" fenêtre d'export, la case *Inclure les leçons* les choisit une à une : "
-"chaque leçon cochée part avec les collections et les positions que ses "
-"étapes montrent, et le fichier peut être filigrané ou protégé par mot de "
-"passe (``.dbx``) comme tout export. Sans cette case, un export partiel "
-"(une sélection de positions, de collections ou de matchs) n'emporte pas "
-"les leçons."
+" fenêtre d'export, la ligne *Leçons* les choisit une à une : chaque leçon"
+" cochée part avec les collections et les positions que ses étapes "
+"montrent, et le fichier peut être filigrané ou protégé par mot de passe "
+"(``.dbx``) comme tout export. Sans cette case, un export partiel (une "
+"sélection de positions, de collections ou de matchs) n'emporte pas les "
+"leçons."
 msgstr ""
 "Varmuuskopio — koko kirjaston vienti vientiikkunasta tai komentoriviltä —"
-" sisältää kaikki oppitunnit. Vientiikkunassa *Sisällytä oppitunnit* "
-"-valintaruutu valitsee ne yksitellen: jokainen valittu oppitunti lähtee "
-"mukaan niiden kokoelmien ja asemien kanssa, joita sen vaiheet näyttävät, "
-"ja tiedostoon voi lisätä alkuperämerkinnän tai suojata sen salasanalla "
-"(``.dbx``) kuten minkä tahansa viennin. Ilman tätä ruutua osittainen "
-"vienti (valinta asemista, kokoelmista tai otteluista) ei sisällä "
-"oppitunteja."
+" vie mukanaan kaikki oppitunnit. Vientiikkunassa rivi *Oppitunnit* "
+"valitsee ne yksi kerrallaan: jokainen valittu oppitunti lähtee mukaan "
+"niiden kokoelmien ja asemien kanssa, joita sen vaiheet näyttävät, ja "
+"tiedostoon voi lisätä vesileiman tai suojata sen salasanalla (``.dbx``) "
+"kuten minkä tahansa viennin. Ilman tätä ruutua osittainen vienti "
+"(asemien, kokoelmien tai otteluiden valinta) ei vie oppitunteja mukanaan."
 
 #: ../../source/manuel.rst:1461
 msgid "Import : ce qui est écrit, ce qui ne l'est jamais"
@@ -11597,133 +11596,160 @@ msgstr "Tietokannan merkitseminen alkuperällään"
 
 #: ../../source/manuel.rst:4964
 msgid ""
-"La fenêtre d'export tient en un seul écran : le formulaire, puis une "
-"progression qui se superpose à lui le temps de l'écriture. Elle se ferme "
-"d'elle-même une fois terminée, et le résultat s'affiche dans la barre "
+"La fenêtre d'export tient en un seul écran : une bande d'en-tête — le "
+"nombre de positions exportées, **Annuler** et **Exporter…** — puis une "
+"grille, une ligne par famille avec son compte. Le fichier se choisit en "
+"dernier, après **Exporter…** ; fermer ce choix sans nom revient à la "
+"grille. Une progression se superpose ensuite le temps de l'écriture, la "
+"fenêtre se ferme d'elle-même et le résultat s'affiche dans la barre "
 "d'état."
 msgstr ""
-"Vienti-ikkuna mahtuu yhdelle näytölle: lomake ja sen päälle kirjoituksen "
-"ajaksi asettuva edistymisnäkymä. Ikkuna sulkeutuu itsestään "
-"valmistuttuaan, ja tulos näkyy tilapalkissa."
+"Vientiikkuna mahtuu yhdelle näytölle: otsikkokaista — viedyt asemat, "
+"**Peruuta** ja **Vie…** — ja sen alla ruudukko, jossa on yksi rivi "
+"kutakin ryhmää kohti lukumäärineen. Tiedosto valitaan viimeisenä, "
+"painikkeen **Vie…** jälkeen; valinnan sulkeminen ilman nimeä palauttaa "
+"ruudukkoon. Kirjoituksen ajaksi päälle tulee edistymisilmaisin, ikkuna "
+"sulkeutuu itsestään ja tulos näkyy tilarivillä."
 
-#: ../../source/manuel.rst:4968
-msgid "Six points méritent l'attention :"
-msgstr "Kuusi seikkaa ansaitsee huomiota:"
+#: ../../source/manuel.rst:4971
+msgid "Huit points méritent l'attention :"
+msgstr "Kahdeksan kohtaa ansaitsee huomion:"
 
-#: ../../source/manuel.rst:4970
+#: ../../source/manuel.rst:4973
 msgid ""
-"**L'export porte sur les positions actuellement affichées**, pas sur la "
-"base entière. Après une recherche, seuls les résultats partent — la "
-"fenêtre le rappelle en tête — et la liste des matchs ne propose que ceux "
-"où ces positions ont été jouées ; chaque match coché part avec toutes ses"
-" positions."
+"**La portée** : depuis une liste — une recherche, une collection —, la "
+"ligne *Portée* choisit entre la *Liste courante* et *Toute la "
+"bibliothèque*. La liste courante exporte ses positions, et la ligne "
+"*Matchs* ne propose que ceux où ces positions ont été jouées ; chaque "
+"match coché part avec toutes ses positions. Depuis la bibliothèque, la "
+"portée est la bibliothèque."
 msgstr ""
-"**Vienti koskee parhaillaan näkyvissä olevia asemia**, ei koko "
-"tietokantaa. Haun jälkeen viedään vain tulokset — ikkuna muistuttaa siitä"
-" yläreunassa — ja ottelulista tarjoaa vain ne ottelut, joissa nämä asemat"
-" on pelattu; jokainen valittu ottelu viedään kaikkine asemineen."
-
-#: ../../source/manuel.rst:4974
-msgid ""
-"**Quand la liste affichée est la bibliothèque**, l'export est le même que"
-" celui du serveur et de ``export --type database`` : toutes les cases "
-"sont cochées d'emblée, et les paquets Anki (sans historique de révision) "
-"et les transcriptions en cours partent avec le reste."
-msgstr ""
-"**Kun näytetty luettelo on kirjasto**, vienti on sama kuin palvelimen ja "
-"komennon ``export --type database``: kaikki valintaruudut on valittu "
-"valmiiksi, ja Anki-pakat (ilman kertaushistoriaa) sekä käynnissä olevat "
-"litteroinnit viedään muun mukana."
+"**Laajuus**: luettelosta — hausta, kokoelmasta — rivi *Laajuus* valitsee "
+"vaihtoehdoista *Nykyinen luettelo* ja *Koko kirjasto*. Nykyinen luettelo "
+"vie asemansa, ja rivi *Ottelut* tarjoaa vain ne ottelut, joissa nämä "
+"asemat on pelattu; jokainen valittu ottelu lähtee kaikkine asemineen. "
+"Kirjastosta käsin laajuus on kirjasto."
 
 #: ../../source/manuel.rst:4978
 msgid ""
-"**Un match part avec son brouillon de transcription**, quelle que soit la"
-" liste affichée : la case *Avec leurs brouillons de transcription*, sous "
-"celle des matchs, est cochée d'emblée. Un brouillon qui n'a pas encore "
-"produit de match ne part qu'avec la bibliothèque entière. Un match ou une"
-" transcription liés à une vidéo locale n'emportent que le nom du fichier,"
-" sans son dossier, que le destinataire relocalise sur sa propre copie ; "
-"un lien web part tel quel. Le fichier d'où un match a été importé ne part"
-" aussi que par son nom."
+"**Toute la bibliothèque** est l'export du serveur et de ``export --type "
+"database`` : toutes les familles sont cochées d'emblée, les paquets Anki "
+"avec leur historique de révision, et les transcriptions en cours partent "
+"avec le reste."
 msgstr ""
-"**Ottelu viedään litterointiluonnoksensa kanssa** näytetystä luettelosta "
-"riippumatta: otteluiden alla oleva valintaruutu *Transkriptioluonnosten "
-"kanssa* on valittu valmiiksi. Luonnos, josta ei vielä ole syntynyt "
-"ottelua, viedään vain koko kirjaston mukana. Paikalliseen videoon "
-"liitetty ottelu tai litterointi sisältää vain tiedostonimen ilman "
-"kansiota, ja vastaanottaja kohdistaa sen omaan kopioonsa; verkkolinkki "
-"viedään sellaisenaan. Myös tiedosto, josta ottelu tuotiin, viedään "
-"pelkällä nimellään."
+"**Koko kirjasto** on palvelimen ja komennon ``export --type database`` "
+"vienti: kaikki ryhmät on valittu valmiiksi, Anki-pakat "
+"kertaushistorioineen, ja kesken olevat litteroinnit lähtevät muun mukana."
 
-#: ../../source/manuel.rst:4986
+#: ../../source/manuel.rst:4982
+msgid ""
+"**Un match part avec son brouillon de transcription**, sous la case "
+"*Transcriptions* de la ligne *Matchs*, cochée d'emblée ; les matchs qu'un"
+" tournoi emporte aussi. Un brouillon qui n'a pas encore produit de match "
+"ne part qu'avec la bibliothèque entière. Un match ou une transcription "
+"liés à une vidéo locale n'emportent que le nom du fichier, sans son "
+"dossier, que le destinataire relocalise sur sa propre copie ; un lien web"
+" part tel quel. Le fichier d'où un match a été importé ne part aussi que "
+"par son nom."
+msgstr ""
+"**Ottelu lähtee litterointiluonnoksensa kanssa**, rivin *Ottelut* ruudun "
+"*Litteroinnit* alla, joka on valittu valmiiksi; samoin ottelut, jotka "
+"myös turnaus vie mukanaan. Luonnos, joka ei ole vielä tuottanut ottelua, "
+"lähtee vain koko kirjaston mukana. Paikalliseen videoon liitetty ottelu "
+"tai litterointi vie mukanaan vain tiedoston nimen ilman kansiota, jonka "
+"vastaanottaja sijoittaa uudelleen omaan kopioonsa; verkkolinkki lähtee "
+"sellaisenaan. Tiedosto, josta ottelu tuotiin, lähtee niin ikään vain "
+"nimellä."
+
+#: ../../source/manuel.rst:4989
 msgid ""
 "**Un match part avec les alias de ses joueurs et de son événement** : la "
-"case *Avec les alias de leurs joueurs et événements*, cochée d'emblée, "
-"fait suivre la fusion de joueurs, et le destinataire lit un joueur "
-"fusionné comme un seul. Un alias qui ne nomme personne des matchs "
-"exportés reste chez vous."
+"case *Alias*, cochée d'emblée, fait suivre la fusion de joueurs, et le "
+"destinataire lit un joueur fusionné comme un seul. Un alias qui ne nomme "
+"personne des matchs exportés reste chez vous."
 msgstr ""
-"**Ottelu viedään pelaajiensa ja tapahtumansa aliasten kanssa**: valmiiksi"
-" valittu ruutu *Pelaajiensa ja tapahtumiensa aliasten kanssa* vie "
-"pelaajien yhdistämisen mukana, ja vastaanottaja lukee yhdistetyn pelaajan"
-" yhtenä. Alias, joka ei nimeä ketään viedyistä otteluista, jää sinulle."
-
-#: ../../source/manuel.rst:4990
-msgid ""
-"**Une collection dont toutes les positions ne sont pas dans la sélection "
-"arrive tronquée.** La liste affiche donc, pour chaque collection, la part"
-" couverte (« 12/40 ») et la signale en rouge lorsqu'elle est partielle."
-msgstr ""
-"**Kokoelma, jonka asemat eivät kaikki sisälly valintaan, saapuu "
-"vaillinaisena.** Siksi luettelo näyttää kunkin kokoelman katetun osuuden "
-"(”12/40”) ja merkitsee sen punaisella, kun se on osittainen."
+"**Ottelu lähtee pelaajiensa ja tapahtumansa aliaksineen**: valmiiksi "
+"valittu ruutu *Aliakset* saa pelaajien yhdistämisen seuraamaan mukana, ja"
+" vastaanottaja lukee yhdistetyn pelaajan yhtenä. Alias, joka ei nimeä "
+"ketään viedyistä otteluista, jää teille."
 
 #: ../../source/manuel.rst:4993
 msgid ""
+"**Une collection dont toutes les positions ne sont pas dans la liste "
+"arrive tronquée.** La liste des collections affiche, pour chacune, la "
+"part couverte (« 12/40 ») et la signale en rouge lorsqu'elle est "
+"partielle. La case *+ leurs positions* emporte les positions des "
+"collections cochées : celles d'une liste faite à la main, celles que la "
+"requête d'une collection vivante sélectionne."
+msgstr ""
+"**Kokoelma, jonka kaikki asemat eivät ole luettelossa, saapuu "
+"typistettynä.** Kokoelmaluettelo näyttää kustakin katetun osuuden "
+"(”12/40”) ja merkitsee sen punaisella, kun se on osittainen. Ruutu *+ "
+"niiden asemat* vie valittujen kokoelmien asemat: käsin tehdyn luettelon "
+"asemat ja ne, jotka elävän kokoelman kysely valitsee."
+
+#: ../../source/manuel.rst:4999
+msgid ""
 "**Les tournois ne peuvent être exportés qu'avec les matchs** : sans eux, "
 "le lien tournoi–match n'existe pas et le tournoi arriverait vide. La case"
-" est désactivée tant que « inclure les matchs » ne l'est pas."
+" reste inactive tant que celle des matchs n'est pas cochée."
 msgstr ""
-"**Turnaukset voi viedä vain otteluiden kanssa**: ilman niitä turnaus"
-"–ottelu-yhteyttä ei ole ja turnaus saapuisi tyhjänä. Valintaruutu pysyy "
-"poissa käytöstä, kunnes ”sisällytä ottelut” on valittu."
+"**Turnauksia voi viedä vain otteluiden kanssa**: ilman niitä turnauksen "
+"ja ottelun välistä linkkiä ei ole, ja turnaus saapuisi tyhjänä. Ruutu "
+"pysyy ei-aktiivisena niin kauan kuin otteluiden ruutua ei ole valittu."
 
-#: ../../source/manuel.rst:4997
+#: ../../source/manuel.rst:5002
+msgid ""
+"**Un paquet Anki part avec ses positions**, en copie d'étude neuve. La "
+"case *avec mon historique* emporte en plus l'état de chaque carte et le "
+"journal de ses révisions : une sauvegarde, ou vos paquets passés sur une "
+"autre machine. Elle est décochée pour une liste, cochée pour la "
+"bibliothèque."
+msgstr ""
+"**Anki-pakka lähtee asemineen**, uutena opiskelukopiona. Ruutu "
+"*historiani kanssa* vie lisäksi kunkin kortin tilan ja sen kertausten "
+"lokin: varmuuskopion tai toiselle koneelle siirretyt pakkanne. Se on "
+"valitsematta luettelolle ja valittuna kirjastolle."
+
+#: ../../source/manuel.rst:5006
+msgid ""
+"**Les filtres enregistrés** n'exportent pas du contenu mais vos propres "
+"recherches, sans utilité dans la base de quelqu'un d'autre ; la case est "
+"décochée pour une liste. Un filtre qui désigne une position, un match ou "
+"un tournoi par son numéro est renuméroté pour le fichier ; s'il en "
+"désigne un qui ne part pas, il reste chez vous."
+msgstr ""
+"**Tallennetut suodattimet** eivät vie sisältöä vaan omia hakujanne, "
+"joista ei ole hyötyä jonkun toisen tietokannassa; ruutu on valitsematta "
+"luettelolle. Suodatin, joka viittaa asemaan, otteluun tai turnaukseen sen"
+" numerolla, numeroidaan tiedostoa varten uudelleen; jos se viittaa "
+"johonkin, joka ei lähde, se jää teille."
+
+#: ../../source/manuel.rst:5012
 msgid ""
 "Les champs *Utilisateur*, *Description* et *Date de création* décrivent "
-"le **fichier produit** ; ils sont préremplis depuis la base source. La "
-"case *Mes filtres enregistrés* est à part des autres : elle n'exporte pas"
-" du contenu mais vos propres recherches enregistrées, sans utilité dans "
-"la base de quelqu'un d'autre. Un filtre qui désigne une position, un "
-"match ou un tournoi par son numéro est renuméroté pour le fichier ; s'il "
-"en désigne un qui ne part pas, il reste chez vous."
+"le **fichier produit** ; ils sont préremplis depuis la base source."
 msgstr ""
-"Kentät *Käyttäjä*, *Kuvaus* ja *Luontipäivä* kuvaavat **syntyvää "
-"tiedostoa**; ne on esitäytetty lähdetietokannasta. Valintaruutu *Omat "
-"tallennetut suodattimet* on erillinen muista: se ei vie sisältöä vaan "
-"omat tallennetut hakusi, joista ei ole hyötyä jonkun toisen "
-"tietokannassa. Suodatin, joka nimeää aseman, ottelun tai turnauksen "
-"numerolla, numeroidaan uudelleen tiedostoa varten; jos se nimeää jonkin, "
-"jota ei viedä, se jää sinulle."
+"Kentät *Käyttäjä*, *Kuvaus* ja *Luontipäivä* kuvaavat **tuotettua "
+"tiedostoa**; ne esitäytetään lähdetietokannasta."
 
-#: ../../source/manuel.rst:5005
-msgid "Cocher **Marquer ce fichier de son origine** fait apparaître deux champs :"
-msgstr ""
-"Valinta **Merkitse tämä tiedosto alkuperällään** tuo näkyviin kaksi "
-"kenttää:"
+#: ../../source/manuel.rst:5015
+msgid "Cocher **Filigrane** fait apparaître deux champs :"
+msgstr "Kun valitset **Vesileima**, esiin tulee kaksi kenttää:"
 
-#: ../../source/manuel.rst:5007
+#: ../../source/manuel.rst:5017
 msgid ""
 "**Origine** — ce qu'est ce fichier et d'où il vient, dans vos mots : « "
 "Cours de Jean Dupont — 12 mars 2026 ». Ce champ est **obligatoire** : "
-"tant qu'il est vide, le bouton d'export reste inactif."
+"tant qu'il est vide, il est bordé de rouge et le bouton d'export reste "
+"inactif."
 msgstr ""
-"**Alkuperä** — mikä tämä tiedosto on ja mistä se tulee, omin sanoin: "
-"”Jean Dupontin oppitunti — 12. maaliskuuta 2026”. Tämä kenttä on "
-"**pakollinen**: niin kauan kuin se on tyhjä, vientipainike pysyy "
-"passiivisena."
+"**Alkuperä** — mikä tämä tiedosto on ja mistä se on peräisin, omin "
+"sanoin: ”Jean Dupontin kurssi — 12. maaliskuuta 2026”. Tämä kenttä on "
+"**pakollinen**: niin kauan kuin se on tyhjä, sen reunus on punainen ja "
+"vientipainike pysyy ei-aktiivisena."
 
-#: ../../source/manuel.rst:5010
+#: ../../source/manuel.rst:5020
 msgid ""
 "**Note**, facultative — conditions d'utilisation, adresse de contact, une"
 " demande de ne pas rediffuser."
@@ -11731,7 +11757,7 @@ msgstr ""
 "**Huomautus**, valinnainen — käyttöehdot, yhteysosoite, pyyntö olla "
 "jakamatta eteenpäin."
 
-#: ../../source/manuel.rst:5013
+#: ../../source/manuel.rst:5023
 msgid ""
 "La marque est signée avec votre identité d'émetteur. Elle est donc "
 "**inaltérable et infalsifiable** : nul ne peut la modifier, ni en "
@@ -11746,11 +11772,11 @@ msgstr ""
 "ohjelmisto. Merkintä ei estä mitään: se kertoo, mistä tiedosto on "
 "peräisin."
 
-#: ../../source/manuel.rst:5020
+#: ../../source/manuel.rst:5030
 msgid "Identité d'émetteur"
 msgstr "Merkitsijän identiteetti"
 
-#: ../../source/manuel.rst:5022
+#: ../../source/manuel.rst:5032
 msgid ""
 "Les marques sont signées avec votre **identité d'émetteur**, créée toute "
 "seule la première fois que vous marquez un fichier ; il n'y a rien à "
@@ -11764,7 +11790,7 @@ msgstr ""
 "tiedostoissasi on sama julkinen sormenjälki muotoa "
 "``A3F1-9C24-7B05-E1D8``."
 
-#: ../../source/manuel.rst:5027
+#: ../../source/manuel.rst:5037
 msgid ""
 "Vous pouvez communiquer cette empreinte à vos destinataires pour qu'ils "
 "vérifient qu'un fichier vient bien de vous. L'identité se transporte d'un"
@@ -11778,7 +11804,7 @@ msgstr ""
 "salalauseella suojattuna. **Tällä tiedostolla voi allekirjoittaa sinun "
 "nimissäsi: älä jaa sitä.**"
 
-#: ../../source/manuel.rst:5033
+#: ../../source/manuel.rst:5043
 msgid ""
 "Dans les préférences (icône engrenage de la barre d'outils), l'onglet "
 "*Identité d'émetteur* affiche votre nom et votre empreinte, et propose "
@@ -11788,7 +11814,7 @@ msgstr ""
 "-välilehti näyttää nimesi ja sormenjälkesi ja tarjoaa toiminnot *Tallenna"
 " identiteetti…*, *Lataa identiteetti…* ja *Luo uusi…*."
 
-#: ../../source/manuel.rst:5039
+#: ../../source/manuel.rst:5049
 msgid ""
 "**Régénérer ne révoque rien.** Un filigrane embarque la clé publique qui "
 "l'a signé : il se vérifie donc pour toujours, tout seul. Si votre fichier"
@@ -11801,7 +11827,7 @@ msgstr ""
 " allekirjoittamista vanhalla sormenjäljelläsi, ja nuo merkinnät pysyvät "
 "pätevinä."
 
-#: ../../source/manuel.rst:5044
+#: ../../source/manuel.rst:5054
 msgid ""
 "Ce qui vous protège après une fuite n'est pas logiciel : c'est de publier"
 " votre nouvelle empreinte et de désavouer l'ancienne auprès de vos "
@@ -11811,7 +11837,7 @@ msgstr ""
 " uuden sormenjälkesi ja ilmoitat vastaanottajillesi vanhan "
 "pätemättömäksi."
 
-#: ../../source/manuel.rst:5048
+#: ../../source/manuel.rst:5058
 msgid ""
 "La régénération écrase la clé actuelle ; blunderDB propose de "
 "l'enregistrer avant de la remplacer."
@@ -11819,11 +11845,11 @@ msgstr ""
 "Uuden luominen korvaa nykyisen avaimen; blunderDB tarjoaa mahdollisuutta "
 "tallentaa se ennen korvaamista."
 
-#: ../../source/manuel.rst:5052
+#: ../../source/manuel.rst:5062
 msgid "Protéger une base par un mot de passe"
 msgstr "Tietokannan suojaaminen salasanalla"
 
-#: ../../source/manuel.rst:5054
+#: ../../source/manuel.rst:5064
 msgid ""
 "Le mot de passe se saisit masqué, ici comme à l'ouverture d'un fichier "
 "protégé ; l'icône en forme d'œil l'affiche **tant qu'on la maintient "
@@ -11833,25 +11859,23 @@ msgstr ""
 "avattaessa; silmäkuvake näyttää sen **niin kauan kuin sitä pidetään "
 "painettuna** ja peittää sen taas heti, kun ote irrotetaan."
 
-#: ../../source/manuel.rst:5058
+#: ../../source/manuel.rst:5068
 msgid ""
-"Cocher **Protéger ce fichier par un mot de passe** produit un fichier "
-"d'extension ``.dbx`` — y compris si vous aviez choisi un nom en ``.db`` "
-"dans la fenêtre d'enregistrement, celle-ci s'ouvrant avant que le mot de "
-"passe ne soit demandé. Pour l'ouvrir, utilisez l'ouverture de base "
-"habituelle : la fenêtre de sélection accepte aussi bien les ``.db`` que "
-"les ``.dbx``. blunderDB demande alors le mot de passe et installe une "
-"base ordinaire à côté ; ensuite plus rien n'est demandé."
+"Cocher **Mot de passe** produit un fichier d'extension ``.dbx`` — y "
+"compris si le nom choisi dans la fenêtre d'enregistrement finit en "
+"``.db``. Pour l'ouvrir, utilisez l'ouverture de base habituelle : la "
+"fenêtre de sélection accepte aussi bien les ``.db`` que les ``.dbx``. "
+"blunderDB demande alors le mot de passe et installe une base ordinaire à "
+"côté ; ensuite plus rien n'est demandé."
 msgstr ""
-"Valinta **Suojaa tämä tiedosto salasanalla** tuottaa tiedoston, jonka "
-"pääte on ``.dbx`` — myös silloin, kun olit valinnut tallennusikkunassa "
-"``.db``-päätteisen nimen, sillä tuo ikkuna avautuu ennen salasanan "
-"kysymistä. Avaamiseen käytetään tavallista tietokannan avausta: "
-"valintaikkuna hyväksyy sekä ``.db``- että ``.dbx``-tiedostot. blunderDB "
-"kysyy tällöin salasanan ja asentaa viereen tavallisen tietokannan; sen "
-"jälkeen mitään ei enää kysytä."
+"Kun valitset **Salasana**, syntyy tiedosto, jonka pääte on ``.dbx`` — "
+"myös silloin, kun tallennusikkunassa valittu nimi päättyy ``.db``. Avaa "
+"se tavallisella tietokannan avaamisella: valintaikkuna hyväksyy sekä "
+"``.db``- että ``.dbx``-tiedostot. blunderDB kysyy tällöin salasanaa ja "
+"asentaa viereen tavallisen tietokannan; sen jälkeen mitään ei enää "
+"kysytä."
 
-#: ../../source/manuel.rst:5066
+#: ../../source/manuel.rst:5075
 msgid ""
 "La fenêtre propose de **supprimer le fichier protégé une fois ouvert** : "
 "sans cela vous conservez le même contenu sous deux noms. La case n'est "
@@ -11864,7 +11888,7 @@ msgstr ""
 " oletuksena valittuna — suojattu tiedosto jää sinulle, jos aiot välittää "
 "sen eteenpäin — ja poisto tapahtuu vasta onnistuneen avaamisen jälkeen."
 
-#: ../../source/manuel.rst:5073
+#: ../../source/manuel.rst:5082
 msgid ""
 "Le mot de passe protège le **transport** du fichier, pas la base. Il "
 "empêche un tiers d'ouvrir un fichier qui traîne dans un dossier de "
@@ -11876,7 +11900,7 @@ msgstr ""
 "vahingossa edelleen lähetettyä liitettä. Se ei suojaa siltä, jolle olet "
 "antanut salasanan."
 
-#: ../../source/manuel.rst:5078
+#: ../../source/manuel.rst:5087
 msgid ""
 "Le mot de passe est vérifié à **chaque** ouverture, y compris lorsque le "
 "fichier a déjà été ouvert auparavant sur ce poste."
@@ -11884,7 +11908,7 @@ msgstr ""
 "Salasana tarkistetaan **joka** avauskerralla, myös silloin kun tiedosto "
 "on jo aiemmin avattu tällä koneella."
 
-#: ../../source/manuel.rst:5081
+#: ../../source/manuel.rst:5090
 msgid ""
 "Techniquement, la base est chiffrée par **AES-256 en mode GCM**, avec une"
 " clé dérivée du mot de passe par **Argon2id** (64 Mio de mémoire, 3 "
@@ -11900,7 +11924,7 @@ msgstr ""
 "samoin mikä tahansa salatun tiedoston muuttaminen — vioittunutta "
 "tietokantaa ei koskaan saada hiljaisesti."
 
-#: ../../source/manuel.rst:5088
+#: ../../source/manuel.rst:5097
 msgid ""
 "L'en-tête du fichier protégé reste **en clair** : son origine demeure "
 "lisible sans le mot de passe."
@@ -11908,11 +11932,11 @@ msgstr ""
 "Suojatun tiedoston otsake pysyy **salaamattomana**: sen alkuperä on "
 "luettavissa ilman salasanaa."
 
-#: ../../source/manuel.rst:5092
+#: ../../source/manuel.rst:5101
 msgid "Lire l'origine d'un fichier"
 msgstr "Tiedoston alkuperän lukeminen"
 
-#: ../../source/manuel.rst:5094
+#: ../../source/manuel.rst:5103
 msgid ""
 "Dans l'application, ouvrez le fichier et affichez le panneau "
 "**Métadonnées** (commande ``meta``). Une section **Origine** apparaît en "
@@ -11924,11 +11948,11 @@ msgstr ""
 "joka kertoo, mitä on kirjattu, kenen toimesta, milloin, ja missä tilassa "
 "allekirjoitus on:"
 
-#: ../../source/manuel.rst:5099
+#: ../../source/manuel.rst:5108
 msgid "« ✓ marquée par vous » : le fichier porte votre marque, intacte ;"
 msgstr "”✓ sinun merkitsemäsi”: tiedostossa on oma merkintäsi ehjänä;"
 
-#: ../../source/manuel.rst:5101
+#: ../../source/manuel.rst:5110
 msgid ""
 "« ✓ signature vérifiée » : la marque est intacte et vient d'une autre clé"
 " — comparez son empreinte à celle que le producteur vous a communiquée ;"
@@ -11937,17 +11961,17 @@ msgstr ""
 "avaimesta — vertaa sen sormenjälkeä siihen, jonka tekijä on sinulle "
 "kertonut;"
 
-#: ../../source/manuel.rst:5103
+#: ../../source/manuel.rst:5112
 msgid "« ⚠ signature invalide » : le document a été modifié ou contrefait."
 msgstr ""
 "”⚠ virheellinen allekirjoitus”: asiakirjaa on muutettu tai se on "
 "väärennetty."
 
-#: ../../source/manuel.rst:5105
+#: ../../source/manuel.rst:5114
 msgid "Cette section n'apparaît pas sur une base ordinaire."
 msgstr "Tavallisessa tietokannassa tätä osiota ei näy."
 
-#: ../../source/manuel.rst:5107
+#: ../../source/manuel.rst:5116
 msgid ""
 "En ligne de commande, ``blunderdb info --db fichier.db`` affiche "
 "l'origine et l'état de la signature, **sans jamais écrire dans le "
@@ -11961,11 +11985,11 @@ msgstr ""
 "komennon ``export`` valitsimista ``--watermark`` ja ``--password`` sekä "
 "komennoista ``identity`` ja ``open``."
 
-#: ../../source/manuel.rst:5116
+#: ../../source/manuel.rst:5125
 msgid "Publier une base pour d'autres"
 msgstr "Tietokannan julkaiseminen muille"
 
-#: ../../source/manuel.rst:5118
+#: ../../source/manuel.rst:5127
 msgid ""
 "Une base marquée se distribue comme n'importe quel fichier — courriel, "
 "site personnel, clé USB. blunderDB **ne fournit aucun service** : ni "
@@ -11980,7 +12004,7 @@ msgstr ""
 "rakenteesta: tiedoston vastaanottajan puolella ei koskaan kirjata mitään,"
 " joten palvelulle ei olisi mitään ilmoitettavaa, vaikka sellainen olisi."
 
-#: ../../source/manuel.rst:5124
+#: ../../source/manuel.rst:5133
 msgid ""
 "Ce qui rend une base publiée utilisable par quelqu'un d'autre tient à "
 "quatre champs, tous déjà là :"
@@ -11988,13 +12012,13 @@ msgstr ""
 "Se, mikä tekee julkaistusta tietokannasta toisen käytettävän, tiivistyy "
 "neljään kenttään, jotka ovat kaikki jo olemassa:"
 
-#: ../../source/manuel.rst:5127
+#: ../../source/manuel.rst:5136
 msgid ""
 "**Utilisateur** — qui l'a constituée, sous le nom que vous voulez voir "
 "cité."
 msgstr "**Käyttäjä** — kuka sen kokosi, sillä nimellä, jonka haluat mainittavan."
 
-#: ../../source/manuel.rst:5128
+#: ../../source/manuel.rst:5137
 msgid ""
 "**Description** — ce que la base contient, en une phrase qui tienne dans "
 "une liste : « 240 décisions de videau au score, commentées, niveau "
@@ -12003,7 +12027,7 @@ msgstr ""
 "**Kuvaus** — mitä tietokanta sisältää, yhdessä lauseessa, joka mahtuu "
 "luetteloon: «240 tuplauspäätöstä tilanteessa, kommentoituna, keskitaso»."
 
-#: ../../source/manuel.rst:5130
+#: ../../source/manuel.rst:5139
 msgid ""
 "**Origine** (du filigrane) — ce qu'est ce fichier et pour qui il a été "
 "produit. C'est ce que le destinataire lit en premier dans le panneau "
@@ -12013,7 +12037,7 @@ msgstr ""
 "tuotettiin. Se on ensimmäinen asia, jonka vastaanottaja lukee "
 "*Metatiedot*-paneelista."
 
-#: ../../source/manuel.rst:5133
+#: ../../source/manuel.rst:5142
 msgid ""
 "**Empreinte d'émetteur** — publiez-la à côté du fichier, pas dedans : "
 "c'est en la comparant que le destinataire vérifie que le fichier vient de"
@@ -12023,7 +12047,7 @@ msgstr ""
 "sisällä: sitä vertaamalla vastaanottaja varmistaa, että tiedosto tulee "
 "sinulta eikä joltakulta, joka on ottanut nimesi."
 
-#: ../../source/manuel.rst:5137
+#: ../../source/manuel.rst:5146
 msgid ""
 "Une base publiée sans filigrane reste parfaitement utilisable ; elle est "
 "simplement anonyme, et le panneau *Métadonnées* n'affiche alors aucune "
@@ -12032,7 +12056,7 @@ msgstr ""
 "Ilman vesileimaa julkaistu tietokanta on täysin käyttökelpoinen; se on "
 "vain nimetön, eikä *Metatiedot*-paneeli näytä silloin *Alkuperä*-osiota."
 
-#: ../../source/manuel.rst:5141
+#: ../../source/manuel.rst:5150
 msgid ""
 "Pour faire connaître une base, la catégorie *Show and tell* des "
 "`discussions du dépôt <https://github.com/kevung/blunderDB/discussions>`_"
@@ -13154,3 +13178,37 @@ msgstr ""
 #~ "työkalun tulisi tehdä hänen selkänsä "
 #~ "takana. Sama ``blunderdb repair`` on "
 #~ "käytettävissä komentoriviltä."
+
+#~ msgid ""
+#~ "La fenêtre d'export tient en un "
+#~ "seul écran : le formulaire, puis "
+#~ "une progression qui se superpose à "
+#~ "lui le temps de l'écriture. Elle "
+#~ "se ferme d'elle-même une fois "
+#~ "terminée, et le résultat s'affiche dans"
+#~ " la barre d'état."
+#~ msgstr ""
+#~ "Vienti-ikkuna mahtuu yhdelle näytölle: "
+#~ "lomake ja sen päälle kirjoituksen ajaksi"
+#~ " asettuva edistymisnäkymä. Ikkuna sulkeutuu "
+#~ "itsestään valmistuttuaan, ja tulos näkyy "
+#~ "tilapalkissa."
+
+#~ msgid ""
+#~ "**L'export porte sur les positions "
+#~ "actuellement affichées**, pas sur la "
+#~ "base entière. Après une recherche, seuls"
+#~ " les résultats partent — la fenêtre"
+#~ " le rappelle en tête — et la"
+#~ " liste des matchs ne propose que "
+#~ "ceux où ces positions ont été "
+#~ "jouées ; chaque match coché part "
+#~ "avec toutes ses positions."
+#~ msgstr ""
+#~ "**Vienti koskee parhaillaan näkyvissä olevia"
+#~ " asemia**, ei koko tietokantaa. Haun "
+#~ "jälkeen viedään vain tulokset — ikkuna"
+#~ " muistuttaa siitä yläreunassa — ja "
+#~ "ottelulista tarjoaa vain ne ottelut, "
+#~ "joissa nämä asemat on pelattu; jokainen"
+#~ " valittu ottelu viedään kaikkine asemineen."

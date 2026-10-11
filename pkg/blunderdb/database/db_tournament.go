@@ -210,6 +210,8 @@ func (d *Database) ExportTournaments(exportPath string, tournamentIDs []int64, m
 		},
 		Analysis: includeAnalysis,
 		Comments: includeComments,
+		// A match's draft travels with it, as from every other export.
+		Transcriptions: true,
 		// A tournament's report reads its players through their aliases (ADR-0081).
 		Aliases:   true,
 		Metadata:  metadata,

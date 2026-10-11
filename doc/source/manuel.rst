@@ -1449,7 +1449,7 @@ leçons se créent et se modifient aussi par la ligne de commande ou par l'API
 
 Une sauvegarde — l'export de toute la bibliothèque depuis la fenêtre d'export
 ou par la ligne de commande — emporte toutes les leçons. Dans la fenêtre
-d'export, la case *Inclure les leçons* les choisit une à une : chaque leçon
+d'export, la ligne *Leçons* les choisit une à une : chaque leçon
 cochée part avec les collections et les positions que ses étapes montrent, et
 le fichier peut être filigrané ou protégé par mot de passe (``.dbx``) comme tout
 export. Sans cette case, un export partiel (une sélection de positions, de
@@ -4961,52 +4961,62 @@ passe.
 Marquer une base de son origine
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-La fenêtre d'export tient en un seul écran : le formulaire, puis une
-progression qui se superpose à lui le temps de l'écriture. Elle se ferme
-d'elle-même une fois terminée, et le résultat s'affiche dans la barre d'état.
+La fenêtre d'export tient en un seul écran : une bande d'en-tête — le nombre
+de positions exportées, **Annuler** et **Exporter…** — puis une grille, une
+ligne par famille avec son compte. Le fichier se choisit en dernier, après
+**Exporter…** ; fermer ce choix sans nom revient à la grille. Une progression
+se superpose ensuite le temps de l'écriture, la fenêtre se ferme d'elle-même et
+le résultat s'affiche dans la barre d'état.
 
-Six points méritent l'attention :
+Huit points méritent l'attention :
 
-* **L'export porte sur les positions actuellement affichées**, pas sur la base
-  entière. Après une recherche, seuls les résultats partent — la fenêtre le
-  rappelle en tête — et la liste des matchs ne propose que ceux où ces
-  positions ont été jouées ; chaque match coché part avec toutes ses positions.
-* **Quand la liste affichée est la bibliothèque**, l'export est le même que
-  celui du serveur et de ``export --type database`` : toutes les cases sont
-  cochées d'emblée, et les paquets Anki (sans historique de révision) et les
-  transcriptions en cours partent avec le reste.
-* **Un match part avec son brouillon de transcription**, quelle que soit la
-  liste affichée : la case *Avec leurs brouillons de transcription*, sous
-  celle des matchs, est cochée d'emblée. Un brouillon qui n'a pas encore
-  produit de match ne part qu'avec la bibliothèque entière. Un match ou une
-  transcription liés à une vidéo locale n'emportent que le nom du fichier,
-  sans son dossier, que le destinataire relocalise sur sa propre copie ; un
-  lien web part tel quel. Le fichier d'où un match a été importé ne part
-  aussi que par son nom.
+* **La portée** : depuis une liste — une recherche, une collection —, la ligne
+  *Portée* choisit entre la *Liste courante* et *Toute la bibliothèque*. La
+  liste courante exporte ses positions, et la ligne *Matchs* ne propose que
+  ceux où ces positions ont été jouées ; chaque match coché part avec toutes
+  ses positions. Depuis la bibliothèque, la portée est la bibliothèque.
+* **Toute la bibliothèque** est l'export du serveur et de
+  ``export --type database`` : toutes les familles sont cochées d'emblée, les
+  paquets Anki avec leur historique de révision, et les transcriptions en
+  cours partent avec le reste.
+* **Un match part avec son brouillon de transcription**, sous la case
+  *Transcriptions* de la ligne *Matchs*, cochée d'emblée ; les matchs qu'un
+  tournoi emporte aussi. Un brouillon qui n'a pas encore produit de match ne
+  part qu'avec la bibliothèque entière. Un match ou une transcription liés à
+  une vidéo locale n'emportent que le nom du fichier, sans son dossier, que le
+  destinataire relocalise sur sa propre copie ; un lien web part tel quel. Le
+  fichier d'où un match a été importé ne part aussi que par son nom.
 * **Un match part avec les alias de ses joueurs et de son événement** : la
-  case *Avec les alias de leurs joueurs et événements*, cochée d'emblée, fait
-  suivre la fusion de joueurs, et le destinataire lit un joueur fusionné comme
-  un seul. Un alias qui ne nomme personne des matchs exportés reste chez vous.
-* **Une collection dont toutes les positions ne sont pas dans la sélection
-  arrive tronquée.** La liste affiche donc, pour chaque collection, la part
-  couverte (« 12/40 ») et la signale en rouge lorsqu'elle est partielle.
+  case *Alias*, cochée d'emblée, fait suivre la fusion de joueurs, et le
+  destinataire lit un joueur fusionné comme un seul. Un alias qui ne nomme
+  personne des matchs exportés reste chez vous.
+* **Une collection dont toutes les positions ne sont pas dans la liste arrive
+  tronquée.** La liste des collections affiche, pour chacune, la part couverte
+  (« 12/40 ») et la signale en rouge lorsqu'elle est partielle. La case
+  *+ leurs positions* emporte les positions des collections cochées : celles
+  d'une liste faite à la main, celles que la requête d'une collection vivante
+  sélectionne.
 * **Les tournois ne peuvent être exportés qu'avec les matchs** : sans eux, le
-  lien tournoi–match n'existe pas et le tournoi arriverait vide. La case est
-  désactivée tant que « inclure les matchs » ne l'est pas.
+  lien tournoi–match n'existe pas et le tournoi arriverait vide. La case reste
+  inactive tant que celle des matchs n'est pas cochée.
+* **Un paquet Anki part avec ses positions**, en copie d'étude neuve. La case
+  *avec mon historique* emporte en plus l'état de chaque carte et le journal
+  de ses révisions : une sauvegarde, ou vos paquets passés sur une autre
+  machine. Elle est décochée pour une liste, cochée pour la bibliothèque.
+* **Les filtres enregistrés** n'exportent pas du contenu mais vos propres
+  recherches, sans utilité dans la base de quelqu'un d'autre ; la case est
+  décochée pour une liste. Un filtre qui désigne une position, un match ou un
+  tournoi par son numéro est renuméroté pour le fichier ; s'il en désigne un
+  qui ne part pas, il reste chez vous.
 
-Les champs *Utilisateur*, *Description* et *Date de création* décrivent le **fichier
-produit** ; ils sont préremplis depuis la base source. La case *Mes filtres
-enregistrés* est à part des autres : elle n'exporte pas du contenu mais vos
-propres recherches enregistrées, sans utilité dans la base de quelqu'un
-d'autre. Un filtre qui désigne une position, un match ou un tournoi par son
-numéro est renuméroté pour le fichier ; s'il en désigne un qui ne part pas,
-il reste chez vous.
+Les champs *Utilisateur*, *Description* et *Date de création* décrivent le
+**fichier produit** ; ils sont préremplis depuis la base source.
 
-Cocher **Marquer ce fichier de son origine** fait apparaître deux champs :
+Cocher **Filigrane** fait apparaître deux champs :
 
 * **Origine** — ce qu'est ce fichier et d'où il vient, dans vos mots :
   « Cours de Jean Dupont — 12 mars 2026 ». Ce champ est **obligatoire** : tant
-  qu'il est vide, le bouton d'export reste inactif.
+  qu'il est vide, il est bordé de rouge et le bouton d'export reste inactif.
 * **Note**, facultative — conditions d'utilisation, adresse de contact, une
   demande de ne pas rediffuser.
 
@@ -5055,11 +5065,10 @@ Le mot de passe se saisit masqué, ici comme à l'ouverture d'un fichier protég
 l'icône en forme d'œil l'affiche **tant qu'on la maintient enfoncée**, et le
 masque de nouveau dès qu'on relâche.
 
-Cocher **Protéger ce fichier par un mot de passe** produit un fichier
-d'extension ``.dbx`` — y compris si vous aviez choisi un nom en ``.db`` dans la
-fenêtre d'enregistrement, celle-ci s'ouvrant avant que le mot de passe ne soit
-demandé. Pour l'ouvrir, utilisez l'ouverture de base habituelle : la fenêtre de
-sélection accepte aussi bien les ``.db`` que les ``.dbx``. blunderDB demande
+Cocher **Mot de passe** produit un fichier d'extension ``.dbx`` — y compris si
+le nom choisi dans la fenêtre d'enregistrement finit en ``.db``. Pour
+l'ouvrir, utilisez l'ouverture de base habituelle : la fenêtre de sélection
+accepte aussi bien les ``.db`` que les ``.dbx``. blunderDB demande
 alors le mot de passe et installe une base ordinaire à côté ; ensuite plus rien
 n'est demandé.
 

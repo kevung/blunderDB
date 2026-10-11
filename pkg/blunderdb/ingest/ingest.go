@@ -102,7 +102,8 @@ type ExportOptions struct {
 	// those families whole. Transcriptions sends each exported match's draft
 	// with it, and the drafts that never became a match when every match and
 	// every position leave. Aliases sends the player and event aliases that
-	// touch an exported match.
+	// touch an exported match. AnkiHistory carries the decks' scheduling
+	// state and review events, which otherwise stay behind.
 	Analysis       bool
 	Comments       bool
 	PlayedMoves    bool
@@ -110,6 +111,7 @@ type ExportOptions struct {
 	AnkiDecks      bool
 	Transcriptions bool
 	Aliases        bool
+	AnkiHistory    bool
 
 	// Metadata is copied by allow-list (issuance.Carried). Watermark is the
 	// sealed document to write verbatim (see SealWatermark), "" for none.

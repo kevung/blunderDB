@@ -303,8 +303,17 @@ type exportSQLiteReq struct {
 	LessonIDs []int64 `json:"lessonIds,omitempty"`
 	// DeckIDs narrows the export to these Anki decks and their positions, on
 	// the same terms: the recipient studies them afresh, without the
-	// sender's review history. Given with the others, all travel.
+	// sender's review history unless ankiHistory asks for it. Given with the
+	// others, all travel.
 	DeckIDs []int64 `json:"deckIds,omitempty"`
+	// Transcriptions and Aliases, when false, leave behind the exported
+	// matches' transcription drafts and the aliases they write; absent, both
+	// travel, as from the desktop and the CLI.
+	Transcriptions *bool `json:"transcriptions,omitempty"`
+	Aliases        *bool `json:"aliases,omitempty"`
+	// AnkiHistory carries the exported decks' review history. Absent, the
+	// whole tenant carries it and decks narrowed by deckIds leave without it.
+	AnkiHistory *bool `json:"ankiHistory,omitempty"`
 }
 
 // sealExportWatermark seals a watermark for origin/note with this daemon's own
@@ -371,7 +380,16 @@ func (s *Server) handleExportSQLite() http.HandlerFunc {
 				LessonIDs: req.LessonIDs, LessonContents: true,
 				DeckIDs: req.DeckIDs, DeckPositions: true,
 			}
-			opts.FilterLibrary, opts.AnkiDecks = false, false
+			opts.FilterLibrary, opts.AnkiDecks, opts.AnkiHistory = false, false, false
+		}
+		if req.Transcriptions != nil {
+			opts.Transcriptions = *req.Transcriptions
+		}
+		if req.Aliases != nil {
+			opts.Aliases = *req.Aliases
+		}
+		if req.AnkiHistory != nil {
+			opts.AnkiHistory = *req.AnkiHistory
 		}
 		opts.Watermark = watermark
 		exportErr := exp.Export(r.Context(), scopeOf(r), tmp, opts)

@@ -68,6 +68,7 @@ func (d *Database) exportPlan(ctx context.Context, opts ExportOptions) (ingest.E
 		FilterLibrary:  opts.IncludeFilterLibrary,
 		Transcriptions: opts.IncludeTranscriptions,
 		Aliases:        opts.IncludeAliases,
+		AnkiHistory:    opts.IncludeAnkiHistory,
 	}
 	sel := ingest.Selection{
 		AllPositions:  opts.AllPositions,
@@ -88,6 +89,7 @@ func (d *Database) exportPlan(ctx context.Context, opts ExportOptions) (ingest.E
 	}
 	if opts.IncludeCollections {
 		sel.CollectionIDs = opts.CollectionIDs
+		sel.CollectionPositions = opts.IncludeCollectionPositions
 	}
 	if opts.IncludeMatches {
 		switch {
@@ -127,6 +129,7 @@ func wholeLibraryPlan(opts ExportOptions) ingest.ExportOptions {
 	plan.FilterLibrary = opts.IncludeFilterLibrary
 	plan.Transcriptions = opts.IncludeTranscriptions
 	plan.Aliases = opts.IncludeAliases
+	plan.AnkiHistory = opts.IncludeAnkiHistory
 	sel := &plan.Selection
 	sel.AllMatches, sel.MatchIDs = narrow(opts.IncludeMatches, opts.MatchIDs)
 	sel.AllCollections, sel.CollectionIDs = narrow(opts.IncludeCollections, opts.CollectionIDs)

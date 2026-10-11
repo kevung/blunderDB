@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-11 19:28+0200\n"
+"POT-Creation-Date: 2026-10-11 20:00+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -3390,21 +3390,21 @@ msgstr ""
 msgid ""
 "Une sauvegarde — l'export de toute la bibliothèque depuis la fenêtre "
 "d'export ou par la ligne de commande — emporte toutes les leçons. Dans la"
-" fenêtre d'export, la case *Inclure les leçons* les choisit une à une : "
-"chaque leçon cochée part avec les collections et les positions que ses "
-"étapes montrent, et le fichier peut être filigrané ou protégé par mot de "
-"passe (``.dbx``) comme tout export. Sans cette case, un export partiel "
-"(une sélection de positions, de collections ou de matchs) n'emporte pas "
-"les leçons."
+" fenêtre d'export, la ligne *Leçons* les choisit une à une : chaque leçon"
+" cochée part avec les collections et les positions que ses étapes "
+"montrent, et le fichier peut être filigrané ou protégé par mot de passe "
+"(``.dbx``) comme tout export. Sans cette case, un export partiel (une "
+"sélection de positions, de collections ou de matchs) n'emporte pas les "
+"leçons."
 msgstr ""
-"Una copia de seguridad — la exportación de toda la biblioteca desde la "
-"ventana de exportación o por la línea de comandos — incluye todas las "
-"lecciones. En la ventana de exportación, la casilla *Incluir lecciones* "
-"las elige una a una: cada lección marcada sale con las colecciones y las "
-"posiciones que muestran sus pasos, y el archivo puede llevar marca de "
-"origen o protegerse con contraseña (``.dbx``) como cualquier exportación."
-" Sin esa casilla, una exportación parcial (una selección de posiciones, "
-"colecciones o partidas) no incluye las lecciones."
+"Una copia de seguridad —la exportación de toda la biblioteca desde la "
+"ventana de exportación o por la línea de comandos— se lleva todas las "
+"lecciones. En la ventana de exportación, la fila *Lecciones* las elige "
+"una a una: cada lección marcada sale con las colecciones y las posiciones"
+" que muestran sus pasos, y el archivo puede llevar marca de agua o "
+"protegerse con contraseña (``.dbx``) como cualquier exportación. Sin esta"
+" casilla, una exportación parcial (una selección de posiciones, de "
+"colecciones o de partidas) no se lleva las lecciones."
 
 #: ../../source/manuel.rst:1461
 msgid "Import : ce qui est écrit, ce qui ne l'est jamais"
@@ -11749,135 +11749,166 @@ msgstr "Marcar una base de datos con su origen"
 
 #: ../../source/manuel.rst:4964
 msgid ""
-"La fenêtre d'export tient en un seul écran : le formulaire, puis une "
-"progression qui se superpose à lui le temps de l'écriture. Elle se ferme "
-"d'elle-même une fois terminée, et le résultat s'affiche dans la barre "
+"La fenêtre d'export tient en un seul écran : une bande d'en-tête — le "
+"nombre de positions exportées, **Annuler** et **Exporter…** — puis une "
+"grille, une ligne par famille avec son compte. Le fichier se choisit en "
+"dernier, après **Exporter…** ; fermer ce choix sans nom revient à la "
+"grille. Une progression se superpose ensuite le temps de l'écriture, la "
+"fenêtre se ferme d'elle-même et le résultat s'affiche dans la barre "
 "d'état."
 msgstr ""
-"La ventana de exportación cabe en una sola pantalla: el formulario y, "
-"sobre él, una barra de progreso durante la escritura. Se cierra sola al "
-"terminar y el resultado aparece en la barra de estado."
+"La ventana de exportación cabe en una sola pantalla: una banda de "
+"cabecera —el número de posiciones exportadas, **Cancelar** y "
+"**Exportar…**— y después una cuadrícula, con una fila por familia y su "
+"recuento. El archivo se elige al final, tras **Exportar…**; cerrar esa "
+"elección sin nombre devuelve a la cuadrícula. Después se superpone una "
+"barra de progreso mientras dura la escritura, la ventana se cierra sola y"
+" el resultado aparece en la barra de estado."
 
-#: ../../source/manuel.rst:4968
-msgid "Six points méritent l'attention :"
-msgstr "Seis puntos merecen atención:"
+#: ../../source/manuel.rst:4971
+msgid "Huit points méritent l'attention :"
+msgstr "Ocho puntos merecen atención:"
 
-#: ../../source/manuel.rst:4970
+#: ../../source/manuel.rst:4973
 msgid ""
-"**L'export porte sur les positions actuellement affichées**, pas sur la "
-"base entière. Après une recherche, seuls les résultats partent — la "
-"fenêtre le rappelle en tête — et la liste des matchs ne propose que ceux "
-"où ces positions ont été jouées ; chaque match coché part avec toutes ses"
-" positions."
+"**La portée** : depuis une liste — une recherche, une collection —, la "
+"ligne *Portée* choisit entre la *Liste courante* et *Toute la "
+"bibliothèque*. La liste courante exporte ses positions, et la ligne "
+"*Matchs* ne propose que ceux où ces positions ont été jouées ; chaque "
+"match coché part avec toutes ses positions. Depuis la bibliothèque, la "
+"portée est la bibliothèque."
 msgstr ""
-"**La exportación afecta a las posiciones mostradas actualmente**, no a "
-"toda la base. Tras una búsqueda solo se exportan los resultados (la "
-"ventana lo recuerda en la parte superior) y la lista de partidas solo "
-"ofrece aquellas en las que se jugaron esas posiciones; cada partida "
-"marcada se exporta con todas sus posiciones."
-
-#: ../../source/manuel.rst:4974
-msgid ""
-"**Quand la liste affichée est la bibliothèque**, l'export est le même que"
-" celui du serveur et de ``export --type database`` : toutes les cases "
-"sont cochées d'emblée, et les paquets Anki (sans historique de révision) "
-"et les transcriptions en cours partent avec le reste."
-msgstr ""
-"**Cuando la lista mostrada es la biblioteca**, la exportación es la misma"
-" que la del servidor y la de ``export --type database``: todas las "
-"casillas están marcadas desde el principio, y los mazos de Anki (sin "
-"historial de repaso) y las transcripciones en curso se exportan con el "
-"resto."
+"**El alcance**: desde una lista —una búsqueda, una colección—, la fila "
+"*Alcance* elige entre la *Lista actual* y *Toda la biblioteca*. La lista "
+"actual exporta sus posiciones, y la fila *Partidas* solo propone aquellas"
+" en las que se jugaron esas posiciones; cada partida marcada sale con "
+"todas sus posiciones. Desde la biblioteca, el alcance es la biblioteca."
 
 #: ../../source/manuel.rst:4978
 msgid ""
-"**Un match part avec son brouillon de transcription**, quelle que soit la"
-" liste affichée : la case *Avec leurs brouillons de transcription*, sous "
-"celle des matchs, est cochée d'emblée. Un brouillon qui n'a pas encore "
-"produit de match ne part qu'avec la bibliothèque entière. Un match ou une"
-" transcription liés à une vidéo locale n'emportent que le nom du fichier,"
-" sans son dossier, que le destinataire relocalise sur sa propre copie ; "
-"un lien web part tel quel. Le fichier d'où un match a été importé ne part"
-" aussi que par son nom."
+"**Toute la bibliothèque** est l'export du serveur et de ``export --type "
+"database`` : toutes les familles sont cochées d'emblée, les paquets Anki "
+"avec leur historique de révision, et les transcriptions en cours partent "
+"avec le reste."
 msgstr ""
-"**Una partida se exporta con su borrador de transcripción**, sea cual sea"
-" la lista mostrada: la casilla *Con sus borradores de transcripción*, "
-"bajo la de las partidas, está marcada desde el principio. Un borrador que"
-" aún no ha producido ninguna partida solo se exporta con la biblioteca "
-"entera. Una partida o una transcripción vinculadas a un vídeo local solo "
-"llevan el nombre del archivo, sin su carpeta, y el destinatario las "
-"reubica en su propia copia; un enlace web se exporta tal cual. El archivo"
-" del que se importó una partida también se exporta solo con su nombre."
+"**Toda la biblioteca** es la exportación del servidor y de ``export "
+"--type database``: todas las familias están marcadas de entrada, los "
+"mazos Anki con su historial de repaso, y las transcripciones en curso "
+"salen con el resto."
 
-#: ../../source/manuel.rst:4986
+#: ../../source/manuel.rst:4982
+msgid ""
+"**Un match part avec son brouillon de transcription**, sous la case "
+"*Transcriptions* de la ligne *Matchs*, cochée d'emblée ; les matchs qu'un"
+" tournoi emporte aussi. Un brouillon qui n'a pas encore produit de match "
+"ne part qu'avec la bibliothèque entière. Un match ou une transcription "
+"liés à une vidéo locale n'emportent que le nom du fichier, sans son "
+"dossier, que le destinataire relocalise sur sa propre copie ; un lien web"
+" part tel quel. Le fichier d'où un match a été importé ne part aussi que "
+"par son nom."
+msgstr ""
+"**Una partida sale con su borrador de transcripción**, bajo la casilla "
+"*Transcripciones* de la fila *Partidas*, marcada de entrada; las partidas"
+" que un torneo también lleva. Un borrador que aún no ha producido una "
+"partida solo sale con la biblioteca entera. Una partida o una "
+"transcripción vinculadas a un vídeo local solo llevan el nombre del "
+"archivo, sin su carpeta, que el destinatario reubica en su propia copia; "
+"un enlace web sale tal cual. El archivo desde el que se importó una "
+"partida tampoco sale más que por su nombre."
+
+#: ../../source/manuel.rst:4989
 msgid ""
 "**Un match part avec les alias de ses joueurs et de son événement** : la "
-"case *Avec les alias de leurs joueurs et événements*, cochée d'emblée, "
-"fait suivre la fusion de joueurs, et le destinataire lit un joueur "
-"fusionné comme un seul. Un alias qui ne nomme personne des matchs "
-"exportés reste chez vous."
+"case *Alias*, cochée d'emblée, fait suivre la fusion de joueurs, et le "
+"destinataire lit un joueur fusionné comme un seul. Un alias qui ne nomme "
+"personne des matchs exportés reste chez vous."
 msgstr ""
-"**Una partida se exporta con los alias de sus jugadores y de su evento**:"
-" la casilla *Con los alias de sus jugadores y eventos*, marcada desde el "
-"principio, conserva la fusión de jugadores, y el destinatario lee un "
-"jugador fusionado como uno solo. Un alias que no nombra a nadie de las "
-"partidas exportadas se queda con usted."
-
-#: ../../source/manuel.rst:4990
-msgid ""
-"**Une collection dont toutes les positions ne sont pas dans la sélection "
-"arrive tronquée.** La liste affiche donc, pour chaque collection, la part"
-" couverte (« 12/40 ») et la signale en rouge lorsqu'elle est partielle."
-msgstr ""
-"**Una colección cuyas posiciones no estén todas en la selección llega "
-"truncada.** Por eso la lista muestra, para cada colección, la parte "
-"cubierta («12/40») y la señala en rojo cuando es parcial."
+"**Una partida sale con los alias de sus jugadores y de su evento**: la "
+"casilla *Alias*, marcada de entrada, hace que la fusión de jugadores la "
+"acompañe, y el destinatario lee un jugador fusionado como uno solo. Un "
+"alias que no nombra a nadie de las partidas exportadas se queda con "
+"usted."
 
 #: ../../source/manuel.rst:4993
 msgid ""
+"**Une collection dont toutes les positions ne sont pas dans la liste "
+"arrive tronquée.** La liste des collections affiche, pour chacune, la "
+"part couverte (« 12/40 ») et la signale en rouge lorsqu'elle est "
+"partielle. La case *+ leurs positions* emporte les positions des "
+"collections cochées : celles d'une liste faite à la main, celles que la "
+"requête d'une collection vivante sélectionne."
+msgstr ""
+"**Una colección cuyas posiciones no están todas en la lista llega "
+"truncada.** La lista de colecciones muestra, para cada una, la parte "
+"cubierta («12/40») y la señala en rojo cuando es parcial. La casilla *+ "
+"sus posiciones* se lleva las posiciones de las colecciones marcadas: las "
+"de una lista hecha a mano, las que selecciona la consulta de una "
+"colección viva."
+
+#: ../../source/manuel.rst:4999
+msgid ""
 "**Les tournois ne peuvent être exportés qu'avec les matchs** : sans eux, "
 "le lien tournoi–match n'existe pas et le tournoi arriverait vide. La case"
-" est désactivée tant que « inclure les matchs » ne l'est pas."
+" reste inactive tant que celle des matchs n'est pas cochée."
 msgstr ""
-"**Los torneos solo pueden exportarse junto con los partidos**: sin ellos "
-"no existe el vínculo torneo–partido y el torneo llegaría vacío. La "
-"casilla permanece desactivada mientras no se marque «incluir los "
-"partidos»."
+"**Los torneos solo pueden exportarse con las partidas**: sin ellas, el "
+"vínculo torneo–partida no existe y el torneo llegaría vacío. La casilla "
+"permanece inactiva mientras la de las partidas no esté marcada."
 
-#: ../../source/manuel.rst:4997
+#: ../../source/manuel.rst:5002
+msgid ""
+"**Un paquet Anki part avec ses positions**, en copie d'étude neuve. La "
+"case *avec mon historique* emporte en plus l'état de chaque carte et le "
+"journal de ses révisions : une sauvegarde, ou vos paquets passés sur une "
+"autre machine. Elle est décochée pour une liste, cochée pour la "
+"bibliothèque."
+msgstr ""
+"**Un mazo Anki sale con sus posiciones**, como copia de estudio nueva. La"
+" casilla *con mi historial* se lleva además el estado de cada tarjeta y "
+"el registro de sus repasos: una copia de seguridad, o sus mazos pasados a"
+" otra máquina. Está desmarcada para una lista y marcada para la "
+"biblioteca."
+
+#: ../../source/manuel.rst:5006
+msgid ""
+"**Les filtres enregistrés** n'exportent pas du contenu mais vos propres "
+"recherches, sans utilité dans la base de quelqu'un d'autre ; la case est "
+"décochée pour une liste. Un filtre qui désigne une position, un match ou "
+"un tournoi par son numéro est renuméroté pour le fichier ; s'il en "
+"désigne un qui ne part pas, il reste chez vous."
+msgstr ""
+"**Los filtros guardados** no exportan contenido sino sus propias "
+"búsquedas, sin utilidad en la base de otra persona; la casilla está "
+"desmarcada para una lista. Un filtro que designa una posición, una "
+"partida o un torneo por su número se renumera para el archivo; si designa"
+" uno que no sale, se queda con usted."
+
+#: ../../source/manuel.rst:5012
 msgid ""
 "Les champs *Utilisateur*, *Description* et *Date de création* décrivent "
-"le **fichier produit** ; ils sont préremplis depuis la base source. La "
-"case *Mes filtres enregistrés* est à part des autres : elle n'exporte pas"
-" du contenu mais vos propres recherches enregistrées, sans utilité dans "
-"la base de quelqu'un d'autre. Un filtre qui désigne une position, un "
-"match ou un tournoi par son numéro est renuméroté pour le fichier ; s'il "
-"en désigne un qui ne part pas, il reste chez vous."
+"le **fichier produit** ; ils sont préremplis depuis la base source."
 msgstr ""
 "Los campos *Usuario*, *Descripción* y *Fecha de creación* describen el "
-"**archivo producido**; se rellenan previamente a partir de la base de "
-"origen. La casilla *Mis filtros guardados* es distinta de las demás: no "
-"exporta contenido, sino sus propias búsquedas guardadas, que no sirven de"
-" nada en la base de otra persona. Un filtro que designa una posición, una"
-" partida o un torneo por su número se renumera para el archivo; si "
-"designa uno que no se exporta, se queda con usted."
+"**archivo producido**; vienen rellenados de antemano a partir de la base "
+"de origen."
 
-#: ../../source/manuel.rst:5005
-msgid "Cocher **Marquer ce fichier de son origine** fait apparaître deux champs :"
-msgstr "Al marcar **Marcar este archivo con su origen** aparecen dos campos:"
+#: ../../source/manuel.rst:5015
+msgid "Cocher **Filigrane** fait apparaître deux champs :"
+msgstr "Al marcar **Marca de agua** aparecen dos campos:"
 
-#: ../../source/manuel.rst:5007
+#: ../../source/manuel.rst:5017
 msgid ""
 "**Origine** — ce qu'est ce fichier et d'où il vient, dans vos mots : « "
 "Cours de Jean Dupont — 12 mars 2026 ». Ce champ est **obligatoire** : "
-"tant qu'il est vide, le bouton d'export reste inactif."
+"tant qu'il est vide, il est bordé de rouge et le bouton d'export reste "
+"inactif."
 msgstr ""
-"**Origen** — qué es este archivo y de dónde viene, con tus palabras: "
-"«Clase de Jean Dupont — 12 de marzo de 2026». Este campo es "
-"**obligatorio**: mientras esté vacío, el botón de exportación permanece "
-"inactivo."
+"**Origen** — qué es este archivo y de dónde viene, con sus propias "
+"palabras: «Curso de Jean Dupont — 12 de marzo de 2026». Este campo es "
+"**obligatorio**: mientras esté vacío, aparece bordeado de rojo y el botón"
+" de exportación permanece inactivo."
 
-#: ../../source/manuel.rst:5010
+#: ../../source/manuel.rst:5020
 msgid ""
 "**Note**, facultative — conditions d'utilisation, adresse de contact, une"
 " demande de ne pas rediffuser."
@@ -11885,7 +11916,7 @@ msgstr ""
 "**Nota**, opcional — condiciones de uso, dirección de contacto, una "
 "petición de no redistribuir."
 
-#: ../../source/manuel.rst:5013
+#: ../../source/manuel.rst:5023
 msgid ""
 "La marque est signée avec votre identité d'émetteur. Elle est donc "
 "**inaltérable et infalsifiable** : nul ne peut la modifier, ni en "
@@ -11899,11 +11930,11 @@ msgstr ""
 "SQLite corriente y blunderDB es software libre. No impide nada: dice de "
 "dónde viene el archivo."
 
-#: ../../source/manuel.rst:5020
+#: ../../source/manuel.rst:5030
 msgid "Identité d'émetteur"
 msgstr "Identidad del emisor"
 
-#: ../../source/manuel.rst:5022
+#: ../../source/manuel.rst:5032
 msgid ""
 "Les marques sont signées avec votre **identité d'émetteur**, créée toute "
 "seule la première fois que vous marquez un fichier ; il n'y a rien à "
@@ -11916,7 +11947,7 @@ msgstr ""
 "Pertenece a una persona y no a una base de datos: todos tus archivos "
 "llevan la misma huella pública, con la forma ``A3F1-9C24-7B05-E1D8``."
 
-#: ../../source/manuel.rst:5027
+#: ../../source/manuel.rst:5037
 msgid ""
 "Vous pouvez communiquer cette empreinte à vos destinataires pour qu'ils "
 "vérifient qu'un fichier vient bien de vous. L'identité se transporte d'un"
@@ -11930,7 +11961,7 @@ msgstr ""
 " por una frase de contraseña. **Ese archivo permite firmar en tu nombre: "
 "no lo compartas.**"
 
-#: ../../source/manuel.rst:5033
+#: ../../source/manuel.rst:5043
 msgid ""
 "Dans les préférences (icône engrenage de la barre d'outils), l'onglet "
 "*Identité d'émetteur* affiche votre nom et votre empreinte, et propose "
@@ -11940,7 +11971,7 @@ msgstr ""
 "pestaña *Identidad del emisor* muestra tu nombre y tu huella, y ofrece "
 "*Guardar identidad…*, *Cargar identidad…* y *Regenerar…*."
 
-#: ../../source/manuel.rst:5039
+#: ../../source/manuel.rst:5049
 msgid ""
 "**Régénérer ne révoque rien.** Un filigrane embarque la clé publique qui "
 "l'a signé : il se vérifie donc pour toujours, tout seul. Si votre fichier"
@@ -11952,7 +11983,7 @@ msgstr ""
 " de identidad se ha filtrado, quien lo posea podrá seguir firmando con tu"
 " huella antigua, y esas marcas seguirán siendo válidas."
 
-#: ../../source/manuel.rst:5044
+#: ../../source/manuel.rst:5054
 msgid ""
 "Ce qui vous protège après une fuite n'est pas logiciel : c'est de publier"
 " votre nouvelle empreinte et de désavouer l'ancienne auprès de vos "
@@ -11961,7 +11992,7 @@ msgstr ""
 "Lo que te protege tras una filtración no es el software: es publicar tu "
 "nueva huella y desautorizar la antigua ante tus destinatarios."
 
-#: ../../source/manuel.rst:5048
+#: ../../source/manuel.rst:5058
 msgid ""
 "La régénération écrase la clé actuelle ; blunderDB propose de "
 "l'enregistrer avant de la remplacer."
@@ -11969,11 +12000,11 @@ msgstr ""
 "La regeneración sobrescribe la clave actual; blunderDB ofrece guardarla "
 "antes de reemplazarla."
 
-#: ../../source/manuel.rst:5052
+#: ../../source/manuel.rst:5062
 msgid "Protéger une base par un mot de passe"
 msgstr "Proteger una base de datos con una contraseña"
 
-#: ../../source/manuel.rst:5054
+#: ../../source/manuel.rst:5064
 msgid ""
 "Le mot de passe se saisit masqué, ici comme à l'ouverture d'un fichier "
 "protégé ; l'icône en forme d'œil l'affiche **tant qu'on la maintient "
@@ -11983,25 +12014,23 @@ msgstr ""
 "protegido; el icono con forma de ojo la muestra **mientras se mantiene "
 "pulsado** y vuelve a ocultarla al soltarlo."
 
-#: ../../source/manuel.rst:5058
+#: ../../source/manuel.rst:5068
 msgid ""
-"Cocher **Protéger ce fichier par un mot de passe** produit un fichier "
-"d'extension ``.dbx`` — y compris si vous aviez choisi un nom en ``.db`` "
-"dans la fenêtre d'enregistrement, celle-ci s'ouvrant avant que le mot de "
-"passe ne soit demandé. Pour l'ouvrir, utilisez l'ouverture de base "
-"habituelle : la fenêtre de sélection accepte aussi bien les ``.db`` que "
-"les ``.dbx``. blunderDB demande alors le mot de passe et installe une "
-"base ordinaire à côté ; ensuite plus rien n'est demandé."
+"Cocher **Mot de passe** produit un fichier d'extension ``.dbx`` — y "
+"compris si le nom choisi dans la fenêtre d'enregistrement finit en "
+"``.db``. Pour l'ouvrir, utilisez l'ouverture de base habituelle : la "
+"fenêtre de sélection accepte aussi bien les ``.db`` que les ``.dbx``. "
+"blunderDB demande alors le mot de passe et installe une base ordinaire à "
+"côté ; ensuite plus rien n'est demandé."
 msgstr ""
-"Marcar **Proteger este archivo con una contraseña** produce un archivo "
-"con extensión ``.dbx``, incluso si habías elegido un nombre en ``.db`` en"
-" la ventana de guardado, ya que esta se abre antes de pedir la "
-"contraseña. Para abrirlo, usa la apertura de base habitual: la ventana de"
-" selección acepta tanto ``.db`` como ``.dbx``. blunderDB pide entonces la"
-" contraseña e instala al lado una base corriente; después no se pide nada"
-" más."
+"Al marcar **Contraseña** se produce un archivo con extensión ``.dbx``, "
+"incluso si el nombre elegido en la ventana de guardado termina en "
+"``.db``. Para abrirlo, use la apertura de base habitual: la ventana de "
+"selección acepta tanto ``.db`` como ``.dbx``. blunderDB pide entonces la "
+"contraseña e instala una base ordinaria al lado; después ya no se pide "
+"nada."
 
-#: ../../source/manuel.rst:5066
+#: ../../source/manuel.rst:5075
 msgid ""
 "La fenêtre propose de **supprimer le fichier protégé une fois ouvert** : "
 "sans cela vous conservez le même contenu sous deux noms. La case n'est "
@@ -12015,7 +12044,7 @@ msgstr ""
 "piensas transmitirlo— y la eliminación solo se produce tras una apertura "
 "correcta."
 
-#: ../../source/manuel.rst:5073
+#: ../../source/manuel.rst:5082
 msgid ""
 "Le mot de passe protège le **transport** du fichier, pas la base. Il "
 "empêche un tiers d'ouvrir un fichier qui traîne dans un dossier de "
@@ -12027,7 +12056,7 @@ msgstr ""
 "adjunto reenviado por error. No protege frente a aquel a quien has dado "
 "la contraseña."
 
-#: ../../source/manuel.rst:5078
+#: ../../source/manuel.rst:5087
 msgid ""
 "Le mot de passe est vérifié à **chaque** ouverture, y compris lorsque le "
 "fichier a déjà été ouvert auparavant sur ce poste."
@@ -12035,7 +12064,7 @@ msgstr ""
 "La contraseña se comprueba en **cada** apertura, incluso si el archivo ya"
 " se había abierto antes en ese equipo."
 
-#: ../../source/manuel.rst:5081
+#: ../../source/manuel.rst:5090
 msgid ""
 "Techniquement, la base est chiffrée par **AES-256 en mode GCM**, avec une"
 " clé dérivée du mot de passe par **Argon2id** (64 Mio de mémoire, 3 "
@@ -12051,7 +12080,7 @@ msgstr ""
 "también cualquier alteración del archivo cifrado; nunca se obtiene en "
 "silencio una base corrupta."
 
-#: ../../source/manuel.rst:5088
+#: ../../source/manuel.rst:5097
 msgid ""
 "L'en-tête du fichier protégé reste **en clair** : son origine demeure "
 "lisible sans le mot de passe."
@@ -12059,11 +12088,11 @@ msgstr ""
 "La cabecera del archivo protegido permanece **en claro**: su origen sigue"
 " siendo legible sin la contraseña."
 
-#: ../../source/manuel.rst:5092
+#: ../../source/manuel.rst:5101
 msgid "Lire l'origine d'un fichier"
 msgstr "Leer el origen de un archivo"
 
-#: ../../source/manuel.rst:5094
+#: ../../source/manuel.rst:5103
 msgid ""
 "Dans l'application, ouvrez le fichier et affichez le panneau "
 "**Métadonnées** (commande ``meta``). Une section **Origine** apparaît en "
@@ -12075,11 +12104,11 @@ msgstr ""
 "del panel, de solo lectura, que indica lo que se inscribió, por quién, "
 "cuándo, y el estado de la firma:"
 
-#: ../../source/manuel.rst:5099
+#: ../../source/manuel.rst:5108
 msgid "« ✓ marquée par vous » : le fichier porte votre marque, intacte ;"
 msgstr "«✓ marcada por usted»: el archivo lleva su marca, intacta;"
 
-#: ../../source/manuel.rst:5101
+#: ../../source/manuel.rst:5110
 msgid ""
 "« ✓ signature vérifiée » : la marque est intacte et vient d'une autre clé"
 " — comparez son empreinte à celle que le producteur vous a communiquée ;"
@@ -12087,15 +12116,15 @@ msgstr ""
 "«✓ firma verificada»: la marca está intacta y procede de otra clave; "
 "compara su huella con la que te haya comunicado el autor;"
 
-#: ../../source/manuel.rst:5103
+#: ../../source/manuel.rst:5112
 msgid "« ⚠ signature invalide » : le document a été modifié ou contrefait."
 msgstr "«⚠ firma no válida»: el documento ha sido modificado o falsificado."
 
-#: ../../source/manuel.rst:5105
+#: ../../source/manuel.rst:5114
 msgid "Cette section n'apparaît pas sur une base ordinaire."
 msgstr "Esta sección no aparece en una base de datos corriente."
 
-#: ../../source/manuel.rst:5107
+#: ../../source/manuel.rst:5116
 msgid ""
 "En ligne de commande, ``blunderdb info --db fichier.db`` affiche "
 "l'origine et l'état de la signature, **sans jamais écrire dans le "
@@ -12109,11 +12138,11 @@ msgstr ""
 "Consulta ``CLI_USAGE.md`` para las opciones ``--watermark`` y "
 "``--password`` de ``export``, así como para ``identity`` y ``open``."
 
-#: ../../source/manuel.rst:5116
+#: ../../source/manuel.rst:5125
 msgid "Publier une base pour d'autres"
 msgstr "Publicar una base para otros"
 
-#: ../../source/manuel.rst:5118
+#: ../../source/manuel.rst:5127
 msgid ""
 "Une base marquée se distribue comme n'importe quel fichier — courriel, "
 "site personnel, clé USB. blunderDB **ne fournit aucun service** : ni "
@@ -12128,7 +12157,7 @@ msgstr ""
 "su diseño: nunca se registra nada del lado de quien recibe un archivo, "
 "así que no habría nada que comunicar a un servicio, aunque existiera."
 
-#: ../../source/manuel.rst:5124
+#: ../../source/manuel.rst:5133
 msgid ""
 "Ce qui rend une base publiée utilisable par quelqu'un d'autre tient à "
 "quatre champs, tous déjà là :"
@@ -12136,13 +12165,13 @@ msgstr ""
 "Lo que hace utilizable por otro una base publicada se reduce a cuatro "
 "campos, todos ya presentes:"
 
-#: ../../source/manuel.rst:5127
+#: ../../source/manuel.rst:5136
 msgid ""
 "**Utilisateur** — qui l'a constituée, sous le nom que vous voulez voir "
 "cité."
 msgstr "**Usuario** — quién la constituyó, con el nombre que quiere ver citado."
 
-#: ../../source/manuel.rst:5128
+#: ../../source/manuel.rst:5137
 msgid ""
 "**Description** — ce que la base contient, en une phrase qui tienne dans "
 "une liste : « 240 décisions de videau au score, commentées, niveau "
@@ -12152,7 +12181,7 @@ msgstr ""
 "lista: «240 decisiones de cubo al marcador, comentadas, nivel "
 "intermedio»."
 
-#: ../../source/manuel.rst:5130
+#: ../../source/manuel.rst:5139
 msgid ""
 "**Origine** (du filigrane) — ce qu'est ce fichier et pour qui il a été "
 "produit. C'est ce que le destinataire lit en premier dans le panneau "
@@ -12161,7 +12190,7 @@ msgstr ""
 "**Origen** (de la marca de agua) — qué es este archivo y para quién se "
 "produjo. Es lo primero que el destinatario lee en el panel *Metadatos*."
 
-#: ../../source/manuel.rst:5133
+#: ../../source/manuel.rst:5142
 msgid ""
 "**Empreinte d'émetteur** — publiez-la à côté du fichier, pas dedans : "
 "c'est en la comparant que le destinataire vérifie que le fichier vient de"
@@ -12171,7 +12200,7 @@ msgstr ""
 "comparándola el destinatario comprueba que el archivo viene de usted y no"
 " de alguien que ha tomado su nombre."
 
-#: ../../source/manuel.rst:5137
+#: ../../source/manuel.rst:5146
 msgid ""
 "Une base publiée sans filigrane reste parfaitement utilisable ; elle est "
 "simplement anonyme, et le panneau *Métadonnées* n'affiche alors aucune "
@@ -12181,7 +12210,7 @@ msgstr ""
 "utilizable; simplemente es anónima, y el panel *Metadatos* no muestra "
 "entonces ninguna sección *Origen*."
 
-#: ../../source/manuel.rst:5141
+#: ../../source/manuel.rst:5150
 msgid ""
 "Pour faire connaître une base, la catégorie *Show and tell* des "
 "`discussions du dépôt <https://github.com/kevung/blunderDB/discussions>`_"
@@ -13401,3 +13430,40 @@ msgstr ""
 #~ "espaldas. El mismo ``blunderdb repair`` "
 #~ "está disponible en la línea de "
 #~ "comandos."
+
+#~ msgid ""
+#~ "La fenêtre d'export tient en un "
+#~ "seul écran : le formulaire, puis "
+#~ "une progression qui se superpose à "
+#~ "lui le temps de l'écriture. Elle "
+#~ "se ferme d'elle-même une fois "
+#~ "terminée, et le résultat s'affiche dans"
+#~ " la barre d'état."
+#~ msgstr ""
+#~ "La ventana de exportación cabe en "
+#~ "una sola pantalla: el formulario y, "
+#~ "sobre él, una barra de progreso "
+#~ "durante la escritura. Se cierra sola "
+#~ "al terminar y el resultado aparece "
+#~ "en la barra de estado."
+
+#~ msgid ""
+#~ "**L'export porte sur les positions "
+#~ "actuellement affichées**, pas sur la "
+#~ "base entière. Après une recherche, seuls"
+#~ " les résultats partent — la fenêtre"
+#~ " le rappelle en tête — et la"
+#~ " liste des matchs ne propose que "
+#~ "ceux où ces positions ont été "
+#~ "jouées ; chaque match coché part "
+#~ "avec toutes ses positions."
+#~ msgstr ""
+#~ "**La exportación afecta a las posiciones"
+#~ " mostradas actualmente**, no a toda "
+#~ "la base. Tras una búsqueda solo se"
+#~ " exportan los resultados (la ventana "
+#~ "lo recuerda en la parte superior) "
+#~ "y la lista de partidas solo ofrece"
+#~ " aquellas en las que se jugaron "
+#~ "esas posiciones; cada partida marcada se"
+#~ " exporta con todas sus posiciones."

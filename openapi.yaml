@@ -8576,6 +8576,15 @@ components:
           items:
             type: integer
             format: int64
+        transcriptions:
+          type: boolean
+          nullable: true
+        aliases:
+          type: boolean
+          nullable: true
+        ankiHistory:
+          type: boolean
+          nullable: true
     filterNameReq:
       type: object
       properties:

@@ -10,12 +10,15 @@ import {
     GetAllMatches,
     GetAllCollections,
     GetAllTournaments,
+    GetAllAnkiDecks,
+    CountPositions,
     ListLessons,
     MatchIDsReachedBy
 } from '../../wailsjs/go/database/Database.js';
 
 import { databasePathStore } from '../stores/databaseStore.js';
-import { positionsStore, browsingLibrary, listedIds } from '../stores/positionStore.js';
+import { positionsStore, browsingLibrary, listedIds, openLibrary } from '../stores/positionStore.js';
+import { openMatchListInPanel } from './positionLoader.js';
 import { statusBarModeStore, openModal, closeModal, MODAL } from '../stores/uiStore.js';
 import { collectionsStore } from '../stores/collectionStore.js';
 import { tournamentsStore } from '../stores/tournamentStore.js';
@@ -26,13 +29,66 @@ import {
     exportOptionsStore,
     exportMatchesStore,
     exportCollectionCoverageStore,
+    exportDecksStore,
+    exportScopeStore,
     resetExportState
 } from '../stores/exportModalStore.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { logger } from '../utils/logger.js';
 
-/** @type {string | null} */
-let pendingExportPath = null;
+/**
+ * What one scope offers: the matches to pick from, how much of each collection it covers,
+ * and how many positions it exports. Read once per opening, on the first choice of it.
+ * @typedef {{ matches: any[], coverage: Record<string, number>, count: number }} ScopeData
+ */
+/** @type {{ list?: ScopeData, library?: ScopeData }} */
+let scopes = {};
+
+/** @type {Promise<number[]> | null} */
+let listed = null;
+// Read once: a paged search result is read whole for this, a full scan.
+const exportedIds = () => (listed ??= listedIds());
+
+/** @param {boolean} library @returns {Promise<ScopeData>} */
+async function readScope(library) {
+    /** @type {any[]} */
+    let matches = [];
+    try {
+        matches = (await GetAllMatches()) || [];
+        // A list offers the matches its positions were played in; the library offers them all.
+        if (!library) {
+            const reached = new Set((await MatchIDsReachedBy(await exportedIds())) || []);
+            matches = matches.filter((m) => reached.has(m.id));
+        }
+    } catch (e) {
+        logger.log('Could not get matches:', e);
+    }
+    // How much of each collection the scope covers. The export only writes membership for
+    // positions it exports, so a collection can arrive truncated; the screen says so.
+    /** @type {Record<string, number>} */
+    let coverage = {};
+    try {
+        coverage = library ? Object.fromEntries((get(collectionsStore) || []).map((/** @type {any} */ c) => [c.id, c.positionCount ?? 0])) : (await CollectionCoverage(await exportedIds())) || {};
+    } catch (e) {
+        logger.log('Could not measure collection coverage:', e);
+    }
+    // The ids the export will send, not the list's length: a search result still being
+    // counted is only as long as its first page.
+    const count = library ? (browsingLibrary() ? get(positionsStore).length : (await CountPositions()) || 0) : (await exportedIds()).length;
+    return { matches, coverage, count };
+}
+
+/**
+ * Shows what a scope exports: its matches, its coverage of the collections, its count.
+ * @param {boolean} library
+ */
+export async function setExportScope(library) {
+    const key = library ? 'library' : 'list';
+    const data = (scopes[key] ??= await readScope(library));
+    exportMatchesStore.set(/** @type {never[]} */ (data.matches));
+    exportCollectionCoverageStore.set(data.coverage);
+    exportPositionCountStore.set(data.count);
+}
 
 export async function exportDatabase() {
     logger.log('exportDatabase');
@@ -42,7 +98,7 @@ export async function exportDatabase() {
         return;
     }
 
-    // The export takes ids (ExportOptions.PositionIDs), or AllPositions for the library.
+    // The export takes ids (ExportOptions.PositionIDs), or the whole library.
     if (get(positionsStore).length === 0) {
         setStatusBarMessage(tMsg('status.noPositionsToExport'));
         await ShowAlert('No positions to export. Please load positions first.');
@@ -50,61 +106,29 @@ export async function exportDatabase() {
     }
 
     try {
-        const exportFilePath = await OpenExportDatabaseDialog();
-        if (!exportFilePath) {
-            logger.log('No export path selected');
-            return;
-        }
-
-        logger.log('Exporting to:', exportFilePath);
-        pendingExportPath = exportFilePath;
-
-        // Read once: a paged search result is read whole for this, a full scan.
-        /** @type {Promise<number[]> | null} */
-        let listed = null;
-        const exportedIds = () => (listed ??= listedIds());
-
-        // A list offers the matches its positions were played in; the library offers them all.
-        try {
-            /** @type {any[]} */
-            let matches = (await GetAllMatches()) || [];
-            if (!browsingLibrary()) {
-                const reached = new Set((await MatchIDsReachedBy(await exportedIds())) || []);
-                matches = matches.filter((m) => reached.has(m.id));
-            }
-            exportMatchesStore.set(/** @type {never[]} */ (matches));
-        } catch (e) {
-            logger.log('Could not get matches:', e);
-            exportMatchesStore.set([]);
-        }
+        scopes = {};
+        listed = null;
+        const library = browsingLibrary();
 
         try {
-            const colls = await GetAllCollections();
-            collectionsStore.set(colls || []);
+            collectionsStore.set((await GetAllCollections()) || []);
         } catch (e) {
             logger.log('Could not get collections:', e);
         }
-
         try {
-            const tourns = await GetAllTournaments();
-            tournamentsStore.set(tourns || []);
+            tournamentsStore.set((await GetAllTournaments()) || []);
         } catch (e) {
             logger.log('Could not get tournaments:', e);
         }
-
-        // How much of each collection the current selection actually covers. The export only
-        // writes membership for positions it exports, so a collection can arrive truncated;
-        // the screen says so rather than letting it happen quietly.
         try {
-            // The whole library covers every collection: no id list to send.
-            const coverage = browsingLibrary()
-                ? Object.fromEntries((get(collectionsStore) || []).map((/** @type {any} */ c) => [c.id, c.positionCount ?? 0]))
-                : (await CollectionCoverage(await exportedIds())) || {};
-            exportCollectionCoverageStore.set(coverage);
+            exportDecksStore.set(/** @type {never[]} */ ((await GetAllAnkiDecks()) || []));
         } catch (e) {
-            logger.log('Could not measure collection coverage:', e);
-            exportCollectionCoverageStore.set({});
+            logger.log('Could not get decks:', e);
+            exportDecksStore.set([]);
         }
+        await setExportScope(library);
+        // A list may still be exported as the whole library; the library is only itself.
+        exportScopeStore.set({ chooseable: !library });
 
         // The metadata describe the file being produced. Starting from the source's own
         // values beats an empty form: most exports keep them, and retyping them every time
@@ -120,13 +144,7 @@ export async function exportDatabase() {
             logger.log('Could not read the source metadata:', e);
         }
 
-        // The ids the export will send, not the list's length: a search result still being
-        // counted is only as long as its first page.
-        exportPositionCountStore.set(browsingLibrary() ? get(positionsStore).length : (await exportedIds()).length);
-        // The whole library starts from what the daemon's export carries: every family ticked.
-        if (browsingLibrary()) {
-            exportOptionsStore.update((o) => ({ ...o, includeFilterLibrary: true, includeTournaments: true, includeCollections: true, includeLessons: true }));
-        }
+        exportOptionsStore.update((o) => ({ ...o, ...scopeDefaults(library) }));
         exportModalModeStore.set('metadata');
         openModal(MODAL.EXPORT_DATABASE);
     } catch (error) {
@@ -135,6 +153,24 @@ export async function exportDatabase() {
         await ShowAlert(`Error preparing export: ${error}`);
         statusBarModeStore.set('NORMAL');
     }
+}
+
+/**
+ * The families a scope starts with: the whole library ticks every one, as the daemon's
+ * export carries them, with the review history (a backup); a list carries its positions
+ * and their matches.
+ * @param {boolean} library
+ */
+export function scopeDefaults(library) {
+    return {
+        wholeLibrary: library,
+        includeFilterLibrary: library,
+        includeTournaments: library,
+        includeCollections: library,
+        includeLessons: library,
+        includeAnkiDecks: library,
+        includeAnkiHistory: library
+    };
 }
 
 // exportMatchMat exports one match to a .mat file: server-built file name (as
@@ -158,18 +194,26 @@ export async function exportMatchMat(match) {
 }
 
 export async function handleExportCommit() {
-    if (!pendingExportPath) {
-        logger.error('No pending export path');
+    // The file is asked for last, once what goes into it is settled; dismissing the
+    // dialog returns to the form.
+    let exportPath = '';
+    try {
+        exportPath = await OpenExportDatabaseDialog();
+    } catch (error) {
+        logger.error('Error choosing the export path:', error);
+    }
+    if (!exportPath) {
+        logger.log('No export path selected');
         return;
     }
 
-    logger.log('Committing export to:', pendingExportPath);
+    logger.log('Committing export to:', exportPath);
     exportModalModeStore.set('exporting');
 
     try {
         const metadata = get(exportMetadataStore);
         const exportOptions = get(exportOptionsStore);
-        const wholeLibrary = browsingLibrary();
+        const wholeLibrary = !!exportOptions.wholeLibrary;
         const lessons = wholeLibrary && exportOptions.includeLessons ? (await ListLessons()) || [] : [];
         // Each family: none when its box is off or its pick emptied by hand; in the whole
         // library, a pick of every item is sent as no ids, which the backend reads as all of it.
@@ -183,8 +227,11 @@ export async function handleExportCommit() {
         const collections = family(exportOptions.includeCollections, exportOptions.collectionIDs, get(collectionsStore) || []);
         const tournaments = family(exportOptions.includeTournaments, exportOptions.includeTournamentIDs, get(tournamentsStore) || []);
         const lessonPick = family(exportOptions.includeLessons, exportOptions.lessonIDs, lessons);
+        const decks = family(exportOptions.includeAnkiDecks, exportOptions.deckIDs, get(exportDecksStore) || []);
+        // A tournament carries its matches: their drafts and aliases follow them as well.
+        const someMatches = matches.include || tournaments.include;
         const baseOptions = {
-            exportPath: pendingExportPath,
+            exportPath,
             // The library is the daemon's whole-tenant export (ExportOptions.WholeLibrary); a
             // list goes as identifiers, not positions: the whole set can be tens of MB of JSON
             // on the UI thread.
@@ -202,17 +249,21 @@ export async function handleExportCommit() {
             includeMatches: matches.include,
             matchIDs: matches.ids,
             // A draft follows its match: without the match it has nothing to travel with.
-            includeTranscriptions: matches.include && !!exportOptions.includeTranscriptions,
+            includeTranscriptions: someMatches && !!exportOptions.includeTranscriptions,
             // An alias leaves only when it names someone an exported match writes.
-            includeAliases: matches.include && !!exportOptions.includeAliases,
+            includeAliases: someMatches && !!exportOptions.includeAliases,
             includeCollections: collections.include,
             collectionIDs: collections.ids,
+            // The library holds every position already.
+            includeCollectionPositions: !wholeLibrary && collections.include && !!exportOptions.includeCollectionPositions,
             includeTournaments: tournaments.include,
             tournamentIDs: wholeLibrary ? tournaments.ids : exportOptions.includeTournamentIDs || [],
             includeLessons: lessonPick.include,
             lessonIDs: lessonPick.ids,
-            // No deck picker yet: the whole library carries every deck, as the daemon's does.
-            includeAnkiDecks: wholeLibrary
+            // In the library no ids means every deck; outside it, the ids are the decks.
+            includeAnkiDecks: decks.include,
+            deckIDs: wholeLibrary ? decks.ids : decks.include ? exportOptions.deckIDs || [] : [],
+            includeAnkiHistory: decks.include && !!exportOptions.includeAnkiHistory
         };
 
         // Both mechanisms are plain export options: the watermark is sealed and written by
@@ -232,29 +283,42 @@ export async function handleExportCommit() {
         const posCount = get(exportPositionCountStore);
         closeModal();
         resetExportState();
-        exportMatchesStore.set([]);
-        pendingExportPath = null;
         setStatusBarMessage(tMsg('status.exportCompleted', { posCount }));
         statusBarModeStore.set('NORMAL');
     } catch (error) {
         logger.error('Error committing export:', error);
         closeModal();
         resetExportState();
-        exportMatchesStore.set([]);
-        pendingExportPath = null;
         setStatusBarMessage(tMsg('status.errorCommittingExport', { error }));
         await ShowAlert(`Error committing export: ${error}`);
         statusBarModeStore.set('NORMAL');
     }
 }
 
+/**
+ * A count opens what it counts: the export gives way to the positions of the scope — the
+ * library, or the list already behind the dialog.
+ * @param {boolean} library
+ */
+export async function openExportPositions(library) {
+    handleExportCancel();
+    if (library && !browsingLibrary()) await openLibrary();
+}
+
+/**
+ * Opens the matches the export offers, in the Matches panel.
+ * @param {number[]} ids
+ */
+export async function openExportMatches(ids) {
+    handleExportCancel();
+    await openMatchListInPanel(ids);
+}
+
 export function handleExportCancel() {
     logger.log('Export cancelled by user');
 
     closeModal();
-    pendingExportPath = null;
     resetExportState();
-    exportMatchesStore.set([]);
     setStatusBarMessage(tMsg('status.exportCancelled'));
     statusBarModeStore.set('NORMAL');
 }

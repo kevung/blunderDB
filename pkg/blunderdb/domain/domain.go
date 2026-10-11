@@ -108,6 +108,10 @@ type AnkiCard struct {
 	Lapses        int     `json:"lapses"`
 	State         int     `json:"state"` // 0=New, 1=Learning, 2=Review, 3=Relearning
 	LastReview    string  `json:"lastReview"`
+	// Suspended keeps the card out of every session until lifted; BuriedUntil,
+	// when set, keeps it out until that moment.
+	Suspended   bool   `json:"suspended"`
+	BuriedUntil string `json:"buriedUntil,omitempty"`
 }
 
 // AnkiReviewCard is the card plus, for a position card, the position it asks
@@ -629,8 +633,13 @@ type ExportOptions struct {
 	IncludeAliases     bool    `json:"includeAliases"`
 	IncludeCollections bool    `json:"includeCollections"`
 	CollectionIDs      []int64 `json:"collectionIDs"`
-	MatchIDs           []int64 `json:"matchIDs"`
-	TournamentIDs      []int64 `json:"tournamentIDs"`
+	// IncludeCollectionPositions adds the positions the exported collections
+	// show — a hand-made list's members, what a LIVING one's query selects —
+	// to a list of positions, so that no collection arrives truncated. A
+	// WholeLibrary export holds them already.
+	IncludeCollectionPositions bool    `json:"includeCollectionPositions"`
+	MatchIDs                   []int64 `json:"matchIDs"`
+	TournamentIDs              []int64 `json:"tournamentIDs"`
 	// IncludeTournaments and IncludeAnkiDecks drop those families from a
 	// WholeLibrary export when false. Outside it, TournamentIDs and DeckIDs
 	// alone say which leave.
@@ -641,10 +650,13 @@ type ExportOptions struct {
 	// (ADR-0066).
 	IncludeLessons bool    `json:"includeLessons"`
 	LessonIDs      []int64 `json:"lessonIDs"`
-	// DeckIDs exports these Anki decks with their positions, without their
-	// review history; empty exports no deck, or every deck in a WholeLibrary
-	// export.
+	// DeckIDs exports these Anki decks with their positions; empty exports no
+	// deck, or every deck in a WholeLibrary export.
 	DeckIDs []int64 `json:"deckIDs"`
+	// IncludeAnkiHistory carries the exported decks' review history: each
+	// card's schedule and its review events. Off, the decks leave as fresh
+	// study copies.
+	IncludeAnkiHistory bool `json:"includeAnkiHistory"`
 
 	// Watermark, WatermarkNote and Password are the two optional mechanisms an export can
 	// carry: a signed statement of where the file comes from, and an encrypted container
