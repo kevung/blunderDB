@@ -19,7 +19,7 @@ import { positionsStore } from '../stores/positionStore.js';
 import { currentPositionIndexStore } from '../stores/uiStore.js';
 import { tournamentOpenRequestStore } from '../stores/tournamentStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
-import { statsFilterStore } from '../stores/statsStore.js';
+import { statsFilterStore, statsTabStore, initStatsFilter, patchStatsFilter } from '../stores/statsStore.js';
 import { leaveStudiedModeForList, forgetSubSearchOrigin } from './modeMachine.js';
 
 /**
@@ -146,4 +146,21 @@ export function openMatchInPanel(matchID) {
     // The Matches panel opens it once its list is loaded, as the command palette does.
     matchOpenRequestStore.set(matchID);
     activeTabStore.set('matches');
+}
+
+/**
+ * Open the Stats panel on a player or on tournaments: the shared filter takes them, so the bar
+ * shows what the figures cover. The saved filter is restored first, or it would overwrite them.
+ *
+ * @param {{ playerName?: string, tournamentIDs?: number[], tab?: string }} target
+ */
+export async function openStatsFor({ playerName, tournamentIDs, tab = 'dashboard' }) {
+    await initStatsFilter();
+    /** @type {Record<string, any>} */
+    const patch = {};
+    if (playerName !== undefined) patch.playerName = playerName;
+    if (tournamentIDs !== undefined) patch.tournamentIDs = tournamentIDs;
+    patchStatsFilter(patch);
+    statsTabStore.set(tab);
+    activeTabStore.set('stats');
 }

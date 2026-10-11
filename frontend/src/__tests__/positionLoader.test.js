@@ -66,7 +66,10 @@ vi.mock('../stores/positionStore.js', () => {
 vi.mock('../stores/statsStore.js', () => {
     const { writable } = require('svelte/store');
     return {
-        statsFilterStore: writable({ decisionType: -1, playerName: '', tournamentIDs: [], dateFrom: '', dateTo: '', matchLength: [] })
+        statsFilterStore: writable({ decisionType: -1, playerName: '', tournamentIDs: [], dateFrom: '', dateTo: '', matchLength: [] }),
+        statsTabStore: writable('dashboard'),
+        initStatsFilter: vi.fn(() => Promise.resolve()),
+        patchStatsFilter: vi.fn(() => true)
     };
 });
 
@@ -79,10 +82,11 @@ import {
     loadPositionsFromTournament,
     loadPositionsFromMatch,
     openTournamentInPanel,
-    openMatchInPanel
+    openMatchInPanel,
+    openStatsFor
 } from '../services/positionLoader.js';
 
-import { statsFilterStore } from '../stores/statsStore.js';
+import { statsFilterStore, statsTabStore, initStatsFilter, patchStatsFilter } from '../stores/statsStore.js';
 
 import { activeTabStore, matchOpenRequestStore } from '../stores/uiStore.js';
 import { tournamentOpenRequestStore } from '../stores/tournamentStore.js';
@@ -210,5 +214,30 @@ describe('openMatchInPanel', () => {
         openMatchInPanel(12);
         expect(get(matchOpenRequestStore)).toBe(12);
         expect(get(activeTabStore)).toBe('matches');
+    });
+});
+
+describe('openStatsFor', () => {
+    test('restores the saved filter first, then puts the player on it and opens Stats', async () => {
+        /** @type {() => void} */
+        let restored = () => {};
+        vi.mocked(initStatsFilter).mockImplementation(() => new Promise((r) => (restored = () => r(undefined))));
+        vi.mocked(patchStatsFilter).mockClear();
+        activeTabStore.set('matches');
+        const opening = openStatsFor({ playerName: 'Alice' });
+        // The restore would overwrite a patch made before it lands.
+        expect(patchStatsFilter).not.toHaveBeenCalled();
+        restored();
+        await opening;
+        expect(patchStatsFilter).toHaveBeenCalledWith({ playerName: 'Alice' });
+        expect(get(statsTabStore)).toBe('dashboard');
+        expect(get(activeTabStore)).toBe('stats');
+    });
+
+    test('a tournament narrows the filter to it, on the asked tab', async () => {
+        vi.mocked(initStatsFilter).mockResolvedValue(undefined);
+        await openStatsFor({ tournamentIDs: [4], tab: 'players' });
+        expect(patchStatsFilter).toHaveBeenLastCalledWith({ tournamentIDs: [4] });
+        expect(get(statsTabStore)).toBe('players');
     });
 });

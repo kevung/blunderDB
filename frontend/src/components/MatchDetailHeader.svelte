@@ -7,6 +7,7 @@
     import { formatDate } from '../utils/matchTable.js';
     import { finalScore } from '../utils/matchSheet.js';
     import ContextMenu from './ContextMenu.svelte';
+    import PlayerStatsLink from './PlayerStatsLink.svelte';
 
     /**
      * @type {{
@@ -45,7 +46,7 @@
 
 <div class="detail-header" data-testid="match-detail-header">
     <div class="title" title={where || undefined}>
-        <span class="player" class:winner={result?.winner === 0}>{names[0]}</span>
+        <span class="player" class:winner={result?.winner === 0}><PlayerStatsLink name={names[0]} /></span>
         {#if result}
             <span class="score" data-testid="header-score" title={result.winner === null ? $t('match.finalScore') : $t('match.matchWonBy', { player: names[result.winner] })}
                 >{result.score[0]}–{result.score[1]}</span
@@ -53,7 +54,7 @@
         {:else}
             <span class="vs">{$t('match.vs')}</span>
         {/if}
-        <span class="player" class:winner={result?.winner === 1}>{names[1]}</span>
+        <span class="player" class:winner={result?.winner === 1}><PlayerStatsLink name={names[1]} /></span>
         <span class="badge">{match.match_length} pt</span>
         {#if cadence}<span class="badge" data-testid="header-cadence" title={$t('match.cadenceRow')}>{$t('match.cadenceBadge', { bank: cadence.bank || '—', s: cadence.delay })}</span>{/if}
         {#if date}<span class="date" title={$t('match.date')}>{date}</span>{/if}

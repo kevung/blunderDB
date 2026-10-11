@@ -36,6 +36,8 @@
         blurDelay = 150,
         autofocus = false,
         placeholder = '',
+        /** The input's id, for a `<label for>` outside. */
+        id = undefined,
         /** 'inline' = the blue-bordered look of an edited cell; 'field' = a plain form field. */
         variant = 'inline',
         /** Custom rendering of one option; receives the item. */
@@ -141,6 +143,7 @@
 <div class="entity-autocomplete">
     <input
         bind:this={inputEl}
+        {id}
         type="text"
         class="input {variant}"
         bind:value

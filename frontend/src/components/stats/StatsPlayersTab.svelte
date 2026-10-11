@@ -1,5 +1,10 @@
 <script>
-    import { statsFilterStore } from '../../stores/statsStore.js';
+    import { tick } from 'svelte';
+    import { get } from 'svelte/store';
+    import { statsFilterStore, patchStatsFilter, defaultStatsFilter } from '../../stores/statsStore.js';
+    import { StatsMatchIDs } from '../../../wailsjs/go/database/Database.js';
+    import { loadPositionsFromStatsSelection, openMatchListInPanel } from '../../services/positionLoader.js';
+    import CountLink from '../panels/CountLink.svelte';
     import { fmtMwc7, mwc7Percent, mwc7Tooltip } from '../../utils/mwc7.js';
     import { t } from '../../i18n/index.js';
     import PanelTable from '../panels/PanelTable.svelte';
@@ -124,11 +129,43 @@
     });
 
     function selectPlayer(/** @type {string} */ name) {
-        statsFilterStore.update((f) => ({ ...f, playerName: name }));
+        patchStatsFilter({ playerName: name });
         onSelectPlayer?.(name);
     }
 
+    /** @type {any} */
+    let table = $state();
+    const selectedName = $derived($statsFilterStore.playerName);
+
+    // The filter's player is marked in the full table and brought into view.
+    $effect(() => {
+        if (!selectedName || !table || sorted.length === 0) return;
+        tick().then(() => table?.scrollToSelected('center'));
+    });
+
+    /**
+     * The filter the table was computed under, narrowed to one player: the table honours the
+     * dates, tournaments and match lengths only, and counts every decision type.
+     */
+    function playerFilter(/** @type {string} */ name) {
+        const f = get(statsFilterStore);
+        return { ...defaultStatsFilter, tournamentIDs: f.tournamentIDs, dateFrom: f.dateFrom, dateTo: f.dateTo, matchLength: f.matchLength, playerName: name };
+    }
+
+    /** A link inside a row opens its own target, not the player's dashboard. */
+    function linkTo(/** @type {() => any} */ open) {
+        return (/** @type {MouseEvent} */ e) => {
+            e.stopPropagation();
+            open();
+        };
+    }
+
+    const openMatches = (/** @type {string} */ name) => linkTo(async () => openMatchListInPanel((await StatsMatchIDs(/** @type {any} */ (playerFilter(name)))) ?? []));
+    const openDecisions = (/** @type {string} */ name) => linkTo(() => loadPositionsFromStatsSelection(playerFilter(name), { Kind: 'all', OnlyWithError: false }));
+
     function onRowKey(/** @type {KeyboardEvent} */ event, /** @type {string} */ name) {
+        // Enter on a link of the row is that link's, not the row's.
+        if (event.target !== event.currentTarget) return;
         if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
             selectPlayer(name);
@@ -144,7 +181,9 @@
             <PlayerComparison a={comparedRows[0]} b={comparedRows[1]} onClear={() => (compared = [])} />
         {/if}
         <PanelTable
+            bind:this={table}
             rows={sorted}
+            selectedKey={selectedName || undefined}
             rowKey={(row) => row.name}
             {columns}
             bind:sort
@@ -167,9 +206,9 @@
                     />
                 </td>
                 <td class="name">{row.name}</td>
-                <td class="numeric">{row.matches}</td>
-                <td class="numeric">{row.wins}–{row.losses}</td>
-                <td class="numeric">{row.decisions}</td>
+                <td class="numeric"><CountLink label={String(row.matches)} onclick={openMatches(row.name)} /></td>
+                <td class="numeric"><CountLink label={`${row.wins}–${row.losses}`} onclick={openMatches(row.name)} /></td>
+                <td class="numeric"><CountLink label={String(row.decisions)} onclick={openDecisions(row.name)} /></td>
                 <td class="numeric strong">{fmtRate(row.pr, row.decisions > 0)}</td>
                 <td class="numeric">{fmtRate(row.pr_checker, row.checker_decisions > 0)}</td>
                 <td class="numeric">{fmtRate(row.pr_cube, row.cube_decisions > 0)}</td>

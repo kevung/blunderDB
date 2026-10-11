@@ -5,6 +5,7 @@
     import { loadPositionsFromSelection } from '../../services/positionLoader.js';
     import { quizOnIds, quizOnWorstGroups, deckFromIds, collectionFromIds } from '../../services/recurringStudy.js';
     import { t } from '../../i18n/index.js';
+    import CountLink from '../panels/CountLink.svelte';
 
     /** @typedef {{ GameType: string, Kind: string, Theme: string, SumErrorMP: number, Count: number, PRCost: number, PositionIDs?: number[] }} RecurringGroup */
     /** @type {{ data: { NumDecisions: number, Groups: Array<RecurringGroup>, Unthemed?: Array<RecurringGroup> }|null, loading?: boolean, error?: string|null }} */
@@ -83,7 +84,7 @@
                                     {$t(`stats.recurringKind_${g.Kind}`)} · {themeLabel(g)}
                                 </button>
                             </td>
-                            <td class="num">{g.Count}</td>
+                            <td class="num"><CountLink label={String(g.Count)} onclick={() => loadPositionsFromSelection(g.PositionIDs ?? [])} /></td>
                             <td class="num">{g.PRCost.toFixed(2)}</td>
                             <td class="actions">
                                 <button type="button" class="study-btn" onclick={() => quizOnIds(g.PositionIDs ?? [])}>{$t('stats.recurringQuiz')}</button>

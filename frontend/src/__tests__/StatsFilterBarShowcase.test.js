@@ -6,7 +6,7 @@
  */
 
 import { describe, test, expect, vi } from 'vitest';
-import { render, waitFor } from '@testing-library/svelte';
+import { render, waitFor, fireEvent } from '@testing-library/svelte';
 import { showcasePlayerNames } from '../../tests/e2e/helpers/showcasePlayers.js';
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
@@ -29,13 +29,18 @@ vi.mock('../stores/databaseStore.js', () => {
 import { GetAllPlayerNames } from '../../wailsjs/go/database/Database.js';
 import StatsFilterBar from '../components/stats/StatsFilterBar.svelte';
 
+/** The option labels the player field shows once focused. */
+async function options(/** @type {HTMLElement} */ container) {
+    await fireEvent.focus(/** @type {HTMLElement} */ (container.querySelector('#fb-player')));
+    return /** @type {HTMLElement[]} */ ([...document.querySelectorAll('[role="option"] span')]);
+}
+
 describe('StatsFilterBar with the showcase player list', () => {
     test('mounts one option per player, keyed by a defined name', async () => {
         /** @type {any} */ (GetAllPlayerNames).mockResolvedValue(showcasePlayerNames);
         const { container } = render(StatsFilterBar);
-        await waitFor(() => {
-            const names = [...container.querySelectorAll('#fb-player option')].map((o) => /** @type {HTMLOptionElement} */ (o).value).filter(Boolean);
-            expect(names).toEqual(showcasePlayerNames.map((p) => p.Name));
+        await waitFor(async () => {
+            expect((await options(container)).map((o) => o.title)).toEqual(showcasePlayerNames.map((p) => p.Name));
         });
     });
 
@@ -43,9 +48,8 @@ describe('StatsFilterBar with the showcase player list', () => {
         const long = 'Alexandre-Jean-Baptiste de la Tour du Pin Gouvernet de La Charce';
         /** @type {any} */ (GetAllPlayerNames).mockResolvedValue([{ Name: long, Count: 3 }]);
         const { container } = render(StatsFilterBar);
-        await waitFor(() => {
-            const opt = /** @type {HTMLOptionElement | null} */ (container.querySelector('#fb-player option[value^="Alexandre"]'));
-            expect(opt?.title).toBe(long);
+        await waitFor(async () => {
+            expect((await options(container))[0]?.title).toBe(long);
         });
     });
 });

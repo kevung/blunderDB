@@ -3,15 +3,19 @@
     // calendaire, classement. Chaque vue se calcule à la demande — ce sont
     // des agrégats sur toute la base, trop chers pour suivre chaque frappe.
     import { HeadToHead, PRByWindow, PlayerRanking, GetAllPlayerNames, StatsMatchIDs } from '../../../wailsjs/go/database/Database.js';
+    import { untrack } from 'svelte';
     import { t } from '../../i18n/index.js';
-    import { loadPositionsFromStatsSelection, openMatchListInPanel } from '../../services/positionLoader.js';
+    import { loadPositionsFromStatsSelection, openMatchListInPanel, openMatchInPanel } from '../../services/positionLoader.js';
     import CountLink from '../panels/CountLink.svelte';
+    import EntityAutocomplete from '../EntityAutocomplete.svelte';
+    import { narrowToMonths } from '../../utils/statsWindow.js';
 
     /** @type {{ filter: object }} */
     let { filter } = $props();
 
     let players = $state([]);
-    let playerA = $state('');
+    // The filter's player is the obvious first side of a head-to-head.
+    let playerA = $state(untrack(() => /** @type {any} */ (filter)?.playerName ?? ''));
     let playerB = $state('');
     let h2h = $state(/** @type {any} */ (null));
     let h2hError = $state('');
@@ -85,14 +89,7 @@
     // A count inside a row opens the other half and stops there.
 
     /** The filter narrowed to a window's months (both ends inclusive). */
-    function windowFilter(/** @type {any} */ w) {
-        const f = /** @type {any} */ (filter);
-        const [y, m] = String(w.to).split('-').map(Number);
-        const lastDay = new Date(Date.UTC(y, m, 0)).getUTCDate();
-        const from = `${w.from}-01`;
-        const to = `${w.to}-${String(lastDay).padStart(2, '0')}`;
-        return { ...f, dateFrom: f?.dateFrom && f.dateFrom > from ? f.dateFrom : from, dateTo: f?.dateTo && f.dateTo < to ? f.dateTo : to };
-    }
+    const windowFilter = (/** @type {any} */ w) => narrowToMonths(/** @type {any} */ (filter), w);
 
     const playerFilter = (/** @type {string} */ name) => ({ ...filter, playerName: name });
 
@@ -127,14 +124,9 @@
         <h3 id="corpus-h2h-title">{$t('stats.corpus.h2hTitle')}</h3>
         <div class="corpus-controls">
             <label for="corpus-a">{$t('stats.corpus.playerA')}</label>
-            <input id="corpus-a" list="corpus-players" bind:value={playerA} />
+            <div class="corpus-player"><EntityAutocomplete id="corpus-a" variant="field" bind:value={playerA} items={players} label={(n) => n} /></div>
             <label for="corpus-b">{$t('stats.corpus.playerB')}</label>
-            <input id="corpus-b" list="corpus-players" bind:value={playerB} />
-            <datalist id="corpus-players">
-                {#each players as name (name)}
-                    <option value={name}></option>
-                {/each}
-            </datalist>
+            <div class="corpus-player"><EntityAutocomplete id="corpus-b" variant="field" bind:value={playerB} items={players} label={(n) => n} /></div>
             <button onclick={loadH2H} disabled={!playerA || !playerB || busy !== ''}>{$t('stats.corpus.compute')}</button>
         </div>
         {#if h2hError}
@@ -174,9 +166,9 @@
                                 data-testid="corpus-h2h-row"
                                 role="button"
                                 tabindex="0"
-                                title={$t('stats.corpus.openMatches')}
-                                onclick={() => openMatchListInPanel([m.id])}
-                                onkeydown={(e) => onRowKey(e, () => openMatchListInPanel([m.id]))}
+                                title={$t('stats.openMatch')}
+                                onclick={() => openMatchInPanel(m.id)}
+                                onkeydown={(e) => onRowKey(e, () => openMatchInPanel(m.id))}
                             >
                                 <td>{m.date}</td>
                                 <td>{m.match_length}</td>
@@ -238,7 +230,13 @@
                                             onclick={(/** @type {Event} */ e) => countClick(e, () => openCountedMatches(windowFilter(w)))}
                                         />{:else}0{/if}</td
                                 >
-                                <td>{w.num_decisions}</td>
+                                <td
+                                    ><CountLink
+                                        label={String(w.num_decisions)}
+                                        title={$t('stats.corpus.openPositions')}
+                                        onclick={(/** @type {Event} */ e) => countClick(e, () => openPositions(windowFilter(w)))}
+                                    /></td
+                                >
                                 <td>{fmt(w.pr)}</td>
                             </tr>
                         {/each}
@@ -340,6 +338,9 @@
         align-items: center;
         gap: 4px 8px;
         margin-bottom: 4px;
+    }
+    .corpus-player {
+        width: 12em;
     }
     .corpus-controls input[type='number'] {
         width: 6em;

@@ -384,6 +384,18 @@ func testHeadToHeadWindowsRanking(t *testing.T, s storage.Storage) {
 	if err != nil || len(bob) != 2 || !slices.Contains(bob, matchB) {
 		t.Errorf("MatchIDs(Bob) = %v, %v; want his 2 matches, %d among them", bob, err, matchB)
 	}
+	// The dashboard's match count opens MatchIDs: both count the same matches, every player
+	// together or one of them.
+	for _, f := range []storage.StatsFilter{{DecisionType: -1}, alice, {DecisionType: -1, PlayerName: "Bob"}} {
+		res, err := s.Stats().Compute(ctx, "", f)
+		if err != nil {
+			t.Fatalf("Compute(%q): %v", f.PlayerName, err)
+		}
+		ids, err := s.Stats().MatchIDs(ctx, "", f)
+		if err != nil || len(ids) != res.Totals.NumMatches {
+			t.Errorf("MatchIDs(%q) = %v, %v; want the dashboard's %d matches", f.PlayerName, ids, err, res.Totals.NumMatches)
+		}
+	}
 	if _, err := s.Stats().MatchIDs(ctx, "", storage.StatsFilter{DecisionType: -1, AnalysisEngine: "x"}); !errors.Is(err, storage.ErrInvalid) {
 		t.Errorf("MatchIDs with a provenance filter: %v, want ErrInvalid", err)
 	}

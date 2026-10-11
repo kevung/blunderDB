@@ -11,6 +11,7 @@
     import { logger } from '../utils/logger.js';
     import { formatDate as formatDateI18n } from '../utils/format.js';
     import { SvelteSet } from 'svelte/reactivity';
+    import PlayerStatsLink from './PlayerStatsLink.svelte';
 
     let match = $state(null);
     // Other matches this position also came from (provenance is one-to-many).
@@ -70,6 +71,9 @@
     // back to the fetched match.
     let player1Name = $derived($matchContextStore.player1Name || match?.player1_name || $transcriptionInfoStore?.player1 || '');
     let player2Name = $derived($matchContextStore.player2Name || match?.player2_name || $transcriptionInfoStore?.player2 || '');
+
+    /** A name links to its statistics once a stored match carries it; a transcription's does not yet. */
+    let namesStored = $derived(!!match);
 
     function formatDate(value) {
         if (!value) return '';
@@ -140,12 +144,16 @@
     <div class="match-info-bar" data-testid="match-info-bar">
         <span class="player">
             <span class="disc" style="background:{$boardColorsStore.checker1};"></span>
-            <span class="name">{player1Name}</span>
+            <span class="name"
+                >{#if namesStored}<PlayerStatsLink name={player1Name} />{:else}{player1Name}{/if}</span
+            >
         </span>
         <span class="vs">{$t('matchInfo.vs')}</span>
         <span class="player">
             <span class="disc" style="background:{$boardColorsStore.checker2};"></span>
-            <span class="name">{player2Name}</span>
+            <span class="name"
+                >{#if namesStored}<PlayerStatsLink name={player2Name} />{:else}{player2Name}{/if}</span
+            >
         </span>
         {#if metaParts.length > 0}
             <span class="sep">·</span>

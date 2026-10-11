@@ -29,11 +29,12 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
 
 vi.mock('../services/positionLoader.js', () => ({
     loadPositionsFromStatsSelection: vi.fn(() => Promise.resolve()),
-    openMatchListInPanel: vi.fn(() => Promise.resolve())
+    openMatchListInPanel: vi.fn(() => Promise.resolve()),
+    openMatchInPanel: vi.fn()
 }));
 
 import { StatsMatchIDs } from '../../wailsjs/go/database/Database.js';
-import { loadPositionsFromStatsSelection, openMatchListInPanel } from '../services/positionLoader.js';
+import { loadPositionsFromStatsSelection, openMatchListInPanel, openMatchInPanel } from '../services/positionLoader.js';
 import StatsCorpusTab from '../components/stats/StatsCorpusTab.svelte';
 
 const filter = { playerName: '', tournamentIDs: [], dateFrom: '', dateTo: '', decisionType: -1, matchLength: [] };
@@ -64,14 +65,22 @@ describe('Corpus › head-to-head', () => {
         const { findAllByTestId } = await computed(1);
         const rows = await findAllByTestId('corpus-h2h-row');
         await fireEvent.click(rows[1]);
-        expect(openMatchListInPanel).toHaveBeenLastCalledWith([8]);
+        expect(openMatchInPanel).toHaveBeenLastCalledWith(8);
         await fireEvent.keyDown(rows[0], { key: 'Enter' });
-        expect(openMatchListInPanel).toHaveBeenLastCalledWith([7]);
+        expect(openMatchInPanel).toHaveBeenLastCalledWith(7);
+        expect(openMatchListInPanel).not.toHaveBeenCalled();
         expect(loadPositionsFromStatsSelection).not.toHaveBeenCalled();
     });
 });
 
 describe('Corpus › windows', () => {
+    test('its decisions count opens the window positions', async () => {
+        const { findAllByTestId } = await computed(2);
+        const links = await findAllByTestId('count-link');
+        await fireEvent.click(links.find((l) => l.textContent === '420'));
+        expect(loadPositionsFromStatsSelection).toHaveBeenCalledWith({ ...filter, dateFrom: '2024-12-01', dateTo: '2025-02-28' }, ALL);
+    });
+
     test('a window row opens the positions of its months, inside the filter', async () => {
         const { findByTestId } = await computed(2);
         await fireEvent.click(await findByTestId('corpus-window-row'));

@@ -1,8 +1,9 @@
 <script>
-    import { get } from 'svelte/store';
-    import { statsFilterStore } from '../../stores/statsStore.js';
+    import { drillDownFilter } from '../../stores/statsStore.js';
+    import { StatsMatchIDs } from '../../../wailsjs/go/database/Database.js';
+    import CountLink from '../panels/CountLink.svelte';
     import { formatIsoDay } from '../../utils/format.js';
-    import { loadPositionsFromStatsSelection, openMatchInPanel } from '../../services/positionLoader.js';
+    import { loadPositionsFromStatsSelection, openMatchInPanel, openMatchListInPanel } from '../../services/positionLoader.js';
     import { t } from '../../i18n/index.js';
     import { fmtMwc7, fmtMwc7Interval, mwc7Tooltip } from '../../utils/mwc7.js';
     import { fmtPRInterval } from '../../utils/interval.js';
@@ -31,7 +32,7 @@
     /** The unit under a card's value. */
     function cardUnit() {
         if (metric === 'mwc7') return $t('mwc7.short');
-        return metric === 'pr' ? '' : 'MWC loss';
+        return metric === 'pr' ? '' : $t('stats.mwcLoss');
     }
 
     /** The 95 % interval of the headline card (ADR-0078), '' without one. */
@@ -102,18 +103,32 @@
     }
 
     async function openCard(kind) {
-        const filter = get(statsFilterStore);
+        const filter = drillDownFilter();
         await loadPositionsFromStatsSelection(filter, { Kind: kind, OnlyWithError: false });
     }
 
     async function openRollingN(/** @type {number} */ n) {
-        const filter = get(statsFilterStore);
+        const filter = drillDownFilter();
         await loadPositionsFromStatsSelection(filter, { Kind: 'last_n', LastN: n });
     }
 
     async function openBlunder(/** @type {number} */ positionID) {
-        const filter = get(statsFilterStore);
+        const filter = drillDownFilter();
         await loadPositionsFromStatsSelection(filter, { Kind: 'position', PositionID: positionID });
+    }
+
+    /**
+     * The match list counts every match with a decision of the filter's players; the totals agree
+     * with it unless a decision type or a provenance narrows them, and then the count stays text.
+     */
+    const matchesOpenable = $derived.by(() => {
+        void result;
+        const f = drillDownFilter();
+        return f.decisionType === -1 && !f.analysisEngine && !f.minAnalysisDepth;
+    });
+
+    async function openMatches() {
+        await openMatchListInPanel((await StatsMatchIDs(/** @type {any} */ (drillDownFilter()))) ?? []);
     }
 
     function openMatch(/** @type {number} */ matchID) {
@@ -127,7 +142,12 @@
     <!-- ── Main cards ────────────────────────────────────────────── -->
     <div class="cards-grid">
         {#each [{ kind: 'all', label: $t('stats.cardLabelAll') }, { kind: 'checker', label: $t('stats.cardLabelChecker') }, { kind: 'cube', label: $t('stats.cardLabelCube') }] as card (card.kind)}
-            <button class="stat-card" onclick={() => openCard(card.kind)} aria-label="Open {numDecisions()} positions — {card.label}" title="{numDecisions()} decisions · click to open positions">
+            <button
+                class="stat-card"
+                onclick={() => openCard(card.kind)}
+                aria-label={$t('stats.cardOpenAria', { n: numDecisions(), label: card.label })}
+                title={$t('stats.nDecisions', { n: numDecisions() })}
+            >
                 <span class="card-value">{cardValue(card.kind)}</span>
                 <span class="card-label">{card.label}</span>
                 {#if cardUnit()}<span class="card-unit">{cardUnit()}</span>{/if}
@@ -147,9 +167,9 @@
     <p class="stats-totals">
         {result.Totals.NumTournaments}
         {$t('stats.tournaments')} ·
-        {result.Totals.NumMatches}
+        {#if matchesOpenable}<CountLink label={String(result.Totals.NumMatches)} onclick={openMatches} />{:else}{result.Totals.NumMatches}{/if}
         {$t('stats.matches')} ·
-        {result.Totals.NumDecisions}
+        <CountLink label={String(result.Totals.NumDecisions)} onclick={() => openCard('all')} />
         {$t('stats.decisions')}
     </p>
 
@@ -188,11 +208,11 @@
 
     <!-- ── Rolling N ────────────────────────────────────────────── -->
     <section class="rolling-section">
-        <h3 class="section-title">{$t('stats.rolling', { metric: metric === 'pr' ? 'PR' : 'MWC loss' })}</h3>
+        <h3 class="section-title">{$t('stats.rolling', { metric: metric === 'pr' ? 'PR' : $t('stats.mwcLoss') })}</h3>
         <div class="rolling-row">
             {#each ROLLING_NS as n (n)}
                 {@const avail = rollingDecisions(n) >= n}
-                <button class="rolling-cell" class:unavailable={!avail} onclick={() => avail && openRollingN(n)} disabled={!avail} title="{rollingDecisions(n)} decisions used">
+                <button class="rolling-cell" class:unavailable={!avail} onclick={() => avail && openRollingN(n)} disabled={!avail} title={$t('stats.nDecisions', { n: rollingDecisions(n) })}>
                     <span class="rolling-n">N={n}</span>
                     <span class="rolling-val">{avail ? fmtRolling(n) : '—'}</span>
                 </button>
