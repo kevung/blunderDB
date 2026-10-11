@@ -132,8 +132,15 @@ var defaultLevel = mustLevel("normal")
 // The filter is what makes the depth reachable at all: a 2-ply opening
 // decision costs ~13 400 evaluations with it, over 760 000 without.
 //
-// Depths beyond the published filter (3 and 4 ply) get a plain count of 5 —
-// this repository's own unmeasured extension; upstream only measured 2-ply.
+// Past the published filter (3 and 4 ply, this repository's own extension;
+// upstream only measured 2-ply), the root keeps the published root triplet
+// and every interior node from depth 2 down deepens one reply, the shallow
+// best: the published depth-1 triplet, which is gnubg's rule at every
+// interior node. Filter[d] is read both at a depth-d root and at a depth-d
+// interior node, so this is a per-ply vector; 0 to 2 ply keep the published
+// filter untouched. Deepening five replies inside costs six times as much at
+// 3 ply and puts 4 ply out of reach, for a mean loss of 6e-5
+// (deep_filter_measure_test.go).
 func DefaultConfig(ply int) SearchConfig {
 	if ply < 0 {
 		ply = 0
@@ -145,10 +152,22 @@ func DefaultConfig(ply int) SearchConfig {
 	copy(cfg.Filter[:], defaultLevel.Filter)
 	copy(cfg.FilterExtra[:], defaultLevel.FilterExtra)
 	copy(cfg.FilterThreshold[:], defaultLevel.FilterThreshold)
-	for d := len(defaultLevel.Filter); d < len(cfg.Filter); d++ {
-		cfg.Filter[d] = 5
+	published := len(defaultLevel.Filter)
+	root, interior := published-1, 1
+	for d := published; d < len(cfg.Filter); d++ {
+		cfg.copyFilter(d, root)
+	}
+	for d := 2; d < ply && ply >= published; d++ {
+		cfg.copyFilter(d, interior)
 	}
 	return cfg
+}
+
+// copyFilter sets the filter at depth to the published triplet at from.
+func (c *SearchConfig) copyFilter(depth, from int) {
+	c.Filter[depth] = defaultLevel.Filter[from]
+	c.FilterExtra[depth] = defaultLevel.FilterExtra[from]
+	c.FilterThreshold[depth] = defaultLevel.FilterThreshold[from]
 }
 
 // SetFilter sets the move filter at depth to the triplet (accept, extra,

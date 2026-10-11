@@ -4260,16 +4260,18 @@ de match — que ce régime est seul à savoir rendre — et les positions de co
 n'ont pas de mesure publiée : ce qui précède ne se transporte pas à ces cas.
 
 **Pourquoi pas plus profond que 2 plis ?** Parce que la mesure dit que cela ne
-rapporte rien. Une décision de pions coûte 99 ms à 2 plis et 8,4 s à 3 plis sur
-la même machine — **85 fois plus**. Sur quarante décisions réelles rejouées aux
+rapporte rien. Une décision de pions coûte 80 ms à 2 plis et 1,4 s à 3 plis sur
+la même machine — **18 fois plus**. Sur quarante décisions réelles rejouées aux
 deux profondeurs, la recherche plus profonde a changé d'avis **deux fois**, et
-les deux fois le gain qu'elle s'attribuait à elle-même valait au plus 0,0005
+les deux fois le gain qu'elle s'attribuait à elle-même valait au plus 0,0002
 d'équité normalisée : deux ordres de grandeur sous 0,020, le seuil à partir
 duquel eXtreme Gammon parle d'erreur. Par décision, tous cas confondus, le gain
 est de 0,0000.
 
 Les 2 plis restent donc le défaut ; 3 et 4 plis se choisissent dans l'onglet
-*gammonNet* de la configuration. Il ne s'agit pas de dire que 3 plis ne vaut
+*gammonNet* de la configuration. À 3 et 4 plis, comme dans GNUbg, seule la
+racine compare plusieurs coups : à chaque nœud intérieur, la réplique retenue
+est la meilleure à 0 pli, seule approfondie. Il ne s'agit pas de dire que 3 plis ne vaut
 rien en général, mais que sur *ce* réseau, avec le filtre canonique, il ne paie
 pas l'attente de quelqu'un devant un panneau. La mesure est reproductible
 (``TestThreePlyMeasure``) et la conclusion se rejugera si le réseau change.
