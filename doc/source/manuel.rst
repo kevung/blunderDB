@@ -2278,8 +2278,9 @@ par pas de 0,25 entre 0,25× et 4× ; une vidéo YouTube ne propose que les
 vitesses de son lecteur, jusqu'à 2×. La vitesse s'affiche dans le coin de la
 vidéo quand elle n'est pas de 1×, et une nouvelle source repart à 1×.
 
-Une vidéo filmée de travers se redresse par le bouton ⟳ de la barre vidéo ou
-par *o* : un quart de tour à chaque appui, de 0° à 270°. L'image reste entière,
+Une vidéo filmée de travers se redresse par le bouton ⟳ de la barre vidéo,
+présent aussi dans la barre du mode théâtre, ou par *o* : un quart de tour à
+chaque appui, de 0° à 270°. L'image reste entière,
 dans la vidéo d'un fichier comme dans le cadre YouTube. L'angle est retenu pour
 le brouillon, sur cet ordinateur seulement ; il n'est pas écrit dans la base.
 
@@ -3018,7 +3019,9 @@ Filtres disponibles
   5, 7, 9, 11, 13, 15, 21 points). Plusieurs longueurs peuvent être combinées.
 
 * **Moteur** et **Profondeur min.** — ne garder que les décisions analysées par
-  un moteur donné (gnubg, xg…), ou au moins à une profondeur donnée, en plis.
+  un moteur donné, ou au moins à une profondeur donnée, en plis. Le menu
+  *Moteur* propose les moteurs présents dans les analyses de la base
+  (eXtreme Gammon, GNU Backgammon…).
 
 Un bouton **↺ Réinitialiser** remet tous les filtres à zéro (sauf le joueur
 auto-détecté).

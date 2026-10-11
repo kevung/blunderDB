@@ -35,6 +35,29 @@ ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
   les verdicts gammonNet d'une prise ou d'un refus, calculés comme une décision
   du receveur ; le rattrapage les récrit comme la décision du doubleur avant le
   double.
+- **Réparer les matchs dont les joueurs ont été inversés** (0.40.0). Avant
+  0.40.0, l'inversion remplaçait les positions du match par d'autres, sans
+  analyse : ``blunderdb match repair --list`` trouve les matchs qui diffèrent de
+  leur fichier source, et ``match repair --id`` ou le bouton ⟲ de la fiche les
+  réécrit depuis ce fichier.
+
+0.40.0 (2026-10-11)
+-------------------
+
+- **L'export Anki .apkg** : un paquet d'étude ou une collection s'écrit en paquet Anki ``.apkg``, que l'application Anki importe sur ordinateur ou téléphone (AnkiDroid, AnkiMobile) ; chaque position devient une carte, le plateau, le score, le videau et les dés au recto, le meilleur coup ou la bonne décision de videau, son équité et l'erreur du coup joué au verso. Le bouton d'export du panneau Anki, ``blunderdb anki export`` et la route ``anki.exportApkg`` du serveur en sont les trois formes, et un réexport met les cartes à jour dans Anki au lieu de les dupliquer.
+- **Le Duel part d'où l'on veut** : la bande d'en-tête du panneau Duel règle le Départ — la position initiale, ou le plateau édité comme dans le panneau Eval, son score et les champs du score ne faisant qu'un —, joue les dés du plateau ou les fait relancer, et place la décision de videau avant ou après le lancer ; *Une seule partie* arrête le Duel à la fin de sa première partie, pour s'entraîner à un score. ``blunderdb duel create`` prend ``--away``, ``--reroll``, ``--after-cube`` et ``--single-game``.
+- **Les cadences en minutes par point** : Standard (2 min par point + 12 s), Speed (0,4 min par point + 10 s) ou une cadence enregistrée sous un nom ; la réserve de chaque joueur se rapporte à la longueur du match, ou à ce qui reste à jouer depuis un score de départ.
+- **Le pipcount masqué pendant un Duel** : décoché au lancement, il reste caché même par le bouton de la barre d'outils ou *P*, et revient à la sortie du Duel.
+- **Faire pivoter la vidéo** : le bouton ⟳ de la barre vidéo, présent aussi dans la barre du mode théâtre, ou la touche *o* tourne la vidéo d'un quart de tour, fichier local comme lien YouTube ; l'angle est retenu pour le brouillon, sur cet ordinateur.
+- **La date d'un tournoi déduite de ses matchs** : un tournoi sans date prend celle de son plus ancien match, affichée en grisé et proposée par le formulaire d'édition, sans être écrite dans la base ; chaque ligne du panneau Tournois commence par # et Date comme dans le panneau Matchs, et la Progression range les tournois dans l'ordre chronologique.
+- **La fiche du match dans le panneau Tournois** : un clic sur un match d'un tournoi affiche sous la table la fiche du panneau Matchs, avec ses onglets, et un champ de filtre restreint la liste des tournois à la frappe.
+- **Toute la bibliothèque s'exporte de la même façon partout** : la fenêtre d'export, ``blunderdb export --type database`` et le serveur emportent les mêmes familles — matchs, collections, tournois, paquets Anki sans historique de révision et transcriptions en cours —, chacune pouvant être retirée ou restreinte à des identifiants (``--match-ids``, ``--tournament-ids``…) ; une liste filtrée n'exporte que les matchs où ses positions ont été jouées, chacun avec toutes ses positions.
+- **Réparer un match depuis son fichier source** : le bouton ⟲ de la ligne *Fichier source* de la fiche, ou ``blunderdb match repair``, relit le fichier et réécrit les positions, les analyses et les erreurs du match comme un import neuf, en gardant ce qui a été saisi depuis (tournoi, noms, inversion des joueurs, commentaires, transcription, vidéo et repères) et les analyses plus profondes ; ``match repair --list`` trouve les matchs qui diffèrent de leur fichier, et la route ``matches.repair`` fait le même geste sur le serveur.
+- **Le panneau Stats** : le filtre *Moteur* est un menu des moteurs présents dans les analyses de la base, que ``blunderdb stats engines`` liste aussi ; dans l'onglet Corpus, chaque ligne ouvre ce qu'elle résume — les matchs d'un face-à-face ou d'un joueur du classement dans le panneau Matchs, les positions d'une fenêtre —, et ``blunderdb stats matches`` donne les matchs qu'un chiffre compte ; la ligne survolée d'un tableau est teintée.
+- **La fenêtre Fusion de joueurs reste ouverte** entre deux fusions ; *Fermer* ou *ÉCHAP* la referme.
+- **Le rollout passe sur MAJ-R** ; *r* reste la position aléatoire.
+- Corrections notables : inverser les joueurs d'un match, en 0.39.0 et avant, remplaçait ses positions par d'autres, sans analyse, et retirait ses décisions du PR, de la MWC et de L₇ ; l'inversion ne touche plus qu'aux noms et aux sièges et garde les analyses et les chiffres au bit près, et un match déjà abîmé se répare depuis son fichier source par ``match repair`` ou le bouton ⟲ de sa fiche. gammonNet ne déborde plus sur un doublet aux très nombreux coups, qui faisait échouer un rollout non tronqué ; la courbe « PR par match » s'affiche sous Linux ; un compte de positions du panneau Stats quitte le mode match avant d'ouvrir sa liste ; ouvrir un tournoi depuis Stats le sélectionne dans le panneau Tournois ; la carte d'un export ``.apkg`` nomme la partie Crawford et post-Crawford.
+- Voir :ref:`manuel`, :ref:`cli` et :ref:`headless`.
 
 0.39.0 (2026-10-10)
 -------------------
