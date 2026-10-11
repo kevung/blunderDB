@@ -1471,10 +1471,11 @@ func (e *exporter) writeAnkiHistory(srcDeck, dstDeck int64) error {
 		var dstID int64
 		err := e.tx.QueryRowContext(e.ctx,
 			`UPDATE anki_card SET due = ?, stability = ?, difficulty = ?, elapsed_days = ?, scheduled_days = ?,
-			 reps = ?, lapses = ?, state = ?, last_review = ?
+			 reps = ?, lapses = ?, state = ?, last_review = ?, suspended = ?, buried_until = ?
 			 WHERE deck_id = ? AND kind = ? AND key = ? RETURNING id`,
 			c.Due, c.Stability, c.Difficulty, c.ElapsedDays, c.ScheduledDays,
-			c.Reps, c.Lapses, c.State, c.LastReview, dstDeck, c.Kind, key).Scan(&dstID)
+			c.Reps, c.Lapses, c.State, c.LastReview, c.Suspended, nullIfEmpty(c.BuriedUntil),
+			dstDeck, c.Kind, key).Scan(&dstID)
 		if errors.Is(err, sql.ErrNoRows) {
 			continue
 		}
@@ -1589,4 +1590,12 @@ func carriedComment(c *domain.CommentEntry) (cols, marks []string, args []any) {
 		cols = append(cols, col)
 	}
 	return cols, marks, args
+}
+
+// nullIfEmpty writes "" as NULL: a nullable column reads NULL as "not set".
+func nullIfEmpty(s string) any {
+	if s == "" {
+		return nil
+	}
+	return s
 }

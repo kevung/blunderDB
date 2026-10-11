@@ -4965,7 +4965,7 @@ Huit points méritent l'attention :
   sélectionne.
 * **Les tournois ne peuvent être exportés qu'avec les matchs** : sans eux, le
   lien tournoi–match n'existe pas et le tournoi arriverait vide. La case reste
-  inactive tant que celle des matchs ne l'est pas.
+  inactive tant que celle des matchs n'est pas cochée.
 * **Un paquet Anki part avec ses positions**, en copie d'étude neuve. La case
   *avec mon historique* emporte en plus l'état de chaque carte et le journal
   de ses révisions : une sauvegarde, ou vos paquets passés sur une autre
@@ -5033,8 +5033,9 @@ l'icône en forme d'œil l'affiche **tant qu'on la maintient enfoncée**, et le
 masque de nouveau dès qu'on relâche.
 
 Cocher **Mot de passe** produit un fichier d'extension ``.dbx`` — y compris si
-le nom choisi dans la fenêtre d'enregistrement finit en ``.db``. Pour l'ouvrir, utilisez l'ouverture de base habituelle : la fenêtre de
-sélection accepte aussi bien les ``.db`` que les ``.dbx``. blunderDB demande
+le nom choisi dans la fenêtre d'enregistrement finit en ``.db``. Pour
+l'ouvrir, utilisez l'ouverture de base habituelle : la fenêtre de sélection
+accepte aussi bien les ``.db`` que les ``.dbx``. blunderDB demande
 alors le mot de passe et installe une base ordinaire à côté ; ensuite plus rien
 n'est demandé.
 

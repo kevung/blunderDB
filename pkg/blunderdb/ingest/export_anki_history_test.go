@@ -50,6 +50,21 @@ func TestExportCarriesAnkiHistoryOnlyWhenAsked(t *testing.T) {
 		}
 	}
 
+	// A suspended card stays suspended in the history.
+	// Read before writing: the in-memory source holds one connection.
+	var toSuspend int64
+	for c, err := range src.Anki().DeckCards(ctx, "", deck) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		if toSuspend == 0 && c.PositionID != ids[0] {
+			toSuspend = c.ID
+		}
+	}
+	if err := src.Anki().SetCardSuspended(ctx, "", toSuspend, true); err != nil {
+		t.Fatal(err)
+	}
+
 	for _, history := range []bool{false, true} {
 		path := filepath.Join(t.TempDir(), "export.db")
 		opts := ExportOptions{Selection: Selection{PositionIDs: ids[1:], DeckIDs: []int64{deck}}, AnkiHistory: history}
@@ -67,7 +82,7 @@ func TestExportCarriesAnkiHistoryOnlyWhenAsked(t *testing.T) {
 			}
 			dstDeck = d.ID
 		}
-		reviewed := 0
+		reviewed, held := 0, 0
 		cards := map[int64]bool{}
 		for c, err := range dst.Anki().DeckCards(ctx, "", dstDeck) {
 			if err != nil {
@@ -76,6 +91,9 @@ func TestExportCarriesAnkiHistoryOnlyWhenAsked(t *testing.T) {
 			cards[c.ID] = true
 			if c.Reps > 0 {
 				reviewed++
+			}
+			if c.Suspended {
+				held++
 			}
 		}
 		var logs int
@@ -93,6 +111,9 @@ func TestExportCarriesAnkiHistoryOnlyWhenAsked(t *testing.T) {
 		want := 0
 		if history {
 			want = 2
+		}
+		if wantHeld := want / 2; held != wantHeld {
+			t.Errorf("history %v: %d suspended cards, want %d", history, held, wantHeld)
 		}
 		if len(cards) != 2 || reviewed != want || logs != want {
 			t.Errorf("history %v: %d cards, %d reviewed, %d review events; want 2, %d, %d", history, len(cards), reviewed, logs, want, want)

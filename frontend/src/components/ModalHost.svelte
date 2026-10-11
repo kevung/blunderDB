@@ -39,7 +39,7 @@
         openJournalMatch,
         analyzeRemainingAfterImport
     } from '../services/importService.js';
-    import { handleExportCommit, handleExportCancel, setExportScope } from '../services/exportService.js';
+    import { handleExportCommit, handleExportCancel, setExportScope, openExportPositions, openExportMatches } from '../services/exportService.js';
     import { toggleHelpModal } from '../services/keyboardService.js';
     import { confirmModalStore, resolveConfirm } from '../services/confirmService.js';
     import { MODAL_TABLES } from './modalTables.js';
@@ -137,6 +137,8 @@
     decks={$exportDecksStore}
     chooseScope={$exportScopeStore.chooseable}
     onScope={setExportScope}
+    onOpenPositions={openExportPositions}
+    onOpenMatches={openExportMatches}
     bind:metadata={$exportMetadataStore}
     bind:exportOptions={$exportOptionsStore}
     onCancel={handleExportCancel}

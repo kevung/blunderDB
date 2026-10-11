@@ -69,3 +69,28 @@ describe('a list', () => {
         expect(box(container, '#export-anki-history').checked).toBe(false);
     });
 });
+
+describe('the counts', () => {
+    test("open what they count: the scope's positions, the matches offered", async () => {
+        const onOpenPositions = vi.fn();
+        const onOpenMatches = vi.fn();
+        const matches = [
+            { id: 3, player1_name: 'A', player2_name: 'B', game_count: 1 },
+            { id: 8, player1_name: 'C', player2_name: 'D', game_count: 2 }
+        ];
+        const { getByTestId } = render(ExportDatabaseModal, {
+            visible: true,
+            exportOptions: { ...base(), wholeLibrary: true },
+            positionCount: 40,
+            matches,
+            onOpenPositions,
+            onOpenMatches,
+            onCancel: () => {},
+            onExport: () => {}
+        });
+        await fireEvent.click(getByTestId('count-link'));
+        expect(onOpenPositions).toHaveBeenCalledWith(true);
+        await fireEvent.click(getByTestId('export-matches-count'));
+        expect(onOpenMatches).toHaveBeenCalledWith([3, 8]);
+    });
+});

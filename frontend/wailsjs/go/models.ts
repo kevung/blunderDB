@@ -1583,6 +1583,8 @@ export namespace domain {
 	    lapses: number;
 	    state: number;
 	    lastReview: string;
+	    suspended: boolean;
+	    buriedUntil?: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new AnkiCard(source);
@@ -1604,6 +1606,8 @@ export namespace domain {
 	        this.lapses = source["lapses"];
 	        this.state = source["state"];
 	        this.lastReview = source["lastReview"];
+	        this.suspended = source["suspended"];
+	        this.buriedUntil = source["buriedUntil"];
 	    }
 	}
 	export class AnkiDeck {

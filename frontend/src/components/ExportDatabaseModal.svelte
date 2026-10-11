@@ -5,6 +5,7 @@
     import PanelHeader from './panels/PanelHeader.svelte';
     import FormGrid from './panels/FormGrid.svelte';
     import FormRow from './panels/FormRow.svelte';
+    import CountLink from './panels/CountLink.svelte';
     import { collectionsStore } from '../stores/collectionStore';
     import { tournamentsStore } from '../stores/tournamentStore';
     import { exportCollectionCoverageStore } from '../stores/exportModalStore.js';
@@ -21,6 +22,9 @@
         // A list can be exported as the whole library; onScope shows what the scope chosen exports.
         chooseScope = false,
         onScope = undefined,
+        // A count opens what it counts (ADR-0085 rule 7).
+        onOpenPositions = undefined,
+        onOpenMatches = undefined,
         metadata = {
             user: '',
             description: '',
@@ -308,7 +312,11 @@
 
 <Modal open={visible} onclose={onCancel} size="large" layer="top" closeButton={false} label={$t('export.dialogLabel')}>
     {#if mode === 'metadata' || mode === 'exporting'}
-        <PanelHeader title={$t('export.titleExport')} count={$t('export.positionCount', { count: positionCount })}>
+        <PanelHeader
+            title={$t('export.titleExport')}
+            count={$t('export.positionCount', { count: positionCount })}
+            onCount={onOpenPositions ? () => onOpenPositions(!!exportOptions.wholeLibrary) : null}
+        >
             {#snippet actions()}
                 <button type="button" onclick={onCancel}>{$t('common.cancel')}</button>
                 <button type="button" class="btn-export primary" onclick={confirmExport} disabled={cannotExport}>{$t('export.exportAction')}</button>
@@ -335,7 +343,11 @@
             </FormRow>
             <FormRow label={$t('export.rowMatches')} for="export-matches">
                 <input type="checkbox" id="export-matches" bind:checked={exportOptions.includeMatches} disabled={matches.length === 0} />
-                <span class="count">{matches.length}</span>
+                {#if onOpenMatches && matches.length > 0}
+                    <CountLink testid="export-matches-count" label={matches.length} onclick={() => onOpenMatches(matches.map((/** @type {{ id: number }} */ m) => m.id))} />
+                {:else}
+                    <span class="count">{matches.length}</span>
+                {/if}
                 <label class="check"
                     ><input type="checkbox" id="export-transcriptions" bind:checked={exportOptions.includeTranscriptions} disabled={!carriesMatches} />{$t('export.transcriptions')}</label
                 >

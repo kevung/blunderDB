@@ -303,7 +303,8 @@ type exportSQLiteReq struct {
 	LessonIDs []int64 `json:"lessonIds,omitempty"`
 	// DeckIDs narrows the export to these Anki decks and their positions, on
 	// the same terms: the recipient studies them afresh, without the
-	// sender's review history. Given with the others, all travel.
+	// sender's review history unless ankiHistory asks for it. Given with the
+	// others, all travel.
 	DeckIDs []int64 `json:"deckIds,omitempty"`
 	// Transcriptions and Aliases, when false, leave behind the exported
 	// matches' transcription drafts and the aliases they write; absent, both

@@ -17,7 +17,8 @@ import {
 } from '../../wailsjs/go/database/Database.js';
 
 import { databasePathStore } from '../stores/databaseStore.js';
-import { positionsStore, browsingLibrary, listedIds } from '../stores/positionStore.js';
+import { positionsStore, browsingLibrary, listedIds, openLibrary } from '../stores/positionStore.js';
+import { openMatchListInPanel } from './positionLoader.js';
 import { statusBarModeStore, openModal, closeModal, MODAL } from '../stores/uiStore.js';
 import { collectionsStore } from '../stores/collectionStore.js';
 import { tournamentsStore } from '../stores/tournamentStore.js';
@@ -292,6 +293,25 @@ export async function handleExportCommit() {
         await ShowAlert(`Error committing export: ${error}`);
         statusBarModeStore.set('NORMAL');
     }
+}
+
+/**
+ * A count opens what it counts: the export gives way to the positions of the scope — the
+ * library, or the list already behind the dialog.
+ * @param {boolean} library
+ */
+export async function openExportPositions(library) {
+    handleExportCancel();
+    if (library && !browsingLibrary()) await openLibrary();
+}
+
+/**
+ * Opens the matches the export offers, in the Matches panel.
+ * @param {number[]} ids
+ */
+export async function openExportMatches(ids) {
+    handleExportCancel();
+    await openMatchListInPanel(ids);
 }
 
 export function handleExportCancel() {

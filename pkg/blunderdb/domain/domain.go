@@ -108,6 +108,10 @@ type AnkiCard struct {
 	Lapses        int     `json:"lapses"`
 	State         int     `json:"state"` // 0=New, 1=Learning, 2=Review, 3=Relearning
 	LastReview    string  `json:"lastReview"`
+	// Suspended keeps the card out of every session until lifted; BuriedUntil,
+	// when set, keeps it out until that moment.
+	Suspended   bool   `json:"suspended"`
+	BuriedUntil string `json:"buriedUntil,omitempty"`
 }
 
 // AnkiReviewCard is the card plus, for a position card, the position it asks

@@ -487,7 +487,8 @@ func (s *AnkiStore) DeckStats(ctx context.Context, scope string, deckID int64) (
 // ankiCardCols reads a domain.AnkiCard.
 func (s *AnkiStore) ankiCardCols() string {
 	return `id, deck_id, kind, key, position_id, ` + s.DB.TimestampText("due") + `, stability, difficulty,
-		elapsed_days, scheduled_days, reps, lapses, state, ` + s.DB.TimestampText("last_review")
+		elapsed_days, scheduled_days, reps, lapses, state, ` + s.DB.TimestampText("last_review") + `,
+		suspended, ` + s.DB.TimestampText("buried_until")
 }
 
 func scanAnkiCard(sc interface{ Scan(...any) error }) (domain.AnkiCard, error) {
@@ -496,14 +497,18 @@ func scanAnkiCard(sc interface{ Scan(...any) error }) (domain.AnkiCard, error) {
 	// scanned through a pointer, and surfaced as 0 in the domain, where Kind
 	// is what says whether that 0 means anything.
 	var positionID *int64
+	var buriedUntil *string
 	if err := sc.Scan(&c.ID, &c.DeckID, &c.Kind, &c.Key, &positionID,
 		&c.Due, &c.Stability, &c.Difficulty,
 		&c.ElapsedDays, &c.ScheduledDays, &c.Reps, &c.Lapses, &c.State,
-		&c.LastReview); err != nil {
+		&c.LastReview, &c.Suspended, &buriedUntil); err != nil {
 		return domain.AnkiCard{}, err
 	}
 	if positionID != nil {
 		c.PositionID = *positionID
+	}
+	if buriedUntil != nil {
+		c.BuriedUntil = *buriedUntil
 	}
 	return c, nil
 }
