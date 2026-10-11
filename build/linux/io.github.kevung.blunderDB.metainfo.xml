@@ -86,6 +86,16 @@
   </branding>
 
   <releases>
+    <release version="0.40.0" date="2026-10-11">
+      <description>
+        <ul>
+          <li>Anki .apkg export: a study deck or a collection becomes a deck the Anki app imports on desktop or phone</li>
+          <li>Duel: start from the board or a given score, keep or reroll its dice, play a single game, cadences in minutes per point, hidden pipcount</li>
+          <li>Repair a match from its source file; swapping a match's players keeps its analyses</li>
+          <li>Rotate a video by quarter turns, tournament dates derived from their matches, and the match sheet inside the Tournaments panel</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.39.0" date="2026-10-10">
       <description>
         <ul>
