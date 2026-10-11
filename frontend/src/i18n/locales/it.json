@@ -1975,12 +1975,6 @@
             "matches": "Match",
             "decisions": "Decisioni",
             "noData": "Nessun dato per questo filtro.",
-            "rankingTitle": "Classifica",
-            "minDecisions": "Decisioni min.",
-            "player": "Giocatore",
-            "record": "Bilancio",
-            "prChecker": "PR pedine",
-            "prCube": "PR cubo",
             "openMatches": "Apri queste partite",
             "openPositions": "Apri queste posizioni"
         },
@@ -3343,5 +3337,9 @@
         "boardSize": "Cambia la dimensione del tavoliere",
         "boardHide": "Riduci il tavoliere",
         "boardShow": "Mostra il tavoliere"
+    },
+    "table": {
+        "filteredOut": "Nessuna riga soddisfa i filtri di colonna.",
+        "numericFilterHint": "≥500, >500, <2,5, ≤2, 3-7, 5"
     }
 }

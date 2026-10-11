@@ -249,3 +249,76 @@ describe('the elastic column', () => {
         expect(elastic(mount().container)).toBe(-1);
     });
 });
+
+describe('a table with a view id (ADR-0090)', () => {
+    const VIEW_ROWS = [
+        { id: 1, name: 'Ann', n: 5 },
+        { id: 2, name: 'Bob', n: 50 },
+        { id: 3, name: 'Cid', n: 500 }
+    ];
+    const VIEW_COLUMNS = [
+        { key: 'name', label: 'Name', sortable: true, filter: 'text' },
+        { key: 'n', label: 'N', sortable: true, filter: 'number', defaultDir: 'desc' }
+    ];
+    const shown = (/** @type {HTMLElement} */ c) => [...c.querySelectorAll('td.name-cell')].map((td) => td.textContent);
+
+    afterEach(() => {
+        delete (/** @type {any} */ (window).go);
+    });
+
+    /** @param {Record<string, any>} [stored] */
+    async function mountView(stored = {}, viewId = 'test.view') {
+        const { resetTableViews } = await import('../stores/tableViewStore.js');
+        resetTableViews();
+        const save = vi.fn(() => Promise.resolve());
+        /** @type {any} */ (window).go = { main: { Config: { GetTableSorts: () => Promise.resolve(stored), SaveTableSort: save } } };
+        const r = render(PanelTable, { props: { rows: VIEW_ROWS, columns: VIEW_COLUMNS, cells, viewId } });
+        await new Promise((res) => setTimeout(res, 0));
+        await tick();
+        return { ...r, save };
+    }
+
+    test('a filter row under the header narrows the rows, one field per filterable column', async () => {
+        const { container, getByLabelText } = await mountView();
+        expect(container.querySelectorAll('tr.filter-row input')).toHaveLength(2);
+        await fireEvent.input(getByLabelText('N'), { target: { value: '>=50' } });
+        expect(shown(container)).toEqual(['Bob', 'Cid']);
+        await fireEvent.input(getByLabelText('Name'), { target: { value: 'c' } });
+        expect(shown(container)).toEqual(['Cid']);
+    });
+
+    test('an unreadable numeric filter is flagged and filters nothing', async () => {
+        const { container, getByLabelText } = await mountView();
+        const field = getByLabelText('N');
+        await fireEvent.input(field, { target: { value: '>>' } });
+        expect(field.getAttribute('aria-invalid')).toBe('true');
+        expect(shown(container)).toEqual(['Ann', 'Bob', 'Cid']);
+    });
+
+    test('filtering everything out offers to clear the filters', async () => {
+        const { container, getByLabelText, getByTestId } = await mountView();
+        await fireEvent.input(getByLabelText('Name'), { target: { value: 'zzz' } });
+        expect(shown(container)).toEqual([]);
+        await fireEvent.click(getByTestId('empty-clear'));
+        expect(shown(container)).toEqual(['Ann', 'Bob', 'Cid']);
+    });
+
+    test('the remembered sort is restored, and a header click is saved', async () => {
+        const { container, getAllByRole, save } = await mountView({ 'test.view': { column: 'n', direction: 'desc' } });
+        expect(shown(container)).toEqual(['Cid', 'Bob', 'Ann']);
+        await fireEvent.click(must(getAllByRole('button').find((b) => b.textContent?.startsWith('Name'))));
+        await new Promise((res) => setTimeout(res, 0));
+        expect(shown(container)).toEqual(['Ann', 'Bob', 'Cid']);
+        expect(save).toHaveBeenCalledWith('test.view', 'name', 'asc');
+    });
+
+    test('a remembered column the table no longer has is ignored', async () => {
+        const { container } = await mountView({ 'test.view': { column: 'gone', direction: 'desc' } });
+        expect(shown(container)).toEqual(['Ann', 'Bob', 'Cid']);
+    });
+
+    test('without a view id there is no filter row', () => {
+        const { container } = render(PanelTable, { props: { rows: VIEW_ROWS, columns: VIEW_COLUMNS, cells } });
+        expect(container.querySelector('tr.filter-row')).toBeNull();
+    });
+});

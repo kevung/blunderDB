@@ -2,11 +2,11 @@
     // A count of positions is a way to those positions (ADR-0085, G7): a button drawn as the
     // status bar's dotted link, never inert text.
 
-    /** @type {{ label: string, onclick: (event: MouseEvent) => void, title?: string }} */
-    let { label, onclick, title = undefined } = $props();
+    /** @type {{ label: string | number, onclick: (event: MouseEvent) => void, title?: string, testid?: string }} */
+    let { label, onclick, title = undefined, testid = 'count-link' } = $props();
 </script>
 
-<button type="button" class="count-link" data-testid="count-link" {title} {onclick}>{label}</button>
+<button type="button" class="count-link" data-testid={testid} {title} {onclick}>{label}</button>
 
 <style>
     /* No `font: inherit`: style.css already sets it (ADR-0008). */
@@ -20,7 +20,8 @@
         font-variant-numeric: tabular-nums;
         flex-shrink: 0;
     }
-    .count-link:hover {
+    .count-link:hover,
+    .count-link:focus-visible {
         color: var(--color-primary);
     }
 </style>

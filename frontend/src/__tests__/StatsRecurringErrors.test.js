@@ -33,7 +33,7 @@ const data = {
 describe('StatsRecurringErrors', () => {
     test('lists the groups in the order the backend ranked them, with the PR cost', () => {
         render(StatsRecurringErrors, { props: { data } });
-        const rows = screen.getAllByRole('row').slice(1);
+        const rows = screen.getAllByRole('row').slice(2);
         expect(rows).toHaveLength(2);
         expect(rows[0].textContent).toContain('20.00');
         expect(rows[1].textContent).toContain('6.00');
@@ -48,7 +48,7 @@ describe('StatsRecurringErrors', () => {
 
     test('each row offers a quiz, a deck and a collection on its own positions', async () => {
         render(StatsRecurringErrors, { props: { data } });
-        const row = screen.getAllByRole('row')[1];
+        const row = screen.getAllByRole('row')[2];
         const [quiz, deck, collection] = row.querySelectorAll('.study-btn');
         await fireEvent.click(quiz);
         expect(quizOnIds).toHaveBeenCalledWith([7, 3]);
@@ -67,7 +67,7 @@ describe('StatsRecurringErrors', () => {
     test('the unthemed errors stay out of the ranking, listed apart and clickable', async () => {
         const withRest = { ...data, Unthemed: [{ GameType: 'contact', Kind: '', Theme: 'none', Count: 9, SumErrorMP: 900, PRCost: 45, PositionIDs: [4, 5] }] };
         render(StatsRecurringErrors, { props: { data: withRest } });
-        expect(screen.getAllByRole('row').slice(1)).toHaveLength(2);
+        expect(screen.getAllByRole('row').slice(2)).toHaveLength(2);
         const item = screen.getByRole('listitem');
         expect(item.textContent).toContain('45.00');
         await fireEvent.click(must(item.querySelector('button')));

@@ -4630,6 +4630,20 @@ export namespace main {
 		    return a;
 		}
 	}
+	export class TableSort {
+	    column: string;
+	    direction: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new TableSort(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.column = source["column"];
+	        this.direction = source["direction"];
+	    }
+	}
 	export class StatsFilterPersisted {
 	    player_name: string;
 	    tournament_ids: number[];
@@ -4680,6 +4694,7 @@ export namespace main {
 	    tab_order?: string[];
 	    duel_form?: string;
 	    hidden_tabs?: string[];
+	    table_sorts?: Record<string, TableSort>;
 	    bearoff_ts_path?: string;
 	    bearoff_rate?: number;
 	    bearoff_cores?: number;
@@ -4732,6 +4747,7 @@ export namespace main {
 	        this.tab_order = source["tab_order"];
 	        this.duel_form = source["duel_form"];
 	        this.hidden_tabs = source["hidden_tabs"];
+	        this.table_sorts = this.convertValues(source["table_sorts"], TableSort, true);
 	        this.bearoff_ts_path = source["bearoff_ts_path"];
 	        this.bearoff_rate = source["bearoff_rate"];
 	        this.bearoff_cores = source["bearoff_cores"];

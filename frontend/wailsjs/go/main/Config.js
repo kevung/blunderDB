@@ -106,6 +106,10 @@ export function GetStatsFilter() {
   return window['go']['main']['Config']['GetStatsFilter']();
 }
 
+export function GetTableSorts() {
+  return window['go']['main']['Config']['GetTableSorts']();
+}
+
 export function GetTabOrder() {
   return window['go']['main']['Config']['GetTabOrder']();
 }
@@ -240,6 +244,10 @@ export function SaveRolloutChoice(arg1) {
 
 export function SaveStatsFilter(arg1) {
   return window['go']['main']['Config']['SaveStatsFilter'](arg1);
+}
+
+export function SaveTableSort(arg1, arg2, arg3) {
+  return window['go']['main']['Config']['SaveTableSort'](arg1, arg2, arg3);
 }
 
 export function SaveTabOrder(arg1) {

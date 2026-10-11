@@ -667,6 +667,44 @@ func TestTabPanelHeights(t *testing.T) {
 	}
 }
 
+func TestTableSortsSurviveReload(t *testing.T) {
+	isolateXDGConfig(t)
+
+	c := NewConfig()
+	if got := c.GetTableSorts(); len(got) != 0 {
+		t.Fatalf("fresh config remembers %v, want nothing", got)
+	}
+	for _, s := range [][3]string{
+		{"stats.players", "pr", "desc"},
+		{"stats.recurring", "count", "sideways"},
+		{"stats.corpus.h2h", "date", "asc"},
+		{"stats.corpus.h2h", "", ""},
+		{"", "pr", "asc"},
+	} {
+		if err := c.SaveTableSort(s[0], s[1], s[2]); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	loaded := &Config{}
+	if _, err := loaded.LoadConfig(); err != nil {
+		t.Fatalf("LoadConfig: %v", err)
+	}
+	got := loaded.GetTableSorts()
+	want := map[string]TableSort{
+		"stats.players":   {Column: "pr", Direction: "desc"},
+		"stats.recurring": {Column: "count", Direction: "asc"},
+	}
+	if len(got) != len(want) {
+		t.Fatalf("sorts = %v, want %v", got, want)
+	}
+	for id, s := range want {
+		if got[id] != s {
+			t.Errorf("sort of %q = %v, want %v", id, got[id], s)
+		}
+	}
+}
+
 // A config written before heights were per tab carries one panel_height: it seeds the height of
 // every tab without its own, and is not written back.
 func TestLoadConfigSeedsTabHeightsFromLegacyPanelHeight(t *testing.T) {

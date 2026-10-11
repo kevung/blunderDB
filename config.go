@@ -211,6 +211,9 @@ type Config struct {
 	DuelForm string `json:"duel_form,omitempty"`
 	// HiddenTabs removes tab buttons only; their shortcuts still work.
 	HiddenTabs []string `json:"hidden_tabs,omitempty"`
+	// TableSorts is the sort each table last had, by the table's view id; the frontend
+	// owns the ids and the column keys, and ignores a column it no longer has.
+	TableSorts map[string]TableSort `json:"table_sorts,omitempty"`
 	// BearoffTSPath is an optional user-supplied two-sided bearoff database
 	// (.bd) widening the generated TS-06-06 (ADR-0009). Empty = none.
 	BearoffTSPath string `json:"bearoff_ts_path,omitempty"`
@@ -483,6 +486,7 @@ func (c *Config) LoadConfig() (*Config, error) {
 	c.TabOrder = config.TabOrder
 	c.DuelForm = config.DuelForm
 	c.HiddenTabs = config.HiddenTabs
+	c.TableSorts = config.TableSorts
 	c.BearoffTSPath = config.BearoffTSPath
 	c.BearoffRate = config.BearoffRate
 	c.BearoffCores = config.BearoffCores
@@ -737,6 +741,45 @@ func (c *Config) SaveTabPanelHeight(tab string, height int) error {
 	}
 	heights[tab] = clampPanelHeight(height)
 	c.PanelHeights = heights
+	return c.SaveConfig(c)
+}
+
+// TableSort is one table's remembered sort: a column key and "asc" or "desc".
+type TableSort struct {
+	Column    string `json:"column"`
+	Direction string `json:"direction"`
+}
+
+// GetTableSorts returns the sort remembered per table view id.
+func (c *Config) GetTableSorts() map[string]TableSort {
+	out := make(map[string]TableSort, len(c.TableSorts))
+	for id, s := range c.TableSorts {
+		if id != "" && s.Column != "" {
+			out[id] = s
+		}
+	}
+	return out
+}
+
+// SaveTableSort remembers the sort of one table; an empty column forgets it. A direction
+// other than "desc" is stored as "asc".
+func (c *Config) SaveTableSort(viewID, column, direction string) error {
+	if viewID == "" {
+		return nil
+	}
+	sorts := c.GetTableSorts()
+	if column == "" {
+		delete(sorts, viewID)
+	} else {
+		if direction != "desc" {
+			direction = "asc"
+		}
+		sorts[viewID] = TableSort{Column: column, Direction: direction}
+	}
+	if len(sorts) == 0 {
+		sorts = nil
+	}
+	c.TableSorts = sorts
 	return c.SaveConfig(c)
 }
 
