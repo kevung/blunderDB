@@ -107,6 +107,34 @@ func TestExportCarriesMatchSourceMetadata(t *testing.T) {
 	}
 }
 
+// The source file a match was imported from travels by its name alone: the
+// recipient can find it again in their own library, but not learn the
+// producer's directory tree.
+func TestExportCarriesMatchFileNameOnly(t *testing.T) {
+	for in, want := range map[string]string{
+		"/home/alice/tournois/2025/finale.xg": "finale.xg",
+		`C:\Users\alice\demi.sgf`:             "demi.sgf",
+		"seul.mat":                            "seul.mat",
+		"":                                    "",
+	} {
+		path := exportOneMatch(t, domain.Match{Player1Name: "A", Player2Name: "B", FilePath: in})
+		ctx := context.Background()
+		dst, err := sqlite.Open(ctx, path, nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+		for mm, err := range dst.Matches().List(ctx, "", storage.MatchListOpts{}) {
+			if err != nil {
+				t.Fatal(err)
+			}
+			if mm.FilePath != want {
+				t.Errorf("exported file_path of %q = %q, want %q", in, mm.FilePath, want)
+			}
+		}
+		dst.Close()
+	}
+}
+
 // exportedMatchNote reads back the comment and its author of the one match
 // an export holds.
 func exportedMatchNote(t *testing.T, path string) (comment, author string) {

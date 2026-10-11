@@ -537,3 +537,35 @@ func TestCarriedTranscriptVideoSource(t *testing.T) {
 		}
 	}
 }
+
+func TestCarriedVideoSourceAndFileName(t *testing.T) {
+	for in, want := range map[string]string{
+		"https://youtu.be/abc":                     "https://youtu.be/abc",
+		"https://www.youtube.com/watch?v=x1&t=42":  "https://www.youtube.com/watch?v=x1&t=42",
+		"https://kevin:secret@nas.local/v.mp4?a=1": "https://nas.local/v.mp4?a=1",
+		"http://token@cdn.example/v.webm":          "http://cdn.example/v.webm",
+		"https://bad host/%zz":                     "",
+		"/home/kevin/Vidéos/finale.mp4":            "finale.mp4",
+		"file:///home/kevin/demi.mkv":              "demi.mkv",
+		"/home/kevin/Vidéos/":                      "",
+		"   ":                                      "",
+	} {
+		got := CarriedVideoSource(&in)
+		if (got == nil) != (want == "") || (got != nil && *got != want) {
+			t.Errorf("CarriedVideoSource(%q) = %v, want %q", in, got, want)
+		}
+	}
+	if CarriedVideoSource(nil) != nil {
+		t.Error("CarriedVideoSource(nil) must stay nil")
+	}
+	for in, want := range map[string]string{
+		"/home/kevin/tournois/finale.xg": "finale.xg",
+		`D:\matchs\demi.sgf`:             "demi.sgf",
+		" seul.mat ":                     "seul.mat",
+		"":                               "",
+	} {
+		if got := CarriedFileName(in); got != want {
+			t.Errorf("CarriedFileName(%q) = %q, want %q", in, got, want)
+		}
+	}
+}

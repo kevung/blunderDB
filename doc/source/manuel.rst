@@ -3049,13 +3049,18 @@ sous-ensemble de positions.
 Perspective joueur
 ^^^^^^^^^^^^^^^^^^
 
-La liste déroulante **Joueur** permet de filtrer les statistiques selon le
-joueur analysé. blunderDB sélectionne automatiquement le joueur dont le nom
-apparaît le plus souvent dans la base de données — modifiable à tout moment.
+Le champ **Joueur** filtre les statistiques selon le joueur analysé. Taper
+quelques lettres réduit la liste aux noms qui les contiennent ; un clic ou
+*Entrée* choisit le joueur, **✕** ou un champ vidé revient à toutes les
+perspectives.
 
-.. tip::
-   Changer de joueur ne provoque pas de perte de données ; il suffit de
-   re-sélectionner le joueur précédent dans la liste.
+Le filtre est **un seul** pour tous les onglets du panneau et il est conservé
+d'une session à l'autre. Il se règle aussi depuis les autres panneaux : le nom
+d'un joueur dans l'en-tête d'un match ou dans la barre au-dessus du plateau
+ouvre toutes ses statistiques (tournois et dates sont vidés), et le bouton
+**Stats** de l'en-tête d'un tournoi ouvre celles de ce tournoi entier (dates
+vidées, joueur conservé). Une date de fin antérieure à la date de début est
+refusée : le champ reprend la date appliquée.
 
 Filtres disponibles
 ^^^^^^^^^^^^^^^^^^^
@@ -3074,8 +3079,7 @@ Filtres disponibles
 * **Moteur** et **Profondeur min.** — ne garder que les décisions analysées par
   un moteur donné (gnubg, xg…), ou au moins à une profondeur donnée, en plis.
 
-Un bouton **↺ Réinitialiser** remet tous les filtres à zéro (sauf le joueur
-auto-détecté).
+Un bouton **↺ Réinitialiser** remet tous les filtres à zéro, sauf le joueur.
 
 .. note::
    Les filtres sont persistés dans la configuration de blunderDB
@@ -3252,6 +3256,11 @@ décisions du filtre. Le nombre de tournois ouvre ces tournois dans le panneau
 Tournois : un tournoi seul s'ouvre directement ; plusieurs restreignent la
 liste, qui porte alors le bouton « N tournois ouverts depuis les Stats × » : il
 rend la liste complète.
+
+Le nombre de décisions ouvre leurs positions ; le nombre
+de matchs ouvre ces matchs dans le panneau Matchs, sauf quand un type de
+décision ou un filtre de provenance est actif : il compte alors moins de
+matchs que la liste n'en ouvrirait et reste un simple nombre.
 
 .. note::
    Le nombre total de décisions est affiché en bas de chaque carte au survol.
@@ -3473,8 +3482,8 @@ perds le plus ? » : par exemple, « tenue · trop de blots ».
   formule du PR appliquée aux erreurs du groupe, rapportée à toutes les
   décisions comptées. Les coûts des groupes ne dépassent donc jamais le PR.
 
-Cliquer sur un groupe charge ses positions, de la plus coûteuse à la moins
-coûteuse. Le thème est recalculé à chaque affichage, jamais enregistré :
+Cliquer sur un groupe, ou sur son nombre d'erreurs, charge ses positions, de
+la plus coûteuse à la moins coûteuse. Le thème est recalculé à chaque affichage, jamais enregistré :
 comme le plan de jeu, c'est une étiquette dérivée, non modifiable. En ligne de
 commande : ``blunderdb stats recurring`` (voir :ref:`cli_stats`).
 
@@ -3563,7 +3572,7 @@ PR de la dernière fenêtre où le plan a été joué.
 
 Entre parenthèses, le nombre de décisions ou de révisions derrière chaque
 valeur : une fenêtre sans échantillon n'a pas de valeur — un tiret, pas un
-zéro. Le filtre ne restreint que les matchs ; le journal du quiz et celui
+zéro. Le nombre de décisions de matchs d'une fenêtre ouvre leurs positions. Le filtre ne restreint que les matchs ; le journal du quiz et celui
 d'Anki sont les vôtres et ne portent pas de joueur. Rien n'est enregistré en
 plus : les trois séries sont relues dans les journaux existants. En ligne de
 commande : ``blunderdb stats training`` (voir :ref:`cli_stats`).
@@ -3696,6 +3705,10 @@ Utilisation :
 * **Ouvrir le détail d'un joueur** — cliquez sur une ligne. Le joueur est
   sélectionné dans la barre de filtres et l'affichage bascule sur l'onglet
   Tableau de bord.
+* **Ouvrir ses décisions** — le nombre de décisions ouvre leurs positions, sous
+  les filtres du tableau. Le nombre de matchs et le bilan V–D restent de simples
+  nombres : ils comptent aussi les matchs sans décision analysée, qu'aucune
+  liste de matchs ne reproduit.
 * **Restreindre la période** — les filtres de dates, de tournois et de longueur
   de match s'appliquent normalement, ce qui permet de borner le tableau aux
   dates d'une compétition.
@@ -3728,9 +3741,11 @@ Une égalité n'est pas une victoire : elle n'est mise en gras d'aucun côté. U
 taux qui n'a rien derrière lui s'affiche « — » et ne départage rien.
 
 .. note::
-   Dans cet onglet, la liste **Joueur** et le choix du **type de décision** sont
-   désactivés : le tableau montre tous les joueurs, et il ventile déjà les
-   décisions de pions et de videau en colonnes distinctes.
+   Dans cet onglet, le choix du **type de décision** est désactivé : le tableau
+   ventile déjà les décisions de pions et de videau en colonnes distinctes. Le
+   joueur de la barre de filtres reste actif : le tableau montre toujours tous
+   les joueurs, et la ligne de celui-ci est mise en évidence et amenée à
+   l'écran.
 
 Deux vues de
 corpus figurent dans l'onglet **Corpus** du panneau, en ligne de
@@ -3746,10 +3761,12 @@ les décisions. Le face-à-face et le PR par fenêtre ne l'acceptent pas : tant
 qu'il est actif, ils refusent de se calculer. Comme le reste de la barre, il
 est conservé d'une session à l'autre.
 
-Dans l'onglet Corpus, chaque ligne ouvre ce qu'elle résume. Une ligne de
+Dans l'onglet Corpus, chaque ligne ouvre ce qu'elle résume. Le bilan du
 face-à-face ouvre ses matchs dans le panneau Matchs, qui porte alors le bouton
-« N matchs ouverts depuis les Stats × » : il rend la liste complète. Une ligne de fenêtre ouvre ses positions et son nombre de
-matchs ouvre les matchs. Un compte de positions du panneau Stats, quel que soit
+« N matchs ouverts depuis les Stats × » : il rend la liste complète ; une ligne
+de face-à-face ouvre son match. Le premier joueur du face-à-face est d'emblée
+celui de la barre de filtres. Une ligne de fenêtre et son nombre de décisions
+ouvrent ses positions, son nombre de matchs ouvre les matchs. Un compte de positions du panneau Stats, quel que soit
 l'onglet, quitte d'abord le match en cours avant d'ouvrir sa liste ; la commande
 ``m`` rouvre ensuite le match au coup sauvegardé.
 
@@ -4948,7 +4965,7 @@ La fenêtre d'export tient en un seul écran : le formulaire, puis une
 progression qui se superpose à lui le temps de l'écriture. Elle se ferme
 d'elle-même une fois terminée, et le résultat s'affiche dans la barre d'état.
 
-Cinq points méritent l'attention :
+Six points méritent l'attention :
 
 * **L'export porte sur les positions actuellement affichées**, pas sur la base
   entière. Après une recherche, seuls les résultats partent — la fenêtre le
@@ -4961,9 +4978,15 @@ Cinq points méritent l'attention :
 * **Un match part avec son brouillon de transcription**, quelle que soit la
   liste affichée : la case *Avec leurs brouillons de transcription*, sous
   celle des matchs, est cochée d'emblée. Un brouillon qui n'a pas encore
-  produit de match ne part qu'avec la bibliothèque entière. Une transcription
-  liée à une vidéo locale n'emporte que le nom du fichier, sans son dossier ;
-  un lien web part tel quel.
+  produit de match ne part qu'avec la bibliothèque entière. Un match ou une
+  transcription liés à une vidéo locale n'emportent que le nom du fichier,
+  sans son dossier, que le destinataire relocalise sur sa propre copie ; un
+  lien web part tel quel. Le fichier d'où un match a été importé ne part
+  aussi que par son nom.
+* **Un match part avec les alias de ses joueurs et de son événement** : la
+  case *Avec les alias de leurs joueurs et événements*, cochée d'emblée, fait
+  suivre la fusion de joueurs, et le destinataire lit un joueur fusionné comme
+  un seul. Un alias qui ne nomme personne des matchs exportés reste chez vous.
 * **Une collection dont toutes les positions ne sont pas dans la sélection
   arrive tronquée.** La liste affiche donc, pour chaque collection, la part
   couverte (« 12/40 ») et la signale en rouge lorsqu'elle est partielle.
@@ -4975,7 +4998,9 @@ Les champs *Utilisateur*, *Description* et *Date de création* décrivent le **f
 produit** ; ils sont préremplis depuis la base source. La case *Mes filtres
 enregistrés* est à part des autres : elle n'exporte pas du contenu mais vos
 propres recherches enregistrées, sans utilité dans la base de quelqu'un
-d'autre.
+d'autre. Un filtre qui désigne une position, un match ou un tournoi par son
+numéro est renuméroté pour le fichier ; s'il en désigne un qui ne part pas,
+il reste chez vous.
 
 Cocher **Marquer ce fichier de son origine** fait apparaître deux champs :
 

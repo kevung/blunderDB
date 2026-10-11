@@ -79,6 +79,7 @@ describe('the whole library', () => {
             positionIDs: [],
             includeMatches: true,
             includeTranscriptions: true,
+            includeAliases: true,
             matchIDs: [],
             includeCollections: true,
             collectionIDs: [],
@@ -131,5 +132,27 @@ describe('a filtered list', () => {
         exportOptionsStore.update((/** @type {any} */ o) => ({ ...o, includeMatches: false, matchIDs: [] }));
         await handleExportCommit();
         expect(vi.mocked(ExportDatabase).mock.calls[0][0]).toMatchObject({ includeMatches: false, includeTranscriptions: false });
+    });
+
+    test('sends the aliases only with their matches, and not once unticked', async () => {
+        library = false;
+        await exportDatabase();
+        pickEverything();
+        await handleExportCommit();
+        expect(vi.mocked(ExportDatabase).mock.calls[0][0]).toMatchObject({ includeMatches: true, includeAliases: true });
+
+        vi.clearAllMocks();
+        await exportDatabase();
+        pickEverything();
+        exportOptionsStore.update((/** @type {any} */ o) => ({ ...o, includeAliases: false }));
+        await handleExportCommit();
+        expect(vi.mocked(ExportDatabase).mock.calls[0][0]).toMatchObject({ includeAliases: false });
+
+        vi.clearAllMocks();
+        await exportDatabase();
+        pickEverything();
+        exportOptionsStore.update((/** @type {any} */ o) => ({ ...o, includeMatches: false, matchIDs: [] }));
+        await handleExportCommit();
+        expect(vi.mocked(ExportDatabase).mock.calls[0][0]).toMatchObject({ includeMatches: false, includeAliases: false });
     });
 });

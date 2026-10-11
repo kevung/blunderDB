@@ -19,7 +19,7 @@ import { positionsStore } from '../stores/positionStore.js';
 import { currentPositionIndexStore } from '../stores/uiStore.js';
 import { tournamentOpenRequestStore, tournamentIDsFilterStore } from '../stores/tournamentStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
-import { statsFilterStore, statsResultFilterStore, playerTableFilterStore } from '../stores/statsStore.js';
+import { statsFilterStore, statsTabStore, initStatsFilter, patchStatsFilter, playerTableFilterStore, drillDownFilter } from '../stores/statsStore.js';
 import { leaveStudiedModeForList, forgetSubSearchOrigin } from './modeMachine.js';
 
 /**
@@ -165,15 +165,9 @@ export function openTournamentListInPanel(ids) {
     activeTabStore.set('tournaments');
 }
 
-// A count on screen comes from the result: it opens under the filter that produced it, not under
-// the bar's, which may have moved ahead of it.
-function shownStatsFilter() {
-    return get(statsResultFilterStore) ?? get(statsFilterStore);
-}
-
 /** Open the tournaments the Dashboard's tournament count counts. */
 export async function openStatsTournaments() {
-    openTournamentListInPanel((await StatsTournamentIDs(shownStatsFilter())) ?? []);
+    openTournamentListInPanel((await StatsTournamentIDs(drillDownFilter())) ?? []);
 }
 
 /**
@@ -183,7 +177,7 @@ export async function openStatsTournaments() {
  * @param {string} playerName
  */
 export async function openStatsPlayerBlunders(playerName) {
-    const filter = get(playerTableFilterStore) ?? shownStatsFilter();
+    const filter = get(playerTableFilterStore) ?? drillDownFilter();
     await loadPositionsFromStatsSelection({ ...filter, playerName, decisionType: -1 }, { Kind: 'blunders' });
 }
 
@@ -214,4 +208,23 @@ export function openMatchInPanel(matchID) {
     // The Matches panel opens it once its list is loaded, as the command palette does.
     matchOpenRequestStore.set(matchID);
     activeTabStore.set('matches');
+}
+
+/**
+ * Open the Stats panel on a player or on tournaments: the shared filter takes them, so the bar
+ * shows what the figures cover. The saved filter is restored first, or it would overwrite them.
+ * A player's name asks for the whole career: tournaments and dates are cleared. A tournament asks
+ * for the whole tournament, with the chosen player kept: dates are cleared.
+ *
+ * @param {{ playerName?: string, tournamentIDs?: number[], tab?: string }} target
+ */
+export async function openStatsFor({ playerName, tournamentIDs, tab = 'dashboard' }) {
+    await initStatsFilter();
+    /** @type {Record<string, any>} */
+    const patch = { dateFrom: '', dateTo: '' };
+    if (playerName !== undefined) Object.assign(patch, { playerName, tournamentIDs: [] });
+    if (tournamentIDs !== undefined) patch.tournamentIDs = tournamentIDs;
+    patchStatsFilter(patch);
+    statsTabStore.set(tab);
+    activeTabStore.set('stats');
 }

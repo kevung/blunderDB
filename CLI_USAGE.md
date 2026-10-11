@@ -272,6 +272,8 @@ Each position is exported as a JSON object on a separate line.
 - `--filters` - Include filter library in database export (default: true)
 - `--played-moves` - Include played moves in analysis (default: true)
 - `--matches` - Include matches in database export (default: true)
+- `--transcriptions` - Include the transcription draft of each exported match (default: true)
+- `--aliases` - Include the player and event aliases the exported matches write (default: true)
 - `--collections` - Include collections in database export (default: true)
 - `--tournaments` - Include tournaments in database export (default: true)
 - `--decks` - Include Anki decks, without their review history, in database export (default: true)
@@ -282,8 +284,8 @@ Each position is exported as a JSON object on a separate line.
 - `--format` - Output format: `text` (default) or `json` (a summary document — file path, byte count, counts)
 
 `--type database` exports the whole library, as the server's export and the GUI's export of the
-library do: positions, matches, tournaments, collections, lessons, Anki decks, transcriptions and
-the filter library. A flag set to `false` leaves its family out; a list of IDs narrows it to those
+library do: positions, matches, tournaments, collections, lessons, Anki decks, transcriptions,
+aliases and the filter library. A flag set to `false` leaves its family out; a list of IDs narrows it to those
 and brings it in.
 
 ### Export Database Without Matches
@@ -3250,6 +3252,8 @@ Usage: blunderdb export [options]
 Export data from the database.
 
 Options:
+  -aliases
+    	Include the player and event aliases the exported matches write in database export (default: true) (default true)
   -analysis
     	Include analysis in database export (default: true) (default true)
   -collection-ids string
@@ -3295,7 +3299,7 @@ Options:
 
 Export Types:
   database   Export the whole library, as the server's export does: positions, matches,
-             tournaments, collections, lessons, Anki decks, transcriptions, filters.
+             tournaments, collections, lessons, Anki decks, transcriptions, aliases, filters.
              Each family can be left out (--matches=false) or narrowed (--match-ids=1,2).
   positions  Export positions to text file (JSON format)
   matches    Export only matches to a new database

@@ -27,6 +27,7 @@
             includePlayedMoves: true,
             includeMatches: true,
             includeTranscriptions: true,
+            includeAliases: true,
             matchIDs: [],
             includeTournaments: false,
             includeTournamentIDs: [],
@@ -46,6 +47,7 @@
      * @property {boolean} [includePlayedMoves]
      * @property {boolean} [includeMatches]
      * @property {boolean} [includeTranscriptions]
+     * @property {boolean} [includeAliases]
      * @property {number[]} matchIDs
      * @property {boolean} [includeTournaments]
      * @property {number[]} includeTournamentIDs
@@ -336,6 +338,10 @@
             <div class="checkbox-item checkbox-sub">
                 <input type="checkbox" id="export-transcriptions" bind:checked={exportOptions.includeTranscriptions} disabled={!exportOptions.includeMatches} />
                 <label for="export-transcriptions">{$t('export.includeTranscriptions')}</label>
+            </div>
+            <div class="checkbox-item checkbox-sub">
+                <input type="checkbox" id="export-aliases" bind:checked={exportOptions.includeAliases} disabled={!exportOptions.includeMatches} />
+                <label for="export-aliases">{$t('export.includeAliases')}</label>
             </div>
             <div class="checkbox-item">
                 <!-- A tournament is linked to its matches only when the matches

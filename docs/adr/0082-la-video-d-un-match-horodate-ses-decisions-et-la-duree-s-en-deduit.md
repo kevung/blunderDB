@@ -73,9 +73,10 @@ peut pas embarquer ; le lecteur intégré de YouTube refuse une page sans réfé
    qu'un fournisseur d'instants.
 4. **La source vidéo est une URL http(s) ou un chemin local, sur le brouillon puis sur le
    Match.** Un chemin local est une indication : les Repères gardent leur sens sans le
-   fichier, et un fichier introuvable se relocalise. À l'export (ADR-0067), seule une URL
-   http(s) voyage ; un chemin local reste chez son auteur, il révèle une arborescence et ne
-   sert à personne d'autre. Les Repères voyagent toujours. Le `.mat` ne porte ni l'un ni
+   fichier, et un fichier introuvable se relocalise. À l'export (ADR-0067), une URL http(s)
+   voyage telle quelle ; d'un chemin local ne voyage que le nom du fichier, que le
+   destinataire relocalise sur sa copie, l'arborescence restant chez son auteur. Les Repères
+   voyagent toujours. Le `.mat` ne porte ni l'un ni
    l'autre.
 5. **Le bureau lit la vidéo par un serveur HTTP de bouclage, jamais par le serveur d'assets de
    Wails.** Le processus du bureau sert les fichiers attachés aux volets ouverts, et eux seuls, sous une URL à jeton
@@ -123,7 +124,7 @@ peut pas embarquer ; le lecteur intégré de YouTube refuse une page sans réfé
   (la durée se lit en secondes) ; un lecteur externe piloté (une dépendance et une plomberie
   par plateforme) ; un décodeur WebAssembly embarqué (trente mégaoctets et un décodage
   logiciel pour le seul cas d'une distribution sans greffons) ; le serveur d'assets de Wails
-  comme source média ; un chemin local qui voyage à l'export ; une Transcription qui refuse
+  comme source média ; un chemin local entier qui voyage à l'export ; une Transcription qui refuse
   un Repère à rebours ; deux lecteurs pour une vidéo, un dans le panneau et un à côté du
   plateau (deux horloges, et un basculement qui perd l'instant) ; un calque qui intercepte les
   clics sur le lecteur (il cacherait les commandes de YouTube et du webview).

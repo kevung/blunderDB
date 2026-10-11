@@ -67,6 +67,7 @@ func (d *Database) exportPlan(ctx context.Context, opts ExportOptions) (ingest.E
 		PlayedMoves:    opts.IncludePlayedMoves,
 		FilterLibrary:  opts.IncludeFilterLibrary,
 		Transcriptions: opts.IncludeTranscriptions,
+		Aliases:        opts.IncludeAliases,
 	}
 	sel := ingest.Selection{
 		AllPositions:  opts.AllPositions,
@@ -125,6 +126,7 @@ func wholeLibraryPlan(opts ExportOptions) ingest.ExportOptions {
 	plan.PlayedMoves = opts.IncludePlayedMoves
 	plan.FilterLibrary = opts.IncludeFilterLibrary
 	plan.Transcriptions = opts.IncludeTranscriptions
+	plan.Aliases = opts.IncludeAliases
 	sel := &plan.Selection
 	sel.AllMatches, sel.MatchIDs = narrow(opts.IncludeMatches, opts.MatchIDs)
 	sel.AllCollections, sel.CollectionIDs = narrow(opts.IncludeCollections, opts.CollectionIDs)

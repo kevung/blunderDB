@@ -96,7 +96,7 @@ type ExportReport struct {
 	Positions, Analyses, Comments                int
 	Matches, Games, Moves, MoveAnalyses          int
 	Collections, Tournaments, Filters, AnkiDecks int
-	Transcriptions, Lessons                      int
+	Transcriptions, Lessons, Aliases             int
 	Skipped                                      int
 	// TournamentMap gives, for each exported tournament, the id the new file assigned it.
 	// A Direction travels with its tournament (ADR-0047) but its tables live on the desktop
@@ -114,7 +114,7 @@ func WholeTenant(format Format) ExportOptions {
 			AllLessons: true,
 		},
 		Analysis: true, Comments: true, PlayedMoves: true, FilterLibrary: true, AnkiDecks: true,
-		Transcriptions: true,
+		Transcriptions: true, Aliases: true,
 	}
 }
 
@@ -256,6 +256,7 @@ func writeExport(ctx context.Context, src storage.Storage, scope, path string, o
 		e.writeMatches,
 		e.writeLivingQueries,
 		e.writeMatchOrigins,
+		e.writeAliases,
 		// No Duel in suspense: its seed is every roll to come, and it leaves
 		// by no route before the end (ADR-0072 rule 11). A finished Duel
 		// travels as its Match and that Match's origin, seed revealed.
@@ -335,6 +336,8 @@ type exporter struct {
 	collMap  map[int64]int64
 	tourMap  map[int64]int64
 	matchMap map[int64]int64
+	// matchNames holds, per alias kind, the names the exported matches write.
+	matchNames map[storage.AliasKind]map[string]bool
 	// living holds the LIVING collections written without their query, and
 	// livingEvals each one's evaluation at the source, read once.
 	living      []livingCollection
@@ -1056,8 +1059,9 @@ func (e *exporter) writeTournaments() error {
 // reason — and TestExportMatchColumnsClassified fails until one of the
 // lists says so. The source metadata (ratings, experience, transcriber, session
 // rules, engine version) is what the file said of the match: it travels
-// with it (ADR-0067). The video source travels only as an http(s) URL
-// (issuance.CarriedVideoSource, ADR-0082).
+// with it (ADR-0067). The source file travels by its name alone
+// (issuance.CarriedFileName, ADR-0067 rule 3); a local video by its name, an
+// http(s) one as its URL (issuance.CarriedVideoSource, ADR-0082).
 var exportedMatchColumns = []string{
 	"player1_name", "player2_name", "event", "location", "round", "match_length",
 	"match_date", "import_date", "file_path", "game_count", "match_hash", "canonical_hash",
@@ -1097,7 +1101,7 @@ func (e *exporter) writeMatches() error {
 			 VALUES (?, ?, ?, ?, ?, ?, ?, COALESCE(?, CURRENT_TIMESTAMP), ?, ?, NULLIF(?, ''), NULLIF(?, ''), ?, ?, ?,
 			         ?, ?, ?, ?, ?, ?, ?, ?, ?`+strings.Repeat(", ?", len(noteArgs))+`)`,
 			append([]any{m.Player1Name, m.Player2Name, m.Event, m.Location, m.Round, m.MatchLength,
-				nullableTime(m.MatchDate), nullableTime(m.ImportDate), m.FilePath, m.GameCount,
+				nullableTime(m.MatchDate), nullableTime(m.ImportDate), issuance.CarriedFileName(m.FilePath), m.GameCount,
 				m.MatchHash, m.CanonicalHash,
 				tournamentID, m.TournamentSortOrder, m.LastVisitedPosition,
 				m.Player1Elo, m.Player2Elo, m.Player1Experience, m.Player2Experience,
@@ -1113,6 +1117,7 @@ func (e *exporter) writeMatches() error {
 		}
 		e.matchMap[id] = newMatchID
 		e.report.Matches++
+		e.noteMatchNames(m)
 
 		var games []*domain.Game
 		for g, err := range e.src.Matches().Games(e.ctx, e.scope, id) {
@@ -1197,8 +1202,60 @@ func nullableTime(t time.Time) any {
 	return t
 }
 
+// noteMatchNames records the player and event names m writes, which decide
+// the aliases that leave with it.
+func (e *exporter) noteMatchNames(m *domain.Match) {
+	if e.matchNames == nil {
+		e.matchNames = map[storage.AliasKind]map[string]bool{
+			storage.AliasPlayer: {}, storage.AliasEvent: {},
+		}
+	}
+	for kind, names := range map[storage.AliasKind][]string{
+		storage.AliasPlayer: {m.Player1Name, m.Player2Name},
+		storage.AliasEvent:  {m.Event},
+	} {
+		for _, n := range names {
+			if n = strings.TrimSpace(n); n != "" {
+				e.matchNames[kind][n] = true
+			}
+		}
+	}
+}
+
+// writeAliases copies, under opts.Aliases, the player and event aliases
+// whose spelling or canonical name an exported match writes: the recipient's
+// stats then read a merged player as one, as the producer's do. An alias
+// that touches no exported match stays home — it names someone the file
+// says nothing about.
+func (e *exporter) writeAliases() error {
+	if !e.opts.Aliases || len(e.matchNames) == 0 {
+		return nil
+	}
+	for _, kind := range []storage.AliasKind{storage.AliasPlayer, storage.AliasEvent} {
+		aliases, err := e.src.Aliases().List(e.ctx, e.scope, kind)
+		if err != nil {
+			return fmt.Errorf("ingest: list %s aliases: %w", kind, err)
+		}
+		names := e.matchNames[kind]
+		for _, a := range aliases {
+			if !names[a.Alias] && !names[a.Canonical] {
+				continue
+			}
+			if err := e.dst.Aliases().Set(e.ctx, "", kind, a.Alias, a.Canonical); err != nil {
+				e.skip("writing alias", "kind", kind, "alias", a.Alias, "err", err)
+				continue
+			}
+			e.report.Aliases++
+		}
+	}
+	return nil
+}
+
 // writeFilters copies the saved-filter library with each filter's edit
-// position.
+// position. A filter that names rows by id — `like<n>`, `id<n>`, `ma<n>`,
+// `tn<n>` — has them renumbered to the file's (carriedLivingQuery); one that
+// names a row the export leaves behind does not leave, since in the file it
+// would select something else or nothing.
 func (e *exporter) writeFilters() error {
 	if !e.opts.FilterLibrary {
 		return nil
@@ -1212,13 +1269,21 @@ func (e *exporter) writeFilters() error {
 		filters = append(filters, &fc)
 	}
 	for _, f := range filters {
+		command, ok := carriedLivingQuery(f.Command, e.posMap, e.matchMap, e.tourMap)
+		if !ok {
+			e.skip("saved filter names a row the export leaves behind", "name", f.Name)
+			continue
+		}
+		if command != f.Command && strings.HasPrefix(strings.TrimSpace(f.Command), "ss ") {
+			command = "s" + command // Format writes the plain verb; keep the narrowing one
+		}
 		editPosition, err := e.src.Filters().LoadEditPosition(e.ctx, e.scope, f.Name)
 		if err != nil && !errors.Is(err, storage.ErrNotFound) {
 			return fmt.Errorf("ingest: load edit position of filter %q: %w", f.Name, err)
 		}
 		if _, err := e.tx.ExecContext(e.ctx,
 			`INSERT INTO filter_library (name, command, edit_position) VALUES (?, ?, ?)`,
-			f.Name, f.Command, editPosition); err != nil {
+			f.Name, command, editPosition); err != nil {
 			e.skip("inserting filter library entry", "name", f.Name, "err", err)
 			continue
 		}

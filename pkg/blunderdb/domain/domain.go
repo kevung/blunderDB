@@ -623,11 +623,14 @@ type ExportOptions struct {
 	// IncludeTranscriptions sends each exported match's transcription draft
 	// with it; the drafts that never became a match leave only in a
 	// WholeLibrary export.
-	IncludeTranscriptions bool    `json:"includeTranscriptions"`
-	IncludeCollections    bool    `json:"includeCollections"`
-	CollectionIDs         []int64 `json:"collectionIDs"`
-	MatchIDs              []int64 `json:"matchIDs"`
-	TournamentIDs         []int64 `json:"tournamentIDs"`
+	IncludeTranscriptions bool `json:"includeTranscriptions"`
+	// IncludeAliases sends the player and event aliases whose spelling or
+	// canonical name an exported match writes.
+	IncludeAliases     bool    `json:"includeAliases"`
+	IncludeCollections bool    `json:"includeCollections"`
+	CollectionIDs      []int64 `json:"collectionIDs"`
+	MatchIDs           []int64 `json:"matchIDs"`
+	TournamentIDs      []int64 `json:"tournamentIDs"`
 	// IncludeTournaments and IncludeAnkiDecks drop those families from a
 	// WholeLibrary export when false. Outside it, TournamentIDs and DeckIDs
 	// alone say which leave.
