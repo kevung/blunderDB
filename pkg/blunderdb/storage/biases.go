@@ -4,7 +4,6 @@ import (
 	"math"
 	"sort"
 	"strconv"
-	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
@@ -125,15 +124,17 @@ type biasRef struct{ axis, score string }
 // walkBiases hands each decision on to every bias it counts in, with its sign
 // and cost. It is the one reading of the rows, shared by the tally and by the
 // selection, so a list holds exactly what its count counts.
-func walkBiases(cube []BiasCubeRow, checker []BiasCheckerRow, visit func(b biasRef, sign int, errMP, positionID int64)) {
+// A score cell's decision also carries the cell itself, so the tally never
+// reads a cell back from its key.
+func walkBiases(cube []BiasCubeRow, checker []BiasCheckerRow, visit func(b biasRef, cell ScoreBias, sign int, errMP, positionID int64)) {
 	for _, r := range cube {
 		switch cellOf := ClassifyCubeDirection(r.Best, r.Played); cellOf {
 		case CubeCellAnswerRight:
-			visit(biasRef{axis: BiasAxisTakePass}, 0, 0, r.PositionID)
+			visit(biasRef{axis: BiasAxisTakePass}, ScoreBias{}, 0, 0, r.PositionID)
 		case CubeCellAnswerWrongTake:
-			visit(biasRef{axis: BiasAxisTakePass}, 1, r.ErrorMP, r.PositionID)
+			visit(biasRef{axis: BiasAxisTakePass}, ScoreBias{}, 1, r.ErrorMP, r.PositionID)
 		case CubeCellAnswerWrongPass:
-			visit(biasRef{axis: BiasAxisTakePass}, -1, r.ErrorMP, r.PositionID)
+			visit(biasRef{axis: BiasAxisTakePass}, ScoreBias{}, -1, r.ErrorMP, r.PositionID)
 		case CubeCellOfferRight, CubeCellOfferPremature, CubeCellOfferMissed:
 			sign := 0
 			switch cellOf {
@@ -142,19 +143,19 @@ func walkBiases(cube []BiasCubeRow, checker []BiasCheckerRow, visit func(b biasR
 			case CubeCellOfferMissed:
 				sign = -1
 			}
-			visit(biasRef{axis: BiasAxisDoubles}, sign, r.ErrorMP, r.PositionID)
+			visit(biasRef{axis: BiasAxisDoubles}, ScoreBias{}, sign, r.ErrorMP, r.PositionID)
 			cell := ScoreBias{MoverAway: domain.PointsAway(r.MoverAway), OpponentAway: domain.PointsAway(r.OpponentAway)}
 			if r.MoverAway < 0 && r.OpponentAway < 0 {
 				cell = ScoreBias{Money: true}
 			}
-			visit(biasRef{axis: BiasAxisDoubles, score: BiasScoreKey(cell)}, sign, r.ErrorMP, r.PositionID)
+			visit(biasRef{axis: BiasAxisDoubles, score: BiasScoreKey(cell)}, cell, sign, r.ErrorMP, r.PositionID)
 		}
 	}
 	for _, r := range checker {
 		if r.Unread {
 			continue
 		}
-		visit(biasRef{axis: BiasAxisBlots}, r.Sign, r.ErrorMP, r.PositionID)
+		visit(biasRef{axis: BiasAxisBlots}, ScoreBias{}, r.Sign, r.ErrorMP, r.PositionID)
 	}
 }
 
@@ -176,9 +177,9 @@ func BuildDirectionalBiases(cube []BiasCubeRow, checker []BiasCheckerRow) *Direc
 		}
 		return &byScore[b.score].SignedBias
 	}
-	walkBiases(cube, checker, func(b biasRef, sign int, errMP, positionID int64) {
+	walkBiases(cube, checker, func(b biasRef, cell ScoreBias, sign int, errMP, positionID int64) {
 		if b.score != "" && byScore[b.score] == nil {
-			byScore[b.score] = scoreBiasOf(b.score)
+			byScore[b.score] = &cell
 		}
 		sb := biasOf(b)
 		sb.add(sign, errMP)
@@ -223,19 +224,6 @@ func BuildDirectionalBiases(cube []BiasCubeRow, checker []BiasCheckerRow) *Direc
 	return out
 }
 
-// scoreBiasOf reads a BiasScoreKey back into an empty score cell.
-func scoreBiasOf(key string) *ScoreBias {
-	if key == "money" {
-		return &ScoreBias{Money: true}
-	}
-	var mover, opp int
-	if i := strings.IndexByte(key, '-'); i > 0 {
-		mover, _ = strconv.Atoi(key[:i])
-		opp, _ = strconv.Atoi(key[i+1:])
-	}
-	return &ScoreBias{MoverAway: mover, OpponentAway: opp}
-}
-
 // BiasPositionIDs lists the distinct positions behind one count of the
 // biases: axis is a BiasAxis*, score a BiasScoreKey for a cell of the doubling
 // bias by score (empty otherwise), side a BiasSide* or empty for every
@@ -245,7 +233,7 @@ func BiasPositionIDs(cube []BiasCubeRow, checker []BiasCheckerRow, axis, score, 
 	want := biasRef{axis: axis, score: score}
 	seen := map[int64]bool{}
 	ids := []int64{}
-	walkBiases(cube, checker, func(b biasRef, sign int, _, positionID int64) {
+	walkBiases(cube, checker, func(b biasRef, _ ScoreBias, sign int, _, positionID int64) {
 		if b != want || seen[positionID] {
 			return
 		}

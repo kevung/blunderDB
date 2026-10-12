@@ -38,13 +38,22 @@
         { key: 'player', label: $t('stats.timePlayer'), sortable: true, filter: /** @type {const} */ ('text'), value: (/** @type {Row} */ r) => r.player },
         { key: 'band', label: $t('stats.timeBand'), sortable: true, value: (/** @type {Row} */ r) => r.bucket },
         {
+            key: 'positions',
+            label: $t('stats.positions'),
+            sortable: true,
+            defaultDir: 'desc',
+            align: 'right',
+            filter: /** @type {const} */ ('number'),
+            value: (/** @type {Row} */ r) => r.positions
+        },
+        {
             key: 'decisions',
             label: $t('stats.timeDecisions'),
             sortable: true,
             defaultDir: 'desc',
             align: 'right',
             filter: /** @type {const} */ ('number'),
-            value: (/** @type {Row} */ r) => r.positions
+            value: (/** @type {Row} */ r) => r.decisions
         },
         {
             key: 'mean',
@@ -74,6 +83,7 @@
                             title={$t('stats.breakdownOpenPositions', { n: r.positions, decisions: r.decisions })}
                         />{:else}0{/if}</td
                 >
+                <td class="align-right">{r.decisions}</td>
                 <td class="align-right">{mean(r)}</td>
                 <td class="align-right">{rate(r)}</td>
             {/snippet}

@@ -23,8 +23,8 @@ describe('StatsTimeErrors', () => {
         const { container } = render(StatsTimeErrors);
         await vi.waitFor(() => expect(container.querySelector('[data-testid="time-errors"]')).not.toBeNull());
         const rows = [...container.querySelectorAll('tbody tr')].map((r) => [...r.querySelectorAll('td')].map((c) => c.textContent));
-        expect(rows[0].slice(2)).toEqual(['3', '12.3', '25.0 %']);
-        expect(rows[1].slice(2)).toEqual(['0', '', '']);
+        expect(rows[0].slice(2)).toEqual(['3', '4', '12.3', '25.0 %']);
+        expect(rows[1].slice(2)).toEqual(['0', '2', '', '']);
     });
 
     test('a band count opens its positions, whatever the filter', async () => {

@@ -86,3 +86,25 @@ func TestBuildDirectionalBiases_ScoreSentinels(t *testing.T) {
 		t.Errorf("BlotsUnreadShare = %v, want 0.25", share)
 	}
 }
+
+// TestBuildDirectionalBiases_NegativeAwayCell pins that a score cell with one
+// negative away keeps both its aways and opens its own positions: no cell is
+// read back from its key, whose dash a negative number shares.
+func TestBuildDirectionalBiases_NegativeAwayCell(t *testing.T) {
+	cube := []BiasCubeRow{
+		{PositionID: 7, Best: "No Double", Played: "Double", MoverAway: -1, OpponentAway: 3},
+		{PositionID: 8, Best: "No Double", Played: "Double", MoverAway: 2, OpponentAway: 3},
+	}
+	got := BuildDirectionalBiases(cube, nil)
+	if len(got.DoublesByScore) != 2 {
+		t.Fatalf("DoublesByScore %+v, want two cells", got.DoublesByScore)
+	}
+	c := got.DoublesByScore[0]
+	if c.Money || c.MoverAway != -1 || c.OpponentAway != 3 || c.Positions != 1 {
+		t.Fatalf("first cell %+v, want -1/3 with one position", c)
+	}
+	ids := BiasPositionIDs(cube, nil, BiasAxisDoubles, BiasScoreKey(c), "")
+	if len(ids) != 1 || ids[0] != 7 {
+		t.Errorf("ids %v, want [7]", ids)
+	}
+}

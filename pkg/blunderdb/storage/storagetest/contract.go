@@ -144,6 +144,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Stats/SuggestReferences", testStatsSuggestReferences},
 		{"Stats/StudyEffect", testStatsStudyEffect},
 		{"Stats/DirectionalBiases", testStatsDirectionalBiases},
+		{"Stats/CountSelectionsUnderFilters", testStatsCountSelectionsUnderFilters},
 		{"Stats/DirectionalBiasesPerMatch", testStatsDirectionalBiasesPerMatch},
 		{"Stats/DirectionalBiasesScores", testStatsDirectionalBiasesScores},
 		{"Stats/PlayerContrast", testStatsPlayerContrast},

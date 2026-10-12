@@ -53,7 +53,9 @@
         { key: 'family', label: $t('stats.planFamily'), sortable: true, filter: text, value: familyName },
         { key: 'studiedOn', label: $t('stats.effectStudiedOn'), sortable: true, filter: text, value: (/** @type {any} */ f) => f.StudiedOn },
         { key: 'before', label: $t('stats.effectBefore'), sortable: true, align: 'right', filter: num, value: (/** @type {any} */ f) => 10000 * f.Before.Rate },
+        { key: 'beforePositions', label: $t('stats.positions'), sortable: true, defaultDir: 'desc', align: 'right', filter: num, value: (/** @type {any} */ f) => f.Before.Positions },
         { key: 'after', label: $t('stats.effectAfter'), sortable: true, align: 'right', filter: num, value: (/** @type {any} */ f) => 10000 * f.After.Rate },
+        { key: 'afterPositions', label: $t('stats.positions'), sortable: true, defaultDir: 'desc', align: 'right', filter: num, value: (/** @type {any} */ f) => f.After.Positions },
         { key: 'gain', label: $t('stats.effectGain'), sortable: true, defaultDir: 'desc', align: 'right', filter: num, value: (/** @type {any} */ f) => 10000 * f.Gain },
         { key: 'interval', label: $t('stats.planInterval'), align: 'right' },
         { key: 'verdict', label: $t('stats.effectVerdict'), sortable: true, filter: text, value: (/** @type {any} */ f) => $t(`stats.effectVerdict_${f.Verdict}`) }
@@ -89,8 +91,10 @@
             {#snippet cells(/** @type {any} */ f)}
                 <td>{familyName(f)}</td>
                 <td title={$t('stats.effectStudied', { n: f.Studied })}>{f.StudiedOn}</td>
-                <td class="align-right">{per100(f.Before.Rate)} <span class="count">({@render count(f, 'before', f.Before)})</span></td>
-                <td class="align-right">{per100(f.After.Rate)} <span class="count">({@render count(f, 'after', f.After)})</span></td>
+                <td class="align-right">{per100(f.Before.Rate)} <span class="count">({f.Before.Decisions})</span></td>
+                <td class="align-right">{@render count(f, 'before', f.Before)}</td>
+                <td class="align-right">{per100(f.After.Rate)} <span class="count">({f.After.Decisions})</span></td>
+                <td class="align-right">{@render count(f, 'after', f.After)}</td>
                 <td class="align-right"><b>{per100(f.Gain, true)}</b></td>
                 <td class="align-right interval">[{per100(f.Low, true)}, {per100(f.High, true)}]</td>
                 <td class="verdict {f.Verdict}">{$t(`stats.effectVerdict_${f.Verdict}`)}</td>

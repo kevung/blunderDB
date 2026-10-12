@@ -63,9 +63,12 @@
     function figureColumns(of, verdictOf) {
         const num = /** @type {const} */ ('number');
         return [
-            { key: 'decisions', label: $t('stats.biasesDecisions'), sortable: true, defaultDir: 'desc', align: 'right', filter: num, value: (/** @type {any} */ r) => of(r).Positions },
-            { key: 'plus', sortable: true, defaultDir: 'desc', align: 'right', filter: num, value: (/** @type {any} */ r) => of(r).PlusPositions },
-            { key: 'minus', sortable: true, defaultDir: 'desc', align: 'right', filter: num, value: (/** @type {any} */ r) => of(r).MinusPositions },
+            { key: 'positions', label: $t('stats.positions'), sortable: true, defaultDir: 'desc', align: 'right', filter: num, value: (/** @type {any} */ r) => of(r).Positions },
+            { key: 'decisions', label: $t('stats.biasesDecisions'), sortable: true, defaultDir: 'desc', align: 'right', filter: num, value: (/** @type {any} */ r) => of(r).Decisions },
+            { key: 'plus', sortable: true, defaultDir: 'desc', align: 'right', filter: num, value: (/** @type {any} */ r) => of(r).Plus },
+            { key: 'plusPositions', label: $t('stats.positions'), sortable: true, defaultDir: 'desc', align: 'right', filter: num, value: (/** @type {any} */ r) => of(r).PlusPositions },
+            { key: 'minus', sortable: true, defaultDir: 'desc', align: 'right', filter: num, value: (/** @type {any} */ r) => of(r).Minus },
+            { key: 'minusPositions', label: $t('stats.positions'), sortable: true, defaultDir: 'desc', align: 'right', filter: num, value: (/** @type {any} */ r) => of(r).MinusPositions },
             { key: 'bias', label: $t('stats.biasesValue'), sortable: true, align: 'right', filter: num, value: (/** @type {any} */ r) => 100 * of(r).Bias },
             { key: 'interval', label: $t('stats.planInterval'), align: 'right' },
             { key: 'verdict', label: $t('stats.effectVerdict'), sortable: true, filter: /** @type {const} */ ('text'), value: verdictOf }
@@ -73,29 +76,35 @@
     }
 
     const axisColumns = $derived.by(() => {
-        const [decisions, plus, minus, ...rest] = figureColumns(
+        const [positions, decisions, plus, plusPositions, minus, minusPositions, ...rest] = figureColumns(
             (r) => r.b,
             (r) => verdict(r.id, r.b)
         );
         return [
             { key: 'bias', label: $t('stats.biasesBias'), sortable: true, filter: /** @type {const} */ ('text'), value: (/** @type {any} */ r) => $t(`stats.biases_${r.id}`) },
+            positions,
             decisions,
             { ...plus, label: $t('stats.biasesTooMuch') },
+            plusPositions,
             { ...minus, label: $t('stats.biasesTooLittle') },
+            minusPositions,
             ...rest.map((c) => (c.key === 'bias' ? { ...c, key: 'value' } : c))
         ];
     });
 
     const scoreColumns = $derived.by(() => {
-        const [decisions, plus, minus, ...rest] = figureColumns(
+        const [positions, decisions, plus, plusPositions, minus, minusPositions, ...rest] = figureColumns(
             (c) => c,
             (c) => verdict('doubles', c)
         );
         return [
             { key: 'score', label: $t('stats.biasesScore'), sortable: true, filter: /** @type {const} */ ('text'), value: score },
+            positions,
             decisions,
             { ...plus, label: $t('stats.biases_doubles_plus') },
+            plusPositions,
             { ...minus, label: $t('stats.biases_doubles_minus') },
+            minusPositions,
             ...rest
         ];
     });
@@ -116,12 +125,11 @@
             {#snippet cells(/** @type {any} */ r)}
                 <td>{$t(`stats.biases_${r.id}`)}</td>
                 <td class="align-right">{@render count(r.b.Positions, r.b.Decisions, `bias-${r.id}-all`, () => open(AXES[r.id], '', ''))}</td>
-                <td class="align-right" title={$t(`stats.biases_${r.id}_plus`)}
-                    >{@render count(r.b.PlusPositions, r.b.Plus, `bias-${r.id}-plus`, () => open(AXES[r.id], '', 'plus'))} <span class="count">({r.b.PlusMP} mp)</span></td
-                >
-                <td class="align-right" title={$t(`stats.biases_${r.id}_minus`)}
-                    >{@render count(r.b.MinusPositions, r.b.Minus, `bias-${r.id}-minus`, () => open(AXES[r.id], '', 'minus'))} <span class="count">({r.b.MinusMP} mp)</span></td
-                >
+                <td class="align-right">{r.b.Decisions}</td>
+                <td class="align-right" title={$t(`stats.biases_${r.id}_plus`)}>{r.b.Plus} <span class="count">({r.b.PlusMP} mp)</span></td>
+                <td class="align-right">{@render count(r.b.PlusPositions, r.b.Plus, `bias-${r.id}-plus`, () => open(AXES[r.id], '', 'plus'))}</td>
+                <td class="align-right" title={$t(`stats.biases_${r.id}_minus`)}>{r.b.Minus} <span class="count">({r.b.MinusMP} mp)</span></td>
+                <td class="align-right">{@render count(r.b.MinusPositions, r.b.Minus, `bias-${r.id}-minus`, () => open(AXES[r.id], '', 'minus'))}</td>
                 <td class="align-right"><b>{pp(r.b.Bias)}</b></td>
                 <td class="align-right interval">[{pp(r.b.Low)}, {pp(r.b.High)}]</td>
                 <td class="verdict {r.b.Verdict}">{verdict(r.id, r.b)}</td>
@@ -142,7 +150,10 @@
                 {#snippet cells(/** @type {any} */ c)}
                     <td>{score(c)}</td>
                     <td class="align-right">{@render count(c.Positions, c.Decisions, `bias-score-${scoreKey(c)}-all`, () => open('doubles', scoreKey(c), ''))}</td>
+                    <td class="align-right">{c.Decisions}</td>
+                    <td class="align-right">{c.Plus}</td>
                     <td class="align-right">{@render count(c.PlusPositions, c.Plus, `bias-score-${scoreKey(c)}-plus`, () => open('doubles', scoreKey(c), 'plus'))}</td>
+                    <td class="align-right">{c.Minus}</td>
                     <td class="align-right">{@render count(c.MinusPositions, c.Minus, `bias-score-${scoreKey(c)}-minus`, () => open('doubles', scoreKey(c), 'minus'))}</td>
                     <td class="align-right"><b>{pp(c.Bias)}</b></td>
                     <td class="align-right interval">[{pp(c.Low)}, {pp(c.High)}]</td>

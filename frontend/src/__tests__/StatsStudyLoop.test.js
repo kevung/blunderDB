@@ -94,6 +94,7 @@ describe('StatsStudyEffect', () => {
         expect(screen.queryByTestId('effect-after')).toBeNull();
         const link = screen.getByTestId('effect-before');
         expect(link.textContent).toBe('190');
+        expect(screen.getByTestId('effect-family').textContent).toContain('(200)');
         await fireEvent.click(link);
         expect(load).toHaveBeenCalledWith(filter, { Kind: 'family_window', GameType: 'holding', FamilyKind: 'checker', StudiedOn: '2026-09-01', Window: 'before' });
     });
@@ -144,6 +145,8 @@ describe('StatsBiases', () => {
         });
         render(StatsBiases);
         expect(screen.getByTestId('bias-takePass-all').textContent).toBe('39');
+        const cells = [...screen.getAllByTestId('bias-row')[0].querySelectorAll('td')].map((c) => c.textContent?.trim());
+        expect(cells.slice(1, 7)).toEqual(['39', '40', '10 (1000 mp)', '10', '0 (0 mp)', '0']);
         expect(screen.queryByTestId('bias-takePass-minus')).toBeNull();
         await fireEvent.click(screen.getByTestId('bias-takePass-plus'));
         expect(load).toHaveBeenLastCalledWith(filter, { Kind: 'bias', Bias: 'take_pass', BiasScore: '', BiasSide: 'plus' });

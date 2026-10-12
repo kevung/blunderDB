@@ -1848,9 +1848,8 @@ le temps et l'erreur : pour chaque joueur et chaque tranche de durée connue
 l'erreur moyenne et la part de blunders. Une décision dont l'erreur n'est pas
 enregistrée est comptée sans entrer dans la moyenne.
 
-Chaque nombre de décisions de ce tableau est un lien : il affiche les
-positions distinctes de ces décisions et les ouvre ; l'info-bulle donne le
-nombre de décisions. Le tableau et ses liens lisent toutes les décisions
+La colonne **Positions** compte les positions distinctes de ces décisions et
+les ouvre d'un clic. Le tableau et ses liens lisent toutes les décisions
 chronométrées de la base, sans le filtre du panneau.
 
 Un match joué ici, issu d'un Duel, porte son origine dans l'onglet **Infos** de
@@ -3379,9 +3378,9 @@ dans le plan.
   fenêtre compte au moins **30 décisions** et que l'intervalle exclut zéro ;
   sinon il reste « indéterminé » ou « trop peu de décisions ».
 
-Le nombre entre parenthèses de chaque fenêtre est un lien : il affiche les
-positions distinctes de ses décisions et les ouvre ; l'info-bulle donne le
-nombre de décisions.
+À côté de chaque fenêtre, la colonne **Positions** compte les positions
+distinctes de ses décisions et les ouvre d'un clic ; le nombre entre
+parenthèses reste celui des décisions, dénominateur du taux.
 
 C'est un changement, pas un effet : une famille est étudiée parce qu'elle
 coûtait, et une part du gain est une régression vers la moyenne ; rien ne
@@ -3420,10 +3419,10 @@ une position jouée dans plusieurs matchs y compte avec le coup joué dans
 chacun. Les biais suivent le filtre du panneau. En ligne de commande :
 ``blunderdb stats biases`` (voir :ref:`cli_stats`).
 
-Chaque compte (décisions, d'un sens, de l'autre) est un lien : il affiche les
-positions distinctes de ces décisions et les ouvre ; une position jouée dans
-plusieurs matchs n'y compte qu'une fois, et l'info-bulle donne le nombre de
-décisions.
+Chaque compte de décisions (toutes, d'un sens, de l'autre) est suivi d'une
+colonne **Positions** : les positions distinctes de ces décisions, qu'un clic
+ouvre. Une position jouée dans plusieurs matchs y compte une décision par
+match, mais une seule position.
 
 PR glissant sur N dernières décisions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
