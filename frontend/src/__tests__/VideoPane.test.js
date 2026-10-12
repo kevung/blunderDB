@@ -80,6 +80,46 @@ describe('VideoPane', () => {
         expect(component.currentTimeMs()).toBe(12500);
     });
 
+    test('seeks asked in a burst wait for the one under way, stay within the file and survive no number', async () => {
+        const { container, component } = render(VideoPane, { props: { source: '/v/final.mp4' } });
+        const video = /** @type {HTMLVideoElement} */ (
+            await vi.waitFor(() => {
+                const el = container.querySelector('video');
+                expect(el).not.toBeNull();
+                return el;
+            })
+        );
+        let seeking = false;
+        Object.defineProperty(video, 'seeking', { get: () => seeking });
+        Object.defineProperty(video, 'duration', { get: () => 60 });
+        /** @type {number[]} */
+        const applied = [];
+        let current = 0;
+        Object.defineProperty(video, 'currentTime', {
+            get: () => current,
+            set: (/** @type {number} */ v) => {
+                applied.push(v);
+                current = v;
+                seeking = true;
+            }
+        });
+        await fireEvent(video, new Event('loadedmetadata'));
+        component.seek(10000);
+        // Shift+Right held down: each press reads the instant and asks five seconds more.
+        for (let i = 0; i < 12; i++) component.seek(/** @type {number} */ (component.currentTimeMs()) + 5000);
+        component.seek(NaN);
+        expect(applied).toEqual([10]);
+        expect(component.currentTimeMs()).toBe(60000);
+        seeking = false;
+        await fireEvent(video, new Event('seeked'));
+        expect(applied).toEqual([10, 60]);
+        seeking = false;
+        await fireEvent(video, new Event('seeked'));
+        expect(applied).toEqual([10, 60]);
+        component.seek(-3000);
+        expect(applied).toEqual([10, 60, 0]);
+    });
+
     test('a file the webview cannot decode is diagnosed by its container', async () => {
         const { container } = render(VideoPane, { props: { source: '/v/final.mkv' } });
         const video = await vi.waitFor(() => container.querySelector('video') ?? expect.fail('no video'));

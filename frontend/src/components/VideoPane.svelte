@@ -210,6 +210,7 @@
 
     function onLoadedMetadata() {
         status = 'ready';
+        queuedMs = null;
         if (pendingMs > 0 && video) video.currentTime = pendingMs / 1000;
         if (video) video.playbackRate = rate;
     }
@@ -233,16 +234,33 @@
         }
     }
 
+    // A seek asked while the <video> is still seeking waits for it, and only the last one
+    // asked is kept: WebKitGTK's pipeline flushes and re-reads the file on every seek, and a
+    // burst of them (Shift+Arrow held down) can leave the playback stalled.
+    /** @type {number | null} */
+    let queuedMs = null;
+
+    function onSeeked() {
+        if (queuedMs === null || !video) return;
+        const at = queuedMs;
+        queuedMs = null;
+        video.currentTime = at / 1000;
+    }
+
     /** @returns {number | null} the player's current instant in ms, null when unknown. */
     export function currentTimeMs() {
         if (status !== 'ready') return null;
         if (kind === 'youtube') return Math.round(ytTime * 1000);
+        if (queuedMs !== null) return queuedMs;
         return video ? Math.round(video.currentTime * 1000) : null;
     }
 
     /** @param {number} ms */
     export function seek(ms) {
-        const at = Math.max(0, ms);
+        if (!Number.isFinite(ms)) return;
+        // Past its end a file has nothing to show: the seek stops at the last instant.
+        const duration = kind === 'file' && video ? video.duration * 1000 : NaN;
+        const at = Math.max(0, Number.isFinite(duration) ? Math.min(ms, duration) : ms);
         pendingMs = at;
         if (status !== 'ready') return;
         if (kind === 'youtube') {
@@ -251,7 +269,8 @@
             ytSeekingUntil = Date.now() + YT_SEEK_SETTLE_MS;
             postToPlayer({ type: 'seek', time: at / 1000 });
         } else if (video) {
-            video.currentTime = at / 1000;
+            if (video.seeking) queuedMs = at;
+            else video.currentTime = at / 1000;
         }
     }
 
@@ -304,6 +323,7 @@
             controlslist="nofullscreen"
             preload="metadata"
             onloadedmetadata={onLoadedMetadata}
+            onseeked={onSeeked}
             onerror={onVideoError}
             onended={() => onended?.()}
             onfocus={reclaimFocus}

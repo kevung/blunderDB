@@ -504,6 +504,21 @@
         if (typeof at === 'number') videoPane.seek(at - 1000);
     }
 
+    // Placements by hand under way: a walk takes one engine round trip per stop, then the
+    // video is sought. Until it is, the clock still reads the stretch the Cursor left, and
+    // the follower would take it back there mid-walk.
+    let placing = 0;
+
+    /**
+     * Runs a placement by hand of the Cursor, the follower set aside until it is over.
+     *
+     * @param {Promise<unknown>} placement
+     */
+    function byHand(placement) {
+        placing++;
+        return placement.finally(() => placing--);
+    }
+
     // The Cursor follows the playing video through the timed part, by a seek that writes
     // nothing; the move never seeks the video back (services/videoFollow.js).
     // The same clock keeps where the playback is for the next opening: when it stops, every
@@ -529,7 +544,7 @@
                 }
                 seen = now;
             }
-            if (moving) return;
+            if (moving || placing > 0) return;
             const active = document.activeElement;
             const quiet = (active instanceof Element && active.matches('input, textarea, select, [contenteditable]')) || isTyping(get(transcriptionStore)?.annotated, get(transcriptionKeyStore));
             const target = follower.step(now, get(transcriptionStore)?.annotated, quiet);
@@ -966,12 +981,9 @@
         // retour du premier : ne pas refaire le chemin deux fois.
         if (to === from || to === walkingTo) return;
         walkingTo = to;
-        run(cursorCommands(from, to))
-            .then(settleCursor)
-            .then(seekToCursor)
-            .finally(() => {
-                if (walkingTo === to) walkingTo = null;
-            });
+        byHand(run(cursorCommands(from, to)).then(settleCursor).then(seekToCursor)).finally(() => {
+            if (walkingTo === to) walkingTo = null;
+        });
         panelEl?.focus({ preventScroll: true });
     }
 
@@ -1226,7 +1238,7 @@
         ranked = [];
         unranked = false;
         danced = false;
-        run(menuCommands(currentStop(ann), cursorStop(ann, index), kind)).then(settleCursor);
+        byHand(run(menuCommands(currentStop(ann), cursorStop(ann, index), kind)).then(settleCursor));
         panelEl?.focus({ preventScroll: true });
     }
 
@@ -1381,11 +1393,12 @@
 
         const rearms = result.commands.some((c) => REARMING.has(c.kind));
         const walks = result.commands.some((c) => c.kind === COMMAND.CURSOR_BACK || c.kind === COMMAND.CURSOR_FORWARD);
-        run(result.commands)
+        const done = run(result.commands)
             .then(rearms ? settleCursor : settleCandidates)
             .then(() => {
                 if (walks) seekToCursor();
             });
+        if (walks) byHand(done);
     }
 
     // Document-changing commands a button also offers: both go through runCommand.

@@ -236,6 +236,43 @@ describe('the Cursor follows the video', () => {
         expect(seeksOfCursor()).toEqual([{ Kind: 'seek_cursor', At: 1 }]);
     });
 
+    test('a click while the video plays lands on the clicked play, though the clock ticks during the walk', async () => {
+        ACTIONS = [
+            { side: 0, kind: 'checker', dice: [3, 1], roll: 10000, tick: 12000 },
+            { side: 1, kind: 'checker', dice: [5, 2], roll: 14000, tick: 16000 },
+            { side: 0, kind: 'checker', dice: [6, 4], roll: 18000, tick: 20000 },
+            { side: 1, kind: 'checker', dice: [4, 2], roll: 22000, tick: 24000 },
+            { side: 0, kind: 'checker', dice: [6, 1], roll: 26000, tick: 28000 }
+        ];
+        await openedPanel(0);
+        await playTo(10500);
+        await playTo(11000);
+        // Each step of the walk answers only after a tick of the clock, as a real engine
+        // round trip may.
+        const plain = /** @type {any} */ (ApplyTranscriptionGesture).getMockImplementation();
+        /** @type {(() => void)[]} */
+        const pending = [];
+        /** @type {any} */ (ApplyTranscriptionGesture).mockImplementation((/** @type {any} */ id, /** @type {any} */ gesture) => {
+            if (gesture.Kind !== 'cursor_forward') return plain(id, gesture);
+            return new Promise((resolve) => pending.push(() => resolve(plain(id, gesture))));
+        });
+        await fireEvent.click(/** @type {HTMLElement} */ (document.querySelector('.cell[data-index="3"]')));
+        await settle(5);
+        let ms = 11000;
+        while (pending.length) {
+            ms += 250;
+            await playTo(ms);
+            /** @type {() => void} */ (pending.shift())();
+            await settle(20);
+        }
+        expect(fakeVideo.seeks).toEqual([21000]);
+        await playTo(21000);
+        await playTo(21500);
+        await playTo(23000);
+        expect(seeksOfCursor()).toEqual([]);
+        expect(document.querySelector('.cell[aria-current="true"]')?.getAttribute('data-index')).toBe('3');
+    });
+
     test('nothing moves while a field has the focus', async () => {
         await openedPanel();
         const field = document.createElement('input');
