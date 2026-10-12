@@ -19,6 +19,7 @@ import {tournoi} from '../models';
 import {maintenance} from '../models';
 import {parser} from '../models';
 import {rollout} from '../models';
+import {capture} from '../models';
 import {rollouts} from '../models';
 
 export function AbandonTranscription(arg1:number):Promise<void>;
@@ -602,6 +603,10 @@ export function PreviewDirectionConfig(arg1:number,arg2:string):Promise<service.
 export function RankPositionIDsByFilters(arg1:domain.SearchFilters,arg2:number):Promise<Array<database.RankedID>>;
 
 export function RankPositionsByFilters(arg1:domain.SearchFilters,arg2:number):Promise<Array<storage.SimilarPosition>>;
+
+export function ReadCaptureData(arg1:string):Promise<capture.Reading>;
+
+export function ReadCaptureFile(arg1:string):Promise<capture.Reading>;
 
 export function RebuildMatchStats():Promise<number>;
 

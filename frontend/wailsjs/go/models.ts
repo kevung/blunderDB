@@ -118,6 +118,67 @@ export namespace assistant {
 
 }
 
+export namespace capture {
+	
+	export class Doubt {
+	    field: string;
+	    point?: number;
+	    reason: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new Doubt(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.field = source["field"];
+	        this.point = source["point"];
+	        this.reason = source["reason"];
+	    }
+	}
+	export class Reading {
+	    position: domain.Position;
+	    software: string;
+	    fit: number;
+	    board: image.Rectangle;
+	    unread: string[];
+	    doubts: Doubt[];
+	
+	    static createFrom(source: any = {}) {
+	        return new Reading(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.position = this.convertValues(source["position"], domain.Position);
+	        this.software = source["software"];
+	        this.fit = source["fit"];
+	        this.board = this.convertValues(source["board"], image.Rectangle);
+	        this.unread = source["unread"];
+	        this.doubts = this.convertValues(source["doubts"], Doubt);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+
+}
+
 export namespace database {
 	
 	export class BlunderEntry {
@@ -4447,6 +4508,57 @@ export namespace gui {
 	        this.folder = source["folder"];
 	        this.intervalSeconds = source["intervalSeconds"];
 	    }
+	}
+
+}
+
+export namespace image {
+	
+	export class Point {
+	    X: number;
+	    Y: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new Point(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.X = source["X"];
+	        this.Y = source["Y"];
+	    }
+	}
+	export class Rectangle {
+	    Min: Point;
+	    Max: Point;
+	
+	    static createFrom(source: any = {}) {
+	        return new Rectangle(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Min = this.convertValues(source["Min"], Point);
+	        this.Max = this.convertValues(source["Max"], Point);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
 	}
 
 }

@@ -626,6 +626,39 @@ export function drawScores(two, geom, cfg, position, text = defaultSceneText) {
 
 /** @typedef {'candidate' | 'record' | 'engine'} ArrowTone */
 
+export const DOUBT_COLOR = 'rgba(255, 152, 0, 0.95)';
+
+/**
+ * Rings what a capture reading could not settle: the stack base of a doubtful point (`points`,
+ * already mirrored to the display) and the cube. Other doubts have no place on the board.
+ *
+ * @param {Surface} two
+ * @param {BoardMetrics} geom
+ * @param {BoardConfig} cfg
+ * @param {BoardPosition} position
+ * @param {{ points: number[], cube: boolean }} doubts
+ * @param {boolean} offered
+ */
+export function drawCaptureDoubts(two, geom, cfg, position, doubts, offered) {
+    const cs = geom.checkerSize;
+    const width = Math.max(cs * 0.08, 2);
+    for (const point of doubts.points) {
+        const at = stackSlotCenter(geom, cfg, point, 0);
+        if (!at) continue;
+        const ring = two.makeCircle(at.x, at.y, cs * 0.55);
+        ring.fill = 'transparent';
+        ring.stroke = DOUBT_COLOR;
+        ring.linewidth = width;
+    }
+    if (doubts.cube) {
+        const box = cubeBox(geom, position, offered);
+        const ring = two.makeCircle(box.x, box.y, box.size * 0.75);
+        ring.fill = 'transparent';
+        ring.stroke = DOUBT_COLOR;
+        ring.linewidth = width;
+    }
+}
+
 /**
  * Arrow colours. `candidate`: a line of the analysis outside transcription. `record`: the move
  * written in a transcribed decision. `engine`: a line of the analysis the user points at while
@@ -719,7 +752,7 @@ export function drawMoveArrows(two, geom, cfg, position, moves, tone = 'candidat
  * @param {BoardMetrics} geom
  * @param {BoardConfig} cfg
  * @param {BoardPosition} position
- * @param {{ text?: SceneText, offeredCube?: boolean, showPipcount?: boolean, diceUsed?: (boolean|number)[] | null, moves?: StepMove[] | null, arrows?: { moves: StepMove[], tone: ArrowTone } | null}} [opts]
+ * @param {{ text?: SceneText, offeredCube?: boolean, showPipcount?: boolean, diceUsed?: (boolean|number)[] | null, moves?: StepMove[] | null, arrows?: { moves: StepMove[], tone: ArrowTone } | null, doubts?: { points: number[], cube: boolean } | null}} [opts]
  * @returns {CubeBox}
  */
 export function drawDynamicScene(two, geom, cfg, position, opts = {}) {
@@ -731,5 +764,6 @@ export function drawDynamicScene(two, geom, cfg, position, opts = {}) {
     drawScores(two, geom, cfg, position, opts.text);
     if (opts.arrows) drawMoveArrows(two, geom, cfg, position, opts.arrows.moves, opts.arrows.tone);
     else drawMoveArrows(two, geom, cfg, position, opts.moves);
+    if (opts.doubts) drawCaptureDoubts(two, geom, cfg, position, opts.doubts, !!opts.offeredCube);
     return box;
 }

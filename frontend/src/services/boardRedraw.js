@@ -13,6 +13,7 @@ import { quizPlayStore, quizPlayValidateStore } from '../stores/quizPlayStore.js
 import { pipcountVisibleStore } from '../stores/uiStore.js';
 import { transcriptionArrowsStore, transcriptionBoardSwapStore } from '../stores/transcriptionStore.js';
 import { duelBoardStore } from '../stores/duelStore.js';
+import { captureDoubtsStore } from '../stores/captureStore.js';
 
 /**
  * Les stores dont tout changement rend le plateau sale. Nommés, parce qu'un
@@ -40,7 +41,9 @@ export const BOARD_REDRAW_TRIGGERS = Object.freeze([
     // Les flèches d'une transcription : le coup écrit sous le Cursor, ou la ligne désignée.
     Object.freeze({ name: 'transcriptionArrows', store: transcriptionArrowsStore }),
     // L'ordre des dés d'un Duel, que le joueur intervertit.
-    Object.freeze({ name: 'duelBoard', store: duelBoardStore })
+    Object.freeze({ name: 'duelBoard', store: duelBoardStore }),
+    // Les doutes d'une lecture de capture : les points et le videau cerclés.
+    Object.freeze({ name: 'captureDoubts', store: captureDoubtsStore })
 ]);
 
 /**

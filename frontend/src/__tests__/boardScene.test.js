@@ -32,6 +32,8 @@ import {
     ILLEGAL_ARROW_COLOR,
     drawPipCounts,
     drawMoveArrows,
+    drawCaptureDoubts,
+    DOUBT_COLOR,
     drawFrame,
     estimateTextWidth
 } from '../utils/boardScene.js';
@@ -465,6 +467,29 @@ describe('drawScores / drawBearoff / drawPipCounts', () => {
         drawPipCounts(two, geom, startPos());
         expect(two.of('text').map((t) => t.args[0])).toEqual(['pip: 167', 'pip: 167']);
         for (const t of two.of('text')) expect(t.args[1]).toBeLessThan(geom.originX - geom.boardWidth / 2);
+    });
+});
+
+// ── Capture doubts ──────────────────────────────────────────────────────────
+
+describe('drawCaptureDoubts', () => {
+    const cfg = makeCfg();
+
+    test('rings the base of each doubtful point and the cube, in the doubt colour', () => {
+        const two = recorder();
+        drawCaptureDoubts(two, geom, cfg, startPos(), { points: [7, 0], cube: true }, false);
+        const rings = two.of('circle');
+        expect(rings).toHaveLength(3);
+        expect(rings.every((r) => r.stroke === DOUBT_COLOR)).toBe(true);
+        const at7 = stackSlotCenter(geom, cfg, 7, 0);
+        expect(rings[0].args[0]).toBeCloseTo(at7.x, 6);
+        expect(rings[0].args[1]).toBeCloseTo(at7.y, 6);
+    });
+
+    test('draws nothing when nothing is in doubt', () => {
+        const two = recorder();
+        drawCaptureDoubts(two, geom, cfg, startPos(), { points: [], cube: false }, false);
+        expect(two.of('circle')).toHaveLength(0);
     });
 });
 

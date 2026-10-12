@@ -90,3 +90,15 @@ describe('handleDbFileDrop', () => {
         expect(openDatabaseByPath).not.toHaveBeenCalled();
     });
 });
+
+describe('classifyDroppedFiles', () => {
+    test('images are screen captures, apart from the importable files', async () => {
+        const { classifyDroppedFiles } = await import('../services/importService.js');
+        const { IsDirectory } = await import('../../wailsjs/go/gui/App.js');
+        vi.mocked(IsDirectory).mockResolvedValue(false);
+        const out = await classifyDroppedFiles(['/a/shot.PNG', '/a/b.jpeg', '/a/m.xg', '/a/x.zip']);
+        expect(out.captures).toEqual(['/a/shot.PNG', '/a/b.jpeg']);
+        expect(out.importFiles).toEqual(['/a/m.xg']);
+        expect(out.unsupported).toEqual(['/a/x.zip']);
+    });
+});

@@ -430,8 +430,11 @@ export async function importPosition() {
     } catch (error) {
         logger.error('Error importing position:', error);
     } finally {
-        if (wasMatchMode) await leaveMatchModeIfStillIn();
-        statusBarModeStore.set('NORMAL');
+        // A capture leaves the user on the EDIT board it was read onto.
+        if (!(outcome && outcome.type === 'capture')) {
+            if (wasMatchMode) await leaveMatchModeIfStillIn();
+            statusBarModeStore.set('NORMAL');
+        }
         // Re-apply the analysis view: leaving match mode reloads every position,
         // which resets the tab back to matches.
         if (outcome && outcome.type === 'position') {
@@ -472,6 +475,11 @@ export async function importFolder() {
 // Returns { type: 'position' | 'match', id } on success, null on failure.
 /** @param {string} filePath */
 export async function importSingleFile(filePath) {
+    if (/\.(png|jpe?g|gif)$/i.test(filePath)) {
+        const { importCaptureFile } = await import('./captureService.js');
+        await importCaptureFile(filePath);
+        return { type: 'capture' };
+    }
     // A single dropped file gets the end-of-import report only when it
     // produced a MATCH; a lone position just lands on the board.
     const batchID = await beginImportBatch(filePath, extensionOf(filePath));
@@ -1088,6 +1096,12 @@ async function pastePositionCore() {
         return;
     }
 
+    // An image on the clipboard has no text: the window's paste event reads it as a capture.
+    if (!result) {
+        setStatusBarMessage(tMsg('status.noPositionToPasteHint'));
+        return;
+    }
+
     pastePositionTextStore.set(result);
 
     const isGnuBGMatch = result && /^\s*\d+\s+point\s+match\s*$/m.test(result) && /^\s*Game\s+\d+\s*$/m.test(result);
@@ -1192,7 +1206,7 @@ async function parsePositionOnly(text) {
 }
 
 /** @param {Position} posData */
-function applyPositionToBoard(posData) {
+export function applyPositionToBoard(posData) {
     positionStore.update((pos) => {
         pos.board.points = posData.board.points.map((p) => ({ checkers: p.checkers, color: p.color }));
         pos.board.bearoff = [...posData.board.bearoff];
@@ -1220,6 +1234,8 @@ export async function classifyDroppedFiles(paths) {
     const folders = [];
     /** @type {string[]} */
     const unsupported = [];
+    /** @type {string[]} */
+    const captures = [];
     for (const p of paths) {
         const isDir = await IsDirectory(p);
         if (isDir) {
@@ -1228,6 +1244,8 @@ export async function classifyDroppedFiles(paths) {
             const ext = p.toLowerCase().split('.').pop() ?? '';
             if (ext === 'db') {
                 dbFiles.push(p);
+            } else if (['png', 'jpg', 'jpeg', 'gif'].includes(ext)) {
+                captures.push(p);
             } else if (['txt', 'xg', 'xgp', 'sgf', 'mat', 'bgf', 'ogxm'].includes(ext)) {
                 importFiles.push(p);
             } else {
@@ -1235,7 +1253,7 @@ export async function classifyDroppedFiles(paths) {
             }
         }
     }
-    return { dbFiles, importFiles, folders, unsupported };
+    return { dbFiles, importFiles, folders, unsupported, captures };
 }
 
 /** @param {string} dbPath */
@@ -1272,7 +1290,14 @@ export async function handleFileDrop(x, y, paths) {
 
     if (!paths || paths.length === 0) return;
 
-    const { dbFiles, importFiles, folders, unsupported } = await classifyDroppedFiles(paths);
+    const { dbFiles, importFiles, folders, unsupported, captures } = await classifyDroppedFiles(paths);
+
+    // A screen capture needs no database: it only lands on the scratch board.
+    if (captures.length > 0) {
+        const { importCaptureFile } = await import('./captureService.js');
+        await importCaptureFile(captures[0]);
+        if (dbFiles.length === 0 && importFiles.length === 0 && folders.length === 0) return;
+    }
 
     if (unsupported.length > 0) {
         const exts = [...new Set(unsupported.map((p) => '.' + p.split('.').pop()))].join(', ');

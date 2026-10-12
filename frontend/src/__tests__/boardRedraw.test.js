@@ -48,6 +48,7 @@ describe('les déclencheurs de repaint', () => {
         // donc rien d'autre ne demanderait le repaint : le bouton resterait
         // enfoncé sur un plateau immobile.
         expect(BOARD_REDRAW_TRIGGERS.map((t) => t.name)).toContain('transcriptionBoardSwap');
+        expect(BOARD_REDRAW_TRIGGERS.map((t) => t.name)).toContain('captureDoubts');
 
         const schedule = vi.fn();
         const unsubscribe = subscribeBoardRedrawTriggers(schedule);

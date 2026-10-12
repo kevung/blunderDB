@@ -4192,6 +4192,17 @@ peut la combler ensuite.
 Dans un OGID, la partie Crawford se lit au ``C`` qui suit la longueur du match
 (``7C``) : sans lui, un joueur à un point du but est après la Crawford.
 
+**Une capture d'écran du plateau** (eXtreme Gammon, thème par défaut) se lit de
+trois façons : coller l'image (*CTRL-V*), la glisser sur la fenêtre, ou l'ouvrir
+par *CTRL-I* (``.png``, ``.jpg``). Aucune base n'est nécessaire. La position lue
+arrive sur le plateau d'édition, et elle n'est qu'une proposition : les points et
+le videau dont la lecture n'est pas sûre sont cerclés d'orange, et ce qu'une
+capture ne montre jamais (le score, le camp au trait quand les dés sont cachés)
+est rappelé dans la barre d'état. Corrigez le plateau comme d'habitude, puis
+enregistrez par le geste habituel : rien n'est enregistré avant. Une image où
+aucun plateau connu n'est reconnu est refusée, avec le motif dans la barre
+d'état. La même lecture existe en ligne de commande (``capture``).
+
 Le plateau du panneau Eval est un brouillon : la position y arrive sans son
 identifiant de base, de sorte qu'aucune modification faite ici ne peut
 réécrire l'enregistrement dont elle provient. Toutes les éditions habituelles

@@ -904,6 +904,7 @@ export default {
 </ul>
 <p>Eine OGID trägt nur eine Stellung: keine Auswertung, keinen Kommentar. Die Stellung kommt also ohne Analyse an, genau wie eine nackte XGID, und der eingebaute Evaluator kann die Lücke danach füllen.</p>
 <p>In einer OGID erkennt man das Crawford-Spiel am <code>C</code> hinter der Matchlänge (<code>7C</code>): Fehlt es, ist ein Spieler, dem ein Punkt zum Sieg fehlt, bereits nach dem Crawford-Spiel.</p>
+<p><strong>Ein Screenshot des Bretts</strong> (eXtreme Gammon, Standardthema) lässt sich auf drei Arten einlesen: das Bild einfügen (<em>CTRL-V</em>), auf das Fenster ziehen oder mit <em>CTRL-I</em> öffnen (<code>.png</code>, <code>.jpg</code>). Es wird keine Datenbank benötigt. Die gelesene Position landet auf dem Bearbeitungsbrett und ist nur ein Vorschlag: Punkte und Doppler, bei denen sich die Lesung nicht sicher ist, werden orange umkreist, und was ein Screenshot nie zeigt (der Spielstand, der Spieler am Zug bei verdeckten Würfeln), wird in der Statusleiste in Erinnerung gerufen. Korrigieren Sie das Brett wie gewohnt und speichern Sie dann mit der üblichen Geste: vorher wird nichts gespeichert. Ein Bild, auf dem kein bekanntes Brett erkannt wird, wird abgelehnt, der Grund steht in der Statusleiste. Dieselbe Lesung gibt es auf der Kommandozeile (<code>capture</code>).</p>
 <p>Das Brett des Eval-Panels ist ein Entwurf: Die Stellung kommt ohne ihre Datenbankkennung dort an, sodass keine hier vorgenommene Änderung den Datensatz überschreiben kann, aus dem sie stammt. Alle üblichen Bearbeitungen des Bretts bleiben dort verfügbar (Steine, Doppler, Würfel, Spielstand), und die Bewertung folgt jeder Änderung.</p>
 <p>In der Gegenrichtung kopiert <em>CTRL-C</em> das Brett des Eval-Panels in die Zwischenablage, mit einer aus den gesetzten Steinen neu berechneten XGID — also direkt in eXtreme Gammon oder in eine andere blunderDB-Instanz einfügbar. Nur die Stellung reist mit: Die vom Panel angezeigte Bewertung ist kein Datensatz der Datenbank und begleitet die Kopie nicht.</p>
 <p>Beim Verlassen des Eval-Panels wird die zuvor betrachtete Stellung wiederhergestellt: Der Entwurf wird nie von selbst gespeichert.</p>
@@ -1202,7 +1203,7 @@ export default {
 </tr>
 <tr>
 <td>STRG-V</td>
-<td>Eine Position aus der Zwischenablage einfügen (automatische Formaterkennung).</td>
+<td>Eine Position aus der Zwischenablage einfügen (automatische Formaterkennung); ein Screenshot des Bretts wird auf das Bearbeitungsbrett gelesen.</td>
 </tr>
 <tr>
 <td>STRG-S</td>

@@ -15,7 +15,7 @@
     import { statusBarModeStore, isAnyModalOpen, activeModal, MODAL, pipcountVisibleStore, activeTabStore } from '../stores/uiStore';
     import { subscribeBoardRedrawTriggers as subscribeSharedRedrawTriggers } from '../services/boardRedraw.js';
     import { boardOrientationStore } from '../stores/boardOrientationStore.js';
-    import { boardIsMirrored, labelsFlipped } from '../services/boardOrientation.js';
+    import { boardIsMirrored, labelsFlipped, screenOfModelPoint } from '../services/boardOrientation.js';
     import { searchStructureModeStore, searchOfferedCubeStore } from '../stores/searchExcludePositionStore';
     import { boardColorsStore } from '../stores/boardColorsStore';
     import { sendPositionToEval, evaluateInNewView } from '../services/positionService.js';
@@ -28,6 +28,7 @@
     import { diceShade, orderedDice } from '../services/boardMove.js';
     import { arrowsHiddenBy } from '../services/boardMoveInput.js';
     import { screenMoves } from '../services/transcribedArrows.js';
+    import { captureDoubtsStore } from '../stores/captureStore.js';
     import { transcriptionCubeRequestStore, transcriptionBoardSwapStore, transcriptionArrowsStore } from '../stores/transcriptionStore.js';
     import { resetBoardPlay } from '../services/transcriptionPlay.js';
     import ContextMenu from './ContextMenu.svelte';
@@ -550,6 +551,24 @@
         return { moves: screenMoves(parseMoveNotation(selectedMove), flipped), tone: 'candidate' };
     }
 
+    // Les doutes ne survivent pas à EDIT : la lecture n'y est qu'une proposition.
+    $effect(() => {
+        if ($statusBarModeStore !== 'EDIT') captureDoubtsStore.set([]);
+    });
+
+    // Les doutes d'une lecture de capture : numérotation ABSOLUE, donc `mirrored`.
+    /**
+     * @param {boolean} mirrored
+     * @returns {{ points: number[], cube: boolean } | null}
+     */
+    function captureDoubts(mirrored) {
+        if (mode !== 'EDIT') return null;
+        const doubts = get(captureDoubtsStore);
+        if (doubts.length === 0) return null;
+        const points = doubts.filter((d) => (d.field === 'point' || d.field === 'bar') && d.point !== undefined).map((d) => screenOfModelPoint(d.point ?? 0, mirrored));
+        return { points, cube: doubts.some((d) => d.field === 'cube') };
+    }
+
     // Static layer (triangles, labels, bar, outline) is rebuilt only on size,
     // orientation, palette or numbering change; scheduleRedraw() refills only
     // the dynamic group. Board.redraw.test.js counts two.clear() as a static
@@ -606,6 +625,7 @@
             offeredCube: isOfferedCube(position),
             showPipcount,
             arrows: selectedMoveArrows(flip),
+            doubts: captureDoubts(displayIsMirrored(position)),
             diceUsed: playedDice(position)
         });
 

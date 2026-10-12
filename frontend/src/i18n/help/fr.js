@@ -904,6 +904,7 @@ export default {
 </ul>
 <p>Un OGID ne porte qu'une position : ni évaluation, ni commentaire. La position arrive donc sans analyse, exactement comme un XGID nu, et l'évaluateur intégré peut la combler ensuite.</p>
 <p>Dans un OGID, la partie Crawford se lit au <code>C</code> qui suit la longueur du match (<code>7C</code>) : sans lui, un joueur à un point du but est après la Crawford.</p>
+<p><strong>Une capture d'écran du plateau</strong> (eXtreme Gammon, thème par défaut) se lit de trois façons : coller l'image (<em>CTRL-V</em>), la glisser sur la fenêtre, ou l'ouvrir par <em>CTRL-I</em> (<code>.png</code>, <code>.jpg</code>). Aucune base n'est nécessaire. La position lue arrive sur le plateau d'édition, et elle n'est qu'une proposition : les points et le videau dont la lecture n'est pas sûre sont cerclés d'orange, et ce qu'une capture ne montre jamais (le score, le camp au trait quand les dés sont cachés) est rappelé dans la barre d'état. Corrigez le plateau comme d'habitude, puis enregistrez par le geste habituel : rien n'est enregistré avant. Une image où aucun plateau connu n'est reconnu est refusée, avec le motif dans la barre d'état. La même lecture existe en ligne de commande (<code>capture</code>).</p>
 <p>Le plateau du panneau Eval est un brouillon : la position y arrive sans son identifiant de base, de sorte qu'aucune modification faite ici ne peut réécrire l'enregistrement dont elle provient. Toutes les éditions habituelles du plateau y restent disponibles (pions, videau, dés, score), et l'évaluation suit chaque modification.</p>
 <p>Dans l'autre sens, <em>CTRL-C</em> copie le plateau du panneau Eval dans le presse-papier, avec un XGID recalculé à partir des pions posés — donc collable directement dans eXtreme Gammon ou dans une autre instance de blunderDB. Seule la position voyage : l'évaluation affichée par le panneau n'est pas un enregistrement de la base et n'accompagne pas la copie.</p>
 <p>En quittant le panneau Eval, la position consultée auparavant est restaurée : le brouillon n'est jamais enregistré tout seul.</p>
@@ -1202,7 +1203,7 @@ export default {
 </tr>
 <tr>
 <td>CTRL-V</td>
-<td>Coller une position depuis le presse-papier (détection automatique du format).</td>
+<td>Coller une position depuis le presse-papier (détection automatique du format) ; une capture d'écran du plateau est lue sur le plateau d'édition.</td>
 </tr>
 <tr>
 <td>CTRL-S</td>

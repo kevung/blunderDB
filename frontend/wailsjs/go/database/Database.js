@@ -1166,6 +1166,14 @@ export function RankPositionsByFilters(arg1, arg2) {
   return window['go']['database']['Database']['RankPositionsByFilters'](arg1, arg2);
 }
 
+export function ReadCaptureData(arg1) {
+  return window['go']['database']['Database']['ReadCaptureData'](arg1);
+}
+
+export function ReadCaptureFile(arg1) {
+  return window['go']['database']['Database']['ReadCaptureFile'](arg1);
+}
+
 export function RebuildMatchStats() {
   return window['go']['database']['Database']['RebuildMatchStats']();
 }

@@ -67,6 +67,7 @@
     import { resizable, clampPanelSize } from './utils/resizeHandle.js';
     import { initTabHeights, panelHeightValue, rememberPanelHeight } from './utils/tabHeights.js';
     import { fileDrop } from './utils/fileDrop.js';
+    import { handlePasteEvent } from './services/captureService.js';
     import { loadWorstBlunders } from './services/positionLoader.js';
 
     import Toolbar from './components/Toolbar.svelte';
@@ -377,6 +378,7 @@
         unregisterGlobalKeys = registerKeys('global', handleKeyDown);
         mainArea.addEventListener('wheel', handleWheel);
         window.addEventListener('resize', handleResize);
+        window.addEventListener('paste', handlePasteEvent);
 
         // The persisted UI language before anything renders; English if the read fails.
         try {
@@ -450,6 +452,7 @@
         unregisterZoomKeys?.();
         mainArea.removeEventListener('wheel', handleWheel);
         window.removeEventListener('resize', handleResize);
+        window.removeEventListener('paste', handlePasteEvent);
         unsubscribePositions();
     });
 </script>

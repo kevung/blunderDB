@@ -904,6 +904,7 @@ export default {
 </ul>
 <p>OGID kantaa vain aseman: ei arviota eikä kommenttia. Asema saapuu siis ilman analyysiä, aivan kuten paljas XGID, ja sisäänrakennettu arviointi voi täyttää aukon jälkikäteen.</p>
 <p>OGID:ssä Crawford-peli tunnistetaan ottelun pituuden perässä olevasta <code>C</code>-kirjaimesta (<code>7C</code>): ilman sitä pelaaja, jolta puuttuu yksi piste voittoon, on jo Crawford-pelin jälkeen.</p>
+<p><strong>Laudan kuvakaappaus</strong> (eXtreme Gammon, oletusteema) luetaan kolmella tavalla: liitä kuva (<em>CTRL-V</em>), vedä se ikkunaan tai avaa se <em>CTRL-I</em>:llä (<code>.png</code>, <code>.jpg</code>). Tietokantaa ei tarvita. Luettu asema tulee muokkauslaudalle ja on vain ehdotus: pisteet ja kuutio, joista lukeminen ei ole varma, ympyröidään oranssilla, ja se, mitä kuvakaappaus ei koskaan näytä (pistetilanne, vuorossa oleva pelaaja noppien ollessa piilossa), muistutetaan tilarivillä. Korjaa lauta tavalliseen tapaan ja tallenna tavallisella eleellä: mitään ei tallenneta ennen sitä. Kuva, josta ei tunnisteta tuntematonta lautaa, hylätään, ja syy näkyy tilarivillä. Sama lukeminen on käytettävissä komentorivillä (<code>capture</code>).</p>
 <p>Eval-paneelin lauta on luonnos: asema saapuu sinne ilman tietokantatunnistettaan, joten mikään täällä tehty muutos ei voi kirjoittaa uudelleen tietuetta, josta se on peräisin. Kaikki tavalliset laudan muokkaukset ovat siinä käytettävissä (nappulat, kuutio, nopat, pistetilanne), ja evaluointi seuraa jokaista muutosta.</p>
 <p>Toiseen suuntaan <em>CTRL-C</em> kopioi Eval-paneelin laudan leikepöydälle asetetuista nappuloista uudelleen lasketun XGID:n kera — joten sen voi liittää suoraan eXtreme Gammoniin tai toiseen blunderDB-instanssiin. Vain asema matkustaa: paneelin näyttämä evaluointi ei ole tietokannan tietue eikä seuraa kopion mukana.</p>
 <p>Eval-paneelista poistuttaessa aiemmin tarkasteltu asema palautetaan: luonnosta ei koskaan tallenneta itsestään.</p>
@@ -1202,7 +1203,7 @@ export default {
 </tr>
 <tr>
 <td>CTRL-V</td>
-<td>Liitä asema leikepöydältä (muoto tunnistetaan automaattisesti).</td>
+<td>Liitä asema leikepöydältä (muodon automaattinen tunnistus); laudan kuvakaappaus luetaan muokkauslaudalle.</td>
 </tr>
 <tr>
 <td>CTRL-S</td>
