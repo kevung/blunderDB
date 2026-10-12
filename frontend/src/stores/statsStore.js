@@ -352,6 +352,8 @@ export async function refreshStudyPlan(filter, invalidationKey) {
 
 export const studyEffectStore = writable(/** @type {any} */ (null));
 export const biasesStore = writable(/** @type {any} */ (null));
+/** The filter the before/after measure and the biases were computed under: their counts open positions under it. */
+export const studyLoopFilterStore = writable(/** @type {any} */ (null));
 export const studyLoopLoadingStore = writable(false);
 export const studyLoopErrorStore = writable(/** @type {any} */ (null));
 
@@ -379,6 +381,7 @@ export async function refreshStudyLoop(filter, invalidationKey) {
     try {
         const [effect, biases] = await Promise.all([ComputeStudyEffect(filter), ComputeDirectionalBiases(filter)]);
         if (seq !== _studyLoopSeq) return;
+        studyLoopFilterStore.set(filter);
         studyEffectStore.set(effect);
         biasesStore.set(biases);
     } catch (err) {

@@ -3,6 +3,7 @@ package storage
 import (
 	"math"
 	"sort"
+	"strconv"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
@@ -36,6 +37,12 @@ type SignedBias struct {
 	Low       float64 `json:"Low"`
 	High      float64 `json:"High"`
 	Verdict   string  `json:"Verdict"`
+	// Positions, PlusPositions and MinusPositions count the distinct
+	// positions behind Decisions, Plus and Minus: the lists a "bias"
+	// selection loads (BiasPositionIDs).
+	Positions      int `json:"Positions"`
+	PlusPositions  int `json:"PlusPositions"`
+	MinusPositions int `json:"MinusPositions"`
 }
 
 // ScoreBias is the doubling bias of one score cell: the away scores of the
@@ -70,6 +77,7 @@ type DirectionalBiases struct {
 // scores of the normalised position as stored (the money and post-Crawford
 // sentinels included) and the cost of the action played in that match.
 type BiasCubeRow struct {
+	PositionID   int64
 	Best, Played string
 	MoverAway    int
 	OpponentAway int
@@ -80,28 +88,53 @@ type BiasCubeRow struct {
 // against the best play (+1, −1, 0) and its cost, or Unread when the play could
 // not be compared.
 type BiasCheckerRow struct {
-	Sign    int
-	ErrorMP int64
-	Unread  bool
+	PositionID int64
+	Sign       int
+	ErrorMP    int64
+	Unread     bool
 }
 
-// BuildDirectionalBiases tallies the three biases (ADR-0079). It is pure and
-// shared by every backend.
-func BuildDirectionalBiases(cube []BiasCubeRow, checker []BiasCheckerRow) *DirectionalBiases {
-	out := &DirectionalBiases{MinDecisions: BiasMinDecisions, DoublesByScore: []ScoreBias{}}
-	type cell struct {
-		money      bool
-		mover, opp int
+// The axes of the biases, as a "bias" selection names them.
+const (
+	BiasAxisTakePass = "take_pass"
+	BiasAxisDoubles  = "doubles"
+	BiasAxisBlots    = "blots"
+)
+
+// The sides of a bias a "bias" selection names; the empty side is every
+// decision of the bias.
+const (
+	BiasSidePlus  = "plus"
+	BiasSideMinus = "minus"
+)
+
+// BiasScoreKey names a score cell of the doubling bias: "money", or
+// "<mover away>-<opponent away>".
+func BiasScoreKey(b ScoreBias) string {
+	if b.Money {
+		return "money"
 	}
-	byScore := map[cell]*SignedBias{}
+	return strconv.Itoa(b.MoverAway) + "-" + strconv.Itoa(b.OpponentAway)
+}
+
+// biasRef names one bias: an axis, and for the doubling bias by score, the
+// score cell's key.
+type biasRef struct{ axis, score string }
+
+// walkBiases hands each decision on to every bias it counts in, with its sign
+// and cost. It is the one reading of the rows, shared by the tally and by the
+// selection, so a list holds exactly what its count counts.
+// A score cell's decision also carries the cell itself, so the tally never
+// reads a cell back from its key.
+func walkBiases(cube []BiasCubeRow, checker []BiasCheckerRow, visit func(b biasRef, cell ScoreBias, sign int, errMP, positionID int64)) {
 	for _, r := range cube {
 		switch cellOf := ClassifyCubeDirection(r.Best, r.Played); cellOf {
 		case CubeCellAnswerRight:
-			out.TakePass.add(0, 0)
+			visit(biasRef{axis: BiasAxisTakePass}, ScoreBias{}, 0, 0, r.PositionID)
 		case CubeCellAnswerWrongTake:
-			out.TakePass.add(1, r.ErrorMP)
+			visit(biasRef{axis: BiasAxisTakePass}, ScoreBias{}, 1, r.ErrorMP, r.PositionID)
 		case CubeCellAnswerWrongPass:
-			out.TakePass.add(-1, r.ErrorMP)
+			visit(biasRef{axis: BiasAxisTakePass}, ScoreBias{}, -1, r.ErrorMP, r.PositionID)
 		case CubeCellOfferRight, CubeCellOfferPremature, CubeCellOfferMissed:
 			sign := 0
 			switch cellOf {
@@ -110,30 +143,73 @@ func BuildDirectionalBiases(cube []BiasCubeRow, checker []BiasCheckerRow) *Direc
 			case CubeCellOfferMissed:
 				sign = -1
 			}
-			out.Doubles.add(sign, r.ErrorMP)
-			c := cell{mover: domain.PointsAway(r.MoverAway), opp: domain.PointsAway(r.OpponentAway)}
+			visit(biasRef{axis: BiasAxisDoubles}, ScoreBias{}, sign, r.ErrorMP, r.PositionID)
+			cell := ScoreBias{MoverAway: domain.PointsAway(r.MoverAway), OpponentAway: domain.PointsAway(r.OpponentAway)}
 			if r.MoverAway < 0 && r.OpponentAway < 0 {
-				c = cell{money: true}
+				cell = ScoreBias{Money: true}
 			}
-			if byScore[c] == nil {
-				byScore[c] = &SignedBias{}
-			}
-			byScore[c].add(sign, r.ErrorMP)
+			visit(biasRef{axis: BiasAxisDoubles, score: BiasScoreKey(cell)}, cell, sign, r.ErrorMP, r.PositionID)
 		}
 	}
 	for _, r := range checker {
 		if r.Unread {
-			out.BlotsUnread++
 			continue
 		}
-		out.Blots.add(r.Sign, r.ErrorMP)
+		visit(biasRef{axis: BiasAxisBlots}, ScoreBias{}, r.Sign, r.ErrorMP, r.PositionID)
+	}
+}
+
+// BuildDirectionalBiases tallies the three biases (ADR-0079). It is pure and
+// shared by every backend.
+func BuildDirectionalBiases(cube []BiasCubeRow, checker []BiasCheckerRow) *DirectionalBiases {
+	out := &DirectionalBiases{MinDecisions: BiasMinDecisions, DoublesByScore: []ScoreBias{}}
+	byScore := map[string]*ScoreBias{}
+	type positions struct{ all, plus, minus map[int64]bool }
+	seen := map[*SignedBias]*positions{}
+	biasOf := func(b biasRef) *SignedBias {
+		switch {
+		case b.axis == BiasAxisTakePass:
+			return &out.TakePass
+		case b.axis == BiasAxisBlots:
+			return &out.Blots
+		case b.score == "":
+			return &out.Doubles
+		}
+		return &byScore[b.score].SignedBias
+	}
+	walkBiases(cube, checker, func(b biasRef, cell ScoreBias, sign int, errMP, positionID int64) {
+		if b.score != "" && byScore[b.score] == nil {
+			byScore[b.score] = &cell
+		}
+		sb := biasOf(b)
+		sb.add(sign, errMP)
+		p := seen[sb]
+		if p == nil {
+			p = &positions{all: map[int64]bool{}, plus: map[int64]bool{}, minus: map[int64]bool{}}
+			seen[sb] = p
+		}
+		p.all[positionID] = true
+		switch {
+		case sign > 0:
+			p.plus[positionID] = true
+		case sign < 0:
+			p.minus[positionID] = true
+		}
+	})
+	for _, r := range checker {
+		if r.Unread {
+			out.BlotsUnread++
+		}
+	}
+	for sb, p := range seen {
+		sb.Positions, sb.PlusPositions, sb.MinusPositions = len(p.all), len(p.plus), len(p.minus)
 	}
 	out.TakePass.measure()
 	out.Doubles.measure()
 	out.Blots.measure()
-	for c, b := range byScore {
+	for _, b := range byScore {
 		b.measure()
-		out.DoublesByScore = append(out.DoublesByScore, ScoreBias{Money: c.money, MoverAway: c.mover, OpponentAway: c.opp, SignedBias: *b})
+		out.DoublesByScore = append(out.DoublesByScore, *b)
 	}
 	sort.Slice(out.DoublesByScore, func(i, j int) bool {
 		a, b := out.DoublesByScore[i], out.DoublesByScore[j]
@@ -146,6 +222,36 @@ func BuildDirectionalBiases(cube []BiasCubeRow, checker []BiasCheckerRow) *Direc
 		return a.OpponentAway < b.OpponentAway
 	})
 	return out
+}
+
+// BiasPositionIDs lists the distinct positions behind one count of the
+// biases: axis is a BiasAxis*, score a BiasScoreKey for a cell of the doubling
+// bias by score (empty otherwise), side a BiasSide* or empty for every
+// decision. Its length is the matching Positions, PlusPositions or
+// MinusPositions of BuildDirectionalBiases over the same rows.
+func BiasPositionIDs(cube []BiasCubeRow, checker []BiasCheckerRow, axis, score, side string) []int64 {
+	want := biasRef{axis: axis, score: score}
+	seen := map[int64]bool{}
+	ids := []int64{}
+	walkBiases(cube, checker, func(b biasRef, _ ScoreBias, sign int, _, positionID int64) {
+		if b != want || seen[positionID] {
+			return
+		}
+		switch side {
+		case BiasSidePlus:
+			if sign <= 0 {
+				return
+			}
+		case BiasSideMinus:
+			if sign >= 0 {
+				return
+			}
+		}
+		seen[positionID] = true
+		ids = append(ids, positionID)
+	})
+	sort.Slice(ids, func(i, j int) bool { return ids[i] < ids[j] })
+	return ids
 }
 
 // BlotsUnreadShare is the share of the checker plays with contact left out of

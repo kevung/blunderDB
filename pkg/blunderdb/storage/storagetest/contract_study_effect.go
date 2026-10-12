@@ -68,6 +68,10 @@ func testStatsStudyEffect(t *testing.T, s storage.Storage) {
 	if f.Verdict != storage.StudyEffectInsufficient {
 		t.Errorf("Verdict %q with %d and %d decisions, want insufficient", f.Verdict, f.Before.Decisions, f.After.Decisions)
 	}
+	if f.Before.Positions != 6 || f.After.Positions != 3 {
+		t.Errorf("positions %d / %d, want 6 then 3", f.Before.Positions, f.After.Positions)
+	}
+	assertStudyEffectSelections(t, s, storage.StatsFilter{DecisionType: -1, PlayerName: "Alice"}, got)
 }
 
 // testStatsDirectionalBiases pins the signed biases (ADR-0079) on both
@@ -113,6 +117,10 @@ func testStatsDirectionalBiases(t *testing.T, s storage.Storage) {
 	if got.Blots.Decisions+got.BlotsUnread != 2 {
 		t.Errorf("Blots %+v unread %d, want the two checker decisions", got.Blots, got.BlotsUnread)
 	}
+	if tp := got.TakePass; tp.Positions != 3 || tp.PlusPositions != 1 || tp.MinusPositions != 1 {
+		t.Errorf("TakePass positions %+v, want 3, one and one", tp)
+	}
+	assertBiasSelections(t, s, storage.StatsFilter{DecisionType: -1, PlayerName: "Alice"}, got)
 }
 
 // biasGame saves a one-game match for Alice and returns the game's id; a
@@ -195,6 +203,11 @@ func testStatsDirectionalBiasesPerMatch(t *testing.T, s storage.Storage) {
 	if b := got.Blots; b.Decisions != 2 || b.Plus != 1 || b.PlusMP != 150 || got.BlotsUnread != 0 {
 		t.Errorf("Blots %+v unread %d, want the second match's bolder play at 150 mp", b, got.BlotsUnread)
 	}
+	// Two decisions on one position: the link counts the position once.
+	if tp := got.TakePass; tp.Positions != 1 || tp.PlusPositions != 1 || tp.MinusPositions != 0 {
+		t.Errorf("TakePass positions %+v, want the one position", tp)
+	}
+	assertBiasSelections(t, s, storage.StatsFilter{DecisionType: -1, PlayerName: "Alice"}, got)
 }
 
 // testStatsDirectionalBiasesScores pins the score cells of the doubling bias:
@@ -243,4 +256,8 @@ func testStatsDirectionalBiasesScores(t *testing.T, s storage.Storage) {
 	if post.Money || post.MoverAway != 1 || post.OpponentAway != 3 || post.Decisions != 1 {
 		t.Errorf("second cell %+v, want 1-away/3-away", post)
 	}
+	if money.Positions != 1 || post.Positions != 1 {
+		t.Errorf("cells %+v / %+v, want one position each", money, post)
+	}
+	assertBiasSelections(t, s, storage.StatsFilter{DecisionType: -1, PlayerName: "Alice"}, got)
 }

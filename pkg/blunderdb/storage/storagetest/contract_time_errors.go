@@ -26,9 +26,9 @@ func testStatsTimeErrors(t *testing.T, s storage.Storage) {
 		t.Fatalf("TimeErrors: %v", err)
 	}
 	want := []storage.TimeErrorRow{
-		{Player: "me", Bucket: 1, Decisions: 1},
-		{Player: "them", Bucket: 0, Decisions: 1},
-		{Player: "them", Bucket: 3, Decisions: 1},
+		{Player: "me", Bucket: 1, Decisions: 1, Positions: 1},
+		{Player: "them", Bucket: 0, Decisions: 1, Positions: 1},
+		{Player: "them", Bucket: 3, Decisions: 1, Positions: 1},
 	}
 	if len(got) != len(want) {
 		t.Fatalf("got %+v, want %+v", got, want)
@@ -38,6 +38,7 @@ func testStatsTimeErrors(t *testing.T, s storage.Storage) {
 			t.Errorf("row %d: got %+v, want %+v", i, got[i], want[i])
 		}
 	}
+	assertTimeBandSelections(t, s, got)
 }
 
 // testStatsTimeErrorsScoredByAnalysis pins that an analysis written after the
@@ -88,8 +89,8 @@ func testStatsTimeErrorsScoredByAnalysis(t *testing.T, s storage.Storage) {
 		t.Fatalf("TimeErrors: %v", err)
 	}
 	want := []storage.TimeErrorRow{
-		{Player: "me", Bucket: 0, Decisions: 1, Scored: 1, MeanErrorMP: 50},
-		{Player: "them", Bucket: 0, Decisions: 1, Scored: 1, MeanErrorMP: 200, Blunders: 1},
+		{Player: "me", Bucket: 0, Decisions: 1, Scored: 1, MeanErrorMP: 50, Positions: 1},
+		{Player: "them", Bucket: 0, Decisions: 1, Scored: 1, MeanErrorMP: 200, Blunders: 1, Positions: 1},
 	}
 	if len(got) != len(want) {
 		t.Fatalf("got %+v, want %+v", got, want)

@@ -37,12 +37,14 @@ func testAliasesStayFlat(t *testing.T, s storage.Storage) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	undated(t, got)
 	want := []storage.Alias{{Alias: "A", Canonical: "Z"}, {Alias: "B", Canonical: "Z"}, {Alias: "C", Canonical: "Z"}}
 	if !reflect.DeepEqual(got, want) {
 		t.Fatalf("List = %+v, want %+v", got, want)
 	}
 	must("Z", "A") // the pair turns round
 	got, _ = as.List(ctx, "", storage.AliasPlayer)
+	undated(t, got)
 	want = []storage.Alias{{Alias: "B", Canonical: "A"}, {Alias: "C", Canonical: "A"}, {Alias: "Z", Canonical: "A"}}
 	if !reflect.DeepEqual(got, want) {
 		t.Fatalf("List after turning round = %+v, want %+v", got, want)
@@ -107,5 +109,17 @@ func testAliasesReadAsOnePerson(t *testing.T, s storage.Storage) {
 		if r.Name == "Alice" && r.Matches != 3 {
 			t.Fatalf("Alice plays %d matches in the players table, want 3", r.Matches)
 		}
+	}
+}
+
+// undated checks that every listed alias bears its creation date, then
+// clears it so the list compares by its names alone.
+func undated(t *testing.T, aliases []storage.Alias) {
+	t.Helper()
+	for i := range aliases {
+		if aliases[i].CreatedAt == "" {
+			t.Errorf("alias %q lists no creation date", aliases[i].Alias)
+		}
+		aliases[i].CreatedAt = ""
 	}
 }

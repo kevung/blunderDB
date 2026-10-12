@@ -93,7 +93,7 @@ func (s *AliasStore) List(ctx context.Context, scope string, kind storage.AliasK
 		return nil, errf(s.DB, "list aliases", err)
 	}
 	tenant, targs := s.DB.TenantFilter("", scope)
-	rows, err := s.DB.Query(ctx, `SELECT alias, canonical FROM `+table+` WHERE `+tenant+` ORDER BY canonical, alias`, targs...)
+	rows, err := s.DB.Query(ctx, `SELECT alias, canonical, `+s.DB.TimestampText("created_at")+` FROM `+table+` WHERE `+tenant+` ORDER BY canonical, alias`, targs...)
 	if err != nil {
 		return nil, errf(s.DB, "list aliases", err)
 	}
@@ -101,7 +101,7 @@ func (s *AliasStore) List(ctx context.Context, scope string, kind storage.AliasK
 	var out []storage.Alias
 	for rows.Next() {
 		var a storage.Alias
-		if err := rows.Scan(&a.Alias, &a.Canonical); err != nil {
+		if err := rows.Scan(&a.Alias, &a.Canonical, &a.CreatedAt); err != nil {
 			return nil, errf(s.DB, "list aliases", err)
 		}
 		out = append(out, a)

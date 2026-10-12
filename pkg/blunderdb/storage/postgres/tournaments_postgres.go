@@ -20,9 +20,12 @@ type tournamentStore struct{ db execer }
 var _ storage.TournamentStore = (*tournamentStore)(nil)
 
 // tsTime formats a TIMESTAMPTZ for the string CreatedAt/UpdatedAt fields,
-// matching the SQLite backend's "YYYY-MM-DD HH:MM:SS" rendering.
+// matching the SQLite backend's "YYYY-MM-DD HH:MM:SS" rendering. In UTC, as
+// SQLite's CURRENT_TIMESTAMP and the shared TimestampText are: the driver
+// hands the value back in the process's zone, which would shift a date
+// copied into another library.
 func tsTime(t time.Time) string {
-	return t.Format("2006-01-02 15:04:05")
+	return t.UTC().Format("2006-01-02 15:04:05")
 }
 
 // tournamentSelectExpr reads a domain.Tournament from tournament t joined to
