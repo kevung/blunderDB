@@ -223,9 +223,6 @@ func TestLastActionValidatedAppendsNext(t *testing.T) {
 			}
 			doc = next
 		}
-		// A stale place to come back to, behind the last Action — the jump
-		// to an Inconsistency leaves one.
-		doc.Return, doc.HasReturn = 1, true
 		after, err := Apply(doc, confirm())
 		if err != nil {
 			t.Fatal(err)
@@ -267,12 +264,10 @@ func TestLastActionValidatedAppendsNext(t *testing.T) {
 	})
 }
 
-// TestValidatingAnUnchangedCellIsARead holds the bug report: reviewing an
-// earlier Action — walked back to and confirmed WITHOUT retyping anything —
-// used to send the Cursor to Return like a genuine correction, even though
-// nothing was written. When Return happened to be the last Action, the next
-// keystroke reopened it (proposedEntry loads whatever the Cursor stands on)
-// instead of appending the roll that continues the transcription.
+// TestValidatingAnUnchangedCellIsARead: Enter on an earlier Action nobody
+// retyped writes nothing, and still goes on to the next decision, as a real
+// correction does (ADR-0091). The roll typed after the last Action is then an
+// append, not a correction of it.
 func TestValidatingAnUnchangedCellIsARead(t *testing.T) {
 	doc := typedMatch(t, 7)
 	n := len(doc.Actions)
@@ -287,8 +282,11 @@ func TestValidatingAnUnchangedCellIsARead(t *testing.T) {
 	if !sameAction(e.Doc.Actions[1], before) {
 		t.Fatalf("action 1 changed: %+v, want %+v", e.Doc.Actions[1], before)
 	}
-	if e.Doc.Cursor != 1 || e.Doc.Entry == nil || e.Doc.Entry.At != 1 {
-		t.Fatalf("cursor = %d, entry = %+v; a read must not move the Cursor away", e.Doc.Cursor, e.Doc.Entry)
+	if e.Doc.Cursor != 2 {
+		t.Fatalf("cursor = %d; Enter on an unchanged cell goes on to the next decision", e.Doc.Cursor)
+	}
+	if ann := Replay(e.Doc, 0); ann.Entry == nil || ann.Entry.At != 2 || !ann.Entry.Replacing {
+		t.Fatalf("entry = %+v; the next decision is loaded for review", ann.Entry)
 	}
 
 	// Walk on to the true last Action and validate it for real: the roll

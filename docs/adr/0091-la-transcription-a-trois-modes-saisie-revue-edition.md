@@ -1,9 +1,10 @@
 # ADR-0091 — La transcription a trois modes : Saisie, Revue, Édition
 
 Statut : acceptée (décision de l'utilisateur).
-Remplace : ADR-0051 décision 1 ; la règle « le Cursor revient à sa place antérieure après
+Remplace : ADR-0048 décision 1 (le chiffre « commence un jet là où le Cursor est ») ; ADR-0051
+décision 1 ; la règle « le Cursor revient à sa place antérieure après
 validation » d'une correction en place (fonctionnel.md §2).
-Voir aussi : ADR-0048 décision 1, ADR-0049, ADR-0052.
+Voir aussi : ADR-0049, ADR-0052, ADR-0086.
 
 ## Contexte
 
@@ -24,15 +25,20 @@ saisir un jet neuf on modifiait la décision relue.
    touches le reçoit en contexte et ne connaît toujours pas le document.
 2. **En Revue, la saisie de dés ne modifie jamais une décision** : chiffres, `f`, `j`/`k`,
    Entrée, Retour arrière et Échap sont pris sans effet, et le triangle des jets est retiré.
-   Les gestes de correction (`i`, `a`, `x`, `s`), de videau et de déplacement restent actifs.
+   Le plateau ne joue pas en Revue. Les gestes de correction (`i`, `a`, `x`, `s`), de videau
+   et de déplacement restent actifs.
 3. **On entre en Édition explicitement** : `e` (qui ouvre aussi le champ du coup de la
    cellule, ADR-0052), un double-clic sur la cellule, un clic sur une ligne de l'analyse.
    Un pas du curseur, une validation, une insertion, une suppression, une annulation la
    referment.
 4. **La validation automatique n'agit qu'en Saisie.** En Édition, le chiffre recommence le
-   jet sur place et seule Entrée valide, la dernière Action comprise.
-5. **Valider une correction place le curseur sur la décision suivante**, jamais en fin de
-   match ; après la dernière Action, c'est le bout du document. `Fin` ramène à la Saisie.
+   jet sur place, même après un coup achevé au plateau, et seule une validation explicite
+   écrit : Entrée, ou le clic sur les dés d'un coup achevé (grammaire d'ADR-0086), la
+   dernière Action comprise.
+5. **Valider une correction place le curseur sur la décision suivante**, chargée en Revue,
+   jamais en fin de match ; après la dernière Action, c'est le bout du document. Entrée sur
+   une décision rouverte et inchangée n'écrit rien mais avance de même. Le moteur ne garde
+   plus de place de retour (`Return`). `Fin` ramène à la Saisie.
 
 ## Conséquences
 

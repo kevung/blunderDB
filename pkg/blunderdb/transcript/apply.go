@@ -577,7 +577,7 @@ func deleteDecision(doc, out Document) (Document, error) {
 	// the end) is abandoned; nothing written is touched.
 	if e := out.Entry; e != nil && e.Mode == EntryNew {
 		out.Cursor = clampSlot(e.At, len(out.Actions))
-		out.Entry, out.pendingBoard, out.HasReturn = nil, nil, false
+		out.Entry, out.pendingBoard = nil, nil
 		stepBack(&out)
 		return out, nil
 	}
@@ -588,7 +588,7 @@ func deleteDecision(doc, out Document) (Document, error) {
 			return doc, ErrNoAction
 		}
 		out.Cursor = len(out.Actions)
-		out.Entry, out.pendingBoard, out.HasReturn = nil, nil, false
+		out.Entry, out.pendingBoard = nil, nil
 		stepBack(&out)
 		return out, nil
 	}
@@ -605,7 +605,7 @@ func deleteDecision(doc, out Document) (Document, error) {
 	}
 	out.Actions = append(out.Actions[:at], out.Actions[at+1:]...)
 	out.Touched, out.HasTouched = at, true
-	out.Entry, out.pendingBoard, out.HasReturn = nil, nil, false
+	out.Entry, out.pendingBoard = nil, nil
 	stepBack(&out)
 	return out, nil
 }
@@ -626,9 +626,6 @@ func stepBack(doc *Document) {
 // Actions it separates (ADR-0054).
 func cursorBack(out Document) Document {
 	if out.Cursor > 0 {
-		if !out.HasReturn {
-			out.Return, out.HasReturn = out.Cursor, true
-		}
 		if !onHole(out) && holeBefore(out, out.Cursor) {
 			openHole(&out, out.Cursor)
 			return out
@@ -705,7 +702,7 @@ func continueGame(doc *Document, at int, nextScore *[2]int) bool {
 	if doc.Actions[at+1].Score == nil {
 		doc.Actions[at+1].Score = nextScore
 	}
-	doc.Cursor, doc.HasReturn = at+1, false
+	doc.Cursor = at + 1
 	doc.Entry, doc.pendingBoard = &Entry{Side: proposedSide(*doc, at+1), Mode: EntryNew, At: at + 1}, nil
 	doc.HoldCursor = true
 	return true
@@ -737,15 +734,15 @@ func commitCorrection(doc Document) Document {
 	if !entryDiffers(doc.Actions[e.At], *e) {
 		return doc
 	}
-	cursor, ret, hasReturn := doc.Cursor, doc.Return, doc.HasReturn
-	doc.Cursor, doc.HasReturn = e.At, false
+	cursor := doc.Cursor
+	doc.Cursor = e.At
 	out, err := validate(doc)
 	if err != nil {
 		// An unready correction is left as is; the Action keeps what it had.
-		doc.Cursor, doc.Return, doc.HasReturn = cursor, ret, hasReturn
+		doc.Cursor = cursor
 		return doc
 	}
-	out.Cursor, out.Return, out.HasReturn = cursor, ret, hasReturn
+	out.Cursor = cursor
 	return out
 }
 
@@ -832,15 +829,15 @@ func validate(doc Document) (Document, error) {
 	if e.Dice[0] == 0 || e.Dice[1] == 0 {
 		return doc, ErrNoDice
 	}
-	// Confirming a cell that says exactly what it already holds is a READ, not
-	// a correction, and must write nothing — the same rule commitCorrection
-	// applies to walking away, here for Enter pressed on a cell nobody
-	// changed. Without it, Enter sent the Cursor to Return and cleared the
-	// Entry, so the NEXT keystroke reopened whatever Action the Cursor landed
-	// on instead of writing a new one, however far from the correction that
-	// landing was. The last Action is the one exception (ADR-0051): its
-	// validation always reaches the end, changed or not.
-	if e.Mode == EntryReplace && e.At < len(doc.Actions) && e.At+1 != len(doc.Actions) && !entryDiffers(doc.Actions[e.At], *e) {
+	// Confirming a cell that says exactly what it already holds writes nothing
+	// — the rule commitCorrection applies to walking away — but it is still
+	// the end of an edit, so the Cursor goes on to the next decision as a real
+	// correction does (ADR-0091): Enter means the same with or without a change.
+	if e.Mode == EntryReplace && e.At < len(doc.Actions) && !entryDiffers(doc.Actions[e.At], *e) {
+		doc.Cursor = e.At + 1
+		doc.pendingBoard = nil
+		doc.HoldCursor = true
+		loadEntry(&doc)
 		return doc, nil
 	}
 	if !e.Selected {
@@ -918,12 +915,16 @@ func record(doc Document, a Action) Document {
 			return doc
 		}
 		// A correction goes on to the decision that follows it, and is held there: the
-		// user reviews the match in order, and a jump back to where they stood before
-		// walking back — or to a mark the correction left further on — loses their
-		// place. After the LAST Action that is the end, where the next roll is
-		// appended (ADR-0051).
+		// user reviews the match in order, and a jump elsewhere — to a mark the
+		// correction left further on — would lose their place. After the last Action
+		// that is the end, where the next roll is appended (ADR-0091).
+		// The decision there is loaded as a walk would load it: it is under review,
+		// and a roll typed next does not overwrite it unnoticed.
 		doc.Cursor = at + 1
-		doc.HasReturn, doc.HoldCursor = false, true
+		doc.HoldCursor = true
+		doc.pendingBoard = nil
+		loadEntry(&doc)
+		return doc
 	} else {
 		// Inserted in front of a game's first Action, the new one opens the game in
 		// its place and takes over the score declared there.
@@ -1122,11 +1123,6 @@ func (e *Editor) SeekCursor(at int) {
 	}
 	if at == e.Doc.Cursor {
 		return
-	}
-	// Remember where the user was reading, so a correction there gives it back
-	// (fonctionnel.md §2).
-	if !e.Doc.HasReturn {
-		e.Doc.Return, e.Doc.HasReturn = e.Doc.Cursor, true
 	}
 	e.Doc.Cursor = at
 	loadEntry(&e.Doc)

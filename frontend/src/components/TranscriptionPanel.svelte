@@ -204,8 +204,17 @@
     /** @type {Record<string, string>} */
     const MODE_KEY = { [MODE.ENTRY]: 'transcription.modeKey.entry', [MODE.REVIEW]: 'transcription.modeKey.review', [MODE.EDIT]: 'transcription.modeKey.edit' };
 
-    /** Rouvre la décision au Cursor : la Revue devient Édition. */
-    function beginEditing() {
+    /**
+     * Rouvre une décision : la Revue devient Édition. Sans index, celle du
+     * Cursor ; un double-clic nomme la cellule, où le Cursor arrive ensuite.
+     *
+     * @param {number} [index]
+     */
+    function beginEditing(index) {
+        if (typeof index === 'number') {
+            editingAt = index;
+            return;
+        }
         const entry = get(transcriptionStore)?.annotated?.entry;
         if (entry?.replacing === true) editingAt = entry.at;
     }
@@ -1333,15 +1342,17 @@
             return;
         }
         // Coup achevé ou hors des règles : Entrée l'enregistre (avec son plateau s'il est libre).
-        if (boardPlayKeys && event.key === 'Enter' && playSettled()) {
+        // En Revue rien ne s'écrit (ADR-0091).
+        if (boardPlayKeys && mode !== MODE.REVIEW && event.key === 'Enter' && playSettled()) {
             event.preventDefault();
             event.stopPropagation();
             validatePlay();
             return;
         }
         // Un coup achevé est enregistré avant que le chiffre ne commence le jet
-        // suivant, sinon le candidat sélectionné le remplacerait.
-        if (boardPlayKeys && dieOf(event) > 0 && playSettled()) {
+        // suivant, sinon le candidat sélectionné le remplacerait. En Saisie
+        // seulement : en Édition le chiffre recommence le jet, Entrée seule valide.
+        if (boardPlayKeys && mode === MODE.ENTRY && dieOf(event) > 0 && playSettled()) {
             event.preventDefault();
             event.stopPropagation();
             validatePlay()?.then(() => applyResult(pressKey(get(transcriptionKeyStore), event, keyContext)));
@@ -1768,7 +1779,8 @@
     // Le jet saisi (ou chargé par `settleCursor` sur une Action relue).
     let boardRoll = $derived(diceEntered && (keys.phase === PHASE.ROLL || keys.phase === PHASE.CANDIDATE) ? [keys.dice[0], keys.dice[1]] : null);
     // Sans jet saisi, aucun coup n'est armé : tout coup au plateau commence par les dés.
-    let boardPlayOpen = $derived(!!draft && !matchOver && !awaitingAnswer && !recordingPlay && expects === 'checker' && boardRoll !== null);
+    // En Revue le plateau ne joue pas : un coup achevé n'y écrirait rien d'autre qu'une décision relue.
+    let boardPlayOpen = $derived(!!draft && !matchOver && !awaitingAnswer && !recordingPlay && expects === 'checker' && boardRoll !== null && mode !== MODE.REVIEW);
 
     // Clé d'armement (place, camp, position, jet) — pas le document, qui change à chaque pas.
     let boardPlayKey = $derived.by(() => {

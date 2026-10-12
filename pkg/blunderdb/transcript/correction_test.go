@@ -67,8 +67,9 @@ func TestCorrectionInPlace(t *testing.T) {
 			t.Error("the review mark must survive a candidate pick (fonctionnel.md §2)")
 		}
 		done := runSteps(t, picked, []step{{"validate", confirm(), nil}})
-		if done.Entry != nil {
-			t.Error("validation left an entry behind")
+		// What is loaded after it is the next decision, under review (ADR-0091).
+		if done.Entry != nil && (done.Entry.At != at+1 || done.Entry.Review || done.Entry.Mode != EntryReplace) {
+			t.Errorf("entry = %+v; validation leaves only the next decision loaded", done.Entry)
 		}
 	})
 
