@@ -92,16 +92,26 @@ type Selection struct {
 type ExportReport struct {
 	// Path is where the file landed: opts' path, or the .dbx container it was
 	// wrapped into when a password was given.
-	Path                                         string
-	Positions, Analyses, Comments                int
-	Matches, Games, Moves, MoveAnalyses          int
-	Collections, Tournaments, Filters, AnkiDecks int
-	Transcriptions, Lessons, Aliases             int
-	Skipped                                      int
+	Path           string `json:"path"`
+	Positions      int    `json:"positions"`
+	Analyses       int    `json:"analyses"`
+	Comments       int    `json:"comments"`
+	Matches        int    `json:"matches"`
+	Games          int    `json:"games"`
+	Moves          int    `json:"moves"`
+	MoveAnalyses   int    `json:"moveAnalyses"`
+	Collections    int    `json:"collections"`
+	Tournaments    int    `json:"tournaments"`
+	Filters        int    `json:"filters"`
+	AnkiDecks      int    `json:"ankiDecks"`
+	Transcriptions int    `json:"transcriptions"`
+	Lessons        int    `json:"lessons"`
+	Aliases        int    `json:"aliases"`
+	Skipped        int    `json:"skipped"`
 	// TournamentMap gives, for each exported tournament, the id the new file assigned it.
 	// A Direction travels with its tournament (ADR-0047) but its tables live on the desktop
 	// wrapper, not the storage contract, so the caller copies them itself with this map.
-	TournamentMap map[int64]int64
+	TournamentMap map[int64]int64 `json:"-"`
 }
 
 // WholeTenant is the export the daemon offers by default: everything the

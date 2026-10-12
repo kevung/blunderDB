@@ -3284,6 +3284,8 @@ Options:
     	Include matches in database export (default: true) (default true)
   -password string
     	Protect the exported file with a password (produces a .dbx container)
+  -plan
+    	Print what a database or matches export would write, family by family, without writing a file
   -played-moves
     	Include played moves in analysis (default: true) (default true)
   -tournament-ids string
@@ -3332,6 +3334,9 @@ Examples:
   # Mark the exported file with its origin, and protect it with a password
   blunderdb export --db database.db --type database --file cours.db \
       --watermark "Cours de Jean Dupont - 12 mars 2026" --password secret
+
+  # Count what an export would carry, without writing it
+  blunderdb export --db database.db --type database --tournament-ids=1 --plan
 
   # Export positions to text file
   blunderdb export --db database.db --type positions --file positions.txt

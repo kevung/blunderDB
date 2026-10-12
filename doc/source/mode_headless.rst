@@ -1013,7 +1013,12 @@ révision de celui qui l'envoie. Les deux champs se combinent. ``ankiHistory``
 décide de cet historique : absent, tout le tenant l'emporte et des paquets
 choisis par ``deckIds`` partent sans. ``transcriptions`` et ``aliases`` à
 ``false`` laissent sur place les brouillons de transcription des matchs
-exportés et les alias qu'ils écrivent ; absents, les deux voyagent.
+exportés et les alias qu'ils écrivent ; absents, les deux voyagent. La
+réponse porte, dans l'en-tête ``X-Blunderdb-Export-Report``, le compte en JSON
+de ce que le fichier contient, famille par famille. ``POST /v1/exports.plan``
+prend le même corps et rend ces comptes avant tout export, avec les
+identifiants de chaque famille et les collections vivantes qui partiraient
+figées ; il n'écrit rien.
 
 **Importer un dossier ou un corpus** se fait par ``imports.batch``, qui passe
 par le même pipeline que ``blunderdb import --type batch`` : mêmes matchs,

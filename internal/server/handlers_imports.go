@@ -281,6 +281,11 @@ func (s *Server) ingestRoutes() []route {
 		})},
 		route{http.MethodPost, "/v1/exports.json", s.handleExport(ingest.FormatJSON)},
 		route{http.MethodPost, "/v1/exports.sqlite", s.handleExportSQLite()},
+		// What exports.sqlite would write for the same body, counted family by family
+		// without writing anything; the watermark fields are ignored.
+		route{http.MethodPost, "/v1/exports.plan", rpc(func(ctx context.Context, scope string, req exportSQLiteReq) (ingest.ExportPlan, error) {
+			return ingest.PlanExport(ctx, s.opts.Storage, scope, exportSQLiteOptions(req))
+		})},
 	)
 }
 
@@ -316,6 +321,35 @@ type exportSQLiteReq struct {
 	AnkiHistory *bool `json:"ankiHistory,omitempty"`
 }
 
+// ExportReportHeader carries, on an exports.sqlite answer, the export's report as
+// JSON: what the file holds, family by family, the counts exports.plan announced.
+// The body is the file itself, so the report rides in a header.
+const ExportReportHeader = "X-Blunderdb-Export-Report"
+
+// exportSQLiteOptions is what an exports.sqlite or exports.plan body asks for,
+// short of the watermark.
+func exportSQLiteOptions(req exportSQLiteReq) ingest.ExportOptions {
+	opts := ingest.WholeTenant(ingest.FormatSQLite)
+	if len(req.CollectionIDs) > 0 || len(req.LessonIDs) > 0 || len(req.DeckIDs) > 0 {
+		opts.Selection = ingest.Selection{
+			CollectionIDs: req.CollectionIDs, CollectionPositions: true,
+			LessonIDs: req.LessonIDs, LessonContents: true,
+			DeckIDs: req.DeckIDs, DeckPositions: true,
+		}
+		opts.FilterLibrary, opts.AnkiDecks, opts.AnkiHistory = false, false, false
+	}
+	if req.Transcriptions != nil {
+		opts.Transcriptions = *req.Transcriptions
+	}
+	if req.Aliases != nil {
+		opts.Aliases = *req.Aliases
+	}
+	if req.AnkiHistory != nil {
+		opts.AnkiHistory = *req.AnkiHistory
+	}
+	return opts
+}
+
 // sealExportWatermark seals a watermark for origin/note with this daemon's own
 // signing identity (Options.Identity — see its doc comment), or returns ""
 // when origin is empty (no watermark asked for). A watermark asked for
@@ -339,17 +373,14 @@ func (s *Server) sealExportWatermark(origin, note string) (string, error) {
 // exportSQLiteReq); with none given the export is WholeTenant, matching the
 // GUI/CLI's "export everything" preset.
 //
-// ingest.SQLiteExporter already materializes the whole file into its own temp
-// path before copying it to the writer it is given, but this handler must not
-// hand it the live ResponseWriter directly: the moment Export writes its
-// first byte, Go commits whatever status/headers are set at that instant —
-// setting the binary headers before calling Export would send a mid-export
-// failure as HTTP 200 with an octet-stream Content-Type and a JSON error body
-// wearing a ".sqlite" Content-Disposition. So Export targets a private temp
-// file here; the binary headers are set, and the file streamed to the
-// client, only once Export has returned successfully. On failure,
-// writeStorageError sets a proper status/content-type — nothing has reached
-// the client yet.
+// The export is written to a private temp file, never straight to the
+// ResponseWriter: the moment a body byte is written, Go commits whatever
+// status/headers are set at that instant, so a mid-export failure would go out
+// as HTTP 200 with an octet-stream Content-Type and a JSON error body wearing a
+// ".sqlite" Content-Disposition. The binary headers — and the export's report,
+// in ExportReportHeader — are set, and the file streamed to the client, only
+// once the export has returned successfully. On failure, writeStorageError
+// sets a proper status/content-type — nothing has reached the client yet.
 func (s *Server) handleExportSQLite() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req exportSQLiteReq
@@ -363,8 +394,6 @@ func (s *Server) handleExportSQLite() http.HandlerFunc {
 			return
 		}
 
-		exp := s.exporterFor(ingest.FormatSQLite)
-
 		tmp, tmpErr := os.CreateTemp("", "blunderdb-export-resp-*.sqlite")
 		if tmpErr != nil {
 			writeStorageError(w, fmt.Errorf("server: create temp export file: %w", tmpErr))
@@ -372,34 +401,22 @@ func (s *Server) handleExportSQLite() http.HandlerFunc {
 		}
 		tmpPath := tmp.Name()
 		defer os.Remove(tmpPath)
-
-		opts := ingest.WholeTenant(ingest.FormatSQLite)
-		if len(req.CollectionIDs) > 0 || len(req.LessonIDs) > 0 || len(req.DeckIDs) > 0 {
-			opts.Selection = ingest.Selection{
-				CollectionIDs: req.CollectionIDs, CollectionPositions: true,
-				LessonIDs: req.LessonIDs, LessonContents: true,
-				DeckIDs: req.DeckIDs, DeckPositions: true,
-			}
-			opts.FilterLibrary, opts.AnkiDecks, opts.AnkiHistory = false, false, false
-		}
-		if req.Transcriptions != nil {
-			opts.Transcriptions = *req.Transcriptions
-		}
-		if req.Aliases != nil {
-			opts.Aliases = *req.Aliases
-		}
-		if req.AnkiHistory != nil {
-			opts.AnkiHistory = *req.AnkiHistory
-		}
-		opts.Watermark = watermark
-		exportErr := exp.Export(r.Context(), scopeOf(r), tmp, opts)
-		closeErr := tmp.Close()
-		if exportErr != nil {
-			writeStorageError(w, exportErr)
+		if err := tmp.Close(); err != nil {
+			writeStorageError(w, fmt.Errorf("server: close temp export file: %w", err))
 			return
 		}
-		if closeErr != nil {
-			writeStorageError(w, fmt.Errorf("server: close temp export file: %w", closeErr))
+
+		opts := exportSQLiteOptions(req)
+		opts.Watermark = watermark
+		report, err := ingest.ExportSQLite(r.Context(), s.opts.Storage, scopeOf(r), tmpPath, opts)
+		if err != nil {
+			writeStorageError(w, err)
+			return
+		}
+		report.Path = "" // the daemon's temp file, nothing the client can open
+		reportJSON, err := json.Marshal(report)
+		if err != nil {
+			writeStorageError(w, fmt.Errorf("server: encode export report: %w", err))
 			return
 		}
 
@@ -412,6 +429,7 @@ func (s *Server) handleExportSQLite() http.HandlerFunc {
 
 		w.Header().Set("Content-Type", "application/octet-stream")
 		w.Header().Set("Content-Disposition", `attachment; filename="blunderdb-export.sqlite"`)
+		w.Header().Set(ExportReportHeader, string(reportJSON))
 		if _, err := io.Copy(w, f); err != nil {
 			// Headers/status are already committed (the copy is the first
 			// write): nothing more to do than let the client see a truncated

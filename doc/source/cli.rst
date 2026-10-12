@@ -398,6 +398,10 @@ Exporte le contenu de la base vers des fichiers.
   d'usage, contact) ; utilisé avec ``--watermark``.
 * ``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` (document
   résumant l'export: chemin, taille en octets, nombres).
+* ``--plan`` — Avec ``--type database`` ou ``matches`` : compte, famille par
+  famille, ce que l'export écrirait, sans écrire de fichier (``--file`` est
+  alors facultatif). Les comptes sont ceux que l'export rapporte ensuite ; les
+  collections vivantes qui partiraient figées sont nommées.
 
 ``--type database`` exporte toute la bibliothèque, comme l'export du serveur
 et comme la fenêtre d'export quand la liste affichée est la bibliothèque :

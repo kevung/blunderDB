@@ -283,7 +283,7 @@ func (cli *CLI) runSearch(args []string) error {
 		metadata["description"] = fmt.Sprintf("Exported from search: %d positions", len(filteredPositions))
 		metadata["dateOfCreation"] = time.Now().Format("2006-01-02 15:04:05")
 
-		err = cli.db.ExportDatabase(ExportOptions{
+		_, err = cli.db.ExportDatabase(ExportOptions{
 			ExportPath:         params.outputDB,
 			Positions:          filteredPositions,
 			Metadata:           metadata,

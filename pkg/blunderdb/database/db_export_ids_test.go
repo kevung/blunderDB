@@ -29,10 +29,10 @@ func TestExportByIDsMatchesExportByPositions(t *testing.T) {
 	byValue := filepath.Join(dir, "by-value.db")
 	byID := filepath.Join(dir, "by-id.db")
 
-	if err := source.ExportDatabase(ExportOptions{ExportPath: byValue, Positions: positions, Metadata: map[string]string{}}); err != nil {
+	if _, err := source.ExportDatabase(ExportOptions{ExportPath: byValue, Positions: positions, Metadata: map[string]string{}}); err != nil {
 		t.Fatalf("ExportDatabase (positions): %v", err)
 	}
-	if err := source.ExportDatabase(ExportOptions{ExportPath: byID, PositionIDs: ids, Metadata: map[string]string{}}); err != nil {
+	if _, err := source.ExportDatabase(ExportOptions{ExportPath: byID, PositionIDs: ids, Metadata: map[string]string{}}); err != nil {
 		t.Fatalf("ExportDatabase (identifiers): %v", err)
 	}
 
@@ -64,12 +64,12 @@ func TestExportByIDsPreservesTheRequestedOrder(t *testing.T) {
 	}
 
 	path := filepath.Join(t.TempDir(), "reversed.db")
-	if err := source.ExportDatabase(ExportOptions{ExportPath: path, PositionIDs: reversed, Metadata: map[string]string{}}); err != nil {
+	if _, err := source.ExportDatabase(ExportOptions{ExportPath: path, PositionIDs: reversed, Metadata: map[string]string{}}); err != nil {
 		t.Fatalf("ExportDatabase: %v", err)
 	}
 
 	forward := filepath.Join(t.TempDir(), "forward.db")
-	if err := source.ExportDatabase(ExportOptions{ExportPath: forward, Positions: positions, Metadata: map[string]string{}}); err != nil {
+	if _, err := source.ExportDatabase(ExportOptions{ExportPath: forward, Positions: positions, Metadata: map[string]string{}}); err != nil {
 		t.Fatalf("ExportDatabase: %v", err)
 	}
 
@@ -94,7 +94,7 @@ func TestExportByIDsSkipsUnknownIdentifiers(t *testing.T) {
 	ids := []int64{positions[0].ID, 999999, positions[1].ID}
 
 	path := filepath.Join(t.TempDir(), "partial.db")
-	if err := source.ExportDatabase(ExportOptions{ExportPath: path, PositionIDs: ids, Metadata: map[string]string{}}); err != nil {
+	if _, err := source.ExportDatabase(ExportOptions{ExportPath: path, PositionIDs: ids, Metadata: map[string]string{}}); err != nil {
 		t.Fatalf("ExportDatabase: %v", err)
 	}
 	if got := readExportedStates(t, path); len(got) != 2 {
