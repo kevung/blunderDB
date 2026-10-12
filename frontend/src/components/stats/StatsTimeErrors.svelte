@@ -8,8 +8,10 @@
     import { GetTimeErrors } from '../../../wailsjs/go/database/Database.js';
     import { logger } from '../../utils/logger.js';
     import PanelTable from '../panels/PanelTable.svelte';
+    import CountLink from '../panels/CountLink.svelte';
+    import { loadPositionsFromStatsSelection } from '../../services/positionLoader.js';
 
-    /** @type {{ player: string, bucket: number, decisions: number, scored: number, mean_error_mp: number, blunders: number }[]} */
+    /** @type {{ player: string, bucket: number, decisions: number, scored: number, mean_error_mp: number, blunders: number, positions: number }[]} */
     let rows = $state([]);
 
     const BAND_KEYS = ['stats.timeBandUnder5', 'stats.timeBand5to15', 'stats.timeBand15to30', 'stats.timeBandOver30'];
@@ -29,6 +31,9 @@
     const rateValue = (/** @type {Row} */ r) => (r.scored > 0 ? (100 * r.blunders) / r.scored : null);
     const rate = (/** @type {Row} */ r) => (r.scored > 0 ? /** @type {number} */ (rateValue(r)).toFixed(1) + ' %' : '');
 
+    // The table reads every timed decision whatever the filter, and so does its selection.
+    const open = (/** @type {Row} */ r) => loadPositionsFromStatsSelection({}, { Kind: 'time_band', Player: r.player, TimeBucket: r.bucket });
+
     const columns = $derived([
         { key: 'player', label: $t('stats.timePlayer'), sortable: true, filter: /** @type {const} */ ('text'), value: (/** @type {Row} */ r) => r.player },
         { key: 'band', label: $t('stats.timeBand'), sortable: true, value: (/** @type {Row} */ r) => r.bucket },
@@ -39,7 +44,7 @@
             defaultDir: 'desc',
             align: 'right',
             filter: /** @type {const} */ ('number'),
-            value: (/** @type {Row} */ r) => r.decisions
+            value: (/** @type {Row} */ r) => r.positions
         },
         {
             key: 'mean',
@@ -61,7 +66,14 @@
             {#snippet cells(/** @type {Row} */ r)}
                 <td>{r.player}</td>
                 <td>{$t(BAND_KEYS[r.bucket])}</td>
-                <td class="align-right">{r.decisions}</td>
+                <td class="align-right"
+                    >{#if r.positions > 0}<CountLink
+                            label={r.positions}
+                            testid="time-band-{r.bucket}"
+                            onclick={() => open(r)}
+                            title={$t('stats.breakdownOpenPositions', { n: r.positions, decisions: r.decisions })}
+                        />{:else}0{/if}</td
+                >
                 <td class="align-right">{mean(r)}</td>
                 <td class="align-right">{rate(r)}</td>
             {/snippet}

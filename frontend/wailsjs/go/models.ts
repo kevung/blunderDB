@@ -976,6 +976,15 @@ export namespace database {
 	    Breakdown: string;
 	    BreakdownKey: string;
 	    OnlyBlunders: boolean;
+	    Bias: string;
+	    BiasScore: string;
+	    BiasSide: string;
+	    GameType: string;
+	    FamilyKind: string;
+	    StudiedOn: string;
+	    Window: string;
+	    Player: string;
+	    TimeBucket: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new SelectionSpec(source);
@@ -996,6 +1005,15 @@ export namespace database {
 	        this.Breakdown = source["Breakdown"];
 	        this.BreakdownKey = source["BreakdownKey"];
 	        this.OnlyBlunders = source["OnlyBlunders"];
+	        this.Bias = source["Bias"];
+	        this.BiasScore = source["BiasScore"];
+	        this.BiasSide = source["BiasSide"];
+	        this.GameType = source["GameType"];
+	        this.FamilyKind = source["FamilyKind"];
+	        this.StudiedOn = source["StudiedOn"];
+	        this.Window = source["Window"];
+	        this.Player = source["Player"];
+	        this.TimeBucket = source["TimeBucket"];
 	    }
 	}
 	export class SessionState {
@@ -7109,6 +7127,9 @@ export namespace storage {
 	    Low: number;
 	    High: number;
 	    Verdict: string;
+	    Positions: number;
+	    PlusPositions: number;
+	    MinusPositions: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new ScoreBias(source);
@@ -7128,6 +7149,9 @@ export namespace storage {
 	        this.Low = source["Low"];
 	        this.High = source["High"];
 	        this.Verdict = source["Verdict"];
+	        this.Positions = source["Positions"];
+	        this.PlusPositions = source["PlusPositions"];
+	        this.MinusPositions = source["MinusPositions"];
 	    }
 	}
 	export class SignedBias {
@@ -7140,6 +7164,9 @@ export namespace storage {
 	    Low: number;
 	    High: number;
 	    Verdict: string;
+	    Positions: number;
+	    PlusPositions: number;
+	    MinusPositions: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new SignedBias(source);
@@ -7156,6 +7183,9 @@ export namespace storage {
 	        this.Low = source["Low"];
 	        this.High = source["High"];
 	        this.Verdict = source["Verdict"];
+	        this.Positions = source["Positions"];
+	        this.PlusPositions = source["PlusPositions"];
+	        this.MinusPositions = source["MinusPositions"];
 	    }
 	}
 	export class DirectionalBiases {
@@ -7973,6 +8003,7 @@ export namespace storage {
 	    Errors: number;
 	    Loss: number;
 	    Rate: number;
+	    Positions: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new StudyEffectWindow(source);
@@ -7984,6 +8015,7 @@ export namespace storage {
 	        this.Errors = source["Errors"];
 	        this.Loss = source["Loss"];
 	        this.Rate = source["Rate"];
+	        this.Positions = source["Positions"];
 	    }
 	}
 	export class StudyEffectFamily {
@@ -8197,6 +8229,7 @@ export namespace storage {
 	    scored: number;
 	    mean_error_mp: number;
 	    blunders: number;
+	    positions: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new TimeErrorRow(source);
@@ -8210,6 +8243,7 @@ export namespace storage {
 	        this.scored = source["scored"];
 	        this.mean_error_mp = source["mean_error_mp"];
 	        this.blunders = source["blunders"];
+	        this.positions = source["positions"];
 	    }
 	}
 	export class UsualLevel {

@@ -2,9 +2,15 @@
     // Biais signés (ADR-0079) : dans quel sens les décisions se trompent, pas seulement combien.
     // Chaque biais est la part des décisions fautives dans un sens moins la part dans l'autre,
     // avec son intervalle ; un sens n'est nommé que si l'intervalle exclut zéro.
-    import { biasesStore, studyLoopLoadingStore, studyLoopErrorStore } from '../../stores/statsStore.js';
+    import { biasesStore, studyLoopFilterStore, studyLoopLoadingStore, studyLoopErrorStore } from '../../stores/statsStore.js';
     import { t } from '../../i18n/index.js';
     import PanelTable from '../panels/PanelTable.svelte';
+    import CountLink from '../panels/CountLink.svelte';
+    import { loadPositionsFromStatsSelection } from '../../services/positionLoader.js';
+
+    /** The axis of each row, as the "bias" selection names it. */
+    /** @type {Record<string, string>} */
+    const AXES = { takePass: 'take_pass', doubles: 'doubles', blots: 'blots' };
 
     let biases = $derived($biasesStore);
     let rows = $derived(
@@ -30,6 +36,20 @@
         return b.Verdict === 'too_much' || b.Verdict === 'too_little' ? $t(`stats.biases_${id}_${b.Verdict}`) : $t(`stats.biasesVerdict_${b.Verdict}`);
     }
 
+    /** The key of a doubling score cell, as the "bias" selection names it. */
+    /** @param {any} c */
+    function scoreKey(c) {
+        return c.Money ? 'money' : `${c.MoverAway}-${c.OpponentAway}`;
+    }
+
+    /**
+     * Open the positions behind one count, under the filter the biases were computed with.
+     * @param {string} axis @param {string} biasScore @param {string} side
+     */
+    function open(axis, biasScore, side) {
+        loadPositionsFromStatsSelection($studyLoopFilterStore, { Kind: 'bias', Bias: axis, BiasScore: biasScore, BiasSide: side });
+    }
+
     /** @param {any} c */
     function score(c) {
         return c.Money ? $t('stats.biasesMoney') : `${c.MoverAway}-${c.OpponentAway}`;
@@ -43,9 +63,9 @@
     function figureColumns(of, verdictOf) {
         const num = /** @type {const} */ ('number');
         return [
-            { key: 'decisions', label: $t('stats.biasesDecisions'), sortable: true, defaultDir: 'desc', align: 'right', filter: num, value: (/** @type {any} */ r) => of(r).Decisions },
-            { key: 'plus', sortable: true, defaultDir: 'desc', align: 'right', filter: num, value: (/** @type {any} */ r) => of(r).Plus },
-            { key: 'minus', sortable: true, defaultDir: 'desc', align: 'right', filter: num, value: (/** @type {any} */ r) => of(r).Minus },
+            { key: 'decisions', label: $t('stats.biasesDecisions'), sortable: true, defaultDir: 'desc', align: 'right', filter: num, value: (/** @type {any} */ r) => of(r).Positions },
+            { key: 'plus', sortable: true, defaultDir: 'desc', align: 'right', filter: num, value: (/** @type {any} */ r) => of(r).PlusPositions },
+            { key: 'minus', sortable: true, defaultDir: 'desc', align: 'right', filter: num, value: (/** @type {any} */ r) => of(r).MinusPositions },
             { key: 'bias', label: $t('stats.biasesValue'), sortable: true, align: 'right', filter: num, value: (/** @type {any} */ r) => 100 * of(r).Bias },
             { key: 'interval', label: $t('stats.planInterval'), align: 'right' },
             { key: 'verdict', label: $t('stats.effectVerdict'), sortable: true, filter: /** @type {const} */ ('text'), value: verdictOf }
@@ -81,6 +101,10 @@
     });
 </script>
 
+{#snippet count(/** @type {number} */ n, /** @type {number} */ decisions, /** @type {string} */ testid, /** @type {() => void} */ onclick)}
+    {#if n > 0}<CountLink label={n} {testid} {onclick} title={$t('stats.breakdownOpenPositions', { n, decisions })} />{:else}0{/if}
+{/snippet}
+
 <section class="chart-section biases" data-testid="biases">
     <h3 class="section-title" title={$t('stats.biasesHint', { n: biases?.MinDecisions ?? 20 })}>{$t('stats.biasesTitle')}</h3>
     {#if $studyLoopLoadingStore}
@@ -91,9 +115,13 @@
         <PanelTable viewId="stats.biases.axes" {rows} columns={axisColumns} rowAttrs={() => ({ 'data-testid': 'bias-row' })}>
             {#snippet cells(/** @type {any} */ r)}
                 <td>{$t(`stats.biases_${r.id}`)}</td>
-                <td class="align-right">{r.b.Decisions}</td>
-                <td class="align-right" title={$t(`stats.biases_${r.id}_plus`)}>{r.b.Plus} <span class="count">({r.b.PlusMP} mp)</span></td>
-                <td class="align-right" title={$t(`stats.biases_${r.id}_minus`)}>{r.b.Minus} <span class="count">({r.b.MinusMP} mp)</span></td>
+                <td class="align-right">{@render count(r.b.Positions, r.b.Decisions, `bias-${r.id}-all`, () => open(AXES[r.id], '', ''))}</td>
+                <td class="align-right" title={$t(`stats.biases_${r.id}_plus`)}
+                    >{@render count(r.b.PlusPositions, r.b.Plus, `bias-${r.id}-plus`, () => open(AXES[r.id], '', 'plus'))} <span class="count">({r.b.PlusMP} mp)</span></td
+                >
+                <td class="align-right" title={$t(`stats.biases_${r.id}_minus`)}
+                    >{@render count(r.b.MinusPositions, r.b.Minus, `bias-${r.id}-minus`, () => open(AXES[r.id], '', 'minus'))} <span class="count">({r.b.MinusMP} mp)</span></td
+                >
                 <td class="align-right"><b>{pp(r.b.Bias)}</b></td>
                 <td class="align-right interval">[{pp(r.b.Low)}, {pp(r.b.High)}]</td>
                 <td class="verdict {r.b.Verdict}">{verdict(r.id, r.b)}</td>
@@ -110,18 +138,12 @@
         {/if}
         {#if scoreCells.length > 0}
             <h4 class="sub-title">{$t('stats.biasesByScore')}</h4>
-            <PanelTable
-                viewId="stats.biases.scores"
-                rows={scoreCells}
-                rowKey={(c) => (c.Money ? 'money' : '') + c.MoverAway + '-' + c.OpponentAway}
-                columns={scoreColumns}
-                rowAttrs={() => ({ 'data-testid': 'bias-score' })}
-            >
+            <PanelTable viewId="stats.biases.scores" rows={scoreCells} rowKey={scoreKey} columns={scoreColumns} rowAttrs={() => ({ 'data-testid': 'bias-score' })}>
                 {#snippet cells(/** @type {any} */ c)}
                     <td>{score(c)}</td>
-                    <td class="align-right">{c.Decisions}</td>
-                    <td class="align-right">{c.Plus}</td>
-                    <td class="align-right">{c.Minus}</td>
+                    <td class="align-right">{@render count(c.Positions, c.Decisions, `bias-score-${scoreKey(c)}-all`, () => open('doubles', scoreKey(c), ''))}</td>
+                    <td class="align-right">{@render count(c.PlusPositions, c.Plus, `bias-score-${scoreKey(c)}-plus`, () => open('doubles', scoreKey(c), 'plus'))}</td>
+                    <td class="align-right">{@render count(c.MinusPositions, c.Minus, `bias-score-${scoreKey(c)}-minus`, () => open('doubles', scoreKey(c), 'minus'))}</td>
                     <td class="align-right"><b>{pp(c.Bias)}</b></td>
                     <td class="align-right interval">[{pp(c.Low)}, {pp(c.High)}]</td>
                     <td class="verdict {c.Verdict}">{verdict('doubles', c)}</td>

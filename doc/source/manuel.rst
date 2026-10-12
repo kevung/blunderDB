@@ -1848,6 +1848,11 @@ le temps et l'erreur : pour chaque joueur et chaque tranche de durée connue
 l'erreur moyenne et la part de blunders. Une décision dont l'erreur n'est pas
 enregistrée est comptée sans entrer dans la moyenne.
 
+Chaque nombre de décisions de ce tableau est un lien : il affiche les
+positions distinctes de ces décisions et les ouvre ; l'info-bulle donne le
+nombre de décisions. Le tableau et ses liens lisent toutes les décisions
+chronométrées de la base, sans le filtre du panneau.
+
 Un match joué ici, issu d'un Duel, porte son origine dans l'onglet **Infos** de
 sa fiche, sous le titre **Provenance**, sur une ligne, même s'il n'a aucun coup : « Joué ici », puis,
 s'il y a lieu, « Perdu au temps » avec le joueur dont la réserve s'est épuisée
@@ -3374,6 +3379,10 @@ dans le plan.
   fenêtre compte au moins **30 décisions** et que l'intervalle exclut zéro ;
   sinon il reste « indéterminé » ou « trop peu de décisions ».
 
+Le nombre entre parenthèses de chaque fenêtre est un lien : il affiche les
+positions distinctes de ses décisions et les ouvre ; l'info-bulle donne le
+nombre de décisions.
+
 C'est un changement, pas un effet : une famille est étudiée parce qu'elle
 coûtait, et une part du gain est une régression vers la moyenne ; rien ne
 contrôle les adversaires, le format ni les dés. En ligne de commande :
@@ -3410,6 +3419,11 @@ nommé qu'à partir de **20 décisions** et d'un intervalle qui exclut zéro.
 une position jouée dans plusieurs matchs y compte avec le coup joué dans
 chacun. Les biais suivent le filtre du panneau. En ligne de commande :
 ``blunderdb stats biases`` (voir :ref:`cli_stats`).
+
+Chaque compte (décisions, d'un sens, de l'autre) est un lien : il affiche les
+positions distinctes de ces décisions et les ouvre ; une position jouée dans
+plusieurs matchs n'y compte qu'une fois, et l'info-bulle donne le nombre de
+décisions.
 
 PR glissant sur N dernières décisions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
