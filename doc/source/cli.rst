@@ -1818,6 +1818,39 @@ volontairement jamais estimé (voir `ADR-0009 <https://github.com/kevung/blunder
    # Avec la table TS-06-11 calculée : exact jusqu'à onze pions par joueur
    ./blunderdb epc --bearoff-ts ~/.local/share/blunderdb/gnubg_ts6x11.bd 'XGID=…'
 
+capture — Position depuis une capture d'écran
+----------------------------------------------
+
+Lit la position que montre une capture d'écran d'un plateau eXtreme Gammon
+(thème par défaut) : pions, barre, pions sortis (ce qui manque à quinze), dés,
+camp au trait et videau. L'image (PNG, JPEG ou GIF) peut avoir n'importe quelle
+taille et contenir autre chose que le plateau. Le score n'est jamais lu. Ce que
+la lecture ne peut trancher est listé comme un doute, jamais deviné : flèche
+masquée, pile plus haute que les cinq pions que XG dessine côte à côte, dés
+illisibles.
+
+.. code-block:: bash
+
+   ./blunderdb capture [options] <image>
+
+**Options:**
+
+* ``--format`` — Format de sortie : ``text``, ``json`` ou ``xgid`` (défaut : ``text``).
+* ``--db`` et ``--save`` — Enregistre la position dans la base comme position
+  individuelle.
+* ``--force`` — Enregistre même quand la lecture comporte des doutes.
+
+**Exemples:**
+
+.. code-block:: bash
+
+   ./blunderdb capture capture.png
+   ./blunderdb capture --format xgid capture.png
+   ./blunderdb capture --db base.db --save capture.png
+
+Le daemon offre la même lecture : ``POST /v1/positions.fromImage`` avec
+``{"data": "<image en base64>"}``.
+
 bearoff — Bases de sortie
 --------------------------
 

@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/capture"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/race"
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
@@ -47,6 +48,11 @@ type parseTextReq struct {
 
 // xgpReq carries a base64-encoded .xgp single-position file.
 type xgpReq struct {
+	Data string `json:"data"`
+}
+
+// imageReq carries a screen capture (PNG, JPEG or GIF), base64-encoded.
+type imageReq struct {
 	Data string `json:"data"`
 }
 
@@ -179,6 +185,21 @@ func (s *Server) positionRoutes() []route {
 				resp.Analysis = graphs[0].Analyses[0]
 			}
 			return resp, nil
+		})},
+		// Read the position a screen capture of another program's board shows
+		// (pure; no storage). The image arrives base64-encoded; the reading
+		// carries its doubts, for a correction step before the position is
+		// saved like any other. Same package as the GUI and the CLI.
+		{http.MethodPost, "/v1/positions.fromImage", rpc(func(ctx context.Context, scope string, req imageReq) (capture.Reading, error) {
+			raw, err := base64.StdEncoding.DecodeString(req.Data)
+			if err != nil {
+				return capture.Reading{}, fmt.Errorf("%w: bad base64 data", storage.ErrInvalid)
+			}
+			rd, err := capture.Decode(raw)
+			if err != nil {
+				return capture.Reading{}, fmt.Errorf("%w: %w", storage.ErrInvalid, err)
+			}
+			return rd, nil
 		})},
 		// Parse pasted clipboard / file text (bare XGID, XG human-readable export,
 		// or blunderDB internal export) into a Position + optional analysis +

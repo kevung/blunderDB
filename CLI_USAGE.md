@@ -48,6 +48,7 @@ When you provide a CLI command as the first argument, it automatically runs in h
 - `training` - The Training journal (sessions, missed positions)
 - `cubematrix` - Cube verdict at every score of a match, for one position
 - `epc` - EPC, win probability and money cube verdict (bearoff)
+- `capture` - Read a position from a screen capture of an XG board
 - `rollout` - Roll out a position's plays or cube decision (gammonNet)
 - `bearoff` - Generate, list, verify and delete the bearoff tables
 - `analyze` - Write a gammonNet analysis for every position missing one
@@ -1021,6 +1022,24 @@ its measured error bound; the cube verdict is deliberately never estimated
 # With the downloaded TS-06-11 (exact up to 11 checkers per player)
 ./blunderDB epc --bearoff-ts ~/.local/share/blunderdb/gnubg_ts6x11.bd 'XGID=…'
 ```
+
+## Capture Command
+
+Read the position a screen capture of an eXtreme Gammon board shows (default
+theme; PNG, JPEG or GIF, at any size): checkers, bar, borne-off checkers
+(what the board lacks of fifteen), dice, player on roll and cube. The score is
+not read. What the reading cannot settle — a hidden point, a stack taller than
+the five checkers XG draws side by side, unreadable dice — is listed as a
+doubt, never guessed; `--save` refuses a reading with doubts unless `--force`.
+
+```bash
+./blunderDB capture screenshot.png
+./blunderDB capture --format xgid screenshot.png
+./blunderDB capture --db database.db --save screenshot.png
+```
+
+The daemon serves the same reading: `POST /v1/positions.fromImage` with
+`{"data": "<base64 image>"}`.
 
 ## Rollout Command
 
@@ -2417,6 +2436,32 @@ Options:
 
 Examples:
   blunderdb bearoff verify ~/.local/share/blunderDB/gnubg_ts6x6.bd
+```
+
+### `blunderdb capture`
+
+```
+Usage: blunderdb capture [options] <image>
+
+Read the position a screen capture of an eXtreme Gammon board shows
+(PNG, JPEG or GIF, at any size): checkers, bar, borne-off checkers,
+dice, cube and player on roll. The score is not read. Whatever the
+reading cannot settle is listed as a doubt, never guessed.
+
+Options:
+  -db string
+    	Database to save the position into (with --save)
+  -force
+    	Save even when the reading has doubts
+  -format string
+    	Output format: text, json, xgid (default "text")
+  -save
+    	Save the position into --db as an individual position
+
+Examples:
+  blunderdb capture screenshot.png
+  blunderdb capture --format xgid screenshot.png
+  blunderdb capture --db my.db --save screenshot.png
 ```
 
 ### `blunderdb collection create`

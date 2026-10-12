@@ -13,6 +13,9 @@ import (
 func (t *theme) readExtras(r *raster, g registration, rd *Reading, aIsBottom bool, checkers []image.Point) {
 	rd.Unread = append(rd.Unread, "score")
 	pos := &rd.Position
+	// Unread, the score stays at money play — the one value that makes no
+	// claim about a match — until the user sets it.
+	pos.Score = [2]int{-1, -1}
 	playerOf := func(c class) int {
 		if (c == clsCheckerA) == aIsBottom {
 			return domain.Black

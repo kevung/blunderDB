@@ -433,6 +433,8 @@ var databaseParity = map[string]parityEntry{
 	"OpenDatabase":                      {Why: whyLifecycle},
 	"OpenProtectedCopyPath":             {CLI: "open", Why: whyIssuance},
 	"ParsePositionText":                 {CLI: "import --type position", Server: "/v1/positions.parseText"},
+	"ReadCaptureData":                   {CLI: "capture", Server: "/v1/positions.fromImage"},
+	"ReadCaptureFile":                   {CLI: "capture", Server: "/v1/positions.fromImage"},
 	"RefreshSearchStatistics":           {Why: whyWrapper},
 	"RemoveMatchFromTournament":         {Server: "/v1/tournaments.removeMatch", Why: whyGUIEdit},
 	"RemovePositionFromCollection":      {Server: "/v1/collections.removePosition", Why: whyGUIEdit},
