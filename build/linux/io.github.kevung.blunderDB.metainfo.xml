@@ -86,13 +86,13 @@
   </branding>
 
   <releases>
-    <release version="0.40.0" date="2026-10-11">
+    <release version="0.40.0" date="2026-10-12">
       <description>
         <ul>
-          <li>Anki .apkg export: a study deck or a collection becomes a deck the Anki app imports on desktop or phone</li>
-          <li>Duel: start from the board or a given score, keep or reroll its dice, play a single game, cadences in minutes per point, hidden pipcount</li>
-          <li>Repair a match from its source file; swapping a match's players keeps its analyses</li>
-          <li>Rotate a video by quarter turns, tournament dates derived from their matches, and the match sheet inside the Tournaments panel</li>
+          <li>Much faster 3- and 4-ply gammonNet search (gammonNet v1.7.0), cancellable mid-search with depth and progress in the status bar; earlier gammonNet analyses are marked stale</li>
+          <li>Maintenance tab: the database's health, one line per operation with its count, last run and action; opening a database writes nothing</li>
+          <li>Stats: one shared filter, sortable and filterable columns, and every count opens exactly what it counts</li>
+          <li>Database export carries transcription drafts, aliases, living collections and optional Anki history; Anki .apkg export; repair a match from its source file</li>
         </ul>
       </description>
     </release>

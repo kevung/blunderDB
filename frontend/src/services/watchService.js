@@ -126,7 +126,8 @@ export async function stopWatch() {
 
 export async function refreshWatchStatus() {
     try {
-        watchStatusStore.set(await FolderWatchStatus());
+        // Un statut absent vaut « rien n'est surveillé » : le panneau lit .running sans garde.
+        watchStatusStore.set((await FolderWatchStatus()) ?? { running: false, folder: '', intervalSeconds: 0 });
     } catch (error) {
         logger.error('could not read the folder-watch status:', error);
     }
