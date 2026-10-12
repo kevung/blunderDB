@@ -6,6 +6,8 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -14,233 +16,309 @@ import (
 // the daemon answers it. Its counts are those of the ExportReport the export
 // would return — the plan walks the same resolved selection (resolveSelection)
 // and keeps a row by the rule the writer applies to it.
+//
+// It holds counts only, so its size does not grow with the library; the ids
+// behind one count are asked for with PlanExportIDs, a page at a time.
 type ExportPlan struct {
-	Positions      PlanFamily `json:"positions"`
-	Comments       PlanFamily `json:"comments"`
-	Matches        PlanFamily `json:"matches"`
-	Tournaments    PlanFamily `json:"tournaments"`
-	Collections    PlanFamily `json:"collections"`
-	Lessons        PlanFamily `json:"lessons"`
-	AnkiDecks      PlanFamily `json:"ankiDecks"`
-	Transcriptions PlanFamily `json:"transcriptions"`
-	Aliases        PlanFamily `json:"aliases"`
-	Filters        PlanFamily `json:"filters"`
+	Positions      int `json:"positions"`
+	Comments       int `json:"comments"`
+	Matches        int `json:"matches"`
+	Tournaments    int `json:"tournaments"`
+	Collections    int `json:"collections"`
+	Lessons        int `json:"lessons"`
+	AnkiDecks      int `json:"ankiDecks"`
+	Transcriptions int `json:"transcriptions"`
+	Aliases        int `json:"aliases"`
+	Filters        int `json:"filters"`
 	// FrozenCollections are the LIVING collections whose query names a row the
 	// file will not hold: they leave as the plain list their query selects now.
-	FrozenCollections []PlannedCollection `json:"frozenCollections"`
+	FrozenCollections []PlannedRow `json:"frozenCollections"`
+	// DegradedAnkiDecks are the search decks whose source loses part of what it
+	// said on the way (ExportReport.DegradedAnkiDecks).
+	DegradedAnkiDecks []PlannedRow `json:"degradedAnkiDecks"`
 }
 
-// PlanFamily counts one family of an export. IDs are the source's own ids of
-// the rows that leave, so a count can open them; Comments lists the positions
-// that carry them. Names stand for the families that have no id worth
-// opening: aliases (as "alias → canonical") and saved filters.
-type PlanFamily struct {
-	Count int      `json:"count"`
-	IDs   []int64  `json:"ids"`
-	Names []string `json:"names"`
-}
-
-// PlannedCollection names a collection of the plan.
-type PlannedCollection struct {
+// PlannedRow names a row of the plan. Both of its lists are bounded by the
+// number of collections or decks, never by the number of positions.
+type PlannedRow struct {
 	ID   int64  `json:"id"`
 	Name string `json:"name"`
 }
 
-func (f *PlanFamily) addID(id int64) {
-	f.Count++
-	f.IDs = append(f.IDs, id)
+// The families whose ids PlanExportIDs pages through. Aliases have no id; a
+// comment is opened through the position that carries it.
+const (
+	PlanPositions      = "positions"
+	PlanComments       = "comments" // the positions that carry the comments
+	PlanMatches        = "matches"
+	PlanTournaments    = "tournaments"
+	PlanCollections    = "collections"
+	PlanLessons        = "lessons"
+	PlanAnkiDecks      = "ankiDecks"
+	PlanTranscriptions = "transcriptions"
+	PlanFilters        = "filters"
+)
+
+// MaxPlannedIDs bounds one page of PlanExportIDs.
+const MaxPlannedIDs = 1000
+
+// PlannedIDs is one page of the source ids behind a count of the plan.
+type PlannedIDs struct {
+	Family string  `json:"family"`
+	Total  int     `json:"total"`
+	Offset int     `json:"offset"`
+	IDs    []int64 `json:"ids"`
 }
 
 // PlanExport counts what ExportSQLite would write for opts, writing nothing.
-// The maps from source ids to file ids are identities here: a row "has a
-// number in the file" exactly when it is planned, which is all the living
-// queries, filters, aliases and drafts ask of them.
 func PlanExport(ctx context.Context, src storage.Storage, scope string, opts ExportOptions) (ExportPlan, error) {
-	e := &exporter{
-		ctx: ctx, src: src, scope: scope, opts: opts,
-		posMap: make(map[int64]int64), written: make(map[int64]bool),
-		collMap: make(map[int64]int64), tourMap: make(map[int64]int64), matchMap: make(map[int64]int64),
-		livingEvals: make(map[int64]*storage.CollectionEvaluation),
-	}
-	if err := e.resolveSelection(); err != nil {
+	p, err := newPlanner(ctx, src, scope, opts)
+	if err != nil {
 		return ExportPlan{}, err
 	}
-	plan := ExportPlan{FrozenCollections: []PlannedCollection{}}
-	for _, step := range []func(*ExportPlan) error{
-		e.planPositions,
-		e.planComments,
-		e.planTournaments,
-		e.planMatches,
-		e.planCollections,
-		e.planLessons,
-		e.planAliases,
-		e.planTranscriptions,
-		e.planFilters,
-		e.planAnkiDecks,
-	} {
-		if err := ctx.Err(); err != nil {
-			return ExportPlan{}, err
-		}
-		if err := step(&plan); err != nil {
-			return ExportPlan{}, err
-		}
-	}
-	return plan, nil
+	return p.plan, nil
 }
 
-// planPositions keeps the positions that exist, once each, in writePositions'
-// order. Positions the caller supplied whole are written whether stored or not;
-// one without an id has no number to open but is counted.
-func (e *exporter) planPositions(plan *ExportPlan) error {
-	sel := e.opts.Selection
-	keep := func(id int64) {
-		if _, done := e.posMap[id]; done {
+// PlanExportIDs pages through the source ids of one family of opts' plan, so
+// a count can open what it counts. limit is capped at MaxPlannedIDs (and
+// defaults to it).
+func PlanExportIDs(ctx context.Context, src storage.Storage, scope string, opts ExportOptions, family string, offset, limit int) (PlannedIDs, error) {
+	if _, ok := plannedFamilies[family]; !ok {
+		return PlannedIDs{}, fmt.Errorf("%w: no ids for export family %q", storage.ErrInvalid, family)
+	}
+	p, err := newPlanner(ctx, src, scope, opts)
+	if err != nil {
+		return PlannedIDs{}, err
+	}
+	ids := p.ids[family]
+	if limit <= 0 || limit > MaxPlannedIDs {
+		limit = MaxPlannedIDs
+	}
+	offset = max(0, min(offset, len(ids)))
+	page := slices.Clone(ids[offset:min(offset+limit, len(ids))])
+	if page == nil {
+		page = []int64{}
+	}
+	return PlannedIDs{Family: family, Total: len(ids), Offset: offset, IDs: page}, nil
+}
+
+var plannedFamilies = map[string]struct{}{
+	PlanPositions: {}, PlanComments: {}, PlanMatches: {}, PlanTournaments: {}, PlanCollections: {},
+	PlanLessons: {}, PlanAnkiDecks: {}, PlanTranscriptions: {}, PlanFilters: {},
+}
+
+// planner is one plan's walk. The exporter's maps from source ids to file ids
+// are identities here: a row "has a number in the file" exactly when it is
+// planned, which is all the living queries, filters, aliases, drafts and deck
+// sources ask of them.
+type planner struct {
+	*exporter
+	plan ExportPlan
+	ids  map[string][]int64
+}
+
+func newPlanner(ctx context.Context, src storage.Storage, scope string, opts ExportOptions) (*planner, error) {
+	p := &planner{
+		exporter: &exporter{
+			ctx: ctx, src: src, scope: scope, opts: opts,
+			posMap: make(map[int64]int64), written: make(map[int64]bool),
+			collMap: make(map[int64]int64), tourMap: make(map[int64]int64), matchMap: make(map[int64]int64),
+			livingEvals: make(map[int64]*storage.CollectionEvaluation),
+		},
+		plan: ExportPlan{FrozenCollections: []PlannedRow{}, DegradedAnkiDecks: []PlannedRow{}},
+		ids:  make(map[string][]int64),
+	}
+	if err := p.resolveSelection(); err != nil {
+		return nil, err
+	}
+	for _, step := range []func() error{
+		p.positions,
+		p.comments,
+		p.tournaments,
+		p.matches,
+		p.collections,
+		p.lessons,
+		p.aliases,
+		p.transcriptions,
+		p.filters,
+		p.ankiDecks,
+	} {
+		if err := ctx.Err(); err != nil {
+			return nil, err
+		}
+		if err := step(); err != nil {
+			return nil, err
+		}
+	}
+	return p, nil
+}
+
+func (p *planner) add(family string, count *int, id int64) {
+	*count++
+	p.ids[family] = append(p.ids[family], id)
+}
+
+// positions keeps what writePositions writes: each position once per Zobrist
+// hash, as the file's Save deduplicates. The positions of the whole library
+// are taken by id alone: a library already holds one row per hash.
+func (p *planner) positions() error {
+	sel := p.opts.Selection
+	hashes := make(map[uint64]bool)
+	keep := func(pos *domain.Position) {
+		if pos.ID > 0 {
+			if _, done := p.posMap[pos.ID]; done {
+				return
+			}
+			p.posMap[pos.ID] = pos.ID
+		}
+		h := engine.PopulatePositionColumns(pos).ZobristHash
+		if hashes[h] {
 			return
 		}
-		e.posMap[id] = id
-		plan.Positions.addID(id)
+		hashes[h] = true
+		p.plan.Positions++
+		if pos.ID > 0 {
+			p.ids[PlanPositions] = append(p.ids[PlanPositions], pos.ID)
+		}
 	}
 	existing := func(ids []int64) error {
 		for start := 0; start < len(ids); start += positionBatch {
-			loaded, err := e.src.Positions().LoadByIDs(e.ctx, e.scope, ids[start:min(start+positionBatch, len(ids))])
+			loaded, err := p.src.Positions().LoadByIDs(p.ctx, p.scope, ids[start:min(start+positionBatch, len(ids))])
 			if err != nil {
 				return fmt.Errorf("cannot read the positions to export: %w", err)
 			}
 			for i := range loaded {
-				keep(loaded[i].ID)
+				keep(&loaded[i])
 			}
 		}
 		return nil
 	}
 	switch {
 	case sel.AllPositions:
-		ids, err := e.src.Positions().ListIDs(e.ctx, e.scope, storage.ListOpts{})
+		ids, err := p.src.Positions().ListIDs(p.ctx, p.scope, storage.ListOpts{})
 		if err != nil {
 			return fmt.Errorf("ingest: list positions: %w", err)
 		}
 		for _, id := range ids {
-			keep(id)
+			if _, done := p.posMap[id]; !done {
+				p.posMap[id] = id
+				p.add(PlanPositions, &p.plan.Positions, id)
+			}
 		}
 	case len(sel.Positions) > 0:
-		for _, p := range sel.Positions {
-			if p.ID > 0 {
-				keep(p.ID)
-			} else {
-				plan.Positions.Count++
-			}
+		for _, pos := range sel.Positions {
+			keep(pos)
 		}
 	default:
 		if err := existing(sel.PositionIDs); err != nil {
 			return err
 		}
 	}
-	return existing(e.extraPositionIDs)
+	return existing(p.extraPositionIDs)
 }
 
-func (e *exporter) planComments(plan *ExportPlan) error {
-	if !e.opts.Comments {
+func (p *planner) comments() error {
+	if !p.opts.Comments {
 		return nil
 	}
-	ids := plan.Positions.IDs
+	ids := p.ids[PlanPositions]
 	for start := 0; start < len(ids); start += positionBatch {
 		batch := ids[start:min(start+positionBatch, len(ids))]
-		comments, err := e.src.Comments().ByPositions(e.ctx, e.scope, batch)
+		comments, err := p.src.Comments().ByPositions(p.ctx, p.scope, batch)
 		if err != nil {
 			return fmt.Errorf("cannot read comments to export: %w", err)
 		}
 		for _, id := range batch {
 			if n := len(comments[id]); n > 0 {
-				plan.Comments.Count += n
-				plan.Comments.IDs = append(plan.Comments.IDs, id)
+				p.plan.Comments += n
+				p.ids[PlanComments] = append(p.ids[PlanComments], id)
 			}
 		}
 	}
 	return nil
 }
 
-func (e *exporter) planTournaments(plan *ExportPlan) error {
-	for _, id := range e.tournamentIDs {
-		if _, err := e.src.Tournaments().Get(e.ctx, e.scope, id); err != nil {
+func (p *planner) tournaments() error {
+	for _, id := range p.tournamentIDs {
+		if _, err := p.src.Tournaments().Get(p.ctx, p.scope, id); err != nil {
 			continue
 		}
-		e.tourMap[id] = id
-		plan.Tournaments.addID(id)
+		p.tourMap[id] = id
+		p.add(PlanTournaments, &p.plan.Tournaments, id)
 	}
 	return nil
 }
 
-func (e *exporter) planMatches(plan *ExportPlan) error {
-	for _, id := range e.matchIDs {
-		m, err := e.src.Matches().Get(e.ctx, e.scope, id)
+func (p *planner) matches() error {
+	for _, id := range p.matchIDs {
+		m, err := p.src.Matches().Get(p.ctx, p.scope, id)
 		if err != nil {
 			continue
 		}
-		e.matchMap[id] = id
-		e.noteMatchNames(m)
-		plan.Matches.addID(id)
+		p.matchMap[id] = id
+		p.noteMatchNames(m)
+		p.add(PlanMatches, &p.plan.Matches, id)
 	}
 	return nil
 }
 
-// planCollections also settles each LIVING collection as writeLivingQueries
+// collections also settles each LIVING collection as writeLivingQueries
 // does: once every family has its numbers, a query that cannot say in the
 // file what it says here marks the collection frozen.
-func (e *exporter) planCollections(plan *ExportPlan) error {
-	for _, id := range e.collectionIDs {
-		c, err := e.src.Collections().Get(e.ctx, e.scope, id)
+func (p *planner) collections() error {
+	for _, id := range p.collectionIDs {
+		c, err := p.src.Collections().Get(p.ctx, p.scope, id)
 		if err != nil {
 			continue
 		}
-		e.collMap[id] = id
-		plan.Collections.addID(id)
+		p.collMap[id] = id
+		p.add(PlanCollections, &p.plan.Collections, id)
 		if query := strings.TrimSpace(c.FilterQuery); query != "" {
-			if _, ok := carriedLivingQuery(query, e.posMap, e.matchMap, e.tourMap); !ok {
-				plan.FrozenCollections = append(plan.FrozenCollections, PlannedCollection{ID: id, Name: c.Name})
+			if _, ok := carriedLivingQuery(query, p.posMap, p.matchMap, p.tourMap); !ok {
+				p.plan.FrozenCollections = append(p.plan.FrozenCollections, PlannedRow{ID: id, Name: c.Name})
 			}
 		}
 	}
 	return nil
 }
 
-func (e *exporter) planLessons(plan *ExportPlan) error {
-	for _, id := range e.lessonIDs {
-		if _, err := e.src.Lessons().Get(e.ctx, e.scope, id); err != nil {
+func (p *planner) lessons() error {
+	for _, id := range p.lessonIDs {
+		if _, err := p.src.Lessons().Get(p.ctx, p.scope, id); err != nil {
 			continue
 		}
-		plan.Lessons.addID(id)
+		p.add(PlanLessons, &p.plan.Lessons, id)
 	}
 	return nil
 }
 
-func (e *exporter) planAliases(plan *ExportPlan) error {
-	if !e.opts.Aliases || len(e.matchNames) == 0 {
+func (p *planner) aliases() error {
+	if !p.opts.Aliases || len(p.matchNames) == 0 {
 		return nil
 	}
 	for _, kind := range []storage.AliasKind{storage.AliasPlayer, storage.AliasEvent} {
-		aliases, err := e.src.Aliases().List(e.ctx, e.scope, kind)
+		aliases, err := p.src.Aliases().List(p.ctx, p.scope, kind)
 		if err != nil {
 			return fmt.Errorf("ingest: list %s aliases: %w", kind, err)
 		}
-		names := e.matchNames[kind]
+		names := p.matchNames[kind]
 		for _, a := range aliases {
-			if !names[a.Alias] && !names[a.Canonical] {
-				continue
+			if names[a.Alias] || names[a.Canonical] {
+				p.plan.Aliases++
 			}
-			plan.Aliases.Count++
-			plan.Aliases.Names = append(plan.Aliases.Names, a.Alias+" → "+a.Canonical)
 		}
 	}
 	return nil
 }
 
-func (e *exporter) planTranscriptions(plan *ExportPlan) error {
-	if !e.opts.Transcriptions {
+func (p *planner) transcriptions() error {
+	if !p.opts.Transcriptions {
 		return nil
 	}
-	sel := e.opts.Selection
+	sel := p.opts.Selection
 	unattached := sel.AllMatches && sel.AllPositions
 	var drafts []*storage.Transcription
-	for tr, err := range e.src.Transcriptions().List(e.ctx, e.scope) {
+	for tr, err := range p.src.Transcriptions().List(p.ctx, p.scope) {
 		if err != nil {
 			return fmt.Errorf("ingest: list transcriptions: %w", err)
 		}
@@ -248,87 +326,89 @@ func (e *exporter) planTranscriptions(plan *ExportPlan) error {
 		drafts = append(drafts, &d)
 	}
 	for _, d := range drafts {
-		if _, exported := e.matchMap[d.MatchID]; !exported && !unattached {
+		if _, exported := p.matchMap[d.MatchID]; !exported && !unattached {
 			continue
 		}
 		if _, err := carriedTranscriptDocument(d.Document); err != nil {
 			continue
 		}
-		plan.Transcriptions.addID(d.ID)
+		p.add(PlanTranscriptions, &p.plan.Transcriptions, d.ID)
 	}
 	return nil
 }
 
-func (e *exporter) planFilters(plan *ExportPlan) error {
-	if !e.opts.FilterLibrary {
+func (p *planner) filters() error {
+	if !p.opts.FilterLibrary {
 		return nil
 	}
-	for f, err := range e.src.Filters().List(e.ctx, e.scope) {
+	for f, err := range p.src.Filters().List(p.ctx, p.scope) {
 		if err != nil {
 			return fmt.Errorf("ingest: list filters: %w", err)
 		}
-		if _, ok := carriedLivingQuery(f.Command, e.posMap, e.matchMap, e.tourMap); !ok {
-			continue
+		if _, ok := carriedLivingQuery(f.Command, p.posMap, p.matchMap, p.tourMap); ok {
+			p.add(PlanFilters, &p.plan.Filters, f.ID)
 		}
-		plan.Filters.Count++
-		plan.Filters.Names = append(plan.Filters.Names, f.Name)
 	}
 	return nil
 }
 
-func (e *exporter) planAnkiDecks(plan *ExportPlan) error {
-	if !e.opts.AnkiDecks && len(e.deckIDs) == 0 {
+func (p *planner) ankiDecks() error {
+	if !p.opts.AnkiDecks && len(p.deckIDs) == 0 {
 		return nil
 	}
-	picked := toSet(e.deckIDs)
-	var ids []int64
-	for d, err := range e.src.Anki().ListDecks(e.ctx, e.scope) {
+	picked := toSet(p.deckIDs)
+	var decks []domain.AnkiDeck
+	for d, err := range p.src.Anki().ListDecks(p.ctx, p.scope) {
 		if err != nil {
 			return fmt.Errorf("ingest: list decks: %w", err)
 		}
-		if e.opts.AnkiDecks || picked[d.ID] {
-			ids = append(ids, d.ID)
+		if p.opts.AnkiDecks || picked[d.ID] {
+			decks = append(decks, *d)
 		}
 	}
-	for _, id := range ids {
-		plan.AnkiDecks.addID(id)
+	for _, d := range decks {
+		p.add(PlanAnkiDecks, &p.plan.AnkiDecks, d.ID)
+		if d.SourceType == domain.AnkiSourceSearch &&
+			searchSourceLost(d.SourceCommand, carriedSearchSource(d.SourceCommand, p.posMap, p.matchMap, p.tourMap)) {
+			p.plan.DegradedAnkiDecks = append(p.plan.DegradedAnkiDecks, PlannedRow{ID: d.ID, Name: d.Name})
+		}
 	}
 	return nil
 }
 
-// planned gives the report's counts of the families a plan counts.
-func (r ExportReport) planned() map[string]int {
+// Counts gives the plan's counts by family name, the names ExportReport.Counts
+// uses.
+func (p ExportPlan) Counts() map[string]int {
 	return map[string]int{
-		"positions": r.Positions, "comments": r.Comments, "matches": r.Matches,
-		"tournaments": r.Tournaments, "collections": r.Collections, "lessons": r.Lessons,
-		"ankiDecks": r.AnkiDecks, "transcriptions": r.Transcriptions, "aliases": r.Aliases,
-		"filters": r.Filters,
+		PlanPositions: p.Positions, PlanComments: p.Comments, PlanMatches: p.Matches,
+		PlanTournaments: p.Tournaments, PlanCollections: p.Collections, PlanLessons: p.Lessons,
+		PlanAnkiDecks: p.AnkiDecks, PlanTranscriptions: p.Transcriptions, "aliases": p.Aliases,
+		PlanFilters: p.Filters, "degradedAnkiDecks": len(p.DegradedAnkiDecks),
 	}
 }
 
-// Counts gives the plan's counts under the names ExportReport.planned uses.
-func (p ExportPlan) Counts() map[string]int {
+// Counts gives the report's counts of the families a plan counts.
+func (r ExportReport) Counts() map[string]int {
 	return map[string]int{
-		"positions": p.Positions.Count, "comments": p.Comments.Count, "matches": p.Matches.Count,
-		"tournaments": p.Tournaments.Count, "collections": p.Collections.Count, "lessons": p.Lessons.Count,
-		"ankiDecks": p.AnkiDecks.Count, "transcriptions": p.Transcriptions.Count, "aliases": p.Aliases.Count,
-		"filters": p.Filters.Count,
+		PlanPositions: r.Positions, PlanComments: r.Comments, PlanMatches: r.Matches,
+		PlanTournaments: r.Tournaments, PlanCollections: r.Collections, PlanLessons: r.Lessons,
+		PlanAnkiDecks: r.AnkiDecks, PlanTranscriptions: r.Transcriptions, "aliases": r.Aliases,
+		PlanFilters: r.Filters, "degradedAnkiDecks": r.DegradedAnkiDecks,
 	}
 }
 
 // Mismatch names the first family whose planned count differs from what the
-// export wrote, or "" when the plan held. It is how the parity test and a
-// caller that wants to check its preview read the two side by side.
+// export wrote, or "" when the plan held.
 func (p ExportPlan) Mismatch(r ExportReport) string {
-	want := r.planned()
-	keys := make([]string, 0, len(want))
-	for k := range want {
+	planned, wrote := p.Counts(), r.Counts()
+	keys := make([]string, 0, len(wrote))
+	for k := range wrote {
 		keys = append(keys, k)
 	}
 	slices.Sort(keys)
 	for _, k := range keys {
-		if got := p.Counts()[k]; got != want[k] {
-			return fmt.Sprintf("%s: planned %d, wrote %d", k, got, want[k])
+		if planned[k] != wrote[k] {
+			return fmt.Sprintf("%s: planned %d, wrote %d", k, planned[k], wrote[k])
 		}
 	}
 	return ""

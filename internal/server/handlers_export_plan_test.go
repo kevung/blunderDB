@@ -85,6 +85,19 @@ func TestExportPlanAgreesWithExportReport(t *testing.T) {
 			if m := plan.Mismatch(report); m != "" {
 				t.Errorf("plan and report disagree on %s", m)
 			}
+
+			var page ingest.PlannedIDs
+			resp = post(t, ts, "/v1/exports.planIds", exportPlanIDsReq{Family: ingest.PlanPositions, Limit: 1})
+			if resp.StatusCode != http.StatusOK {
+				t.Fatalf("exports.planIds status = %d", resp.StatusCode)
+			}
+			if err := json.NewDecoder(resp.Body).Decode(&page); err != nil {
+				t.Fatal(err)
+			}
+			resp.Body.Close()
+			if page.Total == 0 || len(page.IDs) != 1 {
+				t.Errorf("positions page %+v, want one id", page)
+			}
 		})
 	}
 }

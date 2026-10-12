@@ -4453,12 +4453,12 @@ export namespace gui {
 
 export namespace ingest {
 	
-	export class PlannedCollection {
+	export class PlannedRow {
 	    id: number;
 	    name: string;
 	
 	    static createFrom(source: any = {}) {
-	        return new PlannedCollection(source);
+	        return new PlannedRow(source);
 	    }
 	
 	    constructor(source: any = {}) {
@@ -4467,34 +4467,19 @@ export namespace ingest {
 	        this.name = source["name"];
 	    }
 	}
-	export class PlanFamily {
-	    count: number;
-	    ids: number[];
-	    names: string[];
-	
-	    static createFrom(source: any = {}) {
-	        return new PlanFamily(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.count = source["count"];
-	        this.ids = source["ids"];
-	        this.names = source["names"];
-	    }
-	}
 	export class ExportPlan {
-	    positions: PlanFamily;
-	    comments: PlanFamily;
-	    matches: PlanFamily;
-	    tournaments: PlanFamily;
-	    collections: PlanFamily;
-	    lessons: PlanFamily;
-	    ankiDecks: PlanFamily;
-	    transcriptions: PlanFamily;
-	    aliases: PlanFamily;
-	    filters: PlanFamily;
-	    frozenCollections: PlannedCollection[];
+	    positions: number;
+	    comments: number;
+	    matches: number;
+	    tournaments: number;
+	    collections: number;
+	    lessons: number;
+	    ankiDecks: number;
+	    transcriptions: number;
+	    aliases: number;
+	    filters: number;
+	    frozenCollections: PlannedRow[];
+	    degradedAnkiDecks: PlannedRow[];
 	
 	    static createFrom(source: any = {}) {
 	        return new ExportPlan(source);
@@ -4502,17 +4487,18 @@ export namespace ingest {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.positions = this.convertValues(source["positions"], PlanFamily);
-	        this.comments = this.convertValues(source["comments"], PlanFamily);
-	        this.matches = this.convertValues(source["matches"], PlanFamily);
-	        this.tournaments = this.convertValues(source["tournaments"], PlanFamily);
-	        this.collections = this.convertValues(source["collections"], PlanFamily);
-	        this.lessons = this.convertValues(source["lessons"], PlanFamily);
-	        this.ankiDecks = this.convertValues(source["ankiDecks"], PlanFamily);
-	        this.transcriptions = this.convertValues(source["transcriptions"], PlanFamily);
-	        this.aliases = this.convertValues(source["aliases"], PlanFamily);
-	        this.filters = this.convertValues(source["filters"], PlanFamily);
-	        this.frozenCollections = this.convertValues(source["frozenCollections"], PlannedCollection);
+	        this.positions = source["positions"];
+	        this.comments = source["comments"];
+	        this.matches = source["matches"];
+	        this.tournaments = source["tournaments"];
+	        this.collections = source["collections"];
+	        this.lessons = source["lessons"];
+	        this.ankiDecks = source["ankiDecks"];
+	        this.transcriptions = source["transcriptions"];
+	        this.aliases = source["aliases"];
+	        this.filters = source["filters"];
+	        this.frozenCollections = this.convertValues(source["frozenCollections"], PlannedRow);
+	        this.degradedAnkiDecks = this.convertValues(source["degradedAnkiDecks"], PlannedRow);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -4550,6 +4536,7 @@ export namespace ingest {
 	    lessons: number;
 	    aliases: number;
 	    skipped: number;
+	    degradedAnkiDecks: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new ExportReport(source);
@@ -4573,6 +4560,7 @@ export namespace ingest {
 	        this.lessons = source["lessons"];
 	        this.aliases = source["aliases"];
 	        this.skipped = source["skipped"];
+	        this.degradedAnkiDecks = source["degradedAnkiDecks"];
 	    }
 	}
 	export class FileOutcome {
@@ -4639,7 +4627,24 @@ export namespace ingest {
 		    return a;
 		}
 	}
+	export class PlannedIDs {
+	    family: string;
+	    total: number;
+	    offset: number;
+	    ids: number[];
 	
+	    static createFrom(source: any = {}) {
+	        return new PlannedIDs(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.family = source["family"];
+	        this.total = source["total"];
+	        this.offset = source["offset"];
+	        this.ids = source["ids"];
+	    }
+	}
 	
 	export class RepairCounts {
 	    moves: number;
@@ -7041,6 +7046,7 @@ export namespace storage {
 	export class Alias {
 	    alias: string;
 	    canonical: string;
+	    createdAt: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new Alias(source);
@@ -7050,6 +7056,7 @@ export namespace storage {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.alias = source["alias"];
 	        this.canonical = source["canonical"];
+	        this.createdAt = source["createdAt"];
 	    }
 	}
 	export class AliasSuggestion {

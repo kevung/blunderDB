@@ -41,7 +41,10 @@ func (cli *CLI) runExport(args []string) error {
 	watermarkNote := exportCmd.String("watermark-note", "", "Free text attached to the watermark (terms of use, contact)")
 	password := exportCmd.String("password", "", "Protect the exported file with a password (produces a .dbx container)")
 	format := exportCmd.String("format", "text", "Output format: text or json")
-	planOnly := exportCmd.Bool("plan", false, "Print what a database or matches export would write, family by family, without writing a file")
+	planCounts := exportCmd.Bool("plan", false, "Print what a database or matches export would write, family by family, without writing a file")
+	planIDs := exportCmd.String("plan-ids", "", "Print one page of the source ids behind a --plan count, for a family: positions, comments, matches, tournaments, collections, lessons, ankiDecks, transcriptions, filters")
+	planOffset := exportCmd.Int("offset", 0, "With --plan-ids: index of the first id of the page")
+	planLimit := exportCmd.Int("limit", 0, "With --plan-ids: ids per page (at most 1000, the default)")
 
 	exportCmd.Usage = func() {
 		fmt.Println("Usage: blunderdb export [options]")
@@ -123,6 +126,11 @@ func (cli *CLI) runExport(args []string) error {
 	}
 	text := formatLower != "json"
 
+	plan := exportPlanRequest{counts: *planCounts || *planIDs != "", family: *planIDs, offset: *planOffset, limit: *planLimit}
+	if plan.counts && !planType(*exportType) {
+		return fmt.Errorf("--plan and --plan-ids count a database export: use them with --type database or matches, not %q", *exportType)
+	}
+
 	// The .mat export accepts either --file (single match) or --dir (batch);
 	// every other type writes one output file and requires --file.
 	if strings.ToLower(*exportType) == "mat" {
@@ -130,7 +138,7 @@ func (cli *CLI) runExport(args []string) error {
 			exportCmd.Usage()
 			return fmt.Errorf("type mat requires --file (single match) or --dir (multiple matches)")
 		}
-	} else if *outputFile == "" && !(*planOnly && planType(*exportType)) {
+	} else if *outputFile == "" && !plan.counts {
 		exportCmd.Usage()
 		return fmt.Errorf("missing required flag: --file")
 	}
@@ -198,14 +206,14 @@ func (cli *CLI) runExport(args []string) error {
 			TournamentIDs:         tournamentIDs,
 			DeckIDs:               deckIDs,
 		}
-		if *planOnly {
-			return cli.printExportPlan(opts, text)
+		if plan.counts {
+			return cli.printExportPlan(opts, plan, text)
 		}
 		return cli.exportDatabaseWithOptions(opts, marking, text)
 	case "positions":
 		return cli.exportPositions(*outputFile, text)
 	case "matches":
-		return cli.exportMatchesOnly(*outputFile, matchIDs, *includeTranscriptions, *includeAliases, marking, text, *planOnly)
+		return cli.exportMatchesOnly(*outputFile, matchIDs, *includeTranscriptions, *includeAliases, marking, text, plan)
 	case "mat":
 		return cli.exportMatchesMAT(matchIDs, *outputFile, *outputDir, text)
 	default:
@@ -373,6 +381,13 @@ func (cli *CLI) exportDatabaseWithOptions(opts ExportOptions, marking exportMark
 	return nil
 }
 
+// exportPlanRequest is what --plan and --plan-ids ask: the counts, or one page of a family's ids.
+type exportPlanRequest struct {
+	counts        bool
+	family        string
+	offset, limit int
+}
+
 // planType reports whether an export type writes a database, the only kind --plan counts.
 func planType(exportType string) bool {
 	t := strings.ToLower(exportType)
@@ -380,7 +395,22 @@ func planType(exportType string) bool {
 }
 
 // printExportPlan prints what opts' export would write, family by family, without writing it.
-func (cli *CLI) printExportPlan(opts ExportOptions, text bool) error {
+func (cli *CLI) printExportPlan(opts ExportOptions, req exportPlanRequest, text bool) error {
+	if req.family != "" {
+		page, err := cli.db.PlanExportIDs(opts, req.family, req.offset, req.limit)
+		if err != nil {
+			return fmt.Errorf("failed to plan the export: %w", err)
+		}
+		if !text {
+			return printJSON(page)
+		}
+		fmt.Printf("%s %d-%d of %d:", page.Family, page.Offset+1, page.Offset+len(page.IDs), page.Total)
+		for _, id := range page.IDs {
+			fmt.Printf(" %d", id)
+		}
+		fmt.Println()
+		return nil
+	}
 	plan, err := cli.db.PlanExport(opts)
 	if err != nil {
 		return fmt.Errorf("failed to plan the export: %w", err)
@@ -393,16 +423,19 @@ func (cli *CLI) printExportPlan(opts ExportOptions, text bool) error {
 		name string
 		n    int
 	}{
-		{"positions", plan.Positions.Count}, {"comments", plan.Comments.Count},
-		{"matches", plan.Matches.Count}, {"tournaments", plan.Tournaments.Count},
-		{"collections", plan.Collections.Count}, {"lessons", plan.Lessons.Count},
-		{"Anki decks", plan.AnkiDecks.Count}, {"transcriptions", plan.Transcriptions.Count},
-		{"aliases", plan.Aliases.Count}, {"filters", plan.Filters.Count},
+		{"positions", plan.Positions}, {"comments", plan.Comments},
+		{"matches", plan.Matches}, {"tournaments", plan.Tournaments},
+		{"collections", plan.Collections}, {"lessons", plan.Lessons},
+		{"Anki decks", plan.AnkiDecks}, {"transcriptions", plan.Transcriptions},
+		{"aliases", plan.Aliases}, {"filters", plan.Filters},
 	} {
 		fmt.Printf("  %-15s %d\n", f.name, f.n)
 	}
 	for _, c := range plan.FrozenCollections {
 		fmt.Printf("Living collection %d (%s) leaves frozen: its query names rows the file will not hold\n", c.ID, c.Name)
+	}
+	for _, d := range plan.DegradedAnkiDecks {
+		fmt.Printf("Search deck %d (%s) leaves with part of its source dropped: it names rows the file will not hold\n", d.ID, d.Name)
 	}
 	return nil
 }
@@ -413,6 +446,9 @@ func printExportReport(r ingest.ExportReport) {
 		r.Positions, r.Analyses, r.Comments, r.Matches, r.Tournaments, r.Collections)
 	fmt.Printf("  lessons %d, Anki decks %d, transcriptions %d, aliases %d, filters %d\n",
 		r.Lessons, r.AnkiDecks, r.Transcriptions, r.Aliases, r.Filters)
+	if r.DegradedAnkiDecks > 0 {
+		fmt.Printf("  %d search deck(s) left with part of their source dropped (see the log)\n", r.DegradedAnkiDecks)
+	}
 	if r.Skipped > 0 {
 		fmt.Printf("  %d row(s) skipped (see the log)\n", r.Skipped)
 	}
@@ -421,8 +457,8 @@ func printExportReport(r ingest.ExportReport) {
 // exportMatchesOnly exports matches — those of matchIDs, every match when it is empty — to a
 // new database, each with the positions its moves were played in and, under transcriptions,
 // the draft it was typed from; under aliases, the player and event aliases they write go too.
-func (cli *CLI) exportMatchesOnly(outputFile string, matchIDs []int64, transcriptions, aliases bool, marking exportMarking, text, planOnly bool) error {
-	if text && !planOnly {
+func (cli *CLI) exportMatchesOnly(outputFile string, matchIDs []int64, transcriptions, aliases bool, marking exportMarking, text bool, plan exportPlanRequest) error {
+	if text && !plan.counts {
 		fmt.Printf("Exporting matches to: %s\n", outputFile)
 	}
 
@@ -440,7 +476,7 @@ func (cli *CLI) exportMatchesOnly(outputFile string, matchIDs []int64, transcrip
 		return fmt.Errorf("no matches found in database")
 	}
 
-	if text && !planOnly {
+	if text && !plan.counts {
 		fmt.Printf("Found %d match(es) to export\n", len(ids))
 	}
 
@@ -467,8 +503,8 @@ func (cli *CLI) exportMatchesOnly(outputFile string, matchIDs []int64, transcrip
 		WatermarkNote:         marking.note,
 		Password:              marking.password,
 	}
-	if planOnly {
-		return cli.printExportPlan(opts, text)
+	if plan.counts {
+		return cli.printExportPlan(opts, plan, text)
 	}
 	var report ingest.ExportReport
 	err = withInterruptibleContext(func() {

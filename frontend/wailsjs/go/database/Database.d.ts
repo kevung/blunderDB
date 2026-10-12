@@ -575,6 +575,8 @@ export function PlanExport(arg1:domain.ExportOptions):Promise<ingest.ExportPlan>
 
 export function PlanExportCtx(arg1:context.Context,arg2:domain.ExportOptions):Promise<ingest.ExportPlan>;
 
+export function PlanExportIDs(arg1:domain.ExportOptions,arg2:string,arg3:number,arg4:number):Promise<ingest.PlannedIDs>;
+
 export function PlanRollout(arg1:context.Context,arg2:domain.SearchFilters,arg3:rollout.Settings):Promise<database.RolloutPlan>;
 
 export function PlanRolloutIDs(arg1:context.Context,arg2:Array<number>,arg3:rollout.Settings):Promise<database.RolloutPlan>;

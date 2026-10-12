@@ -71,6 +71,22 @@ func (d *Database) PlanExportCtx(ctx context.Context, opts ExportOptions) (inges
 	return ingest.PlanExport(ctx, d.store, "", plan)
 }
 
+// PlanExportIDs pages through the source ids behind one count of PlanExport — family is
+// one of ingest.Plan* — so the dialog can open what a count counts; a page holds at most
+// ingest.MaxPlannedIDs.
+func (d *Database) PlanExportIDs(opts ExportOptions, family string, offset, limit int) (ingest.PlannedIDs, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	if d.db == nil {
+		return ingest.PlannedIDs{}, fmt.Errorf("no database is currently open")
+	}
+	plan, err := d.exportPlan(context.Background(), opts)
+	if err != nil {
+		return ingest.PlannedIDs{}, err
+	}
+	return ingest.PlanExportIDs(context.Background(), d.store, "", plan, family, offset, limit)
+}
+
 // exportPlan maps the GUI's and the CLI's options onto what ingest exports.
 //
 // The whole library is ingest.WholeTenant, the daemon's export, so the three entry points

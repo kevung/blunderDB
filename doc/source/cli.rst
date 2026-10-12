@@ -401,7 +401,14 @@ Exporte le contenu de la base vers des fichiers.
 * ``--plan`` — Avec ``--type database`` ou ``matches`` : compte, famille par
   famille, ce que l'export écrirait, sans écrire de fichier (``--file`` est
   alors facultatif). Les comptes sont ceux que l'export rapporte ensuite ; les
-  collections vivantes qui partiraient figées sont nommées.
+  collections vivantes qui partiraient figées et les paquets « recherche » dont
+  la source perdrait une partie sont nommés. Avec un autre type, l'option est
+  refusée.
+* ``--plan-ids <famille>`` — Comme ``--plan``, mais rend une page des
+  identifiants derrière un compte : ``positions``, ``comments`` (les positions
+  qui les portent), ``matches``, ``tournaments``, ``collections``, ``lessons``,
+  ``ankiDecks``, ``transcriptions`` ou ``filters``. ``--offset`` et ``--limit``
+  choisissent la page (1000 identifiants au plus).
 
 ``--type database`` exporte toute la bibliothèque, comme l'export du serveur
 et comme la fenêtre d'export quand la liste affichée est la bibliothèque :

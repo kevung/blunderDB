@@ -214,6 +214,7 @@ var databaseParity = map[string]parityEntry{
 	"ExportDatabaseCtx":                 {Why: whyCtxVariant},
 	"PlanExport":                        {CLI: "export", Server: "/v1/exports.plan"},
 	"PlanExportCtx":                     {Why: whyCtxVariant},
+	"PlanExportIDs":                     {CLI: "export", Server: "/v1/exports.planIds"},
 	"ExportMatchMAT":                    {CLI: "export --type mat", Server: "/v1/matches.exportMat"},
 	"MatchMAT":                          {CLI: "export --type mat", Server: "/v1/matches.exportMat"},
 	"ExportTournaments":                 {CLI: "export --tournament-ids", Why: whySubsetExp},

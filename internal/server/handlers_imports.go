@@ -205,8 +205,6 @@ func (s *Server) exporterFor(f ingest.Format) ingest.Exporter {
 	switch f {
 	case ingest.FormatJSON, "":
 		return ingest.JSONExporter{S: s.opts.Storage}
-	case ingest.FormatSQLite:
-		return ingest.SQLiteExporter{S: s.opts.Storage}
 	default:
 		return nil
 	}
@@ -286,6 +284,11 @@ func (s *Server) ingestRoutes() []route {
 		route{http.MethodPost, "/v1/exports.plan", rpc(func(ctx context.Context, scope string, req exportSQLiteReq) (ingest.ExportPlan, error) {
 			return ingest.PlanExport(ctx, s.opts.Storage, scope, exportSQLiteOptions(req))
 		})},
+		// One page of the ids behind a count of exports.plan, for a family named in
+		// ingest.Plan*; a page holds at most ingest.MaxPlannedIDs.
+		route{http.MethodPost, "/v1/exports.planIds", rpc(func(ctx context.Context, scope string, req exportPlanIDsReq) (ingest.PlannedIDs, error) {
+			return ingest.PlanExportIDs(ctx, s.opts.Storage, scope, exportSQLiteOptions(req.Export), req.Family, req.Offset, req.Limit)
+		})},
 	)
 }
 
@@ -319,6 +322,15 @@ type exportSQLiteReq struct {
 	// AnkiHistory carries the exported decks' review history. Absent, the
 	// whole tenant carries it and decks narrowed by deckIds leave without it.
 	AnkiHistory *bool `json:"ankiHistory,omitempty"`
+}
+
+// exportPlanIDsReq asks exports.planIds for a page of one family's ids, under
+// the export Export describes.
+type exportPlanIDsReq struct {
+	Export exportSQLiteReq `json:"export"`
+	Family string          `json:"family"`
+	Offset int             `json:"offset,omitempty"`
+	Limit  int             `json:"limit,omitempty"`
 }
 
 // ExportReportHeader carries, on an exports.sqlite answer, the export's report as

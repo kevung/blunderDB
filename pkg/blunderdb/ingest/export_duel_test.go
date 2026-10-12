@@ -62,7 +62,7 @@ func TestSQLiteExportCarriesTheDuel(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		if err := (SQLiteExporter{S: src}).Export(ctx, "", out, opts); err != nil {
+		if err := exportTo(ctx, src, out, opts); err != nil {
 			out.Close()
 			t.Fatalf("export: %v", err)
 		}

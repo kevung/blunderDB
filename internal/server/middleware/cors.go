@@ -37,9 +37,10 @@ func CORS(allowOrigin string) func(http.Handler) http.Handler {
 			h.Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
 			// The conditional reads and the gestures of a Direction (ADR-0057) speak in
 			// these headers, and a reconnecting event stream sends Last-Event-ID; a browser
-			// client must be allowed to send and to read them.
+			// client must be allowed to send and to read them. An export's report rides in
+			// a header beside the file it describes.
 			h.Set("Access-Control-Allow-Headers", "Content-Type, "+TenantHeader+", If-Match, If-None-Match, Idempotency-Key, Last-Event-ID")
-			h.Set("Access-Control-Expose-Headers", "ETag, Direction-Version, Idempotency-Replayed")
+			h.Set("Access-Control-Expose-Headers", "ETag, Direction-Version, Idempotency-Replayed, X-Blunderdb-Export-Report")
 			if r.Method == http.MethodOptions {
 				w.WriteHeader(http.StatusNoContent)
 				return

@@ -3407,6 +3407,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ingest_ExportPlan"
+  /v1/exports.planIds:
+    post:
+      operationId: exports.planIds
+      tags: [exports]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/exportPlanIDsReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ingest_PlannedIDs"
   /v1/exports.sqlite:
     post:
       operationId: exports.sqlite
@@ -8568,6 +8585,21 @@ components:
           format: int64
         played:
           type: string
+    exportPlanIDsReq:
+      type: object
+      properties:
+        export:
+          $ref: "#/components/schemas/exportSQLiteReq"
+        family:
+          type: string
+        offset:
+          type: integer
+          format: int32
+          nullable: true
+        limit:
+          type: integer
+          format: int32
+          nullable: true
     exportSQLiteReq:
       type: object
       properties:
@@ -8741,6 +8773,9 @@ components:
     ingest_ExportPlan:
       type: object
       description: "Opaque: see the Go type ingest.ExportPlan (defined outside internal/server, not expanded here)."
+    ingest_PlannedIDs:
+      type: object
+      description: "Opaque: see the Go type ingest.PlannedIDs (defined outside internal/server, not expanded here)."
     lastVisitedReq:
       type: object
       properties:

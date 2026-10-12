@@ -562,6 +562,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/exports.plan — JSON."
         return self._call("/v1/exports.plan", payload)
 
+    def exports_plan_ids(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/exports.planIds — JSON."
+        return self._call("/v1/exports.planIds", payload)
+
     def exports_sqlite(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/exports.sqlite — hand-written handler — see openapi.yaml."
         return self._call("/v1/exports.sqlite", payload)

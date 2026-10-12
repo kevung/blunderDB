@@ -528,7 +528,7 @@ func TestExportSQLiteWatermark(t *testing.T) {
 }
 
 // TestExportSQLiteErrorEnvelope verifies that an already-cancelled request
-// context — which makes ingest.SQLiteExporter.Export fail (it opens its temp
+// context — which makes ingest.ExportSQLite fail (it opens its temp
 // SQLite file with the same context) before the handler has written anything
 // to the real ResponseWriter — produces a proper error status and a JSON
 // envelope, never HTTP 200 with Content-Type: application/octet-stream and a

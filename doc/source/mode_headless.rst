@@ -1017,8 +1017,11 @@ exportés et les alias qu'ils écrivent ; absents, les deux voyagent. La
 réponse porte, dans l'en-tête ``X-Blunderdb-Export-Report``, le compte en JSON
 de ce que le fichier contient, famille par famille. ``POST /v1/exports.plan``
 prend le même corps et rend ces comptes avant tout export, avec les
-identifiants de chaque famille et les collections vivantes qui partiraient
-figées ; il n'écrit rien.
+collections vivantes qui partiraient figées et les paquets « recherche » dont
+la source perdrait une partie ; il n'écrit rien. ``POST /v1/exports.planIds``
+rend une page des identifiants derrière l'un de ces comptes : ``export`` porte
+le corps d'``exports.sqlite``, ``family`` la famille, ``offset`` et ``limit``
+la page (1000 identifiants au plus).
 
 **Importer un dossier ou un corpus** se fait par ``imports.batch``, qui passe
 par le même pipeline que ``blunderdb import --type batch`` : mêmes matchs,

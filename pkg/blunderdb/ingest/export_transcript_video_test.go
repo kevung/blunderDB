@@ -33,7 +33,7 @@ func TestExportedTranscriptionKeepsOnlyTheVideoFileName(t *testing.T) {
 	}
 
 	var buf bytes.Buffer
-	if err := (SQLiteExporter{S: src}).Export(ctx, "", &buf, WholeTenant(FormatSQLite)); err != nil {
+	if err := exportTo(ctx, src, &buf, WholeTenant(FormatSQLite)); err != nil {
 		t.Fatal(err)
 	}
 	if bytes.Contains(buf.Bytes(), []byte("/home/kevin")) || bytes.Contains(buf.Bytes(), []byte(`C:\\Users`)) {

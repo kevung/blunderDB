@@ -156,6 +156,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
    exports
      POST /v1/exports.json                         custom
      POST /v1/exports.plan                         JSON
+     POST /v1/exports.planIds                      JSON
      POST /v1/exports.sqlite                       custom
    filters
      POST /v1/filters.delete                       JSON
