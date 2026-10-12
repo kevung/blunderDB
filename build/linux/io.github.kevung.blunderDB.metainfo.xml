@@ -93,6 +93,7 @@
           <li>Maintenance tab: the database's health, one line per operation with its count, last run and action; opening a database writes nothing</li>
           <li>Stats: one shared filter, sortable and filterable columns, and every count opens exactly what it counts</li>
           <li>Database export carries transcription drafts, aliases, living collections and optional Anki history; Anki .apkg export; repair a match from its source file</li>
+          <li>Transcription: dance and resignation entered with a key, moves played on the theatre mini-board, a post-Crawford box, and a reason shown for every inconsistency; Ctrl++, Ctrl+- and Ctrl+0 scale the interface</li>
         </ul>
       </description>
     </release>
