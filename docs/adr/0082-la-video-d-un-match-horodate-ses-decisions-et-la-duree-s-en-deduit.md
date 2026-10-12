@@ -47,8 +47,10 @@ peut pas embarquer ; le lecteur intégré de YouTube refuse une page sans réfé
    porte que la durée. Une durée
    mesurée par l'Arbitre prime toujours sur une durée déduite. À l'enregistrement, la durée
    déduite remplit le champ du coup que l'ADR-0073 a défini : même colonne, même filtre, même
-   affichage. Un Repère antérieur à celui qui le précède est une Incohérence, marquée et
-   jamais corrigée (ADR-0044) ; insérer, supprimer ou corriger une Action ne déplace aucun
+   affichage. Un Repère hors de l'ordre de la vidéo est une Incohérence, marquée et
+   jamais corrigée (ADR-0044) : le Replay garde la plus longue suite de Repères qui avance
+   et marque les autres, si bien qu'un instant posé très en avance (une Action insérée
+   alors que la vidéo avait continué) est marqué, et non chaque Action juste qui le suit ; insérer, supprimer ou corriger une Action ne déplace aucun
    Repère, et le Replay recalcule.
 3. **Les Repères se posent de deux façons, et le transcript ramène à la vidéo.** Sur une
    Action *nouvelle*, la première touche de dé pose l'instant du jet et la validation pose

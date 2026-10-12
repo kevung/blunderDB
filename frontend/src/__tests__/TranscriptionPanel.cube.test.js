@@ -52,12 +52,12 @@ function position({ cube = { owner: -1, value: 0 }, decision = 0 } = {}) {
  * Un document annoté comme le moteur le rend. Tout ce que le panneau affiche en
  * sort : rien n'est recalculé côté Svelte.
  *
- * @param {{expects?: string, side?: number, cube?: {owner: number, value: number}, crawford?: boolean, score?: number[], finished?: boolean, winner?: number, game?: number, flags?: string[]}} [options]
+ * @param {{expects?: string, side?: number, cube?: {owner: number, value: number}, crawford?: boolean, score?: number[], finished?: boolean, winner?: number, game?: number, flags?: string[]}} [options] - a flag is `kind` or `kind:rule`
  */
 function annotated({ expects = 'checker', side = 0, cube, crawford = false, score = [0, 0], finished = false, winner = -1, game = 1, flags = [] } = {}) {
     return {
         document: { header: { match_length: 7, player1: 'Kévin', player2: 'Alice' }, actions: [], cursor: 0 },
-        actions: flags.length ? [{ index: 0, inconsistencies: flags.map((kind) => ({ kind, detail: 'engine prose' })) }] : [],
+        actions: flags.length ? [{ index: 0, inconsistencies: flags.map((flag) => ({ kind: flag.split(':')[0], rule: flag.split(':')[1], detail: 'engine prose' })) }] : [],
         games: [],
         next: { expects, side, position: position({ cube, decision: expects === 'take' ? 1 : 0 }), crawford, game_number: game },
         score,
@@ -187,10 +187,10 @@ describe('les incohérences sont montrées, jamais refusées', () => {
     });
 
     test('la phrase est celle du panneau, pas la prose anglaise du moteur', async () => {
-        /** @type {any} */ (ApplyTranscriptionGesture).mockResolvedValue(state(annotated({ flags: ['past_end'] })));
+        /** @type {any} */ (ApplyTranscriptionGesture).mockResolvedValue(state(annotated({ flags: ['past_end:match_won'] })));
         await openedPanel();
         await press('KeyD');
-        expect(await screen.findByText(/past the end of the match/)).toBeTruthy();
+        expect(await screen.findByText(/the match is already won/)).toBeTruthy();
         expect(screen.queryByText(/engine prose/)).toBeNull();
     });
 });

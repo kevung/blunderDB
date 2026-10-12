@@ -1,6 +1,10 @@
 package transcript
 
-import "fmt"
+import (
+	"fmt"
+	"math"
+	"slices"
+)
 
 // TimeActions is what a Replay does to the ActionInfos of actions, for a caller
 // that walked them one at a time with a [Machine]: their Repères, and the
@@ -29,21 +33,41 @@ func TimeActions(actions []Action, infos []ActionInfo) { timeActions(actions, in
 // an array with the Replayer's cache, which an append must not write into.
 func timeActions(actions []Action, infos []ActionInfo) {
 	n := min(len(actions), len(infos))
-	// The Repères in order, nil where missing or running backwards: the only
-	// instants a duration, measured or estimated, may use.
+	// The Repères in order, nil where missing or out of order: the only instants
+	// a duration, measured or estimated, may use.
 	rollAt := make([]*int64, n)
 	tickAt := make([]*int64, n)
-	var last *int64
+	var marks []repere
 	for i := 0; i < n; i++ {
 		a, info := actions[i], &infos[i]
 		info.DecisionMS, info.CubeDecisionMS = a.DecisionMS, a.CubeDecisionMS
 		info.RollTickMS, info.TickMS = a.RollTickMS, a.TickMS
-		roll := a.RollTickMS
-		if !rolls(a.Kind) {
-			roll = nil
+		if a.RollTickMS != nil && rolls(a.Kind) {
+			marks = append(marks, repere{action: i, ms: *a.RollTickMS})
 		}
-		rollAt[i] = inOrder(info, &last, roll, "roll")
-		tickAt[i] = inOrder(info, &last, a.TickMS, "action")
+		if a.TickMS != nil {
+			marks = append(marks, repere{action: i, ms: *a.TickMS, action2: true})
+		}
+	}
+	kept := inOrder(marks)
+	for j, m := range marks {
+		ms := m.ms
+		if kept[j] {
+			if m.action2 {
+				tickAt[m.action] = &ms
+			} else {
+				rollAt[m.action] = &ms
+			}
+			continue
+		}
+		info := &infos[m.action]
+		rule, what := RuleRollOutOfOrder, "roll"
+		if m.action2 {
+			rule, what = RuleActionOutOfOrder, "action"
+		}
+		info.Inconsistencies = append(info.Inconsistencies[:len(info.Inconsistencies):len(info.Inconsistencies)],
+			Inconsistency{Kind: TimecodeBackwards, Rule: rule, Args: map[string]int{"ms": int(ms)},
+				Detail: fmt.Sprintf("the %s is timed at %s, out of the video's order", what, clock(ms))})
 	}
 
 	var prevTick *int64
@@ -93,20 +117,61 @@ func nextInstant(k Kind, roll, tick *int64) *int64 {
 	return nil
 }
 
-// inOrder checks one Repère against the last one the document gave and returns
-// it, or nil when it runs backwards — marked then, and no duration may use it.
-func inOrder(info *ActionInfo, last **int64, tick *int64, what string) *int64 {
-	if tick == nil {
-		return nil
+// repere is one instant of the document: an Action's roll, or its action
+// (action2), in the order the document gives them.
+type repere struct {
+	action  int
+	ms      int64
+	action2 bool
+}
+
+// inOrder keeps the largest set of Repères that runs forward through the
+// document, and reports the others as out of order. Blaming the fewest Repères
+// blames the wrong one: an instant typed far ahead of the video (an Action
+// inserted while the video had moved on) is the one out of place, not every
+// correct instant after it. Between two equal choices the earlier Repère is
+// kept.
+func inOrder(marks []repere) []bool {
+	n := len(marks)
+	kept := make([]bool, n)
+	if n == 0 {
+		return kept
 	}
-	if *last != nil && *tick < **last {
-		info.Inconsistencies = append(info.Inconsistencies[:len(info.Inconsistencies):len(info.Inconsistencies)],
-			Inconsistency{Kind: TimecodeBackwards, Detail: fmt.Sprintf("the %s is timed at %s, before %s", what, clock(*tick), clock(**last))})
-		*last = tick
-		return nil
+	// from[i]: the length of the longest non-decreasing run of Repères that
+	// starts at i, read with a Fenwick tree of suffix maxima over the instants'
+	// ranks.
+	ranks := make([]int64, n)
+	for i, m := range marks {
+		ranks[i] = m.ms
 	}
-	*last = tick
-	return tick
+	slices.Sort(ranks)
+	ranks = slices.Compact(ranks)
+	rank := func(ms int64) int {
+		r, _ := slices.BinarySearch(ranks, ms)
+		return len(ranks) - r // 1-based, reversed: a prefix is the instants >= ms
+	}
+	tree := make([]int, len(ranks)+1)
+	from := make([]int, n)
+	best := 0
+	for i := n - 1; i >= 0; i-- {
+		r := rank(marks[i].ms)
+		longest := 0
+		for k := r; k > 0; k -= k & -k {
+			longest = max(longest, tree[k])
+		}
+		from[i] = longest + 1
+		for k := r; k < len(tree); k += k & -k {
+			tree[k] = max(tree[k], from[i])
+		}
+		best = max(best, from[i])
+	}
+	want, floor := best, int64(math.MinInt64)
+	for i := 0; i < n && want > 0; i++ {
+		if from[i] == want && marks[i].ms >= floor {
+			kept[i], want, floor = true, want-1, marks[i].ms
+		}
+	}
+	return kept
 }
 
 // span is the duration from one Repère to the next, nil when either is unknown.

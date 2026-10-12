@@ -36,15 +36,47 @@ const (
 	// one (ADR-0053); the game is played at the declared score and the detail names
 	// the derived one. It also marks an unusable declaration (money, negative).
 	ScoreMismatch InconsistencyKind = "score_mismatch"
-	// TimecodeBackwards: a Repère earlier than the one before it in the document —
-	// the roll's then the action's of each Action, in order (ADR-0082 rule 2). It
-	// is kept as typed, and every duration that starts or ends on it is unknown.
+	// TimecodeBackwards: a Repère out of the video's order in the document —
+	// the roll's then the action's of each Action (ADR-0082 rule 2), the fewest that
+	// keep the others running forward. It is kept as typed, and every duration that
+	// starts or ends on it is unknown.
 	TimecodeBackwards InconsistencyKind = "timecode_backwards"
 )
 
-// Inconsistency is one derived fact about one Action, with the sentence the panel shows.
+// InconsistencyRule names the rule an Inconsistency breaks, one finer than its kind:
+// "impossible cube" is six different reasons, and the panel names the one that holds.
+type InconsistencyRule string
+
+const (
+	RuleDancePlayable    InconsistencyRule = "dance_playable"
+	RuleUnreachableBoard InconsistencyRule = "unreachable_board"
+	RuleUnknownKind      InconsistencyRule = "unknown_kind"
+	RuleDoubleTurn       InconsistencyRule = "double_turn"
+	RuleDoubleAtOpening  InconsistencyRule = "double_at_opening"
+	RuleDoublePending    InconsistencyRule = "double_pending"
+	RuleCubeNotHeld      InconsistencyRule = "cube_not_held"
+	RuleCrawfordCube     InconsistencyRule = "crawford_cube"
+	RuleCubeCapped       InconsistencyRule = "cube_capped"
+	RuleNoDoubleToAnswer InconsistencyRule = "no_double_to_answer"
+	RuleGameOver         InconsistencyRule = "game_over"
+	RuleMatchWon         InconsistencyRule = "match_won"
+	RuleOpeningDouble    InconsistencyRule = "opening_double"
+	RuleOpeningWinner    InconsistencyRule = "opening_winner"
+	RuleDiceUnused       InconsistencyRule = "dice_unused"
+	RuleUnrecorded       InconsistencyRule = "unrecorded"
+	RuleMoneyScore       InconsistencyRule = "money_score"
+	RuleNegativeScore    InconsistencyRule = "negative_score"
+	RuleScoreDiffers     InconsistencyRule = "score_differs"
+	RuleRollOutOfOrder   InconsistencyRule = "roll_out_of_order"
+	RuleActionOutOfOrder InconsistencyRule = "action_out_of_order"
+)
+
+// Inconsistency is one derived fact about one Action. Rule and Args are what the
+// panel translates; Detail is the same fact in English, for the CLI and the logs.
 type Inconsistency struct {
 	Kind   InconsistencyKind `json:"kind"`
+	Rule   InconsistencyRule `json:"rule"`
+	Args   map[string]int    `json:"args,omitempty"`
 	Detail string            `json:"detail"`
 }
 
@@ -103,8 +135,8 @@ type ActionInfo struct {
 	Inconsistencies []Inconsistency `json:"inconsistencies,omitempty"`
 }
 
-func (i *ActionInfo) add(kind InconsistencyKind, detail string) {
-	i.Inconsistencies = append(i.Inconsistencies, Inconsistency{Kind: kind, Detail: detail})
+func (i *ActionInfo) add(kind InconsistencyKind, rule InconsistencyRule, args map[string]int, detail string) {
+	i.Inconsistencies = append(i.Inconsistencies, Inconsistency{Kind: kind, Rule: rule, Args: args, Detail: detail})
 }
 
 // GameInfo is what a Replay derives about one game of the transcription.

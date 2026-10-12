@@ -65,9 +65,6 @@ const DYNAMIC_PREFIXES = [
     // La palette de commandes décrit chaque commande du vocabulaire par
     // `palette.cmd.<nom>` (commandPalette.js, commandLabelKey).
     'palette.cmd.',
-    // Le panneau Transcription nomme une Incohérence par sa sorte, telle que le
-    // moteur la rend : `$t(`transcription.inconsistency.${i.kind}`)`.
-    'transcription.inconsistency.',
     // La Direction d'un tournoi (ADR-0047) : l'état, le format nommé et le type de phase sont
     // des CODES du moteur rendus par l'interface — `$t(`direction.state.${state}`)`. C'est
     // exactement le mécanisme qui permet à blunderDB de parler neuf langues d'un moteur qui

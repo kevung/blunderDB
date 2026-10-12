@@ -416,3 +416,30 @@ func TestUntimedPlayIsEstimatedToTheNextInstant(t *testing.T) {
 		checkEstimated(t, ann, []*int64{nil}, []bool{false})
 	})
 }
+
+// TestTimecodeAheadBlamesItself: an Action timed far ahead of the video — what an
+// insertion typed after the video moved on produces — is the Repère out of order,
+// not the correctly timed Action that follows it.
+func TestTimecodeAheadBlamesItself(t *testing.T) {
+	doc := seek(t, timedGame(t), 1)
+	doc, err := Apply(doc, Gesture{Kind: GestureSetTimecode, RollTickMS: 60000, HasRollTick: true, TickMS: 61000, HasTick: true})
+	if err != nil {
+		t.Fatal(err)
+	}
+	ann := Replay(doc, 0)
+	for i, info := range ann.Actions {
+		if got := hasInconsistency(info, TimecodeBackwards); got != (i == 1) {
+			t.Errorf("Action %d marked %v, want %v: %+v", i, got, i == 1, info.Inconsistencies)
+		}
+	}
+	rules := map[InconsistencyRule]bool{}
+	for _, in := range ann.Actions[1].Inconsistencies {
+		rules[in.Rule] = true
+	}
+	if !rules[RuleRollOutOfOrder] || !rules[RuleActionOutOfOrder] {
+		t.Errorf("Action 1 rules = %v, want its roll and its action", rules)
+	}
+	if ann.Actions[3].DecisionMS == nil {
+		t.Error("the take after it lost its duration")
+	}
+}

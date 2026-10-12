@@ -30,6 +30,7 @@
     import { registerKeys } from '../services/keyDispatch.js';
     import { isBareLetter } from '../utils/keys.js';
     import { isMoneyPosition } from '../utils/cubeDecision.js';
+    import { flawText } from '../utils/transcriptFlaws.js';
     import {
         PHASE,
         COMMAND,
@@ -1620,12 +1621,12 @@
     let matchWinner = $derived(annotated?.winner ?? -1);
     let gameNumber = $derived(annotated?.next?.game_number ?? 1);
 
-    // Inconsistencies are shown, never refused (ADR-0044); the text comes from the
-    // kind, never the engine's English detail.
+    // Inconsistencies are shown, never refused (ADR-0044); each names the rule it
+    // breaks, never the engine's English detail.
     let lastFlags = $derived.by(() => {
         const actions = annotated?.actions ?? [];
         const last = actions[actions.length - 1];
-        return (last?.inconsistencies ?? []).map((/** @type {{kind: string}} */ i) => $t(`transcription.inconsistency.${i.kind}`));
+        return (last?.inconsistencies ?? []).map((/** @type {any} */ i) => flawText(i, $t, playerName));
     });
 
     // Boutons de correction : chacun double une touche (ux.md §3), pour la découverte.

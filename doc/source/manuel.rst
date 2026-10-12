@@ -2151,8 +2151,8 @@ qui agit. La cellule du curseur est encadrée ; déplacer le curseur ramène le
 plateau à la position de l'action visée et affiche ses candidats, le coup joué
 sélectionné. Une incohérence (coup illégal, double trait, videau impossible,
 action au-delà de la fin du match, dés incohérents, coup non consigné, score
-annoncé incohérent) décore sa
-cellule et se nomme dans une info-bulle. Le coup non consigné est le cas d'un
+annoncé incohérent) décore sa cellule ; l'info-bulle donne la règle enfreinte et
+ce qui est en cause (« videau : Bob ne le détient pas »). Le coup non consigné est le cas d'un
 fichier ``.mat`` relu : gnubg y écrit ``???`` quand il n'a pas gardé le coup
 joué, le jet est connu et le coup ne l'est pas, et poser le curseur sur cette
 cellule propose les coups de ce jet pour le renseigner. Un double trait laisse
@@ -2350,9 +2350,10 @@ du jet à la fin du coup, la décision de videau de l'action précédente au jet
 double ou une réponse de l'action précédente à la leur. Une cellule qui porte
 un repère le signale par un point discret ; son info-bulle donne le jet, le
 coup et la durée (« jet 12:34, coup 12:51, 17 s »), et le panneau d'analyse
-affiche la durée de l'action du curseur comme pour un match joué en Duel. Un
-repère antérieur à celui qui le précède est marqué « repère à rebours », comme
-toute incohérence, et laisse inconnues les durées qui en dépendent. Placer le
+affiche la durée de l'action du curseur comme pour un match joué en Duel. Les
+repères hors de l'ordre de la vidéo, le moins possible pour que les autres
+avancent, sont marqués comme toute incohérence et laissent inconnues les durées
+qui en dépendent. Placer le
 curseur sur une cellule (clic sur le coup ou sur sa durée, *h*, *l*) amène la vidéo une seconde avant le
 jet de cette action, ou avant son action si le jet n'a pas d'instant ; un
 lecteur en pause le reste.
