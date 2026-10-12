@@ -392,6 +392,7 @@ veille ne demande pas la souris.
    "RETOUR ARRIERE", "Effacer les deux dés saisis. C'est par là que passe la reprise d'un jet mal lu, puisqu'un chiffre valide."
    "Clic (sur les cases du jet)", "Effacer les deux dés saisis, comme RETOUR ARRIERE."
    "Esc", "Abandonner la saisie en cours."
+   "f", "Le joueur au trait fait gala : saisir un jet qui ne le fait pas rentrer de la barre — le premier, non-doubles d'abord, que le jan adverse bloque — et passer la main sans coup à taper. Un coup en attente est validé avant, comme par un chiffre. Hors de la barre, ou si tous les jets rentrent, rien n'est saisi et la barre d'état le dit."
    "d", "Doubler ou redoubler : le coup sélectionné est validé au passage, en une seule touche."
    "t", "Prendre le double proposé : le videau passe au preneur à la valeur doublée et le doubleur rejoue. Le curseur posé sur une cellule, écrit la prise à la place de l'action visée ; une passe devenue prise rouvre sa partie, et la suite s'y tape à la place."
    "p", "Passer le double proposé : la partie est gagnée à la valeur d'avant le double. Le curseur posé sur une cellule, écrit la passe à la place de l'action visée."

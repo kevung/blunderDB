@@ -1478,6 +1478,8 @@
             "nothingToRedo": "Nada que rehacer",
             "noAction": "Ninguna acción bajo el cursor",
             "noDice": "Ninguna tirada en curso",
+            "notOnBar": "El jugador en turno no tiene fichas en la barra",
+            "noDanceRoll": "Todas las tiradas permiten entrar al jugador en turno",
             "untimedAction": "Jugada validada sin instante de acción: con un vídeo, Intro valida en el instante de la imagen, o v sobre la celda.",
             "cubeUntimed": "Duración del cubo desconocida: v sobre la jugada anterior para medirla.",
             "noRollToTime": "Esta acción no tiene tirada que marcar.",

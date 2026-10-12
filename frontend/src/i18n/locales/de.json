@@ -1478,6 +1478,8 @@
             "nothingToRedo": "Nichts zum Wiederholen",
             "noAction": "Keine Aktion unter dem Cursor",
             "noDice": "Kein Wurf in Eingabe",
+            "notOnBar": "Der Spieler am Zug hat keinen Stein auf der Bar",
+            "noDanceRoll": "Jeder Wurf lässt den Spieler am Zug einsetzen",
             "untimedAction": "Zug ohne Aktionszeitpunkt bestätigt: Mit einem Video bestätigt Enter zum Zeitpunkt des Bildes, oder v auf der Zelle.",
             "cubeUntimed": "Dauer der Doppler-Entscheidung unbekannt: v auf dem vorherigen Zug, um sie zu messen.",
             "noRollToTime": "Diese Aktion hat keinen Wurf, der sich markieren lässt.",

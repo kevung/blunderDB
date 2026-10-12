@@ -1478,6 +1478,8 @@
             "nothingToRedo": "Nothing to redo",
             "noAction": "No Action under the cursor",
             "noDice": "No roll being entered",
+            "notOnBar": "The side on roll has no checker on the bar",
+            "noDanceRoll": "Every roll lets the side on roll enter",
             "untimedAction": "Play validated without an action time: with a video, Enter validates at the frame's instant, or v on the cell.",
             "cubeUntimed": "Cube decision time unknown: v on the previous play to measure it.",
             "noRollToTime": "This action has no roll to time.",
