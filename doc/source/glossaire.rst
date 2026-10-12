@@ -192,7 +192,7 @@ Joueur (*player*)
     Un nom exactement tel qu'il apparaît dans un match importé. blunderDB ne
     devine pas la personne derrière le nom : la même personne signant sous
     deux orthographes est deux joueurs distincts, jusqu'à une fusion
-    explicite (« Fusionner les joueurs »).
+    explicite (« Gérer les joueurs »).
 
 Filigrane (*watermark*)
     La déclaration signée, apposée par qui exporte une base, de ce qu'elle

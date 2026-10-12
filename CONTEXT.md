@@ -765,6 +765,14 @@ never an inference. Distinct from Tenant — the Tenant owns the data; a Player 
 appears in it.
 _Avoid_: user, account, identity
 
+**Main player**:
+The Player a library belongs to, a library setting recognised through the Player's
+aliases. Designating them swaps, in one transaction, every Match where they sit at
+seat 2 (the swap keeps every analysis, comment, video mark and tournament); every
+later import seats them first. A Match typed or played here keeps the seats it was
+given, and forgetting the Main player swaps nothing back.
+_Avoid_: me, owner, hero
+
 ### Who owns the data
 
 **Tenant**:

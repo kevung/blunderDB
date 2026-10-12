@@ -87,6 +87,8 @@ export function Checkpoint():Promise<void>;
 
 export function ClearCommandHistory():Promise<void>;
 
+export function ClearMainPlayer():Promise<void>;
+
 export function ClearSessionState():Promise<void>;
 
 export function Clock(arg1:number):Promise<service.ClockView>;
@@ -523,6 +525,8 @@ export function LoadTrainingNumberStats(arg1:string):Promise<Array<storage.Train
 
 export function LoadTrainingSessions(arg1:string,arg2:number):Promise<Array<storage.TrainingSession>>;
 
+export function MainPlayer():Promise<string>;
+
 export function MaintenanceIDs(arg1:string):Promise<Array<number>>;
 
 export function MaintenanceStatus():Promise<Array<maintenance.Line>>;
@@ -571,6 +575,8 @@ export function PendingTranscriptionAnalysis():Promise<database.TranscriptionAna
 
 export function PileCollectionID():Promise<number>;
 
+export function PlanMainPlayer(arg1:string):Promise<storage.MainPlayerPlan>;
+
 export function PlanRollout(arg1:context.Context,arg2:domain.SearchFilters,arg3:rollout.Settings):Promise<database.RolloutPlan>;
 
 export function PlanRolloutIDs(arg1:context.Context,arg2:Array<number>,arg3:rollout.Settings):Promise<database.RolloutPlan>;
@@ -580,6 +586,8 @@ export function PlayDuel(arg1:number,arg2:number,arg3:duel.Play):Promise<databas
 export function PlayerContrast(arg1:string,arg2:string,arg3:database.StatsFilter):Promise<storage.PlayerContrast>;
 
 export function PlayerContrastCtx(arg1:context.Context,arg2:string,arg3:string,arg4:database.StatsFilter):Promise<storage.PlayerContrast>;
+
+export function PlayerMatchIDs(arg1:string):Promise<Array<number>>;
 
 export function PlayerRanking(arg1:database.StatsFilter,arg2:number):Promise<Array<storage.RankedPlayer>>;
 
@@ -730,6 +738,8 @@ export function SetEventRooms(arg1:number,arg2:number,arg3:Array<string>):Promis
 export function SetFilterPinned(arg1:number,arg2:boolean):Promise<void>;
 
 export function SetLessonStepDone(arg1:number,arg2:boolean):Promise<void>;
+
+export function SetMainPlayer(arg1:string):Promise<storage.MainPlayerPlan>;
 
 export function SetMatchTournamentByName(arg1:number,arg2:string):Promise<void>;
 

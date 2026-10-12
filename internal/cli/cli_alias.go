@@ -105,7 +105,7 @@ func (cli *CLI) runPlayersMain(args []string) error {
 	fs := flag.NewFlagSet("players main", flag.ContinueOnError)
 	dbPath := fs.String("db", "", "Path to the database file (required)")
 	dryRun := fs.Bool("dry-run", false, "Show the matches the designation would swap, change nothing")
-	clear := fs.Bool("clear", false, "Forget the Main player (no match is swapped back)")
+	clearMain := fs.Bool("clear", false, "Forget the Main player (no match is swapped back)")
 	format := fs.String("format", "text", "Output format: text or json")
 	fs.Usage = func() {
 		fmt.Println("Usage: blunderdb players main --db FILE [--dry-run] [NAME]")
@@ -126,12 +126,12 @@ func (cli *CLI) runPlayersMain(args []string) error {
 	if err := cli.collectionOpen(fs, dbPath, args); err != nil {
 		return err
 	}
-	if fs.NArg() > 1 || (*clear && fs.NArg() > 0) {
+	if fs.NArg() > 1 || (*clearMain && fs.NArg() > 0) {
 		fs.Usage()
 		return fmt.Errorf("usage: blunderdb players main --db FILE [--dry-run] [NAME] | --clear")
 	}
 	switch {
-	case *clear:
+	case *clearMain:
 		if err := cli.db.ClearMainPlayer(); err != nil {
 			return err
 		}
