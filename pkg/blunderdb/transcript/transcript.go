@@ -119,9 +119,15 @@ type Action struct {
 	Steps []domain.CheckerStep `json:"steps,omitempty"`
 
 	// BoardAfter is set ONLY when the play is illegal — when no legal play from the
-	// previous position reaches it. It is then what the board really became, and it
-	// takes precedence over anything the rules could compute.
+	// previous position reaches it. It is what the board became from BoardBefore, and
+	// it holds only while the Replay still reaches the Action on that board: once a
+	// correction upstream changes it, the steps are replayed from the new board, so
+	// the correction runs down the whole chain instead of stopping at a frozen board.
 	BoardAfter *domain.Board `json:"board_after,omitempty"`
+
+	// BoardBefore is the board BoardAfter was entered on. A draft that predates it
+	// keeps BoardAfter only where it is what the steps leave from the replayed board.
+	BoardBefore *domain.Board `json:"board_before,omitempty"`
 
 	// Level is the resignation's value in games: 1, 2 or 3.
 	Level int `json:"level,omitempty"`
@@ -314,6 +320,10 @@ func (a Action) clone() Action {
 	if a.BoardAfter != nil {
 		b := *a.BoardAfter
 		out.BoardAfter = &b
+	}
+	if a.BoardBefore != nil {
+		b := *a.BoardBefore
+		out.BoardBefore = &b
 	}
 	if a.Score != nil {
 		sc := *a.Score

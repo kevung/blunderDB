@@ -9314,6 +9314,7 @@ export namespace transcript {
 	    dice?: number[];
 	    steps?: domain.CheckerStep[];
 	    board_after?: domain.Board;
+	    board_before?: domain.Board;
 	    level?: number;
 	    score?: number[];
 	    decision_ms?: number;
@@ -9332,6 +9333,7 @@ export namespace transcript {
 	        this.dice = source["dice"];
 	        this.steps = this.convertValues(source["steps"], domain.CheckerStep);
 	        this.board_after = this.convertValues(source["board_after"], domain.Board);
+	        this.board_before = this.convertValues(source["board_before"], domain.Board);
 	        this.level = source["level"];
 	        this.score = source["score"];
 	        this.decision_ms = source["decision_ms"];

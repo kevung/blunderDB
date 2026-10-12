@@ -389,8 +389,9 @@ func sameReplayRules(a, b Header) bool {
 		a.Beaver == b.Beaver && a.MaxCube == b.MaxCube && a.PostCrawford == b.PostCrawford
 }
 
-// sameAction compares two Actions by value, following the three references an Action
-// carries: its steps, the board an illegal play left, and a declared score.
+// sameAction compares two Actions by value, following the references an Action
+// carries: its steps, the boards an illegal play started from and left, and a
+// declared score.
 func sameAction(a, b Action) bool {
 	if a.Side != b.Side || a.Kind != b.Kind || a.Dice != b.Dice || a.Level != b.Level {
 		return false
@@ -406,12 +407,16 @@ func sameAction(a, b Action) bool {
 			return false
 		}
 	}
+	return sameBoard(a.BoardAfter, b.BoardAfter) && sameBoard(a.BoardBefore, b.BoardBefore)
+}
+
+func sameBoard(a, b *domain.Board) bool {
 	switch {
-	case a.BoardAfter == nil && b.BoardAfter == nil:
+	case a == nil && b == nil:
 		return true
-	case a.BoardAfter == nil || b.BoardAfter == nil:
+	case a == nil || b == nil:
 		return false
 	default:
-		return *a.BoardAfter == *b.BoardAfter
+		return *a == *b
 	}
 }

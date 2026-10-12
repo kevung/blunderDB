@@ -309,9 +309,7 @@ func (s *state) step(i int, a Action) ActionInfo {
 			} else {
 				info.add(IllegalMove, RuleUnreachableBoard, nil, "no legal play from the previous position reaches this board")
 				info.After = reached
-				// A board given by hand is what happened, unless it miscounts: a
-				// board built against a stale position is no record of anything.
-				if a.BoardAfter != nil && fullBoard(*a.BoardAfter) {
+				if handBoardHolds(a, s.board, reached) {
 					info.After = *a.BoardAfter
 				}
 			}
@@ -566,6 +564,22 @@ func resolveSteps(b domain.Board, mover int, steps []domain.CheckerStep) ([]doma
 		resolved = append(resolved, s)
 	}
 	return resolved, b
+}
+
+// handBoardHolds says whether a play's BoardAfter is still what happened, played
+// from start. A board given by hand is a record of the board it was given on: once
+// a correction upstream changes that board, the steps replayed from the new one are
+// the record, so every board downstream follows the correction. A draft with no
+// BoardBefore keeps it only where the steps leave it. A board that miscounts is no
+// record of anything.
+func handBoardHolds(a Action, start, reached domain.Board) bool {
+	if a.BoardAfter == nil || !fullBoard(*a.BoardAfter) {
+		return false
+	}
+	if a.BoardBefore != nil {
+		return *a.BoardBefore == start
+	}
+	return *a.BoardAfter == reached
 }
 
 // fullBoard reports whether each side holds its fifteen checkers, on the board, on

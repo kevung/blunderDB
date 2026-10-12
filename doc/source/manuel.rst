@@ -2108,6 +2108,11 @@ sur la provenance du geste ; sinon il est marqué « coup illégal » dans le
 transcript, et l'export ``.mat`` avertit avant d'écrire le fichier, sans jamais
 refuser.
 
+Le plateau obtenu par un coup hors des règles vaut pour la position où il a été
+joué. Quand une correction plus haut dans le transcript change cette position,
+les pas du coup sont rejoués depuis la nouvelle, et toutes les positions qui
+suivent portent la correction.
+
 Sur la ligne des dés, la rangée **Doubler**, **Prendre**, **Passer**,
 **Abandonner** reprend à la souris les quatre gestes de videau : ce sont, avec
 les deux dés, les cinq réponses possibles à une seule question — qu'a fait le

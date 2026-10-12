@@ -364,6 +364,10 @@ func apply(doc Document, g Gesture) (Document, error) {
 				b := mirrorBoard(*a.BoardAfter)
 				a.BoardAfter = &b
 			}
+			if a.BoardBefore != nil {
+				b := mirrorBoard(*a.BoardBefore)
+				a.BoardBefore = &b
+			}
 		}
 		if out.NextScore != nil {
 			out.NextScore[0], out.NextScore[1] = out.NextScore[1], out.NextScore[0]
@@ -848,8 +852,8 @@ func validate(doc Document) (Document, error) {
 		pos := entryPosition(doc)
 		pos.Dice, pos.PlayerOnRoll, pos.DecisionType = e.Dice, e.Side, domain.CheckerAction
 		if findPlay(domain.LegalMoves(&pos), *doc.pendingBoard) == nil {
-			b := *doc.pendingBoard
-			a.BoardAfter = &b
+			b, before := *doc.pendingBoard, pos.Board
+			a.BoardAfter, a.BoardBefore = &b, &before
 		}
 	}
 	return record(doc, a), nil
