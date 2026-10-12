@@ -28,6 +28,8 @@ func (k AliasKind) Valid() bool { return k == AliasPlayer || k == AliasEvent }
 type Alias struct {
 	Alias     string `json:"alias"`
 	Canonical string `json:"canonical"`
+	// CreatedAt is when the alias was first set, as text ("" when unknown).
+	CreatedAt string `json:"createdAt"`
 }
 
 // AliasStore keeps the aliases of players and events. The table stays flat:
