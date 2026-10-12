@@ -20,7 +20,7 @@ async function openPlayers(page) {
     await page.locator('[data-testid="tab-tournaments"]').click();
     await expect(page.locator('#tournamentPanel')).toBeVisible();
     await page.locator('#tournamentPanel tbody tr').first().dblclick();
-    await page.locator('#tournamentPanel .direction-btn').click();
+    await page.locator('#tournamentPanel .direction-btn:not([data-testid="tournament-stats"])').click();
     await expect(page.locator('.direction-view')).toBeVisible();
     await page.locator('[data-testid="direction-tab-players"]').click();
     await expect(page.locator('[data-testid="direction-player-ha"]')).toBeVisible();
@@ -67,7 +67,7 @@ test("absenter jusqu'à une ronde, dans un suisse par rondes", async ({ page }) 
     await page.goto('/');
     await page.locator('[data-testid="tab-tournaments"]').click();
     await page.locator('#tournamentPanel tbody tr').first().dblclick();
-    await page.locator('#tournamentPanel .direction-btn').click();
+    await page.locator('#tournamentPanel .direction-btn:not([data-testid="tournament-stats"])').click();
     await page.locator('[data-testid="direction-tab-players"]').click();
 
     const row = page.locator('[data-testid="direction-player-ha"]');

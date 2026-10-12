@@ -45,19 +45,19 @@ async function coveredBy(locator, scroll = false) {
 
 test('panneau Tournoi : « ← » et « Diriger » mesurent au moins 24 px de haut', async ({ page }) => {
     await open(page, { width: 1920, height: 1080 });
-    for (const sel of ['#tournamentPanel [data-testid="panel-back"]', '#tournamentPanel .direction-btn']) {
+    for (const sel of ['#tournamentPanel [data-testid="panel-back"]', '#tournamentPanel .direction-btn:not([data-testid="tournament-stats"])']) {
         const s = await size(page.locator(sel).first());
         expect(s.h, `${sel} : ${s.w}×${s.h}`).toBeGreaterThanOrEqual(MIN);
         expect(s.w, `${sel} : ${s.w}×${s.h}`).toBeGreaterThanOrEqual(MIN);
     }
-    await page.locator('#tournamentPanel .direction-btn').click();
+    await page.locator('#tournamentPanel .direction-btn:not([data-testid="tournament-stats"])').click();
     const open_ = await size(page.locator('[data-testid="tournament-direction-toggle"]'));
     expect(open_.h, `« Ouvrir la direction » : ${open_.w}×${open_.h}`).toBeGreaterThanOrEqual(MIN);
 });
 
 test('Historique : « Corriger » mesure au moins 24 px de haut', async ({ page }) => {
     await open(page, { width: 1920, height: 1080 });
-    await page.locator('#tournamentPanel .direction-btn').click();
+    await page.locator('#tournamentPanel .direction-btn:not([data-testid="tournament-stats"])').click();
     await expect(page.locator('.direction-view')).toBeVisible();
     await page.locator('[data-testid="direction-tab-direction"]').click();
     await page.locator('[data-testid="direction-table-14"]').click();
@@ -72,7 +72,7 @@ test('Historique : « Corriger » mesure au moins 24 px de haut', async ({ page 
 
 test('zoom 150 % (911×512) : « Lancer » et les cases de table ne sont masqués par rien', async ({ page }) => {
     await open(page, { width: 911, height: 512 });
-    await page.locator('#tournamentPanel .direction-btn').click();
+    await page.locator('#tournamentPanel .direction-btn:not([data-testid="tournament-stats"])').click();
     await expect(page.locator('.direction-view')).toBeVisible();
     await page.locator('[data-testid="direction-tab-direction"]').click();
     await expect(page.locator('.proposals .queue li').first()).toBeVisible();
@@ -100,7 +100,7 @@ test('zoom 150 % (911×512) : « Lancer » et les cases de table ne sont masqué
 
 test('1920×1080 : « Enregistrer » des Réglages n’est masqué par aucun champ', async ({ page }) => {
     await open(page, { width: 1920, height: 1080 });
-    await page.locator('#tournamentPanel .direction-btn').click();
+    await page.locator('#tournamentPanel .direction-btn:not([data-testid="tournament-stats"])').click();
     await expect(page.locator('.direction-view')).toBeVisible();
     await page.locator('[data-testid="direction-tab-settings"]').click();
     const apply = page.locator('[data-testid="direction-settings-apply"]');

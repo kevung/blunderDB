@@ -21,7 +21,7 @@ async function openDirection(page) {
     await page.locator('[data-testid="tab-tournaments"]').click();
     await expect(page.locator('#tournamentPanel')).toBeVisible();
     await page.locator('#tournamentPanel tbody tr').first().dblclick();
-    await page.locator('#tournamentPanel .direction-btn').click();
+    await page.locator('#tournamentPanel .direction-btn:not([data-testid="tournament-stats"])').click();
     await expect(page.locator('.direction-view')).toBeVisible();
     await page.locator('[data-testid="direction-tab-direction"]').click();
     await expect(page.locator(proposal).first()).toBeVisible();
@@ -72,7 +72,7 @@ test('ouvrir la direction depuis le panneau lui donne le clavier', async ({ page
     // Le bouton est dans le panneau : si la page ne prenait pas le focus en s'ouvrant, il y
     // resterait, et J / K iraient au panneau. Une direction en cours s'ouvre directement sur
     // la file (DirectionView), sans autre clic pour déplacer le focus.
-    await page.locator('#tournamentPanel .direction-btn').click();
+    await page.locator('#tournamentPanel .direction-btn:not([data-testid="tournament-stats"])').click();
     await expect(page.locator('.direction-view')).toBeVisible();
 
     await expect.poll(() => page.evaluate(() => !!document.activeElement?.closest('.direction-view'))).toBe(true);
@@ -102,7 +102,7 @@ test('un tournoi s’ouvre au clavier : Tab jusqu’à la ligne, Entrée', async
     const row = page.locator('#tournamentPanel tbody tr').first();
     await row.focus();
     await page.keyboard.press('Enter');
-    await expect(page.locator('#tournamentPanel .direction-btn')).toBeVisible();
+    await expect(page.locator('#tournamentPanel .direction-btn:not([data-testid="tournament-stats"])')).toBeVisible();
 });
 
 test('la file est à un Tab de l’onglet Direction, et ses raccourcis sont affichés', async ({ page }) => {

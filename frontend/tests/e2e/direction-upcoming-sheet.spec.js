@@ -18,7 +18,7 @@ test('la feuille de la ronde 3 s’imprime le vendredi, datée, sans rien lancer
     await page.goto('/');
     await page.locator('[data-testid="tab-tournaments"]').click();
     await page.locator('#tournamentPanel tbody tr').first().dblclick();
-    await page.locator('#tournamentPanel .direction-btn').click();
+    await page.locator('#tournamentPanel .direction-btn:not([data-testid="tournament-stats"])').click();
     await page.locator('[data-testid="direction-tab-direction"]').click();
     const queued = await page.locator('.proposals .queue li').count();
     expect(queued).toBeGreaterThan(0);

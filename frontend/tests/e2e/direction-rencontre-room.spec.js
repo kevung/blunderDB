@@ -17,7 +17,7 @@ test('S3 20 h : le speed ne propose aucune table du principal', async ({ page })
     await page.goto('/');
     await page.locator('[data-testid="tab-tournaments"]').click();
     await page.locator('#tournamentPanel tbody tr').first().dblclick();
-    await page.locator('#tournamentPanel .direction-btn').click();
+    await page.locator('#tournamentPanel .direction-btn:not([data-testid="tournament-stats"])').click();
     await page.locator('[data-testid="direction-tab-direction"]').click();
 
     // Les sept tables du principal sont dites occupées, par qui.

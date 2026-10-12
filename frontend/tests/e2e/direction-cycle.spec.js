@@ -23,7 +23,7 @@ async function selectTournament(page) {
 
 test('un double clic sur « Diriger » ouvre la Direction et la laisse ouverte', async ({ page }) => {
     await selectTournament(page);
-    await page.locator('#tournamentPanel .direction-btn').dblclick();
+    await page.locator('#tournamentPanel .direction-btn:not([data-testid="tournament-stats"])').dblclick();
     await expect(page.locator('.direction-view')).toBeVisible();
     await page.waitForTimeout(300);
     await expect(page.locator('.direction-view')).toBeVisible();
@@ -31,7 +31,7 @@ test('un double clic sur « Diriger » ouvre la Direction et la laisse ouverte',
 
 test('un rechargement rouvre la Direction sur son onglet, sans un clic', async ({ page }) => {
     await selectTournament(page);
-    await page.locator('#tournamentPanel .direction-btn').click();
+    await page.locator('#tournamentPanel .direction-btn:not([data-testid="tournament-stats"])').click();
     await page.locator('[data-testid="direction-tab-standings"]').click();
     await expect(page.locator('[data-testid="direction-tab-standings"]')).toHaveClass(/active/);
     await page.waitForFunction(() => (sessionStorage.getItem('e2e-session') || '').includes('standings'));

@@ -39,7 +39,7 @@ async function openTournaments(page, opts = {}) {
 async function openDirection(page, opts = {}) {
     await openTournaments(page, opts);
     await page.locator('#tournamentPanel tbody tr').first().dblclick();
-    await page.locator('#tournamentPanel .direction-btn').click();
+    await page.locator('#tournamentPanel .direction-btn:not([data-testid="tournament-stats"])').click();
     await expect(page.locator('.direction-view')).toBeVisible();
     await page.locator('[data-testid="direction-tab-direction"]').click();
     await expect(page.locator('.proposals .queue li').first()).toBeVisible();
@@ -344,7 +344,7 @@ test.describe('ux.md §4 — les budgets de gestes du directeur', () => {
             const created = page.locator('#tournamentPanel tbody tr').first();
             await expect(created).toBeFocused();
             await g.press('Enter');
-            await g.click(page.locator('#tournamentPanel .direction-btn'));
+            await g.click(page.locator('#tournamentPanel .direction-btn:not([data-testid="tournament-stats"])'));
             await expect(page.locator('.direction-view')).toBeVisible();
 
             // Inscrire les entrants. Chaque nom se tape et se valide à Entrée : c'est la
@@ -381,7 +381,7 @@ test.describe('ux.md §4 — les budgets de gestes du directeur', () => {
             await g.press('Enter');
             await expect(page.locator('#tournamentPanel tbody tr').first()).toBeFocused();
             await g.press('Enter');
-            await g.click(page.locator('#tournamentPanel .direction-btn'));
+            await g.click(page.locator('#tournamentPanel .direction-btn:not([data-testid="tournament-stats"])'));
 
             await g.click(page.locator('[data-testid="direction-tab-players"]'));
             await g.click(page.locator('.directory .head'));

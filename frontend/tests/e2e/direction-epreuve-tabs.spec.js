@@ -51,7 +51,7 @@ test('changer d’épreuve est un clic, sans confirmation ni fermeture', async (
     await page.goto('/');
     await page.locator('[data-testid="tab-tournaments"]').click();
     await page.locator('#tournamentPanel tbody tr').first().dblclick();
-    await page.locator('#tournamentPanel .direction-btn').click();
+    await page.locator('#tournamentPanel .direction-btn:not([data-testid="tournament-stats"])').click();
     await expect(page.locator('.direction-view')).toBeVisible();
     await page.locator('[data-testid="direction-tab-direction"]').click();
 
@@ -92,7 +92,7 @@ test('un tournoi hors Rencontre ne montre aucun onglet d’épreuve', async ({ p
     await page.goto('/');
     await page.locator('[data-testid="tab-tournaments"]').click();
     await page.locator('#tournamentPanel tbody tr').first().dblclick();
-    await page.locator('#tournamentPanel .direction-btn').click();
+    await page.locator('#tournamentPanel .direction-btn:not([data-testid="tournament-stats"])').click();
     await expect(page.locator('.direction-view')).toBeVisible();
     await expect(page.locator('[data-testid="epreuve-tabs"]')).toHaveCount(0);
 });
@@ -103,7 +103,7 @@ test('changer d’onglet de l’app puis revenir rend la Salle quittée', async 
     await page.goto('/');
     await page.locator('[data-testid="tab-tournaments"]').click();
     await page.locator('#tournamentPanel tbody tr').first().dblclick();
-    await page.locator('#tournamentPanel .direction-btn').click();
+    await page.locator('#tournamentPanel .direction-btn:not([data-testid="tournament-stats"])').click();
     await page.locator('[data-testid="epreuve-tab-hall"]').click();
     await expect(page.locator('[data-testid="direction-pane-hall"]')).toBeVisible();
 
