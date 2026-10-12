@@ -45,7 +45,7 @@ test('un compte de Stats ouvert pendant un match quitte le match pour sa liste',
 
     await page.getByTestId('tab-stats').click();
     await page
-        .getByRole('button', { name: /Open 42 positions/ })
+        .getByRole('button', { name: /Open the 42 positions/ })
         .first()
         .click();
 
@@ -62,6 +62,8 @@ test('une ligne du Corpus ouvre ses matchs, le bouton × rend la liste', async (
                 GetAllMatches: [matchSample, matchTwo],
                 ComputeStats: stats,
                 GetAllPlayerNames: [{ Name: 'Alice' }, { Name: 'Bob' }],
+                PRByWindow: [{ from: '2026-01', to: '2026-02', num_matches: 2, num_decisions: 80, pr: 4.2 }],
+                StatsMatchIDs: [7, 8],
                 HeadToHead: {
                     player_a: 'Alice',
                     player_b: 'Bob',
@@ -80,7 +82,7 @@ test('une ligne du Corpus ouvre ses matchs, le bouton × rend la liste', async (
     await page.locator('#corpus-a').fill('Alice');
     await page.locator('#corpus-b').fill('Bob');
     await page.getByRole('button', { name: 'Compute' }).first().click();
-    await page.getByTestId('corpus-h2h-row').click();
+    await page.getByTestId('corpus-h2h-summary').click();
 
     const chip = page.getByTestId('match-ids-filter');
     await expect(chip).toBeVisible();
@@ -90,4 +92,13 @@ test('une ligne du Corpus ouvre ses matchs, le bouton × rend la liste', async (
     await chip.click();
     await expect(chip).toBeHidden();
     await expect.poll(async () => (await lastListing()).IDs).toBeUndefined();
+
+    await page.getByTestId('tab-stats').click();
+    await page.locator('.stats-panel [role="tab"]', { hasText: 'Corpus' }).click();
+    await page.locator('.corpus-section').nth(1).locator('.corpus-controls button').click();
+    await page.getByTestId('corpus-window-row').locator('.count-link').first().click();
+    await expect(chip).toBeVisible();
+    await expect.poll(async () => (await lastListing()).IDs).toEqual([7, 8]);
+    await chip.click();
+    await expect(chip).toBeHidden();
 });
