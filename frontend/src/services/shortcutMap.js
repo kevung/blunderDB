@@ -48,6 +48,13 @@ export const SHORTCUTS = {
     },
     directionGrid: { tier: TIER.CAPTURE, group: 'direction', keys: digits('', 0, 9), shadows: digits('', 1, 6) },
 
+    // The browser zoom chords drive the interface scale; capture phase, so they hold from a text
+    // field and under a modal. Ctrl+0 shadows nothing: the Direction grid digits ignore Ctrl.
+    zoom: {
+        tier: TIER.CAPTURE,
+        keys: ['Ctrl++', 'Ctrl+=', 'Ctrl+-', 'Ctrl+0']
+    },
+
     // An open context menu owns its arrows and traps Tab; it runs before the docked panels, which
     // therefore never see a key the menu claims.
     contextMenu: {

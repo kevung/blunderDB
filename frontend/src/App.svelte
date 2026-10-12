@@ -60,6 +60,7 @@
     import { saveSessionState } from './services/sessionService.js';
     import { handleKeyDown, toggleHelpModal, focusSearchTab } from './services/keyboardService.js';
     import { registerKeys } from './services/keyDispatch.js';
+    import { handleZoomKey } from './services/zoomKeys.js';
     import { initPageStep } from './services/pageStepSetting.js';
     import { initRolloutChoice } from './services/rolloutService.js';
     import { applyTabPanels } from './services/tabHandler.js';
@@ -325,6 +326,8 @@
 
     /** @type {(() => void) | null} */
     let unregisterGlobalKeys = null;
+    /** @type {(() => void) | null} */
+    let unregisterZoomKeys = null;
 
     onMount(async () => {
         maybeCheckForUpdate();
@@ -360,6 +363,7 @@
             onToggleStats: () => toggleStatsPanel(),
             onLoadBlunders: loadWorstBlunders
         });
+        unregisterZoomKeys = registerKeys('zoom', handleZoomKey);
         unregisterGlobalKeys = registerKeys('global', handleKeyDown);
         mainArea.addEventListener('wheel', handleWheel);
         window.addEventListener('resize', handleResize);
@@ -433,6 +437,7 @@
 
     onDestroy(() => {
         unregisterGlobalKeys?.();
+        unregisterZoomKeys?.();
         mainArea.removeEventListener('wheel', handleWheel);
         window.removeEventListener('resize', handleResize);
         unsubscribePositions();

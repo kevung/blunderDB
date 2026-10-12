@@ -179,7 +179,7 @@ export default {
 <p>The <strong>local MCP server</strong> offers blunderDB's tools (search, reading a position and its analysis, a player's statistics, quizzes…) to an assistant that speaks the Model Context Protocol, such as Claude Desktop or Claude Code, as long as the window is open. It listens only on this machine, at <code>http://127.0.0.1:&lt;port&gt;/mcp</code> (port 8765 by default), and rejects a request coming from a web page. It adds two display tools: open a view on a search and show a position. The tools only read, unless <strong>Allow writing</strong> is checked: they can then save a position, comment on it, create and fill a collection, rate an Anki card and save a rollout next to a position's analysis; nothing is deleted. Without an open window, <code>blunderdb mcp</code> serves the same tools (see Command Line Interface (CLI)).</p>
 <p>The <strong>built-in assistant</strong> is a client of these same tools. No model is embedded: it talks to an OpenAI-compatible provider — Ollama on this machine by default, or Groq, OpenRouter, Gemini, Anthropic, or another address. Any address outside this machine is remote, whatever the provider chosen: your sentences and the tool results then leave the machine, the tab says so and waits for your agreement for that precise address; another address asks again. The API key goes into the system keyring, never into the database or the settings file. The model suggested by default for Ollama, <code>qwen2.5:7b</code>, is a starting point, not a recommendation: no model recommendation is made without a score from the benchmark shipped with the source code.</p>
 <p>Once enabled, the assistant is an <strong>Assistant</strong> sub-tab of the Search panel. A sentence — "my errors of more than 50 millipoints in the race" — opens a new view named after it, runs the search there and switches to it; its tokens stay in the search history. What the tools return comes from the database; what the model writes is marked <strong>Model's free text</strong>. The assistant only proposes a change if the <strong>Let the assistant propose changes</strong> box is checked — a setting separate from writing on the local MCP server — and each change it prepares is displayed and is only made after <strong>Confirm</strong>.</p>
-<p>The configuration window also provides interface display settings. An <strong>interface scale</strong> slider lets you enlarge or shrink all interface elements, which is useful on high-density screens or to improve readability. A <strong>panel position</strong> menu sets where the panels (search, matches, analysis) appear relative to the board: <em>bottom</em>, <em>side</em> or <em>automatic</em> (the side is then chosen on wide screens to make better use of the available space). Like the other settings, these choices are kept from one session to the next.</p>
+<p>The configuration window also provides interface display settings. An <strong>interface scale</strong> slider lets you enlarge or shrink all interface elements, which is useful on high-density screens or to improve readability. The shortcuts CTRL-+, CTRL-- and CTRL-0 set the same scale, as in a browser. A <strong>panel position</strong> menu sets where the panels (search, matches, analysis) appear relative to the board: <em>bottom</em>, <em>side</em> or <em>automatic</em> (the side is then chosen on wide screens to make better use of the available space). Like the other settings, these choices are kept from one session to the next.</p>
 <h3>Guided tours and sample database</h3>
 <p>To make getting started easier, blunderDB offers <strong>guided tours</strong> of the interface. The tour catalogue opens from the toolbar or with the <code>tutorial</code> command (alias <code>tour</code>). Seven tours are available: a general tour of the interface, and tours dedicated to searching positions, reviewing matches, reviewing tournaments, the Eval panel, Anki review and statistics. Each tour highlights the relevant interface elements, step by step, opens the panel it talks about along the way, and can be replayed at any time. On first launch, the general tour is offered automatically.</p>
 <p>The <code>demo</code> command loads a <strong>sample database</strong> that lets you explore the tool's features without importing your own games: three matches (two of them grouped in a tournament) analysed by eXtreme Gammon, BGBlitz and gammonNet, three thematic collections, tagged comments (<code>#blunder</code>, <code>#cube</code>) and an Anki deck with its review log. The players, the tournament and the venue are fictional. The guided tours rely on this database when no database is open.</p>
@@ -1308,6 +1308,18 @@ export default {
 <tr>
 <td>CTRL-RIGHT</td>
 <td>Board orientation to the right.</td>
+</tr>
+<tr>
+<td>CTRL-+ / CTRL-=</td>
+<td>Enlarge the interface by a 10 % step (200 % at most), also from a text field; the level appears in the status bar.</td>
+</tr>
+<tr>
+<td>CTRL--</td>
+<td>Shrink the interface by a 10 % step (50 % at least).</td>
+</tr>
+<tr>
+<td>CTRL-0</td>
+<td>Return to the 100 % scale.</td>
 </tr>
 <tr>
 <td>p</td>

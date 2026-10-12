@@ -698,7 +698,8 @@ prépare s'affiche et n'est faite qu'après **Confirmer**.
 La fenêtre de configuration regroupe également des réglages d'affichage de
 l'interface. Un curseur d'**échelle de l'interface** permet d'agrandir ou de
 réduire l'ensemble des éléments, ce qui est utile sur les écrans à haute
-densité ou pour améliorer la lisibilité. Un menu **position des panneaux**
+densité ou pour améliorer la lisibilité. Les raccourcis CTRL-+, CTRL-- et CTRL-0 règlent la même échelle
+comme dans un navigateur. Un menu **position des panneaux**
 détermine l'emplacement des panneaux (recherche, matchs, analyse) par rapport
 au plateau : *en bas*, *sur le côté* ou *automatique* (le côté est alors choisi
 sur les écrans larges afin de mieux exploiter l'espace disponible). Comme les

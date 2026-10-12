@@ -92,6 +92,9 @@ Affichage
 
    "CTRL-GAUCHE", "Orientation du board à gauche."
    "CTRL-DROITE", "Orientation du board à droite."
+   "CTRL-+ / CTRL-=", "Agrandir l'interface d'un pas de 10 % (200 % au plus), y compris depuis un champ de saisie ; le niveau s'affiche dans la barre d'état."
+   "CTRL--", "Réduire l'interface d'un pas de 10 % (50 % au plus)."
+   "CTRL-0", "Revenir à l'échelle de 100 %."
    "p", "Afficher/cacher le compte de course."
    "m", "Activer/désactiver le défi : l'analyse du panneau Analyse est masquée jusqu'à un clic, à chaque position."
 
