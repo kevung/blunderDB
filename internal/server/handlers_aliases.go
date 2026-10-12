@@ -28,8 +28,21 @@ type aliasRemoveResp struct {
 	Removed bool `json:"removed"`
 }
 
+type playerNameReq struct {
+	Name string `json:"name"`
+}
+
+type mainPlayerResp struct {
+	Name string `json:"name"`
+}
+
+type playerMatchIDsResp struct {
+	IDs []int64 `json:"ids"`
+}
+
 // aliasRoutes serves the other spellings of players (/v1/players.alias.*)
-// and events (/v1/events.alias.*), the same four gestures for each.
+// and events (/v1/events.alias.*), the same four gestures for each, and the
+// library's Main player (/v1/players.main.*).
 func (s *Server) aliasRoutes() []route {
 	as := func() storage.AliasStore { return s.opts.Storage.Aliases() }
 	return []route{
@@ -45,6 +58,29 @@ func (s *Server) aliasRoutes() []route {
 		})},
 		{http.MethodPost, "/v1/players.alias.suggest", rpc(func(ctx context.Context, scope string, _ struct{}) (aliasSuggestResp, error) {
 			return suggestAliases(ctx, as(), scope, storage.AliasPlayer)
+		})},
+		{http.MethodPost, "/v1/players.main.get", rpc(func(ctx context.Context, scope string, _ struct{}) (mainPlayerResp, error) {
+			name, err := storage.MainPlayer(ctx, s.opts.Storage, scope)
+			return mainPlayerResp{Name: name}, err
+		})},
+		{http.MethodPost, "/v1/players.main.plan", rpc(func(ctx context.Context, scope string, req playerNameReq) (storage.MainPlayerPlan, error) {
+			return storage.PlanMainPlayer(ctx, s.opts.Storage, scope, req.Name)
+		})},
+		{http.MethodPost, "/v1/players.main.set", rpc(func(ctx context.Context, scope string, req playerNameReq) (storage.MainPlayerPlan, error) {
+			return storage.DesignateMainPlayer(ctx, s.opts.Storage, scope, req.Name)
+		})},
+		{http.MethodPost, "/v1/players.main.clear", rpcVoid(func(ctx context.Context, scope string, _ struct{}) error {
+			return s.opts.Storage.LibrarySettings().SetMainPlayer(ctx, scope, "")
+		})},
+		{http.MethodPost, "/v1/players.matchIds", rpc(func(ctx context.Context, scope string, req playerNameReq) (playerMatchIDsResp, error) {
+			ids := []int64{}
+			for m, err := range s.opts.Storage.Matches().List(ctx, scope, storage.MatchListOpts{PlayerName: req.Name}) {
+				if err != nil {
+					return playerMatchIDsResp{}, err
+				}
+				ids = append(ids, m.ID)
+			}
+			return playerMatchIDsResp{IDs: ids}, nil
 		})},
 		{http.MethodPost, "/v1/events.alias.list", rpc(func(ctx context.Context, scope string, _ struct{}) (aliasListResp, error) {
 			return listAliases(ctx, as(), scope, storage.AliasEvent)

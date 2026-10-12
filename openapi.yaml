@@ -4902,6 +4902,91 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/aliasSuggestResp"
+  /v1/players.main.clear:
+    post:
+      operationId: players.main.clear
+      tags: [players]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/okResp"
+  /v1/players.main.get:
+    post:
+      operationId: players.main.get
+      tags: [players]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/mainPlayerResp"
+  /v1/players.main.plan:
+    post:
+      operationId: players.main.plan
+      tags: [players]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/playerNameReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/storage_MainPlayerPlan"
+  /v1/players.main.set:
+    post:
+      operationId: players.main.set
+      tags: [players]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/playerNameReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/storage_MainPlayerPlan"
+  /v1/players.matchIds:
+    post:
+      operationId: players.matchIds
+      tags: [players]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/playerNameReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/playerMatchIDsResp"
   /v1/positions.count:
     post:
       operationId: positions.count
@@ -8809,6 +8894,11 @@ components:
         offset:
           type: integer
           format: int32
+    mainPlayerResp:
+      type: object
+      properties:
+        name:
+          type: string
     maintenanceCountResp:
       type: object
       properties:
@@ -8974,6 +9064,19 @@ components:
     parser_Result:
       type: object
       description: "Opaque: see the Go type parser.Result (defined outside internal/server, not expanded here)."
+    playerMatchIDsResp:
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: integer
+            format: int64
+    playerNameReq:
+      type: object
+      properties:
+        name:
+          type: string
     positionIDReq:
       type: object
       properties:
@@ -9432,6 +9535,9 @@ components:
     storage_LibrarySettings:
       type: object
       description: "Opaque: see the Go type storage.LibrarySettings (defined outside internal/server, not expanded here)."
+    storage_MainPlayerPlan:
+      type: object
+      description: "Opaque: see the Go type storage.MainPlayerPlan (defined outside internal/server, not expanded here)."
     storage_MatchBadge:
       type: object
       description: "Opaque: see the Go type storage.MatchBadge (defined outside internal/server, not expanded here)."

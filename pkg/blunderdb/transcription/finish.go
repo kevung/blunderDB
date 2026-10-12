@@ -331,7 +331,10 @@ func restoreTimecodes(doc *transcript.Document, games []*domain.Game, moves map[
 // has no notes to attach. The transcript's own ids are not database ids and
 // are dropped; so are the hashes (see writeMatch).
 func MatchGraph(parts transcript.Parts) *ingest.MatchGraph {
-	g := &ingest.MatchGraph{Match: *parts.Match}
+	// The seats are the ones the user typed or played: the Main player's
+	// place at seat 1 is an import's rule, and the callers restate the
+	// header in this order once the match is written.
+	g := &ingest.MatchGraph{Match: *parts.Match, KeepSeats: true}
 	g.Match.MatchHash, g.Match.CanonicalHash = "", ""
 
 	for _, game := range parts.Games {

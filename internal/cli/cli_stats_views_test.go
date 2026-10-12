@@ -120,3 +120,46 @@ func TestCLI_PlayersMergeAndSwap(t *testing.T) {
 		}
 	}
 }
+
+func TestCLI_PlayersMain(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	second := createMatch(t, cli.db, "Bob", "Doe J.", "2025-01-01", 5, 0)
+	first := createMatch(t, cli.db, "Doe J.", "Carol", "2025-01-02", 5, 0)
+	if err := cli.db.SetAlias("player", "Doe J.", "John Doe"); err != nil {
+		t.Fatalf("SetAlias: %v", err)
+	}
+
+	if err := cli.Run([]string{"players", "main", "--db", dbPath, "--dry-run", "John Doe"}); err != nil {
+		t.Fatalf("players main --dry-run: %v", err)
+	}
+	if m, _ := cli.db.GetMatchByID(second); m.Player1Name != "Bob" {
+		t.Errorf("the dry run swapped match %d", second)
+	}
+	if err := cli.Run([]string{"players", "main", "--db", dbPath, "John Doe"}); err != nil {
+		t.Fatalf("players main: %v", err)
+	}
+	if m, _ := cli.db.GetMatchByID(second); m.Player1Name != "Doe J." || m.Player2Name != "Bob" {
+		t.Errorf("match %d: %q / %q, want the Main player first", second, m.Player1Name, m.Player2Name)
+	}
+	if m, _ := cli.db.GetMatchByID(first); m.Player1Name != "Doe J." {
+		t.Errorf("match %d, already the Main player's first, was swapped", first)
+	}
+	if name, err := cli.db.MainPlayer(); err != nil || name != "John Doe" {
+		t.Errorf("MainPlayer = %q, %v", name, err)
+	}
+	if ids, err := cli.db.PlayerMatchIDs("John Doe"); err != nil || len(ids) != 2 {
+		t.Errorf("PlayerMatchIDs = %v, %v; want both matches", ids, err)
+	}
+	if err := cli.Run([]string{"players", "main", "--db", dbPath, "--clear"}); err != nil {
+		t.Fatalf("players main --clear: %v", err)
+	}
+	if name, _ := cli.db.MainPlayer(); name != "" {
+		t.Errorf("MainPlayer after --clear = %q", name)
+	}
+	if m, _ := cli.db.GetMatchByID(second); m.Player1Name != "Doe J." {
+		t.Errorf("--clear swapped match %d back", second)
+	}
+	if err := cli.Run([]string{"players", "main", "--db", dbPath, "--clear", "X"}); err == nil {
+		t.Error("--clear with a name: want an error")
+	}
+}

@@ -35,6 +35,10 @@ type MatchGraph struct {
 	// than the stored ones (deepenAnalyses). Set by the caller, like
 	// ImportBatchID.
 	SkipDuplicates bool
+	// KeepSeats writes a new match in the graph's seat order even when the
+	// library's Main player sits at seat 2 (storage.MainPlayerAtSeat2): a
+	// match typed or played here, whose seats the user chose.
+	KeepSeats bool
 }
 
 // GameGraph is one game with its ordered moves.
@@ -67,6 +71,9 @@ type WriteResult struct {
 	Enriched       bool // true when a cross-format (canonical) duplicate was enriched in place
 	Replaced       bool // true when an existing match was rewritten in place (MatchGraph.ReplaceMatchID)
 	SavedPositions int
+	// SeatsSwapped is true when the match this call created was stored with
+	// its seats swapped, to put the library's Main player at seat 1.
+	SeatsSwapped bool
 	// DroppedAnalyses counts the decisions whose analysis was left out
 	// because it held a value that is not a finite number.
 	DroppedAnalyses int
@@ -295,6 +302,21 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 	if replace && len(orphanCandidates) > 0 {
 		if err := tx.Matches().PurgeOrphanPositions(ctx, scope, orphanCandidates); err != nil {
 			return res, err
+		}
+	}
+
+	// A new match from a file puts the library's Main player at seat 1,
+	// through the same swap as the user's own gesture.
+	if !enrich && !replace && !g.KeepSeats {
+		main, err := tx.LibrarySettings().MainPlayer(ctx, scope)
+		if err != nil {
+			return res, err
+		}
+		if storage.MainPlayerAtSeat2(aliases.players, main, g.Match.Player1Name, g.Match.Player2Name) {
+			if err := tx.Matches().SwapPlayers(ctx, scope, matchID); err != nil {
+				return res, err
+			}
+			res.SeatsSwapped = true
 		}
 	}
 
@@ -538,10 +560,36 @@ func fillStoredMetadata(ctx context.Context, tx storage.Tx, scope string, id int
 	if err != nil {
 		return err
 	}
+	// A stored match may have had its seats swapped since its first import
+	// (by hand, or to put the Main player first): the file's per-seat
+	// figures then belong to the other seat.
+	reversed, err := seatsReversed(ctx, tx, scope, stored, from)
+	if err != nil {
+		return err
+	}
+	if reversed {
+		f := *from
+		f.Player1Elo, f.Player2Elo = from.Player2Elo, from.Player1Elo
+		f.Player1Experience, f.Player2Experience = from.Player2Experience, from.Player1Experience
+		from = &f
+	}
 	if !domain.FillSourceMetadata(stored, from) {
 		return nil
 	}
 	return tx.Matches().ReplaceHeader(ctx, scope, id, stored)
+}
+
+// seatsReversed reports whether stored names the file's players in the
+// other order, the names read through the player aliases.
+func seatsReversed(ctx context.Context, tx storage.Tx, scope string, stored, file *domain.Match) (bool, error) {
+	list, err := tx.Aliases().List(ctx, scope, storage.AliasPlayer)
+	if err != nil {
+		return false, err
+	}
+	a := storage.NewAliasMap(list)
+	s1, s2 := a.Canonical(stored.Player1Name), a.Canonical(stored.Player2Name)
+	f1, f2 := a.Canonical(file.Player1Name), a.Canonical(file.Player2Name)
+	return s1 != s2 && s1 == f2 && s2 == f1, nil
 }
 
 // copySessionRules writes a money session's Jacoby and Beaver rules onto

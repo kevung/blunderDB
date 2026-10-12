@@ -258,6 +258,11 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/players.alias.remove                 JSON
      POST /v1/players.alias.set                    JSON
      POST /v1/players.alias.suggest                JSON
+     POST /v1/players.main.clear                   JSON
+     POST /v1/players.main.get                     JSON
+     POST /v1/players.main.plan                    JSON
+     POST /v1/players.main.set                     JSON
+     POST /v1/players.matchIds                     JSON
    positions
      POST /v1/positions.count                      JSON
      POST /v1/positions.delete                     JSON

@@ -4144,8 +4144,9 @@ Examples:
   blunderdb players alias list --db base.db --format json
   blunderdb players alias suggest --db base.db
 
-Also: `players merge --db FILE --into CANONICAL NAME...` and
-`players swap --db FILE MATCH_ID` (see their --help).
+Also: `players merge --db FILE --into CANONICAL NAME...`,
+`players swap --db FILE MATCH_ID`, `players main --db FILE [NAME]` and
+`players matches --db FILE NAME` (see their --help).
 ```
 
 ### `blunderdb reencode`

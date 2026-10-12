@@ -52,6 +52,12 @@ const (
 	// and written apart from the thresholds (see PileCollection).
 	LibrarySettingPileKey = "pile_collection_id"
 
+	// LibrarySettingMainPlayerKey holds the name of the Main player (see
+	// MainPlayer). Like the Pile, it is read and written apart from the
+	// thresholds, and it stays outside issuance.CarriedMetadataKeys: the
+	// recipient of an export is somebody else.
+	LibrarySettingMainPlayerKey = "main_player"
+
 	// MaintenanceKeyPrefix starts the key of every row of the maintenance
 	// journal (ADR-0088): one row per operation, its last requested run. The
 	// rows sit beside the thresholds because, like them, they belong to the
@@ -143,6 +149,14 @@ type LibrarySettingsStore interface {
 
 	// SetPileCollection names the Collection the Pile gesture aims at.
 	SetPileCollection(ctx context.Context, scope string, collectionID int64) error
+
+	// MainPlayer returns the name stored as the library's Main player, ""
+	// when none is. It is the name as stored: storage.MainPlayer resolves it
+	// through the aliases.
+	MainPlayer(ctx context.Context, scope string) (string, error)
+
+	// SetMainPlayer records the Main player's name; "" forgets it.
+	SetMainPlayer(ctx context.Context, scope string, name string) error
 
 	// MaintenanceLog returns the scope's maintenance journal: every row whose
 	// key starts with MaintenanceKeyPrefix, keyed by the full key. A library
