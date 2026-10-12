@@ -62,7 +62,7 @@ func TestExportCarriesVideoSourceAsURLOrFileName(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			if err := (SQLiteExporter{S: src}).Export(ctx, "", out, WholeTenant(FormatSQLite)); err != nil {
+			if err := exportTo(ctx, src, out, WholeTenant(FormatSQLite)); err != nil {
 				t.Fatalf("export: %v", err)
 			}
 			_ = out.Close()

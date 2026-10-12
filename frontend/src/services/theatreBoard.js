@@ -1,25 +1,26 @@
 /**
  * theatreBoard.js — ce que le mini-plateau du théâtre dessine : la position du plateau
  * principal en transcription, telle que Board.svelte la dessine (coup en cours au plateau,
- * plateau retourné), avec les flèches du candidat sélectionné.
+ * plateau retourné), avec les mêmes flèches : le coup écrit, ou la ligne de l'analyse désignée.
  */
 
-import { boardMetrics, checkerPointAndCountAt, mirrorPosition, parseMoveNotation } from '../utils/boardGeometry.js';
+import { boardMetrics, checkerPointAndCountAt, mirrorPosition } from '../utils/boardGeometry.js';
 import { defaultBoardConfig } from '../utils/boardConfig.js';
 import { hitTestBearoffTray, hitTestSideControls } from '../utils/boardInteractions.js';
 import { OFF } from './quizPlay.js';
-import { boardIsMirrored, labelsFlipped, screenOfNotationPoint } from './boardOrientation.js';
+import { boardIsMirrored, labelsFlipped } from './boardOrientation.js';
 import { diceShade, orderedDice } from './boardMove.js';
 import { arrowsHiddenBy } from './boardMoveInput.js';
+import { screenMoves } from './transcribedArrows.js';
 
 /**
  * `armed` : le coup au plateau suit la grammaire d'ADR-0086 ; ses dés se dessinent alors dans
  * l'ordre choisi et se grisent à mesure, comme sur le plateau principal. `mirrored` dit au clic
  * de rendre le point du modèle (25 - p).
- * @param {{ position: any, play?: any, swap?: boolean, selectedMove?: string | null, armed?: boolean }} params
- * @returns {{ position: any, onRoll: number, flip: boolean, mirrored: boolean, moves: import('../utils/boardGeometry.js').StepMove[], diceUsed: any } | null}
+ * @param {{ position: any, play?: any, swap?: boolean, arrows?: import('./transcribedArrows.js').TranscriptionArrows | null, armed?: boolean }} params
+ * @returns {{ position: any, onRoll: number, flip: boolean, mirrored: boolean, moves: import('../utils/boardGeometry.js').StepMove[], tone: 'record' | 'engine', diceUsed: any } | null}
  */
-export function theatreScene({ position, play = null, swap = false, selectedMove = null, armed = false }) {
+export function theatreScene({ position, play = null, swap = false, arrows = null, armed = false }) {
     if (!position?.board) return null;
     // Seul le damier suit le coup en cours ; le reste vient de la position.
     let shown = play?.board ? { ...position, board: play.board } : position;
@@ -30,10 +31,9 @@ export function theatreScene({ position, play = null, swap = false, selectedMove
     if (mirrored) shown = mirrorPosition(shown);
     // La notation est numérotée depuis le camp au trait : `flip`, pas le miroir.
     const flip = labelsFlipped(shown);
-    // Le coup qu'on saisit retire les flèches du candidat, comme sur le plateau principal.
-    const notation = arrowsHiddenBy(play) ? '' : (selectedMove ?? '');
-    const moves = parseMoveNotation(notation).map((m) => (flip ? { ...m, from: screenOfNotationPoint(m.from, true), to: screenOfNotationPoint(m.to, true) } : m));
-    return { position: shown, onRoll: position.player_on_roll, flip, mirrored, moves, diceUsed };
+    // Le coup qu'on saisit retire les flèches, comme sur le plateau principal.
+    const moves = arrowsHiddenBy(play) ? [] : screenMoves(arrows?.moves ?? [], flip);
+    return { position: shown, onRoll: position.player_on_roll, flip, mirrored, moves, tone: arrows?.tone ?? 'record', diceUsed };
 }
 
 /**

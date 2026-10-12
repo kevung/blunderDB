@@ -30,7 +30,7 @@ func TestExportParity_WholeLibraryFromGUICLIAndDaemon(t *testing.T) {
 	dir := t.TempDir()
 
 	gui := filepath.Join(dir, "gui.db")
-	if err := cli.db.ExportDatabase(ExportOptions{
+	if _, err := cli.db.ExportDatabase(ExportOptions{
 		ExportPath: gui, WholeLibrary: true,
 		IncludeAnalysis: true, IncludeComments: true, IncludePlayedMoves: true, IncludeFilterLibrary: true,
 		IncludeMatches: true, IncludeCollections: true, IncludeTournaments: true, IncludeLessons: true,

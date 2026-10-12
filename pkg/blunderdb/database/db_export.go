@@ -16,29 +16,30 @@ import (
 // ingest.ExportSQLite; this method only seals the watermark with this
 // machine's identity and maps the options to a Selection. Uses
 // context.Background(); prefer ExportDatabaseCtx when the caller can cancel.
-func (d *Database) ExportDatabase(opts ExportOptions) error {
+// The report counts what the file holds, family by family.
+func (d *Database) ExportDatabase(opts ExportOptions) (ingest.ExportReport, error) {
 	return d.ExportDatabaseCtx(context.Background(), opts)
 }
 
 // ExportDatabaseCtx is ExportDatabase with a caller-supplied context that
 // aborts an in-flight export.
-func (d *Database) ExportDatabaseCtx(ctx context.Context, opts ExportOptions) error {
+func (d *Database) ExportDatabaseCtx(ctx context.Context, opts ExportOptions) (ingest.ExportReport, error) {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	if d.db == nil {
-		return fmt.Errorf("no database is currently open")
+		return ingest.ExportReport{}, fmt.Errorf("no database is currently open")
 	}
 
 	// Seal the watermark before writing anything: it is the producer's statement about this
 	// file, and a failure to sign must not leave a half-made export behind.
 	watermarkDocument, err := sealWatermark(opts.Watermark, opts.WatermarkNote)
 	if err != nil {
-		return fmt.Errorf("cannot sign the watermark: %w", err)
+		return ingest.ExportReport{}, fmt.Errorf("cannot sign the watermark: %w", err)
 	}
 
 	plan, err := d.exportPlan(ctx, opts)
 	if err != nil {
-		return err
+		return ingest.ExportReport{}, err
 	}
 	plan.Metadata = opts.Metadata
 	plan.Watermark = watermarkDocument
@@ -46,8 +47,44 @@ func (d *Database) ExportDatabaseCtx(ctx context.Context, opts ExportOptions) er
 	// A Direction travels with its tournament. The copy is ours and not ingest's: the
 	// direction tables belong to the desktop wrapper, and the daemon exposes none of them.
 	plan.AfterWrite = d.directionAfterWrite()
-	_, err = ingest.ExportSQLite(ctx, d.store, "", opts.ExportPath, plan)
-	return err
+	return ingest.ExportSQLite(ctx, d.store, "", opts.ExportPath, plan)
+}
+
+// PlanExport counts, family by family, what ExportDatabase would write for the same
+// options, and names the living collections that would leave frozen. It writes nothing:
+// the export dialog shows it before the user commits to a file.
+func (d *Database) PlanExport(opts ExportOptions) (ingest.ExportPlan, error) {
+	return d.PlanExportCtx(context.Background(), opts)
+}
+
+// PlanExportCtx is PlanExport with a caller-supplied context.
+func (d *Database) PlanExportCtx(ctx context.Context, opts ExportOptions) (ingest.ExportPlan, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	if d.db == nil {
+		return ingest.ExportPlan{}, fmt.Errorf("no database is currently open")
+	}
+	plan, err := d.exportPlan(ctx, opts)
+	if err != nil {
+		return ingest.ExportPlan{}, err
+	}
+	return ingest.PlanExport(ctx, d.store, "", plan)
+}
+
+// PlanExportIDs pages through the source ids behind one count of PlanExport — family is
+// one of ingest.Plan* — so the dialog can open what a count counts; a page holds at most
+// ingest.MaxPlannedIDs.
+func (d *Database) PlanExportIDs(opts ExportOptions, family string, offset, limit int) (ingest.PlannedIDs, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	if d.db == nil {
+		return ingest.PlannedIDs{}, fmt.Errorf("no database is currently open")
+	}
+	plan, err := d.exportPlan(context.Background(), opts)
+	if err != nil {
+		return ingest.PlannedIDs{}, err
+	}
+	return ingest.PlanExportIDs(context.Background(), d.store, "", plan, family, offset, limit)
 }
 
 // exportPlan maps the GUI's and the CLI's options onto what ingest exports.

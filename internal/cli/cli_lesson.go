@@ -434,7 +434,7 @@ func (cli *CLI) runLessonExport(args []string) error {
 			return fmt.Errorf("lesson with ID %d not found", id)
 		}
 	}
-	err = cli.db.ExportDatabase(domain.ExportOptions{
+	_, err = cli.db.ExportDatabase(domain.ExportOptions{
 		ExportPath:      *out,
 		Metadata:        map[string]string{},
 		IncludeLessons:  true,

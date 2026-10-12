@@ -82,3 +82,26 @@ func payloadNamesRows(raw json.RawMessage) bool {
 	}
 	return false
 }
+
+// searchSourceLost reports whether carrying a search deck's source dropped
+// part of what it said: its command and board, its stored payload, or every
+// one of its ids. Such a deck still travels, with its members, but whoever
+// opens it cannot rebuild it from its source; the export says so.
+func searchSourceLost(source, carried string) bool {
+	before, ok := domain.SearchSourceDocument(source)
+	if !ok {
+		return len(domain.SearchSourceIDs(source)) > 0 && len(domain.SearchSourceIDs(carried)) == 0
+	}
+	after, ok := domain.SearchSourceDocument(carried)
+	if !ok {
+		return true
+	}
+	for _, key := range []string{"command", "payload"} {
+		if _, had := before[key]; had {
+			if _, has := after[key]; !has {
+				return true
+			}
+		}
+	}
+	return len(domain.SearchSourceIDs(source)) > 0 && len(domain.SearchSourceIDs(carried)) == 0
+}

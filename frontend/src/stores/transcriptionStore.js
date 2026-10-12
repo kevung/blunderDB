@@ -182,3 +182,13 @@ export const transcriptionCubeRequestStore = writable(null);
  * @type {import('svelte/store').Writable<boolean>}
  */
 export const transcriptionBoardSwapStore = writable(false);
+
+/**
+ * Les flèches du plateau en transcription (services/transcribedArrows.js) : le coup écrit de
+ * l'Action sous le Cursor, ou la ligne de l'analyse que l'utilisateur désigne ; `null`, aucune.
+ * Le plateau principal et le mini-plateau du théâtre les lisent ici, jamais `selectedMoveStore`,
+ * qui ne dit que la ligne surlignée de la liste.
+ *
+ * @type {import('svelte/store').Writable<import('../services/transcribedArrows.js').TranscriptionArrows | null>}
+ */
+export const transcriptionArrowsStore = writable(null);

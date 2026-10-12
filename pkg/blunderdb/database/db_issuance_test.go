@@ -25,7 +25,7 @@ func exportTo(t *testing.T, source *Database, path string, opts ExportOptions) s
 	if opts.Metadata == nil {
 		opts.Metadata = map[string]string{"user": "Jean Dupont", "description": "Cours"}
 	}
-	if err := source.ExportDatabase(opts); err != nil {
+	if _, err := source.ExportDatabase(opts); err != nil {
 		t.Fatalf("ExportDatabase: %v", err)
 	}
 	return path
@@ -192,7 +192,7 @@ func TestProtectedExportIsRenamedToBdbx(t *testing.T) {
 	dir := t.TempDir()
 	asked := filepath.Join(dir, "cours.db")
 
-	if err := source.ExportDatabase(ExportOptions{
+	if _, err := source.ExportDatabase(ExportOptions{
 		ExportPath: asked,
 		Metadata:   map[string]string{},
 		Password:   "pw",
@@ -388,7 +388,7 @@ func TestDeleteProtectedCopyRefusesOrdinaryFiles(t *testing.T) {
 	exportTo(t, source, container, ExportOptions{Password: "pw"})
 
 	plain := filepath.Join(dir, "precieux.db")
-	if err := source.ExportDatabase(ExportOptions{ExportPath: plain, Metadata: map[string]string{}}); err != nil {
+	if _, err := source.ExportDatabase(ExportOptions{ExportPath: plain, Metadata: map[string]string{}}); err != nil {
 		t.Fatalf("ExportDatabase: %v", err)
 	}
 

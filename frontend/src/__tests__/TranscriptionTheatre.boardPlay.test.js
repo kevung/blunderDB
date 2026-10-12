@@ -80,8 +80,8 @@ async function settle(times = 10) {
 
 const panel = () => /** @type {HTMLElement} */ (document.getElementById('transcriptionPanel'));
 const drawing = () => /** @type {HTMLElement} */ (document.querySelector('[data-testid="theatre-board-drawing"]'));
-// The arrows' colour, as boardScene.drawMoveArrows paints them.
-const arrows = () => (drawing().innerHTML.match(/rgba\(255, 107, 107/g) ?? []).length;
+// The arrows' colours, as boardScene.drawMoveArrows paints them: a written move or a line of the analysis.
+const arrows = () => (drawing().innerHTML.match(/rgba\(255, 107, 107|rgba\(52, 120, 246/g) ?? []).length;
 const steps = () => get(quizPlayStore)?.steps.map((/** @type {any} */ s) => [s.from, s.to]);
 
 const W = DIAGRAM_WIDTH;

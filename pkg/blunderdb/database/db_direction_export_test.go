@@ -19,7 +19,7 @@ func exportDirectionTo(t *testing.T, d *Database, opts ExportOptions) *Database 
 	if opts.ExportPath == "" {
 		opts.ExportPath = filepath.Join(t.TempDir(), "export.db")
 	}
-	if err := d.ExportDatabase(opts); err != nil {
+	if _, err := d.ExportDatabase(opts); err != nil {
 		t.Fatalf("export: %v", err)
 	}
 	other := newTestDB(t)

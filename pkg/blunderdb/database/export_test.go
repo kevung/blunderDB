@@ -301,7 +301,7 @@ func doExport(t *testing.T, db *Database, exportPath string, p exportParams) {
 		"user":        "testuser",
 		"description": "test export",
 	}
-	err := db.ExportDatabase(ExportOptions{
+	_, err := db.ExportDatabase(ExportOptions{
 		ExportPath:           exportPath,
 		Positions:            positions,
 		Metadata:             metadata,
@@ -706,7 +706,7 @@ func TestExport_UnknownCollectionAndTournamentAreLoggedAndCounted(t *testing.T) 
 
 	exportPath := filepath.Join(dir, "export.db")
 	positions := allPositions(t, db)
-	err := db.ExportDatabase(ExportOptions{
+	_, err := db.ExportDatabase(ExportOptions{
 		ExportPath:         exportPath,
 		Positions:          positions,
 		IncludeCollections: true,
@@ -963,7 +963,7 @@ func TestExport_Metadata(t *testing.T) {
 		"description":    "My blunder collection",
 		"dateOfCreation": "2025-06-15",
 	}
-	err := db.ExportDatabase(ExportOptions{
+	_, err := db.ExportDatabase(ExportOptions{
 		ExportPath:           exportPath,
 		Positions:            positions,
 		Metadata:             metadata,
@@ -1012,7 +1012,7 @@ func TestExport_DefaultDateOfCreation(t *testing.T) {
 	exportPath := filepath.Join(dir, "export.db")
 	positions := allPositions(t, db)
 	metadata := map[string]string{} // empty - no dateOfCreation
-	err := db.ExportDatabase(ExportOptions{
+	_, err := db.ExportDatabase(ExportOptions{
 		ExportPath:           exportPath,
 		Positions:            positions,
 		Metadata:             metadata,
@@ -1072,7 +1072,7 @@ func TestExport_NoDatabaseOpen(t *testing.T) {
 	dir := tempDir(t)
 	exportPath := filepath.Join(dir, "export.db")
 
-	err := db.ExportDatabase(ExportOptions{
+	_, err := db.ExportDatabase(ExportOptions{
 		ExportPath:           exportPath,
 		IncludeAnalysis:      true,
 		IncludeComments:      true,

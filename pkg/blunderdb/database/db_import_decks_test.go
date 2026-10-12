@@ -43,7 +43,7 @@ func TestExportDeckThenImport(t *testing.T) {
 	}
 
 	file := filepath.Join(dir, "deck.db")
-	if err := src.ExportDatabase(ExportOptions{ExportPath: file, DeckIDs: []int64{deck}}); err != nil {
+	if _, err := src.ExportDatabase(ExportOptions{ExportPath: file, DeckIDs: []int64{deck}}); err != nil {
 		t.Fatal(err)
 	}
 

@@ -3323,12 +3323,20 @@ Options:
     	Include filter library in database export (default: true) (default true)
   -format string
     	Output format: text or json (default "text")
+  -limit int
+    	With --plan-ids: ids per page (at most 1000, the default)
   -match-ids string
     	Comma-separated list of match IDs to export (empty = all)
   -matches
     	Include matches in database export (default: true) (default true)
+  -offset int
+    	With --plan-ids: index of the first id of the page
   -password string
     	Protect the exported file with a password (produces a .dbx container)
+  -plan
+    	Print what a database or matches export would write, family by family, without writing a file
+  -plan-ids string
+    	Print one page of the source ids behind a --plan count, for a family: positions, comments, matches, tournaments, collections, lessons, ankiDecks, transcriptions, filters
   -played-moves
     	Include played moves in analysis (default: true) (default true)
   -tournament-ids string
@@ -3377,6 +3385,9 @@ Examples:
   # Mark the exported file with its origin, and protect it with a password
   blunderdb export --db database.db --type database --file cours.db \
       --watermark "Cours de Jean Dupont - 12 mars 2026" --password secret
+
+  # Count what an export would carry, without writing it
+  blunderdb export --db database.db --type database --tournament-ids=1 --plan
 
   # Export positions to text file
   blunderdb export --db database.db --type positions --file positions.txt

@@ -34,9 +34,8 @@ import TranscriptionPanel from '../components/TranscriptionPanel.svelte';
 import TranscriptionTheatre from '../components/TranscriptionTheatre.svelte';
 import { theatreStore, exitTheatre, enterTheatre, theatreKey, theatreAvailableStore } from '../services/transcriptionTheatre.js';
 import { handleEscapeCapture } from '../services/escapeService.js';
-import { selectedMoveStore } from '../stores/analysisStore.js';
 import { fakeVideo } from './fixtures/fakeVideo.js';
-import { transcriptionStore, clearTranscription } from '../stores/transcriptionStore.js';
+import { transcriptionStore, transcriptionArrowsStore, clearTranscription } from '../stores/transcriptionStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { activeTabStore, statusBarModeStore } from '../stores/uiStore.js';
 
@@ -247,11 +246,11 @@ describe('the theatre of the transcription', () => {
         expect(get(theatreStore)).toBe(false);
     });
 
-    test('the mini-board names the selected candidate and folds into a tab for this theatre only', async () => {
+    test('the mini-board names the move it draws and folds into a tab for this theatre only', async () => {
         await openedPanel();
         await enterTheatre();
         await settle();
-        selectedMoveStore.set('8/5 6/5');
+        transcriptionArrowsStore.set({ notation: '8/5 6/5', moves: [], tone: 'record' });
         await settle();
         expect(document.querySelector('[data-testid="theatre-board-move"]')?.textContent).toBe('8/5 6/5');
         await fireEvent.click(/** @type {HTMLElement} */ (document.querySelector('[data-testid="theatre-board-hide"]')));

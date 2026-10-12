@@ -156,12 +156,16 @@ export const draftRow = {
  * introuvable).
  *
  * @param {import('@playwright/test').Page} page
- * @param {{expects?: string, cursor?: number, video?: string}} [opts]
+ * `notations` réécrit le coup écrit de certaines Actions (index → notation), pour une décision
+ * qu'aucun coup légal ne joue.
+ *
+ * @param {{expects?: string, cursor?: number, video?: string, notations?: Record<number, string>}} [opts]
  */
 export async function installTranscriptionEngine(page, opts = {}) {
     await page.addInitScript(
-        ({ doc, row, plays, moves, expects, cursor, video }) => {
+        ({ doc, row, plays, moves, expects, cursor, video, notations }) => {
             const db = window.go.database.Database;
+            for (const [index, notation] of Object.entries(notations)) doc.actions[Number(index)].notation = notation;
             const app = window.go.gui.App;
 
             if (video) {
@@ -212,7 +216,8 @@ export async function installTranscriptionEngine(page, opts = {}) {
             moves: rankedMoves,
             expects: opts.expects ?? 'checker',
             cursor: opts.cursor ?? ACTION_COUNT,
-            video: opts.video ?? ''
+            video: opts.video ?? '',
+            notations: opts.notations ?? {}
         }
     );
 }

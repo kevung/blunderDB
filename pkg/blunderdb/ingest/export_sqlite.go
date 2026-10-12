@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"log/slog"
 	"os"
 	"slices"
@@ -92,16 +91,30 @@ type Selection struct {
 type ExportReport struct {
 	// Path is where the file landed: opts' path, or the .dbx container it was
 	// wrapped into when a password was given.
-	Path                                         string
-	Positions, Analyses, Comments                int
-	Matches, Games, Moves, MoveAnalyses          int
-	Collections, Tournaments, Filters, AnkiDecks int
-	Transcriptions, Lessons, Aliases             int
-	Skipped                                      int
+	Path           string `json:"path"`
+	Positions      int    `json:"positions"`
+	Analyses       int    `json:"analyses"`
+	Comments       int    `json:"comments"`
+	Matches        int    `json:"matches"`
+	Games          int    `json:"games"`
+	Moves          int    `json:"moves"`
+	MoveAnalyses   int    `json:"moveAnalyses"`
+	Collections    int    `json:"collections"`
+	Tournaments    int    `json:"tournaments"`
+	Filters        int    `json:"filters"`
+	AnkiDecks      int    `json:"ankiDecks"`
+	Transcriptions int    `json:"transcriptions"`
+	Lessons        int    `json:"lessons"`
+	Aliases        int    `json:"aliases"`
+	Skipped        int    `json:"skipped"`
+	// DegradedAnkiDecks counts the search decks that left with part of their
+	// source dropped (searchSourceLost): their members travel, but their
+	// command, payload or ids named rows the file does not hold.
+	DegradedAnkiDecks int `json:"degradedAnkiDecks"`
 	// TournamentMap gives, for each exported tournament, the id the new file assigned it.
 	// A Direction travels with its tournament (ADR-0047) but its tables live on the desktop
 	// wrapper, not the storage contract, so the caller copies them itself with this map.
-	TournamentMap map[int64]int64
+	TournamentMap map[int64]int64 `json:"-"`
 }
 
 // WholeTenant is the export the daemon offers by default: everything the
@@ -131,38 +144,6 @@ func SealWatermark(identity *issuance.Identity, origin, note string) (string, er
 		return "", err
 	}
 	return issuance.EncodeEnvelope(env)
-}
-
-// SQLiteExporter serializes a selection of one scope into a fresh, valid
-// blunderDB SQLite file and streams its bytes to w. It is ExportSQLite behind
-// the Exporter interface, for the daemon; opts.Format is ignored.
-type SQLiteExporter struct{ S storage.Storage }
-
-func (e SQLiteExporter) Export(ctx context.Context, scope string, w io.Writer, opts ExportOptions) error {
-	tmp, err := os.CreateTemp("", "blunderdb-export-*.sqlite")
-	if err != nil {
-		return fmt.Errorf("ingest: temp file: %w", err)
-	}
-	tmpPath := tmp.Name()
-	tmp.Close()
-	defer os.Remove(tmpPath)
-
-	report, err := ExportSQLite(ctx, e.S, scope, tmpPath, opts)
-	if err != nil {
-		return err
-	}
-	if report.Path != tmpPath {
-		defer os.Remove(report.Path)
-	}
-	f, err := os.Open(report.Path)
-	if err != nil {
-		return fmt.Errorf("ingest: reopen export: %w", err)
-	}
-	defer f.Close()
-	if _, err := io.Copy(w, f); err != nil {
-		return fmt.Errorf("ingest: stream export: %w", err)
-	}
-	return nil
 }
 
 // ExportSQLite writes the selected part of scope into a new blunderDB
@@ -1455,6 +1436,10 @@ func (e *exporter) writeAnkiDecks() error {
 			sourceID = e.collMap[sd.d.SourceID] // 0 if the collection was not exported
 		case domain.AnkiSourceSearch:
 			sourceCmd = carriedSearchSource(sourceCmd, e.posMap, e.matchMap, e.tourMap)
+			if searchSourceLost(sd.d.SourceCommand, sourceCmd) {
+				slog.Warn("export: search deck leaves with part of its source dropped", "deck", sd.d.Name)
+				e.report.DegradedAnkiDecks++
+			}
 		}
 		newID, err := e.dst.Anki().CreateDeck(e.ctx, "", sd.d.Name, sd.d.Description, sd.d.SourceType, sourceID, sourceCmd)
 		if err != nil {

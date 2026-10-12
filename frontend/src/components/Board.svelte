@@ -15,7 +15,7 @@
     import { statusBarModeStore, isAnyModalOpen, activeModal, MODAL, pipcountVisibleStore, activeTabStore } from '../stores/uiStore';
     import { subscribeBoardRedrawTriggers as subscribeSharedRedrawTriggers } from '../services/boardRedraw.js';
     import { boardOrientationStore } from '../stores/boardOrientationStore.js';
-    import { boardIsMirrored, labelsFlipped, screenOfNotationPoint } from '../services/boardOrientation.js';
+    import { boardIsMirrored, labelsFlipped } from '../services/boardOrientation.js';
     import { searchStructureModeStore, searchOfferedCubeStore } from '../stores/searchExcludePositionStore';
     import { boardColorsStore } from '../stores/boardColorsStore';
     import { sendPositionToEval, evaluateInNewView } from '../services/positionService.js';
@@ -27,7 +27,8 @@
     import { quizPlayStore, quizPlayValidateStore } from '../stores/quizPlayStore.js';
     import { diceShade, orderedDice } from '../services/boardMove.js';
     import { arrowsHiddenBy } from '../services/boardMoveInput.js';
-    import { transcriptionCubeRequestStore, transcriptionBoardSwapStore } from '../stores/transcriptionStore.js';
+    import { screenMoves } from '../services/transcribedArrows.js';
+    import { transcriptionCubeRequestStore, transcriptionBoardSwapStore, transcriptionArrowsStore } from '../stores/transcriptionStore.js';
     import { resetBoardPlay } from '../services/transcriptionPlay.js';
     import ContextMenu from './ContextMenu.svelte';
     import { onPileStore, refreshPileState, togglePile } from '../services/pileService.js';
@@ -534,13 +535,19 @@
 
     // Flèches : la notation est dans la numérotation du camp au trait, donc
     // `flip` (joueur dessiné en haut), pas `mirrored` — ils divergent en transcription.
-    // En transcription, le coup saisi au plateau les retire dès son premier pas.
-    /** @param {boolean} flipped */
+    // En transcription, ce sont celles de transcriptionArrowsStore — le coup écrit, pas la ligne
+    // surlignée de la liste — et le coup saisi au plateau les retire dès son premier pas.
+    /**
+     * @param {boolean} flipped
+     * @returns {{ moves: import('../utils/boardGeometry.js').StepMove[], tone: import('../utils/boardScene.js').ArrowTone }}
+     */
     function selectedMoveArrows(flipped) {
-        if (mode === 'TRANSCRIBE' && arrowsHiddenBy(get(quizPlayStore))) return [];
-        const moves = parseMoveNotation(selectedMove);
-        if (moves.length === 0 || !flipped) return moves;
-        return moves.map((m) => ({ ...m, from: screenOfNotationPoint(m.from, true), to: screenOfNotationPoint(m.to, true) }));
+        if (mode === 'TRANSCRIBE') {
+            if (arrowsHiddenBy(get(quizPlayStore))) return { moves: [], tone: 'record' };
+            const arrows = get(transcriptionArrowsStore);
+            return { moves: screenMoves(arrows?.moves ?? [], flipped), tone: arrows?.tone ?? 'record' };
+        }
+        return { moves: screenMoves(parseMoveNotation(selectedMove), flipped), tone: 'candidate' };
     }
 
     // Static layer (triangles, labels, bar, outline) is rebuilt only on size,
@@ -598,7 +605,7 @@
             text: sceneText,
             offeredCube: isOfferedCube(position),
             showPipcount,
-            moves: selectedMoveArrows(flip),
+            arrows: selectedMoveArrows(flip),
             diceUsed: playedDice(position)
         });
 

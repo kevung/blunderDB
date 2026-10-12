@@ -14,8 +14,8 @@ import {duel} from '../models';
 import {direction} from '../models';
 import {engine} from '../models';
 import {apkg} from '../models';
-import {tournoi} from '../models';
 import {ingest} from '../models';
+import {tournoi} from '../models';
 import {maintenance} from '../models';
 import {parser} from '../models';
 import {rollout} from '../models';
@@ -263,9 +263,9 @@ export function ExportAnkiPackage(arg1:number,arg2:number,arg3:string,arg4:strin
 
 export function ExportCollections(arg1:string,arg2:Array<number>,arg3:Record<string, string>,arg4:boolean,arg5:boolean,arg6:string,arg7:string):Promise<void>;
 
-export function ExportDatabase(arg1:domain.ExportOptions):Promise<void>;
+export function ExportDatabase(arg1:domain.ExportOptions):Promise<ingest.ExportReport>;
 
-export function ExportDatabaseCtx(arg1:context.Context,arg2:domain.ExportOptions):Promise<void>;
+export function ExportDatabaseCtx(arg1:context.Context,arg2:domain.ExportOptions):Promise<ingest.ExportReport>;
 
 export function ExportMatchMAT(arg1:number,arg2:string):Promise<void>;
 
@@ -570,6 +570,12 @@ export function PendingImportFiles(arg1:Array<string>):Promise<Array<string>>;
 export function PendingTranscriptionAnalysis():Promise<database.TranscriptionAnalysisResume>;
 
 export function PileCollectionID():Promise<number>;
+
+export function PlanExport(arg1:domain.ExportOptions):Promise<ingest.ExportPlan>;
+
+export function PlanExportCtx(arg1:context.Context,arg2:domain.ExportOptions):Promise<ingest.ExportPlan>;
+
+export function PlanExportIDs(arg1:domain.ExportOptions,arg2:string,arg3:number,arg4:number):Promise<ingest.PlannedIDs>;
 
 export function PlanRollout(arg1:context.Context,arg2:domain.SearchFilters,arg3:rollout.Settings):Promise<database.RolloutPlan>;
 

@@ -9,6 +9,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 )
 
 // runExport handles the export command
@@ -39,6 +41,10 @@ func (cli *CLI) runExport(args []string) error {
 	watermarkNote := exportCmd.String("watermark-note", "", "Free text attached to the watermark (terms of use, contact)")
 	password := exportCmd.String("password", "", "Protect the exported file with a password (produces a .dbx container)")
 	format := exportCmd.String("format", "text", "Output format: text or json")
+	planCounts := exportCmd.Bool("plan", false, "Print what a database or matches export would write, family by family, without writing a file")
+	planIDs := exportCmd.String("plan-ids", "", "Print one page of the source ids behind a --plan count, for a family: positions, comments, matches, tournaments, collections, lessons, ankiDecks, transcriptions, filters")
+	planOffset := exportCmd.Int("offset", 0, "With --plan-ids: index of the first id of the page")
+	planLimit := exportCmd.Int("limit", 0, "With --plan-ids: ids per page (at most 1000, the default)")
 
 	exportCmd.Usage = func() {
 		fmt.Println("Usage: blunderdb export [options]")
@@ -82,6 +88,9 @@ func (cli *CLI) runExport(args []string) error {
 		fmt.Println("  blunderdb export --db database.db --type database --file cours.db \\")
 		fmt.Println("      --watermark \"Cours de Jean Dupont - 12 mars 2026\" --password secret")
 		fmt.Println()
+		fmt.Println("  # Count what an export would carry, without writing it")
+		fmt.Println("  blunderdb export --db database.db --type database --tournament-ids=1 --plan")
+		fmt.Println()
 		fmt.Println("  # Export positions to text file")
 		fmt.Println("  blunderdb export --db database.db --type positions --file positions.txt")
 		fmt.Println()
@@ -117,6 +126,11 @@ func (cli *CLI) runExport(args []string) error {
 	}
 	text := formatLower != "json"
 
+	plan := exportPlanRequest{counts: *planCounts || *planIDs != "", family: *planIDs, offset: *planOffset, limit: *planLimit}
+	if plan.counts && !planType(*exportType) {
+		return fmt.Errorf("--plan and --plan-ids count a database export: use them with --type database or matches, not %q", *exportType)
+	}
+
 	// The .mat export accepts either --file (single match) or --dir (batch);
 	// every other type writes one output file and requires --file.
 	if strings.ToLower(*exportType) == "mat" {
@@ -124,7 +138,7 @@ func (cli *CLI) runExport(args []string) error {
 			exportCmd.Usage()
 			return fmt.Errorf("type mat requires --file (single match) or --dir (multiple matches)")
 		}
-	} else if *outputFile == "" {
+	} else if *outputFile == "" && !plan.counts {
 		exportCmd.Usage()
 		return fmt.Errorf("missing required flag: --file")
 	}
@@ -172,7 +186,7 @@ func (cli *CLI) runExport(args []string) error {
 	switch strings.ToLower(*exportType) {
 	case "database":
 		// A list of ids names some of a family: it brings that family in.
-		return cli.exportDatabaseWithOptions(ExportOptions{
+		opts := ExportOptions{
 			ExportPath:            *outputFile,
 			WholeLibrary:          true,
 			IncludeAnalysis:       *includeAnalysis,
@@ -191,11 +205,15 @@ func (cli *CLI) runExport(args []string) error {
 			MatchIDs:              matchIDs,
 			TournamentIDs:         tournamentIDs,
 			DeckIDs:               deckIDs,
-		}, marking, text)
+		}
+		if plan.counts {
+			return cli.printExportPlan(opts, plan, text)
+		}
+		return cli.exportDatabaseWithOptions(opts, marking, text)
 	case "positions":
 		return cli.exportPositions(*outputFile, text)
 	case "matches":
-		return cli.exportMatchesOnly(*outputFile, matchIDs, *includeTranscriptions, *includeAliases, marking, text)
+		return cli.exportMatchesOnly(*outputFile, matchIDs, *includeTranscriptions, *includeAliases, marking, text, plan)
 	case "mat":
 		return cli.exportMatchesMAT(matchIDs, *outputFile, *outputDir, text)
 	default:
@@ -318,19 +336,26 @@ func (cli *CLI) exportDatabaseWithOptions(opts ExportOptions, marking exportMark
 	}
 	opts.Watermark, opts.WatermarkNote, opts.Password = marking.watermark, marking.note, marking.password
 
+	var report ingest.ExportReport
 	// Ctrl-C cancels a large export in flight instead of waiting it out.
 	err := withInterruptibleContext(func() {
 		if text {
 			fmt.Println("\nCancelling...")
 		}
 	}, func(ctx context.Context) error {
-		return cli.db.ExportDatabaseCtx(ctx, opts)
+		var err error
+		report, err = cli.db.ExportDatabaseCtx(ctx, opts)
+		return err
 	})
 	if err != nil && errors.Is(err, context.Canceled) {
 		return fmt.Errorf("export cancelled")
 	}
 	if err != nil {
 		return fmt.Errorf("failed to export database: %w", err)
+	}
+	// A password wraps the file into a .dbx next to the path asked for.
+	if report.Path != "" {
+		outputFile = report.Path
 	}
 
 	// Get file size
@@ -341,24 +366,99 @@ func (cli *CLI) exportDatabaseWithOptions(opts ExportOptions, marking exportMark
 
 	if !text {
 		return printJSON(struct {
-			File  string `json:"file"`
-			Bytes int64  `json:"bytes"`
-		}{File: outputFile, Bytes: size})
+			File   string              `json:"file"`
+			Bytes  int64               `json:"bytes"`
+			Report ingest.ExportReport `json:"report"`
+		}{File: outputFile, Bytes: size, Report: report})
 	}
 	if size > 0 {
 		fmt.Printf("Successfully exported database (%d bytes)\n", size)
 	} else {
 		fmt.Println("Successfully exported database")
 	}
+	printExportReport(report)
 
 	return nil
+}
+
+// exportPlanRequest is what --plan and --plan-ids ask: the counts, or one page of a family's ids.
+type exportPlanRequest struct {
+	counts        bool
+	family        string
+	offset, limit int
+}
+
+// planType reports whether an export type writes a database, the only kind --plan counts.
+func planType(exportType string) bool {
+	t := strings.ToLower(exportType)
+	return t == "database" || t == "matches"
+}
+
+// printExportPlan prints what opts' export would write, family by family, without writing it.
+func (cli *CLI) printExportPlan(opts ExportOptions, req exportPlanRequest, text bool) error {
+	if req.family != "" {
+		page, err := cli.db.PlanExportIDs(opts, req.family, req.offset, req.limit)
+		if err != nil {
+			return fmt.Errorf("failed to plan the export: %w", err)
+		}
+		if !text {
+			return printJSON(page)
+		}
+		fmt.Printf("%s %d-%d of %d:", page.Family, page.Offset+1, page.Offset+len(page.IDs), page.Total)
+		for _, id := range page.IDs {
+			fmt.Printf(" %d", id)
+		}
+		fmt.Println()
+		return nil
+	}
+	plan, err := cli.db.PlanExport(opts)
+	if err != nil {
+		return fmt.Errorf("failed to plan the export: %w", err)
+	}
+	if !text {
+		return printJSON(plan)
+	}
+	fmt.Println("The export would write:")
+	for _, f := range []struct {
+		name string
+		n    int
+	}{
+		{"positions", plan.Positions}, {"comments", plan.Comments},
+		{"matches", plan.Matches}, {"tournaments", plan.Tournaments},
+		{"collections", plan.Collections}, {"lessons", plan.Lessons},
+		{"Anki decks", plan.AnkiDecks}, {"transcriptions", plan.Transcriptions},
+		{"aliases", plan.Aliases}, {"filters", plan.Filters},
+	} {
+		fmt.Printf("  %-15s %d\n", f.name, f.n)
+	}
+	for _, c := range plan.FrozenCollections {
+		fmt.Printf("Living collection %d (%s) leaves frozen: its query names rows the file will not hold\n", c.ID, c.Name)
+	}
+	for _, d := range plan.DegradedAnkiDecks {
+		fmt.Printf("Search deck %d (%s) leaves with part of its source dropped: it names rows the file will not hold\n", d.ID, d.Name)
+	}
+	return nil
+}
+
+// printExportReport prints the counts of a finished export.
+func printExportReport(r ingest.ExportReport) {
+	fmt.Printf("  positions %d, analyses %d, comments %d, matches %d, tournaments %d, collections %d,\n",
+		r.Positions, r.Analyses, r.Comments, r.Matches, r.Tournaments, r.Collections)
+	fmt.Printf("  lessons %d, Anki decks %d, transcriptions %d, aliases %d, filters %d\n",
+		r.Lessons, r.AnkiDecks, r.Transcriptions, r.Aliases, r.Filters)
+	if r.DegradedAnkiDecks > 0 {
+		fmt.Printf("  %d search deck(s) left with part of their source dropped (see the log)\n", r.DegradedAnkiDecks)
+	}
+	if r.Skipped > 0 {
+		fmt.Printf("  %d row(s) skipped (see the log)\n", r.Skipped)
+	}
 }
 
 // exportMatchesOnly exports matches — those of matchIDs, every match when it is empty — to a
 // new database, each with the positions its moves were played in and, under transcriptions,
 // the draft it was typed from; under aliases, the player and event aliases they write go too.
-func (cli *CLI) exportMatchesOnly(outputFile string, matchIDs []int64, transcriptions, aliases bool, marking exportMarking, text bool) error {
-	if text {
+func (cli *CLI) exportMatchesOnly(outputFile string, matchIDs []int64, transcriptions, aliases bool, marking exportMarking, text bool, plan exportPlanRequest) error {
+	if text && !plan.counts {
 		fmt.Printf("Exporting matches to: %s\n", outputFile)
 	}
 
@@ -376,7 +476,7 @@ func (cli *CLI) exportMatchesOnly(outputFile string, matchIDs []int64, transcrip
 		return fmt.Errorf("no matches found in database")
 	}
 
-	if text {
+	if text && !plan.counts {
 		fmt.Printf("Found %d match(es) to export\n", len(ids))
 	}
 
@@ -403,18 +503,27 @@ func (cli *CLI) exportMatchesOnly(outputFile string, matchIDs []int64, transcrip
 		WatermarkNote:         marking.note,
 		Password:              marking.password,
 	}
+	if plan.counts {
+		return cli.printExportPlan(opts, plan, text)
+	}
+	var report ingest.ExportReport
 	err = withInterruptibleContext(func() {
 		if text {
 			fmt.Println("\nCancelling...")
 		}
 	}, func(ctx context.Context) error {
-		return cli.db.ExportDatabaseCtx(ctx, opts)
+		var err error
+		report, err = cli.db.ExportDatabaseCtx(ctx, opts)
+		return err
 	})
 	if err != nil && errors.Is(err, context.Canceled) {
 		return fmt.Errorf("export cancelled")
 	}
 	if err != nil {
 		return fmt.Errorf("failed to export matches: %w", err)
+	}
+	if report.Path != "" {
+		outputFile = report.Path
 	}
 
 	// Get file size
@@ -425,16 +534,18 @@ func (cli *CLI) exportMatchesOnly(outputFile string, matchIDs []int64, transcrip
 
 	if !text {
 		return printJSON(struct {
-			File    string `json:"file"`
-			Bytes   int64  `json:"bytes"`
-			Matches int    `json:"matches"`
-		}{File: outputFile, Bytes: size, Matches: len(ids)})
+			File    string              `json:"file"`
+			Bytes   int64               `json:"bytes"`
+			Matches int                 `json:"matches"`
+			Report  ingest.ExportReport `json:"report"`
+		}{File: outputFile, Bytes: size, Matches: report.Matches, Report: report})
 	}
 	if size > 0 {
 		fmt.Printf("Successfully exported matches (%d bytes)\n", size)
 	} else {
 		fmt.Println("Successfully exported matches")
 	}
+	printExportReport(report)
 
 	return nil
 }

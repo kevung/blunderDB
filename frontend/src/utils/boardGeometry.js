@@ -12,7 +12,7 @@
  * @typedef {MirrorablePosition & { dice: number[], decision_type?: number }} BoardPosition
  */
 /** @typedef {'left' | 'right'} Orientation */
-/** @typedef {{ from: number, to: number, index: number }} StepMove */
+/** @typedef {{ from: number, to: number, index: number, illegal?: boolean }} StepMove */
 /** @typedef {ReturnType<typeof boardMetrics>} BoardMetrics */
 
 /**

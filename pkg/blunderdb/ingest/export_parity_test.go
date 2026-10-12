@@ -15,8 +15,8 @@ import (
 
 // TestExportParity_GUIAndServerEntryPointsAgree covers the "same selection
 // -> same tables/rows" invariant at this layer: ExportSQLite written to a path
-// and streamed through SQLiteExporter.Export must write the same content for
-// the same source and the same Selection. That the GUI, the CLI and the daemon
+// and streamed as the daemon streams it must write the same content for the
+// same source and the same Selection. That the GUI, the CLI and the daemon
 // ask for the same Selection is TestExportParity_WholeLibraryFromGUICLIAndDaemon
 // (internal/cli).
 //
@@ -35,10 +35,10 @@ func TestExportParity_GUIAndServerEntryPointsAgree(t *testing.T) {
 		t.Fatalf("ExportSQLite (GUI/CLI path): %v", err)
 	}
 
-	// The server path: handleExportSQLite calls SQLiteExporter.Export.
+	// The server path: handleExportSQLite streams an ExportSQLite file.
 	var buf bytes.Buffer
-	if err := (SQLiteExporter{S: src}).Export(ctx, "", &buf, opts); err != nil {
-		t.Fatalf("SQLiteExporter.Export (server path): %v", err)
+	if err := exportTo(ctx, src, &buf, opts); err != nil {
+		t.Fatalf("streamed export (server path): %v", err)
 	}
 	serverPath := filepath.Join(t.TempDir(), "server.sqlite")
 	if err := os.WriteFile(serverPath, buf.Bytes(), 0o600); err != nil {

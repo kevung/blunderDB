@@ -34,7 +34,7 @@ func exportOneMatch(t *testing.T, m domain.Match) string {
 		t.Fatal(err)
 	}
 	defer out.Close()
-	if err := (SQLiteExporter{S: src}).Export(ctx, "", out, WholeTenant(FormatSQLite)); err != nil {
+	if err := exportTo(ctx, src, out, WholeTenant(FormatSQLite)); err != nil {
 		t.Fatalf("export: %v", err)
 	}
 	return outPath

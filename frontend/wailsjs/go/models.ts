@@ -4453,6 +4453,116 @@ export namespace gui {
 
 export namespace ingest {
 	
+	export class PlannedRow {
+	    id: number;
+	    name: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new PlannedRow(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.name = source["name"];
+	    }
+	}
+	export class ExportPlan {
+	    positions: number;
+	    comments: number;
+	    matches: number;
+	    tournaments: number;
+	    collections: number;
+	    lessons: number;
+	    ankiDecks: number;
+	    transcriptions: number;
+	    aliases: number;
+	    filters: number;
+	    frozenCollections: PlannedRow[];
+	    degradedAnkiDecks: PlannedRow[];
+	
+	    static createFrom(source: any = {}) {
+	        return new ExportPlan(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.positions = source["positions"];
+	        this.comments = source["comments"];
+	        this.matches = source["matches"];
+	        this.tournaments = source["tournaments"];
+	        this.collections = source["collections"];
+	        this.lessons = source["lessons"];
+	        this.ankiDecks = source["ankiDecks"];
+	        this.transcriptions = source["transcriptions"];
+	        this.aliases = source["aliases"];
+	        this.filters = source["filters"];
+	        this.frozenCollections = this.convertValues(source["frozenCollections"], PlannedRow);
+	        this.degradedAnkiDecks = this.convertValues(source["degradedAnkiDecks"], PlannedRow);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class ExportReport {
+	    path: string;
+	    positions: number;
+	    analyses: number;
+	    comments: number;
+	    matches: number;
+	    games: number;
+	    moves: number;
+	    moveAnalyses: number;
+	    collections: number;
+	    tournaments: number;
+	    filters: number;
+	    ankiDecks: number;
+	    transcriptions: number;
+	    lessons: number;
+	    aliases: number;
+	    skipped: number;
+	    degradedAnkiDecks: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new ExportReport(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.path = source["path"];
+	        this.positions = source["positions"];
+	        this.analyses = source["analyses"];
+	        this.comments = source["comments"];
+	        this.matches = source["matches"];
+	        this.games = source["games"];
+	        this.moves = source["moves"];
+	        this.moveAnalyses = source["moveAnalyses"];
+	        this.collections = source["collections"];
+	        this.tournaments = source["tournaments"];
+	        this.filters = source["filters"];
+	        this.ankiDecks = source["ankiDecks"];
+	        this.transcriptions = source["transcriptions"];
+	        this.lessons = source["lessons"];
+	        this.aliases = source["aliases"];
+	        this.skipped = source["skipped"];
+	        this.degradedAnkiDecks = source["degradedAnkiDecks"];
+	    }
+	}
 	export class FileOutcome {
 	    index: number;
 	    path: string;
@@ -4517,6 +4627,25 @@ export namespace ingest {
 		    return a;
 		}
 	}
+	export class PlannedIDs {
+	    family: string;
+	    total: number;
+	    offset: number;
+	    ids: number[];
+	
+	    static createFrom(source: any = {}) {
+	        return new PlannedIDs(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.family = source["family"];
+	        this.total = source["total"];
+	        this.offset = source["offset"];
+	        this.ids = source["ids"];
+	    }
+	}
+	
 	export class RepairCounts {
 	    moves: number;
 	    positioned: number;
@@ -6917,6 +7046,7 @@ export namespace storage {
 	export class Alias {
 	    alias: string;
 	    canonical: string;
+	    createdAt: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new Alias(source);
@@ -6926,6 +7056,7 @@ export namespace storage {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.alias = source["alias"];
 	        this.canonical = source["canonical"];
+	        this.createdAt = source["createdAt"];
 	    }
 	}
 	export class AliasSuggestion {
