@@ -8,7 +8,7 @@
 import { test, expect } from '@playwright/test';
 import { installWailsMock } from './helpers/wailsMock.js';
 import { openLibraryMock } from './helpers/fixtures.js';
-import { installTranscriptionEngine } from './helpers/transcriptionDraft.js';
+import { installTranscriptionEngine, resetGestures, sentGestures } from './helpers/transcriptionDraft.js';
 
 const ILLEGAL = 'rgba(214, 0, 0, 0.95)';
 const ENGINE = 'rgba(52, 120, 246, 0.85)';
@@ -46,4 +46,10 @@ test('une décision illégale garde ses flèches ; le moteur ne se dessine que d
     await page.locator('#transcriptionPanel .draft-bar').hover();
     await expect(strokes(page, ILLEGAL)).toHaveCount(3);
     await expect(strokes(page, ENGINE)).toHaveCount(0);
+
+    // Choosing the first line of the analysis writes it, like any other line.
+    await resetGestures(page);
+    await page.keyboard.press('k');
+    await page.keyboard.press('Enter');
+    await expect.poll(async () => (await sentGestures(page)).map((g) => (g.Kind === 'select_candidate' ? `select ${g.Candidate}` : g.Kind))).toEqual(['select 0', 'validate']);
 });

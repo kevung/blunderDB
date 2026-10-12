@@ -1149,11 +1149,13 @@
     function commitCandidate(index) {
         if (!draft) return;
         const next = selectCandidate(get(transcriptionKeyStore), index);
+        // Converted before the list is emptied: `select` addresses a row of it.
+        const sent = run([...next.commands, { kind: COMMAND.VALIDATE }]);
         transcriptionKeyStore.set(initialKeyState());
         ranked = [];
         unranked = false;
         danced = false;
-        run([...next.commands, { kind: COMMAND.VALIDATE }]).then(settleCandidates);
+        sent.then(settleCandidates);
         panelEl?.focus({ preventScroll: true });
     }
 

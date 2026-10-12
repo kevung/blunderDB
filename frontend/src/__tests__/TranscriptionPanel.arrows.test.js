@@ -191,3 +191,45 @@ describe('the board draws the transcribed decision', () => {
         expect(arrows?.moves.some((m) => m.illegal)).toBe(false);
     });
 });
+
+describe('choosing a line of the analysis replaces the decision, the first line included', () => {
+    const sent = () => /** @type {any} */ (ApplyTranscriptionGesture).mock.calls.map((/** @type {any} */ call) => (call[1].Kind === 'select_candidate' ? `select ${call[1].Candidate}` : call[1].Kind));
+
+    test('on a decision no line carries, `j` then Enter writes the first line', async () => {
+        await cursorBack(1);
+        /** @type {any} */ (ApplyTranscriptionGesture).mockClear();
+        await fireEvent.keyDown(document, { code: 'KeyJ', key: 'j' });
+        await settle();
+        await fireEvent.keyDown(document, { code: 'Enter', key: 'Enter' });
+        await settle();
+        // '13/10 6/5' is the generator's play 0.
+        expect(sent()).toEqual(['select 0', 'validate']);
+    });
+
+    test('on a decision no line carries, `k` at the top still picks the first line', async () => {
+        await cursorBack(1);
+        /** @type {any} */ (ApplyTranscriptionGesture).mockClear();
+        await fireEvent.keyDown(document, { code: 'KeyK', key: 'k' });
+        await settle();
+        expect(sent()).toEqual(['select 0']);
+    });
+
+    test('on a legal decision that is not the best, `k` up to the first line writes it', async () => {
+        await cursorBack(2);
+        /** @type {any} */ (ApplyTranscriptionGesture).mockClear();
+        await fireEvent.keyDown(document, { code: 'KeyK', key: 'k' });
+        await settle();
+        await fireEvent.keyDown(document, { code: 'Enter', key: 'Enter' });
+        await settle();
+        // '13/11 13/8', ranked first, is the generator's play 0.
+        expect(sent()).toEqual(['select 0', 'validate']);
+    });
+
+    test('a click on the first line picks it, a double-click writes it', async () => {
+        const { container } = await cursorBack(1);
+        /** @type {any} */ (ApplyTranscriptionGesture).mockClear();
+        await fireEvent.dblClick(/** @type {HTMLElement} */ (container.querySelector('tr[data-move="13/10 6/5"]')));
+        await settle();
+        expect(sent()).toEqual(['select 0', 'validate']);
+    });
+});
