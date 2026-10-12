@@ -2115,7 +2115,8 @@ face répond — prendre, passer ; jamais les quatre à la fois, et un bouton do
 le geste ne répondrait à rien reste éteint. Le clavier, lui, ne refuse jamais
 rien : un bouton éteint est une cible qu'on n'offre pas, pas un geste interdit.
 « Abandonner » n'enregistre rien encore : la rangée devient les trois niveaux —
-simple, gammon, backgammon — et « Annuler », qui reprend la touche ÉCHAP. Le
+simple, gammon, backgammon — et « Annuler », qui reprend la touche ÉCHAP ;
+au clavier, *r* puis *1*, *2* ou *3*, *ENTREE* valant simple. Le
 videau dessiné sur le plateau est la seconde cible de ces gestes : un clic
 dessus propose un double. Devant une offre il ne répond pas — la prise et la
 passe sont deux réponses symétriques et vivent ensemble dans la rangée, un clic
@@ -2324,7 +2325,10 @@ qui le rouvre. Sa place et sa taille sont retenues ; replié, il se rouvre à la
 prochaine entrée dans le théâtre. Le clavier reste
 celui du panneau : les dés, les candidats, la validation, le curseur et les
 touches de la vidéo (*ESPACE*, *[*, *]*, …) gardent leur effet, et ni le
-plateau ni les boutons ne prennent le focus. *F11*, *ÉCHAP* ou le bouton en
+plateau ni les boutons ne prennent le focus. Comme la rangée des gestes de
+videau y est cachée, *r* ouvre par-dessus la vidéo une petite fenêtre des trois
+niveaux d'abandon : *1*, *2*, *3* ou un clic les choisissent, *ENTREE* vaut
+simple, et *ÉCHAP* l'annule sans quitter le théâtre. *F11*, *ÉCHAP* ou le bouton en
 haut à droite sortent du mode théâtre et rendent la fenêtre à son état
 précédent : dans le théâtre, *ÉCHAP* sert à sortir, et *RETOUR ARRIERE* efface
 les dés saisis. Retirer la vidéo, quitter le brouillon ou changer d'onglet y

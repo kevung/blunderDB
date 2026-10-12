@@ -399,7 +399,7 @@ veille ne demande pas la souris.
    "d", "Doubler ou redoubler : le coup sélectionné est validé au passage, en une seule touche."
    "t", "Prendre le double proposé : le videau passe au preneur à la valeur doublée et le doubleur rejoue. Le curseur posé sur une cellule, écrit la prise à la place de l'action visée ; une passe devenue prise rouvre sa partie, et la suite s'y tape à la place."
    "p", "Passer le double proposé : la partie est gagnée à la valeur d'avant le double. Le curseur posé sur une cellule, écrit la passe à la place de l'action visée."
-   "r puis 1, 2 ou 3", "Abandonner la partie pour le camp au trait : simple, gammon ou backgammon. Esc entre les deux touches annule sans rien enregistrer."
+   "r puis 1, 2 ou 3", "Abandonner la partie pour le camp au trait : simple, gammon ou backgammon ; ENTREE vaut simple. Esc entre les deux touches annule sans rien enregistrer. Dans le mode théâtre, les trois niveaux s'affichent dans une petite fenêtre par-dessus la vidéo."
    "Clic (sur le videau)", "Proposer un double pour le camp au trait, comme la touche d. Devant une offre, le videau ne répond pas : la prise et la passe sont dans la rangée de boutons."
    "GAUCHE, h", "Reculer le curseur d'une action dans le transcript."
    "DROITE, l", "Avancer le curseur d'une action."

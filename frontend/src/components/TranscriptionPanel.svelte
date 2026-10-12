@@ -57,6 +57,7 @@
     import CandidateMovesTable from './CandidateMovesTable.svelte';
     import DiceTriangle from './DiceTriangle.svelte';
     import CubeActionRow from './CubeActionRow.svelte';
+    import ResignLevelModal from './ResignLevelModal.svelte';
     import ContextMenu from './ContextMenu.svelte';
     import TranscriptView from './TranscriptView.svelte';
     import { closeOnEscape } from '../services/escapeService.js';
@@ -1289,15 +1290,17 @@
         if (panelKeyGuard(event)) return;
         if (!ownsFocus()) return;
 
+        // While a resignation waits for its level, Enter and the digits are levels, not the board's play.
+        const boardPlayKeys = keys.phase !== PHASE.RESIGN;
         // Coup en cours au plateau : Retour arrière défait le dernier pas.
-        if (event.key === 'Backspace' && ($quizPlayStore?.steps?.length ?? 0) > 0) {
+        if (boardPlayKeys && event.key === 'Backspace' && ($quizPlayStore?.steps?.length ?? 0) > 0) {
             event.preventDefault();
             event.stopPropagation();
             undoBoardPlayStep();
             return;
         }
         // Coup achevé ou hors des règles : Entrée l'enregistre (avec son plateau s'il est libre).
-        if (event.key === 'Enter' && playSettled()) {
+        if (boardPlayKeys && event.key === 'Enter' && playSettled()) {
             event.preventDefault();
             event.stopPropagation();
             validatePlay();
@@ -1305,7 +1308,7 @@
         }
         // Un coup achevé est enregistré avant que le chiffre ne commence le jet
         // suivant, sinon le candidat sélectionné le remplacerait.
-        if (dieOf(event) > 0 && playSettled()) {
+        if (boardPlayKeys && dieOf(event) > 0 && playSettled()) {
             event.preventDefault();
             event.stopPropagation();
             validatePlay()?.then(() => applyResult(pressKey(get(transcriptionKeyStore), event, keyContext)));
@@ -2105,6 +2108,8 @@
                                 onCancelResign={abortResign}
                             />
                         {/if}
+                        <!-- The theatre covers the row above: the same choice, over it. -->
+                        <ResignLevelModal open={resigning && $theatreStore} player={playerName(sideOnRoll)} onLevel={pickResignLevel} onCancel={abortResign} />
 
                         {#if diceEntryOpen}
                             <!-- Sous les cases du jet, jamais à leur place : le clavier reste deux fois plus rapide. -->

@@ -136,4 +136,22 @@ describe('la résignation', () => {
         expect(gestures()).toEqual([]);
         expect(get(transcriptionPromptStore)?.key).toBe('transcription.resignPrompt');
     });
+
+    test('Entrée donne le niveau simple, sans modale hors du théâtre', async () => {
+        await openedPanel();
+        await press('KeyR');
+        expect(document.querySelector('[data-testid="resign-modal"]')).toBeNull();
+        await fireEvent.keyDown(document, { code: 'Enter', key: 'Enter' });
+        await vi.waitFor(() => expect(gestures()).toEqual([{ Kind: 'resign', Level: 1 }]));
+    });
+
+    test('r tapé dans un champ texte du panneau reste une lettre', async () => {
+        await openedPanel();
+        const field = document.createElement('input');
+        document.getElementById('transcriptionPanel')?.appendChild(field);
+        field.focus();
+        await fireEvent.keyDown(field, { code: 'KeyR', key: 'r', bubbles: true });
+        expect(get(transcriptionPromptStore)?.key).not.toBe('transcription.resignPrompt');
+        expect(buttonNamed('Single')).toBeFalsy();
+    });
 });

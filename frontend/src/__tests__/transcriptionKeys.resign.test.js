@@ -70,11 +70,12 @@ describe('la résignation', () => {
         expect(d.commands).toEqual([]);
     });
 
-    test('r puis 1, 2 ou 3 crée la résignation du niveau correspondant', () => {
+    test('r puis 1, 2, 3 ou Entrée crée la résignation du niveau correspondant', () => {
         for (const [code, level] of /** @type {[string, number][]} */ ([
             ['Digit1', 1],
             ['Digit2', 2],
-            ['Digit3', 3]
+            ['Digit3', 3],
+            ['Enter', 1]
         ])) {
             const d = driver();
             d.press('KeyR');
@@ -129,7 +130,6 @@ describe('la résignation', () => {
         const d = driver();
         d.press('KeyR');
         d.press('KeyJ');
-        d.press('Enter');
         d.press('KeyD');
         expect(d.commands).toEqual([]);
         expect(d.state.phase).toBe(PHASE.RESIGN);

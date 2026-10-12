@@ -402,7 +402,8 @@ function editCommand(event) {
  */
 function resignLevel(state, event) {
     if (event.key === 'Escape') return { handled: true, ...cancelResign(state) };
-    const level = dieOf(event);
+    // Enter takes the commonest level, a single game.
+    const level = event.key === 'Enter' && !event.ctrlKey && !event.metaKey ? 1 : dieOf(event);
     if (!RESIGN_LEVELS.has(level)) return swallowed(state);
     return { handled: true, ...resignWithLevel(state, level) };
 }
