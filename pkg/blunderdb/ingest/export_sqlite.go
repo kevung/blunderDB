@@ -245,6 +245,7 @@ func writeExport(ctx context.Context, src storage.Storage, scope, path string, o
 		posMap: make(map[int64]int64), written: make(map[int64]bool),
 		collMap: make(map[int64]int64), tourMap: make(map[int64]int64), matchMap: make(map[int64]int64),
 		livingEvals: make(map[int64]*storage.CollectionEvaluation),
+		addedAt:     make(map[int64]map[int64]string),
 	}
 	for _, step := range []func() error{
 		e.writeMetadata,
@@ -342,7 +343,10 @@ type exporter struct {
 	// livingEvals each one's evaluation at the source, read once.
 	living      []livingCollection
 	livingEvals map[int64]*storage.CollectionEvaluation
-	tables      *mets.Carrier // the tables the exported analyses cite, built on first use
+	// addedAt holds, per source collection, when each of its rows was added:
+	// a membership keeps its date in the file, as the collection keeps its own.
+	addedAt map[int64]map[int64]string
+	tables  *mets.Carrier // the tables the exported analyses cite, built on first use
 
 	report ExportReport
 }
@@ -821,10 +825,16 @@ func (e *exporter) writeCollections() error {
 		e.collMap[id] = newID
 		e.report.Collections++
 
-		hand, err := e.src.Collections().PositionIDs(e.ctx, e.scope, id, storage.ListOpts{})
-		if err != nil {
-			return fmt.Errorf("ingest: list positions of collection %d: %w", id, err)
+		var hand []int64
+		added := map[int64]string{}
+		for m, err := range e.src.Collections().Members(e.ctx, e.scope, id) {
+			if err != nil {
+				return fmt.Errorf("ingest: list positions of collection %d: %w", id, err)
+			}
+			hand = append(hand, m.PositionID)
+			added[m.PositionID] = m.AddedAt
 		}
+		e.addedAt[id] = added
 		if query := strings.TrimSpace(c.FilterQuery); query != "" {
 			e.living = append(e.living, livingCollection{src: id, dst: newID, query: query, hand: hand})
 			continue
@@ -854,8 +864,9 @@ func (e *exporter) writeMembers(srcID, dstID int64, positions []int64) {
 			continue
 		}
 		if _, err := e.tx.ExecContext(e.ctx,
-			`INSERT OR IGNORE INTO collection_position (collection_id, position_id, sort_order) VALUES (?, ?, ?)`,
-			dstID, to, order); err != nil {
+			`INSERT OR IGNORE INTO collection_position (collection_id, position_id, sort_order, added_at)
+			 VALUES (?, ?, ?, COALESCE(NULLIF(?, ''), CURRENT_TIMESTAMP))`,
+			dstID, to, order, e.addedAt[srcID][pid]); err != nil {
 			e.skip("inserting collection membership", "collectionID", srcID, "err", err)
 		}
 		order++
@@ -1012,8 +1023,22 @@ func (e *exporter) writeLessons() error {
 				return fmt.Errorf("ingest: write step of lesson %d: %w", id, err)
 			}
 		}
+		e.keepDates("lesson", newID, l.CreatedAt, l.UpdatedAt)
 	}
 	return nil
+}
+
+// keepDates gives a row the file just wrote the dates its source row bears:
+// the store's writers stamp the moment of the export, which would date a
+// lesson, a draft or a deck from the day it was handed over. An empty date
+// leaves the stamp in place.
+func (e *exporter) keepDates(table string, id int64, created, updated string) {
+	if _, err := e.tx.ExecContext(e.ctx,
+		`UPDATE `+table+` SET created_at = COALESCE(NULLIF(?, ''), created_at),
+		 updated_at = COALESCE(NULLIF(?, ''), updated_at) WHERE id = ?`,
+		created, updated, id); err != nil {
+		e.skip("keeping dates", "table", table, "id", id, "err", err)
+	}
 }
 
 func (e *exporter) writeTournaments() error {
@@ -1245,6 +1270,12 @@ func (e *exporter) writeAliases() error {
 				e.skip("writing alias", "kind", kind, "alias", a.Alias, "err", err)
 				continue
 			}
+			if a.CreatedAt != "" {
+				if _, err := e.tx.ExecContext(e.ctx,
+					`UPDATE `+string(kind)+`_alias SET created_at = ? WHERE alias = ?`, a.CreatedAt, a.Alias); err != nil {
+					e.skip("keeping alias date", "kind", kind, "alias", a.Alias, "err", err)
+				}
+			}
 			e.report.Aliases++
 		}
 	}
@@ -1324,10 +1355,12 @@ func (e *exporter) writeTranscriptions() error {
 			continue
 		}
 		d.Document = doc
-		if _, err := e.dst.Transcriptions().Save(e.ctx, "", d); err != nil {
+		newID, err := e.dst.Transcriptions().Save(e.ctx, "", d)
+		if err != nil {
 			e.skip("inserting transcription", "label", d.Label, "err", err)
 			continue
 		}
+		e.keepDates("transcription", newID, d.CreatedAt, d.UpdatedAt)
 		e.report.Transcriptions++
 	}
 	return nil
@@ -1421,7 +1454,7 @@ func (e *exporter) writeAnkiDecks() error {
 		case domain.AnkiSourceCollection:
 			sourceID = e.collMap[sd.d.SourceID] // 0 if the collection was not exported
 		case domain.AnkiSourceSearch:
-			sourceCmd = remapIDList(sourceCmd, e.posMap)
+			sourceCmd = carriedSearchSource(sourceCmd, e.posMap, e.matchMap, e.tourMap)
 		}
 		newID, err := e.dst.Anki().CreateDeck(e.ctx, "", sd.d.Name, sd.d.Description, sd.d.SourceType, sourceID, sourceCmd)
 		if err != nil {
@@ -1447,6 +1480,7 @@ func (e *exporter) writeAnkiDecks() error {
 				return fmt.Errorf("ingest: deck %q history: %w", sd.d.Name, err)
 			}
 		}
+		e.keepDates("anki_deck", newID, sd.d.CreatedAt, sd.d.UpdatedAt)
 		e.report.AnkiDecks++
 	}
 	return nil
