@@ -42,8 +42,9 @@ type App struct {
 	// (the gammonNet batch); other App methods stay database-free.
 	db *database.Database
 	// emitHook, when set, receives the background jobs' events in place of
-	// Wails: a test has no window to listen on.
-	emitHook func(name string, payload ...any)
+	// Wails: a test has no window to listen on. Atomic because a test sets
+	// it while a queued batch may already be emitting.
+	emitHook atomic.Pointer[func(name string, payload ...any)]
 
 	// gnEvalMu/gnEvalCancel govern the Eval panel's at-rest search
 	// (gammonnet_eval.go); gnLivePool is its shared searcher.

@@ -21,7 +21,7 @@ type event struct {
 // the emitting goroutine before the event is queued.
 func recordEvents(a *App, onEvent func(name string)) <-chan event {
 	ch := make(chan event, 64)
-	a.emitHook = func(name string, payload ...any) {
+	hook := func(name string, payload ...any) {
 		if onEvent != nil {
 			onEvent(name)
 		}
@@ -31,6 +31,7 @@ func recordEvents(a *App, onEvent func(name string)) <-chan event {
 		}
 		ch <- event{name, p}
 	}
+	a.emitHook.Store(&hook)
 	return ch
 }
 

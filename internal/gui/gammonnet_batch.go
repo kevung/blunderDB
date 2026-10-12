@@ -156,8 +156,8 @@ func (a *App) batchCtx() context.Context {
 // emitBatch emits nothing without a window: EventsEmit on a non-Wails
 // context ends the process (ADR-0004).
 func (a *App) emitBatch(name string, payload ...any) {
-	if a.emitHook != nil {
-		a.emitHook(name, payload...)
+	if hook := a.emitHook.Load(); hook != nil {
+		(*hook)(name, payload...)
 		return
 	}
 	if a.ctx == nil {
