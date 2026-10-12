@@ -211,8 +211,12 @@
     function onLoadedMetadata() {
         status = 'ready';
         queuedMs = null;
-        if (pendingMs > 0 && video) video.currentTime = pendingMs / 1000;
-        if (video) video.playbackRate = rate;
+        const resume = reloading;
+        reloading = null;
+        if (pendingMs > 0 && video) askTime(pendingMs);
+        if (!video) return;
+        video.playbackRate = resume ? resume.rate : rate;
+        if (resume?.playing) Promise.resolve(video.play()).catch((error) => logger.error('play:', error));
     }
 
     // What the webview cannot read is named by its container and by the packages that give a
@@ -244,14 +248,89 @@
         if (queuedMs === null || !video) return;
         const at = queuedMs;
         queuedMs = null;
-        video.currentTime = at / 1000;
+        askTime(at);
     }
+
+    /** @param {number} ms */
+    function askTime(ms) {
+        if (!video) return;
+        seekSince = Date.now();
+        video.currentTime = ms / 1000;
+    }
+
+    // WebKitGTK can leave a file's pipeline dead without an error event: a decoder that fails
+    // after a seek leaves the element seeking for good, and playback can freeze on one frame.
+    // Past STALL_MS without progress the source is reloaded, then put back at the instant last
+    // asked, at its speed, playing or paused as it was.
+    const STALL_MS = 3000;
+    const WATCH_MS = 500;
+    /** When the seek in flight was asked or first seen, null when none is. */
+    /** @type {number | null} */
+    let seekSince = null;
+    /** The instant playback was last seen at, and since when. */
+    let lastTime = NaN;
+    let lastTimeSince = 0;
+    /** What a reload under way puts back once the metadata is in, null when none is. */
+    /** @type {{ playing: boolean, rate: number, since: number } | null} */
+    let reloading = null;
+
+    function watchdog() {
+        if (!video || kind !== 'file' || status !== 'ready') return;
+        const now = Date.now();
+        if (reloading) {
+            if (now - reloading.since > STALL_MS) reload(pendingMs, reloading.playing, reloading.rate);
+            return;
+        }
+        if (video.seeking) {
+            seekSince ??= now;
+            if (now - seekSince > STALL_MS) reload(queuedMs ?? pendingMs, !video.paused, rate);
+            return;
+        }
+        seekSince = null;
+        if (video.paused || video.ended) {
+            lastTime = NaN;
+            return;
+        }
+        if (video.currentTime !== lastTime) {
+            lastTime = video.currentTime;
+            lastTimeSince = now;
+        } else if (now - lastTimeSince > STALL_MS) {
+            reload(Math.round(video.currentTime * 1000), true, rate);
+        }
+    }
+
+    /**
+     * @param {number} atMs
+     * @param {boolean} playing
+     * @param {number} speed
+     */
+    function reload(atMs, playing, speed) {
+        if (!video) return;
+        logger.warn(`video stalled, reloading at ${atMs} ms`);
+        pendingMs = atMs;
+        queuedMs = null;
+        seekSince = null;
+        lastTime = NaN;
+        reloading = { playing, rate: speed, since: Date.now() };
+        // load() resets the speed to the default one.
+        video.defaultPlaybackRate = speed;
+        video.removeAttribute('src');
+        video.load();
+        video.src = src;
+    }
+
+    $effect(() => {
+        if (!video) return;
+        const timer = setInterval(watchdog, WATCH_MS);
+        return () => clearInterval(timer);
+    });
 
     /** @returns {number | null} the player's current instant in ms, null when unknown. */
     export function currentTimeMs() {
         if (status !== 'ready') return null;
         if (kind === 'youtube') return Math.round(ytTime * 1000);
         if (queuedMs !== null) return queuedMs;
+        if (reloading) return pendingMs;
         return video ? Math.round(video.currentTime * 1000) : null;
     }
 
@@ -268,9 +347,9 @@
             ytSeekingTo = ytTime;
             ytSeekingUntil = Date.now() + YT_SEEK_SETTLE_MS;
             postToPlayer({ type: 'seek', time: at / 1000 });
-        } else if (video) {
+        } else if (video && !reloading) {
             if (video.seeking) queuedMs = at;
-            else video.currentTime = at / 1000;
+            else askTime(at);
         }
     }
 
