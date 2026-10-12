@@ -1853,6 +1853,18 @@
         return true;
     }
 
+    /**
+     * Déclare que la première partie suit la partie Crawford : le brouillon
+     * reprend un match en cours. Même file que les touches.
+     *
+     * @param {boolean} on
+     */
+    function declarePostCrawford(on) {
+        if (!draft) return;
+        sendGesture({ Kind: 'set_post_crawford', PostCrawford: on });
+        panelEl?.focus({ preventScroll: true });
+    }
+
     /** Retour arrière pendant un coup au plateau : le dernier pas est défait. */
     function undoBoardPlayStep() {
         quizPlayStore.update((play) => undoBoardStep(play));
@@ -2114,6 +2126,7 @@
                         onMenu={openTranscriptMenu}
                         onEditMove={commitNotation}
                         onEditScore={declareScore}
+                        onPostCrawford={declarePostCrawford}
                     />
                 </div>
             </div>

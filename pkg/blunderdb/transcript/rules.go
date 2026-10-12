@@ -122,7 +122,8 @@ func (s *state) position(side int, dice [2]int, decision int, cube domain.Cube) 
 }
 
 // ensureGame opens a game if none is running, deriving its initial score and whether
-// it is the Crawford game: the first game a player enters one point from the match.
+// it is the Crawford game: the first game a player enters one point from the match,
+// unless the document declares that its first game comes after the Crawford game.
 func (s *state) ensureGame() {
 	if s.gameActive {
 		return
@@ -130,7 +131,8 @@ func (s *state) ensureGame() {
 	crawford := false
 	if L := s.header.MatchLength; L > 0 && !s.crawfordPlayed {
 		if s.points[domain.Black] == L-1 || s.points[domain.White] == L-1 {
-			crawford, s.crawfordPlayed = true, true
+			crawford = len(s.games) > 0 || !s.header.PostCrawford
+			s.crawfordPlayed = true
 		}
 	}
 	s.games = append(s.games, GameInfo{

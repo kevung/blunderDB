@@ -53,7 +53,33 @@ func ReadMatchForMAT(ctx context.Context, s storage.Storage, scope string, match
 		}
 		movesByGame[mv.GameID] = append(movesByGame[mv.GameID], mv)
 	}
+	if m.PostCrawford, err = firstGamePostCrawford(ctx, s, scope, m, games, movesByGame); err != nil {
+		return nil, nil, nil, err
+	}
 	return m, games, movesByGame, nil
+}
+
+// firstGamePostCrawford reads [domain.Match.PostCrawford] back from the stored
+// match: the first game opens with a player one point away, and its first
+// Position carries the PostCrawford away score rather than the Crawford one.
+func firstGamePostCrawford(ctx context.Context, s storage.Storage, scope string, m *domain.Match, games []*domain.Game, moves map[int64][]*domain.Move) (bool, error) {
+	L := m.MatchLength
+	if L <= 0 || len(games) == 0 {
+		return false, nil
+	}
+	g := games[0]
+	if g.InitialScore[0] != L-1 && g.InitialScore[1] != L-1 {
+		return false, nil
+	}
+	first := moves[g.ID]
+	if len(first) == 0 || first[0].PositionID == 0 {
+		return false, nil
+	}
+	pos, err := s.Positions().Load(ctx, scope, first[0].PositionID)
+	if err != nil {
+		return false, err
+	}
+	return pos.Score[0] == domain.PostCrawford || pos.Score[1] == domain.PostCrawford, nil
 }
 
 // ExportMatchMAT reads a stored match and writes its .mat transcript to w.
@@ -97,6 +123,9 @@ func RenderMAT(m *domain.Match, games []*domain.Game, movesByGame map[int64][]*d
 	// the transcription graph, not the database, that supplies it.
 	if m.Transcriber != "" {
 		fmt.Fprintf(&b, "; [Transcriber \"%s\"]\n", m.Transcriber)
+	}
+	if m.PostCrawford && m.MatchLength > 0 {
+		b.WriteString(domain.MATPostCrawfordHeader + "\n")
 	}
 	b.WriteString("\n")
 

@@ -31,11 +31,24 @@ func FromMAT(text string) (Document, error) {
 	if err != nil {
 		return Document{}, fmt.Errorf("transcript: parse .mat: %w", err)
 	}
-	return fromParsedMAT(parsed)
+	return fromParsedMAT(parsed, declaresPostCrawford(text))
 }
 
-func fromParsedMAT(parsed *gnubgparser.Match) (Document, error) {
+// declaresPostCrawford reports whether the .mat states that its first game comes
+// after the Crawford game ([domain.MATPostCrawfordHeader]), a header line the
+// parser does not read.
+func declaresPostCrawford(text string) bool {
+	for line := range strings.Lines(text) {
+		if strings.TrimSpace(line) == domain.MATPostCrawfordHeader {
+			return true
+		}
+	}
+	return false
+}
+
+func fromParsedMAT(parsed *gnubgparser.Match, postCrawford bool) (Document, error) {
 	doc := New(parsed.Metadata.MatchLength)
+	doc.Header.PostCrawford = postCrawford && doc.Header.MatchLength > 0
 	doc.Header.Player1 = parsed.Metadata.Player1
 	doc.Header.Player2 = parsed.Metadata.Player2
 	doc.Header.Event = parsed.Metadata.Event

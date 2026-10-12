@@ -2145,6 +2145,16 @@ dérivé est marqué, l'info-bulle donne celui-ci, et la première action de la
 partie porte l'incohérence « score annoncé incohérent ». En argent, il n'y a pas de
 score à annoncer.
 
+Un transcript repris en cours de match peut commencer après la partie Crawford.
+Lorsque la première partie s'ouvre avec un joueur à un point du match, une case
+*Post-Crawford* paraît dans son en-tête : cochée, cette partie n'est pas la
+partie Crawford, le videau y est en jeu selon les règles habituelles et aucune
+partie Crawford ne suit. Décochée, ou sans joueur à un point du match, la partie
+Crawford se déduit du score comme d'ordinaire. Le match enregistré porte la
+déclaration, et le fichier ``.mat`` l'écrit dans une ligne d'en-tête
+``; [Crawford "PostCrawford"]`` que blunderDB relit ; gnubg l'ignore et compte
+cette première partie comme la partie Crawford.
+
 Le transcript occupe la moitié droite du panneau : une colonne par joueur, une
 ligne par tour, l'action de videau et la fin de partie dans la colonne de celui
 qui agit. La cellule du curseur est encadrée ; déplacer le curseur ramène le

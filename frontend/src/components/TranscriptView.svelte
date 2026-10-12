@@ -168,7 +168,12 @@
          * `(first, score) => boolean` on Enter in a game's score field;
          * `score` is `[p1, p2]` or `null` to clear it (ADR-0053); `true` closes it.
          */
-        onEditScore = null
+        onEditScore = null,
+        /**
+         * `(on) => void` when the first game is declared post-Crawford or not.
+         * Absent: the declaration is not offered.
+         */
+        onPostCrawford = null
     } = $props();
 
     let header = $derived(annotated?.document?.header ?? {});
@@ -243,6 +248,18 @@
         if (!onEditScore || !((header.match_length ?? 0) > 0)) return -1;
         const first = game?.first ?? -1;
         return first >= 0 && annotated?.actions?.[first]?.opens_game === true ? first : -1;
+    }
+
+    /**
+     * La déclaration post-Crawford ne vaut que pour la première partie, et
+     * seulement quand un joueur y est à un point du match (rules.go, ensureGame).
+     *
+     * @param {any} game
+     */
+    function offersPostCrawford(game) {
+        const length = header.match_length ?? 0;
+        if (!onPostCrawford || length <= 0 || game?.number !== 1) return false;
+        return (game.initial_score ?? []).some((/** @type {number} */ s) => s === length - 1);
     }
 
     /** @param {any} game */
@@ -492,6 +509,13 @@
                         {#if group.game.crawford}
                             <span class="tag">{$t('transcript.crawford')}</span>
                         {/if}
+                        {#if offersPostCrawford(group.game)}
+                            <label class="tag post-crawford">
+                                <input type="checkbox" checked={!!header.post_crawford} onchange={(e) => onPostCrawford?.(e.currentTarget.checked)} onkeydown={(e) => e.stopPropagation()} />{$t(
+                                    'transcript.postCrawford'
+                                )}</label
+                            >
+                        {/if}
                     </summary>
                     {#if open}
                         <table class="turns">
@@ -680,6 +704,17 @@
     }
 
     .game-score,
+    .post-crawford {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25em;
+        cursor: pointer;
+    }
+
+    .post-crawford input {
+        margin: 0;
+    }
+
     .tag {
         color: var(--color-text-muted);
         font-size: var(--font-size-small);
