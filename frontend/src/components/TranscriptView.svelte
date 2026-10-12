@@ -131,6 +131,22 @@
             return { game, rows };
         });
     }
+
+    /**
+     * Le numéro de ligne de la cellule tenue par le Cursor dans sa partie, tel
+     * que la colonne de gauche l'affiche, ou 0.
+     *
+     * @param {any} annotated
+     * @returns {number}
+     */
+    export function cursorRowNumber(annotated) {
+        const held = (/** @type {any} */ c) => c?.kind === 'pending' || (c?.kind === 'action' && c.index === annotated?.cursor);
+        for (const { rows } of transcriptRows(annotated)) {
+            const i = rows.findIndex((row) => held(row.left) || held(row.right));
+            if (i >= 0) return rows[i].numbered ? i + 1 : 0;
+        }
+        return 0;
+    }
 </script>
 
 <script>
@@ -164,6 +180,10 @@
          * `true` closes it. Absent: cells are not editable (ADR-0052).
          */
         onEditMove = null,
+        /** `(index) => void` when a cell's move field opens. */
+        onEditStart = null,
+        /** `() => void` when Escape closes a cell's move field: the keys go back to the caller. */
+        onEditEnd = null,
         /**
          * `(first, score) => boolean` on Enter in a game's score field;
          * `score` is `[p1, p2]` or `null` to clear it (ADR-0053); `true` closes it.
@@ -203,7 +223,11 @@
     let editing = $state(null);
 
     $effect(() => {
-        if (editing) return closeOnEscape(() => (editing = null));
+        if (editing)
+            return closeOnEscape(() => {
+                editing = null;
+                onEditEnd?.();
+            });
     });
 
     /**
@@ -298,6 +322,21 @@
         if (!typable(c)) return;
         const text = c.kind === 'pending' ? (c.entry?.notation ?? '') : c.info?.kind === 'checker' ? (c.info.notation ?? '') : '';
         editing = { index: c.index, pending: c.kind === 'pending', text };
+        onEditStart?.(c.index);
+    }
+
+    /** Ouvre le champ du coup de la cellule tenue par le Cursor, si elle se tape. */
+    export function editAtCursor() {
+        let held = null;
+        for (const group of layout) {
+            for (const row of group.rows) {
+                for (const c of [row.left, row.right]) {
+                    if (c?.kind === 'pending') return startEdit(c);
+                    if (c?.kind === 'action' && c.index === at) held = c;
+                }
+            }
+        }
+        if (held) startEdit(held);
     }
 
     /** @param {KeyboardEvent} event */

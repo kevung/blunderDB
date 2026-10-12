@@ -405,11 +405,12 @@ export default {
 <p>As soon as the second die falls, every <strong>legal play</strong> of the roll is listed, ranked by the built-in engine, the first preselected and its arrows drawn on the board. The list gives the play, its equity and its error against the best one: transcribing means recognising the play one saw, not judging it — the <strong>Evaluation</strong> panel is there for that. This ranking is an evaluation: it is shown, it is never written to the library. When the engine is unavailable the plays are listed unranked and the list says so at its head.</p>
 <p>A roll with no legal play at all records the <strong>dance</strong> on its own: the turn passes to the opponent with no play to type. When the dancing roll does not matter, the <em>f</em> key simply says that the side on roll dances: it enters the first roll, non-doubles first, that does not bring them in from the bar. Off the bar, or against a home board that lets every roll enter, it enters nothing and the status bar says so.</p>
 <p>The <strong>wheel</strong> selects the next or previous candidate, over the list as well as over the board: the eye stays on the board and the arrows scroll past, which recognises a play faster than reading its notation. A click on a row selects it, a double-click validates it.</p>
+<p>A badge, to the left of the dice boxes, shows the <strong>mode</strong> of the entry and what ENTER does. In <strong>Entry</strong>, at the end of the document, the continuation is written. In <strong>Review</strong>, with the cursor on an action already written, the entry keys do not modify it and the dice triangle is withdrawn. The action is reopened in <strong>Editing move N</strong> by <em>e</em>, a double-click on its cell or a click on a line of the analysis: the roll is retyped in place, only ENTER validates, and the cursor then moves to the next decision. END brings back to the end of the document.</p>
 <p>The triangle of the twenty-one rolls sits under the two roll cells, beside the keyboard and not in its place: two digits remain twice as fast as a click, and the triangle is there for whoever transcribes with a hand on the mouse. One cell per roll, never two: 3-1 and 1-3 are the same roll.</p>
 <p>Every move played on the board starts with the roll, typed on the keyboard or clicked on the triangle: with no dice entered, the board plays nothing. Once both dice are entered, the board is constrained to the legal plays of that roll — at the end of the document as on a reviewed action whose cursor has loaded the dice. A click on a checker plays it with the left die, or with the next one when the first cannot; a drag puts it on its destination. Played dice turn grey, a click on the unplayed dice swaps them, and Backspace — or a right click on the board, which takes back the whole move — undoes the move. Each step played keeps in the list only the candidates that contain it, the first of them preselected: this is the gesture for the distant move, where going down to the twelfth candidate costs thirteen keystrokes. From the first step, the arrows of the selected candidate leave the board, so as not to mix with the move being played; they return when the move is taken back or recorded.</p>
 <p>The completed move is recorded only by a validation: a click on the greyed dice, ENTER, or the next roll — a digit or a cell of the triangle — which records it first with the dice as they were typed. On a reviewed action, it replaces it.</p>
 <p>An illegal move is transcribed as it was played, with no button and no change of mode. A drag that no legal play offers puts the checker down where it is released — even from a point no legal play leaves from, provided it holds a checker of the side on roll. The move then leaves the rules: the rest is played freely, by click as by drag, the candidate list gives way to a line that says so, and validation writes the dice entered, the steps and the board reached. Backspace undoes the last step; undoing the only step outside the rules brings the list back.</p>
-<p>The move can also be typed on the keyboard, in the transcript. A double-click on the cell of a move — or of a dance, of an unrecorded move — turns it into a field, prefilled with its notation. Only the move is typed there, <code>13/7 8/7*</code>, <code>bar/22</code> or <code>6/off</code>: the dice are those of the cell. ENTER records it in place of the move written, ESCAPE closes the cell without writing anything, and a text that names no move leaves the field open. The dashed cell of the entry in progress opens the same way, as soon as both its dice are entered.</p>
+<p>The move can also be typed on the keyboard, in the transcript. A double-click on the cell of a move — or of a dance, of an unrecorded move — turns it into a field, prefilled with its notation. Only the move is typed there, <code>13/7 8/7*</code>, <code>bar/22</code> or <code>6/off</code>: the dice are those of the cell. ENTER records it in place of the move written, ESC closes the cell without writing anything, and a text that names no move leaves the field open. The <em>e</em> key opens the cell of the cursor in the same way. The dashed cell of the entry in progress opens the same way, as soon as both its dice are entered.</p>
 <p>A move entered by the free drag or by notation that happens to be legal stays an ordinary move — the comparison is made on the board reached, never on where the gesture came from; otherwise it is marked "illegal move" in the transcript, and the <code>.mat</code> export warns before writing the file, without ever refusing.</p>
 <p>The board an illegal move leaves holds for the position it was played from. When a correction higher up in the transcript changes that position, the move's steps are replayed from the new one, and every position that follows carries the correction.</p>
 <p>The board's arrows are those of the move written in the decision under the cursor, replayed on the position it now has. A step that no longer plays there — a source point left empty by a correction higher up, a point held by the opponent, a checker left on the bar — still leaves from the point written, in dashed red, its source point circled, and the cell carries the “illegal move” mark. The engine's move never takes its place: a line of the list draws its arrows, in blue, only when hovered or chosen with the wheel, the keys or a click.</p>
@@ -1936,7 +1937,7 @@ export default {
 </tr>
 <tr>
 <td>1 … 6 (roll entered)</td>
-<td>Validate the selected move and open the next roll. On an action being reviewed, where the cursor sits on an action already written, the digit restarts the roll of that action instead of validating.</td>
+<td>In Entry, validate the selected move and open the next roll. In Editing, redo the roll of the reopened action, without validating anything. In Review, the digit does nothing.</td>
 </tr>
 <tr>
 <td>1 … 6 (cursor on a game's first play)</td>
@@ -1956,7 +1957,7 @@ export default {
 </tr>
 <tr>
 <td>Click (on a row)</td>
-<td>Select that candidate.</td>
+<td>Select this candidate; on a reviewed action, reopen it in Editing.</td>
 </tr>
 <tr>
 <td>Double-click (on a row)</td>
@@ -1984,7 +1985,7 @@ export default {
 </tr>
 <tr>
 <td>ENTER</td>
-<td>Record the selected play (the last play of a game).</td>
+<td>Validate the selected move (last move of a game); in Editing, validate the correction, the cursor moving on to the next decision. No effect in Review.</td>
 </tr>
 <tr>
 <td>BACKSPACE</td>
@@ -2035,8 +2036,16 @@ export default {
 <td>Put the cursor on that action, or on the missing turn of a double turn.</td>
 </tr>
 <tr>
+<td>e</td>
+<td>Reopen the action under the cursor (Editing) and type its move in its cell, as with a double-click. Esc closes the cell while staying in Editing: the dice are retyped there and ENTER validates the correction.</td>
+</tr>
+<tr>
+<td>End</td>
+<td>Take the cursor to the end of the document, in Entry.</td>
+</tr>
+<tr>
 <td>Double-click (on a cell)</td>
-<td>Type the move of that action on the keyboard, in the cell: 13/7 8/7*, bar/22, 6/off. Only the move is typed, the dice are those of the cell; ENTER records it, even illegal, and Esc closes the cell without writing anything. Works for a move, a dance, an unrecorded move, and for the dashed cell of the entry in progress as soon as both its dice are entered.</td>
+<td>Type the move of that action on the keyboard, in the cell: 13/7 8/7*, bar/22, 6/off. Only the move is typed, the dice are those of the cell; ENTER records it, even illegal, and Esc closes the cell without writing anything. The action goes into Editing. Applies to a move, a dance, an unrecorded move, and to the dashed cell of the entry in progress as soon as both its dice are entered.</td>
 </tr>
 <tr>
 <td>Double-click (on a game's score)</td>
@@ -2110,11 +2119,16 @@ export default {
 </table>
 <p>A roll that allows no play records the dance on its own, with no extra keystroke.</p>
 <p>With a video attached, only an explicit validation (<em>ENTER</em>, a double-click on a candidate, the move completed on the board) sets the action instant. The next roll digit, or a cube gesture, validates without an instant; <em>v</em> sets it afterwards. The arrows are read by their place on the keyboard, whatever its layout; <em>[</em> and <em>]</em> are read by the character typed, <em>ALTGR</em> included on a keyboard that places them that way. Without a video, these keys keep their usual meaning.</p>
-<p>The digit has one meaning: <strong>it starts a roll where the cursor is</strong>. At the end of the document there is nothing under the cursor, so it validates the selected move before opening the next roll — the best move played therefore costs the two dice and nothing more, its validation being carried by the first key of the following turn. On an action already written, which one came back to correct, there is something under the cursor: the digit restarts the roll of that action, in place. The difference is visible on screen, the cell aimed at being framed in the transcript. The <strong>last</strong> action of the document is the exception: once its roll has been typed again, the next digit validates it and opens the following decision, as at the end of the document, and ENTER leads there too.</p>
+<p>The entry has three modes, always shown in a badge above the triangle, with the effect of ENTER:</p>
+<ul>
+<li><strong>Entry</strong> — the cursor is at the end of the document, or on an insertion. The digit validates the selected move before opening the next roll: the best move played costs the two dice and nothing more, its validation being carried by the first key of the following turn.</li>
+<li><strong>Review</strong> — the cursor is on an action already written. The entry keys (digits, f, j/k, ENTER, BACKSPACE) do not modify it, and the dice triangle is hidden. <em>e</em>, a double-click on the cell or a click on a line of the analysis reopen it.</li>
+<li><strong>Editing move N</strong> — the reopened action. The digit restarts its roll in place and only ENTER validates the correction; the cursor then moves to the next decision. Moving the cursor closes Editing; End returns to Entry.</li>
+</ul>
 <p>What is being typed is drawn in the transcript, in dashes, in the place where it will be written: a correction covers the cell it replaces, an insertion opens a cell between its two neighbours, and the side is read from the column. Nothing is recorded before the validation.</p>
 <p>An insertion in the middle of the document goes on inserting: the validation opens an empty cell after it, and the next action is inserted in its turn instead of overwriting the one that follows. The end of the game or moving the cursor puts an end to it.</p>
 <p>A gesture with nothing to do says so, once, in the status bar: "nothing to undo" on an empty stack, "no action under the cursor" at the end of the document. The sentence clears itself and gives the place back to the expected action.</p>
-<p>Moving the cursor back onto an action and typing again corrects it <strong>in place</strong>: validating replaces the action, and the cursor moves on to the next decision — after the last action, to the end of the document, where the transcription continues. If the dice are corrected and the recorded play is still a legal play of the new roll, it is kept; otherwise the first candidate of the new roll is offered and the play is flagged “to review” until it is validated. Moving the cursor forward or back after changing something records the correction on the way.</p>
+<p>Moving the cursor back onto an action, reopening it and then retyping it corrects it <strong>in place</strong>: validating replaces the action and the cursor moves on to the next decision — after the last action, to the end of the document, where the transcription continues. If the dice are corrected and the recorded play is still a legal play of the new roll, it is kept; otherwise the first candidate of the new roll is proposed and the play is flagged “to review” until it is validated. Moving the cursor forward or back after changing something records the correction on the way.</p>
 <p>Nothing is refused and nothing is deleted: inserting an action of the same side as its neighbour creates a double turn, deleting an action may create another one, changing a side may make the plays that follow illegal. These inconsistencies are marked in the transcript, never corrected on your behalf, and the cursor lands on the first of them after every gesture that writes — except where you carry on: after a correction, a deletion, an insertion or a reopened game, it stays where you are typing. Moving around or typing a die never moves it. The turn a double turn has lost is a cell of the transcript: h and l stop on it, and a roll typed there is inserted for the side it was missing from. The undo stack lives in memory: it is lost when the draft is closed.</p>
 <p>The panel itself — the list of drafts, the creation, the entry, the transcript and the draft bar — is described in Transcription Panel.</p>
 <h3>Contact sheet</h3>

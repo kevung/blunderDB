@@ -405,11 +405,12 @@ export default {
 <p>Heti kun toinen noppa putoaa, luetellaan kaikki heiton <strong>lailliset siirrot</strong>, sisäisen moottorin järjestäminä, ensimmäinen esivalittuna ja sen nuolet laudalle asetettuina. Luettelo antaa siirron, sen ekviteetin ja eron parhaaseen: transkriptio on nähdyn siirron tunnistamista, ei sen arvostelua — siihen on <strong>Arviointi</strong>-paneeli. Tämä järjestys on arviointi: se näytetään, sitä ei koskaan kirjoiteta tietokantaan. Kun moottori ei ole käytettävissä, siirrot luetellaan järjestämättöminä ja luettelo kertoo sen otsikossaan.</p>
 <p>Heitto, jolla ei ole yhtään laillista siirtoa, kirjaa <strong>tanssin</strong> itsestään: vuoro siirtyy vastustajalle ilman kirjoitettavaa siirtoa. Kun tanssiheitolla ei ole väliä, <em>f</em>-näppäin kertoo vain, että vuorossa oleva pelaaja ei pääse sisään: se syöttää ensimmäisen heiton, ei-tuplat ensin, jolla hän ei pääse palkilta sisään. Jos palkilla ei ole nappulaa tai kotialue päästää jokaisen heiton sisään, se ei syötä mitään ja tilarivi kertoo sen.</p>
 <p><strong>Rulla</strong> valitsee seuraavan tai edellisen ehdokkaan sekä luettelon että laudan päällä: katse pysyy laudalla ja nuolet vierivät ohi, mikä tunnistaa siirron nopeammin kuin sen notaation lukeminen. Napsautus riviin valitsee sen, kaksoisnapsautus vahvistaa sen.</p>
+<p>Tunniste noppien ruutujen vasemmalla puolella näyttää syötön <strong>tilan</strong> ja sen, mitä ENTER tekee. <strong>Syöttö</strong>-tilassa asiakirjan lopussa kirjoitetaan jatko. <strong>Tarkastelu</strong>-tilassa kohdistin on jo kirjoitetun toiminnon päällä, syöttönäppäimet eivät muuta sitä ja noppakolmio piilotetaan. Toiminto avataan uudelleen tilassa <strong>Siirron N muokkaus</strong> näppäimellä <em>e</em>, kaksoisnapsautuksella sen soluun tai napsautuksella analyysin riviin: heitto kirjoitetaan uudelleen paikallaan, vain ENTER vahvistaa, ja kohdistin siirtyy sitten seuraavaan päätökseen. End palauttaa asiakirjan loppuun.</p>
 <p>Kahdenkymmenenyhden heiton kolmio on heiton kahden ruudun alla, näppäimistön vierellä eikä sen tilalla: kaksi numeroa on yhä kaksi kertaa nopeampi kuin napsautus, ja kolmio on sitä varten, joka kirjaa käsi hiirellä. Yksi ruutu heittoa kohti, ei koskaan kahta: 3-1 ja 1-3 ovat sama heitto.</p>
 <p>Jokainen laudalla pelattu siirto alkaa heitolla, joka kirjoitetaan näppäimistöllä tai napsautetaan kolmiosta: ilman syötettyjä noppia lauta ei pelaa mitään. Kun molemmat nopat on syötetty, lauta rajoittuu kyseisen heiton sallittuihin siirtoihin — asiakirjan lopussa kuten uudelleen luetussa toiminnossa, jonka kohdistin on ladannut nopat. Napsautus nappulaan pelaa sen vasemmalla nopalla tai seuraavalla, kun ensimmäinen ei voi; vetäminen asettaa sen kohteeseensa. Pelatut nopat harmaantuvat, napsautus pelaamattomiin noppiin vaihtaa ne keskenään, ja askelpalautin — tai laudan oikea napsautus, joka peruu koko siirron — kumoaa siirron. Jokainen pelattu askel säilyttää luettelossa vain sen sisältävät ehdokkaat, ensimmäinen niistä valmiiksi valittuna: tämä on kaukaisen siirron ele, jossa kahdennentoista ehdokkaan luo siirtyminen vaatii kolmetoista näppäinpainallusta. Heti ensimmäisestä askeleesta valitun ehdokkaan nuolet poistuvat laudalta, jotta ne eivät sekoitu pelattavaan siirtoon; ne palaavat, kun siirto perutaan tai tallennetaan.</p>
 <p>Valmis siirto tallennetaan vain vahvistuksella: napsautus harmaantuneisiin noppiin, ENTER tai seuraava heitto — numero tai kolmion ruutu —, joka tallentaa sen ensin noppien kanssa sellaisina kuin ne kirjoitettiin. Uudelleen luetussa toiminnossa se korvaa toiminnon.</p>
 <p>Sääntöjen vastainen siirto kirjataan sellaisena kuin se pelattiin, ilman painiketta tai tilanvaihtoa. Veto, jota mikään sallittu siirto ei tarjoa, asettaa nappulan siihen, mihin se vapautetaan — myös pisteestä, josta ei lähde yhtään sallittua siirtoa, kunhan siinä on vuorossa olevan puolen nappula. Siirto poistuu silloin säännöistä: loppu pelataan vapaasti, napsauttamalla kuten vetämällä, ehdokasluettelon tilalle tulee sen muistuttava rivi, ja vahvistus kirjoittaa syötetyt nopat, askeleet ja saavutetun laudan. Askelpalautin kumoaa viimeisen askeleen; sääntöjen ulkopuolisen ainoan askeleen kumoaminen palauttaa luettelon.</p>
-<p>Siirron voi myös kirjoittaa näppäimistöllä, transkriptissa. Kaksoisnapsautus siirron — tai tanssin, kirjaamattoman siirron — soluun muuttaa sen kentäksi, johon sen notaatio on valmiiksi täytetty. Siihen kirjoitetaan vain siirto, <code>13/7 8/7*</code>, <code>bar/22</code> tai <code>6/off</code>: nopat ovat solun omat. ENTER kirjaa sen kirjoitetun siirron tilalle, ESC sulkee solun kirjoittamatta mitään, ja teksti, joka ei ilmaise mitään siirtoa, jättää kentän auki. Kesken olevan syötön katkoviivasolu avautuu samoin, heti kun sen molemmat nopat on syötetty.</p>
+<p>Siirron voi kirjoittaa myös näppäimistöllä, litteroinnissa. Kaksoisnapsautus siirron solussa — tai tanssin, kirjaamattoman siirron — muuttaa sen kentäksi, johon on esitäytetty sen merkintä. Siihen kirjoitetaan vain siirto, <code>13/7 8/7*</code>, <code>bar/22</code> tai <code>6/off</code>: nopat ovat solun nopat. ENTER tallentaa sen kirjoitetun siirron tilalle, ESC sulkee solun kirjoittamatta mitään, ja teksti, joka ei nimeä mitään siirtoa, jättää kentän auki. Näppäin <em>e</em> avaa samoin kohdistimen solun. Käynnissä olevan syötön katkoviivasolu avautuu samoin heti, kun sen molemmat nopat on syötetty.</p>
 <p>Vapaalla vedolla tai notaatiolla syötetty siirto, joka sattuu olemaan laillinen, pysyy tavallisena siirtona — vertailu tehdään saadusta laudasta, ei koskaan eleen alkuperästä; muutoin se merkitään transkriptiin ”laiton siirto”, ja <code>.mat</code>-vienti varoittaa ennen tiedoston kirjoittamista kieltäytymättä koskaan.</p>
 <p>Sääntöjenvastaisen siirron jättämä lauta pätee asemaan, josta se pelattiin. Kun korjaus ylempänä transkriptissa muuttaa tätä asemaa, siirron askeleet pelataan uudelleen uudesta asemasta, ja kaikki sitä seuraavat asemat noudattavat korjausta.</p>
 <p>Laudan nuolet ovat kohdistimen alla olevaan päätökseen kirjoitetun siirron nuolet, pelattuna uudelleen siinä asemassa, joka sillä nyt on. Askel, joka ei siellä enää ole pelattavissa — lähtöpiste, jonka ylempänä tehty korjaus tyhjensi, vastustajan hallussa oleva piste, palkille jätetty nappula — lähtee silti kirjoitetusta pisteestä punaisena katkoviivana, lähtöpiste ympyröitynä, ja solussa on merkintä ”laiton siirto”. Moottorin siirto ei koskaan tule sen tilalle: luettelon rivi piirtää nuolensa sinisenä vain, kun osoitin on sen päällä tai kun se valitaan rullalla, näppäimillä tai napsautuksella.</p>
@@ -1936,7 +1937,7 @@ export default {
 </tr>
 <tr>
 <td>1 … 6 (heitto syötetty)</td>
-<td>Vahvista valittu siirto ja avaa seuraava heitto. Uudelleen tarkasteltavassa toiminnossa, jossa kohdistin on jo kirjoitetun toiminnon päällä, numero aloittaa tämän toiminnon heiton uudelleen vahvistamisen sijaan.</td>
+<td>Syöttö-tilassa: vahvista valittu siirto ja avaa seuraava heitto. Muokkaus-tilassa: tee uudelleen uudelleen avatun toiminnon heitto vahvistamatta mitään. Tarkastelu-tilassa numero ei tee mitään.</td>
 </tr>
 <tr>
 <td>1 … 6 (kohdistin pelin ensimmäisen siirron kohdalla)</td>
@@ -1956,7 +1957,7 @@ export default {
 </tr>
 <tr>
 <td>Napsautus (riviä)</td>
-<td>Valitse kyseinen ehdokas.</td>
+<td>Valitse tämä ehdokas; tarkastellun toiminnon kohdalla avaa se uudelleen Muokkaus-tilassa.</td>
 </tr>
 <tr>
 <td>Kaksoisnapsautus (riviin)</td>
@@ -1984,7 +1985,7 @@ export default {
 </tr>
 <tr>
 <td>ENTER</td>
-<td>Kirjaa valittu siirto (pelin viimeinen siirto).</td>
+<td>Vahvista valittu siirto (pelin viimeinen siirto); Muokkaus-tilassa vahvista korjaus, jolloin kohdistin siirtyy seuraavaan päätökseen. Ei vaikutusta Tarkastelu-tilassa.</td>
 </tr>
 <tr>
 <td>ASKELPALAUTIN</td>
@@ -2035,8 +2036,16 @@ export default {
 <td>Vie kohdistin tähän toimintoon tai kaksoisvuoron puuttuvaan vuoroon.</td>
 </tr>
 <tr>
+<td>e</td>
+<td>Avaa kohdistimen toiminto uudelleen (Muokkaus) ja kirjoita sen siirto sen soluun kuten kaksoisnapsautuksella. Esc sulkee solun pysyen Muokkaus-tilassa: nopat kirjoitetaan siellä uudelleen ja ENTER vahvistaa korjauksen.</td>
+</tr>
+<tr>
+<td>End</td>
+<td>Vie kohdistin asiakirjan loppuun, Syöttö-tilassa.</td>
+</tr>
+<tr>
 <td>Kaksoisnapsautus (solua)</td>
-<td>Kirjoita tämän toiminnon siirto näppäimistöllä, solun sisään: 13/7 8/7*, bar/22, 6/off. Vain siirto kirjoitetaan, nopat ovat solun omat; ENTER kirjaa sen, laittomankin, ja Esc sulkee solun kirjoittamatta mitään. Koskee siirtoa, tanssia, kirjaamatonta siirtoa sekä kesken olevan syötön katkoviivasolua heti kun sen molemmat nopat on syötetty.</td>
+<td>Kirjoita tämän toiminnon siirto näppäimistöllä solussa: 13/7 8/7*, bar/22, 6/off. Vain siirto kirjoitetaan, nopat ovat solun nopat; ENTER tallentaa sen myös laittomana, ja Esc sulkee solun kirjoittamatta mitään. Toiminto siirtyy Muokkaus-tilaan. Pätee siirtoon, tanssiin, kirjaamattomaan siirtoon ja käynnissä olevan syötön katkoviivasoluun heti, kun sen molemmat nopat on syötetty.</td>
 </tr>
 <tr>
 <td>Kaksoisnapsautus (pelin tilannetta)</td>
@@ -2110,11 +2119,16 @@ export default {
 </table>
 <p>Heitto, joka ei salli yhtään siirtoa, kirjaa tanssin itsestään ilman lisänäppäintä.</p>
 <p>Kun video on liitetty, vain nimenomainen vahvistus (<em>ENTER</em>, ehdokkaan kaksoisnapsautus, laudalla valmistunut siirto) asettaa siirron hetken. Seuraavan heiton numero tai kuutioele vahvistaa ilman hetkeä; <em>v</em> asettaa sen jälkikäteen. Nuolinäppäimet luetaan niiden paikasta näppäimistöllä, asettelusta riippumatta; <em>[</em> ja <em>]</em> luetaan kirjoitetun merkin mukaan, <em>ALTGR</em> mukaan lukien näppäimistöllä, joka sijoittaa ne näin. Ilman videota nämä näppäimet säilyttävät tavallisen merkityksensä.</p>
-<p>Numerolla on yksi ainoa merkitys: <strong>se aloittaa heiton siellä missä kohdistin on</strong>. Asiakirjan lopussa kohdistimen alla ei ole mitään, joten se vahvistaa valitun siirron ennen seuraavan heiton avaamista — parhaan pelatun siirron hinnaksi tulee näin kaksi noppaa eikä enempää, sillä sen vahvistuksen kantaa seuraavan vuoron ensimmäinen näppäin. Jo kirjoitetussa toiminnossa, jonka luo on palattu korjaamaan, kohdistimen alla on jotakin: numero aloittaa tämän toiminnon heiton uudelleen, paikallaan. Ero näkyy näytöllä, sillä kohdennettu solu on kehystetty transkriptissä. Asiakirjan <strong>viimeinen</strong> toiminto on poikkeus: kun sen heitto on kirjoitettu uudelleen, seuraava numero vahvistaa sen ja avaa seuraavan päätöksen, kuten asiakirjan lopussa, ja ENTER vie myös sinne.</p>
+<p>Syötöllä on kolme tilaa, jotka näkyvät jatkuvasti kolmion yläpuolella olevassa tunnisteessa yhdessä ENTERin vaikutuksen kanssa:</p>
+<ul>
+<li><strong>Syöttö</strong> — kohdistin on asiakirjan lopussa tai lisäyksen kohdalla. Numero vahvistaa valitun siirron ennen seuraavan heiton avaamista: paras pelattu siirto maksaa kaksi noppaa eikä mitään muuta, sillä sen vahvistuksen kantaa seuraavan vuoron ensimmäinen näppäin.</li>
+<li><strong>Tarkastelu</strong> — kohdistin on jo kirjoitetun toiminnon päällä. Syöttönäppäimet (numerot, f, j/k, ENTER, ASKELPALAUTIN) eivät muuta sitä, ja noppakolmio on piilotettu. <em>e</em>, kaksoisnapsautus solussa tai napsautus analyysin rivillä avaa sen uudelleen.</li>
+<li><strong>Siirron N muokkaus</strong> — uudelleen avattu toiminto. Numero aloittaa sen heiton uudelleen paikallaan ja vain ENTER vahvistaa korjauksen; kohdistin siirtyy sitten seuraavaan päätökseen. Kohdistimen siirtäminen sulkee Muokkauksen; End palauttaa Syöttöön.</li>
+</ul>
 <p>Se mitä parhaillaan kirjoitetaan piirtyy transkriptiin katkoviivalla siihen paikkaan, johon se kirjataan: korjaus peittää solun, jonka se korvaa, lisäys avaa solun kahden naapurinsa väliin, ja puoli luetaan sarakkeesta. Mitään ei kirjata ennen vahvistusta.</p>
 <p>Keskelle asiakirjaa tehty lisäys jatkaa lisäämistä: vahvistus avaa tyhjän solun sen perään, ja seuraava toiminto lisätään vuorostaan sen sijaan että se korvaisi jälkimmäisen. Pelin loppu tai kohdistimen siirtäminen päättää sen.</p>
 <p>Ele, jolla ei ole mitään tehtävää, sanoo sen kerran tilapalkissa: ”ei mitään kumottavaa” tyhjällä pinolla, ”ei toimintoa kohdistimen alla” asiakirjan lopussa. Lause pyyhkiytyy itsestään ja antaa paikan takaisin odotetulle toiminnolle.</p>
-<p>Kohdistimen siirtäminen takaisin toiminnon kohdalle ja uudelleen kirjoittaminen korjaa sen <strong>paikallaan</strong>: hyväksyntä korvaa toiminnon ja kohdistin siirtyy seuraavaan päätökseen — viimeisen toiminnon jälkeen asiakirjan loppuun, jossa litterointi jatkuu. Jos nopat korjataan ja tallennettu siirto on yhä uuden heiton laillinen siirto, se säilytetään; muuten tarjotaan uuden heiton ensimmäistä ehdokasta ja siirto merkitään ”tarkistettavaksi” hyväksyntään asti. Kohdistimen siirtäminen eteen- tai taaksepäin muutoksen jälkeen tallentaa korjauksen samalla.</p>
+<p>Kohdistimen vieminen takaisin toiminnon kohdalle, sen avaaminen uudelleen ja uudelleenkirjoitus korjaa sen <strong>paikallaan</strong>: vahvistus korvaa toiminnon ja kohdistin siirtyy seuraavaan päätökseen — viimeisen toiminnon jälkeen asiakirjan loppuun, jossa litterointi jatkuu. Jos noppia korjataan ja tallennettu siirto on yhä uuden heiton laillinen siirto, se säilyy; muuten ehdotetaan uuden heiton ensimmäistä ehdokasta ja siirto merkitään ”tarkistettava” vahvistukseen asti. Kohdistimen siirtäminen eteen- tai taaksepäin muutoksen jälkeen tallentaa korjauksen samalla.</p>
 <p>Mitään ei hylätä eikä poisteta: naapurinsa kanssa samalle puolelle lisätty toiminto luo kaksoisvuoron, toiminnon poistaminen voi luoda toisen, puolen vaihtaminen voi tehdä seuraavista siirroista laittomia. Nämä epäjohdonmukaisuudet merkitään transkriptiin, niitä ei koskaan korjata automaattisesti, ja kohdistin asettuu ensimmäisen niistä kohdalle jokaisen kirjoittavan eleen jälkeen — paitsi siellä, missä jatketaan: korjauksen, poiston, lisäyksen tai uudelleen avatun pelin jälkeen se pysyy siinä, mihin kirjoitetaan. Liikkuminen tai nopan kirjoittaminen ei koskaan siirrä sitä. Vuoro, jonka kaksoisvuoro on kadottanut, on transkriptin solu: h ja l pysähtyvät siihen, ja siihen kirjoitettu heitto lisätään sille puolelle, jolta se puuttui. Kumoamispino elää muistissa: se menetetään, kun luonnos suljetaan.</p>
 <p>Paneeli itse — luonnosten luettelo, luonti, syöttö, siirtoluettelo ja luonnospalkki — kuvataan kohdassa Litterointipaneeli.</p>
 <h3>Vedosarkki</h3>

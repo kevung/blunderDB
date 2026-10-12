@@ -47,8 +47,11 @@ test('une décision illégale garde ses flèches ; le moteur ne se dessine que d
     await expect(strokes(page, ILLEGAL)).toHaveCount(3);
     await expect(strokes(page, ENGINE)).toHaveCount(0);
 
-    // Choosing the first line of the analysis writes it, like any other line.
+    // Choosing the first line of the analysis writes it, like any other line. The
+    // decision is reopened first: in Review the keys change nothing.
     await resetGestures(page);
+    await page.keyboard.press('e');
+    await page.keyboard.press('Escape');
     await page.keyboard.press('k');
     await page.keyboard.press('Enter');
     await expect.poll(async () => (await sentGestures(page)).map((g) => (g.Kind === 'select_candidate' ? `select ${g.Candidate}` : g.Kind))).toEqual(['select 0', 'validate']);

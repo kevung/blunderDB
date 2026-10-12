@@ -405,11 +405,12 @@ export default {
 <p>En cuanto cae el segundo dado, se listan todos los <strong>movimientos legales</strong> de la tirada, clasificados por el motor incorporado, el primero preseleccionado y sus flechas puestas sobre el tablero. La lista da el movimiento, su equidad y su diferencia con el mejor: transcribir es reconocer el movimiento que se ha visto jugar, no juzgarlo — para eso está el panel <strong>Evaluación</strong>. Esta clasificación es una evaluación: se muestra, nunca se escribe en la base. Cuando el motor no está disponible, los movimientos se listan sin clasificar y la lista lo dice en su cabecera.</p>
 <p>Una tirada sin ninguna jugada legal registra el <strong>baile</strong> por sí sola: el turno pasa al rival sin jugada que teclear. Cuando la tirada que no entra no importa, la tecla <em>f</em> solo indica que el jugador en turno no entra: introduce la primera tirada, los no dobles antes, que no le permite entrar desde la barra. Fuera de la barra, o ante un cuadrante interior que deja entrar todas las tiradas, no introduce nada y la barra de estado lo indica.</p>
 <p>La <strong>rueda</strong> selecciona el candidato siguiente o anterior, tanto sobre la lista como sobre el tablero: la mirada permanece en el tablero y las flechas desfilan, lo que reconoce un movimiento más rápido que leer su notación. Un clic en una fila la selecciona, un doble clic la valida.</p>
+<p>Una insignia, a la izquierda de las casillas del lanzamiento, indica el <strong>modo</strong> de la entrada y lo que hace INTRO. En <strong>Entrada</strong>, al final del documento, se escribe la continuación. En <strong>Revisión</strong>, con el cursor sobre una acción ya escrita, las teclas de entrada no la modifican y el triángulo de los lanzamientos se oculta. La acción se reabre en <strong>Edición jugada N</strong> con <em>e</em>, un doble clic en su celda o un clic en una línea del análisis: el lanzamiento se reescribe en el sitio, solo INTRO valida, y el cursor pasa entonces a la decisión siguiente. FIN devuelve al final del documento.</p>
 <p>El triángulo de las veintiuna tiradas se sitúa bajo las dos casillas de la tirada, junto al teclado y no en su lugar: dos dígitos siguen siendo el doble de rápidos que un clic, y el triángulo está ahí para quien transcribe con la mano en el ratón. Una casilla por tirada, nunca dos: 3-1 y 1-3 son la misma tirada.</p>
 <p>Toda jugada realizada en el tablero comienza con la tirada, escrita con el teclado o pulsada en el triángulo: sin dados introducidos, el tablero no juega nada. Con los dos dados introducidos, el tablero queda limitado a las jugadas legales de esa tirada — al final del documento igual que en una acción releída cuyo cursor ha cargado los dados. Un clic en una ficha la juega con el dado de la izquierda, o con el siguiente cuando el primero no puede; un arrastre la coloca en su destino. Los dados jugados se atenúan en gris, un clic en los dados no jugados los intercambia, y Retroceso — o el clic derecho en el tablero, que retoma toda la jugada — deshace la jugada. Cada paso jugado conserva en la lista solo los candidatos que lo contienen, con el primero de ellos preseleccionado: es el gesto de la jugada lejana, en la que bajar hasta el duodécimo candidato cuesta trece pulsaciones. Desde el primer paso, las flechas del candidato seleccionado abandonan el tablero, para no mezclarse con la jugada que se está haciendo; vuelven cuando la jugada se retoma o se registra.</p>
 <p>La jugada terminada solo se registra mediante una validación: un clic en los dados atenuados, ENTRAR, o la tirada siguiente — un dígito o una casilla del triángulo —, que la registra primero con los dados tal como se escribieron. En una acción releída, la sustituye.</p>
 <p>Una jugada ilegal se transcribe tal como se jugó, sin botón ni cambio de modo. Un arrastre que ninguna jugada legal ofrece coloca la ficha donde se suelta — incluso desde un punto del que no parte ninguna jugada legal, siempre que contenga una ficha del bando que tiene el turno. La jugada sale entonces de las reglas: el resto se juega libremente, con clic o con arrastre, la lista de candidatos deja paso a una línea que lo recuerda, y la validación escribe los dados introducidos, los pasos y el tablero obtenido. Retroceso deshace el último paso; deshacer el único paso fuera de las reglas devuelve la lista.</p>
-<p>La jugada también se teclea, en la transcripción. Un doble clic en la celda de una jugada — o de un baile, de una jugada no consignada — la convierte en un campo, rellenado con su notación. Allí solo se teclea la jugada, <code>13/7 8/7*</code>, <code>bar/22</code> o <code>6/off</code>: los dados son los de la celda. INTRO la registra en lugar de la jugada escrita, ESCAPE cierra la celda sin escribir nada, y un texto que no indica ninguna jugada deja el campo abierto. La celda punteada de la entrada en curso se abre igual, en cuanto sus dos dados están introducidos.</p>
+<p>La jugada también se escribe con el teclado, en la transcripción. Un doble clic en la celda de una jugada — o de una danza, de una jugada no consignada — la convierte en un campo, rellenado con su notación. Solo se escribe la jugada, <code>13/7 8/7*</code>, <code>bar/22</code> o <code>6/off</code>: los dados son los de la celda. INTRO la registra en lugar de la jugada escrita, ESC cierra la celda sin escribir nada, y un texto que no designa ninguna jugada deja el campo abierto. La tecla <em>e</em> abre del mismo modo la celda del cursor. La celda de puntos de la entrada en curso se abre del mismo modo, en cuanto sus dos dados están introducidos.</p>
 <p>Un movimiento introducido por el arrastre libre o por la notación que resulte ser legal sigue siendo un movimiento ordinario — la comparación se hace sobre el tablero obtenido, nunca sobre la procedencia del gesto; si no, se marca «movimiento ilegal» en la transcripción, y la exportación <code>.mat</code> advierte antes de escribir el archivo, sin negarse nunca.</p>
 <p>El tablero que deja un movimiento ilegal vale para la posición desde la que se jugó. Cuando una corrección más arriba en el transcript cambia esa posición, los pasos del movimiento se vuelven a jugar desde la nueva, y todas las posiciones siguientes reflejan la corrección.</p>
 <p>Las flechas del tablero son las de la jugada escrita en la decisión bajo el cursor, rejugada sobre la posición que ahora tiene. Un paso que ya no se juega allí — punto de salida vaciado por una corrección más arriba, punto tomado por el adversario, ficha dejada en la barra — sale igualmente del punto escrito, en rojo discontinuo, con su punto de salida rodeado, y la celda lleva la marca «jugada ilegal». La jugada del motor nunca ocupa su lugar: una línea de la lista dibuja sus flechas, en azul, solo al pasar el puntero por encima o al elegirla con la rueda, las teclas o un clic.</p>
@@ -1936,7 +1937,7 @@ export default {
 </tr>
 <tr>
 <td>1 … 6 (tirada introducida)</td>
-<td>Validar el movimiento seleccionado y abrir la tirada siguiente. En una acción releída, donde el cursor está puesto sobre una acción ya escrita, la cifra reinicia la tirada de esa acción en lugar de validar.</td>
+<td>En Entrada, validar la jugada seleccionada y abrir el lanzamiento siguiente. En Edición, rehacer el lanzamiento de la acción reabierta, sin validar nada. En Revisión, la cifra no hace nada.</td>
 </tr>
 <tr>
 <td>1 … 6 (cursor sobre la primera jugada de una partida)</td>
@@ -1956,7 +1957,7 @@ export default {
 </tr>
 <tr>
 <td>Clic (en una fila)</td>
-<td>Seleccionar ese candidato.</td>
+<td>Seleccionar este candidato; sobre una acción revisada, reabrirla en Edición.</td>
 </tr>
 <tr>
 <td>Doble clic (en una fila)</td>
@@ -1984,7 +1985,7 @@ export default {
 </tr>
 <tr>
 <td>INTRO</td>
-<td>Registrar el movimiento seleccionado (último movimiento de una partida).</td>
+<td>Validar la jugada seleccionada (última jugada de una partida); en Edición, validar la corrección, pasando el cursor a la decisión siguiente. Sin efecto en Revisión.</td>
 </tr>
 <tr>
 <td>RETROCESO</td>
@@ -2035,8 +2036,16 @@ export default {
 <td>Situar el cursor en esa acción, o en el turno que falta de un doble turno.</td>
 </tr>
 <tr>
+<td>e</td>
+<td>Reabrir la acción del cursor (Edición) y escribir su jugada en su celda, como con el doble clic. Esc cierra la celda permaneciendo en Edición: los dados se reescriben allí e INTRO valida la corrección.</td>
+</tr>
+<tr>
+<td>Fin</td>
+<td>Llevar el cursor al final del documento, en Entrada.</td>
+</tr>
+<tr>
 <td>Doble clic (en una celda)</td>
-<td>Teclear la jugada de esa acción, dentro de la celda: 13/7 8/7*, bar/22, 6/off. Solo se teclea la jugada, los dados son los de la celda; INTRO la registra, aunque sea ilegal, y Esc cierra la celda sin escribir nada. Vale para una jugada, un baile, una jugada no consignada, y para la celda punteada de la entrada en curso en cuanto sus dos dados están introducidos.</td>
+<td>Escribir con el teclado la jugada de esta acción, en la celda: 13/7 8/7*, bar/22, 6/off. Solo se escribe la jugada, los dados son los de la celda; INTRO la registra, incluso ilegal, y Esc cierra la celda sin escribir nada. La acción pasa a Edición. Vale para una jugada, una danza, una jugada no consignada, y para la celda de puntos de la entrada en curso en cuanto sus dos dados están introducidos.</td>
 </tr>
 <tr>
 <td>Doble clic (en el marcador de una partida)</td>
@@ -2110,11 +2119,16 @@ export default {
 </table>
 <p>Una tirada que no permite ningún movimiento registra el baile por sí sola, sin pulsación adicional.</p>
 <p>Con un vídeo adjunto, solo una validación explícita (<em>INTRO</em>, el doble clic sobre un candidato, la jugada completada en el tablero) fija el instante de la jugada. La cifra de la tirada siguiente, o un gesto de cubo, valida sin instante; <em>v</em> lo fija a posteriori. Las flechas se leen por su posición en el teclado, sea cual sea su distribución; <em>[</em> y <em>]</em> se leen por el carácter tecleado, <em>ALTGR</em> incluido en un teclado que los coloca así. Sin vídeo, estas teclas conservan su significado habitual.</p>
-<p>La cifra tiene un solo sentido: <strong>empieza una tirada allí donde está el cursor</strong>. Al final del documento no hay nada bajo el cursor, así que valida el movimiento seleccionado antes de abrir la tirada siguiente — el mejor movimiento jugado cuesta así los dos dados y nada más, pues su validación la lleva la primera tecla del turno siguiente. En una acción ya escrita, a la que se ha vuelto para corregirla, hay algo bajo el cursor: la cifra reinicia la tirada de esa acción, en su sitio. La diferencia se ve en pantalla, pues la celda señalada está enmarcada en la transcripción. La <strong>última</strong> acción del documento es la excepción: una vez vuelta a teclear su tirada, la cifra siguiente la valida y abre la decisión siguiente, como al final del documento, e INTRO lleva allí también.</p>
+<p>La entrada tiene tres modos, mostrados permanentemente en una insignia sobre el triángulo, con el efecto de INTRO:</p>
+<ul>
+<li><strong>Entrada</strong> — el cursor está al final del documento, o sobre una inserción. La cifra valida la jugada seleccionada antes de abrir el lanzamiento siguiente: la mejor jugada cuesta los dos dados y nada más, ya que su validación la lleva la primera tecla del turno siguiente.</li>
+<li><strong>Revisión</strong> — el cursor está sobre una acción ya escrita. Las teclas de entrada (cifras, f, j/k, INTRO, RETROCESO) no la modifican, y el triángulo de los lanzamientos está oculto. <em>e</em>, un doble clic en la celda o un clic en una línea del análisis la reabren.</li>
+<li><strong>Edición jugada N</strong> — la acción reabierta. La cifra reinicia su lanzamiento en el sitio y solo INTRO valida la corrección; el cursor pasa entonces a la decisión siguiente. Mover el cursor cierra la Edición; Fin devuelve a la Entrada.</li>
+</ul>
 <p>Lo que se está tecleando se dibuja en la transcripción, con trazo discontinuo, en el lugar donde se escribirá: una corrección cubre la celda que reemplaza, una inserción abre una celda entre sus dos vecinas, y el bando se lee en la columna. Nada se registra antes de la validación.</p>
 <p>Una inserción en medio del documento sigue insertando: la validación abre una celda vacía a continuación, y la acción siguiente se inserta a su vez en lugar de sobrescribir la de después. El final de la partida o mover el cursor le pone fin.</p>
 <p>Un gesto que no tiene nada que hacer lo dice, una vez, en la barra de estado: «nada que deshacer» con la pila vacía, «ninguna acción bajo el cursor» al final del documento. La frase se borra sola y devuelve el sitio a la acción esperada.</p>
-<p>Retroceder el cursor hasta una acción y volver a escribir la corrige <strong>en el sitio</strong>: la validación reemplaza la acción y el cursor pasa a la decisión siguiente — tras la última acción, al final del documento, donde la transcripción continúa. Si se corrigen los dados y la jugada registrada sigue siendo una jugada legal de la nueva tirada, se conserva; si no, se propone el primer candidato de la nueva tirada y la jugada queda señalada «por revisar» hasta la validación. Avanzar o retroceder el cursor después de haber cambiado algo registra la corrección de paso.</p>
+<p>Volver con el cursor sobre una acción, reabrirla y reescribirla la corrige <strong>en el sitio</strong>: la validación sustituye la acción y el cursor pasa a la decisión siguiente — tras la última acción, al final del documento, donde continúa la transcripción. Si se corrigen los dados y la jugada registrada sigue siendo una jugada legal del nuevo lanzamiento, se conserva; si no, se propone el primer candidato del nuevo lanzamiento y la jugada se marca «por revisar» hasta la validación. Avanzar o retroceder el cursor tras cambiar algo registra la corrección de paso.</p>
 <p>Nada se rechaza ni se elimina: insertar una acción del mismo bando que su vecina crea un doble turno, eliminar una acción puede crear otro, cambiar un bando puede volver ilegales las jugadas siguientes. Estas incoherencias se señalan en el transcript, nunca se corrigen de oficio, y el cursor se coloca sobre la primera de ellas después de cada gesto que escribe — salvo donde se continúa: tras una corrección, una eliminación, una inserción o una partida reabierta, se queda donde se teclea. Desplazarse o teclear un dado nunca lo mueve. El turno que un doble turno ha perdido es una celda del transcript: h y l se detienen en ella, y una tirada tecleada allí se inserta para el bando al que le faltaba. La pila de deshacer vive en memoria: se pierde al cerrar el borrador.</p>
 <p>El panel en sí — la lista de borradores, la creación, la entrada, la transcripción y la barra del borrador — se describe en Panel de Transcripción.</p>
 <h3>Hoja de contactos</h3>

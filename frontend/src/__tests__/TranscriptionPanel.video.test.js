@@ -226,23 +226,27 @@ describe('the automatic Repères', () => {
         expect(sent.find((g) => g.Kind === 'validate')).toEqual({ Kind: 'validate', TickMS: 65000, HasTick: true });
     });
 
-    test('a correction of the last Action validated by the next digit: the new roll is timed, nothing to remind', async () => {
+    test('a correction of the last Action is not validated by the next digit: it restarts in place, untimed', async () => {
         entry = { at: ACTIONS.length - 1, kind: 'checker', replacing: true, dice: [5, 2], selected: true, game_start: false };
         await openedPanel(ACTIONS.length - 1);
-        // Retyped on the last Action, the roll is validated by the digit that follows.
+        // In Edition (ADR-0091) only Enter validates; a digit restarts the roll.
+        await press('KeyE');
+        await press('Escape');
         await press('Digit6');
         await press('Digit4');
         await vi.waitFor(() => expect(gestures().some((g) => g.Kind === 'select_candidate')).toBe(true));
         /** @type {any} */ (ApplyTranscriptionGesture).mockClear();
         fakeVideo.now = 99000;
         await press('Digit2');
-        expect(gestures()).toEqual([{ Kind: 'validate' }, { Kind: 'enter_die', Die: 2, TickMS: 99000, HasTick: true }]);
+        expect(gestures()).toEqual([{ Kind: 'enter_die', Die: 2 }]);
         expect(get(transcriptionNoticeStore)?.key).not.toBe('transcription.notice.untimedAction');
     });
 
     test('a correction in place sends no instant', async () => {
         entry = { at: 0, kind: 'checker', replacing: true, dice: [0, 0], game_start: false };
         await openedPanel(0);
+        await press('KeyE');
+        await press('Escape');
         await press('Digit4');
         const die = gestures().find((g) => g.Kind === 'enter_die');
         expect(die).toEqual({ Kind: 'enter_die', Die: 4 });
