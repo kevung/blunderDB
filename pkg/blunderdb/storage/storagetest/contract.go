@@ -228,6 +228,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"MatchEquityTable/TravelsWithImport", testMETTravelsWithImport},
 		{"MatchEquityTable/TravelsWithExport", testMETTravelsWithExport},
 		{"Export/PlanMatchesReport", testExportPlanMatchesReport},
+		{"Export/CarriesDirection", testExportCarriesDirection},
 		{"MatchEquityTable/TravelsWithNDJSON", testMETTravelsWithNDJSON},
 		{"MatchEquityTable/KeptByTrash", testMETKeptByTrash},
 		{"ActionLabel/ReadBackVerbatim", testActionLabelsReadBackVerbatim},

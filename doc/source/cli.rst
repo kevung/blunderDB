@@ -406,14 +406,14 @@ Exporte le contenu de la base vers des fichiers.
   refusée.
 * ``--plan-ids <famille>`` — Comme ``--plan``, mais rend une page des
   identifiants derrière un compte : ``positions``, ``comments`` (les positions
-  qui les portent), ``matches``, ``tournaments``, ``collections``, ``lessons``,
-  ``ankiDecks``, ``transcriptions`` ou ``filters``. ``--offset`` et ``--limit``
+  qui les portent), ``matches``, ``tournaments``, ``directions`` (les tournois dont la Direction part),
+  ``collections``, ``lessons``, ``ankiDecks``, ``transcriptions`` ou ``filters``. ``--offset`` et ``--limit``
   choisissent la page (1000 identifiants au plus).
 
 ``--type database`` exporte toute la bibliothèque, comme l'export du serveur
 et comme la fenêtre d'export quand la liste affichée est la bibliothèque :
-positions, matchs, tournois, collections, leçons, paquets Anki, transcriptions,
-alias et filtres. Une option à ``false`` retire sa famille (``--collections=false``) ;
+positions, matchs, tournois (avec leur Direction : journal, paires et matchs
+rattachés), collections, leçons, paquets Anki, transcriptions, alias et filtres. Une option à ``false`` retire sa famille (``--collections=false``) ;
 une liste d'IDs la restreint à ces éléments et l'inclut.
 Un brouillon de transcription part avec le match qu'il a produit ; un brouillon
 qui n'a pas encore produit de match ne part que si tous les matchs partent.
