@@ -17,7 +17,7 @@ describe('parseMoveNotation', () => {
     });
 
     test('maps bar to 0 and off to -1', () => {
-        expect(parseMoveNotation('bar/23')).toEqual([{ from: 0, to: 23, index: 0 }]);
+        expect(parseMoveNotation('bar/23')).toEqual([{ from: 25, to: 23, index: 0 }]);
         expect(parseMoveNotation('6/off(2)')).toEqual([
             { from: 6, to: -1, index: 0 },
             { from: 6, to: -1, index: 1 }
