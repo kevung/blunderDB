@@ -6,6 +6,7 @@
     import { tick } from 'svelte';
     import { t } from '../i18n';
     import { videoSideStore, setVideoSide, videoStageOwnerStore, videoStageTargetStore } from '../stores/videoStageStore.js';
+    import { toCssPx } from '../utils/uiZoom.js';
 
     /** @type {{ children: import('svelte').Snippet }} */
     let { children } = $props();
@@ -72,7 +73,7 @@
         const startWidth = stage?.clientWidth || width;
         /** @param {PointerEvent} e */
         const move = (e) => {
-            width = clamp(startWidth + (side === 'right' ? startX - e.clientX : e.clientX - startX));
+            width = clamp(startWidth + toCssPx(side === 'right' ? startX - e.clientX : e.clientX - startX));
             refitBoard();
         };
         const up = () => {

@@ -1,4 +1,5 @@
 <script>
+    import { toCssPx } from '../../utils/uiZoom.js';
     /*
      * La grille des tables, lisible à deux mètres ; le temps
      * écoulé passe en alerte quand un match traîne. La fiche de résultat s'ouvre sur la case.
@@ -429,7 +430,7 @@
 </section>
 
 {#if drag?.started}
-    <div class="ghost" data-testid="direction-drag-ghost" style="left: {drag.x + 12}px; top: {drag.y + 12}px">
+    <div class="ghost" data-testid="direction-drag-ghost" style="left: {toCssPx(drag.x) + 12}px; top: {toCssPx(drag.y) + 12}px">
         {drag.cell.noTable ? '' : `${drag.cell.table} · `}{drag.cell.aName} – {drag.cell.bName}
     </div>
 {/if}

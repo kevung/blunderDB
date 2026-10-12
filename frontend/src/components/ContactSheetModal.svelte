@@ -251,7 +251,7 @@
         list-style: none;
         margin: 0;
         padding: 0;
-        max-height: 70vh;
+        max-height: calc(70vh / var(--ui-scale, 1));
         overflow: auto;
     }
 

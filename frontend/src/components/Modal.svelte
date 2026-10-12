@@ -177,8 +177,8 @@
 
     /* A fixed frame the content fills (tabbed help): no padding, the content lays itself out. */
     .size-panel {
-        width: 80vw;
-        height: 70vh;
+        width: calc(80vw / var(--ui-scale, 1));
+        height: calc(70vh / var(--ui-scale, 1));
         padding: 0;
         gap: 0;
     }

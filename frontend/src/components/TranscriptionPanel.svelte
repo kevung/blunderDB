@@ -97,6 +97,7 @@
     import { createCursorFollower, isTyping } from '../services/videoFollow.js';
     import { saveVideoResume, videoResumeMs } from '../services/videoResume.js';
     import { loadVideoRotation, nextRotation, saveVideoRotation } from '../services/videoRotation.js';
+    import { toCssPx } from '../utils/uiZoom.js';
 
     // Mirrors Go's transcript.DefaultMatchLength: the form shows it before any call.
     /** @typedef {import('../services/transcriptionKeys.js').KeyState} KeyState */
@@ -645,7 +646,7 @@
         const startHeight = videoHeight;
         /** @param {PointerEvent} e */
         const move = (e) => {
-            videoHeight = Math.min(VIDEO_HEIGHT_MAX, Math.max(VIDEO_HEIGHT_MIN, Math.round(startHeight + e.clientY - startY)));
+            videoHeight = Math.min(VIDEO_HEIGHT_MAX, Math.max(VIDEO_HEIGHT_MIN, Math.round(startHeight + toCssPx(e.clientY - startY))));
         };
         const up = () => {
             window.removeEventListener('pointermove', move);
@@ -2299,7 +2300,7 @@
     .video-url {
         display: flex;
         gap: var(--space-1);
-        width: min(24rem, calc(100vw - 2 * var(--space-2)));
+        width: min(24rem, calc(100vw / var(--ui-scale, 1) - 2 * var(--space-2)));
         padding: var(--space-1) var(--space-2) var(--space-2);
         box-sizing: border-box;
     }
@@ -2595,7 +2596,7 @@
     /* 62 caractères, la plus longue ligne d'un `.mat`. */
     .mat-text {
         margin: 0;
-        max-height: 60vh;
+        max-height: calc(60vh / var(--ui-scale, 1));
         overflow: auto;
         font-family: var(--font-family-mono);
         font-size: var(--font-size-small);

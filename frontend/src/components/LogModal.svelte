@@ -84,7 +84,7 @@
     }
 
     .log-body {
-        max-height: 60vh;
+        max-height: calc(60vh / var(--ui-scale, 1));
         overflow: auto;
         margin: 0;
         padding: 0.4em 0.6em;

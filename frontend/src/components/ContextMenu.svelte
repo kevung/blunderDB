@@ -1,4 +1,5 @@
 <script>
+    import { toCssPx } from '../utils/uiZoom.js';
     import { onMount } from 'svelte';
     import { t } from '../i18n';
     import { closeOnEscape } from '../services/escapeService.js';
@@ -29,9 +30,10 @@
     let top = $state(0);
     /** @param {number} ax @param {number} ay */
     function fit(ax, ay) {
+        // The anchor and the box are in window pixels; left/top are CSS pixels of the zoomed UI.
         const r = menuEl?.getBoundingClientRect();
-        left = r && ax + r.width > window.innerWidth ? Math.max(0, window.innerWidth - r.width - 4) : ax;
-        top = r && ay + r.height > window.innerHeight ? Math.max(0, window.innerHeight - r.height - 4) : ay;
+        left = toCssPx(r && ax + r.width > window.innerWidth ? Math.max(0, window.innerWidth - r.width - 4) : ax);
+        top = toCssPx(r && ay + r.height > window.innerHeight ? Math.max(0, window.innerHeight - r.height - 4) : ay);
     }
     $effect(() => {
         const ax = x;

@@ -144,7 +144,7 @@
         color: var(--color-text-muted);
     }
     .list {
-        max-height: 60vh;
+        max-height: calc(60vh / var(--ui-scale, 1));
         overflow-y: auto;
     }
     .row {
