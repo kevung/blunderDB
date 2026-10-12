@@ -309,7 +309,9 @@ func (s *state) step(i int, a Action) ActionInfo {
 			} else {
 				info.add(IllegalMove, RuleUnreachableBoard, nil, "no legal play from the previous position reaches this board")
 				info.After = reached
-				if a.BoardAfter != nil {
+				// A board given by hand is what happened, unless it miscounts: a
+				// board built against a stale position is no record of anything.
+				if a.BoardAfter != nil && fullBoard(*a.BoardAfter) {
 					info.After = *a.BoardAfter
 				}
 			}
@@ -566,23 +568,51 @@ func resolveSteps(b domain.Board, mover int, steps []domain.CheckerStep) ([]doma
 	return resolved, b
 }
 
-func applyStep(b domain.Board, mover int, s domain.CheckerStep) domain.Board {
-	if s.From >= 0 && s.From <= 25 {
-		from := &b.Points[s.From]
-		if from.Checkers > 0 {
-			from.Checkers--
-			if from.Checkers == 0 {
-				from.Color = domain.None
+// fullBoard reports whether each side holds its fifteen checkers, on the board, on
+// the bar or borne off.
+func fullBoard(b domain.Board) bool {
+	for side := 0; side < 2; side++ {
+		n := b.Bearoff[side]
+		for _, p := range b.Points {
+			if p.Color == side {
+				n += p.Checkers
 			}
 		}
-	}
-	if s.To == domain.Off {
-		if mover == domain.Black || mover == domain.White {
-			b.Bearoff[mover]++
+		if n != domain.CheckersPerPlayer {
+			return false
 		}
+	}
+	return true
+}
+
+// applyStep moves one checker as recorded, legal or not, but never makes or loses
+// one: a step whose source holds no checker of the mover, or whose destination the
+// other side holds, leaves the board as it was. A correction upstream routinely
+// leaves a later play written against a board that is gone; the Replay marks that
+// play, and the board it hands on still holds fifteen checkers a side.
+func applyStep(b domain.Board, mover int, s domain.CheckerStep) domain.Board {
+	if s.From < 0 || s.From > 25 {
 		return b
 	}
-	if s.To < 0 || s.To > 25 {
+	from := &b.Points[s.From]
+	if from.Color != mover || from.Checkers <= 0 {
+		return b
+	}
+	if s.To != domain.Off {
+		if s.To < 0 || s.To > 25 {
+			return b
+		}
+		dst := b.Points[s.To]
+		if dst.Color == opponent(mover) && dst.Checkers > 0 && !(s.Hit && dst.Checkers == 1) {
+			return b
+		}
+	}
+	from.Checkers--
+	if from.Checkers == 0 {
+		from.Color = domain.None
+	}
+	if s.To == domain.Off {
+		b.Bearoff[mover]++
 		return b
 	}
 	dst := &b.Points[s.To]
@@ -591,11 +621,6 @@ func applyStep(b domain.Board, mover int, s domain.CheckerStep) domain.Board {
 		b.Points[bar].Checkers++
 		b.Points[bar].Color = opponent(mover)
 		dst.Checkers, dst.Color = 0, domain.None
-	}
-	if dst.Color == opponent(mover) && dst.Checkers > 0 {
-		// The point belongs to the other side: an illegal play is recorded as it was
-		// made, so the checker lands there and the board says so.
-		return b
 	}
 	dst.Checkers++
 	dst.Color = mover
