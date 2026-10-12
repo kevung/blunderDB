@@ -79,11 +79,12 @@ func TestGameEndByBearingOff(t *testing.T) {
 					Action{Side: domain.White, Kind: KindTake},
 				)
 			}
-			board := tc.board
+			board, before := tc.board, InitialBoard()
 			doc.Actions = append(doc.Actions, Action{
 				Side: domain.Black, Kind: KindChecker, Dice: [2]int{6, 3},
-				Steps:      []domain.CheckerStep{{From: 6, To: domain.Off}},
-				BoardAfter: &board,
+				Steps:       []domain.CheckerStep{{From: 6, To: domain.Off}},
+				BoardAfter:  &board,
+				BoardBefore: &before,
 			})
 			ann := Replay(doc, 0)
 			g := ann.Games[0]
