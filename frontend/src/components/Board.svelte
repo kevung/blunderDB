@@ -26,6 +26,7 @@
     import { ankiDecksStore } from '../stores/ankiStore.js';
     import { quizPlayStore, quizPlayValidateStore } from '../stores/quizPlayStore.js';
     import { diceShade, orderedDice } from '../services/boardMove.js';
+    import { arrowsHiddenBy } from '../services/boardMoveInput.js';
     import { transcriptionCubeRequestStore, transcriptionBoardSwapStore } from '../stores/transcriptionStore.js';
     import { resetBoardPlay } from '../services/transcriptionPlay.js';
     import ContextMenu from './ContextMenu.svelte';
@@ -533,8 +534,10 @@
 
     // Flèches : la notation est dans la numérotation du camp au trait, donc
     // `flip` (joueur dessiné en haut), pas `mirrored` — ils divergent en transcription.
+    // En transcription, le coup saisi au plateau les retire dès son premier pas.
     /** @param {boolean} flipped */
     function selectedMoveArrows(flipped) {
+        if (mode === 'TRANSCRIBE' && arrowsHiddenBy(get(quizPlayStore))) return [];
         const moves = parseMoveNotation(selectedMove);
         if (moves.length === 0 || !flipped) return moves;
         return moves.map((m) => ({ ...m, from: screenOfNotationPoint(m.from, true), to: screenOfNotationPoint(m.to, true) }));

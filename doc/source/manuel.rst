@@ -2076,7 +2076,9 @@ les intervertit, et Retour arrière — ou le clic droit sur le damier, qui repr
 tout le coup — défait le coup. Chaque pas joué ne garde dans la liste que les
 candidats qui le contiennent, le premier d'entre eux présélectionné : c'est le
 geste du coup lointain, là où descendre au douzième candidat coûte treize
-touches.
+touches. Dès le premier pas, les flèches du candidat sélectionné quittent le
+plateau, pour ne pas se mêler au coup qu'on joue ; elles reviennent quand le
+coup est repris ou enregistré.
 
 Le coup achevé n'est enregistré que par une validation : un clic sur les dés
 grisés, ENTREE, ou le jet suivant — un chiffre ou une case du triangle —, qui
@@ -2308,7 +2310,11 @@ qu'elle soit. La poignée et le bouton laissent le clavier au panneau.
 écran et donnent toute la place à la vidéo. Un petit plateau flotte par-dessus,
 dans le coin inférieur droit : il montre la position de la transcription, les dés
 saisis, le coup en cours au plateau et les flèches du candidat sélectionné, dont
-la notation s'affiche dans son bandeau. On le déplace en le glissant ; un bouton
+la notation s'affiche dans son bandeau. Le coup s'y joue comme sur le plateau
+principal : clic sur un pion, glissé, clic sur les dés pour les intervertir ou
+valider, clic droit sur le damier pour tout reprendre. On le déplace en le
+glissant — par son bandeau quand les dés sont saisis, le damier jouant alors le
+coup ; un bouton
 de son bandeau lui fait prendre trois tailles, un autre le replie en un onglet
 qui le rouvre. Sa place et sa taille sont retenues ; replié, il se rouvre à la
 prochaine entrée dans le théâtre. Le clavier reste

@@ -38,6 +38,11 @@ import { selectedMoveStore } from '../stores/analysisStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { activeTabStore, statusBarModeStore } from '../stores/uiStore.js';
 import { playHop } from '../services/quizPlay.js';
+import TheatreMiniBoard from '../components/TheatreMiniBoard.svelte';
+import { DIAGRAM_WIDTH, DIAGRAM_HEIGHT } from '../services/diagramService.js';
+import { boardMetrics } from '../utils/boardGeometry.js';
+import { defaultBoardConfig } from '../utils/boardConfig.js';
+import { stackSlotCenter, sideLayout } from '../utils/boardScene.js';
 
 const BLACK = 0;
 const WHITE = 1;
@@ -198,5 +203,41 @@ describe('le plateau suit la grammaire commune, les dés d’abord', () => {
         await vi.waitFor(() => expect(gestures().filter((/** @type {any} */ g) => g.Kind === 'enter_die')).toHaveLength(4));
         const kinds = gestures().map((/** @type {any} */ g) => g.Kind);
         expect(kinds.indexOf('validate')).toBeLessThan(kinds.lastIndexOf('enter_die'));
+    });
+});
+
+describe('le mini-plateau du théâtre saisit le coup comme le plateau principal', () => {
+    // Le dessin du mini-plateau, à sa taille nominale, à l'origine de la fenêtre.
+    const W = DIAGRAM_WIDTH;
+    const H = DIAGRAM_HEIGHT + 24;
+    const cfg = { ...defaultBoardConfig(), orientation: /** @type {'right'} */ ('right') };
+    const geom = boardMetrics(W, H, cfg.widthFactor);
+    const drawing = () => /** @type {HTMLElement} */ (document.querySelector('[data-testid="theatre-board-drawing"]'));
+    async function clickAt(/** @type {{ x: number, y: number }} */ at) {
+        for (const type of ['pointerdown', 'pointerup']) drawing().dispatchEvent(new MouseEvent(type, { clientX: at.x, clientY: at.y, button: 0, bubbles: true, cancelable: true }));
+        await tick();
+    }
+
+    afterEach(() => vi.restoreAllMocks());
+
+    test('deux clics de pions puis un clic sur les dés enregistrent le coup au brouillon', async () => {
+        await armed();
+        vi.spyOn(Element.prototype, 'getBoundingClientRect').mockReturnValue(new DOMRect(0, 0, W, H));
+        render(TheatreMiniBoard);
+        await tick();
+        await clickAt(/** @type {{ x: number, y: number }} */ (stackSlotCenter(geom, cfg, 13, 0)));
+        await clickAt(/** @type {{ x: number, y: number }} */ (stackSlotCenter(geom, cfg, 8, 0)));
+        expect(get(quizPlayStore)?.steps.map((/** @type {any} */ s) => [s.from, s.to])).toEqual([
+            [13, 7],
+            [8, 7]
+        ]);
+        const side = sideLayout(geom, cfg, BLACK);
+        await clickAt({ x: side.diceX, y: side.diceY });
+        await vi.waitFor(() => expect(gestures().some((/** @type {any} */ g) => g.Kind === 'enter_play')).toBe(true));
+        const sent = gestures().find((/** @type {any} */ g) => g.Kind === 'enter_play');
+        expect(sent.Steps).toEqual([
+            { from: 13, to: 7, hit: false },
+            { from: 8, to: 7, hit: false }
+        ]);
     });
 });

@@ -28,6 +28,18 @@ describe('the theatre board draws what the main board draws', () => {
         ]);
     });
 
+    test('the first step played on the board takes the arrows away, as on the main board', () => {
+        const play = { board: position(0).board, steps: [] };
+        expect(theatreScene({ position: position(0), play, selectedMove: '8/5 6/5' })?.moves).toHaveLength(2);
+        expect(theatreScene({ position: position(0), play: { ...play, steps: [{ from: 6, to: 3 }] }, selectedMove: '8/5 6/5' })?.moves).toEqual([]);
+    });
+
+    test('an armed play draws its dice in the chosen order', () => {
+        const play = { board: position(0).board, steps: [], rolled: [3, 1], swapped: true };
+        expect(theatreScene({ position: position(0), play, armed: true })?.position.dice).toEqual([1, 3]);
+        expect(theatreScene({ position: position(0), play })?.position.dice).toEqual([3, 1]);
+    });
+
     test('the move being played on the board replaces the checkers only', () => {
         const board = { points: [], bearoff: [1, 0] };
         const scene = theatreScene({ position: position(0), play: { board } });
