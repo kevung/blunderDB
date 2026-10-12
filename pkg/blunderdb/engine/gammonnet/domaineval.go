@@ -20,7 +20,7 @@ import (
 // the cube model and the MET this file ports; a change to any of them moves
 // stored results, so every row analysed under an earlier label is stale
 // (analyze --stale). The gold files are built from the same tag.
-const EngineVersion = "gammonNet v1.6.0"
+const EngineVersion = "gammonNet v1.7.0"
 
 // ErrNotEvaluable marks a position this build declines to answer for (a
 // score beyond the MET's horizon, a cube decision the model refuses), as

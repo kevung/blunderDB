@@ -93,3 +93,33 @@ func TestIsStaleAnalysisMixedCheckerMoveEntriesAreForeignProtected(t *testing.T)
 		t.Error("a mix of gammonNet and XG checker-move entries was reported stale")
 	}
 }
+
+// TestIsStaleAnalysisV160IsStaleUnderV170 pins the adoption of gammonNet
+// v1.7.0: every analysis labelled v1.6.0 is stale at every depth, the 0-2 ply
+// ones included although their numbers did not change, while a v1.7.0 entry
+// at the target depth is current.
+func TestIsStaleAnalysisV160IsStaleUnderV170(t *testing.T) {
+	if EngineVersion != "gammonNet v1.7.0" {
+		t.Fatalf("EngineVersion = %q, want gammonNet v1.7.0", EngineVersion)
+	}
+	for _, depth := range []string{"0-ply", "1-ply", "2-ply", "3-ply", "4-ply"} {
+		old := &domain.PositionAnalysis{
+			DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{AnalysisEngine: "gammonNet v1.6.0", AnalysisDepth: depth},
+			CheckerAnalysis: &domain.CheckerAnalysis{Moves: []domain.CheckerMove{
+				{AnalysisEngine: "gammonNet v1.6.0", AnalysisDepth: depth},
+			}},
+		}
+		if !IsStaleAnalysis(old, depth) {
+			t.Errorf("a gammonNet v1.6.0 analysis at %s was not reported stale", depth)
+		}
+		current := &domain.PositionAnalysis{
+			DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{AnalysisEngine: "gammonNet v1.7.0", AnalysisDepth: depth},
+			CheckerAnalysis: &domain.CheckerAnalysis{Moves: []domain.CheckerMove{
+				{AnalysisEngine: "gammonNet v1.7.0", AnalysisDepth: depth},
+			}},
+		}
+		if IsStaleAnalysis(current, depth) {
+			t.Errorf("a gammonNet v1.7.0 analysis at %s was reported stale", depth)
+		}
+	}
+}
