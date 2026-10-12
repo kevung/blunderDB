@@ -1110,6 +1110,18 @@ export function PileCollectionID() {
   return window['go']['database']['Database']['PileCollectionID']();
 }
 
+export function PlanExport(arg1) {
+  return window['go']['database']['Database']['PlanExport'](arg1);
+}
+
+export function PlanExportCtx(arg1, arg2) {
+  return window['go']['database']['Database']['PlanExportCtx'](arg1, arg2);
+}
+
+export function PlanExportIDs(arg1, arg2, arg3, arg4) {
+  return window['go']['database']['Database']['PlanExportIDs'](arg1, arg2, arg3, arg4);
+}
+
 export function PlanMainPlayer(arg1) {
   return window['go']['database']['Database']['PlanMainPlayer'](arg1);
 }

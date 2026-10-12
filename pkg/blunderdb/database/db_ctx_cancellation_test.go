@@ -53,7 +53,7 @@ func TestExportDatabaseCtxRespectsCancellation(t *testing.T) {
 	cancel()
 
 	path := filepath.Join(t.TempDir(), "cancelled.db")
-	err := db.ExportDatabaseCtx(ctx, ExportOptions{ExportPath: path, AllPositions: true, Metadata: map[string]string{}})
+	_, err := db.ExportDatabaseCtx(ctx, ExportOptions{ExportPath: path, AllPositions: true, Metadata: map[string]string{}})
 	if err == nil {
 		t.Fatal("ExportDatabaseCtx: want an error on an already-cancelled context, got nil")
 	}

@@ -30,7 +30,10 @@ type StudyEffectWindow struct {
 	// Loss is Σℓ of those errors and Rate Loss / Decisions, MWC fraction.
 	Loss float64 `json:"Loss"`
 	Rate float64 `json:"Rate"`
-	sq   float64
+	// Positions counts the distinct positions behind Decisions: the list a
+	// "family_window" selection loads (StudyEffectWindowIDs).
+	Positions int `json:"Positions"`
+	sq        float64
 }
 
 // StudyEffectFamily is one studied family, measured on either side of the day
@@ -70,6 +73,66 @@ type StudyEffectDecisions struct {
 	Kind     string
 	Day      string
 	Count    int
+}
+
+// The windows of a family a "family_window" selection names.
+const (
+	StudyEffectBefore = "before"
+	StudyEffectAfter  = "after"
+)
+
+// StudyEffectPosition is one position of a filter's counted match-play
+// decisions, with its plan of play, its kind, and the first and last match
+// days it was played on ("" when no match is dated).
+type StudyEffectPosition struct {
+	PositionID        int64
+	GameType, Kind    string
+	FirstDay, LastDay string
+}
+
+// StudyEffectWindowIDs lists the distinct positions behind one window of a
+// family: those of its plan and kind with a decision on a match day before
+// studiedOn (window "before") or after it ("after"); the day itself belongs
+// to neither, as in BuildStudyEffect.
+func StudyEffectWindowIDs(positions []StudyEffectPosition, gameType, kind, studiedOn, window string) []int64 {
+	ids := []int64{}
+	if studiedOn == "" {
+		return ids
+	}
+	for _, p := range positions {
+		if p.GameType != gameType || p.Kind != kind {
+			continue
+		}
+		var in bool
+		switch window {
+		case StudyEffectBefore:
+			in = p.FirstDay != "" && dayOf(p.FirstDay) < studiedOn
+		case StudyEffectAfter:
+			in = p.LastDay != "" && dayOf(p.LastDay) > studiedOn
+		}
+		if in {
+			ids = append(ids, p.PositionID)
+		}
+	}
+	sort.Slice(ids, func(i, j int) bool { return ids[i] < ids[j] })
+	return ids
+}
+
+// CountStudyEffectPositions fills each window's Positions from positions,
+// the same reading StudyEffectWindowIDs makes.
+func CountStudyEffectPositions(e *StudyEffect, positions []StudyEffectPosition) {
+	for i := range e.Families {
+		f := &e.Families[i]
+		f.Before.Positions = len(StudyEffectWindowIDs(positions, f.GameType, f.Kind, f.StudiedOn, StudyEffectBefore))
+		f.After.Positions = len(StudyEffectWindowIDs(positions, f.GameType, f.Kind, f.StudiedOn, StudyEffectAfter))
+	}
+}
+
+func dayOf(day string) string {
+	if len(day) > 10 {
+		return day[:10]
+	}
+	return day
 }
 
 // BuildStudyEffect measures every studied family (ADR-0079). rows are the
@@ -162,9 +225,7 @@ func BuildStudyEffect(rows []StudyPlanRow, decisions []StudyEffectDecisions, stu
 // window is the side of the study day a match day falls on, nil on the day
 // itself: whether that match came before the study is unknown.
 func (f *StudyEffectFamily) window(day string) *StudyEffectWindow {
-	if len(day) > 10 {
-		day = day[:10]
-	}
+	day = dayOf(day)
 	switch {
 	case day < f.StudiedOn:
 		return &f.Before

@@ -2,6 +2,7 @@ package sqlshared
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"time"
 
@@ -43,10 +44,7 @@ func (s *StatsStore) StudyEffect(ctx context.Context, scope string, filter stora
 				return err
 			}
 			d.GameType = domain.GameType(gameType).String()
-			d.Kind = "checker"
-			if decisionType == 1 {
-				d.Kind = "cube"
-			}
+			d.Kind = studyEffectKind(decisionType)
 			decisions = append(decisions, d)
 		}
 		return q.Err()
@@ -58,7 +56,53 @@ func (s *StatsStore) StudyEffect(ctx context.Context, scope string, filter stora
 	if err != nil {
 		return nil, err
 	}
-	return storage.BuildStudyEffect(rows, decisions, studied), nil
+	positions, err := s.studyEffectPositions(ctx, scope, filter)
+	if err != nil {
+		return nil, err
+	}
+	e := storage.BuildStudyEffect(rows, decisions, studied)
+	storage.CountStudyEffectPositions(e, positions)
+	return e, nil
+}
+
+// studyEffectPositions reads the positions of the counted match-play
+// decisions the windows count, under a filter whose player aliases are
+// already expanded.
+func (s *StatsStore) studyEffectPositions(ctx context.Context, scope string, filter storage.StatsFilter) ([]storage.StudyEffectPosition, error) {
+	whereSQL, args := s.buildStatsWhereClause(scope, filter)
+	day := "NULLIF(" + s.DB.DateText("m.match_date") + ", '')"
+	q, err := s.DB.Query(ctx,
+		`SELECT p.id, COALESCE(p.game_type, 0), p.decision_type, MIN(`+day+`), MAX(`+day+`) `+
+			statsBaseJoin+whereSQL+` AND COALESCE(p.match_length, m.match_length, 0) > 0
+			GROUP BY p.id, p.game_type, p.decision_type`, args...)
+	if err != nil {
+		return nil, errf(s.DB, "StudyEffect positions", err)
+	}
+	defer q.Close()
+	var out []storage.StudyEffectPosition
+	for q.Next() {
+		var gameType, decisionType int
+		var first, last sql.NullString
+		var p storage.StudyEffectPosition
+		if err := q.Scan(&p.PositionID, &gameType, &decisionType, &first, &last); err != nil {
+			return nil, errf(s.DB, "StudyEffect positions", err)
+		}
+		p.GameType = domain.GameType(gameType).String()
+		p.Kind = studyEffectKind(decisionType)
+		p.FirstDay, p.LastDay = first.String, last.String
+		out = append(out, p)
+	}
+	if err := q.Err(); err != nil {
+		return nil, errf(s.DB, "StudyEffect positions", err)
+	}
+	return out, nil
+}
+
+func studyEffectKind(decisionType int) string {
+	if decisionType == 1 {
+		return "cube"
+	}
+	return "checker"
 }
 
 // firstStudyDays is the UTC day of each position's first study action: a
@@ -157,21 +201,31 @@ func (s *StatsStore) DirectionalBiases(ctx context.Context, scope string, filter
 	if err != nil {
 		return nil, fmt.Errorf("DirectionalBiases aliases: %w", err)
 	}
+	cube, checker, err := s.biasRows(ctx, scope, filter)
+	if err != nil {
+		return nil, err
+	}
+	return storage.BuildDirectionalBiases(cube, checker), nil
+}
+
+// biasRows reads the decisions the biases tally, under a filter whose player
+// aliases are already expanded.
+func (s *StatsStore) biasRows(ctx context.Context, scope string, filter storage.StatsFilter) ([]storage.BiasCubeRow, []storage.BiasCheckerRow, error) {
 	whereSQL, args := s.buildStatsWhereClause(scope, filter)
 
 	cubeRows, err := s.DB.Query(ctx,
-		`SELECT `+ActionLabelOrEmptyFor(s.DB, "a.best_cube_action")+`, `+ActionLabelOrEmptyFor(s.DB, "mv.cube_action")+`,
+		`SELECT p.id, `+ActionLabelOrEmptyFor(s.DB, "a.best_cube_action")+`, `+ActionLabelOrEmptyFor(s.DB, "mv.cube_action")+`,
 			COALESCE(p.score_1, 0), COALESCE(p.score_2, 0), COALESCE(`+statsErrExpr+`, 0) `+
 			statsBaseJoin+whereSQL+` AND p.decision_type = 1`, args...)
 	if err != nil {
-		return nil, errf(s.DB, "DirectionalBiases cube", err)
+		return nil, nil, errf(s.DB, "DirectionalBiases cube", err)
 	}
 	var cube []storage.BiasCubeRow
 	err = func() error {
 		defer cubeRows.Close()
 		for cubeRows.Next() {
 			var r storage.BiasCubeRow
-			if err := cubeRows.Scan(&r.Best, &r.Played, &r.MoverAway, &r.OpponentAway, &r.ErrorMP); err != nil {
+			if err := cubeRows.Scan(&r.PositionID, &r.Best, &r.Played, &r.MoverAway, &r.OpponentAway, &r.ErrorMP); err != nil {
 				return err
 			}
 			cube = append(cube, r)
@@ -179,29 +233,30 @@ func (s *StatsStore) DirectionalBiases(ctx context.Context, scope string, filter
 		return cubeRows.Err()
 	}()
 	if err != nil {
-		return nil, errf(s.DB, "DirectionalBiases cube", err)
+		return nil, nil, errf(s.DB, "DirectionalBiases cube", err)
 	}
 
 	// Each play is costed as played in its match (statsErrExpr). The analysis
 	// blob is only decoded for a play that cost something: a free play is a
 	// best play and reads 0 without a board.
 	checkerRows, err := s.DB.Query(ctx,
-		`SELECT p.state, COALESCE(p.player_on_roll, 0), COALESCE(p.dice_1, 0), COALESCE(p.dice_2, 0),
+		`SELECT p.id, p.state, COALESCE(p.player_on_roll, 0), COALESCE(p.dice_1, 0), COALESCE(p.dice_2, 0),
 			COALESCE(`+statsErrExpr+`, 0), COALESCE(mv.checker_move, ''),
 			CASE WHEN `+statsErrExpr+` > 0 THEN a.data END `+
 			statsBaseJoin+whereSQL+` AND p.decision_type = 0`, args...)
 	if err != nil {
-		return nil, errf(s.DB, "DirectionalBiases checker", err)
+		return nil, nil, errf(s.DB, "DirectionalBiases checker", err)
 	}
 	var checker []storage.BiasCheckerRow
 	err = func() error {
 		defer checkerRows.Close()
 		for checkerRows.Next() {
+			var id int64
 			var state, data []byte
 			var onRoll, dice1, dice2 int
 			var errMP int64
 			var played string
-			if err := checkerRows.Scan(&state, &onRoll, &dice1, &dice2, &errMP, &played, &data); err != nil {
+			if err := checkerRows.Scan(&id, &state, &onRoll, &dice1, &dice2, &errMP, &played, &data); err != nil {
 				return err
 			}
 			pos, ok := positionOfState(string(state))
@@ -209,12 +264,12 @@ func (s *StatsStore) DirectionalBiases(ctx context.Context, scope string, filter
 				continue
 			}
 			if errMP <= 0 {
-				checker = append(checker, storage.BiasCheckerRow{})
+				checker = append(checker, storage.BiasCheckerRow{PositionID: id})
 				continue
 			}
 			pos.PlayerOnRoll = onRoll
 			pos.Dice = [2]int{dice1, dice2}
-			row := storage.BiasCheckerRow{ErrorMP: errMP, Unread: true}
+			row := storage.BiasCheckerRow{PositionID: id, ErrorMP: errMP, Unread: true}
 			if ana, err := engine.DecodeAnalysisFromStorage(data); err == nil {
 				if sign, ok := engine.BlotDeviation(&pos, &ana, played); ok {
 					row.Sign, row.Unread = sign, false
@@ -225,7 +280,7 @@ func (s *StatsStore) DirectionalBiases(ctx context.Context, scope string, filter
 		return checkerRows.Err()
 	}()
 	if err != nil {
-		return nil, errf(s.DB, "DirectionalBiases checker", err)
+		return nil, nil, errf(s.DB, "DirectionalBiases checker", err)
 	}
-	return storage.BuildDirectionalBiases(cube, checker), nil
+	return cube, checker, nil
 }

@@ -3,9 +3,11 @@
     // de MWC par décision de son plan et de sa nature, dans les matchs joués avant le jour de la
     // première action d'étude et dans ceux joués après. Un sens n'est affirmé que si l'intervalle
     // l'exclut et que chaque fenêtre a assez de décisions.
-    import { studyEffectStore, studyLoopLoadingStore, studyLoopErrorStore } from '../../stores/statsStore.js';
+    import { studyEffectStore, studyLoopFilterStore, studyLoopLoadingStore, studyLoopErrorStore } from '../../stores/statsStore.js';
     import { t } from '../../i18n/index.js';
     import PanelTable from '../panels/PanelTable.svelte';
+    import CountLink from '../panels/CountLink.svelte';
+    import { loadPositionsFromStatsSelection } from '../../services/positionLoader.js';
 
     let effect = $derived($studyEffectStore);
     let families = $derived(effect?.Families ?? []);
@@ -37,18 +39,37 @@
         return `${signed && v > 0 ? '+' : ''}${v.toFixed(2)}`;
     }
 
+    /**
+     * Open the positions behind one window of a family, under the filter the measure was computed with.
+     * @param {any} f @param {'before' | 'after'} window
+     */
+    function open(f, window) {
+        loadPositionsFromStatsSelection($studyLoopFilterStore, { Kind: 'family_window', GameType: f.GameType, FamilyKind: f.Kind, StudiedOn: f.StudiedOn, Window: window });
+    }
+
     const num = /** @type {const} */ ('number');
     const text = /** @type {const} */ ('text');
     const columns = $derived([
         { key: 'family', label: $t('stats.planFamily'), sortable: true, filter: text, value: familyName },
         { key: 'studiedOn', label: $t('stats.effectStudiedOn'), sortable: true, filter: text, value: (/** @type {any} */ f) => f.StudiedOn },
         { key: 'before', label: $t('stats.effectBefore'), sortable: true, align: 'right', filter: num, value: (/** @type {any} */ f) => 10000 * f.Before.Rate },
+        { key: 'beforePositions', label: $t('stats.positions'), sortable: true, defaultDir: 'desc', align: 'right', filter: num, value: (/** @type {any} */ f) => f.Before.Positions },
         { key: 'after', label: $t('stats.effectAfter'), sortable: true, align: 'right', filter: num, value: (/** @type {any} */ f) => 10000 * f.After.Rate },
+        { key: 'afterPositions', label: $t('stats.positions'), sortable: true, defaultDir: 'desc', align: 'right', filter: num, value: (/** @type {any} */ f) => f.After.Positions },
         { key: 'gain', label: $t('stats.effectGain'), sortable: true, defaultDir: 'desc', align: 'right', filter: num, value: (/** @type {any} */ f) => 10000 * f.Gain },
         { key: 'interval', label: $t('stats.planInterval'), align: 'right' },
         { key: 'verdict', label: $t('stats.effectVerdict'), sortable: true, filter: text, value: (/** @type {any} */ f) => $t(`stats.effectVerdict_${f.Verdict}`) }
     ]);
 </script>
+
+{#snippet count(/** @type {any} */ f, /** @type {'before' | 'after'} */ window, /** @type {any} */ w)}
+    {#if w.Positions > 0}<CountLink
+            label={w.Positions}
+            testid="effect-{window}"
+            onclick={() => open(f, window)}
+            title={$t('stats.breakdownOpenPositions', { n: w.Positions, decisions: w.Decisions })}
+        />{:else}0{/if}
+{/snippet}
 
 <section class="chart-section study-effect" data-testid="study-effect">
     <h3
@@ -71,7 +92,9 @@
                 <td>{familyName(f)}</td>
                 <td title={$t('stats.effectStudied', { n: f.Studied })}>{f.StudiedOn}</td>
                 <td class="align-right">{per100(f.Before.Rate)} <span class="count">({f.Before.Decisions})</span></td>
+                <td class="align-right">{@render count(f, 'before', f.Before)}</td>
                 <td class="align-right">{per100(f.After.Rate)} <span class="count">({f.After.Decisions})</span></td>
+                <td class="align-right">{@render count(f, 'after', f.After)}</td>
                 <td class="align-right"><b>{per100(f.Gain, true)}</b></td>
                 <td class="align-right interval">[{per100(f.Low, true)}, {per100(f.High, true)}]</td>
                 <td class="verdict {f.Verdict}">{$t(`stats.effectVerdict_${f.Verdict}`)}</td>

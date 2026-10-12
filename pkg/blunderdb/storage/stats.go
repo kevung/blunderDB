@@ -196,7 +196,7 @@ type ScoreCellStats struct {
 // SelectionSpec selects a subset of positions out of a stats result, e.g. the
 // decisions behind a histogram bucket or a tournament row.
 type SelectionSpec struct {
-	Kind string // "all","checker","cube","cube_action","cube_direction","error_bucket","tournament","match","last_n","position","top_blunders","breakdown","blunders"
+	Kind string // "all","checker","cube","cube_action","cube_direction","error_bucket","tournament","match","last_n","position","top_blunders","breakdown","blunders","bias","family_window","time_band"
 	// CubeAction matches analysis.best_cube_action VERBATIM, in whatever
 	// spelling the importer wrote ("No Double", "Double, Take"…) — not the
 	// canonical form.
@@ -218,6 +218,26 @@ type SelectionSpec struct {
 	Breakdown    string
 	BreakdownKey string
 	OnlyBlunders bool
+	// Bias, BiasScore and BiasSide, for Kind "bias", name one count of the
+	// directional biases: Bias a BiasAxis*, BiasScore a BiasScoreKey for a
+	// score cell of the doubling bias (empty for the axis itself), BiasSide a
+	// BiasSide* or empty for every decision (BiasPositionIDs).
+	Bias      string
+	BiasScore string
+	BiasSide  string
+	// GameType, FamilyKind, StudiedOn and Window, for Kind "family_window",
+	// name one window of a studied family of the study effect: its plan of
+	// play and kind as StudyEffectFamily spells them, its study day, and
+	// StudyEffectBefore or StudyEffectAfter (StudyEffectWindowIDs).
+	GameType   string
+	FamilyKind string
+	StudiedOn  string
+	Window     string
+	// Player and TimeBucket, for Kind "time_band", name one row of the time
+	// errors. Like that table, the selection reads every timed decision of
+	// the database and ignores the filter.
+	Player     string
+	TimeBucket int
 }
 
 // The dimensions of the breakdowns a SelectionSpec of Kind "breakdown" names.
@@ -474,6 +494,9 @@ type TimeErrorRow struct {
 	Scored      int     `json:"scored"`
 	MeanErrorMP float64 `json:"mean_error_mp"`
 	Blunders    int     `json:"blunders"`
+	// Positions counts the distinct positions behind Decisions: the list a
+	// "time_band" selection loads.
+	Positions int `json:"positions"`
 }
 
 // MatchBadge is the per-player PR/MWC summary shown on each match-list row.

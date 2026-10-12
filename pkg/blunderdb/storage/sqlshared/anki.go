@@ -240,11 +240,7 @@ func (s *AnkiStore) Sync(ctx context.Context, scope string, deckID int64) error 
 			return errf(s.DB, fmt.Sprintf("sync anki deck %d", deckID), rerr)
 		}
 	case domain.AnkiSourceSearch:
-		for tok := range strings.SplitSeq(sourceCommand, ",") {
-			if pid, err := strconv.ParseInt(strings.TrimSpace(tok), 10, 64); err == nil {
-				positionIDs = append(positionIDs, pid)
-			}
-		}
+		positionIDs = domain.SearchSourceIDs(sourceCommand)
 	case domain.AnkiSourceScores:
 		// The application fills this one, and the user enters nothing
 		// (ADR-0042 rule 2). Syncing it again is how a deck follows a change

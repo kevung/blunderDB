@@ -319,8 +319,23 @@ func (s *StatsStore) PositionIDsBySelection(ctx context.Context, scope string, f
 	if err != nil {
 		return nil, fmt.Errorf("PositionIDsBySelection aliases: %w", err)
 	}
-	if sel.Kind == "breakdown" {
+	switch sel.Kind {
+	case "breakdown":
 		return s.breakdownSelectionIDs(ctx, scope, filter, sel)
+	case "bias":
+		cube, checker, err := s.biasRows(ctx, scope, filter)
+		if err != nil {
+			return nil, err
+		}
+		return storage.BiasPositionIDs(cube, checker, sel.Bias, sel.BiasScore, sel.BiasSide), nil
+	case "family_window":
+		positions, err := s.studyEffectPositions(ctx, scope, filter)
+		if err != nil {
+			return nil, err
+		}
+		return storage.StudyEffectWindowIDs(positions, sel.GameType, sel.FamilyKind, sel.StudiedOn, sel.Window), nil
+	case "time_band":
+		return s.timeBandIDs(ctx, scope, sel.Player, sel.TimeBucket)
 	}
 	// The blunder threshold is the library's, read where the Players table
 	// reads it, so the drill-down lists what its Blunders column counts.
