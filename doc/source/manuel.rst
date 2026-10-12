@@ -2048,6 +2048,13 @@ panneau **Évaluation** est là pour cela. Ce classement est une évaluation : i
 est affiché, il n'est jamais écrit dans la base. Lorsque le moteur n'est pas
 disponible, les coups sont listés sans classement et la liste le dit en tête.
 
+Un jet sans aucun coup légal enregistre la **danse** de lui-même : la main passe
+à l'adversaire sans coup à taper. Quand le jet dansant importe peu, la touche
+*f* dit seulement que le joueur au trait fait gala : elle saisit le premier jet,
+non-doubles d'abord, qui ne le fait pas rentrer de la barre. Hors de la barre,
+ou devant un jan qui laisse rentrer tous les jets, elle ne saisit rien et la
+barre d'état le dit.
+
 La **molette** sélectionne le candidat suivant ou précédent, au-dessus de la
 liste comme au-dessus du damier : le regard reste sur le plateau et les flèches
 défilent, ce qui reconnaît un coup plus vite que la lecture de sa notation. Un

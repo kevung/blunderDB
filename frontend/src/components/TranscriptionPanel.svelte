@@ -49,6 +49,8 @@
         cancelResign,
         menuCommands,
         dieOf,
+        onBar,
+        DANCE_ROLLS,
         DICE_KINDS
     } from '../services/transcriptionKeys.js';
     import CandidateMovesTable from './CandidateMovesTable.svelte';
@@ -1013,6 +1015,57 @@
         else applyMouseDice(enterDicePair(get(transcriptionKeyStore), high, low, keyContext));
     }
 
+    /** @type {boolean} Une recherche de jet dansant est en cours : `f` répété ne la double pas. */
+    let seekingDance = false;
+
+    /**
+     * `f` : le joueur au trait fait gala. Ce qui précède la saisie est réglé
+     * comme pour un chiffre — coup achevé au plateau enregistré, candidat en
+     * attente validé sans instant, dé isolé effacé — puis le premier jet de
+     * [DANCE_ROLLS] sans coup légal est saisi comme deux frappes ; le moteur
+     * n'en trouvant aucun crée la danse ([applyCandidates]).
+     */
+    async function enterDanceRoll() {
+        if (!draft || seekingDance) return;
+        seekingDance = true;
+        try {
+            await validatePlay();
+            const keys = get(transcriptionKeyStore);
+            const restarts = replacing && !(onLast && keys.retyped);
+            if ((keys.phase === PHASE.ROLL || keys.phase === PHASE.CANDIDATE) && !restarts) {
+                transcriptionKeyStore.set(initialKeyState());
+                await run([{ kind: COMMAND.VALIDATE, untimed: true }]);
+            } else if (keys.phase === PHASE.DIE1) {
+                transcriptionKeyStore.set(initialKeyState());
+                await run([{ kind: COMMAND.CLEAR }]);
+            }
+
+            const pos = entryPosition();
+            if (!pos || !onBar(pos)) {
+                noticeTranscription('transcription.notice.notOnBar');
+                return;
+            }
+            let roll = null;
+            for (const dice of DANCE_ROLLS) {
+                const plays = (await LegalMoves({ ...pos, dice: [...dice] })) ?? [];
+                if (plays.length === 0) {
+                    roll = dice;
+                    break;
+                }
+            }
+            if (!roll) {
+                noticeTranscription('transcription.notice.noDanceRoll');
+                return;
+            }
+            applyMouseDice(enterDicePair(get(transcriptionKeyStore), roll[1], roll[0], keyContext));
+        } catch (err) {
+            logger.error('The dance roll of the side on roll failed:', err);
+            error = String(err);
+        } finally {
+            seekingDance = false;
+        }
+    }
+
     /**
      * Une case de la rangée des six : le dé d'un camp, à l'ouverture.
      *
@@ -1247,6 +1300,12 @@
         }
 
         const result = pressKey(keys, event, keyContext);
+        if (result.commands[0]?.kind === COMMAND.DANCE_ROLL) {
+            event.preventDefault();
+            event.stopPropagation();
+            enterDanceRoll();
+            return;
+        }
         // Retour arrière sur un jet vide : pris, sans effet.
         if (result.handled && event.key === 'Backspace' && !result.commands.length && keys.phase === PHASE.DICE) {
             event.preventDefault();

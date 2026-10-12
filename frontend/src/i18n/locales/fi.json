@@ -1478,6 +1478,8 @@
             "nothingToRedo": "Ei mitään uudelleen tehtävää",
             "noAction": "Ei toimintoa kohdistimen alla",
             "noDice": "Ei syötettävää heittoa",
+            "notOnBar": "Vuorossa olevalla pelaajalla ei ole nappulaa palkilla",
+            "noDanceRoll": "Jokainen heitto päästää vuorossa olevan pelaajan sisään",
             "untimedAction": "Siirto vahvistettiin ilman toiminnan ajankohtaa: videon kanssa Enter vahvistaa kuvan hetkellä, tai v solun kohdalla.",
             "cubeUntimed": "Kuutiopäätöksen kesto tuntematon: v edellisen siirron kohdalla mittaa sen.",
             "noRollToTime": "Tällä toiminnolla ei ole heittoa ajoitettavaksi.",

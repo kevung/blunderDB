@@ -1478,6 +1478,8 @@
             "nothingToRedo": "Niente da ripetere",
             "noAction": "Nessuna azione sotto il cursore",
             "noDice": "Nessun tiro in corso di inserimento",
+            "notOnBar": "Il giocatore di turno non ha pedine sulla barra",
+            "noDanceRoll": "Ogni tiro fa rientrare il giocatore di turno",
             "untimedAction": "Mossa convalidata senza istante dell'azione: con un video, Invio convalida all'istante dell'immagine, oppure v sulla cella.",
             "cubeUntimed": "Durata della decisione di cubo sconosciuta: v sulla mossa precedente per misurarla.",
             "noRollToTime": "Questa azione non ha un lancio da marcare.",

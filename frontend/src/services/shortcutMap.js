@@ -88,6 +88,7 @@ export const SHORTCUTS = {
             'ArrowUp',
             'a',
             'd',
+            'f',
             'i',
             'n',
             'p',

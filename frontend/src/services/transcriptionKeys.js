@@ -30,6 +30,9 @@
  * fonctionnel.md §1.4). `t`/`p` exigent une offre en face, sinon la touche
  * remonte au répartiteur (`p` = pips).
  *
+ * Gala : `f` demande au panneau un jet qui ne fait pas rentrer le joueur au
+ * trait ([DANCE_ROLLS]) ; saisi comme deux chiffres, il devient la danse.
+ *
  * Correction : `h`/`l`, `i`/`a`, `x`/`Suppr`, `s` partent de TOUT état (ux.md
  * §3, ligne « tout » ; §4.3). `Ctrl+Z`/`Ctrl+Maj+Z` sont liés par le
  * répartiteur (`isAlwaysGlobal`) mais nommés ici (COMMAND.UNDO/REDO).
@@ -73,6 +76,12 @@ export const COMMAND = Object.freeze({
      */
     ENTER_PLAY: 'enter_play',
     DANCE: 'dance',
+    /**
+     * `f` : le joueur au trait fait gala. Le jet dansant dépend des coups
+     * légaux, que seul le générateur connaît : le panneau le cherche
+     * ([DANCE_ROLLS], [onBar]) puis le saisit comme un jet tapé.
+     */
+    DANCE_ROLL: 'dance_roll',
     DOUBLE: 'double',
     TAKE: 'take',
     PASS: 'pass',
@@ -92,6 +101,30 @@ export const COMMAND = Object.freeze({
  * tienne pas une seconde liste.
  */
 export const DICE_KINDS = new Set(['checker', 'dance']);
+
+/**
+ * L'ordre fixe où `f` cherche un jet qui danse : les non-doubles d'abord, car
+ * un double ne danse que si UN seul point d'entrée est fermé et dirait plus
+ * que « ne rentre pas ». Chaque paire est [petit dé, gros dé].
+ */
+export const DANCE_ROLLS = Object.freeze([
+    ...[1, 2, 3, 4, 5].flatMap((low) => [2, 3, 4, 5, 6].filter((high) => high > low).map((high) => Object.freeze([low, high]))),
+    ...[1, 2, 3, 4, 5, 6].map((die) => Object.freeze([die, die]))
+]);
+
+/**
+ * Le joueur au trait a-t-il un pion sur la barre ? Noir (0) a sa barre au
+ * point 25, Blanc (1) au point 0 (domain.BlackBar / domain.WhiteBar).
+ *
+ * @param {any} position
+ * @returns {boolean}
+ */
+export function onBar(position) {
+    const side = position?.player_on_roll;
+    if (side !== 0 && side !== 1) return false;
+    const bar = position?.board?.points?.[side === 0 ? 25 : 0];
+    return (bar?.checkers ?? 0) > 0 && bar.color === side;
+}
 
 /** Le niveau d'une résignation : simple, gammon, backgammon. */
 const RESIGN_LEVELS = new Set([1, 2, 3]);
@@ -296,6 +329,11 @@ export function pressKey(state, event, { expects = 'checker', replacing = false,
     if (expects === 'take' || editing) {
         if (isBareLetter(event, 't')) return { handled: true, ...cubeGesture(state, COMMAND.TAKE) };
         if (isBareLetter(event, 'p')) return { handled: true, ...cubeGesture(state, COMMAND.PASS) };
+    }
+
+    // `f` : la danse se saisit comme un jet, donc seulement où des dés sont attendus.
+    if (isBareLetter(event, 'f') && DICE_KINDS.has(expects)) {
+        return { handled: true, state, commands: [{ kind: COMMAND.DANCE_ROLL }] };
     }
 
     // `j`/`k` sont à la liste des candidats, qu'elle existe ou non : sans
