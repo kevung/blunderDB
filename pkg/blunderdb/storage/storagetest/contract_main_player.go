@@ -375,3 +375,53 @@ func testMainPlayerFirstAtImport(t *testing.T, s storage.Storage) {
 		t.Errorf("a match with the Main player first was swapped: %+v, %v", k, err)
 	}
 }
+
+// testMainPlayerMergeReopensPlan: a merge that touches the Main player swaps
+// nothing by itself — the plan shows the matches it brings to seat 2 until
+// the designation is applied again. Both directions: an alias merged into
+// the Main player, and the Main player's name merged into another one,
+// which then names them.
+func testMainPlayerMergeReopensPlan(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	if _, err := storage.DesignateMainPlayer(ctx, s, "", "Kevin"); err != nil {
+		t.Fatalf("designate: %v", err)
+	}
+	aliasMatch, _ := importNamed(t, s, "Gildas", "K. Unger", false)
+	otherMatch, _ := importNamed(t, s, "Yan", "Kévin U.", false)
+	plan, err := storage.PlanMainPlayer(ctx, s, "", "Kevin")
+	if err != nil || len(plan.Swap) != 0 {
+		t.Fatalf("plan before any merge = %+v, %v; want nothing to swap", plan, err)
+	}
+
+	reapply := func(wantName string, wantSwap int64) {
+		t.Helper()
+		main, err := storage.MainPlayer(ctx, s, "")
+		if err != nil || main != wantName {
+			t.Fatalf("MainPlayer = %q, %v; want %q", main, err, wantName)
+		}
+		plan, err := storage.PlanMainPlayer(ctx, s, "", main)
+		if err != nil || !slices.Equal(plan.Swap, []int64{wantSwap}) {
+			t.Fatalf("plan after merge = %+v, %v; want to swap #%d", plan, err, wantSwap)
+		}
+		m, err := s.Matches().Get(ctx, "", wantSwap)
+		if err != nil || m.Player1Name == wantName {
+			t.Fatalf("the merge swapped #%d by itself: %+v, %v", wantSwap, m, err)
+		}
+		if _, err := storage.DesignateMainPlayer(ctx, s, "", main); err != nil {
+			t.Fatalf("reapply: %v", err)
+		}
+		if plan, err := storage.PlanMainPlayer(ctx, s, "", main); err != nil || len(plan.Swap) != 0 {
+			t.Fatalf("plan after reapplying = %+v, %v; want nothing left", plan, err)
+		}
+	}
+
+	if err := s.Matches().MergePlayers(ctx, "", []string{"Kevin", "K. Unger"}, "Kevin"); err != nil {
+		t.Fatalf("merge alias into the Main player: %v", err)
+	}
+	reapply("Kevin", aliasMatch)
+
+	if err := s.Matches().MergePlayers(ctx, "", []string{"Kevin", "Kévin U."}, "Kévin U."); err != nil {
+		t.Fatalf("merge the Main player into another name: %v", err)
+	}
+	reapply("Kévin U.", otherMatch)
+}
