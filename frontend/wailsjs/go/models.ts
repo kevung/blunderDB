@@ -9358,6 +9358,8 @@ export namespace transcript {
 	}
 	export class Inconsistency {
 	    kind: string;
+	    rule: string;
+	    args?: Record<string, number>;
 	    detail: string;
 	
 	    static createFrom(source: any = {}) {
@@ -9367,6 +9369,8 @@ export namespace transcript {
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.kind = source["kind"];
+	        this.rule = source["rule"];
+	        this.args = source["args"];
 	        this.detail = source["detail"];
 	    }
 	}

@@ -232,7 +232,7 @@ func (s *state) step(i int, a Action) ActionInfo {
 		DecisionMS: a.DecisionMS, CubeDecisionMS: a.CubeDecisionMS}
 
 	if s.matchOver() {
-		info.add(PastEnd, "the match is already won")
+		info.add(PastEnd, RuleMatchWon, nil, "the match is already won")
 	}
 	// No game opens on a cube action: one recorded after its game ended is kept in
 	// that game and marked, and the next play opens the next game.
@@ -243,7 +243,7 @@ func (s *state) step(i int, a Action) ActionInfo {
 	// one: the running game then stops there, unfinished.
 	opens := !s.gameActive || a.Score != nil
 	if !opens && s.hasPrev && bearsTurn(s.prevKind) && bearsTurn(a.Kind) && s.prevSide == a.Side {
-		info.add(DoubleTurn, fmt.Sprintf("player %d acts twice in a row", a.Side+1))
+		info.add(DoubleTurn, RuleDoubleTurn, map[string]int{"player": a.Side + 1}, fmt.Sprintf("player %d acts twice in a row", a.Side+1))
 	}
 	if opens {
 		s.endGame(-1, 0)
@@ -276,10 +276,10 @@ func (s *state) step(i int, a Action) ActionInfo {
 		info.cubeChoice = !opens && s.pendingDouble < 0 && s.mayDouble(a.Side)
 		legal := domain.LegalMoves(&pos)
 		if opens && a.Dice[0] != 0 && a.Dice[0] == a.Dice[1] {
-			info.add(InconsistentDice, fmt.Sprintf("the game's first play is rolled %d%d: no opening roll is a double", a.Dice[0], a.Dice[1]))
+			info.add(InconsistentDice, RuleOpeningDouble, map[string]int{"die": a.Dice[0]}, fmt.Sprintf("the game's first play is rolled %d%d: no opening roll is a double", a.Dice[0], a.Dice[1]))
 		}
 		if w := openingWinner(a.Dice); opens && w >= 0 && w != a.Side {
-			info.add(InconsistentDice, fmt.Sprintf("player %d won the opening roll and plays first", w+1))
+			info.add(InconsistentDice, RuleOpeningWinner, map[string]int{"player": w + 1}, fmt.Sprintf("player %d won the opening roll and plays first", w+1))
 		}
 
 		if a.Kind == KindUnrecorded {
@@ -287,16 +287,16 @@ func (s *state) step(i int, a Action) ActionInfo {
 			// and report an incomplete record, not a player error.
 			info.After = s.board
 			info.Notation = UnrecordedNotation
-			info.add(UnrecordedMove, "the record does not say what was played")
+			info.add(UnrecordedMove, RuleUnrecorded, nil, "the record does not say what was played")
 		} else if a.Kind == KindDance {
 			info.After = s.board
 			info.Notation = "Cannot Move"
 			if len(legal) > 0 {
-				info.add(IllegalMove, "the roll allows a play, so no dance is possible")
+				info.add(IllegalMove, RuleDancePlayable, nil, "the roll allows a play, so no dance is possible")
 			}
 		} else {
 			if !diceCoherent(s.board, a.Steps, a.Dice, a.Side) {
-				info.add(InconsistentDice, fmt.Sprintf("the play does not use the roll %d%d", a.Dice[0], a.Dice[1]))
+				info.add(InconsistentDice, RuleDiceUnused, map[string]int{"d1": a.Dice[0], "d2": a.Dice[1]}, fmt.Sprintf("the play does not use the roll %d%d", a.Dice[0], a.Dice[1]))
 			}
 			resolved, reached := resolveSteps(s.board, a.Side, a.Steps)
 			// Notate the steps as RECORDED, not the legal play reaching the same
@@ -305,7 +305,7 @@ func (s *state) step(i int, a Action) ActionInfo {
 			if play := findPlay(legal, reached); play != nil {
 				info.After = play.Result.Board
 			} else {
-				info.add(IllegalMove, "no legal play from the previous position reaches this board")
+				info.add(IllegalMove, RuleUnreachableBoard, nil, "no legal play from the previous position reaches this board")
 				info.After = reached
 				if a.BoardAfter != nil {
 					info.After = *a.BoardAfter
@@ -325,17 +325,17 @@ func (s *state) step(i int, a Action) ActionInfo {
 		info.After = s.board
 		switch {
 		case opens:
-			info.add(ImpossibleCube, "no one doubles before the game's first play")
+			info.add(ImpossibleCube, RuleDoubleAtOpening, nil, "no one doubles before the game's first play")
 		case s.pendingDouble >= 0:
-			info.add(ImpossibleCube, "a double is already waiting for its answer")
+			info.add(ImpossibleCube, RuleDoublePending, nil, "a double is already waiting for its answer")
 		case s.cube.Owner != domain.None && s.cube.Owner != a.Side:
-			info.add(ImpossibleCube, fmt.Sprintf("player %d does not hold the cube", a.Side+1))
+			info.add(ImpossibleCube, RuleCubeNotHeld, map[string]int{"player": a.Side + 1}, fmt.Sprintf("player %d does not hold the cube", a.Side+1))
 		}
 		if len(s.games) > 0 && s.games[len(s.games)-1].Crawford {
-			info.add(ImpossibleCube, "the cube is dead in the Crawford game")
+			info.add(ImpossibleCube, RuleCrawfordCube, nil, "the cube is dead in the Crawford game")
 		}
 		if s.header.MaxCube > 0 && s.cube.Value >= s.header.MaxCube {
-			info.add(ImpossibleCube, fmt.Sprintf("the cube is capped at %d", 1<<s.header.MaxCube))
+			info.add(ImpossibleCube, RuleCubeCapped, map[string]int{"value": 1 << s.header.MaxCube}, fmt.Sprintf("the cube is capped at %d", 1<<s.header.MaxCube))
 		}
 		s.pendingDouble = a.Side
 		info.MoveNumber, s.moveNumber = s.moveNumber, s.moveNumber+1
@@ -347,7 +347,7 @@ func (s *state) step(i int, a Action) ActionInfo {
 		info.Before, info.HasPosition = s.position(a.Side, [2]int{}, domain.CubeAction, offered), true
 		info.After = s.board
 		if s.pendingDouble < 0 || s.pendingDouble == a.Side {
-			info.add(ImpossibleCube, "no double from the other side to answer")
+			info.add(ImpossibleCube, RuleNoDoubleToAnswer, nil, "no double from the other side to answer")
 		}
 		info.MoveNumber, s.moveNumber = s.moveNumber, s.moveNumber+1
 		if a.Kind == KindTake {
@@ -396,7 +396,7 @@ func (s *state) step(i int, a Action) ActionInfo {
 		s.forfeited, s.forfeitWinner = true, winner
 
 	default:
-		info.add(IllegalMove, fmt.Sprintf("unknown action kind %q", a.Kind))
+		info.add(IllegalMove, RuleUnknownKind, nil, fmt.Sprintf("unknown action kind %q", a.Kind))
 	}
 
 	if len(s.games) > 0 {
@@ -423,7 +423,7 @@ func isCubeKind(k Kind) bool {
 func (s *state) lateCube(i int, a Action, info ActionInfo) ActionInfo {
 	info.Before, info.HasPosition = s.position(a.Side, [2]int{}, domain.CubeAction, s.cube), true
 	info.After = s.board
-	info.add(ImpossibleCube, "the game is already over")
+	info.add(ImpossibleCube, RuleGameOver, nil, "the game is already over")
 	info.MoveNumber, s.moveNumber = s.moveNumber, s.moveNumber+1
 	gi := len(s.games) - 1
 	g := &s.games[gi]
@@ -444,15 +444,15 @@ func (s *state) declare(info *ActionInfo, score [2]int) bool {
 	switch {
 	case s.header.MatchLength <= 0:
 		if score != [2]int{} {
-			info.add(ScoreMismatch, "a money session has no score")
+			info.add(ScoreMismatch, RuleMoneyScore, nil, "a money session has no score")
 		}
 		return false
 	case score[0] < 0 || score[1] < 0:
-		info.add(ScoreMismatch, fmt.Sprintf("the declared score %d-%d is negative", score[0], score[1]))
+		info.add(ScoreMismatch, RuleNegativeScore, nil, fmt.Sprintf("the declared score %d-%d is negative", score[0], score[1]))
 		return false
 	}
 	if score != s.points {
-		info.add(ScoreMismatch, fmt.Sprintf("the declared score is %d-%d, the previous games give %d-%d",
+		info.add(ScoreMismatch, RuleScoreDiffers, map[string]int{"a": s.points[0], "b": s.points[1]}, fmt.Sprintf("the declared score is %d-%d, the previous games give %d-%d",
 			score[0], score[1], s.points[0], s.points[1]))
 	}
 	s.points = score

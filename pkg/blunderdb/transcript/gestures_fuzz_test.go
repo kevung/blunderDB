@@ -196,6 +196,14 @@ func (m *gestureModel) check(ann Annotated) {
 	if doc.Entry != nil && (doc.Entry.At < 0 || doc.Entry.At > n) {
 		m.fail("Entry.At %d out of [0, %d]", doc.Entry.At, n)
 	}
+	// The panel names an Inconsistency by its rule: one without is a bare warning.
+	for i, info := range ann.Actions {
+		for _, in := range info.Inconsistencies {
+			if in.Rule == "" {
+				m.fail("Action %d: %s without a rule", i, in.Kind)
+			}
+		}
+	}
 	if len(ann.Actions) != n {
 		m.fail("Replay annotated %d Actions of %d", len(ann.Actions), n)
 	}

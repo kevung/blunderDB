@@ -138,6 +138,7 @@
     import { t } from '../i18n';
     import { fmtClock, fmtDuration, fmtSeconds } from '../utils/decisionTime.js';
     import { closeOnEscape } from '../services/escapeService.js';
+    import { flawText } from '../utils/transcriptFlaws.js';
 
     let {
         /** A `transcript.Annotated`, verbatim. */
@@ -353,18 +354,6 @@
         return named || (side === 0 ? $t('transcript.player1') : $t('transcript.player2'));
     }
 
-    // Keys written out: runtime-built keys escape the orphan-translation guard.
-    /** @type {Record<string, string>} */
-    const FLAW_KEY = {
-        illegal_move: 'transcript.inconsistency.illegal_move',
-        double_turn: 'transcript.inconsistency.double_turn',
-        impossible_cube: 'transcript.inconsistency.impossible_cube',
-        past_end: 'transcript.inconsistency.past_end',
-        inconsistent_dice: 'transcript.inconsistency.inconsistent_dice',
-        unrecorded_move: 'transcript.inconsistency.unrecorded_move',
-        score_mismatch: 'transcript.inconsistency.score_mismatch',
-        timecode_backwards: 'transcript.inconsistency.timecode_backwards'
-    };
     /** @type {Record<number, string>} */
     const RESIGN_KEY = { 1: 'transcript.resignSingle', 2: 'transcript.resignGammon', 3: 'transcript.resignBackgammon' };
 
@@ -452,9 +441,9 @@
         return [flaws.length ? flawTitle(flaws) : '', times].filter(Boolean).join('\n') || undefined;
     }
 
-    /** @param {{kind: string}[]} flaws */
+    /** @param {{kind: string, rule?: string, args?: Record<string, number>}[]} flaws */
     function flawTitle(flaws) {
-        return $t('transcript.flawed', { names: flaws.map((f) => (FLAW_KEY[f.kind] ? $t(FLAW_KEY[f.kind]) : f.kind)).join(' · ') });
+        return $t('transcript.flawed', { names: flaws.map((f) => flawText(f, $t, playerName)).join(' · ') });
     }
 </script>
 
@@ -599,6 +588,7 @@
                 data-index={c.index}
                 data-pending={c.kind === 'pending' ? 'true' : undefined}
                 data-inconsistency={flaws.length ? flaws.map((/** @type {{kind: string}} */ f) => f.kind).join(' ') : undefined}
+                data-rule={flaws.length ? flaws.map((/** @type {{kind: string, rule?: string}} */ f) => f.rule ?? '').join(' ') : undefined}
                 aria-current={framed ? 'true' : undefined}
                 data-timed={times ? 'true' : undefined}
                 title={cellTitle(flaws, times)}
@@ -622,6 +612,7 @@
                 data-index={c.kind === 'result' ? undefined : c.index}
                 data-pending={c.kind === 'pending' ? 'true' : undefined}
                 data-inconsistency={flaws.length ? flaws.map((/** @type {{kind: string}} */ f) => f.kind).join(' ') : undefined}
+                data-rule={flaws.length ? flaws.map((/** @type {{kind: string, rule?: string}} */ f) => f.rule ?? '').join(' ') : undefined}
                 aria-current={framed ? 'true' : undefined}
                 data-timed={times ? 'true' : undefined}
                 title={cellTitle(flaws, times)}
