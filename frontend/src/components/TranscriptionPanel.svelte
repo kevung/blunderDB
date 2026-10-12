@@ -77,6 +77,7 @@
         transcriptionInfoStore,
         transcriptionPromptStore,
         transcriptionBoardSwapStore,
+        transcriptionArrowsStore,
         setTranscription,
         clearTranscription,
         transcriptionLibrary,
@@ -87,6 +88,7 @@
     import Modal from './Modal.svelte';
     import { writeTextToClipboard } from '../services/clipboardService.js';
     import { quizPlayStore, armBoardMove } from '../stores/quizPlayStore.js';
+    import { transcriptionArrows } from '../services/transcribedArrows.js';
     import { newBoardPlay, undoBoardStep, stepsFromNotation, boardAfterSteps } from '../services/transcriptionPlay.js';
     import { containsSteps, completedPlay } from '../services/quizPlay.js';
     import { ListTranscriptions, CreateTranscription, OpenTranscription, ApplyTranscriptionGesture, TranscriptionMAT } from '../../wailsjs/go/database/Database.js';
@@ -933,6 +935,7 @@
         ranked = [];
         unranked = false;
         danced = false;
+        hoveredMove = null;
 
         // Une insertion ne charge pas le voisin qu'elle repousse ; `entry.replacing` tranche.
         const inserting = ann.entry != null && ann.entry.replacing === false;
@@ -959,14 +962,16 @@
         unranked = answer.unranked;
         danced = answer.list.length === 0;
 
-        // Recorded play found by notation; if illegal, the first candidate stands in.
+        // Recorded play found by notation. One no legal play matches — illegal, or made so by a
+        // correction upstream — selects no line: the board draws what was written, never a
+        // candidate standing in for it.
         const played = ranked.findIndex((row) => row.move.move === info.notation);
         transcriptionKeyStore.set({
             ...initialKeyState(),
             phase: PHASE.ROLL,
             dice: [info.before.dice?.[0] ?? 0, info.before.dice?.[1] ?? 0],
             candidateCount: ranked.length,
-            selected: played >= 0 ? played : 0
+            selected: played
         });
     }
 
@@ -1144,11 +1149,13 @@
     function commitCandidate(index) {
         if (!draft) return;
         const next = selectCandidate(get(transcriptionKeyStore), index);
+        // Converted before the list is emptied: `select` addresses a row of it.
+        const sent = run([...next.commands, { kind: COMMAND.VALIDATE }]);
         transcriptionKeyStore.set(initialKeyState());
         ranked = [];
         unranked = false;
         danced = false;
-        run([...next.commands, { kind: COMMAND.VALIDATE }]).then(settleCandidates);
+        sent.then(settleCandidates);
         panelEl?.focus({ preventScroll: true });
     }
 
@@ -1468,6 +1475,7 @@
         clearTimeout(matCopyTimer);
         clearTranscriptionNotice();
         selectedMoveStore.set(null);
+        transcriptionArrowsStore.set(null);
         // Démonté, le panneau retire son coup du plateau.
         quizPlayStore.set(null);
         boardPlayArmed = false;
@@ -1554,13 +1562,33 @@
         if (pos) positionStore.set(pos);
     });
 
-    // Arrows of the selected candidate: display only, never written to the library.
+    // The line of the analysis under the pointer: its arrows while it stays there.
+    let hoveredMove = $state(/** @type {string | null} */ (null));
+
+    // The decision under the Cursor as it was written, unless the Cursor makes room for an
+    // insertion or the roll was retyped: the written move then belongs to another roll.
+    let recordedAction = $derived.by(() => {
+        const ann = annotated;
+        if (!ann || (ann.entry != null && ann.entry.replacing === false)) return null;
+        const info = (ann.actions ?? [])[ann.cursor ?? 0];
+        const dice = info?.before?.dice ?? [];
+        return info?.kind === 'checker' && dice[0] === keys.dice[0] && dice[1] === keys.dice[1] ? info : null;
+    });
+
+    // Highlighted line and board arrows: display only, never written to the library. The board
+    // draws the written move; a line of the analysis only when the user points at it — hovered,
+    // or picked by j/k or a click — or when no move is written yet and the line is the one
+    // Enter would record.
     $effect(() => {
-        if (!draft || !ranked.length || keys.phase === PHASE.DICE || keys.phase === PHASE.DIE1) {
+        if (!draft || keys.phase === PHASE.DICE || keys.phase === PHASE.DIE1) {
             selectedMoveStore.set(null);
+            transcriptionArrowsStore.set(null);
             return;
         }
-        selectedMoveStore.set(visible[keys.selected]?.move?.move ?? null);
+        const line = ranked.length ? (visible[keys.selected]?.move?.move ?? null) : null;
+        selectedMoveStore.set(line);
+        const pointed = keys.phase === PHASE.CANDIDATE || !recordedAction ? line : null;
+        transcriptionArrowsStore.set(transcriptionArrows({ info: recordedAction, engineMove: hoveredMove ?? pointed }));
     });
 
     // ── what the panel reads ─────────────────────────────────────────────
@@ -2060,8 +2088,13 @@
                                 <ol class="plain-candidates" data-testid="transcription-candidates">
                                     {#each visible as row, index (row.gen)}
                                         <li>
-                                            <button class="plain-candidate" class:selected={index === keys.selected} onclick={() => chooseCandidate(index)} ondblclick={() => commitCandidate(index)}
-                                                >{row.move.move}</button
+                                            <button
+                                                class="plain-candidate"
+                                                class:selected={index === keys.selected}
+                                                onclick={() => chooseCandidate(index)}
+                                                ondblclick={() => commitCandidate(index)}
+                                                onmouseenter={() => (hoveredMove = row.move.move)}
+                                                onmouseleave={() => (hoveredMove = null)}>{row.move.move}</button
                                             >
                                         </li>
                                     {/each}
@@ -2074,6 +2107,7 @@
                                         selectedMove={$selectedMoveStore}
                                         onRowClick={(/** @type {any} */ move) => chooseCandidate(rankedMoves.indexOf(move))}
                                         onRowDblClick={(/** @type {any} */ move) => commitCandidate(rankedMoves.indexOf(move))}
+                                        onRowHover={(/** @type {any} */ move) => (hoveredMove = move?.move ?? null)}
                                         showProvenance={false}
                                         baseline={null}
                                         projection="identify"

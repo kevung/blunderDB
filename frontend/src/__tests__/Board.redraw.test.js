@@ -96,13 +96,15 @@ vi.mock('../utils/boardScene.js', async (importOriginal) => {
     return {
         ...real,
         drawDynamicScene: (/** @type {any[]} */ ...args) => {
-            drawnArrows.push(args[4]?.moves ?? []);
+            drawnArrows.push(args[4]?.arrows?.moves ?? args[4]?.moves ?? []);
             return real.drawDynamicScene(...args);
         }
     };
 });
 
 import Board from '../components/Board.svelte';
+import { transcriptionArrowsStore } from '../stores/transcriptionStore.js';
+import { parseMoveNotation } from '../utils/boardGeometry.js';
 import { statusBarModeStore } from '../stores/uiStore.js';
 import { quizPlayStore, armBoardMove } from '../stores/quizPlayStore.js';
 import { positionStore, emptyPosition } from '../stores/positionStore.js';
@@ -475,7 +477,7 @@ describe('Board — a play entered on the board takes the candidate arrows away 
         const board = get(positionStore).board;
         armBoardMove({ board, steps: [], plays: [], mover: 0 }, () => {});
         await mountBoard();
-        selectedMoveStore.set('13/10 10/9');
+        transcriptionArrowsStore.set({ notation: '13/10 10/9', moves: parseMoveNotation('13/10 10/9'), tone: 'record' });
         flushFrame();
         expect(drawnArrows.at(-1)).toHaveLength(2);
 
@@ -486,5 +488,19 @@ describe('Board — a play entered on the board takes the candidate arrows away 
         quizPlayStore.update((/** @type {any} */ s) => ({ ...s, steps: [] }));
         flushFrame();
         expect(drawnArrows.at(-1)).toHaveLength(2);
+    });
+
+    test('the highlighted line of the list draws nothing: the board draws the transcription arrows', async () => {
+        statusBarModeStore.set('TRANSCRIBE');
+        await mountBoard();
+        transcriptionArrowsStore.set(null);
+        selectedMoveStore.set('13/10 10/9');
+        flushFrame();
+        expect(drawnArrows.at(-1)).toEqual([]);
+        transcriptionArrowsStore.set({ notation: '8/5 6/5', moves: parseMoveNotation('8/5 6/5'), tone: 'record' });
+        flushFrame();
+        expect(drawnArrows.at(-1)).toEqual(parseMoveNotation('8/5 6/5'));
+        transcriptionArrowsStore.set(null);
+        selectedMoveStore.set(null);
     });
 });

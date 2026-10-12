@@ -11,12 +11,11 @@ import { get } from 'svelte/store';
 import TheatreMiniBoard from '../components/TheatreMiniBoard.svelte';
 import { positionStore } from '../stores/positionStore.js';
 import { quizPlayStore, armBoardMove } from '../stores/quizPlayStore.js';
-import { selectedMoveStore } from '../stores/analysisStore.js';
-import { transcriptionBoardSwapStore } from '../stores/transcriptionStore.js';
+import { transcriptionArrowsStore, transcriptionBoardSwapStore } from '../stores/transcriptionStore.js';
 import { boardOrientationStore } from '../stores/boardOrientationStore.js';
 import { newPlay } from '../services/quizPlay.js';
 import { DIAGRAM_WIDTH, DIAGRAM_HEIGHT } from '../services/diagramService.js';
-import { boardMetrics } from '../utils/boardGeometry.js';
+import { boardMetrics, parseMoveNotation } from '../utils/boardGeometry.js';
 import { defaultBoardConfig } from '../utils/boardConfig.js';
 import { stackSlotCenter, sideLayout } from '../utils/boardScene.js';
 
@@ -80,7 +79,7 @@ afterEach(() => {
     cleanup();
     vi.restoreAllMocks();
     quizPlayStore.set(null);
-    selectedMoveStore.set(null);
+    transcriptionArrowsStore.set(null);
     transcriptionBoardSwapStore.set(false);
     boardOrientationStore.set('right');
     positionStore.set(/** @type {any} */ (null));
@@ -135,7 +134,7 @@ describe('the theatre board takes a play by the one grammar', () => {
 
     test('the first step takes the candidate arrows off the drawing', async () => {
         armBoardMove(newPlay(position, plays), () => {});
-        selectedMoveStore.set('13/10 10/9');
+        transcriptionArrowsStore.set({ notation: '13/10 10/9', moves: parseMoveNotation('13/10 10/9'), tone: 'record' });
         render(TheatreMiniBoard);
         await tick();
         // The arrows' colour, as boardScene.drawMoveArrows paints them.

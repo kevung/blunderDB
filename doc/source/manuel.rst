@@ -2117,6 +2117,15 @@ joué. Quand une correction plus haut dans le transcript change cette position,
 les pas du coup sont rejoués depuis la nouvelle, et toutes les positions qui
 suivent portent la correction.
 
+Les flèches du plateau sont celles du coup écrit dans la décision sous le
+curseur, rejoué sur la position qu'elle a désormais. Un pas qui ne s'y joue
+plus — case de départ vide après une correction plus haut, point tenu par
+l'adversaire, pion laissé à la barre — part quand même de la case écrite, en
+rouge pointillé, sa case de départ cerclée, et la cellule porte la marque
+« coup illégal ». Le coup du moteur ne prend jamais sa place : une ligne de la
+liste ne dessine ses flèches, en bleu, que survolée ou choisie à la molette,
+aux touches ou au clic.
+
 Sur la ligne des dés, la rangée **Doubler**, **Prendre**, **Passer**,
 **Abandonner** reprend à la souris les quatre gestes de videau : ce sont, avec
 les deux dés, les cinq réponses possibles à une seule question — qu'a fait le
@@ -2329,7 +2338,7 @@ qu'elle soit. La poignée et le bouton laissent le clavier au panneau.
 à gauche de celui qui la remet dans le panneau, passent la fenêtre en plein
 écran et donnent toute la place à la vidéo. Un petit plateau flotte par-dessus,
 dans le coin inférieur droit : il montre la position de la transcription, les dés
-saisis, le coup en cours au plateau et les flèches du candidat sélectionné, dont
+saisis, le coup en cours au plateau et les flèches du plateau principal, dont
 la notation s'affiche dans son bandeau. Le coup s'y joue comme sur le plateau
 principal : clic sur un pion, glissé, clic sur les dés pour les intervertir ou
 valider, clic droit sur le damier pour tout reprendre. On le déplace en le

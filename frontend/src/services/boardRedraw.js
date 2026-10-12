@@ -11,7 +11,7 @@ import { analysisStore, selectedMoveStore } from '../stores/analysisStore.js';
 import { searchOfferedCubeStore } from '../stores/searchExcludePositionStore.js';
 import { quizPlayStore, quizPlayValidateStore } from '../stores/quizPlayStore.js';
 import { pipcountVisibleStore } from '../stores/uiStore.js';
-import { transcriptionBoardSwapStore } from '../stores/transcriptionStore.js';
+import { transcriptionArrowsStore, transcriptionBoardSwapStore } from '../stores/transcriptionStore.js';
 import { duelBoardStore } from '../stores/duelStore.js';
 
 /**
@@ -37,6 +37,8 @@ export const BOARD_REDRAW_TRIGGERS = Object.freeze([
     // joueur 2. Rien d'autre ne change quand on la bascule — pas même la
     // position — donc rien d'autre ne demanderait le repaint.
     Object.freeze({ name: 'transcriptionBoardSwap', store: transcriptionBoardSwapStore }),
+    // Les flèches d'une transcription : le coup écrit sous le Cursor, ou la ligne désignée.
+    Object.freeze({ name: 'transcriptionArrows', store: transcriptionArrowsStore }),
     // L'ordre des dés d'un Duel, que le joueur intervertit.
     Object.freeze({ name: 'duelBoard', store: duelBoardStore })
 ]);

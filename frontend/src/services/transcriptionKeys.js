@@ -530,7 +530,9 @@ function moveSelection(state, delta) {
     if (state.awaitingCandidates || state.candidateCount <= 0) return swallowed(state);
 
     const selected = clamp(state.selected + delta, state.candidateCount - 1);
-    const commands = selected === state.selected ? [] : [{ kind: COMMAND.SELECT, index: selected }];
+    // In ROLL the highlighted line is the one the panel loaded, not one the user picked: the
+    // first key always picks, even when it lands on that line.
+    const commands = selected === state.selected && state.phase === PHASE.CANDIDATE ? [] : [{ kind: COMMAND.SELECT, index: selected }];
     return { handled: true, state: { ...state, phase: PHASE.CANDIDATE, selected }, commands };
 }
 
