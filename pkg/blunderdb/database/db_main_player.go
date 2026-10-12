@@ -52,7 +52,7 @@ func (d *Database) ClearMainPlayer() error {
 	if d.db == nil {
 		return fmt.Errorf("no database is currently open")
 	}
-	return d.store.LibrarySettings().SetMainPlayer(context.Background(), "", "")
+	return storage.ClearMainPlayer(context.Background(), d.store, "")
 }
 
 // PlayerMatchIDs returns the ids of the matches name plays, at either seat
@@ -63,12 +63,5 @@ func (d *Database) PlayerMatchIDs(name string) ([]int64, error) {
 	if d.db == nil {
 		return nil, fmt.Errorf("no database is currently open")
 	}
-	ids := []int64{}
-	for m, err := range d.store.Matches().List(context.Background(), "", storage.MatchListOpts{PlayerName: name}) {
-		if err != nil {
-			return nil, err
-		}
-		ids = append(ids, m.ID)
-	}
-	return ids, nil
+	return storage.PlayerMatchIDs(context.Background(), d.store, "", name)
 }

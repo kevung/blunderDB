@@ -308,15 +308,19 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 	// A new match from a file puts the library's Main player at seat 1,
 	// through the same swap as the user's own gesture.
 	if !enrich && !replace && !g.KeepSeats {
-		main, err := tx.LibrarySettings().MainPlayer(ctx, scope)
+		swapped, err := storage.PlaceMainPlayerFirst(ctx, tx, scope, matchID)
 		if err != nil {
 			return res, err
 		}
-		if storage.MainPlayerAtSeat2(aliases.players, main, g.Match.Player1Name, g.Match.Player2Name) {
-			if err := tx.Matches().SwapPlayers(ctx, scope, matchID); err != nil {
+		res.SeatsSwapped = swapped
+		// The suspect names the match as it is stored, the Main player first.
+		if swapped && res.ProbableDuplicate != nil {
+			other, err := tx.Matches().Get(ctx, scope, res.ProbableDuplicate.OtherID)
+			if err != nil {
 				return res, err
 			}
-			res.SeatsSwapped = true
+			suspect := domain.NewSameDiceSuspect(matchID, other.ID, g.Match.Player2Name, g.Match.Player1Name, other.Player1Name, other.Player2Name)
+			res.ProbableDuplicate = &suspect
 		}
 	}
 

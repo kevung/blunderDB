@@ -140,7 +140,23 @@ func (s *Service) writeMatch(ctx context.Context, scope string, id, rev int64, g
 	if err := tx.Transcriptions().Delete(ctx, scope, id); err != nil {
 		return fail(err)
 	}
+	// A finished transcription follows the Main player like an import, once
+	// its header is restated: the swap then turns header and games together.
+	if err := placeMainPlayerFirst(ctx, tx, scope, &res); err != nil {
+		return fail(err)
+	}
 	return res, tx.Commit()
+}
+
+// placeMainPlayerFirst swaps the written Match when the library's Main
+// player sits at its seat 2, with its per-seat tallies rebuilt.
+func placeMainPlayerFirst(ctx context.Context, tx storage.Tx, scope string, res *ingest.WriteResult) error {
+	swapped, err := storage.PlaceMainPlayerFirst(ctx, tx, scope, res.MatchID)
+	if err != nil || !swapped {
+		return err
+	}
+	res.SeatsSwapped = true
+	return tx.Stats().RefreshMatchStats(ctx, scope, []int64{res.MatchID})
 }
 
 // toAnalyze counts the Match's positions that carry no analysis.
@@ -331,9 +347,10 @@ func restoreTimecodes(doc *transcript.Document, games []*domain.Game, moves map[
 // has no notes to attach. The transcript's own ids are not database ids and
 // are dropped; so are the hashes (see writeMatch).
 func MatchGraph(parts transcript.Parts) *ingest.MatchGraph {
-	// The seats are the ones the user typed or played: the Main player's
-	// place at seat 1 is an import's rule, and the callers restate the
-	// header in this order once the match is written.
+	// The graph is written in the seats the document holds: the callers
+	// restate the header in that order once the match is written, and a
+	// Duel keeps the seats it was played in. A finished transcription puts
+	// the Main player first after that restatement (placeMainPlayerFirst).
 	g := &ingest.MatchGraph{Match: *parts.Match, KeepSeats: true}
 	g.Match.MatchHash, g.Match.CanonicalHash = "", ""
 

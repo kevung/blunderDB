@@ -111,8 +111,63 @@ func DesignateMainPlayer(ctx context.Context, st Storage, scope, name string) (M
 			return plan, fmt.Errorf("main player %q: %w", plan.Name, err)
 		}
 	}
+	// The swap only invalidates the per-seat tallies; they are rebuilt in the
+	// same transaction, as an import does, so no reader waits for them.
+	if len(plan.Swap) > 0 {
+		if err := tx.Stats().RefreshMatchStats(ctx, scope, plan.Swap); err != nil {
+			return plan, err
+		}
+	}
 	if err := tx.Commit(); err != nil {
 		return plan, err
 	}
 	return plan, nil
+}
+
+// ClearMainPlayer forgets the scope's Main player. No match is swapped back.
+func ClearMainPlayer(ctx context.Context, st Stores, scope string) error {
+	return st.LibrarySettings().SetMainPlayer(ctx, scope, "")
+}
+
+// PlaceMainPlayerFirst swaps the match when the scope's Main player sits at
+// its seat 2, and reports whether it did. A match whose swap is refused (a
+// draft open on it, played here) is left as it is. The caller refreshes the
+// match's stats.
+func PlaceMainPlayerFirst(ctx context.Context, st Stores, scope string, matchID int64) (bool, error) {
+	main, err := st.LibrarySettings().MainPlayer(ctx, scope)
+	if err != nil || main == "" {
+		return false, err
+	}
+	list, err := st.Aliases().List(ctx, scope, AliasPlayer)
+	if err != nil {
+		return false, err
+	}
+	m, err := st.Matches().Get(ctx, scope, matchID)
+	if err != nil {
+		return false, err
+	}
+	if !MainPlayerAtSeat2(NewAliasMap(list), main, m.Player1Name, m.Player2Name) {
+		return false, nil
+	}
+	switch err := st.Matches().SwapPlayers(ctx, scope, matchID); {
+	case err == nil:
+		return true, nil
+	case errors.Is(err, ErrSwapDraftOpen), errors.Is(err, ErrSwapPlayedHere):
+		return false, nil
+	default:
+		return false, err
+	}
+}
+
+// PlayerMatchIDs returns the ids of the matches name plays, at either seat
+// and under any of their spellings: what a player's match count opens.
+func PlayerMatchIDs(ctx context.Context, st Stores, scope, name string) ([]int64, error) {
+	ids := []int64{}
+	for m, err := range st.Matches().List(ctx, scope, MatchListOpts{PlayerName: name}) {
+		if err != nil {
+			return nil, err
+		}
+		ids = append(ids, m.ID)
+	}
+	return ids, nil
 }

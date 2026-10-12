@@ -70,17 +70,11 @@ func (s *Server) aliasRoutes() []route {
 			return storage.DesignateMainPlayer(ctx, s.opts.Storage, scope, req.Name)
 		})},
 		{http.MethodPost, "/v1/players.main.clear", rpcVoid(func(ctx context.Context, scope string, _ struct{}) error {
-			return s.opts.Storage.LibrarySettings().SetMainPlayer(ctx, scope, "")
+			return storage.ClearMainPlayer(ctx, s.opts.Storage, scope)
 		})},
 		{http.MethodPost, "/v1/players.matchIds", rpc(func(ctx context.Context, scope string, req playerNameReq) (playerMatchIDsResp, error) {
-			ids := []int64{}
-			for m, err := range s.opts.Storage.Matches().List(ctx, scope, storage.MatchListOpts{PlayerName: req.Name}) {
-				if err != nil {
-					return playerMatchIDsResp{}, err
-				}
-				ids = append(ids, m.ID)
-			}
-			return playerMatchIDsResp{IDs: ids}, nil
+			ids, err := storage.PlayerMatchIDs(ctx, s.opts.Storage, scope, req.Name)
+			return playerMatchIDsResp{IDs: ids}, err
 		})},
 		{http.MethodPost, "/v1/events.alias.list", rpc(func(ctx context.Context, scope string, _ struct{}) (aliasListResp, error) {
 			return listAliases(ctx, as(), scope, storage.AliasEvent)

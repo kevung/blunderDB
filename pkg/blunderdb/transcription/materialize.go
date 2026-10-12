@@ -118,5 +118,10 @@ func (s *Service) writeNewMatch(ctx context.Context, scope string, graph *ingest
 	if err := attachTournament(ctx, tx, scope, res.MatchID, header.TournamentID); err != nil {
 		return fail(err)
 	}
+	// A finished transcription follows the Main player like an import, once
+	// its header is restated: the swap then turns header and games together.
+	if err := placeMainPlayerFirst(ctx, tx, scope, &res); err != nil {
+		return fail(err)
+	}
 	return res, tx.Commit()
 }
