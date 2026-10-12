@@ -167,6 +167,12 @@ type Header struct {
 	// MaxCube is the session's cube ceiling as a log2 exponent, 0 for none. A double
 	// that would pass it is an Inconsistency, never a refusal.
 	MaxCube int `json:"max_cube,omitempty"`
+	// PostCrawford declares that the document starts after the Crawford game: a
+	// transcription taken up mid-match, where a player is already one point away
+	// and the Crawford game was played before the first Action. It holds only for
+	// the document's first game, and only when a player is one point away there;
+	// otherwise it is ignored and the Crawford game is found as usual.
+	PostCrawford bool `json:"post_crawford,omitempty"`
 
 	Player1 string `json:"player1,omitempty"`
 	Player2 string `json:"player2,omitempty"`

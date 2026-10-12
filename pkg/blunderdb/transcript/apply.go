@@ -69,6 +69,9 @@ const (
 	// GestureSetScore declares (or, with a nil Gesture.Score, clears) the score of
 	// the game whose first Action is Gesture.At (ADR-0053).
 	GestureSetScore GestureKind = "set_score"
+	// GestureSetPostCrawford states (Gesture.PostCrawford) whether the document
+	// starts after the Crawford game ([Header.PostCrawford]).
+	GestureSetPostCrawford GestureKind = "set_post_crawford"
 	// GestureSetVideo attaches the media the Repères refer to
 	// (Gesture.VideoSource); an empty source detaches it (ADR-0082 rule 4).
 	GestureSetVideo GestureKind = "set_video"
@@ -139,6 +142,8 @@ type Gesture struct {
 	HasRollTick bool
 	// VideoSource is the media GestureSetVideo attaches, "" to detach.
 	VideoSource string
+	// PostCrawford is what GestureSetPostCrawford declares.
+	PostCrawford bool
 }
 
 var (
@@ -372,6 +377,11 @@ func apply(doc Document, g Gesture) (Document, error) {
 
 	case GestureSetScore:
 		return setScore(doc, out, g)
+
+	case GestureSetPostCrawford:
+		out.Header.PostCrawford = g.PostCrawford
+		out.HoldCursor = true
+		return out, nil
 
 	case GestureSetVideo:
 		out.Header.VideoSource = strings.TrimSpace(g.VideoSource)

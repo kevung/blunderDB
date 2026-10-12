@@ -386,7 +386,7 @@ func (r *Replayer) reusable(doc Document) int {
 // untouched and derives nothing, so changing it must not throw the cache away.
 func sameReplayRules(a, b Header) bool {
 	return a.MatchLength == b.MatchLength && a.Jacoby == b.Jacoby &&
-		a.Beaver == b.Beaver && a.MaxCube == b.MaxCube
+		a.Beaver == b.Beaver && a.MaxCube == b.MaxCube && a.PostCrawford == b.PostCrawford
 }
 
 // sameAction compares two Actions by value, following the three references an Action

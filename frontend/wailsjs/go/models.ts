@@ -2622,6 +2622,7 @@ export namespace domain {
 	    has_beaver?: boolean;
 	    engine_version?: string;
 	    video_source?: string;
+	    post_crawford?: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new Match(source);
@@ -2665,6 +2666,7 @@ export namespace domain {
 	        this.has_beaver = source["has_beaver"];
 	        this.engine_version = source["engine_version"];
 	        this.video_source = source["video_source"];
+	        this.post_crawford = source["post_crawford"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -9543,6 +9545,7 @@ export namespace transcript {
 	    jacoby: boolean;
 	    beaver: boolean;
 	    max_cube?: number;
+	    post_crawford?: boolean;
 	    player1?: string;
 	    player2?: string;
 	    event?: string;
@@ -9565,6 +9568,7 @@ export namespace transcript {
 	        this.jacoby = source["jacoby"];
 	        this.beaver = source["beaver"];
 	        this.max_cube = source["max_cube"];
+	        this.post_crawford = source["post_crawford"];
 	        this.player1 = source["player1"];
 	        this.player2 = source["player2"];
 	        this.event = source["event"];
@@ -9750,6 +9754,7 @@ export namespace transcript {
 	    RollTickMS: number;
 	    HasRollTick: boolean;
 	    VideoSource: string;
+	    PostCrawford: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new Gesture(source);
@@ -9778,6 +9783,7 @@ export namespace transcript {
 	        this.RollTickMS = source["RollTickMS"];
 	        this.HasRollTick = source["HasRollTick"];
 	        this.VideoSource = source["VideoSource"];
+	        this.PostCrawford = source["PostCrawford"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

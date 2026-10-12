@@ -63,6 +63,10 @@ func BuildPlayed(h Header, played []GameInfo, actions []ActionInfo, inconsistent
 		// the Match's, and a nil source would keep it (ReplaceHeader).
 		VideoSource: &video,
 	}
+	if L := h.MatchLength; L > 0 && len(played) > 0 && !played[0].Crawford {
+		sc := played[0].InitialScore
+		m.PostCrawford = sc[0] == L-1 || sc[1] == L-1
+	}
 	if h.MatchID != nil {
 		m.ID = *h.MatchID
 	}

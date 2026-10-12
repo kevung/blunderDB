@@ -920,7 +920,18 @@ type Match struct {
 	// a hint the Repères keep their meaning without; only a URL leaves the
 	// library in an export.
 	VideoSource *string `json:"video_source,omitempty"`
+
+	// PostCrawford says the first game comes after the Crawford game although a
+	// player is one point away there: a match taken up mid-way. A .mat reader
+	// infers the Crawford game from the scores alone and cannot tell, so
+	// RenderMAT states it in a MATPostCrawfordHeader line. It has no column:
+	// the first game's Positions carry it (the PostCrawford away score).
+	PostCrawford bool `json:"post_crawford,omitempty"`
 }
+
+// MATPostCrawfordHeader is the .mat header line stating [Match.PostCrawford].
+// gnubg discards a "[Crawford" header, so the file stays readable there.
+const MATPostCrawfordHeader = `; [Crawford "PostCrawford"]`
 
 // CopySourceMetadata sets dst's source metadata to src's.
 func CopySourceMetadata(dst *Match, src *Match) {
