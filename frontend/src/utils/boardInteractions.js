@@ -8,8 +8,7 @@ import { get } from 'svelte/store';
 import { boardMetrics, boardMouseToDrawing, checkerPointAndCountAt } from './boardGeometry.js';
 import { EXCLUDE_EMPTY, sideLayout } from './boardScene.js';
 import { OFF } from '../services/quizPlay.js';
-import { dragStep, resetBoardPlay } from '../services/transcriptionPlay.js';
-import { boardRightClick, diceClick, orderedDice, playClickedChecker } from '../services/boardMove.js';
+import { armedPlay, pressDice, releaseChecker, takeBackPlay } from '../services/boardMoveInput.js';
 
 // A second click on the same Except point within this delay blocks it. Detected by hand: each
 // click recreates the two.js shapes, so native 'dblclick' sees two different DOM nodes.
@@ -380,23 +379,6 @@ export function attachBoardInteractions(canvas, deps) {
         return true;
     }
 
-    /**
-     * Le coup armé selon la grammaire d'ADR-0086 (`quizPlayValidate` posé par son mode), ou null.
-     */
-    function grammarPlay() {
-        const play = stores.quizPlay ? get(stores.quizPlay) : null;
-        if (!play || !stores.quizPlayValidate) return null;
-        return get(stores.quizPlayValidate) ? play : null;
-    }
-
-    /**
-     * Le jet dans l'ordre dessiné : le jet saisi du coup, sinon les dés de la position.
-     * @param {any} play
-     */
-    function drawnDice(play) {
-        return orderedDice(play.rolled ?? get(stores.position).dice, !!play.swapped);
-    }
-
     // Le pion pressé d'un coup selon la grammaire : relâché sur place, c'est un clic (le premier
     // dé non joué) ; relâché ailleurs, un glissé vers ce point.
     /** @type {number|null} */
@@ -410,17 +392,11 @@ export function attachBoardInteractions(canvas, deps) {
      */
     function grammarMouseDown(event, x, y) {
         grammarPress = null;
-        const play = grammarPlay();
-        if (!play) return false;
+        if (!armedPlay(stores)) return false;
         if (event.button !== 0) return true;
         const hit = hitAt(x, y);
-        if (hit.kind === 'point') {
-            grammarPress = hit.point;
-        } else if (hit.kind === 'die') {
-            const action = diceClick(play, drawnDice(play));
-            if (action === 'validate') get(stores.quizPlayValidate)?.();
-            else if (action === 'swap') stores.quizPlay.update((/** @type {any} */ s) => (s ? { ...s, swapped: !s.swapped } : s));
-        }
+        if (hit.kind === 'point') grammarPress = hit.point;
+        else if (hit.kind === 'die') pressDice(stores);
         return true;
     }
 
@@ -433,12 +409,7 @@ export function attachBoardInteractions(canvas, deps) {
         grammarPress = null;
         if (from === null) return false;
         const { x, y } = toDrawing(event);
-        const target = quizTargetAt(x, y);
-        stores.quizPlay.update((/** @type {any} */ s) => {
-            if (!s) return s;
-            if (target === null || target === from) return playClickedChecker(s, from, drawnDice(s));
-            return dragStep(s, from, target);
-        });
+        releaseChecker(stores, from, quizTargetAt(x, y));
         return true;
     }
 
@@ -603,12 +574,9 @@ export function attachBoardInteractions(canvas, deps) {
      * @param {number} y
      */
     function grammarRightClick(x, y) {
-        const play = grammarPlay();
         const kind = hitAt(x, y).kind;
-        if (!play || (kind !== 'point' && kind !== 'none')) return false;
-        if (boardRightClick(play) !== 'reset') return false;
-        stores.quizPlay.update((/** @type {any} */ s) => (s ? { ...resetBoardPlay(s, get(stores.position)), swapped: !!s.swapped } : s));
-        return true;
+        if (kind !== 'point' && kind !== 'none') return false;
+        return takeBackPlay(stores);
     }
 
     /** @param {MouseEvent} event */

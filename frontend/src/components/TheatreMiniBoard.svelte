@@ -1,20 +1,24 @@
 <script>
     // The floating board of the theatre: the transcription's position, the move being played on
     // the board and the arrows of the selected candidate (services/theatreBoard.js), drawn by
-    // the board's own scene functions (services/diagramService.js). It is dragged anywhere, takes
-    // three sizes and folds into a tab; where it sits and its size are remembered. The fold is
+    // the board's own scene functions (services/diagramService.js). While a play is armed, the
+    // board takes it as the main board does (ADR-0086: services/boardMoveInput.js), and only its
+    // head drags it; otherwise it is dragged anywhere. It takes three sizes and folds into a tab;
+    // where it sits and its size are remembered. The fold is
     // not: a tab folded in an earlier theatre is easily missed over a video, and the board is what
     // the theatre is for, so each theatre opens with it unfolded. It never takes the focus:
     // the transcription keys stay live while it is handled.
     import { t } from '../i18n';
     import { positionStore } from '../stores/positionStore.js';
-    import { quizPlayStore } from '../stores/quizPlayStore.js';
+    import { quizPlayStore, quizPlayValidateStore } from '../stores/quizPlayStore.js';
     import { selectedMoveStore } from '../stores/analysisStore.js';
     import { transcriptionBoardSwapStore } from '../stores/transcriptionStore.js';
     import { boardOrientationStore } from '../stores/boardOrientationStore.js';
     import { boardColorsStore } from '../stores/boardColorsStore.js';
     import { renderPositionSVG, DIAGRAM_WIDTH, DIAGRAM_HEIGHT } from '../services/diagramService.js';
-    import { theatreScene } from '../services/theatreBoard.js';
+    import { theatreScene, theatreHit, dropTarget } from '../services/theatreBoard.js';
+    import { pressDice, releaseChecker, takeBackPlay } from '../services/boardMoveInput.js';
+    import { boardMouseToDrawing } from '../utils/boardGeometry.js';
     import { logger } from '../utils/logger.js';
 
     const STORE_KEY = 'blunderdb.theatre.board';
@@ -55,14 +59,19 @@
     const width = $derived(SIZES[size]);
     const height = $derived(Math.round((width * DRAW_HEIGHT) / DIAGRAM_WIDTH));
 
-    const scene = $derived(theatreScene({ position: $positionStore, play: $quizPlayStore, swap: $transcriptionBoardSwapStore, selectedMove: $selectedMoveStore }));
+    const armed = $derived(!!$quizPlayStore && !!$quizPlayValidateStore);
+    const scene = $derived(theatreScene({ position: $positionStore, play: $quizPlayStore, swap: $transcriptionBoardSwapStore, selectedMove: $selectedMoveStore, armed }));
+    const moveStores = { quizPlay: quizPlayStore, quizPlayValidate: quizPlayValidateStore, position: positionStore };
+    // The model point of the checker pressed on the board, until it is released.
+    /** @type {number | null} */
+    let pressed = null;
 
     const svg = $derived.by(() => {
         void $boardColorsStore;
         const orientation = $boardOrientationStore;
         if (!scene) return '';
         try {
-            return renderPositionSVG(scene.position, { height: DRAW_HEIGHT, showPipcount: true, moves: scene.moves, flip: scene.flip, orientation });
+            return renderPositionSVG(scene.position, { height: DRAW_HEIGHT, showPipcount: true, moves: scene.moves, flip: scene.flip, orientation, diceUsed: scene.diceUsed });
         } catch (error) {
             logger.error('theatre board:', error);
             return '';
@@ -162,6 +171,48 @@
 
     /** @param {MouseEvent} event */
     const keepFocus = (event) => event.preventDefault();
+
+    /** @param {MouseEvent} event */
+    function hitOf(event) {
+        const host = /** @type {HTMLElement} */ (event.currentTarget);
+        const drawing = host.querySelector('svg') ?? host;
+        const { x, y } = boardMouseToDrawing(event.clientX, event.clientY, drawing.getBoundingClientRect(), DIAGRAM_WIDTH, DRAW_HEIGHT);
+        return theatreHit(x, y, /** @type {NonNullable<typeof scene>} */ (scene), { width: DIAGRAM_WIDTH, height: DRAW_HEIGHT, orientation: $boardOrientationStore });
+    }
+
+    /** @param {PointerEvent} event */
+    function boardDown(event) {
+        pressed = null;
+        if (!armed || !scene) return;
+        // The press is the play's, not the card's drag, and takes no focus.
+        event.stopPropagation();
+        event.preventDefault();
+        if (event.button !== 0) return;
+        const hit = hitOf(event);
+        if (hit.kind === 'point') {
+            pressed = hit.point;
+            /** @type {HTMLElement} */ (event.currentTarget).setPointerCapture?.(event.pointerId);
+        } else if (hit.kind === 'die') {
+            pressDice(moveStores);
+        }
+    }
+
+    /** @param {PointerEvent} event */
+    function boardUp(event) {
+        const from = pressed;
+        pressed = null;
+        if (from === null || !scene) return;
+        event.stopPropagation();
+        releaseChecker(moveStores, from, dropTarget(hitOf(event)));
+    }
+
+    /** @param {MouseEvent} event */
+    function boardContext(event) {
+        event.preventDefault();
+        if (!armed || !scene) return;
+        const hit = hitOf(event);
+        if (hit.kind === 'point' || hit.kind === 'none') takeBackPlay(moveStores);
+    }
 </script>
 
 <svelte:window onresize={measure} />
@@ -194,7 +245,16 @@
                 <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 12h14" /></svg>
             </button>
         </div>
-        <div class="theatre-board-svg" style="height: {height}px">
+        <div
+            class="theatre-board-svg"
+            class:armed
+            style="height: {height}px"
+            data-testid="theatre-board-drawing"
+            role="presentation"
+            onpointerdown={boardDown}
+            onpointerup={boardUp}
+            oncontextmenu={boardContext}
+        >
             <!-- eslint-disable-next-line svelte/no-at-html-tags -- drawn here by the scene functions, from the position alone -->
             {@html svg}
         </div>
@@ -267,6 +327,9 @@
     .head-btn:focus-visible {
         background: var(--color-surface);
         color: var(--color-text);
+    }
+    .theatre-board-svg.armed {
+        cursor: pointer;
     }
     .theatre-board-svg :global(svg) {
         display: block;

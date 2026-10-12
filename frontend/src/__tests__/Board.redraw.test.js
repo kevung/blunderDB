@@ -87,7 +87,24 @@ vi.mock('two.js', () => {
     return { default: FakeTwo };
 });
 
+// The arrows Board.svelte hands to the dynamic scene, one entry per paint.
+/** @type {any[][]} */
+const drawnArrows = [];
+vi.mock('../utils/boardScene.js', async (importOriginal) => {
+    /** @type {any} */
+    const real = await importOriginal();
+    return {
+        ...real,
+        drawDynamicScene: (/** @type {any[]} */ ...args) => {
+            drawnArrows.push(args[4]?.moves ?? []);
+            return real.drawDynamicScene(...args);
+        }
+    };
+});
+
 import Board from '../components/Board.svelte';
+import { statusBarModeStore } from '../stores/uiStore.js';
+import { quizPlayStore, armBoardMove } from '../stores/quizPlayStore.js';
 import { positionStore, emptyPosition } from '../stores/positionStore.js';
 import { selectedMoveStore, analysisStore } from '../stores/analysisStore.js';
 import { boardColorsStore, DEFAULT_BOARD_COLORS } from '../stores/boardColorsStore.js';
@@ -436,5 +453,38 @@ describe('Board — side labels stay inside the canvas', () => {
             expect(x - half, `${content} at ${size}px, left`).toBeGreaterThanOrEqual(0);
             expect(x + half, `${content} at ${size}px, right`).toBeLessThanOrEqual(two.width);
         }
+    });
+});
+
+describe('Board — a play entered on the board takes the candidate arrows away (transcription)', () => {
+    beforeEach(() => {
+        resetStores();
+        stubRaf();
+        drawnArrows.length = 0;
+    });
+    afterEach(() => {
+        cleanup();
+        twoInstances.length = 0;
+        vi.unstubAllGlobals();
+        quizPlayStore.set(null);
+        statusBarModeStore.set('NORMAL');
+    });
+
+    test('the first step clears them; the play taken back brings them back', async () => {
+        statusBarModeStore.set('TRANSCRIBE');
+        const board = get(positionStore).board;
+        armBoardMove({ board, steps: [], plays: [], mover: 0 }, () => {});
+        await mountBoard();
+        selectedMoveStore.set('13/10 10/9');
+        flushFrame();
+        expect(drawnArrows.at(-1)).toHaveLength(2);
+
+        quizPlayStore.update((/** @type {any} */ s) => ({ ...s, steps: [{ from: 13, to: 10 }] }));
+        flushFrame();
+        expect(drawnArrows.at(-1)).toEqual([]);
+
+        quizPlayStore.update((/** @type {any} */ s) => ({ ...s, steps: [] }));
+        flushFrame();
+        expect(drawnArrows.at(-1)).toHaveLength(2);
     });
 });
