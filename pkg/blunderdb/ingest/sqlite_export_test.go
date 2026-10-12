@@ -291,12 +291,13 @@ func TestSQLiteExportTranscriptions(t *testing.T) {
 		}
 	})
 
-	t.Run("a filtered export carries none", func(t *testing.T) {
+	t.Run("a filtered export carries only its matches' drafts", func(t *testing.T) {
 		opts := WholeTenant(FormatSQLite)
 		opts.Selection.AllMatches = false
 		opts.Selection.MatchIDs = []int64{matchID}
-		if got := list(t, exportTo(t, opts)); len(got) != 0 {
-			t.Fatalf("a filtered export carried %d transcriptions, want 0", len(got))
+		got := list(t, exportTo(t, opts))
+		if len(got) != 1 || got[0].Label != "Alice — Bob" {
+			t.Fatalf("a filtered export carried %+v, want the draft of its match alone", got)
 		}
 	})
 }

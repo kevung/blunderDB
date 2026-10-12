@@ -64,8 +64,9 @@ const InvalidateMatchStatsOfPositionsSuffix = `)`
 // columns (they are NULL there and nowhere else), or before the breakdown
 // cells were written beside them (a seat with a counted decision and no
 // phase cell, see match_stats_cells.go). Run at every open, after
-// the columns exist; the fill that follows recomputes those matches, so the
-// repair is idempotent and costs one scan of the table once done.
+// the columns exist; the matches it empties are then missing, recomputed by
+// the next reader or the stats.matches maintenance line, so the repair is
+// idempotent and costs one scan of the table once done.
 const DropOlderShapeMatchStatsSQL = `DELETE FROM match_stats WHERE ` + OlderShapeMatchStatsPredicate
 
 // OlderShapeMatchStatsPredicate selects those rows, for a probe that writes
@@ -393,8 +394,8 @@ func RefusesWrites(ctx context.Context, db Execer) bool {
 	return ok && w.RefusesWrites(ctx)
 }
 
-// missingMatchStats lists the matches of the scope without rows.
-func (s *StatsStore) missingMatchStats(ctx context.Context, scope string) ([]int64, error) {
+// MissingMatchStats — see storage.StatsStore.
+func (s *StatsStore) MissingMatchStats(ctx context.Context, scope string) ([]int64, error) {
 	tenant, args := s.DB.TenantFilter("m", scope)
 	var ids []int64
 	err := scanEach(ctx, s.DB,
@@ -416,14 +417,14 @@ func (s *StatsStore) missingMatchStats(ctx context.Context, scope string) ([]int
 
 // FillMatchStats — see storage.StatsStore.
 func (s *StatsStore) FillMatchStats(ctx context.Context, scope string, progress func(done, total int)) (int, error) {
-	ids, err := s.missingMatchStats(ctx, scope)
+	ids, err := s.MissingMatchStats(ctx, scope)
 	if err != nil || len(ids) == 0 {
 		return 0, err
 	}
 	// A reader that cannot write must not answer from an incomplete table:
 	// the figures would quietly leave out the matches it lacks.
 	if RefusesWrites(ctx, s.DB) {
-		return 0, fmt.Errorf("%w: %d match(es) have no statistics yet and the database is open read-only; open it for writing once", ErrMatchStatsIncomplete, len(ids))
+		return 0, fmt.Errorf("%w: %d match(es) have no statistics yet and the database is open read-only; open it for writing and run the stats.matches maintenance once", ErrMatchStatsIncomplete, len(ids))
 	}
 	settings, err := librarySettings(ctx, s.DB, scope)
 	if err != nil {
@@ -447,7 +448,7 @@ func (s *StatsStore) FillMatchStats(ctx context.Context, scope string, progress 
 			}
 		}
 		filled += len(ids)
-		if ids, err = s.missingMatchStats(ctx, scope); err != nil {
+		if ids, err = s.MissingMatchStats(ctx, scope); err != nil {
 			return filled, err
 		}
 	}
@@ -468,7 +469,7 @@ func (s *StatsStore) matchStatsReadable(ctx context.Context, scope string) (bool
 		_, err := s.FillMatchStats(ctx, scope, nil)
 		return err == nil, err
 	}
-	ids, err := s.missingMatchStats(ctx, scope)
+	ids, err := s.MissingMatchStats(ctx, scope)
 	if err != nil || len(ids) > 0 {
 		return false, err
 	}

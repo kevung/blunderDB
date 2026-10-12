@@ -51,6 +51,13 @@ const (
 	// LibrarySettingPileKey holds the id of the Pile collection. It is read
 	// and written apart from the thresholds (see PileCollection).
 	LibrarySettingPileKey = "pile_collection_id"
+
+	// MaintenanceKeyPrefix starts the key of every row of the maintenance
+	// journal (ADR-0088): one row per operation, its last requested run. The
+	// rows sit beside the thresholds because, like them, they belong to the
+	// library and to its tenant; they are outside issuance.CarriedMetadataKeys,
+	// so an export never carries them.
+	MaintenanceKeyPrefix = "maintenance."
 )
 
 // DefaultLibrarySettings is what a library that has never been configured
@@ -136,4 +143,13 @@ type LibrarySettingsStore interface {
 
 	// SetPileCollection names the Collection the Pile gesture aims at.
 	SetPileCollection(ctx context.Context, scope string, collectionID int64) error
+
+	// MaintenanceLog returns the scope's maintenance journal: every row whose
+	// key starts with MaintenanceKeyPrefix, keyed by the full key. A library
+	// on which nothing was ever run returns an empty map.
+	MaintenanceLog(ctx context.Context, scope string) (map[string]string, error)
+
+	// RecordMaintenance writes one row of the journal; key must start with
+	// MaintenanceKeyPrefix, so the journal can never overwrite a setting.
+	RecordMaintenance(ctx context.Context, scope, key, value string) error
 }

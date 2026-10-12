@@ -1,4 +1,6 @@
 <script>
+    import { gammonNetBatchLabel } from '../utils/gammonNetBatchLabel.js';
+    import { busyMessage } from '../utils/busyMessage.js';
     import { onDestroy, tick } from 'svelte';
     import { statusBarTextStore, currentPositionIndexStore, commandTextStore, showCommandInputStore, dbMutationCounterStore, activeTabStore } from '../stores/uiStore';
     import { libraryCountsStore, refreshLibraryCounts, formatCount } from '../stores/libraryCountsStore.js';
@@ -15,8 +17,9 @@
     import { positionsStore, matchContextStore } from '../stores/positionStore';
     import { commandHistoryStore } from '../stores/commandHistoryStore';
     import { gammonNetBatchStore } from '../stores/gammonNetBatchStore';
+    import { maintenanceStore, maintenanceEndedStore } from '../stores/maintenanceStore.js';
     import { LoadCommandHistory, SaveCommand } from '../../wailsjs/go/database/Database.js';
-    import { CancelGammonNetBatch } from '../../wailsjs/go/gui/App.js';
+    import { CancelGammonNetBatch, CancelMaintenance } from '../../wailsjs/go/gui/App.js';
     import { EventsOn } from '../../wailsjs/runtime/runtime.js';
     import { t, tMsg, resolveStatusMessage } from '../i18n';
     import { getCommandSuggestions } from '../commandVocabulary.js';
@@ -156,11 +159,43 @@
             statusBarTextStore.set(tMsg('eval.batchDone', summary ?? { evaluated: 0, refused: 0, failed: 0 }));
         }),
         EventsOn('gammonnet-batch:cancelled', () => gammonNetBatchStore.set(null)),
-        EventsOn('gammonnet-batch:error', () => gammonNetBatchStore.set(null)),
+        // An automatic batch queued behind the job writing the library says so until it starts.
+        EventsOn('gammonnet-batch:waiting', (w) => gammonNetBatchStore.set({ done: 0, total: 0, ...w })),
+        EventsOn('gammonnet-batch:error', (e) => {
+            gammonNetBatchStore.set(null);
+            const message = e?.message ?? '';
+            statusBarTextStore.set(tMsg('eval.batchFailed', { error: busyMessage(message) ?? message }));
+        }),
         // A gesture stood but its display page could not be rewritten (a folder gone, a disk full).
         EventsOn('direction:page-warning', () => statusBarTextStore.set(tMsg('direction.display.error')))
     ];
     onDestroy(() => unsubGammonNetBatch.forEach((off) => off && off()));
+
+    // A maintenance pass (ADR-0088): its progress and its cancel live here, as the batch's.
+    let maintenance = $derived($maintenanceStore);
+    /** @param {string} kind */
+    const maintenanceOp = (kind) => $t(`maintenance.line_${String(kind ?? '').replace('.', '_')}`);
+    /** @param {() => void} report */
+    function endMaintenance(report) {
+        maintenanceStore.set(null);
+        maintenanceEndedStore.update((n) => n + 1);
+        report();
+    }
+    const unsubMaintenance = [
+        EventsOn('maintenance:progress', (p) => maintenanceStore.set(p)),
+        EventsOn('maintenance:done', (run) => endMaintenance(() => statusBarTextStore.set(tMsg('maintenance.done', { op: maintenanceOp(run?.kind), n: run?.changed ?? 0 })))),
+        EventsOn('maintenance:cancelled', (e) => endMaintenance(() => statusBarTextStore.set(tMsg('maintenance.cancelled', { op: maintenanceOp(e?.kind) })))),
+        EventsOn('maintenance:error', (e) =>
+            endMaintenance(() => {
+                const message = e?.message ?? '';
+                statusBarTextStore.set(tMsg('maintenance.failed', { op: maintenanceOp(e?.kind), error: busyMessage(message) ?? message }));
+            })
+        )
+    ];
+    onDestroy(() => unsubMaintenance.forEach((off) => off && off()));
+    let maintenanceLabel = $derived(
+        maintenance ? `${maintenanceOp(maintenance.kind)} ${maintenance.total > 0 ? `${maintenance.done}/${maintenance.total}` : maintenance.done > 0 ? maintenance.done : '…'}` : ''
+    );
 
     function cancelGammonNetBatch() {
         CancelGammonNetBatch();
@@ -323,9 +358,15 @@
         <span class="duel-chip"><DuelClocks duel={$duelStore.state} compact /></span>
     {/if}
     {#if gammonNetBatch}
-        <span class="gammonnet-batch-chip" title={$t('eval.batchProgress', { done: gammonNetBatch.done, total: gammonNetBatch.total })}>
-            {$t('eval.batchProgress', { done: gammonNetBatch.done, total: gammonNetBatch.total })}
+        <span class="gammonnet-batch-chip" title={gammonNetBatchLabel($t, gammonNetBatch)}>
+            {gammonNetBatchLabel($t, gammonNetBatch)}
             <button type="button" class="gammonnet-batch-cancel" onclick={cancelGammonNetBatch}>{$t('eval.batchCancel')}</button>
+        </span>
+    {/if}
+    {#if maintenance}
+        <span class="gammonnet-batch-chip" data-testid="maintenance-chip" title={maintenanceLabel}>
+            {maintenanceLabel}
+            <button type="button" class="gammonnet-batch-cancel" onclick={() => CancelMaintenance()}>{$t('eval.batchCancel')}</button>
         </span>
     {/if}
     {#if $matchContextStore.isMatchMode && $matchContextStore.movePositions.length > 0}

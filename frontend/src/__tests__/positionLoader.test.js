@@ -9,7 +9,8 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     GetPositionIDsByStatsSelection: vi.fn(),
     GetPositionIDsByTournament: vi.fn(),
     GetPositionIDsByMatch: vi.fn(),
-    LoadPositionIDsByFilters: vi.fn()
+    LoadPositionIDsByFilters: vi.fn(),
+    StatsTournamentIDs: vi.fn()
 }));
 
 // Mock uiStore to prevent side-effects
@@ -35,7 +36,8 @@ vi.mock('../stores/tournamentStore.js', () => {
     const { writable } = require('svelte/store');
     return {
         selectedTournamentStore: writable(null),
-        tournamentOpenRequestStore: writable(null)
+        tournamentOpenRequestStore: writable(null),
+        tournamentIDsFilterStore: writable(/** @type {number[] | null} */ (null))
     };
 });
 
@@ -62,15 +64,23 @@ vi.mock('../stores/positionStore.js', () => {
     };
 });
 
-// Mock statsStore (real module imports Wails bindings); expose only the filter.
+// Mock statsStore (real module imports Wails bindings); expose only the filter stores.
 vi.mock('../stores/statsStore.js', () => {
-    const { writable } = require('svelte/store');
+    const { writable, get } = require('svelte/store');
+    const statsFilterStore = writable({ decisionType: -1, playerName: '', tournamentIDs: [], dateFrom: '', dateTo: '', matchLength: [] });
+    const statsResultFilterStore = writable(null);
     return {
-        statsFilterStore: writable({ decisionType: -1, playerName: '', tournamentIDs: [], dateFrom: '', dateTo: '', matchLength: [] })
+        statsFilterStore,
+        statsTabStore: writable('dashboard'),
+        initStatsFilter: vi.fn(() => Promise.resolve()),
+        patchStatsFilter: vi.fn(() => true),
+        statsResultFilterStore,
+        playerTableFilterStore: writable(null),
+        drillDownFilter: () => get(statsResultFilterStore) ?? get(statsFilterStore)
     };
 });
 
-import { GetPositionIDsByStatsSelection, GetPositionIDsByTournament, GetPositionIDsByMatch, LoadPositionIDsByFilters } from '../../wailsjs/go/database/Database.js';
+import { GetPositionIDsByStatsSelection, GetPositionIDsByTournament, GetPositionIDsByMatch, LoadPositionIDsByFilters, StatsTournamentIDs } from '../../wailsjs/go/database/Database.js';
 
 import {
     loadPositionsFromSelection,
@@ -79,13 +89,17 @@ import {
     loadPositionsFromTournament,
     loadPositionsFromMatch,
     openTournamentInPanel,
-    openMatchInPanel
+    openMatchInPanel,
+    openStatsFor,
+    openTournamentListInPanel,
+    openStatsTournaments,
+    openStatsPlayerBlunders
 } from '../services/positionLoader.js';
 
-import { statsFilterStore } from '../stores/statsStore.js';
+import { statsFilterStore, statsTabStore, initStatsFilter, patchStatsFilter, statsResultFilterStore, playerTableFilterStore } from '../stores/statsStore.js';
 
 import { activeTabStore, matchOpenRequestStore } from '../stores/uiStore.js';
-import { tournamentOpenRequestStore } from '../stores/tournamentStore.js';
+import { tournamentOpenRequestStore, tournamentIDsFilterStore } from '../stores/tournamentStore.js';
 import { positionsStore } from '../stores/positionStore.js';
 
 describe('loadPositionsFromStatsSelection', () => {
@@ -210,5 +224,99 @@ describe('openMatchInPanel', () => {
         openMatchInPanel(12);
         expect(get(matchOpenRequestStore)).toBe(12);
         expect(get(activeTabStore)).toBe('matches');
+    });
+});
+
+describe('openStatsFor', () => {
+    test('restores the saved filter first, then puts the player on it with no tournament or date, and opens Stats', async () => {
+        /** @type {() => void} */
+        let restored = () => {};
+        vi.mocked(initStatsFilter).mockImplementation(() => new Promise((r) => (restored = () => r(undefined))));
+        vi.mocked(patchStatsFilter).mockClear();
+        activeTabStore.set('matches');
+        const opening = openStatsFor({ playerName: 'Alice' });
+        // The restore would overwrite a patch made before it lands.
+        expect(patchStatsFilter).not.toHaveBeenCalled();
+        restored();
+        await opening;
+        expect(patchStatsFilter).toHaveBeenCalledWith({ playerName: 'Alice', tournamentIDs: [], dateFrom: '', dateTo: '' });
+        expect(get(statsTabStore)).toBe('dashboard');
+        expect(get(activeTabStore)).toBe('stats');
+    });
+
+    test('a tournament narrows the filter to it, clears the dates and keeps the player, on the asked tab', async () => {
+        vi.mocked(initStatsFilter).mockResolvedValue(undefined);
+        await openStatsFor({ tournamentIDs: [4], tab: 'players' });
+        expect(patchStatsFilter).toHaveBeenLastCalledWith({ tournamentIDs: [4], dateFrom: '', dateTo: '' });
+        expect(get(statsTabStore)).toBe('players');
+    });
+});
+
+describe('openTournamentListInPanel', () => {
+    beforeEach(() => {
+        tournamentOpenRequestStore.set(null);
+        tournamentIDsFilterStore.set(null);
+        activeTabStore.set('stats');
+    });
+
+    test('a single tournament opens instead of a one-row list, dropping an earlier restriction', () => {
+        tournamentIDsFilterStore.set([3, 9]);
+        openTournamentListInPanel([5]);
+        expect(get(tournamentOpenRequestStore)).toBe(5);
+        expect(get(tournamentIDsFilterStore)).toBeNull();
+        expect(get(activeTabStore)).toBe('tournaments');
+    });
+
+    test('several tournaments restrict the list', () => {
+        openTournamentListInPanel([3, 9]);
+        expect(get(tournamentIDsFilterStore)).toEqual([3, 9]);
+        expect(get(tournamentOpenRequestStore)).toBeNull();
+        expect(get(activeTabStore)).toBe('tournaments');
+    });
+
+    test('none leaves the panel where it is', () => {
+        openTournamentListInPanel([]);
+        expect(get(activeTabStore)).toBe('stats');
+    });
+});
+
+describe('Stats counts', () => {
+    beforeEach(() => {
+        vi.resetAllMocks();
+        statsResultFilterStore.set(null);
+    });
+
+    test('the tournament count asks under the filter that produced the result', async () => {
+        const shown = { decisionType: -1, playerName: 'Alice', tournamentIDs: [], dateFrom: '2025-01-01', dateTo: '', matchLength: [] };
+        statsResultFilterStore.set(shown);
+        statsFilterStore.set({ ...shown, dateFrom: '2026-01-01' });
+        vi.mocked(StatsTournamentIDs).mockResolvedValue([4, 6]);
+
+        await openStatsTournaments();
+
+        expect(StatsTournamentIDs).toHaveBeenCalledWith(shown);
+        expect(get(tournamentIDsFilterStore)).toEqual([4, 6]);
+    });
+
+    test("a Players row's blunders are the blunders selection of that player, every decision type", async () => {
+        statsFilterStore.set(/** @type {any} */ ({ decisionType: 0, playerName: '', tournamentIDs: [2], dateFrom: '', dateTo: '', matchLength: [] }));
+        vi.mocked(GetPositionIDsByStatsSelection).mockResolvedValue([1]);
+        vi.mocked(LoadPositionIDsByFilters).mockResolvedValue([1]);
+
+        await openStatsPlayerBlunders('Bob');
+
+        expect(GetPositionIDsByStatsSelection).toHaveBeenCalledWith(expect.objectContaining({ playerName: 'Bob', decisionType: -1, tournamentIDs: [2] }), { Kind: 'blunders' });
+    });
+
+    test('the blunders open under the filter the players table was read with', async () => {
+        playerTableFilterStore.set(/** @type {any} */ ({ decisionType: -1, playerName: '', tournamentIDs: [8], dateFrom: '', dateTo: '', matchLength: [] }));
+        statsFilterStore.set(/** @type {any} */ ({ decisionType: -1, playerName: '', tournamentIDs: [9], dateFrom: '', dateTo: '', matchLength: [] }));
+        vi.mocked(GetPositionIDsByStatsSelection).mockResolvedValue([1]);
+        vi.mocked(LoadPositionIDsByFilters).mockResolvedValue([1]);
+
+        await openStatsPlayerBlunders('Bob');
+
+        expect(GetPositionIDsByStatsSelection).toHaveBeenCalledWith(expect.objectContaining({ playerName: 'Bob', tournamentIDs: [8] }), { Kind: 'blunders' });
+        playerTableFilterStore.set(null);
     });
 });

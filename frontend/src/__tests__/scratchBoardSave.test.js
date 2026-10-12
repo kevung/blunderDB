@@ -38,7 +38,7 @@ const config = vi.hoisted(() => ({
     GetGammonNetAnalysisPly: vi.fn(() => Promise.resolve(2)),
     GetGammonNetPruneK: vi.fn(() => Promise.resolve(12))
 }));
-const app = vi.hoisted(() => ({ StartGammonNetBatch: vi.fn(() => Promise.resolve()) }));
+const app = vi.hoisted(() => ({ QueueGammonNetBatch: vi.fn(() => Promise.resolve()) }));
 const status = vi.hoisted(() => ({ setStatusBarMessage: vi.fn() }));
 
 vi.mock('../../wailsjs/go/database/Database.js', () => db);
@@ -333,7 +333,7 @@ describe('saving the Search scratch board', () => {
 
         await saveCurrentPosition();
 
-        expect(app.StartGammonNetBatch).toHaveBeenCalledWith(2, 12, 0);
+        expect(app.QueueGammonNetBatch).toHaveBeenCalledWith(2, 12, 0);
     });
 
     test('a refused board is not written, and the refusal is said', async () => {
@@ -525,7 +525,7 @@ describe('saving the Eval scratch board (#399)', () => {
 
         await saveCurrentPosition();
 
-        expect(app.StartGammonNetBatch).toHaveBeenCalledWith(2, 12, 0);
+        expect(app.QueueGammonNetBatch).toHaveBeenCalledWith(2, 12, 0);
     });
 
     test('outside a scratch board the save is still refused', async () => {

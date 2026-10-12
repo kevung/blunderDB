@@ -2,6 +2,7 @@ package sqlshared
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -162,6 +163,61 @@ func (s *LibrarySettingsStore) SetPileCollection(ctx context.Context, scope stri
 		ON CONFLICT (` + strings.Join(conflict, ", ") + `) DO UPDATE SET value = EXCLUDED.value`
 	if _, err := s.DB.Exec(ctx, upsert, args...); err != nil {
 		return errf(s.DB, "save pile collection", err)
+	}
+	return nil
+}
+
+// MaintenanceLog — see storage.LibrarySettingsStore.
+func (s *LibrarySettingsStore) MaintenanceLog(ctx context.Context, scope string) (map[string]string, error) {
+	table, scoped := s.DB.LibrarySettingsTable()
+	query := `SELECT key, COALESCE(value,'') FROM ` + table + ` WHERE `
+	args := []any{}
+	if scoped {
+		query += s.DB.ScopeColumn() + ` = ? AND `
+		args = append(args, s.DB.ScopeArg(scope))
+	}
+	// substr rather than LIKE: no wildcard of the prefix to escape, and the
+	// same spelling on both dialects.
+	query += `substr(key, 1, ?) = ?`
+	args = append(args, len(storage.MaintenanceKeyPrefix), storage.MaintenanceKeyPrefix)
+	rows, err := s.DB.Query(ctx, query, args...)
+	if err != nil {
+		return nil, errf(s.DB, "load maintenance log", err)
+	}
+	defer rows.Close()
+	out := map[string]string{}
+	for rows.Next() {
+		var key, value string
+		if err := rows.Scan(&key, &value); err != nil {
+			return nil, errf(s.DB, "load maintenance log", err)
+		}
+		out[key] = value
+	}
+	if err := rows.Err(); err != nil {
+		return nil, errf(s.DB, "load maintenance log", err)
+	}
+	return out, nil
+}
+
+// RecordMaintenance — see storage.LibrarySettingsStore.
+func (s *LibrarySettingsStore) RecordMaintenance(ctx context.Context, scope, key, value string) error {
+	if !strings.HasPrefix(key, storage.MaintenanceKeyPrefix) || len(key) == len(storage.MaintenanceKeyPrefix) {
+		return errf(s.DB, "record maintenance", fmt.Errorf("key %q outside the maintenance journal: %w", key, storage.ErrInvalid))
+	}
+	table, scoped := s.DB.LibrarySettingsTable()
+	cols, conflict := []string{"key", "value"}, []string{"key"}
+	args := []any{}
+	if scoped {
+		cols = append([]string{s.DB.ScopeColumn()}, cols...)
+		conflict = append([]string{s.DB.ScopeColumn()}, conflict...)
+		args = append(args, s.DB.ScopeArg(scope))
+	}
+	args = append(args, key, value)
+	upsert := `INSERT INTO ` + table + ` (` + strings.Join(cols, ", ") + `) VALUES (` +
+		strings.TrimSuffix(strings.Repeat("?,", len(cols)), ",") + `)
+		ON CONFLICT (` + strings.Join(conflict, ", ") + `) DO UPDATE SET value = EXCLUDED.value`
+	if _, err := s.DB.Exec(ctx, upsert, args...); err != nil {
+		return errf(s.DB, "record maintenance", err)
 	}
 	return nil
 }

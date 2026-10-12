@@ -62,6 +62,8 @@ var customContentTypes = map[string][]string{
 	"/v1/gammonnet.analyzeMissing":        {ndjsonContentType},
 	"/v1/gammonnet.analyzeMissing.cancel": {"application/json"},
 	"/v1/gammonnet.sweepStale":            {ndjsonContentType},
+	"/v1/maintenance.run":                 {ndjsonContentType},
+	"/v1/maintenance.cancel":              {"application/json"},
 	// gammonnet.compare is hand-written but NOT streamed: it writes nothing,
 	// so there is no partial state to report progress into, and its answer is
 	// one small object.

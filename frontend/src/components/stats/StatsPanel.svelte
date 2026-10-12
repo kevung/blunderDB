@@ -20,9 +20,13 @@
         trainingStatsLoadingStore,
         trainingStatsErrorStore,
         trainingWindowStore,
-        refreshTrainingStats
+        refreshTrainingStats,
+        statsTabStore
     } from '../../stores/statsStore.js';
-    import { activeTabStore } from '../../stores/uiStore.js';
+    import { activeTabStore, configInitialTabStore, openModal, MODAL } from '../../stores/uiStore.js';
+    import { maintenanceEndedStore } from '../../stores/maintenanceStore.js';
+    import { MaintenanceStatus } from '../../../wailsjs/go/database/Database.js';
+    import CountLink from '../panels/CountLink.svelte';
     import { databaseLoadedStore } from '../../stores/databaseStore.js';
     import { t } from '../../i18n/index.js';
     import { exportHTMLReport } from '../../services/reportService.js';
@@ -36,8 +40,6 @@
     import StatsCorpusTab from './StatsCorpusTab.svelte';
     import EmptyState from '../panels/EmptyState.svelte';
 
-    /** Currently active inner tab. */
-    let activeTab = $state('dashboard');
     /** No match imported yet: the filter bar reports it, the match-based tabs show it. */
     let dbEmpty = $state(false);
 
@@ -48,13 +50,43 @@
         logger.perf('StatsPanel:refreshStats', () => refreshStats(filter, key));
     });
 
+    // Matches without match_stats are computed on the first read, slowly on a large library:
+    // their count leads to the Maintenance line that fills them all at once.
+    let matchesWithoutStats = $state(0);
+    // Only the latest request answers: an older one arriving last would show a stale count.
+    let statusSeq = 0;
+    $effect(() => {
+        $statsInvalidationKeyStore;
+        $maintenanceEndedStore;
+        if (!$databaseLoadedStore) {
+            statusSeq++;
+            matchesWithoutStats = 0;
+            return;
+        }
+        const seq = ++statusSeq;
+        MaintenanceStatus()
+            .then((lines) => {
+                if (seq !== statusSeq) return;
+                const line = (lines ?? []).find((l) => l.kind === 'stats.matches');
+                matchesWithoutStats = line?.count ?? 0;
+            })
+            .catch(() => {
+                if (seq === statusSeq) matchesWithoutStats = 0;
+            });
+    });
+
+    function openMaintenance() {
+        configInitialTabStore.set('maintenance');
+        openModal(MODAL.CONFIG);
+    }
+
     // The players table is fetched only while its tab is open: it is a
     // whole-database aggregate, and computing it behind the other three tabs
     // would make every filter change pay for a table nobody is looking at.
     $effect(() => {
         const filter = $statsFilterStore;
         const key = $statsInvalidationKeyStore;
-        if (!$databaseLoadedStore || activeTab !== 'players') return;
+        if (!$databaseLoadedStore || $statsTabStore !== 'players') return;
         logger.perf('StatsPanel:refreshPlayerTable', () => refreshPlayerTable(filter, key));
     });
 
@@ -63,7 +95,7 @@
     $effect(() => {
         const filter = $statsFilterStore;
         const key = $statsInvalidationKeyStore;
-        if (!$databaseLoadedStore || activeTab !== 'errors') return;
+        if (!$databaseLoadedStore || $statsTabStore !== 'errors') return;
         logger.perf('StatsPanel:refreshRecurringErrors', () => refreshRecurringErrors(filter, key));
     });
 
@@ -72,7 +104,7 @@
     $effect(() => {
         const filter = $statsFilterStore;
         const key = $statsInvalidationKeyStore;
-        if (!$databaseLoadedStore || activeTab !== 'dashboard') return;
+        if (!$databaseLoadedStore || $statsTabStore !== 'dashboard') return;
         logger.perf('StatsPanel:refreshStudyPlan', () => refreshStudyPlan(filter, key));
     });
 
@@ -80,7 +112,7 @@
     $effect(() => {
         const filter = $statsFilterStore;
         const key = $statsInvalidationKeyStore;
-        if (!$databaseLoadedStore || activeTab !== 'dashboard') return;
+        if (!$databaseLoadedStore || $statsTabStore !== 'dashboard') return;
         logger.perf('StatsPanel:refreshStudyLoop', () => refreshStudyLoop(filter, key));
     });
 
@@ -89,13 +121,13 @@
         const filter = $statsFilterStore;
         const key = $statsInvalidationKeyStore;
         const windowKind = $trainingWindowStore;
-        if (!$databaseLoadedStore || activeTab !== 'training') return;
+        if (!$databaseLoadedStore || $statsTabStore !== 'training') return;
         logger.perf('StatsPanel:refreshTrainingStats', () => refreshTrainingStats(filter, key, windowKind));
     });
 
     /** Follow a player from the table into their own dashboard. */
     function showPlayerDashboard() {
-        activeTab = 'dashboard';
+        $statsTabStore = 'dashboard';
     }
 
     function handleClose() {
@@ -115,44 +147,55 @@
             >
         </div>
         <span class="spacer"></span>
+        {#if matchesWithoutStats > 0}
+            <CountLink label={$t('maintenance.statsMissing', { n: matchesWithoutStats })} onclick={openMaintenance} title={$t('maintenance.title')} testid="stats-missing-match-stats" />
+        {/if}
         <!-- Le rapport porte le filtre courant, donc il vit là où le
              filtre se règle. -->
         <button class="report-btn" onclick={() => exportHTMLReport()}>{$t('report.action')}</button>
         <button class="close-btn" onclick={handleClose} aria-label={$t('stats.closePanel')}>✕</button>
     </header>
 
-    <StatsFilterBar playersTab={activeTab === 'players'} bind:dbEmpty />
+    <StatsFilterBar playersTab={$statsTabStore === 'players'} bind:dbEmpty />
 
     <div class="tabs" role="tablist">
-        <button class="tab-btn" class:active={activeTab === 'dashboard'} role="tab" aria-selected={activeTab === 'dashboard'} onclick={() => (activeTab = 'dashboard')}
+        <button class="tab-btn" class:active={$statsTabStore === 'dashboard'} role="tab" aria-selected={$statsTabStore === 'dashboard'} onclick={() => ($statsTabStore = 'dashboard')}
             >{$t('stats.tabDashboard')}</button
         >
-        <button class="tab-btn" class:active={activeTab === 'progression'} role="tab" aria-selected={activeTab === 'progression'} onclick={() => (activeTab = 'progression')}
+        <button class="tab-btn" class:active={$statsTabStore === 'progression'} role="tab" aria-selected={$statsTabStore === 'progression'} onclick={() => ($statsTabStore = 'progression')}
             >{$t('stats.tabProgression')}</button
         >
-        <button class="tab-btn" class:active={activeTab === 'errors'} role="tab" aria-selected={activeTab === 'errors'} onclick={() => (activeTab = 'errors')}>{$t('stats.tabErrors')}</button>
-        <button class="tab-btn" class:active={activeTab === 'training'} role="tab" aria-selected={activeTab === 'training'} onclick={() => (activeTab = 'training')}>{$t('stats.tabTraining')}</button>
-        <button class="tab-btn" class:active={activeTab === 'breakdowns'} role="tab" aria-selected={activeTab === 'breakdowns'} onclick={() => (activeTab = 'breakdowns')}
+        <button class="tab-btn" class:active={$statsTabStore === 'errors'} role="tab" aria-selected={$statsTabStore === 'errors'} onclick={() => ($statsTabStore = 'errors')}
+            >{$t('stats.tabErrors')}</button
+        >
+        <button class="tab-btn" class:active={$statsTabStore === 'training'} role="tab" aria-selected={$statsTabStore === 'training'} onclick={() => ($statsTabStore = 'training')}
+            >{$t('stats.tabTraining')}</button
+        >
+        <button class="tab-btn" class:active={$statsTabStore === 'breakdowns'} role="tab" aria-selected={$statsTabStore === 'breakdowns'} onclick={() => ($statsTabStore = 'breakdowns')}
             >{$t('stats.tabBreakdowns')}</button
         >
-        <button class="tab-btn" class:active={activeTab === 'players'} role="tab" aria-selected={activeTab === 'players'} onclick={() => (activeTab = 'players')}>{$t('stats.tabPlayers')}</button>
-        <button class="tab-btn" class:active={activeTab === 'corpus'} role="tab" aria-selected={activeTab === 'corpus'} onclick={() => (activeTab = 'corpus')}>{$t('stats.tabCorpus')}</button>
+        <button class="tab-btn" class:active={$statsTabStore === 'players'} role="tab" aria-selected={$statsTabStore === 'players'} onclick={() => ($statsTabStore = 'players')}
+            >{$t('stats.tabPlayers')}</button
+        >
+        <button class="tab-btn" class:active={$statsTabStore === 'corpus'} role="tab" aria-selected={$statsTabStore === 'corpus'} onclick={() => ($statsTabStore = 'corpus')}
+            >{$t('stats.tabCorpus')}</button
+        >
     </div>
 
     <div class="tab-content" role="tabpanel">
         <!-- Le corpus calcule à la demande : il ne dépend pas du calcul du tableau de bord. -->
-        {#if activeTab === 'corpus'}
+        {#if $statsTabStore === 'corpus'}
             <StatsCorpusTab filter={$statsFilterStore} />
-        {:else if dbEmpty && activeTab !== 'training'}
+        {:else if dbEmpty && $statsTabStore !== 'training'}
             <!-- The training tab reads the quizzes, not the matches: it has something to show. -->
             <EmptyState text={$t('match.noMatchesImported')} />
         {:else if $statsLoadingStore}
             <p class="loading-msg">{$t('stats.loading')}</p>
-        {:else if activeTab === 'dashboard'}
+        {:else if $statsTabStore === 'dashboard'}
             <StatsDashboardTab result={$statsResultStore} metric={$statsMetricStore} />
-        {:else if activeTab === 'progression'}
+        {:else if $statsTabStore === 'progression'}
             <StatsProgressionTab result={$statsResultStore} metric={$statsMetricStore} />
-        {:else if activeTab === 'errors'}
+        {:else if $statsTabStore === 'errors'}
             <StatsErrorsTab
                 result={$statsResultStore}
                 metric={$statsMetricStore}
@@ -160,11 +203,11 @@
                 recurringLoading={$recurringErrorsLoadingStore}
                 recurringError={$recurringErrorsErrorStore}
             />
-        {:else if activeTab === 'training'}
+        {:else if $statsTabStore === 'training'}
             <StatsTrainingTab data={$trainingStatsStore} loading={$trainingStatsLoadingStore} error={$trainingStatsErrorStore} bind:period={$trainingWindowStore} />
-        {:else if activeTab === 'breakdowns'}
+        {:else if $statsTabStore === 'breakdowns'}
             <StatsBreakdownsTab result={$statsResultStore} />
-        {:else if activeTab === 'players'}
+        {:else if $statsTabStore === 'players'}
             {#if $playerTableLoadingStore}
                 <p class="loading-msg">{$t('stats.loading')}</p>
             {:else}

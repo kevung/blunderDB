@@ -132,6 +132,13 @@ func TestCanonicalFormsAgreeWithGammonNet(t *testing.T) {
 		if !slices.Equal(got.FilterThreshold, want.FilterThreshold) {
 			t.Errorf("%s: FilterThreshold = %v, gammonNet publie %v", name, got.FilterThreshold, want.FilterThreshold)
 		}
+		if got.RootStagePly != want.RootStagePly || got.RootStageFilter != want.RootStageFilter ||
+			got.RootStageFilterExtra != want.RootStageFilterExtra ||
+			got.RootStageFilterThreshold != want.RootStageFilterThreshold {
+			t.Errorf("%s: root stage (%d, %d, %d, %v), gammonNet publie (%d, %d, %d, %v)", name,
+				got.RootStagePly, got.RootStageFilter, got.RootStageFilterExtra, got.RootStageFilterThreshold,
+				want.RootStagePly, want.RootStageFilter, want.RootStageFilterExtra, want.RootStageFilterThreshold)
+		}
 		if got.PruneK != want.PruneK {
 			t.Errorf("%s: PruneK = %d, gammonNet publie %d", name, got.PruneK, want.PruneK)
 		}

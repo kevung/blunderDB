@@ -61,11 +61,14 @@ func (d *Database) exportPlan(ctx context.Context, opts ExportOptions) (ingest.E
 		return wholeLibraryPlan(opts), nil
 	}
 	plan := ingest.ExportOptions{
-		Format:        ingest.FormatSQLite,
-		Analysis:      opts.IncludeAnalysis,
-		Comments:      opts.IncludeComments,
-		PlayedMoves:   opts.IncludePlayedMoves,
-		FilterLibrary: opts.IncludeFilterLibrary,
+		Format:         ingest.FormatSQLite,
+		Analysis:       opts.IncludeAnalysis,
+		Comments:       opts.IncludeComments,
+		PlayedMoves:    opts.IncludePlayedMoves,
+		FilterLibrary:  opts.IncludeFilterLibrary,
+		Transcriptions: opts.IncludeTranscriptions,
+		Aliases:        opts.IncludeAliases,
+		AnkiHistory:    opts.IncludeAnkiHistory,
 	}
 	sel := ingest.Selection{
 		AllPositions:  opts.AllPositions,
@@ -86,6 +89,7 @@ func (d *Database) exportPlan(ctx context.Context, opts ExportOptions) (ingest.E
 	}
 	if opts.IncludeCollections {
 		sel.CollectionIDs = opts.CollectionIDs
+		sel.CollectionPositions = opts.IncludeCollectionPositions
 	}
 	if opts.IncludeMatches {
 		switch {
@@ -123,6 +127,9 @@ func wholeLibraryPlan(opts ExportOptions) ingest.ExportOptions {
 	plan.Comments = opts.IncludeComments
 	plan.PlayedMoves = opts.IncludePlayedMoves
 	plan.FilterLibrary = opts.IncludeFilterLibrary
+	plan.Transcriptions = opts.IncludeTranscriptions
+	plan.Aliases = opts.IncludeAliases
+	plan.AnkiHistory = opts.IncludeAnkiHistory
 	sel := &plan.Selection
 	sel.AllMatches, sel.MatchIDs = narrow(opts.IncludeMatches, opts.MatchIDs)
 	sel.AllCollections, sel.CollectionIDs = narrow(opts.IncludeCollections, opts.CollectionIDs)

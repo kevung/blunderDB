@@ -2,6 +2,7 @@ package storagetest
 
 import (
 	"context"
+	"slices"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -175,6 +176,14 @@ func testWithoutAnalysis(t *testing.T, s storage.Storage) {
 	}
 	if seen[analysed] {
 		t.Errorf("a position that already has an analysis (%d) came back as a gap", analysed)
+	}
+
+	bareIDs, err := s.Analyses().WithoutAnalysisIDs(ctx, "")
+	if err != nil {
+		t.Fatalf("WithoutAnalysisIDs: %v", err)
+	}
+	if !slices.Equal(bareIDs, got) {
+		t.Errorf("WithoutAnalysisIDs = %v, want WithoutAnalysis's ids %v", bareIDs, got)
 	}
 
 	// Ascending id, and the same bound the listing families take.

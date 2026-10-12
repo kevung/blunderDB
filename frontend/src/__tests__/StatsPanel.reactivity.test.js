@@ -15,6 +15,7 @@ import { tick } from 'svelte';
 
 // ── Wails mocks ──────────────────────────────────────────────────────────────
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
+    MaintenanceStatus: vi.fn(() => Promise.resolve([])),
     ComputeStats: vi.fn(() =>
         Promise.resolve({
             Totals: { NumPositions: 10, NumMatches: 1, NumTournaments: 0, NumDecisions: 10 },

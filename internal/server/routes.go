@@ -68,6 +68,7 @@ var streamingCustomPaths = map[string]bool{
 	"/v1/exports.sqlite":           true,
 	"/v1/gammonnet.analyzeMissing": true,
 	"/v1/gammonnet.sweepStale":     true,
+	"/v1/maintenance.run":          true,
 	"/v1/rollout.position":         true,
 	"/v1/rollout.filter":           true,
 	// search.query streams a whole result set, exactly like the rpcStream
@@ -164,6 +165,7 @@ func (s *Server) domainRoutes() []route {
 	rs = append(rs, s.gammonnetRoutes()...)
 	rs = append(rs, s.metRoutes()...)
 	rs = append(rs, s.reencodeRoutes()...)
+	rs = append(rs, s.healthRoutes()...)
 	rs = append(rs, s.rolloutRoutes()...)
 	rs = append(rs, s.trashRoutes()...)
 	rs = append(rs, s.directionReadRoutes()...)

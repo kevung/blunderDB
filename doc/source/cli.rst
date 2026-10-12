@@ -106,6 +106,7 @@ Commandes disponibles
    "met", "Liste, importe et choisit la table d'équité de match de la base."
    "reencode", "Réécrit les analyses au format compact."
    "repair", "Recalcule ce que la base dérive de ce qu'elle stocke."
+   "maintenance", "L'état de santé de la base : compteurs, actions et dernières exécutions."
    "delete", "Supprime des données."
    "healthcheck", "Interroge un démon ``serve`` en marche : code 0 s'il est disponible."
    "mcp", "Offre les outils de la base à un assistant IA (Model Context Protocol)."
@@ -373,10 +374,15 @@ Exporte le contenu de la base vers des fichiers.
 * ``--filters`` — Inclure la bibliothèque de filtres (défaut: oui).
 * ``--played-moves`` — Inclure les coups joués (défaut: oui).
 * ``--matches`` — Inclure les matchs (défaut: oui).
+* ``--transcriptions`` — Inclure le brouillon de transcription de chaque match
+  exporté (défaut: oui).
+* ``--aliases`` — Inclure les alias de joueurs et d'événements que les matchs
+  exportés écrivent, pour que la fusion de joueurs les suive (défaut: oui).
 * ``--collections`` — Inclure les collections (défaut: oui).
 * ``--tournaments`` — Inclure les tournois (défaut: oui).
-* ``--decks`` — Inclure les paquets Anki, sans leur historique de révision
-  (défaut: oui).
+* ``--decks`` — Inclure les paquets Anki (défaut: oui).
+* ``--anki-history`` — Emporter l'historique de révision des paquets exportés :
+  l'état de chaque carte et le journal de ses révisions (défaut: oui).
 * ``--collection-ids`` — IDs de collections à exporter (séparés par des
   virgules, vide = toutes).
 * ``--match-ids`` — IDs de matchs à exporter (séparés par des virgules, vide = tous).
@@ -395,9 +401,12 @@ Exporte le contenu de la base vers des fichiers.
 
 ``--type database`` exporte toute la bibliothèque, comme l'export du serveur
 et comme la fenêtre d'export quand la liste affichée est la bibliothèque :
-positions, matchs, tournois, collections, leçons, paquets Anki, transcriptions
-et filtres. Une option à ``false`` retire sa famille (``--collections=false``) ;
+positions, matchs, tournois, collections, leçons, paquets Anki, transcriptions,
+alias et filtres. Une option à ``false`` retire sa famille (``--collections=false``) ;
 une liste d'IDs la restreint à ces éléments et l'inclut.
+Un brouillon de transcription part avec le match qu'il a produit ; un brouillon
+qui n'a pas encore produit de match ne part que si tous les matchs partent.
+``--type matches`` emporte aussi le brouillon de chaque match.
 
 **Exemples:**
 
@@ -1534,6 +1543,15 @@ du plus ancien au plus récent. Leurs identifiants se passent à
    ./blunderdb stats matches --db base.db --player "Alice" --from 2025-01-01 --to 2025-03-31
    ./blunderdb list --type matches --db base.db --ids 12,15,31
 
+**stats tournaments** — Les tournois que compte le nombre de tournois du
+Tableau de bord : ceux qui portent une décision comptée du joueur (de tout
+joueur sans ``--player``) sous le filtre, par identifiant.
+
+.. code-block:: bash
+
+   ./blunderdb stats tournaments --db base.db --player "Alice" --from 2025-01-01
+   ./blunderdb stats tournaments --db base.db --format json
+
 **stats progression** — Le PR de chaque match par ordre de date, le PR de
 chaque tournoi et le PR glissant sur les N dernières décisions : l'onglet
 *Progression* du panneau Stats (voir :ref:`stats`).
@@ -1881,8 +1899,8 @@ rattrapage d'une bibliothèque constituée avant que cette fonctionnalité
 existe (`ADR-0013 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md>`__,
 `ADR-0015 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0015-blunderdb-serve-operates-on-a-library-it-does-not-expose-an-evaluator.md>`__).
 C'est la même opération que le déclenchement
-automatique après import et le bouton « Analyser maintenant » de l'interface
-graphique, et que le point d'accès ``/v1/gammonnet.analyzeMissing`` du démon
+automatique après import et la ligne « Positions sans analyse » de l'onglet
+*Maintenance* de l'interface graphique, et que le point d'accès ``/v1/gammonnet.analyzeMissing`` du démon
 ``serve`` pour un tenant — trois formes différentes de la même opération, pas
 trois logiques distinctes (voir :ref:`headless`).
 
@@ -2750,6 +2768,66 @@ ne se lance jamais d'elle-même. Le démon expose la même opération sur la rou
    ./blunderdb reencode --db base.db
 
    #   Analyses rewritten: 15623468
+
+maintenance — L'état de santé de la base
+----------------------------------------
+
+Une ligne par opération de maintenance : ce qu'elle compte, son action et sa
+dernière exécution. Rien ne se lance de soi-même : ni à l'ouverture de la base,
+ni en lisant l'état.
+
+.. code-block:: bash
+
+   ./blunderdb maintenance status --db <path>
+   ./blunderdb maintenance count <opération> --db <path>
+   ./blunderdb maintenance ids <opération> --db <path>
+   ./blunderdb maintenance run <opération> --db <path>
+
+**Sous-commandes:**
+
+* ``status`` — Toutes les opérations, avec les compteurs gratuits et la
+  dernière exécution de chacune. Un compteur coûteux affiche
+  ``(count on demand)`` : ``count`` le calcule.
+* ``count`` — Calcule le compteur d'une opération, quel qu'en soit le coût.
+* ``ids`` — Liste les identifiants que l'opération compte (positions ou
+  matchs) ; leur nombre est la réponse de ``count``.
+* ``run`` — Lance l'action d'une opération et l'inscrit comme sa dernière
+  exécution (terminée, annulée ou en échec). Ctrl-C l'arrête entre deux lots.
+
+**Opérations:**
+
+.. csv-table::
+   :header: "Opération", "Compteur", "Action"
+   :widths: 22, 40, 38
+
+   "``analysis.missing``", "Positions sans aucune analyse, à la demande.", "La commande ``analyze``."
+   "``stats.matches``", "Matchs sans statistiques par match.", "Les calcule."
+   "``analysis.columns``", "—", "Recalcule les colonnes tirées des analyses."
+   "``moves.errors``", "—", "Note l'erreur des coups joués qui n'en ont pas."
+   "``analysis.legacy``", "—", "Réécrit les analyses au format compact (``reencode``)."
+   "``trash``", "Entrées de la corbeille.", "La commande ``trash``."
+   "``vacuum``", "Octets libres du fichier (SQLite).", "La commande ``vacuum``."
+
+**Options:**
+
+* ``--db`` — Base de données (obligatoire).
+* ``--format`` — Format de sortie: ``text`` (défaut) ou ``json``.
+
+La dernière exécution est rangée dans la base, avec ses réglages ; un export
+ne l'emporte pas. Une seule opération tourne à la fois. Le démon expose les
+mêmes sous-commandes sur les routes ``maintenance.status``,
+``maintenance.count``, ``maintenance.ids``, ``maintenance.run`` (en flux
+NDJSON, annulable par ``maintenance.cancel``), limitées au tenant de
+l'appelant ; une opération demandée pendant qu'une analyse gammonNet ou un
+rollout tourne pour ce tenant est refusée.
+
+**Exemple:**
+
+.. code-block:: bash
+
+   ./blunderdb maintenance run stats.matches --db base.db
+
+   #   stats.matches: done, 1204 changed
 
 players — Les graphies d'un joueur
 ----------------------------------

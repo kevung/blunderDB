@@ -5,8 +5,11 @@
     import { loadPositionsFromSelection } from '../../services/positionLoader.js';
     import { quizOnIds, quizOnWorstGroups, deckFromIds, collectionFromIds } from '../../services/recurringStudy.js';
     import { t } from '../../i18n/index.js';
+    import PanelTable from '../panels/PanelTable.svelte';
+    import CountLink from '../panels/CountLink.svelte';
 
-    /** @type {{ data: { NumDecisions: number, Groups: Array<object> }|null, loading?: boolean, error?: string|null }} */
+    /** @typedef {{ GameType: string, Kind: string, Theme: string, SumErrorMP: number, Count: number, PRCost: number, PositionIDs?: number[] }} RecurringGroup */
+    /** @type {{ data: { NumDecisions: number, Groups: Array<RecurringGroup>, Unthemed?: Array<RecurringGroup> }|null, loading?: boolean, error?: string|null }} */
     let { data = null, loading = false, error = null } = $props();
 
     let groups = $derived(data?.Groups ?? []);
@@ -15,6 +18,7 @@
     // Erreur, et ce reste coifferait sinon un classement qui ne dit rien.
     let unthemed = $derived(data?.Unthemed ?? []);
 
+    /** @param {string} gameType */
     function gameTypeLabel(gameType) {
         const key = `stats.gameType_${gameType}`;
         const label = $t(key);
@@ -23,6 +27,7 @@
 
     // Les thèmes de videau sont les cases d'erreur de la matrice de direction :
     // mêmes libellés qu'elle, pour qu'un même fait ne porte pas deux noms.
+    /** @type {Record<string, string>} */
     const CUBE_LABELS = {
         offer_missed: 'stats.cubeOfferMissed',
         offer_premature: 'stats.cubeOfferPremature',
@@ -30,16 +35,50 @@
         answer_wrong_take: 'stats.cubeAnswerWrongTake'
     };
 
+    /** @param {RecurringGroup} g */
     function themeLabel(g) {
         const key = g.Kind === 'cube' && CUBE_LABELS[g.Theme] ? CUBE_LABELS[g.Theme] : `stats.recurringTheme_${g.Theme}`;
         const label = $t(key);
         return label === key ? g.Theme : label;
     }
 
+    /** @param {RecurringGroup} g */
     function studyName(g) {
         return $t('stats.recurringStudyName', { name: `${gameTypeLabel(g.GameType)} · ${$t(`stats.recurringKind_${g.Kind}`)} · ${themeLabel(g)}` });
     }
 
+    const columns = $derived([
+        { key: 'gameType', label: $t('stats.gameType'), sortable: true, filter: /** @type {const} */ ('text'), value: (/** @type {RecurringGroup} */ g) => gameTypeLabel(g.GameType) },
+        {
+            key: 'theme',
+            label: $t('stats.recurringTheme'),
+            sortable: true,
+            elastic: true,
+            filter: /** @type {const} */ ('text'),
+            value: (/** @type {RecurringGroup} */ g) => `${$t(`stats.recurringKind_${g.Kind}`)} · ${themeLabel(g)}`
+        },
+        {
+            key: 'decisions',
+            label: $t('stats.decisions'),
+            sortable: true,
+            defaultDir: 'desc',
+            align: 'right',
+            filter: /** @type {const} */ ('number'),
+            value: (/** @type {RecurringGroup} */ g) => g.Count
+        },
+        {
+            key: 'cost',
+            label: $t('stats.recurringCost'),
+            sortable: true,
+            defaultDir: 'desc',
+            align: 'right',
+            filter: /** @type {const} */ ('number'),
+            value: (/** @type {RecurringGroup} */ g) => g.PRCost
+        },
+        { key: 'actions', label: $t('stats.recurringActions'), actions: true }
+    ]);
+
+    /** @param {RecurringGroup} g */
     function open(g) {
         if (!g.PositionIDs?.length) return;
         loadPositionsFromSelection(g.PositionIDs);
@@ -58,36 +97,23 @@
     {:else}
         {#if groups.length > 0}
             <button type="button" class="study-btn worst" data-testid="recurring-quiz-worst" onclick={() => quizOnWorstGroups()}>{$t('stats.recurringQuizWorst')}</button>
-            <table>
-                <thead>
-                    <tr>
-                        <th>{$t('stats.gameType')}</th>
-                        <th>{$t('stats.recurringTheme')}</th>
-                        <th class="num">{$t('stats.decisions')}</th>
-                        <th class="num">{$t('stats.recurringCost')}</th>
-                        <th>{$t('stats.recurringActions')}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {#each groups as g (g.GameType + '/' + g.Kind + '/' + g.Theme)}
-                        <tr class="group-row" title={`${(g.SumErrorMP / 1000).toFixed(3)}`}>
-                            <td>{gameTypeLabel(g.GameType)}</td>
-                            <td>
-                                <button type="button" class="group-link" onclick={() => open(g)}>
-                                    {$t(`stats.recurringKind_${g.Kind}`)} · {themeLabel(g)}
-                                </button>
-                            </td>
-                            <td class="num">{g.Count}</td>
-                            <td class="num">{g.PRCost.toFixed(2)}</td>
-                            <td class="actions">
-                                <button type="button" class="study-btn" onclick={() => quizOnIds(g.PositionIDs ?? [])}>{$t('stats.recurringQuiz')}</button>
-                                <button type="button" class="study-btn" onclick={() => deckFromIds(studyName(g), g.PositionIDs ?? [])}>{$t('stats.recurringDeck')}</button>
-                                <button type="button" class="study-btn" onclick={() => collectionFromIds(studyName(g), g.PositionIDs ?? [])}>{$t('stats.recurringCollection')}</button>
-                            </td>
-                        </tr>
-                    {/each}
-                </tbody>
-            </table>
+            <PanelTable viewId="stats.recurring" rows={groups} rowKey={(g) => g.GameType + '/' + g.Kind + '/' + g.Theme} {columns} rowAttrs={(g) => ({ title: `${(g.SumErrorMP / 1000).toFixed(3)}` })}>
+                {#snippet cells(/** @type {RecurringGroup} */ g)}
+                    <td>{gameTypeLabel(g.GameType)}</td>
+                    <td>
+                        <button type="button" class="group-link" onclick={() => open(g)}>
+                            {$t(`stats.recurringKind_${g.Kind}`)} · {themeLabel(g)}
+                        </button>
+                    </td>
+                    <td class="align-right"><CountLink label={String(g.Count)} onclick={() => loadPositionsFromSelection(g.PositionIDs ?? [])} /></td>
+                    <td class="align-right">{g.PRCost.toFixed(2)}</td>
+                    <td class="actions-col">
+                        <button type="button" class="study-btn" onclick={() => quizOnIds(g.PositionIDs ?? [])}>{$t('stats.recurringQuiz')}</button>
+                        <button type="button" class="study-btn" onclick={() => deckFromIds(studyName(g), g.PositionIDs ?? [])}>{$t('stats.recurringDeck')}</button>
+                        <button type="button" class="study-btn" onclick={() => collectionFromIds(studyName(g), g.PositionIDs ?? [])}>{$t('stats.recurringCollection')}</button>
+                    </td>
+                {/snippet}
+            </PanelTable>
         {/if}
         {#if unthemed.length > 0}
             <ul class="unthemed">
@@ -132,37 +158,12 @@
         font-style: italic;
     }
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    th,
-    td {
-        text-align: left;
-        padding: 3px 6px;
-        border-bottom: 1px solid var(--color-border);
-    }
-
-    .num {
-        text-align: right;
-        font-variant-numeric: tabular-nums;
-    }
-
-    .group-row:hover {
-        background: var(--color-surface-alt);
-    }
-
     .unthemed {
         list-style: none;
         margin: 8px 0 0;
         padding: 0;
         font-size: var(--font-size-small);
         color: var(--color-text-muted);
-    }
-
-    .actions {
-        white-space: nowrap;
     }
 
     .study-btn {

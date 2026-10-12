@@ -63,6 +63,7 @@ When you provide a CLI command as the first argument, it automatically runs in h
 - `repair` - Recompute the analysis columns from the analyses themselves
 - `met` - List, import or choose the database's match equity table
 - `reencode` - Rewrite analyses stored by older releases in the compact format
+- `maintenance` - State of health: counters, actions and last runs (status, count, ids, run)
 - `delete` - Delete data from the database
 - `comment` - Comments on a position, signed by their author (add, list)
 - `trash` - What was deleted through the trash, and how to put it back
@@ -271,6 +272,8 @@ Each position is exported as a JSON object on a separate line.
 - `--filters` - Include filter library in database export (default: true)
 - `--played-moves` - Include played moves in analysis (default: true)
 - `--matches` - Include matches in database export (default: true)
+- `--transcriptions` - Include the transcription draft of each exported match (default: true)
+- `--aliases` - Include the player and event aliases the exported matches write (default: true)
 - `--collections` - Include collections in database export (default: true)
 - `--tournaments` - Include tournaments in database export (default: true)
 - `--decks` - Include Anki decks, without their review history, in database export (default: true)
@@ -281,8 +284,8 @@ Each position is exported as a JSON object on a separate line.
 - `--format` - Output format: `text` (default) or `json` (a summary document — file path, byte count, counts)
 
 `--type database` exports the whole library, as the server's export and the GUI's export of the
-library do: positions, matches, tournaments, collections, lessons, Anki decks, transcriptions and
-the filter library. A flag set to `false` leaves its family out; a list of IDs narrows it to those
+library do: positions, matches, tournaments, collections, lessons, Anki decks, transcriptions,
+aliases and the filter library. A flag set to `false` leaves its family out; a list of IDs narrows it to those
 and brings it in.
 
 ### Export Database Without Matches
@@ -1739,6 +1742,49 @@ left as it is and logged. It never runs automatically.
 **Example output:**
 ```
   Analyses rewritten: 15623468
+```
+
+## Maintenance Command
+
+The database's state of health: one line per maintenance operation, with its
+counter, its action and its last run. Nothing runs by itself — not when the
+database opens, not when the status is read.
+
+```bash
+./blunderDB maintenance status --db database.db
+./blunderDB maintenance count <operation> --db database.db
+./blunderDB maintenance ids <operation> --db database.db
+./blunderDB maintenance run <operation> --db database.db
+```
+
+**Sub-commands:**
+- `status` - Every operation, its free counters and its last run; a costly counter reads `(count on demand)`
+- `count` - Compute one operation's counter, whatever it costs
+- `ids` - List the ids (positions or matches) the operation counts; their number is `count`'s answer
+- `run` - Run the operation's action and record it as its last run (done, cancelled or failed); Ctrl-C stops it between two batches
+
+**Operations:** `analysis.missing` (positions without any analysis; action: `analyze`),
+`stats.matches` (matches without per-match statistics; fills them),
+`analysis.columns` (recomputes the columns derived from the analyses),
+`moves.errors` (scores the played moves that have no error yet),
+`analysis.legacy` (rewrites older analyses in the compact format, as `reencode`),
+`trash` (entries in the trash; action: `trash`),
+`vacuum` (free bytes in the SQLite file; action: `vacuum`).
+
+**Options:**
+- `--db` - Path to the database file (required)
+- `--format` - Output format: `text` (default) or `json`
+
+The last run is stored in the database beside its settings; an export does not
+carry it. One operation runs at a time. The daemon exposes the same
+sub-commands as `maintenance.status`, `maintenance.count`, `maintenance.ids` and
+`maintenance.run` (an NDJSON stream, cancelled by `maintenance.cancel`), limited
+to the caller's tenant; an operation asked for while a gammonNet analysis or a
+rollout runs for that tenant is refused.
+
+**Example output:**
+```
+  stats.matches: done, 1204 changed
 ```
 
 ## Healthcheck Command
@@ -3206,8 +3252,12 @@ Usage: blunderdb export [options]
 Export data from the database.
 
 Options:
+  -aliases
+    	Include the player and event aliases the exported matches write in database export (default: true) (default true)
   -analysis
     	Include analysis in database export (default: true) (default true)
+  -anki-history
+    	Carry the review history of the exported Anki decks (default: true) (default true)
   -collection-ids string
     	Comma-separated list of collection IDs to export (empty = all)
   -collections
@@ -3219,7 +3269,7 @@ Options:
   -deck-ids string
     	Comma-separated list of Anki deck IDs to export (empty = all)
   -decks
-    	Include Anki decks, without their review history, in database export (default: true) (default true)
+    	Include Anki decks in database export (default: true) (default true)
   -dir string
     	Output directory for .mat batch export (type=mat, multiple matches)
   -file string
@@ -3240,6 +3290,8 @@ Options:
     	Comma-separated list of tournament IDs to export (empty = all)
   -tournaments
     	Include tournaments in database export (default: true) (default true)
+  -transcriptions
+    	Include the transcription drafts of the exported matches in database export (default: true) (default true)
   -type string
     	Export type: database, positions, matches, mat (required)
   -watermark string
@@ -3249,7 +3301,7 @@ Options:
 
 Export Types:
   database   Export the whole library, as the server's export does: positions, matches,
-             tournaments, collections, lessons, Anki decks, transcriptions, filters.
+             tournaments, collections, lessons, Anki decks, transcriptions, aliases, filters.
              Each family can be left out (--matches=false) or narrowed (--match-ids=1,2).
   positions  Export positions to text file (JSON format)
   matches    Export only matches to a new database
@@ -3789,6 +3841,146 @@ Examples:
   blunderdb list --db database.db --type positions --format csv > positions.csv
   blunderdb list --db database.db --type moves     --format csv > moves.csv
   blunderdb list --db database.db --type analyses  --format csv > analyses.csv
+```
+
+### `blunderdb maintenance count`
+
+```
+Usage: blunderdb maintenance <status|count|ids|run> [operation] --db <file> [--format text|json]
+
+The database's state of health: one line per maintenance operation,
+with its counter, its action and its last run. Nothing runs by itself.
+
+Sub-commands:
+  status            Every operation, its free counts and its last run
+  count <operation> Compute one operation's counter, however long it takes
+  ids <operation>   List the ids one operation counts
+  run <operation>   Run one operation's action (Ctrl-C stops it between batches)
+
+Operations:
+  analysis.missing
+  stats.matches
+  analysis.columns
+  moves.errors
+  analysis.legacy
+  trash
+  vacuum
+
+Examples:
+  blunderdb maintenance status --db database.db
+  blunderdb maintenance count analysis.missing --db database.db
+  blunderdb maintenance run stats.matches --db database.db --format json
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+```
+
+### `blunderdb maintenance ids`
+
+```
+Usage: blunderdb maintenance <status|count|ids|run> [operation] --db <file> [--format text|json]
+
+The database's state of health: one line per maintenance operation,
+with its counter, its action and its last run. Nothing runs by itself.
+
+Sub-commands:
+  status            Every operation, its free counts and its last run
+  count <operation> Compute one operation's counter, however long it takes
+  ids <operation>   List the ids one operation counts
+  run <operation>   Run one operation's action (Ctrl-C stops it between batches)
+
+Operations:
+  analysis.missing
+  stats.matches
+  analysis.columns
+  moves.errors
+  analysis.legacy
+  trash
+  vacuum
+
+Examples:
+  blunderdb maintenance status --db database.db
+  blunderdb maintenance count analysis.missing --db database.db
+  blunderdb maintenance run stats.matches --db database.db --format json
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+```
+
+### `blunderdb maintenance run`
+
+```
+Usage: blunderdb maintenance <status|count|ids|run> [operation] --db <file> [--format text|json]
+
+The database's state of health: one line per maintenance operation,
+with its counter, its action and its last run. Nothing runs by itself.
+
+Sub-commands:
+  status            Every operation, its free counts and its last run
+  count <operation> Compute one operation's counter, however long it takes
+  ids <operation>   List the ids one operation counts
+  run <operation>   Run one operation's action (Ctrl-C stops it between batches)
+
+Operations:
+  analysis.missing
+  stats.matches
+  analysis.columns
+  moves.errors
+  analysis.legacy
+  trash
+  vacuum
+
+Examples:
+  blunderdb maintenance status --db database.db
+  blunderdb maintenance count analysis.missing --db database.db
+  blunderdb maintenance run stats.matches --db database.db --format json
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+```
+
+### `blunderdb maintenance status`
+
+```
+Usage: blunderdb maintenance <status|count|ids|run> [operation] --db <file> [--format text|json]
+
+The database's state of health: one line per maintenance operation,
+with its counter, its action and its last run. Nothing runs by itself.
+
+Sub-commands:
+  status            Every operation, its free counts and its last run
+  count <operation> Compute one operation's counter, however long it takes
+  ids <operation>   List the ids one operation counts
+  run <operation>   Run one operation's action (Ctrl-C stops it between batches)
+
+Operations:
+  analysis.missing
+  stats.matches
+  analysis.columns
+  moves.errors
+  analysis.legacy
+  trash
+  vacuum
+
+Examples:
+  blunderdb maintenance status --db database.db
+  blunderdb maintenance count analysis.missing --db database.db
+  blunderdb maintenance run stats.matches --db database.db --format json
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
 ```
 
 ### `blunderdb match`
@@ -4687,6 +4879,39 @@ Options:
 Examples:
   blunderdb stats tournament --db database.db --id 3
   blunderdb stats tournament --db database.db --id 3 --player "Alice" --format json
+```
+
+### `blunderdb stats tournaments`
+
+```
+Usage: blunderdb stats tournaments --db <file> [options]
+
+The tournaments the Dashboard's tournament count counts, by ID: those
+holding a counted decision of the player, or of any player, under the filter.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -decision-type string
+    	Decision type: all, checker, or cube (default "all")
+  -engine string
+    	Only the decisions analysed by this engine (exact name, as stored)
+  -format string
+    	Output format: text or json (default "text")
+  -from string
+    	Start date filter YYYY-MM-DD (matches)
+  -min-depth int
+    	Only the decisions analysed at least this deep (plies)
+  -player string
+    	Only the tournaments where this player holds a counted decision
+  -to string
+    	End date filter YYYY-MM-DD (matches)
+  -tournament string
+    	Filter the matches by tournament IDs, comma-separated
+
+Examples:
+  blunderdb stats tournaments --db database.db --player "Alice" --from 2025-01-01
+  blunderdb stats tournaments --db database.db --format json
 ```
 
 ### `blunderdb stats training`

@@ -27,7 +27,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
 
@@ -222,10 +221,11 @@ func (d *Database) runMigrationChain(ctx context.Context) error {
 	if err := d.finishAnsweredDoubles(ctx); err != nil {
 		return err
 	}
-	// match_stats last: it reads the provenance just derived. Missing rows
-	// are the to-do list, so an interrupted fill resumes on the next open,
-	// and an open with every match computed pays one anti-join.
-	// Probed first: an open with nothing to repair writes nothing.
+	// An older shape of match_stats rows is a schema repair, not a fill:
+	// readers would sum those rows as they stand. Missing rows are left to
+	// the readers that need them and to the stats.matches maintenance line
+	// (ADR-0088: opening a library computes nothing). Probed first: an open
+	// with nothing to repair writes nothing.
 	var olderShape bool
 	if err := d.db.QueryRowContext(ctx, `SELECT EXISTS (SELECT 1 FROM match_stats WHERE `+sqlshared.OlderShapeMatchStatsPredicate+`)`).Scan(&olderShape); err != nil {
 		return fmt.Errorf("probing per-match statistics of an older shape: %w", err)
@@ -234,11 +234,6 @@ func (d *Database) runMigrationChain(ctx context.Context) error {
 		if _, err := d.db.ExecContext(ctx, sqlshared.DropOlderShapeMatchStatsSQL); err != nil {
 			return fmt.Errorf("dropping per-match statistics of an older shape: %w", err)
 		}
-	}
-	if _, err := sqlite.New(d.db).Stats().FillMatchStats(ctx, "", func(done, total int) {
-		d.emitMigrationProgress("match_stats", done, total)
-	}); err != nil {
-		return fmt.Errorf("computing the per-match statistics: %w", err)
 	}
 	if crossing230 {
 		if err := d.finishLargeLibraryWave(ctx); err != nil {

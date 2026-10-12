@@ -62,8 +62,8 @@ func Run(assets embed.FS, icon []byte, width, height int, db *database.Database,
 	})
 }
 
-// shutdownJobGrace bounds the wait for a cancelled batch, which still finishes
-// its current position. Past it, the close goes ahead: refusing to quit is
+// shutdownJobGrace bounds the wait for a cancelled job. The gammonNet search
+// stops at its next roll, so a batch is gone in milliseconds; past the grace, the close goes ahead: refusing to quit is
 // worse than a late write's warning.
 const shutdownJobGrace = 5 * time.Second
 
@@ -75,6 +75,7 @@ func shutdown(app *App, binds []interface{}) func(ctx context.Context) {
 		app.stopAssistant()
 		app.stopMCP()
 		app.stopMedia()
+		app.closing.Store(true)
 		app.stopBackgroundJobs(shutdownJobGrace)
 
 		for _, bind := range binds {

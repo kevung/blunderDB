@@ -17,7 +17,7 @@ import (
 // file ports, the one its reference corpus comes from. It is not
 // EngineVersion: the policy can move upstream while the network, and so the
 // analyses EngineVersion dates, stays the same.
-const PolicyEngineVersion = "gammonNet v1.6.0"
+const PolicyEngineVersion = "gammonNet v1.7.0"
 
 // PolicyResignHorizon is H of spec §5.5: how many rolls ahead the certain
 // loss is read. Widening it is a measured choice, made upstream.
@@ -116,7 +116,8 @@ func NewPolicy() (*Policy, error) {
 	return p, nil
 }
 
-// Decide answers d at the named level ("instant", "normal", "thorough"). An
+// Decide answers d at the named level ("instant", "normal", "thorough",
+// "ply3", "ply4"). An
 // unknown level or an invalid decision is ErrPolicyRefused.
 func (p *Policy) Decide(level string, d *PolicyDecision) (PolicyAction, error) {
 	shape, ok := Level(level)
@@ -195,6 +196,12 @@ func (p *Policy) configure(level *SearchLevel, d *PolicyDecision) bool {
 	copy(cfg.Filter[:], level.Filter)
 	copy(cfg.FilterExtra[:], level.FilterExtra)
 	copy(cfg.FilterThreshold[:], level.FilterThreshold)
+	// The staged root is part of the level's shape (gn_policy.c's
+	// level_config): without it "ply3" would search another tree.
+	if cfg.SetRootStage(level.RootStagePly, level.RootStageFilter,
+		level.RootStageFilterExtra, level.RootStageFilterThreshold) != nil {
+		return false
+	}
 	return p.s.Reconfigure(cfg) == nil
 }
 

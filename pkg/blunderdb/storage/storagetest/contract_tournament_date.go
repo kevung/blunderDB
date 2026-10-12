@@ -91,8 +91,8 @@ func testStatsProgressionDates(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 	matchA, _ := statsFixtureMatch(t, s, 0, "Alice", "Bob")
 	matchB, _ := statsFixtureMatch(t, s, 2, "Alice", "Carol")
-	// The undated tournament is created first: its fixture match (2025-06-01)
-	// still places it after the one dated 2025-01-01.
+	// The undated tournament is created first: its fixture match is dated
+	// later than the dated tournament's, so it still sorts after it.
 	undated, err := s.Tournaments().Create(ctx, "", "Undated", "", "")
 	if err != nil {
 		t.Fatalf("Create: %v", err)

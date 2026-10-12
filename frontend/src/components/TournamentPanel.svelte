@@ -16,7 +16,7 @@
     import PanelTable, { navigationDelta, stepSelection } from './panels/PanelTable.svelte';
     import PanelHeader from './panels/PanelHeader.svelte';
     import CountLink from './panels/CountLink.svelte';
-    import { loadPositionsFromSelection } from '../services/positionLoader.js';
+    import { loadPositionsFromSelection, openStatsFor } from '../services/positionLoader.js';
     import {
         GetAllTournaments,
         CreateTournament,
@@ -36,7 +36,7 @@
         GetPositionIDsByTournament
     } from '../../wailsjs/go/database/Database.js';
     import { openPanels, PANEL, closePanel, statusBarTextStore, statusBarModeStore } from '../stores/uiStore';
-    import { tournamentsStore, selectedTournamentStore, tournamentMatchesStore, tournamentOpenRequestStore } from '../stores/tournamentStore';
+    import { tournamentsStore, selectedTournamentStore, tournamentMatchesStore, tournamentOpenRequestStore, tournamentIDsFilterStore } from '../stores/tournamentStore';
     import {
         directionSummariesStore,
         openDirectionIdStore,
@@ -103,10 +103,14 @@
     let listTable = $state(/** @type {{ scrollToRow: (row: Tournament) => Promise<void>, focusRow: (row: Tournament) => Promise<void> } | null} */ (null)); // PanelTable of the tournament list, mounted while none is selected
     // The list narrows as the user types: name, location or date, every word must match.
     let filterText = $state('');
+    // A Stats count restricts the list to the tournaments it counts, until cleared.
+    const idSet = $derived($tournamentIDsFilterStore ? new Set($tournamentIDsFilterStore) : null);
+    const narrowed = $derived(filterText.trim() !== '' || idSet !== null);
     const filteredTournaments = $derived.by(() => {
         const words = filterText.toLowerCase().split(/\s+/).filter(Boolean);
-        if (words.length === 0) return tournaments;
-        return tournaments.filter((tr) => {
+        const pool = idSet ? tournaments.filter((tr) => idSet.has(tr.id)) : tournaments;
+        if (words.length === 0) return pool;
+        return pool.filter((tr) => {
             const haystack = `${tr.name ?? ''} ${tr.location ?? ''} ${tr.date || tr.effectiveDate || ''}`.toLowerCase();
             return words.every((w) => haystack.includes(w));
         });
@@ -718,11 +722,7 @@
             <div class="tournament-list-pane">
                 <PanelHeader
                     title={$t('tournament.title')}
-                    count={tournaments.length === 0
-                        ? null
-                        : filterText.trim()
-                          ? $t('tournament.countOfTotal', { shown: filteredTournaments.length, total: tournaments.length })
-                          : String(tournaments.length)}
+                    count={tournaments.length === 0 ? null : narrowed ? $t('tournament.countOfTotal', { shown: filteredTournaments.length, total: tournaments.length }) : String(tournaments.length)}
                 >
                     <input
                         class="tournament-filter"
@@ -738,6 +738,11 @@
                         placeholder={$t('tournament.filterPlaceholder')}
                         aria-label={$t('tournament.filterAria')}
                     />
+                    {#if $tournamentIDsFilterStore}
+                        <button type="button" class="ids-chip" data-testid="tournament-ids-filter" onclick={() => tournamentIDsFilterStore.set(null)} title={$t('tournament.idsFilterClear')}
+                            >{$t('tournament.idsFilter', { n: $tournamentIDsFilterStore.length })} ×</button
+                        >
+                    {/if}
                     {#snippet actions()}
                         <NewButton label={$t('tournament.newButton')} onclick={() => (creating = true)} />
                     {/snippet}
@@ -754,9 +759,17 @@
                     onActivate={(tournament) => {
                         if (!tournamentEdit.isEditing(tournament.id)) selectTournament(tournament);
                     }}
-                    emptyText={filterText.trim() ? $t('tournament.noTournamentsFiltered') : $t('tournament.noTournaments')}
+                    emptyText={narrowed ? $t('tournament.noTournamentsFiltered') : $t('tournament.noTournaments')}
                     emptyActions
-                    emptyClear={filterText.trim() ? { label: $t('emptyState.clearFilter'), onClick: () => (filterText = '') } : null}
+                    emptyClear={narrowed
+                        ? {
+                              label: $t('emptyState.clearFilter'),
+                              onClick: () => {
+                                  filterText = '';
+                                  tournamentIDsFilterStore.set(null);
+                              }
+                          }
+                        : null}
                 >
                     {#snippet cells(tournament, /** @type {number} */ index)}
                         {#if tournamentEdit.isEditing(tournament.id)}
@@ -935,6 +948,15 @@
                                 {selectedTournament.comment || $t('tournament.notesPlaceholder')}
                             </button>
                         {/if}
+                        <button
+                            class="direction-btn"
+                            data-testid="tournament-stats"
+                            onclick={(e) => {
+                                e.stopPropagation();
+                                openStatsFor({ tournamentIDs: [selectedTournament.id] });
+                            }}
+                            title={$t('stats.openTournamentStats')}>{$t('stats.openStatsButton')}</button
+                        >
                         {#if selectedDirection}
                             <button
                                 class="direction-btn"
@@ -1143,6 +1165,22 @@
         color: var(--color-text);
         border: 1px solid var(--color-border);
         border-radius: var(--radius);
+    }
+
+    .ids-chip {
+        flex-shrink: 0;
+        background: none;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        font-size: var(--font-size-small);
+        color: var(--color-text-muted);
+        cursor: pointer;
+        padding: var(--space-1) var(--space-2);
+    }
+
+    .ids-chip:hover {
+        border-color: var(--color-primary);
+        color: var(--color-text);
     }
 
     .match-sheet {

@@ -18,7 +18,7 @@ func testStatsAnalysisEngines(t *testing.T, s storage.Storage) {
 	if err != nil || len(got) != 0 {
 		t.Fatalf("empty database: %v, %v; want none", got, err)
 	}
-	for n, label := range []string{"XG", "GNUbg", "XG", "gammonNet v1.6.0"} {
+	for n, label := range []string{"XG", "GNUbg", "XG", "gammonNet v1.7.0"} {
 		p := distinctPos(n)
 		id, err := s.Positions().Save(ctx, "", &p)
 		if err != nil {
@@ -38,7 +38,7 @@ func testStatsAnalysisEngines(t *testing.T, s storage.Storage) {
 	if err != nil {
 		t.Fatalf("AnalysisEngines: %v", err)
 	}
-	if want := []string{"GNUbg", "XG", "gammonNet v1.6.0"}; !slices.Equal(got, want) {
+	if want := []string{"GNUbg", "XG", "gammonNet v1.7.0"}; !slices.Equal(got, want) {
 		t.Errorf("AnalysisEngines = %v, want %v", got, want)
 	}
 }

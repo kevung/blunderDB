@@ -5,6 +5,7 @@
     // l'exclut et que chaque fenêtre a assez de décisions.
     import { studyEffectStore, studyLoopLoadingStore, studyLoopErrorStore } from '../../stores/statsStore.js';
     import { t } from '../../i18n/index.js';
+    import PanelTable from '../panels/PanelTable.svelte';
 
     let effect = $derived($studyEffectStore);
     let families = $derived(effect?.Families ?? []);
@@ -35,6 +36,18 @@
         const v = 10000 * x;
         return `${signed && v > 0 ? '+' : ''}${v.toFixed(2)}`;
     }
+
+    const num = /** @type {const} */ ('number');
+    const text = /** @type {const} */ ('text');
+    const columns = $derived([
+        { key: 'family', label: $t('stats.planFamily'), sortable: true, filter: text, value: familyName },
+        { key: 'studiedOn', label: $t('stats.effectStudiedOn'), sortable: true, filter: text, value: (/** @type {any} */ f) => f.StudiedOn },
+        { key: 'before', label: $t('stats.effectBefore'), sortable: true, align: 'right', filter: num, value: (/** @type {any} */ f) => 10000 * f.Before.Rate },
+        { key: 'after', label: $t('stats.effectAfter'), sortable: true, align: 'right', filter: num, value: (/** @type {any} */ f) => 10000 * f.After.Rate },
+        { key: 'gain', label: $t('stats.effectGain'), sortable: true, defaultDir: 'desc', align: 'right', filter: num, value: (/** @type {any} */ f) => 10000 * f.Gain },
+        { key: 'interval', label: $t('stats.planInterval'), align: 'right' },
+        { key: 'verdict', label: $t('stats.effectVerdict'), sortable: true, filter: text, value: (/** @type {any} */ f) => $t(`stats.effectVerdict_${f.Verdict}`) }
+    ]);
 </script>
 
 <section class="chart-section study-effect" data-testid="study-effect">
@@ -53,32 +66,17 @@
     {:else if families.length === 0}
         <p class="empty-subsection">{$t('stats.effectEmpty')}</p>
     {:else}
-        <table>
-            <thead>
-                <tr>
-                    <th>{$t('stats.planFamily')}</th>
-                    <th>{$t('stats.effectStudiedOn')}</th>
-                    <th class="num">{$t('stats.effectBefore')}</th>
-                    <th class="num">{$t('stats.effectAfter')}</th>
-                    <th class="num">{$t('stats.effectGain')}</th>
-                    <th class="num">{$t('stats.planInterval')}</th>
-                    <th>{$t('stats.effectVerdict')}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {#each families as f (f.GameType + '/' + f.Kind + '/' + f.Theme)}
-                    <tr class="family-row" data-testid="effect-family">
-                        <td>{familyName(f)}</td>
-                        <td title={$t('stats.effectStudied', { n: f.Studied })}>{f.StudiedOn}</td>
-                        <td class="num">{per100(f.Before.Rate)} <span class="count">({f.Before.Decisions})</span></td>
-                        <td class="num">{per100(f.After.Rate)} <span class="count">({f.After.Decisions})</span></td>
-                        <td class="num"><b>{per100(f.Gain, true)}</b></td>
-                        <td class="num interval">[{per100(f.Low, true)}, {per100(f.High, true)}]</td>
-                        <td class="verdict {f.Verdict}">{$t(`stats.effectVerdict_${f.Verdict}`)}</td>
-                    </tr>
-                {/each}
-            </tbody>
-        </table>
+        <PanelTable viewId="stats.studyEffect" rows={families} rowKey={(f) => f.GameType + '/' + f.Kind + '/' + f.Theme} {columns} rowAttrs={() => ({ 'data-testid': 'effect-family' })}>
+            {#snippet cells(/** @type {any} */ f)}
+                <td>{familyName(f)}</td>
+                <td title={$t('stats.effectStudied', { n: f.Studied })}>{f.StudiedOn}</td>
+                <td class="align-right">{per100(f.Before.Rate)} <span class="count">({f.Before.Decisions})</span></td>
+                <td class="align-right">{per100(f.After.Rate)} <span class="count">({f.After.Decisions})</span></td>
+                <td class="align-right"><b>{per100(f.Gain, true)}</b></td>
+                <td class="align-right interval">[{per100(f.Low, true)}, {per100(f.High, true)}]</td>
+                <td class="verdict {f.Verdict}">{$t(`stats.effectVerdict_${f.Verdict}`)}</td>
+            {/snippet}
+        </PanelTable>
     {/if}
     {#if effect?.Unstudied > 0}
         <p class="aside">{$t('stats.effectUnstudied', { n: effect.Unstudied })}</p>
@@ -119,30 +117,9 @@
         font-style: italic;
     }
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    th,
-    td {
-        text-align: left;
-        padding: 3px 6px;
-        border-bottom: 1px solid var(--color-border);
-    }
-
-    .num {
-        text-align: right;
-        font-variant-numeric: tabular-nums;
-    }
-
     .interval {
         color: var(--color-text-muted);
         white-space: nowrap;
-    }
-
-    .family-row:hover {
-        background: var(--color-surface-alt);
     }
 
     .count {

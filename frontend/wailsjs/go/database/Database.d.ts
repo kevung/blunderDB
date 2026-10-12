@@ -16,6 +16,7 @@ import {engine} from '../models';
 import {apkg} from '../models';
 import {tournoi} from '../models';
 import {ingest} from '../models';
+import {maintenance} from '../models';
 import {parser} from '../models';
 import {rollout} from '../models';
 import {rollouts} from '../models';
@@ -63,6 +64,8 @@ export function Brackets(arg1:number):Promise<Array<service.BracketPhase>>;
 export function BuryAnkiCard(arg1:number):Promise<void>;
 
 export function CancelImport():Promise<void>;
+
+export function CancelMaintenance():Promise<void>;
 
 export function CancelMatch(arg1:number,arg2:string):Promise<service.DirectionView>;
 
@@ -141,6 +144,8 @@ export function CountAnkiDeckFilteredPositions(arg1:number,arg2:string):Promise<
 export function CountAnkiDeckPositions(arg1:number):Promise<number>;
 
 export function CountCollectionPositions(arg1:number):Promise<number>;
+
+export function CountMaintenance(arg1:string):Promise<number>;
 
 export function CountMatchPositionsToAnalyze(arg1:number):Promise<number>;
 
@@ -518,6 +523,10 @@ export function LoadTrainingNumberStats(arg1:string):Promise<Array<storage.Train
 
 export function LoadTrainingSessions(arg1:string,arg2:number):Promise<Array<storage.TrainingSession>>;
 
+export function MaintenanceIDs(arg1:string):Promise<Array<number>>;
+
+export function MaintenanceStatus():Promise<Array<maintenance.Line>>;
+
 export function MakeParticipantAbsent(arg1:number,arg2:string,arg3:string,arg4:number):Promise<service.DirectionView>;
 
 export function MakeParticipantAvailable(arg1:number,arg2:string):Promise<service.DirectionView>;
@@ -652,6 +661,10 @@ export function RolloutPosition(arg1:context.Context,arg2:number,arg3:rollout.Se
 
 export function RolloutPositions(arg1:context.Context,arg2:Array<domain.Position>,arg3:rollout.Settings,arg4:any):Promise<rollouts.Summary>;
 
+export function RunMaintenance(arg1:string):Promise<maintenance.Run>;
+
+export function RunMaintenanceWithProgress(arg1:string,arg2:any):Promise<maintenance.Run>;
+
 export function RunRolloutPlan(arg1:context.Context,arg2:database.RolloutPlan,arg3:rollout.Settings,arg4:any):Promise<rollouts.Summary>;
 
 export function SaveAnalysis(arg1:number,arg2:domain.PositionAnalysis):Promise<void>;
@@ -746,6 +759,8 @@ export function SlotOfMatch(arg1:number):Promise<service.MatchSlot>;
 
 export function Slots(arg1:number):Promise<Array<service.SlotRow>>;
 
+export function StaleGammonNetIDs(arg1:number):Promise<Array<number>>;
+
 export function Standings(arg1:number):Promise<service.StandingsView>;
 
 export function StandingsCSV(arg1:number):Promise<string>;
@@ -762,7 +777,13 @@ export function StatsReportHTML(arg1:database.StatsFilter,arg2:string,arg3:Recor
 
 export function StatsReportHTMLCtx(arg1:context.Context,arg2:database.StatsFilter,arg3:string,arg4:Record<number, string>):Promise<string>;
 
+export function StatsTournamentIDs(arg1:database.StatsFilter):Promise<Array<number>>;
+
+export function StatsTournamentIDsCtx(arg1:context.Context,arg2:database.StatsFilter):Promise<Array<number>>;
+
 export function StopDuel(arg1:number,arg2:number,arg3:boolean):Promise<database.DuelState>;
+
+export function StopMaintenance(arg1:context.Context):Promise<void>;
 
 export function StudyBacklog(arg1:number):Promise<Array<domain.StudyQueueEntry>>;
 

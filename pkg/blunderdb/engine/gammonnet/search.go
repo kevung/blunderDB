@@ -97,6 +97,19 @@ type SearchConfig struct {
 	// than asked.
 	PruneK int
 
+	// The staged root of a move decision (gn_search.h's root_stage_*,
+	// filtre-de-coups-spec §8): the triplet (RootStageFilter,
+	// RootStageFilterExtra, RootStageFilterThreshold) picks, on the 0-ply
+	// ranking, the plays scored at RootStagePly plies; Filter[Ply] then reads
+	// THAT ranking. Active only when 1 <= RootStagePly < Ply; 0 is the
+	// unstaged search, bit for bit. Only the root of Plays reads it: the
+	// searches before the roll (cube decisions, probsAt) never do.
+	// SetRootStage refuses an incoherent stage.
+	RootStagePly             int
+	RootStageFilter          int
+	RootStageFilterExtra     int
+	RootStageFilterThreshold float64
+
 	// UseMatch and Match select the referential every node is valued in
 	// (ADR-0016, gn_search.c's use_match/match): cubeless money equity, or
 	// 2×MWC−1 through Match. Match is the state as the caller sees it; the
@@ -126,14 +139,21 @@ type SearchConfig struct {
 // copies, read from the same embedded export as DefaultPruneK, never retyped.
 var defaultLevel = mustLevel("normal")
 
+// deepLevels are the published 3- and 4-ply levels DefaultConfig copies.
+var deepLevels = map[int]SearchLevel{3: mustLevel("ply3"), 4: mustLevel("ply4")}
+
 // DefaultConfig returns the canonical configuration for a given depth: pruning
 // at DefaultPruneK and the published move filter (defaultLevel's triplet).
 //
 // The filter is what makes the depth reachable at all: a 2-ply opening
 // decision costs ~13 400 evaluations with it, over 760 000 without.
 //
-// Depths beyond the published filter (3 and 4 ply) get a plain count of 5 —
-// this repository's own unmeasured extension; upstream only measured 2-ply.
+// At 3 and 4 ply it is the published "ply3"/"ply4" level, copied whole:
+// every interior node deepens one reply (gnubg's rule), and the root is
+// staged — the triplet (0, 8, 0.16) over the 0-ply ranking, those scored at
+// 2 plies, then (0, 2, 0.04) of that ranking scored at the full depth.
+// Filter[d] is read both at a depth-d root and at a depth-d interior node,
+// so this is a per-ply vector; 0 to 2 ply keep the "normal" filter untouched.
 func DefaultConfig(ply int) SearchConfig {
 	if ply < 0 {
 		ply = 0
@@ -141,14 +161,33 @@ func DefaultConfig(ply int) SearchConfig {
 	if ply > MaxPly {
 		ply = MaxPly
 	}
+	if level, ok := deepLevels[ply]; ok {
+		cfg := SearchConfig{Ply: ply, PruneK: level.PruneK}
+		copy(cfg.Filter[:], level.Filter)
+		copy(cfg.FilterExtra[:], level.FilterExtra)
+		copy(cfg.FilterThreshold[:], level.FilterThreshold)
+		cfg.RootStagePly = level.RootStagePly
+		cfg.RootStageFilter = level.RootStageFilter
+		cfg.RootStageFilterExtra = level.RootStageFilterExtra
+		cfg.RootStageFilterThreshold = level.RootStageFilterThreshold
+		return cfg
+	}
 	cfg := SearchConfig{Ply: ply, PruneK: DefaultPruneK}
 	copy(cfg.Filter[:], defaultLevel.Filter)
 	copy(cfg.FilterExtra[:], defaultLevel.FilterExtra)
 	copy(cfg.FilterThreshold[:], defaultLevel.FilterThreshold)
+	root := len(defaultLevel.Filter) - 1
 	for d := len(defaultLevel.Filter); d < len(cfg.Filter); d++ {
-		cfg.Filter[d] = 5
+		cfg.copyFilter(d, root)
 	}
 	return cfg
+}
+
+// copyFilter sets the filter at depth to the published triplet at from.
+func (c *SearchConfig) copyFilter(depth, from int) {
+	c.Filter[depth] = defaultLevel.Filter[from]
+	c.FilterExtra[depth] = defaultLevel.FilterExtra[from]
+	c.FilterThreshold[depth] = defaultLevel.FilterThreshold[from]
 }
 
 // SetFilter sets the move filter at depth to the triplet (accept, extra,
@@ -166,6 +205,32 @@ func (c *SearchConfig) SetFilter(depth, accept, extra int, threshold float64) er
 	return nil
 }
 
+// SetRootStage stages the root of a move decision through ply plies with the
+// triplet (accept, extra, threshold), as gn_search_set_root_stage does: a ply
+// outside [0, MaxPly-1], a negative count, or a negative or non-finite
+// threshold is refused and the config left untouched. ply == 0 turns the
+// stage off and zeroes all four fields.
+func (c *SearchConfig) SetRootStage(ply, accept, extra int, threshold float64) error {
+	if ply < 0 || ply >= MaxPly || accept < 0 || extra < 0 ||
+		math.IsNaN(threshold) || math.IsInf(threshold, 0) || threshold < 0 {
+		return fmt.Errorf("gammonnet: étage de racine refusé : %d plis, (%d, %d, %v)", ply, accept, extra, threshold)
+	}
+	if ply == 0 {
+		accept, extra, threshold = 0, 0, 0
+	}
+	c.RootStagePly = ply
+	c.RootStageFilter = accept
+	c.RootStageFilterExtra = extra
+	c.RootStageFilterThreshold = threshold
+	return nil
+}
+
+// rootStageActive reports whether a decision at depth goes through its
+// stage: only a stage strictly shallower than the decision means anything.
+func (c *SearchConfig) rootStageActive(depth int) bool {
+	return c.RootStagePly >= 1 && c.RootStagePly < depth
+}
+
 // filterWidest is the most candidates the move filter can deepen at depth:
 // accept + extra, 0 meaning no ceiling. Negative counts read as zero.
 func (c *SearchConfig) filterWidest(depth int) int {
@@ -177,15 +242,21 @@ func (c *SearchConfig) filterWidest(depth int) int {
 // n when the filter is off. With extra == 0 the band loop never runs and the
 // threshold is never read: the plain count, bit for bit.
 func (c *SearchConfig) filterSurvivors(depth int, ranked []Candidate, n int) int {
-	accept := max(c.Filter[depth], 0)
-	extra := max(c.FilterExtra[depth], 0)
+	return bandSurvivors(c.Filter[depth], c.FilterExtra[depth], c.FilterThreshold[depth], ranked, n)
+}
+
+// bandSurvivors is the triplet's rule itself — gn_search.c's band_survivors,
+// shared by the move filter and the root stage.
+func bandSurvivors(accept, extra int, threshold float64, ranked []Candidate, n int) int {
+	accept = max(accept, 0)
+	extra = max(extra, 0)
 	if accept == 0 && extra == 0 {
 		return n
 	}
 	keep := min(accept, n)
 	if extra > 0 {
 		limit := min(accept+extra, n)
-		floor := ranked[0].Equity - c.FilterThreshold[depth]
+		floor := ranked[0].Equity - threshold
 		for keep < limit && ranked[keep].Equity >= floor {
 			keep++
 		}
@@ -249,6 +320,10 @@ type Searcher struct {
 	// Each owns its scratch, its generator and its cache; nothing is shared but
 	// the read-only networks.
 	workers []*Searcher
+
+	// stop is shared with the workers: one context interrupts the whole
+	// search (cancel.go).
+	stop *stopSwitch
 
 	// La file aplatie de deepenGroups et ses résultats, gardées avec le
 	// brouillon pour ne pas allouer par décision.
@@ -338,6 +413,7 @@ func newSearcherWithCache(cfg SearchConfig, net, prune *Network, cacheLog2 uint)
 		ev:    NewEvaluator(net),
 		cache: newEvalCache(cacheLog2),
 		rolls: buildRolls(),
+		stop:  new(stopSwitch),
 	}
 	if prune != nil {
 		s.pruneEv = NewEvaluator(prune)
@@ -402,8 +478,11 @@ func (s *Searcher) Plays(pos *Position, d1, d2 int, out []Candidate) (int, error
 	if d1 < 1 || d1 > 6 || d2 < 1 || d2 > 6 {
 		return 0, fmt.Errorf("gammonnet: dice %d-%d out of range", d1, d2)
 	}
-	n := s.rankPlays(pos, d1, d2, s.cfg.Ply, 0, s.matchState(), s.cfg.CubeOwner, out)
+	n := s.rankRoot(pos, d1, d2, out)
 	if n < 0 {
+		if s.stopped() {
+			return 0, ErrCanceled
+		}
 		return 0, fmt.Errorf("gammonnet: play generation refused or overflowed")
 	}
 	return n, nil
@@ -413,6 +492,13 @@ func (s *Searcher) Plays(pos *Position, d1, d2 int, out []Candidate) (int, error
 // élaguer, valoriser, trier — sans approfondir, pour que la racine de probsAt
 // assemble plusieurs groupes avant d'approfondir.
 func (s *Searcher) rankPlaysShallow(pos *Position, d1, d2, depth, level int, state *MatchState, owner CubeOwner, out []Candidate) int {
+	return s.rankPlaysShallowKeep(pos, d1, d2, s.pruneKeep(depth), level, state, owner, out)
+}
+
+// rankPlaysShallowKeep is rankPlaysShallow with the pruning pass keeping an
+// explicit keep (0: no pruning) — gn_search.c's rank_plays_prune_to followed
+// by rank_plays_shallow, so the staged root can widen it.
+func (s *Searcher) rankPlaysShallowKeep(pos *Position, d1, d2, keep, level int, state *MatchState, owner CubeOwner, out []Candidate) int {
 	if level >= len(s.plays) {
 		return -1
 	}
@@ -435,7 +521,7 @@ func (s *Searcher) rankPlaysShallow(pos *Position, d1, d2, depth, level int, sta
 	theirs := s.childMatchState(level)
 	theirOwner := owner.Mirror()
 
-	if keep := s.pruneKeep(depth); keep > 0 && written > keep {
+	if keep > 0 && written > keep {
 		s.shallowFill(s.pruneEv, out[:written], false)
 		s.valueSweep(out[:written], theirs, theirOwner)
 		sortByEquity(out[:written])
@@ -484,15 +570,25 @@ func (s *Searcher) rankPlays(pos *Position, d1, d2, depth, level int, state *Mat
 	if depth <= 0 {
 		return written
 	}
+	if !s.deepen(out, s.cfg.filterSurvivors(depth, out, written), depth, level, owner) {
+		return -1
+	}
+	return written
+}
+
+// deepen scores out[:searched] at depth plies and re-sorts them among
+// themselves — phase three of rankPlays, and each pass of the staged root.
+// out ranks pos's plays at level; owner is pos's mover's. A finished game
+// keeps the exact value of the shallow sweep.
+func (s *Searcher) deepen(out []Candidate, searched, depth, level int, owner CubeOwner) bool {
 	theirs := s.childMatchState(level)
 	theirOwner := owner.Mirror()
-	searched := s.cfg.filterSurvivors(depth, out, written)
 	// À la racine, tous les candidats partent dans une seule file
 	// (deepenGroups) : une barrière par décision. Ailleurs, la boucle
 	// sérielle, terme pour terme identique.
 	if level == 0 && len(s.workers) > 0 {
 		if !s.deepenGroups([][]Candidate{out[:searched]}, depth, theirs, theirOwner) {
-			return -1
+			return false
 		}
 	} else {
 		for i := 0; i < searched; i++ {
@@ -501,12 +597,49 @@ func (s *Searcher) rankPlays(pos *Position, d1, d2, depth, level int, state *Mat
 			}
 			v, ok := s.positionEquity(&out[i].Play.Result, depth, level+1, theirs, theirOwner)
 			if !ok {
-				return -1
+				return false
 			}
 			out[i].Equity = -v
 		}
 	}
 	sortByEquity(out[:searched])
+	return true
+}
+
+// rankRoot ranks the root of a move decision — gn_search.c's rank_root.
+// Unstaged, it is rankPlays at s.cfg.Ply, untouched. Staged
+// (SearchConfig.RootStagePly), one pass sits between the shallow ranking and
+// the deep one:
+//
+//  1. the shallow ranking, its pruning pass keeping at least as many as the
+//     stage can deepen;
+//  2. the stage's triplet over that 0-ply ranking; its survivors scored at
+//     RootStagePly plies and re-sorted among themselves;
+//  3. Filter[Ply] over the STAGE's survivors only, scored at Ply plies.
+//
+// Every candidate keeps the equity of the deepest pass it reached: plays at
+// Ply plies first, then the stage's other survivors, then the 0-ply rest.
+func (s *Searcher) rankRoot(pos *Position, d1, d2 int, out []Candidate) int {
+	depth, state, owner := s.cfg.Ply, s.matchState(), s.cfg.CubeOwner
+	if !s.cfg.rootStageActive(depth) {
+		return s.rankPlays(pos, d1, d2, depth, 0, state, owner, out)
+	}
+	keep := s.pruneKeep(depth)
+	if keep > 0 {
+		keep = max(keep, max(s.cfg.RootStageFilter, 0)+max(s.cfg.RootStageFilterExtra, 0))
+	}
+	written := s.rankPlaysShallowKeep(pos, d1, d2, keep, 0, state, owner, out)
+	if written <= 0 {
+		return written
+	}
+	staged := bandSurvivors(s.cfg.RootStageFilter, s.cfg.RootStageFilterExtra,
+		s.cfg.RootStageFilterThreshold, out, written)
+	if !s.deepen(out, staged, s.cfg.RootStagePly, 0, owner) {
+		return -1
+	}
+	if !s.deepen(out, s.cfg.filterSurvivors(depth, out, staged), depth, 0, owner) {
+		return -1
+	}
 	return written
 }
 
@@ -674,6 +807,9 @@ func (s *Searcher) positionEquity(pos *Position, depth, level int, state *MatchS
 // pos's own — unswapped, since pos and its mover are unchanged by which dice
 // came up.
 func (s *Searcher) oneRoll(pos *Position, depth, level, r int, state *MatchState, owner CubeOwner, cands []Candidate) (float64, bool) {
+	if s.stopped() {
+		return 0, false
+	}
 	roll := s.rolls[r]
 	n := s.rankPlays(pos, int(roll.d1), int(roll.d2), depth-1, level, state, owner, cands)
 	if n < 0 {
@@ -952,6 +1088,7 @@ func (s *Searcher) WithWorkers(n int) *Searcher {
 	s.workers = make([]*Searcher, n)
 	for i := range s.workers {
 		s.workers[i] = newSearcherWithCache(s.cfg, s.net, s.prune, workerCacheLog2)
+		s.workers[i].stop = s.stop
 	}
 	return s
 }

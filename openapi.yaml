@@ -4164,6 +4164,56 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/storage_LibrarySettings"
+  /v1/maintenance.cancel:
+    post:
+      operationId: maintenance.cancel
+      tags: [maintenance]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
+  /v1/maintenance.count:
+    post:
+      operationId: maintenance.count
+      tags: [maintenance]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/maintenanceKindReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/maintenanceCountResp"
+  /v1/maintenance.ids:
+    post:
+      operationId: maintenance.ids
+      tags: [maintenance]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/maintenanceKindReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: integer
+                  format: int64
   /v1/maintenance.reencode:
     post:
       operationId: maintenance.reencode
@@ -4177,6 +4227,38 @@ paths:
             generator's source analysis (a file upload/download, or a route
             registered from a runtime table) — see internal/server for the actual
             implementation.
+  /v1/maintenance.run:
+    post:
+      operationId: maintenance.run
+      tags: [maintenance]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
+  /v1/maintenance.status:
+    post:
+      operationId: maintenance.status
+      tags: [maintenance]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/maintenance_Line"
   /v1/matches.count:
     post:
       operationId: matches.count
@@ -6564,6 +6646,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/tournamentBadgesResp"
+  /v1/stats.tournamentIds:
+    post:
+      operationId: stats.tournamentIds
+      tags: [stats]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/statsComputeReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/tournamentIDsResp"
   /v1/stats.tournamentReview:
     post:
       operationId: stats.tournamentReview
@@ -8477,6 +8576,15 @@ components:
           items:
             type: integer
             format: int64
+        transcriptions:
+          type: boolean
+          nullable: true
+        aliases:
+          type: boolean
+          nullable: true
+        ankiHistory:
+          type: boolean
+          nullable: true
     filterNameReq:
       type: object
       properties:
@@ -8701,6 +8809,22 @@ components:
         offset:
           type: integer
           format: int32
+    maintenanceCountResp:
+      type: object
+      properties:
+        kind:
+          type: string
+        count:
+          type: integer
+          format: int64
+    maintenanceKindReq:
+      type: object
+      properties:
+        kind:
+          type: string
+    maintenance_Line:
+      type: object
+      description: "Opaque: see the Go type maintenance.Line (defined outside internal/server, not expanded here)."
     matchBadgesReq:
       type: object
       properties:
@@ -9510,6 +9634,14 @@ components:
         tournamentId:
           type: integer
           format: int64
+    tournamentIDsResp:
+      type: object
+      properties:
+        tournament_ids:
+          type: array
+          items:
+            type: integer
+            format: int64
     tournamentMatchReq:
       type: object
       properties:

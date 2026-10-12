@@ -21,6 +21,7 @@ var boundAppMethods = []string{
 	"CancelCubeMatrix",
 	"CancelEvaluationAtRest",
 	"CancelGammonNetBatch",
+	"CancelMaintenance",
 	"CancelRollout",
 	"RolloutPresets",
 	"RolloutStatus",
@@ -90,9 +91,11 @@ var boundAppMethods = []string{
 	"StopFolderWatch",
 	"SuggestWatchFolder",
 	"StartEvaluationAtRest",
+	"QueueGammonNetBatch",
 	"StartGammonNetBatch",
 	"StartGammonNetMatchBatch",
 	"StartGammonNetStaleBatch",
+	"StartMaintenance",
 	"StartupFilePath",
 }
 

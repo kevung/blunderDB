@@ -32,6 +32,7 @@ type Database struct {
 	importCancel      context.CancelFunc                  // cancels the in-flight import/migration; nil when idle
 	searchCancels     map[int]context.CancelFunc          // in-flight searches, guarded by cancelMu
 	searchSeq         int                                 // key of the next entry of searchCancels
+	job               *jobSlot                            // the one job writing the library, guarded by cancelMu; nil when idle
 	migrationProgress func(phase string, done, total int) // optional progress callback (GUI only)
 	// convertBatchSize overrides convertBatch, so that a test library of a
 	// few hundred rows still spans several transactions of a table pass.

@@ -183,6 +183,7 @@ var databaseParity = map[string]parityEntry{
 	"CountPositionsWithoutAnalysis":     {CLI: "analyze", Server: "/v1/gammonnet.analyzeMissing"},
 	"CountMatchPositionsToAnalyze":      {CLI: "analyze --match", Why: whyMatchScoped},
 	"CountPositionsWithStaleGammonNet":  {CLI: "analyze --stale", Server: "/v1/gammonnet.sweepStale"},
+	"StaleGammonNetIDs":                 {Why: "the list a click on the stale count opens in the Maintenance tab"},
 	"CreateAnkiDeck":                    {Server: "/v1/anki.createDeck", Why: "a deck is created from the GUI's current collection or search; the CLI lists, inspects and syncs decks"},
 	"CreateCollection":                  {CLI: "collection create", Server: "/v1/collections.create"},
 	"CreateLesson":                      {CLI: "lesson create", Server: "/v1/lessons.create"},
@@ -513,6 +514,13 @@ var databaseParity = map[string]parityEntry{
 	"SetAnkiCardSuspended":              {CLI: "anki card", Server: "/v1/anki.suspendCard"},
 	"Vacuum":                            {CLI: "vacuum", Server: "/ops/maintenance.vacuum"},
 	"ReencodeAnalyses":                  {CLI: "reencode", Server: "/v1/maintenance.reencode"},
+	"MaintenanceStatus":                 {CLI: "maintenance status", Server: "/v1/maintenance.status"},
+	"CountMaintenance":                  {CLI: "maintenance count", Server: "/v1/maintenance.count"},
+	"MaintenanceIDs":                    {CLI: "maintenance ids", Server: "/v1/maintenance.ids"},
+	"RunMaintenance":                    {CLI: "maintenance run", Server: "/v1/maintenance.run"},
+	"RunMaintenanceWithProgress":        {CLI: "maintenance run", Server: "/v1/maintenance.run"},
+	"CancelMaintenance":                 {Server: "/v1/maintenance.cancel", Why: "the CLI runs in the foreground: Ctrl-C cancels its run between two batches"},
+	"StopMaintenance":                   {Why: "desktop lifecycle: the GUI stops a run before the open file changes; the CLI's run ends with its process and the daemon's with its request (Server.Run cancels every job at shutdown)"},
 	"ImportMET":                         {CLI: "met --import", Server: "/v1/met.import"},
 	"ListMETs":                          {CLI: "met", Server: "/v1/met.list"},
 	"SetCurrentMET":                     {CLI: "met --use", Server: "/v1/met.setCurrent"},
@@ -541,6 +549,8 @@ var databaseParity = map[string]parityEntry{
 	"StatsMatchIDs":                     {CLI: "stats matches", Server: "/v1/stats.matchIds"},
 	"StatsMatchIDsCtx":                  {CLI: "stats matches", Server: "/v1/stats.matchIds"},
 	"PlayerRanking":                     {CLI: "stats ranking", Server: "/v1/stats.ranking"},
+	"StatsTournamentIDs":                {CLI: "stats tournaments", Server: "/v1/stats.tournamentIds"},
+	"StatsTournamentIDsCtx":             {CLI: "stats tournaments", Server: "/v1/stats.tournamentIds"},
 	"HeadToHeadCtx":                     {CLI: "stats h2h", Server: "/v1/stats.headToHead"},
 	"PRByWindowCtx":                     {CLI: "stats windows", Server: "/v1/stats.prByWindow"},
 	"PlayerRankingCtx":                  {CLI: "stats ranking", Server: "/v1/stats.ranking"},
@@ -593,13 +603,14 @@ func TestDatabaseParity(t *testing.T) {
 	c := &CLI{}
 	commands := c.handlers()
 	subcommands := map[string]map[string]func([]string) error{
-		"collection": c.collectionHandlers(),
-		"anki":       c.ankiHandlers(),
-		"lesson":     c.lessonHandlers(),
-		"study":      c.studyHandlers(),
-		"stats":      c.statsHandlers(),
-		"training":   c.trainingHandlers(),
-		"comment":    c.commentHandlers(),
+		"collection":  c.collectionHandlers(),
+		"anki":        c.ankiHandlers(),
+		"lesson":      c.lessonHandlers(),
+		"study":       c.studyHandlers(),
+		"stats":       c.statsHandlers(),
+		"training":    c.trainingHandlers(),
+		"comment":     c.commentHandlers(),
+		"maintenance": c.maintenanceHandlers(),
 	}
 	paths := serverPaths(t)
 

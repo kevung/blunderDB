@@ -99,7 +99,7 @@ func TestAnalyzeGammonNetProgressIsMonotone(t *testing.T) {
 	d := newBatchTestDB(t)
 	seedBatchPositions(t, d, n)
 
-	var last int
+	last := -1 // the first report is 0/total
 	var calls int
 	summary, err := d.AnalyzeMissingWithGammonNet(context.Background(), 0, 0, 0, runtime.NumCPU(), nil, func(done, total int) {
 		calls++
@@ -114,7 +114,7 @@ func TestAnalyzeGammonNetProgressIsMonotone(t *testing.T) {
 	if err != nil {
 		t.Fatalf("AnalyzeMissingWithGammonNet: %v", err)
 	}
-	if calls != n || last != n {
+	if calls != n+1 || last != n {
 		t.Errorf("progress ended at %d after %d call(s), want %d/%d", last, calls, n, n)
 	}
 	if got := summary.Processed(); got != n {

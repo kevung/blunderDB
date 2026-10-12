@@ -196,7 +196,7 @@ type ScoreCellStats struct {
 // SelectionSpec selects a subset of positions out of a stats result, e.g. the
 // decisions behind a histogram bucket or a tournament row.
 type SelectionSpec struct {
-	Kind string // "all","checker","cube","cube_action","cube_direction","error_bucket","tournament","match","last_n","position","top_blunders","breakdown"
+	Kind string // "all","checker","cube","cube_action","cube_direction","error_bucket","tournament","match","last_n","position","top_blunders","breakdown","blunders"
 	// CubeAction matches analysis.best_cube_action VERBATIM, in whatever
 	// spelling the importer wrote ("No Double", "Double, Take"…) — not the
 	// canonical form.
@@ -603,9 +603,11 @@ type StatsStore interface {
 	// PlayerTable computes one row per player over the matches the filter
 	// retains, for the players table of the Stats panel.
 	//
-	// It honours the filter's date range, tournaments and match lengths only;
-	// PlayerName/PlayerAliases and DecisionType are ignored by design (every
-	// player at once, checker and cube in their own columns).
+	// It honours the filter's date range, tournaments and match lengths, and
+	// its provenance (AnalysisEngine, MinAnalysisDepth) for the decision
+	// figures; PlayerName/PlayerAliases and DecisionType are ignored by design
+	// (every player at once, checker and cube in their own columns). Matches,
+	// wins and losses count every match of the player, analysed or not.
 	//
 	// Rows come back sorted by PR ascending, players with no counted decision
 	// last. Nothing is hidden: the decision count says what a PR is worth.
@@ -736,9 +738,17 @@ type StatsStore interface {
 	// is refused with ErrInvalid.
 	MatchIDs(ctx context.Context, scope string, filter StatsFilter) ([]int64, error)
 
+	// TournamentIDs lists the tournaments Totals.NumTournaments counts under
+	// filter: those holding a counted decision of the selection, by id.
+	TournamentIDs(ctx context.Context, scope string, filter StatsFilter) ([]int64, error)
+
 	// RefreshMatchStats recomputes the rows of matchIDs now — what an import
 	// does for the match it has just written, inside its transaction.
 	RefreshMatchStats(ctx context.Context, scope string, matchIDs []int64) error
+
+	// MissingMatchStats lists, in id order, the matches of the scope that
+	// have no match_stats row: what FillMatchStats would compute.
+	MissingMatchStats(ctx context.Context, scope string) ([]int64, error)
 
 	// FillMatchStats computes the rows of every match in scope that has none,
 	// in committed batches: an interrupted run resumes where it stopped.

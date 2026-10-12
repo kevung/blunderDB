@@ -102,6 +102,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Comment/PositionDeleteCascades", testCommentPositionDeleteCascades},
 		{"Anki/ReviewUpdatesScheduling", testAnkiReviewUpdatesScheduling},
 		{"Anki/ReviewLogAgreesWithCard", testAnkiReviewLogAgreesWithCard},
+		{"Anki/DeckCardsListsTheDeck", testAnkiDeckCardsListsTheDeck},
 		{"Anki/RandomCardIgnoresSchedule", testAnkiRandomCardIgnoresSchedule},
 		{"Anki/DeckIDWindows", testAnkiDeckIDWindows},
 		{"Anki/FilteredWindowsMatchCounters", testAnkiFilteredWindowsMatchCounters},
@@ -155,6 +156,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Stats/MatchDetail", testStatsMatchDetail},
 		{"Stats/MatchStatsOracle", testMatchStatsOracle},
 		{"Stats/HeadToHeadWindowsRanking", testHeadToHeadWindowsRanking},
+		{"Stats/CountDrilldowns", testStatsCountDrilldowns},
 		{"Stats/MatchMoveGrades", testStatsMatchMoveGrades},
 		{"Stats/MatchDecisionLosses", testStatsMatchDecisionLosses},
 		{"Stats/MatchDecisionLossesCube", testStatsMatchDecisionLossesCube},
@@ -201,6 +203,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"LibrarySettings/DefaultsWhenNeverSet", testLibrarySettingsDefaults},
 		{"LibrarySettings/RoundTrip", testLibrarySettingsRoundTrip},
 		{"LibrarySettings/RejectsInvertedNesting", testLibrarySettingsRejectsInverted},
+		{"LibrarySettings/MaintenanceLogRoundTrip", testMaintenanceLogRoundTrip},
 		{"Pile/Lifecycle", testPileLifecycle},
 		{"Pile/BringsDraft", testPileBringsDraft},
 		{"LibrarySettings/BlunderCountPromisesTheSearch", testBlunderCountPromisesTheSearch},
@@ -328,10 +331,16 @@ func statsFixtureMatch(t *testing.T, s storage.Storage, slotBase int, p1, p2 str
 // is what a match written outside an import carries.
 func statsFixtureMatchInBatch(t *testing.T, s storage.Storage, slotBase int, p1, p2 string, batchID int64) (matchID int64, posIDs [2]int64) {
 	t.Helper()
+	return statsFixtureMatchOn(t, s, slotBase, p1, p2, batchID, time.Date(2025, 6, 1, 0, 0, 0, 0, time.UTC))
+}
+
+// statsFixtureMatchOn is statsFixtureMatchInBatch played at a given instant.
+func statsFixtureMatchOn(t *testing.T, s storage.Storage, slotBase int, p1, p2 string, batchID int64, at time.Time) (matchID int64, posIDs [2]int64) {
+	t.Helper()
 	ctx := context.Background()
 
 	m := domain.Match{Player1Name: p1, Player2Name: p2, MatchLength: 7,
-		MatchDate:     time.Date(2025, 6, 1, 0, 0, 0, 0, time.UTC),
+		MatchDate:     at,
 		ImportBatchID: batchID}
 	matchID, err := s.Matches().Save(ctx, "", &m)
 	if err != nil {

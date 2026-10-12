@@ -54,6 +54,10 @@ export function CancelGammonNetBatch() {
   return window['go']['gui']['App']['CancelGammonNetBatch']();
 }
 
+export function CancelMaintenance() {
+  return window['go']['gui']['App']['CancelMaintenance']();
+}
+
 export function CancelRollout() {
   return window['go']['gui']['App']['CancelRollout']();
 }
@@ -166,12 +170,12 @@ export function OpenDirectionOutputDialog() {
   return window['go']['gui']['App']['OpenDirectionOutputDialog']();
 }
 
-export function OpenExportDatabaseDialog() {
-  return window['go']['gui']['App']['OpenExportDatabaseDialog']();
-}
-
 export function OpenExportApkgDialog(arg1) {
   return window['go']['gui']['App']['OpenExportApkgDialog'](arg1);
+}
+
+export function OpenExportDatabaseDialog() {
+  return window['go']['gui']['App']['OpenExportDatabaseDialog']();
 }
 
 export function OpenExportMatDialog(arg1) {
@@ -224,6 +228,10 @@ export function PickTranscriptionVideo() {
 
 export function PrepareDemoDatabase() {
   return window['go']['gui']['App']['PrepareDemoDatabase']();
+}
+
+export function QueueGammonNetBatch(arg1, arg2, arg3) {
+  return window['go']['gui']['App']['QueueGammonNetBatch'](arg1, arg2, arg3);
 }
 
 export function ReadFileContent(arg1) {
@@ -300,6 +308,10 @@ export function StartGammonNetMatchBatch(arg1, arg2, arg3, arg4) {
 
 export function StartGammonNetStaleBatch(arg1, arg2, arg3) {
   return window['go']['gui']['App']['StartGammonNetStaleBatch'](arg1, arg2, arg3);
+}
+
+export function StartMaintenance(arg1) {
+  return window['go']['gui']['App']['StartMaintenance'](arg1);
 }
 
 export function StartRollout(arg1) {

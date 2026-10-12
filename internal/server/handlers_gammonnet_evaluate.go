@@ -72,7 +72,9 @@ func (s *Server) handleGammonNetEvaluate(w http.ResponseWriter, r *http.Request)
 	var res gammonnet.EvalResult
 	ran := s.analysis.run(r.Context(), scope, func(get searcherFor) {
 		start := time.Now()
-		res, err = gammonnet.EvaluatePositionWithMET(get(ply, 0), pos, met, ply, 0, req.Candidates)
+		searcher, release := boundSearcher(r.Context(), get, ply, 0)
+		res, err = gammonnet.EvaluatePositionWithMET(searcher, pos, met, ply, 0, req.Candidates)
+		release()
 		s.quota.charge(scope, time.Since(start))
 	})
 	if !ran {

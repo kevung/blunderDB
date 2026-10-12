@@ -32,16 +32,19 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     GetAllMatches: vi.fn(() => Promise.resolve([{ id: 1 }, { id: 2 }, { id: 3 }])),
     GetAllCollections: vi.fn(() => Promise.resolve([{ id: 7 }, { id: 8 }])),
     GetAllTournaments: vi.fn(() => Promise.resolve([{ id: 4 }])),
+    GetAllAnkiDecks: vi.fn(() => Promise.resolve([{ id: 5 }])),
+    CountPositions: vi.fn(() => Promise.resolve(40)),
     ListLessons: vi.fn(() => Promise.resolve([{ id: 9 }])),
     MatchIDsReachedBy: vi.fn(() => Promise.resolve([2]))
 }));
 
-import { exportDatabase, handleExportCommit } from '../services/exportService.js';
-import { exportMatchesStore, exportOptionsStore, resetExportState } from '../stores/exportModalStore.js';
+import { exportDatabase, handleExportCommit, setExportScope, scopeDefaults } from '../services/exportService.js';
+import { exportMatchesStore, exportOptionsStore, exportPositionCountStore, exportScopeStore, resetExportState } from '../stores/exportModalStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionsStore } from '../stores/positionStore.js';
 import { activeModal } from '../stores/uiStore.js';
 import { ExportDatabase, MatchIDsReachedBy } from '../../wailsjs/go/database/Database.js';
+import { OpenExportDatabaseDialog } from '../../wailsjs/go/gui/App.js';
 
 /** The dialog's picks once it has auto-selected every item of the ticked families. */
 function pickEverything() {
@@ -50,7 +53,8 @@ function pickEverything() {
         matchIDs: get(exportMatchesStore).map((/** @type {any} */ m) => m.id),
         collectionIDs: o.includeCollections ? [7, 8] : [],
         includeTournamentIDs: o.includeTournaments ? [4] : [],
-        lessonIDs: o.includeLessons ? [9] : []
+        lessonIDs: o.includeLessons ? [9] : [],
+        deckIDs: o.includeAnkiDecks ? [5] : []
     }));
 }
 
@@ -78,6 +82,8 @@ describe('the whole library', () => {
             wholeLibrary: true,
             positionIDs: [],
             includeMatches: true,
+            includeTranscriptions: true,
+            includeAliases: true,
             matchIDs: [],
             includeCollections: true,
             collectionIDs: [],
@@ -86,7 +92,9 @@ describe('the whole library', () => {
             includeLessons: true,
             lessonIDs: [],
             includeFilterLibrary: true,
-            includeAnkiDecks: true
+            includeAnkiDecks: true,
+            deckIDs: [],
+            includeAnkiHistory: true
         });
         expect(MatchIDsReachedBy).not.toHaveBeenCalled();
     });
@@ -113,6 +121,106 @@ describe('a filtered list', () => {
         await handleExportCommit();
 
         const sent = vi.mocked(ExportDatabase).mock.calls[0][0];
-        expect(sent).toMatchObject({ wholeLibrary: false, positionIDs: [11, 12], includeMatches: true, matchIDs: [2], includeAnkiDecks: false });
+        expect(sent).toMatchObject({ wholeLibrary: false, positionIDs: [11, 12], includeMatches: true, includeTranscriptions: true, matchIDs: [2], includeAnkiDecks: false });
+    });
+
+    test('sends the drafts only with their matches, and not once unticked', async () => {
+        library = false;
+        await exportDatabase();
+        pickEverything();
+        exportOptionsStore.update((/** @type {any} */ o) => ({ ...o, includeTranscriptions: false }));
+        await handleExportCommit();
+        expect(vi.mocked(ExportDatabase).mock.calls[0][0]).toMatchObject({ includeMatches: true, includeTranscriptions: false });
+
+        vi.clearAllMocks();
+        await exportDatabase();
+        pickEverything();
+        exportOptionsStore.update((/** @type {any} */ o) => ({ ...o, includeMatches: false, matchIDs: [] }));
+        await handleExportCommit();
+        expect(vi.mocked(ExportDatabase).mock.calls[0][0]).toMatchObject({ includeMatches: false, includeTranscriptions: false });
+    });
+
+    test('sends the aliases only with their matches, and not once unticked', async () => {
+        library = false;
+        await exportDatabase();
+        pickEverything();
+        await handleExportCommit();
+        expect(vi.mocked(ExportDatabase).mock.calls[0][0]).toMatchObject({ includeMatches: true, includeAliases: true });
+
+        vi.clearAllMocks();
+        await exportDatabase();
+        pickEverything();
+        exportOptionsStore.update((/** @type {any} */ o) => ({ ...o, includeAliases: false }));
+        await handleExportCommit();
+        expect(vi.mocked(ExportDatabase).mock.calls[0][0]).toMatchObject({ includeAliases: false });
+
+        vi.clearAllMocks();
+        await exportDatabase();
+        pickEverything();
+        exportOptionsStore.update((/** @type {any} */ o) => ({ ...o, includeMatches: false, matchIDs: [] }));
+        await handleExportCommit();
+        expect(vi.mocked(ExportDatabase).mock.calls[0][0]).toMatchObject({ includeMatches: false, includeAliases: false });
+    });
+});
+
+describe('the file', () => {
+    test('is asked for once the form is confirmed, and dismissing it keeps the form', async () => {
+        await exportDatabase();
+        expect(OpenExportDatabaseDialog).not.toHaveBeenCalled();
+        vi.mocked(OpenExportDatabaseDialog).mockResolvedValueOnce('');
+        await handleExportCommit();
+        expect(ExportDatabase).not.toHaveBeenCalled();
+        expect(get(activeModal)).not.toBeNull();
+        await handleExportCommit();
+        expect(vi.mocked(ExportDatabase).mock.calls[0][0]).toMatchObject({ exportPath: '/tmp/export.db' });
+    });
+});
+
+describe('a list exported as the whole library', () => {
+    test('offers every match and counts every position', async () => {
+        await exportDatabase();
+        expect(get(exportScopeStore).chooseable).toBe(true);
+        expect(get(exportPositionCountStore)).toBe(2);
+        await setExportScope(true);
+        expect(get(exportMatchesStore)).toHaveLength(3);
+        expect(get(exportPositionCountStore)).toBe(40);
+        exportOptionsStore.update((/** @type {any} */ o) => ({ ...o, ...scopeDefaults(true) }));
+        pickEverything();
+        await handleExportCommit();
+        expect(vi.mocked(ExportDatabase).mock.calls[0][0]).toMatchObject({ wholeLibrary: true, positionIDs: [], matchIDs: [] });
+    });
+});
+
+describe('a list', () => {
+    test("brings its collections' positions and its decks' history only when asked", async () => {
+        await exportDatabase();
+        exportOptionsStore.update((/** @type {any} */ o) => ({ ...o, includeCollections: true, collectionIDs: [7], includeAnkiDecks: true, deckIDs: [5] }));
+        await handleExportCommit();
+        expect(vi.mocked(ExportDatabase).mock.calls[0][0]).toMatchObject({
+            includeCollectionPositions: false,
+            includeAnkiDecks: true,
+            deckIDs: [5],
+            includeAnkiHistory: false
+        });
+
+        await exportDatabase();
+        exportOptionsStore.update((/** @type {any} */ o) => ({
+            ...o,
+            includeCollections: true,
+            collectionIDs: [7],
+            includeCollectionPositions: true,
+            includeAnkiDecks: true,
+            deckIDs: [5],
+            includeAnkiHistory: true
+        }));
+        await handleExportCommit();
+        expect(vi.mocked(ExportDatabase).mock.calls[1][0]).toMatchObject({ includeCollectionPositions: true, includeAnkiHistory: true });
+    });
+
+    test('sends the drafts of the matches its tournaments bring', async () => {
+        await exportDatabase();
+        exportOptionsStore.update((/** @type {any} */ o) => ({ ...o, matchIDs: [], includeTournaments: true, includeTournamentIDs: [4] }));
+        await handleExportCommit();
+        expect(vi.mocked(ExportDatabase).mock.calls[0][0]).toMatchObject({ includeMatches: false, includeTranscriptions: true, includeAliases: true });
     });
 });

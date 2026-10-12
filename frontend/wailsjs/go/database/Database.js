@@ -90,6 +90,10 @@ export function CancelImport() {
   return window['go']['database']['Database']['CancelImport']();
 }
 
+export function CancelMaintenance() {
+  return window['go']['database']['Database']['CancelMaintenance']();
+}
+
 export function CancelMatch(arg1, arg2) {
   return window['go']['database']['Database']['CancelMatch'](arg1, arg2);
 }
@@ -244,6 +248,10 @@ export function CountAnkiDeckPositions(arg1) {
 
 export function CountCollectionPositions(arg1) {
   return window['go']['database']['Database']['CountCollectionPositions'](arg1);
+}
+
+export function CountMaintenance(arg1) {
+  return window['go']['database']['Database']['CountMaintenance'](arg1);
 }
 
 export function CountMatchPositionsToAnalyze(arg1) {
@@ -998,6 +1006,14 @@ export function LoadTrainingSessions(arg1, arg2) {
   return window['go']['database']['Database']['LoadTrainingSessions'](arg1, arg2);
 }
 
+export function MaintenanceIDs(arg1) {
+  return window['go']['database']['Database']['MaintenanceIDs'](arg1);
+}
+
+export function MaintenanceStatus() {
+  return window['go']['database']['Database']['MaintenanceStatus']();
+}
+
 export function MakeParticipantAbsent(arg1, arg2, arg3, arg4) {
   return window['go']['database']['Database']['MakeParticipantAbsent'](arg1, arg2, arg3, arg4);
 }
@@ -1266,6 +1282,14 @@ export function RolloutPositions(arg1, arg2, arg3, arg4) {
   return window['go']['database']['Database']['RolloutPositions'](arg1, arg2, arg3, arg4);
 }
 
+export function RunMaintenance(arg1) {
+  return window['go']['database']['Database']['RunMaintenance'](arg1);
+}
+
+export function RunMaintenanceWithProgress(arg1, arg2) {
+  return window['go']['database']['Database']['RunMaintenanceWithProgress'](arg1, arg2);
+}
+
 export function RunRolloutPlan(arg1, arg2, arg3, arg4) {
   return window['go']['database']['Database']['RunRolloutPlan'](arg1, arg2, arg3, arg4);
 }
@@ -1454,6 +1478,10 @@ export function Slots(arg1) {
   return window['go']['database']['Database']['Slots'](arg1);
 }
 
+export function StaleGammonNetIDs(arg1) {
+  return window['go']['database']['Database']['StaleGammonNetIDs'](arg1);
+}
+
 export function Standings(arg1) {
   return window['go']['database']['Database']['Standings'](arg1);
 }
@@ -1486,8 +1514,20 @@ export function StatsReportHTMLCtx(arg1, arg2, arg3, arg4) {
   return window['go']['database']['Database']['StatsReportHTMLCtx'](arg1, arg2, arg3, arg4);
 }
 
+export function StatsTournamentIDs(arg1) {
+  return window['go']['database']['Database']['StatsTournamentIDs'](arg1);
+}
+
+export function StatsTournamentIDsCtx(arg1, arg2) {
+  return window['go']['database']['Database']['StatsTournamentIDsCtx'](arg1, arg2);
+}
+
 export function StopDuel(arg1, arg2, arg3) {
   return window['go']['database']['Database']['StopDuel'](arg1, arg2, arg3);
+}
+
+export function StopMaintenance(arg1) {
+  return window['go']['database']['Database']['StopMaintenance'](arg1);
 }
 
 export function StudyBacklog(arg1) {

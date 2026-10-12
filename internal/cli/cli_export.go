@@ -25,9 +25,12 @@ func (cli *CLI) runExport(args []string) error {
 	includeFilterLibrary := exportCmd.Bool("filters", true, "Include filter library in database export (default: true)")
 	includePlayedMoves := exportCmd.Bool("played-moves", true, "Include played moves in analysis (default: true)")
 	includeMatches := exportCmd.Bool("matches", true, "Include matches in database export (default: true)")
+	includeTranscriptions := exportCmd.Bool("transcriptions", true, "Include the transcription drafts of the exported matches in database export (default: true)")
+	includeAliases := exportCmd.Bool("aliases", true, "Include the player and event aliases the exported matches write in database export (default: true)")
 	includeCollections := exportCmd.Bool("collections", true, "Include collections in database export (default: true)")
 	includeTournaments := exportCmd.Bool("tournaments", true, "Include tournaments in database export (default: true)")
-	includeDecks := exportCmd.Bool("decks", true, "Include Anki decks, without their review history, in database export (default: true)")
+	includeDecks := exportCmd.Bool("decks", true, "Include Anki decks in database export (default: true)")
+	includeAnkiHistory := exportCmd.Bool("anki-history", true, "Carry the review history of the exported Anki decks (default: true)")
 	collectionIDsStr := exportCmd.String("collection-ids", "", "Comma-separated list of collection IDs to export (empty = all)")
 	matchIDsStr := exportCmd.String("match-ids", "", "Comma-separated list of match IDs to export (empty = all)")
 	deckIDsStr := exportCmd.String("deck-ids", "", "Comma-separated list of Anki deck IDs to export (empty = all)")
@@ -47,7 +50,7 @@ func (cli *CLI) runExport(args []string) error {
 		fmt.Println()
 		fmt.Println("Export Types:")
 		fmt.Println("  database   Export the whole library, as the server's export does: positions, matches,")
-		fmt.Println("             tournaments, collections, lessons, Anki decks, transcriptions, filters.")
+		fmt.Println("             tournaments, collections, lessons, Anki decks, transcriptions, aliases, filters.")
 		fmt.Println("             Each family can be left out (--matches=false) or narrowed (--match-ids=1,2).")
 		fmt.Println("  positions  Export positions to text file (JSON format)")
 		fmt.Println("  matches    Export only matches to a new database")
@@ -170,26 +173,29 @@ func (cli *CLI) runExport(args []string) error {
 	case "database":
 		// A list of ids names some of a family: it brings that family in.
 		return cli.exportDatabaseWithOptions(ExportOptions{
-			ExportPath:           *outputFile,
-			WholeLibrary:         true,
-			IncludeAnalysis:      *includeAnalysis,
-			IncludeComments:      *includeComments,
-			IncludeFilterLibrary: *includeFilterLibrary,
-			IncludePlayedMoves:   *includePlayedMoves,
-			IncludeMatches:       *includeMatches || len(matchIDs) > 0,
-			IncludeCollections:   *includeCollections || len(collectionIDs) > 0,
-			IncludeTournaments:   *includeTournaments || len(tournamentIDs) > 0,
-			IncludeAnkiDecks:     *includeDecks || len(deckIDs) > 0,
-			IncludeLessons:       true,
-			CollectionIDs:        collectionIDs,
-			MatchIDs:             matchIDs,
-			TournamentIDs:        tournamentIDs,
-			DeckIDs:              deckIDs,
+			ExportPath:            *outputFile,
+			WholeLibrary:          true,
+			IncludeAnalysis:       *includeAnalysis,
+			IncludeComments:       *includeComments,
+			IncludeFilterLibrary:  *includeFilterLibrary,
+			IncludePlayedMoves:    *includePlayedMoves,
+			IncludeMatches:        *includeMatches || len(matchIDs) > 0,
+			IncludeTranscriptions: *includeTranscriptions,
+			IncludeAliases:        *includeAliases,
+			IncludeCollections:    *includeCollections || len(collectionIDs) > 0,
+			IncludeTournaments:    *includeTournaments || len(tournamentIDs) > 0,
+			IncludeAnkiDecks:      *includeDecks || len(deckIDs) > 0,
+			IncludeAnkiHistory:    *includeAnkiHistory,
+			IncludeLessons:        true,
+			CollectionIDs:         collectionIDs,
+			MatchIDs:              matchIDs,
+			TournamentIDs:         tournamentIDs,
+			DeckIDs:               deckIDs,
 		}, marking, text)
 	case "positions":
 		return cli.exportPositions(*outputFile, text)
 	case "matches":
-		return cli.exportMatchesOnly(*outputFile, matchIDs, marking, text)
+		return cli.exportMatchesOnly(*outputFile, matchIDs, *includeTranscriptions, *includeAliases, marking, text)
 	case "mat":
 		return cli.exportMatchesMAT(matchIDs, *outputFile, *outputDir, text)
 	default:
@@ -349,8 +355,9 @@ func (cli *CLI) exportDatabaseWithOptions(opts ExportOptions, marking exportMark
 }
 
 // exportMatchesOnly exports matches — those of matchIDs, every match when it is empty — to a
-// new database, each with the positions its moves were played in and nothing else.
-func (cli *CLI) exportMatchesOnly(outputFile string, matchIDs []int64, marking exportMarking, text bool) error {
+// new database, each with the positions its moves were played in and, under transcriptions,
+// the draft it was typed from; under aliases, the player and event aliases they write go too.
+func (cli *CLI) exportMatchesOnly(outputFile string, matchIDs []int64, transcriptions, aliases bool, marking exportMarking, text bool) error {
 	if text {
 		fmt.Printf("Exporting matches to: %s\n", outputFile)
 	}
@@ -383,16 +390,18 @@ func (cli *CLI) exportMatchesOnly(outputFile string, matchIDs []int64, marking e
 	// The matches carry their own positions (ExportDatabase sets MatchPositions); the
 	// exporter reads them from the database. Ctrl-C cancels it in flight.
 	opts := ExportOptions{
-		ExportPath:         outputFile,
-		MatchIDs:           ids,
-		Metadata:           metadata,
-		IncludeAnalysis:    true,
-		IncludeComments:    true,
-		IncludePlayedMoves: true,
-		IncludeMatches:     true,
-		Watermark:          marking.watermark,
-		WatermarkNote:      marking.note,
-		Password:           marking.password,
+		ExportPath:            outputFile,
+		MatchIDs:              ids,
+		Metadata:              metadata,
+		IncludeAnalysis:       true,
+		IncludeComments:       true,
+		IncludePlayedMoves:    true,
+		IncludeMatches:        true,
+		IncludeTranscriptions: transcriptions,
+		IncludeAliases:        aliases,
+		Watermark:             marking.watermark,
+		WatermarkNote:         marking.note,
+		Password:              marking.password,
 	}
 	err = withInterruptibleContext(func() {
 		if text {

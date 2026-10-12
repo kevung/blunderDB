@@ -1,17 +1,23 @@
 <script>
     // Vues de corpus : face-à-face de deux joueurs, PR par fenêtre
-    // calendaire, classement. Chaque vue se calcule à la demande — ce sont
+    // calendaire. Le classement est l'onglet Joueurs, trié par PR et filtré
+    // par colonne sur les décisions. Chaque vue se calcule à la demande — ce sont
     // des agrégats sur toute la base, trop chers pour suivre chaque frappe.
-    import { HeadToHead, PRByWindow, PlayerRanking, GetAllPlayerNames, StatsMatchIDs } from '../../../wailsjs/go/database/Database.js';
+    import { HeadToHead, PRByWindow, GetAllPlayerNames, StatsMatchIDs } from '../../../wailsjs/go/database/Database.js';
+    import { untrack } from 'svelte';
     import { t } from '../../i18n/index.js';
-    import { loadPositionsFromStatsSelection, openMatchListInPanel } from '../../services/positionLoader.js';
+    import { loadPositionsFromStatsSelection, openMatchListInPanel, openMatchInPanel } from '../../services/positionLoader.js';
+    import EntityAutocomplete from '../EntityAutocomplete.svelte';
+    import { narrowToMonths } from '../../utils/statsWindow.js';
     import CountLink from '../panels/CountLink.svelte';
+    import PanelTable from '../panels/PanelTable.svelte';
 
     /** @type {{ filter: object }} */
     let { filter } = $props();
 
     let players = $state([]);
-    let playerA = $state('');
+    // The filter's player is the obvious first side of a head-to-head.
+    let playerA = $state(untrack(() => /** @type {any} */ (filter)?.playerName ?? ''));
     let playerB = $state('');
     let h2h = $state(/** @type {any} */ (null));
     let h2hError = $state('');
@@ -19,10 +25,6 @@
     let months = $state(3);
     let windows = $state(null);
     let windowsError = $state('');
-
-    let minDecisions = $state(500);
-    let ranking = $state(null);
-    let rankingError = $state('');
 
     let busy = $state('');
 
@@ -68,33 +70,12 @@
         });
     }
 
-    function loadRanking() {
-        return run('ranking', async () => {
-            rankingError = '';
-            try {
-                ranking = (await PlayerRanking(filter, Math.max(0, Number(minDecisions) || 0))) ?? [];
-            } catch (err) {
-                ranking = null;
-                rankingError = err?.message ?? String(err);
-            }
-        });
-    }
-
     // A row opens what it sums up: a match row or a player's record opens
     // matches in the Match panel, a window's decisions open their positions.
     // A count inside a row opens the other half and stops there.
 
     /** The filter narrowed to a window's months (both ends inclusive). */
-    function windowFilter(/** @type {any} */ w) {
-        const f = /** @type {any} */ (filter);
-        const [y, m] = String(w.to).split('-').map(Number);
-        const lastDay = new Date(Date.UTC(y, m, 0)).getUTCDate();
-        const from = `${w.from}-01`;
-        const to = `${w.to}-${String(lastDay).padStart(2, '0')}`;
-        return { ...f, dateFrom: f?.dateFrom && f.dateFrom > from ? f.dateFrom : from, dateTo: f?.dateTo && f.dateTo < to ? f.dateTo : to };
-    }
-
-    const playerFilter = (/** @type {string} */ name) => ({ ...filter, playerName: name });
+    const windowFilter = (/** @type {any} */ w) => narrowToMonths(/** @type {any} */ (filter), w);
 
     const openPositions = (/** @type {object} */ f) => loadPositionsFromStatsSelection(f, { Kind: 'all', OnlyWithError: false });
 
@@ -115,6 +96,64 @@
         open();
     }
 
+    const finite = (/** @type {any} */ v) => (Number.isFinite(v) ? v : null);
+
+    const h2hColumns = $derived([
+        { key: 'date', label: $t('stats.corpus.date'), sortable: true, filter: /** @type {const} */ ('text'), value: (/** @type {any} */ m) => m.date },
+        { key: 'length', label: $t('stats.corpus.length'), sortable: true, align: 'right', filter: /** @type {const} */ ('number'), value: (/** @type {any} */ m) => m.match_length },
+        { key: 'winner', label: $t('stats.corpus.winner'), sortable: true, filter: /** @type {const} */ ('text'), value: (/** @type {any} */ m) => outcomeLabel(m.outcome) },
+        {
+            key: 'pr_a',
+            label: $t('stats.corpus.prOf', { name: h2h?.player_a ?? '' }),
+            sortable: true,
+            align: 'right',
+            filter: /** @type {const} */ ('number'),
+            value: (/** @type {any} */ m) => finite(m.pr_a)
+        },
+        {
+            key: 'pr_b',
+            label: $t('stats.corpus.prOf', { name: h2h?.player_b ?? '' }),
+            sortable: true,
+            align: 'right',
+            filter: /** @type {const} */ ('number'),
+            value: (/** @type {any} */ m) => finite(m.pr_b)
+        }
+    ]);
+
+    const windowColumns = $derived([
+        { key: 'from', label: $t('stats.corpus.from'), sortable: true, filter: /** @type {const} */ ('text'), value: (/** @type {any} */ w) => w.from },
+        { key: 'to', label: $t('stats.corpus.to'), sortable: true, filter: /** @type {const} */ ('text'), value: (/** @type {any} */ w) => w.to },
+        {
+            key: 'matches',
+            label: $t('stats.corpus.matches'),
+            sortable: true,
+            defaultDir: 'desc',
+            align: 'right',
+            filter: /** @type {const} */ ('number'),
+            value: (/** @type {any} */ w) => w.num_matches
+        },
+        {
+            key: 'decisions',
+            label: $t('stats.corpus.decisions'),
+            sortable: true,
+            defaultDir: 'desc',
+            align: 'right',
+            filter: /** @type {const} */ ('number'),
+            value: (/** @type {any} */ w) => w.num_decisions
+        },
+        { key: 'pr', label: 'PR', sortable: true, align: 'right', filter: /** @type {const} */ ('number'), value: (/** @type {any} */ w) => finite(w.pr) }
+    ]);
+
+    /**
+     * The attributes that make a row a keyboard-reachable control.
+     * @param {string} testid
+     * @param {string} title
+     * @param {() => void} open
+     */
+    function rowControl(testid, title, open) {
+        return { 'data-testid': testid, role: 'button', tabindex: 0, title, onkeydown: (/** @type {KeyboardEvent} */ e) => onRowKey(e, open) };
+    }
+
     function outcomeLabel(o) {
         if (o > 0) return playerA;
         if (o < 0) return playerB;
@@ -127,14 +166,9 @@
         <h3 id="corpus-h2h-title">{$t('stats.corpus.h2hTitle')}</h3>
         <div class="corpus-controls">
             <label for="corpus-a">{$t('stats.corpus.playerA')}</label>
-            <input id="corpus-a" list="corpus-players" bind:value={playerA} />
+            <div class="corpus-player"><EntityAutocomplete id="corpus-a" variant="field" bind:value={playerA} items={players} label={(/** @type {string} */ n) => n} /></div>
             <label for="corpus-b">{$t('stats.corpus.playerB')}</label>
-            <input id="corpus-b" list="corpus-players" bind:value={playerB} />
-            <datalist id="corpus-players">
-                {#each players as name (name)}
-                    <option value={name}></option>
-                {/each}
-            </datalist>
+            <div class="corpus-player"><EntityAutocomplete id="corpus-b" variant="field" bind:value={playerB} items={players} label={(/** @type {string} */ n) => n} /></div>
             <button onclick={loadH2H} disabled={!playerA || !playerB || busy !== ''}>{$t('stats.corpus.compute')}</button>
         </div>
         {#if h2hError}
@@ -157,36 +191,22 @@
             {#if (h2h.matches ?? []).length === 0}
                 <p class="corpus-empty">{$t('stats.corpus.h2hNone')}</p>
             {:else}
-                <table class="corpus-table">
-                    <thead>
-                        <tr>
-                            <th>{$t('stats.corpus.date')}</th>
-                            <th>{$t('stats.corpus.length')}</th>
-                            <th>{$t('stats.corpus.winner')}</th>
-                            <th>{$t('stats.corpus.prOf', { name: h2h.player_a })}</th>
-                            <th>{$t('stats.corpus.prOf', { name: h2h.player_b })}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {#each h2h.matches as m (m.id)}
-                            <tr
-                                class="clickable"
-                                data-testid="corpus-h2h-row"
-                                role="button"
-                                tabindex="0"
-                                title={$t('stats.corpus.openMatches')}
-                                onclick={() => openMatchListInPanel([m.id])}
-                                onkeydown={(e) => onRowKey(e, () => openMatchListInPanel([m.id]))}
-                            >
-                                <td>{m.date}</td>
-                                <td>{m.match_length}</td>
-                                <td>{outcomeLabel(m.outcome)}</td>
-                                <td>{fmt(m.pr_a)}</td>
-                                <td>{fmt(m.pr_b)}</td>
-                            </tr>
-                        {/each}
-                    </tbody>
-                </table>
+                <PanelTable
+                    viewId="stats.corpus.h2h"
+                    rows={h2h.matches}
+                    columns={h2hColumns}
+                    pointerRows
+                    rowAttrs={(m) => rowControl('corpus-h2h-row', $t('stats.openMatch'), () => openMatchInPanel(m.id))}
+                    onSelect={(m) => openMatchInPanel(m.id)}
+                >
+                    {#snippet cells(/** @type {any} */ m)}
+                        <td>{m.date}</td>
+                        <td class="align-right">{m.match_length}</td>
+                        <td>{outcomeLabel(m.outcome)}</td>
+                        <td class="align-right">{fmt(m.pr_a)}</td>
+                        <td class="align-right">{fmt(m.pr_b)}</td>
+                    {/snippet}
+                </PanelTable>
             {/if}
         {/if}
     </section>
@@ -208,113 +228,45 @@
             {#if windows.length === 0}
                 <p class="corpus-empty">{$t('stats.corpus.noData')}</p>
             {:else}
-                <table class="corpus-table">
-                    <thead>
-                        <tr>
-                            <th>{$t('stats.corpus.from')}</th>
-                            <th>{$t('stats.corpus.to')}</th>
-                            <th>{$t('stats.corpus.matches')}</th>
-                            <th>{$t('stats.corpus.decisions')}</th>
-                            <th>PR</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {#each windows as w (w.from)}
-                            <tr
-                                class="clickable"
-                                data-testid="corpus-window-row"
-                                role="button"
-                                tabindex="0"
+                <PanelTable
+                    viewId="stats.corpus.windows"
+                    rows={windows}
+                    rowKey={(w) => w.from}
+                    columns={windowColumns}
+                    pointerRows
+                    rowAttrs={(w) => rowControl('corpus-window-row', $t('stats.corpus.openPositions'), () => openPositions(windowFilter(w)))}
+                    onSelect={(w) => openPositions(windowFilter(w))}
+                >
+                    {#snippet cells(/** @type {any} */ w)}
+                        <td>{w.from}</td>
+                        <td>{w.to}</td>
+                        <td class="align-right"
+                            >{#if w.num_matches > 0}<CountLink
+                                    label={String(w.num_matches)}
+                                    title={$t('stats.corpus.openMatches')}
+                                    onclick={(/** @type {Event} */ e) => countClick(e, () => openCountedMatches(windowFilter(w)))}
+                                />{:else}0{/if}</td
+                        >
+                        <td class="align-right"
+                            ><CountLink
+                                label={String(w.num_decisions)}
                                 title={$t('stats.corpus.openPositions')}
-                                onclick={() => openPositions(windowFilter(w))}
-                                onkeydown={(e) => onRowKey(e, () => openPositions(windowFilter(w)))}
-                            >
-                                <td>{w.from}</td>
-                                <td>{w.to}</td>
-                                <td
-                                    >{#if w.num_matches > 0}<CountLink
-                                            label={String(w.num_matches)}
-                                            title={$t('stats.corpus.openMatches')}
-                                            onclick={(/** @type {Event} */ e) => countClick(e, () => openCountedMatches(windowFilter(w)))}
-                                        />{:else}0{/if}</td
-                                >
-                                <td>{w.num_decisions}</td>
-                                <td>{fmt(w.pr)}</td>
-                            </tr>
-                        {/each}
-                    </tbody>
-                </table>
+                                onclick={(/** @type {Event} */ e) => countClick(e, () => openPositions(windowFilter(w)))}
+                            /></td
+                        >
+                        <td class="align-right">{fmt(w.pr)}</td>
+                    {/snippet}
+                </PanelTable>
             {/if}
         {/if}
     </section>
 
-    <section class="corpus-section" aria-labelledby="corpus-ranking-title">
-        <h3 id="corpus-ranking-title">{$t('stats.corpus.rankingTitle')}</h3>
-        <div class="corpus-controls">
-            <label for="corpus-min">{$t('stats.corpus.minDecisions')}</label>
-            <input id="corpus-min" type="number" min="0" bind:value={minDecisions} />
-            <button onclick={loadRanking} disabled={busy !== ''}>{$t('stats.corpus.compute')}</button>
-        </div>
-        {#if rankingError}
-            <p class="corpus-error">{rankingError}</p>
-        {:else if ranking}
-            {#if ranking.length === 0}
-                <p class="corpus-empty">{$t('stats.corpus.noData')}</p>
-            {:else}
-                <table class="corpus-table">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>{$t('stats.corpus.player')}</th>
-                            <th>{$t('stats.corpus.matches')}</th>
-                            <th>{$t('stats.corpus.record')}</th>
-                            <th>{$t('stats.corpus.decisions')}</th>
-                            <th>PR</th>
-                            <th>{$t('stats.corpus.prChecker')}</th>
-                            <th>{$t('stats.corpus.prCube')}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {#each ranking as r (r.name)}
-                            <tr
-                                class="clickable"
-                                data-testid="corpus-ranking-row"
-                                role="button"
-                                tabindex="0"
-                                title={$t('stats.corpus.openMatches')}
-                                onclick={() => openCountedMatches(playerFilter(r.name))}
-                                onkeydown={(e) => onRowKey(e, () => openCountedMatches(playerFilter(r.name)))}
-                            >
-                                <td>{r.rank}</td>
-                                <td>{r.name}</td>
-                                <td>{r.matches}</td>
-                                <td>{r.wins}–{r.losses}</td>
-                                <td
-                                    >{#if r.decisions > 0}<CountLink
-                                            label={String(r.decisions)}
-                                            title={$t('stats.corpus.openPositions')}
-                                            onclick={(/** @type {Event} */ e) => countClick(e, () => openPositions(playerFilter(r.name)))}
-                                        />{:else}0{/if}</td
-                                >
-                                <td>{fmt(r.pr)}</td>
-                                <td>{fmt(r.pr_checker)}</td>
-                                <td>{fmt(r.pr_cube)}</td>
-                            </tr>
-                        {/each}
-                    </tbody>
-                </table>
-            {/if}
-        {/if}
-    </section>
     {#if busy}
         <p class="corpus-busy" role="status">{$t('stats.loading')}</p>
     {/if}
 </div>
 
 <style>
-    .corpus-table tr.clickable {
-        cursor: pointer;
-    }
     .corpus-summary-link {
         all: unset;
         cursor: pointer;
@@ -334,29 +286,15 @@
         font-size: var(--font-size-base);
         font-weight: 600;
     }
+    .corpus-player {
+        width: 12em;
+    }
     .corpus-controls {
         display: flex;
         flex-wrap: wrap;
         align-items: center;
         gap: 4px 8px;
         margin-bottom: 4px;
-    }
-    .corpus-controls input[type='number'] {
-        width: 6em;
-    }
-    .corpus-table {
-        border-collapse: collapse;
-        font-size: var(--font-size-small);
-    }
-    .corpus-table th,
-    .corpus-table td {
-        padding: 2px 8px;
-        border-bottom: 1px solid var(--color-border);
-        text-align: right;
-    }
-    .corpus-table th:nth-child(2),
-    .corpus-table td:nth-child(2) {
-        text-align: left;
     }
     .corpus-error {
         color: var(--color-error, #b00020);

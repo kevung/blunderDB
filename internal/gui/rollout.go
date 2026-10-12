@@ -185,7 +185,7 @@ func (a *App) startRolloutBatch(settings rollout.Settings, gather func(context.C
 	a.gnBatchMu.Unlock()
 	a.roMu.Unlock()
 	if gammonNetRunning {
-		return 0, errors.New("rollout: a gammonNet batch analysis is already running")
+		return 0, &database.BusyError{Job: database.JobGammonNet}
 	}
 
 	ctx, stopped, job := a.beginRollout(RolloutStatus{Running: true, Kind: "batch", MaxGames: settings.MaxGames})

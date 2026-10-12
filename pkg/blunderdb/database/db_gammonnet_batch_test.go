@@ -74,8 +74,8 @@ func TestAnalyzeMissingWithGammonNetFillsOnlyTheGap(t *testing.T) {
 	if err != nil {
 		t.Fatalf("AnalyzeMissingWithGammonNet: %v", err)
 	}
-	if len(progressCalls) != 1 || progressCalls[0] != [2]int{1, 1} {
-		t.Errorf("progress calls = %v, want exactly one {1,1}", progressCalls)
+	if len(progressCalls) != 2 || progressCalls[0] != [2]int{0, 1} || progressCalls[1] != [2]int{1, 1} {
+		t.Errorf("progress calls = %v, want {0,1} then {1,1}", progressCalls)
 	}
 	if summary.Evaluated != 1 || summary.Refused != 0 || summary.Failed != 0 {
 		t.Errorf("summary = %+v, want {Evaluated:1 Refused:0 Failed:0}", summary)
@@ -373,5 +373,62 @@ func TestAnalyzeStaleGammonNetConvergesToAShallowerDepth(t *testing.T) {
 		if m.AnalysisDepth != "0-ply" {
 			t.Errorf("move %s kept depth %q, want every entry at 0-ply", m.Move, m.AnalysisDepth)
 		}
+	}
+}
+
+// A deep batch stops inside the search when its context is cancelled: the
+// call returns at once, writes nothing for the interrupted positions and does
+// not count them as failures.
+func TestAnalyzeMissingWithGammonNetCancelInterruptsDeepSearch(t *testing.T) {
+	t.Parallel()
+	d := newBatchTestDB(t)
+
+	dp, err := domain.DecodeXGID("XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:0:10")
+	if err != nil {
+		t.Fatalf("DecodeXGID: %v", err)
+	}
+	dp.Dice = [2]int{0, 0}
+	if _, err := d.SavePosition(&dp); err != nil {
+		t.Fatalf("SavePosition: %v", err)
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 200*time.Millisecond)
+	defer cancel()
+	start := time.Now()
+	summary, err := d.AnalyzeMissingWithGammonNet(ctx, 4, 0, 0, 1, nil, nil)
+	elapsed := time.Since(start)
+	if err == nil {
+		t.Fatal("a 4-ply cube search finished within 200ms: the test no longer cancels anything")
+	}
+	if elapsed > 3*time.Second {
+		t.Fatalf("cancelled 4-ply batch returned after %v", elapsed)
+	}
+	if summary.Processed() != 0 {
+		t.Fatalf("summary %+v, want nothing processed", summary)
+	}
+	if n, _ := d.CountPositionsWithoutAnalysis(); n != 1 {
+		t.Fatalf("CountPositionsWithoutAnalysis = %d, want 1", n)
+	}
+}
+
+// The batch reports 0/total before its first position, which a deep search
+// can hold for minutes.
+func TestAnalyzeMissingWithGammonNetReportsZeroFirst(t *testing.T) {
+	t.Parallel()
+	d := newBatchTestDB(t)
+	for _, pt := range []int{8, 17} {
+		pos := racePosition(pt, pt+2, domain.White)
+		if _, err := d.SavePosition(&pos); err != nil {
+			t.Fatalf("SavePosition: %v", err)
+		}
+	}
+	var seen [][2]int
+	if _, err := d.AnalyzeMissingWithGammonNet(context.Background(), 0, 0, 0, 1, nil, func(done, total int) {
+		seen = append(seen, [2]int{done, total})
+	}); err != nil {
+		t.Fatalf("AnalyzeMissingWithGammonNet: %v", err)
+	}
+	if len(seen) != 3 || seen[0] != [2]int{0, 2} || seen[2] != [2]int{2, 2} {
+		t.Fatalf("progress %v, want 0/2 then up to 2/2", seen)
 	}
 }

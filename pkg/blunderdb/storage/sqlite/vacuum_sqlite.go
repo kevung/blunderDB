@@ -413,3 +413,20 @@ func (s *Storage) FilePath(ctx context.Context) (string, error) {
 	}
 	return mainFilePath(ctx, s.sqlDB)
 }
+
+// Reclaimable reports the bytes a Vacuum would at least give back: the free
+// pages the file already holds. It reads two PRAGMAs, so it costs nothing on
+// any size of library; the analyses Vacuum would recompress are not counted.
+func (s *Storage) Reclaimable(ctx context.Context) (int64, error) {
+	if s.sqlDB == nil {
+		return 0, fmt.Errorf("reclaimable: no database open")
+	}
+	var free, size int64
+	if err := s.sqlDB.QueryRowContext(ctx, `PRAGMA freelist_count`).Scan(&free); err != nil {
+		return 0, fmt.Errorf("reclaimable: %w", err)
+	}
+	if err := s.sqlDB.QueryRowContext(ctx, `PRAGMA page_size`).Scan(&size); err != nil {
+		return 0, fmt.Errorf("reclaimable: %w", err)
+	}
+	return free * size, nil
+}

@@ -172,6 +172,7 @@ export const MATCH_STAT_ROWS = [
 
 // Transcript marks for a Move's grade (ADR-0046): `?` Error, `??` Blunder. The grade comes from
 // the backend (GetMatchMoveGrades), so the Transcript cannot draw a line the statistics do not.
+/** @type {Record<string, string>} */
 export const GRADE_MARKS = { error: '?', blunder: '??' };
 
 /**

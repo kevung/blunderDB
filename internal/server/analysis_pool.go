@@ -46,6 +46,18 @@ type analysisPool struct {
 // evaluation functions take as "make one per position".
 type searcherFor func(ply, pruneK int) *gammonnet.Searcher
 
+// boundSearcher takes the worker's searcher for ply/pruneK and ties it to ctx,
+// so a cancelled sweep or a client gone mid-search frees the worker at the
+// next roll instead of at the end of the search. Call release before the
+// worker's next unit.
+func boundSearcher(ctx context.Context, get searcherFor, ply, pruneK int) (*gammonnet.Searcher, func()) {
+	s := get(ply, pruneK)
+	if s == nil {
+		return nil, func() {}
+	}
+	return s, s.BindContext(ctx)
+}
+
 // poolJob is one request's work: next hands the pool the job's next unit,
 // or false once there is none (the positions are exhausted, the request was
 // cancelled, the tenant's engine time is spent). It is called under the

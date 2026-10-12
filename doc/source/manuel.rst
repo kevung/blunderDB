@@ -249,14 +249,16 @@ Configuration
 
 Le bouton de configuration (icône en forme de rouage) situé dans la barre
 d'outils, à gauche du bouton d'aide, ouvre la fenêtre de configuration de
-blunderDB. Elle est organisée en neuf onglets :
+blunderDB. Elle est organisée en dix onglets :
 
 * **Interface** — thème, langue, échelle d'affichage, position du panneau, pas de
   PageUp / PageDown (10, 50, 100, 500 ou 1 000 positions, ou 10 % de la liste),
   journaux, vérification des mises à jour, votre nom et positions voisines ;
 * **Couleurs** — les couleurs du plateau ;
 * **Bibliothèque** — ce qui appartient à la base ouverte : les seuils
-  d'erreur et de blunder, le compactage et la réparation, décrits ci-dessous ;
+  d'erreur et de blunder, décrits ci-dessous ;
+* **Maintenance** — l'état de santé de la base, une ligne par opération,
+  décrit ci-dessous ;
 * **Corpus** — les doublons à l'import, les alias de joueurs et d'événements
   et la recherche des doublons probables (voir l'import de matchs) ;
 * **Bearoff** — les tables de sortie utilisées par le panneau Eval ;
@@ -320,7 +322,8 @@ d'état et la recherche que son lien prépare, les colonnes « Erreurs » et
 coups dans la fiche d'un match (:ref:`panneau_matchs`), et la liste des positions que
 blunderDB propose de revoir après un import.
 
-Le même onglet propose aussi le bouton **Compacter la base**, qui récupère
+La ligne **Espace récupérable** de l'onglet *Maintenance* porte le bouton
+**Compacter**, qui récupère
 l'espace disque laissé par les suppressions (matchs, tournois, purges) : la
 base de données ne rétrécit jamais toute seule quand on supprime des données,
 il faut demander explicitement ce compactage. L'opération peut prendre du
@@ -441,13 +444,42 @@ L'onglet permet enfin de pointer vers un fichier ``.bd`` two-sided externe, par
 exemple une base produite par gnubg lui-même : la table au domaine le plus
 large l'emporte.
 
-L'onglet *Bibliothèque* porte enfin **Réparer les analyses** : les colonnes
-d'analyse que la recherche et les statistiques interrogent sont une projection
-des analyses stockées, lesquelles restent intactes. Un défaut de projection se
-répare donc sans rien réimporter. C'est explicite et jamais automatique —
-réécrire les colonnes d'analyse de quelqu'un au seul motif qu'il ouvre sa base
-n'est pas une chose qu'un outil doit faire dans son dos. Le même
-``blunderdb repair`` est disponible en ligne de commande.
+.. _onglet_maintenance:
+
+L'onglet **Maintenance** montre l'état de santé de la base : une ligne par
+opération, avec son compte, sa dernière exécution (date et issue : terminée,
+annulée ou en échec) et son action. Rien n'y est lancé tout seul.
+
+* **Positions sans analyse** — les positions qui ne portent aucune analyse ;
+  l'action est l'analyse gammonNet décrite plus bas. Les positions que
+  gammonNet refuse d'évaluer (une danse, un score hors de la table de match)
+  restent dans ce compte, qui n'atteint donc pas forcément zéro.
+* **Analyses gammonNet périmées** — décrites plus bas.
+* **Matchs sans statistiques** — les matchs dont les statistiques ne sont pas
+  encore calculées ; l'action les calcule tous. Sinon, la première lecture des
+  statistiques les calcule, ce qui peut être long sur une grosse base : le
+  panneau Statistiques affiche alors ce nombre, qui ouvre cet onglet.
+* **Colonnes d'analyse** — les colonnes que la recherche et les statistiques
+  interrogent sont une projection des analyses stockées, lesquelles restent
+  intactes : l'action les recalcule sans rien réimporter.
+* **Erreurs des coups joués** — note les coups joués qui n'ont pas encore
+  d'erreur.
+* **Analyses à l'ancien format** — réécrit au format binaire les analyses
+  qu'une version antérieure stockait en JSON.
+* **Corbeille** — le nombre d'entrées de la corbeille, qui l'ouvre.
+* **Espace récupérable** — l'espace libre du fichier, que le compactage
+  décrit plus haut rend au disque.
+
+Un compte coûteux (il lit une table entière) attend le bouton **Compter**.
+Un compte de positions ouvre ces positions dans la liste ; celui des matchs
+sans statistiques ouvre ces matchs dans le panneau des matchs. Une opération
+tourne en arrière-plan : sa progression et un bouton d'annulation s'affichent
+dans la barre d'état, et une seule opération qui écrit dans la base tourne à
+la fois — une analyse gammonNet, un rollout ou une autre opération de
+maintenance en cours fait refuser la suivante, avec le nom de celle qui
+occupe la base. Sur une base ouverte en lecture seule, les actions sont
+désactivées. Les mêmes opérations existent en ligne de commande
+(``blunderdb maintenance``).
 
 L'onglet **gammonNet** règle l'évaluateur embarqué (voir `ADR-0011 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0011-gammonnet-is-ported-to-go-and-the-representation-boundary-sits-at-the-evaluator-s-edge.md>`__). Deux
 profondeurs de recherche y sont réglables, nommées et conservées
@@ -458,39 +490,43 @@ séparément — abaisser l'une ne modifie jamais l'autre :
 * **Profondeur d'analyse** — ce que le lot d'analyse après import écrit dans
   l'Analyse d'une position.
 
-Les deux valent par défaut **2-ply**, la configuration canonique. L'onglet
+Les deux valent par défaut **2-ply**, la configuration canonique. Le menu
+marque d'un ⚠ les profondeurs 3-ply et 4-ply, dont le coût par position
+dépasse de loin celui de 2-ply. L'onglet
 propose aussi l'**élagage** (par défaut ``k=12``) et le **nombre de coups
 candidats affichés** (par défaut 10), ainsi qu'une case **analyser
 automatiquement après import** qui, une fois activée, vérifie après chaque
 import s'il reste des positions **sans aucune analyse** (ni gammonNet, ni XG,
 ni GNUbg, ni BGBlitz — la règle est « une évaluation ne comble qu'un trou »,
 jamais un remplacement) et, le cas échéant, lance en tâche de fond une analyse
-gammonNet à la profondeur d'analyse configurée. Un bouton **Analyser
-maintenant** relance manuellement le même rattrapage, utile pour une
-bibliothèque constituée avant l'existence de cette fonctionnalité.
+gammonNet à la profondeur d'analyse configurée. La ligne **Positions sans
+analyse** de l'onglet *Maintenance* relance manuellement le même rattrapage,
+utile pour une bibliothèque constituée avant l'existence de cette
+fonctionnalité.
 
 Une prise ou un refus est évalué par gammonNet sur la décision du doubleur,
 avant le double. Un verdict gammonNet écrit sur une telle réponse par une
 version antérieure de blunderDB jugeait le redouble du receveur : il est
 supprimé à l'ouverture de la bibliothèque, ou à l'import d'une base qui le
 porte. La prise ou le refus redevient une position sans analyse, absente des
-statistiques jusqu'à ce que **Analyser maintenant** (ou l'analyse automatique
-après import) la réévalue.
+statistiques jusqu'à ce que la ligne *Positions sans analyse* de l'onglet
+*Maintenance* (ou l'analyse automatique après import) la réévalue.
 
-Un second bouton, **Ré-analyser les positions périmées**, couvre le cas
+La ligne **Analyses gammonNet périmées** de l'onglet *Maintenance* couvre le cas
 inverse : une position déjà analysée par gammonNet, mais dont l'analyse
 stockée a été écrite par une version de moteur plus ancienne que celle en
 cours d'exécution, ou à une profondeur différente de la profondeur d'analyse
 configurée ci-dessus, y est signalée comme périmée et réévaluée. Une position
 portant en plus une analyse XG, GNUbg ou BGBlitz n'est jamais touchée par ce
-bouton, quel que soit son contenu gammonNet — la protection
+lot, quel que soit son contenu gammonNet — la protection
 d'`ADR-0013 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md>`__
-reste inconditionnelle. Le nombre affiché à côté de chaque bouton (positions sans
-analyse, positions périmées) est purement informatif ; le lot recalcule sa
+reste inconditionnelle. Le compte des positions périmées lit chaque analyse
+gammonNet de la base : il attend le bouton **Compter**. Le lot recalcule sa
 propre liste au moment de démarrer.
 
 Les deux lots sont **bornés, visibles et annulables, jamais un démon
-silencieux** : leur progression (``positions analysées / total``) et un
+silencieux** : leur profondeur, leur progression (``positions analysées / total``,
+dès ``0`` au lancement) et un
 bouton d'annulation apparaissent dans la barre de statut pendant toute leur
 durée, et disparaissent une fois terminés au profit d'un message résumant le
 résultat — combien de positions ont été **analysées**, combien ont été
@@ -500,6 +536,15 @@ combien ont **échoué** (retentées, inchangées, au prochain lancement).
 Fermer l'application pendant l'un ou l'autre ne perd rien : chaque position
 analysée est écrite au fil de l'eau, et un prochain lancement reprend
 exactement là où l'analyse s'était arrêtée, sans aucun journal à tenir.
+L'annulation comme la fermeture interrompent aussi la position en cours de
+calcul, qui reste sans analyse.
+
+Un seul travail écrit la bibliothèque à la fois : un lot gammonNet, un rollout
+stocké ou une opération de maintenance. Un lot ou une opération lancés depuis
+l'onglet *Maintenance* sont refusés tant qu'un autre travail est en cours, et la barre de
+statut nomme ce travail ; le lot que lance un import, une transcription ou un
+duel attend au contraire qu'il finisse, et la barre de statut l'annonce
+« en attente » jusqu'à son départ.
 
 .. _rollout_reglage:
 
@@ -1309,6 +1354,15 @@ connaît plus **refuse de s'ouvrir** en le disant, plutôt que de renvoyer toute
 la base. C'est la seule panne qu'un filtre enregistré ne doit pas avoir :
 s'élargir en silence.
 
+Une collection vivante **reste vivante dans un export** de la base : sa requête
+voyage avec elle et se réévalue, chez le destinataire, sur les positions du
+fichier. Quand l'export emporte les positions des collections, il emporte
+celles que la requête sélectionne au moment de l'export, jusqu'au plafond de
+5 000 positions. Une requête qui désigne des positions, des matchs ou des
+tournois par leur numéro est réécrite sur les numéros du fichier ; si l'un
+d'eux reste hors du fichier, la collection part **figée**, avec les positions
+que la requête sélectionne au moment de l'export.
+
 Un paquet de répétition espacée fondé sur une collection vivante rejoue sa
 requête à chaque ouverture de séance : les positions que la recherche
 sélectionne depuis la dernière fois y entrent, et les cartes déjà là gardent
@@ -1395,7 +1449,7 @@ leçons se créent et se modifient aussi par la ligne de commande ou par l'API
 
 Une sauvegarde — l'export de toute la bibliothèque depuis la fenêtre d'export
 ou par la ligne de commande — emporte toutes les leçons. Dans la fenêtre
-d'export, la case *Inclure les leçons* les choisit une à une : chaque leçon
+d'export, la ligne *Leçons* les choisit une à une : chaque leçon
 cochée part avec les collections et les positions que ses étapes montrent, et
 le fichier peut être filigrané ou protégé par mot de passe (``.dbx``) comme tout
 export. Sans cette case, un export partiel (une sélection de positions, de
@@ -1422,7 +1476,7 @@ ne remplace pas ce qui est déjà là.
   ses équités, ses erreurs, ses probabilités et la chance du lancer. La règle
   est « une évaluation ne comble qu'un trou » : l'analyse automatique après
   import ne visite que les positions sans **aucune** analyse, et
-  *Ré-analyser les positions périmées* laisse intacte toute position portant
+  la réanalyse des analyses gammonNet périmées laisse intacte toute position portant
   une analyse importée (voir :ref:`configuration`).
 
 * **Réimporter un match déjà présent n'apporte que du plus profond.** Le match
@@ -2996,13 +3050,18 @@ sous-ensemble de positions.
 Perspective joueur
 ^^^^^^^^^^^^^^^^^^
 
-La liste déroulante **Joueur** permet de filtrer les statistiques selon le
-joueur analysé. blunderDB sélectionne automatiquement le joueur dont le nom
-apparaît le plus souvent dans la base de données — modifiable à tout moment.
+Le champ **Joueur** filtre les statistiques selon le joueur analysé. Taper
+quelques lettres réduit la liste aux noms qui les contiennent ; un clic ou
+*Entrée* choisit le joueur, **✕** ou un champ vidé revient à toutes les
+perspectives.
 
-.. tip::
-   Changer de joueur ne provoque pas de perte de données ; il suffit de
-   re-sélectionner le joueur précédent dans la liste.
+Le filtre est **un seul** pour tous les onglets du panneau et il est conservé
+d'une session à l'autre. Il se règle aussi depuis les autres panneaux : le nom
+d'un joueur dans l'en-tête d'un match ou dans la barre au-dessus du plateau
+ouvre toutes ses statistiques (tournois et dates sont vidés), et le bouton
+**Stats** de l'en-tête d'un tournoi ouvre celles de ce tournoi entier (dates
+vidées, joueur conservé). Une date de fin antérieure à la date de début est
+refusée : le champ reprend la date appliquée.
 
 Filtres disponibles
 ^^^^^^^^^^^^^^^^^^^
@@ -3023,8 +3082,7 @@ Filtres disponibles
   *Moteur* propose les moteurs présents dans les analyses de la base
   (eXtreme Gammon, GNU Backgammon…).
 
-Un bouton **↺ Réinitialiser** remet tous les filtres à zéro (sauf le joueur
-auto-détecté).
+Un bouton **↺ Réinitialiser** remet tous les filtres à zéro, sauf le joueur.
 
 .. note::
    Les filtres sont persistés dans la configuration de blunderDB
@@ -3195,6 +3253,17 @@ Cliquer sur une carte charge dans le panneau d'analyse les positions du
 sous-ensemble correspondant (drill-down). Une quatrième carte, **Perte MWC (éq.
 7 pts)**, donne cette perte quel que soit le choix du bouton PR / MWC, avec son
 intervalle ; elle ne charge rien.
+
+Sous les cartes, la ligne des totaux compte les tournois, les matchs et les
+décisions du filtre. Le nombre de tournois ouvre ces tournois dans le panneau
+Tournois : un tournoi seul s'ouvre directement ; plusieurs restreignent la
+liste, qui porte alors le bouton « N tournois ouverts depuis les Stats × » : il
+rend la liste complète.
+
+Le nombre de décisions ouvre leurs positions ; le nombre
+de matchs ouvre ces matchs dans le panneau Matchs, sauf quand un type de
+décision ou un filtre de provenance est actif : il compte alors moins de
+matchs que la liste n'en ouvrirait et reste un simple nombre.
 
 .. note::
    Le nombre total de décisions est affiché en bas de chaque carte au survol.
@@ -3416,8 +3485,8 @@ perds le plus ? » : par exemple, « tenue · trop de blots ».
   formule du PR appliquée aux erreurs du groupe, rapportée à toutes les
   décisions comptées. Les coûts des groupes ne dépassent donc jamais le PR.
 
-Cliquer sur un groupe charge ses positions, de la plus coûteuse à la moins
-coûteuse. Le thème est recalculé à chaque affichage, jamais enregistré :
+Cliquer sur un groupe, ou sur son nombre d'erreurs, charge ses positions, de
+la plus coûteuse à la moins coûteuse. Le thème est recalculé à chaque affichage, jamais enregistré :
 comme le plan de jeu, c'est une étiquette dérivée, non modifiable. En ligne de
 commande : ``blunderdb stats recurring`` (voir :ref:`cli_stats`).
 
@@ -3506,7 +3575,7 @@ PR de la dernière fenêtre où le plan a été joué.
 
 Entre parenthèses, le nombre de décisions ou de révisions derrière chaque
 valeur : une fenêtre sans échantillon n'a pas de valeur — un tiret, pas un
-zéro. Le filtre ne restreint que les matchs ; le journal du quiz et celui
+zéro. Le nombre de décisions de matchs d'une fenêtre ouvre leurs positions. Le filtre ne restreint que les matchs ; le journal du quiz et celui
 d'Anki sont les vôtres et ne portent pas de joueur. Rien n'est enregistré en
 plus : les trois séries sont relues dans les journaux existants. En ligne de
 commande : ``blunderdb stats training`` (voir :ref:`cli_stats`).
@@ -3616,18 +3685,33 @@ Colonnes, dans l'ordre :
    "PR", "Performance Rating global."
    "PR pions, PR videau", "Le PR ventilé par type de décision."
    "Snowie", "Snowie Error Rate (voir :ref:`stats_parity`)."
-   "Blunders", "Nombre d'erreurs atteignant le seuil de blunder de la bibliothèque (0,100 EMG par défaut)."
+   "Blunders", "Nombre d'erreurs atteignant le seuil de blunder de la bibliothèque (0,100 EMG par défaut). Cliquer sur ce nombre charge ces positions dans le panneau d'analyse."
    "Chance", "Chance moyenne par lancer, en millipoints (mpt), signée : positive si les dés ont été favorables."
 
 Utilisation :
 
 * **Trier** — cliquez sur un en-tête de colonne. Le tableau s'ouvre trié par PR
-  croissant, meilleur joueur en tête. Les joueurs dont rien n'a été mesuré
+  croissant, meilleur joueur en tête, et retient d'une session à l'autre le
+  dernier tri choisi. Les joueurs dont rien n'a été mesuré
   restent en bas quel que soit le sens du tri : un zéro faute de données n'est
   pas une performance parfaite.
+* **Filtrer par colonne** — la ligne de champs sous les en-têtes filtre chaque
+  colonne : un morceau de nom pour le texte, une borne pour les nombres
+  (``>=500``, ``>500``, ``<2.5``, ``<=2``), un intervalle (``3-7``) ou une
+  valeur exacte (``5``). Un champ illisible est encadré de rouge et ne filtre
+  rien ; une valeur jamais mesurée ne passe aucune borne. Les filtres de colonne
+  durent le temps de la session. Le **classement** des joueurs se lit ainsi :
+  tri par PR, colonne *Décisions* filtrée par ``>=500``. Tous les tableaux du
+  panneau Stats — ventilations, corpus, erreurs récurrentes, temps de
+  réflexion, entraînement, biais, effet de l'étude — se trient et se filtrent
+  de la même façon.
 * **Ouvrir le détail d'un joueur** — cliquez sur une ligne. Le joueur est
   sélectionné dans la barre de filtres et l'affichage bascule sur l'onglet
   Tableau de bord.
+* **Ouvrir ses décisions** — le nombre de décisions ouvre leurs positions, sous
+  les filtres du tableau. Le nombre de matchs et le bilan V–D restent de simples
+  nombres : ils comptent aussi les matchs sans décision analysée, qu'aucune
+  liste de matchs ne reproduit.
 * **Restreindre la période** — les filtres de dates, de tournois et de longueur
   de match s'appliquent normalement, ce qui permet de borner le tableau aux
   dates d'une compétition.
@@ -3660,29 +3744,32 @@ Une égalité n'est pas une victoire : elle n'est mise en gras d'aucun côté. U
 taux qui n'a rien derrière lui s'affiche « — » et ne départage rien.
 
 .. note::
-   Dans cet onglet, la liste **Joueur** et le choix du **type de décision** sont
-   désactivés : le tableau montre tous les joueurs, et il ventile déjà les
-   décisions de pions et de videau en colonnes distinctes.
+   Dans cet onglet, le choix du **type de décision** est désactivé : le tableau
+   ventile déjà les décisions de pions et de videau en colonnes distinctes. Le
+   joueur de la barre de filtres reste actif : le tableau montre toujours tous
+   les joueurs, et la ligne de celui-ci est mise en évidence et amenée à
+   l'écran.
 
-Trois vues de
+Deux vues de
 corpus figurent dans l'onglet **Corpus** du panneau, en ligne de
 commande et par l'API du démon (voir :ref:`cli_stats`) : le **face-à-face** de deux joueurs (matchs communs, PR de
-chacun, bilan), le **PR par fenêtre calendaire** glissante (1, 3, 6 ou 12 mois)
-et le **classement** par PR des joueurs qui ont au moins un nombre donné de
-décisions comptées. L'onglet Corpus calcule chaque vue à la demande, sous le
-filtre courant. Un **filtre de provenance** (champs *Moteur* et *Profondeur
+chacun, bilan) et le **PR par fenêtre calendaire** glissante (1, 3, 6 ou 12 mois).
+L'onglet Corpus calcule chaque vue à la demande, sous le
+filtre courant. Le **classement** par PR se lit dans l'onglet Joueurs, trié par PR
+et filtré sur la colonne *Décisions* ; la ligne de commande et l'API le donnent
+aussi (``stats ranking``). Un **filtre de provenance** (champs *Moteur* et *Profondeur
 min.* de la barre de filtres) restreint les statistiques aux décisions analysées ainsi ; il porte
 sur chaque décision, et les chiffres qu'il touche sont alors recalculés depuis
 les décisions. Le face-à-face et le PR par fenêtre ne l'acceptent pas : tant
 qu'il est actif, ils refusent de se calculer. Comme le reste de la barre, il
 est conservé d'une session à l'autre.
 
-Dans l'onglet Corpus, chaque ligne ouvre ce qu'elle résume. Une ligne de
+Dans l'onglet Corpus, chaque ligne ouvre ce qu'elle résume. Le bilan du
 face-à-face ouvre ses matchs dans le panneau Matchs, qui porte alors le bouton
-« N matchs ouverts depuis les Stats × » : il rend la liste complète. Une ligne
-du classement ouvre les matchs du joueur et son nombre de décisions ouvre les
-positions comptées ; une ligne de fenêtre ouvre ses positions et son nombre de
-matchs ouvre les matchs. Un compte de positions du panneau Stats, quel que soit
+« N matchs ouverts depuis les Stats × » : il rend la liste complète ; une ligne
+de face-à-face ouvre son match. Le premier joueur du face-à-face est d'emblée
+celui de la barre de filtres. Une ligne de fenêtre et son nombre de décisions
+ouvrent ses positions, son nombre de matchs ouvre les matchs. Un compte de positions du panneau Stats, quel que soit
 l'onglet, quitte d'abord le match en cours avant d'ouvrir sa liste ; la commande
 ``m`` rouvre ensuite le match au coup sauvegardé.
 
@@ -4263,17 +4350,21 @@ de match — que ce régime est seul à savoir rendre — et les positions de co
 n'ont pas de mesure publiée : ce qui précède ne se transporte pas à ces cas.
 
 **Pourquoi pas plus profond que 2 plis ?** Parce que la mesure dit que cela ne
-rapporte rien. Une décision de pions coûte 99 ms à 2 plis et 8,4 s à 3 plis sur
-la même machine — **85 fois plus**. Sur quarante décisions réelles rejouées aux
+rapporte rien. Une décision de pions à 3 plis évalue le réseau **14 fois plus**
+qu'à 2 plis (159 000 évaluations contre 11 400, moyenne sur vingt décisions
+réelles) et prend environ 14 fois plus de temps (3,9 s contre 0,27 s sur un
+seul cœur de la même machine). Sur quarante décisions réelles rejouées aux
 deux profondeurs, la recherche plus profonde a changé d'avis **deux fois**, et
-les deux fois le gain qu'elle s'attribuait à elle-même valait au plus 0,0005
+les deux fois le gain qu'elle s'attribuait à elle-même valait au plus 0,0002
 d'équité normalisée : deux ordres de grandeur sous 0,020, le seuil à partir
 duquel eXtreme Gammon parle d'erreur. Par décision, tous cas confondus, le gain
 est de 0,0000.
 
 Les 2 plis restent donc le défaut ; 3 et 4 plis se choisissent dans l'onglet
-*gammonNet* de la configuration. Il ne s'agit pas de dire que 3 plis ne vaut
-rien en général, mais que sur *ce* réseau, avec le filtre canonique, il ne paie
+*gammonNet* de la configuration. À 3 et 4 plis, comme dans GNUbg, seule la
+racine compare plusieurs coups : à chaque nœud intérieur, la réplique retenue
+est la meilleure à 0 pli, seule approfondie. Il ne s'agit pas de dire que 3 plis ne vaut
+rien en général, mais que sur *ce* réseau, avec ce filtre, il ne paie
 pas l'attente de quelqu'un devant un panneau. La mesure est reproductible
 (``TestThreePlyMeasure``) et la conclusion se rejugera si le réseau change.
 
@@ -4875,40 +4966,62 @@ passe.
 Marquer une base de son origine
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-La fenêtre d'export tient en un seul écran : le formulaire, puis une
-progression qui se superpose à lui le temps de l'écriture. Elle se ferme
-d'elle-même une fois terminée, et le résultat s'affiche dans la barre d'état.
+La fenêtre d'export tient en un seul écran : une bande d'en-tête — le nombre
+de positions exportées, **Annuler** et **Exporter…** — puis une grille, une
+ligne par famille avec son compte. Le fichier se choisit en dernier, après
+**Exporter…** ; fermer ce choix sans nom revient à la grille. Une progression
+se superpose ensuite le temps de l'écriture, la fenêtre se ferme d'elle-même et
+le résultat s'affiche dans la barre d'état.
 
-Trois points méritent l'attention :
+Huit points méritent l'attention :
 
-* **L'export porte sur les positions actuellement affichées**, pas sur la base
-  entière. Après une recherche, seuls les résultats partent — la fenêtre le
-  rappelle en tête — et la liste des matchs ne propose que ceux où ces
-  positions ont été jouées ; chaque match coché part avec toutes ses positions.
-* **Quand la liste affichée est la bibliothèque**, l'export est le même que
-  celui du serveur et de ``export --type database`` : toutes les cases sont
-  cochées d'emblée, et les paquets Anki (sans historique de révision) et les
-  transcriptions en cours partent avec le reste. Une transcription liée à une
-  vidéo locale n'emporte que le nom du fichier, sans son dossier ; un lien web
-  part tel quel.
-* **Une collection dont toutes les positions ne sont pas dans la sélection
-  arrive tronquée.** La liste affiche donc, pour chaque collection, la part
-  couverte (« 12/40 ») et la signale en rouge lorsqu'elle est partielle.
+* **La portée** : depuis une liste — une recherche, une collection —, la ligne
+  *Portée* choisit entre la *Liste courante* et *Toute la bibliothèque*. La
+  liste courante exporte ses positions, et la ligne *Matchs* ne propose que
+  ceux où ces positions ont été jouées ; chaque match coché part avec toutes
+  ses positions. Depuis la bibliothèque, la portée est la bibliothèque.
+* **Toute la bibliothèque** est l'export du serveur et de
+  ``export --type database`` : toutes les familles sont cochées d'emblée, les
+  paquets Anki avec leur historique de révision, et les transcriptions en
+  cours partent avec le reste.
+* **Un match part avec son brouillon de transcription**, sous la case
+  *Transcriptions* de la ligne *Matchs*, cochée d'emblée ; les matchs qu'un
+  tournoi emporte aussi. Un brouillon qui n'a pas encore produit de match ne
+  part qu'avec la bibliothèque entière. Un match ou une transcription liés à
+  une vidéo locale n'emportent que le nom du fichier, sans son dossier, que le
+  destinataire relocalise sur sa propre copie ; un lien web part tel quel. Le
+  fichier d'où un match a été importé ne part aussi que par son nom.
+* **Un match part avec les alias de ses joueurs et de son événement** : la
+  case *Alias*, cochée d'emblée, fait suivre la fusion de joueurs, et le
+  destinataire lit un joueur fusionné comme un seul. Un alias qui ne nomme
+  personne des matchs exportés reste chez vous.
+* **Une collection dont toutes les positions ne sont pas dans la liste arrive
+  tronquée.** La liste des collections affiche, pour chacune, la part couverte
+  (« 12/40 ») et la signale en rouge lorsqu'elle est partielle. La case
+  *+ leurs positions* emporte les positions des collections cochées : celles
+  d'une liste faite à la main, celles que la requête d'une collection vivante
+  sélectionne.
 * **Les tournois ne peuvent être exportés qu'avec les matchs** : sans eux, le
-  lien tournoi–match n'existe pas et le tournoi arriverait vide. La case est
-  désactivée tant que « inclure les matchs » ne l'est pas.
+  lien tournoi–match n'existe pas et le tournoi arriverait vide. La case reste
+  inactive tant que celle des matchs n'est pas cochée.
+* **Un paquet Anki part avec ses positions**, en copie d'étude neuve. La case
+  *avec mon historique* emporte en plus l'état de chaque carte et le journal
+  de ses révisions : une sauvegarde, ou vos paquets passés sur une autre
+  machine. Elle est décochée pour une liste, cochée pour la bibliothèque.
+* **Les filtres enregistrés** n'exportent pas du contenu mais vos propres
+  recherches, sans utilité dans la base de quelqu'un d'autre ; la case est
+  décochée pour une liste. Un filtre qui désigne une position, un match ou un
+  tournoi par son numéro est renuméroté pour le fichier ; s'il en désigne un
+  qui ne part pas, il reste chez vous.
 
-Les champs *Utilisateur*, *Description* et *Date de création* décrivent le **fichier
-produit** ; ils sont préremplis depuis la base source. La case *Mes filtres
-enregistrés* est à part des autres : elle n'exporte pas du contenu mais vos
-propres recherches enregistrées, sans utilité dans la base de quelqu'un
-d'autre.
+Les champs *Utilisateur*, *Description* et *Date de création* décrivent le
+**fichier produit** ; ils sont préremplis depuis la base source.
 
-Cocher **Marquer ce fichier de son origine** fait apparaître deux champs :
+Cocher **Filigrane** fait apparaître deux champs :
 
 * **Origine** — ce qu'est ce fichier et d'où il vient, dans vos mots :
   « Cours de Jean Dupont — 12 mars 2026 ». Ce champ est **obligatoire** : tant
-  qu'il est vide, le bouton d'export reste inactif.
+  qu'il est vide, il est bordé de rouge et le bouton d'export reste inactif.
 * **Note**, facultative — conditions d'utilisation, adresse de contact, une
   demande de ne pas rediffuser.
 
@@ -4957,11 +5070,10 @@ Le mot de passe se saisit masqué, ici comme à l'ouverture d'un fichier protég
 l'icône en forme d'œil l'affiche **tant qu'on la maintient enfoncée**, et le
 masque de nouveau dès qu'on relâche.
 
-Cocher **Protéger ce fichier par un mot de passe** produit un fichier
-d'extension ``.dbx`` — y compris si vous aviez choisi un nom en ``.db`` dans la
-fenêtre d'enregistrement, celle-ci s'ouvrant avant que le mot de passe ne soit
-demandé. Pour l'ouvrir, utilisez l'ouverture de base habituelle : la fenêtre de
-sélection accepte aussi bien les ``.db`` que les ``.dbx``. blunderDB demande
+Cocher **Mot de passe** produit un fichier d'extension ``.dbx`` — y compris si
+le nom choisi dans la fenêtre d'enregistrement finit en ``.db``. Pour
+l'ouvrir, utilisez l'ouverture de base habituelle : la fenêtre de sélection
+accepte aussi bien les ``.db`` que les ``.dbx``. blunderDB demande
 alors le mot de passe et installe une base ordinaire à côté ; ensuite plus rien
 n'est demandé.
 

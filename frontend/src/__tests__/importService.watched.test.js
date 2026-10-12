@@ -39,7 +39,7 @@ vi.mock('../../wailsjs/go/gui/App.js', () => ({
     ShowAlert: vi.fn(),
     ShowQuestionDialog: vi.fn(),
     IsDirectory: vi.fn(),
-    StartGammonNetBatch: vi.fn()
+    QueueGammonNetBatch: vi.fn()
 }));
 vi.mock('../../wailsjs/go/main/Config.js', () => ({
     GetGammonNetAutoAnalyze: vi.fn(async () => false),

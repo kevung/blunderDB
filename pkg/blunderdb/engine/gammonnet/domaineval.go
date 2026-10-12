@@ -20,7 +20,7 @@ import (
 // the cube model and the MET this file ports; a change to any of them moves
 // stored results, so every row analysed under an earlier label is stale
 // (analyze --stale). The gold files are built from the same tag.
-const EngineVersion = "gammonNet v1.6.0"
+const EngineVersion = "gammonNet v1.7.0"
 
 // ErrNotEvaluable marks a position this build declines to answer for (a
 // score beyond the MET's horizon, a cube decision the model refuses), as
@@ -383,6 +383,9 @@ func notationForCandidate(c *Candidate, index map[Position]string) string {
 func evaluateCube(gnPos *Position, pos *domain.Position, searcher *Searcher, depthLabel string, state *MatchState, owner CubeOwner, scale EquityScale) (*domain.DoublingCubeAnalysis, *PreRollFacts, CubeAction, error) {
 	probs, ok := searcher.Probs(gnPos)
 	if !ok {
+		if searcher.stopped() {
+			return nil, nil, NoDouble, ErrCanceled
+		}
 		return nil, nil, NoDouble, fmt.Errorf("gammonnet: could not evaluate the position for a cube decision")
 	}
 	preRoll := &PreRollFacts{

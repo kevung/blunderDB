@@ -18,11 +18,9 @@ import (
 // The Eval panel's live evaluation (ADR-0013) computes, never writes. Two
 // tiers: a synchronous 0-ply call at each gesture (~376µs, not worth a
 // goroutine), and at rest (debounced frontend-side) the display ply in the
-// background, one search at a time, a new gesture cancelling the old.
-//
-// KNOWN LIMIT: Searcher has no cancellation checkpoint, so cancelling only
-// discards a superseded result; its bounded CPU work (~0.63s at 2-ply k=12)
-// still runs to completion.
+// background, one search at a time, a new gesture cancelling the old: the
+// superseded search stops at its next roll (Searcher.BindContext) and frees
+// the shared searcher for the new one.
 
 // gammonNetEngineVersion aliases gammonnet.EngineVersion, shared with the
 // batch job so the label never drifts.
@@ -70,7 +68,8 @@ func (a *App) EvaluatePositionImmediate(pos domain.Position, pruneK, candidates 
 // Reconfigure cannot toggle the prune network, so acquire rebuilds when
 // pruneK changes. Below LiveWorkers' ply-2 floor it bypasses the pool, so the
 // per-keystroke 0-ply tier never waits behind the at-rest search. mu
-// serialises a superseded search (see KNOWN LIMIT) rather than doubling memory.
+// serialises a superseded search, cancelled and unwinding, rather than
+// doubling memory.
 type gammonNetLivePool struct {
 	mu       sync.Mutex
 	searcher *gammonnet.Searcher
@@ -105,23 +104,12 @@ func (p *gammonNetLivePool) acquire(ply, pruneK int) (*gammonnet.Searcher, func(
 // cancelling any in flight. Emits "gammonnet-eval:done" (GammonNetEvalResult),
 // "gammonnet-eval:cancelled" when superseded, or "gammonnet-eval:error".
 func (a *App) StartEvaluationAtRest(pos domain.Position, ply, pruneK, candidates int) {
-	a.gnEvalMu.Lock()
-	if a.gnEvalCancel != nil {
-		a.gnEvalCancel()
-	}
-	ctx, cancel := context.WithCancel(a.ctx)
-	a.gnEvalCancel = cancel
-	a.gnEvalMu.Unlock()
+	ctx, end := a.beginEvaluationAtRest()
 
 	go func() {
 		defer recoverBackground(a.ctx, "gammonNet evaluation at rest")
-		result, err := a.evaluateGammonNet(pos, ply, pruneK, candidates)
-
-		a.gnEvalMu.Lock()
-		a.gnEvalCancel = nil
-		a.gnEvalMu.Unlock()
-
-		if ctx.Err() != nil {
+		result, err := a.evaluateGammonNetCtx(ctx, pos, ply, pruneK, candidates)
+		if end() {
 			runtime.EventsEmit(a.ctx, "gammonnet-eval:cancelled")
 			return
 		}
@@ -131,6 +119,33 @@ func (a *App) StartEvaluationAtRest(pos domain.Position, ply, pruneK, candidates
 		}
 		runtime.EventsEmit(a.ctx, "gammonnet-eval:done", result)
 	}()
+}
+
+// beginEvaluationAtRest cancels the search in flight and registers a new one.
+// end clears the registration only if it is still this search's: a newer
+// search may have replaced it, and erasing its cancel would make it
+// uncancellable and let the batch stop yielding to it. end reports whether
+// the search was cancelled, then releases ctx.
+func (a *App) beginEvaluationAtRest() (ctx context.Context, end func() (cancelled bool)) {
+	a.gnEvalMu.Lock()
+	defer a.gnEvalMu.Unlock()
+	if a.gnEvalCancel != nil {
+		a.gnEvalCancel()
+	}
+	ctx, cancel := context.WithCancel(a.batchCtx())
+	a.gnEvalCancel = cancel
+	a.gnEvalSeq++
+	seq := a.gnEvalSeq
+	return ctx, func() bool {
+		a.gnEvalMu.Lock()
+		if a.gnEvalSeq == seq {
+			a.gnEvalCancel = nil
+		}
+		a.gnEvalMu.Unlock()
+		cancelled := ctx.Err() != nil
+		cancel()
+		return cancelled
+	}
 }
 
 // CancelEvaluationAtRest aborts an in-flight background evaluation, if any.
@@ -147,11 +162,17 @@ func (a *App) CancelEvaluationAtRest() {
 // gammonnet.EvaluatePosition, shared with the batch; only the pre-roll facts
 // and race regime are specific to the panel.
 func (a *App) evaluateGammonNet(pos domain.Position, ply, pruneK, candidates int) (GammonNetEvalResult, error) {
+	return a.evaluateGammonNetCtx(context.Background(), pos, ply, pruneK, candidates)
+}
+
+// evaluateGammonNetCtx is evaluateGammonNet interrupted when ctx is done.
+func (a *App) evaluateGammonNetCtx(ctx context.Context, pos domain.Position, ply, pruneK, candidates int) (GammonNetEvalResult, error) {
 	searcher, release, err := a.gnLivePool.acquire(ply, pruneK)
 	if err != nil {
 		return GammonNetEvalResult{}, err
 	}
 	defer release()
+	defer searcher.BindContext(ctx)()
 
 	// The library's table values the live verdict, as it values the stored
 	// one (ADR-0068): the panel never shows a number another table produced.

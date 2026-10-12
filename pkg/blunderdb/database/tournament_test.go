@@ -1,9 +1,13 @@
 package database
 
 import (
+	"context"
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
 func TestCreateTournament(t *testing.T) {
@@ -309,6 +313,38 @@ func TestExportTournaments(t *testing.T) {
 	}
 	if info.Size() == 0 {
 		t.Error("export file is empty")
+	}
+}
+
+// A tournament leaves with the aliases of its players: its report reads them
+// as one player through those aliases.
+func TestExportTournaments_CarriesAliases(t *testing.T) {
+	t.Parallel()
+	db := newTestDB(t)
+	importTestMatch(t, db)
+	matches, _ := db.GetAllMatches()
+	tID, _ := db.CreateTournament("Export", "", "")
+	_ = db.AddMatchToTournament(tID, matches[0].ID)
+	ctx := context.Background()
+	if err := db.store.Aliases().Set(ctx, "", storage.AliasPlayer, "Autre orthographe", matches[0].Player1Name); err != nil {
+		t.Fatal(err)
+	}
+
+	exportPath := filepath.Join(t.TempDir(), "export.db")
+	if err := db.ExportTournaments(exportPath, []int64{tID}, map[string]string{}, true, true, "", ""); err != nil {
+		t.Fatalf("ExportTournaments: %v", err)
+	}
+	dst, err := sqlite.Open(ctx, exportPath, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer dst.Close()
+	got, err := dst.Aliases().List(ctx, "", storage.AliasPlayer)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(got) != 1 || got[0].Alias != "Autre orthographe" || got[0].Canonical != matches[0].Player1Name {
+		t.Errorf("exported player aliases = %+v", got)
 	}
 }
 

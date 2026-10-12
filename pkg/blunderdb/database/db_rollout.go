@@ -29,6 +29,11 @@ func (d *Database) RolloutPosition(ctx context.Context, positionID int64, s roll
 		if err := d.RefuseReadOnly(); err != nil {
 			return nil, err
 		}
+		release, err := d.acquireJob(ctx, JobRollout, nil)
+		if err != nil {
+			return nil, err
+		}
+		defer release()
 	}
 	d.mu.RLock()
 	gen := d.generation
@@ -173,6 +178,11 @@ func (d *Database) rolloutPositionsAt(ctx context.Context, gen uint64, positions
 	if err := d.RefuseReadOnly(); err != nil {
 		return rollouts.Summary{}, err
 	}
+	release, err := d.acquireJob(ctx, JobRollout, nil)
+	if err != nil {
+		return rollouts.Summary{}, err
+	}
+	defer release()
 	return rollouts.Batch(ctx, positions, s, nil, progress, func(positionID int64, res *rollout.Result) error {
 		return d.storeRollout(gen, positionID, res)
 	})

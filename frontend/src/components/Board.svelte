@@ -14,6 +14,7 @@
     import { get } from 'svelte/store';
     import { statusBarModeStore, isAnyModalOpen, activeModal, MODAL, pipcountVisibleStore, activeTabStore } from '../stores/uiStore';
     import { subscribeBoardRedrawTriggers as subscribeSharedRedrawTriggers } from '../services/boardRedraw.js';
+    import { boardOrientationStore } from '../stores/boardOrientationStore.js';
     import { boardIsMirrored, labelsFlipped, screenOfNotationPoint } from '../services/boardOrientation.js';
     import { searchStructureModeStore, searchOfferedCubeStore } from '../stores/searchExcludePositionStore';
     import { boardColorsStore } from '../stores/boardColorsStore';
@@ -51,6 +52,7 @@
 
     // Partagée avec les diagrammes du rapport (utils/boardConfig.js) : une seule palette.
     let boardCfg = defaultBoardConfig();
+    boardCfg.orientation = get(boardOrientationStore);
 
     /** @typedef {import('../utils/boardGeometry.js').BoardPosition} BoardPosition */
     /** @typedef {{ label: string, onClick: () => void }} MenuItem */
@@ -221,6 +223,7 @@
 
     /** @param {'left' | 'right'} orientation */
     function setBoardOrientation(orientation) {
+        boardOrientationStore.set(orientation);
         boardCfg.orientation = orientation;
         invalidateStaticLayer(); // labels and bearoff side move
         scheduleRedraw();

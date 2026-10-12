@@ -13,13 +13,13 @@ import { get } from 'svelte/store';
 // NOTE: these UI messages are translated at emission time via the non-reactive
 // `translate` helper; already-displayed messages do not retranslate on language change.
 import { tMsg } from '../i18n';
-import { GetPositionIDsByStatsSelection, GetPositionIDsByTournament, GetPositionIDsByMatch, LoadPositionIDsByFilters } from '../../wailsjs/go/database/Database.js';
+import { GetPositionIDsByStatsSelection, GetPositionIDsByTournament, GetPositionIDsByMatch, LoadPositionIDsByFilters, StatsTournamentIDs } from '../../wailsjs/go/database/Database.js';
 import { activeTabStore, statusBarTextStore, matchOpenRequestStore } from '../stores/uiStore.js';
 import { positionsStore } from '../stores/positionStore.js';
 import { currentPositionIndexStore } from '../stores/uiStore.js';
-import { tournamentOpenRequestStore } from '../stores/tournamentStore.js';
+import { tournamentOpenRequestStore, tournamentIDsFilterStore } from '../stores/tournamentStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
-import { statsFilterStore } from '../stores/statsStore.js';
+import { statsFilterStore, statsTabStore, initStatsFilter, patchStatsFilter, playerTableFilterStore, drillDownFilter } from '../stores/statsStore.js';
 import { leaveStudiedModeForList, forgetSubSearchOrigin } from './modeMachine.js';
 
 /**
@@ -46,13 +46,39 @@ export async function loadPositionsFromSelection(ids, { focusIndex = 0 } = {}) {
         return;
     }
 
+    showPositionIDs(resultIds, focusIndex);
+}
+
+/**
+ * Open exactly these positions, in this order, without a round trip through the search: a
+ * list of any length (a Maintenance count), where a filter's CSV restriction would not hold.
+ *
+ * @param {number[]} ids
+ */
+export function openPositionIDs(ids) {
+    if (!get(databasePathStore)) {
+        statusBarTextStore.set(tMsg('commands.noDatabaseLoaded'));
+        return;
+    }
+    if (!ids || ids.length === 0) {
+        statusBarTextStore.set(tMsg('commands.noPositionsFound'));
+        return;
+    }
+    showPositionIDs(ids, 0);
+}
+
+/**
+ * @param {number[]} ids
+ * @param {number} focusIndex
+ */
+function showPositionIDs(ids, focusIndex) {
     // Out of MATCH first: there the board ignores the index set below.
     leaveStudiedModeForList();
     forgetSubSearchOrigin();
-    positionsStore.setIds(Array.isArray(resultIds) ? resultIds : []);
+    positionsStore.setIds(Array.isArray(ids) ? ids : []);
     listOriginStore.set(LIBRARY_ORIGIN);
 
-    const clampedIndex = Math.max(0, Math.min(focusIndex, resultIds.length - 1));
+    const clampedIndex = Math.max(0, Math.min(focusIndex, ids.length - 1));
     // Force a re-render even if the index was already at the same value.
     currentPositionIndexStore.set(-1);
     currentPositionIndexStore.set(clampedIndex);
@@ -120,6 +146,42 @@ export function openTournamentInPanel(tournamentID) {
 }
 
 /**
+ * Show exactly these tournaments in the Tournaments panel's list; a single one opens. The panel
+ * offers to clear the restriction.
+ *
+ * @param {number[]} ids
+ */
+export function openTournamentListInPanel(ids) {
+    if (!ids || ids.length === 0) {
+        statusBarTextStore.set(tMsg('tournament.noTournamentsFiltered'));
+        return;
+    }
+    if (ids.length === 1) {
+        tournamentIDsFilterStore.set(null);
+        openTournamentInPanel(ids[0]);
+        return;
+    }
+    tournamentIDsFilterStore.set([...ids]);
+    activeTabStore.set('tournaments');
+}
+
+/** Open the tournaments the Dashboard's tournament count counts. */
+export async function openStatsTournaments() {
+    openTournamentListInPanel((await StatsTournamentIDs(drillDownFilter())) ?? []);
+}
+
+/**
+ * Open the positions a Players row's Blunders column counts, under the filter the table was read
+ * with. The table ignores the decision type.
+ *
+ * @param {string} playerName
+ */
+export async function openStatsPlayerBlunders(playerName) {
+    const filter = get(playerTableFilterStore) ?? drillDownFilter();
+    await loadPositionsFromStatsSelection({ ...filter, playerName, decisionType: -1 }, { Kind: 'blunders' });
+}
+
+/**
  * Show exactly these matches in the Match panel's list (a Stats corpus row). The
  * panel offers to clear the restriction.
  *
@@ -146,4 +208,23 @@ export function openMatchInPanel(matchID) {
     // The Matches panel opens it once its list is loaded, as the command palette does.
     matchOpenRequestStore.set(matchID);
     activeTabStore.set('matches');
+}
+
+/**
+ * Open the Stats panel on a player or on tournaments: the shared filter takes them, so the bar
+ * shows what the figures cover. The saved filter is restored first, or it would overwrite them.
+ * A player's name asks for the whole career: tournaments and dates are cleared. A tournament asks
+ * for the whole tournament, with the chosen player kept: dates are cleared.
+ *
+ * @param {{ playerName?: string, tournamentIDs?: number[], tab?: string }} target
+ */
+export async function openStatsFor({ playerName, tournamentIDs, tab = 'dashboard' }) {
+    await initStatsFilter();
+    /** @type {Record<string, any>} */
+    const patch = { dateFrom: '', dateTo: '' };
+    if (playerName !== undefined) Object.assign(patch, { playerName, tournamentIDs: [] });
+    if (tournamentIDs !== undefined) patch.tournamentIDs = tournamentIDs;
+    patchStatsFilter(patch);
+    statsTabStore.set(tab);
+    activeTabStore.set('stats');
 }

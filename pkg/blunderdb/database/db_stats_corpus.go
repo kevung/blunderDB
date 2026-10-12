@@ -36,6 +36,20 @@ func (d *Database) StatsMatchIDs(filter StatsFilter) ([]int64, error) {
 	return d.StatsMatchIDsCtx(context.Background(), filter)
 }
 
+// StatsTournamentIDsCtx lists the tournaments Totals.NumTournaments counts
+// under filter (storage.StatsStore.TournamentIDs): what the Dashboard's
+// tournament count opens in the tournament list.
+func (d *Database) StatsTournamentIDsCtx(ctx context.Context, filter StatsFilter) ([]int64, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	return d.store.Stats().TournamentIDs(ctx, "", toStorageStatsFilter(filter))
+}
+
+// StatsTournamentIDs is StatsTournamentIDsCtx for the GUI binding, which passes no context.
+func (d *Database) StatsTournamentIDs(filter StatsFilter) ([]int64, error) {
+	return d.StatsTournamentIDsCtx(context.Background(), filter)
+}
+
 // PlayerRankingCtx ranks the players of the filter by PR above a floor of
 // counted decisions (storage.RankPlayers over the players table).
 func (d *Database) PlayerRankingCtx(ctx context.Context, filter StatsFilter, minDecisions int) ([]storage.RankedPlayer, error) {

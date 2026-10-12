@@ -34,6 +34,8 @@ export function CancelEvaluationAtRest():Promise<void>;
 
 export function CancelGammonNetBatch():Promise<void>;
 
+export function CancelMaintenance():Promise<void>;
+
 export function CancelRollout():Promise<void>;
 
 export function CheckForUpdate():Promise<gui.UpdateCheckResult>;
@@ -90,9 +92,9 @@ export function OpenDatabaseDialog():Promise<string>;
 
 export function OpenDirectionOutputDialog():Promise<string>;
 
-export function OpenExportDatabaseDialog():Promise<string>;
-
 export function OpenExportApkgDialog(arg1:string):Promise<string>;
+
+export function OpenExportDatabaseDialog():Promise<string>;
 
 export function OpenExportMatDialog(arg1:string):Promise<string>;
 
@@ -119,6 +121,8 @@ export function PickIdentityFile():Promise<domain.IdentityFilePick>;
 export function PickTranscriptionVideo():Promise<string>;
 
 export function PrepareDemoDatabase():Promise<string>;
+
+export function QueueGammonNetBatch(arg1:number,arg2:number,arg3:number):Promise<void>;
 
 export function ReadFileContent(arg1:string):Promise<gui.FileDialogResponse>;
 
@@ -157,6 +161,8 @@ export function StartGammonNetBatch(arg1:number,arg2:number,arg3:number):Promise
 export function StartGammonNetMatchBatch(arg1:number,arg2:number,arg3:number,arg4:number):Promise<void>;
 
 export function StartGammonNetStaleBatch(arg1:number,arg2:number,arg3:number):Promise<void>;
+
+export function StartMaintenance(arg1:string):Promise<void>;
 
 export function StartRollout(arg1:gui.RolloutRequest):Promise<number>;
 

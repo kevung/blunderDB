@@ -21,14 +21,15 @@ import (
 // deeper search picks a DIFFERENT move, and what that is worth priced by the
 // deeper search itself (asking 2-ply to grade 3-ply would grade the judge).
 //
-// Measured (40 checker decisions of the gate corpus, 16 workers):
+// Measured (40 checker decisions of the gate corpus, 16 workers, one reply
+// deepened per interior node):
 //
 //	move changed:      2/40 = 5.0%
-//	time per decision: 2-ply 99 ms   3-ply 8.425 s   (85x)
-//	equity gained where it changed: mean 0.0003  median 0.0005  max 0.0005
+//	time per decision: 2-ply 80 ms   3-ply 1.428 s   (18x)
+//	equity gained where it changed: mean 0.0001  median 0.0002  max 0.0002
 //	equity gained per decision:     0.0000
 //
-// So the setting is not offered: 85 times the cost buys at most 0.0005, two
+// So 2-ply stays the default: 18 times the cost buys at most 0.0002, two
 // orders of magnitude below XG's 0.020 error threshold. That holds for THIS
 // network at the canonical filter; the measurement is one command away if
 // either changes.

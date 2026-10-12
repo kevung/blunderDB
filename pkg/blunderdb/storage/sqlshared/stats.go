@@ -6,6 +6,7 @@ import (
 	"math"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -198,18 +199,22 @@ func (s *StatsStore) buildBaseWhereClauseSeat(scope string, filter storage.Stats
 
 // appendDateClauses adds the filter's match_date bounds. The bound strings are
 // compared as text on SQLite and cast to timestamptz on PostgreSQL
-// (Dialect.TimestampArg).
+// (Dialect.TimestampArg). A day DateTo is half-open on the next day, so a
+// match timed on the last day still counts (ADR-0071).
 func appendDateClauses(d Dialect, clauses []string, args []any, filter storage.StatsFilter) ([]string, []any) {
 	ts := d.TimestampArg()
-	if filter.DateFrom != "" && filter.DateTo != "" {
-		clauses = append(clauses, "m.match_date BETWEEN "+ts+" AND "+ts)
-		args = append(args, filter.DateFrom, filter.DateTo)
-	} else if filter.DateFrom != "" {
+	if filter.DateFrom != "" {
 		clauses = append(clauses, "m.match_date >= "+ts)
 		args = append(args, filter.DateFrom)
-	} else if filter.DateTo != "" {
-		clauses = append(clauses, "m.match_date <= "+ts)
-		args = append(args, filter.DateTo)
+	}
+	if filter.DateTo != "" {
+		if day, err := time.Parse(time.DateOnly, filter.DateTo); err == nil {
+			clauses = append(clauses, "m.match_date < "+ts)
+			args = append(args, day.AddDate(0, 0, 1).Format(time.DateOnly))
+		} else {
+			clauses = append(clauses, "m.match_date <= "+ts)
+			args = append(args, filter.DateTo)
+		}
 	}
 	return clauses, args
 }
@@ -317,6 +322,15 @@ func (s *StatsStore) PositionIDsBySelection(ctx context.Context, scope string, f
 	if sel.Kind == "breakdown" {
 		return s.breakdownSelectionIDs(ctx, scope, filter, sel)
 	}
+	// The blunder threshold is the library's, read where the Players table
+	// reads it, so the drill-down lists what its Blunders column counts.
+	if sel.Kind == "blunders" {
+		settings, err := librarySettings(ctx, s.DB, scope)
+		if err != nil {
+			return nil, fmt.Errorf("PositionIDsBySelection (blunders): %w", err)
+		}
+		sel = storage.SelectionSpec{Kind: "error_bucket", BucketMinMP: settings.BlunderThresholdMP, BucketMaxMP: -1}
+	}
 	whereSQL, baseArgs := s.buildStatsWhereClause(scope, filter)
 
 	// A cube-direction cell is decided by reading two free-form labels, stated
@@ -344,6 +358,49 @@ func (s *StatsStore) PositionIDsBySelection(ctx context.Context, scope string, f
 		return nil, fmt.Errorf("PositionIDsBySelection (%s): %w", sel.Kind, err)
 	}
 	return scanPositionIDs(rows)
+}
+
+// TournamentIDs — see storage.StatsStore.
+func (s *StatsStore) TournamentIDs(ctx context.Context, scope string, filter storage.StatsFilter) ([]int64, error) {
+	return s.countedIDs(ctx, scope, filter, "m.tournament_id",
+		" AND m.tournament_id IS NOT NULL GROUP BY m.tournament_id ORDER BY m.tournament_id")
+}
+
+// countedIDs lists col over the decisions Compute's totals count, read where
+// Compute reads them: the phase cells when match_stats serves the filter, as
+// totalsFromCells does, else the decisions themselves, as computeTotals does.
+// Both keep a decision by the table of its own analysis, never by its match's.
+func (s *StatsStore) countedIDs(ctx context.Context, scope string, filter storage.StatsFilter, col, tail string) ([]int64, error) {
+	filter, err := s.withPlayerAliases(ctx, scope, filter)
+	if err != nil {
+		return nil, fmt.Errorf("counted ids aliases: %w", err)
+	}
+	useCells := false
+	if fromMatchStats(filter) {
+		if useCells, err = s.matchStatsReadable(ctx, scope); err != nil {
+			return nil, err
+		}
+	}
+	var query string
+	var args []any
+	if useCells {
+		where, whereArgs := s.cellsWhere(scope, filter)
+		query = "SELECT " + col + cellsJoin + cellKind(where, cellPhase) + tail
+		args = whereArgs
+	} else {
+		where, whereArgs := s.buildStatsWhereClause(scope, filter)
+		query = "SELECT " + col + " " + statsBaseJoin + where + tail
+		args = whereArgs
+	}
+	rows, err := s.DB.Query(ctx, query, args...)
+	if err != nil {
+		return nil, fmt.Errorf("counted ids (%s): %w", col, err)
+	}
+	ids, err := scanPositionIDs(rows)
+	if ids == nil && err == nil {
+		ids = []int64{}
+	}
+	return ids, err
 }
 
 // PositionIDsByTournament returns all position IDs belonging to the given

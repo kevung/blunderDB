@@ -1,12 +1,15 @@
 package gui
 
 import (
+	"context"
 	"math"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/bearoffgen/bearofftest"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/race"
 )
 
@@ -234,5 +237,61 @@ func TestEvaluateGammonNetRaceMatchesCubeAtMatchScore(t *testing.T) {
 	}
 	if diff := math.Abs(cube.CubefulDoublePassEquity - money.DoublePass); diff > tol {
 		t.Errorf("DoublePass disagrees between Cube (%.9f) and Race.Money (%.9f), diff %.2e", cube.CubefulDoublePassEquity, money.DoublePass, diff)
+	}
+}
+
+// TestEvaluationAtRestEndClearsOnlyItsOwn: a superseded search finishing
+// after its successor started must leave the successor cancellable.
+func TestEvaluationAtRestEndClearsOnlyItsOwn(t *testing.T) {
+	a := &App{}
+	ctx1, end1 := a.beginEvaluationAtRest()
+	_, end2 := a.beginEvaluationAtRest()
+	if ctx1.Err() == nil {
+		t.Fatal("starting a search did not cancel the one in flight")
+	}
+
+	done := make(chan bool)
+	go func() { done <- end1() }()
+	if !<-done {
+		t.Error("the superseded search does not report itself cancelled")
+	}
+	a.gnEvalMu.Lock()
+	stillThere := a.gnEvalCancel != nil
+	a.gnEvalMu.Unlock()
+	if !stillThere {
+		t.Fatal("the superseded search erased its successor's cancel")
+	}
+
+	if end2() {
+		t.Error("a search that ran to its end reports itself cancelled")
+	}
+	a.gnEvalMu.Lock()
+	defer a.gnEvalMu.Unlock()
+	if a.gnEvalCancel != nil {
+		t.Error("the finished search left its cancel registered")
+	}
+}
+
+// TestEvaluateGammonNetCtxStopsDeepSearch: a superseded display search stops
+// inside the search instead of holding the shared searcher to its end.
+func TestEvaluateGammonNetCtxStopsDeepSearch(t *testing.T) {
+	if testing.Short() {
+		t.Skip("deep search")
+	}
+	pos, err := domain.DecodeXGID("XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:0:10")
+	if err != nil {
+		t.Fatalf("DecodeXGID: %v", err)
+	}
+	pos.Dice = [2]int{0, 0}
+	a := &App{}
+	ctx, cancel := context.WithTimeout(context.Background(), 200*time.Millisecond)
+	defer cancel()
+	start := time.Now()
+	_, err = a.evaluateGammonNetCtx(ctx, pos, 4, 0, 0)
+	if !gammonnet.IsCanceled(err) {
+		t.Fatalf("err = %v, want a cancelled search", err)
+	}
+	if elapsed := time.Since(start); elapsed > 2*time.Second {
+		t.Fatalf("cancelled 4-ply evaluation returned after %v", elapsed)
 	}
 }

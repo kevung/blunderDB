@@ -29,7 +29,7 @@ export function formatDate(/** @type {Date | string | number | null | undefined}
 
 /**
  * The UTC-midnight timestamp of the day a backend date text starts with ("YYYY-MM-DD", RFC 3339,
- * or Go's "2025-05-17 00:00:00 +0000 UTC"), or null when it does not start with one. Read the day,
+ * or Go's time.String "YYYY-MM-DD hh:mm:ss +0000 UTC"), or null when it does not start with one. Read the day,
  * never the whole text: WebKitGTK's Date refuses Go's time.String format where V8 accepts it.
  */
 export function parseIsoDayUtc(/** @type {string | null | undefined} */ value) {
