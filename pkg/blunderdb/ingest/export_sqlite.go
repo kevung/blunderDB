@@ -111,10 +111,9 @@ type ExportReport struct {
 	// source dropped (searchSourceLost): their members travel, but their
 	// command, payload or ids named rows the file does not hold.
 	DegradedAnkiDecks int `json:"degradedAnkiDecks"`
-	// TournamentMap gives, for each exported tournament, the id the new file assigned it.
-	// A Direction travels with its tournament (ADR-0047) but its tables live on the desktop
-	// wrapper, not the storage contract, so the caller copies them itself with this map.
-	TournamentMap map[int64]int64 `json:"-"`
+	// Directions counts the tournament Directions that left with their
+	// tournament (writeDirections).
+	Directions int `json:"directions"`
 }
 
 // WholeTenant is the export the daemon offers by default: everything the
@@ -180,14 +179,6 @@ func ExportSQLite(ctx context.Context, src storage.Storage, scope, path string, 
 	}
 	report.Path = finalPath
 
-	// While the file is still plain: what the storage contract does not carry gets its turn
-	// here, and a protected export seals it in with the rest.
-	if opts.AfterWrite != nil {
-		if err := opts.AfterWrite(ctx, path, report); err != nil {
-			return report, err
-		}
-	}
-
 	if opts.Password != "" {
 		env, err := issuance.DecodeEnvelope(opts.Watermark)
 		if err != nil {
@@ -236,6 +227,7 @@ func writeExport(ctx context.Context, src storage.Storage, scope, path string, o
 		e.writeLessons,
 		e.writeTournaments,
 		e.writeMatches,
+		e.writeDirections,
 		e.writeLivingQueries,
 		e.writeMatchOrigins,
 		e.writeAliases,
@@ -1047,8 +1039,6 @@ func (e *exporter) writeTournaments() error {
 	if len(e.tournamentIDs) > 0 {
 		slog.Info("exported tournaments", "count", e.report.Tournaments)
 	}
-	// Handed back so a caller that knows about Directions can carry them across.
-	e.report.TournamentMap = e.tourMap
 	return nil
 }
 
@@ -1082,7 +1072,7 @@ var notExportedMatchColumns = map[string]string{
 	"id":                 "the export numbers its own rows",
 	"import_batch_id":    "names an import of the source database, not of the export",
 	"dice_hash":          "derived from the games; the recipient computes it again",
-	"direction_match_id": "links a pairing of the source's tournament direction, which is not exported",
+	"direction_match_id": "written by writeDirections, and only when the match's tournament Direction leaves with it",
 }
 
 func (e *exporter) writeMatches() error {
