@@ -239,7 +239,7 @@
         display: flex;
         gap: 1em;
         min-width: 40em;
-        max-height: 70vh;
+        max-height: calc(70vh / var(--ui-scale, 1));
     }
 
     .lessons {

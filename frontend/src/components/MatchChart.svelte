@@ -1,4 +1,5 @@
 <script>
+    import { toCssPx } from '../utils/uiZoom.js';
     // One chart of the match sheet, on the decision axis the charts share: a
     // title and its legend, the value axis on the left, the games named along
     // the bottom, and a tooltip that stays whole inside the plot whatever its
@@ -56,7 +57,7 @@
         if (!plotEl || tipH <= H || !anchor) return {};
         const box = plotEl.getBoundingClientRect();
         const view = plotEl.closest('[role="tabpanel"]')?.getBoundingClientRect() ?? { top: 0, bottom: globalThis.innerHeight ?? box.bottom };
-        return { top: view.top - box.top, bottom: view.bottom - box.top };
+        return { top: toCssPx(view.top - box.top), bottom: toCssPx(view.bottom - box.top) };
     });
     let at = $derived(placeTip(anchor, { w: tipW, h: tipH }, { w: W, h: H, ...room }));
 
@@ -75,7 +76,7 @@
     function onMove(e) {
         const r = /** @type {HTMLElement} */ (e.currentTarget).getBoundingClientRect();
         active = true;
-        pointer = { x: e.clientX - r.left, y: e.clientY - r.top };
+        pointer = { x: toCssPx(e.clientX - r.left), y: toCssPx(e.clientY - r.top) };
         onfocus(indexAt(e, movePositions.length));
     }
 

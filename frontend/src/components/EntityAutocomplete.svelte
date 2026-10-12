@@ -1,4 +1,5 @@
 <script>
+    import { toCssPx } from '../utils/uiZoom.js';
     // A text field with a filtered dropdown, mouse and keyboard (arrows, Enter).
     // position:fixed from the input's rect to escape overflow:auto containers;
     // flips above when short of room (`auto`) or always (`above`).
@@ -67,10 +68,11 @@
         const spaceBelow = window.innerHeight - rect.bottom;
         const spaceAbove = rect.top;
         const above = placement === 'above' || (spaceBelow < maxHeight && spaceAbove > spaceBelow);
-        const common = `position:fixed; left:${rect.left}px; width:${rect.width}px;`;
+        // Measured in window pixels, written as CSS pixels of the zoomed UI.
+        const common = `position:fixed; left:${toCssPx(rect.left)}px; width:${toCssPx(rect.width)}px;`;
         dropdownStyle = above
-            ? `${common} bottom:${window.innerHeight - rect.top}px; max-height:${Math.min(maxHeight, spaceAbove)}px;`
-            : `${common} top:${rect.bottom}px; max-height:${Math.min(maxHeight, spaceBelow)}px;`;
+            ? `${common} bottom:${toCssPx(window.innerHeight - rect.top)}px; max-height:${toCssPx(Math.min(maxHeight, spaceAbove))}px;`
+            : `${common} top:${toCssPx(rect.bottom)}px; max-height:${toCssPx(Math.min(maxHeight, spaceBelow))}px;`;
     }
 
     function show() {

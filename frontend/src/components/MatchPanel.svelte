@@ -1744,7 +1744,7 @@
     .match-video-slot {
         width: 100%;
         aspect-ratio: 16 / 9;
-        max-height: 40vh;
+        max-height: calc(40vh / var(--ui-scale, 1));
         flex: 0 0 auto;
     }
     .match-video-slot.empty {

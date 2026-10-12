@@ -1,3 +1,4 @@
+import { tick } from 'svelte';
 import { writable } from 'svelte/store';
 import { GetUIScale, SaveUIScale } from '../../wailsjs/go/main/Config.js';
 import { logger } from '../utils/logger.js';
@@ -27,10 +28,11 @@ function applyVar(/** @type {number} */ scale) {
 
 // Ask the board to re-fit: two.js sizes itself from its container's client box,
 // which changes with zoom. This is expensive, so only call it when the scale is
-// committed (e.g. on slider release), not on every intermediate drag value.
+// committed (e.g. on slider release), not on every intermediate drag value. Sent once Svelte
+// has flushed: the panel yields to a larger scale, and the board must fit the room it leaves.
 function requestBoardRefit() {
     if (typeof window !== 'undefined') {
-        window.dispatchEvent(new Event('resize'));
+        tick().then(() => window.dispatchEvent(new Event('resize')));
     }
 }
 

@@ -1,4 +1,17 @@
 import { tick } from 'svelte';
+import { toCssPx } from './uiZoom.js';
+
+/**
+ * The room a panel may take, the board keeping the rest.
+ *
+ * @param {boolean} side   - true: a width (side panel); false: a height (bottom panel)
+ * @param {number}  size   - the wanted size, in CSS pixels of the zoomed UI
+ * @param {number}  extent - the UI's width (side) or height, in the same pixels
+ * @returns {number}
+ */
+export function clampPanelSize(side, size, extent) {
+    return Math.max(0, side ? Math.min(Math.max(150, size), extent - 200) : Math.min(Math.max(80, size), extent - 160));
+}
 
 /**
  * Svelte action: drag a handle to resize the panel next to it.
@@ -21,7 +34,8 @@ export function resizable(node, params) {
     let cleanupDrag = null;
 
     function clamp(side, /** @type {number} */ size) {
-        return side ? Math.min(Math.max(150, size), window.innerWidth - 200) : Math.min(Math.max(80, size), window.innerHeight - 160);
+        // Sizes are CSS pixels of the zoomed UI, the window and the pointer are window pixels.
+        return clampPanelSize(side, size, toCssPx(side ? window.innerWidth : window.innerHeight));
     }
 
     // The new size reaches the DOM only once Svelte has flushed; measuring before that makes the
@@ -41,7 +55,7 @@ export function resizable(node, params) {
 
         function onMouseMove(/** @type {MouseEvent} */ e) {
             moved = true;
-            size = clamp(side, startSize + (start - (side ? e.clientX : e.clientY)));
+            size = clamp(side, startSize + toCssPx(start - (side ? e.clientX : e.clientY)));
             onResize(size, side);
             notifyResize();
         }

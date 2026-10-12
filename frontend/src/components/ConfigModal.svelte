@@ -1187,7 +1187,7 @@
     .tab-body {
         flex: 1;
         min-width: 0;
-        height: min(300px, 46vh);
+        height: min(300px, calc(46vh / var(--ui-scale, 1)));
         overflow-y: auto;
         text-align: left;
     }

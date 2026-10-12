@@ -184,15 +184,15 @@
         display: flex;
         justify-content: center;
         align-items: flex-start;
-        padding-top: 12vh;
+        padding-top: calc(12vh / var(--ui-scale, 1));
         background-color: rgba(0, 0, 0, 0.35);
     }
 
     .palette {
         display: flex;
         flex-direction: column;
-        width: min(600px, calc(100vw - 32px));
-        max-height: 70vh;
+        width: min(600px, calc(100vw / var(--ui-scale, 1) - 32px));
+        max-height: calc(70vh / var(--ui-scale, 1));
         background-color: var(--color-surface);
         color: var(--color-text);
         border: 1px solid var(--color-border);

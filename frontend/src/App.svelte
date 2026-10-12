@@ -14,7 +14,7 @@
     import { isNewerVersion } from './utils/semver.js';
     import { initLanguage, t, tMsg } from './i18n';
     import { initBoardColors } from './stores/boardColorsStore';
-    import { initUIScale } from './stores/uiScaleStore';
+    import { initUIScale, uiScaleStore } from './stores/uiScaleStore';
     import { initPanelPosition, effectivePositionStore, PANEL_SIDE, initPanelSize, panelWidthStore, savePanelWidth, DEFAULT_PANEL_HEIGHT, DEFAULT_PANEL_WIDTH } from './stores/panelLayoutStore';
 
     import { databasePathStore } from './stores/databaseStore.js';
@@ -64,7 +64,7 @@
     import { initPageStep } from './services/pageStepSetting.js';
     import { initRolloutChoice } from './services/rolloutService.js';
     import { applyTabPanels } from './services/tabHandler.js';
-    import { resizable } from './utils/resizeHandle.js';
+    import { resizable, clampPanelSize } from './utils/resizeHandle.js';
     import { initTabHeights, panelHeightValue, rememberPanelHeight } from './utils/tabHeights.js';
     import { fileDrop } from './utils/fileDrop.js';
     import { loadWorstBlunders } from './services/positionLoader.js';
@@ -119,17 +119,27 @@
     });
     let panelHeight = $state(DEFAULT_PANEL_HEIGHT);
     let windowHeight = $state(typeof window === 'undefined' ? 800 : window.innerHeight);
+    let windowWidth = $state(typeof window === 'undefined' ? 1280 : window.innerWidth);
     // The Direction page replaces the board: in a short window (a 150 % zoom is 512 px high) a
     // dock at its stored height leaves it a few dozen pixels and hides its buttons behind the
     // tab bar. Only then does the dock yield; the stored height is left alone.
     const DIRECTION_MIN_HEIGHT = 360;
     const DIRECTION_DOCK_SHARE = 0.3;
+    // Panel sizes are CSS pixels of the zoomed UI, the window's in window pixels. A size stored
+    // under a smaller scale or in a larger window yields as a drag would, so the board keeps room.
+    let uiHeight = $derived((windowHeight * 100) / $uiScaleStore);
+    let uiWidth = $derived((windowWidth * 100) / $uiScaleStore);
     let appliedPanelHeight = $derived(
-        $directionPageShownStore && windowHeight - panelHeight < DIRECTION_MIN_HEIGHT
-            ? Math.min(panelHeight, Math.max(windowHeight - DIRECTION_MIN_HEIGHT, Math.round(windowHeight * DIRECTION_DOCK_SHARE)))
-            : panelHeight
+        clampPanelSize(
+            false,
+            $directionPageShownStore && uiHeight - panelHeight < DIRECTION_MIN_HEIGHT
+                ? Math.min(panelHeight, Math.max(uiHeight - DIRECTION_MIN_HEIGHT, Math.round(uiHeight * DIRECTION_DOCK_SHARE)))
+                : panelHeight,
+            uiHeight
+        )
     );
     let panelWidth = $state(DEFAULT_PANEL_WIDTH);
+    let appliedPanelWidth = $derived(clampPanelSize(true, panelWidth, uiWidth));
     let isSidePanel = $derived($effectivePositionStore === PANEL_SIDE);
     let showDropOverlay = $state(false);
     // Écarté pour la session : le panneau Eval fonctionne sans base.
@@ -444,7 +454,7 @@
     });
 </script>
 
-<svelte:window bind:innerHeight={windowHeight} />
+<svelte:window bind:innerHeight={windowHeight} bind:innerWidth={windowWidth} />
 
 <main class="main-container" class:td-fullscreen={$directionFullscreenStore} bind:this={mainArea} use:fileDrop={{ onDrop: handleFileDrop, onOverlayChange: (visible) => (showDropOverlay = visible) }}>
     {#if showDropOverlay}
@@ -510,14 +520,14 @@
         <div
             class="resize-handle"
             class:side={isSidePanel}
-            use:resizable={{ side: isSidePanel, size: isSidePanel ? panelWidth : appliedPanelHeight, onResize: setPanelSize, onCommit: savePanelSize }}
+            use:resizable={{ side: isSidePanel, size: isSidePanel ? appliedPanelWidth : appliedPanelHeight, onResize: setPanelSize, onCommit: savePanelSize }}
         ></div>
 
         <div
             class="panel-wrapper"
             class:side={isSidePanel}
             data-tour="panels"
-            style={isSidePanel ? `width: ${panelWidth}px;` : $duelFoldedStore ? 'height: auto;' : `height: ${appliedPanelHeight}px;`}
+            style={isSidePanel ? `width: ${appliedPanelWidth}px;` : $duelFoldedStore ? 'height: auto;' : `height: ${appliedPanelHeight}px;`}
         >
             <TabbedPanel
                 onLoadPositionsByFilters={loadPositionsByFilters}
@@ -545,17 +555,16 @@
         display: flex;
         flex-direction: column;
         /* Interface scaling: `zoom` enlarges the whole UI (icons, fonts, panels,
-           modals and the SVG board, which stays crisp). The WebKit/WebView
-           engines resolve `vw`/`vh` in the zoomed coordinate system, so plain
-           100vw/100vh still fill exactly one viewport at any scale — do NOT
-           divide them by the scale (that under-sizes the box and leaves gaps
-           on the right and below the status bar). */
+           modals and the SVG board, which stays crisp). WebKitGTK and Chromium
+           multiply viewport units by the zoom of the element that uses them, so
+           100vw/100vh would size this box to scale × the window. Pinning it to
+           the viewport with insets fills the window at any scale; a viewport
+           length used below it is written `calc(Nvh / var(--ui-scale, 1))`. */
         zoom: var(--ui-scale, 1);
-        height: 100vh;
-        width: 100vw;
+        position: fixed;
+        inset: 0;
         padding: 0;
         box-sizing: border-box;
-        position: relative;
         overflow: hidden;
     }
 
