@@ -84,6 +84,34 @@ export function hasMoverChecker(state, point) {
 }
 
 /**
+ * Le pion peut-il se poser sur `to` ? Sorti, point vide, à soi, ou blot adverse
+ * frappé ; jamais un point que l'adversaire tient, que `applyStep` retournerait
+ * en pions du camp qui joue.
+ *
+ * @param {any} board
+ * @param {number} to
+ * @param {number} mover
+ */
+function canLand(board, to, mover) {
+    if (to === OFF) return true;
+    const p = board?.points?.[to];
+    return !!p && (p.checkers === 0 || p.color === mover || p.checkers === 1);
+}
+
+/**
+ * Le pas peut-il se jouer sur ce plateau : un pion du camp à la source, et une
+ * case où se poser.
+ *
+ * @param {any} board
+ * @param {{from: number, to: number}} step
+ * @param {number} mover
+ */
+function canStep(board, step, mover) {
+    const p = board?.points?.[step.from];
+    return !!p && p.checkers > 0 && p.color === mover && canLand(board, step.to, mover);
+}
+
+/**
  * Déplacer un pion sans rien vérifier (ADR-0044) ; seule condition, un pion à
  * prendre. Le coup reste libre jusqu'au bout.
  * @param {any} state
@@ -91,7 +119,7 @@ export function hasMoverChecker(state, point) {
  * @param {number} to
  */
 export function freeStep(state, from, to) {
-    if (from === to || !hasMoverChecker(state, from)) return state;
+    if (from === to || !hasMoverChecker(state, from) || !canLand(state.board, to, state.mover)) return state;
     const board = applyStep(state.board, { from, to }, state.mover);
     return { ...state, board, steps: [...state.steps, { from, to }], selected: null, free: true };
 }
@@ -158,8 +186,10 @@ export function stepsFromNotation(text, mover) {
 }
 
 /**
- * Le plateau laissé par ces pas, sans jugement : un pas à source vide ne
- * prend rien, et le Replay dira l'incohérence.
+ * Le plateau laissé par ces pas, sans jugement mais sans créer ni perdre de
+ * pion : les pas se jouent dans l'ordre où leur source porte un pion du camp
+ * (comme `resolveSteps` au moteur), et un pas injouable — source vide, point
+ * adverse — est laissé de côté. Le Replay dira l'incohérence.
  *
  * @param {any} board
  * @param {{from: number, to: number}[]} steps
@@ -167,6 +197,14 @@ export function stepsFromNotation(text, mover) {
  */
 export function boardAfterSteps(board, steps, mover) {
     let out = board;
-    for (const step of steps ?? []) out = applyStep(out, step, mover);
+    const remaining = [...(steps ?? [])];
+    while (remaining.length > 0) {
+        const ready = remaining.findIndex((s) => {
+            const p = out?.points?.[s.from];
+            return !!p && p.checkers > 0 && p.color === mover;
+        });
+        const [step] = remaining.splice(Math.max(ready, 0), 1);
+        if (canStep(out, step, mover)) out = applyStep(out, step, mover);
+    }
     return out;
 }

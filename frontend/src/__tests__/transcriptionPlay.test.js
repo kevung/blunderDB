@@ -199,3 +199,40 @@ describe('la notation (ADR-0052)', () => {
         expect(board.points[0]).toEqual({ checkers: 1, color: WHITE });
     });
 });
+
+/** Les pions d'un camp : plateau, barre et sortis. */
+function countOf(/** @type {any} */ board, /** @type {number} */ side) {
+    return board.bearoff[side] + board.points.reduce((/** @type {number} */ n, /** @type {any} */ p) => n + (p.color === side ? p.checkers : 0), 0);
+}
+
+describe('un coup écrit contre une autre position ne crée ni ne perd de pion', () => {
+    const position = positionWith({ 13: [2, BLACK], 8: [1, BLACK], 7: [2, WHITE], 1: [1, WHITE] });
+
+    test('un pas depuis un point vide, ou la barre vide, ne pose rien', () => {
+        const board = boardAfterSteps(position.board, stepsFromNotation('6/4 bar/20', BLACK), BLACK);
+        expect(countOf(board, BLACK)).toBe(3);
+        expect(countOf(board, WHITE)).toBe(3);
+        expect(board.points[4].checkers).toBe(0);
+        expect(board.points[20].checkers).toBe(0);
+    });
+
+    test('un pas sur un point tenu par l’adversaire ne le retourne pas', () => {
+        const board = boardAfterSteps(position.board, stepsFromNotation('13/7', BLACK), BLACK);
+        expect(board.points[7]).toEqual({ checkers: 2, color: WHITE });
+        expect(countOf(board, BLACK)).toBe(3);
+        expect(countOf(board, WHITE)).toBe(3);
+    });
+
+    test('les pas se jouent dans l’ordre où ils sont jouables, comme au moteur', () => {
+        const board = boardAfterSteps(position.board, stepsFromNotation('6/2 13/6', BLACK), BLACK);
+        expect(board.points[2]).toEqual({ checkers: 1, color: BLACK });
+        expect(countOf(board, BLACK)).toBe(3);
+    });
+
+    test('un glissé libre sur un point adverse ne pose pas le pion', () => {
+        const state = newBoardPlay(position, [], { rolled: [6, 5] });
+        const next = dragStep(state, 13, 7);
+        expect(next.board.points[7]).toEqual({ checkers: 2, color: WHITE });
+        expect(countOf(next.board, WHITE)).toBe(3);
+    });
+});
