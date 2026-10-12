@@ -624,18 +624,36 @@ export function drawScores(two, geom, cfg, position, text = defaultSceneText) {
     }
 }
 
+/** @typedef {'candidate' | 'record' | 'engine'} ArrowTone */
+
 /**
- * Arrows for a candidate move, one per checker moved (`moves` already mirrored to the display
- * position). Each leaves from the top of its source stack and lands on the next free slot,
- * simulating the intermediate board so two checkers on one point stack.
+ * Arrow colours. `candidate`: a line of the analysis outside transcription. `record`: the move
+ * written in a transcribed decision. `engine`: a line of the analysis the user points at while
+ * transcribing, set apart from the record so the two cannot be mistaken. An illegal step is
+ * drawn in the alert colour, dashed, whatever the tone.
+ * @type {Record<ArrowTone, string>}
+ */
+export const ARROW_COLORS = Object.freeze({
+    candidate: 'rgba(255, 107, 107, 0.85)',
+    record: 'rgba(255, 107, 107, 0.85)',
+    engine: 'rgba(52, 120, 246, 0.85)'
+});
+export const ILLEGAL_ARROW_COLOR = 'rgba(214, 0, 0, 0.95)';
+
+/**
+ * Arrows for a move, one per checker moved (`moves` already mirrored to the display position).
+ * Each leaves from the top of its source stack and lands on the next free slot, simulating the
+ * intermediate board so two checkers on one point stack. A step flagged `illegal` still leaves
+ * from the point written, empty or not: dashed, in the alert colour, its source ringed.
  *
  * @param {Surface} two
  * @param {BoardMetrics} geom
  * @param {BoardConfig} cfg
  * @param {BoardPosition} position
  * @param {StepMove[] | null | undefined} moves
+ * @param {ArrowTone} [tone]
  */
-export function drawMoveArrows(two, geom, cfg, position, moves) {
+export function drawMoveArrows(two, geom, cfg, position, moves, tone = 'candidate') {
     if (!moves || moves.length === 0) return;
     /** @type {Record<number, number>} */
     const counts = {};
@@ -645,7 +663,7 @@ export function drawMoveArrows(two, geom, cfg, position, moves) {
     counts[BEAROFF_POINT] = 0;
 
     const cs = geom.checkerSize;
-    const arrowColor = 'rgba(255, 107, 107, 0.85)';
+    const baseColor = ARROW_COLORS[tone] ?? ARROW_COLORS.candidate;
     const arrowWidth = Math.max(cs * 0.22, 6);
     const headLength = cs * 0.45;
     const headWidth = cs * 0.38;
@@ -658,6 +676,14 @@ export function drawMoveArrows(two, geom, cfg, position, moves) {
         if (counts[move.from] > 0) counts[move.from]--;
         counts[move.to] = toCount + 1;
         if (!from || !to) continue;
+        const color = move.illegal ? ILLEGAL_ARROW_COLOR : baseColor;
+
+        if (move.illegal) {
+            const ring = two.makeCircle(from.x, from.y, cs * 0.5);
+            ring.fill = 'transparent';
+            ring.stroke = ILLEGAL_ARROW_COLOR;
+            ring.linewidth = Math.max(cs * 0.08, 2);
+        }
 
         const dx = to.x - from.x;
         const dy = to.y - from.y;
@@ -668,30 +694,32 @@ export function drawMoveArrows(two, geom, cfg, position, moves) {
 
         // Shaft from the source centre to the base of the arrowhead.
         const line = two.makeLine(from.x, from.y, to.x - headLength * ndx, to.y - headLength * ndy);
-        line.stroke = arrowColor;
+        line.stroke = color;
         line.linewidth = arrowWidth;
         line.cap = 'round';
+        if (move.illegal) line.dashes = [arrowWidth * 1.2, arrowWidth * 1.2];
 
         // Arrowhead pointing into the destination centre.
         const baseX = to.x - headLength * ndx;
         const baseY = to.y - headLength * ndy;
         const head = two.makePath(to.x, to.y, baseX - headWidth * ndy, baseY + headWidth * ndx, baseX + headWidth * ndy, baseY - headWidth * ndx);
-        head.fill = arrowColor;
-        head.stroke = arrowColor;
+        head.fill = color;
+        head.stroke = color;
         head.linewidth = 1;
         head.closed = true;
     }
 }
 
 /**
- * Everything that depends on the position. `opts`: offeredCube, showPipcount, moves (arrows),
+ * Everything that depends on the position. `opts`: offeredCube, showPipcount, moves (arrows, or
+ * `arrows` with their tone),
  * Returns the cube's box for hit-testing.
  *
  * @param {Surface} two
  * @param {BoardMetrics} geom
  * @param {BoardConfig} cfg
  * @param {BoardPosition} position
- * @param {{ text?: SceneText, offeredCube?: boolean, showPipcount?: boolean, diceUsed?: (boolean|number)[] | null, moves?: StepMove[] | null}} [opts]
+ * @param {{ text?: SceneText, offeredCube?: boolean, showPipcount?: boolean, diceUsed?: (boolean|number)[] | null, moves?: StepMove[] | null, arrows?: { moves: StepMove[], tone: ArrowTone } | null}} [opts]
  * @returns {CubeBox}
  */
 export function drawDynamicScene(two, geom, cfg, position, opts = {}) {
@@ -701,6 +729,7 @@ export function drawDynamicScene(two, geom, cfg, position, opts = {}) {
     if (opts.showPipcount) drawPipCounts(two, geom, position, opts.text);
     drawDice(two, geom, cfg, position, opts.diceUsed ?? null);
     drawScores(two, geom, cfg, position, opts.text);
-    drawMoveArrows(two, geom, cfg, position, opts.moves);
+    if (opts.arrows) drawMoveArrows(two, geom, cfg, position, opts.arrows.moves, opts.arrows.tone);
+    else drawMoveArrows(two, geom, cfg, position, opts.moves);
     return box;
 }

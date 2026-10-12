@@ -11,8 +11,7 @@
     import { t } from '../i18n';
     import { positionStore } from '../stores/positionStore.js';
     import { quizPlayStore, quizPlayValidateStore } from '../stores/quizPlayStore.js';
-    import { selectedMoveStore } from '../stores/analysisStore.js';
-    import { transcriptionBoardSwapStore } from '../stores/transcriptionStore.js';
+    import { transcriptionArrowsStore, transcriptionBoardSwapStore } from '../stores/transcriptionStore.js';
     import { boardOrientationStore } from '../stores/boardOrientationStore.js';
     import { boardColorsStore } from '../stores/boardColorsStore.js';
     import { renderPositionSVG, DIAGRAM_WIDTH, DIAGRAM_HEIGHT } from '../services/diagramService.js';
@@ -60,7 +59,7 @@
     const height = $derived(Math.round((width * DRAW_HEIGHT) / DIAGRAM_WIDTH));
 
     const armed = $derived(!!$quizPlayStore && !!$quizPlayValidateStore);
-    const scene = $derived(theatreScene({ position: $positionStore, play: $quizPlayStore, swap: $transcriptionBoardSwapStore, selectedMove: $selectedMoveStore, armed }));
+    const scene = $derived(theatreScene({ position: $positionStore, play: $quizPlayStore, swap: $transcriptionBoardSwapStore, arrows: $transcriptionArrowsStore, armed }));
     const moveStores = { quizPlay: quizPlayStore, quizPlayValidate: quizPlayValidateStore, position: positionStore };
     // The model point of the checker pressed on the board, until it is released.
     /** @type {number | null} */
@@ -71,7 +70,7 @@
         const orientation = $boardOrientationStore;
         if (!scene) return '';
         try {
-            return renderPositionSVG(scene.position, { height: DRAW_HEIGHT, showPipcount: true, moves: scene.moves, flip: scene.flip, orientation, diceUsed: scene.diceUsed });
+            return renderPositionSVG(scene.position, { height: DRAW_HEIGHT, showPipcount: true, moves: scene.moves, arrowTone: scene.tone, flip: scene.flip, orientation, diceUsed: scene.diceUsed });
         } catch (error) {
             logger.error('theatre board:', error);
             return '';
@@ -237,7 +236,7 @@
     <div class="theatre-board" class:dragging bind:this={card} data-testid="theatre-board" data-size={size} {style} role="group" aria-label={$t('theatre.board')} onpointerdown={startDrag}>
         <div class="theatre-board-head" title={$t('theatre.boardMove')}>
             <span class="grip" aria-hidden="true">⠿</span>
-            <span class="move" data-testid="theatre-board-move">{$selectedMoveStore ?? ''}</span>
+            <span class="move" data-testid="theatre-board-move">{$transcriptionArrowsStore?.notation ?? ''}</span>
             <button class="head-btn" data-testid="theatre-board-size" onmousedown={keepFocus} onclick={cycleSize} title={$t('theatre.boardSize')} aria-label={$t('theatre.boardSize')}>
                 <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7" /></svg>
             </button>

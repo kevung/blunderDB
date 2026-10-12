@@ -28,6 +28,8 @@ import {
     drawDice,
     drawScores,
     drawBearoff,
+    ARROW_COLORS,
+    ILLEGAL_ARROW_COLOR,
     drawPipCounts,
     drawMoveArrows,
     drawFrame,
@@ -511,6 +513,40 @@ describe('drawMoveArrows', () => {
         const tray = stackSlotCenter(geom, cfg, BEAROFF_POINT, 0);
         expect(tip(two.of('path')[1])).toEqual({ x: near(tray.x), y: near(tray.y) });
         expect(tray.x).toBeGreaterThan(geom.originX + geom.boardWidth / 2);
+    });
+
+    test('an illegal step leaves the empty point written: dashed, in the alert colour, its source ringed', () => {
+        const two = recorder();
+        const pos = startPos();
+        pos.board.points[9] = { checkers: 0, color: -1 };
+        drawMoveArrows(
+            two,
+            geom,
+            cfg,
+            pos,
+            [
+                { from: 9, to: 6, index: 0, illegal: true },
+                { from: 8, to: 5, index: 0 }
+            ],
+            'record'
+        );
+        const [bad, good] = /** @type {any[]} */ (two.of('line'));
+        expect(bad.stroke).toBe(ILLEGAL_ARROW_COLOR);
+        expect(bad.dashes?.length).toBe(2);
+        expect(bad.args[1]).toBeCloseTo(stackSlotCenter(geom, cfg, 9, 0).y, 6);
+        expect(good.stroke).toBe(ARROW_COLORS.record);
+        expect(good.dashes).toBeUndefined();
+        const ring = /** @type {any} */ (two.of('circle').at(-1));
+        expect(ring.stroke).toBe(ILLEGAL_ARROW_COLOR);
+        expect(ring.args.slice(0, 2)).toEqual([stackSlotCenter(geom, cfg, 9, 0).x, stackSlotCenter(geom, cfg, 9, 0).y]);
+    });
+
+    test('a line of the analysis pointed at in transcription has its own colour', () => {
+        const two = recorder();
+        drawMoveArrows(two, geom, cfg, startPos(), parseMoveNotation('13/7'), 'engine');
+        expect(/** @type {any} */ (two.of('line')[0]).stroke).toBe(ARROW_COLORS.engine);
+        expect(ARROW_COLORS.engine).not.toBe(ARROW_COLORS.record);
+        expect(ARROW_COLORS.engine).not.toBe(ILLEGAL_ARROW_COLOR);
     });
 
     test('nothing is drawn without a move', () => {

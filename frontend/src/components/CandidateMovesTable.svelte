@@ -28,6 +28,8 @@
         rollouts = null,
         // Double-clic : valider (ADR-0048 décision 11) ; le simple clic sélectionne.
         onRowDblClick = undefined,
+        // Survol d'une ligne (le coup), puis null à la sortie : le plateau peut montrer ses flèches.
+        onRowHover = undefined,
         showProvenance = true,
         baseline = null,
         isMoney = undefined,
@@ -130,6 +132,8 @@
                     onclick={(e) => onRowClick(row.move, e)}
                     ondblclick={() => onRowDblClick?.(row.move)}
                     oncontextmenu={onRowContextMenu ? (e) => onRowContextMenu(row.move, e) : undefined}
+                    onmouseenter={onRowHover ? () => onRowHover(row.move) : undefined}
+                    onmouseleave={onRowHover ? () => onRowHover(null) : undefined}
                 >
                     <td>{row.label}</td>
                     {#each row.cells as cell, i (i)}
