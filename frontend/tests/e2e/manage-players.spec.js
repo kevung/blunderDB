@@ -15,7 +15,7 @@ import { openLibraryMock, matchSample, matchGames, matchMovePositions } from './
 
 const shots = process.env.MANAGE_PLAYERS_SHOTS;
 
-test.beforeEach(async ({ page }) => {
+async function open(page, database = {}) {
     await installWailsMock(
         page,
         openLibraryMock({
@@ -36,18 +36,20 @@ test.beforeEach(async ({ page }) => {
                 ],
                 MainPlayer: '',
                 PlanMainPlayer: { name: 'Kevin', swap: [8, 11, 12, 15, 21, 23, 30, 31, 40, 41, 52, 60, 61, 70, 71, 77, 80, 88, 90], refused: [95] },
-                SetMainPlayer: { name: 'Kevin', swap: [8], refused: [] }
+                SetMainPlayer: { name: 'Kevin', swap: [8], refused: [] },
+                ...database
             },
             config: { GetPanelWidth: 420 }
         })
     );
     await page.goto('/');
-});
-
-test('the star previews the swaps before anything is swapped', async ({ page }) => {
     const panel = page.getByRole('region', { name: 'Match navigator' });
     await panel.getByRole('button', { name: /Manage players/ }).click();
-    const dialog = page.getByRole('dialog');
+    return page.getByRole('dialog');
+}
+
+test('the star previews the swaps before anything is swapped', async ({ page }) => {
+    const dialog = await open(page);
     await expect(dialog.getByText('Kevin', { exact: true })).toBeVisible();
     await expect(dialog.getByTestId('alias-chip')).toHaveCount(3);
     if (shots) await dialog.screenshot({ path: `${shots}/manage-players-list.png` });
@@ -55,5 +57,26 @@ test('the star previews the swaps before anything is swapped', async ({ page }) 
     await dialog.getByTestId('main-player-star').first().click();
     await expect(dialog.getByTestId('main-player-swap-count')).toHaveText('19');
     await expect(dialog.getByTestId('main-player-refused-count')).toHaveText('1');
+    await expect(dialog.getByTestId('main-player-star').first()).toHaveText('★');
     if (shots) await dialog.screenshot({ path: `${shots}/manage-players-confirm.png` });
+});
+
+test('a Main player with matches left to swap: the band comes back, to reapply or remove', async ({ page }) => {
+    const dialog = await open(page, {
+        MainPlayer: 'Kevin',
+        PlanMainPlayer: { name: 'Kevin', swap: [8, 11, 12], refused: [] },
+        GetAllPlayerNames: [
+            { Name: 'Gildas', Count: 17 },
+            { Name: 'Kevin', Count: 45 },
+            { Name: 'Alice', Count: 3 }
+        ],
+        ListAliases: [
+            { alias: 'K. Unger', canonical: 'Kevin' },
+            { alias: 'Kévin U.', canonical: 'Kevin' }
+        ]
+    });
+    await expect(dialog.locator('.player-name').first()).toHaveText('Kevin');
+    await expect(dialog.getByTestId('main-player-swap-count')).toHaveText('3');
+    await expect(dialog.getByTestId('main-player-clear')).toBeVisible();
+    if (shots) await dialog.screenshot({ path: `${shots}/manage-players-reapply.png` });
 });

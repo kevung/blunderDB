@@ -1340,8 +1340,7 @@
         "selectedSummary": "{n} name selected:",
         "selectedSummaryPlural": "{n} names selected:",
         "title": "Manage players",
-        "use": "use",
-        "useAsCanonical": "Use as canonical name",
+        "useAsCanonical": "Keep this name (canonical name of the merge)",
         "merged": "Merged {n} player name(s) into “{target}”",
         "errorLoad": "Error loading players",
         "errorSelect": "Select at least two names to merge",
@@ -1356,7 +1355,9 @@
         "toSwapTitle": "Matches where this player is player 2",
         "refused": "left as is",
         "refusedTitle": "Draft open or match played here: not swapped",
-        "applyMain": "Swap"
+        "applyMain": "Swap",
+        "reapplyMain": "Main player — matches are left to swap: click to reapply",
+        "clearMain": "Remove"
     },
     "tabbedPanel": {
         "analysis": "Analysis",

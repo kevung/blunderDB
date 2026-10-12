@@ -1340,8 +1340,7 @@
         "selectedSummary": "{n} nome selezionato:",
         "selectedSummaryPlural": "{n} nomi selezionati:",
         "title": "Gestisci giocatori",
-        "use": "usa",
-        "useAsCanonical": "Usa come nome canonico",
+        "useAsCanonical": "Mantieni questo nome (nome canonico dell'unione)",
         "merged": "{n} nome/i di giocatore uniti in «{target}»",
         "errorLoad": "Errore durante il caricamento dei giocatori",
         "errorSelect": "Seleziona almeno due nomi da unire",
@@ -1356,7 +1355,9 @@
         "toSwapTitle": "Partite in cui questo giocatore è il giocatore 2",
         "refused": "lasciate come sono",
         "refusedTitle": "Bozza aperta o partita giocata qui: non invertita",
-        "applyMain": "Inverti"
+        "applyMain": "Inverti",
+        "reapplyMain": "Giocatore principale — restano partite da invertire: clicca per riapplicare",
+        "clearMain": "Rimuovi"
     },
     "tabbedPanel": {
         "analysis": "Analisi",

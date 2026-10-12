@@ -1340,8 +1340,7 @@
         "selectedSummary": "{n} nimi valittu:",
         "selectedSummaryPlural": "{n} nimeä valittu:",
         "title": "Hallitse pelaajia",
-        "use": "käytä",
-        "useAsCanonical": "Käytä kanonisena nimenä",
+        "useAsCanonical": "Säilytä tämä nimi (yhdistämisen kanoninen nimi)",
         "merged": "{n} pelaajanimeä yhdistetty kohteeseen ”{target}”",
         "errorLoad": "Virhe pelaajien lataamisessa",
         "errorSelect": "Valitse vähintään kaksi nimeä yhdistettäväksi",
@@ -1356,7 +1355,9 @@
         "toSwapTitle": "Ottelut, joissa tämä pelaaja on pelaaja 2",
         "refused": "jätetään ennalleen",
         "refusedTitle": "Luonnos auki tai täällä pelattu ottelu: ei vaihdeta",
-        "applyMain": "Vaihda"
+        "applyMain": "Vaihda",
+        "reapplyMain": "Pääpelaaja — otteluita on vielä käännettävänä: napsauta soveltaaksesi uudelleen",
+        "clearMain": "Poista"
     },
     "tabbedPanel": {
         "analysis": "Analyysi",

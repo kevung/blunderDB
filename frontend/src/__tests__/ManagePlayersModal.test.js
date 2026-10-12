@@ -87,6 +87,7 @@ beforeEach(() => {
     MainPlayer.mockReset();
     MainPlayer.mockResolvedValue('');
     PlanMainPlayer.mockReset();
+    PlanMainPlayer.mockResolvedValue({ name: '', swap: [], refused: [] });
     SetMainPlayer.mockReset();
     ClearMainPlayer.mockReset();
     ClearMainPlayer.mockResolvedValue(undefined);
@@ -276,7 +277,7 @@ describe('ManagePlayersModal — merging', () => {
 
 describe('ManagePlayersModal — main player, aliases, counts', () => {
     test('the star shows the swap count, which opens those matches; confirming swaps and refreshes', async () => {
-        PlanMainPlayer.mockResolvedValue({ name: 'Bob', swap: [4, 7], refused: [9] });
+        PlanMainPlayer.mockResolvedValueOnce({ name: 'Bob', swap: [4, 7], refused: [9] });
         SetMainPlayer.mockResolvedValue({ name: 'Bob', swap: [4, 7], refused: [9] });
         const { container } = await mount();
         const bob = /** @type {HTMLElement} */ ([...container.querySelectorAll('.player-row')].find((r) => r.querySelector('.player-name')?.textContent === 'Bob'));
@@ -288,6 +289,9 @@ describe('ManagePlayersModal — main player, aliases, counts', () => {
         expect(bob.classList.contains('selected')).toBe(false);
         expect(must(container.querySelector('[data-testid="main-player-swap-count"]')).textContent).toBe('2');
         expect(must(container.querySelector('[data-testid="main-player-refused-count"]')).textContent).toBe('1');
+        // The star is full as soon as it is clicked, while the band asks for confirmation.
+        expect(must(bob.querySelector('[data-testid="main-player-star"]')).textContent).toBe('★');
+        expect(container.querySelector('[data-testid="main-player-clear"]')).toBeNull();
 
         MainPlayer.mockResolvedValue('Bob');
         await fireEvent.click(must(container.querySelector('[data-testid="main-player-apply"]')));
@@ -296,7 +300,9 @@ describe('ManagePlayersModal — main player, aliases, counts', () => {
         expect(onMerged).toHaveBeenCalled();
         expect(container.querySelector('[data-testid="main-player-confirm"]')).toBeNull();
         const stars = [...container.querySelectorAll('[data-testid="main-player-star"]')].map((b) => b.textContent);
-        expect(stars).toEqual(['☆', '☆', '★']);
+        // The Main player heads the list.
+        expect(stars).toEqual(['★', '☆', '☆']);
+        expect(must(container.querySelector('.player-name')).textContent).toBe('Bob');
     });
 
     test('the swap count opens those matches in the panel', async () => {
@@ -311,7 +317,7 @@ describe('ManagePlayersModal — main player, aliases, counts', () => {
         expect(onClose).toHaveBeenCalled();
     });
 
-    test('the star of the main player only forgets them', async () => {
+    test('the star of the main player with nothing left to swap only forgets them', async () => {
         MainPlayer.mockResolvedValue('Alice');
         const { container } = await mount();
         const star = must(container.querySelector('[data-testid="main-player-star"]'));
@@ -319,9 +325,64 @@ describe('ManagePlayersModal — main player, aliases, counts', () => {
         await fireEvent.click(star);
         await settle();
         expect(ClearMainPlayer).toHaveBeenCalledTimes(1);
-        expect(PlanMainPlayer).not.toHaveBeenCalled();
+        // Asked once, at load, what is left to swap: nothing.
+        expect(PlanMainPlayer).toHaveBeenCalledTimes(1);
+        expect(container.querySelector('[data-testid="main-player-confirm"]')).toBeNull();
         expect(SetMainPlayer).not.toHaveBeenCalled();
         expect(star.textContent).toBe('☆');
+    });
+
+    test('with matches left to swap, the band comes back with a Remove button; the full star reapplies', async () => {
+        MainPlayer.mockResolvedValue('Bob');
+        PlanMainPlayer.mockResolvedValue({ name: 'Bob', swap: [5], refused: [] });
+        SetMainPlayer.mockResolvedValue({ name: 'Bob', swap: [5], refused: [] });
+        const { container } = await mount();
+        await settle();
+        expect(must(container.querySelector('[data-testid="main-player-swap-count"]')).textContent).toBe('1');
+
+        await fireEvent.click(must(container.querySelector('[data-testid="main-player-cancel"]')));
+        await settle();
+        expect(container.querySelector('[data-testid="main-player-confirm"]')).toBeNull();
+        const star = must(container.querySelector('[data-testid="main-player-star"]'));
+        expect(star.textContent).toBe('★');
+        await fireEvent.click(star);
+        await settle();
+        expect(ClearMainPlayer).not.toHaveBeenCalled();
+        expect(must(container.querySelector('[data-testid="main-player-swap-count"]')).textContent).toBe('1');
+
+        PlanMainPlayer.mockResolvedValue({ name: 'Bob', swap: [], refused: [] });
+        await fireEvent.click(must(container.querySelector('[data-testid="main-player-apply"]')));
+        await settle();
+        expect(SetMainPlayer).toHaveBeenCalledWith('Bob');
+        expect(container.querySelector('[data-testid="main-player-confirm"]')).toBeNull();
+    });
+
+    test('the Remove button of the band forgets the Main player', async () => {
+        MainPlayer.mockResolvedValue('Bob');
+        PlanMainPlayer.mockResolvedValue({ name: 'Bob', swap: [5], refused: [] });
+        const { container } = await mount();
+        await settle();
+        await fireEvent.click(must(container.querySelector('[data-testid="main-player-clear"]')));
+        await settle();
+        expect(ClearMainPlayer).toHaveBeenCalledTimes(1);
+        expect(SetMainPlayer).not.toHaveBeenCalled();
+        expect(container.querySelector('[data-testid="main-player-confirm"]')).toBeNull();
+        expect([...container.querySelectorAll('[data-testid="main-player-star"]')].map((b) => b.textContent)).toEqual(['☆', '☆', '☆']);
+    });
+
+    test('a merge that leaves the Main player matches to swap brings the band back', async () => {
+        MainPlayer.mockResolvedValue('Alice');
+        const { container } = await mount();
+        expect(container.querySelector('[data-testid="main-player-confirm"]')).toBeNull();
+        const rows = container.querySelectorAll('.player-row');
+        await fireEvent.click(rows[0]);
+        await fireEvent.click(rows[1]);
+        PlanMainPlayer.mockResolvedValue({ name: 'Alice', swap: [8], refused: [] });
+        await fireEvent.click(must(container.querySelector('.btn-merge')));
+        await settle();
+        expect(MergePlayers).toHaveBeenCalled();
+        expect(must(container.querySelector('[data-testid="main-player-swap-count"]')).textContent).toBe('1');
+        expect(container.querySelector('[data-testid="main-player-clear"]')).not.toBeNull();
     });
 
     test("a player's aliases are listed on its row, and removing one undoes the merge", async () => {

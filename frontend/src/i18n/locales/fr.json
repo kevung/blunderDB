@@ -1340,8 +1340,7 @@
         "selectedSummary": "{n} nom sélectionné :",
         "selectedSummaryPlural": "{n} noms sélectionnés :",
         "title": "Gérer les joueurs",
-        "use": "utiliser",
-        "useAsCanonical": "Utiliser comme nom canonique",
+        "useAsCanonical": "Garder ce nom (nom canonique de la fusion)",
         "merged": "{n} nom(s) de joueur fusionné(s) dans « {target} »",
         "errorLoad": "Erreur lors du chargement des joueurs",
         "errorSelect": "Sélectionnez au moins deux noms à fusionner",
@@ -1356,7 +1355,9 @@
         "toSwapTitle": "Matchs où ce joueur est joueur 2",
         "refused": "laissés tels quels",
         "refusedTitle": "Brouillon ouvert ou match joué ici : non inversé",
-        "applyMain": "Inverser"
+        "applyMain": "Inverser",
+        "reapplyMain": "Joueur principal — des matchs restent à inverser : cliquer pour réappliquer",
+        "clearMain": "Retirer"
     },
     "tabbedPanel": {
         "analysis": "Analyse",

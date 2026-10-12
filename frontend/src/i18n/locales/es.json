@@ -1340,8 +1340,7 @@
         "selectedSummary": "{n} nombre seleccionado:",
         "selectedSummaryPlural": "{n} nombres seleccionados:",
         "title": "Gestionar jugadores",
-        "use": "usar",
-        "useAsCanonical": "Usar como nombre canónico",
+        "useAsCanonical": "Conservar este nombre (nombre canónico de la fusión)",
         "merged": "{n} nombre(s) de jugador fusionado(s) en «{target}»",
         "errorLoad": "Error al cargar los jugadores",
         "errorSelect": "Selecciona al menos dos nombres para fusionar",
@@ -1356,7 +1355,9 @@
         "toSwapTitle": "Partidas en las que este jugador es el jugador 2",
         "refused": "sin cambios",
         "refusedTitle": "Borrador abierto o partida jugada aquí: no se invierte",
-        "applyMain": "Invertir"
+        "applyMain": "Invertir",
+        "reapplyMain": "Jugador principal — quedan partidas por invertir: haz clic para volver a aplicar",
+        "clearMain": "Quitar"
     },
     "tabbedPanel": {
         "analysis": "Análisis",

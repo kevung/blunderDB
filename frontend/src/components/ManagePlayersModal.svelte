@@ -21,6 +21,11 @@
     let mainPlayer = $state('');
     // A designation waiting for confirmation: the name and what it swaps.
     let pending = $state(/** @type {{ name: string, swap: number[], refused: number[] } | null} */ (null));
+    // Matches the Main player still has at seat 2: a merge that brings them a
+    // new spelling, or names them under another one, swaps nothing by itself.
+    let mainLeft = $state(0);
+    // The star shown full: the name being confirmed, else the Main player.
+    let shownMain = $derived(pending ? pending.name : mainPlayer);
     // Selected names to be merged. A SvelteSet is mutated in place: the
     // template tracks *this* instance, a re-assigned copy would leave it
     // watching the old one.
@@ -41,8 +46,10 @@
     // Filtered view of the player list: a name matches by itself or by one of its aliases.
     let filteredPlayers = $derived.by(() => {
         const q = filterText.trim().toLowerCase();
-        if (!q) return allPlayers;
-        return allPlayers.filter((p) => p.Name.toLowerCase().includes(q) || (aliasesOf[p.Name] ?? []).some((a) => a.toLowerCase().includes(q)));
+        const shown = q ? allPlayers.filter((p) => p.Name.toLowerCase().includes(q) || (aliasesOf[p.Name] ?? []).some((a) => a.toLowerCase().includes(q))) : allPlayers;
+        // The Main player heads the list.
+        const i = shown.findIndex((p) => p.Name === mainPlayer);
+        return i > 0 ? [shown[i], ...shown.slice(0, i), ...shown.slice(i + 1)] : shown;
     });
 
     // Load player list on mount
@@ -63,9 +70,43 @@
         } finally {
             loading = false;
         }
+        try {
+            await reviewMain();
+        } catch (e) {
+            logger.error('ManagePlayersModal: plan main player failed', e);
+            error = String(e);
+        }
     }
 
     loadPlayers();
+
+    // What the Main player's designation would still swap; when something is
+    // left, the confirmation band comes back.
+    async function reviewMain() {
+        mainLeft = 0;
+        if (!mainPlayer) return;
+        const plan = await PlanMainPlayer(mainPlayer);
+        mainLeft = (plan.swap ?? []).length;
+        if (mainLeft > 0) pending = { name: plan.name || mainPlayer, swap: plan.swap ?? [], refused: plan.refused ?? [] };
+        else if (pending?.name === mainPlayer) pending = null;
+    }
+
+    async function clearMain() {
+        saving = true;
+        error = '';
+        try {
+            await ClearMainPlayer();
+            mainPlayer = '';
+            mainLeft = 0;
+            pending = null;
+            statusBarTextStore.set(tMsg('merge.mainCleared'));
+        } catch (e) {
+            logger.error('ManagePlayersModal: clear main player failed', e);
+            error = String(e);
+        } finally {
+            saving = false;
+        }
+    }
 
     function toggleSelect(/** @type {string} */ name) {
         if (selectedNames.has(name)) {
@@ -132,23 +173,13 @@
         }
     }
 
-    // The star: on the Main player it only forgets them (nothing is swapped back);
-    // on anyone else it shows what the designation swaps, to be confirmed.
+    // The star: on the Main player with nothing left to swap it forgets them
+    // (nothing is swapped back); with matches left, or on anyone else, it shows
+    // what the designation swaps, to be confirmed.
     async function toggleMain(/** @type {string} */ name) {
         error = '';
-        if (name === mainPlayer) {
-            saving = true;
-            try {
-                await ClearMainPlayer();
-                mainPlayer = '';
-                pending = null;
-                statusBarTextStore.set(tMsg('merge.mainCleared'));
-            } catch (e) {
-                logger.error('ManagePlayersModal: clear main player failed', e);
-                error = String(e);
-            } finally {
-                saving = false;
-            }
+        if (name === mainPlayer && mainLeft === 0) {
+            await clearMain();
             return;
         }
         try {
@@ -168,6 +199,7 @@
             const plan = await SetMainPlayer(pending.name);
             mainPlayer = plan.name;
             pending = null;
+            mainLeft = 0;
             statusBarTextStore.set(tMsg('merge.mainSet', { name: plan.name, n: (plan.swap ?? []).length }));
             await onMerged();
             await loadPlayers(true);
@@ -227,15 +259,15 @@
                     <button
                         type="button"
                         class="main-btn"
-                        class:main={p.Name === mainPlayer}
+                        class:main={p.Name === shownMain}
                         data-testid="main-player-star"
-                        aria-pressed={p.Name === mainPlayer}
-                        title={p.Name === mainPlayer ? $t('merge.unsetMain') : $t('merge.setMain')}
+                        aria-pressed={p.Name === shownMain}
+                        title={p.Name !== mainPlayer ? $t('merge.setMain') : mainLeft > 0 ? $t('merge.reapplyMain') : $t('merge.unsetMain')}
                         disabled={saving}
                         onclick={(e) => {
                             e.stopPropagation();
                             toggleMain(p.Name);
-                        }}>{p.Name === mainPlayer ? '★' : '☆'}</button
+                        }}>{p.Name === shownMain ? '★' : '☆'}</button
                     >
                     <input type="checkbox" checked={selectedNames.has(p.Name)} tabindex="-1" onclick={(e) => e.stopPropagation()} onchange={() => toggleSelect(p.Name)} />
                     <span class="player-name">{p.Name}</span>
@@ -256,12 +288,15 @@
                         <CountLink label={p.Count} title={$t('merge.matchCountTitle')} testid="player-match-count" onclick={() => openPlayerMatches(p.Name)} />
                     </span>
                     <button
+                        type="button"
                         class="use-btn"
+                        data-testid="keep-name"
                         title={$t('merge.useAsCanonical')}
+                        aria-label={$t('merge.useAsCanonical')}
                         onclick={(e) => {
                             e.stopPropagation();
                             useAsCanonical(p.Name);
-                        }}>✓ {$t('merge.use')}</button
+                        }}>✓</button
                     >
                 </div>
             {/each}
@@ -280,7 +315,10 @@
                 </span>
             {/if}
             <span class="main-confirm-actions">
-                <button type="button" onclick={() => (pending = null)} disabled={saving}>{$t('common.cancel')}</button>
+                {#if pending.name === mainPlayer}
+                    <button type="button" data-testid="main-player-clear" onclick={clearMain} disabled={saving}>{$t('merge.clearMain')}</button>
+                {/if}
+                <button type="button" data-testid="main-player-cancel" onclick={() => (pending = null)} disabled={saving}>{$t('common.cancel')}</button>
                 <button type="button" class="primary" data-testid="main-player-apply" onclick={confirmMain} disabled={saving}>{$t('merge.applyMain')}</button>
             </span>
         </div>

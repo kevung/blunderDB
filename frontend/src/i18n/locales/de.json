@@ -1340,8 +1340,7 @@
         "selectedSummary": "{n} Name ausgewählt:",
         "selectedSummaryPlural": "{n} Namen ausgewählt:",
         "title": "Spieler verwalten",
-        "use": "verwenden",
-        "useAsCanonical": "Als kanonischen Namen verwenden",
+        "useAsCanonical": "Diesen Namen behalten (kanonischer Name der Zusammenführung)",
         "merged": "{n} Spielername(n) in „{target}“ zusammengeführt",
         "errorLoad": "Fehler beim Laden der Spieler",
         "errorSelect": "Wählen Sie mindestens zwei Namen zum Zusammenführen aus",
@@ -1356,7 +1355,9 @@
         "toSwapTitle": "Matches, in denen dieser Spieler Spieler 2 ist",
         "refused": "unverändert",
         "refusedTitle": "Entwurf offen oder hier gespieltes Match: nicht getauscht",
-        "applyMain": "Tauschen"
+        "applyMain": "Tauschen",
+        "reapplyMain": "Hauptspieler — es bleiben Matches zu tauschen: klicken, um erneut anzuwenden",
+        "clearMain": "Entfernen"
     },
     "tabbedPanel": {
         "analysis": "Analyse",
