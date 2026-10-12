@@ -42,7 +42,7 @@ func (cli *CLI) runExport(args []string) error {
 	password := exportCmd.String("password", "", "Protect the exported file with a password (produces a .dbx container)")
 	format := exportCmd.String("format", "text", "Output format: text or json")
 	planCounts := exportCmd.Bool("plan", false, "Print what a database or matches export would write, family by family, without writing a file")
-	planIDs := exportCmd.String("plan-ids", "", "Print one page of the source ids behind a --plan count, for a family: positions, comments, matches, tournaments, directions, collections, lessons, ankiDecks, transcriptions, filters")
+	planIDs := exportCmd.String("plan-ids", "", "Print one page of the source ids behind a --plan count, for a family: positions, comments, matches, tournaments, directions, rencontres, collections, lessons, ankiDecks, transcriptions, filters")
 	planOffset := exportCmd.Int("offset", 0, "With --plan-ids: index of the first id of the page")
 	planLimit := exportCmd.Int("limit", 0, "With --plan-ids: ids per page (at most 1000, the default)")
 
@@ -425,7 +425,7 @@ func (cli *CLI) printExportPlan(opts ExportOptions, req exportPlanRequest, text 
 	}{
 		{"positions", plan.Positions}, {"comments", plan.Comments},
 		{"matches", plan.Matches}, {"tournaments", plan.Tournaments},
-		{"directions", plan.Directions},
+		{"directions", plan.Directions}, {"slots", plan.Slots}, {"rencontres", plan.Rencontres},
 		{"collections", plan.Collections}, {"lessons", plan.Lessons},
 		{"Anki decks", plan.AnkiDecks}, {"transcriptions", plan.Transcriptions},
 		{"aliases", plan.Aliases}, {"filters", plan.Filters},
@@ -447,6 +447,9 @@ func printExportReport(r ingest.ExportReport) {
 		r.Positions, r.Analyses, r.Comments, r.Matches, r.Tournaments, r.Collections)
 	fmt.Printf("  lessons %d, Anki decks %d, transcriptions %d, aliases %d, filters %d\n",
 		r.Lessons, r.AnkiDecks, r.Transcriptions, r.Aliases, r.Filters)
+	if r.Directions > 0 || r.Rencontres > 0 {
+		fmt.Printf("  directions %d, slots %d, rencontres %d\n", r.Directions, r.Slots, r.Rencontres)
+	}
 	if r.DegradedAnkiDecks > 0 {
 		fmt.Printf("  %d search deck(s) left with part of their source dropped (see the log)\n", r.DegradedAnkiDecks)
 	}

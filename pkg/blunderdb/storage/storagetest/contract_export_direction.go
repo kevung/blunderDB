@@ -114,6 +114,9 @@ func testExportCarriesDirection(t *testing.T, s storage.Storage) {
 	if report.Directions != 1 || plan.Directions != 1 {
 		t.Errorf("directions: planned %d, wrote %d; want 1", plan.Directions, report.Directions)
 	}
+	if report.Slots != 2 || plan.Slots != 2 {
+		t.Errorf("slots: planned %d, wrote %d; want 2", plan.Slots, report.Slots)
+	}
 	if m := plan.Mismatch(report); m != "" {
 		t.Errorf("plan and report disagree on %s", m)
 	}
@@ -133,7 +136,7 @@ func testExportCarriesDirection(t *testing.T, s storage.Storage) {
 		t.Errorf("the output folder left with the export: %q", got.OutputDir)
 	}
 	if got.State != srcRec.State || got.Config != srcRec.Config || got.FormatVersion != srcRec.FormatVersion ||
-		got.EngineVersion != srcRec.EngineVersion || !got.CreatedAt.Equal(srcRec.CreatedAt.Truncate(time.Second)) {
+		got.EngineVersion != srcRec.EngineVersion || !got.CreatedAt.Equal(srcRec.CreatedAt) || !got.UpdatedAt.Equal(srcRec.UpdatedAt) {
 		t.Errorf("record = %+v, want the source's %+v", got, srcRec)
 	}
 	gotEvents, err := out.Directions().LoadEvents(ctx, "", newTID)

@@ -59,7 +59,9 @@ func (e *exporter) writeDirections() error {
 		}); err != nil {
 			return fmt.Errorf("ingest: writing the direction of tournament %d: %w", tid, err)
 		}
-		e.keepDirectionDates(tid, rec)
+		if err := e.writeOwnTables(srcTID, tid); err != nil {
+			return err
+		}
 		// In sequence order: a journal is replayed from its first event, and a
 		// hole or a swap would replay to another tournament.
 		for _, ev := range events {
@@ -72,14 +74,19 @@ func (e *exporter) writeDirections() error {
 				return fmt.Errorf("ingest: writing pair %s of tournament %d: %w", id, tid, err)
 			}
 		}
-		for _, f := range slots {
-			matchID, ok := e.matchMap[f.MatchID]
-			if !ok {
+		for _, f := range exportableSlots(slots, e.matchMap) {
+			matchID := e.matchMap[f.MatchID]
+			if err := dst.AttachSlot(e.ctx, "", tid, f.SlotID, matchID); err != nil {
+				// Counted by Skipped and, by its absence from Slots, by the
+				// plan's mismatch: the file holds a pairing without its match.
+				e.skip("attaching a match to its slot", "matchID", f.MatchID, "slot", f.SlotID, "err", err)
 				continue
 			}
-			if err := dst.AttachSlot(e.ctx, "", tid, f.SlotID, matchID); err != nil {
-				e.skip("attaching a match to its slot", "matchID", f.MatchID, "slot", f.SlotID, "err", err)
-			}
+			e.report.Slots++
+		}
+		// Last: appending to the journal and filling a Slot stamp the record.
+		if err := e.keepDirectionDates(tid, rec); err != nil {
+			return err
 		}
 		e.report.Directions++
 	}
@@ -89,19 +96,52 @@ func (e *exporter) writeDirections() error {
 	return nil
 }
 
+// exportableSlots keeps the filled Slots whose match leaves with the file:
+// the planner counts the same ones.
+func exportableSlots(slots []storage.FilledSlot, matchMap map[int64]int64) []storage.FilledSlot {
+	var out []storage.FilledSlot
+	for _, f := range slots {
+		if _, ok := matchMap[f.MatchID]; ok {
+			out = append(out, f)
+		}
+	}
+	return out
+}
+
+// exportedStamp writes a date at the precision it was read: the fractional
+// seconds are dropped only when they are zero.
+func exportedStamp(t time.Time) string {
+	if t.IsZero() {
+		return ""
+	}
+	return t.UTC().Format("2006-01-02 15:04:05.999999999")
+}
+
 // keepDirectionDates gives the copied record the dates of its source: Create
 // stamps the moment of the export.
-func (e *exporter) keepDirectionDates(tid int64, rec direction.Record) {
-	stamp := func(t time.Time) string {
-		if t.IsZero() {
-			return ""
-		}
-		return t.UTC().Format(time.DateTime)
-	}
+func (e *exporter) keepDirectionDates(tid int64, rec direction.Record) error {
 	if _, err := e.tx.ExecContext(e.ctx,
 		`UPDATE direction SET created_at = COALESCE(NULLIF(?, ''), created_at),
 		 updated_at = COALESCE(NULLIF(?, ''), updated_at) WHERE tournament_id = ?`,
-		stamp(rec.CreatedAt), stamp(rec.UpdatedAt), tid); err != nil {
-		e.skip("keeping direction dates", "tournamentID", tid, "err", err)
+		exportedStamp(rec.CreatedAt), exportedStamp(rec.UpdatedAt), tid); err != nil {
+		return fmt.Errorf("ingest: keeping the dates of the direction of tournament %d: %w", tid, err)
 	}
+	return nil
+}
+
+// writeOwnTables copies the table properties a Tournament owns to run on its
+// own (ADR-0058 §3): they leave with its Direction even when it plays in a
+// Rencontre, where they are kept and ignored.
+func (e *exporter) writeOwnTables(srcTID, tid int64) error {
+	settings, err := e.src.Rencontres().TournamentTableSettings(e.ctx, e.scope, srcTID)
+	if err != nil {
+		return fmt.Errorf("ingest: reading the tables of tournament %d: %w", srcTID, err)
+	}
+	if len(settings) == 0 {
+		return nil
+	}
+	if err := e.dst.Rencontres().SetTournamentTableSettings(e.ctx, "", tid, settings); err != nil {
+		return fmt.Errorf("ingest: writing the tables of tournament %d: %w", tid, err)
+	}
+	return nil
 }

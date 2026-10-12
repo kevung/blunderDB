@@ -114,6 +114,12 @@ type ExportReport struct {
 	// Directions counts the tournament Directions that left with their
 	// tournament (writeDirections).
 	Directions int `json:"directions"`
+	// Slots counts the matches that left in the Slot they fill; a pairing
+	// that could not take its match is missing from it and from the plan's.
+	Slots int `json:"slots"`
+	// Rencontres counts the Rencontres that left with a member tournament
+	// (writeRencontres).
+	Rencontres int `json:"rencontres"`
 }
 
 // WholeTenant is the export the daemon offers by default: everything the
@@ -228,6 +234,7 @@ func writeExport(ctx context.Context, src storage.Storage, scope, path string, o
 		e.writeTournaments,
 		e.writeMatches,
 		e.writeDirections,
+		e.writeRencontres,
 		e.writeLivingQueries,
 		e.writeMatchOrigins,
 		e.writeAliases,
