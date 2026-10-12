@@ -293,8 +293,8 @@ func dump(doc Document) string {
 	if doc.Entry != nil {
 		e = fmt.Sprintf("%+v", *doc.Entry)
 	}
-	return fmt.Sprintf("{cursor=%d return=%d/%v entry=%s pending=%v actions=%s}",
-		doc.Cursor, doc.Return, doc.HasReturn, e, doc.pendingBoard != nil, dumpActions(doc.Actions))
+	return fmt.Sprintf("{cursor=%d entry=%s pending=%v actions=%s}",
+		doc.Cursor, e, doc.pendingBoard != nil, dumpActions(doc.Actions))
 }
 
 func dumpActions(as []Action) string {

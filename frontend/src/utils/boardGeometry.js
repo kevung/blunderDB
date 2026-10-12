@@ -17,8 +17,9 @@
 
 /**
  * Parse a move string (e.g. "24/23 13/11(2)", "bar/23", "6/off(4)") into a flat
- * list of `{ from, to, index }` moves. `bar` → 0, `off` → -1; the `(n)` suffix
- * expands to n moves. Empty/"bar"/"cannot move" strings yield [].
+ * list of `{ from, to, index }` moves, numbered from the side that plays. `bar` → 25,
+ * that side's own bar in its numbering, whichever side it is; `off` → -1; the `(n)`
+ * suffix expands to n moves. Empty/"bar"/"cannot move" strings yield [].
  *
  * @param {string | null | undefined} moveString
  * @returns {StepMove[]}
@@ -36,7 +37,7 @@ export function parseMoveNotation(moveString) {
         // Match pattern like "24/23" or "24/23(2)" or "bar/23" or "6/off(4)"
         const match = part.match(/(\d+|bar)\/(\d+|off)(?:\((\d+)\))?/i);
         if (match) {
-            const from = match[1].toLowerCase() === 'bar' ? 0 : parseInt(match[1]);
+            const from = match[1].toLowerCase() === 'bar' ? 25 : parseInt(match[1]);
             const to = match[2].toLowerCase() === 'off' ? -1 : parseInt(match[2]);
             const count = match[3] ? parseInt(match[3]) : 1;
 

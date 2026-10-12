@@ -1499,7 +1499,17 @@
         "videoYouTube": "Ссылка YouTube…",
         "videoRemove": "Убрать видео",
         "videoAttach": "Прикрепить",
-        "videoResize": "Высота панели видео"
+        "videoResize": "Высота панели видео",
+        "mode": {
+            "entry": "Ввод",
+            "review": "Просмотр",
+            "edit": "Правка хода {n}"
+        },
+        "modeKey": {
+            "entry": "Enter: подтвердить ход",
+            "review": "E: править",
+            "edit": "Enter: подтвердить исправление"
+        }
     },
     "transcript": {
         "title": "Запись",

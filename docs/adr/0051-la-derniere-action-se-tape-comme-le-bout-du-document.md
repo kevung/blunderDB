@@ -1,6 +1,6 @@
 # ADR-0051 — La dernière Action se tape comme le bout du document
 
-Statut : acceptée.
+Statut : acceptée ; décision 1 remplacée par ADR-0091 (en Édition, seule Entrée valide).
 Voir aussi : ADR-0048 décision 1, ADR-0049, ADR-0050 règle 4.
 
 ## Contexte

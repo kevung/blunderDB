@@ -405,11 +405,12 @@ export default {
 <p>Non appena cade il secondo dado, tutte le <strong>mosse legali</strong> del lancio vengono elencate, classificate dal motore incorporato, la prima preselezionata e le sue frecce poste sulla tavola. La lista dà la mossa, la sua equità e il suo scarto dalla migliore: trascrivere significa riconoscere la mossa che si è vista giocare, non giudicarla — per questo c'è il pannello <strong>Valutazione</strong>. Questa classifica è una valutazione: viene mostrata, non viene mai scritta nel database. Quando il motore non è disponibile, le mosse sono elencate senza classifica e la lista lo dice in testa.</p>
 <p>Un tiro senza alcuna mossa legale registra da sé il <strong>tiro a vuoto</strong>: la mano passa all'avversario senza mossa da digitare. Quando il tiro a vuoto non conta, il tasto <em>f</em> dice soltanto che il giocatore di turno resta fuori: inserisce il primo tiro, prima i non doppi, che non lo fa rientrare dalla barra. Fuori dalla barra, o davanti a un tavolo interno che lascia rientrare ogni tiro, non inserisce nulla e la barra di stato lo dice.</p>
 <p>La <strong>rotellina</strong> seleziona la candidata successiva o precedente, sia sopra la lista sia sopra la tavola: lo sguardo resta sulla tavola e le frecce scorrono, il che riconosce una mossa più in fretta della lettura della sua notazione. Un clic su una riga la seleziona, un doppio clic la convalida.</p>
+<p>Un badge, a sinistra delle caselle del tiro, indica la <strong>modalità</strong> dell'inserimento e ciò che fa INVIO. In <strong>Inserimento</strong>, alla fine del documento, si scrive il seguito. In <strong>Revisione</strong>, con il cursore su un'azione già scritta, i tasti di inserimento non la modificano e il triangolo dei tiri si ritira. L'azione si riapre in <strong>Modifica mossa N</strong> con <em>e</em>, un doppio clic sulla sua cella o un clic su una riga dell'analisi: il tiro si ridigita sul posto, solo INVIO convalida, e il cursore passa poi alla decisione successiva. Fine riporta alla fine del documento.</p>
 <p>Il triangolo dei ventuno tiri sta sotto le due caselle del tiro, accanto alla tastiera e non al suo posto: due cifre restano due volte più rapide di un clic, e il triangolo è lì per chi trascrive con la mano sul mouse. Una casella per tiro, mai due: 3-1 e 1-3 sono lo stesso tiro.</p>
 <p>Ogni mossa giocata sul tavoliere inizia con il tiro, digitato da tastiera o cliccato sul triangolo: senza dadi inseriti, il tavoliere non gioca nulla. Con i due dadi inseriti, il tavoliere è vincolato alle mosse legali di quel tiro — a fine documento come su un'azione riletta, il cui cursore ha caricato i dadi. Un clic su una pedina la gioca con il dado di sinistra, o con il successivo quando il primo non può; un trascinamento la posiziona sulla sua destinazione. I dadi giocati diventano grigi, un clic sui dadi non giocati li scambia, e Backspace — o il clic destro sul tavoliere, che riprende l'intera mossa — annulla la mossa. Ogni passo giocato mantiene nell'elenco solo i candidati che lo contengono, con il primo preselezionato: è il gesto della mossa lontana, dove scendere al dodicesimo candidato costa tredici tasti. Fin dal primo passo, le frecce del candidato selezionato lasciano il tavoliere, per non confondersi con la mossa che si gioca; tornano quando la mossa viene ripresa o registrata.</p>
 <p>La mossa completata viene registrata solo da una convalida: un clic sui dadi resi grigi, INVIO, o il tiro successivo — una cifra o una casella del triangolo —, che la registra prima con i dadi così come sono stati digitati. Su un'azione riletta, la sostituisce.</p>
 <p>Una mossa illegale si trascrive così come è stata giocata, senza pulsante né cambio di modalità. Un trascinamento che nessuna mossa legale offre posiziona la pedina dove viene rilasciata — anche da un punto da cui non parte alcuna mossa legale, purché contenga una pedina del lato al tratto. La mossa esce allora dalle regole: il seguito si gioca liberamente, a clic come a trascinamento, l'elenco dei candidati lascia il posto a una riga che lo ricorda, e la convalida scrive i dadi inseriti, i passi e il tavoliere ottenuto. Backspace annulla l'ultimo passo; annullare l'unico passo fuori dalle regole restituisce l'elenco.</p>
-<p>La mossa si digita anche da tastiera, nella trascrizione. Un doppio clic sulla cella di una mossa — o di una danza, di una mossa non registrata — la trasforma in un campo, precompilato con la sua notazione. Lì si digita solo la mossa, <code>13/7 8/7*</code>, <code>bar/22</code> o <code>6/off</code>: i dadi sono quelli della cella. INVIO la registra al posto della mossa scritta, ESC richiude la cella senza scrivere nulla, e un testo che non indica alcuna mossa lascia il campo aperto. La cella tratteggiata dell'inserimento in corso si apre allo stesso modo, non appena i suoi due dadi sono inseriti.</p>
+<p>La mossa si digita anche da tastiera, nella trascrizione. Un doppio clic sulla cella di una mossa — o di una danza, di una mossa non registrata — la trasforma in un campo, precompilato con la sua notazione. Vi si digita solo la mossa, <code>13/7 8/7*</code>, <code>bar/22</code> o <code>6/off</code>: i dadi sono quelli della cella. INVIO la registra al posto della mossa scritta, ESC richiude la cella senza scrivere nulla, e un testo che non indica alcuna mossa lascia il campo aperto. Il tasto <em>e</em> apre allo stesso modo la cella del cursore. La cella tratteggiata dell'inserimento in corso si apre allo stesso modo, appena i suoi due dadi sono inseriti.</p>
 <p>Una mossa immessa con il trascinamento libero o con la notazione che risulti legale resta una mossa ordinaria — il confronto si fa sulla tavola ottenuta, mai sulla provenienza del gesto; altrimenti viene marcata «mossa illegale» nella trascrizione, e l'esportazione <code>.mat</code> avverte prima di scrivere il file, senza mai rifiutare.</p>
 <p>La tavola lasciata da una mossa illegale vale per la posizione da cui è stata giocata. Quando una correzione più in alto nel transcript cambia quella posizione, i passi della mossa vengono rigiocati dalla nuova, e tutte le posizioni che seguono riportano la correzione.</p>
 <p>Le frecce del tavoliere sono quelle della mossa scritta nella decisione sotto il cursore, rigiocata sulla posizione che ha ora. Un passo che lì non si gioca più — punto di partenza svuotato da una correzione più in alto, punto tenuto dall'avversario, pedina lasciata sulla barra — parte comunque dal punto scritto, in rosso tratteggiato, con il punto di partenza cerchiato, e la cella porta il segno «mossa illegale». La mossa del motore non ne prende mai il posto: una riga dell'elenco disegna le sue frecce, in blu, solo al passaggio del puntatore o quando è scelta con la rotellina, i tasti o un clic.</p>
@@ -1936,7 +1937,7 @@ export default {
 </tr>
 <tr>
 <td>1 … 6 (tiro inserito)</td>
-<td>Convalidare la mossa selezionata e aprire il lancio successivo. Su un'azione rivista, dove il cursore è posato su un'azione già scritta, la cifra ricomincia il lancio di quell'azione invece di convalidare.</td>
+<td>In Inserimento, convalidare la mossa selezionata e aprire il tiro successivo. In Modifica, rifare il tiro dell'azione riaperta, senza convalidare nulla. In Revisione, la cifra non fa nulla.</td>
 </tr>
 <tr>
 <td>1 … 6 (cursore sulla prima mossa di una partita)</td>
@@ -1956,7 +1957,7 @@ export default {
 </tr>
 <tr>
 <td>Clic (su una riga)</td>
-<td>Selezionare quel candidato.</td>
+<td>Selezionare questo candidato; su un'azione rivista, riaprirla in Modifica.</td>
 </tr>
 <tr>
 <td>Doppio clic (su una riga)</td>
@@ -1984,7 +1985,7 @@ export default {
 </tr>
 <tr>
 <td>INVIO</td>
-<td>Registrare la mossa selezionata (ultima mossa di una partita).</td>
+<td>Convalidare la mossa selezionata (ultima mossa di una partita); in Modifica, convalidare la correzione, con il cursore che passa alla decisione successiva. Nessun effetto in Revisione.</td>
 </tr>
 <tr>
 <td>BACKSPACE</td>
@@ -2035,8 +2036,16 @@ export default {
 <td>Portare il cursore su questa azione, o sul turno mancante di un doppio turno.</td>
 </tr>
 <tr>
+<td>e</td>
+<td>Riaprire l'azione del cursore (Modifica) e digitarne la mossa nella sua cella, come con il doppio clic. Esc richiude la cella restando in Modifica: i dadi vi si ridigitano e INVIO convalida la correzione.</td>
+</tr>
+<tr>
+<td>Fine</td>
+<td>Portare il cursore alla fine del documento, in Inserimento.</td>
+</tr>
+<tr>
 <td>Doppio clic (su una cella)</td>
-<td>Digitare la mossa di quell'azione da tastiera, nella cella: 13/7 8/7*, bar/22, 6/off. Si digita solo la mossa, i dadi sono quelli della cella; INVIO la registra, anche illegale, ed Esc richiude la cella senza scrivere nulla. Vale per una mossa, una danza, una mossa non registrata, e per la cella tratteggiata dell'inserimento in corso non appena i suoi due dadi sono inseriti.</td>
+<td>Digitare da tastiera, nella cella, la mossa di questa azione: 13/7 8/7*, bar/22, 6/off. Si digita solo la mossa, i dadi sono quelli della cella; INVIO la registra, anche illegale, ed Esc richiude la cella senza scrivere nulla. L'azione passa in Modifica. Vale per una mossa, una danza, una mossa non registrata, e per la cella tratteggiata dell'inserimento in corso appena i suoi due dadi sono inseriti.</td>
 </tr>
 <tr>
 <td>Doppio clic (sul punteggio di una partita)</td>
@@ -2110,12 +2119,17 @@ export default {
 </table>
 <p>Un tiro che non consente alcuna mossa registra la danza da sé, senza un tasto in più.</p>
 <p>Con un video allegato, solo una convalida esplicita (<em>INVIO</em>, il doppio clic su un candidato, la mossa completata sulla scacchiera) fissa l'istante della mossa. La cifra del lancio successivo, o un gesto di cubo, convalida senza istante; <em>v</em> lo fissa a posteriori. Le frecce si leggono dalla loro posizione sulla tastiera, qualunque sia il layout; <em>[</em> e <em>]</em> si leggono dal carattere digitato, <em>ALTGR</em> compreso su una tastiera che li colloca così. Senza video, questi tasti mantengono il loro significato abituale.</p>
-<p>La cifra ha un solo senso: <strong>comincia un lancio là dove si trova il cursore</strong>. In fondo al documento non c'è nulla sotto il cursore, quindi convalida la mossa selezionata prima di aprire il lancio successivo — la mossa migliore giocata costa così i due dadi e nulla più, poiché la sua convalida è portata dal primo tasto del turno seguente. Su un'azione già scritta, alla quale si è tornati per correggerla, c'è qualcosa sotto il cursore: la cifra ricomincia il lancio di quell'azione, sul posto. La differenza si vede sullo schermo, perché la cella mirata è incorniciata nella trascrizione. L'<strong>ultima</strong> azione del documento fa eccezione: una volta ridigitato il suo lancio, la cifra successiva la convalida e apre la decisione seguente, come in fondo al documento, e anche INVIO porta lì.</p>
+<p>L'inserimento ha tre modalità, mostrate in permanenza in un badge sopra il triangolo, con l'effetto di INVIO:</p>
+<ul>
+<li><strong>Inserimento</strong> — il cursore è alla fine del documento, o su un'inserzione. La cifra convalida la mossa selezionata prima di aprire il tiro successivo: la mossa migliore giocata costa i due dadi e nulla più, la sua convalida essendo portata dal primo tasto del turno seguente.</li>
+<li><strong>Revisione</strong> — il cursore è su un'azione già scritta. I tasti di inserimento (cifre, f, j/k, INVIO, BACKSPACE) non la modificano, e il triangolo dei tiri è nascosto. <em>e</em>, un doppio clic sulla cella o un clic su una riga dell'analisi la riaprono.</li>
+<li><strong>Modifica mossa N</strong> — l'azione riaperta. La cifra ricomincia il suo tiro sul posto e solo INVIO convalida la correzione; il cursore passa poi alla decisione successiva. Spostare il cursore chiude la Modifica; Fine riporta all'Inserimento.</li>
+</ul>
 <p>Ciò che si sta digitando è disegnato nella trascrizione, tratteggiato, nel punto in cui sarà scritto: una correzione copre la cella che sostituisce, un inserimento apre una cella tra le sue due vicine, e il campo si legge dalla colonna. Nulla è registrato prima della convalida.</p>
 <p>Un inserimento in mezzo al documento continua a inserire: la convalida apre una cella vuota di seguito, e l'azione successiva si inserisce a sua volta invece di sovrascrivere quella dopo. La fine della partita o lo spostamento del cursore vi mette fine.</p>
 <p>Un gesto che non ha nulla da fare lo dice, una volta, nella barra di stato: «niente da annullare» con la pila vuota, «nessuna azione sotto il cursore» in fondo al documento. La frase si cancella da sola e rende il posto all'azione attesa.</p>
-<p>Riportare il cursore su un'azione e ridigitare la corregge <strong>sul posto</strong>: la convalida sostituisce l'azione e il cursore torna dov'era — oppure, sull'ultima azione, passa in fondo al documento, dove la trascrizione continua. Se i dadi sono corretti e la mossa registrata resta una mossa legale del nuovo lancio, viene conservata; altrimenti viene proposto il primo candidato del nuovo lancio e la mossa è segnalata «da rivedere» fino alla convalida. Avanzare o arretrare il cursore dopo aver cambiato qualcosa registra la correzione al passaggio.</p>
-<p>Nulla viene rifiutato né eliminato: inserire un'azione dello stesso campo della vicina crea un doppio turno, eliminare un'azione può crearne un altro, cambiare un campo può rendere illegali le mosse che seguono. Queste incoerenze sono segnalate nel transcript, mai corrette d'ufficio, e il cursore si posiziona sulla prima di esse dopo ogni gesto che scrive — tranne dove si continua: dopo un'eliminazione, un inserimento o una partita riaperta, resta dove si digita. Spostarsi o digitare un dado non lo sposta mai. Il turno che un doppio turno ha perso è una cella del transcript: h e l vi si fermano, e un lancio digitato lì viene inserito per il campo a cui mancava. La pila di annullamento vive in memoria: va persa alla chiusura della bozza.</p>
+<p>Riportare il cursore su un'azione, riaprirla e poi ridigitarla la corregge <strong>sul posto</strong>: la convalida sostituisce l'azione e il cursore passa alla decisione successiva — dopo l'ultima azione, alla fine del documento, dove la trascrizione continua. Se i dadi vengono corretti e la mossa registrata resta una mossa legale del nuovo tiro, viene conservata; altrimenti viene proposto il primo candidato del nuovo tiro e la mossa è segnalata «da rivedere» fino alla convalida. Avanzare o arretrare il cursore dopo aver cambiato qualcosa registra la correzione strada facendo.</p>
+<p>Nulla viene rifiutato né eliminato: inserire un'azione dello stesso campo della vicina crea un doppio turno, eliminare un'azione può crearne un altro, cambiare un campo può rendere illegali le mosse che seguono. Queste incoerenze sono segnalate nel transcript, mai corrette d'ufficio, e il cursore si posiziona sulla prima di esse dopo ogni gesto che scrive — tranne dove si continua: dopo una correzione, un'eliminazione, un inserimento o una partita riaperta, resta dove si digita. Spostarsi o digitare un dado non lo sposta mai. Il turno che un doppio turno ha perso è una cella del transcript: h e l vi si fermano, e un lancio digitato lì viene inserito per il campo a cui mancava. La pila di annullamento vive in memoria: va persa alla chiusura della bozza.</p>
 <p>Il pannello stesso — l'elenco delle bozze, la creazione, l'inserimento, la trascrizione e la barra della bozza — è descritto in Pannello Trascrizione.</p>
 <h3>Provino</h3>
 <table>
