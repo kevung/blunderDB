@@ -11,6 +11,7 @@
     import { quizPlayStore } from '../stores/quizPlayStore.js';
     import { selectedMoveStore } from '../stores/analysisStore.js';
     import { transcriptionBoardSwapStore } from '../stores/transcriptionStore.js';
+    import { boardOrientationStore } from '../stores/boardOrientationStore.js';
     import { boardColorsStore } from '../stores/boardColorsStore.js';
     import { renderPositionSVG, DIAGRAM_WIDTH, DIAGRAM_HEIGHT } from '../services/diagramService.js';
     import { theatreScene } from '../services/theatreBoard.js';
@@ -58,9 +59,10 @@
 
     const svg = $derived.by(() => {
         void $boardColorsStore;
+        const orientation = $boardOrientationStore;
         if (!scene) return '';
         try {
-            return renderPositionSVG(scene.position, { height: DRAW_HEIGHT, showPipcount: true, moves: scene.moves, flip: scene.flip });
+            return renderPositionSVG(scene.position, { height: DRAW_HEIGHT, showPipcount: true, moves: scene.moves, flip: scene.flip, orientation });
         } catch (error) {
             logger.error('theatre board:', error);
             return '';

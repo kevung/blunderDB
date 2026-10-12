@@ -21,12 +21,14 @@ export const DIAGRAM_HEIGHT = 380;
  * Rend une position en un document SVG autonome.
  *
  * @param {object} position La position au format du store (board, cube, dés…).
- * @param {{width?: number, height?: number, showPipcount?: boolean, moves?: import('../utils/boardGeometry.js').StepMove[], flip?: boolean}} [opts]
- *   `moves` : les flèches, en points affichés ; `flip` : la numérotation, par défaut celle du camp au trait.
+ * @param {{width?: number, height?: number, showPipcount?: boolean, moves?: import('../utils/boardGeometry.js').StepMove[], flip?: boolean, orientation?: 'left' | 'right'}} [opts]
+ *   `moves` : les flèches, en points affichés ; `flip` : la numérotation, par défaut celle du camp au trait ;
+ *   `orientation` : le côté des plateaux de sortie.
  * @returns {string} Le SVG sérialisé, fond compris.
  */
-export function renderPositionSVG(position, { width = DIAGRAM_WIDTH, height = DIAGRAM_HEIGHT, showPipcount = true, moves = [], flip = position?.player_on_roll === 1 } = {}) {
+export function renderPositionSVG(position, { width = DIAGRAM_WIDTH, height = DIAGRAM_HEIGHT, showPipcount = true, moves = [], flip = position?.player_on_roll === 1, orientation = 'right' } = {}) {
     const cfg = applyPalette(defaultBoardConfig(), get(boardColorsStore));
+    cfg.orientation = orientation;
     const geom = boardMetrics(width, height, cfg.widthFactor);
 
     const two = new Two({ type: Two.Types.svg, width, height });
