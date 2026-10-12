@@ -100,6 +100,10 @@ test('the Eval panel works end to end without a database', async ({ page }) => {
     // C-X: the board image; C-X C-X: the board with the evaluation.
     await page.keyboard.press('Control+x');
     await expect(status(page)).toHaveText(en.status.boardImageCopied);
+    // A C-X within the chord window of the lone one would complete a pair with it: the clock
+    // is moved past that window instead of trusting the test to be slow enough.
+    await page.clock.install();
+    await page.clock.fastForward(1000);
     await page.keyboard.press('Control+x');
     await page.keyboard.press('Control+x');
     await expect(status(page)).toHaveText(en.status.boardAnalysisCopied);
