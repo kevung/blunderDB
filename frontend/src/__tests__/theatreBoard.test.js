@@ -1,5 +1,8 @@
 import { describe, test, expect } from 'vitest';
 import { theatreScene } from '../services/theatreBoard.js';
+import { parseMoveNotation } from '../utils/boardGeometry.js';
+
+const engine = (/** @type {string} */ notation) => ({ notation, moves: parseMoveNotation(notation), tone: /** @type {const} */ ('engine') });
 
 const position = (/** @type {number} */ onRoll) => ({
     board: { points: Array.from({ length: 26 }, (_, i) => ({ checkers: i === 6 ? 5 : 0, color: i === 6 ? 0 : -1 })), bearoff: [0, 0] },
@@ -15,12 +18,14 @@ describe('the theatre board draws what the main board draws', () => {
         expect(theatreScene({ position: null })).toBeNull();
     });
 
-    test('the arrows of the selected candidate, in the numbering of the side on roll', () => {
-        expect(theatreScene({ position: position(0), selectedMove: '8/5 6/5' })?.moves).toEqual([
+    test('the arrows of the transcription, in the numbering of the side on roll, with their tone', () => {
+        const scene = theatreScene({ position: position(0), arrows: engine('8/5 6/5') });
+        expect(scene?.tone).toBe('engine');
+        expect(scene?.moves).toEqual([
             { from: 8, to: 5, index: 0 },
             { from: 6, to: 5, index: 0 }
         ]);
-        const other = theatreScene({ position: position(1), selectedMove: '8/5 bar/22' });
+        const other = theatreScene({ position: position(1), arrows: engine('8/5 bar/22') });
         expect(other?.flip).toBe(true);
         expect(other?.moves).toEqual([
             { from: 17, to: 20, index: 0 },
@@ -30,8 +35,8 @@ describe('the theatre board draws what the main board draws', () => {
 
     test('the first step played on the board takes the arrows away, as on the main board', () => {
         const play = { board: position(0).board, steps: [] };
-        expect(theatreScene({ position: position(0), play, selectedMove: '8/5 6/5' })?.moves).toHaveLength(2);
-        expect(theatreScene({ position: position(0), play: { ...play, steps: [{ from: 6, to: 3 }] }, selectedMove: '8/5 6/5' })?.moves).toEqual([]);
+        expect(theatreScene({ position: position(0), play, arrows: engine('8/5 6/5') })?.moves).toHaveLength(2);
+        expect(theatreScene({ position: position(0), play: { ...play, steps: [{ from: 6, to: 3 }] }, arrows: engine('8/5 6/5') })?.moves).toEqual([]);
     });
 
     test('an armed play draws its dice in the chosen order', () => {

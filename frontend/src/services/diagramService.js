@@ -21,14 +21,14 @@ export const DIAGRAM_HEIGHT = 380;
  * Rend une position en un document SVG autonome.
  *
  * @param {object} position La position au format du store (board, cube, dés…).
- * @param {{width?: number, height?: number, showPipcount?: boolean, moves?: import('../utils/boardGeometry.js').StepMove[], flip?: boolean, orientation?: 'left' | 'right', diceUsed?: (boolean|number)[] | null}} [opts]
+ * @param {{width?: number, height?: number, showPipcount?: boolean, moves?: import('../utils/boardGeometry.js').StepMove[], arrowTone?: import('../utils/boardScene.js').ArrowTone, flip?: boolean, orientation?: 'left' | 'right', diceUsed?: (boolean|number)[] | null}} [opts]
  *   `moves` : les flèches, en points affichés ; `flip` : la numérotation, par défaut celle du camp au trait ;
  *   `orientation` : le côté des plateaux de sortie ; `diceUsed` : les dés grisés d'un coup en cours.
  * @returns {string} Le SVG sérialisé, fond compris.
  */
 export function renderPositionSVG(
     position,
-    { width = DIAGRAM_WIDTH, height = DIAGRAM_HEIGHT, showPipcount = true, moves = [], flip = position?.player_on_roll === 1, orientation = 'right', diceUsed = null } = {}
+    { width = DIAGRAM_WIDTH, height = DIAGRAM_HEIGHT, showPipcount = true, moves = [], arrowTone = 'candidate', flip = position?.player_on_roll === 1, orientation = 'right', diceUsed = null } = {}
 ) {
     const cfg = applyPalette(defaultBoardConfig(), get(boardColorsStore));
     cfg.orientation = orientation;
@@ -41,7 +41,13 @@ export function renderPositionSVG(
     const frameLayer = two.makeGroup();
 
     drawStaticScene(layerOf(two, staticLayer), geom, cfg, flip);
-    drawDynamicScene(layerOf(two, dynamicLayer), geom, cfg, position, { text: (key, params) => translate(`board.scene.${key}`, params), offeredCube: false, showPipcount, moves, diceUsed });
+    drawDynamicScene(layerOf(two, dynamicLayer), geom, cfg, position, {
+        text: (key, params) => translate(`board.scene.${key}`, params),
+        offeredCube: false,
+        showPipcount,
+        arrows: { moves, tone: arrowTone },
+        diceUsed
+    });
     drawFrame(layerOf(two, frameLayer), geom, cfg);
     two.update();
 
