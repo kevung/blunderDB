@@ -461,8 +461,8 @@ de document. La phrase s'efface d'elle-même et rend la place à l'action
 attendue.
 
 Reculer le curseur sur une action puis ressaisir la corrige **en place** : la
-validation remplace l'action et le curseur revient là où il était — ou, sur la
-dernière action, passe au bout du document, où la transcription continue. Si les dés
+validation remplace l'action et le curseur passe à la décision suivante — après
+la dernière action, au bout du document, où la transcription continue. Si les dés
 sont corrigés et que le coup enregistré reste un coup légal du nouveau jet, il
 est conservé ; sinon le premier candidat du nouveau jet est proposé et le coup
 est signalé « à revoir » jusqu'à la validation. Avancer ou reculer le curseur
@@ -473,7 +473,7 @@ crée un double trait, supprimer une action peut en créer un autre, changer un
 camp peut rendre illégaux les coups qui suivent. Ces incohérences sont marquées
 dans le transcript, jamais corrigées d'office, et le curseur se place sur la
 première d'entre elles après chaque geste qui écrit — sauf là où l'on continue : après une
-suppression, une insertion ou une partie rouverte, il reste où l'on tape. Se
+correction, une suppression, une insertion ou une partie rouverte, il reste où l'on tape. Se
 déplacer ou taper un dé ne le déplace jamais. Le tour qu'un double trait a perdu
 est une case du transcript : h et l s'y arrêtent, et un jet tapé là s'insère
 pour le camp à qui il manquait. La pile d'annulation vit en mémoire :

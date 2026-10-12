@@ -186,10 +186,10 @@ func TestTakeCorrectedContinuesTheGame(t *testing.T) {
 	}
 }
 
-// TestCorrectionThatStillEndsTheGameReturns holds the other side of the rule: a
-// correction that leaves its game closed goes back where the user came from, as
-// before (ADR-0049).
-func TestCorrectionThatStillEndsTheGameReturns(t *testing.T) {
+// TestCorrectionThatStillEndsTheGameGoesOn holds the other side of the rule: a
+// correction that leaves its game closed goes on to the decision that follows it —
+// the next game's first — and never back to where the user came from.
+func TestCorrectionThatStillEndsTheGameGoesOn(t *testing.T) {
 	doc := doubledMatch(t)
 	pass := len(doc.Actions) - 1
 	doc = runSteps(t, doc, []step{
@@ -202,8 +202,8 @@ func TestCorrectionThatStillEndsTheGameReturns(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if after.Cursor != len(after.Actions) || after.HoldCursor {
-		t.Errorf("cursor = %d (hold %v), want the end of the document", after.Cursor, after.HoldCursor)
+	if after.Cursor != pass+1 || !after.HoldCursor {
+		t.Errorf("cursor = %d (hold %v), want %d, held", after.Cursor, after.HoldCursor, pass+1)
 	}
 }
 

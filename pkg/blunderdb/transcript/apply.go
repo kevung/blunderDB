@@ -917,14 +917,13 @@ func record(doc Document, a Action) Document {
 		if continueGame(&doc, at, nextScore) {
 			return doc
 		}
+		// A correction goes on to the decision that follows it, and is held there: the
+		// user reviews the match in order, and a jump back to where they stood before
+		// walking back — or to a mark the correction left further on — loses their
+		// place. After the LAST Action that is the end, where the next roll is
+		// appended (ADR-0051).
 		doc.Cursor = at + 1
-		if at+1 == len(doc.Actions) {
-			// The LAST Action re-edited: the next roll is appended (ADR-0051).
-			// The Cursor goes to the end whatever Return says, and is held.
-			doc.HasReturn, doc.HoldCursor = false, true
-		} else if doc.HasReturn {
-			doc.Cursor, doc.HasReturn = doc.Return, false
-		}
+		doc.HasReturn, doc.HoldCursor = false, true
 	} else {
 		// Inserted in front of a game's first Action, the new one opens the game in
 		// its place and takes over the score declared there.
