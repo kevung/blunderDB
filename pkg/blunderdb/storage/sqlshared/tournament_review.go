@@ -149,11 +149,10 @@ func (s *StatsStore) reviewMatches(ctx context.Context, scope string, rows []rev
 	return out, nil
 }
 
-// mostFrequentPlayer is the name in the most matches, ties to the first in
-// alphabetical order.
-// tournamentReferencePlayer is the player the review opens on, the same as
-// the tournament badge's (storage.PickReferencePlayer): the Main player when
-// they sat in one of the rounds, otherwise the most frequent player.
+// tournamentReferencePlayer is the player the review opens on, chosen like
+// the tournament badge's (storage.PickReferencePlayer) save that a seat is
+// enough: the Main player when they sat in one of the rounds, analysed or
+// not, otherwise the most frequent player.
 func tournamentReferencePlayer(ctx context.Context, db Execer, scope string, rows []reviewMatchRow) (string, error) {
 	main, aliases, err := mainPlayer(ctx, db, scope)
 	if err != nil {
@@ -169,6 +168,8 @@ func tournamentReferencePlayer(ctx context.Context, db Execer, scope string, row
 	return mostFrequentPlayer(rows), nil
 }
 
+// mostFrequentPlayer is the name in the most matches, ties to the first in
+// alphabetical order.
 func mostFrequentPlayer(rows []reviewMatchRow) string {
 	count := map[string]int{}
 	for _, m := range rows {

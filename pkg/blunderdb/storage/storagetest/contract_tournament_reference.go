@@ -64,7 +64,8 @@ func testStatsTournamentReferenceIsMainPlayer(t *testing.T, s storage.Storage) {
 		t.Fatalf("Create tournament: %v", err)
 	}
 	// Alice plays two matches; Bob one under his name and one under an
-	// alias, so only the alias makes him a two-match player.
+	// alias. The fallback counts raw names, so it picks Alice; as Main
+	// player, Bob's two spellings are pooled.
 	saveTournamentMatch(t, s, tid, "Alice", "Bob", []int{0, 1})
 	saveTournamentMatch(t, s, tid, "Alice", "Carol", []int{3, 4})
 	saveTournamentMatch(t, s, tid, "Bobby", "Dave", []int{6, 7})

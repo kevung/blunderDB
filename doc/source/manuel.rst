@@ -2541,10 +2541,11 @@ pas le rangement fait à la main.
 
 Les colonnes **PR** et **MWC** de chaque tournoi affichent le PR et la perte de
 MWC du **joueur de référence**, sur ses seules décisions. C'est le
-:ref:`joueur principal <joueur_principal>` de la base dès qu'il a joué dans le
-tournoi, quel que soit son nombre de matchs : il est reconnu sous tous ses
-alias, dont les décisions s'additionnent. Faute de joueur principal, ou s'il n'a
-pas joué dans ce tournoi, c'est le joueur présent dans le plus grand nombre de
+:ref:`joueur principal <joueur_principal>` de la base dès qu'une de ses
+décisions analysées compte dans le tournoi, quel que soit son nombre de matchs :
+il est reconnu sous tous ses alias, dont les décisions s'additionnent. Faute de
+joueur principal, ou si aucune de ses décisions analysées ne compte dans ce
+tournoi (match non analysé), c'est le joueur présent dans le plus grand nombre de
 matchs du tournoi ; en cas d'égalité, celui qui a pris le plus de décisions,
 puis le nom qui vient en premier dans l'ordre des caractères (une lettre
 accentuée après *z*). Le PR ne mélange donc pas votre jeu avec celui de vos

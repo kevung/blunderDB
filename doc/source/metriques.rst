@@ -128,8 +128,8 @@ les matchs d'un agrégat.
 **Le PR d'un tournoi.** La liste des tournois donne le PR d'un seul joueur, le
 *joueur de référence*, sur ses seules décisions : un PR des deux sièges
 mêlerait les erreurs de tous ses adversaires aux siennes. C'est le joueur
-principal de la base, lu sous tous ses alias, dès qu'il a joué dans le tournoi,
-même un seul match ; sinon, le joueur du plus grand nombre de matchs, à égalité
+principal de la base, lu sous tous ses alias, dès qu'une de ses décisions
+analysées compte dans le tournoi, même sur un seul match ; sinon, le joueur du plus grand nombre de matchs, à égalité
 celui du plus grand nombre de décisions, puis le nom qui vient en premier dans
 l'ordre des caractères. Ce repli désigne souvent l'adversaire dans un tournoi
 d'un match, où les deux joueurs sont à égalité : désigner le joueur principal
