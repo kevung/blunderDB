@@ -2444,8 +2444,9 @@ Examples:
 Usage: blunderdb capture [options] <image>
 
 Read the position a screen capture of an eXtreme Gammon board shows
-(PNG, JPEG or GIF, at any size): checkers, bar, borne-off checkers,
-dice, cube and player on roll. The score is not read: set it with
+(PNG, JPEG or GIF; one larger than a 4K screen is shrunk first):
+checkers, bar, borne-off checkers, dice, cube and player on roll.
+The score is not read: set it with
 --score, and the turn with --turn when no dice are out. Whatever the
 reading cannot settle is listed as a doubt, never guessed.
 

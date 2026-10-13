@@ -70,25 +70,42 @@ const MinFit = 0.6
 // ErrNoBoard says that no known board was found in the image.
 var ErrNoBoard = errors.New("no backgammon board recognised in the image")
 
-// MaxPixels bounds the image a reading will decode, checked on the header
-// since a small file can declare billions (a 4 KB PNG of 6000x6000). A
-// reading holds about 35 bytes per pixel at its peak — the decoded image,
-// its RGB copy and three summed-area tables of int64 — so the bound is a
-// whole 4K screen (3840x2160), the largest capture a user takes in one
-// gesture, at about 290 MB; anything bigger is not a screen capture.
+// MaxPixels bounds the image a reading works on. A reading holds about 35
+// bytes per pixel at its peak — its RGB copy and three summed-area tables of
+// int64 — so the bound is a whole 4K screen (3840x2160), about 290 MB. Read
+// shrinks a larger image below it; a board drawn at a readable size stays
+// readable at half or a third of a 5K or two-screen capture.
 const MaxPixels = 3840 * 2160
 
-// ErrTooLarge says that the image declares more than MaxPixels.
-var ErrTooLarge = errors.New("image too large to be a screen capture")
+// MaxDecodePixels bounds what Decode accepts at all, checked on the header
+// since a small file can declare billions (a 4 KB PNG of 6000x6000): two 6K
+// screens side by side take 41 Mpx, and the decoded image weighs 4 to 8
+// bytes per pixel before it is shrunk.
+const MaxDecodePixels = 50_000_000
 
-// Decode reads an encoded image (PNG, JPEG or GIF).
+// ErrTooLarge says that the image declares more pixels than the reader takes.
+var ErrTooLarge = errors.New("image too large")
+
+// Decode reads an encoded image (PNG, JPEG or GIF), shrinking one larger
+// than MaxPixels before reading it.
 func Decode(data []byte) (Reading, error) {
+	return decode(data, MaxDecodePixels)
+}
+
+// DecodeBounded is Decode for a shared server: it refuses an image larger
+// than MaxPixels instead of decoding and shrinking it, so that no request
+// holds more than one reading's memory.
+func DecodeBounded(data []byte) (Reading, error) {
+	return decode(data, MaxPixels)
+}
+
+func decode(data []byte, limit int) (Reading, error) {
 	cfg, _, err := image.DecodeConfig(bytes.NewReader(data))
 	if err != nil {
 		return Reading{}, fmt.Errorf("decode image: %w", err)
 	}
-	if cfg.Width <= 0 || cfg.Height <= 0 || cfg.Width > MaxPixels/cfg.Height {
-		return Reading{}, fmt.Errorf("%w: %dx%d, at most %d pixels", ErrTooLarge, cfg.Width, cfg.Height, MaxPixels)
+	if cfg.Width <= 0 || cfg.Height <= 0 || cfg.Width > limit/cfg.Height {
+		return Reading{}, fmt.Errorf("%w: %dx%d, this reader takes at most %d pixels", ErrTooLarge, cfg.Width, cfg.Height, limit)
 	}
 	img, _, err := image.Decode(bytes.NewReader(data))
 	if err != nil {
@@ -97,9 +114,20 @@ func Decode(data []byte) (Reading, error) {
 	return Read(img)
 }
 
+// shrinkFactor is the smallest integer f that brings a w×h image within
+// MaxPixels once each f×f block is averaged into one pixel.
+func shrinkFactor(w, h int) int {
+	f := 1
+	for ((w+f-1)/f)*((h+f-1)/f) > MaxPixels {
+		f++
+	}
+	return f
+}
+
 // Read recognises the position a screen capture shows.
 func Read(img image.Image) (Reading, error) {
-	r := newRaster(img)
+	f := shrinkFactor(img.Bounds().Dx(), img.Bounds().Dy())
+	r := newRaster(img, f)
 	var best Reading
 	bestFit := -1.0
 	for _, t := range themes {
@@ -113,5 +141,7 @@ func Read(img image.Image) (Reading, error) {
 	if bestFit < MinFit {
 		return Reading{}, ErrNoBoard
 	}
+	// The board is reported in the capture's own pixels, not the shrunk ones.
+	best.Board = image.Rectangle{Min: best.Board.Min.Mul(f), Max: best.Board.Max.Mul(f)}
 	return best, nil
 }

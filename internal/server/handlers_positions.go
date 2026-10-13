@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -50,11 +51,6 @@ type parseTextReq struct {
 type xgpReq struct {
 	Data string `json:"data"`
 }
-
-// captureSlots admits two capture readings at a time: at capture.MaxPixels
-// each holds about 290 MB, so the daemon never spends more than ~600 MB on
-// them; a third request waits for a slot or for its client to give up.
-var captureSlots = make(chan struct{}, 2)
 
 // imageReq carries a screen capture (PNG, JPEG or GIF), base64-encoded.
 type imageReq struct {
@@ -195,25 +191,7 @@ func (s *Server) positionRoutes() []route {
 		// (pure; no storage). The image arrives base64-encoded; the reading
 		// carries its doubts, for a correction step before the position is
 		// saved like any other. Same package as the GUI and the CLI.
-		{http.MethodPost, "/v1/positions.fromImage", rpc(func(ctx context.Context, scope string, req imageReq) (capture.Reading, error) {
-			raw, err := base64.StdEncoding.DecodeString(req.Data)
-			if err != nil {
-				return capture.Reading{}, fmt.Errorf("%w: bad base64 data", storage.ErrInvalid)
-			}
-			// A reading peaks near 35 bytes per pixel; bounding the
-			// concurrent ones bounds the daemon's memory whatever the load.
-			select {
-			case captureSlots <- struct{}{}:
-				defer func() { <-captureSlots }()
-			case <-ctx.Done():
-				return capture.Reading{}, ctx.Err()
-			}
-			rd, err := capture.Decode(raw)
-			if err != nil {
-				return capture.Reading{}, fmt.Errorf("%w: %w", storage.ErrInvalid, err)
-			}
-			return rd, nil
-		})},
+		{http.MethodPost, "/v1/positions.fromImage", s.handleFromImage},
 		// Parse pasted clipboard / file text (bare XGID, XG human-readable export,
 		// or blunderDB internal export) into a Position + optional analysis +
 		// comment (pure; no storage). Same backend parser the Desktop GUI calls,
@@ -312,4 +290,36 @@ type reclassifyResp struct {
 // Crawford sentinel they had been imported with.
 type repairCrawfordResp struct {
 	Repaired int `json:"repaired"`
+}
+
+// handleFromImage reads the position a screen capture shows. A reading
+// peaks near 35 bytes per pixel, so the image is refused beyond
+// capture.MaxPixels rather than shrunk, and the readings run at most
+// captureSlots at a time: the daemon's memory stays bounded whatever the load.
+func (s *Server) handleFromImage(w http.ResponseWriter, r *http.Request) {
+	var req imageReq
+	if err := decodeJSON(r, &req); err != nil {
+		writeDecodeError(w, "invalid JSON body", err)
+		return
+	}
+	raw, err := base64.StdEncoding.DecodeString(req.Data)
+	if err != nil {
+		writeStorageError(w, fmt.Errorf("%w: bad base64 data", storage.ErrInvalid))
+		return
+	}
+	select {
+	case s.captureSlots <- struct{}{}:
+		defer func() { <-s.captureSlots }()
+	case <-r.Context().Done():
+		if errors.Is(r.Context().Err(), context.DeadlineExceeded) {
+			writeErrorCode(w, CodeUnavailable, "no capture reading slot freed up within the request deadline")
+		}
+		return // cancelled: nobody is listening
+	}
+	rd, err := capture.DecodeBounded(raw)
+	if err != nil {
+		writeStorageError(w, fmt.Errorf("%w: %w", storage.ErrInvalid, err))
+		return
+	}
+	writeJSONResp(w, rd)
 }

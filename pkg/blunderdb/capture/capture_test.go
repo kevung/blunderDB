@@ -129,14 +129,60 @@ func TestReadRefusesAnImageWithoutBoard(t *testing.T) {
 }
 
 // A few kilobytes of PNG can declare a canvas of a gigabyte: the header is
-// checked before anything is allocated.
+// checked before anything is allocated. The server refuses beyond what a
+// reading holds; the desktop only beyond what no screen produces.
 func TestDecodeRefusesAnOversizedImage(t *testing.T) {
-	var buf bytes.Buffer
-	img := image.NewPaletted(image.Rect(0, 0, 5000, 5000), color.Palette{color.White, color.Black})
-	if err := png.Encode(&buf, img); err != nil {
+	pngOf := func(w, h int) []byte {
+		var buf bytes.Buffer
+		img := image.NewPaletted(image.Rect(0, 0, w, h), color.Palette{color.White, color.Black})
+		if err := png.Encode(&buf, img); err != nil {
+			t.Fatal(err)
+		}
+		return buf.Bytes()
+	}
+	if _, err := DecodeBounded(pngOf(4000, 2200)); !errors.Is(err, ErrTooLarge) {
+		t.Errorf("bounded: got %v, want ErrTooLarge", err)
+	}
+	if _, err := Decode(pngOf(8000, 8000)); !errors.Is(err, ErrTooLarge) {
+		t.Errorf("desktop: got %v, want ErrTooLarge", err)
+	}
+}
+
+// A capture larger than a 4K screen — a 5K display, two screens — is shrunk
+// before it is read, and its board still reported in its own pixels.
+func TestReadShrinksALargeCapture(t *testing.T) {
+	data, err := os.ReadFile("testdata/xg-dice62.jpg")
+	if err != nil {
 		t.Fatal(err)
 	}
-	if _, err := Decode(buf.Bytes()); !errors.Is(err, ErrTooLarge) {
-		t.Fatalf("got %v, want ErrTooLarge", err)
+	src, _, err := image.Decode(bytes.NewReader(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+	small, err := Read(src)
+	if err != nil {
+		t.Fatal(err)
+	}
+	const k = 11 // 3894x3014, past MaxPixels
+	b := src.Bounds()
+	big := image.NewRGBA(image.Rect(0, 0, b.Dx()*k, b.Dy()*k))
+	for y := 0; y < big.Rect.Dy(); y++ {
+		for x := 0; x < big.Rect.Dx(); x++ {
+			big.Set(x, y, src.At(b.Min.X+x/k, b.Min.Y+y/k))
+		}
+	}
+	rd, err := Read(big)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := domain.EncodeXGIDBoard(&rd.Position); got != "a--abBC-C--AbDa-aaAd-b--A-" {
+		t.Errorf("board %s", got)
+	}
+	// Located afresh at another scale, the board may move by a pixel or two
+	// of the original: within 2 % of its width.
+	want := small.Board.Min.Mul(k)
+	tol := rd.Board.Dx() / 50
+	if d := rd.Board.Min.Sub(want); d.X*d.X+d.Y*d.Y > tol*tol {
+		t.Errorf("board found at %v, want near %v", rd.Board, want)
 	}
 }

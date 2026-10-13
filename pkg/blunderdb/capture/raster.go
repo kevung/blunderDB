@@ -15,19 +15,33 @@ type raster struct {
 	sum  [3][]int64 // (w+1)*(h+1) summed-area table per channel
 }
 
-func newRaster(img image.Image) *raster {
+// newRaster copies img into RGB, averaging each f×f block into one pixel.
+func newRaster(img image.Image, f int) *raster {
 	b := img.Bounds()
 	rgba, ok := img.(*image.RGBA)
 	if !ok || rgba.Rect.Min != (image.Point{}) {
 		rgba = image.NewRGBA(image.Rect(0, 0, b.Dx(), b.Dy()))
 		draw.Draw(rgba, rgba.Rect, img, b.Min, draw.Src)
 	}
-	r := &raster{w: b.Dx(), h: b.Dy()}
+	W, H := b.Dx(), b.Dy()
+	r := &raster{w: (W + f - 1) / f, h: (H + f - 1) / f}
 	r.pix = make([]uint8, r.w*r.h*3)
 	for y := 0; y < r.h; y++ {
-		row := rgba.Pix[y*rgba.Stride:]
 		for x := 0; x < r.w; x++ {
-			copy(r.pix[(y*r.w+x)*3:], row[x*4:x*4+3])
+			var sum [3]int
+			n := 0
+			for yy := y * f; yy < min((y+1)*f, H); yy++ {
+				row := rgba.Pix[yy*rgba.Stride:]
+				for xx := x * f; xx < min((x+1)*f, W); xx++ {
+					sum[0] += int(row[xx*4])
+					sum[1] += int(row[xx*4+1])
+					sum[2] += int(row[xx*4+2])
+					n++
+				}
+			}
+			for c := 0; c < 3; c++ {
+				r.pix[(y*r.w+x)*3+c] = uint8(sum[c] / n)
+			}
 		}
 	}
 	r.integrate()

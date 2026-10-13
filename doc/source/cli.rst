@@ -1834,8 +1834,9 @@ capture — Position depuis une capture d'écran
 
 Lit la position que montre une capture d'écran d'un plateau eXtreme Gammon
 (thème par défaut) : pions, barre, pions sortis (ce qui manque à quinze), dés,
-camp au trait et videau. L'image (PNG, JPEG ou GIF) peut avoir n'importe quelle
-taille et contenir autre chose que le plateau. Le score n'est jamais lu. Ce que
+camp au trait et videau. L'image (PNG, JPEG ou GIF) peut contenir autre chose
+que le plateau ; plus grande qu'un écran 4K (3840×2160), elle est réduite avant
+la lecture. Le score n'est jamais lu. Ce que
 la lecture ne peut trancher est listé comme un doute, jamais deviné : flèche
 masquée, pile plus haute que les cinq pions que XG dessine côte à côte, dés
 illisibles.
@@ -1869,7 +1870,8 @@ illisibles.
    ./blunderdb capture --db base.db --save --score money --turn 2 videau.png
 
 Le daemon offre la même lecture : ``POST /v1/positions.fromImage`` avec
-``{"data": "<image en base64>"}``.
+``{"data": "<image en base64>"}``. Il refuse une image plus grande qu'un écran 4K
+au lieu de la réduire, et ne lit que deux images à la fois.
 
 bearoff — Bases de sortie
 --------------------------
