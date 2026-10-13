@@ -100,7 +100,7 @@
     import { GetGammonNetPruneK } from '../../wailsjs/go/main/Config.js';
     import { finishDraft, exportDraftMat, abandonDraft, draftState } from '../services/transcriptionSave.js';
     import { get } from 'svelte/store';
-    import { createCursorFollower, isTyping } from '../services/videoFollow.js';
+    import { createCursorFollower, isTyping, typedRoll } from '../services/videoFollow.js';
     import { saveVideoResume, videoResumeMs } from '../services/videoResume.js';
     import { loadVideoRotation, nextRotation, saveVideoRotation } from '../services/videoRotation.js';
     import { toCssPx } from '../utils/uiZoom.js';
@@ -205,7 +205,7 @@
                   n: cursorRowNumber(annotated),
                   move: annotated?.entry?.notation || (keys.phase === PHASE.ROLL || keys.phase === PHASE.CANDIDATE ? ($selectedMoveStore ?? '') : ''),
                   rolled: keys.phase === PHASE.ROLL || keys.phase === PHASE.CANDIDATE,
-                  phase: awaits === 'take' ? 'answer' : keys.phase
+                  phase: DICE_KINDS.has(expects) ? keys.phase : 'answer'
               }
             : null
     );
@@ -571,7 +571,7 @@
             }
             if (moving || placing > 0) return;
             const active = document.activeElement;
-            const rollTyped = isTyping(get(transcriptionStore)?.annotated, get(transcriptionKeyStore));
+            const rollTyped = typedRoll(get(transcriptionStore)?.annotated, get(transcriptionKeyStore));
             const quiet = (active instanceof Element && active.matches('input, textarea, select, [contenteditable]')) || isTyping(get(transcriptionStore)?.annotated, get(transcriptionKeyStore));
             const target = follower.step(now, get(transcriptionStore)?.annotated, quiet, rollTyped);
             if (target === null) return;

@@ -40,7 +40,7 @@ pas l'ambiguïté. En Saisie, la ligne présélectionnée n'était plus dessiné
 7. **Le suivi vidéo ne reprend pas le Cursor sur une Action sans fin pendant la
    réflexion.** La dernière Action chronométrée par son seul jet n'a pas de borne : une
    réflexion de match dure de 15 à 60 s, la tenue posée à la main dessus ne se relâche
-   donc qu'à un jet tapé (ADR-0082 règle 3), jamais au bout d'un délai.
+   donc jusqu'à un jet tapé (ADR-0082 règle 3) ; aucun délai de repli à ce jour.
 
 ## Conséquences
 

@@ -4,7 +4,7 @@
  */
 
 import { describe, test, expect } from 'vitest';
-import { actionSpans, coveringAt, createCursorFollower, isTyping } from '../services/videoFollow.js';
+import { actionSpans, coveringAt, createCursorFollower, isTyping, typedRoll } from '../services/videoFollow.js';
 
 const checker = (/** @type {number | undefined} */ roll, /** @type {number | undefined} */ tick) => ({
     kind: 'checker',
@@ -75,8 +75,21 @@ describe('createCursorFollower', () => {
         expect(f.step(12000, open(1), false)).toBeNull();
         expect(f.step(68000, open(1), false)).toBeNull();
         expect(f.step(300000, open(1), false)).toBeNull();
-        // A roll typed ends the hold without moving the Cursor under the typing hand.
-        expect(f.step(301000, open(1), true, true)).toBeNull();
+    });
+
+    test('a roll typed ends the hold on the Action left open', () => {
+        const open = (/** @type {number} */ cursor) => ({ actions: [checker(1000, 5000), checker(8000, undefined)], cursor });
+        const held = createCursorFollower();
+        const freed = createCursorFollower();
+        for (const f of [held, freed]) {
+            f.step(9000, open(2), false);
+            f.step(7000, open(1), false);
+        }
+        // Rewound into the stretch before the held Action, within the lead of a placement.
+        expect(held.step(300000, open(1), false)).toBeNull();
+        expect(freed.step(300000, open(1), false)).toBeNull();
+        expect(held.step(7000, open(1), false)).toBeNull();
+        expect(freed.step(7000, open(1), false, true)).toBe(0);
     });
 
     test('rewound into the last Action, then played past it: the Cursor leaves it for the end', () => {
@@ -121,5 +134,17 @@ describe('isTyping', () => {
         expect(isTyping({ actions, entry: { at: 0, replacing: true, dice: [3, 1], notation: '8/5 6/5' } }, { phase: 'candidate' })).toBe(true);
         expect(isTyping({ actions, entry: { at: 1, replacing: false, dice: [6, 0] } }, { phase: 'die1' })).toBe(true);
         expect(isTyping({ actions, entry: null }, { phase: 'dice' })).toBe(false);
+    });
+});
+
+describe('typedRoll', () => {
+    const actions = [checker(1000, 5000)];
+
+    test('only the roll counts: a die, or dice other than the written ones; not a picked play', () => {
+        expect(typedRoll({ actions, entry: { at: 1, replacing: false, dice: [6, 0] } }, { phase: 'die1' })).toBe(true);
+        expect(typedRoll({ actions, entry: { at: 0, replacing: true, dice: [5, 2], notation: '' } }, { phase: 'roll' })).toBe(true);
+        expect(typedRoll({ actions, entry: { at: 0, replacing: true, dice: [3, 1], notation: '8/5 6/5' } }, { phase: 'candidate' })).toBe(false);
+        expect(typedRoll({ actions, entry: { at: 0, replacing: true, dice: [1, 3], notation: '' } }, { phase: 'roll' })).toBe(false);
+        expect(typedRoll({ actions, entry: null }, { phase: 'dice' })).toBe(false);
     });
 });

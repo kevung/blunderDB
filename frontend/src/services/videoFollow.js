@@ -12,8 +12,9 @@ const HOLD_LEAD_MS = 1500;
 // still times it.
 const HOLD_GRACE_MS = 2000;
 // The last Action timed by its roll alone has no end, and a match's thinking time (15 to
-// 60 s) is no bound: the hold on it lasts until a roll is typed (`isTyping`), the sign
-// that the user moved on to the next Action; the Cursor then goes back to the end.
+// 60 s) is no bound: the hold on it lasts until a roll is typed (`typedRoll`), the sign
+// that the user moved on to the next Action; the follower is then free to move the Cursor
+// again when the playback enters another stretch.
 // How far from the instant the panel placed the video its first reading may fall.
 const PLACED_SLACK_MS = 1000;
 
@@ -185,4 +186,23 @@ export function isTyping(annotated, keys) {
     const was = info.before?.dice ?? [0, 0];
     const sameRoll = Math.min(...dice) === Math.min(...was) && Math.max(...dice) === Math.max(...was);
     return !sameRoll || (!!e.notation && e.notation !== info.notation);
+}
+
+/**
+ * Whether the user is typing a roll: a first die, or dice that differ from the roll written
+ * under the Cursor. A play picked or a notation typed is not a roll.
+ *
+ * @param {any} annotated - `transcript.Annotated`
+ * @param {{phase?: string} | null | undefined} keys - the panel's key state
+ */
+export function typedRoll(annotated, keys) {
+    if (keys?.phase === 'die1') return true;
+    const e = annotated?.entry;
+    if (!e) return false;
+    const dice = e.dice ?? [0, 0];
+    if (!e.replacing) return dice[0] > 0 || dice[1] > 0;
+    const info = annotated.actions?.[e.at];
+    if (!info || !ROLLING_KINDS.has(info.kind)) return false;
+    const was = info.before?.dice ?? [0, 0];
+    return Math.min(...dice) !== Math.min(...was) || Math.max(...dice) !== Math.max(...was);
 }

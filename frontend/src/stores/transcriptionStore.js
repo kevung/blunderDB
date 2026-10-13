@@ -198,6 +198,6 @@ export const transcriptionArrowsStore = writable(null);
  * des chiffres, publiés par le panneau pour le théâtre, qui cache la barre : la frappe
  * change de sens avec lui, il reste donc visible. `null` sans brouillon ouvert.
  *
- * @type {import('svelte/store').Writable<{mode: string, n: number, move: string, rolled: boolean} | null>}
+ * @type {import('svelte/store').Writable<{mode: string, n: number, move: string, rolled: boolean, phase: string} | null>}
  */
 export const transcriptionModeStore = writable(null);

@@ -295,6 +295,20 @@ describe('Saisie et décision existante (ADR-0092)', () => {
         expect(badge().textContent).not.toContain('digits: roll');
     });
 
+    test('Édition sous une offre en attente : les chiffres retapent le jet, l’indicateur le dit', async () => {
+        const ann = annotated({ cursor: 1, entry: { at: 1, kind: 'checker', replacing: true, side: 1, dice: [6, 3], selected: true, review: false, notation: '13/7 13/10' } });
+        ann.next = { ...ann.next, expects: 'take' };
+        await openedPanel(ann);
+        expect(badge().textContent).toContain('digits: retype the dice of 1');
+        expect(badge().textContent).not.toContain('answer the cube');
+    });
+
+    test('réponse au videau rouverte en Édition : pas de dés, l’indicateur le dit', async () => {
+        const ann = annotated({ cursor: 1, entry: { at: 1, kind: 'take', replacing: true, side: 1, dice: [0, 0], selected: false, review: false } });
+        await openedPanel(ann);
+        expect(badge().textContent).toContain('no dice: answer the cube');
+    });
+
     test('un jet tapé sur une insertion qui clôt une partie : le clavier suit le jet neuf, jamais l’ancien', async () => {
         /** @type {any} */ (ApplyTranscriptionGesture).mockImplementation(() => Promise.resolve(state(annotated({ cursor: 3 }))));
         /** @type {any} */ (LegalMoves).mockResolvedValue([{ notation: '24/18 13/10' }, { notation: '13/7 13/10' }]);
