@@ -3291,7 +3291,7 @@ Options:
   -plan
     	Print what a database or matches export would write, family by family, without writing a file
   -plan-ids string
-    	Print one page of the source ids behind a --plan count, for a family: positions, comments, matches, tournaments, collections, lessons, ankiDecks, transcriptions, filters
+    	Print one page of the source ids behind a --plan count, for a family: positions, comments, matches, tournaments, directions, collections, lessons, ankiDecks, transcriptions, filters
   -played-moves
     	Include played moves in analysis (default: true) (default true)
   -tournament-ids string

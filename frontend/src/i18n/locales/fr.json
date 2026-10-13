@@ -1510,7 +1510,17 @@
         "videoYouTube": "Lien YouTube…",
         "videoRemove": "Retirer la vidéo",
         "videoAttach": "Attacher",
-        "videoResize": "Hauteur du volet vidéo"
+        "videoResize": "Hauteur du volet vidéo",
+        "mode": {
+            "entry": "Saisie",
+            "review": "Revue",
+            "edit": "Édition coup {n}"
+        },
+        "modeKey": {
+            "entry": "Entrée : valider le coup",
+            "review": "E : éditer",
+            "edit": "Entrée : valider la correction"
+        }
     },
     "transcript": {
         "title": "Transcript",

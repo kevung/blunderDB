@@ -1510,7 +1510,17 @@
         "videoYouTube": "YouTube-Link…",
         "videoRemove": "Video entfernen",
         "videoAttach": "Anhängen",
-        "videoResize": "Höhe des Videobereichs"
+        "videoResize": "Höhe des Videobereichs",
+        "mode": {
+            "entry": "Eingabe",
+            "review": "Durchsicht",
+            "edit": "Bearbeitung Zug {n}"
+        },
+        "modeKey": {
+            "entry": "Enter: Zug bestätigen",
+            "review": "E: bearbeiten",
+            "edit": "Enter: Korrektur bestätigen"
+        }
     },
     "transcript": {
         "title": "Transkript",

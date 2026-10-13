@@ -1510,7 +1510,17 @@
         "videoYouTube": "Σύνδεσμος YouTube…",
         "videoRemove": "Αφαίρεση βίντεο",
         "videoAttach": "Επισύναψη",
-        "videoResize": "Ύψος του πλαισίου βίντεο"
+        "videoResize": "Ύψος του πλαισίου βίντεο",
+        "mode": {
+            "entry": "Καταχώριση",
+            "review": "Επισκόπηση",
+            "edit": "Επεξεργασία κίνησης {n}"
+        },
+        "modeKey": {
+            "entry": "Enter: επικύρωση κίνησης",
+            "review": "E: επεξεργασία",
+            "edit": "Enter: επικύρωση διόρθωσης"
+        }
     },
     "transcript": {
         "title": "Καταγραφή",

@@ -4472,6 +4472,9 @@ export namespace ingest {
 	    comments: number;
 	    matches: number;
 	    tournaments: number;
+	    directions: number;
+	    slots: number;
+	    rencontres: number;
 	    collections: number;
 	    lessons: number;
 	    ankiDecks: number;
@@ -4491,6 +4494,9 @@ export namespace ingest {
 	        this.comments = source["comments"];
 	        this.matches = source["matches"];
 	        this.tournaments = source["tournaments"];
+	        this.directions = source["directions"];
+	        this.slots = source["slots"];
+	        this.rencontres = source["rencontres"];
 	        this.collections = source["collections"];
 	        this.lessons = source["lessons"];
 	        this.ankiDecks = source["ankiDecks"];
@@ -4537,6 +4543,9 @@ export namespace ingest {
 	    aliases: number;
 	    skipped: number;
 	    degradedAnkiDecks: number;
+	    directions: number;
+	    slots: number;
+	    rencontres: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new ExportReport(source);
@@ -4561,6 +4570,9 @@ export namespace ingest {
 	        this.aliases = source["aliases"];
 	        this.skipped = source["skipped"];
 	        this.degradedAnkiDecks = source["degradedAnkiDecks"];
+	        this.directions = source["directions"];
+	        this.slots = source["slots"];
+	        this.rencontres = source["rencontres"];
 	    }
 	}
 	export class FileOutcome {

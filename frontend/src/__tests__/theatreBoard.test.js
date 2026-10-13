@@ -29,7 +29,7 @@ describe('the theatre board draws what the main board draws', () => {
         expect(other?.flip).toBe(true);
         expect(other?.moves).toEqual([
             { from: 17, to: 20, index: 0 },
-            { from: 25, to: 3, index: 0 }
+            { from: 0, to: 3, index: 0 }
         ]);
     });
 

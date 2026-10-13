@@ -184,7 +184,8 @@ describe('le premier coup ressaisi', () => {
 
         // Le petit dé d'abord : le joueur 2 commence. Le moteur en tire le camp ;
         // ce qui est tenu ici est que le jet se corrige en place, le coup restant
-        // à choisir.
+        // à choisir. La décision relue se rouvre par `e` (ADR-0091).
+        await fireEvent.keyDown(document, { code: 'KeyE', key: 'e' });
         await fireEvent.keyDown(document, { code: 'Digit3', key: '3' });
         await fireEvent.keyDown(document, { code: 'Digit5', key: '5' });
         await settle();

@@ -1510,7 +1510,17 @@
         "videoYouTube": "Link YouTube…",
         "videoRemove": "Rimuovi il video",
         "videoAttach": "Allega",
-        "videoResize": "Altezza del riquadro video"
+        "videoResize": "Altezza del riquadro video",
+        "mode": {
+            "entry": "Inserimento",
+            "review": "Revisione",
+            "edit": "Modifica mossa {n}"
+        },
+        "modeKey": {
+            "entry": "Invio: convalida la mossa",
+            "review": "E: modifica",
+            "edit": "Invio: convalida la correzione"
+        }
     },
     "transcript": {
         "title": "Trascrizione",

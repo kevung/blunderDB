@@ -14,7 +14,7 @@
  */
 
 import { describe, test, expect } from 'vitest';
-import { PHASE, COMMAND, initialKeyState, pressKey, applyCandidates } from '../services/transcriptionKeys.js';
+import { PHASE, COMMAND, MODE, initialKeyState, pressKey, applyCandidates, enterDicePair, transcriptionMode } from '../services/transcriptionKeys.js';
 
 function key(/** @type {string} */ code, extra = {}) {
     const digit = /^(?:Digit|Numpad)([0-9])$/.exec(code);
@@ -69,7 +69,7 @@ describe('ux.md §4.3 — dé mal lu, vu aussitôt', () => {
     });
 
     test('deux touches sur une Action relue : le chiffre y recommence le jet', () => {
-        const replaying = { expects: 'checker', replacing: true };
+        const replaying = { expects: 'checker', mode: MODE.EDIT };
         const state = applyCandidates(press(['Digit6', 'Digit3'], { context: replaying }).state, 4).state;
         const { commands, keys } = press(['Digit4', 'Digit1'], { state, context: replaying });
         expect(keys).toBeLessThanOrEqual(2);
@@ -220,35 +220,68 @@ describe('CTRL-Z reste au répartiteur global', () => {
     });
 });
 
-// ADR-0051 : revenu sur la DERNIÈRE Action, on est revenu là où la transcription
-// s'écrit. Son jet retapé, le chiffre suivant valide et ouvre le jet d'après,
-// comme en bout de document — mais le premier chiffre tapé sur la cellule telle
-// qu'elle a été chargée la corrige toujours sur place.
-describe('ADR-0051 — la dernière Action se tape comme le bout du document', () => {
-    const lastCell = { expects: 'checker', replacing: true, last: true };
+// ADR-0091 : trois modes. En Revue, la frappe de dés ne touche jamais la
+// décision relue ; en Édition, le chiffre recommence le jet sur place et seule
+// Entrée valide ; `e` rouvre la décision, `Fin` ramène à la Saisie.
+describe('ADR-0091 — Saisie, Revue, Édition', () => {
+    const review = { expects: 'checker', mode: MODE.REVIEW };
+    const edit = { expects: 'checker', mode: MODE.EDIT };
     /** La cellule relue, telle que le panneau la charge (settleCursor). */
     const loaded = () => ({ ...initialKeyState(), phase: PHASE.ROLL, dice: [6, 3], candidateCount: 4 });
 
-    test('le premier chiffre sur la cellule chargée recommence son jet', () => {
-        const { commands } = press(['Digit4'], { state: loaded(), context: lastCell });
+    test('en Revue, ni chiffre, ni Entrée, ni j/k, ni f, ni effacement ne modifient la décision', () => {
+        for (const code of ['Digit4', 'Enter', 'KeyJ', 'KeyK', 'KeyF', 'Backspace', 'Escape']) {
+            const result = pressKey(loaded(), key(code), review);
+            expect(result.handled, code).toBe(true);
+            expect(result.commands, code).toEqual([]);
+            expect(result.state, code).toEqual(loaded());
+        }
+    });
+
+    test('en Revue, le clic sur le triangle ne fait rien non plus', () => {
+        expect(enterDicePair(loaded(), 5, 2, review).commands).toEqual([]);
+    });
+
+    test('`e` rouvre la décision, sans toucher la saisie en cours', () => {
+        const result = pressKey(loaded(), key('KeyE'), review);
+        expect(kinds(result.commands)).toEqual([COMMAND.EDIT]);
+        expect(result.state).toEqual(loaded());
+    });
+
+    test('en Édition, le jet retapé se recommence sur place, jamais validé par le chiffre', () => {
+        const retyped = applyCandidates(press(['Digit4', 'Digit1'], { state: loaded(), context: edit }).state, 4).state;
+        const { commands } = press(['Digit5'], { state: retyped, context: edit });
         expect(kinds(commands)).toEqual([COMMAND.DIE]);
     });
 
-    test('le jet retapé, le chiffre suivant valide puis ouvre la décision suivante', () => {
-        const retyped = applyCandidates(press(['Digit4', 'Digit1'], { state: loaded(), context: lastCell }).state, 4).state;
-        const { commands } = press(['Digit5'], { state: retyped, context: lastCell });
+    test('en Édition, Entrée valide la correction', () => {
+        const { commands } = press(['Enter'], { state: loaded(), context: edit });
+        expect(kinds(commands)).toEqual([COMMAND.VALIDATE]);
+    });
+
+    test('en Saisie, le chiffre suivant valide puis ouvre le jet', () => {
+        const { commands } = press(['Digit5'], { state: armed() });
         expect(kinds(commands)).toEqual([COMMAND.VALIDATE, COMMAND.DIE]);
     });
 
-    test('ailleurs qu’en dernière Action, le jet retapé se recommence encore sur place', () => {
-        const middle = { expects: 'checker', replacing: true };
-        const retyped = applyCandidates(press(['Digit4', 'Digit1'], { state: loaded(), context: middle }).state, 4).state;
-        const { commands } = press(['Digit5'], { state: retyped, context: middle });
-        expect(kinds(commands)).toEqual([COMMAND.DIE]);
+    test('`Fin` ramène le Cursor au bout du document', () => {
+        for (const context of [review, edit, CHECKER]) {
+            const result = pressKey(loaded(), key('End'), context);
+            expect(kinds(result.commands)).toEqual([COMMAND.CURSOR_END]);
+            expect(result.state).toEqual(initialKeyState());
+        }
+    });
+});
+
+describe('transcriptionMode', () => {
+    test('bout du document ou insertion : Saisie', () => {
+        expect(transcriptionMode({ entry: null }, null)).toBe(MODE.ENTRY);
+        expect(transcriptionMode({ entry: { at: 3, replacing: false } }, 3)).toBe(MODE.ENTRY);
     });
 
-    test('Entrée valide la dernière Action chargée', () => {
-        const { commands } = press(['Enter'], { state: loaded(), context: lastCell });
-        expect(kinds(commands)).toEqual([COMMAND.VALIDATE]);
+    test('décision existante : Revue, Édition seulement si elle a été rouverte', () => {
+        expect(transcriptionMode({ entry: { at: 3, replacing: true } }, null)).toBe(MODE.REVIEW);
+        expect(transcriptionMode({ entry: { at: 3, replacing: true } }, 2)).toBe(MODE.REVIEW);
+        expect(transcriptionMode({ entry: { at: 3, replacing: true } }, 3)).toBe(MODE.EDIT);
     });
 });

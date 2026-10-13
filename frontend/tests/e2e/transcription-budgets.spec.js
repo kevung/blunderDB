@@ -303,6 +303,29 @@ test.describe('ux.md §4.3 — la correction', () => {
         await resetGestures(page);
     }
 
+    // ADR-0091 : en Revue le plateau ne joue pas, et ni Entrée ni un chiffre
+    // n'écrivent la décision relue.
+    test('en Revue, jouer au plateau ne change rien', async ({ page }) => {
+        // Deux pas : l'Action du joueur 1, dessiné en bas.
+        await page.keyboard.press('KeyH');
+        await page.keyboard.press('KeyH');
+        await candidatesListed(page);
+        await expect(page.locator('[data-testid="transcription-mode"]')).toHaveAttribute('data-mode', 'review');
+        await resetGestures(page);
+        await page.mouse.move((await pointAt(page, 8)).x, (await pointAt(page, 8)).y);
+        await page.mouse.down();
+        await page.mouse.move((await pointAt(page, 5)).x, (await pointAt(page, 5)).y, { steps: 5 });
+        await page.mouse.up();
+        await page.mouse.move((await pointAt(page, 6)).x, (await pointAt(page, 6)).y);
+        await page.mouse.down();
+        await page.mouse.move((await pointAt(page, 5)).x, (await pointAt(page, 5)).y, { steps: 5 });
+        await page.mouse.up();
+        await page.keyboard.press('Enter');
+        await page.keyboard.press('Digit4');
+        await expect(page.locator('[data-testid="transcription-mode"]')).toHaveAttribute('data-mode', 'review');
+        expect(await sentKinds(page)).toEqual([]);
+    });
+
     // « dé mal lu, vu aussitôt (jet corrigeable) | 4 1 | 2 K ». Rien n'est
     // validé au passage : c'est toute la raison d'être de l'état.
     // ADR-0048 décision 1 : en bout de document, reprendre un jet qu'on vient de
@@ -332,22 +355,27 @@ test.describe('ux.md §4.3 — la correction', () => {
         expect(await selectedRank(page)).toBe(2);
     });
 
-    // « erreur vue un tour plus tard, dés déjà tapés | Retour, h, j, l | 4 K ».
-    test('une erreur vue un tour plus tard coûte quatre touches', async ({ page }) => {
+    // « erreur vue un tour plus tard, dés déjà tapés | Retour, h, e, Échap, j, Entrée | 6 K ».
+    // ADR-0091 : la décision relue se rouvre (`e` ouvre son champ, Échap le
+    // ferme en restant en Édition) et seule Entrée valide ; la validation mène
+    // le Cursor à la décision suivante, ici le bout du document.
+    test('une erreur vue un tour plus tard coûte six touches', async ({ page }) => {
         await typeRoll(page);
         const count = await countGestures(page, async (g) => {
             await g.press('Backspace');
             await g.press('KeyH');
             await candidatesListed(page);
+            await g.press('KeyE');
+            await g.press('Escape');
             await g.press('KeyJ');
-            await g.press('KeyL');
+            await g.press('Enter');
         });
-        expect(count.keys).toBe(4);
-        await expect.poll(() => sentKinds(page)).toEqual(['clear_dice', 'cursor_back', 'select_candidate', 'cursor_forward']);
+        expect(count.keys).toBe(6);
+        await expect.poll(() => sentKinds(page)).toEqual(['clear_dice', 'cursor_back', 'select_candidate', 'validate']);
     });
 
-    // « erreur vue k tours plus tard | Retour, h×k, j/k×m, l×k | (1 + 2k + m) K ».
-    test('une erreur vue k tours plus tard coûte 1 + 2k + m touches', async ({ page }) => {
+    // « erreur vue k tours plus tard | Retour, h×k, e, Échap, j/k×m, Entrée, Fin | (k + m + 5) K ».
+    test('une erreur vue k tours plus tard coûte k + m + 5 touches', async ({ page }) => {
         const k = 5;
         const m = 1;
         await typeRoll(page);
@@ -355,22 +383,28 @@ test.describe('ux.md §4.3 — la correction', () => {
             await g.press('Backspace');
             for (let i = 0; i < k; i += 1) await g.press('KeyH');
             await candidatesListed(page);
+            await g.press('KeyE');
+            await g.press('Escape');
             for (let i = 0; i < m; i += 1) await g.press('KeyJ');
-            for (let i = 0; i < k; i += 1) await g.press('KeyL');
+            await g.press('Enter');
+            await g.press('End');
         });
-        expect(count.keys).toBe(1 + 2 * k + m);
+        expect(count.keys).toBe(k + m + 5);
         const kinds = await sentKinds(page);
         expect(kinds.filter((x) => x === 'cursor_back')).toHaveLength(k);
-        expect(kinds.filter((x) => x === 'cursor_forward')).toHaveLength(k);
+        // La validation a déjà avancé d'une décision.
+        await expect.poll(async () => (await sentKinds(page)).filter((x) => x === 'cursor_forward')).toHaveLength(k - 1);
         expect(kinds.filter((x) => x === 'select_candidate')).toHaveLength(m);
+        expect(kinds.filter((x) => x === 'validate')).toHaveLength(1);
     });
 
-    // « coup oublié | h×k, i, 3 1 (j…), Entrée, l×k | (2k + 4 + m) K ».
+    // « coup oublié | h×k, i, 3 1 (j…), Entrée, Fin | (k + 5 + m) K ». Une insertion
+    // est une Saisie (ADR-0091) : ses dés se tapent sans `e`.
     // Une insertion n'est pas validée par le déplacement du Cursor :
     // `commitCorrection` (transcript/apply.go) ne commet qu'une Entry
     // `EntryReplace` (correction en place), jamais une insertion — d'où le
     // geste Entrée en plus.
-    test('un coup oublié coûte 2k + 4 touches, Entrée comprise', async ({ page }) => {
+    test('un coup oublié coûte k + 5 touches, Entrée comprise', async ({ page }) => {
         const k = 3;
         const count = await countGestures(page, async (g) => {
             for (let i = 0; i < k; i += 1) await g.press('KeyH');
@@ -379,10 +413,10 @@ test.describe('ux.md §4.3 — la correction', () => {
             await g.press('Digit1');
             await candidatesListed(page);
             await g.press('Enter');
-            for (let i = 0; i < k; i += 1) await g.press('KeyL');
+            await g.press('End');
         });
-        // 2k + 4 : les k retours, `i`, les deux dés, Entrée, les k avances.
-        expect(count.keys).toBe(2 * k + 4);
+        // k + 5 : les k retours, `i`, les deux dés, Entrée, Fin.
+        expect(count.keys).toBe(k + 5);
         const kinds = await sentKinds(page);
         expect(kinds.filter((x) => x === 'insert_before')).toHaveLength(1);
         expect(kinds.filter((x) => x === 'validate')).toHaveLength(1);

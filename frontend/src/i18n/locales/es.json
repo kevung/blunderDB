@@ -1510,7 +1510,17 @@
         "videoYouTube": "Enlace de YouTube…",
         "videoRemove": "Quitar el vídeo",
         "videoAttach": "Adjuntar",
-        "videoResize": "Altura del panel de vídeo"
+        "videoResize": "Altura del panel de vídeo",
+        "mode": {
+            "entry": "Entrada",
+            "review": "Revisión",
+            "edit": "Edición jugada {n}"
+        },
+        "modeKey": {
+            "entry": "Intro: validar la jugada",
+            "review": "E: editar",
+            "edit": "Intro: validar la corrección"
+        }
     },
     "transcript": {
         "title": "Transcripción",

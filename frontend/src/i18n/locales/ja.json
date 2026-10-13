@@ -1510,7 +1510,17 @@
         "videoYouTube": "YouTube リンク…",
         "videoRemove": "動画を外す",
         "videoAttach": "添付",
-        "videoResize": "動画欄の高さ"
+        "videoResize": "動画欄の高さ",
+        "mode": {
+            "entry": "入力",
+            "review": "確認",
+            "edit": "{n}手目を編集"
+        },
+        "modeKey": {
+            "entry": "Enter：手を確定",
+            "review": "E：編集",
+            "edit": "Enter：修正を確定"
+        }
     },
     "transcript": {
         "title": "棋譜",

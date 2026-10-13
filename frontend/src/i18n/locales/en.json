@@ -1510,7 +1510,17 @@
         "videoYouTube": "YouTube link…",
         "videoRemove": "Remove video",
         "videoAttach": "Attach",
-        "videoResize": "Video pane height"
+        "videoResize": "Video pane height",
+        "mode": {
+            "entry": "Entry",
+            "review": "Review",
+            "edit": "Editing move {n}"
+        },
+        "modeKey": {
+            "entry": "Enter: validate the move",
+            "review": "E: edit",
+            "edit": "Enter: validate the correction"
+        }
     },
     "transcript": {
         "title": "Transcript",

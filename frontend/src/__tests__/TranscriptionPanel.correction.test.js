@@ -196,7 +196,8 @@ describe('une correction se joue depuis la position visée', () => {
         /** @type {any} */ (ApplyTranscriptionGesture).mockImplementation(() => Promise.resolve(state(corrected)));
         await openedPanel(corrected);
 
-        // Deux dés retapés sur l'Action du Cursor.
+        // Deux dés retapés sur l'Action du Cursor, rouverte par `e` (ADR-0091).
+        await press('KeyE');
         await press('Digit5');
         await press('Digit2');
 
@@ -236,5 +237,44 @@ describe('rien n’est refusé : l’Incohérence est montrée là où elle est'
         expect(cell).not.toBeNull();
         expect(cell.getAttribute('data-index')).toBe('1');
         expect(cell.getAttribute('aria-current')).toBe('true');
+    });
+});
+
+// ADR-0091 : le mode se lit sur la barre ; la Revue n'écrit rien, `e` rouvre la
+// décision et son champ de coup, `Fin` mène au bout du document.
+describe('Saisie, Revue, Édition', () => {
+    const relue = () => annotated({ cursor: 1, entry: { at: 1, kind: 'checker', replacing: true, side: 1, dice: [6, 3], selected: true, review: false } });
+    const badge = () => /** @type {HTMLElement} */ (document.querySelector('[data-testid="transcription-mode"]'));
+
+    test('bout du document : la pastille dit Saisie et ce que fait Entrée', async () => {
+        await openedPanel(annotated({ cursor: 3 }));
+        expect(badge().dataset.mode).toBe('entry');
+        expect(badge().textContent).toContain('Enter: validate the move');
+    });
+
+    test('en Revue, un chiffre ne part pas vers le moteur', async () => {
+        await openedPanel(relue());
+        expect(badge().dataset.mode).toBe('review');
+        await press('Digit4');
+        await press('Digit1');
+        await press('Enter');
+        await tick();
+        expect(gestures()).toEqual([]);
+    });
+
+    test('`e` passe en Édition et ouvre le champ du coup', async () => {
+        await openedPanel(relue());
+        await press('KeyE');
+        await tick();
+        expect(badge().dataset.mode).toBe('edit');
+        expect(badge().textContent).toContain('move 1');
+        expect(badge().textContent).toContain('Enter: validate the correction');
+        expect(document.querySelector('.transcript-view input.move-field')).not.toBeNull();
+    });
+
+    test('`Fin` mène le Cursor au bout du document', async () => {
+        await openedPanel(relue());
+        await press('End');
+        await vi.waitFor(() => expect(gestures()).toEqual([{ Kind: 'cursor_forward' }, { Kind: 'cursor_forward' }]));
     });
 });
