@@ -1,6 +1,6 @@
 # ADR-0048 — Le panneau de transcription est ordonné par la fréquence, non par le voisinage
 
-Statut : acceptée.
+Statut : acceptée ; décision 1 remplacée par ADR-0091 (le sens du chiffre dépend d'un mode affiché, Saisie / Revue / Édition).
 Voir aussi : ADR-0045 (le brouillon et ses gestes), ADR-0049 à ADR-0054 (corrections en place,
 curseur, coup au plateau), ADR-0018 règle 4, ADR-0021, ADR-0034.
 

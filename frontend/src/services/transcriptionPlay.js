@@ -11,7 +11,7 @@
  * coup légal ne l'atteint (transcript.validate).
  */
 
-import { newPlay, applyStep, barOf, playHop, resetPlay, OFF } from './quizPlay.js';
+import { newPlay, applyStep, playHop, resetPlay, OFF } from './quizPlay.js';
 import { parseMoveNotation } from '../utils/boardGeometry.js';
 
 const WHITE = 1;
@@ -171,7 +171,7 @@ function absolutePoint(relative, mover) {
 
 /**
  * Les pas d'une notation (`13/7 8/7*`, `bar/22`, `6/off(2)`), par
- * `parseMoveNotation` (bar → 0, off → −1, `(n)` développés) puis passage au
+ * `parseMoveNotation` (bar → 25, off → −1, `(n)` développés) puis passage au
  * repère absolu, que le parseur ignore.
  *
  * @param {string} text
@@ -180,7 +180,7 @@ function absolutePoint(relative, mover) {
  */
 export function stepsFromNotation(text, mover) {
     return parseMoveNotation(text).map(({ from, to }) => ({
-        from: from === 0 ? barOf(mover) : absolutePoint(from, mover),
+        from: absolutePoint(from, mover),
         to: to === -1 ? OFF : absolutePoint(to, mover)
     }));
 }

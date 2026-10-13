@@ -1499,7 +1499,17 @@
         "videoYouTube": "YouTube-linkki…",
         "videoRemove": "Poista video",
         "videoAttach": "Liitä",
-        "videoResize": "Videoruudun korkeus"
+        "videoResize": "Videoruudun korkeus",
+        "mode": {
+            "entry": "Syöttö",
+            "review": "Tarkastelu",
+            "edit": "Siirron {n} muokkaus"
+        },
+        "modeKey": {
+            "entry": "Enter: vahvista siirto",
+            "review": "E: muokkaa",
+            "edit": "Enter: vahvista korjaus"
+        }
     },
     "transcript": {
         "title": "Siirtoluettelo",

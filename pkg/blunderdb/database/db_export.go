@@ -44,9 +44,6 @@ func (d *Database) ExportDatabaseCtx(ctx context.Context, opts ExportOptions) (i
 	plan.Metadata = opts.Metadata
 	plan.Watermark = watermarkDocument
 	plan.Password = opts.Password
-	// A Direction travels with its tournament. The copy is ours and not ingest's: the
-	// direction tables belong to the desktop wrapper, and the daemon exposes none of them.
-	plan.AfterWrite = d.directionAfterWrite()
 	return ingest.ExportSQLite(ctx, d.store, "", opts.ExportPath, plan)
 }
 

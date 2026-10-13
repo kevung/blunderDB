@@ -95,6 +95,7 @@ export const SHORTCUTS = {
             'ArrowUp',
             'a',
             'd',
+            'e',
             'f',
             'i',
             'n',
@@ -108,6 +109,7 @@ export const SHORTCUTS = {
             'Enter',
             'Ctrl+Enter',
             'Escape',
+            'End',
             // The video's keys, bound only while a source is attached; Space stays global
             // (the command line) without one.
             'Space',
@@ -121,7 +123,7 @@ export const SHORTCUTS = {
             '[',
             ']'
         ],
-        shadows: [...digits('', 1, 4), 'h', 'l', 'ArrowLeft', 'ArrowRight', 'j', 'k', 'p', 'r', 'Backspace', 'Delete', 'Escape', 'Space']
+        shadows: [...digits('', 1, 4), 'h', 'l', 'ArrowLeft', 'ArrowRight', 'j', 'k', 'p', 'r', 'Backspace', 'Delete', 'Escape', 'End', 'Space']
     },
 
     // Always mounted beside the board.

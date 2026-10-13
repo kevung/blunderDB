@@ -14,7 +14,7 @@
  */
 
 import { describe, test, expect } from 'vitest';
-import { COMMAND, PHASE, initialKeyState, pressKey, applyCandidates, selectCandidate, enterDicePair, enterSingleDie } from '../services/transcriptionKeys.js';
+import { COMMAND, PHASE, MODE, initialKeyState, pressKey, applyCandidates, selectCandidate, enterDicePair, enterSingleDie } from '../services/transcriptionKeys.js';
 
 function key(/** @type {string} */ code) {
     const digit = /^(?:Digit|Numpad)([0-9])$/.exec(code);
@@ -69,7 +69,7 @@ describe('un clic vaut ses deux touches', () => {
     // Le clic dit exactement ce que dit le chiffre, y compris sa dépendance au
     // Cursor (ADR-0048 décision 1) : le triangle n'est pas une seconde règle.
     test('sur une Action relue, le clic recommence le jet sans rien valider', () => {
-        const replaying = { expects: 'checker', replacing: true };
+        const replaying = { expects: 'checker', mode: MODE.EDIT };
         let state = enterDicePair(initialKeyState(), 3, 1, replaying).state;
         state = applyCandidates(state, 17).state;
         expect(state.phase).toBe(PHASE.ROLL);

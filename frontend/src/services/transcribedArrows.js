@@ -16,16 +16,14 @@ import { screenOfNotationPoint } from './boardOrientation.js';
 
 /**
  * L'index du modèle d'un point de notation, numérotée depuis le camp `mover`. `parseMoveNotation`
- * rend la barre comme 0 et la sortie comme -1 ; la barre du camp 0 est le point 25 du modèle,
+ * rend la barre comme 25 et la sortie comme -1 ; la barre du camp 0 est le point 25 du modèle,
  * celle du camp 1 le point 0.
  * @param {number} point
  * @param {number} mover
- * @param {boolean} source
  */
-function modelPoint(point, mover, source) {
+function modelPoint(point, mover) {
     if (point === -1) return -1;
-    const relative = source && point === 0 ? 25 : point;
-    return mover === 1 ? 25 - relative : relative;
+    return mover === 1 ? 25 - point : point;
 }
 
 /**
@@ -54,15 +52,15 @@ export function recordedSteps(notation, before) {
     while (remaining.length) {
         const barred = holds(bar);
         const playable = (/** @type {number} */ i) => {
-            const from = modelPoint(moves[i].from, mover, true);
+            const from = modelPoint(moves[i].from, mover);
             return holds(from) && (!barred || from === bar);
         };
         let at = remaining.findIndex(playable);
-        if (at < 0) at = remaining.findIndex((i) => holds(modelPoint(moves[i].from, mover, true)));
+        if (at < 0) at = remaining.findIndex((i) => holds(modelPoint(moves[i].from, mover)));
         if (at < 0) at = 0;
         const i = remaining.splice(at, 1)[0];
-        const from = modelPoint(moves[i].from, mover, true);
-        const to = modelPoint(moves[i].to, mover, false);
+        const from = modelPoint(moves[i].from, mover);
+        const to = modelPoint(moves[i].to, mover);
         const blocked = to >= 0 && to <= 25 && board[to].color === opponent && board[to].checkers >= 2;
         illegal[i] = !playable(i) || blocked;
         if (holds(from)) {

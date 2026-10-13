@@ -379,19 +379,19 @@ veille ne demande pas la souris.
    "n (liste des brouillons)", "Ouvrir le formulaire de création."
    "Clic", "Ouvrir un brouillon de la liste."
    "1 … 6", "Saisir un dé. Sur le premier coup d'une partie : dé du joueur 1, puis dé du joueur 2 (le plus fort commence et joue les deux dés)."
-   "1 … 6 (jet saisi)", "Valider le coup sélectionné et ouvrir le jet suivant. Sur une action relue, où le curseur est posé sur une action déjà écrite, le chiffre recommence le jet de cette action au lieu de valider."
+   "1 … 6 (jet saisi)", "En Saisie, valider le coup sélectionné et ouvrir le jet suivant. En Édition, recommencer le jet de l'action rouverte, sans rien valider. En Revue, le chiffre ne fait rien."
    "1 … 6 (curseur sur le premier coup d'une partie)", "Taper un autre jet d'ouverture : dé du joueur 1 puis dé du joueur 2. Le plus fort l'emporte — gros dé d'abord, le coup revient au joueur 1 en bas ; petit dé d'abord, au joueur 2 en haut ; le premier candidat est présélectionné. Le même jet retapé ne change rien ; *s* donne le coup à l'autre joueur."
    "BAS, j", "Sélectionner le candidat suivant (les flèches du coup apparaissent sur le plateau)."
    "HAUT, k", "Sélectionner le candidat précédent."
    "Molette", "Sélectionner le candidat suivant ou précédent, au-dessus de la liste comme au-dessus du damier : le regard reste sur le plateau et les flèches défilent."
-   "Clic (sur une ligne)", "Sélectionner ce candidat."
+   "Clic (sur une ligne)", "Sélectionner ce candidat ; sur une action relue, la rouvrir en Édition."
    "Double-clic (sur une ligne)", "Valider ce candidat."
    "Clic (sur le triangle des jets)", "Saisir le jet d'un seul geste : la case porte les deux dés, doubles sur la diagonale. Sur le premier coup d'une partie, le triangle laisse la place à une rangée de six dés, un clic donnant le dé d'un camp."
    "Clic, glisser (jet saisi)", "Jouer le coup sur le damier, contraint aux coups légaux de ce jet : un clic joue le pion du dé de gauche, un glissé le pose sur sa destination, et chaque pas ne garde dans la liste que les candidats qui le contiennent. Sans jet saisi, le damier ne joue rien."
    "Glisser hors des règles (jet saisi)", "Poser le pion là où il est lâché, même depuis un point d'où aucun coup légal ne part, pour transcrire un coup illégal. La suite du coup se joue librement, au clic comme au glissé, et la liste des candidats cède la place à une ligne qui le rappelle."
    "Clic sur les dés, ENTREE (coup achevé)", "Enregistrer le coup achevé avec les dés saisis — et, hors des règles, le plateau obtenu, marqué coup illégal si aucun coup légal n'atteint ce plateau. Le jet suivant, chiffre ou case du triangle, l'enregistre aussi. Sur une action relue, il la remplace. Un coup n'est jamais enregistré de lui-même."
    "RETOUR ARRIERE (coup en cours au plateau)", "Défaire le dernier pas joué au plateau. Les pas restants sont rejoués contraints tant qu'un coup légal les contient : défaire le seul pas hors des règles rend la liste."
-   "ENTREE", "Valider le coup sélectionné (dernier coup d'une partie)."
+   "ENTREE", "Valider le coup sélectionné (dernier coup d'une partie) ; en Édition, valider la correction, le curseur passant à la décision suivante. Sans effet en Revue."
    "RETOUR ARRIERE", "Effacer les deux dés saisis. C'est par là que passe la reprise d'un jet mal lu, puisqu'un chiffre valide."
    "Clic (sur les cases du jet)", "Effacer les deux dés saisis, comme RETOUR ARRIERE."
    "Esc", "Abandonner la saisie en cours."
@@ -404,7 +404,9 @@ veille ne demande pas la souris.
    "GAUCHE, h", "Reculer le curseur d'une action dans le transcript."
    "DROITE, l", "Avancer le curseur d'une action."
    "Clic (sur une cellule)", "Placer le curseur sur cette action, ou sur le tour manquant d'un double trait."
-   "Double-clic (sur une cellule)", "Taper le coup de cette action au clavier, dans la cellule : 13/7 8/7*, bar/22, 6/off. Seul le coup se tape, les dés sont ceux de la cellule ; ENTREE l'enregistre, même illégal, et Esc referme la cellule sans rien écrire. Vaut pour un coup, une danse, un coup non consigné, et pour la cellule en pointillés de la saisie en cours dès que ses deux dés sont saisis."
+   "e", "Rouvrir l'action du curseur (Édition) et taper son coup dans sa cellule, comme au double-clic. Esc referme la cellule en restant en Édition : les dés s'y retapent et ENTREE valide la correction."
+   "FIN", "Mener le curseur au bout du document, en Saisie."
+   "Double-clic (sur une cellule)", "Taper le coup de cette action au clavier, dans la cellule : 13/7 8/7*, bar/22, 6/off. Seul le coup se tape, les dés sont ceux de la cellule ; ENTREE l'enregistre, même illégal, et Esc referme la cellule sans rien écrire. L'action passe en Édition. Vaut pour un coup, une danse, un coup non consigné, et pour la cellule en pointillés de la saisie en cours dès que ses deux dés sont saisis."
    "Double-clic (sur le score d'une partie)", "Taper le score auquel cette partie a été jouée, dans l'en-tête : 3-2, 3–2 ou 3 2. ENTREE l'enregistre, un champ vidé revient au score que donnent les parties précédentes, et Esc referme le champ sans rien écrire. Un score qui diffère de celui-ci est marqué comme une incohérence. Pas de score en argent."
    "Clic droit (sur une cellule)", "Ouvrir les corrections de cette action : insérer avant, insérer après, supprimer, changer de camp. Le curseur est amené sur la cellule au passage."
    "CTRL-ENTREE", "Terminer le brouillon : écrire le match, ou remplacer celui dont il a été ouvert, et libérer le brouillon."
@@ -434,16 +436,21 @@ clavier, quelle que soit sa disposition ; *[* et *]* se lisent au caractère
 tapé, *ALTGR* compris sur un clavier qui les place ainsi. Sans vidéo, ces touches gardent leur
 sens habituel.
 
-Le chiffre a un seul sens : **il commence un jet là où le curseur est**. En bout
-de document il n'y a rien sous le curseur, donc il valide le coup sélectionné
-avant d'ouvrir le jet suivant — le meilleur coup joué coûte ainsi les deux dés
-et rien de plus, sa validation étant portée par la première touche du tour
-d'après. Sur une action déjà écrite, où l'on est revenu pour la corriger, il y a
-quelque chose sous le curseur : le chiffre recommence le jet de cette action,
-sur place. La différence se voit à l'écran, la cellule visée étant encadrée dans
-le transcript. La **dernière** action du document fait exception : une fois son
-jet retapé, le chiffre suivant la valide et ouvre la décision d'après, comme en
-bout de document, et ENTREE y mène aussi.
+La saisie a trois modes, affichés en permanence dans une pastille au-dessus du
+triangle, avec l'effet d'ENTREE :
+
+- **Saisie** — le curseur est au bout du document, ou sur une insertion. Le
+  chiffre valide le coup sélectionné avant d'ouvrir le jet suivant : le meilleur
+  coup joué coûte les deux dés et rien de plus, sa validation étant portée par
+  la première touche du tour d'après.
+- **Revue** — le curseur est sur une action déjà écrite. Les touches de saisie
+  (chiffres, f, j/k, ENTREE, RETOUR ARRIERE) ne la modifient pas, et le triangle
+  des jets est masqué. *e*, un double-clic sur la cellule ou un clic sur une
+  ligne de l'analyse la rouvrent.
+- **Édition coup N** — l'action rouverte. Le chiffre recommence son jet sur
+  place et seule ENTREE valide la correction ; le curseur passe alors à la
+  décision suivante. Déplacer le curseur referme l'Édition ; FIN ramène à la
+  Saisie.
 
 Ce qui est en train d'être tapé se dessine dans le transcript, en pointillés, à
 la place où il sera écrit : une correction recouvre la cellule qu'elle remplace,
@@ -460,9 +467,9 @@ Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état :
 de document. La phrase s'efface d'elle-même et rend la place à l'action
 attendue.
 
-Reculer le curseur sur une action puis ressaisir la corrige **en place** : la
-validation remplace l'action et le curseur revient là où il était — ou, sur la
-dernière action, passe au bout du document, où la transcription continue. Si les dés
+Reculer le curseur sur une action, la rouvrir puis ressaisir la corrige **en place** : la
+validation remplace l'action et le curseur passe à la décision suivante — après
+la dernière action, au bout du document, où la transcription continue. Si les dés
 sont corrigés et que le coup enregistré reste un coup légal du nouveau jet, il
 est conservé ; sinon le premier candidat du nouveau jet est proposé et le coup
 est signalé « à revoir » jusqu'à la validation. Avancer ou reculer le curseur
@@ -473,7 +480,7 @@ crée un double trait, supprimer une action peut en créer un autre, changer un
 camp peut rendre illégaux les coups qui suivent. Ces incohérences sont marquées
 dans le transcript, jamais corrigées d'office, et le curseur se place sur la
 première d'entre elles après chaque geste qui écrit — sauf là où l'on continue : après une
-suppression, une insertion ou une partie rouverte, il reste où l'on tape. Se
+correction, une suppression, une insertion ou une partie rouverte, il reste où l'on tape. Se
 déplacer ou taper un dé ne le déplace jamais. Le tour qu'un double trait a perdu
 est une case du transcript : h et l s'y arrêtent, et un jet tapé là s'insère
 pour le camp à qui il manquait. La pile d'annulation vit en mémoire :

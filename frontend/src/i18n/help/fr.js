@@ -405,11 +405,12 @@ export default {
 <p>Dès que le second dé tombe, tous les <strong>coups légaux</strong> du jet sont listés, classés par le moteur embarqué, le premier présélectionné et ses flèches posées sur le plateau. La liste donne le coup, son équité et son écart au meilleur : transcrire, c'est reconnaître le coup qu'on a vu jouer, pas le juger — le panneau <strong>Évaluation</strong> est là pour cela. Ce classement est une évaluation : il est affiché, il n'est jamais écrit dans la base. Lorsque le moteur n'est pas disponible, les coups sont listés sans classement et la liste le dit en tête.</p>
 <p>Un jet sans aucun coup légal enregistre la <strong>danse</strong> de lui-même : la main passe à l'adversaire sans coup à taper. Quand le jet dansant importe peu, la touche <em>f</em> dit seulement que le joueur au trait fait gala : elle saisit le premier jet, non-doubles d'abord, qui ne le fait pas rentrer de la barre. Hors de la barre, ou devant un jan qui laisse rentrer tous les jets, elle ne saisit rien et la barre d'état le dit.</p>
 <p>La <strong>molette</strong> sélectionne le candidat suivant ou précédent, au-dessus de la liste comme au-dessus du damier : le regard reste sur le plateau et les flèches défilent, ce qui reconnaît un coup plus vite que la lecture de sa notation. Un clic sur une ligne la sélectionne, un double-clic la valide.</p>
+<p>Une pastille, à gauche des cases du jet, donne le <strong>mode</strong> de la saisie et ce que fait ENTREE. En <strong>Saisie</strong>, au bout du document, on écrit la suite. En <strong>Revue</strong>, le curseur posé sur une action déjà écrite, les touches de saisie ne la modifient pas et le triangle des jets se retire. L'action se rouvre en <strong>Édition coup N</strong> par <em>e</em>, un double-clic sur sa cellule ou un clic sur une ligne de l'analyse : le jet s'y retape sur place, seule ENTREE valide, et le curseur passe alors à la décision suivante. FIN ramène au bout du document.</p>
 <p>Le triangle des vingt et un jets est posé sous les deux cases du jet, à côté du clavier et non à sa place : deux chiffres restent deux fois plus rapides qu'un clic, et le triangle est là pour qui transcrit la souris à la main. Une case par jet, jamais deux : 3-1 et 1-3 sont le même jet.</p>
 <p>Tout coup joué au plateau commence par le jet, tapé au clavier ou cliqué au triangle : sans dés saisis, le damier ne joue rien. Les deux dés saisis, le plateau est contraint aux coups légaux de ce jet — en bout de document comme sur une action relue, dont le curseur a chargé les dés. Un clic sur un pion le joue du dé de gauche, ou du suivant quand le premier ne le peut pas ; un glissé le pose sur sa destination. Les dés joués se grisent, un clic sur les dés non joués les intervertit, et Retour arrière — ou le clic droit sur le damier, qui reprend tout le coup — défait le coup. Chaque pas joué ne garde dans la liste que les candidats qui le contiennent, le premier d'entre eux présélectionné : c'est le geste du coup lointain, là où descendre au douzième candidat coûte treize touches. Dès le premier pas, les flèches du candidat sélectionné quittent le plateau, pour ne pas se mêler au coup qu'on joue ; elles reviennent quand le coup est repris ou enregistré.</p>
 <p>Le coup achevé n'est enregistré que par une validation : un clic sur les dés grisés, ENTREE, ou le jet suivant — un chiffre ou une case du triangle —, qui l'enregistre d'abord avec les dés tels qu'ils ont été tapés. Sur une action relue, il la remplace.</p>
 <p>Un coup illégal se transcrit tel qu'il a été joué, sans bouton ni changement de mode. Un glissé qu'aucun coup légal n'offre pose le pion là où il est lâché — y compris depuis un point d'où aucun coup légal ne part, pourvu qu'il porte un pion du camp au trait. Le coup sort alors des règles : la suite se joue librement, au clic comme au glissé, la liste des candidats cède la place à une ligne qui le rappelle, et la validation écrit les dés saisis, les pas et le plateau obtenu. Retour arrière défait le dernier pas ; défaire le seul pas hors des règles rend la liste.</p>
-<p>Le coup se tape aussi au clavier, dans le transcript. Un double-clic sur la cellule d'un coup — ou d'une danse, d'un coup non consigné — la change en champ, pré-rempli de sa notation. On n'y tape que le coup, <code>13/7 8/7*</code>, <code>bar/22</code> ou <code>6/off</code> : les dés sont ceux de la cellule. ENTREE l'enregistre à la place du coup écrit, ÉCHAP referme la cellule sans rien écrire, et un texte qui ne dit aucun coup laisse le champ ouvert. La cellule en pointillés de la saisie en cours s'ouvre de même, dès que ses deux dés sont saisis.</p>
+<p>Le coup se tape aussi au clavier, dans le transcript. Un double-clic sur la cellule d'un coup — ou d'une danse, d'un coup non consigné — la change en champ, pré-rempli de sa notation. On n'y tape que le coup, <code>13/7 8/7*</code>, <code>bar/22</code> ou <code>6/off</code> : les dés sont ceux de la cellule. ENTREE l'enregistre à la place du coup écrit, ÉCHAP referme la cellule sans rien écrire, et un texte qui ne dit aucun coup laisse le champ ouvert. La touche <em>e</em> ouvre de même la cellule du curseur. La cellule en pointillés de la saisie en cours s'ouvre de même, dès que ses deux dés sont saisis.</p>
 <p>Un coup saisi par le glissé libre ou par la notation qui se trouve être légal reste un coup ordinaire — la comparaison se fait sur le plateau obtenu, jamais sur la provenance du geste ; sinon il est marqué « coup illégal » dans le transcript, et l'export <code>.mat</code> avertit avant d'écrire le fichier, sans jamais refuser.</p>
 <p>Le plateau obtenu par un coup hors des règles vaut pour la position où il a été joué. Quand une correction plus haut dans le transcript change cette position, les pas du coup sont rejoués depuis la nouvelle, et toutes les positions qui suivent portent la correction.</p>
 <p>Les flèches du plateau sont celles du coup écrit dans la décision sous le curseur, rejoué sur la position qu'elle a désormais. Un pas qui ne s'y joue plus — case de départ vide après une correction plus haut, point tenu par l'adversaire, pion laissé à la barre — part quand même de la case écrite, en rouge pointillé, sa case de départ cerclée, et la cellule porte la marque « coup illégal ». Le coup du moteur ne prend jamais sa place : une ligne de la liste ne dessine ses flèches, en bleu, que survolée ou choisie à la molette, aux touches ou au clic.</p>
@@ -1937,7 +1938,7 @@ export default {
 </tr>
 <tr>
 <td>1 … 6 (jet saisi)</td>
-<td>Valider le coup sélectionné et ouvrir le jet suivant. Sur une action relue, où le curseur est posé sur une action déjà écrite, le chiffre recommence le jet de cette action au lieu de valider.</td>
+<td>En Saisie, valider le coup sélectionné et ouvrir le jet suivant. En Édition, recommencer le jet de l'action rouverte, sans rien valider. En Revue, le chiffre ne fait rien.</td>
 </tr>
 <tr>
 <td>1 … 6 (curseur sur le premier coup d'une partie)</td>
@@ -1957,7 +1958,7 @@ export default {
 </tr>
 <tr>
 <td>Clic (sur une ligne)</td>
-<td>Sélectionner ce candidat.</td>
+<td>Sélectionner ce candidat ; sur une action relue, la rouvrir en Édition.</td>
 </tr>
 <tr>
 <td>Double-clic (sur une ligne)</td>
@@ -1985,7 +1986,7 @@ export default {
 </tr>
 <tr>
 <td>ENTREE</td>
-<td>Valider le coup sélectionné (dernier coup d'une partie).</td>
+<td>Valider le coup sélectionné (dernier coup d'une partie) ; en Édition, valider la correction, le curseur passant à la décision suivante. Sans effet en Revue.</td>
 </tr>
 <tr>
 <td>RETOUR ARRIERE</td>
@@ -2036,8 +2037,16 @@ export default {
 <td>Placer le curseur sur cette action, ou sur le tour manquant d'un double trait.</td>
 </tr>
 <tr>
+<td>e</td>
+<td>Rouvrir l'action du curseur (Édition) et taper son coup dans sa cellule, comme au double-clic. Esc referme la cellule en restant en Édition : les dés s'y retapent et ENTREE valide la correction.</td>
+</tr>
+<tr>
+<td>FIN</td>
+<td>Mener le curseur au bout du document, en Saisie.</td>
+</tr>
+<tr>
 <td>Double-clic (sur une cellule)</td>
-<td>Taper le coup de cette action au clavier, dans la cellule : 13/7 8/7*, bar/22, 6/off. Seul le coup se tape, les dés sont ceux de la cellule ; ENTREE l'enregistre, même illégal, et Esc referme la cellule sans rien écrire. Vaut pour un coup, une danse, un coup non consigné, et pour la cellule en pointillés de la saisie en cours dès que ses deux dés sont saisis.</td>
+<td>Taper le coup de cette action au clavier, dans la cellule : 13/7 8/7*, bar/22, 6/off. Seul le coup se tape, les dés sont ceux de la cellule ; ENTREE l'enregistre, même illégal, et Esc referme la cellule sans rien écrire. L'action passe en Édition. Vaut pour un coup, une danse, un coup non consigné, et pour la cellule en pointillés de la saisie en cours dès que ses deux dés sont saisis.</td>
 </tr>
 <tr>
 <td>Double-clic (sur le score d'une partie)</td>
@@ -2111,12 +2120,17 @@ export default {
 </table>
 <p>Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans touche supplémentaire.</p>
 <p>Avec une vidéo attachée, seule une validation explicite — <em>ENTREE</em>, le double-clic sur un candidat, le coup achevé au plateau — pose l'instant de l'action. Le chiffre du jet suivant, ou un geste de videau, valide sans instant ; <em>v</em> le pose après coup. Les flèches se lisent à leur place sur le clavier, quelle que soit sa disposition ; <em>[</em> et <em>]</em> se lisent au caractère tapé, <em>ALTGR</em> compris sur un clavier qui les place ainsi. Sans vidéo, ces touches gardent leur sens habituel.</p>
-<p>Le chiffre a un seul sens : <strong>il commence un jet là où le curseur est</strong>. En bout de document il n'y a rien sous le curseur, donc il valide le coup sélectionné avant d'ouvrir le jet suivant — le meilleur coup joué coûte ainsi les deux dés et rien de plus, sa validation étant portée par la première touche du tour d'après. Sur une action déjà écrite, où l'on est revenu pour la corriger, il y a quelque chose sous le curseur : le chiffre recommence le jet de cette action, sur place. La différence se voit à l'écran, la cellule visée étant encadrée dans le transcript. La <strong>dernière</strong> action du document fait exception : une fois son jet retapé, le chiffre suivant la valide et ouvre la décision d'après, comme en bout de document, et ENTREE y mène aussi.</p>
+<p>La saisie a trois modes, affichés en permanence dans une pastille au-dessus du triangle, avec l'effet d'ENTREE :</p>
+<ul>
+<li><strong>Saisie</strong> — le curseur est au bout du document, ou sur une insertion. Le chiffre valide le coup sélectionné avant d'ouvrir le jet suivant : le meilleur coup joué coûte les deux dés et rien de plus, sa validation étant portée par la première touche du tour d'après.</li>
+<li><strong>Revue</strong> — le curseur est sur une action déjà écrite. Les touches de saisie (chiffres, f, j/k, ENTREE, RETOUR ARRIERE) ne la modifient pas, et le triangle des jets est masqué. <em>e</em>, un double-clic sur la cellule ou un clic sur une ligne de l'analyse la rouvrent.</li>
+<li><strong>Édition coup N</strong> — l'action rouverte. Le chiffre recommence son jet sur place et seule ENTREE valide la correction ; le curseur passe alors à la décision suivante. Déplacer le curseur referme l'Édition ; FIN ramène à la Saisie.</li>
+</ul>
 <p>Ce qui est en train d'être tapé se dessine dans le transcript, en pointillés, à la place où il sera écrit : une correction recouvre la cellule qu'elle remplace, une insertion ouvre une cellule entre ses deux voisines, et le camp se lit à la colonne. Rien n'est enregistré avant la validation.</p>
 <p>Une insertion au milieu du document continue d'insérer : la validation ouvre une cellule vide à la suite, et l'action suivante s'insère à son tour au lieu d'écraser celle d'après. La fin de la partie ou un déplacement du curseur y met fin.</p>
 <p>Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « rien à annuler » sur une pile vide, « aucune action sous le curseur » en bout de document. La phrase s'efface d'elle-même et rend la place à l'action attendue.</p>
-<p>Reculer le curseur sur une action puis ressaisir la corrige <strong>en place</strong> : la validation remplace l'action et le curseur revient là où il était — ou, sur la dernière action, passe au bout du document, où la transcription continue. Si les dés sont corrigés et que le coup enregistré reste un coup légal du nouveau jet, il est conservé ; sinon le premier candidat du nouveau jet est proposé et le coup est signalé « à revoir » jusqu'à la validation. Avancer ou reculer le curseur après avoir changé quelque chose enregistre la correction au passage.</p>
-<p>Rien n'est refusé ni supprimé : insérer une action du même camp que sa voisine crée un double trait, supprimer une action peut en créer un autre, changer un camp peut rendre illégaux les coups qui suivent. Ces incohérences sont marquées dans le transcript, jamais corrigées d'office, et le curseur se place sur la première d'entre elles après chaque geste qui écrit — sauf là où l'on continue : après une suppression, une insertion ou une partie rouverte, il reste où l'on tape. Se déplacer ou taper un dé ne le déplace jamais. Le tour qu'un double trait a perdu est une case du transcript : h et l s'y arrêtent, et un jet tapé là s'insère pour le camp à qui il manquait. La pile d'annulation vit en mémoire : elle est perdue à la fermeture du brouillon.</p>
+<p>Reculer le curseur sur une action, la rouvrir puis ressaisir la corrige <strong>en place</strong> : la validation remplace l'action et le curseur passe à la décision suivante — après la dernière action, au bout du document, où la transcription continue. Si les dés sont corrigés et que le coup enregistré reste un coup légal du nouveau jet, il est conservé ; sinon le premier candidat du nouveau jet est proposé et le coup est signalé « à revoir » jusqu'à la validation. Avancer ou reculer le curseur après avoir changé quelque chose enregistre la correction au passage.</p>
+<p>Rien n'est refusé ni supprimé : insérer une action du même camp que sa voisine crée un double trait, supprimer une action peut en créer un autre, changer un camp peut rendre illégaux les coups qui suivent. Ces incohérences sont marquées dans le transcript, jamais corrigées d'office, et le curseur se place sur la première d'entre elles après chaque geste qui écrit — sauf là où l'on continue : après une correction, une suppression, une insertion ou une partie rouverte, il reste où l'on tape. Se déplacer ou taper un dé ne le déplace jamais. Le tour qu'un double trait a perdu est une case du transcript : h et l s'y arrêtent, et un jet tapé là s'insère pour le camp à qui il manquait. La pile d'annulation vit en mémoire : elle est perdue à la fermeture du brouillon.</p>
 <p>Le panneau lui-même — la liste des brouillons, la création, la saisie, le transcript et la barre du brouillon — est décrit dans Panneau Transcription.</p>
 <h3>Planche-contact</h3>
 <table>

@@ -529,11 +529,12 @@ describe('drawMoveArrows', () => {
     test('bar and off are anchored on the bar and the tray', () => {
         const two = recorder();
         const pos = startPos();
-        pos.board.points[0] = { checkers: 1, color: 0 };
+        // The side at the bottom enters from its own bar, point 25.
+        pos.board.points[25] = { checkers: 1, color: 0 };
         drawMoveArrows(two, geom, cfg, pos, parseMoveNotation('bar/20 6/off'));
         const [fromBar, fromSix] = two.of('line');
         expect(fromBar.args[0]).toBeCloseTo(geom.originX, 6);
-        expect(fromBar.args[1]).toBeCloseTo(stackSlotCenter(geom, cfg, 0, 0).y, 6);
+        expect(fromBar.args[1]).toBeCloseTo(stackSlotCenter(geom, cfg, 25, 0).y, 6);
         expect(fromSix.args[1]).toBeCloseTo(stackSlotCenter(geom, cfg, 6, 4).y, 6);
         const tray = stackSlotCenter(geom, cfg, BEAROFF_POINT, 0);
         expect(tip(two.of('path')[1])).toEqual({ x: near(tray.x), y: near(tray.y) });

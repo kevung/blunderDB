@@ -12,7 +12,7 @@
  */
 
 import { describe, test, expect } from 'vitest';
-import { PHASE, COMMAND, initialKeyState, pressKey, applyCandidates, selectCandidate, selectionDelta } from '../services/transcriptionKeys.js';
+import { PHASE, COMMAND, MODE, initialKeyState, pressKey, applyCandidates, selectCandidate, selectionDelta } from '../services/transcriptionKeys.js';
 
 const CHECKER = { expects: 'checker' };
 
@@ -53,7 +53,7 @@ function driver({ expects = 'checker', candidates = 5, replacing = false } = {})
          */
         press(code, extra) {
             presses += 1;
-            const result = pressKey(state, key(code, extra), { expects, replacing });
+            const result = pressKey(state, key(code, extra), { expects, mode: replacing ? MODE.EDIT : MODE.ENTRY });
             state = result.state;
             commands.push(...result.commands);
             settle();
@@ -101,7 +101,7 @@ describe('les transitions d’ux.md §3', () => {
 
     // ADR-0048 décision 1 : le chiffre commence un jet LÀ OÙ LE CURSOR EST. Les
     // deux tests qui suivent sont les deux moitiés de cette seule règle, et le
-    // discriminant est `replacing` — jamais l'historique de la liste.
+    // discriminant est le mode (ADR-0091) — jamais l'historique de la liste.
     test('jet saisi en bout de document + un chiffre → valide, puis ouvre le jet suivant', () => {
         const d = driver();
         d.press('Digit3');
@@ -115,7 +115,7 @@ describe('les transitions d’ux.md §3', () => {
         expect(tail).toEqual([COMMAND.VALIDATE, COMMAND.DIE]);
     });
 
-    test('jet saisi sur une Action relue + un chiffre → recommence le jet, sur place', () => {
+    test('jet saisi en Édition + un chiffre → recommence le jet, sur place', () => {
         const d = driver({ replacing: true });
         d.press('Digit3');
         d.press('Digit1');

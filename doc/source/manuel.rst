@@ -2065,6 +2065,14 @@ liste comme au-dessus du damier : le regard reste sur le plateau et les flèches
 défilent, ce qui reconnaît un coup plus vite que la lecture de sa notation. Un
 clic sur une ligne la sélectionne, un double-clic la valide.
 
+Une pastille, à gauche des cases du jet, donne le **mode** de la saisie et ce
+que fait ENTREE. En **Saisie**, au bout du document, on écrit la suite. En
+**Revue**, le curseur posé sur une action déjà écrite, les touches de saisie ne
+la modifient pas et le triangle des jets se retire. L'action se rouvre en
+**Édition coup N** par *e*, un double-clic sur sa cellule ou un clic sur une
+ligne de l'analyse : le jet s'y retape sur place, seule ENTREE valide, et le
+curseur passe alors à la décision suivante. FIN ramène au bout du document.
+
 Le triangle des vingt et un jets est posé sous les deux cases du jet, à côté du
 clavier et non à sa place : deux chiffres restent deux fois plus rapides qu'un
 clic, et le triangle est là pour qui transcrit la souris à la main. Une case par
@@ -2103,8 +2111,9 @@ cellule d'un coup — ou d'une danse, d'un coup non consigné — la change en c
 pré-rempli de sa notation. On n'y tape que le coup, ``13/7 8/7*``, ``bar/22`` ou
 ``6/off`` : les dés sont ceux de la cellule. ENTREE l'enregistre à la place du
 coup écrit, ÉCHAP referme la cellule sans rien écrire, et un texte qui ne dit
-aucun coup laisse le champ ouvert. La cellule en pointillés de la saisie en
-cours s'ouvre de même, dès que ses deux dés sont saisis.
+aucun coup laisse le champ ouvert. La touche *e* ouvre de même la cellule du
+curseur. La cellule en pointillés de la saisie en cours s'ouvre de même, dès que
+ses deux dés sont saisis.
 
 Un coup saisi par le glissé libre ou par la notation qui se trouve être légal
 reste un coup ordinaire — la comparaison se fait sur le plateau obtenu, jamais

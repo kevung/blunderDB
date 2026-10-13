@@ -177,6 +177,8 @@ export async function installTranscriptionEngine(page, opts = {}) {
 
             let at = cursor;
             let waiting = expects;
+            // Une insertion ouverte : la saisie ajoute devant l'Action du Cursor.
+            let inserting = false;
             const state = () => {
                 const annotated = JSON.parse(JSON.stringify(doc));
                 annotated.cursor = at;
@@ -185,9 +187,10 @@ export async function installTranscriptionEngine(page, opts = {}) {
                 // Sur une Action existante la saisie remplace, au bout elle
                 // ajoute (ADR-0048 décision 1).
                 const info = annotated.actions[at];
-                annotated.entry = info
-                    ? { at, side: info.side, replacing: true, review: false, selected: true, dice: [3, 1] }
-                    : { at, side: annotated.next.side, replacing: false, review: false, selected: false, dice: [0, 0] };
+                annotated.entry =
+                    info && !inserting
+                        ? { at, side: info.side, replacing: true, review: false, selected: true, dice: [3, 1] }
+                        : { at, side: annotated.next.side, replacing: false, review: false, selected: false, dice: [0, 0] };
                 return { id: row.id, annotated, can_undo: true, can_redo: true };
             };
 
@@ -199,8 +202,15 @@ export async function installTranscriptionEngine(page, opts = {}) {
                 // Dérivés : le Cursor (budgets §4.3) et l'Action attendue
                 // après un double (`t`/`p`, §4.2). Le reste reste figé.
                 const kind = gesture ? gesture.Kind : '';
+                if (kind === 'cursor_back' || kind === 'cursor_forward') inserting = false;
                 if (kind === 'cursor_back') at = Math.max(0, at - 1);
                 if (kind === 'cursor_forward') at = Math.min(doc.actions.length, at + 1);
+                if (kind === 'insert_before') inserting = true;
+                // Une validation place le Cursor sur la décision qui suit (transcript.record).
+                if (kind === 'validate' && (inserting || at < doc.actions.length)) {
+                    inserting = false;
+                    at = Math.min(doc.actions.length, at + 1);
+                }
                 if (kind === 'double') waiting = 'take';
                 if (kind === 'take' || kind === 'pass') waiting = 'checker';
                 return Promise.resolve(state());

@@ -67,12 +67,13 @@ func TestCorrectionInPlace(t *testing.T) {
 			t.Error("the review mark must survive a candidate pick (fonctionnel.md §2)")
 		}
 		done := runSteps(t, picked, []step{{"validate", confirm(), nil}})
-		if done.Entry != nil {
-			t.Error("validation left an entry behind")
+		// What is loaded after it is the next decision, under review (ADR-0091).
+		if done.Entry != nil && (done.Entry.At != at+1 || done.Entry.Review || done.Entry.Mode != EntryReplace) {
+			t.Errorf("entry = %+v; validation leaves only the next decision loaded", done.Entry)
 		}
 	})
 
-	t.Run("the cursor comes back where it was, and the document keeps its length", func(t *testing.T) {
+	t.Run("the cursor goes on to the next decision, and the document keeps its length", func(t *testing.T) {
 		doc := base(t)
 		end := len(doc.Actions)
 		corrected := runSteps(t, doc, []step{
@@ -86,8 +87,9 @@ func TestCorrectionInPlace(t *testing.T) {
 		if len(corrected.Actions) != end {
 			t.Fatalf("actions = %d, want %d — a correction is not an insertion", len(corrected.Actions), end)
 		}
-		if corrected.Cursor != end {
-			t.Errorf("cursor = %d, want %d (fonctionnel.md §2: it comes back)", corrected.Cursor, end)
+		// The decision after the one corrected, never the end the user walked back from.
+		if corrected.Cursor != end-1 || !corrected.HoldCursor {
+			t.Errorf("cursor = %d (hold %v), want %d, held", corrected.Cursor, corrected.HoldCursor, end-1)
 		}
 		if got := corrected.Actions[end-2].Dice; got != [2]int{5, 2} {
 			t.Errorf("the corrected action carries %v", got)
