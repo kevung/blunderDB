@@ -3305,8 +3305,9 @@
     "video": {
         "notPlayable": "Этот источник нельзя воспроизвести здесь.",
         "codecDetail": "Webview не воспроизводит этот файл ({container}, поддержка: {support}, код {code}).",
+        "noMetadata": "Метаданные не получены за {seconds} с: Webview не смог открыть этот файл ({container}).",
         "unsupported": "не поддерживается",
-        "codecHint": "В Linux установите плагины GStreamer: gstreamer1.0-plugins-good, gstreamer1.0-libav (Debian, Ubuntu); gstreamer1-plugins-good, gstreamer1-plugin-libav (Fedora); gst-plugins-good, gst-libav (Arch). В Windows расширение HEVC из Store воспроизводит H.265.",
+        "codecHint": "В Linux установите плагины GStreamer: gstreamer1.0-plugins-good, gstreamer1.0-plugins-bad, gstreamer1.0-libav (Debian, Ubuntu); gstreamer1-plugins-good, gstreamer1-plugins-bad-free, gstreamer1-libav (Fedora); gst-plugins-good, gst-plugins-bad, gst-libav (Arch). В Windows расширение HEVC из Store воспроизводит H.265.",
         "missing": "Видеофайл не найден.",
         "relocate": "Выбрать файл…",
         "stalled": "Видео остаётся зависшим после нескольких перезагрузок.",

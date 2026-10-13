@@ -2458,11 +2458,16 @@ pas de fin, il y reste dix secondes après son jet, puis revient en fin de
 transcript : les chiffres y ouvrent le jet suivant, et l'indicateur le dit.
 
 L'application ne décode pas la vidéo elle-même : les formats lus sont ceux du
-webview. Un format qu'il ne lit pas est signalé dans le volet, avec son
-conteneur et, sous Linux, les greffons GStreamer à installer —
-``gstreamer1.0-plugins-good`` et ``gstreamer1.0-libav`` sous Debian et Ubuntu,
-``gstreamer1-plugins-good`` et ``gstreamer1-plugin-libav`` sous Fedora,
-``gst-plugins-good`` et ``gst-libav`` sous Arch (voir :ref:`telecharge_install`).
+webview. Un format qu'il ne lit pas, ou un fichier dont le webview ne
+renvoie aucune information au bout de dix secondes, est signalé dans le volet,
+avec son conteneur et, sous Linux, les greffons GStreamer à installer. Un MP4
+H.264 et AAC demande ``gst-plugins-good`` (démultiplexeur MP4, analyse AAC),
+``gst-plugins-bad`` et ``gst-libav`` (décodeurs H.264 et AAC) : sous Arch,
+``gst-plugins-good gst-plugins-bad gst-libav`` ; sous Debian et Ubuntu,
+``gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-libav`` ;
+sous Fedora, ``gstreamer1-plugins-good gstreamer1-plugins-bad-free
+gstreamer1-libav`` (ce dernier vient de RPM Fusion) — voir
+:ref:`telecharge_install`.
 
 Une vidéo qui se fige — un saut qui n'aboutit pas, une image immobile pendant la lecture — est
 rechargée au bout de trois secondes, puis reprise à l'instant demandé, à la même vitesse, en lecture

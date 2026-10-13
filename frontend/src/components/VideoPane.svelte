@@ -284,6 +284,20 @@
         detail = $t('video.codecDetail', { container, support: verdict === '' ? $t('video.unsupported') : verdict, code: code ?? '?' });
     }
 
+    // A pipeline missing a demuxer or decoder can load a file without ever raising an error
+    // event; the pane then names the missing plugins instead of waiting on a black frame.
+    const METADATA_MS = 10000;
+    $effect(() => {
+        if (status !== 'loading' || kind !== 'file' || !src) return;
+        const timer = setTimeout(() => {
+            const [container] = containerOf(source);
+            stalledOut = null;
+            status = 'codec';
+            detail = $t('video.noMetadata', { seconds: METADATA_MS / 1000, container });
+        }, METADATA_MS);
+        return () => clearTimeout(timer);
+    });
+
     async function relocate() {
         try {
             const path = await PickTranscriptionVideo();

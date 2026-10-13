@@ -3305,8 +3305,9 @@
     "video": {
         "notPlayable": "Cette source n'est pas lisible ici.",
         "codecDetail": "Le webview ne lit pas ce fichier ({container}, lecture : {support}, code {code}).",
+        "noMetadata": "Aucune métadonnée reçue après {seconds} s : le webview n'a pas pu ouvrir ce fichier ({container}).",
         "unsupported": "non prise en charge",
-        "codecHint": "Sous Linux, installez les greffons GStreamer : gstreamer1.0-plugins-good, gstreamer1.0-libav (Debian, Ubuntu) ; gstreamer1-plugins-good, gstreamer1-plugin-libav (Fedora) ; gst-plugins-good, gst-libav (Arch). Sous Windows, l'extension HEVC du Store lit le H.265.",
+        "codecHint": "Sous Linux, installez les greffons GStreamer : gstreamer1.0-plugins-good, gstreamer1.0-plugins-bad, gstreamer1.0-libav (Debian, Ubuntu) ; gstreamer1-plugins-good, gstreamer1-plugins-bad-free, gstreamer1-libav (Fedora) ; gst-plugins-good, gst-plugins-bad, gst-libav (Arch). Sous Windows, l'extension HEVC du Store lit le H.265.",
         "missing": "Fichier vidéo introuvable.",
         "relocate": "Choisir le fichier…",
         "stalled": "La vidéo reste figée malgré plusieurs rechargements.",

@@ -187,9 +187,10 @@ Vidéos de match sous Linux
 
 Le panneau Matchs lit la vidéo attachée à un match avec les codecs du webview :
 sous Linux, ceux de GStreamer. Pour lire le MP4 et le WebM, installez
-``gst-plugins-good``, et ``gst-libav`` pour le H.264 et le HEVC (paquets
-``gstreamer1.0-plugins-good`` et ``gstreamer1.0-libav`` sur Debian, Ubuntu et
-Mint ; ``gstreamer1-plugins-good`` et ``gstreamer1-libav`` sur Fedora). Le
+``gst-plugins-good``, et ``gst-plugins-bad`` et ``gst-libav`` pour le H.264 et
+le HEVC (paquets ``gstreamer1.0-plugins-good``, ``gstreamer1.0-plugins-bad`` et
+``gstreamer1.0-libav`` sur Debian, Ubuntu et Mint ; ``gstreamer1-plugins-good``,
+``gstreamer1-plugins-bad-free`` et ``gstreamer1-libav`` sur Fedora). Le
 paquet AUR les propose en dépendances optionnelles ; le Flatpak embarque
 l'extension ``org.freedesktop.Platform.ffmpeg-full``. Sous Windows, le HEVC
 demande l'extension « Extensions vidéo HEVC » du Microsoft Store ; macOS lit

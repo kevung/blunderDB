@@ -455,7 +455,23 @@ describe('VideoPane', () => {
         expect(note.textContent).toContain('gst-libav');
         // The packages are named per distribution: Debian's and Fedora's names differ from Arch's.
         expect(note.textContent).toContain('gstreamer1.0-libav');
-        expect(note.textContent).toContain('gstreamer1-plugin-libav');
+        expect(note.textContent).toContain('gstreamer1-libav');
+        expect(note.textContent).toContain('gst-plugins-bad');
+    });
+
+    test('a file that never yields metadata names the GStreamer plugins', async () => {
+        vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+        try {
+            const { container } = render(VideoPane, { props: { source: '/v/final.mp4' } });
+            await vi.waitFor(() => container.querySelector('video') ?? expect.fail('no video'));
+            expect(container.querySelector('[data-testid="video-diagnostic"]')).toBeNull();
+            await vi.advanceTimersByTimeAsync(10500);
+            const note = await vi.waitFor(() => container.querySelector('[data-testid="video-diagnostic"]') ?? expect.fail('no diagnostic'));
+            expect(note.textContent).toContain('MP4');
+            expect(note.textContent).toContain('gst-plugins-bad');
+        } finally {
+            vi.useRealTimers();
+        }
     });
 
     test('a missing file offers to relocate it', async () => {

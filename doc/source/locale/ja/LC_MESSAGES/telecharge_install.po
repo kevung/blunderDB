@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-08 20:08+0200\n"
+"POT-Creation-Date: 2026-10-13 11:28+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -389,36 +389,39 @@ msgstr "Linux でのマッチ動画"
 msgid ""
 "Le panneau Matchs lit la vidéo attachée à un match avec les codecs du "
 "webview : sous Linux, ceux de GStreamer. Pour lire le MP4 et le WebM, "
-"installez ``gst-plugins-good``, et ``gst-libav`` pour le H.264 et le HEVC"
-" (paquets ``gstreamer1.0-plugins-good`` et ``gstreamer1.0-libav`` sur "
-"Debian, Ubuntu et Mint ; ``gstreamer1-plugins-good`` et "
-"``gstreamer1-libav`` sur Fedora). Le paquet AUR les propose en "
+"installez ``gst-plugins-good``, et ``gst-plugins-bad`` et ``gst-libav`` "
+"pour le H.264 et le HEVC (paquets ``gstreamer1.0-plugins-good``, "
+"``gstreamer1.0-plugins-bad`` et ``gstreamer1.0-libav`` sur Debian, Ubuntu"
+" et Mint ; ``gstreamer1-plugins-good``, ``gstreamer1-plugins-bad-free`` "
+"et ``gstreamer1-libav`` sur Fedora). Le paquet AUR les propose en "
 "dépendances optionnelles ; le Flatpak embarque l'extension "
 "``org.freedesktop.Platform.ffmpeg-full``. Sous Windows, le HEVC demande "
 "l'extension « Extensions vidéo HEVC » du Microsoft Store ; macOS lit ces "
 "formats nativement. Un fichier que le webview ne lit pas est signalé dans"
 " le volet vidéo, avec son format."
 msgstr ""
-"マッチパネルは、マッチに添付された動画を webview のコーデックで再生します。Linux では GStreamer のものです。MP4 と "
-"WebM を再生するには ``gst-plugins-good`` を、H.264 と HEVC には ``gst-libav`` "
-"もインストールしてください（Debian、Ubuntu、Mint ではパッケージ ``gstreamer1.0-plugins-good`` と "
-"``gstreamer1.0-libav``\\ 、Fedora では ``gstreamer1-plugins-good`` と "
-"``gstreamer1-libav``\\ ）。AUR パッケージはこれらをオプションの依存関係として挙げ、Flatpak は拡張 "
-"``org.freedesktop.Platform.ffmpeg-full`` を含みます。Windows では HEVC に "
-"Microsoft Store の「HEVC ビデオ拡張機能」が必要で、macOS はこれらの形式をネイティブに再生します。webview "
-"が再生できないファイルは、その形式とともに動画ペインに表示されます。"
+"マッチパネルは、マッチに添付された動画を webview のコーデック(Linux では GStreamer のコーデック)で再生します。MP4 "
+"と WebM を再生するには ``gst-plugins-good`` をインストールし、H.264 と HEVC には ``gst-"
+"plugins-bad`` と ``gst-libav`` もインストールしてください(パッケージは、Debian、Ubuntu、Mint では "
+"``gstreamer1.0-plugins-good``、``gstreamer1.0-plugins-"
+"bad``、``gstreamer1.0-libav``、Fedora では ``gstreamer1-plugins-"
+"good``、``gstreamer1-plugins-bad-free``、``gstreamer1-libav``)。AUR "
+"パッケージはこれらをオプションの依存関係として提示し、Flatpak は ``org.freedesktop.Platform.ffmpeg-"
+"full`` 拡張を同梱しています。Windows で HEVC を再生するには、Microsoft Store の「HEVC "
+"ビデオ拡張機能」が必要です。macOS はこれらの形式をネイティブに再生します。webview "
+"が再生できないファイルは、ビデオペインにその形式とともに表示されます。"
 
-#: ../../source/telecharge_install.rst:200
+#: ../../source/telecharge_install.rst:201
 msgid "Archive .tar.gz"
 msgstr ".tar.gz アーカイブ"
 
-#: ../../source/telecharge_install.rst:202
+#: ../../source/telecharge_install.rst:203
 msgid ""
 "Pour les autres distributions. L'extraction d'une archive conserve le bit"
 " exécutable, aucun ``chmod`` n'est donc nécessaire :"
 msgstr "その他のディストリビューション向け。アーカイブを展開すると実行ビットが保持されるため、\\ ``chmod`` は不要です："
 
-#: ../../source/telecharge_install.rst:211
+#: ../../source/telecharge_install.rst:212
 msgid ""
 "L'exécutable de l'archive s'appelle ``blunderDB``, avec les majuscules. "
 "Les paquets ``.deb``, ``.rpm``, AUR et Flatpak installent en plus le lien"
@@ -433,11 +436,11 @@ msgstr ""
 "）が使う名前で、アーカイブにも実行ファイルの隣に同じリンクが含まれています。\\ ``PATH`` に置くには：\\ ``ln -s "
 "\"$PWD/blunderDB\" ~/.local/bin/blunderdb``"
 
-#: ../../source/telecharge_install.rst:219
+#: ../../source/telecharge_install.rst:220
 msgid "Binaire brut (méthode avancée)"
 msgstr "生のバイナリ (上級者向けの方法)"
 
-#: ../../source/telecharge_install.rst:221
+#: ../../source/telecharge_install.rst:222
 msgid ""
 "Le binaire brut |latest_linux_exe| reste disponible. Comme un navigateur "
 "retire le bit exécutable au téléchargement, il faut le rétablir avant la "
@@ -446,7 +449,7 @@ msgstr ""
 "生のバイナリ |latest_linux_exe| "
 "も引き続き利用できます。ブラウザはダウンロード時に実行ビットを削除するため、最初の実行前に復元する必要があります："
 
-#: ../../source/telecharge_install.rst:229
+#: ../../source/telecharge_install.rst:230
 msgid ""
 "Deux variantes Linux sont publiées selon la version de la bibliothèque "
 "webkit2gtk. Si vous obtenez l'erreur ``libwebkit2gtk-4.0.so.37: cannot "
@@ -462,11 +465,11 @@ msgstr ""
 "|latest_linux_webkit2gtk41_exe| "
 "をダウンロードしてください。ネイティブパッケージは正しい依存関係を自動的に選択します。"
 
-#: ../../source/telecharge_install.rst:238
+#: ../../source/telecharge_install.rst:239
 msgid "Image Docker (mode serveur)"
 msgstr "Docker イメージ（サーバーモード）"
 
-#: ../../source/telecharge_install.rst:240
+#: ../../source/telecharge_install.rst:241
 msgid ""
 "Le mode serveur (:ref:`headless`) n'a pas besoin de l'application de "
 "bureau : chaque version publie l'image ``ghcr.io/kevung/blunderdb-serve``"
@@ -477,17 +480,17 @@ msgstr ""
 "のレジストリにイメージ ``ghcr.io/kevung/blunderdb-serve`` を ``linux/amd64`` と "
 "``linux/arm64`` 向けに、バージョンタグと ``latest`` タグで公開します："
 
-#: ../../source/telecharge_install.rst:249
+#: ../../source/telecharge_install.rst:250
 msgid ""
 "Le lancement, la configuration et l'avertissement sur le mandataire "
 "d'authentification sont décrits dans :ref:`headless_docker_image`."
 msgstr "起動、設定、および認証プロキシに関する警告は :ref:`headless_docker_image` に記載されています。"
 
-#: ../../source/telecharge_install.rst:255
+#: ../../source/telecharge_install.rst:256
 msgid "Manifestes winget et Homebrew"
 msgstr "winget と Homebrew のマニフェスト"
 
-#: ../../source/telecharge_install.rst:257
+#: ../../source/telecharge_install.rst:258
 msgid ""
 "Chaque release fournit un manifeste `winget "
 "<https://learn.microsoft.com/windows/package-manager/>`__ (``blunderDB-"
@@ -505,11 +508,11 @@ msgstr ""
 " winget や Homebrew "
 "の公開リポジトリには掲載されていません。どちらも実行ファイルの性質を変えるものではなく、署名されないままで、以下に説明する警告はそのまま当てはまります。"
 
-#: ../../source/telecharge_install.rst:267
+#: ../../source/telecharge_install.rst:268
 msgid "Avertissements Windows et Mac"
 msgstr "Windows と Mac に関する警告"
 
-#: ../../source/telecharge_install.rst:269
+#: ../../source/telecharge_install.rst:270
 msgid ""
 "Sous Windows, il est possible que ce dernier émette des réticences à "
 "exécuter blunderDB. Voir :ref:`annexe_windows_malware` pour comprendre "
@@ -518,7 +521,7 @@ msgstr ""
 "Windows では、blunderDB の実行を拒否する場合があります。理由と回避方法については "
 ":ref:`annexe_windows_malware` を参照してください。"
 
-#: ../../source/telecharge_install.rst:273
+#: ../../source/telecharge_install.rst:274
 msgid ""
 "Sous Mac, il est possible que ce dernier émette des réticences à exécuter"
 " blunderDB. Voir :ref:`annexe_mac_malware` pour comprendre pourquoi et "

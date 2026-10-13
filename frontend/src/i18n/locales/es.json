@@ -3305,8 +3305,9 @@
     "video": {
         "notPlayable": "Esta fuente no se puede reproducir aquí.",
         "codecDetail": "El webview no puede reproducir este archivo ({container}, compatibilidad: {support}, código {code}).",
+        "noMetadata": "No se recibieron metadatos tras {seconds} s: el webview no pudo abrir este archivo ({container}).",
         "unsupported": "no compatible",
-        "codecHint": "En Linux, instale los complementos de GStreamer: gstreamer1.0-plugins-good, gstreamer1.0-libav (Debian, Ubuntu); gstreamer1-plugins-good, gstreamer1-plugin-libav (Fedora); gst-plugins-good, gst-libav (Arch). En Windows, la extensión HEVC de la Store reproduce H.265.",
+        "codecHint": "En Linux, instale los complementos de GStreamer: gstreamer1.0-plugins-good, gstreamer1.0-plugins-bad, gstreamer1.0-libav (Debian, Ubuntu); gstreamer1-plugins-good, gstreamer1-plugins-bad-free, gstreamer1-libav (Fedora); gst-plugins-good, gst-plugins-bad, gst-libav (Arch). En Windows, la extensión HEVC de la Store reproduce H.265.",
         "missing": "Archivo de vídeo no encontrado.",
         "relocate": "Elegir el archivo…",
         "stalled": "El vídeo sigue congelado tras varias recargas.",

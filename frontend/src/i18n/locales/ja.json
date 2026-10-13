@@ -3305,8 +3305,9 @@
     "video": {
         "notPlayable": "このソースはここでは再生できません。",
         "codecDetail": "Webview はこのファイルを再生できません（{container}、対応状況：{support}、コード {code}）。",
+        "noMetadata": "{seconds} 秒経ってもメタデータを受信できません：Webview はこのファイルを開けませんでした（{container}）。",
         "unsupported": "非対応",
-        "codecHint": "Linux では GStreamer プラグインをインストールしてください：gstreamer1.0-plugins-good, gstreamer1.0-libav（Debian、Ubuntu）、gstreamer1-plugins-good, gstreamer1-plugin-libav（Fedora）、gst-plugins-good, gst-libav（Arch）。Windows では Store の HEVC 拡張機能が H.265 を再生します。",
+        "codecHint": "Linux では GStreamer プラグインをインストールしてください：gstreamer1.0-plugins-good, gstreamer1.0-plugins-bad, gstreamer1.0-libav（Debian、Ubuntu）、gstreamer1-plugins-good, gstreamer1-plugins-bad-free, gstreamer1-libav（Fedora）、gst-plugins-good, gst-plugins-bad, gst-libav（Arch）。Windows では Store の HEVC 拡張機能が H.265 を再生します。",
         "missing": "動画ファイルが見つかりません。",
         "relocate": "ファイルを選択…",
         "stalled": "何度か再読み込みしても動画が止まったままです。",
