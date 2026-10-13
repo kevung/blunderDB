@@ -194,10 +194,10 @@ export const transcriptionBoardSwapStore = writable(false);
 export const transcriptionArrowsStore = writable(null);
 
 /**
- * Le mode de la saisie (ADR-0091) et le coup qu'il nomme, publiés par le panneau pour
- * le théâtre, qui le cache : la frappe change de sens avec lui, il reste donc visible.
- * `null` sans brouillon ouvert.
+ * L'indicateur de la saisie (ADR-0092) : le mode, le coup qu'Entrée valide et la phase
+ * des chiffres, publiés par le panneau pour le théâtre, qui cache la barre : la frappe
+ * change de sens avec lui, il reste donc visible. `null` sans brouillon ouvert.
  *
- * @type {import('svelte/store').Writable<{mode: string, n: number} | null>}
+ * @type {import('svelte/store').Writable<{mode: string, n: number, move: string, rolled: boolean} | null>}
  */
 export const transcriptionModeStore = writable(null);

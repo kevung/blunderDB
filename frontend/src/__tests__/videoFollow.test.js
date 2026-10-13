@@ -65,15 +65,18 @@ describe('createCursorFollower', () => {
         expect(f.step(10500, ann(0), false)).toBe(1);
     });
 
-    test('a hold on the last Action timed by its roll alone ends: past it, the Cursor goes to the end', () => {
+    test('a hold on the last Action timed by its roll alone lasts until a roll is typed', () => {
         const open = (/** @type {number} */ cursor) => ({ actions: [checker(1000, 5000), checker(8000, undefined)], cursor });
         const f = createCursorFollower();
         f.step(9000, open(2), false);
         // Placed on the last Action by hand, the video a second ahead of its roll.
         expect(f.step(7000, open(1), false)).toBeNull();
+        // A match's thinking time: a minute past the roll, the Cursor stays.
         expect(f.step(12000, open(1), false)).toBeNull();
-        expect(f.step(18500, open(1), false)).toBe(2);
-        expect(f.step(19000, open(2), false)).toBeNull();
+        expect(f.step(68000, open(1), false)).toBeNull();
+        expect(f.step(300000, open(1), false)).toBeNull();
+        // A roll typed ends the hold without moving the Cursor under the typing hand.
+        expect(f.step(301000, open(1), true, true)).toBeNull();
     });
 
     test('rewound into the last Action, then played past it: the Cursor leaves it for the end', () => {

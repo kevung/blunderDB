@@ -278,6 +278,23 @@ describe('on an existing decision, the arrows follow the line pointed at', () =>
     });
 });
 
+describe('a gesture on the list takes the line back from the pointer', () => {
+    test('`k` at the top of the list, the selection unchanged, redraws the selected line', async () => {
+        const { container } = await cursorBack(1);
+        await fireEvent.keyDown(document, { code: 'KeyJ', key: 'j' });
+        await settle();
+        const row = /** @type {HTMLElement} */ (container.querySelector('tr[data-move="6/3 6/5"]'));
+        await fireEvent.mouseEnter(row);
+        await settle();
+        expect(get(transcriptionArrowsStore)).toMatchObject({ notation: '6/3 6/5' });
+
+        await fireEvent.keyDown(document, { code: 'KeyK', key: 'k' });
+        await settle();
+        expect(get(transcriptionKeyStore).selected).toBe(0);
+        expect(get(transcriptionArrowsStore)).toMatchObject({ tone: 'engine', notation: '13/10 6/5' });
+    });
+});
+
 describe('in Édition, a new roll draws nothing until a line is pointed at', () => {
     // Action 0 reopened (`e`) and its roll restarted as 31: no line is written for it yet.
     const reopened = () => ({ ...annotated(0), entry: { at: 0, replacing: true, side: 1, dice: [3, 1], selected: false, review: false } });

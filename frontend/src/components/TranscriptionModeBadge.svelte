@@ -3,13 +3,25 @@
     // sur celle du théâtre : la frappe change de sens selon la place du Cursor.
     import { t } from '../i18n';
 
-    /** @type {{ state: {mode: string, n: number, move: string, rolled: boolean} | null, dark?: boolean }} */
+    /** @type {{ state: {mode: string, n: number, move: string, rolled: boolean, phase?: string} | null, dark?: boolean }} */
     let { state: badge = null, dark = false } = $props();
 
     let label = $derived(!badge ? '' : badge.mode === 'edit' ? $t('transcription.mode.edit', { n: badge.n }) : $t('transcription.mode.entry'));
     let enter = $derived(badge?.move ? $t('transcription.modeEnter', { move: badge.move }) : '');
+    // Le sens des chiffres suit la phase : sans dés à la réponse au videau, le second dé
+    // d'un jet commencé, puis le mode.
     let digits = $derived(
-        !badge ? '' : badge.mode === 'edit' ? $t('transcription.modeDigits.edit', { n: badge.n }) : badge.rolled ? $t('transcription.modeDigits.entry') : $t('transcription.modeDigits.roll')
+        !badge
+            ? ''
+            : badge.phase === 'answer'
+              ? $t('transcription.modeDigits.answer')
+              : badge.phase === 'die1'
+                ? $t('transcription.modeDigits.die1')
+                : badge.mode === 'edit'
+                  ? $t('transcription.modeDigits.edit', { n: badge.n })
+                  : badge.rolled
+                    ? $t('transcription.modeDigits.entry')
+                    : $t('transcription.modeDigits.roll')
     );
 </script>
 

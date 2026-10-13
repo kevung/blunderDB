@@ -38,7 +38,15 @@ import { LegalMoves, EvaluatePositionImmediate } from '../../wailsjs/go/gui/App.
 
 import TranscriptionPanel from '../components/TranscriptionPanel.svelte';
 import { get } from 'svelte/store';
-import { transcriptionListStore, transcriptionStore, transcriptionHistoryStore, transcriptionNoticeStore, transcriptionPromptStore, clearTranscription } from '../stores/transcriptionStore.js';
+import {
+    transcriptionListStore,
+    transcriptionStore,
+    transcriptionKeyStore,
+    transcriptionHistoryStore,
+    transcriptionNoticeStore,
+    transcriptionPromptStore,
+    clearTranscription
+} from '../stores/transcriptionStore.js';
 import { selectedMoveStore } from '../stores/analysisStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { activeTabStore, statusBarModeStore } from '../stores/uiStore.js';
@@ -270,6 +278,53 @@ describe('Saisie et décision existante (ADR-0092)', () => {
             { Kind: 'enter_die', Die: 4 },
             { Kind: 'enter_die', Die: 1 }
         ]);
+    });
+
+    test('un premier dé tapé : les chiffres complètent le jet', async () => {
+        await openedPanel(annotated({ cursor: 3 }));
+        await press('Digit4');
+        await tick();
+        expect(badge().textContent).toContain('digits: complete the roll');
+    });
+
+    test('une offre de videau en attente : les chiffres ne donnent pas de dés', async () => {
+        const ann = annotated({ cursor: 3 });
+        ann.next = { ...ann.next, expects: 'take' };
+        await openedPanel(ann);
+        expect(badge().textContent).toContain('no dice: answer the cube');
+        expect(badge().textContent).not.toContain('digits: roll');
+    });
+
+    test('un jet tapé sur une insertion qui clôt une partie : le clavier suit le jet neuf, jamais l’ancien', async () => {
+        /** @type {any} */ (ApplyTranscriptionGesture).mockImplementation(() => Promise.resolve(state(annotated({ cursor: 3 }))));
+        /** @type {any} */ (LegalMoves).mockResolvedValue([{ notation: '24/18 13/10' }, { notation: '13/7 13/10' }]);
+        /** @type {any} */ (EvaluatePositionImmediate).mockResolvedValue({
+            moves: [
+                { index: 0, move: '24/18 13/10', equity: 0.1 },
+                { index: 1, move: '13/7 13/10', equity: 0.05, equityError: 0.05 }
+            ]
+        });
+        await openedPanel(annotated({ cursor: 3 }));
+        await press('Digit6');
+        await press('Digit3');
+        await tick();
+        await vi.waitFor(() => expect(get(transcriptionKeyStore).phase).toBe('roll'));
+        // Le lot [valider, dé] crée une entrée de remplacement sur la décision suivante.
+        /** @type {any} */ (ApplyTranscriptionGesture).mockImplementation(() =>
+            Promise.resolve(state(annotated({ cursor: 0, entry: { at: 0, kind: 'checker', replacing: true, side: 0, dice: [4, 0], selected: false, review: false } })))
+        );
+        await press('Digit4');
+        await vi.waitFor(() =>
+            expect(
+                gestures()
+                    .map((/** @type {any} */ g) => g.Kind)
+                    .slice(-2)
+            ).toEqual(['validate', 'enter_die'])
+        );
+        await new Promise((resolve) => setTimeout(resolve, 50));
+        await tick();
+        expect(get(transcriptionKeyStore).phase).toBe('die1');
+        expect(get(transcriptionKeyStore).dice).toEqual([4, 0]);
     });
 
     test('`e` ouvre le champ « dés: coup »', async () => {

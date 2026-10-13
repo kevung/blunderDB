@@ -1519,6 +1519,8 @@
         },
         "modeEnter": "Entrée : valider {move}",
         "modeDigits": {
+            "die1": "chiffres : compléter le jet",
+            "answer": "pas de dés : répondre au videau",
             "entry": "chiffres : valider et jet suivant",
             "roll": "chiffres : jet",
             "edit": "chiffres : retaper les dés du {n}"
