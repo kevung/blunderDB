@@ -181,8 +181,8 @@ describe('VideoPane', () => {
         afterEach(() => vi.useRealTimers());
 
         /** @returns {Promise<{ container: HTMLElement, component: any, video: HTMLVideoElement }>} */
-        async function open() {
-            const { container, component } = render(VideoPane, { props: { source: '/v/round2.webm' } });
+        async function open(extra = {}) {
+            const { container, component } = render(VideoPane, { props: { source: '/v/round2.webm', ...extra } });
             const video = /** @type {HTMLVideoElement} */ (await vi.waitFor(() => container.querySelector('video') ?? expect.fail('no video')));
             return { container, component, video };
         }
@@ -212,17 +212,15 @@ describe('VideoPane', () => {
             expect(el.plays).toBe(1);
         });
 
-        test('a paused seek that never lands comes back paused', async () => {
-            const { component, video } = await open();
+        test('a paused seek that never lands is never reloaded, only asked again once', async () => {
+            const { container, video } = await open({ startMs: 90000 });
             const el = drive(video);
             await fireEvent(video, new Event('loadedmetadata'));
-            el.seeking = false;
-            component.seek(90000);
-            vi.advanceTimersByTime(4000);
-            expect(el.loads).toBe(1);
-            await fireEvent(video, new Event('loadedmetadata'));
-            expect(el.applied).toEqual([90, 90]);
-            expect(el.plays).toBe(0);
+            vi.advanceTimersByTime(40000);
+            expect(el.loads).toBe(0);
+            expect(container.querySelector('[data-testid="video-retry"]')).toBeNull();
+            expect(container.querySelector('.video-pane')?.getAttribute('data-status')).toBe('ready');
+            expect(el.applied.length).toBeLessThanOrEqual(3);
         });
 
         test('playback frozen on one instant reloads there; playback that moves, or a pause, does not', async () => {
@@ -298,6 +296,7 @@ describe('VideoPane', () => {
             const el = drive(video);
             await fireEvent(video, new Event('loadedmetadata'));
             el.seeking = false;
+            el.paused = false;
             component.seek(5000);
             vi.advanceTimersByTime(3500);
             expect(el.loads).toBe(1);
@@ -364,22 +363,6 @@ describe('VideoPane', () => {
             await fireEvent(video, new Event('loadedmetadata'));
             flushSync();
             expect(container.querySelector('.video-pane')?.getAttribute('data-status')).toBe('error');
-        });
-
-        test('a paused seek that lands after a reload starts the count afresh', async () => {
-            const { component, video } = await open();
-            const el = drive(video);
-            await fireEvent(video, new Event('loadedmetadata'));
-            el.seeking = false;
-            component.seek(90000);
-            vi.advanceTimersByTime(3500);
-            expect(el.loads).toBe(1);
-            await fireEvent(video, new Event('loadedmetadata'));
-            await land(video, el);
-            component.seek(120000);
-            // Counted afresh: 3 s, not the 6 s a second reload in a row would wait.
-            vi.advanceTimersByTime(3500);
-            expect(el.loads).toBe(2);
         });
 
         test('a reload never unmutes a muted video, through the speed it puts back', async () => {
