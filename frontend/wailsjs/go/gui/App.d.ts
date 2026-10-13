@@ -40,6 +40,8 @@ export function CancelRollout():Promise<void>;
 
 export function CheckForUpdate():Promise<gui.UpdateCheckResult>;
 
+export function CheckVideoMux(arg1:string):Promise<gui.VideoMuxReport>;
+
 export function CollectImportableFiles(arg1:string):Promise<Array<string>>;
 
 export function ComputeCubeMatrix(arg1:domain.Position,arg2:number,arg3:number,arg4:number):Promise<gammonnet.CubeMatrix>;

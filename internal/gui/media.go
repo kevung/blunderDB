@@ -15,11 +15,14 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	goruntime "runtime"
 	"strings"
 	"sync"
 	"time"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/videomux"
 )
 
 // mediaHost serves the videos of the open panes from a loopback HTTP server
@@ -301,6 +304,67 @@ func (a *App) PickTranscriptionVideo() (string, error) {
 // MediaURL registers a video file and returns its loopback URL; the error
 // (missing file) is what lets the frontend offer to relocate it.
 func (a *App) MediaURL(path string) (string, error) { return a.media.register(path) }
+
+// VideoMuxReport says whether seeks into a local Matroska/WebM video will land in WebKitGTK.
+// Command, the ffmpeg remux that repairs the file, is set for every .webm/.mkv path, so the
+// player can offer it when it gives up even if the check could not run.
+type VideoMuxReport struct {
+	Checked bool `json:"checked"`
+	// Faulty lists, in seconds, the starts of the clusters a seek lands on that open with a
+	// delta frame.
+	Faulty  []float64 `json:"faulty"`
+	Command string    `json:"command"`
+}
+
+type muxKey struct {
+	path  string
+	size  int64
+	mtime time.Time
+}
+
+var (
+	muxMu    sync.Mutex
+	muxCache = map[muxKey]VideoMuxReport{}
+)
+
+// CheckVideoMux examines a local .webm/.mkv video as it is attached: a few kilobytes per
+// cluster, the result kept for as long as the file is unchanged. Any other source gets an
+// empty report.
+func (a *App) CheckVideoMux(path string) VideoMuxReport {
+	if !videomux.IsMatroskaPath(path) || a.VideoSourceKind(path) != "file" {
+		return VideoMuxReport{}
+	}
+	abs, err := filepath.Abs(path)
+	if err != nil {
+		abs = path
+	}
+	rep := VideoMuxReport{Command: videomux.RemuxCommand(abs, goruntime.GOOS)}
+	st, err := os.Stat(abs)
+	if err != nil {
+		return rep
+	}
+	key := muxKey{abs, st.Size(), st.ModTime()}
+	muxMu.Lock()
+	cached, ok := muxCache[key]
+	muxMu.Unlock()
+	if ok {
+		return cached
+	}
+	found, err := videomux.CheckFile(context.Background(), abs)
+	if err != nil {
+		return rep
+	}
+	rep.Checked = true
+	for _, d := range found.Faulty {
+		rep.Faulty = append(rep.Faulty, d.Seconds())
+	}
+	if !found.Partial {
+		muxMu.Lock()
+		muxCache[key] = rep
+		muxMu.Unlock()
+	}
+	return rep
+}
 
 // VideoSourceKind classifies a stored source: "file", "youtube", "url" or "".
 func (a *App) VideoSourceKind(source string) string {

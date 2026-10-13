@@ -199,3 +199,25 @@ func TestYouTubeWatchURL(t *testing.T) {
 		}
 	}
 }
+
+func TestCheckVideoMux(t *testing.T) {
+	a := &App{}
+	rep := a.CheckVideoMux("../../pkg/blunderdb/videomux/testdata/delta-cluster.webm")
+	if !rep.Checked || len(rep.Faulty) != 1 {
+		t.Errorf("report = %+v, want one faulty cluster", rep)
+	}
+	if !strings.Contains(rep.Command, "-cluster_time_limit 30000") || !strings.Contains(rep.Command, "delta-cluster.remux.webm") {
+		t.Errorf("command = %q", rep.Command)
+	}
+	if again := a.CheckVideoMux("../../pkg/blunderdb/videomux/testdata/delta-cluster.webm"); len(again.Faulty) != 1 {
+		t.Errorf("cached report = %+v", again)
+	}
+	for _, src := range []string{newMediaFile(t, "v.mp4", 10), "https://example.org/v.webm"} {
+		if got := a.CheckVideoMux(src); got.Command != "" || got.Checked {
+			t.Errorf("CheckVideoMux(%q) = %+v, want nothing", src, got)
+		}
+	}
+	if got := a.CheckVideoMux(newMediaFile(t, "broken.mkv", 100)); got.Checked || got.Command == "" {
+		t.Errorf("unreadable mkv: report = %+v, want the command only", got)
+	}
+}
