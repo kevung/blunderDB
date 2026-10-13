@@ -5,7 +5,7 @@
     // the bottom, and a tooltip that stays whole inside the plot whatever its
     // width. The marks and the tooltip's text are the caller's.
     import { t } from '../i18n';
-    import { gameSpans, indexAt, stepIndex } from '../utils/chartAxis.js';
+    import { gameSpans, indexAt, stepIndex, visibleIndices } from '../utils/chartAxis.js';
     import { placeTip } from '../utils/chartTip.js';
     import { trackSize } from '../utils/trackWidth.js';
 
@@ -17,6 +17,7 @@
      *   minHeight: number,
      *   movePositions: any[],
      *   ticks: { at: number, text: string }[],
+     *   shown?: [boolean, boolean],
      *   focus: number | null,
      *   onfocus: (index: number | null) => void,
      *   onselect: (index: number) => void,
@@ -26,7 +27,7 @@
      * }} Props
      */
     /** @type {Props} */
-    let { testid, title, label, minHeight, movePositions, ticks, focus, onfocus, onselect, legend, marks, tip } = $props();
+    let { testid, title, label, minHeight, movePositions, ticks, shown = [true, true], focus, onfocus, onselect, legend, marks, tip } = $props();
 
     // Drawn at the plot's pixel size, so a dot stays round: the width is the
     // sheet's, the height what the Charts tab gives this chart, never below
@@ -35,6 +36,8 @@
     let plotHeight = $state(0);
     let W = $derived(Math.max(160, Math.round(plotWidth) || 320));
     let H = $derived(Math.max(minHeight, Math.round(plotHeight) || 0));
+    // Pointer and keys answer to the decisions of the players shown only.
+    let visible = $derived(visibleIndices(movePositions, shown));
     let n = $derived(Math.max(1, movePositions.length));
     let slot = $derived(W / n);
     // Short game names only where the stretch is wide enough to hold one.
@@ -77,7 +80,7 @@
         const r = /** @type {HTMLElement} */ (e.currentTarget).getBoundingClientRect();
         active = true;
         pointer = { x: toCssPx(e.clientX - r.left), y: toCssPx(e.clientY - r.top) };
-        onfocus(indexAt(e, movePositions.length));
+        onfocus(indexAt(e, movePositions.length, visible));
     }
 
     function leave() {
@@ -88,7 +91,7 @@
 
     /** @param {KeyboardEvent} e */
     function onKey(e) {
-        const next = stepIndex(e.key, focus, movePositions.length);
+        const next = stepIndex(e.key, focus, movePositions.length, visible);
         if (next !== null) {
             e.preventDefault();
             active = true;
@@ -131,7 +134,7 @@
             }}
             onmousemove={onMove}
             onmouseleave={leave}
-            onclick={(e) => onselect(indexAt(e, movePositions.length))}
+            onclick={(e) => onselect(indexAt(e, movePositions.length, visible))}
             onkeydown={onKey}
             onblur={leave}
         >

@@ -44,9 +44,8 @@
     import CountLink from './panels/CountLink.svelte';
     import { loadPositionsFromSelection } from '../services/positionLoader.js';
     import { exportMatchMat } from '../services/exportService.js';
-    import MatchTimes from './MatchTimes.svelte';
+    import MatchCharts from './MatchCharts.svelte';
     import { fmtLoss, sortByLoss } from '../utils/decisionLoss.js';
-    import MatchLosses from './MatchLosses.svelte';
     import MatchReview from './MatchReview.svelte';
     import MatchReviewDetails from './MatchReviewDetails.svelte';
     import MatchDetailHeader from './MatchDetailHeader.svelte';
@@ -1399,18 +1398,9 @@
                 <!-- Every tab stays mounted: a tab shown again keeps its scroll and its open games. -->
                 <div class="tab-panel match-charts" role="tabpanel" id="match-tabpanel-charts" aria-labelledby="match-tab-charts" hidden={currentTab !== 'charts'}>
                     {#if !loadingDetail}
-                        {#if detailTimes}
-                            <MatchTimes
-                                summary={detailTimes}
-                                movePositions={detailMovePositions}
-                                player1={detailMatch.player1_name}
-                                player2={detailMatch.player2_name}
-                                hovered={hoveredMove}
-                                onhover={(id) => (hoveredMove = id)}
-                                onselect={jumpToMove}
-                            />
-                        {/if}
-                        <MatchLosses
+                        <MatchCharts
+                            matchId={detailMatch.id}
+                            times={detailTimes}
                             losses={detailLosses}
                             movePositions={detailMovePositions}
                             player1={detailMatch.player1_name}

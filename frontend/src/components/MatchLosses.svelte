@@ -7,9 +7,10 @@
     import { t } from '../i18n';
     import { fmtLoss, lossSeries, niceCeil } from '../utils/decisionLoss.js';
     import MatchChart from './MatchChart.svelte';
+    import PlayerToggle from './PlayerToggle.svelte';
 
-    /** @type {{ losses: any[] | null, movePositions: any[], player1: string, player2: string, hovered?: number | null, onhover?: (moveId: number | null) => void, onselect?: (index: number) => void }} */
-    let { losses, movePositions, player1, player2, hovered = null, onhover = () => {}, onselect = () => {} } = $props();
+    /** @type {{ losses: any[] | null, movePositions: any[], player1: string, player2: string, hovered?: number | null, onhover?: (moveId: number | null) => void, onselect?: (index: number) => void, shown?: [boolean, boolean], ontoggle?: (p: 0 | 1) => void }} */
+    let { losses, movePositions, player1, player2, hovered = null, onhover = () => {}, onselect = () => {}, shown = [true, true], ontoggle = () => {} } = $props();
 
     // The least height a plot keeps; the Charts tab shares the rest of its height out.
     const MIN_H = 140;
@@ -51,19 +52,23 @@
             label={$t('match.lossChart')}
             minHeight={MIN_H}
             {movePositions}
+            {shown}
             ticks={ticks(peak)}
             focus={hover}
             onfocus={setHover}
             {onselect}
         >
             {#snippet legend()}
-                <span><span class="key bar-key player1"></span>{names[0]}</span>
-                <span><span class="key bar-key player2"></span>{names[1]}</span>
+                {#each [0, 1] as p (p)}
+                    <PlayerToggle pressed={shown[p]} locked={shown[p] && !shown[1 - p]} ontoggle={() => ontoggle(/** @type {0 | 1} */ (p))}>
+                        <span class="key bar-key" class:player1={p === 0} class:player2={p === 1}></span>{names[p]}
+                    </PlayerToggle>
+                {/each}
                 <span title={$t('match.difficultyColTooltip')}><span class="key tick-key"></span>{$t('match.legendDifficulty')}</span>
                 <span><span class="key dot-key"></span>{$t('match.avoidable')}</span>
             {/snippet}
             {#snippet marks({ slot, H })}
-                {#each series.items as d (d.index)}
+                {#each series.items.filter((d) => shown[d.player]) as d (d.index)}
                     {#if d.loss === null}
                         <rect class="unscored" x={d.index * slot} y={H - 1.5} width={Math.max(1, slot - 0.5)} height="1.5" />
                     {:else if d.loss > 0}
@@ -98,17 +103,21 @@
             label={$t('match.lossChart')}
             minHeight={MIN_H}
             {movePositions}
+            {shown}
             ticks={ticks(cumPeak)}
             focus={hover}
             onfocus={setHover}
             {onselect}
         >
             {#snippet legend()}
-                <span><svg class="line-key" viewBox="0 0 22 6"><line class="line player1" x1="1" y1="3" x2="21" y2="3" /></svg>{names[0]}</span>
-                <span><svg class="line-key" viewBox="0 0 22 6"><line class="line player2" x1="1" y1="3" x2="21" y2="3" /></svg>{names[1]}</span>
+                {#each [0, 1] as p (p)}
+                    <PlayerToggle pressed={shown[p]} locked={shown[p] && !shown[1 - p]} ontoggle={() => ontoggle(/** @type {0 | 1} */ (p))}>
+                        <svg class="line-key" viewBox="0 0 22 6"><line class="line" class:player1={p === 0} class:player2={p === 1} x1="1" y1="3" x2="21" y2="3" /></svg>{names[p]}
+                    </PlayerToggle>
+                {/each}
             {/snippet}
             {#snippet marks({ slot, H })}
-                {#each [0, 1] as p (p)}
+                {#each [0, 1].filter((p) => shown[p]) as p (p)}
                     {@const pts = series.items.filter((d) => d.player === p).map((d) => ({ x: (d.index + 0.5) * slot, y: cumY(d.cum, H) }))}
                     {#if pts.length > 0}
                         {@const end = pts[pts.length - 1]}
