@@ -966,6 +966,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/positions.explain — JSON."
         return self._call("/v1/positions.explain", payload)
 
+    def positions_from_image(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/positions.fromImage — hand-written handler — see openapi.yaml."
+        return self._call("/v1/positions.fromImage", payload)
+
     def positions_from_ogid(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/positions.fromOGID — JSON."
         return self._call("/v1/positions.fromOGID", payload)

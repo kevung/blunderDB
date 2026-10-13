@@ -271,6 +271,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/positions.epc                        JSON
      POST /v1/positions.exists                     JSON
      POST /v1/positions.explain                    JSON
+     POST /v1/positions.fromImage                  custom
      POST /v1/positions.fromOGID                   JSON
      POST /v1/positions.fromXGID                   JSON
      POST /v1/positions.fromXGP                    JSON
