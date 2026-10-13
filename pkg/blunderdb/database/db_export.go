@@ -143,6 +143,8 @@ func (d *Database) exportPlan(ctx context.Context, opts ExportOptions) (ingest.E
 			sel.MatchIDs = reached
 		}
 	}
+	// A tournament chosen carries its matches, whatever the matches family says.
+	sel.TournamentMatches = len(sel.TournamentIDs) > 0
 	sel.DeckIDs, sel.DeckPositions = opts.DeckIDs, len(opts.DeckIDs) > 0
 	if opts.IncludeLessons {
 		sel.LessonIDs = opts.LessonIDs
@@ -168,6 +170,8 @@ func wholeLibraryPlan(opts ExportOptions) ingest.ExportOptions {
 	sel.AllMatches, sel.MatchIDs = narrow(opts.IncludeMatches, opts.MatchIDs)
 	sel.AllCollections, sel.CollectionIDs = narrow(opts.IncludeCollections, opts.CollectionIDs)
 	sel.AllTournaments, sel.TournamentIDs = narrow(opts.IncludeTournaments, opts.TournamentIDs)
+	// A tournament chosen carries its matches, whatever the matches family says.
+	sel.TournamentMatches = sel.AllTournaments || len(sel.TournamentIDs) > 0
 	sel.AllLessons, sel.LessonIDs = narrow(opts.IncludeLessons, opts.LessonIDs)
 	sel.LessonContents = opts.IncludeLessons
 	plan.AnkiDecks, sel.DeckIDs = narrow(opts.IncludeAnkiDecks, opts.DeckIDs)
