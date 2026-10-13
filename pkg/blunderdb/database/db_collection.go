@@ -6,7 +6,6 @@ import (
 	"iter"
 	"strings"
 
-	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/searchquery"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -431,37 +430,6 @@ func (d *Database) GetPositionCollections(positionID int64) ([]Collection, error
 		return nil, err
 	}
 	return collectCollections(cs.CollectionsOf(context.Background(), "", positionID))
-}
-
-// ExportCollections exports specific collections, and the positions they
-// hold, to a database file. watermark and watermarkNote mirror
-// ExportDatabase's Watermark/WatermarkNote: an empty watermark means the
-// export carries none.
-func (d *Database) ExportCollections(exportPath string, collectionIDs []int64, metadata map[string]string, includeAnalysis bool, includeComments bool, watermark string, watermarkNote string) error {
-	d.mu.Lock()
-	defer d.mu.Unlock()
-
-	if d.db == nil {
-		return fmt.Errorf("no database is currently open")
-	}
-
-	watermarkDocument, err := sealWatermark(watermark, watermarkNote)
-	if err != nil {
-		return fmt.Errorf("cannot sign the watermark: %w", err)
-	}
-
-	_, err = ingest.ExportSQLite(context.Background(), d.store, "", exportPath, ingest.ExportOptions{
-		Format: ingest.FormatSQLite,
-		Selection: ingest.Selection{
-			CollectionIDs:       collectionIDs,
-			CollectionPositions: true,
-		},
-		Analysis:  includeAnalysis,
-		Comments:  includeComments,
-		Metadata:  metadata,
-		Watermark: watermarkDocument,
-	})
-	return err
 }
 
 // CollectionCoverage reports, for every collection, how many of its positions are part of

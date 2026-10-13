@@ -544,22 +544,26 @@ func (cli *CLI) runCollectionDelete(args []string) error {
 
 // ── export ───────────────────────────────────────────────────────────────────
 
-// runCollectionExport writes the positions of one or more collections to a
-// new database file through Database.ExportCollections — the same call the
-// GUI's collection export dialog makes, so the file carries the collections'
-// membership, the analyses and comments asked for, and a watermark when the
-// producer marks it (see the export command and ADR-0007).
+// runCollectionExport writes one or more collections to a new database file through
+// Database.ExportDatabase, the exporter behind `export --type database` and the GUI's export
+// dialog: the file carries the collections' membership and positions, the matches those
+// positions were played in with their transcription drafts and aliases, and the producer's
+// watermark and password (see the export command and ADR-0007).
 func (cli *CLI) runCollectionExport(args []string) error {
 	fs, dbPath := collectionFlagSet("export", "Export one or more collections to a new database file.",
 		"blunderdb collection export --db database.db --id 3 --out openings.db",
 		"blunderdb collection export --db database.db --id 3,4 --out openings.db --comments=false",
-		"blunderdb collection export --db database.db --id 3 --out cours.db --watermark \"Cours du 12 mars\"")
+		"blunderdb collection export --db database.db --id 3 --out cours.db --watermark \"Cours du 12 mars\" --password secret")
 	ids := fs.String("id", "", "Collection ID(s) to export, comma-separated (required)")
 	out := fs.String("out", "", "Path of the database file to write (required)")
 	includeAnalysis := fs.Bool("analysis", true, "Include analyses")
 	includeComments := fs.Bool("comments", true, "Include comments")
+	includeMatches := fs.Bool("matches", true, "Include the matches the collections' positions were played in")
+	includeTranscriptions := fs.Bool("transcriptions", true, "Include the transcription drafts of the exported matches")
+	includeAliases := fs.Bool("aliases", true, "Include the player and event aliases the exported matches write")
 	watermark := fs.String("watermark", "", "Mark the exported file with where it comes from")
 	watermarkNote := fs.String("watermark-note", "", "Free text attached to the watermark (terms of use, contact)")
+	password := fs.String("password", "", "Protect the exported file with a password (produces a .dbx container)")
 	if err := cli.collectionOpen(fs, dbPath, args); err != nil {
 		return err
 	}
@@ -578,27 +582,38 @@ func (cli *CLI) runCollectionExport(args []string) error {
 	if len(collectionIDs) == 0 {
 		return fmt.Errorf("missing required flag: --id")
 	}
+	// The matches a collection reaches are those its positions were played in; the exporter
+	// finds them from the positions' ids, so a collection's members are listed here.
+	var positionIDs []int64
 	for _, id := range collectionIDs {
 		if c, err := cli.db.GetCollectionByID(id); err != nil || c == nil {
 			return fmt.Errorf("collection with ID %d not found", id)
 		}
+		positions, err := cli.db.GetCollectionPositions(id)
+		if err != nil {
+			return fmt.Errorf("failed to read collection %d: %w", id, err)
+		}
+		for _, p := range positions {
+			positionIDs = append(positionIDs, p.ID)
+		}
 	}
 
-	metadata := make(map[string]string)
-	if version, err := cli.db.GetDatabaseVersion(); err == nil {
-		metadata["database_version"] = version
+	opts := ExportOptions{
+		ExportPath:                 *out,
+		PositionIDs:                positionIDs,
+		IncludeAnalysis:            *includeAnalysis,
+		IncludeComments:            *includeComments,
+		IncludePlayedMoves:         true,
+		IncludeMatches:             *includeMatches,
+		IncludeTranscriptions:      *includeTranscriptions,
+		IncludeAliases:             *includeAliases,
+		IncludeCollections:         true,
+		CollectionIDs:              collectionIDs,
+		IncludeCollectionPositions: true,
 	}
-
+	marking := exportMarking{watermark: *watermark, note: *watermarkNote, password: *password}
 	fmt.Printf("Exporting %d collection(s) to: %s\n", len(collectionIDs), *out)
-	if err := cli.db.ExportCollections(*out, collectionIDs, metadata, *includeAnalysis, *includeComments, *watermark, *watermarkNote); err != nil {
-		return fmt.Errorf("failed to export collections: %w", err)
-	}
-	if info, err := os.Stat(*out); err == nil {
-		fmt.Printf("Successfully exported collections (%d bytes)\n", info.Size())
-	} else {
-		fmt.Println("Successfully exported collections")
-	}
-	return nil
+	return cli.exportDatabaseWithOptions(opts, marking, true)
 }
 
 // xgidOf renders a Position as an XGID when no imported analysis carries one:

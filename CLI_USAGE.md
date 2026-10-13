@@ -2542,6 +2542,8 @@ Usage: blunderdb collection export [options]
 Export one or more collections to a new database file.
 
 Options:
+  -aliases
+    	Include the player and event aliases the exported matches write (default true)
   -analysis
     	Include analyses (default true)
   -comments
@@ -2550,8 +2552,14 @@ Options:
     	Path to the database file (required)
   -id string
     	Collection ID(s) to export, comma-separated (required)
+  -matches
+    	Include the matches the collections' positions were played in (default true)
   -out string
     	Path of the database file to write (required)
+  -password string
+    	Protect the exported file with a password (produces a .dbx container)
+  -transcriptions
+    	Include the transcription drafts of the exported matches (default true)
   -watermark string
     	Mark the exported file with where it comes from
   -watermark-note string
@@ -2560,7 +2568,7 @@ Options:
 Examples:
   blunderdb collection export --db database.db --id 3 --out openings.db
   blunderdb collection export --db database.db --id 3,4 --out openings.db --comments=false
-  blunderdb collection export --db database.db --id 3 --out cours.db --watermark "Cours du 12 mars"
+  blunderdb collection export --db database.db --id 3 --out cours.db --watermark "Cours du 12 mars" --password secret
 ```
 
 ### `blunderdb collection filter`

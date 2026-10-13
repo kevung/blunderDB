@@ -1094,10 +1094,14 @@ ou ``csv``, comme ``list``.
 * ``delete --id <id> [--confirm]`` — Supprime une collection ; ses positions
   restent dans la base.
 * ``export --id <id[,id…]> --out <fichier.db> [--analysis=false]
-  [--comments=false] [--watermark <texte>] [--watermark-note <texte>]`` —
-  Exporte une ou plusieurs collections vers un nouveau fichier de base, par
-  le même appel que la fenêtre d'export de l'interface graphique (voir la
-  commande ``export`` pour le filigrane).
+  [--comments=false] [--matches=false] [--transcriptions=false]
+  [--aliases=false] [--watermark <texte>] [--watermark-note <texte>]
+  [--password <mot de passe>]`` — Exporte une ou plusieurs collections vers
+  un nouveau fichier de base, par le même exporteur que la fenêtre d'export
+  de l'interface graphique et que ``export --type database`` : le fichier
+  emporte aussi les matchs où se sont jouées les positions, avec leurs
+  transcriptions et les alias de leurs joueurs et événements (voir la
+  commande ``export`` pour le filigrane et le mot de passe).
 * ``suggest [--player <nom>] [--match <ids>] [--tournament <ids>] [--from
   <date>] [--to <date>] [--decision-type all|checker|cube] [--size <n>]
   [--collection <nom>] [--deck <nom>] [--format text|json]`` — Propose des
