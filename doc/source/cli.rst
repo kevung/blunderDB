@@ -1849,10 +1849,15 @@ illisibles.
 * ``--format`` — Format de sortie : ``text``, ``json`` ou ``xgid`` (défaut : ``text``).
 * ``--db`` et ``--save`` — Enregistre la position dans la base comme position
   individuelle.
-* ``--force`` — Enregistre même quand la lecture comporte des doutes ou ne
-  montre pas le score ou le camp au trait. Sans lui, ``--save`` refuse : le
-  score non lu serait enregistré comme partie d'argent et le trait comme une
-  supposition.
+* ``--score`` — Le score, que la capture ne montre pas : ``money``, ou les
+  scores Away des deux joueurs, celui du joueur 1 (en bas) d'abord, par exemple
+  ``2a/5a``.
+* ``--turn`` — Le camp au trait, ``1`` (en bas) ou ``2`` (en haut), quand aucun
+  dé ne le montre.
+* ``--force`` — Enregistre malgré les doutes de la lecture, une fois le plateau
+  vérifié. Il ne remplace ni ``--score`` ni ``--turn`` : ``--save`` refuse tant
+  que le score, ou le trait sans dés, n'est pas fourni, et nomme l'option qui
+  manque.
 
 **Exemples:**
 
@@ -1860,7 +1865,8 @@ illisibles.
 
    ./blunderdb capture capture.png
    ./blunderdb capture --format xgid capture.png
-   ./blunderdb capture --db base.db --save capture.png
+   ./blunderdb capture --db base.db --save --score 2a/5a capture.png
+   ./blunderdb capture --db base.db --save --score money --turn 2 videau.png
 
 Le daemon offre la même lecture : ``POST /v1/positions.fromImage`` avec
 ``{"data": "<image en base64>"}``.

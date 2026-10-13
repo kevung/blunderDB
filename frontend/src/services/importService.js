@@ -1298,8 +1298,8 @@ export async function handleFileDrop(x, y, paths) {
     // A screen capture needs no database: it only lands on the scratch board.
     if (captures.length > 0) {
         const { importCaptureFile } = await import('./captureService.js');
-        const read = await importCaptureFile(captures[0]);
-        if (read && captures.length > 1) setStatusBarMessage(tMsg('status.captureOnlyFirst', { count: captures.length }));
+        // The images left unread are named in the reading's own status line, not over it.
+        await importCaptureFile(captures[0], captures.length - 1);
         if (dbFiles.length === 0 && importFiles.length === 0 && folders.length === 0) return;
     }
 

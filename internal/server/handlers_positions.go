@@ -51,6 +51,11 @@ type xgpReq struct {
 	Data string `json:"data"`
 }
 
+// captureSlots admits two capture readings at a time: at capture.MaxPixels
+// each holds about 290 MB, so the daemon never spends more than ~600 MB on
+// them; a third request waits for a slot or for its client to give up.
+var captureSlots = make(chan struct{}, 2)
+
 // imageReq carries a screen capture (PNG, JPEG or GIF), base64-encoded.
 type imageReq struct {
 	Data string `json:"data"`
@@ -195,13 +200,15 @@ func (s *Server) positionRoutes() []route {
 			if err != nil {
 				return capture.Reading{}, fmt.Errorf("%w: bad base64 data", storage.ErrInvalid)
 			}
-			if err := ctx.Err(); err != nil {
-				return capture.Reading{}, err
+			// A reading peaks near 35 bytes per pixel; bounding the
+			// concurrent ones bounds the daemon's memory whatever the load.
+			select {
+			case captureSlots <- struct{}{}:
+				defer func() { <-captureSlots }()
+			case <-ctx.Done():
+				return capture.Reading{}, ctx.Err()
 			}
 			rd, err := capture.Decode(raw)
-			if err == nil {
-				err = ctx.Err()
-			}
 			if err != nil {
 				return capture.Reading{}, fmt.Errorf("%w: %w", storage.ErrInvalid, err)
 			}

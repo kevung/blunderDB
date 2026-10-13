@@ -4226,9 +4226,10 @@ Dans un OGID, la partie Crawford se lit au ``C`` qui suit la longueur du match
 trois façons : coller l'image (*CTRL-V*), la glisser sur la fenêtre, ou l'ouvrir
 par *CTRL-I* (``.png``, ``.jpg``). Aucune base n'est nécessaire. La position lue
 arrive sur le plateau d'édition, et elle n'est qu'une proposition : les points et
-le videau dont la lecture n'est pas sûre sont cerclés d'orange, et ce qu'une
-capture ne montre jamais (le score, le camp au trait quand les dés sont cachés)
-est rappelé dans la barre d'état. Corrigez le plateau comme d'habitude, puis
+le videau dont la lecture n'est pas sûre sont cerclés d'orange ; un doute qui ne
+se cercle pas (le sens du plateau quand les numéros des points sont hors de
+l'image, des dés illisibles) et ce qu'une capture ne montre jamais (le score, le
+camp au trait quand les dés sont cachés) sont nommés dans la barre d'état. Corrigez le plateau comme d'habitude, puis
 enregistrez par le geste habituel : rien n'est enregistré avant. Une image où
 aucun plateau connu n'est reconnu est refusée, avec le motif dans la barre
 d'état. La même lecture existe en ligne de commande (``capture``).

@@ -151,10 +151,27 @@ export function tMsg(key, params) {
  */
 export function resolveStatusMessage(value, tfn) {
     if (value && typeof value === 'object' && value.i18nKey) {
-        return tfn(value.i18nKey, value.i18nParams);
+        return tfn(value.i18nKey, resolveParams(value.i18nParams, tfn));
     }
     // tMsg() always names a key, so what is left is a plain string or nothing.
     return /** @type {string | null | undefined} */ (value);
+}
+
+// A parameter may itself be a deferred message, or a list of them joined by commas: a status
+// line built from parts then re-translates as a whole on a language change.
+/**
+ * @param {Record<string, any> | null} params
+ * @param {Translate} tfn
+ * @returns {Record<string, any> | null}
+ */
+function resolveParams(params, tfn) {
+    if (!params) return params;
+    /** @param {any} v @returns {any} */
+    const one = (v) => (v && typeof v === 'object' && v.i18nKey ? resolveStatusMessage(v, tfn) : v);
+    /** @type {Record<string, any>} */
+    const out = {};
+    for (const [k, v] of Object.entries(params)) out[k] = Array.isArray(v) ? v.map(one).join(', ') : one(v);
+    return out;
 }
 
 // Change and persist the language. The dictionary is awaited before the store flips, so

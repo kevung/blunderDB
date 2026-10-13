@@ -36,6 +36,7 @@ const SRC = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 // Prefixes of keys built at runtime by string concatenation, so no literal scan can ever see
 // the full leaf key used. Every subkey under one of these is assumed live.
 const DYNAMIC_PREFIXES = [
+    'status.captureField.', // services/captureService.js: the field name Go's capture reading sends
     'keyNames.', // utils/keyNames.js: t(`keyNames.${key}`)
     'maintenance.line_', // MaintenanceSettings.svelte, StatusBar.svelte: the line's kind Go sends
     'maintenance.hint_', // MaintenanceSettings.svelte: same

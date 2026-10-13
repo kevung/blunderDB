@@ -21,6 +21,10 @@ const { showCaptureOnBoard, importCaptureFile, importCaptureBlob, imageOfPaste, 
 const { statusBarModeStore } = await import('../stores/uiStore.js');
 const { captureDoubtsStore } = await import('../stores/captureStore.js');
 const { duelHoldsBoardStore } = await import('../stores/duelStore.js');
+const { translate, resolveStatusMessage } = await import('../i18n');
+
+/** The last status line, as the status bar shows it (English). */
+const shownStatus = () => resolveStatusMessage(setStatusBarMessage.mock.lastCall?.[0], translate);
 
 const reading = {
     position: { board: { points: [] } },
@@ -56,6 +60,25 @@ describe('a capture read onto the board', () => {
         statusBarModeStore.set('EVAL');
         await showCaptureOnBoard(reading);
         expect(enterEditMode).toHaveBeenCalledOnce();
+    });
+
+    test('a doubt the board cannot ring is named, not counted as ringed', async () => {
+        statusBarModeStore.set('EDIT');
+        await showCaptureOnBoard({ ...reading, unread: ['score', 'turn'], doubts: [{ field: 'orientation', point: 0, reason: 'x' }] });
+        expect(shownStatus()).toBe("Capture read onto the board (xg). To check, not ringed: the board's direction. Check it, set the score, the player on roll, then save.");
+    });
+
+    test('the ringed doubts are counted apart from the others', async () => {
+        statusBarModeStore.set('EDIT');
+        await showCaptureOnBoard({ ...reading, doubts: [...reading.doubts, { field: 'dice', point: 0, reason: 'x' }] });
+        expect(shownStatus()).toBe('Capture read onto the board (xg); 1 doubtful spot(s) ringed. To check, not ringed: the dice. Check it, set the score, then save.');
+    });
+
+    test('images dropped beyond the first are named after the reading, not over it', async () => {
+        ReadCaptureFile.mockResolvedValue(reading);
+        await importCaptureFile('/tmp/a.png', 2);
+        expect(setStatusBarMessage).toHaveBeenCalledOnce();
+        expect(shownStatus()).toBe('Capture read onto the board (xg); 1 doubtful spot(s) ringed. Check it, set the score, then save. 3 images dropped: only the first was read.');
     });
 
     test('nothing is saved: the reading only reaches the board', async () => {

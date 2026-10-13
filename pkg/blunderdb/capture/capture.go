@@ -8,6 +8,7 @@ import (
 	_ "image/gif"  // decoders for image.Decode
 	_ "image/jpeg" // a capture pasted from a browser is often JPEG
 	_ "image/png"
+	"slices"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
@@ -49,16 +50,33 @@ type Reading struct {
 	Doubts []Doubt  `json:"doubts"`
 }
 
+// SetScore settles the score a capture never shows: two Away scores, player
+// 1's first, or {-1, -1} for money play.
+func (rd *Reading) SetScore(score [2]int) {
+	rd.Position.Score = score
+	rd.Unread = slices.DeleteFunc(rd.Unread, func(f string) bool { return f == "score" })
+}
+
+// SetTurn settles the player on roll (domain.Black or domain.White). Dice on
+// the board already name it by their colour; the user's word still wins.
+func (rd *Reading) SetTurn(player int) {
+	rd.Position.PlayerOnRoll = player
+	rd.Unread = slices.DeleteFunc(rd.Unread, func(f string) bool { return f == "turn" })
+}
+
 // MinFit is the fit below which no board is deemed found.
 const MinFit = 0.6
 
 // ErrNoBoard says that no known board was found in the image.
 var ErrNoBoard = errors.New("no backgammon board recognised in the image")
 
-// MaxPixels bounds the image a reading will decode: a screen capture is at
-// most a few megapixels, and a small file can declare billions (a 4 KB PNG
-// of 6000x6000 takes over a gigabyte), so the size is checked on the header.
-const MaxPixels = 16_000_000
+// MaxPixels bounds the image a reading will decode, checked on the header
+// since a small file can declare billions (a 4 KB PNG of 6000x6000). A
+// reading holds about 35 bytes per pixel at its peak — the decoded image,
+// its RGB copy and three summed-area tables of int64 — so the bound is a
+// whole 4K screen (3840x2160), the largest capture a user takes in one
+// gesture, at about 290 MB; anything bigger is not a screen capture.
+const MaxPixels = 3840 * 2160
 
 // ErrTooLarge says that the image declares more than MaxPixels.
 var ErrTooLarge = errors.New("image too large to be a screen capture")

@@ -23,26 +23,42 @@ export function isCaptureFile(path) {
     return CAPTURE_EXTENSIONS.includes(ext);
 }
 
+// The doubts Board.svelte rings on the EDIT board; the others are named in the status line.
+const RINGED_FIELDS = new Set(['point', 'bar', 'cube']);
+
+/** @param {string[]} fields */
+const fieldNames = (fields) => fields.map((f) => tMsg(`status.captureField.${f}`));
+
 /**
  * Puts a reading on the EDIT board (entering EDIT unless a scratch board is already up).
  * @param {{ position: any, software?: string, doubts?: import('../stores/captureStore.js').CaptureDoubt[], unread?: string[] }} reading
+ * @param {number} [ignored] further images dropped with this one and not read
  */
-export async function showCaptureOnBoard(reading) {
+export async function showCaptureOnBoard(reading, ignored = 0) {
     // EDIT, not EVAL: only EDIT draws the doubts the status message announces.
     if (get(statusBarModeStore) !== 'EDIT') await enterEditMode();
     applyPositionToBoard(reading.position);
     const doubts = reading.doubts ?? [];
     captureDoubtsStore.set(doubts);
-    const unread = (reading.unread ?? []).join(', ');
-    const key = doubts.length > 0 ? 'status.captureOnBoardDoubts' : 'status.captureOnBoard';
-    setStatusBarMessage(tMsg(key, { software: reading.software ?? '', count: doubts.length, unread }));
+    const ringed = doubts.filter((d) => RINGED_FIELDS.has(d.field)).length;
+    const unsure = [...new Set(doubts.filter((d) => !RINGED_FIELDS.has(d.field)).map((d) => d.field))];
+    const key = ringed > 0 ? 'status.captureOnBoardDoubts' : 'status.captureOnBoard';
+    setStatusBarMessage(
+        tMsg(key, {
+            software: reading.software ?? '',
+            count: ringed,
+            unread: fieldNames(reading.unread ?? []),
+            unsure: unsure.length > 0 ? tMsg('status.captureUnsure', { fields: fieldNames(unsure) }) : '',
+            more: ignored > 0 ? tMsg('status.captureOnlyFirst', { count: ignored + 1 }) : ''
+        })
+    );
 }
 
-/** @param {() => Promise<any>} read */
-async function readOntoBoard(read) {
+/** @param {() => Promise<any>} read @param {number} [ignored] */
+async function readOntoBoard(read, ignored = 0) {
     if (get(duelHoldsBoardStore)) return false;
     try {
-        await showCaptureOnBoard(await read());
+        await showCaptureOnBoard(await read(), ignored);
         return true;
     } catch (error) {
         logger.error('could not read the capture:', error);
@@ -51,9 +67,12 @@ async function readOntoBoard(read) {
     }
 }
 
-/** @param {string} path an image file on disk */
-export function importCaptureFile(path) {
-    return readOntoBoard(() => ReadCaptureFile(path));
+/**
+ * @param {string} path an image file on disk
+ * @param {number} [ignored] further images dropped with it, named in the same status line
+ */
+export function importCaptureFile(path, ignored = 0) {
+    return readOntoBoard(() => ReadCaptureFile(path), ignored);
 }
 
 /** @param {Blob} blob an image from the clipboard */

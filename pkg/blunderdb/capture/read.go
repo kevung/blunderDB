@@ -248,22 +248,45 @@ func (t *theme) readBar(r *raster, g registration) (a, b int, doubt string) {
 // the wide labels lie at the far end from home. ok is false when the capture
 // shows no labels there.
 func (t *theme) readHomeSide(r *raster, g registration) (homeLeft, ok bool) {
+	// The band under the lower row crosses the frame's horizontal edges and
+	// the bar's vertical ones, so a pixel is ink only when it stands out from
+	// both its row and its column: against the band's mean, every column
+	// would hold an edge and look wide.
+	y0 := int(math.Max(0, g.y(t.fieldH)+0.2*g.p))
+	y1 := int(math.Min(float64(r.h), g.y(t.fieldH)+0.75*g.p))
+	xa := int(math.Max(0, g.x(t.colX(0))-0.5*g.p))
+	xb := int(math.Min(float64(r.w), g.x(t.colX(11))+0.5*g.p))
+	if y1-y0 < 2 || xb-xa < 12 {
+		return false, false
+	}
+	rowBg := make([]float64, y1-y0)
+	row := make([]float64, xb-xa)
+	for y := y0; y < y1; y++ {
+		for x := xa; x < xb; x++ {
+			row[x-xa] = luma(r.at(x, y))
+		}
+		slices.Sort(row)
+		rowBg[y-y0] = row[len(row)/2]
+	}
 	width := func(c int) float64 {
 		cx := g.x(t.colX(c))
-		y0, y1 := g.y(t.fieldH)+0.1*g.p, g.y(t.fieldH)+0.75*g.p
-		bg := luma(r.mean(cx-0.5*g.p, y0, cx+0.5*g.p, y1))
 		n := 0
-		for x := cx - 0.5*g.p; x < cx+0.5*g.p; x++ {
-			col := r.mean(x, y0, x+1, y1)
-			// A column crossing a glyph is darker or lighter than the strip.
-			lo, hi := 255.0, 0.0
-			for y := y0; y < y1; y++ {
-				l := luma(r.at(int(x), int(y)))
-				lo, hi = math.Min(lo, l), math.Max(hi, l)
+		col := make([]float64, y1-y0)
+		for x := int(cx - 0.35*g.p); x < int(cx+0.35*g.p); x++ {
+			if x < 0 || x >= r.w {
+				continue
 			}
-			_ = col
-			if bg-lo > 40 || hi-bg > 40 {
-				n++
+			for y := y0; y < y1; y++ {
+				col[y-y0] = luma(r.at(x, y))
+			}
+			colBg := slices.Clone(col)
+			slices.Sort(colBg)
+			for y := y0; y < y1; y++ {
+				l := col[y-y0]
+				if math.Abs(l-rowBg[y-y0]) > 40 && math.Abs(l-colBg[len(colBg)/2]) > 40 {
+					n++
+					break
+				}
 			}
 		}
 		return float64(n)

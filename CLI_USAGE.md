@@ -2445,23 +2445,29 @@ Usage: blunderdb capture [options] <image>
 
 Read the position a screen capture of an eXtreme Gammon board shows
 (PNG, JPEG or GIF, at any size): checkers, bar, borne-off checkers,
-dice, cube and player on roll. The score is not read. Whatever the
+dice, cube and player on roll. The score is not read: set it with
+--score, and the turn with --turn when no dice are out. Whatever the
 reading cannot settle is listed as a doubt, never guessed.
 
 Options:
   -db string
     	Database to save the position into (with --save)
   -force
-    	Save even when the reading has doubts or leaves the score or the turn unread
+    	Save even though the reading has doubts (points, bar, cube, dice or orientation it could not settle)
   -format string
     	Output format: text, json, xgid (default "text")
   -save
     	Save the position into --db as an individual position
+  -score string
+    	The score the capture does not show: "money", or two Away scores "<player 1>a/<player 2>a" (e.g. 2a/5a); player 1 plays from the bottom
+  -turn int
+    	The player on roll, 1 (bottom) or 2 (top), when no dice show it
 
 Examples:
   blunderdb capture screenshot.png
   blunderdb capture --format xgid screenshot.png
-  blunderdb capture --db my.db --save screenshot.png
+  blunderdb capture --db my.db --save --score 2a/5a screenshot.png
+  blunderdb capture --db my.db --save --score money --turn 2 cube.png
 ```
 
 ### `blunderdb collection create`
