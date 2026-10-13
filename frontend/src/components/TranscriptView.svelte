@@ -155,6 +155,7 @@
     import { fmtClock, fmtDuration, fmtSeconds } from '../utils/decisionTime.js';
     import { closeOnEscape } from '../services/escapeService.js';
     import { flawText } from '../utils/transcriptFlaws.js';
+    import { diceMoveText } from '../services/transcriptionPlay.js';
 
     let {
         /** A `transcript.Annotated`, verbatim. */
@@ -320,7 +321,8 @@
     /** @param {any} c */
     function startEdit(c) {
         if (!typable(c)) return;
-        const text = c.kind === 'pending' ? (c.entry?.notation ?? '') : c.info?.kind === 'checker' ? (c.info.notation ?? '') : '';
+        // Les dés font partie du texte : une seule correction règle jet et coup.
+        const text = c.kind === 'pending' ? diceMoveText(c.entry?.dice, c.entry?.notation) : diceMoveText(actions[c.index]?.dice, c.info?.kind === 'checker' ? c.info.notation : '');
         editing = { index: c.index, pending: c.kind === 'pending', text };
         onEditStart?.(c.index);
     }

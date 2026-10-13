@@ -404,11 +404,11 @@ describe('le coup tapé dans sa cellule (double-clic)', () => {
         });
     });
 
-    test('la cellule devient un champ, pré-rempli de sa notation', async () => {
+    test('la cellule devient un champ, pré-rempli de ses dés et de sa notation', async () => {
         await openedOn(withOneAction(1));
         await doubleClick(/** @type {Element} */ (document.querySelector('.transcript-view .cell[data-index="0"]')));
         await vi.waitFor(() => expect(field()).not.toBeNull());
-        expect(field()?.value).toBe('13/7 8/7');
+        expect(field()?.value).toBe('61: 13/7 8/7');
         expect(document.activeElement).toBe(field());
     });
 
@@ -433,6 +433,61 @@ describe('le coup tapé dans sa cellule (double-clic)', () => {
         expect(play.BoardAfter.points[3]).toEqual({ checkers: 1, color: BLACK });
         expect(validate).toEqual({ Kind: 'validate' });
         expect(field()).toBeNull();
+    });
+
+    /** Ouvre le champ de la cellule 0, y tape `text` et valide. */
+    async function typeInCell(/** @type {string} */ text) {
+        await openedOn(withOneAction(1));
+        await doubleClick(/** @type {Element} */ (document.querySelector('.transcript-view .cell[data-index="0"]')));
+        await vi.waitFor(() => expect(field()).not.toBeNull());
+        await settle();
+        const input = /** @type {HTMLInputElement} */ (field());
+        await fireEvent.input(input, { target: { value: text } });
+        await press('Enter', input);
+        await settle();
+    }
+
+    test('dés et coup se corrigent ensemble : une seule correction, validée', async () => {
+        await typeInCell('42: 13/9 13/11');
+        const [die1, die2, play, validate] = recorded();
+        expect(die1).toEqual({ Kind: 'enter_die', Die: 4 });
+        expect(die2).toEqual({ Kind: 'enter_die', Die: 2 });
+        expect(play.Steps).toEqual([step(13, 9), step(13, 11)]);
+        expect(validate).toEqual({ Kind: 'validate' });
+        expect(gestures().filter((/** @type {any} */ g) => g.Kind === 'validate')).toHaveLength(1);
+        expect(field()).toBeNull();
+    });
+
+    test('un double se tape avec son multiplicateur', async () => {
+        await typeInCell('66: 13/7(2) 8/2(2)');
+        const [die1, die2, play] = recorded();
+        expect([die1.Die, die2.Die]).toEqual([6, 6]);
+        expect(play.Steps).toEqual([step(13, 7), step(13, 7), step(8, 2), step(8, 2)]);
+    });
+
+    test('bar et off se lisent', async () => {
+        await typeInCell('61: bar/24 6/off');
+        const [, , play] = recorded();
+        expect(play.Steps).toEqual([step(25, 24), step(6, -1)]);
+    });
+
+    test('le même jet dans l’autre ordre garde l’ordre de la cellule', async () => {
+        await typeInCell('16: 13/7 8/7');
+        const [die1, die2] = recorded();
+        expect([die1.Die, die2.Die]).toEqual([6, 1]);
+    });
+
+    test('un texte sans « dés: » garde les dés de la cellule', async () => {
+        await typeInCell('13/7 13/12');
+        const [die1, die2, play] = recorded();
+        expect([die1.Die, die2.Die]).toEqual([6, 1]);
+        expect(play.Steps).toEqual([step(13, 7), step(13, 12)]);
+    });
+
+    test.each(['72: 13/7 8/7', '6: 13/7', '623: 13/7', 'ab: 13/7', ': 13/7'])('des dés illisibles (%s) laissent le champ ouvert, rien n’est deviné', async (text) => {
+        await typeInCell(text);
+        expect(field()).not.toBeNull();
+        expect(gestures().some((/** @type {any} */ g) => g.Kind === 'enter_play' || g.Kind === 'enter_die')).toBe(false);
     });
 
     test('Échap ferme le champ et n’écrit rien', async () => {
@@ -484,7 +539,7 @@ describe('le coup tapé dans sa cellule (double-clic)', () => {
         expect(cell).not.toBeNull();
         await fireEvent.dblClick(cell);
         await vi.waitFor(() => expect(field()).not.toBeNull());
-        expect(field()?.value).toBe('');
+        expect(field()?.value).toBe('52: ');
         const input = /** @type {HTMLInputElement} */ (field());
         await fireEvent.input(input, { target: { value: '13/8 13/11' } });
         await press('Enter', input);

@@ -192,23 +192,28 @@ describe('the board draws the transcribed decision', () => {
     });
 });
 
-describe('at the end of the transcript, a new roll draws nothing until a line is pointed at', () => {
-    test('the line preselected for Enter is highlighted, not drawn; hovering it draws it', async () => {
-        const { container } = await cursorBack(0);
+describe("in Saisie, the engine's first line is preselected and drawn", () => {
+    const sent = () =>
+        /** @type {any} */ (ApplyTranscriptionGesture).mock.calls.map((/** @type {any} */ call) =>
+            call[1].Kind === 'enter_die' ? `die ${call[1].Die}` : call[1].Kind === 'select_candidate' ? `select ${call[1].Candidate}` : call[1].Kind
+        );
+
+    test('after the dice, line 0 is highlighted and drawn; Enter records it', async () => {
+        await cursorBack(0);
         await fireEvent.keyDown(document, { key: '5', code: 'Digit5' });
         await fireEvent.keyDown(document, { key: '2', code: 'Digit2' });
         await settle();
 
         expect(get(selectedMoveStore)).toBe('13/11 13/8');
-        expect(get(transcriptionArrowsStore)?.moves ?? []).toEqual([]);
-
-        const row = /** @type {HTMLElement} */ (container.querySelector('tr[data-move="13/11 13/8"]'));
-        await fireEvent.mouseEnter(row);
-        await settle();
         expect(get(transcriptionArrowsStore)).toMatchObject({ tone: 'engine', notation: '13/11 13/8' });
+
+        /** @type {any} */ (ApplyTranscriptionGesture).mockClear();
+        await fireEvent.keyDown(document, { code: 'Enter', key: 'Enter' });
+        await settle();
+        expect(sent()).toEqual(['validate']);
     });
 
-    test('`j` picks a line: it is drawn', async () => {
+    test('`j` picks another line: it is drawn instead', async () => {
         await cursorBack(0);
         await fireEvent.keyDown(document, { key: '5', code: 'Digit5' });
         await fireEvent.keyDown(document, { key: '2', code: 'Digit2' });
@@ -217,6 +222,70 @@ describe('at the end of the transcript, a new roll draws nothing until a line is
         await settle();
 
         expect(get(transcriptionArrowsStore)).toMatchObject({ tone: 'engine', notation: '13/8 13/11' });
+    });
+
+    test("the next roll's dice record the preselected line, then open the next decision", async () => {
+        await cursorBack(0);
+        await fireEvent.keyDown(document, { key: '5', code: 'Digit5' });
+        await fireEvent.keyDown(document, { key: '2', code: 'Digit2' });
+        await settle();
+        await fireEvent.keyDown(document, { key: '3', code: 'Digit3' });
+        await fireEvent.keyDown(document, { key: '1', code: 'Digit1' });
+        await settle();
+
+        // The next decision opens with its own line 0 preselected, and drawn.
+        expect(sent()).toEqual(['die 5', 'die 2', 'select 0', 'validate', 'die 3', 'die 1', 'select 0']);
+        expect(get(transcriptionArrowsStore)).toMatchObject({ tone: 'engine', notation: '13/10 6/5' });
+    });
+
+    test("the next roll's dice record the line picked with `j`", async () => {
+        await cursorBack(0);
+        await fireEvent.keyDown(document, { key: '5', code: 'Digit5' });
+        await fireEvent.keyDown(document, { key: '2', code: 'Digit2' });
+        await settle();
+        await fireEvent.keyDown(document, { code: 'KeyJ', key: 'j' });
+        await settle();
+        await fireEvent.keyDown(document, { key: '3', code: 'Digit3' });
+        await fireEvent.keyDown(document, { key: '1', code: 'Digit1' });
+        await settle();
+
+        expect(sent()).toEqual(['die 5', 'die 2', 'select 0', 'select 1', 'validate', 'die 3', 'die 1', 'select 0']);
+    });
+});
+
+describe('in Édition, a new roll draws nothing until a line is pointed at', () => {
+    // Action 0 reopened (`e`) and its roll restarted as 31: no line is written for it yet.
+    const reopened = () => ({ ...annotated(0), entry: { at: 0, replacing: true, side: 1, dice: [3, 1], selected: false, review: false } });
+
+    async function rerolled() {
+        /** @type {any} */ (ApplyTranscriptionGesture).mockImplementation(() => Promise.resolve({ id: 1, annotated: reopened() }));
+        transcriptionStore.set({ id: 1, annotated: reopened() });
+        const rendered = render(TranscriptionPanel);
+        await tick();
+        document.getElementById('transcriptionPanel')?.focus();
+        await fireEvent.keyDown(document, { code: 'KeyE', key: 'e' });
+        await settle();
+        const field = /** @type {HTMLInputElement | null} */ (document.querySelector('.transcript-view input'));
+        if (field) await fireEvent.keyDown(field, { key: 'Escape', code: 'Escape' });
+        document.getElementById('transcriptionPanel')?.focus();
+        await settle();
+        expect(document.querySelector('[data-testid="transcription-mode"]')?.getAttribute('data-mode')).toBe('edit');
+        await fireEvent.keyDown(document, { key: '3', code: 'Digit3' });
+        await fireEvent.keyDown(document, { key: '1', code: 'Digit1' });
+        await settle();
+        return rendered;
+    }
+
+    test('the line preselected for Enter is highlighted, not drawn; hovering it draws it', async () => {
+        const { container } = await rerolled();
+
+        expect(get(selectedMoveStore)).toBe('13/10 6/5');
+        expect(get(transcriptionArrowsStore)?.moves ?? []).toEqual([]);
+
+        const row = /** @type {HTMLElement} */ (container.querySelector('tr[data-move="13/10 6/5"]'));
+        await fireEvent.mouseEnter(row);
+        await settle();
+        expect(get(transcriptionArrowsStore)).toMatchObject({ tone: 'engine', notation: '13/10 6/5' });
     });
 });
 

@@ -1480,6 +1480,8 @@
             "nothingToRedo": "Nichts zum Wiederholen",
             "noAction": "Keine Aktion unter dem Cursor",
             "noDice": "Kein Wurf in Eingabe",
+            "badDice": "Würfel unlesbar: zwei Ziffern von 1 bis 6 vor „:“, z. B. 62: 24/18 13/11",
+            "badMove": "Zug unlesbar: z. B. 24/18 13/11, bar/20, 6/off",
             "notOnBar": "Der Spieler am Zug hat keinen Stein auf der Bar",
             "noDanceRoll": "Jeder Wurf lässt den Spieler am Zug einsetzen",
             "untimedAction": "Zug ohne Aktionszeitpunkt bestätigt: Mit einem Video bestätigt Enter zum Zeitpunkt des Bildes, oder v auf der Zelle.",

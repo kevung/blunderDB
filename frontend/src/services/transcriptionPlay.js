@@ -186,6 +186,35 @@ export function stepsFromNotation(text, mover) {
 }
 
 /**
+ * Le texte du champ d'un coup, tel que la cellule l'affiche : « 62: 24/18 13/11 ».
+ *
+ * @param {number[] | null | undefined} dice
+ * @param {string | null | undefined} notation
+ */
+export function diceMoveText(dice, notation) {
+    const move = notation ?? '';
+    if (!(dice?.[0] > 0) || !(dice?.[1] > 0)) return move;
+    return `${dice[0]}${dice[1]}: ${move}`;
+}
+
+/**
+ * Lit « <dés>: <coup> ». Sans « : », le texte n'est qu'un coup et les dés de la
+ * cellule restent. Avec, ce qui précède doit être deux dés de 1 à 6 (« 62 »,
+ * « 6-2 ») : rien n'est deviné, un autre préfixe est une erreur.
+ *
+ * @param {string} text
+ * @returns {{dice: number[] | null, move: string} | {error: 'dice'}}
+ */
+export function parseDiceMove(text) {
+    const s = (text ?? '').trim();
+    const colon = s.indexOf(':');
+    if (colon < 0) return { dice: null, move: s };
+    const head = s.slice(0, colon).replace(/[\s-]/g, '');
+    if (!/^[1-6]{2}$/.test(head)) return { error: 'dice' };
+    return { dice: [Number(head[0]), Number(head[1])], move: s.slice(colon + 1).trim() };
+}
+
+/**
  * Le plateau laissé par ces pas, sans jugement mais sans créer ni perdre de
  * pion : les pas se jouent dans l'ordre où leur source porte un pion du camp
  * (comme `resolveSteps` au moteur), et un pas injouable — source vide, point

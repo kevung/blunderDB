@@ -121,7 +121,8 @@ function annotatedAt(cursor) {
         document: {
             format_version: '1',
             header: { match_length: 7, player1: 'Kévin', player2: 'Alice', jacoby: false, beaver: false },
-            actions: [],
+            // Les dés vivent sur l'Action du document : la cellule et son champ les lisent là.
+            actions: actions.map((a) => ({ side: a.side, kind: 'checker', dice: [3, 1] })),
             cursor
         },
         actions,
@@ -189,7 +190,7 @@ export async function installTranscriptionEngine(page, opts = {}) {
                 const info = annotated.actions[at];
                 annotated.entry =
                     info && !inserting
-                        ? { at, side: info.side, replacing: true, review: false, selected: true, dice: [3, 1] }
+                        ? { at, side: info.side, replacing: true, review: false, selected: true, dice: [3, 1], notation: info.notation }
                         : { at, side: annotated.next.side, replacing: false, review: false, selected: false, dice: [0, 0] };
                 return { id: row.id, annotated, can_undo: true, can_redo: true };
             };

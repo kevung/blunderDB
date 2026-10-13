@@ -1480,6 +1480,8 @@
             "nothingToRedo": "Rien à rétablir",
             "noAction": "Aucune Action sous le curseur",
             "noDice": "Aucun jet en cours",
+            "badDice": "Dés illisibles : deux chiffres de 1 à 6 avant « : », par exemple 62: 24/18 13/11",
+            "badMove": "Coup illisible : par exemple 24/18 13/11, bar/20, 6/off",
             "notOnBar": "Le joueur au trait n'a pas de pion sur la barre",
             "noDanceRoll": "Tous les jets font rentrer le joueur au trait",
             "untimedAction": "Coup validé sans instant d'action : avec une vidéo, Entrée valide à l'instant de l'image, ou v sur la cellule.",

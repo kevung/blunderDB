@@ -158,10 +158,7 @@ afterEach(async () => {
 describe('a play on the theatre board, through the panel', () => {
     test('the first step takes the candidate arrows off, and they stay off while the play is in progress', async () => {
         await armedInTheatre();
-        // The preselected line draws nothing; `j` points at a line, which does.
-        expect(arrows()).toBe(0);
-        await fireEvent.keyDown(panel(), { code: 'KeyJ', key: 'j', bubbles: true, cancelable: true });
-        await settle();
+        // In Saisie the preselected line is drawn: it is the move Enter would record.
         expect(arrows()).toBeGreaterThan(0);
         await clickAt(slot(13));
         expect(steps()).toEqual([[13, 7]]);

@@ -1480,6 +1480,8 @@
             "nothingToRedo": "Ei mitään uudelleen tehtävää",
             "noAction": "Ei toimintoa kohdistimen alla",
             "noDice": "Ei syötettävää heittoa",
+            "badDice": "Nopat lukukelvottomat: kaksi numeroa 1–6 ennen merkkiä ”:”, esim. 62: 24/18 13/11",
+            "badMove": "Siirto lukukelvoton: esim. 24/18 13/11, bar/20, 6/off",
             "notOnBar": "Vuorossa olevalla pelaajalla ei ole nappulaa palkilla",
             "noDanceRoll": "Jokainen heitto päästää vuorossa olevan pelaajan sisään",
             "untimedAction": "Siirto vahvistettiin ilman toiminnan ajankohtaa: videon kanssa Enter vahvistaa kuvan hetkellä, tai v solun kohdalla.",

@@ -1480,6 +1480,8 @@
             "nothingToRedo": "Niente da ripetere",
             "noAction": "Nessuna azione sotto il cursore",
             "noDice": "Nessun tiro in corso di inserimento",
+            "badDice": "Dadi illeggibili: due cifre da 1 a 6 prima di «:», ad es. 62: 24/18 13/11",
+            "badMove": "Mossa illeggibile: ad es. 24/18 13/11, bar/20, 6/off",
             "notOnBar": "Il giocatore di turno non ha pedine sulla barra",
             "noDanceRoll": "Ogni tiro fa rientrare il giocatore di turno",
             "untimedAction": "Mossa convalidata senza istante dell'azione: con un video, Invio convalida all'istante dell'immagine, oppure v sulla cella.",

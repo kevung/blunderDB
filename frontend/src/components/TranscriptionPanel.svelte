@@ -91,7 +91,7 @@
     import { writeTextToClipboard } from '../services/clipboardService.js';
     import { quizPlayStore, armBoardMove } from '../stores/quizPlayStore.js';
     import { transcriptionArrows } from '../services/transcribedArrows.js';
-    import { newBoardPlay, undoBoardStep, stepsFromNotation, boardAfterSteps } from '../services/transcriptionPlay.js';
+    import { newBoardPlay, undoBoardStep, stepsFromNotation, boardAfterSteps, parseDiceMove } from '../services/transcriptionPlay.js';
     import { containsSteps, completedPlay } from '../services/quizPlay.js';
     import { ListTranscriptions, CreateTranscription, OpenTranscription, ApplyTranscriptionGesture, TranscriptionMAT } from '../../wailsjs/go/database/Database.js';
     import { LegalMoves, EvaluatePositionImmediate, PickTranscriptionVideo, YouTubeWatchURL } from '../../wailsjs/go/gui/App.js';
@@ -1626,8 +1626,9 @@
 
     // Highlighted line and board arrows: display only, never written to the library. The board
     // draws the written move; a line of the analysis only when the user points at it — hovered,
-    // or picked by j/k or a click. The line preselected for Enter draws nothing: an arrow
-    // the user did not ask for reads as a move already played.
+    // or picked by j/k or a click. In Saisie the line preselected for Enter is drawn too:
+    // it is the move about to be recorded. In Revue and Édition it draws nothing: an arrow
+    // the user did not ask for over a decision already written reads as that decision.
     $effect(() => {
         if (!draft || keys.phase === PHASE.DICE || keys.phase === PHASE.DIE1) {
             selectedMoveStore.set(null);
@@ -1636,7 +1637,7 @@
         }
         const line = ranked.length ? (visible[keys.selected]?.move?.move ?? null) : null;
         selectedMoveStore.set(line);
-        const pointed = keys.phase === PHASE.CANDIDATE ? line : null;
+        const pointed = keys.phase === PHASE.CANDIDATE || (mode === MODE.ENTRY && !recordedAction) ? line : null;
         transcriptionArrowsStore.set(transcriptionArrows({ info: recordedAction, engineMove: hoveredMove ?? pointed }));
     });
 
@@ -1882,9 +1883,11 @@
     const TYPABLE_KINDS = new Set(['checker', 'dance', 'unrecorded']);
 
     /**
-     * Coup tapé dans une cellule du Transcript (`13/7 8/7*`, ADR-0052), dés de
-     * la cellule, parsé par `parseMoveNotation`. Rien n'est jugé : un illégal
-     * est enregistré et marqué (ADR-0044).
+     * Coup tapé dans une cellule du Transcript (`62: 13/7 8/7*`, ADR-0052,
+     * ADR-0091) : dés facultatifs devant « : », sinon ceux de la cellule ; coup
+     * parsé par `parseMoveNotation`. Des dés illisibles ou un coup sans pas
+     * laissent le champ ouvert ; un coup illégal est enregistré et marqué
+     * (ADR-0044), jamais remplacé par un coup deviné.
      *
      * @param {number} index l'Action de la cellule
      * @param {string} text
@@ -1913,9 +1916,20 @@
             lead = cursorCommands(currentStop(ann), cursorStop(ann, index));
         }
         if (!pos || !(dice[0] > 0) || !(dice[1] > 0)) return false;
+        const parsed = parseDiceMove(text);
+        if ('error' in parsed) {
+            noticeTranscription('transcription.notice.badDice');
+            return false;
+        }
+        // The same roll typed in the other order is no correction: keep the cell's order.
+        const typed = parsed.dice;
+        if (typed && !(Math.min(...typed) === Math.min(...dice) && Math.max(...typed) === Math.max(...dice))) dice = typed;
         const mover = pos.player_on_roll;
-        const steps = stepsFromNotation(text, mover);
-        if (!steps.length) return false;
+        const steps = stepsFromNotation(parsed.move, mover);
+        if (!steps.length) {
+            noticeTranscription('transcription.notice.badMove');
+            return false;
+        }
         sendPlay([dice[0], dice[1]], steps, boardAfterSteps(pos.board, steps, mover), lead);
         panelEl?.focus({ preventScroll: true });
         return true;
