@@ -65,6 +65,25 @@ describe('createCursorFollower', () => {
         expect(f.step(10500, ann(0), false)).toBe(1);
     });
 
+    test('a hold on the last Action timed by its roll alone ends: past it, the Cursor goes to the end', () => {
+        const open = (/** @type {number} */ cursor) => ({ actions: [checker(1000, 5000), checker(8000, undefined)], cursor });
+        const f = createCursorFollower();
+        f.step(9000, open(2), false);
+        // Placed on the last Action by hand, the video a second ahead of its roll.
+        expect(f.step(7000, open(1), false)).toBeNull();
+        expect(f.step(12000, open(1), false)).toBeNull();
+        expect(f.step(18500, open(1), false)).toBe(2);
+        expect(f.step(19000, open(2), false)).toBeNull();
+    });
+
+    test('rewound into the last Action, then played past it: the Cursor leaves it for the end', () => {
+        const f = createCursorFollower();
+        f.step(14000, ann(2), false);
+        expect(f.step(10000, ann(2), false)).toBe(1);
+        expect(f.step(11000, ann(1), false)).toBeNull();
+        expect(f.step(12500, ann(1), false)).toBe(2);
+    });
+
     test('a video the panel placed at opening starts no transition: the Cursor stays at the end', () => {
         const f = createCursorFollower({ startMs: 9000 });
         // Reopened a little before the last Repère, the Cursor at the end where the user types.

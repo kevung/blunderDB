@@ -180,6 +180,20 @@ describe('the Cursor follows the video', () => {
         ]);
     });
 
+    test('the mode indicator says where the video took the Cursor: a decision, then the end', async () => {
+        await openedPanel();
+        const mode = () => document.querySelector('[data-testid="transcription-mode"]')?.getAttribute('data-mode');
+        expect(mode()).toBe('entry');
+        await playTo(12000);
+        await playTo(12500);
+        await settle();
+        expect(mode()).toBe('edit');
+        await playTo(35000);
+        await playTo(36000);
+        await settle();
+        expect(mode()).toBe('entry');
+    });
+
     test('a paused video takes the Cursor nowhere', async () => {
         await openedPanel();
         await playTo(12000);

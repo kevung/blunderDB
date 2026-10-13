@@ -11,6 +11,10 @@ const HOLD_LEAD_MS = 1500;
 // Past its end, the Action placed by hand stays a moment: `v` pressed a little late
 // still times it.
 const HOLD_GRACE_MS = 2000;
+// The last Action timed by its roll alone has no end: the hold on it lasts this long past
+// the dice, long enough for `v` on the play, then the playback is the part not yet
+// transcribed and the Cursor goes back to the end, where digits open the next roll.
+const HOLD_OPEN_MS = 10000;
 // How far from the instant the panel placed the video its first reading may fall.
 const PLACED_SLACK_MS = 1000;
 
@@ -146,7 +150,8 @@ function released(held, spans, key, ms) {
     const span = spans.find((s) => s.index === held.cursor);
     if (!span) return key !== held.key;
     if (ms < span.start - HOLD_LEAD_MS) return true;
-    return span.closed && ms >= span.end + HOLD_GRACE_MS;
+    if (!span.closed) return ms >= span.start + HOLD_OPEN_MS;
+    return ms >= span.end + HOLD_GRACE_MS;
 }
 
 /**
