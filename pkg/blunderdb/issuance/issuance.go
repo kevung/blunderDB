@@ -93,9 +93,14 @@ var CarriedMatchCommentColumns = []string{"comment", "comment_author"}
 
 // CarriedVideoSource is the video source an exported match carries: an
 // http(s) URL without the credentials it may embed, a local file by its name
-// alone, nil when there is none (ADR-0082). The name lets the recipient relocate the match onto their
-// own copy of the video; the directories above it are the producer's and
-// stay home. The Repères keep their meaning either way.
+// alone, nil when there is none (ADR-0082). The name lets the recipient
+// relocate the match onto their own copy of the video; the directories above
+// it are the producer's and stay home. The Repères keep their meaning either
+// way.
+//
+// Limit: a token written in the URL's path (/s/<token>/video.mp4, the share
+// links of Dropbox or Drive) is indistinguishable from a path and is not
+// removed.
 func CarriedVideoSource(src *string) *string {
 	if src == nil {
 		return nil
@@ -103,6 +108,15 @@ func CarriedVideoSource(src *string) *string {
 	v := strings.TrimSpace(*src)
 	lower := strings.ToLower(v)
 	if !strings.HasPrefix(lower, "http://") && !strings.HasPrefix(lower, "https://") {
+		// Anything that is not exactly an http(s) URL (//host/x, host/x,
+		// https:/h/x) is read as a path, but may still be a URL typed
+		// loosely: the query and the fragment are cut before the name is
+		// taken, so a signed token cannot ride along. A local file whose
+		// name holds ? or # loses the tail of its name; that is the price of
+		// never carrying a token, and the name is kept rather than dropped.
+		if i := strings.IndexAny(v, "?#"); i >= 0 {
+			v = v[:i]
+		}
 		v = CarriedFileName(v)
 	} else if u, err := url.Parse(v); err != nil {
 		// A URL that does not parse cannot be told free of credentials.
@@ -131,14 +145,26 @@ var carriedVideoParams = map[string]bool{
 }
 
 // keepVideoParams filters a query (or a fragment written as one) to the
-// allow-list, keeping the order; a fragment that is not a query is dropped.
+// allow-list, keeping the order and the first occurrence of each key. A value
+// that could hide another parameter (a ; separator, or a % escape that
+// decodes to &, = or ;) is dropped with its key; a fragment that is not a
+// query is dropped.
 func keepVideoParams(raw string) string {
 	var kept []string
+	seen := map[string]bool{}
 	for _, kv := range strings.Split(raw, "&") {
-		k, _, _ := strings.Cut(kv, "=")
-		if carriedVideoParams[k] {
-			kept = append(kept, kv)
+		k, val, _ := strings.Cut(kv, "=")
+		if !carriedVideoParams[k] || seen[k] {
+			continue
 		}
+		seen[k] = true
+		if strings.Contains(val, ";") {
+			continue
+		}
+		if dec, err := url.QueryUnescape(val); err != nil || strings.ContainsAny(dec, "&=;") {
+			continue
+		}
+		kept = append(kept, kv)
 	}
 	return strings.Join(kept, "&")
 }

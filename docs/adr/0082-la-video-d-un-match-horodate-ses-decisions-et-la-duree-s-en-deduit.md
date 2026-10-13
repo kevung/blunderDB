@@ -134,3 +134,8 @@ peut pas embarquer ; le lecteur intégré de YouTube refuse une page sans réfé
   fichier n'en porte pas.
 - Garde : les tests de dérivation dans `transcript`, la suite de contrat des backends sur les
   nouvelles colonnes, `TestMigrationSteps_ContinuousChain`, `TestDemoDatabaseIsCurrent`.
+- Limite de l'export : une URL http(s) n'emporte de sa query que les paramètres de lecture
+  (`v`, `t`, `list`, `si`, `start`, `end`, `index`) ; une source qui n'est pas exactement une URL
+  http(s) est lue comme un chemin, coupée à `?` et `#`, puis réduite à son nom. Un jeton placé
+  dans le CHEMIN (`/s/<jeton>/video.mp4`, liens de partage Dropbox ou Drive) ne se distingue pas
+  d'un chemin et part avec l'URL.
