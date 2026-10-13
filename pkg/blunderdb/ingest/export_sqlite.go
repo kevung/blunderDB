@@ -1049,6 +1049,59 @@ func (e *exporter) writeTournaments() error {
 	return nil
 }
 
+// exportedTables are the tables of the schema an export writes into, each
+// with how. An export proceeds by allow-list: a table added to the schema
+// stays at home until it is named here — or in notExportedTables, with the
+// reason — and TestExportTablesClassified fails until one of the lists says so.
+var exportedTables = map[string]string{
+	"position":              "the selected positions, under the export's own ids",
+	"analysis":              "carried with its position",
+	"comment":               "the carried comment columns of each position (issuance.CarriedCommentColumns)",
+	"metadata":              "the allow-list issuance.CarriedMetadataKeys, plus the producer's watermark",
+	"filter_library":        "the saved filters of the selection",
+	"collection":            "the selected collections",
+	"collection_position":   "the membership of the exported positions in the exported collections",
+	"lesson":                "the selected lessons",
+	"lesson_step":           "carried with its lesson, remapped to the exported collections and positions",
+	"tournament":            "the selected tournaments",
+	"rencontre":             "leaves as soon as one of its tournaments does",
+	"table_setting":         "the table settings of an exported tournament or rencontre",
+	"direction":             "leaves with the tournament it directs",
+	"direction_event":       "carried with its direction",
+	"direction_pair_member": "carried with its direction",
+	"match":                 "the selected matches; its columns are classified by exportedMatchColumns",
+	"game":                  "carried with its match",
+	"move":                  "carried with its match",
+	"move_analysis":         "carried with its move",
+	"match_origin":          "how a match played here began; carried with the match",
+	"transcription":         "the transcriptions of the exported matches",
+	"player_alias":          "only those naming a player of an exported match, when the option is set",
+	"event_alias":           "only those naming an event of an exported match, when the option is set",
+	"match_equity_table":    "the table an exported analysis is tagged with, re-registered by its digest",
+	"anki_deck":             "the decks of the selection, with their scheduling parameters",
+	"anki_card":             "rebuilt from the exported positions, with the scheduling state of the source",
+	"anki_review_log":       "the review history of an exported deck",
+	"action_label":          "not copied: a label the fixed list lacks is registered again when the move that bears it is written",
+}
+
+// notExportedTables are the tables an export leaves behind, each with why.
+var notExportedTables = map[string]string{
+	"command_history":      "what the user typed: personal, belongs to this installation",
+	"search_history":       "what the user searched: personal, belongs to this installation",
+	"session_state":        "where the user left the interface: personal, belongs to this installation",
+	"import_batch":         "an import is an act of the library it happened in; the recipient's own imports write theirs (ADR-0007)",
+	"import_batch_file":    "detail of an import batch",
+	"match_stats":          "derived from the moves; the recipient computes it again",
+	"match_stats_cell":     "derived from the moves; the recipient computes it again",
+	"match_stats_position": "derived from the moves; the recipient computes it again",
+	"duel":                 "a game in suspense: its seed is every roll to come; only a finished one leaves, as a match",
+	"trash":                "what the user deleted here: a snapshot to restore in this library",
+	"training_session":     "the user's own training journal",
+	"training_item":        "the user's own training journal",
+	"lesson_progress":      "how far the user got through a lesson: personal progress, not a property of the lesson",
+	"study_mark":           "the user's own marks on positions to study",
+}
+
 // writeMatches copies each selected match with its games, moves and move
 // analyses. A move whose position was not exported keeps everything but the
 // position; a match whose tournament was not exported keeps everything but

@@ -71,6 +71,46 @@ func TestExportMatchColumnsClassified(t *testing.T) {
 	}
 }
 
+// Every table of the schema is either written by an export or left behind
+// with a reason: a table added to the schema cannot stay at home, nor leave,
+// without someone deciding (ADR-0007).
+func TestExportTablesClassified(t *testing.T) {
+	path := exportOneMatch(t, domain.Match{Player1Name: "A", Player2Name: "B"})
+	db, err := sql.Open("sqlite", sqlite.DSN(path))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+	rows, err := db.Query(`SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer rows.Close()
+	seen := map[string]bool{}
+	for rows.Next() {
+		var table string
+		if err := rows.Scan(&table); err != nil {
+			t.Fatal(err)
+		}
+		seen[table] = true
+		_, exported := exportedTables[table]
+		_, left := notExportedTables[table]
+		if exported == left {
+			t.Errorf("table %q: exported=%v, left behind=%v — name it in exactly one of exportedTables, notExportedTables", table, exported, left)
+		}
+	}
+	if err := rows.Err(); err != nil {
+		t.Fatal(err)
+	}
+	for _, m := range []map[string]string{exportedTables, notExportedTables} {
+		for table := range m {
+			if !seen[table] {
+				t.Errorf("table %q is classified but absent from the schema", table)
+			}
+		}
+	}
+}
+
 // The source metadata travels with the match, and opening the export reads
 // it back as stored — unknown stays unknown.
 func TestExportCarriesMatchSourceMetadata(t *testing.T) {
