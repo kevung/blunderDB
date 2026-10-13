@@ -1,7 +1,12 @@
 package cli
 
 import (
+	"database/sql"
 	"encoding/json"
+	"fmt"
+	"github.com/kevung/blunderdb/pkg/blunderdb/database"
+	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
+	"os"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -196,7 +201,7 @@ func TestCLI_CollectionExport(t *testing.T) {
 	outPath := filepath.Join(tempDir(t), "openings.db")
 
 	captureStdout(t, func() {
-		if err := cli.Run([]string{"collection", "export", "--db", dbPath, "--id", "1", "--out", outPath}); err != nil {
+		if err := cli.Run([]string{"collection", "export", "--db", dbPath, "--id", "1", "--out", outPath, "--matches=false"}); err != nil {
 			t.Fatalf("collection export: %v", err)
 		}
 	})
@@ -245,5 +250,56 @@ func TestCLI_CollectionUsageErrors(t *testing.T) {
 		if err == nil {
 			t.Errorf("%v: expected an error", args)
 		}
+	}
+}
+
+// A collection leaves through the same exporter as every other database export: the
+// transcription drafts and aliases of the matches its positions were played in go with it,
+// and a password wraps the file.
+func TestCLI_CollectionExport_CarriesTranscriptionsAliasesAndPassword(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	colID, _ := seedCollection(t, cli, "Openings", 3)
+	matches, err := cli.db.GetAllMatches()
+	if err != nil || len(matches) == 0 {
+		t.Fatalf("GetAllMatches = %d, %v", len(matches), err)
+	}
+	if err := cli.db.SetAlias("player", matches[0].Player1Name, "Canonique"); err != nil {
+		t.Fatalf("SetAlias: %v", err)
+	}
+	tr, err := cli.db.CreateTranscription(transcript.Header{MatchLength: 7})
+	if err != nil {
+		t.Fatal(err)
+	}
+	raw, err := sql.Open("sqlite", dbPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := raw.Exec(`UPDATE transcription SET match_id = ? WHERE id = ?`, matches[0].ID, tr.ID); err != nil {
+		t.Fatalf("link draft: %v", err)
+	}
+	raw.Close()
+
+	out := filepath.Join(tempDir(t), "openings.db")
+	captureStdout(t, func() {
+		if err := cli.Run([]string{"collection", "export", "--db", dbPath, "--id", fmt.Sprint(colID), "--out", out, "--password", "secret"}); err != nil {
+			t.Fatalf("collection export: %v", err)
+		}
+	})
+	if _, err := os.Stat(out + "x"); err != nil {
+		t.Fatalf("a password should produce a .dbx container next to %s: %v", out, err)
+	}
+	plain, err := database.OpenProtectedCopy(out+"x", "secret")
+	if err != nil {
+		t.Fatalf("open protected export: %v", err)
+	}
+	rows := dumpTables(t, plain)
+	if len(rows["transcription"]) != 1 {
+		t.Errorf("transcriptions = %d, want 1: the draft of the collection's match", len(rows["transcription"]))
+	}
+	if len(rows["player_alias"]) != 1 {
+		t.Errorf("player aliases = %d, want 1", len(rows["player_alias"]))
+	}
+	if len(rows["collection"]) != 1 {
+		t.Errorf("collections = %d, want 1", len(rows["collection"]))
 	}
 }

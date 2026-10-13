@@ -486,10 +486,6 @@ export function ExportAnkiPackage(arg1, arg2, arg3, arg4) {
   return window['go']['database']['Database']['ExportAnkiPackage'](arg1, arg2, arg3, arg4);
 }
 
-export function ExportCollections(arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
-  return window['go']['database']['Database']['ExportCollections'](arg1, arg2, arg3, arg4, arg5, arg6, arg7);
-}
-
 export function ExportDatabase(arg1) {
   return window['go']['database']['Database']['ExportDatabase'](arg1);
 }
@@ -500,10 +496,6 @@ export function ExportDatabaseCtx(arg1, arg2) {
 
 export function ExportMatchMAT(arg1, arg2) {
   return window['go']['database']['Database']['ExportMatchMAT'](arg1, arg2);
-}
-
-export function ExportTournaments(arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
-  return window['go']['database']['Database']['ExportTournaments'](arg1, arg2, arg3, arg4, arg5, arg6, arg7);
 }
 
 export function ExportTranscriptionMAT(arg1, arg2) {

@@ -51,12 +51,6 @@ var lockGuardOverrides = map[string]func(t *testing.T) []any{
 			TournamentIDs:        []int64{1},
 		}}
 	},
-	"ExportCollections": func(t *testing.T) []any {
-		return []any{filepath.Join(tempDir(t), "collections.db"), []int64{1}, map[string]string{}, true, true, "", ""}
-	},
-	"ExportTournaments": func(t *testing.T) []any {
-		return []any{filepath.Join(tempDir(t), "tournaments.db"), []int64{1}, map[string]string{}, true, true, "", ""}
-	},
 	"ExportMatchMAT": func(t *testing.T) []any {
 		return []any{int64(1), filepath.Join(tempDir(t), "match.mat")}
 	},

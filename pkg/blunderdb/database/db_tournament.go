@@ -5,12 +5,11 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // Tournament methods take d.mu and delegate to d.store.Tournaments() with the
-// wrapper's implicit scope; ExportTournaments goes through ingest.ExportSQLite.
+// wrapper's implicit scope.
 
 // CreateTournament creates a new tournament
 func (d *Database) CreateTournament(name string, date string, location string) (int64, error) {
@@ -182,40 +181,4 @@ func (d *Database) GetMatchTournament(matchID int64) (*Tournament, error) {
 		return nil, nil
 	}
 	return t, err
-}
-
-// ExportTournaments exports specific tournaments — their matches, games,
-// moves and move analyses — and the positions those matches reached, to a
-// database file. watermark and watermarkNote mirror ExportDatabase's
-// Watermark/WatermarkNote: an empty watermark means the export carries none.
-func (d *Database) ExportTournaments(exportPath string, tournamentIDs []int64, metadata map[string]string, includeAnalysis bool, includeComments bool, watermark string, watermarkNote string) error {
-	d.mu.Lock()
-	defer d.mu.Unlock()
-
-	if d.db == nil {
-		return fmt.Errorf("no database is currently open")
-	}
-
-	watermarkDocument, err := sealWatermark(watermark, watermarkNote)
-	if err != nil {
-		return fmt.Errorf("cannot sign the watermark: %w", err)
-	}
-
-	_, err = ingest.ExportSQLite(context.Background(), d.store, "", exportPath, ingest.ExportOptions{
-		Format: ingest.FormatSQLite,
-		Selection: ingest.Selection{
-			TournamentIDs:     tournamentIDs,
-			TournamentMatches: true,
-			MatchPositions:    true,
-		},
-		Analysis: includeAnalysis,
-		Comments: includeComments,
-		// A match's draft travels with it, as from every other export.
-		Transcriptions: true,
-		// A tournament's report reads its players through their aliases (ADR-0081).
-		Aliases:   true,
-		Metadata:  metadata,
-		Watermark: watermarkDocument,
-	})
-	return err
 }
