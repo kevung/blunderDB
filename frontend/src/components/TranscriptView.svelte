@@ -182,7 +182,6 @@
          */
         onEditMove = null,
         /** `(index) => void` when a cell's move field opens. */
-        onEditStart = null,
         /** `() => void` when Escape closes a cell's move field: the keys go back to the caller. */
         onEditEnd = null,
         /**
@@ -324,7 +323,6 @@
         // Les dés font partie du texte : une seule correction règle jet et coup.
         const text = c.kind === 'pending' ? diceMoveText(c.entry?.dice, c.entry?.notation) : diceMoveText(actions[c.index]?.dice, c.info?.kind === 'checker' ? c.info.notation : '');
         editing = { index: c.index, pending: c.kind === 'pending', text };
-        onEditStart?.(c.index);
     }
 
     /** Ouvre le champ du coup de la cellule tenue par le Cursor, si elle se tape. */

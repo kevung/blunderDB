@@ -1515,13 +1515,13 @@
         "videoResize": "Hauteur du volet vidéo",
         "mode": {
             "entry": "Saisie",
-            "review": "Revue",
-            "edit": "Édition coup {n}"
+            "edit": "Coup {n}"
         },
-        "modeKey": {
-            "entry": "Entrée : valider le coup",
-            "review": "E : éditer",
-            "edit": "Entrée : valider la correction"
+        "modeEnter": "Entrée : valider {move}",
+        "modeDigits": {
+            "entry": "chiffres : valider et jet suivant",
+            "roll": "chiffres : jet",
+            "edit": "chiffres : retaper les dés du {n}"
         }
     },
     "transcript": {

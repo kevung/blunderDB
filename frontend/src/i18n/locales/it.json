@@ -1515,13 +1515,13 @@
         "videoResize": "Altezza del riquadro video",
         "mode": {
             "entry": "Inserimento",
-            "review": "Revisione",
-            "edit": "Modifica mossa {n}"
+            "edit": "Mossa {n}"
         },
-        "modeKey": {
-            "entry": "Invio: convalida la mossa",
-            "review": "E: modifica",
-            "edit": "Invio: convalida la correzione"
+        "modeEnter": "Invio: convalida {move}",
+        "modeDigits": {
+            "entry": "cifre: convalida e tiro successivo",
+            "roll": "cifre: tiro",
+            "edit": "cifre: riscrivi i dadi di {n}"
         }
     },
     "transcript": {

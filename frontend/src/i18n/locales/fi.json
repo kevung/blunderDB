@@ -1515,13 +1515,13 @@
         "videoResize": "Videoruudun korkeus",
         "mode": {
             "entry": "Syöttö",
-            "review": "Tarkastelu",
-            "edit": "Siirron {n} muokkaus"
+            "edit": "Siirto {n}"
         },
-        "modeKey": {
-            "entry": "Enter: vahvista siirto",
-            "review": "E: muokkaa",
-            "edit": "Enter: vahvista korjaus"
+        "modeEnter": "Enter: vahvista {move}",
+        "modeDigits": {
+            "entry": "numerot: vahvista ja seuraava heitto",
+            "roll": "numerot: heitto",
+            "edit": "numerot: kirjoita siirron {n} nopat uudelleen"
         }
     },
     "transcript": {

@@ -1515,13 +1515,13 @@
         "videoResize": "動画欄の高さ",
         "mode": {
             "entry": "入力",
-            "review": "確認",
-            "edit": "{n}手目を編集"
+            "edit": "{n} 手目"
         },
-        "modeKey": {
-            "entry": "Enter：手を確定",
-            "review": "E：編集",
-            "edit": "Enter：修正を確定"
+        "modeEnter": "Enter: {move} を確定",
+        "modeDigits": {
+            "entry": "数字: 確定して次のロール",
+            "roll": "数字: ロール",
+            "edit": "数字: {n} 手目のダイスを打ち直す"
         }
     },
     "transcript": {

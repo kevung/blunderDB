@@ -192,3 +192,12 @@ export const transcriptionBoardSwapStore = writable(false);
  * @type {import('svelte/store').Writable<import('../services/transcribedArrows.js').TranscriptionArrows | null>}
  */
 export const transcriptionArrowsStore = writable(null);
+
+/**
+ * Le mode de la saisie (ADR-0091) et le coup qu'il nomme, publiés par le panneau pour
+ * le théâtre, qui le cache : la frappe change de sens avec lui, il reste donc visible.
+ * `null` sans brouillon ouvert.
+ *
+ * @type {import('svelte/store').Writable<{mode: string, n: number} | null>}
+ */
+export const transcriptionModeStore = writable(null);

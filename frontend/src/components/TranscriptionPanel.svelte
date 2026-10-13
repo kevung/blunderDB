@@ -62,6 +62,7 @@
     import ResignLevelModal from './ResignLevelModal.svelte';
     import ContextMenu from './ContextMenu.svelte';
     import TranscriptView, { cursorRowNumber } from './TranscriptView.svelte';
+    import TranscriptionModeBadge from './TranscriptionModeBadge.svelte';
     import { closeOnEscape } from '../services/escapeService.js';
     import TranscriptionMetadata from './TranscriptionMetadata.svelte';
     import VideoDock from './VideoDock.svelte';
@@ -80,6 +81,7 @@
         transcriptionPromptStore,
         transcriptionBoardSwapStore,
         transcriptionArrowsStore,
+        transcriptionModeStore,
         setTranscription,
         clearTranscription,
         transcriptionLibrary,
@@ -184,40 +186,31 @@
     // joueur 1 puis du joueur 2, et le moteur donne le coup au plus fort. Lu
     // sur la cellule sous le curseur, sinon sur la fin du document.
     let gameStart = $derived(annotated?.entry ? annotated.entry.game_start === true : annotated?.next?.game_start === true);
-    // L'Action rouverte par `e`, un double-clic sur sa cellule ou un clic sur
-    // une ligne de l'analyse ; un pas du Cursor, une validation ou une
-    // correction du document la referment (ADR-0091).
-    let editingAt = $state(/** @type {number|null} */ (null));
     /** @type {any} */
     let transcriptView = $state(null);
-    // Discriminant de la touche chiffrée : Saisie, Revue ou Édition.
-    let mode = $derived(transcriptionMode(annotated, editingAt));
+    // Discriminant de la touche chiffrée : Saisie ou décision existante (ADR-0092).
+    let mode = $derived(transcriptionMode(annotated));
     // Cellule tenue par le curseur, aucun dé tapé : les gestes de videau y
     // corrigent au rang de l'Entry. Dès qu'un dé est tapé, `t`/`p` cessent
     // d'être des réponses (`p` redevient le compte de pips global).
     let editingSlot = $derived(!!annotated?.entry && !(annotated.entry.dice?.[0] > 0) && !(annotated.entry.dice?.[1] > 0));
     let keyContext = $derived({ expects, mode, editing: editingSlot });
 
-    // La pastille de la barre : le mode, puis ce que fait Entrée (ou `e` en Revue).
-    /** @type {Record<string, string>} */
-    const MODE_LABEL = { [MODE.ENTRY]: 'transcription.mode.entry', [MODE.REVIEW]: 'transcription.mode.review', [MODE.EDIT]: 'transcription.mode.edit' };
-    /** @type {Record<string, string>} */
-    const MODE_KEY = { [MODE.ENTRY]: 'transcription.modeKey.entry', [MODE.REVIEW]: 'transcription.modeKey.review', [MODE.EDIT]: 'transcription.modeKey.edit' };
-
-    /**
-     * Rouvre une décision : la Revue devient Édition. Sans index, celle du
-     * Cursor ; un double-clic nomme la cellule, où le Cursor arrive ensuite.
-     *
-     * @param {number} [index]
-     */
-    function beginEditing(index) {
-        if (typeof index === 'number') {
-            editingAt = index;
-            return;
-        }
-        const entry = get(transcriptionStore)?.annotated?.entry;
-        if (entry?.replacing === true) editingAt = entry.at;
-    }
+    // L'indicateur de la barre (ADR-0092) : le mode, ce qu'Entrée valide, ce que font les
+    // chiffres. Le théâtre cache cette barre : il montre le même, lu dans le store.
+    let modeBadge = $derived(
+        draft
+            ? {
+                  mode,
+                  n: cursorRowNumber(annotated),
+                  move: annotated?.entry?.notation || (keys.phase === PHASE.ROLL || keys.phase === PHASE.CANDIDATE ? ($selectedMoveStore ?? '') : ''),
+                  rolled: keys.phase === PHASE.ROLL || keys.phase === PHASE.CANDIDATE
+              }
+            : null
+    );
+    $effect(() => {
+        transcriptionModeStore.set(modeBadge);
+    });
 
     // Length 0 = money, the only case asking for the session's rules (ADR-0028).
     let formIsMoney = $derived(formLength.trim() === '0');
@@ -439,7 +432,6 @@
     // Converted synchronously: a `select` rank refers to the list at keystroke time.
     /** @param {PanelCommand[]} commands */
     function run(commands) {
-        if (commands.some((c) => ENDS_EDITING.has(c.kind))) editingAt = null;
         const now = videoNow();
         const entry = annotated?.entry;
         // A correction in place keeps the Repères it had: the engine ignores an instant
@@ -476,11 +468,6 @@
         });
         return queue(gestures);
     }
-
-    // Gestes après lesquels le Cursor n'est plus sur la décision rouverte, ou
-    // sur une autre à ce rang.
-    /** @type {Set<string>} */
-    const ENDS_EDITING = new Set([COMMAND.VALIDATE, COMMAND.CURSOR_BACK, COMMAND.CURSOR_FORWARD, COMMAND.INSERT_BEFORE, COMMAND.INSERT_AFTER, COMMAND.DELETE, COMMAND.UNDO, COMMAND.REDO]);
 
     /** Whether the Action a new one follows has its action's Repère; true when there is none. */
     function previousTimed() {
@@ -1133,7 +1120,6 @@
 
     /** @param {number} index */
     function chooseCandidate(index) {
-        beginEditing();
         const next = selectCandidate(get(transcriptionKeyStore), index);
         transcriptionKeyStore.set(next.state);
         run(next.commands);
@@ -1150,7 +1136,6 @@
      */
     function stepCandidate(delta) {
         const state = get(transcriptionKeyStore);
-        if (mode === MODE.REVIEW) return state.candidateCount > 0;
         if (state.candidateCount <= 0) return false;
         const next = selectCandidate(state, state.selected + delta);
         if (next.state.selected === state.selected && state.phase === next.state.phase) return true;
@@ -1346,7 +1331,7 @@
         }
         // Coup achevé ou hors des règles : Entrée l'enregistre (avec son plateau s'il est libre).
         // En Revue rien ne s'écrit (ADR-0091).
-        if (boardPlayKeys && mode !== MODE.REVIEW && event.key === 'Enter' && playSettled()) {
+        if (boardPlayKeys && event.key === 'Enter' && playSettled()) {
             event.preventDefault();
             event.stopPropagation();
             validatePlay();
@@ -1428,7 +1413,6 @@
      */
     function applyResult(result) {
         if (result.commands[0]?.kind === COMMAND.EDIT) {
-            beginEditing();
             transcriptView?.editAtCursor();
             return;
         }
@@ -1525,6 +1509,7 @@
         clearTranscriptionNotice();
         selectedMoveStore.set(null);
         transcriptionArrowsStore.set(null);
+        transcriptionModeStore.set(null);
         // Démonté, le panneau retire son coup du plateau.
         quizPlayStore.set(null);
         boardPlayArmed = false;
@@ -1724,7 +1709,7 @@
     let dieCells = $derived([keys.dice[0] || '·', keys.dice[1] || '·']);
 
     // Triangle seulement quand un jet est attendu : pas de cible qui ne répond à rien.
-    let diceEntryOpen = $derived(!!draft && !matchOver && !awaitingAnswer && keys.phase !== PHASE.RESIGN && DICE_KINDS.has(expects) && mode !== MODE.REVIEW);
+    let diceEntryOpen = $derived(!!draft && !matchOver && !awaitingAnswer && keys.phase !== PHASE.RESIGN && DICE_KINDS.has(expects));
 
     // Rangée [D][T][P][R] : annonce du camp au trait ou réponse d'en face, jamais
     // les quatre ; masquée match fini. Le clavier, lui, accepte tout (ADR-0044).
@@ -1784,7 +1769,7 @@
     let boardRoll = $derived(diceEntered && (keys.phase === PHASE.ROLL || keys.phase === PHASE.CANDIDATE) ? [keys.dice[0], keys.dice[1]] : null);
     // Sans jet saisi, aucun coup n'est armé : tout coup au plateau commence par les dés.
     // En Revue le plateau ne joue pas : un coup achevé n'y écrirait rien d'autre qu'une décision relue.
-    let boardPlayOpen = $derived(!!draft && !matchOver && !awaitingAnswer && !recordingPlay && expects === 'checker' && boardRoll !== null && mode !== MODE.REVIEW);
+    let boardPlayOpen = $derived(!!draft && !matchOver && !awaitingAnswer && !recordingPlay && expects === 'checker' && boardRoll !== null);
 
     // Clé d'armement (place, camp, position, jet) — pas le document, qui change à chaque pas.
     let boardPlayKey = $derived.by(() => {
@@ -2185,9 +2170,7 @@
                     <div class="palette-col" data-testid="transcription-palette">
                         <!-- Dés et gestes de videau sur une ligne, triangle dessous (décision 7). -->
                         <div class="entry-row" data-testid="transcription-dice">
-                            <span class="mode-badge" data-testid="transcription-mode" data-mode={mode}
-                                >{$t(MODE_LABEL[mode], { n: cursorRowNumber(annotated) })}<span class="mode-key">{$t(MODE_KEY[mode])}</span></span
-                            >
+                            <TranscriptionModeBadge state={modeBadge} />
                             {#if !awaitingAnswer && keys.phase !== PHASE.RESIGN}
                                 <!-- Cliquables : Retour arrière à la souris. -->
                                 <button class="die" class:filled={keys.dice[0] > 0} onclick={clearDice} title={$t('transcription.clearDice')} aria-label={$t('transcription.clearDice')}
@@ -2233,7 +2216,6 @@
                         onHole={selectHole}
                         onMenu={openTranscriptMenu}
                         onEditMove={commitNotation}
-                        onEditStart={beginEditing}
                         onEditEnd={() => panelEl?.focus({ preventScroll: true })}
                         onEditScore={declareScore}
                         onPostCrawford={declarePostCrawford}
@@ -2595,29 +2577,6 @@
         align-items: center;
         gap: var(--space-1);
         flex: 0 0 auto;
-    }
-
-    /* Le mode et l'effet d'Entrée, toujours visibles : la frappe change de sens avec eux. */
-    .mode-badge {
-        display: inline-flex;
-        align-items: baseline;
-        gap: var(--space-1);
-        padding: 0 var(--space-1);
-        border: 1px solid var(--color-border);
-        border-radius: 999px;
-        font-size: var(--font-size-small);
-        color: var(--color-text);
-        background: var(--color-surface-alt);
-        white-space: nowrap;
-    }
-
-    .mode-badge[data-mode='edit'] {
-        border-color: var(--color-primary);
-        color: var(--color-primary);
-    }
-
-    .mode-key {
-        color: var(--color-text-muted);
     }
 
     .die {

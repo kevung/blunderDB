@@ -1515,13 +1515,13 @@
         "videoResize": "Video pane height",
         "mode": {
             "entry": "Entry",
-            "review": "Review",
-            "edit": "Editing move {n}"
+            "edit": "Move {n}"
         },
-        "modeKey": {
-            "entry": "Enter: validate the move",
-            "review": "E: edit",
-            "edit": "Enter: validate the correction"
+        "modeEnter": "Enter: record {move}",
+        "modeDigits": {
+            "entry": "digits: record and next roll",
+            "roll": "digits: roll",
+            "edit": "digits: retype the dice of {n}"
         }
     },
     "transcript": {

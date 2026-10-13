@@ -253,6 +253,19 @@ describe("in Saisie, the engine's first line is preselected and drawn", () => {
     });
 });
 
+describe('on an existing decision, the arrows follow the line pointed at', () => {
+    test('`k` then `j` redraw the arrows of each line, at once', async () => {
+        await cursorBack(2);
+        await fireEvent.keyDown(document, { code: 'KeyK', key: 'k' });
+        await settle();
+        expect(get(transcriptionArrowsStore)).toMatchObject({ tone: 'engine', notation: '13/11 13/8' });
+        await fireEvent.keyDown(document, { code: 'KeyJ', key: 'j' });
+        await settle();
+        // Back on the written move: drawn as the written move.
+        expect(get(transcriptionArrowsStore)).toMatchObject({ notation: '13/8 13/11' });
+    });
+});
+
 describe('in Édition, a new roll draws nothing until a line is pointed at', () => {
     // Action 0 reopened (`e`) and its roll restarted as 31: no line is written for it yet.
     const reopened = () => ({ ...annotated(0), entry: { at: 0, replacing: true, side: 1, dice: [3, 1], selected: false, review: false } });

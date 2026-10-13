@@ -5,6 +5,8 @@
     import { t } from '../i18n';
     import { theatreStore, theatreTargetStore, theatreRotateStore, exitTheatre } from '../services/transcriptionTheatre.js';
     import TheatreMiniBoard from './TheatreMiniBoard.svelte';
+    import { transcriptionModeStore } from '../stores/transcriptionStore.js';
+    import TranscriptionModeBadge from './TranscriptionModeBadge.svelte';
 
     /** @type {HTMLDivElement | null} */
     let host = $state(null);
@@ -23,6 +25,7 @@
         <div class="theatre-video" bind:this={host} hidden></div>
         <TheatreMiniBoard />
         <div class="theatre-bar">
+            <span class="theatre-mode"><TranscriptionModeBadge state={$transcriptionModeStore} dark /></span>
             <span class="theatre-hint">{$t('theatre.hint')}</span>
             {#if $theatreRotateStore}
                 <button class="theatre-exit" data-testid="video-rotate" onmousedown={keepFocus} onclick={$theatreRotateStore} title={$t('video.rotate')} aria-label={$t('video.rotate')}>⟳</button>
@@ -44,6 +47,12 @@
         inset: 0;
         z-index: 900;
         pointer-events: none;
+    }
+    /* The indicator leads the bar; the hint and the buttons keep the right. */
+    .theatre-mode {
+        display: flex;
+        min-width: 0;
+        margin-right: auto;
     }
     .theatre-bar {
         position: absolute;

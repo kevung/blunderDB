@@ -1515,13 +1515,13 @@
         "videoResize": "Höhe des Videobereichs",
         "mode": {
             "entry": "Eingabe",
-            "review": "Durchsicht",
-            "edit": "Bearbeitung Zug {n}"
+            "edit": "Zug {n}"
         },
-        "modeKey": {
-            "entry": "Enter: Zug bestätigen",
-            "review": "E: bearbeiten",
-            "edit": "Enter: Korrektur bestätigen"
+        "modeEnter": "Enter: {move} übernehmen",
+        "modeDigits": {
+            "entry": "Ziffern: übernehmen und nächster Wurf",
+            "roll": "Ziffern: Wurf",
+            "edit": "Ziffern: Würfel von {n} neu eingeben"
         }
     },
     "transcript": {

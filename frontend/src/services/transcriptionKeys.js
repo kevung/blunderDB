@@ -11,9 +11,9 @@
  * - au second dé, les coups légaux sont classés en 0-ply et le premier est
  *   présélectionné, sans confirmation ;
  * - la touche chiffrée dépend du [MODE], affiché en permanence sur la barre
- *   (ADR-0091) : en Saisie elle VALIDE le candidat puis ouvre le jet suivant ;
- *   en Édition elle RECOMMENCE le jet sur place et seule Entrée valide ; en
- *   Revue elle ne fait rien. Le dernier coup d'une partie se valide par Entrée.
+ *   (ADR-0092) : en Saisie elle VALIDE le candidat puis ouvre le jet suivant ;
+ *   sur une décision existante elle RECOMMENCE le jet sur place et Entrée
+ *   valide. Le dernier coup d'une partie se valide par Entrée.
  * La machine ne connaît pas le document (fonctionnel.md §1.2) : le panneau
  * lui donne le mode ([transcriptionMode]).
  *
@@ -63,30 +63,25 @@ export const PHASE = Object.freeze({
 });
 
 /**
- * Les trois modes de la Transcription (ADR-0091). Saisie : le Cursor est en
- * bout de document (ou sur une insertion), la frappe écrit la suite. Revue :
- * le Cursor est sur une décision existante, aucune frappe de dés ne la
- * modifie. Édition : la décision au Cursor est rouverte explicitement (`e`,
- * double-clic sur sa cellule, clic sur une ligne de l'analyse).
+ * Les deux modes de la Transcription (ADR-0092). Saisie : le Cursor est en bout
+ * de document (ou sur une insertion), un chiffre sur un jet saisi valide puis
+ * ouvre le jet suivant. Correction : le Cursor est sur une décision existante,
+ * un chiffre retape son jet sur place. Aucune touche n'est avalée dans l'un ni
+ * dans l'autre ; l'indicateur de la barre dit l'effet d'Entrée et des chiffres.
  */
 export const MODE = Object.freeze({
     ENTRY: 'entry',
-    REVIEW: 'review',
     EDIT: 'edit'
 });
 
 /**
- * Le mode au Cursor : `editingAt` est l'Action que l'utilisateur a rouverte,
- * ou null. Une Action rouverte qui n'est plus sous le Cursor ne compte pas.
+ * Le mode au Cursor : Correction sur une décision existante, Saisie ailleurs.
  *
  * @param {any} annotated
- * @param {number|null} editingAt
  * @returns {string}
  */
-export function transcriptionMode(annotated, editingAt) {
-    const entry = annotated?.entry;
-    if (entry?.replacing !== true) return MODE.ENTRY;
-    return editingAt != null && entry.at === editingAt ? MODE.EDIT : MODE.REVIEW;
+export function transcriptionMode(annotated) {
+    return annotated?.entry?.replacing === true ? MODE.EDIT : MODE.ENTRY;
 }
 
 /** Les gestes que la machine demande ; le panneau les traduit en appels Go. */
@@ -362,11 +357,6 @@ export function pressKey(state, event, { expects = 'checker', mode = MODE.ENTRY,
         if (isBareLetter(event, 'p')) return { handled: true, ...cubeGesture(state, COMMAND.PASS) };
     }
 
-    // En Revue la frappe de dés ne touche pas la décision relue : chiffres,
-    // `f`, `j`/`k`, Entrée et effacements sont pris sans effet, pour ne pas
-    // remonter au répartiteur global.
-    if (mode === MODE.REVIEW && DICE_KINDS.has(expects) && reviewSwallows(event)) return swallowed(state);
-
     // `f` : la danse se saisit comme un jet, donc seulement où des dés sont attendus.
     if (isBareLetter(event, 'f') && DICE_KINDS.has(expects)) {
         return { handled: true, state, commands: [{ kind: COMMAND.DANCE_ROLL }] };
@@ -407,15 +397,6 @@ export function pressKey(state, event, { expects = 'checker', mode = MODE.ENTRY,
     }
 
     return ignored(state);
-}
-
-/**
- * Les touches de saisie de dés qu'une Revue avale.
- *
- * @param {KeyboardEvent} event
- */
-function reviewSwallows(event) {
-    return dieOf(event) > 0 || selectionDelta(event) !== 0 || isBareLetter(event, 'f') || event.key === 'Enter' || event.key === 'Backspace' || event.key === 'Escape';
 }
 
 /**
@@ -510,9 +491,9 @@ export function menuCommands(from, to, kind) {
 /**
  * Un chiffre : premier dé, puis second ; sur une ouverture le second valide.
  *
- * Sur un jet déjà saisi : en Saisie il valide puis ouvre le jet suivant ; en
- * Édition il recommence sur place, Entrée seule validant ; en Revue il ne fait
- * rien (ADR-0091).
+ * Sur un jet déjà saisi : en Saisie il valide puis ouvre le jet suivant ; sur
+ * une décision existante il recommence son jet sur place, Entrée validant
+ * (ADR-0092).
  *
  * @param {KeyState} state
  * @param {number} die
@@ -520,7 +501,6 @@ export function menuCommands(from, to, kind) {
  * @returns {KeyResult}
  */
 function enterDie(state, die, mode = MODE.ENTRY) {
-    if (mode === MODE.REVIEW) return swallowed(state);
     switch (state.phase) {
         case PHASE.DICE:
             return {
@@ -540,7 +520,7 @@ function enterDie(state, die, mode = MODE.ENTRY) {
 
         case PHASE.ROLL:
         case PHASE.CANDIDATE: {
-            // Édition : recommencer sur place (le moteur repart de zéro, rien
+            // Décision existante : recommencer sur place (le moteur repart de zéro, rien
             // n'est validé, Entrée seule valide). Saisie : valider d'abord.
             const commands = mode === MODE.EDIT ? [{ kind: COMMAND.DIE, value: die }] : [{ kind: COMMAND.VALIDATE }, { kind: COMMAND.DIE, value: die }];
             return {

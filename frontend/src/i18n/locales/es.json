@@ -1515,13 +1515,13 @@
         "videoResize": "Altura del panel de vídeo",
         "mode": {
             "entry": "Entrada",
-            "review": "Revisión",
-            "edit": "Edición jugada {n}"
+            "edit": "Jugada {n}"
         },
-        "modeKey": {
-            "entry": "Intro: validar la jugada",
-            "review": "E: editar",
-            "edit": "Intro: validar la corrección"
+        "modeEnter": "Intro: validar {move}",
+        "modeDigits": {
+            "entry": "cifras: validar y tirada siguiente",
+            "roll": "cifras: tirada",
+            "edit": "cifras: reescribir los dados de {n}"
         }
     },
     "transcript": {

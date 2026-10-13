@@ -242,34 +242,41 @@ describe('rien n’est refusé : l’Incohérence est montrée là où elle est'
 
 // ADR-0091 : le mode se lit sur la barre ; la Revue n'écrit rien, `e` rouvre la
 // décision et son champ de coup, `Fin` mène au bout du document.
-describe('Saisie, Revue, Édition', () => {
-    const relue = () => annotated({ cursor: 1, entry: { at: 1, kind: 'checker', replacing: true, side: 1, dice: [6, 3], selected: true, review: false } });
+describe('Saisie et décision existante (ADR-0092)', () => {
+    const relue = () => annotated({ cursor: 1, entry: { at: 1, kind: 'checker', replacing: true, side: 1, dice: [6, 3], selected: true, review: false, notation: '13/7 13/10' } });
     const badge = () => /** @type {HTMLElement} */ (document.querySelector('[data-testid="transcription-mode"]'));
 
-    test('bout du document : la pastille dit Saisie et ce que fait Entrée', async () => {
+    test('bout du document : l’indicateur dit Saisie et ce que font les chiffres', async () => {
         await openedPanel(annotated({ cursor: 3 }));
         expect(badge().dataset.mode).toBe('entry');
-        expect(badge().textContent).toContain('Enter: validate the move');
+        expect(badge().textContent).toContain('Entry');
+        expect(badge().textContent).toContain('digits: roll');
     });
 
-    test('en Revue, un chiffre ne part pas vers le moteur', async () => {
+    test('sur une décision existante, l’indicateur dit le coup, ce qu’Entrée valide et que les chiffres retapent le jet', async () => {
         await openedPanel(relue());
-        expect(badge().dataset.mode).toBe('review');
+        expect(badge().dataset.mode).toBe('edit');
+        expect(badge().textContent).toContain('Move 1');
+        expect(badge().textContent).toContain('Enter: record 13/7 13/10');
+        expect(badge().textContent).toContain('digits: retype the dice of 1');
+    });
+
+    test('sur une décision existante, un chiffre retape le jet sans rien avaler', async () => {
+        await openedPanel(relue());
         await press('Digit4');
         await press('Digit1');
-        await press('Enter');
         await tick();
-        expect(gestures()).toEqual([]);
+        expect(gestures().slice(0, 2)).toEqual([
+            { Kind: 'enter_die', Die: 4 },
+            { Kind: 'enter_die', Die: 1 }
+        ]);
     });
 
-    test('`e` passe en Édition et ouvre le champ du coup', async () => {
+    test('`e` ouvre le champ « dés: coup »', async () => {
         await openedPanel(relue());
         await press('KeyE');
         await tick();
-        expect(badge().dataset.mode).toBe('edit');
-        expect(badge().textContent).toContain('move 1');
-        expect(badge().textContent).toContain('Enter: validate the correction');
-        expect(document.querySelector('.transcript-view input.move-field')).not.toBeNull();
+        expect(/** @type {HTMLInputElement} */ (document.querySelector('.transcript-view input.move-field'))?.value).toBe('63: 13/7 13/10');
     });
 
     test('`Fin` mène le Cursor au bout du document', async () => {
