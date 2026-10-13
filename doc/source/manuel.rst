@@ -1696,7 +1696,12 @@ graphiques et sur sa ligne de la transcription, et une info-bulle donne la
 partie, le coup, le joueur et la perte ; l'info-bulle se place du côté où elle
 tient entière dans le cadre du graphique, même dans un panneau étroit. Un clic,
 ou Entrée, y amène la revue. Il en va de même pour le graphique des
-durées. Hors de l'interface, ``match --format json`` ajoute ``decision_losses``
+durées. Dans la légende de chaque graphique, le nom de chaque joueur est une
+case à cocher (au clavier comme à la souris) : la décocher masque ses marques
+sur les trois graphiques, car le réglage est commun, et le survol, le clic et
+les flèches ne tombent plus que sur les décisions de l'autre joueur (un clic
+prend la décision visible la plus proche). Le dernier joueur coché ne se
+décoche pas, et chaque match s'ouvre avec les deux joueurs cochés. Hors de l'interface, ``match --format json`` ajoute ``decision_losses``
 (une entrée par coup, ``mwc_loss`` valant ``null`` pour un coup non noté),
 ``--format text`` une ligne « MWC loss » par coup noté et ``--format summary`` le
 total par joueur.

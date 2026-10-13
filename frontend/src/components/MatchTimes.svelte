@@ -4,9 +4,10 @@
     import { t } from '../i18n';
     import { fmtDuration, fmtMean, timeBars } from '../utils/decisionTime.js';
     import MatchChart from './MatchChart.svelte';
+    import PlayerToggle from './PlayerToggle.svelte';
 
-    /** @type {{ summary: any, movePositions: any[], player1: string, player2: string, hovered?: number | null, onhover?: (moveId: number | null) => void, onselect?: (index: number) => void }} */
-    let { summary, movePositions, player1, player2, hovered = null, onhover = () => {}, onselect = () => {} } = $props();
+    /** @type {{ summary: any, movePositions: any[], player1: string, player2: string, hovered?: number | null, onhover?: (moveId: number | null) => void, onselect?: (index: number) => void, shown?: [boolean, boolean], ontoggle?: (p: 0 | 1) => void }} */
+    let { summary, movePositions, player1, player2, hovered = null, onhover = () => {}, onselect = () => {}, shown = [true, true], ontoggle = () => {} } = $props();
 
     // On the same decision axis as the loss charts.
     const MIN_H = 100;
@@ -65,6 +66,7 @@
                 label={$t('match.timesChart')}
                 minHeight={MIN_H}
                 {movePositions}
+                {shown}
                 ticks={[
                     { at: 1, text: fmtDuration(peak) },
                     { at: 0, text: '0' }
@@ -75,11 +77,13 @@
             >
                 {#snippet legend()}
                     {#each players as { name }, i (i)}
-                        <span><span class="key" class:player1={i === 0} class:player2={i === 1}></span>{name}</span>
+                        <PlayerToggle pressed={shown[i]} locked={shown[i] && !shown[1 - i]} ontoggle={() => ontoggle(/** @type {0 | 1} */ (i))}>
+                            <span class="key" class:player1={i === 0} class:player2={i === 1}></span>{name}
+                        </PlayerToggle>
                     {/each}
                 {/snippet}
                 {#snippet marks({ slot, H })}
-                    {#each bars as b (b.index)}
+                    {#each bars.filter((b) => shown[b.player]) as b (b.index)}
                         {@const h = Math.max(1, (b.ms / peak) * (H - 2))}
                         <rect
                             class="bar"

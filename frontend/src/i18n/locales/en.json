@@ -559,6 +559,7 @@
         "chartOpen": "Click to open this decision",
         "gameShort": "G{n}",
         "legendDifficulty": "difficulty (expected loss)",
+        "legendToggle": "show or hide this player's decisions",
         "lossSoFar": "Running total: {loss}",
         "timesPerDecision": "Time per decision",
         "tabsLabel": "Match views",
