@@ -2066,13 +2066,12 @@ avant le premier coup est marqué « action de videau impossible ». Une action 
 videau inscrite après la fin d'une partie porte la même marque : elle reste dans
 la partie terminée, n'en ouvre pas de nouvelle, et se supprime à la main.
 
-Dès que le second dé tombe, tous les **coups légaux** du jet sont listés,
-classés par le moteur embarqué, le premier présélectionné. Il ne dessine rien
-sur le plateau tant qu'on ne le survole ni ne le choisit. La liste donne le
-coup, son équité et son écart au meilleur :
-transcrire, c'est reconnaître le coup qu'on a vu jouer, pas le juger — le
-panneau **Évaluation** est là pour cela. Ce classement est une évaluation : il
-est affiché, il n'est jamais écrit dans la base. Lorsque le moteur n'est pas
+Dès que le second dé tombe, tous les **coups légaux** du jet sont listés, classés
+par le moteur embarqué, le premier présélectionné. Il ne dessine rien sur le plateau
+tant qu'on ne le survole ni ne le choisit. La liste donne le coup, son équité et son
+écart au meilleur : transcrire, c'est reconnaître le coup qu'on a vu jouer, pas le
+juger — le panneau **Évaluation** est là pour cela. Ce classement est une
+évaluation : il est affiché, il n'est jamais écrit dans la base. Lorsque le moteur n'est pas
 disponible, les coups sont listés sans classement et la liste le dit en tête.
 
 Un jet sans aucun coup légal enregistre la **danse** de lui-même : la main passe
