@@ -926,6 +926,26 @@ class GeneratedAPI(BaseClient):
         "POST /v1/players.alias.suggest — JSON."
         return self._call("/v1/players.alias.suggest", payload)
 
+    def players_main_clear(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/players.main.clear — JSON."
+        return self._call("/v1/players.main.clear", payload)
+
+    def players_main_get(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/players.main.get — JSON."
+        return self._call("/v1/players.main.get", payload)
+
+    def players_main_plan(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/players.main.plan — JSON."
+        return self._call("/v1/players.main.plan", payload)
+
+    def players_main_set(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/players.main.set — JSON."
+        return self._call("/v1/players.main.set", payload)
+
+    def players_match_ids(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/players.matchIds — JSON."
+        return self._call("/v1/players.matchIds", payload)
+
     def positions_count(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/positions.count — JSON."
         return self._call("/v1/positions.count", payload)

@@ -7,6 +7,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
@@ -256,5 +257,67 @@ func TestFinishAndAbandonNameTheirRevision(t *testing.T) {
 	}
 	if _, err := store.Transcriptions().Get(ctx, "1", other.ID); !errors.Is(err, storage.ErrNotFound) {
 		t.Fatalf("the draft must be gone after Abandon: %v", err)
+	}
+}
+
+// A finished transcription follows the Main player like an import: written
+// with them at seat 2, the Match is stored with them first, its moves turned
+// with its header. A library without one keeps the document's seats.
+func TestFinishSeatsTheMainPlayerFirst(t *testing.T) {
+	ctx := context.Background()
+	finish := func(main string) (*domain.Match, int) {
+		t.Helper()
+		const scope = "1"
+		store := newStore(t)
+		svc := New(store, Options{})
+		if err := store.LibrarySettings().SetMainPlayer(ctx, scope, main); err != nil {
+			t.Fatalf("SetMainPlayer: %v", err)
+		}
+		st, err := svc.Create(ctx, scope, transcript.Header{MatchLength: 7, Player1: "Alice", Player2: "Bob"})
+		if err != nil {
+			t.Fatalf("Create: %v", err)
+		}
+		st = play(t, svc, scope, st, checkerAction(6, 3))
+		res, err := svc.Finish(ctx, scope, st.ID, Expect{Session: st.SessionID, Revision: st.Revision})
+		if err != nil {
+			t.Fatalf("Finish: %v", err)
+		}
+		m, err := store.Matches().Get(ctx, scope, res.MatchID)
+		if err != nil {
+			t.Fatalf("Get: %v", err)
+		}
+		var games []*domain.Game
+		for g, err := range store.Matches().Games(ctx, scope, res.MatchID) {
+			if err != nil {
+				t.Fatalf("Games: %v", err)
+			}
+			games = append(games, g)
+		}
+		if len(games) == 0 {
+			t.Fatal("no game stored")
+		}
+		var moves []*domain.Move
+		for mv, err := range store.Matches().Moves(ctx, scope, games[0].ID) {
+			if err != nil {
+				t.Fatalf("Moves: %v", err)
+			}
+			moves = append(moves, mv)
+		}
+		if len(moves) == 0 {
+			t.Fatal("no move stored")
+		}
+		return m, int(moves[0].Player)
+	}
+
+	plain, opener := finish("")
+	if plain.Player1Name != "Alice" || plain.Player2Name != "Bob" {
+		t.Fatalf("without a Main player: seats %q / %q, want Alice / Bob", plain.Player1Name, plain.Player2Name)
+	}
+	m, player := finish("Bob")
+	if m.Player1Name != "Bob" || m.Player2Name != "Alice" {
+		t.Fatalf("seats %q / %q, want Bob / Alice", m.Player1Name, m.Player2Name)
+	}
+	if player != -opener {
+		t.Errorf("first move by player %d, want %d: the moves were not turned with the header", player, -opener)
 	}
 }

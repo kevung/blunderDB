@@ -1905,14 +1905,35 @@ vitesse ; pour une source YouTube, le navigateur s'ouvre sur le lien horodaté. 
 volet, et un format que le webview ne lit pas y est signalé avec les paquets à
 installer (voir :ref:`telecharge_install`). Un match sans source ne change pas.
 
-Le bouton **Fusionner les joueurs** de la barre d'outils du panneau ouvre une
-fenêtre listant tous les noms de joueurs de la base avec leur nombre de
-matchs : sélectionner les variantes d'orthographe d'un même joueur, choisir le
-nom canonique à conserver, puis fusionner. La fenêtre reste ouverte pour enchaîner d'autres fusions ; **Fermer** (ou *Échap*) la referme. La fusion crée un alias par
+Le bouton **Gérer les joueurs** de la barre d'outils du panneau ouvre une
+fenêtre listant tous les joueurs de la base, chacun avec son nombre de matchs
+(cliquer le nombre affiche ses matchs dans le panneau) et ses alias. Pour
+fusionner, sélectionner les variantes d'orthographe d'un même joueur, choisir le
+nom canonique à conserver (le taper, ou cliquer ✓ sur sa ligne), puis fusionner. La fenêtre reste ouverte pour enchaîner d'autres fusions ; **Fermer** (ou *Échap*) la referme. La fusion crée un alias par
 variante : les matchs gardent les noms de leurs fichiers, mais les statistiques,
 la table Joueurs et la recherche ``pl"…"`` lisent toutes les variantes comme un
-seul joueur, et les imports suivants enregistrent le nom canonique. Retirer
-l'alias dans l'onglet **Corpus** des paramètres défait la fusion.
+seul joueur, et les imports suivants enregistrent le nom canonique. Cliquer un
+alias (*×*) le retire et défait la fusion, comme dans l'onglet **Corpus** des
+paramètres.
+
+L'étoile (☆) d'une ligne désigne le **joueur principal**, celui à qui appartient
+la base, mémorisé dans la base et toujours en tête de la liste. Elle se remplit
+aussitôt et affiche le nombre de matchs où il est joueur 2 (cliquable, pour les
+voir), puis **Inverser** les inverse tous en une seule fois : si une inversion
+échoue, aucun match n'est inversé. Chaque match inversé garde ses analyses, ses
+erreurs, ses commentaires, ses repères vidéo, sa transcription et son tournoi.
+Le joueur principal est reconnu sous tous ses alias, et chaque import ultérieur,
+quel qu'en soit le format, le place en joueur 1, comme une transcription
+terminée ; un match joué contre gammonNet garde ses places. Un match où un
+brouillon de transcription est ouvert, ou joué dans blunderDB, n'est pas
+inversé : leur nombre est indiqué à part.
+
+Une fusion qui touche le joueur principal — un alias ajouté à son nom, ou son
+nom fusionné dans un autre, qui le désigne désormais — n'inverse rien d'elle-même :
+le bandeau revient avec les matchs qu'elle laisse à inverser, à confirmer par
+**Inverser** ou à écarter par **Retirer**, qui retire le joueur principal. Tant
+qu'il en reste, cliquer l'étoile pleine (★) rouvre ce bandeau ; sinon, elle
+retire le joueur principal, sans rien inverser en retour.
 
 Lorsqu'un match est ouvert, une **barre d'informations** apparaît au-dessus du
 plateau : elle rappelle les joueurs en présence (*joueur 1* contre *joueur 2*)

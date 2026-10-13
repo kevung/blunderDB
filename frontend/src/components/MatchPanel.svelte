@@ -38,7 +38,7 @@
     import VideoDock from './VideoDock.svelte';
     import { rateKeyDirection } from '../utils/videoRate.js';
     import { isBareLetter } from '../utils/keys.js';
-    import MergePlayersModal from './MergePlayersModal.svelte';
+    import ManagePlayersModal from './ManagePlayersModal.svelte';
     import EntityAutocomplete from './EntityAutocomplete.svelte';
     import PanelTable, { navigationDelta } from './panels/PanelTable.svelte';
     import CountLink from './panels/CountLink.svelte';
@@ -265,7 +265,7 @@
     }
 
     // Merge players modal
-    let showMergePlayersModal = $state(false);
+    let showManagePlayersModal = $state(false);
 
     // Inline match comment editing (detail pane, metadata view)
     const commentEdit = createInlineEdit({
@@ -1025,7 +1025,7 @@
         // A confirmation is up: Enter / Escape / Delete belong to it.
         if (get(confirmModalStore)) return;
         // Don't intercept keys while the merge players modal is open
-        if (showMergePlayersModal) return;
+        if (showManagePlayersModal) return;
 
         // [ and ] set the open video's speed. Read before panelKeyGuard: AltGr, which types
         // them on AZERTY, arrives as Ctrl+Alt on Windows.
@@ -1115,7 +1115,7 @@
         // blur the focused element, or modal text fields become unclickable.
         if (get(isAnyModalOpen)) return;
         // Don't interfere while the merge players modal is open
-        if (showMergePlayersModal) return;
+        if (showManagePlayersModal) return;
         // Close tournament dropdown if clicking outside
         if (tournamentEdit.editingId !== null && !event.target.closest('.tournament-cell-edit')) {
             tournamentEdit.cancel();
@@ -1198,7 +1198,7 @@
                     >
                 {/if}
                 {#if matches.length > 0 && matches.length < matchTotal}<span class="match-count">{$t('match.countOfTotal', { shown: matches.length, total: matchTotal })}</span>{/if}
-                <button class="toolbar-btn" onclick={() => (showMergePlayersModal = true)} title={$t('match.mergePlayersTitle')} disabled={matches.length === 0}>⇢ {$t('match.mergePlayers')}</button>
+                <button class="toolbar-btn" onclick={() => (showManagePlayersModal = true)} title={$t('match.mergePlayersTitle')} disabled={matches.length === 0}>⇢ {$t('match.mergePlayers')}</button>
             </div>
             <PanelTable
                 bind:this={table}
@@ -1730,9 +1730,9 @@
     </div>
 </section>
 
-{#if showMergePlayersModal}
-    <MergePlayersModal
-        onClose={() => (showMergePlayersModal = false)}
+{#if showManagePlayersModal}
+    <ManagePlayersModal
+        onClose={() => (showManagePlayersModal = false)}
         onMerged={async () => {
             await loadMatches();
             dbMutationCounterStore.update((n) => n + 1);
