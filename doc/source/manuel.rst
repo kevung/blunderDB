@@ -2424,11 +2424,11 @@ conteneur et, sous Linux, les greffons GStreamer à installer —
 ``gstreamer1-plugins-good`` et ``gstreamer1-plugin-libav`` sous Fedora,
 ``gst-plugins-good`` et ``gst-libav`` sous Arch (voir :ref:`telecharge_install`).
 
-Une vidéo qui se fige — un saut qui n'aboutit pas, une image immobile pendant
-la lecture — est rechargée au bout de trois secondes, puis reprise à l'instant
-demandé, à la même vitesse, en lecture ou en pause comme avant. Sous Linux, le
-webview dessine avec la carte graphique. Si la fenêtre reste blanche ou noire
-au démarrage, lancez blunderDB avec la variable d'environnement
+Une vidéo qui se fige — un saut qui n'aboutit pas, une image immobile pendant la lecture — est
+rechargée au bout de trois secondes, puis reprise à l'instant demandé, à la même vitesse, en lecture
+ou en pause comme avant. Après trois rechargements sans effet, le volet le signale et propose de
+réessayer. Sous Linux, le webview dessine avec la carte graphique. Si la fenêtre reste blanche ou
+noire au démarrage, lancez blunderDB avec la variable d'environnement
 ``WEBKIT_DISABLE_DMABUF_RENDERER=1``, par exemple
 ``WEBKIT_DISABLE_DMABUF_RENDERER=1 blunderDB``.
 

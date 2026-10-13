@@ -3280,6 +3280,8 @@
         "codecHint": "Στο Linux, εγκαταστήστε τα πρόσθετα GStreamer: gstreamer1.0-plugins-good, gstreamer1.0-libav (Debian, Ubuntu)· gstreamer1-plugins-good, gstreamer1-plugin-libav (Fedora)· gst-plugins-good, gst-libav (Arch). Στα Windows, η επέκταση HEVC του Store αναπαράγει H.265.",
         "missing": "Το αρχείο βίντεο δεν βρέθηκε.",
         "relocate": "Επιλογή αρχείου…",
+        "stalled": "Το βίντεο παραμένει παγωμένο παρά τις επαναφορτώσεις.",
+        "stalledRetry": "Επανάληψη",
         "player": "Πρόγραμμα αναπαραγωγής βίντεο",
         "placeBoard": "Εμφάνιση του βίντεο δίπλα στο ταμπλό",
         "placePanel": "Επαναφορά του βίντεο στο πάνελ",

@@ -3280,6 +3280,8 @@
         "codecHint": "On Linux, install the GStreamer plugins: gstreamer1.0-plugins-good, gstreamer1.0-libav (Debian, Ubuntu); gstreamer1-plugins-good, gstreamer1-plugin-libav (Fedora); gst-plugins-good, gst-libav (Arch). On Windows, the Store's HEVC extension plays H.265.",
         "missing": "Video file not found.",
         "relocate": "Choose the file…",
+        "stalled": "The video stays frozen after several reloads.",
+        "stalledRetry": "Retry",
         "player": "Video player",
         "placeBoard": "Show the video beside the board",
         "placePanel": "Put the video back in the panel",
