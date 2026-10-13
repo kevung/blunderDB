@@ -943,6 +943,18 @@
         await run(next.commands);
     }
 
+    /**
+     * After a batch: a validation that corrected a decision in place leaves the Cursor on the
+     * next one already written, which is re-armed as a walk would; otherwise the roll typed
+     * waits for its list.
+     *
+     * @param {PanelCommand[]} commands
+     */
+    function settleAfter(commands) {
+        const correctedInPlace = commands.some((c) => c.kind === COMMAND.VALIDATE) && get(transcriptionStore)?.annotated?.entry?.replacing === true;
+        return correctedInPlace ? settleCursor() : settleCandidates();
+    }
+
     // The engine moves the Cursor; the panel re-asks the candidates, an
     // Evaluation never stored (ADR-0045 rule 8).
 
@@ -1172,12 +1184,13 @@
         if (!draft) return;
         const next = selectCandidate(get(transcriptionKeyStore), index);
         // Converted before the list is emptied: `select` addresses a row of it.
-        const sent = run([...next.commands, { kind: COMMAND.VALIDATE }]);
+        const commands = [...next.commands, { kind: COMMAND.VALIDATE }];
+        const sent = run(commands);
         transcriptionKeyStore.set(initialKeyState());
         ranked = [];
         unranked = false;
         danced = false;
-        sent.then(settleCandidates);
+        sent.then(() => settleAfter(commands));
         panelEl?.focus({ preventScroll: true });
     }
 
@@ -1439,7 +1452,7 @@
         const rearms = result.commands.some((c) => REARMING.has(c.kind));
         const walks = result.commands.some((c) => c.kind === COMMAND.CURSOR_BACK || c.kind === COMMAND.CURSOR_FORWARD);
         const done = run(result.commands)
-            .then(rearms ? settleCursor : settleCandidates)
+            .then(() => (rearms ? settleCursor() : settleAfter(result.commands)))
             .then(() => {
                 if (walks) seekToCursor();
             });
@@ -1871,6 +1884,7 @@
             recordingPlay = false;
         }
         resetTranscriptionKeys();
+        if (get(transcriptionStore)?.annotated?.entry?.replacing === true) await settleCursor();
     }
 
     // Cellules dont le coup se tape (ADR-0052) : celles que `settleCursor` rejoue.

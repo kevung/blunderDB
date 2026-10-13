@@ -78,6 +78,7 @@ test('e : le champ porte « dés: coup » ; une validation corrige les deux', as
     await expect.poll(async () => (await sentGestures(page)).map(label)).toEqual(['die 6', 'die 2', 'enter_play', 'validate']);
     // La correction validée mène à la décision suivante (ADR-0092).
     await expect(page.locator('#transcriptionPanel .cell.cursor')).toHaveAttribute('data-index', '5');
+    await expect(page.locator('[data-testid="transcription-dice"] .die.filled')).toHaveCount(2);
 });
 
 test('changer de ligne redessine les flèches aussitôt : j/k, clic, survol', async ({ page }) => {
@@ -106,4 +107,21 @@ test('changer de ligne redessine les flèches aussitôt : j/k, clic, survol', as
     await rows.nth(1).click();
     await page.mouse.move(0, 0);
     await expect.poll(() => arrows(page, ENGINE)).not.toBe(before);
+});
+
+test('retour sur une décision, j puis Entrée : la ligne remplace le coup, la décision suivante est réévaluée', async ({ page }) => {
+    await openDraft(page);
+    await page.locator('#transcriptionPanel .cell[data-index="4"]').click();
+    await expect(page.locator('[data-testid="transcription-mode"]')).toHaveAttribute('data-mode', 'edit');
+    await expect(page.locator('[data-testid="transcription-candidates"] tr[data-move]').first()).toBeVisible();
+
+    await resetGestures(page);
+    await page.keyboard.press('j');
+    await page.keyboard.press('Enter');
+    await expect.poll(async () => (await sentGestures(page)).map((g) => g.Kind)).toEqual(['select_candidate', 'validate']);
+    await expect(page.locator('#transcriptionPanel .cell.cursor')).toHaveAttribute('data-index', '5');
+    // La décision suivante est réarmée comme par une marche : son jet, son analyse.
+    await expect(page.locator('[data-testid="transcription-dice"] .die.filled')).toHaveCount(2);
+    await expect(page.locator('[data-testid="transcription-candidates"] tr[data-move]').first()).toBeVisible();
+    await expect(page.locator('[data-testid="transcription-mode"]')).toHaveAttribute('data-mode', 'edit');
 });
