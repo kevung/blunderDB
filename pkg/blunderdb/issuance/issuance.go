@@ -107,16 +107,40 @@ func CarriedVideoSource(src *string) *string {
 	} else if u, err := url.Parse(v); err != nil {
 		// A URL that does not parse cannot be told free of credentials.
 		return nil
-	} else if u.User != nil {
-		// Credentials written into the URL are the producer's; the query
-		// (a YouTube ?v=) is what names the video and stays.
-		u.User = nil
-		v = u.String()
+	} else {
+		q, f := keepVideoParams(u.RawQuery), keepVideoParams(u.Fragment)
+		if u.User != nil || q != u.RawQuery || f != u.Fragment {
+			u.User, u.RawQuery, u.Fragment, u.RawFragment = nil, q, f, ""
+			v = u.String()
+		}
 	}
 	if v == "" {
 		return nil
 	}
 	return &v
+}
+
+// carriedVideoParams are the query parameters that locate a moment of a
+// public video: the video (v), the playlist and its position (list, index),
+// the start time (t, start, end) and the share id YouTube appends (si). Any
+// other parameter of a URL is the producer's: a signed link (S3 X-Amz-*,
+// Drive) carries its access token there, so what is not named stays home.
+var carriedVideoParams = map[string]bool{
+	"v": true, "t": true, "list": true, "si": true,
+	"start": true, "end": true, "index": true,
+}
+
+// keepVideoParams filters a query (or a fragment written as one) to the
+// allow-list, keeping the order; a fragment that is not a query is dropped.
+func keepVideoParams(raw string) string {
+	var kept []string
+	for _, kv := range strings.Split(raw, "&") {
+		k, _, _ := strings.Cut(kv, "=")
+		if carriedVideoParams[k] {
+			kept = append(kept, kv)
+		}
+	}
+	return strings.Join(kept, "&")
 }
 
 // CarriedTranscriptVideoSource is CarriedVideoSource for a transcription's
