@@ -176,6 +176,11 @@ type MatchStore interface {
 	// and with ErrSwapPlayedHere for a match played here (it has an origin).
 	SwapPlayers(ctx context.Context, scope string, id int64) error
 
+	// SwapRefusal is the refusal SwapPlayers would return for the match
+	// (ErrSwapDraftOpen, ErrSwapPlayedHere), nil when it would swap. It
+	// writes nothing: a plan can show what a bulk swap leaves out.
+	SwapRefusal(ctx context.Context, scope string, id int64) error
+
 	// MergePlayers makes every other given player name an alias of the
 	// canonical name; the stored matches keep the names their files wrote,
 	// and every reader that groups players resolves them through the aliases.

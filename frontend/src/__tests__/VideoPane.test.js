@@ -9,6 +9,7 @@
 import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
+import { flushSync } from 'svelte';
 
 const gui = vi.hoisted(() => ({ kind: 'file', mediaError: null }));
 
@@ -118,6 +119,313 @@ describe('VideoPane', () => {
         expect(applied).toEqual([10, 60]);
         component.seek(-3000);
         expect(applied).toEqual([10, 60, 0]);
+    });
+
+    /**
+     * A <video> whose pipeline is driven by hand: seeking, paused, the instant, the speed and
+     * the data at hand. A speed that changes fires ratechange, as WebKit does.
+     *
+     * @param {HTMLVideoElement} video
+     */
+    function drive(video) {
+        const el = { seeking: false, paused: true, muted: false, current: 0, rate: 1, ready: 4, loads: 0, plays: 0, applied: /** @type {number[]} */ ([]) };
+        const setRate = (/** @type {number} */ v) => {
+            if (v === el.rate) return;
+            el.rate = v;
+            // WebKitGTK unmutes the element on a speed change.
+            if (el.muted) {
+                el.muted = false;
+                video.dispatchEvent(new Event('volumechange'));
+            }
+            video.dispatchEvent(new Event('ratechange'));
+        };
+        Object.defineProperty(video, 'muted', {
+            get: () => el.muted,
+            set: (/** @type {boolean} */ v) => {
+                el.muted = v;
+            }
+        });
+        Object.defineProperty(video, 'seeking', { get: () => el.seeking });
+        Object.defineProperty(video, 'paused', { get: () => el.paused });
+        Object.defineProperty(video, 'ended', { get: () => false });
+        Object.defineProperty(video, 'readyState', { get: () => el.ready });
+        Object.defineProperty(video, 'duration', { get: () => 3600 });
+        Object.defineProperty(video, 'currentTime', {
+            get: () => el.current,
+            set: (/** @type {number} */ v) => {
+                el.applied.push(v);
+                el.current = v;
+                el.seeking = true;
+            }
+        });
+        Object.defineProperty(video, 'playbackRate', { get: () => el.rate, set: setRate });
+        video.load = () => {
+            el.loads++;
+            el.seeking = false;
+            el.paused = true;
+            setRate(1);
+        };
+        video.play = () => {
+            el.plays++;
+            el.paused = false;
+            return Promise.resolve();
+        };
+        video.pause = () => {
+            el.paused = true;
+        };
+        return el;
+    }
+
+    describe('a stalled file is reloaded', () => {
+        beforeEach(() => vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval', 'setTimeout', 'clearTimeout', 'Date', 'performance'] }));
+        afterEach(() => vi.useRealTimers());
+
+        /** @returns {Promise<{ container: HTMLElement, component: any, video: HTMLVideoElement }>} */
+        async function open() {
+            const { container, component } = render(VideoPane, { props: { source: '/v/round2.webm' } });
+            const video = /** @type {HTMLVideoElement} */ (await vi.waitFor(() => container.querySelector('video') ?? expect.fail('no video')));
+            return { container, component, video };
+        }
+
+        test('a seek that never lands reloads the source and goes to the last instant asked, at its speed, playing', async () => {
+            const { component, video } = await open();
+            const el = drive(video);
+            await fireEvent(video, new Event('loadedmetadata'));
+            el.seeking = false;
+            el.paused = false;
+            component.stepRate(1);
+            component.seek(600000);
+            component.seek(720000);
+            expect(el.applied).toEqual([600]);
+            vi.advanceTimersByTime(2500);
+            expect(el.loads).toBe(0);
+            vi.advanceTimersByTime(1500);
+            expect(el.loads).toBe(1);
+            expect(video.getAttribute('src')).toBe('http://127.0.0.1:1/m/tok');
+            // Asked while the source reloads: kept for the moment the metadata is in.
+            component.seek(750000);
+            expect(component.currentTimeMs()).toBe(750000);
+            expect(el.applied).toEqual([600]);
+            await fireEvent(video, new Event('loadedmetadata'));
+            expect(el.applied).toEqual([600, 750]);
+            expect(el.rate).toBe(1.25);
+            expect(el.plays).toBe(1);
+        });
+
+        test('a paused seek that never lands comes back paused', async () => {
+            const { component, video } = await open();
+            const el = drive(video);
+            await fireEvent(video, new Event('loadedmetadata'));
+            el.seeking = false;
+            component.seek(90000);
+            vi.advanceTimersByTime(4000);
+            expect(el.loads).toBe(1);
+            await fireEvent(video, new Event('loadedmetadata'));
+            expect(el.applied).toEqual([90, 90]);
+            expect(el.plays).toBe(0);
+        });
+
+        test('playback frozen on one instant reloads there; playback that moves, or a pause, does not', async () => {
+            const { video } = await open();
+            const el = drive(video);
+            await fireEvent(video, new Event('loadedmetadata'));
+            el.paused = false;
+            el.current = 30;
+            for (let i = 0; i < 10; i++) {
+                vi.advanceTimersByTime(1000);
+                el.current += 1;
+            }
+            el.paused = true;
+            vi.advanceTimersByTime(10000);
+            expect(el.loads).toBe(0);
+            el.paused = false;
+            vi.advanceTimersByTime(4000);
+            expect(el.loads).toBe(1);
+            await fireEvent(video, new Event('loadedmetadata'));
+            expect(el.applied).toEqual([40]);
+            expect(el.plays).toBe(1);
+        });
+
+        test('playback waiting for data is given longer before it counts as frozen', async () => {
+            const { video } = await open();
+            const el = drive(video);
+            await fireEvent(video, new Event('loadedmetadata'));
+            el.paused = false;
+            el.current = 30;
+            el.ready = 2;
+            vi.advanceTimersByTime(12000);
+            expect(el.loads).toBe(0);
+            vi.advanceTimersByTime(4000);
+            expect(el.loads).toBe(1);
+        });
+
+        test('a seek that fails at the same instant every time gives up after three reloads, each waiting longer, and offers to retry', async () => {
+            const { container, component, video } = await open();
+            const el = drive(video);
+            await fireEvent(video, new Event('loadedmetadata'));
+            el.seeking = false;
+            el.paused = false;
+            component.seek(1200000);
+            const reloadsAfter = (/** @type {number} */ ms) => {
+                vi.advanceTimersByTime(ms);
+                return el.loads;
+            };
+            // 3 s, then 6 s, then 9 s: the metadata comes back, the seek never lands.
+            expect(reloadsAfter(3500)).toBe(1);
+            await fireEvent(video, new Event('loadedmetadata'));
+            expect(reloadsAfter(5000)).toBe(1);
+            expect(reloadsAfter(1500)).toBe(2);
+            await fireEvent(video, new Event('loadedmetadata'));
+            expect(reloadsAfter(8000)).toBe(2);
+            expect(reloadsAfter(1500)).toBe(3);
+            await fireEvent(video, new Event('loadedmetadata'));
+            expect(reloadsAfter(30000)).toBe(3);
+            flushSync();
+            expect(container.querySelector('.video-pane')?.getAttribute('data-status')).toBe('error');
+            expect(container.textContent).toContain('frozen');
+            // Seeks asked meanwhile are where the retry goes.
+            component.seek(1300000);
+            await fireEvent.click(must(container.querySelector('[data-testid="video-retry"]')));
+            expect(el.loads).toBe(4);
+            expect(container.querySelector('[data-testid="video-retry"]')).toBeNull();
+            await fireEvent(video, new Event('loadedmetadata'));
+            expect(el.applied.at(-1)).toBe(1300);
+            expect(el.plays).toBe(4);
+        });
+
+        test('a reload that brings no metadata is tried again, then given up', async () => {
+            const { container, component, video } = await open();
+            const el = drive(video);
+            await fireEvent(video, new Event('loadedmetadata'));
+            el.seeking = false;
+            component.seek(5000);
+            vi.advanceTimersByTime(3500);
+            expect(el.loads).toBe(1);
+            vi.advanceTimersByTime(6500);
+            expect(el.loads).toBe(2);
+            vi.advanceTimersByTime(9500);
+            expect(el.loads).toBe(3);
+            vi.advanceTimersByTime(60000);
+            expect(el.loads).toBe(3);
+            flushSync();
+            expect(container.querySelector('[data-testid="video-retry"]')).not.toBeNull();
+        });
+
+        test('playback that moves again after a reload starts the count afresh', async () => {
+            const { component, video } = await open();
+            const el = drive(video);
+            await fireEvent(video, new Event('loadedmetadata'));
+            el.seeking = false;
+            el.paused = false;
+            for (let round = 1; round <= 5; round++) {
+                component.seek(round * 60000);
+                vi.advanceTimersByTime(3500);
+                expect(el.loads).toBe(round);
+                await fireEvent(video, new Event('loadedmetadata'));
+                el.seeking = false;
+                for (let i = 0; i < 3; i++) {
+                    el.current += 0.5;
+                    vi.advanceTimersByTime(500);
+                }
+            }
+        });
+
+        /**
+         * The seek a reload asked lands, as WebKit reports it.
+         *
+         * @param {HTMLVideoElement} video
+         * @param {ReturnType<typeof drive>} el
+         */
+        async function land(video, el) {
+            el.seeking = false;
+            await fireEvent(video, new Event('seeked'));
+        }
+
+        test('playback that lands after each reload but freezes again on the same frame gives up after three', async () => {
+            const { container, video } = await open();
+            const el = drive(video);
+            await fireEvent(video, new Event('loadedmetadata'));
+            el.paused = false;
+            el.current = 30;
+            const waits = [4000, 7000, 10000];
+            for (let n = 1; n <= 3; n++) {
+                vi.advanceTimersByTime(waits[n - 1]);
+                expect(el.loads).toBe(n);
+                await fireEvent(video, new Event('loadedmetadata'));
+                await land(video, el);
+                // One frame drawn past the point is not progress.
+                el.current += 0.04;
+            }
+            vi.advanceTimersByTime(30000);
+            expect(el.loads).toBe(3);
+            flushSync();
+            expect(container.querySelector('[data-testid="video-retry"]')).not.toBeNull();
+            // An answer that comes after the pane gave up leaves it as it is.
+            await fireEvent(video, new Event('loadedmetadata'));
+            flushSync();
+            expect(container.querySelector('.video-pane')?.getAttribute('data-status')).toBe('error');
+        });
+
+        test('a paused seek that lands after a reload starts the count afresh', async () => {
+            const { component, video } = await open();
+            const el = drive(video);
+            await fireEvent(video, new Event('loadedmetadata'));
+            el.seeking = false;
+            component.seek(90000);
+            vi.advanceTimersByTime(3500);
+            expect(el.loads).toBe(1);
+            await fireEvent(video, new Event('loadedmetadata'));
+            await land(video, el);
+            component.seek(120000);
+            // Counted afresh: 3 s, not the 6 s a second reload in a row would wait.
+            vi.advanceTimersByTime(3500);
+            expect(el.loads).toBe(2);
+        });
+
+        test('a reload never unmutes a muted video, through the speed it puts back', async () => {
+            const { component, video } = await open();
+            const el = drive(video);
+            await fireEvent(video, new Event('loadedmetadata'));
+            el.seeking = false;
+            el.paused = false;
+            el.muted = true;
+            await fireEvent(video, new Event('volumechange'));
+            component.stepRate(1);
+            expect(el.muted).toBe(true);
+            // Past the window a speed gesture opens: what follows is the reload's own doing.
+            vi.advanceTimersByTime(1000);
+            component.seek(60000);
+            vi.advanceTimersByTime(3500);
+            expect(el.loads).toBe(1);
+            expect(el.muted).toBe(true);
+            await fireEvent(video, new Event('loadedmetadata'));
+            expect(el.rate).toBe(1.25);
+            expect(el.muted).toBe(true);
+        });
+
+        test('a speed or a pause asked during a reload is the one kept, and the restored speed shows no indicator', async () => {
+            const { container, component, video } = await open();
+            const el = drive(video);
+            await fireEvent(video, new Event('loadedmetadata'));
+            el.seeking = false;
+            el.paused = false;
+            component.stepRate(1);
+            vi.advanceTimersByTime(1500);
+            expect(container.querySelector('[data-testid="video-rate-flash"]')).toBeNull();
+            component.seek(60000);
+            vi.advanceTimersByTime(3500);
+            expect(el.loads).toBe(1);
+            expect(container.querySelector('[data-testid="video-rate-flash"]')).toBeNull();
+            component.stepRate(1);
+            component.togglePlay();
+            expect(component.playbackRate()).toBe(1.5);
+            vi.advanceTimersByTime(1500);
+            await fireEvent(video, new Event('loadedmetadata'));
+            expect(el.rate).toBe(1.5);
+            expect(el.plays).toBe(0);
+            await vi.waitFor(() => expect(container.querySelector('[data-testid="video-rate"]')?.textContent).toBe('1.5×'));
+            expect(container.querySelector('[data-testid="video-rate-flash"]')).toBeNull();
+        });
     });
 
     test('a file the webview cannot decode is diagnosed by its container', async () => {

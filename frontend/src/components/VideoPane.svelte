@@ -47,7 +47,8 @@
     let rateWindowEnd = 0;
     function keepMuted() {
         if (!video) return;
-        if (performance.now() < rateWindowEnd) {
+        // A reload changes the speed too, through load() and then the speed it puts back.
+        if (performance.now() < rateWindowEnd || reloading) {
             if (userMuted && !video.muted) video.muted = true;
         } else userMuted = video.muted;
     }
@@ -139,6 +140,9 @@
         rates = VIDEO_RATES;
         ytTime = 0;
         ytSeekingTo = null;
+        reloads = 0;
+        reloading = null;
+        stalledOut = null;
         (async () => {
             try {
                 const k = await VideoSourceKind(current);
@@ -209,10 +213,20 @@
     }
 
     function onLoadedMetadata() {
+        // A late answer from a source given up on leaves the pane as it said.
+        if (stalledOut) return;
         status = 'ready';
         queuedMs = null;
-        if (pendingMs > 0 && video) video.currentTime = pendingMs / 1000;
-        if (video) video.playbackRate = rate;
+        const resume = reloading;
+        reloading = null;
+        if (pendingMs > 0 && video) askTime(pendingMs);
+        if (!video) return;
+        if (resume) {
+            quietRateUntil = Date.now() + RATE_QUIET_MS;
+            rateWindowEnd = performance.now() + RATE_QUIET_MS;
+        }
+        video.playbackRate = resume ? resume.rate : rate;
+        if (resume?.playing) Promise.resolve(video.play()).catch((error) => logger.error('play:', error));
     }
 
     // What the webview cannot read is named by its container and by the packages that give a
@@ -220,6 +234,7 @@
     function onVideoError() {
         const [container, mime] = containerOf(source);
         const code = video?.error?.code;
+        stalledOut = null;
         status = 'codec';
         const verdict = mime ? video?.canPlayType(mime) || '' : '';
         detail = $t('video.codecDetail', { container, support: verdict === '' ? $t('video.unsupported') : verdict, code: code ?? '?' });
@@ -241,17 +256,138 @@
     let queuedMs = null;
 
     function onSeeked() {
+        // Landing is progress only when paused: playing, a reload that lands then freezes again
+        // must still count against the limit.
+        if (video?.paused) reloads = 0;
         if (queuedMs === null || !video) return;
         const at = queuedMs;
         queuedMs = null;
-        video.currentTime = at / 1000;
+        askTime(at);
     }
+
+    /** @param {number} ms */
+    function askTime(ms) {
+        if (!video) return;
+        seekSince = Date.now();
+        video.currentTime = ms / 1000;
+    }
+
+    // WebKitGTK can leave a file's pipeline dead without an error event: a decoder that fails
+    // after a seek leaves the element seeking for good, and playback can freeze on one frame.
+    // Without progress the source is reloaded, then put back at the instant last asked, at its
+    // speed, playing or paused as it was. Each reload in a row waits longer; past MAX_RELOADS
+    // the pane says so and offers to try again, rather than reloading a file that always fails
+    // at the same instant.
+    const STALL_MS = 3000;
+    // Playback the element itself says is waiting for data is given longer before it counts.
+    const BUFFERING_MS = 15000;
+    const MAX_RELOADS = 3;
+    const WATCH_MS = 500;
+    // The speed a reload restores is not a gesture: its ratechange shows no indicator.
+    const RATE_QUIET_MS = 500;
+    const HAVE_FUTURE_DATA = 3;
+    /** When the seek in flight was asked or first seen, null when none is. */
+    /** @type {number | null} */
+    let seekSince = null;
+    /** The instant playback was last seen at, and since when. */
+    let lastTime = NaN;
+    let lastTimeSince = 0;
+    /** Reloads in a row with no progress between them. */
+    let reloads = 0;
+    /** The instant, in seconds, the last reload went back to. */
+    let progressFrom = NaN;
+    const PROGRESS_S = 1;
+    let quietRateUntil = 0;
+    /** What a reload under way puts back once the metadata is in, null when none is. */
+    /** @type {{ playing: boolean, rate: number, since: number } | null} */
+    let reloading = null;
+    /** What a retry after giving up resumes. */
+    let stalledOut = $state(/** @type {{ playing: boolean, rate: number } | null} */ (null));
+
+    function stallLimit() {
+        return STALL_MS * (reloads + 1);
+    }
+
+    function watchdog() {
+        if (!video || kind !== 'file' || status !== 'ready') return;
+        const now = Date.now();
+        if (reloading) {
+            if (now - reloading.since > stallLimit()) reload(pendingMs, reloading.playing, reloading.rate);
+            return;
+        }
+        if (video.seeking) {
+            seekSince ??= now;
+            if (now - seekSince > stallLimit()) reload(queuedMs ?? pendingMs, !video.paused, rate);
+            return;
+        }
+        seekSince = null;
+        if (video.paused || video.ended) {
+            lastTime = NaN;
+            return;
+        }
+        // Progress is playback past the reload point, not one frame drawn there.
+        if (reloads > 0 && video.currentTime > progressFrom + PROGRESS_S) reloads = 0;
+        if (video.currentTime !== lastTime) {
+            lastTime = video.currentTime;
+            lastTimeSince = now;
+            return;
+        }
+        const limit = video.readyState < HAVE_FUTURE_DATA ? Math.max(BUFFERING_MS, stallLimit()) : stallLimit();
+        if (now - lastTimeSince > limit) reload(Math.round(video.currentTime * 1000), true, rate);
+    }
+
+    /**
+     * @param {number} atMs
+     * @param {boolean} playing
+     * @param {number} speed
+     */
+    function reload(atMs, playing, speed) {
+        if (!video) return;
+        pendingMs = atMs;
+        queuedMs = null;
+        seekSince = null;
+        lastTime = NaN;
+        if (reloads >= MAX_RELOADS) {
+            logger.warn(`video still stalled after ${reloads} reloads, at ${atMs} ms`);
+            reloading = null;
+            stalledOut = { playing, rate: speed };
+            status = 'error';
+            detail = $t('video.stalled');
+            return;
+        }
+        reloads++;
+        progressFrom = atMs / 1000;
+        logger.warn(`video stalled, reload ${reloads} at ${atMs} ms`);
+        reloading = { playing, rate: speed, since: Date.now() };
+        // load() resets the speed to the default one.
+        video.defaultPlaybackRate = speed;
+        video.removeAttribute('src');
+        video.load();
+        video.src = src;
+    }
+
+    function retryStalled() {
+        const resume = stalledOut;
+        if (!resume) return;
+        stalledOut = null;
+        reloads = 0;
+        status = 'ready';
+        detail = '';
+        reload(pendingMs, resume.playing, resume.rate);
+    }
+
+    $effect(() => {
+        if (!video) return;
+        const timer = setInterval(watchdog, WATCH_MS);
+        return () => clearInterval(timer);
+    });
 
     /** @returns {number | null} the player's current instant in ms, null when unknown. */
     export function currentTimeMs() {
         if (status !== 'ready') return null;
         if (kind === 'youtube') return Math.round(ytTime * 1000);
         if (queuedMs !== null) return queuedMs;
+        if (reloading) return pendingMs;
         return video ? Math.round(video.currentTime * 1000) : null;
     }
 
@@ -268,9 +404,9 @@
             ytSeekingTo = ytTime;
             ytSeekingUntil = Date.now() + YT_SEEK_SETTLE_MS;
             postToPlayer({ type: 'seek', time: at / 1000 });
-        } else if (video) {
+        } else if (video && !reloading) {
             if (video.seeking) queuedMs = at;
-            else video.currentTime = at / 1000;
+            else askTime(at);
         }
     }
 
@@ -283,7 +419,12 @@
         if (status !== 'ready') return;
         const next = nextRate(rate, direction, rates);
         if (next === rate) return;
-        if (kind === 'youtube') {
+        if (reloading && video) {
+            // Applied once the source is back; load() would reset it now.
+            reloading.rate = next;
+            video.defaultPlaybackRate = next;
+            showRate(next);
+        } else if (kind === 'youtube') {
             // The shown speed is the one the player answers with, not the one asked.
             postToPlayer({ type: 'rate', rate: next });
         } else if (video) {
@@ -303,6 +444,8 @@
         if (kind === 'youtube') {
             postToPlayer({ type: ytPlaying ? 'pause' : 'play' });
             ytPlaying = !ytPlaying;
+        } else if (reloading) {
+            reloading.playing = !reloading.playing;
         } else if (video) {
             if (video.paused) video.play().catch((error) => logger.error('play:', error));
             else video.pause();
@@ -335,6 +478,7 @@
             onratechange={() => {
                 if (!video) return;
                 keepMuted();
+                if (reloading || Date.now() < quietRateUntil) return;
                 showRate(video.playbackRate);
             }}
         ></video>
@@ -369,6 +513,7 @@
         <div class="video-note video-problem" data-testid="video-diagnostic">
             <p>{detail}</p>
             {#if status === 'codec'}<p class="video-hint">{$t('video.codecHint')}</p>{/if}
+            {#if stalledOut}<button class="video-btn" data-testid="video-retry" onclick={retryStalled}>{$t('video.stalledRetry')}</button>{/if}
         </div>
     {/if}
 </div>
