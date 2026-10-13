@@ -327,8 +327,17 @@ describe('le glissé hors des règles, puis Entrée', () => {
 });
 
 describe('sur une Action relue', () => {
-    /** Le brouillon, le Cursor mené sur la cellule par un clic. */
+    /** Le brouillon, le Cursor mené sur la cellule par un clic, la décision rouverte par `e` (ADR-0091). */
     async function onRecorded() {
+        const cell = await reviewed();
+        await press('KeyE');
+        await press('Escape');
+        await vi.waitFor(() => expect(/** @type {any} */ (get(quizPlayStore))?.rolled).toEqual([6, 1]));
+        return cell;
+    }
+
+    /** Le brouillon, le Cursor mené sur la cellule par un clic : la décision est en Revue. */
+    async function reviewed() {
         let cursor = 1;
         /** @type {any} */ (ApplyTranscriptionGesture).mockImplementation((/** @type {any} */ _id, /** @type {any} */ gesture) => {
             if (gesture.Kind === 'cursor_back') cursor = 0;
@@ -340,9 +349,15 @@ describe('sur une Action relue', () => {
         document.getElementById('transcriptionPanel')?.focus();
         const cell = /** @type {HTMLElement} */ (document.querySelector('.transcript-view .cell[data-index="0"]'));
         await fireEvent.click(cell);
-        await vi.waitFor(() => expect(/** @type {any} */ (get(quizPlayStore))?.rolled).toEqual([6, 1]));
+        await vi.waitFor(() => expect(document.querySelector('[data-testid="transcription-mode"]')?.getAttribute('data-mode')).toBe('review'));
         return cell;
     }
+
+    test('en Revue, le plateau ne joue pas', async () => {
+        await reviewed();
+        await settle(30);
+        expect(get(quizPlayStore)).toBeNull();
+    });
 
     test('ses dés arment le plateau, et un coup légal joué la REMPLACE', async () => {
         await onRecorded();

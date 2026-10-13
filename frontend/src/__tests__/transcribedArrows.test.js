@@ -84,3 +84,23 @@ describe('transcriptionArrows', () => {
         expect(screenMoves(transcriptionArrows({ info })?.moves ?? [], true)[0]).toEqual({ from: 17, to: 20, index: 0, illegal: true });
     });
 });
+
+// La notation est numérotée depuis le camp qui joue : sa barre y est 25, et le plateau la dessine
+// du côté de ce camp, en bas comme en haut.
+describe('une entrée depuis la barre part de la barre du camp qui joue', () => {
+    test.each([
+        [0, false, 25],
+        [1, true, 0]
+    ])('camp %i (dessiné en haut : %s) : la flèche du moteur part du point %i', (camp, flipped, bar) => {
+        const info = { kind: 'checker', notation: '13/7', before: position(camp, { 13: [camp, 2] }) };
+        const moves = screenMoves(transcriptionArrows({ info, engineMove: 'bar/22' })?.moves ?? [], flipped);
+        expect(moves[0]).toEqual({ from: bar, to: flipped ? 3 : 22, index: 0 });
+    });
+
+    test.each([0, 1])('camp %i : le coup écrit depuis la barre se joue depuis sa barre', (camp) => {
+        const barPoint = camp === 0 ? 25 : 0;
+        const info = { kind: 'checker', notation: 'bar/22', before: position(camp, { [barPoint]: [camp, 1] }) };
+        const moves = transcriptionArrows({ info })?.moves ?? [];
+        expect(moves).toEqual([{ from: 25, to: 22, index: 0 }]);
+    });
+});

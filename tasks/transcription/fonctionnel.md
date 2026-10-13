@@ -134,7 +134,7 @@ annoté`. Les touches sont dans [ux.md](ux.md) ; ici, l'effet.
 | prendre / passer | Action précédente `double` | valide l'attente, crée `take` / `pass` | l'Action |
 | résigner (camp, niveau) | partie en cours | valide l'attente, crée `resign` ; partie terminée | l'Action |
 | reculer / avancer le Cursor | — | le Cursor change ; les dés et le candidat de l'Action visée sont chargés | — |
-| corriger en place | Cursor sur une Action | la nouvelle saisie remplace l'Action ; le Cursor **revient** à sa place antérieure après validation | l'Action |
+| corriger en place | Cursor sur une Action | rouverte en Édition (`e`, double-clic, clic sur une ligne de l'analyse), la nouvelle saisie remplace l'Action ; après validation le Cursor passe à la **décision suivante** (ADR-0091) | l'Action |
 | insérer avant / après | Cursor sur une Action | une Action nouvelle est attendue à cet endroit ; `side` proposé = celui qui rend la suite cohérente | l'Action insérée |
 | supprimer | Cursor sur une Action, ou une saisie en cours | l'Action (ou la saisie non écrite) disparaît ; les suivantes gardent leur `side` ; le Cursor recule sur la précédente, chargée pour correction (ADR-0050) | la suivante (Cursor tenu) |
 | changer de camp | Cursor sur une Action | `side` inversé | l'Action |

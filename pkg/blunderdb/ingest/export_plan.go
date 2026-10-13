@@ -2,10 +2,13 @@ package ingest
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"maps"
 	"slices"
 	"strings"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -20,10 +23,17 @@ import (
 // It holds counts only, so its size does not grow with the library; the ids
 // behind one count are asked for with PlanExportIDs, a page at a time.
 type ExportPlan struct {
-	Positions      int `json:"positions"`
-	Comments       int `json:"comments"`
-	Matches        int `json:"matches"`
-	Tournaments    int `json:"tournaments"`
+	Positions   int `json:"positions"`
+	Comments    int `json:"comments"`
+	Matches     int `json:"matches"`
+	Tournaments int `json:"tournaments"`
+	// Directions are the tournaments, among those planned, whose Direction
+	// leaves with them.
+	Directions int `json:"directions"`
+	// Slots are the planned matches that fill a Slot of a planned Direction.
+	Slots int `json:"slots"`
+	// Rencontres are the Rencontres of the planned tournaments.
+	Rencontres     int `json:"rencontres"`
 	Collections    int `json:"collections"`
 	Lessons        int `json:"lessons"`
 	AnkiDecks      int `json:"ankiDecks"`
@@ -52,6 +62,9 @@ const (
 	PlanComments       = "comments" // the positions that carry the comments
 	PlanMatches        = "matches"
 	PlanTournaments    = "tournaments"
+	PlanDirections     = "directions" // the tournaments whose Direction leaves
+	PlanSlots          = "slots"
+	PlanRencontres     = "rencontres" // the Rencontres that leave with a tournament
 	PlanCollections    = "collections"
 	PlanLessons        = "lessons"
 	PlanAnkiDecks      = "ankiDecks"
@@ -103,7 +116,7 @@ func PlanExportIDs(ctx context.Context, src storage.Storage, scope string, opts 
 }
 
 var plannedFamilies = map[string]struct{}{
-	PlanPositions: {}, PlanComments: {}, PlanMatches: {}, PlanTournaments: {}, PlanCollections: {},
+	PlanPositions: {}, PlanComments: {}, PlanMatches: {}, PlanTournaments: {}, PlanDirections: {}, PlanRencontres: {}, PlanCollections: {},
 	PlanLessons: {}, PlanAnkiDecks: {}, PlanTranscriptions: {}, PlanFilters: {},
 }
 
@@ -136,6 +149,8 @@ func newPlanner(ctx context.Context, src storage.Storage, scope string, opts Exp
 		p.comments,
 		p.tournaments,
 		p.matches,
+		p.directions,
+		p.rencontres,
 		p.collections,
 		p.lessons,
 		p.aliases,
@@ -245,6 +260,40 @@ func (p *planner) tournaments() error {
 		}
 		p.tourMap[id] = id
 		p.add(PlanTournaments, &p.plan.Tournaments, id)
+	}
+	return nil
+}
+
+// directions keeps what writeDirections writes: the Direction of each planned
+// tournament that has one.
+func (p *planner) directions() error {
+	for _, id := range slices.Sorted(maps.Keys(p.tourMap)) {
+		_, err := p.src.Directions().Get(p.ctx, p.scope, id)
+		if errors.Is(err, direction.ErrNoDirection) || errors.Is(err, storage.ErrNotFound) {
+			continue
+		}
+		if err != nil {
+			return fmt.Errorf("ingest: reading the direction of tournament %d: %w", id, err)
+		}
+		p.add(PlanDirections, &p.plan.Directions, id)
+		slots, err := p.src.Directions().FilledSlots(p.ctx, p.scope, id)
+		if err != nil {
+			return fmt.Errorf("ingest: reading the slots of tournament %d: %w", id, err)
+		}
+		p.plan.Slots += len(exportableSlots(slots, p.matchMap))
+	}
+	return nil
+}
+
+// rencontres keeps what writeRencontres writes: the Rencontre of each planned
+// tournament.
+func (p *planner) rencontres() error {
+	ids, err := rencontresOf(p.exporter, slices.Sorted(maps.Keys(p.tourMap)))
+	if err != nil {
+		return err
+	}
+	for _, id := range ids {
+		p.add(PlanRencontres, &p.plan.Rencontres, id)
 	}
 	return nil
 }
@@ -381,7 +430,7 @@ func (p *planner) ankiDecks() error {
 func (p ExportPlan) Counts() map[string]int {
 	return map[string]int{
 		PlanPositions: p.Positions, PlanComments: p.Comments, PlanMatches: p.Matches,
-		PlanTournaments: p.Tournaments, PlanCollections: p.Collections, PlanLessons: p.Lessons,
+		PlanTournaments: p.Tournaments, PlanDirections: p.Directions, PlanSlots: p.Slots, PlanRencontres: p.Rencontres, PlanCollections: p.Collections, PlanLessons: p.Lessons,
 		PlanAnkiDecks: p.AnkiDecks, PlanTranscriptions: p.Transcriptions, "aliases": p.Aliases,
 		PlanFilters: p.Filters, "degradedAnkiDecks": len(p.DegradedAnkiDecks),
 	}
@@ -391,7 +440,7 @@ func (p ExportPlan) Counts() map[string]int {
 func (r ExportReport) Counts() map[string]int {
 	return map[string]int{
 		PlanPositions: r.Positions, PlanComments: r.Comments, PlanMatches: r.Matches,
-		PlanTournaments: r.Tournaments, PlanCollections: r.Collections, PlanLessons: r.Lessons,
+		PlanTournaments: r.Tournaments, PlanDirections: r.Directions, PlanSlots: r.Slots, PlanRencontres: r.Rencontres, PlanCollections: r.Collections, PlanLessons: r.Lessons,
 		PlanAnkiDecks: r.AnkiDecks, PlanTranscriptions: r.Transcriptions, "aliases": r.Aliases,
 		PlanFilters: r.Filters, "degradedAnkiDecks": r.DegradedAnkiDecks,
 	}

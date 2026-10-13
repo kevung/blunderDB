@@ -10,13 +10,12 @@
  * Deux règles portent le budget :
  * - au second dé, les coups légaux sont classés en 0-ply et le premier est
  *   présélectionné, sans confirmation ;
- * - la touche chiffrée commence un jet là où le Cursor est (ADR-0048
- *   décision 1) : en bout de document elle VALIDE le candidat puis ouvre le
- *   jet suivant ; sur une Action relue elle RECOMMENCE le jet sur place. Le
- *   dernier coup d'une partie se valide par Entrée.
- * Le discriminant est `replacing` (`annotated.entry`, la cellule encadrée
- * du Transcript) : un état visible, pas un mode (ux.md §1). La machine ne
- * connaît pas le document (fonctionnel.md §1.2).
+ * - la touche chiffrée dépend du [MODE], affiché en permanence sur la barre
+ *   (ADR-0091) : en Saisie elle VALIDE le candidat puis ouvre le jet suivant ;
+ *   en Édition elle RECOMMENCE le jet sur place et seule Entrée valide ; en
+ *   Revue elle ne fait rien. Le dernier coup d'une partie se valide par Entrée.
+ * La machine ne connaît pas le document (fonctionnel.md §1.2) : le panneau
+ * lui donne le mode ([transcriptionMode]).
  *
  * Les candidats viennent du moteur : la machine pose `awaitingCandidates`,
  * le panneau répond par [applyCandidates]. Un jet sans coup légal crée
@@ -63,6 +62,33 @@ export const PHASE = Object.freeze({
     RESIGN: 'resign'
 });
 
+/**
+ * Les trois modes de la Transcription (ADR-0091). Saisie : le Cursor est en
+ * bout de document (ou sur une insertion), la frappe écrit la suite. Revue :
+ * le Cursor est sur une décision existante, aucune frappe de dés ne la
+ * modifie. Édition : la décision au Cursor est rouverte explicitement (`e`,
+ * double-clic sur sa cellule, clic sur une ligne de l'analyse).
+ */
+export const MODE = Object.freeze({
+    ENTRY: 'entry',
+    REVIEW: 'review',
+    EDIT: 'edit'
+});
+
+/**
+ * Le mode au Cursor : `editingAt` est l'Action que l'utilisateur a rouverte,
+ * ou null. Une Action rouverte qui n'est plus sous le Cursor ne compte pas.
+ *
+ * @param {any} annotated
+ * @param {number|null} editingAt
+ * @returns {string}
+ */
+export function transcriptionMode(annotated, editingAt) {
+    const entry = annotated?.entry;
+    if (entry?.replacing !== true) return MODE.ENTRY;
+    return editingAt != null && entry.at === editingAt ? MODE.EDIT : MODE.REVIEW;
+}
+
 /** Les gestes que la machine demande ; le panneau les traduit en appels Go. */
 export const COMMAND = Object.freeze({
     DIE: 'die',
@@ -88,6 +114,10 @@ export const COMMAND = Object.freeze({
     RESIGN: 'resign',
     CURSOR_BACK: 'cursor_back',
     CURSOR_FORWARD: 'cursor_forward',
+    /** `Fin` : le Cursor rejoint le bout du document, donc la Saisie. */
+    CURSOR_END: 'cursor_end',
+    /** `e` : rouvrir la décision au Cursor, son coup tapé en texte (ADR-0052). */
+    EDIT: 'edit',
     INSERT_BEFORE: 'insert_before',
     INSERT_AFTER: 'insert_after',
     DELETE: 'delete',
@@ -130,7 +160,7 @@ export function onBar(position) {
 const RESIGN_LEVELS = new Set([1, 2, 3]);
 
 /**
- * @typedef {{phase: string, dice: number[], selected: number, candidateCount: number, awaitingCandidates: boolean, retyped: boolean, resume: KeyState|null}} KeyState
+ * @typedef {{phase: string, dice: number[], selected: number, candidateCount: number, awaitingCandidates: boolean, resume: KeyState|null}} KeyState
  */
 
 /**
@@ -153,10 +183,6 @@ export function initialKeyState() {
         selected: 0,
         candidateCount: 0,
         awaitingCandidates: false,
-        // Le jet en cours a été TAPÉ dans cette saisie, et non chargé d'une
-        // Action relue : c'est ce qui sépare, sur la dernière Action, le
-        // chiffre qui corrige son jet de celui qui ouvre le suivant (ADR-0051).
-        retyped: false,
         // L'état à rendre si la résignation est abandonnée par Échap. Nul
         // partout ailleurs : seule la phase RESIGN en pose un.
         resume: null
@@ -278,15 +304,14 @@ const clamp = (n, max) => Math.min(Math.max(n, 0), max);
 /**
  * @param {KeyState} state - l'état rendu par `initialKeyState` ou par un appel précédent
  * @param {KeyboardEvent} event
- * @param {{expects?: string, replacing?: boolean, editing?: boolean, last?: boolean}} context -
+ * @param {{expects?: string, mode?: string, editing?: boolean}} context -
  *   `expects` : la sorte d'Action attendue au Cursor (`annotated.entry.kind`,
- *   à défaut `annotated.next.expects`) ; `replacing` : le Cursor est sur une
- *   Action existante (ADR-0048 décision 1) ; `editing` : le Cursor tient une
- *   cellule sans dé tapé ; `last` : l'Action remplacée est la dernière
- *   (ADR-0051).
+ *   à défaut `annotated.next.expects`) ; `mode` : [MODE] au Cursor
+ *   ([transcriptionMode]) ; `editing` : le Cursor tient une cellule sans dé
+ *   tapé.
  * @returns {KeyResult}
  */
-export function pressKey(state, event, { expects = 'checker', replacing = false, editing = false, last = false } = {}) {
+export function pressKey(state, event, { expects = 'checker', mode = MODE.ENTRY, editing = false } = {}) {
     // PHASE.RESIGN capte tout jusqu'à son niveau : les chiffres y sont des
     // niveaux, pas des dés.
     if (state.phase === PHASE.RESIGN) return resignLevel(state, event);
@@ -300,6 +325,12 @@ export function pressKey(state, event, { expects = 'checker', replacing = false,
             state: initialKeyState(),
             commands: [{ kind: step < 0 ? COMMAND.CURSOR_BACK : COMMAND.CURSOR_FORWARD }]
         };
+    }
+    if (event.key === 'End' && !event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey) {
+        return { handled: true, state: initialKeyState(), commands: [{ kind: COMMAND.CURSOR_END }] };
+    }
+    if (isBareLetter(event, 'e')) {
+        return { handled: true, state, commands: [{ kind: COMMAND.EDIT }] };
     }
 
     // Les quatre gestes de correction, aussi depuis « tout état » (ux.md §3,
@@ -331,6 +362,11 @@ export function pressKey(state, event, { expects = 'checker', replacing = false,
         if (isBareLetter(event, 'p')) return { handled: true, ...cubeGesture(state, COMMAND.PASS) };
     }
 
+    // En Revue la frappe de dés ne touche pas la décision relue : chiffres,
+    // `f`, `j`/`k`, Entrée et effacements sont pris sans effet, pour ne pas
+    // remonter au répartiteur global.
+    if (mode === MODE.REVIEW && DICE_KINDS.has(expects) && reviewSwallows(event)) return swallowed(state);
+
     // `f` : la danse se saisit comme un jet, donc seulement où des dés sont attendus.
     if (isBareLetter(event, 'f') && DICE_KINDS.has(expects)) {
         return { handled: true, state, commands: [{ kind: COMMAND.DANCE_ROLL }] };
@@ -347,7 +383,7 @@ export function pressKey(state, event, { expects = 'checker', replacing = false,
     if (!DICE_KINDS.has(expects)) return ignored(state);
 
     const die = dieOf(event);
-    if (die > 0) return enterDie(state, die, replacing, last);
+    if (die > 0) return enterDie(state, die, mode);
 
     if (event.key === 'Enter') {
         // Entrée valide seule : le dernier coup d'une partie n'a pas de tour
@@ -371,6 +407,15 @@ export function pressKey(state, event, { expects = 'checker', replacing = false,
     }
 
     return ignored(state);
+}
+
+/**
+ * Les touches de saisie de dés qu'une Revue avale.
+ *
+ * @param {KeyboardEvent} event
+ */
+function reviewSwallows(event) {
+    return dieOf(event) > 0 || selectionDelta(event) !== 0 || isBareLetter(event, 'f') || event.key === 'Enter' || event.key === 'Backspace' || event.key === 'Escape';
 }
 
 /**
@@ -465,21 +510,17 @@ export function menuCommands(from, to, kind) {
 /**
  * Un chiffre : premier dé, puis second ; sur une ouverture le second valide.
  *
- * Sur un jet déjà saisi (ADR-0048 décision 1) : en bout de document il valide
- * puis ouvre le jet suivant ; sur une Action relue il recommence sur place —
- * sauf sur la dernière Action une fois son jet retapé (ADR-0051), où il valide.
- *
- * Pas « valider partout » : `validate` n'est pas gardé par `entryDiffers`
- * comme `commitCorrection` ; il réécrirait l'Action et renverrait le Cursor à
- * `doc.Return`, mettant fin à la relecture.
+ * Sur un jet déjà saisi : en Saisie il valide puis ouvre le jet suivant ; en
+ * Édition il recommence sur place, Entrée seule validant ; en Revue il ne fait
+ * rien (ADR-0091).
  *
  * @param {KeyState} state
  * @param {number} die
- * @param {boolean} [replacing]
- * @param {boolean} [last] - l'Action remplacée est la dernière du document
+ * @param {string} [mode]
  * @returns {KeyResult}
  */
-function enterDie(state, die, replacing = false, last = false) {
+function enterDie(state, die, mode = MODE.ENTRY) {
+    if (mode === MODE.REVIEW) return swallowed(state);
     switch (state.phase) {
         case PHASE.DICE:
             return {
@@ -492,17 +533,16 @@ function enterDie(state, die, replacing = false, last = false) {
             const dice = [state.dice[0], die];
             return {
                 handled: true,
-                state: { ...initialKeyState(), phase: PHASE.ROLL, dice, awaitingCandidates: true, retyped: true },
+                state: { ...initialKeyState(), phase: PHASE.ROLL, dice, awaitingCandidates: true },
                 commands: [{ kind: COMMAND.DIE, value: die }]
             };
         }
 
         case PHASE.ROLL:
         case PHASE.CANDIDATE: {
-            // Relue : recommencer sur place (le moteur repart de zéro, rien
-            // n'est validé). Bout de document : valider d'abord.
-            const inPlace = replacing && !(last && state.retyped);
-            const commands = inPlace ? [{ kind: COMMAND.DIE, value: die }] : [{ kind: COMMAND.VALIDATE }, { kind: COMMAND.DIE, value: die }];
+            // Édition : recommencer sur place (le moteur repart de zéro, rien
+            // n'est validé, Entrée seule valide). Saisie : valider d'abord.
+            const commands = mode === MODE.EDIT ? [{ kind: COMMAND.DIE, value: die }] : [{ kind: COMMAND.VALIDATE }, { kind: COMMAND.DIE, value: die }];
             return {
                 handled: true,
                 state: { ...initialKeyState(), phase: PHASE.DIE1, dice: [die, 0] },
@@ -583,12 +623,12 @@ export function applyCandidates(state, count) {
  * @param {KeyState} state
  * @param {number} d1 - le dé fort, celui que porte l'étiquette de la case
  * @param {number} d2
- * @param {{expects?: string, replacing?: boolean, last?: boolean}} context - `expects` est lu par `pressKey` ; un clic ne s’en sert pas
+ * @param {{expects?: string, mode?: string}} context - `expects` est lu par `pressKey` ; un clic ne s’en sert pas
  * @returns {{state: KeyState, commands: KeyCommand[]}}
  */
-export function enterDicePair(state, d1, d2, { replacing = false, last = false } = {}) {
-    const first = enterDie(state, d1, replacing, last);
-    const second = enterDie(first.state, d2, replacing, last);
+export function enterDicePair(state, d1, d2, { mode = MODE.ENTRY } = {}) {
+    const first = enterDie(state, d1, mode);
+    const second = enterDie(first.state, d2, mode);
     return { state: second.state, commands: [...first.commands, ...second.commands] };
 }
 
@@ -598,10 +638,10 @@ export function enterDicePair(state, d1, d2, { replacing = false, last = false }
  *
  * @param {KeyState} state
  * @param {number} die
- * @param {{expects?: string, replacing?: boolean, last?: boolean}} context - `expects` est lu par `pressKey` ; un clic ne s’en sert pas
+ * @param {{expects?: string, mode?: string}} context - `expects` est lu par `pressKey` ; un clic ne s’en sert pas
  * @returns {{state: KeyState, commands: KeyCommand[]}}
  */
-export function enterSingleDie(state, die, { replacing = false, last = false } = {}) {
-    const result = enterDie(state, die, replacing, last);
+export function enterSingleDie(state, die, { mode = MODE.ENTRY } = {}) {
+    const result = enterDie(state, die, mode);
     return { state: result.state, commands: result.commands };
 }

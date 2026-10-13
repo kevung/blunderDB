@@ -219,9 +219,7 @@ type Document struct {
 	// no play behind it, or a .mat whose last game has none, leaves one.
 	NextScore *[2]int `json:"next_score,omitempty"`
 
-	Entry     *Entry `json:"-"`
-	Return    int    `json:"-"`
-	HasReturn bool   `json:"-"`
+	Entry *Entry `json:"-"`
 
 	// Touched is the index of the Action the last gesture EDITED (replaced,
 	// inserted, deleted, side changed); HasTouched says one was. A Replay looks
