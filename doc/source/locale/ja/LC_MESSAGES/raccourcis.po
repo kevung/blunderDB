@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-13 02:00+0200\n"
+"POT-Creation-Date: 2026-10-13 04:04+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -1289,10 +1289,10 @@ msgstr "1 … 6（出目を入力済み）"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"En Saisie, valider le coup sélectionné et ouvrir le jet suivant. En "
-"Édition, recommencer le jet de l'action rouverte, sans rien valider. En "
-"Revue, le chiffre ne fait rien."
-msgstr "入力では、選択中の手を確定して次のロールを開きます。編集では、開き直したアクションのロールを、何も確定せずにやり直します。確認では、数字キーは何もしません。"
+"Au bout du document, valider le coup sélectionné et ouvrir le jet "
+"suivant. Sur une action écrite, retaper son jet sur place, sans rien "
+"valider."
+msgstr "文書の末尾では、選択中の手を確定して次のロールを開きます。書き込み済みのアクションでは、何も確定せずそのロールをその場で入力し直します。"
 
 #: ../../source/raccourcis.rst:1
 msgid "1 … 6 (curseur sur le premier coup d'une partie)"
@@ -1336,8 +1336,8 @@ msgid "Clic (sur une ligne)"
 msgstr "クリック（行の上で）"
 
 #: ../../source/raccourcis.rst:1
-msgid "Sélectionner ce candidat ; sur une action relue, la rouvrir en Édition."
-msgstr "この候補を選択します。確認中のアクションでは、編集で開き直します。"
+msgid "Sélectionner ce candidat."
+msgstr "その候補を選択する。"
 
 #: ../../source/raccourcis.rst:1
 msgid "Double-clic (sur une ligne)"
@@ -1412,10 +1412,9 @@ msgstr ""
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Valider le coup sélectionné (dernier coup d'une partie) ; en Édition, "
-"valider la correction, le curseur passant à la décision suivante. Sans "
-"effet en Revue."
-msgstr "選択中の手を確定します(ゲームの最後の手)。編集では修正を確定し、カーソルは次の判断へ移ります。確認では効果がありません。"
+"Valider le coup sélectionné ; sur une action écrite, valider la "
+"correction, le curseur passant à la décision suivante."
+msgstr "選択中の手を確定します。書き込み済みのアクションでは修正を確定し、カーソルは次の判断へ移ります。"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
@@ -1532,12 +1531,13 @@ msgstr "e"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Rouvrir l'action du curseur (Édition) et taper son coup dans sa cellule, "
-"comme au double-clic. Esc referme la cellule en restant en Édition : les "
-"dés s'y retapent et ENTREE valide la correction."
+"Ouvrir la cellule du curseur, pré-remplie « dés: coup » (``62: 24/18 "
+"13/11``), comme au double-clic : ENTREE valide jet et coup ensemble, des "
+"dés illisibles laissent le champ ouvert. Esc referme la cellule sans rien"
+" écrire."
 msgstr ""
-"カーソル位置のアクションを開き直し(編集)、ダブルクリックのときと同様にそのセルで手を入力します。Esc "
-"は編集のままセルを閉じます。ダイスはそこで打ち直し、ENTER で修正を確定します。"
+"カーソルのセルを「ダイス: 手」(``62: 24/18 13/11``)の形で入力済みにして開きます。ダブルクリックと同じで、ENTER "
+"はロールと手をまとめて確定し、読み取れないダイスはフィールドを開いたままにします。Esc は何も書かずにセルを閉じます。"
 
 #: ../../source/raccourcis.rst:1
 msgid "FIN"
@@ -1553,16 +1553,16 @@ msgstr "ダブルクリック（セルの上で）"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Taper le coup de cette action au clavier, dans la cellule : 13/7 8/7*, "
-"bar/22, 6/off. Seul le coup se tape, les dés sont ceux de la cellule ; "
-"ENTREE l'enregistre, même illégal, et Esc referme la cellule sans rien "
-"écrire. L'action passe en Édition. Vaut pour un coup, une danse, un coup "
-"non consigné, et pour la cellule en pointillés de la saisie en cours dès "
-"que ses deux dés sont saisis."
+"Taper le jet et le coup de cette action au clavier, dans la cellule : 62:"
+" 24/18 13/11, ou le coup seul (13/7 8/7*, bar/22, 6/off), les dés de la "
+"cellule restant alors. ENTREE l'enregistre, même illégal, et Esc referme "
+"la cellule sans rien écrire. Vaut pour un coup, une danse, un coup non "
+"consigné, et pour la cellule en pointillés de la saisie en cours dès que "
+"ses deux dés sont saisis."
 msgstr ""
-"このアクションの手をセル内でキーボードから入力します。13/7 "
-"8/7*、bar/22、6/off。入力するのは手だけで、ダイスはセルのものです。ENTER は不正な手でも記録し、Esc "
-"は何も書かずにセルを閉じます。アクションは編集に移ります。手、ダンス、未記録の手、および入力中の点線のセルで、2つのダイスが入力されるとすぐに使えます。"
+"このアクションのロールと手をセル内でキーボードから入力します。62: 24/18 13/11、または手だけ(13/7 "
+"8/7*、bar/22、6/off)で、その場合セルのダイスはそのままです。ENTER は不正な手でも記録し、Esc "
+"は何も書かずにセルを閉じます。手、ダンス、未記録の手、および入力中の点線のセルで、2つのダイスが入力されるとすぐに使えます。"
 
 #: ../../source/raccourcis.rst:1
 msgid "Double-clic (sur le score d'une partie)"
@@ -1753,42 +1753,34 @@ msgstr ""
 
 #: ../../source/raccourcis.rst:439
 msgid ""
-"La saisie a trois modes, affichés en permanence dans une pastille au-"
-"dessus du triangle, avec l'effet d'ENTREE :"
-msgstr "入力には3つのモードがあり、三角形の上のバッジに常に表示され、ENTER の働きも示されます。"
+"Un indicateur permanent, au-dessus du triangle et sur la barre du mode "
+"théâtre, dit l'effet d'ENTREE et des chiffres à l'instant. Aucune touche "
+"n'est bloquée :"
+msgstr "常時表示のインジケーターが、三角形の上とシアターモードのバーで、いま ENTER と数字キーが何をするかを示します。どのキーもロックされません。"
 
 #: ../../source/raccourcis.rst:442
 msgid ""
-"**Saisie** — le curseur est au bout du document, ou sur une insertion. Le"
-" chiffre valide le coup sélectionné avant d'ouvrir le jet suivant : le "
-"meilleur coup joué coûte les deux dés et rien de plus, sa validation "
-"étant portée par la première touche du tour d'après."
+"**Saisie** — le curseur est au bout du document, ou sur une insertion. La"
+" première ligne de l'analyse est présélectionnée et dessinée ; le chiffre"
+" valide le coup sélectionné avant d'ouvrir le jet suivant : le meilleur "
+"coup joué coûte les deux dés et rien de plus, sa validation étant portée "
+"par la première touche du tour d'après."
 msgstr ""
 "**入力**\\ "
-"――カーソルは文書の末尾または挿入位置にあります。数字キーは、次のロールを開く前に選択中の手を確定します。最善手を指すのに必要なのは2つのダイスだけで、その確定は次のターンの最初のキーが担います。"
+"――カーソルは文書の末尾または挿入位置にあります。解析の先頭の行があらかじめ選ばれて描かれます。数字キーは、次のロールを開く前に選択中の手を確定します。最善手を指すのに必要なのは2つのダイスだけで、その確定は次のターンの最初のキーが担います。"
 
-#: ../../source/raccourcis.rst:446
+#: ../../source/raccourcis.rst:447
 msgid ""
-"**Revue** — le curseur est sur une action déjà écrite. Les touches de "
-"saisie (chiffres, f, j/k, ENTREE, RETOUR ARRIERE) ne la modifient pas, et"
-" le triangle des jets est masqué. *e*, un double-clic sur la cellule ou "
-"un clic sur une ligne de l'analyse la rouvrent."
+"**Coup N** — le curseur est sur une action déjà écrite. *j*/*k*, les "
+"flèches, le plateau et les clics sur l'analyse la corrigent ; le chiffre "
+"retape son jet sur place et ENTREE valide la correction, le curseur "
+"passant à la décision suivante. FIN ramène à la Saisie."
 msgstr ""
-"**確認**\\ "
-"――カーソルは書き込み済みのアクションにあります。入力キー(数字、f、j/k、ENTER、BACKSPACE)はそれを変更せず、ロールの三角形は非表示になります。\\"
-" *e*\\ 、セルのダブルクリック、または解析の行のクリックで開き直せます。"
+"**N手目を編集**\\ ――カーソルは書き込み済みのアクションにあります。\\ *j*\\ /\\ *k*\\ "
+"、矢印キー、盤面、解析のクリックで修正できます。数字キーはそのロールをその場で入力し直し、ENTER "
+"が修正を確定すると、カーソルは次の判断へ移ります。End で入力に戻ります。"
 
-#: ../../source/raccourcis.rst:450
-msgid ""
-"**Édition coup N** — l'action rouverte. Le chiffre recommence son jet sur"
-" place et seule ENTREE valide la correction ; le curseur passe alors à la"
-" décision suivante. Déplacer le curseur referme l'Édition ; FIN ramène à "
-"la Saisie."
-msgstr ""
-"**N手目を編集**\\ ――開き直したアクションです。数字キーはそのロールをその場でやり直し、修正を確定できるのは ENTER "
-"だけです。確定するとカーソルは次の判断へ移ります。カーソルを動かすと編集は閉じ、End で入力に戻ります。"
-
-#: ../../source/raccourcis.rst:455
+#: ../../source/raccourcis.rst:452
 msgid ""
 "Ce qui est en train d'être tapé se dessine dans le transcript, en "
 "pointillés, à la place où il sera écrit : une correction recouvre la "
@@ -1797,7 +1789,7 @@ msgid ""
 "validation."
 msgstr "入力中の内容は、書き込まれる位置に破線でトランスクリプトに描かれる。訂正は置き換えるセルを覆い、挿入は両隣のあいだにセルを開き、手番は列で読み取れる。確定前には何も記録されない。"
 
-#: ../../source/raccourcis.rst:460
+#: ../../source/raccourcis.rst:457
 msgid ""
 "Une insertion au milieu du document continue d'insérer : la validation "
 "ouvre une cellule vide à la suite, et l'action suivante s'insère à son "
@@ -1805,7 +1797,7 @@ msgid ""
 "déplacement du curseur y met fin."
 msgstr "文書の途中への挿入は挿入を続ける。確定すると続きに空のセルが開き、次のアクションもまた挿入され、後続のアクションを上書きしない。ゲームが終わるか、カーソルを動かすと終わる。"
 
-#: ../../source/raccourcis.rst:465
+#: ../../source/raccourcis.rst:462
 msgid ""
 "Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
 "rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
@@ -1813,7 +1805,7 @@ msgid ""
 "l'action attendue."
 msgstr "何もすることのない操作は、ステータスバーで一度そう告げます。積みが空なら「取り消すものがありません」、文書の末尾なら「カーソルの下にアクションがありません」。この文はひとりでに消え、期待される行動に場所を返します。"
 
-#: ../../source/raccourcis.rst:470
+#: ../../source/raccourcis.rst:467
 msgid ""
 "Reculer le curseur sur une action, la rouvrir puis ressaisir la corrige "
 "**en place** : la validation remplace l'action et le curseur passe à la "
@@ -1827,7 +1819,7 @@ msgstr ""
 "カーソルをアクションまで戻し、開き直して打ち直すと、その場で\\ **修正**\\ "
 "されます。確定するとアクションが置き換わり、カーソルは次の判断へ移ります。最後のアクションの後は文書の末尾に移り、トランスクリプションが続きます。ダイスを修正しても記録済みの手が新しいロールの合法手であれば、その手は保持されます。そうでなければ新しいロールの最初の候補が提案され、確定するまで手は「要確認」と表示されます。何かを変更した後にカーソルを前後に動かすと、その修正がついでに記録されます。"
 
-#: ../../source/raccourcis.rst:478
+#: ../../source/raccourcis.rst:475
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1844,7 +1836,7 @@ msgstr ""
 "拒否されるものも削除されるものもありません。隣と同じ手番のアクションを挿入すれば二重手番になり、アクションを削除すれば別の二重手番が生じることがあり、手番を変えれば以降の手が不正になることがあります。これらの不整合はトランスクリプトに印が付き、勝手に修正されることはありません。カーソルは書き込む操作のたびにその最初の不整合へ移動します。ただし続けて入力している場合は別で、修正、削除、挿入、再び開いたゲームのあとでは、入力している場所にとどまります。移動やダイスの入力でカーソルが動くことはありません。二重手番で失われた手番はトランスクリプトのセルです。h"
 " と l はそこで止まり、そこで入力した出目は、手番が抜けていた側に挿入されます。取り消し履歴はメモリ上にあり、下書きを閉じると失われます。"
 
-#: ../../source/raccourcis.rst:489
+#: ../../source/raccourcis.rst:486
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1853,7 +1845,7 @@ msgstr ""
 "パネルそのもの — 下書き一覧、作成、入力、棋譜、下書きのバー — は :ref:`panneau_transcription` "
 "で説明されています。"
 
-#: ../../source/raccourcis.rst:496
+#: ../../source/raccourcis.rst:493
 msgid "Planche-contact"
 msgstr "コンタクトシート"
 
@@ -1901,7 +1893,7 @@ msgstr "局面を盤面に開き、シートを閉じます。"
 msgid "Refermer la planche."
 msgstr "シートを閉じます。"
 
-#: ../../source/raccourcis.rst:513
+#: ../../source/raccourcis.rst:510
 msgid "Panneau d'aide"
 msgstr "ヘルプパネル"
 
@@ -2183,9 +2175,6 @@ msgstr "ヘルプを閉じる。"
 #~ " au lieu de valider."
 #~ msgstr "選択された手を確定し、次の出目を開く。カーソルがすでに書かれたアクションの上にある見直し中のアクションでは、数字は確定せずそのアクションの出目をやり直す。"
 
-#~ msgid "Sélectionner ce candidat."
-#~ msgstr "その候補を選択する。"
-
 #~ msgid "Valider le coup sélectionné (dernier coup d'une partie)."
 #~ msgstr "選択中の着手を記録する（ゲーム最後の着手）。"
 
@@ -2219,3 +2208,46 @@ msgstr "ヘルプを閉じる。"
 #~ " **最後の**\\ "
 #~ "アクションは例外です。その出目を打ち直すと、次の数字がそれを確定して次の決定を開きます。文書の末尾と同じく、ENTER "
 #~ "でもそこへ進みます。"
+
+#~ msgid ""
+#~ "En Saisie, valider le coup sélectionné"
+#~ " et ouvrir le jet suivant. En "
+#~ "Édition, recommencer le jet de l'action"
+#~ " rouverte, sans rien valider. En "
+#~ "Revue, le chiffre ne fait rien."
+#~ msgstr "入力では、選択中の手を確定して次のロールを開きます。編集では、開き直したアクションのロールを、何も確定せずにやり直します。確認では、数字キーは何もしません。"
+
+#~ msgid "Sélectionner ce candidat ; sur une action relue, la rouvrir en Édition."
+#~ msgstr "この候補を選択します。確認中のアクションでは、編集で開き直します。"
+
+#~ msgid ""
+#~ "Rouvrir l'action du curseur (Édition) et"
+#~ " taper son coup dans sa cellule, "
+#~ "comme au double-clic. Esc referme "
+#~ "la cellule en restant en Édition :"
+#~ " les dés s'y retapent et ENTREE "
+#~ "valide la correction."
+#~ msgstr ""
+#~ "カーソル位置のアクションを開き直し(編集)、ダブルクリックのときと同様にそのセルで手を入力します。Esc "
+#~ "は編集のままセルを閉じます。ダイスはそこで打ち直し、ENTER で修正を確定します。"
+
+#~ msgid ""
+#~ "La saisie a trois modes, affichés "
+#~ "en permanence dans une pastille au-"
+#~ "dessus du triangle, avec l'effet "
+#~ "d'ENTREE :"
+#~ msgstr "入力には3つのモードがあり、三角形の上のバッジに常に表示され、ENTER の働きも示されます。"
+
+#~ msgid ""
+#~ "**Revue** — le curseur est sur une"
+#~ " action déjà écrite. Les touches de"
+#~ " saisie (chiffres, f, j/k, ENTREE, "
+#~ "RETOUR ARRIERE) ne la modifient pas, "
+#~ "et le triangle des jets est "
+#~ "masqué. *e*, un double-clic sur la"
+#~ " cellule ou un clic sur une "
+#~ "ligne de l'analyse la rouvrent."
+#~ msgstr ""
+#~ "**確認**\\ "
+#~ "――カーソルは書き込み済みのアクションにあります。入力キー(数字、f、j/k、ENTER、BACKSPACE)はそれを変更せず、ロールの三角形は非表示になります。\\"
+#~ " *e*\\ 、セルのダブルクリック、または解析の行のクリックで開き直せます。"

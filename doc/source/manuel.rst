@@ -2086,13 +2086,17 @@ liste comme au-dessus du damier : le regard reste sur le plateau et les flèches
 défilent, ce qui reconnaît un coup plus vite que la lecture de sa notation. Un
 clic sur une ligne la sélectionne, un double-clic la valide.
 
-Une pastille, à gauche des cases du jet, donne le **mode** de la saisie et ce
-que fait ENTREE. En **Saisie**, au bout du document, on écrit la suite. En
-**Revue**, le curseur posé sur une action déjà écrite, les touches de saisie ne
-la modifient pas et le triangle des jets se retire. L'action se rouvre en
-**Édition coup N** par *e*, un double-clic sur sa cellule ou un clic sur une
-ligne de l'analyse : le jet s'y retape sur place, seule ENTREE valide, et le
-curseur passe alors à la décision suivante. FIN ramène au bout du document.
+Un indicateur, à gauche des cases du jet — et sur la barre du mode théâtre —,
+dit ce que fait la frappe à l'instant : **Saisie** au bout du document, **Coup
+N** sur une action déjà écrite, puis le coup qu'ENTREE valide et l'effet des
+chiffres. Aucune touche n'est bloquée : sur une action écrite comme au bout,
+*j*/*k* et les flèches choisissent une ligne de l'analyse, le plateau joue et
+les chiffres tapent les dés. En Saisie, la ligne présélectionnée — la première
+de l'analyse — est dessinée sur le plateau, et les chiffres du jet suivant
+l'enregistrent avant d'ouvrir la décision suivante. Sur une action écrite, les
+chiffres retapent son jet sur place et ENTREE valide la correction : le curseur
+passe alors à la décision suivante, et les positions qui suivent sont
+recalculées. FIN ramène au bout du document.
 
 Le triangle des vingt et un jets est posé sous les deux cases du jet, à côté du
 clavier et non à sa place : deux chiffres restent deux fois plus rapides qu'un
@@ -2129,10 +2133,14 @@ la liste.
 
 Le coup se tape aussi au clavier, dans le transcript. Un double-clic sur la
 cellule d'un coup — ou d'une danse, d'un coup non consigné — la change en champ,
-pré-rempli de sa notation. On n'y tape que le coup, ``13/7 8/7*``, ``bar/22`` ou
-``6/off`` : les dés sont ceux de la cellule. ENTREE l'enregistre à la place du
-coup écrit, ÉCHAP referme la cellule sans rien écrire, et un texte qui ne dit
-aucun coup laisse le champ ouvert. La touche *e* ouvre de même la cellule du
+pré-remplie de ses dés et de sa notation, ``62: 24/18 13/11``. On y corrige le
+jet et le coup ensemble ; sans ``dés:`` devant, seul le coup est tapé —
+``13/7 8/7*``, ``bar/22``, ``6/off``, ``13/7(2)`` — et les dés de la cellule
+restent. ENTREE enregistre les deux à la place de ce qui était écrit, ÉCHAP
+referme la cellule sans rien écrire. Des dés illisibles (``72:``) ou un texte
+qui ne dit aucun coup laissent le champ ouvert, et la barre d'état le dit ; un
+coup illégal pour ces dés est enregistré et marqué, jamais remplacé par un
+autre. La touche *e* ouvre de même la cellule du
 curseur. La cellule en pointillés de la saisie en cours s'ouvre de même, dès que
 ses deux dés sont saisis.
 
@@ -2445,7 +2453,9 @@ pendant une saisie ni quand la vidéo est en pause, et ce déplacement n'entre
 pas dans l'historique d'annulation. Placé à la main, le curseur reste sur
 l'action choisie tant que la lecture n'en est pas sortie : on clique sur un
 coup sans instant d'action, on lance la vidéo, on appuie sur *v* à la fin du
-coup, et c'est ce coup qui reçoit l'instant.
+coup, et c'est ce coup qui reçoit l'instant. Sur la dernière action, qui n'a
+pas de fin, il y reste dix secondes après son jet, puis revient en fin de
+transcript : les chiffres y ouvrent le jet suivant, et l'indicateur le dit.
 
 L'application ne décode pas la vidéo elle-même : les formats lus sont ceux du
 webview. Un format qu'il ne lit pas est signalé dans le volet, avec son
