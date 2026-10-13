@@ -17,7 +17,7 @@ import { newPlay } from '../services/quizPlay.js';
 import { DIAGRAM_WIDTH, DIAGRAM_HEIGHT } from '../services/diagramService.js';
 import { boardMetrics, parseMoveNotation } from '../utils/boardGeometry.js';
 import { defaultBoardConfig } from '../utils/boardConfig.js';
-import { stackSlotCenter, sideLayout } from '../utils/boardScene.js';
+import { ARROW_COLORS, stackSlotCenter, sideLayout } from '../utils/boardScene.js';
 
 // The mini board draws the diagram 24 units taller than its nominal height.
 const W = DIAGRAM_WIDTH;
@@ -137,8 +137,8 @@ describe('the theatre board takes a play by the one grammar', () => {
         transcriptionArrowsStore.set({ notation: '13/10 10/9', moves: parseMoveNotation('13/10 10/9'), tone: 'record' });
         render(TheatreMiniBoard);
         await tick();
-        // The arrows' colour, as boardScene.drawMoveArrows paints them.
-        const arrows = () => (drawing().innerHTML.match(/rgba\(255, 107, 107/g) ?? []).length;
+        // The arrows' colour, as boardScene.drawMoveArrows paints the written move.
+        const arrows = () => drawing().innerHTML.split(ARROW_COLORS.record).length - 1;
         expect(arrows()).toBeGreaterThan(0);
         await click(slot(8));
         expect(arrows()).toBe(0);

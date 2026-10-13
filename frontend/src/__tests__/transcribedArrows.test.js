@@ -32,7 +32,27 @@ describe('recordedSteps', () => {
     });
 
     test('a point held by the opponent is no landing; a lone opponent is hit', () => {
-        expect(recordedSteps('8/5 6/2', position(0, { 8: [0, 1], 6: [0, 1], 5: [1, 2], 2: [1, 1] })).map((m) => !!m.illegal)).toEqual([true, false]);
+        const before = { ...position(0, { 8: [0, 1], 6: [0, 1], 5: [1, 2], 2: [1, 1] }), dice: [4, 3] };
+        expect(recordedSteps('8/5 6/2', before).map((m) => !!m.illegal)).toEqual([true, false]);
+    });
+
+    test('a roll corrected under a kept play: the step no die pays is flagged', () => {
+        // Écrit sur 3-1, gardé sous 6-1 : le 3 n'existe plus.
+        const before = { ...position(0, { 8: [0, 2], 6: [0, 5] }), dice: [6, 1] };
+        expect(recordedSteps('8/5 6/5', before).map((m) => !!m.illegal)).toEqual([true, false]);
+        // Un pas qui prend deux dés par un point libre reste payé.
+        expect(recordedSteps('13/6', { ...position(0, { 13: [0, 2] }), dice: [6, 1] }).map((m) => !!m.illegal)).toEqual([false]);
+        // …pas par un point tenu des deux côtés.
+        expect(recordedSteps('13/6', { ...position(0, { 13: [0, 2], 7: [1, 2], 12: [1, 2] }), dice: [6, 1] }).map((m) => !!m.illegal)).toEqual([true]);
+    });
+
+    test('bearing off with a checker outside the home board is flagged', () => {
+        const before = { ...position(0, { 8: [0, 1], 3: [0, 2] }), dice: [3, 1] };
+        expect(recordedSteps('3/off 8/7', before).map((m) => !!m.illegal)).toEqual([true, false]);
+        // Le dernier pion rentré d'abord, la sortie se joue.
+        expect(recordedSteps('7/6 3/off', { ...position(0, { 7: [0, 1], 3: [0, 2] }), dice: [3, 1] }).map((m) => !!m.illegal)).toEqual([false, false]);
+        // Sortie d'un dé plus fort, tout le camp rentré : payée.
+        expect(recordedSteps('2/off 3/2', { ...position(0, { 2: [0, 1], 3: [0, 1] }), dice: [3, 1] }).map((m) => !!m.illegal)).toEqual([false, false]);
     });
 
     test('a checker on the bar enters first, whatever the order written', () => {
@@ -72,6 +92,13 @@ describe('transcriptionArrows', () => {
 
     test('pointing at the written move is the written move', () => {
         expect(transcriptionArrows({ info, engineMove: '8/5 6/5' })?.tone).toBe('record');
+    });
+
+    test('a play the Replay judges illegal, no step faulty on its own: every step on alert', () => {
+        const legalLooking = { kind: 'checker', notation: '8/5', before: position(0, { 8: [0, 1] }), inconsistencies: [{ kind: 'illegal_move', rule: 'unreachable_board' }] };
+        expect(transcriptionArrows({ info: legalLooking })?.moves).toEqual([{ from: 8, to: 5, index: 0, illegal: true }]);
+        const clean = { ...legalLooking, inconsistencies: [{ kind: 'score', rule: 'score_differs' }] };
+        expect(transcriptionArrows({ info: clean })?.moves).toEqual([{ from: 8, to: 5, index: 0 }]);
     });
 
     test('a dance, an unrecorded move or no Action draws nothing of its own', () => {

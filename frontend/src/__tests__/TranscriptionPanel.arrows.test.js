@@ -192,6 +192,34 @@ describe('the board draws the transcribed decision', () => {
     });
 });
 
+describe('at the end of the transcript, a new roll draws nothing until a line is pointed at', () => {
+    test('the line preselected for Enter is highlighted, not drawn; hovering it draws it', async () => {
+        const { container } = await cursorBack(0);
+        await fireEvent.keyDown(document, { key: '5', code: 'Digit5' });
+        await fireEvent.keyDown(document, { key: '2', code: 'Digit2' });
+        await settle();
+
+        expect(get(selectedMoveStore)).toBe('13/11 13/8');
+        expect(get(transcriptionArrowsStore)?.moves ?? []).toEqual([]);
+
+        const row = /** @type {HTMLElement} */ (container.querySelector('tr[data-move="13/11 13/8"]'));
+        await fireEvent.mouseEnter(row);
+        await settle();
+        expect(get(transcriptionArrowsStore)).toMatchObject({ tone: 'engine', notation: '13/11 13/8' });
+    });
+
+    test('`j` picks a line: it is drawn', async () => {
+        await cursorBack(0);
+        await fireEvent.keyDown(document, { key: '5', code: 'Digit5' });
+        await fireEvent.keyDown(document, { key: '2', code: 'Digit2' });
+        await settle();
+        await fireEvent.keyDown(document, { code: 'KeyJ', key: 'j' });
+        await settle();
+
+        expect(get(transcriptionArrowsStore)).toMatchObject({ tone: 'engine', notation: '13/8 13/11' });
+    });
+});
+
 describe('choosing a line of the analysis replaces the decision, the first line included', () => {
     const sent = () => /** @type {any} */ (ApplyTranscriptionGesture).mock.calls.map((/** @type {any} */ call) => (call[1].Kind === 'select_candidate' ? `select ${call[1].Candidate}` : call[1].Kind));
 

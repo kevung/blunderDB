@@ -2046,8 +2046,8 @@ videau inscrite après la fin d'une partie porte la même marque : elle reste da
 la partie terminée, n'en ouvre pas de nouvelle, et se supprime à la main.
 
 Dès que le second dé tombe, tous les **coups légaux** du jet sont listés,
-classés par le moteur embarqué, le premier présélectionné et ses flèches posées
-sur le plateau. La liste donne le coup, son équité et son écart au meilleur :
+classés par le moteur embarqué, le premier présélectionné. Il ne dessine rien
+sur le plateau tant qu'on ne le survole ni ne le choisit. La liste donne le coup, son équité et son écart au meilleur :
 transcrire, c'est reconnaître le coup qu'on a vu jouer, pas le juger — le
 panneau **Évaluation** est là pour cela. Ce classement est une évaluation : il
 est affiché, il n'est jamais écrit dans la base. Lorsque le moteur n'est pas
@@ -2126,14 +2126,14 @@ joué. Quand une correction plus haut dans le transcript change cette position,
 les pas du coup sont rejoués depuis la nouvelle, et toutes les positions qui
 suivent portent la correction.
 
-Les flèches du plateau sont celles du coup écrit dans la décision sous le
-curseur, rejoué sur la position qu'elle a désormais. Un pas qui ne s'y joue
-plus — case de départ vide après une correction plus haut, point tenu par
-l'adversaire, pion laissé à la barre — part quand même de la case écrite, en
-rouge pointillé, sa case de départ cerclée, et la cellule porte la marque
-« coup illégal ». Le coup du moteur ne prend jamais sa place : une ligne de la
-liste ne dessine ses flèches, en bleu, que survolée ou choisie à la molette,
-aux touches ou au clic.
+Les flèches du plateau sont celles du coup écrit dans la décision sous le curseur, en gris,
+rejoué sur la position qu'elle a désormais. Un pas qui ne s'y joue plus — case de départ vide
+après une correction plus haut, point tenu par l'adversaire, pion laissé à la barre, sortie avec
+un pion hors du jan, longueur qu'aucun dé ne paie après un jet corrigé — part quand même de la
+case écrite, en rouge pointillé, sa case de départ cerclée, et la cellule porte la marque « coup
+illégal ». Un coup que la relecture juge illégal sans qu'aucun pas ne le soit seul passe en rouge
+tout entier. Le coup du moteur ne prend jamais sa place : une ligne de la liste ne dessine ses
+flèches, en bleu, que survolée ou choisie à la molette, aux touches ou au clic.
 
 Sur la ligne des dés, la rangée **Doubler**, **Prendre**, **Passer**,
 **Abandonner** reprend à la souris les quatre gestes de videau : ce sont, avec
