@@ -1700,6 +1700,7 @@
         "captureOnBoard": "Schermata letta sulla scacchiera ({software}). Controllala, imposta {unread} e salva.",
         "captureOnBoardDoubts": "Schermata letta sulla scacchiera ({software}); {count} punto/i dubbio/i cerchiato/i. Controllala, imposta {unread} e salva.",
         "captureFailed": "Impossibile leggere la schermata: {error}",
+        "captureOnlyFirst": "{count} immagini rilasciate: è stata letta solo la prima.",
         "importIdentifierFailed": "L'identificatore non ha potuto essere letto: {error}",
         "boardImageSaved": "Immagine salvata: {path}",
         "boardImageSaveFailed": "L'immagine non ha potuto essere salvata: {err}",

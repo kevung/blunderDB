@@ -122,7 +122,7 @@ export namespace capture {
 	
 	export class Doubt {
 	    field: string;
-	    point?: number;
+	    point: number;
 	    reason: string;
 	
 	    static createFrom(source: any = {}) {

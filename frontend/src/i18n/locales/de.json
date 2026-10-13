@@ -1700,6 +1700,7 @@
         "captureOnBoard": "Screenshot auf das Brett gelesen ({software}). Prüfen, {unread} setzen, dann speichern.",
         "captureOnBoardDoubts": "Screenshot auf das Brett gelesen ({software}); {count} unsichere Stelle(n) umkreist. Prüfen, {unread} setzen, dann speichern.",
         "captureFailed": "Screenshot konnte nicht gelesen werden: {error}",
+        "captureOnlyFirst": "{count} Bilder abgelegt: nur das erste wurde gelesen.",
         "importIdentifierFailed": "Die Kennung konnte nicht gelesen werden: {error}",
         "boardImageSaved": "Bild gespeichert: {path}",
         "boardImageSaveFailed": "Das Bild konnte nicht gespeichert werden: {err}",

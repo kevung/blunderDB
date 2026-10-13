@@ -1700,6 +1700,7 @@
         "captureOnBoard": "Снимок экрана прочитан на доску ({software}). Проверьте, задайте {unread} и сохраните.",
         "captureOnBoardDoubts": "Снимок экрана прочитан на доску ({software}); сомнительных мест обведено: {count}. Проверьте, задайте {unread} и сохраните.",
         "captureFailed": "Не удалось прочитать снимок экрана: {error}",
+        "captureOnlyFirst": "Перетащено изображений: {count}. Прочитано только первое.",
         "importIdentifierFailed": "Не удалось прочитать идентификатор: {error}",
         "boardImageSaved": "Изображение сохранено: {path}",
         "boardImageSaveFailed": "Не удалось сохранить изображение: {err}",

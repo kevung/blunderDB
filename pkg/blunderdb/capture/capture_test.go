@@ -1,9 +1,11 @@
 package capture
 
 import (
+	"bytes"
 	"errors"
 	"image"
 	"image/color"
+	"image/png"
 	"os"
 	"testing"
 
@@ -81,5 +83,18 @@ func TestReadRefusesAnImageWithoutBoard(t *testing.T) {
 	}
 	if _, err := Read(img); !errors.Is(err, ErrNoBoard) {
 		t.Fatalf("got %v, want ErrNoBoard", err)
+	}
+}
+
+// A few kilobytes of PNG can declare a canvas of a gigabyte: the header is
+// checked before anything is allocated.
+func TestDecodeRefusesAnOversizedImage(t *testing.T) {
+	var buf bytes.Buffer
+	img := image.NewPaletted(image.Rect(0, 0, 5000, 5000), color.Palette{color.White, color.Black})
+	if err := png.Encode(&buf, img); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Decode(buf.Bytes()); !errors.Is(err, ErrTooLarge) {
+		t.Fatalf("got %v, want ErrTooLarge", err)
 	}
 }

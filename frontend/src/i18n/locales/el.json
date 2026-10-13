@@ -1700,6 +1700,7 @@
         "captureOnBoard": "Το στιγμιότυπο διαβάστηκε στο ταμπλό ({software}). Ελέγξτε το, ορίστε {unread} και αποθηκεύστε.",
         "captureOnBoardDoubts": "Το στιγμιότυπο διαβάστηκε στο ταμπλό ({software}) ; {count} αμφίβολο(α) σημείο(α) περικυκλώθηκαν. Ελέγξτε το, ορίστε {unread} και αποθηκεύστε.",
         "captureFailed": "Αδυναμία ανάγνωσης του στιγμιοτύπου: {error}",
+        "captureOnlyFirst": "Αφέθηκαν {count} εικόνες: διαβάστηκε μόνο η πρώτη.",
         "importIdentifierFailed": "Το αναγνωριστικό δεν μπόρεσε να διαβαστεί: {error}",
         "boardImageSaved": "Η εικόνα αποθηκεύτηκε: {path}",
         "boardImageSaveFailed": "Η εικόνα δεν μπόρεσε να αποθηκευτεί: {err}",

@@ -1149,6 +1149,9 @@ async function pastePositionCore() {
 async function pastePositionToBoard() {
     try {
         const clipboardText = await ClipboardGetText();
+        // No text and nothing copied inside the app: an image may be on the clipboard, and the
+        // window's paste event reads it, so this path stays out of its way.
+        if (!clipboardText && !get(clipboardPositionStore)) return;
         if (clipboardText && clipboardText.includes('XGID=')) {
             try {
                 const { positionData } = await parsePositionOnly(clipboardText);
@@ -1295,7 +1298,8 @@ export async function handleFileDrop(x, y, paths) {
     // A screen capture needs no database: it only lands on the scratch board.
     if (captures.length > 0) {
         const { importCaptureFile } = await import('./captureService.js');
-        await importCaptureFile(captures[0]);
+        const read = await importCaptureFile(captures[0]);
+        if (read && captures.length > 1) setStatusBarMessage(tMsg('status.captureOnlyFirst', { count: captures.length }));
         if (dbFiles.length === 0 && importFiles.length === 0 && folders.length === 0) return;
     }
 

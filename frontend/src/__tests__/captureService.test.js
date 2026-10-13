@@ -45,11 +45,17 @@ describe('a capture read onto the board', () => {
         expect(get(captureDoubtsStore)).toEqual(reading.doubts);
     });
 
-    test('a scratch board is not left', async () => {
+    test('the EDIT board is not re-entered', async () => {
         statusBarModeStore.set('EDIT');
         await showCaptureOnBoard(reading);
         expect(enterEditMode).not.toHaveBeenCalled();
         expect(applyPositionToBoard).toHaveBeenCalledOnce();
+    });
+
+    test('EVAL does not draw the doubts: the reading moves to EDIT', async () => {
+        statusBarModeStore.set('EVAL');
+        await showCaptureOnBoard(reading);
+        expect(enterEditMode).toHaveBeenCalledOnce();
     });
 
     test('nothing is saved: the reading only reaches the board', async () => {

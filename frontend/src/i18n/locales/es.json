@@ -1700,6 +1700,7 @@
         "captureOnBoard": "Captura leída en el tablero ({software}). Compruébala, define {unread} y guarda.",
         "captureOnBoardDoubts": "Captura leída en el tablero ({software}); {count} punto(s) dudoso(s) rodeado(s). Compruébala, define {unread} y guarda.",
         "captureFailed": "No se pudo leer la captura: {error}",
+        "captureOnlyFirst": "{count} imágenes soltadas: solo se leyó la primera.",
         "importIdentifierFailed": "No se ha podido leer el identificador: {error}",
         "boardImageSaved": "Imagen guardada: {path}",
         "boardImageSaveFailed": "No se ha podido guardar la imagen: {err}",

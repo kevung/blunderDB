@@ -1700,6 +1700,7 @@
         "captureOnBoard": "Kuvakaappaus luettu laudalle ({software}). Tarkista, aseta {unread} ja tallenna.",
         "captureOnBoardDoubts": "Kuvakaappaus luettu laudalle ({software}); {count} epävarmaa kohtaa ympyröity. Tarkista, aseta {unread} ja tallenna.",
         "captureFailed": "Kuvakaappausta ei voitu lukea: {error}",
+        "captureOnlyFirst": "{count} kuvaa pudotettu: vain ensimmäinen luettiin.",
         "importIdentifierFailed": "Tunnistetta ei voitu lukea: {error}",
         "boardImageSaved": "Kuva tallennettu: {path}",
         "boardImageSaveFailed": "Kuvaa ei voitu tallentaa: {err}",

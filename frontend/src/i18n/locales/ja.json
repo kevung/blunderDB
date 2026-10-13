@@ -1700,6 +1700,7 @@
         "captureOnBoard": "スクリーンショットを盤面に読み取りました（{software}）。確認し、{unread} を設定して保存してください。",
         "captureOnBoardDoubts": "スクリーンショットを盤面に読み取りました（{software}）。不確かな箇所 {count} 件を丸で示しています。確認し、{unread} を設定して保存してください。",
         "captureFailed": "スクリーンショットを読み取れませんでした: {error}",
+        "captureOnlyFirst": "{count} 枚の画像がドロップされました。最初の1枚だけを読み取りました。",
         "importIdentifierFailed": "識別子を読み取れませんでした：{error}",
         "boardImageSaved": "画像を保存しました：{path}",
         "boardImageSaveFailed": "画像を保存できませんでした：{err}",

@@ -47,7 +47,11 @@ func (t *theme) read(r *raster, g registration) Reading {
 
 	homeLeft, labelsSeen := t.readHomeSide(r, g)
 	if !labelsSeen {
+		// The point numbers are hidden, so the theme's default is a guess:
+		// the board may be mirrored, and a mirrored board is never settled
+		// without the user seeing it.
 		homeLeft = t.homeLeft
+		rd.Doubts = append(rd.Doubts, Doubt{Field: "orientation", Reason: "the point numbers are not visible, so the board's direction is assumed"})
 	}
 
 	// Which colour plays from the bottom. The theme's default holds unless
@@ -116,7 +120,11 @@ func (t *theme) read(r *raster, g registration) Reading {
 		onBoard[col] += b.count
 	}
 	if barDoubt != "" {
-		rd.Doubts = append(rd.Doubts, Doubt{Field: "bar", Reason: barDoubt})
+		for _, idx := range []int{domain.WhiteBar, domain.BlackBar} {
+			if pos.Board.Points[idx].Checkers > 0 {
+				rd.Doubts = append(rd.Doubts, Doubt{Field: "bar", Point: idx, Reason: barDoubt})
+			}
+		}
 	}
 	for col := 0; col < 2; col++ {
 		if onBoard[col] > 15 {

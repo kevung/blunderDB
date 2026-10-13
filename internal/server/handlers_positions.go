@@ -195,7 +195,13 @@ func (s *Server) positionRoutes() []route {
 			if err != nil {
 				return capture.Reading{}, fmt.Errorf("%w: bad base64 data", storage.ErrInvalid)
 			}
+			if err := ctx.Err(); err != nil {
+				return capture.Reading{}, err
+			}
 			rd, err := capture.Decode(raw)
+			if err == nil {
+				err = ctx.Err()
+			}
 			if err != nil {
 				return capture.Reading{}, fmt.Errorf("%w: %w", storage.ErrInvalid, err)
 			}

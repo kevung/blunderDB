@@ -13,14 +13,14 @@ import (
 
 // runCapture handles the capture command: the position a screen capture of
 // another program's board shows, with what the reading could not settle.
-// Saving is a choice: an uncertain reading is refused unless --force says
-// the user has checked it.
+// Saving is a choice: an uncertain or incomplete reading is refused unless
+// --force says the user has checked it.
 func (cli *CLI) runCapture(args []string) error {
 	fs := flag.NewFlagSet("capture", flag.ContinueOnError)
 	format := fs.String("format", "text", "Output format: text, json, xgid")
 	dbPath := fs.String("db", "", "Database to save the position into (with --save)")
 	save := fs.Bool("save", false, "Save the position into --db as an individual position")
-	force := fs.Bool("force", false, "Save even when the reading has doubts")
+	force := fs.Bool("force", false, "Save even when the reading has doubts or leaves the score or the turn unread")
 	fs.Usage = func() {
 		fmt.Println("Usage: blunderdb capture [options] <image>")
 		fmt.Println()
@@ -67,7 +67,7 @@ func (cli *CLI) runCapture(args []string) error {
 		fmt.Printf("XGID=%s\n", domain.EncodeXGID(&rd.Position))
 		fmt.Printf("Not read: %s\n", strings.Join(rd.Unread, ", "))
 		for _, d := range rd.Doubts {
-			if d.Point != 0 {
+			if d.Field == "point" || d.Field == "bar" {
 				fmt.Printf("Doubt: %s %d — %s\n", d.Field, d.Point, d.Reason)
 			} else {
 				fmt.Printf("Doubt: %s — %s\n", d.Field, d.Reason)
@@ -81,8 +81,10 @@ func (cli *CLI) runCapture(args []string) error {
 	if *dbPath == "" {
 		return fmt.Errorf("--save needs --db")
 	}
-	if len(rd.Doubts) > 0 && !*force {
-		return fmt.Errorf("the reading has %d doubt(s): check it, then save with --force", len(rd.Doubts))
+	// An unread score is saved as money play and an unread turn as a guess:
+	// both are wrong values, not blanks, so the user must have set them.
+	if (len(rd.Doubts) > 0 || len(rd.Unread) > 0) && !*force {
+		return fmt.Errorf("the reading has %d doubt(s) and does not show: %s; check and set them, then save with --force", len(rd.Doubts), strings.Join(rd.Unread, ", "))
 	}
 	if err := cli.initDatabase(*dbPath); err != nil {
 		return err

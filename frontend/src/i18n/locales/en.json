@@ -1700,6 +1700,7 @@
         "captureOnBoard": "Capture read onto the board ({software}). Check it, set {unread}, then save.",
         "captureOnBoardDoubts": "Capture read onto the board ({software}); {count} doubtful spot(s) ringed. Check it, set {unread}, then save.",
         "captureFailed": "Could not read the capture: {error}",
+        "captureOnlyFirst": "{count} images dropped: only the first was read.",
         "importIdentifierFailed": "The identifier could not be read: {error}",
         "boardImageSaved": "Image saved: {path}",
         "boardImageSaveFailed": "The image could not be saved: {err}",

@@ -28,8 +28,8 @@ export function isCaptureFile(path) {
  * @param {{ position: any, software?: string, doubts?: import('../stores/captureStore.js').CaptureDoubt[], unread?: string[] }} reading
  */
 export async function showCaptureOnBoard(reading) {
-    const mode = get(statusBarModeStore);
-    if (mode !== 'EDIT' && mode !== 'EVAL') await enterEditMode();
+    // EDIT, not EVAL: only EDIT draws the doubts the status message announces.
+    if (get(statusBarModeStore) !== 'EDIT') await enterEditMode();
     applyPositionToBoard(reading.position);
     const doubts = reading.doubts ?? [];
     captureDoubtsStore.set(doubts);

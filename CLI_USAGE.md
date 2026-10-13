@@ -1030,7 +1030,7 @@ theme; PNG, JPEG or GIF, at any size): checkers, bar, borne-off checkers
 (what the board lacks of fifteen), dice, player on roll and cube. The score is
 not read. What the reading cannot settle — a hidden point, a stack taller than
 the five checkers XG draws side by side, unreadable dice — is listed as a
-doubt, never guessed; `--save` refuses a reading with doubts unless `--force`.
+doubt, never guessed; `--save` refuses a reading with doubts, or one that does not show the score or the turn, unless `--force`.
 
 ```bash
 ./blunderDB capture screenshot.png
@@ -2452,7 +2452,7 @@ Options:
   -db string
     	Database to save the position into (with --save)
   -force
-    	Save even when the reading has doubts
+    	Save even when the reading has doubts or leaves the score or the turn unread
   -format string
     	Output format: text, json, xgid (default "text")
   -save
@@ -3336,7 +3336,7 @@ Options:
   -plan
     	Print what a database or matches export would write, family by family, without writing a file
   -plan-ids string
-    	Print one page of the source ids behind a --plan count, for a family: positions, comments, matches, tournaments, directions, collections, lessons, ankiDecks, transcriptions, filters
+    	Print one page of the source ids behind a --plan count, for a family: positions, comments, matches, tournaments, directions, rencontres, collections, lessons, ankiDecks, transcriptions, filters
   -played-moves
     	Include played moves in analysis (default: true) (default true)
   -tournament-ids string

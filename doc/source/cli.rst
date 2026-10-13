@@ -1849,7 +1849,10 @@ illisibles.
 * ``--format`` — Format de sortie : ``text``, ``json`` ou ``xgid`` (défaut : ``text``).
 * ``--db`` et ``--save`` — Enregistre la position dans la base comme position
   individuelle.
-* ``--force`` — Enregistre même quand la lecture comporte des doutes.
+* ``--force`` — Enregistre même quand la lecture comporte des doutes ou ne
+  montre pas le score ou le camp au trait. Sans lui, ``--save`` refuse : le
+  score non lu serait enregistré comme partie d'argent et le trait comme une
+  supposition.
 
 **Exemples:**
 

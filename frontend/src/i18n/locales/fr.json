@@ -1700,6 +1700,7 @@
         "captureOnBoard": "Capture lue sur le plateau ({software}). Vérifiez-la, réglez {unread}, puis enregistrez.",
         "captureOnBoardDoubts": "Capture lue sur le plateau ({software}) ; {count} doute(s) cerclé(s). Vérifiez-la, réglez {unread}, puis enregistrez.",
         "captureFailed": "Lecture de la capture impossible : {error}",
+        "captureOnlyFirst": "{count} images déposées : seule la première a été lue.",
         "importIdentifierFailed": "L'identifiant n'a pas pu être lu : {error}",
         "boardImageSaved": "Image enregistrée : {path}",
         "boardImageSaveFailed": "L'image n'a pas pu être enregistrée : {err}",

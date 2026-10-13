@@ -29,7 +29,7 @@ type Doubt struct {
 	Field string `json:"field"`
 	// Point is the blunderDB index (1..24, 0 and 25 for the bars) when Field
 	// is "point" or "bar".
-	Point int `json:"point,omitempty"`
+	Point int `json:"point"`
 	// Reason is a short English phrase for logs and the CLI.
 	Reason string `json:"reason"`
 }
@@ -55,8 +55,23 @@ const MinFit = 0.6
 // ErrNoBoard says that no known board was found in the image.
 var ErrNoBoard = errors.New("no backgammon board recognised in the image")
 
+// MaxPixels bounds the image a reading will decode: a screen capture is at
+// most a few megapixels, and a small file can declare billions (a 4 KB PNG
+// of 6000x6000 takes over a gigabyte), so the size is checked on the header.
+const MaxPixels = 16_000_000
+
+// ErrTooLarge says that the image declares more than MaxPixels.
+var ErrTooLarge = errors.New("image too large to be a screen capture")
+
 // Decode reads an encoded image (PNG, JPEG or GIF).
 func Decode(data []byte) (Reading, error) {
+	cfg, _, err := image.DecodeConfig(bytes.NewReader(data))
+	if err != nil {
+		return Reading{}, fmt.Errorf("decode image: %w", err)
+	}
+	if cfg.Width <= 0 || cfg.Height <= 0 || cfg.Width > MaxPixels/cfg.Height {
+		return Reading{}, fmt.Errorf("%w: %dx%d, at most %d pixels", ErrTooLarge, cfg.Width, cfg.Height, MaxPixels)
+	}
 	img, _, err := image.Decode(bytes.NewReader(data))
 	if err != nil {
 		return Reading{}, fmt.Errorf("decode image: %w", err)
