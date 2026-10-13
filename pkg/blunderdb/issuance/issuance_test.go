@@ -540,15 +540,20 @@ func TestCarriedTranscriptVideoSource(t *testing.T) {
 
 func TestCarriedVideoSourceAndFileName(t *testing.T) {
 	for in, want := range map[string]string{
-		"https://youtu.be/abc":                     "https://youtu.be/abc",
-		"https://www.youtube.com/watch?v=x1&t=42":  "https://www.youtube.com/watch?v=x1&t=42",
-		"https://kevin:secret@nas.local/v.mp4?a=1": "https://nas.local/v.mp4?a=1",
-		"http://token@cdn.example/v.webm":          "http://cdn.example/v.webm",
-		"https://bad host/%zz":                     "",
-		"/home/kevin/Vidéos/finale.mp4":            "finale.mp4",
-		"file:///home/kevin/demi.mkv":              "demi.mkv",
-		"/home/kevin/Vidéos/":                      "",
-		"   ":                                      "",
+		"https://youtu.be/abc":                                                        "https://youtu.be/abc",
+		"https://www.youtube.com/watch?v=x1&t=42":                                     "https://www.youtube.com/watch?v=x1&t=42",
+		"https://youtu.be/abc?t=42&list=PL1&si=zz":                                    "https://youtu.be/abc?t=42&list=PL1&si=zz",
+		"https://kevin:secret@nas.local/v.mp4?a=1":                                    "https://nas.local/v.mp4",
+		"https://b.s3.amazonaws.com/v.mp4?X-Amz-Signature=abc&X-Amz-Credential=k&t=5": "https://b.s3.amazonaws.com/v.mp4?t=5",
+		"https://b.s3.amazonaws.com/v.mp4?X-Amz-Signature=abc":                        "https://b.s3.amazonaws.com/v.mp4",
+		"https://drive.example/v.mp4?v=1#access_token=abc":                            "https://drive.example/v.mp4?v=1",
+		"https://youtu.be/abc#t=30":                                                   "https://youtu.be/abc#t=30",
+		"http://token@cdn.example/v.webm":                                             "http://cdn.example/v.webm",
+		"https://bad host/%zz":                                                        "",
+		"/home/kevin/Vidéos/finale.mp4":                                               "finale.mp4",
+		"file:///home/kevin/demi.mkv":                                                 "demi.mkv",
+		"/home/kevin/Vidéos/":                                                         "",
+		"   ":                                                                         "",
 	} {
 		got := CarriedVideoSource(&in)
 		if (got == nil) != (want == "") || (got != nil && *got != want) {
