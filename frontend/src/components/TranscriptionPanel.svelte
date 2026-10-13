@@ -2579,6 +2579,12 @@
         flex: 0 0 auto;
     }
 
+    /* Sans largeur propre : la colonne garde celle du triangle, le badge prend le reste. */
+    .entry-row :global(.mode-badge) {
+        flex: 1 1 0;
+        contain: inline-size;
+    }
+
     .die {
         display: inline-flex;
         align-items: center;
