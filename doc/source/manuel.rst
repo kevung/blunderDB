@@ -5150,9 +5150,10 @@ Huit points méritent l'attention :
   *+ leurs positions* emporte les positions des collections cochées : celles
   d'une liste faite à la main, celles que la requête d'une collection vivante
   sélectionne.
-* **Les tournois ne peuvent être exportés qu'avec les matchs** : sans eux, le
-  lien tournoi–match n'existe pas et le tournoi arriverait vide. La case reste
-  inactive tant que celle des matchs n'est pas cochée.
+* **Un tournoi part toujours avec ses matchs** : sans eux, le lien
+  tournoi–match n'existe pas et le tournoi arriverait vide. Cocher un tournoi
+  emporte ses matchs, même si la case des matchs est décochée ou restreinte à
+  d'autres.
 * **Un paquet Anki part avec ses positions**, en copie d'étude neuve. La case
   *avec mon historique* emporte en plus l'état de chaque carte et le journal
   de ses révisions : une sauvegarde, ou vos paquets passés sur une autre

@@ -354,8 +354,8 @@
                 <label class="check"><input type="checkbox" id="export-aliases" bind:checked={exportOptions.includeAliases} disabled={!carriesMatches} />{$t('export.aliases')}</label>
             </FormRow>
             <FormRow label={$t('export.rowTournaments')} for="export-tournaments">
-                <!-- A tournament is linked to its matches only when the matches are exported too. -->
-                <input type="checkbox" id="export-tournaments" bind:checked={exportOptions.includeTournaments} disabled={tournaments.length === 0 || !exportOptions.includeMatches} />
+                <!-- A tournament always leaves with its matches, so this box does not depend on the matches one. -->
+                <input type="checkbox" id="export-tournaments" bind:checked={exportOptions.includeTournaments} disabled={tournaments.length === 0} />
                 <span class="count">{tournaments.length}</span>
             </FormRow>
             <FormRow label={$t('export.rowCollections')} for="export-collections">
