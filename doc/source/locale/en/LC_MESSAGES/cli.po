@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-13 02:03+0200\n"
+"POT-Creation-Date: 2026-10-13 02:12+0200\n"
 "PO-Revision-Date: 2026-04-20 17:00+0200\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -540,9 +540,9 @@ msgstr "Create a new database file with optional metadata."
 #: ../../source/cli.rst:2459 ../../source/cli.rst:2543
 #: ../../source/cli.rst:2577 ../../source/cli.rst:2713
 #: ../../source/cli.rst:2758 ../../source/cli.rst:2798
-#: ../../source/cli.rst:2858 ../../source/cli.rst:2971
-#: ../../source/cli.rst:3070 ../../source/cli.rst:3100
-#: ../../source/cli.rst:3143
+#: ../../source/cli.rst:2858 ../../source/cli.rst:2992
+#: ../../source/cli.rst:3091 ../../source/cli.rst:3121
+#: ../../source/cli.rst:3164
 msgid "**Options:**"
 msgstr "**Options:**"
 
@@ -581,7 +581,7 @@ msgstr ""
 #: ../../source/cli.rst:141 ../../source/cli.rst:2024 ../../source/cli.rst:2187
 #: ../../source/cli.rst:2733 ../../source/cli.rst:2773
 #: ../../source/cli.rst:2811 ../../source/cli.rst:2871
-#: ../../source/cli.rst:3051 ../../source/cli.rst:3112
+#: ../../source/cli.rst:3072 ../../source/cli.rst:3133
 msgid "**Exemple:**"
 msgstr "**Example:**"
 
@@ -1106,8 +1106,8 @@ msgstr ""
 #: ../../source/cli.rst:1924 ../../source/cli.rst:2344
 #: ../../source/cli.rst:2408 ../../source/cli.rst:2442
 #: ../../source/cli.rst:2469 ../../source/cli.rst:2559
-#: ../../source/cli.rst:2632 ../../source/cli.rst:3079
-#: ../../source/cli.rst:3171
+#: ../../source/cli.rst:2632 ../../source/cli.rst:3100
+#: ../../source/cli.rst:3192
 msgid "**Exemples:**"
 msgstr "**Examples:**"
 
@@ -1250,8 +1250,8 @@ msgstr "**Main options:**"
 #: ../../source/cli.rst:2461 ../../source/cli.rst:2545
 #: ../../source/cli.rst:2579 ../../source/cli.rst:2715
 #: ../../source/cli.rst:2760 ../../source/cli.rst:2800
-#: ../../source/cli.rst:2860 ../../source/cli.rst:2973
-#: ../../source/cli.rst:3072
+#: ../../source/cli.rst:2860 ../../source/cli.rst:2994
+#: ../../source/cli.rst:3093
 msgid "``--db`` — Base de données (obligatoire)."
 msgstr "``--db`` — Database (required)."
 
@@ -5422,11 +5422,40 @@ msgstr ""
 " seat. The swap is refused while a transcription draft is open on the "
 "match, and for a match played in blunderDB."
 
-#: ../../source/cli.rst:2944
+#: ../../source/cli.rst:2938
+msgid ""
+"**players main** — Le joueur principal de la fenêtre des matchs (routes "
+"``players.main.*``). Sans nom, affiche le joueur principal ; avec un nom,"
+" le désigne et inverse en une seule transaction tous les matchs où lui ou"
+" l'un de ses alias est joueur 2 ; chaque import ultérieur le place en "
+"joueur 1. ``--dry-run`` affiche les matchs à inverser sans rien changer ;"
+" ``--clear`` retire le joueur principal sans rien inverser en retour. Un "
+"match où un brouillon de transcription est ouvert, ou joué dans "
+"blunderDB, est laissé tel quel et listé à part."
+msgstr ""
+"**players main** — The main player of the matches window (routes "
+"``players.main.*``). Without a name, shows the main player; with a name, "
+"designates that player and, in a single transaction, swaps every match "
+"where he or she or one of the aliases is player 2; every later import "
+"places that player as player 1. ``--dry-run`` shows the matches to swap "
+"without changing anything; ``--clear`` removes the main player without "
+"swapping anything back. A match with an open transcription draft, or "
+"played in blunderDB, is left as is and listed separately."
+
+#: ../../source/cli.rst:2951
+msgid ""
+"**players matches** — Les identifiants des matchs d'un joueur, à l'un ou "
+"l'autre siège et sous tous ses alias (route ``players.matchIds``)."
+msgstr ""
+"**players matches** — The identifiers of a player's matches, on either "
+"side of the board and under all of his or her aliases (route "
+"``players.matchIds``)."
+
+#: ../../source/cli.rst:2965
 msgid "events — Les graphies d'un événement"
 msgstr "events — An event's spellings"
 
-#: ../../source/cli.rst:2946
+#: ../../source/cli.rst:2967
 msgid ""
 "Les mêmes actions que ``players alias``, pour les noms d'événement (le "
 "champ Event d'un fichier). À l'import, un match dont l'événement est un "
@@ -5436,11 +5465,11 @@ msgstr ""
 "of a file). On import, a match whose event is an alias is filed in the "
 "tournament of the canonical name."
 
-#: ../../source/cli.rst:2958
+#: ../../source/cli.rst:2979
 msgid "repair — Recalculer ce qui est dérivé"
 msgstr "repair — Recompute what is derived"
 
-#: ../../source/cli.rst:2960
+#: ../../source/cli.rst:2981
 msgid ""
 "Recalcule ce que la base tire de ce qu'elle stocke : les colonnes "
 "scalaires de chaque analyse à partir de l'analyse elle-même, dont elles "
@@ -5457,7 +5486,7 @@ msgstr ""
 " from, or from the XGID it came in with. The analyses are not touched: "
 "what is redone are the values that had been derived from them."
 
-#: ../../source/cli.rst:2974
+#: ../../source/cli.rst:2995
 #, no-python-brace-format
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` — un "
@@ -5474,11 +5503,11 @@ msgstr ""
 "``match_stats`` (matches recomputed) is added. With ``--move-errors``, "
 "``move_errors`` (moves scored) is added."
 
-#: ../../source/cli.rst:2979
+#: ../../source/cli.rst:3000
 msgid "``--stats`` — Recalcule aussi, de zéro, les statistiques par match."
 msgstr "``--stats`` — Also recomputes the per-match statistics from scratch."
 
-#: ../../source/cli.rst:2980
+#: ../../source/cli.rst:3001
 msgid ""
 "``--move-errors`` — Écrit aussi, pour chaque coup joué, l'équité qu'il a "
 "cédée face au meilleur coup, lue dans l'analyse de sa position (colonne "
@@ -5492,7 +5521,7 @@ msgstr ""
 "interrupted, it resumes where it stopped; on a very large library it "
 "takes several minutes. Server side: ``matches.scoreMoves``."
 
-#: ../../source/cli.rst:2985
+#: ../../source/cli.rst:3006
 msgid ""
 "``--duplicates`` — Ne lance aucune des passes : liste les paires de "
 "matchs que les dés disent identiques, sans rien fusionner (voir ci-"
@@ -5501,7 +5530,7 @@ msgstr ""
 "``--duplicates`` — Runs none of the passes: lists the pairs of matches "
 "that the dice say are identical, without merging anything (see below)."
 
-#: ../../source/cli.rst:2988
+#: ../../source/cli.rst:3009
 msgid ""
 "Les statistiques par match sont, pour chaque joueur de chaque match, ses "
 "décisions, son erreur cumulée, son PR, ses blunders, sa chance et la "
@@ -5524,7 +5553,7 @@ msgstr ""
 "from an earlier version computes them once, on first opening. ``--stats``"
 " redoes them all: the remedy should this bookkeeping ever go wrong."
 
-#: ../../source/cli.rst:2998
+#: ../../source/cli.rst:3019
 #, no-python-brace-format
 msgid ""
 "**Doublons probables.** ``repair --duplicates`` compare les matchs par "
@@ -5562,7 +5591,7 @@ msgstr ""
 "(``alias``, ``canonical``). A match imported before the dice fingerprint "
 "existed receives it along the way; this is the only write of this mode."
 
-#: ../../source/cli.rst:3014
+#: ../../source/cli.rst:3035
 msgid ""
 "Utile après une correction de la façon dont une analyse importée est lue."
 " Le cas s'est déjà produit deux fois. L'importeur XG écrit un « pas de "
@@ -5584,7 +5613,7 @@ msgstr ""
 "moves. Correcting the reading changes nothing in the rows already "
 "written; this command redoes them."
 
-#: ../../source/cli.rst:3024
+#: ../../source/cli.rst:3045
 msgid ""
 "La passe Crawford, elle, touche les positions elles-mêmes. Un score à "
 "``1`` signifie « un point à faire, et cette partie EST la Crawford » ; "
@@ -5633,7 +5662,7 @@ msgstr ""
 " proves nothing. Any other position without a match is left as it is: "
 "nothing contradicts what its score announces."
 
-#: ../../source/cli.rst:3046
+#: ../../source/cli.rst:3067
 msgid ""
 "Rien ne la déclenche automatiquement, et c'est voulu : réécrire les "
 "colonnes d'analyse de tout le monde, ou réhacher des positions, à la "
@@ -5645,29 +5674,29 @@ msgstr ""
 "opening a database is not something a tool should do behind its user's "
 "back."
 
-#: ../../source/cli.rst:3062
+#: ../../source/cli.rst:3083
 msgid "delete — Supprimer des données"
 msgstr "delete — Delete data"
 
-#: ../../source/cli.rst:3064
+#: ../../source/cli.rst:3085
 msgid ""
 "Supprime un match et toutes les données associées (parties, coups, "
 "analyses)."
 msgstr "Delete a match and all associated data (games, moves, analyses)."
 
-#: ../../source/cli.rst:3073
+#: ../../source/cli.rst:3094
 msgid "``--type`` — Type de suppression: ``match`` (obligatoire)."
 msgstr "``--type`` — Delete type: ``match`` (required)."
 
-#: ../../source/cli.rst:3074
+#: ../../source/cli.rst:3095
 msgid "``--id`` — ID de l'élément à supprimer (obligatoire)."
 msgstr "``--id`` — ID of the item to delete (required)."
 
-#: ../../source/cli.rst:3075
+#: ../../source/cli.rst:3096
 msgid "``--confirm`` — Supprimer sans demander de confirmation."
 msgstr "``--confirm`` — Delete without asking for confirmation."
 
-#: ../../source/cli.rst:3076
+#: ../../source/cli.rst:3097
 #, no-python-brace-format
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
@@ -5676,11 +5705,11 @@ msgstr ""
 "``--format`` — Output format: ``text`` (default) or ``json`` "
 "(``{\"match_id\": N, \"deleted\": true}``)."
 
-#: ../../source/cli.rst:3088
+#: ../../source/cli.rst:3109
 msgid "healthcheck — Sonder un démon"
 msgstr "healthcheck — Probing a daemon"
 
-#: ../../source/cli.rst:3090
+#: ../../source/cli.rst:3111
 msgid ""
 "Demande à un démon ``serve`` en marche (voir :doc:`mode_headless`) s'il "
 "est disponible : une requête ``GET /readyz``, code de retour ``0`` si le "
@@ -5694,7 +5723,7 @@ msgstr ""
 "otherwise — storage unreachable, stale schema, or nothing listening at "
 "the address. No database file is opened."
 
-#: ../../source/cli.rst:3102
+#: ../../source/cli.rst:3123
 msgid ""
 "``--addr`` — Adresse d'écoute du démon (par défaut ``BLUNDERDB_ADDR``, "
 "sinon ``:8080``). Une adresse sans hôte (``:8080``) ou avec un hôte "
@@ -5704,13 +5733,13 @@ msgstr ""
 "else ``:8080``). An address without a host (``:8080``) or with a wildcard"
 " host (``0.0.0.0``, ``[::]``) is probed on the loopback interface."
 
-#: ../../source/cli.rst:3105
+#: ../../source/cli.rst:3126
 msgid ""
 "``--timeout`` — Délai au-delà duquel la sonde abandonne (``2s`` par "
 "défaut)."
 msgstr "``--timeout`` — Give up after this long (``2s`` by default)."
 
-#: ../../source/cli.rst:3107
+#: ../../source/cli.rst:3128
 msgid ""
 "C'est la commande que lance le ``HEALTHCHECK`` de l'image conteneur (une "
 "image *distroless*, sans ``curl``) ; le binaire ``serve`` construit "
@@ -5722,7 +5751,7 @@ msgstr ""
 "``cmd/serve`` understands it too. It works just as well from a script or "
 "a systemd unit."
 
-#: ../../source/cli.rst:3121
+#: ../../source/cli.rst:3142
 msgid ""
 "En cas d'échec la raison est affichée, ce que ``docker inspect`` "
 "reproduit pour un conteneur ``unhealthy`` :"
@@ -5730,11 +5759,11 @@ msgstr ""
 "On failure the reason is printed, which ``docker inspect`` reproduces for"
 " an ``unhealthy`` container:"
 
-#: ../../source/cli.rst:3129
+#: ../../source/cli.rst:3150
 msgid "mcp — Offrir la base à un assistant IA"
 msgstr "mcp — Offer the database to an AI assistant"
 
-#: ../../source/cli.rst:3131
+#: ../../source/cli.rst:3152
 msgid ""
 "Sert les outils de la base à un assistant IA par le *Model Context "
 "Protocol*, sur l'entrée et la sortie standard : c'est l'assistant qui "
@@ -5753,11 +5782,11 @@ msgstr ""
 "question. They only read, except with ``--write``. The full list and the "
 "daemon's HTTP equivalent: :ref:`headless_mcp`."
 
-#: ../../source/cli.rst:3145
+#: ../../source/cli.rst:3166
 msgid "``--db`` — Fichier de base de données (obligatoire)."
 msgstr "``--db`` — Database file (required)."
 
-#: ../../source/cli.rst:3146
+#: ../../source/cli.rst:3167
 msgid ""
 "``--write`` — Offre aussi les outils qui écrivent : enregistrer une "
 "position, la commenter, créer et remplir une collection. Rien n'efface."
@@ -5765,7 +5794,7 @@ msgstr ""
 "``--write`` — Also offers the tools that write: save a position, comment "
 "it, create and fill a collection. Nothing is deleted."
 
-#: ../../source/cli.rst:3149
+#: ../../source/cli.rst:3170
 msgid ""
 "Comme ``call``, la commande migre le schéma d'une base ancienne à "
 "l'ouverture, même sans ``--write``."
@@ -5773,15 +5802,15 @@ msgstr ""
 "Like ``call``, the command migrates an older database's schema when it "
 "opens it, even without ``--write``."
 
-#: ../../source/cli.rst:3152
+#: ../../source/cli.rst:3173
 msgid "**Exemple:** déclarer la base à Claude Code."
 msgstr "**Example:** declare the database to Claude Code."
 
-#: ../../source/cli.rst:3159
+#: ../../source/cli.rst:3180
 msgid "completion — Complétion shell"
 msgstr "completion — Shell completion"
 
-#: ../../source/cli.rst:3161
+#: ../../source/cli.rst:3182
 msgid ""
 "Affiche sur la sortie standard un script de complétion pour les noms de "
 "sous-commandes. La liste des commandes intégrée à chaque script est "
@@ -5796,7 +5825,7 @@ msgstr ""
 "(``handlers()``): a new subcommand is therefore offered by completion as "
 "soon as it is wired in, with nothing to keep up to date by hand."
 
-#: ../../source/cli.rst:3185
+#: ../../source/cli.rst:3206
 msgid ""
 "Les paquets installent cela automatiquement : le ``.deb``/``.rpm`` (nfpm)"
 " et le paquet AUR génèrent les trois scripts depuis le binaire empaqueté "
@@ -5813,11 +5842,11 @@ msgstr ""
 "committed to the repository, so completion can never drift from the "
 "subcommand table."
 
-#: ../../source/cli.rst:3193
+#: ../../source/cli.rst:3214
 msgid "version — Afficher la version"
 msgstr "version — Show the version"
 
-#: ../../source/cli.rst:3195
+#: ../../source/cli.rst:3216
 msgid ""
 "Affiche la version de blunderDB et celle du schéma de base de données que"
 " ce binaire écrit ; c'est la première chose à joindre à un rapport de "
@@ -5826,35 +5855,35 @@ msgstr ""
 "Prints blunderDB's version and the database schema version this binary "
 "writes; it is the first thing to attach to a bug report."
 
-#: ../../source/cli.rst:3204
+#: ../../source/cli.rst:3225
 msgid "Exemples de flux de travail"
 msgstr "Workflow examples"
 
-#: ../../source/cli.rst:3207
+#: ../../source/cli.rst:3228
 msgid "Import d'un répertoire de tournoi"
 msgstr "Import a tournament directory"
 
-#: ../../source/cli.rst:3216
+#: ../../source/cli.rst:3237
 msgid "Sauvegarde régulière"
 msgstr "Regular backup"
 
-#: ../../source/cli.rst:3223
+#: ../../source/cli.rst:3244
 msgid "Analyse des erreurs"
 msgstr "Error analysis"
 
-#: ../../source/cli.rst:3235
+#: ../../source/cli.rst:3256
 msgid "Codes de retour"
 msgstr "Exit codes"
 
-#: ../../source/cli.rst:3237
+#: ../../source/cli.rst:3258
 msgid "``0`` — Succès."
 msgstr "``0`` — Success."
 
-#: ../../source/cli.rst:3238
+#: ../../source/cli.rst:3259
 msgid "``1`` — Erreur."
 msgstr "``1`` — Error."
 
-#: ../../source/cli.rst:3240
+#: ../../source/cli.rst:3261
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr "This makes the CLI suitable for use in scripts with error handling:"
 
@@ -6048,6 +6077,3 @@ msgstr "This makes the CLI suitable for use in scripts with error handling:"
 #~ "``--decks`` — Include Anki decks, "
 #~ "without their review history (default: "
 #~ "yes)."
-
-#~ msgid "``--force`` — Enregistre même quand la lecture comporte des doutes."
-#~ msgstr "``--force`` — Saves even when the reading contains doubts."

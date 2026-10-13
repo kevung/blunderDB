@@ -134,6 +134,10 @@ export function ClearCommandHistory() {
   return window['go']['database']['Database']['ClearCommandHistory']();
 }
 
+export function ClearMainPlayer() {
+  return window['go']['database']['Database']['ClearMainPlayer']();
+}
+
 export function ClearSessionState() {
   return window['go']['database']['Database']['ClearSessionState']();
 }
@@ -1006,6 +1010,10 @@ export function LoadTrainingSessions(arg1, arg2) {
   return window['go']['database']['Database']['LoadTrainingSessions'](arg1, arg2);
 }
 
+export function MainPlayer() {
+  return window['go']['database']['Database']['MainPlayer']();
+}
+
 export function MaintenanceIDs(arg1) {
   return window['go']['database']['Database']['MaintenanceIDs'](arg1);
 }
@@ -1114,6 +1122,10 @@ export function PlanExportIDs(arg1, arg2, arg3, arg4) {
   return window['go']['database']['Database']['PlanExportIDs'](arg1, arg2, arg3, arg4);
 }
 
+export function PlanMainPlayer(arg1) {
+  return window['go']['database']['Database']['PlanMainPlayer'](arg1);
+}
+
 export function PlanRollout(arg1, arg2, arg3) {
   return window['go']['database']['Database']['PlanRollout'](arg1, arg2, arg3);
 }
@@ -1132,6 +1144,10 @@ export function PlayerContrast(arg1, arg2, arg3) {
 
 export function PlayerContrastCtx(arg1, arg2, arg3, arg4) {
   return window['go']['database']['Database']['PlayerContrastCtx'](arg1, arg2, arg3, arg4);
+}
+
+export function PlayerMatchIDs(arg1) {
+  return window['go']['database']['Database']['PlayerMatchIDs'](arg1);
 }
 
 export function PlayerRanking(arg1, arg2) {
@@ -1440,6 +1456,10 @@ export function SetFilterPinned(arg1, arg2) {
 
 export function SetLessonStepDone(arg1, arg2) {
   return window['go']['database']['Database']['SetLessonStepDone'](arg1, arg2);
+}
+
+export function SetMainPlayer(arg1) {
+  return window['go']['database']['Database']['SetMainPlayer'](arg1);
 }
 
 export function SetMatchTournamentByName(arg1, arg2) {

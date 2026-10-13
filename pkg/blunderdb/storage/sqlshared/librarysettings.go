@@ -221,3 +221,68 @@ func (s *LibrarySettingsStore) RecordMaintenance(ctx context.Context, scope, key
 	}
 	return nil
 }
+
+// MainPlayer — see storage.LibrarySettingsStore.
+func (s *LibrarySettingsStore) MainPlayer(ctx context.Context, scope string) (string, error) {
+	table, scoped := s.DB.LibrarySettingsTable()
+	query := `SELECT COALESCE(value,'') FROM ` + table + ` WHERE `
+	args := []any{}
+	if scoped {
+		query += s.DB.ScopeColumn() + ` = ? AND `
+		args = append(args, s.DB.ScopeArg(scope))
+	}
+	query += `key = ?`
+	args = append(args, storage.LibrarySettingMainPlayerKey)
+	rows, err := s.DB.Query(ctx, query, args...)
+	if err != nil {
+		return "", errf(s.DB, "load main player", err)
+	}
+	defer rows.Close()
+	var name string
+	if rows.Next() {
+		if err := rows.Scan(&name); err != nil {
+			return "", errf(s.DB, "load main player", err)
+		}
+	}
+	if err := rows.Err(); err != nil {
+		return "", errf(s.DB, "load main player", err)
+	}
+	return strings.TrimSpace(name), nil
+}
+
+// SetMainPlayer — see storage.LibrarySettingsStore. Forgetting deletes the
+// row, so a library that never had a Main player and one that had it
+// removed read the same.
+func (s *LibrarySettingsStore) SetMainPlayer(ctx context.Context, scope string, name string) error {
+	name = strings.TrimSpace(name)
+	table, scoped := s.DB.LibrarySettingsTable()
+	if name == "" {
+		query := `DELETE FROM ` + table + ` WHERE `
+		args := []any{}
+		if scoped {
+			query += s.DB.ScopeColumn() + ` = ? AND `
+			args = append(args, s.DB.ScopeArg(scope))
+		}
+		query += `key = ?`
+		args = append(args, storage.LibrarySettingMainPlayerKey)
+		if _, err := s.DB.Exec(ctx, query, args...); err != nil {
+			return errf(s.DB, "clear main player", err)
+		}
+		return nil
+	}
+	cols, conflict := []string{"key", "value"}, []string{"key"}
+	args := []any{}
+	if scoped {
+		cols = append([]string{s.DB.ScopeColumn()}, cols...)
+		conflict = append([]string{s.DB.ScopeColumn()}, conflict...)
+		args = append(args, s.DB.ScopeArg(scope))
+	}
+	args = append(args, storage.LibrarySettingMainPlayerKey, name)
+	upsert := `INSERT INTO ` + table + ` (` + strings.Join(cols, ", ") + `) VALUES (` +
+		strings.TrimSuffix(strings.Repeat("?,", len(cols)), ",") + `)
+		ON CONFLICT (` + strings.Join(conflict, ", ") + `) DO UPDATE SET value = EXCLUDED.value`
+	if _, err := s.DB.Exec(ctx, upsert, args...); err != nil {
+		return errf(s.DB, "save main player", err)
+	}
+	return nil
+}

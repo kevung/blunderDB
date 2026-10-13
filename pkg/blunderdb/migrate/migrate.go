@@ -242,6 +242,15 @@ func (m *mover) copyLibrarySettings() error {
 			return fmt.Errorf("write pile collection: %w", err)
 		}
 	}
+	main, err := m.src.LibrarySettings().MainPlayer(m.ctx, "")
+	if err != nil {
+		return fmt.Errorf("read main player: %w", err)
+	}
+	if main != "" {
+		if err := m.dst.LibrarySettings().SetMainPlayer(m.ctx, m.scope, main); err != nil {
+			return fmt.Errorf("write main player: %w", err)
+		}
+	}
 	return nil
 }
 

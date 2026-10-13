@@ -681,6 +681,11 @@ func (s *matchStore) SwapPlayers(ctx context.Context, scope string, id int64) er
 	})
 }
 
+// SwapRefusal — see storage.MatchStore.
+func (s *matchStore) SwapRefusal(ctx context.Context, scope string, id int64) error {
+	return sqlshared.SwapRefusal(ctx, binder{s.db}.shared(), scope, id)
+}
+
 // MergePlayers records every other name as an alias of canonical
 // (storage.AliasStore.Set): the matches keep the names their files wrote, and
 // the stats, the players table, the search and every later import read them

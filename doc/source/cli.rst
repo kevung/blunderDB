@@ -2935,10 +2935,31 @@ match, et pour un match joué dans blunderDB.
 
    ./blunderdb players swap --db <chemin> <ID_MATCH>
 
+**players main** — Le joueur principal de la fenêtre des matchs (routes
+``players.main.*``). Sans nom, affiche le joueur principal ; avec un nom, le
+désigne et inverse en une seule transaction tous les matchs où lui ou l'un de ses
+alias est joueur 2 ; chaque import ultérieur le place en joueur 1. ``--dry-run``
+affiche les matchs à inverser sans rien changer ; ``--clear`` retire le joueur
+principal sans rien inverser en retour. Un match où un brouillon de transcription
+est ouvert, ou joué dans blunderDB, est laissé tel quel et listé à part.
+
+.. code-block:: bash
+
+   ./blunderdb players main --db <chemin> [--dry-run] [<NOM>]
+   ./blunderdb players main --db <chemin> --clear
+
+**players matches** — Les identifiants des matchs d'un joueur, à l'un ou l'autre
+siège et sous tous ses alias (route ``players.matchIds``).
+
+.. code-block:: bash
+
+   ./blunderdb players matches --db <chemin> <NOM>
+
 .. code-block:: bash
 
    ./blunderdb players merge --db base.db --into "John Doe" "Doe J." "J. Doe"
    ./blunderdb players swap --db base.db 42
+   ./blunderdb players main --db base.db --dry-run "John Doe"
 
 events — Les graphies d'un événement
 ------------------------------------

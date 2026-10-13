@@ -19,6 +19,10 @@ func (cli *CLI) runPlayers(args []string) error {
 			return cli.runPlayersMerge(args[1:])
 		case "swap":
 			return cli.runPlayersSwap(args[1:])
+		case "main":
+			return cli.runPlayersMain(args[1:])
+		case "matches":
+			return cli.runPlayersMatches(args[1:])
 		}
 	}
 	return cli.runAliasCommand("players", "player", args)
@@ -92,6 +96,116 @@ func (cli *CLI) runPlayersSwap(args []string) error {
 		return err
 	}
 	fmt.Printf("players of match %d swapped\n", id)
+	return nil
+}
+
+// runPlayersMain is `players main`: the star of the window's player list,
+// through the same SetMainPlayer as the daemon's players.main.set.
+func (cli *CLI) runPlayersMain(args []string) error {
+	fs := flag.NewFlagSet("players main", flag.ContinueOnError)
+	dbPath := fs.String("db", "", "Path to the database file (required)")
+	dryRun := fs.Bool("dry-run", false, "Show the matches the designation would swap, change nothing")
+	clearMain := fs.Bool("clear", false, "Forget the Main player (no match is swapped back)")
+	format := fs.String("format", "text", "Output format: text or json")
+	fs.Usage = func() {
+		fmt.Println("Usage: blunderdb players main --db FILE [--dry-run] [NAME]")
+		fmt.Println("       blunderdb players main --db FILE --clear")
+		fmt.Println()
+		fmt.Println("Without NAME, print the Main player. With NAME, make them the Main player:")
+		fmt.Println("every match where they (or one of their aliases) sit second has its players")
+		fmt.Println("swapped, all in one transaction, and every later import puts them first.")
+		fmt.Println("A match with a transcription draft open, or played here, is left as it is.")
+		fmt.Println()
+		fmt.Println("Options:")
+		fs.PrintDefaults()
+		fmt.Println()
+		fmt.Println("Examples:")
+		fmt.Println("  blunderdb players main --db base.db --dry-run \"John Doe\"")
+		fmt.Println("  blunderdb players main --db base.db \"John Doe\"")
+	}
+	if err := cli.collectionOpen(fs, dbPath, args); err != nil {
+		return err
+	}
+	if fs.NArg() > 1 || (*clearMain && fs.NArg() > 0) {
+		fs.Usage()
+		return fmt.Errorf("usage: blunderdb players main --db FILE [--dry-run] [NAME] | --clear")
+	}
+	switch {
+	case *clearMain:
+		if err := cli.db.ClearMainPlayer(); err != nil {
+			return err
+		}
+		fmt.Println("Main player forgotten")
+		return nil
+	case fs.NArg() == 0:
+		name, err := cli.db.MainPlayer()
+		if err != nil {
+			return err
+		}
+		if strings.ToLower(*format) == "json" {
+			return printJSON(map[string]string{"name": name})
+		}
+		if name == "" {
+			fmt.Println("No Main player.")
+		} else {
+			fmt.Println(name)
+		}
+		return nil
+	}
+	var plan database.MainPlayerPlan
+	var err error
+	if *dryRun {
+		plan, err = cli.db.PlanMainPlayer(fs.Arg(0))
+	} else {
+		plan, err = cli.db.SetMainPlayer(fs.Arg(0))
+	}
+	if err != nil {
+		return err
+	}
+	if strings.ToLower(*format) == "json" {
+		return printJSON(plan)
+	}
+	verb := "swapped"
+	if *dryRun {
+		verb = "to swap"
+	}
+	fmt.Printf("Main player: %s\n%d match(es) %s: %s\n", plan.Name, len(plan.Swap), verb, joinIDs(plan.Swap))
+	if len(plan.Refused) > 0 {
+		fmt.Printf("%d match(es) left (draft open or played here): %s\n", len(plan.Refused), joinIDs(plan.Refused))
+	}
+	return nil
+}
+
+// runPlayersMatches is `players matches`: the ids a player's match count
+// opens, through the same PlayerMatchIDs as the daemon's players.matchIds.
+func (cli *CLI) runPlayersMatches(args []string) error {
+	fs := flag.NewFlagSet("players matches", flag.ContinueOnError)
+	dbPath := fs.String("db", "", "Path to the database file (required)")
+	fs.Usage = func() {
+		fmt.Println("Usage: blunderdb players matches --db FILE NAME")
+		fmt.Println()
+		fmt.Println("Print the ids of the matches NAME plays, at either seat and under any alias.")
+		fmt.Println()
+		fmt.Println("Options:")
+		fs.PrintDefaults()
+		fmt.Println()
+		fmt.Println("Examples:")
+		fmt.Println("  blunderdb players matches --db base.db \"John Doe\"")
+	}
+	if err := cli.collectionOpen(fs, dbPath, args); err != nil {
+		return err
+	}
+	if fs.NArg() != 1 {
+		fs.Usage()
+		return fmt.Errorf("usage: blunderdb players matches --db FILE NAME")
+	}
+	ids, err := cli.db.PlayerMatchIDs(fs.Arg(0))
+	if err != nil {
+		return err
+	}
+	for _, id := range ids {
+		fmt.Println(id)
+	}
 	return nil
 }
 
@@ -228,7 +342,8 @@ func printAliasUsage(cmd, kind string) {
 	fmt.Printf("  blunderdb %s alias suggest --db base.db\n", cmd)
 	if cmd == "players" {
 		fmt.Println()
-		fmt.Println("Also: `players merge --db FILE --into CANONICAL NAME...` and")
-		fmt.Println("`players swap --db FILE MATCH_ID` (see their --help).")
+		fmt.Println("Also: `players merge --db FILE --into CANONICAL NAME...`,")
+		fmt.Println("`players swap --db FILE MATCH_ID`, `players main --db FILE [NAME]` and")
+		fmt.Println("`players matches --db FILE NAME` (see their --help).")
 	}
 }

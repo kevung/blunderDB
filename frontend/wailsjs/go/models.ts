@@ -7628,6 +7628,22 @@ export namespace storage {
 	        this.rolls = source["rolls"];
 	    }
 	}
+	export class MainPlayerPlan {
+	    name: string;
+	    swap: number[];
+	    refused: number[];
+	
+	    static createFrom(source: any = {}) {
+	        return new MainPlayerPlan(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.name = source["name"];
+	        this.swap = source["swap"];
+	        this.refused = source["refused"];
+	    }
+	}
 	export class MatchListOpts {
 	    PlayerName: string;
 	    PlayerSpellings: string[];

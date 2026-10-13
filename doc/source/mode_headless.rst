@@ -1180,6 +1180,12 @@ alias plutôt que de réécrire les matchs. Un import enregistre le nom canoniqu
 (les empreintes gardent les noms du fichier), et ``stats.compute``,
 ``stats.playerTable``, ``stats.playerNames`` et la recherche par joueur lisent
 toutes les graphies comme une seule personne.
+``players.main.get`` renvoie le joueur principal, ``players.main.plan``
+(``{"name": …}``) les matchs que sa désignation inverserait (``swap``) et ceux
+qu'elle laisserait (``refused``), ``players.main.set`` le désigne et les inverse
+en une transaction, ``players.main.clear`` le retire sans rien inverser ; un
+import ultérieur le place en joueur 1. ``players.matchIds`` renvoie les matchs
+d'un joueur sous toutes ses graphies.
 
 Le champ ``winner`` d'une partie, reçu par ``matches.createGame`` et renvoyé par
 ``matches.games``, a un seul codage : ``1`` pour le joueur 1, ``-1`` pour le

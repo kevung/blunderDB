@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-13 02:03+0200\n"
+"POT-Creation-Date: 2026-10-13 02:12+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -513,9 +513,9 @@ msgstr "任意のメタデータとともに新しいデータベースファイ
 #: ../../source/cli.rst:2459 ../../source/cli.rst:2543
 #: ../../source/cli.rst:2577 ../../source/cli.rst:2713
 #: ../../source/cli.rst:2758 ../../source/cli.rst:2798
-#: ../../source/cli.rst:2858 ../../source/cli.rst:2971
-#: ../../source/cli.rst:3070 ../../source/cli.rst:3100
-#: ../../source/cli.rst:3143
+#: ../../source/cli.rst:2858 ../../source/cli.rst:2992
+#: ../../source/cli.rst:3091 ../../source/cli.rst:3121
+#: ../../source/cli.rst:3164
 msgid "**Options:**"
 msgstr "**オプション：**"
 
@@ -552,7 +552,7 @@ msgstr "``.db`` 拡張子がない場合は自動的に追加されます。必�
 #: ../../source/cli.rst:141 ../../source/cli.rst:2024 ../../source/cli.rst:2187
 #: ../../source/cli.rst:2733 ../../source/cli.rst:2773
 #: ../../source/cli.rst:2811 ../../source/cli.rst:2871
-#: ../../source/cli.rst:3051 ../../source/cli.rst:3112
+#: ../../source/cli.rst:3072 ../../source/cli.rst:3133
 msgid "**Exemple:**"
 msgstr "**例：**"
 
@@ -1035,8 +1035,8 @@ msgstr ""
 #: ../../source/cli.rst:1924 ../../source/cli.rst:2344
 #: ../../source/cli.rst:2408 ../../source/cli.rst:2442
 #: ../../source/cli.rst:2469 ../../source/cli.rst:2559
-#: ../../source/cli.rst:2632 ../../source/cli.rst:3079
-#: ../../source/cli.rst:3171
+#: ../../source/cli.rst:2632 ../../source/cli.rst:3100
+#: ../../source/cli.rst:3192
 msgid "**Exemples:**"
 msgstr "**例：**"
 
@@ -1166,8 +1166,8 @@ msgstr "**主なオプション：**"
 #: ../../source/cli.rst:2461 ../../source/cli.rst:2545
 #: ../../source/cli.rst:2579 ../../source/cli.rst:2715
 #: ../../source/cli.rst:2760 ../../source/cli.rst:2800
-#: ../../source/cli.rst:2860 ../../source/cli.rst:2973
-#: ../../source/cli.rst:3072
+#: ../../source/cli.rst:2860 ../../source/cli.rst:2994
+#: ../../source/cli.rst:3093
 msgid "``--db`` — Base de données (obligatoire)."
 msgstr "``--db`` — データベース（必須）。"
 
@@ -4917,11 +4917,36 @@ msgstr ""
 ")。ポジションも解析も変わりません。各プレイヤーは自分の統計を、もう一方の席で保ちます。マッチに書き起こしの下書きが開いている間、および "
 "blunderDB で対局したマッチでは、入れ替えは拒否されます。"
 
-#: ../../source/cli.rst:2944
+#: ../../source/cli.rst:2938
+msgid ""
+"**players main** — Le joueur principal de la fenêtre des matchs (routes "
+"``players.main.*``). Sans nom, affiche le joueur principal ; avec un nom,"
+" le désigne et inverse en une seule transaction tous les matchs où lui ou"
+" l'un de ses alias est joueur 2 ; chaque import ultérieur le place en "
+"joueur 1. ``--dry-run`` affiche les matchs à inverser sans rien changer ;"
+" ``--clear`` retire le joueur principal sans rien inverser en retour. Un "
+"match où un brouillon de transcription est ouvert, ou joué dans "
+"blunderDB, est laissé tel quel et listé à part."
+msgstr ""
+"**players main** — マッチウィンドウのメインプレイヤー（ルート "
+"``players.main.*``）。名前なしではメインプレイヤーを表示し、名前ありではそのプレイヤーを指定して、本人またはその別名のいずれかが2番手であるすべてのマッチを一つのトランザクションで入れ替えます。以降のインポートは、そのプレイヤーを1番手に置きます"
+"。``--dry-run`` は何も変更せずに入れ替え対象のマッチを表示し、``--clear`` "
+"は何も戻さずにメインプレイヤーを解除します。書き起こしの下書きが開いているマッチや blunderDB "
+"で対戦したマッチはそのままにされ、別に一覧表示されます。"
+
+#: ../../source/cli.rst:2951
+msgid ""
+"**players matches** — Les identifiants des matchs d'un joueur, à l'un ou "
+"l'autre siège et sous tous ses alias (route ``players.matchIds``)."
+msgstr ""
+"**players matches** — プレイヤーのマッチの識別子。どちらの席でも、すべての別名を通じて取得します（ルート "
+"``players.matchIds``）。"
+
+#: ../../source/cli.rst:2965
 msgid "events — Les graphies d'un événement"
 msgstr "events — イベント名の表記"
 
-#: ../../source/cli.rst:2946
+#: ../../source/cli.rst:2967
 msgid ""
 "Les mêmes actions que ``players alias``, pour les noms d'événement (le "
 "champ Event d'un fichier). À l'import, un match dont l'événement est un "
@@ -4930,11 +4955,11 @@ msgstr ""
 "``players alias`` と同じアクションを、イベント名（ファイルの Event "
 "フィールド）に対して行います。インポート時、イベントが別名であるマッチは、正規名のトーナメントに入ります。"
 
-#: ../../source/cli.rst:2958
+#: ../../source/cli.rst:2979
 msgid "repair — Recalculer ce qui est dérivé"
 msgstr "repair — 導かれたものを再計算する"
 
-#: ../../source/cli.rst:2960
+#: ../../source/cli.rst:2981
 msgid ""
 "Recalcule ce que la base tire de ce qu'elle stocke : les colonnes "
 "scalaires de chaque analyse à partir de l'analyse elle-même, dont elles "
@@ -4949,7 +4974,7 @@ msgstr ""
 "標識を、その局面が由来する対戦、またはその局面が持ち込まれた XGID "
 "から。分析そのものには手を触れません。作り直されるのは、そこから導かれていた値です。"
 
-#: ../../source/cli.rst:2974
+#: ../../source/cli.rst:2995
 #, no-python-brace-format
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` — un "
@@ -4965,11 +4990,11 @@ msgstr ""
 " ``--stats``\\\\ を付けると、\\\\ ``match_stats``\\\\ （再計算されたマッチ）が加わります。 "
 "``--move-errors`` を付けると ``move_errors``\\ (評価した手の数)が加わります。"
 
-#: ../../source/cli.rst:2979
+#: ../../source/cli.rst:3000
 msgid "``--stats`` — Recalcule aussi, de zéro, les statistiques par match."
 msgstr "``--stats`` — マッチごとの統計もゼロから再計算します。"
 
-#: ../../source/cli.rst:2980
+#: ../../source/cli.rst:3001
 msgid ""
 "``--move-errors`` — Écrit aussi, pour chaque coup joué, l'équité qu'il a "
 "cédée face au meilleur coup, lue dans l'analyse de sa position (colonne "
@@ -4981,14 +5006,14 @@ msgstr ""
 "指した各手について、その局面の解析から読み取った、最善手に対して失ったエクイティも書き込みます(手テーブルの ``error_mp`` "
 "列)。この処理は再開可能で、中断しても止まった所から再開します。非常に大きなライブラリでは数分かかります。サーバー側:``matches.scoreMoves``。"
 
-#: ../../source/cli.rst:2985
+#: ../../source/cli.rst:3006
 msgid ""
 "``--duplicates`` — Ne lance aucune des passes : liste les paires de "
 "matchs que les dés disent identiques, sans rien fusionner (voir ci-"
 "dessous)."
 msgstr "``--duplicates``\\ ー どの処理も実行せず、ダイスが同一であるマッチのペアを、何も統合せずに一覧表示します(下記参照)。"
 
-#: ../../source/cli.rst:2988
+#: ../../source/cli.rst:3009
 msgid ""
 "Les statistiques par match sont, pour chaque joueur de chaque match, ses "
 "décisions, son erreur cumulée, son PR, ses blunders, sa chance et la "
@@ -5004,7 +5029,7 @@ msgstr ""
 "マッチごとの統計とは、各マッチの各プレイヤーについて、その判断、累積エラー、PR、ブランダー、運、そして分析の主な出所です。統計は、すべての判断をたどり直す代わりにこれらを読みます。統計はインポート時にマッチとともに書き込まれ、それを変える変更（マッチの削除、プレイヤーの入れ替え、そのマッチの局面の分析の変更、ブランダーしきい値の変更）のたびに消去されます。次の読み取りで足りない分が再計算されます。以前のバージョンから移行したデータベースは、最初に開いたときに一度だけ計算します。\\"
 " ``--stats``\\ はそのすべてをやり直します。この集計が万一誤った場合の手段です。"
 
-#: ../../source/cli.rst:2998
+#: ../../source/cli.rst:3019
 #, no-python-brace-format
 msgid ""
 "**Doublons probables.** ``repair --duplicates`` compare les matchs par "
@@ -5035,7 +5060,7 @@ msgstr ""
 "（読みの一覧。各読みに\\ ``aliases``\\ "
 "（``alias``、``canonical``）が付きます）が含まれます。ダイスのフィンガープリントが存在する前にインポートされたマッチは、その際にフィンガープリントを受け取ります。これがこのモードで唯一の書き込みです。"
 
-#: ../../source/cli.rst:3014
+#: ../../source/cli.rst:3035
 msgid ""
 "Utile après une correction de la façon dont une analyse importée est lue."
 " Le cas s'est déjà produit deux fois. L'importeur XG écrit un « pas de "
@@ -5052,7 +5077,7 @@ msgstr ""
 " blunderDB 自身が計算した解析はどの手が指されたかを知らず、解析なしで取り込んだマッチはどこも誤差ゼロのまま PR 0,00 "
 "になっていました。この列はマッチの手から計算し直されます。読み方を直しても、すでに書かれた行は変わりません。このコマンドがそれを作り直します。"
 
-#: ../../source/cli.rst:3024
+#: ../../source/cli.rst:3045
 msgid ""
 "La passe Crawford, elle, touche les positions elles-mêmes. Un score à "
 "``1`` signifie « un point à faire, et cette partie EST la Crawford » ; "
@@ -5091,7 +5116,7 @@ msgstr ""
 "``0``\\ のままです。その XGID がその対戦の長さを示しているからです。blunderDB 自身が書き直した XGID "
 "は保存済みのスコアを繰り返すだけで、何も証明しません。対戦のないそれ以外の局面はそのままにされます。そのスコアが述べていることに反するものが何もないからです。"
 
-#: ../../source/cli.rst:3046
+#: ../../source/cli.rst:3067
 msgid ""
 "Rien ne la déclenche automatiquement, et c'est voulu : réécrire les "
 "colonnes d'analyse de tout le monde, ou réhacher des positions, à la "
@@ -5099,29 +5124,29 @@ msgid ""
 "faire dans le dos de son utilisateur."
 msgstr "自動的に実行されることはありません。これは意図的です。データベースを開いただけで全員の分析列を書き換えたり、局面のハッシュを取り直したりするのは、道具が利用者に黙ってやってよいことではないからです。"
 
-#: ../../source/cli.rst:3062
+#: ../../source/cli.rst:3083
 msgid "delete — Supprimer des données"
 msgstr "delete — データを削除する"
 
-#: ../../source/cli.rst:3064
+#: ../../source/cli.rst:3085
 msgid ""
 "Supprime un match et toutes les données associées (parties, coups, "
 "analyses)."
 msgstr "マッチとすべての関連データ（ゲーム、手、分析）を削除します。"
 
-#: ../../source/cli.rst:3073
+#: ../../source/cli.rst:3094
 msgid "``--type`` — Type de suppression: ``match`` (obligatoire)."
 msgstr "``--type`` — 削除の種類：\\ ``match``\\ （必須）。"
 
-#: ../../source/cli.rst:3074
+#: ../../source/cli.rst:3095
 msgid "``--id`` — ID de l'élément à supprimer (obligatoire)."
 msgstr "``--id`` — 削除する要素のID（必須）。"
 
-#: ../../source/cli.rst:3075
+#: ../../source/cli.rst:3096
 msgid "``--confirm`` — Supprimer sans demander de confirmation."
 msgstr "``--confirm`` — 確認なしで削除する。"
 
-#: ../../source/cli.rst:3076
+#: ../../source/cli.rst:3097
 #, no-python-brace-format
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
@@ -5130,11 +5155,11 @@ msgstr ""
 "``--format`` — 出力フォーマット：\\ ``text``\\ （デフォルト）または\\ ``json``\\ （\\ "
 "``{\"match_id\": N, \"deleted\": true}``\\ ）。"
 
-#: ../../source/cli.rst:3088
+#: ../../source/cli.rst:3109
 msgid "healthcheck — Sonder un démon"
 msgstr "healthcheck — デーモンを確認する"
 
-#: ../../source/cli.rst:3090
+#: ../../source/cli.rst:3111
 msgid ""
 "Demande à un démon ``serve`` en marche (voir :doc:`mode_headless`) s'il "
 "est disponible : une requête ``GET /readyz``, code de retour ``0`` si le "
@@ -5148,7 +5173,7 @@ msgstr ""
 "、それ以外（ストレージに到達できない、スキーマが古い、アドレスで何もリッスンしていない）なら\\ ``1``\\ "
 "を返します。データベースファイルは一切開きません。"
 
-#: ../../source/cli.rst:3102
+#: ../../source/cli.rst:3123
 msgid ""
 "``--addr`` — Adresse d'écoute du démon (par défaut ``BLUNDERDB_ADDR``, "
 "sinon ``:8080``). Une adresse sans hôte (``:8080``) ou avec un hôte "
@@ -5158,13 +5183,13 @@ msgstr ""
 "``:8080``\\ ）。ホストのないアドレス（\\ ``:8080``\\ ）やワイルドカードホスト（\\ ``0.0.0.0``\\ 、\\"
 " ``[::]``\\ ）はループバックインターフェースで確認します。"
 
-#: ../../source/cli.rst:3105
+#: ../../source/cli.rst:3126
 msgid ""
 "``--timeout`` — Délai au-delà duquel la sonde abandonne (``2s`` par "
 "défaut)."
 msgstr "``--timeout`` — この時間を過ぎると確認を諦めます（既定は\\ ``2s``\\ ）。"
 
-#: ../../source/cli.rst:3107
+#: ../../source/cli.rst:3128
 msgid ""
 "C'est la commande que lance le ``HEALTHCHECK`` de l'image conteneur (une "
 "image *distroless*, sans ``curl``) ; le binaire ``serve`` construit "
@@ -5175,7 +5200,7 @@ msgstr ""
 "``curl``\\ はありません）。\\ ``cmd/serve``\\ からビルドした\\ ``serve``\\ "
 "バイナリも同じコマンドを理解します。スクリプトや systemd ユニットからも同様に使えます。"
 
-#: ../../source/cli.rst:3121
+#: ../../source/cli.rst:3142
 msgid ""
 "En cas d'échec la raison est affichée, ce que ``docker inspect`` "
 "reproduit pour un conteneur ``unhealthy`` :"
@@ -5183,11 +5208,11 @@ msgstr ""
 "失敗した場合はその理由が表示され、\\ ``docker inspect``\\ も\\ ``unhealthy``\\ "
 "なコンテナについて同じ内容を示します："
 
-#: ../../source/cli.rst:3129
+#: ../../source/cli.rst:3150
 msgid "mcp — Offrir la base à un assistant IA"
 msgstr "mcp — データベースを AI アシスタントに提供する"
 
-#: ../../source/cli.rst:3131
+#: ../../source/cli.rst:3152
 msgid ""
 "Sert les outils de la base à un assistant IA par le *Model Context "
 "Protocol*, sur l'entrée et la sortie standard : c'est l'assistant qui "
@@ -5202,31 +5227,31 @@ msgstr ""
 "アシスタントに提供します。コマンドを起動するのはアシスタントです。ツールは、コマンドバーの文法でポジションを検索し、ポジションとその解析を読み取り、ミスを説明し、プレイヤーの統計を計算し、マッチ・トーナメント・コレクションを一覧表示し、クイズを出題します。\\"
 " ``--write`` を付けない限り、読み取りのみを行います。完全な一覧とデーモンの HTTP 版：:ref:`headless_mcp`。"
 
-#: ../../source/cli.rst:3145
+#: ../../source/cli.rst:3166
 msgid "``--db`` — Fichier de base de données (obligatoire)."
 msgstr "``--db`` — データベースファイル（必須）。"
 
-#: ../../source/cli.rst:3146
+#: ../../source/cli.rst:3167
 msgid ""
 "``--write`` — Offre aussi les outils qui écrivent : enregistrer une "
 "position, la commenter, créer et remplir une collection. Rien n'efface."
 msgstr "``--write`` — 書き込みを行うツールも提供します：ポジションの保存、コメントの追加、コレクションの作成と追加。削除は一切行いません。"
 
-#: ../../source/cli.rst:3149
+#: ../../source/cli.rst:3170
 msgid ""
 "Comme ``call``, la commande migre le schéma d'une base ancienne à "
 "l'ouverture, même sans ``--write``."
 msgstr "``call`` と同じく、このコマンドは ``--write`` なしでも、開くときに古いデータベースのスキーマを移行します。"
 
-#: ../../source/cli.rst:3152
+#: ../../source/cli.rst:3173
 msgid "**Exemple:** déclarer la base à Claude Code."
 msgstr "**例：** データベースを Claude Code に登録する。"
 
-#: ../../source/cli.rst:3159
+#: ../../source/cli.rst:3180
 msgid "completion — Complétion shell"
 msgstr "completion ――― シェル補完"
 
-#: ../../source/cli.rst:3161
+#: ../../source/cli.rst:3182
 msgid ""
 "Affiche sur la sortie standard un script de complétion pour les noms de "
 "sous-commandes. La liste des commandes intégrée à chaque script est "
@@ -5239,7 +5264,7 @@ msgstr ""
 "や\\ ``main.go``\\ のディスパッチ（\\ ``handlers()``\\ "
 "）が読み込むのと同じテーブルから生成される。そのため、新しいサブコマンドが組み込まれると同時に補完でも提供され、手作業で維持する必要は何もない。"
 
-#: ../../source/cli.rst:3185
+#: ../../source/cli.rst:3206
 msgid ""
 "Les paquets installent cela automatiquement : le ``.deb``/``.rpm`` (nfpm)"
 " et le paquet AUR génèrent les trois scripts depuis le binaire empaqueté "
@@ -5254,46 +5279,46 @@ msgstr ""
 "``generate_completions_from_executable``\\ を通じて\\ ``blunderdb completion "
 "<shell>``\\ を実行する。リポジトリには何もコミットされないため、補完がサブコマンドのテーブルからずれることは決してない。"
 
-#: ../../source/cli.rst:3193
+#: ../../source/cli.rst:3214
 msgid "version — Afficher la version"
 msgstr "version — バージョンを表示する"
 
-#: ../../source/cli.rst:3195
+#: ../../source/cli.rst:3216
 msgid ""
 "Affiche la version de blunderDB et celle du schéma de base de données que"
 " ce binaire écrit ; c'est la première chose à joindre à un rapport de "
 "bug."
 msgstr "blunderDB のバージョンと、このバイナリが書き込むデータベーススキーマのバージョンを表示します。バグ報告に最初に添えるべき情報です。"
 
-#: ../../source/cli.rst:3204
+#: ../../source/cli.rst:3225
 msgid "Exemples de flux de travail"
 msgstr "ワークフロー例"
 
-#: ../../source/cli.rst:3207
+#: ../../source/cli.rst:3228
 msgid "Import d'un répertoire de tournoi"
 msgstr "トーナメントディレクトリのインポート"
 
-#: ../../source/cli.rst:3216
+#: ../../source/cli.rst:3237
 msgid "Sauvegarde régulière"
 msgstr "定期バックアップ"
 
-#: ../../source/cli.rst:3223
+#: ../../source/cli.rst:3244
 msgid "Analyse des erreurs"
 msgstr "エラー分析"
 
-#: ../../source/cli.rst:3235
+#: ../../source/cli.rst:3256
 msgid "Codes de retour"
 msgstr "終了コード"
 
-#: ../../source/cli.rst:3237
+#: ../../source/cli.rst:3258
 msgid "``0`` — Succès."
 msgstr "``0`` — 成功。"
 
-#: ../../source/cli.rst:3238
+#: ../../source/cli.rst:3259
 msgid "``1`` — Erreur."
 msgstr "``1`` — エラー。"
 
-#: ../../source/cli.rst:3240
+#: ../../source/cli.rst:3261
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr "これにより、エラー処理を含むスクリプトでCLIを使用できます："
 
@@ -5448,6 +5473,3 @@ msgstr "これにより、エラー処理を含むスクリプトでCLIを使用
 #~ " sans leur historique de révision "
 #~ "(défaut: oui)."
 #~ msgstr "``--decks`` — Anki デッキを含める（復習履歴は含まない。デフォルト：はい）。"
-
-#~ msgid "``--force`` — Enregistre même quand la lecture comporte des doutes."
-#~ msgstr "``--force`` — 読み取りに疑義がある場合でも保存します。"
