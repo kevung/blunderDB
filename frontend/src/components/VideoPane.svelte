@@ -289,6 +289,8 @@
     /** When the seek in flight was asked or first seen, null when none is. */
     /** @type {number | null} */
     let seekSince = null;
+    /** Whether a seek that does not land while paused has been asked again. */
+    let pausedAsked = false;
     /** The instant playback was last seen at, and since when. */
     let lastTime = NaN;
     let lastTimeSince = 0;
@@ -317,10 +319,19 @@
         }
         if (video.seeking) {
             seekSince ??= now;
-            if (now - seekSince > stallLimit()) reload(queuedMs ?? pendingMs, !video.paused, rate);
+            if (now - seekSince > stallLimit()) {
+                // A paused video is never reloaded: the source vanishes and nothing replaces it.
+                // The instant is asked once more; a playing one may have a dead decoder.
+                if (!video.paused) reload(queuedMs ?? pendingMs, true, rate);
+                else if (!pausedAsked) {
+                    pausedAsked = true;
+                    askTime(queuedMs ?? pendingMs);
+                }
+            }
             return;
         }
         seekSince = null;
+        pausedAsked = false;
         if (video.paused || video.ended) {
             lastTime = NaN;
             return;
