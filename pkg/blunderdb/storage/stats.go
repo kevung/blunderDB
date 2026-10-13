@@ -517,8 +517,9 @@ type MatchBadge struct {
 // match (two fixed players), a tournament groups matches against varying
 // opponents, so a pooled PR would blend the reference player's decisions with
 // every opponent's. Instead the badge reports the reference player's own PR:
-// RefPlayer is the person appearing in the most of the tournament's matches
-// (see PickReferencePlayer), and PR/MWCLoss cover only that player's decisions.
+// RefPlayer is the library's Main player when they played in the tournament,
+// otherwise the person appearing in the most of its matches (see
+// PickReferencePlayer), and PR/MWCLoss cover only that player's decisions.
 type TournamentBadge struct {
 	PR        float64 `json:"pr"`
 	MWCLoss   float64 `json:"mwc_loss"`
@@ -544,16 +545,26 @@ type TournamentPlayerAcc struct {
 }
 
 // PickReferencePlayer selects a tournament's reference player and returns its
-// badge. The reference player is the person present in the most of the
+// badge. The reference player is the Main player main (a canonical name, ""
+// when none is designated) as soon as one of their spellings, read through
+// aliases, made a decision in the tournament: the library belongs to them, so
+// the figure is theirs whatever their match count, pooled over every
+// spelling. Otherwise it is the person present in the most of the
 // tournament's matches; ties break on the most counted decisions, then on the
 // lexicographically smallest non-empty name (deterministic across backends).
 // An empty map yields the zero badge.
-func PickReferencePlayer(players map[string]*TournamentPlayerAcc) TournamentBadge {
+func PickReferencePlayer(players map[string]*TournamentPlayerAcc, main string, aliases AliasMap) TournamentBadge {
 	var best *TournamentPlayerAcc
 	var bestName string
-	for name, pa := range players {
-		if best == nil || refPlayerBetter(name, pa, bestName, best) {
-			best, bestName = pa, name
+	if main != "" {
+		best = mainPlayerAcc(players, main, aliases)
+		bestName = main
+	}
+	if best == nil {
+		for name, pa := range players {
+			if best == nil || refPlayerBetter(name, pa, bestName, best) {
+				best, bestName = pa, name
+			}
 		}
 	}
 	if best == nil {
@@ -573,6 +584,34 @@ func PickReferencePlayer(players map[string]*TournamentPlayerAcc) TournamentBadg
 		elo.AddLoss(best.MatchMWC[id], best.MatchLength[id])
 	}
 	return TournamentBadge{PR: pr, MWCLoss: best.MWC, RefPlayer: bestName, MWC7: elo.Result()}
+}
+
+// mainPlayerAcc pools the accumulators of every spelling of main, nil when
+// none played.
+func mainPlayerAcc(players map[string]*TournamentPlayerAcc, main string, aliases AliasMap) *TournamentPlayerAcc {
+	var pooled *TournamentPlayerAcc
+	for name, pa := range players {
+		if aliases.Canonical(name) != main {
+			continue
+		}
+		if pooled == nil {
+			pooled = &TournamentPlayerAcc{Matches: map[int64]struct{}{},
+				MatchMWC: map[int64]float64{}, MatchLength: map[int64]int{}}
+		}
+		pooled.SumErr += pa.SumErr
+		pooled.Cnt += pa.Cnt
+		pooled.MWC += pa.MWC
+		for id := range pa.Matches {
+			pooled.Matches[id] = struct{}{}
+		}
+		for id, mwc := range pa.MatchMWC {
+			pooled.MatchMWC[id] += mwc
+		}
+		for id, n := range pa.MatchLength {
+			pooled.MatchLength[id] = n
+		}
+	}
+	return pooled
 }
 
 // refPlayerBetter reports whether candidate (name, pa) outranks the current best

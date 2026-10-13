@@ -63,7 +63,10 @@ func (s *StatsStore) TournamentReview(ctx context.Context, scope string, tournam
 	}
 
 	if player == "" {
-		player = mostFrequentPlayer(inTournament)
+		player, err = tournamentReferencePlayer(ctx, s.DB, scope, inTournament)
+		if err != nil {
+			return storage.TournamentReview{}, errf(s.DB, "TournamentReview main player", err)
+		}
 	}
 	review := storage.TournamentReview{TournamentID: tournamentID, Name: name, Date: date, Player: player}
 	if player == "" {
@@ -148,6 +151,24 @@ func (s *StatsStore) reviewMatches(ctx context.Context, scope string, rows []rev
 
 // mostFrequentPlayer is the name in the most matches, ties to the first in
 // alphabetical order.
+// tournamentReferencePlayer is the player the review opens on, the same as
+// the tournament badge's (storage.PickReferencePlayer): the Main player when
+// they sat in one of the rounds, otherwise the most frequent player.
+func tournamentReferencePlayer(ctx context.Context, db Execer, scope string, rows []reviewMatchRow) (string, error) {
+	main, aliases, err := mainPlayer(ctx, db, scope)
+	if err != nil {
+		return "", err
+	}
+	if main != "" {
+		for _, m := range rows {
+			if aliases.Canonical(m.p1) == main || aliases.Canonical(m.p2) == main {
+				return main, nil
+			}
+		}
+	}
+	return mostFrequentPlayer(rows), nil
+}
+
 func mostFrequentPlayer(rows []reviewMatchRow) string {
 	count := map[string]int{}
 	for _, m := range rows {

@@ -1916,6 +1916,8 @@ seul joueur, et les imports suivants enregistrent le nom canonique. Cliquer un
 alias (*×*) le retire et défait la fusion, comme dans l'onglet **Corpus** des
 paramètres.
 
+.. _joueur_principal:
+
 L'étoile (☆) d'une ligne désigne le **joueur principal**, celui à qui appartient
 la base, mémorisé dans la base et toujours en tête de la liste. Elle se remplit
 aussitôt et affiche le nombre de matchs où il est joueur 2 (cliquable, pour les
@@ -2538,19 +2540,26 @@ présent dans la base n'est jamais reclassé : réimporter son fichier ne défai
 pas le rangement fait à la main.
 
 Les colonnes **PR** et **MWC** de chaque tournoi affichent le PR et la perte de
-MWC du **joueur de référence** —
-c'est-à-dire le joueur présent dans le plus grand nombre de matchs du tournoi
-(en cas d'égalité, celui ayant pris le plus de décisions). Le PR ne mélange donc
-pas votre jeu avec celui de vos adversaires : pour vos propres tournois, il
-reflète votre performance seule. Le nom du joueur de référence apparaît en
-infobulle au survol de la valeur.
+MWC du **joueur de référence**, sur ses seules décisions. C'est le
+:ref:`joueur principal <joueur_principal>` de la base dès qu'il a joué dans le
+tournoi, quel que soit son nombre de matchs : il est reconnu sous tous ses
+alias, dont les décisions s'additionnent. Faute de joueur principal, ou s'il n'a
+pas joué dans ce tournoi, c'est le joueur présent dans le plus grand nombre de
+matchs du tournoi ; en cas d'égalité, celui qui a pris le plus de décisions,
+puis le nom qui vient en premier dans l'ordre des caractères (une lettre
+accentuée après *z*). Le PR ne mélange donc pas votre jeu avec celui de vos
+adversaires : une fois désigné joueur principal, il reflète votre performance
+seule dans chacun de vos tournois, même d'un seul match. Le nom du joueur de
+référence apparaît en infobulle au survol de la valeur.
 
 .. _bilan_tournoi:
 
 **Bilan du tournoi.** Le bouton **Bilan**, dans l'en-tête d'un tournoi ouvert,
 répond à la question qu'on se pose en rentrant d'une épreuve : ai-je joué à mon
-niveau, et sinon, où cela a-t-il cédé ? Le joueur est par défaut le plus présent
-dans les matchs du tournoi ; le menu **Joueur** en choisit un autre. Les seuils
+niveau, et sinon, où cela a-t-il cédé ? Le joueur est par défaut le joueur
+principal s'il a joué dans le tournoi, sinon le plus présent dans ses matchs (à
+égalité, le nom qui vient en premier dans l'ordre des caractères) ; le menu
+**Joueur** en choisit un autre. Les seuils
 ont été fixés avant tout examen de résultats.
 
 * **Le niveau habituel** est ce joueur sur ses matchs en points des 365 jours
