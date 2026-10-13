@@ -47,7 +47,8 @@
     let rateWindowEnd = 0;
     function keepMuted() {
         if (!video) return;
-        if (performance.now() < rateWindowEnd) {
+        // A reload changes the speed too, through load() and then the speed it puts back.
+        if (performance.now() < rateWindowEnd || reloading) {
             if (userMuted && !video.muted) video.muted = true;
         } else userMuted = video.muted;
     }
@@ -212,13 +213,18 @@
     }
 
     function onLoadedMetadata() {
+        // A late answer from a source given up on leaves the pane as it said.
+        if (stalledOut) return;
         status = 'ready';
         queuedMs = null;
         const resume = reloading;
         reloading = null;
         if (pendingMs > 0 && video) askTime(pendingMs);
         if (!video) return;
-        if (resume) quietRateUntil = Date.now() + RATE_QUIET_MS;
+        if (resume) {
+            quietRateUntil = Date.now() + RATE_QUIET_MS;
+            rateWindowEnd = performance.now() + RATE_QUIET_MS;
+        }
         video.playbackRate = resume ? resume.rate : rate;
         if (resume?.playing) Promise.resolve(video.play()).catch((error) => logger.error('play:', error));
     }
@@ -228,6 +234,7 @@
     function onVideoError() {
         const [container, mime] = containerOf(source);
         const code = video?.error?.code;
+        stalledOut = null;
         status = 'codec';
         const verdict = mime ? video?.canPlayType(mime) || '' : '';
         detail = $t('video.codecDetail', { container, support: verdict === '' ? $t('video.unsupported') : verdict, code: code ?? '?' });
@@ -287,6 +294,9 @@
     let lastTimeSince = 0;
     /** Reloads in a row with no progress between them. */
     let reloads = 0;
+    /** The instant, in seconds, the last reload went back to. */
+    let progressFrom = NaN;
+    const PROGRESS_S = 1;
     let quietRateUntil = 0;
     /** What a reload under way puts back once the metadata is in, null when none is. */
     /** @type {{ playing: boolean, rate: number, since: number } | null} */
@@ -315,8 +325,9 @@
             lastTime = NaN;
             return;
         }
+        // Progress is playback past the reload point, not one frame drawn there.
+        if (reloads > 0 && video.currentTime > progressFrom + PROGRESS_S) reloads = 0;
         if (video.currentTime !== lastTime) {
-            if (!Number.isNaN(lastTime)) reloads = 0;
             lastTime = video.currentTime;
             lastTimeSince = now;
             return;
@@ -345,6 +356,7 @@
             return;
         }
         reloads++;
+        progressFrom = atMs / 1000;
         logger.warn(`video stalled, reload ${reloads} at ${atMs} ms`);
         reloading = { playing, rate: speed, since: Date.now() };
         // load() resets the speed to the default one.
