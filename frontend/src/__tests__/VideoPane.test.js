@@ -226,7 +226,32 @@ describe('VideoPane', () => {
             expect(el.loads).toBe(0);
             expect(container.querySelector('[data-testid="video-retry"]')).toBeNull();
             expect(container.querySelector('.video-pane')?.getAttribute('data-status')).toBe('ready');
-            expect(el.applied.length).toBeLessThanOrEqual(3);
+            expect(el.applied).toEqual([90, 90]);
+        });
+
+        test('a paused block asked again once, then playing and blocked paused again, is asked again', async () => {
+            const { video } = await open({ startMs: 90000 });
+            const el = drive(video);
+            await fireEvent(video, new Event('loadedmetadata'));
+            vi.advanceTimersByTime(40000);
+            expect(el.applied).toEqual([90, 90]);
+            el.paused = false;
+            vi.advanceTimersByTime(4000);
+            expect(el.loads).toBe(1);
+            await fireEvent(video, new Event('loadedmetadata'));
+            el.paused = true;
+            const before = el.applied.length;
+            vi.advanceTimersByTime(40000);
+            expect(el.applied.slice(before - 1)).toEqual([90, 90]);
+        });
+
+        test('a seek asked during a paused block is sent, not left queued', async () => {
+            const { component, video } = await open({ startMs: 90000 });
+            const el = drive(video);
+            await fireEvent(video, new Event('loadedmetadata'));
+            vi.advanceTimersByTime(40000);
+            component.seek(200000);
+            expect(el.applied).toEqual([90, 90, 200]);
         });
 
         test('playback frozen on one instant reloads there; playback that moves, or a pause, does not', async () => {

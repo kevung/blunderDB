@@ -415,6 +415,7 @@
         pendingMs = atMs;
         queuedMs = null;
         seekSince = null;
+        pausedAsked = false;
         lastTime = NaN;
         if (reloads >= MAX_RELOADS) {
             logger.warn(`video still stalled after ${reloads} reloads, at ${atMs} ms`);
@@ -475,7 +476,10 @@
             ytSeekingUntil = Date.now() + YT_SEEK_SETTLE_MS;
             postToPlayer({ type: 'seek', time: at / 1000 });
         } else if (video && !reloading) {
-            if (video.seeking) queuedMs = at;
+            // A paused pipeline already blocked has no landing to wait for: the new instant goes now.
+            const blocked = video.seeking && video.paused && pausedAsked;
+            pausedAsked = false;
+            if (video.seeking && !blocked) queuedMs = at;
             else askTime(at);
         }
     }
