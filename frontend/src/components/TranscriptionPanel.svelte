@@ -894,10 +894,13 @@
     /**
      * The plays of the roll, best first, each with its index in LegalMoves.
      *
-     * @param {any} pos
+     * @param {any} rolled
      * @returns {Promise<{list: Candidate[], unranked: boolean}>}
      */
-    async function computeCandidates(pos) {
+    async function computeCandidates(rolled) {
+        // High die first, as the engine's `Candidates` generates: `gen` indexes that order.
+        const [a, b] = rolled.dice;
+        const pos = { ...rolled, dice: [Math.max(a, b), Math.min(a, b)] };
         const plays = (await LegalMoves(pos)) ?? [];
         if (!plays.length) return { list: [], unranked: false };
 

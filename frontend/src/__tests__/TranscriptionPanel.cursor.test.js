@@ -159,6 +159,20 @@ describe('le Cursor au clavier', () => {
         expect(get(selectedMoveStore)).toBe('8/5 6/5');
     });
 
+    test('la liste relue est générée dé fort en premier, comme celle que le moteur indexe', async () => {
+        await openedPanel();
+        const lowFirst = annotated(2);
+        lowFirst.actions[2].before.dice = [2, 5];
+        /** @type {any} */ (ApplyTranscriptionGesture).mockImplementation(() => Promise.resolve({ id: 1, annotated: lowFirst }));
+
+        await fireEvent.keyDown(document, { code: 'KeyH', key: 'h' });
+        await settle();
+
+        // Le plateau rejoue les pas sur le jet tel qu'écrit ; la liste, elle, sur le jet ordonné.
+        const rolls = /** @type {any} */ (LegalMoves).mock.calls.map((/** @type {any} */ call) => call[0].dice);
+        expect(rolls).toContainEqual([5, 2]);
+    });
+
     test('`l` avance', async () => {
         await openedPanel(1);
         // Le pilote du moteur part de la fin ; on le remet là où le panneau est.
