@@ -1,6 +1,6 @@
 # ADR-0091 — La transcription a trois modes : Saisie, Revue, Édition
 
-Statut : acceptée (décision de l'utilisateur).
+Statut : remplacée par ADR-0092 (les blocages de la Revue, vécus à l'usage).
 Remplace : ADR-0048 décision 1 (le chiffre « commence un jet là où le Cursor est ») ; ADR-0051
 décision 1 ; la règle « le Cursor revient à sa place antérieure après
 validation » d'une correction en place (fonctionnel.md §2).

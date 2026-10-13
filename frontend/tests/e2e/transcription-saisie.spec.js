@@ -51,7 +51,7 @@ test('Saisie : la ligne 0 est proposée et dessinée ; Entrée ou le jet suivant
 test('e : le champ porte « dés: coup » ; une validation corrige les deux', async ({ page }) => {
     await openDraft(page);
     await page.locator('#transcriptionPanel .cell[data-index="4"]').click();
-    await expect(page.locator('[data-testid="transcription-mode"]')).toHaveAttribute('data-mode', 'review');
+    await expect(page.locator('[data-testid="transcription-mode"]')).toHaveAttribute('data-mode', 'edit');
 
     await page.keyboard.press('e');
     const field = page.locator('#transcriptionPanel input.move-field');

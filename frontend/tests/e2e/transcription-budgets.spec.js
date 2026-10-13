@@ -303,14 +303,13 @@ test.describe('ux.md §4.3 — la correction', () => {
         await resetGestures(page);
     }
 
-    // ADR-0091 : en Revue le plateau ne joue pas, et ni Entrée ni un chiffre
-    // n'écrivent la décision relue.
-    test('en Revue, jouer au plateau ne change rien', async ({ page }) => {
+    // ADR-0092 : sur une décision écrite, le plateau joue et Entrée enregistre la correction.
+    test('sur une décision écrite, jouer au plateau puis Entrée la corrige', async ({ page }) => {
         // Deux pas : l'Action du joueur 1, dessiné en bas.
         await page.keyboard.press('KeyH');
         await page.keyboard.press('KeyH');
         await candidatesListed(page);
-        await expect(page.locator('[data-testid="transcription-mode"]')).toHaveAttribute('data-mode', 'review');
+        await expect(page.locator('[data-testid="transcription-mode"]')).toHaveAttribute('data-mode', 'edit');
         await resetGestures(page);
         await page.mouse.move((await pointAt(page, 8)).x, (await pointAt(page, 8)).y);
         await page.mouse.down();
@@ -321,9 +320,8 @@ test.describe('ux.md §4.3 — la correction', () => {
         await page.mouse.move((await pointAt(page, 5)).x, (await pointAt(page, 5)).y, { steps: 5 });
         await page.mouse.up();
         await page.keyboard.press('Enter');
-        await page.keyboard.press('Digit4');
-        await expect(page.locator('[data-testid="transcription-mode"]')).toHaveAttribute('data-mode', 'review');
-        expect(await sentKinds(page)).toEqual([]);
+        await expect.poll(() => sentKinds(page)).toContain('enter_play');
+        expect(await sentKinds(page)).toContain('validate');
     });
 
     // « dé mal lu, vu aussitôt (jet corrigeable) | 4 1 | 2 K ». Rien n'est
