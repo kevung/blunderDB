@@ -125,6 +125,16 @@ en 7 points est de l'ordre de 1,5 PR. blunderDB donne un intervalle à 95 %
 (:ref:`metrique_intervalles`) en rééchantillonnant les parties d'un match, et
 les matchs d'un agrégat.
 
+**Le PR d'un tournoi.** La liste des tournois donne le PR d'un seul joueur, le
+*joueur de référence*, sur ses seules décisions : un PR des deux sièges
+mêlerait les erreurs de tous ses adversaires aux siennes. C'est le joueur
+principal de la base, lu sous tous ses alias, dès qu'il a joué dans le tournoi,
+même un seul match ; sinon, le joueur du plus grand nombre de matchs, à égalité
+celui du plus grand nombre de décisions, puis le nom qui vient en premier dans
+l'ordre des caractères. Ce repli désigne souvent l'adversaire dans un tournoi
+d'un match, où les deux joueurs sont à égalité : désigner le joueur principal
+l'évite (:ref:`panneau_tournois`).
+
 **Limites.** Le numérateur ne dépend de rien, mais le dénominateur dépend de
 ce que l'on compte : les seuils de 0,001 et 0,200 sont arbitraires. On peut
 faire baisser son PR sans mieux jouer, en prenant un refus serré pour ajouter
@@ -616,8 +626,9 @@ Bilan du tournoi
 dernières rondes, les longues fins de match, les scores où un point décide,
 la pendule ? Les écrans : :ref:`bilan du tournoi <bilan_tournoi>`.
 
-**Définition.** Le **niveau habituel** est le joueur sur ses matchs en points
-des **365 jours** qui précèdent le tournoi (sa date, à défaut celle de son
+**Définition.** Le joueur est par défaut le joueur principal s'il a joué dans
+le tournoi, sinon le plus présent dans ses matchs. Le **niveau habituel** est
+le joueur sur ses matchs en points des **365 jours** qui précèdent le tournoi (sa date, à défaut celle de son
 premier match), ceux du tournoi exclus ; il faut au moins **5 matchs**. Le
 tournoi et le niveau habituel ont chacun leur PR et leur L₇, avec l'intervalle
 par matchs (:ref:`metrique_intervalles`).

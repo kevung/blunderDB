@@ -12,7 +12,7 @@ func acc(sumErr int64, cnt int, matches ...int64) *TournamentPlayerAcc {
 
 func TestPickReferencePlayer(t *testing.T) {
 	t.Run("empty map yields zero badge", func(t *testing.T) {
-		b := PickReferencePlayer(nil)
+		b := PickReferencePlayer(nil, "", nil)
 		if b.RefPlayer != "" || b.PR != 0 {
 			t.Fatalf("got %+v, want zero badge", b)
 		}
@@ -23,7 +23,7 @@ func TestPickReferencePlayer(t *testing.T) {
 		b := PickReferencePlayer(map[string]*TournamentPlayerAcc{
 			"A": acc(100, 50, 1, 2),
 			"B": acc(400, 20, 3),
-		})
+		}, "", nil)
 		if b.RefPlayer != "A" {
 			t.Fatalf("RefPlayer = %q, want A", b.RefPlayer)
 		}
@@ -37,7 +37,7 @@ func TestPickReferencePlayer(t *testing.T) {
 		b := PickReferencePlayer(map[string]*TournamentPlayerAcc{
 			"A": acc(120, 50, 1),
 			"B": acc(80, 30, 2),
-		})
+		}, "", nil)
 		if b.RefPlayer != "A" {
 			t.Fatalf("RefPlayer = %q, want A (50 > 30 decisions)", b.RefPlayer)
 		}
@@ -48,9 +48,25 @@ func TestPickReferencePlayer(t *testing.T) {
 			"":      acc(120, 50, 1),
 			"Bravo": acc(120, 50, 2),
 			"Alpha": acc(120, 50, 3),
-		})
+		}, "", nil)
 		if b.RefPlayer != "Alpha" {
 			t.Fatalf("RefPlayer = %q, want Alpha (named, lexicographically first)", b.RefPlayer)
+		}
+	})
+
+	t.Run("the Main player wins over more matches, pooled across spellings", func(t *testing.T) {
+		players := map[string]*TournamentPlayerAcc{
+			"Alice": acc(100, 50, 1, 2, 3),
+			"Kev":   acc(40, 10, 1),
+			"Kevin": acc(60, 10, 2),
+		}
+		b := PickReferencePlayer(players, "Kevin", AliasMap{"Kev": "Kevin"})
+		// PR = 500 * (40+60) / 1000 / 20 = 2.5
+		if b.RefPlayer != "Kevin" || b.PR != 2.5 {
+			t.Fatalf("got %q PR %v, want Kevin PR 2.5", b.RefPlayer, b.PR)
+		}
+		if b := PickReferencePlayer(players, "Zed", nil); b.RefPlayer != "Alice" {
+			t.Fatalf("absent Main player: RefPlayer = %q, want Alice", b.RefPlayer)
 		}
 	})
 }

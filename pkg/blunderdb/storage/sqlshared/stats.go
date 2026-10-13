@@ -862,6 +862,12 @@ func (s *StatsStore) MatchBadges(ctx context.Context, scope string, matchIDs []i
 // why the badge is the reference player's own PR rather than a both-players
 // pool.
 func (s *StatsStore) TournamentBadges(ctx context.Context, scope string) (map[int64]storage.TournamentBadge, error) {
+	// Read before the decisions' cursor opens: a cursor still open on the
+	// connection would hold it across these queries.
+	main, aliases, err := mainPlayer(ctx, s.DB, scope)
+	if err != nil {
+		return nil, fmt.Errorf("TournamentBadges main player: %w", err)
+	}
 	tenant, targs := s.DB.TenantFilter("p", scope)
 	query := `SELECT m.tournament_id, ` + statsErrExpr + ` as err_mp,
 		COALESCE(p.score_1, 0), COALESCE(p.score_2, 0), mv.player,
@@ -914,9 +920,23 @@ func (s *StatsStore) TournamentBadges(ctx context.Context, scope string) (map[in
 
 	out := make(map[int64]storage.TournamentBadge, len(acc))
 	for tournamentID, byPlayer := range acc {
-		out[tournamentID] = storage.PickReferencePlayer(byPlayer)
+		out[tournamentID] = storage.PickReferencePlayer(byPlayer, main, aliases)
 	}
 	return out, nil
+}
+
+// mainPlayer returns the scope's Main player under their canonical name, ""
+// when none is designated, with the player aliases that recognise them.
+func mainPlayer(ctx context.Context, db Execer, scope string) (string, storage.AliasMap, error) {
+	name, err := (&LibrarySettingsStore{DB: db}).MainPlayer(ctx, scope)
+	if err != nil || name == "" {
+		return "", nil, err
+	}
+	aliases, err := aliasMap(ctx, db, scope, storage.AliasPlayer)
+	if err != nil {
+		return "", nil, err
+	}
+	return aliases.Canonical(name), aliases, nil
 }
 
 // playerTableFilter strips the player selection and decision type, which the
