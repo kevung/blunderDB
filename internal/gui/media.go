@@ -15,11 +15,14 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	goruntime "runtime"
 	"strings"
 	"sync"
 	"time"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/videomux"
 )
 
 // mediaHost serves the videos of the open panes from a loopback HTTP server
@@ -32,10 +35,11 @@ type mediaHost struct {
 	mu      sync.Mutex
 	srv     *http.Server
 	base    string
-	tokens  map[string]string // token -> absolute path
-	byPath  map[string]string // absolute path -> token
-	refs    map[string]int    // token or YouTube id -> panes holding it
-	youtube map[string]bool   // ids with an attached YouTube source
+	tokens  map[string]string   // token -> absolute path
+	byPath  map[string]string   // absolute path -> token
+	refs    map[string]int      // token or YouTube id -> panes holding it
+	youtube map[string]bool     // ids with an attached YouTube source
+	mux     map[string]muxEntry // token -> multiplexing check of the file it serves
 }
 
 var youTubeIDRe = regexp.MustCompile(`^[A-Za-z0-9_-]{6,20}$`)
@@ -137,8 +141,8 @@ func (h *mediaHost) register(path string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if st.IsDir() {
-		return "", errors.New("not a file: " + abs)
+	if !st.Mode().IsRegular() {
+		return "", errors.New("not a regular file: " + abs)
 	}
 	h.mu.Lock()
 	defer h.mu.Unlock()
@@ -214,13 +218,14 @@ func (h *mediaHost) release(u string) {
 	}
 	delete(h.byPath, h.tokens[key])
 	delete(h.tokens, key)
+	delete(h.mux, key)
 }
 
 func (h *mediaHost) stop() {
 	h.mu.Lock()
 	srv := h.srv
 	h.srv, h.base = nil, ""
-	h.tokens, h.byPath, h.youtube, h.refs = nil, nil, nil, nil
+	h.tokens, h.byPath, h.youtube, h.refs, h.mux = nil, nil, nil, nil, nil
 	h.mu.Unlock()
 	if srv != nil {
 		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
@@ -301,6 +306,76 @@ func (a *App) PickTranscriptionVideo() (string, error) {
 // MediaURL registers a video file and returns its loopback URL; the error
 // (missing file) is what lets the frontend offer to relocate it.
 func (a *App) MediaURL(path string) (string, error) { return a.media.register(path) }
+
+// VideoMuxReport says whether seeks into a local Matroska/WebM video will land in WebKitGTK.
+// Command, the ffmpeg remux that repairs the file, is set for every .webm/.mkv path, so the
+// player can offer it when it gives up even if the check could not run.
+type VideoMuxReport struct {
+	Checked bool `json:"checked"`
+	// Faulty lists, in seconds, the starts of the clusters a seek lands on that open with a
+	// delta frame.
+	Faulty  []float64 `json:"faulty"`
+	Command string    `json:"command"`
+}
+
+// muxEntry is a check kept while its file is served and unchanged.
+type muxEntry struct {
+	size   int64
+	mtime  time.Time
+	report VideoMuxReport
+}
+
+// CheckVideoMux examines a .webm/.mkv video a pane is serving (registered through MediaURL):
+// a few kilobytes per cluster, the result kept while the file is served and unchanged. Any
+// other source, or a path no pane serves, gets an empty report: the frontend names a file
+// to examine only by playing it.
+func (a *App) CheckVideoMux(path string) VideoMuxReport {
+	if !videomux.IsMatroskaPath(path) || a.VideoSourceKind(path) != "file" {
+		return VideoMuxReport{}
+	}
+	abs, err := filepath.Abs(path)
+	if err != nil {
+		return VideoMuxReport{}
+	}
+	h := &a.media
+	h.mu.Lock()
+	tok, served := h.byPath[abs]
+	h.mu.Unlock()
+	if !served {
+		return VideoMuxReport{}
+	}
+	rep := VideoMuxReport{Command: videomux.RemuxCommand(abs, goruntime.GOOS)}
+	// A FIFO or a device would block the open before any deadline applies.
+	st, err := os.Stat(abs)
+	if err != nil || !st.Mode().IsRegular() {
+		return rep
+	}
+	h.mu.Lock()
+	cached, ok := h.mux[tok]
+	h.mu.Unlock()
+	if ok && cached.size == st.Size() && cached.mtime.Equal(st.ModTime()) {
+		return cached.report
+	}
+	found, err := videomux.CheckFile(context.Background(), abs)
+	if err != nil {
+		return rep
+	}
+	rep.Checked = true
+	for _, d := range found.Faulty {
+		rep.Faulty = append(rep.Faulty, d.Seconds())
+	}
+	if !found.Partial {
+		h.mu.Lock()
+		if h.tokens[tok] == abs {
+			if h.mux == nil {
+				h.mux = map[string]muxEntry{}
+			}
+			h.mux[tok] = muxEntry{st.Size(), st.ModTime(), rep}
+		}
+		h.mu.Unlock()
+	}
+	return rep
+}
 
 // VideoSourceKind classifies a stored source: "file", "youtube", "url" or "".
 func (a *App) VideoSourceKind(source string) string {

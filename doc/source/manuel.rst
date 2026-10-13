@@ -2467,10 +2467,21 @@ conteneur et, sous Linux, les greffons GStreamer à installer —
 Une vidéo qui se fige — un saut qui n'aboutit pas, une image immobile pendant la lecture — est
 rechargée au bout de trois secondes, puis reprise à l'instant demandé, à la même vitesse, en lecture
 ou en pause comme avant. Après trois rechargements sans effet, le volet le signale et propose de
-réessayer. Sous Linux, le webview dessine avec la carte graphique. Si la fenêtre reste blanche ou
-noire au démarrage, lancez blunderDB avec la variable d'environnement
-``WEBKIT_DISABLE_DMABUF_RENDERER=1``, par exemple
-``WEBKIT_DISABLE_DMABUF_RENDERER=1 blunderDB``.
+réessayer.
+
+Un fichier ``.webm`` ou ``.mkv`` mal multiplexé fige la vidéo sur certains sauts : un groupe
+d'images du fichier commence par une image non clé, que le webview ne sait pas décoder seule.
+C'est le cas de fichiers téléchargés par yt-dlp. À l'ouverture d'un tel fichier, blunderDB lit
+l'index du fichier (quelques kilo-octets par groupe) et, s'il trouve des sauts fautifs, le volet
+l'annonce avec la commande qui répare le fichier sans le réencoder, prête à copier :
+
+.. code-block:: bash
+
+   ffmpeg -i 'ronde 4.webm' -map 0 -c copy -cluster_time_limit 30000 'ronde 4.remux.webm'
+
+La commande écrit une copie à côté de l'original ; associez ensuite cette copie au match ou à la
+transcription. Le volet propose la même commande quand il renonce après ses trois rechargements
+sur un ``.webm`` ou un ``.mkv``.
 
 .. tip:: Se référer à :ref:`raccourcis` pour les raccourcis disponibles.
 

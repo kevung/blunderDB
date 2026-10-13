@@ -4493,6 +4493,22 @@ export namespace gui {
 	        this.htmlUrl = source["htmlUrl"];
 	    }
 	}
+	export class VideoMuxReport {
+	    checked: boolean;
+	    faulty: number[];
+	    command: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new VideoMuxReport(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.checked = source["checked"];
+	        this.faulty = source["faulty"];
+	        this.command = source["command"];
+	    }
+	}
 	export class WatchStatus {
 	    running: boolean;
 	    folder: string;

@@ -11,23 +11,29 @@ import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { flushSync } from 'svelte';
 
-const gui = vi.hoisted(() => ({ kind: 'file', mediaError: null }));
+const REMUX = "ffmpeg -i '/v/round2.webm' -map 0 -c copy -cluster_time_limit 30000 '/v/round2.remux.webm'";
+const gui = vi.hoisted(() => ({ kind: 'file', mediaError: null, faulty: /** @type {number[]} */ ([]) }));
 
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
     VideoSourceKind: vi.fn(() => Promise.resolve(gui.kind)),
     MediaURL: vi.fn(() => (gui.mediaError ? Promise.reject(gui.mediaError) : Promise.resolve('http://127.0.0.1:1/m/tok'))),
     YouTubeEmbedURL: vi.fn(() => Promise.resolve('http://127.0.0.1:1/yt/abc')),
     PickTranscriptionVideo: vi.fn(() => Promise.resolve('/new/place.mp4')),
-    ReleaseMedia: vi.fn(() => Promise.resolve())
+    ReleaseMedia: vi.fn(() => Promise.resolve()),
+    CheckVideoMux: vi.fn(() => Promise.resolve({ checked: true, faulty: gui.faulty, command: REMUX }))
 }));
 
-import { MediaURL, ReleaseMedia } from '../../wailsjs/go/gui/App.js';
+vi.mock('../../wailsjs/runtime/runtime.js', () => ({ ClipboardSetText: vi.fn(() => Promise.resolve(true)) }));
+
+import { CheckVideoMux, MediaURL, ReleaseMedia } from '../../wailsjs/go/gui/App.js';
+import { ClipboardSetText } from '../../wailsjs/runtime/runtime.js';
 import VideoPane from '../components/VideoPane.svelte';
 
 describe('VideoPane', () => {
     beforeEach(() => {
         gui.kind = 'file';
         gui.mediaError = null;
+        gui.faulty = [];
     });
     afterEach(cleanup);
 
@@ -281,6 +287,10 @@ describe('VideoPane', () => {
             flushSync();
             expect(container.querySelector('.video-pane')?.getAttribute('data-status')).toBe('error');
             expect(container.textContent).toContain('frozen');
+            // A .webm that gives up names the remux that repairs it, instead of the bare notice.
+            expect(container.querySelector('[data-testid="video-remux-command"]')?.textContent).toBe(REMUX);
+            // The check found nothing wrong: the cause is offered as a possibility, not asserted.
+            expect(container.textContent).toContain('If this file is badly multiplexed');
             // Seeks asked meanwhile are where the retry goes.
             component.seek(1300000);
             await fireEvent.click(must(container.querySelector('[data-testid="video-retry"]')));
@@ -409,6 +419,30 @@ describe('VideoPane', () => {
             await vi.waitFor(() => expect(container.querySelector('[data-testid="video-rate"]')?.textContent).toBe('1.5×'));
             expect(container.querySelector('[data-testid="video-rate-flash"]')).toBeNull();
         });
+    });
+
+    test('a .webm whose clusters open on a delta frame warns with the remux command, until dismissed', async () => {
+        gui.faulty = [55.6, 167.5];
+        vi.mocked(ClipboardSetText).mockClear();
+        const { container } = render(VideoPane, { props: { source: '/v/round2.webm' } });
+        const note = await vi.waitFor(() => container.querySelector('[data-testid="video-mux-warning"]') ?? expect.fail('no warning'));
+        expect(note.textContent).toContain('2');
+        expect(note.textContent).toContain(REMUX);
+        expect(container.querySelector('video')).not.toBeNull();
+        await fireEvent.click(must(note.querySelector('button')));
+        await vi.waitFor(() => expect(ClipboardSetText).toHaveBeenCalledWith(REMUX));
+        await fireEvent.click(must(container.querySelector('[data-testid="video-mux-dismiss"]')));
+        expect(container.querySelector('[data-testid="video-mux-warning"]')).toBeNull();
+    });
+
+    test('a clean .webm, or a file of another container, shows no warning', async () => {
+        vi.mocked(CheckVideoMux).mockClear();
+        const { container, rerender } = render(VideoPane, { props: { source: '/v/clean.webm' } });
+        await vi.waitFor(() => expect(CheckVideoMux).toHaveBeenCalledWith('/v/clean.webm'));
+        await rerender({ source: '/v/a.mp4' });
+        await vi.waitFor(() => expect(container.querySelector('video')).not.toBeNull());
+        expect(CheckVideoMux).toHaveBeenCalledTimes(1);
+        expect(container.querySelector('[data-testid="video-mux-warning"]')).toBeNull();
     });
 
     test('a file the webview cannot decode is diagnosed by its container', async () => {

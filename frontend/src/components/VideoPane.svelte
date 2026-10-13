@@ -5,7 +5,8 @@
     // and never touches the element, so the Transcription panel and the match review share one
     // player. It fills the box its caller gives it; the media keeps its own ratio inside.
     import { untrack } from 'svelte';
-    import { MediaURL, ReleaseMedia, PickTranscriptionVideo, VideoSourceKind, YouTubeEmbedURL } from '../../wailsjs/go/gui/App.js';
+    import { CheckVideoMux, MediaURL, ReleaseMedia, PickTranscriptionVideo, VideoSourceKind, YouTubeEmbedURL } from '../../wailsjs/go/gui/App.js';
+    import { ClipboardSetText } from '../../wailsjs/runtime/runtime.js';
     import { t } from '../i18n';
     import { logger } from '../utils/logger.js';
     import { VIDEO_RATES, stepRate as nextRate } from '../utils/videoRate.js';
@@ -78,6 +79,42 @@
         return CONTAINERS[ext] || [ext.toUpperCase(), ''];
     }
 
+    // A .webm/.mkv whose cue-referenced clusters open on a delta frame freezes on a seek there
+    // (WebKitGTK decodes from the cluster's start). The check runs when the source is set;
+    // its command, the ffmpeg remux that repairs the file, is also what the pane offers when
+    // it gives up reloading.
+    /** @type {{ checked: boolean, faulty: number[] | null, command: string } | null} */
+    let mux = $state(null);
+    let muxDismissed = $state(false);
+    let copied = $state(false);
+    const muxFaulty = $derived(mux?.faulty?.length ?? 0);
+
+    async function copyCommand() {
+        const text = mux?.command ?? '';
+        if (!text) return;
+        try {
+            if (!(await ClipboardSetText(text))) throw new Error('backend clipboard write returned false');
+        } catch (_e) {
+            try {
+                await navigator.clipboard.writeText(text);
+            } catch (error) {
+                logger.error('copying the remux command:', error);
+                return;
+            }
+        }
+        copied = true;
+    }
+
+    /** @param {string} path */
+    function checkMux(path) {
+        const ext = (String(path).split('.').pop() ?? '').toLowerCase();
+        if (ext !== 'webm' && ext !== 'mkv') return Promise.resolve(null);
+        return Promise.resolve(CheckVideoMux(path)).catch((/** @type {unknown} */ error) => {
+            logger.warn('checking the video multiplexing:', error);
+            return null;
+        });
+    }
+
     /** @param {MessageEvent} event */
     function onYouTubeMessage(event) {
         if (!ytOrigin || event.origin !== ytOrigin || event.source !== frame?.contentWindow) return;
@@ -143,6 +180,9 @@
         reloads = 0;
         reloading = null;
         stalledOut = null;
+        mux = null;
+        muxDismissed = false;
+        copied = false;
         (async () => {
             try {
                 const k = await VideoSourceKind(current);
@@ -160,6 +200,10 @@
                     // that sends none leaves it this parameter to post back to.
                     src = k === 'youtube' ? `${url}?origin=${encodeURIComponent(window.location.origin)}` : url;
                     if (k === 'youtube') ytOrigin = new URL(url).origin;
+                    if (k === 'file')
+                        checkMux(current).then((r) => {
+                            if (!cancelled && r?.command) mux = r;
+                        });
                 } else {
                     status = 'error';
                     detail = $t('video.notPlayable');
@@ -363,7 +407,8 @@
             reloading = null;
             stalledOut = { playing, rate: speed };
             status = 'error';
-            detail = $t('video.stalled');
+            // Only a check that found faulty clusters names the cause; otherwise the remux is a guess.
+            detail = !mux?.command ? $t('video.stalled') : muxFaulty ? $t('video.stalledRemux') : $t('video.stalledRemuxMaybe');
             return;
         }
         reloads++;
@@ -524,7 +569,21 @@
         <div class="video-note video-problem" data-testid="video-diagnostic">
             <p>{detail}</p>
             {#if status === 'codec'}<p class="video-hint">{$t('video.codecHint')}</p>{/if}
+            {#if stalledOut && mux?.command}
+                <code class="video-command" data-testid="video-remux-command">{mux.command}</code>
+                <button class="video-btn" onclick={copyCommand}>{copied ? $t('video.copied') : $t('video.copyCommand')}</button>
+            {/if}
             {#if stalledOut}<button class="video-btn" data-testid="video-retry" onclick={retryStalled}>{$t('video.stalledRetry')}</button>{/if}
+        </div>
+    {/if}
+    {#if muxFaulty && !muxDismissed && status !== 'error' && status !== 'missing' && mux}
+        <div class="video-mux" data-testid="video-mux-warning" role="status">
+            <p>{$t('video.muxWarning', { count: muxFaulty })}</p>
+            <code class="video-command">{mux.command}</code>
+            <div class="video-mux-actions">
+                <button class="video-btn" onclick={copyCommand}>{copied ? $t('video.copied') : $t('video.copyCommand')}</button>
+                <button class="video-btn" data-testid="video-mux-dismiss" onclick={() => (muxDismissed = true)}>{$t('video.muxDismiss')}</button>
+            </div>
         </div>
     {/if}
 </div>
@@ -622,5 +681,31 @@
     .video-btn {
         padding: 4px 10px;
         cursor: pointer;
+    }
+    .video-command {
+        max-width: 100%;
+        overflow-wrap: anywhere;
+        user-select: text;
+        font-size: var(--font-size-small);
+    }
+    .video-mux {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        padding: 6px 10px;
+        background: rgb(0 0 0 / 0.75);
+        color: white;
+        font-size: var(--font-size-small);
+    }
+    .video-mux p {
+        margin: 0;
+    }
+    .video-mux-actions {
+        display: flex;
+        gap: 6px;
     }
 </style>

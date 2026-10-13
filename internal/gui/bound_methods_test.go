@@ -68,6 +68,7 @@ var boundAppMethods = []string{
 	"OpenPositionFilesDialog",
 	"OpenPositionFolderDialog",
 	"MediaURL",
+	"CheckVideoMux",
 	"OpenVideoExternally",
 	"PathExists",
 	"PickTranscriptionVideo",

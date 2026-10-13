@@ -29,11 +29,12 @@ type admonition struct {
 	blocks []block
 }
 
-// literal is a body shown verbatim (the .. math:: block: the help has no
-// formula renderer).
+// literal is a body shown verbatim: the .. math:: block (the help has no
+// formula renderer), or a .. code-block::, which no catalogue translates.
 type literal struct {
-	class string
-	text  string
+	class    string
+	text     string
+	verbatim bool
 }
 
 type bulletList struct{ items []string }
@@ -145,8 +146,13 @@ func parseBlocks(lines []string, path string, levels *[]string) ([]block, error)
 				blocks = append(blocks, admonition{kind: name, blocks: sub})
 			case "math":
 				blocks = append(blocks, literal{class: "math", text: strings.Join(trimBlank(body), "\n")})
+			case "code-block", "code":
+				blocks = append(blocks, literal{class: "code", text: strings.Join(trimBlank(body), "\n"), verbatim: true})
+			case "figure", "image":
+				// The help shows no pictures; the text around them stands alone.
 			default:
-				// Unknown directive (toctree, figure, …): skipped whole.
+				// Skipping it would drop text the reader is told about without a word.
+				return nil, fmt.Errorf("%s:%d: .. %s:: has no rendering in the in-app help", path, i+1, name)
 			}
 			i = next - 1
 			continue

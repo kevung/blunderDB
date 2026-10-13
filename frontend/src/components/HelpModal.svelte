@@ -374,9 +374,10 @@
         border-left: 2px solid var(--color-border);
     }
 
-    /* The one .. math:: in the documentation, shown as it is written: the
-       modal carries no formula renderer. */
-    .tab-content :global(pre.math) {
+    /* A .. math:: shown as it is written (the modal carries no formula
+       renderer), and a .. code-block:: to copy. */
+    .tab-content :global(pre.math),
+    .tab-content :global(pre.code) {
         margin: 0 20px 20px 40px;
         padding: var(--space-2);
         overflow-x: auto;

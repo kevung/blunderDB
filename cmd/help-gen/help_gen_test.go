@@ -179,6 +179,27 @@ func TestTranslationIsNeverSilentlyFrench(t *testing.T) {
 	}
 }
 
+func TestCodeBlockIsRenderedVerbatimAndUnknownDirectiveRefused(t *testing.T) {
+	lines := []string{"Avant :", "", ".. code-block:: bash", "", "   ffmpeg -i 'a b.webm' {x}", "", "Après."}
+	blocks, err := parseBlocks(lines, "t.rst", &[]string{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	g := &generator{refs: map[string]refTarget{}, cats: map[string]catalogue{}}
+	// No catalogue holds the command: it is shown as written in every language.
+	tr := translator{lang: "de", cats: []catalogue{{"Avant :": "Vorher:", "Après.": "Danach."}}}
+	html, err := g.renderBlocks(blocks, tr)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if want := `<pre class="code">ffmpeg -i 'a b.webm' &#123;x&#125;</pre>`; !strings.Contains(html, want) {
+		t.Errorf("rendered:\n%s\nwant %s", html, want)
+	}
+	if _, err := parseBlocks([]string{".. toctree::", "", "   a"}, "t.rst", &[]string{}); err == nil {
+		t.Error("a directive the help cannot render must stop the build, not vanish")
+	}
+}
+
 func TestParseCSVTable(t *testing.T) {
 	body := []string{
 		`:header: "Commande", "Action"`,

@@ -66,6 +66,10 @@ export function CheckForUpdate() {
   return window['go']['gui']['App']['CheckForUpdate']();
 }
 
+export function CheckVideoMux(arg1) {
+  return window['go']['gui']['App']['CheckVideoMux'](arg1);
+}
+
 export function CollectImportableFiles(arg1) {
   return window['go']['gui']['App']['CollectImportableFiles'](arg1);
 }
