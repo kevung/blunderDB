@@ -1519,6 +1519,8 @@
         },
         "modeEnter": "Enter: vahvista {move}",
         "modeDigits": {
+            "die1": "numerot: täydennä heitto",
+            "answer": "ei noppia: vastaa tuplaukseen",
             "entry": "numerot: vahvista ja seuraava heitto",
             "roll": "numerot: heitto",
             "edit": "numerot: kirjoita siirron {n} nopat uudelleen"

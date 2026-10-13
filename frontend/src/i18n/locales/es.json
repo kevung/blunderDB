@@ -1519,6 +1519,8 @@
         },
         "modeEnter": "Intro: validar {move}",
         "modeDigits": {
+            "die1": "dígitos: completar la tirada",
+            "answer": "sin dados: responder al cubo",
             "entry": "cifras: validar y tirada siguiente",
             "roll": "cifras: tirada",
             "edit": "cifras: reescribir los dados de {n}"

@@ -100,7 +100,7 @@
     import { GetGammonNetPruneK } from '../../wailsjs/go/main/Config.js';
     import { finishDraft, exportDraftMat, abandonDraft, draftState } from '../services/transcriptionSave.js';
     import { get } from 'svelte/store';
-    import { createCursorFollower, isTyping } from '../services/videoFollow.js';
+    import { createCursorFollower, isTyping, typedRoll } from '../services/videoFollow.js';
     import { saveVideoResume, videoResumeMs } from '../services/videoResume.js';
     import { loadVideoRotation, nextRotation, saveVideoRotation } from '../services/videoRotation.js';
     import { toCssPx } from '../utils/uiZoom.js';
@@ -204,7 +204,8 @@
                   mode,
                   n: cursorRowNumber(annotated),
                   move: annotated?.entry?.notation || (keys.phase === PHASE.ROLL || keys.phase === PHASE.CANDIDATE ? ($selectedMoveStore ?? '') : ''),
-                  rolled: keys.phase === PHASE.ROLL || keys.phase === PHASE.CANDIDATE
+                  rolled: keys.phase === PHASE.ROLL || keys.phase === PHASE.CANDIDATE,
+                  phase: DICE_KINDS.has(expects) ? keys.phase : 'answer'
               }
             : null
     );
@@ -570,8 +571,9 @@
             }
             if (moving || placing > 0) return;
             const active = document.activeElement;
+            const rollTyped = typedRoll(get(transcriptionStore)?.annotated, get(transcriptionKeyStore));
             const quiet = (active instanceof Element && active.matches('input, textarea, select, [contenteditable]')) || isTyping(get(transcriptionStore)?.annotated, get(transcriptionKeyStore));
-            const target = follower.step(now, get(transcriptionStore)?.annotated, quiet);
+            const target = follower.step(now, get(transcriptionStore)?.annotated, quiet, rollTyped);
             if (target === null) return;
             moving = true;
             sendGesture({ Kind: 'seek_cursor', At: target })
@@ -952,7 +954,8 @@
      */
     function settleAfter(commands) {
         const correctedInPlace = commands.some((c) => c.kind === COMMAND.VALIDATE) && get(transcriptionStore)?.annotated?.entry?.replacing === true;
-        return correctedInPlace ? settleCursor() : settleCandidates();
+        const rollsNext = commands.some((c) => c.kind === COMMAND.DIE);
+        return correctedInPlace && !rollsNext ? settleCursor() : settleCandidates();
     }
 
     // The engine moves the Cursor; the panel re-asks the candidates, an
@@ -1132,6 +1135,7 @@
 
     /** @param {number} index */
     function chooseCandidate(index) {
+        hoveredMove = null;
         const next = selectCandidate(get(transcriptionKeyStore), index);
         transcriptionKeyStore.set(next.state);
         run(next.commands);
@@ -1147,6 +1151,7 @@
      * @param {number} delta
      */
     function stepCandidate(delta) {
+        hoveredMove = null;
         const state = get(transcriptionKeyStore);
         if (state.candidateCount <= 0) return false;
         const next = selectCandidate(state, state.selected + delta);
@@ -1343,7 +1348,6 @@
             return;
         }
         // Coup achevé ou hors des règles : Entrée l'enregistre (avec son plateau s'il est libre).
-        // En Revue rien ne s'écrit (ADR-0091).
         if (boardPlayKeys && event.key === 'Enter' && playSettled()) {
             event.preventDefault();
             event.stopPropagation();
@@ -1375,6 +1379,8 @@
             return;
         }
         if (!result.handled) return;
+        // A key naming a line takes it from the pointer even when the selection stays put.
+        if (selectionDelta(event) !== 0) hoveredMove = null;
         event.preventDefault();
         event.stopPropagation();
         applyResult(result);
@@ -1634,8 +1640,8 @@
     // Highlighted line and board arrows: display only, never written to the library. The board
     // draws the written move; a line of the analysis only when the user points at it — hovered,
     // or picked by j/k or a click. In Saisie the line preselected for Enter is drawn too:
-    // it is the move about to be recorded. In Revue and Édition it draws nothing: an arrow
-    // the user did not ask for over a decision already written reads as that decision.
+    // it is the move about to be recorded. On a decision already written it draws nothing
+    // more: an arrow the user did not ask for reads as that decision.
     $effect(() => {
         if (!draft || keys.phase === PHASE.DICE || keys.phase === PHASE.DIE1) {
             selectedMoveStore.set(null);
@@ -1790,7 +1796,6 @@
     // Le jet saisi (ou chargé par `settleCursor` sur une Action relue).
     let boardRoll = $derived(diceEntered && (keys.phase === PHASE.ROLL || keys.phase === PHASE.CANDIDATE) ? [keys.dice[0], keys.dice[1]] : null);
     // Sans jet saisi, aucun coup n'est armé : tout coup au plateau commence par les dés.
-    // En Revue le plateau ne joue pas : un coup achevé n'y écrirait rien d'autre qu'une décision relue.
     let boardPlayOpen = $derived(!!draft && !matchOver && !awaitingAnswer && !recordingPlay && expects === 'checker' && boardRoll !== null);
 
     // Clé d'armement (place, camp, position, jet) — pas le document, qui change à chaque pas.
@@ -1892,7 +1897,7 @@
 
     /**
      * Coup tapé dans une cellule du Transcript (`62: 13/7 8/7*`, ADR-0052,
-     * ADR-0091) : dés facultatifs devant « : », sinon ceux de la cellule ; coup
+     * ADR-0092) : dés facultatifs devant « : », sinon ceux de la cellule ; coup
      * parsé par `parseMoveNotation`. Des dés illisibles ou un coup sans pas
      * laissent le champ ouvert ; un coup illégal est enregistré et marqué
      * (ADR-0044), jamais remplacé par un coup deviné.

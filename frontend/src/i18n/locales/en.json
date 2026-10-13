@@ -1519,6 +1519,8 @@
         },
         "modeEnter": "Enter: record {move}",
         "modeDigits": {
+            "die1": "digits: complete the roll",
+            "answer": "no dice: answer the cube",
             "entry": "digits: record and next roll",
             "roll": "digits: roll",
             "edit": "digits: retype the dice of {n}"

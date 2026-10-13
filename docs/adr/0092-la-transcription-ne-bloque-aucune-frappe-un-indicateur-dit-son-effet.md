@@ -37,6 +37,11 @@ pas l'ambiguïté. En Saisie, la ligne présélectionnée n'était plus dessiné
 6. **Valider une correction place le curseur sur la décision suivante**, jamais en fin de
    match (repris d'ADR-0091 décision 5). `Fin` ramène au bout du document.
 
+7. **Le suivi vidéo ne reprend pas le Cursor sur une Action sans fin pendant la
+   réflexion.** La dernière Action chronométrée par son seul jet n'a pas de borne : une
+   réflexion de match dure de 15 à 60 s, la tenue posée à la main dessus ne se relâche
+   donc jusqu'à un jet tapé (ADR-0082 règle 3) ; aucun délai de repli à ce jour.
+
 ## Conséquences
 
 Une frappe sur une décision existante peut la modifier sans geste préalable : l'indicateur

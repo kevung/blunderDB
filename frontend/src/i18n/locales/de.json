@@ -1519,6 +1519,8 @@
         },
         "modeEnter": "Enter: {move} übernehmen",
         "modeDigits": {
+            "die1": "Ziffern: Wurf vervollständigen",
+            "answer": "keine Würfel: Doppler beantworten",
             "entry": "Ziffern: übernehmen und nächster Wurf",
             "roll": "Ziffern: Wurf",
             "edit": "Ziffern: Würfel von {n} neu eingeben"

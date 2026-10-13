@@ -11,10 +11,10 @@ const HOLD_LEAD_MS = 1500;
 // Past its end, the Action placed by hand stays a moment: `v` pressed a little late
 // still times it.
 const HOLD_GRACE_MS = 2000;
-// The last Action timed by its roll alone has no end: the hold on it lasts this long past
-// the dice, long enough for `v` on the play, then the playback is the part not yet
-// transcribed and the Cursor goes back to the end, where digits open the next roll.
-const HOLD_OPEN_MS = 10000;
+// The last Action timed by its roll alone has no end, and a match's thinking time (15 to
+// 60 s) is no bound: the hold on it lasts until a roll is typed (`typedRoll`), the sign
+// that the user moved on to the next Action; the follower is then free to move the Cursor
+// again when the playback enters another stretch.
 // How far from the instant the panel placed the video its first reading may fall.
 const PLACED_SLACK_MS = 1000;
 
@@ -92,9 +92,10 @@ export function createCursorFollower({ startMs = 0 } = {}) {
          * @param {number | null} ms - the video's instant, null without a ready player
          * @param {any} annotated - `transcript.Annotated`
          * @param {boolean} quiet - the user is typing: watch, never move
+         * @param {boolean} [rollTyped] - a roll has been typed: the hold on an Action left open ends
          * @returns {number | null} the Cursor stop to move to
          */
-        step(ms, annotated, quiet) {
+        step(ms, annotated, quiet, rollTyped = false) {
             if (ms === null || !annotated) return null;
             const actions = annotated.actions ?? [];
             const cursor = annotated.cursor ?? actions.length;
@@ -112,6 +113,7 @@ export function createCursorFollower({ startMs = 0 } = {}) {
             // While the user types, transitions pass by unheeded. A still clock is no
             // transition either: it is weighed on the next instant that moves, and the
             // first instant read counts as a transition then.
+            if (rollTyped && held && !isClosed(spans, held)) held = null;
             if (quiet) lastKey = key;
             if (quiet || first || !moved) return null;
             const changed = key !== lastKey;
@@ -139,6 +141,17 @@ export function createCursorFollower({ startMs = 0 } = {}) {
 }
 
 /**
+ * Whether the held Action is timed up to its end (the hold then ends with the stretch).
+ *
+ * @param {ReturnType<typeof actionSpans>} spans
+ * @param {{cursor: number}} held
+ */
+function isClosed(spans, held) {
+    const span = spans.find((s) => s.index === held.cursor);
+    return !span || span.closed;
+}
+
+/**
  * Whether the playback has left the stretch of the Action placed by hand.
  *
  * @param {{cursor: number, key: number | 'end' | null}} held
@@ -150,7 +163,7 @@ function released(held, spans, key, ms) {
     const span = spans.find((s) => s.index === held.cursor);
     if (!span) return key !== held.key;
     if (ms < span.start - HOLD_LEAD_MS) return true;
-    if (!span.closed) return ms >= span.start + HOLD_OPEN_MS;
+    if (!span.closed) return false;
     return ms >= span.end + HOLD_GRACE_MS;
 }
 
@@ -173,4 +186,23 @@ export function isTyping(annotated, keys) {
     const was = info.before?.dice ?? [0, 0];
     const sameRoll = Math.min(...dice) === Math.min(...was) && Math.max(...dice) === Math.max(...was);
     return !sameRoll || (!!e.notation && e.notation !== info.notation);
+}
+
+/**
+ * Whether the user is typing a roll: a first die, or dice that differ from the roll written
+ * under the Cursor. A play picked or a notation typed is not a roll.
+ *
+ * @param {any} annotated - `transcript.Annotated`
+ * @param {{phase?: string} | null | undefined} keys - the panel's key state
+ */
+export function typedRoll(annotated, keys) {
+    if (keys?.phase === 'die1') return true;
+    const e = annotated?.entry;
+    if (!e) return false;
+    const dice = e.dice ?? [0, 0];
+    if (!e.replacing) return dice[0] > 0 || dice[1] > 0;
+    const info = annotated.actions?.[e.at];
+    if (!info || !ROLLING_KINDS.has(info.kind)) return false;
+    const was = info.before?.dice ?? [0, 0];
+    return Math.min(...dice) !== Math.min(...was) || Math.max(...dice) !== Math.max(...was);
 }

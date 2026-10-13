@@ -1519,6 +1519,8 @@
         },
         "modeEnter": "Invio: convalida {move}",
         "modeDigits": {
+            "die1": "cifre: completare il tiro",
+            "answer": "niente dadi: rispondere al cubo",
             "entry": "cifre: convalida e tiro successivo",
             "roll": "cifre: tiro",
             "edit": "cifre: riscrivi i dadi di {n}"

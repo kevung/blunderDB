@@ -181,7 +181,6 @@
          * `true` closes it. Absent: cells are not editable (ADR-0052).
          */
         onEditMove = null,
-        /** `(index) => void` when a cell's move field opens. */
         /** `() => void` when Escape closes a cell's move field: the keys go back to the caller. */
         onEditEnd = null,
         /**
