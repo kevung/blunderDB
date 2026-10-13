@@ -1,5 +1,5 @@
 /**
- * Saisie et correction d'une décision au clavier (ADR-0091). En Saisie, la ligne 0 de
+ * Saisie et correction d'une décision au clavier (ADR-0092). En Saisie, la ligne 0 de
  * l'analyse est présélectionnée et dessinée : Entrée l'enregistre, et les dés du jet suivant
  * l'enregistrent aussi avant d'ouvrir la décision suivante. `e` ouvre le champ « dés: coup » :
  * une seule validation corrige jet et coup, des dés illisibles laissent le champ ouvert.
@@ -11,6 +11,14 @@ import { openLibraryMock } from './helpers/fixtures.js';
 import { installTranscriptionEngine, resetGestures, sentGestures } from './helpers/transcriptionDraft.js';
 
 const ENGINE = 'rgba(52, 120, 246, 0.85)';
+const RECORD = 'rgba(110, 110, 110, 0.9)';
+
+/**
+ * Les flèches dessinées d'une couleur, en une empreinte comparable.
+ * @param {import('@playwright/test').Page} page
+ * @param {string} color
+ */
+const arrows = (page, color) => page.locator(`#backgammon-board svg [stroke="${color}"]`).evaluateAll((els) => els.map((el) => el.getAttribute('d') ?? el.outerHTML).join('|'));
 
 /** @param {any} g */
 const label = (g) => (g.Kind === 'enter_die' ? `die ${g.Die}` : g.Kind === 'select_candidate' ? `select ${g.Candidate}` : g.Kind);
@@ -68,6 +76,34 @@ test('e : le champ porte « dés: coup » ; une validation corrige les deux', as
     await field.press('Enter');
     await expect(field).toHaveCount(0);
     await expect.poll(async () => (await sentGestures(page)).map(label)).toEqual(['die 6', 'die 2', 'enter_play', 'validate']);
-    // La correction validée mène à la décision suivante (ADR-0091).
+    // La correction validée mène à la décision suivante (ADR-0092).
     await expect(page.locator('#transcriptionPanel .cell.cursor')).toHaveAttribute('data-index', '5');
+});
+
+test('changer de ligne redessine les flèches aussitôt : j/k, clic, survol', async ({ page }) => {
+    await openDraft(page);
+    await page.locator('#transcriptionPanel .cell[data-index="4"]').click();
+    await expect(page.locator('[data-testid="transcription-mode"]')).toHaveAttribute('data-mode', 'edit');
+    const rows = page.locator('[data-testid="transcription-candidates"] tr[data-move]');
+    await expect(rows.nth(2)).toBeVisible();
+
+    // Sur une décision écrite, le coup écrit ; j désigne une autre ligne, dessinée.
+    await expect.poll(() => arrows(page, RECORD)).not.toBe('');
+    await page.keyboard.press('j');
+    await expect.poll(() => arrows(page, ENGINE)).not.toBe('');
+    const first = await arrows(page, ENGINE);
+    await page.keyboard.press('j');
+    await expect.poll(() => arrows(page, ENGINE)).not.toBe(first);
+
+    // Le survol dessine sa ligne ; la touche suivante reprend la main, même pointeur posé.
+    await rows.nth(0).hover();
+    const hovered = await arrows(page, ENGINE);
+    await page.keyboard.press('j');
+    await expect.poll(() => arrows(page, ENGINE)).not.toBe(hovered);
+
+    // Un clic dessine la ligne cliquée.
+    const before = await arrows(page, ENGINE);
+    await rows.nth(1).click();
+    await page.mouse.move(0, 0);
+    await expect.poll(() => arrows(page, ENGINE)).not.toBe(before);
 });

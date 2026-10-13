@@ -264,6 +264,18 @@ describe('on an existing decision, the arrows follow the line pointed at', () =>
         // Back on the written move: drawn as the written move.
         expect(get(transcriptionArrowsStore)).toMatchObject({ notation: '13/8 13/11' });
     });
+
+    test('a key after a hover redraws its line though the pointer still rests on the list', async () => {
+        const { container } = await cursorBack(1);
+        const row = /** @type {HTMLElement} */ (container.querySelector('tr[data-move="6/3 6/5"]'));
+        await fireEvent.mouseEnter(row);
+        await settle();
+        expect(get(transcriptionArrowsStore)).toMatchObject({ notation: '6/3 6/5' });
+
+        await fireEvent.keyDown(document, { code: 'KeyJ', key: 'j' });
+        await settle();
+        expect(get(transcriptionArrowsStore)).toMatchObject({ tone: 'engine', notation: '13/10 6/5' });
+    });
 });
 
 describe('in Édition, a new roll draws nothing until a line is pointed at', () => {

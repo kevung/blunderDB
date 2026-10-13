@@ -1598,6 +1598,15 @@
 
     // The line of the analysis under the pointer: its arrows while it stays there.
     let hoveredMove = $state(/** @type {string | null} */ (null));
+    // The last gesture names the line: a key, a click or the wheel takes it back from a pointer
+    // left resting over the list, until the pointer moves to another row.
+    let selectedSeen = -1;
+    $effect(() => {
+        const selected = keys.selected;
+        if (selected === selectedSeen) return;
+        selectedSeen = selected;
+        hoveredMove = null;
+    });
 
     // The decision under the Cursor as it was written, unless the Cursor makes room for an
     // insertion or the roll was retyped: the written move then belongs to another roll.
