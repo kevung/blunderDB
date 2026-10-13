@@ -85,7 +85,7 @@ func TestRemuxCommand(t *testing.T) {
 	cases := []struct{ in, goos, want string }{
 		{"/v/ronde 4.webm", "linux", `ffmpeg -i '/v/ronde 4.webm' -map 0 -c copy -cluster_time_limit 30000 '/v/ronde 4.remux.webm'`},
 		{"/v/l'été.mkv", "darwin", `ffmpeg -i '/v/l'\''été.mkv' -map 0 -c copy -cluster_time_limit 30000 '/v/l'\''été.remux.mkv'`},
-		{`C:\v\a b.webm`, "windows", `ffmpeg -i "C:\v\a b.webm" -map 0 -c copy -cluster_time_limit 30000 "C:\v\a b.remux.webm"`},
+		{`C:\v\l'a $b.webm`, "windows", `ffmpeg -i 'C:\v\l''a $b.webm' -map 0 -c copy -cluster_time_limit 30000 'C:\v\l''a $b.remux.webm'`},
 	}
 	for _, c := range cases {
 		if got := RemuxCommand(c.in, c.goos); got != c.want {

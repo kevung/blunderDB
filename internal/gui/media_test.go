@@ -202,22 +202,41 @@ func TestYouTubeWatchURL(t *testing.T) {
 
 func TestCheckVideoMux(t *testing.T) {
 	a := &App{}
-	rep := a.CheckVideoMux("../../pkg/blunderdb/videomux/testdata/delta-cluster.webm")
+	t.Cleanup(a.stopMedia)
+	fixture := "../../pkg/blunderdb/videomux/testdata/delta-cluster.webm"
+	// A path no pane serves is not read: the frontend could name any file.
+	if got := a.CheckVideoMux(fixture); got.Checked || got.Command != "" {
+		t.Errorf("unserved path: report = %+v, want nothing", got)
+	}
+	u, err := a.MediaURL(fixture)
+	if err != nil {
+		t.Fatal(err)
+	}
+	rep := a.CheckVideoMux(fixture)
 	if !rep.Checked || len(rep.Faulty) != 1 {
 		t.Errorf("report = %+v, want one faulty cluster", rep)
 	}
 	if !strings.Contains(rep.Command, "-cluster_time_limit 30000") || !strings.Contains(rep.Command, "delta-cluster.remux.webm") {
 		t.Errorf("command = %q", rep.Command)
 	}
-	if again := a.CheckVideoMux("../../pkg/blunderdb/videomux/testdata/delta-cluster.webm"); len(again.Faulty) != 1 {
+	if again := a.CheckVideoMux(fixture); len(again.Faulty) != 1 {
 		t.Errorf("cached report = %+v", again)
 	}
+	a.ReleaseMedia(u)
+	if got := a.CheckVideoMux(fixture); got.Checked {
+		t.Errorf("released path: report = %+v, want nothing", got)
+	}
 	for _, src := range []string{newMediaFile(t, "v.mp4", 10), "https://example.org/v.webm"} {
+		_, _ = a.MediaURL(src)
 		if got := a.CheckVideoMux(src); got.Command != "" || got.Checked {
 			t.Errorf("CheckVideoMux(%q) = %+v, want nothing", src, got)
 		}
 	}
-	if got := a.CheckVideoMux(newMediaFile(t, "broken.mkv", 100)); got.Checked || got.Command == "" {
+	broken := newMediaFile(t, "broken.mkv", 100)
+	if _, err := a.MediaURL(broken); err != nil {
+		t.Fatal(err)
+	}
+	if got := a.CheckVideoMux(broken); got.Checked || got.Command == "" {
 		t.Errorf("unreadable mkv: report = %+v, want the command only", got)
 	}
 }

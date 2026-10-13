@@ -407,7 +407,8 @@
             reloading = null;
             stalledOut = { playing, rate: speed };
             status = 'error';
-            detail = mux?.command ? $t('video.stalledRemux') : $t('video.stalled');
+            // Only a check that found faulty clusters names the cause; otherwise the remux is a guess.
+            detail = !mux?.command ? $t('video.stalled') : muxFaulty ? $t('video.stalledRemux') : $t('video.stalledRemuxMaybe');
             return;
         }
         reloads++;

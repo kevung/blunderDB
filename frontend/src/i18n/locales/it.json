@@ -3310,6 +3310,7 @@
         "stalled": "Il video resta bloccato nonostante diversi ricaricamenti.",
         "stalledRetry": "Riprova",
         "stalledRemux": "Il video resta bloccato a questo istante: il file è multiplexato male (un salto cade su un fotogramma non chiave). Riparatelo senza ricodificare con ffmpeg, poi associate la copia:",
+        "stalledRemuxMaybe": "Il video resta bloccato a questo istante. Se il file è multiplexato male (un salto che cade su un fotogramma non chiave), riparatelo senza ricodificare con ffmpeg, poi associate la copia:",
         "copyCommand": "Copia il comando",
         "copied": "Copiato",
         "muxWarning": "Questo file è multiplexato male: i salti vicino a {count} istanti possono bloccare il video. Riparatelo senza ricodificare con ffmpeg, poi associate la copia:",

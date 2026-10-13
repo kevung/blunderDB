@@ -445,6 +445,7 @@ export default {
 <p>アプリケーション自体は動画をデコードしません。再生できる形式はウェブビューのものです。再生できない形式は、コンテナとともに動画欄に表示され、Linux ではインストールすべき GStreamer プラグインも示されます。Debian と Ubuntu では <code>gstreamer1.0-plugins-good</code> と <code>gstreamer1.0-libav</code>、Fedora では <code>gstreamer1-plugins-good</code> と <code>gstreamer1-plugin-libav</code>、Arch では <code>gst-plugins-good</code> と <code>gst-libav</code> です(ダウンロードとインストール を参照)。</p>
 <p>止まってしまった動画(シークが完了しない、再生中に画像が動かない)は、3 秒後に再読み込みされ、指定した時点から同じ速度で、以前と同じく再生または一時停止の状態で再開します。3 回再読み込みしても効果がない場合は、パネルがその旨を表示し、再試行を提案します。</p>
 <p>多重化に問題のある <code>.webm</code> や <code>.mkv</code> ファイルでは、一部のシークで動画が止まります。ファイル内の画像グループがキーフレームでない画像から始まり、webview はそれを単独でデコードできないためです。yt-dlp でダウンロードしたファイルがこれに当たることがあります。このようなファイルを開くと、blunderDB はファイルのインデックス(グループごとに数キロバイト)を読み、問題のあるシークが見つかれば、ファイルを再エンコードせずに修復するコマンドをコピーできる形でパネルに表示します:</p>
+<pre class="code">ffmpeg -i 'ronde 4.webm' -map 0 -c copy -cluster_time_limit 30000 'ronde 4.remux.webm'</pre>
 <p>このコマンドは元のファイルの隣にコピーを書き出します。その後、このコピーをマッチまたはトランスクリプトに関連付けてください。<code>.webm</code> や <code>.mkv</code> で 3 回の再読み込みの後にパネルが再生をあきらめたときも、同じコマンドが表示されます。</p>
 <div class="admonition tip">
 <p>利用可能なショートカットについては キーボードショートカット を参照してください。</p>

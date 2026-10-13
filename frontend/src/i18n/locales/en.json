@@ -3310,6 +3310,7 @@
         "stalled": "The video stays frozen after several reloads.",
         "stalledRetry": "Retry",
         "stalledRemux": "The video stays frozen at this instant: this file is badly multiplexed (a seek lands on a non-key frame). Repair it without re-encoding with ffmpeg, then attach the copy:",
+        "stalledRemuxMaybe": "The video stays frozen at this instant. If this file is badly multiplexed (a seek landing on a non-key frame), repair it without re-encoding with ffmpeg, then attach the copy:",
         "copyCommand": "Copy the command",
         "copied": "Copied",
         "muxWarning": "This file is badly multiplexed: seeks near {count} instants may freeze the video. Repair it without re-encoding with ffmpeg, then attach the copy:",

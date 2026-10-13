@@ -289,6 +289,8 @@ describe('VideoPane', () => {
             expect(container.textContent).toContain('frozen');
             // A .webm that gives up names the remux that repairs it, instead of the bare notice.
             expect(container.querySelector('[data-testid="video-remux-command"]')?.textContent).toBe(REMUX);
+            // The check found nothing wrong: the cause is offered as a possibility, not asserted.
+            expect(container.textContent).toContain('If this file is badly multiplexed');
             // Seeks asked meanwhile are where the retry goes.
             component.seek(1300000);
             await fireEvent.click(must(container.querySelector('[data-testid="video-retry"]')));

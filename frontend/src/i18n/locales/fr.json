@@ -3310,6 +3310,7 @@
         "stalled": "La vidéo reste figée malgré plusieurs rechargements.",
         "stalledRetry": "Réessayer",
         "stalledRemux": "La vidéo reste figée à cet instant : ce fichier est mal multiplexé (un saut y tombe sur une image non clé). Réparez-le sans réencoder avec ffmpeg, puis associez la copie :",
+        "stalledRemuxMaybe": "La vidéo reste figée à cet instant. Si ce fichier est mal multiplexé (un saut qui tombe sur une image non clé), réparez-le sans réencoder avec ffmpeg, puis associez la copie :",
         "copyCommand": "Copier la commande",
         "copied": "Copiée",
         "muxWarning": "Ce fichier est mal multiplexé : les sauts près de {count} instants risquent de figer la vidéo. Réparez-le sans réencoder avec ffmpeg, puis associez la copie :",

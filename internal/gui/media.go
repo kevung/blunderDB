@@ -35,10 +35,11 @@ type mediaHost struct {
 	mu      sync.Mutex
 	srv     *http.Server
 	base    string
-	tokens  map[string]string // token -> absolute path
-	byPath  map[string]string // absolute path -> token
-	refs    map[string]int    // token or YouTube id -> panes holding it
-	youtube map[string]bool   // ids with an attached YouTube source
+	tokens  map[string]string   // token -> absolute path
+	byPath  map[string]string   // absolute path -> token
+	refs    map[string]int      // token or YouTube id -> panes holding it
+	youtube map[string]bool     // ids with an attached YouTube source
+	mux     map[string]muxEntry // token -> multiplexing check of the file it serves
 }
 
 var youTubeIDRe = regexp.MustCompile(`^[A-Za-z0-9_-]{6,20}$`)
@@ -140,8 +141,8 @@ func (h *mediaHost) register(path string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if st.IsDir() {
-		return "", errors.New("not a file: " + abs)
+	if !st.Mode().IsRegular() {
+		return "", errors.New("not a regular file: " + abs)
 	}
 	h.mu.Lock()
 	defer h.mu.Unlock()
@@ -217,13 +218,14 @@ func (h *mediaHost) release(u string) {
 	}
 	delete(h.byPath, h.tokens[key])
 	delete(h.tokens, key)
+	delete(h.mux, key)
 }
 
 func (h *mediaHost) stop() {
 	h.mu.Lock()
 	srv := h.srv
 	h.srv, h.base = nil, ""
-	h.tokens, h.byPath, h.youtube, h.refs = nil, nil, nil, nil
+	h.tokens, h.byPath, h.youtube, h.refs, h.mux = nil, nil, nil, nil, nil
 	h.mu.Unlock()
 	if srv != nil {
 		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
@@ -316,39 +318,43 @@ type VideoMuxReport struct {
 	Command string    `json:"command"`
 }
 
-type muxKey struct {
-	path  string
-	size  int64
-	mtime time.Time
+// muxEntry is a check kept while its file is served and unchanged.
+type muxEntry struct {
+	size   int64
+	mtime  time.Time
+	report VideoMuxReport
 }
 
-var (
-	muxMu    sync.Mutex
-	muxCache = map[muxKey]VideoMuxReport{}
-)
-
-// CheckVideoMux examines a local .webm/.mkv video as it is attached: a few kilobytes per
-// cluster, the result kept for as long as the file is unchanged. Any other source gets an
-// empty report.
+// CheckVideoMux examines a .webm/.mkv video a pane is serving (registered through MediaURL):
+// a few kilobytes per cluster, the result kept while the file is served and unchanged. Any
+// other source, or a path no pane serves, gets an empty report: the frontend names a file
+// to examine only by playing it.
 func (a *App) CheckVideoMux(path string) VideoMuxReport {
 	if !videomux.IsMatroskaPath(path) || a.VideoSourceKind(path) != "file" {
 		return VideoMuxReport{}
 	}
 	abs, err := filepath.Abs(path)
 	if err != nil {
-		abs = path
+		return VideoMuxReport{}
+	}
+	h := &a.media
+	h.mu.Lock()
+	tok, served := h.byPath[abs]
+	h.mu.Unlock()
+	if !served {
+		return VideoMuxReport{}
 	}
 	rep := VideoMuxReport{Command: videomux.RemuxCommand(abs, goruntime.GOOS)}
+	// A FIFO or a device would block the open before any deadline applies.
 	st, err := os.Stat(abs)
-	if err != nil {
+	if err != nil || !st.Mode().IsRegular() {
 		return rep
 	}
-	key := muxKey{abs, st.Size(), st.ModTime()}
-	muxMu.Lock()
-	cached, ok := muxCache[key]
-	muxMu.Unlock()
-	if ok {
-		return cached
+	h.mu.Lock()
+	cached, ok := h.mux[tok]
+	h.mu.Unlock()
+	if ok && cached.size == st.Size() && cached.mtime.Equal(st.ModTime()) {
+		return cached.report
 	}
 	found, err := videomux.CheckFile(context.Background(), abs)
 	if err != nil {
@@ -359,9 +365,14 @@ func (a *App) CheckVideoMux(path string) VideoMuxReport {
 		rep.Faulty = append(rep.Faulty, d.Seconds())
 	}
 	if !found.Partial {
-		muxMu.Lock()
-		muxCache[key] = rep
-		muxMu.Unlock()
+		h.mu.Lock()
+		if h.tokens[tok] == abs {
+			if h.mux == nil {
+				h.mux = map[string]muxEntry{}
+			}
+			h.mux[tok] = muxEntry{st.Size(), st.ModTime(), rep}
+		}
+		h.mu.Unlock()
 	}
 	return rep
 }

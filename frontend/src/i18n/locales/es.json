@@ -3310,6 +3310,7 @@
         "stalled": "El vídeo sigue congelado tras varias recargas.",
         "stalledRetry": "Reintentar",
         "stalledRemux": "El vídeo sigue congelado en este instante: el archivo está mal multiplexado (un salto cae en una imagen no clave). Repárelo sin recodificar con ffmpeg y asocie luego la copia:",
+        "stalledRemuxMaybe": "El vídeo sigue congelado en este instante. Si el archivo está mal multiplexado (un salto que cae en una imagen no clave), repárelo sin recodificar con ffmpeg y asocie luego la copia:",
         "copyCommand": "Copiar el comando",
         "copied": "Copiado",
         "muxWarning": "Este archivo está mal multiplexado: los saltos cerca de {count} instantes pueden congelar el vídeo. Repárelo sin recodificar con ffmpeg y asocie luego la copia:",

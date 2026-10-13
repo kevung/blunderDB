@@ -191,9 +191,12 @@ func (g *generator) renderBlocks(blocks []block, tr translator) (string, error) 
 			}
 			write("</tbody>\n</table>\n")
 		case literal:
-			text, err := tr.tr(v.text)
-			if err != nil {
-				return "", err
+			text := v.text
+			if !v.verbatim {
+				var err error
+				if text, err = tr.tr(v.text); err != nil {
+					return "", err
+				}
 			}
 			// Encode braces: `{i}` would read as an interpolation
 			// placeholder, which help.safety.test.js refuses.

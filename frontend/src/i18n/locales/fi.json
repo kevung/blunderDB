@@ -3310,6 +3310,7 @@
         "stalled": "Video pysyy jumissa useista uudelleenlatauksista huolimatta.",
         "stalledRetry": "Yritä uudelleen",
         "stalledRemux": "Video jää jumiin tähän kohtaan: tiedosto on multipleksattu virheellisesti (siirtymä osuu muuhun kuin avainkuvaan). Korjaa se ilman uudelleenkoodausta ffmpegillä ja liitä sitten kopio:",
+        "stalledRemuxMaybe": "Video jää jumiin tähän kohtaan. Jos tiedosto on multipleksattu virheellisesti (siirtymä osuu muuhun kuin avainkuvaan), korjaa se ilman uudelleenkoodausta ffmpegillä ja liitä sitten kopio:",
         "copyCommand": "Kopioi komento",
         "copied": "Kopioitu",
         "muxWarning": "Tämä tiedosto on multipleksattu virheellisesti: siirtymät {count} kohdan lähellä voivat jäädyttää videon. Korjaa se ilman uudelleenkoodausta ffmpegillä ja liitä sitten kopio:",

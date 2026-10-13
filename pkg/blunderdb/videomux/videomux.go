@@ -82,6 +82,12 @@ func IsMatroskaPath(path string) bool {
 
 // CheckFile opens path and runs Check on it, within DefaultTimeout when ctx sets no deadline.
 func CheckFile(ctx context.Context, path string) (Report, error) {
+	// Opening a FIFO blocks until a writer comes, out of reach of the deadline.
+	if st, err := os.Stat(path); err != nil {
+		return Report{}, err
+	} else if !st.Mode().IsRegular() {
+		return Report{}, fmt.Errorf("videomux: not a regular file: %s", path)
+	}
 	f, err := os.Open(path)
 	if err != nil {
 		return Report{}, err
@@ -598,8 +604,9 @@ func RemuxOutput(in string) string {
 
 func quote(s, goos string) string {
 	if goos == "windows" {
-		// A Windows path cannot hold a double quote; cmd and PowerShell both take this.
-		return `"` + s + `"`
+		// PowerShell, Windows' default shell, expands $ and ` inside double quotes; single
+		// quotes are literal there, a quote inside doubled.
+		return "'" + strings.ReplaceAll(s, "'", "''") + "'"
 	}
 	return "'" + strings.ReplaceAll(s, "'", `'\''`) + "'"
 }

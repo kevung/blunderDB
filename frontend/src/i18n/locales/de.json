@@ -3310,6 +3310,7 @@
         "stalled": "Das Video bleibt trotz mehrerer Neuladungen hängen.",
         "stalledRetry": "Erneut versuchen",
         "stalledRemux": "Das Video bleibt an dieser Stelle hängen: Die Datei ist fehlerhaft gemultiplext (ein Sprung landet auf einem Nicht-Schlüsselbild). Reparieren Sie sie ohne Neukodierung mit ffmpeg und verknüpfen Sie dann die Kopie:",
+        "stalledRemuxMaybe": "Das Video bleibt an dieser Stelle hängen. Falls die Datei fehlerhaft gemultiplext ist (ein Sprung landet auf einem Nicht-Schlüsselbild), reparieren Sie sie ohne Neukodierung mit ffmpeg und verknüpfen Sie dann die Kopie:",
         "copyCommand": "Befehl kopieren",
         "copied": "Kopiert",
         "muxWarning": "Diese Datei ist fehlerhaft gemultiplext: Sprünge nahe {count} Zeitpunkten können das Video einfrieren. Reparieren Sie sie ohne Neukodierung mit ffmpeg und verknüpfen Sie dann die Kopie:",
