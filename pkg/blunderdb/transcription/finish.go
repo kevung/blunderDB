@@ -126,6 +126,7 @@ func (s *Service) writeMatch(ctx context.Context, scope string, id, rev int64, g
 			}
 		}
 	}
+	graph.TournamentID = chosenTournament(header.TournamentID)
 	res, err = ingest.WriteMatch(ctx, tx, scope, graph, nil)
 	if err != nil {
 		return fail(err)
@@ -134,8 +135,10 @@ func (s *Service) writeMatch(ctx context.Context, scope string, id, rev int64, g
 	if err := tx.Matches().ReplaceHeader(ctx, scope, res.MatchID, &header); err != nil {
 		return fail(err)
 	}
-	if err := attachTournament(ctx, tx, scope, res.MatchID, header.TournamentID); err != nil {
-		return fail(err)
+	if res.Replaced {
+		if err := refileTournament(ctx, tx, scope, res.MatchID, header.TournamentID); err != nil {
+			return fail(err)
+		}
 	}
 	if err := tx.Transcriptions().Delete(ctx, scope, id); err != nil {
 		return fail(err)
@@ -182,15 +185,26 @@ func (s *Service) toAnalyze(ctx context.Context, scope string, matchID int64) (i
 	return len(ids) - len(have), nil
 }
 
-// attachTournament is the header's tournament made true of the Match, in the
-// same transaction as the write.
+// chosenTournament is the tournament the header names, 0 for none: a new
+// Match is then filed by ingest under its event's tournament, as an import is.
+func chosenTournament(tournamentID *int64) int64 {
+	if tournamentID == nil {
+		return 0
+	}
+	return *tournamentID
+}
+
+// refileTournament makes the header's tournament true of a replaced Match, in
+// the same transaction as the write: ingest never re-files a replacement.
 //
 // Here, not in the graph: ReplaceHeader does not touch tournament_id, which
-// the tournament store owns with its sort order. A save with no tournament
-// DETACHES, so clearing the field is not silently ignored.
-func attachTournament(ctx context.Context, tx storage.Tx, scope string, matchID int64, tournamentID *int64) error {
-	if tournamentID != nil && *tournamentID != 0 {
-		return tx.Tournaments().AddMatch(ctx, scope, *tournamentID, matchID)
+// the tournament store owns with its sort order. A replacement whose header
+// names no tournament DETACHES, so clearing the field is not silently
+// ignored; the draft of a stored Match starts from its tournament
+// (EditMatch), so only a cleared field gets there.
+func refileTournament(ctx context.Context, tx storage.Tx, scope string, matchID int64, tournamentID *int64) error {
+	if id := chosenTournament(tournamentID); id != 0 {
+		return tx.Tournaments().AddMatch(ctx, scope, id, matchID)
 	}
 	return tx.Tournaments().RemoveMatch(ctx, scope, matchID)
 }

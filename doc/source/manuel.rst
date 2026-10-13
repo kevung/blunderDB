@@ -2022,7 +2022,9 @@ Le bouton **Métadonnées** de la barre déplie l'en-tête du brouillon, à tout
 moment : les noms des deux joueurs — autocomplétés depuis les joueurs de la
 base —, l'événement, le lieu, la ronde, la date (celle du jour par défaut), le
 transcripteur (l'utilisateur de la base par défaut) et le tournoi auquel le
-match sera rattaché lors de l'enregistrement. Aucun champ n'est obligatoire :
+match sera rattaché lors de l'enregistrement ; laissé vide, le match nouveau
+est classé, comme à l'import, dans le tournoi qui porte le nom de son
+événement. Aucun champ n'est obligatoire :
 un brouillon sans noms s'enregistre et s'exporte, avec des en-têtes vides. Le
 bouton **Inverser les joueurs** échange les deux noms, donne toutes les actions
 au camp d'en face et retourne le plateau : c'est le même match, lu de l'autre

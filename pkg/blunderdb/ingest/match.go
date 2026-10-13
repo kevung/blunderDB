@@ -39,6 +39,11 @@ type MatchGraph struct {
 	// library's Main player sits at seat 2 (storage.MainPlayerAtSeat2): a
 	// match typed or played here, whose seats the user chose.
 	KeepSeats bool
+	// TournamentID files a match this graph creates into that tournament
+	// rather than into the one its event names, 0 for the event's: the
+	// tournament a user chose is not doubled by an empty one named after the
+	// event. A replacement is never re-filed either way.
+	TournamentID int64
 }
 
 // GameGraph is one game with its ordered moves.
@@ -230,11 +235,15 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 		}
 		matchID = id
 
-		// The file names its event; make it a tournament. Only on a match this
-		// import created: a match already stored may have been filed by hand,
-		// and re-importing its file must not move it. Date and location start
-		// empty.
-		if name := strings.TrimSpace(g.Match.Event); name != "" {
+		// The file names its event; make it a tournament, unless the caller
+		// chose one. Only on a match this import created: a match already
+		// stored may have been filed by hand, and re-importing its file must
+		// not move it. Date and location start empty.
+		if g.TournamentID != 0 {
+			if err := tx.Tournaments().AddMatch(ctx, scope, g.TournamentID, matchID); err != nil {
+				return res, err
+			}
+		} else if name := strings.TrimSpace(g.Match.Event); name != "" {
 			if err := tx.Tournaments().SetMatchByName(ctx, scope, matchID, name); err != nil {
 				return res, err
 			}

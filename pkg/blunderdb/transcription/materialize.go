@@ -108,14 +108,12 @@ func (s *Service) writeNewMatch(ctx context.Context, scope string, graph *ingest
 		_ = tx.Rollback()
 		return res, err
 	}
+	graph.TournamentID = chosenTournament(header.TournamentID)
 	if res, err = ingest.WriteMatch(ctx, tx, scope, graph, nil); err != nil {
 		return fail(err)
 	}
 	header.ID = res.MatchID
 	if err := tx.Matches().ReplaceHeader(ctx, scope, res.MatchID, &header); err != nil {
-		return fail(err)
-	}
-	if err := attachTournament(ctx, tx, scope, res.MatchID, header.TournamentID); err != nil {
 		return fail(err)
 	}
 	// A finished transcription follows the Main player like an import, once

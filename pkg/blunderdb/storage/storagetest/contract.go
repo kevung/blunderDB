@@ -88,6 +88,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Match/ListFilterSortPaginate", testMatchListFilterSortPaginate},
 		{"Tournament/AddRemoveMatch", testTournamentAddRemoveMatch},
 		{"Tournament/EffectiveDate", testTournamentEffectiveDate},
+		{"Tournament/FinishedTranscriptionIsFiled", testTournamentFinishedTranscriptionIsFiled},
 		{"Collection/MoveBetweenCollections", testCollectionMoveBetween},
 		{"Collection/CopyPosition", testCollectionCopyPosition},
 		{"Collection/ReorderPositions", testCollectionReorderPositions},
