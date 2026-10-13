@@ -254,6 +254,21 @@ describe('VideoPane', () => {
             expect(el.applied).toEqual([90, 90, 200]);
         });
 
+        test('a queued seek is dropped when a later one is sent during a paused block', async () => {
+            const { component, video } = await open({ startMs: 90000 });
+            const el = drive(video);
+            await fireEvent(video, new Event('loadedmetadata'));
+            component.seek(120000);
+            vi.advanceTimersByTime(40000);
+            expect(el.applied).toEqual([90, 120]);
+            component.seek(200000);
+            expect(el.applied).toEqual([90, 120, 200]);
+            expect(component.currentTimeMs()).toBe(200000);
+            el.seeking = false;
+            await fireEvent(video, new Event('seeked'));
+            expect(el.applied).toEqual([90, 120, 200]);
+        });
+
         test('playback frozen on one instant reloads there; playback that moves, or a pause, does not', async () => {
             const { video } = await open();
             const el = drive(video);

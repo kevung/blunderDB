@@ -480,7 +480,10 @@
             const blocked = video.seeking && video.paused && pausedAsked;
             pausedAsked = false;
             if (video.seeking && !blocked) queuedMs = at;
-            else askTime(at);
+            else {
+                queuedMs = null;
+                askTime(at);
+            }
         }
     }
 
