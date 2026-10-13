@@ -43,7 +43,7 @@ import { activeTabStore, statusBarModeStore } from '../stores/uiStore.js';
 import { DIAGRAM_WIDTH, DIAGRAM_HEIGHT } from '../services/diagramService.js';
 import { boardMetrics } from '../utils/boardGeometry.js';
 import { defaultBoardConfig } from '../utils/boardConfig.js';
-import { stackSlotCenter } from '../utils/boardScene.js';
+import { ARROW_COLORS, stackSlotCenter } from '../utils/boardScene.js';
 
 const BLACK = 0;
 const WHITE = 1;
@@ -81,7 +81,7 @@ async function settle(times = 10) {
 const panel = () => /** @type {HTMLElement} */ (document.getElementById('transcriptionPanel'));
 const drawing = () => /** @type {HTMLElement} */ (document.querySelector('[data-testid="theatre-board-drawing"]'));
 // The arrows' colours, as boardScene.drawMoveArrows paints them: a written move or a line of the analysis.
-const arrows = () => (drawing().innerHTML.match(/rgba\(255, 107, 107|rgba\(52, 120, 246/g) ?? []).length;
+const arrows = () => Object.values(ARROW_COLORS).reduce((n, colour) => n + drawing().innerHTML.split(colour).length - 1, 0);
 const steps = () => get(quizPlayStore)?.steps.map((/** @type {any} */ s) => [s.from, s.to]);
 
 const W = DIAGRAM_WIDTH;
@@ -158,6 +158,10 @@ afterEach(async () => {
 describe('a play on the theatre board, through the panel', () => {
     test('the first step takes the candidate arrows off, and they stay off while the play is in progress', async () => {
         await armedInTheatre();
+        // The preselected line draws nothing; `j` points at a line, which does.
+        expect(arrows()).toBe(0);
+        await fireEvent.keyDown(panel(), { code: 'KeyJ', key: 'j', bubbles: true, cancelable: true });
+        await settle();
         expect(arrows()).toBeGreaterThan(0);
         await clickAt(slot(13));
         expect(steps()).toEqual([[13, 7]]);

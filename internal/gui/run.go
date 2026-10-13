@@ -46,8 +46,13 @@ func Run(assets embed.FS, icon []byte, width, height int, db *database.Database,
 		Linux: &linux.Options{
 			Icon:                icon,
 			WindowIsTranslucent: false,
-			WebviewGpuPolicy:    linux.WebviewGpuPolicyNever,
-			ProgramName:         "blunderDB",
+			// Without the GPU, WebKitGTK's video sink waits on the main thread to draw while a
+			// seek on that thread waits on the sink: the whole window freezes. Wails v2 swaps
+			// two values in its C switch: OnDemand is what sets WebKit's ALWAYS, and Always sets
+			// ON_DEMAND, deprecated since WebKitGTK 2.54. A driver that cannot export DMA-BUF is
+			// worked around with WEBKIT_DISABLE_DMABUF_RENDERER=1 (manual, video pane).
+			WebviewGpuPolicy: linux.WebviewGpuPolicyOnDemand,
+			ProgramName:      "blunderDB",
 		},
 		// WebView2 already applies OS DPI scaling: pin its zoom to 1.0 so it
 		// does not compound with `--ui-scale`.

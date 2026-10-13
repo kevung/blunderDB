@@ -68,8 +68,11 @@ func TestCorrectionInPlace(t *testing.T) {
 		}
 		done := runSteps(t, picked, []step{{"validate", confirm(), nil}})
 		// What is loaded after it is the next decision, under review (ADR-0091).
-		if done.Entry != nil && (done.Entry.At != at+1 || done.Entry.Review || done.Entry.Mode != EntryReplace) {
-			t.Errorf("entry = %+v; validation leaves only the next decision loaded", done.Entry)
+		if done.Entry == nil || done.Entry.At != at+1 || done.Entry.Review || done.Entry.Mode != EntryReplace {
+			t.Errorf("entry = %+v; validation loads the next decision, unmarked", done.Entry)
+		}
+		if done.Cursor != at+1 {
+			t.Errorf("cursor = %d, want the next decision %d", done.Cursor, at+1)
 		}
 	})
 

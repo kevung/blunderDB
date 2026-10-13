@@ -27,10 +27,59 @@ function modelPoint(point, mover) {
 }
 
 /**
+ * Les pas qu'aucun dé du jet ne paie, comme `diceCoherent` du Replay : chaque pas prend un dé, ou
+ * plusieurs par des points intermédiaires libres (« 24/14 » sur 6-4) ; une sortie se paie d'un dé
+ * égal ou supérieur à la distance. Un jet corrigé sous un coup gardé laisse des pas de la mauvaise
+ * longueur : ce sont eux. Parmi les affectations, celle qui paie le plus de pas, les premiers d'abord.
+ *
+ * @param {StepMove[]} moves
+ * @param {{ board: { points: { color: number, checkers: number }[] }, player_on_roll: number, dice?: number[] }} before
+ * @returns {boolean[]} vrai pour un pas impayé ; rien n'est impayé sans jet connu
+ */
+function unpaidSteps(moves, before) {
+    const [d1, d2] = before.dice ?? [0, 0];
+    if (!(d1 >= 1 && d1 <= 6 && d2 >= 1 && d2 <= 6)) return moves.map(() => false);
+    const dice = d1 === d2 ? [d1, d1, d1, d1] : [d1, d2];
+    const mover = before.player_on_roll;
+    const points = before.board.points;
+    const open = (/** @type {number} */ p) => {
+        const c = points[modelPoint(p, mover)];
+        return !(c.color === 1 - mover && c.checkers >= 2);
+    };
+    const used = dice.map(() => false);
+    /** @type {number[]} */
+    let best = [];
+
+    /** Couvre le pas depuis `at` avec des dés libres, puis continue par `next`. */
+    const chain = (/** @type {StepMove} */ step, /** @type {number} */ at, /** @type {() => void} */ next) => {
+        dice.forEach((die, j) => {
+            if (used[j]) return;
+            used[j] = true;
+            const to = at - die;
+            if (step.to === -1 ? die >= at : to === step.to) next();
+            else if (to > Math.max(step.to, 0) && open(to)) chain(step, to, next);
+            used[j] = false;
+        });
+    };
+    const assign = (/** @type {number} */ i, /** @type {number[]} */ paid) => {
+        if (paid.length + moves.length - i <= best.length) return;
+        if (i === moves.length) {
+            best = paid;
+            return;
+        }
+        chain(moves[i], moves[i].from, () => assign(i + 1, [...paid, i]));
+        assign(i + 1, paid);
+    };
+    assign(0, []);
+    return moves.map((_, i) => !best.includes(i));
+}
+
+/**
  * Le coup écrit, pas par pas, chaque pas marqué `illegal` quand il ne se joue pas sur `before` :
  * pas de pion du camp au trait sur la case de départ, point d'arrivée tenu par deux pions adverses
- * ou plus, ou pion à la barre laissé là. L'ordre n'est pas celui de l'écriture : comme le Replay,
- * on joue d'abord les pas qui se jouent (« 24/18 bar/24 » se lit dans les deux sens).
+ * ou plus, pion à la barre laissé là, sortie avec un autre pion hors du jan, ou longueur qu'aucun
+ * dé ne paie. L'ordre n'est pas celui de l'écriture : comme le Replay, on joue d'abord les pas qui
+ * se jouent (« 24/18 bar/24 » se lit dans les deux sens).
  *
  * @param {string | null | undefined} notation - numérotée depuis le camp au trait
  * @param {{ board?: { points: { color: number, checkers: number }[] }, player_on_roll: number } | null | undefined} before
@@ -45,6 +94,16 @@ export function recordedSteps(notation, before) {
     const bar = mover === 1 ? 0 : 25;
     const board = points.map((p) => ({ color: p.color, checkers: p.checkers }));
     const holds = (/** @type {number} */ i) => i >= 0 && i <= 25 && board[i].color === mover && board[i].checkers > 0;
+    // Pions du camp hors du jan (barre comprise), en dehors de celui qui sort.
+    const outside = (/** @type {number} */ leaving) => {
+        let n = 0;
+        for (let p = 7; p <= 25; p++) {
+            const m = modelPoint(p, mover);
+            if (holds(m)) n += board[m].checkers;
+        }
+        return leaving >= 7 ? n - 1 : n;
+    };
+    const unpaid = unpaidSteps(moves, before);
 
     /** @type {boolean[]} */
     const illegal = moves.map(() => false);
@@ -62,7 +121,8 @@ export function recordedSteps(notation, before) {
         const from = modelPoint(moves[i].from, mover);
         const to = modelPoint(moves[i].to, mover);
         const blocked = to >= 0 && to <= 25 && board[to].color === opponent && board[to].checkers >= 2;
-        illegal[i] = !playable(i) || blocked;
+        const early = to === -1 && outside(moves[i].from) > 0;
+        illegal[i] = !playable(i) || blocked || early || unpaid[i];
         if (holds(from)) {
             board[from].checkers--;
             if (board[from].checkers === 0) board[from].color = -1;
@@ -90,8 +150,16 @@ export function transcriptionArrows({ info = null, engineMove = null }) {
         return { notation: engineMove, moves: parseMoveNotation(engineMove), tone: 'engine' };
     }
     if (!recorded) return null;
-    return { notation: recorded, moves: recordedSteps(recorded, info.before), tone: 'record' };
+    const moves = recordedSteps(recorded, info.before);
+    // Le Replay juge le coup entier : une faute qu'aucun pas ne montre seul (un dé laissé
+    // injouer) met tous les pas en alerte, pour qu'un coup illégal ne se dessine jamais normal.
+    const faulted = (info.inconsistencies ?? []).some((/** @type {any} */ f) => PLAY_FAULTS.has(f.rule));
+    const flagged = faulted && !moves.some((m) => m.illegal) ? moves.map((m) => ({ ...m, illegal: true })) : moves;
+    return { notation: recorded, moves: flagged, tone: 'record' };
 }
+
+// Les règles du Replay qui rendent un coup écrit illégal (transcript/replay.go).
+const PLAY_FAULTS = new Set(['unreachable_board', 'dice_unused']);
 
 /**
  * Des pas en notation vers les points dessinés : la notation est numérotée depuis le camp au

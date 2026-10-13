@@ -3307,6 +3307,8 @@
         "codecHint": "В Linux установите плагины GStreamer: gstreamer1.0-plugins-good, gstreamer1.0-libav (Debian, Ubuntu); gstreamer1-plugins-good, gstreamer1-plugin-libav (Fedora); gst-plugins-good, gst-libav (Arch). В Windows расширение HEVC из Store воспроизводит H.265.",
         "missing": "Видеофайл не найден.",
         "relocate": "Выбрать файл…",
+        "stalled": "Видео остаётся зависшим после нескольких перезагрузок.",
+        "stalledRetry": "Повторить",
         "player": "Видеоплеер",
         "placeBoard": "Показать видео рядом с доской",
         "placePanel": "Вернуть видео в панель",

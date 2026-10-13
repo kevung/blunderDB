@@ -575,6 +575,14 @@ describe('drawMoveArrows', () => {
         expect(ARROW_COLORS.engine).not.toBe(ILLEGAL_ARROW_COLOR);
     });
 
+    test('the written move is neutral: neither the alert red nor the analysis colour', () => {
+        const rgb = (/** @type {string} */ c) => (c.match(/\d+/g) ?? []).slice(0, 3).map(Number);
+        const [r, g, b] = rgb(ARROW_COLORS.record);
+        expect(Math.max(r, g, b) - Math.min(r, g, b)).toBeLessThan(24);
+        expect(ARROW_COLORS.record).not.toBe(ARROW_COLORS.candidate);
+        expect(ARROW_COLORS.record).not.toBe(ILLEGAL_ARROW_COLOR);
+    });
+
     test('nothing is drawn without a move', () => {
         const two = recorder();
         drawMoveArrows(two, geom, cfg, startPos(), []);

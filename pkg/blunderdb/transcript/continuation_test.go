@@ -209,7 +209,7 @@ func TestCorrectionThatStillEndsTheGameGoesOn(t *testing.T) {
 
 // TestLastActionValidatedAppendsNext holds ADR-0051: the LAST Action, walked back
 // to and validated again — re-edited or not — sends the Cursor to the end of the
-// document, whatever Return says, and holds it there, so the next roll is appended
+// document and holds it there, so the next roll is appended
 // as it was the first time.
 func TestLastActionValidatedAppendsNext(t *testing.T) {
 	t.Run("walked back and forward again, Enter goes to the end", func(t *testing.T) {

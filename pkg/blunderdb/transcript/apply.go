@@ -514,6 +514,14 @@ func rolls(k Kind) bool {
 	return k == KindChecker || k == KindDance || k == KindUnrecorded
 }
 
+// CandidateDice is the roll as the candidates are generated on: high die first.
+// LegalMoves' order depends on the dice's order, and `select_candidate` is an index
+// into that order, so the panel and [Candidates] must generate on the same roll
+// whichever order the dice were typed, written, or carried by an opening Position.
+func CandidateDice(d [2]int) [2]int {
+	return [2]int{max(d[0], d[1]), min(d[0], d[1])}
+}
+
 // sameRoll reports whether two rolls are the same two dice, in either order.
 func sameRoll(a, b [2]int) bool {
 	return a == b || a == [2]int{b[1], b[0]}
@@ -723,8 +731,9 @@ func loadEntry(doc *Document) {
 // and leaves the Cursor exactly where it was.
 //
 // Walking away from a correction keeps it, or a user who walked on would silently
-// lose the play they picked (ux.md §4.3 budgets). It takes no return jump (`l` is a
-// step, not a validation), and does nothing when the entry equals the Action, so
+// lose the play they picked (ux.md §4.3 budgets). The Cursor does not move on to the
+// next decision as a validation's does (`l` is a step, not a validation), and nothing
+// is done when the entry equals the Action, so
 // reading the Transcript rewrites nothing and pushes no undo entry.
 func commitCorrection(doc Document) Document {
 	e := doc.Entry
@@ -869,7 +878,7 @@ func clampSlot(at, n int) int {
 }
 
 // record writes the Action at the place the entry names and moves the Cursor on. A
-// correction sends the Cursor back where it stood before the user walked back to it.
+// correction moves it to the decision that follows, loaded for review (ADR-0091).
 func record(doc Document, a Action) Document {
 	e := doc.Entry
 	at := doc.Cursor
@@ -925,36 +934,35 @@ func record(doc Document, a Action) Document {
 		doc.pendingBoard = nil
 		loadEntry(&doc)
 		return doc
-	} else {
-		// Inserted in front of a game's first Action, the new one opens the game in
-		// its place and takes over the score declared there.
-		if at < len(doc.Actions) && doc.Actions[at].Score != nil && a.Score == nil &&
-			slotOpensGame(Replay(doc, 0), at, false) {
-			a.Score, doc.Actions[at].Score = doc.Actions[at].Score, nil
+	}
+	// Inserted in front of a game's first Action, the new one opens the game in
+	// its place and takes over the score declared there.
+	if at < len(doc.Actions) && doc.Actions[at].Score != nil && a.Score == nil &&
+		slotOpensGame(Replay(doc, 0), at, false) {
+		a.Score, doc.Actions[at].Score = doc.Actions[at].Score, nil
+	}
+	// A boundary waiting at the end goes to the Action that opens the game.
+	if at == len(doc.Actions) && doc.NextScore != nil {
+		if a.Score == nil {
+			a.Score = doc.NextScore
 		}
-		// A boundary waiting at the end goes to the Action that opens the game.
-		if at == len(doc.Actions) && doc.NextScore != nil {
-			if a.Score == nil {
-				a.Score = doc.NextScore
-			}
-			doc.NextScore = nil
-		}
-		doc.Actions = append(doc.Actions, Action{})
-		copy(doc.Actions[at+1:], doc.Actions[at:])
-		doc.Actions[at] = a
-		doc.Cursor = at + 1
-		// …until the game it fills ends: past that, the next Action is the next
-		// game's first play, and the Cursor rests on it rather than slipping a
-		// roll of this game in front of it (ADR-0050).
-		if doc.Cursor < len(doc.Actions) && !gameEndsAt(doc, at) {
-			// An insertion in the MIDDLE goes on inserting: the user is filling
-			// a skipped passage, not typing over what follows. The slot is drawn
-			// (EntryInfo), so it is a visible state, not a mode.
-			doc.Entry, doc.pendingBoard = &Entry{Side: proposedSide(doc, doc.Cursor), Mode: EntryNew, At: doc.Cursor}, nil
-			// Held like an append: the inserted Action may carry a mark.
-			doc.HoldCursor = true
-			return doc
-		}
+		doc.NextScore = nil
+	}
+	doc.Actions = append(doc.Actions, Action{})
+	copy(doc.Actions[at+1:], doc.Actions[at:])
+	doc.Actions[at] = a
+	doc.Cursor = at + 1
+	// …until the game it fills ends: past that, the next Action is the next
+	// game's first play, and the Cursor rests on it rather than slipping a
+	// roll of this game in front of it (ADR-0050).
+	if doc.Cursor < len(doc.Actions) && !gameEndsAt(doc, at) {
+		// An insertion in the MIDDLE goes on inserting: the user is filling
+		// a skipped passage, not typing over what follows. The slot is drawn
+		// (EntryInfo), so it is a visible state, not a mode.
+		doc.Entry, doc.pendingBoard = &Entry{Side: proposedSide(doc, doc.Cursor), Mode: EntryNew, At: doc.Cursor}, nil
+		// Held like an append: the inserted Action may carry a mark.
+		doc.HoldCursor = true
+		return doc
 	}
 	doc.Entry, doc.pendingBoard = nil, nil
 	return doc
@@ -1063,15 +1071,15 @@ func entryPosition(doc Document) domain.Position {
 }
 
 // Candidates lists the legal plays of the roll being entered, in the order the
-// generator produces them. They are what the user picks from: the engine RANKS and
-// RECOGNISES, it never chooses (ADR-0044).
+// generator produces them on [CandidateDice]. They are what the user picks from: the
+// engine RANKS and RECOGNISES, it never chooses (ADR-0044).
 func Candidates(doc Document) []domain.LegalPlay {
 	e := proposedEntry(doc)
 	if doc.Entry != nil {
 		e = *doc.Entry
 	}
 	pos := entryPosition(doc)
-	pos.Dice = e.Dice
+	pos.Dice = CandidateDice(e.Dice)
 	pos.PlayerOnRoll = e.Side
 	pos.DecisionType = domain.CheckerAction
 	return domain.LegalMoves(&pos)

@@ -668,7 +668,7 @@ export function drawCaptureDoubts(two, geom, cfg, position, doubts, offered) {
  */
 export const ARROW_COLORS = Object.freeze({
     candidate: 'rgba(255, 107, 107, 0.85)',
-    record: 'rgba(255, 107, 107, 0.85)',
+    record: 'rgba(110, 110, 110, 0.9)',
     engine: 'rgba(52, 120, 246, 0.85)'
 });
 export const ILLEGAL_ARROW_COLOR = 'rgba(214, 0, 0, 0.95)';

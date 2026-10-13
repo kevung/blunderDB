@@ -894,10 +894,13 @@
     /**
      * The plays of the roll, best first, each with its index in LegalMoves.
      *
-     * @param {any} pos
+     * @param {any} rolled
      * @returns {Promise<{list: Candidate[], unranked: boolean}>}
      */
-    async function computeCandidates(pos) {
+    async function computeCandidates(rolled) {
+        // High die first, as the engine's `Candidates` generates: `gen` indexes that order.
+        const [a, b] = rolled.dice;
+        const pos = { ...rolled, dice: [Math.max(a, b), Math.min(a, b)] };
         const plays = (await LegalMoves(pos)) ?? [];
         if (!plays.length) return { list: [], unranked: false };
 
@@ -1623,8 +1626,8 @@
 
     // Highlighted line and board arrows: display only, never written to the library. The board
     // draws the written move; a line of the analysis only when the user points at it — hovered,
-    // or picked by j/k or a click — or when no move is written yet and the line is the one
-    // Enter would record.
+    // or picked by j/k or a click. The line preselected for Enter draws nothing: an arrow
+    // the user did not ask for reads as a move already played.
     $effect(() => {
         if (!draft || keys.phase === PHASE.DICE || keys.phase === PHASE.DIE1) {
             selectedMoveStore.set(null);
@@ -1633,7 +1636,7 @@
         }
         const line = ranked.length ? (visible[keys.selected]?.move?.move ?? null) : null;
         selectedMoveStore.set(line);
-        const pointed = keys.phase === PHASE.CANDIDATE || !recordedAction ? line : null;
+        const pointed = keys.phase === PHASE.CANDIDATE ? line : null;
         transcriptionArrowsStore.set(transcriptionArrows({ info: recordedAction, engineMove: hoveredMove ?? pointed }));
     });
 
