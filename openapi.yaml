@@ -898,6 +898,32 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/anki.undoReview:
+    post:
+      operationId: anki.undoReview
+      tags: [anki]
+      x-kind: json
+      x-idempotency-key: true
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: false
+          description: A key the client draws per gesture; a retry under it replays the first answer instead of writing again.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/cardIDReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/domain_AnkiReviewCard"
+                nullable: true
   /v1/anki.updateDeck:
     post:
       operationId: anki.updateDeck

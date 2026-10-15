@@ -854,6 +854,8 @@ export function TrashRencontre(arg1:number):Promise<number>;
 
 export function UnattachedMatches(arg1:number):Promise<Array<service.SlotSuggestion>>;
 
+export function UndoAnkiReview(arg1:number):Promise<domain.AnkiReviewCard>;
+
 export function UpdateAnkiDeck(arg1:number,arg2:string,arg3:string):Promise<void>;
 
 export function UpdateAnkiDeckParams(arg1:number,arg2:number,arg3:number,arg4:boolean,arg5:any):Promise<void>;

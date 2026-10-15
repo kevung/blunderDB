@@ -202,6 +202,9 @@
 
     // Review state
     let reviewSessionCount = $state(0);
+    // The cards graded in this sitting, last on top: what « Annuler » walks back.
+    /** @type {import("../services/ankiService.js").Card[]} */
+    let gradedCards = $state([]);
     // Cram (free drill): serves random cards without touching the FSRS schedule.
     let cramMode = $state(false);
 
@@ -212,6 +215,8 @@
             ankiReviewActionStore.set(null);
             if (v === 'back') {
                 backToList();
+            } else if (v === 'undo') {
+                undoLastReview();
             } else if (v === 'validate') {
                 if (reviewCard) boardAnswer.validateBoardAnswer(reviewCard);
             } else if (typeof v === 'number' && v >= 1 && v <= 4) {
@@ -316,6 +321,7 @@
                 return;
             }
             reviewSessionCount = anki.resumedSessionCount(pausedSession, selectedDeck, cram);
+            gradedCards = [];
             ankiPausedSessionStore.set(null);
             ankiViewModeStore.set('review');
         } catch (e) {
@@ -329,6 +335,7 @@
         // Counted when given, not once the next card is on the board: the next card shows before
         // its board has loaded, and a grade given on it then must not overtake this one's count.
         const count = ++reviewSessionCount;
+        const graded = reviewCard;
         let next;
         try {
             // In cram mode the rating is ignored — just advance, never schedule.
@@ -338,6 +345,7 @@
             fail(e);
             return;
         }
+        if (!cramMode) gradedCards = [...gradedCards, graded];
         try {
             invalidateTrainingStats();
 
@@ -369,6 +377,28 @@
         } catch (e) {
             fail(e);
         }
+    }
+
+    // Takes back the last grade of the sitting and shows that card again; cram
+    // grades nothing, so it has nothing to undo.
+    async function undoLastReview() {
+        if (cramMode || gradedCards.length === 0) return;
+        const card = gradedCards[gradedCards.length - 1];
+        try {
+            await anki.undoReview(card);
+        } catch (e) {
+            if (anki.isNothingToUndo(e)) {
+                gradedCards = [];
+                statusBarTextStore.set(tMsg('anki.nothingToUndo'));
+            } else {
+                fail(e);
+            }
+            return;
+        }
+        gradedCards = gradedCards.slice(0, -1);
+        reviewSessionCount = Math.max(0, reviewSessionCount - 1);
+        invalidateTrainingStats();
+        statusBarTextStore.set(tMsg('anki.reviewUndone'));
     }
 
     // Suspend / bury / remove, in a context menu rather than beside the grading
@@ -579,6 +609,9 @@
                             </button>
                         {/each}
                     </div>
+                    <button class="btn-undo" data-testid="anki-undo-review" disabled={gradedCards.length === 0} onclick={undoLastReview} title={$t('anki.undoReview') + ' (u)'}>
+                        {$t('anki.undoReview')}
+                    </button>
                 {/if}
             </div>
 
@@ -1114,6 +1147,19 @@
         background: var(--color-surface);
         color: var(--color-text);
         gap: 2px;
+    }
+    .btn-undo {
+        padding: 2px 8px;
+        border: 1px solid var(--color-border);
+        border-radius: 3px;
+        cursor: pointer;
+        background: var(--color-surface);
+        color: var(--color-text);
+        font-size: var(--font-size-small);
+    }
+    .btn-undo:disabled {
+        cursor: default;
+        opacity: 0.5;
     }
     .btn-rating.suggested {
         outline: 2px solid var(--accent, currentColor);

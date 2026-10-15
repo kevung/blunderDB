@@ -1299,12 +1299,14 @@ reste dans l'interface graphique ; la CLI liste, mesure et resynchronise.
   planification.
 * ``retention --deck <id> [--format text|json]`` — Rétention mesurée d'un
   paquet, comparée à la cible que son propriétaire a choisie.
-* ``card --id <id> --action suspend|unsuspend|bury|remove [--format text|json]``
+* ``card --id <id> --action suspend|unsuspend|bury|remove|undo [--format text|json]``
   — Agit sur une carte. *Suspendre* la met de côté sans perdre son historique
   (elle ne ressort plus en séance) ; *enterrer* la masque jusqu'au lendemain,
   sans rien dire de sa valeur ; *retirer* la supprime du paquet — la position,
   elle, reste dans la base, un paquet n'étant qu'une liste d'étude posée
-  dessus.
+  dessus ; *undo* annule la dernière note de la carte, qui retrouve l'état
+  d'avant cette note, et affiche cet état. Sans note à annuler, la commande
+  refuse : « the card has no review to undo ».
 * ``log [--deck <id>] [--limit <n>] [--format text|json]`` — Journal des
   révisions, la plus récente d'abord (``--deck 0``, le défaut, couvre tous les
   paquets ; ``--limit`` vaut 20 par défaut). Le journal est ce que le
@@ -1340,6 +1342,7 @@ recherche elle-même.
    ./blunderdb anki forecast --db base.db --deck 2 --days 14
    ./blunderdb anki sync --db base.db --deck 2
    ./blunderdb anki card --db base.db --id 12 --action suspend
+   ./blunderdb anki card --db base.db --id 12 --action undo
    ./blunderdb anki log --db base.db --deck 2 --limit 50
    ./blunderdb anki export --db base.db --deck 2 --out paquet.apkg --lang fr
 

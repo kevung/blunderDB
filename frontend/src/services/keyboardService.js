@@ -275,6 +275,9 @@ export function handleKeyDown(event) {
             ankiReviewActionStore.set('back');
         } else if (letter('p')) {
             togglePipcount();
+        } else if (letter('u')) {
+            event.preventDefault();
+            ankiReviewActionStore.set('undo');
         }
         return;
     }

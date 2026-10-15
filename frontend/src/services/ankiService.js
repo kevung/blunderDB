@@ -21,6 +21,7 @@ import {
     GetLinkedAnkiCard,
     GetRandomAnkiCard,
     ReviewAnkiCard,
+    UndoAnkiReview,
     SetAnkiCardSuspended,
     BuryAnkiCard,
     RemoveAnkiCard,
@@ -436,6 +437,24 @@ export async function reviewCard(/** @type {Card} */ card, /** @type {number} */
         if (linked) return await advance(linked);
     }
     return await advance(next);
+}
+
+/**
+ * Undo the last grade of a card: the card takes back its schedule from before
+ * that grade, leaves the review log and is shown again.
+ *
+ * @returns {Promise<object | null>} the restored card
+ */
+export async function undoReview(/** @type {Card} */ card) {
+    return await advance(await UndoAnkiReview(card.card.id));
+}
+
+/**
+ * Whether an error is the backend's refusal to undo a card no review of which
+ * kept its prior state (storage.ErrNoReviewToUndo).
+ */
+export function isNothingToUndo(/** @type {unknown} */ error) {
+    return String(error).includes('the card has no review to undo');
 }
 
 /**

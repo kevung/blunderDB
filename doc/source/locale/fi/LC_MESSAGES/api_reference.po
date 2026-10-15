@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-09 00:38+0200\n"
+"POT-Creation-Date: 2026-10-16 01:50+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -42,17 +42,17 @@ msgstr ""
 "vastausmuodon kanssa (JSON tai NDJSON suoratoistetulle listalle) ja, jos "
 "se on olemassa, maininnan valinnaisesta ``Idempotency-Key``-otsakkeesta."
 
-#: ../../source/api_reference.rst:394
+#: ../../source/api_reference.rst:419
 msgid "Idempotence"
 msgstr "Idempotenssi"
 
-#: ../../source/api_reference.rst:396
+#: ../../source/api_reference.rst:421
 msgid ""
 "La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les "
 "lectures sont sans effet de bord, et les écritures de ``positions.*`` "
 "sont idempotentes dans leur effet grâce au hachage Zobrist du contenu — "
 "enregistrer deux fois la même position renvoie la même ligne, jamais un "
-"doublon. 48 méthodes acceptent un en-tête ``Idempotency-Key`` optionnel :"
+"doublon. 49 méthodes acceptent un en-tête ``Idempotency-Key`` optionnel :"
 " celles dont deux appels sont deux effets distincts, et "
 "``positions.save``, dont la réponse dit si l'appel a créé la position "
 "(``created``) et le dirait faux si elle était rejouée après une réponse "
@@ -65,7 +65,7 @@ msgstr ""
 "lukemisilla ei ole sivuvaikutuksia, ja ``positions.*``-kirjoitukset ovat "
 "vaikutukseltaan idempotentteja sisällön Zobrist-tiivisteen ansiosta — "
 "saman aseman tallentaminen kahdesti palauttaa saman rivin, ei koskaan "
-"kaksoiskappaletta. 48 menetelmää hyväksyy valinnaisen ``Idempotency-"
+"kaksoiskappaletta. 49 menetelmää hyväksyy valinnaisen ``Idempotency-"
 "Key``-otsakkeen: ne, joiden kaksi kutsua ovat kaksi erillistä vaikutusta,"
 " sekä ``positions.save``, jonka vastaus kertoo, loiko kutsu aseman "
 "(``created``), ja kertoisi sen väärin, jos kutsu toistettaisiin menetetyn"
@@ -74,11 +74,11 @@ msgstr ""
 " merkintä ”(Idempotency-Key)” yllä olevasta taulukosta. Mikään muu "
 "menetelmä ei tarvitse tai hyväksy tätä otsaketta."
 
-#: ../../source/api_reference.rst:408
+#: ../../source/api_reference.rst:433
 msgid "Lectures conditionnelles"
 msgstr "Ehdolliset lukemiset"
 
-#: ../../source/api_reference.rst:410
+#: ../../source/api_reference.rst:435
 msgid ""
 "Les méthodes marquées « (ETag) » rendent un en-tête ``ETag``. Le renvoyer"
 " dans ``If-None-Match`` obtient une réponse ``304`` sans corps tant que "
@@ -90,11 +90,11 @@ msgstr ""
 "rungoton ``304``-vastaus niin kauan kuin mikään metodin lukema ei ole "
 "muuttunut — katso :ref:`headless_direction`."
 
-#: ../../source/api_reference.rst:415
+#: ../../source/api_reference.rst:440
 msgid "Repères d'une transcription"
 msgstr "Litteroinnin aikaleimat"
 
-#: ../../source/api_reference.rst:417
+#: ../../source/api_reference.rst:442
 msgid ""
 "Un geste de ``transcriptions.apply`` peut porter l'instant de la vidéo où"
 " il est fait, en millisecondes depuis le début du média : ``TickMS``, lu "
@@ -124,7 +124,7 @@ msgstr ""
 "paikallinen polku), tyhjä merkkijono irrottaa sen; ``set_header`` asettaa"
 " sen myös, kun sen otsake nimeää lähteen, mutta ei koskaan poista sitä."
 
-#: ../../source/api_reference.rst:429
+#: ../../source/api_reference.rst:454
 msgid ""
 "Le geste ``seek_cursor`` pose le curseur sur l'action de rang ``At``, la "
 "fin du document au-delà de la dernière, sans rien écrire ni s'empiler sur"
@@ -140,7 +140,7 @@ msgstr ""
 " ilman toiminnan aikamerkkiä, mitattuna heitosta seuraavan toiminnon "
 "ensimmäiseen hetkeen."
 
-#: ../../source/api_reference.rst:435
+#: ../../source/api_reference.rst:460
 msgid ""
 "L'état rendu porte la source dans ``header.video_source``, les repères de"
 " chaque action dans ``roll_tick_ms`` et ``tick_ms``, et, sur chaque "

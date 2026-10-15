@@ -2197,11 +2197,11 @@ Examples:
 ```
 Usage: blunderdb anki card [options]
 
-Suspend, bury or remove one card.
+Suspend, bury, remove one card, or undo its last review.
 
 Options:
   -action string
-    	suspend, unsuspend, bury or remove (required)
+    	suspend, unsuspend, bury, remove or undo (required)
   -db string
     	Path to the database file (required)
   -format string
@@ -2214,6 +2214,7 @@ Examples:
   blunderdb anki card --db database.db --id 12 --action unsuspend
   blunderdb anki card --db database.db --id 12 --action bury
   blunderdb anki card --db database.db --id 12 --action remove
+  blunderdb anki card --db database.db --id 12 --action undo
 ```
 
 ### `blunderdb anki decks`

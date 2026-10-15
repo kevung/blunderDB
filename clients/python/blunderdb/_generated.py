@@ -194,6 +194,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/anki.syncWithPositions — JSON."
         return self._call("/v1/anki.syncWithPositions", payload)
 
+    def anki_undo_review(self, payload: Optional[dict] = None, *, idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/anki.undoReview — JSON. Accepts an Idempotency-Key."
+        return self._call("/v1/anki.undoReview", payload, idempotency_key=idempotency_key)
+
     def anki_update_deck(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/anki.updateDeck — JSON."
         return self._call("/v1/anki.updateDeck", payload)

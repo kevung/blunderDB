@@ -1662,6 +1662,10 @@ export function UnattachedMatches(arg1) {
   return window['go']['database']['Database']['UnattachedMatches'](arg1);
 }
 
+export function UndoAnkiReview(arg1) {
+  return window['go']['database']['Database']['UndoAnkiReview'](arg1);
+}
+
 export function UpdateAnkiDeck(arg1, arg2, arg3) {
   return window['go']['database']['Database']['UpdateAnkiDeck'](arg1, arg2, arg3);
 }

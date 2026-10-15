@@ -966,6 +966,7 @@ export default {
 <p><strong>Un paquet sélectionné prend l'en-tête du panneau</strong> : son nom, le nombre de ses positions, qu'un clic ouvre, et le nombre de cartes dues ; à droite, les paramètres (⚙), la remise à zéro (↻), <em>Bachoter</em> et <em>Étudier</em>. ← revient à la liste des paquets.</p>
 <p><strong>Exporter vers Anki :</strong> le bouton ⤓ d'une ligne de la liste écrit le paquet en fichier <strong>.apkg</strong>, que l'application Anki importe sur un ordinateur ou un téléphone (AnkiDroid, AnkiMobile). Chaque position devient une carte recto-verso : au recto le plateau, le score vu du joueur au trait (placé en bas), le videau et les dés ; au verso le meilleur coup ou la bonne décision de videau, son équité et l'erreur du coup joué. Les libellés suivent la langue de l'interface. Le paquet s'exporte tel qu'il est, sans synchronisation, et l'export n'écrit rien dans la base. Réimporter un export plus récent dans Anki met les cartes à jour au lieu de les dupliquer. En ligne de commande : <code>blunderdb anki export</code>, qui exporte aussi une collection (voir cli).</p>
 <p><strong>Révision :</strong> Sélectionnez un paquet puis cliquez sur <em>Étudier</em> (ou double-cliquez sur un paquet) pour commencer la révision des cartes dues. Une carte de position affiche la position sur le plateau ; une carte de score annonce le score et laisse le plateau tel qu'il est. Évaluez votre rappel avec les touches <em>1</em> (À revoir), <em>2</em> (Difficile), <em>3</em> (Correct), ou <em>4</em> (Facile). Appuyez sur <em>Esc</em> pour arrêter et revenir à la liste des paquets.</p>
+<p><strong>Annuler une note.</strong> Le bouton <em>Annuler</em>, sous les boutons de note, ou la touche <em>u</em>, reprend la dernière note de la séance : la carte retrouve exactement l'état qu'elle avait avant (échéance, intervalle, stabilité, difficulté, nombre de révisions et d'oublis), la note quitte le journal des révisions, et la carte revient à l'écran pour être notée de nouveau. Répété, il remonte la séance note après note. Une révision enregistrée avant la version 2.42.0 du schéma ne peut pas être annulée : l'état d'avant n'était pas conservé. En ligne de commande : <code>blunderdb anki card --action undo</code> (voir cli).</p>
 <p>Deux comptes portent des noms distincts : la colonne <strong>Échues</strong> de la liste compte toutes les cartes dont l'échéance est passée, y compris les cartes suspendues ou enterrées ; le compte <em>dues</em> de l'en-tête ne retient que celles qui sont disponibles maintenant, et peut donc être plus petit.</p>
 <p>Les comptes d'Anki sont des liens : un clic sur les cartes dues, nouvelles, en cours ou en révision de la bande, ou sur une valeur des colonnes <strong>Cartes</strong>, <strong>Nouvelles</strong> et <strong>Échues</strong> de la liste, charge les positions correspondantes. De même, dans un tournoi ouvert, le nombre de positions ouvre exactement ces positions.</p>
 <p><strong>Les décisions de videau font deux cartes, enchaînées.</strong> Une décision de videau est deux questions — « double ? », puis « prend ? » — et blunderDB les enregistre depuis toujours comme deux positions. Un paquet qui n'en sélectionne qu'une moitié reçoit l'autre : la décision est complétée, pas augmentée. Et quand les deux sont dues, la seconde vient <strong>immédiatement</strong> après la première.</p>
@@ -1801,6 +1802,10 @@ export default {
 <tr>
 <td>4</td>
 <td>Évaluer : Facile.</td>
+</tr>
+<tr>
+<td>u</td>
+<td>Annuler la dernière note de la séance : la carte reprend l'échéance qu'elle avait et revient à l'écran (comme le bouton <em>Annuler</em>).</td>
 </tr>
 <tr>
 <td>p</td>

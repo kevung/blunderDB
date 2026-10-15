@@ -966,6 +966,7 @@ export default {
 <p><strong>Un mazo seleccionado toma la cabecera del panel</strong>: su nombre, el número de sus posiciones, que un clic abre, y el número de tarjetas pendientes; a la derecha, los ajustes (⚙), la puesta a cero (↻), <em>Práctica</em> y <em>Estudiar</em>. ← vuelve a la lista de mazos.</p>
 <p><strong>Exportar a Anki:</strong> el botón ⤓ de una fila de la lista escribe el mazo como archivo <strong>.apkg</strong>, que la aplicación Anki importa en un ordenador o un teléfono (AnkiDroid, AnkiMobile). Cada posición se convierte en una tarjeta de dos caras: en el anverso el tablero, el marcador visto por el jugador al turno (abajo), el cubo y los dados; en el reverso la mejor jugada o la decisión de cubo correcta, su equity y el error de la jugada realizada. Los rótulos siguen el idioma de la interfaz. El mazo se exporta tal cual, sin sincronizar, y la exportación no escribe nada en la base. Reimportar en Anki una exportación más reciente actualiza las tarjetas en lugar de duplicarlas. En la línea de comandos: <code>blunderdb anki export</code>, que también exporta una colección (ver cli).</p>
 <p><strong>Repaso:</strong> Seleccione un mazo y luego haga clic en <em>Estudiar</em> (o haga doble clic en un mazo) para empezar a repasar las tarjetas pendientes. Una tarjeta de posición muestra la posición en el tablero; una tarjeta de marcador anuncia el marcador y deja el tablero tal como está. Evalúe su recuerdo con las teclas <em>1</em> (Repetir), <em>2</em> (Difícil), <em>3</em> (Bien) o <em>4</em> (Fácil). Pulse <em>Esc</em> para detenerse y volver a la lista de mazos.</p>
+<p><strong>Deshacer una calificación.</strong> El botón <em>Deshacer</em>, bajo los botones de calificación, o la tecla <em>u</em>, retira la última calificación de la sesión: la carta recupera exactamente el estado que tenía antes (vencimiento, intervalo, estabilidad, dificultad, número de repasos y olvidos), la calificación sale del registro de repasos y la carta vuelve a la pantalla para calificarse de nuevo. Repetido, retrocede en la sesión calificación a calificación. Un repaso registrado antes de la versión 2.42.0 del esquema no puede deshacerse: el estado anterior no se conservaba. En línea de comandos: <code>blunderdb anki card --action undo</code> (véase cli).</p>
 <p>Dos recuentos llevan nombres distintos: la columna <strong>Vencidas</strong> de la lista cuenta todas las tarjetas cuya fecha de vencimiento ha pasado, incluidas las suspendidas o enterradas; el recuento <em>pendientes</em> de la cabecera solo cuenta las tarjetas disponibles ahora y por tanto puede ser menor.</p>
 <p>Los recuentos de Anki son enlaces: un clic en las tarjetas pendientes, nuevas, en aprendizaje o en repaso de la banda, o en un valor de las columnas <strong>Tarjetas</strong>, <strong>Nuevas</strong> y <strong>Vencidas</strong> de la lista, carga las posiciones correspondientes. Del mismo modo, en un torneo abierto, el número de posiciones abre exactamente esas posiciones.</p>
 <p><strong>Las decisiones de cubo hacen dos tarjetas, encadenadas.</strong> Una decisión de cubo son dos preguntas — «¿doblar?», luego «¿aceptar?» — y blunderDB siempre las ha guardado como dos posiciones. Un mazo que selecciona solo una mitad recibe la otra: la decisión se completa, no se amplía. Y cuando ambas vencen, la segunda viene <strong>inmediatamente</strong> después de la primera.</p>
@@ -1801,6 +1802,10 @@ export default {
 <tr>
 <td>4</td>
 <td>Calificar: Fácil.</td>
+</tr>
+<tr>
+<td>u</td>
+<td>Deshacer la última calificación de la sesión: la carta recupera el vencimiento que tenía y vuelve a la pantalla (como el botón <em>Deshacer</em>).</td>
 </tr>
 <tr>
 <td>p</td>

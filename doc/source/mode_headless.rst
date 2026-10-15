@@ -1157,6 +1157,16 @@ révision temporairement ou définitivement) et ``anki.retention`` (taux de
 réussite mesuré sur les révisions d'un paquet, lu en regard de la cible que son
 propriétaire a fixée).
 
+``anki.undoReview`` (``cardId``) annule la dernière révision d'une carte : la
+carte retrouve exactement son état d'avant cette note (échéance, intervalle,
+stabilité, difficulté, compteurs), la note quitte le journal, et la réponse est
+la carte restaurée, avec sa position. Rappelée, elle remonte d'une note de
+plus. Sans révision à annuler — carte jamais notée, toutes ses notes déjà
+annulées, ou note enregistrée avant le schéma 2.42.0 —, elle refuse par un
+``409`` dont le message contient « the card has no review to undo » ; une carte
+d'un autre tenant est un ``404``. Comme ``anki.reviewCard``, elle accepte un
+``Idempotency-Key`` : rejouée, elle n'annule pas une note de trop.
+
 .. note::
 
    ``anki.retention`` remplace ``anki.optimizeParams``, qui ajustait la cible

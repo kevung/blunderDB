@@ -4600,6 +4600,15 @@ laisse le plateau tel qu'il est. Évaluez votre rappel avec les touches
 *1* (À revoir), *2* (Difficile), *3* (Correct), ou *4* (Facile). Appuyez sur *Esc*
 pour arrêter et revenir à la liste des paquets.
 
+**Annuler une note.** Le bouton *Annuler*, sous les boutons de note, ou la
+touche *u*, reprend la dernière note de la séance : la carte retrouve exactement
+l'état qu'elle avait avant (échéance, intervalle, stabilité, difficulté,
+nombre de révisions et d'oublis), la note quitte le journal des révisions, et la
+carte revient à l'écran pour être notée de nouveau. Répété, il remonte la
+séance note après note. Une révision enregistrée avant la version 2.42.0 du
+schéma ne peut pas être annulée : l'état d'avant n'était pas conservé. En ligne
+de commande : ``blunderdb anki card --action undo`` (voir :doc:`cli`).
+
 Deux comptes portent des noms distincts : la colonne **Échues** de la liste
 compte toutes les cartes dont l'échéance est passée, y compris les cartes
 suspendues ou enterrées ; le compte *dues* de l'en-tête ne retient que celles qui
