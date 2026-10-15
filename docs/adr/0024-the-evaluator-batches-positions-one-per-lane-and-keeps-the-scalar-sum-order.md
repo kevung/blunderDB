@@ -35,11 +35,9 @@ one bit.
    proof; a new fast path on any platform passes the same gate before it becomes a default.
 4. **Skipping zero inputs is allowed** (`acc + w × 0.0 = acc` in IEEE 754), proved by the same
    identity test, not assumed.
-5. **Parallelism is production behaviour.** The analysis batch runs positions across `NumCPU`
-   goroutines, each reusing one serial `Searcher`; the live panel runs one search with
-   `WithWorkers(NumCPU)` over the root's rolls. The two never stack. Both stay bit-identical to
-   the serial search because the weighted sum over the 21 rolls is taken serially in ascending
-   roll order.
+5. ~~**Parallelism is production behaviour.**~~ Replaced by ADR-0093: every search forks
+   into one process-wide budget of cores, at every level from depth 2, and stays
+   bit-identical because every sum is taken after the barrier in ascending roll order.
 6. **Nothing here changes what the engine plays.** Move filters, transposition tables, a
    distilled or quantised network are new Configurations, decided upstream (ADR-0011 rules 7–8).
 
@@ -54,4 +52,5 @@ one bit.
 ## Guard
 
 `pkg/blunderdb/engine/gammonnet/kernel_identity_test.go` (`==` on every bit against the Go
-fallback); `TestParallelSearchIsBitIdentical` (`search_test.go`); `parity_test.go`.
+fallback); `TestParallelSearchIsBitIdentical` (`search_test.go`); `parity_test.go`;
+`TestParallelSearchFingerprint` (`parallel_test.go`).

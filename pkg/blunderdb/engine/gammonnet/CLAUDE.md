@@ -23,6 +23,8 @@ and the header of `cube.go` first. Each invariant below is a bug if violated, ev
   float32 sums, multiply and add as two operations (`float32(a*b)` is the fusion barrier; it
   matters on arm64). A new arithmetic path passes `kernel_identity_test.go` bit for bit; a
   requested but unavailable kernel is an error at load, never a fallback (ADR-0024).
-- **Parallelism never changes a result.** The batch runs positions over `NumCPU` goroutines,
-  each with one serial `Searcher`; the live panel runs one search `WithWorkers`; the two never
-  stack. The 21-roll weighted sum is always taken serially in ascending roll order (ADR-0024).
+- **Parallelism never changes a result.** Four loops fork from depth 2 (`parallel.go`); every
+  sum is taken after the barrier in ascending roll order, each task writes only its own slot.
+  All searches share one budget (`ProcessCores`; a goroutine searching on its own holds a
+  token, `HoldCore`), and a fork never waits for a token. A new fork site passes
+  `TestParallelSearchFingerprint` (ADR-0093).
