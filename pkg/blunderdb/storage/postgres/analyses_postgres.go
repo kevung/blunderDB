@@ -106,8 +106,12 @@ func (s *analysisStore) merge(ctx context.Context, scope string, positionID int6
 			 FOR UPDATE`, positionID, tenant).
 			Scan(&data, &stored.bestCube, &stored.cubeErr, &stored.bestMoveErr, &stored.bestMoveUnscored, &stored.forced, &stored.closeCube)
 	}
-	err := load()
-	if errors.Is(err, pgx.ErrNoRows) {
+	fresh := storage.IsFreshPosition(ctx, positionID)
+	err := pgx.ErrNoRows // a position created in this transaction has no analysis yet
+	if !fresh {
+		err = load()
+	}
+	if errors.Is(err, pgx.ErrNoRows) && !fresh {
 		// FOR UPDATE locks nothing when there is no row, and two writers would
 		// both insert, the second over the first. The analysis guard — the one
 		// a rollout's guarded transaction holds — serialises them; the row is
@@ -234,11 +238,14 @@ func (s *analysisStore) write(ctx context.Context, tenant, positionID int64, a *
 
 	// The analysis row and the position flag it implies are one write.
 	return withTx(ctx, s.db, func(tx execer) error {
-		if err := requireOwned(ctx, tx, tenant, "position", positionID); err != nil {
-			return fmt.Errorf("postgres: save analysis for position %d: %w", positionID, err)
-		}
-		if err := invalidateMatchStatsOnAnalysis(ctx, tx, tenant, positionID, c); err != nil {
-			return err
+		fresh := storage.IsFreshPosition(ctx, positionID)
+		if !fresh {
+			if err := requireOwned(ctx, tx, tenant, "position", positionID); err != nil {
+				return fmt.Errorf("postgres: save analysis for position %d: %w", positionID, err)
+			}
+			if err := invalidateMatchStatsOnAnalysis(ctx, tx, tenant, positionID, c); err != nil {
+				return err
+			}
 		}
 		bestCube, err := actionCode(ctx, tx, tenant, c.BestCubeAction)
 		if err != nil {
@@ -258,8 +265,10 @@ func (s *analysisStore) write(ctx context.Context, tenant, positionID int64, a *
 			return fmt.Errorf("postgres: save analysis for position %d: %w", positionID, storage.ErrNotFound)
 		}
 		// The moves played here are scored against the analysis just written.
-		if _, err := sqlshared.RescorePlayedDecisions(ctx, binder{tx}.shared(), map[int64]*domain.PositionAnalysis{positionID: a}); err != nil {
-			return err
+		if !fresh {
+			if _, err := sqlshared.RescorePlayedDecisions(ctx, binder{tx}.shared(), map[int64]*domain.PositionAnalysis{positionID: a}); err != nil {
+				return err
+			}
 		}
 
 		// Flag the position as a take/pass cube response if any played cube action is
