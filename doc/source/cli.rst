@@ -381,6 +381,8 @@ Exporte le contenu de la base vers des fichiers.
 * ``--collections`` — Inclure les collections (défaut: oui).
 * ``--tournaments`` — Inclure les tournois (défaut: oui).
 * ``--decks`` — Inclure les paquets Anki (défaut: oui).
+* ``--lessons`` — Inclure les leçons, avec les collections et les positions
+  que leurs étapes montrent (défaut: oui).
 * ``--anki-history`` — Emporter l'historique de révision des paquets exportés :
   l'état de chaque carte et le journal de ses révisions (défaut: oui).
 * ``--collection-ids`` — IDs de collections à exporter (séparés par des
@@ -390,6 +392,8 @@ Exporte le contenu de la base vers des fichiers.
   vide = tous).
 * ``--deck-ids`` — IDs de paquets Anki à exporter avec leurs positions
   (séparés par des virgules, vide = tous).
+* ``--lesson-ids`` — IDs de leçons à exporter (séparés par des virgules,
+  vide = toutes).
 
 * ``--password`` — Enveloppe le résultat dans un conteneur chiffré (``.dbx``).
 * ``--watermark`` — Écrit une déclaration d'origine **signée** dans le fichier

@@ -445,7 +445,7 @@ func TestExportSQLiteIncludesMatches(t *testing.T) {
 func TestExportSQLiteWatermarkRequiresIdentity(t *testing.T) {
 	ts := newTestServer(t)
 
-	resp := post(t, ts, "/v1/exports.sqlite", exportSQLiteReq{WatermarkOrigin: "cours du mardi"})
+	resp := post(t, ts, "/v1/exports.sqlite", map[string]any{"watermark": "cours du mardi"})
 	defer resp.Body.Close()
 	if resp.StatusCode == http.StatusOK {
 		t.Fatal("status = 200, want an error: this server has no identity to sign with")
@@ -485,9 +485,9 @@ func TestExportSQLiteWatermark(t *testing.T) {
 	p := domain.InitializePosition()
 	post(t, ts, "/v1/positions.save", positionReq{Position: &p}).Body.Close()
 
-	resp := post(t, ts, "/v1/exports.sqlite", exportSQLiteReq{
-		WatermarkOrigin: "cours du mardi",
-		WatermarkNote:   "ne pas redistribuer",
+	resp := post(t, ts, "/v1/exports.sqlite", map[string]any{
+		"watermark":     "cours du mardi",
+		"watermarkNote": "ne pas redistribuer",
 	})
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {

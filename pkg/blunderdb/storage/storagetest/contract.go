@@ -182,6 +182,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Analysis/LoadManyDecodesBatch", testAnalysisLoadMany},
 		{"Comment/ByPositionsGroupsOldestFirst", testCommentByPositions},
 		{"Match/MovesByPositions", testMovesByPositions},
+		{"Match/MatchIDsReachedBy", testMatchIDsReachedBy},
 		{"Match/MoveAnalysisRoundTrip", testMoveAnalysisRoundTrip},
 		{"Match/HashesReadBack", testMatchHashesReadBack},
 		{"Aliases/StayFlat", testAliasesStayFlat},

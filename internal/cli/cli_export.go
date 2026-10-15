@@ -32,10 +32,12 @@ func (cli *CLI) runExport(args []string) error {
 	includeCollections := exportCmd.Bool("collections", true, "Include collections in database export (default: true)")
 	includeTournaments := exportCmd.Bool("tournaments", true, "Include tournaments in database export (default: true)")
 	includeDecks := exportCmd.Bool("decks", true, "Include Anki decks in database export (default: true)")
+	includeLessons := exportCmd.Bool("lessons", true, "Include lessons, with the collections and positions their steps show, in database export (default: true)")
 	includeAnkiHistory := exportCmd.Bool("anki-history", true, "Carry the review history of the exported Anki decks (default: true)")
 	collectionIDsStr := exportCmd.String("collection-ids", "", "Comma-separated list of collection IDs to export (empty = all)")
 	matchIDsStr := exportCmd.String("match-ids", "", "Comma-separated list of match IDs to export (empty = all)")
 	deckIDsStr := exportCmd.String("deck-ids", "", "Comma-separated list of Anki deck IDs to export (empty = all)")
+	lessonIDsStr := exportCmd.String("lesson-ids", "", "Comma-separated list of lesson IDs to export (empty = all)")
 	tournamentIDsStr := exportCmd.String("tournament-ids", "", "Comma-separated list of tournament IDs to export (empty = all)")
 	watermark := exportCmd.String("watermark", "", "Mark the exported file with where it comes from, e.g. \"Cours de Jean Dupont - 12 mars 2026\"")
 	watermarkNote := exportCmd.String("watermark-note", "", "Free text attached to the watermark (terms of use, contact)")
@@ -80,6 +82,10 @@ func (cli *CLI) runExport(args []string) error {
 		fmt.Println()
 		fmt.Println("  # Export without collections or Anki decks")
 		fmt.Println("  blunderdb export --db database.db --type database --file export.db --collections=false --decks=false")
+		fmt.Println()
+		fmt.Println("  # Export with specific lessons, or without any")
+		fmt.Println("  blunderdb export --db database.db --type database --file export.db --lesson-ids=2")
+		fmt.Println("  blunderdb export --db database.db --type database --file export.db --lessons=false")
 		fmt.Println()
 		fmt.Println("  # Export with specific tournaments")
 		fmt.Println("  blunderdb export --db database.db --type database --file export.db --tournament-ids=1,2")
@@ -152,6 +158,14 @@ func (cli *CLI) runExport(args []string) error {
 			return fmt.Errorf("invalid collection-ids: %w", parseErr)
 		}
 	}
+	var lessonIDs []int64
+	if *lessonIDsStr != "" {
+		var parseErr error
+		lessonIDs, parseErr = parseIDList(*lessonIDsStr)
+		if parseErr != nil {
+			return fmt.Errorf("invalid lesson-ids: %w", parseErr)
+		}
+	}
 	var deckIDs []int64
 	if *deckIDsStr != "" {
 		var parseErr error
@@ -200,7 +214,8 @@ func (cli *CLI) runExport(args []string) error {
 			IncludeTournaments:    *includeTournaments || len(tournamentIDs) > 0,
 			IncludeAnkiDecks:      *includeDecks || len(deckIDs) > 0,
 			IncludeAnkiHistory:    *includeAnkiHistory,
-			IncludeLessons:        true,
+			IncludeLessons:        *includeLessons || len(lessonIDs) > 0,
+			LessonIDs:             lessonIDs,
 			CollectionIDs:         collectionIDs,
 			MatchIDs:              matchIDs,
 			TournamentIDs:         tournamentIDs,

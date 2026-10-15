@@ -4,10 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"slices"
-	"strings"
 
-	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 )
 
@@ -84,150 +81,10 @@ func (d *Database) PlanExportIDs(opts ExportOptions, family string, offset, limi
 	return ingest.PlanExportIDs(context.Background(), d.store, "", plan, family, offset, limit)
 }
 
-// exportPlan maps the GUI's and the CLI's options onto what ingest exports.
-//
-// The whole library is ingest.WholeTenant, the daemon's export, so the three entry points
-// cannot disagree on what "everything" carries; a family the caller turns off or narrows to
-// some ids is then taken out of it. Anything else is a list of positions, and the matches
-// it carries are, unless named, those its positions were played in.
+// exportPlan maps the GUI's and the CLI's options onto what ingest exports, through the
+// reading the daemon shares (ingest.OptionsFor).
 func (d *Database) exportPlan(ctx context.Context, opts ExportOptions) (ingest.ExportOptions, error) {
-	if opts.WholeLibrary {
-		return wholeLibraryPlan(opts), nil
-	}
-	plan := ingest.ExportOptions{
-		Format:         ingest.FormatSQLite,
-		Analysis:       opts.IncludeAnalysis,
-		Comments:       opts.IncludeComments,
-		PlayedMoves:    opts.IncludePlayedMoves,
-		FilterLibrary:  opts.IncludeFilterLibrary,
-		Transcriptions: opts.IncludeTranscriptions,
-		Aliases:        opts.IncludeAliases,
-		AnkiHistory:    opts.IncludeAnkiHistory,
-	}
-	sel := ingest.Selection{
-		AllPositions:  opts.AllPositions,
-		PositionIDs:   opts.PositionIDs,
-		TournamentIDs: opts.TournamentIDs,
-		// A match leaves with the positions its moves were played in: without them its
-		// moves would point at nothing in the file.
-		MatchPositions: true,
-	}
-	// Positions wins over PositionIDs when set: callers holding positions
-	// that are not in the database keep working.
-	if len(opts.Positions) > 0 {
-		sel.AllPositions, sel.PositionIDs = false, nil
-		sel.Positions = make([]*domain.Position, len(opts.Positions))
-		for i := range opts.Positions {
-			sel.Positions[i] = &opts.Positions[i]
-		}
-	}
-	if opts.IncludeCollections {
-		sel.CollectionIDs = opts.CollectionIDs
-		sel.CollectionPositions = opts.IncludeCollectionPositions
-	}
-	if opts.IncludeMatches {
-		switch {
-		case len(opts.MatchIDs) > 0:
-			sel.MatchIDs = opts.MatchIDs
-		case sel.AllPositions:
-			sel.AllMatches = true
-		default:
-			ids := sel.PositionIDs
-			for _, p := range sel.Positions {
-				ids = append(ids, p.ID)
-			}
-			reached, err := d.matchIDsReachedBy(ctx, ids)
-			if err != nil {
-				return plan, err
-			}
-			sel.MatchIDs = reached
-		}
-	}
-	// A tournament chosen carries its matches, whatever the matches family says.
-	sel.TournamentMatches = len(sel.TournamentIDs) > 0
-	sel.DeckIDs, sel.DeckPositions = opts.DeckIDs, len(opts.DeckIDs) > 0
-	if opts.IncludeLessons {
-		sel.LessonIDs = opts.LessonIDs
-		sel.AllLessons = len(opts.LessonIDs) == 0
-		sel.LessonContents = true
-	}
-	plan.Selection = sel
-	return plan, nil
-}
-
-// wholeLibraryPlan is ingest.WholeTenant less what opts leaves out. Each family follows the
-// same rule: off drops it, a list of ids narrows it to them, on with no ids keeps all of it.
-func wholeLibraryPlan(opts ExportOptions) ingest.ExportOptions {
-	plan := ingest.WholeTenant(ingest.FormatSQLite)
-	plan.Analysis = opts.IncludeAnalysis
-	plan.Comments = opts.IncludeComments
-	plan.PlayedMoves = opts.IncludePlayedMoves
-	plan.FilterLibrary = opts.IncludeFilterLibrary
-	plan.Transcriptions = opts.IncludeTranscriptions
-	plan.Aliases = opts.IncludeAliases
-	plan.AnkiHistory = opts.IncludeAnkiHistory
-	sel := &plan.Selection
-	sel.AllMatches, sel.MatchIDs = narrow(opts.IncludeMatches, opts.MatchIDs)
-	sel.AllCollections, sel.CollectionIDs = narrow(opts.IncludeCollections, opts.CollectionIDs)
-	sel.AllTournaments, sel.TournamentIDs = narrow(opts.IncludeTournaments, opts.TournamentIDs)
-	// A tournament chosen carries its matches, whatever the matches family says.
-	sel.TournamentMatches = sel.AllTournaments || len(sel.TournamentIDs) > 0
-	sel.AllLessons, sel.LessonIDs = narrow(opts.IncludeLessons, opts.LessonIDs)
-	sel.LessonContents = opts.IncludeLessons
-	plan.AnkiDecks, sel.DeckIDs = narrow(opts.IncludeAnkiDecks, opts.DeckIDs)
-	return plan
-}
-
-// narrow reads one family of a whole-library export: all of it, the listed ids, or none.
-func narrow(include bool, ids []int64) (all bool, picked []int64) {
-	if !include {
-		return false, nil
-	}
-	if len(ids) > 0 {
-		return false, ids
-	}
-	return true, nil
-}
-
-// matchIDsReachedBy returns the matches whose moves were played in one of these positions,
-// in id order. The caller holds d.mu.
-func (d *Database) matchIDsReachedBy(ctx context.Context, positionIDs []int64) ([]int64, error) {
-	seen := make(map[int64]bool)
-	const chunk = 500
-	for start := 0; start < len(positionIDs); start += chunk {
-		if err := d.collectMatchIDs(ctx, positionIDs[start:min(start+chunk, len(positionIDs))], seen); err != nil {
-			return nil, fmt.Errorf("matches reached by the exported positions: %w", err)
-		}
-	}
-	ids := make([]int64, 0, len(seen))
-	for id := range seen {
-		ids = append(ids, id)
-	}
-	slices.Sort(ids)
-	return ids, nil
-}
-
-// collectMatchIDs adds to seen the matches whose moves were played in one of positionIDs.
-func (d *Database) collectMatchIDs(ctx context.Context, positionIDs []int64, seen map[int64]bool) error {
-	args := make([]any, len(positionIDs))
-	for i, id := range positionIDs {
-		args[i] = id
-	}
-	rows, err := d.db.QueryContext(ctx, `
-		SELECT DISTINCT g.match_id FROM move mv JOIN game g ON g.id = mv.game_id
-		WHERE mv.position_id IN (?`+strings.Repeat(",?", len(positionIDs)-1)+`)`, args...)
-	if err != nil {
-		return err
-	}
-	defer rows.Close()
-	for rows.Next() {
-		var id int64
-		if err := rows.Scan(&id); err != nil {
-			return err
-		}
-		seen[id] = true
-	}
-	return rows.Err()
+	return ingest.OptionsFor(ctx, d.store, "", opts)
 }
 
 // MatchIDsReachedBy returns the matches whose moves were played in one of these positions:
@@ -238,7 +95,7 @@ func (d *Database) MatchIDsReachedBy(positionIDs []int64) ([]int64, error) {
 	if d.db == nil {
 		return nil, fmt.Errorf("no database is currently open")
 	}
-	return d.matchIDsReachedBy(context.Background(), positionIDs)
+	return d.store.Matches().MatchIDsReachedBy(context.Background(), "", positionIDs)
 }
 
 // DeleteFile is a helper function to delete a file

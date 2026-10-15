@@ -19,63 +19,152 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
 )
 
-// The whole library leaves the same way from the three entry points: the GUI's dialog
-// (Database.ExportDatabase with what exportService.js sends when the library is listed),
-// the CLI's `export --type database`, and the daemon's exports.sqlite. Their files are
-// compared table by table, rows included, so a family one of them forgets shows up here
-// whatever that family is.
-func TestExportParity_WholeLibraryFromGUICLIAndDaemon(t *testing.T) {
-	cli, dbPath := setupCLIWithDB(t)
-	seedWholeLibrary(t, cli)
-	dir := t.TempDir()
-
-	gui := filepath.Join(dir, "gui.db")
-	if _, err := cli.db.ExportDatabase(ExportOptions{
-		ExportPath: gui, WholeLibrary: true,
-		IncludeAnalysis: true, IncludeComments: true, IncludePlayedMoves: true, IncludeFilterLibrary: true,
-		IncludeMatches: true, IncludeCollections: true, IncludeTournaments: true, IncludeLessons: true,
-		IncludeAnkiDecks: true, IncludeTranscriptions: true,
-	}); err != nil {
-		t.Fatalf("GUI export: %v", err)
-	}
-
-	daemon := filepath.Join(dir, "daemon.db")
-	exportThroughDaemon(t, dbPath, daemon)
-
-	cliOut := filepath.Join(dir, "cli.db")
-	captureStdout(t, func() {
-		if err := cli.Run([]string{"export", "--db", dbPath, "--type", "database", "--file", cliOut}); err != nil {
-			t.Fatalf("CLI export: %v", err)
+// One set of export options leaves the same way from the three entry points: the GUI's
+// dialog (Database.ExportDatabase with what exportService.js sends when the library is
+// listed), the CLI's `export --type database` with its flags, and the daemon's exports.sqlite
+// with the same options as its JSON body. Their files are compared table by table, rows
+// included, so a family one of them forgets or reads differently shows up here whatever that
+// family is.
+func TestExportParity_GUICLIAndDaemon(t *testing.T) {
+	everything := func() ExportOptions {
+		return ExportOptions{
+			WholeLibrary: true, IncludeAnalysis: true, IncludeComments: true, IncludePlayedMoves: true,
+			IncludeFilterLibrary: true, IncludeMatches: true, IncludeCollections: true,
+			IncludeTournaments: true, IncludeLessons: true, IncludeAnkiDecks: true,
+			IncludeTranscriptions: true, IncludeAliases: true, IncludeAnkiHistory: true,
 		}
-	})
-
-	want := dumpTables(t, daemon)
-	if len(want["transcription"]) == 0 || len(want["anki_deck"]) == 0 || len(want["collection"]) == 0 {
-		t.Fatalf("the daemon's export lacks a seeded family: %d transcriptions, %d decks, %d collections",
-			len(want["transcription"]), len(want["anki_deck"]), len(want["collection"]))
 	}
-	if drafts := strings.Join(want["transcription"], "\n"); strings.Contains(drafts, "/home/producteur") || !strings.Contains(drafts, "finale.mp4") {
-		t.Errorf("the exported draft should name its video, not locate it: %s", drafts)
+	cases := []struct {
+		name string
+		gui  func(seeded) ExportOptions
+		cli  func(seeded) []string
+		body func(seeded) string
+	}{
+		{
+			name: "whole library",
+			gui:  func(seeded) ExportOptions { return everything() },
+			cli:  func(seeded) []string { return nil },
+			body: func(seeded) string { return "" },
+		},
+		{
+			name: "families narrowed",
+			gui: func(s seeded) ExportOptions {
+				o := everything()
+				o.LessonIDs, o.CollectionIDs, o.IncludeAnkiDecks, o.IncludeTranscriptions = []int64{s.lesson}, []int64{s.collection}, false, false
+				return o
+			},
+			cli: func(s seeded) []string {
+				return []string{fmt.Sprintf("--lesson-ids=%d", s.lesson), fmt.Sprintf("--collection-ids=%d", s.collection), "--decks=false", "--transcriptions=false"}
+			},
+			body: func(s seeded) string {
+				return fmt.Sprintf(`{"lessonIDs":[%d],"collectionIDs":[%d],"includeAnkiDecks":false,"includeTranscriptions":false}`, s.lesson, s.collection)
+			},
+		},
+		{
+			name: "families left out",
+			gui: func(seeded) ExportOptions {
+				o := everything()
+				o.IncludeLessons, o.IncludeFilterLibrary, o.IncludeAnkiHistory, o.IncludeTournaments = false, false, false, false
+				return o
+			},
+			cli: func(seeded) []string {
+				return []string{"--lessons=false", "--filters=false", "--anki-history=false", "--tournaments=false"}
+			},
+			body: func(seeded) string {
+				return `{"includeLessons":false,"includeFilterLibrary":false,"includeAnkiHistory":false,"includeTournaments":false}`
+			},
+		},
+		{
+			// The CLI exports no list of positions; the daemon reads the desktop's list.
+			name: "list of positions",
+			gui: func(s seeded) ExportOptions {
+				return ExportOptions{
+					PositionIDs: s.positions, IncludeAnalysis: true, IncludeComments: true, IncludePlayedMoves: true,
+					IncludeMatches: true, IncludeTranscriptions: true, IncludeAliases: true,
+					IncludeCollections: true, CollectionIDs: []int64{s.collection},
+				}
+			},
+			body: func(s seeded) string {
+				return fmt.Sprintf(`{"wholeLibrary":false,"positionIDs":%s,"collectionIDs":[%d],"includeFilterLibrary":false,"includeLessons":false,"includeAnkiHistory":false}`,
+					strings.ReplaceAll(fmt.Sprint(s.positions), " ", ","), s.collection)
+			},
+		},
 	}
-	for name, path := range map[string]string{"GUI": gui, "CLI": cliOut} {
-		got := dumpTables(t, path)
-		for table, rows := range want {
-			if !slices.Equal(got[table], rows) {
-				t.Errorf("%s export, table %s: %d rows, daemon %d\n%s\nvs daemon\n%s",
-					name, table, len(got[table]), len(rows), strings.Join(got[table], "\n"), strings.Join(rows, "\n"))
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			cli, dbPath := setupCLIWithDB(t)
+			ids := seedWholeLibrary(t, cli)
+			// A second lesson, so that narrowing to the first leaves one behind.
+			if _, err := cli.db.CreateLesson("Hors programme", ""); err != nil {
+				t.Fatal(err)
 			}
-		}
-		for table := range got {
-			if _, ok := want[table]; !ok {
-				t.Errorf("%s export has table %s, the daemon's has not", name, table)
+			dir := t.TempDir()
+
+			gui := filepath.Join(dir, "gui.db")
+			opts := tc.gui(ids)
+			opts.ExportPath = gui
+			if _, err := cli.db.ExportDatabase(opts); err != nil {
+				t.Fatalf("GUI export: %v", err)
 			}
-		}
+
+			daemon := filepath.Join(dir, "daemon.db")
+			exportThroughDaemon(t, dbPath, daemon, tc.body(ids))
+
+			outputs := map[string]string{"GUI": gui}
+			if tc.cli != nil {
+				cliOut := filepath.Join(dir, "cli.db")
+				captureStdout(t, func() {
+					args := append([]string{"export", "--db", dbPath, "--type", "database", "--file", cliOut}, tc.cli(ids)...)
+					if err := cli.Run(args); err != nil {
+						t.Fatalf("CLI export: %v", err)
+					}
+				})
+				outputs["CLI"] = cliOut
+			}
+
+			want := dumpTables(t, daemon)
+			if tc.name == "whole library" {
+				if len(want["transcription"]) == 0 || len(want["anki_deck"]) == 0 || len(want["collection"]) == 0 || len(want["lesson"]) == 0 {
+					t.Fatalf("the daemon's export lacks a seeded family: %d transcriptions, %d decks, %d collections, %d lessons",
+						len(want["transcription"]), len(want["anki_deck"]), len(want["collection"]), len(want["lesson"]))
+				}
+				if drafts := strings.Join(want["transcription"], "\n"); strings.Contains(drafts, "/home/producteur") || !strings.Contains(drafts, "finale.mp4") {
+					t.Errorf("the exported draft should name its video, not locate it: %s", drafts)
+				}
+			}
+			if tc.name == "list of positions" && (len(want["position"]) == 0 || len(want["match"]) == 0) {
+				t.Fatalf("the daemon's list export holds %d positions and %d matches, want both", len(want["position"]), len(want["match"]))
+			}
+			if tc.name == "families narrowed" && (len(want["lesson"]) != 1 || len(want["anki_deck"]) != 0) {
+				t.Fatalf("the daemon's narrowed export holds %d lessons and %d decks, want 1 and 0", len(want["lesson"]), len(want["anki_deck"]))
+			}
+			for name, path := range outputs {
+				got := dumpTables(t, path)
+				for table, rows := range want {
+					if !slices.Equal(got[table], rows) {
+						t.Errorf("%s export, table %s: %d rows, daemon %d\n%s\nvs daemon\n%s",
+							name, table, len(got[table]), len(rows), strings.Join(got[table], "\n"), strings.Join(rows, "\n"))
+					}
+				}
+				for table := range got {
+					if _, ok := want[table]; !ok {
+						t.Errorf("%s export has table %s, the daemon's has not", name, table)
+					}
+				}
+			}
+		})
 	}
+}
+
+// seeded names what seedWholeLibrary created that an export can narrow to.
+type seeded struct {
+	collection, lesson int64
+	positions          []int64
 }
 
 // seedWholeLibrary puts one of each family an export carries into the database: a match in a
 // tournament, a collection, a lesson, a saved filter, an Anki deck and a draft transcription.
-func seedWholeLibrary(t *testing.T, cli *CLI) {
+func seedWholeLibrary(t *testing.T, cli *CLI) seeded {
 	t.Helper()
 	colID, posIDs := seedCollection(t, cli, "Primes", 3)
 	matches, err := cli.db.GetAllMatches()
@@ -109,13 +198,14 @@ func seedWholeLibrary(t *testing.T, cli *CLI) {
 	if _, err := cli.db.CreateTranscription(transcript.Header{MatchLength: 7, VideoSource: "/home/producteur/Vidéos/finale.mp4"}); err != nil {
 		t.Fatal(err)
 	}
+	return seeded{collection: colID, lesson: lessonID, positions: posIDs}
 }
 
 const daemonTenant = "1"
 
-// exportThroughDaemon serves the database file as the daemon does and saves its
-// exports.sqlite answer to out.
-func exportThroughDaemon(t *testing.T, dbPath, out string) {
+// exportThroughDaemon serves the database file as the daemon does and saves to out its
+// exports.sqlite answer to body, the JSON request ("" sends none).
+func exportThroughDaemon(t *testing.T, dbPath, out, body string) {
 	t.Helper()
 	st, err := sqlite.Open(context.Background(), dbPath, nil)
 	if err != nil {
@@ -139,18 +229,25 @@ func exportThroughDaemon(t *testing.T, dbPath, out string) {
 	}
 	ts := httptest.NewServer(srv.Handler())
 	defer ts.Close()
-	req, _ := http.NewRequest(http.MethodPost, ts.URL+"/v1/exports.sqlite", nil)
+	var reqBody io.Reader
+	if body != "" {
+		reqBody = strings.NewReader(body)
+	}
+	req, _ := http.NewRequest(http.MethodPost, ts.URL+"/v1/exports.sqlite", reqBody)
 	req.Header.Set(middleware.TenantHeader, daemonTenant)
+	if body != "" {
+		req.Header.Set("Content-Type", "application/json")
+	}
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer resp.Body.Close()
-	body, err := io.ReadAll(resp.Body)
+	file, err := io.ReadAll(resp.Body)
 	if err != nil || resp.StatusCode != http.StatusOK {
-		t.Fatalf("exports.sqlite: %d %v %s", resp.StatusCode, err, body[:min(200, len(body))])
+		t.Fatalf("exports.sqlite: %d %v %s", resp.StatusCode, err, file[:min(200, len(file))])
 	}
-	if err := os.WriteFile(out, body, 0o600); err != nil {
+	if err := os.WriteFile(out, file, 0o600); err != nil {
 		t.Fatal(err)
 	}
 }

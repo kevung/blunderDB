@@ -3338,6 +3338,10 @@ Options:
     	Include filter library in database export (default: true) (default true)
   -format string
     	Output format: text or json (default "text")
+  -lesson-ids string
+    	Comma-separated list of lesson IDs to export (empty = all)
+  -lessons
+    	Include lessons, with the collections and positions their steps show, in database export (default: true) (default true)
   -limit int
     	With --plan-ids: ids per page (at most 1000, the default)
   -match-ids string
@@ -3393,6 +3397,10 @@ Examples:
 
   # Export without collections or Anki decks
   blunderdb export --db database.db --type database --file export.db --collections=false --decks=false
+
+  # Export with specific lessons, or without any
+  blunderdb export --db database.db --type database --file export.db --lesson-ids=2
+  blunderdb export --db database.db --type database --file export.db --lessons=false
 
   # Export with specific tournaments
   blunderdb export --db database.db --type database --file export.db --tournament-ids=1,2
