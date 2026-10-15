@@ -13,6 +13,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     ListLessons: vi.fn(async () => [])
 }));
 
+import { collectionsStore } from '../stores/collectionStore';
 import ExportDatabaseModal from '../components/ExportDatabaseModal.svelte';
 
 afterEach(cleanup);
@@ -127,5 +128,69 @@ describe('the preview', () => {
         expect((await findByTestId('export-aliases-count')).textContent).toBe('4');
         expect(planFor).toHaveBeenCalled();
         expect(container.textContent).toContain('7');
+    });
+});
+
+describe('the preview, when it goes stale', () => {
+    const mk = (matches) => ({
+        positions: 1,
+        comments: 0,
+        matches,
+        tournaments: 0,
+        directions: 0,
+        rencontres: 0,
+        collections: 0,
+        lessons: 0,
+        ankiDecks: 0,
+        transcriptions: 0,
+        aliases: 0,
+        filters: 0,
+        frozenCollections: [],
+        degradedAnkiDecks: []
+    });
+    const count = (/** @type {HTMLElement} */ c) => c.querySelector('[data-testid="export-matches-count"]')?.textContent;
+
+    test('a slow answer to an earlier choice is ignored, and a failure clears the plan', async () => {
+        /** @type {((p: any) => void)[]} */
+        const resolvers = [];
+        const planFor = vi.fn(() => new Promise((r) => resolvers.push(r)));
+        const { container } = render(ExportDatabaseModal, { visible: true, exportOptions: base(), planFor, onCancel: () => {}, onExport: () => {} });
+        await waitFor(() => expect(resolvers.length).toBe(1));
+        await fireEvent.click(box(container, '#export-comments'));
+        await waitFor(() => expect(resolvers.length).toBe(2));
+        resolvers[1](mk(5));
+        await waitFor(() => expect(count(container)).toBe('5'));
+        resolvers[0](mk(9));
+        await new Promise((r) => setTimeout(r, 20));
+        expect(count(container)).toBe('5');
+        planFor.mockRejectedValueOnce(new Error('boom'));
+        await fireEvent.click(box(container, '#export-comments'));
+        await waitFor(() => expect(count(container)).toBe('0'));
+    });
+
+    test('an answer after the close is ignored', async () => {
+        /** @type {((p: any) => void)[]} */
+        const resolvers = [];
+        const planFor = vi.fn(() => new Promise((r) => resolvers.push(r)));
+        const { container, rerender } = render(ExportDatabaseModal, { visible: true, exportOptions: base(), planFor, onCancel: () => {}, onExport: () => {} });
+        await waitFor(() => expect(resolvers.length).toBe(1));
+        await rerender({ visible: false });
+        resolvers[0](mk(7));
+        await new Promise((r) => setTimeout(r, 20));
+        expect(container.querySelector('[data-testid="export-matches-count"]')?.textContent ?? '0').not.toBe('7');
+    });
+
+    test('a collection that leaves frozen is marked and noted', async () => {
+        collectionsStore.set([{ id: 9, name: 'Live', positionCount: 4 }]);
+        const planFor = async () => ({ ...mk(0), collections: 1, frozenCollections: [{ id: 9, name: 'Live' }] });
+        const { findByTestId, container } = render(ExportDatabaseModal, {
+            visible: true,
+            exportOptions: { ...base(), includeCollections: true, collectionIDs: [9] },
+            planFor,
+            onCancel: () => {},
+            onExport: () => {}
+        });
+        await findByTestId('export-frozen-note');
+        expect(container.textContent).toContain('Live (0/4) frozen');
     });
 });

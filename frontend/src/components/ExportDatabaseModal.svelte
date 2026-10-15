@@ -108,19 +108,27 @@
     let plan = $state(/** @type {Plan | null} */ (null));
     let planTicket = 0;
     $effect(() => {
-        if (!visible) plan = null;
+        if (!visible) {
+            plan = null;
+            planTicket++;
+        }
         if (!visible || mode !== 'metadata' || !planFor) return;
         // Read here so that every choice (and the lists they apply to) re-runs the preview.
         const snapshot = $state.snapshot(exportOptions);
         void [matches, decks, lessons, collections, tournaments];
         const ticket = ++planTicket;
+        // A count of an earlier choice is never left shown, nor clickable.
+        plan = null;
         const timer = setTimeout(() => {
             Promise.resolve()
                 .then(() => planFor(snapshot))
                 .then((p) => {
                     if (ticket === planTicket) plan = p;
                 })
-                .catch((error) => logger.error('could not preview the export:', error));
+                .catch((error) => {
+                    if (ticket === planTicket) plan = null;
+                    logger.error('could not preview the export:', error);
+                });
         }, 150);
         return () => clearTimeout(timer);
     });
