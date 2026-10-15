@@ -97,7 +97,7 @@
     // Hand the chosen options back to the caller, which reads them from the store object.
     function confirmExport() {
         Object.assign(exportOptionsProp, $state.snapshot(exportOptions));
-        onExport?.();
+        onExport?.(plan);
     }
 
     let passwordVisible = $state(false);

@@ -69,6 +69,16 @@ describe('a successful export', () => {
         });
     });
 
+    test('reports the count the dialog showed, else the scope count', async () => {
+        await exportDatabase();
+        await handleExportCommit({ positions: 2 });
+        expect(get(statusBarTextStore)).toEqual({ i18nKey: 'status.exportCompleted', i18nParams: { posCount: 2 } });
+
+        await exportDatabase();
+        await handleExportCommit(null);
+        expect(get(statusBarTextStore)).toEqual({ i18nKey: 'status.exportCompleted', i18nParams: { posCount: 3 } });
+    });
+
     test('sends identifiers rather than whole positions', async () => {
         await exportDatabase();
         await handleExportCommit();

@@ -266,13 +266,8 @@ export async function buildExportOptions(exportOptions, exportPath) {
  */
 export async function planExport(exportOptions) {
     const plan = await PlanExport(/** @type {any} */ (await buildExportOptions(exportOptions, '')));
-    plannedPositions = plan?.positions ?? null;
     return plan;
 }
-
-// The position count of the last preview: the header shows it, so the status bar says the same.
-/** @type {number | null} */
-let plannedPositions = null;
 
 /**
  * The source ids behind one count of the plan (a family of ingest.PlanExport), up to the
@@ -286,7 +281,11 @@ export async function plannedIds(exportOptions, family) {
     return page?.ids || [];
 }
 
-export async function handleExportCommit() {
+/**
+ * @param {{ positions?: number } | null} [plan] the preview the dialog shows, if any: the
+ * status bar then says the same number as its header.
+ */
+export async function handleExportCommit(plan = null) {
     // The file is asked for last, once what goes into it is settled; dismissing the
     // dialog returns to the form.
     let exportPath = '';
@@ -321,8 +320,7 @@ export async function handleExportCommit() {
 
         // No completion screen: the status bar reports, as for every long
         // operation.
-        const posCount = plannedPositions ?? get(exportPositionCountStore);
-        plannedPositions = null;
+        const posCount = plan?.positions ?? get(exportPositionCountStore);
         closeModal();
         resetExportState();
         setStatusBarMessage(tMsg('status.exportCompleted', { posCount }));
