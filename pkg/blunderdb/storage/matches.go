@@ -83,6 +83,13 @@ type MatchStore interface {
 	// match.
 	ListByDiceHash(ctx context.Context, scope string, hash string) ([]domain.Match, error)
 
+	// MatchesByPosition returns the ids of the matches, ascending, having at
+	// least one move recorded on the position (move.position_id): what a
+	// caller must know before dropping the position, since a move would lose
+	// its position_id. A position no match mentions, or an unknown id, gives
+	// an empty slice; a position of another tenant is unknown.
+	MatchesByPosition(ctx context.Context, scope string, positionID int64) ([]int64, error)
+
 	// SetDiceHash stores a match's dice_hash, computed after the fact for a
 	// match imported before the column existed.
 	SetDiceHash(ctx context.Context, scope string, id int64, hash string) error

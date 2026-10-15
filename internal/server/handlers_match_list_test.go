@@ -194,3 +194,49 @@ func TestMatchesFindByHashHTTP(t *testing.T) {
 		t.Errorf("lookup by unknown hash = %+v, want found=false", got)
 	}
 }
+
+// matches.byPosition answers "which matches have a move on this position":
+// the check before dropping a position from the library.
+func TestMatchesByPositionHTTP(t *testing.T) {
+	ts := newTestServer(t)
+
+	savePos := func(onRoll int) int64 {
+		t.Helper()
+		p := domain.Position{PlayerOnRoll: onRoll, DecisionType: domain.CheckerAction}
+		resp := post(t, ts, "/v1/positions.save", map[string]any{"position": p})
+		defer resp.Body.Close()
+		var id idResp
+		if err := json.NewDecoder(resp.Body).Decode(&id); err != nil || id.ID == 0 {
+			t.Fatalf("save position: %+v, %v", id, err)
+		}
+		return id.ID
+	}
+	decode := func(resp *http.Response, v any) {
+		t.Helper()
+		defer resp.Body.Close()
+		if err := json.NewDecoder(resp.Body).Decode(v); err != nil {
+			t.Fatal(err)
+		}
+	}
+	posID, otherID := savePos(0), savePos(1)
+
+	var m idResp
+	decode(post(t, ts, "/v1/matches.save", matchSaveReq{Match: &domain.Match{Player1Name: "A", Player2Name: "B", MatchLength: 3}}), &m)
+	var g idResp
+	decode(post(t, ts, "/v1/matches.createGame", gameReq{Game: &domain.Game{MatchID: m.ID, GameNumber: 1}}), &g)
+	decode(post(t, ts, "/v1/matches.createMove", moveReq{Move: &domain.Move{GameID: g.ID, MoveNumber: 1, MoveType: "checker", PositionID: posID, Player: 1}}), &idResp{})
+
+	var got matchesByPositionResp
+	decode(post(t, ts, "/v1/matches.byPosition", positionIDReq{PositionID: posID}), &got)
+	if len(got.MatchIDs) != 1 || got.MatchIDs[0] != m.ID {
+		t.Errorf("referenced position: matchIds = %v, want [%d]", got.MatchIDs, m.ID)
+	}
+	decode(post(t, ts, "/v1/matches.byPosition", positionIDReq{PositionID: otherID}), &got)
+	if got.MatchIDs == nil || len(got.MatchIDs) != 0 {
+		t.Errorf("unreferenced position: matchIds = %#v, want []", got.MatchIDs)
+	}
+	if resp := post(t, ts, "/v1/matches.byPosition", positionIDReq{}); resp.StatusCode != http.StatusBadRequest {
+		t.Errorf("missing positionId: status %d, want 400", resp.StatusCode)
+		resp.Body.Close()
+	}
+}

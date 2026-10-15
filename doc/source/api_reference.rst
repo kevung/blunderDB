@@ -219,6 +219,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/maintenance.run                      custom
      POST /v1/maintenance.status                   JSON
    matches
+     POST /v1/matches.byPosition                   JSON
      POST /v1/matches.count                        JSON
      POST /v1/matches.createGame                   JSON
      POST /v1/matches.createMove                   JSON

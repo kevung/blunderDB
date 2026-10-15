@@ -88,6 +88,12 @@ type matchListReq struct {
 // maxPageSize on it before matches.list ever runs.
 func (r matchListReq) pageLimit() int { return r.Limit }
 
+// matchesByPositionResp lists, ascending, the matches having a move on the
+// position; never null.
+type matchesByPositionResp struct {
+	MatchIDs []int64 `json:"matchIds"`
+}
+
 type gameIDReq struct {
 	GameID int64 `json:"gameId"`
 }
@@ -139,6 +145,13 @@ func (s *Server) matchRoutes() []route {
 		{http.MethodPost, "/v1/matches.scoreMoves", rpc(func(ctx context.Context, scope string, _ struct{}) (scoreMovesResp, error) {
 			n, err := storage.ScoreAllMoves(ctx, ms(), scope, nil, nil)
 			return scoreMovesResp{Scored: n}, err
+		})},
+		{http.MethodPost, "/v1/matches.byPosition", rpc(func(ctx context.Context, scope string, req positionIDReq) (matchesByPositionResp, error) {
+			if req.PositionID <= 0 {
+				return matchesByPositionResp{}, errMissing("positionId")
+			}
+			ids, err := ms().MatchesByPosition(ctx, scope, req.PositionID)
+			return matchesByPositionResp{MatchIDs: ids}, err
 		})},
 		{http.MethodPost, "/v1/matches.list", rpcStream(func(ctx context.Context, scope string, req matchListReq) iterMatches {
 			return ms().List(ctx, scope, req.opts())

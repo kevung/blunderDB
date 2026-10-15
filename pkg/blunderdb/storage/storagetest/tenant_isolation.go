@@ -282,6 +282,26 @@ func checkMatchIsolation(t *testing.T, ctx context.Context, s storage.Storage, a
 	if _, err := s.Matches().Get(ctx, b, id); !errors.Is(err, storage.ErrNotFound) {
 		t.Errorf("Get(%s, id from %s): got %v, want ErrNotFound", b, a, err)
 	}
+
+	// A match of a moving on a position is invisible to b asking about it.
+	p := checkerPos()
+	posID, err := s.Positions().Save(ctx, a, &p)
+	if err != nil {
+		t.Fatalf("Save position(%s): %v", a, err)
+	}
+	gid, err := s.Matches().CreateGame(ctx, a, &domain.Game{MatchID: id, GameNumber: 1})
+	if err != nil {
+		t.Fatalf("CreateGame(%s): %v", a, err)
+	}
+	if _, err := s.Matches().CreateMove(ctx, a, &domain.Move{GameID: gid, MoveNumber: 1, MoveType: "checker", PositionID: posID, Player: 1}); err != nil {
+		t.Fatalf("CreateMove(%s): %v", a, err)
+	}
+	if got, err := s.Matches().MatchesByPosition(ctx, a, posID); err != nil || len(got) != 1 || got[0] != id {
+		t.Errorf("MatchesByPosition(%s) = %v, %v; want [%d]", a, got, err, id)
+	}
+	if got, err := s.Matches().MatchesByPosition(ctx, b, posID); err != nil || len(got) != 0 {
+		t.Errorf("MatchesByPosition(%s, position from %s) = %v, %v; want none", b, a, got, err)
+	}
 }
 
 func checkCommentIsolation(t *testing.T, ctx context.Context, s storage.Storage, a, b string) {

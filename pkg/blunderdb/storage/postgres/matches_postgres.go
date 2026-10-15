@@ -1262,6 +1262,26 @@ func (s *matchStore) ListByDiceHash(ctx context.Context, scope string, hash stri
 	return out, rows.Err()
 }
 
+// MatchesByPosition lists the matches with a move on the position — see
+// storage.MatchStore.
+func (s *matchStore) MatchesByPosition(ctx context.Context, scope string, positionID int64) ([]int64, error) {
+	rows, err := s.db.Query(ctx, `SELECT DISTINCT g.match_id FROM move mv JOIN game g ON g.id = mv.game_id AND g.tenant_id = mv.tenant_id
+		 WHERE mv.position_id = $1 AND mv.tenant_id = $2 ORDER BY g.match_id`, positionID, tenantID(scope))
+	if err != nil {
+		return nil, fmt.Errorf("postgres: matches by position %d: %w", positionID, err)
+	}
+	defer rows.Close()
+	out := []int64{}
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			return nil, fmt.Errorf("postgres: matches by position %d: %w", positionID, err)
+		}
+		out = append(out, id)
+	}
+	return out, rows.Err()
+}
+
 // SetDiceHash stores a match's dice_hash — see storage.MatchStore.
 func (s *matchStore) SetDiceHash(ctx context.Context, scope string, id int64, hash string) error {
 	if _, err := s.db.Exec(ctx, `UPDATE match SET dice_hash = $1 WHERE id = $2 AND tenant_id = $3`,
