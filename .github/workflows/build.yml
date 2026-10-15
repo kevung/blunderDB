@@ -309,8 +309,9 @@ jobs:
   # detector rather than just for bit-identity) and
   # TestParallelSearchFingerprint, which under -race forks every path on one
   # light case each: the detector slows a forking search several times more
-  # than a serial one, and its full corpus runs without -race in the
-  # `gammonnet` shard on tags and in nightly.yml.
+  # than a serial one, and its default cases, at both widths, run without
+  # -race in the `gammonnet` shard on tag pushes and in nightly.yml's
+  # test-os-full (windows-latest, macos-latest).
   race-gammonnet:
     runs-on: ubuntu-latest
     timeout-minutes: 10

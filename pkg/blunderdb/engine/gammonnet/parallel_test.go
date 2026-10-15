@@ -135,22 +135,25 @@ func TestParallelSearchFingerprint(t *testing.T) {
 		cases []goldCase
 		cfg   func(goldCase) SearchConfig
 		probs bool
+		// nested: the path must lend helpers from inside a lent task.
+		nested bool
 	}
 	paths := []path{
-		{"normal", take(cases, 6, 40), func(goldCase) SearchConfig { return DefaultConfig(2) }, false},
-		{"thorough", take(cases, 2, 10), func(goldCase) SearchConfig { return levelConfig(mustLevel("thorough"), SearchConfig{}) }, false},
-		{"ply3", light(take(cases, 2, 10), raceDecisionCase), func(goldCase) SearchConfig { return DefaultConfig(3) }, false},
-		{"probs-ply3", light(take(cases, 1, 4), raceProbsCase), func(goldCase) SearchConfig { return DefaultConfig(3) }, true},
-		{"match-cube", take(cubeCases, 6, len(cubeCases)), func(c goldCase) SearchConfig { return c.config() }, false},
+		{"normal", take(cases, 6, 40), func(goldCase) SearchConfig { return DefaultConfig(2) }, false, false},
+		{"thorough", take(cases, 2, 10), func(goldCase) SearchConfig { return levelConfig(mustLevel("thorough"), SearchConfig{}) }, false, false},
+		{"ply3", light(take(cases, 2, 10), raceDecisionCase), func(goldCase) SearchConfig { return DefaultConfig(3) }, false, true},
+		{"probs-ply3", light(take(cases, 1, 4), raceProbsCase), func(goldCase) SearchConfig { return DefaultConfig(3) }, true, true},
+		{"match-cube", take(cubeCases, 6, len(cubeCases)), func(c goldCase) SearchConfig { return c.config() }, false, false},
 		{"match-cube-ply3", light(take(cubeCases, 1, 6), raceDecisionCase), func(c goldCase) SearchConfig {
 			return levelConfig(mustLevel("ply3"), c.config())
-		}, false},
+		}, false, true},
 	}
 
 	for _, p := range paths {
 		t.Run(p.name, func(t *testing.T) {
-			run := func(workers int) fingerprint {
+			run := func(workers int) (fingerprint, uint64) {
 				var fp fingerprint
+				var nested uint64
 				for _, c := range p.cases {
 					s, err := NewSearcher(p.cfg(c))
 					if err != nil {
@@ -163,16 +166,23 @@ func TestParallelSearchFingerprint(t *testing.T) {
 					} else {
 						fp = append(fp, rankingFingerprint(t, s, one)...)
 					}
+					nested += s.nestedLends
 				}
-				return fp
+				return fp, nested
 			}
-			serial := run(1)
+			serial, _ := run(1)
 			widths := []int{6, runtime.NumCPU()}
 			if raceEnabled {
 				widths = widths[:1]
 			}
 			for _, nw := range widths {
-				sameFingerprint(t, serial, run(nw))
+				par, nested := run(nw)
+				sameFingerprint(t, serial, par)
+				// Without a nested lend the case proves nothing about the
+				// forks inside forks; a lighter case must not drop them.
+				if p.nested && nw == 6 && nested == 0 {
+					t.Errorf("%d workers: no helper lent from inside a lent task", nw)
+				}
 			}
 		})
 	}
