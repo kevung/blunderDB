@@ -135,7 +135,7 @@ func TestParallelSearchFingerprint(t *testing.T) {
 		cases []goldCase
 		cfg   func(goldCase) SearchConfig
 		probs bool
-		// nested: the path must lend helpers from inside a lent task.
+		// nested: the path must fork from inside a forked task.
 		nested bool
 	}
 	paths := []path{
@@ -166,7 +166,7 @@ func TestParallelSearchFingerprint(t *testing.T) {
 					} else {
 						fp = append(fp, rankingFingerprint(t, s, one)...)
 					}
-					nested += s.nestedLends
+					nested += s.nestedForks
 				}
 				return fp, nested
 			}
@@ -175,13 +175,19 @@ func TestParallelSearchFingerprint(t *testing.T) {
 			if raceEnabled {
 				widths = widths[:1]
 			}
-			for _, nw := range widths {
+			var firstNested uint64
+			for i, nw := range widths {
 				par, nested := run(nw)
 				sameFingerprint(t, serial, par)
-				// Without a nested lend the case proves nothing about the
+				if i == 0 {
+					firstNested = nested
+				} else if nested != firstNested {
+					t.Errorf("%d workers: %d nested forks, %d at %d workers", nw, nested, firstNested, widths[0])
+				}
+				// Without a nested fork the case proves nothing about the
 				// forks inside forks; a lighter case must not drop them.
-				if p.nested && nw == 6 && nested == 0 {
-					t.Errorf("%d workers: no helper lent from inside a lent task", nw)
+				if p.nested && nested == 0 {
+					t.Errorf("%d workers: no fork opened inside a forked task", nw)
 				}
 			}
 		})

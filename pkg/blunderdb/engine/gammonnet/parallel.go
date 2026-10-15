@@ -140,15 +140,15 @@ type searchCounts struct {
 	lent                         time.Duration
 	evals, pruneEvals, cacheHits uint64
 	batchFilled, batchSlotted    uint64
-	cubeValuations, nestedLends  uint64
+	cubeValuations, nestedForks  uint64
 }
 
 // takeCounts returns s's counters and zeroes them.
 func (s *Searcher) takeCounts() searchCounts {
-	c := searchCounts{s.lent, s.evals, s.pruneEvals, s.cacheHits, s.batchFilled, s.batchSlotted, s.cubeValuations, s.nestedLends}
+	c := searchCounts{s.lent, s.evals, s.pruneEvals, s.cacheHits, s.batchFilled, s.batchSlotted, s.cubeValuations, s.nestedForks}
 	s.lent = 0
 	s.evals, s.pruneEvals, s.cacheHits = 0, 0, 0
-	s.batchFilled, s.batchSlotted, s.cubeValuations, s.nestedLends = 0, 0, 0, 0
+	s.batchFilled, s.batchSlotted, s.cubeValuations, s.nestedForks = 0, 0, 0, 0
 	return c
 }
 
@@ -160,7 +160,7 @@ func (s *Searcher) addCounts(c searchCounts) {
 	s.batchFilled += c.batchFilled
 	s.batchSlotted += c.batchSlotted
 	s.cubeValuations += c.cubeValuations
-	s.nestedLends += c.nestedLends
+	s.nestedForks += c.nestedForks
 }
 
 // LentTime is the time helpers have spent on this searcher's searches since
@@ -191,6 +191,9 @@ func (s *Searcher) fork(n int, task func(w *Searcher, k int) bool) bool {
 		return true
 	}
 
+	if s.inTask {
+		s.nestedForks++
+	}
 	var (
 		next    atomic.Int64
 		active  atomic.Int64
@@ -214,9 +217,6 @@ func (s *Searcher) fork(n int, task func(w *Searcher, k int) bool) bool {
 	for !failed.Load() {
 		for int64(n)-next.Load() > active.Load()+1 && t.cores.tryTake() {
 			active.Add(1)
-			if s.inTask {
-				s.nestedLends++
-			}
 			h := t.borrow(s)
 			wg.Add(1)
 			go func() {
@@ -257,7 +257,7 @@ func (c *searchCounts) add(o searchCounts) {
 	c.batchFilled += o.batchFilled
 	c.batchSlotted += o.batchSlotted
 	c.cubeValuations += o.cubeValuations
-	c.nestedLends += o.nestedLends
+	c.nestedForks += o.nestedForks
 }
 
 // splitDepth is the shallowest node whose subtrees are handed out (spec §2):
