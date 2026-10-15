@@ -296,9 +296,10 @@ func countPips(rg region, faceMask []bool, box image.Rectangle, lightFace bool) 
 
 // pointSymmetric says whether spots could be a die's face: every face from
 // one to six is symmetric about its centre, which holds a spot exactly when
-// the count is odd. A spot missed or added by the counter breaks that, and the
-// die is then unread rather than misread — except a six that loses its two
-// middle spots, which is a four.
+// the count is odd. A single spot missed or added by the counter breaks that,
+// and the die is then unread rather than misread. A pair of opposite spots
+// lost or gained together keeps the symmetry and passes: 6↔4, 6↔2, 5↔3,
+// 5↔1, 3↔1 (and 4↔2) cannot be told apart by it.
 func pointSymmetric(spots []image.Point, tol float64) bool {
 	if len(spots) == 0 {
 		return true
