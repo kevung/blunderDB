@@ -11,6 +11,7 @@ import (
 	"math"
 	"runtime"
 	"sort"
+	"strconv"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -705,6 +706,18 @@ func IsResponseCubeAction(action string) bool {
 // (PlayedCandidate), and IsForcedChecker needs its count of legal plays.
 // Rates are stored × 100, equities × 1000.
 func PopulateAnalysisColumns(a *domain.PositionAnalysis, playedMove, playedCubeAction string, pos *domain.Position) AnalysisColumns {
+	return populateAnalysisColumns(a, playedMove, playedCubeAction, pos, true)
+}
+
+// PlayedDecisionColumns is PopulateAnalysisColumns for a caller that reads
+// only what the played decision cost (the move table's error and close-cube
+// flag): IsForced is left 0, sparing the legal-play count every imported
+// move would otherwise pay.
+func PlayedDecisionColumns(a *domain.PositionAnalysis, playedMove, playedCubeAction string, pos *domain.Position) AnalysisColumns {
+	return populateAnalysisColumns(a, playedMove, playedCubeAction, pos, false)
+}
+
+func populateAnalysisColumns(a *domain.PositionAnalysis, playedMove, playedCubeAction string, pos *domain.Position, forced bool) AnalysisColumns {
 	var c AnalysisColumns
 	if a == nil {
 		return c
@@ -743,7 +756,7 @@ func PopulateAnalysisColumns(a *domain.PositionAnalysis, playedMove, playedCubeA
 		}
 	}
 
-	if a.CheckerAnalysis != nil && len(a.CheckerAnalysis.Moves) > 0 && IsForcedChecker(a.CheckerAnalysis, CountLegalPlays(pos)) {
+	if forced && a.CheckerAnalysis != nil && len(a.CheckerAnalysis.Moves) > 0 && IsForcedChecker(a.CheckerAnalysis, CountLegalPlays(pos)) {
 		c.IsForced = 1
 	}
 
@@ -767,14 +780,20 @@ func PopulateAnalysisColumns(a *domain.PositionAnalysis, playedMove, playedCubeA
 // candidate's board is one the lenient reading allows. Otherwise a played
 // move left with two boards is unscored, never matched to one of them.
 //
-// When the board cannot speak — no position, no dice, or a played move that
-// names no play of the position — only a candidate written exactly as the
-// played move is found.
+// A lenient reading keeps every board the written points allow, so an
+// unmarked played move that skips a point ("6/1" for 6/2*/1 or 6/5/1) written
+// exactly as a candidate takes that candidate's board among them; no importer
+// writes its played moves that way where the paths differ.
+//
+// Without a position (the historical migrations, a cube decision with no dice)
+// nothing can be replayed: a candidate written exactly as the played move is
+// found, else the single candidate of its shape (CanonicalMove). A played move
+// that names no play of its position is found only as written.
 func PlayedCandidate(pos *domain.Position, moves []domain.CheckerMove, playedMove string) *domain.CheckerMove {
-	var boards []domain.Position
-	if pos != nil {
-		boards = domain.PlayBoards(pos, playedMove, false)
+	if pos == nil || pos.Dice[0] < 1 || pos.Dice[1] < 1 {
+		return playedCandidateByShape(moves, playedMove)
 	}
+	boards := domain.PlayBoards(pos, playedMove, false)
 	allowed := func(b domain.Board) bool {
 		for _, p := range boards {
 			if domain.SameBoard(p.Board, b) {
@@ -799,7 +818,11 @@ func PlayedCandidate(pos *domain.Position, moves []domain.CheckerMove, playedMov
 	if len(boards) != 1 {
 		return nil
 	}
+	delta := moverDelta(playedMove)
 	for i := range moves {
+		if moverDelta(moves[i].Move) != delta {
+			continue // cannot leave the same board: spare the replay
+		}
 		// Several engines of a merged analysis may list the same play: the
 		// first listed is taken.
 		if b, err := ResolveBoard(pos, moves[i].Move, marks[moves[i].AnalysisEngine]); err == nil && allowed(b.Board) {
@@ -807,6 +830,68 @@ func PlayedCandidate(pos *domain.Position, moves []domain.CheckerMove, playedMov
 		}
 	}
 	return nil
+}
+
+// moverDelta is what a notation does to the mover's own checkers, read from
+// its text alone: the points it takes a checker from and puts one on, the
+// hops in between cancelled. Two notations leaving the same board from one
+// position have the same delta, so a different one rules a candidate out
+// before it is replayed.
+func moverDelta(move string) string {
+	count := map[string]int{}
+	for _, tok := range strings.Fields(move) {
+		n := 1
+		if i := strings.IndexByte(tok, '('); i >= 0 && strings.HasSuffix(tok, ")") {
+			if v, err := strconv.Atoi(tok[i+1 : len(tok)-1]); err == nil && v > 0 {
+				n = v
+			}
+			tok = tok[:i]
+		}
+		points := strings.Split(strings.ToLower(strings.ReplaceAll(tok, "*", "")), "/")
+		if len(points) < 2 {
+			return move
+		}
+		for j, pt := range points {
+			if pt == "25" {
+				pt = "bar"
+			}
+			points[j] = pt
+		}
+		count[points[0]] -= n
+		count[points[len(points)-1]] += n
+	}
+	keys := make([]string, 0, len(count))
+	for k, v := range count {
+		if v != 0 {
+			keys = append(keys, k+":"+strconv.Itoa(v))
+		}
+	}
+	sort.Strings(keys)
+	return strings.Join(keys, " ")
+}
+
+// playedCandidateByShape is PlayedCandidate without a position: the
+// candidate written exactly as the played move, else the one candidate of its
+// shape — two of the same shape would be a guess.
+func playedCandidateByShape(moves []domain.CheckerMove, playedMove string) *domain.CheckerMove {
+	norm := NormalizeMove(playedMove)
+	for i := range moves {
+		if NormalizeMove(moves[i].Move) == norm {
+			return &moves[i]
+		}
+	}
+	canon := CanonicalMove(playedMove)
+	var found *domain.CheckerMove
+	for i := range moves {
+		if CanonicalMove(moves[i].Move) != canon {
+			continue
+		}
+		if found != nil {
+			return nil
+		}
+		found = &moves[i]
+	}
+	return found
 }
 
 // CandidateMarksHits says, per analysis engine of a candidate list, whether

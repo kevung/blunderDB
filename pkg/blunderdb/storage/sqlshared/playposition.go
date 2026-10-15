@@ -5,11 +5,11 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 )
 
-// LegalPlaysColumns are the position columns a legal-play count depends on,
+// PlayPositionColumns are the position columns its checker plays depend on,
 // in the order PlayPosition takes them, qualified with the alias p.
-const LegalPlaysColumns = "p.state, p.player_on_roll, p.dice_1, p.dice_2"
+const PlayPositionColumns = "p.state, p.player_on_roll, p.dice_1, p.dice_2"
 
-// PlayPosition rebuilds, from the columns LegalPlaysColumns selects, what of a
+// PlayPosition rebuilds, from the columns PlayPositionColumns selects, what of a
 // stored position its checker plays depend on (board, player on roll, dice);
 // nil when the row has none (an analysis whose position is gone, a cube
 // decision without dice). Both backends derive is_forced and the played

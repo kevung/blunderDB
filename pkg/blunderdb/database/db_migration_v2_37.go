@@ -47,7 +47,7 @@ func (d *Database) migrate_2_36_0_to_2_37_0(ctx context.Context) error {
 				`SELECT a.id, a.data, a.is_forced, a.is_close_cube, a.best_move_equity_error,
 			        (SELECT mv.checker_move FROM move mv WHERE mv.position_id = a.position_id AND COALESCE(mv.checker_move, '') <> '' ORDER BY mv.id LIMIT 1),
 			        (SELECT `+sqlshared.ActionLabelSQL("mv.cube_action")+` FROM move mv WHERE mv.position_id = a.position_id AND `+sqlshared.ActionNotEmptySQL("mv.cube_action")+` ORDER BY mv.id LIMIT 1),
-			        `+sqlshared.LegalPlaysColumns+`
+			        `+sqlshared.PlayPositionColumns+`
 			 FROM analysis a LEFT JOIN position p ON p.id = a.position_id
 			 WHERE a.id > ? ORDER BY a.id LIMIT 500`, lastID)
 			if err != nil {

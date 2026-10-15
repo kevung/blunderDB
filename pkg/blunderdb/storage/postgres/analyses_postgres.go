@@ -213,13 +213,13 @@ func (s *analysisStore) positionOf(ctx context.Context, tenant, positionID int64
 	}
 	var state []byte
 	var por, d1, d2 *int64
-	err := s.db.QueryRow(ctx, `SELECT `+sqlshared.LegalPlaysColumns+` FROM position p WHERE p.id = $1 AND p.tenant_id = $2`,
+	err := s.db.QueryRow(ctx, `SELECT `+sqlshared.PlayPositionColumns+` FROM position p WHERE p.id = $1 AND p.tenant_id = $2`,
 		positionID, tenant).Scan(&state, &por, &d1, &d2)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return nil, nil
 	}
 	if err != nil {
-		return nil, fmt.Errorf("postgres: read position %d for its legal plays: %w", positionID, err)
+		return nil, fmt.Errorf("postgres: read position %d to replay its plays: %w", positionID, err)
 	}
 	return sqlshared.PlayPosition(state, por, d1, d2), nil
 }
@@ -450,7 +450,7 @@ func repairDenormalisedPages(ctx context.Context, db execer, tenant *int64, afte
 				        COALESCE(a.best_move_equity_error,0), a.best_move_equity_error IS NULL, a.is_forced, a.is_close_cube,
 				        (SELECT mv.checker_move FROM move mv WHERE mv.position_id = a.position_id AND mv.tenant_id = a.tenant_id AND COALESCE(mv.checker_move, '') <> '' ORDER BY mv.id LIMIT 1),
 				        (SELECT `+sqlshared.TenantActionLabelSQL("mv.cube_action")+` FROM move mv WHERE mv.position_id = a.position_id AND mv.tenant_id = a.tenant_id AND `+sqlshared.ActionNotEmptySQL("mv.cube_action")+` ORDER BY mv.id LIMIT 1),
-				        `+sqlshared.LegalPlaysColumns+`
+				        `+sqlshared.PlayPositionColumns+`
 				 FROM analysis a LEFT JOIN position p ON p.id = a.position_id AND p.tenant_id = a.tenant_id
 				 WHERE ($1::bigint IS NULL OR a.tenant_id = $1) AND a.id > $2 ORDER BY a.id LIMIT $3`,
 				tenant, lastID, repairPageSize)

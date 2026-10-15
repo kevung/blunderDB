@@ -171,8 +171,8 @@ func (s *analysisStore) prepare(ctx context.Context, positionID int64, a *domain
 	return engine.PopulateAnalysisColumns(a, playedMove, playedCubeAction, pos), nil
 }
 
-// legalPlaysSQL reads the columns a legal-play count depends on.
-const legalPlaysSQL = `SELECT ` + sqlshared.LegalPlaysColumns + ` FROM position p WHERE p.id = ?`
+// playPositionSQL reads the columns positionOf rebuilds a position from.
+const playPositionSQL = `SELECT ` + sqlshared.PlayPositionColumns + ` FROM position p WHERE p.id = ?`
 
 // positionOf reads the position a checker analysis is for, nil when it is
 // gone or has no dice; a cube-only analysis needs none, and a caller holding the position
@@ -186,12 +186,12 @@ func positionOf(ctx context.Context, q execer, positionID int64, a *domain.Posit
 	}
 	var state []byte
 	var por, d1, d2 *int64
-	err := q.QueryRowContext(ctx, legalPlaysSQL, positionID).Scan(&state, &por, &d1, &d2)
+	err := q.QueryRowContext(ctx, playPositionSQL, positionID).Scan(&state, &por, &d1, &d2)
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, nil
 	}
 	if err != nil {
-		return nil, fmt.Errorf("sqlite: read position %d for its legal plays: %w", positionID, err)
+		return nil, fmt.Errorf("sqlite: read position %d to replay its plays: %w", positionID, err)
 	}
 	return sqlshared.PlayPosition(state, por, d1, d2), nil
 }
@@ -426,7 +426,7 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, _ string)
 				`SELECT a.id, a.position_id, a.data, `+sqlshared.ActionLabelSQL("a.best_cube_action")+`, a.cube_error, a.best_move_equity_error, a.is_forced, a.is_close_cube,
 				        (SELECT mv.checker_move FROM move mv WHERE mv.position_id = a.position_id AND COALESCE(mv.checker_move, '') <> '' ORDER BY mv.id LIMIT 1),
 				        (SELECT `+sqlshared.ActionLabelSQL("mv.cube_action")+` FROM move mv WHERE mv.position_id = a.position_id AND `+sqlshared.ActionNotEmptySQL("mv.cube_action")+` ORDER BY mv.id LIMIT 1),
-				        `+sqlshared.LegalPlaysColumns+`
+				        `+sqlshared.PlayPositionColumns+`
 				 FROM analysis a LEFT JOIN position p ON p.id = a.position_id
 				 WHERE a.id > ? ORDER BY a.id LIMIT ?`, lastID, repairPageSize)
 			if err != nil {

@@ -90,8 +90,12 @@ func TestPlayedCandidate(t *testing.T) {
 	if m := PlayedCandidate(&opening, moves, "6/off 5/off"); m != nil {
 		t.Errorf("unknown play: got %v, want none", m)
 	}
-	if m := PlayedCandidate(nil, moves, "13/8 8/7"); m != nil {
-		t.Errorf("without a position only the exact spelling is found: got %v", m)
+	if m := PlayedCandidate(nil, moves, "13/8 8/7"); m == nil || m.Move != "13/7" {
+		t.Errorf("without a position, the one candidate of its shape: got %v", m)
+	}
+	sameShape := []domain.CheckerMove{{Move: "6/5 5/1", AnalysisEngine: "GNUbg"}, {Move: "6/2 2/1", AnalysisEngine: "GNUbg"}}
+	if m := PlayedCandidate(nil, sameShape, "6/1"); m != nil {
+		t.Errorf("without a position, two candidates of one shape: got %v, want none", m)
 	}
 	if m := PlayedCandidate(nil, moves, "6/5 13/8"); m == nil || m.Move != "13/8 6/5" {
 		t.Errorf("without a position, exact spelling: got %v", m)

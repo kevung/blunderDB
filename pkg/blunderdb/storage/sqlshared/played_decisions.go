@@ -38,7 +38,7 @@ func scorePlayedDecision(a *domain.PositionAnalysis, pos *domain.Position, decis
 		return playedDecision{}
 	}
 	move, cube := engine.PlayedActionsFor([]string{checkerMove}, []string{cubeAction}, a.PlayedMoves, a.PlayedCubeActions)
-	c := engine.PopulateAnalysisColumns(a, move, cube, pos)
+	c := engine.PlayedDecisionColumns(a, move, cube, pos)
 	pd := playedDecision{closeCube: c.IsCloseCube}
 	switch {
 	case decisionType == 1:
@@ -60,7 +60,7 @@ func (pd playedDecision) errArg() any {
 
 // PlayedDecisionAnalysisSQL reads what PlayedDecisionArgs scores a new move
 // by; a constant, so an import prepares it once.
-const PlayedDecisionAnalysisSQL = `SELECT COALESCE(p.decision_type, 0), a.data, ` + LegalPlaysColumns + `
+const PlayedDecisionAnalysisSQL = `SELECT COALESCE(p.decision_type, 0), a.data, ` + PlayPositionColumns + `
 		FROM position p JOIN analysis a ON a.position_id = p.id WHERE p.id = ?`
 
 // PlayedDecisionArgs returns the values of move.decision_error_mp and
@@ -130,7 +130,7 @@ func RescorePlayedDecisions(ctx context.Context, db Execer, analyses map[int64]*
 func RescoreMovesSQL(d Dialect, n int) string {
 	return `SELECT mv.id, mv.position_id, COALESCE(p.decision_type, 0), COALESCE(mv.checker_move, ''),
 			` + ActionLabelOrEmptyFor(d, "mv.cube_action") + `, mv.decision_error_mp, COALESCE(mv.is_close_cube, 0),
-			` + LegalPlaysColumns + `
+			` + PlayPositionColumns + `
 		FROM move mv JOIN position p ON p.id = mv.position_id
 		WHERE mv.position_id IN (` + Placeholders(n) + `)`
 }

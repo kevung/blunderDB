@@ -43,15 +43,17 @@ func PlayBoards(p *Position, notation string, marksHits bool) []Position {
 	}
 
 	var out []Position
-	seen := map[string]bool{}
 	record := func(pos Position, hits uint32) {
 		if starred&^hits != 0 || (marksHits && hits != starred) {
 			return
 		}
-		if key := boardKey(&pos); !seen[key] {
-			seen[key] = true
-			out = append(out, pos)
+		pos.Board = emptyNone(pos.Board)
+		for _, o := range out {
+			if o.Board == pos.Board {
+				return
+			}
 		}
+		out = append(out, pos)
 	}
 
 	var solve func(pos Position, dice []int, segs []playSegment, hits uint32)
@@ -72,7 +74,7 @@ func PlayBoards(p *Position, notation string, marksHits bool) []Position {
 		}
 	}
 	advance = func(pos Position, dice []int, at, target int, rest []playSegment, hits uint32) {
-		tried := map[int]bool{}
+		var tried [7]bool
 		for i, die := range dice {
 			if tried[die] {
 				continue
