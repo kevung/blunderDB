@@ -1996,7 +1996,9 @@ trois logiques distinctes (voir :ref:`headless`).
 * ``--candidates`` — Nombre de coups candidats conservés par décision de
   déplacement (défaut: 10).
 * ``--jobs`` — Nombre de positions analysées en parallèle (défaut: le nombre
-  de cœurs de la machine).
+  de cœurs de la machine). Quand il reste moins de positions que de cœurs (un
+  match court, la fin du lot), chaque recherche s'étale sur les cœurs libres ;
+  le résultat ne change pas d'un bit.
 * ``--match`` — Restreint le lot aux positions d'un seul match (0, le défaut,
   signifie toute la bibliothèque).
 * ``--compare`` — **N'écrit rien** : compare gammonNet aux analyses importées

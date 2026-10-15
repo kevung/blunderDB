@@ -171,7 +171,8 @@ transcripteur, celles d'une base ``.db`` de leur auteur d'origine.
    * - ``--analysis-workers <n>``
      - ``0``
      - travailleurs du moteur que partagent les balayages et les évaluations
-       de tous les tenants ; 0 = un par cœur
+       de tous les tenants ; une recherche s'étale sur les travailleurs
+       inactifs ; 0 = un par cœur
    * - ``--analysis-weights <liste>``
      - (vide)
      - ``tenant=poids,…`` : positions servies à un tenant à chaque tour des
@@ -1722,9 +1723,10 @@ Une instance partagée borne ce que chaque tenant lui prend avec
 moteur demandé par le tenant : ``gammonnet.analyzeMissing``,
 ``gammonnet.sweepStale``, ``gammonnet.compare``, ``gammonnet.cubeMatrix``,
 ``gammonnet.evaluate``, ``rollout.position`` et ``rollout.filter``. Il se
-compte en secondes CPU : le temps écoulé multiplié par le nombre de recherches
-menées à la fois, si bien qu'un calcul réparti sur tous les cœurs coûte autant
-que le même travail mené position par position. Une fois le temps du jour
+compte en secondes CPU : le temps écoulé de chaque calcul, plus celui des
+travailleurs inactifs sur lesquels sa recherche s'est étalée, si bien qu'un
+calcul réparti sur tous les cœurs coûte autant que le même travail mené
+position par position. Une fois le temps du jour
 épuisé, ces routes répondent 429 avec le code ``quota_exceeded``. Un balayage
 ou un ``rollout.filter`` en cours garde ce qu'il a enregistré et finit sur
 l'évènement ``quota_exceeded`` au lieu de ``done`` ; un ``rollout.position``
@@ -1759,7 +1761,9 @@ chercheur réutilisé, qui prennent les positions une à une en faisant le tour
 des tenants qui ont du travail. Deux tenants qui balaient en même temps se
 partagent les cœurs au lieu de les réclamer chacun ; une évaluation demandée
 pendant le balayage d'un autre tenant attend une position, pas tout le
-balayage. Avec ``--analysis-weights 7=3``, le tenant ``7`` reçoit trois
+balayage. Une recherche menée quand des travailleurs sont inactifs (une
+évaluation seule, la fin d'un balayage) s'étale sur eux, sans jamais dépasser
+``--analysis-workers`` cœurs ; son résultat ne change pas d'un bit. Avec ``--analysis-weights 7=3``, le tenant ``7`` reçoit trois
 positions par tour quand un autre en reçoit une. Les travaux d'un même tenant
 passent dans l'ordre où ils sont arrivés. Un rollout prend son tour partie
 par partie : un rollout long d'un tenant n'empêche pas la requête courte d'un
