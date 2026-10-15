@@ -114,7 +114,10 @@ func (d *Database) CompareWithGammonNet(ctx context.Context, ply, pruneK, candid
 					return
 				}
 				id := ids[i]
-				results <- gammonnet.CompareOne(positionsByID[id], storedByID[id], id, searcher, ply, pruneK, candidates)
+				release := gammonnet.HoldCore()
+				sample := gammonnet.CompareOne(positionsByID[id], storedByID[id], id, searcher, ply, pruneK, candidates)
+				release()
+				results <- sample
 			}
 		}()
 	}

@@ -25,6 +25,11 @@ import (
 type analysisPool struct {
 	workers int
 	weights map[string]int
+	// cores is the pool's own budget, workers tokens: a worker holds one
+	// while its unit runs, and the searches fork into the rest, so a lone
+	// request spreads over every idle worker's core and a full pool runs
+	// serial searches — never more than workers cores either way.
+	cores *gammonnet.Cores
 
 	start sync.Once
 	mu    sync.Mutex
@@ -76,6 +81,7 @@ func (j *poolJob) wait() { <-j.done }
 
 func newAnalysisPool(workers int, weights map[string]int) *analysisPool {
 	p := &analysisPool{workers: max(workers, 1), weights: weights, queues: map[string][]*poolJob{}, served: map[string]int64{}}
+	p.cores = gammonnet.NewCores(p.workers)
 	p.cond = sync.NewCond(&p.mu)
 	return p
 }
@@ -259,6 +265,8 @@ func (p *analysisPool) work() {
 		s, err := gammonnet.NewBatchSearcher(ply, pruneK)
 		if err != nil {
 			s = nil
+		} else if gammonnet.CoresFor(ply) != nil {
+			s = s.WithCores(p.cores)
 		}
 		searchers[k] = s
 		return s
@@ -282,7 +290,9 @@ func (p *analysisPool) work() {
 		}
 		p.mu.Unlock()
 
+		release := p.cores.Hold()
 		unit(get)
+		release()
 
 		p.mu.Lock()
 		j.inflight--

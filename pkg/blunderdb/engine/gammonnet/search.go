@@ -6,7 +6,6 @@ import (
 	_ "embed"
 	"fmt"
 	"math"
-	"runtime"
 	"slices"
 	"sync"
 )
@@ -1060,7 +1059,7 @@ func (s *Searcher) WithWorkers(n int) *Searcher {
 	if n <= 1 {
 		return s.WithCores(nil)
 	}
-	return s.WithCores(newCores(n - 1))
+	return s.WithCores(NewCores(n - 1))
 }
 
 // WithCores lets the searcher hand subtrees out to helpers whenever c has a
@@ -1076,27 +1075,27 @@ func (s *Searcher) WithCores(c *Cores) *Searcher {
 	return s
 }
 
-// LiveWorkers is how many goroutines a FOREGROUND search (the only one
-// running, with the user waiting) should spread its roll queue over: every
-// core, or one when the depth is too shallow for the pool (~6 ms to build)
-// to pay for itself (ADR-0011). The 2-ply floor is measured:
+// CoresFor is the budget a search at ply should fork into: the process's
+// (ProcessCores) from 2 ply, nil (serial) below, where the hand-offs cost more
+// than they return (ADR-0011). The 2-ply floor is measured:
 //
-//	0 ply  286 µs serial, 352 µs with eight workers — there is no roll queue
-//	       to spread at all, only barriers to pay for. This is the tier the
-//	       board refreshes synchronously on every edit.
-//	1 ply  3,5 ms serial, 1,8 ms with eight workers — a real speedup, and
-//	       still a net LOSS once the 6 ms of pool cost the tier is on the hook
-//	       for.
-//	2 ply  250 ms serial, 55 ms with eight workers. Nothing to weigh.
+//	0 ply  286 µs serial, 352 µs with eight goroutines — there is no roll
+//	       queue to spread at all, only barriers to pay for. This is the tier
+//	       the board refreshes synchronously on every edit.
+//	1 ply  3,5 ms serial, 1,8 ms with eight goroutines — a real speedup, and
+//	       still a net loss once the pool's start-up is on the hook.
+//	2 ply  250 ms serial, 55 ms with eight goroutines. Nothing to weigh.
 //
-// Never for a batch job: its parallelism is across positions, one serial
-// searcher per goroutine (NewBatchSearcher); a pool on top would ask for
-// NumCPU² goroutines.
-func LiveWorkers(ply int) int {
+// Every search shares the one budget, the live panel's and a batch's alike:
+// a batch goroutine holds a token per position (Cores.Hold), so a batch that
+// fills the machine leaves no token to fork into, and one that does not —
+// its tail, a match of five positions — lends the idle cores to the searches
+// still running. Nothing stacked ever asks for more than GOMAXPROCS.
+func CoresFor(ply int) *Cores {
 	if ply < 2 {
-		return 1
+		return nil
 	}
-	return runtime.NumCPU()
+	return ProcessCores()
 }
 
 // Reconfigure points an existing searcher at a new configuration — same

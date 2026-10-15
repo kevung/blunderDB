@@ -147,9 +147,8 @@ func EvaluatePosition(pos domain.Position, ply, pruneK, candidates int) (EvalRes
 	if err != nil {
 		return EvalResult{}, err
 	}
-	// Recherche au premier plan : tous les cœurs (ADR-0011). Un lot n'entre
-	// jamais par ici (NewBatchSearcher/EvaluatePositionWith).
-	searcher = searcher.WithWorkers(LiveWorkers(cfg.Ply))
+	// Les cœurs que le budget du processus laisse libres (CoresFor).
+	searcher = searcher.WithCores(CoresFor(cfg.Ply))
 
 	return evaluateConfigured(&gnPos, &pos, searcher, cfg, state, candidates)
 }
@@ -161,13 +160,26 @@ func EvaluatePosition(pos domain.Position, ply, pruneK, candidates int) (EvalRes
 //
 // A Searcher costs about 5.5 MB; one per goroutine, reused, pays it once and
 // keeps the cache warm, which is licit (cache.go).
+//
+// It forks into the process's idle cores (CoresFor): the goroutine that runs
+// it holds a token of ProcessCores while it searches (HoldCore), so the
+// searchers of a batch only lend each other the cores the batch leaves idle.
 func NewBatchSearcher(ply, pruneK int) (*Searcher, error) {
 	cfg := DefaultConfig(ply)
 	if pruneK > 0 {
 		cfg.PruneK = pruneK
 	}
-	return NewSearcher(cfg)
+	s, err := NewSearcher(cfg)
+	if err != nil {
+		return nil, err
+	}
+	return s.WithCores(CoresFor(ply)), nil
 }
+
+// HoldCore takes a token of the process budget for a goroutine that is about
+// to search on its own — one position of a batch, one server request —
+// blocking while every core is busy. Call release once the search returns.
+func HoldCore() (release func()) { return ProcessCores().Hold() }
 
 // EvaluatePositionWith is EvaluatePosition on a searcher the caller owns and
 // reuses — same result, bit for bit: the searcher is re-pointed at pos's
@@ -192,7 +204,7 @@ func EvaluatePositionWithMET(searcher *Searcher, pos domain.Position, met *engin
 		if err != nil {
 			return EvalResult{}, err
 		}
-		searcher = fresh.WithWorkers(LiveWorkers(fresh.cfg.Ply))
+		searcher = fresh.WithCores(CoresFor(fresh.cfg.Ply))
 	}
 
 	gnPos, err := FromDomain(&pos)

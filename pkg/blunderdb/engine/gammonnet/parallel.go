@@ -56,12 +56,14 @@ type Cores struct {
 	tokens chan struct{}
 }
 
-// newCores is a budget of n tokens.
-func newCores(n int) *Cores {
+// NewCores is a budget of n tokens, for a component that must stay within a
+// core count of its own (the server's AnalysisWorkers); everything else shares
+// ProcessCores.
+func NewCores(n int) *Cores {
 	return &Cores{tokens: make(chan struct{}, max(n, 0))}
 }
 
-var processCores = sync.OnceValue(func() *Cores { return newCores(runtime.GOMAXPROCS(0)) })
+var processCores = sync.OnceValue(func() *Cores { return NewCores(runtime.GOMAXPROCS(0)) })
 
 // ProcessCores is the budget the whole process shares: GOMAXPROCS tokens.
 func ProcessCores() *Cores { return processCores() }

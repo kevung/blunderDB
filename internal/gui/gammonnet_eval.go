@@ -61,12 +61,14 @@ func (a *App) EvaluatePositionImmediate(pos domain.Position, pruneK, candidates 
 	return a.evaluateGammonNet(pos, 0, pruneK, candidates)
 }
 
-// gammonNetLivePool shares ONE Searcher and worker pool across the up to
-// three searches of an evaluation and across gestures (a fresh NumCPU pool
-// per call costs ~190 MB on 16 cores, cold caches).
+// gammonNetLivePool shares ONE Searcher and its helpers across the up to
+// three searches of an evaluation and across gestures (fresh helpers on
+// every core per call cost ~190 MB on 16 cores, and a cold cache). It forks
+// into the process budget (gammonnet.CoresFor), so a batch running beside it
+// only ever leaves it the cores it does not use.
 //
 // Reconfigure cannot toggle the prune network, so acquire rebuilds when
-// pruneK changes. Below LiveWorkers' ply-2 floor it bypasses the pool, so the
+// pruneK changes. Below CoresFor's ply-2 floor it bypasses the pool, so the
 // per-keystroke 0-ply tier never waits behind the at-rest search. mu
 // serialises a superseded search, cancelled and unwinding, rather than
 // doubling memory.
@@ -79,7 +81,7 @@ type gammonNetLivePool struct {
 // acquire returns a searcher for ply/pruneK and a release to call once the
 // whole (sequential) evaluation has run.
 func (p *gammonNetLivePool) acquire(ply, pruneK int) (*gammonnet.Searcher, func(), error) {
-	if gammonnet.LiveWorkers(ply) <= 1 {
+	if gammonnet.CoresFor(ply) == nil {
 		s, err := gammonnet.NewBatchSearcher(ply, pruneK)
 		if err != nil {
 			return nil, nil, err
@@ -94,7 +96,7 @@ func (p *gammonNetLivePool) acquire(ply, pruneK int) (*gammonnet.Searcher, func(
 			p.mu.Unlock()
 			return nil, nil, err
 		}
-		p.searcher = s.WithWorkers(gammonnet.LiveWorkers(ply))
+		p.searcher = s
 		p.pruneK = pruneK
 	}
 	return p.searcher, p.mu.Unlock, nil

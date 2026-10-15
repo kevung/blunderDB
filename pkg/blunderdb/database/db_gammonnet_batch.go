@@ -55,9 +55,11 @@ func (d *Database) positionIDsWithoutAnalysis() ([]int64, error) {
 }
 
 // AnalyzeMissingWithGammonNet writes a gammonNet analysis for every position
-// that has none, over jobs goroutines (<= 0 means NumCPU). Each search runs
-// serially: WithWorkers is the live panel's regime, and stacking both would
-// oversubscribe the cores.
+// that has none, over jobs goroutines (<= 0 means NumCPU). Each goroutine
+// holds a token of the process budget while it searches, and its searcher
+// forks only into tokens left free (gammonnet.CoresFor): a batch as wide as
+// the machine runs serial searches, its tail and a short match spread over
+// the idle cores, and nothing stacked oversubscribes them.
 //
 // ctx is checked before each position and interrupts the search in flight
 // (Searcher.BindContext), so cancelling a deep batch returns at once; the
@@ -268,7 +270,12 @@ func (d *Database) analyzeIDsWithGammonNet(ctx context.Context, gen uint64, ids 
 				}
 				id := ids[i]
 
+				// One token of the process budget per position: the batch
+				// lends its searchers only the cores it leaves idle — its
+				// tail, a match shorter than the machine is wide.
+				release := gammonnet.HoldCore()
 				analysis, err := evaluateOnePositionWithGammonNet(positionsByID[id], id, searcher, met, ply, pruneK, candidates)
+				release()
 				if gammonnet.IsCanceled(err) {
 					return // not a failure: the position is picked up on the next run
 				}

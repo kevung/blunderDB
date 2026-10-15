@@ -7,6 +7,7 @@ import (
 	"math"
 	"os"
 	"runtime"
+	"sync"
 	"testing"
 )
 
@@ -146,5 +147,49 @@ func TestParallelSearchFingerprint(t *testing.T) {
 				sameFingerprint(t, serial, run(nw))
 			}
 		})
+	}
+}
+
+// TestSharedBudgetSearchesAgree runs several batch searchers at once on the
+// process budget, as a short batch does — each holding a token, forking into
+// the rest — and holds every ranking to the serial one.
+func TestSharedBudgetSearchesAgree(t *testing.T) {
+	if testing.Short() {
+		t.Skip("2-ply searches, serial and concurrent")
+	}
+	raw, err := os.ReadFile(corpusPath)
+	if err != nil {
+		t.Skipf("no corpus: %v", err)
+	}
+	cases := decodeCorpus(t, raw)[:4]
+
+	want := make([]fingerprint, len(cases))
+	for i, c := range cases {
+		s, err := NewBatchSearcher(2, DefaultPruneK)
+		if err != nil {
+			t.Fatal(err)
+		}
+		want[i] = rankingFingerprint(t, s.WithCores(nil), []goldCase{c})
+	}
+
+	got := make([]fingerprint, len(cases))
+	var wg sync.WaitGroup
+	for i, c := range cases {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			s, err := NewBatchSearcher(2, DefaultPruneK)
+			if err != nil {
+				t.Error(err)
+				return
+			}
+			release := HoldCore()
+			defer release()
+			got[i] = rankingFingerprint(t, s, []goldCase{c})
+		}()
+	}
+	wg.Wait()
+	for i := range cases {
+		sameFingerprint(t, want[i], got[i])
 	}
 }

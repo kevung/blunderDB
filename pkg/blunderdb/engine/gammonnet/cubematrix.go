@@ -145,7 +145,9 @@ func cubeMatrixGoroutines(workers, ply, pruneK int) CellExec {
 					if i >= int64(n) {
 						return
 					}
+					release := HoldCore()
 					cell(int(i), searcher)
+					release()
 				}
 			}()
 		}
