@@ -248,38 +248,45 @@ func (t *theme) fit(r *raster, ps []probe, g registration) float64 {
 	return s
 }
 
+// refine climbs from a coarse placement by moving the board's four edges one
+// at a time. The edges, not (x0, y0, p, hs), are the coordinates: those are
+// coupled — shifting y0 alone moves the top and the bottom edge together, so
+// a placement whose top is a few pixels high and bottom a few pixels low has
+// no single move that improves it, and the climb stops on a board drawn
+// slightly too small, inside the probes' tolerance, whose checker slots and
+// dice then miss. One edge moves without the other three.
 func (t *theme) refine(r *raster, ps []probe, g registration) (registration, float64) {
+	W, H := t.fieldW(), t.fieldH
+	e := [4]float64{g.x0, g.y0, g.x0 + W*g.p, g.y0 + H*g.p*g.hs}
+	reg := func(e [4]float64) (registration, bool) {
+		p := (e[2] - e[0]) / W
+		if p <= 0 {
+			return registration{}, false
+		}
+		hs := (e[3] - e[1]) / (H * p)
+		return registration{e[0], e[1], p, hs}, hs >= 0.97 && hs <= 1.03
+	}
 	best := t.fit(r, ps, g)
-	steps := [4]float64{0.3 * g.p, 0.3 * g.p, 0.04 * g.p, 0.02}
+	step := 0.3 * g.p
 	for round := 0; round < 6; round++ {
 		improved := true
 		for improved {
 			improved = false
 			for dim := 0; dim < 4; dim++ {
 				for _, sign := range []float64{-1, 1} {
-					h := g
-					switch dim {
-					case 0:
-						h.x0 += sign * steps[0]
-					case 1:
-						h.y0 += sign * steps[1]
-					case 2:
-						h.p += sign * steps[2]
-					case 3:
-						h.hs += sign * steps[3]
-					}
-					if h.hs < 0.97 || h.hs > 1.03 {
+					f := e
+					f[dim] += sign * step
+					h, ok := reg(f)
+					if !ok {
 						continue
 					}
 					if s := t.fit(r, ps, h); s > best {
-						g, best, improved = h, s, true
+						e, g, best, improved = f, h, s, true
 					}
 				}
 			}
 		}
-		for i := range steps {
-			steps[i] /= 2
-		}
+		step /= 2
 	}
 	return g, best
 }

@@ -163,30 +163,67 @@ func TestReadShrinksALargeCapture(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	// The bound is lowered so that a 4x enlargement is past it: the shrinking
+	// The bound is lowered so that an enlargement is past it: the shrinking
 	// is the same at any size, and a real 5K capture costs minutes under -race.
 	defer func(v int) { readPixels = v }(readPixels)
-	readPixels = 300_000
-	const k = 4 // 1416x1096, past readPixels: shrunk by 3, a 1.33x scale
-	b := src.Bounds()
-	big := image.NewRGBA(image.Rect(0, 0, b.Dx()*k, b.Dy()*k))
-	for y := 0; y < big.Rect.Dy(); y++ {
-		for x := 0; x < big.Rect.Dx(); x++ {
-			big.Set(x, y, src.At(b.Min.X+x/k, b.Min.Y+y/k))
+	cases := []struct {
+		k, readPixels int
+	}{
+		{4, 300_000}, // 1416x1096 shrunk by 3: a 1.33x scale
+		// 1062x822 shrunk by 2, a 1.5x scale: every other pixel of the
+		// shrunk board blends two of the original, which once left the
+		// board placed a few pixels small (the checkers of two points and
+		// the dice missed) and the dice's spots counted short.
+		{3, 250_000},
+	}
+	for _, c := range cases {
+		readPixels = c.readPixels
+		b := src.Bounds()
+		big := image.NewRGBA(image.Rect(0, 0, b.Dx()*c.k, b.Dy()*c.k))
+		for y := 0; y < big.Rect.Dy(); y++ {
+			for x := 0; x < big.Rect.Dx(); x++ {
+				big.Set(x, y, src.At(b.Min.X+x/c.k, b.Min.Y+y/c.k))
+			}
+		}
+		rd, err := Read(big)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if got := domain.EncodeXGIDBoard(&rd.Position); got != "a--abBC-C--AbDa-aaAd-b--A-" {
+			t.Errorf("x%d: board %s (doubts %v)", c.k, got, rd.Doubts)
+		}
+		if rd.Position.Dice != [2]int{6, 2} || len(rd.Doubts) != 0 {
+			t.Errorf("x%d: dice %v, doubts %v", c.k, rd.Position.Dice, rd.Doubts)
+		}
+		// Located afresh at another scale, the board may move by a pixel or
+		// two of the original: within 2 % of its width.
+		want := small.Board.Min.Mul(c.k)
+		tol := rd.Board.Dx() / 50
+		if d := rd.Board.Min.Sub(want); d.X*d.X+d.Y*d.Y > tol*tol {
+			t.Errorf("x%d: board found at %v, want near %v", c.k, rd.Board, want)
 		}
 	}
-	rd, err := Read(big)
-	if err != nil {
-		t.Fatal(err)
+}
+
+// A die whose spots were miscounted is unread, never misread: every face is
+// symmetric about its centre, which holds a spot exactly when the count is odd.
+func TestPointSymmetricRejectsAMiscountedDie(t *testing.T) {
+	six := []image.Point{{0, 0}, {0, 5}, {0, 10}, {8, 0}, {8, 5}, {8, 10}}
+	cases := []struct {
+		name  string
+		spots []image.Point
+		want  bool
+	}{
+		{"six", six, true},
+		{"five", []image.Point{{0, 0}, {0, 10}, {4, 5}, {8, 0}, {8, 10}}, true},
+		{"one", []image.Point{{4, 5}}, true},
+		{"six less one", six[1:], false},
+		{"six less two of a column", six[2:], false},
+		{"four plus a stray", []image.Point{{0, 0}, {0, 10}, {8, 0}, {8, 10}, {2, 5}}, false},
 	}
-	if got := domain.EncodeXGIDBoard(&rd.Position); got != "a--abBC-C--AbDa-aaAd-b--A-" {
-		t.Errorf("board %s", got)
-	}
-	// Located afresh at another scale, the board may move by a pixel or two
-	// of the original: within 2 % of its width.
-	want := small.Board.Min.Mul(k)
-	tol := rd.Board.Dx() / 50
-	if d := rd.Board.Min.Sub(want); d.X*d.X+d.Y*d.Y > tol*tol {
-		t.Errorf("board found at %v, want near %v", rd.Board, want)
+	for _, c := range cases {
+		if got := pointSymmetric(c.spots, 1.5); got != c.want {
+			t.Errorf("%s: %v, want %v", c.name, got, c.want)
+		}
 	}
 }

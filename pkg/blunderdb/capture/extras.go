@@ -225,20 +225,27 @@ func countPips(rg region, faceMask []bool, box image.Rectangle, lightFace bool) 
 	sort.Float64s(faceLums)
 	face := faceLums[len(faceLums)/2]
 	isFace := func(x, y int) bool { return math.Abs(lum(x, y)-face) < 35 }
-	box = box.Inset(-1).Intersect(image.Rect(0, 0, rg.w, rg.h))
+	// The counter's distances follow the die's size, so that a die drawn
+	// large or shrunk by a fractional factor is read like one drawn small:
+	// m, the reach of a local extreme, is about a spot's radius; R, the ring
+	// a spot must stand out from, lies between a spot and its neighbours.
+	side := min(box.Dx(), box.Dy())
+	m := max(1, int(math.Round(float64(side)/16)))
+	R := max(2, int(math.Round(float64(side)/8)))
+	box = box.Inset(-m).Intersect(image.Rect(0, 0, rg.w, rg.h))
 	var spots []image.Point
 	for y := box.Min.Y; y < box.Max.Y; y++ {
 		for x := box.Min.X; x < box.Max.X; x++ {
 			l := lum(x, y)
 			isMin := true
-			for dy := -1; dy <= 1 && isMin; dy++ {
-				for dx := -1; dx <= 1; dx++ {
+			for dy := -m; dy <= m && isMin; dy++ {
+				for dx := -m; dx <= m; dx++ {
 					if dx == 0 && dy == 0 {
 						continue
 					}
-					m := lum(x+dx, y+dy)
+					v := lum(x+dx, y+dy)
 					// Ties go to the first pixel in reading order.
-					if m < l || (m == l && (dy < 0 || (dy == 0 && dx < 0))) {
+					if v < l || (v == l && (dy < 0 || (dy == 0 && dx < 0))) {
 						isMin = false
 						break
 					}
@@ -248,11 +255,11 @@ func countPips(rg region, faceMask []bool, box image.Rectangle, lightFace bool) 
 				continue
 			}
 			ring, k := 0.0, 0
-			for d := -2; d <= 2; d++ {
-				ring += lum(x+d, y-2) + lum(x+d, y+2)
+			for d := -R; d <= R; d++ {
+				ring += lum(x+d, y-R) + lum(x+d, y+R)
 				k += 2
-				if d > -2 && d < 2 {
-					ring += lum(x-2, y+d) + lum(x+2, y+d)
+				if d > -R && d < R {
+					ring += lum(x-R, y+d) + lum(x+R, y+d)
 					k += 2
 				}
 			}
@@ -260,10 +267,10 @@ func countPips(rg region, faceMask []bool, box image.Rectangle, lightFace bool) 
 				continue
 			}
 			// A spot lies on the face: most of the eight compass points
-			// two steps away show the face's colour, not the board's.
+			// two spot-widths away show the face's colour, not the board's.
 			around := 0
-			for _, d := range [8][2]int{{2, 0}, {-2, 0}, {0, 2}, {0, -2}, {2, 2}, {2, -2}, {-2, 2}, {-2, -2}} {
-				if isFace(x+d[0], y+d[1]) {
+			for _, d := range [8][2]int{{1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}} {
+				if isFace(x+R*d[0], y+R*d[1]) {
 					around++
 				}
 			}
@@ -272,7 +279,7 @@ func countPips(rg region, faceMask []bool, box image.Rectangle, lightFace bool) 
 			}
 			near := false
 			for _, q := range spots {
-				if abs(q.X-x) <= 1 && abs(q.Y-y) <= 1 {
+				if abs(q.X-x) <= m && abs(q.Y-y) <= m {
 					near = true
 				}
 			}
@@ -281,7 +288,47 @@ func countPips(rg region, faceMask []bool, box image.Rectangle, lightFace bool) 
 			}
 		}
 	}
+	if !pointSymmetric(spots, math.Max(1.5, float64(side)/8)) {
+		return 0
+	}
 	return len(spots)
+}
+
+// pointSymmetric says whether spots could be a die's face: every face from
+// one to six is symmetric about its centre, which holds a spot exactly when
+// the count is odd. A spot missed or added by the counter breaks that, and the
+// die is then unread rather than misread — except a six that loses its two
+// middle spots, which is a four.
+func pointSymmetric(spots []image.Point, tol float64) bool {
+	if len(spots) == 0 {
+		return true
+	}
+	var cx, cy float64
+	for _, q := range spots {
+		cx += float64(q.X)
+		cy += float64(q.Y)
+	}
+	cx /= float64(len(spots))
+	cy /= float64(len(spots))
+	centred := 0
+	for _, q := range spots {
+		mx, my := 2*cx-float64(q.X), 2*cy-float64(q.Y)
+		if math.Hypot(mx-float64(q.X), my-float64(q.Y)) <= tol {
+			centred++
+			continue
+		}
+		mirrored := false
+		for _, o := range spots {
+			if math.Hypot(mx-float64(o.X), my-float64(o.Y)) <= tol {
+				mirrored = true
+				break
+			}
+		}
+		if !mirrored {
+			return false
+		}
+	}
+	return centred == len(spots)%2
 }
 
 func abs(v int) int {
