@@ -283,7 +283,7 @@ func checkMatchIsolation(t *testing.T, ctx context.Context, s storage.Storage, a
 		t.Errorf("Get(%s, id from %s): got %v, want ErrNotFound", b, a, err)
 	}
 
-	// A match of a moving on a position is invisible to b asking about it.
+	// A match of a with a move on a position is invisible to b asking about it.
 	p := checkerPos()
 	posID, err := s.Positions().Save(ctx, a, &p)
 	if err != nil {
