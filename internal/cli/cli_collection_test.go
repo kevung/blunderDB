@@ -4,14 +4,14 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"github.com/kevung/blunderdb/pkg/blunderdb/database"
-	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
 )
 
 // seedCollection imports the XG fixture and gathers its first n positions

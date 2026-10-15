@@ -40,4 +40,7 @@ type RencontreStore interface {
 	// SetTournamentTableSettings is SetTableSettings for a Tournament's own
 	// tables.
 	SetTournamentTableSettings(ctx context.Context, scope string, tournamentID int64, settings []domain.TableSetting) error
+	// KeepDates gives Rencontre id the created_at/updated_at text its source
+	// row bore (an empty one is left as is): an import keeps its history.
+	KeepDates(ctx context.Context, scope string, id int64, created, updated string) error
 }

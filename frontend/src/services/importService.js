@@ -201,6 +201,8 @@ async function handleImportCommitCore() {
             total: result.total,
             matches: result.matches ?? 0,
             matchesKnown: result.matchesKnown ?? 0,
+            directions: result.directions ?? 0,
+            rencontres: result.rencontres ?? 0,
             livingCollectionsFrozen: result.livingCollectionsFrozen ?? [],
             livingCollectionsOnManual: result.livingCollectionsOnManual ?? [],
             unreadable: result.unreadable ?? []
@@ -426,6 +428,7 @@ export async function importPosition() {
         setStatusBarMessage(tMsg('status.noDatabaseOpened'));
         return;
     }
+    /** @type {any} */
     let outcome = null;
     try {
         const files = await OpenPositionFilesDialog();

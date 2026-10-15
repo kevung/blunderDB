@@ -1287,6 +1287,8 @@
         "matchesToSkip": "Partidas ya presentes (omitidas)",
         "matchesAdded": "Partidas añadidas",
         "matchesKnown": "Partidas ya presentes",
+        "directionsRead": "Direcciones recuperadas",
+        "rencontresCreated": "Eventos creados",
         "livingFrozen": "Colecciones dinámicas congeladas (no se pudo trasladar su consulta): {names}",
         "livingOnManual": "Colecciones dinámicas no vertidas en su lista del mismo nombre: {names}",
         "unreadable": "Omitido (el origen es demasiado antiguo para leerse): {names}",

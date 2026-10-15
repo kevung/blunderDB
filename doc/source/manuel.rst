@@ -1470,13 +1470,16 @@ ne remplace pas ce qui est déjà là.
 
 * **Importer une base relit tout ce qu'un export écrit.** Les positions, avec
   leurs analyses et commentaires, mais aussi les matchs (parties et coups
-  compris), les tournois, les brouillons de transcription, les alias, les
-  collections, les leçons et les paquets Anki : voir :ref:`guide_fusionner_base`.
+  compris), les tournois avec leur Direction et leur Rencontre, les brouillons
+  de transcription, les alias, les collections, les leçons et les paquets
+  Anki : voir :ref:`guide_fusionner_base`.
   Rien n'est écrasé : un match déjà présent n'est pas recopié, un tournoi du même
   nom reçoit les matchs sans changer la date de l'événement (sa date de dernière
-  modification avance, puisqu'il reçoit de nouveaux matchs), et ce que la base
-  décidait déjà reste décidé par elle. Les tournois, brouillons de transcription
-  et alias créés par l'import gardent leurs dates d'origine ; les collections,
+  modification avance, puisqu'il reçoit de nouveaux matchs), un tournoi qui a
+  déjà sa Direction la garde et reste hors de la Rencontre importée, un match
+  déjà rangé dans un autre tournoi ou une autre place du tableau y reste, et ce
+  que la base décidait déjà reste décidé par elle. Les tournois, Directions, Rencontres, brouillons de transcription et
+  alias créés par l'import gardent leurs dates d'origine ; les collections,
   leçons et paquets Anki créés n'en gardent pas.
 
 * **Une analyse par moteur.** eXtreme Gammon, GNUbg, BGBlitz et l'évaluateur
@@ -5175,8 +5178,8 @@ Huit points méritent l'attention :
   d'autres. Il part aussi avec sa Direction — journal, paires, tables et
   rattachement des matchs exportés — et sa Rencontre part dès qu'un de ses
   tournois part ; le dossier de sortie de la Direction reste chez vous. La
-  Direction se retrouve en ouvrant le fichier : importer une base ne la relit
-  pas.
+  Direction se retrouve en ouvrant le fichier, ou en l'important dans une
+  autre base.
 * **Un paquet Anki part avec ses positions**, en copie d'étude neuve. La case
   *avec mon historique* emporte en plus l'état de chaque carte et le journal
   de ses révisions : une sauvegarde, ou vos paquets passés sur une autre

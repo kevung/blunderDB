@@ -79,6 +79,10 @@ type Summary struct {
 	Tournaments    int `json:"tournaments,omitempty"`
 	Transcriptions int `json:"transcriptions,omitempty"`
 	Aliases        int `json:"aliases,omitempty"`
+	// Directions and Rencontres count what a native .db import read back of
+	// the tournaments' Direction (mergeDirections).
+	Directions int `json:"directions,omitempty"`
+	Rencontres int `json:"rencontres,omitempty"`
 	// Unreadable names the families a native .db source is too old to hold.
 	Unreadable []string `json:"unreadable,omitempty"`
 	// Lessons counts the Lessons a native .db import created (MergeLessons);

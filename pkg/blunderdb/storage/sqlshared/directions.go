@@ -251,3 +251,8 @@ func parseTimeText(s string) time.Time {
 	}
 	return time.Time{}
 }
+
+// KeepDates implements storage.DirectionStore.KeepDates.
+func (s *DirectionStore) KeepDates(ctx context.Context, scope string, tournamentID int64, created, updated string) error {
+	return KeepDates(ctx, s.DB, scope, "direction", "tournament_id", tournamentID, created, updated)
+}

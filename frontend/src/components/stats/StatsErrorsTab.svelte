@@ -10,7 +10,7 @@
     import StatsRecurringErrors from './StatsRecurringErrors.svelte';
     import StatsTimeErrors from './StatsTimeErrors.svelte';
 
-    /** @type {{ result: import('../../stores/statsStore.js').StatsResult|null, metric: string }} */
+    /** @type {{ result: import('../../stores/statsStore.js').StatsResult|null, metric: string, recurring?: any, recurringLoading?: boolean, recurringError?: any }} */
     let { result = null, metric = 'pr', recurring = null, recurringLoading = false, recurringError = null } = $props();
 
     // ── Derived: summary ──────────────────────────────────────────────────────
@@ -37,7 +37,7 @@
             legend: { display: false },
             tooltip: {
                 callbacks: {
-                    afterBody: (items) => {
+                    afterBody: (/** @type {any[]} */ items) => {
                         const idx = items[0]?.dataIndex;
                         if (idx == null) return [];
                         const c = cubeBreakdown[idx];
@@ -112,7 +112,7 @@
               ]
     );
 
-    function handleDirectionClick(cell, /** @type {number} */ n) {
+    function handleDirectionClick(/** @type {any} */ cell, /** @type {number} */ n) {
         if (n === 0) return; // nothing behind an empty cell
         const filter = get(statsFilterStore);
         loadPositionsFromStatsSelection(filter, { Kind: 'cube_direction', CubeCell: cell });
@@ -174,6 +174,7 @@
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     /** Build a human-readable bucket label in EMG units. */
+    /** @param {{ MinMP: number, MaxMP: number }} bucket */
     function bucketLabel(bucket) {
         const lo = (bucket.MinMP / 1000).toFixed(3);
         if (bucket.MaxMP < 0) return `\u2265${lo}`;
@@ -182,6 +183,7 @@
     }
 
     /** Blunder rate as a percentage string. */
+    /** @param {{ NumDecisions: number, BlunderCount: number }|null|undefined} c */
     function blunderRate(c) {
         if (!c || c.NumDecisions === 0) return '0.0';
         return ((c.BlunderCount / c.NumDecisions) * 100).toFixed(1);

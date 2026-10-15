@@ -193,8 +193,9 @@ export function stepsFromNotation(text, mover) {
  */
 export function diceMoveText(dice, notation) {
     const move = notation ?? '';
-    if (!(dice?.[0] > 0) || !(dice?.[1] > 0)) return move;
-    return `${dice[0]}${dice[1]}: ${move}`;
+    const [d1, d2] = dice ?? [];
+    if (!(d1 !== undefined && d1 > 0) || !(d2 !== undefined && d2 > 0)) return move;
+    return `${d1}${d2}: ${move}`;
 }
 
 /**

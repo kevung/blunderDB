@@ -1287,6 +1287,8 @@
         "matchesToSkip": "Jo olemassa olevat ottelut (ohitetaan)",
         "matchesAdded": "Lisätyt ottelut",
         "matchesKnown": "Jo olemassa olevat ottelut",
+        "directionsRead": "Palautetut johdot",
+        "rencontresCreated": "Luodut tapahtumat",
         "livingFrozen": "Dynaamiset kokoelmat jäädytetty (niiden hakua ei voitu siirtää): {names}",
         "livingOnManual": "Dynaamisia kokoelmia ei lisätty samannimiseen luetteloosi: {names}",
         "unreadable": "Jätetty pois (lähde on liian vanha luettavaksi): {names}",

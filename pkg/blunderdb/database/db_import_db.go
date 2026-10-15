@@ -781,6 +781,8 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 		"matches":                   matches.Matches,
 		"matchesKnown":              matches.Duplicates,
 		"tournaments":               matches.Tournaments,
+		"directions":                matches.Directions,
+		"rencontres":                matches.Rencontres,
 		"transcriptions":            matches.Transcriptions,
 		"aliases":                   matches.Aliases,
 		"unreadable":                matches.Unreadable,

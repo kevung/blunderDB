@@ -18,6 +18,8 @@ export const importResultStore = writable({
     total: 0,
     matches: 0,
     matchesKnown: 0,
+    directions: 0,
+    rencontres: 0,
     livingCollectionsFrozen: /** @type {string[]} */ ([]),
     livingCollectionsOnManual: /** @type {string[]} */ ([]),
     unreadable: /** @type {string[]} */ ([])

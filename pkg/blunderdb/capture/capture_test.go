@@ -163,7 +163,11 @@ func TestReadShrinksALargeCapture(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	const k = 11 // 3894x3014, past MaxPixels
+	// The bound is lowered so that a 4x enlargement is past it: the shrinking
+	// is the same at any size, and a real 5K capture costs minutes under -race.
+	defer func(v int) { readPixels = v }(readPixels)
+	readPixels = 300_000
+	const k = 4 // 1416x1096, past readPixels: shrunk by 3, a 1.33x scale
 	b := src.Bounds()
 	big := image.NewRGBA(image.Rect(0, 0, b.Dx()*k, b.Dy()*k))
 	for y := 0; y < big.Rect.Dy(); y++ {

@@ -1287,6 +1287,8 @@
         "matchesToSkip": "Matchs déjà présents (ignorés)",
         "matchesAdded": "Matchs ajoutés",
         "matchesKnown": "Matchs déjà présents",
+        "directionsRead": "Directions relues",
+        "rencontresCreated": "Événements créés",
         "livingFrozen": "Collections vivantes figées (leur requête n'a pas pu être reportée) : {names}",
         "livingOnManual": "Collections vivantes non versées dans votre liste du même nom : {names}",
         "unreadable": "Laissé de côté (la source est trop ancienne pour être lue) : {names}",
