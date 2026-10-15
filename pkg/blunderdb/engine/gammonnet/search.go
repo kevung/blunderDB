@@ -8,6 +8,7 @@ import (
 	"math"
 	"slices"
 	"sync"
+	"time"
 )
 
 // Expectiminimax over dice, 0 to 4 ply, ported from gammonNet's gn_search.
@@ -298,8 +299,9 @@ type Searcher struct {
 	cache   *evalCache
 	rolls   [NumRolls]diceRoll
 
-	evals      uint64 // big-network evaluations that actually ran
-	pruneEvals uint64 // small-network evaluations
+	lent       time.Duration // helper time spent on this searcher's forks (LentTime)
+	evals      uint64        // big-network evaluations that actually ran
+	pruneEvals uint64        // small-network evaluations
 	cacheHits  uint64
 
 	// batchFilled and batchSlotted: positions a fill pass evaluated, against
@@ -1043,9 +1045,11 @@ func (s *Searcher) CubeValuations() uint64 {
 	return s.cubeValuations
 }
 
-// ResetCounters zeroes them.
+// ResetCounters zeroes them (not LentTime).
 func (s *Searcher) ResetCounters() {
+	lent := s.lent
 	s.takeCounts()
+	s.lent = lent
 }
 
 // WithWorkers lets the searcher's search spread over at most n goroutines of

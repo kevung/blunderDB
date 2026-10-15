@@ -69,7 +69,7 @@ func (s *Server) handleGammonNetCubeMatrix(w http.ResponseWriter, r *http.Reques
 			charge(d)
 			return true
 		}, func(i int, get searcherFor) {
-			cell(i, get(req.Ply, req.PruneK))
+			cell(i, get.searcher(req.Ply, req.PruneK))
 		})
 	})
 	switch {

@@ -109,7 +109,7 @@ func compareGathered(ctx context.Context, pool *analysisPool, scope string, posi
 	results := make([]gammonnet.ComparisonSample, total)
 	ran := make([]bool, total)
 	err := pool.each(ctx, scope, total, spend, func(i int, get searcherFor) {
-		results[i] = gammonnet.CompareOne(&positions[i], stored[i], positions[i].ID, get(ply, pruneK), ply, pruneK, candidates)
+		results[i] = gammonnet.CompareOne(&positions[i], stored[i], positions[i].ID, get.searcher(ply, pruneK), ply, pruneK, candidates)
 		ran[i] = true
 	})
 	samples := make([]gammonnet.ComparisonSample, 0, total)

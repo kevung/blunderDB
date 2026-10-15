@@ -46,17 +46,64 @@ type analysisPool struct {
 	served map[string]int64
 }
 
-// searcherFor hands a unit the worker's own Searcher for a ply and pruning
-// width, made on first use and kept; nil when one cannot be made, which the
-// evaluation functions take as "make one per position".
-type searcherFor func(ply, pruneK int) *gammonnet.Searcher
+// workerEngine is what a worker lends the unit it runs: its own Searcher per
+// ply and pruning width, made on first use and kept (nil when one cannot be
+// made, which the evaluation functions take as "make one per position"), and
+// the clock that prices the unit.
+type workerEngine struct {
+	cores     *gammonnet.Cores
+	searchers map[[2]int]*gammonnet.Searcher
+}
+
+// searcherFor is the name a unit knows its worker's engine by.
+type searcherFor = *workerEngine
+
+func (e *workerEngine) searcher(ply, pruneK int) *gammonnet.Searcher {
+	k := [2]int{ply, pruneK}
+	if s, ok := e.searchers[k]; ok {
+		return s
+	}
+	s, err := gammonnet.NewBatchSearcher(ply, pruneK)
+	if err != nil {
+		s = nil
+	} else if gammonnet.CoresFor(ply) != nil {
+		s = s.WithCores(e.cores)
+	}
+	e.searchers[k] = s
+	return s
+}
+
+// lent is the helper time the worker's searchers have spent so far.
+func (e *workerEngine) lent() time.Duration {
+	var d time.Duration
+	for _, s := range e.searchers {
+		if s != nil {
+			d += s.LentTime()
+		}
+	}
+	return d
+}
+
+// clock starts pricing a unit: cost is the engine time spent since — the
+// worker's wall time plus what its searches lent to helpers, so a search
+// spread over eight idle workers costs eight workers' time, the same as
+// eight positions searched side by side. A nil engine (a unit run outside
+// the pool) prices wall time.
+func (e *workerEngine) clock() (cost func() time.Duration) {
+	start := time.Now()
+	if e == nil {
+		return func() time.Duration { return time.Since(start) }
+	}
+	lent := e.lent()
+	return func() time.Duration { return time.Since(start) + e.lent() - lent }
+}
 
 // boundSearcher takes the worker's searcher for ply/pruneK and ties it to ctx,
 // so a cancelled sweep or a client gone mid-search frees the worker at the
 // next roll instead of at the end of the search. Call release before the
 // worker's next unit.
 func boundSearcher(ctx context.Context, get searcherFor, ply, pruneK int) (*gammonnet.Searcher, func()) {
-	s := get(ply, pruneK)
+	s := get.searcher(ply, pruneK)
 	if s == nil {
 		return nil, func() {}
 	}
@@ -156,10 +203,10 @@ func (p *analysisPool) each(ctx context.Context, scope string, n int, charge fun
 			if ctx.Err() != nil || spent.Load() {
 				return
 			}
-			start := time.Now()
+			cost := get.clock()
 			unit(i, get)
 			ran.Add(1)
-			if !charge(time.Since(start)) {
+			if !charge(cost()) {
 				spent.Store(true)
 			}
 		}, true
@@ -256,21 +303,7 @@ func (p *analysisPool) takeLocked() (*poolJob, func(searcherFor), bool) {
 }
 
 func (p *analysisPool) work() {
-	searchers := map[[2]int]*gammonnet.Searcher{}
-	get := func(ply, pruneK int) *gammonnet.Searcher {
-		k := [2]int{ply, pruneK}
-		if s, ok := searchers[k]; ok {
-			return s
-		}
-		s, err := gammonnet.NewBatchSearcher(ply, pruneK)
-		if err != nil {
-			s = nil
-		} else if gammonnet.CoresFor(ply) != nil {
-			s = s.WithCores(p.cores)
-		}
-		searchers[k] = s
-		return s
-	}
+	get := &workerEngine{cores: p.cores, searchers: map[[2]int]*gammonnet.Searcher{}}
 	for {
 		p.mu.Lock()
 		var (

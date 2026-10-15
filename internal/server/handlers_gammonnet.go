@@ -7,7 +7,6 @@ import (
 	"log/slog"
 	"net/http"
 	"sync/atomic"
-	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
@@ -184,11 +183,11 @@ func (s *Server) runGammonNetSweep(w http.ResponseWriter, r *http.Request, gathe
 		pos := positions[next]
 		next++
 		return func(get searcherFor) {
-			start := time.Now()
+			cost := get.clock()
 			searcher, release := boundSearcher(ctx, get, req.Ply, req.PruneK)
 			analysis, err := gammonnetEvaluateOne(searcher, pos, met, req.Ply, req.PruneK, req.Candidates)
 			release()
-			if !spend(time.Since(start)) {
+			if !spend(cost()) {
 				quotaSpent.Store(true)
 			}
 			if gammonnet.IsCanceled(err) {

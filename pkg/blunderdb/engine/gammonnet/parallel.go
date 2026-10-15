@@ -49,6 +49,7 @@ import (
 	"runtime"
 	"sync"
 	"sync/atomic"
+	"time"
 )
 
 // Cores is a budget of goroutines that searches may run on at once.
@@ -136,6 +137,7 @@ func (t *team) giveBack(h *Searcher) {
 // searchCounts are a searcher's counters, carried back from a helper to the
 // goroutine that opened the fork (gn_search.c's GnCounts).
 type searchCounts struct {
+	lent                         time.Duration
 	evals, pruneEvals, cacheHits uint64
 	batchFilled, batchSlotted    uint64
 	cubeValuations               uint64
@@ -143,13 +145,15 @@ type searchCounts struct {
 
 // takeCounts returns s's counters and zeroes them.
 func (s *Searcher) takeCounts() searchCounts {
-	c := searchCounts{s.evals, s.pruneEvals, s.cacheHits, s.batchFilled, s.batchSlotted, s.cubeValuations}
+	c := searchCounts{s.lent, s.evals, s.pruneEvals, s.cacheHits, s.batchFilled, s.batchSlotted, s.cubeValuations}
+	s.lent = 0
 	s.evals, s.pruneEvals, s.cacheHits = 0, 0, 0
 	s.batchFilled, s.batchSlotted, s.cubeValuations = 0, 0, 0
 	return c
 }
 
 func (s *Searcher) addCounts(c searchCounts) {
+	s.lent += c.lent
 	s.evals += c.evals
 	s.pruneEvals += c.pruneEvals
 	s.cacheHits += c.cacheHits
@@ -157,6 +161,12 @@ func (s *Searcher) addCounts(c searchCounts) {
 	s.batchSlotted += c.batchSlotted
 	s.cubeValuations += c.cubeValuations
 }
+
+// LentTime is the time helpers have spent on this searcher's searches since
+// it was built — what its forks cost beyond the caller's own wall time. Engine
+// time accounting adds it: a search spread over eight cores costs eight cores.
+// ResetCounters leaves it alone; read it between searches.
+func (s *Searcher) LentTime() time.Duration { return s.lent }
 
 // parallel reports whether s may fork at all.
 func (s *Searcher) parallel() bool { return s.team != nil }
@@ -207,8 +217,10 @@ func (s *Searcher) fork(n int, task func(w *Searcher, k int) bool) bool {
 			wg.Add(1)
 			go func() {
 				defer wg.Done()
+				start := time.Now()
 				pull(h)
 				c := h.takeCounts()
+				c.lent += time.Since(start)
 				t.giveBack(h)
 				t.cores.give()
 				countMu.Lock()
@@ -230,6 +242,7 @@ func (s *Searcher) fork(n int, task func(w *Searcher, k int) bool) bool {
 }
 
 func (c *searchCounts) add(o searchCounts) {
+	c.lent += o.lent
 	c.evals += o.evals
 	c.pruneEvals += o.pruneEvals
 	c.cacheHits += o.cacheHits

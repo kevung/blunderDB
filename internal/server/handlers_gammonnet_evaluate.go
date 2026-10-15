@@ -3,7 +3,6 @@ package server
 import (
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
@@ -71,11 +70,11 @@ func (s *Server) handleGammonNetEvaluate(w http.ResponseWriter, r *http.Request)
 	// A client gone before its turn costs neither engine time nor quota.
 	var res gammonnet.EvalResult
 	ran := s.analysis.run(r.Context(), scope, func(get searcherFor) {
-		start := time.Now()
+		cost := get.clock()
 		searcher, release := boundSearcher(r.Context(), get, ply, 0)
 		res, err = gammonnet.EvaluatePositionWithMET(searcher, pos, met, ply, 0, req.Candidates)
 		release()
-		s.quota.charge(scope, time.Since(start))
+		s.quota.charge(scope, cost())
 	})
 	if !ran {
 		if r.Context().Err() != nil {

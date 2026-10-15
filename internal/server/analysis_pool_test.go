@@ -6,6 +6,7 @@ import (
 	"slices"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
@@ -198,7 +199,7 @@ func TestBoundSearcherStopsOnCancel(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	get := func(int, int) *gammonnet.Searcher { return s }
+	get := &workerEngine{searchers: map[[2]int]*gammonnet.Searcher{{2, 0}: s}}
 	pos, err := domain.DecodeXGID("XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:0:10")
 	if err != nil {
 		t.Fatal(err)
@@ -221,9 +222,39 @@ func TestBoundSearcherStopsOnCancel(t *testing.T) {
 		t.Fatalf("after release: %v", err)
 	}
 
-	if s, release := boundSearcher(ctx, func(int, int) *gammonnet.Searcher { return nil }, 2, 0); s != nil {
+	if s, release := boundSearcher(ctx, &workerEngine{searchers: map[[2]int]*gammonnet.Searcher{{2, 0}: nil}}, 2, 0); s != nil {
 		t.Fatal("no searcher built, yet one returned")
 	} else {
 		release()
+	}
+}
+
+// TestUnitCostCountsLentTime holds a unit's price to the engine time it used:
+// a 2-ply search that forks into idle workers costs its wall time plus what
+// the helpers spent, or a tenant's quota would buy as many cores as were idle.
+func TestUnitCostCountsLentTime(t *testing.T) {
+	if testing.Short() {
+		t.Skip("a 2-ply search")
+	}
+	pos, err := domain.DecodeXGID("XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:0:10")
+	if err != nil {
+		t.Fatal(err)
+	}
+	pos.Dice = [2]int{0, 0}
+
+	e := &workerEngine{cores: gammonnet.NewCores(4), searchers: map[[2]int]*gammonnet.Searcher{}}
+	cost := e.clock()
+	start := time.Now()
+	searcher, release := boundSearcher(context.Background(), e, 2, 0)
+	if _, err := gammonnet.EvaluatePositionWithMET(searcher, pos, nil, 2, 0, 0); err != nil {
+		t.Fatal(err)
+	}
+	release()
+	wall, c := time.Since(start), cost()
+	if searcher.LentTime() == 0 {
+		t.Fatal("the 2-ply search lent nothing to helpers with three tokens free")
+	}
+	if c < wall+searcher.LentTime() {
+		t.Fatalf("unit priced %v, wall %v + lent %v", c, wall, searcher.LentTime())
 	}
 }
