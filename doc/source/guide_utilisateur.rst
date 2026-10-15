@@ -437,19 +437,29 @@ blunderDB va fusionner intelligemment les deux bases de données:
 
 * Les matchs arrivent avec leurs parties, leurs coups et leurs analyses ; un
   match que la base courante contient déjà — même empreinte — n'est pas
-  recopié. Un tournoi rejoint celui du même nom, ou est créé, et ses matchs s'y
-  rangent dans l'ordre de la base importée.
+  recopié. Un tournoi rejoint celui du même nom, qui garde sa date, ou est créé
+  avec la date qu'il portait dans la base importée ; ses matchs s'y rangent dans
+  l'ordre de la base importée. La Direction d'un tournoi n'est pas relue : elle
+  reste dans le fichier exporté.
 
 * Les brouillons de transcription et les alias de joueurs et d'événements
-  suivent ; un nom dont la base courante décide déjà reste décidé par elle.
+  suivent, avec leurs dates d'origine ; un nom dont la base courante décide
+  déjà reste décidé par elle.
 
 * Les collections, leçons et paquets Anki rejoignent ceux du même nom ou sont
   créés. La requête d'une collection vivante qui désigne des lignes par numéro
   (``id``, ``like``, ``ma``, ``tn``) est renumérotée vers celles de la base
   courante ; quand une ligne qu'elle désigne manque, la collection arrive
-  figée, avec ce qu'elle sélectionnait dans la base importée.
+  figée, avec ce qu'elle sélectionnait dans la base importée. Une collection
+  vivante dont la base courante a une liste manuelle du même nom laisse cette
+  liste telle quelle. La requête d'un paquet Anki « recherche » est renumérotée
+  de même.
 
-* Un message résumera le nombre de positions ajoutées, fusionnées et ignorées.
+* L'aperçu donne, avant toute écriture, le nombre de positions à ajouter, à
+  fusionner et à ignorer, et le nombre de matchs à ajouter et de matchs déjà
+  présents. Le résultat reprend ces comptes et nomme les collections vivantes
+  figées, celles laissées sur une liste manuelle, et les familles que la base
+  importée est trop ancienne pour porter.
 
 Une fusion **ajoute**, elle ne réconcilie pas : rien n'est supprimé de la base
 courante parce que la base importée ne le contient pas.

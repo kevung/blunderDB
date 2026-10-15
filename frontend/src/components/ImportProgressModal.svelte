@@ -10,13 +10,20 @@
             toMerge: 0,
             toSkip: 0,
             total: 0,
+            matches: 0,
+            matchesKnown: 0,
             importPath: ''
         },
         result = {
             added: 0,
             merged: 0,
             skipped: 0,
-            total: 0
+            total: 0,
+            matches: 0,
+            matchesKnown: 0,
+            livingCollectionsFrozen: [],
+            livingCollectionsOnManual: [],
+            unreadable: []
         },
         onCancel,
         onCommit,
@@ -27,7 +34,14 @@
     // reached: mode 'completed', or the 'preview' branch that has nothing to
     // import (its own "Fermer" button, no commit/cancel choice to make). While
     // analyzing/committing, Escape must not silently abandon the import.
-    let nothingToImport = $derived(analysis.toAdd === 0 && analysis.toMerge === 0);
+    let nothingToImport = $derived(analysis.toAdd === 0 && analysis.toMerge === 0 && !analysis.matches);
+    const notes = $derived(
+        [
+            ['import.livingFrozen', result.livingCollectionsFrozen],
+            ['import.livingOnManual', result.livingCollectionsOnManual],
+            ['import.unreadable', result.unreadable]
+        ].filter(([, names]) => names && names.length > 0)
+    );
     let closable = $derived(mode === 'completed' || (mode === 'preview' && nothingToImport));
 </script>
 
@@ -57,6 +71,19 @@
                 <div class="stat-value">{analysis.toSkip}</div>
             </div>
         </div>
+
+        {#if analysis.matches > 0 || analysis.matchesKnown > 0}
+            <div class="stats">
+                <div class="stat-item" data-testid="import-matches">
+                    <div class="stat-label">{$t('import.matchesToAdd')}</div>
+                    <div class="stat-value">{analysis.matches}</div>
+                </div>
+                <div class="stat-item" data-testid="import-matches-known">
+                    <div class="stat-label">{$t('import.matchesToSkip')}</div>
+                    <div class="stat-value">{analysis.matchesKnown}</div>
+                </div>
+            </div>
+        {/if}
 
         {#if analysis.toMerge > 0}
             <div class="summary warning">
@@ -94,6 +121,25 @@
                 <div class="stat-value">{result.skipped}</div>
             </div>
         </div>
+
+        {#if result.matches > 0 || result.matchesKnown > 0}
+            <div class="stats">
+                <div class="stat-item" data-testid="result-matches">
+                    <div class="stat-label">{$t('import.matchesAdded')}</div>
+                    <div class="stat-value">{result.matches}</div>
+                </div>
+                <div class="stat-item" data-testid="result-matches-known">
+                    <div class="stat-label">{$t('import.matchesKnown')}</div>
+                    <div class="stat-value">{result.matchesKnown}</div>
+                </div>
+            </div>
+        {/if}
+
+        {#each notes as [key, names] (key)}
+            <div class="summary warning" data-testid={key}>
+                <p>{$t(key, { names: names.join(', ') })}</p>
+            </div>
+        {/each}
     {/if}
     {#snippet footer()}
         {#if mode === 'analyzing'}

@@ -210,3 +210,50 @@ func TestDBImportLivingOntoManualList(t *testing.T) {
 		t.Errorf("the hand-made list became living: %q", c.FilterQuery)
 	}
 }
+
+// TestDBImportMergedTournamentKeepsRecipientDates: a tournament merged into
+// the target's namesake keeps the target's dates; the source's apply only to
+// a tournament the import creates.
+func TestDBImportMergedTournamentKeepsRecipientDates(t *testing.T) {
+	ctx := context.Background()
+	srcPath := filepath.Join(t.TempDir(), "club.db")
+	src, err := sqlite.Open(ctx, srcPath, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	tour, err := src.Tournaments().Create(ctx, "", "Open commun", "2018-02-03", "Nice")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := src.Tournaments().KeepDates(ctx, "", tour, srcCreated, srcUpdated); err != nil {
+		t.Fatal(err)
+	}
+	src.Close()
+
+	target := openMemTarget(t)
+	const recvCreated, recvUpdated = "2024-05-06 07:08:09", "2025-01-02 03:04:05"
+	rid, err := target.Tournaments().Create(ctx, "", "Open commun", "2024-05-06", "Lyon")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := target.Tournaments().KeepDates(ctx, "", rid, recvCreated, recvUpdated); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := (DBImporter{S: target}).Import(ctx, "", Source{Path: srcPath}, nil); err != nil {
+		t.Fatal(err)
+	}
+
+	n := 0
+	for tr, err := range target.Tournaments().List(ctx, "", storage.ListOpts{}) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		n++
+		if tr.CreatedAt != recvCreated || tr.UpdatedAt != recvUpdated {
+			t.Errorf("tournament %q dates = %q / %q, want the recipient's %q / %q", tr.Name, tr.CreatedAt, tr.UpdatedAt, recvCreated, recvUpdated)
+		}
+	}
+	if n != 1 {
+		t.Errorf("%d tournaments after the merge, want 1", n)
+	}
+}

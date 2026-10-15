@@ -110,8 +110,9 @@ func PlanImportMatches(ctx context.Context, target storage.Stores, scope string,
 		if err != nil {
 			return plan, fmt.Errorf("ingest: read source match %d: %w", id, err)
 		}
-		// The source's own fingerprints are unique (schema), so only the
-		// target can already hold one.
+		// match_hash is only indexed, not UNIQUE, so a source may hold a
+		// fingerprint twice; only the target is consulted here, and each copy
+		// is counted by what the target holds.
 		if m.MatchHash != "" || m.CanonicalHash != "" {
 			_, found, err := target.Matches().FindByHash(ctx, scope, m.MatchHash, m.CanonicalHash)
 			if err != nil {

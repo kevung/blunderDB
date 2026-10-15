@@ -7,13 +7,20 @@ export const importAnalysisStore = writable({
     toMerge: 0,
     toSkip: 0,
     total: 0,
+    matches: 0,
+    matchesKnown: 0,
     importPath: ''
 });
 export const importResultStore = writable({
     added: 0,
     merged: 0,
     skipped: 0,
-    total: 0
+    total: 0,
+    matches: 0,
+    matchesKnown: 0,
+    livingCollectionsFrozen: /** @type {string[]} */ ([]),
+    livingCollectionsOnManual: /** @type {string[]} */ ([]),
+    unreadable: /** @type {string[]} */ ([])
 });
 
 export const showFileImportModalStore = writable(false);

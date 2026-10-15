@@ -48,6 +48,65 @@ var tenantIsolationCases = []tenantIsolationCase{
 	{"TableSetting", checkTableSettingIsolation},
 	{"Training", checkTrainingIsolation},
 	{"MaintenanceLog", checkMaintenanceLogIsolation},
+	{"KeptDates", checkKeptDatesIsolation},
+}
+
+// checkKeptDatesIsolation: dates kept for a row in one tenant's scope never
+// reach another tenant's row, whether it is addressed by an id of the first
+// tenant (tournament, draft) or by the same alias text.
+func checkKeptDatesIsolation(t *testing.T, ctx context.Context, s storage.Storage, a, b string) {
+	tid, err := s.Tournaments().Create(ctx, a, "kept-tourney", "2026-01-01", "")
+	if err != nil {
+		t.Fatalf("Tournaments.Create(%s): %v", a, err)
+	}
+	did, err := s.Transcriptions().Save(ctx, a, &storage.Transcription{FormatVersion: "1", Label: "kept", Document: `{"actions":[]}`})
+	if err != nil {
+		t.Fatalf("Transcriptions.Save(%s): %v", a, err)
+	}
+	if err := s.Aliases().Set(ctx, a, storage.AliasPlayer, "Bobby", "Bob"); err != nil {
+		t.Fatalf("Aliases.Set(%s): %v", a, err)
+	}
+	if err := s.Aliases().Set(ctx, b, storage.AliasPlayer, "Bobby", "Robert"); err != nil {
+		t.Fatalf("Aliases.Set(%s): %v", b, err)
+	}
+	tourBefore, _ := s.Tournaments().Get(ctx, a, tid)
+	draftBefore, _ := s.Transcriptions().Get(ctx, a, did)
+	aliasBefore, _ := s.Aliases().List(ctx, a, storage.AliasPlayer)
+
+	// Errors are not asserted: a backend may report ErrNotFound or nil for
+	// a row outside the scope; the row of the owner is what must not move.
+	_ = s.Tournaments().KeepDates(ctx, b, tid, keptCreated, keptUpdated)
+	_ = s.Transcriptions().KeepDates(ctx, b, did, keptCreated, keptUpdated)
+	if err := s.Aliases().KeepCreatedAt(ctx, b, storage.AliasPlayer, "Bobby", keptCreated); err != nil {
+		t.Fatalf("Aliases.KeepCreatedAt(%s): %v", b, err)
+	}
+
+	tour, err := s.Tournaments().Get(ctx, a, tid)
+	if err != nil {
+		t.Fatalf("Tournaments.Get(%s): %v", a, err)
+	}
+	if tour.CreatedAt != tourBefore.CreatedAt || tour.UpdatedAt != tourBefore.UpdatedAt {
+		t.Errorf("tenant %s moved the dates of tenant %s's tournament: %q / %q", b, a, tour.CreatedAt, tour.UpdatedAt)
+	}
+	draft, err := s.Transcriptions().Get(ctx, a, did)
+	if err != nil {
+		t.Fatalf("Transcriptions.Get(%s): %v", a, err)
+	}
+	if draft.CreatedAt != draftBefore.CreatedAt || draft.UpdatedAt != draftBefore.UpdatedAt {
+		t.Errorf("tenant %s moved the dates of tenant %s's draft: %q / %q", b, a, draft.CreatedAt, draft.UpdatedAt)
+	}
+	aliases, err := s.Aliases().List(ctx, a, storage.AliasPlayer)
+	if err != nil || len(aliases) != 1 || len(aliasBefore) != 1 {
+		t.Fatalf("Aliases.List(%s) = %+v, %v", a, aliases, err)
+	}
+	if aliases[0].CreatedAt != aliasBefore[0].CreatedAt {
+		t.Errorf("tenant %s moved the created_at of tenant %s's alias: %q", b, a, aliases[0].CreatedAt)
+	}
+	// And the other tenant's own row did take the date.
+	own, err := s.Aliases().List(ctx, b, storage.AliasPlayer)
+	if err != nil || len(own) != 1 || own[0].CreatedAt != keptCreated {
+		t.Errorf("Aliases.List(%s) = %+v, %v, want created %q", b, own, err, keptCreated)
+	}
 }
 
 // checkMaintenanceLogIsolation: a run recorded for one tenant is not the

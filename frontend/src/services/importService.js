@@ -156,6 +156,8 @@ export async function importDatabase() {
                 toMerge: analysis.toMerge,
                 toSkip: analysis.toSkip,
                 total: analysis.total,
+                matches: analysis.matches ?? 0,
+                matchesKnown: analysis.matchesKnown ?? 0,
                 importPath: importFilePath
             });
             importModalModeStore.set('preview');
@@ -196,7 +198,12 @@ async function handleImportCommitCore() {
             added: result.added,
             merged: result.merged,
             skipped: result.skipped,
-            total: result.total
+            total: result.total,
+            matches: result.matches ?? 0,
+            matchesKnown: result.matchesKnown ?? 0,
+            livingCollectionsFrozen: result.livingCollectionsFrozen ?? [],
+            livingCollectionsOnManual: result.livingCollectionsOnManual ?? [],
+            unreadable: result.unreadable ?? []
         });
         importModalModeStore.set('completed');
 
@@ -270,6 +277,8 @@ export async function importDatabaseByPath(importFilePath) {
                 toMerge: analysis.toMerge,
                 toSkip: analysis.toSkip,
                 total: analysis.total,
+                matches: analysis.matches ?? 0,
+                matchesKnown: analysis.matchesKnown ?? 0,
                 importPath: importFilePath
             });
             importModalModeStore.set('preview');

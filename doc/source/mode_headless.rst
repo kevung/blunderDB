@@ -999,8 +999,9 @@ chaîne XGID, et ``positions.fromXGP`` à partir d'un fichier de position unique
 ``.xgp``.
 
 ``POST /v1/exports.sqlite`` exporte tout le tenant courant — positions,
-collections, matchs, tournois, leçons, analyses, commentaires, coups joués,
-bibliothèque de filtres et paquets Anki — dans un fichier SQLite ouvrable tel
+collections, matchs, tournois (avec leur Direction et leur Rencontre), leçons,
+transcriptions, alias, analyses, commentaires, coups joués, bibliothèque de
+filtres et paquets Anki — dans un fichier SQLite ouvrable tel
 quel par le poste de travail. Le corps JSON de la requête est optionnel ; il
 porte les options d'export de la fenêtre d'export et de ``blunderdb export``,
 sous les mêmes noms et lues de la même façon, si bien qu'un même jeu
@@ -1114,7 +1115,8 @@ renumérotée vers les lignes du receveur, ou figée quand une ligne qu'elle
 désigne manque ; arrivée sur une liste manuelle du même nom, elle laisse cette
 liste telle quelle et est signalée. La réponse compte chaque famille :
 ``matches``, ``skippedDuplicates``, ``tournaments``, ``transcriptions``,
-``aliases``, ``livingCollectionsFrozen``, ``livingCollectionsOnManual``.
+``aliases``, ``livingCollectionsFrozen``, ``livingCollectionsOnManual``, et
+``unreadable`` quand la base reçue est trop ancienne pour porter une famille.
 
 .. code-block:: bash
 

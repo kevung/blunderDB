@@ -1468,6 +1468,15 @@ ne remplace pas ce qui est déjà là.
   dés, score — qui la reconnaît, jamais le fichier d'où elle vient : la même
   position rencontrée dans deux matchs reste une seule ligne.
 
+* **Importer une base relit tout ce qu'un export écrit.** Les positions, avec
+  leurs analyses et commentaires, mais aussi les matchs (parties et coups
+  compris), les tournois, les brouillons de transcription, les alias, les
+  collections, les leçons et les paquets Anki : voir :ref:`guide_fusionner_base`.
+  Rien n'est écrasé : un match déjà présent n'est pas recopié, un tournoi du même
+  nom reçoit les matchs sans changer de date, et ce que la base décidait déjà
+  reste décidé par elle. Les dates d'origine des lignes qu'elle crée sont
+  conservées.
+
 * **Une analyse par moteur.** eXtreme Gammon, GNUbg, BGBlitz et l'évaluateur
   embarqué cohabitent sur une même position, et le panneau Analyse indique
   l'origine de chacune. Importer l'une n'efface pas l'autre.
@@ -5161,7 +5170,11 @@ Huit points méritent l'attention :
 * **Un tournoi part toujours avec ses matchs** : sans eux, le lien
   tournoi–match n'existe pas et le tournoi arriverait vide. Cocher un tournoi
   emporte ses matchs, même si la case des matchs est décochée ou restreinte à
-  d'autres.
+  d'autres. Il part aussi avec sa Direction — journal, paires, tables et
+  rattachement des matchs exportés — et sa Rencontre part dès qu'un de ses
+  tournois part ; le dossier de sortie de la Direction reste chez vous. La
+  Direction se retrouve en ouvrant le fichier : importer une base ne la relit
+  pas.
 * **Un paquet Anki part avec ses positions**, en copie d'étude neuve. La case
   *avec mon historique* emporte en plus l'état de chaque carte et le journal
   de ses révisions : une sauvegarde, ou vos paquets passés sur une autre
@@ -5171,6 +5184,10 @@ Huit points méritent l'attention :
   décochée pour une liste. Un filtre qui désigne une position, un match ou un
   tournoi par son numéro est renuméroté pour le fichier ; s'il en désigne un
   qui ne part pas, il reste chez vous.
+
+Les collections, leçons, transcriptions, paquets Anki, alias et tournois partent
+avec les dates de création et d'ajout qu'ils portent chez vous, non avec la date
+de l'export.
 
 Les champs *Utilisateur*, *Description* et *Date de création* décrivent le
 **fichier produit** ; ils sont préremplis depuis la base source.
