@@ -1,7 +1,8 @@
 <script>
     import { t } from '../i18n';
     import { checkerRows, formatEquity } from '../utils/analysisRows.js';
-    import { canonicalMove } from '../utils/moveNotation.js';
+    import { marksHits } from '../utils/moveNotation.js';
+    import { rolloutFor } from '../utils/rolloutRows.js';
 
     // Lays out ranked checker-move candidates for AnalysisPanel and EvalPanel;
     // sorting, selection and highlighting stay with the caller, cells come from
@@ -38,8 +39,19 @@
 
     let block = $derived(checkerRows(moves, { t: $t, isPlayedMove, showProvenance, baseline, isMoney, projection }));
 
+    // Each engine of the table writes its hits or never does: a row's missing "*" is read in its
+    // engine's dialect.
+    let engineMarks = $derived.by(() => {
+        /** @type {Record<string, boolean>} */
+        const m = {};
+        for (const mv of moves ?? []) {
+            const e = mv?.analysisEngine ?? '';
+            m[e] = m[e] || marksHits([mv?.move]);
+        }
+        return m;
+    });
     /** @param {any} move */
-    const rolloutOf = (move) => (rollouts && rollouts.size ? rollouts.get(canonicalMove(move?.move)) : undefined);
+    const rolloutOf = (move) => rolloutFor(rollouts, move?.move, engineMarks[move?.analysisEngine ?? ''] ?? false);
     let showRollout = $derived(!!rollouts && rollouts.size > 0 && block.rows.some((row) => rolloutOf(row.move)));
     let rolloutHeader = $derived(isMoney === true ? $t('rollout.columnMoney') : isMoney === false ? $t('rollout.columnMatch') : $t('rollout.column'));
 

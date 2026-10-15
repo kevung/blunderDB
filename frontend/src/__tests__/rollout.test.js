@@ -60,7 +60,8 @@ const RolloutSettings = (await import('../components/RolloutSettings.svelte')).d
 const RolloutStrip = (await import('../components/RolloutStrip.svelte')).default;
 const AnalysisPanel = (await import('../components/AnalysisPanel.svelte')).default;
 const { runRolloutCommand, toggleRollout, initRolloutChoice } = await import('../services/rolloutService.js');
-const { canonicalMove } = await import('../utils/moveNotation.js');
+const { canonicalMove, playKey, samePlay } = await import('../utils/moveNotation.js');
+const { rolloutsByMove, rolloutFor } = await import('../utils/rolloutRows.js');
 
 const stored = (over = {}) => ({
     analysisEngine: 'blunderDB rollout v1 / gammonNet v1.2.1',
@@ -119,12 +120,41 @@ describe('canonicalMove', () => {
         ['6/3 3/1', '6/3* 3/1'],
         ['8/5 6/5', '6/5 8/5'],
         ['bar/22 13/11', 'bar/24 24/22 13/11'],
-        ['6/off', '6/2 2/off']
+        ['6/off', '6/2 2/off'],
+        ['8/5*/4', '8/5 5/4']
     ])('%s and %s are one play', (a, b) => {
         expect(canonicalMove(a)).toBe(canonicalMove(b));
     });
     test('different plays stay different', () => {
         expect(canonicalMove('13/7')).not.toBe(canonicalMove('13/8 6/5'));
+    });
+});
+
+describe('hits tell two plays of one shape apart', () => {
+    // 4-1: both carry a checker from 6 to 1; the first hits twice, the second once.
+    test('playKey keeps where a play hits', () => {
+        expect(playKey('6/5* 5/1*')).not.toBe(playKey('6/2 2/1*'));
+        expect(playKey('13/7*')).toBe(playKey('13/8 8/7*'));
+        expect(playKey('8/5*/4')).toBe(playKey('8/5* 5/4'));
+    });
+    test.each([
+        ['6/5* 5/1*', true, '6/2 2/1*', true, false],
+        ['6/2/1', true, '6/2 2/1*', true, false],
+        ['6/2/1', false, '6/2 2/1*', true, true],
+        ['6/2 2/1*', true, '6/2/1', false, true]
+    ])('samePlay(%s, %s, %s, %s) is %s', (a, am, b, bm, want) => {
+        expect(samePlay(a, am, b, bm)).toBe(want);
+    });
+    const rolled = (moves) => rolloutsByMove({ live: moves.map((move, i) => ({ move, equity: i, ci95: 0, stdErr: 0, jsd: 0, games: 1 })) });
+    test('a marking row finds its own rollout, not the other hit', () => {
+        const rows = rolled(['6/5* 5/1*', '6/2 2/1*']);
+        expect(rolloutFor(rows, '6/2/1*', true)?.candidate.move).toBe('6/2 2/1*');
+        expect(rolloutFor(rows, '6/5*/1*', true)?.candidate.move).toBe('6/5* 5/1*');
+        expect(rolloutFor(rows, '6/2/1', true)).toBeUndefined();
+    });
+    test('an unmarked row is a wildcard only when one rollout fits', () => {
+        expect(rolloutFor(rolled(['6/5* 5/1*', '6/2 2/1*']), '6/2 2/1', false)).toBeUndefined();
+        expect(rolloutFor(rolled(['6/2 2/1*', '13/7']), '6/2 2/1', false)?.candidate.move).toBe('6/2 2/1*');
     });
 });
 

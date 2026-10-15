@@ -287,14 +287,6 @@ func moveBranches(pos *domain.Position, s Settings, named []string, cube cubeSta
 	if len(legal) == 0 {
 		return nil, nil, fmt.Errorf("rollout: no legal play for %d-%d", pos.Dice[0], pos.Dice[1])
 	}
-	byNotation := make(map[string]domain.Position, len(legal))
-	// An imported analysis names a play in its engine's dialect ("13/7*",
-	// "6/4(2)"): the canonical form finds the legal play it stands for.
-	byCanonical := make(map[string]domain.Position, len(legal))
-	for _, p := range legal {
-		byNotation[p.Notation] = p.Result
-		byCanonical[engine.CanonicalMove(p.Notation)] = p.Result
-	}
 
 	if len(named) == 0 {
 		k := s.Candidates
@@ -316,22 +308,23 @@ func moveBranches(pos *domain.Position, s Settings, named []string, cube cubeSta
 	if pos.PlayerOnRoll == domain.White {
 		opponent = domain.Black
 	}
+	// An imported analysis names a play in its engine's dialect ("13/7*",
+	// "6/4(2)"); whether a missing "*" means "no hit" is the list's to say.
+	marks := engine.MarksHits(named...)
 	var names []string
 	var branches []branch
 	for _, n := range named {
 		n = strings.TrimSpace(n)
-		res, ok := byNotation[n]
-		if !ok {
-			res, ok = byCanonical[engine.CanonicalMove(n)]
-		}
-		if !ok {
-			options := make([]string, 0, len(byNotation))
-			for k := range byNotation {
-				options = append(options, k)
+		play, err := engine.ResolvePlay(legal, n, marks)
+		if err != nil {
+			options := make([]string, 0, len(legal))
+			for _, p := range legal {
+				options = append(options, p.Notation)
 			}
 			slices.Sort(options)
-			return nil, nil, fmt.Errorf("rollout: %q is not a legal play; legal: %s", n, strings.Join(options, ", "))
+			return nil, nil, fmt.Errorf("rollout: %w; legal: %s", err, strings.Join(options, ", "))
 		}
+		res := play.Result
 		if slices.Contains(names, n) {
 			continue
 		}

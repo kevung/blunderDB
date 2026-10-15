@@ -73,8 +73,9 @@ func TestComputeIsCloseCube(t *testing.T) {
 	}
 }
 
-// TestPlayedCandidate matches a play spelt two ways, and refuses a canonical
-// match that names two candidates (the hit markers it drops told them apart).
+// TestPlayedCandidate matches a play spelt two ways. In a list that writes its
+// hits, a missing "*" means no hit; in one that never does, a match naming
+// two candidates is refused.
 func TestPlayedCandidate(t *testing.T) {
 	t.Parallel()
 	moves := []domain.CheckerMove{{Move: "13/6"}, {Move: "24/20 13/10"}, {Move: "8/4* 4/1"}, {Move: "8/4 4/1"}}
@@ -87,8 +88,26 @@ func TestPlayedCandidate(t *testing.T) {
 	if m := PlayedCandidate(moves, "8/4* 4/1"); m == nil || m.Move != "8/4* 4/1" {
 		t.Errorf("exact spelling with a hit: got %v", m)
 	}
-	if m := PlayedCandidate(moves, "8/1"); m != nil {
-		t.Errorf("ambiguous canonical match: got %v, want none", m)
+	if m := PlayedCandidate(moves, "8/1"); m == nil || m.Move != "8/4 4/1" {
+		t.Errorf("no marker in a marking list means no hit: got %v, want 8/4 4/1", m)
+	}
+	unmarked := []domain.CheckerMove{{Move: "8/4 4/1", AnalysisEngine: "GNUbg"}, {Move: "8/7 7/1", AnalysisEngine: "GNUbg"}}
+	if m := PlayedCandidate(unmarked, "8/1"); m != nil {
+		t.Errorf("ambiguous match in an unmarked list: got %v, want none", m)
+	}
+	if m := PlayedCandidate(unmarked[:1], "8/4* 4/1"); m == nil || m.Move != "8/4 4/1" {
+		t.Errorf("an unmarked list is a wildcard over the hits: got %v", m)
+	}
+	xg := []domain.CheckerMove{{Move: "6/5* 5/1*", AnalysisEngine: "XG"}, {Move: "6/2 2/1*", AnalysisEngine: "XG"}}
+	if m := PlayedCandidate(xg, "6/2/1*"); m == nil || m.Move != "6/2 2/1*" {
+		t.Errorf("one hit is not two: got %v, want 6/2 2/1*", m)
+	}
+	if m := PlayedCandidate(xg, "6/2/1"); m != nil {
+		t.Errorf("XG writes its hits, 6/2/1 hits nothing: got %v, want none", m)
+	}
+	mixed := append(xg[:1:1], domain.CheckerMove{Move: "13/9 9/8", AnalysisEngine: "GNUbg"})
+	if m := PlayedCandidate(mixed, "6/1"); m == nil || m.Move != "6/5* 5/1*" {
+		t.Errorf("a played move beside an unmarked engine keeps the wildcard: got %v", m)
 	}
 	if m := PlayedCandidate(moves, "6/off 5/off"); m != nil {
 		t.Errorf("unknown play: got %v, want none", m)

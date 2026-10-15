@@ -753,10 +753,15 @@ func PopulateAnalysisColumns(a *domain.PositionAnalysis, playedMove, playedCubeA
 
 // PlayedCandidate returns the candidate that is the played move, nil when
 // none is. The notation is matched first as written (parts in any order);
-// failing that, as the play it describes (CanonicalMove), because the match
+// failing that, as the play it describes (SamePlay), because the match
 // record and the analysis may spell one play two ways — "13/9 9/6" against
-// "13/6", "4/3 3/off" against "4/off". The canonical form drops hit markers,
-// so it is only trusted when it names a single candidate.
+// "13/6", "4/3 3/off" against "4/off". A source that never writes its hits
+// matches on shape alone, so the match is only trusted when it names a
+// single candidate.
+//
+// Every importer records the played move with the analysis it read, in one
+// dialect: an unmarked played move writes its hits unless some engine of the
+// list does not.
 func PlayedCandidate(moves []domain.CheckerMove, playedMove string) *domain.CheckerMove {
 	norm := NormalizeMove(playedMove)
 	for i := range moves {
@@ -764,10 +769,17 @@ func PlayedCandidate(moves []domain.CheckerMove, playedMove string) *domain.Chec
 			return &moves[i]
 		}
 	}
-	canon := CanonicalMove(playedMove)
+	marks := CandidateMarksHits(moves)
+	playedMarks := MarksHits(playedMove)
+	if !playedMarks {
+		playedMarks = true
+		for _, m := range marks {
+			playedMarks = playedMarks && m
+		}
+	}
 	var found *domain.CheckerMove
 	for i := range moves {
-		if CanonicalMove(moves[i].Move) != canon {
+		if !SamePlay(playedMove, playedMarks, moves[i].Move, marks[moves[i].AnalysisEngine]) {
 			continue
 		}
 		if found != nil {
@@ -776,6 +788,17 @@ func PlayedCandidate(moves []domain.CheckerMove, playedMove string) *domain.Chec
 		found = &moves[i]
 	}
 	return found
+}
+
+// CandidateMarksHits says, per analysis engine of a candidate list, whether
+// that engine writes its hits (MarksHits over its own candidates): a list
+// merges several engines' entries, each in its own dialect.
+func CandidateMarksHits(moves []domain.CheckerMove) map[string]bool {
+	marks := make(map[string]bool)
+	for _, m := range moves {
+		marks[m.AnalysisEngine] = marks[m.AnalysisEngine] || MarksHits(m.Move)
+	}
+	return marks
 }
 
 // BestMoveErrorArg is BestMoveEquityError as a column value: nil (NULL) when

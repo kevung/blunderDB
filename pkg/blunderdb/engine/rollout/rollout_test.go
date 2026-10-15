@@ -409,3 +409,28 @@ func TestResponseRolloutIsTheDoublersDecision(t *testing.T) {
 		}
 	}
 }
+
+// Deux coups de même forme qui ne frappent pas les mêmes pions sont deux
+// branches ; une liste sans aucune marque de prise ne peut pas les départager
+// et le refus vaut mieux qu'un coup deviné.
+func TestMoveBranches_LesPrisesDistinguentDeuxCoups(t *testing.T) {
+	pos := domain.InitializePosition()
+	pos.Dice = [2]int{4, 1}
+	pos.Board.Points[5] = domain.Point{Checkers: 1, Color: domain.White}
+	pos.Board.Points[1] = domain.Point{Checkers: 1, Color: domain.White}
+	cube := cubeState{value: 1, owner: noOwner}
+
+	names, branches, err := moveBranches(&pos, Settings{}, []string{"6/5*/1*", "6/2/1*"}, cube)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(branches) != 2 || branches[0].start == branches[1].start {
+		t.Fatalf("%v : deux prises et une prise donnent une seule branche", names)
+	}
+	if _, _, err := moveBranches(&pos, Settings{}, []string{"6/1"}, cube); err == nil {
+		t.Error("« 6/1 » d'une liste sans marque nomme deux coups : deviné au lieu de refusé")
+	}
+	if _, _, err := moveBranches(&pos, Settings{}, []string{"6/2/1*", "6/2/1"}, cube); err == nil {
+		t.Error("« 6/2/1 » d'une liste qui note ses prises ne frappe pas : aucun coup légal")
+	}
+}

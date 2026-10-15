@@ -101,3 +101,21 @@ func TestAggregate_UnRefusNEstPasUnEchec(t *testing.T) {
 		t.Errorf("pires désaccords : %+v", cmp.Worst)
 	}
 }
+
+// Deux coups de même forme qui ne frappent pas les mêmes pions sont deux
+// décisions : 4-1, « 6/5* 5/1* » contre « 6/2 2/1* ».
+func TestCompareOne_LesPrisesDistinguentDeuxCoups(t *testing.T) {
+	stored := &domain.PositionAnalysis{
+		CheckerAnalysis: &domain.CheckerAnalysis{Moves: []domain.CheckerMove{
+			{Move: "6/5* 5/1*", Equity: 0.10, AnalysisEngine: "XG"},
+			{Move: "6/2 2/1*", Equity: 0.02, AnalysisEngine: "XG"},
+		}},
+	}
+	got := compareCheckerAnswer(stored, "6/2 2/1*", domain.PhaseMiddlegame.String(), 1)
+	if got.same {
+		t.Fatal("une prise et deux prises comptées comme le même coup")
+	}
+	if want := 0.08; got.dis.Cost < want-1e-9 || got.dis.Cost > want+1e-9 {
+		t.Errorf("coût du désaccord : %v, attendu %v", got.dis.Cost, want)
+	}
+}

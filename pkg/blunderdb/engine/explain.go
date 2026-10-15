@@ -79,8 +79,9 @@ func ExplainChecker(pos *domain.Position, ana *domain.PositionAnalysis, played s
 	}
 	out := Explanation{CostMP: cost, Best: bestMove.Move}
 
-	playedBoard, okPlayed := boardAfter(pos, playedMove.Move)
-	bestBoard, okBest := boardAfter(pos, bestMove.Move)
+	marks := CandidateMarksHits(ana.CheckerAnalysis.Moves)
+	playedBoard, okPlayed := boardAfter(pos, playedMove.Move, marks[playedMove.AnalysisEngine])
+	bestBoard, okBest := boardAfter(pos, bestMove.Move, marks[bestMove.AnalysisEngine])
 
 	// Gammon first: it is the one axis the analysis states directly, so it
 	// needs no board reconstruction and cannot be wrong about what it saw.
@@ -193,57 +194,16 @@ func findPlayedAndBest(moves []domain.CheckerMove, played string) (*domain.Check
 }
 
 // boardAfter replays a move notation through the legal-move generator and
-// returns the board it produces. The generator writes each step ("13/10(2)
-// 10/7(2)", "8/5* 5/4") where an analysis may merge them ("13/7(2)",
-// "8/5*/4"), so a notation that is not one of the generator's spellings is
-// matched by the play it describes (CanonicalMove): the legal plays it
-// names must all leave one board, after keeping those that hit as often as
-// the notation says when they do not. A notation that names no legal play, or
+// returns the board it produces (ResolvePlay). marks says whether the
+// notation's source writes its hits. A notation that names no legal play, or
 // plays leaving different boards, yields ok=false, and the rules that need a
 // board simply do not fire.
-func boardAfter(pos *domain.Position, notation string) (domain.Board, bool) {
-	norm := NormalizeMove(notation)
-	plays := domain.LegalMoves(pos)
-	for _, play := range plays {
-		if strings.EqualFold(NormalizeMove(play.Notation), norm) {
-			return play.Result.Board, true
-		}
-	}
-	canon := strings.ToLower(CanonicalMove(notation))
-	if canon == "" {
+func boardAfter(pos *domain.Position, notation string, marks bool) (domain.Board, bool) {
+	play, err := ResolvePlay(domain.LegalMoves(pos), notation, marks)
+	if err != nil {
 		return domain.Board{}, false
 	}
-	var same []domain.LegalPlay
-	for _, play := range plays {
-		if strings.ToLower(CanonicalMove(play.Notation)) == canon {
-			same = append(same, play)
-		}
-	}
-	if board, ok := oneBoard(same); ok {
-		return board, true
-	}
-	hits := strings.Count(notation, "*")
-	var hitting []domain.LegalPlay
-	for _, play := range same {
-		if strings.Count(play.Notation, "*") == hits {
-			hitting = append(hitting, play)
-		}
-	}
-	return oneBoard(hitting)
-}
-
-// oneBoard is the board every play leaves, ok=false when there is no play or
-// they leave different boards.
-func oneBoard(plays []domain.LegalPlay) (domain.Board, bool) {
-	if len(plays) == 0 {
-		return domain.Board{}, false
-	}
-	for _, play := range plays[1:] {
-		if play.Result.Board != plays[0].Result.Board {
-			return domain.Board{}, false
-		}
-	}
-	return plays[0].Result.Board, true
+	return play.Result.Board, true
 }
 
 // countBlots counts a side's lone checkers on the board.
@@ -289,8 +249,9 @@ func BlotDeviation(pos *domain.Position, ana *domain.PositionAnalysis, played st
 	if playedMove.Move == bestMove.Move {
 		return 0, true
 	}
-	playedBoard, okPlayed := boardAfter(pos, playedMove.Move)
-	bestBoard, okBest := boardAfter(pos, bestMove.Move)
+	marks := CandidateMarksHits(ana.CheckerAnalysis.Moves)
+	playedBoard, okPlayed := boardAfter(pos, playedMove.Move, marks[playedMove.AnalysisEngine])
+	bestBoard, okBest := boardAfter(pos, bestMove.Move, marks[bestMove.AnalysisEngine])
 	if !okPlayed || !okBest {
 		return 0, false
 	}

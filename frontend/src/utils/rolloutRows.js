@@ -1,25 +1,26 @@
 // What the candidate moves table shows of the rollouts of a position: one entry per play, the
 // rollout in progress first, then one of a board that is not stored, then the stored ones newest
 // first. A rollout of the cube decision has no play row and is left out.
-import { canonicalMove } from './moveNotation.js';
+import { marksHits, playKey, samePlay } from './moveNotation.js';
 
 /**
  * @typedef {{ move: string, equity: number, ci95: number, stdErr: number, jsd: number, games: number }} RolloutCandidate
- * @typedef {{ candidate: RolloutCandidate, record: any, live: boolean }} RolloutEntry
+ * @typedef {{ candidate: RolloutCandidate, record: any, live: boolean, marks: boolean }} RolloutEntry
  */
 
 /**
  * @param {{ stored?: any[], unsaved?: any, live?: RolloutCandidate[] }} sources
- * @returns {Map<string, RolloutEntry>} keyed by canonicalMove
+ * @returns {Map<string, RolloutEntry>} keyed by playKey
  */
 export function rolloutsByMove({ stored = [], unsaved = null, live = [] } = {}) {
     /** @type {Map<string, RolloutEntry>} */
     const out = new Map();
     /** @param {RolloutCandidate[]} candidates @param {any} record @param {boolean} isLive */
     const add = (candidates, record, isLive) => {
+        const marks = marksHits((candidates ?? []).map((c) => c.move));
         for (const c of candidates ?? []) {
-            const key = canonicalMove(c.move);
-            if (key && !out.has(key)) out.set(key, { candidate: c, record, live: isLive });
+            const key = playKey(c.move);
+            if (key && !out.has(key)) out.set(key, { candidate: c, record, live: isLive, marks });
         }
     };
     add(live, null, true);
@@ -28,6 +29,29 @@ export function rolloutsByMove({ stored = [], unsaved = null, live = [] } = {}) 
         add(r?.candidates, r, false);
     }
     return out;
+}
+
+/**
+ * The rollout of one row of the analysis table: by its playKey, else, when one side never writes
+ * its hits, by the single entry of the same shape (samePlay) — two would be a guess.
+ *
+ * @param {Map<string, RolloutEntry> | null | undefined} rollouts
+ * @param {string} move
+ * @param {boolean} moveMarks whether the row's engine writes its hits (marksHits over its rows)
+ * @returns {RolloutEntry | undefined}
+ */
+export function rolloutFor(rollouts, move, moveMarks) {
+    if (!rollouts || !rollouts.size || !move) return undefined;
+    const exact = rollouts.get(playKey(move));
+    if (exact) return exact;
+    /** @type {RolloutEntry | undefined} */
+    let found;
+    for (const entry of rollouts.values()) {
+        if (!samePlay(move, moveMarks, entry.candidate.move, entry.marks)) continue;
+        if (found) return undefined;
+        found = entry;
+    }
+    return found;
 }
 
 /**
