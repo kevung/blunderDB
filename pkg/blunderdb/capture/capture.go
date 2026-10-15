@@ -119,7 +119,7 @@ func decode(data []byte, limit int) (Reading, error) {
 }
 
 // shrinkFactor is the smallest integer f that brings a w×h image within
-// MaxPixels once each f×f block is averaged into one pixel.
+// readPixels (MaxPixels unless a test lowers it) once each f×f block is averaged into one pixel.
 func shrinkFactor(w, h int) int {
 	f := 1
 	for ((w+f-1)/f)*((h+f-1)/f) > readPixels {
