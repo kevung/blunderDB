@@ -1241,7 +1241,11 @@
         "aliases": "別名",
         "collectionPositions": "+ その局面",
         "ankiHistory": "学習履歴を含める",
-        "selectDecks": "エクスポートするデッキを選択"
+        "selectDecks": "エクスポートするデッキを選択",
+        "frozenMark": "固定",
+        "frozenNote": "{count} 件のライブコレクションは固定されて書き出されます。クエリがファイルに含まれない行を指しているため、現時点で選択される一覧として届きます。「+ その局面」にチェックすると、ライブのまま保てます。",
+        "degradedNote": "{count} 件の検索デッキはソースの一部が失われます。",
+        "tournamentsDetail": "うち 運営 {directions} 件、対抗戦 {rencontres} 件"
     },
     "import": {
         "minimize": "最小化",
@@ -1718,7 +1722,13 @@
         "captureFailed": "スクリーンショットを読み取れませんでした: {error}",
         "captureOnlyFirst": "{count} 枚の画像がドロップされました。最初の1枚だけを読み取りました。",
         "captureUnsure": "丸で示していない要確認事項: {fields}。",
-        "captureField": { "score": "スコア", "turn": "手番", "orientation": "盤の向き", "dice": "ダイス", "checkers": "駒の数" },
+        "captureField": {
+            "score": "スコア",
+            "turn": "手番",
+            "orientation": "盤の向き",
+            "dice": "ダイス",
+            "checkers": "駒の数"
+        },
         "importIdentifierFailed": "識別子を読み取れませんでした：{error}",
         "boardImageSaved": "画像を保存しました：{path}",
         "boardImageSaveFailed": "画像を保存できませんでした：{err}",

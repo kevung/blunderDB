@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-13 17:22+0200\n"
+"POT-Creation-Date: 2026-10-15 11:57+0200\n"
 "PO-Revision-Date: 2025-01-20 13:37+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -11836,24 +11836,30 @@ msgstr "Marking a database with its origin"
 msgid ""
 "La fenêtre d'export tient en un seul écran : une bande d'en-tête — le "
 "nombre de positions exportées, **Annuler** et **Exporter…** — puis une "
-"grille, une ligne par famille avec son compte. Le fichier se choisit en "
-"dernier, après **Exporter…** ; fermer ce choix sans nom revient à la "
-"grille. Une progression se superpose ensuite le temps de l'écriture, la "
-"fenêtre se ferme d'elle-même et le résultat s'affiche dans la barre "
-"d'état."
+"grille, une ligne par famille avec son compte. Ces comptes sont exacts : "
+"ils sont lus auprès du serveur à chaque changement de case, sur la même "
+"sélection que l'export, et sont ce que le fichier contiendra (le nombre "
+"de positions de la bande d'en-tête, les commentaires, les matchs, les "
+"transcriptions, les alias, les tournois, les collections, les leçons, les"
+" paquets, les filtres). Le fichier se choisit en dernier, après "
+"**Exporter…** ; fermer ce choix sans nom revient à la grille. Une "
+"progression se superpose ensuite le temps de l'écriture, la fenêtre se "
+"ferme d'elle-même et le résultat s'affiche dans la barre d'état."
 msgstr ""
 "The export window fits on a single screen: a header strip — the number of"
 " positions exported, **Cancel** and **Export…** — then a grid, one row "
-"per family with its count. The file is chosen last, after **Export…**; "
-"closing that choice without a name returns to the grid. A progress "
-"indicator then overlays for the duration of the write, the window closes "
-"by itself and the result appears in the status bar."
+"per family with its count. These counts are exact: they are read from the"
+" server at every change of a box, on the same selection as the export, "
+"and are what the file will hold. The file is chosen last, after "
+"**Export…**; closing that choice without a name returns to the grid. A "
+"progress indicator then overlays for the duration of the write, the "
+"window closes by itself and the result appears in the status bar."
 
-#: ../../source/manuel.rst:5125
+#: ../../source/manuel.rst:5130
 msgid "Huit points méritent l'attention :"
 msgstr "Eight points deserve attention:"
 
-#: ../../source/manuel.rst:5127
+#: ../../source/manuel.rst:5132
 msgid ""
 "**La portée** : depuis une liste — une recherche, une collection —, la "
 "ligne *Portée* choisit entre la *Liste courante* et *Toute la "
@@ -11868,7 +11874,7 @@ msgstr ""
 "these positions were played; each ticked match leaves with all its "
 "positions. From the library, the scope is the library."
 
-#: ../../source/manuel.rst:5132
+#: ../../source/manuel.rst:5137
 msgid ""
 "**Toute la bibliothèque** est l'export du serveur et de ``export --type "
 "database`` : toutes les familles sont cochées d'emblée, les paquets Anki "
@@ -11880,7 +11886,7 @@ msgstr ""
 "their review history, and the transcriptions in progress leave with the "
 "rest."
 
-#: ../../source/manuel.rst:5136
+#: ../../source/manuel.rst:5141
 msgid ""
 "**Un match part avec son brouillon de transcription**, sous la case "
 "*Transcriptions* de la ligne *Matchs*, cochée d'emblée ; les matchs qu'un"
@@ -11900,7 +11906,7 @@ msgstr ""
 " The file from which a match was imported likewise leaves only by its "
 "name."
 
-#: ../../source/manuel.rst:5143
+#: ../../source/manuel.rst:5148
 msgid ""
 "**Un match part avec les alias de ses joueurs et de son événement** : la "
 "case *Alias*, cochée d'emblée, fait suivre la fusion de joueurs, et le "
@@ -11912,22 +11918,30 @@ msgstr ""
 "the recipient reads a merged player as one. An alias that names no one "
 "from the exported matches stays with you."
 
-#: ../../source/manuel.rst:5147
+#: ../../source/manuel.rst:5152
 msgid ""
 "**Une collection dont toutes les positions ne sont pas dans la liste "
 "arrive tronquée.** La liste des collections affiche, pour chacune, la "
 "part couverte (« 12/40 ») et la signale en rouge lorsqu'elle est "
 "partielle. La case *+ leurs positions* emporte les positions des "
 "collections cochées : celles d'une liste faite à la main, celles que la "
-"requête d'une collection vivante sélectionne."
+"requête d'une collection vivante sélectionne. Une collection vivante dont"
+" la requête désigne des lignes que le fichier ne contient pas **part "
+"figée** : elle arrive comme la liste de ce que sa requête sélectionne "
+"aujourd'hui, et la liste la marque « figée » en rouge avec une note ; "
+"cocher *+ leurs positions* la laisse vivante."
 msgstr ""
 "**A collection whose positions are not all in the list arrives "
 "truncated.** The collection list shows, for each one, the share covered "
 "(“12/40”) and flags it in red when it is partial. The *+ their positions*"
 " box carries the positions of the ticked collections: those of a hand-"
-"made list, those that the query of a living collection selects."
+"made list, those that the query of a living collection selects. A living "
+"collection whose query names rows the file does not hold **leaves "
+"frozen**: it arrives as the list its query selects today, and the list "
+"marks it “frozen” in red with a note; ticking *+ their positions* keeps "
+"it living."
 
-#: ../../source/manuel.rst:5153
+#: ../../source/manuel.rst:5161
 msgid ""
 "**Un tournoi part toujours avec ses matchs** : sans eux, le lien "
 "tournoi–match n'existe pas et le tournoi arriverait vide. Cocher un "
@@ -11939,7 +11953,7 @@ msgstr ""
 "empty. Ticking a tournament takes its matches along, even if the matches "
 "box is unticked or restricted to others."
 
-#: ../../source/manuel.rst:5157
+#: ../../source/manuel.rst:5165
 msgid ""
 "**Un paquet Anki part avec ses positions**, en copie d'étude neuve. La "
 "case *avec mon historique* emporte en plus l'état de chaque carte et le "
@@ -11952,7 +11966,7 @@ msgstr ""
 "its reviews: a backup, or your decks moved to another machine. It is "
 "unticked for a list, ticked for the library."
 
-#: ../../source/manuel.rst:5161
+#: ../../source/manuel.rst:5169
 msgid ""
 "**Les filtres enregistrés** n'exportent pas du contenu mais vos propres "
 "recherches, sans utilité dans la base de quelqu'un d'autre ; la case est "
@@ -11966,7 +11980,7 @@ msgstr ""
 "renumbered for the file; if it designates one that does not leave, it "
 "stays with you."
 
-#: ../../source/manuel.rst:5167
+#: ../../source/manuel.rst:5175
 msgid ""
 "Les champs *Utilisateur*, *Description* et *Date de création* décrivent "
 "le **fichier produit** ; ils sont préremplis depuis la base source."
@@ -11974,11 +11988,11 @@ msgstr ""
 "The *User*, *Description* and *Creation date* fields describe the "
 "**produced file**; they are prefilled from the source database."
 
-#: ../../source/manuel.rst:5170
+#: ../../source/manuel.rst:5178
 msgid "Cocher **Filigrane** fait apparaître deux champs :"
 msgstr "Ticking **Watermark** reveals two fields:"
 
-#: ../../source/manuel.rst:5172
+#: ../../source/manuel.rst:5180
 msgid ""
 "**Origine** — ce qu'est ce fichier et d'où il vient, dans vos mots : « "
 "Cours de Jean Dupont — 12 mars 2026 ». Ce champ est **obligatoire** : "
@@ -11990,7 +12004,7 @@ msgstr ""
 "**mandatory**: as long as it is empty, it is outlined in red and the "
 "export button stays inactive."
 
-#: ../../source/manuel.rst:5175
+#: ../../source/manuel.rst:5183
 msgid ""
 "**Note**, facultative — conditions d'utilisation, adresse de contact, une"
 " demande de ne pas rediffuser."
@@ -11998,7 +12012,7 @@ msgstr ""
 "**Note**, optional — terms of use, a contact address, a request not to "
 "pass the file on."
 
-#: ../../source/manuel.rst:5178
+#: ../../source/manuel.rst:5186
 msgid ""
 "La marque est signée avec votre identité d'émetteur. Elle est donc "
 "**inaltérable et infalsifiable** : nul ne peut la modifier, ni en "
@@ -12012,11 +12026,11 @@ msgstr ""
 "ordinary SQLite database, and blunderDB is free software. It prevents "
 "nothing: it says where the file came from."
 
-#: ../../source/manuel.rst:5185
+#: ../../source/manuel.rst:5193
 msgid "Identité d'émetteur"
 msgstr "Issuer identity"
 
-#: ../../source/manuel.rst:5187
+#: ../../source/manuel.rst:5195
 msgid ""
 "Les marques sont signées avec votre **identité d'émetteur**, créée toute "
 "seule la première fois que vous marquez un fichier ; il n'y a rien à "
@@ -12029,7 +12043,7 @@ msgstr ""
 "person rather than to a database: every file you mark carries the same "
 "public fingerprint, of the form ``A3F1-9C24-7B05-E1D8``."
 
-#: ../../source/manuel.rst:5192
+#: ../../source/manuel.rst:5200
 msgid ""
 "Vous pouvez communiquer cette empreinte à vos destinataires pour qu'ils "
 "vérifient qu'un fichier vient bien de vous. L'identité se transporte d'un"
@@ -12043,7 +12057,7 @@ msgstr ""
 "a passphrase. **That file lets anyone holding it sign in your name: do "
 "not share it.**"
 
-#: ../../source/manuel.rst:5198
+#: ../../source/manuel.rst:5206
 msgid ""
 "Dans les préférences (icône engrenage de la barre d'outils), l'onglet "
 "*Identité d'émetteur* affiche votre nom et votre empreinte, et propose "
@@ -12053,7 +12067,7 @@ msgstr ""
 "tab shows your name and fingerprint, and offers *Save identity…*, *Load "
 "identity…* and *Regenerate…*."
 
-#: ../../source/manuel.rst:5204
+#: ../../source/manuel.rst:5212
 msgid ""
 "**Régénérer ne révoque rien.** Un filigrane embarque la clé publique qui "
 "l'a signé : il se vérifie donc pour toujours, tout seul. Si votre fichier"
@@ -12065,7 +12079,7 @@ msgstr ""
 " leaked, whoever holds it can keep signing under your old fingerprint, "
 "and those marks stay valid."
 
-#: ../../source/manuel.rst:5209
+#: ../../source/manuel.rst:5217
 msgid ""
 "Ce qui vous protège après une fuite n'est pas logiciel : c'est de publier"
 " votre nouvelle empreinte et de désavouer l'ancienne auprès de vos "
@@ -12074,7 +12088,7 @@ msgstr ""
 "What protects you after a leak is not software: it is publishing your new"
 " fingerprint and disowning the old one to your recipients."
 
-#: ../../source/manuel.rst:5213
+#: ../../source/manuel.rst:5221
 msgid ""
 "La régénération écrase la clé actuelle ; blunderDB propose de "
 "l'enregistrer avant de la remplacer."
@@ -12082,11 +12096,11 @@ msgstr ""
 "Regenerating overwrites the current key; blunderDB offers to save it "
 "before replacing it."
 
-#: ../../source/manuel.rst:5217
+#: ../../source/manuel.rst:5225
 msgid "Protéger une base par un mot de passe"
 msgstr "Protecting a database with a password"
 
-#: ../../source/manuel.rst:5219
+#: ../../source/manuel.rst:5227
 msgid ""
 "Le mot de passe se saisit masqué, ici comme à l'ouverture d'un fichier "
 "protégé ; l'icône en forme d'œil l'affiche **tant qu'on la maintient "
@@ -12096,7 +12110,7 @@ msgstr ""
 "eye icon reveals it **while it is held down**, and masks it again as soon"
 " as it is released."
 
-#: ../../source/manuel.rst:5223
+#: ../../source/manuel.rst:5231
 msgid ""
 "Cocher **Mot de passe** produit un fichier d'extension ``.dbx`` — y "
 "compris si le nom choisi dans la fenêtre d'enregistrement finit en "
@@ -12111,7 +12125,7 @@ msgstr ""
 "``.dbx`` alike. blunderDB then asks for the password and installs an "
 "ordinary database alongside; after that nothing more is asked."
 
-#: ../../source/manuel.rst:5230
+#: ../../source/manuel.rst:5238
 msgid ""
 "La fenêtre propose de **supprimer le fichier protégé une fois ouvert** : "
 "sans cela vous conservez le même contenu sous deux noms. La case n'est "
@@ -12124,7 +12138,7 @@ msgstr ""
 "default — the protected file is yours to keep if you mean to pass it on —"
 " and the deletion only happens after a successful open."
 
-#: ../../source/manuel.rst:5237
+#: ../../source/manuel.rst:5245
 msgid ""
 "Le mot de passe protège le **transport** du fichier, pas la base. Il "
 "empêche un tiers d'ouvrir un fichier qui traîne dans un dossier de "
@@ -12136,7 +12150,7 @@ msgstr ""
 "forwarded by mistake. It does not protect you from whoever you gave the "
 "password to."
 
-#: ../../source/manuel.rst:5242
+#: ../../source/manuel.rst:5250
 msgid ""
 "Le mot de passe est vérifié à **chaque** ouverture, y compris lorsque le "
 "fichier a déjà été ouvert auparavant sur ce poste."
@@ -12144,7 +12158,7 @@ msgstr ""
 "The password is checked on **every** open, including when the file has "
 "already been opened on this machine before."
 
-#: ../../source/manuel.rst:5245
+#: ../../source/manuel.rst:5253
 msgid ""
 "Techniquement, la base est chiffrée par **AES-256 en mode GCM**, avec une"
 " clé dérivée du mot de passe par **Argon2id** (64 Mio de mémoire, 3 "
@@ -12160,7 +12174,7 @@ msgstr ""
 "tampering with the encrypted file — you never silently end up with a "
 "corrupt database."
 
-#: ../../source/manuel.rst:5252
+#: ../../source/manuel.rst:5260
 msgid ""
 "L'en-tête du fichier protégé reste **en clair** : son origine demeure "
 "lisible sans le mot de passe."
@@ -12168,11 +12182,11 @@ msgstr ""
 "The protected file's header stays **in the clear**: its origin remains "
 "readable without the password."
 
-#: ../../source/manuel.rst:5256
+#: ../../source/manuel.rst:5264
 msgid "Lire l'origine d'un fichier"
 msgstr "Reading a file's origin"
 
-#: ../../source/manuel.rst:5258
+#: ../../source/manuel.rst:5266
 msgid ""
 "Dans l'application, ouvrez le fichier et affichez le panneau "
 "**Métadonnées** (commande ``meta``). Une section **Origine** apparaît en "
@@ -12184,11 +12198,11 @@ msgstr ""
 " read-only, stating what was written, by whom, when, and how the "
 "signature checks out:"
 
-#: ../../source/manuel.rst:5263
+#: ../../source/manuel.rst:5271
 msgid "« ✓ marquée par vous » : le fichier porte votre marque, intacte ;"
 msgstr "“✓ marked by you”: the file carries your mark, intact;"
 
-#: ../../source/manuel.rst:5265
+#: ../../source/manuel.rst:5273
 msgid ""
 "« ✓ signature vérifiée » : la marque est intacte et vient d'une autre clé"
 " — comparez son empreinte à celle que le producteur vous a communiquée ;"
@@ -12196,15 +12210,15 @@ msgstr ""
 "“✓ signature verified”: the mark is intact and comes from another key — "
 "compare its fingerprint with the one the producer gave you;"
 
-#: ../../source/manuel.rst:5267
+#: ../../source/manuel.rst:5275
 msgid "« ⚠ signature invalide » : le document a été modifié ou contrefait."
 msgstr "“⚠ invalid signature”: the document has been altered or forged."
 
-#: ../../source/manuel.rst:5269
+#: ../../source/manuel.rst:5277
 msgid "Cette section n'apparaît pas sur une base ordinaire."
 msgstr "This section does not appear on an ordinary database."
 
-#: ../../source/manuel.rst:5271
+#: ../../source/manuel.rst:5279
 msgid ""
 "En ligne de commande, ``blunderdb info --db fichier.db`` affiche "
 "l'origine et l'état de la signature, **sans jamais écrire dans le "
@@ -12218,11 +12232,11 @@ msgstr ""
 " for ``export``'s ``--watermark`` and ``--password`` options, and for "
 "``identity`` and ``open``."
 
-#: ../../source/manuel.rst:5280
+#: ../../source/manuel.rst:5288
 msgid "Publier une base pour d'autres"
 msgstr "Publishing a database for others"
 
-#: ../../source/manuel.rst:5282
+#: ../../source/manuel.rst:5290
 msgid ""
 "Une base marquée se distribue comme n'importe quel fichier — courriel, "
 "site personnel, clé USB. blunderDB **ne fournit aucun service** : ni "
@@ -12237,7 +12251,7 @@ msgstr ""
 "nothing is ever recorded on the side of whoever receives a file, so there"
 " would be nothing to report to a service even if one existed."
 
-#: ../../source/manuel.rst:5288
+#: ../../source/manuel.rst:5296
 msgid ""
 "Ce qui rend une base publiée utilisable par quelqu'un d'autre tient à "
 "quatre champs, tous déjà là :"
@@ -12245,13 +12259,13 @@ msgstr ""
 "What makes a published database usable by someone else comes down to four"
 " fields, all of them already there:"
 
-#: ../../source/manuel.rst:5291
+#: ../../source/manuel.rst:5299
 msgid ""
 "**Utilisateur** — qui l'a constituée, sous le nom que vous voulez voir "
 "cité."
 msgstr "**User** — who built it, under the name you want cited."
 
-#: ../../source/manuel.rst:5292
+#: ../../source/manuel.rst:5300
 msgid ""
 "**Description** — ce que la base contient, en une phrase qui tienne dans "
 "une liste : « 240 décisions de videau au score, commentées, niveau "
@@ -12260,7 +12274,7 @@ msgstr ""
 "**Description** — what the database holds, in one sentence that fits in a"
 " list: “240 cube decisions at a score, commented, intermediate level”."
 
-#: ../../source/manuel.rst:5294
+#: ../../source/manuel.rst:5302
 msgid ""
 "**Origine** (du filigrane) — ce qu'est ce fichier et pour qui il a été "
 "produit. C'est ce que le destinataire lit en premier dans le panneau "
@@ -12269,7 +12283,7 @@ msgstr ""
 "**Origin** (of the watermark) — what this file is and who it was produced"
 " for. It is the first thing the recipient reads in the *Metadata* panel."
 
-#: ../../source/manuel.rst:5297
+#: ../../source/manuel.rst:5305
 msgid ""
 "**Empreinte d'émetteur** — publiez-la à côté du fichier, pas dedans : "
 "c'est en la comparant que le destinataire vérifie que le fichier vient de"
@@ -12279,7 +12293,7 @@ msgstr ""
 "comparing it is how the recipient checks the file comes from you and not "
 "from someone who took your name."
 
-#: ../../source/manuel.rst:5301
+#: ../../source/manuel.rst:5309
 msgid ""
 "Une base publiée sans filigrane reste parfaitement utilisable ; elle est "
 "simplement anonyme, et le panneau *Métadonnées* n'affiche alors aucune "
@@ -12289,7 +12303,7 @@ msgstr ""
 "simply anonymous, and the *Metadata* panel then shows no *Origin* "
 "section."
 
-#: ../../source/manuel.rst:5305
+#: ../../source/manuel.rst:5313
 msgid ""
 "Pour faire connaître une base, la catégorie *Show and tell* des "
 "`discussions du dépôt <https://github.com/kevung/blunderDB/discussions>`_"
