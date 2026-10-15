@@ -8,6 +8,14 @@ propre issue le jour où il est lancé.
 
 ## Ouvert — Backend
 
+- **Colonnes dérivées du coup joué calculées avant que les prises distinguent deux coups.**
+  `engine.PlayedCandidate` lit désormais le coup joué dans le dialecte de chaque moteur (XG,
+  gammonNet et le générateur notent leurs prises, gnubg/BGBlitz/HedgeHog non) : « 6/2/1 »
+  n'est plus apparié à « 6/5*/1 ». Les `best_move_error` et `BestMoveUnscored` déjà stockés
+  ont été calculés avec l'ancien appariement (forme seule) et peuvent chiffrer un autre coup ;
+  ils ne changent qu'à la réécriture de l'analyse. Un recalcul demande un pas de migration qui
+  rejoue `PopulateAnalysisColumns` sur chaque analyse, comme `db_migration_v2_37.go:83`, donc
+  un bump de `DatabaseVersion` : à faire avec le prochain changement de schéma.
 - **Statistiques : le filtre `--engine` par les cellules.** Il lit encore les décisions
   (copie de la sélection) ; passer par `match_stats_cell` demande le moteur dans la clé des
   cellules, autant de cellules en plus que de moteurs par match. Mesure de départ :

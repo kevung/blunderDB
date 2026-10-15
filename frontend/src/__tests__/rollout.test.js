@@ -60,7 +60,7 @@ const RolloutSettings = (await import('../components/RolloutSettings.svelte')).d
 const RolloutStrip = (await import('../components/RolloutStrip.svelte')).default;
 const AnalysisPanel = (await import('../components/AnalysisPanel.svelte')).default;
 const { runRolloutCommand, toggleRollout, initRolloutChoice } = await import('../services/rolloutService.js');
-const { canonicalMove, playKey, samePlay } = await import('../utils/moveNotation.js');
+const { canonicalMove, playKey, samePlay, candidateMarksHits } = await import('../utils/moveNotation.js');
 const { rolloutsByMove, rolloutFor } = await import('../utils/rolloutRows.js');
 
 const stored = (over = {}) => ({
@@ -74,7 +74,7 @@ const stored = (over = {}) => ({
     cubefulBias: true,
     exactBearoff: false,
     candidates: [
-        { move: '13/7 8/7', equity: 0.123, stdErr: 0.004, ci95: 0.008, games: 216, jsd: 0 },
+        { move: '8/7 13/7*', equity: 0.123, stdErr: 0.004, ci95: 0.008, games: 216, jsd: 0 },
         { move: '24/18 13/11', equity: 0.05, stdErr: 0.005, ci95: 0.01, games: 108, jsd: 3.4 }
     ],
     ...over
@@ -152,8 +152,21 @@ describe('hits tell two plays of one shape apart', () => {
         expect(rolloutFor(rows, '6/5*/1*', true)?.candidate.move).toBe('6/5* 5/1*');
         expect(rolloutFor(rows, '6/2/1', true)).toBeUndefined();
     });
+    test('the dialect is the engine, not the stars of its rows', () => {
+        const marks = candidateMarksHits([
+            { move: '6/2/1', analysisEngine: 'XG' },
+            { move: '6/3* 3/1', analysisEngine: 'GNUbg' },
+            { move: '24/18', analysisEngine: 'Other' }
+        ]);
+        expect(marks).toEqual({ XG: true, GNUbg: false, Other: false });
+        // XG's 6/2/1 hits nothing: it is not the rollout of 6/5*/1.
+        expect(rolloutFor(rolled(['6/5* 5/1*', '13/9 6/5*']), '6/2/1', marks.XG)).toBeUndefined();
+    });
+    test('an unmarked row is told apart by its steps', () => {
+        expect(rolloutFor(rolled(['6/5* 5/1*', '6/2 2/1*']), '6/2 2/1', false)?.candidate.move).toBe('6/2 2/1*');
+    });
     test('an unmarked row is a wildcard only when one rollout fits', () => {
-        expect(rolloutFor(rolled(['6/5* 5/1*', '6/2 2/1*']), '6/2 2/1', false)).toBeUndefined();
+        expect(rolloutFor(rolled(['6/5* 5/1*', '6/2 2/1*']), '6/1', false)).toBeUndefined();
         expect(rolloutFor(rolled(['6/2 2/1*', '13/7']), '6/2 2/1', false)?.candidate.move).toBe('6/2 2/1*');
     });
 });

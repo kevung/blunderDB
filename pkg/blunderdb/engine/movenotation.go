@@ -27,8 +27,8 @@ import (
 //
 // CanonicalMove folds all three and gives the play's shape; HitPoints gives
 // where it hits. SamePlay compares on both, and reads a missing "*" as "no
-// hit" unless the source never writes one (MarksHits): only then is an
-// unmarked play a wildcard over the hits.
+// hit" unless the notation's dialect never writes one (EngineMarksHits): only
+// then is an unmarked play a wildcard over the hits.
 
 // CanonicalMove renders a checker play in a form two engines can be compared
 // on: hit markers dropped, "(n)" expanded, chained hops merged, steps sorted.
@@ -129,9 +129,23 @@ func PlayKey(move string) string {
 	return canon
 }
 
-// MarksHits reports whether a source writes its hits: whether any play of
-// its list carries a "*". A source that never does (gnubg's SGF candidates)
-// says nothing about hits, so its plays match on shape alone.
+// EngineMarksHits says whether an analysis engine's dialect, as blunderDB's
+// importers write it, carries hit markers; known=false for an engine it does
+// not name. XG, gammonNet and blunderDB's own move generator (rollouts, the
+// legal plays) write "*"; the GNU Backgammon, BGBlitz and HedgeHog importers
+// never do.
+func EngineMarksHits(engine string) (marks, known bool) {
+	switch {
+	case engine == "XG", strings.HasPrefix(engine, "gammonNet"), strings.HasPrefix(engine, "blunderDB"):
+		return true, true
+	case engine == "GNUbg", engine == "BGBlitz", strings.HasPrefix(engine, "HedgeHog"):
+		return false, true
+	}
+	return false, false
+}
+
+// MarksHits reports whether any of the notations carries a "*": what can be
+// told of a source whose dialect is unknown, from the plays it wrote.
 func MarksHits(moves ...string) bool {
 	for _, m := range moves {
 		if strings.Contains(m, "*") {
@@ -142,7 +156,7 @@ func MarksHits(moves ...string) bool {
 }
 
 // SamePlay reports whether two notations name the same play. aMarks and
-// bMarks say whether each one's source writes its hits (MarksHits): when
+// bMarks say whether each one's dialect writes its hits (EngineMarksHits): when
 // both do, a missing "*" means no hit and the hit points must agree; when
 // one does not, the shape decides and the caller must make sure it names a
 // single play.
@@ -168,23 +182,46 @@ func ResolvePlay(legal []domain.LegalPlay, notation string, marks bool) (domain.
 			return p, nil
 		}
 	}
-	var same []domain.LegalPlay
+	var same, steps []domain.LegalPlay
 	for _, p := range legal {
 		if SamePlay(notation, marks, p.Notation, true) {
 			same = append(same, p)
+			if SameSteps(notation, p.Notation) {
+				steps = append(steps, p)
+			}
 		}
+	}
+	if len(steps) > 0 && !oneBoard(same) {
+		// The steps as written tell apart what the shape cannot: gnubg's
+		// "6/2 2/1" goes through 2, whatever it hits there.
+		same = steps
 	}
 	if len(same) == 0 {
 		return domain.LegalPlay{}, fmt.Errorf("%q is not a legal play", notation)
 	}
-	for _, p := range same[1:] {
-		if p.Result.Board != same[0].Result.Board {
-			names := make([]string, len(same))
-			for i, q := range same {
-				names[i] = q.Notation
-			}
-			return domain.LegalPlay{}, fmt.Errorf("%q is ambiguous: %s", notation, strings.Join(names, ", "))
+	if !oneBoard(same) {
+		names := make([]string, len(same))
+		for i, q := range same {
+			names[i] = q.Notation
 		}
+		return domain.LegalPlay{}, fmt.Errorf("%q is ambiguous: %s", notation, strings.Join(names, ", "))
 	}
 	return same[0], nil
+}
+
+// SameSteps reports whether two notations write the same steps once their
+// hit markers are dropped, parts in any order: an unmarked "6/2 2/1" and the
+// generator's "6/2 2/1*".
+func SameSteps(a, b string) bool {
+	return NormalizeMove(strings.ReplaceAll(a, "*", "")) == NormalizeMove(strings.ReplaceAll(b, "*", ""))
+}
+
+// oneBoard reports whether every play leaves the same board.
+func oneBoard(plays []domain.LegalPlay) bool {
+	for _, p := range plays[min(1, len(plays)):] {
+		if p.Result.Board != plays[0].Result.Board {
+			return false
+		}
+	}
+	return true
 }

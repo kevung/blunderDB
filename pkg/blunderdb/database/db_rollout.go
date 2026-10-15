@@ -38,11 +38,15 @@ func (d *Database) RolloutPosition(ctx context.Context, positionID int64, s roll
 	d.mu.RLock()
 	gen := d.generation
 	pos, err := rollouts.Load(ctx, d.store, "", positionID)
+	var from []domain.CheckerMove
+	if err == nil && len(moves) > 0 {
+		from, err = rollouts.Candidates(ctx, d.store, "", positionID)
+	}
 	d.mu.RUnlock()
 	if err != nil {
 		return nil, err
 	}
-	res, err := rollouts.Run(ctx, pos, s, moves, nil, progress)
+	res, err := rollouts.Run(ctx, pos, s, moves, from, nil, progress)
 	if err != nil {
 		return res, err
 	}

@@ -755,13 +755,18 @@ func PopulateAnalysisColumns(a *domain.PositionAnalysis, playedMove, playedCubeA
 // none is. The notation is matched first as written (parts in any order);
 // failing that, as the play it describes (SamePlay), because the match
 // record and the analysis may spell one play two ways — "13/9 9/6" against
-// "13/6", "4/3 3/off" against "4/off". A source that never writes its hits
+// "13/6", "4/3 3/off" against "4/off". A dialect that never writes its hits
 // matches on shape alone, so the match is only trusted when it names a
 // single candidate.
 //
-// Every importer records the played move with the analysis it read, in one
-// dialect: an unmarked played move writes its hits unless some engine of the
-// list does not.
+// The played move is read in the dialect of the candidate it is compared
+// with: every importer writes the played move with the same formatter as the
+// candidates it brings, so its own engine's candidates read it right. A
+// played move kept beside another engine's analysis (merged analyses, a
+// gammonNet verdict superseding, the match's move table) is read in that
+// engine's dialect too: unmarked, it hits nothing there, and an unmarked
+// dialect's played move that hits finds no marking candidate — unscored, never
+// matched to another play.
 func PlayedCandidate(moves []domain.CheckerMove, playedMove string) *domain.CheckerMove {
 	norm := NormalizeMove(playedMove)
 	for i := range moves {
@@ -771,31 +776,38 @@ func PlayedCandidate(moves []domain.CheckerMove, playedMove string) *domain.Chec
 	}
 	marks := CandidateMarksHits(moves)
 	playedMarks := MarksHits(playedMove)
-	if !playedMarks {
-		playedMarks = true
-		for _, m := range marks {
-			playedMarks = playedMarks && m
-		}
-	}
-	var found *domain.CheckerMove
+	var same, steps []*domain.CheckerMove
 	for i := range moves {
-		if !SamePlay(playedMove, playedMarks, moves[i].Move, marks[moves[i].AnalysisEngine]) {
+		m := marks[moves[i].AnalysisEngine]
+		if !SamePlay(playedMove, playedMarks || m, moves[i].Move, m) {
 			continue
 		}
-		if found != nil {
-			return nil
+		same = append(same, &moves[i])
+		if SameSteps(playedMove, moves[i].Move) {
+			steps = append(steps, &moves[i])
 		}
-		found = &moves[i]
 	}
-	return found
+	switch {
+	case len(same) == 1:
+		return same[0]
+	case len(steps) == 1:
+		// The steps as written tell apart what the shape cannot.
+		return steps[0]
+	}
+	return nil
 }
 
 // CandidateMarksHits says, per analysis engine of a candidate list, whether
-// that engine writes its hits (MarksHits over its own candidates): a list
+// its dialect writes its hits (EngineMarksHits); for an engine it does not
+// name, whether any of that engine's own candidates carries a "*". A list
 // merges several engines' entries, each in its own dialect.
 func CandidateMarksHits(moves []domain.CheckerMove) map[string]bool {
 	marks := make(map[string]bool)
 	for _, m := range moves {
+		if v, known := EngineMarksHits(m.AnalysisEngine); known {
+			marks[m.AnalysisEngine] = v
+			continue
+		}
 		marks[m.AnalysisEngine] = marks[m.AnalysisEngine] || MarksHits(m.Move)
 	}
 	return marks

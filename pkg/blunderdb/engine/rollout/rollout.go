@@ -132,6 +132,11 @@ type Options struct {
 	// Moves names the plays to roll out, in blunderDB notation; empty rolls
 	// the Settings.Candidates best at Settings.Ply. Ignored for a cube.
 	Moves []string
+	// From is the analysis the Moves were picked from, when there is one: a
+	// name found there is read in its engine's dialect (a missing "*" means
+	// "no hit" only where that engine writes its hits); a name found nowhere
+	// is read alone.
+	From []domain.CheckerMove
 	// Progress, when set, is called after every batch from the calling
 	// goroutine.
 	Progress func(Progress)
@@ -239,7 +244,7 @@ func Run(ctx context.Context, pos domain.Position, s Settings, opt Options) (*Re
 	var names []string
 	if hasDice(&pos) {
 		res.Kind = KindMoves
-		names, branches, err = moveBranches(&pos, s, opt.Moves, rootCube)
+		names, branches, err = moveBranches(&pos, s, opt.Moves, opt.From, rootCube)
 		if err != nil {
 			return nil, err
 		}
@@ -282,7 +287,25 @@ func hasDice(pos *domain.Position) bool {
 	return pos.Dice[0] >= 1 && pos.Dice[0] <= 6 && pos.Dice[1] >= 1 && pos.Dice[1] <= 6
 }
 
-func moveBranches(pos *domain.Position, s Settings, named []string, cube cubeState) ([]string, []branch, error) {
+// nameMarksHits says whether a named play's dialect writes its hits: that of
+// the engine whose candidate it is in from, else what the name itself shows.
+// An imported analysis names a play in its engine's dialect ("13/7*",
+// "6/4(2)", gnubg's unmarked "6/3 3/1"), and a selection may mix engines.
+func nameMarksHits(name string, from []domain.CheckerMove) bool {
+	if engine.MarksHits(name) {
+		return true
+	}
+	marks := engine.CandidateMarksHits(from)
+	norm := engine.NormalizeMove(name)
+	for _, m := range from {
+		if engine.NormalizeMove(m.Move) == norm {
+			return marks[m.AnalysisEngine]
+		}
+	}
+	return false
+}
+
+func moveBranches(pos *domain.Position, s Settings, named []string, from []domain.CheckerMove, cube cubeState) ([]string, []branch, error) {
 	legal := domain.LegalMoves(pos)
 	if len(legal) == 0 {
 		return nil, nil, fmt.Errorf("rollout: no legal play for %d-%d", pos.Dice[0], pos.Dice[1])
@@ -308,13 +331,11 @@ func moveBranches(pos *domain.Position, s Settings, named []string, cube cubeSta
 	if pos.PlayerOnRoll == domain.White {
 		opponent = domain.Black
 	}
-	// An imported analysis names a play in its engine's dialect ("13/7*",
-	// "6/4(2)"); whether a missing "*" means "no hit" is the list's to say.
-	marks := engine.MarksHits(named...)
 	var names []string
 	var branches []branch
 	for _, n := range named {
 		n = strings.TrimSpace(n)
+		marks := nameMarksHits(n, from)
 		play, err := engine.ResolvePlay(legal, n, marks)
 		if err != nil {
 			options := make([]string, 0, len(legal))
@@ -325,6 +346,11 @@ func moveBranches(pos *domain.Position, s Settings, named []string, cube cubeSta
 			return nil, nil, fmt.Errorf("rollout: %w; legal: %s", err, strings.Join(options, ", "))
 		}
 		res := play.Result
+		if !engine.MarksHits(n) && engine.MarksHits(play.Notation) {
+			// A name whose dialect could not say where it hits is named as
+			// the generator writes it: a rollout's names carry their hits.
+			n = play.Notation
+		}
 		if slices.Contains(names, n) {
 			continue
 		}

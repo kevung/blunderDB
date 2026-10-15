@@ -1,7 +1,7 @@
 <script>
     import { t } from '../i18n';
     import { checkerRows, formatEquity } from '../utils/analysisRows.js';
-    import { marksHits } from '../utils/moveNotation.js';
+    import { candidateMarksHits } from '../utils/moveNotation.js';
     import { rolloutFor } from '../utils/rolloutRows.js';
 
     // Lays out ranked checker-move candidates for AnalysisPanel and EvalPanel;
@@ -41,15 +41,7 @@
 
     // Each engine of the table writes its hits or never does: a row's missing "*" is read in its
     // engine's dialect.
-    let engineMarks = $derived.by(() => {
-        /** @type {Record<string, boolean>} */
-        const m = {};
-        for (const mv of moves ?? []) {
-            const e = mv?.analysisEngine ?? '';
-            m[e] = m[e] || marksHits([mv?.move]);
-        }
-        return m;
-    });
+    let engineMarks = $derived(candidateMarksHits(moves));
     /** @param {any} move */
     const rolloutOf = (move) => rolloutFor(rollouts, move?.move, engineMarks[move?.analysisEngine ?? ''] ?? false);
     let showRollout = $derived(!!rollouts && rollouts.size > 0 && block.rows.some((row) => rolloutOf(row.move)));

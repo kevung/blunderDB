@@ -141,3 +141,18 @@ func TestResolvePlay_PrisesEn41(t *testing.T) {
 		t.Error("« 6/2/1 » d'une source qui note ses prises ne frappe pas : aucun coup légal")
 	}
 }
+
+func TestCandidateMarksHits_ParDialecte(t *testing.T) {
+	marks := CandidateMarksHits([]domain.CheckerMove{
+		{Move: "6/2/1", AnalysisEngine: "XG"},
+		{Move: "6/3* 3/1", AnalysisEngine: "GNUbg"},
+		{Move: "13/8 8/7", AnalysisEngine: "gammonNet v1.7.0"},
+		{Move: "24/18", AnalysisEngine: "Inconnu"},
+		{Move: "6/5*", AnalysisEngine: "Autre"},
+	})
+	for engine, want := range map[string]bool{"XG": true, "GNUbg": false, "gammonNet v1.7.0": true, "Inconnu": false, "Autre": true} {
+		if marks[engine] != want {
+			t.Errorf("%s : marque ses prises = %v, attendu %v", engine, marks[engine], want)
+		}
+	}
+}

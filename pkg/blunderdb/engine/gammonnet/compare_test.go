@@ -119,3 +119,21 @@ func TestCompareOne_LesPrisesDistinguentDeuxCoups(t *testing.T) {
 		t.Errorf("coût du désaccord : %v, attendu %v", got.dis.Cost, want)
 	}
 }
+
+// XG écrit ses prises même quand sa liste n'en contient aucune : son
+// « 6/2/1 » ne frappe pas, le « 6/5*/1 » de gammonNet frappe.
+func TestCompareOne_LeDialecteDitLesPrisesMemeSansEtoile(t *testing.T) {
+	stored := &domain.PositionAnalysis{
+		CheckerAnalysis: &domain.CheckerAnalysis{Moves: []domain.CheckerMove{
+			{Move: "6/2/1", Equity: 0.10, AnalysisEngine: "XG"},
+			{Move: "13/9 6/5", Equity: 0.04, AnalysisEngine: "XG"},
+		}},
+	}
+	got := compareCheckerAnswer(stored, "6/5*/1", domain.PhaseMiddlegame.String(), 1)
+	if got.same {
+		t.Fatal("6/5*/1 et 6/2/1 comptés comme le même coup")
+	}
+	if got.dis.Cost != 0 {
+		t.Errorf("coût %v : le coup de gammonNet n'est pas listé, il ne se tarifie pas", got.dis.Cost)
+	}
+}

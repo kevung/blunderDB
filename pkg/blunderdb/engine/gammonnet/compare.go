@@ -135,7 +135,7 @@ func CompareOne(pos *domain.Position, stored *domain.PositionAnalysis, id int64,
 // compareCheckerAnswer compares one checker decision: the stored best move
 // against the move gammonNet prefers, both read through engine.SamePlay so a
 // difference of dialect is never reported as a difference of opinion.
-// gammonNet writes its hits; the stored engine is read as its list says.
+// gammonNet writes its hits; the stored engine is read in its dialect.
 func compareCheckerAnswer(stored *domain.PositionAnalysis, ours, phase string, id int64) ComparisonSample {
 	moves := stored.CheckerAnalysis.Moves
 	dis := ComparisonDisagreement{
@@ -164,23 +164,13 @@ func checkerDisagreementCost(moves []domain.CheckerMove, want string) float64 {
 	if len(moves) == 0 {
 		return 0
 	}
-	best := moves[0].Equity
-	marks := engine.CandidateMarksHits(moves)
-	var found *domain.CheckerMove
-	for i := range moves {
-		if !engine.SamePlay(want, true, moves[i].Move, marks[moves[i].AnalysisEngine]) {
-			continue
-		}
-		if found != nil {
-			// An unmarked dialect names several of them: no price is safer
-			// than the price of another play.
-			return 0
-		}
-		found = &moves[i]
-	}
+	// gammonNet writes its hits: an unmarked move of its hits nothing, which
+	// is how PlayedCandidate reads it against a dialect that writes them.
+	found := engine.PlayedCandidate(moves, want)
 	if found == nil {
 		return 0
 	}
+	best := moves[0].Equity
 	return math.Max(0, best-found.Equity)
 }
 

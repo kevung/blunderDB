@@ -105,9 +105,26 @@ func TestPlayedCandidate(t *testing.T) {
 	if m := PlayedCandidate(xg, "6/2/1"); m != nil {
 		t.Errorf("XG writes its hits, 6/2/1 hits nothing: got %v, want none", m)
 	}
-	mixed := append(xg[:1:1], domain.CheckerMove{Move: "13/9 9/8", AnalysisEngine: "GNUbg"})
-	if m := PlayedCandidate(mixed, "6/1"); m == nil || m.Move != "6/5* 5/1*" {
-		t.Errorf("a played move beside an unmarked engine keeps the wildcard: got %v", m)
+	// XG writes its hits whether or not its list holds one.
+	noHitInList := []domain.CheckerMove{{Move: "6/2/1", AnalysisEngine: "XG"}, {Move: "13/9 6/5", AnalysisEngine: "XG"}}
+	if m := PlayedCandidate(noHitInList, "6/5*/1"); m != nil {
+		t.Errorf("6/5*/1 hits, XG's 6/2/1 does not: got %v, want none", m)
+	}
+	// A played move is read in the dialect of the candidate it meets, not as
+	// a wildcard because another engine of the list writes no hits.
+	mixed := []domain.CheckerMove{{Move: "6/5*/1", AnalysisEngine: "XG"}, {Move: "13/9 6/5", AnalysisEngine: "XG"}, {Move: "13/9 6/5", AnalysisEngine: "GNUbg"}}
+	if m := PlayedCandidate(mixed, "6/2/1"); m != nil {
+		t.Errorf("6/2/1 hits nothing in XG's dialect: got %v, want none", m)
+	}
+	if m := PlayedCandidate([]domain.CheckerMove{{Move: "6/5* 5/1*", AnalysisEngine: "gammonNet v1.7.0"}, {Move: "6/2 2/1*", AnalysisEngine: "gammonNet v1.7.0"}}, "6/2/1*"); m == nil || m.Move != "6/2 2/1*" {
+		t.Errorf("chained hit against gammonNet: got %v", m)
+	}
+	if m := PlayedCandidate([]domain.CheckerMove{{Move: "6/5 5/1", AnalysisEngine: "GNUbg"}, {Move: "6/2 2/1", AnalysisEngine: "GNUbg"}}, "6/2 2/1*"); m == nil || m.Move != "6/2 2/1" {
+		t.Errorf("unmarked steps tell two same-shape plays apart: got %v", m)
+	}
+	gnu := []domain.CheckerMove{{Move: "6/5* 5/1*", AnalysisEngine: "XG"}, {Move: "6/5 5/1", AnalysisEngine: "GNUbg"}}
+	if m := PlayedCandidate(gnu, "5/1 6/5"); m == nil || m.Move != "6/5 5/1" {
+		t.Errorf("a gnubg played move finds its own engine's candidate: got %v", m)
 	}
 	if m := PlayedCandidate(moves, "6/off 5/off"); m != nil {
 		t.Errorf("unknown play: got %v, want none", m)

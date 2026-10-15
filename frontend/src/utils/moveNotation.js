@@ -89,8 +89,60 @@ export function playKey(move) {
 }
 
 /**
- * Whether a source writes its hits: whether any play of its list carries a "*". A source that
- * never does (gnubg's SGF candidates) says nothing about hits.
+ * Whether an analysis engine's dialect, as blunderDB's importers write it, carries hit markers;
+ * undefined for an engine it does not name. engine.EngineMarksHits in Go.
+ *
+ * @param {string | undefined} engine
+ * @returns {boolean | undefined}
+ */
+export function engineMarksHits(engine) {
+    const e = String(engine ?? '');
+    if (e === 'XG' || e.startsWith('gammonNet') || e.startsWith('blunderDB')) return true;
+    if (e === 'GNUbg' || e === 'BGBlitz' || e.startsWith('HedgeHog')) return false;
+    return undefined;
+}
+
+/**
+ * Per analysis engine of a candidate list, whether its dialect writes its hits: engineMarksHits,
+ * else whether any of that engine's own candidates carries a "*". engine.CandidateMarksHits.
+ *
+ * @param {Array<{ move?: string, analysisEngine?: string }>} moves
+ * @returns {Record<string, boolean>}
+ */
+export function candidateMarksHits(moves) {
+    /** @type {Record<string, boolean>} */
+    const out = {};
+    for (const m of moves ?? []) {
+        const e = m?.analysisEngine ?? '';
+        const known = engineMarksHits(e);
+        out[e] = known ?? (out[e] || marksHits([m?.move]));
+    }
+    return out;
+}
+
+/**
+ * Whether two notations write the same steps once their hit markers are dropped, parts in any
+ * order: an unmarked "6/2 2/1" and the generator's "6/2 2/1*".
+ *
+ * @param {string} a
+ * @param {string} b
+ */
+export function sameSteps(a, b) {
+    /** @param {string} m */
+    const steps = (m) =>
+        String(m ?? '')
+            .replaceAll('*', '')
+            .trim()
+            .split(/\s+/)
+            .filter(Boolean)
+            .sort()
+            .join(' ');
+    return steps(a) === steps(b);
+}
+
+/**
+ * Whether any of the notations carries a "*": what can be told of a source whose dialect is
+ * unknown, from the plays it wrote.
  *
  * @param {Array<string | undefined>} moves
  */

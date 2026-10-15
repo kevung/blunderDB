@@ -420,17 +420,30 @@ func TestMoveBranches_LesPrisesDistinguentDeuxCoups(t *testing.T) {
 	pos.Board.Points[1] = domain.Point{Checkers: 1, Color: domain.White}
 	cube := cubeState{value: 1, owner: noOwner}
 
-	names, branches, err := moveBranches(&pos, Settings{}, []string{"6/5*/1*", "6/2/1*"}, cube)
+	names, branches, err := moveBranches(&pos, Settings{}, []string{"6/5*/1*", "6/2/1*"}, nil, cube)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if len(branches) != 2 || branches[0].start == branches[1].start {
 		t.Fatalf("%v : deux prises et une prise donnent une seule branche", names)
 	}
-	if _, _, err := moveBranches(&pos, Settings{}, []string{"6/1"}, cube); err == nil {
+	if _, _, err := moveBranches(&pos, Settings{}, []string{"6/1"}, nil, cube); err == nil {
 		t.Error("« 6/1 » d'une liste sans marque nomme deux coups : deviné au lieu de refusé")
 	}
-	if _, _, err := moveBranches(&pos, Settings{}, []string{"6/2/1*", "6/2/1"}, cube); err == nil {
-		t.Error("« 6/2/1 » d'une liste qui note ses prises ne frappe pas : aucun coup légal")
+	// Une sélection mêle les moteurs : chaque nom se lit dans le dialecte du
+	// sien. Le « 6/2 2/1 » de gnubg ne dit pas sa prise ; celui de XG dit
+	// qu'il n'en fait pas.
+	gnu := []domain.CheckerMove{{Move: "6/1", AnalysisEngine: "GNUbg"}, {Move: "6/5*/1*", AnalysisEngine: "XG"}}
+	if _, _, err := moveBranches(&pos, Settings{}, []string{"6/5*/1*", "6/1"}, gnu, cube); err == nil {
+		t.Error("« 6/1 » de gnubg nomme deux coups (une ou deux prises) : deviné au lieu de refusé")
+	}
+	gnuOne := []domain.CheckerMove{{Move: "6/2 2/1", AnalysisEngine: "GNUbg"}, {Move: "6/5*/1*", AnalysisEngine: "XG"}}
+	names, _, err = moveBranches(&pos, Settings{}, []string{"6/2 2/1"}, gnuOne, cube)
+	if err != nil || len(names) != 1 || names[0] != "6/2 2/1*" {
+		t.Errorf("le « 6/2 2/1 » de gnubg frappe sur 1 : %v, %v", names, err)
+	}
+	xg := []domain.CheckerMove{{Move: "6/2 2/1", AnalysisEngine: "XG"}}
+	if _, _, err := moveBranches(&pos, Settings{}, []string{"6/2 2/1"}, xg, cube); err == nil {
+		t.Error("le « 6/2 2/1 » de XG ne frappe pas : aucun coup légal")
 	}
 }

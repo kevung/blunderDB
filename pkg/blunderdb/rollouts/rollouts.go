@@ -290,7 +290,30 @@ func Position(ctx context.Context, st storage.Storage, scope string, positionID 
 	if err != nil {
 		return nil, err
 	}
-	return Run(ctx, pos, s, moves, exec, progress)
+	var from []domain.CheckerMove
+	if len(moves) > 0 {
+		if from, err = Candidates(ctx, st, scope, positionID); err != nil {
+			return nil, err
+		}
+	}
+	return Run(ctx, pos, s, moves, from, exec, progress)
+}
+
+// Candidates reads the checker candidates of positionID's analysis, none when
+// it has no analysis: the plays a rollout's moves were picked from, each in
+// its engine's dialect (rollout.Options.From).
+func Candidates(ctx context.Context, st storage.Storage, scope string, positionID int64) ([]domain.CheckerMove, error) {
+	a, err := st.Analyses().Load(ctx, scope, positionID)
+	if errors.Is(err, storage.ErrNotFound) {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, fmt.Errorf("%w %d: %w", ErrLoad, positionID, err)
+	}
+	if a == nil || a.CheckerAnalysis == nil {
+		return nil, nil
+	}
+	return a.CheckerAnalysis.Moves, nil
 }
 
 // Load reads the position a rollout is asked on, a failure wrapped in
@@ -305,9 +328,11 @@ func Load(ctx context.Context, st storage.Storage, scope string, positionID int6
 }
 
 // Run rolls pos out: its plays, moves naming them when set, or its cube
-// decision. exec, when set, plays the games (rollout.Options.Exec).
-func Run(ctx context.Context, pos *domain.Position, s rollout.Settings, moves []string, exec rollout.Exec, progress func(rollout.Progress)) (*rollout.Result, error) {
-	return rollout.Run(ctx, *pos, s, rollout.Options{Moves: moves, Exec: exec, Progress: progress})
+// decision. from is the analysis the moves were picked from
+// (rollout.Options.From); exec, when set, plays the games
+// (rollout.Options.Exec).
+func Run(ctx context.Context, pos *domain.Position, s rollout.Settings, moves []string, from []domain.CheckerMove, exec rollout.Exec, progress func(rollout.Progress)) (*rollout.Result, error) {
+	return rollout.Run(ctx, *pos, s, rollout.Options{Moves: moves, From: from, Exec: exec, Progress: progress})
 }
 
 // ParseQuery reads query as the search bar does, refusing a token it does not
