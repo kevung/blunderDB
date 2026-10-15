@@ -208,7 +208,7 @@ func fingerprintedTournamentMatch(t *testing.T, s storage.Storage, tid int64, p1
 }
 
 // sameStamp compares two dates to the second whatever text each backend
-// gives them ("2026-09-01 08:00:00", "2026-09-01T08:00:00Z").
+// gives them (a space or a "T" between date and time, with or without a zone).
 func sameStamp(a, b string) bool {
 	digits := func(s string) string {
 		var out []rune
