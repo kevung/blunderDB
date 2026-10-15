@@ -347,12 +347,20 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 		return nil, err
 	}
 
+	matches, err := planImportMatches(context.Background(), importDB, d.store)
+	if err != nil {
+		return nil, err
+	}
+
 	result := map[string]interface{}{
 		"toAdd":      positionsToAdd,
 		"toMerge":    positionsToMerge,
 		"toSkip":     positionsToSkip,
 		"total":      totalPositions,
 		"importPath": importPath,
+		// The keys CommitImportDatabase reports the same figures under.
+		"matches":      matches.ToImport,
+		"matchesKnown": matches.Known,
 	}
 
 	slog.Info("import analysis", "toAdd", positionsToAdd, "toMerge", positionsToMerge, "toSkip", positionsToSkip, "total", totalPositions)
@@ -766,21 +774,34 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 		"skipped": positionsSkipped,
 		"total":   totalPositions,
 		// The same figures as ingest.Summary on the daemon's imports.db.
-		"collections":              merged.Changed,
-		"livingCollectionsSkipped": merged.LivingSkipped,
-		"livingCollectionsFrozen":  merged.LivingFrozen,
-		"matches":                  matches.Matches,
-		"matchesKnown":             matches.Duplicates,
-		"tournaments":              matches.Tournaments,
-		"transcriptions":           matches.Transcriptions,
-		"aliases":                  matches.Aliases,
-		"unreadable":               matches.Unreadable,
-		"lessons":                  lessons,
-		"decks":                    decks,
+		"collections":               merged.Changed,
+		"livingCollectionsSkipped":  merged.LivingSkipped,
+		"livingCollectionsFrozen":   merged.LivingFrozen,
+		"livingCollectionsOnManual": merged.LivingOnManual,
+		"matches":                   matches.Matches,
+		"matchesKnown":              matches.Duplicates,
+		"tournaments":               matches.Tournaments,
+		"transcriptions":            matches.Transcriptions,
+		"aliases":                   matches.Aliases,
+		"unreadable":                matches.Unreadable,
+		"lessons":                   lessons,
+		"decks":                     decks,
 	}
 
 	slog.Info("import committed", "added", positionsAdded, "merged", positionsMerged, "skipped", positionsSkipped, "total", totalPositions)
 	return result, nil
+}
+
+// planImportMatches counts what mergeImportMatches would do with the
+// source's matches (ingest.PlanImportMatches), through the same read-only
+// transaction on the source.
+func planImportMatches(ctx context.Context, importDB *sql.DB, dst storage.Stores) (ingest.ImportMatchPlan, error) {
+	itx, err := importDB.BeginTx(ctx, &sql.TxOptions{ReadOnly: true})
+	if err != nil {
+		return ingest.ImportMatchPlan{}, err
+	}
+	defer itx.Rollback()
+	return ingest.PlanImportMatches(ctx, dst, "", sqlite.WrapTx(itx))
 }
 
 // mergeImportMatches merges the source's matches, tournaments, drafts and

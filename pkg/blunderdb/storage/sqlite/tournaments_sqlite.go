@@ -290,3 +290,8 @@ func (s *tournamentStore) TournamentOf(ctx context.Context, scope string, matchI
 	}
 	return s.Get(ctx, scope, tournamentID.Int64)
 }
+
+// KeepDates implements storage.TournamentStore.KeepDates.
+func (s *tournamentStore) KeepDates(ctx context.Context, scope string, id int64, created, updated string) error {
+	return sqlshared.KeepDates(ctx, shared{s.db}, scope, "tournament", "id", id, created, updated)
+}

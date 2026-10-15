@@ -203,3 +203,12 @@ func (s *AliasStore) Suggest(ctx context.Context, scope string, kind storage.Ali
 	}
 	return storage.SuggestAliases(counts, existing), nil
 }
+
+// KeepCreatedAt implements storage.AliasStore.KeepCreatedAt.
+func (s *AliasStore) KeepCreatedAt(ctx context.Context, scope string, kind storage.AliasKind, alias, created string) error {
+	table, err := aliasTable(kind)
+	if err != nil {
+		return err
+	}
+	return KeepDates(ctx, s.DB, scope, table, "alias", alias, created, "")
+}

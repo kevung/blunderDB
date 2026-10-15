@@ -55,6 +55,7 @@ type MatchMerge struct {
 //   - an alias is set unless the target already decides that spelling, or
 //     the name is a canonical there: the recipient's choice wins.
 //
+// Tournaments, drafts and aliases keep the dates their source rows bore.
 // Importing the same file twice therefore changes nothing. Nothing is written
 // that the file did not carry: no import batch, no date of this import other
 // than the stores' own (ADR-0007).
@@ -73,6 +74,57 @@ func MergeMatches(ctx context.Context, tx storage.Stores, scope string, source s
 		return res, err
 	}
 	return res, nil
+}
+
+// ImportMatchPlan is what MergeMatches would do with a source's matches, counted
+// without writing: the import preview's figures.
+type ImportMatchPlan struct {
+	// ToImport counts the matches the import would create; Known those the
+	// target already holds by fingerprint.
+	ToImport int
+	Known    int
+	// Unreadable is true when the source has no readable matches family: a
+	// source older than it, which the import leaves behind.
+	Unreadable bool
+}
+
+// PlanImportMatches counts the source's matches by MergeMatches' rule — same
+// match_hash, else same canonical_hash, in the target — and nothing else: it
+// writes nothing.
+func PlanImportMatches(ctx context.Context, target storage.Stores, scope string, source storage.Stores) (ImportMatchPlan, error) {
+	var plan ImportMatchPlan
+	var ids []int64
+	for m, err := range source.Matches().List(ctx, scope, storage.MatchListOpts{}) {
+		if err != nil {
+			slog.Warn("import preview: source matches unreadable", "err", err)
+			plan.Unreadable = true
+			return plan, nil
+		}
+		ids = append(ids, m.ID)
+	}
+	for _, id := range ids {
+		if err := ctx.Err(); err != nil {
+			return plan, err
+		}
+		m, err := source.Matches().Get(ctx, scope, id)
+		if err != nil {
+			return plan, fmt.Errorf("ingest: read source match %d: %w", id, err)
+		}
+		// The source's own fingerprints are unique (schema), so only the
+		// target can already hold one.
+		if m.MatchHash != "" || m.CanonicalHash != "" {
+			_, found, err := target.Matches().FindByHash(ctx, scope, m.MatchHash, m.CanonicalHash)
+			if err != nil {
+				return plan, err
+			}
+			if found {
+				plan.Known++
+				continue
+			}
+		}
+		plan.ToImport++
+	}
+	return plan, nil
 }
 
 // unreadable records that the source cannot be read for family: a source
@@ -115,6 +167,9 @@ func mergeTournaments(ctx context.Context, tx storage.Stores, scope string, sour
 			if err := tx.Tournaments().UpdateComment(ctx, scope, id, t.Comment); err != nil {
 				return fmt.Errorf("ingest: import tournament %q comment: %w", t.Name, err)
 			}
+		}
+		if err := tx.Tournaments().KeepDates(ctx, scope, id, t.CreatedAt, t.UpdatedAt); err != nil {
+			return fmt.Errorf("ingest: import tournament %q dates: %w", t.Name, err)
 		}
 		byName[t.Name] = id
 		res.TournamentMap[t.ID] = id
@@ -324,8 +379,12 @@ func mergeTranscriptions(ctx context.Context, tx storage.Stores, scope string, s
 		}
 		d := *full
 		d.ID, d.Revision, d.MatchID = 0, 0, match
-		if _, err := tx.Transcriptions().Save(ctx, scope, &d); err != nil {
+		id, err := tx.Transcriptions().Save(ctx, scope, &d)
+		if err != nil {
 			return fmt.Errorf("ingest: import transcription %q: %w", d.Label, err)
+		}
+		if err := tx.Transcriptions().KeepDates(ctx, scope, id, full.CreatedAt, full.UpdatedAt); err != nil {
+			return fmt.Errorf("ingest: import transcription %q dates: %w", d.Label, err)
 		}
 		heldDoc[d.Document] = true
 		if match != 0 {
@@ -365,6 +424,9 @@ func mergeAliases(ctx context.Context, tx storage.Stores, scope string, source s
 			}
 			if err := tx.Aliases().Set(ctx, scope, kind, a.Alias, a.Canonical); err != nil {
 				return fmt.Errorf("ingest: import %s alias %q: %w", kind, a.Alias, err)
+			}
+			if err := tx.Aliases().KeepCreatedAt(ctx, scope, kind, a.Alias, a.CreatedAt); err != nil {
+				return fmt.Errorf("ingest: import %s alias %q date: %w", kind, a.Alias, err)
 			}
 			spelled[strings.ToLower(a.Alias)] = true
 			canonical[strings.ToLower(a.Canonical)] = true

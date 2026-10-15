@@ -257,6 +257,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Direction/TxRollback", testDirectionTxRollback},
 		{"Direction/BindsToThePackageStore", testDirectionBindsToThePackageStore},
 		{"Transcription/CRUD", testTranscriptionCRUD},
+		{"KeptDates/TournamentDraftAlias", testKeptDates},
 		{"Transcription/ListNewestFirst", testTranscriptionListNewestFirst},
 		{"Transcription/MatchLinkSurvivesTheMatch", testTranscriptionMatchLink},
 		{"Transcription/DeleteInTxRollsBack", testTranscriptionDeleteInTx},

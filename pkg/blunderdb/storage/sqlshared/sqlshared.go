@@ -171,6 +171,13 @@ type Dialect interface {
 	DateText(col string) string
 	TimestampText(col string) string
 
+	// TimestampTextArg is TimestampText's inverse: the placeholder that
+	// writes such a text ("YYYY-MM-DD HH:MM:SS", UTC) back into a
+	// created_at/updated_at column — "?" in SQLite, which stores the text,
+	// a UTC cast in PostgreSQL, which would otherwise read it in the
+	// session's zone.
+	TimestampTextArg() string
+
 	// Referenced maps the backend's FOREIGN KEY violation onto
 	// storage.ErrNotFound (the row the caller pointed at does not exist) and
 	// passes any other error through.

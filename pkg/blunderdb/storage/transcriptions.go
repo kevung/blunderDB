@@ -69,6 +69,12 @@ type TranscriptionStore interface {
 	// updated_at is left alone, so the list order follows the typing.
 	Touch(ctx context.Context, scope string, id, revision int64) (int64, error)
 
+	// KeepDates gives draft id the created_at/updated_at text its source row
+	// bore (an empty one is left as is), without touching its revision: an
+	// import keeps the draft's history and its place in List. An id outside
+	// the scope changes nothing.
+	KeepDates(ctx context.Context, scope string, id int64, created, updated string) error
+
 	// Annotations counts what a Match carries that a .mat cannot: the
 	// analyses (position and move) and the comments on its positions. It is
 	// what reopening an imported Match as a draft would drop (ADR-0045 §2).

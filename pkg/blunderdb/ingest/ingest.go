@@ -70,6 +70,9 @@ type Summary struct {
 	// query named a row the import did not carry: they were created as the
 	// list of what the query selected at the source (MergeCollections).
 	LivingCollectionsFrozen []string `json:"livingCollectionsFrozen,omitempty"`
+	// LivingCollectionsOnManual names the imported living collections whose
+	// namesake here is a hand-made list, left as it was.
+	LivingCollectionsOnManual []string `json:"livingCollectionsOnManual,omitempty"`
 	// Tournaments, Transcriptions and Aliases count what a native .db import
 	// created (MergeMatches); the matches it created count in Matches, those
 	// the target already held in SkippedDuplicates.

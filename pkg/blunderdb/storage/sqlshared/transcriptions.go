@@ -226,3 +226,8 @@ func nullableID(id int64) any {
 	}
 	return id
 }
+
+// KeepDates implements storage.TranscriptionStore.KeepDates.
+func (s *TranscriptionStore) KeepDates(ctx context.Context, scope string, id int64, created, updated string) error {
+	return KeepDates(ctx, s.DB, scope, "transcription", "id", id, created, updated)
+}

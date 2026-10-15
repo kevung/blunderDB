@@ -211,6 +211,7 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 	sum.Collections = merged.Changed
 	sum.LivingCollectionsSkipped = merged.LivingSkipped
 	sum.LivingCollectionsFrozen = merged.LivingFrozen
+	sum.LivingCollectionsOnManual = merged.LivingOnManual
 	if sum.Lessons, err = MergeLessons(ctx, tx, scope, srcLessons, srcCollections, targetOf); err != nil {
 		return sum, err
 	}
@@ -291,6 +292,9 @@ type CollectionMerge struct {
 	// of what their query selected at the source: it names a row the import
 	// did not carry, so in the target it would select something else.
 	LivingFrozen []string
+	// LivingOnManual names the living source collections whose namesake in
+	// the target is a hand-made list: that list is left as it was.
+	LivingOnManual []string
 }
 
 // MergeCollections is the one rule both native .db imports (the daemon's
@@ -303,6 +307,8 @@ type CollectionMerge struct {
 // target already holds keep their place and are not rewritten, so importing
 // the same file twice changes nothing. A living target collection receives no
 // members: a living collection stores none (storage.Collection.FilterQuery).
+// A living source collection whose namesake is a hand-made list changes
+// nothing either, and is named in LivingOnManual.
 func MergeCollections(ctx context.Context, tx storage.Stores, scope string, src []SourceCollection, maps RowMaps) (CollectionMerge, error) {
 	targetOf := maps.Positions
 	var res CollectionMerge
@@ -327,6 +333,13 @@ func MergeCollections(ctx context.Context, tx storage.Stores, scope string, src 
 				if len(sc.Members) > 0 {
 					res.LivingSkipped = append(res.LivingSkipped, sc.Coll.Name)
 				}
+				continue
+			}
+			if strings.TrimSpace(sc.Coll.FilterQuery) != "" {
+				// A living source stores no members, and pouring what its
+				// query selects into the recipient's own list would rewrite
+				// a list the user made: the list is left, the import says so.
+				res.LivingOnManual = append(res.LivingOnManual, sc.Coll.Name)
 				continue
 			}
 			for m, err := range tx.Collections().Members(ctx, scope, target.ID) {

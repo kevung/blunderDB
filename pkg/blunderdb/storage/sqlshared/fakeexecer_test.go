@@ -50,6 +50,7 @@ func (fakeDialect) LimitOffset(limit, offset int) (string, []any) {
 	return " LIMIT ? OFFSET ?", []any{limit, offset}
 }
 func (fakeDialect) TimestampArg() string                 { return "?" }
+func (fakeDialect) TimestampTextArg() string             { return "?" }
 func (fakeDialect) InstantArg(t time.Time) (string, any) { return "?", t.Unix() }
 func (fakeDialect) DateText(col string) string           { return col }
 func (fakeDialect) TimestampText(col string) string      { return col }

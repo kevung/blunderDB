@@ -50,6 +50,11 @@ type AliasStore interface {
 	// Remove forgets alias; removed is false when it was not one.
 	Remove(ctx context.Context, scope string, kind AliasKind, alias string) (removed bool, err error)
 
+	// KeepCreatedAt gives alias the created_at text its source row bore
+	// ("" leaves it): an import keeps when the spelling was first set. An
+	// alias the scope does not hold changes nothing.
+	KeepCreatedAt(ctx context.Context, scope string, kind AliasKind, alias, created string) error
+
 	// List returns the aliases of kind ordered by canonical, then alias.
 	List(ctx context.Context, scope string, kind AliasKind) ([]Alias, error)
 

@@ -1108,11 +1108,13 @@ règles.
 
 ``imports.db`` relit aussi les matchs avec leurs parties et leurs coups (un
 match que le receveur tient déjà, même empreinte, n'est pas recopié), les
-tournois (par nom), les brouillons de transcription et les alias. La requête
-d'une collection vivante est renumérotée vers les lignes du receveur, ou figée
-quand une ligne qu'elle désigne manque. La réponse compte chaque famille :
+tournois (par nom), les brouillons de transcription et les alias, avec les
+dates qu'ils portaient dans la source. La requête d'une collection vivante est
+renumérotée vers les lignes du receveur, ou figée quand une ligne qu'elle
+désigne manque ; arrivée sur une liste manuelle du même nom, elle laisse cette
+liste telle quelle et est signalée. La réponse compte chaque famille :
 ``matches``, ``skippedDuplicates``, ``tournaments``, ``transcriptions``,
-``aliases``, ``livingCollectionsFrozen``.
+``aliases``, ``livingCollectionsFrozen``, ``livingCollectionsOnManual``.
 
 .. code-block:: bash
 

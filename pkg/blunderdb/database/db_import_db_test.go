@@ -561,3 +561,49 @@ func TestImport_KeepsRollouts(t *testing.T) {
 		t.Errorf("rollout-only position: rollouts %+v, primary %v — want the imported analysis beside its rollout", got.Rollouts, got.HasPrimary())
 	}
 }
+
+// TestAnalyzeImportDatabase_CountsMatches: the preview reports, under the
+// keys the commit uses, the matches the import would create and those the
+// target already holds by fingerprint.
+func TestAnalyzeImportDatabase_CountsMatches(t *testing.T) {
+	ctx := context.Background()
+	dir := t.TempDir()
+	srcPath := filepath.Join(dir, "a.db")
+	src := NewDatabase()
+	if err := src.SetupDatabase(srcPath); err != nil {
+		t.Fatalf("SetupDatabase(A): %v", err)
+	}
+	for _, h := range []string{"h-held", "h-new-1", "h-new-2"} {
+		if _, err := src.store.Matches().Save(ctx, "", &domain.Match{Player1Name: "A", Player2Name: "B",
+			MatchLength: 5, MatchHash: h}); err != nil {
+			t.Fatal(err)
+		}
+	}
+	src.Close()
+
+	dst := NewDatabase()
+	if err := dst.SetupDatabase(filepath.Join(dir, "b.db")); err != nil {
+		t.Fatalf("SetupDatabase(B): %v", err)
+	}
+	defer dst.Close()
+	if _, err := dst.store.Matches().Save(ctx, "", &domain.Match{Player1Name: "A", Player2Name: "B",
+		MatchLength: 5, MatchHash: "h-held"}); err != nil {
+		t.Fatal(err)
+	}
+
+	analysis, err := dst.AnalyzeImportDatabase(srcPath)
+	if err != nil {
+		t.Fatalf("AnalyzeImportDatabase: %v", err)
+	}
+	if analysis["matches"] != 2 || analysis["matchesKnown"] != 1 {
+		t.Errorf("preview matches=%v known=%v, want 2 and 1", analysis["matches"], analysis["matchesKnown"])
+	}
+	result, err := dst.CommitImportDatabase(srcPath)
+	if err != nil {
+		t.Fatalf("CommitImportDatabase: %v", err)
+	}
+	if result["matches"] != analysis["matches"] || result["matchesKnown"] != analysis["matchesKnown"] {
+		t.Errorf("commit matches=%v known=%v, the preview said %v and %v",
+			result["matches"], result["matchesKnown"], analysis["matches"], analysis["matchesKnown"])
+	}
+}

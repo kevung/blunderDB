@@ -698,6 +698,7 @@ func (cli *CLI) importDatabase(filePath, format string) error {
 	for _, l := range [][2]string{
 		{"livingCollectionsFrozen", "living collections frozen"},
 		{"livingCollectionsSkipped", "living collections left as they were"},
+		{"livingCollectionsOnManual", "living collections not poured into your list of the same name"},
 		{"unreadable", "left behind (source too old)"},
 	} {
 		if names, ok := res[l[0]].([]string); ok && len(names) > 0 {
