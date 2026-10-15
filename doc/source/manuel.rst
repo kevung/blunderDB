@@ -1476,8 +1476,9 @@ ne remplace pas ce qui est déjà là.
   Rien n'est écrasé : un match déjà présent n'est pas recopié, un tournoi du même
   nom reçoit les matchs sans changer la date de l'événement (sa date de dernière
   modification avance, puisqu'il reçoit de nouveaux matchs), un tournoi qui a
-  déjà sa Direction la garde, et ce que la base décidait déjà reste décidé par
-  elle. Les tournois, Directions, Rencontres, brouillons de transcription et
+  déjà sa Direction la garde et reste hors de la Rencontre importée, un match
+  déjà rangé dans un autre tournoi ou une autre place du tableau y reste, et ce
+  que la base décidait déjà reste décidé par elle. Les tournois, Directions, Rencontres, brouillons de transcription et
   alias créés par l'import gardent leurs dates d'origine ; les collections,
   leçons et paquets Anki créés n'en gardent pas.
 

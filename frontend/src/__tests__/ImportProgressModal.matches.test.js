@@ -64,6 +64,17 @@ describe('the result', () => {
         expect(text(container, 'import.unreadable')).toContain('transcriptions');
     });
 
+    test('shows the directions read back and the events created, as the CLI does', () => {
+        const { container } = mount({ visible: true, mode: 'completed', result: { ...result, directions: 2, rencontres: 1 } });
+        expect(text(container, 'result-directions')).toContain('2');
+        expect(text(container, 'result-rencontres')).toContain('1');
+    });
+
+    test('shows no direction block when the source brought none', () => {
+        const { container } = mount({ visible: true, mode: 'completed', result });
+        expect(text(container, 'result-directions')).toBeNull();
+    });
+
     test('shows no note when nothing was set apart', () => {
         const { container } = mount({
             visible: true,
@@ -75,12 +86,12 @@ describe('the result', () => {
 
     test('the stores start with the new fields', () => {
         expect(get(importAnalysisStore)).toMatchObject({ matches: 0, matchesKnown: 0 });
-        expect(get(importResultStore)).toMatchObject({ matchesKnown: 0, unreadable: [] });
+        expect(get(importResultStore)).toMatchObject({ matchesKnown: 0, directions: 0, rencontres: 0, unreadable: [] });
     });
 });
 
 describe('the keys exist in the nine languages', () => {
-    test.each(['matchesToAdd', 'matchesToSkip', 'matchesAdded', 'matchesKnown', 'livingFrozen', 'livingOnManual', 'unreadable'])('%s', (k) => {
+    test.each(['matchesToAdd', 'matchesToSkip', 'matchesAdded', 'matchesKnown', 'directionsRead', 'rencontresCreated', 'livingFrozen', 'livingOnManual', 'unreadable'])('%s', (k) => {
         for (const l of [en, fr, de, el, es, fi, it, ja, ru]) expect(/** @type {Record<string, string>} */ (l.import)[k]).toBeTruthy();
     });
 });

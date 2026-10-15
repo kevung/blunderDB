@@ -21,6 +21,8 @@
             total: 0,
             matches: 0,
             matchesKnown: 0,
+            directions: 0,
+            rencontres: 0,
             livingCollectionsFrozen: [],
             livingCollectionsOnManual: [],
             unreadable: []
@@ -131,6 +133,19 @@
                 <div class="stat-item" data-testid="result-matches-known">
                     <div class="stat-label">{$t('import.matchesKnown')}</div>
                     <div class="stat-value">{result.matchesKnown}</div>
+                </div>
+            </div>
+        {/if}
+
+        {#if result.directions > 0 || result.rencontres > 0}
+            <div class="stats">
+                <div class="stat-item" data-testid="result-directions">
+                    <div class="stat-label">{$t('import.directionsRead')}</div>
+                    <div class="stat-value">{result.directions}</div>
+                </div>
+                <div class="stat-item" data-testid="result-rencontres">
+                    <div class="stat-label">{$t('import.rencontresCreated')}</div>
+                    <div class="stat-value">{result.rencontres}</div>
                 </div>
             </div>
         {/if}

@@ -1287,6 +1287,8 @@
         "matchesToSkip": "すでに存在するマッチ(スキップ)",
         "matchesAdded": "追加されたマッチ",
         "matchesKnown": "すでに存在するマッチ",
+        "directionsRead": "読み込んだ運営",
+        "rencontresCreated": "作成したイベント",
         "livingFrozen": "固定されたライブコレクション(クエリを引き継げませんでした):{names}",
         "livingOnManual": "同名のリストに追加されなかったライブコレクション:{names}",
         "unreadable": "取り込まれなかった項目(ソースが古すぎて読み取れません):{names}",

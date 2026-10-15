@@ -52,6 +52,10 @@ func testImportReadsDirectionBack(t *testing.T, s storage.Storage) {
 	if err := rs.SetEventRooms(ctx, "", tid, []string{"A"}); err != nil {
 		t.Fatal(err)
 	}
+	const rCreated, rUpdated = "2026-09-01 08:00:00", "2026-09-02 09:30:00"
+	if err := rs.KeepDates(ctx, "", rid, rCreated, rUpdated); err != nil {
+		t.Fatalf("Rencontres.KeepDates: %v", err)
+	}
 	srcRec, err := ds.Get(ctx, "", tid)
 	if err != nil {
 		t.Fatal(err)
@@ -135,6 +139,9 @@ func testImportReadsDirectionBack(t *testing.T, s storage.Storage) {
 			!reflect.DeepEqual(r.EventRooms[got], []string{"A"}) {
 			t.Errorf("%s: rencontre = %+v, %v", label, r, err)
 		}
+		if r != nil && (!sameStamp(r.CreatedAt, rCreated) || !sameStamp(r.UpdatedAt, rUpdated)) {
+			t.Errorf("%s: rencontre dates = %q / %q, want the source's %q / %q", label, r.CreatedAt, r.UpdatedAt, rCreated, rUpdated)
+		}
 	}
 
 	// A blank library.
@@ -198,4 +205,48 @@ func fingerprintedTournamentMatch(t *testing.T, s storage.Storage, tid int64, p1
 		t.Fatalf("AddMatch: %v", err)
 	}
 	return id
+}
+
+// sameStamp compares two dates to the second whatever text each backend
+// gives them ("2026-09-01 08:00:00", "2026-09-01T08:00:00Z").
+func sameStamp(a, b string) bool {
+	digits := func(s string) string {
+		var out []rune
+		for _, c := range s {
+			if c >= '0' && c <= '9' {
+				out = append(out, c)
+			}
+		}
+		if len(out) > 14 {
+			out = out[:14]
+		}
+		return string(out)
+	}
+	return digits(a) == digits(b)
+}
+
+// testImportSameNamedDirections: two directed Tournaments of one name merge
+// into one target Tournament, which takes the first Direction only.
+func testImportSameNamedDirections(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	first, _ := launchedDirection(t, s, "Doublon")
+	second, _ := launchedDirection(t, s, "Doublon")
+	opts := ingest.WholeTenant(ingest.FormatSQLite)
+	opts.Selection = ingest.Selection{TournamentIDs: []int64{first, second}, TournamentMatches: true}
+	path := filepath.Join(t.TempDir(), "out.db")
+	if _, err := ingest.ExportSQLite(ctx, s, "", path, opts); err != nil {
+		t.Fatalf("ExportSQLite: %v", err)
+	}
+	blank, err := sqlite.Open(ctx, filepath.Join(t.TempDir(), "blank.db"), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer blank.Close()
+	sum, err := ingest.DBImporter{S: blank}.Import(ctx, "", ingest.Source{Format: ingest.FormatNativeDB, Path: path}, nil)
+	if err != nil {
+		t.Fatalf("Import: %v", err)
+	}
+	if sum.Tournaments != 1 || sum.Directions != 1 {
+		t.Errorf("summary = %+v, want one tournament and one direction", sum)
+	}
 }

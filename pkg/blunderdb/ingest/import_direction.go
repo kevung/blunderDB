@@ -44,7 +44,13 @@ func mergeDirections(ctx context.Context, tx storage.Stores, scope string, sourc
 			return err
 		}
 		tid, ok := res.TournamentMap[rec.TournamentID]
-		if !ok || created[tid] {
+		if !ok {
+			continue
+		}
+		// Two source Tournaments of one name merge into one target
+		// Tournament: the first Direction read back is its own.
+		if created[tid] {
+			res.DirectionsKnown++
 			continue
 		}
 		if _, err := dst.Get(ctx, scope, tid); err == nil {
@@ -70,9 +76,12 @@ func copyDirection(ctx context.Context, tx storage.Stores, scope string, source 
 	if err != nil {
 		return fmt.Errorf("ingest: reading the journal of source tournament %d: %w", srcTID, err)
 	}
+	// A source older than pairs (schema < 2.25.0) or than table properties
+	// (< 2.28.0) holds a Direction without them: it is read back without them.
 	pairs, err := src.Pairs(ctx, scope, srcTID)
 	if err != nil {
-		return fmt.Errorf("ingest: reading the pairs of source tournament %d: %w", srcTID, err)
+		res.unreadableOnce("direction pairs", err)
+		pairs = nil
 	}
 	slots, err := src.FilledSlots(ctx, scope, srcTID)
 	if err != nil {
@@ -80,7 +89,8 @@ func copyDirection(ctx context.Context, tx storage.Stores, scope string, source 
 	}
 	tables, err := source.Rencontres().TournamentTableSettings(ctx, scope, srcTID)
 	if err != nil {
-		return fmt.Errorf("ingest: reading the tables of source tournament %d: %w", srcTID, err)
+		res.unreadableOnce("table settings", err)
+		tables = nil
 	}
 
 	// Field by field: OutputDir is a path on the producer's machine.
@@ -168,11 +178,13 @@ func mergeRencontres(ctx context.Context, tx storage.Stores, scope string, sourc
 	slices.SortFunc(srcRencontres, func(a, b *domain.Rencontre) int { return cmp.Compare(a.ID, b.ID) })
 	for _, r := range srcRencontres {
 		var members []int64
+		seen := map[int64]bool{}
 		for _, srcTID := range r.TournamentIDs {
 			tid, ok := res.TournamentMap[srcTID]
-			if !ok || kept[tid] {
+			if !ok || kept[tid] || seen[tid] {
 				continue
 			}
+			seen[tid] = true
 			if in, err := tx.Rencontres().Of(ctx, scope, tid); err != nil && !errors.Is(err, storage.ErrNotFound) {
 				return fmt.Errorf("ingest: reading the rencontre of tournament %d: %w", tid, err)
 			} else if in != 0 {
@@ -226,4 +238,12 @@ func createRencontre(ctx context.Context, tx storage.Stores, scope string, r *do
 		}
 	}
 	return id, nil
+}
+
+// unreadableOnce is unreadable for a family read once per Tournament: it is
+// named once however many Tournaments lack it.
+func (res *MatchMerge) unreadableOnce(family string, err error) {
+	if !slices.Contains(res.Unreadable, family) {
+		res.unreadable(family, err)
+	}
 }

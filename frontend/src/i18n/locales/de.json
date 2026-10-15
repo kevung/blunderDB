@@ -1287,6 +1287,8 @@
         "matchesToSkip": "Bereits vorhandene Spiele (übersprungen)",
         "matchesAdded": "Hinzugefügte Spiele",
         "matchesKnown": "Bereits vorhandene Spiele",
+        "directionsRead": "Übernommene Turnierleitungen",
+        "rencontresCreated": "Erstellte Veranstaltungen",
         "livingFrozen": "Dynamische Sammlungen eingefroren (ihre Abfrage konnte nicht übernommen werden): {names}",
         "livingOnManual": "Dynamische Sammlungen nicht in Ihre gleichnamige Liste übernommen: {names}",
         "unreadable": "Nicht übernommen (die Quelle ist zu alt, um gelesen zu werden): {names}",
