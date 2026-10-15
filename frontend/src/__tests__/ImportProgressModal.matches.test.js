@@ -22,6 +22,9 @@ import ru from '../i18n/locales/ru.json';
 
 afterEach(cleanup);
 
+/** @param {any} props */
+const mount = (props) => render(ImportProgressModal, props);
+
 const analysis = { toAdd: 0, toMerge: 0, toSkip: 3, total: 3, matches: 4, matchesKnown: 2, importPath: '' };
 const result = {
     added: 0,
@@ -40,21 +43,21 @@ const text = (c, id) => c.querySelector(`[data-testid="${id}"]`)?.textContent ??
 
 describe('the preview', () => {
     test('shows the matches to add and those already held, and is not empty when a match comes', () => {
-        const { container } = render(ImportProgressModal, { visible: true, mode: 'preview', analysis });
+        const { container } = mount({ visible: true, mode: 'preview', analysis });
         expect(text(container, 'import-matches')).toContain('4');
         expect(text(container, 'import-matches-known')).toContain('2');
         expect(container.textContent).not.toContain('Nothing to import');
     });
 
     test('shows no match block when the source holds none', () => {
-        const { container } = render(ImportProgressModal, { visible: true, mode: 'preview', analysis: { ...analysis, matches: 0, matchesKnown: 0 } });
+        const { container } = mount({ visible: true, mode: 'preview', analysis: { ...analysis, matches: 0, matchesKnown: 0 } });
         expect(text(container, 'import-matches')).toBeNull();
     });
 });
 
 describe('the result', () => {
     test('shows the matches held already and names what was frozen, left on a manual list or unreadable', () => {
-        const { container } = render(ImportProgressModal, { visible: true, mode: 'completed', result });
+        const { container } = mount({ visible: true, mode: 'completed', result });
         expect(text(container, 'result-matches-known')).toContain('2');
         expect(text(container, 'import.livingFrozen')).toContain('Blunders');
         expect(text(container, 'import.livingOnManual')).toContain('Mine, Other');
@@ -62,7 +65,7 @@ describe('the result', () => {
     });
 
     test('shows no note when nothing was set apart', () => {
-        const { container } = render(ImportProgressModal, {
+        const { container } = mount({
             visible: true,
             mode: 'completed',
             result: { ...result, livingCollectionsFrozen: [], livingCollectionsOnManual: [], unreadable: [] }
@@ -78,6 +81,6 @@ describe('the result', () => {
 
 describe('the keys exist in the nine languages', () => {
     test.each(['matchesToAdd', 'matchesToSkip', 'matchesAdded', 'matchesKnown', 'livingFrozen', 'livingOnManual', 'unreadable'])('%s', (k) => {
-        for (const l of [en, fr, de, el, es, fi, it, ja, ru]) expect(l.import[k]).toBeTruthy();
+        for (const l of [en, fr, de, el, es, fi, it, ja, ru]) expect(/** @type {Record<string, string>} */ (l.import)[k]).toBeTruthy();
     });
 });

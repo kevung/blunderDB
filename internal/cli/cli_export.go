@@ -150,44 +150,24 @@ func (cli *CLI) runExport(args []string) error {
 	}
 
 	// Parse comma-separated ID lists
-	var collectionIDs, matchIDs, tournamentIDs []int64
-	if *collectionIDsStr != "" {
-		var parseErr error
-		collectionIDs, parseErr = parseIDList(*collectionIDsStr)
-		if parseErr != nil {
-			return fmt.Errorf("invalid collection-ids: %w", parseErr)
+	var ids [5][]int64
+	for i, f := range []struct{ name, raw string }{
+		{"collection-ids", *collectionIDsStr},
+		{"lesson-ids", *lessonIDsStr},
+		{"deck-ids", *deckIDsStr},
+		{"match-ids", *matchIDsStr},
+		{"tournament-ids", *tournamentIDsStr},
+	} {
+		if f.raw == "" {
+			continue
 		}
-	}
-	var lessonIDs []int64
-	if *lessonIDsStr != "" {
-		var parseErr error
-		lessonIDs, parseErr = parseIDList(*lessonIDsStr)
+		parsed, parseErr := parseIDList(f.raw)
 		if parseErr != nil {
-			return fmt.Errorf("invalid lesson-ids: %w", parseErr)
+			return fmt.Errorf("invalid %s: %w", f.name, parseErr)
 		}
+		ids[i] = parsed
 	}
-	var deckIDs []int64
-	if *deckIDsStr != "" {
-		var parseErr error
-		deckIDs, parseErr = parseIDList(*deckIDsStr)
-		if parseErr != nil {
-			return fmt.Errorf("invalid deck-ids: %w", parseErr)
-		}
-	}
-	if *matchIDsStr != "" {
-		var parseErr error
-		matchIDs, parseErr = parseIDList(*matchIDsStr)
-		if parseErr != nil {
-			return fmt.Errorf("invalid match-ids: %w", parseErr)
-		}
-	}
-	if *tournamentIDsStr != "" {
-		var parseErr error
-		tournamentIDs, parseErr = parseIDList(*tournamentIDsStr)
-		if parseErr != nil {
-			return fmt.Errorf("invalid tournament-ids: %w", parseErr)
-		}
-	}
+	collectionIDs, lessonIDs, deckIDs, matchIDs, tournamentIDs := ids[0], ids[1], ids[2], ids[3], ids[4]
 
 	// Initialize database
 	if err := cli.initDatabase(*dbPath); err != nil {

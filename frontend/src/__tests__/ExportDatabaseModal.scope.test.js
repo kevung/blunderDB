@@ -132,7 +132,7 @@ describe('the preview', () => {
 });
 
 describe('the preview, when it goes stale', () => {
-    const mk = (matches) => ({
+    const mk = (/** @type {number} */ matches) => ({
         positions: 1,
         comments: 0,
         matches,

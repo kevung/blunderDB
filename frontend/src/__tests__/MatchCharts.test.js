@@ -32,11 +32,11 @@ function mount(extra = {}) {
     return { ...utils, onselect, onhover };
 }
 const plots = () => ['times-plot', 'loss-plot-per', 'loss-plot-cum'].map((id) => screen.getByTestId(id));
-function rect(plot) {
+function rect(/** @type {any} */ plot) {
     plot.getBoundingClientRect = () => ({ left: 0, top: 0, width: 60, height: 100, right: 60, bottom: 100 });
 }
-const toggle = (name, nth = 0) => screen.getAllByRole('button', { name })[nth];
-const bars = (plot) => plot.querySelectorAll('rect.bar').length;
+const toggle = (/** @type {string} */ name, nth = 0) => screen.getAllByRole('button', { name })[nth];
+const bars = (/** @type {any} */ plot) => plot.querySelectorAll('rect.bar').length;
 
 describe('legend toggles', () => {
     test('each chart offers a toggle per player, pressed at first', () => {

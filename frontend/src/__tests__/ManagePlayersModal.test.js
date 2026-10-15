@@ -64,7 +64,7 @@ async function settle() {
     for (let i = 0; i < 6; i++) await tick();
 }
 
-function tab(target, shiftKey = false) {
+function tab(/** @type {any} */ target, shiftKey = false) {
     const event = new KeyboardEvent('keydown', { key: 'Tab', shiftKey, bubbles: true, cancelable: true });
     target.dispatchEvent(event);
     return event;
