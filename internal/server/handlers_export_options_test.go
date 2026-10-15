@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -24,8 +25,9 @@ func shareBody(family string, ids ...int64) map[string]any {
 }
 
 // exports.sqlite honours the families the desktop and the CLI can leave out:
-// the whole tenant carries the decks' review history, decks named by deckIds
-// leave without it, and ankiHistory or transcriptions set to false drop them.
+// the whole tenant carries the decks' review history, decks shared by deckIDs
+// leave without it, and includeAnkiHistory or includeTranscriptions set to
+// false drop them.
 func TestExportSQLiteHonoursHistoryAndTranscriptions(t *testing.T) {
 	ts, srv := newTestServerAndHandler(t)
 	ctx := context.Background()
@@ -125,6 +127,29 @@ func TestExportSQLiteRefusesPassword(t *testing.T) {
 		resp.Body.Close()
 		if resp.StatusCode != http.StatusBadRequest {
 			t.Errorf("%s with a password: status %d, want 400", route, resp.StatusCode)
+		}
+	}
+}
+
+// A key the export options do not hold is refused and named: an old client's
+// collectionIds must not quietly export the whole tenant.
+func TestExportSQLiteRefusesUnknownKeys(t *testing.T) {
+	ts := newTestServer(t)
+	for _, tc := range []struct {
+		route string
+		body  any
+		key   string
+	}{
+		{"/v1/exports.sqlite", map[string]any{"collectionIds": []int64{4}}, "collectionIds"},
+		{"/v1/exports.plan", map[string]any{"watermarkOrigin": "club"}, "watermarkOrigin"},
+		{"/v1/exports.planIds", map[string]any{"family": "positions", "export": map[string]any{"deckIds": []int64{1}}}, "deckIds"},
+		{"/v1/exports.sqlite", map[string]any{"metadata": map[string]string{"a": "b"}}, "metadata"},
+	} {
+		resp := post(t, ts, tc.route, tc.body)
+		body, _ := io.ReadAll(resp.Body)
+		resp.Body.Close()
+		if resp.StatusCode != http.StatusBadRequest || !strings.Contains(string(body), tc.key) {
+			t.Errorf("%s with %s: status %d, body %s; want 400 naming the key", tc.route, tc.key, resp.StatusCode, body)
 		}
 	}
 }

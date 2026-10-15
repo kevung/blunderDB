@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -304,7 +305,8 @@ func (s *Server) ingestRoutes() []route {
 // exports.planIds: the export options of the desktop and the CLI, under the same
 // JSON keys, read by the same ingest.OptionsFor. A field left out keeps its
 // value in ingest.WholeLibraryOptions, so an absent or empty body exports the
-// whole tenant. watermark / watermarkNote ask for a watermark signed with the
+// whole tenant; an unknown key, or metadata, is refused. positions hands
+// over positions whole, as the desktop does for unsaved ones. watermark / watermarkNote ask for a watermark signed with the
 // daemon's own identity; exportPath is the daemon's affair and is ignored; a
 // password is refused, the daemon streaming a plain SQLite file.
 type exportSQLiteReq struct {
@@ -314,15 +316,44 @@ type exportSQLiteReq struct {
 	decoded bool
 }
 
-// UnmarshalJSON reads the body over ingest.WholeLibraryOptions.
+// UnmarshalJSON reads the body over ingest.WholeLibraryOptions. A key the
+// options do not hold is refused rather than ignored: an ignored one would
+// widen the export to the whole tenant behind the caller's back.
 func (r *exportSQLiteReq) UnmarshalJSON(b []byte) error {
+	// encoding/json matches keys without regard to case, so the earlier
+	// collectionIds would land on collectionIDs under the whole-library preset:
+	// every key is checked against the options' exact names first.
+	var keys map[string]json.RawMessage
+	if err := json.Unmarshal(b, &keys); err != nil {
+		return err
+	}
+	for k := range keys {
+		if !exportOptionKeys[k] {
+			return fmt.Errorf("unknown export option %q: the export body takes the export options of the desktop and the CLI (wholeLibrary, include…, collectionIDs, deckIDs, lessonIDs, matchIDs, tournamentIDs, positionIDs, watermark…)", k)
+		}
+	}
 	opts := ingest.WholeLibraryOptions()
 	if err := json.Unmarshal(b, &opts); err != nil {
 		return err
 	}
+	if len(opts.Metadata) > 0 {
+		return errors.New(`"metadata" is not an export option of the daemon: it writes only the file's creation date and the watermark`)
+	}
 	r.ExportOptions, r.decoded = opts, true
 	return nil
 }
+
+// exportOptionKeys holds the exact JSON names of domain.ExportOptions.
+var exportOptionKeys = func() map[string]bool {
+	keys := map[string]bool{}
+	t := reflect.TypeFor[domain.ExportOptions]()
+	for i := range t.NumField() {
+		if name, _, _ := strings.Cut(t.Field(i).Tag.Get("json"), ","); name != "" && name != "-" {
+			keys[name] = true
+		}
+	}
+	return keys
+}()
 
 // options is what the request asks for: the preset when no body came.
 func (r exportSQLiteReq) options() domain.ExportOptions {
@@ -366,7 +397,7 @@ func (s *Server) sealExportWatermark(origin, note string) (string, error) {
 		return "", nil
 	}
 	if s.opts.Identity == nil {
-		return "", fmt.Errorf("%w: watermarkOrigin was given but this server has no signing identity (start it with --identity-dir)", storage.ErrInvalid)
+		return "", fmt.Errorf("%w: watermark was given but this server has no signing identity (start it with --identity-dir)", storage.ErrInvalid)
 	}
 	return ingest.SealWatermark(s.opts.Identity, origin, note)
 }

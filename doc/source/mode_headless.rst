@@ -1023,7 +1023,11 @@ bibliothèque de filtres). ``watermark`` / ``watermarkNote`` apposent un
 filigrane signé de l'identité propre du démon (``--identity-dir``) — sans ces
 champs, l'export ne porte aucun filigrane ; les demander sans identité
 configurée échoue avec le code ``invalid``, comme un ``password`` : le démon
-ne rend pas de conteneur chiffré. ``exportPath`` est ignoré. La
+ne rend pas de conteneur chiffré. ``positions`` remet des positions entières,
+enregistrées ou non, à la place de ``positionIDs``. ``metadata`` est refusé :
+le démon n'écrit dans le fichier que sa date de création et le filigrane. ``exportPath`` est ignoré. Une clé
+que les options ne connaissent pas, ou écrite avec une autre casse
+(``collectionIds``), est refusée avec le code ``invalid``, qui la nomme. La
 réponse porte, dans l'en-tête ``X-Blunderdb-Export-Report``, le compte en JSON
 de ce que le fichier contient, famille par famille. ``POST /v1/exports.plan``
 prend le même corps et rend ces comptes avant tout export, avec les
