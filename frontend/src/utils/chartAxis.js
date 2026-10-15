@@ -35,18 +35,18 @@ export function nearestVisible(i, visible) {
 
 /**
  * The decision under a pointer. With `visible`, a decision of a hidden player
- * gives the closest visible one.
+ * gives the closest visible one, and `null` when none is visible.
  *
  * @param {MouseEvent} e a pointer event on the plot
  * @param {number} count decisions on the axis
  * @param {readonly number[]} [visible]
- * @returns {number}
+ * @returns {number | null}
  */
 export function indexAt(e, count, visible) {
     const r = /** @type {HTMLElement} */ (e.currentTarget).getBoundingClientRect();
     const i = Math.floor(((e.clientX - r.left) / Math.max(1, r.width)) * count);
     const clamped = Math.min(count - 1, Math.max(0, i));
-    return visible ? (nearestVisible(clamped, visible) ?? clamped) : clamped;
+    return visible ? nearestVisible(clamped, visible) : clamped;
 }
 
 /**
@@ -68,7 +68,9 @@ export function stepIndex(key, current, count, visible) {
         if (current === null) return key === 'ArrowRight' ? visible[0] : visible[visible.length - 1];
         const next = key === 'ArrowRight' ? visible.find((v) => v > current) : visible.findLast((v) => v < current);
         if (next !== undefined) return next;
-        return key === 'ArrowRight' ? visible[visible.length - 1] : visible[0];
+        // Past the last (or before the first) visible decision there is nowhere to go on to.
+        const end = key === 'ArrowRight' ? visible[visible.length - 1] : visible[0];
+        return end === current ? end : null;
     }
     if (count < 1) return null;
     if (key === 'Home') return 0;

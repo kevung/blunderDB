@@ -112,16 +112,20 @@ describe('only the decisions of the player left answer', () => {
     });
 
     test('the arrows walk the visible decisions only', async () => {
-        const { onselect, onhover } = mount();
+        const { onselect, onhover, rerender } = mount();
         await fireEvent.click(toggle('Bob'));
         const [t] = plots();
         await fireEvent.keyDown(t, { key: 'ArrowRight' });
         expect(onhover).toHaveBeenLastCalledWith(100);
+        // The parent feeds the focus back: Bob is hidden, so the next stop skips decision 1.
+        await rerender({ hovered: 100 });
         await fireEvent.keyDown(t, { key: 'ArrowRight' });
-        // Same focus is not re-fed by the parent here: the harness is stateless, so End/Home check the ends.
+        expect(onhover).toHaveBeenLastCalledWith(102);
         await fireEvent.keyDown(t, { key: 'End' });
         expect(onhover).toHaveBeenLastCalledWith(105);
+        await rerender({ hovered: 102 });
         await fireEvent.keyDown(t, { key: 'Enter' });
-        expect(onselect).not.toHaveBeenCalledWith(1);
+        expect(onselect).toHaveBeenCalledTimes(1);
+        expect(onselect).toHaveBeenCalledWith(2);
     });
 });

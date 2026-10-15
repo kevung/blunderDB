@@ -1,6 +1,7 @@
 <script>
     // The time chart and the two loss charts of a match, with the one setting
     // they share: which players are shown. It starts with both for every match.
+    import { untrack } from 'svelte';
     import { togglePlayer } from '../utils/chartAxis.js';
     import MatchLosses from './MatchLosses.svelte';
     import MatchTimes from './MatchTimes.svelte';
@@ -10,7 +11,7 @@
 
     /** @type {[boolean, boolean]} */
     let shown = $state([true, true]);
-    let current = matchId;
+    let current = untrack(() => matchId);
     $effect.pre(() => {
         if (matchId !== current) {
             current = matchId;

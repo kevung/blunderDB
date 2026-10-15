@@ -80,7 +80,8 @@
         const r = /** @type {HTMLElement} */ (e.currentTarget).getBoundingClientRect();
         active = true;
         pointer = { x: toCssPx(e.clientX - r.left), y: toCssPx(e.clientY - r.top) };
-        onfocus(indexAt(e, movePositions.length, visible));
+        const i = indexAt(e, movePositions.length, visible);
+        if (i !== null) onfocus(i);
     }
 
     function leave() {
@@ -134,7 +135,10 @@
             }}
             onmousemove={onMove}
             onmouseleave={leave}
-            onclick={(e) => onselect(indexAt(e, movePositions.length, visible))}
+            onclick={(e) => {
+                const i = indexAt(e, movePositions.length, visible);
+                if (i !== null) onselect(i);
+            }}
             onkeydown={onKey}
             onblur={leave}
         >

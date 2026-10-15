@@ -19,6 +19,11 @@ describe('nearestVisible', () => {
         expect(nearestVisible(1, [0, 5])).toBe(0);
         expect(nearestVisible(4, [0, 5])).toBe(5);
     });
+    test('past the last visible decision, the arrow stays put', () => {
+        expect(stepIndex('ArrowRight', 5, 6, [0, 2, 3])).toBeNull();
+        expect(stepIndex('ArrowLeft', 0, 6, [2, 3])).toBeNull();
+        expect(stepIndex('ArrowRight', 3, 6, [0, 2, 3])).toBe(3);
+    });
     test('nothing visible gives null', () => {
         expect(nearestVisible(1, [])).toBeNull();
     });
@@ -30,6 +35,9 @@ describe('indexAt on the visible decisions', () => {
         // 6 decisions of 10 px: x=15 is index 1, hidden when only player 0 is shown.
         expect(indexAt(at(15), 6, [0, 2, 5])).toBe(0);
         expect(indexAt(at(25), 6, [0, 2, 5])).toBe(2);
+    });
+    test('nothing visible gives null', () => {
+        expect(indexAt(at(15), 6, [])).toBeNull();
     });
     test('without a filter nothing changes', () => {
         expect(indexAt(at(15), 6)).toBe(1);
@@ -53,6 +61,11 @@ describe('stepIndex on the visible decisions', () => {
     test('from a hidden decision, the arrow goes on from where it stands', () => {
         expect(stepIndex('ArrowRight', 1, 6, [0, 2, 5])).toBe(2);
         expect(stepIndex('ArrowLeft', 1, 6, [0, 2, 5])).toBe(0);
+    });
+    test('past the last visible decision, the arrow stays put', () => {
+        expect(stepIndex('ArrowRight', 5, 6, [0, 2, 3])).toBeNull();
+        expect(stepIndex('ArrowLeft', 0, 6, [2, 3])).toBeNull();
+        expect(stepIndex('ArrowRight', 3, 6, [0, 2, 3])).toBe(3);
     });
     test('nothing visible gives null', () => {
         expect(stepIndex('ArrowRight', null, 6, [])).toBeNull();

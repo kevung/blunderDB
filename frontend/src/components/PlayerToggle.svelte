@@ -33,7 +33,12 @@
         opacity: 0.45;
         text-decoration: line-through;
     }
+    .player-toggle:focus-visible {
+        outline: 2px solid currentColor;
+        outline-offset: 1px;
+    }
     .player-toggle[aria-disabled='true'] {
-        cursor: default;
+        cursor: not-allowed;
+        text-decoration: underline dotted;
     }
 </style>
