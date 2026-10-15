@@ -437,7 +437,7 @@ blunderDB va fusionner intelligemment les deux bases de données:
 
 * Les matchs arrivent avec leurs parties, leurs coups et leurs analyses ; un
   match que la base courante contient déjà — même empreinte — n'est pas
-  recopié. Un tournoi rejoint celui du même nom, qui garde sa date, ou est créé
+  recopié. Un tournoi rejoint celui du même nom, qui garde la date de son événement, ou est créé
   avec la date qu'il portait dans la base importée ; ses matchs s'y rangent dans
   l'ordre de la base importée. La Direction d'un tournoi n'est pas relue : elle
   reste dans le fichier exporté.

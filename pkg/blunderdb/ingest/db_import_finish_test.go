@@ -40,6 +40,13 @@ func TestDBImportKeepsDates(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	mid, err := src.Matches().Save(ctx, "", &domain.Match{Player1Name: "A", Player2Name: "B", MatchLength: 3, MatchHash: "h-dated"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := src.Tournaments().AddMatch(ctx, "", tour, mid); err != nil {
+		t.Fatal(err)
+	}
 	draft, err := src.Transcriptions().Save(ctx, "", &storage.Transcription{FormatVersion: "1",
 		Label: "Daté", Document: `{"header":{}}`})
 	if err != nil {
@@ -212,8 +219,8 @@ func TestDBImportLivingOntoManualList(t *testing.T) {
 }
 
 // TestDBImportMergedTournamentKeepsRecipientDates: a tournament merged into
-// the target's namesake keeps the target's dates; the source's apply only to
-// a tournament the import creates.
+// the target's namesake keeps its event date and created_at, and the source's
+// dates apply only to a tournament the import creates.
 func TestDBImportMergedTournamentKeepsRecipientDates(t *testing.T) {
 	ctx := context.Background()
 	srcPath := filepath.Join(t.TempDir(), "club.db")
@@ -223,6 +230,13 @@ func TestDBImportMergedTournamentKeepsRecipientDates(t *testing.T) {
 	}
 	tour, err := src.Tournaments().Create(ctx, "", "Open commun", "2018-02-03", "Nice")
 	if err != nil {
+		t.Fatal(err)
+	}
+	mid, err := src.Matches().Save(ctx, "", &domain.Match{Player1Name: "A", Player2Name: "B", MatchLength: 3, MatchHash: "h-shared"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := src.Tournaments().AddMatch(ctx, "", tour, mid); err != nil {
 		t.Fatal(err)
 	}
 	if err := src.Tournaments().KeepDates(ctx, "", tour, srcCreated, srcUpdated); err != nil {
@@ -249,8 +263,12 @@ func TestDBImportMergedTournamentKeepsRecipientDates(t *testing.T) {
 			t.Fatal(err)
 		}
 		n++
-		if tr.CreatedAt != recvCreated || tr.UpdatedAt != recvUpdated {
-			t.Errorf("tournament %q dates = %q / %q, want the recipient's %q / %q", tr.Name, tr.CreatedAt, tr.UpdatedAt, recvCreated, recvUpdated)
+		// A new match advances updated_at; the event's date and created_at stay.
+		if tr.CreatedAt != recvCreated || tr.Date != "2024-05-06" {
+			t.Errorf("tournament %q created/date = %q / %q, want the recipient's %q / 2024-05-06", tr.Name, tr.CreatedAt, tr.Date, recvCreated)
+		}
+		if tr.UpdatedAt == srcUpdated {
+			t.Errorf("tournament %q took the source's updated_at", tr.Name)
 		}
 	}
 	if n != 1 {

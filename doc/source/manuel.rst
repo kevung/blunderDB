@@ -1473,9 +1473,11 @@ ne remplace pas ce qui est déjà là.
   compris), les tournois, les brouillons de transcription, les alias, les
   collections, les leçons et les paquets Anki : voir :ref:`guide_fusionner_base`.
   Rien n'est écrasé : un match déjà présent n'est pas recopié, un tournoi du même
-  nom reçoit les matchs sans changer de date, et ce que la base décidait déjà
-  reste décidé par elle. Les dates d'origine des lignes qu'elle crée sont
-  conservées.
+  nom reçoit les matchs sans changer la date de l'événement (sa date de dernière
+  modification avance, puisqu'il reçoit de nouveaux matchs), et ce que la base
+  décidait déjà reste décidé par elle. Les tournois, brouillons de transcription
+  et alias créés par l'import gardent leurs dates d'origine ; les collections,
+  leçons et paquets Anki créés n'en gardent pas.
 
 * **Une analyse par moteur.** eXtreme Gammon, GNUbg, BGBlitz et l'évaluateur
   embarqué cohabitent sur une même position, et le panneau Analyse indique

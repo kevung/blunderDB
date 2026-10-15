@@ -38,6 +38,11 @@ type MatchMerge struct {
 
 	MatchMap      map[int64]int64
 	TournamentMap map[int64]int64
+
+	// keptDates holds the source dates of each tournament this merge created,
+	// by target id: filing a match advances updated_at, so they are written
+	// back once the matches are filed.
+	keptDates map[int64][2]string
 }
 
 // MergeMatches is the second half of the native .db rule both imports apply
@@ -66,6 +71,11 @@ func MergeMatches(ctx context.Context, tx storage.Stores, scope string, source s
 	}
 	if err := mergeMatchRows(ctx, tx, scope, source, targetOf, &res); err != nil {
 		return res, err
+	}
+	for id, d := range res.keptDates {
+		if err := tx.Tournaments().KeepDates(ctx, scope, id, d[0], d[1]); err != nil {
+			return res, fmt.Errorf("ingest: import tournament %d dates: %w", id, err)
+		}
 	}
 	if err := mergeTranscriptions(ctx, tx, scope, source, &res); err != nil {
 		return res, err
@@ -169,9 +179,10 @@ func mergeTournaments(ctx context.Context, tx storage.Stores, scope string, sour
 				return fmt.Errorf("ingest: import tournament %q comment: %w", t.Name, err)
 			}
 		}
-		if err := tx.Tournaments().KeepDates(ctx, scope, id, t.CreatedAt, t.UpdatedAt); err != nil {
-			return fmt.Errorf("ingest: import tournament %q dates: %w", t.Name, err)
+		if res.keptDates == nil {
+			res.keptDates = map[int64][2]string{}
 		}
+		res.keptDates[id] = [2]string{t.CreatedAt, t.UpdatedAt}
 		byName[t.Name] = id
 		res.TournamentMap[t.ID] = id
 		res.Tournaments++
