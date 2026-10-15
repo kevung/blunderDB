@@ -300,12 +300,18 @@ jobs:
   # race detector at all, and the search gold file (gammonnet-gold in
   # fuzz.yml) never runs at push time either. This job is deliberately
   # narrow — only tests whose name matches Parallel/Concurrent/Batch, no
-  # -short — so it can afford -race on every push without becoming the new
-  # bottleneck shard: measured 2026-09, ~43s, dominated by
+  # -short, plus TestSharedBudgetSearchesAgree (searches sharing the process
+  # core budget) — so it can afford -race on every push without becoming the
+  # new bottleneck shard: ~95s on two cores, split between
   # TestKernelIdentityOnPartialBatches (the batched evaluator's own
   # concurrency-relevant path — `engine/gammonnet/CLAUDE.md`'s "the network kernel never fuses
   # and never reassociates" invariant, exercised here under the race
-  # detector rather than just for bit-identity).
+  # detector rather than just for bit-identity) and
+  # TestParallelSearchFingerprint, which under -race forks every path on one
+  # light case each: the detector slows a forking search several times more
+  # than a serial one, and its default cases, at both widths, run without
+  # -race in the `gammonnet` shard on tag pushes and in nightly.yml's
+  # test-os-full (windows-latest, macos-latest).
   race-gammonnet:
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -325,7 +331,7 @@ jobs:
         shell: bash
 
       - name: go test -race (parallel/concurrent/batch search paths)
-        run: go test -race -count=1 -run 'Parallel|Concurrent|Batch' -v -timeout 300s ./pkg/blunderdb/engine/gammonnet/
+        run: go test -race -count=1 -run 'Parallel|Concurrent|Batch|SharedBudget' -v -timeout 300s ./pkg/blunderdb/engine/gammonnet/
         shell: bash
 
   # Runs the shared storage contract, RLS, SQLite→PostgreSQL migration and

@@ -78,12 +78,26 @@ func levelConfig(level SearchLevel, base SearchConfig) SearchConfig {
 	return cfg
 }
 
+// The cube corpus's cases that the race detector searches at 3 ply: late
+// positions whose search still lends helpers work at every depth, for about
+// 18 000 and 20 000 evaluations against 100 000 to 160 000 for an opening.
+const (
+	raceDecisionCase = 100
+	raceProbsCase    = 92
+)
+
 // TestParallelSearchFingerprint holds the number of cores to changing
 // nothing a search returns, on every path that forks: the root queue
 // (normal, thorough), the nested deep passes and chance nodes (ply3, staged
 // root), the distribution backups (Probs at 3 ply), and match play with the
 // cube. A private budget of 6 forces a mix of helpers and caller-run tasks;
 // NumCPU the widest spread. BLUNDERDB_PARALLEL widens every corpus.
+//
+// Under the race detector, which slows a forking search several times more
+// than a serial one, each path searches one case at the budget of 6 only,
+// and the 3-ply paths a late position of the cube corpus that still forks at
+// every depth at a tenth of an opening's evaluations: the race job looks for
+// unsynchronised writes, the full proof runs without the detector.
 func TestParallelSearchFingerprint(t *testing.T) {
 	if testing.Short() {
 		t.Skip("3-ply searches, serial and parallel")
@@ -100,10 +114,20 @@ func TestParallelSearchFingerprint(t *testing.T) {
 	cubeCases := decodeSearchCubeCorpus(t, raw2)
 	wide := os.Getenv("BLUNDERDB_PARALLEL") != ""
 	take := func(c []goldCase, n, all int) []goldCase {
-		if wide {
+		switch {
+		case wide:
 			n = all
+		case raceEnabled:
+			n = 1
 		}
 		return c[:min(n, len(c))]
+	}
+	// light is c, or under the race detector the cube corpus's case k.
+	light := func(c []goldCase, k int) []goldCase {
+		if raceEnabled && !wide && k < len(cubeCases) {
+			return cubeCases[k : k+1]
+		}
+		return c
 	}
 
 	type path struct {
@@ -111,22 +135,25 @@ func TestParallelSearchFingerprint(t *testing.T) {
 		cases []goldCase
 		cfg   func(goldCase) SearchConfig
 		probs bool
+		// nested: the path must fork from inside a forked task.
+		nested bool
 	}
 	paths := []path{
-		{"normal", take(cases, 6, 40), func(goldCase) SearchConfig { return DefaultConfig(2) }, false},
-		{"thorough", take(cases, 2, 10), func(goldCase) SearchConfig { return levelConfig(mustLevel("thorough"), SearchConfig{}) }, false},
-		{"ply3", take(cases, 2, 10), func(goldCase) SearchConfig { return DefaultConfig(3) }, false},
-		{"probs-ply3", take(cases, 1, 4), func(goldCase) SearchConfig { return DefaultConfig(3) }, true},
-		{"match-cube", take(cubeCases, 6, len(cubeCases)), func(c goldCase) SearchConfig { return c.config() }, false},
-		{"match-cube-ply3", take(cubeCases, 1, 6), func(c goldCase) SearchConfig {
+		{"normal", take(cases, 6, 40), func(goldCase) SearchConfig { return DefaultConfig(2) }, false, false},
+		{"thorough", take(cases, 2, 10), func(goldCase) SearchConfig { return levelConfig(mustLevel("thorough"), SearchConfig{}) }, false, false},
+		{"ply3", light(take(cases, 2, 10), raceDecisionCase), func(goldCase) SearchConfig { return DefaultConfig(3) }, false, true},
+		{"probs-ply3", light(take(cases, 1, 4), raceProbsCase), func(goldCase) SearchConfig { return DefaultConfig(3) }, true, true},
+		{"match-cube", take(cubeCases, 6, len(cubeCases)), func(c goldCase) SearchConfig { return c.config() }, false, false},
+		{"match-cube-ply3", light(take(cubeCases, 1, 6), raceDecisionCase), func(c goldCase) SearchConfig {
 			return levelConfig(mustLevel("ply3"), c.config())
-		}, false},
+		}, false, true},
 	}
 
 	for _, p := range paths {
 		t.Run(p.name, func(t *testing.T) {
-			run := func(workers int) fingerprint {
+			run := func(workers int) (fingerprint, uint64) {
 				var fp fingerprint
+				var nested uint64
 				for _, c := range p.cases {
 					s, err := NewSearcher(p.cfg(c))
 					if err != nil {
@@ -139,12 +166,29 @@ func TestParallelSearchFingerprint(t *testing.T) {
 					} else {
 						fp = append(fp, rankingFingerprint(t, s, one)...)
 					}
+					nested += s.nestedForks
 				}
-				return fp
+				return fp, nested
 			}
-			serial := run(1)
-			for _, nw := range []int{6, runtime.NumCPU()} {
-				sameFingerprint(t, serial, run(nw))
+			serial, _ := run(1)
+			widths := []int{6, runtime.NumCPU()}
+			if raceEnabled {
+				widths = widths[:1]
+			}
+			var firstNested uint64
+			for i, nw := range widths {
+				par, nested := run(nw)
+				sameFingerprint(t, serial, par)
+				if i == 0 {
+					firstNested = nested
+				} else if nested != firstNested {
+					t.Errorf("%d workers: %d nested forks, %d at %d workers", nw, nested, firstNested, widths[0])
+				}
+				// Without a nested fork the case proves nothing about the
+				// forks inside forks; a lighter case must not drop them.
+				if p.nested && nested == 0 {
+					t.Errorf("%d workers: no fork opened inside a forked task", nw)
+				}
 			}
 		})
 	}

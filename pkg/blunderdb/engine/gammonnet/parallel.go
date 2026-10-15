@@ -140,15 +140,15 @@ type searchCounts struct {
 	lent                         time.Duration
 	evals, pruneEvals, cacheHits uint64
 	batchFilled, batchSlotted    uint64
-	cubeValuations               uint64
+	cubeValuations, nestedForks  uint64
 }
 
 // takeCounts returns s's counters and zeroes them.
 func (s *Searcher) takeCounts() searchCounts {
-	c := searchCounts{s.lent, s.evals, s.pruneEvals, s.cacheHits, s.batchFilled, s.batchSlotted, s.cubeValuations}
+	c := searchCounts{s.lent, s.evals, s.pruneEvals, s.cacheHits, s.batchFilled, s.batchSlotted, s.cubeValuations, s.nestedForks}
 	s.lent = 0
 	s.evals, s.pruneEvals, s.cacheHits = 0, 0, 0
-	s.batchFilled, s.batchSlotted, s.cubeValuations = 0, 0, 0
+	s.batchFilled, s.batchSlotted, s.cubeValuations, s.nestedForks = 0, 0, 0, 0
 	return c
 }
 
@@ -160,6 +160,7 @@ func (s *Searcher) addCounts(c searchCounts) {
 	s.batchFilled += c.batchFilled
 	s.batchSlotted += c.batchSlotted
 	s.cubeValuations += c.cubeValuations
+	s.nestedForks += c.nestedForks
 }
 
 // LentTime is the time helpers have spent on this searcher's searches since
@@ -190,6 +191,9 @@ func (s *Searcher) fork(n int, task func(w *Searcher, k int) bool) bool {
 		return true
 	}
 
+	if s.inTask {
+		s.nestedForks++
+	}
 	var (
 		next    atomic.Int64
 		active  atomic.Int64
@@ -218,6 +222,7 @@ func (s *Searcher) fork(n int, task func(w *Searcher, k int) bool) bool {
 			go func() {
 				defer wg.Done()
 				start := time.Now()
+				h.inTask = true
 				pull(h)
 				c := h.takeCounts()
 				c.lent += time.Since(start)
@@ -232,9 +237,12 @@ func (s *Searcher) fork(n int, task func(w *Searcher, k int) bool) bool {
 		if k >= n {
 			break
 		}
+		outer := s.inTask
+		s.inTask = true
 		if !task(s, k) {
 			failed.Store(true)
 		}
+		s.inTask = outer
 	}
 	wg.Wait()
 	s.addCounts(counts)
@@ -249,6 +257,7 @@ func (c *searchCounts) add(o searchCounts) {
 	c.batchFilled += o.batchFilled
 	c.batchSlotted += o.batchSlotted
 	c.cubeValuations += o.cubeValuations
+	c.nestedForks += o.nestedForks
 }
 
 // splitDepth is the shallowest node whose subtrees are handed out (spec §2):
