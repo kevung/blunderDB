@@ -83,8 +83,7 @@
     // (WebKitGTK decodes from the cluster's start). The check runs when the source is set;
     // its command, the ffmpeg remux that repairs the file, is also what the pane offers when
     // it gives up reloading.
-    /** @type {{ checked: boolean, faulty: number[] | null, command: string } | null} */
-    let mux = $state(null);
+    let mux = $state(/** @type {{ checked: boolean, faulty: number[] | null, command: string } | null} */ (null));
     let muxDismissed = $state(false);
     let copied = $state(false);
     const muxFaulty = $derived(mux?.faulty?.length ?? 0);

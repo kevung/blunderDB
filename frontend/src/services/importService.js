@@ -426,6 +426,7 @@ export async function importPosition() {
         setStatusBarMessage(tMsg('status.noDatabaseOpened'));
         return;
     }
+    /** @type {any} */
     let outcome = null;
     try {
         const files = await OpenPositionFilesDialog();

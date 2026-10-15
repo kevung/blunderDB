@@ -14,7 +14,7 @@
     let { onClose, onMerged } = $props();
 
     // All player names (canonical) with their match counts
-    let allPlayers = $state([]);
+    let allPlayers = $state(/** @type {any[]} */ ([]));
     // Canonical name → the other spellings merged into it.
     let aliasesOf = $state(/** @type {Record<string, string[]>} */ ({}));
     // The library's Main player, '' when none.

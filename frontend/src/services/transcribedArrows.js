@@ -82,7 +82,7 @@ function unpaidSteps(moves, before) {
  * se jouent (« 24/18 bar/24 » se lit dans les deux sens).
  *
  * @param {string | null | undefined} notation - numérotée depuis le camp au trait
- * @param {{ board?: { points: { color: number, checkers: number }[] }, player_on_roll: number } | null | undefined} before
+ * @param {{ board?: { points: { color: number, checkers: number }[] }, player_on_roll: number, dice?: number[] } | null | undefined} before
  * @returns {StepMove[]} dans l'ordre de `parseMoveNotation(notation)`
  */
 export function recordedSteps(notation, before) {
@@ -103,7 +103,7 @@ export function recordedSteps(notation, before) {
         }
         return leaving >= 7 ? n - 1 : n;
     };
-    const unpaid = unpaidSteps(moves, before);
+    const unpaid = unpaidSteps(moves, { ...before, board: { points } });
 
     /** @type {boolean[]} */
     const illegal = moves.map(() => false);
