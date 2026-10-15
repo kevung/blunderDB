@@ -289,11 +289,12 @@ Import d'une base
 Fusionne une autre base blunderDB (*.db*) dans celle de ``--db``, selon les
 règles de la fusion de l'application de bureau et d'``imports.db`` en mode
 serveur (:ref:`guide_fusionner_base`) : positions, matchs, tournois,
-collections, leçons, paquets Anki, brouillons et alias. Importer deux fois le
-même fichier ne change rien. La sortie texte compte les matchs ajoutés et déjà
-présents, et nomme les collections vivantes figées ou laissées sur une liste
-manuelle, et les familles que la base est trop ancienne pour porter ; la
-Direction des tournois n'est pas relue.
+collections, leçons, paquets Anki, brouillons et alias, ainsi que la Direction
+des tournois et leur Rencontre. Importer deux fois le même fichier ne change
+rien. La sortie texte compte les matchs ajoutés et déjà présents, les
+Directions et Rencontres relues, et nomme les collections vivantes figées ou
+laissées sur une liste manuelle, et les familles que la base est trop ancienne
+pour porter.
 
 .. code-block:: bash
 
