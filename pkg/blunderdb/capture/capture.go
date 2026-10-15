@@ -77,6 +77,10 @@ var ErrNoBoard = errors.New("no backgammon board recognised in the image")
 // readable at half or a third of a 5K or two-screen capture.
 const MaxPixels = 3840 * 2160
 
+// readPixels is the size past which Read shrinks its input; a variable so that
+// a test can exercise the shrinking on a small image.
+var readPixels = MaxPixels
+
 // MaxDecodePixels bounds what Decode accepts at all, checked on the header
 // since a small file can declare billions (a 4 KB PNG of 6000x6000): two 6K
 // screens side by side take 41 Mpx, and the decoded image weighs 4 to 8
@@ -118,7 +122,7 @@ func decode(data []byte, limit int) (Reading, error) {
 // MaxPixels once each f×f block is averaged into one pixel.
 func shrinkFactor(w, h int) int {
 	f := 1
-	for ((w+f-1)/f)*((h+f-1)/f) > MaxPixels {
+	for ((w+f-1)/f)*((h+f-1)/f) > readPixels {
 		f++
 	}
 	return f
