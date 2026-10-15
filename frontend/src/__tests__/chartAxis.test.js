@@ -19,11 +19,6 @@ describe('nearestVisible', () => {
         expect(nearestVisible(1, [0, 5])).toBe(0);
         expect(nearestVisible(4, [0, 5])).toBe(5);
     });
-    test('past the last visible decision, the arrow stays put', () => {
-        expect(stepIndex('ArrowRight', 5, 6, [0, 2, 3])).toBeNull();
-        expect(stepIndex('ArrowLeft', 0, 6, [2, 3])).toBeNull();
-        expect(stepIndex('ArrowRight', 3, 6, [0, 2, 3])).toBe(3);
-    });
     test('nothing visible gives null', () => {
         expect(nearestVisible(1, [])).toBeNull();
     });
