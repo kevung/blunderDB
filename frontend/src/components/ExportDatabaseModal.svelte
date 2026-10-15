@@ -47,7 +47,11 @@
             lessonIDs: []
         },
         matches = [],
-        decks = []
+        decks = [],
+        // The backend's preview: planFor(options) counts what the file would hold, and
+        // planIdsFor(options, family) gives the ids behind one count.
+        planFor = undefined,
+        planIdsFor = undefined
     } = $props();
 
     /**
@@ -97,6 +101,39 @@
     }
 
     let passwordVisible = $state(false);
+
+    /** @typedef {{ positions: number, comments: number, matches: number, tournaments: number, directions: number, rencontres: number, collections: number, lessons: number, ankiDecks: number, transcriptions: number, aliases: number, filters: number, frozenCollections: {id: number, name: string}[], degradedAnkiDecks: {id: number, name: string}[] }} Plan */
+    // What the file will hold, read from the backend after every change of the choices. A
+    // slower answer to an earlier choice is dropped.
+    let plan = $state(/** @type {Plan | null} */ (null));
+    let planTicket = 0;
+    $effect(() => {
+        if (!visible) plan = null;
+        if (!visible || mode !== 'metadata' || !planFor) return;
+        // Read here so that every choice (and the lists they apply to) re-runs the preview.
+        const snapshot = $state.snapshot(exportOptions);
+        void [matches, decks, lessons, collections, tournaments];
+        const ticket = ++planTicket;
+        const timer = setTimeout(() => {
+            Promise.resolve()
+                .then(() => planFor(snapshot))
+                .then((p) => {
+                    if (ticket === planTicket) plan = p;
+                })
+                .catch((error) => logger.error('could not preview the export:', error));
+        }, 150);
+        return () => clearTimeout(timer);
+    });
+
+    // A count opens what it counts: the ids come from the same plan.
+    async function openPlanned(/** @type {string} */ family, /** @type {(ids: number[]) => void} */ open) {
+        if (!planIdsFor) return;
+        open(await planIdsFor($state.snapshot(exportOptions), family));
+    }
+
+    let frozenIDs = $derived(new Set((plan?.frozenCollections ?? []).map((c) => c.id)));
+    let degradedDecks = $derived(plan?.degradedAnkiDecks ?? []);
+    const shown = (/** @type {number | undefined} */ planned, /** @type {number} */ available) => planned ?? available;
 
     let collections = $derived($collectionsStore || []);
 
@@ -314,7 +351,7 @@
     {#if mode === 'metadata' || mode === 'exporting'}
         <PanelHeader
             title={$t('export.titleExport')}
-            count={$t('export.positionCount', { count: positionCount })}
+            count={$t('export.positionCount', { count: plan?.positions ?? positionCount })}
             onCount={onOpenPositions ? () => onOpenPositions(!!exportOptions.wholeLibrary) : null}
         >
             {#snippet actions()}
@@ -339,28 +376,42 @@
                 <label class="check"
                     ><input type="checkbox" id="export-played-moves" bind:checked={exportOptions.includePlayedMoves} disabled={!exportOptions.includeAnalysis} />{$t('export.playedMoves')}</label
                 >
-                <label class="check"><input type="checkbox" id="export-comments" bind:checked={exportOptions.includeComments} />{$t('export.comments')}</label>
+                <label class="check"
+                    ><input type="checkbox" id="export-comments" bind:checked={exportOptions.includeComments} />{$t('export.comments')}{#if plan}
+                        <span class="count" data-testid="export-comments-count">{plan.comments}</span>{/if}</label
+                >
             </FormRow>
             <FormRow label={$t('export.rowMatches')} for="export-matches">
                 <input type="checkbox" id="export-matches" bind:checked={exportOptions.includeMatches} disabled={matches.length === 0} />
-                {#if onOpenMatches && matches.length > 0}
-                    <CountLink testid="export-matches-count" label={matches.length} onclick={() => onOpenMatches(matches.map((/** @type {{ id: number }} */ m) => m.id))} />
+                {#if onOpenMatches && (plan ? plan.matches > 0 : matches.length > 0)}
+                    <CountLink
+                        testid="export-matches-count"
+                        label={shown(plan?.matches, matches.length)}
+                        onclick={() => (plan ? openPlanned('matches', (ids) => onOpenMatches(ids)) : onOpenMatches(matches.map((/** @type {{ id: number }} */ m) => m.id)))}
+                    />
                 {:else}
-                    <span class="count">{matches.length}</span>
+                    <span class="count" data-testid="export-matches-count">{shown(plan?.matches, matches.length)}</span>
                 {/if}
                 <label class="check"
-                    ><input type="checkbox" id="export-transcriptions" bind:checked={exportOptions.includeTranscriptions} disabled={!carriesMatches} />{$t('export.transcriptions')}</label
+                    ><input type="checkbox" id="export-transcriptions" bind:checked={exportOptions.includeTranscriptions} disabled={!carriesMatches} />{$t('export.transcriptions')}{#if plan}
+                        <span class="count" data-testid="export-transcriptions-count">{plan.transcriptions}</span>{/if}</label
                 >
-                <label class="check"><input type="checkbox" id="export-aliases" bind:checked={exportOptions.includeAliases} disabled={!carriesMatches} />{$t('export.aliases')}</label>
+                <label class="check"
+                    ><input type="checkbox" id="export-aliases" bind:checked={exportOptions.includeAliases} disabled={!carriesMatches} />{$t('export.aliases')}{#if plan}
+                        <span class="count" data-testid="export-aliases-count">{plan.aliases}</span>{/if}</label
+                >
             </FormRow>
             <FormRow label={$t('export.rowTournaments')} for="export-tournaments">
                 <!-- A tournament always leaves with its matches, so this box does not depend on the matches one. -->
                 <input type="checkbox" id="export-tournaments" bind:checked={exportOptions.includeTournaments} disabled={tournaments.length === 0} />
-                <span class="count">{tournaments.length}</span>
+                <span class="count" data-testid="export-tournaments-count">{shown(plan?.tournaments, tournaments.length)}</span>
+                {#if plan && plan.tournaments > 0 && (plan.directions > 0 || plan.rencontres > 0)}
+                    <span class="count">{$t('export.tournamentsDetail', { directions: plan.directions, rencontres: plan.rencontres })}</span>
+                {/if}
             </FormRow>
             <FormRow label={$t('export.rowCollections')} for="export-collections">
                 <input type="checkbox" id="export-collections" bind:checked={exportOptions.includeCollections} disabled={collections.length === 0} />
-                <span class="count">{collections.length}</span>
+                <span class="count" data-testid="export-collections-count">{shown(plan?.collections, collections.length)}</span>
                 {#if !exportOptions.wholeLibrary}
                     <label class="check"
                         ><input type="checkbox" id="export-collection-positions" bind:checked={exportOptions.includeCollectionPositions} disabled={!exportOptions.includeCollections} />{$t(
@@ -371,11 +422,11 @@
             </FormRow>
             <FormRow label={$t('export.rowLessons')} for="export-lessons">
                 <input type="checkbox" id="export-lessons" bind:checked={exportOptions.includeLessons} disabled={lessons.length === 0} />
-                <span class="count">{lessons.length}</span>
+                <span class="count" data-testid="export-lessons-count">{shown(plan?.lessons, lessons.length)}</span>
             </FormRow>
             <FormRow label={$t('export.rowDecks')} for="export-decks">
                 <input type="checkbox" id="export-decks" bind:checked={exportOptions.includeAnkiDecks} disabled={decks.length === 0} />
-                <span class="count">{decks.length}</span>
+                <span class="count" data-testid="export-decks-count">{shown(plan?.ankiDecks, decks.length)}</span>
                 <label class="check"
                     ><input type="checkbox" id="export-anki-history" bind:checked={exportOptions.includeAnkiHistory} disabled={!exportOptions.includeAnkiDecks} />{$t('export.ankiHistory')}</label
                 >
@@ -383,6 +434,7 @@
             <FormRow label={$t('export.rowFilters')} for="export-filter-library">
                 <!-- The producer's saved searches: working preferences, off for a list. -->
                 <input type="checkbox" id="export-filter-library" bind:checked={exportOptions.includeFilterLibrary} />
+                {#if plan}<span class="count" data-testid="export-filters-count">{plan.filters}</span>{/if}
             </FormRow>
 
             <!-- Describe the produced file; seeded from the source's values. -->
@@ -481,10 +533,13 @@
                 selectNone={selectNoCollections}
                 describe={(collection) => ({
                     name: collection.name,
-                    count: `(${covered(collection)}/${collection.positionCount})`,
-                    partial: isPartial(collection) && !exportOptions.includeCollectionPositions
+                    count: `(${covered(collection)}/${collection.positionCount})${frozenIDs.has(collection.id) ? ` ${$t('export.frozenMark')}` : ''}`,
+                    partial: (isPartial(collection) && !exportOptions.includeCollectionPositions) || frozenIDs.has(collection.id)
                 })}
             />
+            {#if frozenIDs.size > 0}
+                <p class="note" data-testid="export-frozen-note">{$t('export.frozenNote', { count: frozenIDs.size })}</p>
+            {/if}
         {/if}
 
         {#if exportOptions.includeLessons && lessons.length > 0}
@@ -523,6 +578,9 @@
                 }}
                 describe={(deck) => ({ name: deck.name, count: `(${deck.cardCount})` })}
             />
+            {#if degradedDecks.length > 0}
+                <p class="note" data-testid="export-degraded-note">{$t('export.degradedNote', { count: degradedDecks.length })}</p>
+            {/if}
         {/if}
     {/if}
 
@@ -594,6 +652,11 @@
     .check:has(input:disabled) {
         cursor: not-allowed;
         opacity: 0.5;
+    }
+
+    .note {
+        margin: var(--space-1) var(--space-3);
+        color: var(--color-text-muted);
     }
 
     .count {

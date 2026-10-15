@@ -1241,7 +1241,11 @@
         "aliases": "Alias",
         "collectionPositions": "+ le loro posizioni",
         "ankiHistory": "con la mia cronologia",
-        "selectDecks": "Seleziona i mazzi da esportare"
+        "selectDecks": "Seleziona i mazzi da esportare",
+        "frozenMark": "congelata",
+        "frozenNote": "{count} collezione(i) viva(e) partiranno congelate: la loro query indica righe che il file non contiene e arriveranno come l'elenco che selezionano oggi. Spunta «+ le loro posizioni» per mantenerle vive.",
+        "degradedNote": "{count} mazzo(i) di ricerca perderanno parte della loro sorgente.",
+        "tournamentsDetail": "di cui {directions} direzione(i), {rencontres} incontro(i)"
     },
     "import": {
         "minimize": "Riduci",
@@ -1718,7 +1722,13 @@
         "captureFailed": "Impossibile leggere la schermata: {error}",
         "captureOnlyFirst": " {count} immagini rilasciate: è stata letta solo la prima.",
         "captureUnsure": " Da verificare, non cerchiato: {fields}.",
-        "captureField": { "score": "il punteggio", "turn": "il giocatore di turno", "orientation": "il verso della scacchiera", "dice": "i dadi", "checkers": "il numero di pedine" },
+        "captureField": {
+            "score": "il punteggio",
+            "turn": "il giocatore di turno",
+            "orientation": "il verso della scacchiera",
+            "dice": "i dadi",
+            "checkers": "il numero di pedine"
+        },
         "importIdentifierFailed": "L'identificatore non ha potuto essere letto: {error}",
         "boardImageSaved": "Immagine salvata: {path}",
         "boardImageSaveFailed": "L'immagine non ha potuto essere salvata: {err}",

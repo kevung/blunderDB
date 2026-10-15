@@ -1241,7 +1241,11 @@
         "aliases": "Alias",
         "collectionPositions": "+ sus posiciones",
         "ankiHistory": "con mi historial",
-        "selectDecks": "Seleccionar los mazos a exportar"
+        "selectDecks": "Seleccionar los mazos a exportar",
+        "frozenMark": "congelada",
+        "frozenNote": "{count} colección(es) viva(s) saldrán congeladas: su consulta nombra filas que el archivo no contiene y llegarán como la lista que selecciona hoy. Marque «+ sus posiciones» para mantenerlas vivas.",
+        "degradedNote": "{count} mazo(s) de búsqueda perderán parte de su fuente.",
+        "tournamentsDetail": "de ellas {directions} dirección(es), {rencontres} encuentro(s)"
     },
     "import": {
         "minimize": "Minimizar",
@@ -1718,7 +1722,13 @@
         "captureFailed": "No se pudo leer la captura: {error}",
         "captureOnlyFirst": " {count} imágenes soltadas: solo se leyó la primera.",
         "captureUnsure": " Por comprobar, sin rodear: {fields}.",
-        "captureField": { "score": "el marcador", "turn": "el jugador al turno", "orientation": "la orientación del tablero", "dice": "los dados", "checkers": "el número de fichas" },
+        "captureField": {
+            "score": "el marcador",
+            "turn": "el jugador al turno",
+            "orientation": "la orientación del tablero",
+            "dice": "los dados",
+            "checkers": "el número de fichas"
+        },
         "importIdentifierFailed": "No se ha podido leer el identificador: {error}",
         "boardImageSaved": "Imagen guardada: {path}",
         "boardImageSaveFailed": "No se ha podido guardar la imagen: {err}",

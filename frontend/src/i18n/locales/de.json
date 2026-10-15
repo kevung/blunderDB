@@ -1241,7 +1241,11 @@
         "aliases": "Aliasse",
         "collectionPositions": "+ ihre Positionen",
         "ankiHistory": "mit meinem Verlauf",
-        "selectDecks": "Zu exportierende Stapel auswählen"
+        "selectDecks": "Zu exportierende Stapel auswählen",
+        "frozenMark": "eingefroren",
+        "frozenNote": "{count} lebende Sammlung(en) werden eingefroren exportiert: Ihre Abfrage nennt Zeilen, die nicht in der Datei stehen; sie kommen als Liste dessen an, was sie heute auswählt. Mit „+ ihre Positionen“ bleiben sie lebendig.",
+        "degradedNote": "{count} Suchstapel verlieren einen Teil ihrer Quelle.",
+        "tournamentsDetail": "davon {directions} Turnierleitung(en), {rencontres} Begegnung(en)"
     },
     "import": {
         "minimize": "Minimieren",
@@ -1718,7 +1722,13 @@
         "captureFailed": "Screenshot konnte nicht gelesen werden: {error}",
         "captureOnlyFirst": " {count} Bilder abgelegt: nur das erste wurde gelesen.",
         "captureUnsure": " Zu prüfen, nicht umkreist: {fields}.",
-        "captureField": { "score": "den Spielstand", "turn": "den Spieler am Zug", "orientation": "die Brettrichtung", "dice": "die Würfel", "checkers": "die Steinanzahl" },
+        "captureField": {
+            "score": "den Spielstand",
+            "turn": "den Spieler am Zug",
+            "orientation": "die Brettrichtung",
+            "dice": "die Würfel",
+            "checkers": "die Steinanzahl"
+        },
         "importIdentifierFailed": "Die Kennung konnte nicht gelesen werden: {error}",
         "boardImageSaved": "Bild gespeichert: {path}",
         "boardImageSaveFailed": "Das Bild konnte nicht gespeichert werden: {err}",

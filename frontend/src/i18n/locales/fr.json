@@ -1241,7 +1241,11 @@
         "aliases": "Alias",
         "collectionPositions": "+ leurs positions",
         "ankiHistory": "avec mon historique",
-        "selectDecks": "Sélectionner les paquets à exporter"
+        "selectDecks": "Sélectionner les paquets à exporter",
+        "frozenMark": "figée",
+        "frozenNote": "{count} collection(s) vivante(s) partiront figées : leur requête désigne des lignes que le fichier ne contient pas, elles arriveront comme la liste de ce qu'elle sélectionne aujourd'hui. Cochez « + leurs positions » pour les garder vivantes.",
+        "degradedNote": "{count} paquet(s) de recherche perdront une partie de leur source.",
+        "tournamentsDetail": "dont {directions} direction(s), {rencontres} rencontre(s)"
     },
     "import": {
         "minimize": "Réduire",
@@ -1718,7 +1722,13 @@
         "captureFailed": "Lecture de la capture impossible : {error}",
         "captureOnlyFirst": " {count} images déposées : seule la première a été lue.",
         "captureUnsure": " À vérifier, non cerclé : {fields}.",
-        "captureField": { "score": "le score", "turn": "le joueur au trait", "orientation": "le sens du plateau", "dice": "les dés", "checkers": "le nombre de dames" },
+        "captureField": {
+            "score": "le score",
+            "turn": "le joueur au trait",
+            "orientation": "le sens du plateau",
+            "dice": "les dés",
+            "checkers": "le nombre de dames"
+        },
         "importIdentifierFailed": "L'identifiant n'a pas pu être lu : {error}",
         "boardImageSaved": "Image enregistrée : {path}",
         "boardImageSaveFailed": "L'image n'a pas pu être enregistrée : {err}",

@@ -1241,7 +1241,11 @@
         "aliases": "Aliases",
         "collectionPositions": "+ their positions",
         "ankiHistory": "with my history",
-        "selectDecks": "Select the decks to export"
+        "selectDecks": "Select the decks to export",
+        "frozenMark": "frozen",
+        "frozenNote": "{count} living collection(s) will leave frozen: their query names rows the file does not hold, so they arrive as the list it selects today. Tick \"+ their positions\" to keep them living.",
+        "degradedNote": "{count} search deck(s) will lose part of their source.",
+        "tournamentsDetail": "incl. {directions} direction(s), {rencontres} meeting(s)"
     },
     "import": {
         "minimize": "Minimize",
@@ -1718,7 +1722,13 @@
         "captureFailed": "Could not read the capture: {error}",
         "captureOnlyFirst": " {count} images dropped: only the first was read.",
         "captureUnsure": " To check, not ringed: {fields}.",
-        "captureField": { "score": "the score", "turn": "the player on roll", "orientation": "the board's direction", "dice": "the dice", "checkers": "the checker count" },
+        "captureField": {
+            "score": "the score",
+            "turn": "the player on roll",
+            "orientation": "the board's direction",
+            "dice": "the dice",
+            "checkers": "the checker count"
+        },
         "importIdentifierFailed": "The identifier could not be read: {error}",
         "boardImageSaved": "Image saved: {path}",
         "boardImageSaveFailed": "The image could not be saved: {err}",

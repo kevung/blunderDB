@@ -7,7 +7,7 @@
 
 import { must } from './helpers/must.js';
 import { describe, test, expect, afterEach, vi } from 'vitest';
-import { render, cleanup, fireEvent } from '@testing-library/svelte';
+import { render, cleanup, fireEvent, waitFor } from '@testing-library/svelte';
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
     ListLessons: vi.fn(async () => [])
@@ -92,5 +92,40 @@ describe('the counts', () => {
         expect(onOpenPositions).toHaveBeenCalledWith(true);
         await fireEvent.click(getByTestId('export-matches-count'));
         expect(onOpenMatches).toHaveBeenCalledWith([3, 8]);
+    });
+});
+
+describe('the preview', () => {
+    const plan = {
+        positions: 7,
+        comments: 3,
+        matches: 2,
+        tournaments: 1,
+        directions: 0,
+        rencontres: 0,
+        collections: 2,
+        lessons: 0,
+        ankiDecks: 0,
+        transcriptions: 1,
+        aliases: 4,
+        filters: 0,
+        frozenCollections: [{ id: 9, name: 'Live' }],
+        degradedAnkiDecks: []
+    };
+
+    test('shows the counts the backend gives and marks the collections that leave frozen', async () => {
+        const planFor = vi.fn(async () => plan);
+        const { container, findByTestId } = render(ExportDatabaseModal, {
+            visible: true,
+            exportOptions: { ...base(), includeCollections: true, collectionIDs: [9] },
+            planFor,
+            onCancel: () => {},
+            onExport: () => {}
+        });
+        await waitFor(() => expect(container.querySelector('[data-testid="export-matches-count"]')?.textContent).toBe('2'));
+        expect((await findByTestId('export-transcriptions-count')).textContent).toBe('1');
+        expect((await findByTestId('export-aliases-count')).textContent).toBe('4');
+        expect(planFor).toHaveBeenCalled();
+        expect(container.textContent).toContain('7');
     });
 });

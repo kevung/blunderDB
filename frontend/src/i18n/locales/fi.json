@@ -1241,7 +1241,11 @@
         "aliases": "Aliakset",
         "collectionPositions": "+ niiden asemat",
         "ankiHistory": "historiani kanssa",
-        "selectDecks": "Valitse vietävät pakat"
+        "selectDecks": "Valitse vietävät pakat",
+        "frozenMark": "jäädytetty",
+        "frozenNote": "{count} elävää kokoelmaa viedään jäädytettyinä: niiden kysely viittaa riveihin, joita tiedosto ei sisällä, joten ne saapuvat luettelona siitä, mitä kysely valitsee nyt. Valitse ”+ niiden asemat”, jotta ne pysyvät eläivinä.",
+        "degradedNote": "{count} hakupakan lähteestä menetetään osa.",
+        "tournamentsDetail": "joista {directions} johto(a), {rencontres} ottelu(a)"
     },
     "import": {
         "minimize": "Pienennä",
@@ -1718,7 +1722,13 @@
         "captureFailed": "Kuvakaappausta ei voitu lukea: {error}",
         "captureOnlyFirst": " {count} kuvaa pudotettu: vain ensimmäinen luettiin.",
         "captureUnsure": " Tarkistettava, ei ympyröity: {fields}.",
-        "captureField": { "score": "pistetilanne", "turn": "vuorossa oleva pelaaja", "orientation": "laudan suunta", "dice": "nopat", "checkers": "nappuloiden määrä" },
+        "captureField": {
+            "score": "pistetilanne",
+            "turn": "vuorossa oleva pelaaja",
+            "orientation": "laudan suunta",
+            "dice": "nopat",
+            "checkers": "nappuloiden määrä"
+        },
         "importIdentifierFailed": "Tunnistetta ei voitu lukea: {error}",
         "boardImageSaved": "Kuva tallennettu: {path}",
         "boardImageSaveFailed": "Kuvaa ei voitu tallentaa: {err}",

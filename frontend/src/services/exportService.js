@@ -13,7 +13,9 @@ import {
     GetAllAnkiDecks,
     CountPositions,
     ListLessons,
-    MatchIDsReachedBy
+    MatchIDsReachedBy,
+    PlanExport,
+    PlanExportIDs
 } from '../../wailsjs/go/database/Database.js';
 
 import { databasePathStore } from '../stores/databaseStore.js';
@@ -193,6 +195,91 @@ export async function exportMatchMat(match) {
     }
 }
 
+/**
+ * The backend's ExportOptions for the choices made in the dialog, minus the file and the
+ * two sealing mechanisms: what the commit sends and what the preview counts, one function so
+ * that the counts are those of the file.
+ * @param {any} exportOptions
+ * @param {string} exportPath
+ */
+export async function buildExportOptions(exportOptions, exportPath) {
+    const metadata = get(exportMetadataStore);
+    const wholeLibrary = !!exportOptions.wholeLibrary;
+    const lessons = wholeLibrary && exportOptions.includeLessons ? (await ListLessons()) || [] : [];
+    // Each family: none when its box is off or its pick emptied by hand; in the whole
+    // library, a pick of every item is sent as no ids, which the backend reads as all of it.
+    const family = (/** @type {boolean} */ on, /** @type {number[] | undefined} */ picked, /** @type {{ id: number }[]} */ all) => {
+        const ids = picked || [];
+        const include = !!on && ids.length > 0;
+        const everything = wholeLibrary && all.length > 0 && all.every((x) => ids.includes(x.id));
+        return { include, ids: include && !everything ? ids : [] };
+    };
+    const matches = family(exportOptions.includeMatches, exportOptions.matchIDs, get(exportMatchesStore) || []);
+    const collections = family(exportOptions.includeCollections, exportOptions.collectionIDs, get(collectionsStore) || []);
+    const tournaments = family(exportOptions.includeTournaments, exportOptions.includeTournamentIDs, get(tournamentsStore) || []);
+    const lessonPick = family(exportOptions.includeLessons, exportOptions.lessonIDs, lessons);
+    const decks = family(exportOptions.includeAnkiDecks, exportOptions.deckIDs, get(exportDecksStore) || []);
+    // A tournament carries its matches: their drafts and aliases follow them as well.
+    const someMatches = matches.include || tournaments.include;
+    const baseOptions = {
+        exportPath,
+        // The library is the daemon's whole-tenant export (ExportOptions.WholeLibrary); a
+        // list goes as identifiers, not positions: the whole set can be tens of MB of JSON
+        // on the UI thread.
+        wholeLibrary,
+        positionIDs: wholeLibrary ? [] : await listedIds(),
+        metadata: {
+            user: metadata.user || '',
+            description: metadata.description || '',
+            dateOfCreation: metadata.dateOfCreation || ''
+        },
+        includeAnalysis: exportOptions.includeAnalysis,
+        includeComments: exportOptions.includeComments,
+        includeFilterLibrary: exportOptions.includeFilterLibrary,
+        includePlayedMoves: exportOptions.includePlayedMoves,
+        includeMatches: matches.include,
+        matchIDs: matches.ids,
+        // A draft follows its match: without the match it has nothing to travel with.
+        includeTranscriptions: someMatches && !!exportOptions.includeTranscriptions,
+        // An alias leaves only when it names someone an exported match writes.
+        includeAliases: someMatches && !!exportOptions.includeAliases,
+        includeCollections: collections.include,
+        collectionIDs: collections.ids,
+        // The library holds every position already.
+        includeCollectionPositions: !wholeLibrary && collections.include && !!exportOptions.includeCollectionPositions,
+        includeTournaments: tournaments.include,
+        tournamentIDs: wholeLibrary ? tournaments.ids : exportOptions.includeTournamentIDs || [],
+        includeLessons: lessonPick.include,
+        lessonIDs: lessonPick.ids,
+        // In the library no ids means every deck; outside it, the ids are the decks.
+        includeAnkiDecks: decks.include,
+        deckIDs: wholeLibrary ? decks.ids : decks.include ? exportOptions.deckIDs || [] : [],
+        includeAnkiHistory: decks.include && !!exportOptions.includeAnkiHistory
+    };
+    return baseOptions;
+}
+
+/**
+ * What the file would hold for the choices in the dialog, counted by the backend on the
+ * same selection the export walks.
+ * @param {any} exportOptions
+ */
+export async function planExport(exportOptions) {
+    return PlanExport(/** @type {any} */ (await buildExportOptions(exportOptions, '')));
+}
+
+/**
+ * The source ids behind one count of the plan (a family of ingest.PlanExport), up to the
+ * backend's page bound.
+ * @param {any} exportOptions
+ * @param {string} family
+ * @returns {Promise<number[]>}
+ */
+export async function plannedIds(exportOptions, family) {
+    const page = await PlanExportIDs(/** @type {any} */ (await buildExportOptions(exportOptions, '')), family, 0, 0);
+    return page?.ids || [];
+}
+
 export async function handleExportCommit() {
     // The file is asked for last, once what goes into it is settled; dismissing the
     // dialog returns to the form.
@@ -211,60 +298,8 @@ export async function handleExportCommit() {
     exportModalModeStore.set('exporting');
 
     try {
-        const metadata = get(exportMetadataStore);
         const exportOptions = get(exportOptionsStore);
-        const wholeLibrary = !!exportOptions.wholeLibrary;
-        const lessons = wholeLibrary && exportOptions.includeLessons ? (await ListLessons()) || [] : [];
-        // Each family: none when its box is off or its pick emptied by hand; in the whole
-        // library, a pick of every item is sent as no ids, which the backend reads as all of it.
-        const family = (/** @type {boolean} */ on, /** @type {number[] | undefined} */ picked, /** @type {{ id: number }[]} */ all) => {
-            const ids = picked || [];
-            const include = !!on && ids.length > 0;
-            const everything = wholeLibrary && all.length > 0 && all.every((x) => ids.includes(x.id));
-            return { include, ids: include && !everything ? ids : [] };
-        };
-        const matches = family(exportOptions.includeMatches, exportOptions.matchIDs, get(exportMatchesStore) || []);
-        const collections = family(exportOptions.includeCollections, exportOptions.collectionIDs, get(collectionsStore) || []);
-        const tournaments = family(exportOptions.includeTournaments, exportOptions.includeTournamentIDs, get(tournamentsStore) || []);
-        const lessonPick = family(exportOptions.includeLessons, exportOptions.lessonIDs, lessons);
-        const decks = family(exportOptions.includeAnkiDecks, exportOptions.deckIDs, get(exportDecksStore) || []);
-        // A tournament carries its matches: their drafts and aliases follow them as well.
-        const someMatches = matches.include || tournaments.include;
-        const baseOptions = {
-            exportPath,
-            // The library is the daemon's whole-tenant export (ExportOptions.WholeLibrary); a
-            // list goes as identifiers, not positions: the whole set can be tens of MB of JSON
-            // on the UI thread.
-            wholeLibrary,
-            positionIDs: wholeLibrary ? [] : await listedIds(),
-            metadata: {
-                user: metadata.user || '',
-                description: metadata.description || '',
-                dateOfCreation: metadata.dateOfCreation || ''
-            },
-            includeAnalysis: exportOptions.includeAnalysis,
-            includeComments: exportOptions.includeComments,
-            includeFilterLibrary: exportOptions.includeFilterLibrary,
-            includePlayedMoves: exportOptions.includePlayedMoves,
-            includeMatches: matches.include,
-            matchIDs: matches.ids,
-            // A draft follows its match: without the match it has nothing to travel with.
-            includeTranscriptions: someMatches && !!exportOptions.includeTranscriptions,
-            // An alias leaves only when it names someone an exported match writes.
-            includeAliases: someMatches && !!exportOptions.includeAliases,
-            includeCollections: collections.include,
-            collectionIDs: collections.ids,
-            // The library holds every position already.
-            includeCollectionPositions: !wholeLibrary && collections.include && !!exportOptions.includeCollectionPositions,
-            includeTournaments: tournaments.include,
-            tournamentIDs: wholeLibrary ? tournaments.ids : exportOptions.includeTournamentIDs || [],
-            includeLessons: lessonPick.include,
-            lessonIDs: lessonPick.ids,
-            // In the library no ids means every deck; outside it, the ids are the decks.
-            includeAnkiDecks: decks.include,
-            deckIDs: wholeLibrary ? decks.ids : decks.include ? exportOptions.deckIDs || [] : [],
-            includeAnkiHistory: decks.include && !!exportOptions.includeAnkiHistory
-        };
+        const baseOptions = await buildExportOptions(exportOptions, exportPath);
 
         // Both mechanisms are plain export options: the watermark is sealed and written by
         // the backend, and a password wraps the finished file. Neither changes anything

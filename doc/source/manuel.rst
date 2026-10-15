@@ -5117,8 +5117,13 @@ Marquer une base de son origine
 
 La fenêtre d'export tient en un seul écran : une bande d'en-tête — le nombre
 de positions exportées, **Annuler** et **Exporter…** — puis une grille, une
-ligne par famille avec son compte. Le fichier se choisit en dernier, après
-**Exporter…** ; fermer ce choix sans nom revient à la grille. Une progression
+ligne par famille avec son compte. Ces comptes sont exacts : ils sont lus
+auprès du serveur à chaque changement de case, sur la même sélection que
+l'export, et sont ce que le fichier contiendra (le nombre de positions de la
+bande d'en-tête, les commentaires, les matchs, les transcriptions, les alias,
+les tournois, les collections, les leçons, les paquets, les filtres). Le fichier
+se choisit en dernier, après **Exporter…** ; fermer ce choix sans nom revient à
+la grille. Une progression
 se superpose ensuite le temps de l'écriture, la fenêtre se ferme d'elle-même et
 le résultat s'affiche dans la barre d'état.
 
@@ -5149,7 +5154,10 @@ Huit points méritent l'attention :
   (« 12/40 ») et la signale en rouge lorsqu'elle est partielle. La case
   *+ leurs positions* emporte les positions des collections cochées : celles
   d'une liste faite à la main, celles que la requête d'une collection vivante
-  sélectionne.
+  sélectionne. Une collection vivante dont la requête désigne des lignes que le
+  fichier ne contient pas **part figée** : elle arrive comme la liste de ce que
+  sa requête sélectionne aujourd'hui, et la liste la marque « figée » en rouge
+  avec une note ; cocher *+ leurs positions* la laisse vivante.
 * **Un tournoi part toujours avec ses matchs** : sans eux, le lien
   tournoi–match n'existe pas et le tournoi arriverait vide. Cocher un tournoi
   emporte ses matchs, même si la case des matchs est décochée ou restreinte à
