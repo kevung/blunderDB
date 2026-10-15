@@ -416,13 +416,14 @@ func (cli *CLI) runAnkiRetention(args []string) error {
 // One sub-command with an action, since the three share their argument,
 // confirmation and output.
 func (cli *CLI) runAnkiCard(args []string) error {
-	fs, dbPath := ankiFlagSet("card", "Suspend, bury or remove one card.",
+	fs, dbPath := ankiFlagSet("card", "Suspend, bury, remove one card, or undo its last review.",
 		"blunderdb anki card --db database.db --id 12 --action suspend",
 		"blunderdb anki card --db database.db --id 12 --action unsuspend",
 		"blunderdb anki card --db database.db --id 12 --action bury",
-		"blunderdb anki card --db database.db --id 12 --action remove")
+		"blunderdb anki card --db database.db --id 12 --action remove",
+		"blunderdb anki card --db database.db --id 12 --action undo")
 	cardID := fs.Int64("id", 0, "Card ID (required)")
-	action := fs.String("action", "", "suspend, unsuspend, bury or remove (required)")
+	action := fs.String("action", "", "suspend, unsuspend, bury, remove or undo (required)")
 	format := fs.String("format", "text", "Output format: text or json")
 	if err := cli.collectionOpen(fs, dbPath, args); err != nil {
 		return err
@@ -442,11 +443,13 @@ func (cli *CLI) runAnkiCard(args []string) error {
 		err = cli.db.BuryAnkiCard(*cardID)
 	case "remove":
 		err = cli.db.RemoveAnkiCard(*cardID)
+	case "undo":
+		return cli.undoAnkiReview(*cardID, *format)
 	case "":
 		fs.Usage()
 		return fmt.Errorf("missing required flag: --action")
 	default:
-		return fmt.Errorf("unknown action: %s (use suspend, unsuspend, bury or remove)", *action)
+		return fmt.Errorf("unknown action: %s (use suspend, unsuspend, bury, remove or undo)", *action)
 	}
 	if err != nil {
 		return fmt.Errorf("failed to %s card %d: %w", strings.ToLower(*action), *cardID, err)
@@ -464,6 +467,32 @@ func (cli *CLI) runAnkiCard(args []string) error {
 		return nil
 	default:
 		return fmt.Errorf("unknown format: %s (use text or json)", *format)
+	}
+}
+
+// undoAnkiReview cancels the last review of a card and prints the state the
+// card is back in.
+func (cli *CLI) undoAnkiReview(cardID int64, format string) error {
+	rc, err := cli.db.UndoAnkiReview(cardID)
+	if err != nil {
+		return fmt.Errorf("failed to undo the last review of card %d: %w", cardID, err)
+	}
+	c := rc.Card
+	switch strings.ToLower(format) {
+	case "json":
+		return printJSON(c)
+	case "text":
+		fmt.Printf("Card %d: last review undone\n", cardID)
+		w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+		fmt.Fprintf(w, "  Due:\t%s\n", c.Due)
+		fmt.Fprintf(w, "  Interval:\t%d days\n", c.ScheduledDays)
+		fmt.Fprintf(w, "  Stability:\t%.2f\n", c.Stability)
+		fmt.Fprintf(w, "  Difficulty:\t%.2f\n", c.Difficulty)
+		fmt.Fprintf(w, "  Reviews:\t%d\n", c.Reps)
+		fmt.Fprintf(w, "  Lapses:\t%d\n", c.Lapses)
+		return w.Flush()
+	default:
+		return fmt.Errorf("unknown format: %s (use text or json)", format)
 	}
 }
 

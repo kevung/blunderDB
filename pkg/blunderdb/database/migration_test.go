@@ -4946,3 +4946,73 @@ func TestAnsweredDoubles_ResumeAndClean(t *testing.T) {
 		t.Errorf("the doubler's verdict given after the drop did not survive an open")
 	}
 }
+
+// TestMigrate_2_41_0_to_2_42_0_AnkiUndo opens a 2.41.0 library holding one
+// review and checks the review is kept but cannot be undone — its prior state
+// was never recorded — while a review graded after the migration can.
+func TestMigrate_2_41_0_to_2_42_0_AnkiUndo(t *testing.T) {
+	t.Parallel()
+	dbPath := filepath.Join(tempDir(t), "test_v2410.db")
+	createOldDatabase(t, dbPath, "2.31.0")
+	d := NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open: %v", err)
+	}
+	p := InitializePosition()
+	p.DecisionType = CheckerAction
+	posID, err := d.SavePosition(&p)
+	if err != nil {
+		t.Fatalf("save position: %v", err)
+	}
+	deckID, err := d.CreateAnkiDeck("deck", "", AnkiSourceSearch, 0, "")
+	if err != nil {
+		t.Fatalf("create deck: %v", err)
+	}
+	if err := d.SyncAnkiDeckWithPositions(deckID, []int64{posID}); err != nil {
+		t.Fatalf("sync deck: %v", err)
+	}
+	card, err := d.GetNextAnkiCard(deckID)
+	if err != nil {
+		t.Fatalf("next card: %v", err)
+	}
+	if _, err := d.ReviewAnkiCard(card.Card.ID, 3); err != nil {
+		t.Fatalf("review: %v", err)
+	}
+	// Back to the 2.41.0 shape.
+	stmts := []string{}
+	for _, col := range []string{"prev_due", "prev_stability", "prev_difficulty", "prev_elapsed_days",
+		"prev_scheduled_days", "prev_reps", "prev_lapses", "prev_state", "prev_last_review"} {
+		stmts = append(stmts, `ALTER TABLE anki_review_log DROP COLUMN `+col)
+	}
+	stmts = append(stmts, `UPDATE metadata SET value = '2.41.0' WHERE key = 'database_version'`)
+	for _, stmt := range stmts {
+		if _, err := d.db.Exec(stmt); err != nil {
+			t.Fatalf("%s: %v", stmt, err)
+		}
+	}
+	if err := d.Close(); err != nil {
+		t.Fatalf("close: %v", err)
+	}
+
+	d = NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open v2.41.0 database: %v", err)
+	}
+	closeOnCleanup(t, d)
+	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {
+		t.Fatalf("version after migration = %q, %v; want %q", v, err, DatabaseVersion)
+	}
+	log, err := d.GetAnkiReviewLog(deckID, 0)
+	if err != nil || len(log) != 1 {
+		t.Fatalf("review log after migration = %d entries, %v; want 1", len(log), err)
+	}
+	if _, err := d.UndoAnkiReview(card.Card.ID); !errors.Is(err, storage.ErrNoReviewToUndo) {
+		t.Errorf("undo of a review logged before 2.42.0: got %v, want ErrNoReviewToUndo", err)
+	}
+	if _, err := d.ReviewAnkiCard(card.Card.ID, 4); err != nil {
+		t.Fatalf("review after migration: %v", err)
+	}
+	if _, err := d.UndoAnkiReview(card.Card.ID); err != nil {
+		t.Errorf("undo of a review graded after the migration: %v", err)
+	}
+}

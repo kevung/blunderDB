@@ -42,6 +42,7 @@ var tenantIsolationCases = []tenantIsolationCase{
 	{"Match", checkMatchIsolation},
 	{"Comment", checkCommentIsolation},
 	{"Anki/Deck", checkAnkiDeckIsolation},
+	{"Anki/UndoReview", checkAnkiUndoReviewIsolation},
 	{"Direction", checkDirectionIsolation},
 	{"Lesson", checkLessonIsolation},
 	{"Schema231", checkSchema231Isolation},
@@ -488,5 +489,39 @@ func checkStoredBytesIsolation(t *testing.T, ctx context.Context, s storage.Stor
 	}
 	if after != before {
 		t.Fatalf("StoredBytes(%s) went from %d to %d when only %s wrote", b, before, after, a)
+	}
+}
+
+// checkAnkiUndoReviewIsolation: another tenant cannot undo a review by
+// naming the card's id; the card and its log stay as graded.
+func checkAnkiUndoReviewIsolation(t *testing.T, ctx context.Context, s storage.Storage, a, b string) {
+	deckID, err := s.Anki().CreateDeck(ctx, a, "undo-deck", "", domain.AnkiSourceSearch, 0, "")
+	if err != nil {
+		t.Fatalf("CreateDeck(%s): %v", a, err)
+	}
+	p := checkerPos()
+	posID, err := s.Positions().Save(ctx, a, &p)
+	if err != nil {
+		t.Fatalf("Save position(%s): %v", a, err)
+	}
+	if err := s.Anki().SyncWithPositions(ctx, a, deckID, []int64{posID}); err != nil {
+		t.Fatalf("SyncWithPositions(%s): %v", a, err)
+	}
+	next, err := s.Anki().NextCard(ctx, a, deckID)
+	if err != nil {
+		t.Fatalf("NextCard(%s): %v", a, err)
+	}
+	if _, err := s.Anki().ReviewCard(ctx, a, next.Card.ID, 3); err != nil {
+		t.Fatalf("ReviewCard(%s): %v", a, err)
+	}
+	graded := ankiCardByID(t, s, a, deckID, next.Card.ID)
+	if _, err := s.Anki().UndoReview(ctx, b, next.Card.ID); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("UndoReview(%s) of %s's card: got %v, want ErrNotFound", b, a, err)
+	}
+	if got := ankiCardByID(t, s, a, deckID, next.Card.ID); got != graded {
+		t.Errorf("tenant %s changed %s's card: got %+v, want %+v", b, a, got, graded)
+	}
+	if n := ankiReviewCount(t, s, a, deckID); n != 1 {
+		t.Errorf("tenant %s's log holds %d reviews after %s's undo, want 1", a, n, b)
 	}
 }

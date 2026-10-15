@@ -798,6 +798,19 @@ var schemaStatements = []string{
 		elapsed_days INTEGER DEFAULT 0,
 		scheduled_days INTEGER DEFAULT 0,
 		reviewed_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		-- The card's scheduling state just before the review, copied from
+		-- anki_card in the review's transaction so an undo restores it
+		-- exactly. NULL on a review logged before 2.42.0, which cannot be
+		-- undone.
+		prev_due DATETIME,
+		prev_stability REAL,
+		prev_difficulty REAL,
+		prev_elapsed_days INTEGER,
+		prev_scheduled_days INTEGER,
+		prev_reps INTEGER,
+		prev_lapses INTEGER,
+		prev_state INTEGER,
+		prev_last_review DATETIME,
 		FOREIGN KEY(card_id) REFERENCES anki_card(id) ON DELETE CASCADE,
 		-- deck_id and position_id were plain integers until 2.18.0 (issue #185):
 		-- the journal named a deck and a position with nothing to say they had

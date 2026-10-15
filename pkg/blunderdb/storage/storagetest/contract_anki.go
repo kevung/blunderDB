@@ -678,3 +678,106 @@ func testAnkiDeckCardsListsTheDeck(t *testing.T, s storage.Storage) {
 		t.Errorf("DeckCards = %+v, want the one reviewed card of deck %d", got, decks[0])
 	}
 }
+
+// ankiCardByID reads one card's whole scheduling state through DeckCards.
+func ankiCardByID(t *testing.T, s storage.Storage, scope string, deckID, cardID int64) domain.AnkiCard {
+	t.Helper()
+	for c, err := range s.Anki().DeckCards(context.Background(), scope, deckID) {
+		if err != nil {
+			t.Fatalf("DeckCards: %v", err)
+		}
+		if c.ID == cardID {
+			return *c
+		}
+	}
+	t.Fatalf("card %d not in deck %d", cardID, deckID)
+	return domain.AnkiCard{}
+}
+
+// ankiReviewCount counts the reviews a deck's log holds.
+func ankiReviewCount(t *testing.T, s storage.Storage, scope string, deckID int64) int {
+	t.Helper()
+	n := 0
+	for _, err := range s.Anki().ReviewLog(context.Background(), scope, deckID, 0) {
+		if err != nil {
+			t.Fatalf("ReviewLog: %v", err)
+		}
+		n++
+	}
+	return n
+}
+
+// testAnkiUndoReviewRestoresState grades a card twice and undoes both
+// grades: each undo puts back exactly the state the card had before the
+// grade — due, stability, difficulty, intervals, counters, state, last review
+// — and takes that grade out of the log. Undoing with nothing left to undo
+// is the named refusal, an unknown card ErrNotFound.
+func testAnkiUndoReviewRestoresState(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	deckID, err := s.Anki().CreateDeck(ctx, "", "deck", "", domain.AnkiSourceSearch, 0, "")
+	if err != nil {
+		t.Fatalf("CreateDeck: %v", err)
+	}
+	p := checkerPos()
+	posID, err := s.Positions().Save(ctx, "", &p)
+	if err != nil {
+		t.Fatalf("Save position: %v", err)
+	}
+	if err := s.Anki().SyncWithPositions(ctx, "", deckID, []int64{posID}); err != nil {
+		t.Fatalf("SyncWithPositions: %v", err)
+	}
+	next, err := s.Anki().NextCard(ctx, "", deckID)
+	if err != nil {
+		t.Fatalf("NextCard: %v", err)
+	}
+	cardID := next.Card.ID
+
+	if _, err := s.Anki().UndoReview(ctx, "", cardID); !errors.Is(err, storage.ErrNoReviewToUndo) {
+		t.Fatalf("UndoReview of a card never graded: got %v, want ErrNoReviewToUndo", err)
+	}
+	if _, err := s.Anki().UndoReview(ctx, "", cardID+1000); !errors.Is(err, storage.ErrNotFound) {
+		t.Fatalf("UndoReview of an unknown card: got %v, want ErrNotFound", err)
+	}
+
+	before := ankiCardByID(t, s, "", deckID, cardID)
+	if _, err := s.Anki().ReviewCard(ctx, "", cardID, 3); err != nil {
+		t.Fatalf("ReviewCard(Good): %v", err)
+	}
+	afterFirst := ankiCardByID(t, s, "", deckID, cardID)
+	if _, err := s.Anki().ReviewCard(ctx, "", cardID, 1); err != nil {
+		t.Fatalf("ReviewCard(Again): %v", err)
+	}
+	if afterSecond := ankiCardByID(t, s, "", deckID, cardID); afterSecond == afterFirst {
+		t.Fatalf("the second grade changed nothing: %+v", afterSecond)
+	}
+
+	restored, err := s.Anki().UndoReview(ctx, "", cardID)
+	if err != nil {
+		t.Fatalf("UndoReview: %v", err)
+	}
+	if restored == nil || restored.Card != afterFirst {
+		t.Errorf("UndoReview returned %+v, want %+v", restored, afterFirst)
+	}
+	if got := ankiCardByID(t, s, "", deckID, cardID); got != afterFirst {
+		t.Errorf("card after one undo:\n got %+v\nwant %+v", got, afterFirst)
+	}
+	if restored != nil && restored.Position.ID != posID {
+		t.Errorf("UndoReview position: got %d, want %d", restored.Position.ID, posID)
+	}
+	if n := ankiReviewCount(t, s, "", deckID); n != 1 {
+		t.Errorf("log after one undo holds %d reviews, want 1", n)
+	}
+
+	if _, err := s.Anki().UndoReview(ctx, "", cardID); err != nil {
+		t.Fatalf("second UndoReview: %v", err)
+	}
+	if got := ankiCardByID(t, s, "", deckID, cardID); got != before {
+		t.Errorf("card after both undos:\n got %+v\nwant %+v", got, before)
+	}
+	if n := ankiReviewCount(t, s, "", deckID); n != 0 {
+		t.Errorf("log after both undos holds %d reviews, want 0", n)
+	}
+	if _, err := s.Anki().UndoReview(ctx, "", cardID); !errors.Is(err, storage.ErrNoReviewToUndo) {
+		t.Errorf("UndoReview with every grade undone: got %v, want ErrNoReviewToUndo", err)
+	}
+}

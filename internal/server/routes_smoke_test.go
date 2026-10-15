@@ -129,6 +129,7 @@ var customContentTypes = map[string][]string{
 	"/v1/rencontres.setEventRooms":        {"application/json"},
 	"/v1/directions.setTables":            {"application/json"},
 	"/v1/anki.reviewCard":                 {"application/json"},
+	"/v1/anki.undoReview":                 {"application/json"},
 	// The transcription gestures, wrapped with withIdempotency and withIfMatch
 	// for the same reason; get is hand-written for its ETag and 304.
 	"/v1/transcriptions.get":         {"application/json"},

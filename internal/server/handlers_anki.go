@@ -204,6 +204,10 @@ func (s *Server) ankiRoutes() []route {
 		{http.MethodPost, "/v1/anki.reviewCard", s.withIdempotency(rpc(func(ctx context.Context, scope string, req reviewCardReq) (*domain.AnkiReviewCard, error) {
 			return as().ReviewCard(ctx, scope, req.CardID, req.Rating)
 		}))},
+		// Idempotent: a replayed undo would walk back one review too many.
+		{http.MethodPost, "/v1/anki.undoReview", s.withIdempotency(rpc(func(ctx context.Context, scope string, req cardIDReq) (*domain.AnkiReviewCard, error) {
+			return as().UndoReview(ctx, scope, req.CardID)
+		}))},
 		{http.MethodPost, "/v1/anki.reviewLog", rpcStream(func(ctx context.Context, scope string, req reviewLogReq) iterReviewLog {
 			return as().ReviewLog(ctx, scope, req.DeckID, req.Limit)
 		})},

@@ -306,6 +306,20 @@ func (d *Database) ReviewAnkiCard(cardID int64, rating int) (*AnkiReviewCard, er
 	return d.store.Anki().ReviewCard(context.Background(), "", cardID, rating)
 }
 
+// UndoAnkiReview cancels the most recent review of a card: the card takes
+// back its scheduling state from before that grade and the review leaves the
+// log. It returns the restored card, to be shown again; storage.ErrNoReviewToUndo
+// when nothing can be undone.
+func (d *Database) UndoAnkiReview(cardID int64) (*AnkiReviewCard, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return nil, fmt.Errorf("no database is currently open")
+	}
+	return d.store.Anki().UndoReview(context.Background(), "", cardID)
+}
+
 // ResetAnkiDeck resets all cards in a deck to new state
 func (d *Database) ResetAnkiDeck(deckID int64) error {
 	d.mu.Lock()

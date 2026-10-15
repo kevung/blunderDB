@@ -60,3 +60,10 @@ func (e *DuplicatePositionError) Error() string {
 
 // Is makes errors.Is(err, ErrConflict) true for a duplicate position.
 func (e *DuplicatePositionError) Is(target error) bool { return target == ErrConflict }
+
+// ErrNoReviewToUndo — AnkiStore.UndoReview found no review of the card whose
+// prior state was kept: the card was never graded, every grade was already
+// undone, or the remaining one predates the snapshot (an older library, an
+// imported history). It matches ErrConflict; its message is part of the
+// contract — the GUI recognises it to translate it.
+var ErrNoReviewToUndo = fmt.Errorf("%w: the card has no review to undo", ErrConflict)

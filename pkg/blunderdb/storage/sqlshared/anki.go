@@ -668,16 +668,6 @@ func (s *AnkiStore) ReviewCard(ctx context.Context, scope string, cardID int64, 
 			return err
 		}
 
-		utenant, utargs := tx.TenantFilter("", scope)
-		if _, err := tx.Exec(ctx,
-			`UPDATE anki_card SET due = `+tx.TimestampArg()+`, stability = ?, difficulty = ?,
-			 elapsed_days = ?, scheduled_days = ?, reps = ?, lapses = ?, state = ?, last_review = `+tx.TimestampArg()+`
-			 WHERE id = ? AND `+utenant,
-			append([]any{next.Due, next.Stability, next.Difficulty,
-				next.ElapsedDays, next.ScheduledDays, next.Reps, next.Lapses, next.State,
-				next.LastReview, cardID}, utargs...)...); err != nil {
-			return err
-		}
 		cols, cargs := tx.TenantColumns(scope)
 		cols = append(cols, "card_id", "deck_id", "kind", "key", "position_id", "rating", "state",
 			"stability", "difficulty", "elapsed_days", "scheduled_days", "reviewed_at")
@@ -687,10 +677,31 @@ func (s *AnkiStore) ReviewCard(ctx context.Context, scope string, cardID int64, 
 		}
 		cargs = append(cargs, log.CardID, log.DeckID, card.Kind, card.Key, logPositionID, log.Rating, log.State,
 			log.Stability, log.Difficulty, log.ElapsedDays, log.ScheduledDays, log.ReviewedAt)
-		if _, err := tx.Exec(ctx,
+		logID, err := tx.Insert(ctx,
 			`INSERT INTO anki_review_log (`+strings.Join(cols, ", ")+`) VALUES (`+Placeholders(len(cols))+`)`,
-			cargs...); err != nil {
+			cargs...)
+		if err != nil {
 			return fmt.Errorf("log: %w", err)
+		}
+		// The card's state before the grade, copied column to column so an
+		// undo restores it exactly, whatever the backend's timestamp type.
+		ltenant, ltargs := tx.TenantFilter("", scope)
+		if _, err := tx.Exec(ctx,
+			`UPDATE anki_review_log SET (`+ankiPrevCols+`) =
+			 (SELECT `+ankiSnapshotCols+` FROM anki_card WHERE id = ?)
+			 WHERE id = ? AND `+ltenant,
+			append([]any{cardID, logID}, ltargs...)...); err != nil {
+			return fmt.Errorf("log snapshot: %w", err)
+		}
+		utenant, utargs := tx.TenantFilter("", scope)
+		if _, err := tx.Exec(ctx,
+			`UPDATE anki_card SET due = `+tx.TimestampArg()+`, stability = ?, difficulty = ?,
+			 elapsed_days = ?, scheduled_days = ?, reps = ?, lapses = ?, state = ?, last_review = `+tx.TimestampArg()+`
+			 WHERE id = ? AND `+utenant,
+			append([]any{next.Due, next.Stability, next.Difficulty,
+				next.ElapsedDays, next.ScheduledDays, next.Reps, next.Lapses, next.State,
+				next.LastReview, cardID}, utargs...)...); err != nil {
+			return err
 		}
 		return nil
 	})
@@ -708,6 +719,80 @@ func (s *AnkiStore) ReviewCard(ctx context.Context, scope string, cardID int64, 
 	rc, err := s.reviewCardFor(ctx, scope, nextCard)
 	if err != nil {
 		return nil, errf(s.DB, fmt.Sprintf("review anki card %d", cardID), err)
+	}
+	return rc, nil
+}
+
+// ankiSnapshotCols are the anki_card columns a review changes, and
+// ankiPrevCols the anki_review_log columns that keep them as they were just
+// before it, in the same order.
+const (
+	ankiSnapshotCols = `due, stability, difficulty, elapsed_days, scheduled_days, reps, lapses, state, last_review`
+	ankiPrevCols     = `prev_due, prev_stability, prev_difficulty, prev_elapsed_days, prev_scheduled_days, prev_reps, prev_lapses, prev_state, prev_last_review`
+)
+
+// UndoReview cancels the most recent review of a card: the card takes back
+// the state the review log kept from just before it, and that review leaves
+// the log, in one transaction. A most recent review without that state (one
+// logged before the log kept it, or imported) is not skipped for an older
+// one: undoing past it would restore a state the card did not have.
+func (s *AnkiStore) UndoReview(ctx context.Context, scope string, cardID int64) (*domain.AnkiReviewCard, error) {
+	var card domain.AnkiCard
+	err := s.DB.Transact(ctx, func(tx Execer) error {
+		tenant, targs := tx.TenantFilter("", scope)
+		var exists int
+		err := tx.QueryRow(ctx, `SELECT 1 FROM anki_card WHERE id = ? AND `+tenant,
+			append([]any{cardID}, targs...)...).Scan(&exists)
+		if errors.Is(err, ErrNoRows) {
+			return storage.ErrNotFound
+		}
+		if err != nil {
+			return err
+		}
+
+		ltenant, ltargs := tx.TenantFilter("", scope)
+		var (
+			logID int64
+			kept  int
+		)
+		err = tx.QueryRow(ctx,
+			`SELECT id, CASE WHEN prev_state IS NULL THEN 0 ELSE 1 END FROM anki_review_log
+			 WHERE card_id = ? AND `+ltenant+`
+			 ORDER BY reviewed_at DESC, id DESC LIMIT 1`,
+			append([]any{cardID}, ltargs...)...).Scan(&logID, &kept)
+		if errors.Is(err, ErrNoRows) || (err == nil && kept == 0) {
+			return storage.ErrNoReviewToUndo
+		}
+		if err != nil {
+			return err
+		}
+
+		utenant, utargs := tx.TenantFilter("", scope)
+		if _, err := tx.Exec(ctx,
+			`UPDATE anki_card SET (`+ankiSnapshotCols+`) =
+			 (SELECT `+ankiPrevCols+` FROM anki_review_log WHERE id = ?)
+			 WHERE id = ? AND `+utenant,
+			append([]any{logID, cardID}, utargs...)...); err != nil {
+			return err
+		}
+		dtenant, dtargs := tx.TenantFilter("", scope)
+		if _, err := tx.Exec(ctx, `DELETE FROM anki_review_log WHERE id = ? AND `+dtenant,
+			append([]any{logID}, dtargs...)...); err != nil {
+			return fmt.Errorf("log: %w", err)
+		}
+
+		rtenant, rtargs := tx.TenantFilter("", scope)
+		card, err = scanAnkiCard(tx.QueryRow(ctx,
+			`SELECT `+s.ankiCardCols()+` FROM anki_card WHERE id = ? AND `+rtenant,
+			append([]any{cardID}, rtargs...)...))
+		return err
+	})
+	if err != nil {
+		return nil, errf(s.DB, fmt.Sprintf("undo review of anki card %d", cardID), err)
+	}
+	rc, err := s.reviewCardFor(ctx, scope, card)
+	if err != nil {
+		return nil, errf(s.DB, fmt.Sprintf("undo review of anki card %d", cardID), err)
 	}
 	return rc, nil
 }

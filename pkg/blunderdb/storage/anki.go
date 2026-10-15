@@ -100,6 +100,14 @@ type AnkiStore interface {
 	// ReviewCard records a review rating and returns the next card to review.
 	ReviewCard(ctx context.Context, scope string, cardID int64, rating int) (*domain.AnkiReviewCard, error)
 
+	// UndoReview cancels the most recent review of a card: the card takes
+	// back the scheduling state it had before that grade (due, stability,
+	// difficulty, intervals, reps, lapses, state, last review) and the review
+	// leaves the log. Repeated, it walks further back. It returns the
+	// restored card, ErrNotFound for an unknown card and ErrNoReviewToUndo
+	// when no review of the card kept its prior state.
+	UndoReview(ctx context.Context, scope string, cardID int64) (*domain.AnkiReviewCard, error)
+
 	// SetCardSuspended suspends or unsuspends a card. A suspended card never
 	// surfaces for review until it is unsuspended.
 	SetCardSuspended(ctx context.Context, scope string, cardID int64, suspended bool) error

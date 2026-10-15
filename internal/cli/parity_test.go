@@ -445,6 +445,7 @@ var databaseParity = map[string]parityEntry{
 	"ReorderTournamentMatches":          {Server: "/v1/tournaments.reorderMatches", Why: whyGUIEdit},
 	"ResetAnkiDeck":                     {Server: "/v1/anki.resetDeck", Why: "resetting a deck discards its review history: kept behind the GUI's confirmation"},
 	"ReviewAnkiCard":                    {Server: "/v1/anki.reviewCard", Why: whyReview},
+	"UndoAnkiReview":                    {CLI: "anki card --action undo", Server: "/v1/anki.undoReview"},
 	"SaveAnalysis":                      {Server: "/v1/analyses.save", Why: "an analysis reaches the CLI through an import or `analyze`; pasting one is a GUI gesture"},
 	"SaveCommand":                       {Server: "/v1/history.save", Why: whyGUIState},
 	"SaveComment":                       {Server: "/v1/comments.add", Why: whyGUIEdit},
