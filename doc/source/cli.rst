@@ -283,6 +283,20 @@ L'analyse et les commentaires ne voyagent pas par ce format : il porte la
 position, rien d'autre. Pour déplacer une bibliothèque entière, c'est
 ``export --type database`` qu'il faut.
 
+Import d'une base
+^^^^^^^^^^^^^^^^^
+
+Fusionne une autre base blunderDB (*.db*) dans celle de ``--db``, selon les
+règles de la fusion de l'application de bureau et d'``imports.db`` en mode
+serveur (:ref:`guide_fusionner_base`) : positions, matchs, tournois,
+collections, leçons, paquets Anki, brouillons et alias. Importer deux fois le
+même fichier ne change rien.
+
+.. code-block:: bash
+
+   ./blunderdb import --db base.db --type database --file club.db
+   ./blunderdb import --db base.db --type database --file club.db --format json
+
 Import par lot
 ^^^^^^^^^^^^^^
 

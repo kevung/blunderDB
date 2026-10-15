@@ -161,6 +161,22 @@ the position along with its analysis (checker moves and/or cube decisions).
 #   Games: 15
 ```
 
+### Import a Database
+
+Merge another blunderDB database (`.db`) into the one of `--db`, by the rules
+the desktop's merge and the server's `/v1/imports.db` apply: positions (by
+Zobrist hash), matches with their games and moves (by fingerprint; a match
+already held is not copied again), tournaments (by name), collections, lessons,
+Anki decks, transcription drafts and aliases. A living collection's query is
+renumbered onto this database's rows, or frozen into the list of what it
+selected when it names a row the file does not hold. Importing the same file
+twice changes nothing.
+
+```bash
+./blunderDB import --db database.db --type database --file club.db
+./blunderDB import --db database.db --type database --file club.db --format json
+```
+
 ### Import Positions
 
 Import positions from a text file (JSON format, one position per line):
@@ -3498,7 +3514,7 @@ Options:
   -fail-on-error
     	Exit non-zero when any item failed to import (position/batch); by default only a total failure (nothing imported, duplicates aside) is an error
   -file string
-    	Path to the file to import (for match/position)
+    	Path to the file to import (for match/position/database)
   -format string
     	Output format: text or json (default "text")
   -recursive
@@ -3508,7 +3524,7 @@ Options:
   -skip-duplicates
     	Skip a match already in the database outright; by default its analyses deeper than the stored ones replace them
   -type string
-    	Import type: match, position, batch (required)
+    	Import type: match, position, batch, database (required)
   -watch
     	With --type batch: keep running and import each match file as it appears in --dir (Ctrl-C to stop)
   -watch-every duration
@@ -3518,6 +3534,7 @@ Import Types:
   match     Import a single match file (.xg, .sgf, .mat, .txt, .bgf, .ogxm) or XGP position (.xgp)
   position  Import positions from a text file
   batch     Batch import all match/position files from a directory
+  database  Merge a blunderDB database (.db): positions, matches, tournaments, collections, lessons, decks, drafts, aliases
 
 Examples:
   # Import XG match file
@@ -3525,6 +3542,9 @@ Examples:
 
   # Import position file
   blunderdb import --db database.db --type position --file positions.txt
+
+  # Merge another blunderDB database into this one
+  blunderdb import --db database.db --type database --file club.db
 
   # Batch import all .xg files from a directory (recursive)
   blunderdb import --db database.db --type batch --dir ./matches/

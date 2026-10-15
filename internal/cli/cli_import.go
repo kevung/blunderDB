@@ -25,8 +25,8 @@ func (cli *CLI) runImport(args []string) error {
 
 	// Define flags
 	dbPath := importCmd.String("db", "", "Path to the database file (required)")
-	importType := importCmd.String("type", "", "Import type: match, position, batch (required)")
-	inputFile := importCmd.String("file", "", "Path to the file to import (for match/position)")
+	importType := importCmd.String("type", "", "Import type: match, position, batch, database (required)")
+	inputFile := importCmd.String("file", "", "Path to the file to import (for match/position/database)")
 	inputDir := importCmd.String("dir", "", "Path to directory for batch import (for batch)")
 	recursive := importCmd.Bool("recursive", true, "Recursively scan subdirectories for batch import")
 	format := importCmd.String("format", "text", "Output format: text or json")
@@ -53,6 +53,7 @@ func (cli *CLI) runImport(args []string) error {
 		fmt.Println("  match     Import a single match file (.xg, .sgf, .mat, .txt, .bgf, .ogxm) or XGP position (.xgp)")
 		fmt.Println("  position  Import positions from a text file")
 		fmt.Println("  batch     Batch import all match/position files from a directory")
+		fmt.Println("  database  Merge a blunderDB database (.db): positions, matches, tournaments, collections, lessons, decks, drafts, aliases")
 		fmt.Println()
 		fmt.Println("Examples:")
 		fmt.Println("  # Import XG match file")
@@ -60,6 +61,9 @@ func (cli *CLI) runImport(args []string) error {
 		fmt.Println()
 		fmt.Println("  # Import position file")
 		fmt.Println("  blunderdb import --db database.db --type position --file positions.txt")
+		fmt.Println()
+		fmt.Println("  # Merge another blunderDB database into this one")
+		fmt.Println("  blunderdb import --db database.db --type database --file club.db")
 		fmt.Println()
 		fmt.Println("  # Batch import all .xg files from a directory (recursive)")
 		fmt.Println("  blunderdb import --db database.db --type batch --dir ./matches/")
@@ -141,8 +145,17 @@ func (cli *CLI) runImport(args []string) error {
 			return cli.importWatch(*inputDir, formatLower, *watchEvery, *failOnError)
 		}
 		return cli.importBatch(*inputDir, *recursive, formatLower, *failOnError, *resume)
+	case "database":
+		if *inputFile == "" {
+			importCmd.Usage()
+			return fmt.Errorf("missing required flag: --file")
+		}
+		if _, err := os.Stat(*inputFile); os.IsNotExist(err) {
+			return fmt.Errorf("input file does not exist: %s", *inputFile)
+		}
+		return cli.importDatabase(*inputFile, formatLower)
 	default:
-		return fmt.Errorf("unknown import type: %s (must be 'match', 'position', or 'batch')", *importType)
+		return fmt.Errorf("unknown import type: %s (must be 'match', 'position', 'batch' or 'database')", *importType)
 	}
 }
 
@@ -663,4 +676,33 @@ func printProgress(w *os.File, p ingest.BatchProgress) {
 		return
 	}
 	fmt.Fprintln(w, line)
+}
+
+// importDatabase merges a native blunderDB .db, as the desktop's "Import a
+// database" and the daemon's /v1/imports.db do. It opens no import batch: the
+// rows it writes are the file's, and nothing else is recorded (ADR-0007).
+func (cli *CLI) importDatabase(filePath, format string) error {
+	res, err := cli.db.CommitImportDatabase(filePath)
+	if err != nil {
+		return err
+	}
+	if format == "json" {
+		return printJSON(res)
+	}
+	fmt.Printf("Imported %s\n", filePath)
+	fmt.Printf("  positions: %v added, %v merged, %v unchanged\n", res["added"], res["merged"], res["skipped"])
+	fmt.Printf("  matches: %v added, %v already held\n", res["matches"], res["matchesKnown"])
+	for _, key := range []string{"tournaments", "collections", "lessons", "decks", "transcriptions", "aliases"} {
+		fmt.Printf("  %s: %v\n", key, res[key])
+	}
+	for _, l := range [][2]string{
+		{"livingCollectionsFrozen", "living collections frozen"},
+		{"livingCollectionsSkipped", "living collections left as they were"},
+		{"unreadable", "left behind (source too old)"},
+	} {
+		if names, ok := res[l[0]].([]string); ok && len(names) > 0 {
+			fmt.Printf("  %s: %s\n", l[1], strings.Join(names, ", "))
+		}
+	}
+	return nil
 }

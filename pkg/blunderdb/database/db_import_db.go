@@ -712,11 +712,17 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 		return nil, err
 	}
 
+	matches, err := mergeImportMatches(ctx, importDB, stx, targetOf)
+	if err != nil {
+		return nil, err
+	}
+	maps := ingest.RowMaps{Positions: targetOf, Matches: matches.MatchMap, Tournaments: matches.TournamentMap}
+
 	srcCollections, err := readImportCollections(ctx, importDB)
 	if err != nil {
 		return nil, err
 	}
-	merged, err := ingest.MergeCollections(ctx, stx, "", srcCollections, targetOf)
+	merged, err := ingest.MergeCollections(ctx, stx, "", srcCollections, maps)
 	if err != nil {
 		return nil, err
 	}
@@ -732,7 +738,7 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 	if err != nil {
 		return nil, err
 	}
-	decks, err := ingest.MergeDecks(ctx, stx, "", srcDecks, srcCollections, targetOf)
+	decks, err := ingest.MergeDecks(ctx, stx, "", srcDecks, srcCollections, maps)
 	if err != nil {
 		return nil, err
 	}
@@ -762,12 +768,31 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 		// The same figures as ingest.Summary on the daemon's imports.db.
 		"collections":              merged.Changed,
 		"livingCollectionsSkipped": merged.LivingSkipped,
+		"livingCollectionsFrozen":  merged.LivingFrozen,
+		"matches":                  matches.Matches,
+		"matchesKnown":             matches.Duplicates,
+		"tournaments":              matches.Tournaments,
+		"transcriptions":           matches.Transcriptions,
+		"aliases":                  matches.Aliases,
+		"unreadable":               matches.Unreadable,
 		"lessons":                  lessons,
 		"decks":                    decks,
 	}
 
 	slog.Info("import committed", "added", positionsAdded, "merged", positionsMerged, "skipped", positionsSkipped, "total", totalPositions)
 	return result, nil
+}
+
+// mergeImportMatches merges the source's matches, tournaments, drafts and
+// aliases (ingest.MergeMatches) through one read-only transaction on the
+// source, released before the next family opens its own.
+func mergeImportMatches(ctx context.Context, importDB *sql.DB, dst storage.Stores, targetOf map[int64]int64) (ingest.MatchMerge, error) {
+	itx, err := importDB.BeginTx(ctx, &sql.TxOptions{ReadOnly: true})
+	if err != nil {
+		return ingest.MatchMerge{}, err
+	}
+	defer itx.Rollback()
+	return ingest.MergeMatches(ctx, dst, "", sqlite.WrapTx(itx), targetOf)
 }
 
 // readImportCollections reads the source's collections through a read-only

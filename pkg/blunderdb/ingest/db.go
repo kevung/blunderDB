@@ -3,6 +3,7 @@ package ingest
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"os"
 	"strings"
 
@@ -14,15 +15,17 @@ import (
 
 // DBImporter imports a native blunderDB .db file's position library —
 // positions plus their analysis and comments, and the collections that group
-// them — into the target Storage. It is the backend-agnostic counterpart of
-// database.CommitImportDatabase, with which it shares MergeCollections: a
-// Storage→Storage merge of positions and collections, no match/game/move rows.
+// them, the matches with their games and moves, tournaments, drafts and
+// aliases — into the target Storage. It is the backend-agnostic counterpart
+// of database.CommitImportDatabase, with which it shares MergeMatches,
+// MergeCollections, MergeLessons and MergeDecks.
 //
 // Merge semantics:
 //   - positions dedup by content (PositionStore.Save's Zobrist index);
 //   - an imported analysis is written only when the target has none, or when
 //     the target's analysis is empty-typed and the import's is not;
 //   - a comment is appended only when the target doesn't already contain it;
+//   - matches, tournaments, drafts and aliases follow MergeMatches;
 //   - collections follow MergeCollections, the rule the desktop import shares.
 type DBImporter struct{ S storage.Storage }
 
@@ -194,16 +197,24 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 		}
 	}
 
-	merged, err := MergeCollections(ctx, tx, scope, srcCollections, targetOf)
+	matches, err := MergeMatches(ctx, tx, scope, source, targetOf)
+	if err != nil {
+		return sum, err
+	}
+	sum.applyMatchMerge(matches)
+	maps := RowMaps{Positions: targetOf, Matches: matches.MatchMap, Tournaments: matches.TournamentMap}
+
+	merged, err := MergeCollections(ctx, tx, scope, srcCollections, maps)
 	if err != nil {
 		return sum, err
 	}
 	sum.Collections = merged.Changed
 	sum.LivingCollectionsSkipped = merged.LivingSkipped
+	sum.LivingCollectionsFrozen = merged.LivingFrozen
 	if sum.Lessons, err = MergeLessons(ctx, tx, scope, srcLessons, srcCollections, targetOf); err != nil {
 		return sum, err
 	}
-	if sum.Decks, err = MergeDecks(ctx, tx, scope, srcDecks, srcCollections, targetOf); err != nil {
+	if sum.Decks, err = MergeDecks(ctx, tx, scope, srcDecks, srcCollections, maps); err != nil {
 		return sum, err
 	}
 
@@ -222,6 +233,19 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 type SourceCollection struct {
 	Coll    storage.Collection
 	Members []int64
+	// Evaluated is, for a living collection whose query names rows by id,
+	// what the query selects at the source (source position ids): the
+	// members it freezes into when its query cannot be carried.
+	Evaluated []int64
+}
+
+// namesRows reports whether a living query names rows by id — `like<n>`,
+// `id<n>`, `ma<n>`, `tn<n>` — and so selects something else once those rows
+// are numbered by another library. With no row to carry it through, such a
+// query cannot be carried; any other comes back as written.
+func namesRows(query string) bool {
+	_, ok := carriedLivingQuery(query, nil, nil, nil)
+	return !ok
 }
 
 // ReadSourceCollections drains a source's collections, then each one's
@@ -241,6 +265,16 @@ func ReadSourceCollections(ctx context.Context, source storage.Stores, scope str
 			}
 			out[i].Members = append(out[i].Members, m.PositionID)
 		}
+		if q := strings.TrimSpace(out[i].Coll.FilterQuery); q != "" && namesRows(q) {
+			ev, err := storage.EvaluateCollection(ctx, source, scope, out[i].Coll.ID, 0)
+			if err != nil {
+				// A query the source cannot evaluate selects nothing there.
+				slog.Warn("import: living collection not evaluable at the source",
+					"collection", out[i].Coll.Name, "err", err)
+				continue
+			}
+			out[i].Evaluated = ev.PositionIDs
+		}
 	}
 	return out, nil
 }
@@ -253,17 +287,24 @@ type CollectionMerge struct {
 	// namesake in the target is living: its membership is its query, so
 	// those members are not added.
 	LivingSkipped []string
+	// LivingFrozen names the living collections created as hand-made lists
+	// of what their query selected at the source: it names a row the import
+	// did not carry, so in the target it would select something else.
+	LivingFrozen []string
 }
 
 // MergeCollections is the one rule both native .db imports (the daemon's
 // DBImporter and the desktop's Database.CommitImportDatabase) apply: a source
 // collection merges into the target's collection of the same name, or is
-// created with the source's description and, when living, its query. Members
-// are remapped through targetOf (source position id → target id); those the
+// created with the source's description and, when living, its query, its row
+// ids renumbered through maps — or, when they cannot be, frozen into what it
+// selected at the source. Members
+// are remapped through maps.Positions (source position id → target id); those the
 // target already holds keep their place and are not rewritten, so importing
 // the same file twice changes nothing. A living target collection receives no
 // members: a living collection stores none (storage.Collection.FilterQuery).
-func MergeCollections(ctx context.Context, tx storage.Stores, scope string, src []SourceCollection, targetOf map[int64]int64) (CollectionMerge, error) {
+func MergeCollections(ctx context.Context, tx storage.Stores, scope string, src []SourceCollection, maps RowMaps) (CollectionMerge, error) {
+	targetOf := maps.Positions
 	var res CollectionMerge
 	if len(src) == 0 {
 		return res, nil
@@ -299,12 +340,20 @@ func MergeCollections(ctx context.Context, tx storage.Stores, scope string, src 
 			if err != nil {
 				return res, err
 			}
-			target = storage.Collection{ID: id, Name: sc.Coll.Name, FilterQuery: sc.Coll.FilterQuery}
-			if sc.Coll.FilterQuery != "" {
-				if err := tx.Collections().SetFilterQuery(ctx, scope, id, sc.Coll.FilterQuery); err != nil {
-					return res, err
+			target = storage.Collection{ID: id, Name: sc.Coll.Name}
+			members := sc.Members
+			if q := strings.TrimSpace(sc.Coll.FilterQuery); q != "" {
+				if carried, ok := carriedLivingQuery(q, targetOf, maps.Matches, maps.Tournaments); ok {
+					if err := tx.Collections().SetFilterQuery(ctx, scope, id, carried); err != nil {
+						return res, err
+					}
+					target.FilterQuery = carried
+				} else {
+					members = sc.Evaluated
+					res.LivingFrozen = append(res.LivingFrozen, sc.Coll.Name)
 				}
 			}
+			sc.Members = members
 			byName[sc.Coll.Name] = target
 		}
 		var ids []int64

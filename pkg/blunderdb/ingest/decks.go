@@ -41,9 +41,10 @@ func ReadSourceDecks(ctx context.Context, source storage.Stores, scope string) (
 // name the target already holds is left alone, so importing the same file
 // twice changes nothing and a deck the recipient studies keeps its cards and
 // their schedule; any other is created, its members remapped through
-// targetOf and its collection through the source collection's name. It
+// maps and its collection through the source collection's name. It
 // returns the number of decks created.
-func MergeDecks(ctx context.Context, tx storage.Stores, scope string, src []SourceDeck, srcCollections []SourceCollection, targetOf map[int64]int64) (int, error) {
+func MergeDecks(ctx context.Context, tx storage.Stores, scope string, src []SourceDeck, srcCollections []SourceCollection, maps RowMaps) (int, error) {
+	targetOf := maps.Positions
 	if len(src) == 0 {
 		return 0, nil
 	}
@@ -82,7 +83,7 @@ func MergeDecks(ctx context.Context, tx storage.Stores, scope string, src []Sour
 				sourceID = targetColl[name]
 			}
 		case domain.AnkiSourceSearch:
-			sourceCmd = carriedSearchSource(sourceCmd, targetOf, nil, nil)
+			sourceCmd = carriedSearchSource(sourceCmd, targetOf, maps.Matches, maps.Tournaments)
 		}
 		id, err := tx.Anki().CreateDeck(ctx, scope, d.Name, d.Description, d.SourceType, sourceID, sourceCmd)
 		if err != nil {

@@ -38,4 +38,5 @@ func TestDBImportCollections_Postgres(t *testing.T) {
 	}
 	defer target.Close()
 	checkDBImportCollections(t, target, "2")
+	checkDBImportMatches(t, target, "3")
 }

@@ -66,6 +66,18 @@ type Summary struct {
 	// LivingCollectionsSkipped names the imported collections whose
 	// namesake in the target is living, and so received no members.
 	LivingCollectionsSkipped []string `json:"livingCollectionsSkipped,omitempty"`
+	// LivingCollectionsFrozen names the imported living collections whose
+	// query named a row the import did not carry: they were created as the
+	// list of what the query selected at the source (MergeCollections).
+	LivingCollectionsFrozen []string `json:"livingCollectionsFrozen,omitempty"`
+	// Tournaments, Transcriptions and Aliases count what a native .db import
+	// created (MergeMatches); the matches it created count in Matches, those
+	// the target already held in SkippedDuplicates.
+	Tournaments    int `json:"tournaments,omitempty"`
+	Transcriptions int `json:"transcriptions,omitempty"`
+	Aliases        int `json:"aliases,omitempty"`
+	// Unreadable names the families a native .db source is too old to hold.
+	Unreadable []string `json:"unreadable,omitempty"`
 	// Lessons counts the Lessons a native .db import created (MergeLessons);
 	// one whose name the target already holds is left alone.
 	Lessons int `json:"lessons,omitempty"`

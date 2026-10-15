@@ -88,7 +88,7 @@ func CreateCollection(ctx context.Context, st Storage, scope, name, description,
 
 // LivingFilters reads a collection's saved query and resolves it through the
 // parser the command bar runs. living is false for a hand-made list.
-func LivingFilters(ctx context.Context, st Storage, scope string, collectionID int64) (filters domain.SearchFilters, query string, living bool, err error) {
+func LivingFilters(ctx context.Context, st Stores, scope string, collectionID int64) (filters domain.SearchFilters, query string, living bool, err error) {
 	col, err := st.Collections().Get(ctx, scope, collectionID)
 	if err != nil {
 		return domain.SearchFilters{}, "", false, err
@@ -111,7 +111,7 @@ func clampCap(limit int) int {
 // (bounded by LivingCollectionCap), in the order GetCollectionPositions uses.
 // A living collection is evaluated by the search engine within scope, so the
 // tenant's row-level security confines it like any search.
-func EvaluateCollection(ctx context.Context, st Storage, scope string, collectionID int64, limit int) (*CollectionEvaluation, error) {
+func EvaluateCollection(ctx context.Context, st Stores, scope string, collectionID int64, limit int) (*CollectionEvaluation, error) {
 	limit = clampCap(limit)
 	filters, query, living, err := LivingFilters(ctx, st, scope, collectionID)
 	if err != nil {

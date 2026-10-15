@@ -1106,6 +1106,14 @@ cartes et calendrier compris, si bien qu'importer deux fois le même fichier ne
 change rien. L'import d'une base dans l'application de bureau suit les mêmes
 règles.
 
+``imports.db`` relit aussi les matchs avec leurs parties et leurs coups (un
+match que le receveur tient déjà, même empreinte, n'est pas recopié), les
+tournois (par nom), les brouillons de transcription et les alias. La requête
+d'une collection vivante est renumérotée vers les lignes du receveur, ou figée
+quand une ligne qu'elle désigne manque. La réponse compte chaque famille :
+``matches``, ``skippedDuplicates``, ``tournaments``, ``transcriptions``,
+``aliases``, ``livingCollectionsFrozen``.
+
 .. code-block:: bash
 
    curl -X POST http://127.0.0.1:8080/v1/exports.sqlite \

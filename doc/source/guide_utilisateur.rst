@@ -409,6 +409,8 @@ fenêtre du système.
 .. tip::
    Raccourcis clavier: *CTRL-O*. Commande: ``o``
 
+.. _guide_fusionner_base:
+
 Fusionner une base de données
 -----------------------------
 
@@ -432,6 +434,20 @@ blunderDB va fusionner intelligemment les deux bases de données:
 * Les positions qui existent déjà seront mises à jour: les analyses seront
   complétées si manquantes, et les commentaires seront fusionnés (ajout des
   nouveaux commentaires sans dupliquer les existants).
+
+* Les matchs arrivent avec leurs parties, leurs coups et leurs analyses ; un
+  match que la base courante contient déjà — même empreinte — n'est pas
+  recopié. Un tournoi rejoint celui du même nom, ou est créé, et ses matchs s'y
+  rangent dans l'ordre de la base importée.
+
+* Les brouillons de transcription et les alias de joueurs et d'événements
+  suivent ; un nom dont la base courante décide déjà reste décidé par elle.
+
+* Les collections, leçons et paquets Anki rejoignent ceux du même nom ou sont
+  créés. La requête d'une collection vivante qui désigne des lignes par numéro
+  (``id``, ``like``, ``ma``, ``tn``) est renumérotée vers celles de la base
+  courante ; quand une ligne qu'elle désigne manque, la collection arrive
+  figée, avec ce qu'elle sélectionnait dans la base importée.
 
 * Un message résumera le nombre de positions ajoutées, fusionnées et ignorées.
 
