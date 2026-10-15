@@ -28,7 +28,7 @@ name: Nightly
 # 2-ply gammonnet searches and the schema benchmarks skip themselves under
 # -short), a full-package gammonnet run under -race with -short — a
 # nightly complement to build.yml's race-gammonnet job, which is deliberately
-# narrow (only Parallel/Concurrent/Batch tests) so it can afford -race on
+# narrow (only Parallel/Concurrent/Batch/SharedBudget tests) so it can afford -race on
 # every push without becoming the bottleneck shard — and the `benchstat` job
 # below (E.9, #225): build.yml used to carry a `benchmark` job that ran on
 # every push to main and was never compared against anything (115s/push,
@@ -128,7 +128,7 @@ jobs:
           go-version: ${{ env.GO_VERSION }}
           cache: true
 
-      # Full package, not just Parallel/Concurrent/Batch (build.yml's
+      # Full package, not just Parallel/Concurrent/Batch/SharedBudget (build.yml's
       # race-gammonnet): -short keeps the 2-ply searches inside this job's
       # timeout even under the race detector's slowdown.
       - name: go test -race -short (full gammonnet package)

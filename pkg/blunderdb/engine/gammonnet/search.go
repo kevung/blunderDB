@@ -316,6 +316,13 @@ type Searcher struct {
 	// valuation : le dénominateur se compte, il ne se suppose pas.
 	cubeValuations uint64
 
+	// nestedForks counts the forks opened inside another fork's task, the
+	// nesting that keeps cores busy once a node's own subtrees run out. It
+	// depends on the tree alone, not on which tokens were free; inTask is set
+	// while s runs such a task.
+	nestedForks uint64
+	inTask      bool
+
 	// team is nil for a serial searcher; otherwise the budget and helpers its
 	// forks hand subtrees to (parallel.go). A helper shares its lender's team.
 	team *team
