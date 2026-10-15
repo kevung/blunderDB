@@ -182,3 +182,23 @@ func TestBlotDeviation_ReadsEveryNotationDialect(t *testing.T) {
 		t.Errorf("hit in another order: got %d, %v; want -1, true", s, ok)
 	}
 }
+
+// Un rollout stocké nomme ses coups comme l'analyse d'où ils ont été choisis :
+// le « 6/2 2/1 » sans marque d'un rollout tiré d'une analyse gnubg passe par 2
+// et y frappe. Lu comme un dialecte qui note ses prises, il ne serait aucun
+// coup et la règle se tairait.
+func TestBlotDeviation_RolloutStockéSansMarques(t *testing.T) {
+	pos := position41(2)
+	errMP := 0.1
+	ana := &domain.PositionAnalysis{CheckerAnalysis: &domain.CheckerAnalysis{Moves: []domain.CheckerMove{
+		{Move: "6/5 5/1", AnalysisEngine: "gammonNet v1.7.0", EquityError: new(float64)},
+		{Move: "6/2 2/1", AnalysisEngine: "blunderDB rollout v1 / gammonNet v1.7.0", EquityError: &errMP},
+	}}}
+	sign, ok := BlotDeviation(&pos, ana, "6/2* 2/1")
+	if !ok {
+		t.Fatal("le coup joué n'est pas retrouvé parmi les coups du rollout")
+	}
+	if sign != 0 {
+		t.Errorf("les deux coups laissent un blot sur 1 : signe %d, attendu 0", sign)
+	}
+}

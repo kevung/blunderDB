@@ -193,35 +193,35 @@ func (s *analysisStore) prepare(ctx context.Context, tenant, positionID int64, a
 		playedMove, playedCubeAction = engine.PlayedActionsFor(
 			[]string{playedMove}, []string{playedCubeAction}, []string{mvMove}, []string{mvCube})
 	}
-	legal, err := s.legalPlaysOf(ctx, tenant, positionID, a, played)
+	pos, err := s.positionOf(ctx, tenant, positionID, a, played)
 	if err != nil {
 		return engine.AnalysisColumns{}, err
 	}
 	engine.RoundAnalysisForStorage(a)
-	return engine.PopulateAnalysisColumns(a, playedMove, playedCubeAction, legal), nil
+	return engine.PopulateAnalysisColumns(a, playedMove, playedCubeAction, pos), nil
 }
 
-// legalPlaysOf counts the legal plays of the position a checker analysis is
-// for; a cube-only analysis needs none, and a caller holding the position
+// positionOf reads the position a checker analysis is for, nil when it is
+// gone or has no dice; a cube-only analysis needs none, and a caller holding the position
 // (storage.PlayedActions) spares the read.
-func (s *analysisStore) legalPlaysOf(ctx context.Context, tenant, positionID int64, a *domain.PositionAnalysis, played *storage.PlayedActions) (int, error) {
+func (s *analysisStore) positionOf(ctx context.Context, tenant, positionID int64, a *domain.PositionAnalysis, played *storage.PlayedActions) (*domain.Position, error) {
 	if ca := a.ColumnSource().CheckerAnalysis; ca == nil || len(ca.Moves) == 0 {
-		return engine.LegalPlaysUnknown, nil
+		return nil, nil
 	}
 	if played != nil && played.Position != nil {
-		return engine.CountLegalPlays(played.Position), nil
+		return played.Position, nil
 	}
 	var state []byte
 	var por, d1, d2 *int64
 	err := s.db.QueryRow(ctx, `SELECT `+sqlshared.LegalPlaysColumns+` FROM position p WHERE p.id = $1 AND p.tenant_id = $2`,
 		positionID, tenant).Scan(&state, &por, &d1, &d2)
 	if errors.Is(err, pgx.ErrNoRows) {
-		return engine.LegalPlaysUnknown, nil
+		return nil, nil
 	}
 	if err != nil {
-		return 0, fmt.Errorf("postgres: read position %d for its legal plays: %w", positionID, err)
+		return nil, fmt.Errorf("postgres: read position %d for its legal plays: %w", positionID, err)
 	}
-	return sqlshared.LegalPlays(state, por, d1, d2), nil
+	return sqlshared.PlayPosition(state, por, d1, d2), nil
 }
 
 // write encodes a prepared analysis into the BYTEA data column and upserts
@@ -485,7 +485,7 @@ func repairDenormalisedPages(ctx context.Context, db execer, tenant *int64, afte
 				a.PlayedMoves, a.PlayedCubeActions,
 				[]string{deref(r.mvMove)}, []string{deref(r.mvCube)})
 			c := engine.PopulateAnalysisColumns(&a, playedMove, playedCubeAction,
-				sqlshared.LegalPlays(r.state, r.por, r.d1, r.d2))
+				sqlshared.PlayPosition(r.state, r.por, r.d1, r.d2))
 			analyses[r.posID] = &a
 			stored := storedPlayedColumns{bestCube: r.bestCube, cubeErr: r.cubeErr, bestMoveErr: r.bestMoveErr,
 				bestMoveUnscored: r.bestMoveUnscored, forced: r.forced, closeCube: r.closeCub}

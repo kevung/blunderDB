@@ -33,12 +33,12 @@ type playedDecision struct {
 // recorded. A move that recorded nothing falls back on what the analysis
 // states was played, as the analysis columns do. A nil analysis scores
 // nothing.
-func scorePlayedDecision(a *domain.PositionAnalysis, decisionType int, checkerMove, cubeAction string) playedDecision {
+func scorePlayedDecision(a *domain.PositionAnalysis, pos *domain.Position, decisionType int, checkerMove, cubeAction string) playedDecision {
 	if a == nil {
 		return playedDecision{}
 	}
 	move, cube := engine.PlayedActionsFor([]string{checkerMove}, []string{cubeAction}, a.PlayedMoves, a.PlayedCubeActions)
-	c := engine.PopulateAnalysisColumns(a, move, cube, engine.LegalPlaysUnknown)
+	c := engine.PopulateAnalysisColumns(a, move, cube, pos)
 	pd := playedDecision{closeCube: c.IsCloseCube}
 	switch {
 	case decisionType == 1:
@@ -60,7 +60,7 @@ func (pd playedDecision) errArg() any {
 
 // PlayedDecisionAnalysisSQL reads what PlayedDecisionArgs scores a new move
 // by; a constant, so an import prepares it once.
-const PlayedDecisionAnalysisSQL = `SELECT COALESCE(p.decision_type, 0), a.data
+const PlayedDecisionAnalysisSQL = `SELECT COALESCE(p.decision_type, 0), a.data, ` + LegalPlaysColumns + `
 		FROM position p JOIN analysis a ON a.position_id = p.id WHERE p.id = ?`
 
 // PlayedDecisionArgs returns the values of move.decision_error_mp and
@@ -80,15 +80,16 @@ func PlayedDecisionArgs(ctx context.Context, db Execer, positionID int64, checke
 		return nil, 0, rows.Err()
 	}
 	var decisionType int
-	var data []byte
-	if err := rows.Scan(&decisionType, &data); err != nil {
+	var data, state []byte
+	var por, d1, d2 *int64
+	if err := rows.Scan(&decisionType, &data, &state, &por, &d1, &d2); err != nil {
 		return nil, 0, errf(db, "read analysis of move", err)
 	}
 	a, decErr := engine.DecodeAnalysisFromStorage(data)
 	if decErr != nil {
 		return nil, 0, nil
 	}
-	pd := scorePlayedDecision(&a, decisionType, checkerMove, cubeAction)
+	pd := scorePlayedDecision(&a, PlayPosition(state, por, d1, d2), decisionType, checkerMove, cubeAction)
 	return pd.errArg(), pd.closeCube, nil
 }
 
@@ -128,7 +129,8 @@ func RescorePlayedDecisions(ctx context.Context, db Execer, analyses map[int64]*
 // is fixed, so an import prepares it once.
 func RescoreMovesSQL(d Dialect, n int) string {
 	return `SELECT mv.id, mv.position_id, COALESCE(p.decision_type, 0), COALESCE(mv.checker_move, ''),
-			` + ActionLabelOrEmptyFor(d, "mv.cube_action") + `, mv.decision_error_mp, COALESCE(mv.is_close_cube, 0)
+			` + ActionLabelOrEmptyFor(d, "mv.cube_action") + `, mv.decision_error_mp, COALESCE(mv.is_close_cube, 0),
+			` + LegalPlaysColumns + `
 		FROM move mv JOIN position p ON p.id = mv.position_id
 		WHERE mv.position_id IN (` + Placeholders(n) + `)`
 }
@@ -140,6 +142,7 @@ func rescorePlayedDecisionsChunk(ctx context.Context, db Execer, ids []int64, an
 		decisionType         int
 		checkerMove, cubeAct string
 		stored               playedDecision
+		pos                  *domain.Position
 	}
 	rows, err := db.Query(ctx, RescoreMovesSQL(db, len(ids)), int64Args(ids)...)
 	if err != nil {
@@ -148,10 +151,13 @@ func rescorePlayedDecisionsChunk(ctx context.Context, db Execer, ids []int64, an
 	var moves []move
 	for rows.Next() {
 		var m move
-		if err := rows.Scan(&m.id, &m.positionID, &m.decisionType, &m.checkerMove, &m.cubeAct, &m.stored.errMP, &m.stored.closeCube); err != nil {
+		var state []byte
+		var por, d1, d2 *int64
+		if err := rows.Scan(&m.id, &m.positionID, &m.decisionType, &m.checkerMove, &m.cubeAct, &m.stored.errMP, &m.stored.closeCube, &state, &por, &d1, &d2); err != nil {
 			rows.Close()
 			return 0, errf(db, "read moves to rescore", err)
 		}
+		m.pos = PlayPosition(state, por, d1, d2)
 		moves = append(moves, m)
 	}
 	rows.Close()
@@ -167,7 +173,7 @@ func rescorePlayedDecisionsChunk(ctx context.Context, db Execer, ids []int64, an
 		}
 		var updates []update
 		for _, m := range moves {
-			pd := scorePlayedDecision(analyses[m.positionID], m.decisionType, m.checkerMove, m.cubeAct)
+			pd := scorePlayedDecision(analyses[m.positionID], m.pos, m.decisionType, m.checkerMove, m.cubeAct)
 			if pd.closeCube == m.stored.closeCube && equalErr(pd.errMP, m.stored.errMP) {
 				continue
 			}

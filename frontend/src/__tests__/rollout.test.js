@@ -4,7 +4,7 @@
  * réglage gardé dans la configuration, la barre de progression, le résultat porté par la ligne
  * du coup, le refus d'une base en lecture seule et la commande (dont le lot sur la liste).
  */
-import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, test, expect, vi, beforeEach, afterEach, onTestFinished } from 'vitest';
 import { render, screen, cleanup, fireEvent, waitFor } from '@testing-library/svelte';
 import { tick } from 'svelte';
 import { get } from 'svelte/store';
@@ -60,7 +60,7 @@ const RolloutSettings = (await import('../components/RolloutSettings.svelte')).d
 const RolloutStrip = (await import('../components/RolloutStrip.svelte')).default;
 const AnalysisPanel = (await import('../components/AnalysisPanel.svelte')).default;
 const { runRolloutCommand, toggleRollout, initRolloutChoice } = await import('../services/rolloutService.js');
-const { canonicalMove, playKey, samePlay, candidateMarksHits } = await import('../utils/moveNotation.js');
+const { canonicalMove, candidateMarksHits, resolveBoard } = await import('../utils/moveNotation.js');
 const { rolloutsByMove, rolloutFor } = await import('../utils/rolloutRows.js');
 
 const stored = (over = {}) => ({
@@ -130,27 +130,88 @@ describe('canonicalMove', () => {
     });
 });
 
-describe('hits tell two plays of one shape apart', () => {
-    // 4-1: both carry a checker from 6 to 1; the first hits twice, the second once.
-    test('playKey keeps where a play hits', () => {
-        expect(playKey('6/5* 5/1*')).not.toBe(playKey('6/2 2/1*'));
-        expect(playKey('13/7*')).toBe(playKey('13/8 8/7*'));
-        expect(playKey('8/5*/4')).toBe(playKey('8/5* 5/4'));
+/**
+ * The starting position, Black (0) on roll with dice, White (1) blots on the given points and
+ * point 1 emptied unless named.
+ * @param {[number, number]} dice
+ * @param {number[]} blots
+ */
+function opening(dice, blots = [], { keep1 = false } = {}) {
+    const points = Array.from({ length: 26 }, () => ({ checkers: 0, color: -1 }));
+    for (const [i, n] of [
+        [24, 2],
+        [13, 5],
+        [8, 3],
+        [6, 5]
+    ])
+        points[i] = { checkers: n, color: 0 };
+    for (const [i, n] of [
+        [1, 2],
+        [12, 5],
+        [17, 3],
+        [19, 5]
+    ])
+        points[i] = { checkers: n, color: 1 };
+    if (!keep1) points[1] = { checkers: 0, color: -1 };
+    for (const b of blots) points[b] = { checkers: 1, color: 1 };
+    return { board: { points, bearoff: [0, 0] }, dice, player_on_roll: 0 };
+}
+
+describe('plays are matched by the board they leave', () => {
+    // 4-1, a blot on 2, point 1 empty: both carry a checker from 6 to 1, the second hits on 2.
+    const blot2 = opening([4, 1], [2]);
+    test('resolveBoard follows the written steps and reads the hits in the dialect', () => {
+        expect(resolveBoard(blot2, '6/5 5/1', true)).not.toBe(resolveBoard(blot2, '6/2* 2/1', true));
+        expect(resolveBoard(blot2, '6/2 2/1', false)).toBe(resolveBoard(blot2, '6/2* 2/1', true));
+        expect(resolveBoard(blot2, '6/2 2/1', true)).toBeNull();
+        expect(resolveBoard(blot2, '6/5* 5/1', false)).toBeNull();
+        expect(resolveBoard(blot2, '6/1', false)).toBeNull();
+        expect(resolveBoard(blot2, '6/1', true)).toBe(resolveBoard(blot2, '6/5 5/1', true));
+        expect(resolveBoard(blot2, '2/1 6/2*', true)).toBe(resolveBoard(blot2, '6/2* 2/1', true));
     });
-    test.each([
-        ['6/5* 5/1*', true, '6/2 2/1*', true, false],
-        ['6/2/1', true, '6/2 2/1*', true, false],
-        ['6/2/1', false, '6/2 2/1*', true, true],
-        ['6/2 2/1*', true, '6/2/1', false, true]
-    ])('samePlay(%s, %s, %s, %s) is %s', (a, am, b, bm, want) => {
-        expect(samePlay(a, am, b, bm)).toBe(want);
+    /** @param {any} position @param {string[]} moves @param {any} [record] */
+    const rolled = (position, moves, record) =>
+        rolloutsByMove({
+            position,
+            ...(record
+                ? { stored: [{ ...record, kind: 'moves', candidates: moves.map((move, i) => ({ move, equity: i, ci95: 0, stdErr: 0, jsd: 0, games: 1 })) }] }
+                : { live: moves.map((move, i) => ({ move, equity: i, ci95: 0, stdErr: 0, jsd: 0, games: 1 })) })
+        });
+    test("an unmarked row finds the rollout of its own play, not the other one's", () => {
+        const rows = rolled(blot2, ['6/5 5/1', '6/2* 2/1']);
+        expect(rolloutFor(rows, '6/2 2/1', false, blot2)?.candidate.move).toBe('6/2* 2/1');
+        expect(rolloutFor(rows, '6/5/1', true, blot2)?.candidate.move).toBe('6/5 5/1');
+        expect(rolloutFor(rows, '6/1', false, blot2)).toBeUndefined();
     });
-    const rolled = (moves) => rolloutsByMove({ live: moves.map((move, i) => ({ move, equity: i, ci95: 0, stdErr: 0, jsd: 0, games: 1 })) });
-    test('a marking row finds its own rollout, not the other hit', () => {
-        const rows = rolled(['6/5* 5/1*', '6/2 2/1*']);
-        expect(rolloutFor(rows, '6/2/1*', true)?.candidate.move).toBe('6/2 2/1*');
-        expect(rolloutFor(rows, '6/5*/1*', true)?.candidate.move).toBe('6/5* 5/1*');
-        expect(rolloutFor(rows, '6/2/1', true)).toBeUndefined();
+    test('a hit on 5 is not the rollout of a play through 2', () => {
+        const both = opening([4, 1], [5, 2]);
+        const rows = rolled(both, ['6/2* 2/1']);
+        expect(rolloutFor(rows, '6/5* 5/1', true, both)).toBeUndefined();
+        expect(rolloutFor(rows, '6/2 2/1', false, both)?.candidate.move).toBe('6/2* 2/1');
+    });
+    test('one hit is not two', () => {
+        const two = opening([4, 1], [5, 1], { keep1: true });
+        const rows = rolled(two, ['6/5* 5/1*', '6/2 2/1*']);
+        expect(rolloutFor(rows, '6/2/1*', true, two)?.candidate.move).toBe('6/2 2/1*');
+        expect(rolloutFor(rows, '6/5*/1*', true, two)?.candidate.move).toBe('6/5* 5/1*');
+        expect(rolloutFor(rows, '6/2/1', true, two)).toBeUndefined();
+    });
+    test('an unmarked hit finds the marked rollout', () => {
+        const hit7 = opening([6, 2], [7], { keep1: true });
+        const rows = rolled(hit7, ['24/18 13/11', '13/7* 13/11']);
+        expect(rolloutFor(rows, '13/7 13/11', false, hit7)?.candidate.move).toBe('13/7* 13/11');
+    });
+    test('a stored rollout named without marks keeps its column', () => {
+        const rows = rolled(blot2, ['6/2 2/1', '6/5 5/1'], { analysisEngine: 'blunderDB rollout v1 / gammonNet v1.7.0' });
+        expect(rolloutFor(rows, '6/2* 2/1', true, blot2)?.candidate.move).toBe('6/2 2/1');
+        expect(rolloutFor(rows, '6/5 5/1', true, blot2)?.candidate.move).toBe('6/5 5/1');
+    });
+    test('a stored name that may leave two boards is the rollout of the row written so', () => {
+        // XG's "6/1" goes through 5; read leniently, it may also hit on 2.
+        const rows = rolled(blot2, ['6/1', '13/9 6/5'], { analysisEngine: 'blunderDB rollout v1 / gammonNet v1.7.0' });
+        expect(rolloutFor(rows, '6/1', true, blot2)?.candidate.move).toBe('6/1');
+        expect(rolloutFor(rows, '6/2* 2/1', true, blot2)).toBeUndefined();
+        expect(rolloutFor(rows, '6/5 5/1', true, blot2)).toBeUndefined();
     });
     test('the dialect is the engine, not the stars of its rows', () => {
         const marks = candidateMarksHits([
@@ -159,15 +220,8 @@ describe('hits tell two plays of one shape apart', () => {
             { move: '24/18', analysisEngine: 'Other' }
         ]);
         expect(marks).toEqual({ XG: true, GNUbg: false, Other: false });
-        // XG's 6/2/1 hits nothing: it is not the rollout of 6/5*/1.
-        expect(rolloutFor(rolled(['6/5* 5/1*', '13/9 6/5*']), '6/2/1', marks.XG)).toBeUndefined();
-    });
-    test('an unmarked row is told apart by its steps', () => {
-        expect(rolloutFor(rolled(['6/5* 5/1*', '6/2 2/1*']), '6/2 2/1', false)?.candidate.move).toBe('6/2 2/1*');
-    });
-    test('an unmarked row is a wildcard only when one rollout fits', () => {
-        expect(rolloutFor(rolled(['6/5* 5/1*', '6/2 2/1*']), '6/1', false)).toBeUndefined();
-        expect(rolloutFor(rolled(['6/2 2/1*', '13/7']), '6/2 2/1', false)?.candidate.move).toBe('6/2 2/1*');
+        // XG's 6/2/1 hits nothing: through the blot on 2, it is no play at all.
+        expect(rolloutFor(rolled(blot2, ['6/2* 2/1']), '6/2/1', marks.XG, blot2)).toBeUndefined();
     });
 });
 
@@ -390,11 +444,16 @@ describe('the candidate moves table', () => {
     });
 
     test('a stored rollout is read in the row of its play, in any notation', async () => {
+        // 6-1 with a blot on 7: the rollout's "8/7 13/7*" is XG's "13/7* 8/7"; "24/18 13/11" is
+        // no play of 6-1, and its row gets no rollout.
+        const before = get(positionStore);
+        const { board, dice } = opening([6, 1], [7], { keep1: true });
+        positionStore.set({ ...before, board, dice, player_on_roll: 0 });
+        onTestFinished(() => positionStore.set(before));
         withCheckerAnalysis();
         loadRollouts.mockResolvedValue([stored()]);
         await renderPanel();
-        // Its two plays: one in XG's dialect on screen, one written alike.
-        await waitFor(() => expect(screen.getAllByTestId('rollout-cell').length).toBe(2));
+        await waitFor(() => expect(screen.getAllByTestId('rollout-cell').length).toBe(1));
         const cell = screen.getAllByTestId('rollout-cell')[0];
         expect(row('13/7* 8/7').contains(cell)).toBe(true);
         expect(cell.textContent).toContain('+0.123');

@@ -27,6 +27,8 @@
         onRowContextMenu = undefined,
         selectedMoves = [],
         rollouts = null,
+        // The position the moves are played from: a row finds its rollout by the board it leaves.
+        position = null,
         // Double-clic : valider (ADR-0048 décision 11) ; le simple clic sélectionne.
         onRowDblClick = undefined,
         // Survol d'une ligne (le coup), puis null à la sortie : le plateau peut montrer ses flèches.
@@ -39,11 +41,11 @@
 
     let block = $derived(checkerRows(moves, { t: $t, isPlayedMove, showProvenance, baseline, isMoney, projection }));
 
-    // Each engine of the table writes its hits or never does: a row's missing "*" is read in its
+    // Each engine of the table writes its hits or never does: a row's play is replayed in its
     // engine's dialect.
     let engineMarks = $derived(candidateMarksHits(moves));
     /** @param {any} move */
-    const rolloutOf = (move) => rolloutFor(rollouts, move?.move, engineMarks[move?.analysisEngine ?? ''] ?? false);
+    const rolloutOf = (move) => rolloutFor(rollouts, move?.move, engineMarks[move?.analysisEngine ?? ''] ?? false, position);
     let showRollout = $derived(!!rollouts && rollouts.size > 0 && block.rows.some((row) => rolloutOf(row.move)));
     let rolloutHeader = $derived(isMoney === true ? $t('rollout.columnMoney') : isMoney === false ? $t('rollout.columnMatch') : $t('rollout.column'));
 

@@ -2,7 +2,6 @@ package engine
 
 import (
 	"fmt"
-	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -25,10 +24,10 @@ import (
 //     as one token naming the hop, "8/5*/4"; gammonNet writes both, "13/8
 //     8/7". They leave the SAME board.
 //
-// CanonicalMove folds all three and gives the play's shape; HitPoints gives
-// where it hits. SamePlay compares on both, and reads a missing "*" as "no
-// hit" unless the notation's dialect never writes one (EngineMarksHits): only
-// then is an unmarked play a wildcard over the hits.
+// CanonicalMove folds all three and gives the play's shape, for display and
+// counting. Deciding whether two notations are the same play is a question
+// about boards, not text: ResolveBoard replays each on the position, the hits
+// read in its dialect (EngineMarksHits).
 
 // CanonicalMove renders a checker play in a form two engines can be compared
 // on: hit markers dropped, "(n)" expanded, chained hops merged, steps sorted.
@@ -100,42 +99,16 @@ func CanonicalMove(move string) string {
 	return strings.Join(steps, " ")
 }
 
-// HitPoints lists the points a play hits on, as its "*" markers name them,
-// sorted and without repeats: "8/5*/4" hits on 5, "6/5* 5/1*" on 1 and 5.
-func HitPoints(move string) []string {
-	var hits []string
-	for _, tok := range strings.Fields(move) {
-		if i := strings.IndexByte(tok, '('); i >= 0 && strings.HasSuffix(tok, ")") {
-			tok = tok[:i]
-		}
-		points := strings.Split(tok, "/")
-		for _, p := range points[1:] {
-			if strings.HasSuffix(p, "*") {
-				hits = append(hits, strings.TrimRight(p, "*"))
-			}
-		}
-	}
-	sort.Strings(hits)
-	return slices.Compact(hits)
-}
-
-// PlayKey is CanonicalMove with the play's hit points: equal keys name the
-// same play in any dialect that writes its hits.
-func PlayKey(move string) string {
-	canon := CanonicalMove(move)
-	if hits := HitPoints(move); len(hits) > 0 {
-		return canon + " *" + strings.Join(hits, ",")
-	}
-	return canon
-}
-
 // EngineMarksHits says whether an analysis engine's dialect, as blunderDB's
 // importers write it, carries hit markers; known=false for an engine it does
-// not name. XG, gammonNet and blunderDB's own move generator (rollouts, the
-// legal plays) write "*"; the GNU Backgammon, BGBlitz and HedgeHog importers
-// never do.
+// not name. XG, gammonNet and blunderDB's own move generator write "*"; the
+// GNU Backgammon, BGBlitz and HedgeHog importers never do. A stored rollout
+// ("blunderDB rollout") names its plays as they were picked, possibly from an
+// unmarked analysis, so it is read as one that does not.
 func EngineMarksHits(engine string) (marks, known bool) {
 	switch {
+	case strings.HasPrefix(engine, "blunderDB rollout"):
+		return false, true
 	case engine == "XG", strings.HasPrefix(engine, "gammonNet"), strings.HasPrefix(engine, "blunderDB"):
 		return true, true
 	case engine == "GNUbg", engine == "BGBlitz", strings.HasPrefix(engine, "HedgeHog"):
@@ -155,73 +128,47 @@ func MarksHits(moves ...string) bool {
 	return false
 }
 
-// SamePlay reports whether two notations name the same play. aMarks and
-// bMarks say whether each one's dialect writes its hits (EngineMarksHits): when
-// both do, a missing "*" means no hit and the hit points must agree; when
-// one does not, the shape decides and the caller must make sure it names a
-// single play.
-func SamePlay(a string, aMarks bool, b string, bMarks bool) bool {
-	if CanonicalMove(a) != CanonicalMove(b) {
-		return false
+// ResolveBoard returns the one position a notation leaves from pos
+// (domain.PlayBoards); marks says whether its dialect writes its hits. It
+// refuses rather than guesses: a notation that names no play, or plays
+// leaving different boards, is an error.
+func ResolveBoard(pos *domain.Position, notation string, marks bool) (domain.Position, error) {
+	boards := domain.PlayBoards(pos, notation, marks)
+	switch len(boards) {
+	case 0:
+		return domain.Position{}, fmt.Errorf("%q is not a legal play of %d-%d", notation, pos.Dice[0], pos.Dice[1])
+	case 1:
+		return boards[0], nil
 	}
-	if !aMarks || !bMarks {
-		return true
-	}
-	return slices.Equal(HitPoints(a), HitPoints(b))
+	return domain.Position{}, fmt.Errorf("%q is ambiguous: it leaves %d different boards", notation, len(boards))
 }
 
-// ResolvePlay finds the legal play a notation stands for: as written first,
-// then as the play it describes (SamePlay, the generator always writing its
-// hits). It refuses rather than guesses: a notation that names no legal
-// play, or plays leaving different boards, is an error.
-func ResolvePlay(legal []domain.LegalPlay, notation string, marks bool) (domain.LegalPlay, error) {
-	notation = strings.TrimSpace(notation)
-	norm := NormalizeMove(notation)
+// ResolvePlay finds, among legal (domain.LegalMoves of pos), the play a
+// notation stands for: the one leaving the board ResolveBoard finds.
+func ResolvePlay(pos *domain.Position, legal []domain.LegalPlay, notation string, marks bool) (domain.LegalPlay, error) {
+	board, err := ResolveBoard(pos, notation, marks)
+	if err != nil {
+		return domain.LegalPlay{}, err
+	}
 	for _, p := range legal {
-		if p.Notation == notation || NormalizeMove(p.Notation) == norm {
+		if domain.SameBoard(p.Result.Board, board.Board) {
 			return p, nil
 		}
 	}
-	var same, steps []domain.LegalPlay
-	for _, p := range legal {
-		if SamePlay(notation, marks, p.Notation, true) {
-			same = append(same, p)
-			if SameSteps(notation, p.Notation) {
-				steps = append(steps, p)
-			}
-		}
-	}
-	if len(steps) > 0 && !oneBoard(same) {
-		// The steps as written tell apart what the shape cannot: gnubg's
-		// "6/2 2/1" goes through 2, whatever it hits there.
-		same = steps
-	}
-	if len(same) == 0 {
-		return domain.LegalPlay{}, fmt.Errorf("%q is not a legal play", notation)
-	}
-	if !oneBoard(same) {
-		names := make([]string, len(same))
-		for i, q := range same {
-			names[i] = q.Notation
-		}
-		return domain.LegalPlay{}, fmt.Errorf("%q is ambiguous: %s", notation, strings.Join(names, ", "))
-	}
-	return same[0], nil
+	return domain.LegalPlay{}, fmt.Errorf("%q is not a legal play", notation)
 }
 
-// SameSteps reports whether two notations write the same steps once their
-// hit markers are dropped, parts in any order: an unmarked "6/2 2/1" and the
-// generator's "6/2 2/1*".
-func SameSteps(a, b string) bool {
-	return NormalizeMove(strings.ReplaceAll(a, "*", "")) == NormalizeMove(strings.ReplaceAll(b, "*", ""))
-}
-
-// oneBoard reports whether every play leaves the same board.
-func oneBoard(plays []domain.LegalPlay) bool {
-	for _, p := range plays[min(1, len(plays)):] {
-		if p.Result.Board != plays[0].Result.Board {
-			return false
-		}
+// SamePlay reports whether two notations leave the same board from pos, each
+// read in its dialect (aMarks, bMarks: EngineMarksHits). ok is false when
+// either cannot be resolved to one board: then nothing can be said.
+func SamePlay(pos *domain.Position, a string, aMarks bool, b string, bMarks bool) (same, ok bool) {
+	ab, err := ResolveBoard(pos, a, aMarks)
+	if err != nil {
+		return false, false
 	}
-	return true
+	bb, err := ResolveBoard(pos, b, bMarks)
+	if err != nil {
+		return false, false
+	}
+	return domain.SameBoard(ab.Board, bb.Board), true
 }

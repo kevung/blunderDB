@@ -129,7 +129,7 @@
     let onBoard = $derived(rolloutOnBoard(rollout, $positionStore));
     let liveCandidates = $derived(onBoard.live);
     let unsavedRollout = $derived(onBoard.unsaved);
-    let rolloutRows = $derived(rolloutsByMove({ stored: storedRollouts, unsaved: unsavedRollout, live: liveCandidates }));
+    let rolloutRows = $derived(rolloutsByMove({ stored: storedRollouts, unsaved: unsavedRollout, live: liveCandidates, position: $positionStore }));
 
     /** The plays a rollout started now would roll out; none is the whole position. */
     function rolloutSelection() {
@@ -512,6 +512,7 @@
                 onRowContextMenu={handleRowContextMenu}
                 selectedMoves={pickedMoves}
                 rollouts={rolloutRows}
+                position={$positionStore}
                 {isMoney}
                 {jacoby}
                 {beaver}

@@ -188,7 +188,7 @@ func sampleAnalysis() *domain.PositionAnalysis {
 // l'ordre inverse sont le même coup.
 func TestPopulateAnalysisColumns(t *testing.T) {
 	a := sampleAnalysis()
-	c := PopulateAnalysisColumns(a, "13/11 24/23", "Double", LegalPlaysUnknown)
+	c := PopulateAnalysisColumns(a, "13/11 24/23", "Double", nil)
 
 	if c.BestCubeAction != "Double, Take" {
 		t.Errorf("BestCubeAction = %q", c.BestCubeAction)
@@ -202,11 +202,11 @@ func TestPopulateAnalysisColumns(t *testing.T) {
 	// "13/11 24/23" est le meilleur coup ici, il n'a pas d'erreur ; celle
 	// remplie est celle du second, retrouvé malgré l'ordre inverse de ses
 	// parties et l'espace final.
-	c2 := PopulateAnalysisColumns(a, "13/11 24/23 ", "Double", LegalPlaysUnknown)
+	c2 := PopulateAnalysisColumns(a, "13/11 24/23 ", "Double", nil)
 	if c2.BestMoveEquityError != 0 {
 		t.Errorf("le meilleur coup porte une erreur: %d", c2.BestMoveEquityError)
 	}
-	c3 := PopulateAnalysisColumns(a, "13/11 13/8", "Double", LegalPlaysUnknown)
+	c3 := PopulateAnalysisColumns(a, "13/11 13/8", "Double", nil)
 	if c3.BestMoveEquityError != 35 {
 		t.Errorf("BestMoveEquityError = %d, attendu 35 (0,0345 arrondi au millipoint)", c3.BestMoveEquityError)
 	}
@@ -216,7 +216,7 @@ func TestPopulateAnalysisColumns(t *testing.T) {
 		t.Errorf("CubeError = %d pour l'action optimale", c.CubeError)
 	}
 	// Ne pas doubler coûte 0,8912 − 0,6789 = 0,2123 → 212 millipoints.
-	nd := PopulateAnalysisColumns(a, "", "No Double", LegalPlaysUnknown)
+	nd := PopulateAnalysisColumns(a, "", "No Double", nil)
 	if nd.CubeError != 212 {
 		t.Errorf("CubeError(No Double) = %d, attendu 212", nd.CubeError)
 	}
@@ -226,11 +226,11 @@ func TestPopulateAnalysisColumns(t *testing.T) {
 	}
 	forced := sampleAnalysis()
 	forced.CheckerAnalysis.Moves = forced.CheckerAnalysis.Moves[:1]
-	if got := PopulateAnalysisColumns(forced, "", "", LegalPlaysUnknown).IsForced; got != 1 {
+	if got := PopulateAnalysisColumns(forced, "", "", nil).IsForced; got != 1 {
 		t.Errorf("IsForced = %d avec un seul coup légal", got)
 	}
 
-	if got := PopulateAnalysisColumns(nil, "13/11", "Take", LegalPlaysUnknown); got != (AnalysisColumns{}) {
+	if got := PopulateAnalysisColumns(nil, "13/11", "Take", nil); got != (AnalysisColumns{}) {
 		t.Errorf("une analyse nulle rend %+v, attendu la structure vide", got)
 	}
 }
@@ -246,7 +246,7 @@ func TestPopulateAnalysisColumnsCheckerOnly(t *testing.T) {
 			},
 		},
 	}
-	c := PopulateAnalysisColumns(a, "24/21 13/11", "", LegalPlaysUnknown)
+	c := PopulateAnalysisColumns(a, "24/21 13/11", "", nil)
 	if c.Player1WinRate != 5432 || c.Player2WinRate != 4568 {
 		t.Errorf("taux = (%d, %d), attendu ceux du meilleur coup (5432, 4568)",
 			c.Player1WinRate, c.Player2WinRate)

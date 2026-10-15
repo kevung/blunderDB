@@ -26,6 +26,7 @@
         onRowContextMenu = undefined,
         selectedMoves = [],
         rollouts = null,
+        position = null,
         isMoney = undefined,
         jacoby = false,
         beaver = false,
@@ -84,7 +85,7 @@
 {/if}
 
 {#if kind === 'checker' && hasMoves}
-    <CandidateMovesTable {moves} {sortColumn} {sortDirection} {selectedMove} {selectedMoves} {rollouts} {isPlayedMove} {onSort} {onRowClick} {onRowContextMenu} {isMoney} />
+    <CandidateMovesTable {moves} {sortColumn} {sortDirection} {selectedMove} {selectedMoves} {rollouts} {position} {isPlayedMove} {onSort} {onRowClick} {onRowContextMenu} {isMoney} />
 {/if}
 
 <style>

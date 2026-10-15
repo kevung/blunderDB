@@ -700,10 +700,11 @@ func IsResponseCubeAction(action string) bool {
 
 // PopulateAnalysisColumns computes the scalar analysis columns from a
 // PositionAnalysis. playedMove and playedCubeAction are the actions taken in
-// this position (may be empty); legalPlays is the position's count of legal
-// checker plays (LegalPlaysUnknown when not known), which IsForcedChecker
-// needs. Rates are stored × 100, equities × 1000.
-func PopulateAnalysisColumns(a *domain.PositionAnalysis, playedMove, playedCubeAction string, legalPlays int) AnalysisColumns {
+// this position (may be empty); pos is the position, nil when not known: the
+// played move is found among the candidates by the board it leaves
+// (PlayedCandidate), and IsForcedChecker needs its count of legal plays.
+// Rates are stored × 100, equities × 1000.
+func PopulateAnalysisColumns(a *domain.PositionAnalysis, playedMove, playedCubeAction string, pos *domain.Position) AnalysisColumns {
 	var c AnalysisColumns
 	if a == nil {
 		return c
@@ -735,14 +736,14 @@ func PopulateAnalysisColumns(a *domain.PositionAnalysis, playedMove, playedCubeA
 	}
 
 	if playedMove != "" && a.CheckerAnalysis != nil && len(a.CheckerAnalysis.Moves) > 0 {
-		if m := PlayedCandidate(a.CheckerAnalysis.Moves, playedMove); m == nil {
+		if m := PlayedCandidate(pos, a.CheckerAnalysis.Moves, playedMove); m == nil {
 			c.BestMoveUnscored = true
 		} else if m.EquityError != nil {
 			c.BestMoveEquityError = int64(math.Round(*m.EquityError * 1000))
 		}
 	}
 
-	if a.CheckerAnalysis != nil && IsForcedChecker(a.CheckerAnalysis, legalPlays) {
+	if a.CheckerAnalysis != nil && len(a.CheckerAnalysis.Moves) > 0 && IsForcedChecker(a.CheckerAnalysis, CountLegalPlays(pos)) {
 		c.IsForced = 1
 	}
 
@@ -752,47 +753,58 @@ func PopulateAnalysisColumns(a *domain.PositionAnalysis, playedMove, playedCubeA
 }
 
 // PlayedCandidate returns the candidate that is the played move, nil when
-// none is. The notation is matched first as written (parts in any order);
-// failing that, as the play it describes (SamePlay), because the match
-// record and the analysis may spell one play two ways — "13/9 9/6" against
-// "13/6", "4/3 3/off" against "4/off". A dialect that never writes its hits
-// matches on shape alone, so the match is only trusted when it names a
-// single candidate.
+// none is or when it cannot be told. The match record and the analysis may
+// spell one play many ways — "13/9 9/6" against "13/6", "6/2 2/1" against
+// "6/2* 2/1" — and two plays of the same shape may leave different boards, so
+// notations are compared by the boards they leave from pos (ResolveBoard).
 //
-// The played move is read in the dialect of the candidate it is compared
-// with: every importer writes the played move with the same formatter as the
-// candidates it brings, so its own engine's candidates read it right. A
-// played move kept beside another engine's analysis (merged analyses, a
-// gammonNet verdict superseding, the match's move table) is read in that
-// engine's dialect too: unmarked, it hits nothing there, and an unmarked
-// dialect's played move that hits finds no marking candidate — unscored, never
-// matched to another play.
-func PlayedCandidate(moves []domain.CheckerMove, playedMove string) *domain.CheckerMove {
+// Each candidate is read in its engine's dialect (CandidateMarksHits). The
+// played move's source is not carried with it, so it is read leniently: a
+// missing "*" may be a hit, a written one must be, and the points it writes
+// are followed. A played move written exactly as a candidate is that
+// candidate's own formatter speaking — XG's "5/off" hits nothing even where a
+// path through a blot exists — so it is that candidate, provided the
+// candidate's board is one the lenient reading allows. Otherwise a played
+// move left with two boards is unscored, never matched to one of them.
+//
+// When the board cannot speak — no position, no dice, or a played move that
+// names no play of the position — only a candidate written exactly as the
+// played move is found.
+func PlayedCandidate(pos *domain.Position, moves []domain.CheckerMove, playedMove string) *domain.CheckerMove {
+	var boards []domain.Position
+	if pos != nil {
+		boards = domain.PlayBoards(pos, playedMove, false)
+	}
+	allowed := func(b domain.Board) bool {
+		for _, p := range boards {
+			if domain.SameBoard(p.Board, b) {
+				return true
+			}
+		}
+		return false
+	}
 	norm := NormalizeMove(playedMove)
+	marks := CandidateMarksHits(moves)
 	for i := range moves {
-		if NormalizeMove(moves[i].Move) == norm {
+		if NormalizeMove(moves[i].Move) != norm {
+			continue
+		}
+		if len(boards) == 0 {
+			return &moves[i]
+		}
+		if b, err := ResolveBoard(pos, moves[i].Move, marks[moves[i].AnalysisEngine]); err == nil && allowed(b.Board) {
 			return &moves[i]
 		}
 	}
-	marks := CandidateMarksHits(moves)
-	playedMarks := MarksHits(playedMove)
-	var same, steps []*domain.CheckerMove
-	for i := range moves {
-		m := marks[moves[i].AnalysisEngine]
-		if !SamePlay(playedMove, playedMarks || m, moves[i].Move, m) {
-			continue
-		}
-		same = append(same, &moves[i])
-		if SameSteps(playedMove, moves[i].Move) {
-			steps = append(steps, &moves[i])
-		}
+	if len(boards) != 1 {
+		return nil
 	}
-	switch {
-	case len(same) == 1:
-		return same[0]
-	case len(steps) == 1:
-		// The steps as written tell apart what the shape cannot.
-		return steps[0]
+	for i := range moves {
+		// Several engines of a merged analysis may list the same play: the
+		// first listed is taken.
+		if b, err := ResolveBoard(pos, moves[i].Move, marks[moves[i].AnalysisEngine]); err == nil && allowed(b.Board) {
+			return &moves[i]
+		}
 	}
 	return nil
 }

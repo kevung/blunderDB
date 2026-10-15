@@ -80,7 +80,7 @@ func (d *Database) migrate_2_36_0_to_2_37_0(ctx context.Context) error {
 			}
 			playedMove, playedCube := engine.PlayedActionsFor(a.PlayedMoves, a.PlayedCubeActions,
 				[]string{r.mvMove.String}, []string{r.mvCube.String})
-			c := engine.PopulateAnalysisColumns(&a, playedMove, playedCube, sqlshared.LegalPlays(r.state, r.por, r.d1, r.d2))
+			c := engine.PopulateAnalysisColumns(&a, playedMove, playedCube, sqlshared.PlayPosition(r.state, r.por, r.d1, r.d2))
 			moveErr := r.moveErr
 			if c.BestMoveUnscored {
 				moveErr = sql.NullInt64{}

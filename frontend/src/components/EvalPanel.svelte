@@ -279,7 +279,7 @@
     let panelMenu = $state(/** @type {{ x: number, y: number, items: any[] } | null} */ (null));
     let rollout = $derived($rolloutStore);
     let onBoard = $derived(rolloutOnBoard(rollout, $positionStore, { unsaved: true }));
-    let rolloutRows = $derived(rolloutsByMove({ unsaved: onBoard.unsaved, live: onBoard.live }));
+    let rolloutRows = $derived(rolloutsByMove({ unsaved: onBoard.unsaved, live: onBoard.live, position: $positionStore }));
     let cubeRolled = $derived(cubeRollouts([], onBoard.unsaved));
     const UNSAVED = { unsaved: true };
 
@@ -660,6 +660,7 @@
                                 selectedMove={$selectedMoveStore}
                                 selectedMoves={pickedMoves}
                                 rollouts={rolloutRows}
+                                position={$positionStore}
                                 onRowClick={handleMoveRowClick}
                                 onRowContextMenu={handleRowContextMenu}
                                 showProvenance={false}

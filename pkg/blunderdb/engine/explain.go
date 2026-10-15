@@ -66,7 +66,7 @@ func ExplainChecker(pos *domain.Position, ana *domain.PositionAnalysis, played s
 	if pos == nil || ana == nil || ana.CheckerAnalysis == nil || len(ana.CheckerAnalysis.Moves) == 0 {
 		return Explanation{}
 	}
-	playedMove, bestMove := findPlayedAndBest(ana.CheckerAnalysis.Moves, played)
+	playedMove, bestMove := findPlayedAndBest(pos, ana.CheckerAnalysis.Moves, played)
 	if playedMove == nil || bestMove == nil || playedMove.Move == bestMove.Move {
 		return Explanation{}
 	}
@@ -167,10 +167,10 @@ func ExplainCube(ana *domain.PositionAnalysis, played string) Explanation {
 	return out
 }
 
-// findPlayedAndBest locates the played move and the analysis's own best.
-func findPlayedAndBest(moves []domain.CheckerMove, played string) (*domain.CheckerMove, *domain.CheckerMove) {
-	norm := NormalizeMove(played)
-	var playedMove, bestMove *domain.CheckerMove
+// findPlayedAndBest locates the played move (PlayedCandidate, the lookup that
+// scored its error) and the analysis's own best.
+func findPlayedAndBest(pos *domain.Position, moves []domain.CheckerMove, played string) (*domain.CheckerMove, *domain.CheckerMove) {
+	var bestMove *domain.CheckerMove
 	bestErr := math.Inf(1)
 	for i := range moves {
 		m := &moves[i]
@@ -181,29 +181,23 @@ func findPlayedAndBest(moves []domain.CheckerMove, played string) (*domain.Check
 		if e < bestErr {
 			bestErr, bestMove = e, m
 		}
-		if norm != "" && strings.EqualFold(NormalizeMove(m.Move), norm) {
-			playedMove = m
-		}
 	}
-	if playedMove == nil && norm != "" {
-		// The match record and the analysis may spell one play two ways; the
-		// play's error was scored by the same lookup.
-		playedMove = PlayedCandidate(moves, played)
+	if strings.TrimSpace(played) == "" {
+		return nil, bestMove
 	}
-	return playedMove, bestMove
+	return PlayedCandidate(pos, moves, played), bestMove
 }
 
-// boardAfter replays a move notation through the legal-move generator and
-// returns the board it produces (ResolvePlay). marks says whether the
-// notation's source writes its hits. A notation that names no legal play, or
-// plays leaving different boards, yields ok=false, and the rules that need a
-// board simply do not fire.
+// boardAfter replays a move notation on pos and returns the board it leaves
+// (ResolveBoard). marks says whether the notation's source writes its hits.
+// A notation that names no play, or plays leaving different boards, yields
+// ok=false, and the rules that need a board simply do not fire.
 func boardAfter(pos *domain.Position, notation string, marks bool) (domain.Board, bool) {
-	play, err := ResolvePlay(domain.LegalMoves(pos), notation, marks)
+	res, err := ResolveBoard(pos, notation, marks)
 	if err != nil {
 		return domain.Board{}, false
 	}
-	return play.Result.Board, true
+	return res.Board, true
 }
 
 // countBlots counts a side's lone checkers on the board.
@@ -242,7 +236,7 @@ func BlotDeviation(pos *domain.Position, ana *domain.PositionAnalysis, played st
 		noContact(&pos.Board) {
 		return 0, false
 	}
-	playedMove, bestMove := findPlayedAndBest(ana.CheckerAnalysis.Moves, played)
+	playedMove, bestMove := findPlayedAndBest(pos, ana.CheckerAnalysis.Moves, played)
 	if playedMove == nil || bestMove == nil {
 		return 0, false
 	}

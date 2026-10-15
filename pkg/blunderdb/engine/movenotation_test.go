@@ -49,96 +49,100 @@ func TestCanonicalMove_NonCoup(t *testing.T) {
 	}
 }
 
-// prisesEn41 : 4-1, un pion sur 6, des blots adverses sur 5 et sur 1. « 6/5* 5/1* »
-// et « 6/2 2/1* » ont la même forme, 6/1, et ne laissent pas le même plateau.
-func prisesEn41() domain.Position {
+// position41 : 4-1 pour Noir, la position de départ avec des blots blancs sur
+// les points donnés (le point 1 vidé sauf s'il est nommé).
+func position41(blots ...int) domain.Position {
 	p := domain.InitializePosition()
 	p.Dice = [2]int{4, 1}
-	p.Board.Points[5] = domain.Point{Checkers: 1, Color: domain.White}
-	p.Board.Points[1] = domain.Point{Checkers: 1, Color: domain.White}
+	p.Board.Points[1] = domain.Point{Color: domain.None}
+	for _, b := range blots {
+		p.Board.Points[b] = domain.Point{Checkers: 1, Color: domain.White}
+	}
 	return p
 }
 
-func TestHitPoints(t *testing.T) {
-	for _, tc := range []struct{ move, want string }{
-		{"6/5* 5/1*", "1,5"},
-		{"6/2 2/1*", "1"},
-		{"8/5*/4", "5"},
-		{"13/7*", "7"},
-		{"6/5*(2)", "5"},
-		{"bar/22* 13/11", "22"},
-		{"6/3 3/1", ""},
-	} {
-		got := ""
-		for i, h := range HitPoints(tc.move) {
-			if i > 0 {
-				got += ","
-			}
-			got += h
-		}
-		if got != tc.want {
-			t.Errorf("HitPoints(%q) = %q, want %q", tc.move, got, tc.want)
-		}
+// prisesEn41 : 4-1, des blots blancs sur 5 et sur 1. « 6/5* 5/1* » et
+// « 6/2 2/1* » ont la même forme, 6/1, et ne laissent pas le même plateau.
+func prisesEn41() domain.Position { return position41(5, 1) }
+
+func resolve(t *testing.T, pos domain.Position, notation string, marks bool) domain.Board {
+	t.Helper()
+	b, err := ResolveBoard(&pos, notation, marks)
+	if err != nil {
+		t.Fatalf("%q : %v", notation, err)
 	}
+	return b.Board
 }
 
-func TestPlayKey_DistingueLesPrises(t *testing.T) {
-	if PlayKey("6/5* 5/1*") == PlayKey("6/2 2/1*") {
-		t.Error("deux coups qui ne frappent pas les mêmes pions ont la même clé")
-	}
-	if PlayKey("13/7*") != PlayKey("13/8 8/7*") {
-		t.Error("XG et gammonNet écrivent le même coup : clés différentes")
-	}
-	if PlayKey("8/5*/4") != PlayKey("8/5* 5/4") {
-		t.Error("un saut chaîné et ses deux pas : clés différentes")
-	}
-}
-
-// Le joker dépend de la source : une source qui note ses prises dit « pas de
-// prise » par l'absence de « * » ; une source qui n'en note jamais ne dit rien.
-func TestSamePlay_JokerSelonLaSource(t *testing.T) {
-	for _, tc := range []struct {
-		a      string
-		aMarks bool
-		b      string
-		bMarks bool
-		want   bool
-	}{
-		{"6/5* 5/1*", true, "6/2 2/1*", true, false},
-		{"6/2/1", true, "6/2 2/1*", true, false},
-		{"6/1", true, "6/1", true, true},
-		{"6/2/1", false, "6/2 2/1*", true, true},
-		{"6/2 2/1*", true, "6/2/1", false, true},
-		{"6/2/1", false, "13/7", true, false},
-	} {
-		if got := SamePlay(tc.a, tc.aMarks, tc.b, tc.bMarks); got != tc.want {
-			t.Errorf("SamePlay(%q, %v, %q, %v) = %v, want %v", tc.a, tc.aMarks, tc.b, tc.bMarks, got, tc.want)
-		}
-	}
-}
-
-func TestResolvePlay_PrisesEn41(t *testing.T) {
+func TestResolveBoard_PrisesEn41(t *testing.T) {
 	pos := prisesEn41()
-	legal := domain.LegalMoves(&pos)
-	double, err := ResolvePlay(legal, "6/5*/1*", true)
-	if err != nil {
-		t.Fatalf("6/5*/1* : %v", err)
-	}
-	single, err := ResolvePlay(legal, "6/2/1*", true)
-	if err != nil {
-		t.Fatalf("6/2/1* : %v", err)
-	}
-	if double.Result.Board == single.Result.Board {
+	double := resolve(t, pos, "6/5*/1*", true)
+	single := resolve(t, pos, "6/2/1*", true)
+	if double == single {
 		t.Fatal("deux prises et une prise laissent le même plateau")
 	}
-	if double.Notation != "6/5* 5/1*" || single.Notation != "6/2 2/1*" {
-		t.Errorf("résolus en %q et %q", double.Notation, single.Notation)
+	if resolve(t, pos, "6/5* 5/1*", true) != double || resolve(t, pos, "6/2 2/1*", true) != single {
+		t.Error("le même coup écrit pas à pas ne laisse pas le même plateau")
 	}
-	if _, err := ResolvePlay(legal, "6/1", false); err == nil {
+	if resolve(t, pos, "2/1* 6/2", true) != single {
+		t.Error("l'ordre des parties change le plateau")
+	}
+	if _, err := ResolveBoard(&pos, "6/1", false); err == nil {
 		t.Error("« 6/1 » sans marque d'une source qui n'en note pas : deviné au lieu de refusé")
 	}
-	if _, err := ResolvePlay(legal, "6/2/1", true); err == nil {
-		t.Error("« 6/2/1 » d'une source qui note ses prises ne frappe pas : aucun coup légal")
+	if _, err := ResolveBoard(&pos, "6/2/1", true); err == nil {
+		t.Error("« 6/2/1 » d'une source qui note ses prises ne frappe pas : aucun coup")
+	}
+	if resolve(t, pos, "6/2/1", false) != single {
+		t.Error("« 6/2/1 » lu avec tolérance passe par 2 et frappe sur 1")
+	}
+}
+
+// Le dialecte d'un moteur qui note ses prises dit aussi les prises absentes ;
+// celui qui ne les note pas laisse la prise possible, mais suit les pas écrits.
+func TestResolveBoard_PasÉcritsEtPrisesPossibles(t *testing.T) {
+	pos := position41(2)
+	via5 := resolve(t, pos, "6/5 5/1", true)
+	via2 := resolve(t, pos, "6/2* 2/1", true)
+	if via5 == via2 {
+		t.Fatal("passer par 2 en frappant et par 5 laissent le même plateau")
+	}
+	if resolve(t, pos, "6/2 2/1", false) != via2 {
+		t.Error("« 6/2 2/1 » d'une source sans marques : passe par 2, donc frappe")
+	}
+	if _, err := ResolveBoard(&pos, "6/2 2/1", true); err == nil {
+		t.Error("« 6/2 2/1 » d'une source qui note ses prises ne peut pas passer par le blot sans frapper")
+	}
+	if _, err := ResolveBoard(&pos, "6/5* 5/1", false); err == nil {
+		t.Error("« 6/5* 5/1 » frappe sur 5 où il n'y a rien : aucun coup")
+	}
+	if _, err := ResolveBoard(&pos, "6/1", false); err == nil {
+		t.Error("« 6/1 » sans marque : par 5 ou par 2 en frappant, deviné au lieu de refusé")
+	}
+	if resolve(t, pos, "6/1", true) != via5 {
+		t.Error("« 6/1 » d'une source qui note ses prises ne frappe pas : par 5")
+	}
+}
+
+func TestResolveBoard_NotationsIllisibles(t *testing.T) {
+	pos := position41()
+	for _, n := range []string{"", "cannot move", "6/0", "*6/2", "bar/21", "6/2 6/2 6/2"} {
+		if _, err := ResolveBoard(&pos, n, false); err == nil {
+			t.Errorf("%q résolu", n)
+		}
+	}
+	nodice := domain.InitializePosition()
+	if _, err := ResolveBoard(&nodice, "13/9 6/5", false); err == nil {
+		t.Error("une position sans dés résout un coup")
+	}
+}
+
+func TestEngineMarksHits_RolloutStockéLuAvecTolérance(t *testing.T) {
+	if marks, known := EngineMarksHits("blunderDB rollout v1 / gammonNet v1.7.0"); !known || marks {
+		t.Errorf("un rollout stocké nomme ses coups comme on les lui a donnés : marks=%v known=%v", marks, known)
+	}
+	if marks, _ := EngineMarksHits("gammonNet v1.7.0"); !marks {
+		t.Error("gammonNet note ses prises")
 	}
 }
 

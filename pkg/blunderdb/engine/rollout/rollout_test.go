@@ -447,3 +447,20 @@ func TestMoveBranches_LesPrisesDistinguentDeuxCoups(t *testing.T) {
 		t.Error("le « 6/2 2/1 » de XG ne frappe pas : aucun coup légal")
 	}
 }
+
+// Un rollout stocké est relu avec tolérance : un nom XG « 6/1 » qui ne frappe
+// pas, mais qui pourrait passer par un blot, est rangé sous le nom du
+// générateur pour rester lisible.
+func TestMoveBranches_UnNomAmbiguEstRangéSousCeluiDuGénérateur(t *testing.T) {
+	pos := domain.InitializePosition()
+	pos.Dice = [2]int{4, 1}
+	pos.Board.Points[1] = domain.Point{Color: domain.None}
+	pos.Board.Points[2] = domain.Point{Checkers: 1, Color: domain.White}
+	pos.Board.Points[12] = domain.Point{Checkers: 6, Color: domain.White}
+	cube := cubeState{value: 1, owner: noOwner}
+	xg := []domain.CheckerMove{{Move: "6/1", AnalysisEngine: "XG"}}
+	names, _, err := moveBranches(&pos, Settings{}, []string{"6/1"}, xg, cube)
+	if err != nil || len(names) != 1 || names[0] != "6/5 5/1" {
+		t.Errorf("le « 6/1 » de XG passe par 5 : %v, %v", names, err)
+	}
+}

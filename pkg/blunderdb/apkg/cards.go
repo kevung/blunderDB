@@ -257,7 +257,7 @@ func back(p *domain.Position, a *domain.PositionAnalysis, lang string) (answer, 
 	if pms := playedMoves(a); len(pms) > 0 {
 		pm := pms[0]
 		played = fmt.Sprintf("%s%s%s", html.EscapeString(label(lang, "played")), label(lang, "sep"), html.EscapeString(pm))
-		if m := engine.PlayedCandidate(moves, pm); m != nil {
+		if m := engine.PlayedCandidate(p, moves, pm); m != nil {
 			played += fmt.Sprintf(" (%s %.3f)", html.EscapeString(label(lang, "error")), best.Equity-m.Equity)
 		}
 	}

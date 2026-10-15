@@ -8,6 +8,25 @@ import (
 
 // La comparaison porte sur la DÉCISION, pas sur sa notation : deux moteurs qui
 // jouent le même coup en le notant différemment sont d'accord.
+// ouverture51 : la position de départ, 5-1 pour Noir.
+func ouverture51() *domain.Position {
+	p := domain.InitializePosition()
+	p.Dice = [2]int{5, 1}
+	return &p
+}
+
+// en41 : 4-1 pour Noir, des blots blancs sur les points donnés, le point 1
+// vidé sauf s'il est nommé.
+func en41(blots ...int) *domain.Position {
+	p := domain.InitializePosition()
+	p.Dice = [2]int{4, 1}
+	p.Board.Points[1] = domain.Point{Color: domain.None}
+	for _, b := range blots {
+		p.Board.Points[b] = domain.Point{Checkers: 1, Color: domain.White}
+	}
+	return &p
+}
+
 func TestCompareOne_LeDialecteNEstPasUnDesaccord(t *testing.T) {
 	stored := &domain.PositionAnalysis{
 		CheckerAnalysis: &domain.CheckerAnalysis{Moves: []domain.CheckerMove{
@@ -16,7 +35,7 @@ func TestCompareOne_LeDialecteNEstPasUnDesaccord(t *testing.T) {
 		}},
 	}
 	// Ce que gammonNet répondrait, écrit dans son dialecte à lui.
-	got := compareCheckerAnswer(stored, "13/8 8/7", domain.PhaseOpening.String(), 1)
+	got := compareCheckerAnswer(ouverture51(), stored, "13/8 8/7", domain.PhaseOpening.String(), 1)
 	if !got.same {
 		t.Errorf("« 13/7 » et « 13/8 8/7 » sont le même coup ; comparés comme différents")
 	}
@@ -32,7 +51,7 @@ func TestCompareOne_UnVraiDesaccordEstChiffre(t *testing.T) {
 			{Move: "24/18", Equity: 0.05, AnalysisEngine: "XG"},
 		}},
 	}
-	got := compareCheckerAnswer(stored, "24/18", domain.PhaseOpening.String(), 1)
+	got := compareCheckerAnswer(ouverture51(), stored, "24/18", domain.PhaseOpening.String(), 1)
 	if got.same {
 		t.Fatal("deux coups différents comptés comme identiques")
 	}
@@ -49,7 +68,7 @@ func TestCompareOne_UnCoupNonListeNeSeTarifePas(t *testing.T) {
 			{Move: "13/7", Equity: 0.10, AnalysisEngine: "XG"},
 		}},
 	}
-	got := compareCheckerAnswer(stored, "24/18", domain.PhaseOpening.String(), 1)
+	got := compareCheckerAnswer(ouverture51(), stored, "24/18", domain.PhaseOpening.String(), 1)
 	if got.same {
 		t.Fatal("deux coups différents comptés comme identiques")
 	}
@@ -111,7 +130,7 @@ func TestCompareOne_LesPrisesDistinguentDeuxCoups(t *testing.T) {
 			{Move: "6/2 2/1*", Equity: 0.02, AnalysisEngine: "XG"},
 		}},
 	}
-	got := compareCheckerAnswer(stored, "6/2 2/1*", domain.PhaseMiddlegame.String(), 1)
+	got := compareCheckerAnswer(en41(5, 1), stored, "6/2 2/1*", domain.PhaseMiddlegame.String(), 1)
 	if got.same {
 		t.Fatal("une prise et deux prises comptées comme le même coup")
 	}
@@ -121,7 +140,7 @@ func TestCompareOne_LesPrisesDistinguentDeuxCoups(t *testing.T) {
 }
 
 // XG écrit ses prises même quand sa liste n'en contient aucune : son
-// « 6/2/1 » ne frappe pas, le « 6/5*/1 » de gammonNet frappe.
+// « 6/2/1 » ne frappe pas, le « 6/5*/1 » de gammonNet frappe sur 5.
 func TestCompareOne_LeDialecteDitLesPrisesMemeSansEtoile(t *testing.T) {
 	stored := &domain.PositionAnalysis{
 		CheckerAnalysis: &domain.CheckerAnalysis{Moves: []domain.CheckerMove{
@@ -129,11 +148,43 @@ func TestCompareOne_LeDialecteDitLesPrisesMemeSansEtoile(t *testing.T) {
 			{Move: "13/9 6/5", Equity: 0.04, AnalysisEngine: "XG"},
 		}},
 	}
-	got := compareCheckerAnswer(stored, "6/5*/1", domain.PhaseMiddlegame.String(), 1)
+	got := compareCheckerAnswer(en41(5), stored, "6/5*/1", domain.PhaseMiddlegame.String(), 1)
 	if got.same {
 		t.Fatal("6/5*/1 et 6/2/1 comptés comme le même coup")
 	}
 	if got.dis.Cost != 0 {
 		t.Errorf("coût %v : le coup de gammonNet n'est pas listé, il ne se tarifie pas", got.dis.Cost)
+	}
+}
+
+// Un coup gnubg sans marque suit ses pas : « 6/2 2/1 » passe par 2 et y frappe,
+// le « 6/5* 5/1 » de gammonNet frappe sur 5. Deux décisions, pas un dialecte.
+func TestCompareOne_LesPasÉcritsDistinguentDeuxCoups(t *testing.T) {
+	stored := &domain.PositionAnalysis{
+		CheckerAnalysis: &domain.CheckerAnalysis{Moves: []domain.CheckerMove{
+			{Move: "6/2 2/1", Equity: 0.10, AnalysisEngine: "GNUbg"},
+			{Move: "6/5 5/1", Equity: 0.04, AnalysisEngine: "GNUbg"},
+		}},
+	}
+	got := compareCheckerAnswer(en41(5, 2), stored, "6/5* 5/1", domain.PhaseMiddlegame.String(), 1)
+	if got.outcome == GNRefused || got.same {
+		t.Fatalf("6/5* 5/1 et 6/2 2/1 comptés comme le même coup (ou refusés) : %+v", got)
+	}
+	if want := 0.06; got.dis.Cost < want-1e-9 || got.dis.Cost > want+1e-9 {
+		t.Errorf("coût du désaccord : %v, attendu %v", got.dis.Cost, want)
+	}
+}
+
+// Un coup stocké sans marque qui peut frapper ou non ne laisse pas un plateau
+// unique : il n'y a rien à comparer, ce n'est pas un accord.
+func TestCompareOne_UnCoupAmbiguNeSeComparePas(t *testing.T) {
+	stored := &domain.PositionAnalysis{
+		CheckerAnalysis: &domain.CheckerAnalysis{Moves: []domain.CheckerMove{
+			{Move: "6/1", Equity: 0.10, AnalysisEngine: "GNUbg"},
+		}},
+	}
+	got := compareCheckerAnswer(en41(2), stored, "6/5 5/1", domain.PhaseMiddlegame.String(), 1)
+	if got.outcome != GNRefused {
+		t.Errorf("« 6/1 » de gnubg passe par 5 ou frappe sur 2 : comparé quand même (%+v)", got)
 	}
 }

@@ -155,6 +155,23 @@ describe('EvalPanel rollouts', () => {
     });
 
     test('the result is read in its row, and goes when the board changes', async () => {
+        // The row finds its rollout by the board its play leaves: a starting position, 3-2.
+        const points = Array.from({ length: 26 }, () => ({ checkers: 0, color: -1 }));
+        for (const [i, n] of [
+            [24, 2],
+            [13, 5],
+            [8, 3],
+            [6, 5]
+        ])
+            points[i] = { checkers: n, color: 0 };
+        for (const [i, n] of [
+            [1, 2],
+            [12, 5],
+            [17, 3],
+            [19, 5]
+        ])
+            points[i] = { checkers: n, color: 1 };
+        positionStore.update((p) => ({ ...p, board: { points, bearoff: [0, 0] }, dice: [3, 2], player_on_roll: 0 }));
         await mount();
         await fireEvent.keyDown(/** @type {HTMLElement} */ (document.querySelector('.eval-panel')), { key: 'R', shiftKey: true });
         await waitFor(() => expect(startRollout).toHaveBeenCalledTimes(1));

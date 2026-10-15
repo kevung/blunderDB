@@ -114,7 +114,7 @@ func CompareOne(pos *domain.Position, stored *domain.PositionAnalysis, id int64,
 
 	switch {
 	case len(result.Moves) > 0 && stored.CheckerAnalysis != nil && len(stored.CheckerAnalysis.Moves) > 0:
-		return compareCheckerAnswer(stored, result.Moves[0].Move, dis.Phase, id)
+		return compareCheckerAnswer(pos, stored, result.Moves[0].Move, dis.Phase, id)
 
 	case result.Cube != nil && stored.DoublingCubeAnalysis != nil:
 		dis.Kind = "cube"
@@ -133,10 +133,12 @@ func CompareOne(pos *domain.Position, stored *domain.PositionAnalysis, id int64,
 }
 
 // compareCheckerAnswer compares one checker decision: the stored best move
-// against the move gammonNet prefers, both read through engine.SamePlay so a
-// difference of dialect is never reported as a difference of opinion.
-// gammonNet writes its hits; the stored engine is read in its dialect.
-func compareCheckerAnswer(stored *domain.PositionAnalysis, ours, phase string, id int64) ComparisonSample {
+// against the move gammonNet prefers, by the boards they leave
+// (engine.SamePlay), so a difference of dialect is never reported as a
+// difference of opinion. gammonNet writes its hits; the stored engine is read
+// in its dialect. A stored move that leaves no single board (an unmarked
+// notation that may or may not hit) cannot be compared: refused, not guessed.
+func compareCheckerAnswer(pos *domain.Position, stored *domain.PositionAnalysis, ours, phase string, id int64) ComparisonSample {
 	moves := stored.CheckerAnalysis.Moves
 	dis := ComparisonDisagreement{
 		PositionID: id,
@@ -147,9 +149,12 @@ func compareCheckerAnswer(stored *domain.PositionAnalysis, ours, phase string, i
 		GammonNet:  ours,
 	}
 	marks := engine.CandidateMarksHits(moves)
-	same := engine.SamePlay(ours, true, dis.Stored, marks[moves[0].AnalysisEngine])
+	same, ok := engine.SamePlay(pos, ours, true, dis.Stored, marks[moves[0].AnalysisEngine])
+	if !ok {
+		return ComparisonSample{outcome: GNRefused}
+	}
 	if !same {
-		dis.Cost = checkerDisagreementCost(moves, ours)
+		dis.Cost = checkerDisagreementCost(pos, moves, ours)
 	}
 	return ComparisonSample{dis: dis, same: same}
 }
@@ -160,13 +165,13 @@ func compareCheckerAnswer(stored *domain.PositionAnalysis, ours, phase string, i
 //
 // A move the stored analysis does not list cannot be priced and costs 0, a
 // known limit; candidacy is integration_gate_test.go's criterion 3.
-func checkerDisagreementCost(moves []domain.CheckerMove, want string) float64 {
+func checkerDisagreementCost(pos *domain.Position, moves []domain.CheckerMove, want string) float64 {
 	if len(moves) == 0 {
 		return 0
 	}
-	// gammonNet writes its hits: an unmarked move of its hits nothing, which
-	// is how PlayedCandidate reads it against a dialect that writes them.
-	found := engine.PlayedCandidate(moves, want)
+	// gammonNet's notation is complete, so PlayedCandidate's lenient reading
+	// of a played move finds its one board.
+	found := engine.PlayedCandidate(pos, moves, want)
 	if found == nil {
 		return 0
 	}

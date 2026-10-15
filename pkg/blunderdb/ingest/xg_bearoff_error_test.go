@@ -29,7 +29,7 @@ func TestXGBearOffPlayedMoveErrors(t *testing.T) {
 				if !ok {
 					continue
 				}
-				m := engine.PlayedCandidate(a.CheckerAnalysis.Moves, a.PlayedMoves[0])
+				m := engine.PlayedCandidate(mv.Position, a.CheckerAnalysis.Moves, a.PlayedMoves[0])
 				if m == nil {
 					t.Errorf("%q names no candidate", a.PlayedMoves[0])
 					continue

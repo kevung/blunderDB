@@ -336,7 +336,7 @@ func moveBranches(pos *domain.Position, s Settings, named []string, from []domai
 	for _, n := range named {
 		n = strings.TrimSpace(n)
 		marks := nameMarksHits(n, from)
-		play, err := engine.ResolvePlay(legal, n, marks)
+		play, err := engine.ResolvePlay(pos, legal, n, marks)
 		if err != nil {
 			options := make([]string, 0, len(legal))
 			for _, p := range legal {
@@ -346,9 +346,11 @@ func moveBranches(pos *domain.Position, s Settings, named []string, from []domai
 			return nil, nil, fmt.Errorf("rollout: %w; legal: %s", err, strings.Join(options, ", "))
 		}
 		res := play.Result
-		if !engine.MarksHits(n) && engine.MarksHits(play.Notation) {
-			// A name whose dialect could not say where it hits is named as
-			// the generator writes it: a rollout's names carry their hits.
+		if _, err := engine.ResolveBoard(pos, n, false); err != nil || (!engine.MarksHits(n) && engine.MarksHits(play.Notation)) {
+			// A rollout's names carry their hits, and a stored one is read
+			// leniently (EngineMarksHits): a name that does not say where it
+			// hits, or that would then leave two boards, is named as the
+			// generator writes it, every hop and hit spelt out.
 			n = play.Notation
 		}
 		if slices.Contains(names, n) {

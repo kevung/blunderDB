@@ -163,37 +163,37 @@ func (s *analysisStore) prepare(ctx context.Context, positionID int64, a *domain
 		playedMove, playedCubeAction = engine.PlayedActionsFor(
 			[]string{playedMove}, []string{playedCubeAction}, []string{mvMove}, []string{mvCube})
 	}
-	legal, err := legalPlaysOf(ctx, s.db, positionID, a, played)
+	pos, err := positionOf(ctx, s.db, positionID, a, played)
 	if err != nil {
 		return engine.AnalysisColumns{}, err
 	}
 	engine.RoundAnalysisForStorage(a)
-	return engine.PopulateAnalysisColumns(a, playedMove, playedCubeAction, legal), nil
+	return engine.PopulateAnalysisColumns(a, playedMove, playedCubeAction, pos), nil
 }
 
 // legalPlaysSQL reads the columns a legal-play count depends on.
 const legalPlaysSQL = `SELECT ` + sqlshared.LegalPlaysColumns + ` FROM position p WHERE p.id = ?`
 
-// legalPlaysOf counts the legal plays of the position a checker analysis is
-// for; a cube-only analysis needs none, and a caller holding the position
+// positionOf reads the position a checker analysis is for, nil when it is
+// gone or has no dice; a cube-only analysis needs none, and a caller holding the position
 // (storage.PlayedActions) spares the read.
-func legalPlaysOf(ctx context.Context, q execer, positionID int64, a *domain.PositionAnalysis, played *storage.PlayedActions) (int, error) {
+func positionOf(ctx context.Context, q execer, positionID int64, a *domain.PositionAnalysis, played *storage.PlayedActions) (*domain.Position, error) {
 	if ca := a.ColumnSource().CheckerAnalysis; ca == nil || len(ca.Moves) == 0 {
-		return engine.LegalPlaysUnknown, nil
+		return nil, nil
 	}
 	if played != nil && played.Position != nil {
-		return engine.CountLegalPlays(played.Position), nil
+		return played.Position, nil
 	}
 	var state []byte
 	var por, d1, d2 *int64
 	err := q.QueryRowContext(ctx, legalPlaysSQL, positionID).Scan(&state, &por, &d1, &d2)
 	if errors.Is(err, sql.ErrNoRows) {
-		return engine.LegalPlaysUnknown, nil
+		return nil, nil
 	}
 	if err != nil {
-		return 0, fmt.Errorf("sqlite: read position %d for its legal plays: %w", positionID, err)
+		return nil, fmt.Errorf("sqlite: read position %d for its legal plays: %w", positionID, err)
 	}
-	return sqlshared.LegalPlays(state, por, d1, d2), nil
+	return sqlshared.PlayPosition(state, por, d1, d2), nil
 }
 
 // write encodes a prepared analysis and upserts it with its columns.
@@ -310,11 +310,11 @@ func SaveAnalysisUncompressed(ctx context.Context, tx *sql.Tx, positionID int64,
 	if err != nil {
 		return fmt.Errorf("sqlite: encode analysis: %w", err)
 	}
-	legal, err := legalPlaysOf(ctx, tx, positionID, a, nil)
+	pos, err := positionOf(ctx, tx, positionID, a, nil)
 	if err != nil {
 		return fmt.Errorf("sqlite: save analysis: %w", err)
 	}
-	c := engine.PopulateAnalysisColumns(a, firstOf(a.PlayedMoves), firstOf(a.PlayedCubeActions), legal)
+	c := engine.PopulateAnalysisColumns(a, firstOf(a.PlayedMoves), firstOf(a.PlayedCubeActions), pos)
 	bestCube, err := actionCode(ctx, tx, c.BestCubeAction)
 	if err != nil {
 		return fmt.Errorf("sqlite: save analysis: %w", err)
@@ -469,7 +469,7 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, _ string)
 				a.PlayedMoves, a.PlayedCubeActions,
 				[]string{r.mvMove.String}, []string{r.mvCube.String})
 			c := engine.PopulateAnalysisColumns(&a, playedMove, playedCubeAction,
-				sqlshared.LegalPlays(r.state, r.por, r.d1, r.d2))
+				sqlshared.PlayPosition(r.state, r.por, r.d1, r.d2))
 			analyses[r.posID] = &a
 			stored := storedPlayedColumns{bestCube: r.bestCube, cubeErr: r.cubeErr, bestMoveErr: r.bestMoveErr, forced: r.forced, closeCube: r.closeCub}
 			if stored.equal(c) {
