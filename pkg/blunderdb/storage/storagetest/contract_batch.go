@@ -2,6 +2,7 @@ package storagetest
 
 import (
 	"context"
+	"slices"
 	"strconv"
 	"testing"
 
@@ -142,6 +143,38 @@ func testMovesByPositions(t *testing.T, s storage.Storage) {
 	}
 	if got[id1][0].MoveNumber != 1 || got[id1][1].MoveNumber != 2 || got[id1][0].CheckerMove != "8/5 6/5" {
 		t.Errorf("MovesByPositions[%d] = %+v, %+v", id1, got[id1][0], got[id1][1])
+	}
+}
+
+// testMatchIDsReachedBy: the matches a list of positions was played in,
+// each once, in id order; a position no move reached adds none.
+func testMatchIDsReachedBy(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	p1, p2, p3 := provenancePos(1), provenancePos(2), provenancePos(3)
+	ids := make([]int64, 3)
+	for i, p := range []*domain.Position{&p1, &p2, &p3} {
+		id, err := s.Positions().Save(ctx, "", p)
+		if err != nil {
+			t.Fatalf("Save: %v", err)
+		}
+		ids[i] = id
+	}
+	m1, _ := matchWithMoves(t, s, [2]int64{ids[0], ids[0]})
+	m2, _ := matchWithMoves(t, s, [2]int64{ids[1], ids[0]})
+
+	got, err := s.Matches().MatchIDsReachedBy(ctx, "", []int64{ids[0], ids[1], ids[2], 999999})
+	if err != nil {
+		t.Fatalf("MatchIDsReachedBy: %v", err)
+	}
+	want := []int64{min(m1, m2), max(m1, m2)}
+	if !slices.Equal(got, want) {
+		t.Errorf("MatchIDsReachedBy = %v, want %v", got, want)
+	}
+	if got, err := s.Matches().MatchIDsReachedBy(ctx, "", []int64{ids[2]}); err != nil || len(got) != 0 {
+		t.Errorf("MatchIDsReachedBy(unplayed) = %v, %v; want none", got, err)
+	}
+	if got, err := s.Matches().MatchIDsReachedBy(ctx, "", nil); err != nil || len(got) != 0 {
+		t.Errorf("MatchIDsReachedBy(nil) = %v, %v; want none", got, err)
 	}
 }
 

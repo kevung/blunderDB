@@ -92,10 +92,11 @@ func resolveSchema(typeText string, types map[string]typeInfo, comps *Components
 	if strings.Contains(t, ".") {
 		name := componentName(t)
 		if comps.Get(name) == nil {
-			comps.schemas[name] = &Schema{
-				Type:        "object",
-				Description: "Opaque: see the Go type " + t + " (defined outside internal/server, not expanded here).",
+			desc := "Opaque: see the Go type " + t + " (defined outside internal/server, not expanded here)."
+			if note := opaqueNotes[t]; note != "" {
+				desc += " " + note
 			}
+			comps.schemas[name] = &Schema{Type: "object", Description: desc}
 		}
 		return &Schema{Ref: "#/components/schemas/" + name}
 	}
@@ -168,4 +169,13 @@ func primitiveSchema(t string) (*Schema, bool) {
 // ':', '#' or newlines, unsafe in plain style.
 func quoteYAML(s string) string {
 	return strconv.Quote(s)
+}
+
+// opaqueNotes says, for an opaque type a client must still write by hand, what
+// its body holds; doc/source/mode_headless.rst says it in full.
+var opaqueNotes = map[string]string{
+	"domain.ExportOptions": "The export options of the desktop and the CLI, under their exact JSON names: " +
+		"wholeLibrary, allPositions, positionIDs, positions, the include… switches, collectionIDs, matchIDs, " +
+		"tournamentIDs, lessonIDs, deckIDs, watermark, watermarkNote. A key left out keeps the whole-library " +
+		"preset; an unknown key, metadata or password is refused with invalid; exportPath is ignored.",
 }

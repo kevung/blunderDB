@@ -999,21 +999,35 @@ chaîne XGID, et ``positions.fromXGP`` à partir d'un fichier de position unique
 ``.xgp``.
 
 ``POST /v1/exports.sqlite`` exporte tout le tenant courant — positions,
-collections, matchs, tournois, analyses, commentaires, coups joués,
+collections, matchs, tournois, leçons, analyses, commentaires, coups joués,
 bibliothèque de filtres et paquets Anki — dans un fichier SQLite ouvrable tel
-quel par le poste de travail. Le corps JSON de la requête est optionnel :
-``watermarkOrigin`` / ``watermarkNote`` apposent un filigrane signé de
-l'identité propre du démon (``--identity-dir``) — sans ces champs, l'export ne
-porte aucun filigrane ; les demander sans identité configurée échoue avec le
-code ``invalid``. ``collectionIds`` restreint l'export à ces collections et à
-leurs positions, avec analyses, commentaires et coups joués, sans la
-bibliothèque de filtres ni les autres paquets Anki. ``deckIds`` fait de même
-pour des paquets Anki : chacun voyage avec ses positions, sans l'historique de
-révision de celui qui l'envoie. Les deux champs se combinent. ``ankiHistory``
-décide de cet historique : absent, tout le tenant l'emporte et des paquets
-choisis par ``deckIds`` partent sans. ``transcriptions`` et ``aliases`` à
-``false`` laissent sur place les brouillons de transcription des matchs
-exportés et les alias qu'ils écrivent ; absents, les deux voyagent. La
+quel par le poste de travail. Le corps JSON de la requête est optionnel ; il
+porte les options d'export de la fenêtre d'export et de ``blunderdb export``,
+sous les mêmes noms et lues de la même façon, si bien qu'un même jeu
+d'options écrit le même fichier par les trois voies. Un champ absent garde
+sa valeur par défaut, celle de toute la bibliothèque : ``wholeLibrary``,
+chaque ``include…`` et ``includeAnkiHistory`` valent ``true``. Une option
+``include…`` à ``false`` retire sa famille (``includeMatches``,
+``includeCollections``, ``includeTournaments``, ``includeLessons``,
+``includeAnkiDecks``, ``includeFilterLibrary``, ``includeTranscriptions``,
+``includeAliases``, ``includeAnalysis``, ``includeComments``,
+``includePlayedMoves``) ; une liste d'identifiants la restreint à ces éléments
+(``matchIDs``, ``collectionIDs``, ``tournamentIDs``, ``lessonIDs``,
+``deckIDs``). Avec ``"wholeLibrary": false``, seules partent les positions
+nommées par ``positionIDs`` (ou toutes avec ``allPositions``), les matchs où
+elles ont été jouées, et ce que les listes d'identifiants désignent ;
+``includeCollectionPositions`` y ajoute les positions des collections
+choisies, et une option ``include…`` restée vraie sans liste emporte encore
+toute sa famille quand elle n'a pas besoin de positions nommées (leçons,
+bibliothèque de filtres). ``watermark`` / ``watermarkNote`` apposent un
+filigrane signé de l'identité propre du démon (``--identity-dir``) — sans ces
+champs, l'export ne porte aucun filigrane ; les demander sans identité
+configurée échoue avec le code ``invalid``, comme un ``password`` : le démon
+ne rend pas de conteneur chiffré. ``positions`` remet des positions entières,
+enregistrées ou non, à la place de ``positionIDs``. ``metadata`` est refusé :
+le démon n'écrit dans le fichier que sa date de création et le filigrane. ``exportPath`` est ignoré. Une clé
+que les options ne connaissent pas, ou écrite avec une autre casse
+(``collectionIds``), est refusée avec le code ``invalid``, qui la nomme. La
 réponse porte, dans l'en-tête ``X-Blunderdb-Export-Report``, le compte en JSON
 de ce que le fichier contient, famille par famille. ``POST /v1/exports.plan``
 prend le même corps et rend ces comptes avant tout export, avec les
@@ -1077,14 +1091,16 @@ sont sautés sans être lus, ceux de même contenu sont lus mais pas analysés.
 **Copier une collection d'un tenant à l'autre** passe par le client (la lire
 sur place, sans copie, est l'affaire de ``across.collectionsList``,
 :ref:`headless_tenants_lus`) : le tenant qui donne appelle
-``exports.sqlite`` avec ``collectionIds`` (et un filigrane, pour que le
-receveur sache d'où vient le fichier), le tenant qui reçoit envoie le fichier
+``exports.sqlite`` avec ``"wholeLibrary": false`` et ``collectionIDs``,
+``includeCollectionPositions`` pour emporter leurs positions, sans leçons, ni
+filtres, ni historique Anki (et un filigrane, pour que le receveur sache d'où
+vient le fichier) ; le tenant qui reçoit envoie le fichier
 à ``imports.db``. Chaque requête porte son propre ``X-Tenant-ID`` ; le proxy
 décide qui a le droit de faire l'une et l'autre. À l'import, une collection
 rejoint celle du même nom chez le receveur, ou est créée ; ses positions s'y
 ajoutent à la suite, sans doublon. Une collection vivante du receveur ne
 reçoit aucune position : sa requête fait son contenu. Un paquet Anki se
-partage de même, avec ``deckIds`` : le receveur l'étudie à neuf, ses cartes
+partage de même, avec ``deckIDs`` : le receveur l'étudie à neuf, ses cartes
 toutes nouvelles ; un paquet dont il tient déjà le nom est laissé tel quel,
 cartes et calendrier compris, si bien qu'importer deux fois le même fichier ne
 change rien. L'import d'une base dans l'application de bureau suit les mêmes
@@ -1094,7 +1110,9 @@ règles.
 
    curl -X POST http://127.0.0.1:8080/v1/exports.sqlite \
         -H 'X-Tenant-ID: 7' -H 'Content-Type: application/json' \
-        -d '{"collectionIds":[4],"watermarkOrigin":"Club de Lyon"}' -o ouvertures.db
+        -d '{"wholeLibrary":false,"collectionIDs":[4],"includeCollectionPositions":true,
+             "includeLessons":false,"includeFilterLibrary":false,"includeAnkiHistory":false,
+             "watermark":"Club de Lyon"}' -o ouvertures.db
    curl -X POST http://127.0.0.1:8080/v1/imports.db \
         -H 'X-Tenant-ID: 2' -F file=@ouvertures.db
 

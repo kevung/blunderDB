@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -282,46 +283,84 @@ func (s *Server) ingestRoutes() []route {
 		// What exports.sqlite would write for the same body, counted family by family
 		// without writing anything; the watermark fields are ignored.
 		route{http.MethodPost, "/v1/exports.plan", rpc(func(ctx context.Context, scope string, req exportSQLiteReq) (ingest.ExportPlan, error) {
-			return ingest.PlanExport(ctx, s.opts.Storage, scope, exportSQLiteOptions(req))
+			opts, err := exportSQLiteOptions(ctx, s.opts.Storage, scope, req)
+			if err != nil {
+				return ingest.ExportPlan{}, err
+			}
+			return ingest.PlanExport(ctx, s.opts.Storage, scope, opts)
 		})},
 		// One page of the ids behind a count of exports.plan, for a family named in
 		// ingest.Plan*; a page holds at most ingest.MaxPlannedIDs.
 		route{http.MethodPost, "/v1/exports.planIds", rpc(func(ctx context.Context, scope string, req exportPlanIDsReq) (ingest.PlannedIDs, error) {
-			return ingest.PlanExportIDs(ctx, s.opts.Storage, scope, exportSQLiteOptions(req.Export), req.Family, req.Offset, req.Limit)
+			opts, err := exportSQLiteOptions(ctx, s.opts.Storage, scope, req.Export)
+			if err != nil {
+				return ingest.PlannedIDs{}, err
+			}
+			return ingest.PlanExportIDs(ctx, s.opts.Storage, scope, opts, req.Family, req.Offset, req.Limit)
 		})},
 	)
 }
 
-// exportSQLiteReq optionally asks for a watermark on the export — origin is
-// free text (who this copy is for, or why it left), mirroring the desktop's
-// export dialog and the CLI's --watermark/--watermark-note. An empty (or
-// absent) origin means the export carries none.
+// exportSQLiteReq is the body of exports.sqlite, exports.plan and the export of
+// exports.planIds: the export options of the desktop and the CLI, under the same
+// JSON keys, read by the same ingest.OptionsFor. A field left out keeps its
+// value in ingest.WholeLibraryOptions, so an absent or empty body exports the
+// whole tenant; an unknown key, or metadata, is refused. positions hands
+// over positions whole, as the desktop does for unsaved ones. watermark / watermarkNote ask for a watermark signed with the
+// daemon's own identity; exportPath is the daemon's affair and is ignored; a
+// password is refused, the daemon streaming a plain SQLite file.
 type exportSQLiteReq struct {
-	WatermarkOrigin string `json:"watermarkOrigin"`
-	WatermarkNote   string `json:"watermarkNote"`
-	// CollectionIDs narrows the export to these collections and their
-	// positions, with analyses, comments and played moves: what one tenant
-	// hands another, who imports it with imports.db. The filter library and
-	// the Anki decks stay behind — they are the sender's, not the
-	// collection's. Empty exports the whole tenant.
-	CollectionIDs []int64 `json:"collectionIds,omitempty"`
-	// LessonIDs narrows the export to these Lessons and what their steps
-	// show, on the same terms as CollectionIDs (ADR-0066); given with
-	// CollectionIDs, both travel.
-	LessonIDs []int64 `json:"lessonIds,omitempty"`
-	// DeckIDs narrows the export to these Anki decks and their positions, on
-	// the same terms: the recipient studies them afresh, without the
-	// sender's review history unless ankiHistory asks for it. Given with the
-	// others, all travel.
-	DeckIDs []int64 `json:"deckIds,omitempty"`
-	// Transcriptions and Aliases, when false, leave behind the exported
-	// matches' transcription drafts and the aliases they write; absent, both
-	// travel, as from the desktop and the CLI.
-	Transcriptions *bool `json:"transcriptions,omitempty"`
-	Aliases        *bool `json:"aliases,omitempty"`
-	// AnkiHistory carries the exported decks' review history. Absent, the
-	// whole tenant carries it and decks narrowed by deckIds leave without it.
-	AnkiHistory *bool `json:"ankiHistory,omitempty"`
+	domain.ExportOptions
+
+	// decoded tells a body read over the preset from no body at all.
+	decoded bool
+}
+
+// UnmarshalJSON reads the body over ingest.WholeLibraryOptions. A key the
+// options do not hold is refused rather than ignored: an ignored one would
+// widen the export to the whole tenant behind the caller's back.
+func (r *exportSQLiteReq) UnmarshalJSON(b []byte) error {
+	// encoding/json matches keys without regard to case, so the earlier
+	// collectionIds would land on collectionIDs under the whole-library preset:
+	// every key is checked against the options' exact names first.
+	var keys map[string]json.RawMessage
+	if err := json.Unmarshal(b, &keys); err != nil {
+		return err
+	}
+	for k := range keys {
+		if !exportOptionKeys[k] {
+			return fmt.Errorf("unknown export option %q: the export body takes the export options of the desktop and the CLI (wholeLibrary, include…, collectionIDs, deckIDs, lessonIDs, matchIDs, tournamentIDs, positionIDs, watermark…)", k)
+		}
+	}
+	opts := ingest.WholeLibraryOptions()
+	if err := json.Unmarshal(b, &opts); err != nil {
+		return err
+	}
+	if len(opts.Metadata) > 0 {
+		return errors.New(`"metadata" is not an export option of the daemon: it writes only the file's creation date and the watermark`)
+	}
+	r.ExportOptions, r.decoded = opts, true
+	return nil
+}
+
+// exportOptionKeys holds the exact JSON names of domain.ExportOptions.
+var exportOptionKeys = func() map[string]bool {
+	keys := map[string]bool{}
+	t := reflect.TypeFor[domain.ExportOptions]()
+	for i := range t.NumField() {
+		if name, _, _ := strings.Cut(t.Field(i).Tag.Get("json"), ","); name != "" && name != "-" {
+			keys[name] = true
+		}
+	}
+	return keys
+}()
+
+// options is what the request asks for: the preset when no body came.
+func (r exportSQLiteReq) options() domain.ExportOptions {
+	if !r.decoded {
+		return ingest.WholeLibraryOptions()
+	}
+	return r.ExportOptions
 }
 
 // exportPlanIDsReq asks exports.planIds for a page of one family's ids, under
@@ -340,26 +379,12 @@ const ExportReportHeader = "X-Blunderdb-Export-Report"
 
 // exportSQLiteOptions is what an exports.sqlite or exports.plan body asks for,
 // short of the watermark.
-func exportSQLiteOptions(req exportSQLiteReq) ingest.ExportOptions {
-	opts := ingest.WholeTenant(ingest.FormatSQLite)
-	if len(req.CollectionIDs) > 0 || len(req.LessonIDs) > 0 || len(req.DeckIDs) > 0 {
-		opts.Selection = ingest.Selection{
-			CollectionIDs: req.CollectionIDs, CollectionPositions: true,
-			LessonIDs: req.LessonIDs, LessonContents: true,
-			DeckIDs: req.DeckIDs, DeckPositions: true,
-		}
-		opts.FilterLibrary, opts.AnkiDecks, opts.AnkiHistory = false, false, false
+func exportSQLiteOptions(ctx context.Context, st storage.Storage, scope string, req exportSQLiteReq) (ingest.ExportOptions, error) {
+	opts := req.options()
+	if opts.Password != "" {
+		return ingest.ExportOptions{}, fmt.Errorf("%w: the daemon exports no password-protected file", storage.ErrInvalid)
 	}
-	if req.Transcriptions != nil {
-		opts.Transcriptions = *req.Transcriptions
-	}
-	if req.Aliases != nil {
-		opts.Aliases = *req.Aliases
-	}
-	if req.AnkiHistory != nil {
-		opts.AnkiHistory = *req.AnkiHistory
-	}
-	return opts
+	return ingest.OptionsFor(ctx, st, scope, opts)
 }
 
 // sealExportWatermark seals a watermark for origin/note with this daemon's own
@@ -372,7 +397,7 @@ func (s *Server) sealExportWatermark(origin, note string) (string, error) {
 		return "", nil
 	}
 	if s.opts.Identity == nil {
-		return "", fmt.Errorf("%w: watermarkOrigin was given but this server has no signing identity (start it with --identity-dir)", storage.ErrInvalid)
+		return "", fmt.Errorf("%w: watermark was given but this server has no signing identity (start it with --identity-dir)", storage.ErrInvalid)
 	}
 	return ingest.SealWatermark(s.opts.Identity, origin, note)
 }
@@ -400,7 +425,12 @@ func (s *Server) handleExportSQLite() http.HandlerFunc {
 			writeDecodeError(w, "invalid JSON body", err)
 			return
 		}
-		watermark, err := s.sealExportWatermark(req.WatermarkOrigin, req.WatermarkNote)
+		opts, err := exportSQLiteOptions(r.Context(), s.opts.Storage, scopeOf(r), req)
+		if err != nil {
+			writeStorageError(w, err)
+			return
+		}
+		watermark, err := s.sealExportWatermark(req.Watermark, req.WatermarkNote)
 		if err != nil {
 			writeStorageError(w, err)
 			return
@@ -418,7 +448,6 @@ func (s *Server) handleExportSQLite() http.HandlerFunc {
 			return
 		}
 
-		opts := exportSQLiteOptions(req)
 		opts.Watermark = watermark
 		report, err := ingest.ExportSQLite(r.Context(), s.opts.Storage, scopeOf(r), tmpPath, opts)
 		if err != nil {

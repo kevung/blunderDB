@@ -3399,7 +3399,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/exportSQLiteReq"
+              $ref: "#/components/schemas/domain_ExportOptions"
       responses:
         "200":
           description: OK
@@ -3433,7 +3433,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/exportSQLiteReq"
+              $ref: "#/components/schemas/domain_ExportOptions"
       responses:
         "200":
           description: OK
@@ -8568,6 +8568,9 @@ components:
     domain_DuplicateSuspect:
       type: object
       description: "Opaque: see the Go type domain.DuplicateSuspect (defined outside internal/server, not expanded here)."
+    domain_ExportOptions:
+      type: object
+      description: "Opaque: see the Go type domain.ExportOptions (defined outside internal/server, not expanded here). The export options of the desktop and the CLI, under their exact JSON names: wholeLibrary, allPositions, positionIDs, positions, the include… switches, collectionIDs, matchIDs, tournamentIDs, lessonIDs, deckIDs, watermark, watermarkNote. A key left out keeps the whole-library preset; an unknown key, metadata or password is refused with invalid; exportPath is ignored."
     domain_Game:
       type: object
       description: "Opaque: see the Go type domain.Game (defined outside internal/server, not expanded here)."
@@ -8687,7 +8690,7 @@ components:
       type: object
       properties:
         export:
-          $ref: "#/components/schemas/exportSQLiteReq"
+          $ref: "#/components/schemas/domain_ExportOptions"
         family:
           type: string
         offset:
@@ -8697,40 +8700,6 @@ components:
         limit:
           type: integer
           format: int32
-          nullable: true
-    exportSQLiteReq:
-      type: object
-      properties:
-        watermarkOrigin:
-          type: string
-        watermarkNote:
-          type: string
-        collectionIds:
-          type: array
-          nullable: true
-          items:
-            type: integer
-            format: int64
-        lessonIds:
-          type: array
-          nullable: true
-          items:
-            type: integer
-            format: int64
-        deckIds:
-          type: array
-          nullable: true
-          items:
-            type: integer
-            format: int64
-        transcriptions:
-          type: boolean
-          nullable: true
-        aliases:
-          type: boolean
-          nullable: true
-        ankiHistory:
-          type: boolean
           nullable: true
     filterNameReq:
       type: object

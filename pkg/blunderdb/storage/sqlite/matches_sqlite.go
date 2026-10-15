@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"iter"
+	"slices"
 	"strings"
 	"time"
 
@@ -1028,6 +1029,30 @@ func (s *matchStore) MovesByPositions(ctx context.Context, scope string, positio
 		return nil, fmt.Errorf("sqlite: moves by positions: %w", err)
 	}
 	return out, nil
+}
+
+// MatchIDsReachedBy — see storage.MatchStore.
+func (s *matchStore) MatchIDsReachedBy(ctx context.Context, scope string, positionIDs []int64) ([]int64, error) {
+	seen := make(map[int64]bool)
+	err := forEachIn(ctx, s.db, positionIDs,
+		`SELECT DISTINCT g.match_id FROM move mv JOIN game g ON g.id = mv.game_id WHERE mv.position_id IN `, ``,
+		func(rows *sql.Rows) error {
+			var id int64
+			if err := rows.Scan(&id); err != nil {
+				return err
+			}
+			seen[id] = true
+			return nil
+		})
+	if err != nil {
+		return nil, fmt.Errorf("sqlite: matches reached by positions: %w", err)
+	}
+	ids := make([]int64, 0, len(seen))
+	for id := range seen {
+		ids = append(ids, id)
+	}
+	slices.Sort(ids)
+	return ids, nil
 }
 
 const moveAnalysisCols = `analysis_type, depth, equity, equity_error, win_rate, gammon_rate, backgammon_rate,

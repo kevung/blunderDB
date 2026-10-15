@@ -217,6 +217,11 @@ type MatchStore interface {
 	// it — keyed by position id, in id order.
 	MovesByPositions(ctx context.Context, scope string, positionIDs []int64) (map[int64][]*domain.Move, error)
 
+	// MatchIDsReachedBy returns the matches whose moves were played in one
+	// of the given positions, in id order: what an export of these positions
+	// carries when its matches are left unnamed.
+	MatchIDsReachedBy(ctx context.Context, scope string, positionIDs []int64) ([]int64, error)
+
 	// ScoreMoves writes move.error_mp (domain.Move.ErrorMP) for at most limit
 	// unscored moves past the id after whose position carries an analysis,
 	// in id order, and returns the id of the last move it examined (0 when

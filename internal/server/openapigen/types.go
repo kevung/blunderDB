@@ -26,6 +26,11 @@ func collectTypeDecls(f *ast.File, types map[string]typeInfo) {
 			switch t := ts.Type.(type) {
 			case *ast.StructType:
 				info.fields = fieldsOf(t)
+				// A struct that only wraps another type's fields reads, on
+				// the wire, as that type.
+				if embedded := soleEmbedded(t); embedded != "" && len(info.fields) == 0 {
+					info.underlying = embedded
+				}
 			case *ast.IndexListExpr:
 				// type X = iter.Seq2[T, error] — the shape every alias in
 				// handlers_iters.go uses.
@@ -54,7 +59,7 @@ func fieldsOf(st *ast.StructType) []Field {
 	}
 	for _, f := range st.Fields.List {
 		if len(f.Names) == 0 {
-			continue // an embedded field; none of this package's Req/Resp structs embed one
+			continue // an embedded field: see soleEmbedded
 		}
 		goType := exprText(f.Type)
 		_, isPointer := f.Type.(*ast.StarExpr)
@@ -87,4 +92,20 @@ func fieldsOf(st *ast.StructType) []Field {
 		}
 	}
 	return fields
+}
+
+// soleEmbedded returns the type text of st's only embedded field, "" when it
+// embeds none or several.
+func soleEmbedded(st *ast.StructType) string {
+	embedded := ""
+	for _, f := range st.Fields.List {
+		if len(f.Names) != 0 {
+			continue
+		}
+		if embedded != "" {
+			return ""
+		}
+		embedded = exprText(f.Type)
+	}
+	return embedded
 }

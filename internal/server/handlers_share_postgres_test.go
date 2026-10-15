@@ -45,7 +45,7 @@ func TestShareCollectionBetweenTenants_Postgres(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resp := postAs(t, ts, "1", "/v1/exports.sqlite", exportSQLiteReq{CollectionIDs: []int64{cid}})
+	resp := postAs(t, ts, "1", "/v1/exports.sqlite", shareBody("collectionIDs", cid))
 	file, _ := io.ReadAll(resp.Body)
 	resp.Body.Close()
 	if resp.StatusCode != http.StatusOK || !bytes.HasPrefix(file, []byte("SQLite format 3")) {
@@ -100,7 +100,7 @@ func TestShareCollectionOfAnotherTenant_Postgres(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resp := postAs(t, ts, "2", "/v1/exports.sqlite", exportSQLiteReq{CollectionIDs: []int64{cid}})
+	resp := postAs(t, ts, "2", "/v1/exports.sqlite", shareBody("collectionIDs", cid))
 	file, _ := io.ReadAll(resp.Body)
 	resp.Body.Close()
 	if resp.StatusCode == http.StatusOK && bytes.HasPrefix(file, []byte("SQLite format 3")) {
@@ -202,7 +202,7 @@ func TestShareDeckBetweenTenants_Postgres(t *testing.T) {
 	}
 
 	// A tenant that names another's deck carries nothing away.
-	resp := postAs(t, ts, "2", "/v1/exports.sqlite", exportSQLiteReq{DeckIDs: []int64{deck}})
+	resp := postAs(t, ts, "2", "/v1/exports.sqlite", shareBody("deckIDs", deck))
 	probe, _ := io.ReadAll(resp.Body)
 	resp.Body.Close()
 	if resp.StatusCode == http.StatusOK && bytes.HasPrefix(probe, []byte("SQLite format 3")) {
@@ -218,7 +218,7 @@ func TestShareDeckBetweenTenants_Postgres(t *testing.T) {
 		}
 	}
 
-	resp = postAs(t, ts, "1", "/v1/exports.sqlite", exportSQLiteReq{DeckIDs: []int64{deck}})
+	resp = postAs(t, ts, "1", "/v1/exports.sqlite", shareBody("deckIDs", deck))
 	file, _ := io.ReadAll(resp.Body)
 	resp.Body.Close()
 	if resp.StatusCode != http.StatusOK || !bytes.HasPrefix(file, []byte("SQLite format 3")) {

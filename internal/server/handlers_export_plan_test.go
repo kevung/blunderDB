@@ -49,14 +49,13 @@ func TestExportPlanAgreesWithExportReport(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	f := false
 	for _, tc := range []struct {
 		name string
 		req  any
 	}{
 		{"whole tenant", nil},
-		{"decks named", exportSQLiteReq{DeckIDs: []int64{deck}}},
-		{"drafts off", exportSQLiteReq{Transcriptions: &f}},
+		{"decks named", shareBody("deckIDs", deck)},
+		{"drafts off", map[string]any{"includeTranscriptions": false}},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			var plan ingest.ExportPlan
@@ -87,7 +86,7 @@ func TestExportPlanAgreesWithExportReport(t *testing.T) {
 			}
 
 			var page ingest.PlannedIDs
-			resp = post(t, ts, "/v1/exports.planIds", exportPlanIDsReq{Family: ingest.PlanPositions, Limit: 1})
+			resp = post(t, ts, "/v1/exports.planIds", map[string]any{"family": ingest.PlanPositions, "limit": 1})
 			if resp.StatusCode != http.StatusOK {
 				t.Fatalf("exports.planIds status = %d", resp.StatusCode)
 			}

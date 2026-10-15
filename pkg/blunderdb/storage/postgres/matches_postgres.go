@@ -891,6 +891,33 @@ func (s *matchStore) MovesByPositions(ctx context.Context, scope string, positio
 	return out, nil
 }
 
+// MatchIDsReachedBy — see storage.MatchStore.
+func (s *matchStore) MatchIDsReachedBy(ctx context.Context, scope string, positionIDs []int64) ([]int64, error) {
+	ids := []int64{}
+	if len(positionIDs) == 0 {
+		return ids, nil
+	}
+	rows, err := s.db.Query(ctx,
+		`SELECT DISTINCT g.match_id FROM move mv JOIN game g ON g.id = mv.game_id
+		 WHERE mv.position_id = ANY($1) AND mv.tenant_id = $2 ORDER BY g.match_id`,
+		positionIDs, tenantID(scope))
+	if err != nil {
+		return nil, fmt.Errorf("postgres: matches reached by positions: %w", err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			return nil, fmt.Errorf("postgres: matches reached by positions: %w", err)
+		}
+		ids = append(ids, id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("postgres: matches reached by positions: %w", err)
+	}
+	return ids, nil
+}
+
 // CreateMoveAnalysis — see storage.MatchStore. The rate and equity columns
 // are BIGINT here (schema 001), so the values are stored rounded: nothing
 // writes fractional move analyses any more, and a copy of an old SQLite file

@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -13,9 +14,20 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
+// shareBody is the export body that hands one family's ids to another tenant:
+// those rows and their positions, without the rest of the library or the
+// sender's review history.
+func shareBody(family string, ids ...int64) map[string]any {
+	return map[string]any{
+		"wholeLibrary": false, family: ids, "includeCollectionPositions": true,
+		"includeFilterLibrary": false, "includeLessons": false, "includeAnkiHistory": false,
+	}
+}
+
 // exports.sqlite honours the families the desktop and the CLI can leave out:
-// the whole tenant carries the decks' review history, decks named by deckIds
-// leave without it, and ankiHistory or transcriptions set to false drop them.
+// the whole tenant carries the decks' review history, decks shared by deckIDs
+// leave without it, and includeAnkiHistory or includeTranscriptions set to
+// false drop them.
 func TestExportSQLiteHonoursHistoryAndTranscriptions(t *testing.T) {
 	ts, srv := newTestServerAndHandler(t)
 	ctx := context.Background()
@@ -56,16 +68,15 @@ func TestExportSQLiteHonoursHistoryAndTranscriptions(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	f := false
 	cases := []struct {
 		name            string
 		req             any
 		reviews, drafts int
 	}{
 		{"whole tenant", nil, 1, 1},
-		{"decks named", exportSQLiteReq{DeckIDs: []int64{deck}}, 0, 0},
-		{"history off", exportSQLiteReq{AnkiHistory: &f}, 0, 1},
-		{"drafts off", exportSQLiteReq{Transcriptions: &f}, 1, 0},
+		{"decks named", shareBody("deckIDs", deck), 0, 0},
+		{"history off", map[string]any{"includeAnkiHistory": false}, 0, 1},
+		{"drafts off", map[string]any{"includeTranscriptions": false}, 1, 0},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
@@ -104,5 +115,41 @@ func TestExportSQLiteHonoursHistoryAndTranscriptions(t *testing.T) {
 				t.Errorf("%d review events, %d drafts; want %d, %d", reviews, drafts, tc.reviews, tc.drafts)
 			}
 		})
+	}
+}
+
+// The daemon streams a plain SQLite file: a password it would not apply is refused,
+// on the export and on its plan alike.
+func TestExportSQLiteRefusesPassword(t *testing.T) {
+	ts := newTestServer(t)
+	for _, route := range []string{"/v1/exports.sqlite", "/v1/exports.plan"} {
+		resp := post(t, ts, route, map[string]any{"password": "secret"})
+		resp.Body.Close()
+		if resp.StatusCode != http.StatusBadRequest {
+			t.Errorf("%s with a password: status %d, want 400", route, resp.StatusCode)
+		}
+	}
+}
+
+// A key the export options do not hold is refused and named: an old client's
+// collectionIds must not quietly export the whole tenant.
+func TestExportSQLiteRefusesUnknownKeys(t *testing.T) {
+	ts := newTestServer(t)
+	for _, tc := range []struct {
+		route string
+		body  any
+		key   string
+	}{
+		{"/v1/exports.sqlite", map[string]any{"collectionIds": []int64{4}}, "collectionIds"},
+		{"/v1/exports.plan", map[string]any{"watermarkOrigin": "club"}, "watermarkOrigin"},
+		{"/v1/exports.planIds", map[string]any{"family": "positions", "export": map[string]any{"deckIds": []int64{1}}}, "deckIds"},
+		{"/v1/exports.sqlite", map[string]any{"metadata": map[string]string{"a": "b"}}, "metadata"},
+	} {
+		resp := post(t, ts, tc.route, tc.body)
+		body, _ := io.ReadAll(resp.Body)
+		resp.Body.Close()
+		if resp.StatusCode != http.StatusBadRequest || !strings.Contains(string(body), tc.key) {
+			t.Errorf("%s with %s: status %d, body %s; want 400 naming the key", tc.route, tc.key, resp.StatusCode, body)
+		}
 	}
 }
