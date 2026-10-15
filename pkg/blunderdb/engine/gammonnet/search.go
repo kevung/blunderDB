@@ -9,7 +9,6 @@ import (
 	"runtime"
 	"slices"
 	"sync"
-	"sync/atomic"
 )
 
 // Expectiminimax over dice, 0 to 4 ply, ported from gammonNet's gn_search.
@@ -316,12 +315,11 @@ type Searcher struct {
 	// valuation : le dénominateur se compte, il ne se suppose pas.
 	cubeValuations uint64
 
-	// workers are independent searchers the root farms its roll loop out to.
-	// Each owns its scratch, its generator and its cache; nothing is shared but
-	// the read-only networks.
-	workers []*Searcher
+	// team is nil for a serial searcher; otherwise the budget and helpers its
+	// forks hand subtrees to (parallel.go). A helper shares its lender's team.
+	team *team
 
-	// stop is shared with the workers: one context interrupts the whole
+	// stop is shared with the helpers: one context interrupts the whole
 	// search (cancel.go).
 	stop *stopSwitch
 
@@ -347,7 +345,7 @@ type Searcher struct {
 	// needs: even levels see [0], odd levels [1] (Swap only exchanges the
 	// away scores). seedMatchState fixes both at level 0; deeper levels index
 	// them (childMatchState) instead of allocating a swapped copy per step.
-	// hasMatchState is false for money; each worker owns its own pair.
+	// hasMatchState is false for money; a helper is lent a copy of the pair.
 	matchStates   [2]MatchState
 	hasMatchState bool
 
@@ -358,7 +356,7 @@ type Searcher struct {
 
 	// best is the candidate buffer (164 Ko) for the entry points that do not
 	// take one: BestPlay and evaluateMoves. Allocated on first use, since a
-	// worker never touches it.
+	// helper never touches it.
 	best []Candidate
 
 	// Le brouillon du lot de shallowFill, le chemin le plus chaud du moteur,
@@ -396,9 +394,7 @@ func newSearcherWith(cfg SearchConfig, net, prune *Network) *Searcher {
 	return newSearcherWithCache(cfg, net, prune, defaultCacheLog2)
 }
 
-// newSearcherWithCache is newSearcherWith with the cache size broken out, so
-// WithWorkers can give a worker a smaller cache: it only catches repeats
-// within the queue it drains, a much smaller working set than the root's.
+// newSearcherWithCache is newSearcherWith with the cache size broken out.
 func newSearcherWithCache(cfg SearchConfig, net, prune *Network, cacheLog2 uint) *Searcher {
 	if cfg.Ply < 0 {
 		cfg.Ply = 0
@@ -422,7 +418,7 @@ func newSearcherWithCache(cfg SearchConfig, net, prune *Network, cacheLog2 uint)
 }
 
 // playsAt et candsAt sont les brouillons du niveau level, alloués au premier
-// usage : un ouvrier par cœur les multiplie, et une décision à 2 ply ne
+// usage : un auxiliaire par cœur les multiplie, et une décision à 2 ply ne
 // descend que trois niveaux sur six. Aucun verrou : un Searcher appartient à
 // une goroutine.
 func (s *Searcher) playsAt(level int) []Play {
@@ -584,13 +580,28 @@ func (s *Searcher) deepen(out []Candidate, searched, depth, level int, owner Cub
 	theirs := s.childMatchState(level)
 	theirOwner := owner.Mirror()
 	// À la racine, tous les candidats partent dans une seule file
-	// (deepenGroups) : une barrière par décision. Ailleurs, la boucle
-	// sérielle, terme pour terme identique.
-	if level == 0 && len(s.workers) > 0 {
+	// (deepenGroups) : une barrière par décision. Plus bas, à partir de
+	// splitDepth, un candidat par tâche (parallel.go) ; ailleurs la boucle
+	// sérielle. Chaque tâche n'écrit que l'équité de son candidat, et le tri
+	// suit la barrière : terme pour terme identique.
+	switch {
+	case level == 0 && s.parallel():
 		if !s.deepenGroups([][]Candidate{out[:searched]}, depth, theirs, theirOwner) {
 			return false
 		}
-	} else {
+	case depth >= splitDepth && searched > 1 && s.parallel():
+		ok := s.fork(searched, func(w *Searcher, i int) bool {
+			if out[i].Play.Result.isOver() {
+				return true // keeps the exact terminal value from the sweep
+			}
+			v, ok := w.positionEquity(&out[i].Play.Result, depth, level+1, theirs, theirOwner)
+			out[i].Equity = -v
+			return ok
+		})
+		if !ok {
+			return false
+		}
+	default:
 		for i := 0; i < searched; i++ {
 			if out[i].Play.Result.isOver() {
 				continue // keeps the exact terminal value from the sweep
@@ -770,8 +781,9 @@ func (s *Searcher) nodeValue(probs *[NumOutputs]float32, state *MatchState, owne
 // state is the match state as pos's OWN mover sees it, or nil under money
 // valuation; owner the cube as that mover sees it.
 //
-// Always serial: its callers are below the root, where the workers are never
-// consulted (the roots farm out through deepenGroups).
+// From splitDepth on a parallel searcher, the 21 rolls are handed out longest
+// first (rollsByCost), each into its own slot, and summed after the barrier in
+// ascending roll index — the order of the serial loop.
 func (s *Searcher) positionEquity(pos *Position, depth, level int, state *MatchState, owner CubeOwner) (float64, bool) {
 	if level == 0 {
 		s.seedMatchState(state) // only a direct test entry point takes this in production
@@ -785,15 +797,26 @@ func (s *Searcher) positionEquity(pos *Position, depth, level int, state *MatchS
 	if level >= len(s.cands) {
 		return 0, false
 	}
-	cands := s.candsAt(level)
-
 	var best [NumRolls]float64
-	for r := 0; r < NumRolls; r++ {
-		v, ok := s.oneRoll(pos, depth, level, r, state, owner, cands)
+	if depth >= splitDepth && s.parallel() {
+		ok := s.fork(NumRolls, func(w *Searcher, k int) bool {
+			r := rollsByCost[k]
+			v, ok := w.oneRoll(pos, depth, level, r, state, owner, w.candsAt(level))
+			best[r] = v
+			return ok
+		})
 		if !ok {
 			return 0, false
 		}
-		best[r] = v
+	} else {
+		cands := s.candsAt(level)
+		for r := 0; r < NumRolls; r++ {
+			v, ok := s.oneRoll(pos, depth, level, r, state, owner, cands)
+			if !ok {
+				return 0, false
+			}
+			best[r] = v
+		}
 	}
 
 	var sum float64
@@ -858,7 +881,7 @@ var rollsByCost = [NumRolls]int{10, 14, 7, 12, 3, 9, 16, 19, 4, 1, 6, 8, 15, 17,
 // deepenGroups approfondit tous les candidats d'un ou plusieurs groupes (un
 // niveau de rankPlays, ou un lancer racine de probsAt) dans une seule file et
 // derrière une seule barrière : une file de 63 tâches se répartit bien mieux
-// sur les ouvriers que trois de 21.
+// sur les cœurs que trois de 21.
 //
 // Le résultat ne bouge pas d'un bit : la somme pondérée reste sérielle, par
 // candidat, en index de lancer croissant, en float64 (l'équivalent aplati de
@@ -925,49 +948,22 @@ func (s *Searcher) deepenGroups(groups [][]Candidate, depth int, state *MatchSta
 	return true
 }
 
-// runRollTasks vide la file sur les ouvriers, qui piochent la tâche suivante
-// par un compteur atomique (le schedule(dynamic,1) d'OpenMP, bien moins cher
-// qu'un canal). Rien n'est partagé que les réseaux en lecture seule et state
-// (une valeur) ; chaque résultat va dans son emplacement fixé d'avance.
+// runRollTasks vide la file par fork (parallel.go) : l'appelant et les
+// auxiliaires qu'il recrute piochent la tâche suivante dans l'ordre LPT ;
+// chaque résultat va dans son emplacement fixé d'avance.
+//
+// Une tâche tourne au niveau 1 : le niveau 0 est celui de la racine, dont
+// le brouillon et la paire d'états de match doivent survivre à la file
+// quand l'appelant exécute lui-même une tâche. state (déjà échangé) est
+// matchStates[1], ce que childMatchState(0) rend : le niveau 1 lit la même
+// paire que la récursion sérielle.
 func (s *Searcher) runRollTasks(tasks []rollTask, depth int, state *MatchState, owner CubeOwner, out []float64) bool {
-	nw := len(s.workers)
-	if nw > len(tasks) {
-		nw = len(tasks)
-	}
-	if nw <= 0 {
-		return true
-	}
-	var next atomic.Int64
-	var wg sync.WaitGroup
-	ok := make([]bool, nw)
-	for w := 0; w < nw; w++ {
-		wg.Add(1)
-		go func(w int) {
-			defer wg.Done()
-			worker := s.workers[w]
-			ok[w] = true
-			for {
-				i := int(next.Add(1)) - 1
-				if i >= len(tasks) {
-					return
-				}
-				t := tasks[i]
-				v, good := worker.oneRoll(t.pos, depth, 0, t.roll, state, owner, worker.candsAt(0))
-				if !good {
-					ok[w] = false
-					return
-				}
-				out[t.slot] = v
-			}
-		}(w)
-	}
-	wg.Wait()
-	for _, good := range ok {
-		if !good {
-			return false
-		}
-	}
-	return true
+	return s.fork(len(tasks), func(w *Searcher, k int) bool {
+		t := tasks[k]
+		v, ok := w.oneRoll(t.pos, depth, 1, t.roll, state, owner, w.candsAt(1))
+		out[t.slot] = v
+		return ok
+	})
 }
 
 // leafValue is the value of a position from its own turn's point of view:
@@ -1027,93 +1023,57 @@ const sortInsertionMax = 48
 // actually ran, small-network (pruning) evaluations, and cache hits. A cache
 // hit is an evaluation that did not happen.
 //
-// Workers are counted in (a root-only figure would shrink as cores are
-// added). Call between searches, never during one.
+// Helpers are counted in: a fork carries their counters back to the searcher
+// that opened it (a root-only figure would shrink as cores are added). Call
+// between searches, never during one.
 func (s *Searcher) Counters() (evals, pruneEvals, cacheHits uint64) {
-	evals, pruneEvals, cacheHits = s.evals, s.pruneEvals, s.cacheHits
-	for _, w := range s.workers {
-		e, pe, ch := w.Counters()
-		evals, pruneEvals, cacheHits = evals+e, pruneEvals+pe, cacheHits+ch
-	}
-	return evals, pruneEvals, cacheHits
+	return s.evals, s.pruneEvals, s.cacheHits
 }
 
 // BatchFill reports how many positions the fill passes evaluated, and how many
 // lanes those positions would occupy at EvalBatchWidth. filled/slotted is the
 // batch fill ratio; the shortfall is the work a batched kernel computes and
-// discards. Workers are counted in, for the same reason Counters counts them.
+// discards. Helpers are counted in, as in Counters.
 func (s *Searcher) BatchFill() (filled, slotted uint64) {
-	filled, slotted = s.batchFilled, s.batchSlotted
-	for _, w := range s.workers {
-		f, sl := w.BatchFill()
-		filled, slotted = filled+f, slotted+sl
-	}
-	return filled, slotted
+	return s.batchFilled, s.batchSlotted
 }
 
 // CubeValuations reports how many distributions the cube model actually
-// valued, workers counted in.
+// valued, helpers counted in.
 func (s *Searcher) CubeValuations() uint64 {
-	n := s.cubeValuations
-	for _, w := range s.workers {
-		n += w.CubeValuations()
-	}
-	return n
+	return s.cubeValuations
 }
 
-// ResetCounters zeroes them, workers included.
+// ResetCounters zeroes them.
 func (s *Searcher) ResetCounters() {
-	s.evals, s.pruneEvals, s.cacheHits = 0, 0, 0
-	s.batchFilled, s.batchSlotted = 0, 0
-	s.cubeValuations = 0
-	for _, w := range s.workers {
-		w.ResetCounters()
-	}
+	s.takeCounts()
 }
 
-// WithWorkers gives the searcher a pool to farm the root's roll loop out to.
-// Each worker is an independent Searcher over the same read-only networks: its
-// own scratch, its own generator, its own cache.
+// WithWorkers lets the searcher's search spread over at most n goroutines of
+// its own (its own budget, n-1 helpers beside the caller): the measurement
+// and test entry point. A search that runs beside others takes WithCores
+// (ProcessCores()) instead, so that nothing stacked asks for more than the
+// machine.
 //
-// The answer is unchanged, bit for bit: parallelism decides who computes each
-// of the 21 terms, never the order they are summed in (no parallel reduction).
+// The answer is unchanged, bit for bit (parallel.go).
 func (s *Searcher) WithWorkers(n int) *Searcher {
 	if n <= 1 {
-		s.workers = nil
-		return s
+		return s.WithCores(nil)
 	}
-	if max := s.maxUsefulWorkers(); n > max {
-		n = max
-	}
-	s.workers = make([]*Searcher, n)
-	for i := range s.workers {
-		s.workers[i] = newSearcherWithCache(s.cfg, s.net, s.prune, workerCacheLog2)
-		s.workers[i].stop = s.stop
-	}
-	return s
+	return s.WithCores(newCores(n - 1))
 }
 
-// maxUsefulWorkers est le nombre de tâches de la plus grosse file de cette
-// configuration : au-delà, un ouvrier n'ajoute que sa table (3,7 Mo). Deux
-// files comptent : un niveau de rankPlays (filterWidest(depth) × 21) et la
-// racine de probsAt (jusqu'à NumRolls² × filterWidest(Ply-1)).
-func (s *Searcher) maxUsefulWorkers() int {
-	widest := 1
-	for depth := 1; depth <= s.cfg.Ply && depth < len(s.cfg.Filter); depth++ {
-		widest = max(widest, s.cfg.filterWidest(depth))
+// WithCores lets the searcher hand subtrees out to helpers whenever c has a
+// free token; nil makes it serial again. Its cache becomes shared with the
+// helpers (one lock per slice of slots).
+func (s *Searcher) WithCores(c *Cores) *Searcher {
+	if c == nil {
+		s.team = nil
+		return s
 	}
-	tasks := NumRolls * widest
-	if s.cfg.Ply >= 1 {
-		rootDepth := s.cfg.Ply - 1
-		rootWidth := 1
-		if rootDepth >= 0 && rootDepth < len(s.cfg.Filter) {
-			rootWidth = max(rootWidth, s.cfg.filterWidest(rootDepth))
-		}
-		if probeTasks := NumRolls * NumRolls * rootWidth; probeTasks > tasks {
-			tasks = probeTasks
-		}
-	}
-	return tasks
+	s.cache.share()
+	s.team = &team{cores: c}
+	return s
 }
 
 // LiveWorkers is how many goroutines a FOREGROUND search (the only one
@@ -1158,8 +1118,5 @@ func (s *Searcher) Reconfigure(cfg SearchConfig) error {
 		cfg.Ply = MaxPly
 	}
 	s.cfg = cfg
-	for _, w := range s.workers {
-		w.cfg = cfg
-	}
 	return nil
 }

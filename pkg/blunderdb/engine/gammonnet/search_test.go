@@ -147,6 +147,7 @@ func TestCacheDoesNotChangeTheAnswer(t *testing.T) {
 		t.Fatal(err)
 	}
 	again := make([]Candidate, MaxPlays)
+	s.ResetCounters()
 	n2, err := s.Plays(&p, 5, 3, again) // now every leaf is cached
 	if err != nil {
 		t.Fatal(err)
@@ -159,7 +160,7 @@ func TestCacheDoesNotChangeTheAnswer(t *testing.T) {
 			t.Fatalf("candidate %d changed once cached: %.17g → %.17g", i, warm[i].Equity, again[i].Equity)
 		}
 	}
-	if s.cache.hits == 0 {
+	if _, _, hits := s.Counters(); hits == 0 {
 		t.Error("no cache hit in the second pass — the cache is not being consulted")
 	}
 }

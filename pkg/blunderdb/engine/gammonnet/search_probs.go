@@ -93,51 +93,78 @@ func (s *Searcher) probsAt(pos *Position, depth, level int, state *MatchState, o
 		return [NumOutputs]float32{}, false
 	}
 
-	// À la racine, seule à consulter s.workers, les 21 lancers vont dans une
-	// file combinée ; ailleurs, la boucle sérielle, terme pour terme
-	// identique.
-	if level == 0 && len(s.workers) > 0 {
+	// À la racine d'un chercheur parallèle, les 21 lancers vont dans une
+	// file combinée ; ailleurs, un lancer par emplacement, sur plusieurs
+	// cœurs à partir de splitDepth, accumulés après la barrière en index de
+	// lancer croissant : terme pour terme la boucle sérielle.
+	if level == 0 && s.parallel() {
 		return s.probsAtRootParallel(pos, depth, state, owner)
 	}
 
-	cands := s.candsAt(level)
-
-	var total [NumOutputs]float64
-	for r := 0; r < NumRolls; r++ {
-		roll := s.rolls[r]
-		n := s.rankPlays(pos, int(roll.d1), int(roll.d2), depth-1, level, state, owner, cands)
-		if n < 0 {
-			return [NumOutputs]float32{}, false
-		}
-
-		var theirs [NumOutputs]float32
-		var ok bool
-		if n > 0 {
-			// The best play's own distribution, at the depth its equity was
-			// scored at (depth-1) — mirroring -V(result, depth-1).
-			theirs, ok = s.probsAt(&cands[0].Play.Result, depth-1, level+1, s.childMatchState(level), owner.Mirror())
-		} else {
-			// No legal play: the turn passes, exactly as the scalar
-			// recursion does — dropping the branch would bias the average.
-			passed := *pos
-			passed.swapTurn()
-			theirs, ok = s.probsAt(&passed, depth-1, level+1, s.childMatchState(level), owner.Mirror())
-		}
+	var mine [NumRolls][NumOutputs]float32
+	if depth >= splitDepth && s.parallel() {
+		ok := s.fork(NumRolls, func(w *Searcher, k int) bool {
+			r := rollsByCost[k]
+			var ok bool
+			mine[r], ok = w.rollProbs(pos, depth, level, r, state, owner)
+			return ok
+		})
 		if !ok {
 			return [NumOutputs]float32{}, false
 		}
-
-		mine := invertProbs(&theirs)
-		for i := range total {
-			total[i] += roll.weight * float64(mine[i])
+	} else {
+		for r := 0; r < NumRolls; r++ {
+			var ok bool
+			if mine[r], ok = s.rollProbs(pos, depth, level, r, state, owner); !ok {
+				return [NumOutputs]float32{}, false
+			}
 		}
 	}
+	return s.weighRolls(&mine), true
+}
 
+// rollProbs is one roll's term of probsAt, from pos's mover's view: the best
+// reply's distribution at depth-1, inverted.
+func (s *Searcher) rollProbs(pos *Position, depth, level, r int, state *MatchState, owner CubeOwner) ([NumOutputs]float32, bool) {
+	roll := s.rolls[r]
+	cands := s.candsAt(level)
+	n := s.rankPlays(pos, int(roll.d1), int(roll.d2), depth-1, level, state, owner, cands)
+	if n < 0 {
+		return [NumOutputs]float32{}, false
+	}
+	var theirs [NumOutputs]float32
+	var ok bool
+	if n > 0 {
+		// The best play's own distribution, at the depth its equity was
+		// scored at (depth-1) — mirroring -V(result, depth-1).
+		theirs, ok = s.probsAt(&cands[0].Play.Result, depth-1, level+1, s.childMatchState(level), owner.Mirror())
+	} else {
+		// No legal play: the turn passes, exactly as the scalar
+		// recursion does — dropping the branch would bias the average.
+		passed := *pos
+		passed.swapTurn()
+		theirs, ok = s.probsAt(&passed, depth-1, level+1, s.childMatchState(level), owner.Mirror())
+	}
+	if !ok {
+		return [NumOutputs]float32{}, false
+	}
+	return invertProbs(&theirs), true
+}
+
+// weighRolls is the roll-weighted average of the 21 terms, accumulated in
+// float64 in ascending roll index, whoever computed them.
+func (s *Searcher) weighRolls(mine *[NumRolls][NumOutputs]float32) [NumOutputs]float32 {
+	var total [NumOutputs]float64
+	for r := 0; r < NumRolls; r++ {
+		for i := range total {
+			total[i] += s.rolls[r].weight * float64(mine[r][i])
+		}
+	}
 	var out [NumOutputs]float32
 	for i := range out {
 		out[i] = float32(total[i])
 	}
-	return out, true
+	return out
 }
 
 // probsAtRootParallel est la racine de probsAt, aplatie comme la phase trois
@@ -150,10 +177,11 @@ func (s *Searcher) probsAt(pos *Position, depth, level int, state *MatchState, o
 // Pass B (deepenGroups) approfondit tous les groupes : une file, une
 // barrière.
 //
-// Pass C (sérielle, en index de lancer croissant) reproduit la réduction
-// d'origine : retrier le groupe, prendre le meilleur, recourir à probsAt,
-// inverser, accumuler pondéré en float64. La parallélisation ne change que
-// qui calcule, jamais l'ordre de la somme.
+// Pass C reproduit la réduction d'origine : retrier le groupe, prendre le
+// meilleur, recourir à probsAt (un lancer par tâche), inverser, puis
+// accumuler pondéré en float64 en index de lancer croissant après la
+// barrière. La parallélisation ne change que qui calcule, jamais l'ordre de
+// la somme.
 func (s *Searcher) probsAtRootParallel(pos *Position, depth int, state *MatchState, owner CubeOwner) ([NumOutputs]float32, bool) {
 	// Always level 0 — probsAt only ever branches here from its own level ==
 	// 0 check, which has already seeded matchStates[0]/[1] for this chain.
@@ -191,32 +219,27 @@ func (s *Searcher) probsAtRootParallel(pos *Position, depth int, state *MatchSta
 		return [NumOutputs]float32{}, false
 	}
 
-	var total [NumOutputs]float64
+	// Pass C : le tri de chaque groupe d'abord, sur l'appelant ; puis la
+	// distribution du meilleur coup de chaque lancer, un emplacement par
+	// lancer, accumulée après la barrière en index croissant.
+	var results [NumRolls]*Position
 	for r := 0; r < NumRolls; r++ {
-		roll := s.rolls[r]
-
-		var result *Position
 		if s.probeDanced[r] {
-			result = &s.probePassed[r]
+			results[r] = &s.probePassed[r]
 		} else {
 			sortByEquity(s.probeCands[r])
-			result = &s.probeCands[r][0].Play.Result
-		}
-
-		theirsProbs, ok := s.probsAt(result, depth-1, 1, theirs, theirOwner)
-		if !ok {
-			return [NumOutputs]float32{}, false
-		}
-
-		mine := invertProbs(&theirsProbs)
-		for i := range total {
-			total[i] += roll.weight * float64(mine[i])
+			results[r] = &s.probeCands[r][0].Play.Result
 		}
 	}
-
-	var out [NumOutputs]float32
-	for i := range out {
-		out[i] = float32(total[i])
+	var mine [NumRolls][NumOutputs]float32
+	ok := s.fork(NumRolls, func(w *Searcher, k int) bool {
+		r := rollsByCost[k]
+		theirsProbs, ok := w.probsAt(results[r], depth-1, 1, theirs, theirOwner)
+		mine[r] = invertProbs(&theirsProbs)
+		return ok
+	})
+	if !ok {
+		return [NumOutputs]float32{}, false
 	}
-	return out, true
+	return s.weighRolls(&mine), true
 }

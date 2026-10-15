@@ -2,6 +2,8 @@
 
 package gammonnet
 
+import "sync"
+
 // The evaluation cache: a direct-mapped table from a position to the raw leaf
 // distribution the network produced for it.
 //
@@ -9,8 +11,9 @@ package gammonnet
 //
 // The key is the whole position and nothing else — no depth, score or cube —
 // and the value is the network's output for it, so a hit returns exactly what
-// a miss would compute. That is what allows one cache per goroutine, without a
-// lock (the reference shares one): only the hit rate differs.
+// a miss would compute. That is what allows a searcher to own its table without
+// a lock, or to share it with its team behind one lock per slice of slots (as
+// the reference does): only the hit rate differs.
 //
 // The pruning pass must never read or write it, or the small network's
 // ordering would depend on evaluation history.
@@ -24,11 +27,11 @@ const (
 	// transpositions across the whole tree recur.
 	defaultCacheLog2 = 16
 
-	// workerCacheLog2 sizes a WORKER's cache (~230 KB): a worker only drains
-	// its share of one deepenGroups queue, a small working set. Big-network
-	// evals stay flat (<0.2 %) from 2^10 to 2^16 entries; 2^12 keeps a
-	// margin.
-	workerCacheLog2 = 12
+	// cacheLockLog2 is how many locks guard a shared table: one per slice
+	// of slots, gn_evalcache.c's 4096. A reader racing a writer on one slot
+	// could see the whole key of one position and half the probabilities of
+	// another.
+	cacheLockLog2 = 12
 )
 
 type cacheEntry struct {
@@ -40,8 +43,11 @@ type cacheEntry struct {
 type evalCache struct {
 	entries []cacheEntry
 	mask    uint64
-	hits    uint64
-	misses  uint64
+
+	// locks is nil while one goroutine owns the table; share allocates it
+	// before a team reads and writes it at once.
+	locks    []sync.Mutex
+	lockMask uint64
 }
 
 func newEvalCache(log2 uint) *evalCache {
@@ -50,6 +56,20 @@ func newEvalCache(log2 uint) *evalCache {
 	}
 	n := uint64(1) << log2
 	return &evalCache{entries: make([]cacheEntry, n), mask: n - 1}
+}
+
+// share makes the table safe for concurrent use. Called once, before the
+// first helper is lent; idempotent.
+func (c *evalCache) share() {
+	if c.locks != nil {
+		return
+	}
+	n := c.mask + 1
+	if n > 1<<cacheLockLog2 {
+		n = 1 << cacheLockLog2
+	}
+	c.locks = make([]sync.Mutex, n)
+	c.lockMask = n - 1
 }
 
 // hashPosition is FNV-1a over the 29 bytes the reference hashes, in the same
@@ -77,21 +97,36 @@ func hashPosition(p *Position) uint64 {
 // compared, so a hash collision never produces a wrong answer — it produces a
 // miss.
 func (c *evalCache) lookup(p *Position, out *[NumOutputs]float32) bool {
-	e := &c.entries[hashPosition(p)&c.mask]
-	if !e.occupied || e.key != *p {
-		c.misses++
-		return false
+	i := hashPosition(p) & c.mask
+	e := &c.entries[i]
+	if c.locks == nil {
+		if !e.occupied || e.key != *p {
+			return false
+		}
+		*out = e.probs
+		return true
 	}
-	*out = e.probs
-	c.hits++
-	return true
+	l := &c.locks[i&c.lockMask]
+	l.Lock()
+	hit := e.occupied && e.key == *p
+	if hit {
+		*out = e.probs
+	}
+	l.Unlock()
+	return hit
 }
 
 // store writes p's distribution, replacing whatever shared its slot. Newest
 // wins: no probing, no chaining.
 func (c *evalCache) store(p *Position, probs *[NumOutputs]float32) {
-	e := &c.entries[hashPosition(p)&c.mask]
-	e.key = *p
-	e.probs = *probs
-	e.occupied = true
+	i := hashPosition(p) & c.mask
+	e := &c.entries[i]
+	if c.locks == nil {
+		e.key, e.probs, e.occupied = *p, *probs, true
+		return
+	}
+	l := &c.locks[i&c.lockMask]
+	l.Lock()
+	e.key, e.probs, e.occupied = *p, *probs, true
+	l.Unlock()
 }

@@ -13,14 +13,11 @@ import (
 	"time"
 )
 
-// coldCaches vide les tables d'évaluation du chercheur et de ses ouvriers :
-// sur une table chaude, on mesurerait le cache, pas la décision.
+// coldCaches vide la table d'évaluation du chercheur, que ses auxiliaires
+// partagent : sur une table chaude, on mesurerait le cache, pas la décision.
 func coldCaches(s *Searcher) {
 	for i := range s.cache.entries {
 		s.cache.entries[i].occupied = false
-	}
-	for _, w := range s.workers {
-		coldCaches(w)
 	}
 }
 
