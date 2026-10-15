@@ -692,7 +692,7 @@ func (cli *CLI) importDatabase(filePath, format string) error {
 	fmt.Printf("Imported %s\n", filePath)
 	fmt.Printf("  positions: %v added, %v merged, %v unchanged\n", res["added"], res["merged"], res["skipped"])
 	fmt.Printf("  matches: %v added, %v already held\n", res["matches"], res["matchesKnown"])
-	for _, key := range []string{"tournaments", "collections", "lessons", "decks", "transcriptions", "aliases"} {
+	for _, key := range []string{"tournaments", "directions", "rencontres", "collections", "lessons", "decks", "transcriptions", "aliases"} {
 		fmt.Printf("  %s: %v\n", key, res[key])
 	}
 	for _, l := range [][2]string{

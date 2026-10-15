@@ -33,9 +33,9 @@ type DirectionStore interface {
 	// already written (ErrConflict): the log is append-only, and a silent
 	// overwrite would lose a decision the director made. It also refuses a
 	// log without its record (direction.ErrNoDirection): every writer creates
-	// the record first — direction.Create, and the export, which copies the
-	// record before the events — and no import writes a log, so an orphan
-	// event could only be a bug. Bound to a Tx it is atomic with the rest of
+	// the record first — direction.Create, and the export and the import,
+	// which copy the record before the events — so an orphan event could only
+	// be a bug. Bound to a Tx it is atomic with the rest of
 	// that transaction.
 	AppendEvent(ctx context.Context, scope string, tournamentID int64, ev direction.StoredEvent) error
 	// LoadEvents returns the log in sequence order.
@@ -64,6 +64,10 @@ type DirectionStore interface {
 	Pairs(ctx context.Context, scope string, tournamentID int64) (map[string][]PairMember, error)
 	// SetPair replaces the persons behind one Participant.
 	SetPair(ctx context.Context, scope string, tournamentID int64, participantID string, members []PairMember) error
+	// KeepDates gives the record the created_at/updated_at text its source
+	// bore (an empty one is left as is): an import keeps the Direction's
+	// history, which appending events and filling Slots would restamp.
+	KeepDates(ctx context.Context, scope string, tournamentID int64, created, updated string) error
 }
 
 // FilledSlot is a library Match sitting in a Slot, with what its own file

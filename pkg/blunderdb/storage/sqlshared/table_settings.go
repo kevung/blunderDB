@@ -177,3 +177,8 @@ func decodeRooms(raw string) ([]string, error) {
 	}
 	return rooms, nil
 }
+
+// KeepDates implements storage.RencontreStore.KeepDates.
+func (s *RencontreStore) KeepDates(ctx context.Context, scope string, id int64, created, updated string) error {
+	return KeepDates(ctx, s.DB, scope, "rencontre", "id", id, created, updated)
+}

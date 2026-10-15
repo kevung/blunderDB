@@ -32,6 +32,14 @@ type MatchMerge struct {
 	Tournaments    int
 	Transcriptions int
 	Aliases        int
+	// Directions counts the Directions read back, Slots the imported Matches
+	// they put back in their Slots, Rencontres the Rencontres created;
+	// DirectionsKnown the Directions left behind because the target's
+	// Tournament already has one.
+	Directions      int
+	DirectionsKnown int
+	Slots           int
+	Rencontres      int
 	// Unreadable names the families the source could not be read for — a
 	// source older than them — which the import leaves behind.
 	Unreadable []string
@@ -58,7 +66,9 @@ type MatchMerge struct {
 //   - a draft is written unless the target holds the same document, or a
 //     draft of the match it produced;
 //   - an alias is set unless the target already decides that spelling, or
-//     the name is a canonical there: the recipient's choice wins.
+//     the name is a canonical there: the recipient's choice wins;
+//   - a Direction is read back into its Tournament unless that one already
+//     has a Direction here, with its Rencontre (mergeDirections).
 //
 // Tournaments, drafts and aliases keep the dates their source rows bore.
 // Importing the same file twice therefore changes nothing. Nothing is written
@@ -70,6 +80,11 @@ func MergeMatches(ctx context.Context, tx storage.Stores, scope string, source s
 		return res, err
 	}
 	if err := mergeMatchRows(ctx, tx, scope, source, targetOf, &res); err != nil {
+		return res, err
+	}
+	// Before the tournaments' dates are written back: filling a Slot and
+	// joining a Rencontre stamp the tournament.
+	if err := mergeDirections(ctx, tx, scope, source, &res); err != nil {
 		return res, err
 	}
 	for id, d := range res.keptDates {
@@ -455,5 +470,7 @@ func (s *Summary) applyMatchMerge(m MatchMerge) {
 	s.Tournaments = m.Tournaments
 	s.Transcriptions = m.Transcriptions
 	s.Aliases = m.Aliases
+	s.Directions = m.Directions
+	s.Rencontres = m.Rencontres
 	s.Unreadable = m.Unreadable
 }
