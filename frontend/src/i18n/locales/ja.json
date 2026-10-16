@@ -2262,7 +2262,11 @@
             "colCi": "95 % 信頼区間",
             "tied": "同等",
             "scale": "差はスコアに正規化したエクイティ（±1 = センターキューブ）。「同等」：差が 1.96·σ(差) + 0.005 未満。",
-            "precision": "ロールアウト：{games} ゲーム — {signature}"
+            "precision": "ロールアウト {ply}、{truncation}、{games} ゲーム、{bearoff}",
+            "truncated": "{n} で打ち切り",
+            "untruncated": "打ち切りなし",
+            "withBearoff": "正確なベアオフ表あり",
+            "withoutBearoff": "正確なベアオフ表なし"
         }
     },
     "explain": {

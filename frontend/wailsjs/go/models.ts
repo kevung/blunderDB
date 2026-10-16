@@ -5417,6 +5417,7 @@ export namespace openingbook {
 	    ranked: Ranked[];
 	    signature: string;
 	    games: number;
+	    exact_bearoff: boolean;
 	    next?: ReplyStep;
 	
 	    static createFrom(source: any = {}) {

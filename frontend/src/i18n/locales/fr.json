@@ -2262,7 +2262,11 @@
             "colCi": "IC 95 %",
             "tied": "à égalité",
             "scale": "Écarts en équité normalisée au score (±1 = le videau centré) ; « à égalité » : écart sous 1,96·σ(écart) + 0,005.",
-            "precision": "Rollout : {games} parties — {signature}"
+            "precision": "Rollout {ply}, {truncation}, {games} parties, {bearoff}",
+            "truncated": "tronqué à {n}",
+            "untruncated": "non tronqué",
+            "withBearoff": "avec la table de bearoff exacte",
+            "withoutBearoff": "sans table de bearoff exacte"
         }
     },
     "explain": {

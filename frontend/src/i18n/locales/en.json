@@ -2262,7 +2262,11 @@
             "colCi": "95 % CI",
             "tied": "tied",
             "scale": "Gaps in normalised equity at the score (±1 = the centred cube); “tied”: gap under 1.96·σ(gap) + 0.005.",
-            "precision": "Rollout: {games} games — {signature}"
+            "precision": "Rollout {ply}, {truncation}, {games} games, {bearoff}",
+            "truncated": "truncated at {n}",
+            "untruncated": "not truncated",
+            "withBearoff": "with the exact bearoff table",
+            "withoutBearoff": "without the exact bearoff table"
         }
     },
     "explain": {

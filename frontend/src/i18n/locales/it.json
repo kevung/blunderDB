@@ -2262,7 +2262,11 @@
             "colCi": "IC 95 %",
             "tied": "alla pari",
             "scale": "Scarti in equity normalizzata al punteggio (±1 = il cubo al centro); «alla pari»: scarto sotto 1,96·σ(scarto) + 0,005.",
-            "precision": "Rollout: {games} partite — {signature}"
+            "precision": "Rollout {ply}, {truncation}, {games} partite, {bearoff}",
+            "truncated": "troncato a {n}",
+            "untruncated": "non troncato",
+            "withBearoff": "con la tabella di bearoff esatta",
+            "withoutBearoff": "senza tabella di bearoff esatta"
         }
     },
     "explain": {

@@ -197,6 +197,9 @@ type Verdict struct {
 	// verdict is.
 	Signature string `json:"signature"`
 	Games     int    `json:"games"`
+	// ExactBearoff says whether the exact bearoff table served the line: the
+	// signature only states the policy.
+	ExactBearoff bool `json:"exact_bearoff"`
 	// Next is the reply step, on an opening verdict whose answer named a
 	// reply roll the book holds.
 	Next *ReplyStep `json:"next,omitempty"`
@@ -262,7 +265,7 @@ func grade(k Key, line Line, a Answer) (Verdict, error) {
 		return Verdict{}, err
 	}
 	legal := domain.LegalMoves(&pos)
-	v := Verdict{Played: -1, Ranked: line.Rank(), Signature: line.Signature, Games: line.Games}
+	v := Verdict{Played: -1, Ranked: line.Rank(), Signature: line.Signature, Games: line.Games, ExactBearoff: line.ExactBearoff}
 	var played domain.LegalPlay
 	switch {
 	case a.Board != nil:

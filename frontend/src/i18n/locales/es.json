@@ -2262,7 +2262,11 @@
             "colCi": "IC 95 %",
             "tied": "empatada",
             "scale": "Diferencias en equity normalizada al marcador (±1 = el cubo centrado); «empatada»: diferencia inferior a 1,96·σ(diferencia) + 0,005.",
-            "precision": "Rollout: {games} partidas — {signature}"
+            "precision": "Rollout {ply}, {truncation}, {games} partidas, {bearoff}",
+            "truncated": "truncado a {n}",
+            "untruncated": "sin truncar",
+            "withBearoff": "con la tabla de bearoff exacta",
+            "withoutBearoff": "sin tabla de bearoff exacta"
         }
     },
     "explain": {

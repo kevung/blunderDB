@@ -2262,7 +2262,11 @@
             "colCi": "ΔΕ 95 %",
             "tied": "ισοβαθμεί",
             "scale": "Αποστάσεις σε κανονικοποιημένο equity στο σκορ (±1 = ο κύβος στο κέντρο)· «ισοβαθμεί»: απόσταση κάτω από 1,96·σ(απόσταση) + 0,005.",
-            "precision": "Rollout: {games} παιχνίδια — {signature}"
+            "precision": "Rollout {ply}, {truncation}, {games} παιχνίδια, {bearoff}",
+            "truncated": "περικοπή στο {n}",
+            "untruncated": "χωρίς περικοπή",
+            "withBearoff": "με τον ακριβή πίνακα bearoff",
+            "withoutBearoff": "χωρίς τον ακριβή πίνακα bearoff"
         }
     },
     "explain": {

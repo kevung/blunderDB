@@ -15,6 +15,12 @@
     let roll = $derived(question.step === 'opening' ? question.opening : question.reply);
     let showAnalysis = $derived(revealed && verdict && (outOfTime || !verdict.right));
 
+    // Le plafond de demi-coups et la profondeur sont dans la signature du
+    // rollout ; la table de bearoff, elle, est dite par le champ du livre (la
+    // signature n'énonce que la politique).
+    let ply = $derived(/(\d+-ply) plays/.exec(verdict?.signature ?? '')?.[1] ?? '');
+    let truncation = $derived(/truncation (\d+) half-moves/.exec(verdict?.signature ?? '')?.[1]);
+
     /** @param {number} x */
     function fixed(x) {
         return (x ?? 0).toFixed(3);
@@ -75,7 +81,14 @@
             </table>
             <p class="hint">{$t('training.opening.scale')}</p>
         {/if}
-        <p class="precision" data-testid="opening-precision">{$t('training.opening.precision', { games: verdict.games, signature: verdict.signature })}</p>
+        <p class="precision" data-testid="opening-precision" title={verdict.signature}>
+            {$t('training.opening.precision', {
+                ply,
+                truncation: truncation ? $t('training.opening.truncated', { n: truncation }) : $t('training.opening.untruncated'),
+                games: verdict.games,
+                bearoff: verdict.exact_bearoff ? $t('training.opening.withBearoff') : $t('training.opening.withoutBearoff')
+            })}
+        </p>
     {/if}
 </div>
 
@@ -114,7 +127,10 @@
         color: var(--color-primary);
     }
 
+    /* Colonnes au contenu, à gauche du panneau, comme le tableau des candidats. */
     .ranked {
+        align-self: flex-start;
+        width: auto;
         border-collapse: collapse;
         font-variant-numeric: tabular-nums;
     }
@@ -123,11 +139,17 @@
         text-align: left;
         font-weight: normal;
         color: var(--color-text-muted);
-        padding-right: 0.75em;
+        padding: 2px 10px;
+        white-space: nowrap;
     }
 
     .ranked td {
-        padding-right: 0.75em;
+        padding: 2px 10px;
+        white-space: nowrap;
+    }
+
+    .ranked th.num {
+        text-align: right;
     }
 
     .ranked .num {

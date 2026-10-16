@@ -270,8 +270,8 @@
                                 {/each}
                             </div>
                         {:else}
-                            <p class="prompt">{$t('training.playOnBoard')}</p>
                             {#if !session.revealed}
+                                <p class="prompt">{$t('training.playOnBoard')}</p>
                                 <div class="choices">
                                     <button type="button" disabled={!hasSteps} data-testid="training-undo-step" onclick={() => undoDecisionStep()}>{$t('training.undoHop')}</button>
                                     <button type="button" disabled={!hasSteps} data-testid="training-reset-play" onclick={() => resetDecisionPlay()}>{$t('training.resetPlay')}</button>

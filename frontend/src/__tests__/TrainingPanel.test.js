@@ -239,6 +239,13 @@ describe('une décision de pions', () => {
         expect(service.answerDecisionBoard).not.toHaveBeenCalled();
     });
 
+    test('la consigne « jouez le coup » disparaît une fois le coup jugé', () => {
+        const asked = decisionSession('checker');
+        trainingSessionStore.set({ ...asked, revealed: true, verdict: verdict() });
+        const panel = render(TrainingPanel);
+        expect(panel.container.textContent).not.toContain(en.training.playOnBoard);
+    });
+
     test('« Annuler le pas » et « Recommencer » sont des boutons du panneau', async () => {
         trainingSessionStore.set(decisionSession('checker'));
         quizPlayStore.set(newPlay(POSITION, [PLAY]));

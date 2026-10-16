@@ -2262,7 +2262,11 @@
             "colCi": "95-%-KI",
             "tied": "gleichauf",
             "scale": "Abstände in normierter Equity beim Stand (±1 = der zentrierte Würfel); „gleichauf“: Abstand unter 1,96·σ(Abstand) + 0,005.",
-            "precision": "Rollout: {games} Partien — {signature}"
+            "precision": "Rollout {ply}, {truncation}, {games} Partien, {bearoff}",
+            "truncated": "bei {n} abgebrochen",
+            "untruncated": "nicht abgebrochen",
+            "withBearoff": "mit exakter Bearoff-Tabelle",
+            "withoutBearoff": "ohne exakte Bearoff-Tabelle"
         }
     },
     "explain": {

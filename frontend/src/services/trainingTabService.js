@@ -599,6 +599,13 @@ function disarmBoard(session) {
     if (session?.exercise === 'decision' || session?.exercise === 'opening') quizPlayStore.set(null);
 }
 
+/** La position synthétique d'Ouverture (dés compris) ne survit pas à la séance :
+ *  le plateau reprend celui qu'on avait en la commençant.
+ *  @param {import('./trainingTab.js').TrainingSessionState|null} session */
+function restoreBoard(session) {
+    if (session?.exercise === 'opening' && boardSeed) positionStore.set({ ...boardSeed });
+}
+
 // ── La session ───────────────────────────────────────────────────────────────
 
 /**
@@ -906,6 +913,7 @@ export async function finishTrainingSession() {
     const closed = session.revealed ? recordQuestion(session) : session;
     stopTicker();
     disarmBoard(session);
+    restoreBoard(session);
     prefetched = null;
     boardSeed = null;
     bearoffPhaseIndices = null;
@@ -939,7 +947,9 @@ export async function finishTrainingSession() {
 /** Quitte la session sans rien enregistrer. */
 export function quitTrainingSession() {
     stopTicker();
-    disarmBoard(get(trainingSessionStore));
+    const open = get(trainingSessionStore);
+    disarmBoard(open);
+    restoreBoard(open);
     prefetched = null;
     boardSeed = null;
     bearoffPhaseIndices = null;

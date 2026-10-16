@@ -2262,7 +2262,11 @@
             "colCi": "95 %:n LV",
             "tied": "tasoissa",
             "scale": "Erot normalisoituna equityna tilanteessa (±1 = keskitetty kuutio); ”tasoissa”: ero alle 1,96·σ(ero) + 0,005.",
-            "precision": "Rollout: {games} peliä — {signature}"
+            "precision": "Rollout {ply}, {truncation}, {games} peliä, {bearoff}",
+            "truncated": "katkaistu kohtaan {n}",
+            "untruncated": "ei katkaistu",
+            "withBearoff": "tarkalla bearoff-taulukolla",
+            "withoutBearoff": "ilman tarkkaa bearoff-taulukkoa"
         }
     },
     "explain": {

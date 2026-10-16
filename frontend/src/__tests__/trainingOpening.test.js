@@ -161,4 +161,15 @@ describe('une session d’Ouverture', () => {
         await nextTrainingQuestion();
         expect(current().question.step).toBe('reply');
     });
+
+    test('« Terminer » rend le plateau à celui d’avant la séance, dés d’exercice ôtés', async () => {
+        const before = { ...board(), id: 7, dice: [0, 0] };
+        positionStore.set(before);
+        app.OpeningBookQuestion.mockResolvedValue(/** @type {any} */ ({ empty: false, opening: '31', reply: '21', score: '4-2', position: { ...board(), id: 0, dice: [3, 1] } }));
+        expect(await startTrainingSession({ exercise: 'opening' })).toBe(true);
+        expect(get(positionStore).dice).toEqual([3, 1]);
+        await finishTrainingSession();
+        expect(get(positionStore)).toMatchObject({ id: 7, dice: [0, 0] });
+        expect(get(quizPlayStore)).toBeNull();
+    });
 });
