@@ -214,6 +214,18 @@ export function OpenVideoExternally(arg1, arg2) {
   return window['go']['gui']['App']['OpenVideoExternally'](arg1, arg2);
 }
 
+export function OpeningBookGrade(arg1) {
+  return window['go']['gui']['App']['OpeningBookGrade'](arg1);
+}
+
+export function OpeningBookQuestion(arg1) {
+  return window['go']['gui']['App']['OpeningBookQuestion'](arg1);
+}
+
+export function OpeningBookStatus() {
+  return window['go']['gui']['App']['OpeningBookStatus']();
+}
+
 export function PathExists(arg1) {
   return window['go']['gui']['App']['PathExists'](arg1);
 }

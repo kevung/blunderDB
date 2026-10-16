@@ -23,9 +23,9 @@ func TestGenerate_ResumesWithoutRedoing(t *testing.T) {
 	}
 	path := filepath.Join(t.TempDir(), "run.jsonl")
 	jobs := []Key{
-		{Roll{3, 1}, Roll{5, 2}, Score{4, 2}},
-		{Roll{3, 1}, Roll{5, 2}, Score{1, 4}},
-		{Roll{6, 5}, Roll{6, 6}, Score{3, 3}},
+		OpeningKey(Roll{3, 1}, Score{4, 2}),
+		ReplyKey(Roll{3, 1}, "8/5 6/5", Roll{5, 2}, Score{1, 4}),
+		ReplyKey(Roll{6, 5}, "24/13", Roll{6, 6}, Score{3, 3}),
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -67,7 +67,7 @@ func TestGenerate_ResumesWithoutRedoing(t *testing.T) {
 		t.Fatalf("%d lines, want 3", book.Len())
 	}
 	for _, k := range jobs {
-		l, _ := book.Lookup(k.Opening, k.Reply, k.Score)
+		l, _ := book.Lookup(k)
 		if len(l.Candidates) != 2 || l.Games != 36 || l.Signature == "" || l.ExactBearoff || l.XGID == "" {
 			t.Fatalf("%s: %+v", k, l)
 		}
@@ -79,5 +79,27 @@ func TestGenerate_ResumesWithoutRedoing(t *testing.T) {
 	rep, err = Generate(context.Background(), path, jobs, Options{Settings: tiny()})
 	if err != nil || rep.Skipped != 3 || rep.Written != 0 {
 		t.Fatalf("finished run rerun: %+v, %v", rep, err)
+	}
+}
+
+func TestReplyJobs_FollowTheTiedOpeningPlays(t *testing.T) {
+	b := testBook(t)
+	s := []Score{{4, 2}}
+	if n := len(ReplyJobs(b, s, 2, Filter{})); n != 2*21+21 {
+		t.Fatalf("%d jobs after the tied plays, want 63", n)
+	}
+	if n := len(ReplyJobs(b, s, 1, Filter{})); n != 42 {
+		t.Fatalf("%d jobs after the best plays, want 42", n)
+	}
+	f := Filter{Openings: []Roll{{3, 1}}, Replies: []Roll{{2, 1}}}
+	jobs := ReplyJobs(b, s, 2, f)
+	if len(jobs) != 2 || jobs[0].Play != "8/5 6/5" || jobs[1].Play != "24/23 13/10" {
+		t.Fatalf("filtered jobs %v", jobs)
+	}
+	if n := len(OpeningJobs(GridScores(), f)); n != 20 {
+		t.Fatalf("%d opening jobs for one roll on the grid, want 20", n)
+	}
+	if n := len(ReplyJobs(&Book{}, s, 2, Filter{})); n != 0 {
+		t.Fatalf("no opening line, %d reply jobs", n)
 	}
 }

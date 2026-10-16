@@ -9,7 +9,7 @@ import {
     GradeQuizCheckerMove,
     GradeQuizCube
 } from '../../wailsjs/go/database/Database.js';
-import { GenerateBearoffQuestion, GenerateEvaluationQuestion, LegalMoves } from '../../wailsjs/go/gui/App.js';
+import { GenerateBearoffQuestion, GenerateEvaluationQuestion, LegalMoves, OpeningBookQuestion, OpeningBookGrade } from '../../wailsjs/go/gui/App.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionStore, positionsStore, browsingLibrary, searchSource } from '../stores/positionStore.js';
 import { currentPositionIndexStore } from '../stores/uiStore.js';
@@ -454,6 +454,84 @@ async function buildDecisionQuestion() {
     return { question: null, refusal: 'noAnalysis' };
 }
 
+// ── Ouverture : les deux premiers coups à un score (ADR-0094) ────────────────
+// Une question du livre a deux temps : le jet d'ouverture, puis la réponse
+// dans la position qu'il laisse. Chacun est une question CHOISIE du journal ;
+// la seconde naît du verdict de la première (`verdict.next`), jamais du tirage.
+
+/** Les coups joués au plateau : Décision de pions et les deux temps d'Ouverture. */
+function playsOnBoard(question) {
+    return (question?.kind === 'decision' && question.prompt === 'checker') || question?.kind === 'opening';
+}
+
+/** @param {any} position */
+async function openingLegalPlays(position) {
+    const plays = await LegalMoves(position);
+    return plays?.length ? plays : null;
+}
+
+/** Tire une ouverture ; un livre vide est un refus nommé, pas une erreur. */
+async function buildOpeningQuestion() {
+    const drawn = await OpeningBookQuestion(/** @type {any} */ ({}));
+    if (!drawn || drawn.empty) return { question: null, refusal: 'bookEmpty' };
+    const plays = await openingLegalPlays(drawn.position);
+    if (!plays) return { question: null, refusal: 'noQuestion' };
+    return {
+        question: {
+            kind: 'opening',
+            step: 'opening',
+            key: `${drawn.opening}/${drawn.reply}@${drawn.score}`,
+            opening: drawn.opening,
+            reply: drawn.reply,
+            score: drawn.score,
+            openingPlay: '',
+            position: drawn.position,
+            plays,
+            prompt: 'checker',
+            numbers: [{ type: 'opening.first', value: 0 }]
+        },
+        refusal: ''
+    };
+}
+
+/**
+ * Le second temps d'une question d'Ouverture, après le verdict du premier :
+ * la réponse dans la position du coup d'ouverture que le livre suit.
+ * @param {any} question @param {any} verdict
+ */
+async function buildReplyQuestion(question, verdict) {
+    const next = verdict?.next;
+    if (question?.kind !== 'opening' || question.step !== 'opening' || !next) return null;
+    const plays = await openingLegalPlays(next.position);
+    if (!plays) return null;
+    return {
+        question: {
+            ...question,
+            step: 'reply',
+            key: `${question.key}:${next.openingPlay}`,
+            openingPlay: next.openingPlay,
+            followsBest: !!next.followsBest,
+            position: next.position,
+            plays,
+            numbers: [{ type: 'opening.reply', value: 0 }]
+        },
+        refusal: ''
+    };
+}
+
+/** @param {any} question @param {any} board — `null` : sans réponse (hors délai) */
+function gradeOpening(question, board) {
+    return OpeningBookGrade(
+        /** @type {any} */ ({
+            opening: question.opening,
+            openingPlay: question.openingPlay,
+            reply: question.reply,
+            score: question.score,
+            board: board ?? undefined
+        })
+    );
+}
+
 // ── Fabriquer n'est pas montrer ──────────────────────────────────────────────
 // `buildQuestion` calcule la position et sa vérité sans toucher au plateau, à
 // l'onglet ni à l'index ; `showQuestion` le fait une fois, quand la question
@@ -469,6 +547,7 @@ async function buildQuestion(exercise, seedSource, seed) {
     if (exercise === 'bearoff') return buildBearoffQuestion(seedSource, seed);
     if (exercise === 'evaluation') return buildEvaluationQuestion(seedSource, seed);
     if (exercise === 'decision') return buildDecisionQuestion();
+    if (exercise === 'opening') return buildOpeningQuestion();
     return buildPipsQuestion(seedSource, seed);
 }
 
@@ -509,7 +588,7 @@ async function showQuestion(question) {
  * @param {any} question
  */
 function armBoard(question) {
-    if (question?.kind !== 'decision') return;
+    if (question?.kind !== 'decision' && question?.kind !== 'opening') return;
     if (question.prompt === 'checker' && question.plays?.length) armBoardMove(newPlay(question.position, question.plays), () => void answerDecisionBoard());
     else quizPlayStore.set(null);
 }
@@ -517,7 +596,7 @@ function armBoard(question) {
 /** Désarme le plateau à la fin d'une session de Décision, et seulement d'elle.
  *  @param {import('./trainingTab.js').TrainingSessionState|null} session */
 function disarmBoard(session) {
-    if (session?.exercise === 'decision') quizPlayStore.set(null);
+    if (session?.exercise === 'decision' || session?.exercise === 'opening') quizPlayStore.set(null);
 }
 
 // ── La session ───────────────────────────────────────────────────────────────
@@ -634,7 +713,7 @@ export function revealQuestion({ outOfTime = false } = {}) {
     const next = reveal(session, Date.now(), { outOfTime });
     trainingSessionStore.set(next);
     trainingElapsedStore.set(next.elapsedMs);
-    if (next.revealed && next.question?.kind === 'decision') fetchCorrection(next.question);
+    if (next.revealed && (next.question?.kind === 'decision' || next.question?.kind === 'opening')) fetchCorrection(next.question);
 }
 
 // ── Décision : répondre ──────────────────────────────────────────────────────
@@ -650,10 +729,14 @@ export function revealQuestion({ outOfTime = false } = {}) {
 export async function answerDecisionBoard() {
     const session = get(trainingSessionStore);
     const question = session?.question;
-    if (!session || session.revealed || question?.kind !== 'decision' || question.prompt !== 'checker') return;
+    if (!session || session.revealed || !playsOnBoard(question)) return;
     const state = get(quizPlayStore);
     const play = state ? completedPlay(state) : null;
     if (!play) return;
+    if (question.kind === 'opening') {
+        await gradeDecision(question, () => gradeOpening(question, play.result.board));
+        return;
+    }
     await gradeDecision(question, () => GradeQuizChecker(/** @type {number} */ (question.positionId), play.result.board));
 }
 
@@ -699,7 +782,7 @@ async function gradeDecision(question, judge) {
  */
 function fetchCorrection(question) {
     const id = /** @type {number} */ (question.positionId);
-    const ask = question.prompt === 'cube' ? GradeQuizCube(id, '') : GradeQuizCheckerMove(id, '');
+    const ask = question.kind === 'opening' ? gradeOpening(question, null) : question.prompt === 'cube' ? GradeQuizCube(id, '') : GradeQuizCheckerMove(id, '');
     Promise.resolve(ask)
         .then((correction) => {
             const session = get(trainingSessionStore);
@@ -744,7 +827,7 @@ export function playDecisionNotation(text) {
 function openCheckerQuestion() {
     const session = get(trainingSessionStore);
     const question = session?.question;
-    if (!session || session.revealed || question?.kind !== 'decision' || question.prompt !== 'checker' || !question.position) return null;
+    if (!session || session.revealed || !playsOnBoard(question) || !question.position) return null;
     return question;
 }
 
@@ -773,8 +856,14 @@ export function setTrainingAnswer(index, text) {
 export async function nextTrainingQuestion() {
     const session = get(trainingSessionStore);
     if (!session || !session.revealed) return;
+    let followUp = null;
+    try {
+        followUp = await buildReplyQuestion(session.question, session.verdict);
+    } catch (error) {
+        logger.error('could not build the reply of the opening question:', error);
+    }
     const recorded = recordQuestion(session);
-    await askNextQuestion(recorded);
+    await askNextQuestion(recorded, followUp);
 }
 
 /**
@@ -786,9 +875,12 @@ export async function retryTrainingQuestion() {
     await askNextQuestion(session);
 }
 
-/** @param {import('./trainingTab.js').TrainingSessionState} session */
-async function askNextQuestion(session) {
-    const built = await takeNextQuestion(session.exercise, session.seedSource);
+/**
+ * @param {import('./trainingTab.js').TrainingSessionState} session
+ * @param {{question: any, refusal: string}|null} [followUp] le second temps d'une question, qui passe avant le tirage
+ */
+async function askNextQuestion(session, followUp = null) {
+    const built = followUp ?? (await takeNextQuestion(session.exercise, session.seedSource));
     if (!built.question) {
         disarmBoard(session);
         trainingSessionStore.set(failNextQuestion(session, built.refusal || 'noQuestion'));
@@ -800,7 +892,8 @@ async function askNextQuestion(session) {
     armBoard(built.question);
     trainingSessionStore.set(askQuestion(session, built.question, Date.now()));
     trainingElapsedStore.set(0);
-    prefetchNextQuestion(session.exercise, session.seedSource);
+    // Le tirage préchargé attend la fin de la question à deux temps.
+    if (!followUp) prefetchNextQuestion(session.exercise, session.seedSource);
 }
 
 /**

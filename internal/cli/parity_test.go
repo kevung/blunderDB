@@ -114,6 +114,11 @@ var serverOnly = map[string]string{
 	"/v1/tenants.quota":        whyTenantQuota,
 	"/v1/positions.fromOGID":   whyIdentifierDecode,
 	"/v1/positions.fromXGID":   whyPureDomain,
+	// The opening book is data embedded in the binary, not a tenant's rows:
+	// the GUI binds it on *gui.App and the CLI has `openingbook`.
+	"/v1/openingbook.status":   whyPureDomain,
+	"/v1/openingbook.question": whyPureDomain,
+	"/v1/openingbook.grade":    whyPureDomain,
 	"/v1/positions.legalMoves": whyPureDomain,
 	"/v1/search.parse":         whyPureDomain,
 

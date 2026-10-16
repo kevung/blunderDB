@@ -2170,7 +2170,8 @@
             "pips": "ピップ",
             "bearoff": "ベアオフ",
             "evaluation": "評価",
-            "decision": "判断"
+            "decision": "判断",
+            "opening": "オープニング"
         },
         "sources": {
             "board": "盤面",
@@ -2220,7 +2221,9 @@
             "gv4": "ギャモン価値 4",
             "decisionChecker": "チェッカープレイ",
             "decisionCube": "キューブアクション",
-            "evalWin": "手番側の勝率 (%)"
+            "evalWin": "手番側の勝率 (%)",
+            "openingFirst": "オープニングの手",
+            "openingReply": "応手"
         },
         "retry": "再試行",
         "validate": "判定",
@@ -2237,12 +2240,30 @@
             "decisionsExhausted": "表示中のリストの解析済み局面はすべて出題しました。",
             "notAGame": "この練習には対局中の局面が必要です。各サイド 15 個の駒があり、どちらも全駒を上がっていないこと。",
             "notMoneyCubeDecision": "この練習にはマネーゲームのキューブ判断が必要です。ダイスなしで、キューブが中央か手番側にある局面です。表示中のリストには見つかりませんでした。",
-            "notEvaluable": "エンジンがこの局面を評価できませんでした。推定する代わりに出題しません。"
+            "notEvaluable": "エンジンがこの局面を評価できませんでした。推定する代わりに出題しません。",
+            "bookEmpty": "オープニングブックはまだ計算されていません。この演習には今のところ出題がありません。"
         },
         "truthExact": "正解: 両者のベアオフデータベース (厳密)。",
         "truthEvaluated": "正解: gammonNet、{depth}。",
         "epcShown": "EPC — {p1}: {a} · {p2}: {b}",
-        "scoresInstruction": "各マスの数値を頭の中で見積もってから「公開」を押し、その後、間違えた数値をクリックしてください。"
+        "scoresInstruction": "各マスの数値を頭の中で見積もってから「公開」を押し、その後、間違えた数値をクリックしてください。",
+        "opening": {
+            "promptOpening": "オープニング {roll} を指してください。",
+            "promptReply": "応手 {roll} を指してください。",
+            "score": "あなたは残り {you} ポイント、相手は残り {them} ポイント。",
+            "money": "マネーゲーム。",
+            "followsBest": "あなたのオープニングはブックが続く手ではありません。応手はこのスコアでのブックの最善手 {move} の後に出題されます。",
+            "after": "オープニング {move} の後。",
+            "right": "正解：{move} は最善手と同等です。",
+            "unranked": "{move} はブックの候補手にありません。",
+            "behind": "{move} は最善手より {gap} 劣ります。",
+            "colPlay": "手",
+            "colGap": "差",
+            "colCi": "95 % 信頼区間",
+            "tied": "同等",
+            "scale": "差はスコアに正規化したエクイティ（±1 = センターキューブ）。「同等」：差が 1.96·σ(差) + 0.005 未満。",
+            "precision": "ロールアウト：{games} ゲーム — {signature}"
+        }
     },
     "explain": {
         "blots": "{cost} mp の損：着手はブロットを {blots} 個残しますが、{best} なら {bestBlots} 個です。",

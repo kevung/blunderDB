@@ -254,6 +254,10 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/metadata.counts                      JSON
      POST /v1/metadata.countsEstimate              JSON
      POST /v1/metadata.version                     JSON
+   openingbook
+     POST /v1/openingbook.grade                    JSON
+     POST /v1/openingbook.question                 JSON
+     POST /v1/openingbook.status                   JSON
    pile
      POST /v1/pile.state                           JSON
      POST /v1/pile.toggle                          JSON

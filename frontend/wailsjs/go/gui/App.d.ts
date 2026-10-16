@@ -7,6 +7,7 @@ import {gammonnet} from '../models';
 import {rollout} from '../models';
 import {race} from '../models';
 import {training} from '../models';
+import {openingbook} from '../models';
 
 export function AssistantAsk(arg1:gui.AssistantRequest):Promise<assistant.Turn>;
 
@@ -113,6 +114,12 @@ export function OpenPositionFilesDialog():Promise<Array<string>>;
 export function OpenPositionFolderDialog():Promise<string>;
 
 export function OpenVideoExternally(arg1:string,arg2:number):Promise<void>;
+
+export function OpeningBookGrade(arg1:openingbook.Answer):Promise<openingbook.Verdict>;
+
+export function OpeningBookQuestion(arg1:openingbook.QuestionRequest):Promise<openingbook.Question>;
+
+export function OpeningBookStatus():Promise<openingbook.Status>;
 
 export function PathExists(arg1:string):Promise<boolean>;
 

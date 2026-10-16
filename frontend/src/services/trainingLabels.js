@@ -29,7 +29,11 @@ const LABEL_KEYS = Object.freeze({
     // Évaluation : chances de gain du joueur au trait, et action de videau —
     // même terme qu'en Décision, compté à part au journal.
     'eval.win': 'training.numbers.evalWin',
-    'eval.cube': 'training.numbers.decisionCube'
+    'eval.cube': 'training.numbers.decisionCube',
+    // Ouverture : les deux temps comptés à part — on peut connaître les
+    // ouvertures et mal répondre.
+    'opening.first': 'training.numbers.openingFirst',
+    'opening.reply': 'training.numbers.openingReply'
 });
 
 /**

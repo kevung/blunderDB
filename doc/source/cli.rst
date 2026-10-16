@@ -1711,6 +1711,55 @@ questions de *Décision* gardent leur position.
    ./blunderdb training missed --db base.db --session 12 --deck "Ratés de lundi"
    ./blunderdb training missed --db base.db --collection "Mes ratés" --format json
 
+.. _cli_openingbook:
+
+openingbook — Quel coup à ce score ?
+------------------------------------
+
+L'exercice *Ouverture* du panneau Entraînement (voir :ref:`panneau_entrainement`)
+en ligne de commande : les deux premiers coups d'une partie à un score, tirés du
+livre d'ouverture embarqué et jugés contre lui. Tout coup à égalité avec le
+meilleur est juste (voir :ref:`metrique_livre_ouverture`). Aucune base n'est
+lue ni écrite ; tant que le livre n'est pas calculé, chaque sous-commande le dit.
+
+**openingbook status** — Le nombre de lignes du livre et ses scores.
+
+**openingbook question** — Tire une question : le jet d'ouverture, le jet de
+réponse et le score, avec le XGID de la position d'ouverture.
+
+.. code-block:: bash
+
+   ./blunderdb openingbook question [options]
+
+**Options:**
+
+* ``--score <liste>`` — Scores à tirer, séparés par des virgules : ``4-2``
+  (le répondeur à 4 points, l'ouvreur à 2), ``1-2`` (partie Crawford), ``money``.
+* ``--opening <liste>``, ``--reply <liste>`` — Jets d'ouverture ou de réponse à tirer (``31,65``).
+* ``--seed <n>`` — Tirage reproductible (0 = au hasard).
+* ``--book <fichier>`` — Un livre ``.jsonl`` ou ``.jsonl.gz`` à la place du livre embarqué.
+* ``--format text|json`` — Format de sortie.
+
+**openingbook answer** — Juge un coup et affiche chaque candidat contre le
+meilleur : écart, IC 95 % et « tied » (à égalité), en équité normalisée au
+score, avec le nombre de parties et le réglage du rollout. Sans ``--after``,
+le coup est l'ouverture, et la sortie donne la commande de la réponse — après
+votre coup s'il est à égalité et que le livre le suit, sinon après le meilleur
+coup d'ouverture du livre ; avec ``--after``, le coup est la réponse jouée
+après ce coup d'ouverture.
+
+.. code-block:: bash
+
+   ./blunderdb openingbook answer --opening <jet> --reply <jet> --score <score> [--after <coup>] [options] '<coup>'
+
+**Exemples:**
+
+.. code-block:: bash
+
+   ./blunderdb openingbook question --score 4-2,2-4
+   ./blunderdb openingbook answer --opening 31 --reply 21 --score 4-2 '8/5 6/5'
+   ./blunderdb openingbook answer --opening 31 --reply 21 --score 4-2 --after '8/5 6/5' '13/11 6/5'
+
 .. _cli_cubematrix:
 
 cubematrix — Matrice du videau

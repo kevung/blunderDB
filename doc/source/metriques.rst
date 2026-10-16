@@ -651,3 +651,46 @@ l'intervalle : la règle est prudente. La réserve de la pendule n'est pas
 enregistrée coup par coup : la pression du temps restant ne se mesure pas.
 
 **XG et gnuBG.** Pas d'équivalent.
+
+.. _metrique_livre_ouverture:
+
+Livre d'ouverture : écart, IC 95 % et égalité
+---------------------------------------------
+
+**La question.** À ce score, quel coup jouer avec ce jet d'ouverture, et quelle
+réponse ? Et mon coup est-il vraiment moins bon, ou seulement indiscernable du
+meilleur ? L'écran : l'exercice *Ouverture* du :ref:`panneau Entraînement
+<panneau_entrainement>`. Il sert à apprendre comment le score déplace les
+premiers coups — ce qu'aucune table d'argent n'enseigne.
+
+**Définition.** Le livre range, pour chaque position et chaque score, les
+meilleurs candidats d'un rollout cubeful de blunderDB, avec leur équité et
+l'erreur type σ de cette équité. L'**écart** d'un coup est l'équité du meilleur
+moins la sienne, en **équité normalisée au score** (±1 = le videau centré ;
+points en partie d'argent) : le livre ne montre que des écarts, jamais d'équité
+absolue, parce que le modèle de videau du rollout pèse sur les deux coups de la
+même façon.
+
+**La formule.** σ(écart) = √(σ²meilleur + σ²coup), les deux estimations prises
+indépendantes ; l'**IC 95 %** de l'écart est ± 1,96·σ(écart). Un coup est **à
+égalité** avec le meilleur si écart < 1,96·σ(écart) + 0,005, le 0,005 étant le
+biais mesuré d'un rollout tronqué face à un rollout complet à 2 plis. Le
+meilleur est à égalité avec lui-même. Ce qui compte comme décision : chaque
+coup joué, l'ouverture et la réponse à part.
+
+**Comment le lire.** « À égalité » n'affirme pas que deux coups se valent ; il
+dit que le livre ne peut pas les départager — tout coup du groupe de tête est
+donc une bonne réponse. Un écart au-delà de son IC est une vraie différence.
+
+**Incertitude et limites.** Les dés communs du rollout corrèlent positivement
+les deux estimations : les supposer indépendantes surestime σ(écart), et la
+règle est prudente. Un livre calculé avec un réglage rapide (peu de parties,
+rollout tronqué) a des σ plus larges : le groupe de tête s'élargit de lui-même,
+et l'écran indique le nombre de parties et le réglage sous l'analyse. Un coup
+hors des candidats du livre est compté faux sans écart chiffré. Le livre ne
+couvre que les scores de sa grille.
+
+**XG et gnuBG.** Les tables d'ouverture publiées (bkgm.com) sont des rollouts
+d'argent ; XG et gnuBG roulent une position à la demande mais ne livrent pas de
+table par score. blunderDB calcule la sienne et l'embarque.
+

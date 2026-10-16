@@ -2170,7 +2170,8 @@
             "pips": "Pip",
             "bearoff": "Bearoff",
             "evaluation": "Valutazione",
-            "decision": "Decisione"
+            "decision": "Decisione",
+            "opening": "Apertura"
         },
         "sources": {
             "board": "Tavoliere",
@@ -2220,7 +2221,9 @@
             "gv4": "Valore del gammon 4",
             "decisionChecker": "Mossa di pedine",
             "decisionCube": "Azione di cubo",
-            "evalWin": "Probabilità di vittoria del giocatore di turno (%)"
+            "evalWin": "Probabilità di vittoria del giocatore di turno (%)",
+            "openingFirst": "Mossa d'apertura",
+            "openingReply": "Risposta"
         },
         "retry": "Riprovare",
         "validate": "Verifica",
@@ -2237,12 +2240,30 @@
             "decisionsExhausted": "Tutte le posizioni analizzate della lista sfogliata sono state proposte.",
             "notAGame": "Questo esercizio richiede una posizione di partita: quindici pedine per parte, e nessuna parte con tutte le pedine uscite.",
             "notMoneyCubeDecision": "Questo esercizio richiede una decisione di cubo in partita a soldi, senza dadi e con il cubo al centro o al giocatore di turno: nessuna è stata trovata nell'elenco sfogliato.",
-            "notEvaluable": "Il motore non ha potuto valutare questa posizione: non viene proposta anziché stimata."
+            "notEvaluable": "Il motore non ha potuto valutare questa posizione: non viene proposta anziché stimata.",
+            "bookEmpty": "Il libro delle aperture non è ancora calcolato: per ora questo esercizio non ha nulla da chiedere."
         },
         "truthExact": "Verità: la base di bearoff a due parti, esatta.",
         "truthEvaluated": "Verità: gammonNet, {depth}.",
         "epcShown": "EPC — {p1}: {a} · {p2}: {b}",
-        "scoresInstruction": "Per ogni casella stima il numero a mente, poi premi Rivelare. Poi premi ogni numero che hai sbagliato."
+        "scoresInstruction": "Per ogni casella stima il numero a mente, poi premi Rivelare. Poi premi ogni numero che hai sbagliato.",
+        "opening": {
+            "promptOpening": "Giocate l'apertura {roll}.",
+            "promptReply": "Giocate la risposta {roll}.",
+            "score": "Voi a {you} punti, l'avversario a {them}.",
+            "money": "Partita a soldi.",
+            "followsBest": "La vostra apertura non è quella che il libro segue: la risposta si pone dopo la sua mossa migliore a questo punteggio, {move}.",
+            "after": "Dopo l'apertura {move}.",
+            "right": "Giusto: {move} è alla pari con la migliore.",
+            "unranked": "{move} non è tra i candidati del libro.",
+            "behind": "{move} è a {gap} dalla migliore.",
+            "colPlay": "Mossa",
+            "colGap": "Scarto",
+            "colCi": "IC 95 %",
+            "tied": "alla pari",
+            "scale": "Scarti in equity normalizzata al punteggio (±1 = il cubo al centro); «alla pari»: scarto sotto 1,96·σ(scarto) + 0,005.",
+            "precision": "Rollout: {games} partite — {signature}"
+        }
     },
     "explain": {
         "blots": "Perdi {cost} mp: la mossa giocata lascia {blots} pedine scoperte dove {best} ne lascia solo {bestBlots}.",

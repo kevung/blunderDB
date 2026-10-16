@@ -910,6 +910,18 @@ class GeneratedAPI(BaseClient):
         "POST /v1/metadata.version — JSON."
         return self._call("/v1/metadata.version", payload)
 
+    def openingbook_grade(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/openingbook.grade — JSON."
+        return self._call("/v1/openingbook.grade", payload)
+
+    def openingbook_question(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/openingbook.question — JSON."
+        return self._call("/v1/openingbook.question", payload)
+
+    def openingbook_status(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/openingbook.status — JSON."
+        return self._call("/v1/openingbook.status", payload)
+
     def pile_state(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/pile.state — JSON."
         return self._call("/v1/pile.state", payload)

@@ -7,7 +7,9 @@
  */
 
 /**
- * Les cinq exercices de l'ADR-0040 règle 3.
+ * Les cinq exercices de l'ADR-0040 règle 3, et Ouverture (ADR-0094) : les deux
+ * premiers coups d'une partie à un score, joués au plateau et jugés contre le
+ * livre d'ouverture embarqué — son vivier est le livre, pas la bibliothèque.
  *
  * `sources` : les sources de graine acceptées, dans l'ordre du lanceur ; vide
  * pour Scores, dont le vivier est les 36 scores non ordonnés.
@@ -46,7 +48,8 @@ export const TRAINING_EXERCISES = Object.freeze([
     Object.freeze({ id: 'pips', mode: 'declared', sources: ['board', 'library'], defaultSource: 'board', surface: 'board', boardIsTheQuestion: true }),
     Object.freeze({ id: 'bearoff', mode: 'entered', sources: ['pool', 'board', 'library'], defaultSource: 'pool', surface: 'board' }),
     Object.freeze({ id: 'evaluation', mode: 'entered', sources: ['pool', 'board', 'library'], defaultSource: 'pool', surface: 'board' }),
-    Object.freeze({ id: 'decision', mode: 'chosen', sources: ['library'], defaultSource: 'library', surface: 'board' })
+    Object.freeze({ id: 'decision', mode: 'chosen', sources: ['library'], defaultSource: 'library', surface: 'board' }),
+    Object.freeze({ id: 'opening', mode: 'chosen', sources: ['pool'], defaultSource: 'pool', surface: 'board' })
 ]);
 
 /** @param {string} exercise */
@@ -88,7 +91,10 @@ const EXERCISE_WORDS = Object.freeze({
     epc: 'bearoff',
     evaluation: 'evaluation',
     decision: 'decision',
-    quiz: 'decision'
+    quiz: 'decision',
+    opening: 'opening',
+    ouverture: 'opening',
+    book: 'opening'
 });
 
 /**
@@ -290,7 +296,9 @@ export function reveal(session, now, { outOfTime = false } = {}) {
  */
 export function answerChosen(session, verdict, now) {
     if (!session.question || session.revealed || !verdict) return session;
-    const correct = !!verdict.matched && verdict.errorMp === 0;
+    // Le livre d'ouverture juge par l'égalité avec le meilleur (`right`), pas
+    // par un coût : tout coup du groupe de tête est juste.
+    const correct = typeof verdict.right === 'boolean' ? verdict.right : !!verdict.matched && verdict.errorMp === 0;
     return {
         ...session,
         revealed: true,

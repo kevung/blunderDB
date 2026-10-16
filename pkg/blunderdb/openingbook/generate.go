@@ -14,19 +14,94 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/rollout"
 )
 
-// Jobs is every key of the book at the given scores: openings, then
-// replies, then scores, so an interrupted run has finished whole openings
-// first.
-func Jobs(scores []Score) []Key {
+// FullSettings are the corrective book's rollout settings (ADR-0094): every
+// game played to its end at 2 ply, cubeful, 1296 games (every ordered pair
+// of opening rolls once), a candidate stopped at JSD 3 after 324, the 4 best
+// plays at 2 ply. Only the generator reads them: the exercise reads lines,
+// whatever settings their signature names.
+func FullSettings() rollout.Settings {
+	return rollout.Settings{Truncation: 0, MinGames: 324, MaxGames: 1296, JSDLimit: 3, Ply: 2, Candidates: 4, Seed: rollout.DefaultSeed}
+}
+
+// Filter narrows the jobs to a chosen subset, to check a sample against
+// another engine or to roll a few lines first. An empty list allows all.
+type Filter struct {
+	Openings []Roll
+	Replies  []Roll
+}
+
+func (f Filter) allows(k Key) bool {
+	in := func(rs []Roll, r Roll) bool {
+		if len(rs) == 0 {
+			return true
+		}
+		for _, x := range rs {
+			if x == r {
+				return true
+			}
+		}
+		return false
+	}
+	return in(f.Openings, k.Opening) && (k.IsOpening() || in(f.Replies, k.Reply))
+}
+
+// OpeningJobs is phase 1: every opening roll at every score, openings first.
+func OpeningJobs(scores []Score, f Filter) []Key {
 	var out []Key
 	for _, o := range Openings() {
-		for _, r := range Replies() {
-			for _, s := range scores {
-				out = append(out, Key{o, r, s})
+		for _, s := range scores {
+			if k := OpeningKey(o, s); f.allows(k) {
+				out = append(out, k)
 			}
 		}
 	}
 	return out
+}
+
+// ReplyJobs is phase 2, read from the opening lines phase 1 wrote: for each
+// opening at each score, the 21 replies after its best play at that score,
+// and after each play tied with the best, up to maxAfter plays in all (≤ 1:
+// the best only). An opening line not yet rolled gives no reply job: run the
+// phases again once it is.
+func ReplyJobs(b *Book, scores []Score, maxAfter int, f Filter) []Key {
+	var out []Key
+	for _, o := range Openings() {
+		for _, s := range scores {
+			l, ok := b.Lookup(OpeningKey(o, s))
+			if !ok {
+				continue
+			}
+			for i, r := range l.Rank() {
+				if i >= max(maxAfter, 1) || !r.Tied {
+					break
+				}
+				for _, rep := range Replies() {
+					if k := ReplyKey(o, r.Move, rep, s); f.allows(k) {
+						out = append(out, k)
+					}
+				}
+			}
+		}
+	}
+	return out
+}
+
+// ReadRun reads the lines a run file holds, a torn last line left out and
+// the file untouched.
+func ReadRun(path string) (*Book, error) {
+	data, err := os.ReadFile(path)
+	if errors.Is(err, os.ErrNotExist) {
+		return &Book{lines: map[Key]Line{}}, nil
+	}
+	if err != nil {
+		return nil, fmt.Errorf("openingbook: %w", err)
+	}
+	data = data[:bytes.LastIndexByte(data, '\n')+1]
+	b, err := Compile(bytes.NewReader(data))
+	if err != nil {
+		return nil, fmt.Errorf("%w (in %s)", err, path)
+	}
+	return b, nil
 }
 
 // Options tune Generate.
@@ -147,13 +222,12 @@ feed:
 // RollLine rolls one job out. An interrupted rollout is an error: a line is
 // whole or absent.
 func RollLine(ctx context.Context, k Key, s rollout.Settings) (Line, error) {
-	pos, err := ReplyPosition(k.Opening, k.Reply, k.Score)
+	pos, err := k.Position()
 	if err != nil {
 		return Line{}, err
 	}
-	// Reply positions are eleven half-moves from a bearoff: the exact table
-	// would never be reached, and leaving it out keeps the book independent
-	// of what a machine has generated.
+	// Leaving the exact bearoff table out keeps the book independent of what
+	// a machine has generated: two runs of the same settings agree.
 	res, err := rollout.Run(ctx, pos, s, rollout.Options{NoBearoffTable: true})
 	if err != nil {
 		return Line{}, err
@@ -163,8 +237,7 @@ func RollLine(ctx context.Context, k Key, s rollout.Settings) (Line, error) {
 	}
 	l := Line{
 		Opening:       k.Opening.String(),
-		OpeningPlay:   OpeningPlays[k.Opening],
-		Reply:         k.Reply.String(),
+		OpeningPlay:   k.Play,
 		Score:         k.Score.String(),
 		XGID:          "XGID=" + domain.EncodeXGID(&pos),
 		EngineVersion: res.EngineVersion,
@@ -179,6 +252,9 @@ func RollLine(ctx context.Context, k Key, s rollout.Settings) (Line, error) {
 			Move: c.Move, Equity: round6(c.Equity), StdErr: round6(c.StdErr),
 			Games: c.Games, JSD: math.Round(c.JSD*100) / 100,
 		})
+	}
+	if !k.IsOpening() {
+		l.Reply = k.Reply.String()
 	}
 	sort.SliceStable(l.Candidates, func(i, j int) bool { return l.Candidates[i].Equity > l.Candidates[j].Equity })
 	return l, nil

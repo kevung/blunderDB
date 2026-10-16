@@ -7,17 +7,18 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
-func TestReplyPositions_AllOpeningsResolveAndDiffer(t *testing.T) {
-	if len(Openings()) != 15 || len(Replies()) != 21 || len(OpeningPlays) != 15 {
-		t.Fatalf("openings %d, replies %d, plays %d; want 15, 21, 15", len(Openings()), len(Replies()), len(OpeningPlays))
+func TestPositions_OpeningsAndRepliesResolveAndDiffer(t *testing.T) {
+	if len(Openings()) != 15 || len(Replies()) != 21 {
+		t.Fatalf("openings %d, replies %d; want 15, 21", len(Openings()), len(Replies()))
 	}
 	seen := map[string]Key{}
-	for _, k := range Jobs([]Score{{4, 2}}) {
-		pos, err := ReplyPosition(k.Opening, k.Reply, k.Score)
+	add := func(k Key, onRoll int) {
+		t.Helper()
+		pos, err := k.Position()
 		if err != nil {
-			t.Fatal(err)
+			t.Fatalf("%s: %v", k, err)
 		}
-		if pos.PlayerOnRoll != domain.White || pos.Score[domain.White] != 4 || pos.Score[domain.Black] != 2 {
+		if pos.PlayerOnRoll != onRoll || pos.Score[domain.White] != 4 || pos.Score[domain.Black] != 2 {
 			t.Fatalf("%s: on roll %d, score %v", k, pos.PlayerOnRoll, pos.Score)
 		}
 		x := domain.EncodeXGID(&pos)
@@ -30,13 +31,33 @@ func TestReplyPositions_AllOpeningsResolveAndDiffer(t *testing.T) {
 			t.Fatalf("%s: XGID %s reads back as %v (%v)", k, x, back.Score, err)
 		}
 	}
-	if len(seen) != 315 {
-		t.Fatalf("%d reply positions, want 315", len(seen))
+	s := []Score{{4, 2}}
+	for _, k := range OpeningJobs(s, Filter{}) {
+		add(k, domain.Black)
+	}
+	// The reply follows whatever play the opening line ranks first: here the
+	// first legal play of each roll stands in for it. Two openings may
+	// transpose, so the 21 replies differ within an opening only.
+	n := 0
+	for _, o := range Openings() {
+		n += len(seen)
+		seen = map[string]Key{}
+		pos, _ := OpeningPosition(o, s[0])
+		play := domain.LegalMoves(&pos)[0].Notation
+		for _, r := range Replies() {
+			add(ReplyKey(o, play, r, s[0]), domain.White)
+		}
+	}
+	if n += len(seen); n != 15+315 {
+		t.Fatalf("%d positions, want 330", n)
+	}
+	if _, err := ReplyPosition(Roll{3, 1}, "24/12", Roll{2, 1}, s[0]); err == nil {
+		t.Fatal("an illegal opening play must be refused")
 	}
 }
 
 func TestReplyPosition_CrawfordReadsBack(t *testing.T) {
-	pos, err := ReplyPosition(Roll{3, 1}, Roll{5, 2}, Score{domain.Crawford, 4})
+	pos, err := ReplyPosition(Roll{3, 1}, "8/5 6/5", Roll{5, 2}, Score{domain.Crawford, 4})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -94,8 +115,8 @@ func TestRank_TieRule(t *testing.T) {
 }
 
 func TestLoad_RefusesDuplicateCompileKeepsLater(t *testing.T) {
-	a := `{"opening":"31","reply":"52","score":"4-2","candidates":[{"move":"x","equity":0.1}]}`
-	b := `{"opening":"31","reply":"52","score":"4-2","candidates":[{"move":"y","equity":0.2}]}`
+	a := `{"opening":"31","opening_play":"8/5 6/5","reply":"52","score":"4-2","candidates":[{"move":"x","equity":0.1}]}`
+	b := `{"opening":"31","opening_play":"8/5 6/5","reply":"52","score":"4-2","candidates":[{"move":"y","equity":0.2}]}`
 	if _, err := Load(strings.NewReader(a + "\n" + b + "\n")); err == nil {
 		t.Fatal("Load accepted a key twice")
 	}
@@ -103,7 +124,7 @@ func TestLoad_RefusesDuplicateCompileKeepsLater(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	l, ok := book.Lookup(Roll{3, 1}, Roll{5, 2}, Score{4, 2})
+	l, ok := book.Lookup(ReplyKey(Roll{3, 1}, "8/5 6/5", Roll{5, 2}, Score{4, 2}))
 	if !ok || l.Candidates[0].Move != "y" {
 		t.Fatalf("lookup %v %v, want the later line", l, ok)
 	}
@@ -114,6 +135,27 @@ func TestLoad_RefusesDuplicateCompileKeepsLater(t *testing.T) {
 	again, err := Load(strings.NewReader(sb.String()))
 	if err != nil || again.Len() != 1 {
 		t.Fatalf("written book reads back as %d lines (%v)", again.Len(), err)
+	}
+}
+
+func TestKey_OpeningAndReplyLinesReadBack(t *testing.T) {
+	bad := []string{
+		`{"opening":"31","opening_play":"8/5 6/5","score":"4-2"}`, // an opening line names no play
+		`{"opening":"31","reply":"52","score":"4-2"}`,             // a reply follows a play
+	}
+	for _, l := range bad {
+		if _, err := Load(strings.NewReader(l)); err == nil {
+			t.Errorf("Load accepted %s", l)
+		}
+	}
+	b, err := Load(strings.NewReader(`{"opening":"31","score":"4-2"}` + "\n" +
+		`{"opening":"31","opening_play":"8/5 6/5","reply":"52","score":"4-2"}` + "\n" +
+		`{"opening":"31","opening_play":"24/23 13/10","reply":"52","score":"4-2"}`))
+	if err != nil || b.Len() != 3 {
+		t.Fatalf("%v, %d lines", err, b.Len())
+	}
+	if _, ok := b.Lookup(OpeningKey(Roll{3, 1}, Score{4, 2})); !ok {
+		t.Fatal("opening line not found")
 	}
 }
 

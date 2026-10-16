@@ -4877,6 +4877,57 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/versionResp"
+  /v1/openingbook.grade:
+    post:
+      operationId: openingbook.grade
+      tags: [openingbook]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/openingbook_Answer"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/openingbook_Verdict"
+  /v1/openingbook.question:
+    post:
+      operationId: openingbook.question
+      tags: [openingbook]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/openingbook_QuestionRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/openingbook_Question"
+  /v1/openingbook.status:
+    post:
+      operationId: openingbook.status
+      tags: [openingbook]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/openingBookStatusReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/openingbook_Status"
   /v1/pile.state:
     post:
       operationId: pile.state
@@ -9144,6 +9195,23 @@ components:
       properties:
         ok:
           type: boolean
+    openingBookStatusReq:
+      type: object
+    openingbook_Answer:
+      type: object
+      description: "Opaque: see the Go type openingbook.Answer (defined outside internal/server, not expanded here)."
+    openingbook_Question:
+      type: object
+      description: "Opaque: see the Go type openingbook.Question (defined outside internal/server, not expanded here)."
+    openingbook_QuestionRequest:
+      type: object
+      description: "Opaque: see the Go type openingbook.QuestionRequest (defined outside internal/server, not expanded here)."
+    openingbook_Status:
+      type: object
+      description: "Opaque: see the Go type openingbook.Status (defined outside internal/server, not expanded here)."
+    openingbook_Verdict:
+      type: object
+      description: "Opaque: see the Go type openingbook.Verdict (defined outside internal/server, not expanded here)."
     parseTextReq:
       type: object
       properties:

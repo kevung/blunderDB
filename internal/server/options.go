@@ -7,6 +7,7 @@ import (
 	"github.com/kevung/blunderdb/internal/server/metrics"
 	"github.com/kevung/blunderdb/pkg/blunderdb/duel"
 	"github.com/kevung/blunderdb/pkg/blunderdb/issuance"
+	"github.com/kevung/blunderdb/pkg/blunderdb/openingbook"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -213,6 +214,11 @@ type Options struct {
 	// with CodeInvalid rather than silently exporting unmarked. RunServe
 	// loads or creates it from --identity-dir.
 	Identity *issuance.Identity
+
+	// OpeningBook is the book the « which play at this score? » exercise
+	// draws from and judges against; nil (the default) is the one embedded
+	// in the binary (openingbook.Default).
+	OpeningBook *openingbook.Book
 
 	// now is an injectable clock for deterministic tests. Defaults to
 	// time.Now.

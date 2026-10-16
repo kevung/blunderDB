@@ -75,8 +75,8 @@ Navigation
 
 Tant qu'une question du :ref:`panneau Entraînement <panneau_entrainement>` est
 posée sur le plateau, les touches qui parcourent la liste ne la font pas
-défiler : la question garde le plateau. Sur une décision de pions, le panneau
-ayant le focus : RETOUR ARRIÈRE défait le dernier pas, ÉCHAP recommence le coup,
+défiler : la question garde le plateau. Sur une décision de pions ou une
+question d'*Ouverture*, le panneau ayant le focus : RETOUR ARRIÈRE défait le dernier pas, ÉCHAP recommence le coup,
 ENTRÉE le valide quand il est complet, comme un clic sur les dés ; dans le champ
 de notation, ENTRÉE valide le coup tapé (``13/7 8/7``).
 

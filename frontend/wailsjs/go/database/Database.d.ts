@@ -264,13 +264,11 @@ export function ExplainDecision(arg1:number,arg2:string):Promise<engine.Explanat
 
 export function ExportAnkiPackage(arg1:number,arg2:number,arg3:string,arg4:string):Promise<apkg.Result>;
 
-
 export function ExportDatabase(arg1:domain.ExportOptions):Promise<ingest.ExportReport>;
 
 export function ExportDatabaseCtx(arg1:context.Context,arg2:domain.ExportOptions):Promise<ingest.ExportReport>;
 
 export function ExportMatchMAT(arg1:number,arg2:string):Promise<void>;
-
 
 export function ExportTranscriptionMAT(arg1:number,arg2:string):Promise<void>;
 

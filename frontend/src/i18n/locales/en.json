@@ -2170,7 +2170,8 @@
             "pips": "Pips",
             "bearoff": "Bearoff",
             "evaluation": "Evaluation",
-            "decision": "Decision"
+            "decision": "Decision",
+            "opening": "Opening"
         },
         "sources": {
             "board": "Board",
@@ -2220,7 +2221,9 @@
             "gv4": "Gammon value 4",
             "decisionChecker": "Checker play",
             "decisionCube": "Cube action",
-            "evalWin": "Win chance of the player on roll (%)"
+            "evalWin": "Win chance of the player on roll (%)",
+            "openingFirst": "Opening play",
+            "openingReply": "Reply"
         },
         "retry": "Retry",
         "validate": "Check",
@@ -2237,12 +2240,30 @@
             "decisionsExhausted": "Every analysed position of the browsed list has been asked.",
             "notAGame": "This exercise needs a game position: fifteen chequers a side, and neither side fully borne off.",
             "notMoneyCubeDecision": "This exercise needs a money-game cube decision, with no dice and the cube centred or held by the player on roll: none was found in the browsed list.",
-            "notEvaluable": "The engine could not evaluate this position: it is not asked rather than estimated."
+            "notEvaluable": "The engine could not evaluate this position: it is not asked rather than estimated.",
+            "bookEmpty": "The opening book is not computed yet: this exercise has nothing to ask for now."
         },
         "truthExact": "Truth: the two-sided bear-off database, exact.",
         "truthEvaluated": "Truth: gammonNet, {depth}.",
         "epcShown": "EPC — {p1}: {a} · {p2}: {b}",
-        "scoresInstruction": "For each box, work the number out in your head, then click Reveal. Afterwards, click every number you got wrong."
+        "scoresInstruction": "For each box, work the number out in your head, then click Reveal. Afterwards, click every number you got wrong.",
+        "opening": {
+            "promptOpening": "Play the opening {roll}.",
+            "promptReply": "Play the reply {roll}.",
+            "score": "You {you} away, the opponent {them} away.",
+            "money": "Money game.",
+            "followsBest": "Your opening is not the one the book follows: the reply is asked after its best play at this score, {move}.",
+            "after": "After the opening {move}.",
+            "right": "Right: {move} is tied with the best.",
+            "unranked": "{move} is not among the book's candidates.",
+            "behind": "{move} is {gap} behind the best.",
+            "colPlay": "Play",
+            "colGap": "Gap",
+            "colCi": "95 % CI",
+            "tied": "tied",
+            "scale": "Gaps in normalised equity at the score (±1 = the centred cube); “tied”: gap under 1.96·σ(gap) + 0.005.",
+            "precision": "Rollout: {games} games — {signature}"
+        }
     },
     "explain": {
         "blots": "You lose {cost} mp: the move played leaves {blots} blots where {best} leaves only {bestBlots}.",

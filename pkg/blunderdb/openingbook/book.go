@@ -12,6 +12,8 @@ import (
 	"math"
 	"sort"
 	"sync"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
 // Candidate is one play of a reply position, rolled out.
@@ -20,7 +22,7 @@ type Candidate struct {
 	// name the rollout resolved, so two plays never share it.
 	Move string `json:"move"`
 	// Equity is normalised equity at the score (money points at money play),
-	// the replier's side (ADR-0019).
+	// the side on roll's (ADR-0019).
 	Equity float64 `json:"equity"`
 	// StdErr is the standard error of Equity.
 	StdErr float64 `json:"std_err"`
@@ -32,13 +34,16 @@ type Candidate struct {
 	JSD float64 `json:"jsd"`
 }
 
-// Line is the book's unit: one reply position at one score.
+// Line is the book's unit: one position at one score, either the opening
+// move (Reply and OpeningPlay empty) or a reply to an opening play.
 type Line struct {
-	Opening     string `json:"opening"`      // the opening roll, "31"
-	OpeningPlay string `json:"opening_play"` // OpeningPlays of it, as rolled out
-	Reply       string `json:"reply"`        // the reply roll, "52" or "66"
-	Score       string `json:"score"`        // Score.String: "4-2", "1-4", "money"
-	XGID        string `json:"xgid"`         // the reply position, to roll it again
+	Opening string `json:"opening"` // the opening roll, "31"
+	// OpeningPlay is the opening play the reply follows, a candidate of the
+	// opening line at the same score; empty on an opening line.
+	OpeningPlay string `json:"opening_play,omitempty"`
+	Reply       string `json:"reply,omitempty"` // the reply roll, "52" or "66"; empty on an opening line
+	Score       string `json:"score"`           // Score.String: "4-2", "1-4", "money"
+	XGID        string `json:"xgid"`            // the position, to roll it again
 	// EngineVersion and Signature are the rollout's: two lines with the same
 	// signature were computed alike and can be compared.
 	EngineVersion string `json:"engine_version"`
@@ -54,14 +59,39 @@ type Line struct {
 	Candidates []Candidate `json:"candidates"`
 }
 
-// Key is what a Line answers: an opening, a reply and a score.
+// Key is what a Line answers: an opening roll at a score (an opening line,
+// Play empty and Reply zero), or a reply roll after the opening play Play.
 type Key struct {
-	Opening, Reply Roll
-	Score          Score
+	Opening Roll
+	Play    string
+	Reply   Roll
+	Score   Score
 }
 
+// OpeningKey is the key of the opening line of opening at s.
+func OpeningKey(opening Roll, s Score) Key { return Key{Opening: opening, Score: s} }
+
+// ReplyKey is the key of the line of reply after play, opening at s.
+func ReplyKey(opening Roll, play string, reply Roll, s Score) Key {
+	return Key{Opening: opening, Play: play, Reply: reply, Score: s}
+}
+
+// IsOpening says the key names an opening line.
+func (k Key) IsOpening() bool { return k.Reply == Roll{} }
+
 func (k Key) String() string {
-	return k.Opening.String() + "/" + k.Reply.String() + "@" + k.Score.String()
+	if k.IsOpening() {
+		return k.Opening.String() + "@" + k.Score.String()
+	}
+	return k.Opening.String() + " " + k.Play + " / " + k.Reply.String() + "@" + k.Score.String()
+}
+
+// Position is the position the key's line rolls out.
+func (k Key) Position() (domain.Position, error) {
+	if k.IsOpening() {
+		return OpeningPosition(k.Opening, k.Score)
+	}
+	return ReplyPosition(k.Opening, k.Play, k.Reply, k.Score)
 }
 
 // Key reads the line's key back from its fields.
@@ -70,15 +100,24 @@ func (l *Line) Key() (Key, error) {
 	if err != nil {
 		return Key{}, err
 	}
-	r, err := ParseRoll(l.Reply)
-	if err != nil {
-		return Key{}, err
-	}
 	s, err := ParseScore(l.Score)
 	if err != nil {
 		return Key{}, err
 	}
-	return Key{o, r, s}, nil
+	if l.Reply == "" {
+		if l.OpeningPlay != "" {
+			return Key{}, fmt.Errorf("openingbook: opening line %s names an opening play", l.Opening)
+		}
+		return OpeningKey(o, s), nil
+	}
+	r, err := ParseRoll(l.Reply)
+	if err != nil {
+		return Key{}, err
+	}
+	if l.OpeningPlay == "" {
+		return Key{}, fmt.Errorf("openingbook: reply line %s/%s names no opening play", l.Opening, l.Reply)
+	}
+	return ReplyKey(o, l.OpeningPlay, r, s), nil
 }
 
 // The tie rule of the book: a play is level with the best when its gap is
@@ -134,12 +173,12 @@ type Book struct {
 	lines map[Key]Line
 }
 
-// Lookup returns the line of a reply position at a score.
-func (b *Book) Lookup(opening, reply Roll, s Score) (Line, bool) {
+// Lookup returns the line of a key.
+func (b *Book) Lookup(k Key) (Line, bool) {
 	if b == nil {
 		return Line{}, false
 	}
-	l, ok := b.lines[Key{opening, reply, s}]
+	l, ok := b.lines[k]
 	return l, ok
 }
 
@@ -169,6 +208,8 @@ func keyLess(a, b Key) bool {
 	switch {
 	case a.Opening != b.Opening:
 		return rollLess(a.Opening, b.Opening)
+	case a.Play != b.Play:
+		return a.Play < b.Play
 	case a.Reply != b.Reply:
 		return rollLess(a.Reply, b.Reply)
 	case a.Score.Replier != b.Score.Replier:

@@ -2170,7 +2170,8 @@
             "pips": "Pips",
             "bearoff": "Bearoff",
             "evaluation": "Bewertung",
-            "decision": "Entscheidung"
+            "decision": "Entscheidung",
+            "opening": "Eröffnung"
         },
         "sources": {
             "board": "Brett",
@@ -2220,7 +2221,9 @@
             "gv4": "Gammonwert 4",
             "decisionChecker": "Zug",
             "decisionCube": "Doppelentscheidung",
-            "evalWin": "Gewinnchance des Spielers am Zug (%)"
+            "evalWin": "Gewinnchance des Spielers am Zug (%)",
+            "openingFirst": "Eröffnungszug",
+            "openingReply": "Antwort"
         },
         "retry": "Erneut versuchen",
         "validate": "Prüfen",
@@ -2237,12 +2240,30 @@
             "decisionsExhausted": "Alle analysierten Positionen der durchsuchten Liste wurden gestellt.",
             "notAGame": "Diese Übung braucht eine Spielposition: fünfzehn Steine je Seite, und keine Seite ganz abgetragen.",
             "notMoneyCubeDecision": "Diese Übung braucht eine Doppelentscheidung im Geldspiel, ohne Würfel und mit dem Doppler in der Mitte oder beim Spieler am Zug: in der durchsuchten Liste wurde keine gefunden.",
-            "notEvaluable": "Die Engine konnte diese Position nicht bewerten: sie wird nicht gestellt statt geschätzt."
+            "notEvaluable": "Die Engine konnte diese Position nicht bewerten: sie wird nicht gestellt statt geschätzt.",
+            "bookEmpty": "Das Eröffnungsbuch ist noch nicht berechnet: Diese Übung hat vorerst nichts zu fragen."
         },
         "truthExact": "Wahrheit: die zweiseitige Bearoff-Datenbank, exakt.",
         "truthEvaluated": "Wahrheit: gammonNet, {depth}.",
         "epcShown": "EPC — {p1}: {a} · {p2}: {b}",
-        "scoresInstruction": "Schätzen Sie jede Zahl im Kopf und klicken Sie dann auf Aufdecken. Klicken Sie danach jede Zahl an, die Sie falsch hatten."
+        "scoresInstruction": "Schätzen Sie jede Zahl im Kopf und klicken Sie dann auf Aufdecken. Klicken Sie danach jede Zahl an, die Sie falsch hatten.",
+        "opening": {
+            "promptOpening": "Spielen Sie die Eröffnung {roll}.",
+            "promptReply": "Spielen Sie die Antwort {roll}.",
+            "score": "Sie {you} Punkte entfernt, der Gegner {them}.",
+            "money": "Geldspiel.",
+            "followsBest": "Ihre Eröffnung ist nicht die, der das Buch folgt: Die Antwort wird nach seinem besten Zug bei diesem Stand gestellt, {move}.",
+            "after": "Nach der Eröffnung {move}.",
+            "right": "Richtig: {move} ist gleichauf mit dem besten Zug.",
+            "unranked": "{move} gehört nicht zu den Kandidaten des Buchs.",
+            "behind": "{move} liegt {gap} hinter dem besten Zug.",
+            "colPlay": "Zug",
+            "colGap": "Abstand",
+            "colCi": "95-%-KI",
+            "tied": "gleichauf",
+            "scale": "Abstände in normierter Equity beim Stand (±1 = der zentrierte Würfel); „gleichauf“: Abstand unter 1,96·σ(Abstand) + 0,005.",
+            "precision": "Rollout: {games} Partien — {signature}"
+        }
     },
     "explain": {
         "blots": "Sie verlieren {cost} mp: Der gespielte Zug lässt {blots} Blots stehen, {best} nur {bestBlots}.",

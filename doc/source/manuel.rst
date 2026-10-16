@@ -4768,7 +4768,7 @@ Le lanceur
 
 Trois réglages, un par ligne ; « Démarrer » est au bout de la bande d'en-tête :
 
-* l'**exercice** — *Scores*, *Comptage des pips*, *Bearoff*, *Évaluation* ou *Décision* ;
+* l'**exercice** — *Scores*, *Comptage des pips*, *Bearoff*, *Évaluation*, *Décision* ou *Ouverture* ;
 * la **source** de la question, quand l'exercice en a plusieurs — *Vivier*
   (des formes canoniques de l'exercice), *Plateau* (la position telle qu'elle
   est) ou *Base* (une position de la liste parcourue) ;
@@ -4780,13 +4780,14 @@ La liste parcourue peut venir des *erreurs récurrentes* du panneau Stats : un
 clic sur « Quiz sur ce groupe » la remplace par les positions du groupe et
 démarre l'exercice Décision.
 
-``train scores``, ``train pips``, ``train bearoff``, ``train evaluation`` et
-``train decision`` ouvrent le panneau et démarrent directement ; ``train tp`` et ``train takepoint``
+``train scores``, ``train pips``, ``train bearoff``, ``train evaluation``,
+``train decision`` et ``train opening`` ouvrent le panneau et démarrent directement ; ``train tp`` et ``train takepoint``
 sont des synonymes de ``train scores``, ``train epc`` de ``train bearoff``,
-``train quiz`` de ``train decision``.
+``train quiz`` de ``train decision``, ``train ouverture`` et ``train book`` de
+``train opening``.
 
-Les cinq exercices
-~~~~~~~~~~~~~~~~~~
+Les six exercices
+~~~~~~~~~~~~~~~~~
 
 **Scores** tire au sort l'un des 36 scores non ordonnés de 2 à 9 away et
 affiche une **fiche de score** : deux colonnes — *Vous* et *L'adversaire* — et
@@ -4872,8 +4873,18 @@ session ; quand la liste est épuisée, le panneau le dit. Sans base ouverte, ou
 sans position analysée dans la liste, l'exercice **refuse en le disant** et rien
 ne démarre.
 
-Tant qu'une question d'*Évaluation* ou de *Décision* attend sa réponse, le
-panneau Analyse est masqué : il porte la réponse.
+**Ouverture** pose **les deux premiers jets d'une partie à un score** : vous
+jouez d'abord l'ouverture du joueur au trait, puis la réponse de l'adversaire
+dans la position qu'elle laisse. Les deux coups sont jugés contre le **livre
+d'ouverture** embarqué dans blunderDB, calculé par ses propres rollouts : pour
+chaque score de sa grille — de 2 à 7 points de part et d'autre, à un point
+d'écart au plus, et la partie Crawford —, les quinze jets d'ouverture, puis les
+réponses après le meilleur coup d'ouverture à ce score. Le livre est la seule
+source de l'exercice ; tant qu'il n'est pas calculé, l'exercice **le dit et ne
+démarre pas**.
+
+Tant qu'une question d'*Évaluation*, de *Décision* ou d'*Ouverture* attend sa
+réponse, le panneau Analyse est masqué : il porte la réponse.
 
 Répondre
 ~~~~~~~~
@@ -4928,8 +4939,22 @@ simplement pas de prix, et il ne coûte rien. Un coup classé coûte ce que
 l'analyse dit qu'il coûte, en millipoints. Seul un coup classé et sans coût est
 juste ; le meilleur coup s'affiche dans tous les cas.
 
+*Ouverture* se **choisit** aussi, coup joué sur le damier comme en *Décision*
+— mêmes gestes, même champ de notation. Le panneau dit le jet à jouer et le
+score, *vous* d'abord. Un coup est **juste** quand il est **à égalité avec le
+meilleur** : il n'y a pas un seul bon coup, mais un groupe de tête que le livre
+ne sait pas départager (voir :ref:`metrique_livre_ouverture`). Après une
+erreur, ou hors délai, le panneau montre chaque candidat du livre : son
+**écart** au meilleur, l'**IC 95 %** de cet écart et la mention **à égalité** ;
+une ligne discrète donne le nombre de parties et le réglage du rollout qui ont
+produit ces chiffres. « Suivante » pose alors la réponse. Si votre ouverture
+était à égalité avec le meilleur et que le livre la suit, la réponse se pose
+après elle ; sinon elle se pose après le **meilleur coup d'ouverture du livre à
+ce score**, et le panneau le dit. Le journal compte l'ouverture et la réponse à
+part : on peut connaître ses ouvertures et mal répondre.
+
 Le chronomètre part à l'affichage de la question et s'arrête à « Révéler », à
-« Valider » ou au clic d'une action de videau de *Décision* ; la question suivante se prépare pendant que vous répondez, elle
+« Valider », au clic d'une action de videau de *Décision* ou au coup joué d'*Ouverture* ; la question suivante se prépare pendant que vous répondez, elle
 n'est donc jamais chronométrée avec la vôtre. Cocher ses fautes n'est pas
 chronométré non plus.
 Avec une limite, une question restée

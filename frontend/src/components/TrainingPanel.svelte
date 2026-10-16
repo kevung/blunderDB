@@ -31,6 +31,7 @@
     import { retakeMissed, missedToDeck, missedToCollection } from '../services/trainingMissed.js';
     import ScoreCard from './ScoreCard.svelte';
     import ExplanationLine from './ExplanationLine.svelte';
+    import OpeningBookStep from './OpeningBookStep.svelte';
     import TrainingNumberCell from './TrainingNumberCell.svelte';
     import PanelHeader from './panels/PanelHeader.svelte';
     import FormGrid from './panels/FormGrid.svelte';
@@ -86,7 +87,7 @@
     // ENTRÉE valide le coup complet, ÉCHAP le recommence. Dans un champ de texte, ils restent au champ.
     /** @param {KeyboardEvent} event */
     function onPanelKey(event) {
-        if (!session || session.revealed || question?.kind !== 'decision' || question.prompt !== 'checker') return;
+        if (!session || session.revealed || question?.prompt !== 'checker' || (question.kind !== 'decision' && question.kind !== 'opening')) return;
         const target = /** @type {HTMLElement} */ (event.target);
         if (event.ctrlKey || event.metaKey || event.altKey) return;
         if (target.matches?.('input, textarea, select')) return;
@@ -248,8 +249,11 @@
                 {#if !question}
                     <!-- Question suivante impossible : la session reste ouverte, « Terminer » l'enregistre. -->
                     <p class="refusal" data-testid="training-question-failed">{$t(refusalMessageKey(session.questionError))}</p>
-                {:else if question.kind === 'decision'}
+                {:else if question.kind === 'decision' || question.kind === 'opening'}
                     <div class="decision">
+                        {#if question.kind === 'opening'}
+                            <OpeningBookStep {question} {verdict} revealed={session.revealed} outOfTime={session.outOfTime} />
+                        {/if}
                         {#if question.prompt === 'cube'}
                             <p class="prompt">{$t('training.cubePrompt')}</p>
                             <div class="choices" role="group" aria-label={$t('training.numbers.decisionCube')}>
@@ -292,7 +296,7 @@
                                 />
                             {/if}
                         {/if}
-                        {#if session.revealed && verdict}
+                        {#if session.revealed && verdict && question.kind === 'decision'}
                             <!-- Illégal, non classé (sans prix) et noté sont trois issues ;
                                  hors délai, seulement la correction. -->
                             <p class="verdict" class:correct={!session.outOfTime && verdict.matched && verdict.errorMp === 0} data-testid="training-verdict">

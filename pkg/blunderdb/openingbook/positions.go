@@ -23,29 +23,6 @@ func ParseRoll(s string) (Roll, error) {
 	return Roll{Hi: max(a, b), Lo: min(a, b)}, nil
 }
 
-// OpeningPlays is the opening play of each non-double roll the book answers:
-// the best one by the published opening rollouts, in blunderDB notation, for
-// the player moving from 24 to 1. A roll whose best plays are within a few
-// thousandths of each other (21, 41, 43, 64) keeps the one most often played;
-// changing an entry changes the reply positions and calls for a new book.
-var OpeningPlays = map[Roll]string{
-	{2, 1}: "13/11 6/5",
-	{3, 1}: "8/5 6/5",
-	{4, 1}: "24/23 13/9",
-	{5, 1}: "24/23 13/8",
-	{6, 1}: "13/7 8/7",
-	{3, 2}: "24/21 13/11",
-	{4, 2}: "8/4 6/4",
-	{5, 2}: "13/11 13/8",
-	{6, 2}: "24/18 13/11",
-	{4, 3}: "24/20 13/10",
-	{5, 3}: "8/3 6/3",
-	{6, 3}: "24/18 13/10",
-	{5, 4}: "24/20 13/8",
-	{6, 4}: "8/2 6/2",
-	{6, 5}: "24/13",
-}
-
 // Openings lists the 15 non-double rolls in a fixed order: by the higher
 // die, then the lower.
 func Openings() []Roll {
@@ -176,13 +153,13 @@ func ParseScores(spec string) ([]Score, error) {
 	return out, nil
 }
 
-// ReplyPosition is the position the second player faces: the opener (Black,
-// moving from 24 to 1) has played OpeningPlays[opening], the replier (White)
-// is on roll with reply, the cube centred at 1, at score s.
-func ReplyPosition(opening, reply Roll, s Score) (domain.Position, error) {
-	play, ok := OpeningPlays[opening]
-	if !ok {
-		return domain.Position{}, fmt.Errorf("openingbook: no opening play for %s", opening)
+// OpeningPosition is the position of the first move: the opener (Black,
+// moving from 24 to 1) on roll with opening, the cube centred at 1, at
+// score s. Score is still read replier first: one question asks both moves
+// of the same game.
+func OpeningPosition(opening Roll, s Score) (domain.Position, error) {
+	if opening.Hi == opening.Lo || opening.Lo < 1 || opening.Hi > 6 {
+		return domain.Position{}, fmt.Errorf("openingbook: %s is not an opening roll", opening)
 	}
 	if err := s.Valid(); err != nil {
 		return domain.Position{}, err
@@ -190,7 +167,25 @@ func ReplyPosition(opening, reply Roll, s Score) (domain.Position, error) {
 	pos := domain.InitializePosition()
 	pos.PlayerOnRoll = domain.Black
 	pos.Dice = [2]int{opening.Hi, opening.Lo}
-	p, err := engine.ResolvePlay(&pos, domain.LegalMoves(&pos), play, false)
+	pos.DecisionType = domain.CheckerAction
+	pos.Cube = domain.Cube{Owner: domain.None, Value: 0}
+	pos.Score = [2]int{}
+	pos.Score[domain.White] = s.Replier
+	pos.Score[domain.Black] = s.Opener
+	return pos, nil
+}
+
+// ReplyPosition is the position the second player faces: the opener has
+// played play (a candidate of the opening line, in the book's notation, hits
+// marked), the replier (White) is on roll with reply, at score s. The play
+// is the book's best at that score, not a fixed table: the reply follows
+// what the opening line says.
+func ReplyPosition(opening Roll, play string, reply Roll, s Score) (domain.Position, error) {
+	pos, err := OpeningPosition(opening, s)
+	if err != nil {
+		return domain.Position{}, err
+	}
+	p, err := engine.ResolvePlay(&pos, domain.LegalMoves(&pos), play, true)
 	if err != nil {
 		return domain.Position{}, fmt.Errorf("openingbook: opening %s: %w", opening, err)
 	}
@@ -199,8 +194,6 @@ func ReplyPosition(opening, reply Roll, s Score) (domain.Position, error) {
 	out.Dice = [2]int{reply.Hi, reply.Lo}
 	out.DecisionType = domain.CheckerAction
 	out.Cube = domain.Cube{Owner: domain.None, Value: 0}
-	out.Score = [2]int{}
-	out.Score[domain.White] = s.Replier
-	out.Score[domain.Black] = s.Opener
+	out.Score = pos.Score
 	return out, nil
 }

@@ -2170,7 +2170,8 @@
             "pips": "Pips",
             "bearoff": "Bearoff",
             "evaluation": "Evaluación",
-            "decision": "Decisión"
+            "decision": "Decisión",
+            "opening": "Apertura"
         },
         "sources": {
             "board": "Tablero",
@@ -2220,7 +2221,9 @@
             "gv4": "Valor del gammon 4",
             "decisionChecker": "Jugada de fichas",
             "decisionCube": "Acción de cubo",
-            "evalWin": "Probabilidad de ganar del jugador en turno (%)"
+            "evalWin": "Probabilidad de ganar del jugador en turno (%)",
+            "openingFirst": "Jugada de apertura",
+            "openingReply": "Respuesta"
         },
         "retry": "Reintentar",
         "validate": "Comprobar",
@@ -2237,12 +2240,30 @@
             "decisionsExhausted": "Todas las posiciones analizadas de la lista recorrida ya se han planteado.",
             "notAGame": "Este ejercicio necesita una posición de partida: quince fichas por bando, y ningún bando con todas sus fichas sacadas.",
             "notMoneyCubeDecision": "Este ejercicio necesita una decisión de cubo en partida por dinero, sin dados y con el cubo en el centro o en manos del jugador en turno: no se encontró ninguna en la lista recorrida.",
-            "notEvaluable": "El motor no pudo evaluar esta posición: no se plantea en lugar de estimarse."
+            "notEvaluable": "El motor no pudo evaluar esta posición: no se plantea en lugar de estimarse.",
+            "bookEmpty": "El libro de aperturas aún no está calculado: este ejercicio no tiene nada que preguntar por ahora."
         },
         "truthExact": "Verdad: la base de bearoff de dos bandos, exacta.",
         "truthEvaluated": "Verdad: gammonNet, {depth}.",
         "epcShown": "EPC — {p1}: {a} · {p2}: {b}",
-        "scoresInstruction": "Calcule mentalmente cada casilla y pulse Revelar. Después, pulse cada número que haya fallado."
+        "scoresInstruction": "Calcule mentalmente cada casilla y pulse Revelar. Después, pulse cada número que haya fallado.",
+        "opening": {
+            "promptOpening": "Juegue la apertura {roll}.",
+            "promptReply": "Juegue la respuesta {roll}.",
+            "score": "Usted a {you} puntos, el rival a {them}.",
+            "money": "Partida por dinero.",
+            "followsBest": "Su apertura no es la que sigue el libro: la respuesta se plantea tras su mejor jugada en este marcador, {move}.",
+            "after": "Tras la apertura {move}.",
+            "right": "Correcto: {move} está empatada con la mejor.",
+            "unranked": "{move} no está entre los candidatos del libro.",
+            "behind": "{move} está a {gap} de la mejor.",
+            "colPlay": "Jugada",
+            "colGap": "Diferencia",
+            "colCi": "IC 95 %",
+            "tied": "empatada",
+            "scale": "Diferencias en equity normalizada al marcador (±1 = el cubo centrado); «empatada»: diferencia inferior a 1,96·σ(diferencia) + 0,005.",
+            "precision": "Rollout: {games} partidas — {signature}"
+        }
     },
     "explain": {
         "blots": "Pierde {cost} mp: la jugada realizada deja {blots} fichas sueltas donde {best} solo deja {bestBlots}.",

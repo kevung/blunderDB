@@ -54,9 +54,16 @@ function question(types) {
 }
 
 describe('le catalogue servi à ce jour', () => {
-    test('cinq exercices, et le mode de réponse est une propriété de chacun', () => {
-        expect(TRAINING_EXERCISES.map((e) => e.id)).toEqual(['scores', 'pips', 'bearoff', 'evaluation', 'decision']);
-        expect(Object.fromEntries(TRAINING_EXERCISES.map((e) => [e.id, e.mode]))).toEqual({ scores: 'declared', pips: 'declared', bearoff: 'entered', evaluation: 'entered', decision: 'chosen' });
+    test('six exercices, et le mode de réponse est une propriété de chacun', () => {
+        expect(TRAINING_EXERCISES.map((e) => e.id)).toEqual(['scores', 'pips', 'bearoff', 'evaluation', 'decision', 'opening']);
+        expect(Object.fromEntries(TRAINING_EXERCISES.map((e) => [e.id, e.mode]))).toEqual({
+            scores: 'declared',
+            pips: 'declared',
+            bearoff: 'entered',
+            evaluation: 'entered',
+            decision: 'chosen',
+            opening: 'chosen'
+        });
     });
 
     test('Évaluation accepte les trois sources, démarre sur le vivier, et occupe le plateau', () => {
@@ -78,7 +85,14 @@ describe('le catalogue servi à ce jour', () => {
     // La surface (ADR-0040 règle 2) : ce qui, hors de l'onglet, montre la
     // question. C'est elle qui dit si le plateau appartient à la question.
     test('seule la fiche de score n’a pas le plateau pour surface', () => {
-        expect(Object.fromEntries(TRAINING_EXERCISES.map((e) => [e.id, e.surface]))).toEqual({ scores: 'none', pips: 'board', bearoff: 'board', evaluation: 'board', decision: 'board' });
+        expect(Object.fromEntries(TRAINING_EXERCISES.map((e) => [e.id, e.surface]))).toEqual({
+            scores: 'none',
+            pips: 'board',
+            bearoff: 'board',
+            evaluation: 'board',
+            decision: 'board',
+            opening: 'board'
+        });
     });
 
     test('Bearoff accepte les trois sources, et démarre sur le vivier', () => {

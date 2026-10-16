@@ -46,6 +46,7 @@ When you provide a CLI command as the first argument, it automatically runs in h
 - `anki` - Spaced-repetition decks (decks, stats, forecast, sync)
 - `stats` - Statistics computed apart from list --type stats (recurring)
 - `training` - The Training journal (sessions, missed positions)
+- `openingbook` - Which play at this score? Replies to the opening, judged by the book
 - `cubematrix` - Cube verdict at every score of a match, for one position
 - `epc` - EPC, win probability and money cube verdict (bearoff)
 - `capture` - Read a position from a screen capture of an XG board
@@ -911,6 +912,36 @@ Decision questions keep their position. `--deck` makes an Anki deck of them,
 ```bash
 ./blunderDB training missed --db database.db --session 12 --deck "Monday's misses"
 ./blunderDB training missed --db database.db --collection "My misses" --format json
+```
+
+## Openingbook Command
+
+The exercise « which play at this score? » of the Training tab, from a shell:
+the first two moves of a game at a match score, drawn from the opening book
+embedded in blunderDB and judged against it. Every play tied with the best is
+a right answer (tied: gap under 1.96·σ(gap) + 0.005). No database is read or
+written; while the book is not computed, every sub-command says so.
+
+```bash
+./blunderDB openingbook status
+./blunderDB openingbook question [--score 4-2,1-2,money] [--opening 31] [--reply 21] [--seed <n>]
+./blunderDB openingbook answer --opening <roll> --reply <roll> --score <score> [--after <opening play>] '<play>'
+```
+
+`question` names the opening roll, the reply roll and the score (replier's
+away score first: `4-2` is the replier 4-away, the opener 2-away), with the
+XGID of the opening position. `answer` without `--after` judges the opening
+play and prints the command of the reply — after your play when it is tied
+and the book follows it, else after the book's best opening play at the
+score; with `--after`, it judges the reply. Each verdict lists every
+candidate's gap to the best, the 95 % interval of that gap and whether it is
+tied, in normalised equity at the score, with the rollout's games and
+settings. `--book` reads a `.jsonl` or `.jsonl.gz` book instead of the
+embedded one.
+
+```bash
+./blunderDB openingbook answer --opening 31 --reply 21 --score 4-2 '8/5 6/5'
+./blunderDB openingbook answer --opening 31 --reply 21 --score 4-2 --after '8/5 6/5' '13/11 6/5'
 ```
 
 ## Comment Command
@@ -4216,6 +4247,61 @@ Options:
 
 Example:
   blunderdb open --db cours.dbx --password secret
+```
+
+### `blunderdb openingbook answer`
+
+```
+Usage: blunderdb openingbook answer --opening <roll> --reply <roll> --score <score> [--after <opening play>] [options] <play>
+
+Without --after, judges the opening play and names the position of the reply;
+with it, judges the reply played after that opening play.
+
+Options:
+  -after string
+    	The opening play the reply follows, as the opening's verdict names it; empty judges the opening play
+  -book string
+    	Book file (.jsonl or .jsonl.gz) instead of the embedded one
+  -format string
+    	Output format: text, json (default "text")
+  -opening string
+    	Opening roll of the question (31)
+  -reply string
+    	Reply roll of the question (21)
+  -score string
+    	Score of the question (4-2, 1-2, money)
+
+Example:
+  blunderdb openingbook answer --opening 31 --reply 21 --score 4-2 '8/5 6/5'
+  blunderdb openingbook answer --opening 31 --reply 21 --score 4-2 --after '8/5 6/5' '13/11 6/5'
+```
+
+### `blunderdb openingbook question`
+
+```
+Usage of openingbook question:
+  -book string
+    	Book file (.jsonl or .jsonl.gz) instead of the embedded one
+  -format string
+    	Output format: text, json (default "text")
+  -opening string
+    	Opening rolls to draw from, comma-separated (31,65)
+  -reply string
+    	Reply rolls to draw from, comma-separated (21,66)
+  -score string
+    	Scores to draw from, comma-separated (replier-opener away: 4-2, 1-2 Crawford, money)
+  -seed uint
+    	Seed for a reproducible draw (0 = random)
+```
+
+### `blunderdb openingbook status`
+
+```
+Usage of openingbook status:
+  -book string
+    	Book file (.jsonl or .jsonl.gz) instead of the embedded one
+  -format string
+    	Output format: text, json (default "text")
 ```
 
 ### `blunderdb players`
