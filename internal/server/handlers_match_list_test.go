@@ -211,8 +211,9 @@ func TestMatchesByPositionHTTP(t *testing.T) {
 		}
 		return id.ID
 	}
-	decode := func(resp *http.Response, v any) {
+	call := func(path string, req, v any) {
 		t.Helper()
+		resp := post(t, ts, path, req)
 		defer resp.Body.Close()
 		if err := json.NewDecoder(resp.Body).Decode(v); err != nil {
 			t.Fatal(err)
@@ -221,22 +222,23 @@ func TestMatchesByPositionHTTP(t *testing.T) {
 	posID, otherID := savePos(0), savePos(1)
 
 	var m idResp
-	decode(post(t, ts, "/v1/matches.save", matchSaveReq{Match: &domain.Match{Player1Name: "A", Player2Name: "B", MatchLength: 3}}), &m)
+	call("/v1/matches.save", matchSaveReq{Match: &domain.Match{Player1Name: "A", Player2Name: "B", MatchLength: 3}}, &m)
 	var g idResp
-	decode(post(t, ts, "/v1/matches.createGame", gameReq{Game: &domain.Game{MatchID: m.ID, GameNumber: 1}}), &g)
-	decode(post(t, ts, "/v1/matches.createMove", moveReq{Move: &domain.Move{GameID: g.ID, MoveNumber: 1, MoveType: "checker", PositionID: posID, Player: 1}}), &idResp{})
+	call("/v1/matches.createGame", gameReq{Game: &domain.Game{MatchID: m.ID, GameNumber: 1}}, &g)
+	call("/v1/matches.createMove", moveReq{Move: &domain.Move{GameID: g.ID, MoveNumber: 1, MoveType: "checker", PositionID: posID, Player: 1}}, &idResp{})
 
 	var got matchesByPositionResp
-	decode(post(t, ts, "/v1/matches.byPosition", positionIDReq{PositionID: posID}), &got)
+	call("/v1/matches.byPosition", positionIDReq{PositionID: posID}, &got)
 	if len(got.MatchIDs) != 1 || got.MatchIDs[0] != m.ID {
 		t.Errorf("referenced position: matchIds = %v, want [%d]", got.MatchIDs, m.ID)
 	}
-	decode(post(t, ts, "/v1/matches.byPosition", positionIDReq{PositionID: otherID}), &got)
+	call("/v1/matches.byPosition", positionIDReq{PositionID: otherID}, &got)
 	if got.MatchIDs == nil || len(got.MatchIDs) != 0 {
 		t.Errorf("unreferenced position: matchIds = %#v, want []", got.MatchIDs)
 	}
-	if resp := post(t, ts, "/v1/matches.byPosition", positionIDReq{}); resp.StatusCode != http.StatusBadRequest {
+	resp := post(t, ts, "/v1/matches.byPosition", positionIDReq{})
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusBadRequest {
 		t.Errorf("missing positionId: status %d, want 400", resp.StatusCode)
-		resp.Body.Close()
 	}
 }
