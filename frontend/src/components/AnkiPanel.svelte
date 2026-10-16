@@ -1161,7 +1161,6 @@
         gap: 2px;
     }
     .btn-undo {
-        font: inherit;
         padding: 2px 8px;
         border: 1px solid var(--color-border);
         border-radius: 3px;

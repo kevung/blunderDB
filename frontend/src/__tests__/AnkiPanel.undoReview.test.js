@@ -1,3 +1,4 @@
+// @ts-nocheck — données de test partielles : les props typées par Wails exigent des classes générées.
 /**
  * AnkiPanel.undoReview.test.js — « Annuler » takes back the last grade of the
  * sitting: it names the card just graded, shows it again, and says so when the
