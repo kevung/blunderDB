@@ -16,9 +16,11 @@ import (
 // convention: this test does, by calling every exported method on a small
 // database and refusing to wait longer than this.
 //
-// Five seconds is ~100× the slowest legitimate call on these databases, so a
-// hit means a wedge, not a slow machine.
-const lockGuardTimeout = 5 * time.Second
+// A wedge never returns, so the bound only has to outlast the slowest
+// legitimate call on the slowest runner: a single INSERT has taken over five
+// seconds on a Windows CI disk shared with the parallel tests. A minute stays
+// well under the ten-minute go test timeout that would lose the method's name.
+const lockGuardTimeout = time.Minute
 
 // lockGuardSkips names the exported methods this guard does not call, with the
 // reason. Keep it short: every entry is a method the guard no longer covers.
