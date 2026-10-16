@@ -295,6 +295,13 @@ export function handleKeyDown(event) {
         return;
     }
 
+    // The last grade of a finished sitting stays undoable from the deck list.
+    if (get(ankiViewModeStore) === 'list' && get(activeTabStore) === 'anki' && !event.ctrlKey && !event.altKey && letter('u')) {
+        event.preventDefault();
+        ankiReviewActionStore.set('undo');
+        return;
+    }
+
     // Comment panel: suppress single-key shortcuts while focused inside it;
     // Ctrl-combos, Escape (blur) and Tab still pass.
     if (document.activeElement?.closest('.comment-panel') && !isAlwaysGlobal(event) && event.key !== 'Escape' && event.key !== 'Tab') {

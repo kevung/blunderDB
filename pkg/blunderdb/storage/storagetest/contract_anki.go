@@ -781,3 +781,42 @@ func testAnkiUndoReviewRestoresState(t *testing.T, s storage.Storage) {
 		t.Errorf("UndoReview with every grade undone: got %v, want ErrNoReviewToUndo", err)
 	}
 }
+
+// testAnkiResetForgetsUndo: a reset rewrites the schedule by another road
+// than a review, so the reviews logged before it can no longer be undone —
+// undoing one would silently put back the schedule the reset discarded.
+func testAnkiResetForgetsUndo(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	deckID, err := s.Anki().CreateDeck(ctx, "", "deck", "", domain.AnkiSourceSearch, 0, "")
+	if err != nil {
+		t.Fatalf("CreateDeck: %v", err)
+	}
+	p := checkerPos()
+	posID, err := s.Positions().Save(ctx, "", &p)
+	if err != nil {
+		t.Fatalf("Save position: %v", err)
+	}
+	if err := s.Anki().SyncWithPositions(ctx, "", deckID, []int64{posID}); err != nil {
+		t.Fatalf("SyncWithPositions: %v", err)
+	}
+	next, err := s.Anki().NextCard(ctx, "", deckID)
+	if err != nil {
+		t.Fatalf("NextCard: %v", err)
+	}
+	if _, err := s.Anki().ReviewCard(ctx, "", next.Card.ID, 4); err != nil {
+		t.Fatalf("ReviewCard: %v", err)
+	}
+	if err := s.Anki().ResetDeck(ctx, "", deckID); err != nil {
+		t.Fatalf("ResetDeck: %v", err)
+	}
+	reset := ankiCardByID(t, s, "", deckID, next.Card.ID)
+	if _, err := s.Anki().UndoReview(ctx, "", next.Card.ID); !errors.Is(err, storage.ErrNoReviewToUndo) {
+		t.Errorf("UndoReview after a reset: got %v, want ErrNoReviewToUndo", err)
+	}
+	if got := ankiCardByID(t, s, "", deckID, next.Card.ID); got != reset {
+		t.Errorf("the refused undo changed the card: got %+v, want %+v", got, reset)
+	}
+	if n := ankiReviewCount(t, s, "", deckID); n != 1 {
+		t.Errorf("log after the reset holds %d reviews, want 1", n)
+	}
+}

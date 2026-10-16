@@ -826,6 +826,23 @@ func testRepairCrawfordMergeCarriesDependents(t *testing.T, s storage.Storage) {
 		t.Fatalf("the merged position %d is still stored (err=%v)", staleID, err)
 	}
 
+	// The survivor's card received the dropped card's review; the state that
+	// review kept was the dropped card's, so it cannot be undone onto this one.
+	// The id is read first: an open DeckCards holds the one connection of an
+	// in-memory store.
+	var survivorCard int64
+	for c, err := range anki.DeckCards(ctx, "", deckBoth) {
+		if err != nil {
+			t.Fatalf("DeckCards: %v", err)
+		}
+		if c.PositionID == twinID {
+			survivorCard = c.ID
+		}
+	}
+	if _, err := anki.UndoReview(ctx, "", survivorCard); !errors.Is(err, storage.ErrNoReviewToUndo) {
+		t.Errorf("UndoReview of the survivor's card after the merge: got %v, want ErrNoReviewToUndo", err)
+	}
+
 	for mv, err := range ms.Moves(ctx, "", postCrawfordGame) {
 		if err != nil {
 			t.Fatalf("Moves: %v", err)

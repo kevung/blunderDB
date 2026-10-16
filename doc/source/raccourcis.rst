@@ -302,7 +302,7 @@ Panneau Anki (répétition espacée)
    "2", "Évaluer : Difficile."
    "3", "Évaluer : Bien."
    "4", "Évaluer : Facile."
-   "u", "Annuler la dernière note de la séance : la carte reprend l'échéance qu'elle avait et revient à l'écran (comme le bouton *Annuler*)."
+   "u", "Annuler la dernière note de la séance, même terminée : la carte reprend l'échéance qu'elle avait et revient à l'écran (comme le bouton *Annuler*)."
    "p", "Afficher/cacher le compte de course (identique au raccourci général, disponible pendant la révision)."
    "Esc", "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
 

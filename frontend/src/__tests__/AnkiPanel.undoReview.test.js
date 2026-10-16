@@ -141,3 +141,27 @@ describe('undoing a grade', () => {
         expect(undo.disabled).toBe(true);
     });
 });
+
+describe('after the sitting ends', () => {
+    test('its last grade stays undoable from the deck band, and undoing resumes the review', async () => {
+        const deck = deckWith(null);
+        ankiDecksStore.set([deck]);
+        selectedAnkiDeckStore.set(deck);
+        ankiReviewCardStore.set({ ...CARD(1), card: { id: 1, state: 0, deckId: 1 } });
+        ankiViewModeStore.set('review');
+        vi.mocked(db.ReviewAnkiCard).mockResolvedValue(null);
+        const { container } = render(AnkiPanel);
+        await settle();
+        await fireEvent.click(container.querySelectorAll('.btn-rating')[2]);
+        await settle();
+        expect(get(ankiViewModeStore)).toBe('list');
+
+        vi.mocked(db.UndoAnkiReview).mockResolvedValueOnce({ ...CARD(1), card: { id: 1, state: 0, deckId: 1 } });
+        await fireEvent.click(must(container.querySelector('[data-testid="anki-undo-last"]')));
+        await settle();
+
+        expect(db.UndoAnkiReview).toHaveBeenCalledWith(1);
+        expect(get(ankiViewModeStore)).toBe('review');
+        expect(must(get(ankiReviewCardStore)).card.id).toBe(1);
+    });
+});

@@ -203,8 +203,11 @@
     // Review state
     let reviewSessionCount = $state(0);
     // The cards graded in this sitting, last on top: what « Annuler » walks back.
+    // Kept once the sitting ends, so its last grade stays undoable from the
+    // deck's band until another sitting starts.
     /** @type {import("../services/ankiService.js").Card[]} */
     let gradedCards = $state([]);
+    let canUndoFromList = $derived(gradedCards.length > 0 && !!selectedDeck && gradedCards[gradedCards.length - 1].card.deckId === selectedDeck.id);
     // Cram (free drill): serves random cards without touching the FSRS schedule.
     let cramMode = $state(false);
 
@@ -383,9 +386,15 @@
     // grades nothing, so it has nothing to undo.
     async function undoLastReview() {
         if (cramMode || gradedCards.length === 0) return;
+        if (viewMode !== 'review' && !canUndoFromList) return;
         const card = gradedCards[gradedCards.length - 1];
         try {
             await anki.undoReview(card);
+            if (viewMode !== 'review') {
+                // Back into the sitting, on the card whose grade was taken back.
+                ankiPausedSessionStore.set(null);
+                ankiViewModeStore.set('review');
+            }
         } catch (e) {
             if (anki.isNothingToUndo(e)) {
                 gradedCards = [];
@@ -762,6 +771,9 @@
                 {#snippet actions()}
                     <button class="icon-btn" data-testid="anki-settings" onclick={openSettings} title={$t('anki.deckSettingsTooltip')}>{@render icon(ICON.gear)}</button>
                     <button class="icon-btn" onclick={(e) => resetDeck(selectedDeck, e)} title={$t('anki.resetTooltip')}>{@render icon(ICON.sync)}</button>
+                    {#if canUndoFromList}
+                        <button class="btn-outline" data-testid="anki-undo-last" onclick={undoLastReview} title={$t('anki.undoReview') + ' (u)'}>{$t('anki.undoReview')}</button>
+                    {/if}
                     <button class="btn-outline" data-testid="anki-cram" onclick={() => startSession(true)} disabled={!anki.canCram(stats)} title={$t('anki.cramTooltip')}>{$t('anki.cram')}</button>
                     <button class="btn-launch" data-testid="anki-study" onclick={() => startSession(false)} disabled={!anki.canStudy(stats, selectedDeck)}>
                         {@render icon(ICON.play, 12)}
@@ -1149,6 +1161,7 @@
         gap: 2px;
     }
     .btn-undo {
+        font: inherit;
         padding: 2px 8px;
         border: 1px solid var(--color-border);
         border-radius: 3px;

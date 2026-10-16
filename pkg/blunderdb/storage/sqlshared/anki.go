@@ -186,15 +186,28 @@ func (s *AnkiStore) DeleteDeck(ctx context.Context, scope string, id int64) erro
 	return nil
 }
 
-// ResetDeck clears the FSRS state of every card in a deck back to new.
+// ResetDeck clears the FSRS state of every card in a deck back to new. The
+// review log stays, but forgets the states it kept for an undo: undoing a
+// review after the reset would silently put back the schedule the reset
+// discarded.
 func (s *AnkiStore) ResetDeck(ctx context.Context, scope string, deckID int64) error {
-	tenant, targs := s.DB.TenantFilter("", scope)
-	if _, err := s.DB.Exec(ctx,
-		`UPDATE anki_card SET due = `+s.DB.TimestampArg()+`, stability = 0, difficulty = 0,
-		 elapsed_days = 0, scheduled_days = 0, reps = 0, lapses = 0, state = 0, last_review = NULL,
-		 `+s.DB.Bool("suspended", false)+`, buried_until = NULL
-		 WHERE deck_id = ? AND `+tenant,
-		append([]any{ankiNow(), deckID}, targs...)...); err != nil {
+	err := s.DB.Transact(ctx, func(tx Execer) error {
+		tenant, targs := tx.TenantFilter("", scope)
+		if _, err := tx.Exec(ctx,
+			`UPDATE anki_card SET due = `+tx.TimestampArg()+`, stability = 0, difficulty = 0,
+			 elapsed_days = 0, scheduled_days = 0, reps = 0, lapses = 0, state = 0, last_review = NULL,
+			 `+tx.Bool("suspended", false)+`, buried_until = NULL
+			 WHERE deck_id = ? AND `+tenant,
+			append([]any{ankiNow(), deckID}, targs...)...); err != nil {
+			return err
+		}
+		ltenant, ltargs := tx.TenantFilter("", scope)
+		_, err := tx.Exec(ctx,
+			`UPDATE anki_review_log SET `+AnkiForgetPrevSQL+` WHERE deck_id = ? AND `+ltenant,
+			append([]any{deckID}, ltargs...)...)
+		return err
+	})
+	if err != nil {
 		return errf(s.DB, fmt.Sprintf("reset anki deck %d", deckID), err)
 	}
 	return nil
@@ -730,6 +743,14 @@ const (
 	ankiSnapshotCols = `due, stability, difficulty, elapsed_days, scheduled_days, reps, lapses, state, last_review`
 	ankiPrevCols     = `prev_due, prev_stability, prev_difficulty, prev_elapsed_days, prev_scheduled_days, prev_reps, prev_lapses, prev_state, prev_last_review`
 )
+
+// AnkiForgetPrevSQL is the SET clause that makes a logged review no longer
+// undoable, for every write that rewrites a card's schedule by another road
+// than a review (a reset) or hands a review to another card (a merge): the
+// state the log kept is then not one the card can go back to.
+const AnkiForgetPrevSQL = `prev_due = NULL, prev_stability = NULL, prev_difficulty = NULL,
+	prev_elapsed_days = NULL, prev_scheduled_days = NULL, prev_reps = NULL, prev_lapses = NULL,
+	prev_state = NULL, prev_last_review = NULL`
 
 // UndoReview cancels the most recent review of a card: the card takes back
 // the state the review log kept from just before it, and that review leaves

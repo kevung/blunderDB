@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-16 01:50+0200\n"
+"POT-Creation-Date: 2026-10-16 02:21+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -1062,9 +1062,10 @@ msgstr "u"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Annuler la dernière note de la séance : la carte reprend l'échéance "
-"qu'elle avait et revient à l'écran (comme le bouton *Annuler*)."
-msgstr "セッションの最後の評価を取り消します。カードは元の期限に戻り、画面に戻ります(\\ *元に戻す*\\ ボタンと同様)。"
+"Annuler la dernière note de la séance, même terminée : la carte reprend "
+"l'échéance qu'elle avait et revient à l'écran (comme le bouton "
+"*Annuler*)."
+msgstr "セッションが終了していても、最後の評価を取り消します。カードは元の期限に戻り、画面に戻ります(\\ *元に戻す*\\ ボタンと同様)。"
 
 #: ../../source/raccourcis.rst:1
 msgid ""

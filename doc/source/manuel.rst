@@ -4605,7 +4605,9 @@ touche *u*, reprend la dernière note de la séance : la carte retrouve exacteme
 l'état qu'elle avait avant (échéance, intervalle, stabilité, difficulté,
 nombre de révisions et d'oublis), la note quitte le journal des révisions, et la
 carte revient à l'écran pour être notée de nouveau. Répété, il remonte la
-séance note après note. Une révision enregistrée avant la version 2.42.0 du
+séance note après note. Quand la séance s'achève, *Annuler* reste dans la bande
+du paquet jusqu'à la séance suivante : la dernière note se reprend aussi, et la
+révision reprend sur cette carte. Une révision enregistrée avant la version 2.42.0 du
 schéma ne peut pas être annulée : l'état d'avant n'était pas conservé. En ligne
 de commande : ``blunderdb anki card --action undo`` (voir :doc:`cli`).
 

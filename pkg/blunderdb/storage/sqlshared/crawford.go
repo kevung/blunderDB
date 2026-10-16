@@ -481,7 +481,8 @@ func rehashSentinel(ctx context.Context, db Execer, scope string, positions stor
 //   - Anki cards follow it, and so does the key that names the position inside
 //     its deck (ADR-0042: a position card's key is its position id as text).
 //     In a deck keepID already has a card in, dupID's card goes, its review
-//     journal handed to keepID's card first (retention figures read it);
+//     journal handed to keepID's card first (retention figures read it),
+//     no longer undoable there: the states it kept were another card's;
 //   - the review journal follows it, key included;
 //   - an analysis follows only when keepID has none (there is one per
 //     position, and the held row's own wins);
@@ -516,7 +517,8 @@ func MergePositionInto(ctx context.Context, tx Execer, scope string, keepID, dup
 		if _, err := tx.Exec(ctx,
 			`UPDATE anki_review_log
 			    SET card_id = (SELECT k.id FROM anki_card k
-			                    WHERE `+ktenant+` AND k.position_id = ? AND k.deck_id = anki_review_log.deck_id)
+			                    WHERE `+ktenant+` AND k.position_id = ? AND k.deck_id = anki_review_log.deck_id),
+			        `+AnkiForgetPrevSQL+`
 			  WHERE `+ltenant+` AND position_id = ?
 			    AND card_id IN (SELECT c.id FROM anki_card c
 			                     WHERE `+ctenant+` AND c.position_id = ?
