@@ -1,16 +1,22 @@
 package cli
 
 import (
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 )
 
 const testOpeningBook = "pkg/blunderdb/openingbook/testdata/book.jsonl"
 
-func TestOpeningBook_EmptyEmbeddedBookSaysSo(t *testing.T) {
+func TestOpeningBook_EmptyBookSaysSo(t *testing.T) {
+	empty := filepath.Join(t.TempDir(), "empty.jsonl")
+	if err := os.WriteFile(empty, nil, 0o600); err != nil {
+		t.Fatal(err)
+	}
 	cli := NewCLI()
 	out := captureStdout(t, func() {
-		if err := cli.Run([]string{"openingbook", "question"}); err != nil {
+		if err := cli.Run([]string{"openingbook", "question", "--book", empty}); err != nil {
 			t.Fatal(err)
 		}
 	})

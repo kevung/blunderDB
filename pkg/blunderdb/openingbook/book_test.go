@@ -164,3 +164,28 @@ func TestDefault_EmbeddedBookLoads(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+// The embedded book is what the exercise draws from: every opening at every
+// grid score, and every reply after its best play, so that no question can
+// reach a line the book lacks.
+func TestDefault_EmbeddedBookCoversTheGrid(t *testing.T) {
+	b, err := Default()
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, s := range GridScores() {
+		for _, o := range Openings() {
+			line, ok := b.Lookup(OpeningKey(o, s))
+			if !ok || len(line.Candidates) == 0 {
+				t.Errorf("no opening line for %s at %s", o, s)
+				continue
+			}
+			best := line.Candidates[0].Move
+			for _, r := range Replies() {
+				if _, ok := b.Lookup(ReplyKey(o, best, r, s)); !ok {
+					t.Errorf("no reply %s after %s %s at %s", r, o, best, s)
+				}
+			}
+		}
+	}
+}
