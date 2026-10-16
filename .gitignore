@@ -68,3 +68,4 @@ node_modules
 go.work
 go.work.sum
 /demodb
+openingbook-run.jsonl
