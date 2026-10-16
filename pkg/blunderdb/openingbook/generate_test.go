@@ -68,7 +68,7 @@ func TestGenerate_ResumesWithoutRedoing(t *testing.T) {
 	}
 	for _, k := range jobs {
 		l, _ := book.Lookup(k.Opening, k.Reply, k.Score)
-		if len(l.Candidates) != 2 || l.Games != 36 || l.Signature == "" || l.XGID == "" {
+		if len(l.Candidates) != 2 || l.Games != 36 || l.Signature == "" || l.ExactBearoff || l.XGID == "" {
 			t.Fatalf("%s: %+v", k, l)
 		}
 		if r := l.Rank(); r[0].Equity < r[1].Equity {

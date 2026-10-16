@@ -43,9 +43,13 @@ type Line struct {
 	// signature were computed alike and can be compared.
 	EngineVersion string `json:"engine_version"`
 	Signature     string `json:"signature"`
-	Seed          uint64 `json:"seed"`
-	Games         int    `json:"games"`
-	Stop          string `json:"stop"`
+	// ExactBearoff says whether the exact bearoff table was used: the
+	// signature's "exact bearoff when covered" states a policy, not whether
+	// the table was there, and the generator leaves it out on purpose.
+	ExactBearoff bool   `json:"exact_bearoff"`
+	Seed         uint64 `json:"seed"`
+	Games        int    `json:"games"`
+	Stop         string `json:"stop"`
 	// Candidates are sorted best first.
 	Candidates []Candidate `json:"candidates"`
 }

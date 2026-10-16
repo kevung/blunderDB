@@ -169,6 +169,7 @@ func RollLine(ctx context.Context, k Key, s rollout.Settings) (Line, error) {
 		XGID:          "XGID=" + domain.EncodeXGID(&pos),
 		EngineVersion: res.EngineVersion,
 		Signature:     res.Signature,
+		ExactBearoff:  res.ExactBearoff,
 		Seed:          res.Settings.Seed,
 		Games:         res.Games,
 		Stop:          string(res.Stop),
