@@ -42,6 +42,22 @@ ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
   leur fichier source, et ``match repair --id`` ou le bouton ⟲ de la fiche les
   réécrit depuis ce fichier.
 
+0.41.0 (2026-10-16)
+-------------------
+
+- **Lire une position depuis une capture d'écran** : coller, glisser ou ouvrir une capture du plateau d'eXtreme Gammon sur le plateau d'édition en lit les pions, les dés, le videau et le score, sans modèle appris ; les lectures douteuses sont cerclées sur le plateau et rien n'est enregistré avant le geste habituel. ``blunderdb capture`` et la route ``positions.fromImage`` du serveur en sont les autres formes.
+- **Le joueur principal et la fenêtre Gérer les joueurs** : l'étoile d'un joueur le désigne comme joueur principal, placé au siège 1 à l'import, et propose d'inverser en une fois les matchs où il joue en face ; la fenêtre liste les joueurs avec leurs alias (× défait une fusion) et leurs nombres de matchs, qui ouvrent ces matchs. ``blunderdb players main`` et ``players matches`` ainsi que les routes ``players.main.*`` en sont les autres formes. Dans le panneau Tournois, le PR et le MWC d'une ligne sont ceux du joueur principal dès qu'il y a joué.
+- **Importer une base reprend aussi les matchs** : avec leurs parties, coups, analyses et origine, les tournois (avec leur Direction et leur Rencontre), les brouillons de transcription et les alias de joueurs, sans doublon et sans rien changer au réimport du même fichier ; une collection vivante ou un filtre enregistré qui désigne des lignes par leur numéro est renuméroté pour la base qui reçoit. ``blunderdb import --type database`` et le serveur font de même.
+- **Un aperçu avant d'exporter** : la fenêtre d'export compte, famille par famille, ce que le fichier contiendra, avant de l'écrire ; ``blunderdb export --plan`` et la route ``exports.plan`` en donnent le même compte. Un tournoi choisi emporte toujours ses matchs, et la Direction et la Rencontre d'un tournoi partent avec lui.
+- **Annuler la dernière révision Anki** : le bouton **Annuler** de la révision, ou la touche *u*, reprend la dernière note de la séance et remontre la carte ; ``blunderdb anki card --action undo`` et la route ``anki.undoReview`` du serveur font le même geste.
+- **La recherche gammonNet s'étale sur les cœurs libres** : gammonNet v1.8.0 découpe une recherche à 2 plis et plus sur plusieurs cœurs, avec les mêmes chiffres que sur un seul ; tous les calculs d'un processus (analyse, lot, panneaux, serveur) puisent dans un seul budget de cœurs, et le serveur compte à une unité le temps de chaque cœur qu'elle occupe.
+- **Cocher les joueurs dans la légende des graphes d'un match** : décocher un joueur masque ses marques dans les trois graphes, et le survol, le clic et les flèches ne visent plus que l'autre ; le réglage est retenu par match.
+- **Les comptes des statistiques ouvrent leurs positions** : les panneaux Biais, Avant/après et Temps ajoutent à chaque compte de décisions une colonne *Positions* qui ouvre les positions distinctes concernées.
+- **Une transcription plus lisible** : la touche chiffrée dit son effet par un indicateur de mode (Saisie ou Édition) et l'effet d'*Entrée* ; les flèches du plateau suivent le coup écrit dans la décision sous le curseur, en gris, et un pas illégal est dessiné en rouge pointillé ; choisir la première ligne de l'analyse remplace la décision.
+- **La vidéo ne fige plus l'application** : le volet vidéo reprend sa lecture après un saut qui n'aboutit pas, ne recharge jamais une vidéo en pause, et nomme les greffons GStreamer manquants ; un fichier ``.webm`` ou ``.mkv`` mal multiplexé est annoncé à l'ouverture avec la commande ``ffmpeg`` qui le répare sans réencodage.
+- Corrections notables : un coup joué est apparié à ses candidats par le plateau où il arrive et non par sa notation, de sorte que deux coups de même forme mais de prises différentes ne sont plus confondus ; une capture d'écran à échelle fractionnaire est lue juste ; une vidéo en pause n'est plus rechargée.
+- Voir :ref:`manuel`, :ref:`raccourcis`, :ref:`cli`, :ref:`headless` et :ref:`api_reference`.
+
 0.40.0 (2026-10-12)
 -------------------
 

@@ -86,6 +86,17 @@
   </branding>
 
   <releases>
+    <release version="0.41.0" date="2026-10-16">
+      <description>
+        <ul>
+          <li>Read a position from a screenshot of an eXtreme Gammon board: paste, drop or open it on the edit board, with doubtful readings circled</li>
+          <li>Main player: manage players and aliases in one window, swap all matches in one go, and tournament PR and MWC follow the main player</li>
+          <li>Importing a database now brings matches, tournaments with their direction, transcription drafts and aliases; the export window previews what it will write</li>
+          <li>Undo the last Anki review; show or hide each player in a match's graphs; every Stats count opens its positions</li>
+          <li>gammonNet searches spread over the free cores with identical results; a video no longer freezes the application</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.40.0" date="2026-10-12">
       <description>
         <ul>

@@ -1950,7 +1950,7 @@ brouillon de transcription est ouvert, ou joué dans blunderDB, n'est pas
 inversé : leur nombre est indiqué à part.
 
 Une fusion qui touche le joueur principal — un alias ajouté à son nom, ou son
-nom fusionné dans un autre, qui le désigne désormais — n'inverse rien d'elle-même :
+nom fusionné dans un autre, qui le désigne — n'inverse rien d'elle-même :
 le bandeau revient avec les matchs qu'elle laisse à inverser, à confirmer par
 **Inverser** ou à écarter par **Retirer**, qui retire le joueur principal. Tant
 qu'il en reste, cliquer l'étoile pleine (★) rouvre ce bandeau ; sinon, elle
@@ -2179,7 +2179,7 @@ les pas du coup sont rejoués depuis la nouvelle, et toutes les positions qui
 suivent portent la correction.
 
 Les flèches du plateau sont celles du coup écrit dans la décision sous le curseur, en gris,
-rejoué sur la position qu'elle a désormais. Un pas qui ne s'y joue plus — case de départ vide
+rejoué sur la position qu'elle a. Un pas qui ne s'y joue plus — case de départ vide
 après une correction plus haut, point tenu par l'adversaire, pion laissé à la barre, sortie avec
 un pion hors du jan, longueur qu'aucun dé ne paie après un jet corrigé — part quand même de la
 case écrite, en rouge pointillé, sa case de départ cerclée, et la cellule porte la marque « coup
