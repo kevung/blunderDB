@@ -42,7 +42,7 @@ const LABEL_KEYS = Object.freeze({
  * (exercice qu'une version ne sert plus).
  */
 export function numberTypeLabelKey(type) {
-    return LABEL_KEYS[type] || type;
+    return /** @type {Record<string, string>} */ (LABEL_KEYS)[type] || type;
 }
 
 /** Les types que cette version sait nommer. */

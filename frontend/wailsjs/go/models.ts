@@ -5433,6 +5433,7 @@ export namespace openingbook {
 	        this.ranked = this.convertValues(source["ranked"], Ranked);
 	        this.signature = source["signature"];
 	        this.games = source["games"];
+	        this.exact_bearoff = source["exact_bearoff"];
 	        this.next = this.convertValues(source["next"], ReplyStep);
 	    }
 	

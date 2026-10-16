@@ -459,7 +459,11 @@ async function buildDecisionQuestion() {
 // dans la position qu'il laisse. Chacun est une question CHOISIE du journal ;
 // la seconde naît du verdict de la première (`verdict.next`), jamais du tirage.
 
-/** Les coups joués au plateau : Décision de pions et les deux temps d'Ouverture. */
+/**
+ * Les coups joués au plateau : Décision de pions et les deux temps d'Ouverture.
+ * @param {import('./trainingTab.js').TrainingQuestion|null|undefined} question
+ * @returns {question is import('./trainingTab.js').TrainingQuestion}
+ */
 function playsOnBoard(question) {
     return (question?.kind === 'decision' && question.prompt === 'checker') || question?.kind === 'opening';
 }

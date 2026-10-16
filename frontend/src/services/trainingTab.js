@@ -168,6 +168,9 @@ export const TREND_WINDOW = 10;
  * @property {string} best
  * @property {number} errorMp
  *
+ * @typedef {QuizVerdict|import('../../wailsjs/go/models').openingbook.Verdict} TrainingVerdict
+ * un jugement de Décision, ou du livre d'ouverture (juste par l'égalité, `right`)
+ *
  * @typedef {object} TrainingSessionState
  * @property {string} exercise
  * @property {string} seedSource
@@ -291,14 +294,14 @@ export function reveal(session, now, { outOfTime = false } = {}) {
  * faute. Juste = classé et sans coût ; illégal ou non évalué = faute à coût
  * nul. Un second verdict ne remplace pas le premier.
  *
- * @param {TrainingSessionState} session @param {QuizVerdict} verdict @param {number} now
+ * @param {TrainingSessionState} session @param {TrainingVerdict} verdict @param {number} now
  * @returns {TrainingSessionState}
  */
 export function answerChosen(session, verdict, now) {
     if (!session.question || session.revealed || !verdict) return session;
     // Le livre d'ouverture juge par l'égalité avec le meilleur (`right`), pas
     // par un coût : tout coup du groupe de tête est juste.
-    const correct = typeof verdict.right === 'boolean' ? verdict.right : !!verdict.matched && verdict.errorMp === 0;
+    const correct = 'right' in verdict ? verdict.right : !!verdict.matched && verdict.errorMp === 0;
     return {
         ...session,
         revealed: true,
@@ -306,19 +309,21 @@ export function answerChosen(session, verdict, now) {
         elapsedMs: Math.max(0, now - session.startedAt),
         faults: session.question.numbers.map(() => !correct),
         deviations: session.question.numbers.map(() => null),
-        verdict
+        // Ouverture range son propre verdict ici : le panneau le lit par ses
+        // champs (`ranked`, `right`) dans sa branche, jamais comme une Décision.
+        verdict: /** @type {QuizVerdict} */ (verdict)
     };
 }
 
 /**
  * Le meilleur coup d'une question CHOISIE restée sans réponse. Arrivé après un
  * aller-retour, il ne s'attache qu'à sa question (`key`), jamais sur un verdict.
- * @param {TrainingSessionState} session @param {string} key @param {QuizVerdict} correction
+ * @param {TrainingSessionState} session @param {string} key @param {TrainingVerdict} correction
  * @returns {TrainingSessionState}
  */
 export function attachCorrection(session, key, correction) {
     if (!session.question || session.question.key !== key || !session.outOfTime || session.verdict || !correction) return session;
-    return { ...session, verdict: correction };
+    return { ...session, verdict: /** @type {QuizVerdict} */ (correction) };
 }
 
 /**
