@@ -62,6 +62,15 @@ func TestBootstrapServesHealthz(t *testing.T) {
 	if !strings.Contains(env.Error.Message, middleware.TenantHeader) {
 		t.Errorf("message = %q, want it to name %q", env.Error.Message, middleware.TenantHeader)
 	}
+
+	// The opening-book routes are served by the embedded handler too.
+	rec3 := httptest.NewRecorder()
+	req3 := httptest.NewRequest(http.MethodPost, "/v1/openingbook.status", bytes.NewReader([]byte("{}")))
+	req3.Header.Set(middleware.TenantHeader, "1")
+	h.ServeHTTP(rec3, req3)
+	if rec3.Code != http.StatusOK {
+		t.Fatalf("/v1/openingbook.status: status %d, want 200 (body %q)", rec3.Code, rec3.Body.String())
+	}
 }
 
 // TestBootstrapAppliesCORSAllowOrigin: Config.CORSAllowOrigin reaches
