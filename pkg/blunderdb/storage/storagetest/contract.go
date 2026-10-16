@@ -74,6 +74,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Match/ReplaceHeaderUnknownID", testMatchReplaceHeaderUnknownID},
 		{"Match/FindByHash", testMatchFindByHash},
 		{"Match/DiceSequences", testMatchDiceSequences},
+		{"Match/MatchesByPosition", testMatchesByPosition},
 		{"Match/SourceMetadata", testMatchSourceMetadata},
 		{"Match/ListPlayerAliases", testMatchListPlayerAliases},
 		{"Match/SwapKeepsPositions", testMatchSwapKeepsPositions},

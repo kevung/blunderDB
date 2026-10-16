@@ -4319,6 +4319,23 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/maintenance_Line"
+  /v1/matches.byPosition:
+    post:
+      operationId: matches.byPosition
+      tags: [matches]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/positionIDReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/matchesByPositionResp"
   /v1/matches.count:
     post:
       operationId: matches.count
@@ -9079,6 +9096,14 @@ components:
           format: int64
         source:
           type: string
+    matchesByPositionResp:
+      type: object
+      properties:
+        matchIds:
+          type: array
+          items:
+            type: integer
+            format: int64
     mergePlayersReq:
       type: object
       properties:

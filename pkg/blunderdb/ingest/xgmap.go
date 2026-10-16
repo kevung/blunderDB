@@ -144,7 +144,7 @@ func createPositionFromXG(xgPos xgparser.Position, game *xgparser.Game, matchLen
 	// more than 15 on the board is a corrupt file, refused here rather than
 	// stored with a negative bearoff.
 	if err := pos.Board.RecomputeBearoff(); err != nil {
-		return nil, err
+		return nil, wrapInvalid(err)
 	}
 	return pos, nil
 }

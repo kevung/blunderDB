@@ -375,7 +375,11 @@ func savePositionWithAnalyses(ctx context.Context, tx storage.Tx, scope string, 
 		}
 	}
 	if len(frags) > 0 {
-		if _, err := tx.Analyses().Merge(ctx, scope, posID, played, func(existing *domain.PositionAnalysis) *domain.PositionAnalysis {
+		mergeCtx := ctx
+		if created {
+			mergeCtx = storage.WithFreshPosition(ctx, posID)
+		}
+		if _, err := tx.Analyses().Merge(mergeCtx, scope, posID, played, func(existing *domain.PositionAnalysis) *domain.PositionAnalysis {
 			cur := existing
 			for i, frag := range frags {
 				if keepStored {

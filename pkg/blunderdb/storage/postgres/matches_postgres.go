@@ -1009,8 +1009,12 @@ func (s *matchStore) CreateMove(ctx context.Context, scope string, mv *domain.Mo
 	if err != nil {
 		return 0, fmt.Errorf("postgres: create move: %w", err)
 	}
+	insertSQL := moveInsertSQL
+	if positionID != nil {
+		insertSQL = moveInsertDatingSQL
+	}
 	var id int64
-	err = s.db.QueryRow(ctx, moveInsertSQL,
+	err = s.db.QueryRow(ctx, insertSQL,
 		tenantID(scope), mv.GameID, mv.MoveNumber, moveType, positionID, mv.Player,
 		mv.Dice[0], mv.Dice[1], mv.CheckerMove, cubeAction, luckMP,
 		sqlshared.MSArg(mv.DecisionMS), sqlshared.MSArg(mv.CubeDecisionMS), decisionErr, closeCube,
@@ -1019,17 +1023,26 @@ func (s *matchStore) CreateMove(ctx context.Context, scope string, mv *domain.Mo
 		return 0, fmt.Errorf("postgres: create move: %w", referenced(err))
 	}
 	mv.ID = id
-	if positionID != nil {
-		if _, err := s.db.Exec(ctx, positionMatchDateOnMoveSQL, mv.GameID, positionID, tenantID(scope)); err != nil {
-			return 0, fmt.Errorf("postgres: date position of move: %w", err)
-		}
-	}
 	return id, nil
 }
 
-// positionMatchDateOnMoveSQL lowers position.match_date to the date of the
-// match a new move ties the position to; see the SQLite twin for why it
-// compares instead of taking the MIN over the position's moves.
+// moveInsertDatingSQL is moveInsertSQL plus, in the same statement, the
+// lowering of position.match_date to the date of the match the new move ties
+// the position to (see the SQLite twin for why it compares instead of taking
+// the MIN over the position's moves). One round-trip instead of two per move;
+// $2 is the game, $5 the (non-NULL) position, $1 the tenant.
+const moveInsertDatingSQL = `WITH ins AS (` + moveInsertSQL + `),
+	dated AS (
+	UPDATE position SET match_date = d.md
+	FROM (SELECT m.match_date AS md FROM game g
+	        JOIN match m ON m.id = g.match_id AND m.tenant_id = g.tenant_id
+	       WHERE g.id = $2 AND g.tenant_id = $1) AS d
+	WHERE position.id = $5 AND position.tenant_id = $1 AND d.md IS NOT NULL
+	  AND (position.match_date IS NULL OR position.match_date > d.md))
+	SELECT id FROM ins`
+
+// positionMatchDateOnMoveSQL is the stand-alone form of the dating folded
+// into moveInsertDatingSQL, for a move re-pointed to another position.
 const positionMatchDateOnMoveSQL = `UPDATE position SET match_date = d.md
 	FROM (SELECT m.match_date AS md FROM game g
 	        JOIN match m ON m.id = g.match_id AND m.tenant_id = g.tenant_id
@@ -1258,6 +1271,26 @@ func (s *matchStore) ListByDiceHash(ctx context.Context, scope string, hash stri
 			return nil, fmt.Errorf("postgres: list matches by dice hash: %w", err)
 		}
 		out = append(out, m)
+	}
+	return out, rows.Err()
+}
+
+// MatchesByPosition lists the matches with a move on the position — see
+// storage.MatchStore.
+func (s *matchStore) MatchesByPosition(ctx context.Context, scope string, positionID int64) ([]int64, error) {
+	rows, err := s.db.Query(ctx, `SELECT DISTINCT g.match_id FROM move mv JOIN game g ON g.id = mv.game_id AND g.tenant_id = mv.tenant_id
+		 WHERE mv.position_id = $1 AND mv.tenant_id = $2 ORDER BY g.match_id`, positionID, tenantID(scope))
+	if err != nil {
+		return nil, fmt.Errorf("postgres: matches by position %d: %w", positionID, err)
+	}
+	defer rows.Close()
+	out := []int64{}
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			return nil, fmt.Errorf("postgres: matches by position %d: %w", positionID, err)
+		}
+		out = append(out, id)
 	}
 	return out, rows.Err()
 }

@@ -137,7 +137,7 @@ func createPositionFromGnuBG(gnubgPos *gnubgparser.Position, game *gnubgparser.G
 	}
 
 	if err := pos.Board.RecomputeBearoff(); err != nil {
-		return nil, err
+		return nil, wrapInvalid(err)
 	}
 	return pos, nil
 }

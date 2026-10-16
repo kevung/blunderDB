@@ -244,7 +244,7 @@ func createPositionFromBGF(boardState [28]int, gameData map[string]interface{}, 
 	}
 
 	if err := pos.Board.RecomputeBearoff(); err != nil {
-		return nil, err
+		return nil, wrapInvalid(err)
 	}
 
 	// Jacoby and beaver only mean anything in money play, which is where

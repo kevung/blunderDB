@@ -782,6 +782,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/maintenance.status — JSON."
         return self._call("/v1/maintenance.status", payload)
 
+    def matches_by_position(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/matches.byPosition — JSON."
+        return self._call("/v1/matches.byPosition", payload)
+
     def matches_count(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/matches.count — JSON."
         return self._call("/v1/matches.count", payload)
