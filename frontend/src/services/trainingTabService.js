@@ -779,8 +779,9 @@ async function gradeDecision(question, judge) {
         return;
     }
     const session = get(trainingSessionStore);
-    // La session a pu passer à autre chose pendant l'aller-retour.
-    if (!session || session.question !== question) return;
+    // La session a pu passer à autre chose pendant l'aller-retour, ou une seconde réponse partie
+    // avant le retour de la première l'a déjà notée.
+    if (!session || session.question !== question || session.revealed) return;
     const next = answerChosen(session, verdict, answeredAt);
     trainingSessionStore.set(next);
     trainingElapsedStore.set(next.elapsedMs);
@@ -866,15 +867,46 @@ export function setTrainingAnswer(index, text) {
  */
 export async function nextTrainingQuestion() {
     const session = get(trainingSessionStore);
-    if (!session || !session.revealed) return;
-    let followUp = null;
+    // Deux appuis rapprochés trouvent la même question révélée : un seul l'enregistre.
+    if (!session || !session.revealed || advancing) return;
+    advancing = true;
     try {
-        followUp = await buildReplyQuestion(session.question, session.verdict);
-    } catch (error) {
-        logger.error('could not build the reply of the opening question:', error);
+        let followUp = null;
+        try {
+            followUp = await buildReplyQuestion(session.question, session.verdict);
+        } catch (error) {
+            logger.error('could not build the reply of the opening question:', error);
+        }
+        const recorded = recordQuestion(session);
+        await askNextQuestion(recorded, followUp);
+    } finally {
+        advancing = false;
     }
-    const recorded = recordQuestion(session);
-    await askNextQuestion(recorded, followUp);
+}
+
+let advancing = false;
+
+/**
+ * ENTRÉE pendant une séance, quel que soit le focus : le répartiteur global l'appelle hors des
+ * champs et des boutons, qui gardent leur propre ENTRÉE. Question ouverte jouée au plateau : valide
+ * le coup s'il est complet. Question révélée : « Suivante », ou « Terminer » s'il n'y en a pas.
+ *
+ * @returns {boolean} vrai si la touche a servi
+ */
+export function trainingEnterKey() {
+    const session = get(trainingSessionStore);
+    const question = session?.question;
+    if (!session || !question) return false;
+    if (session.revealed) {
+        if (canAskAnother(session.exercise, session.seedSource)) nextTrainingQuestion();
+        else finishTrainingSession();
+        return true;
+    }
+    if (!playsOnBoard(question)) return false;
+    const state = get(quizPlayStore);
+    if (!state || !completedPlay(state)) return false;
+    answerDecisionBoard();
+    return true;
 }
 
 /**

@@ -71,6 +71,7 @@ vi.mock('../services/trainingTabService.js', async () => {
         quitTrainingSession: vi.fn(),
         refreshTrainingJournal: vi.fn(() => Promise.resolve()),
         answerDecisionBoard: vi.fn(),
+        trainingEnterKey: vi.fn(() => true),
         answerDecisionCube: vi.fn(),
         undoDecisionStep: vi.fn(),
         resetDecisionPlay: vi.fn(),
@@ -83,6 +84,7 @@ const { default: TrainingPanel } = await import('../components/TrainingPanel.sve
 const { trainingSessionStore } = await import('../stores/trainingTabStore.js');
 const { activeTabStore, activeModal } = await import('../stores/uiStore.js');
 const { newSession, askQuestion, setAnswer } = await import('../services/trainingTab.js');
+const { trainingEnterKey } = await import('../services/trainingTabService.js');
 
 /** Une question de Bearoff, champ du bas rempli. */
 function bearoffSession() {
@@ -154,5 +156,33 @@ describe('une question dont le plateau est la surface garde ses touches', () => 
         activeTabStore.set('analysis');
         press('j', 'KeyJ');
         expect(nextPosition).toHaveBeenCalledTimes(1);
+    });
+});
+
+describe('ENTRÉE pendant une séance', () => {
+    test('le focus sur la page : la séance la prend (valider, puis « Suivante »)', async () => {
+        trainingSessionStore.set(bearoffSession());
+        render(TrainingPanel);
+        /** @type {HTMLElement} */ (document.activeElement)?.blur();
+        press('Enter', 'Enter');
+        expect(trainingEnterKey).toHaveBeenCalledTimes(1);
+    });
+
+    test('un bouton focalisé garde son ENTRÉE : rien ne part deux fois', async () => {
+        trainingSessionStore.set(bearoffSession());
+        const panel = render(TrainingPanel);
+        panel.getByTestId('training-quit').focus();
+        press('Enter', 'Enter');
+        expect(trainingEnterKey).not.toHaveBeenCalled();
+    });
+
+    test('hors de l’onglet Entraînement, ou sous une modale, ENTRÉE ne touche pas la séance', async () => {
+        trainingSessionStore.set(bearoffSession());
+        activeTabStore.set('analysis');
+        press('Enter', 'Enter');
+        activeTabStore.set('training');
+        activeModal.set(/** @type {any} */ ('help'));
+        press('Enter', 'Enter');
+        expect(trainingEnterKey).not.toHaveBeenCalled();
     });
 });

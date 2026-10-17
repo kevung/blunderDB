@@ -299,10 +299,6 @@ describe('une décision de pions', () => {
         expect(service.undoDecisionStep).toHaveBeenCalledTimes(1);
         await fireEvent.keyDown(undo, { key: 'Escape' });
         expect(service.resetDecisionPlay).toHaveBeenCalledTimes(1);
-        quizPlayStore.update((s) => (s ? playHop(s, 6, 3) : s));
-        await tick();
-        await fireEvent.keyDown(panel.getByTestId('training-panel'), { key: 'Enter' });
-        expect(service.answerDecisionBoard).toHaveBeenCalledTimes(1);
     });
 
     test('RETOUR ARRIÈRE reste au champ de notation', async () => {

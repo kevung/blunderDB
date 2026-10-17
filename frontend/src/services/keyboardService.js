@@ -12,6 +12,7 @@ import { directionOwnsKey, directionTabKey, directionLeavesToPage, directionSear
 import { directionFullscreenKey, toggleDirectionFullscreen } from './directionFullscreen.js';
 import { theatreKey, toggleTheatre } from './transcriptionTheatre.js';
 import { trainingHoldsBoardStore } from '../stores/trainingTabStore.js';
+import { trainingEnterKey } from './trainingTabService.js';
 import { toggleAnalysisChallenge } from '../stores/analysisChallengeStore.js';
 
 import { newDatabase, openDatabase, exitApp } from './databaseService.js';
@@ -292,6 +293,23 @@ export function handleKeyDown(event) {
 
     // Allow normal typing in input fields
     if (inTextField && !event.ctrlKey && event.key !== 'Escape' && event.key !== 'Tab') {
+        return;
+    }
+
+    // A training session takes Enter wherever the focus fell (the board after a move played with
+    // the mouse, the page after the clicked button left): it validates the move, then advances.
+    // A focused button or select keeps its own Enter, so one press never acts twice.
+    if (
+        event.key === 'Enter' &&
+        !event.ctrlKey &&
+        !event.altKey &&
+        !event.metaKey &&
+        !event.shiftKey &&
+        get(activeTabStore) === 'training' &&
+        !(event.target instanceof HTMLButtonElement || event.target instanceof HTMLSelectElement) &&
+        trainingEnterKey()
+    ) {
+        event.preventDefault();
         return;
     }
 

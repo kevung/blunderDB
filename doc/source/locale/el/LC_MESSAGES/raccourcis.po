@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-16 11:22+0200\n"
+"POT-Creation-Date: 2026-10-17 08:46+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -364,19 +364,24 @@ msgid ""
 "parcourent la liste ne la font pas défiler : la question garde le "
 "plateau. Sur une décision de pions ou une question d'*Ouverture*, le "
 "panneau ayant le focus : RETOUR ARRIÈRE défait le dernier pas, ÉCHAP "
-"recommence le coup, ENTRÉE le valide quand il est complet, comme un clic "
-"sur les dés ; dans le champ de notation, ENTRÉE valide le coup tapé "
-"(``13/7 8/7``)."
+"recommence le coup. ENTRÉE, où que soit le focus hors d'un bouton, valide"
+" le coup quand il est complet, comme un clic sur les dés ; dans le champ "
+"de notation, ENTRÉE valide le coup tapé (``13/7 8/7``). Une fois la "
+"réponse affichée, ENTRÉE fait « Suivante », ou « Terminer » s'il n'y a "
+"pas de question suivante."
 msgstr ""
 "Όσο μια ερώτηση του :ref:`πίνακα Εξάσκησης <panneau_entrainement>` είναι "
 "τοποθετημένη στο ταμπλό, τα πλήκτρα που διατρέχουν τη λίστα δεν την "
 "κυλούν: η ερώτηση κρατά το ταμπλό. Σε απόφαση πουλιών ή σε ερώτηση "
 "*Ouverture*, με την εστίαση στον πίνακα: το BACKSPACE αναιρεί το "
-"τελευταίο βήμα, το ESC ξαναρχίζει την κίνηση, το ENTER την επικυρώνει "
-"όταν ολοκληρωθεί, όπως ένα κλικ στα ζάρια· στο πεδίο καταγραφής, το ENTER"
-" επικυρώνει την πληκτρολογημένη κίνηση (``13/7 8/7``)."
+"τελευταίο βήμα και το ESC ξαναρχίζει την κίνηση. Το ENTER, όπου κι αν "
+"βρίσκεται η εστίαση εκτός από ένα κουμπί, επικυρώνει την κίνηση όταν "
+"ολοκληρωθεί, όπως ένα κλικ στα ζάρια· στο πεδίο καταγραφής, το ENTER "
+"επικυρώνει την πληκτρολογημένη κίνηση (``13/7 8/7``). Μόλις εμφανιστεί η "
+"απάντηση, το ENTER κάνει «Επόμενη», ή «Τέλος» αν δεν υπάρχει επόμενη "
+"ερώτηση."
 
-#: ../../source/raccourcis.rst:86
+#: ../../source/raccourcis.rst:88
 msgid "Affichage"
 msgstr "Εμφάνιση"
 
@@ -444,7 +449,7 @@ msgstr ""
 "Ενεργοποίηση/απενεργοποίηση της πρόκλησης: η ανάλυση του πίνακα Ανάλυση "
 "κρύβεται μέχρι ένα κλικ, σε κάθε θέση."
 
-#: ../../source/raccourcis.rst:104
+#: ../../source/raccourcis.rst:106
 msgid "Actions"
 msgstr "Ενέργειες"
 
@@ -472,7 +477,7 @@ msgstr "ALT-1 … ALT-9"
 msgid "Lancer le filtre épinglé de ce rang dans la bibliothèque de filtres."
 msgstr "Εκτέλεση του καρφιτσωμένου φίλτρου αυτής της θέσης στη βιβλιοθήκη φίλτρων."
 
-#: ../../source/raccourcis.rst:118
+#: ../../source/raccourcis.rst:120
 msgid "Outils"
 msgstr "Εργαλεία"
 
@@ -714,7 +719,7 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "Εμφάνιση/απόκρυψη της βοήθειας."
 
-#: ../../source/raccourcis.rst:155
+#: ../../source/raccourcis.rst:157
 msgid "Duel au plateau"
 msgstr "Μονομαχία στη σκακιέρα"
 
@@ -788,7 +793,7 @@ msgstr "Δεξί κλικ έξω από τη σκακιέρα ή εκτός τη
 msgid "Ouvrir le menu du Duel : Pile, abandon, suspension, arrêt."
 msgstr "Άνοιγμα του μενού της Μονομαχίας: Στοίβα, εγκατάλειψη, αναστολή, διακοπή."
 
-#: ../../source/raccourcis.rst:173
+#: ../../source/raccourcis.rst:175
 msgid "Onglets de vues"
 msgstr "Καρτέλες προβολών"
 
@@ -840,7 +845,7 @@ msgstr "Διπλό κλικ στην καρτέλα"
 msgid "Renommer la vue."
 msgstr "Μετονομασία της προβολής."
 
-#: ../../source/raccourcis.rst:190
+#: ../../source/raccourcis.rst:192
 msgid "Ligne de commande"
 msgstr "Γραμμή εντολών"
 
@@ -864,7 +869,7 @@ msgstr "Περιήγηση στο ιστορικό εντολών προς τα 
 msgid "Pendant une recherche : l'interrompre."
 msgstr "Κατά τη διάρκεια αναζήτησης: τη διακόπτει."
 
-#: ../../source/raccourcis.rst:204
+#: ../../source/raccourcis.rst:206
 msgid "Historique de recherche"
 msgstr "Ιστορικό αναζήτησης"
 
@@ -884,7 +889,7 @@ msgstr "Διπλό κλικ"
 msgid "Exécuter la recherche."
 msgstr "Εκτέλεση της αναζήτησης."
 
-#: ../../source/raccourcis.rst:217
+#: ../../source/raccourcis.rst:219
 msgid "Bibliothèque de filtres"
 msgstr "Βιβλιοθήκη φίλτρων"
 
@@ -912,7 +917,7 @@ msgstr "Κλικ (σε καρφιτσωμένη ετικέτα)"
 msgid "Exécuter la recherche du filtre épinglé."
 msgstr "Εκτέλεση της αναζήτησης του καρφιτσωμένου φίλτρου."
 
-#: ../../source/raccourcis.rst:232
+#: ../../source/raccourcis.rst:234
 msgid "Panneau d'analyse"
 msgstr "Πίνακας ανάλυσης"
 
@@ -995,7 +1000,7 @@ msgstr ""
 "αποτελέσματα μιας αναζήτησης ``ss``: επιστροφή από εκεί στη συλλογή ή "
 "στον αγώνα."
 
-#: ../../source/raccourcis.rst:252
+#: ../../source/raccourcis.rst:254
 msgid "Panneau Eval"
 msgstr "Πίνακας Eval"
 
@@ -1003,7 +1008,7 @@ msgstr "Πίνακας Eval"
 msgid "Arrêter le rollout en cours, sinon désélectionner le coup."
 msgstr "Διακοπή του rollout που εκτελείται, διαφορετικά αποεπιλογή της κίνησης."
 
-#: ../../source/raccourcis.rst:271
+#: ../../source/raccourcis.rst:273
 msgid "Panneau des matchs"
 msgstr "Πίνακας αγώνων"
 
@@ -1075,7 +1080,7 @@ msgstr ""
 msgid "Désélectionner/fermer le panneau."
 msgstr "Αποεπιλογή/κλείσιμο του πίνακα."
 
-#: ../../source/raccourcis.rst:292
+#: ../../source/raccourcis.rst:294
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Πίνακας Anki (επαναληπτική μελέτη με χρονικά διαστήματα)"
 
@@ -1155,7 +1160,7 @@ msgstr ""
 "Διακοπή της επανάληψης και επιστροφή στη λίστα πακέτων (δυνατότητα "
 "συνέχισης αργότερα)."
 
-#: ../../source/raccourcis.rst:312
+#: ../../source/raccourcis.rst:314
 msgid "Panneau des tournois"
 msgstr "Πίνακας τουρνουά"
 
@@ -1200,11 +1205,11 @@ msgstr ""
 "προσθήκης αγώνα, αλλιώς αποεπιλογή του τουρνουά, αλλιώς κλείσιμο του "
 "πίνακα (σταδιακά)."
 
-#: ../../source/raccourcis.rst:328
+#: ../../source/raccourcis.rst:330
 msgid "Page Direction"
 msgstr "Σελίδα Διεύθυνσης"
 
-#: ../../source/raccourcis.rst:330
+#: ../../source/raccourcis.rst:332
 msgid ""
 "Sous la page Direction, *J*, *K*, *HAUT*, *BAS* et *ENTRÉE* vont à la "
 "file des propositions, sauf quand le focus est sur une case de la grille "
@@ -1326,7 +1331,7 @@ msgstr ""
 "αγωνίσματος· μια ανταλλαγή με άλλο αγώνισμα κατονομάζει και τα δύο στην "
 "επιβεβαίωση."
 
-#: ../../source/raccourcis.rst:352
+#: ../../source/raccourcis.rst:354
 msgid "Panneau des collections"
 msgstr "Πίνακας συλλογών"
 
@@ -1354,11 +1359,11 @@ msgstr ""
 "Επιστροφή στη λίστα των συλλογών, αλλιώς αποεπιλογή της συλλογής, αλλιώς "
 "κλείσιμο του πίνακα (σταδιακά)."
 
-#: ../../source/raccourcis.rst:367
+#: ../../source/raccourcis.rst:369
 msgid "Panneau Transcription"
 msgstr "Πίνακας μεταγραφής"
 
-#: ../../source/raccourcis.rst:369
+#: ../../source/raccourcis.rst:371
 msgid ""
 "Le panneau prend ces touches lorsqu'il a le focus. Devant la liste des "
 "brouillons il en prend déjà quelques-unes, pour que reprendre le travail "
@@ -1942,7 +1947,7 @@ msgstr ""
 "BACKSPACE σβήνει τα ζάρια που εισήχθησαν (:ref:`λεπτομέρειες "
 "<transcription_theatre>`)."
 
-#: ../../source/raccourcis.rst:429
+#: ../../source/raccourcis.rst:431
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -1950,7 +1955,7 @@ msgstr ""
 "Μια ζαριά που δεν επιτρέπει καμία κίνηση καταγράφει τον χορό από μόνη "
 "της, χωρίς επιπλέον πλήκτρο."
 
-#: ../../source/raccourcis.rst:432
+#: ../../source/raccourcis.rst:434
 msgid ""
 "Avec une vidéo attachée, seule une validation explicite — *ENTREE*, le "
 "double-clic sur un candidat, le coup achevé au plateau — pose l'instant "
@@ -1969,7 +1974,7 @@ msgstr ""
 "συμπεριλαμβανομένου του *ALTGR* σε πληκτρολόγιο που τα τοποθετεί έτσι. "
 "Χωρίς βίντεο, τα πλήκτρα αυτά κρατούν τη συνηθισμένη τους σημασία."
 
-#: ../../source/raccourcis.rst:440
+#: ../../source/raccourcis.rst:442
 msgid ""
 "Un indicateur permanent, au-dessus du triangle et sur la barre du mode "
 "théâtre, dit l'effet d'ENTREE et des chiffres à l'instant. Aucune touche "
@@ -1979,7 +1984,7 @@ msgstr ""
 "θεάτρου, λέει το αποτέλεσμα του ENTER και των ψηφίων αυτή τη στιγμή. "
 "Κανένα πλήκτρο δεν είναι μπλοκαρισμένο:"
 
-#: ../../source/raccourcis.rst:443
+#: ../../source/raccourcis.rst:445
 msgid ""
 "**Saisie** — le curseur est au bout du document, ou sur une insertion. La"
 " première ligne de l'analyse est présélectionnée et dessinée ; le chiffre"
@@ -1994,7 +1999,7 @@ msgstr ""
 "τίποτα παραπάνω, καθώς την επικύρωσή της φέρνει το πρώτο πλήκτρο της "
 "επόμενης στροφής."
 
-#: ../../source/raccourcis.rst:448
+#: ../../source/raccourcis.rst:450
 msgid ""
 "**Coup N** — le curseur est sur une action déjà écrite. *j*/*k*, les "
 "flèches, le plateau et les clics sur l'analyse la corrigent ; le chiffre "
@@ -2007,7 +2012,7 @@ msgstr ""
 "επικυρώνει τη διόρθωση, με τον δείκτη να περνά στην επόμενη απόφαση. Το "
 "End επαναφέρει στην Καταχώριση."
 
-#: ../../source/raccourcis.rst:453
+#: ../../source/raccourcis.rst:455
 msgid ""
 "Ce qui est en train d'être tapé se dessine dans le transcript, en "
 "pointillés, à la place où il sera écrit : une correction recouvre la "
@@ -2021,7 +2026,7 @@ msgstr ""
 "της, και η πλευρά διαβάζεται από τη στήλη. Τίποτα δεν καταγράφεται πριν "
 "από την επικύρωση."
 
-#: ../../source/raccourcis.rst:458
+#: ../../source/raccourcis.rst:460
 msgid ""
 "Une insertion au milieu du document continue d'insérer : la validation "
 "ouvre une cellule vide à la suite, et l'action suivante s'insère à son "
@@ -2033,7 +2038,7 @@ msgstr ""
 "τη σειρά της αντί να αντικαταστήσει την επόμενη. Το τέλος της παρτίδας ή "
 "η μετακίνηση του δρομέα το τερματίζει."
 
-#: ../../source/raccourcis.rst:463
+#: ../../source/raccourcis.rst:465
 msgid ""
 "Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
 "rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
@@ -2045,7 +2050,7 @@ msgstr ""
 " από τον δρομέα» στο τέλος του εγγράφου. Η φράση σβήνεται μόνη της και "
 "δίνει τη θέση της στην αναμενόμενη ενέργεια."
 
-#: ../../source/raccourcis.rst:468
+#: ../../source/raccourcis.rst:470
 msgid ""
 "Reculer le curseur sur une action, la rouvrir puis ressaisir la corrige "
 "**en place** : la validation remplace l'action et le curseur passe à la "
@@ -2066,7 +2071,7 @@ msgstr ""
 "επικύρωση. Η μετακίνηση του δείκτη μπρος ή πίσω μετά από κάποια αλλαγή "
 "καταγράφει τη διόρθωση παρεμπιπτόντως."
 
-#: ../../source/raccourcis.rst:476
+#: ../../source/raccourcis.rst:478
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -2094,7 +2099,7 @@ msgstr ""
 "οποία έλειπε. Η στοίβα αναιρέσεων ζει στη μνήμη: χάνεται με το κλείσιμο "
 "του πρόχειρου."
 
-#: ../../source/raccourcis.rst:487
+#: ../../source/raccourcis.rst:489
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -2104,7 +2109,7 @@ msgstr ""
 "καταγραφή και η γραμμή του προσχεδίου — περιγράφεται στο "
 ":ref:`panneau_transcription`."
 
-#: ../../source/raccourcis.rst:494
+#: ../../source/raccourcis.rst:496
 msgid "Planche-contact"
 msgstr "Φύλλο επαφής"
 
@@ -2152,7 +2157,7 @@ msgstr "Άνοιγμα της θέσης στο ταμπλό και κλείσι
 msgid "Refermer la planche."
 msgstr "Κλείσιμο του φύλλου."
 
-#: ../../source/raccourcis.rst:511
+#: ../../source/raccourcis.rst:513
 msgid "Panneau d'aide"
 msgstr "Πίνακας βοήθειας"
 

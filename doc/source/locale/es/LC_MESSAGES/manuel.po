@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-16 11:22+0200\n"
+"POT-Creation-Date: 2026-10-17 08:46+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -11608,10 +11608,10 @@ msgid ""
 " champ de notation accepte aussi le coup tapé (``13/7 8/7``, la notation "
 "de la transcription) : les pas se posent sur le damier à chaque frappe, "
 "un champ rougi dit qu'un pas n'est pas jouable, et ENTRÉE valide le coup "
-"complet. Le panneau ayant le focus, RETOUR ARRIÈRE défait un pas, ÉCHAP "
-"recommence le coup et ENTRÉE le valide. Sur une décision de videau, "
-"cliquez *Pas de double*, *Double, prend* ou *Double, passe* : le clic est"
-" la réponse."
+"complet. Le panneau ayant le focus, RETOUR ARRIÈRE défait un pas et ÉCHAP"
+" recommence le coup ; ENTRÉE valide le coup complet où que soit le focus,"
+" hors d'un bouton. Sur une décision de videau, cliquez *Pas de double*, "
+"*Double, prend* ou *Double, passe* : le clic est la réponse."
 msgstr ""
 "*Décision* se **elige**. En una decisión de fichas, **juegue el "
 "movimiento en el tablero**: un clic en una ficha la juega con el primer "
@@ -11626,11 +11626,12 @@ msgstr ""
 " de la transcripción): los pasos se colocan en el tablero con cada "
 "pulsación, un campo enrojecido indica que un paso no es jugable, e INTRO "
 "valida el movimiento completo. Con el foco en el panel, RETROCESO deshace"
-" un paso, ESC reinicia el movimiento e INTRO lo valida. En una decisión "
-"de cubo, pulse *Sin doblar*, *Doblar, aceptar* o *Doblar, pasar*: el clic"
-" es la respuesta."
+" un paso y ESC reinicia el movimiento; INTRO valida el movimiento "
+"completo esté donde esté el foco, salvo en un botón. En una decisión de "
+"cubo, pulse *Sin doblar*, *Doblar, aceptar* o *Doblar, pasar*: el clic es"
+" la respuesta."
 
-#: ../../source/manuel.rst:4935
+#: ../../source/manuel.rst:4936
 msgid ""
 "La correction distingue trois issues, et les confondre mentirait. Un "
 "**coup illégal** n'est pas un coup mal choisi — c'est une faute de règle."
@@ -11648,7 +11649,7 @@ msgstr ""
 "correcta una jugada clasificada y sin coste; la mejor jugada se muestra "
 "en todos los casos."
 
-#: ../../source/manuel.rst:4942
+#: ../../source/manuel.rst:4943
 msgid ""
 "*Ouverture* se **choisit** aussi, coup joué sur le damier comme en "
 "*Décision* — mêmes gestes, même champ de notation. Le panneau dit le jet "
@@ -11682,7 +11683,7 @@ msgstr ""
 " El registro cuenta aparte la apertura y la respuesta: se pueden conocer "
 "las aperturas y responder mal."
 
-#: ../../source/manuel.rst:4956
+#: ../../source/manuel.rst:4957
 msgid ""
 "Le chronomètre part à l'affichage de la question et s'arrête à « Révéler "
 "», à « Valider », au clic d'une action de videau de *Décision* ou au coup"
@@ -11704,25 +11705,29 @@ msgstr ""
 "respuesta que no se ha dado. Una decisión fuera de plazo muestra la mejor"
 " jugada y no entra en el PR de la sesión."
 
-#: ../../source/manuel.rst:4966
+#: ../../source/manuel.rst:4967
 msgid ""
-"« Suivante » enregistre la question et en pose une autre. La session n'a "
-"pas de longueur fixée : elle dure jusqu'à « Terminer », qui l'écrit au "
-"journal, ou « Quitter », qui la jette. Tous les boutons sont dans la "
-"bande d'en-tête du panneau, avec l'exercice, le numéro de la question et "
-"le chronomètre : « Quitter », « Terminer », puis, toujours au bout, "
-"l'action de la question (« Révéler », « Valider » ou « Suivante »). Le "
-"plateau montre la question et sa réponse, il ne porte aucune commande."
+"« Suivante » enregistre la question et en pose une autre ; ENTRÉE, hors "
+"d'un champ ou d'un bouton, fait de même une fois la réponse affichée, ou "
+"« Terminer » s'il n'y a pas de question suivante. La session n'a pas de "
+"longueur fixée : elle dure jusqu'à « Terminer », qui l'écrit au journal, "
+"ou « Quitter », qui la jette. Tous les boutons sont dans la bande d'en-"
+"tête du panneau, avec l'exercice, le numéro de la question et le "
+"chronomètre : « Quitter », « Terminer », puis, toujours au bout, l'action"
+" de la question (« Révéler », « Valider » ou « Suivante »). Le plateau "
+"montre la question et sa réponse, il ne porte aucune commande."
 msgstr ""
-"«Siguiente» registra la pregunta y plantea otra. La sesión no tiene una "
-"duración fijada: dura hasta «Terminar», que la escribe en el diario, o "
-"«Salir», que la descarta. Todos los botones están en la banda de "
-"encabezado del panel, con el ejercicio, el número de la pregunta y el "
-"cronómetro: «Salir», «Terminar» y, siempre al final, la acción de la "
-"pregunta («Revelar», «Comprobar» o «Siguiente»). El tablero muestra la "
-"pregunta y su respuesta, no lleva ningún control."
+"«Siguiente» registra la pregunta y plantea otra; INTRO, fuera de un campo"
+" o de un botón, hace lo mismo una vez mostrada la respuesta, o «Terminar»"
+" si no hay pregunta siguiente. La sesión no tiene una duración fijada: "
+"dura hasta «Terminar», que la escribe en el diario, o «Salir», que la "
+"descarta. Todos los botones están en la banda de encabezado del panel, "
+"con el ejercicio, el número de la pregunta y el cronómetro: «Salir», "
+"«Terminar» y, siempre al final, la acción de la pregunta («Revelar», "
+"«Comprobar» o «Siguiente»). El tablero muestra la pregunta y su "
+"respuesta, no lleva ningún control."
 
-#: ../../source/manuel.rst:4974
+#: ../../source/manuel.rst:4977
 msgid ""
 "Tant qu'une question est posée sur le plateau, révélée ou non, les "
 "touches qui parcourent la liste ne la font pas défiler : la question "
@@ -11732,11 +11737,11 @@ msgstr ""
 "teclas que recorren la lista no la hacen avanzar: la pregunta conserva el"
 " tablero hasta « Suivante », « Terminer » o « Quitter »."
 
-#: ../../source/manuel.rst:4979
+#: ../../source/manuel.rst:4982
 msgid "Le journal et le bilan"
 msgstr "El diario y el balance"
 
-#: ../../source/manuel.rst:4981
+#: ../../source/manuel.rst:4984
 msgid ""
 "Les sessions terminées sont conservées dans la base elle-même — elles "
 "suivent donc le fichier — et sans plafond. Au repos, le panneau affiche "
@@ -11752,7 +11757,7 @@ msgstr ""
 "entre la tasa de fallos de las diez últimas sesiones y la de todas — "
 "negativa, está progresando."
 
-#: ../../source/manuel.rst:4988
+#: ../../source/manuel.rst:4991
 msgid ""
 "Pour *Décision*, la ligne donne aussi le **PR** de la dernière session, "
 "calculé par la formule que les statistiques appliquent au jeu réel — 500 "
@@ -11766,7 +11771,7 @@ msgstr ""
 "PR de entrenamiento de 6 y un PR de partido de 6 miden lo mismo en la "
 "misma escala."
 
-#: ../../source/manuel.rst:4994
+#: ../../source/manuel.rst:4997
 msgid ""
 "Cliquer le nom de l'exercice déplie le détail **par type de nombre** : « "
 "Point de prise 4 · dernier lancer, 6 / 9 ». C'est ce détail qui fait "
@@ -11780,7 +11785,7 @@ msgstr ""
 " misma casilla de la misma tabla, vista de un lado o del otro, es una "
 "sola debilidad."
 
-#: ../../source/manuel.rst:4999
+#: ../../source/manuel.rst:5002
 msgid ""
 "Une question de *Décision* garde au journal sa position, la réponse "
 "donnée et son coût en millipoints. Le détail de *Décision* porte donc "
@@ -11794,7 +11799,7 @@ msgstr ""
 "cada una una vez, la fallada más recientemente primero — una pregunta "
 "fuera de plazo cuenta como fallada:"
 
-#: ../../source/manuel.rst:5004
+#: ../../source/manuel.rst:5007
 msgid ""
 "**Reprendre mes ratés** — les positions ratées deviennent la liste "
 "parcourue et une session *Décision* repart dessus ;"
@@ -11802,15 +11807,15 @@ msgstr ""
 "**Repetir mis fallos** — las posiciones falladas pasan a ser la lista "
 "recorrida y una sesión de *Decisión* se reinicia sobre ellas;"
 
-#: ../../source/manuel.rst:5006
+#: ../../source/manuel.rst:5009
 msgid "**Paquet Anki des ratés** — un paquet Anki de ces positions ;"
 msgstr "**Mazo Anki de los fallos** — un mazo Anki con estas posiciones;"
 
-#: ../../source/manuel.rst:5007
+#: ../../source/manuel.rst:5010
 msgid "**Collection des ratés** — une collection de ces positions."
 msgstr "**Colección de los fallos** — una colección con estas posiciones."
 
-#: ../../source/manuel.rst:5009
+#: ../../source/manuel.rst:5012
 msgid ""
 "Le paquet et la collection sont nommés « Ratés à Décision » suivis de la "
 "date du jour. En ligne de commande, ``training missed`` rend la même "
@@ -11824,11 +11829,11 @@ msgstr ""
 "(``--collection``), y ``training sessions`` relee el diario (véase "
 ":ref:`cli_training`)."
 
-#: ../../source/manuel.rst:5017
+#: ../../source/manuel.rst:5020
 msgid "Panneau Duel"
 msgstr "Panel Duelo"
 
-#: ../../source/manuel.rst:5019
+#: ../../source/manuel.rst:5022
 msgid ""
 "Le panneau **Duel** fait jouer un match entier contre le Bot, sous "
 "l'arbitrage de blunderDB : il lance les dés, impose les règles, tient le "
@@ -11842,7 +11847,7 @@ msgstr ""
 "la barra de herramientas o con el comando ``duel``. Debe haber una base "
 "abierta: el Duelo se escribe en ella tras cada decisión."
 
-#: ../../source/manuel.rst:5025
+#: ../../source/manuel.rst:5028
 msgid ""
 "Sans Duel ouvert, le panneau montre le formulaire, mémorisé d'un Duel à "
 "l'autre, et, s'il y en a, la liste des Duels en suspens. La bande d'en-"
@@ -11854,7 +11859,7 @@ msgstr ""
 "encabezado lleva la **Salida**, las opciones que pide la posición de "
 "salida, la **cadencia** y «Jugar» en su extremo:"
 
-#: ../../source/manuel.rst:5030
+#: ../../source/manuel.rst:5033
 msgid ""
 "**Départ** : la position initiale, ou la position au plateau. Partant du "
 "plateau, celui-ci s'édite comme dans le panneau Eval (même plateau "
@@ -11866,7 +11871,7 @@ msgstr ""
 "mismos gestos): las fichas, el cubo y su propietario, los dados — "
 "colocados del lado de un jugador, le dan el turno — y el marcador."
 
-#: ../../source/manuel.rst:5034
+#: ../../source/manuel.rst:5037
 msgid ""
 "**Dés** (départ du plateau portant des dés) : « Dés du plateau », par "
 "défaut, joue le jet posé ; « Relancer » le fait tirer à nouveau par "
@@ -11876,7 +11881,7 @@ msgstr ""
 "defecto, juega la tirada colocada; «Volver a tirar» hace que el Árbitro "
 "la saque de nuevo."
 
-#: ../../source/manuel.rst:5036
+#: ../../source/manuel.rst:5039
 msgid ""
 "**Décision de videau** (départ du plateau sans dés à jouer, quand le "
 "joueur au trait peut doubler ou qu'un double est offert au plateau) : « "
@@ -11891,7 +11896,7 @@ msgstr ""
 "ofrecido; «Después del cubo» pasa directamente a la tirada, y un doble "
 "ofrecido se acepta entonces."
 
-#: ../../source/manuel.rst:5041
+#: ../../source/manuel.rst:5044
 msgid ""
 "**Cadence** : sans cadence, **Standard** (2 min par point + 12 s), "
 "**Speed** (0,4 min par point, soit 2 min pour un match en 5 points, + 10 "
@@ -11901,15 +11906,15 @@ msgstr ""
 "**Speed** (0,4 min por punto, es decir, 2 min para un match a 5 puntos, +"
 " 10 s) o una cadencia guardada."
 
-#: ../../source/manuel.rst:5045
+#: ../../source/manuel.rst:5048
 msgid "Le formulaire, un réglage par ligne :"
 msgstr "El formulario, un ajuste por línea:"
 
-#: ../../source/manuel.rst:5047
+#: ../../source/manuel.rst:5050
 msgid "**Match** de 1 à 25 points, ou **session en argent** (Jacoby au choix)."
 msgstr "**Match** de 1 a 25 puntos, o **sesión de dinero** (Jacoby opcional)."
 
-#: ../../source/manuel.rst:5048
+#: ../../source/manuel.rst:5051
 msgid ""
 "**Score** : ce qu'il manque à chaque joueur, par défaut la longueur du "
 "match (début de match) ; « 1 (Crawford) » est la partie Crawford, « 1 "
@@ -11927,7 +11932,7 @@ msgstr ""
 "partida** detiene el Duelo al final de su primera partida, para entrenar "
 "un marcador: el Match escrito cuenta solo esa partida."
 
-#: ../../source/manuel.rst:5055
+#: ../../source/manuel.rst:5058
 msgid ""
 "**Cadence** (une cadence choisie) : **minutes par point** et **délai** en"
 " secondes. Chaque joueur dispose de minutes par point × longueur du match"
@@ -11949,7 +11954,7 @@ msgstr ""
 "«Eliminar» quita la cadencia guardada elegida. Una sesión de dinero se "
 "juega sin cadencia."
 
-#: ../../source/manuel.rst:5063
+#: ../../source/manuel.rst:5066
 msgid ""
 "**Côté joué** (joueur 1 ou 2) et **niveau du Bot** (``instant``, "
 "``normal``, ``thorough``, ceux de l'analyse). Le sélecteur dit la "
@@ -11961,7 +11966,7 @@ msgstr ""
 "profundidad de cada nivel, por ejemplo «instant (0-ply)» o «normal "
 "(2-ply, podado)»; más profundo es más fuerte y más lento."
 
-#: ../../source/manuel.rst:5067
+#: ../../source/manuel.rst:5070
 msgid ""
 "**Votre nom** et **Enregistrer le match** : décoché, le Duel terminé est "
 "jeté au lieu de devenir un Match."
@@ -11969,7 +11974,7 @@ msgstr ""
 "**Su nombre** y **Guardar el match**: sin marcar, el Duelo terminado se "
 "descarta en lugar de convertirse en un Match."
 
-#: ../../source/manuel.rst:5069
+#: ../../source/manuel.rst:5072
 msgid ""
 "**Pipcount** : décoché, le pipcount reste masqué pendant le Duel, même "
 "par le bouton de la barre d'outils ou ``P`` ; il revient à la sortie du "
@@ -11979,7 +11984,7 @@ msgstr ""
 "incluso con el botón de la barra de herramientas o ``P``; vuelve al salir"
 " del Duelo."
 
-#: ../../source/manuel.rst:5072
+#: ../../source/manuel.rst:5075
 msgid ""
 "« Reprendre » rouvre un Duel en suspens au même point, avec les mêmes dés"
 " à venir ; ses horloges étaient arrêtées."
@@ -11987,7 +11992,7 @@ msgstr ""
 "«Reanudar» reabre un Duelo suspendido en el mismo punto, con los mismos "
 "dados por venir; sus relojes estaban detenidos."
 
-#: ../../source/manuel.rst:5075
+#: ../../source/manuel.rst:5078
 msgid ""
 "Un Duel en suspens ne quitte pas sa base : l'export de la base ne "
 "l'emporte pas, parce que ses dés à venir ne doivent sortir par aucune "
@@ -11997,7 +12002,7 @@ msgstr ""
 "lleva, porque sus dados por venir no deben salir por ninguna vía antes "
 "del final. Un Duelo terminado se exporta como cualquier Match."
 
-#: ../../source/manuel.rst:5079
+#: ../../source/manuel.rst:5082
 msgid ""
 "Le Duel se joue au plateau. Le panneau montre la feuille de match en deux"
 " colonnes, comme la Transcription, et les horloges quand une cadence "
@@ -12031,7 +12036,7 @@ msgstr ""
 "ningún candidato. Solo quedan la Pila (``B``), el pipcount (``P``, salvo "
 "si está oculto para el Duelo) y la ayuda."
 
-#: ../../source/manuel.rst:5093
+#: ../../source/manuel.rst:5096
 msgid ""
 "Avant le lancer, un clic sur le plateau, sur les dés ou sur un pion les "
 "lance ; seul un clic sur le videau propose de doubler, et le plateau "
@@ -12043,11 +12048,11 @@ msgstr ""
 "«Doblar» o «Cancelar». Cuando el cubo no está disponible, la tirada es "
 "automática."
 
-#: ../../source/manuel.rst:5096
+#: ../../source/manuel.rst:5099
 msgid "Face à un double du Bot, le plateau demande « Prendre » ou « Passer »."
 msgstr "Ante un doble del Bot, el tablero pregunta «Aceptar» o «Rechazar»."
 
-#: ../../source/manuel.rst:5097
+#: ../../source/manuel.rst:5100
 msgid ""
 "Un clic sur un pion le joue aussitôt avec le dé de gauche encore libre, "
 "ou avec l'autre quand celui-ci ne peut pas le jouer ; un pion sur la "
@@ -12059,7 +12064,7 @@ msgstr ""
 "barra entra, un doble se juega en cuatro clics. Una ficha también puede "
 "arrastrarse hasta su destino. Solo pasan los pasos de una jugada legal."
 
-#: ../../source/manuel.rst:5101
+#: ../../source/manuel.rst:5104
 msgid ""
 "Un dé se grise quand il est joué ; sur un double, chaque dé vaut deux pas"
 " et se voile à moitié au premier. Le coup complet grise tous les dés, y "
@@ -12069,7 +12074,7 @@ msgstr ""
 "y se vela a medias tras el primero. La jugada completa atenúa todos los "
 "dados, incluidos los que la regla no permite jugar."
 
-#: ../../source/manuel.rst:5104
+#: ../../source/manuel.rst:5107
 msgid ""
 "Tant que le coup n'est pas complet, un clic sur les dés intervertit les "
 "dés restant à jouer. Le clic droit sur le plateau reprend tous les pions "
@@ -12081,7 +12086,7 @@ msgstr ""
 "las fichas jugadas (``RETROCESO`` también); sin ficha jugada, abre el "
 "menú del Duelo."
 
-#: ../../source/manuel.rst:5107
+#: ../../source/manuel.rst:5110
 msgid ""
 "Le coup complet se valide par un clic sur les dés, par « Valider » sur le"
 " plateau, ou par ``ENTRÉE`` ou ``ESPACE``. Rien ne se reprend après."
@@ -12090,13 +12095,13 @@ msgstr ""
 "el tablero, o con ``INTRO`` o ``ESPACIO``. Después no se puede "
 "retroceder."
 
-#: ../../source/manuel.rst:5109
+#: ../../source/manuel.rst:5112
 msgid "Le Bot répond aussitôt ; ses coups sont rejoués au plateau, lentement."
 msgstr ""
 "El Bot responde enseguida; sus jugadas se reproducen en el tablero, "
 "despacio."
 
-#: ../../source/manuel.rst:5110
+#: ../../source/manuel.rst:5113
 msgid ""
 "Le clic droit hors du plateau, ou sur le plateau hors de son coup ou sans"
 " pion joué, ouvre le menu du Duel : mettre la position sur la Pile ou "
@@ -12110,7 +12115,7 @@ msgstr ""
 " (en su turno, tras confirmación), abandonar el match, ponerlo en pausa, "
 "anularlo. Este menú no ofrece ni evaluación ni edición."
 
-#: ../../source/manuel.rst:5115
+#: ../../source/manuel.rst:5118
 msgid ""
 "« Abandonner le match » cède le match entier, à tout moment et après "
 "confirmation : la partie en cours va à l'adversaire pour les points qui "
@@ -12128,7 +12133,7 @@ msgstr ""
 "el match, una reserva agotada equivale al abandono del match por ese "
 "jugador."
 
-#: ../../source/manuel.rst:5121
+#: ../../source/manuel.rst:5124
 msgid ""
 "« Mettre en pause » met le Duel en suspens, horloges arrêtées ; il se "
 "reprend au même point. « Annuler le match » le jette, après confirmation "
@@ -12138,7 +12143,7 @@ msgstr ""
 "reanuda en el mismo punto. «Anular el match» lo descarta, tras "
 "confirmación: no se guarda nada."
 
-#: ../../source/manuel.rst:5124
+#: ../../source/manuel.rst:5127
 msgid ""
 "Un double-clic hors du plateau met la position sur la Pile, ou l'en "
 "retire, comme ``B`` ; seul le marque-page au coin du plateau le montre."
@@ -12146,7 +12151,7 @@ msgstr ""
 "Un doble clic fuera del tablero pone la posición en la Pila, o la retira,"
 " como ``B``; solo el marcador en la esquina del tablero lo muestra."
 
-#: ../../source/manuel.rst:5127
+#: ../../source/manuel.rst:5130
 msgid ""
 "Chaque décision porte sa durée, avec ou sans cadence. Un abandon n'a pas "
 "de durée enregistrée dans le Match."
@@ -12154,7 +12159,7 @@ msgstr ""
 "Cada decisión lleva su duración, con o sin control de tiempo. Un abandono"
 " no tiene duración registrada en el Match."
 
-#: ../../source/manuel.rst:5130
+#: ../../source/manuel.rst:5133
 msgid ""
 "À la fin, le Match est écrit, son analyse se lance et l'onglet Matchs "
 "s'ouvre sur lui. En ligne de commande, ``blunderdb duel`` pilote le même "
@@ -12164,11 +12169,11 @@ msgstr ""
 " se abre sobre él. En la línea de comandos, ``blunderdb duel`` maneja el "
 "mismo Duelo (véase :ref:`cli_duel`)."
 
-#: ../../source/manuel.rst:5137
+#: ../../source/manuel.rst:5140
 msgid "Panneau Métadonnées"
 msgstr "Panel de Metadatos"
 
-#: ../../source/manuel.rst:5139
+#: ../../source/manuel.rst:5142
 msgid ""
 "Le panneau **Métadonnées** (*CTRL-M*) affiche les informations générales "
 "de la base de données courante : *Utilisateur*, date de création "
@@ -12183,7 +12188,7 @@ msgstr ""
 "modifican en el sitio y se guardan al salir del campo; la versión es de "
 "solo lectura. También accesible mediante el comando ``meta``."
 
-#: ../../source/manuel.rst:5145
+#: ../../source/manuel.rst:5148
 msgid ""
 "Il affiche également, **lorsqu'elle existe**, l'origine de la base — voir"
 " :ref:`diffusion_controlee`. Une base ordinaire n'affiche pas cette "
@@ -12193,11 +12198,11 @@ msgstr ""
 " :ref:`diffusion_controlee`. Una base de datos corriente no muestra esa "
 "sección."
 
-#: ../../source/manuel.rst:5151
+#: ../../source/manuel.rst:5154
 msgid "Diffuser une base : origine et mot de passe"
 msgstr "Distribuir una base de datos: origen y contraseña"
 
-#: ../../source/manuel.rst:5153
+#: ../../source/manuel.rst:5156
 msgid ""
 "Un enseignant qui distribue une base de positions dispose de deux "
 "mécanismes, indépendants l'un de l'autre, tous deux facultatifs et "
@@ -12209,7 +12214,7 @@ msgstr ""
 "momento de la exportación**: marcar el archivo con su origen y protegerlo"
 " con una contraseña."
 
-#: ../../source/manuel.rst:5160
+#: ../../source/manuel.rst:5163
 msgid ""
 "Aucun des deux ne suit ce que devient le fichier. blunderDB "
 "**n'enregistre rien du côté de celui qui reçoit la base** : ouvrir une "
@@ -12222,11 +12227,11 @@ msgstr ""
 "ningún sitio queda constancia de quién la abrió, cuándo, ni de dónde "
 "procede su contenido."
 
-#: ../../source/manuel.rst:5166
+#: ../../source/manuel.rst:5169
 msgid "Marquer une base de son origine"
 msgstr "Marcar una base de datos con su origen"
 
-#: ../../source/manuel.rst:5168
+#: ../../source/manuel.rst:5171
 msgid ""
 "La fenêtre d'export tient en un seul écran : une bande d'en-tête — le "
 "nombre de positions exportées, **Annuler** et **Exporter…** — puis une "
@@ -12250,11 +12255,11 @@ msgstr ""
 "Después se superpone una barra de progreso mientras dura la escritura, la"
 " ventana se cierra sola y el resultado aparece en la barra de estado."
 
-#: ../../source/manuel.rst:5180
+#: ../../source/manuel.rst:5183
 msgid "Huit points méritent l'attention :"
 msgstr "Ocho puntos merecen atención:"
 
-#: ../../source/manuel.rst:5182
+#: ../../source/manuel.rst:5185
 msgid ""
 "**La portée** : depuis une liste — une recherche, une collection —, la "
 "ligne *Portée* choisit entre la *Liste courante* et *Toute la "
@@ -12269,7 +12274,7 @@ msgstr ""
 " en las que se jugaron esas posiciones; cada partida marcada sale con "
 "todas sus posiciones. Desde la biblioteca, el alcance es la biblioteca."
 
-#: ../../source/manuel.rst:5187
+#: ../../source/manuel.rst:5190
 msgid ""
 "**Toute la bibliothèque** est l'export du serveur et de ``export --type "
 "database`` : toutes les familles sont cochées d'emblée, les paquets Anki "
@@ -12281,7 +12286,7 @@ msgstr ""
 "mazos Anki con su historial de repaso, y las transcripciones en curso "
 "salen con el resto."
 
-#: ../../source/manuel.rst:5191
+#: ../../source/manuel.rst:5194
 msgid ""
 "**Un match part avec son brouillon de transcription**, sous la case "
 "*Transcriptions* de la ligne *Matchs*, cochée d'emblée ; les matchs qu'un"
@@ -12301,7 +12306,7 @@ msgstr ""
 "un enlace web sale tal cual. El archivo desde el que se importó una "
 "partida tampoco sale más que por su nombre."
 
-#: ../../source/manuel.rst:5198
+#: ../../source/manuel.rst:5201
 msgid ""
 "**Un match part avec les alias de ses joueurs et de son événement** : la "
 "case *Alias*, cochée d'emblée, fait suivre la fusion de joueurs, et le "
@@ -12314,7 +12319,7 @@ msgstr ""
 "alias que no nombra a nadie de las partidas exportadas se queda con "
 "usted."
 
-#: ../../source/manuel.rst:5202
+#: ../../source/manuel.rst:5205
 msgid ""
 "**Une collection dont toutes les positions ne sont pas dans la liste "
 "arrive tronquée.** La liste des collections affiche, pour chacune, la "
@@ -12337,7 +12342,7 @@ msgstr ""
 "consulta selecciona hoy, y la lista la marca en rojo como «congelada» con"
 " una nota; marcar *+ sus posiciones* la deja viva."
 
-#: ../../source/manuel.rst:5211
+#: ../../source/manuel.rst:5214
 msgid ""
 "**Un tournoi part toujours avec ses matchs** : sans eux, le lien "
 "tournoi–match n'existe pas et le tournoi arriverait vide. Cocher un "
@@ -12357,7 +12362,7 @@ msgstr ""
 " su equipo. La Dirección se recupera abriendo el archivo, o importándolo "
 "en otra base."
 
-#: ../../source/manuel.rst:5219
+#: ../../source/manuel.rst:5222
 msgid ""
 "**Un paquet Anki part avec ses positions**, en copie d'étude neuve. La "
 "case *avec mon historique* emporte en plus l'état de chaque carte et le "
@@ -12371,7 +12376,7 @@ msgstr ""
 " otra máquina. Está desmarcada para una lista y marcada para la "
 "biblioteca."
 
-#: ../../source/manuel.rst:5223
+#: ../../source/manuel.rst:5226
 msgid ""
 "**Les filtres enregistrés** n'exportent pas du contenu mais vos propres "
 "recherches, sans utilité dans la base de quelqu'un d'autre ; la case est "
@@ -12385,7 +12390,7 @@ msgstr ""
 "partida o un torneo por su número se renumera para el archivo; si designa"
 " uno que no sale, se queda con usted."
 
-#: ../../source/manuel.rst:5229
+#: ../../source/manuel.rst:5232
 msgid ""
 "Les collections, leçons, transcriptions, paquets Anki, alias et tournois "
 "partent avec les dates de création et d'ajout qu'ils portent chez vous, "
@@ -12395,7 +12400,7 @@ msgstr ""
 "salen con las fechas de creación y de adición que tienen en su equipo, no"
 " con la fecha de la exportación."
 
-#: ../../source/manuel.rst:5233
+#: ../../source/manuel.rst:5236
 msgid ""
 "Les champs *Utilisateur*, *Description* et *Date de création* décrivent "
 "le **fichier produit** ; ils sont préremplis depuis la base source."
@@ -12404,11 +12409,11 @@ msgstr ""
 "**archivo producido**; vienen rellenados de antemano a partir de la base "
 "de origen."
 
-#: ../../source/manuel.rst:5236
+#: ../../source/manuel.rst:5239
 msgid "Cocher **Filigrane** fait apparaître deux champs :"
 msgstr "Al marcar **Marca de agua** aparecen dos campos:"
 
-#: ../../source/manuel.rst:5238
+#: ../../source/manuel.rst:5241
 msgid ""
 "**Origine** — ce qu'est ce fichier et d'où il vient, dans vos mots : « "
 "Cours de Jean Dupont — 12 mars 2026 ». Ce champ est **obligatoire** : "
@@ -12420,7 +12425,7 @@ msgstr ""
 "**obligatorio**: mientras esté vacío, aparece bordeado de rojo y el botón"
 " de exportación permanece inactivo."
 
-#: ../../source/manuel.rst:5241
+#: ../../source/manuel.rst:5244
 msgid ""
 "**Note**, facultative — conditions d'utilisation, adresse de contact, une"
 " demande de ne pas rediffuser."
@@ -12428,7 +12433,7 @@ msgstr ""
 "**Nota**, opcional — condiciones de uso, dirección de contacto, una "
 "petición de no redistribuir."
 
-#: ../../source/manuel.rst:5244
+#: ../../source/manuel.rst:5247
 msgid ""
 "La marque est signée avec votre identité d'émetteur. Elle est donc "
 "**inaltérable et infalsifiable** : nul ne peut la modifier, ni en "
@@ -12442,11 +12447,11 @@ msgstr ""
 "SQLite corriente y blunderDB es software libre. No impide nada: dice de "
 "dónde viene el archivo."
 
-#: ../../source/manuel.rst:5251
+#: ../../source/manuel.rst:5254
 msgid "Identité d'émetteur"
 msgstr "Identidad del emisor"
 
-#: ../../source/manuel.rst:5253
+#: ../../source/manuel.rst:5256
 msgid ""
 "Les marques sont signées avec votre **identité d'émetteur**, créée toute "
 "seule la première fois que vous marquez un fichier ; il n'y a rien à "
@@ -12459,7 +12464,7 @@ msgstr ""
 "Pertenece a una persona y no a una base de datos: todos tus archivos "
 "llevan la misma huella pública, con la forma ``A3F1-9C24-7B05-E1D8``."
 
-#: ../../source/manuel.rst:5258
+#: ../../source/manuel.rst:5261
 msgid ""
 "Vous pouvez communiquer cette empreinte à vos destinataires pour qu'ils "
 "vérifient qu'un fichier vient bien de vous. L'identité se transporte d'un"
@@ -12473,7 +12478,7 @@ msgstr ""
 " por una frase de contraseña. **Ese archivo permite firmar en tu nombre: "
 "no lo compartas.**"
 
-#: ../../source/manuel.rst:5264
+#: ../../source/manuel.rst:5267
 msgid ""
 "Dans les préférences (icône engrenage de la barre d'outils), l'onglet "
 "*Identité d'émetteur* affiche votre nom et votre empreinte, et propose "
@@ -12483,7 +12488,7 @@ msgstr ""
 "pestaña *Identidad del emisor* muestra tu nombre y tu huella, y ofrece "
 "*Guardar identidad…*, *Cargar identidad…* y *Regenerar…*."
 
-#: ../../source/manuel.rst:5270
+#: ../../source/manuel.rst:5273
 msgid ""
 "**Régénérer ne révoque rien.** Un filigrane embarque la clé publique qui "
 "l'a signé : il se vérifie donc pour toujours, tout seul. Si votre fichier"
@@ -12495,7 +12500,7 @@ msgstr ""
 " de identidad se ha filtrado, quien lo posea podrá seguir firmando con tu"
 " huella antigua, y esas marcas seguirán siendo válidas."
 
-#: ../../source/manuel.rst:5275
+#: ../../source/manuel.rst:5278
 msgid ""
 "Ce qui vous protège après une fuite n'est pas logiciel : c'est de publier"
 " votre nouvelle empreinte et de désavouer l'ancienne auprès de vos "
@@ -12504,7 +12509,7 @@ msgstr ""
 "Lo que te protege tras una filtración no es el software: es publicar tu "
 "nueva huella y desautorizar la antigua ante tus destinatarios."
 
-#: ../../source/manuel.rst:5279
+#: ../../source/manuel.rst:5282
 msgid ""
 "La régénération écrase la clé actuelle ; blunderDB propose de "
 "l'enregistrer avant de la remplacer."
@@ -12512,11 +12517,11 @@ msgstr ""
 "La regeneración sobrescribe la clave actual; blunderDB ofrece guardarla "
 "antes de reemplazarla."
 
-#: ../../source/manuel.rst:5283
+#: ../../source/manuel.rst:5286
 msgid "Protéger une base par un mot de passe"
 msgstr "Proteger una base de datos con una contraseña"
 
-#: ../../source/manuel.rst:5285
+#: ../../source/manuel.rst:5288
 msgid ""
 "Le mot de passe se saisit masqué, ici comme à l'ouverture d'un fichier "
 "protégé ; l'icône en forme d'œil l'affiche **tant qu'on la maintient "
@@ -12526,7 +12531,7 @@ msgstr ""
 "protegido; el icono con forma de ojo la muestra **mientras se mantiene "
 "pulsado** y vuelve a ocultarla al soltarlo."
 
-#: ../../source/manuel.rst:5289
+#: ../../source/manuel.rst:5292
 msgid ""
 "Cocher **Mot de passe** produit un fichier d'extension ``.dbx`` — y "
 "compris si le nom choisi dans la fenêtre d'enregistrement finit en "
@@ -12542,7 +12547,7 @@ msgstr ""
 "contraseña e instala una base ordinaria al lado; después ya no se pide "
 "nada."
 
-#: ../../source/manuel.rst:5296
+#: ../../source/manuel.rst:5299
 msgid ""
 "La fenêtre propose de **supprimer le fichier protégé une fois ouvert** : "
 "sans cela vous conservez le même contenu sous deux noms. La case n'est "
@@ -12556,7 +12561,7 @@ msgstr ""
 "piensas transmitirlo— y la eliminación solo se produce tras una apertura "
 "correcta."
 
-#: ../../source/manuel.rst:5303
+#: ../../source/manuel.rst:5306
 msgid ""
 "Le mot de passe protège le **transport** du fichier, pas la base. Il "
 "empêche un tiers d'ouvrir un fichier qui traîne dans un dossier de "
@@ -12568,7 +12573,7 @@ msgstr ""
 "adjunto reenviado por error. No protege frente a aquel a quien has dado "
 "la contraseña."
 
-#: ../../source/manuel.rst:5308
+#: ../../source/manuel.rst:5311
 msgid ""
 "Le mot de passe est vérifié à **chaque** ouverture, y compris lorsque le "
 "fichier a déjà été ouvert auparavant sur ce poste."
@@ -12576,7 +12581,7 @@ msgstr ""
 "La contraseña se comprueba en **cada** apertura, incluso si el archivo ya"
 " se había abierto antes en ese equipo."
 
-#: ../../source/manuel.rst:5311
+#: ../../source/manuel.rst:5314
 msgid ""
 "Techniquement, la base est chiffrée par **AES-256 en mode GCM**, avec une"
 " clé dérivée du mot de passe par **Argon2id** (64 Mio de mémoire, 3 "
@@ -12592,7 +12597,7 @@ msgstr ""
 "también cualquier alteración del archivo cifrado; nunca se obtiene en "
 "silencio una base corrupta."
 
-#: ../../source/manuel.rst:5318
+#: ../../source/manuel.rst:5321
 msgid ""
 "L'en-tête du fichier protégé reste **en clair** : son origine demeure "
 "lisible sans le mot de passe."
@@ -12600,11 +12605,11 @@ msgstr ""
 "La cabecera del archivo protegido permanece **en claro**: su origen sigue"
 " siendo legible sin la contraseña."
 
-#: ../../source/manuel.rst:5322
+#: ../../source/manuel.rst:5325
 msgid "Lire l'origine d'un fichier"
 msgstr "Leer el origen de un archivo"
 
-#: ../../source/manuel.rst:5324
+#: ../../source/manuel.rst:5327
 msgid ""
 "Dans l'application, ouvrez le fichier et affichez le panneau "
 "**Métadonnées** (commande ``meta``). Une section **Origine** apparaît en "
@@ -12616,11 +12621,11 @@ msgstr ""
 "del panel, de solo lectura, que indica lo que se inscribió, por quién, "
 "cuándo, y el estado de la firma:"
 
-#: ../../source/manuel.rst:5329
+#: ../../source/manuel.rst:5332
 msgid "« ✓ marquée par vous » : le fichier porte votre marque, intacte ;"
 msgstr "«✓ marcada por usted»: el archivo lleva su marca, intacta;"
 
-#: ../../source/manuel.rst:5331
+#: ../../source/manuel.rst:5334
 msgid ""
 "« ✓ signature vérifiée » : la marque est intacte et vient d'une autre clé"
 " — comparez son empreinte à celle que le producteur vous a communiquée ;"
@@ -12628,15 +12633,15 @@ msgstr ""
 "«✓ firma verificada»: la marca está intacta y procede de otra clave; "
 "compara su huella con la que te haya comunicado el autor;"
 
-#: ../../source/manuel.rst:5333
+#: ../../source/manuel.rst:5336
 msgid "« ⚠ signature invalide » : le document a été modifié ou contrefait."
 msgstr "«⚠ firma no válida»: el documento ha sido modificado o falsificado."
 
-#: ../../source/manuel.rst:5335
+#: ../../source/manuel.rst:5338
 msgid "Cette section n'apparaît pas sur une base ordinaire."
 msgstr "Esta sección no aparece en una base de datos corriente."
 
-#: ../../source/manuel.rst:5337
+#: ../../source/manuel.rst:5340
 msgid ""
 "En ligne de commande, ``blunderdb info --db fichier.db`` affiche "
 "l'origine et l'état de la signature, **sans jamais écrire dans le "
@@ -12650,11 +12655,11 @@ msgstr ""
 "Consulta ``CLI_USAGE.md`` para las opciones ``--watermark`` y "
 "``--password`` de ``export``, así como para ``identity`` y ``open``."
 
-#: ../../source/manuel.rst:5346
+#: ../../source/manuel.rst:5349
 msgid "Publier une base pour d'autres"
 msgstr "Publicar una base para otros"
 
-#: ../../source/manuel.rst:5348
+#: ../../source/manuel.rst:5351
 msgid ""
 "Une base marquée se distribue comme n'importe quel fichier — courriel, "
 "site personnel, clé USB. blunderDB **ne fournit aucun service** : ni "
@@ -12669,7 +12674,7 @@ msgstr ""
 "su diseño: nunca se registra nada del lado de quien recibe un archivo, "
 "así que no habría nada que comunicar a un servicio, aunque existiera."
 
-#: ../../source/manuel.rst:5354
+#: ../../source/manuel.rst:5357
 msgid ""
 "Ce qui rend une base publiée utilisable par quelqu'un d'autre tient à "
 "quatre champs, tous déjà là :"
@@ -12677,13 +12682,13 @@ msgstr ""
 "Lo que hace utilizable por otro una base publicada se reduce a cuatro "
 "campos, todos ya presentes:"
 
-#: ../../source/manuel.rst:5357
+#: ../../source/manuel.rst:5360
 msgid ""
 "**Utilisateur** — qui l'a constituée, sous le nom que vous voulez voir "
 "cité."
 msgstr "**Usuario** — quién la constituyó, con el nombre que quiere ver citado."
 
-#: ../../source/manuel.rst:5358
+#: ../../source/manuel.rst:5361
 msgid ""
 "**Description** — ce que la base contient, en une phrase qui tienne dans "
 "une liste : « 240 décisions de videau au score, commentées, niveau "
@@ -12693,7 +12698,7 @@ msgstr ""
 "lista: «240 decisiones de cubo al marcador, comentadas, nivel "
 "intermedio»."
 
-#: ../../source/manuel.rst:5360
+#: ../../source/manuel.rst:5363
 msgid ""
 "**Origine** (du filigrane) — ce qu'est ce fichier et pour qui il a été "
 "produit. C'est ce que le destinataire lit en premier dans le panneau "
@@ -12702,7 +12707,7 @@ msgstr ""
 "**Origen** (de la marca de agua) — qué es este archivo y para quién se "
 "produjo. Es lo primero que el destinatario lee en el panel *Metadatos*."
 
-#: ../../source/manuel.rst:5363
+#: ../../source/manuel.rst:5366
 msgid ""
 "**Empreinte d'émetteur** — publiez-la à côté du fichier, pas dedans : "
 "c'est en la comparant que le destinataire vérifie que le fichier vient de"
@@ -12712,7 +12717,7 @@ msgstr ""
 "comparándola el destinatario comprueba que el archivo viene de usted y no"
 " de alguien que ha tomado su nombre."
 
-#: ../../source/manuel.rst:5367
+#: ../../source/manuel.rst:5370
 msgid ""
 "Une base publiée sans filigrane reste parfaitement utilisable ; elle est "
 "simplement anonyme, et le panneau *Métadonnées* n'affiche alors aucune "
@@ -12722,7 +12727,7 @@ msgstr ""
 "utilizable; simplemente es anónima, y el panel *Metadatos* no muestra "
 "entonces ninguna sección *Origen*."
 
-#: ../../source/manuel.rst:5371
+#: ../../source/manuel.rst:5374
 msgid ""
 "Pour faire connaître une base, la catégorie *Show and tell* des "
 "`discussions du dépôt <https://github.com/kevung/blunderDB/discussions>`_"

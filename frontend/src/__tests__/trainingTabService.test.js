@@ -66,7 +66,8 @@ import {
     answerDecisionCube,
     undoDecisionStep,
     playDecisionNotation,
-    resetDecisionPlay
+    resetDecisionPlay,
+    trainingEnterKey
 } from '../services/trainingTabService.js';
 
 // Les modules simulés, typés comme tels : `vi.mocked` dit au vérificateur que
@@ -891,6 +892,32 @@ describe('une session de Décision (#323)', () => {
             expect(current().revealed).toBe(true);
             expect(current().faults).toEqual([false]);
             expect(current().verdict.notation).toBe('6/4 6/3');
+        });
+
+        test('ENTRÉE valide le coup complet, puis passe à la question suivante', async () => {
+            library({ 7: CHECKER, 8: CHECKER });
+            await startTrainingSession({ exercise: 'decision', seedSource: 'library' });
+            expect(trainingEnterKey(), 'sans coup complet, ENTRÉE ne sert pas').toBe(false);
+            playOnBoard();
+            db.GradeQuizChecker.mockResolvedValue(/** @type {any} */ (verdict()));
+            expect(trainingEnterKey()).toBe(true);
+            await vi.waitFor(() => expect(current().revealed).toBe(true));
+            const answered = current().question;
+            expect(trainingEnterKey()).toBe(true);
+            expect(trainingEnterKey(), 'un second appui avant la suivante ne compte pas deux fois').toBe(true);
+            await vi.waitFor(() => expect(current().question).not.toBe(answered));
+            expect(current().revealed).toBe(false);
+            expect(current().askedQuestions).toBe(1);
+        });
+
+        test('deux validations parties ensemble ne notent qu’une fois', async () => {
+            library({ 7: CHECKER });
+            await startTrainingSession({ exercise: 'decision', seedSource: 'library' });
+            playOnBoard();
+            db.GradeQuizChecker.mockResolvedValue(/** @type {any} */ (verdict()));
+            await Promise.all([answerDecisionBoard(), answerDecisionBoard()]);
+            expect(current().revealed).toBe(true);
+            expect(current().faults).toEqual([false]);
         });
 
         test('sans coup complet, « Valider » ne juge rien', async () => {

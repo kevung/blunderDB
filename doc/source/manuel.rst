@@ -4928,8 +4928,9 @@ pas » revient d'un dé et « Recommencer » remet la position telle que la ques
 la pose. Le champ de notation accepte aussi le coup tapé (``13/7 8/7``, la
 notation de la transcription) : les pas se posent sur le damier à chaque frappe,
 un champ rougi dit qu'un pas n'est pas jouable, et ENTRÉE valide le coup
-complet. Le panneau ayant le focus, RETOUR ARRIÈRE défait un pas, ÉCHAP
-recommence le coup et ENTRÉE le valide. Sur une décision de videau, cliquez *Pas
+complet. Le panneau ayant le focus, RETOUR ARRIÈRE défait un pas et ÉCHAP
+recommence le coup ; ENTRÉE valide le coup complet où que soit le focus, hors
+d'un bouton. Sur une décision de videau, cliquez *Pas
 de double*, *Double, prend* ou *Double, passe* : le clic est la réponse.
 
 La correction distingue trois issues, et les confondre mentirait. Un **coup
@@ -4963,7 +4964,9 @@ nombres sont faux, et son temps n'entre pas dans la médiane — on ne mesure pa
 une réponse qui n'a pas été donnée. Une décision hors délai affiche le meilleur
 coup, et n'entre pas dans le PR de la session.
 
-« Suivante » enregistre la question et en pose une autre. La session n'a pas de
+« Suivante » enregistre la question et en pose une autre ; ENTRÉE, hors d'un
+champ ou d'un bouton, fait de même une fois la réponse affichée, ou « Terminer »
+s'il n'y a pas de question suivante. La session n'a pas de
 longueur fixée : elle dure jusqu'à « Terminer », qui l'écrit au journal, ou
 « Quitter », qui la jette. Tous les boutons sont dans la bande d'en-tête du
 panneau, avec l'exercice, le numéro de la question et le chronomètre :

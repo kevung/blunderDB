@@ -84,7 +84,8 @@
     }
 
     // Les gestes de la transcription, quand le panneau a le focus : RETOUR ARRIÈRE défait un pas,
-    // ENTRÉE valide le coup complet, ÉCHAP le recommence. Dans un champ de texte, ils restent au champ.
+    // ÉCHAP le recommence. Dans un champ de texte, ils restent au champ. ENTRÉE, qui valide quel
+    // que soit le focus, est au répartiteur global (trainingEnterKey).
     /** @param {KeyboardEvent} event */
     function onPanelKey(event) {
         if (!session || session.revealed || question?.prompt !== 'checker' || (question.kind !== 'decision' && question.kind !== 'opening')) return;
@@ -99,9 +100,6 @@
             event.preventDefault();
             resetDecisionPlay();
             notation = '';
-        } else if (event.key === 'Enter' && !target.matches?.('button') && $quizPlayCompleteStore) {
-            event.preventDefault();
-            answerDecisionBoard();
         }
     }
 
