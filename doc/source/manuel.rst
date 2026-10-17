@@ -4774,6 +4774,10 @@ Trois réglages, un par ligne ; « Démarrer » est au bout de la bande d'en-tê
   est) ou *Base* (une position de la liste parcourue) ;
 * pour *Ouverture*, à la place de la source, le **jet** posé — *1st roll* (le
   coup d'ouverture) ou *2nd roll* (la réponse) ; *1st roll* par défaut ;
+* pour *Ouverture* encore, les **catégories** tirées — *Money*, *DMP*, *Gammon save*
+  (l'ouvreur à 1 away Crawford, le répondeur à 2 away), *Gammon go* (l'inverse) et
+  *Scores de match en 7* (la grille du livre) ; les quatre premières sont cochées
+  d'emblée, la grille non. Une catégorie que le livre ne tient pas est grisée ;
 * la **limite par question** — aucune, 15, 30 ou 60 secondes.
 
 La source, ou le jet, choisi est mémorisé pour chaque exercice, d'une session à l'autre.
@@ -4886,6 +4890,11 @@ d'écart au plus, et la partie Crawford à 1 away contre 2 ou 4 away, dans les
 deux sens —, les quinze jets d'ouverture, puis les réponses après les coups
 d'ouverture à égalité avec le meilleur à ce score. Le livre est la seule source
 de l'exercice.
+
+Les scores se tirent par **catégories** (*Money*, *DMP*, *Gammon save*, *Gammon
+go*), parce que, de 4 à 7 away, les meilleurs coups changent à peine d'un score à
+l'autre, alors que ces quatre situations jouent différemment. La consigne
+nomme la catégorie à côté du score.
 
 Tant qu'une question d'*Évaluation*, de *Décision* ou d'*Ouverture* attend sa
 réponse, le panneau Analyse est masqué : il porte la réponse.

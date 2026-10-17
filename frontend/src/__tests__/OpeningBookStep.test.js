@@ -24,6 +24,13 @@ const verdict = (extra = {}) => ({
 });
 
 describe('OpeningBookStep', () => {
+    test('la catégorie est nommée à côté du score', () => {
+        const { getByTestId, queryByTestId, rerender } = render(OpeningBookStep, { question: { ...question, score: '2-1' }, verdict: null, revealed: false });
+        expect(getByTestId('opening-category').textContent).toBe(en.training.opening.category.gammonSave);
+        rerender({ question: { ...question, score: '4-2' }, verdict: null, revealed: false });
+        expect(queryByTestId('opening-category')).toBeNull();
+    });
+
     test('avant le coup : la consigne seule, sans tableau', () => {
         const { getByTestId, queryByTestId } = render(OpeningBookStep, { question, verdict: null, revealed: false });
         expect(getByTestId('opening-prompt').textContent).toContain('31');

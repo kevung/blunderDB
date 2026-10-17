@@ -104,7 +104,9 @@ const DYNAMIC_PREFIXES = [
     // Le barème d'une section de dotation (#393) : `$t(`direction.settings.scale_${section}`)`,
     // la section étant un identifiant du moteur — all, main, conso, last.
     'direction.settings.scale_',
-    'training.refusal.'
+    'training.refusal.',
+    // Les catégories de l'exercice Ouverture : `$t(`training.opening.category.${id}`)`.
+    'training.opening.category.'
 ];
 
 function sourceFiles(dir) {

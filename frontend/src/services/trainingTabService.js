@@ -9,7 +9,7 @@ import {
     GradeQuizCheckerMove,
     GradeQuizCube
 } from '../../wailsjs/go/database/Database.js';
-import { GenerateBearoffQuestion, GenerateEvaluationQuestion, LegalMoves, OpeningBookQuestion, OpeningBookGrade } from '../../wailsjs/go/gui/App.js';
+import { GenerateBearoffQuestion, GenerateEvaluationQuestion, LegalMoves, OpeningBookQuestion, OpeningBookGrade, OpeningBookStatus } from '../../wailsjs/go/gui/App.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionStore, positionsStore, browsingLibrary, searchSource } from '../stores/positionStore.js';
 import { currentPositionIndexStore } from '../stores/uiStore.js';
@@ -27,7 +27,9 @@ import {
     finishedSession,
     canAskAnother,
     answerChosen,
-    attachCorrection
+    attachCorrection,
+    openingScoreKeys,
+    DEFAULT_OPENING_CATEGORIES
 } from './trainingTab.js';
 import { invalidateTrainingStats } from '../stores/statsStore.js';
 import { quizPlayStore, armBoardMove } from '../stores/quizPlayStore.js';
@@ -474,6 +476,9 @@ async function openingLegalPlays(position) {
     return plays?.length ? plays : null;
 }
 
+/** Les catégories de l'exercice Ouverture, fixées au lancement de la session. */
+let openingCategories = /** @type {string[]} */ ([...DEFAULT_OPENING_CATEGORIES]);
+
 /**
  * Tire une question d'Ouverture du jet choisi : `first` pose le coup d'ouverture, `second` la
  * réponse dans la position que laisse un coup d'ouverture à égalité avec le meilleur. Un livre
@@ -482,7 +487,13 @@ async function openingLegalPlays(position) {
  */
 async function buildOpeningQuestion(roll) {
     const second = roll === 'second';
-    const drawn = await OpeningBookQuestion(/** @type {any} */ ({ roll: second ? 'second' : 'first' }));
+    // Les clés viennent du livre : Draw refuse une clé qu'il ne tient pas, et une liste vide
+    // voudrait dire « n'importe laquelle ».
+    const status = await OpeningBookStatus();
+    if (!status?.scores?.length) return { question: null, refusal: 'bookEmpty' };
+    const scores = openingScoreKeys(openingCategories, status.scores);
+    if (!scores.length) return { question: null, refusal: 'noCategory' };
+    const drawn = await OpeningBookQuestion(/** @type {any} */ ({ roll: second ? 'second' : 'first', scores }));
     if (!drawn || drawn.empty) return { question: null, refusal: 'bookEmpty' };
     const plays = await openingLegalPlays(drawn.position);
     if (!plays) return { question: null, refusal: 'noQuestion' };
@@ -650,15 +661,16 @@ async function takeNextQuestion(exercise, seedSource) {
  * une graine hors domaine ne démarre rien. Un plateau vide retombe sur le
  * vivier en gardant la phrase.
  *
- * @param {{exercise: string, seedSource?: string, limitSeconds?: number}} opts
+ * @param {{exercise: string, seedSource?: string, limitSeconds?: number, categories?: string[]}} opts
  */
-export async function startTrainingSession({ exercise, seedSource = '', limitSeconds = 0 }) {
+export async function startTrainingSession({ exercise, seedSource = '', limitSeconds = 0, categories = undefined }) {
     const declared = exerciseById(exercise);
     if (!declared) {
         setStatusBarMessage(tMsg('training.unknownExercise', { exercise }));
         return false;
     }
     const source = declared.sources.includes(seedSource) ? seedSource : declared.defaultSource;
+    openingCategories = categories ?? [...DEFAULT_OPENING_CATEGORIES];
     disarmBoard(get(trainingSessionStore));
     prefetched = null;
     bearoffPhaseIndices = null;

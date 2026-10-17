@@ -2244,7 +2244,8 @@
             "notAGame": "Este ejercicio necesita una posición de partida: quince fichas por bando, y ningún bando con todas sus fichas sacadas.",
             "notMoneyCubeDecision": "Este ejercicio necesita una decisión de cubo en partida por dinero, sin dados y con el cubo en el centro o en manos del jugador en turno: no se encontró ninguna en la lista recorrida.",
             "notEvaluable": "El motor no pudo evaluar esta posición: no se plantea en lugar de estimarse.",
-            "bookEmpty": "El libro de aperturas aún no está calculado: este ejercicio no tiene nada que preguntar por ahora."
+            "bookEmpty": "El libro de aperturas aún no está calculado: este ejercicio no tiene nada que preguntar por ahora.",
+            "noCategory": "No hay marcada ninguna categoría que el libro contenga: este ejercicio no tiene nada que preguntar."
         },
         "truthExact": "Verdad: la base de bearoff de dos bandos, exacta.",
         "truthEvaluated": "Verdad: gammonNet, {depth}.",
@@ -2266,8 +2267,16 @@
             "withBearoff": "con la tabla de bearoff exacta",
             "withoutBearoff": "sin tabla de bearoff exacta",
             "markRight": "Correcto",
-            "markWrong": "Incorrecto"
-        }
+            "markWrong": "Incorrecto",
+            "category": {
+                "money": "Money",
+                "dmp": "DMP",
+                "gammonSave": "Gammon save",
+                "gammonGo": "Gammon go",
+                "grid": "Marcadores de match a 7"
+            }
+        },
+        "categories": "Categorías"
     },
     "explain": {
         "blots": "Pierde {cost} mp: la jugada realizada deja {blots} fichas sueltas donde {best} solo deja {bestBlots}.",

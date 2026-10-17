@@ -55,6 +55,54 @@ export const TRAINING_EXERCISES = Object.freeze([
     Object.freeze({ id: 'opening', mode: 'chosen', sources: ['first', 'second'], defaultSource: 'first', surface: 'board' })
 ]);
 
+/**
+ * Les catégories de l'exercice Ouverture. Les clés de score lisent « répondeur-ouvreur » :
+ * Gammon save, c'est l'ouvreur à 1-away Crawford et le répondeur à 2-away. `keys` est la clé
+ * que le livre doit tenir ; `grid` n'en a pas, il prend tous les scores de match du livre.
+ */
+export const OPENING_CATEGORIES = Object.freeze([
+    Object.freeze({ id: 'money', keys: ['money'] }),
+    Object.freeze({ id: 'dmp', keys: ['1-1'] }),
+    Object.freeze({ id: 'gammonSave', keys: ['2-1'] }),
+    Object.freeze({ id: 'gammonGo', keys: ['1-2'] }),
+    Object.freeze({ id: 'grid', keys: /** @type {string[]|null} */ (null) })
+]);
+
+/** Cochées d'emblée : les quatre catégories d'XG, pas la grille. */
+export const DEFAULT_OPENING_CATEGORIES = Object.freeze(['money', 'dmp', 'gammonSave', 'gammonGo']);
+
+/** @param {string} key */
+function isMatchScore(key) {
+    return /^\d+-\d+$/.test(key) && key !== '1-1';
+}
+
+/**
+ * Les clés de score que le livre tient pour ces catégories : jamais une clé qu'il n'a pas.
+ * @param {string[]} categories @param {string[]} bookScores
+ * @returns {string[]}
+ */
+export function openingScoreKeys(categories, bookScores) {
+    const held = new Set(bookScores ?? []);
+    const keys = new Set();
+    for (const category of OPENING_CATEGORIES) {
+        if (!categories.includes(category.id)) continue;
+        for (const key of category.keys ?? [...held].filter(isMatchScore)) {
+            if (held.has(key)) keys.add(key);
+        }
+    }
+    return [...keys];
+}
+
+/** @param {string} category @param {string[]} bookScores */
+export function openingCategoryAvailable(category, bookScores) {
+    return openingScoreKeys([category], bookScores).length > 0;
+}
+
+/** La catégorie nommée d'un score, ou '' (score de la grille). @param {string} key */
+export function openingCategoryOf(key) {
+    return OPENING_CATEGORIES.find((c) => c.keys?.includes(key))?.id ?? '';
+}
+
 /** @param {string} exercise */
 function modeOf(exercise) {
     return TRAINING_EXERCISES.find((e) => e.id === exercise)?.mode ?? 'declared';

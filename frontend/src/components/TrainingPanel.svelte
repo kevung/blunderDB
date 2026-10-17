@@ -7,7 +7,19 @@
     import { GetTrainingSeedSources, SaveTrainingSeedSource } from '../../wailsjs/go/main/Config.js';
     import { trainingSessionStore, trainingElapsedStore, trainingJournalStore, trainingRefusalStore } from '../stores/trainingTabStore.js';
     import { databasePathStore } from '../stores/databaseStore.js';
-    import { TRAINING_EXERCISES, TIME_LIMITS, summarizeExercise, canAskAnother, isEnteredExercise, isChosenExercise, isChosenNumber } from '../services/trainingTab.js';
+    import {
+        TRAINING_EXERCISES,
+        TIME_LIMITS,
+        summarizeExercise,
+        canAskAnother,
+        isEnteredExercise,
+        isChosenExercise,
+        isChosenNumber,
+        OPENING_CATEGORIES,
+        DEFAULT_OPENING_CATEGORIES,
+        openingCategoryAvailable,
+        openingScoreKeys
+    } from '../services/trainingTab.js';
     import { quizPlayStore, quizPlayCompleteStore } from '../stores/quizPlayStore.js';
     import {
         startTrainingSession,
@@ -26,6 +38,7 @@
         resetDecisionPlay,
         playDecisionNotation
     } from '../services/trainingTabService.js';
+    import { OpeningBookStatus } from '../../wailsjs/go/gui/App.js';
     import { logger } from '../utils/logger.js';
     import { numberTypeLabelKey } from '../services/trainingLabels.js';
     import { retakeMissed, missedToDeck, missedToCollection } from '../services/trainingMissed.js';
@@ -43,6 +56,33 @@
     // Source mémorisée par exercice, qui n'offrent pas les mêmes (ADR-0041 règle 2).
     let rememberedSources = $state(/** @type {Record<string, string>} */ ({}));
 
+    // Catégories de l'exercice Ouverture : le choix est mémorisé sur le poste, la disponibilité
+    // vient des scores que le livre tient.
+    const CATEGORIES_KEY = 'blunderdb.openingCategories';
+    let bookScores = $state(/** @type {string[]} */ ([]));
+    let pickedCategories = $state(/** @type {string[]} */ (loadCategories()));
+    let openingKeys = $derived(openingScoreKeys(pickedCategories, bookScores));
+
+    function loadCategories() {
+        try {
+            const stored = JSON.parse(localStorage.getItem(CATEGORIES_KEY) ?? 'null');
+            if (Array.isArray(stored)) return stored.filter((id) => OPENING_CATEGORIES.some((c) => c.id === id));
+        } catch {
+            /* storage unavailable: the defaults stand */
+        }
+        return [...DEFAULT_OPENING_CATEGORIES];
+    }
+
+    /** @param {string} id */
+    function toggleCategory(id) {
+        pickedCategories = pickedCategories.includes(id) ? pickedCategories.filter((c) => c !== id) : [...pickedCategories, id];
+        try {
+            localStorage.setItem(CATEGORIES_KEY, JSON.stringify(pickedCategories));
+        } catch {
+            /* storage unavailable: the choice lasts until the panel closes */
+        }
+    }
+
     let session = $derived($trainingSessionStore);
     let question = $derived(session?.question ?? null);
     let chosen = $derived(TRAINING_EXERCISES.find((e) => e.id === exercise) ?? TRAINING_EXERCISES[0]);
@@ -50,6 +90,8 @@
     let hasLibrary = $derived(!!$databasePathStore);
     // An exercise drawn only from the library (Décision) cannot start without one.
     let libraryMissing = $derived(!hasLibrary && chosen.sources.length > 0 && chosen.sources.every((source) => source === 'library'));
+    // Ouverture sans catégorie jouable : rien à tirer, le lancement est refusé d'emblée.
+    let noCategory = $derived(exercise === 'opening' && bookScores.length > 0 && openingKeys.length === 0);
     let remembered = $derived(rememberedSources[exercise]);
     let seedSource = $derived(chosen.sources.includes(remembered) && !(remembered === 'library' && !hasLibrary) ? remembered : usableDefault(chosen, hasLibrary));
 
@@ -154,6 +196,11 @@
 
     onMount(() => {
         refreshTrainingJournal();
+        OpeningBookStatus()
+            .then((status) => {
+                bookScores = status?.scores ?? [];
+            })
+            .catch((error) => logger.error('could not read the opening book status:', error));
         GetTrainingSeedSources()
             .then((sources) => {
                 rememberedSources = sources || {};
@@ -169,7 +216,7 @@
     function start() {
         // Mémorisée au lancement, pas au clic.
         SaveTrainingSeedSource(exercise, seedSource).catch((error) => logger.error('could not remember the training source:', error));
-        startTrainingSession({ exercise, seedSource, limitSeconds });
+        startTrainingSession({ exercise, seedSource, limitSeconds, categories: pickedCategories });
     }
 
     /** @param {string} id */
@@ -438,7 +485,7 @@
     {:else}
         <PanelHeader title={$t('training.title')}>
             {#snippet actions()}
-                <button type="button" class="launch" data-testid="training-start" disabled={libraryMissing} onclick={start}>{$t('training.start')}</button>
+                <button type="button" class="launch" data-testid="training-start" disabled={libraryMissing || noCategory} onclick={start}>{$t('training.start')}</button>
             {/snippet}
         </PanelHeader>
 
@@ -468,6 +515,26 @@
                                     onclick={() => chooseSource(source)}
                                 >
                                     {$t(`training.sources.${source}`)}
+                                </button>
+                            {/each}
+                        </div>
+                    </FormRow>
+                {/if}
+
+                {#if exercise === 'opening'}
+                    <FormRow label={$t('training.categories')}>
+                        <div class="choices" role="group" aria-label={$t('training.categories')}>
+                            {#each OPENING_CATEGORIES as category (category.id)}
+                                {@const available = openingCategoryAvailable(category.id, bookScores)}
+                                <button
+                                    type="button"
+                                    class:selected={available && pickedCategories.includes(category.id)}
+                                    aria-pressed={available && pickedCategories.includes(category.id)}
+                                    disabled={!available}
+                                    data-testid="training-category-{category.id}"
+                                    onclick={() => toggleCategory(category.id)}
+                                >
+                                    {$t(`training.opening.category.${category.id}`)}
                                 </button>
                             {/each}
                         </div>

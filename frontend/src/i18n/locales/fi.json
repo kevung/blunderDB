@@ -2244,7 +2244,8 @@
             "notAGame": "Tämä harjoitus vaatii pelitilanteen: viisitoista nappulaa kummallakin puolella, eikä kumpikaan puoli ole pelannut kaikkia nappuloitaan pois.",
             "notMoneyCubeDecision": "Tämä harjoitus vaatii rahapelin kuutiopäätöksen ilman noppia, kuutio keskellä tai vuorossa olevalla pelaajalla: selattavasta luettelosta ei löytynyt yhtään.",
             "notEvaluable": "Moottori ei pystynyt arvioimaan tätä asemaa: sitä ei kysytä sen sijaan, että se arvioitaisiin karkeasti.",
-            "bookEmpty": "Avauskirjaa ei ole vielä laskettu: tällä harjoituksella ei ole toistaiseksi mitään kysyttävää."
+            "bookEmpty": "Avauskirjaa ei ole vielä laskettu: tällä harjoituksella ei ole toistaiseksi mitään kysyttävää.",
+            "noCategory": "Mitään kirjan sisältämää kategoriaa ei ole valittu: tällä harjoituksella ei ole kysyttävää."
         },
         "truthExact": "Totuus: kaksipuolinen bearoff-tietokanta, tarkka.",
         "truthEvaluated": "Totuus: gammonNet, {depth}.",
@@ -2266,8 +2267,16 @@
             "withBearoff": "tarkalla bearoff-taulukolla",
             "withoutBearoff": "ilman tarkkaa bearoff-taulukkoa",
             "markRight": "Oikein",
-            "markWrong": "Väärin"
-        }
+            "markWrong": "Väärin",
+            "category": {
+                "money": "Money",
+                "dmp": "DMP",
+                "gammonSave": "Gammon save",
+                "gammonGo": "Gammon go",
+                "grid": "Ottelutilanteet 7:ään"
+            }
+        },
+        "categories": "Kategoriat"
     },
     "explain": {
         "blots": "Menetät {cost} mp: pelattu siirto jättää {blots} yksinäistä nappulaa, kun {best} jättää vain {bestBlots}.",

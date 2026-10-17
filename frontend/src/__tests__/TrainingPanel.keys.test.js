@@ -47,6 +47,7 @@ vi.mock('../services/positionService.js', () => ({
     loadRandomPosition: vi.fn(),
     showDatesAndMetadata: vi.fn()
 }));
+vi.mock('../../wailsjs/go/gui/App.js', () => ({ OpeningBookStatus: vi.fn(() => Promise.resolve({ lines: 0, scores: [] })) }));
 vi.mock('../../wailsjs/go/main/Config.js', () => ({
     GetTrainingSeedSources: vi.fn(() => Promise.resolve({})),
     SaveTrainingSeedSource: vi.fn(() => Promise.resolve())

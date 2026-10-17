@@ -2244,7 +2244,8 @@
             "notAGame": "Cet exercice demande une position de partie : quinze pions par camp, et aucun camp sorti en entier.",
             "notMoneyCubeDecision": "Cet exercice demande une décision de videau en partie d'argent, sans dés et videau au centre ou au joueur au trait : aucune n'a été trouvée dans la liste parcourue.",
             "notEvaluable": "Le moteur n'a pas pu évaluer cette position : elle n'est pas posée plutôt qu'estimée.",
-            "bookEmpty": "Le livre d'ouverture n'est pas encore calculé : cet exercice n'a rien à poser pour l'instant."
+            "bookEmpty": "Le livre d'ouverture n'est pas encore calculé : cet exercice n'a rien à poser pour l'instant.",
+            "noCategory": "Aucune catégorie tenue par le livre n'est cochée : cet exercice n'a rien à poser."
         },
         "truthExact": "Vérité : la base de bearoff à deux camps, exacte.",
         "truthEvaluated": "Vérité : gammonNet, {depth}.",
@@ -2266,8 +2267,16 @@
             "withBearoff": "avec la table de bearoff exacte",
             "withoutBearoff": "sans table de bearoff exacte",
             "markRight": "Juste",
-            "markWrong": "Faux"
-        }
+            "markWrong": "Faux",
+            "category": {
+                "money": "Money",
+                "dmp": "DMP",
+                "gammonSave": "Gammon save",
+                "gammonGo": "Gammon go",
+                "grid": "Scores de match en 7"
+            }
+        },
+        "categories": "Catégories"
     },
     "explain": {
         "blots": "Vous perdez {cost} mp : le coup joué laisse {blots} blots là où {best} n'en laisse que {bestBlots}.",

@@ -2244,7 +2244,8 @@
             "notAGame": "Questo esercizio richiede una posizione di partita: quindici pedine per parte, e nessuna parte con tutte le pedine uscite.",
             "notMoneyCubeDecision": "Questo esercizio richiede una decisione di cubo in partita a soldi, senza dadi e con il cubo al centro o al giocatore di turno: nessuna è stata trovata nell'elenco sfogliato.",
             "notEvaluable": "Il motore non ha potuto valutare questa posizione: non viene proposta anziché stimata.",
-            "bookEmpty": "Il libro delle aperture non è ancora calcolato: per ora questo esercizio non ha nulla da chiedere."
+            "bookEmpty": "Il libro delle aperture non è ancora calcolato: per ora questo esercizio non ha nulla da chiedere.",
+            "noCategory": "Nessuna categoria presente nel libro è selezionata: questo esercizio non ha nulla da chiedere."
         },
         "truthExact": "Verità: la base di bearoff a due parti, esatta.",
         "truthEvaluated": "Verità: gammonNet, {depth}.",
@@ -2266,8 +2267,16 @@
             "withBearoff": "con la tabella di bearoff esatta",
             "withoutBearoff": "senza tabella di bearoff esatta",
             "markRight": "Giusto",
-            "markWrong": "Sbagliato"
-        }
+            "markWrong": "Sbagliato",
+            "category": {
+                "money": "Money",
+                "dmp": "DMP",
+                "gammonSave": "Gammon save",
+                "gammonGo": "Gammon go",
+                "grid": "Punteggi di match fino a 7"
+            }
+        },
+        "categories": "Categorie"
     },
     "explain": {
         "blots": "Perdi {cost} mp: la mossa giocata lascia {blots} pedine scoperte dove {best} ne lascia solo {bestBlots}.",

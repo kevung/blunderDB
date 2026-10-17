@@ -2244,7 +2244,8 @@
             "notAGame": "Diese Übung braucht eine Spielposition: fünfzehn Steine je Seite, und keine Seite ganz abgetragen.",
             "notMoneyCubeDecision": "Diese Übung braucht eine Doppelentscheidung im Geldspiel, ohne Würfel und mit dem Doppler in der Mitte oder beim Spieler am Zug: in der durchsuchten Liste wurde keine gefunden.",
             "notEvaluable": "Die Engine konnte diese Position nicht bewerten: sie wird nicht gestellt statt geschätzt.",
-            "bookEmpty": "Das Eröffnungsbuch ist noch nicht berechnet: Diese Übung hat vorerst nichts zu fragen."
+            "bookEmpty": "Das Eröffnungsbuch ist noch nicht berechnet: Diese Übung hat vorerst nichts zu fragen.",
+            "noCategory": "Keine im Buch vorhandene Kategorie ist angehakt: Diese Übung hat nichts zu fragen."
         },
         "truthExact": "Wahrheit: die zweiseitige Bearoff-Datenbank, exakt.",
         "truthEvaluated": "Wahrheit: gammonNet, {depth}.",
@@ -2266,8 +2267,16 @@
             "withBearoff": "mit exakter Bearoff-Tabelle",
             "withoutBearoff": "ohne exakte Bearoff-Tabelle",
             "markRight": "Richtig",
-            "markWrong": "Falsch"
-        }
+            "markWrong": "Falsch",
+            "category": {
+                "money": "Money",
+                "dmp": "DMP",
+                "gammonSave": "Gammon save",
+                "gammonGo": "Gammon go",
+                "grid": "Matchstände bis 7"
+            }
+        },
+        "categories": "Kategorien"
     },
     "explain": {
         "blots": "Sie verlieren {cost} mp: Der gespielte Zug lässt {blots} Blots stehen, {best} nur {bestBlots}.",

@@ -4,6 +4,7 @@
     // contre le meilleur : écart, IC 95 % de l'écart, « à égalité » — en équité
     // normalisée au score, la seule échelle qui sorte du moteur (ADR-0019).
     import { t } from '../i18n';
+    import { openingCategoryOf } from '../services/trainingTab.js';
 
     let { question, verdict = null, revealed = false, outOfTime = false } = $props();
 
@@ -12,6 +13,7 @@
     let parts = $derived(question.score === 'money' ? null : question.score.split('-'));
     let you = $derived(parts ? (question.step === 'opening' ? parts[1] : parts[0]) : '');
     let them = $derived(parts ? (question.step === 'opening' ? parts[0] : parts[1]) : '');
+    let category = $derived(openingCategoryOf(question.score));
     let roll = $derived(question.step === 'opening' ? question.opening : question.reply);
     // Un coup légal que le livre ne classe pas : une ligne de plus, sans écart.
     let unranked = $derived(revealed && verdict && !outOfTime && verdict.legal && verdict.played < 0 ? verdict.notation : '');
@@ -40,6 +42,9 @@
     <p class="prompt" data-testid="opening-prompt">
         {$t(question.step === 'opening' ? 'training.opening.promptOpening' : 'training.opening.promptReply', { roll })}
         <span class="score">
+            {#if category}
+                <strong data-testid="opening-category">{$t(`training.opening.category.${category}`)}</strong>
+            {/if}
             {#if parts}
                 {$t('training.opening.score', { you, them })}
             {:else}

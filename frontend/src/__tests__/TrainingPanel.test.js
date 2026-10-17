@@ -13,6 +13,8 @@ import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
 
+let bookScores = ['2-1', '1-2', '4-2'];
+vi.mock('../../wailsjs/go/gui/App.js', () => ({ OpeningBookStatus: vi.fn(() => Promise.resolve({ lines: 1, scores: bookScores })) }));
 vi.mock('../../wailsjs/go/main/Config.js', () => ({
     GetTrainingSeedSources: vi.fn(() => Promise.resolve({})),
     SaveTrainingSeedSource: vi.fn(() => Promise.resolve())
@@ -552,6 +554,8 @@ describe('une question d’Évaluation (#322)', () => {
 });
 
 describe('le lanceur d’Ouverture', () => {
+    beforeEach(() => localStorage.clear());
+
     test('choisit le jet posé, 1st roll par défaut, et démarre sur lui', async () => {
         const panel = render(TrainingPanel);
         panel.getByTestId('training-exercise-opening').click();
@@ -566,5 +570,34 @@ describe('le lanceur d’Ouverture', () => {
         expect(second.classList.contains('selected')).toBe(true);
         panel.getByTestId('training-start').click();
         expect(service.startTrainingSession).toHaveBeenCalledWith(expect.objectContaining({ exercise: 'opening', seedSource: 'second' }));
+    });
+
+    test('quatre catégories, la grille décochée ; Money et DMP indisponibles tant que le livre ne les tient pas', async () => {
+        const panel = render(TrainingPanel);
+        panel.getByTestId('training-exercise-opening').click();
+        await tick();
+        await tick();
+        expect(panel.getByTestId('training-category-money').hasAttribute('disabled')).toBe(true);
+        expect(panel.getByTestId('training-category-dmp').hasAttribute('disabled')).toBe(true);
+        expect(panel.getByTestId('training-category-gammonSave').getAttribute('aria-pressed')).toBe('true');
+        expect(panel.getByTestId('training-category-gammonGo').getAttribute('aria-pressed')).toBe('true');
+        expect(panel.getByTestId('training-category-grid').getAttribute('aria-pressed')).toBe('false');
+        panel.getByTestId('training-category-grid').click();
+        await tick();
+        panel.getByTestId('training-category-gammonGo').click();
+        await tick();
+        panel.getByTestId('training-start').click();
+        const call = vi.mocked(service.startTrainingSession).mock.calls.at(-1)?.[0];
+        expect(call?.categories?.slice().sort()).toEqual(['dmp', 'gammonSave', 'grid', 'money']);
+    });
+
+    test('aucune catégorie jouable cochée : le lancement est refusé', async () => {
+        const panel = render(TrainingPanel);
+        panel.getByTestId('training-exercise-opening').click();
+        await tick();
+        await tick();
+        for (const id of ['gammonSave', 'gammonGo']) panel.getByTestId(`training-category-${id}`).click();
+        await tick();
+        expect(panel.getByTestId('training-start').hasAttribute('disabled')).toBe(true);
     });
 });

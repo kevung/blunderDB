@@ -2244,7 +2244,8 @@
             "notAGame": "This exercise needs a game position: fifteen chequers a side, and neither side fully borne off.",
             "notMoneyCubeDecision": "This exercise needs a money-game cube decision, with no dice and the cube centred or held by the player on roll: none was found in the browsed list.",
             "notEvaluable": "The engine could not evaluate this position: it is not asked rather than estimated.",
-            "bookEmpty": "The opening book is not computed yet: this exercise has nothing to ask for now."
+            "bookEmpty": "The opening book is not computed yet: this exercise has nothing to ask for now.",
+            "noCategory": "No category the book holds is ticked: this exercise has nothing to ask."
         },
         "truthExact": "Truth: the two-sided bear-off database, exact.",
         "truthEvaluated": "Truth: gammonNet, {depth}.",
@@ -2266,8 +2267,16 @@
             "withBearoff": "with the exact bearoff table",
             "withoutBearoff": "without the exact bearoff table",
             "markRight": "Right",
-            "markWrong": "Wrong"
-        }
+            "markWrong": "Wrong",
+            "category": {
+                "money": "Money",
+                "dmp": "DMP",
+                "gammonSave": "Gammon save",
+                "gammonGo": "Gammon go",
+                "grid": "Match scores to 7"
+            }
+        },
+        "categories": "Categories"
     },
     "explain": {
         "blots": "You lose {cost} mp: the move played leaves {blots} blots where {best} leaves only {bestBlots}.",
