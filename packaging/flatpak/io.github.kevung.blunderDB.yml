@@ -87,6 +87,6 @@ modules:
         # Rewritten by `scripts/release.sh` on every release cut (see the file
         # header). The tarball unpacks to blunderDB-linux-webkit2gtk-4.1-<ver>/,
         # flattened by strip-components.
-        url: https://github.com/kevung/blunderDB/releases/download/0.40.0/blunderDB-linux-webkit2gtk-4.1-0.40.0.tar.gz
-        sha256: 9363eb9e176c45d8077c451b8797199dd9589440d811ca681c258bcdb7880158
+        url: https://github.com/kevung/blunderDB/releases/download/0.41.0/blunderDB-linux-webkit2gtk-4.1-0.41.0.tar.gz
+        sha256: cfe1c8ec606c090e24f3e6f08a4759ce01c984b2bf62f908275269251c267a15
         strip-components: 1
