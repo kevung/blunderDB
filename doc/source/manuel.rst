@@ -4877,12 +4877,13 @@ ne démarre.
 
 **Ouverture** pose **l'un des deux premiers jets d'une partie à un score**,
 selon le jet choisi au lanceur : en *1st roll*, l'ouverture du joueur au trait ;
-en *2nd roll*, la réponse de l'adversaire dans la position que laisse le
-**meilleur coup d'ouverture du livre à ce score**, déjà joué au plateau. Le coup
+en *2nd roll*, la réponse de l'adversaire dans la position que laisse un
+**coup d'ouverture à égalité avec le meilleur à ce score**, tiré parmi ceux que
+le livre suit et déjà joué au plateau. Le coup
 est jugé contre le **livre d'ouverture** embarqué dans blunderDB, calculé par ses propres rollouts : pour
 chaque score de sa grille — de 2 à 7 points de part et d'autre, à un point
 d'écart au plus, et la partie Crawford —, les quinze jets d'ouverture, puis les
-réponses après le meilleur coup d'ouverture à ce score. Le livre est la seule
+réponses après les coups d'ouverture à égalité avec le meilleur à ce score. Le livre est la seule
 source de l'exercice ; tant qu'il n'est pas calculé, l'exercice **le dit et ne
 démarre pas**.
 

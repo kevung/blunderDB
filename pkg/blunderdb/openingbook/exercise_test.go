@@ -73,7 +73,7 @@ func TestDraw_FirstRollAsksTheOpening(t *testing.T) {
 	}
 }
 
-func TestDraw_SecondRollAsksTheReplyAfterTheBest(t *testing.T) {
+func TestDraw_SecondRollAsksTheReplyAfterATiedPlay(t *testing.T) {
 	b := testBook(t)
 	seen := map[string]bool{}
 	for seed := uint64(1); seed <= 40; seed++ {
@@ -90,8 +90,8 @@ func TestDraw_SecondRollAsksTheReplyAfterTheBest(t *testing.T) {
 			t.Fatalf("%+v cannot be graded: %v", q, err)
 		}
 	}
-	// The book's best opening play only: never the tied 24/23 13/10 it also follows.
-	want := map[string]bool{"31/8/5 6/5/21@4-2": true, "31/8/5 6/5/21@2-4": true, "65/24/18 18/13/64@4-2": true}
+	// The tied 24/23 13/10 at 4-2 is a right opening too, and the book follows it: it is drawn.
+	want := map[string]bool{"31/8/5 6/5/21@4-2": true, "31/24/23 13/10/21@4-2": true, "31/8/5 6/5/21@2-4": true, "65/24/18 18/13/64@4-2": true}
 	if len(seen) != len(want) {
 		t.Fatalf("drew %v, want %v", seen, want)
 	}

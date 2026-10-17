@@ -1726,8 +1726,8 @@ lue ni écrite ; tant que le livre n'est pas calculé, chaque sous-commande le d
 
 **openingbook question** — Tire une question : le jet d'ouverture et le score,
 avec le XGID de la position d'ouverture ; avec ``--roll second``, le jet de
-réponse dans la position que laisse le meilleur coup d'ouverture du livre à ce
-score, avec ce coup et le XGID de la position de réponse.
+réponse dans la position que laisse un coup d'ouverture à égalité avec le
+meilleur à ce score, avec ce coup et le XGID de la position de réponse.
 
 .. code-block:: bash
 

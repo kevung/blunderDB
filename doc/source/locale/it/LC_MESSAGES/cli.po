@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-17 08:58+0200\n"
+"POT-Creation-Date: 2026-10-17 09:26+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -3481,14 +3481,14 @@ msgstr "**openingbook status** — Il numero di righe del libro e i suoi puntegg
 msgid ""
 "**openingbook question** — Tire une question : le jet d'ouverture et le "
 "score, avec le XGID de la position d'ouverture ; avec ``--roll second``, "
-"le jet de réponse dans la position que laisse le meilleur coup "
-"d'ouverture du livre à ce score, avec ce coup et le XGID de la position "
-"de réponse."
+"le jet de réponse dans la position que laisse un coup d'ouverture à "
+"égalité avec le meilleur à ce score, avec ce coup et le XGID de la "
+"position de réponse."
 msgstr ""
 "**openingbook question** — Estrae una domanda: il tiro d'apertura e il "
 "punteggio, con l'XGID della posizione d'apertura; con ``--roll second``, "
-"il tiro di risposta nella posizione che lascia la migliore mossa "
-"d'apertura del libro a quel punteggio, con quella mossa e l'XGID della "
+"il tiro di risposta nella posizione che lascia una mossa d'apertura alla "
+"pari con la migliore a quel punteggio, con quella mossa e l'XGID della "
 "posizione di risposta."
 
 #: ../../source/cli.rst:1738
@@ -3531,7 +3531,7 @@ msgstr ""
 "libro integrato."
 
 #: ../../source/cli.rst:1746
-#, no-python-format, python-format
+#, no-python-format
 msgid ""
 "**openingbook answer** — Juge un coup et affiche chaque candidat contre "
 "le meilleur : écart, IC 95 % et « tied » (à égalité), en équité "

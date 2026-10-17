@@ -476,7 +476,7 @@ async function openingLegalPlays(position) {
 
 /**
  * Tire une question d'Ouverture du jet choisi : `first` pose le coup d'ouverture, `second` la
- * réponse dans la position que laisse le meilleur coup d'ouverture du livre à ce score. Un livre
+ * réponse dans la position que laisse un coup d'ouverture à égalité avec le meilleur. Un livre
  * vide est un refus nommé, pas une erreur.
  * @param {string} roll
  */

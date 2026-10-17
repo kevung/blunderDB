@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-17 08:58+0200\n"
+"POT-Creation-Date: 2026-10-17 09:26+0200\n"
 "PO-Revision-Date: 2026-04-20 17:00+0200\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -3396,14 +3396,14 @@ msgstr "**openingbook status** — The number of rows in the book and its scores
 msgid ""
 "**openingbook question** — Tire une question : le jet d'ouverture et le "
 "score, avec le XGID de la position d'ouverture ; avec ``--roll second``, "
-"le jet de réponse dans la position que laisse le meilleur coup "
-"d'ouverture du livre à ce score, avec ce coup et le XGID de la position "
-"de réponse."
+"le jet de réponse dans la position que laisse un coup d'ouverture à "
+"égalité avec le meilleur à ce score, avec ce coup et le XGID de la "
+"position de réponse."
 msgstr ""
 "**openingbook question** — Draws a question: the opening roll and the "
 "score, with the XGID of the opening position; with ``--roll second``, the"
-" reply roll in the position left by the book's best opening move at that "
-"score, with that move and the XGID of the reply position."
+" reply roll in the position left by an opening move tied with the best at"
+" that score, with that move and the XGID of the reply position."
 
 #: ../../source/cli.rst:1738
 msgid ""
@@ -3445,7 +3445,7 @@ msgstr ""
 "embedded one."
 
 #: ../../source/cli.rst:1746
-#, no-python-format, python-format
+#, no-python-format
 msgid ""
 "**openingbook answer** — Juge un coup et affiche chaque candidat contre "
 "le meilleur : écart, IC 95 % et « tied » (à égalité), en équité "

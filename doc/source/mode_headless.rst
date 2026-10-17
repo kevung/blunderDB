@@ -1149,8 +1149,8 @@ ni écriture dans la base. ``openingbook.status`` (corps ``{}``) rend le nombre
 de lignes du livre (``lines``) et les scores qu'il tient (``scores``, dans
 l'ordre de la grille, ``"money"`` pour le jeu à l'argent).
 ``openingbook.question`` tire une question ; ``roll`` (``"first"``, le coup
-d'ouverture, par défaut, ou ``"second"``, la réponse après le meilleur coup
-d'ouverture du livre à ce score), ``scores``, ``openings`` (``"31"``),
+d'ouverture, par défaut, ou ``"second"``, la réponse après un coup
+d'ouverture à égalité avec le meilleur à ce score), ``scores``, ``openings`` (``"31"``),
 ``replies`` (``"52"``, pour ``"second"``) et ``seed`` sont facultatifs, une
 liste vide laissant tout permis et ``seed`` à 0 tirant depuis l'horloge. Elle
 rend ``roll``, ``opening``, ``score``, ``position`` (le plateau à jouer),

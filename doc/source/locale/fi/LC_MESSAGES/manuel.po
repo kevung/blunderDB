@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-17 08:58+0200\n"
+"POT-Creation-Date: 2026-10-17 09:26+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -11352,29 +11352,31 @@ msgid ""
 "**Ouverture** pose **l'un des deux premiers jets d'une partie à un "
 "score**, selon le jet choisi au lanceur : en *1st roll*, l'ouverture du "
 "joueur au trait ; en *2nd roll*, la réponse de l'adversaire dans la "
-"position que laisse le **meilleur coup d'ouverture du livre à ce score**,"
-" déjà joué au plateau. Le coup est jugé contre le **livre d'ouverture** "
-"embarqué dans blunderDB, calculé par ses propres rollouts : pour chaque "
-"score de sa grille — de 2 à 7 points de part et d'autre, à un point "
-"d'écart au plus, et la partie Crawford —, les quinze jets d'ouverture, "
-"puis les réponses après le meilleur coup d'ouverture à ce score. Le livre"
-" est la seule source de l'exercice ; tant qu'il n'est pas calculé, "
-"l'exercice **le dit et ne démarre pas**."
+"position que laisse un **coup d'ouverture à égalité avec le meilleur à ce"
+" score**, tiré parmi ceux que le livre suit et déjà joué au plateau. Le "
+"coup est jugé contre le **livre d'ouverture** embarqué dans blunderDB, "
+"calculé par ses propres rollouts : pour chaque score de sa grille — de 2 "
+"à 7 points de part et d'autre, à un point d'écart au plus, et la partie "
+"Crawford —, les quinze jets d'ouverture, puis les réponses après les "
+"coups d'ouverture à égalité avec le meilleur à ce score. Le livre est la "
+"seule source de l'exercice ; tant qu'il n'est pas calculé, l'exercice "
+"**le dit et ne démarre pas**."
 msgstr ""
 "**Avaus** asettaa **pelin kahdesta ensimmäisestä heitosta toisen tietyllä"
 " pistetilanteella** aloittimessa valitun heiton mukaan: *1. heitolla* "
 "vuorossa olevan pelaajan avaus; *2. heitolla* vastustajan vastaus "
-"asemassa, jonka **kirjan kyseisen pistetilanteen paras avaussiirto** "
-"jättää, valmiiksi laudalla pelattuna. Siirto arvioidaan blunderDB:hen "
-"upotettua **avauskirjaa** vasten, joka on laskettu sen omilla "
-"rollouteilla: jokaiselle sen ruudukon pistetilanteelle — 2–7 pistettä "
-"kummallakin puolella, enintään yhden pisteen erolla, sekä Crawford-peli —"
-" viisitoista avausheittoa, sitten vastaukset kyseisen pistetilanteen "
-"parhaan avaussiirron jälkeen. Kirja on harjoituksen ainoa lähde; niin "
-"kauan kuin sitä ei ole laskettu, harjoitus **ilmoittaa sen eikä "
-"käynnisty**."
+"asemassa, jonka **kyseisen pistetilanteen parhaan kanssa tasoissa oleva "
+"avaussiirto** jättää, kirjan seuraamista siirroista valittuna ja "
+"valmiiksi laudalla pelattuna. Siirto arvioidaan blunderDB:hen upotettua "
+"**avauskirjaa** vasten, joka on laskettu sen omilla rollouteilla: "
+"jokaiselle sen ruudukon pistetilanteelle — 2–7 pistettä kummallakin "
+"puolella, enintään yhden pisteen erolla, sekä Crawford-peli — viisitoista"
+" avausheittoa, sitten vastaukset kyseisen pistetilanteen parhaan kanssa "
+"tasoissa olevien avaussiirtojen jälkeen. Kirja on harjoituksen ainoa "
+"lähde; niin kauan kuin sitä ei ole laskettu, harjoitus **ilmoittaa sen "
+"eikä käynnisty**."
 
-#: ../../source/manuel.rst:4889
+#: ../../source/manuel.rst:4890
 msgid ""
 "Tant qu'une question d'*Évaluation*, de *Décision* ou d'*Ouverture* "
 "attend sa réponse, le panneau Analyse est masqué : il porte la réponse."
@@ -11382,11 +11384,11 @@ msgstr ""
 "Kun *Évaluation*-, *Décision*- tai *Ouverture*-kysymys odottaa "
 "vastaustaan, analyysipaneeli pysyy peitettynä: se kantaa vastauksen."
 
-#: ../../source/manuel.rst:4893
+#: ../../source/manuel.rst:4894
 msgid "Répondre"
 msgstr "Vastaaminen"
 
-#: ../../source/manuel.rst:4895
+#: ../../source/manuel.rst:4896
 msgid ""
 "Le mode de réponse est une propriété de l'exercice, jamais un réglage : "
 "ce qui se **compte ou se récite** se déclare, ce qui s'**estime** se "
@@ -11396,7 +11398,7 @@ msgstr ""
 "**lasketaan tai muistetaan** paljastetaan, se mitä **arvioidaan** "
 "kirjoitetaan — sillä siellä virheen suuruus on opetus."
 
-#: ../../source/manuel.rst:4899
+#: ../../source/manuel.rst:4900
 msgid ""
 "*Scores* et *Comptage des pips* se **déclarent** : vous calculez de tête,"
 " vous cliquez « Révéler », et la vérité s'affiche. Chaque nombre est "
@@ -11414,7 +11416,7 @@ msgstr ""
 "kirjoiteta: pip-luku tai taulukon solu on oikein tai väärin, eikä sen "
 "kirjoittaminen opeta enempää kuin sen lukeminen."
 
-#: ../../source/manuel.rst:4906
+#: ../../source/manuel.rst:4907
 msgid ""
 "*Bearoff* se **saisit** : vous écrivez les deux EPC, « Valider » les juge"
 " à un demi-pion près — la granularité à laquelle l'EPC change une "
@@ -11430,7 +11432,7 @@ msgstr ""
 "**etumerkkeineen**: yliarviointi ei ole aliarviointia, ja yhteenveto "
 "tekee siitä keskiarvon."
 
-#: ../../source/manuel.rst:4912
+#: ../../source/manuel.rst:4913
 msgid ""
 "*Évaluation* mêle les deux gestes dans une même question. Les chances de "
 "gain se **saisissent** et se jugent à cinq points près, écart signé "
@@ -11459,7 +11461,7 @@ msgstr ""
 "sillä on oma harjoituksensa. Päiväkirja laskee kaksi lukua erikseen: "
 "aseman voi arvioida hyvin ja lukea sen kuution väärin."
 
-#: ../../source/manuel.rst:4924
+#: ../../source/manuel.rst:4925
 msgid ""
 "*Décision* se **choisit**. Sur une décision de pions, **jouez le coup sur"
 " le damier** : un clic sur un pion le joue du premier dé non joué (le dé "
@@ -11494,7 +11496,7 @@ msgstr ""
 "painiketta lukuun ottamatta. Kuutiopäätöksessä napsauta *Ei tuplausta*, "
 "*Tuplaus, hyväksy* tai *Tuplaus, luovuta*: napsautus on vastaus."
 
-#: ../../source/manuel.rst:4939
+#: ../../source/manuel.rst:4940
 msgid ""
 "La correction distingue trois issues, et les confondre mentirait. Un "
 "**coup illégal** n'est pas un coup mal choisi — c'est une faute de règle."
@@ -11512,7 +11514,7 @@ msgstr ""
 "millipisteinä. Oikein on vain arvioitu siirto, joka ei maksa mitään; "
 "paras siirto näytetään joka tapauksessa."
 
-#: ../../source/manuel.rst:4946
+#: ../../source/manuel.rst:4947
 msgid ""
 "*Ouverture* se **choisit** aussi, coup joué sur le damier comme en "
 "*Décision* — mêmes gestes, même champ de notation. Le panneau dit le jet "
@@ -11544,7 +11546,7 @@ msgstr ""
 "avaussiirron. Loki laskee avauksen ja vastauksen erikseen: avauksensa voi"
 " osata ja vastata huonosti."
 
-#: ../../source/manuel.rst:4959
+#: ../../source/manuel.rst:4960
 msgid ""
 "Le chronomètre part à l'affichage de la question et s'arrête à « Révéler "
 "», à « Valider », au clic d'une action de videau de *Décision* ou au coup"
@@ -11566,7 +11568,7 @@ msgstr ""
 "mediaaniin — vastausta jota ei annettu ei mitata. Myöhästynyt päätös "
 "näyttää parhaan siirron, eikä se mene istunnon PR:ään."
 
-#: ../../source/manuel.rst:4969
+#: ../../source/manuel.rst:4970
 msgid ""
 "« Suivante » enregistre la question et en pose une autre ; ENTRÉE, hors "
 "d'un champ ou d'un bouton, fait de même une fois la réponse affichée, ou "
@@ -11588,7 +11590,7 @@ msgstr ""
 "”Tarkista” tai ”Seuraava”). Lauta näyttää kysymyksen ja sen vastauksen, "
 "se ei kanna yhtään säädintä."
 
-#: ../../source/manuel.rst:4979
+#: ../../source/manuel.rst:4980
 msgid ""
 "Tant qu'une question est posée sur le plateau, révélée ou non, les "
 "touches qui parcourent la liste ne la font pas défiler : la question "
@@ -11598,11 +11600,11 @@ msgstr ""
 "selaavat näppäimet eivät vieritä sitä: kysymys pitää laudan, kunnes "
 "valitaan « Suivante », « Terminer » tai « Quitter »."
 
-#: ../../source/manuel.rst:4984
+#: ../../source/manuel.rst:4985
 msgid "Le journal et le bilan"
 msgstr "Päiväkirja ja yhteenveto"
 
-#: ../../source/manuel.rst:4986
+#: ../../source/manuel.rst:4987
 msgid ""
 "Les sessions terminées sont conservées dans la base elle-même — elles "
 "suivent donc le fichier — et sans plafond. Au repos, le panneau affiche "
@@ -11618,7 +11620,7 @@ msgstr ""
 "viimeisen istunnon virheprosentin ja kaikkien istuntojen virheprosentin "
 "välillä — negatiivisena edistyt."
 
-#: ../../source/manuel.rst:4993
+#: ../../source/manuel.rst:4994
 msgid ""
 "Pour *Décision*, la ligne donne aussi le **PR** de la dernière session, "
 "calculé par la formule que les statistiques appliquent au jeu réel — 500 "
@@ -11632,7 +11634,7 @@ msgstr ""
 "päätöksistä. Harjoittelun PR 6 ja ottelun PR 6 mittaavat samaa asiaa "
 "samalla asteikolla."
 
-#: ../../source/manuel.rst:4999
+#: ../../source/manuel.rst:5000
 msgid ""
 "Cliquer le nom de l'exercice déplie le détail **par type de nombre** : « "
 "Point de prise 4 · dernier lancer, 6 / 9 ». C'est ce détail qui fait "
@@ -11646,7 +11648,7 @@ msgstr ""
 "taulukon sama ruutu, kummalta puolelta tahansa katsottuna, on yksi ja "
 "sama heikkous."
 
-#: ../../source/manuel.rst:5004
+#: ../../source/manuel.rst:5005
 msgid ""
 "Une question de *Décision* garde au journal sa position, la réponse "
 "donnée et son coût en millipoints. Le détail de *Décision* porte donc "
@@ -11660,7 +11662,7 @@ msgstr ""
 "kukin kerran, viimeksi epäonnistunut ensin — aikarajan ylittänyt kysymys "
 "lasketaan epäonnistuneeksi:"
 
-#: ../../source/manuel.rst:5009
+#: ../../source/manuel.rst:5010
 msgid ""
 "**Reprendre mes ratés** — les positions ratées deviennent la liste "
 "parcourue et une session *Décision* repart dessus ;"
@@ -11668,15 +11670,15 @@ msgstr ""
 "**Kertaa virheeni** — epäonnistuneista asemista tulee selattava lista, ja"
 " *Päätös*-istunto alkaa uudelleen niillä;"
 
-#: ../../source/manuel.rst:5011
+#: ../../source/manuel.rst:5012
 msgid "**Paquet Anki des ratés** — un paquet Anki de ces positions ;"
 msgstr "**Virheiden Anki-pakka** — Anki-pakka näistä asemista;"
 
-#: ../../source/manuel.rst:5012
+#: ../../source/manuel.rst:5013
 msgid "**Collection des ratés** — une collection de ces positions."
 msgstr "**Virheiden kokoelma** — kokoelma näistä asemista."
 
-#: ../../source/manuel.rst:5014
+#: ../../source/manuel.rst:5015
 msgid ""
 "Le paquet et la collection sont nommés « Ratés à Décision » suivis de la "
 "date du jour. En ligne de commande, ``training missed`` rend la même "
@@ -11690,11 +11692,11 @@ msgstr ""
 "``training sessions`` lukee päiväkirjan uudelleen (katso "
 ":ref:`cli_training`)."
 
-#: ../../source/manuel.rst:5022
+#: ../../source/manuel.rst:5023
 msgid "Panneau Duel"
 msgstr "Kaksintaistelu-paneeli"
 
-#: ../../source/manuel.rst:5024
+#: ../../source/manuel.rst:5025
 msgid ""
 "Le panneau **Duel** fait jouer un match entier contre le Bot, sous "
 "l'arbitrage de blunderDB : il lance les dés, impose les règles, tient le "
@@ -11709,7 +11711,7 @@ msgstr ""
 "on oltava auki: Kaksintaistelu kirjoitetaan siihen jokaisen päätöksen "
 "jälkeen."
 
-#: ../../source/manuel.rst:5030
+#: ../../source/manuel.rst:5031
 msgid ""
 "Sans Duel ouvert, le panneau montre le formulaire, mémorisé d'un Duel à "
 "l'autre, et, s'il y en a, la liste des Duels en suspens. La bande d'en-"
@@ -11721,7 +11723,7 @@ msgstr ""
 "Kaksintaistelujen luettelon. Otsikkokaistalla ovat **Lähtö**, lähtöaseman"
 " vaatimat valinnat, **aikataulu** ja sen päässä ”Pelaa”:"
 
-#: ../../source/manuel.rst:5035
+#: ../../source/manuel.rst:5036
 msgid ""
 "**Départ** : la position initiale, ou la position au plateau. Partant du "
 "plateau, celui-ci s'édite comme dans le panneau Eval (même plateau "
@@ -11733,7 +11735,7 @@ msgstr ""
 "nappulat, kuutio ja sen omistaja, nopat — pelaajan puolelle asetettuina "
 "ne antavat hänelle vuoron — ja tulos."
 
-#: ../../source/manuel.rst:5039
+#: ../../source/manuel.rst:5040
 msgid ""
 "**Dés** (départ du plateau portant des dés) : « Dés du plateau », par "
 "défaut, joue le jet posé ; « Relancer » le fait tirer à nouveau par "
@@ -11743,7 +11745,7 @@ msgstr ""
 " asetetun heiton; ”Heitä uudelleen” antaa Erotuomarin arpoa sen "
 "uudelleen."
 
-#: ../../source/manuel.rst:5041
+#: ../../source/manuel.rst:5042
 msgid ""
 "**Décision de videau** (départ du plateau sans dés à jouer, quand le "
 "joueur au trait peut doubler ou qu'un double est offert au plateau) : « "
@@ -11758,7 +11760,7 @@ msgstr ""
 "”Kuution jälkeen” siirtyy suoraan heittoon, jolloin tarjottu tuplaus "
 "hyväksytään."
 
-#: ../../source/manuel.rst:5046
+#: ../../source/manuel.rst:5047
 msgid ""
 "**Cadence** : sans cadence, **Standard** (2 min par point + 12 s), "
 "**Speed** (0,4 min par point, soit 2 min pour un match en 5 points, + 10 "
@@ -11768,15 +11770,15 @@ msgstr ""
 "s), **Speed** (0,4 min pistettä kohden eli 2 min 5 pisteen ottelussa, + "
 "10 s) tai tallennettu aikataulu."
 
-#: ../../source/manuel.rst:5050
+#: ../../source/manuel.rst:5051
 msgid "Le formulaire, un réglage par ligne :"
 msgstr "Lomake, yksi asetus riviä kohden:"
 
-#: ../../source/manuel.rst:5052
+#: ../../source/manuel.rst:5053
 msgid "**Match** de 1 à 25 points, ou **session en argent** (Jacoby au choix)."
 msgstr "**Ottelu** 1–25 pisteeseen tai **rahapeli** (Jacoby valinnan mukaan)."
 
-#: ../../source/manuel.rst:5053
+#: ../../source/manuel.rst:5054
 msgid ""
 "**Score** : ce qu'il manque à chaque joueur, par défaut la longueur du "
 "match (début de match) ; « 1 (Crawford) » est la partie Crawford, « 1 "
@@ -11794,7 +11796,7 @@ msgstr ""
 "ensimmäisen pelin loppuun, tuloksen harjoittelua varten: kirjoitettu "
 "Ottelu sisältää vain tämän pelin."
 
-#: ../../source/manuel.rst:5060
+#: ../../source/manuel.rst:5061
 msgid ""
 "**Cadence** (une cadence choisie) : **minutes par point** et **délai** en"
 " secondes. Chaque joueur dispose de minutes par point × longueur du match"
@@ -11815,7 +11817,7 @@ msgstr ""
 "lukua valikon aikatauluna käyttäjän asetuksissa; ”Poista” poistaa valitun"
 " tallennetun aikataulun. Rahapelisessio pelataan ilman aikataulua."
 
-#: ../../source/manuel.rst:5068
+#: ../../source/manuel.rst:5069
 msgid ""
 "**Côté joué** (joueur 1 ou 2) et **niveau du Bot** (``instant``, "
 "``normal``, ``thorough``, ceux de l'analyse). Le sélecteur dit la "
@@ -11827,7 +11829,7 @@ msgstr ""
 " tason syvyyden, esimerkiksi \"instant (0-ply)\" tai \"normal (2-ply, "
 "karsittu)\"; syvempi on vahvempi ja hitaampi."
 
-#: ../../source/manuel.rst:5072
+#: ../../source/manuel.rst:5073
 msgid ""
 "**Votre nom** et **Enregistrer le match** : décoché, le Duel terminé est "
 "jeté au lieu de devenir un Match."
@@ -11835,7 +11837,7 @@ msgstr ""
 "**Nimesi** ja **Tallenna ottelu**: kun valinta on poistettu, päättynyt "
 "Kaksintaistelu hylätään sen sijaan, että siitä tulisi Ottelu."
 
-#: ../../source/manuel.rst:5074
+#: ../../source/manuel.rst:5075
 msgid ""
 "**Pipcount** : décoché, le pipcount reste masqué pendant le Duel, même "
 "par le bouton de la barre d'outils ou ``P`` ; il revient à la sortie du "
@@ -11845,7 +11847,7 @@ msgstr ""
 "Kaksintaistelun ajan, myös työkalupalkin painikkeesta tai "
 "``P``-näppäimestä; se palaa Kaksintaistelun päättyessä."
 
-#: ../../source/manuel.rst:5077
+#: ../../source/manuel.rst:5078
 msgid ""
 "« Reprendre » rouvre un Duel en suspens au même point, avec les mêmes dés"
 " à venir ; ses horloges étaient arrêtées."
@@ -11853,7 +11855,7 @@ msgstr ""
 "«Jatka peliä» avaa keskeytetyn Kaksintaistelun uudelleen samasta "
 "kohdasta, samoilla tulevilla nopilla; sen kellot olivat pysähdyksissä."
 
-#: ../../source/manuel.rst:5080
+#: ../../source/manuel.rst:5081
 msgid ""
 "Un Duel en suspens ne quitte pas sa base : l'export de la base ne "
 "l'emporte pas, parce que ses dés à venir ne doivent sortir par aucune "
@@ -11864,7 +11866,7 @@ msgstr ""
 "millään tiellä ennen loppua. Päättynyt Kaksintaistelu lähtee kuten mikä "
 "tahansa Match."
 
-#: ../../source/manuel.rst:5084
+#: ../../source/manuel.rst:5085
 msgid ""
 "Le Duel se joue au plateau. Le panneau montre la feuille de match en deux"
 " colonnes, comme la Transcription, et les horloges quand une cadence "
@@ -11897,7 +11899,7 @@ msgstr ""
 "Pino (``B``), pipcount (``P``, ellei sitä ole piilotettu Kaksintaistelun "
 "ajaksi) ja ohje."
 
-#: ../../source/manuel.rst:5098
+#: ../../source/manuel.rst:5099
 msgid ""
 "Avant le lancer, un clic sur le plateau, sur les dés ou sur un pion les "
 "lance ; seul un clic sur le videau propose de doubler, et le plateau "
@@ -11909,11 +11911,11 @@ msgstr ""
 "tai ”Peruuta”. Kun kuutio ei ole käytettävissä, heitto tapahtuu "
 "automaattisesti."
 
-#: ../../source/manuel.rst:5101
+#: ../../source/manuel.rst:5102
 msgid "Face à un double du Bot, le plateau demande « Prendre » ou « Passer »."
 msgstr "Botin tuplauksen edessä lauta kysyy ”Ota vastaan” tai ”Luovuta”."
 
-#: ../../source/manuel.rst:5102
+#: ../../source/manuel.rst:5103
 msgid ""
 "Un clic sur un pion le joue aussitôt avec le dé de gauche encore libre, "
 "ou avec l'autre quand celui-ci ne peut pas le jouer ; un pion sur la "
@@ -11925,7 +11927,7 @@ msgstr ""
 "sisään, tuplaheitto pelataan neljällä napsautuksella. Nappulan voi myös "
 "vetää kohteeseensa. Vain laillisen siirron askeleet menevät läpi."
 
-#: ../../source/manuel.rst:5106
+#: ../../source/manuel.rst:5107
 msgid ""
 "Un dé se grise quand il est joué ; sur un double, chaque dé vaut deux pas"
 " et se voile à moitié au premier. Le coup complet grise tous les dés, y "
@@ -11935,7 +11937,7 @@ msgstr ""
 "kahta askelta ja himmenee puoliksi ensimmäisen jälkeen. Valmis siirto "
 "harmaannuttaa kaikki nopat, myös ne, joita sääntö ei salli pelata."
 
-#: ../../source/manuel.rst:5109
+#: ../../source/manuel.rst:5110
 msgid ""
 "Tant que le coup n'est pas complet, un clic sur les dés intervertit les "
 "dés restant à jouer. Le clic droit sur le plateau reprend tous les pions "
@@ -11947,7 +11949,7 @@ msgstr ""
 "ottaa takaisin kaikki pelatut nappulat (myös ``BACKSPACE``); jos "
 "nappuloita ei ole pelattu, se avaa Kaksintaistelun valikon."
 
-#: ../../source/manuel.rst:5112
+#: ../../source/manuel.rst:5113
 msgid ""
 "Le coup complet se valide par un clic sur les dés, par « Valider » sur le"
 " plateau, ou par ``ENTRÉE`` ou ``ESPACE``. Rien ne se reprend après."
@@ -11956,11 +11958,11 @@ msgstr ""
 "laudalla tai näppäimellä ``ENTER`` tai ``VÄLILYÖNTI``. Sen jälkeen mitään"
 " ei voi ottaa takaisin."
 
-#: ../../source/manuel.rst:5114
+#: ../../source/manuel.rst:5115
 msgid "Le Bot répond aussitôt ; ses coups sont rejoués au plateau, lentement."
 msgstr "Botti vastaa heti; sen siirrot toistetaan laudalla hitaasti."
 
-#: ../../source/manuel.rst:5115
+#: ../../source/manuel.rst:5116
 msgid ""
 "Le clic droit hors du plateau, ou sur le plateau hors de son coup ou sans"
 " pion joué, ouvre le menu du Duel : mettre la position sur la Pile ou "
@@ -11975,7 +11977,7 @@ msgstr ""
 "vahvistuksen jälkeen), ottelun luovuttaminen, tauotus, peruminen. Valikko"
 " ei tarjoa arviointia eikä muokkausta."
 
-#: ../../source/manuel.rst:5120
+#: ../../source/manuel.rst:5121
 msgid ""
 "« Abandonner le match » cède le match entier, à tout moment et après "
 "confirmation : la partie en cours va à l'adversaire pour les points qui "
@@ -11993,7 +11995,7 @@ msgstr ""
 "häviämiseen johtavalla aikataululla loppunut varaus vastaa sitä, että "
 "pelaaja luovuttaa ottelun."
 
-#: ../../source/manuel.rst:5126
+#: ../../source/manuel.rst:5127
 msgid ""
 "« Mettre en pause » met le Duel en suspens, horloges arrêtées ; il se "
 "reprend au même point. « Annuler le match » le jette, après confirmation "
@@ -12003,7 +12005,7 @@ msgstr ""
 "jatkuu samasta kohdasta. ”Peru ottelu” hylkää sen vahvistuksen jälkeen: "
 "mitään ei tallenneta."
 
-#: ../../source/manuel.rst:5129
+#: ../../source/manuel.rst:5130
 msgid ""
 "Un double-clic hors du plateau met la position sur la Pile, ou l'en "
 "retire, comme ``B`` ; seul le marque-page au coin du plateau le montre."
@@ -12011,7 +12013,7 @@ msgstr ""
 "Kaksoisnapsautus laudan ulkopuolella lisää aseman pinoon tai poistaa sen "
 "sieltä kuten ``B``; vain laudan kulmassa oleva kirjanmerkki näyttää sen."
 
-#: ../../source/manuel.rst:5132
+#: ../../source/manuel.rst:5133
 msgid ""
 "Chaque décision porte sa durée, avec ou sans cadence. Un abandon n'a pas "
 "de durée enregistrée dans le Match."
@@ -12019,7 +12021,7 @@ msgstr ""
 "Jokaisella päätöksellä on kestonsa, ajankäytöllä tai ilman. Luovutuksella"
 " ei ole Otteluun tallennettua kestoa."
 
-#: ../../source/manuel.rst:5135
+#: ../../source/manuel.rst:5136
 msgid ""
 "À la fin, le Match est écrit, son analyse se lance et l'onglet Matchs "
 "s'ouvre sur lui. En ligne de commande, ``blunderdb duel`` pilote le même "
@@ -12029,11 +12031,11 @@ msgstr ""
 " avautuu siihen. Komentoriviltä ``blunderdb duel`` ohjaa samaa "
 "Kaksintaistelua (katso :ref:`cli_duel`)."
 
-#: ../../source/manuel.rst:5142
+#: ../../source/manuel.rst:5143
 msgid "Panneau Métadonnées"
 msgstr "Metatietopaneeli"
 
-#: ../../source/manuel.rst:5144
+#: ../../source/manuel.rst:5145
 msgid ""
 "Le panneau **Métadonnées** (*CTRL-M*) affiche les informations générales "
 "de la base de données courante : *Utilisateur*, date de création "
@@ -12048,7 +12050,7 @@ msgstr ""
 "tallennetaan kentästä poistuttaessa; versio on vain luettavissa. "
 "Saatavilla myös komennolla ``meta``."
 
-#: ../../source/manuel.rst:5150
+#: ../../source/manuel.rst:5151
 msgid ""
 "Il affiche également, **lorsqu'elle existe**, l'origine de la base — voir"
 " :ref:`diffusion_controlee`. Une base ordinaire n'affiche pas cette "
@@ -12058,11 +12060,11 @@ msgstr ""
 ":ref:`diffusion_controlee`. Tavallisessa tietokannassa tätä osiota ei "
 "näy."
 
-#: ../../source/manuel.rst:5156
+#: ../../source/manuel.rst:5157
 msgid "Diffuser une base : origine et mot de passe"
 msgstr "Tietokannan jakaminen: alkuperä ja salasana"
 
-#: ../../source/manuel.rst:5158
+#: ../../source/manuel.rst:5159
 msgid ""
 "Un enseignant qui distribue une base de positions dispose de deux "
 "mécanismes, indépendants l'un de l'autre, tous deux facultatifs et "
@@ -12074,7 +12076,7 @@ msgstr ""
 "valittavia: tiedoston merkitseminen alkuperällään ja sen suojaaminen "
 "salasanalla."
 
-#: ../../source/manuel.rst:5165
+#: ../../source/manuel.rst:5166
 msgid ""
 "Aucun des deux ne suit ce que devient le fichier. blunderDB "
 "**n'enregistre rien du côté de celui qui reçoit la base** : ouvrir une "
@@ -12087,11 +12089,11 @@ msgstr ""
 "eikä missään kirjata, kuka sen avasi, milloin, tai mistä sen sisältö on "
 "peräisin."
 
-#: ../../source/manuel.rst:5171
+#: ../../source/manuel.rst:5172
 msgid "Marquer une base de son origine"
 msgstr "Tietokannan merkitseminen alkuperällään"
 
-#: ../../source/manuel.rst:5173
+#: ../../source/manuel.rst:5174
 msgid ""
 "La fenêtre d'export tient en un seul écran : une bande d'en-tête — le "
 "nombre de positions exportées, **Annuler** et **Exporter…** — puis une "
@@ -12114,11 +12116,11 @@ msgstr ""
 "ilman nimeä palauttaa ruudukkoon. Kirjoituksen ajaksi päälle tulee "
 "edistymisilmaisin, ikkuna sulkeutuu itsestään ja tulos näkyy tilarivillä."
 
-#: ../../source/manuel.rst:5185
+#: ../../source/manuel.rst:5186
 msgid "Huit points méritent l'attention :"
 msgstr "Kahdeksan kohtaa ansaitsee huomion:"
 
-#: ../../source/manuel.rst:5187
+#: ../../source/manuel.rst:5188
 msgid ""
 "**La portée** : depuis une liste — une recherche, une collection —, la "
 "ligne *Portée* choisit entre la *Liste courante* et *Toute la "
@@ -12133,7 +12135,7 @@ msgstr ""
 "asemat on pelattu; jokainen valittu ottelu lähtee kaikkine asemineen. "
 "Kirjastosta käsin laajuus on kirjasto."
 
-#: ../../source/manuel.rst:5192
+#: ../../source/manuel.rst:5193
 msgid ""
 "**Toute la bibliothèque** est l'export du serveur et de ``export --type "
 "database`` : toutes les familles sont cochées d'emblée, les paquets Anki "
@@ -12144,7 +12146,7 @@ msgstr ""
 "vienti: kaikki ryhmät on valittu valmiiksi, Anki-pakat "
 "kertaushistorioineen, ja kesken olevat litteroinnit lähtevät muun mukana."
 
-#: ../../source/manuel.rst:5196
+#: ../../source/manuel.rst:5197
 msgid ""
 "**Un match part avec son brouillon de transcription**, sous la case "
 "*Transcriptions* de la ligne *Matchs*, cochée d'emblée ; les matchs qu'un"
@@ -12164,7 +12166,7 @@ msgstr ""
 "sellaisenaan. Tiedosto, josta ottelu tuotiin, lähtee niin ikään vain "
 "nimellä."
 
-#: ../../source/manuel.rst:5203
+#: ../../source/manuel.rst:5204
 msgid ""
 "**Un match part avec les alias de ses joueurs et de son événement** : la "
 "case *Alias*, cochée d'emblée, fait suivre la fusion de joueurs, et le "
@@ -12176,7 +12178,7 @@ msgstr ""
 " vastaanottaja lukee yhdistetyn pelaajan yhtenä. Alias, joka ei nimeä "
 "ketään viedyistä otteluista, jää teille."
 
-#: ../../source/manuel.rst:5207
+#: ../../source/manuel.rst:5208
 msgid ""
 "**Une collection dont toutes les positions ne sont pas dans la liste "
 "arrive tronquée.** La liste des collections affiche, pour chacune, la "
@@ -12199,7 +12201,7 @@ msgstr ""
 " ja luettelo merkitsee sen punaisella ”jäädytetyksi” sekä huomautuksella;"
 " ruutu *+ niiden asemat* pitää sen elävänä."
 
-#: ../../source/manuel.rst:5216
+#: ../../source/manuel.rst:5217
 msgid ""
 "**Un tournoi part toujours avec ses matchs** : sans eux, le lien "
 "tournoi–match n'existe pas et le tournoi arriverait vide. Cocher un "
@@ -12218,7 +12220,7 @@ msgstr ""
 "heti, kun jokin sen turnauksista lähtee; Johdon tulostekansio jää teille."
 " Johto löytyy avaamalla tiedosto tai tuomalla se toiseen tietokantaan."
 
-#: ../../source/manuel.rst:5224
+#: ../../source/manuel.rst:5225
 msgid ""
 "**Un paquet Anki part avec ses positions**, en copie d'étude neuve. La "
 "case *avec mon historique* emporte en plus l'état de chaque carte et le "
@@ -12231,7 +12233,7 @@ msgstr ""
 "lokin: varmuuskopion tai toiselle koneelle siirretyt pakkanne. Se on "
 "valitsematta luettelolle ja valittuna kirjastolle."
 
-#: ../../source/manuel.rst:5228
+#: ../../source/manuel.rst:5229
 msgid ""
 "**Les filtres enregistrés** n'exportent pas du contenu mais vos propres "
 "recherches, sans utilité dans la base de quelqu'un d'autre ; la case est "
@@ -12245,7 +12247,7 @@ msgstr ""
 " numerolla, numeroidaan tiedostoa varten uudelleen; jos se viittaa "
 "johonkin, joka ei lähde, se jää teille."
 
-#: ../../source/manuel.rst:5234
+#: ../../source/manuel.rst:5235
 msgid ""
 "Les collections, leçons, transcriptions, paquets Anki, alias et tournois "
 "partent avec les dates de création et d'ajout qu'ils portent chez vous, "
@@ -12255,7 +12257,7 @@ msgstr ""
 "lähtevät niillä luonti- ja lisäyspäivämäärillä, jotka niillä on teillä, "
 "eivät viennin päivämäärällä."
 
-#: ../../source/manuel.rst:5238
+#: ../../source/manuel.rst:5239
 msgid ""
 "Les champs *Utilisateur*, *Description* et *Date de création* décrivent "
 "le **fichier produit** ; ils sont préremplis depuis la base source."
@@ -12263,11 +12265,11 @@ msgstr ""
 "Kentät *Käyttäjä*, *Kuvaus* ja *Luontipäivä* kuvaavat **tuotettua "
 "tiedostoa**; ne esitäytetään lähdetietokannasta."
 
-#: ../../source/manuel.rst:5241
+#: ../../source/manuel.rst:5242
 msgid "Cocher **Filigrane** fait apparaître deux champs :"
 msgstr "Kun valitset **Vesileima**, esiin tulee kaksi kenttää:"
 
-#: ../../source/manuel.rst:5243
+#: ../../source/manuel.rst:5244
 msgid ""
 "**Origine** — ce qu'est ce fichier et d'où il vient, dans vos mots : « "
 "Cours de Jean Dupont — 12 mars 2026 ». Ce champ est **obligatoire** : "
@@ -12279,7 +12281,7 @@ msgstr ""
 "**pakollinen**: niin kauan kuin se on tyhjä, sen reunus on punainen ja "
 "vientipainike pysyy ei-aktiivisena."
 
-#: ../../source/manuel.rst:5246
+#: ../../source/manuel.rst:5247
 msgid ""
 "**Note**, facultative — conditions d'utilisation, adresse de contact, une"
 " demande de ne pas rediffuser."
@@ -12287,7 +12289,7 @@ msgstr ""
 "**Huomautus**, valinnainen — käyttöehdot, yhteysosoite, pyyntö olla "
 "jakamatta eteenpäin."
 
-#: ../../source/manuel.rst:5249
+#: ../../source/manuel.rst:5250
 msgid ""
 "La marque est signée avec votre identité d'émetteur. Elle est donc "
 "**inaltérable et infalsifiable** : nul ne peut la modifier, ni en "
@@ -12302,11 +12304,11 @@ msgstr ""
 "ohjelmisto. Merkintä ei estä mitään: se kertoo, mistä tiedosto on "
 "peräisin."
 
-#: ../../source/manuel.rst:5256
+#: ../../source/manuel.rst:5257
 msgid "Identité d'émetteur"
 msgstr "Merkitsijän identiteetti"
 
-#: ../../source/manuel.rst:5258
+#: ../../source/manuel.rst:5259
 msgid ""
 "Les marques sont signées avec votre **identité d'émetteur**, créée toute "
 "seule la première fois que vous marquez un fichier ; il n'y a rien à "
@@ -12320,7 +12322,7 @@ msgstr ""
 "tiedostoissasi on sama julkinen sormenjälki muotoa "
 "``A3F1-9C24-7B05-E1D8``."
 
-#: ../../source/manuel.rst:5263
+#: ../../source/manuel.rst:5264
 msgid ""
 "Vous pouvez communiquer cette empreinte à vos destinataires pour qu'ils "
 "vérifient qu'un fichier vient bien de vous. L'identité se transporte d'un"
@@ -12334,7 +12336,7 @@ msgstr ""
 "salalauseella suojattuna. **Tällä tiedostolla voi allekirjoittaa sinun "
 "nimissäsi: älä jaa sitä.**"
 
-#: ../../source/manuel.rst:5269
+#: ../../source/manuel.rst:5270
 msgid ""
 "Dans les préférences (icône engrenage de la barre d'outils), l'onglet "
 "*Identité d'émetteur* affiche votre nom et votre empreinte, et propose "
@@ -12344,7 +12346,7 @@ msgstr ""
 "-välilehti näyttää nimesi ja sormenjälkesi ja tarjoaa toiminnot *Tallenna"
 " identiteetti…*, *Lataa identiteetti…* ja *Luo uusi…*."
 
-#: ../../source/manuel.rst:5275
+#: ../../source/manuel.rst:5276
 msgid ""
 "**Régénérer ne révoque rien.** Un filigrane embarque la clé publique qui "
 "l'a signé : il se vérifie donc pour toujours, tout seul. Si votre fichier"
@@ -12357,7 +12359,7 @@ msgstr ""
 " allekirjoittamista vanhalla sormenjäljelläsi, ja nuo merkinnät pysyvät "
 "pätevinä."
 
-#: ../../source/manuel.rst:5280
+#: ../../source/manuel.rst:5281
 msgid ""
 "Ce qui vous protège après une fuite n'est pas logiciel : c'est de publier"
 " votre nouvelle empreinte et de désavouer l'ancienne auprès de vos "
@@ -12367,7 +12369,7 @@ msgstr ""
 " uuden sormenjälkesi ja ilmoitat vastaanottajillesi vanhan "
 "pätemättömäksi."
 
-#: ../../source/manuel.rst:5284
+#: ../../source/manuel.rst:5285
 msgid ""
 "La régénération écrase la clé actuelle ; blunderDB propose de "
 "l'enregistrer avant de la remplacer."
@@ -12375,11 +12377,11 @@ msgstr ""
 "Uuden luominen korvaa nykyisen avaimen; blunderDB tarjoaa mahdollisuutta "
 "tallentaa se ennen korvaamista."
 
-#: ../../source/manuel.rst:5288
+#: ../../source/manuel.rst:5289
 msgid "Protéger une base par un mot de passe"
 msgstr "Tietokannan suojaaminen salasanalla"
 
-#: ../../source/manuel.rst:5290
+#: ../../source/manuel.rst:5291
 msgid ""
 "Le mot de passe se saisit masqué, ici comme à l'ouverture d'un fichier "
 "protégé ; l'icône en forme d'œil l'affiche **tant qu'on la maintient "
@@ -12389,7 +12391,7 @@ msgstr ""
 "avattaessa; silmäkuvake näyttää sen **niin kauan kuin sitä pidetään "
 "painettuna** ja peittää sen taas heti, kun ote irrotetaan."
 
-#: ../../source/manuel.rst:5294
+#: ../../source/manuel.rst:5295
 msgid ""
 "Cocher **Mot de passe** produit un fichier d'extension ``.dbx`` — y "
 "compris si le nom choisi dans la fenêtre d'enregistrement finit en "
@@ -12405,7 +12407,7 @@ msgstr ""
 "asentaa viereen tavallisen tietokannan; sen jälkeen mitään ei enää "
 "kysytä."
 
-#: ../../source/manuel.rst:5301
+#: ../../source/manuel.rst:5302
 msgid ""
 "La fenêtre propose de **supprimer le fichier protégé une fois ouvert** : "
 "sans cela vous conservez le même contenu sous deux noms. La case n'est "
@@ -12418,7 +12420,7 @@ msgstr ""
 " oletuksena valittuna — suojattu tiedosto jää sinulle, jos aiot välittää "
 "sen eteenpäin — ja poisto tapahtuu vasta onnistuneen avaamisen jälkeen."
 
-#: ../../source/manuel.rst:5308
+#: ../../source/manuel.rst:5309
 msgid ""
 "Le mot de passe protège le **transport** du fichier, pas la base. Il "
 "empêche un tiers d'ouvrir un fichier qui traîne dans un dossier de "
@@ -12430,7 +12432,7 @@ msgstr ""
 "vahingossa edelleen lähetettyä liitettä. Se ei suojaa siltä, jolle olet "
 "antanut salasanan."
 
-#: ../../source/manuel.rst:5313
+#: ../../source/manuel.rst:5314
 msgid ""
 "Le mot de passe est vérifié à **chaque** ouverture, y compris lorsque le "
 "fichier a déjà été ouvert auparavant sur ce poste."
@@ -12438,7 +12440,7 @@ msgstr ""
 "Salasana tarkistetaan **joka** avauskerralla, myös silloin kun tiedosto "
 "on jo aiemmin avattu tällä koneella."
 
-#: ../../source/manuel.rst:5316
+#: ../../source/manuel.rst:5317
 msgid ""
 "Techniquement, la base est chiffrée par **AES-256 en mode GCM**, avec une"
 " clé dérivée du mot de passe par **Argon2id** (64 Mio de mémoire, 3 "
@@ -12454,7 +12456,7 @@ msgstr ""
 "samoin mikä tahansa salatun tiedoston muuttaminen — vioittunutta "
 "tietokantaa ei koskaan saada hiljaisesti."
 
-#: ../../source/manuel.rst:5323
+#: ../../source/manuel.rst:5324
 msgid ""
 "L'en-tête du fichier protégé reste **en clair** : son origine demeure "
 "lisible sans le mot de passe."
@@ -12462,11 +12464,11 @@ msgstr ""
 "Suojatun tiedoston otsake pysyy **salaamattomana**: sen alkuperä on "
 "luettavissa ilman salasanaa."
 
-#: ../../source/manuel.rst:5327
+#: ../../source/manuel.rst:5328
 msgid "Lire l'origine d'un fichier"
 msgstr "Tiedoston alkuperän lukeminen"
 
-#: ../../source/manuel.rst:5329
+#: ../../source/manuel.rst:5330
 msgid ""
 "Dans l'application, ouvrez le fichier et affichez le panneau "
 "**Métadonnées** (commande ``meta``). Une section **Origine** apparaît en "
@@ -12478,11 +12480,11 @@ msgstr ""
 "joka kertoo, mitä on kirjattu, kenen toimesta, milloin, ja missä tilassa "
 "allekirjoitus on:"
 
-#: ../../source/manuel.rst:5334
+#: ../../source/manuel.rst:5335
 msgid "« ✓ marquée par vous » : le fichier porte votre marque, intacte ;"
 msgstr "”✓ sinun merkitsemäsi”: tiedostossa on oma merkintäsi ehjänä;"
 
-#: ../../source/manuel.rst:5336
+#: ../../source/manuel.rst:5337
 msgid ""
 "« ✓ signature vérifiée » : la marque est intacte et vient d'une autre clé"
 " — comparez son empreinte à celle que le producteur vous a communiquée ;"
@@ -12491,17 +12493,17 @@ msgstr ""
 "avaimesta — vertaa sen sormenjälkeä siihen, jonka tekijä on sinulle "
 "kertonut;"
 
-#: ../../source/manuel.rst:5338
+#: ../../source/manuel.rst:5339
 msgid "« ⚠ signature invalide » : le document a été modifié ou contrefait."
 msgstr ""
 "”⚠ virheellinen allekirjoitus”: asiakirjaa on muutettu tai se on "
 "väärennetty."
 
-#: ../../source/manuel.rst:5340
+#: ../../source/manuel.rst:5341
 msgid "Cette section n'apparaît pas sur une base ordinaire."
 msgstr "Tavallisessa tietokannassa tätä osiota ei näy."
 
-#: ../../source/manuel.rst:5342
+#: ../../source/manuel.rst:5343
 msgid ""
 "En ligne de commande, ``blunderdb info --db fichier.db`` affiche "
 "l'origine et l'état de la signature, **sans jamais écrire dans le "
@@ -12515,11 +12517,11 @@ msgstr ""
 "komennon ``export`` valitsimista ``--watermark`` ja ``--password`` sekä "
 "komennoista ``identity`` ja ``open``."
 
-#: ../../source/manuel.rst:5351
+#: ../../source/manuel.rst:5352
 msgid "Publier une base pour d'autres"
 msgstr "Tietokannan julkaiseminen muille"
 
-#: ../../source/manuel.rst:5353
+#: ../../source/manuel.rst:5354
 msgid ""
 "Une base marquée se distribue comme n'importe quel fichier — courriel, "
 "site personnel, clé USB. blunderDB **ne fournit aucun service** : ni "
@@ -12534,7 +12536,7 @@ msgstr ""
 "rakenteesta: tiedoston vastaanottajan puolella ei koskaan kirjata mitään,"
 " joten palvelulle ei olisi mitään ilmoitettavaa, vaikka sellainen olisi."
 
-#: ../../source/manuel.rst:5359
+#: ../../source/manuel.rst:5360
 msgid ""
 "Ce qui rend une base publiée utilisable par quelqu'un d'autre tient à "
 "quatre champs, tous déjà là :"
@@ -12542,13 +12544,13 @@ msgstr ""
 "Se, mikä tekee julkaistusta tietokannasta toisen käytettävän, tiivistyy "
 "neljään kenttään, jotka ovat kaikki jo olemassa:"
 
-#: ../../source/manuel.rst:5362
+#: ../../source/manuel.rst:5363
 msgid ""
 "**Utilisateur** — qui l'a constituée, sous le nom que vous voulez voir "
 "cité."
 msgstr "**Käyttäjä** — kuka sen kokosi, sillä nimellä, jonka haluat mainittavan."
 
-#: ../../source/manuel.rst:5363
+#: ../../source/manuel.rst:5364
 msgid ""
 "**Description** — ce que la base contient, en une phrase qui tienne dans "
 "une liste : « 240 décisions de videau au score, commentées, niveau "
@@ -12557,7 +12559,7 @@ msgstr ""
 "**Kuvaus** — mitä tietokanta sisältää, yhdessä lauseessa, joka mahtuu "
 "luetteloon: «240 tuplauspäätöstä tilanteessa, kommentoituna, keskitaso»."
 
-#: ../../source/manuel.rst:5365
+#: ../../source/manuel.rst:5366
 msgid ""
 "**Origine** (du filigrane) — ce qu'est ce fichier et pour qui il a été "
 "produit. C'est ce que le destinataire lit en premier dans le panneau "
@@ -12567,7 +12569,7 @@ msgstr ""
 "tuotettiin. Se on ensimmäinen asia, jonka vastaanottaja lukee "
 "*Metatiedot*-paneelista."
 
-#: ../../source/manuel.rst:5368
+#: ../../source/manuel.rst:5369
 msgid ""
 "**Empreinte d'émetteur** — publiez-la à côté du fichier, pas dedans : "
 "c'est en la comparant que le destinataire vérifie que le fichier vient de"
@@ -12577,7 +12579,7 @@ msgstr ""
 "sisällä: sitä vertaamalla vastaanottaja varmistaa, että tiedosto tulee "
 "sinulta eikä joltakulta, joka on ottanut nimesi."
 
-#: ../../source/manuel.rst:5372
+#: ../../source/manuel.rst:5373
 msgid ""
 "Une base publiée sans filigrane reste parfaitement utilisable ; elle est "
 "simplement anonyme, et le panneau *Métadonnées* n'affiche alors aucune "
@@ -12586,7 +12588,7 @@ msgstr ""
 "Ilman vesileimaa julkaistu tietokanta on täysin käyttökelpoinen; se on "
 "vain nimetön, eikä *Metatiedot*-paneeli näytä silloin *Alkuperä*-osiota."
 
-#: ../../source/manuel.rst:5376
+#: ../../source/manuel.rst:5377
 msgid ""
 "Pour faire connaître une base, la catégorie *Show and tell* des "
 "`discussions du dépôt <https://github.com/kevung/blunderDB/discussions>`_"

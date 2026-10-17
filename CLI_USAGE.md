@@ -4289,7 +4289,7 @@ Usage of openingbook question:
   -reply string
     	Reply rolls to draw from, comma-separated (21,66); --roll second only
   -roll string
-    	Which roll to ask: first (the opening play) or second (the reply after the book's best opening play) (default "first")
+    	Which roll to ask: first (the opening play) or second (the reply after an opening play tied with the best) (default "first")
   -score string
     	Scores to draw from, comma-separated (replier-opener away: 4-2, 1-2 Crawford, money)
   -seed uint

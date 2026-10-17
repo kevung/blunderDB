@@ -1,6 +1,6 @@
 /**
  * L'exercice Ouverture (ADR-0094) : le jet choisi au lanceur — 1st roll, le
- * coup d'ouverture ; 2nd roll, la réponse après le meilleur coup du livre —,
+ * coup d'ouverture ; 2nd roll, la réponse après un coup à égalité avec le meilleur —,
  * joué au plateau et jugé contre le livre.
  */
 import { describe, test, expect, vi, beforeEach } from 'vitest';

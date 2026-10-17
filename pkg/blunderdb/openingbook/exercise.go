@@ -62,8 +62,9 @@ func scoreLess(a, b Score) bool {
 const (
 	// RollFirst asks the opening play, the opener on roll at the start.
 	RollFirst = "first"
-	// RollSecond asks the reply, in the position the book's best opening
-	// play at the score leaves: the book ranks replies after that play only.
+	// RollSecond asks the reply, in the position an opening play tied with
+	// the best at the score leaves: any of them is a right opening, and the
+	// book rolls the replies after each one it follows.
 	RollSecond = "second"
 )
 
@@ -79,7 +80,7 @@ type QuestionRequest struct {
 }
 
 // Question is one play to find at one score: the opening play (RollFirst),
-// or the reply after the book's best opening play (RollSecond). Empty says
+// or the reply after an opening play tied with the best (RollSecond). Empty says
 // the book (or the part the request narrowed it to) holds nothing to ask,
 // which is not an error.
 type Question struct {
@@ -110,7 +111,8 @@ func rollOf(s string) (string, error) {
 
 // Draw picks one question among those the request allows, uniformly over
 // the lines that can ask it: (opening, score) for the first roll, (opening,
-// reply, score) after the book's best opening play for the second.
+// opening play, reply, score) for the second, over every opening play tied
+// with the best whose replies the book holds.
 func (b *Book) Draw(req QuestionRequest) (Question, error) {
 	roll, err := rollOf(req.Roll)
 	if err != nil {
@@ -151,14 +153,18 @@ func (b *Book) Draw(req QuestionRequest) (Question, error) {
 			pool = append(pool, pick{k, "", len(l.Candidates)})
 			continue
 		}
-		best := l.Rank()[0].Move
-		for _, r := range Replies() {
-			if !allows(replies, r.String()) {
-				continue
+		for _, c := range l.Rank() {
+			if !c.Tied {
+				break
 			}
-			rk := ReplyKey(k.Opening, best, r, k.Score)
-			if rl, ok := b.Lookup(rk); ok && len(rl.Candidates) > 0 {
-				pool = append(pool, pick{rk, best, len(rl.Candidates)})
+			for _, r := range Replies() {
+				if !allows(replies, r.String()) {
+					continue
+				}
+				rk := ReplyKey(k.Opening, c.Move, r, k.Score)
+				if rl, ok := b.Lookup(rk); ok && len(rl.Candidates) > 0 {
+					pool = append(pool, pick{rk, c.Move, len(rl.Candidates)})
+				}
 			}
 		}
 	}

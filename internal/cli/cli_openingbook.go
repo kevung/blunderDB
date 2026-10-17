@@ -57,7 +57,7 @@ func (cli *CLI) printOpeningBookUsage() {
 	fmt.Println("Usage: blunderdb openingbook <sub-command> [options]")
 	fmt.Println()
 	fmt.Println("The exercise « which play at this score? »: the opening play (1st roll) or")
-	fmt.Println("the reply after the book's best opening play (2nd roll) at a match score,")
+	fmt.Println("the reply after an opening play tied with the best (2nd roll) at a match score,")
 	fmt.Println("judged against the opening book embedded in blunderDB.")
 	fmt.Println("Every play tied with the best is a right answer.")
 	fmt.Println()
@@ -121,7 +121,7 @@ func splitList(s string) []string {
 func (cli *CLI) runOpeningBookQuestion(args []string) error {
 	fs := flag.NewFlagSet("openingbook question", flag.ContinueOnError)
 	bookPath, format := openingBookFlags(fs)
-	roll := fs.String("roll", openingbook.RollFirst, "Which roll to ask: first (the opening play) or second (the reply after the book's best opening play)")
+	roll := fs.String("roll", openingbook.RollFirst, "Which roll to ask: first (the opening play) or second (the reply after an opening play tied with the best)")
 	scores := fs.String("score", "", "Scores to draw from, comma-separated (replier-opener away: 4-2, 1-2 Crawford, money)")
 	openings := fs.String("opening", "", "Opening rolls to draw from, comma-separated (31,65)")
 	replies := fs.String("reply", "", "Reply rolls to draw from, comma-separated (21,66); --roll second only")

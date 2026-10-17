@@ -108,7 +108,7 @@ L'exercice ne pose plus les deux jets à la suite : le lanceur choisit **1st rol
 d'ouverture) ou **2nd roll** (la réponse), mémorisé par exercice comme la source des autres.
 `QuestionRequest.Roll` (`first` par défaut, `second`) porte ce choix dans les trois modes
 (`--roll` en CLI, `roll` sur `/v1/openingbook.question`). Une question 2nd roll se pose dans la
-position que laisse le **meilleur coup d'ouverture du livre au score**, le seul après lequel
-toutes les réponses sont roulées ; `Verdict.Next` et l'étape qui suivait le coup de
-l'utilisateur disparaissent. Les lignes de réponse après un coup à égalité restent au livre et
-se jugent encore (`Answer.OpeningPlay`), mais aucun tirage ne les pose.
+position que laisse un **coup d'ouverture à égalité avec le meilleur au score**, tiré
+uniformément sur les lignes (coup à égalité, réponse, score) que le livre tient : tout coup du
+groupe de tête est une bonne ouverture, et la phase 2 roule les réponses après chacun (au plus
+`--after`). `Verdict.Next` et l'étape qui suivait le coup de l'utilisateur disparaissent.
