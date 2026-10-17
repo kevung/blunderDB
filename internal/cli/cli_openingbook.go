@@ -150,7 +150,11 @@ func (cli *CLI) runOpeningBookQuestion(args []string) error {
 		}
 		return nil
 	}
-	at := fmt.Sprintf("At %s (the opener %s-away, the replier %s-away)", scoreLabel(q.Score), awayOf(q.Score, 1), awayOf(q.Score, 0))
+	at := "At " + scoreLabel(q.Score)
+	// Money play has no away score, and the DMP label already says both sides are 1-away.
+	if q.Score != "money" && q.Score != "1-1" {
+		at += fmt.Sprintf(" (the opener %s-away, the replier %s-away)", awayOf(q.Score, 1), awayOf(q.Score, 0))
+	}
 	if q.Roll == openingbook.RollSecond {
 		fmt.Printf("%s, after the opening %s played %s: reply %s.\n", at, q.Opening, q.OpeningPlay, q.Reply)
 		fmt.Printf("XGID: %s\n", q.XGID)
@@ -174,11 +178,7 @@ func scoreLabel(key string) string {
 }
 
 func awayOf(key string, i int) string {
-	parts := strings.SplitN(key, "-", 2)
-	if len(parts) != 2 {
-		return "∞"
-	}
-	return parts[i]
+	return strings.SplitN(key, "-", 2)[i]
 }
 
 func (cli *CLI) runOpeningBookAnswer(args []string) error {
