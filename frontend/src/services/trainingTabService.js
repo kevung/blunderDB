@@ -29,6 +29,7 @@ import {
     answerChosen,
     attachCorrection,
     openingScoreKeys,
+    openingCategoryAvailable,
     DEFAULT_OPENING_CATEGORIES
 } from './trainingTab.js';
 import { invalidateTrainingStats } from '../stores/statsStore.js';
@@ -491,8 +492,12 @@ async function buildOpeningQuestion(roll) {
     // voudrait dire « n'importe laquelle ».
     const status = await OpeningBookStatus();
     if (!status?.scores?.length) return { question: null, refusal: 'bookEmpty' };
-    const scores = openingScoreKeys(openingCategories, status.scores);
-    if (!scores.length) return { question: null, refusal: 'noCategory' };
+    // Une catégorie d'abord, puis ses seules clés : tirer parmi l'union des clés ferait peser
+    // chaque catégorie de son nombre de lignes, et « scores de match » écraserait les autres.
+    const playable = openingCategories.filter((category) => openingCategoryAvailable(category, status.scores));
+    if (!playable.length) return { question: null, refusal: 'noCategory' };
+    const category = playable[Math.floor(Math.random() * playable.length)];
+    const scores = openingScoreKeys([category], status.scores);
     const drawn = await OpeningBookQuestion(/** @type {any} */ ({ roll: second ? 'second' : 'first', scores }));
     if (!drawn || drawn.empty) return { question: null, refusal: 'bookEmpty' };
     const plays = await openingLegalPlays(drawn.position);

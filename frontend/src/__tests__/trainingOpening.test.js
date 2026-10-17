@@ -107,7 +107,23 @@ describe('une session d’Ouverture', () => {
     test('Money et DMP tirés dès que le livre les tient', async () => {
         app.OpeningBookStatus.mockResolvedValue(/** @type {any} */ ({ lines: 9, scores: ['money', '1-1', '2-1', '1-2'] }));
         await startTrainingSession({ exercise: 'opening', seedSource: 'first' });
-        expect(app.OpeningBookQuestion.mock.calls[0][0]).toEqual({ roll: 'first', scores: ['money', '1-1', '2-1', '1-2'] });
+        expect(app.OpeningBookQuestion.mock.calls[0][0].scores).toHaveLength(1);
+        expect(['money', '1-1', '2-1', '1-2']).toContain(app.OpeningBookQuestion.mock.calls[0][0].scores[0]);
+    });
+
+    test('chaque tirage joue une seule catégorie, et toutes les catégories cochées sortent à égalité', async () => {
+        app.OpeningBookStatus.mockResolvedValue(/** @type {any} */ ({ lines: 9, scores: ['money', '1-1', '2-1', '1-2', '4-2'] }));
+        const random = vi.spyOn(Math, 'random');
+        const sent = [];
+        for (const r of [0, 0.3, 0.55, 0.8]) {
+            random.mockReturnValue(r);
+            app.OpeningBookQuestion.mockClear();
+            await startTrainingSession({ exercise: 'opening', seedSource: 'first', categories: ['money', 'dmp', 'gammonSave', 'gammonGo'] });
+            sent.push(app.OpeningBookQuestion.mock.calls[0][0].scores);
+            quitTrainingSession();
+        }
+        random.mockRestore();
+        expect(sent).toEqual([['money'], ['1-1'], ['2-1'], ['1-2']]);
     });
 
     test('aucune catégorie tenue par le livre : refus nommé, aucun tirage', async () => {
@@ -130,7 +146,8 @@ describe('une session d’Ouverture', () => {
 
     test('1st roll : chaque question est un coup d’ouverture, tiré à nouveau', async () => {
         expect(await startTrainingSession({ exercise: 'opening', seedSource: 'first' })).toBe(true);
-        expect(app.OpeningBookQuestion.mock.calls[0][0]).toEqual({ roll: 'first', scores: ['2-1', '1-2'] });
+        expect(app.OpeningBookQuestion.mock.calls[0][0].roll).toBe('first');
+        expect(['2-1', '1-2']).toContain(app.OpeningBookQuestion.mock.calls[0][0].scores[0]);
         expect(current().seedSource).toBe('first');
         expect(current().question).toMatchObject({ kind: 'opening', step: 'opening', opening: '31', reply: '', openingPlay: '', score: '4-2' });
 
@@ -154,7 +171,8 @@ describe('une session d’Ouverture', () => {
     test('2nd roll : la réponse se pose après le coup d’ouverture du livre, et se juge comme telle', async () => {
         app.OpeningBookQuestion.mockResolvedValue(/** @type {any} */ ({ empty: false, roll: 'second', opening: '31', openingPlay: '8/5 6/5', reply: '21', score: '4-2', position: board() }));
         expect(await startTrainingSession({ exercise: 'opening', seedSource: 'second' })).toBe(true);
-        expect(app.OpeningBookQuestion.mock.calls[0][0]).toEqual({ roll: 'second', scores: ['2-1', '1-2'] });
+        expect(app.OpeningBookQuestion.mock.calls[0][0].roll).toBe('second');
+        expect(['2-1', '1-2']).toContain(app.OpeningBookQuestion.mock.calls[0][0].scores[0]);
         expect(current().question).toMatchObject({ kind: 'opening', step: 'reply', opening: '31', openingPlay: '8/5 6/5', reply: '21' });
         expect(current().question.numbers[0].type).toBe('opening.reply');
 
@@ -172,7 +190,8 @@ describe('une session d’Ouverture', () => {
     test('un jet inconnu (mémoire d’une version passée) retombe sur 1st roll', async () => {
         expect(await startTrainingSession({ exercise: 'opening', seedSource: 'pool' })).toBe(true);
         expect(current().seedSource).toBe('first');
-        expect(app.OpeningBookQuestion.mock.calls[0][0]).toEqual({ roll: 'first', scores: ['2-1', '1-2'] });
+        expect(app.OpeningBookQuestion.mock.calls[0][0].roll).toBe('first');
+        expect(['2-1', '1-2']).toContain(app.OpeningBookQuestion.mock.calls[0][0].scores[0]);
     });
 
     test('hors délai, la correction vient du livre', async () => {
