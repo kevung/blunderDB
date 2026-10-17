@@ -924,7 +924,7 @@ written; while the book is not computed, every sub-command says so.
 
 ```bash
 ./blunderDB openingbook status
-./blunderDB openingbook question [--score 4-2,1-2,money] [--opening 31] [--reply 21] [--seed <n>]
+./blunderDB openingbook question [--score 4-2,1-2,1-1,money] [--opening 31] [--reply 21] [--seed <n>]
 ./blunderDB openingbook answer --opening <roll> --reply <roll> --score <score> [--after <opening play>] '<play>'
 ```
 
@@ -4269,7 +4269,7 @@ Options:
   -reply string
     	Reply roll of a second-roll question (21)
   -score string
-    	Score of the question (4-2, 1-2, money)
+    	Score of the question (4-2, 1-2 Crawford, 1-1 DMP, money)
 
 Example:
   blunderdb openingbook answer --opening 31 --score 4-2 '8/5 6/5'
@@ -4291,7 +4291,7 @@ Usage of openingbook question:
   -roll string
     	Which roll to ask: first (the opening play) or second (the reply after an opening play tied with the best) (default "first")
   -score string
-    	Scores to draw from, comma-separated (replier-opener away: 4-2, 1-2 Crawford, money)
+    	Scores to draw from, comma-separated (replier-opener away: 4-2, 1-2 Crawford; 1-1 is the DMP; money)
   -seed uint
     	Seed for a reproducible draw (0 = random)
 ```

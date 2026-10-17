@@ -112,3 +112,12 @@ position que laisse un **coup d'ouverture à égalité avec le meilleur au score
 uniformément sur les lignes (coup à égalité, réponse, score) que le livre tient : tout coup du
 groupe de tête est une bonne ouverture, et la phase 2 roule les réponses après chacun (au plus
 `--after`). `Verdict.Next` et l'étape qui suivait le coup de l'utilisateur disparaissent.
+
+## Amendement — money et DMP
+
+Le livre embarqué tient aussi les lignes `money` et `1-1` (le DMP, sentinelle `DMP` de
+`positions.go`, écrit `1-1`), calculées à part (`--scores money,1-1`, même réglage rapide) puis
+fusionnées au lot de la grille sans le recalculer. La liste de la règle 2 (`4-2`, `1-4`,
+`money`) est donc complète pour ces deux scores, et `Status.Scores` les annonce : l'exercice
+Ouverture par catégories (Money, DMP, Gammon save, Gammon go) s'active dessus. `XGScores()`
+est couverte par le test du livre embarqué comme la grille.

@@ -122,7 +122,7 @@ func (cli *CLI) runOpeningBookQuestion(args []string) error {
 	fs := flag.NewFlagSet("openingbook question", flag.ContinueOnError)
 	bookPath, format := openingBookFlags(fs)
 	roll := fs.String("roll", openingbook.RollFirst, "Which roll to ask: first (the opening play) or second (the reply after an opening play tied with the best)")
-	scores := fs.String("score", "", "Scores to draw from, comma-separated (replier-opener away: 4-2, 1-2 Crawford, money)")
+	scores := fs.String("score", "", "Scores to draw from, comma-separated (replier-opener away: 4-2, 1-2 Crawford; 1-1 is the DMP; money)")
 	openings := fs.String("opening", "", "Opening rolls to draw from, comma-separated (31,65)")
 	replies := fs.String("reply", "", "Reply rolls to draw from, comma-separated (21,66); --roll second only")
 	seed := fs.Uint64("seed", 0, "Seed for a reproducible draw (0 = random)")
@@ -167,6 +167,9 @@ func scoreLabel(key string) string {
 	if key == "money" {
 		return "money play"
 	}
+	if key == "1-1" {
+		return "DMP (double match point)"
+	}
 	return "score " + key
 }
 
@@ -183,7 +186,7 @@ func (cli *CLI) runOpeningBookAnswer(args []string) error {
 	bookPath, format := openingBookFlags(fs)
 	opening := fs.String("opening", "", "Opening roll of the question (31)")
 	reply := fs.String("reply", "", "Reply roll of a second-roll question (21)")
-	score := fs.String("score", "", "Score of the question (4-2, 1-2, money)")
+	score := fs.String("score", "", "Score of the question (4-2, 1-2 Crawford, 1-1 DMP, money)")
 	after := fs.String("after", "", "The opening play the reply follows, as the second-roll question names it; empty judges the opening play")
 	fs.Usage = func() {
 		fmt.Println("Usage: blunderdb openingbook answer --opening <roll> --score <score> [--reply <roll> --after <opening play>] [options] <play>")

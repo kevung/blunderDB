@@ -1737,7 +1737,7 @@ meilleur à ce score, avec ce coup et le XGID de la position de réponse.
 
 * ``--roll first|second`` — Le jet posé : ``first`` (l'ouverture, par défaut) ou ``second`` (la réponse).
 * ``--score <liste>`` — Scores à tirer, séparés par des virgules : ``4-2``
-  (le répondeur à 4 points, l'ouvreur à 2), ``1-2`` (partie Crawford), ``money``.
+  (le répondeur à 4 points, l'ouvreur à 2), ``1-2`` (partie Crawford), ``1-1`` (le DMP, un point partout), ``money``.
 * ``--opening <liste>``, ``--reply <liste>`` — Jets d'ouverture ou de réponse à tirer (``31,65``) ; ``--reply`` avec ``--roll second`` seulement.
 * ``--seed <n>`` — Tirage reproductible (0 = au hasard).
 * ``--book <fichier>`` — Un livre ``.jsonl`` ou ``.jsonl.gz`` à la place du livre embarqué.

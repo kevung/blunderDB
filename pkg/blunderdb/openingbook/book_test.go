@@ -234,7 +234,7 @@ func TestDefault_EmbeddedBookCoversTheGrid(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, s := range GridScores() {
+	for _, s := range append(GridScores(), XGScores()...) {
 		for _, o := range Openings() {
 			line, ok := b.Lookup(OpeningKey(o, s))
 			if !ok || len(line.Candidates) == 0 {
@@ -246,6 +246,43 @@ func TestDefault_EmbeddedBookCoversTheGrid(t *testing.T) {
 				if _, ok := b.Lookup(ReplyKey(o, best, r, s)); !ok {
 					t.Errorf("no reply %s after %s %s at %s", r, o, best, s)
 				}
+			}
+		}
+	}
+}
+
+// A drill at money or at DMP asks both rolls from the embedded book and
+// grades the book's own best play as right.
+func TestDefault_DrillsMoneyAndDMP(t *testing.T) {
+	b, err := Default()
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, key := range []string{"money", "1-1"} {
+		s, err := ParseScore(key)
+		if err != nil {
+			t.Fatal(err)
+		}
+		for _, roll := range []string{RollFirst, RollSecond} {
+			q, err := b.Draw(QuestionRequest{Roll: roll, Scores: []string{key}, Seed: 3})
+			if err != nil || q.Empty || q.Roll != roll || q.Score != key {
+				t.Fatalf("%s %s: %+v, %v", key, roll, q, err)
+			}
+			o, err := ParseRoll(q.Opening)
+			if err != nil {
+				t.Fatal(err)
+			}
+			line, ok := b.Lookup(OpeningKey(o, s))
+			if roll == RollSecond {
+				r, _ := ParseRoll(q.Reply)
+				line, ok = b.Lookup(ReplyKey(o, q.OpeningPlay, r, s))
+			}
+			if !ok || len(line.Candidates) == 0 {
+				t.Fatalf("%s %s: no line behind %+v", key, roll, q)
+			}
+			v, err := b.Grade(Answer{Opening: q.Opening, OpeningPlay: q.OpeningPlay, Reply: q.Reply, Score: key, Notation: line.Candidates[0].Move})
+			if err != nil || !v.Legal || !v.Right || v.Played != 0 {
+				t.Fatalf("%s %s: %+v, %v", key, roll, v, err)
 			}
 		}
 	}
