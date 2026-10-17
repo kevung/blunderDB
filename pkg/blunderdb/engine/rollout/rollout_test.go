@@ -344,6 +344,32 @@ func TestMatchMoveRollout(t *testing.T) {
 	}
 }
 
+// TestDMPRolloutIsGammonless: at double match point (both sides 1-away,
+// post-Crawford) a game is worth the match whatever its stake or cube, so
+// without the luck correction every play's normalised equity is exactly
+// 2·P(win) − 1 over the games played, gammons included.
+func TestDMPRolloutIsGammonless(t *testing.T) {
+	pos := decode(t, "XGID=-b----E-C---eE---c-e----B-:0:0:1:31:1:1:0:2:10")
+	if pos.Score != [2]int{domain.PostCrawford, domain.PostCrawford} {
+		t.Fatalf("score %v, want DMP", pos.Score)
+	}
+	s := Settings{Truncation: 0, MinGames: 72, MaxGames: 72, Ply: 0, Candidates: 2, Seed: 7}
+	r, err := Run(context.Background(), pos, s, Options{NoBearoffTable: true, withoutLuck: true})
+	if err != nil {
+		t.Fatal(err)
+	}
+	gammons := 0.0
+	for _, c := range r.Candidates {
+		gammons += c.Chances[1] + c.Chances[3]
+		if want := 2*c.Chances[0] - 1; math.Abs(c.Equity-want) > 1e-9 {
+			t.Fatalf("DMP %s: equity %+.6f, want 2·P(win)−1 = %+.6f", c.Move, c.Equity, want)
+		}
+	}
+	if gammons == 0 {
+		t.Fatal("no gammon in the games played: the check proves nothing")
+	}
+}
+
 // A play named in another engine's dialect — a chained hop, steps in another
 // order — is rolled out under the name it was given.
 func TestNamedMovesInAnotherDialect(t *testing.T) {

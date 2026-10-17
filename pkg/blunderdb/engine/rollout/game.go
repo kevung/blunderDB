@@ -130,11 +130,19 @@ func (t *table) fromSearch(v float64) float64 {
 	return v
 }
 
+// canDouble follows gnubg's GetDPEq: at a score the cube is dead for a
+// mover whose single win at its current value already takes the match. The
+// opponent always takes such a double, so it can only raise the mover's
+// losses; at DMP it would otherwise pass back and forth until the value
+// overflows.
 func (t *table) canDouble(c cubeState, mover uint8) bool {
 	if t.crawford || (c.owner != noOwner && c.owner != int(mover)) {
 		return false
 	}
-	return t.match || c.value < maxMoneyCube
+	if t.match {
+		return c.value < t.away[mover]
+	}
+	return c.value < maxMoneyCube
 }
 
 // configure aims s at mover's view of the cube and score. SearchConfig has

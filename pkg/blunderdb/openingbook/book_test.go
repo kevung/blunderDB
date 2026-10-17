@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
 )
 
 func TestPositions_OpeningsAndRepliesResolveAndDiffer(t *testing.T) {
@@ -68,6 +69,57 @@ func TestReplyPosition_CrawfordReadsBack(t *testing.T) {
 	}
 }
 
+// TestReplyPosition_DMPReadsBack: a DMP position is post-Crawford on both
+// sides; its XGID (a 2-point match at 1-1, Crawford flag 0) reads back as the
+// same sentinel, never as a Crawford game.
+func TestReplyPosition_DMPReadsBack(t *testing.T) {
+	pos, err := ReplyPosition(Roll{3, 1}, "8/5 6/5", Roll{5, 2}, DMP)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if pos.Score != [2]int{domain.PostCrawford, domain.PostCrawford} {
+		t.Fatalf("DMP score %v, want both post-Crawford", pos.Score)
+	}
+	x := domain.EncodeXGID(&pos)
+	if !strings.Contains(x, ":1:1:0:2:") {
+		t.Fatalf("DMP XGID %s, want score 1-1 of a 2-point match, Crawford 0", x)
+	}
+	back, err := domain.DecodeXGID(x)
+	if err != nil || back.Score != pos.Score {
+		t.Fatalf("DMP score %v reads back as %v (%v)", pos.Score, back.Score, err)
+	}
+}
+
+// TestDMPEquityIsGammonless: at DMP the cube and gammons are worth nothing,
+// so the normalised equity of every play is 2·P(win) − 1. Money play, where
+// gammons count, is the control that the identity is not trivial.
+func TestDMPEquityIsGammonless(t *testing.T) {
+	eval := func(s Score) []domain.CheckerMove {
+		t.Helper()
+		pos, err := ReplyPosition(Roll{3, 1}, "8/5 6/5", Roll{6, 4}, s)
+		if err != nil {
+			t.Fatal(err)
+		}
+		r, err := gammonnet.EvaluatePosition(pos, 0, 0, 0)
+		if err != nil || len(r.Moves) == 0 {
+			t.Fatalf("%s: %v (%d moves)", s, err, len(r.Moves))
+		}
+		return r.Moves
+	}
+	for _, m := range eval(DMP) {
+		if m.PlayerGammonChance <= 0 {
+			t.Fatalf("%s: no gammon chance, the check proves nothing", m.Move)
+		}
+		if want := 2*m.PlayerWinChance/100 - 1; math.Abs(m.Equity-want) > 1e-4 {
+			t.Fatalf("DMP %s: equity %+.5f, want 2·P(win)−1 = %+.5f", m.Move, m.Equity, want)
+		}
+	}
+	m := eval(Money)[0]
+	if math.Abs(m.Equity-(2*m.PlayerWinChance/100-1)) < 0.01 {
+		t.Fatalf("money %s: equity %+.5f is gammonless too, the control fails", m.Move, m.Equity)
+	}
+}
+
 func TestScores(t *testing.T) {
 	if n := len(GridScores()); n != 20 {
 		t.Fatalf("grid has %d scores, want 20", n)
@@ -75,13 +127,13 @@ func TestScores(t *testing.T) {
 	if n := len(FullScores()); n != 48 {
 		t.Fatalf("full grid has %d scores, want 48", n)
 	}
-	for _, s := range append(FullScores(), Money) {
+	for _, s := range append(FullScores(), Money, DMP) {
 		back, err := ParseScore(s.String())
 		if err != nil || back != s {
 			t.Fatalf("%s reads back as %v (%v)", s, back, err)
 		}
 	}
-	for _, bad := range []string{"1-1", "0-3", "3", "a-b", "-1-3"} {
+	for _, bad := range []string{"0-3", "0-0", "1-0", "3", "a-b", "-1-3"} {
 		if _, err := ParseScore(bad); err == nil {
 			t.Fatalf("score %q accepted", bad)
 		}
@@ -89,6 +141,13 @@ func TestScores(t *testing.T) {
 	got, err := ParseScores("4-2, 2-4,4-2,money")
 	if err != nil || len(got) != 3 {
 		t.Fatalf("list gives %v (%v), want 3 distinct scores", got, err)
+	}
+	if err := (Score{domain.Crawford, domain.Crawford}).Valid(); err == nil {
+		t.Fatal("two Crawford sides accepted: 1-1 is DMP, post-Crawford")
+	}
+	xg, err := ParseScores("xg")
+	if err != nil || len(xg) != 4 || xg[0] != Money || xg[1] != DMP || xg[2].String() != "2-1" || xg[3].String() != "1-2" {
+		t.Fatalf("xg scores %v (%v), want money, 1-1, 2-1, 1-2", xg, err)
 	}
 }
 
