@@ -49,25 +49,35 @@ func Replies() []Roll {
 
 // Score is the match score of a reply position, as away scores (CONTEXT.md,
 // « Away score »): Replier is the player on roll, Opener the one who moved
-// first. 1 is the Crawford game; both −1 is money play.
+// first. 1 is the Crawford game; both −1 is money play; both 0 is DMP.
 type Score struct{ Replier, Opener int }
 
 // Money is the money-play score.
 var Money = Score{domain.Unlimited, domain.Unlimited}
 
+// DMP is double match point, both players one point away. Someone reached
+// 1-away first and played the Crawford game, so the game at 1-1 is always
+// post-Crawford: both sides carry the post-Crawford sentinel, the cube is
+// alive but worthless and gammons count for nothing.
+var DMP = Score{domain.PostCrawford, domain.PostCrawford}
+
 // String is the book's key for the score: "4-2" (the replier 4-away, the
-// opener 2-away), "1-4" for a Crawford game, "money".
+// opener 2-away), "1-4" for a Crawford game, "1-1" for DMP, "money".
 func (s Score) String() string {
-	if s == Money {
+	switch s {
+	case Money:
 		return "money"
+	case DMP:
+		return "1-1"
 	}
 	return fmt.Sprintf("%d-%d", s.Replier, s.Opener)
 }
 
-// Valid refuses a score the book does not hold: post-Crawford (0), both
-// players one point away, or a half-money score.
+// Valid refuses a score the book does not hold: post-Crawford against a
+// player more than one point away, or a half-money score. Both sides one
+// point away is DMP, never a Crawford game.
 func (s Score) Valid() error {
-	if s == Money {
+	if s == Money || s == DMP {
 		return nil
 	}
 	ok := func(a int) bool { return a >= domain.Crawford && a <= 25 }
@@ -83,6 +93,9 @@ func ParseScore(key string) (Score, error) {
 	if strings.EqualFold(key, "money") {
 		return Money, nil
 	}
+	if key == "1-1" {
+		return DMP, nil
+	}
 	a, b, found := strings.Cut(key, "-")
 	if !found {
 		return Score{}, fmt.Errorf("openingbook: score %q is not replier-opener (e.g. 4-2) or money", key)
@@ -93,6 +106,10 @@ func ParseScore(key string) (Score, error) {
 		return Score{}, fmt.Errorf("openingbook: score %q is not replier-opener (e.g. 4-2) or money", key)
 	}
 	s := Score{r, o}
+	if s == DMP {
+		// The sentinel is internal: DMP is written "1-1".
+		return Score{}, fmt.Errorf("openingbook: score %q is not one the book holds (DMP is 1-1)", key)
+	}
 	return s, s.Valid()
 }
 
@@ -114,6 +131,15 @@ func GridScores() []Score {
 	return out
 }
 
+// XGScores are the four scores of an XG-style opening drill: money, DMP,
+// gammon save (the replier 2-away against an opener 1-away Crawford) and
+// gammon go (the reverse). Kept apart from GridScores: the grid is what the
+// embedded book is held to cover, and money and DMP join it once their lines
+// are rolled.
+func XGScores() []Score {
+	return []Score{Money, DMP, {2, domain.Crawford}, {domain.Crawford, 2}}
+}
+
 // FullScores is the complete grid: every pair of 2- to 7-away (36) and every
 // Crawford game at 1-away against 2- to 7-away, both ways (12).
 func FullScores() []Score {
@@ -129,14 +155,16 @@ func FullScores() []Score {
 	return out
 }
 
-// ParseScores reads "grid", "full", or a comma-separated list of keys
-// ("4-2,2-4,1-2,money").
+// ParseScores reads "grid", "full", "xg", or a comma-separated list of keys
+// ("4-2,2-4,1-2,1-1,money").
 func ParseScores(spec string) ([]Score, error) {
 	switch strings.ToLower(strings.TrimSpace(spec)) {
 	case "", "grid":
 		return GridScores(), nil
 	case "full":
 		return FullScores(), nil
+	case "xg":
+		return XGScores(), nil
 	}
 	var out []Score
 	seen := map[Score]bool{}
