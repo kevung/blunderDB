@@ -122,9 +122,8 @@ func (l *Line) Key() (Key, error) {
 
 // The tie rule of the book: a play is level with the best when its gap is
 // under tieZ standard deviations of the difference plus tieBias, the bias
-// measured of the truncated 0-ply rollout against a full 2-ply one
-// (tasks/etude-livre-ouverture-scores.md, § 2 and § 4). Refining below it
-// would measure the setting, not the play.
+// measured of the truncated 0-ply rollout against a full 2-ply one. Refining
+// below it would measure the setting, not the play.
 const (
 	tieZ    = 1.96
 	tieBias = 0.005

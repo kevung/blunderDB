@@ -1,6 +1,7 @@
 package openingbook
 
 import (
+	"math"
 	"strings"
 	"testing"
 
@@ -109,7 +110,8 @@ func TestRank_TieRule(t *testing.T) {
 	if r[2].Move != "c" || r[2].Tied {
 		t.Fatalf("c should trail: %+v", r[2])
 	}
-	if d := r[1].CI95 - 1.96*r[1].SigmaDiff; d != 0 {
+	// A tolerance, not equality: arm64 fuses the multiply-add and moves the last bit.
+	if d := r[1].CI95 - 1.96*r[1].SigmaDiff; math.Abs(d) > 1e-12 {
 		t.Fatalf("CI95 is not 1.96 σ(diff): %g", d)
 	}
 }
