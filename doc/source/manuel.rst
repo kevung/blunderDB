@@ -4882,10 +4882,10 @@ en *2nd roll*, la réponse de l'adversaire dans la position que laisse un
 le livre suit et déjà joué au plateau. Le coup
 est jugé contre le **livre d'ouverture** embarqué dans blunderDB, calculé par ses propres rollouts : pour
 chaque score de sa grille — de 2 à 7 points de part et d'autre, à un point
-d'écart au plus, et la partie Crawford —, les quinze jets d'ouverture, puis les
-réponses après les coups d'ouverture à égalité avec le meilleur à ce score. Le livre est la seule
-source de l'exercice ; tant qu'il n'est pas calculé, l'exercice **le dit et ne
-démarre pas**.
+d'écart au plus, et la partie Crawford à 1 away contre 2 ou 4 away, dans les
+deux sens —, les quinze jets d'ouverture, puis les réponses après les coups
+d'ouverture à égalité avec le meilleur à ce score. Le livre est la seule source
+de l'exercice.
 
 Tant qu'une question d'*Évaluation*, de *Décision* ou d'*Ouverture* attend sa
 réponse, le panneau Analyse est masqué : il porte la réponse.

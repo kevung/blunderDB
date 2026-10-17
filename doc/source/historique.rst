@@ -42,6 +42,15 @@ ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
   leur fichier source, et ``match repair --id`` ou le bouton ⟲ de la fiche les
   réécrit depuis ce fichier.
 
+0.42.0 (2026-10-17)
+-------------------
+
+- **Quel coup à ce score ? L'exercice Ouverture** : l'onglet Entraînement pose le coup d'ouverture (*1st roll*) ou la réponse (*2nd roll*) d'une partie à un score, joué au plateau et jugé contre un livre d'ouverture embarqué, calculé par les rollouts de blunderDB sur vingt scores ; tout coup à égalité avec le meilleur est juste, et en *2nd roll* le coup d'ouverture déjà joué est tiré parmi ceux-là. Le verdict est une marque juste ou faux et le tableau des candidats du livre. ``train opening``, ``blunderdb openingbook`` et les routes ``openingbook.*`` du serveur en sont les autres formes.
+- **ENTRÉE enchaîne les questions d'entraînement** : pendant une *Décision* ou une *Ouverture*, ENTRÉE valide le coup joué au plateau, où que soit le focus hors d'un champ, d'un bouton ou d'une fenêtre, puis passe à la question suivante, ou termine la séance, une fois le verdict affiché ; deux appuis rapprochés ne notent pas la réponse deux fois.
+- **Côté serveur** : la route ``matches.byPosition`` liste les matchs où un coup a été joué sur une position, et l'import d'un fichier XG dans une base PostgreSQL fait deux fois moins de requêtes par position et va deux fois plus vite.
+- Corrections notables : un fichier de match dont une position porte seize pions d'un camp est refusé par le serveur comme invalide, et non plus par une erreur interne.
+- Voir :ref:`panneau_entrainement`, :ref:`raccourcis`, :ref:`cli_openingbook`, :ref:`metrique_livre_ouverture` et :ref:`api_reference`.
+
 0.41.0 (2026-10-16)
 -------------------
 

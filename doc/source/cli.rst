@@ -1720,7 +1720,7 @@ L'exercice *Ouverture* du panneau Entraînement (voir :ref:`panneau_entrainement
 en ligne de commande : le coup d'ouverture (1st roll) ou la réponse (2nd roll)
 d'une partie à un score, tiré du livre d'ouverture embarqué et jugé contre lui. Tout coup à égalité avec le
 meilleur est juste (voir :ref:`metrique_livre_ouverture`). Aucune base n'est
-lue ni écrite ; tant que le livre n'est pas calculé, chaque sous-commande le dit.
+lue ni écrite.
 
 **openingbook status** — Le nombre de lignes du livre et ses scores.
 
