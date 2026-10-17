@@ -1717,15 +1717,17 @@ openingbook — Quel coup à ce score ?
 ------------------------------------
 
 L'exercice *Ouverture* du panneau Entraînement (voir :ref:`panneau_entrainement`)
-en ligne de commande : les deux premiers coups d'une partie à un score, tirés du
-livre d'ouverture embarqué et jugés contre lui. Tout coup à égalité avec le
+en ligne de commande : le coup d'ouverture (1st roll) ou la réponse (2nd roll)
+d'une partie à un score, tiré du livre d'ouverture embarqué et jugé contre lui. Tout coup à égalité avec le
 meilleur est juste (voir :ref:`metrique_livre_ouverture`). Aucune base n'est
 lue ni écrite ; tant que le livre n'est pas calculé, chaque sous-commande le dit.
 
 **openingbook status** — Le nombre de lignes du livre et ses scores.
 
-**openingbook question** — Tire une question : le jet d'ouverture, le jet de
-réponse et le score, avec le XGID de la position d'ouverture.
+**openingbook question** — Tire une question : le jet d'ouverture et le score,
+avec le XGID de la position d'ouverture ; avec ``--roll second``, le jet de
+réponse dans la position que laisse le meilleur coup d'ouverture du livre à ce
+score, avec ce coup et le XGID de la position de réponse.
 
 .. code-block:: bash
 
@@ -1733,9 +1735,10 @@ réponse et le score, avec le XGID de la position d'ouverture.
 
 **Options:**
 
+* ``--roll first|second`` — Le jet posé : ``first`` (l'ouverture, par défaut) ou ``second`` (la réponse).
 * ``--score <liste>`` — Scores à tirer, séparés par des virgules : ``4-2``
   (le répondeur à 4 points, l'ouvreur à 2), ``1-2`` (partie Crawford), ``money``.
-* ``--opening <liste>``, ``--reply <liste>`` — Jets d'ouverture ou de réponse à tirer (``31,65``).
+* ``--opening <liste>``, ``--reply <liste>`` — Jets d'ouverture ou de réponse à tirer (``31,65``) ; ``--reply`` avec ``--roll second`` seulement.
 * ``--seed <n>`` — Tirage reproductible (0 = au hasard).
 * ``--book <fichier>`` — Un livre ``.jsonl`` ou ``.jsonl.gz`` à la place du livre embarqué.
 * ``--format text|json`` — Format de sortie.
@@ -1743,21 +1746,21 @@ réponse et le score, avec le XGID de la position d'ouverture.
 **openingbook answer** — Juge un coup et affiche chaque candidat contre le
 meilleur : écart, IC 95 % et « tied » (à égalité), en équité normalisée au
 score, avec le nombre de parties et le réglage du rollout. Sans ``--after``,
-le coup est l'ouverture, et la sortie donne la commande de la réponse — après
-votre coup s'il est à égalité et que le livre le suit, sinon après le meilleur
-coup d'ouverture du livre ; avec ``--after``, le coup est la réponse jouée
-après ce coup d'ouverture.
+le coup est l'ouverture ; avec ``--reply`` et ``--after``, le coup est la
+réponse jouée après ce coup d'ouverture, celui que nomme la question
+``--roll second``.
 
 .. code-block:: bash
 
-   ./blunderdb openingbook answer --opening <jet> --reply <jet> --score <score> [--after <coup>] [options] '<coup>'
+   ./blunderdb openingbook answer --opening <jet> --score <score> [--reply <jet> --after <coup>] [options] '<coup>'
 
 **Exemples:**
 
 .. code-block:: bash
 
    ./blunderdb openingbook question --score 4-2,2-4
-   ./blunderdb openingbook answer --opening 31 --reply 21 --score 4-2 '8/5 6/5'
+   ./blunderdb openingbook answer --opening 31 --score 4-2 '8/5 6/5'
+   ./blunderdb openingbook question --roll second --score 4-2
    ./blunderdb openingbook answer --opening 31 --reply 21 --score 4-2 --after '8/5 6/5' '13/11 6/5'
 
 .. _cli_cubematrix:

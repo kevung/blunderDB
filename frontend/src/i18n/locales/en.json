@@ -2176,10 +2176,13 @@
         "sources": {
             "board": "Board",
             "library": "Library",
-            "pool": "Pool"
+            "pool": "Pool",
+            "first": "1st roll",
+            "second": "2nd roll"
         },
         "exerciseLabel": "Exercise",
         "source": "Source",
+        "roll": "Roll",
         "limit": "Limit per question",
         "limitNone": "None",
         "limitSeconds": "{n} s",
@@ -2252,21 +2255,18 @@
             "promptReply": "Play the reply {roll}.",
             "score": "You {you} away, the opponent {them} away.",
             "money": "Money game.",
-            "followsBest": "Your opening is not the one the book follows: the reply is asked after its best play at this score, {move}.",
             "after": "After the opening {move}.",
-            "right": "Right: {move} is tied with the best.",
-            "unranked": "{move} is not among the book's candidates.",
-            "behind": "{move} is {gap} behind the best.",
             "colPlay": "Play",
             "colGap": "Gap",
             "colCi": "95 % CI",
             "tied": "tied",
-            "scale": "Gaps in normalised equity at the score (±1 = the centred cube); “tied”: gap under 1.96·σ(gap) + 0.005.",
             "precision": "Rollout {ply}, {truncation}, {games} games, {bearoff}",
             "truncated": "truncated at {n}",
             "untruncated": "not truncated",
             "withBearoff": "with the exact bearoff table",
-            "withoutBearoff": "without the exact bearoff table"
+            "withoutBearoff": "without the exact bearoff table",
+            "markRight": "Right",
+            "markWrong": "Wrong"
         }
     },
     "explain": {

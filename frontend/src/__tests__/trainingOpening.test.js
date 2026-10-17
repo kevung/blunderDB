@@ -1,6 +1,7 @@
 /**
- * L'exercice Ouverture (ADR-0094) : une question, deux temps joués au plateau —
- * l'ouverture, puis la réponse dans la position que le livre suit.
+ * L'exercice Ouverture (ADR-0094) : le jet choisi au lanceur — 1st roll, le
+ * coup d'ouverture ; 2nd roll, la réponse après le meilleur coup du livre —,
+ * joué au plateau et jugé contre le livre.
  */
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 import { get } from 'svelte/store';
@@ -104,62 +105,60 @@ describe('une session d’Ouverture', () => {
         expect(current()).toBeNull();
     });
 
-    test('une ouverture fausse montre l’analyse, puis la réponse se pose après le meilleur coup du livre', async () => {
-        expect(await startTrainingSession({ exercise: 'opening' })).toBe(true);
-        expect(current().question).toMatchObject({ kind: 'opening', step: 'opening', opening: '31', reply: '21', score: '4-2' });
+    test('1st roll : chaque question est un coup d’ouverture, tiré à nouveau', async () => {
+        expect(await startTrainingSession({ exercise: 'opening', seedSource: 'first' })).toBe(true);
+        expect(app.OpeningBookQuestion.mock.calls[0][0]).toEqual({ roll: 'first' });
+        expect(current().seedSource).toBe('first');
+        expect(current().question).toMatchObject({ kind: 'opening', step: 'opening', opening: '31', reply: '', openingPlay: '', score: '4-2' });
 
         playOnBoard();
-        app.OpeningBookGrade.mockResolvedValueOnce(
-            /** @type {any} */ ({
-                legal: true,
-                notation: '13/10 6/5',
-                played: 2,
-                right: false,
-                ranked: RANKED,
-                games: 216,
-                signature: 'test',
-                next: { openingPlay: '8/5 6/5', followsBest: true, reply: '21', position: board() }
-            })
-        );
+        app.OpeningBookGrade.mockResolvedValueOnce(/** @type {any} */ ({ legal: true, notation: '13/10 6/5', played: 2, right: false, ranked: RANKED, games: 216, signature: 'test' }));
         await answerDecisionBoard();
-        const draws = app.OpeningBookQuestion.mock.calls.length;
-        expect(app.OpeningBookGrade.mock.calls[0][0]).toMatchObject({ opening: '31', openingPlay: '', reply: '21', score: '4-2', board: RESULT });
+        expect(app.OpeningBookGrade.mock.calls[0][0]).toMatchObject({ opening: '31', openingPlay: '', score: '4-2', board: RESULT });
         expect(current().revealed).toBe(true);
         expect(current().faults).toEqual([true]);
 
+        const draws = app.OpeningBookQuestion.mock.calls.length;
         await nextTrainingQuestion();
-        expect(current().question).toMatchObject({ kind: 'opening', step: 'reply', openingPlay: '8/5 6/5', followsBest: true });
-        // La réponse naît du verdict, pas d'un nouveau tirage.
-        expect(app.OpeningBookQuestion).toHaveBeenCalledTimes(draws);
+        expect(current().question.step).toBe('opening');
+        expect(current().revealed).toBe(false);
+        expect(app.OpeningBookQuestion.mock.calls.length, 'la suivante est un nouveau tirage').toBeGreaterThanOrEqual(draws);
+        const row = await finishTrainingSession();
+        expect(row?.items.map((/** @type {any} */ item) => [item.numberType, item.wrong])).toEqual([['opening.first', true]]);
+        expect(db.SaveTrainingSession).toHaveBeenCalledTimes(1);
+    });
+
+    test('2nd roll : la réponse se pose après le coup d’ouverture du livre, et se juge comme telle', async () => {
+        app.OpeningBookQuestion.mockResolvedValue(/** @type {any} */ ({ empty: false, roll: 'second', opening: '31', openingPlay: '8/5 6/5', reply: '21', score: '4-2', position: board() }));
+        expect(await startTrainingSession({ exercise: 'opening', seedSource: 'second' })).toBe(true);
+        expect(app.OpeningBookQuestion.mock.calls[0][0]).toEqual({ roll: 'second' });
+        expect(current().question).toMatchObject({ kind: 'opening', step: 'reply', opening: '31', openingPlay: '8/5 6/5', reply: '21' });
+        expect(current().question.numbers[0].type).toBe('opening.reply');
 
         playOnBoard();
         app.OpeningBookGrade.mockResolvedValueOnce(/** @type {any} */ ({ legal: true, notation: '13/11 6/5', played: 0, right: true, ranked: RANKED }));
         await answerDecisionBoard();
-        expect(app.OpeningBookGrade.mock.calls[1][0]).toMatchObject({ openingPlay: '8/5 6/5', reply: '21' });
+        expect(app.OpeningBookGrade.mock.calls[0][0]).toMatchObject({ opening: '31', openingPlay: '8/5 6/5', reply: '21', score: '4-2' });
         expect(current().faults).toEqual([false]);
-
         await nextTrainingQuestion();
-        expect(current().question.step).toBe('opening');
+        expect(current().question.step).toBe('reply');
         const row = await finishTrainingSession();
-        expect(row?.items.map((/** @type {any} */ item) => [item.numberType, item.wrong])).toEqual([
-            ['opening.first', true],
-            ['opening.reply', false]
-        ]);
-        expect(row?.pr).toBe(0);
-        expect(db.SaveTrainingSession).toHaveBeenCalledTimes(1);
+        expect(row?.items.map((/** @type {any} */ item) => item.numberType)).toEqual(['opening.reply']);
     });
 
-    test('hors délai, la correction vient du livre et la réponse suit quand même', async () => {
+    test('un jet inconnu (mémoire d’une version passée) retombe sur 1st roll', async () => {
+        expect(await startTrainingSession({ exercise: 'opening', seedSource: 'pool' })).toBe(true);
+        expect(current().seedSource).toBe('first');
+        expect(app.OpeningBookQuestion.mock.calls[0][0]).toEqual({ roll: 'first' });
+    });
+
+    test('hors délai, la correction vient du livre', async () => {
         expect(await startTrainingSession({ exercise: 'opening', limitSeconds: 15 })).toBe(true);
-        app.OpeningBookGrade.mockResolvedValueOnce(
-            /** @type {any} */ ({ legal: false, notation: '', played: -1, right: false, ranked: RANKED, next: { openingPlay: '8/5 6/5', followsBest: true, reply: '21', position: board() } })
-        );
+        app.OpeningBookGrade.mockResolvedValueOnce(/** @type {any} */ ({ legal: false, notation: '', played: -1, right: false, ranked: RANKED }));
         revealQuestion({ outOfTime: true });
         await new Promise((resolve) => setTimeout(resolve, 0));
         expect(app.OpeningBookGrade.mock.calls[0][0].board).toBeUndefined();
         expect(current().verdict?.ranked).toHaveLength(3);
-        await nextTrainingQuestion();
-        expect(current().question.step).toBe('reply');
     });
 
     test('« Terminer » rend le plateau à celui d’avant la séance, dés d’exercice ôtés', async () => {

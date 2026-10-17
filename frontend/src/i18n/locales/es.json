@@ -2176,10 +2176,13 @@
         "sources": {
             "board": "Tablero",
             "library": "Base",
-            "pool": "Vivero"
+            "pool": "Vivero",
+            "first": "1.ª tirada",
+            "second": "2.ª tirada"
         },
         "exerciseLabel": "Ejercicio",
         "source": "Fuente",
+        "roll": "Tirada",
         "limit": "Límite por pregunta",
         "limitNone": "Ninguno",
         "limitSeconds": "{n} s",
@@ -2252,21 +2255,18 @@
             "promptReply": "Juegue la respuesta {roll}.",
             "score": "Usted a {you} puntos, el rival a {them}.",
             "money": "Partida por dinero.",
-            "followsBest": "Su apertura no es la que sigue el libro: la respuesta se plantea tras su mejor jugada en este marcador, {move}.",
             "after": "Tras la apertura {move}.",
-            "right": "Correcto: {move} está empatada con la mejor.",
-            "unranked": "{move} no está entre los candidatos del libro.",
-            "behind": "{move} está a {gap} de la mejor.",
             "colPlay": "Jugada",
             "colGap": "Diferencia",
             "colCi": "IC 95 %",
             "tied": "empatada",
-            "scale": "Diferencias en equity normalizada al marcador (±1 = el cubo centrado); «empatada»: diferencia inferior a 1,96·σ(diferencia) + 0,005.",
             "precision": "Rollout {ply}, {truncation}, {games} partidas, {bearoff}",
             "truncated": "truncado a {n}",
             "untruncated": "sin truncar",
             "withBearoff": "con la tabla de bearoff exacta",
-            "withoutBearoff": "sin tabla de bearoff exacta"
+            "withoutBearoff": "sin tabla de bearoff exacta",
+            "markRight": "Correcto",
+            "markWrong": "Incorrecto"
         }
     },
     "explain": {

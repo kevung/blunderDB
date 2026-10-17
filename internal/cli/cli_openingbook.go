@@ -56,13 +56,14 @@ func (cli *CLI) OpeningBookSubcommands() []string {
 func (cli *CLI) printOpeningBookUsage() {
 	fmt.Println("Usage: blunderdb openingbook <sub-command> [options]")
 	fmt.Println()
-	fmt.Println("The exercise « which play at this score? »: a reply to the opening move at")
-	fmt.Println("a match score, judged against the opening book embedded in blunderDB.")
+	fmt.Println("The exercise « which play at this score? »: the opening play (1st roll) or")
+	fmt.Println("the reply after the book's best opening play (2nd roll) at a match score,")
+	fmt.Println("judged against the opening book embedded in blunderDB.")
 	fmt.Println("Every play tied with the best is a right answer.")
 	fmt.Println()
 	fmt.Println("Sub-commands:")
 	fmt.Println("  status    How many lines the book holds, and at which scores")
-	fmt.Println("  question  Draw a reply position at a score")
+	fmt.Println("  question  Draw a position to play at a score (--roll first|second)")
 	fmt.Println("  answer    Judge a play and show every candidate against the best")
 }
 
@@ -120,9 +121,10 @@ func splitList(s string) []string {
 func (cli *CLI) runOpeningBookQuestion(args []string) error {
 	fs := flag.NewFlagSet("openingbook question", flag.ContinueOnError)
 	bookPath, format := openingBookFlags(fs)
+	roll := fs.String("roll", openingbook.RollFirst, "Which roll to ask: first (the opening play) or second (the reply after the book's best opening play)")
 	scores := fs.String("score", "", "Scores to draw from, comma-separated (replier-opener away: 4-2, 1-2 Crawford, money)")
 	openings := fs.String("opening", "", "Opening rolls to draw from, comma-separated (31,65)")
-	replies := fs.String("reply", "", "Reply rolls to draw from, comma-separated (21,66)")
+	replies := fs.String("reply", "", "Reply rolls to draw from, comma-separated (21,66); --roll second only")
 	seed := fs.Uint64("seed", 0, "Seed for a reproducible draw (0 = random)")
 	if err := fs.Parse(args); err != nil {
 		return err
@@ -132,7 +134,7 @@ func (cli *CLI) runOpeningBookQuestion(args []string) error {
 		return err
 	}
 	q, err := b.Draw(openingbook.QuestionRequest{
-		Scores: splitList(*scores), Openings: splitList(*openings), Replies: splitList(*replies), Seed: *seed,
+		Roll: *roll, Scores: splitList(*scores), Openings: splitList(*openings), Replies: splitList(*replies), Seed: *seed,
 	})
 	if err != nil {
 		return err
@@ -148,10 +150,16 @@ func (cli *CLI) runOpeningBookQuestion(args []string) error {
 		}
 		return nil
 	}
-	fmt.Printf("At %s (the opener %s-away, the replier %s-away): play the opening %s, then the reply %s.\n",
-		scoreLabel(q.Score), awayOf(q.Score, 1), awayOf(q.Score, 0), q.Opening, q.Reply)
+	at := fmt.Sprintf("At %s (the opener %s-away, the replier %s-away)", scoreLabel(q.Score), awayOf(q.Score, 1), awayOf(q.Score, 0))
+	if q.Roll == openingbook.RollSecond {
+		fmt.Printf("%s, after the opening %s played %s: reply %s.\n", at, q.Opening, q.OpeningPlay, q.Reply)
+		fmt.Printf("XGID: %s\n", q.XGID)
+		fmt.Printf("Answer: blunderdb openingbook answer --opening %s --reply %s --score %s --after '%s' '<reply>'\n", q.Opening, q.Reply, q.Score, q.OpeningPlay)
+		return nil
+	}
+	fmt.Printf("%s: play the opening %s.\n", at, q.Opening)
 	fmt.Printf("XGID: %s\n", q.XGID)
-	fmt.Printf("Answer: blunderdb openingbook answer --opening %s --reply %s --score %s '<opening play>'\n", q.Opening, q.Reply, q.Score)
+	fmt.Printf("Answer: blunderdb openingbook answer --opening %s --score %s '<opening play>'\n", q.Opening, q.Score)
 	return nil
 }
 
@@ -174,20 +182,20 @@ func (cli *CLI) runOpeningBookAnswer(args []string) error {
 	fs := flag.NewFlagSet("openingbook answer", flag.ContinueOnError)
 	bookPath, format := openingBookFlags(fs)
 	opening := fs.String("opening", "", "Opening roll of the question (31)")
-	reply := fs.String("reply", "", "Reply roll of the question (21)")
+	reply := fs.String("reply", "", "Reply roll of a second-roll question (21)")
 	score := fs.String("score", "", "Score of the question (4-2, 1-2, money)")
-	after := fs.String("after", "", "The opening play the reply follows, as the opening's verdict names it; empty judges the opening play")
+	after := fs.String("after", "", "The opening play the reply follows, as the second-roll question names it; empty judges the opening play")
 	fs.Usage = func() {
-		fmt.Println("Usage: blunderdb openingbook answer --opening <roll> --reply <roll> --score <score> [--after <opening play>] [options] <play>")
+		fmt.Println("Usage: blunderdb openingbook answer --opening <roll> --score <score> [--reply <roll> --after <opening play>] [options] <play>")
 		fmt.Println()
-		fmt.Println("Without --after, judges the opening play and names the position of the reply;")
-		fmt.Println("with it, judges the reply played after that opening play.")
+		fmt.Println("Without --after, judges the opening play (1st roll); with --reply and --after,")
+		fmt.Println("judges the reply played after that opening play (2nd roll).")
 		fmt.Println()
 		fmt.Println("Options:")
 		fs.PrintDefaults()
 		fmt.Println()
 		fmt.Println("Example:")
-		fmt.Println("  blunderdb openingbook answer --opening 31 --reply 21 --score 4-2 '8/5 6/5'")
+		fmt.Println("  blunderdb openingbook answer --opening 31 --score 4-2 '8/5 6/5'")
 		fmt.Println("  blunderdb openingbook answer --opening 31 --reply 21 --score 4-2 --after '8/5 6/5' '13/11 6/5'")
 	}
 	if err := fs.Parse(args); err != nil {
@@ -242,13 +250,5 @@ func (cli *CLI) runOpeningBookAnswer(args []string) error {
 	fmt.Println()
 	fmt.Println("Gap: normalised equity at the score (±1 = the centred cube) behind the best play.")
 	fmt.Printf("Rollout: %d games; %s\n", v.Games, v.Signature)
-	if n := v.Next; n != nil {
-		fmt.Println()
-		if n.FollowsBest {
-			fmt.Printf("The reply is asked after the book's best opening play at this score, %s.\n", n.OpeningPlay)
-		}
-		fmt.Printf("Now reply with %s: XGID %s\n", n.Reply, n.XGID)
-		fmt.Printf("Answer: blunderdb openingbook answer --opening %s --reply %s --score %s --after '%s' '<reply>'\n", *opening, n.Reply, *score, n.OpeningPlay)
-	}
 	return nil
 }

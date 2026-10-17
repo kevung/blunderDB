@@ -1142,30 +1142,31 @@ et ``limit`` facultatifs). Un item de Décision porte sa position
 client.
 
 La famille ``openingbook`` sert l'exercice Ouverture du panneau Entraînement :
-un jet d'ouverture à jouer, puis la réponse à un score donné, jugés d'après le
+un jet d'ouverture, ou une réponse, à jouer à un score donné, jugé d'après le
 livre embarqué dans le binaire, calculé par blunderDB. Ce livre n'appartient à
 aucun tenant : tous tirent dans le même et sont jugés contre lui, sans lecture
 ni écriture dans la base. ``openingbook.status`` (corps ``{}``) rend le nombre
 de lignes du livre (``lines``) et les scores qu'il tient (``scores``, dans
 l'ordre de la grille, ``"money"`` pour le jeu à l'argent).
-``openingbook.question`` tire une question ; ``scores``, ``openings``
-(``"31"``), ``replies`` (``"52"``) et ``seed`` sont facultatifs, une liste
-vide laissant tout permis et ``seed`` à 0 tirant depuis l'horloge. Elle rend
-``opening``, ``reply``, ``score``, ``position`` (le plateau d'ouverture),
-``xgid`` et ``candidates`` (le nombre de coups classés par le livre). Sur un
+``openingbook.question`` tire une question ; ``roll`` (``"first"``, le coup
+d'ouverture, par défaut, ou ``"second"``, la réponse après le meilleur coup
+d'ouverture du livre à ce score), ``scores``, ``openings`` (``"31"``),
+``replies`` (``"52"``, pour ``"second"``) et ``seed`` sont facultatifs, une
+liste vide laissant tout permis et ``seed`` à 0 tirant depuis l'horloge. Elle
+rend ``roll``, ``opening``, ``score``, ``position`` (le plateau à jouer),
+``xgid`` et ``candidates`` (le nombre de coups classés par le livre), plus
+``openingPlay`` et ``reply`` pour une réponse. Sur un
 livre vide, ou une restriction qui ne laisse rien, la réponse est un succès
 portant ``{"empty": true}``, non une erreur. ``openingbook.grade`` juge une
-réponse : ``opening``, ``reply`` et ``score`` de la question, plus le coup joué
-(``board``, le plateau laissé, ou ``notation``, ``board`` l'emportant) ;
-``openingPlay`` est vide pour le coup d'ouverture, et porte le coup d'ouverture
-retenu pour la réponse qui suit. Sans ``board`` ni ``notation`` (hors délai),
+réponse : ``opening``, ``score`` et, pour une réponse, ``openingPlay`` et
+``reply`` de la question, plus le coup joué (``board``, le plateau laissé, ou
+``notation``, ``board`` l'emportant) ; ``openingPlay`` vide juge le coup
+d'ouverture. Sans ``board`` ni ``notation`` (hors délai),
 le verdict se réduit à la correction. Il porte ``legal``, ``notation``,
 ``played`` (l'indice dans ``ranked``, -1 si le livre ne classe pas ce coup),
 ``right`` (le coup est à égalité avec le meilleur), ``ranked`` (chaque
 candidat contre le meilleur), ``signature`` et ``games`` (réglages et nombre de
-parties du rollout), et, sur un verdict d'ouverture, ``next`` : l'étape de la
-réponse (``openingPlay``, ``followsBest``, ``reply``, ``position``, ``xgid``,
-``candidates``). Une ligne que le livre ne contient pas répond 400. Le client
+parties du rollout). Une ligne que le livre ne contient pas répond 400. Le client
 journalise la séance par ``training.save`` comme les autres exercices, avec
 ``exercise`` égal à ``opening``.
 

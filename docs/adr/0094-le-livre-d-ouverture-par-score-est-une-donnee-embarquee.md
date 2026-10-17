@@ -101,3 +101,14 @@ score, et la réponse doit suivre celui que le livre retient *à ce score*.
    `/v1/openingbook.*` : les trois modes tirent et jugent pareil. Une question exige les deux
    lignes (l'ouverture au score, la réponse après son meilleur coup) ; un livre vide est un état,
    pas une erreur : l'exercice le dit et ne démarre pas.
+
+## Amendement — un jet par question
+
+L'exercice ne pose plus les deux jets à la suite : le lanceur choisit **1st roll** (le coup
+d'ouverture) ou **2nd roll** (la réponse), mémorisé par exercice comme la source des autres.
+`QuestionRequest.Roll` (`first` par défaut, `second`) porte ce choix dans les trois modes
+(`--roll` en CLI, `roll` sur `/v1/openingbook.question`). Une question 2nd roll se pose dans la
+position que laisse le **meilleur coup d'ouverture du livre au score**, le seul après lequel
+toutes les réponses sont roulées ; `Verdict.Next` et l'étape qui suivait le coup de
+l'utilisateur disparaissent. Les lignes de réponse après un coup à égalité restent au livre et
+se jugent encore (`Answer.OpeningPlay`), mais aucun tirage ne les pose.

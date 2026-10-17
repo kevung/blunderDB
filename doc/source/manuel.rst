@@ -4772,9 +4772,11 @@ Trois réglages, un par ligne ; « Démarrer » est au bout de la bande d'en-tê
 * la **source** de la question, quand l'exercice en a plusieurs — *Vivier*
   (des formes canoniques de l'exercice), *Plateau* (la position telle qu'elle
   est) ou *Base* (une position de la liste parcourue) ;
+* pour *Ouverture*, à la place de la source, le **jet** posé — *1st roll* (le
+  coup d'ouverture) ou *2nd roll* (la réponse) ; *1st roll* par défaut ;
 * la **limite par question** — aucune, 15, 30 ou 60 secondes.
 
-La source choisie est mémorisée pour chaque exercice, d'une session à l'autre.
+La source, ou le jet, choisi est mémorisé pour chaque exercice, d'une session à l'autre.
 
 La liste parcourue peut venir des *erreurs récurrentes* du panneau Stats : un
 clic sur « Quiz sur ce groupe » la remplace par les positions du groupe et
@@ -4873,10 +4875,11 @@ session ; quand la liste est épuisée, le panneau le dit. Sans base ouverte, ou
 sans position analysée dans la liste, l'exercice **refuse en le disant** et rien
 ne démarre.
 
-**Ouverture** pose **les deux premiers jets d'une partie à un score** : vous
-jouez d'abord l'ouverture du joueur au trait, puis la réponse de l'adversaire
-dans la position qu'elle laisse. Les deux coups sont jugés contre le **livre
-d'ouverture** embarqué dans blunderDB, calculé par ses propres rollouts : pour
+**Ouverture** pose **l'un des deux premiers jets d'une partie à un score**,
+selon le jet choisi au lanceur : en *1st roll*, l'ouverture du joueur au trait ;
+en *2nd roll*, la réponse de l'adversaire dans la position que laisse le
+**meilleur coup d'ouverture du livre à ce score**, déjà joué au plateau. Le coup
+est jugé contre le **livre d'ouverture** embarqué dans blunderDB, calculé par ses propres rollouts : pour
 chaque score de sa grille — de 2 à 7 points de part et d'autre, à un point
 d'écart au plus, et la partie Crawford —, les quinze jets d'ouverture, puis les
 réponses après le meilleur coup d'ouverture à ce score. Le livre est la seule
@@ -4944,15 +4947,14 @@ juste ; le meilleur coup s'affiche dans tous les cas.
 — mêmes gestes, même champ de notation. Le panneau dit le jet à jouer et le
 score, *vous* d'abord. Un coup est **juste** quand il est **à égalité avec le
 meilleur** : il n'y a pas un seul bon coup, mais un groupe de tête que le livre
-ne sait pas départager (voir :ref:`metrique_livre_ouverture`). Après une
-erreur, ou hors délai, le panneau montre chaque candidat du livre : son
-**écart** au meilleur, l'**IC 95 %** de cet écart et la mention **à égalité** ;
-une ligne discrète donne le nombre de parties et le réglage du rollout qui ont
-produit ces chiffres. « Suivante » pose alors la réponse. Si votre ouverture
-était à égalité avec le meilleur et que le livre la suit, la réponse se pose
-après elle ; sinon elle se pose après le **meilleur coup d'ouverture du livre à
-ce score**, et le panneau le dit. Le journal compte l'ouverture et la réponse à
-part : on peut connaître ses ouvertures et mal répondre.
+ne sait pas départager (voir :ref:`metrique_livre_ouverture`). Le coup joué,
+le panneau marque *juste* ou *faux* et montre le tableau des candidats du
+livre : l'**écart** de chacun au meilleur, l'**IC 95 %** de cet écart et la
+mention **à égalité**, votre coup surligné — ajouté en bas, sans écart, quand
+le livre ne le classe pas. Le nombre de parties et le réglage du rollout qui
+ont produit ces chiffres sont dans l'infobulle du tableau. En *2nd roll*, la
+consigne nomme le coup d'ouverture déjà joué. Le journal compte l'ouverture et
+la réponse à part : on peut connaître ses ouvertures et mal répondre.
 
 Le chronomètre part à l'affichage de la question et s'arrête à « Révéler », à
 « Valider », au clic d'une action de videau de *Décision* ou au coup joué d'*Ouverture* ; la question suivante se prépare pendant que vous répondez, elle

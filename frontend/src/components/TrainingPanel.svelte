@@ -454,10 +454,11 @@
                     </div>
                 </FormRow>
 
-                <!-- Décision ne connaît que la bibliothèque. -->
+                <!-- Décision ne connaît que la bibliothèque ; Ouverture y choisit le jet posé. -->
                 {#if chosen.sources.length > 1}
-                    <FormRow label={$t('training.source')}>
-                        <div class="choices" role="group" aria-label={$t('training.source')}>
+                    {@const sourceLabel = $t(exercise === 'opening' ? 'training.roll' : 'training.source')}
+                    <FormRow label={sourceLabel}>
+                        <div class="choices" role="group" aria-label={sourceLabel}>
                             {#each chosen.sources as source (source)}
                                 <button
                                     type="button"

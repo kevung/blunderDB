@@ -43,24 +43,24 @@ func TestDraw_EmptyIsNotAnError(t *testing.T) {
 	}
 }
 
-func TestDraw_AsksTheOpeningFirst(t *testing.T) {
+func TestDraw_FirstRollAsksTheOpening(t *testing.T) {
 	b := testBook(t)
 	seen := map[string]bool{}
 	for seed := uint64(1); seed <= 40; seed++ {
 		q, err := b.Draw(QuestionRequest{Seed: seed})
-		if err != nil || q.Empty {
+		if err != nil || q.Empty || q.Roll != RollFirst || q.Reply != "" || q.OpeningPlay != "" {
 			t.Fatalf("draw: %+v, %v", q, err)
 		}
-		seen[q.Opening+"/"+q.Reply+"@"+q.Score] = true
+		seen[q.Opening+"@"+q.Score] = true
 		if q.Position.PlayerOnRoll != domain.Black || q.Position.Dice[0] != int(q.Opening[0]-'0') {
 			t.Fatalf("question position: %+v", q.Position)
 		}
 	}
 	if len(seen) != 3 {
-		t.Fatalf("drew %v, want the three questions", seen)
+		t.Fatalf("drew %v, want the three openings", seen)
 	}
-	q, _ := b.Draw(QuestionRequest{Openings: []string{"56"}})
-	if q.Opening != "65" || q.Reply != "64" {
+	q, _ := b.Draw(QuestionRequest{Roll: RollFirst, Openings: []string{"56"}})
+	if q.Opening != "65" || q.Candidates == 0 {
 		t.Fatalf("filtered draw: %+v", q)
 	}
 	a, _ := b.Draw(QuestionRequest{Seed: 7})
@@ -68,38 +68,67 @@ func TestDraw_AsksTheOpeningFirst(t *testing.T) {
 	if a != c {
 		t.Fatal("a seed must make the draw reproducible")
 	}
+	if _, err := b.Draw(QuestionRequest{Roll: "third"}); err == nil {
+		t.Fatal("an unknown roll must be refused")
+	}
 }
 
-func TestGrade_OpeningThenReply(t *testing.T) {
+func TestDraw_SecondRollAsksTheReplyAfterTheBest(t *testing.T) {
+	b := testBook(t)
+	seen := map[string]bool{}
+	for seed := uint64(1); seed <= 40; seed++ {
+		q, err := b.Draw(QuestionRequest{Roll: RollSecond, Seed: seed})
+		if err != nil || q.Empty || q.Roll != RollSecond || q.Reply == "" {
+			t.Fatalf("draw: %+v, %v", q, err)
+		}
+		seen[q.Opening+"/"+q.OpeningPlay+"/"+q.Reply+"@"+q.Score] = true
+		if q.Position.PlayerOnRoll != domain.White || q.Position.Dice[0] != int(q.Reply[0]-'0') {
+			t.Fatalf("question position: %+v", q.Position)
+		}
+		// The question is answered as a reply after its opening play.
+		if _, err := b.Grade(Answer{Opening: q.Opening, OpeningPlay: q.OpeningPlay, Reply: q.Reply, Score: q.Score}); err != nil {
+			t.Fatalf("%+v cannot be graded: %v", q, err)
+		}
+	}
+	// The book's best opening play only: never the tied 24/23 13/10 it also follows.
+	want := map[string]bool{"31/8/5 6/5/21@4-2": true, "31/8/5 6/5/21@2-4": true, "65/24/18 18/13/64@4-2": true}
+	if len(seen) != len(want) {
+		t.Fatalf("drew %v, want %v", seen, want)
+	}
+	for k := range seen {
+		if !want[k] {
+			t.Fatalf("drew %v, want %v", seen, want)
+		}
+	}
+	if q, _ := b.Draw(QuestionRequest{Roll: RollSecond, Replies: []string{"66"}}); !q.Empty {
+		t.Fatalf("a reply the book lacks: %+v", q)
+	}
+}
+
+func TestGrade_OpeningAndReply(t *testing.T) {
 	b := testBook(t)
 	cases := []struct {
 		score, play string
 		right       bool
 		played      int
-		next        string
-		followsBest bool
 	}{
-		{"4-2", "8/5 6/5", true, 0, "8/5 6/5", false},
-		{"4-2", "24/23 13/10", true, 1, "24/23 13/10", false}, // tied, and the book follows it
-		{"4-2", "13/10 6/5", false, 2, "8/5 6/5", true},
-		{"4-2", "24/21 24/23", false, -1, "8/5 6/5", true}, // legal, outside the candidates
-		{"2-4", "24/23 13/10", false, 1, "8/5 6/5", true},  // the same play at another score
+		{"4-2", "8/5 6/5", true, 0},
+		{"4-2", "24/23 13/10", true, 1}, // tied with the best
+		{"4-2", "13/10 6/5", false, 2},
+		{"4-2", "24/21 24/23", false, -1}, // legal, outside the candidates
+		{"2-4", "24/23 13/10", false, 1},  // the same play at another score
 	}
 	for _, c := range cases {
-		v, err := b.Grade(Answer{Opening: "31", Reply: "21", Score: c.score, Notation: c.play})
+		v, err := b.Grade(Answer{Opening: "31", Score: c.score, Notation: c.play})
 		if err != nil {
 			t.Fatal(err)
 		}
-		if !v.Legal || v.Right != c.right || v.Played != c.played || v.Next == nil {
+		if !v.Legal || v.Right != c.right || v.Played != c.played {
 			t.Fatalf("%s at %s: %+v", c.play, c.score, v)
-		}
-		if v.Next.OpeningPlay != c.next || v.Next.FollowsBest != c.followsBest ||
-			v.Next.Position.PlayerOnRoll != domain.White || v.Next.Position.Dice != [2]int{2, 1} {
-			t.Errorf("%s at %s: next %+v", c.play, c.score, v.Next)
 		}
 	}
 	v, err := b.Grade(Answer{Opening: "31", OpeningPlay: "24/23 13/10", Reply: "21", Score: "4-2", Notation: "13/11 6/5"})
-	if err != nil || !v.Right || v.Played != 1 || v.Next != nil {
+	if err != nil || !v.Right || v.Played != 1 {
 		t.Fatalf("reply after the tied opening play: %+v, %v", v, err)
 	}
 	v, err = b.Grade(Answer{Opening: "31", OpeningPlay: "8/5 6/5", Reply: "21", Score: "4-2", Notation: "13/11 8/7"})

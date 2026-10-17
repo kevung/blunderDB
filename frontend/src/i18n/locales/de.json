@@ -2176,10 +2176,13 @@
         "sources": {
             "board": "Brett",
             "library": "Datenbank",
-            "pool": "Vorrat"
+            "pool": "Vorrat",
+            "first": "1. Wurf",
+            "second": "2. Wurf"
         },
         "exerciseLabel": "Übung",
         "source": "Quelle",
+        "roll": "Wurf",
         "limit": "Zeit je Frage",
         "limitNone": "Keine",
         "limitSeconds": "{n} s",
@@ -2252,21 +2255,18 @@
             "promptReply": "Spielen Sie die Antwort {roll}.",
             "score": "Sie {you} Punkte entfernt, der Gegner {them}.",
             "money": "Geldspiel.",
-            "followsBest": "Ihre Eröffnung ist nicht die, der das Buch folgt: Die Antwort wird nach seinem besten Zug bei diesem Stand gestellt, {move}.",
             "after": "Nach der Eröffnung {move}.",
-            "right": "Richtig: {move} ist gleichauf mit dem besten Zug.",
-            "unranked": "{move} gehört nicht zu den Kandidaten des Buchs.",
-            "behind": "{move} liegt {gap} hinter dem besten Zug.",
             "colPlay": "Zug",
             "colGap": "Abstand",
             "colCi": "95-%-KI",
             "tied": "gleichauf",
-            "scale": "Abstände in normierter Equity beim Stand (±1 = der zentrierte Würfel); „gleichauf“: Abstand unter 1,96·σ(Abstand) + 0,005.",
             "precision": "Rollout {ply}, {truncation}, {games} Partien, {bearoff}",
             "truncated": "bei {n} abgebrochen",
             "untruncated": "nicht abgebrochen",
             "withBearoff": "mit exakter Bearoff-Tabelle",
-            "withoutBearoff": "ohne exakte Bearoff-Tabelle"
+            "withoutBearoff": "ohne exakte Bearoff-Tabelle",
+            "markRight": "Richtig",
+            "markWrong": "Falsch"
         }
     },
     "explain": {

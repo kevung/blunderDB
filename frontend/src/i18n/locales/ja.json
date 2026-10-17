@@ -2176,10 +2176,13 @@
         "sources": {
             "board": "盤面",
             "library": "データベース",
-            "pool": "定型"
+            "pool": "定型",
+            "first": "1投目",
+            "second": "2投目"
         },
         "exerciseLabel": "エクササイズ",
         "source": "ソース",
+        "roll": "ロール",
         "limit": "1問あたりの制限",
         "limitNone": "なし",
         "limitSeconds": "{n} 秒",
@@ -2252,21 +2255,18 @@
             "promptReply": "応手 {roll} を指してください。",
             "score": "あなたは残り {you} ポイント、相手は残り {them} ポイント。",
             "money": "マネーゲーム。",
-            "followsBest": "あなたのオープニングはブックが続く手ではありません。応手はこのスコアでのブックの最善手 {move} の後に出題されます。",
             "after": "オープニング {move} の後。",
-            "right": "正解：{move} は最善手と同等です。",
-            "unranked": "{move} はブックの候補手にありません。",
-            "behind": "{move} は最善手より {gap} 劣ります。",
             "colPlay": "手",
             "colGap": "差",
             "colCi": "95 % 信頼区間",
             "tied": "同等",
-            "scale": "差はスコアに正規化したエクイティ（±1 = センターキューブ）。「同等」：差が 1.96·σ(差) + 0.005 未満。",
             "precision": "ロールアウト {ply}、{truncation}、{games} ゲーム、{bearoff}",
             "truncated": "{n} で打ち切り",
             "untruncated": "打ち切りなし",
             "withBearoff": "正確なベアオフ表あり",
-            "withoutBearoff": "正確なベアオフ表なし"
+            "withoutBearoff": "正確なベアオフ表なし",
+            "markRight": "正解",
+            "markWrong": "不正解"
         }
     },
     "explain": {

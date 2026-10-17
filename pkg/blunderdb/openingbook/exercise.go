@@ -58,35 +58,64 @@ func scoreLess(a, b Score) bool {
 	return a.Opener < b.Opener
 }
 
+// The two halves of a game's first two rolls, asked apart.
+const (
+	// RollFirst asks the opening play, the opener on roll at the start.
+	RollFirst = "first"
+	// RollSecond asks the reply, in the position the book's best opening
+	// play at the score leaves: the book ranks replies after that play only.
+	RollSecond = "second"
+)
+
 // QuestionRequest narrows the draw. Every list is optional: empty means any.
 type QuestionRequest struct {
+	// Roll is RollFirst (the default when empty) or RollSecond.
+	Roll     string   `json:"roll,omitempty"`
 	Scores   []string `json:"scores,omitempty"`   // score keys, "4-2", "money"
 	Openings []string `json:"openings,omitempty"` // opening rolls, "31"
-	Replies  []string `json:"replies,omitempty"`  // reply rolls, "52"
+	Replies  []string `json:"replies,omitempty"`  // reply rolls, "52"; a second-roll draw only
 	// Seed makes the draw reproducible; 0 draws from the clock.
 	Seed uint64 `json:"seed,omitempty"`
 }
 
-// Question is the first two rolls of a game at one score: the opener's roll
-// to play first, then the reply roll, asked once the opening is judged (the
-// Verdict's Next). Empty says the book (or the part the request narrowed it
-// to) holds nothing to ask, which is not an error.
+// Question is one play to find at one score: the opening play (RollFirst),
+// or the reply after the book's best opening play (RollSecond). Empty says
+// the book (or the part the request narrowed it to) holds nothing to ask,
+// which is not an error.
 type Question struct {
 	Empty   bool   `json:"empty"`
+	Roll    string `json:"roll,omitempty"`
 	Opening string `json:"opening,omitempty"`
-	Reply   string `json:"reply,omitempty"`
-	Score   string `json:"score,omitempty"`
-	// Position is the opening position, the opener on roll.
+	// OpeningPlay is the opening play already on the board of a second-roll
+	// question; Reply is the roll to play there.
+	OpeningPlay string `json:"openingPlay,omitempty"`
+	Reply       string `json:"reply,omitempty"`
+	Score       string `json:"score,omitempty"`
+	// Position is the position to play, its player on roll with the dice.
 	Position domain.Position `json:"position"`
 	XGID     string          `json:"xgid,omitempty"`
-	// Candidates is how many opening plays the book ranks.
+	// Candidates is how many plays the book ranks in Position.
 	Candidates int `json:"candidates,omitempty"`
 }
 
+func rollOf(s string) (string, error) {
+	switch strings.TrimSpace(strings.ToLower(s)) {
+	case "", RollFirst, "1":
+		return RollFirst, nil
+	case RollSecond, "2":
+		return RollSecond, nil
+	}
+	return "", fmt.Errorf("openingbook: roll %q is neither %s nor %s", s, RollFirst, RollSecond)
+}
+
 // Draw picks one question among those the request allows, uniformly over
-// (opening, reply, score). A question needs both lines: the opening at the
-// score, and the reply after the book's best opening play at that score.
+// the lines that can ask it: (opening, score) for the first roll, (opening,
+// reply, score) after the book's best opening play for the second.
 func (b *Book) Draw(req QuestionRequest) (Question, error) {
+	roll, err := rollOf(req.Roll)
+	if err != nil {
+		return Question{}, err
+	}
 	scores, err := keySet(req.Scores, func(s string) (string, error) {
 		sc, err := ParseScore(s)
 		return sc.String(), err
@@ -107,9 +136,9 @@ func (b *Book) Draw(req QuestionRequest) (Question, error) {
 		return Question{}, err
 	}
 	type pick struct {
-		k     Key
-		reply Roll
-		n     int
+		k    Key
+		play string
+		n    int
 	}
 	var pool []pick
 	for _, l := range b.Lines() {
@@ -118,18 +147,23 @@ func (b *Book) Draw(req QuestionRequest) (Question, error) {
 			!allows(scores, l.Score) || !allows(openings, l.Opening) {
 			continue
 		}
+		if roll == RollFirst {
+			pool = append(pool, pick{k, "", len(l.Candidates)})
+			continue
+		}
 		best := l.Rank()[0].Move
 		for _, r := range Replies() {
 			if !allows(replies, r.String()) {
 				continue
 			}
-			if rl, ok := b.Lookup(ReplyKey(k.Opening, best, r, k.Score)); ok && len(rl.Candidates) > 0 {
-				pool = append(pool, pick{k, r, len(l.Candidates)})
+			rk := ReplyKey(k.Opening, best, r, k.Score)
+			if rl, ok := b.Lookup(rk); ok && len(rl.Candidates) > 0 {
+				pool = append(pool, pick{rk, best, len(rl.Candidates)})
 			}
 		}
 	}
 	if len(pool) == 0 {
-		return Question{Empty: true}, nil
+		return Question{Empty: true, Roll: roll}, nil
 	}
 	seed := req.Seed
 	if seed == 0 {
@@ -140,10 +174,14 @@ func (b *Book) Draw(req QuestionRequest) (Question, error) {
 	if err != nil {
 		return Question{}, err
 	}
-	return Question{
-		Opening: p.k.Opening.String(), Reply: p.reply.String(), Score: p.k.Score.String(),
+	q := Question{
+		Roll: roll, Opening: p.k.Opening.String(), OpeningPlay: p.play, Score: p.k.Score.String(),
 		Position: pos, XGID: "XGID=" + domain.EncodeXGID(&pos), Candidates: p.n,
-	}, nil
+	}
+	if roll == RollSecond {
+		q.Reply = p.k.Reply.String()
+	}
+	return q, nil
 }
 
 func keySet(in []string, norm func(string) (string, error)) (map[string]bool, error) {
@@ -164,11 +202,10 @@ func keySet(in []string, norm func(string) (string, error)) (map[string]bool, er
 func allows(set map[string]bool, k string) bool { return set == nil || set[k] }
 
 // Answer is one answer of a question: the opening play when OpeningPlay is
-// empty, else the reply played after OpeningPlay (the Next the opening's
-// verdict named). The play is the board the user left, or its notation when
-// typed; Board wins when both are given. Neither is no answer (out of time):
-// the verdict is then the correction alone, and the opening's still names the
-// reply step, after the book's best play.
+// empty, else the reply (roll Reply) played after OpeningPlay. The play is
+// the board the user left, or its notation when typed; Board wins when both
+// are given. Neither is no answer (out of time): the verdict is then the
+// correction alone.
 type Answer struct {
 	Opening     string        `json:"opening"`
 	OpeningPlay string        `json:"openingPlay,omitempty"`
@@ -200,25 +237,6 @@ type Verdict struct {
 	// ExactBearoff says whether the exact bearoff table served the line: the
 	// signature only states the policy.
 	ExactBearoff bool `json:"exact_bearoff"`
-	// Next is the reply step, on an opening verdict whose answer named a
-	// reply roll the book holds.
-	Next *ReplyStep `json:"next,omitempty"`
-}
-
-// ReplyStep is the second half of a question: the reply roll in the
-// position the opening play left.
-type ReplyStep struct {
-	// OpeningPlay is the opening play the reply follows: the user's when it
-	// is tied with the best and the book holds the reply after it, else the
-	// book's best at the score.
-	OpeningPlay string `json:"openingPlay"`
-	// FollowsBest says OpeningPlay is the book's best rather than the user's
-	// play, which the screen states.
-	FollowsBest bool            `json:"followsBest"`
-	Reply       string          `json:"reply"`
-	Position    domain.Position `json:"position"`
-	XGID        string          `json:"xgid"`
-	Candidates  int             `json:"candidates"`
 }
 
 // Grade judges an answer. A key the book does not hold is an error: the
@@ -232,16 +250,14 @@ func (b *Book) Grade(a Answer) (Verdict, error) {
 	if err != nil {
 		return Verdict{}, err
 	}
-	var reply Roll
-	if a.Reply != "" {
-		if reply, err = ParseRoll(a.Reply); err != nil {
-			return Verdict{}, err
-		}
-	}
 	k := OpeningKey(o, s)
 	if a.OpeningPlay != "" {
 		if a.Reply == "" {
 			return Verdict{}, fmt.Errorf("openingbook: a reply answer names its reply roll")
+		}
+		reply, err := ParseRoll(a.Reply)
+		if err != nil {
+			return Verdict{}, err
 		}
 		k = ReplyKey(o, a.OpeningPlay, reply, s)
 	}
@@ -249,14 +265,7 @@ func (b *Book) Grade(a Answer) (Verdict, error) {
 	if !ok {
 		return Verdict{}, fmt.Errorf("openingbook: the book holds no line %s", k)
 	}
-	v, err := grade(k, line, a)
-	if err != nil || !k.IsOpening() || a.Reply == "" {
-		return v, err
-	}
-	if v.Next, err = b.next(k, v, reply); err != nil {
-		return Verdict{}, err
-	}
-	return v, nil
+	return grade(k, line, a)
 }
 
 func grade(k Key, line Line, a Answer) (Verdict, error) {
@@ -294,36 +303,6 @@ func grade(k Key, line Line, a Answer) (Verdict, error) {
 		break
 	}
 	return v, nil
-}
-
-// next is the reply step after an opening verdict: after the user's play
-// when it is right and the book follows it, after the book's best otherwise.
-func (b *Book) next(k Key, v Verdict, reply Roll) (*ReplyStep, error) {
-	if len(v.Ranked) == 0 {
-		return nil, nil
-	}
-	play, best := v.Ranked[0].Move, true
-	if v.Right && v.Played > 0 {
-		mine := v.Ranked[v.Played].Move
-		if _, ok := b.Lookup(ReplyKey(k.Opening, mine, reply, k.Score)); ok {
-			play, best = mine, false
-		}
-	} else if v.Played == 0 {
-		best = false
-	}
-	rk := ReplyKey(k.Opening, play, reply, k.Score)
-	rl, ok := b.Lookup(rk)
-	if !ok {
-		return nil, fmt.Errorf("openingbook: the book holds no line %s", rk)
-	}
-	pos, err := rk.Position()
-	if err != nil {
-		return nil, err
-	}
-	return &ReplyStep{
-		OpeningPlay: play, FollowsBest: best, Reply: reply.String(), Position: pos,
-		XGID: "XGID=" + domain.EncodeXGID(&pos), Candidates: len(rl.Candidates),
-	}, nil
 }
 
 // Open reads a book file, gzipped or not, strictly (Load): a run's own book

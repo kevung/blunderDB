@@ -57,8 +57,11 @@ func TestOpeningBookRoutes(t *testing.T) {
 	if code := post(srv, "/v1/openingbook.question", `{"scores":["2-4"],"seed":3}`, &q); code != http.StatusOK || q.Score != "2-4" {
 		t.Fatalf("question: %d %+v", code, q)
 	}
+	if code := post(srv, "/v1/openingbook.question", `{"roll":"second","scores":["2-4"],"seed":3}`, &q); code != http.StatusOK || q.Reply != "21" || q.OpeningPlay != "8/5 6/5" {
+		t.Fatalf("second-roll question: %d %+v", code, q)
+	}
 	var v openingbook.Verdict
-	if code := post(srv, "/v1/openingbook.grade", `{"opening":"31","reply":"21","score":"2-4","notation":"8/5 6/5"}`, &v); code != http.StatusOK || !v.Right || len(v.Ranked) != 2 || v.Next == nil {
+	if code := post(srv, "/v1/openingbook.grade", `{"opening":"31","score":"2-4","notation":"8/5 6/5"}`, &v); code != http.StatusOK || !v.Right || len(v.Ranked) != 2 {
 		t.Fatalf("grade: %d %+v", code, v)
 	}
 	if code := post(srv, "/v1/openingbook.grade", `{"opening":"31","reply":"21","score":"9-9","notation":"8/7"}`, nil); code != http.StatusBadRequest {

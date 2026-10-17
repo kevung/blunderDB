@@ -4252,14 +4252,14 @@ Example:
 ### `blunderdb openingbook answer`
 
 ```
-Usage: blunderdb openingbook answer --opening <roll> --reply <roll> --score <score> [--after <opening play>] [options] <play>
+Usage: blunderdb openingbook answer --opening <roll> --score <score> [--reply <roll> --after <opening play>] [options] <play>
 
-Without --after, judges the opening play and names the position of the reply;
-with it, judges the reply played after that opening play.
+Without --after, judges the opening play (1st roll); with --reply and --after,
+judges the reply played after that opening play (2nd roll).
 
 Options:
   -after string
-    	The opening play the reply follows, as the opening's verdict names it; empty judges the opening play
+    	The opening play the reply follows, as the second-roll question names it; empty judges the opening play
   -book string
     	Book file (.jsonl or .jsonl.gz) instead of the embedded one
   -format string
@@ -4267,12 +4267,12 @@ Options:
   -opening string
     	Opening roll of the question (31)
   -reply string
-    	Reply roll of the question (21)
+    	Reply roll of a second-roll question (21)
   -score string
     	Score of the question (4-2, 1-2, money)
 
 Example:
-  blunderdb openingbook answer --opening 31 --reply 21 --score 4-2 '8/5 6/5'
+  blunderdb openingbook answer --opening 31 --score 4-2 '8/5 6/5'
   blunderdb openingbook answer --opening 31 --reply 21 --score 4-2 --after '8/5 6/5' '13/11 6/5'
 ```
 
@@ -4287,7 +4287,9 @@ Usage of openingbook question:
   -opening string
     	Opening rolls to draw from, comma-separated (31,65)
   -reply string
-    	Reply rolls to draw from, comma-separated (21,66)
+    	Reply rolls to draw from, comma-separated (21,66); --roll second only
+  -roll string
+    	Which roll to ask: first (the opening play) or second (the reply after the book's best opening play) (default "first")
   -score string
     	Scores to draw from, comma-separated (replier-opener away: 4-2, 1-2 Crawford, money)
   -seed uint

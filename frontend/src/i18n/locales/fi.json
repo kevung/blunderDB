@@ -2176,10 +2176,13 @@
         "sources": {
             "board": "Lauta",
             "library": "Tietokanta",
-            "pool": "Varanto"
+            "pool": "Varanto",
+            "first": "1. heitto",
+            "second": "2. heitto"
         },
         "exerciseLabel": "Harjoitus",
         "source": "Lähde",
+        "roll": "Heitto",
         "limit": "Aikaraja kysymystä kohti",
         "limitNone": "Ei rajaa",
         "limitSeconds": "{n} s",
@@ -2252,21 +2255,18 @@
             "promptReply": "Pelaa vastaus {roll}.",
             "score": "Sinulta puuttuu {you} pistettä, vastustajalta {them}.",
             "money": "Rahapeli.",
-            "followsBest": "Avauksesi ei ole se, jota kirja seuraa: vastaus kysytään sen parhaan siirron jälkeen tällä tilanteella, {move}.",
             "after": "Avauksen {move} jälkeen.",
-            "right": "Oikein: {move} on tasoissa parhaan kanssa.",
-            "unranked": "{move} ei ole kirjan ehdokkaiden joukossa.",
-            "behind": "{move} on {gap} parhaan perässä.",
             "colPlay": "Siirto",
             "colGap": "Ero",
             "colCi": "95 %:n LV",
             "tied": "tasoissa",
-            "scale": "Erot normalisoituna equityna tilanteessa (±1 = keskitetty kuutio); ”tasoissa”: ero alle 1,96·σ(ero) + 0,005.",
             "precision": "Rollout {ply}, {truncation}, {games} peliä, {bearoff}",
             "truncated": "katkaistu kohtaan {n}",
             "untruncated": "ei katkaistu",
             "withBearoff": "tarkalla bearoff-taulukolla",
-            "withoutBearoff": "ilman tarkkaa bearoff-taulukkoa"
+            "withoutBearoff": "ilman tarkkaa bearoff-taulukkoa",
+            "markRight": "Oikein",
+            "markWrong": "Väärin"
         }
     },
     "explain": {

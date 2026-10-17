@@ -474,50 +474,31 @@ async function openingLegalPlays(position) {
     return plays?.length ? plays : null;
 }
 
-/** Tire une ouverture ; un livre vide est un refus nommé, pas une erreur. */
-async function buildOpeningQuestion() {
-    const drawn = await OpeningBookQuestion(/** @type {any} */ ({}));
+/**
+ * Tire une question d'Ouverture du jet choisi : `first` pose le coup d'ouverture, `second` la
+ * réponse dans la position que laisse le meilleur coup d'ouverture du livre à ce score. Un livre
+ * vide est un refus nommé, pas une erreur.
+ * @param {string} roll
+ */
+async function buildOpeningQuestion(roll) {
+    const second = roll === 'second';
+    const drawn = await OpeningBookQuestion(/** @type {any} */ ({ roll: second ? 'second' : 'first' }));
     if (!drawn || drawn.empty) return { question: null, refusal: 'bookEmpty' };
     const plays = await openingLegalPlays(drawn.position);
     if (!plays) return { question: null, refusal: 'noQuestion' };
     return {
         question: {
             kind: 'opening',
-            step: 'opening',
-            key: `${drawn.opening}/${drawn.reply}@${drawn.score}`,
+            step: second ? 'reply' : 'opening',
+            key: second ? `${drawn.opening}:${drawn.openingPlay}/${drawn.reply}@${drawn.score}` : `${drawn.opening}@${drawn.score}`,
             opening: drawn.opening,
-            reply: drawn.reply,
+            reply: second ? drawn.reply : '',
             score: drawn.score,
-            openingPlay: '',
+            openingPlay: second ? drawn.openingPlay : '',
             position: drawn.position,
             plays,
             prompt: 'checker',
-            numbers: [{ type: 'opening.first', value: 0 }]
-        },
-        refusal: ''
-    };
-}
-
-/**
- * Le second temps d'une question d'Ouverture, après le verdict du premier :
- * la réponse dans la position du coup d'ouverture que le livre suit.
- * @param {any} question @param {any} verdict
- */
-async function buildReplyQuestion(question, verdict) {
-    const next = verdict?.next;
-    if (question?.kind !== 'opening' || question.step !== 'opening' || !next) return null;
-    const plays = await openingLegalPlays(next.position);
-    if (!plays) return null;
-    return {
-        question: {
-            ...question,
-            step: 'reply',
-            key: `${question.key}:${next.openingPlay}`,
-            openingPlay: next.openingPlay,
-            followsBest: !!next.followsBest,
-            position: next.position,
-            plays,
-            numbers: [{ type: 'opening.reply', value: 0 }]
+            numbers: [{ type: second ? 'opening.reply' : 'opening.first', value: 0 }]
         },
         refusal: ''
     };
@@ -551,7 +532,7 @@ async function buildQuestion(exercise, seedSource, seed) {
     if (exercise === 'bearoff') return buildBearoffQuestion(seedSource, seed);
     if (exercise === 'evaluation') return buildEvaluationQuestion(seedSource, seed);
     if (exercise === 'decision') return buildDecisionQuestion();
-    if (exercise === 'opening') return buildOpeningQuestion();
+    if (exercise === 'opening') return buildOpeningQuestion(seedSource);
     return buildPipsQuestion(seedSource, seed);
 }
 
@@ -871,14 +852,7 @@ export async function nextTrainingQuestion() {
     if (!session || !session.revealed || advancing) return;
     advancing = true;
     try {
-        let followUp = null;
-        try {
-            followUp = await buildReplyQuestion(session.question, session.verdict);
-        } catch (error) {
-            logger.error('could not build the reply of the opening question:', error);
-        }
-        const recorded = recordQuestion(session);
-        await askNextQuestion(recorded, followUp);
+        await askNextQuestion(recordQuestion(session));
     } finally {
         advancing = false;
     }
@@ -918,12 +892,9 @@ export async function retryTrainingQuestion() {
     await askNextQuestion(session);
 }
 
-/**
- * @param {import('./trainingTab.js').TrainingSessionState} session
- * @param {{question: any, refusal: string}|null} [followUp] le second temps d'une question, qui passe avant le tirage
- */
-async function askNextQuestion(session, followUp = null) {
-    const built = followUp ?? (await takeNextQuestion(session.exercise, session.seedSource));
+/** @param {import('./trainingTab.js').TrainingSessionState} session */
+async function askNextQuestion(session) {
+    const built = await takeNextQuestion(session.exercise, session.seedSource);
     if (!built.question) {
         disarmBoard(session);
         trainingSessionStore.set(failNextQuestion(session, built.refusal || 'noQuestion'));
@@ -935,8 +906,7 @@ async function askNextQuestion(session, followUp = null) {
     armBoard(built.question);
     trainingSessionStore.set(askQuestion(session, built.question, Date.now()));
     trainingElapsedStore.set(0);
-    // Le tirage préchargé attend la fin de la question à deux temps.
-    if (!followUp) prefetchNextQuestion(session.exercise, session.seedSource);
+    prefetchNextQuestion(session.exercise, session.seedSource);
 }
 
 /**

@@ -550,3 +550,21 @@ describe('une question d’Évaluation (#322)', () => {
         expect(panel.getByTestId('training-missed-retake').textContent).toBe(en.training.missedRetake);
     });
 });
+
+describe('le lanceur d’Ouverture', () => {
+    test('choisit le jet posé, 1st roll par défaut, et démarre sur lui', async () => {
+        const panel = render(TrainingPanel);
+        panel.getByTestId('training-exercise-opening').click();
+        await tick();
+        const first = panel.getByTestId('training-source-first');
+        const second = panel.getByTestId('training-source-second');
+        expect(first.classList.contains('selected')).toBe(true);
+        expect(first.textContent?.trim()).toBe(en.training.sources.first);
+        expect(panel.getByRole('group', { name: en.training.roll })).toBeTruthy();
+        second.click();
+        await tick();
+        expect(second.classList.contains('selected')).toBe(true);
+        panel.getByTestId('training-start').click();
+        expect(service.startTrainingSession).toHaveBeenCalledWith(expect.objectContaining({ exercise: 'opening', seedSource: 'second' }));
+    });
+});

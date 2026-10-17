@@ -2176,10 +2176,13 @@
         "sources": {
             "board": "Tavoliere",
             "library": "Base",
-            "pool": "Vivaio"
+            "pool": "Vivaio",
+            "first": "1° tiro",
+            "second": "2° tiro"
         },
         "exerciseLabel": "Esercizio",
         "source": "Fonte",
+        "roll": "Tiro",
         "limit": "Limite per domanda",
         "limitNone": "Nessuno",
         "limitSeconds": "{n} s",
@@ -2252,21 +2255,18 @@
             "promptReply": "Giocate la risposta {roll}.",
             "score": "Voi a {you} punti, l'avversario a {them}.",
             "money": "Partita a soldi.",
-            "followsBest": "La vostra apertura non è quella che il libro segue: la risposta si pone dopo la sua mossa migliore a questo punteggio, {move}.",
             "after": "Dopo l'apertura {move}.",
-            "right": "Giusto: {move} è alla pari con la migliore.",
-            "unranked": "{move} non è tra i candidati del libro.",
-            "behind": "{move} è a {gap} dalla migliore.",
             "colPlay": "Mossa",
             "colGap": "Scarto",
             "colCi": "IC 95 %",
             "tied": "alla pari",
-            "scale": "Scarti in equity normalizzata al punteggio (±1 = il cubo al centro); «alla pari»: scarto sotto 1,96·σ(scarto) + 0,005.",
             "precision": "Rollout {ply}, {truncation}, {games} partite, {bearoff}",
             "truncated": "troncato a {n}",
             "untruncated": "non troncato",
             "withBearoff": "con la tabella di bearoff esatta",
-            "withoutBearoff": "senza tabella di bearoff esatta"
+            "withoutBearoff": "senza tabella di bearoff esatta",
+            "markRight": "Giusto",
+            "markWrong": "Sbagliato"
         }
     },
     "explain": {

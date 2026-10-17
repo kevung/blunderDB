@@ -7,12 +7,15 @@
  */
 
 /**
- * Les cinq exercices de l'ADR-0040 règle 3, et Ouverture (ADR-0094) : les deux
- * premiers coups d'une partie à un score, joués au plateau et jugés contre le
- * livre d'ouverture embarqué — son vivier est le livre, pas la bibliothèque.
+ * Les cinq exercices de l'ADR-0040 règle 3, et Ouverture (ADR-0094) : le coup
+ * d'ouverture ou la réponse d'une partie à un score, joué au plateau et jugé
+ * contre le livre d'ouverture embarqué — son vivier est le livre, pas la
+ * bibliothèque.
  *
  * `sources` : les sources de graine acceptées, dans l'ordre du lanceur ; vide
- * pour Scores, dont le vivier est les 36 scores non ordonnés.
+ * pour Scores, dont le vivier est les 36 scores non ordonnés. Ouverture, dont le
+ * vivier est toujours le livre, y range le jet posé : `first` (le coup
+ * d'ouverture) ou `second` (la réponse) — même ligne du lanceur, même mémoire.
  *
  * `mode` (règle 2) appartient à l'exercice, jamais à la session : le COMPTÉ ou
  * RÉCITÉ se déclare, l'ESTIMÉ se saisit (la taille de l'erreur est la leçon).
@@ -49,7 +52,7 @@ export const TRAINING_EXERCISES = Object.freeze([
     Object.freeze({ id: 'bearoff', mode: 'entered', sources: ['pool', 'board', 'library'], defaultSource: 'pool', surface: 'board' }),
     Object.freeze({ id: 'evaluation', mode: 'entered', sources: ['pool', 'board', 'library'], defaultSource: 'pool', surface: 'board' }),
     Object.freeze({ id: 'decision', mode: 'chosen', sources: ['library'], defaultSource: 'library', surface: 'board' }),
-    Object.freeze({ id: 'opening', mode: 'chosen', sources: ['pool'], defaultSource: 'pool', surface: 'board' })
+    Object.freeze({ id: 'opening', mode: 'chosen', sources: ['first', 'second'], defaultSource: 'first', surface: 'board' })
 ]);
 
 /** @param {string} exercise */
