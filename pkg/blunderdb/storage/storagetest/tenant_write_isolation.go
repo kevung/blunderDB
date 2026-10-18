@@ -130,9 +130,15 @@ func checkWritePosition(t *testing.T, cx func(scope string) context.Context, s s
 	edited.Score = [2]int{before.Score[0] + 1, before.Score[1] + 2}
 	_ = s.Positions().Update(cx(b), b, &edited)
 	_ = s.Positions().Delete(cx(b), b, idA)
+	if err := s.Positions().SetIndividuallyImported(cx(b), b, idA, true); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("tenant %s marked tenant %s's position, want ErrNotFound: %v", b, a, err)
+	}
 	got, err := s.Positions().Load(cx(a), a, idA)
 	if err != nil {
 		t.Fatalf("tenant %s's position after tenant %s's update and delete: %v", a, b, err)
+	}
+	if got.IndividuallyImported != before.IndividuallyImported {
+		t.Errorf("tenant %s's position was marked by tenant %s", a, b)
 	}
 	if got.Score != before.Score {
 		t.Errorf("tenant %s's position has score %v after tenant %s's update, want %v", a, got.Score, b, before.Score)

@@ -35,6 +35,11 @@ type idResp struct {
 }
 
 // idReq is the common "operate on this id" request.
+type individuallyImportedReq struct {
+	ID    int64 `json:"id"`
+	Value bool  `json:"value"`
+}
+
 type idReq struct {
 	ID int64 `json:"id"`
 }

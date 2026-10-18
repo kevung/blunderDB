@@ -291,6 +291,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/positions.reclassifyPhases           JSON
      POST /v1/positions.repairCrawford             JSON
      POST /v1/positions.save                       JSON  (Idempotency-Key)
+     POST /v1/positions.setIndividuallyImported    JSON
      POST /v1/positions.similar                    JSON
      POST /v1/positions.update                     JSON
    quiz
