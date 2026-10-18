@@ -42,6 +42,13 @@ ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
   leur fichier source, et ``match repair --id`` ou le bouton ⟲ de la fiche les
   réécrit depuis ce fichier.
 
+0.43.0 (2026-10-18)
+-------------------
+
+- **L'exercice Ouverture tire par catégories** : *Money*, *DMP*, *Gammon save* (l'ouvreur à 1 away Crawford, le répondeur à 2 away) et *Gammon go* (l'inverse), une catégorie à égalité avec les autres puis un de ses scores ; la consigne nomme la catégorie à côté du score. La grille des scores de match en 7 reste une option, décochée d'emblée, parce que de 4 à 7 away les meilleurs coups changent à peine d'un score à l'autre.
+- **Le livre d'ouverture embarqué tient la partie d'argent et le DMP** : ``blunderdb openingbook`` et les routes ``openingbook.*`` du serveur les servent comme les autres scores.
+- Voir :ref:`panneau_entrainement`, :ref:`cli_openingbook` et :ref:`metrique_livre_ouverture`.
+
 0.42.0 (2026-10-17)
 -------------------
 

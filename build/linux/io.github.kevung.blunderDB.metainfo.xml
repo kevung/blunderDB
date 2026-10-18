@@ -86,6 +86,14 @@
   </branding>
 
   <releases>
+    <release version="0.43.0" date="2026-10-18">
+      <description>
+        <ul>
+          <li>The Opening exercise draws by category: Money, DMP, Gammon save and Gammon go, with the 7-point score grid as an option</li>
+          <li>The embedded opening book covers money play and DMP</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.42.0" date="2026-10-17">
       <description>
         <ul>
