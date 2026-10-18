@@ -18,13 +18,14 @@ import (
 // statsViewFlags are the flags every `stats` view shares: the database and the
 // panel's filter.
 type statsViewFlags struct {
-	db, player, tournament, from, to, decisionType, format *string
+	db, player, opponent, tournament, from, to, decisionType, format *string
 }
 
 func newStatsViewFlags(fs *flag.FlagSet) statsViewFlags {
 	return statsViewFlags{
 		db:           fs.String("db", "", "Path to the database file (required)"),
 		player:       fs.String("player", "", "Only this player's decisions"),
+		opponent:     fs.String("opponent", "", "Only the matches played against this player (with --player: the other seat)"),
 		tournament:   fs.String("tournament", "", "Filter by tournament IDs, comma-separated"),
 		from:         fs.String("from", "", "Start date filter YYYY-MM-DD"),
 		to:           fs.String("to", "", "End date filter YYYY-MM-DD"),
@@ -50,6 +51,7 @@ func (cli *CLI) runStatsView(name string, usage func(*flag.FlagSet), args []stri
 		return nil, f, fs, fmt.Errorf("missing required flag: --db")
 	}
 	filter, err := buildStatsFilter(*f.player, *f.tournament, *f.from, *f.to, *f.decisionType)
+	filter.OpponentName = *f.opponent
 	if err != nil {
 		return nil, f, fs, err
 	}
@@ -211,6 +213,7 @@ func (cli *CLI) runStatsReport(args []string) error {
 		return fmt.Errorf("missing required flag: --html")
 	}
 	filter, err := buildStatsFilter(*f.player, *f.tournament, *f.from, *f.to, *f.decisionType)
+	filter.OpponentName = *f.opponent
 	if err != nil {
 		return err
 	}

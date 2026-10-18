@@ -36,6 +36,13 @@ type PositionStore interface {
 	// set, never cleared (ADR-0006).
 	RaiseFlag(ctx context.Context, scope string, p *domain.Position) (bool, error)
 
+	// SetIndividuallyImported sets or lifts the "brought in by hand" mark of
+	// the position id and nothing else: no match_stats row, no analysis and no
+	// move is touched, unlike Update. Idempotent; ErrNotFound when the
+	// position is not in the scope. The mark is sticky for imports (ADR-0001);
+	// this is the one deliberate way to lift it.
+	SetIndividuallyImported(ctx context.Context, scope string, id int64, value bool) error
+
 	// Update overwrites the stored position with the same id as p.
 	Update(ctx context.Context, scope string, p *domain.Position) error
 

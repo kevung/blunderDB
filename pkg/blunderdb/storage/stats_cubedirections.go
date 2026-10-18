@@ -144,3 +144,8 @@ func PlayerNameSet(f StatsFilter) []string {
 	}
 	return out
 }
+
+// OpponentNameSet is PlayerNameSet for the opponent filter.
+func OpponentNameSet(f StatsFilter) []string {
+	return PlayerNameSet(StatsFilter{PlayerName: f.OpponentName, PlayerAliases: f.OpponentAliases})
+}

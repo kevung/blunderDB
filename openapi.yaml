@@ -389,6 +389,19 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/domain_PositionAnalysis"
+  /v1/analyses.queueStatus:
+    post:
+      operationId: analyses.queueStatus
+      tags: [analyses]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
   /v1/analyses.repair:
     post:
       operationId: analyses.repair
@@ -5457,6 +5470,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/positionSaveResp"
+  /v1/positions.setIndividuallyImported:
+    post:
+      operationId: positions.setIndividuallyImported
+      tags: [positions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/individuallyImportedReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/okResp"
   /v1/positions.similar:
     post:
       operationId: positions.similar
@@ -8928,6 +8958,14 @@ components:
           type: integer
           format: int32
           nullable: true
+    individuallyImportedReq:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        value:
+          type: boolean
     ingest_BatchProgress:
       type: object
       description: "Opaque: see the Go type ingest.BatchProgress (defined outside internal/server, not expanded here)."
