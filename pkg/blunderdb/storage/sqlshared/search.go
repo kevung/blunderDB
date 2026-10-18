@@ -730,21 +730,26 @@ func (s *SearchStore) IndexOf(ctx context.Context, scope string, f domain.Search
 }
 
 // sortKey returns the column a search sort orders on before its p.id
-// tiebreak, descending with NULLs last; "" for the id order. It is read off
-// domain.SearchOrderByClause so the rank cannot drift from the ORDER BY.
-func sortKey(order string) (col string, ok bool) {
+// tiebreak, and whether it runs descending, NULLs last; "" for the id order.
+// It is read off domain.SearchOrderByClause so the rank cannot drift from the
+// ORDER BY.
+func sortKey(order string) (col string, desc, ok bool) {
 	clause := domain.SearchOrderByClause(order)
 	if clause == "p.id" {
-		return "", true
+		return "", false, true
 	}
-	return strings.CutSuffix(clause, " DESC NULLS LAST, p.id")
+	if col, ok = strings.CutSuffix(clause, " DESC NULLS LAST, p.id"); ok {
+		return col, true, true
+	}
+	col, ok = strings.CutSuffix(clause, " ASC NULLS LAST, p.id")
+	return col, false, ok
 }
 
 // indexOfInSQL ranks id without reading a row: one query for id's sort key
 // (none means the search does not find it), one COUNT of the rows ordered
 // before it under "key DESC NULLS LAST, p.id".
 func (s *SearchStore) indexOfInSQL(ctx context.Context, wc searchWhereClause, order string, id int64) (int, bool, error) {
-	col, ok := sortKey(order)
+	col, desc, ok := sortKey(order)
 	if !ok {
 		return 0, false, fmt.Errorf("search: no rank for sort %q", order)
 	}
@@ -768,10 +773,15 @@ func (s *SearchStore) indexOfInSQL(ctx context.Context, wc searchWhereClause, or
 		return 0, false, errf(s.DB, "search rank key", err)
 	}
 	// NULLs sort last: before a NULL key come every keyed row and the NULL
-	// rows of a smaller id; before a key k, the larger keys and k's smaller ids.
+	// rows of a smaller id; before a key k, the keys ahead of it (larger when
+	// descending, smaller when ascending) and k's smaller ids.
+	ahead := " < ?"
+	if desc {
+		ahead = " > ?"
+	}
 	extra, extraArgs := " AND ("+col+" IS NOT NULL OR p.id < ?)", []any{id}
 	if key != nil {
-		extra, extraArgs = " AND ("+col+" > ? OR ("+col+" = ? AND p.id < ?))", []any{key, key, id}
+		extra, extraArgs = " AND ("+col+ahead+" OR ("+col+" = ? AND p.id < ?))", []any{key, key, id}
 	}
 	before, err := s.countWhere(ctx, wc, extra, extraArgs)
 	return before, err == nil, err

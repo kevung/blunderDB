@@ -126,6 +126,7 @@ var serverOnly = map[string]string{
 	"/v1/exports.json":                    whyTransport,
 	"/v1/imports.json":                    whyTransport,
 	"/v1/gammonnet.analyzeMissing.cancel": whyTransport,
+	"/v1/analyses.queueStatus":            "the gauges of the daemon's sweep registry, one per tenant; the GUI and the CLI run their one batch in the foreground and report it as it goes",
 	"/v1/rollout.filter.cancel":           whyTransport,
 	"/v1/search.query":                    whyTransport,
 	// get: a remote client reads a draft back after a 409, the desktop holds

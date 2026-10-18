@@ -186,6 +186,10 @@ func testWithoutAnalysis(t *testing.T, s storage.Storage) {
 		t.Errorf("WithoutAnalysisIDs = %v, want WithoutAnalysis's ids %v", bareIDs, got)
 	}
 
+	if n, err := s.Analyses().CountWithoutAnalysis(ctx, ""); err != nil || n != len(got) {
+		t.Errorf("CountWithoutAnalysis = %d, %v; want %d", n, err, len(got))
+	}
+
 	// Ascending id, and the same bound the listing families take.
 	for i := 1; i < len(got); i++ {
 		if got[i] <= got[i-1] {

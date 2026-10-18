@@ -42,7 +42,7 @@ const (
 )
 
 const (
-	DatabaseVersion = "2.42.0"
+	DatabaseVersion = "2.43.0"
 )
 
 // Anki deck source types
@@ -546,7 +546,9 @@ type SearchFilters struct {
 	// Sort orders the result set. "" keeps the stable engine order (position id).
 	// Analysis-backed keys ("error", "winrate", "close") order by the denormalised
 	// analysis columns; positions without an analysis sort last (NULLS LAST), so
-	// they are relegated, never hidden. See SearchOrderByClause.
+	// they are relegated, never hidden. "pip_asc"/"pip_desc" order by the pip
+	// count of the side on roll, "date_asc"/"date_desc" by the date of the
+	// earliest match reaching the position (none: last). See SearchOrderByClause.
 	Sort string `json:"sort"`
 }
 
@@ -563,6 +565,14 @@ func SearchOrderByClause(sort string) string {
 		return "a.player1_win_rate DESC NULLS LAST, p.id"
 	case "close": // close cube decisions first
 		return "a.is_close_cube DESC NULLS LAST, p.id"
+	case "pip_asc": // positions are stored from the side on roll: pip_1 is its pip count
+		return "p.pip_1 ASC NULLS LAST, p.id"
+	case "pip_desc":
+		return "p.pip_1 DESC NULLS LAST, p.id"
+	case "date_asc": // date of the earliest match reaching the position; none sorts last
+		return "p.match_date ASC NULLS LAST, p.id"
+	case "date_desc":
+		return "p.match_date DESC NULLS LAST, p.id"
 	default:
 		return "p.id"
 	}

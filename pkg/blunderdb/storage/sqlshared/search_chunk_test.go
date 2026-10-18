@@ -88,7 +88,7 @@ func TestSearchIndexOfSortedReadsNoRow(t *testing.T) {
 	if _, err := db.ExecContext(ctx, `UPDATE position SET decision_type = 'undecodable' WHERE id = ?`, ids[0]); err != nil {
 		t.Fatalf("corrupt row: %v", err)
 	}
-	for _, order := range []string{"error", "winrate", "close"} {
+	for _, order := range []string{"error", "winrate", "close", "pip_asc", "pip_desc", "date_asc", "date_desc"} {
 		at, ok, err := s.Search().IndexOf(ctx, "", domain.SearchFilters{Sort: order}, ids[2])
 		if err != nil || !ok || at != 2 {
 			t.Errorf("sort %q: IndexOf = %d, %v, %v; want 2", order, at, ok, err)

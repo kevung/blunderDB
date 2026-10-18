@@ -31,11 +31,14 @@ type StatsFilter struct {
 	// PlayerName (the filter keeps the decisions of ANY of them). See
 	// storage.StatsFilter for why a single string is not enough.
 	PlayerAliases []string
-	TournamentIDs []int64
-	DateFrom      string // ISO "YYYY-MM-DD"
-	DateTo        string // ISO "YYYY-MM-DD"
-	DecisionType  int    // -1=all, 0=checker, 1=cube
-	MatchLength   []int
+	// OpponentName and OpponentAliases: see storage.StatsFilter.
+	OpponentName    string   `json:"OpponentName,omitempty"`
+	OpponentAliases []string `json:"OpponentAliases,omitempty"`
+	TournamentIDs   []int64
+	DateFrom        string // ISO "YYYY-MM-DD"
+	DateTo          string // ISO "YYYY-MM-DD"
+	DecisionType    int    // -1=all, 0=checker, 1=cube
+	MatchLength     []int
 	// Provenance: see storage.StatsFilter.
 	AnalysisEngine   string `json:"AnalysisEngine,omitempty"`
 	MinAnalysisDepth int    `json:"MinAnalysisDepth,omitempty"`

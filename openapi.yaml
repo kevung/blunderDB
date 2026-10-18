@@ -389,6 +389,19 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/domain_PositionAnalysis"
+  /v1/analyses.queueStatus:
+    post:
+      operationId: analyses.queueStatus
+      tags: [analyses]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
   /v1/analyses.repair:
     post:
       operationId: analyses.repair

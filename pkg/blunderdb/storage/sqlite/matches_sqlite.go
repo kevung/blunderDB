@@ -695,7 +695,7 @@ func (s *matchStore) MergePlayers(ctx context.Context, scope string, names []str
 // SetLastVisitedPosition records the last position index viewed in a match.
 func (s *matchStore) SetLastVisitedPosition(ctx context.Context, scope string, id int64, positionIndex int) error {
 	if _, err := s.db.ExecContext(ctx,
-		`UPDATE match SET last_visited_position = ? WHERE id = ?`, positionIndex, id); err != nil {
+		`UPDATE match SET last_visited_position = ?, last_visited_at = strftime('%Y-%m-%d %H:%M:%f', 'now') WHERE id = ?`, positionIndex, id); err != nil {
 		return fmt.Errorf("sqlite: set last visited position for match %d: %w", id, err)
 	}
 	return nil
@@ -709,7 +709,7 @@ func (s *matchStore) LastVisited(ctx context.Context, scope string) (*domain.Mat
 		`SELECT `+matchSelectCols+` FROM match m
 		 LEFT JOIN tournament t ON m.tournament_id = t.id
 		 WHERE m.last_visited_position >= 0
-		 ORDER BY m.import_date DESC LIMIT 1`)
+		 ORDER BY m.last_visited_at DESC NULLS LAST, m.import_date DESC, m.id DESC LIMIT 1`)
 	m, err := scanMatch(row)
 	if err == nil {
 		return &m, nil
@@ -901,6 +901,17 @@ func (s *matchStore) CreateMove(ctx context.Context, scope string, mv *domain.Mo
 		}
 	}
 	return id, nil
+}
+
+// CreateMoves stores the moves in order; SQLite pays no round trip, so it is
+// CreateMove in a loop.
+func (s *matchStore) CreateMoves(ctx context.Context, scope string, mvs []*domain.Move) error {
+	for _, mv := range mvs {
+		if _, err := s.CreateMove(ctx, scope, mv); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // positionMatchDateOnMoveSQL lowers position.match_date to the date of the
