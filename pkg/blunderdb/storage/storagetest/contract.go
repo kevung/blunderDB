@@ -139,6 +139,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Search/Pagination", testSearchPagination},
 		{"Search/WindowsAgree", testSearchWindowsAgree},
 		{"Search/EncounterCountsEveryOccurrence", testSearchEncounterCountsEveryOccurrence},
+		{"Match/CreateMovesEqualsCreateMove", testCreateMovesEqualsCreateMove},
 		{"Match/MoveLuckRoundTrip", testMoveLuckRoundTrip},
 		{"Match/MoveDecisionTimeRoundTrip", testMoveDecisionTimeRoundTrip},
 		{"Match/VideoRoundTrip", testMatchVideoRoundTrip},
