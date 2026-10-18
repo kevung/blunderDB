@@ -1466,6 +1466,10 @@ export function SetMigrationProgress(arg1) {
   return window['go']['database']['Database']['SetMigrationProgress'](arg1);
 }
 
+export function SetPositionIndividuallyImported(arg1, arg2) {
+  return window['go']['database']['Database']['SetPositionIndividuallyImported'](arg1, arg2);
+}
+
 export function SetPositionStudied(arg1, arg2) {
   return window['go']['database']['Database']['SetPositionStudied'](arg1, arg2);
 }

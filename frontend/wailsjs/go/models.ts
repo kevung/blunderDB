@@ -1116,6 +1116,8 @@ export namespace database {
 	export class StatsFilter {
 	    PlayerName: string;
 	    PlayerAliases: string[];
+	    OpponentName?: string;
+	    OpponentAliases?: string[];
 	    TournamentIDs: number[];
 	    DateFrom: string;
 	    DateTo: string;
@@ -1132,6 +1134,8 @@ export namespace database {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.PlayerName = source["PlayerName"];
 	        this.PlayerAliases = source["PlayerAliases"];
+	        this.OpponentName = source["OpponentName"];
+	        this.OpponentAliases = source["OpponentAliases"];
 	        this.TournamentIDs = source["TournamentIDs"];
 	        this.DateFrom = source["DateFrom"];
 	        this.DateTo = source["DateTo"];
