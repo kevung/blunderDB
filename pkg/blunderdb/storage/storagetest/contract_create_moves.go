@@ -27,7 +27,6 @@ func testCreateMovesEqualsCreateMove(t *testing.T, s storage.Storage) {
 			t.Fatalf("Save position %d: %v", slot, err)
 		}
 		pos[slot] = id
-		e := e
 		a := domain.PositionAnalysis{
 			PlayedMoves: []string{"13/11 24/23"},
 			CheckerAnalysis: &domain.CheckerAnalysis{Moves: []domain.CheckerMove{
