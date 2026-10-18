@@ -1026,6 +1026,112 @@ func (s *matchStore) CreateMove(ctx context.Context, scope string, mv *domain.Mo
 	return id, nil
 }
 
+// batcher is what pgxpool.Pool and pgx.Tx both give: several statements sent
+// in one round trip.
+type batcher interface {
+	SendBatch(ctx context.Context, b *pgx.Batch) pgx.BatchResults
+}
+
+// CreateMoves stores the moves in order, as CreateMove does one by one, in
+// two round trips whatever their number: the analysis each position scores
+// its moves by is read once per position, then the inserts go out together.
+func (s *matchStore) CreateMoves(ctx context.Context, scope string, mvs []*domain.Move) error {
+	bt, ok := s.db.(batcher)
+	if !ok || len(mvs) < 2 {
+		for _, mv := range mvs {
+			if _, err := s.CreateMove(ctx, scope, mv); err != nil {
+				return err
+			}
+		}
+		return nil
+	}
+	tenant := tenantID(scope)
+
+	var positionIDs []int64
+	seen := map[int64]bool{}
+	for _, mv := range mvs {
+		if mv.PositionID != 0 && !seen[mv.PositionID] {
+			seen[mv.PositionID] = true
+			positionIDs = append(positionIDs, mv.PositionID)
+		}
+	}
+	bases := make(map[int64]*sqlshared.PlayedDecisionBasis, len(positionIDs))
+	if len(positionIDs) > 0 {
+		read := &pgx.Batch{}
+		for _, id := range positionIDs {
+			read.Queue(sqlshared.Rebind(sqlshared.PlayedDecisionAnalysisSQL), id)
+		}
+		res := bt.SendBatch(ctx, read)
+		for _, id := range positionIDs {
+			rows, err := res.Query()
+			if err != nil {
+				_ = res.Close()
+				return fmt.Errorf("postgres: create moves: read analysis of move: %w", err)
+			}
+			if rows.Next() {
+				basis, err := sqlshared.ScanPlayedDecisionBasis(rows.Scan)
+				if err != nil {
+					rows.Close()
+					_ = res.Close()
+					return fmt.Errorf("postgres: create moves: read analysis of move: %w", err)
+				}
+				bases[id] = basis
+			}
+			rows.Close()
+			if err := rows.Err(); err != nil {
+				_ = res.Close()
+				return fmt.Errorf("postgres: create moves: read analysis of move: %w", err)
+			}
+		}
+		if err := res.Close(); err != nil {
+			return fmt.Errorf("postgres: create moves: read analysis of move: %w", err)
+		}
+	}
+
+	insert := &pgx.Batch{}
+	for _, mv := range mvs {
+		var positionID any
+		sql := moveInsertSQL
+		if mv.PositionID != 0 {
+			positionID = mv.PositionID
+			sql = moveInsertDatingSQL
+		}
+		var luckMP any
+		if mv.LuckMP != nil {
+			luckMP = *mv.LuckMP
+		}
+		moveType, err := actionCode(ctx, s.db, tenant, mv.MoveType)
+		if err != nil {
+			return fmt.Errorf("postgres: create move: %w", err)
+		}
+		cubeAction, err := actionCode(ctx, s.db, tenant, mv.CubeAction)
+		if err != nil {
+			return fmt.Errorf("postgres: create move: %w", err)
+		}
+		decisionErr, closeCube := bases[mv.PositionID].Args(mv.CheckerMove, mv.CubeAction)
+		insert.Queue(sql,
+			tenant, mv.GameID, mv.MoveNumber, moveType, positionID, mv.Player,
+			mv.Dice[0], mv.Dice[1], mv.CheckerMove, cubeAction, luckMP,
+			sqlshared.MSArg(mv.DecisionMS), sqlshared.MSArg(mv.CubeDecisionMS), decisionErr, closeCube,
+			sqlshared.MSArg(mv.RollTickMS), sqlshared.MSArg(mv.TickMS))
+	}
+	res := bt.SendBatch(ctx, insert)
+	ids := make([]int64, len(mvs))
+	for i := range mvs {
+		if err := res.QueryRow().Scan(&ids[i]); err != nil {
+			_ = res.Close()
+			return fmt.Errorf("postgres: create move: %w", referenced(err))
+		}
+	}
+	if err := res.Close(); err != nil {
+		return fmt.Errorf("postgres: create move: %w", referenced(err))
+	}
+	for i, mv := range mvs {
+		mv.ID = ids[i]
+	}
+	return nil
+}
+
 // moveInsertDatingSQL is moveInsertSQL plus, in the same statement, the
 // lowering of position.match_date to the date of the match the new move ties
 // the position to (see the SQLite twin for why it compares instead of taking

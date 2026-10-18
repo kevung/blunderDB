@@ -264,6 +264,11 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 		createdHere = map[int64]bool{}
 	}
 	counter := Progress{Matches: 1}
+	// The moves are written once every position of the graph is, in one
+	// call: a server backend sends them in a few round trips instead of
+	// several per move, and each is scored by the analysis its position ends
+	// with.
+	var newMoves []*domain.Move
 	commentCtx := storage.WithCommentAuthor(ctx, importedCommentAuthor(g))
 	for gi := range g.Games {
 		gg := &g.Games[gi]
@@ -292,14 +297,16 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 			}
 			if !enrich {
 				mg.Move.GameID = gameID
-				if _, err := tx.Matches().CreateMove(ctx, scope, &mg.Move); err != nil {
-					return res, err
-				}
+				newMoves = append(newMoves, &mg.Move)
 			}
 			if prog != nil {
 				prog(counter)
 			}
 		}
+	}
+
+	if err := tx.Matches().CreateMoves(ctx, scope, newMoves); err != nil {
+		return res, err
 	}
 
 	// Only now, with the new moves written, is the retention predicate asked
