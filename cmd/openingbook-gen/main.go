@@ -93,7 +93,7 @@ func parseRolls(spec string) ([]openingbook.Roll, error) {
 func run(args []string) error {
 	cmd := flag.NewFlagSet("run", flag.ContinueOnError)
 	out := cmd.String("out", "openingbook-run.jsonl", "Run file: one line per finished job, read back to resume")
-	scores := cmd.String("scores", "grid", "Scores: grid (20), full (48), or a list of replier-opener away scores (4-2,1-4,money)")
+	scores := cmd.String("scores", "grid", "Scores: grid (20), full (48), xg, match5 (25), or a list of replier-opener away scores (4-2,1-4,money)")
 	openings := cmd.String("openings", "", "Only these opening rolls, comma-separated (31,65): a sample")
 	replies := cmd.String("replies", "", "Only these reply rolls, comma-separated (21,66): a sample")
 	after := cmd.Int("after", 2, "Reply jobs follow the best opening play and the plays tied with it, at most this many (1 = the best only)")

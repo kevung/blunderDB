@@ -1,6 +1,7 @@
 package openingbook
 
 import (
+	"fmt"
 	"math"
 	"strings"
 	"testing"
@@ -220,6 +221,26 @@ func TestKey_OpeningAndReplyLinesReadBack(t *testing.T) {
 	}
 }
 
+func TestMatch5Scores_AreTheTwentyFiveScoresOfAFivePointMatch(t *testing.T) {
+	seen := map[string]bool{}
+	for _, s := range Match5Scores() {
+		if err := s.Valid(); err != nil {
+			t.Fatalf("%s: %v", s, err)
+		}
+		seen[s.String()] = true
+	}
+	for r := 1; r <= 5; r++ {
+		for o := 1; o <= 5; o++ {
+			if k := fmt.Sprintf("%d-%d", r, o); !seen[k] {
+				t.Errorf("missing %s", k)
+			}
+		}
+	}
+	if len(seen) != 25 || len(Match5Scores()) != 25 {
+		t.Errorf("%d scores, want 25", len(seen))
+	}
+}
+
 func TestDefault_EmbeddedBookLoads(t *testing.T) {
 	if _, err := Default(); err != nil {
 		t.Fatal(err)
@@ -227,14 +248,14 @@ func TestDefault_EmbeddedBookLoads(t *testing.T) {
 }
 
 // The embedded book is what the exercise draws from: every opening at every
-// grid score, and every reply after its best play, so that no question can
+// grid, XG and 5-point-match score, and every reply after its best play, so that no question can
 // reach a line the book lacks.
 func TestDefault_EmbeddedBookCoversTheGrid(t *testing.T) {
 	b, err := Default()
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, s := range append(GridScores(), XGScores()...) {
+	for _, s := range append(append(GridScores(), XGScores()...), Match5Scores()...) {
 		for _, o := range Openings() {
 			line, ok := b.Lookup(OpeningKey(o, s))
 			if !ok || len(line.Candidates) == 0 {

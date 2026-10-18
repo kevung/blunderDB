@@ -140,6 +140,23 @@ func XGScores() []Score {
 	return []Score{Money, DMP, {2, domain.Crawford}, {domain.Crawford, 2}}
 }
 
+// Match5Scores are the scores of a 5-point match, the exercise's « Match en 5 »:
+// every pair of 2- to 5-away (16), the Crawford game at 1-away against 2- to
+// 5-away, both ways (8), and DMP. Money and the 6- and 7-away scores of the
+// grid are not part of it.
+func Match5Scores() []Score {
+	var out []Score
+	for r := 2; r <= 5; r++ {
+		for o := 2; o <= 5; o++ {
+			out = append(out, Score{r, o})
+		}
+	}
+	for n := 2; n <= 5; n++ {
+		out = append(out, Score{domain.Crawford, n}, Score{n, domain.Crawford})
+	}
+	return append(out, DMP)
+}
+
 // FullScores is the complete grid: every pair of 2- to 7-away (36) and every
 // Crawford game at 1-away against 2- to 7-away, both ways (12).
 func FullScores() []Score {
@@ -155,7 +172,7 @@ func FullScores() []Score {
 	return out
 }
 
-// ParseScores reads "grid", "full", "xg", or a comma-separated list of keys
+// ParseScores reads "grid", "full", "xg", "match5", or a comma-separated list of keys
 // ("4-2,2-4,1-2,1-1,money").
 func ParseScores(spec string) ([]Score, error) {
 	switch strings.ToLower(strings.TrimSpace(spec)) {
@@ -165,6 +182,8 @@ func ParseScores(spec string) ([]Score, error) {
 		return FullScores(), nil
 	case "xg":
 		return XGScores(), nil
+	case "match5":
+		return Match5Scores(), nil
 	}
 	var out []Score
 	seen := map[Score]bool{}

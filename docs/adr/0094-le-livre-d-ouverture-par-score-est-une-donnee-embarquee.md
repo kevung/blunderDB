@@ -121,3 +121,12 @@ fusionnées au lot de la grille sans le recalculer. La liste de la règle 2 (`4-
 `money`) est donc complète pour ces deux scores, et `Status.Scores` les annonce : l'exercice
 Ouverture par catégories (Money, DMP, Gammon save, Gammon go) s'active dessus. `XGScores()`
 est couverte par le test du livre embarqué comme la grille.
+
+## Amendement — match en 5
+
+Le livre embarqué tient les 25 scores d'un match en 5 points (`Match5Scores()`, `--scores
+match5`) : les dix qui manquaient à la grille et aux catégories XG (`2-4`, `4-2`, `2-5`, `5-2`,
+`3-5`, `5-3` et les jeux Crawford `1-3`, `3-1`, `1-5`, `5-1`) ont été calculés à part, même
+réglage rapide, puis fusionnés sans recalculer le reste (10 851 → 15 558 lignes). Le mode
+*Match en 5* de l'exercice Ouverture tire parmi eux ; le test du livre embarqué couvre
+`Match5Scores()` comme la grille et `XGScores()`.
