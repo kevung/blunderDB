@@ -3,6 +3,7 @@ package storagetest
 import (
 	"context"
 	"errors"
+	"reflect"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -13,12 +14,12 @@ import (
 // position is refused by name.
 func testPositionSetIndividuallyImported(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
-	_, posIDs := statsFixtureMatch(t, s, 0, "Ann", "Abe")
+	matchID, posIDs := statsFixtureMatch(t, s, 0, "Ann", "Abe")
 	id := posIDs[0]
 
-	before, err := s.Stats().Compute(ctx, "", storage.StatsFilter{DecisionType: -1})
-	if err != nil {
-		t.Fatalf("Compute: %v", err)
+	before, err := s.Stats().MatchStats(ctx, "", []int64{matchID})
+	if err != nil || len(before) == 0 {
+		t.Fatalf("MatchStats: %d rows, %v", len(before), err)
 	}
 	marked := func() bool {
 		t.Helper()
@@ -39,12 +40,12 @@ func testPositionSetIndividuallyImported(t *testing.T, s storage.Storage) {
 	if _, err := s.Analyses().Load(ctx, "", id); err != nil {
 		t.Errorf("the analysis did not survive: %v", err)
 	}
-	after, err := s.Stats().Compute(ctx, "", storage.StatsFilter{DecisionType: -1})
+	after, err := s.Stats().MatchStats(ctx, "", []int64{matchID})
 	if err != nil {
-		t.Fatalf("Compute after: %v", err)
+		t.Fatalf("MatchStats after: %v", err)
 	}
-	if after.Totals != before.Totals {
-		t.Errorf("totals moved: %+v, was %+v", after.Totals, before.Totals)
+	if !reflect.DeepEqual(after, before) {
+		t.Errorf("match_stats rows moved: %+v, was %+v", after, before)
 	}
 	if err := s.Positions().SetIndividuallyImported(ctx, "", id+1000000, true); !errors.Is(err, storage.ErrNotFound) {
 		t.Errorf("unknown position: err = %v, want ErrNotFound", err)

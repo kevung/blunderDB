@@ -34,12 +34,12 @@ type idResp struct {
 	ID int64 `json:"id"`
 }
 
-// idReq is the common "operate on this id" request.
 type individuallyImportedReq struct {
 	ID    int64 `json:"id"`
 	Value bool  `json:"value"`
 }
 
+// idReq is the common "operate on this id" request.
 type idReq struct {
 	ID int64 `json:"id"`
 }
