@@ -266,6 +266,20 @@ func (s *positionStore) RaiseFlag(ctx context.Context, scope string, p *domain.P
 	return n > 0, nil
 }
 
+// SetIndividuallyImported — see storage.PositionStore.
+func (s *positionStore) SetIndividuallyImported(ctx context.Context, scope string, id int64, value bool) error {
+	res, err := s.db.ExecContext(ctx, `UPDATE position SET individually_imported = ? WHERE id = ?`, value, id)
+	if err != nil {
+		return fmt.Errorf("sqlite: set individually imported on position %d: %w", id, err)
+	}
+	if n, err := res.RowsAffected(); err != nil {
+		return fmt.Errorf("sqlite: set individually imported on position %d: %w", id, err)
+	} else if n == 0 {
+		return fmt.Errorf("sqlite: set individually imported on position %d: %w", id, storage.ErrNotFound)
+	}
+	return nil
+}
+
 const positionUpdateSQL = `UPDATE position SET state = ?,
 	zobrist_hash=?, decision_type=?, player_on_roll=?, dice_1=?, dice_2=?,
 	cube_value=?, cube_owner=?, score_1=?, score_2=?,

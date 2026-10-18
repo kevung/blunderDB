@@ -111,6 +111,16 @@ func (d *Database) UpdatePosition(position Position) error {
 	return d.store.Positions().Update(context.Background(), "", &position)
 }
 
+// SetPositionIndividuallyImported sets or lifts the "brought in by hand" mark
+// of a position and nothing else: the matches that hold it, their stats and
+// its analysis are not touched, unlike UpdatePosition.
+func (d *Database) SetPositionIndividuallyImported(id int64, value bool) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	return d.store.Positions().SetIndividuallyImported(context.Background(), "", id, value)
+}
+
 func (d *Database) LoadPosition(id int) (*Position, error) {
 	d.mu.RLock()         // Lock the mutex
 	defer d.mu.RUnlock() // Unlock the mutex when the function returns
