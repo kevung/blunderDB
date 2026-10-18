@@ -4662,6 +4662,8 @@ Options:
     	Output format: text or json (default "text")
   -from string
     	Start date filter YYYY-MM-DD
+  -opponent string
+    	Only the matches played against this player (with --player: the other seat)
   -player string
     	Only this player's decisions
   -to string
@@ -4908,6 +4910,8 @@ Options:
     	Output format: text or json (default "text")
   -from string
     	Start date filter YYYY-MM-DD
+  -opponent string
+    	Only the matches played against this player (with --player: the other seat)
   -player string
     	Only this player's decisions
   -to string
@@ -5028,6 +5032,8 @@ Options:
     	Write the report as one self-contained HTML file (the only format)
   -lang string
     	Report language: fr, en, de, el, es, fi, it, ja, ru (default "en")
+  -opponent string
+    	Only the matches played against this player (with --player: the other seat)
   -output string
     	File to write (default: standard output)
   -player string

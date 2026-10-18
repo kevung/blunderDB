@@ -2270,7 +2270,7 @@
             "markWrong": "Wrong",
             "mode": "Mode",
             "modes": {
-                "xg": "Categories XG",
+                "xg": "XG categories",
                 "match5": "Match to 5"
             },
             "category": {

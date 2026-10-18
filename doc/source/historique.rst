@@ -42,6 +42,14 @@ ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
   leur fichier source, et ``match repair --id`` ou le bouton ⟲ de la fiche les
   réécrit depuis ce fichier.
 
+0.44.0 (2026-10-19)
+-------------------
+
+- **L'exercice Ouverture choisit entre deux modes** : *Catégories XG* (*Money*, *DMP*, *Gammon save* et *Gammon go*, combinables) ou *Match en 5*, qui tire un score à égalité parmi les vingt-cinq scores d'un match en 5 points, DMP et parties Crawford compris, sans score à choisir. La grille des scores de match en 7 disparaît.
+- **Le livre d'ouverture embarqué tient les vingt-cinq scores d'un match en 5** : 2-4, 4-2, 2-5, 5-2, 3-5, 5-3 et les parties Crawford 1-3, 3-1, 1-5 et 5-1 s'ajoutent ; ``blunderdb openingbook`` et les routes ``openingbook.*`` du serveur les servent comme les autres scores.
+- **Côté serveur** : ``search.find`` trie par compte de pips et par date, ``analyses.queueStatus`` décrit la file d'analyse, les statistiques se filtrent par adversaire, ``positions.setIndividuallyImported`` lève la marque « apportée à la main » d'une position, et ``matches.lastVisited`` rend le dernier match visité, non plus le dernier importé ; ``blunderdb stats`` prend ``--opponent``.
+- Voir :ref:`panneau_entrainement`, :ref:`cli_openingbook` et :ref:`api_reference`.
+
 0.43.0 (2026-10-18)
 -------------------
 

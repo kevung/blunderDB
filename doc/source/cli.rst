@@ -1371,6 +1371,8 @@ panneau Stats (voir :ref:`stats`). Les statistiques globales restent sous
 **Options:**
 
 * ``--player <nom>`` — Uniquement les décisions de ce joueur.
+* ``--opponent <nom>`` — Uniquement les matchs joués contre ce joueur ; avec
+  ``--player``, l'autre siège.
 * ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, ``--to <AAAA-MM-JJ>``,
   ``--decision-type all|checker|cube`` — Le même filtre que
   ``list --type stats``.
@@ -1459,7 +1461,7 @@ pu être rejoués est donnée sous le tableau.
    ./blunderdb stats biases --db <fichier> [options]
 
 Mêmes options de filtre que ``stats recurring`` (``--player``,
-``--tournament``, ``--from``, ``--to``, ``--decision-type``, ``--format``).
+``--opponent``, ``--tournament``, ``--from``, ``--to``, ``--decision-type``, ``--format``).
 
 .. code-block:: bash
 

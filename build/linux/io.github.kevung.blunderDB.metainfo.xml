@@ -86,6 +86,15 @@
   </branding>
 
   <releases>
+    <release version="0.44.0" date="2026-10-19">
+      <description>
+        <ul>
+          <li>The Opening exercise offers two modes: XG categories, or every score of a 5-point match</li>
+          <li>The embedded opening book covers all 25 scores of a 5-point match</li>
+          <li>Server: new search sorts, analysis queue status, opponent filter on statistics</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.43.0" date="2026-10-18">
       <description>
         <ul>
