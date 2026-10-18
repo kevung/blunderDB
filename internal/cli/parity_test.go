@@ -126,6 +126,7 @@ var serverOnly = map[string]string{
 	"/v1/exports.json":                    whyTransport,
 	"/v1/imports.json":                    whyTransport,
 	"/v1/gammonnet.analyzeMissing.cancel": whyTransport,
+	"/v1/analyses.queueStatus":            "the gauges of the daemon's sweep registry, one per tenant; the GUI and the CLI run their one batch in the foreground and report it as it goes",
 	"/v1/rollout.filter.cancel":           whyTransport,
 	"/v1/search.query":                    whyTransport,
 	// get: a remote client reads a draft back after a 409, the desktop holds
@@ -504,6 +505,7 @@ var databaseParity = map[string]parityEntry{
 	"SetMatchVideoSource":               {Server: "/v1/matches.setVideoSource", Why: whyGUIEdit},
 	"UpdateMatchComment":                {Server: "/v1/matches.updateComment", Why: whyGUIEdit},
 	"UpdatePosition":                    {Server: "/v1/positions.update", Why: whyGUIEdit},
+	"SetPositionIndividuallyImported":   {Server: "/v1/positions.setIndividuallyImported", Why: whyGUIEdit},
 	"UpdateTournament":                  {Server: "/v1/tournaments.update", Why: whyGUIEdit},
 	"UpdateTournamentComment":           {Server: "/v1/tournaments.updateComment", Why: whyGUIEdit},
 	"RemoveAnkiCard":                    {CLI: "anki card", Server: "/v1/anki.removeCard"},

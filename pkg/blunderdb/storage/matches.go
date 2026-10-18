@@ -208,6 +208,12 @@ type MatchStore interface {
 	// CreateMove stores a new move and returns its id.
 	CreateMove(ctx context.Context, scope string, mv *domain.Move) (int64, error)
 
+	// CreateMoves stores the moves in order, updating each mv.ID in place, as
+	// CreateMove would one by one — each scored by the analysis its position
+	// holds when the call is made. A server backend sends them in a few round
+	// trips instead of three or four per move.
+	CreateMoves(ctx context.Context, scope string, mvs []*domain.Move) error
+
 	// Moves streams the moves of a game in order.
 	Moves(ctx context.Context, scope string, gameID int64) iter.Seq2[*domain.Move, error]
 

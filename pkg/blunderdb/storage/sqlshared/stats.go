@@ -163,6 +163,10 @@ func (s *StatsStore) buildBaseWhereClauseSeat(scope string, filter storage.Stats
 
 	clauses, args = appendDateClauses(s.DB, clauses, args, filter)
 
+	if c, a := opponentClause(filter); c != "" {
+		clauses, args = append(clauses, c), append(args, a...)
+	}
+
 	if filter.DecisionType >= 0 {
 		clauses = append(clauses, "p.decision_type = ?")
 		args = append(args, filter.DecisionType)
@@ -540,18 +544,59 @@ func mergePlayerFrequencies(raw []storage.PlayerFrequency, aliases storage.Alias
 // table gives the same person, so a stats request names the person and not
 // one of their spellings.
 func (s *StatsStore) withPlayerAliases(ctx context.Context, scope string, filter storage.StatsFilter) (storage.StatsFilter, error) {
-	names := storage.PlayerNameSet(filter)
-	if len(names) == 0 {
+	names, opp := storage.PlayerNameSet(filter), storage.OpponentNameSet(filter)
+	if len(names) == 0 && len(opp) == 0 {
 		return filter, nil
 	}
 	aliases, err := aliasMap(ctx, s.DB, scope, storage.AliasPlayer)
 	if err != nil || len(aliases) == 0 {
 		return filter, err
 	}
-	group := aliases.Group(names...)
-	filter.PlayerName = group[0]
-	filter.PlayerAliases = group[1:]
+	if len(names) > 0 {
+		group := aliases.Group(names...)
+		filter.PlayerName = group[0]
+		filter.PlayerAliases = group[1:]
+	}
+	if len(opp) > 0 {
+		group := aliases.Group(opp...)
+		filter.OpponentName = group[0]
+		filter.OpponentAliases = group[1:]
+	}
 	return filter, nil
+}
+
+// opponentClause renders the opponent filter on alias m: the match was played
+// against one of the opponent's spellings, in the seat opposite the filter's
+// player when it names one. Empty when the filter names no opponent.
+func opponentClause(filter storage.StatsFilter) (string, []any) {
+	opp := storage.OpponentNameSet(filter)
+	if len(opp) == 0 {
+		return "", nil
+	}
+	ph := Placeholders(len(opp))
+	var args []any
+	add := func() {
+		for _, n := range opp {
+			args = append(args, n)
+		}
+	}
+	players := storage.PlayerNameSet(filter)
+	if len(players) == 0 {
+		add()
+		add()
+		return "(m.player1_name IN (" + ph + ") OR m.player2_name IN (" + ph + "))", args
+	}
+	pph := Placeholders(len(players))
+	addPlayers := func() {
+		for _, n := range players {
+			args = append(args, n)
+		}
+	}
+	addPlayers()
+	add()
+	addPlayers()
+	add()
+	return "((m.player1_name IN (" + pph + ") AND m.player2_name IN (" + ph + ")) OR (m.player2_name IN (" + pph + ") AND m.player1_name IN (" + ph + ")))", args
 }
 
 // MatchDetail computes per-player statistics for the given match, scoped to
@@ -980,6 +1025,10 @@ func (s *StatsStore) matchClauses(scope string, filter storage.StatsFilter) (cla
 	}
 
 	clauses, args = appendDateClauses(s.DB, clauses, args, filter)
+
+	if c, a := opponentClause(filter); c != "" {
+		clauses, args = append(clauses, c), append(args, a...)
+	}
 
 	if len(filter.MatchLength) > 0 {
 		ph := strings.TrimSuffix(strings.Repeat("?,", len(filter.MatchLength)), ",")

@@ -903,6 +903,17 @@ func (s *matchStore) CreateMove(ctx context.Context, scope string, mv *domain.Mo
 	return id, nil
 }
 
+// CreateMoves stores the moves in order; SQLite pays no round trip, so it is
+// CreateMove in a loop.
+func (s *matchStore) CreateMoves(ctx context.Context, scope string, mvs []*domain.Move) error {
+	for _, mv := range mvs {
+		if _, err := s.CreateMove(ctx, scope, mv); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // positionMatchDateOnMoveSQL lowers position.match_date to the date of the
 // match a new move ties the position to. It compares with the stored value
 // rather than taking the MIN over the position's moves: an opening position

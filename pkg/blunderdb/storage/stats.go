@@ -15,11 +15,17 @@ type StatsFilter struct {
 	// filter keeps the decisions of ANY of PlayerName + PlayerAliases. Merging
 	// names in place (MergePlayers) would rewrite a shared database's matches.
 	PlayerAliases []string
-	TournamentIDs []int64
-	DateFrom      string // ISO "YYYY-MM-DD"
-	DateTo        string // ISO "YYYY-MM-DD"
-	DecisionType  int    // -1=all, 0=checker, 1=cube
-	MatchLength   []int
+	// OpponentName (+ OpponentAliases, additive like the player's) keeps the
+	// decisions of the matches played against that name. With a player named,
+	// the opponent must sit in the other seat; without one, any match the
+	// name played counts, both seats' decisions included.
+	OpponentName    string   `json:"OpponentName,omitempty"`
+	OpponentAliases []string `json:"OpponentAliases,omitempty"`
+	TournamentIDs   []int64
+	DateFrom        string // ISO "YYYY-MM-DD"
+	DateTo          string // ISO "YYYY-MM-DD"
+	DecisionType    int    // -1=all, 0=checker, 1=cube
+	MatchLength     []int
 	// Provenance (ADR-0013): keep only the decisions analysed by this engine
 	// (analysis.analysis_engine, exact) and at least this deep
 	// (analysis.analysis_depth). Empty and 0 keep every analysis.

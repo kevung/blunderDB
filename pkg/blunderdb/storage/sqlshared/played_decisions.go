@@ -79,18 +79,48 @@ func PlayedDecisionArgs(ctx context.Context, db Execer, positionID int64, checke
 	if !rows.Next() {
 		return nil, 0, rows.Err()
 	}
+	basis, err := ScanPlayedDecisionBasis(rows.Scan)
+	if err != nil {
+		return nil, 0, errf(db, "read analysis of move", err)
+	}
+	errMP, closeCube = basis.Args(checkerMove, cubeAction)
+	return errMP, closeCube, nil
+}
+
+// PlayedDecisionBasis is what a move at one position is scored by: the row
+// PlayedDecisionAnalysisSQL reads, decoded once so that every move played
+// from the position can be scored without reading it again.
+type PlayedDecisionBasis struct {
+	decisionType int
+	analysis     *domain.PositionAnalysis
+	position     *domain.Position
+}
+
+// ScanPlayedDecisionBasis decodes one row of PlayedDecisionAnalysisSQL. An
+// analysis that cannot be decoded gives a nil basis, which scores NULL and 0
+// like a position without analysis.
+func ScanPlayedDecisionBasis(scan func(dest ...any) error) (*PlayedDecisionBasis, error) {
 	var decisionType int
 	var data, state []byte
 	var por, d1, d2 *int64
-	if err := rows.Scan(&decisionType, &data, &state, &por, &d1, &d2); err != nil {
-		return nil, 0, errf(db, "read analysis of move", err)
+	if err := scan(&decisionType, &data, &state, &por, &d1, &d2); err != nil {
+		return nil, err
 	}
 	a, decErr := engine.DecodeAnalysisFromStorage(data)
 	if decErr != nil {
-		return nil, 0, nil
+		return nil, nil
 	}
-	pd := scorePlayedDecision(&a, PlayPosition(state, por, d1, d2), decisionType, checkerMove, cubeAction)
-	return pd.errArg(), pd.closeCube, nil
+	return &PlayedDecisionBasis{decisionType: decisionType, analysis: &a, position: PlayPosition(state, por, d1, d2)}, nil
+}
+
+// Args returns move.decision_error_mp and move.is_close_cube for a move with
+// the given play; a nil basis (no analysis) gives NULL and 0.
+func (b *PlayedDecisionBasis) Args(checkerMove, cubeAction string) (errMP any, closeCube int64) {
+	if b == nil {
+		return nil, 0
+	}
+	pd := scorePlayedDecision(b.analysis, b.position, b.decisionType, checkerMove, cubeAction)
+	return pd.errArg(), pd.closeCube
 }
 
 // playedDecisionChunk bounds the positions one rescoring query names.

@@ -163,3 +163,33 @@ func testMatchStatsMETClearedInvalidates(t *testing.T, s storage.Storage) {
 	}
 	statsMatchRebuild(t, s, "after the upsert cleared met_id")
 }
+
+// testStatsOpponentFilter: the opponent filter keeps the matches played
+// against the name, in the seat opposite the player when one is named.
+func testStatsOpponentFilter(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	statsFixtureMatch(t, s, 0, "Ann", "Abe")
+	statsFixtureMatch(t, s, 4, "Bea", "Ann")
+	statsFixtureMatch(t, s, 8, "Cid", "Cal")
+	for _, c := range []struct {
+		name               string
+		f                  storage.StatsFilter
+		decisions, matches int
+	}{
+		{"opponent alone, both seats", storage.StatsFilter{OpponentName: "Abe"}, 2, 1},
+		{"opponent spellings add up", storage.StatsFilter{OpponentName: "Abe", OpponentAliases: []string{"Bea"}}, 4, 2},
+		{"player and opponent, the player's seat", storage.StatsFilter{PlayerName: "Ann", OpponentName: "Abe"}, 1, 1},
+		{"player in either seat", storage.StatsFilter{PlayerName: "Ann", OpponentName: "Bea"}, 1, 1},
+		{"never met", storage.StatsFilter{PlayerName: "Ann", OpponentName: "Cal"}, 0, 0},
+		{"a player is not its own opponent's seat", storage.StatsFilter{PlayerName: "Abe", OpponentName: "Abe"}, 0, 0},
+	} {
+		c.f.DecisionType = -1
+		res, err := s.Stats().Compute(ctx, "", c.f)
+		if err != nil {
+			t.Fatalf("%s: Compute: %v", c.name, err)
+		}
+		if res.Totals.NumDecisions != c.decisions || res.Totals.NumMatches != c.matches {
+			t.Errorf("%s: decisions %d, matches %d; want %d, %d", c.name, res.Totals.NumDecisions, res.Totals.NumMatches, c.decisions, c.matches)
+		}
+	}
+}

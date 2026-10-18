@@ -112,6 +112,11 @@ func (s *Server) positionRoutes() []route {
 			}
 			return ps().Update(ctx, scope, req.Position)
 		})},
+		// Lifts or sets the "brought in by hand" mark and nothing else: unlike
+		// update, no match_stats row and no analysis is touched.
+		{http.MethodPost, "/v1/positions.setIndividuallyImported", rpcVoid(func(ctx context.Context, scope string, req individuallyImportedReq) error {
+			return ps().SetIndividuallyImported(ctx, scope, req.ID, req.Value)
+		})},
 		// Reclassifies the derived phase (ADR-0035). Explicit, never
 		// automatic, like /v1/analyses.repair: the phase recomputes when the
 		// rule changes, not on every open. The report counts rows that
