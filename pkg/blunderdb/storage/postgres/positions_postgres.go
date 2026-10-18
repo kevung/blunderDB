@@ -271,6 +271,19 @@ func (s *positionStore) Reinstate(ctx context.Context, scope string, p *domain.P
 	return id, created, nil
 }
 
+// SetIndividuallyImported — see storage.PositionStore.
+func (s *positionStore) SetIndividuallyImported(ctx context.Context, scope string, id int64, value bool) error {
+	tag, err := s.db.Exec(ctx, `UPDATE position SET individually_imported = $1 WHERE id = $2 AND tenant_id = $3`,
+		value, id, tenantID(scope))
+	if err != nil {
+		return fmt.Errorf("postgres: set individually imported on position %d: %w", id, err)
+	}
+	if tag.RowsAffected() == 0 {
+		return fmt.Errorf("postgres: set individually imported on position %d: %w", id, storage.ErrNotFound)
+	}
+	return nil
+}
+
 const positionUpdateSQL = `UPDATE position SET state = $1,
 	zobrist_hash=$2, decision_type=$3, player_on_roll=$4, dice_1=$5, dice_2=$6,
 	cube_value=$7, cube_owner=$8, score_1=$9, score_2=$10,
