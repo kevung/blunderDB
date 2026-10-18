@@ -577,6 +577,19 @@ func (s *analysisStore) WithoutAnalysisIDs(ctx context.Context, scope string) ([
 	return ids, rows.Err()
 }
 
+// CountWithoutAnalysis is WithoutAnalysisIDs's predicate as a COUNT.
+func (s *analysisStore) CountWithoutAnalysis(ctx context.Context, scope string) (int, error) {
+	var n int
+	err := s.db.QueryRow(ctx, `SELECT COUNT(*)
+		 FROM position p LEFT JOIN analysis a
+		   ON a.position_id = p.id AND a.tenant_id = p.tenant_id
+		 WHERE p.tenant_id = $1 AND a.position_id IS NULL`, tenantID(scope)).Scan(&n)
+	if err != nil {
+		return 0, fmt.Errorf("postgres: count positions without analysis: %w", err)
+	}
+	return n, nil
+}
+
 // invalidateMatchStatsOnAnalysis drops the match_stats rows of every match
 // reaching positionID when the analysis about to be written changes a column
 // those rows summarise (or the position had no analysis). An unchanged

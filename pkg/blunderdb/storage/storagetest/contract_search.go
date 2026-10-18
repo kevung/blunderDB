@@ -818,3 +818,87 @@ func testSearchEncounterCountsEveryOccurrence(t *testing.T, s storage.Storage) {
 		}
 	}
 }
+
+// testSearchSortPipAndDate pins the direction and the meaning of the pip and
+// date sorts: pip is the count of the side on roll (C is a White-to-play
+// position whose absolute Black count, 10, would mis-order it), date is the
+// earliest match reaching a position (D is reached by a 2025 and a 2023
+// match), and a position no match reaches (E) sorts last in both directions.
+func testSearchSortPipAndDate(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	mk := func(onRoll int, black, white map[int]int, dice [2]int) domain.Position {
+		p := domain.InitializePosition()
+		for i := range p.Board.Points {
+			p.Board.Points[i] = domain.Point{Color: -1}
+		}
+		b, w := 0, 0
+		for pt, n := range black {
+			p.Board.Points[pt] = domain.Point{Checkers: n, Color: domain.Black}
+			b += n
+		}
+		for pt, n := range white {
+			p.Board.Points[pt] = domain.Point{Checkers: n, Color: domain.White}
+			w += n
+		}
+		p.Board.Bearoff = [2]int{15 - b, 15 - w}
+		p.PlayerOnRoll = onRoll
+		p.Dice = dice
+		return p
+	}
+	var ids [5]int64 // A..E
+	for i, p := range []domain.Position{
+		mk(domain.Black, map[int]int{6: 2}, map[int]int{24: 1}, [2]int{3, 1}),  // A: 12 on roll
+		mk(domain.Black, map[int]int{3: 1}, map[int]int{20: 3}, [2]int{4, 2}),  // B: 3
+		mk(domain.White, map[int]int{10: 1}, map[int]int{21: 2}, [2]int{5, 1}), // C: 8 (Black holds 10)
+		mk(domain.Black, map[int]int{9: 1}, map[int]int{23: 1}, [2]int{6, 2}),  // D: 9
+		mk(domain.Black, map[int]int{5: 1}, map[int]int{20: 1}, [2]int{6, 3}),  // E: 5, no match
+	} {
+		id, err := s.Positions().Save(ctx, "", &p)
+		if err != nil {
+			t.Fatalf("Save position %c: %v", 'A'+i, err)
+		}
+		ids[i] = id
+	}
+	A, B, C, D, E := ids[0], ids[1], ids[2], ids[3], ids[4]
+
+	reach := func(date time.Time, positions ...int64) {
+		t.Helper()
+		m := domain.Match{Player1Name: "p", Player2Name: "q", MatchLength: 7, MatchDate: date}
+		matchID, err := s.Matches().Save(ctx, "", &m)
+		if err != nil {
+			t.Fatalf("Save match: %v", err)
+		}
+		g := domain.Game{MatchID: matchID, GameNumber: 1}
+		gameID, err := s.Matches().CreateGame(ctx, "", &g)
+		if err != nil {
+			t.Fatalf("CreateGame: %v", err)
+		}
+		for n, pid := range positions {
+			mv := domain.Move{GameID: gameID, MoveNumber: int32(n + 1), MoveType: "checker",
+				PositionID: pid, Player: 1, Dice: [2]int32{3, 1}, CheckerMove: "8/5 6/5"}
+			if _, err := s.Matches().CreateMove(ctx, "", &mv); err != nil {
+				t.Fatalf("CreateMove: %v", err)
+			}
+		}
+	}
+	day := func(y int, m time.Month, d int) time.Time { return time.Date(y, m, d, 0, 0, 0, 0, time.UTC) }
+	reach(day(2025, 6, 1), A, D)
+	reach(day(2023, 1, 1), D)
+	reach(day(2024, 3, 1), B)
+	reach(day(2023, 9, 1), C)
+
+	for _, tc := range []struct {
+		sort string
+		want []int64
+	}{
+		{"pip_asc", []int64{B, E, C, D, A}},
+		{"pip_desc", []int64{A, D, C, E, B}},
+		{"date_asc", []int64{D, C, B, A, E}},
+		{"date_desc", []int64{A, B, C, D, E}},
+	} {
+		got := searchIDs(t, s, domain.SearchFilters{Sort: tc.sort})
+		if !slices.Equal(got, tc.want) {
+			t.Errorf("sort %s: got %v, want %v", tc.sort, got, tc.want)
+		}
+	}
+}

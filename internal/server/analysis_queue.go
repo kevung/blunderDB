@@ -62,11 +62,11 @@ func (s *Server) analysisQueueStatus(ctx context.Context, scope string, _ struct
 	if err != nil {
 		return analysisQueueResp{}, err
 	}
-	missing, err := st.Analyses().WithoutAnalysisIDs(ctx, scope)
+	missing, err := st.Analyses().CountWithoutAnalysis(ctx, scope)
 	if err != nil {
 		return analysisQueueResp{}, err
 	}
-	resp := analysisQueueResp{Positions: total, Pending: len(missing), Analysed: total - len(missing)}
+	resp := analysisQueueResp{Positions: total, Pending: missing, Analysed: total - missing}
 	if p, ok := s.sweeps.get(scope); ok {
 		resp.Sweep = &p
 		resp.Running = p.State == "running"
