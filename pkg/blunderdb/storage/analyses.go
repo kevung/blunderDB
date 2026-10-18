@@ -84,6 +84,10 @@ type AnalysisStore interface {
 	// only lists them pays for the ids alone.
 	WithoutAnalysisIDs(ctx context.Context, scope string) ([]int64, error)
 
+	// CountWithoutAnalysis is len(WithoutAnalysisIDs) as one COUNT, loading
+	// no id.
+	CountWithoutAnalysis(ctx context.Context, scope string) (int, error)
+
 	// WithEngine streams, by ascending position id, the analyses whose
 	// provenance column (analysis_engine) starts with enginePrefix or is not
 	// derived yet (NULL). Rows of any other engine are skipped on the column

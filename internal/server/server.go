@@ -70,6 +70,7 @@ type Server struct {
 	// reuses importRegistry's scope-keyed cancel bookkeeping under its own
 	// instance rather than a new type for the same three methods.
 	gammonnetJobs *importRegistry
+	sweeps        sweepBoard
 	rl            *middleware.RateLimiter // nil when rate limiting is disabled
 	// spool bounds the total bytes concurrently in-flight imports may hold
 	// spooled to $TMPDIR — see handleImport and Options.MaxSpoolBytes.

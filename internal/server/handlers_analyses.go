@@ -20,6 +20,9 @@ type positionIDReq struct {
 func (s *Server) analysisRoutes() []route {
 	as := func() storage.AnalysisStore { return s.opts.Storage.Analyses() }
 	return []route{
+		// Gauges of the analysis queue: positions with and without an
+		// analysis, and the counters of the tenant's running or last sweep.
+		{http.MethodPost, "/v1/analyses.queueStatus", rpc(s.analysisQueueStatus)},
 		{http.MethodPost, "/v1/analyses.save", rpcVoid(func(ctx context.Context, scope string, req analysisSaveReq) error {
 			if req.Analysis == nil {
 				return errMissing("analysis")
