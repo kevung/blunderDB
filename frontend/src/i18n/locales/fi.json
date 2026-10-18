@@ -2268,12 +2268,16 @@
             "withoutBearoff": "ilman tarkkaa bearoff-taulukkoa",
             "markRight": "Oikein",
             "markWrong": "Väärin",
+            "mode": "Tila",
+            "modes": {
+                "xg": "XG-luokat",
+                "match5": "Ottelu viiteen"
+            },
             "category": {
                 "money": "Money",
                 "dmp": "DMP",
                 "gammonSave": "Gammon save",
-                "gammonGo": "Gammon go",
-                "grid": "Ottelutilanteet 7:ään"
+                "gammonGo": "Gammon go"
             }
         },
         "categories": "Kategoriat"

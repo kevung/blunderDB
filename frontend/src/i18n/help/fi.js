@@ -1001,7 +1001,7 @@ export default {
 <li><strong>harjoitus</strong> — <em>Tulokset</em>, <em>Pipit</em>, <em>Bearoff</em>, <em>Arviointi</em>, <em>Päätös</em> tai <em>Avaus</em>;</li>
 <li>kysymyksen <strong>lähde</strong>, kun harjoituksella on useita — <em>Vivier</em> (harjoituksen vakiomuodot), <em>Plateau</em> (asema sellaisenaan) tai <em>Base</em> (asema selatusta luettelosta);</li>
 <li><em>Avaus</em>-harjoituksessa lähteen sijaan pelattava <strong>heitto</strong> — <em>1. heitto</em> (1st roll, avaussiirto) tai <em>2. heitto</em> (2nd roll, vastaus); oletuksena <em>1. heitto</em>;</li>
-<li><em>Avaus</em>-harjoituksessa lisäksi arvottavat <strong>kategoriat</strong> — <em>Money</em>, <em>DMP</em>, <em>Gammon save</em> (aloittaja 1-away Crawfordissa, vastaaja 2-awayssa), <em>Gammon go</em> (päinvastoin) ja <em>Ottelutilanteet 7:ään</em> (kirjan ruudukko); neljä ensimmäistä on oletuksena valittu, ruudukko ei. Kategoria, jota kirja ei sisällä, on harmaana;</li>
+<li><em>Avaus</em>-harjoituksessa lisäksi <strong>tila</strong>, joista vain yksi on valittuna: <em>XG-luokat</em> (oletus) arpoo valittujen <strong>luokkien</strong> joukosta — <em>Money</em>, <em>DMP</em>, <em>Gammon save</em> (avaaja 1 away Crawford, vastaaja 2 away) ja <em>Gammon go</em> (päinvastoin), jotka on valittu oletuksena; <em>Ottelu viiteen</em> arpoo yhden tilanteen yhtä suurin painoin niistä, jotka kirja sisältää ja joissa kumpikin pelaaja on 1–5 away, ilman tilanteen valintaa. Luokka tai <em>Ottelu viiteen</em> -tila, jota kirja ei sisällä, on harmaana;</li>
 <li><strong>aikaraja kysymystä kohti</strong> — ei rajaa, 15, 30 tai 60 sekuntia.</li>
 </ul>
 <p>Valittu lähde tai heitto muistetaan kullekin harjoitukselle istunnosta toiseen.</p>

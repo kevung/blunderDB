@@ -100,8 +100,27 @@ describe('une session d’Ouverture', () => {
         await startTrainingSession({ exercise: 'opening', seedSource: 'first', categories: ['money', 'dmp', 'gammonSave'] });
         expect(app.OpeningBookQuestion.mock.calls[0][0]).toEqual({ roll: 'first', scores: ['2-1'] });
         quitTrainingSession();
-        await startTrainingSession({ exercise: 'opening', seedSource: 'first', categories: ['grid'] });
-        expect(app.OpeningBookQuestion.mock.calls.at(-1)?.[0]).toEqual({ roll: 'first', scores: ['4-2', '2-1', '1-2'] });
+    });
+
+    test('Match en 5 : un score tiré à égalité parmi ceux du livre qui sont de 1 à 5 away, ni money ni 6-7', async () => {
+        app.OpeningBookStatus.mockResolvedValue(/** @type {any} */ ({ lines: 9, scores: ['money', '1-1', '2-1', '1-2', '4-2', '6-2', '7-7'] }));
+        const random = vi.spyOn(Math, 'random');
+        const sent = [];
+        for (const r of [0, 0.3, 0.5, 0.99]) {
+            random.mockReturnValue(r);
+            app.OpeningBookQuestion.mockClear();
+            await startTrainingSession({ exercise: 'opening', seedSource: 'first', openingMode: 'match5' });
+            sent.push(app.OpeningBookQuestion.mock.calls[0][0].scores);
+            quitTrainingSession();
+        }
+        random.mockRestore();
+        expect(sent).toEqual([['1-1'], ['2-1'], ['1-2'], ['4-2']]);
+    });
+
+    test('Match en 5 sans score du livre : refus, aucun tirage', async () => {
+        app.OpeningBookStatus.mockResolvedValue(/** @type {any} */ ({ lines: 9, scores: ['money', '6-2'] }));
+        expect(await startTrainingSession({ exercise: 'opening', seedSource: 'first', openingMode: 'match5' })).toBe(false);
+        expect(app.OpeningBookQuestion).not.toHaveBeenCalled();
     });
 
     test('Money et DMP tirés dès que le livre les tient', async () => {

@@ -572,23 +572,49 @@ describe('le lanceur d’Ouverture', () => {
         expect(service.startTrainingSession).toHaveBeenCalledWith(expect.objectContaining({ exercise: 'opening', seedSource: 'second' }));
     });
 
-    test('quatre catégories, la grille décochée ; Money et DMP indisponibles tant que le livre ne les tient pas', async () => {
+    test('quatre catégories cochées ; Money et DMP indisponibles tant que le livre ne les tient pas', async () => {
         const panel = render(TrainingPanel);
         panel.getByTestId('training-exercise-opening').click();
         await tick();
         await tick();
         expect(panel.getByTestId('training-category-money').hasAttribute('disabled')).toBe(true);
         expect(panel.getByTestId('training-category-dmp').hasAttribute('disabled')).toBe(true);
-        expect(panel.getByTestId('training-category-gammonSave').getAttribute('aria-pressed')).toBe('true');
+        expect(panel.queryByTestId('training-category-grid')).toBeNull();
         expect(panel.getByTestId('training-category-gammonGo').getAttribute('aria-pressed')).toBe('true');
-        expect(panel.getByTestId('training-category-grid').getAttribute('aria-pressed')).toBe('false');
-        panel.getByTestId('training-category-grid').click();
-        await tick();
         panel.getByTestId('training-category-gammonGo').click();
         await tick();
         panel.getByTestId('training-start').click();
         const call = vi.mocked(service.startTrainingSession).mock.calls.at(-1)?.[0];
-        expect(call?.categories?.slice().sort()).toEqual(['dmp', 'gammonSave', 'grid', 'money']);
+        expect(call?.categories?.slice().sort()).toEqual(['dmp', 'gammonSave', 'money']);
+        expect(call?.openingMode).toBe('xg');
+    });
+
+    test('Match en 5 : exclusif, sans choix de score, mémorisé ; désactivé si le livre n’en tient aucun', async () => {
+        localStorage.removeItem('blunderdb.openingMode');
+        const panel = render(TrainingPanel);
+        panel.getByTestId('training-exercise-opening').click();
+        await tick();
+        await tick();
+        expect(panel.getByTestId('training-mode-xg').getAttribute('aria-pressed')).toBe('true');
+        panel.getByTestId('training-mode-match5').click();
+        await tick();
+        expect(panel.getByTestId('training-mode-match5').getAttribute('aria-pressed')).toBe('true');
+        expect(panel.getByTestId('training-mode-xg').getAttribute('aria-pressed')).toBe('false');
+        expect(panel.queryByTestId('training-category-gammonGo')).toBeNull();
+        expect(localStorage.getItem('blunderdb.openingMode')).toBe('match5');
+        panel.getByTestId('training-start').click();
+        expect(vi.mocked(service.startTrainingSession).mock.calls.at(-1)?.[0]?.openingMode).toBe('match5');
+        localStorage.removeItem('blunderdb.openingMode');
+    });
+
+    test('une valeur mémorisée contenant l’ancien grid ne casse pas le montage', async () => {
+        localStorage.setItem('blunderdb.openingCategories', JSON.stringify(['grid']));
+        const panel = render(TrainingPanel);
+        panel.getByTestId('training-exercise-opening').click();
+        await tick();
+        await tick();
+        expect(panel.getByTestId('training-category-gammonGo').getAttribute('aria-pressed')).toBe('true');
+        localStorage.removeItem('blunderdb.openingCategories');
     });
 
     test('aucune catégorie jouable cochée : le lancement est refusé', async () => {

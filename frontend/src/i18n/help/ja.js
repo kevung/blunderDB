@@ -1001,7 +1001,7 @@ export default {
 <li><strong>練習</strong> — <em>スコア</em>、<em>ピップ数</em>、<em>ベアオフ</em>、<em>評価</em>、<em>判断</em>、<em>オープニング</em>。</li>
 <li>問題の<strong>ソース</strong>（練習が複数持つ場合）— <em>Vivier</em>（その練習の定型局面）、<em>Plateau</em>（現在の盤面そのまま）、<em>Base</em>（閲覧中の一覧の局面）。</li>
 <li><em>オープニング</em>では、ソースの代わりに出題する<strong>ロール</strong>を選びます。<em>1投目</em>（1st roll、オープニングの手）か<em>2投目</em>（2nd roll、返し）で、既定は<em>1投目</em>です。</li>
-<li><em>オープニング</em>ではさらに、出題する<strong>カテゴリ</strong>を選びます。<em>Money</em>、<em>DMP</em>、<em>Gammon save</em>（オープナーが1-awayのクロフォード、リプライヤーが2-away）、<em>Gammon go</em>（その逆）、<em>7ポイントまでのマッチスコア</em>（ブックのグリッド）で、最初の4つは初期状態で選択済み、グリッドは未選択です。ブックにないカテゴリはグレー表示になります。</li>
+<li>オープニングではさらに<strong>モード</strong>を選びます（排他）。<em>XGカテゴリ</em>（既定）は、チェックされた<strong>カテゴリ</strong>——<em>Money</em>、<em>DMP</em>、<em>Gammon save</em>（オープナーが 1-away Crawford、応答側が 2-away）、<em>Gammon go</em>（その逆）、いずれも初期状態でチェック済み——から出題します。<em>5ポイントマッチ</em>は、双方が 1〜5 away であるスコアのうちブックにあるものから等しい重みで 1 つ出題し、スコアの選択はありません。ブックにないカテゴリや<em>5ポイントマッチ</em>モードはグレー表示になります。</li>
 <li><strong>1問あたりの制限</strong> — なし、15、30 または 60 秒。</li>
 </ul>
 <p>選んだソース（またはロール）は練習ごとに記憶され、セッションをまたいで引き継がれます。</p>

@@ -4774,10 +4774,12 @@ Trois réglages, un par ligne ; « Démarrer » est au bout de la bande d'en-tê
   est) ou *Base* (une position de la liste parcourue) ;
 * pour *Ouverture*, à la place de la source, le **jet** posé — *1st roll* (le
   coup d'ouverture) ou *2nd roll* (la réponse) ; *1st roll* par défaut ;
-* pour *Ouverture* encore, les **catégories** tirées — *Money*, *DMP*, *Gammon save*
-  (l'ouvreur à 1 away Crawford, le répondeur à 2 away), *Gammon go* (l'inverse) et
-  *Scores de match en 7* (la grille du livre) ; les quatre premières sont cochées
-  d'emblée, la grille non. Une catégorie que le livre ne tient pas est grisée ;
+* pour *Ouverture* encore, le **mode**, exclusif : *Catégories XG* (par défaut) tire
+  parmi les **catégories** cochées — *Money*, *DMP*, *Gammon save* (l'ouvreur à 1 away
+  Crawford, le répondeur à 2 away) et *Gammon go* (l'inverse), cochées d'emblée ;
+  *Match en 5* tire un score à égalité parmi ceux du livre où chaque joueur est à 1 à
+  5 away, sans choix de score. Une catégorie, ou le mode *Match en 5*, que le livre ne
+  tient pas est grisé ;
 * la **limite par question** — aucune, 15, 30 ou 60 secondes.
 
 La source, ou le jet, choisi est mémorisé pour chaque exercice, d'une session à l'autre.

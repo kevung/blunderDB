@@ -1001,7 +1001,7 @@ export default {
 <li>l'<strong>exercice</strong> — <em>Scores</em>, <em>Comptage des pips</em>, <em>Bearoff</em>, <em>Évaluation</em>, <em>Décision</em> ou <em>Ouverture</em> ;</li>
 <li>la <strong>source</strong> de la question, quand l'exercice en a plusieurs — <em>Vivier</em> (des formes canoniques de l'exercice), <em>Plateau</em> (la position telle qu'elle est) ou <em>Base</em> (une position de la liste parcourue) ;</li>
 <li>pour <em>Ouverture</em>, à la place de la source, le <strong>jet</strong> posé — <em>1st roll</em> (le coup d'ouverture) ou <em>2nd roll</em> (la réponse) ; <em>1st roll</em> par défaut ;</li>
-<li>pour <em>Ouverture</em> encore, les <strong>catégories</strong> tirées — <em>Money</em>, <em>DMP</em>, <em>Gammon save</em> (l'ouvreur à 1 away Crawford, le répondeur à 2 away), <em>Gammon go</em> (l'inverse) et <em>Scores de match en 7</em> (la grille du livre) ; les quatre premières sont cochées d'emblée, la grille non. Une catégorie que le livre ne tient pas est grisée ;</li>
+<li>pour <em>Ouverture</em> encore, le <strong>mode</strong>, exclusif : <em>Catégories XG</em> (par défaut) tire parmi les <strong>catégories</strong> cochées — <em>Money</em>, <em>DMP</em>, <em>Gammon save</em> (l'ouvreur à 1 away Crawford, le répondeur à 2 away) et <em>Gammon go</em> (l'inverse), cochées d'emblée ; <em>Match en 5</em> tire un score à égalité parmi ceux du livre où chaque joueur est à 1 à 5 away, sans choix de score. Une catégorie, ou le mode <em>Match en 5</em>, que le livre ne tient pas est grisé ;</li>
 <li>la <strong>limite par question</strong> — aucune, 15, 30 ou 60 secondes.</li>
 </ul>
 <p>La source, ou le jet, choisi est mémorisé pour chaque exercice, d'une session à l'autre.</p>

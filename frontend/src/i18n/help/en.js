@@ -1001,7 +1001,7 @@ export default {
 <li>the <strong>exercise</strong> — <em>Scores</em>, <em>Pip count</em>, <em>Bearoff</em>, <em>Evaluation</em>, <em>Decision</em> or <em>Opening</em>;</li>
 <li>the <strong>source</strong> of the question, when the exercise has several — <em>Vivier</em> (canonical shapes of the exercise), <em>Plateau</em> (the position as it stands) or <em>Base</em> (a position of the browsed list);</li>
 <li>for <em>Opening</em>, instead of the source, the <strong>roll</strong> to play — <em>1st roll</em> (the opening move) or <em>2nd roll</em> (the reply); <em>1st roll</em> by default;</li>
-<li>for <em>Opening</em> again, the <strong>categories</strong> drawn — <em>Money</em>, <em>DMP</em>, <em>Gammon save</em> (the opener 1-away Crawford, the replier 2-away), <em>Gammon go</em> (the reverse) and <em>Match scores to 7</em> (the book's grid); the first four are ticked by default, the grid is not. A category the book does not hold is greyed out;</li>
+<li>for <em>Opening</em> again, the <strong>mode</strong>, exclusive: <em>XG categories</em> (the default) draws among the ticked <strong>categories</strong> — <em>Money</em>, <em>DMP</em>, <em>Gammon save</em> (the opener 1-away Crawford, the replier 2-away) and <em>Gammon go</em> (the reverse), ticked by default; <em>Match to 5</em> draws one score, with equal weight, among those the book holds where each player is 1 to 5 away, with no choice of score. A category, or the <em>Match to 5</em> mode, that the book does not hold is greyed out;</li>
 <li>the <strong>limit per question</strong> — none, 15, 30 or 60 seconds.</li>
 </ul>
 <p>The chosen source, or roll, is remembered for each exercise, from one session to the next.</p>

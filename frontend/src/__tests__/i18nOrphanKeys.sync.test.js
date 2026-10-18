@@ -106,7 +106,9 @@ const DYNAMIC_PREFIXES = [
     'direction.settings.scale_',
     'training.refusal.',
     // Les catégories de l'exercice Ouverture : `$t(`training.opening.category.${id}`)`.
-    'training.opening.category.'
+    'training.opening.category.',
+    // Les modes de l'exercice Ouverture : `$t(`training.opening.modes.${mode}`)`.
+    'training.opening.modes.'
 ];
 
 function sourceFiles(dir) {

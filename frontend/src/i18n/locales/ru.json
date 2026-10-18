@@ -2268,12 +2268,16 @@
             "withoutBearoff": "без точной таблицы бэройфа",
             "markRight": "Верно",
             "markWrong": "Неверно",
+            "mode": "Режим",
+            "modes": {
+                "xg": "Категории XG",
+                "match5": "Матч до 5"
+            },
             "category": {
                 "money": "Money",
                 "dmp": "DMP",
                 "gammonSave": "Gammon save",
-                "gammonGo": "Gammon go",
-                "grid": "Счета матча до 7"
+                "gammonGo": "Gammon go"
             }
         },
         "categories": "Категории"

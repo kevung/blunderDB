@@ -29,6 +29,7 @@ import {
     answerChosen,
     attachCorrection,
     openingScoreKeys,
+    openingMatch5Keys,
     openingCategoryAvailable,
     DEFAULT_OPENING_CATEGORIES
 } from './trainingTab.js';
@@ -478,6 +479,7 @@ async function openingLegalPlays(position) {
 }
 
 /** Les catégories de l'exercice Ouverture, fixées au lancement de la session. */
+let openingMode = 'xg';
 let openingCategories = /** @type {string[]} */ ([...DEFAULT_OPENING_CATEGORIES]);
 
 /**
@@ -494,10 +496,13 @@ async function buildOpeningQuestion(roll) {
     if (!status?.scores?.length) return { question: null, refusal: 'bookEmpty' };
     // Une catégorie d'abord, puis ses seules clés : tirer parmi l'union des clés ferait peser
     // chaque catégorie de son nombre de lignes, et « scores de match » écraserait les autres.
-    const playable = openingCategories.filter((category) => openingCategoryAvailable(category, status.scores));
+    // Match en 5 : un score tiré à égalité parmi ceux que le livre tient.
+    const match5 = openingMode === 'match5' ? openingMatch5Keys(status.scores) : null;
+    if (match5 && !match5.length) return { question: null, refusal: 'noCategory' };
+    const playable = match5 ?? openingCategories.filter((category) => openingCategoryAvailable(category, status.scores));
     if (!playable.length) return { question: null, refusal: 'noCategory' };
     const category = playable[Math.floor(Math.random() * playable.length)];
-    const scores = openingScoreKeys([category], status.scores);
+    const scores = match5 ? [category] : openingScoreKeys([category], status.scores);
     const drawn = await OpeningBookQuestion(/** @type {any} */ ({ roll: second ? 'second' : 'first', scores }));
     if (!drawn || drawn.empty) return { question: null, refusal: 'bookEmpty' };
     const plays = await openingLegalPlays(drawn.position);
@@ -666,15 +671,16 @@ async function takeNextQuestion(exercise, seedSource) {
  * une graine hors domaine ne démarre rien. Un plateau vide retombe sur le
  * vivier en gardant la phrase.
  *
- * @param {{exercise: string, seedSource?: string, limitSeconds?: number, categories?: string[]}} opts
+ * @param {{exercise: string, seedSource?: string, limitSeconds?: number, categories?: string[], openingMode?: string}} opts
  */
-export async function startTrainingSession({ exercise, seedSource = '', limitSeconds = 0, categories = undefined }) {
+export async function startTrainingSession({ exercise, seedSource = '', limitSeconds = 0, categories = undefined, openingMode: mode = 'xg' }) {
     const declared = exerciseById(exercise);
     if (!declared) {
         setStatusBarMessage(tMsg('training.unknownExercise', { exercise }));
         return false;
     }
     const source = declared.sources.includes(seedSource) ? seedSource : declared.defaultSource;
+    openingMode = mode === 'match5' ? 'match5' : 'xg';
     openingCategories = categories ?? [...DEFAULT_OPENING_CATEGORIES];
     disarmBoard(get(trainingSessionStore));
     prefetched = null;

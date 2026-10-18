@@ -2268,12 +2268,16 @@
             "withoutBearoff": "正確なベアオフ表なし",
             "markRight": "正解",
             "markWrong": "不正解",
+            "mode": "モード",
+            "modes": {
+                "xg": "XGカテゴリ",
+                "match5": "5ポイントマッチ"
+            },
             "category": {
                 "money": "マネー",
                 "dmp": "DMP",
                 "gammonSave": "ギャモンセーブ",
-                "gammonGo": "ギャモンゴー",
-                "grid": "7ポイントまでのマッチスコア"
+                "gammonGo": "ギャモンゴー"
             }
         },
         "categories": "カテゴリ"

@@ -2268,12 +2268,16 @@
             "withoutBearoff": "sans table de bearoff exacte",
             "markRight": "Juste",
             "markWrong": "Faux",
+            "mode": "Mode",
+            "modes": {
+                "xg": "Catégories XG",
+                "match5": "Match en 5"
+            },
             "category": {
                 "money": "Money",
                 "dmp": "DMP",
                 "gammonSave": "Gammon save",
-                "gammonGo": "Gammon go",
-                "grid": "Scores de match en 7"
+                "gammonGo": "Gammon go"
             }
         },
         "categories": "Catégories"

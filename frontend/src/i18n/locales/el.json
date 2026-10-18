@@ -2268,12 +2268,16 @@
             "withoutBearoff": "χωρίς τον ακριβή πίνακα bearoff",
             "markRight": "Σωστό",
             "markWrong": "Λάθος",
+            "mode": "Λειτουργία",
+            "modes": {
+                "xg": "Κατηγορίες XG",
+                "match5": "Αγώνας στους 5"
+            },
             "category": {
                 "money": "Money",
                 "dmp": "DMP",
                 "gammonSave": "Gammon save",
-                "gammonGo": "Gammon go",
-                "grid": "Σκορ αγώνα έως 7"
+                "gammonGo": "Gammon go"
             }
         },
         "categories": "Κατηγορίες"

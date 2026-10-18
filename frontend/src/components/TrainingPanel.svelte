@@ -18,7 +18,10 @@
         OPENING_CATEGORIES,
         DEFAULT_OPENING_CATEGORIES,
         openingCategoryAvailable,
-        openingScoreKeys
+        openingScoreKeys,
+        openingMatch5Keys,
+        OPENING_MODES,
+        DEFAULT_OPENING_MODE
     } from '../services/trainingTab.js';
     import { quizPlayStore, quizPlayCompleteStore } from '../stores/quizPlayStore.js';
     import {
@@ -61,12 +64,41 @@
     const CATEGORIES_KEY = 'blunderdb.openingCategories';
     let bookScores = $state(/** @type {string[]} */ ([]));
     let pickedCategories = $state(/** @type {string[]} */ (loadCategories()));
-    let openingKeys = $derived(openingScoreKeys(pickedCategories, bookScores));
+    const MODE_KEY = 'blunderdb.openingMode';
+    let openingMode = $state(loadMode());
+    let match5Available = $derived(openingMatch5Keys(bookScores).length > 0);
+    // A remembered « Match en 5 » stands down while the book holds no such score.
+    let effectiveMode = $derived(openingMode === 'match5' && match5Available ? 'match5' : 'xg');
+    let openingKeys = $derived(effectiveMode === 'match5' ? openingMatch5Keys(bookScores) : openingScoreKeys(pickedCategories, bookScores));
+
+    function loadMode() {
+        try {
+            const stored = localStorage.getItem(MODE_KEY);
+            if (OPENING_MODES.includes(stored ?? '')) return /** @type {string} */ (stored);
+        } catch {
+            /* storage unavailable: the default stands */
+        }
+        return DEFAULT_OPENING_MODE;
+    }
+
+    /** @param {string} mode */
+    function chooseMode(mode) {
+        openingMode = mode;
+        try {
+            localStorage.setItem(MODE_KEY, mode);
+        } catch {
+            /* storage unavailable: the choice lasts until the panel closes */
+        }
+    }
 
     function loadCategories() {
         try {
             const stored = JSON.parse(localStorage.getItem(CATEGORIES_KEY) ?? 'null');
-            if (Array.isArray(stored)) return stored.filter((id) => OPENING_CATEGORIES.some((c) => c.id === id));
+            if (Array.isArray(stored)) {
+                // An id the table no longer knows (the retired grid) is dropped; nothing left means the defaults.
+                const known = stored.filter((id) => OPENING_CATEGORIES.some((c) => c.id === id));
+                if (known.length || !stored.length) return known;
+            }
         } catch {
             /* storage unavailable: the defaults stand */
         }
@@ -216,7 +248,7 @@
     function start() {
         // Mémorisée au lancement, pas au clic.
         SaveTrainingSeedSource(exercise, seedSource).catch((error) => logger.error('could not remember the training source:', error));
-        startTrainingSession({ exercise, seedSource, limitSeconds, categories: pickedCategories });
+        startTrainingSession({ exercise, seedSource, limitSeconds, categories: pickedCategories, openingMode: effectiveMode });
     }
 
     /** @param {string} id */
@@ -522,23 +554,41 @@
                 {/if}
 
                 {#if exercise === 'opening'}
-                    <FormRow label={$t('training.categories')}>
-                        <div class="choices" role="group" aria-label={$t('training.categories')}>
-                            {#each OPENING_CATEGORIES as category (category.id)}
-                                {@const available = openingCategoryAvailable(category.id, bookScores)}
+                    <FormRow label={$t('training.opening.mode')}>
+                        <div class="choices" role="group" aria-label={$t('training.opening.mode')}>
+                            {#each OPENING_MODES as mode (mode)}
                                 <button
                                     type="button"
-                                    class:selected={available && pickedCategories.includes(category.id)}
-                                    aria-pressed={available && pickedCategories.includes(category.id)}
-                                    disabled={!available}
-                                    data-testid="training-category-{category.id}"
-                                    onclick={() => toggleCategory(category.id)}
+                                    class:selected={effectiveMode === mode}
+                                    aria-pressed={effectiveMode === mode}
+                                    disabled={mode === 'match5' && !match5Available}
+                                    data-testid="training-mode-{mode}"
+                                    onclick={() => chooseMode(mode)}
                                 >
-                                    {$t(`training.opening.category.${category.id}`)}
+                                    {$t(`training.opening.modes.${mode}`)}
                                 </button>
                             {/each}
                         </div>
                     </FormRow>
+                    {#if effectiveMode === 'xg'}
+                        <FormRow label={$t('training.categories')}>
+                            <div class="choices" role="group" aria-label={$t('training.categories')}>
+                                {#each OPENING_CATEGORIES as category (category.id)}
+                                    {@const available = openingCategoryAvailable(category.id, bookScores)}
+                                    <button
+                                        type="button"
+                                        class:selected={available && pickedCategories.includes(category.id)}
+                                        aria-pressed={available && pickedCategories.includes(category.id)}
+                                        disabled={!available}
+                                        data-testid="training-category-{category.id}"
+                                        onclick={() => toggleCategory(category.id)}
+                                    >
+                                        {$t(`training.opening.category.${category.id}`)}
+                                    </button>
+                                {/each}
+                            </div>
+                        </FormRow>
+                    {/if}
                 {/if}
 
                 <FormRow label={$t('training.limit')}>
