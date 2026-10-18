@@ -150,7 +150,7 @@ func (d *Database) SaveLastVisitedPosition(matchID int64, positionIndex int) err
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
-	_, err := d.db.Exec(`UPDATE match SET last_visited_position = ? WHERE id = ?`, positionIndex, matchID)
+	_, err := d.db.Exec(`UPDATE match SET last_visited_position = ?, last_visited_at = strftime('%Y-%m-%d %H:%M:%f', 'now') WHERE id = ?`, positionIndex, matchID)
 	if err != nil {
 		return err
 	}
@@ -173,7 +173,7 @@ func (d *Database) GetLastVisitedMatch() (*Match, error) {
 		FROM match m
 		LEFT JOIN tournament t ON m.tournament_id = t.id
 		WHERE m.last_visited_position >= 0
-		ORDER BY m.import_date DESC
+		ORDER BY m.last_visited_at DESC NULLS LAST, m.import_date DESC, m.id DESC
 		LIMIT 1
 	`).Scan(&m.ID, &m.Player1Name, &m.Player2Name, &m.Event, &m.Location, &m.Round,
 		&m.MatchLength, &m.MatchDate, &m.ImportDate, &m.FilePath, &m.GameCount,

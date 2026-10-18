@@ -719,7 +719,7 @@ func (s *matchStore) inTx(ctx context.Context, what string, fn func(pgx.Tx) erro
 // SetLastVisitedPosition records the last position index viewed in a match.
 func (s *matchStore) SetLastVisitedPosition(ctx context.Context, scope string, id int64, positionIndex int) error {
 	if _, err := s.db.Exec(ctx,
-		`UPDATE match SET last_visited_position = $1 WHERE id = $2 AND tenant_id = $3`,
+		`UPDATE match SET last_visited_position = $1, last_visited_at = clock_timestamp() WHERE id = $2 AND tenant_id = $3`,
 		positionIndex, id, tenantID(scope)); err != nil {
 		return fmt.Errorf("postgres: set last visited position for match %d: %w", id, err)
 	}
@@ -735,7 +735,7 @@ func (s *matchStore) LastVisited(ctx context.Context, scope string) (*domain.Mat
 		`SELECT `+matchSelectCols+` FROM match m
 		 LEFT JOIN tournament t ON m.tournament_id = t.id
 		 WHERE m.tenant_id = $1 AND m.last_visited_position >= 0
-		 ORDER BY m.import_date DESC LIMIT 1`, tenant)
+		 ORDER BY m.last_visited_at DESC NULLS LAST, m.import_date DESC, m.id DESC LIMIT 1`, tenant)
 	m, err := scanMatch(row)
 	if err == nil {
 		return &m, nil

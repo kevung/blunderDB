@@ -240,6 +240,9 @@ var schemaStatements = []string{
 		match_hash TEXT,
 		tournament_id INTEGER REFERENCES tournament(id) ON DELETE SET NULL,
 		last_visited_position INTEGER DEFAULT -1,
+		-- When last_visited_position was last set; NULL for a match visited
+		-- before 2.43.0, which then sorts after every dated visit.
+		last_visited_at DATETIME,
 		canonical_hash TEXT,
 		comment TEXT DEFAULT '',
 		-- Who signs match.comment (domain.Match.CommentAuthor), '' when

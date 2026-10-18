@@ -1130,6 +1130,7 @@ var exportedMatchColumns = []string{
 // with why.
 var notExportedMatchColumns = map[string]string{
 	"id":                 "the export numbers its own rows",
+	"last_visited_at":    "when the source library was last visited, not the recipient's",
 	"import_batch_id":    "names an import of the source database, not of the export",
 	"dice_hash":          "derived from the games; the recipient computes it again",
 	"direction_match_id": "written by writeDirections, and only when the match's tournament Direction leaves with it",
