@@ -84,6 +84,9 @@ func (s *analysisStore) Merge(ctx context.Context, scope string, positionID int6
 	// the read holds until the write: inside a caller's transaction this is a
 	// savepoint and the caller's lock scope applies.
 	var changed bool
+	if storage.IsFreshPosition(ctx, positionID) {
+		return s.merge(ctx, scope, positionID, played, merge)
+	}
 	err := withTx(ctx, s.db, func(tx execer) error {
 		var err error
 		changed, err = (&analysisStore{db: tx}).merge(ctx, scope, positionID, played, merge)
@@ -237,7 +240,7 @@ func (s *analysisStore) write(ctx context.Context, tenant, positionID int64, a *
 	}
 
 	// The analysis row and the position flag it implies are one write.
-	return withTx(ctx, s.db, func(tx execer) error {
+	body := func(tx execer) error {
 		fresh := storage.IsFreshPosition(ctx, positionID)
 		if !fresh {
 			if err := requireOwned(ctx, tx, tenant, "position", positionID); err != nil {
@@ -284,7 +287,13 @@ func (s *analysisStore) write(ctx context.Context, tenant, positionID int64, a *
 			}
 		}
 		return nil
-	})
+	}
+	// A position created by this very transaction has no reader and no row to
+	// protect: the savepoint would cost two round trips to guard nothing.
+	if storage.IsFreshPosition(ctx, positionID) {
+		return body(s.db)
+	}
+	return withTx(ctx, s.db, body)
 }
 
 // Load returns the decoded analysis for positionID, or ErrNotFound. The
