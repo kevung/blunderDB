@@ -12,6 +12,10 @@ func TestSearchOrderByClause(t *testing.T) {
 		{"error", "a.best_move_equity_error DESC NULLS LAST, p.id"},
 		{"winrate", "a.player1_win_rate DESC NULLS LAST, p.id"},
 		{"close", "a.is_close_cube DESC NULLS LAST, p.id"},
+		{"pip_asc", "p.pip_1 ASC NULLS LAST, p.id"},
+		{"pip_desc", "p.pip_1 DESC NULLS LAST, p.id"},
+		{"date_asc", "p.match_date ASC NULLS LAST, p.id"},
+		{"date_desc", "p.match_date DESC NULLS LAST, p.id"},
 		{"", "p.id"},
 		{"unknown-key", "p.id"},
 	}

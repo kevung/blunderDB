@@ -123,6 +123,12 @@ func (s *Server) runGammonNetSweep(w http.ResponseWriter, r *http.Request, gathe
 		return
 	}
 	defer s.gammonnetJobs.finish(jobID)
+	progress := sweepProgress{State: "running"}
+	s.sweeps.set(scope, progress)
+	end := func(state string) {
+		progress.State = state
+		s.sweeps.set(scope, progress)
+	}
 
 	w.Header().Set("Content-Type", ndjsonContentType)
 	w.WriteHeader(http.StatusOK)
@@ -138,15 +144,19 @@ func (s *Server) runGammonNetSweep(w http.ResponseWriter, r *http.Request, gathe
 
 	positions, err := gather(ctx, s.opts.Storage, scope, req)
 	if err != nil {
+		end("error")
 		emit(map[string]any{"event": "error", "error": errorBodyFor(w, err)})
 		return
 	}
 	total := len(positions)
+	progress.Total = total
+	s.sweeps.set(scope, progress)
 
 	// The sweep is valued with the tenant's table current at its start, and
 	// each analysis records it (ADR-0068).
 	metID, met, err := mets.Current(ctx, s.opts.Storage, scope)
 	if err != nil {
+		end("error")
 		emit(map[string]any{"event": "error", "error": errorBodyFor(w, err)})
 		return
 	}
@@ -229,19 +239,24 @@ func (s *Server) runGammonNetSweep(w http.ResponseWriter, r *http.Request, gathe
 		// Monotone over positions PROCESSED, refused and failed included: a
 		// sweep with unevaluable positions must still visibly reach total.
 		done++
+		progress.Done, progress.Evaluated, progress.Refused, progress.Failed = done, evaluated, refused, failed
+		s.sweeps.set(scope, progress)
 		emit(map[string]any{"event": "progress", "done": done, "total": total})
 	}
 
 	if ctx.Err() != nil {
+		end("cancelled")
 		emit(map[string]any{"event": "cancelled", "done": done, "total": total, "evaluated": evaluated, "refused": refused, "failed": failed})
 		return
 	}
 	if quotaSpent.Load() && done < total {
 		// The tenant's engine time for the day ran out mid-sweep: what was
 		// computed is saved, the rest waits for tomorrow's allowance.
+		end("quota_exceeded")
 		emit(map[string]any{"event": "quota_exceeded", "quota": "analysisSecondsPerDay", "done": done, "total": total, "evaluated": evaluated, "refused": refused, "failed": failed})
 		return
 	}
+	end("done")
 	emit(map[string]any{"event": "done", "done": done, "total": total, "evaluated": evaluated, "refused": refused, "failed": failed})
 }
 

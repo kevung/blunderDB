@@ -627,7 +627,7 @@ func testSearchWindowsAgree(t *testing.T, s storage.Storage) {
 		chunk int // 0 keeps the backend's chunk size
 	}
 	cases := map[string]searchCase{}
-	for _, order := range []string{"", "error", "winrate", "close"} {
+	for _, order := range []string{"", "error", "winrate", "close", "pip_asc", "pip_desc", "date_asc", "date_desc"} {
 		by := ", by " + order
 		if order == "" {
 			by = ", by id"
