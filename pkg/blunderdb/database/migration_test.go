@@ -13,6 +13,7 @@ import (
 	"slices"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 
@@ -5014,5 +5015,64 @@ func TestMigrate_2_41_0_to_2_42_0_AnkiUndo(t *testing.T) {
 	}
 	if _, err := d.UndoAnkiReview(card.Card.ID); err != nil {
 		t.Errorf("undo of a review graded after the migration: %v", err)
+	}
+}
+
+// TestMigrate_2_42_0_to_2_43_0_LastVisitedAt opens a 2.42.0 library whose
+// match visited before the migration has no instant, and checks that match
+// is still the last visited one until a later visit is dated, which then wins.
+func TestMigrate_2_42_0_to_2_43_0_LastVisitedAt(t *testing.T) {
+	t.Parallel()
+	dbPath := filepath.Join(tempDir(t), "test_v2420.db")
+	createOldDatabase(t, dbPath, "2.31.0")
+	d := NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open: %v", err)
+	}
+	var ids [2]int64
+	for i := range ids {
+		res, err := d.db.Exec(`INSERT INTO match (player1_name, player2_name, event, location, round, match_length, match_date, import_date, file_path, game_count, match_hash)
+		 VALUES (?, 'Adversaire', '', '', '', 7, ?, ?, '', 0, ?)`, fmt.Sprintf("m%d", i), time.Now(), time.Now(), "hash-"+fmt.Sprintf("m%d", i))
+		if err != nil {
+			t.Fatalf("insert match: %v", err)
+		}
+		if ids[i], err = res.LastInsertId(); err != nil {
+			t.Fatalf("match id: %v", err)
+		}
+	}
+	// Back to the 2.42.0 shape: the first match was visited, undated.
+	for _, stmt := range []string{
+		`ALTER TABLE match DROP COLUMN last_visited_at`,
+		fmt.Sprintf(`UPDATE match SET last_visited_position = 3 WHERE id = %d`, ids[0]),
+		`UPDATE metadata SET value = '2.42.0' WHERE key = 'database_version'`,
+	} {
+		if _, err := d.db.Exec(stmt); err != nil {
+			t.Fatalf("%s: %v", stmt, err)
+		}
+	}
+	if err := d.Close(); err != nil {
+		t.Fatalf("close: %v", err)
+	}
+
+	d = NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open v2.42.0 database: %v", err)
+	}
+	closeOnCleanup(t, d)
+	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {
+		t.Fatalf("version after migration = %q, %v; want %q", v, err, DatabaseVersion)
+	}
+	var at sql.NullString
+	if err := d.db.QueryRow(`SELECT last_visited_at FROM match WHERE id = ?`, ids[0]).Scan(&at); err != nil || at.Valid {
+		t.Fatalf("last_visited_at of the match visited before = %+v, %v; want NULL", at, err)
+	}
+	if m, err := d.GetLastVisitedMatch(); err != nil || m.ID != ids[0] {
+		t.Fatalf("last visited after migration = %+v, %v; want match %d", m, err, ids[0])
+	}
+	if err := d.SaveLastVisitedPosition(ids[1], 0); err != nil {
+		t.Fatalf("visit: %v", err)
+	}
+	if m, err := d.GetLastVisitedMatch(); err != nil || m.ID != ids[1] {
+		t.Errorf("last visited after a dated visit = %+v, %v; want match %d", m, err, ids[1])
 	}
 }
