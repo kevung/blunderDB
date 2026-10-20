@@ -2629,7 +2629,12 @@ de la base ``--db``, jamais avec ceux de la base lue : ``error``, ``blunder``,
 avec une autre table d'équité que la table courante de ``--db`` est signalée ;
 ses coûts en match sont affichés mais non jugés (``other-met``), comme partout
 ailleurs dans blunderDB. Les autres fichiers sont ouverts en lecture seule :
-rien n'y est écrit. Un fichier d'une version antérieure est refusé (l'ouvrir
+rien n'y est écrit, et une base placée dans un dossier en lecture seule (partage
+réseau, clé, montage) se lit telle quelle, sans créer de fichier à côté. Un fichier
+illisible (absent, d'une version antérieure ou plus récente, pas une base
+blunderDB) est signalé ligne ``Not read:`` sous son nom (champ ``error`` en JSON)
+et sauté : les autres fichiers répondent, et la commande ne rend un code de
+sortie non nul que si aucun n'a pu être lu. Un fichier d'une version antérieure est refusé (l'ouvrir
 une fois dans blunderDB le met à jour), un fichier d'une version plus récente
 aussi (mettre blunderDB à jour). Au-delà de 50 matchs où la position a été
 jouée, seuls les 50 derniers importés sont lus : la sortie le dit, avec le

@@ -2,6 +2,7 @@ package cli
 
 import (
 	"context"
+	"errors"
 	"flag"
 	"fmt"
 	"os"
@@ -38,7 +39,9 @@ func (cli *CLI) runElsewhere(args []string) error {
 		fmt.Println("cost is judged with the error and blunder thresholds of --db; an analysis")
 		fmt.Println("valued with another match equity table than the one of --db is flagged, and")
 		fmt.Println("its match-play costs are shown but not judged. The other files are opened")
-		fmt.Println("read-only: nothing is written to any of them.")
+		fmt.Println("read-only: nothing is written to any of them, and a file in a read-only folder")
+		fmt.Println("is read as it stands. A file that cannot be read is reported and skipped; the")
+		fmt.Println("others answer, and the command fails only when none could be read.")
 		fmt.Println()
 		fmt.Println("Options:")
 		fs.PrintDefaults()
@@ -111,38 +114,57 @@ func (cli *CLI) runElsewhere(args []string) error {
 		return err
 	}
 
+	// A file that cannot be read is reported and skipped: the others answer.
+	unread := map[string]error{}
 	sources := make([]storage.Source, 0, len(others))
 	for _, path := range others {
 		st, err := openReadOnly(ctx, path)
 		if err != nil {
-			return err
+			unread[path] = err
+			continue
 		}
 		defer st.Close()
 		sources = append(sources, storage.Source{Name: path, Storage: st})
 	}
-	reports, err := storage.Elsewhere(ctx, sources, q, judge)
+	if len(sources) == 0 {
+		msgs := make([]string, 0, len(others))
+		for _, path := range others {
+			msgs = append(msgs, unread[path].Error())
+		}
+		return errors.New(strings.Join(msgs, "\n"))
+	}
+	found, err := storage.Elsewhere(ctx, sources, q, judge)
 	if err != nil {
 		return err
+	}
+	byFile := map[string]storage.ElsewhereReport{}
+	for _, r := range found {
+		byFile[r.Tenant] = r.Item
 	}
 	if q.Target != nil {
 		q.Zobrist = storage.ZobristOf(q.Target)
 	}
 	if strings.ToLower(*format) == "json" {
 		type fileReport struct {
-			File string `json:"file"`
+			File  string `json:"file"`
+			Error string `json:"error,omitempty"`
 			storage.ElsewhereReport
 		}
 		out := struct {
 			Zobrist uint64        `json:"zobrist"`
 			Judge   storage.Judge `json:"judge"`
 			Results []fileReport  `json:"results"`
-		}{Zobrist: q.Zobrist, Judge: judge, Results: make([]fileReport, len(reports))}
-		for i, r := range reports {
-			out.Results[i] = fileReport{File: r.Tenant, ElsewhereReport: r.Item}
+		}{Zobrist: q.Zobrist, Judge: judge, Results: make([]fileReport, 0, len(others))}
+		for _, path := range others {
+			if err, bad := unread[path]; bad {
+				out.Results = append(out.Results, fileReport{File: path, Error: err.Error(), ElsewhereReport: storage.ElsewhereReport{Comments: []*domain.CommentEntry{}, Plays: []storage.ElsewherePlay{}, Neighbours: []storage.ElsewhereNeighbour{}}})
+				continue
+			}
+			out.Results = append(out.Results, fileReport{File: path, ElsewhereReport: byFile[path]})
 		}
 		return printJSON(out)
 	}
-	printElsewhere(q.Zobrist, judge, reports)
+	printElsewhere(q.Zobrist, judge, others, byFile, unread)
 	return nil
 }
 
@@ -183,13 +205,17 @@ func schemaReadable(path, version string) error {
 	return nil
 }
 
-func printElsewhere(zobrist uint64, judge storage.Judge, reports []storage.Tagged[storage.ElsewhereReport]) {
+func printElsewhere(zobrist uint64, judge storage.Judge, files []string, reports map[string]storage.ElsewhereReport, unread map[string]error) {
 	fmt.Printf("Board %d, judged at error >= %d mp, blunder >= %d mp\n",
 		zobrist, judge.Settings.ErrorThresholdMP, judge.Settings.BlunderThresholdMP)
-	for _, r := range reports {
-		rep := r.Item
+	for _, file := range files {
 		fmt.Println()
-		fmt.Printf("== %s\n", r.Tenant)
+		fmt.Printf("== %s\n", file)
+		if err, bad := unread[file]; bad {
+			fmt.Printf("Not read: %v\n", err)
+			continue
+		}
+		rep := reports[file]
 		if rep.PositionID == 0 {
 			fmt.Println("Not held.")
 		} else {
