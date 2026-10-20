@@ -1545,14 +1545,19 @@ copié. La copie se fusionne comme l'import d'une base ``.db`` : une position
 déjà présente est reconnue à son hachage, un match, une collection ou une leçon
 déjà présents ne sont pas dupliqués, si bien que tirer de 2 vers 1 puis de 1
 vers 2 ne crée aucun doublon. La réponse compte ce qui a été lu (``exported``)
-et ce que le tenant en a pris (``imported``).
+et ce que le tenant en a pris (``imported``). Les positions suivent les règles
+de ``transfer`` : dès qu'une liste d'IDs est donnée, seules partent celles
+qu'atteignent les familles retenues ; une collection part avec ses membres ; un
+match nommé emporte la fiche de son tournoi, pas ses autres matchs. Un ID que
+le tenant source ne contient pas est refusé (``400``). Pour copier la
+collection 3 et ses positions, rien d'autre :
 
 .. code-block:: bash
 
    curl -s http://127.0.0.1:8080/v1/across.transferPull \
      -H 'Content-Type: application/json' \
      -H 'X-Tenant-ID: 1' -H 'X-Read-Tenants: 2' \
-     -d '{"tenant":"2","export":{"wholeLibrary":false,"includeCollections":true,"collectionIDs":[3]}}'
+     -d '{"tenant":"2","export":{"collectionIDs":[3],"includeMatches":false,"includeTournaments":false,"includeLessons":false,"includeAnkiDecks":false}}'
 
 Le transfert est toujours **tiré** par le tenant qui reçoit, jamais poussé chez
 un autre : on lit à travers les tenants et on n'écrit que chez soi

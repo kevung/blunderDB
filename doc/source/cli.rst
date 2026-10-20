@@ -505,7 +505,11 @@ aucun doublon.
 
 **Options:**
 
-* ``--from`` — Bibliothèque source (obligatoire ; elle doit exister).
+* ``--from`` — Bibliothèque source (obligatoire ; elle doit exister et être au
+  schéma de cette version de blunderDB). Une bibliothèque plus ancienne est
+  refusée, car la mettre à jour serait y écrire : ouvrez-la une fois dans
+  blunderDB. Une bibliothèque plus récente est refusée aussi : mettez
+  blunderDB à jour.
 * ``--to`` — Bibliothèque de destination (obligatoire ; créée si elle
   n'existe pas). Elle ne peut pas être la source.
 * ``--analysis``, ``--comments``, ``--played-moves``, ``--matches``,
@@ -513,10 +517,20 @@ aucun doublon.
   ``--decks``, ``--lessons`` — Comme pour ``export`` : une option à ``false``
   retire sa famille (défaut : oui pour toutes).
 * ``--collection-ids``, ``--match-ids``, ``--tournament-ids``,
-  ``--deck-ids``, ``--lesson-ids`` — Comme pour ``export`` : une liste d'IDs
-  de la source restreint sa famille à ces éléments et l'inclut.
+  ``--deck-ids``, ``--lesson-ids`` — Une liste d'IDs de la source restreint
+  sa famille à ces éléments et l'inclut. Un ID que la source ne contient pas
+  est une erreur, et rien n'est copié.
 * ``--format`` — ``text`` (défaut) ou ``json`` (ce qui a été lu dans la
   source et ce que la destination en a pris).
+
+**Quelles positions partent.** Sans liste d'IDs, toutes les positions de la
+source partent, rangées ou non. Dès qu'une liste d'IDs est donnée, seules
+partent les positions qu'atteignent les familles retenues (les membres d'une
+collection, les coups d'un match, les étapes d'une leçon, les cartes d'un
+paquet), avec leurs analyses et leurs commentaires. Une collection part
+toujours avec ses membres. Un match nommé par ``--match-ids`` emporte la fiche
+de son tournoi (nom, date, lieu), mais pas les autres matchs de ce tournoi ;
+avec ``--tournaments=false``, il arrive sans tournoi.
 
 Rien n'est écrit qui dise d'où vient la copie : ni filigrane, ni journal
 d'import, ni métadonnée de la source ; la destination garde les siennes, et
@@ -534,6 +548,10 @@ historique, et un paquet du même nom déjà présent garde le sien.
    # Deux collections et leurs positions, rien d'autre
    ./blunderdb transfer --from club.db --to perso.db --collection-ids 3,7 \
        --matches=false --tournaments=false --lessons=false --decks=false
+
+   # Un match, ses positions et son tournoi, en retour
+   ./blunderdb transfer --from perso.db --to club.db --match-ids 12 \
+       --collections=false --lessons=false --decks=false
 
 Le serveur offre le même transfert entre deux tenants, tiré par le tenant qui
 reçoit (voir :ref:`mode_headless_transfert`).

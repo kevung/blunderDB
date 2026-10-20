@@ -2,8 +2,13 @@ package cli
 
 import (
 	"context"
+	"crypto/sha256"
+	"database/sql"
 	"encoding/json"
+	"os"
 	"path/filepath"
+	"strconv"
+	"strings"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
@@ -112,5 +117,90 @@ func TestCLI_TransferRefusals(t *testing.T) {
 		if err == nil {
 			t.Errorf("%s: accepted", name)
 		}
+	}
+}
+
+func fileSum(t *testing.T, path string) [32]byte {
+	t.Helper()
+	b, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return sha256.Sum256(b)
+}
+
+// A source at another schema is refused before it is opened for writing,
+// and its bytes are left as they were: migrating an older one would be a
+// write, and a newer one holds what this build would drop.
+func TestCLI_TransferRefusesAnotherSchema(t *testing.T) {
+	for version, want := range map[string]string{"2.15.0": "older", "9.0.0": "newer"} {
+		dir := tempDir(t)
+		src, dst := filepath.Join(dir, "club.db"), filepath.Join(dir, "mine.db")
+		seedTransferLibrary(t, src, "match_with_comment.xg")
+		raw, err := sql.Open("sqlite", sqlite.DSN(src))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if _, err := raw.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, version); err != nil {
+			t.Fatal(err)
+		}
+		raw.Close()
+		before := fileSum(t, src)
+		cli := &CLI{db: NewDatabase()}
+		var runErr error
+		captureStdout(t, func() { runErr = cli.runTransfer([]string{"--from", src, "--to", dst}) })
+		cli.db.Close()
+		if runErr == nil || !strings.Contains(runErr.Error(), want) {
+			t.Errorf("source at %s: %v, want refused as %s", version, runErr, want)
+		}
+		if fileSum(t, src) != before {
+			t.Errorf("source at %s: its bytes changed", version)
+		}
+	}
+}
+
+// The documented example copies the named collection and its positions,
+// nothing else; an id the source lacks fails the command.
+func TestCLI_TransferNamedCollection(t *testing.T) {
+	dir := tempDir(t)
+	src, dst := filepath.Join(dir, "club.db"), filepath.Join(dir, "mine.db")
+	seedTransferLibrary(t, src, "match_with_comment.xg")
+	ctx := context.Background()
+	s, err := sqlite.Open(ctx, src, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var ids []int64
+	for p, err := range s.Positions().List(ctx, "", storage.ListOpts{Limit: 3}) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		ids = append(ids, p.ID)
+	}
+	col, err := s.Collections().Create(ctx, "", "picked", "")
+	if err == nil {
+		err = s.Collections().AddPositions(ctx, "", col, ids)
+	}
+	s.Close()
+	if err != nil {
+		t.Fatal(err)
+	}
+	family := []string{"--matches=false", "--tournaments=false", "--lessons=false", "--decks=false"}
+	rep := runTransfer(t, append([]string{"--from", src, "--to", dst, "--collection-ids=" + strconv.FormatInt(col, 10)}, family...)...)
+	if rep.Exported.Positions != len(ids) || rep.Exported.Collections != 1 {
+		t.Errorf("read %+v, want the collection and its %d positions", rep.Exported, len(ids))
+	}
+	if got := libraryRows(t, dst); got != [2]int{len(ids), 0} {
+		t.Errorf("destination holds %v, want %d positions and no match", got, len(ids))
+	}
+
+	cli := &CLI{db: NewDatabase()}
+	var runErr error
+	captureStdout(t, func() {
+		runErr = cli.runTransfer([]string{"--from", src, "--to", dst, "--match-ids=999"})
+	})
+	cli.db.Close()
+	if runErr == nil || !strings.Contains(runErr.Error(), "match 999") {
+		t.Errorf("--match-ids=999: %v, want refused", runErr)
 	}
 }

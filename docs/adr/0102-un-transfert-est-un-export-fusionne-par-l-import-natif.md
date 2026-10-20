@@ -28,7 +28,7 @@ ces règles, et les copies de l'export ont déjà dérivé par le passé.
    enchaînés par `ingest.Transfer(ctx, from, to TransferEnd, opts domain.ExportOptions, …)`
    à travers un fichier SQLite temporaire que l'utilisateur ne voit pas. Les options sont
    celles de l'export, lues par le même `OptionsFor` : le bureau, la CLI et le serveur
-   copient donc exactement ce qu'un export emporterait et fusionnent exactement comme un
+   copient donc la même sélection (au point 5 près) et fusionnent exactement comme un
    import de cet export. A → B puis B → A ne crée aucun doublon (testé à chaque niveau).
 2. **Rien n'est écrit qui dise d'où vient la copie** (ADR-0007) : ni filigrane, ni lot
    d'import (`ImportBatches`, qui porterait le nom de la source), ni métadonnée de la source.
@@ -46,7 +46,17 @@ ces règles, et les copies de l'export ont déjà dérivé par le passé.
    écrit sous un contexte limité à son tenant (RLS). Le transfert compte comme un import du
    tenant qui reçoit (quotas, annulation à l'arrêt). Comme les autres `across.*`, la route
    est propre au serveur : `call` et le bureau n'ont qu'un tenant.
-5. **Ce que l'import natif ne prend pas, le transfert ne le prend pas** : la bibliothèque de
+5. **Une sélection nommée est une cueillette, pas une bibliothèque.** Un export de toute la
+   bibliothèque garde toutes ses positions même quand ses familles sont restreintes, pour
+   rester une bibliothèque ; un transfert qui nomme des IDs doit livrer ce qui a été choisi
+   et rien de plus, surtout pas les commentaires privés des autres positions.
+   `ingest.Transfer` ajuste donc le plan de l'export : dès qu'une liste d'IDs est donnée,
+   les positions sont celles qu'atteignent les familles retenues ; une collection part
+   toujours avec ses membres ; un match nommé emporte la fiche de son tournoi, sans les
+   autres matchs du tournoi. Un ID que la source ne contient pas est refusé (`ErrInvalid`)
+   au lieu d'être sauté. La CLI refuse une source à un autre schéma, sondée en lecture
+   seule avant de l'ouvrir : l'ouvrir migrerait une base ancienne en place.
+6. **Ce que l'import natif ne prend pas, le transfert ne le prend pas** : la bibliothèque de
    filtres et l'historique de révision des paquets Anki (un paquet du même nom déjà présent
    garde son calendrier). La CLI n'offre donc ni `--filters` ni `--anki-history`.
 

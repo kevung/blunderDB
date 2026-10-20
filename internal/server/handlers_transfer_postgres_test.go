@@ -8,6 +8,7 @@ package server
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"path/filepath"
 	"testing"
@@ -114,5 +115,36 @@ func TestTransferPull_Postgres(t *testing.T) {
 	}
 	if got := count("3"); got != [2]int{} {
 		t.Errorf("tenant 3 holds %v after pulls it took no part in", got)
+	}
+
+	// The documented pull of one collection brings its members; an id the
+	// source does not hold is refused, and nothing lands.
+	ctx2 := storage.WithTenant(ctx, 2)
+	var ids []int64
+	for p, err := range st.Positions().List(ctx2, "2", storage.ListOpts{Limit: 3}) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		ids = append(ids, p.ID)
+	}
+	col, err := st.Collections().Create(ctx2, "2", "picked", "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := st.Collections().AddPositions(ctx2, "2", col, ids); err != nil {
+		t.Fatal(err)
+	}
+	if rec := serveAcross(t, srv, "4", "2", "/v1/across.transferPull", `{"tenant":"2","export":{"collectionIDs":[999]}}`); rec.Code != http.StatusBadRequest {
+		t.Errorf("absent collection: status %d, want 400", rec.Code)
+	}
+	if got := count("4"); got != [2]int{} {
+		t.Errorf("a refused pull wrote %v", got)
+	}
+	body := fmt.Sprintf(`{"tenant":"2","export":{"wholeLibrary":false,"includeCollections":true,"collectionIDs":[%d]}}`, col)
+	if rec := serveAcross(t, srv, "4", "2", "/v1/across.transferPull", body); rec.Code != http.StatusOK {
+		t.Fatalf("collection pull: %d %s", rec.Code, rec.Body)
+	}
+	if got := count("4"); got[0] != len(ids) {
+		t.Errorf("collection of %d pulled: tenant 4 holds %v", len(ids), got)
 	}
 }
