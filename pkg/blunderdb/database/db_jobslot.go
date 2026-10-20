@@ -14,6 +14,9 @@ const (
 	JobMaintenance = "maintenance"
 	JobGammonNet   = "gammonnet"
 	JobRollout     = "rollout"
+	// JobExchange is the desktop swapping the open library between two
+	// handles (Exchange): short, but no job may start across it.
+	JobExchange = "exchange"
 )
 
 // ErrDatabaseBusy matches every BusyError under errors.Is.
@@ -62,6 +65,10 @@ func (d *Database) acquireJob(ctx context.Context, job string, cancel context.Ca
 	told := false
 	for {
 		d.cancelMu.Lock()
+		if d.exchanging {
+			d.cancelMu.Unlock()
+			return nil, &BusyError{Job: JobExchange}
+		}
 		held := d.job
 		if held == nil {
 			j := &jobSlot{name: job, ctx: ctx, cancel: cancel, done: make(chan struct{})}

@@ -122,6 +122,7 @@ func NewApp(db *database.Database) *App {
 				a.stopDisplayForSwitch()
 			}
 		})
+		db.SetOpenGuard(a.refuseHeldLibrary)
 	}
 	return a
 }

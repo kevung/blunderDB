@@ -1,6 +1,7 @@
 package database
 
 import (
+	"context"
 	"errors"
 	"path/filepath"
 	"reflect"
@@ -100,13 +101,13 @@ func TestExchange_EveryFieldIsPlaced(t *testing.T) {
 		"transcriptSvc": true, "transcriptOn": true, "duelSvc": true, "duelOn": true, "duelBoard": true,
 		"positionsSinceStats": true, "pendingPhaseBackfill": true, "pendingAnkiCardKinds": true,
 		// Moved by bumping, not swapping: both sides change.
-		"generation": true, "storeEpoch": true,
+		"generation": true, "storeEpoch": true, "openPath": true,
 	}
 	handle := map[string]bool{
-		"mu": true, "cancelMu": true, "switchMu": true, "beforeSwitch": true,
+		"mu": true, "cancelMu": true, "switchMu": true, "beforeSwitch": true, "openGuard": true,
 		"transcriptMu": true, "duelMu": true,
 		// Refused while set (idleForExchange) or only alive during one import.
-		"importCancel": true, "job": true, "searchCancels": true, "searchSeq": true,
+		"importCancel": true, "job": true, "exchanging": true, "searchCancels": true, "searchSeq": true,
 		"importBatchID": true, "importBatchCounts": true, "importJournal": true,
 		"migrationProgress": true, "convertBatchSize": true, "afterActionColumnDrop": true,
 		"skipDuplicates": true, "commentAuthor": true, "directionMem": true,
@@ -117,5 +118,65 @@ func TestExchange_EveryFieldIsPlaced(t *testing.T) {
 		if !library[name] && !handle[name] {
 			t.Errorf("Database.%s is neither library nor handle state: place it (and swap it in Exchange if it follows the file)", name)
 		}
+	}
+}
+
+// Between the idle check and the swap, neither a job nor an import may start
+// on either handle: it would begin on one library and write into the next.
+// The before-switch hook runs inside that window.
+func TestExchange_NoJobStartsDuringTheSwap(t *testing.T) {
+	bound, pathA := openTemp(t, "a.db")
+	parked, _ := openTemp(t, "b.db")
+	var jobErr, parkedJobErr error
+	importCancelled := false
+	bound.SetBeforeSwitch(func() {
+		_, jobErr = bound.acquireJob(context.Background(), JobRollout, nil)
+		_, parkedJobErr = parked.acquireJob(context.Background(), JobRollout, nil)
+		ctx, done := bound.beginCancellableImport()
+		importCancelled = ctx.Err() != nil
+		done()
+	})
+	if err := Exchange(bound, parked); err != nil {
+		t.Fatal(err)
+	}
+	var busy *BusyError
+	if !errors.As(jobErr, &busy) || busy.Job != JobExchange {
+		t.Errorf("job on the bound handle during the swap: %v, want busy %q", jobErr, JobExchange)
+	}
+	if !errors.As(parkedJobErr, &busy) || busy.Job != JobExchange {
+		t.Errorf("job on the parked handle during the swap: %v, want busy %q", parkedJobErr, JobExchange)
+	}
+	if !importCancelled {
+		t.Error("an import begun during the swap got a live context")
+	}
+	bound.SetBeforeSwitch(nil)
+	release, err := bound.acquireJob(context.Background(), JobRollout, nil)
+	if err != nil {
+		t.Fatalf("job after the swap: %v", err)
+	}
+	release()
+	if !parked.IsOpenDatabase(pathA) {
+		t.Error("the parked handle does not report the file it now carries")
+	}
+}
+
+func TestOpenGuard_RefusesBeforeTouchingTheOpenFile(t *testing.T) {
+	d, path := openTemp(t, "a.db")
+	refused := errors.New("held elsewhere")
+	other := filepath.Join(t.TempDir(), "b.db")
+	d.SetOpenGuard(func(p string) error {
+		if p == other {
+			return refused
+		}
+		return nil
+	})
+	if err := d.OpenDatabase(other); !errors.Is(err, refused) {
+		t.Fatalf("OpenDatabase = %v, want the guard's refusal", err)
+	}
+	if err := d.SetupDatabase(other); !errors.Is(err, refused) {
+		t.Fatalf("SetupDatabase = %v, want the guard's refusal", err)
+	}
+	if OpenPath(d) != path {
+		t.Errorf("open file after a refusal = %q, want %q", OpenPath(d), path)
 	}
 }

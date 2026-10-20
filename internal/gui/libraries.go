@@ -89,6 +89,20 @@ func (a *App) LibraryGroupHolding(path string) int {
 	return a.holdingLocked(path)
 }
 
+// refuseHeldLibrary is the bound handle's open guard: whatever path opens a
+// file in the active group (a dialog, a recent file, a drop, the CLI bridge),
+// a file another group holds is refused, never opened twice. Reopening the
+// active group's own file stays allowed.
+func (a *App) refuseHeldLibrary(path string) error {
+	a.libs.mu.Lock()
+	defer a.libs.mu.Unlock()
+	a.libs.init()
+	if id := a.holdingLocked(path); id != 0 && id != a.libs.active {
+		return &ErrLibraryAlreadyOpen{Group: id}
+	}
+	return nil
+}
+
 // ListLibraryGroups returns the open groups, in the order they were opened.
 func (a *App) ListLibraryGroups() []LibraryGroup {
 	a.libs.mu.Lock()

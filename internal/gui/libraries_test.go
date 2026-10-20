@@ -105,3 +105,32 @@ func TestLibraryGroups_SwitchRefusedWhileTheFolderWatchRuns(t *testing.T) {
 		t.Fatalf("switch during a folder watch: %v, want *BusyError", err)
 	}
 }
+
+// Opening a file through the bound handle itself — not through a group — is
+// refused when another group holds it: the file would sit in two groups.
+func TestLibraryGroups_BoundOpenRefusesAFileAnotherGroupHolds(t *testing.T) {
+	dir := t.TempDir()
+	pathA := newLibraryFile(t, dir, "a.db", 1)
+	pathB := newLibraryFile(t, dir, "b.db", 0)
+	db := database.NewDatabase()
+	a := NewApp(db)
+	t.Cleanup(func() { a.closeParkedLibraries(); _ = db.Close() })
+
+	first, err := a.OpenLibraryGroup(pathA)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := a.OpenLibraryGroup(pathB); err != nil {
+		t.Fatal(err)
+	}
+	var held *ErrLibraryAlreadyOpen
+	if err := db.OpenDatabase(pathA); !errors.As(err, &held) || held.Group != first.ID {
+		t.Fatalf("OpenDatabase of a parked library = %v, want ErrLibraryAlreadyOpen{%d}", err, first.ID)
+	}
+	if got := database.OpenPath(db); got != pathB {
+		t.Errorf("active library after the refusal = %q, want %q", got, pathB)
+	}
+	if err := db.OpenDatabase(pathB); err != nil {
+		t.Errorf("reopening the active library: %v", err)
+	}
+}

@@ -33,9 +33,11 @@ func Exchange(d, other *Database) error {
 	if err := d.idleForExchange(); err != nil {
 		return err
 	}
+	defer d.endExchange()
 	if err := other.idleForExchange(); err != nil {
 		return err
 	}
+	defer other.endExchange()
 	d.switchFile()
 	d.CancelSearch()
 	other.CancelSearch()
@@ -64,6 +66,9 @@ func Exchange(d, other *Database) error {
 	d.lock, other.lock = other.lock, d.lock
 	d.readOnly, other.readOnly = other.readOnly, d.readOnly
 	d.path, other.path = other.path, d.path
+	dOpen := d.openPath.Load()
+	d.openPath.Store(other.openPath.Load())
+	other.openPath.Store(dOpen)
 	d.positionsSinceStats, other.positionsSinceStats = other.positionsSinceStats, d.positionsSinceStats
 	d.pendingPhaseBackfill, other.pendingPhaseBackfill = other.pendingPhaseBackfill, d.pendingPhaseBackfill
 	d.pendingAnkiCardKinds, other.pendingAnkiCardKinds = other.pendingAnkiCardKinds, d.pendingAnkiCardKinds
@@ -74,15 +79,27 @@ func Exchange(d, other *Database) error {
 	return nil
 }
 
-// idleForExchange refuses while an import, a migration or a job holds d.
+// idleForExchange refuses while an import, a migration or a job holds d;
+// otherwise it marks d as exchanging, under the same lock, so that no job or
+// import starts between this check and the swap. endExchange clears the mark.
 func (d *Database) idleForExchange() error {
 	d.cancelMu.Lock()
 	defer d.cancelMu.Unlock()
+	if d.exchanging {
+		return &BusyError{Job: JobExchange}
+	}
 	if d.job != nil {
 		return &BusyError{Job: d.job.name}
 	}
 	if d.importCancel != nil {
 		return &BusyError{Job: "import"}
 	}
+	d.exchanging = true
 	return nil
+}
+
+func (d *Database) endExchange() {
+	d.cancelMu.Lock()
+	d.exchanging = false
+	d.cancelMu.Unlock()
 }
