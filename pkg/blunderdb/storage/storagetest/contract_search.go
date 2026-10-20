@@ -520,6 +520,36 @@ func testSearchMoveErrorFilterMaxOverPlays(t *testing.T, s storage.Storage) {
 		if !reflect.DeepEqual(got, sorted(w.ids)) {
 			t.Errorf("run %d mirror=%v %s: got %v, want %v", run, mirror, w.filter, got, sorted(w.ids))
 		}
+		// The unbounded calls and the paged one take different SQL for this
+		// filter; they must give the same answer, in the same order.
+		f := domain.SearchFilters{MoveErrorFilter: w.filter, MirrorFilter: mirror}
+		var paged []int64
+		for offset := 0; ; offset++ {
+			n := 0
+			for pos, err := range s.Search().Find(ctx, "", f, storage.ListOpts{Offset: offset, Limit: 1}) {
+				if err != nil {
+					t.Fatalf("paged Find: %v", err)
+				}
+				paged = append(paged, pos.ID)
+				n++
+			}
+			if n == 0 {
+				break
+			}
+		}
+		if !reflect.DeepEqual(sorted(paged), sorted(w.ids)) {
+			t.Errorf("run %d mirror=%v %s: paged Find %v, want %v", run, mirror, w.filter, paged, sorted(w.ids))
+		}
+		ids, err := s.Search().FindIDs(ctx, "", f, storage.ListOpts{})
+		if err != nil {
+			t.Fatalf("FindIDs: %v", err)
+		}
+		if !reflect.DeepEqual(ids, paged) {
+			t.Errorf("run %d mirror=%v %s: FindIDs %v, paged Find %v", run, mirror, w.filter, ids, paged)
+		}
+		if n, err := s.Search().Count(ctx, "", f); err != nil || n != len(paged) {
+			t.Errorf("run %d mirror=%v %s: Count %d (%v), want %d", run, mirror, w.filter, n, err, len(paged))
+		}
 	}
 	// 20 runs: the answer is a property of the data, not of the run.
 	for run := range 20 {

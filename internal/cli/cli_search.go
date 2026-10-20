@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"bufio"
 	"context"
 	"encoding/json"
 	"errors"
@@ -214,8 +215,11 @@ func (cli *CLI) runSearch(args []string) error {
 	}
 
 	// Apply errorMin / hasAnalysis using the analysis map from the JOIN (no extra DB queries).
-	var filteredPositions []Position
-	for _, pos := range positions {
+	// Filtered in place: the survivors keep their order at the front of
+	// positions, with no second slice of positions.
+	filteredPositions := positions[:0]
+	for i := range positions {
+		pos := &positions[i]
 		if params.errorMin > 0 || params.hasAnalysis {
 			analysis := analysisMap[pos.ID]
 			if analysis == nil {
@@ -245,7 +249,7 @@ func (cli *CLI) runSearch(args []string) error {
 			}
 		}
 
-		filteredPositions = append(filteredPositions, pos)
+		filteredPositions = append(filteredPositions, *pos)
 	}
 
 	// Apply limit/offset client-side only when they were not already pushed
@@ -275,7 +279,7 @@ func (cli *CLI) runSearch(args []string) error {
 	fmt.Fprintf(status, "Found %d position(s)\n\n", len(filteredPositions))
 
 	if len(filteredPositions) > 0 {
-		if err := cli.renderResults(os.Stdout, filteredPositions, params.format); err != nil {
+		if err := renderResults(os.Stdout, filteredPositions, analysisMap, params.format); err != nil {
 			return err
 		}
 	}
@@ -321,14 +325,18 @@ type searchPositionResult struct {
 
 // renderResults writes already-filtered, already-limited search results to w
 // in the requested format (table, json, or xgid — anything else falls back
-// to table, matching the flag's own default): pure formatting over positions
-// already in hand, plus one LoadAnalysis call per position to fill in
-// best-move/equity/XGID.
-func (cli *CLI) renderResults(w io.Writer, positions []Position, format string) error {
+// to table, matching the flag's own default): pure formatting over the
+// positions and the analyses the search already returned, which fill in
+// best-move/equity/XGID. A position absent from analyses has none.
+func renderResults(w io.Writer, positions []Position, analyses map[int64]*PositionAnalysis, format string) error {
 	switch format {
 	case "json":
 		var results []searchPositionResult
-		for _, pos := range positions {
+		if len(positions) > 0 {
+			results = make([]searchPositionResult, 0, len(positions))
+		}
+		for i := range positions {
+			pos := &positions[i]
 			result := searchPositionResult{
 				ID:    pos.ID,
 				Score: pos.Score,
@@ -342,11 +350,9 @@ func (cli *CLI) renderResults(w io.Writer, positions []Position, format string) 
 				result.DecisionType = "cube"
 			}
 
-			// Get analysis if available
-			analysis, err := cli.db.LoadAnalysis(pos.ID)
-			p := pos
-			result.XGID = "XGID=" + cli.storedOrEncodedXGID(&p)
-			if err == nil && analysis != nil {
+			analysis := analyses[pos.ID]
+			result.XGID = "XGID=" + xgidWith(pos, analysis)
+			if analysis != nil {
 				if analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0 {
 					result.BestMove = analysis.CheckerAnalysis.Moves[0].Move
 					result.Equity = analysis.CheckerAnalysis.Moves[0].Equity
@@ -360,12 +366,19 @@ func (cli *CLI) renderResults(w io.Writer, positions []Position, format string) 
 		if err != nil {
 			return fmt.Errorf("failed to format JSON: %w", err)
 		}
-		fmt.Fprintln(w, string(jsonData))
+		jsonData = append(jsonData, '\n')
+		if _, err := w.Write(jsonData); err != nil {
+			return err
+		}
 
 	case "xgid":
-		for _, pos := range positions {
-			p := pos
-			fmt.Fprintln(w, "XGID="+cli.storedOrEncodedXGID(&p))
+		bw := bufio.NewWriter(w)
+		for i := range positions {
+			// A write error sticks to bw and comes back from Flush.
+			_, _ = bw.WriteString("XGID=" + xgidWith(&positions[i], analyses[positions[i].ID]) + "\n")
+		}
+		if err := bw.Flush(); err != nil {
+			return err
 		}
 
 	default: // table format
@@ -373,7 +386,8 @@ func (cli *CLI) renderResults(w io.Writer, positions []Position, format string) 
 		fmt.Fprintln(tw, "ID\tScore\tCube\tType\tDice\tBest Move\tEquity")
 		fmt.Fprintln(tw, "--\t-----\t----\t----\t----\t---------\t------")
 
-		for _, pos := range positions {
+		for i := range positions {
+			pos := &positions[i]
 			decType := "checker"
 			if pos.DecisionType == CubeAction {
 				decType = "cube"
@@ -387,9 +401,7 @@ func (cli *CLI) renderResults(w io.Writer, positions []Position, format string) 
 			bestMove := ""
 			equityStr := ""
 
-			// Get analysis if available
-			analysis, err := cli.db.LoadAnalysis(pos.ID)
-			if err == nil && analysis != nil {
+			if analysis := analyses[pos.ID]; analysis != nil {
 				if analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0 {
 					bestMove = analysis.CheckerAnalysis.Moves[0].Move
 					equityStr = fmt.Sprintf("%.3f", analysis.CheckerAnalysis.Moves[0].Equity)

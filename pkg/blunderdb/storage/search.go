@@ -25,7 +25,8 @@ type SearchStore interface {
 	// limit. Without a Go-only filter (mirror, loose structure mask, comment
 	// text, zone, date/equity/move pattern) the window goes to SQL; with one,
 	// candidates are scanned a chunk at a time until the window is full, so
-	// memory stays bounded by the window, not by the library.
+	// memory stays bounded by the window, not by the library. Each position
+	// yielded is the caller's: the store never reuses or alters it.
 	Find(ctx context.Context, scope string, f domain.SearchFilters, opts ListOpts) iter.Seq2[*domain.Position, error]
 
 	// Rank answers a query carrying the `like` token: the same filters as

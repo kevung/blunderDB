@@ -259,9 +259,13 @@ func TestRenderResults_Formats(t *testing.T) {
 		t.Fatalf("LoadAllPositions: %v (n=%d)", err, len(positions))
 	}
 	one := positions[:1]
+	analyses := map[int64]*PositionAnalysis{}
+	if a, err := cli.db.LoadAnalysis(one[0].ID); err == nil {
+		analyses[one[0].ID] = a
+	}
 
 	var tableBuf bytes.Buffer
-	if err := cli.renderResults(&tableBuf, one, "table"); err != nil {
+	if err := renderResults(&tableBuf, one, analyses, "table"); err != nil {
 		t.Fatalf("renderResults table: %v", err)
 	}
 	if !bytes.Contains(tableBuf.Bytes(), []byte("ID")) {
@@ -269,7 +273,7 @@ func TestRenderResults_Formats(t *testing.T) {
 	}
 
 	var jsonBuf bytes.Buffer
-	if err := cli.renderResults(&jsonBuf, one, "json"); err != nil {
+	if err := renderResults(&jsonBuf, one, analyses, "json"); err != nil {
 		t.Fatalf("renderResults json: %v", err)
 	}
 	if !json.Valid(bytes.TrimSpace(jsonBuf.Bytes())) {
@@ -277,7 +281,7 @@ func TestRenderResults_Formats(t *testing.T) {
 	}
 
 	var xgidBuf bytes.Buffer
-	if err := cli.renderResults(&xgidBuf, one, "xgid"); err != nil {
+	if err := renderResults(&xgidBuf, one, analyses, "xgid"); err != nil {
 		t.Fatalf("renderResults xgid: %v", err)
 	}
 	if got := strings.TrimSpace(xgidBuf.String()); !strings.HasPrefix(got, "XGID=") || strings.Count(got, ":") != 9 || strings.Contains(got, "\n") {
