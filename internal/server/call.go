@@ -10,6 +10,7 @@ import (
 
 	"github.com/kevung/blunderdb/internal/server/middleware"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/remote"
 )
 
 const callUsage = `blunderdb call <family>.<method> — invoke a Storage method directly.
@@ -52,8 +53,8 @@ func RunCall(args []string) error {
 		fs.PrintDefaults()
 	}
 	var (
-		backend  = fs.String("backend", envOr("BLUNDERDB_BACKEND", "sqlite"), "storage backend: sqlite|postgres")
-		dsn      = fs.String("dsn", os.Getenv("BLUNDERDB_DSN"), "backend connection string (sqlite path or postgres DSN)")
+		backend  = fs.String("backend", envOr("BLUNDERDB_BACKEND", "sqlite"), "storage backend: sqlite|postgres|remote")
+		dsn      = fs.String("dsn", os.Getenv("BLUNDERDB_DSN"), "backend connection string (sqlite path, postgres DSN, or the URL of a serve daemon for remote)")
 		dbPath   = fs.String("db", "", "sqlite database file (shorthand for --backend sqlite --dsn <path>)")
 		scope    = fs.String("scope", "1", "tenant sent as X-Tenant-ID: a positive decimal integer (SQLite ignores it for most families)")
 		jsonBody = fs.String("json", "{}", "request body as JSON")
@@ -61,6 +62,8 @@ func RunCall(args []string) error {
 		list     = fs.Bool("list", false, "list every available <family>.<method> and exit")
 		ifMatch  = fs.String("if-match", "", "version a gesture of a Direction, a Rencontre or a transcription was decided on, sent as If-Match: the Direction-Version a read printed on stderr")
 	)
+	var headers headerFlag
+	fs.Var(&headers, "header", "with --backend remote: a header sent to the daemon on every call, \"Name: value\" (repeatable), e.g. the proxy's token")
 	if err := fs.Parse(rest); err != nil {
 		return err
 	}
@@ -84,7 +87,16 @@ func RunCall(args []string) error {
 		effDSN = ":memory:"
 	}
 
-	st, err := OpenStorage(ctx, *backend, effDSN, false)
+	var st storage.Storage
+	var err error
+	if strings.EqualFold(*backend, "remote") {
+		// The same handlers run here, over the daemon's /v1 instead of a
+		// database: a route whose storage methods /v1 does not serve answers
+		// the backend's typed refusal (ADR-0095).
+		st, err = remote.Open(remote.Options{BaseURL: effDSN, Tenant: *scope, Header: http.Header(headers)})
+	} else {
+		st, err = OpenStorage(ctx, *backend, effDSN, false)
+	}
 	if err != nil {
 		return err
 	}
@@ -187,3 +199,20 @@ func (w *stdoutResponseWriter) Write(b []byte) (int, error) {
 // Flush is a no-op (writes are unbuffered); it exists so streaming handlers
 // that type-assert http.Flusher find one.
 func (w *stdoutResponseWriter) Flush() {}
+
+// headerFlag collects repeated --header "Name: value" flags.
+type headerFlag http.Header
+
+func (h *headerFlag) String() string { return "" }
+
+func (h *headerFlag) Set(v string) error {
+	name, value, ok := strings.Cut(v, ":")
+	if !ok || strings.TrimSpace(name) == "" {
+		return fmt.Errorf("want \"Name: value\", got %q", v)
+	}
+	if *h == nil {
+		*h = headerFlag{}
+	}
+	http.Header(*h).Add(strings.TrimSpace(name), strings.TrimSpace(value))
+	return nil
+}

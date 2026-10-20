@@ -29,6 +29,16 @@ import (
 // return a fresh, empty, migrated Storage on every call.
 func RunContractTests(t *testing.T, factory func() storage.Storage) {
 	t.Helper()
+	RunContractTestsOnly(t, factory, nil)
+}
+
+// RunContractTestsOnly runs the cases keep accepts (all of them when keep is
+// nil) and skips the rest by name. It serves a backend that implements part
+// of the contract by design — storage/remote answers the methods /v1 has no
+// route for with a typed refusal — and must still be held to every case its
+// families can pass.
+func RunContractTestsOnly(t *testing.T, factory func() storage.Storage, keep func(name string) bool) {
+	t.Helper()
 
 	cases := []struct {
 		name string
@@ -283,6 +293,9 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		t.Run(tc.name, func(t *testing.T) {
 			if tc.fn == nil {
 				t.Skip("contract case pending storage implementation (P2 PRs 3-6)")
+			}
+			if keep != nil && !keep(tc.name) {
+				t.Skip("outside this backend's coverage")
 			}
 			s := factory()
 			defer s.Close()

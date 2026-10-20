@@ -183,3 +183,48 @@ func TestRunCallRejectsNamedScope(t *testing.T) {
 		}
 	}
 }
+
+// TestCallRemoteBackend runs `call` over a daemon's /v1: the in-process
+// handlers reach the remote daemon's database through storage/remote, with
+// the configured header on every request.
+func TestCallRemoteBackend(t *testing.T) {
+	ts, _ := newTestServerAndHandler(t)
+	var token string
+	proxy := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		token = r.Header.Get("X-Proxy-Token")
+		ts.Config.Handler.ServeHTTP(w, r)
+	}))
+	t.Cleanup(proxy.Close)
+
+	if _, err := captureStdout(t, func() error {
+		return RunCall([]string{"positions.save", "--backend", "remote", "--dsn", proxy.URL,
+			"--header", "X-Proxy-Token: s3cret", "--json", `{"position":{"decision_type":0}}`})
+	}); err != nil {
+		t.Fatalf("positions.save over remote: %v", err)
+	}
+	if token != "s3cret" {
+		t.Fatalf("--header not forwarded: got %q", token)
+	}
+	out, err := captureStdout(t, func() error {
+		return RunCall([]string{"positions.count", "--backend", "remote", "--dsn", proxy.URL})
+	})
+	if err != nil || strings.TrimSpace(out) != "1" {
+		t.Fatalf("positions.count over remote = %q, %v; want 1", out, err)
+	}
+}
+
+// TestCallRemoteNamesTheUnsupportedMethod: a route whose storage method /v1
+// does not serve answers an internal error, but one that names the method,
+// not the generic text that hides a backend's internals.
+func TestCallRemoteNamesTheUnsupportedMethod(t *testing.T) {
+	ts, _ := newTestServerAndHandler(t)
+	out, err := captureStdout(t, func() error {
+		return RunCall([]string{"met.list", "--backend", "remote", "--dsn", ts.URL})
+	})
+	if err == nil {
+		t.Fatalf("met.list over remote succeeded: %s", out)
+	}
+	if !strings.Contains(out, `"internal"`) || !strings.Contains(out, "MatchEquityTableStore.") || !strings.Contains(out, "has no /v1 route") {
+		t.Fatalf("envelope does not name the method: %s", out)
+	}
+}

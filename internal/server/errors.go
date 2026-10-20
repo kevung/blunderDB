@@ -175,6 +175,12 @@ func errorBodyFor(w http.ResponseWriter, err error) errorBody {
 			es.SetErr(err)
 		}
 		msg = internalErrorMessage
+		// An error that knows its message holds no backend internal — the
+		// contract method storage/remote cannot serve — shows that message.
+		var pub interface{ ClientMessage() string }
+		if errors.As(err, &pub) {
+			msg = pub.ClientMessage()
+		}
 	}
 	body := errorBody{Code: code, Message: msg}
 	// An error that knows more than its message (a conflict's current
