@@ -194,7 +194,7 @@
 
     async function chooseSyncFolder() {
         try {
-            const folder = await OpenSyncFolderDialog();
+            const folder = await OpenSyncFolderDialog($t('export.syncFolderDialogTitle'));
             if (folder) exportOptions.syncFolder = folder;
         } catch (error) {
             logger.error('could not choose the sync folder:', error);

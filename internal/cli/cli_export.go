@@ -458,6 +458,9 @@ func printExportReport(r ingest.ExportReport) {
 	if r.Skipped > 0 {
 		fmt.Printf("  %d row(s) skipped (see the log)\n", r.Skipped)
 	}
+	if r.SyncHeld {
+		fmt.Println("  the sync cursor did not advance: the next incremental export sends these rows again")
+	}
 }
 
 // exportMatchesOnly exports matches — those of matchIDs, every match when it is empty — to a

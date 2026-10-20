@@ -297,3 +297,9 @@ func RescorePlayedDecisions(ctx context.Context, db *sql.DB) (int, error) {
 func DropGammonNetResponseAnalyses(ctx context.Context, db *sql.DB) (int, error) {
 	return sqlshared.DropGammonNetResponseAnalyses(ctx, binder{db}.shared())
 }
+
+// IDsVisibleInOrder reports that SQLite's identifiers become visible in the
+// order they are allocated: its single writer commits one transaction before
+// the next can take an identifier, so a mark read now never passes a row
+// that appears later (ingest.OrderedIDs, ADR-0096).
+func (s *Storage) IDsVisibleInOrder() bool { return true }

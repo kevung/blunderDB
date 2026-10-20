@@ -696,6 +696,15 @@ Ce qu'il faut savoir :
 * **Ce qu'une machine a reçu repart une fois vers l'autre**, puisque c'est
   nouveau dans sa bibliothèque ; l'autre le reconnaît sans rien ajouter, et
   l'échange suivant est vide.
+* **Un fichier arrivé pendant que blunderDB était fermé n'est pas perdu** : au
+  démarrage de la surveillance, chaque ``.db`` déjà présent dans le dossier est
+  fusionné, contrairement aux fichiers de match. La machine qui reçoit ne note
+  pas ce qu'elle a lu ; elle refusionne donc, à chaque démarrage, tous les
+  fichiers que le dossier contient encore, sans rien ajouter, mais au prix du
+  temps de les relire. Supprimez de temps en temps les fichiers ``sync-…``
+  déjà reçus pour que ce démarrage reste rapide.
+* **Un export qui a dû écarter des lignes** (signalées dans le journal) ne fait
+  pas avancer le repère : le suivant les retente, avec tout ce qui les suit.
 * **Un export n'est jamais vu à moitié écrit** : il est écrit sous un nom caché
   puis renommé d'un coup. Un fichier protégé par mot de passe (``.dbx``) n'est
   pas pris par la surveillance, qui ne peut pas demander le mot de passe.

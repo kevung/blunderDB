@@ -1241,6 +1241,7 @@
         "incremental": "Nur Neues seit dem letzten Export in diesen Ordner",
         "incrementalHint": "Für einen anderen Rechner, der diesen Ordner überwacht: Jeder Export enthält nur, was seit dem vorigen Export in denselben Ordner in die Bibliothek gekommen ist. Löschungen werden nicht übertragen.",
         "chooseSyncFolder": "Ordner wählen…",
+        "syncFolderDialogTitle": "Synchronisierungsordner",
         "analysis": "Analysen",
         "playedMoves": "Gespielte Züge",
         "comments": "Kommentare",

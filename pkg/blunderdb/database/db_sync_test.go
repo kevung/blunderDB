@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"fmt"
 	"maps"
 	"os"
 	"path/filepath"
@@ -12,6 +13,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	"github.com/kevung/blunderdb/pkg/blunderdb/watch"
 )
 
 // TestIncrementalSync_Converges: two libraries that imported different matches
@@ -52,8 +54,10 @@ func TestIncrementalSync_Converges(t *testing.T) {
 		t.Fatalf("second export of A with nothing new = %+v, want empty", again)
 	}
 
-	if _, err := b.CommitImportDatabase(filepath.Join(toB, "a1.db")); err != nil {
-		t.Fatal(err)
+	// B was not running when a1.db arrived: its watch, started afterwards,
+	// still offers the file, and merging it is how it reaches B.
+	if merged := mergeWatched(t, b, toB); len(merged) != 2 {
+		t.Fatalf("the watch offered %v, want a1.db and a2.db", merged)
 	}
 	if _, err := a.CommitImportDatabase(syncExport(t, b, toA, "b1.db").Path); err != nil {
 		t.Fatal(err)
@@ -79,6 +83,16 @@ func TestIncrementalSync_Converges(t *testing.T) {
 	}
 	if r := syncExport(t, b, toA, "b2.db"); !emptyExport(r) {
 		t.Errorf("B after convergence = %+v, want empty", r)
+	}
+
+	// Restarting B's watch offers every file the folder still holds; merging
+	// them again writes nothing (ADR-0007).
+	before := snapshot(t, b)
+	if merged := mergeWatched(t, b, toB); len(merged) != 4 {
+		t.Fatalf("a restarted watch offered %v, want the four files", merged)
+	}
+	if after := snapshot(t, b); !maps.Equal(before, after) {
+		t.Errorf("merging known files changed B:\n before %v\n after  %v", before, after)
 	}
 
 	// The cursor is the producer's, per destination: B's own cursor names only
@@ -163,4 +177,54 @@ func hasCollection(t *testing.T, d *Database, name string) bool {
 		}
 	}
 	return false
+}
+
+// mergeWatched starts a watch on folder, as a receiver does when it starts,
+// and merges what the watch offers once the files have settled.
+func mergeWatched(t *testing.T, d *Database, folder string) []string {
+	t.Helper()
+	w, err := watch.New(folder)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := w.Poll(); err != nil {
+		t.Fatal(err)
+	}
+	files, err := w.Poll()
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, f := range files {
+		if _, err := d.CommitImportDatabase(f); err != nil {
+			t.Fatalf("merge %s: %v", f, err)
+		}
+	}
+	return files
+}
+
+// snapshot is what a merge could change in a library: its headline counts,
+// its collections and its metadata.
+func snapshot(t *testing.T, d *Database) map[string]string {
+	t.Helper()
+	ctx := context.Background()
+	out, err := d.store.Metadata().Load(ctx, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	counts, err := d.store.Metadata().Counts(ctx, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	out["counts"] = fmt.Sprintf("%+v", counts)
+	var batches int
+	if err := d.db.QueryRow("SELECT COUNT(*) FROM import_batch").Scan(&batches); err != nil {
+		t.Fatal(err)
+	}
+	out["batches"] = fmt.Sprint(batches)
+	var members int
+	if err := d.db.QueryRow("SELECT COUNT(*) FROM collection_position").Scan(&members); err != nil {
+		t.Fatal(err)
+	}
+	out["members"] = fmt.Sprint(members)
+	return out
 }

@@ -1241,6 +1241,7 @@
         "incremental": "このフォルダーへの前回のエクスポート以降の新しいものだけ",
         "incrementalHint": "このフォルダーを監視する別のマシン向け：各エクスポートは、同じフォルダーへの前回のエクスポート以降にライブラリに入ったものだけを含みます。削除は伝わりません。",
         "chooseSyncFolder": "フォルダーを選択…",
+        "syncFolderDialogTitle": "同期フォルダー",
         "analysis": "解析",
         "playedMoves": "実際の手",
         "comments": "コメント",

@@ -124,6 +124,26 @@ func TestWatcherReportsAnIncomingLibraryButNotItsPartialFile(t *testing.T) {
 	}
 }
 
+// A .db that arrived while nobody watched is offered on start: the receiver
+// records nothing of what it merged, so passing over it would lose it.
+func TestWatcherOffersALibraryAlreadyThere(t *testing.T) {
+	dir := t.TempDir()
+	write(t, dir, "old.xg", 100, time.Hour)
+	write(t, dir, "sync-a.db", 100, time.Hour)
+	w, err := New(dir)
+	if err != nil {
+		t.Fatalf("New: %v", err)
+	}
+	_, _ = w.Poll()
+	got, err := w.Poll()
+	if err != nil {
+		t.Fatalf("Poll: %v", err)
+	}
+	if len(got) != 1 || filepath.Base(got[0]) != "sync-a.db" {
+		t.Fatalf("got %v, want sync-a.db alone", got)
+	}
+}
+
 // A temporary file another program renames away must not stay in the
 // watcher's memory for the life of the watch.
 func TestWatcherForgetsAFileThatVanishes(t *testing.T) {

@@ -121,6 +121,9 @@ type ExportReport struct {
 	// Rencontres counts the Rencontres that left with a member tournament
 	// (writeRencontres).
 	Rencontres int `json:"rencontres"`
+	// SyncHeld says an incremental export skipped rows and so left its
+	// cursor where it was: the next one sends the same rows again.
+	SyncHeld bool `json:"syncHeld,omitempty"`
 }
 
 // WholeTenant is the export the daemon offers by default: everything the
@@ -215,8 +218,13 @@ func ExportSQLite(ctx context.Context, src storage.Storage, scope, path string, 
 	}
 	// The cursor advances only once the file is whole: a failed export
 	// leaves it where it was, and the next one carries the same rows again.
+	// A row skipped on the way did not leave, and the mark would pass it:
+	// the cursor stays, and the next export tries those rows again.
 	if opts.Sync != nil {
-		if err := saveSyncMark(ctx, src, scope, opts.Sync); err != nil {
+		if report.Skipped > 0 {
+			report.SyncHeld = true
+			slog.Warn("incremental export skipped rows: its cursor does not advance", "cursor", opts.Sync.Name, "skipped", report.Skipped)
+		} else if err := saveSyncCursor(ctx, src, scope, opts.Sync); err != nil {
 			return report, err
 		}
 	}

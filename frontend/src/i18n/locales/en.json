@@ -1241,6 +1241,7 @@
         "incremental": "Only what is new since the last export to this folder",
         "incrementalHint": "For another machine that watches this folder: each export carries only what entered the library since the previous one to the same folder. Deletions do not propagate.",
         "chooseSyncFolder": "Choose the folder…",
+        "syncFolderDialogTitle": "Synchronisation folder",
         "analysis": "Analyses",
         "playedMoves": "Played moves",
         "comments": "Comments",

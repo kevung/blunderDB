@@ -1241,6 +1241,7 @@
         "incremental": "Solo lo nuevo desde la última exportación a esta carpeta",
         "incrementalHint": "Para otra máquina que vigila esta carpeta: cada exportación lleva solo lo que entró en la biblioteca desde la anterior a la misma carpeta. Las eliminaciones no se propagan.",
         "chooseSyncFolder": "Elegir la carpeta…",
+        "syncFolderDialogTitle": "Carpeta de sincronización",
         "analysis": "Análisis",
         "playedMoves": "Jugadas realizadas",
         "comments": "Comentarios",

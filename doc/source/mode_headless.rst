@@ -1044,7 +1044,17 @@ le démon n'écrit dans le fichier que sa date de création et le filigrane.
 ``"incremental": true`` n'exporte que ce qui est entré dans le tenant depuis
 le dernier export incrémental sous le même ``syncCursor`` (``default`` s'il
 est absent), et avance ce repère dans le tenant quand le fichier est construit
-(voir :ref:`synchroniser_deux_machines`). ``exportPath`` est ignoré. Une clé
+(voir :ref:`synchroniser_deux_machines`). Le repère avance **avant** que le
+client ait reçu le fichier : un téléchargement interrompu ne se rejoue pas en
+renvoyant la même requête, qui ne porterait plus ces lignes. Pour rattraper,
+demandez un export entier (sans ``incremental``), ou un export incrémental
+sous un nouveau ``syncCursor``, qui repart de zéro ; l'import étant
+idempotent, ce recouvrement ne crée aucun doublon. Sur PostgreSQL, un import
+concurrent peut rendre visibles après coup des lignes numérotées sous le
+repère : chaque repère n'y est donc tenu pour sûr qu'au bout de 24 heures, et
+un export incrémental renvoie aussi ce qui est entré pendant ce délai.
+L'en-tête de compte rendu porte ``"syncHeld": true`` quand des lignes ont été
+écartées : le repère n'a alors pas avancé. ``exportPath`` est ignoré. Une clé
 que les options ne connaissent pas, ou écrite avec une autre casse
 (``collectionIds``), est refusée avec le code ``invalid``, qui la nomme. La
 réponse porte, dans l'en-tête ``X-Blunderdb-Export-Report``, le compte en JSON

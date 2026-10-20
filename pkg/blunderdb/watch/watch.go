@@ -15,8 +15,9 @@
 // explicit folder import.
 //
 // A native .db is reported too: it is how another machine's incremental
-// export arrives (ADR-0096), and the caller merges it. An export is renamed
-// into place whole, so its temporary name is never reported.
+// export arrives (ADR-0096), and the caller merges it. Unlike a match, a .db
+// already in the folder when the watch starts is offered as well. An export
+// is renamed into place whole, so its temporary name is never reported.
 //
 // Stable means "seen twice with the same size and modification time". A file
 // being written by another program grows between two polls, and importing a
@@ -62,7 +63,8 @@ type Watcher struct {
 }
 
 // New starts a watch on dir. Everything already in the directory is recorded
-// as seen and will never be reported.
+// as seen and will never be reported — except native .db files, which the
+// first polls offer.
 //
 // An unreadable directory is an error here rather than on the first poll, so
 // a mistyped path is refused while the user is still looking at the setting.
@@ -88,6 +90,14 @@ func New(dir string) (*Watcher, error) {
 		return nil, err
 	}
 	for path := range present {
+		// A .db already there is another machine's export that arrived while
+		// nobody watched — the usual case with a synchronised folder. It is
+		// offered like a new file: merging it again is idempotent, and
+		// skipping it would lose it for good, since the receiver records
+		// nothing of what it read (ADR-0007, ADR-0096).
+		if ingest.IsLibraryFile(path) {
+			continue
+		}
 		w.reported[path] = true
 	}
 	return w, nil

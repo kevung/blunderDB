@@ -214,8 +214,8 @@ export function OpenPositionFolderDialog() {
   return window['go']['gui']['App']['OpenPositionFolderDialog']();
 }
 
-export function OpenSyncFolderDialog() {
-  return window['go']['gui']['App']['OpenSyncFolderDialog']();
+export function OpenSyncFolderDialog(arg1) {
+  return window['go']['gui']['App']['OpenSyncFolderDialog'](arg1);
 }
 
 export function OpenVideoExternally(arg1, arg2) {
