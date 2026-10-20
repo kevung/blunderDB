@@ -109,14 +109,14 @@ async function heldByAnotherGroup(filePath) {
     return holder !== get(activeGroupId);
 }
 
-// The jobs that refuse a switch (App.libraryBusy), each with where it is stopped: a watched
-// folder or a tournament shown on the network never ends by itself.
+// The jobs that refuse a switch, each with where it is stopped: a rollout and the tournament
+// display follow the screen (App.libraryBusy); an import on the bound handle (one file at a
+// time, a library merged) is short. The import, the watched folder and the batch analysis run
+// in the background, attached to their library: they never refuse a switch.
 /** @type {Record<string, string>} */
 const BUSY_JOB_KEYS = {
-    'gammonnet-batch': 'libraryGroups.busyBatch',
-    gammonnet: 'libraryGroups.busyBatch',
     rollout: 'libraryGroups.busyRollout',
-    'folder-watch': 'libraryGroups.busyWatch',
+    import: 'libraryGroups.busyImport',
     'tournament-display': 'libraryGroups.busyDisplay'
 };
 

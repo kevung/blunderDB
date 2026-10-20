@@ -1,6 +1,7 @@
 # Plusieurs bibliothèques ouvertes sont une présentation du bureau ; le transfert et « Ailleurs » vivent sous le contrat
 
-Status: accepted (étape 1 livrée : groupes et bascule ; étapes 2 à 5 en cours, issues #690 à #693).
+Status: accepted (étapes 1 et 2 livrées : groupes, bascule, tâches attachées à leur bibliothèque ;
+étapes 3 à 5 en cours, issues #691 à #693).
 See also: ADR-0007 (rien n'est écrit chez le destinataire), ADR-0055 (budget de contexte),
 ADR-0065 (lecture à travers les tenants), ADR-0001 (l'identité d'une position est son hachage).
 
@@ -28,16 +29,32 @@ recopier un match demandait un export puis un import. Le bureau lie un seul `*da
    les critères de recherche (ceux du formulaire monté compris), la liste des matchs, les
    compteurs et le défilement de chaque boîte défilante du panneau sont photographiés quand on
    le quitte et rendus quand il revient, sans requête ; les compteurs sont relus après
-   l'affichage, la liste des matchs seulement si elle n'a jamais été lue ou si leur nombre a
-   bougé. Le cache de positions n'est jamais partagé entre deux bibliothèques : un même
+   l'affichage, la liste des matchs seulement si elle n'a jamais été lue, si leur nombre a
+   bougé ou si une tâche de fond a écrit la bibliothèque pendant l'absence. Le cache de positions n'est jamais partagé entre deux bibliothèques : un même
    identifiant y nomme deux lignes différentes, comme les ids de matchs et de tournois d'un
    critère de recherche.
 4. **Un fichier (chemin canonique) ne s'ouvre pas dans deux groupes.** Le rouvrir amène le
    groupe qui le tient. L'assistant MCP et l'affichage de tournoi suivent la poignée liée,
    donc le groupe actif.
-5. **Tant qu'une tâche écrit la bibliothèque active, le changement de groupe est refusé**
-   (`BusyError`) : ses écritures passent par la poignée liée, qui changerait de fichier sous
-   elle. L'étape 2 attache les tâches à leur bibliothèque et lève ce refus.
+5. **Une tâche de fond reste attachée à sa bibliothèque.** L'import de fichiers (le pipeline),
+   le dossier surveillé et l'analyse GammonNet par lots tournent sur une poignée *empruntée*
+   (`database.Borrow`) : une poignée à elle sur la connexion et le `Storage` de la
+   bibliothèque, qui partage son créneau de tâche (`jobGate`). L'échange déplace la
+   bibliothèque et son créneau, pas la poignée empruntée : la tâche continue d'écrire la
+   bibliothèque où elle a commencé, jamais celle qu'affiche la poignée liée. Le lot d'import
+   ouvert par l'interface passe à la poignée empruntée (`HandOverImportBatch`), qui le ferme.
+   La poignée empruntée ne possède rien (ni verrou de fichier, ni connexion à fermer) : qui
+   ferme ou remplace la bibliothèque arrête d'abord ses tâches (`stopGroupJobs`), sinon leur
+   écriture suivante échoue sur une connexion fermée — jamais dans un autre fichier.
+   Le dossier surveillé appartient au groupe où il a démarré ; un groupe non affiché importe en
+   fond ce que le pipeline lit seul, le reste (base à fusionner, texte de position) attend son
+   retour. Chaque événement de tâche porte son groupe : hors écran, l'en-tête du groupe porte
+   une pastille (en cours, terminé), et le compte rendu est dit à son retour. Restent refusés,
+   parce qu'ils suivent l'écran : le rollout (son résultat s'affiche sur la position du
+   plateau, et il écrit par la poignée liée), l'affichage de tournoi (il sert la bibliothèque
+   active), le Duel (il tient le plateau et ses vues), l'entraînement (son chronomètre et son
+   journal ne suivent aucun groupe), et l'import fichier par fichier que seule l'interface sait
+   lire ou la fusion d'une base, le temps qu'ils durent.
 6. **Le transfert vit sous le contrat, pour les trois modes** : une fonction `Storage` source →
    `Storage` destination avec une `ingest.Selection`, qui reprend la fusion de l'import natif,
    dédoublonne par hachage, copie les métadonnées par `issuance.CarriedMetadataKeys` et n'écrit
@@ -55,3 +72,8 @@ recopier un match demandait un export puis un import. Le bureau lie un seul `*da
   et non en méthodes pour ne pas élargir la liaison Wails.
 - Une base ouverte dans un nouveau groupe n'affiche pas la progression d'une migration : la
   poignée neuve n'a pas le rappel de progression du bureau.
+- Une tâche sur une poignée empruntée et l'interface écrivent la même base sans partager le
+  verrou `Database.mu` de la couche historique : c'est SQLite (WAL, `busy_timeout`) qui
+  sérialise leurs écritures, comme pour le démon, dont les backends n'ont pas de verrou global.
+- Une seule analyse par lots tourne à la fois, tous groupes confondus : en lancer une autre
+  remplace celle en cours, quel que soit son groupe (elles prennent chacune tous les cœurs).

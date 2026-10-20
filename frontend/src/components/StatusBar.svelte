@@ -13,7 +13,8 @@
     import { watchImportNoticeStore } from '../stores/watchStore.js';
     import { transcriptionResumeStore, refreshTranscriptionResume, resumeTranscriptionAnalysis, dismissTranscriptionResume } from '../services/transcriptionSave.js';
     import { transcriptionPromptStore, transcriptionNoticeStore } from '../stores/transcriptionStore.js';
-    import { showFileImportModalStore, fileImportModeStore, fileImportMinimizedStore, fileImportProgressStore } from '../stores/importModalStore.js';
+    import { showFileImportModalStore, fileImportModeStore, fileImportMinimizedStore, fileImportProgressStore, fileImportGroupStore } from '../stores/importModalStore.js';
+    import { activeGroupId, noteGroupJob } from '../stores/groupActivityStore.js';
     import { positionsStore, matchContextStore } from '../stores/positionStore';
     import { commandHistoryStore } from '../stores/commandHistoryStore';
     import { gammonNetBatchStore } from '../stores/gammonNetBatchStore';
@@ -148,23 +149,32 @@
 
     // gammonNet batch (ADR-0013): a bounded, visible job, shown and cancelled
     // here since the status bar is always mounted.
-    let gammonNetBatch = $derived($gammonNetBatchStore);
+    // A batch runs attached to its library group: its chip shows while that group is on screen,
+    // and the group's header carries a badge while it is not.
+    let gammonNetBatch = $derived($gammonNetBatchStore && (!$gammonNetBatchStore.group || $gammonNetBatchStore.group === $activeGroupId) ? $gammonNetBatchStore : null);
+    // A minimised import shows its chip in its own group only.
+    let importChipHere = $derived(!$fileImportGroupStore || $fileImportGroupStore === $activeGroupId);
 
     const unsubGammonNetBatch = [
-        EventsOn('gammonnet-batch:progress', (p) => gammonNetBatchStore.set(p)),
+        EventsOn('gammonnet-batch:progress', (p) => {
+            noteGroupJob(p?.group, 'running', 'batch');
+            gammonNetBatchStore.set(p);
+        }),
         // Refused is deliberate (dance, score beyond the MET), never a warning;
         // failed positions are retried on the next run.
         EventsOn('gammonnet-batch:done', (summary) => {
             gammonNetBatchStore.set(null);
-            statusBarTextStore.set(tMsg('eval.batchDone', summary ?? { evaluated: 0, refused: 0, failed: 0 }));
+            const message = tMsg('eval.batchDone', summary ?? { evaluated: 0, refused: 0, failed: 0 });
+            if (noteGroupJob(summary?.group, 'done', 'batch', message)) statusBarTextStore.set(message);
         }),
         EventsOn('gammonnet-batch:cancelled', () => gammonNetBatchStore.set(null)),
         // An automatic batch queued behind the job writing the library says so until it starts.
         EventsOn('gammonnet-batch:waiting', (w) => gammonNetBatchStore.set({ done: 0, total: 0, ...w })),
         EventsOn('gammonnet-batch:error', (e) => {
             gammonNetBatchStore.set(null);
-            const message = e?.message ?? '';
-            statusBarTextStore.set(tMsg('eval.batchFailed', { error: busyMessage(message) ?? message }));
+            const error = e?.message ?? '';
+            const message = tMsg('eval.batchFailed', { error: busyMessage(error) ?? error });
+            if (noteGroupJob(e?.group, 'done', 'batch', message)) statusBarTextStore.set(message);
         }),
         // A gesture stood but its display page could not be rewritten (a folder gone, a disk full).
         EventsOn('direction:page-warning', () => statusBarTextStore.set(tMsg('direction.display.error'))),
@@ -306,7 +316,7 @@
         <span class="info-message" role="status" aria-live="polite" data-testid="status-bar-message" title={statusMessage}>{statusMessage}</span>
     {/if}
     <!-- Un import réduit continue derrière cette pastille ; elle rouvre la fenêtre. -->
-    {#if $fileImportMinimizedStore && $fileImportModeStore === 'importing'}
+    {#if $fileImportMinimizedStore && $fileImportModeStore === 'importing' && importChipHere}
         <span class="watch-import-chip" data-testid="import-chip">
             {$t('status.importChip', {
                 percent: $fileImportProgressStore && $fileImportProgressStore.bytesTotal > 0 ? Math.round(($fileImportProgressStore.bytesRead / $fileImportProgressStore.bytesTotal) * 100) : 0

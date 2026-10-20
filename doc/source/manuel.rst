@@ -299,19 +299,38 @@ s'appliquent jamais dans un autre. Le travail en cours le suit aussi : un
 brouillon de transcription, une leçon, une révision Anki, la file d'étude et
 la Direction ouverte se retrouvent tels qu'ils ont été laissés. Ce qui a pu
 changer pendant l'absence est relu juste après l'affichage : les compteurs
-toujours, la liste des matchs seulement si leur nombre a changé. Les listes
+toujours, la liste des matchs si leur nombre a changé ou si une tâche de fond
+a écrit dans la bibliothèque pendant l'absence. Les listes
 propres à chaque base (collections, tournois, paquets Anki, brouillons,
 Duels, historique de recherche, filtres enregistrés) sont relues dans la
 bibliothèque affichée.
 
 Un même fichier ne s'ouvre pas dans deux groupes : le rouvrir affiche le
-groupe qui le tient déjà. Tant qu'une tâche écrit dans la bibliothèque active
-(import, dossier surveillé, analyse par lots, rollout, affichage de tournoi),
-qu'un Duel est en cours ou qu'une séance d'entraînement n'est pas terminée,
-le changement de groupe est refusé, au clic comme au clavier, avec un message
-dans la barre d'état qui nomme la tâche et dit où l'arrêter : un dossier
-surveillé s'arrête dans les Paramètres, l'affichage d'un tournoi dans la
-Direction, un rollout par ``rollout stop``.
+groupe qui le tient déjà.
+
+Les tâches de fond restent attachées à leur bibliothèque : un import de
+fichiers de matchs, le dossier surveillé et l'analyse GammonNet par lots
+continuent dans le groupe où ils ont commencé quand on en affiche un autre, et
+n'écrivent jamais dans la bibliothèque affichée. Leur progression et leur
+compte rendu restent dans leur groupe : tant qu'il n'est pas affiché, son
+en-tête porte une pastille, qui clignote pendant que la tâche travaille et
+devient fixe quand elle est terminée. Au retour sur le groupe, la pastille
+s'efface, la barre d'état dit ce que la tâche a fait et la liste des matchs
+est relue. L'analyse automatique qui suit un import se lance dans la
+bibliothèque de l'import. Le dossier surveillé appartient au groupe où il a
+été démarré : les fichiers de matchs y sont importés en fond, tandis qu'une
+base à fusionner ou un texte de position attend que ce groupe soit de nouveau
+affiché. Fermer un groupe arrête ses tâches et sa surveillance.
+
+Le changement de groupe reste refusé, au clic comme au clavier, avec un
+message dans la barre d'état qui nomme la cause et dit où l'arrêter, quand ce
+qui tourne suit l'écran : un rollout, dont le résultat s'affiche sur la
+position du plateau (``rollout stop``) ; l'affichage d'un tournoi, qui sert la
+bibliothèque affichée sur le réseau du club (on l'arrête dans la Direction) ;
+un Duel en cours, qui tient le plateau et ses vues ; une séance
+d'entraînement, dont le chronomètre et le journal ne suivent aucun groupe ;
+enfin, le temps qu'il dure, l'import des fichiers que seule l'interface sait
+lire (textes de position, importés un par un) ou la fusion d'une base.
 À la fermeture de blunderDB, seule la session de la bibliothèque active est
 enregistrée, et la liste des groupes ne l'est pas : au démarrage suivant,
 blunderDB rouvre la dernière base active.

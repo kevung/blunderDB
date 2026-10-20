@@ -4361,6 +4361,10 @@ export namespace gui {
 	    hadMatches: boolean;
 	    lastPositionID: number;
 	    cancelled: boolean;
+	    group: number;
+	    report?: domain.ImportBatch;
+	    journal: domain.ImportFileEntry[];
+	    batchClosed: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new ImportFilesSummary(source);
@@ -4375,6 +4379,10 @@ export namespace gui {
 	        this.hadMatches = source["hadMatches"];
 	        this.lastPositionID = source["lastPositionID"];
 	        this.cancelled = source["cancelled"];
+	        this.group = source["group"];
+	        this.report = this.convertValues(source["report"], domain.ImportBatch);
+	        this.journal = this.convertValues(source["journal"], domain.ImportFileEntry);
+	        this.batchClosed = source["batchClosed"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -4624,6 +4632,7 @@ export namespace gui {
 	    running: boolean;
 	    folder: string;
 	    intervalSeconds: number;
+	    group: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new WatchStatus(source);
@@ -4634,6 +4643,7 @@ export namespace gui {
 	        this.running = source["running"];
 	        this.folder = source["folder"];
 	        this.intervalSeconds = source["intervalSeconds"];
+	        this.group = source["group"];
 	    }
 	}
 

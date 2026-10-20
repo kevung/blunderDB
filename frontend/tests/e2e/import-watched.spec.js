@@ -39,7 +39,7 @@ test('un import surveillé laisse la position et l’onglet en place', async ({ 
     await page.getByTestId('tab-analysis').click();
     await expect(page.getByTestId('tab-analysis')).toHaveClass(/active/);
 
-    await page.evaluate(() => window.__events['folder-watch:files'](['/tmp/watch/new.xg', '/tmp/watch/dup.xg']));
+    await page.evaluate(() => window.__events['folder-watch:files']({ group: 1, files: ['/tmp/watch/new.xg', '/tmp/watch/dup.xg'] }));
 
     await expect(statusBar(page)).toContainText('Watched folder: 1 imported, 1 skipped, 0 failed');
     await expect(statusBar(page)).toContainText('1 / 3');

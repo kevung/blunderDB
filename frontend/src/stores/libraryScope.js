@@ -266,7 +266,8 @@ export const OUTSIDE = [
     'matchPanelRefreshTriggerStore',
     'dbMutationCounterStore',
     'positionReloadTriggerStore',
-    // Jobs and modals, which refuse a switch while they run (libraryBusy, modals).
+    // Jobs and modals. A job either refuses a switch while it runs (libraryBusy, modals) or
+    // runs attached to its library and names its group (an import, the watch, a batch).
     'bearoffProgressStore',
     'bearoffErrorStore',
     'gammonNetBatchStore',
@@ -297,12 +298,15 @@ export const OUTSIDE = [
     'fileImportInterruptedStore',
     'fileImportProgressStore',
     'fileImportMinimizedStore',
+    'fileImportGroupStore',
     // The group machinery.
     'groupIdsStore',
     'parkedGroupsStore',
     'lastSwitchMsStore',
     'tabGroupsStore',
-    'libraryChangedStore'
+    'libraryChangedStore',
+    'groupActivityStore',
+    'importForegroundStore'
 ];
 
 /** @param {Record<string, Scoped>} scope */

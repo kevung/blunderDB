@@ -71,7 +71,10 @@ import {
     closeGroup,
     cycleTab,
     cycleGroup,
-    groupName
+    groupName,
+    noteGroupJob,
+    groupActivityStore,
+    importForegroundStore
 } from '../stores/libraryGroupStore.js';
 
 /** @param {number[]} ids */
@@ -325,12 +328,46 @@ describe('what the status bar says', () => {
         expect(get(statusBarTextStore)).toEqual({ i18nKey: 'libraryGroups.closed', i18nParams: { name: 'b', shown: 'a' } });
     });
 
+    test('a job of a group off screen badges its header; its end is said, and its list read again, on return', async () => {
+        const groupA = get(activeGroupId);
+        await openInNewGroup('/libs/b.db');
+        expect(noteGroupJob(groupA, 'running', 'import')).toBe(false);
+        expect(get(groupActivityStore).get(groupA)?.state).toBe('running');
+        const message = { i18nKey: 'status.importDone', i18nParams: { succeeded: 1, skipped: 0, failed: 0 } };
+        noteGroupJob(groupA, 'done', 'import', message);
+        noteGroupJob(groupA, 'running', 'batch');
+        expect(get(groupActivityStore).get(groupA)).toEqual({ state: 'done', job: 'import', message });
+        // A job of the group on screen shows as before: no badge.
+        expect(noteGroupJob(get(activeGroupId), 'running', 'batch')).toBe(true);
+        expect(get(groupActivityStore).has(get(activeGroupId))).toBe(false);
+
+        const refreshes = get(matchPanelRefreshTriggerStore);
+        expect(await activateGroup(groupA)).toBe(true);
+        expect(get(groupActivityStore).has(groupA)).toBe(false);
+        expect(get(statusBarTextStore)).toEqual(message);
+        await new Promise((r) => requestAnimationFrame(() => setTimeout(r, 0)));
+        await Promise.resolve();
+        expect(get(matchPanelRefreshTriggerStore)).toBeGreaterThan(refreshes);
+    });
+
+    test('an import running file by file holds the group on screen', async () => {
+        const groupA = get(activeGroupId);
+        await openInNewGroup('/libs/b.db');
+        importForegroundStore.set(true);
+        try {
+            expect(await activateGroup(groupA)).toBe(false);
+            expect(get(statusBarTextStore)).toEqual({ i18nKey: 'libraryGroups.busyImport', i18nParams: null });
+        } finally {
+            importForegroundStore.set(false);
+        }
+    });
+
     test('a busy job is named; another failure says the switch failed, not an open', async () => {
         const groupA = get(activeGroupId);
         await openInNewGroup('/libs/b.db');
-        vi.mocked(ActivateLibraryGroup).mockRejectedValueOnce('database is busy: folder-watch');
+        vi.mocked(ActivateLibraryGroup).mockRejectedValueOnce('database is busy: rollout');
         expect(await activateGroup(groupA)).toBe(false);
-        expect(get(statusBarTextStore)).toEqual({ i18nKey: 'libraryGroups.busyWatch', i18nParams: null });
+        expect(get(statusBarTextStore)).toEqual({ i18nKey: 'libraryGroups.busyRollout', i18nParams: null });
         vi.mocked(ActivateLibraryGroup).mockRejectedValueOnce('database is busy: something-new');
         await activateGroup(groupA);
         expect(get(statusBarTextStore)).toEqual({ i18nKey: 'libraryGroups.busy', i18nParams: { job: 'something-new' } });

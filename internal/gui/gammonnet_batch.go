@@ -14,32 +14,46 @@ import (
 // The gammonNet batch (ADR-0013): the loops live on *database.Database, shared
 // with the CLI and daemon; this file is the GUI shell and its events:
 //
-//	gammonnet-batch:waiting   {job, ply}
-//	gammonnet-batch:progress  {done, total, ply}
-//	gammonnet-batch:done      {evaluated, refused, failed}
-//	gammonnet-batch:cancelled {}
-//	gammonnet-batch:error     {message}
+//	gammonnet-batch:waiting   {job, ply, group}
+//	gammonnet-batch:progress  {done, total, ply, group}
+//	gammonnet-batch:done      {evaluated, refused, failed, group}
+//	gammonnet-batch:cancelled {group}
+//	gammonnet-batch:error     {message, group}
+//
+// group is the library group the batch analyses: it runs on a handle borrowed
+// from that library (libraries.go), so it keeps analysing it when another
+// group comes on screen.
 
 // gnYieldPoll is how often a yielding batch rechecks the live evaluation.
 const gnYieldPoll = 50 * time.Millisecond
+
+// batchRun is the work of one batch, on the library handle it is given.
+type batchRun func(ctx context.Context, db *database.Database, onProgress func(done, total int)) (database.GammonNetBatchSummary, error)
 
 // StartGammonNetBatch analyses every position without an analysis, in the
 // background, cancelling any batch in flight. No-op when db is nil. The user
 // asked for it: refused while another job writes the library.
 func (a *App) StartGammonNetBatch(ply, pruneK, candidates int) {
-	a.runGammonNetBatch(ply, false, a.missingBatch(ply, pruneK, candidates))
+	a.runGammonNetBatch(0, ply, false, a.missingBatch(ply, pruneK, candidates))
 }
 
 // QueueGammonNetBatch is StartGammonNetBatch for the analysis an import
 // starts on its own: it waits for the job writing the library instead of
 // being refused (ADR-0088).
 func (a *App) QueueGammonNetBatch(ply, pruneK, candidates int) {
-	a.runGammonNetBatch(ply, true, a.missingBatch(ply, pruneK, candidates))
+	a.runGammonNetBatch(0, ply, true, a.missingBatch(ply, pruneK, candidates))
 }
 
-func (a *App) missingBatch(ply, pruneK, candidates int) func(context.Context, func(done, total int)) (database.GammonNetBatchSummary, error) {
-	return func(ctx context.Context, onProgress func(done, total int)) (database.GammonNetBatchSummary, error) {
-		return a.db.AnalyzeMissingWithGammonNet(ctx, ply, pruneK, candidates, a.effectiveBatchJobs(),
+// QueueGammonNetBatchIn is QueueGammonNetBatch for the library of group, on
+// screen or not: an import that finished in a group the user left analyses
+// that group's library, not the one shown.
+func (a *App) QueueGammonNetBatchIn(group, ply, pruneK, candidates int) {
+	a.runGammonNetBatch(group, ply, true, a.missingBatch(ply, pruneK, candidates))
+}
+
+func (a *App) missingBatch(ply, pruneK, candidates int) batchRun {
+	return func(ctx context.Context, db *database.Database, onProgress func(done, total int)) (database.GammonNetBatchSummary, error) {
+		return db.AnalyzeMissingWithGammonNet(ctx, ply, pruneK, candidates, a.effectiveBatchJobs(),
 			a.waitForInteractiveEvaluation, onProgress)
 	}
 }
@@ -47,8 +61,8 @@ func (a *App) missingBatch(ply, pruneK, candidates int) func(context.Context, fu
 // StartGammonNetStaleBatch re-runs gammonNet on every position whose analysis
 // is entirely its own but stale: another EngineVersion, or another depth.
 func (a *App) StartGammonNetStaleBatch(ply, pruneK, candidates int) {
-	a.runGammonNetBatch(ply, false, func(ctx context.Context, onProgress func(done, total int)) (database.GammonNetBatchSummary, error) {
-		return a.db.AnalyzeStaleGammonNet(ctx, ply, pruneK, candidates, a.effectiveBatchJobs(),
+	a.runGammonNetBatch(0, ply, false, func(ctx context.Context, db *database.Database, onProgress func(done, total int)) (database.GammonNetBatchSummary, error) {
+		return db.AnalyzeStaleGammonNet(ctx, ply, pruneK, candidates, a.effectiveBatchJobs(),
 			a.waitForInteractiveEvaluation, onProgress)
 	})
 }
@@ -57,8 +71,8 @@ func (a *App) StartGammonNetStaleBatch(ply, pruneK, candidates int) {
 // batch a transcription's or a duel's save starts (ADR-0045 §8). The caller
 // sets depth. Started on its own, it waits for the job writing the library.
 func (a *App) StartGammonNetMatchBatch(matchID int64, ply, pruneK, candidates int) {
-	a.runGammonNetBatch(ply, true, func(ctx context.Context, onProgress func(done, total int)) (database.GammonNetBatchSummary, error) {
-		return a.db.AnalyzeMatchWithGammonNet(ctx, matchID, ply, pruneK, candidates, a.effectiveBatchJobs(),
+	a.runGammonNetBatch(0, ply, true, func(ctx context.Context, db *database.Database, onProgress func(done, total int)) (database.GammonNetBatchSummary, error) {
+		return db.AnalyzeMatchWithGammonNet(ctx, matchID, ply, pruneK, candidates, a.effectiveBatchJobs(),
 			a.waitForInteractiveEvaluation, onProgress)
 	})
 }
@@ -82,8 +96,13 @@ func (a *App) effectiveBatchJobs() int {
 // runGammonNetBatch is the shell every batch shares: run does the work, this
 // owns the single-in-flight bookkeeping and the events. A queued batch waits
 // for the job writing the library; any other is refused while one runs.
-func (a *App) runGammonNetBatch(ply int, queued bool, run func(ctx context.Context, onProgress func(done, total int)) (database.GammonNetBatchSummary, error)) {
+func (a *App) runGammonNetBatch(group, ply int, queued bool, run batchRun) {
 	if a.db == nil {
+		return
+	}
+	group, db, err := a.borrowLibrary(group)
+	if err != nil {
+		a.emitBatch("gammonnet-batch:error", map[string]any{"message": err.Error(), "group": group})
 		return
 	}
 
@@ -92,7 +111,7 @@ func (a *App) runGammonNetBatch(ply int, queued bool, run func(ctx context.Conte
 	a.roMu.Lock()
 	if !queued && a.rolloutBatchRunning() {
 		a.roMu.Unlock()
-		a.emitBatch("gammonnet-batch:error", map[string]string{"message": (&database.BusyError{Job: database.JobRollout}).Error()})
+		a.emitBatch("gammonnet-batch:error", map[string]any{"message": (&database.BusyError{Job: database.JobRollout}).Error(), "group": group})
 		return
 	}
 	a.gnBatchMu.Lock()
@@ -102,12 +121,13 @@ func (a *App) runGammonNetBatch(ply int, queued bool, run func(ctx context.Conte
 	ctx, cancel := context.WithCancel(a.batchCtx())
 	if queued {
 		ctx = database.WaitForDatabase(ctx, func(job string) {
-			a.emitBatch("gammonnet-batch:waiting", map[string]any{"job": job, "ply": ply})
+			a.emitBatch("gammonnet-batch:waiting", map[string]any{"job": job, "ply": ply, "group": group})
 		})
 	}
 	stopped := make(chan struct{})
 	a.gnBatchCancel = cancel
 	a.gnBatchDone = stopped
+	a.gnBatchGroup = group
 	a.gnBatchMu.Unlock()
 	a.roMu.Unlock()
 
@@ -116,8 +136,9 @@ func (a *App) runGammonNetBatch(ply int, queued bool, run func(ctx context.Conte
 		// waits on it.
 		defer close(stopped)
 		defer recoverBackground(a.ctx, "gammonNet batch analysis")
-		summary, err := run(ctx, func(done, total int) {
-			a.emitBatch("gammonnet-batch:progress", map[string]int{"done": done, "total": total, "ply": ply})
+		defer db.Close() // lets the borrowed library go; closes nothing
+		summary, err := run(ctx, db, func(done, total int) {
+			a.emitBatch("gammonnet-batch:progress", map[string]int{"done": done, "total": total, "ply": ply, "group": group})
 		})
 
 		// Only if still the batch in flight: a newer one may have replaced it.
@@ -125,21 +146,23 @@ func (a *App) runGammonNetBatch(ply int, queued bool, run func(ctx context.Conte
 		if a.gnBatchDone == stopped {
 			a.gnBatchCancel = nil
 			a.gnBatchDone = nil
+			a.gnBatchGroup = 0
 		}
 		a.gnBatchMu.Unlock()
 
 		if err != nil {
 			if ctx.Err() != nil {
-				a.emitBatch("gammonnet-batch:cancelled")
+				a.emitBatch("gammonnet-batch:cancelled", map[string]int{"group": group})
 				return
 			}
-			a.emitBatch("gammonnet-batch:error", map[string]string{"message": err.Error()})
+			a.emitBatch("gammonnet-batch:error", map[string]any{"message": err.Error(), "group": group})
 			return
 		}
 		a.emitBatch("gammonnet-batch:done", map[string]int{
 			"evaluated": summary.Evaluated,
 			"refused":   summary.Refused,
 			"failed":    summary.Failed,
+			"group":     group,
 		})
 	}()
 }
@@ -207,18 +230,35 @@ func (a *App) stopBackgroundJobs(grace time.Duration) {
 	a.stopDatabaseJobs(grace)
 }
 
-// stopDatabaseJobs cancels the gammonNet batch, the rollout and the
-// maintenance run, the jobs that write the database, and waits for them up to
-// grace, shared: before shutdown and before the open file changes.
+// stopDatabaseJobs cancels every job that writes a library, in any group (the
+// gammonNet batch, the rollout, the maintenance run, the background imports),
+// and waits for them up to grace, shared: before shutdown.
 func (a *App) stopDatabaseJobs(grace time.Duration) {
+	a.stopGroupJobs(0, grace)
+}
+
+// stopGroupJobs is stopDatabaseJobs for the jobs writing the library of group
+// (0: every group): before that library is closed or replaced. The rollout
+// and the maintenance run write through the bound handle, so they belong to
+// the group on screen.
+func (a *App) stopGroupJobs(group int, grace time.Duration) {
 	// One context for the whole grace period: unlike a timer channel, which
 	// delivers its value once, it stays done for every job still waited on.
 	deadline, release := context.WithTimeout(context.Background(), grace)
 	defer release()
-	for name, stopped := range map[string]<-chan struct{}{
-		"the gammonNet batch": a.cancelGammonNetBatch(),
-		"the rollout":         a.cancelRollout(),
-	} {
+	onScreen := group == 0 || group == a.shownGroup()
+	stops := map[string]<-chan struct{}{}
+	a.gnBatchMu.Lock()
+	batchGroup := a.gnBatchGroup
+	a.gnBatchMu.Unlock()
+	if group == 0 || batchGroup == group {
+		stops["the gammonNet batch"] = a.cancelGammonNetBatch()
+	}
+	if onScreen {
+		stops["the rollout"] = a.cancelRollout()
+	}
+	stops["the imports"] = a.imports.cancel(group)
+	for name, stopped := range stops {
 		if stopped == nil {
 			continue
 		}
@@ -228,7 +268,15 @@ func (a *App) stopDatabaseJobs(grace time.Duration) {
 			slog.Warn("a job writing the database did not stop within the grace period; going ahead", "job", name, "grace", grace)
 		}
 	}
-	if a.db != nil {
+	if onScreen && a.db != nil {
 		a.db.StopMaintenance(deadline)
 	}
+}
+
+// shownGroup is the group on screen, read without libs.mu.
+func (a *App) shownGroup() int {
+	if id := int(a.libs.shown.Load()); id != 0 {
+		return id
+	}
+	return 1
 }

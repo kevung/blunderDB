@@ -1,6 +1,6 @@
 <script>
     import { viewStore } from '../stores/viewStore';
-    import { tabGroupsStore, activateGroup, closeGroup } from '../stores/libraryGroupStore.js';
+    import { tabGroupsStore, activateGroup, closeGroup, groupActivityStore } from '../stores/libraryGroupStore.js';
     import { registerKeys } from '../services/keyDispatch.js';
     import { t } from '../i18n';
 
@@ -147,6 +147,18 @@
                         onkeydown={(e) => e.target === e.currentTarget && e.key === 'Enter' && activateGroup(group.id)}
                     >
                         <span class="group-name">{group.name || $t('libraryGroups.unnamed')}</span>
+                        <!-- A job of this library ran or finished while it was off screen. -->
+                        {#if !group.active && $groupActivityStore.get(group.id)}
+                            {@const done = $groupActivityStore.get(group.id)?.state === 'done'}
+                            <span
+                                class="group-badge"
+                                class:done
+                                data-testid="library-group-badge"
+                                data-state={done ? 'done' : 'running'}
+                                title={$t(done ? 'libraryGroups.jobDone' : 'libraryGroups.jobRunning')}
+                                aria-label={$t(done ? 'libraryGroups.jobDone' : 'libraryGroups.jobRunning')}
+                            ></span>
+                        {/if}
                         <button class="close-btn" onclick={(e) => handleCloseGroup(e, group.id)} title={$t('libraryGroups.close')}>&times;</button>
                     </div>
                 {/if}
@@ -354,6 +366,30 @@
         color: inherit;
     }
 
+    .group-badge {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        margin-left: 4px;
+        border-radius: 50%;
+        background: var(--color-text-muted);
+        flex-shrink: 0;
+        animation: group-badge-pulse 1.2s ease-in-out infinite;
+    }
+    .group-badge.done {
+        background: var(--color-primary);
+        animation: none;
+    }
+    @keyframes group-badge-pulse {
+        50% {
+            opacity: 0.35;
+        }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .group-badge {
+            animation: none;
+        }
+    }
     .group-name {
         max-width: 14em;
         overflow: hidden;

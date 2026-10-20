@@ -123,10 +123,7 @@ func TestStopMaintenance_CancelsOnlyMaintenance(t *testing.T) {
 		release()
 	}()
 	d.StopMaintenance(context.Background())
-	d.cancelMu.Lock()
-	held := d.job
-	d.cancelMu.Unlock()
-	if held != nil {
+	if held := d.currentJob(); held != nil {
 		t.Error("StopMaintenance returned before the run released the library")
 	}
 }
@@ -216,10 +213,7 @@ func TestQueuedBatch_CancelledWhileWaiting(t *testing.T) {
 	if err := <-done; !errors.Is(err, context.Canceled) {
 		t.Fatalf("cancelled wait: %v, want context.Canceled", err)
 	}
-	d.cancelMu.Lock()
-	held := d.job
-	d.cancelMu.Unlock()
-	if held == nil || held.name != JobRollout {
+	if held := d.currentJob(); held == nil || held.name != JobRollout {
 		t.Error("cancelling the waiting batch disturbed the rollout")
 	}
 }

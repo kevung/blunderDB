@@ -65,6 +65,8 @@ type App struct {
 	// none runs): a cancelled batch still writes its in-flight results, so
 	// shutdown must wait on it before closing the database.
 	gnBatchDone chan struct{}
+	// gnBatchGroup is the library group the batch in flight analyses, 0 when none.
+	gnBatchGroup int
 	// closing is set once shutdown has stopped the jobs.
 	closing atomic.Bool
 
@@ -103,6 +105,8 @@ type App struct {
 
 	// libs are the libraries open in other groups (libraries.go).
 	libs libraryGroups
+	// imports are the imports running on borrowed handles (import_files.go).
+	imports backgroundImports
 }
 
 // blunderCountReadyEvent tells the status bar that a background recount has
@@ -121,10 +125,13 @@ func NewApp(db *database.Database) *App {
 		// At shutdown the jobs were already stopped and waited for: the
 		// database's Close must not pay the grace a second time.
 		db.SetBeforeSwitch(func() {
-			if !a.closing.Load() {
-				a.stopDatabaseJobs(shutdownJobGrace)
-				a.stopDisplayForSwitch()
+			// A switch between library groups moves no job: each runs on a
+			// handle borrowed from its own library (libraries.go).
+			if a.closing.Load() || a.libs.exchanging.Load() {
+				return
 			}
+			a.stopGroupJobs(a.shownGroup(), shutdownJobGrace)
+			a.stopDisplayForSwitch()
 		})
 		database.SetOpenGuard(db, a.refuseHeldLibrary)
 		database.SetBlunderCountReady(db, func() {

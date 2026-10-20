@@ -1,10 +1,12 @@
 package gui
 
 import (
+	"context"
 	"errors"
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 )
@@ -86,23 +88,171 @@ func TestLibraryGroups_OpenSwitchAndClose(t *testing.T) {
 	}
 }
 
-func TestLibraryGroups_SwitchRefusedWhileTheFolderWatchRuns(t *testing.T) {
+// twoGroups opens a.db (with posA positions) in group 1 and b.db (empty) in
+// group 2, and brings group 1 back on screen.
+func twoGroups(t *testing.T) (*App, *database.Database) {
+	t.Helper()
 	dir := t.TempDir()
 	db := database.NewDatabase()
 	a := NewApp(db)
-	t.Cleanup(func() { a.StopFolderWatch(); a.closeParkedLibraries(); _ = db.Close() })
-	if _, err := a.OpenLibraryGroup(newLibraryFile(t, dir, "a.db", 0)); err != nil {
+	t.Cleanup(func() { a.StopFolderWatch(); a.stopDatabaseJobs(time.Second); a.closeParkedLibraries(); _ = db.Close() })
+	if _, err := a.OpenLibraryGroup(newLibraryFile(t, dir, "a.db", 1)); err != nil {
 		t.Fatal(err)
 	}
 	if _, err := a.OpenLibraryGroup(newLibraryFile(t, dir, "b.db", 0)); err != nil {
 		t.Fatal(err)
 	}
+	if err := a.ActivateLibraryGroup(1); err != nil {
+		t.Fatal(err)
+	}
+	return a, db
+}
+
+// positionsOf counts the positions of group's library, on screen or not.
+func positionsOf(t *testing.T, a *App, group int) int {
+	t.Helper()
+	_, lent, err := a.borrowLibrary(group)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer lent.Close()
+	n, err := lent.CountPositions()
+	if err != nil {
+		t.Fatal(err)
+	}
+	return n
+}
+
+// An import started in A keeps writing A when B comes on screen, and writes
+// nothing into B. A write transaction held on A keeps the import from
+// committing until after the switch, so the switch lands in its middle.
+func TestLibraryGroups_ImportFinishesInItsGroupAcrossASwitch(t *testing.T) {
+	a, _ := twoGroups(t)
+	if _, err := a.db.BeginImportBatch("test.mat", "mixed"); err != nil {
+		t.Fatal(err)
+	}
+	ctx := context.Background()
+	blocker, err := database.RawConn(a.db).Conn(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer blocker.Close()
+	if _, err := blocker.ExecContext(ctx, "BEGIN IMMEDIATE"); err != nil {
+		t.Fatal(err)
+	}
+	type result struct {
+		s   ImportFilesSummary
+		err error
+	}
+	done := make(chan result, 1)
+	go func() {
+		s, err := a.ImportFiles([]string{filepath.Join("..", "..", "testdata", "test.mat")}, true)
+		done <- result{s, err}
+	}()
+	waitFor(t, func() bool { return a.importsRunning() > 0 })
+
+	if err := a.ActivateLibraryGroup(2); err != nil {
+		t.Fatalf("switch during an import: %v", err)
+	}
+	select {
+	case r := <-done:
+		t.Fatalf("the import finished before the switch could land in it: %+v, %v", r.s, r.err)
+	default:
+	}
+	if _, err := blocker.ExecContext(ctx, "ROLLBACK"); err != nil {
+		t.Fatal(err)
+	}
+	r := <-done
+	if r.err != nil || r.s.Succeeded != 1 || r.s.Group != 1 {
+		t.Fatalf("import: %+v, %v; want one match into group 1", r.s, r.err)
+	}
+	if r.s.Report == nil {
+		t.Error("the background import must close its batch and return the report")
+	}
+	if n, _ := a.db.CountPositions(); n != 0 {
+		t.Errorf("B, on screen, has %d positions: the import wrote into it", n)
+	}
+	if n := positionsOf(t, a, 1); n <= 1 {
+		t.Errorf("A has %d positions after the import, want more than its 1", n)
+	}
+	if database.OpenImportBatch(a.db) != 0 {
+		t.Error("the batch was left open on the bound handle")
+	}
+}
+
+// A batch analysis started in A writes A after the switch to B.
+func TestLibraryGroups_BatchKeepsItsGroupAcrossASwitch(t *testing.T) {
+	a, _ := twoGroups(t)
+	release := make(chan struct{})
+	wrote := make(chan error, 1)
+	a.runGammonNetBatch(0, 2, false, func(ctx context.Context, db *database.Database, _ func(done, total int)) (database.GammonNetBatchSummary, error) {
+		<-release
+		p := database.Position{Board: database.Board{Points: [26]database.Point{{Checkers: 9, Color: 0}}}, Cube: database.Cube{Value: 0, Owner: -1}}
+		_, err := db.SavePosition(&p)
+		wrote <- err
+		return database.GammonNetBatchSummary{}, err
+	})
+	a.gnBatchMu.Lock()
+	group := a.gnBatchGroup
+	a.gnBatchMu.Unlock()
+	if group != 1 {
+		t.Fatalf("batch group = %d, want 1", group)
+	}
+	if err := a.ActivateLibraryGroup(2); err != nil {
+		t.Fatalf("switch during a batch: %v", err)
+	}
+	close(release)
+	if err := <-wrote; err != nil {
+		t.Fatal(err)
+	}
+	if n, _ := a.db.CountPositions(); n != 0 {
+		t.Errorf("B, on screen, has %d positions: the batch wrote into it", n)
+	}
+	if n := positionsOf(t, a, 1); n != 2 {
+		t.Errorf("A has %d positions, want 2", n)
+	}
+}
+
+// The watched folder belongs to the group it was started in: the switch goes
+// through, its files go to that group, and closing the group stops it.
+func TestLibraryGroups_WatchKeepsItsGroup(t *testing.T) {
+	a, _ := twoGroups(t)
 	if _, err := a.StartFolderWatch(t.TempDir(), 3600); err != nil {
 		t.Skipf("folder watch unavailable: %v", err)
 	}
-	var busy *database.BusyError
-	if err := a.ActivateLibraryGroup(1); !errors.As(err, &busy) {
-		t.Fatalf("switch during a folder watch: %v, want *BusyError", err)
+	if err := a.ActivateLibraryGroup(2); err != nil {
+		t.Fatalf("switch during a folder watch: %v", err)
+	}
+	if st := a.FolderWatchStatus(); !st.Running || st.Group != 1 {
+		t.Fatalf("watch after the switch: %+v, want running for group 1", st)
+	}
+	s, err := a.ImportFilesIn(1, []string{filepath.Join("..", "..", "testdata", "test.mat")}, "watched")
+	if err != nil || s.Succeeded != 1 || s.Group != 1 {
+		t.Fatalf("watched import into group 1: %+v, %v", s, err)
+	}
+	if n, _ := a.db.CountPositions(); n != 0 {
+		t.Errorf("B, on screen, has %d positions: the watched import wrote into it", n)
+	}
+	if n := positionsOf(t, a, 1); n <= 1 {
+		t.Errorf("A has %d positions, want the watched match in it", n)
+	}
+	if err := a.CloseLibraryGroup(1); err != nil {
+		t.Fatal(err)
+	}
+	if a.FolderWatchStatus().Running {
+		t.Error("closing the group left its watch running")
+	}
+}
+
+// waitFor polls cond for up to two seconds.
+func waitFor(t *testing.T, cond func() bool) {
+	t.Helper()
+	deadline := time.Now().Add(2 * time.Second)
+	for !cond() {
+		if time.Now().After(deadline) {
+			t.Fatal("condition not met within two seconds")
+		}
+		time.Sleep(time.Millisecond)
 	}
 }
 

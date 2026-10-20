@@ -82,9 +82,7 @@ func (d *Database) RunMaintenanceWithProgress(kind string, fn func(done, total i
 // CancelMaintenance ends the in-flight maintenance run between two batches;
 // no-op when idle or when the job holding the library is not maintenance.
 func (d *Database) CancelMaintenance() {
-	d.cancelMu.Lock()
-	j := d.job
-	d.cancelMu.Unlock()
+	j := d.currentJob()
 	if j != nil && j.cancel != nil {
 		j.cancel()
 	}
@@ -94,9 +92,7 @@ func (d *Database) CancelMaintenance() {
 // end, or for ctx: the desktop calls it before the open file changes, so a
 // pass never writes into the next library.
 func (d *Database) StopMaintenance(ctx context.Context) {
-	d.cancelMu.Lock()
-	j := d.job
-	d.cancelMu.Unlock()
+	j := d.currentJob()
 	if j == nil || j.cancel == nil {
 		return
 	}

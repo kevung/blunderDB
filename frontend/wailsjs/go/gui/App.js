@@ -58,6 +58,10 @@ export function CancelGammonNetBatch() {
   return window['go']['gui']['App']['CancelGammonNetBatch']();
 }
 
+export function CancelLibraryImport(arg1) {
+  return window['go']['gui']['App']['CancelLibraryImport'](arg1);
+}
+
 export function CancelMaintenance() {
   return window['go']['gui']['App']['CancelMaintenance']();
 }
@@ -154,8 +158,12 @@ export function HelpBundle(arg1) {
   return window['go']['gui']['App']['HelpBundle'](arg1);
 }
 
-export function ImportFiles(arg1) {
-  return window['go']['gui']['App']['ImportFiles'](arg1);
+export function ImportFiles(arg1, arg2) {
+  return window['go']['gui']['App']['ImportFiles'](arg1, arg2);
+}
+
+export function ImportFilesIn(arg1, arg2, arg3) {
+  return window['go']['gui']['App']['ImportFilesIn'](arg1, arg2, arg3);
 }
 
 export function ImportIssuerIdentity(arg1, arg2) {
@@ -280,6 +288,10 @@ export function PrepareDemoDatabase() {
 
 export function QueueGammonNetBatch(arg1, arg2, arg3) {
   return window['go']['gui']['App']['QueueGammonNetBatch'](arg1, arg2, arg3);
+}
+
+export function QueueGammonNetBatchIn(arg1, arg2, arg3, arg4) {
+  return window['go']['gui']['App']['QueueGammonNetBatchIn'](arg1, arg2, arg3, arg4);
 }
 
 export function ReadFileContent(arg1) {

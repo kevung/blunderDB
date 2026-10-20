@@ -70,7 +70,7 @@ describe('resumeImportBatch', () => {
         await resumeImportBatch(12, ['/a.xg', '/b.xg']);
         expect(ResumeImportBatch).toHaveBeenCalledWith(12);
         expect(BeginImportBatch).not.toHaveBeenCalled();
-        expect(ImportFiles).toHaveBeenCalledWith(['/b.xg']);
+        expect(ImportFiles).toHaveBeenCalledWith(['/b.xg'], true);
     });
 
     test('the Resume button resumes the interrupted import with its whole file list', async () => {

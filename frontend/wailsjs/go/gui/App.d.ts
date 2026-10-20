@@ -37,6 +37,8 @@ export function CancelEvaluationAtRest():Promise<void>;
 
 export function CancelGammonNetBatch():Promise<void>;
 
+export function CancelLibraryImport(arg1:number):Promise<void>;
+
 export function CancelMaintenance():Promise<void>;
 
 export function CancelRollout():Promise<void>;
@@ -85,7 +87,9 @@ export function GetTournamentDisplayStatus():Promise<gui.TournamentDisplayStatus
 
 export function HelpBundle(arg1:string):Promise<string>;
 
-export function ImportFiles(arg1:Array<string>):Promise<gui.ImportFilesSummary>;
+export function ImportFiles(arg1:Array<string>,arg2:boolean):Promise<gui.ImportFilesSummary>;
+
+export function ImportFilesIn(arg1:number,arg2:Array<string>,arg3:string):Promise<gui.ImportFilesSummary>;
 
 export function ImportIssuerIdentity(arg1:string,arg2:string):Promise<domain.IssuerIdentityInfo>;
 
@@ -148,6 +152,8 @@ export function PickTranscriptionVideo():Promise<string>;
 export function PrepareDemoDatabase():Promise<string>;
 
 export function QueueGammonNetBatch(arg1:number,arg2:number,arg3:number):Promise<void>;
+
+export function QueueGammonNetBatchIn(arg1:number,arg2:number,arg3:number,arg4:number):Promise<void>;
 
 export function ReadFileContent(arg1:string):Promise<gui.FileDialogResponse>;
 

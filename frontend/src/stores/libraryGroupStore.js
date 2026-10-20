@@ -11,12 +11,15 @@ import { viewStore } from './viewStore.js';
 import { positionsStore } from './positionStore.js';
 import { databasePathStore, libraryChanged, libraryTitle } from './databaseStore.js';
 import { libraryCountsStore, refreshLibraryCounts } from './libraryCountsStore.js';
-import { matchPanelRefreshTriggerStore, statusBarTextStore } from './uiStore.js';
+import { matchPanelRefreshTriggerStore, statusBarTextStore, dbMutationCounterStore } from './uiStore.js';
 import { trainingSessionStore } from './trainingTabStore.js';
 import { bumpTranscriptionLibrary } from './transcriptionStore.js';
 import { matchListStore } from './matchListStore.js';
 import { directionSessionState, forgetDirection, restoreDirection } from './directionStore.js';
 import { takeScopedState, putScopedState } from './libraryScope.js';
+import { groupIdsStore, activeGroupId, takeActivity, importForegroundStore as importForegroundStoreRef } from './groupActivityStore.js';
+
+export { groupIdsStore, activeGroupId, groupActivityStore, importForegroundStore, groupOnScreen, noteGroupJob } from './groupActivityStore.js';
 import { tMsg, translate } from '../i18n';
 import { logger } from '../utils/logger.js';
 
@@ -27,9 +30,6 @@ import { logger } from '../utils/logger.js';
  *   direction: { openId: number | null, tabs: Record<string, string> } }} GroupPhoto
  */
 
-/** The groups in tab-bar order: ids only, the active one's path is databasePathStore. */
-export const groupIdsStore = writable(/** @type {number[]} */ ([1]));
-export const activeGroupId = writable(1);
 /** Photographs of the groups waiting, by id. */
 export const parkedGroupsStore = writable(/** @type {Map<number, GroupPhoto>} */ (new Map()));
 /** How long the last switch took to put the group on screen, in ms (shown nowhere; tests, e2e). */
@@ -178,6 +178,7 @@ function showTitle(path, readOnly) {
 export function switchRefusal() {
     if (viewStore.viewsLocked()) return tMsg('libraryGroups.duel');
     if (get(trainingSessionStore)) return tMsg('libraryGroups.training');
+    if (get(importForegroundStoreRef)) return tMsg('libraryGroups.busyImport');
     return null;
 }
 
@@ -193,16 +194,20 @@ export class LibraryGroupRefused extends Error {
 
 /**
  * What may have changed while the group waited, read once it is on screen. The match list came
- * back with its photograph: it is read again only if it never was, or if the library's match
- * count moved, since reading it again repaints every row.
+ * back with its photograph: it is read again only if it never was, if the library's match
+ * count moved, or if a background job wrote the library meanwhile (stale), since reading it
+ * again repaints every row.
  * @param {any} countsBefore the counts photographed with the group
+ * @param {boolean} [stale] a job of the group wrote its library while it was off screen
  */
-async function refreshAfterShow(countsBefore) {
+async function refreshAfterShow(countsBefore, stale = false) {
     const group = get(activeGroupId);
     await refreshLibraryCounts();
     if (get(activeGroupId) !== group) return;
     const list = get(matchListStore);
-    if (!list.loaded || get(libraryCountsStore)?.matches !== countsBefore?.matches) matchPanelRefreshTriggerStore.update((n) => n + 1);
+    if (stale || !list.loaded || get(libraryCountsStore)?.matches !== countsBefore?.matches) matchPanelRefreshTriggerStore.update((n) => n + 1);
+    // What reads the library on a write (statistics, the panels) reads it again.
+    if (stale) dbMutationCounterStore.update((n) => n + 1);
 }
 
 /**
@@ -264,6 +269,7 @@ export async function activateGroup(id, viewId = null) {
         next.set(leaving, photo);
         return next;
     });
+    const { activity, stale } = takeActivity(id);
     // The path first: what follows the path (the match list drops another library's ids) acts on
     // the state left, and the group's own state is put back over it.
     databasePathStore.set(target.path);
@@ -275,9 +281,11 @@ export async function activateGroup(id, viewId = null) {
     showTitle(target.path, target.scoped.databaseReadOnlyStore ?? false);
     libraryChanged();
     lastSwitchMsStore.set(performance.now() - started);
+    // What a job finished while the group was away is said once it is back.
+    if (activity?.state === 'done' && activity.message) statusBarTextStore.set(activity.message);
     requestAnimationFrame(() => {
         restoreScroll(target.scroll);
-        refreshAfterShow(target.counts).catch((error) => logger.error('Error refreshing a library group:', error));
+        refreshAfterShow(target.counts, stale).catch((error) => logger.error('Error refreshing a library group:', error));
         restoreDirection(target.direction).catch((error) => logger.error('Error reopening the Direction of a library group:', error));
     });
     return true;
@@ -309,6 +317,7 @@ export async function closeGroup(id) {
         return next;
     });
     groupIdsStore.update((list) => list.filter((g) => g !== id));
+    takeActivity(id);
     // Says what happened, and replaces whatever an earlier refusal left there.
     statusBarTextStore.set(tMsg('libraryGroups.closed', { name: closing, shown: groupName(get(databasePathStore)) }));
     return true;

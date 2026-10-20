@@ -28,11 +28,12 @@ import (
 type Database struct {
 	db                *sql.DB
 	mu                sync.RWMutex                        // RWMutex allows concurrent reads
-	cancelMu          sync.Mutex                          // guards importCancel (held briefly, never with mu)
+	cancelMu          sync.Mutex                          // guards importCancel, gate (held briefly; taken after mu, never before)
 	importCancel      context.CancelFunc                  // cancels the in-flight import/migration; nil when idle
 	searchCancels     map[int]context.CancelFunc          // in-flight searches, guarded by cancelMu
 	searchSeq         int                                 // key of the next entry of searchCancels
-	job               *jobSlot                            // the one job writing the library, guarded by cancelMu; nil when idle
+	gate              *jobGate                            // the library's job slot, shared with borrowed handles; guarded by cancelMu
+	borrowed          bool                                // lent by Borrow: Close lets the library go without closing it
 	exchanging        bool                                // an Exchange is moving the library; guarded by cancelMu
 	migrationProgress func(phase string, done, total int) // optional progress callback (GUI only)
 	// convertBatchSize overrides convertBatch, so that a test library of a
@@ -386,6 +387,13 @@ func (d *Database) Checkpoint() error {
 // Close closes the underlying connection and clears it. It is safe to call
 // when the connection is already nil or closed.
 func (d *Database) Close() error {
+	if d.borrowed {
+		d.mu.Lock()
+		defer d.mu.Unlock()
+		d.bumpGeneration()
+		d.db, d.store, d.path = nil, nil, ""
+		return nil
+	}
 	d.switchFile()
 	d.forgetTranscriptSessions()
 	d.forgetDuels()

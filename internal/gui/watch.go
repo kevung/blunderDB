@@ -16,9 +16,16 @@ import (
 // frontend, which imports them exactly as a drag-and-drop, so importing is
 // written once. Off unless the user names a folder.
 
-// watchFilesEvent is the event the frontend listens on. Its payload is a list
-// of absolute paths.
+// watchFilesEvent is the event the frontend listens on. Its payload is a
+// watchedFiles.
 const watchFilesEvent = "folder-watch:files"
+
+// watchedFiles are new files of the watched folder and the library group they
+// go to: the watch belongs to the group it was started in, on screen or not.
+type watchedFiles struct {
+	Group int      `json:"group"`
+	Files []string `json:"files"`
+}
 
 // folderWatch is the single running watch.
 type folderWatch struct {
@@ -26,6 +33,7 @@ type folderWatch struct {
 	stop     chan struct{}
 	dir      string
 	interval time.Duration
+	group    int
 }
 
 // WatchStatus is the running watch as reported, not inferred from the config,
@@ -34,6 +42,8 @@ type WatchStatus struct {
 	Running         bool   `json:"running"`
 	Folder          string `json:"folder"`
 	IntervalSeconds int    `json:"intervalSeconds"`
+	// Group is the library group the watch imports into.
+	Group int `json:"group"`
 }
 
 // StartFolderWatch begins watching dir, replacing any running watch. Files
@@ -45,9 +55,11 @@ func (a *App) StartFolderWatch(dir string, intervalSeconds int) (WatchStatus, er
 		return WatchStatus{}, err
 	}
 	if a.db != nil {
-		w.Skip(a.db.IsOpenDatabase)
+		// A library open in any group is never read as a file to merge.
+		w.Skip(func(path string) bool { return a.db.IsOpenDatabase(path) || a.LibraryGroupHolding(path) != 0 })
 	}
 	interval := watch.ClampInterval(time.Duration(intervalSeconds) * time.Second)
+	group := a.activeGroup()
 
 	a.folderWatch.mu.Lock()
 	if a.folderWatch.stop != nil {
@@ -57,12 +69,13 @@ func (a *App) StartFolderWatch(dir string, intervalSeconds int) (WatchStatus, er
 	a.folderWatch.stop = stop
 	a.folderWatch.dir = w.Dir()
 	a.folderWatch.interval = interval
+	a.folderWatch.group = group
 	a.folderWatch.mu.Unlock()
 
-	go a.runFolderWatch(w, interval, stop)
+	go a.runFolderWatch(w, interval, stop, group)
 
-	slog.Info("watching folder for new match files", "folder", w.Dir(), "interval", interval)
-	return WatchStatus{Running: true, Folder: w.Dir(), IntervalSeconds: int(interval / time.Second)}, nil
+	slog.Info("watching folder for new match files", "folder", w.Dir(), "interval", interval, "group", group)
+	return WatchStatus{Running: true, Folder: w.Dir(), IntervalSeconds: int(interval / time.Second), Group: group}, nil
 }
 
 // StopFolderWatch stops the watch, if one is running. Idempotent.
@@ -74,6 +87,18 @@ func (a *App) StopFolderWatch() {
 		a.folderWatch.stop = nil
 	}
 	a.folderWatch.dir = ""
+	a.folderWatch.group = 0
+}
+
+// stopFolderWatchOf stops the watch if it imports into group: that group's
+// library is closing.
+func (a *App) stopFolderWatchOf(group int) {
+	a.folderWatch.mu.Lock()
+	mine := a.folderWatch.stop != nil && a.folderWatch.group == group
+	a.folderWatch.mu.Unlock()
+	if mine {
+		a.StopFolderWatch()
+	}
 }
 
 // FolderWatchStatus reports the running watch, if any.
@@ -87,6 +112,7 @@ func (a *App) FolderWatchStatus() WatchStatus {
 		Running:         true,
 		Folder:          a.folderWatch.dir,
 		IntervalSeconds: int(a.folderWatch.interval / time.Second),
+		Group:           a.folderWatch.group,
 	}
 }
 
@@ -113,7 +139,7 @@ func (a *App) SuggestWatchFolder() string {
 }
 
 // runFolderWatch is the loop; it emits paths and imports nothing.
-func (a *App) runFolderWatch(w *watch.Watcher, interval time.Duration, stop <-chan struct{}) {
+func (a *App) runFolderWatch(w *watch.Watcher, interval time.Duration, stop <-chan struct{}, group int) {
 	ticker := time.NewTicker(interval)
 	defer ticker.Stop()
 
@@ -141,7 +167,7 @@ func (a *App) runFolderWatch(w *watch.Watcher, interval time.Duration, stop <-ch
 		}
 		slog.Info("new match files in the watched folder", "folder", w.Dir(), "count", len(files))
 		if a.ctx != nil {
-			runtime.EventsEmit(a.ctx, watchFilesEvent, files)
+			runtime.EventsEmit(a.ctx, watchFilesEvent, watchedFiles{Group: group, Files: files})
 		}
 	}
 }

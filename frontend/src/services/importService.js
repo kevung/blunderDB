@@ -40,7 +40,7 @@ import {
     ImportReport
 } from '../../wailsjs/go/database/Database.js';
 import { GetGammonNetAutoAnalyze, GetGammonNetAnalysisPly, GetGammonNetPruneK } from '../../wailsjs/go/main/Config.js';
-import { QueueGammonNetBatch } from '../../wailsjs/go/gui/App.js';
+import { QueueGammonNetBatch, QueueGammonNetBatchIn, CancelLibraryImport } from '../../wailsjs/go/gui/App.js';
 import { ClipboardGetText, EventsOn } from '../../wailsjs/runtime/runtime.js';
 
 import { latestJournalEntries } from './importJournal.js';
@@ -64,8 +64,10 @@ import {
     fileImportJournalStore,
     fileImportInterruptedStore,
     fileImportProgressStore,
-    fileImportMinimizedStore
+    fileImportMinimizedStore,
+    fileImportGroupStore
 } from '../stores/importModalStore.js';
+import { activeGroupId, groupOnScreen, noteGroupJob, importForegroundStore } from '../stores/groupActivityStore.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { logger } from '../utils/logger.js';
 
@@ -110,13 +112,21 @@ async function leaveMatchModeIfStillIn() {
 
 // gammonNet auto-analyze after import (ADR-0013): any import completion hands
 // the unanalysed backlog to gui.App's batch when the setting is on. No
-// per-import-type case: the batch is a no-op when the count is zero.
-export async function maybeAutoAnalyzeAfterImport() {
+// per-import-type case: the batch is a no-op when the count is zero. An import
+// that finished in a library group off screen analyses that group's library.
+/** @param {number} [group] the group the import wrote into; the one on screen by default */
+export async function maybeAutoAnalyzeAfterImport(group = get(activeGroupId)) {
     // Nothing was imported without a database, and the backlog count would query none.
     if (!get(databasePathStore)) return;
     try {
         const auto = await GetGammonNetAutoAnalyze();
         if (!auto) return;
+        if (!groupOnScreen(group)) {
+            // The count would read the library on screen; the batch counts its own.
+            const [ply, pruneK] = await Promise.all([GetGammonNetAnalysisPly(), GetGammonNetPruneK()]);
+            await QueueGammonNetBatchIn(group, ply, pruneK, 0);
+            return;
+        }
         const remaining = await CountPositionsWithoutAnalysis();
         if (!remaining) return;
         const [ply, pruneK] = await Promise.all([GetGammonNetAnalysisPly(), GetGammonNetPruneK()]);
@@ -783,7 +793,7 @@ async function importTxtFileBatch(filePath, { quiet = false } = {}) {
     if (isJellyfishTXT) {
         // Through the pipeline, whose summary says "skipped" for a duplicate:
         // no error text is read to find out.
-        const summary = await ImportFiles([filePath]);
+        const summary = await ImportFiles([filePath], false);
         if (summary.skipped > 0) throw Object.assign(new Error('duplicate match'), { duplicate: true });
         if (summary.failed > 0) throw new Error(summary.errors?.[0]?.message ?? 'import failed');
         return { type: 'match', id: 0 };
@@ -806,7 +816,7 @@ export async function importMultipleFiles(files) {
     try {
         return await importMultipleFilesCore(files);
     } finally {
-        await maybeAutoAnalyzeAfterImport();
+        await maybeAutoAnalyzeAfterImport(get(fileImportGroupStore));
     }
 }
 
@@ -827,7 +837,7 @@ export async function importWatchedFiles(files) {
     try {
         await importMultipleFilesCore(others, { quiet: true });
     } finally {
-        await maybeAutoAnalyzeAfterImport();
+        await maybeAutoAnalyzeAfterImport(get(fileImportGroupStore));
     }
     const r = get(fileImportResultsStore);
     return { succeeded: r.succeeded + merged.succeeded, skipped: r.skipped + merged.skipped, failed: r.failed + merged.failed };
@@ -901,16 +911,19 @@ function appendErrors(list, more) {
 }
 
 // importThroughPipeline sends the files in one call; the backend reports each
-// decided file by event, in file order, which drives the progress.
-/** @param {string[]} paths @param {number} remaining */
-async function importThroughPipeline(paths, remaining) {
+// decided file by event, in file order, which drives the progress. It runs in
+// the background, on the library of the group it started in, and closes the
+// import batch there: the user may bring another group on screen meanwhile.
+/** @param {string[]} paths @param {number} done the files imported before */
+async function importThroughPipeline(paths, done) {
     const offProgress = EventsOn('import-files:progress', (p) => {
+        noteGroupJob(p.group, 'running', 'import');
         fileImportProgressStore.set(p);
-        fileImportCurrentIndexStore.set(p.filesDone);
+        fileImportCurrentIndexStore.set(done + p.filesDone);
         fileImportCurrentFileStore.set(p.currentFile);
     });
     try {
-        const summary = await ImportFiles(paths);
+        const summary = await ImportFiles(paths, true);
         fileImportResultsStore.update((r) => ({
             ...r,
             succeeded: r.succeeded + summary.succeeded,
@@ -925,9 +938,9 @@ async function importThroughPipeline(paths, remaining) {
         fileImportResultsStore.update((r) => ({
             ...r,
             failed: r.failed + paths.length,
-            errors: r.errors.concat([{ file: `${paths.length + remaining} files`, message: String(error).replace(/^Error:\s*/, '') }])
+            errors: r.errors.concat([{ file: `${paths.length} files`, message: String(error).replace(/^Error:\s*/, '') }])
         }));
-        return { hadMatches: false, lastPositionID: 0 };
+        return { hadMatches: false, lastPositionID: 0, report: null, journal: null, batchClosed: false };
     } finally {
         if (typeof offProgress === 'function') offProgress();
     }
@@ -1001,59 +1014,92 @@ async function importMultipleFilesCore(files, { quiet = false, resumeBatchID = 0
     let hadMatches = false;
     /** @type {number | null} */
     let lastPositionID = null;
+    // The import belongs to the group it started in; the user may leave it once the files go
+    // through the background pipeline.
+    const group = get(activeGroupId);
+    fileImportGroupStore.set(group);
+    let batchClosed = false;
 
     // Every file the backend can read alone goes through its parallel
     // pipeline in one call; a .txt may be a position text only the frontend
-    // parses, so those stay one call each.
+    // parses, so those stay one call each, first, on the library on screen:
+    // the group cannot be left meanwhile.
     const pipelined = files.filter((f) => PIPELINE_EXTENSIONS.some((ext) => f.toLowerCase().endsWith(ext)));
     const oneByOne = files.filter((f) => !pipelined.includes(f));
 
-    if (pipelined.length > 0) {
-        const summary = await importThroughPipeline(pipelined, oneByOne.length);
-        hadMatches = summary.hadMatches;
-        if (summary.lastPositionID) lastPositionID = summary.lastPositionID;
+    if (oneByOne.length > 0) importForegroundStore.set(true);
+    try {
+        for (let i = 0; i < oneByOne.length; i++) {
+            if (fileImportCancelled) break;
+            const filePath = oneByOne[i];
+            fileImportCurrentIndexStore.set(i + 1);
+            fileImportCurrentFileStore.set(filePath);
+
+            try {
+                const result = await importSingleFileBatch(filePath, { quiet });
+                fileImportResultsStore.update((r) => ({ ...r, succeeded: r.succeeded + 1 }));
+                if (result && result.type === 'match') hadMatches = true;
+                if (result && result.type === 'position' && result.id) lastPositionID = result.id;
+            } catch (error) {
+                const errorStr = String(error);
+                if (/** @type {{ duplicate?: boolean } | null} */ (error)?.duplicate === true) {
+                    fileImportResultsStore.update((r) => ({ ...r, skipped: r.skipped + 1 }));
+                } else {
+                    fileImportResultsStore.update((r) => {
+                        r.errors.push({ file: filePath, message: errorStr.replace(/^Error:\s*/, '') });
+                        return { ...r, failed: r.failed + 1 };
+                    });
+                }
+            }
+        }
+    } finally {
+        importForegroundStore.set(false);
     }
 
-    for (let i = 0; i < oneByOne.length; i++) {
-        if (fileImportCancelled) break;
-        const filePath = oneByOne[i];
-        fileImportCurrentIndexStore.set(pipelined.length + i + 1);
-        fileImportCurrentFileStore.set(filePath);
-
-        try {
-            const result = await importSingleFileBatch(filePath, { quiet });
-            fileImportResultsStore.update((r) => ({ ...r, succeeded: r.succeeded + 1 }));
-            if (result && result.type === 'match') hadMatches = true;
-            if (result && result.type === 'position' && result.id) lastPositionID = result.id;
-        } catch (error) {
-            const errorStr = String(error);
-            if (/** @type {{ duplicate?: boolean } | null} */ (error)?.duplicate === true) {
-                fileImportResultsStore.update((r) => ({ ...r, skipped: r.skipped + 1 }));
-            } else {
-                fileImportResultsStore.update((r) => {
-                    r.errors.push({ file: filePath, message: errorStr.replace(/^Error:\s*/, '') });
-                    return { ...r, failed: r.failed + 1 };
-                });
-            }
+    if (pipelined.length > 0 && !fileImportCancelled) {
+        const summary = await importThroughPipeline(pipelined, oneByOne.length);
+        hadMatches = hadMatches || summary.hadMatches;
+        if (summary.lastPositionID) lastPositionID = summary.lastPositionID;
+        if (summary.batchClosed) {
+            batchClosed = true;
+            fileImportReportStore.set(summary.report ?? null);
+            fileImportJournalStore.set(summary.report ? latestJournalEntries(summary.journal ?? []) : []);
         }
     }
 
-    await finishImportBatch(batchID);
+    const here = groupOnScreen(group);
+    // The bound handle carries the group on screen: an import that did not close its batch did
+    // so before any switch, since only the pipeline lets the group be left.
+    if (!batchClosed && here) await finishImportBatch(batchID);
     // A stopped import keeps what Resume needs, and its summary stays on screen.
-    const interrupted = fileImportCancelled && batchID !== 0 && !quiet;
+    const interrupted = fileImportCancelled && batchID !== 0 && !quiet && here;
     fileImportInterruptedStore.set(interrupted ? { batchID, files: requestedFiles } : null);
     fileImportModeStore.set('completed');
     if (interrupted) showFileImportModalStore.set(true);
-    // A minimised import comes back with its report once finished.
-    if (get(fileImportMinimizedStore)) {
+    // A minimised import comes back with its report once finished, in its group.
+    if (get(fileImportMinimizedStore) && here) {
         fileImportMinimizedStore.set(false);
         if (!quiet) showFileImportModalStore.set(true);
     }
 
+    const results = get(fileImportResultsStore);
+    const message = tMsg(quiet ? 'status.watchImportDone' : 'status.importDone', {
+        succeeded: results.succeeded,
+        skipped: results.skipped,
+        failed: results.failed
+    });
+    if (!here) {
+        // Finished in a group off screen: its header says so, and the group reads its library
+        // again when it comes back. Nothing here touches the library on screen.
+        noteGroupJob(group, 'done', 'import', message);
+        return null;
+    }
+
     // Refresh planner statistics once, as the CLI batch importer does:
     // ensureSearchStats only backfills at open when no stats exist at all.
-    // Best-effort, skipped when nothing was imported.
-    if (get(fileImportResultsStore).succeeded > 0) {
+    // Best-effort, skipped when nothing was imported; the pipeline refreshed
+    // them itself.
+    if (results.succeeded > 0 && !batchClosed) {
         RefreshSearchStatistics();
     }
 
@@ -1065,14 +1111,7 @@ async function importMultipleFilesCore(files, { quiet = false, resumeBatchID = 0
     // reloading the list would reset all four.
     if (!quiet) await reloadPositions();
 
-    const results = get(fileImportResultsStore);
-    setStatusBarMessage(
-        tMsg(quiet ? 'status.watchImportDone' : 'status.importDone', {
-            succeeded: results.succeeded,
-            skipped: results.skipped,
-            failed: results.failed
-        })
-    );
+    setStatusBarMessage(message);
 
     // A batch of positions only (no match): land on the last one with its analysis.
     // Never on a watched import: moving the board out from under someone who
@@ -1087,6 +1126,8 @@ async function importMultipleFilesCore(files, { quiet = false, resumeBatchID = 0
 export function handleFileImportCancel() {
     fileImportCancelled = true;
     CancelImport().catch((err) => logger.error('Error calling CancelImport:', err));
+    // The pipeline runs on a handle of its own, attached to its group's library.
+    CancelLibraryImport(get(fileImportGroupStore)).catch((err) => logger.error('Error calling CancelLibraryImport:', err));
     fileImportMinimizedStore.set(false);
     showFileImportModalStore.set(false);
     fileImportModeStore.set('idle');

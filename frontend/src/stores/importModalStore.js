@@ -49,3 +49,7 @@ export const fileImportInterruptedStore = writable(/** @type {{ batchID: number,
 export const fileImportProgressStore = writable(null);
 // The import goes on behind a status-bar chip while the user keeps working.
 export const fileImportMinimizedStore = writable(false);
+
+// The library group the file import in flight writes into: its progress and its report belong to
+// that group, shown when it is on screen.
+export const fileImportGroupStore = writable(0);

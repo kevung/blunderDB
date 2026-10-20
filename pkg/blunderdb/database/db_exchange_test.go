@@ -102,12 +102,14 @@ func TestExchange_EveryFieldIsPlaced(t *testing.T) {
 		"positionsSinceStats": true, "pendingPhaseBackfill": true, "pendingAnkiCardKinds": true,
 		// Moved by bumping, not swapping: both sides change.
 		"generation": true, "storeEpoch": true, "openPath": true,
+		// The job slot is the library's: a job on a borrowed handle keeps it.
+		"gate": true,
 	}
 	handle := map[string]bool{
 		"mu": true, "cancelMu": true, "switchMu": true, "beforeSwitch": true, "openGuard": true,
 		"transcriptMu": true, "duelMu": true,
 		// Refused while set (idleForExchange) or only alive during one import.
-		"importCancel": true, "job": true, "exchanging": true, "searchCancels": true, "searchSeq": true,
+		"importCancel": true, "exchanging": true, "borrowed": true, "searchCancels": true, "searchSeq": true,
 		"importBatchID": true, "importBatchCounts": true, "importJournal": true,
 		"migrationProgress": true, "convertBatchSize": true, "afterActionColumnDrop": true,
 		"skipDuplicates": true, "commentAuthor": true, "directionMem": true,

@@ -23,9 +23,10 @@ func OpenPath(d *Database) string {
 //
 // d's before-switch hook runs first, as for an Open. Both generations move,
 // so a job started on either side writes nothing after the exchange. An
-// import or a job holding either library refuses the exchange with a
+// import or a job running on either handle refuses the exchange with a
 // *BusyError: its writes go through the handle, which is about to carry the
-// other file.
+// other file. A job on a handle Borrow lent keeps its library: the job slot
+// moves with the library, the borrowed handle stays on it.
 func Exchange(d, other *Database) error {
 	if other == d {
 		return nil
@@ -72,6 +73,11 @@ func Exchange(d, other *Database) error {
 	d.positionsSinceStats, other.positionsSinceStats = other.positionsSinceStats, d.positionsSinceStats
 	d.pendingPhaseBackfill, other.pendingPhaseBackfill = other.pendingPhaseBackfill, d.pendingPhaseBackfill
 	d.pendingAnkiCardKinds, other.pendingAnkiCardKinds = other.pendingAnkiCardKinds, d.pendingAnkiCardKinds
+	d.cancelMu.Lock()
+	other.cancelMu.Lock()
+	d.gate, other.gate = other.gate, d.gate
+	other.cancelMu.Unlock()
+	d.cancelMu.Unlock()
 	d.bumpGeneration()
 	other.bumpGeneration()
 	d.storeEpoch++
@@ -88,8 +94,14 @@ func (d *Database) idleForExchange() error {
 	if d.exchanging {
 		return &BusyError{Job: JobExchange}
 	}
-	if d.job != nil {
-		return &BusyError{Job: d.job.name}
+	g := d.gateLocked()
+	g.mu.Lock()
+	held := g.job
+	g.mu.Unlock()
+	if held != nil && held.by == d {
+		// A job on a borrowed handle keeps its library through the swap; one
+		// on this handle would find the other file under it.
+		return &BusyError{Job: held.name}
 	}
 	if d.importCancel != nil {
 		return &BusyError{Job: "import"}

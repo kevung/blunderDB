@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"sort"
 	"sync"
+	"sync/atomic"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 )
@@ -21,6 +22,18 @@ type libraryGroups struct {
 	active int
 	next   int
 	parked map[int]*database.Database
+	// exchanging is set while a switch exchanges the two handles: the bound
+	// handle's before-switch hook then stops nothing, since the jobs run on
+	// borrowed handles that keep their library (borrowLibrary).
+	exchanging atomic.Bool
+	// shown mirrors active for the before-switch hook, which may run while
+	// libs.mu is held (closing the last group closes the bound handle).
+	shown atomic.Int64
+}
+
+func (g *libraryGroups) setActive(id int) {
+	g.active = id
+	g.shown.Store(int64(id))
 }
 
 // LibraryGroup is one open library as the tab bar shows it.
@@ -42,7 +55,7 @@ func (e *ErrLibraryAlreadyOpen) Error() string {
 func (g *libraryGroups) init() {
 	if g.parked == nil {
 		g.parked = map[int]*database.Database{}
-		g.active = 1
+		g.setActive(1)
 		g.next = 2
 	}
 }
@@ -119,29 +132,61 @@ func (a *App) ListLibraryGroups() []LibraryGroup {
 	return out
 }
 
-// libraryBusy refuses a switch while a job of the desktop writes the
-// active library: its writes go through the bound handle, which a switch
-// hands to another file.
+// libraryBusy refuses a switch while a job that follows the screen runs. The
+// background jobs (an import, the watched folder, a gammonNet batch) run on a
+// handle borrowed from their library and keep it through a switch; a rollout
+// shows its result live on the position at the board, and the tournament
+// display serves the active library on the network: those two still hold the
+// group on screen.
 func (a *App) libraryBusy() error {
-	a.gnBatchMu.Lock()
-	batch := a.gnBatchDone != nil
-	a.gnBatchMu.Unlock()
-	if batch {
-		return &database.BusyError{Job: "gammonnet-batch"}
-	}
 	a.roMu.Lock()
 	rollout := a.roDone != nil
 	a.roMu.Unlock()
 	if rollout {
 		return &database.BusyError{Job: database.JobRollout}
 	}
-	if a.FolderWatchStatus().Running {
-		return &database.BusyError{Job: "folder-watch"}
-	}
 	if a.GetTournamentDisplayStatus().Running {
 		return &database.BusyError{Job: "tournament-display"}
 	}
 	return nil
+}
+
+// exchangeLocked swaps the bound handle's library with other's; the caller
+// holds libs.mu. The jobs of both libraries run on borrowed handles and are
+// left running.
+func (a *App) exchangeLocked(other *database.Database) error {
+	a.libs.exchanging.Store(true)
+	defer a.libs.exchanging.Store(false)
+	return database.Exchange(a.db, other)
+}
+
+// borrowLibrary lends the library of group (0: the active one) to a
+// background job: the returned handle stays on that library whichever group
+// comes on screen. The caller lets it go with Close, which closes nothing.
+func (a *App) borrowLibrary(group int) (int, *database.Database, error) {
+	a.libs.mu.Lock()
+	defer a.libs.mu.Unlock()
+	a.libs.init()
+	if group == 0 {
+		group = a.libs.active
+	}
+	carrier := a.db
+	if group != a.libs.active {
+		carrier = a.libs.parked[group]
+	}
+	if carrier == nil {
+		return group, nil, fmt.Errorf("no library group %d", group)
+	}
+	lent, err := database.Borrow(carrier)
+	return group, lent, err
+}
+
+// activeGroup is the group on screen.
+func (a *App) activeGroup() int {
+	a.libs.mu.Lock()
+	defer a.libs.mu.Unlock()
+	a.libs.init()
+	return a.libs.active
 }
 
 // OpenLibraryGroup opens path in a new group and makes it active; the library
@@ -167,19 +212,19 @@ func (a *App) OpenLibraryGroup(path string) (LibraryGroup, error) {
 	}
 	if database.OpenPath(a.db) == "" {
 		// Nothing open: the active group takes the file, no group to add.
-		err := database.Exchange(a.db, fresh)
+		err := a.exchangeLocked(fresh)
 		_ = fresh.Close()
 		if err != nil {
 			return LibraryGroup{}, err
 		}
 		return LibraryGroup{ID: a.libs.active, Path: database.OpenPath(a.db), Active: true, ReadOnly: a.db.IsReadOnly()}, nil
 	}
-	if err := database.Exchange(a.db, fresh); err != nil {
+	if err := a.exchangeLocked(fresh); err != nil {
 		_ = fresh.Close()
 		return LibraryGroup{}, err
 	}
 	a.libs.parked[a.libs.active] = fresh
-	a.libs.active = a.libs.next
+	a.libs.setActive(a.libs.next)
 	a.libs.next++
 	return LibraryGroup{ID: a.libs.active, Path: database.OpenPath(a.db), Active: true, ReadOnly: a.db.IsReadOnly()}, nil
 }
@@ -203,19 +248,24 @@ func (a *App) ActivateLibraryGroup(id int) error {
 	if err := a.libraryBusy(); err != nil {
 		return err
 	}
-	if err := database.Exchange(a.db, parked); err != nil {
+	if err := a.exchangeLocked(parked); err != nil {
 		return err
 	}
 	delete(a.libs.parked, id)
 	a.libs.parked[a.libs.active] = parked
-	a.libs.active = id
+	a.libs.setActive(id)
 	return nil
 }
 
 // CloseLibraryGroup closes the library of a waiting group and drops the group.
 // The active group is closed by activating another first; when it is the only
-// one, its library is closed and the group stays, empty.
+// one, its library is closed and the group stays, empty. The group's jobs are
+// stopped first: they write through handles borrowed from that library.
 func (a *App) CloseLibraryGroup(id int) error {
+	if id != a.activeGroup() {
+		a.stopGroupJobs(id, shutdownJobGrace)
+		a.stopFolderWatchOf(id)
+	}
 	a.libs.mu.Lock()
 	defer a.libs.mu.Unlock()
 	a.libs.init()

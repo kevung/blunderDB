@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"errors"
+	"sync"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -54,6 +55,36 @@ type jobSlot struct {
 	ctx    context.Context
 	cancel context.CancelFunc // set for a maintenance run, which CancelMaintenance ends
 	done   chan struct{}
+	// by is the handle the job runs on: an exchange is refused only for a
+	// job on one of its two handles, not for one on a borrowed handle.
+	by *Database
+}
+
+// jobGate holds the one job writing a library. Every handle on the library
+// shares it, the one carrying the library and those Borrow lent to a job, so
+// a job on a borrowed handle and one on the carrier exclude each other as two
+// jobs on one handle do. Exchange moves it with the library.
+type jobGate struct {
+	mu  sync.Mutex
+	job *jobSlot
+}
+
+// gateLocked returns d's job gate, made on first use; the caller holds cancelMu.
+func (d *Database) gateLocked() *jobGate {
+	if d.gate == nil {
+		d.gate = &jobGate{}
+	}
+	return d.gate
+}
+
+// currentJob returns the job holding d's library, nil when idle.
+func (d *Database) currentJob() *jobSlot {
+	d.cancelMu.Lock()
+	g := d.gateLocked()
+	d.cancelMu.Unlock()
+	g.mu.Lock()
+	defer g.mu.Unlock()
+	return g.job
 }
 
 // acquireJob takes the slot for job (one of the Job codes) running under
@@ -69,20 +100,24 @@ func (d *Database) acquireJob(ctx context.Context, job string, cancel context.Ca
 			d.cancelMu.Unlock()
 			return nil, &BusyError{Job: JobExchange}
 		}
-		held := d.job
+		g := d.gateLocked()
+		g.mu.Lock()
+		held := g.job
 		if held == nil {
-			j := &jobSlot{name: job, ctx: ctx, cancel: cancel, done: make(chan struct{})}
-			d.job = j
+			j := &jobSlot{name: job, ctx: ctx, cancel: cancel, done: make(chan struct{}), by: d}
+			g.job = j
+			g.mu.Unlock()
 			d.cancelMu.Unlock()
 			return func() {
-				d.cancelMu.Lock()
-				if d.job == j {
-					d.job = nil
+				g.mu.Lock()
+				if g.job == j {
+					g.job = nil
 				}
-				d.cancelMu.Unlock()
+				g.mu.Unlock()
 				close(j.done)
 			}, nil
 		}
+		g.mu.Unlock()
 		d.cancelMu.Unlock()
 		if held.ctx.Err() == nil {
 			if !queued {
