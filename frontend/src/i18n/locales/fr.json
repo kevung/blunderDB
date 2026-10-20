@@ -3599,5 +3599,29 @@
         "emptyBasket": "Vider le panier",
         "dragPosition": "Glissez sur l'en-tête d'une autre bibliothèque pour y copier cette position",
         "dragLesson": "Glissez sur l'en-tête d'une autre bibliothèque pour y copier cette leçon"
+    },
+    "split": {
+        "toggle": "Écran partagé : la bibliothèque active et une visionneuse côte à côte (Ctrl+Maj+X)",
+        "tooNarrow": "Écran partagé refusé : la fenêtre fait moins de {min} px de large. Maintenez x pour voir la position dans l'autre bibliothèque à la place du plateau.",
+        "closedNarrow": "Écran partagé fermé : la fenêtre fait moins de {min} px de large. Maintenez x pour l'échange sur place.",
+        "viewerLabel": "Visionneuse de la bibliothèque {name}",
+        "readOnly": "lecture",
+        "activateHint": "Cliquer pour activer cette bibliothèque",
+        "sameLibrary": "Même bibliothèque que le volet actif",
+        "close": "Fermer l'écran partagé",
+        "source": "Que parcourir",
+        "library": "Toute la bibliothèque",
+        "matches": "Matchs",
+        "collections": "Collections",
+        "first": "Première",
+        "previous": "Précédente",
+        "next": "Suivante",
+        "last": "Dernière",
+        "moveAt": "Partie {game}, coup {move}",
+        "empty": "Rien à afficher.",
+        "error": "La bibliothèque n'a pas pu être lue.",
+        "noDouble": "Pas de double",
+        "doubleTake": "Double, prend",
+        "doublePass": "Double, passe"
     }
 }

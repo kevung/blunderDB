@@ -540,6 +540,9 @@
         border-bottom: 1px solid var(--color-border);
         height: 22px; /* Ensure toolbar height is sufficient */
         width: 100%; /* Ensure toolbar takes up full available width */
+        container: toolbar / inline-size;
+        box-sizing: border-box;
+        overflow: hidden;
     }
 
     .toolbar button {
@@ -570,6 +573,18 @@
 
     .toolbar button:focus {
         outline: none;
+    }
+
+    /* A half-window pane (the split screen) is too narrow for the full-size buttons: they
+       tighten rather than fall off the edge. */
+    @container toolbar (max-width: 900px) {
+        .toolbar button {
+            padding: 2px 1px;
+        }
+        .toolbar button svg {
+            width: 17px;
+            height: 17px;
+        }
     }
 
     .toolbar button:hover {

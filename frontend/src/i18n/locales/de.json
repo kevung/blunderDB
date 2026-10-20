@@ -3599,5 +3599,29 @@
         "emptyBasket": "Korb leeren",
         "dragPosition": "Auf die Kopfzeile einer anderen Bibliothek ziehen, um diese Position dorthin zu kopieren",
         "dragLesson": "Auf die Kopfzeile einer anderen Bibliothek ziehen, um diese Lektion dorthin zu kopieren"
+    },
+    "split": {
+        "toggle": "Geteilter Bildschirm: die aktive Bibliothek und ein Betrachter nebeneinander (Strg+Umschalt+X)",
+        "tooNarrow": "Geteilter Bildschirm abgelehnt: das Fenster ist schmaler als {min} px. Halten Sie x gedrückt, um die Stellung in der anderen Bibliothek anstelle des Bretts zu sehen.",
+        "closedNarrow": "Geteilter Bildschirm geschlossen: das Fenster ist schmaler als {min} px. Halten Sie x für den Tausch an Ort und Stelle.",
+        "viewerLabel": "Betrachter der Bibliothek {name}",
+        "readOnly": "nur lesen",
+        "activateHint": "Klicken, um diese Bibliothek zu aktivieren",
+        "sameLibrary": "Dieselbe Bibliothek wie im aktiven Bereich",
+        "close": "Geteilten Bildschirm schließen",
+        "source": "Was durchgehen",
+        "library": "Die ganze Bibliothek",
+        "matches": "Matches",
+        "collections": "Sammlungen",
+        "first": "Erste",
+        "previous": "Vorherige",
+        "next": "Nächste",
+        "last": "Letzte",
+        "moveAt": "Spiel {game}, Zug {move}",
+        "empty": "Nichts anzuzeigen.",
+        "error": "Die Bibliothek konnte nicht gelesen werden.",
+        "noDouble": "Kein Doppel",
+        "doubleTake": "Doppel, angenommen",
+        "doublePass": "Doppel, abgelehnt"
     }
 }

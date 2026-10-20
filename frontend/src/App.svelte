@@ -96,6 +96,8 @@
     import { showTab, showTrainingPanel, showDuelPanel } from './services/tabToggles.js';
     import { duelHoldsBoardStore, duelFoldedStore } from './stores/duelStore.js';
     import HomeScreen from './components/HomeScreen.svelte';
+    import SplitViewer from './components/SplitViewer.svelte';
+    import { splitStore } from './stores/splitStore.js';
     import { initFolderWatch } from './services/watchService.js';
     import { initMCPHost } from './services/mcpHostService.js';
     import { initTheme } from './stores/themeStore.js';
@@ -475,7 +477,14 @@
 
 <svelte:window bind:innerHeight={windowHeight} bind:innerWidth={windowWidth} />
 
-<main class="main-container" class:td-fullscreen={$directionFullscreenStore} bind:this={mainArea} use:fileDrop={{ onDrop: handleFileDrop, onOverlayChange: (visible) => (showDropOverlay = visible) }}>
+<main
+    class="main-container"
+    class:td-fullscreen={$directionFullscreenStore}
+    class:split-left={$splitStore.on && $splitStore.side === 'right'}
+    class:split-right={$splitStore.on && $splitStore.side === 'left'}
+    bind:this={mainArea}
+    use:fileDrop={{ onDrop: handleFileDrop, onOverlayChange: (visible) => (showDropOverlay = visible) }}
+>
     {#if showDropOverlay}
         <div class="drop-overlay" transition:fade={{ duration: 150 }}>
             <div class="drop-overlay-content">
@@ -569,6 +578,11 @@
     <TranscriptionTheatre />
 </main>
 
+<!-- L'écran partagé : l'autre moitié de la fenêtre, une visionneuse en lecture (ADR-0101). -->
+{#if $splitStore.on}
+    <SplitViewer />
+{/if}
+
 <style>
     .main-container {
         display: flex;
@@ -585,6 +599,14 @@
         padding: 0;
         box-sizing: border-box;
         overflow: hidden;
+    }
+
+    /* The split screen: the live group keeps one half, the viewer the other (SplitViewer). */
+    .main-container.split-left {
+        right: calc(50vw / var(--ui-scale, 1));
+    }
+    .main-container.split-right {
+        left: calc(50vw / var(--ui-scale, 1));
     }
 
     /* Wraps the board, the resize handle and the panel. Column (panel at the

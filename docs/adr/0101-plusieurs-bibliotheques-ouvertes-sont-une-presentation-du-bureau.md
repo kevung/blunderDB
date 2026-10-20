@@ -1,7 +1,7 @@
 # Plusieurs bibliothèques ouvertes sont une présentation du bureau ; le transfert et « Ailleurs » vivent sous le contrat
 
-Status: accepted (étapes 1 à 3 livrées : groupes, bascule, tâches attachées à leur bibliothèque,
-transfert, panier et verrou ; étapes 4 et 5 en cours, issues #692 et #693).
+Status: accepted (livrée : groupes, bascule, tâches attachées à leur bibliothèque, transfert,
+panier et verrou, vue « Ailleurs » et échange sur place, écran partagé).
 See also: ADR-0007 (rien n'est écrit chez le destinataire), ADR-0055 (budget de contexte),
 ADR-0065 (lecture à travers les tenants), ADR-0001 (l'identité d'une position est son hachage).
 
@@ -69,6 +69,18 @@ recopier un match demandait un export puis un import. Le bureau lie un seul `*da
 7. **La vue « Ailleurs » cherche par hachage** avec le même service que les lectures
    `across.*`, et juge avec les seuils du groupe actif ; une analyse faite avec une autre MET
    est signalée comme aujourd'hui.
+
+8. **L'écran partagé montre un groupe vivant et une visionneuse en lecture**, pas deux groupes
+   vivants. Le front tient un seul jeu de stores, photographié par groupe (point 3), et la
+   poignée liée ne porte que la bibliothèque active (point 2) : un second groupe complet
+   simultané demanderait de réécrire chaque store et chaque liaison par groupe. Le second volet
+   est donc une visionneuse fidèle (plateau, analyse, commentaire ; la bibliothèque, un match
+   rejoué coup par coup ou une collection) qui lit son groupe par son numéro
+   (`ViewerSteps`, `ViewerShow`, `ViewerCatalogOf`, sous le verrou des groupes) et n'écrit ni
+   store du volet vivant ni base. L'égalité des volets tient par l'activation : cliquer la
+   visionneuse active son groupe, les volets échangent leurs rôles et chaque bibliothèque garde
+   son côté ; le groupe actif reste celui du volet qui reçoit le clavier. Les deux volets ont la
+   même largeur ; sous 1280 px de large, l'option se refuse et propose l'échange sur place.
 
 ## Consequences
 

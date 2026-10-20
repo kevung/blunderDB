@@ -317,7 +317,9 @@ export const OUTSIDE = [
     'tabGroupsStore',
     'libraryChangedStore',
     'groupActivityStore',
-    'importForegroundStore'
+    'importForegroundStore',
+    // The split screen follows the groups: it names one and survives every switch.
+    'splitStore'
 ];
 
 /** @param {Record<string, Scoped>} scope */

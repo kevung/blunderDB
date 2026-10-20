@@ -3599,5 +3599,29 @@
         "emptyBasket": "Empty the basket",
         "dragPosition": "Drag onto another library's header to copy this position there",
         "dragLesson": "Drag onto another library's header to copy this lesson there"
+    },
+    "split": {
+        "toggle": "Split screen: the active library and a viewer side by side (Ctrl+Shift+X)",
+        "tooNarrow": "Split screen refused: the window is narrower than {min} px. Hold x to see the position in the other library in place of the board.",
+        "closedNarrow": "Split screen closed: the window is narrower than {min} px. Hold x for the in-place swap.",
+        "viewerLabel": "Viewer of the library {name}",
+        "readOnly": "read-only",
+        "activateHint": "Click to activate this library",
+        "sameLibrary": "Same library as the active pane",
+        "close": "Close the split screen",
+        "source": "What to walk through",
+        "library": "The whole library",
+        "matches": "Matches",
+        "collections": "Collections",
+        "first": "First",
+        "previous": "Previous",
+        "next": "Next",
+        "last": "Last",
+        "moveAt": "Game {game}, move {move}",
+        "empty": "Nothing to show.",
+        "error": "The library could not be read.",
+        "noDouble": "No double",
+        "doubleTake": "Double, take",
+        "doublePass": "Double, pass"
     }
 }

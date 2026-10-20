@@ -144,6 +144,7 @@ Outils
    "CTRL-E", "Afficher/cacher le panneau Eval."
    "CTRL-MAJ-T", "Afficher/cacher le panneau Transcription (brouillons de matchs)."
    "CTRL-MAJ-A", "Afficher/cacher l'onglet Ailleurs : ce que les autres bibliothèques ouvertes savent de la position."
+   "CTRL-MAJ-X", "Écran partagé : le groupe actif et une visionneuse en lecture d'une autre bibliothèque côte à côte ; refusé sous 1280 pixels de large."
    "x", "Échange sur place : montrer la position de l'autre bibliothèque au lieu du plateau ; maintenue, revenir en la relâchant, sinon à la pression suivante."
    "J / K", "Dans la file des propositions d'un tournoi dirigé : descendre, monter."
    "ENTRÉE", "Dans la file des propositions : confirmer la proposition choisie."

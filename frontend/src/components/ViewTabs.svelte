@@ -5,6 +5,8 @@
     import { libraryDrag } from '../utils/libraryDrag.js';
     import { registerKeys } from '../services/keyDispatch.js';
     import { t } from '../i18n';
+    import { splitStore } from '../stores/splitStore.js';
+    import { toggleSplit } from '../services/splitService.js';
 
     const { views, activeViewId, switchTo, addView, closeView, renameView } = viewStore;
 
@@ -230,6 +232,15 @@
     <button class="group-btn" data-testid="open-library-group" onclick={openInNewGroup} title={$t('libraryGroups.openInNewGroup')} aria-label={$t('libraryGroups.openInNewGroup')}
         >&#x29C9;{#if !grouped}<span class="add-label">{$t('libraryGroups.openLabel')}</span>{/if}</button
     >
+    <button
+        class="group-btn"
+        class:on={$splitStore.on}
+        data-testid="toggle-split"
+        onclick={() => toggleSplit()}
+        title={$t('split.toggle')}
+        aria-label={$t('split.toggle')}
+        aria-pressed={$splitStore.on}>&#x25EB;</button
+    >
     {#if grouped || $transferBasketStore.length > 0}
         <!-- The basket: rows of any group, poured at once into one; dragged onto a header, it pours there. -->
         <div class="basket">
@@ -392,6 +403,9 @@
         color: var(--color-text);
     }
 
+    .group-btn.on {
+        color: var(--color-primary);
+    }
     .group-btn {
         border: none;
         background: none;

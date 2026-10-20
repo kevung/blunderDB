@@ -3599,5 +3599,29 @@
         "emptyBasket": "Tyhjennä kori",
         "dragPosition": "Vedä toisen kirjaston otsikon päälle kopioidaksesi tämän aseman sinne",
         "dragLesson": "Vedä toisen kirjaston otsikon päälle kopioidaksesi tämän oppitunnin sinne"
+    },
+    "split": {
+        "toggle": "Jaettu näyttö: aktiivinen kirjasto ja katselin rinnakkain (Ctrl+Vaihto+X)",
+        "tooNarrow": "Jaettu näyttö hylätty: ikkuna on kapeampi kuin {min} px. Pidä x painettuna nähdäksesi aseman toisessa kirjastossa laudan paikalla.",
+        "closedNarrow": "Jaettu näyttö suljettu: ikkuna on kapeampi kuin {min} px. Pidä x painettuna vaihtaaksesi paikan päällä.",
+        "viewerLabel": "Kirjaston {name} katselin",
+        "readOnly": "vain luku",
+        "activateHint": "Napsauta aktivoidaksesi tämän kirjaston",
+        "sameLibrary": "Sama kirjasto kuin aktiivisessa ruudussa",
+        "close": "Sulje jaettu näyttö",
+        "source": "Mitä selataan",
+        "library": "Koko kirjasto",
+        "matches": "Ottelut",
+        "collections": "Kokoelmat",
+        "first": "Ensimmäinen",
+        "previous": "Edellinen",
+        "next": "Seuraava",
+        "last": "Viimeinen",
+        "moveAt": "Peli {game}, siirto {move}",
+        "empty": "Ei näytettävää.",
+        "error": "Kirjastoa ei voitu lukea.",
+        "noDouble": "Ei tuplausta",
+        "doubleTake": "Tuplaus, otto",
+        "doublePass": "Tuplaus, luovutus"
     }
 }

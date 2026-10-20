@@ -405,6 +405,21 @@ même position dans la première autre bibliothèque qui la contient ; le
 bouton *Épingler* sous une vignette de l'onglet Ailleurs choisit plutôt cette
 voisine, jusqu'à *Désépingler* ou un changement de groupe.
 
+**L'écran partagé.** Sur un grand écran, le bouton ◫ de la barre des onglets
+(*CTRL-MAJ-X*) partage la fenêtre en deux volets de même largeur. L'un porte
+le groupe actif, entier ; l'autre une visionneuse en lecture d'une autre
+bibliothèque ouverte (de la même, s'il n'y en a qu'une) : son plateau,
+l'analyse de la position et son commentaire. La visionneuse parcourt toute la
+bibliothèque, un match rejoué coup par coup (la partie, le coup et ce qui a
+été joué s'affichent au-dessus du plateau) ou une collection, au choix de sa
+liste déroulante, avec ses boutons ⏮ ◀ ▶ ⏭. Elle s'ouvre là où cette
+bibliothèque a été quittée. Rien de ce qu'elle montre n'est écrit nulle part.
+Cliquer la visionneuse, hors de ses boutons, active sa bibliothèque : les deux
+volets échangent leurs rôles et chaque bibliothèque garde son côté ;
+*CTRL-MAJ-PAGE PRÉC.* / *PAGE SUIV.* fait de même au clavier. Sous 1280 pixels de large,
+l'écran partagé se refuse et propose l'échange sur place (*x*) ; il se ferme
+si la fenêtre devient trop étroite.
+
 .. _configuration:
 
 Configuration

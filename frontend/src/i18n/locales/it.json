@@ -3599,5 +3599,29 @@
         "emptyBasket": "Svuota il cestino",
         "dragPosition": "Trascina sull'intestazione di un'altra libreria per copiarvi questa posizione",
         "dragLesson": "Trascina sull'intestazione di un'altra libreria per copiarvi questa lezione"
+    },
+    "split": {
+        "toggle": "Schermo diviso: la libreria attiva e un visualizzatore affiancati (Ctrl+Maiusc+X)",
+        "tooNarrow": "Schermo diviso rifiutato: la finestra è più stretta di {min} px. Tieni premuto x per vedere la posizione nell'altra libreria al posto della tavola.",
+        "closedNarrow": "Schermo diviso chiuso: la finestra è più stretta di {min} px. Tieni premuto x per lo scambio sul posto.",
+        "viewerLabel": "Visualizzatore della libreria {name}",
+        "readOnly": "sola lettura",
+        "activateHint": "Clicca per attivare questa libreria",
+        "sameLibrary": "Stessa libreria del riquadro attivo",
+        "close": "Chiudi lo schermo diviso",
+        "source": "Cosa scorrere",
+        "library": "Tutta la libreria",
+        "matches": "Match",
+        "collections": "Collezioni",
+        "first": "Prima",
+        "previous": "Precedente",
+        "next": "Successiva",
+        "last": "Ultima",
+        "moveAt": "Partita {game}, mossa {move}",
+        "empty": "Niente da mostrare.",
+        "error": "Impossibile leggere la libreria.",
+        "noDouble": "Nessun raddoppio",
+        "doubleTake": "Raddoppio, accetta",
+        "doublePass": "Raddoppio, rifiuta"
     }
 }
