@@ -59,12 +59,12 @@ import MatchPanel from '../components/MatchPanel.svelte';
 import { openTab } from './matchTabHelper.js';
 
 /**
- * The list is loaded twice at mount (onMount, then the visibility effect) and
- * the second load clears the selection when it resolves: wait for both before
+ * The list is loaded once at mount, by the visibility effect, whose load clears
+ * the selection when it resolves: wait for it before
  * touching a row.
  */
 async function settle() {
-    await vi.waitFor(() => expect(ListMatches).toHaveBeenCalledTimes(2));
+    await vi.waitFor(() => expect(ListMatches).toHaveBeenCalledTimes(1));
     await new Promise((resolve) => setTimeout(resolve, 0));
     for (let i = 0; i < 4; i++) await tick();
 }

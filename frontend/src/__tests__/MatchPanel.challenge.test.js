@@ -64,7 +64,7 @@ import { analysisChallengeStore, revealAnalysis } from '../stores/analysisChalle
 async function openTranscript() {
     const view = render(MatchPanel);
     const { container } = view;
-    await vi.waitFor(() => expect(ListMatches).toHaveBeenCalledTimes(2));
+    await vi.waitFor(() => expect(ListMatches).toHaveBeenCalledTimes(1));
     await new Promise((r) => setTimeout(r, 0));
     for (let i = 0; i < 6; i++) await tick();
     if (!container.querySelector('tbody tr.selected')) {
