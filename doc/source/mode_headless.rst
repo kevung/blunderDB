@@ -1489,7 +1489,7 @@ le proxy. Le journal d'accès d'une route ``across.*`` porte la liste reçue
 (champ ``read_tenants``). L'en-tête ne figure pas parmi les en-têtes CORS
 autorisés : seul le proxy l'écrit, jamais un navigateur.
 
-Quatre lectures servent le club et le coach, sur la même liste
+Cinq lectures servent le club et le coach, sur la même liste
 (`ADR-0065 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0065-club-et-coach-lisent-a-travers-les-tenants-et-n-ecrivent-que-chez-soi.md>`__) :
 
 - **commentaires du coach** : le coach range chez lui la position d'un élève
@@ -1498,6 +1498,14 @@ Quatre lectures servent le club et le coach, sur la même liste
   ``across.commentsByZobrist`` (``{"zobrists": [...]}``, 1000 hachages au plus)
   rend les commentaires que chaque tenant lu a écrits sur ces plateaux, chacun
   avec son tenant, l'id de la position chez lui et son origine ;
+- **ailleurs** : ``across.positionElsewhere`` (``{"zobrist": H}`` ou
+  ``{"position": {...}}``, ``neighbours``, ``maxDistance``) rend, pour chaque
+  tenant lu autre que ``X-Tenant-ID``, ce qu'il sait de ce plateau : l'id de
+  sa copie, son analyse, ses commentaires, les matchs où il a été joué et ses
+  plateaux voisins. Les coups sont jugés avec les seuils de ``X-Tenant-ID`` ;
+  une analyse faite avec une autre table d'équité est signalée
+  (``otherMet``). ``blunderdb elsewhere`` fait la même lecture sur des
+  fichiers ;
 - **bibliothèque partagée** : ``across.collectionsList`` liste les collections
   des tenants lus, ``across.collectionPositions`` (``tenant``,
   ``collectionId``) les positions de l'une d'elles, chacune avec son hachage. La

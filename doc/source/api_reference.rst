@@ -23,6 +23,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/across.matchesGet                    JSON
      POST /v1/across.matchesList                   NDJSON
      POST /v1/across.playerTable                   JSON
+     POST /v1/across.positionElsewhere             JSON
      POST /v1/across.searchFind                    NDJSON
      POST /v1/across.statsCompute                  JSON
    analyses

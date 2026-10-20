@@ -90,6 +90,7 @@ Commandes disponibles
    "stats", "Statistiques calculées à part de ``list --type stats`` (erreurs récurrentes, classement, rapport…)."
    "training", "Le journal d'entraînement (séances, positions manquées)."
    "comment", "Lit et ajoute les commentaires signés d'une position."
+   "elsewhere", "Ce que d'autres bases savent d'une position, et ses voisines chez elles."
    "cubematrix", "Verdict de videau d'une position à chaque score d'un match."
    "rollout", "Joue une position jusqu'au bout pour départager ses coups ou sa décision de videau (XGID ou OGID)."
    "epc", "Calcule l'Effective Pip Count et le verdict de videau d'une position de sortie (XGID ou OGID)."
@@ -2559,6 +2560,53 @@ auteur.
    ./blunderdb comment add --db base.db --position 412 --text "Videau trop tôt" --author Alice
    ./blunderdb comment list --db base.db --position 412
    ./blunderdb comment list --db base.db --author Alice --format json
+
+elsewhere — Ailleurs : une position dans d'autres bases
+-------------------------------------------------------
+
+Cherche une position, par son hachage Zobrist, dans d'autres fichiers de base
+passés à la même commande, et rend pour chacun ce qu'il en sait : son analyse,
+ses commentaires, les matchs où la position a été jouée (joueurs, longueur,
+date, coup joué et son coût), et ses positions les plus proches (même
+classement que le jeton ``like`` de la recherche, en pips de pions déplacés).
+
+Le coût d'un coup joué ailleurs est jugé avec les seuils d'erreur et de blunder
+de la base ``--db``, jamais avec ceux de la base lue : ``error``, ``blunder``,
+``good``, ou ``unscored`` sans analyse. Une analyse faite à un score de match
+avec une autre table d'équité que la table courante de ``--db`` est signalée ;
+ses coûts en match sont affichés mais non jugés (``other-met``), comme partout
+ailleurs dans blunderDB. Les autres fichiers sont ouverts en lecture seule :
+rien n'y est écrit, et un fichier d'une version antérieure est refusé (l'ouvrir
+une fois dans blunderDB le met à jour).
+
+.. code-block:: bash
+
+   ./blunderdb elsewhere --db <chemin> --other <fichier> [--other <fichier>...] (--position N | --xgid X | --zobrist H) [options]
+
+**Options:**
+
+* ``--db`` (obligatoire) — La base qui juge : ses seuils et sa table d'équité.
+* ``--other`` (obligatoire, répétable) — Un fichier de base où chercher.
+* ``--position N`` — La position, par son identifiant dans ``--db``.
+* ``--xgid X`` — La position, par son XGID.
+* ``--zobrist H`` — La position, par son hachage (décimal) ; ses voisines ne
+  sont alors cherchées que dans les bases qui la détiennent.
+* ``--neighbours N`` — Nombre de voisines par base (défaut : 5, 0 : aucune,
+  50 au plus).
+* ``--max-distance D`` — Écarte les voisines à plus de D pips de pions
+  déplacés (0 : sans plafond).
+* ``--format`` — ``text`` (défaut) ou ``json``.
+
+Le démon sert la même lecture à travers les tenants : ``across.positionElsewhere``
+(voir :ref:`headless`).
+
+**Exemples:**
+
+.. code-block:: bash
+
+   ./blunderdb elsewhere --db moi.db --other club.db --position 412
+   ./blunderdb elsewhere --db moi.db --other a.db --other b.db --xgid "XGID=-b----E-C---eE---c-e----B-:0:0:1:52:0:0:0:0:10"
+   ./blunderdb elsewhere --db moi.db --other club.db --zobrist 1234567890 --format json
 
 info — Métadonnées de la base
 ------------------------------
