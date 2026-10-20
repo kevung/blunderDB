@@ -19,7 +19,7 @@ func acceleratedKernels() []denseKernel {
 	if !cpu.X86.HasAVX2 {
 		return nil
 	}
-	return []denseKernel{{name: "avx2", dense: denseAVX2}}
+	return []denseKernel{{name: "avx2", dense: denseAVX2, denseCols: denseColsAVX2}}
 }
 
 // denseAVX2 adapts the generated stubs to the denseFunc contract. The ReLU and
@@ -37,4 +37,17 @@ func denseAVX2(w, bias, act, out []float32, in, outDim int, relu bool) {
 		return
 	}
 	denseAVX2Linear(&w[0], &bias[0], &act[0], &out[0], in, outDim)
+}
+
+// denseColsAVX2 is denseAVX2 over column-major weights, w[j*outDim+i].
+func denseColsAVX2(w, bias, act, out []float32, in, outDim int, relu bool) {
+	if in == 0 || outDim == 0 {
+		denseColsGo(w, bias, act, out, in, outDim, relu)
+		return
+	}
+	if relu {
+		denseColsAVX2ReLU(&w[0], &bias[0], &act[0], &out[0], in, outDim)
+		return
+	}
+	denseColsAVX2Linear(&w[0], &bias[0], &act[0], &out[0], in, outDim)
 }

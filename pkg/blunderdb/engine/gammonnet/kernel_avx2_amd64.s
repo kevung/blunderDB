@@ -212,3 +212,190 @@ tailj:
 done:
 	VZEROUPPER
 	RET
+
+// func denseColsAVX2ReLU(w *float32, bias *float32, act *float32, out *float32, in int, outDim int)
+// Requires: AVX
+TEXT ·denseColsAVX2ReLU(SB), NOSPLIT, $0-48
+	MOVQ   w+0(FP), AX
+	MOVQ   bias+8(FP), CX
+	MOVQ   act+16(FP), DX
+	MOVQ   out+24(FP), BX
+	MOVQ   in+32(FP), SI
+	MOVQ   outDim+40(FP), DI
+	SHLQ   $0x02, SI
+	MOVQ   DI, R8
+	SHLQ   $0x02, R8
+	VXORPS Y0, Y0, Y0
+
+tileloop:
+	CMPQ         DI, $0x00000006
+	JL           tailhead
+	VBROADCASTSS (CX), Y1
+	VBROADCASTSS 4(CX), Y3
+	VBROADCASTSS 8(CX), Y4
+	VBROADCASTSS 12(CX), Y5
+	VBROADCASTSS 16(CX), Y6
+	VBROADCASTSS 20(CX), Y7
+	MOVQ         AX, R10
+	XORQ         R9, R9
+
+tilej:
+	VMOVUPS      (DX)(R9*8), Y8
+	VBROADCASTSS (R10), Y2
+	VMULPS       Y8, Y2, Y2
+	VADDPS       Y2, Y1, Y1
+	VBROADCASTSS 4(R10), Y2
+	VMULPS       Y8, Y2, Y2
+	VADDPS       Y2, Y3, Y3
+	VBROADCASTSS 8(R10), Y2
+	VMULPS       Y8, Y2, Y2
+	VADDPS       Y2, Y4, Y4
+	VBROADCASTSS 12(R10), Y2
+	VMULPS       Y8, Y2, Y2
+	VADDPS       Y2, Y5, Y5
+	VBROADCASTSS 16(R10), Y2
+	VMULPS       Y8, Y2, Y2
+	VADDPS       Y2, Y6, Y6
+	VBROADCASTSS 20(R10), Y2
+	VMULPS       Y8, Y2, Y2
+	VADDPS       Y2, Y7, Y7
+	ADDQ         R8, R10
+	ADDQ         $0x04, R9
+	CMPQ         R9, SI
+	JL           tilej
+	VMAXPS       Y0, Y1, Y1
+	VMOVUPS      Y1, (BX)
+	VMAXPS       Y0, Y3, Y3
+	VMOVUPS      Y3, 32(BX)
+	VMAXPS       Y0, Y4, Y4
+	VMOVUPS      Y4, 64(BX)
+	VMAXPS       Y0, Y5, Y5
+	VMOVUPS      Y5, 96(BX)
+	VMAXPS       Y0, Y6, Y6
+	VMOVUPS      Y6, 128(BX)
+	VMAXPS       Y0, Y7, Y7
+	VMOVUPS      Y7, 160(BX)
+	ADDQ         $0x18, AX
+	ADDQ         $0x18, CX
+	ADDQ         $0x000000c0, BX
+	SUBQ         $0x06, DI
+	JMP          tileloop
+
+tailhead:
+tailloop:
+	CMPQ         DI, $0x00000000
+	JLE          done
+	VBROADCASTSS (CX), Y1
+	MOVQ         AX, R10
+	XORQ         R9, R9
+
+tailj:
+	VMOVUPS      (DX)(R9*8), Y8
+	VBROADCASTSS (R10), Y2
+	VMULPS       Y8, Y2, Y2
+	VADDPS       Y2, Y1, Y1
+	ADDQ         R8, R10
+	ADDQ         $0x04, R9
+	CMPQ         R9, SI
+	JL           tailj
+	VMAXPS       Y0, Y1, Y1
+	VMOVUPS      Y1, (BX)
+	ADDQ         $0x04, AX
+	ADDQ         $0x04, CX
+	ADDQ         $0x20, BX
+	DECQ         DI
+	JMP          tailloop
+
+done:
+	VZEROUPPER
+	RET
+
+// func denseColsAVX2Linear(w *float32, bias *float32, act *float32, out *float32, in int, outDim int)
+// Requires: AVX
+TEXT ·denseColsAVX2Linear(SB), NOSPLIT, $0-48
+	MOVQ   w+0(FP), AX
+	MOVQ   bias+8(FP), CX
+	MOVQ   act+16(FP), DX
+	MOVQ   out+24(FP), BX
+	MOVQ   in+32(FP), SI
+	MOVQ   outDim+40(FP), DI
+	SHLQ   $0x02, SI
+	MOVQ   DI, R8
+	SHLQ   $0x02, R8
+	VXORPS Y0, Y0, Y0
+
+tileloop:
+	CMPQ         DI, $0x00000006
+	JL           tailhead
+	VBROADCASTSS (CX), Y0
+	VBROADCASTSS 4(CX), Y2
+	VBROADCASTSS 8(CX), Y3
+	VBROADCASTSS 12(CX), Y4
+	VBROADCASTSS 16(CX), Y5
+	VBROADCASTSS 20(CX), Y6
+	MOVQ         AX, R10
+	XORQ         R9, R9
+
+tilej:
+	VMOVUPS      (DX)(R9*8), Y7
+	VBROADCASTSS (R10), Y1
+	VMULPS       Y7, Y1, Y1
+	VADDPS       Y1, Y0, Y0
+	VBROADCASTSS 4(R10), Y1
+	VMULPS       Y7, Y1, Y1
+	VADDPS       Y1, Y2, Y2
+	VBROADCASTSS 8(R10), Y1
+	VMULPS       Y7, Y1, Y1
+	VADDPS       Y1, Y3, Y3
+	VBROADCASTSS 12(R10), Y1
+	VMULPS       Y7, Y1, Y1
+	VADDPS       Y1, Y4, Y4
+	VBROADCASTSS 16(R10), Y1
+	VMULPS       Y7, Y1, Y1
+	VADDPS       Y1, Y5, Y5
+	VBROADCASTSS 20(R10), Y1
+	VMULPS       Y7, Y1, Y1
+	VADDPS       Y1, Y6, Y6
+	ADDQ         R8, R10
+	ADDQ         $0x04, R9
+	CMPQ         R9, SI
+	JL           tilej
+	VMOVUPS      Y0, (BX)
+	VMOVUPS      Y2, 32(BX)
+	VMOVUPS      Y3, 64(BX)
+	VMOVUPS      Y4, 96(BX)
+	VMOVUPS      Y5, 128(BX)
+	VMOVUPS      Y6, 160(BX)
+	ADDQ         $0x18, AX
+	ADDQ         $0x18, CX
+	ADDQ         $0x000000c0, BX
+	SUBQ         $0x06, DI
+	JMP          tileloop
+
+tailhead:
+tailloop:
+	CMPQ         DI, $0x00000000
+	JLE          done
+	VBROADCASTSS (CX), Y0
+	MOVQ         AX, R10
+	XORQ         R9, R9
+
+tailj:
+	VMOVUPS      (DX)(R9*8), Y7
+	VBROADCASTSS (R10), Y1
+	VMULPS       Y7, Y1, Y1
+	VADDPS       Y1, Y0, Y0
+	ADDQ         R8, R10
+	ADDQ         $0x04, R9
+	CMPQ         R9, SI
+	JL           tailj
+	VMOVUPS      Y0, (BX)
+	ADDQ         $0x04, AX
+	ADDQ         $0x04, CX
+	ADDQ         $0x20, BX
+	DECQ         DI
+	JMP          tailloop
+
+done:
+	VZEROUPPER
+	RET

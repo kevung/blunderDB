@@ -47,12 +47,17 @@ const goKernelName = "go"
 // position. Every implementation must produce the same bits.
 type denseFunc func(w, bias, act, out []float32, in, outDim int, relu bool)
 
+// denseKernel is one arithmetic path. denseCols is the same computation over
+// column-major weights, w[j*outDim+i], the layout the first layer is stored in
+// (network.go); nil means the path has none, and the first layer is then
+// regathered row-major for dense.
 type denseKernel struct {
-	name  string
-	dense denseFunc
+	name      string
+	dense     denseFunc
+	denseCols denseFunc
 }
 
-var goKernel = denseKernel{name: goKernelName, dense: denseGo}
+var goKernel = denseKernel{name: goKernelName, dense: denseGo, denseCols: denseColsGo}
 
 var resolveKernelOnce = sync.OnceValues(func() (denseKernel, error) {
 	return resolveKernel(os.Getenv(KernelEnv), acceleratedKernels())
@@ -168,24 +173,31 @@ func (e *Evaluator) EvaluateBatch(features *[EvalBatchWidth][NumFeatures]float32
 	e.nz = nz
 
 	// Gather the first layer's surviving columns once per batch into a
-	// contiguous buffer and run the same dense kernel with in = k: indirect
-	// indexing in the inner loop is slower (gn_infer_reference.c), and
-	// vgatherdps is microcoded. The margin is thin (~6 % on sibling plays,
-	// a loss on unrelated boards): measure on siblings if revisited.
-	cw := lay0.weight
-	if k != lay0.in {
-		cw = e.batchWeight[:lay0.out*k]
-		for i := 0; i < lay0.out; i++ {
-			row := lay0.weight[i*lay0.in : (i+1)*lay0.in]
-			dst := cw[i*k : i*k+k]
+	// contiguous buffer and run the kernel with in = k: indirect indexing in
+	// the inner loop is slower (gn_infer_reference.c), and vgatherdps is
+	// microcoded. The layer is stored column-major, so each surviving column
+	// is one contiguous copy.
+	dense := e.kernel.dense
+	act0 := e.batchAct[:k*EvalBatchWidth]
+	if cols := e.kernel.denseCols; cols != nil {
+		cw := lay0.weight
+		if k != lay0.in {
+			cw = e.batchWeight[:k*lay0.out]
 			for t, j := range nz {
-				dst[t] = row[j]
+				copy(cw[t*lay0.out:(t+1)*lay0.out], lay0.weight[int(j)*lay0.out:(int(j)+1)*lay0.out])
 			}
 		}
+		cols(cw, lay0.bias, act0, e.batchA, k, lay0.out, last > 0)
+	} else {
+		cw := e.batchWeight[:lay0.out*k]
+		for t, j := range nz {
+			src := lay0.weight[int(j)*lay0.out : (int(j)+1)*lay0.out]
+			for i, w := range src {
+				cw[i*k+t] = w
+			}
+		}
+		dense(cw, lay0.bias, act0, e.batchA, k, lay0.out, last > 0)
 	}
-
-	dense := e.kernel.dense
-	dense(cw, lay0.bias, e.batchAct[:k*EvalBatchWidth], e.batchA, k, lay0.out, last > 0)
 
 	in, out := e.batchA, e.batchB
 	for l := 1; l <= last; l++ {

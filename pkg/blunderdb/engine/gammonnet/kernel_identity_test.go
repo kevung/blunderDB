@@ -432,6 +432,46 @@ func TestDenseKernelsAgreeOnRandomLayers(t *testing.T) {
 	}
 }
 
+// TestDenseColsMatchesDense: the column-major entry point of every kernel gives
+// the row-major reference's bits on the transposed weights, since the first
+// layer only ever runs through it.
+func TestDenseColsMatchesDense(t *testing.T) {
+	rng := rand.New(rand.NewSource(20261020))
+	for _, k := range batchKernels(t) {
+		if k.denseCols == nil {
+			continue
+		}
+		for _, shape := range [][2]int{
+			{0, 5}, {1, 1}, {1, 5}, {3, 4}, {5, 3}, {196, 5}, {196, 512}, {38, 512},
+			{38, 32}, {7, 6}, {7, 13},
+		} {
+			in, out := shape[0], shape[1]
+			w := randFloats(rng, in*out)
+			wt := make([]float32, in*out)
+			for i := 0; i < out; i++ {
+				for j := 0; j < in; j++ {
+					wt[j*out+i] = w[i*in+j]
+				}
+			}
+			bias := randFloats(rng, out)
+			act := randFloats(rng, in*EvalBatchWidth)
+			for _, relu := range []bool{false, true} {
+				ref := make([]float32, out*EvalBatchWidth)
+				denseGo(w, bias, act, ref, in, out, relu)
+				got := make([]float32, out*EvalBatchWidth)
+				k.denseCols(wt, bias, act, got, in, out, relu)
+				for idx := range ref {
+					if math.Float32bits(got[idx]) != math.Float32bits(ref[idx]) {
+						t.Fatalf("%dx%d relu=%v: %s denseCols at row %d lane %d: %s, denseGo says %s",
+							in, out, relu, k.name, idx/EvalBatchWidth, idx%EvalBatchWidth,
+							bits(got[idx]), bits(ref[idx]))
+					}
+				}
+			}
+		}
+	}
+}
+
 func randFloats(rng *rand.Rand, n int) []float32 {
 	out := make([]float32, n)
 	for i := range out {

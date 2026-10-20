@@ -67,6 +67,8 @@ func main() {
 
 	dense("denseAVX2ReLU", true)
 	dense("denseAVX2Linear", false)
+	denseCols("denseColsAVX2ReLU", true)
+	denseCols("denseColsAVX2Linear", false)
 
 	Generate()
 }
@@ -192,6 +194,126 @@ func dense(name string, relu bool) {
 	VMOVUPS(acc[0], Mem{Base: outp})
 
 	ADDQ(rowBytes, wp)
+	ADDQ(U8(4), biasp)
+	ADDQ(U8(4*lanes), outp)
+	DECQ(remaining)
+	JMP(LabelRef("tailloop"))
+
+	Label("done")
+	VZEROUPPER()
+	RET()
+}
+
+// denseCols est dense sur des poids rangés colonne par entrée, w[j*outDim+i] :
+// la forme que prend la première couche une fois ses colonnes nulles retirées
+// par simple copie de colonnes contiguës (kernel.go). Seul l'adressage des
+// poids change ; les voies, l'ordre de sommation (j croissant depuis le biais)
+// et la paire VMULPS/VADDPS sont ceux de dense, instruction pour instruction.
+func denseCols(name string, relu bool) {
+	TEXT(name, NOSPLIT, "func(w, bias, act, out *float32, in, outDim int)")
+	if relu {
+		Doc(
+			name+" est denseAVX2ReLU sur des poids colonne par entrée,",
+			"w[j*outDim+i]. Même arithmétique, même ordre, jamais de FMA (ADR-0024).",
+		)
+	} else {
+		Doc(
+			name+" est denseAVX2Linear sur des poids colonne par entrée,",
+			"w[j*outDim+i]. Même arithmétique, même ordre, jamais de FMA (ADR-0024).",
+		)
+	}
+	Pragma("noescape")
+
+	wp := Load(Param("w"), GP64())
+	biasp := Load(Param("bias"), GP64())
+	actp := Load(Param("act"), GP64())
+	outp := Load(Param("out"), GP64())
+	in := Load(Param("in"), GP64())
+	outDim := Load(Param("outDim"), GP64())
+
+	// inBytes borne la boucle interne, colBytes est le pas d'une colonne de
+	// poids à la suivante.
+	inBytes := GP64()
+	MOVQ(in, inBytes)
+	SHLQ(U8(2), inBytes)
+	colBytes := GP64()
+	MOVQ(outDim, colBytes)
+	SHLQ(U8(2), colBytes)
+
+	remaining := outDim
+
+	zero := YMM()
+	VXORPS(zero, zero, zero)
+
+	acc := make([]reg.VecVirtual, tile)
+	tmp := make([]reg.VecVirtual, tile)
+	for t := 0; t < tile; t++ {
+		acc[t] = YMM()
+		tmp[t] = YMM()
+	}
+	col := YMM()
+	jb := GP64()
+	wj := GP64()
+
+	Label("tileloop")
+	CMPQ(remaining, U32(tile))
+	JL(LabelRef("tailhead"))
+
+	for t := 0; t < tile; t++ {
+		VBROADCASTSS(Mem{Base: biasp}.Offset(4*t), acc[t])
+	}
+	MOVQ(wp, wj)
+
+	XORQ(jb, jb)
+	Label("tilej")
+	VMOVUPS(Mem{Base: actp, Index: jb, Scale: lanes}, col)
+	for t := 0; t < tile; t++ {
+		VBROADCASTSS(Mem{Base: wj}.Offset(4*t), tmp[t])
+		VMULPS(col, tmp[t], tmp[t])
+		VADDPS(tmp[t], acc[t], acc[t])
+	}
+	ADDQ(colBytes, wj)
+	ADDQ(U8(4), jb)
+	CMPQ(jb, inBytes)
+	JL(LabelRef("tilej"))
+
+	for t := 0; t < tile; t++ {
+		if relu {
+			VMAXPS(zero, acc[t], acc[t])
+		}
+		VMOVUPS(acc[t], Mem{Base: outp}.Offset(4*lanes*t))
+	}
+
+	ADDQ(U8(4*tile), wp)
+	ADDQ(U8(4*tile), biasp)
+	ADDQ(U32(4*lanes*tile), outp)
+	SUBQ(U8(tile), remaining)
+	JMP(LabelRef("tileloop"))
+
+	Label("tailhead")
+	Label("tailloop")
+	CMPQ(remaining, U32(0))
+	JLE(LabelRef("done"))
+
+	VBROADCASTSS(Mem{Base: biasp}, acc[0])
+	MOVQ(wp, wj)
+	XORQ(jb, jb)
+	Label("tailj")
+	VMOVUPS(Mem{Base: actp, Index: jb, Scale: lanes}, col)
+	VBROADCASTSS(Mem{Base: wj}, tmp[0])
+	VMULPS(col, tmp[0], tmp[0])
+	VADDPS(tmp[0], acc[0], acc[0])
+	ADDQ(colBytes, wj)
+	ADDQ(U8(4), jb)
+	CMPQ(jb, inBytes)
+	JL(LabelRef("tailj"))
+
+	if relu {
+		VMAXPS(zero, acc[0], acc[0])
+	}
+	VMOVUPS(acc[0], Mem{Base: outp})
+
+	ADDQ(U8(4), wp)
 	ADDQ(U8(4), biasp)
 	ADDQ(U8(4*lanes), outp)
 	DECQ(remaining)
