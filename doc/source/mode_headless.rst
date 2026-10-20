@@ -2207,8 +2207,9 @@ les tests d'intégration.
    * - ``--timeout <durée>``
      - ``1m``
      - avec ``remote`` : délai de connexion et d'attente des en-têtes de la
-       réponse du démon (jamais du corps, qui peut être un flux) ; ``0``
-       garde la valeur par défaut
+       réponse du démon, puis d'un silence du corps (aucun octet reçu pendant
+       cette durée) ; ``0`` garde la valeur par défaut, une durée négative
+       supprime toute borne
    * - ``--scope <n>``
      - ``1``
      - tenant, un entier décimal positif (envoyé comme ``X-Tenant-ID`` ; un

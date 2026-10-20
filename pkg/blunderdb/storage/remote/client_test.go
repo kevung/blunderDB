@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/remote"
@@ -168,5 +169,31 @@ func TestByPositionsLongListIsOneRequest(t *testing.T) {
 	got, err := rs.Comments().ByPositions(context.Background(), "", ids)
 	if err != nil || n != 1 || len(got[5]) != 2 || got[5][0].ID != 1 || len(got[99]) != 0 {
 		t.Fatalf("got %v, %v after %d requests", got, err, n)
+	}
+}
+
+func TestSilentBodyFailsAfterTheTimeout(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(200)
+		w.(http.Flusher).Flush()
+		<-r.Context().Done()
+	}))
+	t.Cleanup(ts.Close)
+	rs, err := remote.Open(remote.Options{BaseURL: ts.URL, Timeout: 300 * time.Millisecond})
+	if err != nil {
+		t.Fatal(err)
+	}
+	start := time.Now()
+	_, err = rs.Positions().Count(context.Background(), "")
+	if !errors.Is(err, remote.ErrUnavailable) || time.Since(start) > 5*time.Second {
+		t.Fatalf("silent body: %v after %v", err, time.Since(start))
+	}
+}
+
+func TestTooLargeIsNotARateLimit(t *testing.T) {
+	rs, _ := fake(t, 413, `too big`)
+	_, err := rs.Positions().Count(context.Background(), "")
+	if !errors.Is(err, remote.ErrTooLarge) || errors.Is(err, remote.ErrRateLimited) {
+		t.Fatalf("413: %v", err)
 	}
 }

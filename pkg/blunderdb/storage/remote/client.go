@@ -29,6 +29,9 @@ var ErrUnavailable = errors.New("remote: daemon unavailable")
 // no outage.
 var ErrRefused = errors.New("remote: refused by the daemon or its proxy")
 
+// ErrTooLarge is a request the daemon or its proxy refuses for its size (HTTP 413).
+var ErrTooLarge = errors.New("remote: request too large")
+
 // ErrRateLimited is the daemon's request rate or quota reached (HTTP 429, or
 // the rate_limited and quota_exceeded codes).
 var ErrRateLimited = errors.New("remote: daemon limit reached")
@@ -123,6 +126,32 @@ type client struct {
 	tenant string
 	header http.Header
 	http   *http.Client
+	// idle is how long a body may stay silent; zero means no bound.
+	idle time.Duration
+}
+
+// idleBody cancels its request when no byte arrives for d, so a daemon that
+// goes silent after its headers fails the read instead of blocking it.
+type idleBody struct {
+	io.ReadCloser
+	timer  *time.Timer
+	d      time.Duration
+	cancel context.CancelFunc
+}
+
+func (b *idleBody) Read(p []byte) (int, error) {
+	n, err := b.ReadCloser.Read(p)
+	if n > 0 {
+		b.timer.Reset(b.d)
+	}
+	return n, err
+}
+
+func (b *idleBody) Close() error {
+	b.timer.Stop()
+	err := b.ReadCloser.Close()
+	b.cancel()
+	return err
 }
 
 func newClient(o Options) (*client, error) {
@@ -137,7 +166,14 @@ func newClient(o Options) (*client, error) {
 		hc = defaultHTTPClient(o.Timeout)
 	}
 	o.BaseURL = strings.TrimSuffix(strings.TrimRight(o.BaseURL, "/"), "/v1")
-	return &client{base: strings.TrimRight(o.BaseURL, "/"), tenant: o.Tenant, header: o.Header.Clone(), http: hc}, nil
+	c := &client{base: strings.TrimRight(o.BaseURL, "/"), tenant: o.Tenant, header: o.Header.Clone(), http: hc}
+	if o.HTTPClient == nil && o.Timeout >= 0 {
+		c.idle = o.Timeout
+		if c.idle == 0 {
+			c.idle = DefaultTimeout
+		}
+	}
+	return c, nil
 }
 
 // post sends one /v1 call and returns the open response; the caller closes
@@ -151,8 +187,10 @@ func (c *client) post(ctx context.Context, scope, method string, req any) (*http
 		}
 		body = bytes.NewReader(b)
 	}
-	hr, err := http.NewRequestWithContext(ctx, http.MethodPost, c.base+"/v1/"+method, body)
+	rctx, cancel := context.WithCancel(ctx)
+	hr, err := http.NewRequestWithContext(rctx, http.MethodPost, c.base+"/v1/"+method, body)
 	if err != nil {
+		cancel()
 		return nil, visible(fmt.Errorf("%w: %s: %w", ErrUnavailable, method, err))
 	}
 	for k, vs := range c.header {
@@ -173,14 +211,22 @@ func (c *client) post(ctx context.Context, scope, method string, req any) (*http
 	}
 	resp, err := c.http.Do(hr)
 	if err != nil {
+		cancel()
 		if ctx.Err() != nil {
 			return nil, ctx.Err()
 		}
 		return nil, visible(fmt.Errorf("%w: cannot reach %s (%s): %w", ErrUnavailable, c.base, method, err))
 	}
+	if c.idle > 0 {
+		resp.Body = &idleBody{ReadCloser: resp.Body, timer: time.AfterFunc(c.idle, cancel), d: c.idle, cancel: cancel}
+	}
 	if resp.StatusCode/100 != 2 {
 		defer resp.Body.Close()
 		return nil, decodeError(method, resp)
+	}
+	if c.idle == 0 {
+		// No idle bound: the request context is released with the body.
+		resp.Body = &idleBody{ReadCloser: resp.Body, timer: time.NewTimer(time.Hour), d: time.Hour, cancel: cancel}
 	}
 	return resp, nil
 }
@@ -214,7 +260,7 @@ func statusError(method string, status int) error {
 	case http.StatusTooManyRequests:
 		return visible(fmt.Errorf("%w: %s: HTTP 429; wait and retry, or ask for a higher --rate-limit-rps/--rate-limit-burst on the daemon", ErrRateLimited, method))
 	case http.StatusRequestEntityTooLarge:
-		return visible(fmt.Errorf("%w: %s: HTTP 413, the request is too large for the daemon or its proxy", ErrRateLimited, method))
+		return visible(fmt.Errorf("%w: %s: HTTP 413, the request is too large for the daemon or its proxy; send fewer items at a time", ErrTooLarge, method))
 	}
 	return visible(fmt.Errorf("%w: %s: HTTP %d without an error envelope", ErrUnavailable, method, status))
 }
