@@ -4126,6 +4126,52 @@ export namespace gammonnet {
 }
 
 export namespace gui {
+	export class TransferSummary {
+	    group: number;
+	    positions: number;
+	    matches: number;
+	    alreadyHeld: number;
+	    collections: number;
+	    lessons: number;
+	    errors: string[];
+	    cancelled: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new TransferSummary(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.group = source["group"];
+	        this.positions = source["positions"];
+	        this.matches = source["matches"];
+	        this.alreadyHeld = source["alreadyHeld"];
+	        this.collections = source["collections"];
+	        this.lessons = source["lessons"];
+	        this.errors = source["errors"];
+	        this.cancelled = source["cancelled"];
+	    }
+	}
+	export class TransferBatch {
+	    group: number;
+	    positionIDs: number[];
+	    matchIDs: number[];
+	    collectionIDs: number[];
+	    lessonIDs: number[];
+	
+	    static createFrom(source: any = {}) {
+	        return new TransferBatch(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.group = source["group"];
+	        this.positionIDs = source["positionIDs"];
+	        this.matchIDs = source["matchIDs"];
+	        this.collectionIDs = source["collectionIDs"];
+	        this.lessonIDs = source["lessonIDs"];
+	    }
+	}
 	
 	export class AssistantRequest {
 	    preset: string;
