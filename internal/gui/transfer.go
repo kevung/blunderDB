@@ -8,10 +8,6 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 )
 
-// transferEvent tells the desktop a transfer started or ended, with the group
-// it writes: an end off screen badges that group's header (ADR-0101).
-const transferEvent = "library-transfer:state"
-
 // TransferBatch is what one library group gives to a transfer: rows named by
 // their ids in that group's library. A drag carries one batch, the basket one
 // per group it was filled from.
@@ -139,7 +135,6 @@ func (a *App) TransferToGroup(dst int, batches []TransferBatch) (TransferSummary
 	a.libs.mu.Unlock()
 
 	sum := TransferSummary{Group: dst, Errors: []string{}}
-	a.emitBatch(transferEvent, map[string]any{"group": dst, "state": "running"})
 	// The import counts every position it merged, held or not: the account
 	// tells what dst did not hold before.
 	held, _ := to.CountPositions()
@@ -164,6 +159,5 @@ func (a *App) TransferToGroup(dst int, batches []TransferBatch) (TransferSummary
 	if sum.Positions+sum.Matches > 0 {
 		to.RefreshSearchStatistics()
 	}
-	a.emitBatch(transferEvent, map[string]any{"group": dst, "state": "done", "summary": sum})
 	return sum, nil
 }

@@ -1,7 +1,7 @@
 # Plusieurs bibliothèques ouvertes sont une présentation du bureau ; le transfert et « Ailleurs » vivent sous le contrat
 
-Status: accepted (étapes 1 et 2 livrées : groupes, bascule, tâches attachées à leur bibliothèque ;
-étapes 3 à 5 en cours, issues #691 à #693).
+Status: accepted (étapes 1 à 3 livrées : groupes, bascule, tâches attachées à leur bibliothèque,
+transfert, panier et verrou ; étapes 4 et 5 en cours, issues #692 et #693).
 See also: ADR-0007 (rien n'est écrit chez le destinataire), ADR-0055 (budget de contexte),
 ADR-0065 (lecture à travers les tenants), ADR-0001 (l'identité d'une position est son hachage).
 
@@ -60,6 +60,12 @@ recopier un match demandait un export puis un import. Le bureau lie un seul `*da
    dédoublonne par hachage, copie les métadonnées par `issuance.CarriedMetadataKeys` et n'écrit
    rien qui dise d'où vient la copie (ADR-0007). Au démon, le transfert est un tirage depuis un
    tenant de `X-Read-Tenants` vers le sien, jamais l'inverse (ADR-0065).
+   Au bureau, glisser une ligne sur l'en-tête d'un autre groupe, ou y verser le panier, appelle
+   ce même transfert (`TransferToGroup` → `Database.TransferTo`) sur deux poignées empruntées :
+   il tourne en fond, attaché au groupe d'arrivée, et compte comme un import de celui-ci (un
+   vacuum l'attend, `CancelImport` l'arrête). Le panier et le verrou d'un groupe sont la
+   mémoire du bureau, jamais celle d'une base.
+
 7. **La vue « Ailleurs » cherche par hachage** avec le même service que les lectures
    `across.*`, et juge avec les seuils du groupe actif ; une analyse faite avec une autre MET
    est signalée comme aujourd'hui.

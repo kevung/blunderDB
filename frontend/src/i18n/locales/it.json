@@ -3576,5 +3576,28 @@
             "unscored": "non valutata",
             "otherMet": "altra MET"
         }
+    },
+    "transfer": {
+        "locked": "Questo gruppo di librerie è bloccato: non vi si versa nulla (sbloccalo dalla sua intestazione)",
+        "nothing": "Niente da copiare: queste righe sono già in questa libreria",
+        "running": "Copia in questa libreria…",
+        "failed": "La copia non è riuscita: {error}",
+        "cancelled": "Copia annullata: ciò che era già unito resta",
+        "done": "Copiato: {positions} posizioni nuove, {matches} match nuovi ({held} già presenti), {collections} raccolte, {lessons} lezioni",
+        "doneWithErrors": "Copiato: {positions} posizioni nuove, {matches} match nuovi ({held} già presenti), {collections} raccolte, {lessons} lezioni; {failed} parte/i non riuscita/e",
+        "basketDraft": "Salva prima la posizione: solo una posizione salvata va nel cestino",
+        "basketIn": "Nel cestino ({n})",
+        "basketOut": "Tolta dal cestino ({n})",
+        "basketEmpty": "Il cestino è vuoto",
+        "lockOn": "Gruppo bloccato: non vi si può versare nulla",
+        "lockOff": "Gruppo sbloccato",
+        "lockGroup": "Blocca questo gruppo: rifiuta ogni copia verso di esso",
+        "unlockGroup": "Sblocca questo gruppo",
+        "basket": "Cestino",
+        "basketTitle": "Cestino di trasferimento: {n} riga/e — trascinalo su un gruppo o fai clic per versarlo (Maiusc+B aggiunge la posizione)",
+        "pourInto": "Versa in {name}",
+        "emptyBasket": "Svuota il cestino",
+        "dragPosition": "Trascina sull'intestazione di un'altra libreria per copiarvi questa posizione",
+        "dragLesson": "Trascina sull'intestazione di un'altra libreria per copiarvi questa lezione"
     }
 }

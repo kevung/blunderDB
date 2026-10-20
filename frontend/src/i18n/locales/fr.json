@@ -3576,5 +3576,28 @@
             "unscored": "non évalué",
             "otherMet": "autre MET"
         }
+    },
+    "transfer": {
+        "locked": "Ce groupe est verrouillé : rien n'y est versé (déverrouillez-le depuis son en-tête)",
+        "nothing": "Rien à copier : ces lignes sont déjà dans cette bibliothèque",
+        "running": "Copie vers cette bibliothèque…",
+        "failed": "La copie a échoué : {error}",
+        "cancelled": "Copie annulée : ce qui était déjà fusionné reste",
+        "done": "Copié : {positions} positions nouvelles, {matches} matchs nouveaux ({held} déjà présents), {collections} collections, {lessons} leçons",
+        "doneWithErrors": "Copié : {positions} positions nouvelles, {matches} matchs nouveaux ({held} déjà présents), {collections} collections, {lessons} leçons ; {failed} partie(s) en échec",
+        "basketDraft": "Enregistrez d'abord la position : seule une position enregistrée va au panier",
+        "basketIn": "Dans le panier ({n})",
+        "basketOut": "Retirée du panier ({n})",
+        "basketEmpty": "Le panier est vide",
+        "lockOn": "Groupe verrouillé : rien ne peut y être versé",
+        "lockOff": "Groupe déverrouillé",
+        "lockGroup": "Verrouiller ce groupe : refuser toute copie vers lui",
+        "unlockGroup": "Déverrouiller ce groupe",
+        "basket": "Panier",
+        "basketTitle": "Panier de transfert : {n} ligne(s) — glissez-le sur un groupe, ou cliquez pour le verser (Maj+B ajoute la position)",
+        "pourInto": "Verser dans {name}",
+        "emptyBasket": "Vider le panier",
+        "dragPosition": "Glissez sur l'en-tête d'une autre bibliothèque pour y copier cette position",
+        "dragLesson": "Glissez sur l'en-tête d'une autre bibliothèque pour y copier cette leçon"
     }
 }

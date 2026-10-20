@@ -3576,5 +3576,28 @@
             "unscored": "sin evaluar",
             "otherMet": "otra MET"
         }
+    },
+    "transfer": {
+        "locked": "Este grupo de bibliotecas está bloqueado: no se vierte nada en él (desbloquéelo desde su cabecera)",
+        "nothing": "Nada que copiar: estas filas ya están en esta biblioteca",
+        "running": "Copiando en esta biblioteca…",
+        "failed": "La copia falló: {error}",
+        "cancelled": "Copia cancelada: lo ya fusionado permanece",
+        "done": "Copiado: {positions} posiciones nuevas, {matches} partidas nuevas ({held} ya presentes), {collections} colecciones, {lessons} lecciones",
+        "doneWithErrors": "Copiado: {positions} posiciones nuevas, {matches} partidas nuevas ({held} ya presentes), {collections} colecciones, {lessons} lecciones; {failed} parte(s) fallida(s)",
+        "basketDraft": "Guarde primero la posición: solo una posición guardada entra en la cesta",
+        "basketIn": "A la cesta ({n})",
+        "basketOut": "Fuera de la cesta ({n})",
+        "basketEmpty": "La cesta está vacía",
+        "lockOn": "Grupo bloqueado: no se puede verter nada en él",
+        "lockOff": "Grupo desbloqueado",
+        "lockGroup": "Bloquear este grupo: rechazar toda copia hacia él",
+        "unlockGroup": "Desbloquear este grupo",
+        "basket": "Cesta",
+        "basketTitle": "Cesta de transferencia: {n} fila(s) — arrástrela sobre un grupo o haga clic para verterla (Mayús+B añade la posición)",
+        "pourInto": "Verter en {name}",
+        "emptyBasket": "Vaciar la cesta",
+        "dragPosition": "Arrastre sobre la cabecera de otra biblioteca para copiar allí esta posición",
+        "dragLesson": "Arrastre sobre la cabecera de otra biblioteca para copiar allí esta lección"
     }
 }
