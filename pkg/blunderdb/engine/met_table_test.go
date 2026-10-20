@@ -103,3 +103,36 @@ func TestMETDigestIgnoresLayoutAndName(t *testing.T) {
 		t.Error("layout or name changed the digest")
 	}
 }
+
+func metWithEncoding(t *testing.T, label, name string) []byte {
+	t.Helper()
+	data, err := os.ReadFile("testdata/met/Kazaross-XG2.xml")
+	if err != nil {
+		t.Fatal(err)
+	}
+	s := strings.Replace(string(data), `<?xml version = "1.0"?>`, `<?xml version="1.0" encoding="`+label+`"?>`, 1)
+	i := strings.Index(s, "<name>")
+	j := strings.Index(s, "</name>")
+	if i < 0 || j < i {
+		t.Fatal("no <name> in fixture")
+	}
+	return []byte(s[:i+len("<name>")] + name + s[j:])
+}
+
+func TestParseGnubgMET_ReadsLatin1(t *testing.T) {
+	// "Kazaross café" with é encoded as the single byte 0xE9.
+	m, err := ParseGnubgMET(metWithEncoding(t, "ISO-8859-1", "Kazaross caf\xe9"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if m.Name != "Kazaross café" {
+		t.Errorf("name %q, want %q", m.Name, "Kazaross café")
+	}
+}
+
+func TestParseGnubgMET_RefusesOtherEncodings(t *testing.T) {
+	_, err := ParseGnubgMET(metWithEncoding(t, "shift_jis", "x"))
+	if !errors.Is(err, ErrMETFormat) || !strings.Contains(err.Error(), "unsupported encoding") {
+		t.Fatalf("err %v, want ErrMETFormat naming the unsupported encoding", err)
+	}
+}

@@ -7,11 +7,10 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
+	"io"
 	"strconv"
 	"strings"
 	"sync"
-
-	"golang.org/x/net/html/charset"
 )
 
 // MET is a match equity table a library imported from a gnubg .xml file
@@ -65,6 +64,27 @@ type gnubgMETDoc struct {
 	Post []gnubgMETTable `xml:"post-crawford-table"`
 }
 
+// metCharsetReader accepts the encodings gnubg tables use. Anything else is
+// refused rather than resolved through a general charset registry, which would
+// link every CJK table of x/text into each binary.
+func metCharsetReader(label string, input io.Reader) (io.Reader, error) {
+	switch strings.ToLower(strings.TrimSpace(label)) {
+	case "utf-8", "utf8", "us-ascii", "ascii":
+		return input, nil
+	case "iso-8859-1", "iso8859-1", "latin1", "latin-1", "l1":
+		raw, err := io.ReadAll(input)
+		if err != nil {
+			return nil, err
+		}
+		runes := make([]rune, len(raw))
+		for i, b := range raw {
+			runes[i] = rune(b)
+		}
+		return strings.NewReader(string(runes)), nil
+	}
+	return nil, fmt.Errorf("unsupported encoding %q (UTF-8, US-ASCII and ISO-8859-1 are supported)", label)
+}
+
 // ParseGnubgMET reads a gnubg match equity table (met.dtd). Parametric
 // tables (zadeh, mec) and tables whose post-Crawford values differ by player
 // are refused: blunderDB stores values, and one post-Crawford row serves
@@ -72,7 +92,7 @@ type gnubgMETDoc struct {
 func ParseGnubgMET(data []byte) (*MET, error) {
 	var doc gnubgMETDoc
 	dec := xml.NewDecoder(bytes.NewReader(data))
-	dec.CharsetReader = charset.NewReaderLabel
+	dec.CharsetReader = metCharsetReader
 	dec.Strict = false
 	if err := dec.Decode(&doc); err != nil {
 		return nil, fmt.Errorf("%w: %w", ErrMETFormat, err)
