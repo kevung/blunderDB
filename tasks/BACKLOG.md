@@ -42,11 +42,6 @@ propre issue le jour où il est lancé.
   (`storagetest/contract_comments.go`, `contract_collections*.go`). Effort S.
 - **`migrate.Run` par lots avec reprise** (aujourd'hui une transaction unique pour toute la
   copie SQLite→PG, `migrate/migrate.go`) — attendre un besoin terrain.
-- **Décompte des gaffes d'`info` en cache** : sans `--estimate`, `GetDatabaseStats` lit
-  `Counts` d'un coup et `blunderCount` (`sqlshared/metadata.go`) parcourt toute `analysis` —
-  des secondes à des dizaines de secondes sur une base BMAB ; `--estimate` ne fait que sauter
-  les gaffes au-delà de 200 000 lignes. Le garder en cache dans `metadata`, invalidé par
-  import, suppression et changement de seuil. Effort M.
 - **Course Stat/Rename du vacuum par remplacement** (`database/db_vacuum.go`, `vacuumBySwap`) :
   l'absence de `-wal` est constatée par `os.Stat` puis le fichier remplacé par `os.Rename` ; un
   autre processus qui ouvre la base entre les deux lit l'ancien inode et y écrit à perte.

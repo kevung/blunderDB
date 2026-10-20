@@ -10,6 +10,8 @@ import (
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
 
 // schemaStatements is the full DDL for a fresh database at the current
@@ -907,6 +909,44 @@ var schemaStatements = []string{
 	`CREATE        INDEX IF NOT EXISTS idx_filter_library_scope_name ON filter_library(scope, name)`,
 }
 
+// blunderCountTriggers delete the cached blunder count
+// (storage.BlunderCountMetadataKey) on any write to a table it is counted
+// from, whatever path the write takes: the storage backends, the legacy
+// wrapper's own SQL, a migration. They run on every open (EnsureSchema), so
+// a table rebuilt without them gets them back; until then the cache refuses
+// to answer (sqlshared.cachedBlunderCount checks they are all there).
+func blunderCountTriggers() []string {
+	var out []string
+	for _, table := range sqlshared.BlunderCountTriggerTables {
+		for _, op := range []string{"INSERT", "UPDATE", "DELETE"} {
+			out = append(out, `CREATE TRIGGER IF NOT EXISTS blunder_count_forget_`+table+`_`+strings.ToLower(op)+
+				` AFTER `+op+` ON `+table+` BEGIN DELETE FROM metadata WHERE key = '`+storage.BlunderCountMetadataKey+`'; END`)
+		}
+	}
+	return out
+}
+
+// EnsureBlunderCountTriggers creates the triggers that keep the cached blunder
+// count honest, where they are missing. A table the database does not hold
+// yet (a migration step runs before EnsureSchema creates it) is skipped: its
+// triggers come with it, and the cache refuses to answer until all are there.
+func EnsureBlunderCountTriggers(ctx context.Context, db *sql.DB) error {
+	tables, err := objectNames(ctx, db, "table")
+	if err != nil {
+		return err
+	}
+	for _, stmt := range blunderCountTriggers() {
+		on := strings.Fields(stmt[strings.Index(stmt, " ON ")+len(" ON "):])[0]
+		if !tables[on] {
+			continue
+		}
+		if _, err := db.ExecContext(ctx, stmt); err != nil {
+			return fmt.Errorf("sqlite: blunder count trigger: %w", err)
+		}
+	}
+	return nil
+}
+
 // Bootstrap creates the full schema at domain.DatabaseVersion on a fresh
 // database and records the schema version. It is run by Open for an empty
 // database and by the Database wrapper's SetupDatabase. Every statement is
@@ -917,6 +957,9 @@ func Bootstrap(ctx context.Context, db *sql.DB) error {
 		if _, err := db.ExecContext(ctx, stmt); err != nil {
 			return fmt.Errorf("sqlite: bootstrap schema: %w", err)
 		}
+	}
+	if err := EnsureBlunderCountTriggers(ctx, db); err != nil {
+		return err
 	}
 	if _, err := db.ExecContext(ctx,
 		`INSERT OR REPLACE INTO metadata (key, value) VALUES ('database_version', ?)`,
@@ -979,6 +1022,9 @@ func EnsureSchema(ctx context.Context, db *sql.DB) error {
 				slog.Warn("sqlite: cannot add missing column", "table", t.name, "column", c.name, "err", err)
 			}
 		}
+	}
+	if err := EnsureBlunderCountTriggers(ctx, db); err != nil {
+		return err
 	}
 	have, err := indexNames(ctx, db)
 	if err != nil {

@@ -34,9 +34,19 @@ type CountsEstimate struct {
 	// Approximate lists the JSON names of the fields that are estimates.
 	Approximate []string `json:"approximate"`
 	// BlundersKnown is false when Blunders was not computed: no honest
-	// estimate of it exists, only the exact count, which scans every analysis.
+	// estimate of it exists, only the exact count, which scans every analysis
+	// unless its cache (BlunderCountMetadataKey) still holds.
 	BlundersKnown bool `json:"blunders_known"`
 }
+
+// BlunderCountMetadataKey prefixes the metadata row that caches Counts.Blunders,
+// the one count that reads every analysis. Its value is "<threshold>:<count>",
+// valid only at the blunder threshold it names; on a multi-tenant database the
+// key carries ":<tenant>". Triggers on position, analysis, move and
+// action_label delete it on any write that could change the count, so a row
+// that is present is never stale. It describes the library it sits in, which
+// is why it stays outside issuance.CarriedMetadataKeys.
+const BlunderCountMetadataKey = "blunder_count"
 
 // MetadataStore persists the database-level key/value metadata: schema
 // version, match-equity-table id, and the headline counts.
@@ -59,7 +69,7 @@ type MetadataStore interface {
 	// EstimatedCounts returns the headline counts without a full scan: exact
 	// while every table's highest id stays under exactBelow, estimated beyond.
 	// IndividualPositions and AnkiCards are not filled. Blunders is filled
-	// only when Positions is exact.
+	// when Positions is exact, or when the cached count is still valid.
 	EstimatedCounts(ctx context.Context, scope string, exactBelow int) (CountsEstimate, error)
 
 	// StoredBytes is the disk space the scope's tenant holds, tables and

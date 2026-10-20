@@ -5076,3 +5076,62 @@ func TestMigrate_2_42_0_to_2_43_0_LastVisitedAt(t *testing.T) {
 		t.Errorf("last visited after a dated visit = %+v, %v; want match %d", m, err, ids[1])
 	}
 }
+
+// TestMigrate_2_43_0_to_2_44_0_BlunderCountTriggers opens a 2.43.0 library,
+// which has no trigger, and checks the migration installs them: a counted
+// library caches its count, and a write afterwards takes the cache away.
+func TestMigrate_2_43_0_to_2_44_0_BlunderCountTriggers(t *testing.T) {
+	t.Parallel()
+	dbPath := filepath.Join(tempDir(t), "test_v2430.db")
+	createOldDatabase(t, dbPath, "2.31.0")
+	d := NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open: %v", err)
+	}
+	if _, err := d.db.Exec(`UPDATE metadata SET value = '2.43.0' WHERE key = 'database_version'`); err != nil {
+		t.Fatal(err)
+	}
+	for _, table := range []string{"position", "analysis", "move", "action_label"} {
+		for _, op := range []string{"insert", "update", "delete"} {
+			if _, err := d.db.Exec(`DROP TRIGGER IF EXISTS blunder_count_forget_` + table + `_` + op); err != nil {
+				t.Fatal(err)
+			}
+		}
+	}
+	if err := d.Close(); err != nil {
+		t.Fatalf("close: %v", err)
+	}
+
+	d = NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open v2.43.0 database: %v", err)
+	}
+	closeOnCleanup(t, d)
+	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {
+		t.Fatalf("version after migration = %q, %v; want %q", v, err, DatabaseVersion)
+	}
+	var n int
+	if err := d.db.QueryRow(`SELECT COUNT(*) FROM sqlite_master WHERE type = 'trigger' AND name LIKE 'blunder_count_forget_%'`).Scan(&n); err != nil || n != 12 {
+		t.Fatalf("blunder count triggers after migration = %d, %v; want 12", n, err)
+	}
+	if _, err := d.GetDatabaseStats(); err != nil {
+		t.Fatalf("stats: %v", err)
+	}
+	cached := func() bool {
+		var c int
+		if err := d.db.QueryRow(`SELECT COUNT(*) FROM metadata WHERE key = 'blunder_count'`).Scan(&c); err != nil {
+			t.Fatal(err)
+		}
+		return c == 1
+	}
+	if !cached() {
+		t.Fatal("the count was not cached after the migration")
+	}
+	pos := InitializePosition()
+	if _, err := d.SavePosition(&pos); err != nil {
+		t.Fatalf("save a position: %v", err)
+	}
+	if cached() {
+		t.Error("a write to position left the cached count in place")
+	}
+}

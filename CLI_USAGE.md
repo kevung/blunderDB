@@ -1554,7 +1554,7 @@ Display database metadata and statistics.
 **Options:**
 - `--db` - Path to the database file (required)
 - `--format` - Output format: `text` or `json` (default: text)
-- `--estimate` - Answer at once on a very large database: beyond 200,000 rows a count is an estimate (listed in `approximate`), and the blunders are not counted. Default: every row is counted
+- `--estimate` - Answer at once on a very large database: beyond 200,000 rows a count is an estimate (listed in `approximate`), and the blunders are counted only when their cached count still holds. Default: every row is counted; the blunder count is cached in the database and recounted after any write that can change it
 
 **Examples:**
 ```bash
@@ -3607,7 +3607,7 @@ Options:
   -db string
     	Path to the database file (required)
   -estimate
-    	Estimate the tables beyond 200000 rows instead of counting them, and skip the blunders there (default: count every row)
+    	Estimate the tables beyond 200000 rows instead of counting them, and skip the blunders there unless their cached count still holds (default: count every row)
   -format string
     	Output format: text, json (default "text")
 

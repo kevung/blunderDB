@@ -18,7 +18,7 @@ func (cli *CLI) runInfo(args []string) error {
 	// Define flags
 	dbPath := infoCmd.String("db", "", "Path to the database file (required)")
 	format := infoCmd.String("format", "text", "Output format: text, json")
-	estimate := infoCmd.Bool("estimate", false, "Estimate the tables beyond 200000 rows instead of counting them, and skip the blunders there (default: count every row)")
+	estimate := infoCmd.Bool("estimate", false, "Estimate the tables beyond 200000 rows instead of counting them, and skip the blunders there unless their cached count still holds (default: count every row)")
 
 	infoCmd.Usage = func() {
 		fmt.Println("Usage: blunderdb info [options]")

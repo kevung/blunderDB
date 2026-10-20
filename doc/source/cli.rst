@@ -2561,8 +2561,11 @@ Affiche les métadonnées et les statistiques d'une base de données.
 * ``--estimate`` — Répond tout de suite sur une très grande base : au-delà de
   200 000 lignes, un nombre est une estimation (borne haute), listée dans
   ``approximate`` en JSON et précédée de « ≈ » en texte, et les blunders ne
-  sont pas comptés (pas de ``blunder_count``). Par défaut, toutes les lignes
-  sont comptées.
+  sont donnés que si leur décompte gardé en cache vaut encore (sinon pas de
+  ``blunder_count``). Par défaut, toutes les lignes sont comptées ; le
+  décompte des blunders est gardé en cache dans la base et refait après toute
+  écriture qui peut le changer (import, analyse, suppression, changement de
+  seuil).
 
 **Exemples:**
 

@@ -458,9 +458,11 @@ func testMetadataEstimatedCounts(t *testing.T, s storage.Storage) {
 	}
 	// Above it a backend may keep counting (a multi-tenant one has no cheap
 	// estimate) or estimate; either way an estimate is flagged, never silent.
+	// The blunders are not estimated: the count cached by the exact call above
+	// is still valid, so they are known, and exact.
 	if slices.Contains(est.Approximate, "positions") {
-		if est.Positions < n || est.BlundersKnown {
-			t.Fatalf("over the threshold: %+v, want at least %d positions and no blunders", est, n)
+		if est.Positions < n || !est.BlundersKnown || est.Blunders != 0 {
+			t.Fatalf("over the threshold: %+v, want at least %d positions and the cached 0 blunders", est, n)
 		}
 	} else if est.Positions != n || !est.BlundersKnown {
 		t.Fatalf("over the threshold, counted: %+v, want exactly %d positions and blunders known", est, n)
