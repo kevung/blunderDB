@@ -102,7 +102,8 @@ A violation is a bug even when every test passes.
 - **CLI/GUI/server parity**: logic goes on `Database` or the storage contract and is exposed to
   all three; never a mode-specific fork.
 - **Nothing is recorded on the recipient's side**: a watermark is written by the producer at
-  export; opening, reading or importing a database writes nothing (ADR-0007). Exports copy
+  export; opening, reading or importing a database writes nothing about who opened it or when —
+  only caches derived from its own rows, never exported (ADR-0007). Exports copy
   metadata through the `issuance.CarriedMetadataKeys` allow-list, never by exclusion.
 - **One equity scale leaves the engine**: money points at money play, normalised equity (±1 =
   the current cube) at a match score. The engine's internal scales never reach storage or
