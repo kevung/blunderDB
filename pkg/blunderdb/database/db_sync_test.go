@@ -209,11 +209,13 @@ func mergeWatched(t *testing.T, d *Database, folder string) []string {
 func snapshot(t *testing.T, d *Database) map[string]string {
 	t.Helper()
 	ctx := context.Background()
-	out, err := d.store.Metadata().Load(ctx, "")
+	// Counts first: it caches the blunder count in metadata, which Load
+	// would otherwise see in one snapshot and not the other.
+	counts, err := d.store.Metadata().Counts(ctx, "")
 	if err != nil {
 		t.Fatal(err)
 	}
-	counts, err := d.store.Metadata().Counts(ctx, "")
+	out, err := d.store.Metadata().Load(ctx, "")
 	if err != nil {
 		t.Fatal(err)
 	}

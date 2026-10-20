@@ -2177,6 +2177,12 @@ proxy placé devant lui décide. Une méthode dont le stockage n'a pas de route
 ``/v1`` (une transaction, un service de direction ou de transcription) répond
 une erreur interne qui la nomme.
 
+Un export incrémental (``"incremental": true``) par ``--backend remote``
+devient un export entier : ce stockage ne sait pas dire quand les transactions
+du démon sont finies, donc son repère ne s'établit jamais (voir
+:ref:`synchroniser_deux_machines`). Pour un export incrémental, appelez le
+démon directement.
+
 ``call`` sert les gestes de transcription sans drapeau : il travaille sur un
 fichier local, comme la CLI. Chaque appel est un processus neuf, donc sa propre
 session : le ``sessionId`` peut être omis, et il n'y a pas d'annulation d'un

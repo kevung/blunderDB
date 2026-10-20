@@ -47,7 +47,13 @@ et de quoi la recevoir sans geste.
    — levée quand le `xmin` de l'instantané courant l'atteint, ce qui couvre toute transaction
    ayant écrit, quel que soit son rôle — et les couples `(pid, xact_start)` de
    `pg_stat_activity` de la base, ce qui couvre une transaction qui a tiré une valeur de
-   séquence sans avoir encore d'identifiant de transaction. Une transaction longue retarde le
+   séquence sans avoir encore d'identifiant de transaction. Reste un trou théorique : une
+   transaction d'un autre rôle, sans droit de lecture sur sa ligne de `pg_stat_activity`
+   (`xact_start` y est nul), qui a tiré une valeur de séquence mais n'a pas encore de `xid` au
+   moment de la barrière. Ni l'une ni l'autre moitié ne la couvre : son `xid`, pris après,
+   dépasse le `xmax` retenu. Le démon écrit sous un rôle unique, que `pg_stat_activity` lui
+   montre toujours ; une écriture concurrente sous un autre rôle sort de ce modèle. Une
+   transaction longue retarde le
    repère, sans limite et sans perte ; une barrière illisible tient. Un moteur ni ordonné ni
    doté de barrière (`storage/remote`) n'établit jamais de repère : chaque export incrémental y
    emporte tout depuis le repère zéro. Le recouvrement coûte une refusion idempotente ; le trou
