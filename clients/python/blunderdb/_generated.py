@@ -730,6 +730,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/lessons.get — JSON."
         return self._call("/v1/lessons.get", payload)
 
+    def lessons_html(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/lessons.html — JSON."
+        return self._call("/v1/lessons.html", payload)
+
     def lessons_list(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/lessons.list — JSON."
         return self._call("/v1/lessons.list", payload)

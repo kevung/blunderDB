@@ -203,6 +203,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/lessons.delete                       JSON
      POST /v1/lessons.doneSteps                    JSON
      POST /v1/lessons.get                          JSON
+     POST /v1/lessons.html                         JSON
      POST /v1/lessons.list                         JSON
      POST /v1/lessons.removeStep                   JSON
      POST /v1/lessons.reorderSteps                 JSON

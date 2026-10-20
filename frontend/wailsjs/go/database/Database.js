@@ -862,6 +862,18 @@ export function LessonDoneSteps(arg1) {
   return window['go']['database']['Database']['LessonDoneSteps'](arg1);
 }
 
+export function LessonHTML(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['LessonHTML'](arg1, arg2, arg3);
+}
+
+export function LessonHTMLCtx(arg1, arg2, arg3, arg4) {
+  return window['go']['database']['Database']['LessonHTMLCtx'](arg1, arg2, arg3, arg4);
+}
+
+export function LessonPositionIDs(arg1) {
+  return window['go']['database']['Database']['LessonPositionIDs'](arg1);
+}
+
 export function ListAliases(arg1) {
   return window['go']['database']['Database']['ListAliases'](arg1);
 }

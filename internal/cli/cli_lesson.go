@@ -409,14 +409,17 @@ func (cli *CLI) runLessonReorder(args []string) error {
 func (cli *CLI) runLessonExport(args []string) error {
 	fs, dbPath := lessonFlagSet("export", "Export lessons, with the collections and positions their steps show, to a new database file.",
 		"blunderdb lesson export --db database.db --id 1 --out lesson.db --watermark \"Course of 12 March\"",
-		"blunderdb lesson export --db database.db --id 1,2 --out lessons.dbx --password secret")
+		"blunderdb lesson export --db database.db --id 1,2 --out lessons.dbx --password secret",
+		"blunderdb lesson export --db database.db --id 1 --html --out lesson.html --lang fr")
 	ids := fs.String("id", "", "Lesson ID(s) to export, comma-separated (required)")
-	out := fs.String("out", "", "Path of the database file to write (required)")
+	out := fs.String("out", "", "Path of the file to write (required)")
 	includeAnalysis := fs.Bool("analysis", true, "Include analyses")
 	includeComments := fs.Bool("comments", true, "Include comments")
 	watermark := fs.String("watermark", "", "Mark the exported file with where it comes from")
 	watermarkNote := fs.String("watermark-note", "", "Free text attached to the watermark (terms of use, contact)")
 	password := fs.String("password", "", "Encrypt the export into a protected .dbx file")
+	asHTML := fs.Bool("html", false, "Write one self-contained HTML page of the lesson (--id takes a single lesson) instead of a database; the page names the database's watermark origin at its foot")
+	lang := fs.String("lang", "en", "Language of the HTML page (fr, en, de, el, es, fi, it, ja, ru)")
 	if err := cli.lessonOpen(fs, dbPath, args); err != nil {
 		return err
 	}
@@ -433,6 +436,20 @@ func (cli *CLI) runLessonExport(args []string) error {
 		if _, err := cli.db.GetLesson(id); err != nil {
 			return fmt.Errorf("lesson with ID %d not found", id)
 		}
+	}
+	if *asHTML {
+		if len(lessonIDs) != 1 {
+			return fmt.Errorf("--html writes one lesson: give a single --id")
+		}
+		page, err := cli.db.LessonHTML(lessonIDs[0], *lang, nil)
+		if err != nil {
+			return fmt.Errorf("failed to build the lesson page: %w", err)
+		}
+		if err := os.WriteFile(*out, []byte(page), 0o644); err != nil {
+			return fmt.Errorf("write lesson page: %w", err)
+		}
+		fmt.Printf("Successfully exported lesson %d to %s\n", lessonIDs[0], *out)
+		return nil
 	}
 	_, err = cli.db.ExportDatabase(domain.ExportOptions{
 		ExportPath:      *out,

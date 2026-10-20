@@ -1443,7 +1443,11 @@ collection choisie dans la liste et une position : *Position courante* y
 attache la position affichée sur le plateau, *Détacher la position* l'en
 retire. *Enregistrer l'étape* écrit ses changements ; les flèches la déplacent
 d'un cran ; *Ajouter une étape* en ajoute une à la fin. *Lire* ferme l'éditeur
-et ouvre la leçon à sa première étape ; *Supprimer* efface la leçon et ses
+et ouvre la leçon à sa première étape ; *Exporter en page web* enregistre la
+leçon en un seul fichier HTML autonome (titre, description, chaque étape avec
+son texte et son plateau, l'analyse enregistrée de chaque position repliée
+comme une réponse de quiz, l'origine du filigrane en pied de page), à publier
+tel quel : il ne contient ni script ni appel réseau ; *Supprimer* efface la leçon et ses
 étapes, sans toucher aux collections ni aux positions qu'elles montraient. Les
 leçons se créent et se modifient aussi par la ligne de commande ou par l'API
 (:ref:`headless_lecons`).

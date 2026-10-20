@@ -860,6 +860,7 @@ nothing. Reading a lesson records nothing on the reader's side.
     --title "Timing" --text "Count the pips." --collection 3
 ./blunderDB lesson export --db database.db --id 1 --out lesson.dbx \
     --password secret --watermark "Course of 12 March"
+./blunderDB lesson export --db database.db --id 1 --html --out lesson.html
 ```
 
 ## Stats Command
@@ -3775,10 +3776,14 @@ Options:
     	Include comments (default true)
   -db string
     	Path to the database file (required)
+  -html
+    	Write one self-contained HTML page of the lesson (--id takes a single lesson) instead of a database; the page names the database's watermark origin at its foot
   -id string
     	Lesson ID(s) to export, comma-separated (required)
+  -lang string
+    	Language of the HTML page (fr, en, de, el, es, fi, it, ja, ru) (default "en")
   -out string
-    	Path of the database file to write (required)
+    	Path of the file to write (required)
   -password string
     	Encrypt the export into a protected .dbx file
   -watermark string
@@ -3789,6 +3794,7 @@ Options:
 Examples:
   blunderdb lesson export --db database.db --id 1 --out lesson.db --watermark "Course of 12 March"
   blunderdb lesson export --db database.db --id 1,2 --out lessons.dbx --password secret
+  blunderdb lesson export --db database.db --id 1 --html --out lesson.html --lang fr
 ```
 
 ### `blunderdb lesson list`

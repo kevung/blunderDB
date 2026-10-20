@@ -1243,7 +1243,12 @@ acceptent ``--format text`` (défaut) ou ``json``.
   [--password <mot de passe>]`` — Exporte une ou plusieurs leçons, avec les
   collections et les positions que leurs étapes montrent, vers un nouveau
   fichier de base ; avec ``--password``, le fichier est un ``.dbx`` protégé
-  (voir la commande ``export`` pour le filigrane).
+  (voir la commande ``export`` pour le filigrane). Avec ``--html`` (une seule
+  leçon, ``--lang fr|en|de|el|es|fi|it|ja|ru``), ``--out`` est une page HTML
+  autonome : titre, description, chaque étape avec son texte et son plateau,
+  l'analyse enregistrée de chaque position repliée comme une réponse de quiz,
+  et l'origine du filigrane de la base en pied de page, s'il y en a un. Le
+  fichier ne contient ni script ni adresse réseau.
 * ``done --step <id> [--undo]`` — Marque une étape comme faite dans cette base,
   ou retire la marque avec ``--undo`` : c'est la progression de celui qui lit
   la leçon, et aucun export ne l'emporte.

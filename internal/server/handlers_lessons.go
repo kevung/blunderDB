@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/report"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -41,6 +42,17 @@ type lessonReorderReq struct {
 	StepIDs  []int64 `json:"stepIds"`
 }
 
+// lessonHTMLReq asks for the standalone HTML document of a Lesson.
+type lessonHTMLReq struct {
+	ID int64 `json:"id"`
+	// Language is the document's language ("en" when empty or unknown).
+	Language string `json:"language"`
+}
+
+type lessonHTMLResp struct {
+	HTML string `json:"html"`
+}
+
 // lessonRoutes serve the Lessons (ADR-0066): read by any client, written by
 // the coach's own tools through the same store as the desktop and the CLI.
 func (s *Server) lessonRoutes() []route {
@@ -51,6 +63,12 @@ func (s *Server) lessonRoutes() []route {
 		})},
 		{http.MethodPost, "/v1/lessons.get", rpc(func(ctx context.Context, scope string, req idReq) (*domain.Lesson, error) {
 			return ls().Get(ctx, scope, req.ID)
+		})},
+		// The Lesson as one self-contained HTML page, from the generator the GUI
+		// and `lesson export --html` use.
+		{http.MethodPost, "/v1/lessons.html", rpc(func(ctx context.Context, scope string, req lessonHTMLReq) (lessonHTMLResp, error) {
+			html, err := report.BuildLesson(ctx, s.opts.Storage, scope, req.ID, req.Language, nil)
+			return lessonHTMLResp{HTML: html}, err
 		})},
 		// Idempotent: Create has no natural dedup key, so a retry would make a
 		// second, identically named Lesson.

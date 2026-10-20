@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/report"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -138,4 +139,56 @@ func (d *Database) LessonDoneSteps(lessonID int64) (map[int64]string, error) {
 		return err
 	})
 	return out, err
+}
+
+// LessonHTML renders the Lesson id as one self-contained HTML document (package
+// report), written in lang (English when it has no catalogue). diagrams maps a
+// position id to a ready SVG the caller drew itself, as the desktop app does
+// with renderPositionSVG in the board palette; a position it does not cover
+// gets the built-in diagram, and nil leaves every board to it. Nothing is
+// written to the database.
+func (d *Database) LessonHTML(id int64, lang string, diagrams map[int64]string) (string, error) {
+	return d.LessonHTMLCtx(context.Background(), id, lang, diagrams)
+}
+
+// LessonHTMLCtx is LessonHTML under ctx.
+func (d *Database) LessonHTMLCtx(ctx context.Context, id int64, lang string, diagrams map[int64]string) (string, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	var draw report.Diagrammer
+	if len(diagrams) > 0 {
+		draw = func(p *domain.Position) string {
+			if svg, ok := diagrams[p.ID]; ok && svg != "" {
+				return svg
+			}
+			return report.Diagram(p)
+		}
+	}
+	return report.BuildLesson(ctx, d.store, "", id, lang, draw)
+}
+
+// LessonPositionIDs lists the positions the Lesson id shows, Steps' own and the
+// first ones of their Collections, so a caller can draw their boards before
+// asking for the document.
+func (d *Database) LessonPositionIDs(id int64) ([]int64, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	ctx := context.Background()
+	l, err := d.store.Lessons().Get(ctx, "", id)
+	if err != nil {
+		return nil, err
+	}
+	var ids []int64
+	for _, st := range l.Steps {
+		if st.CollectionID > 0 {
+			got, err := d.store.Collections().PositionIDs(ctx, "", st.CollectionID, storage.ListOpts{Limit: report.MaxCollectionBoards})
+			if err == nil {
+				ids = append(ids, got...)
+			}
+		}
+		if st.PositionID > 0 {
+			ids = append(ids, st.PositionID)
+		}
+	}
+	return ids, nil
 }

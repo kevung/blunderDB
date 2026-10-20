@@ -3239,7 +3239,10 @@
         "detachPosition": "Irrota asema",
         "saveStep": "Tallenna vaihe",
         "removeStep": "Poista vaihe",
-        "addStep": "Lisää vaihe"
+        "addStep": "Lisää vaihe",
+        "exportHtml": "Vie verkkosivuna",
+        "htmlSaved": "Oppituntisivu tallennettu: {path}",
+        "htmlFailed": "Oppituntisivun vienti epäonnistui: {err}"
     },
     "duel": {
         "player1": "Pelaaja 1",

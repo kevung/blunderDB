@@ -3239,7 +3239,10 @@
         "detachPosition": "ポジションを外す",
         "saveStep": "ステップを保存",
         "removeStep": "ステップを削除",
-        "addStep": "ステップを追加"
+        "addStep": "ステップを追加",
+        "exportHtml": "Webページとして書き出す",
+        "htmlSaved": "レッスンのページを保存しました: {path}",
+        "htmlFailed": "レッスンのページを書き出せませんでした: {err}"
     },
     "duel": {
         "player1": "プレイヤー1",

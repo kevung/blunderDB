@@ -452,6 +452,12 @@ export function LastDecision(arg1:number):Promise<service.LastDecision>;
 
 export function LessonDoneSteps(arg1:number):Promise<Record<number, string>>;
 
+export function LessonHTML(arg1:number,arg2:string,arg3:Record<number, string>):Promise<string>;
+
+export function LessonHTMLCtx(arg1:context.Context,arg2:number,arg3:string,arg4:Record<number, string>):Promise<string>;
+
+export function LessonPositionIDs(arg1:number):Promise<Array<number>>;
+
 export function ListAliases(arg1:string):Promise<Array<storage.Alias>>;
 
 export function ListAnkiDeckFilteredPositionIDs(arg1:number,arg2:string,arg3:number,arg4:number):Promise<Array<number>>;

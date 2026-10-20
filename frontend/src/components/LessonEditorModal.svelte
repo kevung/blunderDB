@@ -19,6 +19,7 @@
     import { lessonEditorTargetStore } from '../stores/lessonStore.js';
     import { positionStore } from '../stores/positionStore.js';
     import { openLesson, refreshOpenLesson } from '../services/lessonService.js';
+    import { exportLessonHTML } from '../services/lessonHtmlService.js';
     import { confirmAction } from '../services/confirmService.js';
     import { logger } from '../utils/logger.js';
     import { t, translate } from '../i18n';
@@ -189,6 +190,7 @@
                 <div class="row">
                     <button type="button" onclick={saveLesson} disabled={!name.trim()}>{$t('lessonEditor.save')}</button>
                     <button type="button" onclick={read} disabled={steps.length === 0}>{$t('lessonEditor.read')}</button>
+                    <button type="button" onclick={() => exportLessonHTML(selectedId)} disabled={steps.length === 0}>{$t('lessonEditor.exportHtml')}</button>
                     <button type="button" class="danger" onclick={remove}>{$t('lessonEditor.delete')}</button>
                 </div>
 

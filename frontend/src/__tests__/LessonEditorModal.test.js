@@ -23,6 +23,7 @@ const api = vi.hoisted(() => ({
 }));
 vi.mock('../../wailsjs/go/database/Database.js', () => api);
 vi.mock('../services/lessonService.js', () => ({ openLesson: vi.fn(), refreshOpenLesson: vi.fn() }));
+vi.mock('../services/lessonHtmlService.js', () => ({ exportLessonHTML: vi.fn() }));
 vi.mock('../services/confirmService.js', () => ({ confirmAction: vi.fn(async () => true) }));
 
 import LessonEditorModal from '../components/LessonEditorModal.svelte';

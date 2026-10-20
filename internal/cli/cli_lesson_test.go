@@ -122,3 +122,40 @@ func TestCLI_LessonProgress(t *testing.T) {
 		t.Fatalf("progress after undo = %+v", rows)
 	}
 }
+
+// `lesson export --html` writes one page that stands alone: the Step's text
+// escaped, a board per position, no script and no network address.
+func TestCLI_LessonExportHTML(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	collID, _ := seedCollection(t, cli, "Primes", 2)
+	run := func(args ...string) string {
+		t.Helper()
+		return captureStdout(t, func() {
+			if err := cli.Run(append([]string{"lesson"}, append(args, "--db", dbPath)...)); err != nil {
+				t.Fatalf("lesson %v: %v", args, err)
+			}
+		})
+	}
+	run("create", "--name", "Primes <b>")
+	run("add-step", "--lesson", "1", "--title", "Série", "--text", "A & B", "--collection", itoa64(collID))
+	out := filepath.Join(t.TempDir(), "lecon.html")
+	run("export", "--id", "1", "--html", "--lang", "fr", "--out", out)
+	raw, err := os.ReadFile(out)
+	if err != nil {
+		t.Fatal(err)
+	}
+	page := string(raw)
+	for _, want := range []string{`lang="fr"`, "Primes &lt;b&gt;", "A &amp; B", "<svg", "Série"} {
+		if !strings.Contains(page, want) {
+			t.Errorf("page lacks %q", want)
+		}
+	}
+	if strings.Count(page, "<svg") < 2 {
+		t.Errorf("want a board per position of the collection, got %d", strings.Count(page, "<svg"))
+	}
+	for _, bad := range []string{"<script", "src=", "href=", "url("} {
+		if strings.Contains(page, bad) {
+			t.Errorf("page is not self-contained: %q", bad)
+		}
+	}
+}

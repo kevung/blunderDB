@@ -3239,7 +3239,10 @@
         "detachPosition": "Detach the position",
         "saveStep": "Save the step",
         "removeStep": "Remove the step",
-        "addStep": "Add a step"
+        "addStep": "Add a step",
+        "exportHtml": "Export as a web page",
+        "htmlSaved": "Lesson page saved: {path}",
+        "htmlFailed": "Could not export the lesson page: {err}"
     },
     "duel": {
         "player1": "Player 1",

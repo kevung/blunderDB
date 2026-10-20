@@ -3239,7 +3239,10 @@
         "detachPosition": "Détacher la position",
         "saveStep": "Enregistrer l'étape",
         "removeStep": "Retirer l'étape",
-        "addStep": "Ajouter une étape"
+        "addStep": "Ajouter une étape",
+        "exportHtml": "Exporter en page web",
+        "htmlSaved": "Page de la leçon enregistrée : {path}",
+        "htmlFailed": "Export de la page de leçon impossible : {err}"
     },
     "duel": {
         "player1": "Joueur 1",
