@@ -101,3 +101,41 @@ func TestHandOverImportBatch_MovesTheOpenBatch(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+// A vacuum replaces the file under every handle of the library: refused while
+// a borrowed handle runs a job or an import, and no import starts during it.
+func TestVacuum_RefusedWhileABorrowedHandleWrites(t *testing.T) {
+	bound, _ := openTemp(t, "a.db")
+	lent, err := Borrow(bound)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var busy *BusyError
+	release, err := lent.acquireJob(context.Background(), JobGammonNet, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := bound.Vacuum(); !errors.As(err, &busy) || busy.Job != JobGammonNet {
+		t.Fatalf("vacuum during a borrowed batch: %v, want busy: gammonnet", err)
+	}
+	release()
+	_, done := lent.beginCancellableImport()
+	if _, err := bound.Vacuum(); !errors.As(err, &busy) || busy.Job != "import" {
+		t.Fatalf("vacuum during a borrowed import: %v, want busy: import", err)
+	}
+	done()
+
+	rel, err := bound.acquireVacuum()
+	if err != nil {
+		t.Fatal(err)
+	}
+	ctx, end := lent.beginCancellableImport()
+	if ctx.Err() == nil {
+		t.Error("an import started during a vacuum")
+	}
+	end()
+	rel()
+	if _, err := bound.Vacuum(); err != nil {
+		t.Fatalf("vacuum once idle: %v", err)
+	}
+}

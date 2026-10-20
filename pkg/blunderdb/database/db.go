@@ -281,9 +281,23 @@ func (d *Database) beginCancellableImport() (context.Context, func()) {
 		cancel()
 		return ctx, func() {}
 	}
+	g := d.gateLocked()
+	g.mu.Lock()
+	if g.job != nil && g.job.name == JobVacuum {
+		// The file is being replaced: nothing written now would survive.
+		g.mu.Unlock()
+		d.cancelMu.Unlock()
+		cancel()
+		return ctx, func() {}
+	}
+	g.imports++
+	g.mu.Unlock()
 	d.importCancel = cancel
 	d.cancelMu.Unlock()
 	return ctx, func() {
+		g.mu.Lock()
+		g.imports--
+		g.mu.Unlock()
 		d.cancelMu.Lock()
 		d.importCancel = nil
 		d.cancelMu.Unlock()

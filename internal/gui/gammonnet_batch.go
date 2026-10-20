@@ -100,7 +100,11 @@ func (a *App) runGammonNetBatch(group, ply int, queued bool, run batchRun) {
 	if a.db == nil {
 		return
 	}
-	group, db, err := a.borrowLibrary(group)
+	// libs.mu until the batch is registered: a group closed meanwhile finds
+	// it to stop.
+	a.libs.mu.Lock()
+	defer a.libs.mu.Unlock()
+	group, db, err := a.borrowLibraryLocked(group)
 	if err != nil {
 		a.emitBatch("gammonnet-batch:error", map[string]any{"message": err.Error(), "group": group})
 		return
@@ -111,6 +115,7 @@ func (a *App) runGammonNetBatch(group, ply int, queued bool, run batchRun) {
 	a.roMu.Lock()
 	if !queued && a.rolloutBatchRunning() {
 		a.roMu.Unlock()
+		_ = db.Close()
 		a.emitBatch("gammonnet-batch:error", map[string]any{"message": (&database.BusyError{Job: database.JobRollout}).Error(), "group": group})
 		return
 	}

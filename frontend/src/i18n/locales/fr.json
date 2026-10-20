@@ -1730,6 +1730,7 @@
         "importedPositionSaved": "Position et analyse importées enregistrées avec succès",
         "pastedPositionSaved": "Position et analyse collées enregistrées avec succès",
         "importDone": "Import terminé : {succeeded} importées, {skipped} ignorées, {failed} échouées",
+        "importBusy": "Un import est déjà en cours : attendez sa fin avant d'en lancer un autre",
         "confirmDeletePosition": "Supprimer cette position et son analyse associée ?",
         "searching": "Recherche…",
         "searchingElapsed": "Recherche… {seconds} s (Échap pour annuler)",

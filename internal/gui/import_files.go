@@ -92,12 +92,18 @@ func (a *App) ImportFiles(paths []string, background bool) (ImportFilesSummary, 
 		s.Group = group
 		return s, err
 	}
-	group, lent, err := a.borrowLibrary(0)
+	// Under libs.mu, so that the bound handle still carries the group the
+	// batch was opened in, and a close of that group finds the import.
+	a.libs.mu.Lock()
+	group, lent, err := a.borrowLibraryLocked(0)
 	if err != nil {
+		a.libs.mu.Unlock()
 		return ImportFilesSummary{Group: group}, err
 	}
 	database.HandOverImportBatch(a.db, lent)
-	s, err := a.importOn(group, lent, paths)
+	done := a.imports.add(group, lent)
+	a.libs.mu.Unlock()
+	s, err := a.importOn(group, lent, paths, done)
 	s.BatchClosed = true
 	if err != nil {
 		// The batch has moved and is closed: an error past this point is
@@ -112,21 +118,24 @@ func (a *App) ImportFiles(paths []string, background bool) (ImportFilesSummary, 
 // a borrowed handle and in a batch of its own named source: what a watched
 // folder brings in for a group the user has left.
 func (a *App) ImportFilesIn(group int, paths []string, source string) (ImportFilesSummary, error) {
-	group, lent, err := a.borrowLibrary(group)
+	a.libs.mu.Lock()
+	group, lent, err := a.borrowLibraryLocked(group)
 	if err != nil {
+		a.libs.mu.Unlock()
 		return ImportFilesSummary{Group: group}, err
 	}
+	done := a.imports.add(group, lent)
+	a.libs.mu.Unlock()
 	if _, err := lent.BeginImportBatch(source, "mixed"); err != nil {
 		slog.Warn("could not open an import batch; importing without one", "err", err)
 	}
-	return a.importOn(group, lent, paths)
+	return a.importOn(group, lent, paths, done)
 }
 
-// importOn runs the import on lent, a borrowed handle, closes its batch,
-// refreshes the planner statistics and lets the handle go.
-func (a *App) importOn(group int, lent *database.Database, paths []string) (ImportFilesSummary, error) {
+// importOn runs the import on lent, a borrowed handle registered by done,
+// closes its batch, refreshes the planner statistics and lets the handle go.
+func (a *App) importOn(group int, lent *database.Database, paths []string, done func()) (ImportFilesSummary, error) {
 	defer lent.Close() // lets the borrowed library go; closes nothing
-	done := a.imports.add(group, lent)
 	defer done()
 	out, err := lent.ImportFiles(paths, database.ImportFilesOptions{
 		OnProgress: func(p ingest.BatchProgress) { a.emitBatch(importProgressEvent, importProgress{p, group}) },

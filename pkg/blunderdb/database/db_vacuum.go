@@ -37,7 +37,15 @@ type VacuumResult struct {
 // sqlite.Storage.Vacuum — the daemon's, which shares its pool — is the
 // fallback when the file cannot be replaced. This wrapper takes d.mu
 // exclusively: VACUUM rewrites the whole file and must not overlap a reader.
+// It also takes the library's job slot, refused while a job or an import runs
+// on any handle of the library (Borrow): those write through the shared pool
+// without d.mu, and the swap closes it under them.
 func (d *Database) Vacuum() (VacuumResult, error) {
+	release, err := d.acquireVacuum()
+	if err != nil {
+		return VacuumResult{}, err
+	}
+	defer release()
 	d.mu.Lock()
 	defer d.mu.Unlock()
 

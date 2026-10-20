@@ -53,3 +53,7 @@ export const fileImportMinimizedStore = writable(false);
 // The library group the file import in flight writes into: its progress and its report belong to
 // that group, shown when it is on screen.
 export const fileImportGroupStore = writable(0);
+
+// A file import is in flight: one at a time, since its progress, report and cancel are these
+// stores. A second one is refused; the watched folder waits for it to end.
+export const fileImportBusyStore = writable(false);

@@ -299,6 +299,7 @@ export const OUTSIDE = [
     'fileImportProgressStore',
     'fileImportMinimizedStore',
     'fileImportGroupStore',
+    'fileImportBusyStore',
     // The group machinery.
     'groupIdsStore',
     'parkedGroupsStore',

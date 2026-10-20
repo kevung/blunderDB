@@ -3,6 +3,7 @@ import { EventsOn } from '../../wailsjs/runtime/runtime.js';
 import { StartFolderWatch, StopFolderWatch, FolderWatchStatus, ImportFilesIn } from '../../wailsjs/go/gui/App.js';
 import { GetWatchFolder, SaveWatchFolder } from '../../wailsjs/go/main/Config.js';
 import { watchStatusStore, watchImportNoticeStore } from '../stores/watchStore.js';
+import { fileImportBusyStore } from '../stores/importModalStore.js';
 import { databaseLoadedStore } from '../stores/databaseStore';
 import { importWatchedFiles, maybeAutoAnalyzeAfterImport } from './importService.js';
 import { activeGroupId, groupIdsStore, groupOnScreen, noteGroupJob } from '../stores/groupActivityStore.js';
@@ -41,6 +42,10 @@ export async function initFolderWatch() {
         // Les fichiers d'un groupe qui revient à l'écran partent.
         activeGroupId.subscribe(() => {
             void drainPending();
+        });
+        // Un import de l'utilisateur en cours : la file attend sa fin.
+        fileImportBusyStore.subscribe((busy) => {
+            if (!busy) void drainPending();
         });
     }
     await applyConfiguredWatch();
@@ -134,6 +139,8 @@ function nextBatch() {
             continue;
         }
         if (groupOnScreen(group)) {
+            // Un seul import à la fois : ses compteurs et son annulation sont ceux de l'écran.
+            if (get(fileImportBusyStore)) continue;
             pending.delete(group);
             return { group, files, onScreen: true };
         }

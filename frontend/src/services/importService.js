@@ -65,7 +65,8 @@ import {
     fileImportInterruptedStore,
     fileImportProgressStore,
     fileImportMinimizedStore,
-    fileImportGroupStore
+    fileImportGroupStore,
+    fileImportBusyStore
 } from '../stores/importModalStore.js';
 import { activeGroupId, groupOnScreen, noteGroupJob, importForegroundStore } from '../stores/groupActivityStore.js';
 import { setStatusBarMessage } from './databaseService.js';
@@ -813,11 +814,23 @@ async function importTxtFileBatch(filePath, { quiet = false } = {}) {
 // caller can show the last one), null when the batch contained any match.
 /** @param {string[]} files */
 export async function importMultipleFiles(files) {
+    if (refuseConcurrentImport()) return null;
+    const group = get(activeGroupId);
     try {
         return await importMultipleFilesCore(files);
     } finally {
-        await maybeAutoAnalyzeAfterImport(get(fileImportGroupStore));
+        await maybeAutoAnalyzeAfterImport(group);
     }
+}
+
+/**
+ * One file import at a time, whatever its group: its progress, report and cancel live in the
+ * import stores. A second one is refused with a message rather than mixed into the first.
+ */
+function refuseConcurrentImport() {
+    if (!get(fileImportBusyStore)) return false;
+    setStatusBarMessage(tMsg('status.importBusy'));
+    return true;
 }
 
 /**
@@ -834,10 +847,11 @@ export async function importWatchedFiles(files) {
     const merged = await mergeWatchedLibraries(files.filter(isLibrary));
     const others = files.filter((f) => !isLibrary(f));
     if (others.length === 0) return merged;
+    const group = get(activeGroupId);
     try {
         await importMultipleFilesCore(others, { quiet: true });
     } finally {
-        await maybeAutoAnalyzeAfterImport(get(fileImportGroupStore));
+        await maybeAutoAnalyzeAfterImport(group);
     }
     const r = get(fileImportResultsStore);
     return { succeeded: r.succeeded + merged.succeeded, skipped: r.skipped + merged.skipped, failed: r.failed + merged.failed };
@@ -980,11 +994,22 @@ export async function pickFilesToResume() {
 // or same content) are not read again.
 /** @param {number} batchID @param {string[]} files */
 export async function resumeImportBatch(batchID, files) {
+    if (refuseConcurrentImport()) return null;
     return importMultipleFilesCore(files, { resumeBatchID: batchID });
 }
 
 /** @param {string[]} files @param {{ quiet?: boolean, resumeBatchID?: number }} [options] */
-async function importMultipleFilesCore(files, { quiet = false, resumeBatchID = 0 } = {}) {
+async function importMultipleFilesCore(files, options = {}) {
+    fileImportBusyStore.set(true);
+    try {
+        return await runFileImport(files, options);
+    } finally {
+        fileImportBusyStore.set(false);
+    }
+}
+
+/** @param {string[]} files @param {{ quiet?: boolean, resumeBatchID?: number }} [options] */
+async function runFileImport(files, { quiet = false, resumeBatchID = 0 } = {}) {
     fileImportCancelled = false;
     fileImportTotalFilesStore.set(files.length);
     fileImportCurrentIndexStore.set(0);

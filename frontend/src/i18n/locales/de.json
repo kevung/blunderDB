@@ -1730,6 +1730,7 @@
         "importedPositionSaved": "Importierte Position und Analyse erfolgreich gespeichert",
         "pastedPositionSaved": "Eingefügte Position und Analyse erfolgreich gespeichert",
         "importDone": "Import abgeschlossen: {succeeded} importiert, {skipped} übersprungen, {failed} fehlgeschlagen",
+        "importBusy": "Ein Import läuft bereits: Warten Sie sein Ende ab, bevor Sie einen weiteren starten",
         "confirmDeletePosition": "Diese Position und die zugehörige Analyse löschen?",
         "searching": "Suche läuft…",
         "searchingElapsed": "Suche… {seconds} s (Esc zum Abbrechen)",

@@ -18,6 +18,9 @@ const (
 	// JobExchange is the desktop swapping the open library between two
 	// handles (Exchange): short, but no job may start across it.
 	JobExchange = "exchange"
+	// JobVacuum is the compaction replacing the file: no job and no import,
+	// on any handle of the library, may write across it.
+	JobVacuum = "vacuum"
 )
 
 // ErrDatabaseBusy matches every BusyError under errors.Is.
@@ -67,6 +70,41 @@ type jobSlot struct {
 type jobGate struct {
 	mu  sync.Mutex
 	job *jobSlot
+	// imports counts the imports in flight on the library's handles; a
+	// vacuum waits for none.
+	imports int
+}
+
+// acquireVacuum takes the library's slot for a vacuum, refused while a job
+// or an import runs on any handle of the library: one on a borrowed handle
+// writes through a connection the vacuum is about to close.
+func (d *Database) acquireVacuum() (func(), error) {
+	d.cancelMu.Lock()
+	defer d.cancelMu.Unlock()
+	if d.exchanging {
+		return nil, &BusyError{Job: JobExchange}
+	}
+	g := d.gateLocked()
+	g.mu.Lock()
+	defer g.mu.Unlock()
+	if g.job != nil {
+		return nil, &BusyError{Job: g.job.name}
+	}
+	if g.imports > 0 {
+		return nil, &BusyError{Job: "import"}
+	}
+	ctx, cancel := context.WithCancel(context.Background())
+	j := &jobSlot{name: JobVacuum, ctx: ctx, done: make(chan struct{}), by: d}
+	g.job = j
+	return func() {
+		g.mu.Lock()
+		if g.job == j {
+			g.job = nil
+		}
+		g.mu.Unlock()
+		cancel()
+		close(j.done)
+	}, nil
 }
 
 // gateLocked returns d's job gate, made on first use; the caller holds cancelMu.

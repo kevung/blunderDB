@@ -166,6 +166,13 @@ func (a *App) exchangeLocked(other *database.Database) error {
 func (a *App) borrowLibrary(group int) (int, *database.Database, error) {
 	a.libs.mu.Lock()
 	defer a.libs.mu.Unlock()
+	return a.borrowLibraryLocked(group)
+}
+
+// borrowLibraryLocked is borrowLibrary for a caller holding libs.mu, which
+// registers the job before letting go: a group closed meanwhile (under the
+// same lock) then finds the job to stop.
+func (a *App) borrowLibraryLocked(group int) (int, *database.Database, error) {
 	a.libs.init()
 	if group == 0 {
 		group = a.libs.active
@@ -262,13 +269,15 @@ func (a *App) ActivateLibraryGroup(id int) error {
 // one, its library is closed and the group stays, empty. The group's jobs are
 // stopped first: they write through handles borrowed from that library.
 func (a *App) CloseLibraryGroup(id int) error {
-	if id != a.activeGroup() {
-		a.stopGroupJobs(id, shutdownJobGrace)
-		a.stopFolderWatchOf(id)
-	}
 	a.libs.mu.Lock()
 	defer a.libs.mu.Unlock()
 	a.libs.init()
+	if id != a.libs.active {
+		// Under libs.mu: no job can borrow this library between the stop
+		// and the close.
+		a.stopGroupJobs(id, shutdownJobGrace)
+		a.stopFolderWatchOf(id)
+	}
 	if id == a.libs.active {
 		if len(a.libs.parked) > 0 {
 			return errors.New("activate another library group before closing the active one")
