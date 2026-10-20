@@ -280,7 +280,7 @@ func TestRenderResults_Formats(t *testing.T) {
 	if err := cli.renderResults(&xgidBuf, one, "xgid"); err != nil {
 		t.Fatalf("renderResults xgid: %v", err)
 	}
-	if got := strings.TrimSpace(xgidBuf.String()); strings.Count(got, ":") != 9 || strings.Contains(got, "\n") {
+	if got := strings.TrimSpace(xgidBuf.String()); !strings.HasPrefix(got, "XGID=") || strings.Count(got, ":") != 9 || strings.Contains(got, "\n") {
 		t.Errorf("xgid output is not one XGID per position: %q", got)
 	}
 }
@@ -298,13 +298,16 @@ func TestSearch_MachineFormatsOwnStdout(t *testing.T) {
 	if !json.Valid(bytes.TrimSpace([]byte(out))) {
 		t.Errorf("stdout is not only JSON:\n%s", out)
 	}
+	if !strings.Contains(out, `"xgid": "XGID=`) {
+		t.Errorf("json rows carry no prefixed XGID:\n%s", out)
+	}
 	out = captureStdout(t, func() {
 		if err := cli.Run([]string{"search", "--db", dbPath, "--format", "xgid", "--limit", "3"}); err != nil {
 			t.Errorf("search xgid: %v", err)
 		}
 	})
 	lines := strings.Split(strings.TrimSpace(out), "\n")
-	if len(lines) != 3 || strings.Count(lines[0], ":") != 9 {
+	if len(lines) != 3 || !strings.HasPrefix(lines[0], "XGID=") {
 		t.Errorf("want 3 XGID lines, got %q", out)
 	}
 }

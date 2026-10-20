@@ -1630,6 +1630,9 @@ client avant d'injecter le sien :
 dit quoi (« 128 positions, 3 matchs ») ; ``--on-conflict skip`` passe outre et
 laisse la déduplication par empreinte Zobrist fusionner les positions.
 
+``migrate`` copie aussi les leçons, avec leurs étapes dans l'ordre ; une étape
+renvoie vers les collections et les positions déplacées.
+
 Ce que ``migrate`` **ne copie pas**, et qu'il annonce en fin de course avec le
 compte exact : les paquets Anki et leurs cartes, la bibliothèque de filtres,
 les historiques de recherche et de commandes, et l'état de session. Ce sont des

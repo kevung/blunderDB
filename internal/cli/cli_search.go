@@ -13,7 +13,6 @@ import (
 	"text/tabwriter"
 	"time"
 
-	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/searchquery"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -346,7 +345,7 @@ func (cli *CLI) renderResults(w io.Writer, positions []Position, format string) 
 			// Get analysis if available
 			analysis, err := cli.db.LoadAnalysis(pos.ID)
 			p := pos
-			result.XGID = domain.EncodeXGID(&p)
+			result.XGID = "XGID=" + cli.storedOrEncodedXGID(&p)
 			if err == nil && analysis != nil {
 				if analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0 {
 					result.BestMove = analysis.CheckerAnalysis.Moves[0].Move
@@ -366,7 +365,7 @@ func (cli *CLI) renderResults(w io.Writer, positions []Position, format string) 
 	case "xgid":
 		for _, pos := range positions {
 			p := pos
-			fmt.Fprintln(w, domain.EncodeXGID(&p))
+			fmt.Fprintln(w, "XGID="+cli.storedOrEncodedXGID(&p))
 		}
 
 	default: // table format

@@ -33,12 +33,28 @@ func TestRunCarriesLessons(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	// Positions saved in the destination first would shift ids if the remap were skipped.
+	for i := 0; i < 2; i++ {
+		p := domain.InitializePosition()
+		p.DecisionType = domain.CheckerAction
+		p.Dice = [2]int{3 + i, 1}
+		if _, err := src.Positions().Save(ctx, "", &p); err != nil {
+			t.Fatal(err)
+		}
+	}
+	posList := []int64{}
+	for p, err := range src.Positions().List(ctx, "", storage.ListOpts{}) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		posList = append(posList, p.ID)
+	}
 	lid, err := src.Lessons().Create(ctx, "", "Bearoff", "d")
 	if err != nil {
 		t.Fatal(err)
 	}
 	for _, title := range []string{"one", "two"} {
-		if _, err := src.Lessons().AddStep(ctx, "", lid, domain.LessonStep{Title: title, CollectionID: cid}); err != nil {
+		if _, err := src.Lessons().AddStep(ctx, "", lid, domain.LessonStep{Title: title, CollectionID: cid, PositionID: posList[len(posList)-1]}); err != nil {
 			t.Fatal(err)
 		}
 	}
@@ -61,5 +77,49 @@ func TestRunCarriesLessons(t *testing.T) {
 	c, err := dst.Collections().Get(ctx, "", l.Steps[0].CollectionID)
 	if err != nil || c.Name != "second" {
 		t.Fatalf("step points at %+v (%v), want the migrated collection %q", c, err, "second")
+	}
+}
+
+func TestRunCarriesLessonStepPosition(t *testing.T) {
+	ctx := context.Background()
+	open := func() storage.Storage {
+		s, err := sqlite.Open(ctx, ":memory:", nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() { s.Close() })
+		if err := s.Migrate(ctx); err != nil {
+			t.Fatal(err)
+		}
+		return s
+	}
+	src, dst := open(), open()
+	a := domain.InitializePosition()
+	a.DecisionType = domain.CheckerAction
+	a.Dice = [2]int{2, 1}
+	b := a
+	b.Dice = [2]int{6, 5}
+	if _, err := src.Positions().Save(ctx, "", &a); err != nil {
+		t.Fatal(err)
+	}
+	bid, err := src.Positions().Save(ctx, "", &b)
+	if err != nil {
+		t.Fatal(err)
+	}
+	lid, _ := src.Lessons().Create(ctx, "", "L", "")
+	if _, err := src.Lessons().AddStep(ctx, "", lid, domain.LessonStep{Title: "s", PositionID: bid}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Run(ctx, src, dst, "", Options{}); err != nil {
+		t.Fatal(err)
+	}
+	ls, _ := dst.Lessons().List(ctx, "")
+	l, err := dst.Lessons().Get(ctx, "", ls[0].ID)
+	if err != nil || len(l.Steps) != 1 || l.Steps[0].PositionID == 0 {
+		t.Fatalf("step lost its position: %+v, %v", l, err)
+	}
+	got, err := dst.Positions().Load(ctx, "", l.Steps[0].PositionID)
+	if err != nil || got.Dice != [2]int{6, 5} {
+		t.Fatalf("step points at %+v (%v), want the 6-5 position", got, err)
 	}
 }
