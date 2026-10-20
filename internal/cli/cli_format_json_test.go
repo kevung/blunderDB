@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"strings"
 	"testing"
 )
 
@@ -278,5 +279,32 @@ func TestRenderResults_Formats(t *testing.T) {
 	var xgidBuf bytes.Buffer
 	if err := cli.renderResults(&xgidBuf, one, "xgid"); err != nil {
 		t.Fatalf("renderResults xgid: %v", err)
+	}
+	if got := strings.TrimSpace(xgidBuf.String()); strings.Count(got, ":") != 9 || strings.Contains(got, "\n") {
+		t.Errorf("xgid output is not one XGID per position: %q", got)
+	}
+}
+
+func TestSearch_MachineFormatsOwnStdout(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	if err := cli.Run([]string{"import", "--db", dbPath, "--type", "match", "--file", testdataPath("test.xg")}); err != nil {
+		t.Fatalf("import: %v", err)
+	}
+	out := captureStdout(t, func() {
+		if err := cli.Run([]string{"search", "--db", dbPath, "--format", "json", "--limit", "3"}); err != nil {
+			t.Errorf("search json: %v", err)
+		}
+	})
+	if !json.Valid(bytes.TrimSpace([]byte(out))) {
+		t.Errorf("stdout is not only JSON:\n%s", out)
+	}
+	out = captureStdout(t, func() {
+		if err := cli.Run([]string{"search", "--db", dbPath, "--format", "xgid", "--limit", "3"}); err != nil {
+			t.Errorf("search xgid: %v", err)
+		}
+	})
+	lines := strings.Split(strings.TrimSpace(out), "\n")
+	if len(lines) != 3 || strings.Count(lines[0], ":") != 9 {
+		t.Errorf("want 3 XGID lines, got %q", out)
 	}
 }

@@ -287,12 +287,14 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 			mg := &gg.Moves[mi]
 			if mg.Position != nil {
 				played := &storage.PlayedActions{CheckerMove: mg.Move.CheckerMove, CubeAction: mg.Move.CubeAction, Position: mg.Position}
-				posID, err := savePositionWithAnalyses(commentCtx, tx, scope, mg.Position, played, mg.Analyses, mg.Comments, g.CommentOrigin, createdHere)
+				posID, created, err := savePositionCreated(commentCtx, tx, scope, mg.Position, played, mg.Analyses, mg.Comments, g.CommentOrigin, createdHere)
 				if err != nil {
 					return res, err
 				}
 				mg.Move.PositionID = posID
-				res.SavedPositions++
+				if created {
+					res.SavedPositions++
+				}
 				counter.Positions++
 			}
 			if !enrich {
@@ -367,9 +369,17 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 // the import) or edited at the same depth must survive it. A position the
 // rewrite creates is recorded in createdHere and merged as an import would.
 func savePositionWithAnalyses(ctx context.Context, tx storage.Tx, scope string, pos *domain.Position, played *storage.PlayedActions, analyses []*domain.PositionAnalysis, comments []string, origin domain.CommentOrigin, createdHere map[int64]bool) (int64, error) {
+	id, _, err := savePositionCreated(ctx, tx, scope, pos, played, analyses, comments, origin, createdHere)
+	return id, err
+}
+
+// savePositionCreated is savePositionWithAnalyses, also saying whether the
+// position was a new row, so a count of "new positions" excludes the ones
+// deduplication matched.
+func savePositionCreated(ctx context.Context, tx storage.Tx, scope string, pos *domain.Position, played *storage.PlayedActions, analyses []*domain.PositionAnalysis, comments []string, origin domain.CommentOrigin, createdHere map[int64]bool) (int64, bool, error) {
 	posID, created, err := tx.Positions().SaveCreated(ctx, scope, pos)
 	if err != nil {
-		return 0, err
+		return 0, false, err
 	}
 	if created && createdHere != nil {
 		createdHere[posID] = true
@@ -407,7 +417,7 @@ func savePositionWithAnalyses(ctx context.Context, tx storage.Tx, scope string, 
 			}
 			return cur
 		}); err != nil {
-			return posID, err
+			return posID, created, err
 		}
 	}
 	// Add only comments not already on the position: an enrich re-import, or
@@ -416,7 +426,7 @@ func savePositionWithAnalyses(ctx context.Context, tx storage.Tx, scope string, 
 		existing := map[string]bool{}
 		for c, err := range tx.Comments().ByPosition(ctx, scope, posID) {
 			if err != nil {
-				return posID, err
+				return posID, created, err
 			}
 			existing[c.Text] = true
 		}
@@ -425,12 +435,12 @@ func savePositionWithAnalyses(ctx context.Context, tx storage.Tx, scope string, 
 				continue
 			}
 			if _, err := tx.Comments().AddFrom(ctx, scope, posID, c, origin); err != nil {
-				return posID, err
+				return posID, created, err
 			}
 			existing[c] = true
 		}
 	}
-	return posID, nil
+	return posID, created, nil
 }
 
 // applyFlags raises the source-tool study mark on the positions of a graph

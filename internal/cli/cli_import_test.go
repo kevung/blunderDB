@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
+	"strings"
 	"testing"
 )
 
@@ -289,5 +291,21 @@ func TestCLI_ImportBatch_ResumeSkipsJournaledFiles(t *testing.T) {
 	}
 	if err := cli.Run([]string{"import", "--db", dbPath, "--type", "batch", "--dir", dir, "--resume", fmt.Sprint(id + 99)}); err == nil {
 		t.Error("resuming an unknown batch must fail")
+	}
+}
+
+// A match already held under another format is enriched in place; its
+// positions are known, so the report must not announce them as new.
+func TestImport_ReportCountsOnlyNewPositions(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	for _, f := range []string{"charlot1-charlot2_7p_2025-11-08-2305.xg", "charlot1-charlot2_7p_2025-11-08-2305.sgf"} {
+		out := captureStdout(t, func() {
+			if err := cli.Run([]string{"import", "--db", dbPath, "--type", "match", "--file", testdataPath(f)}); err != nil {
+				t.Fatalf("import %s: %v", f, err)
+			}
+		})
+		if strings.HasSuffix(f, ".sgf") && !regexp.MustCompile(`New positions\s+0\n`).MatchString(out) {
+			t.Errorf("second import announces known positions as new:\n%s", out)
+		}
 	}
 }
