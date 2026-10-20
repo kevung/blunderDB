@@ -1,11 +1,15 @@
 // Package storage defines the persistence contract for the blunderDB engine.
 //
-// The Storage interface is composed of per-family sub-interfaces. Two
+// The Storage interface is composed of per-family sub-interfaces. Three
 // concrete backends implement it under sibling sub-packages: storage/sqlite
-// (the desktop app and single-user CLI) and storage/postgres (the
-// multi-tenant `serve` daemon, with optional row-level security). Both are
-// held to the same shared contract suite in storage/storagetest. The
-// Database wrapper kept for the Wails GUI delegates to a Storage value.
+// (the desktop app and single-user CLI), storage/postgres (the
+// multi-tenant `serve` daemon, with optional row-level security), and
+// storage/remote (a client of a `serve` daemon's /v1 API, ADR-0095). The
+// first two are held to the whole shared contract suite in
+// storage/storagetest; storage/remote to the cases its routes cover, the
+// other methods answering a typed refusal, and it offers no transaction
+// across calls. The Database wrapper kept for the Wails GUI delegates to a
+// Storage value.
 //
 // Design notes:
 //   - Every method takes a context.Context for cancellation/deadlines.

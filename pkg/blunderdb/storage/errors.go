@@ -58,6 +58,12 @@ func (e *DuplicatePositionError) Error() string {
 	return fmt.Sprintf("this position already exists (id %d)", e.ExistingID)
 }
 
+// ErrorDetails hands the existing row's id to the daemon's error envelope,
+// so a client of /v1 — storage/remote among them — can name it too.
+func (e *DuplicatePositionError) ErrorDetails() map[string]any {
+	return map[string]any{"existingId": e.ExistingID}
+}
+
 // Is makes errors.Is(err, ErrConflict) true for a duplicate position.
 func (e *DuplicatePositionError) Is(target error) bool { return target == ErrConflict }
 
