@@ -102,14 +102,14 @@ describe('transferService', () => {
 
     it('drops the rows of a group that has since opened another file', async () => {
         addToBasket({ group: 1, kind: 'position', id: 7, label: '' });
-        tabGroupsStore.set([
+        /** @type {import("svelte/store").Writable<any>} */ (tabGroupsStore).set([
             { id: 1, path: '/libs/other.db' },
             { id: 2, path: '/libs/club.db' }
         ]);
         expect(await pourBasket(2)).toBe(false);
         expect(TransferToGroup).not.toHaveBeenCalled();
         expect(get(transferBasketStore)).toEqual([]);
-        tabGroupsStore.set([
+        /** @type {import("svelte/store").Writable<any>} */ (tabGroupsStore).set([
             { id: 1, path: '/libs/mine.db' },
             { id: 2, path: '/libs/club.db' }
         ]);
