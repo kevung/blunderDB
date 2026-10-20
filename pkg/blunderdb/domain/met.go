@@ -12,4 +12,7 @@ type MatchEquityTable struct {
 	Source    string `json:"source,omitempty"` // the .xml as imported
 	Current   bool   `json:"current"`
 	CreatedAt string `json:"created_at,omitempty"`
+	// AlreadyHeld is set on the answer to an import of values the library
+	// already holds, under the name Name.
+	AlreadyHeld bool `json:"already_held,omitempty"`
 }

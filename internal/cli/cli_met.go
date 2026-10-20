@@ -66,6 +66,13 @@ func (cli *CLI) runMET(args []string) error {
 		if err != nil {
 			return fmt.Errorf("met import failed: %w", err)
 		}
+		if formatLower == "text" {
+			if t.AlreadyHeld {
+				fmt.Printf("Table already held: #%d %s (same values)\n", t.ID, t.Name)
+			} else {
+				fmt.Printf("Imported: #%d %s\n", t.ID, t.Name)
+			}
+		}
 		if *makeCurrent {
 			if err := cli.db.SetCurrentMET(t.ID); err != nil {
 				return fmt.Errorf("met import failed: %w", err)

@@ -64,6 +64,18 @@ type gnubgMETDoc struct {
 	Post []gnubgMETTable `xml:"post-crawford-table"`
 }
 
+// ErrMETEncoding is a .xml declared in an encoding this importer does not read.
+var ErrMETEncoding = errors.New("unsupported match equity table encoding")
+
+// IsLatin1Label reports whether an XML encoding label names ISO-8859-1.
+func IsLatin1Label(label string) bool {
+	switch strings.ToLower(strings.TrimSpace(label)) {
+	case "iso-8859-1", "iso8859-1", "latin1", "latin-1", "l1":
+		return true
+	}
+	return false
+}
+
 // metCharsetReader accepts the encodings gnubg tables use. Anything else is
 // refused rather than resolved through a general charset registry, which would
 // link every CJK table of x/text into each binary.
@@ -71,7 +83,8 @@ func metCharsetReader(label string, input io.Reader) (io.Reader, error) {
 	switch strings.ToLower(strings.TrimSpace(label)) {
 	case "utf-8", "utf8", "us-ascii", "ascii":
 		return input, nil
-	case "iso-8859-1", "iso8859-1", "latin1", "latin-1", "l1":
+	}
+	if IsLatin1Label(label) {
 		raw, err := io.ReadAll(input)
 		if err != nil {
 			return nil, err
@@ -82,7 +95,22 @@ func metCharsetReader(label string, input io.Reader) (io.Reader, error) {
 		}
 		return strings.NewReader(string(runes)), nil
 	}
-	return nil, fmt.Errorf("unsupported encoding %q (UTF-8, US-ASCII and ISO-8859-1 are supported)", label)
+	return nil, fmt.Errorf("%w: the file is declared %q; only UTF-8, US-ASCII and ISO-8859-1 are read, save it as UTF-8", ErrMETEncoding, label)
+}
+
+// metDecodeError words a decoder failure. A file that is not UTF-8 and says
+// nothing about it is most often Latin-1 or UTF-16.
+func metDecodeError(data []byte, err error) error {
+	if i := strings.Index(err.Error(), ErrMETEncoding.Error()); i >= 0 {
+		return fmt.Errorf("%w%s", ErrMETEncoding, err.Error()[i+len(ErrMETEncoding.Error()):])
+	}
+	if bytes.HasPrefix(data, []byte{0xFF, 0xFE}) || bytes.HasPrefix(data, []byte{0xFE, 0xFF}) {
+		return fmt.Errorf("%w: the file is UTF-16; save it as UTF-8", ErrMETEncoding)
+	}
+	if strings.Contains(err.Error(), "invalid UTF-8") {
+		return fmt.Errorf("%w: the file is not valid UTF-8; if it is Latin-1, declare encoding=\"ISO-8859-1\" in its <?xml?> line, otherwise save it as UTF-8", ErrMETEncoding)
+	}
+	return fmt.Errorf("%w: %w", ErrMETFormat, err)
 }
 
 // ParseGnubgMET reads a gnubg match equity table (met.dtd). Parametric
@@ -95,7 +123,7 @@ func ParseGnubgMET(data []byte) (*MET, error) {
 	dec.CharsetReader = metCharsetReader
 	dec.Strict = false
 	if err := dec.Decode(&doc); err != nil {
-		return nil, fmt.Errorf("%w: %w", ErrMETFormat, err)
+		return nil, metDecodeError(data, err)
 	}
 	length, err := strconv.Atoi(strings.TrimSpace(doc.Info.Length))
 	if err != nil || length < 1 || length > MaxScore {

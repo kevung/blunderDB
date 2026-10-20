@@ -132,7 +132,7 @@ func TestParseGnubgMET_ReadsLatin1(t *testing.T) {
 
 func TestParseGnubgMET_RefusesOtherEncodings(t *testing.T) {
 	_, err := ParseGnubgMET(metWithEncoding(t, "shift_jis", "x"))
-	if !errors.Is(err, ErrMETFormat) || !strings.Contains(err.Error(), "unsupported encoding") {
-		t.Fatalf("err %v, want ErrMETFormat naming the unsupported encoding", err)
+	if !errors.Is(err, ErrMETEncoding) || !strings.Contains(err.Error(), "shift_jis") || !strings.Contains(err.Error(), "save it as UTF-8") {
+		t.Fatalf("err %v, want ErrMETEncoding naming shift_jis and the remedy", err)
 	}
 }

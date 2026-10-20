@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -38,7 +39,17 @@ func Import(ctx context.Context, s storage.Storage, scope string, data []byte, f
 	}
 	digest := m.Digest()
 	if digest == engine.KazarossXG2Digest() {
-		return &domain.MatchEquityTable{Name: BuiltInName, Digest: digest}, nil
+		return &domain.MatchEquityTable{Name: BuiltInName, Digest: digest, AlreadyHeld: true}, nil
+	}
+	held, err := s.MatchEquityTables().List(ctx, scope)
+	if err != nil {
+		return nil, err
+	}
+	for _, t := range held {
+		if t.Digest == digest {
+			t.AlreadyHeld = true
+			return t, nil
+		}
 	}
 	name := m.Name
 	if name == "" {
@@ -61,6 +72,26 @@ func Import(ctx context.Context, s storage.Storage, scope string, data []byte, f
 		}
 	}
 	return nil, fmt.Errorf("match equity table %d: %w", id, storage.ErrNotFound)
+}
+
+var xmlEncodingDecl = regexp.MustCompile(`^\s*<\?xml[^>]*\sencoding\s*=\s*["']([^"']+)["']`)
+
+// ImportText is Import for a file that reached the caller as text (a JSON
+// string): its characters are already decoded, so a Latin-1 declaration must
+// not decode them a second time. They go back to the bytes the declaration
+// describes. A caller able to carry bytes should send them to Import.
+func ImportText(ctx context.Context, s storage.Storage, scope, text, fallbackName string) (*domain.MatchEquityTable, error) {
+	data := []byte(text)
+	if m := xmlEncodingDecl.FindStringSubmatch(text); m != nil && engine.IsLatin1Label(m[1]) {
+		data = make([]byte, 0, len(text))
+		for _, r := range text {
+			if r > 0xFF {
+				return nil, fmt.Errorf("%w: %w: the file is declared ISO-8859-1 but holds %q; send its bytes as source_base64 or save it as UTF-8", storage.ErrInvalid, engine.ErrMETEncoding, r)
+			}
+			data = append(data, byte(r))
+		}
+	}
+	return Import(ctx, s, scope, data, fallbackName)
 }
 
 // ImportFile is Import from a path, named after the file when the table
