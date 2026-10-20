@@ -615,7 +615,17 @@ func (cli *CLI) runCollectionExport(args []string) error {
 // recorded with the analysis when there is one (it carries the match length the
 // source stated), else the encoding of the board. No "XGID=" prefix.
 func (cli *CLI) storedOrEncodedXGID(pos *Position) string {
-	if analysis, err := cli.db.LoadAnalysis(pos.ID); err == nil && analysis != nil && analysis.XGID != "" {
+	analysis, err := cli.db.LoadAnalysis(pos.ID)
+	if err != nil {
+		analysis = nil
+	}
+	return xgidWith(pos, analysis)
+}
+
+// xgidWith is storedOrEncodedXGID with the position's analysis already in
+// hand (nil when it has none).
+func xgidWith(pos *Position, analysis *PositionAnalysis) string {
+	if analysis != nil && analysis.XGID != "" {
 		return strings.TrimPrefix(analysis.XGID, "XGID=")
 	}
 	return xgidOf(pos)

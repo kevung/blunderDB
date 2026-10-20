@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"iter"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -30,14 +31,13 @@ func (d *Database) LoadPositionsByFiltersCoreCtx(
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
-	var positions []Position
-	var ids []int64
-	for pos, err := range d.store.Search().Find(ctx, "", f, opts) {
-		if err != nil {
-			return nil, nil, err
-		}
-		positions = append(positions, *pos)
-		ids = append(ids, pos.ID)
+	positions, err := collectFound(d.store.Search().Find(ctx, "", f, opts))
+	if err != nil {
+		return nil, nil, err
+	}
+	ids := make([]int64, len(positions))
+	for i := range positions {
+		ids[i] = positions[i].ID
 	}
 	analysisMap, err := d.store.Analyses().LoadMany(ctx, "", ids)
 	if err != nil {
@@ -57,14 +57,7 @@ func (d *Database) loadPositionsByFilters(ctx context.Context, f SearchFilters) 
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
-	var positions []Position
-	for pos, err := range d.store.Search().Find(ctx, "", f, storage.ListOpts{}) {
-		if err != nil {
-			return nil, err
-		}
-		positions = append(positions, *pos)
-	}
-	return positions, nil
+	return collectFound(d.store.Search().Find(ctx, "", f, storage.ListOpts{}))
 }
 
 // LoadPositionIDsByFilters returns the ids of positions matching f, in the
@@ -134,4 +127,28 @@ func (d *Database) indexOfPositionByFilters(ctx context.Context, f SearchFilters
 		return -1, err
 	}
 	return index, nil
+}
+
+// collectFound gathers a search's positions into one slice, copying each
+// once into a slice of the exact size: a wide search runs to a hundred
+// thousand positions of several hundred bytes, which growing a slice by
+// append would copy and reallocate again and again. The store hands over
+// positions it does not reuse (storage.SearchStore.Find), so holding the
+// pointers until the copy is safe.
+func collectFound(found iter.Seq2[*Position, error]) ([]Position, error) {
+	var ptrs []*Position
+	for pos, err := range found {
+		if err != nil {
+			return nil, err
+		}
+		ptrs = append(ptrs, pos)
+	}
+	if len(ptrs) == 0 {
+		return nil, nil
+	}
+	positions := make([]Position, len(ptrs))
+	for i, p := range ptrs {
+		positions[i] = *p
+	}
+	return positions, nil
 }

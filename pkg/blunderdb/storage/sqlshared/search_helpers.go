@@ -4,7 +4,9 @@ import (
 	"context"
 	"fmt"
 	"math"
+	"slices"
 	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -215,6 +217,33 @@ func multiPlayedSQL(db Execer, scope string) (string, []any) {
 		WHERE m1.position_id = p.id AND ` + tenant + ` AND m1.player = 1
 		  AND (COALESCE(m1.checker_move, '') <> COALESCE(m2.checker_move, '')
 		    OR ` + ActionCodeOrEmptySQL("m1.cube_action") + ` <> ` + ActionCodeOrEmptySQL("m2.cube_action") + `))`, args
+}
+
+// multiPlayedIDListSQL is multiPlayedSQL for a scan that reads the whole
+// result: the positions are listed once (multiPlayedPlayer1Positions) and
+// written into the text as an id list, so no chunk of the scan reruns a
+// subquery. The ids are integers formatted here, never user text. "" when no
+// position was played two ways.
+func multiPlayedIDListSQL(ctx context.Context, db Execer, scope string) (string, error) {
+	set, err := multiPlayedPlayer1Positions(ctx, db, scope)
+	if err != nil || len(set) == 0 {
+		return "", err
+	}
+	ids := make([]int64, 0, len(set))
+	for id := range set {
+		ids = append(ids, id)
+	}
+	slices.Sort(ids)
+	var b strings.Builder
+	b.WriteString("p.id IN (")
+	for i, id := range ids {
+		if i > 0 {
+			b.WriteByte(',')
+		}
+		b.WriteString(strconv.FormatInt(id, 10))
+	}
+	b.WriteByte(')')
+	return b.String(), nil
 }
 
 // decisionTimeBounds is the `tm` filter as a condition on the duration columns
