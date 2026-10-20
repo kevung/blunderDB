@@ -10,7 +10,7 @@
     import { autofocus } from '../utils/autofocus.js';
     import { collectionsStore, selectedCollectionStore, collectionPositionsStore, activeCollectionStore } from '../stores/collectionStore';
     import { openPanels, PANEL, closePanel, statusBarTextStore, statusBarModeStore, currentPositionIndexStore } from '../stores/uiStore';
-    import { databaseLoadedStore } from '../stores/databaseStore';
+    import { databaseLoadedStore, libraryChangedStore } from '../stores/databaseStore';
     import { positionStore, collectionSource } from '../stores/positionStore';
     import { analysisStore } from '../stores/analysisStore';
     import { lastSearchStore } from '../stores/searchHistoryStore';
@@ -209,8 +209,9 @@
         }
     });
 
-    // Load collections when database becomes available
+    // Load collections when a library becomes available, and again when another takes its place
     $effect(() => {
+        void $libraryChangedStore;
         if ($databaseLoadedStore) {
             loadCollections();
             loadPositionIndexMap();

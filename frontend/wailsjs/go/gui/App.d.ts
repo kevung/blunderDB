@@ -9,6 +9,8 @@ import {race} from '../models';
 import {training} from '../models';
 import {openingbook} from '../models';
 
+export function ActivateLibraryGroup(arg1:number):Promise<void>;
+
 export function AssistantAsk(arg1:gui.AssistantRequest):Promise<assistant.Turn>;
 
 export function AssistantCancel():Promise<void>;
@@ -42,6 +44,8 @@ export function CancelRollout():Promise<void>;
 export function CheckForUpdate():Promise<gui.UpdateCheckResult>;
 
 export function CheckVideoMux(arg1:string):Promise<gui.VideoMuxReport>;
+
+export function CloseLibraryGroup(arg1:number):Promise<void>;
 
 export function CollectImportableFiles(arg1:string):Promise<Array<string>>;
 
@@ -89,6 +93,10 @@ export function IsDirectory(arg1:string):Promise<boolean>;
 
 export function LegalMoves(arg1:domain.Position):Promise<Array<domain.LegalPlay>>;
 
+export function LibraryGroupHolding(arg1:string):Promise<number>;
+
+export function ListLibraryGroups():Promise<Array<gui.LibraryGroup>>;
+
 export function LooksLikeOGID(arg1:string):Promise<boolean>;
 
 export function MediaURL(arg1:string):Promise<string>;
@@ -106,6 +114,8 @@ export function OpenExportDatabaseDialog():Promise<string>;
 export function OpenExportMatDialog(arg1:string):Promise<string>;
 
 export function OpenImportDatabaseDialog():Promise<string>;
+
+export function OpenLibraryGroup(arg1:string):Promise<gui.LibraryGroup>;
 
 export function OpenLocalPage(arg1:string):Promise<void>;
 

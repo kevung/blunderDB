@@ -33,6 +33,7 @@ type Database struct {
 	searchCancels     map[int]context.CancelFunc          // in-flight searches, guarded by cancelMu
 	searchSeq         int                                 // key of the next entry of searchCancels
 	job               *jobSlot                            // the one job writing the library, guarded by cancelMu; nil when idle
+	exchanging        bool                                // an Exchange is moving the library; guarded by cancelMu
 	migrationProgress func(phase string, done, total int) // optional progress callback (GUI only)
 	// convertBatchSize overrides convertBatch, so that a test library of a
 	// few hundred rows still spans several transactions of a table pass.
@@ -105,6 +106,13 @@ type Database struct {
 	// mu to finish their last write). Guarded by switchMu.
 	switchMu     sync.Mutex
 	beforeSwitch func()
+	// openGuard refuses a file before Open or Setup touches anything; the
+	// desktop refuses there a file another library group holds. Guarded by
+	// switchMu.
+	openGuard func(path string) error
+	// path is the file open here, "" when none; guarded by mu. The desktop
+	// refuses to open one file in two library groups by it (OpenPath).
+	path string
 }
 
 // ErrDatabaseChanged refuses a background job's write once another database
@@ -117,6 +125,26 @@ func (d *Database) SetBeforeSwitch(fn func()) {
 	d.switchMu.Lock()
 	defer d.switchMu.Unlock()
 	d.beforeSwitch = fn
+}
+
+// SetOpenGuard registers fn on d, asked before every OpenDatabase and
+// SetupDatabase: an error refuses the file and leaves the open one in place.
+// nil clears it. A function, not a method, so the Wails binding of *Database
+// does not grow: the webview must not be able to clear the guard.
+func SetOpenGuard(d *Database, fn func(path string) error) {
+	d.switchMu.Lock()
+	defer d.switchMu.Unlock()
+	d.openGuard = fn
+}
+
+func (d *Database) guardOpen(path string) error {
+	d.switchMu.Lock()
+	fn := d.openGuard
+	d.switchMu.Unlock()
+	if fn == nil {
+		return nil
+	}
+	return fn(path)
 }
 
 // switchFile runs the beforeSwitch hook; the caller then takes mu and calls
@@ -240,6 +268,13 @@ func (d *Database) IsReadOnly() bool {
 func (d *Database) beginCancellableImport() (context.Context, func()) {
 	ctx, cancel := context.WithCancel(context.Background())
 	d.cancelMu.Lock()
+	if d.exchanging {
+		// The handle is about to carry another file: the import must not
+		// start on one library and write into the next.
+		d.cancelMu.Unlock()
+		cancel()
+		return ctx, func() {}
+	}
 	d.importCancel = cancel
 	d.cancelMu.Unlock()
 	return ctx, func() {
@@ -352,6 +387,7 @@ func (d *Database) Close() error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	d.bumpGeneration()
+	d.path = ""
 	d.releaseFileLock()
 	wasReadOnly := d.readOnly
 	d.readOnly = false
@@ -370,12 +406,16 @@ func (d *Database) Close() error {
 }
 
 func (d *Database) SetupDatabase(path string) (err error) {
+	if err := d.guardOpen(path); err != nil {
+		return err
+	}
 	d.switchFile()
 	d.forgetTranscriptSessions()
 	d.forgetDuels()
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	d.bumpGeneration()
+	d.path = ""
 
 	// Close the currently opened database, if any. Best-effort: the handle is
 	// replaced below regardless, but a failure deserves a log line.
@@ -404,7 +444,9 @@ func (d *Database) SetupDatabase(path string) (err error) {
 				d.db = nil
 			}
 			d.releaseFileLock()
+			return
 		}
+		d.path = path
 	}()
 
 	// The PRAGMAs (foreign_keys=ON, busy_timeout, WAL, …) travel in the DSN
@@ -450,12 +492,16 @@ func (d *Database) SetupDatabase(path string) (err error) {
 }
 
 func (d *Database) OpenDatabase(path string) (err error) {
+	if err := d.guardOpen(path); err != nil {
+		return err
+	}
 	d.switchFile()
 	d.forgetTranscriptSessions()
 	d.forgetDuels()
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	d.bumpGeneration()
+	d.path = ""
 
 	// Close the currently opened database, if any. Best-effort: the handle is
 	// replaced below regardless, but a failure deserves a log line.
@@ -479,7 +525,9 @@ func (d *Database) OpenDatabase(path string) (err error) {
 				d.db = nil
 			}
 			d.releaseFileLock()
+			return
 		}
+		d.path = path
 	}()
 
 	// The PRAGMAs (foreign_keys=ON, busy_timeout, WAL, …) travel in the DSN

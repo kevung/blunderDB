@@ -3504,5 +3504,14 @@
         "hint_analysis_legacy": "Kirjoittaa JSON-muodossa tallennetut analyysit binäärimuotoon",
         "hint_trash": "Roskakorin merkinnät",
         "hint_vacuum": "Tiedoston vapaat sivut, jotka tiivistys palauttaa"
+    },
+    "libraryGroups": {
+        "openInNewGroup": "Avaa kirjasto uudessa ryhmässä (Ctrl+Vaihto+O)",
+        "close": "Sulje kirjasto ja sen ryhmä",
+        "unnamed": "Ei tietokantaa",
+        "alreadyOpen": "{name} on jo auki: sen ryhmä näytetään",
+        "busy": "Tehtävä kirjoittaa aktiiviseen kirjastoon: odota sen valmistumista tai peruuta se ennen ryhmän vaihtoa",
+        "duel": "Kaksintaistelu on käynnissä: keskeytä tai päätä se ennen kirjaston vaihtamista",
+        "training": "Harjoitusistunto on käynnissä: päätä se ennen kirjaston vaihtamista"
     }
 }

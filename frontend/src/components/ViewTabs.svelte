@@ -1,5 +1,6 @@
 <script>
     import { viewStore } from '../stores/viewStore';
+    import { tabGroupsStore, activateGroup, closeGroup } from '../stores/libraryGroupStore.js';
     import { registerKeys } from '../services/keyDispatch.js';
     import { t } from '../i18n';
 
@@ -9,9 +10,26 @@
     let editingName = $state('');
     let editInput = $state();
 
-    /** @param {number} viewId */
-    function handleTabClick(viewId) {
-        switchTo(viewId);
+    // Several libraries open: the bar shows every group, each behind a header in its colour.
+    const grouped = $derived($tabGroupsStore.length > 1);
+    const tabCount = $derived($tabGroupsStore.reduce((n, g) => n + g.views.length, 0));
+
+    /**
+     * A tab of the group on screen switches view; a tab of another group brings its library and
+     * that view in one gesture.
+     * @param {number} groupId
+     * @param {number} viewId
+     * @param {boolean} activeGroup
+     */
+    function handleTabClick(groupId, viewId, activeGroup) {
+        if (activeGroup) switchTo(viewId);
+        else activateGroup(groupId, viewId);
+    }
+
+    // On demand: the database service pulls in the whole open flow, which the bar does not need
+    // until the user asks for a second library.
+    async function openInNewGroup() {
+        (await import('../services/databaseService.js')).openDatabaseInNewGroup();
     }
 
     /** @param {{ id: number, name: string }} view */
@@ -46,13 +64,15 @@
     // now focuses it) changes nothing that follows.
     /**
      * @param {KeyboardEvent} event
+     * @param {number} groupId
      * @param {number} viewId
+     * @param {boolean} activeGroup
      */
-    function handleTabKeydown(event, viewId) {
+    function handleTabKeydown(event, groupId, viewId, activeGroup) {
         if (event.target !== event.currentTarget) return; // rename field and close button own their keys
         if (event.key !== 'Enter') return;
         event.preventDefault();
-        handleTabClick(viewId);
+        handleTabClick(groupId, viewId, activeGroup);
     }
 
     /**
@@ -62,6 +82,15 @@
     function handleClose(event, viewId) {
         event.stopPropagation();
         closeView(viewId);
+    }
+
+    /**
+     * @param {MouseEvent} event
+     * @param {number} groupId
+     */
+    function handleCloseGroup(event, groupId) {
+        event.stopPropagation();
+        closeGroup(groupId);
     }
 
     /** @param {KeyboardEvent} event */
@@ -83,34 +112,60 @@
     $effect(() => registerKeys('viewTabs', handleKeydown));
 </script>
 
-<!-- A single view collapses the bar to the bare "+"; it expands with a second view. -->
-<div class="view-tabs" class:collapsed={$views.length <= 1}>
-    {#if $views.length > 1}
+<!-- A single view of a single library collapses the bar to the bare "+"; it expands with a second
+     view or a second library. -->
+<div class="view-tabs" class:collapsed={tabCount <= 1}>
+    {#if tabCount > 1}
         <div class="view-tab-list" role="tablist">
-            {#each $views as view, _i (view.id)}
-                <div
-                    class="view-tab"
-                    class:active={$activeViewId === view.id}
-                    role="tab"
-                    aria-selected={$activeViewId === view.id}
-                    tabindex="0"
-                    onclick={() => handleTabClick(view.id)}
-                    ondblclick={() => handleDoubleClick(view)}
-                    onkeydown={(e) => handleTabKeydown(e, view.id)}
-                >
-                    {#if editingId === view.id}
-                        <input bind:this={editInput} bind:value={editingName} class="rename-input" onblur={finishRename} onkeydown={handleRenameKeydown} />
-                    {:else}
-                        <span class="tab-name">{view.name}</span>
-                    {/if}
-                    <button class="close-btn" onclick={(e) => handleClose(e, view.id)} title={$t('viewTabs.closeView')}>&times;</button>
-                </div>
+            {#each $tabGroupsStore as group (group.id)}
+                {#if grouped}
+                    <div
+                        class="group-header group-color-{group.color}"
+                        class:active={group.active}
+                        role="button"
+                        tabindex="0"
+                        title={group.path}
+                        data-testid="library-group"
+                        data-group-id={group.id}
+                        onclick={() => activateGroup(group.id)}
+                        onkeydown={(e) => e.target === e.currentTarget && e.key === 'Enter' && activateGroup(group.id)}
+                    >
+                        <span class="group-name">{group.name || $t('libraryGroups.unnamed')}</span>
+                        <button class="close-btn" onclick={(e) => handleCloseGroup(e, group.id)} title={$t('libraryGroups.close')}>&times;</button>
+                    </div>
+                {/if}
+                {#each group.views as view (view.id)}
+                    {@const selected = group.active && $activeViewId === view.id}
+                    <div
+                        class="view-tab group-color-{group.color}"
+                        class:grouped
+                        class:active={selected}
+                        class:resting={!group.active && group.activeViewId === view.id}
+                        role="tab"
+                        aria-selected={selected}
+                        tabindex="0"
+                        data-group-id={group.id}
+                        onclick={() => handleTabClick(group.id, view.id, group.active)}
+                        ondblclick={() => group.active && handleDoubleClick(view)}
+                        onkeydown={(e) => handleTabKeydown(e, group.id, view.id, group.active)}
+                    >
+                        {#if group.active && editingId === view.id}
+                            <input bind:this={editInput} bind:value={editingName} class="rename-input" onblur={finishRename} onkeydown={handleRenameKeydown} />
+                        {:else}
+                            <span class="tab-name">{view.name}</span>
+                        {/if}
+                        {#if group.active && group.views.length > 1}
+                            <button class="close-btn" onclick={(e) => handleClose(e, view.id)} title={$t('viewTabs.closeView')}>&times;</button>
+                        {/if}
+                    </div>
+                {/each}
             {/each}
         </div>
     {/if}
     <button class="add-btn" onclick={() => addView()} title={$t('viewTabs.newView')}
-        >+{#if $views.length <= 1}<span class="add-label">{$t('viewTabs.newView')}</span>{/if}</button
+        >+{#if tabCount <= 1}<span class="add-label">{$t('viewTabs.newView')}</span>{/if}</button
     >
+    <button class="group-btn" data-testid="open-library-group" onclick={openInNewGroup} title={$t('libraryGroups.openInNewGroup')}>&#x29C9;</button>
 </div>
 
 <style>
@@ -218,5 +273,83 @@
 
     .add-btn:hover {
         color: var(--color-text);
+    }
+
+    .group-btn {
+        border: none;
+        background: none;
+        font-size: var(--font-size-base);
+        color: var(--color-text-muted);
+        cursor: pointer;
+        padding: 0 6px;
+        display: flex;
+        align-items: center;
+    }
+
+    .group-btn:hover {
+        color: var(--color-text);
+    }
+
+    /* A group: its header carries the library's name on its colour; its tabs a top edge of it. */
+    .group-header {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 0 6px 0 8px;
+        margin-left: 6px;
+        font-size: var(--font-size-small);
+        color: var(--color-surface);
+        background: var(--group-color);
+        opacity: 0.7;
+        cursor: pointer;
+        white-space: nowrap;
+        user-select: none;
+        border-radius: var(--radius) var(--radius) 0 0;
+    }
+
+    .group-header:first-child {
+        margin-left: 0;
+    }
+
+    .group-header.active {
+        opacity: 1;
+        font-weight: 600;
+    }
+
+    .group-header .close-btn {
+        color: inherit;
+    }
+
+    .group-name {
+        max-width: 14em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .view-tab.grouped {
+        box-shadow: inset 0 2px 0 var(--group-color);
+    }
+
+    .view-tab.resting {
+        color: var(--color-text);
+    }
+
+    .group-color-1 {
+        --group-color: var(--group-color-1);
+    }
+    .group-color-2 {
+        --group-color: var(--group-color-2);
+    }
+    .group-color-3 {
+        --group-color: var(--group-color-3);
+    }
+    .group-color-4 {
+        --group-color: var(--group-color-4);
+    }
+    .group-color-5 {
+        --group-color: var(--group-color-5);
+    }
+    .group-color-6 {
+        --group-color: var(--group-color-6);
     }
 </style>

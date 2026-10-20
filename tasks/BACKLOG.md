@@ -130,6 +130,14 @@ propre issue le jour où il est lancé.
   position (`Analyses().Load`) : N allers-retours sous PostgreSQL, à remplacer par un
   chargement par lot sur le contrat de stockage.
 
+- **Migration d'une base ouverte dans un nouveau groupe de bibliothèque : ni progression ni
+  annulation.** `OpenLibraryGroup` (`internal/gui/libraries.go`) ouvre le fichier sur un
+  `*Database` neuf : la migration qu'il déclenche ne passe pas par la poignée liée, donc
+  `CancelImport` ne l'atteint pas, et aucun rappel de progression n'est câblé (la poignée liée
+  n'en a pas non plus : `SetMigrationProgress` n'est appelé par aucun mode). Piste : une méthode
+  `App` qui annule l'ouverture en cours d'un groupe, et un émetteur Wails partagé par les deux
+  poignées.
+
 ## Ouvert — Moteur
 
 Les trois premiers items ne demandent pas de code dans blunderDB tant que gammonNet (amont) ou

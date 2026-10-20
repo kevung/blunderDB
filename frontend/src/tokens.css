@@ -99,4 +99,11 @@
     --space-3: 12px;
     --space-4: 16px;
     --radius: 4px;
+    /* Library groups (ViewTabs): one hue per open library, its tabs' top edge and header. */
+    --group-color-1: #3b6ea8;
+    --group-color-2: #b5652a;
+    --group-color-3: #3d8a5a;
+    --group-color-4: #8a4f9e;
+    --group-color-5: #a83b5c;
+    --group-color-6: #6b7a2e;
 }

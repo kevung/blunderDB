@@ -242,6 +242,52 @@ chaque vue.
 Les vues sont enregistrées avec l'état de session de la base de données et
 restaurées à sa réouverture.
 
+.. _groupes_bibliotheques:
+
+Plusieurs bibliothèques ouvertes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Plusieurs bases de données peuvent rester ouvertes en même temps. Chacune
+forme un **groupe** d'onglets : dans la barre, un en-tête de couleur porte le
+nom du fichier, suivi des vues de cette bibliothèque, dont le bord supérieur
+reprend la même couleur. Une seule bibliothèque est active à la fois : c'est
+elle que lisent et écrivent les panneaux, la recherche, les imports et
+l'assistant.
+
+* **Ouvrir une bibliothèque dans un nouveau groupe** : bouton *⧉* à droite
+  de la barre d'onglets, ou *CTRL-MAJ-O*. La bibliothèque active jusque-là
+  reste ouverte dans son groupe. *CTRL-O* remplace, lui, la bibliothèque du
+  groupe actif.
+
+* **Changer de bibliothèque** : cliquer un onglet d'un autre groupe active
+  sa bibliothèque et cette vue d'un seul geste ; cliquer l'en-tête du groupe
+  la ramène sur la vue où elle a été laissée. *CTRL-MAJ-PageUp* /
+  *CTRL-MAJ-PageDown* passent à la bibliothèque précédente / suivante ;
+  *CTRL-PageUp* / *CTRL-PageDown* (ou *MAJ-J* / *MAJ-K*) parcourent les vues
+  de tous les groupes à la suite.
+
+* **Fermer un groupe** : la croix de son en-tête ferme la bibliothèque et ses
+  vues. Fermer le groupe actif affiche son voisin.
+
+La bascule est immédiate : chaque groupe garde en mémoire ses vues, sa liste
+de positions, la position courante, la recherche en cours, les compteurs et
+le défilement du panneau, et les retrouve sans relire la base. Le travail en
+cours le suit aussi : un brouillon de transcription, une leçon, une révision
+Anki, la file d'étude et la Direction ouverte se retrouvent tels qu'ils ont
+été laissés. Ce qui a pu changer pendant l'absence (compteurs, liste des
+matchs) est relu juste après l'affichage, et les listes propres à chaque base
+(collections, tournois, paquets Anki, brouillons, Duels, historique de
+recherche, filtres enregistrés) sont relues dans la bibliothèque affichée.
+
+Un même fichier ne s'ouvre pas dans deux groupes : le rouvrir affiche le
+groupe qui le tient déjà. Tant qu'une tâche écrit dans la bibliothèque active
+(import, dossier surveillé, analyse par lots, rollout, affichage de tournoi),
+qu'un Duel est en cours ou qu'une séance d'entraînement n'est pas terminée,
+le changement de groupe est refusé avec un message dans la barre d'état.
+À la fermeture de blunderDB, seule la session de la bibliothèque active est
+enregistrée, et la liste des groupes ne l'est pas : au démarrage suivant,
+blunderDB rouvre la dernière base active.
+
 .. _configuration:
 
 Configuration

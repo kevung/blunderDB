@@ -100,6 +100,9 @@ type App struct {
 	display   displayHost
 	media     mediaHost
 	assistant assistantState
+
+	// libs are the libraries open in other groups (libraries.go).
+	libs libraryGroups
 }
 
 // NewApp creates a new App application struct.
@@ -119,6 +122,7 @@ func NewApp(db *database.Database) *App {
 				a.stopDisplayForSwitch()
 			}
 		})
+		database.SetOpenGuard(db, a.refuseHeldLibrary)
 	}
 	return a
 }

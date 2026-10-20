@@ -19,7 +19,7 @@
     import { cubeTurnability, isMoneyPosition } from '../utils/cubeDecision.js';
     import { playedMovePredicate, playedCubeActionPredicate } from '../utils/playedMarks.js';
     import { statusBarTextStore, activeTabStore } from '../stores/uiStore';
-    import { databaseLoadedStore } from '../stores/databaseStore';
+    import { databaseLoadedStore, libraryChangedStore } from '../stores/databaseStore';
     import { collectionsStore } from '../stores/collectionStore';
     import { positionsStore } from '../stores/positionStore';
     import { listOriginStore } from '../stores/listOriginStore.js';
@@ -243,6 +243,7 @@
     // Reload and auto-sync all decks when the tab becomes active, and put the
     // current review card back on the board when returning mid-review.
     $effect(() => {
+        void $libraryChangedStore;
         if ($activeTabStore === 'anki' && databaseLoaded) {
             anki.syncAllDecksAndReload();
             if (viewMode === 'review' && reviewCard) anki.showCard(reviewCard);

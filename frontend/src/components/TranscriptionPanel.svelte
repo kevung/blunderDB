@@ -22,7 +22,7 @@
     import { t, tMsg } from '../i18n';
     import { setStatusBarMessage } from '../services/databaseService.js';
     import { logger } from '../utils/logger.js';
-    import { databaseLoadedStore } from '../stores/databaseStore.js';
+    import { databaseLoadedStore, libraryChangedStore } from '../stores/databaseStore.js';
     import { activeTabStore, statusBarModeStore } from '../stores/uiStore.js';
     import { positionStore } from '../stores/positionStore.js';
     import { selectedMoveStore } from '../stores/analysisStore.js';
@@ -240,6 +240,7 @@
     // Refresh on tab entry and library change: another file's drafts must not survive an open.
     $effect(() => {
         void $databaseLoadedStore;
+        void $libraryChangedStore;
         if ($activeTabStore === 'transcription') refresh();
     });
 

@@ -10,6 +10,11 @@ import (
 // frontend, so a newly exported method cannot become reachable from the
 // webview without a deliberate update here.
 var boundAppMethods = []string{
+	"ActivateLibraryGroup",
+	"CloseLibraryGroup",
+	"LibraryGroupHolding",
+	"ListLibraryGroups",
+	"OpenLibraryGroup",
 	"AssistantAsk",
 	"AssistantCancel",
 	"AssistantConfirm",

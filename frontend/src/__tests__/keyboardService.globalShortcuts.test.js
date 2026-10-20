@@ -26,17 +26,11 @@ vi.mock('../services/importService.js', () => ({
 
 const selectPreviousView = vi.fn();
 const selectNextView = vi.fn();
-vi.mock('../stores/viewStore.js', async (importOriginal) => {
-    const actual = await importOriginal();
-    return {
-        ...actual,
-        viewStore: {
-            ...must(actual).viewStore,
-            selectPreviousView: (/** @type {any[]} */ ...a) => selectPreviousView(...a),
-            selectNextView: (/** @type {any[]} */ ...a) => selectNextView(...a)
-        }
-    };
-});
+// The tab keys walk the tabs of every library group (cycleTab): -1 is the previous tab.
+vi.mock('../stores/libraryGroupStore.js', async (importOriginal) => ({
+    ...must(await importOriginal()),
+    cycleTab: (/** @type {number} */ step) => (step < 0 ? selectPreviousView() : selectNextView())
+}));
 
 import { handleKeyDown, isAlwaysGlobal, panelKeyGuard } from '../services/keyboardService.js';
 import { activeTabStore } from '../stores/uiStore.js';

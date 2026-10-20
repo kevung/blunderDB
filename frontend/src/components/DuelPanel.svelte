@@ -10,7 +10,7 @@
     import { get } from 'svelte/store';
     import { t } from '../i18n';
     import { duelStore, duelListStore, duelAnimatingStore, duelHoldsBoardStore } from '../stores/duelStore.js';
-    import { databasePathStore } from '../stores/databaseStore.js';
+    import { databasePathStore, libraryChangedStore } from '../stores/databaseStore.js';
     import { statusBarModeStore } from '../stores/uiStore.js';
     import { positionStore } from '../stores/positionStore.js';
     import {
@@ -70,6 +70,12 @@
     let choices = $derived(cadenceChoices(form, cadences));
     let chosen = $derived(choices.find((c) => c.name === form.cadence) ?? null);
     let awayOptions = $derived(awayChoices(form.matchLength));
+
+    // Another library brought forward: its Duels, not the previous one's.
+    const libraryAtMount = untrack(() => $libraryChangedStore);
+    $effect(() => {
+        if ($libraryChangedStore !== libraryAtMount) refreshDuels();
+    });
 
     onMount(async () => {
         refreshDuels();

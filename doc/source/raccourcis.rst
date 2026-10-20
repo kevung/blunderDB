@@ -20,6 +20,7 @@ Base de données
 
    "CTRL-N", "Créer une nouvelle base de données."
    "CTRL-O", "Ouvrir une base de données existante."
+   "CTRL-MAJ-O", "Ouvrir une base de données dans un nouveau groupe d'onglets, la base courante restant ouverte dans le sien."
    "CTRL-MAJ-I", "Fusionner une base de données dans celle-ci."
    "CTRL-MAJ-S", "Exporter la base de données."
    "CTRL-Q", "Fermer blunderDB."
@@ -181,8 +182,9 @@ Onglets de vues
 
    "CTRL-T", "Créer une nouvelle vue (copie de la vue courante)."
    "CTRL-W", "Fermer la vue courante."
-   "CTRL-Page préc., MAJ-J", "Vue précédente."
-   "CTRL-Page suiv., MAJ-K", "Vue suivante."
+   "CTRL-Page préc., MAJ-J", "Vue précédente, à travers les groupes : avant le premier onglet d'une bibliothèque vient le dernier de la précédente."
+   "CTRL-Page suiv., MAJ-K", "Vue suivante, à travers les groupes : après le dernier onglet d'une bibliothèque vient le premier de la suivante."
+   "CTRL-MAJ-Page préc. / CTRL-MAJ-Page suiv.", "Bibliothèque précédente / suivante, sur l'onglet où elle a été laissée."
    "CTRL-1 … CTRL-9", "Aller directement à la n-ième vue."
    "Double-clic sur l'onglet", "Renommer la vue."
 
