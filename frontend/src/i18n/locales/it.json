@@ -1304,6 +1304,7 @@
         "livingFrozen": "Raccolte dinamiche congelate (la loro query non è stata riportata): {names}",
         "livingOnManual": "Raccolte dinamiche non versate nella tua lista omonima: {names}",
         "unreadable": "Lasciato indietro (la sorgente è troppo vecchia per essere letta): {names}",
+        "analysesSkipped": "Analisi non unite ({count}): quella presente in questo database è illeggibile ed è stata lasciata com'era.",
         "dropToImport": "Rilascia i file per importarli",
         "reportNewPositions": "Posizioni nuove",
         "reportFlagged": "Segnate nel programma di origine",

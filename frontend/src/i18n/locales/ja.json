@@ -1304,6 +1304,7 @@
         "livingFrozen": "固定されたライブコレクション(クエリを引き継げませんでした):{names}",
         "livingOnManual": "同名のリストに追加されなかったライブコレクション:{names}",
         "unreadable": "取り込まれなかった項目(ソースが古すぎて読み取れません):{names}",
+        "analysesSkipped": "統合されなかった解析 ({count} 件)：このデータベースにある解析が読み取れないため、そのまま残しました。",
         "dropToImport": "ファイルをドロップしてインポート",
         "reportNewPositions": "新しい局面",
         "reportFlagged": "元のソフトでマーク済み",

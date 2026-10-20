@@ -205,7 +205,8 @@ async function handleImportCommitCore() {
             rencontres: result.rencontres ?? 0,
             livingCollectionsFrozen: result.livingCollectionsFrozen ?? [],
             livingCollectionsOnManual: result.livingCollectionsOnManual ?? [],
-            unreadable: result.unreadable ?? []
+            unreadable: result.unreadable ?? [],
+            analysesSkipped: result.analysesSkipped ?? 0
         });
         importModalModeStore.set('completed');
 

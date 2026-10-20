@@ -1304,6 +1304,7 @@
         "livingFrozen": "Living collections frozen (their query could not be carried over): {names}",
         "livingOnManual": "Living collections not poured into your list of the same name: {names}",
         "unreadable": "Left behind (the source is too old to read them): {names}",
+        "analysesSkipped": "Analyses not merged ({count}): the one held here could not be read, and was left as it was.",
         "dropToImport": "Drop files to import",
         "reportNewPositions": "New positions",
         "reportFlagged": "Flagged in the source tool",

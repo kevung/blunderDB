@@ -19,6 +19,19 @@ propre issue le jour où il est lancé.
 - **Décompte des gaffes de la barre d'état (`MetadataStore.blunderCount`, ~0,17 s par appel
   sur la même base)** : traité sur une autre branche ; à remesurer après sa fusion.
 
+- **Import/transfert sans les coups joués mais avec les matchs : colonnes calculées trop tôt.**
+  Le transfert et l'import d'une base (`ingest.MergeDBAnalysis`) écrivent les analyses avant
+  les matchs. Quand l'export ne replie pas les coups joués dans l'analyse
+  (`IncludePlayedMoves` à faux, `IncludeMatches` à vrai), les colonnes sont dérivées sans coup
+  joué : erreur nulle, blunder non compté, `is_cube_response` non levé ; les coups arrivent
+  ensuite sans les recalculer. `repair` les rattrape. Piste : re-dériver, à la fin de
+  `copyMatch`, les analyses des positions atteintes (un `Merge` identité par position), au prix
+  d'une lecture par position à chaque import de match.
+- **Bases ayant reçu un import de base avant la correction des colonnes d'analyse.** Leurs
+  analyses importées n'ont pas de colonnes dérivées (blunders non comptés, coups forcés comptés
+  comme décisions) ; `blunderdb repair` les remplit (doc : `cli.rst`, section *repair*). Rien ne
+  le fait à l'ouverture, par le contrat de `RepairDenormalisedColumns`.
+
 - **Colonnes dérivées du coup joué calculées avant l'appariement par plateau.**
   `engine.PlayedCandidate` apparie désormais le coup joué par le plateau qu'il laisse
   (`domain.PlayBoards`) : « 6/2 2/1 » qui frappe sur 2 n'est plus le « 6/5 5/1 » de même forme.

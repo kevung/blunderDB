@@ -174,7 +174,7 @@ func (im JSONImporter) Import(ctx context.Context, scope string, src Source, pro
 			if err != nil {
 				return sum, fmt.Errorf("ingest: position %d: %w", sum.SavedPositions+1, err)
 			}
-			if err := mergeDBAnalysis(ctx, tx, scope, id, b.Analysis, met); err != nil {
+			if _, err := MergeDBAnalysis(ctx, tx, scope, id, b.Analysis, met); err != nil {
 				return sum, err
 			}
 		}
