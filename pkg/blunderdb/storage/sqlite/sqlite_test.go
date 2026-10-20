@@ -105,7 +105,7 @@ func TestOpenReadOnly_ReadOnlyFolder(t *testing.T) {
 	if err := os.Chmod(dir, 0o555); err != nil {
 		t.Fatal(err)
 	}
-	defer os.Chmod(dir, 0o755)
+	defer func() { _ = os.Chmod(dir, 0o755) }()
 	if f, err := os.Create(filepath.Join(dir, "probe")); err == nil {
 		f.Close()
 		t.Skip("the folder stays writable (running as root)")
