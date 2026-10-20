@@ -138,6 +138,10 @@ export function GetMCPHostStatus() {
   return window['go']['gui']['App']['GetMCPHostStatus']();
 }
 
+export function GetTournamentDisplayStatus() {
+  return window['go']['gui']['App']['GetTournamentDisplayStatus']();
+}
+
 export function ImportFiles(arg1) {
   return window['go']['gui']['App']['ImportFiles'](arg1);
 }
@@ -342,12 +346,20 @@ export function StartRolloutIDs(arg1, arg2) {
   return window['go']['gui']['App']['StartRolloutIDs'](arg1, arg2);
 }
 
+export function StartTournamentDisplay(arg1) {
+  return window['go']['gui']['App']['StartTournamentDisplay'](arg1);
+}
+
 export function StartupFilePath() {
   return window['go']['gui']['App']['StartupFilePath']();
 }
 
 export function StopFolderWatch() {
   return window['go']['gui']['App']['StopFolderWatch']();
+}
+
+export function StopTournamentDisplay() {
+  return window['go']['gui']['App']['StopTournamentDisplay']();
 }
 
 export function SuggestWatchFolder() {

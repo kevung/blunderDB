@@ -11,6 +11,7 @@
     import { tMsg } from '../../i18n';
     import { logger } from '../../utils/logger.js';
     import { focusPanelUnlessTyping } from '../../utils/panelFocus.js';
+    import NetworkDisplay from './NetworkDisplay.svelte';
     import DirectionSettings from './DirectionSettings.svelte';
     import RencontrePanel from './RencontrePanel.svelte';
     import TableSettingsEditor from './TableSettingsEditor.svelte';
@@ -851,6 +852,7 @@
                     {onOpenPage}
                 />
                 {#if view}
+                    <NetworkDisplay tournamentId={view.tournamentId} />
                     {#if !view.rencontreId}
                         <TableSettingsEditor
                             testid="direction-tables-editor"

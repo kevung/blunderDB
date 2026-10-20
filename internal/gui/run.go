@@ -79,6 +79,7 @@ func shutdown(app *App, binds []interface{}) func(ctx context.Context) {
 	return func(context.Context) {
 		app.stopAssistant()
 		app.stopMCP()
+		app.stopDisplay()
 		app.stopMedia()
 		app.closing.Store(true)
 		app.stopBackgroundJobs(shutdownJobGrace)

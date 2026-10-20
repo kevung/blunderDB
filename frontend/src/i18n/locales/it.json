@@ -3035,6 +3035,21 @@
             "allLaunched": "Tutta la coda è avviata",
             "launched": "Proposta avviata",
             "forfeitWithdrawFailed": "Forfait registrato, ma il ritiro del giocatore non è riuscito."
+        },
+        "network": {
+            "title": "Mostra sulla rete del club",
+            "hint": "Il desktop serve la pagina di questo torneo — tabellone, accoppiamenti, risultati, classifica — in sola lettura ai telefoni della rete locale; scansionano il codice QR. La pagina si aggiorna da sola.",
+            "warning": "Nessuna password: chiunque su questa rete locale può leggere la pagina (nomi, accoppiamenti, risultati). Nulla può esservi modificato.",
+            "start": "Mostra in rete",
+            "stop": "Interrompi la visualizzazione",
+            "port": "Porta",
+            "url": "Indirizzo per i telefoni",
+            "openHere": "Apri su questa macchina",
+            "qr": "Codice QR dell'indirizzo della pagina",
+            "other": "La rete mostra già il torneo #{id}; mostrare questo lo sostituisce.",
+            "error": "Impossibile avviare la visualizzazione: {error}",
+            "address": "Rete",
+            "noLan": "Nessun indirizzo di rete locale: i telefoni non possono raggiungere questa macchina. Collegala alla rete del club, poi riavvia la visualizzazione."
         }
     },
     "palette": {

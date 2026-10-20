@@ -52,6 +52,7 @@ directory of each one).
 | [github.com/modelcontextprotocol/go-sdk](https://github.com/modelcontextprotocol/go-sdk) | v1.8.0 | MIT, new code Apache-2.0 (licensing transition stated in its `LICENSE`) | Model Context Protocol a Series of LF Projects, LLC (MIT part); the Go MCP SDK authors | MCP servers of the desktop app, the CLI and `serve` |
 | [github.com/shirou/gopsutil/v4](https://github.com/shirou/gopsutil) | v4.26.8 | BSD-3-Clause | (c) 2014 WAKAYAMA Shirou | Available memory before computing a bearoff table (desktop) |
 | [github.com/zalando/go-keyring](https://github.com/zalando/go-keyring) | v0.2.8 | MIT | (c) 2016 Zalando SE | Assistant API key in the system keyring (desktop) |
+| [github.com/skip2/go-qrcode](https://github.com/skip2/go-qrcode) | v0.0.0-20200617195104-da1b6568686e | MIT | (c) 2014 Tom Harwood | QR code of the tournament display address (desktop, not linked into `cmd/serve`) |
 | [github.com/PileOfCells/backgammon-tournoi](https://github.com/PileOfCells/backgammon-tournoi) | v0.5.2 | MIT | (c) 2026 Nicolas Harmand, Kévin Unger | Tournament direction rules |
 | [golang.org/x/crypto](https://pkg.go.dev/golang.org/x/crypto), `x/net`, `x/sys`, `x/text` | see `go.mod` | BSD-3-Clause | The Go Authors | Signed watermarks and encrypted export containers, OS calls, text collation |
 | Go standard library | 1.27 | BSD-3-Clause | The Go Authors | — |

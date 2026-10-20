@@ -265,17 +265,23 @@ La page web de consultation
 consultable depuis une tablette ou un téléphone, sans installer quoi que ce
 soit.
 
-Elle sait faire **trois choses**, et cette liste est la décision, pas une
+Elle sait faire **quatre choses**, et cette liste est la décision, pas une
 étape :
 
 * **consulter** une position, son analyse et son plateau ;
 * **chercher**, avec la même grammaire de jetons que la ligne de commande de
   l'application ;
-* **réviser** un paquet Anki — réponse dévoilée et note donnée.
+* **réviser** un paquet Anki — réponse dévoilée et note donnée ;
+* **afficher un tournoi**, en lecture seule : l'onglet *Tournoi* montre la page
+  d'affichage d'une Direction (arbre, appariements, résultats, classement), la
+  même que celle que le bureau écrit dans son dossier d'affichage, et la
+  rafraîchit toutes les dix secondes par lecture conditionnelle
+  (``If-None-Match`` : un 304 tant que rien n'a changé). ``/app/?tournoi=<id>``
+  n'affiche que ce tournoi, sans menu — l'adresse à projeter ou à partager.
 
 Elle ne sait pas éditer une position, importer, supprimer, gérer les
-collections, les matchs, les tournois ou la configuration, et elle ne le saura
-pas. Une fonctionnalité qui manque ici n'est pas un manque : c'est le
+collections, les matchs ou la configuration, ni saisir quoi que ce soit dans un
+tournoi, et elle ne le saura pas. Une fonctionnalité qui manque ici n'est pas un manque : c'est le
 périmètre.
 
 **Elle est éteinte par défaut, et ce défaut est la décision.** Le démon
@@ -283,6 +289,13 @@ n'authentifie personne : il fait confiance à l'en-tête ``X-Tenant-ID`` et doit
 tourner derrière un mandataire qui authentifie. Livrer une interface
 atteignable par un navigateur, allumée d'office, inviterait exactement le
 déploiement que cette règle interdit.
+
+Le bureau sert lui-même l'affichage d'un tournoi sur le réseau local, sans
+``serve`` : la Direction lance sur demande un serveur qui n'expose que la page
+web et ``directions.pageHtml`` pour le seul tournoi choisi, pose lui-même le
+tenant, et montre le QR code de l'adresse (voir le manuel, *L'affichage du
+tournoi*). Il n'authentifie personne non plus : quiconque est sur le réseau local
+lit la page.
 
 La page **n'envoie aucun tenant** : c'est le mandataire qui pose l'en-tête,
 comme pour n'importe quel autre client. En développement local, et là

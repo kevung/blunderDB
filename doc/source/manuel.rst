@@ -3094,6 +3094,25 @@ changement, et la page se recharge d'elle-même. Elle s'ouvre hors ligne, sur un
 second écran ou projetée, et ne charge aucune ressource extérieure. *Ouvrir dans
 le navigateur* l'affiche immédiatement.
 
+Les joueurs peuvent aussi suivre le tournoi sur leur téléphone. Dans les
+Réglages de la Direction, la rubrique **Afficher sur le réseau du club** lance un
+petit serveur web sur la machine du directeur (port 8770 par défaut, modifiable)
+et montre le **QR code** de son adresse, avec l'adresse en clair à côté : un
+téléphone connecté au même réseau le scanne et voit la page d'affichage de ce
+tournoi — arbre, appariements, résultats, classement. La page se met à jour seule
+toutes les dix secondes ; un résultat saisi y apparaît sans rien toucher.
+*Ouvrir sur cette machine* l'ouvre dans le navigateur du poste. *Arrêter
+l'affichage* ferme le serveur, qui s'arrête aussi à la fermeture de blunderDB.
+
+L'affichage est éteint tant que le directeur ne l'allume pas, et il est **en
+lecture seule** : il ne sert que la page de ce tournoi, aucune autre donnée de la
+base, et rien ne peut y être saisi. Il n'y a **aucun mot de passe** : quiconque
+est sur le réseau local peut lire la page (noms, appariements, résultats) — ce
+qu'un écran mural montre déjà à la salle. Sur une machine reliée à plusieurs
+réseaux, une liste propose ses adresses, celles des réseaux virtuels (conteneurs,
+VPN) en dernier. Sans réseau local, le panneau le dit et ne dessine pas de QR code.
+L'affichage s'arrête quand un autre fichier est ouvert, créé ou fermé.
+
 La **feuille d'appariements** se pose sur la table d'accueil : un clic sur
 *Imprimer la feuille* ouvre le dialogue d'impression du système. Une ligne par
 match — les deux joueurs, la longueur, la table, deux cases vides pour le score —

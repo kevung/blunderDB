@@ -92,6 +92,11 @@ type Database struct {
 	// guarded by mu. A background job remembers it at its start and writes
 	// nothing once it has moved: its positions belong to the previous file.
 	generation uint64
+	// storeEpoch counts the Storage values rebuildStore has made; guarded by mu.
+	// It moves on every open and also on a vacuum that swaps the file under the
+	// same path, which leaves generation alone so the running jobs keep writing
+	// but closes the connection the previous Storage borrowed.
+	storeEpoch uint64
 	// beforeSwitch runs before Open, Setup and Close take mu, so the GUI can
 	// stop and wait for the jobs writing the file about to go away (they need
 	// mu to finish their last write). Guarded by switchMu.
@@ -269,6 +274,7 @@ func (d *Database) CancelSearch() {
 // borrows the handle (sqlite.New): d.db stays owned by this Database.
 func (d *Database) rebuildStore() {
 	d.store = sqlite.New(d.db)
+	d.storeEpoch++
 }
 
 func NewDatabase() *Database {
