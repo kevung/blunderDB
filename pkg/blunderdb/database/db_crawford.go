@@ -3,6 +3,8 @@ package database
 import (
 	"context"
 	"fmt"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // RepairCrawfordSentinel rewrites the away score of every position that carries
@@ -15,12 +17,16 @@ import (
 //
 // Never automatic: it rehashes positions, and opening a file must not rewrite
 // stored identities.
-func (d *Database) RepairCrawfordSentinel() (int, error) {
+//
+// The report also counts the signed comments that no longer verify: a signature
+// covers the position's hash (ADR-0099), so rehashing a position leaves the
+// notes on it readable but unverified.
+func (d *Database) RepairCrawfordSentinel() (storage.CrawfordRepair, error) {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
 	if d.db == nil {
-		return 0, fmt.Errorf("no database is currently open")
+		return storage.CrawfordRepair{}, fmt.Errorf("no database is currently open")
 	}
-	return d.store.Positions().RepairCrawfordSentinel(context.Background(), "")
+	return storage.RepairCrawfordSentinel(context.Background(), d.store, "")
 }

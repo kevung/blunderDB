@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"strconv"
 	"testing"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
 // Two people annotate the same position: each comment keeps its author, and
@@ -60,6 +62,24 @@ func TestCLI_CommentAddListByAuthor(t *testing.T) {
 		}
 		if len(got) != 1 || got[0].Author != "Élodie" {
 			t.Errorf("--author %q = %+v", q, got)
+		}
+	}
+}
+
+// TestSignerLabel: a signature that cannot be read says so, instead of an
+// empty name and fingerprint.
+func TestSignerLabel(t *testing.T) {
+	for _, tc := range []struct {
+		in   *domain.CommentSigner
+		want string
+	}{
+		{nil, ""},
+		{&domain.CommentSigner{}, "(unreadable signature)"},
+		{&domain.CommentSigner{Name: "Coach", Fingerprint: "21FA-ECC9-77E0-EC62", Verified: true}, "Coach [21FA-ECC9-77E0-EC62]"},
+		{&domain.CommentSigner{Name: "Coach", Fingerprint: "21FA-ECC9-77E0-EC62"}, "Coach [21FA-ECC9-77E0-EC62] (unverified)"},
+	} {
+		if got := signerLabel(tc.in); got != tc.want {
+			t.Errorf("signerLabel(%+v) = %q, want %q", tc.in, got, tc.want)
 		}
 	}
 }

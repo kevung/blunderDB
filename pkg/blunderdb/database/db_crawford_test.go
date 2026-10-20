@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/issuance"
 
 	_ "modernc.org/sqlite"
 )
@@ -126,12 +127,30 @@ func TestRepairCrawfordSentinelRehashesPostCrawfordPositions(t *testing.T) {
 
 	_, staleHashBefore := awayAndHashOf(t, raw, staleID)
 
-	repaired, err := db.RepairCrawfordSentinel()
+	// The note was signed on the stale hash: the rehash leaves it unverified,
+	// and the repair says so.
+	coach, err := issuance.NewIdentity("Coach")
+	if err != nil {
+		t.Fatal(err)
+	}
+	sig, err := issuance.SealComment(coach, "the trailer doubles here", "", uint64(staleHashBefore))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := raw.Exec(`UPDATE comment SET signature = ? WHERE position_id = ?`, sig, staleID); err != nil {
+		t.Fatal(err)
+	}
+
+	rep, err := db.RepairCrawfordSentinel()
+	repaired, unverified := rep.Rehashed, rep.SignaturesUnverified
 	if err != nil {
 		t.Fatalf("RepairCrawfordSentinel: %v", err)
 	}
 	if repaired != 1 {
 		t.Fatalf("repaired %d positions, want 1 (only the post-Crawford one)", repaired)
+	}
+	if unverified != 1 {
+		t.Errorf("signed comments left unverified = %d, want 1", unverified)
 	}
 
 	away, hashAfter := awayAndHashOf(t, raw, staleID)
@@ -158,7 +177,8 @@ func TestRepairCrawfordSentinelRehashesPostCrawfordPositions(t *testing.T) {
 
 	// Idempotent: everything now says what it means, so a second pass is a
 	// pure scan.
-	again, err := db.RepairCrawfordSentinel()
+	againRep, err := db.RepairCrawfordSentinel()
+	again := againRep.Rehashed
 	if err != nil {
 		t.Fatalf("second RepairCrawfordSentinel: %v", err)
 	}
@@ -212,7 +232,8 @@ func TestRepairCrawfordSentinelMergesWithTheCorrectTwin(t *testing.T) {
 		t.Fatalf("insert comment: %v", err)
 	}
 
-	repaired, err := db.RepairCrawfordSentinel()
+	repairedRep, err := db.RepairCrawfordSentinel()
+	repaired := repairedRep.Rehashed
 	if err != nil {
 		t.Fatalf("RepairCrawfordSentinel: %v", err)
 	}
@@ -399,7 +420,8 @@ func TestRepairCrawfordSentinelOnePointMatch(t *testing.T) {
 	longDMPID := paste("the DMP after the Crawford game of a 7-point match", longDMP, dmp, 0)
 
 	_, hashBefore := awayAndHashOf(t, raw, pastedID)
-	repaired, err := db.RepairCrawfordSentinel()
+	repairedRep, err := db.RepairCrawfordSentinel()
+	repaired := repairedRep.Rehashed
 	if err != nil {
 		t.Fatalf("RepairCrawfordSentinel: %v", err)
 	}
@@ -420,7 +442,7 @@ func TestRepairCrawfordSentinelOnePointMatch(t *testing.T) {
 		t.Errorf("the DMP of a 7-point match was rewritten to %v", got)
 	}
 
-	if again, err := db.RepairCrawfordSentinel(); err != nil || again != 0 {
-		t.Errorf("second pass: repaired=%d err=%v, want 0 and no error", again, err)
+	if againRep, err := db.RepairCrawfordSentinel(); err != nil || againRep.Rehashed != 0 {
+		t.Errorf("second pass: repaired=%d err=%v, want 0 and no error", againRep.Rehashed, err)
 	}
 }

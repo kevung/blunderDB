@@ -18,9 +18,13 @@ import (
 // Dialect.TenantFilter / TenantColumns.
 type CommentStore struct {
 	DB Execer
-	// Unsigned reads a database that predates comment.signature (a file
-	// imported as it is, never migrated): every comment reads unsigned.
+	// Unsigned, NoOrigin and NoAuthor read a database that predates
+	// comment.signature, comment.origin or comment.author (a file imported as
+	// it is, never migrated): the missing column reads as its default —
+	// unsigned, origin unknown, no author.
 	Unsigned bool
+	NoOrigin bool
+	NoAuthor bool
 }
 
 var _ storage.CommentStore = (*CommentStore)(nil)
@@ -31,8 +35,22 @@ var _ storage.CommentStore = (*CommentStore)(nil)
 func (s *CommentStore) selectCols() string {
 	return `id, position_id, COALESCE(text,''), ` +
 		s.DB.TimestampText("created_at") + `, ` + s.DB.TimestampText("modified_at") +
-		`, COALESCE(origin,'unknown'), COALESCE(author,''), ` + s.signatureCol() +
+		`, ` + s.originCol() + `, ` + s.authorCol() + `, ` + s.signatureCol() +
 		`, (SELECT p.zobrist_hash FROM position p WHERE p.id = comment.position_id)`
+}
+
+func (s *CommentStore) originCol() string {
+	if s.NoOrigin {
+		return `'unknown'`
+	}
+	return `COALESCE(origin,'unknown')`
+}
+
+func (s *CommentStore) authorCol() string {
+	if s.NoAuthor {
+		return `''`
+	}
+	return `COALESCE(author,'')`
 }
 
 func (s *CommentStore) signatureCol() string {

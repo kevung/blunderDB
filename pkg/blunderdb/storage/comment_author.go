@@ -54,3 +54,47 @@ func CommentSignatureFromContext(ctx context.Context) string {
 	v, _ := ctx.Value(commentSignatureKey{}).(string)
 	return v
 }
+
+// CountVerifiedSignedComments counts the comments of scope whose signature
+// still verifies. A pass that rehashes positions compares it before and after:
+// a signature covers the position's Zobrist hash, so a note on a rehashed
+// position stops verifying even though its words are untouched.
+func CountVerifiedSignedComments(ctx context.Context, cs CommentStore, scope string) (int, error) {
+	n := 0
+	for c, err := range cs.ListAll(ctx, scope, ListOpts{}) {
+		if err != nil {
+			return 0, err
+		}
+		if c.Signer != nil && c.Signer.Verified {
+			n++
+		}
+	}
+	return n, nil
+}
+
+// CrawfordRepair is what RepairCrawfordSentinel changed: the positions it
+// rehashed, and the signed comments that stopped verifying because the
+// position they sit on was rehashed.
+type CrawfordRepair struct {
+	Rehashed             int `json:"rehashed"`
+	SignaturesUnverified int `json:"signaturesUnverified"`
+}
+
+// RepairCrawfordSentinel runs PositionStore.RepairCrawfordSentinel over st and
+// counts the signed comments it left unverified, so every mode can say so.
+func RepairCrawfordSentinel(ctx context.Context, st Storage, scope string) (CrawfordRepair, error) {
+	before, err := CountVerifiedSignedComments(ctx, st.Comments(), scope)
+	if err != nil {
+		return CrawfordRepair{}, err
+	}
+	var rep CrawfordRepair
+	if rep.Rehashed, err = st.Positions().RepairCrawfordSentinel(ctx, scope); err != nil || rep.Rehashed == 0 {
+		return rep, err
+	}
+	after, err := CountVerifiedSignedComments(ctx, st.Comments(), scope)
+	if err != nil {
+		return rep, err
+	}
+	rep.SignaturesUnverified = max(before-after, 0)
+	return rep, nil
+}

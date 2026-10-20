@@ -322,7 +322,7 @@ export async function handleExportCommit(plan = null) {
         // Both mechanisms are plain export options: the watermark is sealed and written by
         // the backend, and a password wraps the finished file. Neither changes anything
         // about what is exported.
-        await ExportDatabase({
+        const report = await ExportDatabase({
             ...baseOptions,
             watermark: exportOptions.watermarkEnabled ? (exportOptions.watermark || '').trim() : '',
             watermarkNote: exportOptions.watermarkEnabled ? (exportOptions.watermarkNote || '').trim() : '',
@@ -336,7 +336,9 @@ export async function handleExportCommit(plan = null) {
         const posCount = plan?.positions ?? get(exportPositionCountStore);
         closeModal();
         resetExportState();
-        setStatusBarMessage(tMsg('status.exportCompleted', { posCount }));
+        // The user's own notes leave signed only with a watermark: say how many did.
+        const signed = report?.signedComments ?? 0;
+        setStatusBarMessage(signed > 0 ? tMsg('status.exportCompletedSigned', { posCount, signed }) : tMsg('status.exportCompleted', { posCount }));
         statusBarModeStore.set('NORMAL');
     } catch (error) {
         logger.error('Error committing export:', error);

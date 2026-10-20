@@ -12,8 +12,8 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// runComment is `blunderdb comment`: the comments of one position, each signed
-// by its author, so that several people can annotate the same file. The daemon
+// runComment is `blunderdb comment`: the comments of one position, each
+// attributed to its author, so that several people can annotate the same file. The daemon
 // serves the same family as /v1/comments.*.
 func (cli *CLI) runComment(args []string) error {
 	if len(args) < 1 {
@@ -56,11 +56,13 @@ func (cli *CLI) CommentSubcommands() []string {
 func (cli *CLI) printCommentUsage() {
 	fmt.Println("Usage: blunderdb comment <sub-command> [options]")
 	fmt.Println()
-	fmt.Println("Comments on a position. A position holds any number of them, each signed")
-	fmt.Println("by the person who wrote it.")
+	fmt.Println("Comments on a position. A position holds any number of them, each")
+	fmt.Println("attributed to the person who wrote it (--author, free text). A comment")
+	fmt.Println("received in a watermarked export also carries its producer's signature,")
+	fmt.Println("shown in the Signed by column.")
 	fmt.Println()
 	fmt.Println("Sub-commands:")
-	fmt.Println("  add       Add a comment to a position, signed with --author")
+	fmt.Println("  add       Add a comment to a position, attributed to --author")
 	fmt.Println("  list      List the comments of a position, or of the whole database")
 	fmt.Println()
 	fmt.Println("Examples:")
@@ -91,7 +93,7 @@ func (cli *CLI) runCommentAdd(args []string) error {
 		"blunderdb comment add --db database.db --position 412 --text \"Cube too early\" --author Alice")
 	position := fs.Int64("position", 0, "Position id (required)")
 	text := fs.String("text", "", "Comment text (required)")
-	author := fs.String("author", "", "Who signs the comment (empty: unsigned)")
+	author := fs.String("author", "", "Who wrote the comment, as free text (empty: no author)")
 	if err := fs.Parse(args); err != nil {
 		return err
 	}
@@ -121,7 +123,7 @@ func (cli *CLI) runCommentList(args []string) error {
 		"blunderdb comment list --db database.db --position 412",
 		"blunderdb comment list --db database.db --author Alice --format json")
 	position := fs.Int64("position", 0, "Only the comments of this position id (0: every position)")
-	author := fs.String("author", "", "Only the comments signed by this author (whole name, any case)")
+	author := fs.String("author", "", "Only the comments attributed to this author (whole name, any case)")
 	format := fs.String("format", "text", "Output format: text or json")
 	if err := fs.Parse(args); err != nil {
 		return err
@@ -166,10 +168,10 @@ func (cli *CLI) runCommentList(args []string) error {
 		return nil
 	}
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
-	fmt.Fprintln(w, "ID\tPosition\tAuthor\tSigned by\tCreated\tText")
-	fmt.Fprintln(w, "--\t--------\t------\t---------\t-------\t----")
+	fmt.Fprintln(w, "ID\tPosition\tAuthor\tOrigin\tSigned by\tCreated\tText")
+	fmt.Fprintln(w, "--\t--------\t------\t------\t---------\t-------\t----")
 	for _, e := range entries {
-		fmt.Fprintf(w, "%d\t%d\t%s\t%s\t%s\t%s\n", e.ID, e.PositionID, e.Author, signerLabel(e.Signer), e.CreatedAt, strings.ReplaceAll(e.Text, "\n", " "))
+		fmt.Fprintf(w, "%d\t%d\t%s\t%s\t%s\t%s\t%s\n", e.ID, e.PositionID, e.Author, originLabel(e.Origin), signerLabel(e.Signer), e.CreatedAt, strings.ReplaceAll(e.Text, "\n", " "))
 	}
 	return w.Flush()
 }
@@ -180,9 +182,21 @@ func signerLabel(s *domain.CommentSigner) string {
 	if s == nil {
 		return ""
 	}
+	if s.Fingerprint == "" {
+		return "(unreadable signature)"
+	}
 	label := s.Name + " [" + s.Fingerprint + "]"
 	if !s.Verified {
 		label += " (unverified)"
 	}
 	return label
+}
+
+// originLabel names where a comment's text came from; "" for one the user
+// wrote, the common case, as the desktop shows it.
+func originLabel(o domain.CommentOrigin) string {
+	if o == domain.CommentOriginUser {
+		return ""
+	}
+	return string(o)
 }

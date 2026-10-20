@@ -89,7 +89,7 @@ Commandes disponibles
    "anki", "Paquets de répétition espacée (liste, statistiques, prévision, synchronisation)."
    "stats", "Statistiques calculées à part de ``list --type stats`` (erreurs récurrentes, classement, rapport…)."
    "training", "Le journal d'entraînement (séances, positions manquées)."
-   "comment", "Lit et ajoute les commentaires signés d'une position."
+   "comment", "Lit et ajoute les commentaires d'une position, attribués à leur auteur."
    "elsewhere", "Ce que d'autres bases savent d'une position, et ses voisines chez elles."
    "cubematrix", "Verdict de videau d'une position à chaque score d'un match."
    "rollout", "Joue une position jusqu'au bout pour départager ses coups ou sa décision de videau (XGID ou OGID)."
@@ -677,7 +677,7 @@ Recherche des positions dans la base selon des critères combinables.
   commentaire de ces provenances : ``user``, ``xg``, ``gnubg``, ``bgf``,
   ``unknown`` (``co:``).
 * ``--comment-author <nom>`` — Uniquement les positions portant un commentaire
-  signé de ce nom (nom entier, casse ignorée).
+  attribué à ce nom (nom entier, casse ignorée).
 * ``--phase <p1,p2>`` — Uniquement les positions de ces phases de jeu :
   ``opening``, ``middlegame``, ``race``, ``bearoff`` (``ph:``).
 * ``--game-type <t1,t2>`` — Uniquement les positions de ces plans de jeu :
@@ -2606,8 +2606,12 @@ l'ouverture d'une base.
 comment — Les commentaires d'une position
 ------------------------------------------
 
-Une position porte autant de commentaires qu'on veut, chacun signé de son
-auteur.
+Une position porte autant de commentaires qu'on veut, chacun attribué à son
+auteur (texte libre). Un commentaire reçu dans un export filigrané porte en
+plus la signature de son émetteur : ``list`` l'affiche dans la colonne
+*Signed by* — nom, empreinte, et ``(unverified)`` s'il ne correspond plus à ce
+qui a été signé —, et la provenance dans la colonne *Origin* (vide pour un
+commentaire écrit dans blunderDB).
 
 .. code-block:: bash
 
@@ -2616,7 +2620,7 @@ auteur.
 **Sous-commandes:**
 
 * ``add --position N --text T [--author A]`` — Ajoute un commentaire à la
-  position N, signé de A (sans ``--author``, il n'est pas signé).
+  position N, attribué à A (sans ``--author``, il n'a pas d'auteur).
 * ``list [--position N] [--author A]`` — Liste les commentaires d'une position,
   ou de toute la base, éventuellement ceux d'un seul auteur.
 
@@ -3244,8 +3248,10 @@ contenu compte alors comme s'il était venu par ``transfer``.
 * ``--db`` — Base de données (obligatoire).
 * ``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` — un compteur
   par passe : ``repaired`` (colonnes d'analyse), ``phases`` (positions
-  reclassées) et ``crawford`` (positions réhachées). Chacun dit le nombre de
-  lignes réellement changées. Avec ``--stats``, s'y ajoute ``match_stats``
+  reclassées), ``crawford`` (positions réhachées) et ``signatures_unverified``
+  (commentaires signés qu'un réhachage laisse non vérifiés : une signature
+  couvre l'identité de la position). Chacun dit le nombre de lignes réellement
+  changées. Avec ``--stats``, s'y ajoute ``match_stats``
   (matchs recalculés) ; avec ``--move-errors``, ``move_errors`` (coups notés).
 * ``--stats`` — Recalcule aussi, de zéro, les statistiques par match.
 * ``--move-errors`` — Écrit aussi, pour chaque coup joué, l'équité qu'il a

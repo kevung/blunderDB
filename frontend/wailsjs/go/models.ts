@@ -4769,6 +4769,8 @@ export namespace ingest {
 	    positions: number;
 	    analyses: number;
 	    comments: number;
+	    signedComments: number;
+	    unsignedOwnComments: number;
 	    matches: number;
 	    games: number;
 	    moves: number;
@@ -4796,6 +4798,8 @@ export namespace ingest {
 	        this.positions = source["positions"];
 	        this.analyses = source["analyses"];
 	        this.comments = source["comments"];
+	        this.signedComments = source["signedComments"];
+	        this.unsignedOwnComments = source["unsignedOwnComments"];
 	        this.matches = source["matches"];
 	        this.games = source["games"];
 	        this.moves = source["moves"];
@@ -7519,6 +7523,20 @@ export namespace storage {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.canonical = source["canonical"];
 	        this.aliases = source["aliases"];
+	    }
+	}
+	export class CrawfordRepair {
+	    rehashed: number;
+	    signaturesUnverified: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new CrawfordRepair(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.rehashed = source["rehashed"];
+	        this.signaturesUnverified = source["signaturesUnverified"];
 	    }
 	}
 	export class CollectionEvaluation {

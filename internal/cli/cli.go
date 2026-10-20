@@ -213,7 +213,7 @@ func (cli *CLI) printUsage() {
 	fmt.Println("  reencode  Rewrite analyses stored by older releases in the compact format")
 	fmt.Println("  maintenance  State of health: counters, actions and last runs (status, count, ids, run)")
 	fmt.Println("  delete    Delete data from the database")
-	fmt.Println("  comment   Comments on a position, signed by their author (add, list)")
+	fmt.Println("  comment   Comments on a position, attributed to their author (add, list)")
 	fmt.Println("  elsewhere What other database files know of one board, and its neighbours there")
 	fmt.Println("  trash     What was deleted through the trash, and how to put it back")
 	fmt.Println("  completion  Print a shell completion script (bash, zsh, fish)")

@@ -195,6 +195,12 @@ transcripteur, celles d'une base ``.db`` de leur auteur d'origine.
      - répertoire de l'identité de signature du démon (créée au premier
        usage) ; nécessaire pour qu'``exports.sqlite`` puisse apposer un
        filigrane — voir plus bas
+   * - ``--identity-name <nom>``
+     - –
+     - nom que porte cette identité : celui que lit le destinataire d'un
+       export filigrané et de chaque commentaire signé ; vide, le nom
+       enregistré est gardé (``blunderdb-serve`` à la création). Renommer ne
+       change pas la clé, donc pas l'empreinte
    * - ``--import-dir <répertoire>``
      - –
      - répertoire de la machine du démon que ``imports.batch`` peut lire par
@@ -224,7 +230,7 @@ fournies par variable d'environnement (``BLUNDERDB_BACKEND``, ``BLUNDERDB_DSN``,
 ``BLUNDERDB_QUOTA_ANALYSIS_SECONDS``, ``BLUNDERDB_QUOTA_IMPORTS``,
 ``BLUNDERDB_ANALYSIS_WORKERS``, ``BLUNDERDB_ANALYSIS_WEIGHTS``, ``BLUNDERDB_RLS``,
 ``BLUNDERDB_READ_TENANTS``, ``BLUNDERDB_TS_PATH``, ``BLUNDERDB_IDENTITY_DIR``,
-``BLUNDERDB_IMPORT_DIR``, ``BLUNDERDB_OPS_ADDR``, ``BLUNDERDB_PPROF_ADDR``) :
+``BLUNDERDB_IDENTITY_NAME``, ``BLUNDERDB_IMPORT_DIR``, ``BLUNDERDB_OPS_ADDR``, ``BLUNDERDB_PPROF_ADDR``) :
 un drapeau explicite reste prioritaire sur la variable correspondante.
 
 Le démon n'a **pas** d'option de répertoire de données : il écrit ses tables de
@@ -1043,7 +1049,11 @@ bibliothèque de filtres). ``watermark`` / ``watermarkNote`` apposent un
 filigrane signé de l'identité propre du démon (``--identity-dir``) — sans ces
 champs, l'export ne porte aucun filigrane ; les demander sans identité
 configurée échoue avec le code ``invalid``, comme un ``password`` : le démon
-ne rend pas de conteneur chiffré. ``positions`` remet des positions entières,
+ne rend pas de conteneur chiffré. Un export filigrané signe aussi chaque
+commentaire écrit dans le tenant et pas encore signé, avec la même identité :
+elle est **une pour tous les tenants**, si bien que la signature atteste que le
+commentaire vient de ce serveur, pas de quel tenant ni de quelle personne
+(nom réglable par ``--identity-name``). ``positions`` remet des positions entières,
 enregistrées ou non, à la place de ``positionIDs``. ``metadata`` est refusé :
 le démon n'écrit dans le fichier que sa date de création et le filigrane.
 ``"incremental": true`` n'exporte que ce qui est entré dans le tenant depuis

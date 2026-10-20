@@ -50,9 +50,23 @@ func testCommentSignatureRoundTrip(t *testing.T, s storage.Storage) {
 
 	opts := ingest.WholeTenant(ingest.FormatSQLite)
 	opts.Signer = coach
+	// Unwatermarked, the user's three notes leave unsigned, and the report says so.
+	plain := ingest.WholeTenant(ingest.FormatSQLite)
+	rep, err := ingest.ExportSQLite(ctx, s, "", filepath.Join(t.TempDir(), "plain.db"), plain)
+	if err != nil {
+		t.Fatalf("ExportSQLite (no watermark): %v", err)
+	}
+	if rep.SignedComments != 0 || rep.UnsignedOwnComments != 3 {
+		t.Errorf("export without a watermark: signed %d, unsigned own %d; want 0 and 3", rep.SignedComments, rep.UnsignedOwnComments)
+	}
+
 	path := filepath.Join(t.TempDir(), "eleve.db")
-	if _, err := ingest.ExportSQLite(ctx, s, "", path, opts); err != nil {
+	rep, err = ingest.ExportSQLite(ctx, s, "", path, opts)
+	if err != nil {
 		t.Fatalf("ExportSQLite: %v", err)
+	}
+	if rep.SignedComments != 3 || rep.UnsignedOwnComments != 0 {
+		t.Errorf("watermarked export: signed %d, unsigned own %d; want 3 and 0", rep.SignedComments, rep.UnsignedOwnComments)
 	}
 
 	importInto := func(file string) map[string]*domain.CommentEntry {
@@ -124,7 +138,7 @@ func testCommentSignatureRoundTrip(t *testing.T, s storage.Storage) {
 		}
 	}
 
-	// A file from 2.44.0, the last schema without the column, imports as it
+	// A file from 2.45.0, the last schema without the column, imports as it
 	// stands: never migrated, its comments arrive unsigned.
 	raw, err = sql.Open("sqlite", path)
 	if err != nil {
@@ -132,7 +146,7 @@ func testCommentSignatureRoundTrip(t *testing.T, s storage.Storage) {
 	}
 	for _, stmt := range []string{
 		`ALTER TABLE comment DROP COLUMN signature`,
-		`UPDATE metadata SET value = '2.44.0' WHERE key = 'database_version'`,
+		`UPDATE metadata SET value = '2.45.0' WHERE key = 'database_version'`,
 	} {
 		if _, err := raw.Exec(stmt); err != nil {
 			t.Fatal(err)
@@ -141,6 +155,27 @@ func testCommentSignatureRoundTrip(t *testing.T, s storage.Storage) {
 	raw.Close()
 	got = importInto(path)
 	if c := got["Ailleurs."]; c == nil || c.Signer != nil || c.Origin != domain.CommentOriginUser {
-		t.Errorf("comment of a 2.44.0 file: %+v; want imported, unsigned, of origin user", c)
+		t.Errorf("comment of a 2.45.0 file: %+v; want imported, unsigned, of origin user", c)
+	}
+
+	// A file older than 2.19.0 has neither origin nor author: its comments
+	// arrive of origin unknown, with no author, as the desktop reads them.
+	raw, err = sql.Open("sqlite", path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, stmt := range []string{
+		`DROP INDEX IF EXISTS idx_comment_position`,
+		`ALTER TABLE comment DROP COLUMN origin`,
+		`ALTER TABLE comment DROP COLUMN author`,
+	} {
+		if _, err := raw.Exec(stmt); err != nil {
+			t.Fatalf("%s: %v", stmt, err)
+		}
+	}
+	raw.Close()
+	got = importInto(path)
+	if c := got["Ailleurs."]; c == nil || c.Signer != nil || c.Origin != domain.CommentOriginUnknown || c.Author != "" {
+		t.Errorf("comment of a file without origin nor author: %+v; want imported, unsigned, origin unknown, no author", c)
 	}
 }

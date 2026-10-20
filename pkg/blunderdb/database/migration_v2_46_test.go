@@ -155,7 +155,7 @@ func TestMigrate_2_45_0_to_2_46_0_CommentRebuildKeepsEverything(t *testing.T) {
 	if !strings.Contains(ddl, "AUTOINCREMENT") {
 		t.Fatalf("comment after migration is not AUTOINCREMENT:\n%s", ddl)
 	}
-	after := readCommentShape(t, d.db)
+	after := withoutSignature(readCommentShape(t, d.db))
 	if !reflect.DeepEqual(before.Rows, after.Rows) {
 		t.Errorf("comment rows changed:\nbefore %v\nafter  %v", before.Rows, after.Rows)
 	}
@@ -199,4 +199,21 @@ func TestMigrate_2_45_0_to_2_46_0_CommentRebuildKeepsEverything(t *testing.T) {
 	if err := d.db.QueryRow(`SELECT COUNT(*) FROM comment WHERE position_id = ?`, pid).Scan(&left); err != nil || left != 0 {
 		t.Fatalf("comments of a deleted position = %d, %v; want 0 (cascade lost)", left, err)
 	}
+}
+
+// withoutSignature drops comment.signature, which the next step (2.47.0)
+// adds empty to every row, from a shape: what this test watches is the
+// rebuild, not the column a later step brings.
+func withoutSignature(s commentShape) commentShape {
+	for i, r := range s.Rows {
+		s.Rows[i] = strings.TrimSuffix(r, "|signature=<nil>")
+	}
+	cols := s.Columns[:0:0]
+	for _, c := range s.Columns {
+		if !strings.HasPrefix(c, "name=signature|") {
+			cols = append(cols, c)
+		}
+	}
+	s.Columns = cols
+	return s
 }

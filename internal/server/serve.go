@@ -80,6 +80,7 @@ type serveConfig struct {
 	readTenants     bool
 	tsPath          string
 	identityDir     string
+	identityName    string
 	importDir       string
 	pprofAddr       string
 }
@@ -135,6 +136,7 @@ func parseServeArgs(args []string) (*serveConfig, error) {
 		readTenants     = fs.Bool("read-tenants", envBoolOr("BLUNDERDB_READ_TENANTS", false), "honour X-Read-Tenants on the across.* reads (ADR-0063); off by default, and off REFUSES the header (400). Enable only once the proxy strips any client-supplied value and sets it itself: this daemon authenticates nobody (ADR-0005)")
 		tsPath          = fs.String("bearoff-ts", os.Getenv("BLUNDERDB_TS_PATH"), "optional two-sided bearoff database (.bd) widening the TS-06-06 it computes on this machine; the daemon never downloads one")
 		identityDir     = fs.String("identity-dir", os.Getenv("BLUNDERDB_IDENTITY_DIR"), "directory holding this daemon's watermark signing identity (created on first use); a watermarked export is refused when unset")
+		identityName    = fs.String("identity-name", os.Getenv("BLUNDERDB_IDENTITY_NAME"), "name this daemon's identity signs with, shown to whoever opens a watermarked export and on every comment it signs — one name for every tenant (empty keeps the stored one; \""+defaultIdentityName+"\" on first use)")
 		importDir       = fs.String("import-dir", os.Getenv("BLUNDERDB_IMPORT_DIR"), "directory on this host from which imports.batch may read match files by path (off by default: without it a batch comes only as an uploaded archive); a path outside it is refused")
 		opsAddr         = fs.String("ops-addr", envOr("BLUNDERDB_OPS_ADDR", ""), "optional listener for the /ops/ family (maintenance.vacuum, tenant.purge) on a SEPARATE address, e.g. \"127.0.0.1:8081\"; empty (the default) serves /ops/ on --addr, where the reverse proxy in front is expected to refuse the prefix (#233)")
 		pprofAddr       = fs.String("pprof-addr", envOr("BLUNDERDB_PPROF_ADDR", ""), "optional net/http/pprof listener on a SEPARATE address, e.g. \"127.0.0.1:6060\" (debug only; never expose this on the same address as --addr or to the public internet); empty (the default) exposes no pprof endpoint at all (#238)")
@@ -180,6 +182,7 @@ func parseServeArgs(args []string) (*serveConfig, error) {
 		readTenants:     *readTenants,
 		tsPath:          *tsPath,
 		identityDir:     *identityDir,
+		identityName:    *identityName,
 		importDir:       *importDir,
 		pprofAddr:       *pprofAddr,
 	}
@@ -239,7 +242,7 @@ func RunServe(args []string) error {
 
 	var identity *issuance.Identity
 	if cfg.identityDir != "" {
-		identity, err = issuance.LoadOrCreateIdentity(cfg.identityDir, "blunderdb-serve")
+		identity, err = loadServeIdentity(cfg.identityDir, cfg.identityName)
 		if err != nil {
 			return fmt.Errorf("serve: identity: %w", err)
 		}
@@ -453,4 +456,28 @@ func parseAnalysisWeights(spec string) (map[string]int, error) {
 		out[strings.TrimSpace(tenant)] = n
 	}
 	return out, nil
+}
+
+// defaultIdentityName names a daemon identity no --identity-name has named.
+const defaultIdentityName = "blunderdb-serve"
+
+// loadServeIdentity loads the daemon's signing identity from dir, creating it
+// on first use. A non-empty name renames it: the key, and so the fingerprint a
+// reader checks, stays the same, only the name future seals carry changes.
+func loadServeIdentity(dir, name string) (*issuance.Identity, error) {
+	name = strings.TrimSpace(name)
+	initial := name
+	if initial == "" {
+		initial = defaultIdentityName
+	}
+	id, err := issuance.LoadOrCreateIdentity(dir, initial)
+	if err != nil {
+		return nil, err
+	}
+	if name != "" && id.Name != name {
+		if err := id.Rename(dir, name); err != nil {
+			return nil, err
+		}
+	}
+	return id, nil
 }

@@ -16,12 +16,20 @@ note.
 1. **La signature est écrite par le producteur, à l'export filigrané.** Le même geste qui
    scelle le Filigrane scelle, avec la même identité, chaque Commentaire d'origine `user`
    qui n'en porte pas encore (`ingest.ExportOptions.Signer`). Un export sans filigrane ne
-   signe rien et ne crée pas d'identité. Le démon signe avec la sienne, comme son filigrane.
+   signe rien et ne crée pas d'identité. Le démon signe avec la sienne, comme son filigrane :
+   une pour tous les tenants, si bien que sa signature atteste qu'une note vient de ce
+   serveur, pas de quel tenant ni de quelle personne. Son nom se règle par
+   `serve --identity-name` (`blunderdb-serve` par défaut) ; renommer garde la clé.
 2. **Ce qui est signé** : le texte exact, l'auteur nommé, le hachage Zobrist de la Position
    commentée, le nom de l'émetteur et l'instant (`issuance.CommentStatement`), dans la même
    enveloppe Ed25519 que le Filigrane, rangée telle quelle dans `comment.signature` (schéma
    2.47.0, colonne nullable). Une note signée déplacée sur un autre plateau ne se vérifie
-   plus : la signature atteste des mots et de l'endroit où ils sont posés.
+   plus : la signature atteste des mots et de l'endroit où ils sont posés. Un rehachage
+   légitime a le même effet — sentinelle de Crawford recalée par `repair` (et fusion dans
+   la jumelle), `Rehome` d'une réparation de match : la note reste lisible, marquée non
+   vérifiée, et `repair` en donne le nombre (`storage.RepairCrawfordSentinel`, CLI et
+   `/v1/positions.repairCrawford`). Tenir un tel rehachage pour vérifié reviendrait à croire
+   la base réceptrice sur parole, ce que la signature sert justement à éviter.
 3. **Une signature voyage telle quelle.** Un Commentaire qui en porte déjà une — reçu d'une
    coach, puis réexporté par l'élève — garde celle de son émetteur : la resigner mettrait le
    nom de l'exportateur sur la note d'un autre. `signature` rejoint
@@ -30,7 +38,8 @@ note.
    recopie la signature et n'écrit rien d'autre : ni registre, ni journal, ni lignée
    (ADR-0007). La source est lue telle quelle, jamais migrée : un fichier antérieur à
    2.47.0 n'a pas la colonne, elle est sondée (`sqlite.Storage.FileComments`, et côté bureau
-   `readSourceCommentColumns`) et ses Commentaires arrivent non signés. La vérification
+   `readSourceCommentColumns`) et ses Commentaires arrivent non signés. `origin` et `author`
+   sont sondées de même. La vérification
    n'est pas stockée : chaque lecture d'un Commentaire (`sqlshared.scanCommentEntry`, qui
    relit le hachage de sa Position) la refait et rend `CommentSigner{Name, Fingerprint,
    Verified}`. Une note altérée dans le fichier est importée et affichée *non vérifiée*,
@@ -43,7 +52,8 @@ note.
    producteur arrive `user` et retient sa Position — c'est la note de la coach que l'élève
    veut garder quand il supprime le match ; une remarque qu'un fichier XG avait apportée au
    producteur arrive `xg` et part avec le match, comme chez lui. Une source sans la colonne
-   (antérieure à 2.19.0) donne `unknown`. Un fichier exporté avant 2.47.0 porte `unknown`
+   (antérieure à 2.19.0) donne `unknown` et un auteur vide, au démon comme au bureau et à
+   la CLI. Un fichier exporté avant 2.47.0 porte `unknown`
    partout, puisque l'origine n'y voyageait pas : ses Commentaires ne retiennent rien,
    comme le faisait déjà l'import du bureau, alors que `ingest.DBImporter` les écrivait
    `user`. Les trois modes recopient désormais l'origine de la même façon.

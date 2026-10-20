@@ -127,3 +127,31 @@ func TestServeReadTenantsFlag(t *testing.T) {
 		t.Error("BLUNDERDB_READ_TENANTS=true does not turn it on")
 	}
 }
+
+// TestLoadServeIdentity_Name: the daemon's identity is created under the
+// default name, renamed by --identity-name without changing its key, and an
+// empty name keeps the one stored.
+func TestLoadServeIdentity_Name(t *testing.T) {
+	dir := t.TempDir()
+	first, err := loadServeIdentity(dir, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if first.Name != defaultIdentityName {
+		t.Fatalf("first use: name %q, want %q", first.Name, defaultIdentityName)
+	}
+	named, err := loadServeIdentity(dir, "  Club de Paris ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if named.Name != "Club de Paris" || named.Fingerprint() != first.Fingerprint() {
+		t.Fatalf("renamed: %q %s, want \"Club de Paris\" with fingerprint %s", named.Name, named.Fingerprint(), first.Fingerprint())
+	}
+	kept, err := loadServeIdentity(dir, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if kept.Name != "Club de Paris" {
+		t.Fatalf("no name given: %q, want the stored \"Club de Paris\"", kept.Name)
+	}
+}

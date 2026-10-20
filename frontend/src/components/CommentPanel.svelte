@@ -379,7 +379,10 @@
                                 <span class="msg-author">{comment.author}{myName && comment.author === myName ? ' (' + $t('comment.you') + ')' : ''}</span>
                             {/if}
                             <!-- A producer's seal: whose note it is, and whether its words are still the signed ones. -->
-                            {#if comment.signer}
+                            {#if comment.signer && !comment.signer.fingerprint}
+                                <span class="msg-signer unverified" title={$t('comment.signatureUnreadableTitle')}>⚠ {$t('comment.signatureUnreadable')}</span>
+                            {:else if comment.signer}
+                                <!-- The fingerprint, not the name, tells an issuer from a namesake. -->
                                 <span
                                     class="msg-signer"
                                     class:unverified={!comment.signer.verified}
@@ -388,7 +391,8 @@
                                         fingerprint: comment.signer.fingerprint
                                     })}
                                     >{comment.signer.verified ? '✓' : '⚠'}
-                                    {$t('comment.signedBy', { name: comment.signer.name || comment.signer.fingerprint })}{comment.signer.verified ? '' : ' — ' + $t('comment.signerUnverified')}</span
+                                    {$t('comment.signedBy', { name: comment.signer.name || comment.signer.fingerprint })}
+                                    <span class="msg-fingerprint">{comment.signer.fingerprint}</span>{comment.signer.verified ? '' : ' — ' + $t('comment.signerUnverified')}</span
                                 >
                             {/if}
                             <!-- Only for a note the user did not write. -->
@@ -571,6 +575,10 @@
         font-size: var(--font-size-small);
         color: var(--color-text-muted);
         margin-left: var(--space-1);
+    }
+    .msg-fingerprint {
+        font-family: monospace;
+        opacity: 0.8;
     }
     .msg-signer.unverified {
         color: var(--color-danger);

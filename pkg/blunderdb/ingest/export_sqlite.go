@@ -93,22 +93,28 @@ type Selection struct {
 type ExportReport struct {
 	// Path is where the file landed: opts' path, or the .dbx container it was
 	// wrapped into when a password was given.
-	Path           string `json:"path"`
-	Positions      int    `json:"positions"`
-	Analyses       int    `json:"analyses"`
-	Comments       int    `json:"comments"`
-	Matches        int    `json:"matches"`
-	Games          int    `json:"games"`
-	Moves          int    `json:"moves"`
-	MoveAnalyses   int    `json:"moveAnalyses"`
-	Collections    int    `json:"collections"`
-	Tournaments    int    `json:"tournaments"`
-	Filters        int    `json:"filters"`
-	AnkiDecks      int    `json:"ankiDecks"`
-	Transcriptions int    `json:"transcriptions"`
-	Lessons        int    `json:"lessons"`
-	Aliases        int    `json:"aliases"`
-	Skipped        int    `json:"skipped"`
+	Path      string `json:"path"`
+	Positions int    `json:"positions"`
+	Analyses  int    `json:"analyses"`
+	Comments  int    `json:"comments"`
+	// SignedComments counts the user's own comments this export sealed with
+	// its watermark's identity (ADR-0099); UnsignedOwnComments the ones an
+	// export without a watermark sent unsigned. A comment that arrived
+	// already signed by someone else is in neither: it travels as it was.
+	SignedComments      int `json:"signedComments"`
+	UnsignedOwnComments int `json:"unsignedOwnComments"`
+	Matches             int `json:"matches"`
+	Games               int `json:"games"`
+	Moves               int `json:"moves"`
+	MoveAnalyses        int `json:"moveAnalyses"`
+	Collections         int `json:"collections"`
+	Tournaments         int `json:"tournaments"`
+	Filters             int `json:"filters"`
+	AnkiDecks           int `json:"ankiDecks"`
+	Transcriptions      int `json:"transcriptions"`
+	Lessons             int `json:"lessons"`
+	Aliases             int `json:"aliases"`
+	Skipped             int `json:"skipped"`
 	// DegradedAnkiDecks counts the search decks that left with part of their
 	// source dropped (searchSourceLost): their members travel, but their
 	// command, payload or ids named rows the file does not hold.
@@ -712,6 +718,13 @@ func (e *exporter) writeBatch(positions []*domain.Position) error {
 				continue
 			}
 			e.report.Comments++
+			if c.Signature == "" && c.Origin == domain.CommentOriginUser {
+				if e.opts.Signer != nil {
+					e.report.SignedComments++
+				} else {
+					e.report.UnsignedOwnComments++
+				}
+			}
 		}
 	}
 	return nil

@@ -41,6 +41,8 @@ func (cli *CLI) runRepair(args []string) error {
 		fmt.Println("Crawford one is read cube-dead. Correcting it changes the")
 		fmt.Println("position's Zobrist hash, so such a position is rehashed and")
 		fmt.Println("merged with its correct twin when the database holds one.")
+		fmt.Println("A signed comment on such a position then reads unverified:")
+		fmt.Println("its signature covers the position's hash. The report counts them.")
 		fmt.Println("Nothing runs it automatically.")
 		fmt.Println()
 		fmt.Println("Options:")
@@ -84,10 +86,11 @@ func (cli *CLI) runRepair(args []string) error {
 	if err != nil {
 		return fmt.Errorf("repair failed: %w", err)
 	}
-	crawford, err := cli.db.RepairCrawfordSentinel()
+	crawfordRep, err := cli.db.RepairCrawfordSentinel()
 	if err != nil {
 		return fmt.Errorf("repair failed: %w", err)
 	}
+	crawford, unverified := crawfordRep.Rehashed, crawfordRep.SignaturesUnverified
 
 	// The counter is in the JSON report only when the pass ran.
 	matchStats := 0
@@ -113,9 +116,10 @@ func (cli *CLI) runRepair(args []string) error {
 			Repaired   int  `json:"repaired"`
 			Phases     int  `json:"phases"`
 			Crawford   int  `json:"crawford"`
+			Unverified int  `json:"signatures_unverified"`
 			MatchStats *int `json:"match_stats,omitempty"`
 			MoveErrors *int `json:"move_errors,omitempty"`
-		}{repaired, phases, crawford, matchStatsReport, scoredMovesReport})
+		}{repaired, phases, crawford, unverified, matchStatsReport, scoredMovesReport})
 	}
 	switch repaired {
 	case 0:
@@ -140,6 +144,13 @@ func (cli *CLI) runRepair(args []string) error {
 		fmt.Println("1 position rehashed onto the right Crawford sentinel.")
 	default:
 		fmt.Printf("%d positions rehashed onto the right Crawford sentinel.\n", crawford)
+	}
+	switch unverified {
+	case 0:
+	case 1:
+		fmt.Println("1 signed comment sits on a rehashed position: it now reads unverified, its text untouched.")
+	default:
+		fmt.Printf("%d signed comments sit on rehashed positions: they now read unverified, their text untouched.\n", unverified)
 	}
 	if *rebuildStats {
 		fmt.Printf("Per-match statistics recomputed for %d matches.\n", matchStats)

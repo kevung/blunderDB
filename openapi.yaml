@@ -9533,6 +9533,9 @@ components:
         repaired:
           type: integer
           format: int32
+        signaturesUnverified:
+          type: integer
+          format: int32
     repairResp:
       type: object
       properties:

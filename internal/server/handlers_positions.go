@@ -131,8 +131,8 @@ func (s *Server) positionRoutes() []route {
 		// away score is part of the Zobrist identity. So explicit, never
 		// automatic.
 		{http.MethodPost, "/v1/positions.repairCrawford", rpc(func(ctx context.Context, scope string, _ struct{}) (repairCrawfordResp, error) {
-			n, err := ps().RepairCrawfordSentinel(ctx, scope)
-			return repairCrawfordResp{Repaired: n}, err
+			rep, err := storage.RepairCrawfordSentinel(ctx, s.opts.Storage, scope)
+			return repairCrawfordResp{Repaired: rep.Rehashed, SignaturesUnverified: rep.SignaturesUnverified}, err
 		})},
 		{http.MethodPost, "/v1/positions.load", rpc(func(ctx context.Context, scope string, req idReq) (*domain.Position, error) {
 			return ps().Load(ctx, scope, req.ID)
@@ -295,6 +295,9 @@ type reclassifyResp struct {
 // Crawford sentinel they had been imported with.
 type repairCrawfordResp struct {
 	Repaired int `json:"repaired"`
+	// SignaturesUnverified counts the signed comments a rehash left
+	// unverified: a signature covers the position's hash (ADR-0099).
+	SignaturesUnverified int `json:"signaturesUnverified"`
 }
 
 // handleFromImage reads the position a screen capture shows. A reading

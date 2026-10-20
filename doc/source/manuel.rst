@@ -1114,13 +1114,15 @@ commentaires importés depuis les fichiers XG sont automatiquement associés aux
 positions correspondantes. Appuyer sur *CTRL-P* ou exécuter la commande
 ``comment`` pour afficher ou masquer le panneau.
 
-Le nom qui signe vos commentaires se règle dans les préférences, onglet
-*Interface*, champ **Votre nom** ; vide, vos commentaires ne sont pas signés.
-Les commentaires d'un import XG sont signés ``XG``, ceux d'un fichier de match
-du nom de son transcripteur. Réécrire un commentaire le signe de votre nom. La
-recherche ``au"Alice"`` retient les positions qu'Alice a commentées ; hors de
-l'interface, ``blunderdb comment add --author`` écrit un commentaire signé et
-``blunderdb comment list`` les relit (voir :ref:`cli`).
+Le nom attribué à vos commentaires se règle dans les préférences, onglet
+*Interface*, champ **Votre nom** ; vide, vos commentaires ne portent pas
+d'auteur. Les commentaires d'un import XG sont attribués à ``XG``, ceux d'un
+fichier de match à son transcripteur. Réécrire un commentaire vous l'attribue.
+La recherche ``au"Alice"`` retient les positions qu'Alice a commentées ; hors de
+l'interface, ``blunderdb comment add --author`` écrit un commentaire attribué à
+cet auteur et ``blunderdb comment list`` les relit (voir :ref:`cli`). Ce nom est
+du texte libre : il n'atteste rien, à la différence de la signature décrite plus
+bas.
 
 Chaque commentaire venu d'un fichier porte une **étiquette de provenance**
 (``XG``, ``GNU BG``, ``BGF``, ou *importé* lorsque la provenance n'a pas été
@@ -1134,17 +1136,31 @@ n'efface plus une position sur laquelle **vous** aviez écrit. Une note reprise
 du fichier source, elle, disparaît avec le match qui l'a apportée.
 
 Un commentaire reçu dans une base exportée avec un filigrane porte la
-**signature** de son émetteur : le fil affiche « commentaire de *émetteur* »,
-précédé de ✓, et son survol donne l'empreinte de la clé. Si son texte ou son
-auteur a été modifié dans le fichier après la signature, ou s'il a été déplacé
-sur une autre position, le commentaire est conservé mais marqué ⚠ *non
-vérifié*. Le modifier vous-même retire la signature : la phrase est alors la
-vôtre. Un commentaire reçu d'une autre base garde sa provenance : une note que
-son auteur avait écrite retient sa position quand un match est supprimé, comme
-les vôtres ; une remarque qu'il tenait d'un fichier XG garde son étiquette
-``XG`` et disparaît avec le match.
-``blunderdb comment list`` donne la même information dans sa colonne
-*Signed by*.
+**signature** de son émetteur : le fil affiche « commentaire de *émetteur* »
+suivi de l'empreinte de sa clé, précédé de ✓. Deux personnes peuvent porter le
+même nom, pas la même empreinte : comparez-la à celle que l'émetteur vous a
+communiquée.
+
+Un commentaire qui ne correspond plus à ce qui a été signé est conservé mais
+marqué ⚠ *non vérifié* : texte ou auteur modifié dans le fichier, commentaire
+déplacé sur une autre position, ou position dont l'identité a été corrigée
+depuis. La signature couvre en effet l'identité de la position : quand
+``blunderdb repair`` recale la sentinelle de Crawford d'une position (et la
+fusionne au besoin avec sa jumelle), ou quand la réparation d'un match déplace
+vos notes sur la position corrigée, les commentaires signés qu'elle porte ne se
+vérifient plus, sans que leur texte ait changé ; ``blunderdb repair`` en donne
+le nombre. Une signature que blunderDB ne sait pas lire s'affiche ⚠ *signature
+illisible*. Modifier un commentaire signé retire la signature : la phrase est
+alors la vôtre.
+
+Un commentaire reçu d'une autre base garde sa provenance : une note que son
+auteur avait écrite retient sa position quand un match est supprimé, comme les
+vôtres ; une remarque qu'il tenait d'un fichier XG garde son étiquette ``XG`` et
+disparaît avec le match. Cela vaut pour une base exportée par une version de
+blunderDB qui signe déjà les commentaires ; venu d'un fichier plus ancien, un
+commentaire porte l'étiquette *importé* et disparaît avec le match.
+``blunderdb comment list`` donne la provenance dans sa colonne *Origin* et la
+signature dans sa colonne *Signed by*.
 
 .. _tags:
 
@@ -5474,7 +5490,8 @@ n'empêche rien : elle dit d'où vient le fichier.
 Les commentaires que vous avez écrits sont signés avec la même identité : le
 destinataire voit qu'ils viennent de vous, et s'ils ont été altérés en chemin
 (voir :ref:`panneau_commentaires`). Un commentaire qui porte déjà la signature
-d'un autre émetteur la garde.
+d'un autre émetteur la garde. La barre d'état dit, à la fin de l'export, combien
+de vos commentaires ont été signés ; un export sans marque n'en signe aucun.
 
 Identité d'émetteur
 ~~~~~~~~~~~~~~~~~~~

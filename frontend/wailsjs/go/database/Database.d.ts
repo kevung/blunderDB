@@ -662,7 +662,7 @@ export function ReorderTournamentMatches(arg1:number,arg2:Array<number>):Promise
 
 export function RepairAnalyses():Promise<number>;
 
-export function RepairCrawfordSentinel():Promise<number>;
+export function RepairCrawfordSentinel():Promise<storage.CrawfordRepair>;
 
 export function RepairGamePhases():Promise<number>;
 

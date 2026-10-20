@@ -106,4 +106,45 @@ describe('CommentPanel — signed comments', () => {
         expect(byText.altered.classList.contains('unverified')).toBe(true);
         expect(byText.altered.getAttribute('title')).toContain('A3F1-9C24-7B05-E1D8');
     });
+
+    test('shows the fingerprint beside the name, and says when a signature cannot be read', async () => {
+        vi.mocked(GetCommentsByPosition).mockResolvedValue([
+            {
+                id: 1,
+                positionId: 9,
+                text: 'coach',
+                author: '',
+                origin: 'user',
+                createdAt: '2026-01-01 10:00:00',
+                signer: { name: 'Coach Alice', fingerprint: '21FA-ECC9-77E0-EC62', verified: true }
+            },
+            {
+                id: 2,
+                positionId: 9,
+                text: 'namesake',
+                author: '',
+                origin: 'user',
+                createdAt: '2026-01-02 10:00:00',
+                signer: { name: 'Coach Alice', fingerprint: 'FA33-0578-1C2D-9E10', verified: true }
+            },
+            {
+                id: 3,
+                positionId: 9,
+                text: 'damaged',
+                author: '',
+                origin: 'user',
+                createdAt: '2026-01-03 10:00:00',
+                signer: { name: '', fingerprint: '', verified: false }
+            }
+        ]);
+        positionStore.set({ id: 9 });
+        const { container } = render(CommentPanel, { props: { visible: true, onClose: () => {} } });
+        await new Promise((r) => setTimeout(r, 50));
+        const byText = Object.fromEntries([...container.querySelectorAll('.msg-signer')].map((s) => [s.closest('.msg').querySelector('.msg-text').textContent, s]));
+        expect(byText.coach.textContent).toContain('21FA-ECC9-77E0-EC62');
+        expect(byText.namesake.textContent).toContain('FA33-0578-1C2D-9E10');
+        expect(byText.damaged.querySelector('.msg-fingerprint')).toBeNull();
+        expect(byText.damaged.classList.contains('unverified')).toBe(true);
+        expect(byText.damaged.textContent).not.toMatch(/ {2}/);
+    });
 });

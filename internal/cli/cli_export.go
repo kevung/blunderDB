@@ -404,6 +404,12 @@ func printExportReport(r ingest.ExportReport) {
 	if r.Directions > 0 || r.Rencontres > 0 {
 		fmt.Printf("  directions %d, slots %d, rencontres %d\n", r.Directions, r.Slots, r.Rencontres)
 	}
+	if r.SignedComments > 0 {
+		fmt.Printf("  %d comment(s) of yours signed with your issuer identity\n", r.SignedComments)
+	}
+	if r.UnsignedOwnComments > 0 {
+		fmt.Printf("  %d comment(s) of yours left unsigned: only a watermarked export (--watermark) signs them\n", r.UnsignedOwnComments)
+	}
 	if r.DegradedAnkiDecks > 0 {
 		fmt.Printf("  %d search deck(s) left with part of their source dropped (see the log)\n", r.DegradedAnkiDecks)
 	}

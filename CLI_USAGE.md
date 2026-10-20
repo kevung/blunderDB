@@ -68,7 +68,7 @@ When you provide a CLI command as the first argument, it automatically runs in h
 - `reencode` - Rewrite analyses stored by older releases in the compact format
 - `maintenance` - State of health: counters, actions and last runs (status, count, ids, run)
 - `delete` - Delete data from the database
-- `comment` - Comments on a position, signed by their author (add, list)
+- `comment` - Comments on a position, attributed to their author (add, list)
 - `elsewhere` - What other database files know of one board, and its neighbours there
 - `trash` - What was deleted through the trash, and how to put it back
 - `completion` - Print a shell completion script (bash, zsh, fish)
@@ -2834,7 +2834,7 @@ Add a comment to a position.
 
 Options:
   -author string
-    	Who signs the comment (empty: unsigned)
+    	Who wrote the comment, as free text (empty: no author)
   -db string
     	Path to the database file (required)
   -position int
@@ -2855,7 +2855,7 @@ List the comments of a position, or of the whole database.
 
 Options:
   -author string
-    	Only the comments signed by this author (whole name, any case)
+    	Only the comments attributed to this author (whole name, any case)
   -db string
     	Path to the database file (required)
   -format string
@@ -4470,6 +4470,8 @@ wrote the sentinel: a post-Crawford position stored as a
 Crawford one is read cube-dead. Correcting it changes the
 position's Zobrist hash, so such a position is rehashed and
 merged with its correct twin when the database holds one.
+A signed comment on such a position then reads unverified:
+its signature covers the position's hash. The report counts them.
 Nothing runs it automatically.
 
 Options:
