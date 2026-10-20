@@ -116,8 +116,8 @@ func TestImportDatabase_DerivesAnalysisColumnsAsTransfer(t *testing.T) {
 	}
 }
 
-// A library whose analyses hold their blob alone, as the native import once
-// wrote them, gets back by repair the columns a transfer derives.
+// A library whose analyses hold their blob alone, provenance filled by the
+// open-time pass, gets back by repair the columns a transfer derives.
 func TestRepairAnalyses_FillsBlobOnlyRows(t *testing.T) {
 	ctx := context.Background()
 	src := newTestDBWithXG(t)
@@ -128,15 +128,28 @@ func TestRepairAnalyses_FillsBlobOnlyRows(t *testing.T) {
 			t.Fatalf("transfer: %v", err)
 		}
 	}
-	if _, err := broken.db.Exec(`UPDATE analysis SET best_cube_action = NULL, cube_error = NULL,
-		best_move_equity_error = NULL, player1_win_rate = NULL, player1_gammon_rate = NULL,
-		player1_backgammon_rate = NULL, player2_win_rate = NULL, player2_gammon_rate = NULL,
-		player2_backgammon_rate = NULL, is_forced = 0, is_close_cube = 0,
-		analysis_engine = NULL, analysis_depth = NULL, creation_date = NULL`); err != nil {
+	// The state the native import left: each analysis row written with its
+	// blob alone, no cube-response flag, then the provenance pass every
+	// open runs.
+	for _, q := range []string{
+		`CREATE TEMP TABLE blob_only AS SELECT position_id, data FROM analysis`,
+		`DELETE FROM analysis`,
+		`INSERT INTO analysis (position_id, data) SELECT position_id, data FROM blob_only`,
+		`UPDATE position SET is_cube_response = 0`,
+	} {
+		if _, err := broken.db.Exec(q); err != nil {
+			t.Fatalf("%s: %v", q, err)
+		}
+	}
+	if err := broken.backfillAnalysisProvenance(ctx); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := broken.db.Exec(`UPDATE position SET is_cube_response = 0`); err != nil {
-		t.Fatal(err)
+	var unset, responses int
+	if err := broken.db.QueryRow(`SELECT count(*) FROM analysis WHERE player1_win_rate IS NULL AND analysis_engine IS NOT NULL`).Scan(&unset); err != nil || unset == 0 {
+		t.Fatalf("no blob-only row once provenance is filled (%d, %v)", unset, err)
+	}
+	if err := transferred.db.QueryRow(`SELECT count(*) FROM position WHERE is_cube_response = 1`).Scan(&responses); err != nil || responses == 0 {
+		t.Fatalf("fixture holds no cube response (%d, %v)", responses, err)
 	}
 	if n, err := broken.RepairAnalyses(); err != nil || n == 0 {
 		t.Fatalf("repair: %d rows, %v", n, err)
@@ -149,5 +162,39 @@ func TestRepairAnalyses_FillsBlobOnlyRows(t *testing.T) {
 	}
 	if n, err := broken.RepairAnalyses(); err != nil || n != 0 {
 		t.Errorf("second repair: %d rows, %v; want 0", n, err)
+	}
+}
+
+// A position whose analysis here cannot be read keeps it: the import goes on,
+// leaves that analysis as it was and counts it.
+func TestImportDatabase_SkipsUnmergeableAnalysis(t *testing.T) {
+	src := newTestDBWithXG(t)
+	path := exportTo(t, src, filepath.Join(t.TempDir(), "source.db"), ingest.WholeLibraryOptions())
+	dst := newTestDB(t)
+	held, err := src.store.Positions().Load(context.Background(), "", 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	id, err := dst.SavePosition(held)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := dst.db.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, x'00')`, id); err != nil {
+		t.Fatal(err)
+	}
+	res, err := dst.CommitImportDatabase(path)
+	if err != nil {
+		t.Fatalf("import: %v", err)
+	}
+	if res["analysesSkipped"] != 1 {
+		t.Errorf("analysesSkipped = %v, want 1", res["analysesSkipped"])
+	}
+	var data []byte
+	if err := dst.db.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, id).Scan(&data); err != nil || string(data) != "\x00" {
+		t.Errorf("unreadable analysis rewritten: %x, %v", data, err)
+	}
+	var n int
+	if err := dst.db.QueryRow(`SELECT count(*) FROM analysis`).Scan(&n); err != nil || n != 543 {
+		t.Errorf("%d analyses after import, want 543 (%v)", n, err)
 	}
 }

@@ -384,6 +384,10 @@ type importRun struct {
 	srcMET   map[int64]int64
 	signed   bool
 	targetOf map[int64]int64
+	// analysesSkipped counts the source analyses the receiver could not
+	// merge (its own blob unreadable, a write refused): the position is
+	// kept, its analysis left as it was, as the rest of the import does.
+	analysesSkipped int
 	// sourceVersion is the source's schema version, which tells whether its
 	// gammonNet verdicts on take/pass positions are stale
 	// (ingest.StaleResponseVerdict).
@@ -426,7 +430,13 @@ func (r *importRun) carryAnalysis(id, positionID int64, pos *Position) (bool, er
 	if err != nil {
 		return false, err
 	}
-	return ingest.MergeDBAnalysis(r.ctx, r.stx, "", positionID, &imported, met)
+	wrote, err := ingest.MergeDBAnalysis(r.ctx, r.stx, "", positionID, &imported, met)
+	if err != nil {
+		slog.Warn("merging import analysis", "positionID", positionID, "err", err)
+		r.analysesSkipped++
+		return false, nil
+	}
+	return wrote, nil
 }
 
 // mergeExisting folds a source position the target already holds into it:
@@ -742,6 +752,8 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 		"merged":  positionsMerged,
 		"skipped": positionsSkipped,
 		"total":   totalPositions,
+		// Analyses the receiver could not merge; their positions are counted above.
+		"analysesSkipped": run.analysesSkipped,
 		// The same figures as ingest.Summary on the daemon's imports.db.
 		"collections":               merged.Changed,
 		"livingCollectionsSkipped":  merged.LivingSkipped,
