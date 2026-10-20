@@ -954,12 +954,12 @@ jobs:
 
       - name: Build App Linux for libwebkit2gtk-4.0
         if: matrix.os == 'ubuntu-22.04'
-        run: wails build --platform 'linux' -o blunderDB-linux-${{ steps.vars.outputs.version }} -upx -clean -ldflags "-X github.com/kevung/blunderdb/internal/cli.appVersion=${{ steps.vars.outputs.version }}"
+        run: wails build -trimpath --platform 'linux' -o blunderDB-linux-${{ steps.vars.outputs.version }} -upx -clean -ldflags "-X github.com/kevung/blunderdb/internal/cli.appVersion=${{ steps.vars.outputs.version }}"
         shell: bash
 
       - name: Build App Linux for libwebkit2gtk-4.1
         if: matrix.os == 'ubuntu-latest'
-        run: wails build --platform 'linux' -o blunderDB-linux-webkit2gtk-4.1-${{ steps.vars.outputs.version }} -upx -clean -tags webkit2_41 -ldflags "-X github.com/kevung/blunderdb/internal/cli.appVersion=${{ steps.vars.outputs.version }}"
+        run: wails build -trimpath --platform 'linux' -o blunderDB-linux-webkit2gtk-4.1-${{ steps.vars.outputs.version }} -upx -clean -tags webkit2_41 -ldflags "-X github.com/kevung/blunderdb/internal/cli.appVersion=${{ steps.vars.outputs.version }}"
         shell: bash
 
       # No -upx here: UPX is not installed on the Linux runners (the step above
@@ -968,12 +968,12 @@ jobs:
       # copying a flag that does nothing.
       - name: Build App Linux arm64 for libwebkit2gtk-4.1
         if: matrix.os == 'ubuntu-24.04-arm'
-        run: wails build --platform 'linux/arm64' -o blunderDB-linux-arm64-webkit2gtk-4.1-${{ steps.vars.outputs.version }} -clean -tags webkit2_41 -ldflags "-X github.com/kevung/blunderdb/internal/cli.appVersion=${{ steps.vars.outputs.version }}"
+        run: wails build -trimpath --platform 'linux/arm64' -o blunderDB-linux-arm64-webkit2gtk-4.1-${{ steps.vars.outputs.version }} -clean -tags webkit2_41 -ldflags "-X github.com/kevung/blunderdb/internal/cli.appVersion=${{ steps.vars.outputs.version }}"
         shell: bash
 
       - name: Build App Windows
         if: runner.os == 'Windows'
-        run: wails build --platform 'windows' -o blunderDB-windows-${{ steps.vars.outputs.version }}.exe -upx -clean -tags webkit2_41 -ldflags "-X github.com/kevung/blunderdb/internal/cli.appVersion=${{ steps.vars.outputs.version }}"
+        run: wails build -trimpath --platform 'windows' -o blunderDB-windows-${{ steps.vars.outputs.version }}.exe -upx -clean -tags webkit2_41 -ldflags "-X github.com/kevung/blunderdb/internal/cli.appVersion=${{ steps.vars.outputs.version }}"
         shell: bash
 
       # Note: Windows binaries are not code-signed. Free OSS Authenticode signing
@@ -999,7 +999,7 @@ jobs:
             sed -i '' "s/\"name\": \"[^\"]*\"/\"name\": \"$OUTPUT_NAME\"/" wails.json
             sed -i '' "s/\"outputfilename\": \"[^\"]*\"/\"outputfilename\": \"$OUTPUT_NAME\"/" wails.json
           fi
-          wails build --platform 'darwin/universal' -clean -tags webkit2_41 -ldflags "-X github.com/kevung/blunderdb/internal/cli.appVersion=$VERSION"
+          wails build -trimpath --platform 'darwin/universal' -clean -tags webkit2_41 -ldflags "-X github.com/kevung/blunderdb/internal/cli.appVersion=$VERSION"
         shell: bash
         
       - name: Add Linux perms
