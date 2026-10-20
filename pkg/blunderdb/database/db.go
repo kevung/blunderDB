@@ -65,8 +65,11 @@ type Database struct {
 	// repair also rebuilds anki_card: ALTER TABLE relaxes no constraint.
 	pendingAnkiCardKinds bool
 	lock                 *fileLock // single-writer advisory lock on the open file (nil for :memory:/read-only)
-	readOnly             bool      // opened read-only because another instance holds the write lock
-	commentAuthor        string    // who signs the comments written here (SetCommentAuthor); guarded by mu
+	// openPath is the file open now, read without mu by IsOpenDatabase:
+	// a watch loop asks it while an import holds the lock.
+	openPath      atomic.Pointer[string]
+	readOnly      bool   // opened read-only because another instance holds the write lock
+	commentAuthor string // who signs the comments written here (SetCommentAuthor); guarded by mu
 	// transcriptSvc is the transcription service over this handle's store
 	// (db_transcription.go), holding the open drafts' sessions; transcriptMu
 	// guards the pointer.
@@ -168,6 +171,7 @@ func (d *Database) acquireFileLock(path string) {
 	if path == "" || path == ":memory:" {
 		return
 	}
+	d.openPath.Store(&path)
 	lock, ok, err := tryLockExclusive(lockPathFor(path))
 	if err != nil {
 		slog.Warn("single-instance lock unavailable; opening without it", "path", path, "err", err)
@@ -181,8 +185,36 @@ func (d *Database) acquireFileLock(path string) {
 	d.lock = lock
 }
 
+// IsOpenDatabase reports whether path names the file this Database has
+// open, whatever the spelling — relative, through a symbolic link, a hard
+// link. Merging a library into itself is never meant: a watched folder that
+// holds the open library must not offer it back.
+func (d *Database) IsOpenDatabase(path string) bool {
+	open := d.openPath.Load()
+	if open == nil || path == "" {
+		return false
+	}
+	a, errA := os.Stat(*open)
+	b, errB := os.Stat(path)
+	if errA == nil && errB == nil {
+		return os.SameFile(a, b)
+	}
+	return canonicalPath(*open) == canonicalPath(path)
+}
+
+func canonicalPath(p string) string {
+	if abs, err := filepath.Abs(p); err == nil {
+		p = abs
+	}
+	if real, err := filepath.EvalSymlinks(p); err == nil {
+		p = real
+	}
+	return filepath.Clean(p)
+}
+
 // releaseFileLock drops the single-writer lock if held.
 func (d *Database) releaseFileLock() {
+	d.openPath.Store(nil)
 	if d.lock != nil {
 		if err := d.lock.release(); err != nil {
 			slog.Warn("releasing single-instance lock failed", "err", err)

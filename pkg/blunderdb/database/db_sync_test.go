@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"maps"
 	"os"
@@ -184,6 +185,7 @@ func hasCollection(t *testing.T, d *Database, name string) bool {
 func mergeWatched(t *testing.T, d *Database, folder string) []string {
 	t.Helper()
 	w, err := watch.New(folder)
+	w.Skip(d.IsOpenDatabase)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -227,4 +229,29 @@ func snapshot(t *testing.T, d *Database) map[string]string {
 	}
 	out["members"] = fmt.Sprint(members)
 	return out
+}
+
+// A library kept inside its own watched folder is never offered to itself,
+// whatever path names it — through a symbolic link included — and merging
+// it into itself by hand is refused; another library beside it still is.
+func TestWatchedFolderSkipsTheOpenLibrary(t *testing.T) {
+	dir := t.TempDir()
+	self := filepath.Join(dir, "self.db")
+	d := openLibrary(t, self)
+	openLibrary(t, filepath.Join(dir, "other.db"))
+	link := filepath.Join(t.TempDir(), "alias")
+	if err := os.Symlink(dir, link); err != nil {
+		t.Skipf("symlink: %v", err)
+	}
+
+	merged := mergeWatched(t, d, link)
+	if len(merged) != 1 || filepath.Base(merged[0]) != "other.db" {
+		t.Fatalf("the watch offered %v, want other.db alone", merged)
+	}
+	if _, err := d.CommitImportDatabase(filepath.Join(link, "self.db")); !errors.Is(err, ErrImportIsOpenDatabase) {
+		t.Fatalf("merging the open library into itself: err = %v, want ErrImportIsOpenDatabase", err)
+	}
+	if _, err := d.AnalyzeImportDatabase(self); !errors.Is(err, ErrImportIsOpenDatabase) {
+		t.Fatalf("analysing the open library as an import: err = %v, want ErrImportIsOpenDatabase", err)
+	}
 }

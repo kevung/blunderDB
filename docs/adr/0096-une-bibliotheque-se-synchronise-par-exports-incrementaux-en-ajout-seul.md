@@ -33,14 +33,27 @@ et de quoi la recevoir sans geste.
    tout ce qui est en dessous (`sqlite.Storage.IDsVisibleInOrder`, `ingest.OrderedIDs`). Sur
    PostgreSQL, un import concurrent du même tenant tient des valeurs de séquence inférieures au
    plus grand identifiant lu et ne les rend visibles qu'à sa validation : un repère avancé
-   aussitôt les perdrait sans bruit. Un moteur qui ne se déclare pas ordonné garde donc chaque
-   repère *en attente* (`SyncCursor.Pending`) pendant `ingest.SyncSettleDelay` (24 h, bien
-   au-delà de toute transaction d'import) ; chaque export part du dernier repère *établi*
-   (`SyncCursor.Settled`) et renvoie ce qui est entré pendant ce délai. Le recouvrement coûte
-   une refusion idempotente ; le trou coûterait une perte. Un repère fondé sur la visibilité
-   transactionnelle (`pg_current_snapshot`) serait exact, mais demande de lire les identifiants
-   dans l'instantané du test, donc une méthode de plus au contrat de stockage pour un seul
-   moteur.
+   aussitôt les perdrait sans bruit. Aucune durée ne borne une transaction : le repère n'est donc
+   pas cru au bout d'un délai, mais quand on sait que ces transactions sont finies. Un moteur non
+   ordonné qui sait le dire (`ingest.SyncFence`) garde chaque repère *en attente*
+   (`SyncCursor.Pending`) avec une *barrière* prise juste après la lecture des identifiants, qui
+   nomme les transactions alors en cours ; chaque export part du dernier repère *établi*
+   (`SyncCursor.Settled`). Avant de lire, l'export vérifie les barrières des repères en attente,
+   du plus ancien au plus récent, et s'arrête à la première qui tient : une fois le fichier
+   complet, le plus récent des repères dont la barrière était levée devient établi, car cet
+   export, parti d'en dessous, a vu tout ce que ces transactions ont validé. Un repère plus
+   récent n'est jamais établi devant un plus ancien dont la barrière tient. Sur PostgreSQL
+   (`postgres.Storage.SyncFence`), la barrière retient `pg_snapshot_xmax(pg_current_snapshot())`
+   — levée quand le `xmin` de l'instantané courant l'atteint, ce qui couvre toute transaction
+   ayant écrit, quel que soit son rôle — et les couples `(pid, xact_start)` de
+   `pg_stat_activity` de la base, ce qui couvre une transaction qui a tiré une valeur de
+   séquence sans avoir encore d'identifiant de transaction. Une transaction longue retarde le
+   repère, sans limite et sans perte ; une barrière illisible tient. Un moteur ni ordonné ni
+   doté de barrière (`storage/remote`) n'établit jamais de repère : chaque export incrémental y
+   emporte tout depuis le repère zéro. Le recouvrement coûte une refusion idempotente ; le trou
+   coûterait une perte. Un délai fixe (24 h) a été écarté : il suppose une borne que rien
+   n'impose, et un repère cru au bout du délai sans qu'un export ait relu entre-temps passait
+   au-dessus des lignes validées tard.
 4. **Ajout seul.** Une suppression ou une modification en place (commentaire réécrit, analyse
    refaite sur une position déjà envoyée) ne se propage pas ; la documentation le dit. Les filtres
    enregistrés et les paquets Anki ne partent pas dans un export incrémental : ce ne sont pas des
@@ -69,7 +82,10 @@ et de quoi la recevoir sans geste.
    ce qui a été lu, pour s'en dispenser, serait écrire chez le receveur. Un export
    incrémental s'écrit sous `.<nom>.part` puis est renommé, pour qu'une surveillance ne voie jamais
    un fichier à moitié écrit ; vers un dossier, il prend un nom neuf `sync-<machine>-<date>.db`,
-   car la surveillance ne signale un nom qu'une fois.
+   car la surveillance ne signale un nom qu'une fois. La bibliothèque ouverte n'est jamais
+   proposée à elle-même (`watch.Watcher.Skip`, `Database.IsOpenDatabase`, qui compare les
+   fichiers et non les chemins écrits), et sa fusion à la main est refusée
+   (`database.ErrImportIsOpenDatabase`).
 
 ## Consequences
 
@@ -77,4 +93,7 @@ et de quoi la recevoir sans geste.
   celui de l'utilisateur (Syncthing, clé USB, courriel).
 - Un `.dbx` n'est pas pris par la surveillance, qui ne peut pas demander de mot de passe.
 - Réinitialiser une synchronisation, c'est faire un export entier : l'import est idempotent.
-- Sur PostgreSQL, un export incrémental n'est jamais vide dans les 24 h qui suivent un ajout.
+- Sur PostgreSQL, chaque export incrémental renvoie au moins ce qu'a porté le précédent ; une
+  transaction restée ouverte (`idle in transaction`) empêche tout repère de s'établir, et chaque
+  export renvoie tout depuis le dernier établi tant qu'elle dure.
+- Sur le backend `remote`, un export incrémental est un export entier.

@@ -1051,8 +1051,9 @@ demandez un export entier (sans ``incremental``), ou un export incrémental
 sous un nouveau ``syncCursor``, qui repart de zéro ; l'import étant
 idempotent, ce recouvrement ne crée aucun doublon. Sur PostgreSQL, un import
 concurrent peut rendre visibles après coup des lignes numérotées sous le
-repère : chaque repère n'y est donc tenu pour sûr qu'au bout de 24 heures, et
-un export incrémental renvoie aussi ce qui est entré pendant ce délai.
+repère : un repère n'y est donc tenu pour sûr qu'une fois finies toutes les
+transactions de la base en cours quand il a été lu, quelle que soit leur durée,
+et chaque export incrémental renvoie aussi ce que portait le précédent.
 L'en-tête de compte rendu porte ``"syncHeld": true`` quand des lignes ont été
 écartées : le repère n'a alors pas avancé. ``exportPath`` est ignoré. Une clé
 que les options ne connaissent pas, ou écrite avec une autre casse

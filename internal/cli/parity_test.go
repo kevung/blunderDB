@@ -323,6 +323,7 @@ var databaseParity = map[string]parityEntry{
 	"ImportFiles":                       {CLI: "import", Server: "/v1/imports.batch"},
 	"SetSkipDuplicates":                 {CLI: "import --skip-duplicates", Server: "/v1/imports.batch"},
 	"ImportXGPPosition":                 {CLI: "import --type position", Server: "/v1/positions.fromXGP"},
+	"IsOpenDatabase":                    {CLI: "import --watch", Why: "names the file this process has open, so a watched folder that holds it skips it; the daemon opens no library file and watches no folder"},
 	"IsProtectedCopyPath":               {CLI: "open", Why: whyIssuance},
 	"IsReadOnly":                        {Why: whyLifecycle + " (ADR-0004: the second desktop instance opens read-only; a CLI run is one process, the daemon owns its store)"},
 	"RefuseReadOnly":                    {Why: whyLifecycle + " (the read-only guard the rollout methods run themselves; the GUI asks it to refuse before a job starts)"},

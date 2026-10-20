@@ -37,15 +37,16 @@ const syncCursorPrefix = "sync_cursor:"
 // names none — the daemon's case, which knows no destination folder.
 const DefaultSyncCursor = "default"
 
-// SyncSettleDelay is how long a mark waits before it is trusted on a backend
-// whose identifiers can become visible out of order. On PostgreSQL a
-// sequence value is taken when a row is inserted and seen when its
-// transaction commits: an import still running when the export reads holds
-// identifiers below the highest one read, and they appear later. A mark
-// read at T is trusted once no transaction open at T can still be running —
-// a day, far beyond any import — and until then each export starts from the
-// newest trusted mark, sending the last day's additions again.
-const SyncSettleDelay = 24 * time.Hour
+// On a backend whose identifiers can become visible out of order — on
+// PostgreSQL a sequence value is taken when a row is inserted and seen when
+// its transaction commits — an export reading at T may pass identifiers
+// held by a transaction still running at T, which appear later. Its mark is
+// therefore kept pending, and the exports that follow still start from the
+// last trusted mark. A pending mark becomes trusted only through a later
+// export that checked, before reading, that every transaction running when
+// the mark was read has ended (SyncFence): that export saw whatever those
+// transactions committed below the mark. No clock is trusted, so a
+// transaction of any length delays the mark instead of losing its rows.
 
 // SyncMark is the highest identifier of each family an incremental export
 // has already carried. The zero mark carries everything.
@@ -59,18 +60,20 @@ type SyncMark struct {
 }
 
 // SyncCursor is what the producer keeps per destination. Settled is the
-// mark below which every row has been sent. Pending holds the marks of the
-// exports made since, on a backend that does not commit identifiers in
-// order; each settles once SyncSettleDelay has passed.
+// mark below which every row has been sent. Pending holds, oldest first, the
+// marks of the exports made since on a backend that does not commit
+// identifiers in order, each waiting for its fence to clear.
 type SyncCursor struct {
 	Settled SyncMark      `json:"settled"`
 	Pending []PendingMark `json:"pending,omitempty"`
 }
 
-// PendingMark is a mark read by an export, not yet trusted.
+// PendingMark is a mark read by an export, not yet trusted. Fence names the
+// transactions running when it was read; At is informative only.
 type PendingMark struct {
-	Mark SyncMark  `json:"mark"`
-	At   time.Time `json:"at"`
+	Mark  SyncMark  `json:"mark"`
+	Fence string    `json:"fence"`
+	At    time.Time `json:"at"`
 }
 
 // SyncAdvance is what an incremental export writes back to its source once
@@ -82,10 +85,23 @@ type SyncAdvance struct {
 
 // OrderedIDs is implemented by a backend whose identifiers become visible in
 // the order they are allocated — SQLite, whose single writer commits one
-// transaction before the next can take an identifier. A backend that does
-// not say so is treated as unordered: its marks wait SyncSettleDelay.
+// transaction before the next can take an identifier. Its marks are trusted
+// at once.
 type OrderedIDs interface {
 	IDsVisibleInOrder() bool
+}
+
+// SyncFence is implemented by a backend whose identifiers can become visible
+// out of order but which can name the transactions running at a moment and
+// later tell whether they have all ended — PostgreSQL. A backend that is
+// neither ordered nor fenced never trusts a mark: each incremental export
+// then carries everything since the zero mark, an overlap, never a hole.
+type SyncFence interface {
+	// SyncFence returns a token naming every transaction running now.
+	SyncFence(ctx context.Context) (string, error)
+	// SyncFenceCleared reports whether every transaction the token names
+	// has ended. An unreadable token is not cleared.
+	SyncFenceCleared(ctx context.Context, token string) (bool, error)
 }
 
 func idsVisibleInOrder(src storage.Storage) bool {
@@ -93,28 +109,41 @@ func idsVisibleInOrder(src storage.Storage) bool {
 	return ok && o.IDsVisibleInOrder()
 }
 
-// start is the mark an export reads from at now: the newest trusted one.
-// The cursor returned has the marks that settled by now folded in.
-func (c SyncCursor) start(now time.Time) (SyncMark, SyncCursor) {
-	var keep []PendingMark
-	for _, p := range c.Pending {
-		if now.Sub(p.At) >= SyncSettleDelay {
-			c.Settled = p.Mark
-		} else {
-			keep = append(keep, p)
+// clearedPrefix counts the pending marks, oldest first, whose fence has
+// cleared. It stops at the first that has not: a newer mark is above an
+// older one, so trusting it would pass the older one's late rows.
+func (c SyncCursor) clearedPrefix(cleared func(token string) (bool, error)) (int, error) {
+	for i, p := range c.Pending {
+		ok, err := cleared(p.Fence)
+		if err != nil {
+			return 0, err
+		}
+		if !ok {
+			return i, nil
 		}
 	}
-	c.Pending = keep
-	return c.Settled, c
+	return len(c.Pending), nil
 }
 
-// advance records a mark read at now by an export that completed.
-func (c SyncCursor) advance(mark SyncMark, now time.Time, ordered bool) SyncCursor {
+// advance records the mark read by an export that completed. The export
+// started from c.Settled and checked, before reading, that the fences of
+// the first n pending marks had cleared: it saw every row below them, so
+// the newest of them is trusted. The mark it read waits behind fence; on an
+// ordered backend it is trusted at once. fenced is false on a backend that
+// can name no fence: nothing is ever trusted there.
+func (c SyncCursor) advance(n int, mark SyncMark, fence string, now time.Time, ordered, fenced bool) SyncCursor {
 	if ordered {
 		return SyncCursor{Settled: mark}
 	}
-	c.Pending = append(c.Pending, PendingMark{Mark: mark, At: now})
-	return c
+	if !fenced {
+		return SyncCursor{Settled: c.Settled}
+	}
+	next := SyncCursor{Settled: c.Settled}
+	if n > 0 {
+		next.Settled = c.Pending[n-1].Mark
+	}
+	next.Pending = append(append([]PendingMark(nil), c.Pending[n:]...), PendingMark{Mark: mark, Fence: fence, At: now})
+	return next
 }
 
 func syncCursorKey(cursor string) string {
@@ -179,8 +208,19 @@ func incrementalOptions(ctx context.Context, src storage.Storage, scope string, 
 	if err != nil {
 		return plan, err
 	}
-	now := time.Now()
-	since, cur := cur.start(now)
+	ordered := idsVisibleInOrder(src)
+	fence, fenced := src.(SyncFence)
+	// The fences are checked before the read: a transaction that has
+	// ended by now committed its rows before the read below sees them.
+	cleared := 0
+	if !ordered && fenced {
+		if cleared, err = cur.clearedPrefix(func(token string) (bool, error) {
+			return fence.SyncFenceCleared(ctx, token)
+		}); err != nil {
+			return plan, fmt.Errorf("ingest: check sync fence: %w", err)
+		}
+	}
+	since := cur.Settled
 	next := since
 	sel := Selection{MatchPositions: true, CollectionPositions: true, TournamentMatches: true, LessonContents: true}
 
@@ -255,8 +295,16 @@ func incrementalOptions(ctx context.Context, src storage.Storage, scope string, 
 		sel.LessonIDs, next.Lesson = above(all, since.Lesson)
 	}
 
+	// The fence is taken after the read: it names every transaction that
+	// could hold an identifier below the mark just read.
+	var token string
+	if !ordered && fenced {
+		if token, err = fence.SyncFence(ctx); err != nil {
+			return plan, fmt.Errorf("ingest: take sync fence: %w", err)
+		}
+	}
 	plan.Selection = sel
-	plan.Sync = &SyncAdvance{Name: cursor, Cursor: cur.advance(next, now, idsVisibleInOrder(src))}
+	plan.Sync = &SyncAdvance{Name: cursor, Cursor: cur.advance(cleared, next, token, time.Now(), ordered, fenced)}
 	return plan, nil
 }
 

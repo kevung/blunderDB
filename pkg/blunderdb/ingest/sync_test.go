@@ -10,47 +10,84 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
-// On a backend whose identifiers can appear out of order, a mark is not
-// trusted until SyncSettleDelay has passed: the exports made meanwhile start
-// from the last trusted mark, so a row committed late by a concurrent import
-// is sent by the next export instead of being lost under the mark.
-func TestSyncCursorUnorderedOverlapsUntilSettled(t *testing.T) {
-	t0 := time.Date(2026, 10, 20, 9, 0, 0, 0, time.UTC)
+// fakeFences stands for a backend's running transactions: a token names
+// the transactions open when it was taken, cleared once all have ended.
+type fakeFences struct{ open map[string]bool }
+
+func (f fakeFences) cleared(token string) (bool, error) { return !f.open[token], nil }
+
+// exportOnce runs one incremental export's cursor arithmetic: check the
+// fences, read from Settled, take the fence of the mark just read.
+func exportOnce(t *testing.T, c SyncCursor, f fakeFences, read SyncMark, token string) (SyncMark, SyncCursor) {
+	t.Helper()
+	n, err := c.clearedPrefix(f.cleared)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return c.Settled, c.advance(n, read, token, time.Now(), false, true)
+}
+
+// On a backend whose identifiers can appear out of order, a mark is trusted
+// only through an export that read after every transaction running at the
+// mark's read had ended — however long that takes. A transaction kept open
+// across many exports keeps them all starting below its identifiers.
+func TestSyncCursorUnorderedWaitsForItsFence(t *testing.T) {
+	f := fakeFences{open: map[string]bool{}}
 	var c SyncCursor
 
-	since, c := c.start(t0)
+	// The export E1 read positions up to 10; an import still running holds
+	// 7, invisible to it, and outlives any delay.
+	f.open["e1"] = true
+	since, c := exportOnce(t, c, f, SyncMark{Position: 10}, "e1")
 	if since != (SyncMark{}) {
 		t.Fatalf("first export starts at %+v, want zero", since)
 	}
-	// The export at t0 read positions up to 10; an import still running
-	// holds 7, invisible to it.
-	c = c.advance(SyncMark{Position: 10}, t0, false)
-
-	since, c = c.start(t0.Add(time.Minute))
+	for i := range 3 {
+		since, c = exportOnce(t, c, f, SyncMark{Position: 12}, "e2")
+		if since.Position != 0 {
+			t.Fatalf("export %d while the import runs starts at %d, want 0: position 7 may still appear", i, since.Position)
+		}
+	}
+	// The import commits position 7. The next export still starts at 0 —
+	// it is the one that carries 7 — and only then is 10 trusted.
+	f.open["e1"] = false
+	since, c = exportOnce(t, c, f, SyncMark{Position: 12}, "e3")
 	if since.Position != 0 {
-		t.Fatalf("a minute later the export starts at %d, want 0: position 7 may still appear", since.Position)
+		t.Fatalf("the export after the commit starts at %d, want 0", since.Position)
 	}
-	c = c.advance(SyncMark{Position: 12}, t0.Add(time.Minute), false)
-
-	since, c = c.start(t0.Add(SyncSettleDelay))
-	if since.Position != 10 {
-		t.Fatalf("after the delay the export starts at %d, want 10", since.Position)
+	if c.Settled.Position != 12 {
+		t.Fatalf("settled after the cleared export = %d, want 12 (every cleared mark folds in)", c.Settled.Position)
 	}
-	if len(c.Pending) != 1 || c.Pending[0].Mark.Position != 12 {
-		t.Fatalf("pending after settling = %+v, want the mark 12 alone", c.Pending)
-	}
-	since, _ = c.start(t0.Add(SyncSettleDelay + time.Minute))
-	if since.Position != 12 {
-		t.Fatalf("start = %d, want 12", since.Position)
+	if len(c.Pending) != 1 || c.Pending[0].Fence != "e3" {
+		t.Fatalf("pending = %+v, want the last mark alone", c.Pending)
 	}
 }
 
-// On an ordered backend the mark is trusted at once.
-func TestSyncCursorOrderedAdvancesAtOnce(t *testing.T) {
+// A newer mark whose fence cleared is not trusted ahead of an older one
+// whose fence has not: it lies above the older one's late rows.
+func TestSyncCursorClearsInOrder(t *testing.T) {
+	f := fakeFences{open: map[string]bool{"old": true}}
+	c := SyncCursor{Pending: []PendingMark{
+		{Mark: SyncMark{Position: 10}, Fence: "old"},
+		{Mark: SyncMark{Position: 20}, Fence: "new"},
+	}}
+	since, c := exportOnce(t, c, f, SyncMark{Position: 30}, "e")
+	if since.Position != 0 || c.Settled.Position != 0 || len(c.Pending) != 3 {
+		t.Fatalf("start %d, cursor %+v: nothing may settle behind an open fence", since.Position, c)
+	}
+}
+
+// On an ordered backend the mark is trusted at once; on a backend that can
+// name no fence it never is, and every export starts from the last
+// trusted mark.
+func TestSyncCursorOrderedAndUnfenced(t *testing.T) {
 	now := time.Now()
-	c := SyncCursor{}.advance(SyncMark{Position: 10}, now, true)
-	if since, _ := c.start(now); since.Position != 10 {
-		t.Fatalf("start = %d, want 10", since.Position)
+	if c := (SyncCursor{}).advance(0, SyncMark{Position: 10}, "", now, true, false); c.Settled.Position != 10 {
+		t.Fatalf("ordered: settled = %d, want 10", c.Settled.Position)
+	}
+	c := SyncCursor{}.advance(0, SyncMark{Position: 10}, "", now, false, false)
+	if c.Settled.Position != 0 || len(c.Pending) != 0 {
+		t.Fatalf("unfenced: cursor = %+v, want the zero cursor", c)
 	}
 }
 

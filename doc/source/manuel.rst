@@ -703,6 +703,8 @@ Ce qu'il faut savoir :
   fichiers que le dossier contient encore, sans rien ajouter, mais au prix du
   temps de les relire. Supprimez de temps en temps les fichiers ``sync-…``
   déjà reçus pour que ce démarrage reste rapide.
+* **La bibliothèque ouverte n'est jamais fusionnée dans elle-même** : si elle
+  se trouve dans le dossier surveillé, la surveillance la passe.
 * **Un export qui a dû écarter des lignes** (signalées dans le journal) ne fait
   pas avancer le repère : le suivant les retente, avec tout ce qui les suit.
 * **Un export n'est jamais vu à moitié écrit** : il est écrit sous un nom caché

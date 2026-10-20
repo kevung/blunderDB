@@ -60,7 +60,16 @@ type Watcher struct {
 	reported map[string]bool
 	// pending holds files seen once but not yet stable.
 	pending map[string]fileState
+	// skip, when set, names files never to report — the library open in
+	// the caller, which a watched folder may hold and must not merge into
+	// itself. It is asked at every poll, so it follows the caller's state.
+	skip func(path string) bool
 }
+
+// Skip makes the watch pass over every file skip accepts. It is not
+// remembered as reported: a file skipped now is offered once skip lets it
+// through.
+func (w *Watcher) Skip(skip func(path string) bool) { w.skip = skip }
 
 // New starts a watch on dir. Everything already in the directory is recorded
 // as seen and will never be reported — except native .db files, which the
@@ -134,6 +143,10 @@ func (w *Watcher) Poll() ([]string, error) {
 	var ready []string
 	for path, now := range present {
 		if w.reported[path] {
+			continue
+		}
+		if w.skip != nil && w.skip(path) {
+			delete(w.pending, path)
 			continue
 		}
 		before, seen := w.pending[path]

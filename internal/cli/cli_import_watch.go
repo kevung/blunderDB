@@ -21,6 +21,9 @@ func (cli *CLI) importWatch(dirPath, format string, interval time.Duration, fail
 	if err != nil {
 		return err
 	}
+	if cli.db != nil {
+		w.Skip(cli.db.IsOpenDatabase)
+	}
 	interval = watch.ClampInterval(interval)
 
 	text := format != "json"
