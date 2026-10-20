@@ -12,6 +12,8 @@
     import { GetCheckForUpdates, GetTrainingSeedSources } from '../wailsjs/go/main/Config.js';
     import { metaStore } from './stores/metaStore.js';
     import { isNewerVersion } from './utils/semver.js';
+    import { markStartup } from './utils/startupMarks.js';
+    import { preloadDeferredComponents } from './components/lazyComponents.js';
     import { initLanguage, t, tMsg } from './i18n';
     import { initBoardColors } from './stores/boardColorsStore';
     import { initUIScale, uiScaleStore } from './stores/uiScaleStore';
@@ -340,6 +342,13 @@
     /** @type {(() => void) | null} */
     let unregisterZoomKeys = null;
 
+    /** The window is usable: fetch the panels and modals kept off the first screen. */
+    function startupDone() {
+        markStartup('ready');
+        // WebKit has no requestIdleCallback; a macrotask lets the first frames paint first.
+        setTimeout(() => preloadDeferredComponents(), 0);
+    }
+
     onMount(async () => {
         maybeCheckForUpdate();
 
@@ -386,6 +395,7 @@
         } catch (_e) {
             await initLanguage('en');
         }
+        markStartup('language');
 
         initBoardColors();
 
@@ -420,6 +430,7 @@
             const startupPath = await StartupFilePath();
             if (startupPath && (await PathExists(startupPath))) {
                 await openDatabaseByPath(startupPath);
+                startupDone();
                 return;
             }
         } catch (error) {
@@ -445,6 +456,7 @@
             // Any failure, the probe included, is transient: keep the path.
             logger.error('Error auto-reopening last database (keeping remembered path):', error);
         }
+        startupDone();
     });
 
     onDestroy(() => {

@@ -365,6 +365,9 @@ export async function getWailsCalls(page, methodName) {
  * @param {import('@playwright/test').Page} page
  */
 export async function dismissHomeScreen(page) {
+    // The app mounts once the locale is in (main.js): before that there is no home screen to
+    // dismiss, and one that appears afterwards would cover every panel.
+    await page.waitForFunction(() => performance.getEntriesByName('bdb:mounted').length > 0);
     // Constat et clic en un seul tour de page : sous openLibraryMock, l'accueil peut s'effacer
     // entre un count() et un click(), qui attendrait alors un bouton disparu.
     await page.evaluate(() => /** @type {HTMLElement | null} */ (document.querySelector('[data-testid="home-dismiss"]'))?.click());

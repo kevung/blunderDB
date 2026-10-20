@@ -56,7 +56,7 @@ import MatchPanel from '../components/MatchPanel.svelte';
 import { must } from './helpers/must.js';
 
 async function settle() {
-    await vi.waitFor(() => expect(ListMatches).toHaveBeenCalledTimes(2));
+    await vi.waitFor(() => expect(ListMatches).toHaveBeenCalledTimes(1));
     await new Promise((r) => setTimeout(r, 0));
     for (let i = 0; i < 6; i++) await tick();
 }

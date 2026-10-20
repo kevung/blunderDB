@@ -73,8 +73,8 @@ describe('ModalHost', () => {
     test.each(DIALOG_MODALS)('%s opens one dialog and Escape closes it', async (id) => {
         const { container } = render(ModalHost);
         openModal(id);
-        await tick();
-        expect(dialogs(container).length, `${id} should show exactly one dialog`).toBe(1);
+        // Opening is what fetches a modal's chunk (lazyComponents.js): it shows once loaded.
+        await waitFor(() => expect(dialogs(container).length, `${id} should show exactly one dialog`).toBe(1), { timeout: 5000 });
 
         await pressEscape(container);
         expect(get(activeModal), `${id} should close on Escape`).toBeNull();
@@ -97,7 +97,7 @@ describe('ModalHost', () => {
         const { container } = render(ModalHost);
         for (const [id, tables] of Object.entries(MODAL_TABLES)) {
             openModal(id);
-            await tick();
+            await waitFor(() => expect(container.querySelector('[role="dialog"] table')).not.toBeNull(), { timeout: 5000 });
             const sections = container.querySelectorAll('[role="dialog"] table');
             expect(sections.length, id).toBe(tables.length);
             sections.forEach((table, i) => {

@@ -17,7 +17,7 @@ test.beforeEach(async ({ page }) => {
     await installWailsMock(
         page,
         openLibraryMock({
-            database: { GetAllTournaments: [open], GetTournamentMatches: [matchSample], GetAllMatches: [matchSample], GetMatchMovePositions: matchMovePositions }
+            database: { GetAllTournaments: [open], GetTournamentMatches: [matchSample], GetAllMatches: [matchSample], GetMatchByID: matchSample, GetMatchMovePositions: matchMovePositions }
         })
     );
     await page.goto('/');

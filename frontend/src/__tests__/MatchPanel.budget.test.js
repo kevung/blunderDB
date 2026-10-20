@@ -48,7 +48,7 @@ describe('MatchPanel — fifty thousand matches', () => {
     test('only a window of rows is in the DOM, and j selects the first one', async () => {
         const started = performance.now();
         const { container } = render(MatchPanel);
-        await vi.waitFor(() => expect(ListMatches).toHaveBeenCalledTimes(2));
+        await vi.waitFor(() => expect(ListMatches).toHaveBeenCalledTimes(1));
         await new Promise((resolve) => setTimeout(resolve, 0));
         for (let i = 0; i < 4; i++) await tick();
 

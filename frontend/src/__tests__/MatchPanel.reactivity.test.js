@@ -168,4 +168,18 @@ describe('MatchPanel — matchPanelRefreshTriggerStore', () => {
 
         expect(ListMatches).not.toHaveBeenCalled();
     });
+
+    // ── Test 7 : montage différé, base déjà ouverte → une seule charge ──────
+    test('T7 — montage avec panel ouvert et trigger déjà incrémenté : ListMatches appelé une fois', async () => {
+        // The panel mounts after the database opened: the trigger already moved and the
+        // panel is visible. Neither is news to the panel; it loads exactly once.
+        matchPanelRefreshTriggerStore.set(3);
+        openPanels.set(new Set([PANEL.MATCH]));
+        render(MatchPanel);
+        await tick();
+        await tick();
+        await tick();
+
+        expect(ListMatches).toHaveBeenCalledTimes(1);
+    });
 });

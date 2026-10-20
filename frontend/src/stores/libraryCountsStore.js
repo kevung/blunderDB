@@ -13,10 +13,26 @@ import { writable } from 'svelte/store';
 /** @type {import('svelte/store').Writable<LibraryCounts>} */
 export const libraryCountsStore = writable(null);
 
-/** Rafraîchit le compteur ; sans base ouverte il disparaît plutôt que de garder d'anciens chiffres. */
 let refreshSeq = 0;
+/** @type {Promise<void> | null} */
+let scheduled = null;
 
-export async function refreshLibraryCounts() {
+/**
+ * Rafraîchit le compteur ; sans base ouverte il disparaît plutôt que de garder d'anciens chiffres.
+ * Les demandes d'un même tour (l'ouverture d'une base en émet plusieurs : le service, l'effet
+ * de la barre d'état) partagent une seule lecture ; une demande venue pendant une lecture en
+ * lance une nouvelle, car la base a pu changer entre-temps.
+ */
+export function refreshLibraryCounts() {
+    if (scheduled) return scheduled;
+    scheduled = new Promise((resolve) => setTimeout(resolve, 0)).then(() => {
+        scheduled = null;
+        return readLibraryCounts();
+    });
+    return scheduled;
+}
+
+async function readLibraryCounts() {
     // Une réponse n'est appliquée que si aucun rafraîchissement plus récent n'a démarré.
     const seq = ++refreshSeq;
     const { get } = await import('svelte/store');

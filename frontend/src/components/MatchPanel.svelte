@@ -283,10 +283,13 @@
         }
     });
 
-    // Reload matches when a new match is imported (trigger increments from 0)
+    // Reload matches when a new match is imported, or a database opened. The value present
+    // at mount is not news: the panel mounting with a database open loads through the
+    // `visible` effect below, and a second load would run the same costly list again.
+    const triggerAtMount = untrack(() => $matchPanelRefreshTriggerStore);
     $effect(() => {
         const trigger = $matchPanelRefreshTriggerStore;
-        if (trigger === 0 || embedded) return; // skip initial run
+        if (trigger === triggerAtMount || embedded) return;
         if (untrack(() => !visible || !databaseLoaded)) return;
         loadMatches().then(async () => {
             const lvm = lastVisitedMatch;
@@ -340,8 +343,9 @@
     async function loadMatches() {
         return logger.perf('MatchPanel:loadMatches', async () => {
             try {
-                await matchListStore.reload();
-                await loadTournaments();
+                // Each side runs a full aggregate on a large library (the page's badges, the
+                // tournaments' badges): side by side, the list waits for the slower, not the sum.
+                await Promise.all([matchListStore.reload(), loadTournaments()]);
             } catch (error) {
                 logger.error('Error loading matches:', error);
             }
@@ -1145,7 +1149,8 @@
 
     onMount(async () => {
         if (embedded) return;
-        if (visible) await loadMatches();
+        // With a database open, the `visible` effect has this mount's load already.
+        if (visible && !databaseLoaded) await loadMatches();
         document.addEventListener('click', handleClickOutside);
         unregisterKeys = registerKeys('matchPanel', handleKeyDown);
     });
