@@ -165,7 +165,7 @@
     <button class="add-btn" onclick={() => addView()} title={$t('viewTabs.newView')}
         >+{#if tabCount <= 1}<span class="add-label">{$t('viewTabs.newView')}</span>{/if}</button
     >
-    <button class="add-btn group-btn" data-testid="open-library-group" onclick={openInNewGroup} title={$t('libraryGroups.openInNewGroup')}>&#x29C9;</button>
+    <button class="group-btn" data-testid="open-library-group" onclick={openInNewGroup} title={$t('libraryGroups.openInNewGroup')}>&#x29C9;</button>
 </div>
 
 <style>
@@ -276,8 +276,18 @@
     }
 
     .group-btn {
+        border: none;
+        background: none;
         font-size: var(--font-size-base);
+        color: var(--color-text-muted);
+        cursor: pointer;
         padding: 0 6px;
+        display: flex;
+        align-items: center;
+    }
+
+    .group-btn:hover {
+        color: var(--color-text);
     }
 
     /* A group: its header carries the library's name on its colour; its tabs a top edge of it. */

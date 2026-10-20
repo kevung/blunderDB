@@ -230,14 +230,16 @@ export const protectedCopyErrorStore = writable('');
  *        in a group of its own (libraryGroupStore), the active library waiting open in its group
  */
 export async function openDatabaseByPath(filePath, { inNewGroup } = {}) {
-    const holder = await groupHolding(filePath);
-    const { activeGroupId, activateGroup } = await import('../stores/libraryGroupStore.js');
-    if (holder && (inNewGroup || holder !== get(activeGroupId))) {
-        await activateGroup(holder);
+    // Side by side: the panels may load against the library as soon as the opening is under way,
+    // so the resets below must not wait one more round trip.
+    // The group store on demand: it pulls in the view and position stores.
+    const [holder, isProtected, groups] = await Promise.all([groupHolding(filePath), IsProtectedCopyPath(filePath).catch(() => false), import('../stores/libraryGroupStore.js')]);
+    if (holder && (inNewGroup || holder !== get(groups.activeGroupId))) {
+        await groups.activateGroup(holder);
         setStatusBarMessage(tMsg('libraryGroups.alreadyOpen', { name: getFilenameFromPath(filePath) }));
         return;
     }
-    if (await IsProtectedCopyPath(filePath).catch(() => false)) {
+    if (isProtected) {
         protectedCopyErrorStore.set('');
         protectedCopyPathStore.set(filePath);
         openModal(MODAL.PROTECTED_COPY);
