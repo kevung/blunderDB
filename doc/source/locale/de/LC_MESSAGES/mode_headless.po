@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-20 16:05+0200\n"
+"POT-Creation-Date: 2026-10-20 16:15+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -202,8 +202,8 @@ msgstr "``--db <Pfad>``"
 #: ../../source/mode_headless.rst:210 ../../source/mode_headless.rst:2130
 #: ../../source/mode_headless.rst:2133 ../../source/mode_headless.rst:2136
 #: ../../source/mode_headless.rst:2140 ../../source/mode_headless.rst:2194
-#: ../../source/mode_headless.rst:2204 ../../source/mode_headless.rst:2215
-#: ../../source/mode_headless.rst:2218 ../../source/mode_headless.rst:2221
+#: ../../source/mode_headless.rst:2204 ../../source/mode_headless.rst:2221
+#: ../../source/mode_headless.rst:2224 ../../source/mode_headless.rst:2227
 msgid "–"
 msgstr "–"
 
@@ -4870,14 +4870,33 @@ msgstr ""
 " etwa das Token des Proxys (wiederholbar)"
 
 #: ../../source/mode_headless.rst:2207
+msgid "``--timeout <durée>``"
+msgstr "``--timeout <Dauer>``"
+
+#: ../../source/mode_headless.rst:2208
+msgid "``1m``"
+msgstr "``1m``"
+
+#: ../../source/mode_headless.rst:2209
+msgid ""
+"avec ``remote`` : délai de connexion et d'attente des en-têtes de la "
+"réponse du démon, puis d'un silence du corps (aucun octet reçu pendant "
+"cette durée) ; ``0`` garde la valeur par défaut, une durée négative "
+"supprime toute borne"
+msgstr ""
+"mit ``remote``: wie lange auf Verbindung und Antwort-Header des Daemons "
+"gewartet wird, danach auf einen stummen Body (kein Byte in dieser Zeit); "
+"``0`` behält den Standardwert, eine negative Dauer hebt jede Grenze auf"
+
+#: ../../source/mode_headless.rst:2213
 msgid "``--scope <n>``"
 msgstr "``--scope <n>``"
 
-#: ../../source/mode_headless.rst:2208
+#: ../../source/mode_headless.rst:2214
 msgid "``1``"
 msgstr "``1``"
 
-#: ../../source/mode_headless.rst:2209
+#: ../../source/mode_headless.rst:2215
 msgid ""
 "tenant, un entier décimal positif (envoyé comme ``X-Tenant-ID`` ; un nom "
 "comme ``alice`` est refusé)"
@@ -4885,40 +4904,40 @@ msgstr ""
 "Tenant, eine positive Dezimal-Ganzzahl (als ``X-Tenant-ID`` gesendet; ein"
 " Name wie ``alice`` wird abgewiesen)"
 
-#: ../../source/mode_headless.rst:2211
+#: ../../source/mode_headless.rst:2217
 msgid "``--json <chaîne>``"
 msgstr "``--json <Zeichenkette>``"
 
-#: ../../source/mode_headless.rst:2212
+#: ../../source/mode_headless.rst:2218
 #, no-python-brace-format
 msgid "``{}``"
 msgstr "``{}``"
 
-#: ../../source/mode_headless.rst:2213
+#: ../../source/mode_headless.rst:2219
 msgid "corps de la requête au format JSON"
 msgstr "Anfragerumpf im JSON-Format"
 
-#: ../../source/mode_headless.rst:2214
+#: ../../source/mode_headless.rst:2220
 msgid "``--json-file <chemin>``"
 msgstr "``--json-file <Pfad>``"
 
-#: ../../source/mode_headless.rst:2216
+#: ../../source/mode_headless.rst:2222
 msgid "lit le corps de la requête depuis un fichier"
 msgstr "liest den Anfragerumpf aus einer Datei"
 
-#: ../../source/mode_headless.rst:2217
+#: ../../source/mode_headless.rst:2223
 msgid "``--list``"
 msgstr "``--list``"
 
-#: ../../source/mode_headless.rst:2219
+#: ../../source/mode_headless.rst:2225
 msgid "affiche toutes les méthodes ``<famille>.<méthode>`` et quitte"
 msgstr "zeigt alle Methoden ``<famille>.<méthode>`` an und beendet sich"
 
-#: ../../source/mode_headless.rst:2220
+#: ../../source/mode_headless.rst:2226
 msgid "``--if-match <version>``"
 msgstr "``--if-match <version>``"
 
-#: ../../source/mode_headless.rst:2222
+#: ../../source/mode_headless.rst:2228
 msgid ""
 "version envoyée en ``If-Match``, exigée par les gestes de direction "
 "(:ref:`headless_direction_gestures`) et de transcription "
@@ -4928,38 +4947,51 @@ msgstr ""
 "(:ref:`headless_direction_gestures`) und den Transkriptionsgesten "
 "(:ref:`headless_transcription`)"
 
-#: ../../source/mode_headless.rst:2226
+#: ../../source/mode_headless.rst:2232
 msgid ""
 "Avec ``--backend remote``, ``call`` ne lit aucune base : ses "
-"gestionnaires passent par l'API ``/v1`` du démon que nomme ``--dsn``, "
-"avec le tenant de ``--scope`` et les en-têtes de ``--header``. Le démon "
-"ne s'authentifie pas ; le proxy placé devant lui décide. Une méthode dont"
-" le stockage n'a pas de route ``/v1`` (une transaction, un service de "
-"direction ou de transcription) répond une erreur interne qui la nomme."
+"gestionnaires passent par l'API ``/v1`` du démon que nomme ``--dsn`` (une"
+" URL ``http://hôte:port`` ou ``https://…``), avec le tenant de "
+"``--scope`` et les en-têtes de ``--header`` (``X-Tenant-ID`` y est refusé"
+" : le tenant est ``--scope``). ``--db`` et ``--backend remote`` "
+"s'excluent. Le démon ne s'authentifie pas ; le proxy placé devant lui "
+"décide : un refus du proxy (HTTP 401 ou 403) se lit « refused » et "
+"renvoie à ``--header``, une limite (HTTP 429, ``rate_limited``) se lit "
+"comme telle, et seul un démon injoignable ou muet au-delà de "
+"``--timeout`` se lit « daemon unavailable »."
 msgstr ""
 "Mit ``--backend remote`` liest ``call`` keine Datenbank: Seine Handler "
-"gehen über die ``/v1``-API des Daemons, den ``--dsn`` nennt, mit dem "
-"Tenant aus ``--scope`` und den Headern aus ``--header``. Der Daemon "
-"authentifiziert nicht; der vorgeschaltete Proxy entscheidet. Eine "
-"Methode, deren Speicher keine ``/v1``-Route hat (eine Transaktion, ein "
-"Turnierleitungs- oder Transkriptionsdienst), antwortet mit einem internen"
-" Fehler, der sie nennt."
+"laufen über die ``/v1``-API des mit ``--dsn`` benannten Daemons (eine URL"
+" ``http://host:port`` oder ``https://…``), mit dem Tenant aus ``--scope``"
+" und den Headern aus ``--header`` (``X-Tenant-ID`` wird dort abgelehnt: "
+"der Tenant ist ``--scope``). ``--db`` und ``--backend remote`` schließen "
+"sich aus. Der Daemon authentifiziert nicht; der vorgeschaltete Proxy "
+"entscheidet: Eine Ablehnung durch den Proxy (HTTP 401 oder 403) lautet "
+"„refused“ und verweist auf ``--header``, ein Limit (HTTP 429, "
+"``rate_limited``) wird als solches gemeldet, und nur ein unerreichbarer "
+"oder über ``--timeout`` hinaus stummer Daemon lautet „daemon "
+"unavailable“."
 
-#: ../../source/mode_headless.rst:2233
+#: ../../source/mode_headless.rst:2242
 msgid ""
-"Un export incrémental (``\"incremental\": true``) par ``--backend "
-"remote`` devient un export entier : ce stockage ne sait pas dire quand "
-"les transactions du démon sont finies, donc son repère ne s'établit "
-"jamais (voir :ref:`synchroniser_deux_machines`). Pour un export "
-"incrémental, appelez le démon directement."
+"Une méthode dont le stockage n'a pas de route ``/v1`` (une transaction, "
+"un service de Direction, de Rencontre, de Duel, de table de match, de "
+"transcription) ne passe pas par ``--backend remote`` : l'erreur le dit, "
+"le processus sort en code non nul et ``call`` imprime sur la sortie "
+"d'erreur la requête à envoyer au démon (``POST <dsn>/v1/<méthode>``). Il "
+"en va de même des exports (``exports.sqlite``, ``exports.json``, "
+"``exports.plan``, y compris incrémentaux) : appelez le démon directement."
 msgstr ""
-"Ein inkrementeller Export (``\"incremental\": true``) über ``--backend "
-"remote`` wird zu einem vollständigen Export: Dieser Speicher kann nicht "
-"sagen, wann die Transaktionen des Daemons beendet sind, daher wird seine "
-"Markierung nie sicher (siehe :ref:`synchroniser_deux_machines`). Für "
-"einen inkrementellen Export rufen Sie den Daemon direkt auf."
+"Eine Methode, deren Speicher keine ``/v1``-Route hat (eine Transaktion, "
+"ein Dienst für Direction, Rencontre, Duel, Match-Equity-Tabelle oder "
+"Transkription), läuft nicht über ``--backend remote``: Der Fehler sagt "
+"es, der Prozess endet mit einem Wert ungleich null, und ``call`` gibt auf"
+" der Fehlerausgabe die an den Daemon zu sendende Anfrage aus (``POST "
+"<dsn>/v1/<Methode>``). Dasselbe gilt für Exporte (``exports.sqlite``, "
+"``exports.json``, ``exports.plan``, auch inkrementelle): Rufen Sie den "
+"Daemon direkt auf."
 
-#: ../../source/mode_headless.rst:2239
+#: ../../source/mode_headless.rst:2250
 msgid ""
 "``call`` sert les gestes de transcription sans drapeau : il travaille sur"
 " un fichier local, comme la CLI. Chaque appel est un processus neuf, donc"
@@ -4971,33 +5003,34 @@ msgstr ""
 "eine eigene Sitzung: die ``sessionId`` kann weggelassen werden, und es "
 "gibt kein Rückgängigmachen von einem Aufruf zum nächsten."
 
-#: ../../source/mode_headless.rst:2244
+#: ../../source/mode_headless.rst:2255
 #, no-python-brace-format
 msgid ""
 "La réponse JSON (ou le flux NDJSON pour les endpoints ``*.list``) est "
 "écrite sur la sortie standard. En cas d'erreur, le processus se termine "
 "avec un code non nul et l'enveloppe ``{\"error\":{…}}`` est imprimée sur "
-"la sortie standard pour rester analysable (par exemple avec ``jq``). Une "
-"réponse qui porte un en-tête ``Direction-Version`` l'imprime sur la "
-"sortie d'erreur : c'est la valeur que le geste suivant passe à ``--if-"
-"match``. ``call`` sert les gestes de direction sans drapeau, comme la "
-"CLI, puisqu'il s'exécute en local."
+"la sortie standard pour rester analysable (par exemple avec ``jq``) ; il "
+"en va de même d'une erreur qui survient au milieu d'un flux. Une réponse "
+"qui porte un en-tête ``Direction-Version`` l'imprime sur la sortie "
+"d'erreur : c'est la valeur que le geste suivant passe à ``--if-match``. "
+"``call`` sert les gestes de direction sans drapeau, comme la CLI, "
+"puisqu'il s'exécute en local."
 msgstr ""
-"Die JSON-Antwort (oder der NDJSON-Strom bei den ``*.list``-Endpunkten) "
-"wird auf die Standardausgabe geschrieben. Im Fehlerfall endet der Prozess"
-" mit einem von null verschiedenen Code, und der Umschlag "
-"``{\"error\":{…}}`` wird auf die Standardausgabe geschrieben, damit er "
-"analysierbar bleibt (zum Beispiel mit ``jq``). Eine Antwort mit dem "
-"Header ``Direction-Version`` gibt ihn auf der Standardfehlerausgabe aus: "
-"Das ist der Wert, den die nächste Geste an ``--if-match`` übergibt. "
-"``call`` bedient die Gesten der Turnierleitung ohne Schalter, wie die "
-"CLI, da es lokal läuft."
+"Die JSON-Antwort (oder der NDJSON-Stream bei den ``*.list``-Endpunkten) "
+"wird auf die Standardausgabe geschrieben. Bei einem Fehler endet der "
+"Prozess mit einem Wert ungleich null, und die Hülle ``{\"error\":{…}}`` "
+"wird auf der Standardausgabe ausgegeben, damit sie auswertbar bleibt (zum"
+" Beispiel mit ``jq``); dasselbe gilt für einen Fehler mitten in einem "
+"Stream. Eine Antwort mit einem ``Direction-Version``-Header gibt ihn auf "
+"der Fehlerausgabe aus: Das ist der Wert, den die nächste Geste an ``--if-"
+"match`` übergibt. ``call`` bedient die Direction-Gesten ohne Schalter, "
+"wie die CLI, da es lokal läuft."
 
-#: ../../source/mode_headless.rst:2255
+#: ../../source/mode_headless.rst:2267
 msgid "Outils pour un assistant IA (MCP)"
 msgstr "Werkzeuge für einen KI-Assistenten (MCP)"
 
-#: ../../source/mode_headless.rst:2257
+#: ../../source/mode_headless.rst:2269
 msgid ""
 "blunderDB n'embarque aucun modèle de langage : il offre ses outils à "
 "l'assistant que vous utilisez déjà (Claude Code, Claude Desktop, un "
@@ -5010,31 +5043,31 @@ msgstr ""
 "Assistent sucht, liest und erklärt; blunderDB antwortet mit seinen "
 "eigenen Zahlen."
 
-#: ../../source/mode_headless.rst:2262
+#: ../../source/mode_headless.rst:2274
 msgid "Les outils passent par les mêmes gestionnaires que ``/v1`` et ``call`` :"
 msgstr "Die Werkzeuge laufen über dieselben Handler wie ``/v1`` und ``call``:"
 
-#: ../../source/mode_headless.rst:2268
+#: ../../source/mode_headless.rst:2280
 msgid "Outil"
 msgstr "Werkzeug"
 
-#: ../../source/mode_headless.rst:2269
+#: ../../source/mode_headless.rst:2281
 msgid "Ce qu'il rend"
 msgstr "Was es liefert"
 
-#: ../../source/mode_headless.rst:2270
+#: ../../source/mode_headless.rst:2282
 msgid "``database_overview``"
 msgstr "``database_overview``"
 
-#: ../../source/mode_headless.rst:2271
+#: ../../source/mode_headless.rst:2283
 msgid "comptes, période des matchs, version du schéma, joueurs fréquents"
 msgstr "Zählungen, Zeitraum der Matches, Schemaversion, häufige Spieler"
 
-#: ../../source/mode_headless.rst:2272
+#: ../../source/mode_headless.rst:2284
 msgid "``search_positions``"
 msgstr "``search_positions``"
 
-#: ../../source/mode_headless.rst:2273
+#: ../../source/mode_headless.rst:2285
 msgid ""
 "positions d'une recherche dans la grammaire de la barre de commande "
 "(décrite dans l'outil), avec sa forme canonique"
@@ -5042,11 +5075,11 @@ msgstr ""
 "Positionen einer Suche in der Grammatik der Befehlsleiste (im Werkzeug "
 "beschrieben), mit ihrer kanonischen Form"
 
-#: ../../source/mode_headless.rst:2275
+#: ../../source/mode_headless.rst:2287
 msgid "``search_comments``, ``position_comments``, ``saved_searches``"
 msgstr "``search_comments``, ``position_comments``, ``saved_searches``"
 
-#: ../../source/mode_headless.rst:2276
+#: ../../source/mode_headless.rst:2288
 msgid ""
 "commentaires contenant des mots ; tous les commentaires d'une position, "
 "chacun avec son auteur ; recherches enregistrées"
@@ -5054,11 +5087,11 @@ msgstr ""
 "Kommentare, die bestimmte Wörter enthalten; alle Kommentare einer "
 "Position, jeweils mit ihrem Autor; gespeicherte Suchen"
 
-#: ../../source/mode_headless.rst:2278
+#: ../../source/mode_headless.rst:2290
 msgid "``get_position``"
 msgstr "``get_position``"
 
-#: ../../source/mode_headless.rst:2279
+#: ../../source/mode_headless.rst:2291
 msgid ""
 "une position, son analyse (meilleurs coups ou videau), le coup joué et le"
 " commentaire"
@@ -5066,25 +5099,25 @@ msgstr ""
 "eine Position, ihre Analyse (beste Züge oder Doppler), der gespielte Zug "
 "und der Kommentar"
 
-#: ../../source/mode_headless.rst:2281
+#: ../../source/mode_headless.rst:2293
 msgid "``explain_error``"
 msgstr "``explain_error``"
 
-#: ../../source/mode_headless.rst:2282
+#: ../../source/mode_headless.rst:2294
 msgid "le thème de l'erreur, son coût en millipoints et la meilleure décision"
 msgstr ""
 "das Thema des Fehlers, seine Kosten in Millipunkten und die beste "
 "Entscheidung"
 
-#: ../../source/mode_headless.rst:2283
+#: ../../source/mode_headless.rst:2295
 msgid "``similar_positions``, ``decode_position``, ``legal_moves``, ``race_epc``"
 msgstr "``similar_positions``, ``decode_position``, ``legal_moves``, ``race_epc``"
 
-#: ../../source/mode_headless.rst:2285
+#: ../../source/mode_headless.rst:2297
 msgid "positions voisines ; lecture d'un XGID ; coups légaux ; EPC de course"
 msgstr "benachbarte Positionen; Lesen einer XGID; legale Züge; Rennen-EPC"
 
-#: ../../source/mode_headless.rst:2286
+#: ../../source/mode_headless.rst:2298
 msgid ""
 "``list_players``, ``player_aliases``, ``player_stats``, "
 "``recurring_errors``, ``training_stats``, ``training_missed``"
@@ -5092,7 +5125,7 @@ msgstr ""
 "``list_players``, ``player_aliases``, ``player_stats``, "
 "``recurring_errors``, ``training_stats``, ``training_missed``"
 
-#: ../../source/mode_headless.rst:2288
+#: ../../source/mode_headless.rst:2300
 msgid ""
 "joueurs ; leurs alias et les graphies proposées ; PR global, pions, "
 "videau, par phase ; erreurs qui reviennent ; PR du quiz et rétention Anki"
@@ -5103,11 +5136,11 @@ msgstr ""
 "Behaltensrate gegenüber dem tatsächlichen PR; im Quiz verfehlte "
 "Stellungen"
 
-#: ../../source/mode_headless.rst:2291
+#: ../../source/mode_headless.rst:2303
 msgid "``head_to_head``, ``pr_by_window``, ``player_ranking``"
 msgstr "``head_to_head``, ``pr_by_window``, ``player_ranking``"
 
-#: ../../source/mode_headless.rst:2292
+#: ../../source/mode_headless.rst:2304
 msgid ""
 "face-à-face de deux joueurs ; PR par fenêtre calendaire ; classement par "
 "PR"
@@ -5115,45 +5148,45 @@ msgstr ""
 "direkter Vergleich zweier Spieler; PR pro Kalenderfenster; Rangliste nach"
 " PR"
 
-#: ../../source/mode_headless.rst:2294
+#: ../../source/mode_headless.rst:2306
 msgid "``list_matches``, ``get_match``, ``list_tournaments``"
 msgstr "``list_matches``, ``get_match``, ``list_tournaments``"
 
-#: ../../source/mode_headless.rst:2295
+#: ../../source/mode_headless.rst:2307
 msgid "matchs, détail d'un match, tournois"
 msgstr "Matches, Detail eines Matches, Turniere"
 
-#: ../../source/mode_headless.rst:2296
+#: ../../source/mode_headless.rst:2308
 msgid "``list_collections``, ``collection_positions``, ``study_decks``"
 msgstr "``list_collections``, ``collection_positions``, ``study_decks``"
 
-#: ../../source/mode_headless.rst:2297
+#: ../../source/mode_headless.rst:2309
 msgid "collections et leurs positions ; paquets de révision"
 msgstr "Sammlungen und ihre Positionen; Lernstapel"
 
-#: ../../source/mode_headless.rst:2298
+#: ../../source/mode_headless.rst:2310
 msgid "``list_lessons``, ``lesson``"
 msgstr "``list_lessons``, ``lesson``"
 
-#: ../../source/mode_headless.rst:2299
+#: ../../source/mode_headless.rst:2311
 msgid "leçons ; les étapes d'une leçon, dans l'ordre"
 msgstr "Lektionen; die Schritte einer Lektion in der richtigen Reihenfolge"
 
-#: ../../source/mode_headless.rst:2300
+#: ../../source/mode_headless.rst:2312
 msgid "``quiz_draw``, ``quiz_grade``"
 msgstr "``quiz_draw``, ``quiz_grade``"
 
-#: ../../source/mode_headless.rst:2301
+#: ../../source/mode_headless.rst:2313
 msgid "tire une position sans sa réponse, puis note la réponse donnée"
 msgstr ""
 "zieht eine Position ohne ihre Antwort und bewertet dann die gegebene "
 "Antwort"
 
-#: ../../source/mode_headless.rst:2302
+#: ../../source/mode_headless.rst:2314
 msgid "``evaluate``"
 msgstr "``evaluate``"
 
-#: ../../source/mode_headless.rst:2303
+#: ../../source/mode_headless.rst:2315
 msgid ""
 "évaluation gammonNet d'une position donnée en texte, sans l'enregistrer :"
 " meilleurs coups ou décision de videau"
@@ -5161,35 +5194,35 @@ msgstr ""
 "gammonNet-Bewertung einer als Text angegebenen Stellung, ohne sie zu "
 "speichern: beste Züge oder Doppelentscheidung"
 
-#: ../../source/mode_headless.rst:2305
+#: ../../source/mode_headless.rst:2317
 msgid "``anki_next``"
 msgstr "``anki_next``"
 
-#: ../../source/mode_headless.rst:2306
+#: ../../source/mode_headless.rst:2318
 msgid "la prochaine carte due d'un paquet de révision"
 msgstr "die nächste fällige Karte eines Wiederholungsstapels"
 
-#: ../../source/mode_headless.rst:2307
+#: ../../source/mode_headless.rst:2319
 msgid "``transcribe_list``, ``transcribe_get``, ``transcribe_mat``"
 msgstr "``transcribe_list``, ``transcribe_get``, ``transcribe_mat``"
 
-#: ../../source/mode_headless.rst:2308
+#: ../../source/mode_headless.rst:2320
 msgid "transcriptions de matchs ; détail d'une transcription ; son texte ``.mat``"
 msgstr "Match-Transkriptionen; Detail einer Transkription; ihr ``.mat``-Text"
 
-#: ../../source/mode_headless.rst:2310
+#: ../../source/mode_headless.rst:2322
 msgid "``direction_list``, ``direction_standings``, ``direction_season``"
 msgstr "``direction_list``, ``direction_standings``, ``direction_season``"
 
-#: ../../source/mode_headless.rst:2311
+#: ../../source/mode_headless.rst:2323
 msgid "tournois dirigés ; classement d'un tournoi ; classement de saison"
 msgstr "geleitete Turniere; Rangliste eines Turniers; Saisonwertung"
 
-#: ../../source/mode_headless.rst:2312
+#: ../../source/mode_headless.rst:2324
 msgid "``rollout``"
 msgstr "``rollout``"
 
-#: ../../source/mode_headless.rst:2313
+#: ../../source/mode_headless.rst:2325
 #, no-python-format
 msgid ""
 "rollout d'une position de la base : équité, intervalle à 95 % et JSD par "
@@ -5198,7 +5231,7 @@ msgstr ""
 "Rollout einer Stellung der Datenbank: Equity, 95-%-Intervall und JSD je "
 "Kandidat"
 
-#: ../../source/mode_headless.rst:2315
+#: ../../source/mode_headless.rst:2327
 msgid ""
 "``club_matches``, ``club_match_positions``, ``club_comments``, "
 "``club_library``, ``club_library_positions``, ``club_ranking``"
@@ -5206,7 +5239,7 @@ msgstr ""
 "``club_matches``, ``club_match_positions``, ``club_comments``, "
 "``club_library``, ``club_library_positions``, ``club_ranking``"
 
-#: ../../source/mode_headless.rst:2317
+#: ../../source/mode_headless.rst:2329
 msgid ""
 "lectures à travers les tenants que liste le proxy "
 "(:ref:`headless_tenants_lus`) : matchs des élèves, positions d'un match "
@@ -5219,7 +5252,7 @@ msgstr ""
 "gemeinsame Bibliothek, Clubrangliste; ohne ``X-Read-Tenants`` nur dieser "
 "Tenant"
 
-#: ../../source/mode_headless.rst:2322
+#: ../../source/mode_headless.rst:2334
 msgid ""
 "Seuls ces outils écrivent — ``save_position``, ``comment_position`` (qui "
 "signe de l'argument ``author``, sinon de l'en-tête ``X-User-Name``), "
@@ -5250,7 +5283,7 @@ msgstr ""
 "angeboten wird, das Argument ``store``, das den Rollout neben der Analyse"
 " der Position speichert. Kein Werkzeug löscht etwas."
 
-#: ../../source/mode_headless.rst:2337
+#: ../../source/mode_headless.rst:2349
 msgid ""
 "**En local**, l'assistant lance ``blunderdb mcp`` sur un fichier (voir "
 ":ref:`cli`). Pour Claude Code :"
@@ -5258,7 +5291,7 @@ msgstr ""
 "**Lokal** startet der Assistent ``blunderdb mcp`` auf einer Datei (siehe "
 ":ref:`cli`). Für Claude Code:"
 
-#: ../../source/mode_headless.rst:2344
+#: ../../source/mode_headless.rst:2356
 msgid ""
 "**Sur le démon**, les mêmes outils répondent en HTTP sur ``POST /mcp`` "
 "(transport *streamable HTTP*, sans session). Comme ``/v1``, ``/mcp`` "
@@ -5283,7 +5316,7 @@ msgstr ""
 "zusätzlich zur ``/mcp``-Anfrage, die ihn trägt. Ein Werkzeugaufruf kostet"
 " also mehrere Anfragen; keine ist davon ausgenommen."
 
-#: ../../source/mode_headless.rst:2355
+#: ../../source/mode_headless.rst:2367
 msgid ""
 "Comme ``call``, ``blunderdb mcp`` migre le schéma d'une base ancienne à "
 "l'ouverture, même sans ``--write``."
@@ -5511,3 +5544,50 @@ msgstr ""
 #~ "nicht lernen. Eine hier fehlende "
 #~ "Funktion ist keine Lücke: Sie ist "
 #~ "der Umfang."
+
+#~ msgid ""
+#~ "Avec ``--backend remote``, ``call`` ne "
+#~ "lit aucune base : ses gestionnaires "
+#~ "passent par l'API ``/v1`` du démon "
+#~ "que nomme ``--dsn``, avec le tenant "
+#~ "de ``--scope`` et les en-têtes de"
+#~ " ``--header``. Le démon ne s'authentifie"
+#~ " pas ; le proxy placé devant "
+#~ "lui décide. Une méthode dont le "
+#~ "stockage n'a pas de route ``/v1`` "
+#~ "(une transaction, un service de "
+#~ "direction ou de transcription) répond "
+#~ "une erreur interne qui la nomme."
+#~ msgstr ""
+#~ "Mit ``--backend remote`` liest ``call`` "
+#~ "keine Datenbank: Seine Handler gehen "
+#~ "über die ``/v1``-API des Daemons, den"
+#~ " ``--dsn`` nennt, mit dem Tenant aus"
+#~ " ``--scope`` und den Headern aus "
+#~ "``--header``. Der Daemon authentifiziert "
+#~ "nicht; der vorgeschaltete Proxy entscheidet."
+#~ " Eine Methode, deren Speicher keine "
+#~ "``/v1``-Route hat (eine Transaktion, ein "
+#~ "Turnierleitungs- oder Transkriptionsdienst), "
+#~ "antwortet mit einem internen Fehler, der"
+#~ " sie nennt."
+
+#~ msgid ""
+#~ "Un export incrémental (``\"incremental\": "
+#~ "true``) par ``--backend remote`` devient "
+#~ "un export entier : ce stockage ne"
+#~ " sait pas dire quand les transactions"
+#~ " du démon sont finies, donc son "
+#~ "repère ne s'établit jamais (voir "
+#~ ":ref:`synchroniser_deux_machines`). Pour un export"
+#~ " incrémental, appelez le démon directement."
+#~ msgstr ""
+#~ "Ein inkrementeller Export (``\"incremental\": "
+#~ "true``) über ``--backend remote`` wird "
+#~ "zu einem vollständigen Export: Dieser "
+#~ "Speicher kann nicht sagen, wann die "
+#~ "Transaktionen des Daemons beendet sind, "
+#~ "daher wird seine Markierung nie sicher"
+#~ " (siehe :ref:`synchroniser_deux_machines`). Für "
+#~ "einen inkrementellen Export rufen Sie "
+#~ "den Daemon direkt auf."
