@@ -167,7 +167,10 @@
             statusBarTextStore.set(tMsg('eval.batchFailed', { error: busyMessage(message) ?? message }));
         }),
         // A gesture stood but its display page could not be rewritten (a folder gone, a disk full).
-        EventsOn('direction:page-warning', () => statusBarTextStore.set(tMsg('direction.display.error')))
+        EventsOn('direction:page-warning', () => statusBarTextStore.set(tMsg('direction.display.error'))),
+        // On a large library the blunders are recounted in the background once a write has
+        // forgotten their count: the counter reads it again when it is back.
+        EventsOn('library:blunder-count-ready', () => refreshLibraryCounts())
     ];
     onDestroy(() => unsubGammonNetBatch.forEach((off) => off && off()));
 

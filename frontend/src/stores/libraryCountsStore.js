@@ -3,7 +3,9 @@ import { writable } from 'svelte/store';
 // Le compteur de bibliothèque (« 412 positions · 38 blunders · 5 matchs »), chaque nombre ouvrant
 // ce qu'il compte. Rafraîchi quand il peut changer (ouverture, import, suppression), jamais en
 // boucle. Le décompte ne balaye jamais une grande table : au-delà d'un seuil le nombre est une
-// estimation (« ≈ ») et celui des blunders, qui n'en a pas d'honnête, n'est pas donné (null).
+// estimation (« ≈ ») et celui des blunders, qui n'en a pas d'honnête, vient du décompte gardé en
+// cache ; une écriture l'efface, et il n'est pas donné (null) le temps qu'un recompte en tâche de
+// fond le refasse — la barre d'état relit alors le compteur.
 
 /**
  * @typedef {{positions: number, blunders: number | null, matches: number,

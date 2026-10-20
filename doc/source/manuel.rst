@@ -173,8 +173,12 @@ suivantes:
   200 000 lignes), le compteur ne balaie pas les tables : un nombre précédé de
   « ≈ » est une estimation (une borne haute, les lignes supprimées laissant des
   trous). Si les positions sont estimées, le nombre de blunders, qui n'a pas
-  d'estimation honnête, s'affiche « ? » — le lien lance la recherche, qui
-  donne le compte exact.
+  d'estimation honnête, est le dernier décompte exact, gardé tant qu'aucune
+  écriture ne peut le changer. Après un import ou une modification, il
+  s'affiche « ? » le temps qu'un nouveau décompte se fasse en tâche de fond,
+  puis revient de lui-même ; ouverte en lecture seule, la bibliothèque ne
+  recompte pas et garde « ? » tant que l'instance qui l'écrit n'a pas refait le
+  décompte. Le lien lance la recherche, qui donne le compte exact.
   Les deux nombres de blunders sont des liens distincts : le premier lance la sous-recherche ``ss E>`` dans la liste à l'écran, le second la recherche dans toute la bibliothèque ; quand seul le total s'affiche, il n'y a qu'un lien.
 
 .. note:: Dans le cas de positions issues d'une recherche par l'utilisateur, le

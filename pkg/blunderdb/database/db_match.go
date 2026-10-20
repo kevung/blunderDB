@@ -339,7 +339,8 @@ const EstimateExactBelow = 200_000
 // scans a large table. Counts of tables beyond EstimateExactBelow rows are
 // estimates, named in "approximate". "blunder_count" is there when the
 // positions are counted exactly, or when the cached count still holds for the
-// library's threshold; otherwise it is absent, never estimated.
+// library's threshold; otherwise it is absent, never estimated, and a
+// recount starts in the background (startBlunderRecount) to fill the cache.
 // GetDatabaseStats is the exact form.
 func (d *Database) GetDatabaseStatsEstimate() (map[string]interface{}, error) {
 	d.mu.RLock()
@@ -358,6 +359,8 @@ func (d *Database) GetDatabaseStatsEstimate() (map[string]interface{}, error) {
 	}
 	if est.BlundersKnown {
 		stats["blunder_count"] = int64(est.Blunders)
+	} else {
+		d.startBlunderRecount()
 	}
 	return stats, nil
 }
