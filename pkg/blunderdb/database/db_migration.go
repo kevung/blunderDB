@@ -386,3 +386,7 @@ func (d *Database) forEachRow(query string, args []any, each func(*sql.Rows)) er
 	}
 	return rows.Err()
 }
+
+// CompareVersions orders two schema versions: -1, 0 or 1 as a is older than,
+// equal to or newer than b. A reader that refuses a file says which way.
+func CompareVersions(a, b string) (int, error) { return compareVersions(a, b) }

@@ -133,6 +133,28 @@ func RunElsewhereTests(t *testing.T, factory func() storage.Storage) {
 		}
 	})
 
+	t.Run("NegativeDistanceRefused", func(t *testing.T) {
+		if _, err := storage.Elsewhere(ctx, sources, storage.ElsewhereQuery{Target: &asked, MaxDistance: -1}, judge); err == nil {
+			t.Error("a negative maxDistance was accepted")
+		}
+	})
+
+	t.Run("TruncationIsSaid", func(t *testing.T) {
+		busy := factory()
+		defer busy.Close()
+		for range storage.ElsewhereMaxMatches + 1 {
+			statsFixtureMatch(t, busy, 0, "Alice", "Bob")
+		}
+		got, err := storage.Elsewhere(ctx, []storage.Source{{Name: "busy", Storage: busy}}, storage.ElsewhereQuery{Target: &asked, Neighbours: -1}, judge)
+		if err != nil {
+			t.Fatalf("Elsewhere: %v", err)
+		}
+		r := got[0].Item
+		if r.MatchesTotal != storage.ElsewhereMaxMatches+1 || !r.PlaysTruncated || len(r.Plays) != storage.ElsewhereMaxMatches {
+			t.Errorf("total %d truncated %v plays %d, want %d, true, %d", r.MatchesTotal, r.PlaysTruncated, len(r.Plays), storage.ElsewhereMaxMatches+1, storage.ElsewhereMaxMatches)
+		}
+	})
+
 	t.Run("NeedsABoard", func(t *testing.T) {
 		if _, err := storage.Elsewhere(ctx, sources, storage.ElsewhereQuery{}, judge); err == nil {
 			t.Error("a query naming no board was accepted")

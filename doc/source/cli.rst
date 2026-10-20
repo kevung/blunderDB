@@ -2576,8 +2576,11 @@ de la base ``--db``, jamais avec ceux de la base lue : ``error``, ``blunder``,
 avec une autre table d'équité que la table courante de ``--db`` est signalée ;
 ses coûts en match sont affichés mais non jugés (``other-met``), comme partout
 ailleurs dans blunderDB. Les autres fichiers sont ouverts en lecture seule :
-rien n'y est écrit, et un fichier d'une version antérieure est refusé (l'ouvrir
-une fois dans blunderDB le met à jour).
+rien n'y est écrit. Un fichier d'une version antérieure est refusé (l'ouvrir
+une fois dans blunderDB le met à jour), un fichier d'une version plus récente
+aussi (mettre blunderDB à jour). Au-delà de 50 matchs où la position a été
+jouée, seuls les 50 derniers importés sont lus : la sortie le dit, avec le
+nombre total (``matchesTotal`` et ``playsTruncated`` en JSON).
 
 .. code-block:: bash
 

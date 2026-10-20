@@ -970,7 +970,10 @@ with the error and blunder thresholds of `--db`, never with the other file's;
 an analysis valued at a match score with another match equity table than the
 current one of `--db` is flagged, and its match-play costs are shown but not
 judged (`other-met`). The other files are opened read-only and must be at the
-current version. The daemon serves the same read across tenants as
+current version: an older one is opened once with blunderDB to upgrade it, a
+newer one needs blunderDB updated. Past 50 matches playing the board, only the
+50 latest imported are read, and the output says so with the total
+(`matchesTotal`, `playsTruncated` in JSON). The daemon serves the same read across tenants as
 `across.positionElsewhere`.
 
 ```bash

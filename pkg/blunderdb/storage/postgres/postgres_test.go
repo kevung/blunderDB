@@ -9,9 +9,11 @@ package postgres_test
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"slices"
 	"strconv"
+	"strings"
 	"testing"
 
 	"github.com/jackc/pgx/v5"
@@ -386,4 +388,29 @@ func TestMigrate_RepairsMatchStatsShape(t *testing.T) {
 	if err != nil || len(rows) != 2 {
 		t.Fatalf("MatchStats after the repair = %d rows, %v; want the match recomputed", len(rows), err)
 	}
+}
+
+// TestElsewhere_Postgres holds the Elsewhere read on separate PostgreSQL
+// databases, one per library, as the SQLite suite holds it on separate files.
+func TestElsewhere_Postgres(t *testing.T) {
+	ctx := context.Background()
+	dsn := startPostgres(t)
+	n := 0
+	storagetest.RunElsewhereTests(t, func() storage.Storage {
+		n++
+		name := fmt.Sprintf("elsewhere_%d", n)
+		admin, err := pgx.Connect(ctx, dsn)
+		if err != nil {
+			t.Fatalf("connect: %v", err)
+		}
+		if _, err := admin.Exec(ctx, "CREATE DATABASE "+name); err != nil {
+			t.Fatalf("create database: %v", err)
+		}
+		admin.Close(ctx)
+		s, err := pg.Open(ctx, strings.Replace(dsn, "/blunderdb?", "/"+name+"?", 1), nil)
+		if err != nil {
+			t.Fatalf("Open: %v", err)
+		}
+		return s
+	})
 }

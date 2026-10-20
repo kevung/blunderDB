@@ -39,3 +39,9 @@ deux fois — une par mode — ferait diverger le jugement.
   `MaxReadTenants` sources, `ElsewhereMaxMatches` matchs et `ElsewhereMaxNeighbours` voisines.
 - Un hachage seul ne situe pas de plateau : sans position, les voisines ne sont cherchées que
   là où la source détient la position.
+- Au-delà de `ElsewhereMaxMatches`, les matchs lus sont les derniers importés (ids croissants,
+  sans charger tous les en-têtes d'une position d'ouverture) et la réponse le dit
+  (`matchesTotal`, `playsTruncated`) : une troncature n'est jamais silencieuse.
+- Un fichier lu par la CLI est ouvert par `sqlite.OpenReadOnly` (URI échappée, `mode=ro`, sans
+  `journal_mode(WAL)` ni amorçage) ; un schéma plus ancien ou plus récent est refusé avec le
+  geste qui le débloque.

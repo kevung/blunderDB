@@ -5,7 +5,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
 	"text/tabwriter"
@@ -150,27 +149,38 @@ func (cli *CLI) runElsewhere(args []string) error {
 // openReadOnly opens another database file without writing to it: it must
 // exist and be at the current schema, since a migration is a write.
 func openReadOnly(ctx context.Context, path string) (*sqlite.Storage, error) {
-	abs, err := filepath.Abs(path)
-	if err != nil {
+	if _, err := os.Stat(path); err != nil {
 		return nil, fmt.Errorf("%s: %w", path, err)
 	}
-	if _, err := os.Stat(abs); err != nil {
-		return nil, fmt.Errorf("%s: %w", path, err)
-	}
-	st, err := sqlite.Open(ctx, "file:"+filepath.ToSlash(abs)+"?mode=ro", nil)
+	st, err := sqlite.OpenReadOnly(ctx, path)
 	if err != nil {
-		return nil, fmt.Errorf("%s: %w", path, err)
+		return nil, err
 	}
 	v, err := st.Version(ctx)
 	if err != nil {
 		st.Close()
 		return nil, fmt.Errorf("%s: %w", path, err)
 	}
-	if v != domain.DatabaseVersion {
+	if err := schemaReadable(path, v); err != nil {
 		st.Close()
-		return nil, fmt.Errorf("%s: database version %s, this blunderDB reads %s: open it once with blunderDB to upgrade it", path, v, domain.DatabaseVersion)
+		return nil, err
 	}
 	return st, nil
+}
+
+// schemaReadable refuses a file at another schema than this blunderDB's, and
+// says which side has to move.
+func schemaReadable(path, version string) error {
+	cmp, err := database.CompareVersions(version, domain.DatabaseVersion)
+	switch {
+	case err != nil:
+		return fmt.Errorf("%s: unreadable database version %q: %w", path, version, err)
+	case cmp < 0:
+		return fmt.Errorf("%s: database version %s is older than %s: open it once with blunderDB to upgrade it", path, version, domain.DatabaseVersion)
+	case cmp > 0:
+		return fmt.Errorf("%s: database version %s is newer than %s: update blunderDB to read it", path, version, domain.DatabaseVersion)
+	}
+	return nil
 }
 
 func printElsewhere(zobrist uint64, judge storage.Judge, reports []storage.Tagged[storage.ElsewhereReport]) {
@@ -216,6 +226,9 @@ func printElsewhere(zobrist uint64, judge storage.Judge, reports []storage.Tagge
 				}
 				w.Flush()
 			}
+			if rep.PlaysTruncated {
+				fmt.Printf("  %d of %d matches shown, the latest imported\n", len(uniqueMatches(rep.Plays)), rep.MatchesTotal)
+			}
 		}
 		if len(rep.Neighbours) > 0 {
 			fmt.Println("  Nearest boards:")
@@ -224,4 +237,12 @@ func printElsewhere(zobrist uint64, judge storage.Judge, reports []storage.Tagge
 			}
 		}
 	}
+}
+
+func uniqueMatches(plays []storage.ElsewherePlay) map[int64]bool {
+	out := map[int64]bool{}
+	for _, p := range plays {
+		out[p.MatchID] = true
+	}
+	return out
 }

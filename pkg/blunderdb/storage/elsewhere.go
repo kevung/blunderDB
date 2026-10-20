@@ -167,11 +167,16 @@ type ElsewhereReport struct {
 	Analysis   *domain.PositionAnalysis `json:"analysis,omitempty"`
 	// METName names the table the analysis was valued with ("" for the
 	// built-in one); OtherMET says it is not the reader's, at a match score.
-	METName    string                 `json:"metName,omitempty"`
-	OtherMET   bool                   `json:"otherMet"`
-	Comments   []*domain.CommentEntry `json:"comments"`
-	Plays      []ElsewherePlay        `json:"plays"`
-	Neighbours []ElsewhereNeighbour   `json:"neighbours"`
+	METName  string                 `json:"metName,omitempty"`
+	OtherMET bool                   `json:"otherMet"`
+	Comments []*domain.CommentEntry `json:"comments"`
+	Plays    []ElsewherePlay        `json:"plays"`
+	// MatchesTotal counts the matches that played the board; Plays reads
+	// the ElsewhereMaxMatches most recently imported of them, and
+	// PlaysTruncated says when that left some out.
+	MatchesTotal   int                  `json:"matchesTotal"`
+	PlaysTruncated bool                 `json:"playsTruncated"`
+	Neighbours     []ElsewhereNeighbour `json:"neighbours"`
 }
 
 // Elsewhere reads, from every source in order, what it knows of the board q
@@ -183,6 +188,9 @@ func Elsewhere(ctx context.Context, sources []Source, q ElsewhereQuery, judge Ju
 	}
 	if q.Zobrist == 0 {
 		return nil, fmt.Errorf("%w: elsewhere needs a zobrist hash or a position", ErrInvalid)
+	}
+	if q.MaxDistance < 0 {
+		return nil, fmt.Errorf("%w: maxDistance %d is negative", ErrInvalid, q.MaxDistance)
 	}
 	switch {
 	case q.Neighbours == 0:
@@ -271,9 +279,15 @@ func elsewhereKnown(ctx context.Context, s Storage, scope string, held *domain.P
 	if err != nil {
 		return err
 	}
+	rep.MatchesTotal = len(matchIDs)
 	if len(matchIDs) > ElsewhereMaxMatches {
+		// Ids ascend with imports: the last ones are the latest imported,
+		// read without loading every header of a board played thousands
+		// of times.
 		matchIDs = matchIDs[len(matchIDs)-ElsewhereMaxMatches:]
+		rep.PlaysTruncated = true
 	}
+	money := held.IsMoney()
 	for _, mid := range matchIDs {
 		m, err := s.Matches().Get(ctx, scope, mid)
 		if errors.Is(err, ErrNotFound) {
@@ -282,7 +296,6 @@ func elsewhereKnown(ctx context.Context, s Storage, scope string, held *domain.P
 		if err != nil {
 			return err
 		}
-		money := m.MatchLength <= 0 || m.MatchLength >= 99999
 		// The match read scores each play from the analysis; the read by
 		// position does not.
 		for mv, err := range s.Matches().MovesByMatch(ctx, scope, mid) {

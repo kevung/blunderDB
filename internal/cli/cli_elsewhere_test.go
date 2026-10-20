@@ -2,11 +2,16 @@ package cli
 
 import (
 	"bytes"
+	"database/sql"
 	"encoding/json"
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"testing"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
 // The board of a match imported in both files is known in the other one:
@@ -103,5 +108,62 @@ func TestCLI_ElsewhereRefusesAMissingFile(t *testing.T) {
 	}
 	if _, err := os.Stat(missing); !os.IsNotExist(err) {
 		t.Error("a missing --other file was created")
+	}
+}
+
+func TestCLI_ElsewhereSchemaRefusalSaysWhichSideMoves(t *testing.T) {
+	if err := schemaReadable("a.db", domain.DatabaseVersion); err != nil {
+		t.Errorf("current schema refused: %v", err)
+	}
+	if err := schemaReadable("a.db", "1.0.0"); err == nil || !strings.Contains(err.Error(), "open it once with blunderDB") {
+		t.Errorf("older schema: %v, want the advice to open it once", err)
+	}
+	if err := schemaReadable("a.db", "999.0.0"); err == nil || !strings.Contains(err.Error(), "update blunderDB") {
+		t.Errorf("newer schema: %v, want the advice to update blunderDB", err)
+	}
+}
+
+// An older file is refused, and left as it was: upgrading it is a write.
+func TestCLI_ElsewhereRefusesAnOlderFile(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	old := filepath.Join(tempDir(t), "old?#%.db")
+	other := NewDatabase()
+	if err := other.SetupDatabase(old); err != nil {
+		t.Fatalf("SetupDatabase: %v", err)
+	}
+	other.Close()
+	raw, err := sql.Open("sqlite", sqlite.DSN(old))
+	if err != nil {
+		t.Fatalf("sql.Open: %v", err)
+	}
+	if _, err := raw.Exec(`UPDATE metadata SET value = '1.0.0' WHERE key = 'database_version'`); err != nil {
+		t.Fatalf("downgrade: %v", err)
+	}
+	raw.Close()
+	err = cli.Run([]string{"elsewhere", "--db", dbPath, "--other", old, "--zobrist", "1"})
+	if err == nil || !strings.Contains(err.Error(), "older") {
+		t.Errorf("older file: %v, want refused as older", err)
+	}
+}
+
+func TestCLI_ElsewhereRefusesWhatIsNotADatabase(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	dir := tempDir(t)
+	empty := filepath.Join(dir, "empty.db")
+	text := filepath.Join(dir, "notes.db")
+	if err := os.WriteFile(empty, nil, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(text, []byte("not sqlite at all, just some notes"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	for _, f := range []string{empty, text} {
+		err := cli.Run([]string{"elsewhere", "--db", dbPath, "--other", f, "--zobrist", "1"})
+		if err == nil || !strings.Contains(err.Error(), "not a blunderDB database") {
+			t.Errorf("%s: %v, want refused as not a blunderDB database", f, err)
+		}
+	}
+	if fi, _ := os.Stat(empty); fi.Size() != 0 {
+		t.Error("the empty file was written to")
 	}
 }

@@ -303,3 +303,34 @@ func DropGammonNetResponseAnalyses(ctx context.Context, db *sql.DB) (int, error)
 // the next can take an identifier, so a mark read now never passes a row
 // that appears later (ingest.OrderedIDs, ADR-0096).
 func (s *Storage) IDsVisibleInOrder() bool { return true }
+
+// OpenReadOnly opens an existing database file for reading only (mode=ro):
+// no WAL switch, no bootstrap, no index repair — nothing is written to it,
+// not even a -wal file. A file that is not a blunderDB database is refused.
+func OpenReadOnly(ctx context.Context, path string) (*Storage, error) {
+	abs, err := filepath.Abs(path)
+	if err != nil {
+		return nil, fmt.Errorf("sqlite: %s: %w", path, err)
+	}
+	q := url.Values{}
+	q.Add("mode", "ro")
+	for _, p := range perConnPragmas {
+		q.Add("_pragma", p[0]+"("+p[1]+")")
+	}
+	dsn := fileURI(abs) + "?" + q.Encode()
+	db, err := sql.Open("sqlite", dsn)
+	if err != nil {
+		return nil, fmt.Errorf("sqlite: open %s: %w", path, err)
+	}
+	ConfigurePool(db, dsn)
+	fresh, err := isFreshDB(ctx, db)
+	if err != nil {
+		db.Close()
+		return nil, fmt.Errorf("%s is not a blunderDB database: %w", path, err)
+	}
+	if fresh {
+		db.Close()
+		return nil, fmt.Errorf("%s is not a blunderDB database (empty, or no metadata table)", path)
+	}
+	return &Storage{binder: binder{db: db}, sqlDB: db, ownsDB: true}, nil
+}
