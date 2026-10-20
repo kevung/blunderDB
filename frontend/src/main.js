@@ -11,9 +11,9 @@ markStartup('modules-evaluated');
 
 // The dev server answers module by module, each import found only once its parent is
 // parsed: a lazy panel's first open there is a waterfall of seconds on a busy machine, and
-// the e2e suite runs there. Dev mounts with everything loaded, as before the split, the
-// fetch overlapping the locale's; the production bundle keeps the panels off the first screen.
-const devPreload = import.meta.env.DEV ? preloadDeferredComponents() : null;
+// the e2e suite runs there. Dev starts fetching every panel now, without holding the mount
+// on it; the production bundle keeps the panels off the first screen until `ready`.
+if (import.meta.env.DEV) preloadDeferredComponents();
 
 // The persisted language before the first render: mounted in English, the window painted
 // every label twice when the locale arrived. Bounded, so a backend slow to answer never
@@ -27,7 +27,6 @@ await Promise.race([
     new Promise((resolve) => setTimeout(resolve, 1000))
 ]);
 
-await devPreload;
 
 const app = mount(App, { target: document.getElementById('app') });
 markStartup('mounted');
