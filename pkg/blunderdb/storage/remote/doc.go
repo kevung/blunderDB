@@ -15,7 +15,11 @@
 //   - The daemon's error envelope comes back as the storage sentinels
 //     (not_found → storage.ErrNotFound, conflict → storage.ErrConflict,
 //     invalid → storage.ErrInvalid); a transport failure or a daemon that
-//     does not answer the envelope comes back as ErrUnavailable.
+//     does not answer the envelope comes back as ErrUnavailable — except a
+//     401/403 (ErrRefused: the proxy turns the caller away) and a 429 or a
+//     rate_limited/quota_exceeded code (ErrRateLimited), which say so.
+//   - A request waits Options.Timeout (DefaultTimeout) for the connection and
+//     the response headers, never for the body of a stream.
 //   - No authentication lives here (ADR-0005): the backend sends the headers
 //     it is configured with — a proxy token, say — and X-Tenant-ID, and the
 //     authenticating proxy in front of the daemon decides.

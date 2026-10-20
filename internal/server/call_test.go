@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/kevung/blunderdb/internal/server/middleware"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -224,7 +225,48 @@ func TestCallRemoteNamesTheUnsupportedMethod(t *testing.T) {
 	if err == nil {
 		t.Fatalf("met.list over remote succeeded: %s", out)
 	}
-	if !strings.Contains(out, `"internal"`) || !strings.Contains(out, "MatchEquityTableStore.") || !strings.Contains(out, "has no /v1 route") {
+	if !strings.Contains(out, `"internal"`) || !strings.Contains(out, "MatchEquityTableStore.") || !strings.Contains(out, "is not served through the remote backend") {
 		t.Fatalf("envelope does not name the method: %s", out)
+	}
+}
+
+func TestCallRemoteRefusesDbAndTenantHeader(t *testing.T) {
+	if err := RunCall([]string{"metadata.counts", "--backend", "remote", "--dsn", "http://x", "--db", "a.db"}); err == nil || !strings.Contains(err.Error(), "exclude each other") {
+		t.Fatalf("--db with remote: %v", err)
+	}
+	if err := RunCall([]string{"metadata.counts", "--backend", "remote", "--dsn", "http://x", "--header", "X-Tenant-ID: 9"}); err == nil || !strings.Contains(err.Error(), "--scope") {
+		t.Fatalf("X-Tenant-ID header: %v", err)
+	}
+	if err := RunCall([]string{"metadata.counts", "--backend", "remote"}); err == nil || !strings.Contains(err.Error(), "--dsn") {
+		t.Fatalf("missing dsn: %v", err)
+	}
+}
+
+func TestCallRemoteProxyRefusalAndTimeout(t *testing.T) {
+	deny := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.Error(w, "<html>sign in</html>", http.StatusUnauthorized)
+	}))
+	t.Cleanup(deny.Close)
+	err := RunCall([]string{"metadata.counts", "--backend", "remote", "--dsn", deny.URL})
+	if err == nil || !strings.Contains(err.Error(), "refused") || !strings.Contains(err.Error(), "--header") {
+		t.Fatalf("401 reads as %v", err)
+	}
+	stall := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		<-r.Context().Done()
+	}))
+	t.Cleanup(stall.Close)
+	start := time.Now()
+	err = RunCall([]string{"metadata.counts", "--backend", "remote", "--dsn", stall.URL, "--timeout", "300ms"})
+	if err == nil || time.Since(start) > 5*time.Second {
+		t.Fatalf("stalled daemon: %v after %v", err, time.Since(start))
+	}
+}
+
+// A stream that fails after its 200 still ends the process non-zero.
+func TestStdoutResponseWriterErrorLineFails(t *testing.T) {
+	w := newStdoutResponseWriter()
+	_, _ = w.Write([]byte("{\"id\":1}\n{\"error\":{\"code\":\"internal\"}}\n"))
+	if w.failure == "" {
+		t.Fatal("error line not seen")
 	}
 }

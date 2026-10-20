@@ -2204,6 +2204,11 @@ les tests d'intégration.
      - –
      - avec ``remote`` : en-tête envoyé au démon à chaque appel, par exemple
        le jeton du proxy (répétable)
+   * - ``--timeout <durée>``
+     - ``1m``
+     - avec ``remote`` : délai de connexion et d'attente des en-têtes de la
+       réponse du démon (jamais du corps, qui peut être un flux) ; ``0``
+       garde la valeur par défaut
    * - ``--scope <n>``
      - ``1``
      - tenant, un entier décimal positif (envoyé comme ``X-Tenant-ID`` ; un
@@ -2224,17 +2229,22 @@ les tests d'intégration.
        (:ref:`headless_transcription`)
 
 Avec ``--backend remote``, ``call`` ne lit aucune base : ses gestionnaires
-passent par l'API ``/v1`` du démon que nomme ``--dsn``, avec le tenant de
-``--scope`` et les en-têtes de ``--header``. Le démon ne s'authentifie pas ; le
-proxy placé devant lui décide. Une méthode dont le stockage n'a pas de route
-``/v1`` (une transaction, un service de direction ou de transcription) répond
-une erreur interne qui la nomme.
+passent par l'API ``/v1`` du démon que nomme ``--dsn`` (une URL
+``http://hôte:port`` ou ``https://…``), avec le tenant de ``--scope`` et les
+en-têtes de ``--header`` (``X-Tenant-ID`` y est refusé : le tenant est
+``--scope``). ``--db`` et ``--backend remote`` s'excluent. Le démon ne
+s'authentifie pas ; le proxy placé devant lui décide : un refus du proxy
+(HTTP 401 ou 403) se lit « refused » et renvoie à ``--header``, une limite
+(HTTP 429, ``rate_limited``) se lit comme telle, et seul un démon injoignable
+ou muet au-delà de ``--timeout`` se lit « daemon unavailable ».
 
-Un export incrémental (``"incremental": true``) par ``--backend remote``
-devient un export entier : ce stockage ne sait pas dire quand les transactions
-du démon sont finies, donc son repère ne s'établit jamais (voir
-:ref:`synchroniser_deux_machines`). Pour un export incrémental, appelez le
-démon directement.
+Une méthode dont le stockage n'a pas de route ``/v1`` (une transaction, un
+service de Direction, de Rencontre, de Duel, de table de match, de
+transcription) ne passe pas par ``--backend remote`` : l'erreur le dit, le
+processus sort en code non nul et ``call`` imprime sur la sortie d'erreur la
+requête à envoyer au démon (``POST <dsn>/v1/<méthode>``). Il en va de même des
+exports (``exports.sqlite``, ``exports.json``, ``exports.plan``, y compris
+incrémentaux) : appelez le démon directement.
 
 ``call`` sert les gestes de transcription sans drapeau : il travaille sur un
 fichier local, comme la CLI. Chaque appel est un processus neuf, donc sa propre
@@ -2244,7 +2254,8 @@ appel à l'autre.
 La réponse JSON (ou le flux NDJSON pour les endpoints ``*.list``) est écrite
 sur la sortie standard. En cas d'erreur, le processus se termine avec un code
 non nul et l'enveloppe ``{"error":{…}}`` est imprimée sur la sortie standard
-pour rester analysable (par exemple avec ``jq``). Une réponse qui porte un
+pour rester analysable (par exemple avec ``jq``) ; il en va de même d'une
+erreur qui survient au milieu d'un flux. Une réponse qui porte un
 en-tête ``Direction-Version`` l'imprime sur la sortie d'erreur : c'est la
 valeur que le geste suivant passe à ``--if-match``. ``call`` sert les gestes de
 direction sans drapeau, comme la CLI, puisqu'il s'exécute en local.

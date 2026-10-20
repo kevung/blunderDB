@@ -1,6 +1,7 @@
 package remote
 
 import (
+	"cmp"
 	"context"
 	"iter"
 	"slices"
@@ -54,11 +55,34 @@ func (s commentStore) Text(ctx context.Context, scope string, positionID int64) 
 	return r.Text, err
 }
 
-// ByPositions has no batch route: it reads comments.byPosition once per id
-// and turns its newest-first answer into the oldest-first order of the
-// contract.
+// byPositionsBatch is the size above which one comments.listAll stream costs
+// fewer requests than one comments.byPosition per id — and stays under the
+// daemon's request rate limit.
+const byPositionsBatch = 16
+
+// ByPositions has no batch route: a short list reads comments.byPosition once
+// per id; a long one reads comments.listAll once and keeps the requested
+// positions. Either way the answer is the contract's oldest-first order.
 func (s commentStore) ByPositions(ctx context.Context, scope string, positionIDs []int64) (map[int64][]*domain.CommentEntry, error) {
 	out := make(map[int64][]*domain.CommentEntry)
+	if len(positionIDs) > byPositionsBatch {
+		want := make(map[int64]struct{}, len(positionIDs))
+		for _, id := range positionIDs {
+			want[id] = struct{}{}
+		}
+		for c, err := range s.ListAll(ctx, scope, storage.ListOpts{}) {
+			if err != nil {
+				return nil, err
+			}
+			if _, ok := want[c.PositionID]; ok {
+				out[c.PositionID] = append(out[c.PositionID], c)
+			}
+		}
+		for _, cs := range out {
+			slices.SortStableFunc(cs, func(a, b *domain.CommentEntry) int { return cmp.Compare(a.ID, b.ID) })
+		}
+		return out, nil
+	}
 	for _, id := range positionIDs {
 		cs, err := collect(s.ByPosition(ctx, scope, id))
 		if err != nil {

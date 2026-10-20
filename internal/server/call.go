@@ -1,6 +1,7 @@
 package server
 
 import (
+	"bytes"
 	"context"
 	"flag"
 	"fmt"
@@ -62,12 +63,16 @@ func RunCall(args []string) error {
 		list     = fs.Bool("list", false, "list every available <family>.<method> and exit")
 		ifMatch  = fs.String("if-match", "", "version a gesture of a Direction, a Rencontre or a transcription was decided on, sent as If-Match: the Direction-Version a read printed on stderr")
 	)
+	timeout := fs.Duration("timeout", remote.DefaultTimeout, "with --backend remote: how long to wait for the daemon to connect and to start answering (0 = the default)")
 	var headers headerFlag
 	fs.Var(&headers, "header", "with --backend remote: a header sent to the daemon on every call, \"Name: value\" (repeatable), e.g. the proxy's token")
 	if err := fs.Parse(rest); err != nil {
 		return err
 	}
 	if *dbPath != "" {
+		if strings.EqualFold(*backend, "remote") {
+			return fmt.Errorf("call: --db (a local file) and --backend remote (a daemon, given by --dsn) exclude each other")
+		}
 		*backend = "sqlite"
 		*dsn = *dbPath
 	}
@@ -75,6 +80,13 @@ func RunCall(args []string) error {
 	// failure names the flag rather than a header the user never typed.
 	if n, err := storage.ParseTenant(*scope); err != nil || n == 0 {
 		return fmt.Errorf("call: --scope must be %s, got %q", storage.TenantFormat, *scope)
+	}
+
+	if _, ok := http.Header(headers)[http.CanonicalHeaderKey(middleware.TenantHeader)]; ok {
+		return fmt.Errorf("call: --header cannot carry %s: the tenant is --scope", middleware.TenantHeader)
+	}
+	if len(headers) > 0 && !strings.EqualFold(*backend, "remote") {
+		fmt.Fprintln(os.Stderr, "call: --header applies to --backend remote only; ignored")
 	}
 
 	ctx := context.Background()
@@ -93,7 +105,7 @@ func RunCall(args []string) error {
 		// The same handlers run here, over the daemon's /v1 instead of a
 		// database: a route whose storage methods /v1 does not serve answers
 		// the backend's typed refusal (ADR-0095).
-		st, err = remote.Open(remote.Options{BaseURL: effDSN, Tenant: *scope, Header: http.Header(headers)})
+		st, err = remote.Open(remote.Options{BaseURL: effDSN, Tenant: *scope, Header: http.Header(headers), Timeout: *timeout})
 	} else {
 		st, err = OpenStorage(ctx, *backend, effDSN, false)
 	}
@@ -102,6 +114,9 @@ func RunCall(args []string) error {
 	}
 	defer st.Close()
 	if err := st.Migrate(ctx); err != nil {
+		if strings.EqualFold(*backend, "remote") {
+			return fmt.Errorf("call: daemon %s: %w", effDSN, err)
+		}
 		return fmt.Errorf("call: migrate: %w", err)
 	}
 
@@ -164,6 +179,14 @@ func RunCall(args []string) error {
 	if w.status >= 400 {
 		return fmt.Errorf("call: %s returned HTTP %d", method, w.status)
 	}
+	// A route that streams has sent its 200 before it fails: the error comes
+	// as a line of the body.
+	if w.failure != "" {
+		if strings.EqualFold(*backend, "remote") && strings.Contains(w.failure, "is not served through the remote backend") {
+			fmt.Fprintf(os.Stderr, "call: %s cannot go through --backend remote; send it to the daemon: POST %s/v1/%s\n", method, strings.TrimRight(effDSN, "/"), method)
+		}
+		return fmt.Errorf("call: %s failed (see the error on stdout)", method)
+	}
 	return nil
 }
 
@@ -173,6 +196,8 @@ type stdoutResponseWriter struct {
 	header    http.Header
 	status    int
 	wroteHead bool
+	// failure is the first error envelope the body carried, whatever the status.
+	failure string
 }
 
 func newStdoutResponseWriter() *stdoutResponseWriter {
@@ -192,6 +217,14 @@ func (w *stdoutResponseWriter) WriteHeader(status int) {
 func (w *stdoutResponseWriter) Write(b []byte) (int, error) {
 	if !w.wroteHead {
 		w.WriteHeader(http.StatusOK) // implicit 200, matching net/http's own ResponseWriter
+	}
+	if w.failure == "" {
+		for _, line := range bytes.Split(b, []byte("\n")) {
+			if bytes.HasPrefix(bytes.TrimSpace(line), []byte(`{"error":`)) {
+				w.failure = string(line)
+				break
+			}
+		}
 	}
 	return os.Stdout.Write(b)
 }

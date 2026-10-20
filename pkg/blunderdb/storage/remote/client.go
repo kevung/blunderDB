@@ -9,8 +9,11 @@ import (
 	"fmt"
 	"io"
 	"iter"
+	"net"
 	"net/http"
+	"net/url"
 	"strings"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -20,6 +23,27 @@ import (
 // operation may or may not have been applied — the caller re-reads before it
 // retries a write.
 var ErrUnavailable = errors.New("remote: daemon unavailable")
+
+// ErrRefused is a daemon or a proxy in front of it that refuses the caller
+// (HTTP 401 or 403): the credentials it expects are missing or wrong, which is
+// no outage.
+var ErrRefused = errors.New("remote: refused by the daemon or its proxy")
+
+// ErrRateLimited is the daemon's request rate or quota reached (HTTP 429, or
+// the rate_limited and quota_exceeded codes).
+var ErrRateLimited = errors.New("remote: daemon limit reached")
+
+// visibleError is a transport-level failure whose text holds nothing of a
+// backend: the daemon that serves a remote backend shows it as is rather than
+// as "internal error".
+type visibleError struct{ err error }
+
+func (e visibleError) Error() string         { return e.err.Error() }
+func (e visibleError) Unwrap() error         { return e.err }
+func (e visibleError) ClientMessage() string { return e.err.Error() }
+func (e visibleError) Is(target error) bool  { return target == storage.ErrInternal }
+
+func visible(err error) error { return visibleError{err} }
 
 // ErrUnsupported is a contract method the /v1 API exposes no route for.
 var ErrUnsupported = errors.New("remote: no /v1 route for this storage method")
@@ -33,7 +57,7 @@ type UnsupportedError struct {
 }
 
 func (e *UnsupportedError) Error() string {
-	return fmt.Sprintf("remote: %s has no /v1 route", e.Method)
+	return fmt.Sprintf("remote: %s is not served through the remote backend: the route you called needs it, and it has no /v1 route of its own; send the request to the daemon itself (POST <daemon>/v1/<route>)", e.Method)
 }
 
 // ClientMessage lets the daemon show this message although the error is
@@ -68,8 +92,30 @@ type Options struct {
 	// Header is added to every request: the proxy's token, an
 	// X-User-Name. The backend reads none of it.
 	Header http.Header
-	// HTTPClient defaults to http.DefaultClient.
+	// HTTPClient replaces the default client; Timeout is then not applied.
 	HTTPClient *http.Client
+	// Timeout bounds the connection and the wait for a response's headers
+	// (never its body, which a stream keeps open). Zero means
+	// DefaultTimeout; a negative value, no bound.
+	Timeout time.Duration
+}
+
+// DefaultTimeout bounds the connection and the wait for response headers when
+// Options.Timeout is zero.
+const DefaultTimeout = 60 * time.Second
+
+func defaultHTTPClient(timeout time.Duration) *http.Client {
+	if timeout == 0 {
+		timeout = DefaultTimeout
+	}
+	if timeout < 0 {
+		return http.DefaultClient
+	}
+	tr := http.DefaultTransport.(*http.Transport).Clone()
+	tr.DialContext = (&net.Dialer{Timeout: timeout, KeepAlive: 30 * time.Second}).DialContext
+	tr.TLSHandshakeTimeout = timeout
+	tr.ResponseHeaderTimeout = timeout
+	return &http.Client{Transport: tr}
 }
 
 type client struct {
@@ -81,12 +127,16 @@ type client struct {
 
 func newClient(o Options) (*client, error) {
 	if o.BaseURL == "" {
-		return nil, fmt.Errorf("%w: remote: BaseURL is required", storage.ErrInvalid)
+		return nil, fmt.Errorf("%w: remote: the daemon's URL is required (--dsn http://host:port, or $BLUNDERDB_DSN)", storage.ErrInvalid)
+	}
+	if u, err := url.Parse(o.BaseURL); err != nil || (u.Scheme != "http" && u.Scheme != "https") || u.Host == "" {
+		return nil, fmt.Errorf("%w: remote: --dsn must be the daemon's URL, http://host:port or https://host:port, got %q", storage.ErrInvalid, o.BaseURL)
 	}
 	hc := o.HTTPClient
 	if hc == nil {
-		hc = http.DefaultClient
+		hc = defaultHTTPClient(o.Timeout)
 	}
+	o.BaseURL = strings.TrimSuffix(strings.TrimRight(o.BaseURL, "/"), "/v1")
 	return &client{base: strings.TrimRight(o.BaseURL, "/"), tenant: o.Tenant, header: o.Header.Clone(), http: hc}, nil
 }
 
@@ -103,7 +153,7 @@ func (c *client) post(ctx context.Context, scope, method string, req any) (*http
 	}
 	hr, err := http.NewRequestWithContext(ctx, http.MethodPost, c.base+"/v1/"+method, body)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %s: %w", ErrUnavailable, method, err)
+		return nil, visible(fmt.Errorf("%w: %s: %w", ErrUnavailable, method, err))
 	}
 	for k, vs := range c.header {
 		for _, v := range vs {
@@ -126,7 +176,7 @@ func (c *client) post(ctx context.Context, scope, method string, req any) (*http
 		if ctx.Err() != nil {
 			return nil, ctx.Err()
 		}
-		return nil, fmt.Errorf("%w: %s: %w", ErrUnavailable, method, err)
+		return nil, visible(fmt.Errorf("%w: cannot reach %s (%s): %w", ErrUnavailable, c.base, method, err))
 	}
 	if resp.StatusCode/100 != 2 {
 		defer resp.Body.Close()
@@ -147,9 +197,33 @@ type errorEnvelope struct {
 func decodeError(method string, resp *http.Response) error {
 	var env errorEnvelope
 	if err := json.NewDecoder(io.LimitReader(resp.Body, 1<<20)).Decode(&env); err != nil || env.Error == nil {
-		return fmt.Errorf("%w: %s: HTTP %d without an error envelope", ErrUnavailable, method, resp.StatusCode)
+		return statusError(method, resp.StatusCode)
+	}
+	if resp.StatusCode == http.StatusUnauthorized || resp.StatusCode == http.StatusForbidden {
+		return refused(method, resp.StatusCode, env.Error.Message)
 	}
 	return envelopeError(method, env.Error.Code, env.Error.Message, env.Error.Details)
+}
+
+// statusError reads an answer that carries no error envelope: a proxy's page,
+// most often. A refusal or a limit says so; anything else is an outage.
+func statusError(method string, status int) error {
+	switch status {
+	case http.StatusUnauthorized, http.StatusForbidden:
+		return refused(method, status, "")
+	case http.StatusTooManyRequests:
+		return visible(fmt.Errorf("%w: %s: HTTP 429; wait and retry, or ask for a higher --rate-limit-rps/--rate-limit-burst on the daemon", ErrRateLimited, method))
+	case http.StatusRequestEntityTooLarge:
+		return visible(fmt.Errorf("%w: %s: HTTP 413, the request is too large for the daemon or its proxy", ErrRateLimited, method))
+	}
+	return visible(fmt.Errorf("%w: %s: HTTP %d without an error envelope", ErrUnavailable, method, status))
+}
+
+func refused(method string, status int, message string) error {
+	if message != "" {
+		message = ": " + message
+	}
+	return visible(fmt.Errorf("%w: %s: HTTP %d%s; check the credentials the proxy expects (--header \"Authorization: Bearer …\") and the tenant (--scope)", ErrRefused, method, status, message))
 }
 
 // namedRefusals are the storage errors that wrap a sentinel with a message of
@@ -179,8 +253,12 @@ func envelopeError(method, code, message string, details map[string]any) error {
 		return fmt.Errorf("%w: %s", unsupported(method), message)
 	case "internal":
 		return fmt.Errorf("%w: %s", storage.ErrInternal, message)
+	case "rate_limited", "quota_exceeded":
+		return visible(fmt.Errorf("%w: %s: %s: %s; wait and retry, or raise --rate-limit-rps/--rate-limit-burst on the daemon", ErrRateLimited, method, code, message))
+	case "forbidden", "unauthorized":
+		return refused(method, http.StatusForbidden, message)
 	default:
-		return fmt.Errorf("%w: %s: %s: %s", ErrUnavailable, method, code, message)
+		return visible(fmt.Errorf("%w: %s: %s: %s", ErrUnavailable, method, code, message))
 	}
 }
 
@@ -196,7 +274,7 @@ func (c *client) call(ctx context.Context, scope, method string, req, out any) e
 		return nil
 	}
 	if err := json.NewDecoder(resp.Body).Decode(out); err != nil {
-		return fmt.Errorf("%w: %s: decode answer: %w", ErrUnavailable, method, err)
+		return visible(fmt.Errorf("%w: %s: decode answer: %w", ErrUnavailable, method, err))
 	}
 	return nil
 }
@@ -229,7 +307,7 @@ func stream[T any](ctx context.Context, c *client, scope, method string, req any
 			}
 			var v T
 			if err := json.Unmarshal(line, &v); err != nil {
-				yield(zero, fmt.Errorf("%w: %s: decode line: %w", ErrUnavailable, method, err))
+				yield(zero, visible(fmt.Errorf("%w: %s: decode line: %w", ErrUnavailable, method, err)))
 				return
 			}
 			if !yield(v, nil) {
@@ -237,7 +315,7 @@ func stream[T any](ctx context.Context, c *client, scope, method string, req any
 			}
 		}
 		if err := sc.Err(); err != nil {
-			yield(zero, fmt.Errorf("%w: %s: %w", ErrUnavailable, method, err))
+			yield(zero, visible(fmt.Errorf("%w: %s: %w", ErrUnavailable, method, err)))
 		}
 	}
 }

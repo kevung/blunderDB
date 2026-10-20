@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -67,7 +68,7 @@ func TestEnvelopeBecomesTheSentinels(t *testing.T) {
 		{"invalid", storage.ErrInvalid},
 		{"internal", storage.ErrInternal},
 		{"unknown_route", remote.ErrUnsupported},
-		{"rate_limited", remote.ErrUnavailable},
+		{"rate_limited", remote.ErrRateLimited},
 	} {
 		rs, _ := fake(t, 400, `{"error":{"code":"`+tc.code+`","message":"m"}}`)
 		if _, err := rs.Positions().Load(context.Background(), "", 1); !errors.Is(err, tc.want) {
@@ -117,5 +118,55 @@ func TestNoRouteIsATypedRefusal(t *testing.T) {
 	}
 	if last.URL != nil {
 		t.Fatal("a refused method reached the daemon")
+	}
+}
+
+func TestRefusalsAndLimitsAreNamed(t *testing.T) {
+	for _, tc := range []struct {
+		status int
+		body   string
+		want   error
+	}{
+		{401, `<html>login</html>`, remote.ErrRefused},
+		{403, `{"error":{"code":"forbidden","message":"tenant not allowed"}}`, remote.ErrRefused},
+		{429, `{"error":{"code":"rate_limited","message":"too many requests"}}`, remote.ErrRateLimited},
+		{429, `slow down`, remote.ErrRateLimited},
+		{502, `bad gateway`, remote.ErrUnavailable},
+	} {
+		rs, _ := fake(t, tc.status, tc.body)
+		_, err := rs.Positions().Count(context.Background(), "")
+		if !errors.Is(err, tc.want) {
+			t.Errorf("HTTP %d %q: %v, want %v", tc.status, tc.body, err, tc.want)
+		}
+	}
+}
+
+func TestOpenNamesTheOption(t *testing.T) {
+	for _, u := range []string{"", "127.0.0.1:18431"} {
+		_, err := remote.Open(remote.Options{BaseURL: u})
+		if err == nil || !strings.Contains(err.Error(), "--dsn") {
+			t.Errorf("BaseURL %q: %v", u, err)
+		}
+	}
+}
+
+func TestByPositionsLongListIsOneRequest(t *testing.T) {
+	var n int
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		n++
+		_, _ = w.Write([]byte("{\"id\":2,\"positionId\":5,\"text\":\"b\"}\n{\"id\":1,\"positionId\":5,\"text\":\"a\"}\n{\"id\":3,\"positionId\":99,\"text\":\"x\"}\n"))
+	}))
+	t.Cleanup(ts.Close)
+	rs, err := remote.Open(remote.Options{BaseURL: ts.URL})
+	if err != nil {
+		t.Fatal(err)
+	}
+	ids := make([]int64, 40)
+	for i := range ids {
+		ids[i] = int64(i)
+	}
+	got, err := rs.Comments().ByPositions(context.Background(), "", ids)
+	if err != nil || n != 1 || len(got[5]) != 2 || got[5][0].ID != 1 || len(got[99]) != 0 {
+		t.Fatalf("got %v, %v after %d requests", got, err, n)
 	}
 }
