@@ -105,6 +105,9 @@ type Database struct {
 	// mu to finish their last write). Guarded by switchMu.
 	switchMu     sync.Mutex
 	beforeSwitch func()
+	// path is the file open here, "" when none; guarded by mu. The desktop
+	// refuses to open one file in two library groups by it (OpenPath).
+	path string
 }
 
 // ErrDatabaseChanged refuses a background job's write once another database
@@ -352,6 +355,7 @@ func (d *Database) Close() error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	d.bumpGeneration()
+	d.path = ""
 	d.releaseFileLock()
 	wasReadOnly := d.readOnly
 	d.readOnly = false
@@ -376,6 +380,7 @@ func (d *Database) SetupDatabase(path string) (err error) {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	d.bumpGeneration()
+	d.path = ""
 
 	// Close the currently opened database, if any. Best-effort: the handle is
 	// replaced below regardless, but a failure deserves a log line.
@@ -404,7 +409,9 @@ func (d *Database) SetupDatabase(path string) (err error) {
 				d.db = nil
 			}
 			d.releaseFileLock()
+			return
 		}
+		d.path = path
 	}()
 
 	// The PRAGMAs (foreign_keys=ON, busy_timeout, WAL, …) travel in the DSN
@@ -456,6 +463,7 @@ func (d *Database) OpenDatabase(path string) (err error) {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	d.bumpGeneration()
+	d.path = ""
 
 	// Close the currently opened database, if any. Best-effort: the handle is
 	// replaced below regardless, but a failure deserves a log line.
@@ -479,7 +487,9 @@ func (d *Database) OpenDatabase(path string) (err error) {
 				d.db = nil
 			}
 			d.releaseFileLock()
+			return
 		}
+		d.path = path
 	}()
 
 	// The PRAGMAs (foreign_keys=ON, busy_timeout, WAL, …) travel in the DSN

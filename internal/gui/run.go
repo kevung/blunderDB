@@ -84,6 +84,7 @@ func shutdown(app *App, binds []interface{}) func(ctx context.Context) {
 		app.stopMedia()
 		app.closing.Store(true)
 		app.stopBackgroundJobs(shutdownJobGrace)
+		app.closeParkedLibraries()
 
 		for _, bind := range binds {
 			closer, ok := bind.(interface{ Close() error })
