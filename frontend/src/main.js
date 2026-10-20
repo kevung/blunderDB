@@ -27,7 +27,6 @@ await Promise.race([
     new Promise((resolve) => setTimeout(resolve, 1000))
 ]);
 
-
 const app = mount(App, { target: document.getElementById('app') });
 markStartup('mounted');
 

@@ -8,6 +8,17 @@ propre issue le jour où il est lancé.
 
 ## Ouvert — Backend
 
+- **Badges des matchs et des tournois : un agrégat complet à chaque liste.** Sur une base de
+  66 Mo (286 matchs, 98 000 analyses), `TournamentBadges` et `MatchBadges` d'une page de 500
+  coûtent ~0,6 s chacun (`sqlshared/stats.go`), presque tout dans le pas SQLite (jointure
+  position → analysis → move → game → match, ~80 000 lignes ; 0,24 s en sqlite3 natif, ~2,5×
+  plus sous modernc). Pré-agréger en SQL ne gagne rien (le balayage domine). Pistes : badges
+  mémorisés par match et invalidés à l'écriture de ses analyses, ou colonnes de synthèse
+  maintenues à l'import ; dans les deux cas les trois backends et la parité GUI/CLI/serve.
+  Mesures : `tasks/latence-demarrage-2026-10.md`.
+- **Décompte des gaffes de la barre d'état (`MetadataStore.blunderCount`, ~0,17 s par appel
+  sur la même base)** : traité sur une autre branche ; à remesurer après sa fusion.
+
 - **Colonnes dérivées du coup joué calculées avant l'appariement par plateau.**
   `engine.PlayedCandidate` apparie désormais le coup joué par le plateau qu'il laisse
   (`domain.PlayBoards`) : « 6/2 2/1 » qui frappe sur 2 n'est plus le « 6/5 5/1 » de même forme.
