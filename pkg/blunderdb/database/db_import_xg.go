@@ -43,21 +43,9 @@ type RawCubeAction struct {
 	Doubled  *xgparser.EngineStructDoubleAction // Full cube analysis data
 }
 
-// convertXGPlayerToBlunderDB converts XG player encoding to blunderDB encoding
-// XG: -1 = Player 1, 1 = Player 2
-// blunderDB: 0 = Player 1, 1 = Player 2
-func convertXGPlayerToBlunderDB(xgPlayer int32) int {
-	// XG uses 1 for first player, -1 for second player
-	// blunderDB uses 0 for Player 1 (black, bottom), 1 for Player 2 (white, top)
-	if xgPlayer == 1 {
-		return 0 // Player 1
-	}
-	return 1 // Player 2
-}
-
 // convertBlunderDBPlayerToXG converts blunderDB player encoding (0/1) to XG encoding (1/-1)
-// This is used when storing GnuBG-imported moves in the DB, so that GetMatchMovePositions
-// can apply convertXGPlayerToBlunderDB uniformly for both XG and GnuBG imports.
+// This is used when storing GnuBG-imported moves in the DB, so that the store's MovePositions
+// can decode the player uniformly for both XG and GnuBG imports.
 func convertBlunderDBPlayerToXG(blunderDBPlayer int) int32 {
 	if blunderDBPlayer == 0 {
 		return 1 // Player 1

@@ -390,3 +390,33 @@ func testMoveDecisionTimeRoundTrip(t *testing.T, s storage.Storage) {
 	check("Moves", byGame)
 	check("MovesByMatch", byMatch)
 }
+
+// testMatchZeroDateSortsByImportDate pins that a match saved without a date
+// sorts by its import date, among dated matches, in both backends.
+func testMatchZeroDateSortsByImportDate(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	ms := s.Matches()
+	save := func(name string, d time.Time) int64 {
+		t.Helper()
+		id, err := ms.Save(ctx, "", &domain.Match{Player1Name: name, Player2Name: "Z", MatchLength: 5, MatchDate: d})
+		if err != nil {
+			t.Fatalf("Save %s: %v", name, err)
+		}
+		return id
+	}
+	past := save("past", time.Date(2001, 1, 1, 0, 0, 0, 0, time.UTC))
+	undated := save("undated", time.Time{})
+	future := save("future", time.Date(2999, 1, 1, 0, 0, 0, 0, time.UTC))
+
+	var got []int64
+	for m, err := range ms.List(ctx, "", storage.MatchListOpts{}) {
+		if err != nil {
+			t.Fatalf("List: %v", err)
+		}
+		got = append(got, m.ID)
+	}
+	want := []int64{future, undated, past}
+	if len(got) != len(want) || got[0] != want[0] || got[1] != want[1] || got[2] != want[2] {
+		t.Errorf("order = %v, want %v (undated sorts by its import date)", got, want)
+	}
+}

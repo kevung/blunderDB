@@ -97,6 +97,7 @@ func RunContractTestsOnly(t *testing.T, factory func() storage.Storage, keep fun
 		{"Match/RepairKeepsCommentsOfAHeldPosition", testMatchRepairKeepsCommentsOfAHeldPosition},
 		{"Match/ReanchorAnsweredDoubles", testMatchReanchorAnsweredDoubles},
 		{"Match/ListFilterSortPaginate", testMatchListFilterSortPaginate},
+		{"Match/ZeroDateSortsByImportDate", testMatchZeroDateSortsByImportDate},
 		{"Tournament/AddRemoveMatch", testTournamentAddRemoveMatch},
 		{"Tournament/EffectiveDate", testTournamentEffectiveDate},
 		{"Tournament/FinishedTranscriptionIsFiled", testTournamentFinishedTranscriptionIsFiled},

@@ -2,9 +2,10 @@ package database
 
 import (
 	"context"
-	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"reflect"
 	"testing"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // A match without a date (NULL, ” or the zero time) sorts by its import
@@ -23,8 +24,9 @@ func TestMatchReadParity_UndatedSortsByImportDate(t *testing.T) {
 	old := ins("h1", "2020-06-01T00:00:00Z", "2023-01-01T00:00:00Z")
 	zero := ins("h2", "0001-01-01T00:00:00Z", "2021-01-01T00:00:00Z")
 	empty := ins("h3", nil, "2019-01-01T00:00:00Z")
+	blank := ins("h5", "", "2018-01-01T00:00:00Z")
 	recent := ins("h4", "2022-03-01T00:00:00Z", "2023-01-01T00:00:00Z")
-	want := []int64{recent, zero, old, empty}
+	want := []int64{recent, zero, old, empty, blank}
 
 	all, err := db.GetAllMatches()
 	if err != nil {

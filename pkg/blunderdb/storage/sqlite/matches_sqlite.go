@@ -42,11 +42,48 @@ const matchSelectCols = `m.id, COALESCE(m.player1_name,''), COALESCE(m.player2_n
 	m.player1_elo, m.player2_elo, m.player1_experience, m.player2_experience,
 	COALESCE(m.transcriber,''), m.has_jacoby, m.has_beaver, COALESCE(m.engine_version,''), m.video_source`
 
+// lenientTime scans a date column that legacy rows may hold as ” or as the
+// zero time: both, like NULL, read as an unset date instead of failing the
+// scan of the whole list.
+type lenientTime struct {
+	Time  time.Time
+	Valid bool
+}
+
+func (l *lenientTime) Scan(src any) error {
+	*l = lenientTime{}
+	switch v := src.(type) {
+	case nil:
+		return nil
+	case time.Time:
+		l.Time, l.Valid = v, !v.IsZero()
+		return nil
+	case string:
+		return l.parse(v)
+	case []byte:
+		return l.parse(string(v))
+	}
+	return fmt.Errorf("unsupported date value of type %T", src)
+}
+
+func (l *lenientTime) parse(v string) error {
+	if v == "" {
+		return nil
+	}
+	for _, layout := range []string{time.RFC3339Nano, "2006-01-02 15:04:05.999999999-07:00", "2006-01-02 15:04:05", "2006-01-02"} {
+		if t, err := time.Parse(layout, v); err == nil {
+			l.Time, l.Valid = t, !t.IsZero()
+			return nil
+		}
+	}
+	return fmt.Errorf("unparsable date %q", v)
+}
+
 // scanMatch reconstructs a domain.Match from a row selected with
 // matchSelectCols. match_date and tournament_id are nullable.
 func scanMatch(sc interface{ Scan(...any) error }) (domain.Match, error) {
 	var m domain.Match
-	var matchDate, importDate sql.NullTime
+	var matchDate, importDate lenientTime
 	var tournamentID sql.NullInt64
 	var elo1, elo2 sql.NullFloat64
 	var exp1, exp2, jacoby, beaver sql.NullInt64
