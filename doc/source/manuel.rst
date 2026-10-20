@@ -271,13 +271,18 @@ l'assistant.
 
 La bascule est immédiate : chaque groupe garde en mémoire ses vues, sa liste
 de positions, la position courante, la recherche en cours, les compteurs et
-le défilement du panneau, et les retrouve sans relire la base. Ce qui a pu
-changer pendant l'absence (compteurs, liste des matchs) est relu juste après
-l'affichage.
+le défilement du panneau, et les retrouve sans relire la base. Le travail en
+cours le suit aussi : un brouillon de transcription, une leçon, une révision
+Anki, la file d'étude et la Direction ouverte se retrouvent tels qu'ils ont
+été laissés. Ce qui a pu changer pendant l'absence (compteurs, liste des
+matchs) est relu juste après l'affichage, et les listes propres à chaque base
+(collections, tournois, paquets Anki, brouillons, Duels, historique de
+recherche, filtres enregistrés) sont relues dans la bibliothèque affichée.
 
 Un même fichier ne s'ouvre pas dans deux groupes : le rouvrir affiche le
 groupe qui le tient déjà. Tant qu'une tâche écrit dans la bibliothèque active
 (import, dossier surveillé, analyse par lots, rollout, affichage de tournoi),
+qu'un Duel est en cours ou qu'une séance d'entraînement n'est pas terminée,
 le changement de groupe est refusé avec un message dans la barre d'état.
 À la fermeture de blunderDB, seule la session de la bibliothèque active est
 enregistrée, et la liste des groupes ne l'est pas : au démarrage suivant,

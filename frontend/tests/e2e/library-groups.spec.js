@@ -9,6 +9,7 @@
 import { test, expect } from '@playwright/test';
 import { installWailsMock } from './helpers/wailsMock.js';
 import { openLibraryMock } from './helpers/fixtures.js';
+import { installTranscriptionEngine, draftRow } from './helpers/transcriptionDraft.js';
 
 const pathB = '/libs/club.db';
 
@@ -84,4 +85,68 @@ test('closing a group closes its library and leaves one group', async ({ page })
     await expect(headers).toHaveCount(0);
     const closes = await page.evaluate(() => window.__wailsCalls.filter((c) => c.method === 'CloseLibraryGroup').map((c) => c.args[0]));
     expect(closes).toEqual([2]);
+});
+
+test("what each library holds stays in its group, and A's draft is intact on return", async ({ page }) => {
+    const collectionA = { id: 1, name: 'Collection de A', description: '', positionCount: 0, sortOrder: 0 };
+    const tournamentA = { id: 3, name: 'Open de Lyon', date: '2026-05-01', location: 'Lyon', matchCount: 0 };
+    await installTranscriptionEngine(page);
+    // Two libraries behind the bound handle: what the backend answers follows the active one.
+    await page.addInitScript(
+        ({ collectionA, tournamentA, draftRow }) => {
+            const db = window.go.database.Database;
+            const app = window.go.gui.App;
+            window.__library = 'A';
+            const ofA = (value, empty) => () => Promise.resolve(window.__library === 'A' ? value : empty);
+            db.GetAllCollections = ofA([collectionA], []);
+            db.GetAllTournaments = ofA([tournamentA], []);
+            db.ListTranscriptions = ofA([draftRow], []);
+            app.OpenLibraryGroup = (path) => {
+                window.__library = 'B';
+                return Promise.resolve({ id: 2, path, active: true, readOnly: false });
+            };
+            app.ActivateLibraryGroup = (id) => {
+                window.__library = id === 1 ? 'A' : 'B';
+                return Promise.resolve(null);
+            };
+        },
+        { collectionA, tournamentA, draftRow }
+    );
+    await page.goto('/');
+    await expect(page.locator('[data-testid="status-bar"]')).toBeVisible({ timeout: 8000 });
+
+    const collections = page.locator('#collectionPanel');
+    const tournaments = page.locator('.tournament-panel');
+    const transcription = page.locator('#transcriptionPanel');
+
+    // In A: a collection, a tournament, and a transcription draft open.
+    await page.getByTestId('tab-collections').click();
+    await expect(collections.getByText('Collection de A')).toBeVisible();
+    await page.keyboard.press('Control+y');
+    await expect(tournaments.getByText('Open de Lyon')).toBeVisible();
+    await page.getByTestId('tab-transcription').click();
+    await transcription.locator('tbody tr').first().click();
+    await expect(transcription.locator('.draft-bar')).toBeVisible();
+
+    // B, opened in a new group, shows none of them.
+    await page.locator('[data-testid="open-library-group"]').click();
+    await expect(page.locator('[data-testid="library-group"]').nth(1)).toHaveClass(/active/);
+    await page.getByTestId('tab-tournaments').click();
+    await expect(tournaments).toBeVisible();
+    await expect(tournaments.getByText('Open de Lyon')).toHaveCount(0);
+    await page.getByTestId('tab-collections').click();
+    await expect(collections.getByText('Collection de A')).toHaveCount(0);
+    await page.getByTestId('tab-transcription').click();
+    await expect(transcription.locator('.draft-bar')).toHaveCount(0);
+    await expect(transcription.locator('tbody tr')).toHaveCount(0);
+
+    // Back on A: its draft is where it was left, its lists are A's again.
+    await page.locator('[role="tab"][data-group-id="1"]').first().click();
+    await expect(page.locator('[data-testid="library-group"]').nth(0)).toHaveClass(/active/);
+    await page.getByTestId('tab-transcription').click();
+    await expect(transcription.locator('.draft-bar')).toBeVisible();
+    await page.getByTestId('tab-tournaments').click();
+    await expect(tournaments.getByText('Open de Lyon')).toBeVisible();
+    await page.getByTestId('tab-collections').click();
+    await expect(collections.getByText('Collection de A')).toBeVisible();
 });
