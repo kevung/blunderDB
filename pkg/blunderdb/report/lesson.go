@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"html"
+	"math"
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -128,6 +129,20 @@ func originLine(ctx context.Context, s storage.Storage, scope string) string {
 
 func analysisHTML(lang string, a *domain.PositionAnalysis) string {
 	esc := html.EscapeString
+	colon := cubeWord(lang, "colon")
+	played := func(list []string, single string, show func(string) string) string {
+		if len(list) == 0 && single != "" {
+			list = []string{single}
+		}
+		if len(list) == 0 {
+			return ""
+		}
+		shown := make([]string, len(list))
+		for i, m := range list {
+			shown[i] = show(m)
+		}
+		return fmt.Sprintf("<p><b>%s</b>%s %s</p>", esc(cubeWord(lang, "played")), colon, esc(strings.Join(shown, " ; ")))
+	}
 	var b strings.Builder
 	if a.CheckerAnalysis != nil {
 		moves := a.CheckerAnalysis.Moves
@@ -137,7 +152,7 @@ func analysisHTML(lang string, a *domain.PositionAnalysis) string {
 		for i, m := range moves {
 			errCell := ""
 			if m.EquityError != nil && i > 0 {
-				errCell = fmt.Sprintf(" (%+.3f)", *m.EquityError)
+				errCell = fmt.Sprintf(" (%+.3f)", -math.Abs(*m.EquityError))
 			}
 			cls := ""
 			if i == 0 {
@@ -146,12 +161,18 @@ func analysisHTML(lang string, a *domain.PositionAnalysis) string {
 			fmt.Fprintf(&b, "<li%s>%s — %+.3f%s</li>", cls, esc(m.Move), m.Equity, esc(errCell))
 		}
 		if b.Len() > 0 {
-			return fmt.Sprintf("<p><b>%s</b></p><ol>%s</ol>", esc(lessonLabel(lang, "best")), b.String())
+			return played(a.PlayedMoves, a.PlayedMove, func(m string) string { return m }) +
+				fmt.Sprintf("<p><b>%s</b></p><ol>%s</ol>", esc(lessonLabel(lang, "best")), b.String())
 		}
 	}
 	if c := a.DoublingCubeAnalysis; c != nil && c.BestCubeAction != "" {
-		return fmt.Sprintf("<p><b>%s</b> : %s</p><ul><li>ND %+.3f</li><li>D/T %+.3f</li><li>D/P %+.3f</li></ul>",
-			esc(lessonLabel(lang, "cube")), esc(c.BestCubeAction), c.CubefulNoDoubleEquity, c.CubefulDoubleTakeEquity, c.CubefulDoublePassEquity)
+		word := func(l string) string { return cubeActionText(lang, l) }
+		return played(a.PlayedCubeActions, a.PlayedCubeAction, word) +
+			fmt.Sprintf("<p><b>%s</b>%s %s</p><ul><li>%s %+.3f</li><li>%s %+.3f</li><li>%s %+.3f</li></ul>",
+				esc(lessonLabel(lang, "cube")), colon, esc(word(c.BestCubeAction)),
+				esc(word("No Double")), c.CubefulNoDoubleEquity,
+				esc(word("Double, Take")), c.CubefulDoubleTakeEquity,
+				esc(word("Double, Pass")), c.CubefulDoublePassEquity)
 	}
 	return ""
 }

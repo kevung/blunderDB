@@ -159,3 +159,22 @@ func TestCLI_LessonExportHTML(t *testing.T) {
 		}
 	}
 }
+
+// --html neither encrypts nor watermarks, and an unknown language is an error
+// rather than an English page.
+func TestCLI_LessonExportHTMLRefusesWhatItWouldIgnore(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	if err := cli.Run([]string{"lesson", "create", "--name", "L", "--db", dbPath}); err != nil {
+		t.Fatal(err)
+	}
+	out := filepath.Join(t.TempDir(), "x.html")
+	base := []string{"lesson", "export", "--id", "1", "--html", "--out", out, "--db", dbPath}
+	for _, extra := range [][]string{{"--password", "a"}, {"--watermark", "w"}, {"--watermark-note", "n"}, {"--analysis=false"}, {"--lang", "xx"}} {
+		if err := cli.Run(append(append([]string{}, base...), extra...)); err == nil {
+			t.Errorf("%v: want a refusal", extra)
+		}
+	}
+	if _, err := os.Stat(out); err == nil {
+		t.Error("a refused export must write nothing")
+	}
+}

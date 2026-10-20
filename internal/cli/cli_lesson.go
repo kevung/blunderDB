@@ -4,11 +4,13 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"slices"
 	"sort"
 	"strings"
 	"text/tabwriter"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/report"
 )
 
 // runLesson handles the lesson command: a Lesson is an ordered sequence of
@@ -440,6 +442,16 @@ func (cli *CLI) runLessonExport(args []string) error {
 	if *asHTML {
 		if len(lessonIDs) != 1 {
 			return fmt.Errorf("--html writes one lesson: give a single --id")
+		}
+		given := map[string]bool{}
+		fs.Visit(func(f *flag.Flag) { given[f.Name] = true })
+		for _, name := range []string{"password", "watermark", "watermark-note", "analysis", "comments"} {
+			if given[name] {
+				return fmt.Errorf("--html cannot be combined with --%s: the page is neither encrypted nor watermarked (its foot names the database's own watermark origin) and always shows the stored analysis", name)
+			}
+		}
+		if !slices.Contains(report.Languages(), *lang) {
+			return fmt.Errorf("unknown --lang %q: choose one of %s", *lang, strings.Join(report.Languages(), ", "))
 		}
 		page, err := cli.db.LessonHTML(lessonIDs[0], *lang, nil)
 		if err != nil {
