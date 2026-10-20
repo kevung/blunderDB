@@ -522,8 +522,8 @@ func (s *matchStore) UpdateComment(ctx context.Context, scope string, id int64, 
 // positionIsHeldSQL reports whether anything still holds a position once the
 // match that referenced it is gone: deleting a match must not destroy the
 // user's work on a position that merely occurred in it. The predicate is
-// stated three times — database/db_match.go, storage/sqlite, storage/postgres —
-// and must stay identical in all three.
+// stated twice — storage/sqlite and storage/postgres, one per SQL dialect —
+// and must stay identical in both.
 //
 // A position is held by: another match's move; a collection membership; an
 // Anki card; a Lesson step (ADR-0066); a comment with origin = 'user'; the
