@@ -81,6 +81,7 @@ var xmlEncodingDecl = regexp.MustCompile(`^\s*<\?xml[^>]*\sencoding\s*=\s*["']([
 // not decode them a second time. They go back to the bytes the declaration
 // describes. A caller able to carry bytes should send them to Import.
 func ImportText(ctx context.Context, s storage.Storage, scope, text, fallbackName string) (*domain.MatchEquityTable, error) {
+	text = strings.TrimPrefix(text, "\uFEFF")
 	data := []byte(text)
 	if m := xmlEncodingDecl.FindStringSubmatch(text); m != nil && engine.IsLatin1Label(m[1]) {
 		data = make([]byte, 0, len(text))

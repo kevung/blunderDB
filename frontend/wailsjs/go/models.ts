@@ -2781,6 +2781,7 @@ export namespace domain {
 	    source?: string;
 	    current: boolean;
 	    created_at?: string;
+	    already_held?: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new MatchEquityTable(source);
@@ -2794,6 +2795,7 @@ export namespace domain {
 	        this.source = source["source"];
 	        this.current = source["current"];
 	        this.created_at = source["created_at"];
+	        this.already_held = source["already_held"];
 	    }
 	}
 	export class MatchMovePosition {

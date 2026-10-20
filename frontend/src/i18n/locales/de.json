@@ -133,6 +133,7 @@
         "metImport": "MET aus .xml importieren…",
         "metNote": "gammonNet bewertet Matchstände mit dieser Tabelle, und jede berechnete Analyse speichert sie. Eine Analyse bei Matchstand, die mit einer anderen Tabelle berechnet wurde, wird als „andere MET“ markiert und aus den Statistiken ausgeschlossen. Ein Tabellenwechsel schreibt keine Analyse um. Nur explizite gnubg-Tabellen werden gelesen.",
         "metImported": "Tabelle importiert: {name}",
+        "metAlreadyHeld": "Tabelle bereits vorhanden: {name}",
         "metBuiltInImported": "Diese Datei ist Kazaross-XG2, die eingebaute Tabelle: nichts wurde hinzugefügt.",
         "checkForUpdates": "Beim Start nach Updates suchen",
         "checkForUpdatesNote": "Fragt beim Start einmal die GitHub-Release-Seite ab. Standardmäßig deaktiviert und bei einer paketverwalteten Installation (Flatpak, Distributionspaket, Homebrew …) nie automatisch aktiviert.",

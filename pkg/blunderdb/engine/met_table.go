@@ -101,8 +101,8 @@ func metCharsetReader(label string, input io.Reader) (io.Reader, error) {
 // metDecodeError words a decoder failure. A file that is not UTF-8 and says
 // nothing about it is most often Latin-1 or UTF-16.
 func metDecodeError(data []byte, err error) error {
-	if i := strings.Index(err.Error(), ErrMETEncoding.Error()); i >= 0 {
-		return fmt.Errorf("%w%s", ErrMETEncoding, err.Error()[i+len(ErrMETEncoding.Error()):])
+	if errors.Is(err, ErrMETEncoding) {
+		return err
 	}
 	if bytes.HasPrefix(data, []byte{0xFF, 0xFE}) || bytes.HasPrefix(data, []byte{0xFE, 0xFF}) {
 		return fmt.Errorf("%w: the file is UTF-16; save it as UTF-8", ErrMETEncoding)

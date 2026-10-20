@@ -45,7 +45,7 @@
             const path = await OpenMETDialog();
             if (!path) return;
             const table = await ImportMET(path);
-            notice = table.id === 0 ? $t('config.metBuiltInImported') : $t('config.metImported', { name: table.name });
+            notice = table.id === 0 ? $t('config.metBuiltInImported') : table.already_held ? $t('config.metAlreadyHeld', { name: table.name }) : $t('config.metImported', { name: table.name });
             await load();
         } catch (e) {
             logger.error('METSettings: import failed', e);

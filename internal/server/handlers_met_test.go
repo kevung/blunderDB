@@ -49,6 +49,24 @@ func TestMetImportDecodesLatin1Once(t *testing.T) {
 	}
 }
 
+func TestMetImportLatin1TextEdgeCases(t *testing.T) {
+	ts := newTestServer(t)
+	text, _ := latin1Table(t)
+
+	resp := post(t, ts, "/v1/met.import", map[string]any{"source": strings.Replace(text, "Table é", "Table €", 1)})
+	b, _ := io.ReadAll(resp.Body)
+	resp.Body.Close()
+	if resp.StatusCode != http.StatusBadRequest || !strings.Contains(string(b), "source_base64") {
+		t.Errorf("char above U+00FF: status %d: %s; want 400 pointing at source_base64", resp.StatusCode, b)
+	}
+
+	var table domain.MatchEquityTable
+	postDecode(t, ts, "/v1/met.import", map[string]any{"source": "\uFEFF" + text}, &table)
+	if table.Name != "Table é Latin1" {
+		t.Errorf("name with a BOM = %q; want %q", table.Name, "Table é Latin1")
+	}
+}
+
 func TestMetImportRefusalsSayWhatToDo(t *testing.T) {
 	ts := newTestServer(t)
 	text, _ := latin1Table(t)
@@ -57,7 +75,7 @@ func TestMetImportRefusalsSayWhatToDo(t *testing.T) {
 		want string
 	}{
 		"windows-1252": {map[string]any{"source": strings.Replace(text, "ISO-8859-1", "windows-1252", 1)}, "windows-1252"},
-		"undeclared":   {map[string]any{"source_base64": base64.StdEncoding.EncodeToString([]byte(strings.Replace(text, ` encoding="ISO-8859-1"`, "", 1)[:0] + "<?xml version=\"1.0\"?><met><info><name>\xe9</name>"))}, "ISO-8859-1"},
+		"undeclared":   {map[string]any{"source_base64": base64.StdEncoding.EncodeToString([]byte("<?xml version=\"1.0\"?><met><info><name>\xe9</name>"))}, "ISO-8859-1"},
 		"utf16":        {map[string]any{"source_base64": base64.StdEncoding.EncodeToString([]byte{0xFF, 0xFE, '<', 0})}, "UTF-16"},
 	} {
 		t.Run(name, func(t *testing.T) {

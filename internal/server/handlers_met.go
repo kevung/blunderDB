@@ -33,7 +33,7 @@ func (s *Server) metRoutes() []route {
 			if req.SourceBase64 != "" {
 				raw, err := base64.StdEncoding.DecodeString(req.SourceBase64)
 				if err != nil {
-					return nil, fmt.Errorf("%w: source_base64: %v", storage.ErrInvalid, err)
+					return nil, fmt.Errorf("%w: source_base64: %w", storage.ErrInvalid, err)
 				}
 				return mets.Import(ctx, s.opts.Storage, scope, raw, req.Name)
 			}
