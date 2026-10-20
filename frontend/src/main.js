@@ -13,7 +13,7 @@ markStartup('modules-evaluated');
 // parsed: a lazy panel's first open there is a waterfall of seconds on a busy machine, and
 // the e2e suite runs there. Dev starts fetching every panel now, without holding the mount
 // on it; the production bundle keeps the panels off the first screen until `ready`.
-if (import.meta.env.DEV) preloadDeferredComponents();
+if (import.meta.env.DEV) preloadDeferredComponents({ immediate: true });
 
 // The persisted language before the first render: mounted in English, the window painted
 // every label twice when the locale arrived. Bounded, so a backend slow to answer never

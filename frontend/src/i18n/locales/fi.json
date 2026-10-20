@@ -1383,6 +1383,8 @@
         "clearMain": "Poista"
     },
     "tabbedPanel": {
+        "loadFailed": "Paneelia ei voitu ladata. Lataa ikkuna uudelleen tai avaa paneeli uudelleen.",
+        "reload": "Lataa uudelleen",
         "analysis": "Analyysi",
         "comments": "Kommentit",
         "search": "Haku",

@@ -73,3 +73,24 @@ avant le montage (borné à 1 s) : la fenêtre ne peint plus chaque libellé deu
 
 Les badges des matchs et des tournois restent un agrégat complet par liste (~0,6 s chacun sur
 la base de 66 Mo) : voir `tasks/BACKLOG.md`, « Badges des matchs et des tournois ».
+
+## Premier clic juste après le démarrage
+
+Avant : « prêt » posé avant le premier pixel, préchargement des 45 chunks d'un seul tenant
+(le fil principal occupé 1,5 à 2 s), panneau vide sans signe, chunk en échec vide pour la session.
+Après : « prêt » posé après la première peinture (`requestAnimationFrame` puis macrotâche),
+préchargement chunk par chunk à chaque trame oisive (onglet actif d'abord), indicateur de
+chargement dans l'onglet, message et bouton de rechargement quand un chunk échoue (un nouvel
+essai part à la prochaine ouverture ; un `import()` en échec peut rester en échec dans le
+navigateur, d'où le rechargement).
+
+Mesure (`measure-startup.mjs`, médianes de 5, builds en alternance, machine chargée), en ms :
+
+| Jalon | avant ×1 | après ×1 | avant ×4 | après ×4 |
+|---|---:|---:|---:|---:|
+| premier rendu (FCP) | 972 | 912 | 3840 | 3120 |
+| prêt | 801 | 924 | 3123 | 3466 |
+
+« Prêt » suit désormais le premier rendu (avant : il le précédait de 0,1 à 0,7 s). La
+durée des tâches longues après « prêt » n'a pas été remesurée (`preload.mjs` n'est pas dans le dépôt).
+

@@ -342,11 +342,15 @@
     /** @type {(() => void) | null} */
     let unregisterZoomKeys = null;
 
-    /** The window is usable: fetch the panels and modals kept off the first screen. */
+    /** The window is usable once it has painted; then the panels and modals kept off the first screen are fetched. */
     function startupDone() {
-        markStartup('ready');
-        // WebKit has no requestIdleCallback; a macrotask lets the first frames paint first.
-        setTimeout(() => preloadDeferredComponents(), 0);
+        // The frame callback runs before the paint it asks for, the macrotask after it.
+        requestAnimationFrame(() =>
+            setTimeout(() => {
+                markStartup('ready');
+                preloadDeferredComponents({ first: get(activeTabStore) });
+            }, 0)
+        );
     }
 
     onMount(async () => {

@@ -26,6 +26,7 @@
     $effect(() => {
         panels.load($activeTabStore);
     });
+    const failedPanels = panels.failed;
     const Panel = $derived($loadedPanels[$activeTabStore]);
 
     // Props passed through to panels
@@ -353,7 +354,18 @@
 
     <div class="tab-content" class:folded={$duelFoldedStore} data-testid="tab-content" role="tabpanel">
         {#if !Panel}
-            <!-- The tab's chunk is still on its way (a click before the idle preload finished). -->
+            <!-- The tab's chunk is still on its way (a click before the idle preload reached it). -->
+            {#if $failedPanels.has($activeTabStore)}
+                <div class="panel-pending" role="alert" data-testid="panel-load-failed">
+                    <span>{$t('tabbedPanel.loadFailed')}</span>
+                    <button onclick={() => location.reload()}>{$t('tabbedPanel.reload')}</button>
+                </div>
+            {:else}
+                <div class="panel-pending" role="status" data-testid="panel-loading">
+                    <span class="panel-spinner" aria-hidden="true"></span>
+                    <span>{$t('common.loading')}…</span>
+                </div>
+            {/if}
         {:else if $activeTabStore === 'analysis'}
             <Panel onClose={onCloseAnalysis} />
         {:else if $activeTabStore === 'comments'}
@@ -474,6 +486,31 @@
 
     .tab-label {
         font-size: var(--font-size-small);
+    }
+
+    .panel-pending {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        height: 100%;
+        min-height: 120px;
+        color: var(--text-secondary, #666);
+    }
+
+    .panel-spinner {
+        width: 16px;
+        height: 16px;
+        border: 2px solid currentColor;
+        border-right-color: transparent;
+        border-radius: 50%;
+        animation: panel-spin 0.8s linear infinite;
+    }
+
+    @keyframes panel-spin {
+        to {
+            transform: rotate(360deg);
+        }
     }
 
     .tab-content.folded {
