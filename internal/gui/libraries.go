@@ -22,6 +22,9 @@ type libraryGroups struct {
 	active int
 	next   int
 	parked map[int]*database.Database
+	// locked holds the groups their user locked against transfers into them
+	// (SetLibraryGroupLocked): the desktop's memory, never a library's.
+	locked map[int]bool
 	// exchanging is set while a switch exchanges the two handles: the bound
 	// handle's before-switch hook then stops nothing, since the jobs run on
 	// borrowed handles that keep their library (borrowLibrary).
@@ -42,6 +45,8 @@ type LibraryGroup struct {
 	Path     string `json:"path"`
 	Active   bool   `json:"active"`
 	ReadOnly bool   `json:"readOnly"`
+	// Locked refuses transfers into the group (SetLibraryGroupLocked).
+	Locked bool `json:"locked"`
 }
 
 // ErrLibraryAlreadyOpen refuses a file already open in a group; the message
@@ -55,6 +60,7 @@ func (e *ErrLibraryAlreadyOpen) Error() string {
 func (g *libraryGroups) init() {
 	if g.parked == nil {
 		g.parked = map[int]*database.Database{}
+		g.locked = map[int]bool{}
 		g.setActive(1)
 		g.next = 2
 	}
@@ -123,10 +129,10 @@ func (a *App) ListLibraryGroups() []LibraryGroup {
 	a.libs.init()
 	var out []LibraryGroup
 	if a.db != nil {
-		out = append(out, LibraryGroup{ID: a.libs.active, Path: database.OpenPath(a.db), Active: true, ReadOnly: a.db.IsReadOnly()})
+		out = append(out, LibraryGroup{ID: a.libs.active, Path: database.OpenPath(a.db), Active: true, ReadOnly: a.db.IsReadOnly(), Locked: a.libs.locked[a.libs.active]})
 	}
 	for id, d := range a.libs.parked {
-		out = append(out, LibraryGroup{ID: id, Path: database.OpenPath(d), ReadOnly: d.IsReadOnly()})
+		out = append(out, LibraryGroup{ID: id, Path: database.OpenPath(d), ReadOnly: d.IsReadOnly(), Locked: a.libs.locked[id]})
 	}
 	sort.Slice(out, func(i, j int) bool { return out[i].ID < out[j].ID })
 	return out
@@ -292,6 +298,7 @@ func (a *App) CloseLibraryGroup(id int) error {
 		return nil
 	}
 	delete(a.libs.parked, id)
+	delete(a.libs.locked, id)
 	return parked.Close()
 }
 

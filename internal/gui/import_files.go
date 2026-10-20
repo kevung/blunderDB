@@ -191,17 +191,25 @@ type backgroundImports struct {
 }
 
 type runningImport struct {
-	group int
-	done  chan struct{}
+	group  int
+	cancel func()
+	done   chan struct{}
 }
 
 func (b *backgroundImports) add(group int, lent *database.Database) func() {
+	return b.addCancel(group, lent, lent.CancelImport)
+}
+
+// addCancel registers a job writing or reading lent, a handle borrowed from
+// group's library, that cancel stops: a transfer, which holds a handle on
+// each of its two libraries, stops when either group closes.
+func (b *backgroundImports) addCancel(group int, lent *database.Database, cancel func()) func() {
 	b.mu.Lock()
 	defer b.mu.Unlock()
 	if b.running == nil {
 		b.running = map[*database.Database]runningImport{}
 	}
-	r := runningImport{group: group, done: make(chan struct{})}
+	r := runningImport{group: group, cancel: cancel, done: make(chan struct{})}
 	b.running[lent] = r
 	return func() {
 		b.mu.Lock()
@@ -216,9 +224,9 @@ func (b *backgroundImports) add(group int, lent *database.Database) func() {
 func (b *backgroundImports) cancel(group int) <-chan struct{} {
 	b.mu.Lock()
 	var waits []chan struct{}
-	for lent, r := range b.running {
+	for _, r := range b.running {
 		if group == 0 || r.group == group {
-			lent.CancelImport()
+			r.cancel()
 			waits = append(waits, r.done)
 		}
 	}

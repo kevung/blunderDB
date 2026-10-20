@@ -16,6 +16,8 @@ var boundAppMethods = []string{
 	"LibraryGroupHolding",
 	"ListLibraryGroups",
 	"OpenLibraryGroup",
+	"SetLibraryGroupLocked",
+	"TransferToGroup",
 	"AssistantAsk",
 	"AssistantCancel",
 	"AssistantConfirm",

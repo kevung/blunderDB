@@ -27,6 +27,13 @@ func (d *Database) TransferTo(ctx context.Context, dst *Database, opts ExportOpt
 	if open := dst.openPath.Load(); open != nil && d.IsOpenDatabase(*open) {
 		return ingest.TransferReport{}, fmt.Errorf("%w: %w", storage.ErrInvalid, ingest.ErrSelfTransfer)
 	}
+	// The destination counts the transfer as one of its imports: a vacuum of
+	// it waits, and its CancelImport stops the transfer.
+	imported, done := dst.beginCancellableImport()
+	defer done()
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+	defer context.AfterFunc(imported, cancel)()
 	transferMu.Lock()
 	defer transferMu.Unlock()
 	d.mu.RLock()
