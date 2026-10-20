@@ -5186,3 +5186,51 @@ func TestMigrate_2_44_0_to_2_45_0_UndatedMatchesNull(t *testing.T) {
 		t.Fatalf("after migration: %d undated rows not NULL, %d dated kept (want 1), %d positions dated year 1", undated, kept, yearOne)
 	}
 }
+
+// TestMigrate_2_46_0_to_2_47_0_CommentSignature opens a 2.46.0 library, whose
+// comments have no signature column, and checks the migration adds it with
+// every existing comment unsigned.
+func TestMigrate_2_46_0_to_2_47_0_CommentSignature(t *testing.T) {
+	t.Parallel()
+	dbPath := filepath.Join(tempDir(t), "test_v2460_sig.db")
+	createOldDatabase(t, dbPath, "2.31.0")
+	d := NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open: %v", err)
+	}
+	pos := InitializePosition()
+	id, err := d.SavePosition(&pos)
+	if err != nil {
+		t.Fatalf("SavePosition: %v", err)
+	}
+	if err := d.AddComment(id, "noté avant"); err != nil {
+		t.Fatalf("AddComment: %v", err)
+	}
+	for _, stmt := range []string{
+		`ALTER TABLE comment DROP COLUMN signature`,
+		`UPDATE metadata SET value = '2.46.0' WHERE key = 'database_version'`,
+	} {
+		if _, err := d.db.Exec(stmt); err != nil {
+			t.Fatalf("%s: %v", stmt, err)
+		}
+	}
+	if err := d.Close(); err != nil {
+		t.Fatalf("close: %v", err)
+	}
+
+	d = NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open v2.46.0 database: %v", err)
+	}
+	closeOnCleanup(t, d)
+	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {
+		t.Fatalf("version after migration = %q, %v; want %q", v, err, DatabaseVersion)
+	}
+	entries, err := d.GetCommentsByPosition(id)
+	if err != nil || len(entries) != 1 {
+		t.Fatalf("comments after migration = %+v, %v; want the one written before", entries, err)
+	}
+	if e := entries[0]; e.Signature != "" || e.Signer != nil {
+		t.Fatalf("a comment from before the migration must read unsigned: %+v", e)
+	}
+}

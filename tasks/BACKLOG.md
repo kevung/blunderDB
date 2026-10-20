@@ -150,6 +150,12 @@ propre issue le jour où il est lancé.
   n'en a pas non plus : `SetMigrationProgress` n'est appelé par aucun mode). Piste : une méthode
   `App` qui annule l'ouverture en cours d'un groupe, et un émetteur Wails partagé par les deux
   poignées.
+- **La signature d'un commentaire ne passe ni par l'export JSON ni par le backend `remote`**
+  (ADR-0099). `ingest/json.go` n'écrit que texte et auteur ; `remote` n'envoie pas
+  `storage.CommentSignatureFromContext` à `comments.add`, que le démon ne lit pas non plus.
+  Un commentaire passé par l'un d'eux arrive non signé, ce qui ne trompe personne mais perd
+  l'attribution vérifiable. Les porter : un champ `signature` (et `origin`) dans le paquet
+  JSON et dans le corps de `comments.add`, recopié tel quel, avec un test de contrat.
 
 ## Ouvert — Moteur
 

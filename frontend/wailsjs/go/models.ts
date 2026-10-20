@@ -2045,6 +2045,22 @@ export namespace domain {
 	        this.hit = source["hit"];
 	    }
 	}
+	export class CommentSigner {
+	    name: string;
+	    fingerprint: string;
+	    verified: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new CommentSigner(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.name = source["name"];
+	        this.fingerprint = source["fingerprint"];
+	        this.verified = source["verified"];
+	    }
+	}
 	export class CommentEntry {
 	    id: number;
 	    positionId: number;
@@ -2053,6 +2069,8 @@ export namespace domain {
 	    modifiedAt: string;
 	    origin: string;
 	    author: string;
+	    signature?: string;
+	    signer?: CommentSigner;
 	
 	    static createFrom(source: any = {}) {
 	        return new CommentEntry(source);
@@ -2067,8 +2085,29 @@ export namespace domain {
 	        this.modifiedAt = source["modifiedAt"];
 	        this.origin = source["origin"];
 	        this.author = source["author"];
+	        this.signature = source["signature"];
+	        this.signer = this.convertValues(source["signer"], CommentSigner);
 	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
 	}
+	
 	
 	export class DoublingCubeAnalysis {
 	    analysisDepth: string;

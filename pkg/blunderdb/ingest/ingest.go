@@ -7,6 +7,8 @@ package ingest
 import (
 	"context"
 	"io"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/issuance"
 )
 
 // Format identifies an import/export wire format.
@@ -144,6 +146,12 @@ type ExportOptions struct {
 	// that cursor in the source's metadata once the file is complete
 	// (ADR-0096). PlanExport only counts and leaves it alone.
 	Sync *SyncAdvance
+
+	// Signer signs, with the producer's identity, each comment of origin
+	// 'user' that carries no signature yet (ADR-0099); nil signs nothing.
+	// The callers set it exactly when they seal a Watermark: the producer
+	// who vouches for the file vouches for its notes.
+	Signer *issuance.Identity
 }
 
 // Importer reads a Source and writes its contents through Storage, emitting

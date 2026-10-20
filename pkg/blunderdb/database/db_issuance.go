@@ -93,16 +93,21 @@ func IssuerIdentity() (*issuance.Identity, error) {
 }
 
 // sealWatermark builds the document an export writes, or "" when the export carries no
-// watermark. It is the only place an identity is ever created.
-func sealWatermark(origin, note string) (string, error) {
+// watermark, and returns the identity that sealed it, which also signs the exported
+// comments (ADR-0099). It is the only place an identity is ever created.
+func sealWatermark(origin, note string) (string, *issuance.Identity, error) {
 	if strings.TrimSpace(origin) == "" {
-		return "", nil
+		return "", nil, nil
 	}
 	identity, err := IssuerIdentity()
 	if err != nil {
-		return "", err
+		return "", nil, err
 	}
-	return ingest.SealWatermark(identity, origin, note)
+	doc, err := ingest.SealWatermark(identity, origin, note)
+	if err != nil {
+		return "", nil, err
+	}
+	return doc, identity, nil
 }
 
 // IsProtectedCopy reports whether a path is a password-protected copy rather than an ordinary

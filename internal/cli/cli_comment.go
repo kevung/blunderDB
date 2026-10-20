@@ -8,6 +8,7 @@ import (
 	"strings"
 	"text/tabwriter"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -165,10 +166,23 @@ func (cli *CLI) runCommentList(args []string) error {
 		return nil
 	}
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
-	fmt.Fprintln(w, "ID\tPosition\tAuthor\tCreated\tText")
-	fmt.Fprintln(w, "--\t--------\t------\t-------\t----")
+	fmt.Fprintln(w, "ID\tPosition\tAuthor\tSigned by\tCreated\tText")
+	fmt.Fprintln(w, "--\t--------\t------\t---------\t-------\t----")
 	for _, e := range entries {
-		fmt.Fprintf(w, "%d\t%d\t%s\t%s\t%s\n", e.ID, e.PositionID, e.Author, e.CreatedAt, strings.ReplaceAll(e.Text, "\n", " "))
+		fmt.Fprintf(w, "%d\t%d\t%s\t%s\t%s\t%s\n", e.ID, e.PositionID, e.Author, signerLabel(e.Signer), e.CreatedAt, strings.ReplaceAll(e.Text, "\n", " "))
 	}
 	return w.Flush()
+}
+
+// signerLabel spells who sealed a comment and whether its words are still
+// the signed ones (ADR-0099); "" for an unsigned comment.
+func signerLabel(s *domain.CommentSigner) string {
+	if s == nil {
+		return ""
+	}
+	label := s.Name + " [" + s.Fingerprint + "]"
+	if !s.Verified {
+		label += " (unverified)"
+	}
+	return label
 }

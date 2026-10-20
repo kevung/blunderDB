@@ -449,6 +449,9 @@ func (s *Server) handleExportSQLite() http.HandlerFunc {
 		}
 
 		opts.Watermark = watermark
+		if watermark != "" {
+			opts.Signer = s.opts.Identity
+		}
 		report, err := ingest.ExportSQLite(r.Context(), s.opts.Storage, scopeOf(r), tmpPath, opts)
 		if err != nil {
 			writeStorageError(w, err)

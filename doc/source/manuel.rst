@@ -1133,6 +1133,19 @@ Cette distinction a une conséquence visible ailleurs : supprimer un match
 n'efface plus une position sur laquelle **vous** aviez écrit. Une note reprise
 du fichier source, elle, disparaît avec le match qui l'a apportée.
 
+Un commentaire reçu dans une base exportée avec un filigrane porte la
+**signature** de son émetteur : le fil affiche « commentaire de *émetteur* »,
+précédé de ✓, et son survol donne l'empreinte de la clé. Si son texte ou son
+auteur a été modifié dans le fichier après la signature, ou s'il a été déplacé
+sur une autre position, le commentaire est conservé mais marqué ⚠ *non
+vérifié*. Le modifier vous-même retire la signature : la phrase est alors la
+vôtre. Un commentaire reçu d'une autre base garde sa provenance : une note que
+son auteur avait écrite retient sa position quand un match est supprimé, comme
+les vôtres ; une remarque qu'il tenait d'un fichier XG garde son étiquette
+``XG`` et disparaît avec le match.
+``blunderdb comment list`` donne la même information dans sa colonne
+*Signed by*.
+
 .. _tags:
 
 Les tags
@@ -5457,6 +5470,11 @@ La marque est signée avec votre identité d'émetteur. Elle est donc
 à votre nom. Elle n'est en revanche **pas ineffaçable** — le fichier distribué
 est une base SQLite ordinaire, et blunderDB est un logiciel libre. Elle
 n'empêche rien : elle dit d'où vient le fichier.
+
+Les commentaires que vous avez écrits sont signés avec la même identité : le
+destinataire voit qu'ils viennent de vous, et s'ils ont été altérés en chemin
+(voir :ref:`panneau_commentaires`). Un commentaire qui porte déjà la signature
+d'un autre émetteur la garde.
 
 Identité d'émetteur
 ~~~~~~~~~~~~~~~~~~~

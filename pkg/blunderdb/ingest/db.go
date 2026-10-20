@@ -69,7 +69,7 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 	if err != nil {
 		return Summary{}, fmt.Errorf("ingest: load source analyses: %w", err)
 	}
-	srcComments, err := source.Comments().ByPositions(ctx, scope, ids)
+	srcComments, err := source.FileComments(ctx).ByPositions(ctx, scope, ids)
 	if err != nil {
 		return Summary{}, fmt.Errorf("ingest: read source comments: %w", err)
 	}
@@ -427,8 +427,11 @@ func MergeDBAnalysis(ctx context.Context, tx storage.Stores, scope string, posit
 // mergeDBCommentsPreloaded appends each imported comment to positionID unless
 // the position's existing comment text already contains it. existing is the
 // target's current comment entries, already loaded in Import's batched pass.
-// Each appended comment keeps the source's author, never the importer's: the
-// source database states who wrote it (ADR-0007).
+// Each appended comment keeps the source's author, never the importer's, its
+// origin — a remark an importer brought the producer does not become the
+// recipient's note — and the signature the producer sealed, verbatim: the
+// source database states who wrote it (ADR-0007, ADR-0099). Checking it is the reader's business; an
+// altered note is kept and shown unverified, never refused here.
 func mergeDBCommentsPreloaded(ctx context.Context, tx storage.Tx, scope string, positionID int64, existingEntries []*domain.CommentEntry, comments []*domain.CommentEntry) error {
 	if len(comments) == 0 {
 		return nil
@@ -444,7 +447,7 @@ func mergeDBCommentsPreloaded(ctx context.Context, tx storage.Tx, scope string, 
 		if trimmed == "" || strings.Contains(existing, trimmed) {
 			continue
 		}
-		if _, err := tx.Comments().Add(storage.WithCommentAuthor(ctx, c.Author), scope, positionID, text); err != nil {
+		if _, err := tx.Comments().AddFrom(storage.WithCommentSignature(storage.WithCommentAuthor(ctx, c.Author), c.Signature), scope, positionID, text, c.Origin); err != nil {
 			return err
 		}
 		if existing == "" {

@@ -378,6 +378,19 @@
                             {#if comment.author}
                                 <span class="msg-author">{comment.author}{myName && comment.author === myName ? ' (' + $t('comment.you') + ')' : ''}</span>
                             {/if}
+                            <!-- A producer's seal: whose note it is, and whether its words are still the signed ones. -->
+                            {#if comment.signer}
+                                <span
+                                    class="msg-signer"
+                                    class:unverified={!comment.signer.verified}
+                                    title={$t(comment.signer.verified ? 'comment.signerVerifiedTitle' : 'comment.signerUnverifiedTitle', {
+                                        name: comment.signer.name,
+                                        fingerprint: comment.signer.fingerprint
+                                    })}
+                                    >{comment.signer.verified ? '✓' : '⚠'}
+                                    {$t('comment.signedBy', { name: comment.signer.name || comment.signer.fingerprint })}{comment.signer.verified ? '' : ' — ' + $t('comment.signerUnverified')}</span
+                                >
+                            {/if}
                             <!-- Only for a note the user did not write. -->
                             {#if originLabel(comment.origin)}
                                 <span class="msg-origin" title={originTitle(comment.origin)}>{originLabel(comment.origin)}</span>
@@ -553,6 +566,15 @@
         font-size: var(--font-size-small);
         font-weight: 600;
         color: var(--color-text);
+    }
+    .msg-signer {
+        font-size: var(--font-size-small);
+        color: var(--color-text-muted);
+        margin-left: var(--space-1);
+    }
+    .msg-signer.unverified {
+        color: var(--color-danger);
+        font-weight: 600;
     }
     .msg-origin {
         font-size: var(--font-size-small);

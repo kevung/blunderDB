@@ -42,7 +42,7 @@ const (
 )
 
 const (
-	DatabaseVersion = "2.46.0"
+	DatabaseVersion = "2.47.0"
 )
 
 // Anki deck source types
@@ -254,6 +254,20 @@ type CommentEntry struct {
 	// Origin says which program carried the text; Author tells a coach from
 	// a student when both write in blunderDB.
 	Author string `json:"author"`
+	// Signature is the producer's sealed statement about Text and Author,
+	// written at export and kept verbatim by an import (ADR-0099); "" when
+	// the comment is not signed. Signer is what checking it found.
+	Signature string         `json:"signature,omitempty"`
+	Signer    *CommentSigner `json:"signer,omitempty"`
+}
+
+// CommentSigner is the issuer a signed Comment names, and whether its
+// signature still covers the comment's text and author. An unverified signer
+// is shown as such: a note altered in the file is flagged, never dropped.
+type CommentSigner struct {
+	Name        string `json:"name"`
+	Fingerprint string `json:"fingerprint"`
+	Verified    bool   `json:"verified"`
 }
 
 // CommentOrigin names who wrote the text a comment row currently holds.

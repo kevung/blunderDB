@@ -72,7 +72,10 @@ Who wrote a Comment: the user, or the importer of the file it came in with (`xg`
 `gnubg`, `bgf`), or `unknown` for a Comment written before the column existed. It is a
 fact of how the row entered the database — but EDITING a Comment makes it the user's,
 because after the edit the sentence is theirs. It is what lets the Orphan purge tell a
-note the user typed from a per-move remark lifted out of a file.
+note the user typed from a per-move remark lifted out of a file. It travels with an exported
+Comment: a note that was the producer's own arrives `user` and holds its Position, a remark
+an XG file brought the producer arrives `xg` (ADR-0099). Who wrote a `user` note is the
+Comment signature's business.
 _Avoid_: comment author, comment source
 
 **Import batch**:
@@ -844,6 +847,17 @@ every file the same producer marks carries the same public fingerprint, which is
 recipient check that a file really came from them. It comes into existence without being
 asked for, on the first watermarked export, and moves from one machine to another as a
 single file.
+
+**Comment signature**:
+The producer's signed statement about one Comment — its exact text, the author it names, the
+Zobrist hash of its Position, and the Issuer identity's name — sealed at a watermarked export, on the Comments of origin `user`
+that carry none yet. An import keeps it verbatim; the reader checks it every time it shows
+the Comment, which is then "a comment by *issuer*", **verified** while its words are the
+signed ones on the signed board and **unverified** once the file altered or moved them —
+flagged, never dropped. Editing
+the Comment removes it, as the sentence is no longer the signer's. It says nothing about
+retention, which reads the Comment origin alone (ADR-0099).
+_Avoid_: signed author (Author is free text, not a signature), certified comment
 
 **Protected file**:
 An exported database wrapped in an encrypted container, opened once with a password and

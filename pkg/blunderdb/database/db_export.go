@@ -31,7 +31,7 @@ func (d *Database) ExportDatabaseCtx(ctx context.Context, opts ExportOptions) (i
 
 	// Seal the watermark before writing anything: it is the producer's statement about this
 	// file, and a failure to sign must not leave a half-made export behind.
-	watermarkDocument, err := sealWatermark(opts.Watermark, opts.WatermarkNote)
+	watermarkDocument, signer, err := sealWatermark(opts.Watermark, opts.WatermarkNote)
 	if err != nil {
 		return ingest.ExportReport{}, fmt.Errorf("cannot sign the watermark: %w", err)
 	}
@@ -47,6 +47,7 @@ func (d *Database) ExportDatabaseCtx(ctx context.Context, opts ExportOptions) (i
 	}
 	plan.Metadata = opts.Metadata
 	plan.Watermark = watermarkDocument
+	plan.Signer = signer
 	plan.Password = opts.Password
 	return ingest.ExportSQLite(ctx, d.store, "", opts.ExportPath, plan)
 }

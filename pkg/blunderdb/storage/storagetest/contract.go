@@ -256,6 +256,7 @@ func RunContractTestsOnly(t *testing.T, factory func() storage.Storage, keep fun
 		{"Export/CarriesDirection", testExportCarriesDirection},
 		{"Export/CarriesRencontre", testExportCarriesRencontre},
 		{"Import/ReadsDirectionBack", testImportReadsDirectionBack},
+		{"Comment/SignatureRoundTrip", testCommentSignatureRoundTrip},
 		{"Import/SameNamedDirections", testImportSameNamedDirections},
 		{"MatchEquityTable/TravelsWithNDJSON", testMETTravelsWithNDJSON},
 		{"MatchEquityTable/KeptByTrash", testMETKeptByTrash},

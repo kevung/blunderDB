@@ -362,3 +362,11 @@ func openReadOnlyMode(ctx context.Context, abs, path string, immutable bool) (*S
 	}
 	return &Storage{binder: binder{db: db}, sqlDB: db, ownsDB: true}, nil
 }
+
+// FileComments is Comments over a file read as it stands, never migrated —
+// the source of an import. One that predates comment.signature reads every
+// comment unsigned instead of failing on the missing column.
+func (s *Storage) FileComments(ctx context.Context) storage.CommentStore {
+	have, err := columnNames(ctx, s.sqlDB, "comment")
+	return &sqlshared.CommentStore{DB: s.shared(), Unsigned: err != nil || !have["signature"]}
+}

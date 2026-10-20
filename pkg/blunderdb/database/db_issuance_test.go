@@ -1,12 +1,14 @@
 package database
 
 import (
+	"context"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 
 	"github.com/adrg/xdg"
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/issuance"
 )
 
@@ -407,5 +409,66 @@ func TestDeleteProtectedCopyRefusesOrdinaryFiles(t *testing.T) {
 	}
 	if _, err := os.Stat(container); !os.IsNotExist(err) {
 		t.Fatal("the container should be gone")
+	}
+}
+
+// A coach's watermarked export seals the coach's notes; the student's import keeps the seal,
+// verified, and a note altered in the file arrives flagged, not refused (ADR-0099).
+func TestSignedCommentsSurviveTheDesktopImport(t *testing.T) {
+	isolateIdentity(t)
+	coach := newTestDB(t)
+	coach.SetCommentAuthor("Martin")
+	pos := InitializePosition()
+	id, err := coach.SavePosition(&pos)
+	if err != nil {
+		t.Fatalf("SavePosition: %v", err)
+	}
+	for _, text := range []string{"Joue 8/4 6/4.", "Le pip count décide."} {
+		if err := coach.AddComment(id, text); err != nil {
+			t.Fatalf("AddComment: %v", err)
+		}
+	}
+	if _, err := coach.store.Comments().AddFrom(context.Background(), "", id, "XG: -0.120", domain.CommentOriginXG); err != nil {
+		t.Fatalf("AddFrom: %v", err)
+	}
+	path := exportTo(t, coach, filepath.Join(t.TempDir(), "eleve.db"), ExportOptions{
+		Watermark: "Suivi de l'élève", IncludeComments: true, AllPositions: true,
+	})
+	raw, err := openExistingSQLite(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := raw.Exec(`UPDATE comment SET text = 'Joue 13/7.' WHERE text = 'Joue 8/4 6/4.'`); err != nil {
+		t.Fatal(err)
+	}
+	raw.Close()
+
+	student := newTestDB(t)
+	if _, err := student.CommitImportDatabase(path); err != nil {
+		t.Fatalf("CommitImportDatabase: %v", err)
+	}
+	entries, err := student.GetAllComments()
+	if err != nil {
+		t.Fatal(err)
+	}
+	me, err := IssuerIdentity()
+	if err != nil {
+		t.Fatal(err)
+	}
+	got := map[string]CommentEntry{}
+	for _, e := range entries {
+		got[e.Text] = e
+	}
+	if s := got["Le pip count décide."].Signer; s == nil || !s.Verified || s.Fingerprint != me.Fingerprint() {
+		t.Errorf("intact note: signer %+v; want verified by %s", s, me.Fingerprint())
+	}
+	if s := got["Joue 13/7."].Signer; s == nil || s.Verified {
+		t.Errorf("altered note: signer %+v; want kept and unverified", s)
+	}
+	if o := got["Le pip count décide."].Origin; o != "user" {
+		t.Errorf("imported note origin = %q; want user", o)
+	}
+	if e := got["XG: -0.120"]; e.Origin != domain.CommentOriginXG || e.Signer != nil {
+		t.Errorf("the producer's XG remark: origin %q, signer %+v; want xg, unsigned", e.Origin, e.Signer)
 	}
 }

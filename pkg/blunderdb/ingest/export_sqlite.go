@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/issuance"
 	"github.com/kevung/blunderdb/pkg/blunderdb/mets"
 	"github.com/kevung/blunderdb/pkg/blunderdb/searchquery"
@@ -700,7 +701,10 @@ func (e *exporter) writeBatch(positions []*domain.Position) error {
 			}
 		}
 		for _, c := range comments[p.ID] {
-			cols, marks, args := carriedComment(c)
+			cols, marks, args, err := carriedComment(c, e.opts.Signer, engine.ZobristHash(&pc))
+			if err != nil {
+				return fmt.Errorf("cannot sign a comment to export: %w", err)
+			}
 			if _, err := e.tx.ExecContext(e.ctx,
 				`INSERT INTO comment (position_id, `+strings.Join(cols, ", ")+`) VALUES (?, `+strings.Join(marks, ", ")+`)`,
 				append([]any{newID}, args...)...); err != nil {
@@ -1673,7 +1677,12 @@ func carriedMatchComment(m *domain.Match) (cols []string, args []any) {
 // carriedComment spells the INSERT of one exported comment from the
 // issuance.CarriedCommentColumns allow-list: a column it does not name is not
 // copied, and a name it adds without a value here fails the export loudly.
-func carriedComment(c *domain.CommentEntry) (cols, marks []string, args []any) {
+//
+// A signature already on the row travels as it is, whoever sealed it: it is
+// that producer's statement, and re-signing it would put the exporter's name
+// on someone else's note. A note of the user's own that carries none is
+// sealed by signer, when there is one.
+func carriedComment(c *domain.CommentEntry, signer *issuance.Identity, zobrist uint64) (cols, marks []string, args []any, err error) {
 	for _, col := range issuance.CarriedCommentColumns {
 		switch col {
 		case "text":
@@ -1684,12 +1693,22 @@ func carriedComment(c *domain.CommentEntry) (cols, marks []string, args []any) {
 			marks, args = append(marks, "NULLIF(?, '')"), append(args, c.ModifiedAt)
 		case "author":
 			marks, args = append(marks, "?"), append(args, c.Author)
+		case "origin":
+			marks, args = append(marks, "?"), append(args, string(domain.ParseCommentOrigin(string(c.Origin))))
+		case "signature":
+			sig := c.Signature
+			if sig == "" && signer != nil && c.Origin == domain.CommentOriginUser {
+				if sig, err = issuance.SealComment(signer, c.Text, c.Author, zobrist); err != nil {
+					return nil, nil, nil, err
+				}
+			}
+			marks, args = append(marks, "?"), append(args, nullIfEmpty(sig))
 		default:
 			panic("issuance.CarriedCommentColumns names " + col + ", which the export does not know how to copy")
 		}
 		cols = append(cols, col)
 	}
-	return cols, marks, args
+	return cols, marks, args, nil
 }
 
 // nullIfEmpty writes "" as NULL: a nullable column reads NULL as "not set".

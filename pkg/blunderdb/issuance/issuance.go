@@ -82,9 +82,12 @@ var CarriedMetadataKeys = []string{"user", "description", "dateOfCreation"}
 // CarriedCommentColumns is the allow-list of comment columns an exported file
 // carries, for the same reason: a column added to `comment` later stays home
 // until it is named here. The author is the producer's statement about who
-// wrote the note, so it travels (ADR-0007); the origin describes the
-// producer's own import history and does not.
-var CarriedCommentColumns = []string{"text", "created_at", "modified_at", "author"}
+// wrote the note, so it travels (ADR-0007). The origin travels too: a remark
+// an XG file brought the producer stays an importer's remark for the
+// recipient, and only the producer's own notes hold their position there
+// (ADR-0099). The signature is the producer's sealed statement over text,
+// author and position (SealComment).
+var CarriedCommentColumns = []string{"text", "created_at", "modified_at", "author", "origin", "signature"}
 
 // CarriedMatchCommentColumns is the same allow-list for the note a match
 // carries itself: its text and who signs it — the producer's statement, or

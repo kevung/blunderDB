@@ -37,3 +37,20 @@ func NormalizeCommentAuthor(author string) string {
 	}
 	return author
 }
+
+type commentSignatureKey struct{}
+
+// WithCommentSignature returns a context whose next comment Add stores
+// signature verbatim beside the text: an import keeping the statement the
+// producer sealed at export (ADR-0099). Nothing else writes one, and an
+// edit erases it, since the words it covered are gone.
+func WithCommentSignature(ctx context.Context, signature string) context.Context {
+	return context.WithValue(ctx, commentSignatureKey{}, signature)
+}
+
+// CommentSignatureFromContext returns the signature set by
+// WithCommentSignature, or "".
+func CommentSignatureFromContext(ctx context.Context) string {
+	v, _ := ctx.Value(commentSignatureKey{}).(string)
+	return v
+}

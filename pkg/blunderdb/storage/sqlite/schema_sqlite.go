@@ -156,6 +156,10 @@ var schemaStatements = []string{
 		-- student annotating one shared library are two authors of origin
 		-- 'user'. A position may carry several comments.
 		author TEXT NOT NULL DEFAULT '',
+		-- The producer's sealed statement over text, author and position hash
+		-- (issuance.SealComment), written at export and kept verbatim by an
+		-- import; NULL when unsigned. An edit clears it (ADR-0099).
+		signature TEXT,
 		FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE
 	)`,
 	`CREATE TABLE IF NOT EXISTS metadata (

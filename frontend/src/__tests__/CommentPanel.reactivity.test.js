@@ -71,3 +71,39 @@ describe('CommentPanel — thread of a position', () => {
         expect(authors[1]).toBe('Bob');
     });
 });
+
+describe('CommentPanel — signed comments', () => {
+    test('names the signer, and flags a note altered after signing', async () => {
+        vi.mocked(GetCommentsByPosition).mockResolvedValue([
+            {
+                id: 1,
+                positionId: 8,
+                text: 'intact',
+                author: 'Martin',
+                origin: 'user',
+                createdAt: '2026-01-01 10:00:00',
+                signer: { name: 'Coach Martin', fingerprint: 'A3F1-9C24-7B05-E1D8', verified: true }
+            },
+            {
+                id: 2,
+                positionId: 8,
+                text: 'altered',
+                author: 'Martin',
+                origin: 'user',
+                createdAt: '2026-01-02 10:00:00',
+                signer: { name: 'Coach Martin', fingerprint: 'A3F1-9C24-7B05-E1D8', verified: false }
+            },
+            { id: 3, positionId: 8, text: 'mine', author: 'Alice', origin: 'user', createdAt: '2026-01-03 10:00:00' }
+        ]);
+        positionStore.set({ id: 8 });
+        const { container } = render(CommentPanel, { props: { visible: true, onClose: () => {} } });
+        await new Promise((r) => setTimeout(r, 50));
+        const signers = [...container.querySelectorAll('.msg-signer')];
+        expect(signers).toHaveLength(2);
+        const byText = Object.fromEntries(signers.map((s) => [s.closest('.msg').querySelector('.msg-text').textContent, s]));
+        expect(byText.intact.textContent).toContain('Coach Martin');
+        expect(byText.intact.classList.contains('unverified')).toBe(false);
+        expect(byText.altered.classList.contains('unverified')).toBe(true);
+        expect(byText.altered.getAttribute('title')).toContain('A3F1-9C24-7B05-E1D8');
+    });
+});

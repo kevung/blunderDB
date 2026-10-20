@@ -328,3 +328,9 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   identifier is never reused (an incremental export follows comments by
   identifier, ADR-0096). `comment.id` is a `BIGSERIAL` on this side, which
   never hands a value out twice.
+- `050_comment_signature.sql` — `comment.signature`, the producer's sealed
+  statement over a comment's text, author and position hash, written into an
+  exported file and kept verbatim by an import; NULL when unsigned, cleared by
+  an edit (ADR-0099).
+
+  Schema-visible: bumped `domain.DatabaseVersion` to 2.47.0.

@@ -2,19 +2,26 @@ package sqlshared
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"iter"
 	"sort"
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/issuance"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // CommentStore implements storage.CommentStore. comment is a domain table:
 // every statement is confined to the scope's tenant through
 // Dialect.TenantFilter / TenantColumns.
-type CommentStore struct{ DB Execer }
+type CommentStore struct {
+	DB Execer
+	// Unsigned reads a database that predates comment.signature (a file
+	// imported as it is, never migrated): every comment reads unsigned.
+	Unsigned bool
+}
 
 var _ storage.CommentStore = (*CommentStore)(nil)
 
@@ -24,16 +31,29 @@ var _ storage.CommentStore = (*CommentStore)(nil)
 func (s *CommentStore) selectCols() string {
 	return `id, position_id, COALESCE(text,''), ` +
 		s.DB.TimestampText("created_at") + `, ` + s.DB.TimestampText("modified_at") +
-		`, COALESCE(origin,'unknown'), COALESCE(author,'')`
+		`, COALESCE(origin,'unknown'), COALESCE(author,''), ` + s.signatureCol() +
+		`, (SELECT p.zobrist_hash FROM position p WHERE p.id = comment.position_id)`
+}
+
+func (s *CommentStore) signatureCol() string {
+	if s.Unsigned {
+		return `''`
+	}
+	return `COALESCE(signature,'')`
 }
 
 func scanCommentEntry(sc interface{ Scan(...any) error }) (domain.CommentEntry, error) {
 	var e domain.CommentEntry
 	var origin string
-	if err := sc.Scan(&e.ID, &e.PositionID, &e.Text, &e.CreatedAt, &e.ModifiedAt, &origin, &e.Author); err != nil {
+	var zobrist sql.NullInt64
+	if err := sc.Scan(&e.ID, &e.PositionID, &e.Text, &e.CreatedAt, &e.ModifiedAt, &origin, &e.Author, &e.Signature, &zobrist); err != nil {
 		return domain.CommentEntry{}, err
 	}
 	e.Origin = domain.ParseCommentOrigin(origin)
+	// The hash is stored as the signed reinterpretation of the uint64.
+	if s, ok := issuance.CheckComment(e.Signature, e.Text, e.Author, uint64(zobrist.Int64)); ok {
+		e.Signer = &domain.CommentSigner{Name: s.IssuerName, Fingerprint: s.Fingerprint, Verified: s.Verified}
+	}
 	return e, nil
 }
 
@@ -45,8 +65,9 @@ func (s *CommentStore) Add(ctx context.Context, scope string, positionID int64, 
 // AddFrom appends a comment entry carrying its provenance and returns its id.
 func (s *CommentStore) AddFrom(ctx context.Context, scope string, positionID int64, text string, origin domain.CommentOrigin) (int64, error) {
 	cols, args := s.DB.TenantColumns(scope)
-	cols = append(cols, "position_id", "text", "origin", "author")
-	args = append(args, positionID, text, string(domain.ParseCommentOrigin(string(origin))), storage.CommentAuthorFromContext(ctx))
+	cols = append(cols, "position_id", "text", "origin", "author", "signature")
+	args = append(args, positionID, text, string(domain.ParseCommentOrigin(string(origin))), storage.CommentAuthorFromContext(ctx),
+		nullIfBlank(storage.CommentSignatureFromContext(ctx)))
 	id, err := s.DB.Insert(ctx,
 		`INSERT INTO comment (`+strings.Join(cols, ", ")+`) VALUES (`+Placeholders(len(cols))+`)`, args...)
 	if err != nil {
@@ -75,9 +96,10 @@ func (s *CommentStore) Upsert(ctx context.Context, scope string, positionID int6
 			// The text becomes the user's, so the row's provenance does
 			// too: an imported note the user rewrites is no longer the
 			// importer's sentence, and the purge that spares user comments
-			// must spare this one. The author follows the same rule.
+			// must spare this one. The author follows the same rule, and
+			// the signature, which covered words no longer there, goes.
 			_, err := tx.Exec(ctx,
-				`UPDATE comment SET text = ?, origin = ?, author = ?, modified_at = CURRENT_TIMESTAMP WHERE id = ? AND `+tenant,
+				`UPDATE comment SET text = ?, origin = ?, author = ?, signature = NULL, modified_at = CURRENT_TIMESTAMP WHERE id = ? AND `+tenant,
 				append([]any{text, string(domain.CommentOriginUser), storage.CommentAuthorFromContext(ctx), id}, targs...)...)
 			return err
 		}
@@ -100,11 +122,12 @@ func (s *CommentStore) Upsert(ctx context.Context, scope string, positionID int6
 
 // Update changes the text of the comment entry with the given id. The entry
 // becomes the user's, whoever wrote it first: they have rewritten it, and it
-// is signed by whoever the context names.
+// is signed by whoever the context names. A producer's signature goes: it
+// covered the words just replaced.
 func (s *CommentStore) Update(ctx context.Context, scope string, commentID int64, text string) error {
 	tenant, targs := s.DB.TenantFilter("", scope)
 	if _, err := s.DB.Exec(ctx,
-		`UPDATE comment SET text = ?, origin = ?, author = ?, modified_at = CURRENT_TIMESTAMP WHERE id = ? AND `+tenant,
+		`UPDATE comment SET text = ?, origin = ?, author = ?, signature = NULL, modified_at = CURRENT_TIMESTAMP WHERE id = ? AND `+tenant,
 		append([]any{text, string(domain.CommentOriginUser), storage.CommentAuthorFromContext(ctx), commentID}, targs...)...); err != nil {
 		return errf(s.DB, fmt.Sprintf("update comment %d", commentID), err)
 	}
@@ -320,4 +343,13 @@ func (s *CommentStore) Tags(ctx context.Context, scope string) ([]domain.TagCoun
 		return out[i].Tag < out[j].Tag
 	})
 	return out, nil
+}
+
+// nullIfBlank stores "" as NULL: an unsigned comment has no signature, not an
+// empty one.
+func nullIfBlank(s string) any {
+	if s == "" {
+		return nil
+	}
+	return s
 }

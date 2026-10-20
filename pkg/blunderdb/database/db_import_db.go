@@ -158,25 +158,38 @@ func loadJoinedCommentText(db queryer, positionID int64) (string, error) {
 }
 
 // importedComment is one comment row of a database being imported.
-type importedComment struct{ text, author string }
+type importedComment struct{ text, author, origin, signature string }
 
-// sourceCommentsSigned reports whether the database being imported records who
-// wrote each comment; one written before comments were signed does not.
-func sourceCommentsSigned(db *sql.DB) bool {
-	var n int
-	err := db.QueryRow(`SELECT COUNT(*) FROM pragma_table_info('comment') WHERE name = 'author'`).Scan(&n)
-	return err == nil && n > 0
+// sourceCommentColumns says which of the comment columns added over time the
+// database being imported has: an older file lacks them.
+type sourceCommentColumns struct{ author, origin, signature bool }
+
+func readSourceCommentColumns(db *sql.DB) sourceCommentColumns {
+	has := func(col string) bool {
+		var n int
+		err := db.QueryRow(`SELECT COUNT(*) FROM pragma_table_info('comment') WHERE name = ?`, col).Scan(&n)
+		return err == nil && n > 0
+	}
+	return sourceCommentColumns{author: has("author"), origin: has("origin"), signature: has("signature")}
 }
 
 // loadImportedComments returns a source position's non-empty comment rows in
-// id order, each with the author the source records: an import copies the
-// producer's signature and never signs in the importer's name (ADR-0007).
-func loadImportedComments(db queryer, positionID int64, signed bool) ([]importedComment, error) {
-	author := `''`
-	if signed {
+// id order, each with the author, origin and signature the source records:
+// an import copies the producer's statement and never signs in the
+// importer's name (ADR-0007, ADR-0099). A file that predates the origin
+// column says nothing of it: unknown.
+func loadImportedComments(db queryer, positionID int64, cols sourceCommentColumns) ([]importedComment, error) {
+	author, origin, signature := `''`, `'unknown'`, `''`
+	if cols.origin {
+		origin = `COALESCE(origin, 'unknown')`
+	}
+	if cols.author {
 		author = `COALESCE(author, '')`
 	}
-	rows, err := db.Query(`SELECT text, `+author+` FROM comment WHERE position_id = ? AND text != '' ORDER BY id ASC`, positionID)
+	if cols.signature {
+		signature = `COALESCE(signature, '')`
+	}
+	rows, err := db.Query(`SELECT text, `+author+`, `+origin+`, `+signature+` FROM comment WHERE position_id = ? AND text != '' ORDER BY id ASC`, positionID)
 	if err != nil {
 		return nil, err
 	}
@@ -184,7 +197,7 @@ func loadImportedComments(db queryer, positionID int64, signed bool) ([]imported
 	var out []importedComment
 	for rows.Next() {
 		var c importedComment
-		if err := rows.Scan(&c.text, &c.author); err != nil {
+		if err := rows.Scan(&c.text, &c.author, &c.origin, &c.signature); err != nil {
 			return nil, err
 		}
 		out = append(out, c)
@@ -194,6 +207,20 @@ func loadImportedComments(db queryer, positionID int64, signed bool) ([]imported
 
 // ErrImportIsOpenDatabase refuses to merge the open library into itself.
 var ErrImportIsOpenDatabase = errors.New("the file to import is the database already open")
+
+// insertImportedComment appends c to positionID as ingest.DBImporter does:
+// the exact text (a signature covers it byte for byte), and the source's
+// author, origin and signature — only a note that was the producer's own
+// holds its position here as the user's (ADR-0099).
+func insertImportedComment(tx *sql.Tx, positionID int64, c importedComment) error {
+	var signature any
+	if c.signature != "" {
+		signature = c.signature
+	}
+	_, err := tx.Exec(`INSERT INTO comment (position_id, text, origin, author, signature) VALUES (?, ?, ?, ?, ?)`,
+		positionID, c.text, string(domain.ParseCommentOrigin(c.origin)), c.author, signature)
+	return err
+}
 
 // AnalyzeImportDatabase analyzes what would be imported without making changes
 func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interface{}, error) {
@@ -376,14 +403,14 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 // steps it delegates: one transaction on the target, the read-only source, and
 // the maps that tie source ids to target ids.
 type importRun struct {
-	ctx      context.Context
-	tx       *sql.Tx
-	stx      storage.Tx
-	importDB *sql.DB
-	carrier  *mets.Carrier
-	srcMET   map[int64]int64
-	signed   bool
-	targetOf map[int64]int64
+	ctx         context.Context
+	tx          *sql.Tx
+	stx         storage.Tx
+	importDB    *sql.DB
+	carrier     *mets.Carrier
+	srcMET      map[int64]int64
+	commentCols sourceCommentColumns
+	targetOf    map[int64]int64
 	// analysesSkipped counts the source analyses not merged because the
 	// receiver's own blob for that position cannot be decoded: the position
 	// is kept, its analysis left as it was. Nothing else is skipped: a
@@ -465,7 +492,7 @@ func (r *importRun) receiverBlobUnreadable(positionID int64) (bool, error) {
 // mergeExisting folds a source position the target already holds into it:
 // provenance flag, analysis, then comments. It reports whether anything changed.
 func (r *importRun) mergeExisting(id, existingPositionID int64, importPosition *Position, sourceIndividual bool) (bool, error) {
-	tx, importDB, signed := r.tx, r.importDB, r.signed
+	tx, importDB, commentCols := r.tx, r.importDB, r.commentCols
 	r.targetOf[id] = existingPositionID
 	var err error
 	hasMerged := false
@@ -492,7 +519,7 @@ func (r *importRun) mergeExisting(id, existingPositionID int64, importPosition *
 	// author, when the target's joined text does not already contain
 	// it, as ingest.DBImporter does: existing rows are never
 	// rewritten.
-	importComments, err := loadImportedComments(importDB, id, signed)
+	importComments, err := loadImportedComments(importDB, id, commentCols)
 	if err != nil {
 		slog.Warn("reading import comment", "positionID", id, "err", err)
 	} else if len(importComments) > 0 {
@@ -505,7 +532,7 @@ func (r *importRun) mergeExisting(id, existingPositionID int64, importPosition *
 			if err != nil || trimmed == "" || strings.Contains(existingComment, trimmed) {
 				continue
 			}
-			if _, ierr := tx.Exec(`INSERT INTO comment (position_id, text, author) VALUES (?, ?, ?)`, existingPositionID, trimmed, c.author); ierr != nil {
+			if ierr := insertImportedComment(tx, existingPositionID, c); ierr != nil {
 				slog.Warn("inserting comment for position", "positionID", existingPositionID, "err", ierr)
 				continue
 			}
@@ -524,7 +551,7 @@ func (r *importRun) mergeExisting(id, existingPositionID int64, importPosition *
 // and comments. It reports false (and no error) when the position row itself
 // could not be inserted.
 func (r *importRun) addNew(id int64, importPosition *Position, sourceIndividual bool) (bool, error) {
-	ctx, tx, stx, importDB, signed := r.ctx, r.tx, r.stx, r.importDB, r.signed
+	ctx, tx, stx, importDB, commentCols := r.ctx, r.tx, r.stx, r.importDB, r.commentCols
 	importPosition.IndividuallyImported = sourceIndividual
 	newPositionID, err := stx.Positions().Save(ctx, "", importPosition)
 	if err != nil {
@@ -539,12 +566,12 @@ func (r *importRun) addNew(id int64, importPosition *Position, sourceIndividual 
 	}
 
 	// Copy every comment row, each with its author.
-	importComments, err := loadImportedComments(importDB, id, signed)
+	importComments, err := loadImportedComments(importDB, id, commentCols)
 	if err != nil {
 		slog.Warn("reading import comment", "positionID", id, "err", err)
 	}
 	for _, c := range importComments {
-		if _, err := tx.Exec(`INSERT INTO comment (position_id, text, author) VALUES (?, ?, ?)`, newPositionID, c.text, c.author); err != nil {
+		if err := insertImportedComment(tx, newPositionID, c); err != nil {
 			slog.Warn("inserting comment for new position", "positionID", newPositionID, "err", err)
 		}
 	}
@@ -597,7 +624,7 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 		return nil, err
 	}
 	defer importDB.Close()
-	signed := sourceCommentsSigned(importDB)
+	commentCols := readSourceCommentColumns(importDB)
 
 	// Check the import database version
 	var importDBVersion string
@@ -654,7 +681,7 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 	// targetOf maps each source position id to the id it holds here, for the
 	// collections merged after the positions.
 	targetOf := map[int64]int64{}
-	run := &importRun{ctx: ctx, tx: tx, stx: stx, importDB: importDB, carrier: carrier, srcMET: srcMET, signed: signed, targetOf: targetOf, sourceVersion: importDBVersion}
+	run := &importRun{ctx: ctx, tx: tx, stx: stx, importDB: importDB, carrier: carrier, srcMET: srcMET, commentCols: commentCols, targetOf: targetOf, sourceVersion: importDBVersion}
 
 	for rows.Next() {
 		// Check for cancellation

@@ -97,8 +97,10 @@ func TestSQLiteExportRoundTrip(t *testing.T) {
 			if c.Author != "Coach" {
 				t.Errorf("exported comment author = %q, want Coach", c.Author)
 			}
-			if c.Origin == domain.CommentOriginXG {
-				t.Error("exported comment kept its origin: only the allow-listed columns travel")
+			// The origin is allow-listed: an importer's remark stays one for the
+			// recipient, and does not hold its position there (ADR-0099).
+			if c.Origin != domain.CommentOriginXG {
+				t.Errorf("exported comment origin = %q, want xg", c.Origin)
 			}
 		}
 	}
