@@ -362,6 +362,8 @@
         "tabCommands": "Riga di comando",
         "tabAbout": "Informazioni",
         "loadFailed": "Impossibile caricare la guida.",
+        "retry": "Riprova",
+        "onlineDoc": "Documentazione online",
         "searchPlaceholder": "Cerca nella guida (/)",
         "searchNone": "nessun risultato"
     },

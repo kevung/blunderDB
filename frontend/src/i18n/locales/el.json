@@ -362,6 +362,8 @@
         "tabCommands": "Γραμμή εντολών",
         "tabAbout": "Σχετικά",
         "loadFailed": "Δεν ήταν δυνατή η φόρτωση της βοήθειας.",
+        "retry": "Επανάληψη",
+        "onlineDoc": "Τεκμηρίωση online",
         "searchPlaceholder": "Αναζήτηση στη βοήθεια (/)",
         "searchNone": "κανένα αποτέλεσμα"
     },

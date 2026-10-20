@@ -362,6 +362,8 @@
         "tabCommands": "Komentorivi",
         "tabAbout": "Tietoja",
         "loadFailed": "Ohjetta ei voitu ladata.",
+        "retry": "Yritä uudelleen",
+        "onlineDoc": "Verkkodokumentaatio",
         "searchPlaceholder": "Hae ohjeesta (/)",
         "searchNone": "ei tuloksia"
     },

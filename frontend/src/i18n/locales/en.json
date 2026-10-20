@@ -362,6 +362,8 @@
         "tabCommands": "Command Line",
         "tabAbout": "About",
         "loadFailed": "The help could not be loaded.",
+        "retry": "Retry",
+        "onlineDoc": "Online documentation",
         "searchPlaceholder": "Search the help (/)",
         "searchNone": "no result"
     },

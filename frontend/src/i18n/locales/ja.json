@@ -362,6 +362,8 @@
         "tabCommands": "コマンドライン",
         "tabAbout": "情報",
         "loadFailed": "ヘルプを読み込めませんでした。",
+        "retry": "再試行",
+        "onlineDoc": "オンラインドキュメント",
         "searchPlaceholder": "ヘルプ内を検索 (/)",
         "searchNone": "該当なし"
     },
