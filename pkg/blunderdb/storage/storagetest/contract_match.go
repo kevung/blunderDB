@@ -408,15 +408,31 @@ func testMatchZeroDateSortsByImportDate(t *testing.T, s storage.Storage) {
 	undated := save("undated", time.Time{})
 	future := save("future", time.Date(2999, 1, 1, 0, 0, 0, 0, time.UTC))
 
-	var got []int64
-	for m, err := range ms.List(ctx, "", storage.MatchListOpts{}) {
-		if err != nil {
-			t.Fatalf("List: %v", err)
+	check := func(when string) {
+		t.Helper()
+		var got []int64
+		for m, err := range ms.List(ctx, "", storage.MatchListOpts{}) {
+			if err != nil {
+				t.Fatalf("List: %v", err)
+			}
+			got = append(got, m.ID)
 		}
-		got = append(got, m.ID)
+		want := []int64{future, undated, past}
+		if len(got) != len(want) || got[0] != want[0] || got[1] != want[1] || got[2] != want[2] {
+			t.Errorf("%s: order = %v, want %v (undated sorts by its import date)", when, got, want)
+		}
 	}
-	want := []int64{future, undated, past}
-	if len(got) != len(want) || got[0] != want[0] || got[1] != want[1] || got[2] != want[2] {
-		t.Errorf("order = %v, want %v (undated sorts by its import date)", got, want)
+	check("saved")
+	// A client echoes an undated match's zero time back as the year-1 day.
+	if err := ms.Update(ctx, "", undated, "undated", "Z", "0001-01-01"); err != nil {
+		t.Fatalf("Update: %v", err)
+	}
+	check("edited with the year-1 day")
+	m, err := ms.Get(ctx, "", undated)
+	if err != nil {
+		t.Fatalf("Get: %v", err)
+	}
+	if !m.MatchDate.IsZero() {
+		t.Errorf("edited undated match reads date %v, want none", m.MatchDate)
 	}
 }

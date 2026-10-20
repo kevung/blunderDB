@@ -12,26 +12,37 @@ import (
 
 // Pure XG → domain mapping helpers, free of any storage.
 
-// parseMatchDate tries the date formats XG emits and returns the parsed time,
-// falling back to time.Now() when the string is empty or unrecognised.
+// delphiEpoch is the date XG writes for a match it holds no date for: a zero
+// Delphi TDateTime.
+var delphiEpoch = time.Date(1899, 12, 30, 0, 0, 0, 0, time.UTC)
+
+// parseMatchDate tries the date formats the match files emit. An empty or
+// unrecognised string yields the zero time, stored as NULL: a match with no
+// date of play stays undated rather than passing for one played on import day,
+// which import_date already records.
 func parseMatchDate(dateStr string) time.Time {
+	dateStr = strings.TrimSpace(dateStr)
 	if dateStr == "" {
-		return time.Now()
+		return time.Time{}
 	}
 	for _, layout := range []string{
 		"Jan 2, 2006",
 		"2006-01-02 15:04:05",
 		"2006-01-02",
 		"2006/01/02",
+		"2006.01.02",
 		"01/02/2006",
 		"January 2, 2006",
 		time.RFC3339,
 	} {
 		if t, err := time.Parse(layout, dateStr); err == nil {
+			if t.Equal(delphiEpoch) {
+				return time.Time{}
+			}
 			return t
 		}
 	}
-	return time.Now()
+	return time.Time{}
 }
 
 // convertXGPlayerToBlunderDB converts XG player encoding to blunderDB encoding.

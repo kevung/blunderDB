@@ -248,6 +248,76 @@ func TestMigrate_032_MatchDateUnderRLS(t *testing.T) {
 	})
 }
 
+// TestMigrate_049_UndatedMatchUnderRLS replays 049 on a two-tenant library
+// whose RLS is FORCEd on its owner: each tenant's year-1 match must come out
+// NULL with its position undated, a dated match untouched, FORCE back on.
+func TestMigrate_049_UndatedMatchUnderRLS(t *testing.T) {
+	ctx := context.Background()
+	s, conn, _ := openAsRLSOwner(t)
+	ms := s.Matches()
+	date := time.Date(2024, 3, 9, 0, 0, 0, 0, time.UTC)
+	type seeded struct {
+		scope      string
+		match, pid int64
+		dated      bool
+	}
+	// dice keeps a tenant's two positions apart: one position reached by a
+	// dated match would take that date.
+	seed := func(scope, name string, d time.Time, die int) seeded {
+		t.Helper()
+		matchID, err := ms.Save(ctx, scope, &domain.Match{Player1Name: name, Player2Name: "Bob", MatchLength: 7, MatchDate: d})
+		if err != nil {
+			t.Fatal(err)
+		}
+		gameID, err := ms.CreateGame(ctx, scope, &domain.Game{MatchID: matchID, GameNumber: 1})
+		if err != nil {
+			t.Fatal(err)
+		}
+		p := domain.InitializePosition()
+		p.Dice = [2]int{die, 1}
+		pid, err := s.Positions().Save(ctx, scope, &p)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if _, err := ms.CreateMove(ctx, scope, &domain.Move{GameID: gameID, MoveNumber: 1, MoveType: "checker", PositionID: pid, Player: 1}); err != nil {
+			t.Fatal(err)
+		}
+		return seeded{scope, matchID, pid, !d.IsZero()}
+	}
+	rows := []seeded{seed("1", "Undated1", time.Time{}, 3), seed("2", "Undated2", time.Time{}, 3), seed("2", "Dated", date, 5)}
+	if err := s.ApplyRLS(ctx); err != nil {
+		t.Fatalf("ApplyRLS: %v", err)
+	}
+	execUnforced(t, conn, []string{"match", "position"}, []string{
+		`UPDATE match SET match_date = TIMESTAMPTZ '0001-01-01 00:00:00+00' WHERE match_date IS NULL`,
+		`UPDATE position SET match_date = TIMESTAMPTZ '0001-01-01 00:00:00+00' WHERE match_date IS NULL`,
+		`DELETE FROM schema_migrations WHERE version = '049_undated_match_null'`,
+	})
+
+	if err := s.Migrate(ctx); err != nil {
+		t.Fatalf("Migrate under RLS: %v", err)
+	}
+	assertForced(t, conn, "position", "move", "game", "match")
+	for _, r := range rows {
+		asTenant(t, conn, r.scope, func() {
+			var md, pd *time.Time
+			if err := conn.QueryRow(ctx, `SELECT match_date FROM match WHERE id = $1`, r.match).Scan(&md); err != nil {
+				t.Fatal(err)
+			}
+			if err := conn.QueryRow(ctx, `SELECT match_date FROM position WHERE id = $1`, r.pid).Scan(&pd); err != nil {
+				t.Fatal(err)
+			}
+			if r.dated {
+				if md == nil || !md.Equal(date) || pd == nil || !pd.Equal(date) {
+					t.Errorf("tenant %s: dated match %v / position %v after 049, want %v", r.scope, md, pd, date)
+				}
+			} else if md != nil || pd != nil {
+				t.Errorf("tenant %s: undated match %v / position %v after 049, want NULL", r.scope, md, pd)
+			}
+		})
+	}
+}
+
 // TestMETForeignKeyRejectsCrossTenant: analysis.met_id names a match equity
 // table of the analysis's own tenant, and deleting that table clears met_id
 // alone.

@@ -317,3 +317,10 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   finds the triggers missing does not trust the row.
 
   Schema-visible: bumped `domain.DatabaseVersion` to 2.44.0.
+- `049_undated_match_null.sql` — a match without a date of play is NULL, its
+  one stored form. Rows holding the year-1 day (an edit that echoed an undated
+  match's zero time back) go to NULL, and the positions they reach are
+  re-dated from the matches that remain dated. FORCEd RLS is lifted for the
+  statements and put back, as in `028` and `032`.
+
+  Schema-visible: bumped `domain.DatabaseVersion` to 2.45.0.

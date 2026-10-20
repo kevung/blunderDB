@@ -81,8 +81,9 @@ export function toDateInputValue(dateStr) {
     if (!dateStr) return '';
     // A backend date text carries its day first; reading it whole fails under WebKitGTK for Go's
     // time.String format, and through a Date it can slide a day with the time zone.
+    // The year-1 day is Go's zero time, an undated match: the field stays empty so a save keeps it undated.
     const day = ISO_DAY.exec(String(dateStr));
-    if (day) return `${day[1]}-${day[2]}-${day[3]}`;
+    if (day) return day[1] === '0001' ? '' : `${day[1]}-${day[2]}-${day[3]}`;
     try {
         const date = new Date(dateStr);
         if (isNaN(date.getTime())) return '';

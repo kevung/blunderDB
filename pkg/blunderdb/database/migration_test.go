@@ -5135,3 +5135,54 @@ func TestMigrate_2_43_0_to_2_44_0_BlunderCountTriggers(t *testing.T) {
 		t.Error("a write to position left the cached count in place")
 	}
 }
+
+// TestMigrate_2_44_0_to_2_45_0_UndatedMatchesNull opens a 2.44.0 library
+// whose undated matches hold the zero time as text and checks the migration
+// stores them as NULL and re-dates the positions they reach.
+func TestMigrate_2_44_0_to_2_45_0_UndatedMatchesNull(t *testing.T) {
+	t.Parallel()
+	dbPath := filepath.Join(tempDir(t), "test_v2440.db")
+	d := NewDatabase()
+	if err := d.SetupDatabase(dbPath); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := d.ImportXGMatch(filepath.Join("testdata", "test.xg")); err != nil {
+		t.Fatal(err)
+	}
+	blank := insertMatchRow(t, d, "blank", "", "2022-01-01T00:00:00Z")
+	dated := insertMatchRow(t, d, "dated", "2020-06-01 00:00:00 +0000 UTC", "2020-07-01T00:00:00Z")
+	if _, err := d.db.Exec(`UPDATE match SET match_date = '0001-01-01 00:00:00 +0000 UTC' WHERE id NOT IN (?, ?)`, blank, dated); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := d.db.Exec(`UPDATE position SET match_date = -62135596800`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := d.db.Exec(`UPDATE metadata SET value = '2.44.0' WHERE key = 'database_version'`); err != nil {
+		t.Fatal(err)
+	}
+	if err := d.Close(); err != nil {
+		t.Fatal(err)
+	}
+
+	d = NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open v2.44.0 database: %v", err)
+	}
+	closeOnCleanup(t, d)
+	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {
+		t.Fatalf("version after migration = %q, %v; want %q", v, err, DatabaseVersion)
+	}
+	var undated, kept, yearOne int
+	if err := d.db.QueryRow(`SELECT COUNT(*) FROM match WHERE match_date IS NOT NULL AND match_date != '2020-06-01 00:00:00 +0000 UTC'`).Scan(&undated); err != nil {
+		t.Fatal(err)
+	}
+	if err := d.db.QueryRow(`SELECT COUNT(*) FROM match WHERE match_date = '2020-06-01 00:00:00 +0000 UTC'`).Scan(&kept); err != nil {
+		t.Fatal(err)
+	}
+	if err := d.db.QueryRow(`SELECT COUNT(*) FROM position WHERE match_date = -62135596800`).Scan(&yearOne); err != nil {
+		t.Fatal(err)
+	}
+	if undated != 0 || kept != 1 || yearOne != 0 {
+		t.Fatalf("after migration: %d undated rows not NULL, %d dated kept (want 1), %d positions dated year 1", undated, kept, yearOne)
+	}
+}

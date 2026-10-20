@@ -117,6 +117,11 @@ describe('toDateInputValue', () => {
         expect(toDateInputValue(null)).toBe('');
         expect(toDateInputValue('not-a-date')).toBe('');
     });
+
+    test('leaves an undated match empty, whatever form its zero time takes', () => {
+        expect(toDateInputValue('0001-01-01T00:00:00Z')).toBe('');
+        expect(toDateInputValue('0001-01-01 00:00:00 +0000 UTC')).toBe('');
+    });
 });
 
 describe('formatDate', () => {

@@ -11,7 +11,9 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
 // GetAllMatches returns all matches from the database
@@ -111,11 +113,13 @@ func (d *Database) GetPositionProvenance(positionID int64) ([]Match, error) {
 	var matches []Match
 	for rows.Next() {
 		var m Match
+		var matchDate, importDate sqlite.LenientTime
 		if err := rows.Scan(&m.ID, &m.Player1Name, &m.Player2Name, &m.Event, &m.Location,
-			&m.Round, &m.MatchLength, &m.MatchDate, &m.ImportDate, &m.FilePath,
+			&m.Round, &m.MatchLength, &matchDate, &importDate, &m.FilePath,
 			&m.GameCount, &m.TournamentID, &m.TournamentName); err != nil {
 			return nil, err
 		}
+		m.MatchDate, m.ImportDate = matchDate.Time, importDate.Time
 		matches = append(matches, m)
 	}
 	return matches, rows.Err()
@@ -136,6 +140,7 @@ func (d *Database) GetLastVisitedMatch() (*Match, error) {
 	defer d.mu.RUnlock()
 
 	var m Match
+	var matchDate, importDate sqlite.LenientTime
 	// First try to find a match that has been visited (last_visited_position >= 0)
 	err := d.db.QueryRow(`
 		SELECT m.id, m.player1_name, m.player2_name, m.event, m.location, m.round,
@@ -148,10 +153,11 @@ func (d *Database) GetLastVisitedMatch() (*Match, error) {
 		ORDER BY m.last_visited_at DESC NULLS LAST, m.import_date DESC, m.id DESC
 		LIMIT 1
 	`).Scan(&m.ID, &m.Player1Name, &m.Player2Name, &m.Event, &m.Location, &m.Round,
-		&m.MatchLength, &m.MatchDate, &m.ImportDate, &m.FilePath, &m.GameCount,
+		&m.MatchLength, &matchDate, &importDate, &m.FilePath, &m.GameCount,
 		&m.TournamentID, &m.TournamentName, &m.LastVisitedPosition)
 
 	if err == nil {
+		m.MatchDate, m.ImportDate = matchDate.Time, importDate.Time
 		return &m, nil
 	}
 
@@ -167,10 +173,10 @@ func (d *Database) GetLastVisitedMatch() (*Match, error) {
 		       COALESCE(m.last_visited_position, -1) as last_visited_position
 		FROM match m
 		LEFT JOIN tournament t ON m.tournament_id = t.id
-		ORDER BY CASE WHEN m.match_date IS NULL OR m.match_date = '' OR m.match_date = '0001-01-01T00:00:00Z' THEN m.import_date ELSE m.match_date END DESC
+		ORDER BY `+domain.MatchSortDateSQLite+` DESC
 		LIMIT 1
 	`).Scan(&m.ID, &m.Player1Name, &m.Player2Name, &m.Event, &m.Location, &m.Round,
-		&m.MatchLength, &m.MatchDate, &m.ImportDate, &m.FilePath, &m.GameCount,
+		&m.MatchLength, &matchDate, &importDate, &m.FilePath, &m.GameCount,
 		&m.TournamentID, &m.TournamentName, &m.LastVisitedPosition)
 
 	if err != nil {
@@ -180,6 +186,7 @@ func (d *Database) GetLastVisitedMatch() (*Match, error) {
 		return nil, err
 	}
 
+	m.MatchDate, m.ImportDate = matchDate.Time, importDate.Time
 	return &m, nil
 }
 

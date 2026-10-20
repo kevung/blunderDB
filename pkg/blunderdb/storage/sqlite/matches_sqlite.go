@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"iter"
+	"log/slog"
 	"slices"
 	"strings"
 	"time"
@@ -42,16 +43,17 @@ const matchSelectCols = `m.id, COALESCE(m.player1_name,''), COALESCE(m.player2_n
 	m.player1_elo, m.player2_elo, m.player1_experience, m.player2_experience,
 	COALESCE(m.transcriber,''), m.has_jacoby, m.has_beaver, COALESCE(m.engine_version,''), m.video_source`
 
-// lenientTime scans a date column that legacy rows may hold as ” or as the
-// zero time: both, like NULL, read as an unset date instead of failing the
-// scan of the whole list.
-type lenientTime struct {
+// LenientTime scans a date column that legacy rows may hold as an empty string, as the
+// zero time, as Go's time.String text or as text in no known layout. All of
+// them but a readable date read as an unset date: one bad row must not fail
+// the scan of a whole list, so an unreadable one is logged and skipped.
+type LenientTime struct {
 	Time  time.Time
 	Valid bool
 }
 
-func (l *lenientTime) Scan(src any) error {
-	*l = lenientTime{}
+func (l *LenientTime) Scan(src any) error {
+	*l = LenientTime{}
 	switch v := src.(type) {
 	case nil:
 		return nil
@@ -59,31 +61,48 @@ func (l *lenientTime) Scan(src any) error {
 		l.Time, l.Valid = v, !v.IsZero()
 		return nil
 	case string:
-		return l.parse(v)
+		l.parse(v)
+		return nil
 	case []byte:
-		return l.parse(string(v))
-	}
-	return fmt.Errorf("unsupported date value of type %T", src)
-}
-
-func (l *lenientTime) parse(v string) error {
-	if v == "" {
+		l.parse(string(v))
 		return nil
 	}
-	for _, layout := range []string{time.RFC3339Nano, "2006-01-02 15:04:05.999999999-07:00", "2006-01-02 15:04:05", "2006-01-02"} {
+	slog.Warn("sqlite: date of unsupported type read as absent", "type", fmt.Sprintf("%T", src))
+	return nil
+}
+
+// lenientDateLayouts are the text forms a date column has been written in:
+// RFC 3339, the driver's own forms, and time.String (whose monotonic-clock
+// suffix is cut first).
+var lenientDateLayouts = []string{
+	time.RFC3339Nano,
+	"2006-01-02 15:04:05.999999999-07:00",
+	"2006-01-02 15:04:05.999999999 -0700 MST",
+	"2006-01-02 15:04:05",
+	"2006-01-02",
+}
+
+func (l *LenientTime) parse(v string) {
+	if i := strings.Index(v, " m="); i >= 0 {
+		v = v[:i]
+	}
+	if v = strings.TrimSpace(v); v == "" {
+		return
+	}
+	for _, layout := range lenientDateLayouts {
 		if t, err := time.Parse(layout, v); err == nil {
 			l.Time, l.Valid = t, !t.IsZero()
-			return nil
+			return
 		}
 	}
-	return fmt.Errorf("unparsable date %q", v)
+	slog.Warn("sqlite: unreadable date read as absent", "value", v)
 }
 
 // scanMatch reconstructs a domain.Match from a row selected with
 // matchSelectCols. match_date and tournament_id are nullable.
 func scanMatch(sc interface{ Scan(...any) error }) (domain.Match, error) {
 	var m domain.Match
-	var matchDate, importDate lenientTime
+	var matchDate, importDate LenientTime
 	var tournamentID sql.NullInt64
 	var elo1, elo2 sql.NullFloat64
 	var exp1, exp2, jacoby, beaver sql.NullInt64
@@ -472,7 +491,8 @@ func (s *matchStore) Update(ctx context.Context, scope string, id int64, player1
 		if err != nil {
 			return fmt.Errorf("sqlite: update match %d: invalid date %q: %w", id, matchDate, err)
 		}
-		dateVal = t
+		// The year-1 day is how a client echoes an undated match back.
+		dateVal = nullableTime(t)
 	}
 	err := withTx(ctx, s.db, func(tx execer) error {
 		if _, err := tx.ExecContext(ctx,

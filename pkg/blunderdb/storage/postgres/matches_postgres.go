@@ -419,7 +419,8 @@ func (s *matchStore) Update(ctx context.Context, scope string, id int64, player1
 		if err != nil {
 			return fmt.Errorf("postgres: update match %d: invalid date %q: %w", id, matchDate, err)
 		}
-		dateVal = t
+		// The year-1 day is how a client echoes an undated match back.
+		dateVal = nullableTime(t)
 	}
 	tenant := tenantID(scope)
 	return s.inTx(ctx, fmt.Sprintf("update match %d", id), func(tx pgx.Tx) error {

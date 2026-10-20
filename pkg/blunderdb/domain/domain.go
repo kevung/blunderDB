@@ -42,7 +42,7 @@ const (
 )
 
 const (
-	DatabaseVersion = "2.44.0"
+	DatabaseVersion = "2.45.0"
 )
 
 // Anki deck source types
@@ -587,11 +587,19 @@ func MatchOrderByClause(sort string) string {
 	return MatchOrderByClauseWithDate(sort, "COALESCE(m.match_date, m.import_date)")
 }
 
-// MatchSortDateSQLite is the date expression of a match order for SQLite,
-// where a match without a date is stored as NULL, ” or the zero time and all
-// three fall back to the import date. PostgreSQL stores the zero time as NULL
-// in a TIMESTAMPTZ column, which the default expression already covers.
-const MatchSortDateSQLite = "CASE WHEN m.match_date IS NULL OR m.match_date = '' OR m.match_date = '0001-01-01T00:00:00Z' THEN m.import_date ELSE m.match_date END"
+// MatchUndatedSQLite is the SQLite predicate "col holds no date of play". A
+// match without a date is stored as NULL; rows written before that rule may
+// still hold an empty string or the zero time in any of the text forms the driver has
+// written (RFC 3339, time.String, ...), all of which begin with the year-1 day.
+func MatchUndatedSQLite(col string) string {
+	return "(" + col + " IS NULL OR " + col + " = '' OR substr(" + col + ", 1, 10) = '0001-01-01')"
+}
+
+// MatchSortDateSQLite is the date expression of a match order for SQLite: an
+// undated match (MatchUndatedSQLite) falls back to its import date.
+// PostgreSQL stores the zero time as NULL in a TIMESTAMPTZ column, which the
+// default expression already covers.
+var MatchSortDateSQLite = "CASE WHEN " + MatchUndatedSQLite("m.match_date") + " THEN m.import_date ELSE m.match_date END"
 
 // MatchOrderByClauseWithDate is MatchOrderByClause with the date expression
 // of the "date" sorts chosen by the dialect.

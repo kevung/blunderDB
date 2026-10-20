@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
@@ -22,7 +23,7 @@ func (s *statsStore) DateRange(ctx context.Context, scope string) (storage.Stats
 	if err := s.DB.QueryRow(ctx,
 		`SELECT COALESCE(MIN(SUBSTR(match_date,1,10)),''), COALESCE(MAX(SUBSTR(match_date,1,10)),'')
 		 FROM match
-		 WHERE match_date IS NOT NULL AND match_date != '' AND match_date != '0001-01-01T00:00:00Z'`,
+		 WHERE NOT `+domain.MatchUndatedSQLite("match_date"),
 	).Scan(&min, &max); err != nil {
 		return storage.StatsDateRange{}, fmt.Errorf("sqlite: stats date range: %w", err)
 	}
