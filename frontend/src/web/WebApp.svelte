@@ -1,8 +1,14 @@
 <script>
-    // Le front web, périmètre verrouillé par l'ADR-0039 : consulter, chercher, réviser. Le plateau
-    // est dessiné par le même dessinateur que le rapport HTML et l'export d'image.
+    // Le front web, périmètre verrouillé par l'ADR-0039 : consulter, chercher, réviser, et afficher
+    // un tournoi en lecture seule (ADR-0097). Le plateau est dessiné par le même dessinateur que le
+    // rapport HTML et l'export d'image.
     import { call } from './api.js';
     import { renderPositionSVG } from '../services/diagramService.js';
+    import TournamentView from './TournamentView.svelte';
+
+    // `?tournoi=<id>` : l'affichage d'un seul tournoi, sans rien d'autre — l'adresse que le QR
+    // code de la Direction donne aux joueurs, et la seule que le bureau sert sur le réseau du club.
+    const kioskTournament = Number(new URLSearchParams(window.location.search).get('tournoi')) || 0;
 
     let query = $state('');
     let positions = $state([]);
@@ -11,6 +17,10 @@
     let error = $state('');
     let busy = $state(false);
     let mode = $state('browse');
+
+    // L'affichage d'un tournoi choisi dans la liste des Directions.
+    let directions = $state([]);
+    let tournamentId = $state(0);
 
     // La révision : la carte courante, et si la réponse est dévoilée.
     let decks = $state([]);
@@ -79,6 +89,14 @@
         });
     }
 
+    async function loadDirections() {
+        await run(async () => {
+            directions = (await call('directions.list')) || [];
+            if (directions.length > 0 && !tournamentId) tournamentId = directions[0].tournamentId;
+            if (directions.length === 0) error = 'Aucun tournoi dirigé dans cette bibliothèque.';
+        });
+    }
+
     function moveRows(analysis) {
         return analysis?.checkerAnalysis?.moves || [];
     }
@@ -88,112 +106,140 @@
     }
 </script>
 
-<header>
-    <h1>blunderDB</h1>
-    <nav>
-        <button type="button" class:active={mode === 'browse'} onclick={() => (mode = 'browse')}>Consulter</button>
-        <button
-            type="button"
-            class:active={mode === 'review'}
-            onclick={() => {
-                mode = 'review';
-                if (decks.length === 0) loadDecks();
-            }}>Réviser</button
+{#if kioskTournament}
+    <TournamentView tournamentId={kioskTournament} />
+{:else}
+    <header>
+        <h1>blunderDB</h1>
+        <nav>
+            <button type="button" class:active={mode === 'browse'} onclick={() => (mode = 'browse')}>Consulter</button>
+            <button
+                type="button"
+                class:active={mode === 'review'}
+                onclick={() => {
+                    mode = 'review';
+                    if (decks.length === 0) loadDecks();
+                }}>Réviser</button
+            >
+            <button
+                type="button"
+                class:active={mode === 'tournament'}
+                onclick={() => {
+                    mode = 'tournament';
+                    if (directions.length === 0) loadDirections();
+                }}>Tournoi</button
+            >
+        </nav>
+    </header>
+
+    {#if error}
+        <p class="error">{error}</p>
+    {/if}
+
+    {#if mode === 'browse'}
+        <form
+            class="search"
+            onsubmit={(e) => {
+                e.preventDefault();
+                search();
+            }}
         >
-    </nav>
-</header>
+            <input type="text" bind:value={query} placeholder="E&gt;100 gt:holding" aria-label="Recherche" />
+            <button type="submit" disabled={busy}>Chercher</button>
+        </form>
 
-{#if error}
-    <p class="error">{error}</p>
-{/if}
-
-{#if mode === 'browse'}
-    <form
-        class="search"
-        onsubmit={(e) => {
-            e.preventDefault();
-            search();
-        }}
-    >
-        <input type="text" bind:value={query} placeholder="E&gt;100 gt:holding" aria-label="Recherche" />
-        <button type="submit" disabled={busy}>Chercher</button>
-    </form>
-
-    {#if current}
-        <!-- Le SVG vient de NOTRE dessinateur, jamais d'une saisie : two.js
+        {#if current}
+            <!-- Le SVG vient de NOTRE dessinateur, jamais d'une saisie : two.js
              l'assemble à partir de nombres et de couleurs, et une position ne
              porte aucun texte libre qui serait rendu ici. C'est la raison —
              pas l'habitude — pour laquelle la règle est levée sur cette ligne
              et seulement sur elle. -->
-        <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-        <div class="board">{@html boardSVG}</div>
-        <p class="nav">
-            <button type="button" disabled={index === 0} onclick={() => (index -= 1)}>◀</button>
-            <span>{index + 1} / {positions.length}</span>
-            <button type="button" disabled={index >= positions.length - 1} onclick={() => (index += 1)}>▶</button>
-        </p>
-        {#if currentAnalysis}
-            <table class="moves">
-                <thead>
-                    <tr><th>Coup</th><th>Équité</th><th>Erreur</th></tr>
-                </thead>
-                <tbody>
-                    {#each moveRows(currentAnalysis) as move (move.move)}
-                        <tr>
-                            <td>{move.move}</td>
-                            <td class="num">{fmt(move.equity)}</td>
-                            <td class="num">{fmt(move.equityError)}</td>
-                        </tr>
-                    {/each}
-                </tbody>
-            </table>
-            {#if currentAnalysis.doublingCubeAnalysis}
-                <p class="verdict">{currentAnalysis.doublingCubeAnalysis.bestCubeAction}</p>
-            {/if}
-        {:else}
-            <p class="note">Cette position n'a pas d'analyse enregistrée.</p>
-        {/if}
-    {/if}
-{:else}
-    <div class="review">
-        <label>
-            Paquet
-            <select bind:value={deckId} onchange={() => (card = null)}>
-                {#each decks as deck (deck.id)}
-                    <option value={deck.id}>{deck.name}</option>
-                {/each}
-            </select>
-        </label>
-        <button type="button" disabled={!deckId || busy} onclick={nextCard}>Commencer</button>
-    </div>
-
-    {#if card}
-        <!-- Même raison qu'au-dessus : le SVG est produit ici, pas reçu. -->
-        <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-        <div class="board">{@html cardSVG}</div>
-        {#if revealed}
-            <table class="moves">
-                <thead>
-                    <tr><th>Coup</th><th>Équité</th><th>Erreur</th></tr>
-                </thead>
-                <tbody>
-                    {#each moveRows(card.analysis) as move (move.move)}
-                        <tr>
-                            <td>{move.move}</td>
-                            <td class="num">{fmt(move.equity)}</td>
-                            <td class="num">{fmt(move.equityError)}</td>
-                        </tr>
-                    {/each}
-                </tbody>
-            </table>
-            <p class="grades">
-                <button type="button" onclick={() => grade(1)}>À revoir</button>
-                <button type="button" onclick={() => grade(2)}>Difficile</button>
-                <button type="button" onclick={() => grade(3)}>Bien</button>
-                <button type="button" onclick={() => grade(4)}>Facile</button>
+            <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+            <div class="board">{@html boardSVG}</div>
+            <p class="nav">
+                <button type="button" disabled={index === 0} onclick={() => (index -= 1)}>◀</button>
+                <span>{index + 1} / {positions.length}</span>
+                <button type="button" disabled={index >= positions.length - 1} onclick={() => (index += 1)}>▶</button>
             </p>
-        {:else}
-            <p class="grades"><button type="button" onclick={() => (revealed = true)}>Voir la réponse</button></p>
+            {#if currentAnalysis}
+                <table class="moves">
+                    <thead>
+                        <tr><th>Coup</th><th>Équité</th><th>Erreur</th></tr>
+                    </thead>
+                    <tbody>
+                        {#each moveRows(currentAnalysis) as move (move.move)}
+                            <tr>
+                                <td>{move.move}</td>
+                                <td class="num">{fmt(move.equity)}</td>
+                                <td class="num">{fmt(move.equityError)}</td>
+                            </tr>
+                        {/each}
+                    </tbody>
+                </table>
+                {#if currentAnalysis.doublingCubeAnalysis}
+                    <p class="verdict">{currentAnalysis.doublingCubeAnalysis.bestCubeAction}</p>
+                {/if}
+            {:else}
+                <p class="note">Cette position n'a pas d'analyse enregistrée.</p>
+            {/if}
+        {/if}
+    {:else if mode === 'tournament'}
+        <div class="review">
+            <label>
+                Tournoi
+                <select bind:value={tournamentId}>
+                    {#each directions as d (d.tournamentId)}
+                        <option value={d.tournamentId}>Tournoi #{d.tournamentId}</option>
+                    {/each}
+                </select>
+            </label>
+        </div>
+        {#if tournamentId}
+            {#key tournamentId}
+                <TournamentView {tournamentId} />
+            {/key}
+        {/if}
+    {:else}
+        <div class="review">
+            <label>
+                Paquet
+                <select bind:value={deckId} onchange={() => (card = null)}>
+                    {#each decks as deck (deck.id)}
+                        <option value={deck.id}>{deck.name}</option>
+                    {/each}
+                </select>
+            </label>
+            <button type="button" disabled={!deckId || busy} onclick={nextCard}>Commencer</button>
+        </div>
+
+        {#if card}
+            <!-- Même raison qu'au-dessus : le SVG est produit ici, pas reçu. -->
+            <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+            <div class="board">{@html cardSVG}</div>
+            {#if revealed}
+                <table class="moves">
+                    <thead>
+                        <tr><th>Coup</th><th>Équité</th><th>Erreur</th></tr>
+                    </thead>
+                    <tbody>
+                        {#each moveRows(card.analysis) as move (move.move)}
+                            <tr>
+                                <td>{move.move}</td>
+                                <td class="num">{fmt(move.equity)}</td>
+                                <td class="num">{fmt(move.equityError)}</td>
+                            </tr>
+                        {/each}
+                    </tbody>
+                </table>
+                <p class="grades">
+                    <button type="button" onclick={() => grade(1)}>À revoir</button>
+                    <button type="button" onclick={() => grade(2)}>Difficile</button>
+                    <button type="button" onclick={() => grade(3)}>Bien</button>
+                    <button type="button" onclick={() => grade(4)}>Facile</button>
+                </p>
+            {:else}
+                <p class="grades"><button type="button" onclick={() => (revealed = true)}>Voir la réponse</button></p>
+            {/if}
         {/if}
     {/if}
 {/if}

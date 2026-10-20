@@ -190,3 +190,9 @@ export function VideoSourceKind(arg1:string):Promise<string>;
 export function YouTubeEmbedURL(arg1:string):Promise<string>;
 
 export function YouTubeWatchURL(arg1:string):Promise<string>;
+
+export function GetTournamentDisplayStatus():Promise<gui.TournamentDisplayStatus>;
+
+export function StartTournamentDisplay(arg1:gui.TournamentDisplayConfig):Promise<gui.TournamentDisplayStatus>;
+
+export function StopTournamentDisplay():Promise<gui.TournamentDisplayStatus>;

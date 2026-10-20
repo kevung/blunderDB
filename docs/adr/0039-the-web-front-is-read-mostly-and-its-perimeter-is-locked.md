@@ -1,6 +1,6 @@
 # ADR-0039 — Le front web est en consultation, son périmètre est verrouillé, et il est éteint par défaut
 
-Statut : acceptée.
+Statut : acceptée ; règle 1 élargie par l'ADR-0097 (afficher un tournoi, en lecture seule).
 Voir aussi : ADR-0005 (le démon n'authentifie personne), ADR-0034.
 
 ## Contexte

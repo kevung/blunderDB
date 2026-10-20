@@ -94,6 +94,7 @@ type App struct {
 	// mcp is the MCP server served on localhost (mcphost.go); assistant the
 	// in-app assistant, a client of the same tools (assistant.go).
 	mcp       mcpHost
+	display   displayHost
 	media     mediaHost
 	assistant assistantState
 }
@@ -102,6 +103,7 @@ type App struct {
 func NewApp(db *database.Database) *App {
 	a := &App{db: db}
 	a.mcp.engine.db = db
+	a.display.engine.db = db
 	if db != nil {
 		// Opening, creating or closing a file stops the jobs writing the
 		// current one first; past the grace, the Database refuses their

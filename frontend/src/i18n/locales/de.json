@@ -3035,6 +3035,19 @@
             "allLaunched": "Die ganze Warteschlange ist gestartet",
             "launched": "Vorschlag gestartet",
             "forfeitWithdrawFailed": "Aufgabe erfasst, aber das Zurückziehen des Spielers ist fehlgeschlagen."
+        },
+        "network": {
+            "title": "Im Clubnetz anzeigen",
+            "hint": "Der Desktop stellt die Seite dieses Turniers — Turnierbaum, Paarungen, Ergebnisse, Rangliste — schreibgeschützt den Handys im lokalen Netz bereit; sie scannen den QR-Code. Die Seite aktualisiert sich selbst.",
+            "warning": "Ohne Passwort: Jeder in diesem lokalen Netz kann die Seite lesen (Namen, Paarungen, Ergebnisse). Nichts kann darüber geändert werden.",
+            "start": "Im Netz anzeigen",
+            "stop": "Anzeige beenden",
+            "port": "Port",
+            "url": "Adresse für Handys",
+            "openHere": "Auf diesem Rechner öffnen",
+            "qr": "QR-Code der Seitenadresse",
+            "other": "Das Netz zeigt bereits Turnier #{id}; dieses anzuzeigen ersetzt es.",
+            "error": "Anzeige konnte nicht gestartet werden: {error}"
         }
     },
     "palette": {

@@ -4366,6 +4366,42 @@ export namespace gui {
 	        this.write = source["write"];
 	    }
 	}
+	export class TournamentDisplayConfig {
+	    tournamentId: number;
+	    port: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new TournamentDisplayConfig(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.tournamentId = source["tournamentId"];
+	        this.port = source["port"];
+	    }
+	}
+	export class TournamentDisplayStatus {
+	    running: boolean;
+	    tournamentId: number;
+	    url: string;
+	    localUrl: string;
+	    qr: string;
+	    error: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new TournamentDisplayStatus(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.running = source["running"];
+	        this.tournamentId = source["tournamentId"];
+	        this.url = source["url"];
+	        this.localUrl = source["localUrl"];
+	        this.qr = source["qr"];
+	        this.error = source["error"];
+	    }
+	}
 	export class MCPHostStatus {
 	    running: boolean;
 	    url: string;

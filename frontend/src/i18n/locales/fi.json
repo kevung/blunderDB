@@ -3035,6 +3035,19 @@
             "allLaunched": "Koko jono on aloitettu",
             "launched": "Ehdotus aloitettu",
             "forfeitWithdrawFailed": "Luovutus kirjattu, mutta pelaajan poistaminen epäonnistui."
+        },
+        "network": {
+            "title": "Näytä seuran verkossa",
+            "hint": "Työpöytäsovellus jakaa tämän turnauksen sivun — kaavio, parit, tulokset, sarjataulukko — vain luku -tilassa lähiverkon puhelimille; ne skannaavat QR-koodin. Sivu päivittyy itsestään.",
+            "warning": "Ei salasanaa: kuka tahansa tässä lähiverkossa voi lukea sivun (nimet, parit, tulokset). Sen kautta ei voi muuttaa mitään.",
+            "start": "Näytä verkossa",
+            "stop": "Lopeta näyttäminen",
+            "port": "Portti",
+            "url": "Osoite puhelimille",
+            "openHere": "Avaa tällä koneella",
+            "qr": "Sivun osoitteen QR-koodi",
+            "other": "Verkossa näkyy jo turnaus #{id}; tämän näyttäminen korvaa sen.",
+            "error": "Näyttöä ei voitu käynnistää: {error}"
         }
     },
     "palette": {

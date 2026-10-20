@@ -3035,6 +3035,19 @@
             "allLaunched": "Toute la file est lancée",
             "launched": "Proposition lancée",
             "forfeitWithdrawFailed": "Forfait enregistré, mais le retrait du joueur a échoué."
+        },
+        "network": {
+            "title": "Afficher sur le réseau du club",
+            "hint": "Le bureau sert la page de ce tournoi — arbre, appariements, résultats, classement — en lecture seule aux téléphones du réseau local ; ils scannent le QR code. La page se met à jour seule.",
+            "warning": "Sans mot de passe : quiconque est sur ce réseau local peut lire la page (noms, appariements, résultats). Rien ne peut y être modifié.",
+            "start": "Afficher sur le réseau",
+            "stop": "Arrêter l'affichage",
+            "port": "Port",
+            "url": "Adresse pour les téléphones",
+            "openHere": "Ouvrir sur cette machine",
+            "qr": "QR code de l'adresse de la page",
+            "other": "Le réseau affiche déjà le tournoi #{id} ; afficher celui-ci le remplace.",
+            "error": "Impossible de lancer l'affichage : {error}"
         }
     },
     "palette": {

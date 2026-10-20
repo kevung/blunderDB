@@ -3035,6 +3035,19 @@
             "allLaunched": "Toda la cola está iniciada",
             "launched": "Propuesta iniciada",
             "forfeitWithdrawFailed": "Abandono registrado, pero no se pudo retirar al jugador."
+        },
+        "network": {
+            "title": "Mostrar en la red del club",
+            "hint": "El escritorio sirve la página de este torneo — cuadro, emparejamientos, resultados, clasificación — en solo lectura a los teléfonos de la red local; escanean el código QR. La página se actualiza sola.",
+            "warning": "Sin contraseña: cualquiera en esta red local puede leer la página (nombres, emparejamientos, resultados). Nada puede modificarse desde ella.",
+            "start": "Mostrar en la red",
+            "stop": "Dejar de mostrar",
+            "port": "Puerto",
+            "url": "Dirección para los teléfonos",
+            "openHere": "Abrir en esta máquina",
+            "qr": "Código QR de la dirección de la página",
+            "other": "La red ya muestra el torneo #{id}; mostrar este lo sustituye.",
+            "error": "No se pudo iniciar la visualización: {error}"
         }
     },
     "palette": {

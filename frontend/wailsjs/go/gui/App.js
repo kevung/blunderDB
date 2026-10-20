@@ -365,3 +365,15 @@ export function YouTubeEmbedURL(arg1) {
 export function YouTubeWatchURL(arg1) {
   return window['go']['gui']['App']['YouTubeWatchURL'](arg1);
 }
+
+export function GetTournamentDisplayStatus() {
+  return window['go']['gui']['App']['GetTournamentDisplayStatus']();
+}
+
+export function StartTournamentDisplay(arg1) {
+  return window['go']['gui']['App']['StartTournamentDisplay'](arg1);
+}
+
+export function StopTournamentDisplay() {
+  return window['go']['gui']['App']['StopTournamentDisplay']();
+}

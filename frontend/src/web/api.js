@@ -29,6 +29,33 @@ export async function call(route, body = {}) {
 }
 
 /**
+ * Lecture conditionnelle (ADR-0057 règle 4) : l'étiquette d'une réponse précédente renvoyée dans
+ * `If-None-Match` vaut un 304 sans corps tant que rien de ce que la route lit n'a changé — c'est
+ * ce qui rend le sondage d'un affichage de tournoi presque gratuit.
+ * @param {string} route
+ * @param {object} body
+ * @param {string} etag étiquette de la réponse précédente, '' la première fois
+ * @returns {Promise<{ changed: boolean, etag: string, body: any }>}
+ */
+export async function callConditional(route, body, etag) {
+    /** @type {Record<string, string>} */
+    const headers = { 'Content-Type': 'application/json' };
+    if (devTenant) headers['X-Tenant-ID'] = devTenant;
+    if (etag) headers['If-None-Match'] = etag;
+    const response = await fetch(`/v1/${route}`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(body)
+    });
+    if (response.status === 304) return { changed: false, etag, body: null };
+    const text = await response.text();
+    if (!response.ok) {
+        throw new Error(extractError(text) || `${response.status} ${response.statusText}`);
+    }
+    return { changed: true, etag: response.headers.get('ETag') || '', body: text ? parseBody(text) : null };
+}
+
+/**
  * Les routes qui diffusent (rpcStream) répondent en NDJSON, un objet par ligne ; décodées en une
  * passe, sans que la page connaisse la pagination.
  */
