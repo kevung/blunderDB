@@ -96,6 +96,24 @@ func BenchmarkScale_SearchWideErrorAboveTenth(b *testing.B) {
 	benchScaleSearch(b, SearchFilters{Filter: emptyFilter(), MoveErrorFilter: "E>100"})
 }
 
+// BenchmarkScale_SearchIDsErrorAboveTenth is the GUI's side of the same
+// filter: ids only, the whole result at once.
+func BenchmarkScale_SearchIDsErrorAboveTenth(b *testing.B) {
+	db := openScaleDB(b)
+	f := SearchFilters{Filter: emptyFilter(), MoveErrorFilter: "E>100"}
+	b.ReportAllocs()
+	b.ResetTimer()
+	var n int
+	for i := 0; i < b.N; i++ {
+		ids, err := db.LoadPositionIDsByFilters(f)
+		if err != nil {
+			b.Fatal(err)
+		}
+		n = len(ids)
+	}
+	b.ReportMetric(float64(n), "positions")
+}
+
 // Narrow: a handful of rows out of the whole base.
 func BenchmarkScale_SearchNarrowDiceAndScore(b *testing.B) {
 	filter := emptyFilter()
