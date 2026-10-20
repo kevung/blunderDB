@@ -105,6 +105,10 @@ type App struct {
 	libs libraryGroups
 }
 
+// blunderCountReadyEvent tells the status bar that a background recount has
+// filled the blunder count cache: its counter can read the number again.
+const blunderCountReadyEvent = "library:blunder-count-ready"
+
 // NewApp creates a new App application struct.
 func NewApp(db *database.Database) *App {
 	a := &App{db: db}
@@ -123,6 +127,11 @@ func NewApp(db *database.Database) *App {
 			}
 		})
 		database.SetOpenGuard(db, a.refuseHeldLibrary)
+		database.SetBlunderCountReady(db, func() {
+			if a.ctx != nil {
+				runtime.EventsEmit(a.ctx, blunderCountReadyEvent)
+			}
+		})
 	}
 	return a
 }

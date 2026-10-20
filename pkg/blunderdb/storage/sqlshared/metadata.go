@@ -189,6 +189,13 @@ func (s *MetadataStore) blunderCount(ctx context.Context, scope string) (int, er
 	return cachedOrRecountedBlunders(ctx, s.DB, scope)
 }
 
+// BlunderCount is the cached blunder count alone, recounted and cached when
+// the cache is missing: what a background recount needs, without counting
+// every table as Counts does.
+func (s *MetadataStore) BlunderCount(ctx context.Context, scope string) (int, error) {
+	return s.blunderCount(ctx, scope)
+}
+
 // recountBlunders is the count itself, without the cache.
 func recountBlunders(ctx context.Context, db Execer, scope string, threshold int) (int, error) {
 	tenant, targs := db.TenantFilter("p", scope)

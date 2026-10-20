@@ -113,6 +113,8 @@ type Database struct {
 	// path is the file open here, "" when none; guarded by mu. The desktop
 	// refuses to open one file in two library groups by it (OpenPath).
 	path string
+	// recount is the background blunder recount (blunder_recount.go).
+	recount blunderRecount
 }
 
 // ErrDatabaseChanged refuses a background job's write once another database
@@ -159,7 +161,10 @@ func (d *Database) switchFile() {
 }
 
 // bumpGeneration marks the file about to change; the caller holds mu.
-func (d *Database) bumpGeneration() { d.generation++ }
+func (d *Database) bumpGeneration() {
+	d.generation++
+	d.cancelBlunderRecount()
+}
 
 // currentGeneration is the generation a background job remembers at its start.
 func (d *Database) currentGeneration() uint64 {

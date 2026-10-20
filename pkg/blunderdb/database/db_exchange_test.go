@@ -111,6 +111,8 @@ func TestExchange_EveryFieldIsPlaced(t *testing.T) {
 		"importBatchID": true, "importBatchCounts": true, "importJournal": true,
 		"migrationProgress": true, "convertBatchSize": true, "afterActionColumnDrop": true,
 		"skipDuplicates": true, "commentAuthor": true, "directionMem": true,
+		// A running recount is cancelled by the generation bump.
+		"recount": true,
 	}
 	typ := reflect.TypeOf(Database{})
 	for i := 0; i < typ.NumField(); i++ {
