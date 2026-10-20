@@ -10,7 +10,7 @@ const calls = vi.hoisted(() => ({ started: /** @type {any[]} */ ([]), stopped: 0
 vi.mock('../../wailsjs/runtime/runtime.js', () => ({ BrowserOpenURL: () => {}, EventsOn: () => () => {}, EventsOff: () => {} }));
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
     GetTournamentDisplayStatus: () => Promise.resolve({ running: false, tournamentId: 0, url: '', localUrl: '', qr: '', error: '' }),
-    StartTournamentDisplay: (c) => {
+    StartTournamentDisplay: (/** @type {any} */ c) => {
         calls.started.push(c);
         if (c.tournamentId === 8) {
             return Promise.resolve({ running: false, tournamentId: 0, addresses: [], publicAddresses: [], address: '', url: '', localUrl: '', qr: '', error: 'port_in_use', errorPort: c.port });

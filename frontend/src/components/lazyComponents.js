@@ -99,7 +99,10 @@ export const modals = lazyRegistry({
     fileImportProgress: () => import('./FileImportProgressModal.svelte')
 });
 
-/** Runs `task` when the main thread is idle, or after a short pause where there is no idle callback (WebKit). */
+/**
+ * Runs `task` when the main thread is idle, or after a short pause where there is no idle callback (WebKit).
+ * @param {() => void} task
+ */
 function whenIdle(task) {
     if (typeof requestIdleCallback === 'function') requestIdleCallback(() => task(), { timeout: 500 });
     else setTimeout(task, 50);
@@ -115,7 +118,7 @@ export function preloadDeferredComponents({ first, immediate = false } = {}) {
     if (immediate) return Promise.all([panels.loadAll(), modals.loadAll()]).then(() => {});
     const queue = [...panels.names().map((name) => () => panels.load(name)), ...modals.names().map((name) => () => modals.load(name))];
     if (first && panels.names().includes(first)) queue.unshift(() => panels.load(first));
-    return new Promise((resolve) => {
+    return new Promise((/** @type {(value?: any) => void} */ resolve) => {
         const next = () => {
             const step = queue.shift();
             if (!step) return resolve();

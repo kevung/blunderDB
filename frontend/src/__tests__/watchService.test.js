@@ -1,3 +1,4 @@
+// @ts-nocheck — doublures de test : les signatures typées (Wails, stores) exigent des objets complets.
 /**
  * watchService.test.js — le dossier surveillé (#258, fiche I.2).
  *

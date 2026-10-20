@@ -18,24 +18,28 @@ import { HelpBundle } from '../../../wailsjs/go/gui/App.js';
 // the Go binding HelpBundle inflates the same embedded file instead. Without bindings
 // (serve mode) a current browser is required. A response that is already plain JSON
 // (a server or a test that inflated it) is read as is.
+/** @type {Record<string, any>} */
 const maps = {};
 
 // Bumped whenever a lazily-loaded help bundle lands, so the derived `help`
 // store below re-evaluates even though `language` itself did not change.
 const helpVersion = writable(0);
 
+/** @type {Set<string>} */
 const failed = new Set();
 
+/** @param {string} lang */
 async function fetchBundle(lang) {
     if (typeof DecompressionStream === 'undefined') return JSON.parse(await HelpBundle(lang));
     const response = await fetch(`${import.meta.env.BASE_URL}help/${lang}.bin`);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const bytes = new Uint8Array(await response.arrayBuffer());
     const gzipped = bytes[0] === 0x1f && bytes[1] === 0x8b;
-    const text = gzipped ? await new Response(new Response(bytes).body.pipeThrough(new DecompressionStream('gzip'))).text() : new TextDecoder().decode(bytes);
+    const text = gzipped ? await new Response(/** @type {ReadableStream} */ (new Response(bytes).body).pipeThrough(new DecompressionStream('gzip'))).text() : new TextDecoder().decode(bytes);
     return JSON.parse(text);
 }
 
+/** @param {string} lang */
 async function loadBundle(lang) {
     if (maps[lang] || !LOCALES.includes(lang)) return;
     try {
@@ -48,6 +52,7 @@ async function loadBundle(lang) {
 }
 
 /** Fetch and cache the help bundle for `lang` and the English fallback; a no-op once cached. Never rejects. */
+/** @param {string} lang */
 export async function loadHelpFor(lang) {
     await Promise.all([...new Set([FALLBACK_LOCALE, lang])].map(loadBundle));
     helpVersion.update((n) => n + 1);

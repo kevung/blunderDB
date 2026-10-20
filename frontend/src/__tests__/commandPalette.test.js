@@ -51,7 +51,7 @@ describe('every command of the vocabulary is reachable in the palette', () => {
     test('each has a description in the nine locales', () => {
         for (const [lang, messages] of Object.entries(LOCALES)) {
             for (const cmd of COMMANDS) {
-                const leaf = messages.palette?.cmd?.[cmd.name];
+                const leaf = /** @type {any} */ (messages).palette?.cmd?.[cmd.name];
                 expect(typeof leaf === 'string' && leaf.length > 0, `${lang}: missing ${commandLabelKey(cmd.name)}`).toBe(true);
             }
         }
@@ -80,7 +80,7 @@ describe('the other sources', () => {
     });
 
     test('a description finds its command: "matrice" is the cube matrix', () => {
-        const fr = buildPaletteItems({ translate: (key) => key.split('.').reduce((o, k) => o?.[k], LOCALES.fr) ?? key });
+        const fr = buildPaletteItems({ translate: (key) => key.split('.').reduce((/** @type {any} */ o, k) => o?.[k], /** @type {any} */ (LOCALES).fr) ?? key });
         const hit = rankPaletteItems(fr, 'matrice videau')[0]?.item;
         expect(hit?.id).toBe('command:cm');
         // The example manuel.rst gives, verbatim.

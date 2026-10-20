@@ -113,7 +113,7 @@
     let detailGames = $state([]); // Game[] for the detail match
     /** @type {any[]} */
     let detailGrades = $state([]); // MoveGrade[] for the detail match
-    /** @type {import('../../wailsjs/go/models').service.MatchTimeSummary | null} */
+    /** @type {import('../../wailsjs/go/models').storage.MatchTimeSummary | null} */
     let detailTimes = $state(null);
     /** @type {any[] | null} the MWC loss of each decision */
     let detailLosses = $state(null);

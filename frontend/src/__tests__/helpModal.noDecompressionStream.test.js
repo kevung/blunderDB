@@ -8,7 +8,7 @@ import { readHelpBundle } from './helpers/helpBundles.js';
 
 vi.mock('../../wailsjs/go/main/Config.js', () => ({ SaveLanguage: vi.fn() }));
 const HelpBundle = vi.fn(async (lang) => JSON.stringify(readHelpBundle(lang)));
-vi.mock('../../wailsjs/go/gui/App.js', () => ({ HelpBundle: (lang) => HelpBundle(lang) }));
+vi.mock('../../wailsjs/go/gui/App.js', () => ({ HelpBundle: (/** @type {string} */ lang) => HelpBundle(lang) }));
 
 test('without DecompressionStream the help comes from the Go binding', async () => {
     vi.stubGlobal('DecompressionStream', undefined);

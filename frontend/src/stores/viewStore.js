@@ -395,7 +395,7 @@ function createViewStore() {
 
     /**
      * The views of the library being left, photographed, for its group to keep (libraryGroupStore).
-     * @returns {{ views: ViewState[], activeViewId: number }}
+     * @returns {{ views: ViewState[], activeViewId: number, nextNumber: number }}
      */
     function takeGroup() {
         saveCurrentViewState();

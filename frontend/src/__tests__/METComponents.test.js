@@ -41,7 +41,7 @@ describe('MET de la base', () => {
 
     test('réimporter une table connue le dit', async () => {
         vi.mocked(OpenMETDialog).mockResolvedValueOnce('/tmp/t.xml');
-        vi.mocked(ImportMET).mockResolvedValueOnce({ id: 3, name: 'Rockwell-Kazaross', already_held: true });
+        vi.mocked(ImportMET).mockResolvedValueOnce(/** @type {any} */ ({ id: 3, name: 'Rockwell-Kazaross', already_held: true }));
         render(METSettings);
         await waitFor(() => screen.getByRole('combobox'));
         (await screen.findAllByRole('button'))[0].click();

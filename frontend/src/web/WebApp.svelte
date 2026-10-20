@@ -22,7 +22,7 @@
     let mode = $state('browse');
 
     // L'affichage d'un tournoi choisi dans la liste des Directions.
-    let directions = $state([]);
+    let directions = $state(/** @type {any[]} */ ([]));
     let tournamentId = $state(0);
 
     // La révision : la carte courante, et si la réponse est dévoilée.

@@ -842,6 +842,10 @@ export function IndexOfPositionByFilters(arg1, arg2) {
   return window['go']['database']['Database']['IndexOfPositionByFilters'](arg1, arg2);
 }
 
+export function IsOpenDatabase(arg1) {
+  return window['go']['database']['Database']['IsOpenDatabase'](arg1);
+}
+
 export function IsPositionOnPile(arg1) {
   return window['go']['database']['Database']['IsPositionOnPile'](arg1);
 }
@@ -1652,6 +1656,10 @@ export function TogglePile(arg1) {
 
 export function TranscriptionMAT(arg1) {
   return window['go']['database']['Database']['TranscriptionMAT'](arg1);
+}
+
+export function TransferTo(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['TransferTo'](arg1, arg2, arg3);
 }
 
 export function TrashCollection(arg1) {

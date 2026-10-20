@@ -1,3 +1,4 @@
+// @ts-nocheck — doublures de test : les signatures typées (Wails, stores) exigent des objets complets.
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 const lessonHTML = vi.fn(async () => '<html></html>');

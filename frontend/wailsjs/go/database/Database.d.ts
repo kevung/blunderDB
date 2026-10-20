@@ -442,6 +442,8 @@ export function IndexOfPosition(arg1:number):Promise<number>;
 
 export function IndexOfPositionByFilters(arg1:domain.SearchFilters,arg2:number):Promise<number>;
 
+export function IsOpenDatabase(arg1:string):Promise<boolean>;
+
 export function IsPositionOnPile(arg1:domain.Position):Promise<boolean>;
 
 export function IsProtectedCopyPath(arg1:string):Promise<boolean>;
@@ -847,6 +849,8 @@ export function Tags():Promise<Array<domain.TagCount>>;
 export function TogglePile(arg1:domain.Position):Promise<storage.PileToggle>;
 
 export function TranscriptionMAT(arg1:number):Promise<string>;
+
+export function TransferTo(arg1:context.Context,arg2:database.Database,arg3:domain.ExportOptions):Promise<ingest.TransferReport>;
 
 export function TrashCollection(arg1:number):Promise<number>;
 

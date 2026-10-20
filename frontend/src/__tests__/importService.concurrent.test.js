@@ -1,3 +1,4 @@
+// @ts-nocheck — doublures de test : les signatures typées (Wails, stores) exigent des objets complets.
 import { describe, test, expect, vi } from 'vitest';
 import { get } from 'svelte/store';
 

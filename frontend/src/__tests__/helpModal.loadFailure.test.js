@@ -1,3 +1,4 @@
+// @ts-nocheck — doublures de test : les signatures typées (Wails, stores) exigent des objets complets.
 /**
  * A help bundle that fails to load falls back on English; when English fails too the modal says so
  * instead of spinning forever. Neither rejects.
