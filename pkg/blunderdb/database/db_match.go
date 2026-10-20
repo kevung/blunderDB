@@ -12,7 +12,6 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
-	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
 // GetAllMatches returns all matches from the database
@@ -146,15 +145,11 @@ func (d *Database) GetPositionProvenance(positionID int64) ([]Match, error) {
 }
 
 // SaveLastVisitedPosition saves the last visited position index for a match
+// (storage.MatchStore.SetLastVisitedPosition).
 func (d *Database) SaveLastVisitedPosition(matchID int64, positionIndex int) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
-
-	_, err := d.db.Exec(`UPDATE match SET last_visited_position = ?, last_visited_at = strftime('%Y-%m-%d %H:%M:%f', 'now') WHERE id = ?`, positionIndex, matchID)
-	if err != nil {
-		return err
-	}
-	return nil
+	return d.store.Matches().SetLastVisitedPosition(context.Background(), "", matchID, positionIndex)
 }
 
 // GetLastVisitedMatch returns the most recently visited match (match with highest last_visited_position != -1)
@@ -211,40 +206,19 @@ func (d *Database) GetLastVisitedMatch() (*Match, error) {
 	return &m, nil
 }
 
-// GetGamesByMatch returns all games in a match
+// GetGamesByMatch returns all games in a match, by game number
+// (storage.MatchStore.Games).
 func (d *Database) GetGamesByMatch(matchID int64) ([]Game, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
-	rows, err := d.db.Query(`
-		SELECT id, match_id, game_number, initial_score_1, initial_score_2,
-		       winner, points_won, move_count
-		FROM game
-		WHERE match_id = ?
-		ORDER BY game_number ASC
-	`, matchID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
 	var games []Game
-	for rows.Next() {
-		var g Game
-		var score1, score2 int32
-		err := rows.Scan(&g.ID, &g.MatchID, &g.GameNumber, &score1, &score2,
-			&g.Winner, &g.PointsWon, &g.MoveCount)
+	for g, err := range d.store.Matches().Games(context.Background(), "", matchID) {
 		if err != nil {
-			slog.Warn("scanning game", "err", err)
-			continue
+			return nil, err
 		}
-		g.InitialScore = [2]int32{score1, score2}
-		games = append(games, g)
+		games = append(games, *g)
 	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-
 	return games, nil
 }
 
@@ -302,94 +276,14 @@ func (d *Database) GetMovesByGame(gameID int64) ([]Move, error) {
 	return moves, nil
 }
 
-// DeleteMatch deletes a match and all associated games, moves, and analysis
+// DeleteMatch deletes a match and all associated games, moves and move
+// analyses, then the positions nothing else holds any more
+// (storage.MatchStore.DeleteCascade, whose retention predicate decides which).
 func (d *Database) DeleteMatch(matchID int64) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
-
-	tx, err := d.db.Begin()
-	if err != nil {
-		return fmt.Errorf("failed to begin transaction: %w", err)
-	}
-	defer tx.Rollback()
-
-	// Collect position IDs referenced by this match's moves before cascade delete
-	positionIDs, err := queryInt64s(tx, `
-		SELECT DISTINCT m.position_id 
-		FROM move m
-		INNER JOIN game g ON m.game_id = g.id
-		WHERE g.match_id = ? AND m.position_id IS NOT NULL
-	`, matchID)
-	if err != nil {
-		return fmt.Errorf("error collecting position IDs: %w", err)
-	}
-
-	if _, err = tx.Exec(sqlshared.InvalidateMatchStatsOfMatchesSQL+"(?)", matchID); err != nil {
-		return fmt.Errorf("error deleting match stats: %w", err)
-	}
-
-	// Foreign key constraints will cascade delete to game, move, and move_analysis
-	_, err = tx.Exec(`DELETE FROM match WHERE id = ?`, matchID)
-	if err != nil {
-		return fmt.Errorf("error deleting match: %w", err)
-	}
-
-	// Drop the positions nothing holds any more (see positionIsHeldSQL); their
-	// analyses and comments cascade off the position delete.
-	if err := deleteOrphanedPositions(tx, positionIDs); err != nil {
-		return err
-	}
-	// The survivors may have been dated by this match.
-	if err := sqlite.RefreshPositionMatchDates(context.Background(), tx, positionIDs); err != nil {
-		return err
-	}
-
-	return tx.Commit()
+	return d.store.Matches().DeleteCascade(context.Background(), "", matchID)
 }
-
-// deleteOrphanedPositions removes every position in ids that positionIsHeldSQL
-// says nothing holds any more, as a single set-based DELETE rather than one
-// EXISTS round-trip per id.
-func deleteOrphanedPositions(tx *sql.Tx, ids []int64) error {
-	if len(ids) == 0 {
-		return nil
-	}
-	placeholders := strings.TrimSuffix(strings.Repeat("?,", len(ids)), ",")
-	args := make([]any, len(ids))
-	for i, id := range ids {
-		args[i] = id
-	}
-	query := fmt.Sprintf(`DELETE FROM position WHERE id IN (%s) AND NOT (%s)`, placeholders, positionIsHeldSQL)
-	if _, err := tx.Exec(query, args...); err != nil {
-		return fmt.Errorf("error deleting orphaned positions: %w", err)
-	}
-	return nil
-}
-
-// positionIsHeldSQL reports whether anything still holds a position once the
-// match that referenced it is gone. Deleting a match must not destroy work the
-// user did on a position that merely happened to occur in it.
-//
-// A position is held by: another match's move; a collection; an Anki card; a
-// Lesson step (ADR-0066); a comment with origin = 'user'; individual import (ADR-0001); or the source
-// tool's study mark, which the `fl` filter surfaces (ADR-0006).
-//
-// Deliberately NOT held by an analysis (every match position has one, so
-// nothing would ever be purged) nor by an imported or 'unknown'-origin
-// comment (importers attach the source file's notes).
-//
-// A WHERE fragment correlated with the outer `position` row, embedded in
-// deleteOrphanedPositions' set-based DELETE.
-//
-// Stated identically in three places — here (the copy the GUI and CLI run),
-// storage/sqlite and storage/postgres. They must not drift.
-const positionIsHeldSQL = `EXISTS (SELECT 1 FROM move               WHERE position_id = position.id)
-	                       OR EXISTS (SELECT 1 FROM collection_position WHERE position_id = position.id)
-	                       OR EXISTS (SELECT 1 FROM anki_card           WHERE position_id = position.id)
-	                       OR EXISTS (SELECT 1 FROM lesson_step         WHERE position_id = position.id)
-	                       OR EXISTS (SELECT 1 FROM comment             WHERE position_id = position.id AND origin = 'user')
-	                       OR position.individually_imported = 1
-	                       OR position.flagged = 1`
 
 // GetMatchMovePositions returns all positions from a match in chronological order
 // Positions are returned as they were stored (from player on roll POV)
@@ -600,7 +494,8 @@ func (d *Database) SetMatchVideoSource(matchID int64, source string) error {
 	return d.store.Matches().SetVideoSource(context.Background(), "", matchID, strings.TrimSpace(source))
 }
 
-// UpdateMatch updates editable metadata for a match (player names and date).
+// UpdateMatch updates editable metadata for a match (player names and date)
+// and re-dates the positions it reaches (storage.MatchStore.Update).
 // matchDate should be an empty string or a date string parseable by time.Parse ("2006-01-02").
 func (d *Database) UpdateMatch(matchID int64, player1Name, player2Name, matchDate string) error {
 	d.mu.Lock()
@@ -609,45 +504,13 @@ func (d *Database) UpdateMatch(matchID int64, player1Name, player2Name, matchDat
 	if d.db == nil {
 		return fmt.Errorf("no database is currently open")
 	}
-
-	var dateVal interface{}
 	if matchDate != "" {
-		t, err := time.Parse("2006-01-02", matchDate)
-		if err != nil {
+		if _, err := time.Parse("2006-01-02", matchDate); err != nil {
 			return fmt.Errorf("invalid date format: %w", err)
 		}
-		dateVal = t
-	} else {
-		dateVal = nil
 	}
-
-	tx, err := d.db.Begin()
-	if err != nil {
-		return err
-	}
-	defer tx.Rollback()
-	if _, err := tx.Exec(
-		`UPDATE match SET player1_name = ?, player2_name = ?, match_date = ? WHERE id = ?`,
-		strings.TrimSpace(player1Name),
-		strings.TrimSpace(player2Name),
-		dateVal,
-		matchID,
-	); err != nil {
-		return err
-	}
-	positionIDs, err := queryInt64s(tx, `
-		SELECT DISTINCT m.position_id
-		FROM move m
-		INNER JOIN game g ON m.game_id = g.id
-		WHERE g.match_id = ? AND m.position_id IS NOT NULL
-	`, matchID)
-	if err != nil {
-		return err
-	}
-	if err := sqlite.RefreshPositionMatchDates(context.Background(), tx, positionIDs); err != nil {
-		return err
-	}
-	return tx.Commit()
+	return d.store.Matches().Update(context.Background(), "", matchID,
+		strings.TrimSpace(player1Name), strings.TrimSpace(player2Name), matchDate)
 }
 
 // SwapMatchPlayers swaps the two players in a match: player1 becomes player2

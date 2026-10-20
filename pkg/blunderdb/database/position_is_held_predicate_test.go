@@ -10,10 +10,9 @@ import (
 	"testing"
 )
 
-// positionIsHeldSQL is stated three times on purpose (CLAUDE.md
-// "Invariants"): storage/sqlite/matches_sqlite.go,
-// storage/postgres/matches_postgres.go and database/db_match.go (the copy the
-// GUI and CLI run). None exports it, so this test reads the raw SQL out of the
+// positionIsHeldSQL is stated once per SQL dialect (CLAUDE.md "Invariants"):
+// storage/sqlite/matches_sqlite.go, which the GUI and CLI reach through
+// Database.DeleteMatch, and storage/postgres/matches_postgres.go. None exports it, so this test reads the raw SQL out of the
 // source files.
 
 // positionIsHeldSourceFiles maps a short label to the file holding one copy
@@ -21,7 +20,6 @@ import (
 var positionIsHeldSourceFiles = map[string]string{
 	"sqlite":   filepath.Join("pkg", "blunderdb", "storage", "sqlite", "matches_sqlite.go"),
 	"postgres": filepath.Join("pkg", "blunderdb", "storage", "postgres", "matches_postgres.go"),
-	"database": filepath.Join("pkg", "blunderdb", "database", "db_match.go"),
 }
 
 // positionIsHeldSQLPattern captures the backtick-quoted body of
@@ -104,7 +102,7 @@ func sortedKeys(set map[string]bool) []string {
 }
 
 // TestPositionIsHeldPredicateParity guards the CLAUDE.md invariant that the
-// retention predicate is stated identically in its three deliberate copies
+// retention predicate is stated identically in both dialects
 // (what holds a position: see the doc comment on positionIsHeldSQL). They
 // cannot share one Go constant across SQL dialects, and nothing but this test
 // keeps them in lockstep.
