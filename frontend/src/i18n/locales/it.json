@@ -3047,7 +3047,9 @@
             "openHere": "Apri su questa macchina",
             "qr": "Codice QR dell'indirizzo della pagina",
             "other": "La rete mostra già il torneo #{id}; mostrare questo lo sostituisce.",
-            "error": "Impossibile avviare la visualizzazione: {error}"
+            "error": "Impossibile avviare la visualizzazione: {error}",
+            "address": "Rete",
+            "noLan": "Nessun indirizzo di rete locale: i telefoni non possono raggiungere questa macchina. Collegala alla rete del club, poi riavvia la visualizzazione."
         }
     },
     "palette": {

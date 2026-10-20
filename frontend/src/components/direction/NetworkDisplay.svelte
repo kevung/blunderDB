@@ -7,15 +7,15 @@
      */
     import { t } from '../../i18n';
     import { StartTournamentDisplay, StopTournamentDisplay, GetTournamentDisplayStatus } from '../../../wailsjs/go/gui/App.js';
-    import { BrowserOpenURL } from '../../../wailsjs/runtime/runtime.js';
+    import { BrowserOpenURL, EventsOn } from '../../../wailsjs/runtime/runtime.js';
 
     const DEFAULT_PORT = 8770;
 
     /** @type {{ tournamentId: number }} */
     let { tournamentId } = $props();
 
-    /** @type {{ running: boolean, tournamentId: number, url: string, localUrl: string, qr: string, error: string }} */
-    let status = $state({ running: false, tournamentId: 0, url: '', localUrl: '', qr: '', error: '' });
+    /** @type {{ running: boolean, tournamentId: number, addresses: string[], address: string, url: string, localUrl: string, qr: string, error: string }} */
+    let status = $state({ running: false, tournamentId: 0, addresses: [], address: '', url: '', localUrl: '', qr: '', error: '' });
     let port = $state(DEFAULT_PORT);
     let busy = $state(false);
 
@@ -30,6 +30,15 @@
             .catch(() => {});
     });
 
+    // Le bureau arrête l'affichage quand le fichier ouvert change : le panneau l'apprend ici.
+    $effect(() => {
+        try {
+            return EventsOn('direction:network-display', (s) => (status = s));
+        } catch {
+            return undefined;
+        }
+    });
+
     /** @param {() => Promise<any>} action */
     async function apply(action) {
         busy = true;
@@ -42,8 +51,9 @@
         }
     }
 
-    function start() {
-        apply(() => StartTournamentDisplay({ tournamentId, port: Number(port) || DEFAULT_PORT }));
+    /** @param {string} [address] */
+    function start(address = status.address) {
+        apply(() => StartTournamentDisplay({ tournamentId, port: Number(port) || DEFAULT_PORT, address: address || '' }));
     }
 
     function stop() {
@@ -64,7 +74,7 @@
                 {$t('direction.network.port')}
                 <input type="number" min="1" max="65535" bind:value={port} />
             </label>
-            <button type="button" data-testid="direction-network-start" disabled={busy} onclick={start}>{$t('direction.network.start')}</button>
+            <button type="button" data-testid="direction-network-start" disabled={busy} onclick={() => start()}>{$t('direction.network.start')}</button>
         {/if}
         {#if status.running}
             <button type="button" data-testid="direction-network-stop" disabled={busy} onclick={stop}>{$t('direction.network.stop')}</button>
@@ -73,12 +83,26 @@
     {#if status.error}
         <p class="error">{$t('direction.network.error', { error: status.error })}</p>
     {/if}
-    {#if showsThis}
+    {#if showsThis && !status.url}
+        <p class="warning" data-testid="direction-network-nolan">{$t('direction.network.noLan')}</p>
+        <button type="button" class="link" onclick={() => BrowserOpenURL(status.localUrl)}>{$t('direction.network.openHere')}</button>
+    {/if}
+    {#if showsThis && status.url}
         <div class="share">
             <img class="qr" src={status.qr} alt={$t('direction.network.qr')} width="192" height="192" />
             <div>
                 <p class="facts">{$t('direction.network.url')}</p>
                 <p class="facts path" data-testid="direction-network-url">{status.url}</p>
+                {#if status.addresses.length > 1}
+                    <label class="facts">
+                        {$t('direction.network.address')}
+                        <select data-testid="direction-network-address" value={status.address} disabled={busy} onchange={(e) => start(e.currentTarget.value)}>
+                            {#each status.addresses as a (a)}
+                                <option value={a}>{a}</option>
+                            {/each}
+                        </select>
+                    </label>
+                {/if}
                 <button type="button" class="link" onclick={() => BrowserOpenURL(status.localUrl)}>{$t('direction.network.openHere')}</button>
             </div>
         </div>

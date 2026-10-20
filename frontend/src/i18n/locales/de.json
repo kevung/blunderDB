@@ -3047,7 +3047,9 @@
             "openHere": "Auf diesem Rechner öffnen",
             "qr": "QR-Code der Seitenadresse",
             "other": "Das Netz zeigt bereits Turnier #{id}; dieses anzuzeigen ersetzt es.",
-            "error": "Anzeige konnte nicht gestartet werden: {error}"
+            "error": "Anzeige konnte nicht gestartet werden: {error}",
+            "address": "Netzwerk",
+            "noLan": "Keine lokale Netzwerkadresse: Handys können diesen Rechner nicht erreichen. Verbinden Sie ihn mit dem Clubnetz und starten Sie die Anzeige erneut."
         }
     },
     "palette": {

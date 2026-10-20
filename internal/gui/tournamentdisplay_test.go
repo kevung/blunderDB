@@ -3,13 +3,16 @@ package gui
 import (
 	"bytes"
 	"fmt"
+	"net"
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"strconv"
 	"strings"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
 // recordingEngine stands for the engine: it records what reached it.
@@ -137,6 +140,84 @@ func TestDisplayHandler_ServesTheDemoTournamentConditionally(t *testing.T) {
 	}
 	again := serveDisplay(h, http.MethodPost, displayRoute, body, map[string]string{"Content-Type": "application/json", "If-None-Match": tag})
 	if again.Code != http.StatusNotModified {
-		t.Errorf("unchanged page: code=%d, want 304", again.Code)
+		t.Fatalf("unchanged page: code=%d, want 304", again.Code)
+	}
+
+	// A Direction write — naming a table, which the page shows — moves the tag: the phones
+	// get the new page on their next poll.
+	tables := []domain.TableSetting{{Number: 1, Name: "Terrasse", AssignedTo: []string{}}}
+	view, err := db.GetDirection(id)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if rid := view.RencontreID; rid != 0 {
+		_, err = db.SetRencontreTables(rid, tables)
+	} else {
+		_, err = db.SetDirectionTables(id, tables)
+	}
+	if err != nil {
+		t.Fatal(err)
+	}
+	changed := serveDisplay(h, http.MethodPost, displayRoute, body, map[string]string{"Content-Type": "application/json", "If-None-Match": tag})
+	if changed.Code != http.StatusOK || changed.Header().Get("ETag") == tag {
+		t.Errorf("after a write: code=%d etag changed=%v, want 200 and a new tag", changed.Code, changed.Header().Get("ETag") != tag)
+	}
+}
+
+// openDemo opens a fresh copy of the demo file in db.
+func openDemo(t *testing.T, a *App, db *database.Database) {
+	t.Helper()
+	path, err := a.PrepareDemoDatabase()
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = os.Remove(path) })
+	if err := db.OpenDatabase(path); err != nil {
+		t.Fatal(err)
+	}
+}
+
+// The display shows one file's tournament: opening another file stops it, and the port is
+// released, rather than serving the same id from the new file.
+func TestTournamentDisplay_StopsWhenTheOpenFileChanges(t *testing.T) {
+	db := database.NewDatabase()
+	a := NewApp(db)
+	t.Cleanup(a.stopDisplay)
+	t.Cleanup(func() { _ = db.Close() })
+	openDemo(t, a, db)
+	list, err := db.ListDirections()
+	if err != nil || len(list) == 0 {
+		t.Fatalf("the demo file must hold a Direction: %v", err)
+	}
+	port := freePort(t)
+	st := a.StartTournamentDisplay(TournamentDisplayConfig{TournamentID: list[0].TournamentID, Port: port})
+	if !st.Running {
+		t.Fatalf("display did not start: %s", st.Error)
+	}
+	openDemo(t, a, db)
+	if st := a.GetTournamentDisplayStatus(); st.Running {
+		t.Fatal("the display must stop when another file is opened")
+	}
+	if conn, err := net.Dial("tcp", net.JoinHostPort("127.0.0.1", strconv.Itoa(port))); err == nil {
+		_ = conn.Close()
+		t.Error("the port must be released")
+	}
+}
+
+func TestChooseAddress_PrefersTheAskedThenTheFirst(t *testing.T) {
+	addrs := []string{"192.168.1.10", "172.17.0.1"}
+	if got := chooseAddress(addrs, "172.17.0.1"); got != "172.17.0.1" {
+		t.Errorf("asked address: %q", got)
+	}
+	if got := chooseAddress(addrs, "10.0.0.9"); got != "192.168.1.10" {
+		t.Errorf("unknown address falls back to the first: %q", got)
+	}
+	if got := chooseAddress(nil, ""); got != "" {
+		t.Errorf("no network: %q", got)
+	}
+	for name, want := range map[string]bool{"docker0": true, "br-1a2b": true, "virbr0": true, "tun0": true, "wg0": true, "eth0": false, "wlp3s0": false, "enp0s31f6": false} {
+		if isVirtual(name) != want {
+			t.Errorf("isVirtual(%q) = %v", name, !want)
+		}
 	}
 }

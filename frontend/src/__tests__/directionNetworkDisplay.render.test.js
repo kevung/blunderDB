@@ -12,9 +12,14 @@ vi.mock('../../wailsjs/go/gui/App.js', () => ({
     GetTournamentDisplayStatus: () => Promise.resolve({ running: false, tournamentId: 0, url: '', localUrl: '', qr: '', error: '' }),
     StartTournamentDisplay: (c) => {
         calls.started.push(c);
+        if (c.tournamentId === 7) {
+            return Promise.resolve({ running: true, tournamentId: 7, addresses: [], address: '', url: '', localUrl: 'http://127.0.0.1:8770/app/?tournoi=7', qr: '', error: '' });
+        }
         return Promise.resolve({
             running: true,
             tournamentId: c.tournamentId,
+            addresses: ['192.168.1.10'],
+            address: '192.168.1.10',
             url: `http://192.168.1.10:${c.port}/app/?tournoi=${c.tournamentId}`,
             localUrl: `http://127.0.0.1:${c.port}/app/?tournoi=${c.tournamentId}`,
             qr: 'data:image/png;base64,AAAA',
@@ -42,7 +47,7 @@ describe('NetworkDisplay', () => {
         await fireEvent.click(getByTestId('direction-network-start'));
         await tick();
         await tick();
-        expect(calls.started).toEqual([{ tournamentId: 42, port: 8770 }]);
+        expect(calls.started).toEqual([{ tournamentId: 42, port: 8770, address: '' }]);
         expect(getByTestId('direction-network-url').textContent).toBe('http://192.168.1.10:8770/app/?tournoi=42');
         expect(container.querySelector('img.qr')?.getAttribute('src')).toBe('data:image/png;base64,AAAA');
 
@@ -51,5 +56,16 @@ describe('NetworkDisplay', () => {
         await tick();
         expect(calls.stopped).toBe(1);
         expect(container.querySelector('img.qr')).toBeNull();
+    });
+
+    test('without a local network address, says so instead of drawing a QR code to 127.0.0.1', async () => {
+        const { getByTestId, queryByTestId, container } = render(NetworkDisplay, { props: { tournamentId: 7 } });
+        await tick();
+        await fireEvent.click(getByTestId('direction-network-start'));
+        await tick();
+        await tick();
+        expect(getByTestId('direction-network-nolan').textContent).toBeTruthy();
+        expect(container.querySelector('img.qr')).toBeNull();
+        expect(queryByTestId('direction-network-url')).toBeNull();
     });
 });

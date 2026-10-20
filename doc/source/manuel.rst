@@ -3109,7 +3109,9 @@ lecture seule** : il ne sert que la page de ce tournoi, aucune autre donnée de 
 base, et rien ne peut y être saisi. Il n'y a **aucun mot de passe** : quiconque
 est sur le réseau local peut lire la page (noms, appariements, résultats) — ce
 qu'un écran mural montre déjà à la salle. Sur une machine reliée à plusieurs
-réseaux, vérifier que l'adresse affichée est bien celle du réseau du club.
+réseaux, une liste propose ses adresses, celles des réseaux virtuels (conteneurs,
+VPN) en dernier. Sans réseau local, le panneau le dit et ne dessine pas de QR code.
+L'affichage s'arrête quand un autre fichier est ouvert, créé ou fermé.
 
 La **feuille d'appariements** se pose sur la table d'accueil : un clic sur
 *Imprimer la feuille* ouvre le dialogue d'impression du système. Une ligne par

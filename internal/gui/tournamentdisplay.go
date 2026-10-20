@@ -2,7 +2,6 @@ package gui
 
 import (
 	"bytes"
-	"context"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
@@ -12,11 +11,14 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"slices"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
 	qrcode "github.com/skip2/go-qrcode"
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 
 	"github.com/kevung/blunderdb/internal/server/middleware"
 	"github.com/kevung/blunderdb/internal/server/webui"
@@ -35,23 +37,30 @@ const displayRoute = "/v1/directions.pageHtml"
 // its request is one integer.
 const displayBodyLimit = 4 << 10
 
-// TournamentDisplayConfig names the tournament shown and the port it is shown on.
+// TournamentDisplayConfig names the tournament shown, the port it is shown on, and the
+// address the QR code points to — one of TournamentDisplayStatus.Addresses, empty for the
+// default one.
 type TournamentDisplayConfig struct {
-	TournamentID int64 `json:"tournamentId"`
-	Port         int   `json:"port"`
+	TournamentID int64  `json:"tournamentId"`
+	Port         int    `json:"port"`
+	Address      string `json:"address"`
 }
 
 // TournamentDisplayStatus says whether the display listens, for which
 // tournament, and where: URL is the address phones on the club network open
 // (also drawn as a QR code, a PNG data URI), LocalURL the same page on this
-// machine.
+// machine. Addresses are the machine's local-network IPv4 addresses, Address
+// the one URL uses; with none, URL and QR are empty and the page is reachable
+// on this machine only.
 type TournamentDisplayStatus struct {
-	Running      bool   `json:"running"`
-	TournamentID int64  `json:"tournamentId"`
-	URL          string `json:"url"`
-	LocalURL     string `json:"localUrl"`
-	QR           string `json:"qr"`
-	Error        string `json:"error"`
+	Running      bool     `json:"running"`
+	TournamentID int64    `json:"tournamentId"`
+	Addresses    []string `json:"addresses"`
+	Address      string   `json:"address"`
+	URL          string   `json:"url"`
+	LocalURL     string   `json:"localUrl"`
+	QR           string   `json:"qr"`
+	Error        string   `json:"error"`
 }
 
 // displayHost is the tournament display the desktop serves on the local
@@ -102,14 +111,29 @@ func displayPath(tournamentID int64) string {
 	return webui.Prefix + "?" + url.Values{"tournoi": {strconv.FormatInt(tournamentID, 10)}}.Encode()
 }
 
-// lanAddress is the first IPv4 address of an interface that is up and not a
-// loopback: the address a phone on the same network reaches. Empty when the
-// machine has none (no network), and the page is then reachable here only.
-func lanAddress() string {
+// virtualPrefixes name the interfaces a phone on the club network never reaches: container
+// bridges, virtual machines' networks, tunnels and VPNs. Their addresses are still offered,
+// last, since a machine is free to name its interfaces otherwise.
+var virtualPrefixes = []string{"docker", "br-", "virbr", "veth", "vboxnet", "vmnet", "tun", "tap", "wg", "zt", "tailscale", "lxc", "lxd", "cni", "flannel"}
+
+func isVirtual(name string) bool {
+	for _, p := range virtualPrefixes {
+		if strings.HasPrefix(name, p) {
+			return true
+		}
+	}
+	return false
+}
+
+// lanAddresses lists the IPv4 addresses of the interfaces that are up and not loopback,
+// physical interfaces first: the first is the default the QR code points to. Empty when the
+// machine has no network, and the page is then reachable here only.
+func lanAddresses() []string {
 	ifaces, err := net.Interfaces()
 	if err != nil {
-		return ""
+		return nil
 	}
+	var physical, virtual []string
 	for _, iface := range ifaces {
 		if iface.Flags&net.FlagUp == 0 || iface.Flags&net.FlagLoopback != 0 {
 			continue
@@ -123,10 +147,27 @@ func lanAddress() string {
 			if !ok {
 				continue
 			}
-			if ip4 := ipnet.IP.To4(); ip4 != nil && !ip4.IsLinkLocalUnicast() {
-				return ip4.String()
+			ip4 := ipnet.IP.To4()
+			if ip4 == nil || ip4.IsLinkLocalUnicast() || ip4.IsLoopback() {
+				continue
+			}
+			if isVirtual(iface.Name) {
+				virtual = append(virtual, ip4.String())
+			} else {
+				physical = append(physical, ip4.String())
 			}
 		}
+	}
+	return append(physical, virtual...)
+}
+
+// chooseAddress is the address asked for when the machine has it, the default otherwise.
+func chooseAddress(addrs []string, asked string) string {
+	if slices.Contains(addrs, asked) {
+		return asked
+	}
+	if len(addrs) > 0 {
+		return addrs[0]
 	}
 	return ""
 }
@@ -163,20 +204,21 @@ func (a *App) StartTournamentDisplay(cfg TournamentDisplayConfig) TournamentDisp
 		return h.status
 	}
 	path := displayPath(cfg.TournamentID)
-	host := lanAddress()
-	if host == "" {
-		host = "127.0.0.1"
-	}
-	lan := "http://" + net.JoinHostPort(host, strconv.Itoa(cfg.Port)) + path
-	qr, err := qrDataURI(lan)
-	if err != nil {
-		_ = ln.Close()
-		h.status.Error = err.Error()
-		return h.status
+	addrs := lanAddresses()
+	host := chooseAddress(addrs, cfg.Address)
+	var lan, qr string
+	if host != "" {
+		lan = "http://" + net.JoinHostPort(host, strconv.Itoa(cfg.Port)) + path
+		if qr, err = qrDataURI(lan); err != nil {
+			_ = ln.Close()
+			h.status.Error = err.Error()
+			return h.status
+		}
 	}
 	srv := &http.Server{Handler: displayHandler(&h.engine, cfg.TournamentID), ReadHeaderTimeout: 10 * time.Second}
 	h.http = srv
-	h.status = TournamentDisplayStatus{Running: true, TournamentID: cfg.TournamentID, URL: lan, QR: qr,
+	h.status = TournamentDisplayStatus{Running: true, TournamentID: cfg.TournamentID,
+		Addresses: addrs, Address: host, URL: lan, QR: qr,
 		LocalURL: fmt.Sprintf("http://127.0.0.1:%d%s", cfg.Port, path)}
 	go func() {
 		if err := srv.Serve(ln); err != nil && !errors.Is(err, http.ErrServerClosed) {
@@ -201,15 +243,33 @@ func (a *App) GetTournamentDisplayStatus() TournamentDisplayStatus {
 	return a.display.status
 }
 
+// stopLocked closes the listener and drops the connections at once: it also runs while the
+// open file is being switched, and a graceful shutdown would wait on requests that wait on
+// that very switch.
 func (h *displayHost) stopLocked() {
 	h.status = TournamentDisplayStatus{}
 	if h.http == nil {
 		return
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
-	defer cancel()
-	_ = h.http.Shutdown(ctx)
+	_ = h.http.Close()
 	h.http = nil
+}
+
+// displayStatusEvent tells the Direction panel the display's new state when it changes
+// without the panel asking.
+const displayStatusEvent = "direction:network-display"
+
+// stopDisplayForSwitch stops the display before the open file changes: it was started on one
+// file's tournament, and the same id in the next file is another tournament.
+func (a *App) stopDisplayForSwitch() {
+	a.display.mu.Lock()
+	running := a.display.http != nil
+	a.display.stopLocked()
+	st := a.display.status
+	a.display.mu.Unlock()
+	if running && a.ctx != nil {
+		runtime.EventsEmit(a.ctx, displayStatusEvent, st)
+	}
 }
 
 // stopDisplay stops the display and drops its engine, at shutdown.

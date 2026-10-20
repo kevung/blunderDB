@@ -77,6 +77,8 @@ export function GetIssuerIdentity():Promise<domain.IssuerIdentityInfo>;
 
 export function GetMCPHostStatus():Promise<gui.MCPHostStatus>;
 
+export function GetTournamentDisplayStatus():Promise<gui.TournamentDisplayStatus>;
+
 export function ImportFiles(arg1:Array<string>):Promise<gui.ImportFilesSummary>;
 
 export function ImportIssuerIdentity(arg1:string,arg2:string):Promise<domain.IssuerIdentityInfo>;
@@ -179,9 +181,13 @@ export function StartRolloutFiltered(arg1:string,arg2:rollout.Settings):Promise<
 
 export function StartRolloutIDs(arg1:Array<number>,arg2:rollout.Settings):Promise<number>;
 
+export function StartTournamentDisplay(arg1:gui.TournamentDisplayConfig):Promise<gui.TournamentDisplayStatus>;
+
 export function StartupFilePath():Promise<string>;
 
 export function StopFolderWatch():Promise<void>;
+
+export function StopTournamentDisplay():Promise<gui.TournamentDisplayStatus>;
 
 export function SuggestWatchFolder():Promise<string>;
 
@@ -190,9 +196,3 @@ export function VideoSourceKind(arg1:string):Promise<string>;
 export function YouTubeEmbedURL(arg1:string):Promise<string>;
 
 export function YouTubeWatchURL(arg1:string):Promise<string>;
-
-export function GetTournamentDisplayStatus():Promise<gui.TournamentDisplayStatus>;
-
-export function StartTournamentDisplay(arg1:gui.TournamentDisplayConfig):Promise<gui.TournamentDisplayStatus>;
-
-export function StopTournamentDisplay():Promise<gui.TournamentDisplayStatus>;

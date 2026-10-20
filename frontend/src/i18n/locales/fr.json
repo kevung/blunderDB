@@ -3047,7 +3047,9 @@
             "openHere": "Ouvrir sur cette machine",
             "qr": "QR code de l'adresse de la page",
             "other": "Le réseau affiche déjà le tournoi #{id} ; afficher celui-ci le remplace.",
-            "error": "Impossible de lancer l'affichage : {error}"
+            "error": "Impossible de lancer l'affichage : {error}",
+            "address": "Réseau",
+            "noLan": "Aucune adresse de réseau local : les téléphones ne peuvent pas joindre cette machine. Connectez-la au réseau du club, puis relancez l'affichage."
         }
     },
     "palette": {

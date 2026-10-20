@@ -3047,7 +3047,9 @@
             "openHere": "Open on this machine",
             "qr": "QR code of the page address",
             "other": "The network already shows tournament #{id}; showing this one replaces it.",
-            "error": "Could not start the display: {error}"
+            "error": "Could not start the display: {error}",
+            "address": "Network",
+            "noLan": "No local network address: phones cannot reach this machine. Connect it to the club network, then start the display again."
         }
     },
     "palette": {

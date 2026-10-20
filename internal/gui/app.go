@@ -113,6 +113,7 @@ func NewApp(db *database.Database) *App {
 		db.SetBeforeSwitch(func() {
 			if !a.closing.Load() {
 				a.stopDatabaseJobs(shutdownJobGrace)
+				a.stopDisplayForSwitch()
 			}
 		})
 	}

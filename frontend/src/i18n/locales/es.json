@@ -3047,7 +3047,9 @@
             "openHere": "Abrir en esta máquina",
             "qr": "Código QR de la dirección de la página",
             "other": "La red ya muestra el torneo #{id}; mostrar este lo sustituye.",
-            "error": "No se pudo iniciar la visualización: {error}"
+            "error": "No se pudo iniciar la visualización: {error}",
+            "address": "Red",
+            "noLan": "Sin dirección de red local: los teléfonos no pueden alcanzar esta máquina. Conéctela a la red del club y vuelva a iniciar la visualización."
         }
     },
     "palette": {

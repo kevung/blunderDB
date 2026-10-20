@@ -48,8 +48,11 @@ un fichier sur le disque du directeur n'atteint pas un téléphone. L'ADR-0039 f
 - La liste de refus de l'ADR-0039 perd « tournois » pour la seule lecture de la page
   d'affichage ; la saisie d'un résultat depuis le web reste refusée.
 - Le QR code est produit en Go pur (`github.com/skip2/go-qrcode`, MIT), sans appel réseau.
-- L'adresse du QR est la première IPv4 non bouclée de la machine ; sur une machine à plusieurs
-  réseaux, ce peut ne pas être celle du club. L'adresse est affichée en clair à côté du QR.
+- Le QR pointe vers une IPv4 de réseau local, au choix du directeur parmi celles de la machine
+  (interfaces virtuelles — conteneurs, VPN — en dernier) ; sans aucune, le panneau le dit et
+  ne dessine pas de QR vers 127.0.0.1.
+- L'affichage est lié au fichier ouvert : ouvrir, créer ou fermer un fichier l'arrête, car le
+  même identifiant désignerait un autre tournoi.
 - La page sert dans la langue du catalogue de la Direction, pas dans celle du téléphone.
 
 ## Garde
