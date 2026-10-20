@@ -14,11 +14,18 @@ func pushPositionIDsPastEstimate(t *testing.T, db *Database) {
 	if _, err := db.db.Exec(`UPDATE sqlite_sequence SET seq = ? WHERE name = 'position'`, EstimateExactBelow+1000); err != nil {
 		t.Fatalf("sqlite_sequence: %v", err)
 	}
+	saveFreshPosition(t, db, 3)
+}
+
+// saveFreshPosition writes a position no other call writes, forgetting the
+// cached blunder count.
+func saveFreshPosition(t *testing.T, db *Database, away int) {
+	t.Helper()
 	pos := InitializePosition()
 	pos.Dice = [2]int{6, 5}
-	pos.Score = [2]int{3, 2}
+	pos.Score = [2]int{away, 2}
 	if _, err := db.SavePosition(&pos); err != nil {
-		t.Fatalf("SavePosition: %v", err)
+		t.Errorf("SavePosition: %v", err)
 	}
 }
 
@@ -82,5 +89,57 @@ func TestCloseCancelsBlunderRecount(t *testing.T) {
 	db.recount.mu.Unlock()
 	if running != nil {
 		t.Fatal("a recount is still registered after Close")
+	}
+}
+
+// A write landing while the recount runs forgets what it is about to cache,
+// and the estimate asked meanwhile finds that run already there: the run must
+// count once more, or the counter stays at "?" with nothing left to restart it.
+func TestRecountRunsAgainAfterAWriteDuringIt(t *testing.T) {
+	db := newTestDBWithXG(t)
+	exact, err := db.GetDatabaseStats()
+	if err != nil {
+		t.Fatalf("GetDatabaseStats: %v", err)
+	}
+	pushPositionIDsPastEstimate(t, db)
+
+	ready := make(chan struct{}, 1)
+	SetBlunderCountReady(db, func() {
+		select {
+		case ready <- struct{}{}:
+		default:
+		}
+	})
+	rounds := 0
+	db.recount.mu.Lock()
+	db.recount.afterRound = func() {
+		rounds++
+		if rounds > 1 {
+			return
+		}
+		saveFreshPosition(t, db, 4)
+		if _, err := db.GetDatabaseStatsEstimate(); err != nil {
+			t.Errorf("GetDatabaseStatsEstimate during the recount: %v", err)
+		}
+	}
+	db.recount.mu.Unlock()
+
+	if _, err := db.GetDatabaseStatsEstimate(); err != nil {
+		t.Fatalf("GetDatabaseStatsEstimate: %v", err)
+	}
+	select {
+	case <-ready:
+	case <-time.After(30 * time.Second):
+		t.Fatal("a write during the recount left the count unknown for good")
+	}
+	if rounds != 2 {
+		t.Errorf("rounds = %d, want 2", rounds)
+	}
+	again, err := db.GetDatabaseStatsEstimate()
+	if err != nil {
+		t.Fatalf("GetDatabaseStatsEstimate: %v", err)
+	}
+	if again["blunder_count"] != exact["blunder_count"] {
+		t.Fatalf("blunder_count = %v, want the exact %v", again["blunder_count"], exact["blunder_count"])
 	}
 }
