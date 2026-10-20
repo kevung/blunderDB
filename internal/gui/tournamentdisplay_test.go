@@ -221,3 +221,43 @@ func TestChooseAddress_PrefersTheAskedThenTheFirst(t *testing.T) {
 		}
 	}
 }
+
+// A vacuum by file replacement closes the connection the engines' Storage borrowed: the
+// assistant and the display must rebuild on the new one rather than serve its errors.
+func TestLiveEngines_AnswerAfterAVacuumBySwap(t *testing.T) {
+	db := database.NewDatabase()
+	a := NewApp(db)
+	t.Cleanup(a.stopDisplay)
+	t.Cleanup(a.stopMCP)
+	t.Cleanup(func() { _ = db.Close() })
+	openDemo(t, a, db)
+	list, err := db.ListDirections()
+	if err != nil || len(list) == 0 {
+		t.Fatalf("the demo file must hold a Direction: %v", err)
+	}
+	body := fmt.Sprintf(`{"tournamentId":%d}`, list[0].TournamentID)
+	// The assistant reaches the engine as the MCP server does, tenant 1; the display through
+	// its own handler, which sets the tenant itself.
+	headers := map[string]string{"Content-Type": "application/json", "X-Tenant-ID": "1"}
+	handlers := map[string]http.Handler{
+		"assistant": &a.mcp.engine,
+		"display":   displayHandler(&a.display.engine, list[0].TournamentID),
+	}
+	ask := func(when string) {
+		t.Helper()
+		for name, h := range handlers {
+			if r := serveDisplay(h, http.MethodPost, displayRoute, body, headers); r.Code != http.StatusOK {
+				t.Fatalf("%s %s: code=%d body=%.200s", name, when, r.Code, r.Body.String())
+			}
+		}
+	}
+	ask("before the vacuum")
+	first := a.mcp.engine.srv
+	if _, err := db.Vacuum(); err != nil {
+		t.Fatal(err)
+	}
+	ask("after the vacuum")
+	if a.mcp.engine.srv == first {
+		t.Error("the swap must rebuild the engine on the new connection")
+	}
+}
