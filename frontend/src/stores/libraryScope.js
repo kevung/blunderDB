@@ -44,6 +44,7 @@ import { positionBeforeFilterLibraryStore, positionIndexBeforeFilterLibraryStore
 import { rankedDistancesStore, rankedTargetStore } from './rankedStore.js';
 import { rolloutStore, idleRollout } from './rolloutStore.js';
 import { databaseReadOnlyStore } from './databaseStore.js';
+import { commandHistoryStore } from './commandHistoryStore.js';
 
 /**
  * @typedef {import('svelte/store').Writable<any>} AnyWritable
@@ -146,7 +147,9 @@ export const RELOADED = {
     filterLibraryStore: [filterLibraryStore, () => []],
     transcriptionListStore: [transcriptionListStore, () => []],
     duelListStore: [duelListStore, () => []],
-    directionSummariesStore: [directionSummariesStore, () => []]
+    directionSummariesStore: [directionSummariesStore, () => []],
+    // The status bar reads it again each time the command line opens.
+    commandHistoryStore: [commandHistoryStore, () => []]
 };
 
 /** Read again by another mechanism when the library changes. */
@@ -231,7 +234,6 @@ export const OUTSIDE = [
     'panelPositionStore',
     'effectivePositionStore',
     'panelWidthStore',
-    'commandHistoryStore',
     'skipDuplicatesStore',
     'rolloutChoiceStore',
     'statsMetricStore',

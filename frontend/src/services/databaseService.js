@@ -241,8 +241,10 @@ export async function openDatabaseByPath(filePath, { inNewGroup } = {}) {
     if (holder) {
         const groups = await import('../stores/libraryGroupStore.js');
         if (inNewGroup || holder !== get(groups.activeGroupId)) {
-            await groups.activateGroup(holder);
-            setStatusBarMessage(tMsg('libraryGroups.alreadyOpen', { name: getFilenameFromPath(filePath) }));
+            // A refused switch has already said why (a Duel, a training session, a job): keep it.
+            if (await groups.activateGroup(holder)) {
+                setStatusBarMessage(tMsg('libraryGroups.alreadyOpen', { name: getFilenameFromPath(filePath) }));
+            }
             return;
         }
     }
