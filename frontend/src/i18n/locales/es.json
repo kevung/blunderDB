@@ -1383,6 +1383,8 @@
         "clearMain": "Quitar"
     },
     "tabbedPanel": {
+        "loadFailed": "No se pudo cargar este panel. Recargue la ventana o ábralo de nuevo.",
+        "reload": "Recargar",
         "analysis": "Análisis",
         "comments": "Comentarios",
         "search": "Búsqueda",

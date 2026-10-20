@@ -1383,6 +1383,8 @@
         "clearMain": "解除"
     },
     "tabbedPanel": {
+        "loadFailed": "このパネルを読み込めませんでした。ウィンドウを再読み込みするか、もう一度開いてください。",
+        "reload": "再読み込み",
         "analysis": "分析",
         "comments": "コメント",
         "search": "検索",

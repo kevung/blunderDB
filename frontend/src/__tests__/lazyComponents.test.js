@@ -5,11 +5,13 @@
  */
 import { describe, test, expect } from 'vitest';
 import { get } from 'svelte/store';
-import { panels, modals, preloadDeferredComponents } from '../components/lazyComponents.js';
+import { panels, modals, preloadDeferredComponents, lazyRegistry } from '../components/lazyComponents.js';
 import { TABS } from '../services/tabCatalog.js';
 
 // The first import of a component compiles it and its whole subtree: slow on a loaded runner.
 const SLOW = 60000;
+
+const lazyRegistryForTest = (loader) => lazyRegistry({ x: loader });
 
 describe('lazyComponents', () => {
     test('nothing is loaded before it is asked for', () => {
@@ -43,4 +45,14 @@ describe('lazyComponents', () => {
         },
         SLOW
     );
+
+    test('a failed fetch is reported, then retried on the next load', async () => {
+        let calls = 0;
+        const registry = lazyRegistryForTest(() => (++calls === 1 ? Promise.reject(new Error('net')) : Promise.resolve({ default: () => {} })));
+        await registry.load('x');
+        expect(get(registry.failed).has('x')).toBe(true);
+        await registry.load('x');
+        expect(get(registry.failed).has('x')).toBe(false);
+        expect(typeof get(registry.components).x).toBe('function');
+    });
 });

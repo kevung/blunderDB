@@ -1383,6 +1383,8 @@
         "clearMain": "Retirer"
     },
     "tabbedPanel": {
+        "loadFailed": "Ce panneau n'a pas pu être chargé. Rechargez la fenêtre ou rouvrez-le.",
+        "reload": "Recharger",
         "analysis": "Analyse",
         "comments": "Commentaires",
         "search": "Recherche",

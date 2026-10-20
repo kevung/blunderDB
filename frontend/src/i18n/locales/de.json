@@ -1383,6 +1383,8 @@
         "clearMain": "Entfernen"
     },
     "tabbedPanel": {
+        "loadFailed": "Dieses Panel konnte nicht geladen werden. Fenster neu laden oder erneut öffnen.",
+        "reload": "Neu laden",
         "analysis": "Analyse",
         "comments": "Kommentare",
         "search": "Suche",
