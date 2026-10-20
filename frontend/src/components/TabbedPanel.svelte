@@ -19,19 +19,14 @@
     import { TABS } from '../services/tabCatalog.js';
     import ContextMenu from './ContextMenu.svelte';
 
-    import AnalysisPanel from './AnalysisPanel.svelte';
-    import CommentPanel from './CommentPanel.svelte';
-    import SearchPanel from './SearchPanel.svelte';
-    import CollectionPanel from './CollectionPanel.svelte';
-    import MetadataPanel from './MetadataPanel.svelte';
-    import MatchPanel from './MatchPanel.svelte';
-    import TournamentPanel from './TournamentPanel.svelte';
-    import StatsPanel from './stats/StatsPanel.svelte';
-    import EvalPanel from './EvalPanel.svelte';
-    import AnkiPanel from './AnkiPanel.svelte';
-    import TrainingPanel from './TrainingPanel.svelte';
-    import DuelPanel from './DuelPanel.svelte';
-    import TranscriptionPanel from './TranscriptionPanel.svelte';
+    // Each panel is its own chunk, fetched when its tab is first shown (lazyComponents.js).
+    import { panels } from './lazyComponents.js';
+
+    const loadedPanels = panels.components;
+    $effect(() => {
+        panels.load($activeTabStore);
+    });
+    const Panel = $derived($loadedPanels[$activeTabStore]);
 
     // Props passed through to panels
     let { onLoadPositionsByFilters, onCloseAnalysis, onCloseComment, onOpenCollection, onAddToFilterLibrary } = $props();
@@ -357,32 +352,18 @@
     {/if}
 
     <div class="tab-content" class:folded={$duelFoldedStore} data-testid="tab-content" role="tabpanel">
-        {#if $activeTabStore === 'analysis'}
-            <AnalysisPanel onClose={onCloseAnalysis} />
+        {#if !Panel}
+            <!-- The tab's chunk is still on its way (a click before the idle preload finished). -->
+        {:else if $activeTabStore === 'analysis'}
+            <Panel onClose={onCloseAnalysis} />
         {:else if $activeTabStore === 'comments'}
-            <CommentPanel visible={true} onClose={onCloseComment} />
+            <Panel visible={true} onClose={onCloseComment} />
         {:else if $activeTabStore === 'search'}
-            <SearchPanel {onLoadPositionsByFilters} {onAddToFilterLibrary} />
+            <Panel {onLoadPositionsByFilters} {onAddToFilterLibrary} />
         {:else if $activeTabStore === 'collections'}
-            <CollectionPanel {onOpenCollection} />
-        {:else if $activeTabStore === 'anki'}
-            <AnkiPanel />
-        {:else if $activeTabStore === 'training'}
-            <TrainingPanel />
-        {:else if $activeTabStore === 'duel'}
-            <DuelPanel />
-        {:else if $activeTabStore === 'matches'}
-            <MatchPanel />
-        {:else if $activeTabStore === 'tournaments'}
-            <TournamentPanel />
-        {:else if $activeTabStore === 'stats'}
-            <StatsPanel />
-        {:else if $activeTabStore === 'eval'}
-            <EvalPanel />
-        {:else if $activeTabStore === 'transcription'}
-            <TranscriptionPanel />
-        {:else if $activeTabStore === 'metadata'}
-            <MetadataPanel />
+            <Panel {onOpenCollection} />
+        {:else}
+            <Panel />
         {/if}
     </div>
 </div>

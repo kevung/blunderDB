@@ -82,9 +82,13 @@
 
     /* Two font families, not one per component: the UI's own type (an alias for the
        stack `body` sets below — components can depend on the token without repeating
-       the eleven-name fallback list), and monospace, for XGIDs, PIP counts and other
-       fixed-width figures. */
-    --font-family-ui: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'Noto Sans JP', sans-serif;
+       the fallback list), and monospace, for XGIDs, PIP counts and other fixed-width
+       figures. The UI stack stays short: the first layout runs before Nunito has loaded,
+       and on Linux every absent family is a fontconfig miss — a per-platform list
+       (-apple-system, Segoe UI, Cantarell…) cost a quarter of a second at startup.
+       system-ui names the desktop's own font on every platform, and covers the Greek
+       and Cyrillic glyphs Nunito (latin only) lacks. */
+    --font-family-ui: 'Nunito', system-ui, 'Noto Sans JP', sans-serif;
     --font-family-mono: 'Consolas', 'Monaco', 'Courier New', monospace;
 
     /* A 4px-based spacing scale and the one corner radius, for new layout code — not

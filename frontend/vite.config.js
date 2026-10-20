@@ -4,6 +4,14 @@ import { svelte } from '@sveltejs/vite-plugin-svelte';
 // https://vitejs.dev/config/
 export default defineConfig({
     plugins: [svelte({ compilerOptions: { runes: true } })],
+    server: {
+        // The panels and modals load on first use (src/components/lazyComponents.js). The
+        // dev server compiles a module when first asked: warming them at start keeps a first
+        // click (and an e2e spec) from waiting seconds on a whole subtree's transform.
+        warmup: {
+            clientFiles: ['./src/components/*Panel.svelte', './src/components/*Modal.svelte', './src/components/stats/StatsPanel.svelte']
+        }
+    },
     build: {
         chunkSizeWarningLimit: 1000,
         rollupOptions: {
