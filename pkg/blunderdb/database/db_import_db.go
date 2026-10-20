@@ -193,8 +193,14 @@ func loadImportedComments(db queryer, positionID int64, signed bool) ([]imported
 	return out, rows.Err()
 }
 
+// ErrImportIsOpenDatabase refuses to merge the open library into itself.
+var ErrImportIsOpenDatabase = errors.New("the file to import is the database already open")
+
 // AnalyzeImportDatabase analyzes what would be imported without making changes
 func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interface{}, error) {
+	if d.IsOpenDatabase(importPath) {
+		return nil, ErrImportIsOpenDatabase
+	}
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
@@ -555,6 +561,9 @@ func (r *importRun) addNew(id int64, importPosition *Position, sourceIndividual 
 
 // CommitImportDatabase performs the actual import within a transaction (ACID)
 func (d *Database) CommitImportDatabase(importPath string) (map[string]interface{}, error) {
+	if d.IsOpenDatabase(importPath) {
+		return nil, ErrImportIsOpenDatabase
+	}
 	ctx, done := d.beginCancellableImport()
 	defer done()
 

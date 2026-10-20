@@ -1040,7 +1040,22 @@ champs, l'export ne porte aucun filigrane ; les demander sans identité
 configurée échoue avec le code ``invalid``, comme un ``password`` : le démon
 ne rend pas de conteneur chiffré. ``positions`` remet des positions entières,
 enregistrées ou non, à la place de ``positionIDs``. ``metadata`` est refusé :
-le démon n'écrit dans le fichier que sa date de création et le filigrane. ``exportPath`` est ignoré. Une clé
+le démon n'écrit dans le fichier que sa date de création et le filigrane.
+``"incremental": true`` n'exporte que ce qui est entré dans le tenant depuis
+le dernier export incrémental sous le même ``syncCursor`` (``default`` s'il
+est absent), et avance ce repère dans le tenant quand le fichier est construit
+(voir :ref:`synchroniser_deux_machines`). Le repère avance **avant** que le
+client ait reçu le fichier : un téléchargement interrompu ne se rejoue pas en
+renvoyant la même requête, qui ne porterait plus ces lignes. Pour rattraper,
+demandez un export entier (sans ``incremental``), ou un export incrémental
+sous un nouveau ``syncCursor``, qui repart de zéro ; l'import étant
+idempotent, ce recouvrement ne crée aucun doublon. Sur PostgreSQL, un import
+concurrent peut rendre visibles après coup des lignes numérotées sous le
+repère : un repère n'y est donc tenu pour sûr qu'une fois finies toutes les
+transactions de la base en cours quand il a été lu, quelle que soit leur durée,
+et chaque export incrémental renvoie aussi ce que portait le précédent.
+L'en-tête de compte rendu porte ``"syncHeld": true`` quand des lignes ont été
+écartées : le repère n'a alors pas avancé. ``exportPath`` est ignoré. Une clé
 que les options ne connaissent pas, ou écrite avec une autre casse
 (``collectionIds``), est refusée avec le code ``invalid``, qui la nomme. La
 réponse porte, dans l'en-tête ``X-Blunderdb-Export-Report``, le compte en JSON
@@ -2161,6 +2176,12 @@ passent par l'API ``/v1`` du démon que nomme ``--dsn``, avec le tenant de
 proxy placé devant lui décide. Une méthode dont le stockage n'a pas de route
 ``/v1`` (une transaction, un service de direction ou de transcription) répond
 une erreur interne qui la nomme.
+
+Un export incrémental (``"incremental": true``) par ``--backend remote``
+devient un export entier : ce stockage ne sait pas dire quand les transactions
+du démon sont finies, donc son repère ne s'établit jamais (voir
+:ref:`synchroniser_deux_machines`). Pour un export incrémental, appelez le
+démon directement.
 
 ``call`` sert les gestes de transcription sans drapeau : il travaille sur un
 fichier local, comme la CLI. Chaque appel est un processus neuf, donc sa propre

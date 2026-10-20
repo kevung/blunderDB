@@ -138,6 +138,12 @@ type ExportOptions struct {
 	Metadata  map[string]string
 	Watermark string
 	Password  string
+
+	// Sync, when set, makes this an incremental export: the Selection holds
+	// what entered the library since Sync's cursor, and ExportSQLite advances
+	// that cursor in the source's metadata once the file is complete
+	// (ADR-0096). PlanExport only counts and leaves it alone.
+	Sync *SyncAdvance
 }
 
 // Importer reads a Source and writes its contents through Storage, emitting

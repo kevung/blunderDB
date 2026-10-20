@@ -14,6 +14,11 @@
 // watch does NOT import what the folder already holds: that is the separate,
 // explicit folder import.
 //
+// A native .db is reported too: it is how another machine's incremental
+// export arrives (ADR-0096), and the caller merges it. Unlike a match, a .db
+// already in the folder when the watch starts is offered as well. An export
+// is renamed into place whole, so its temporary name is never reported.
+//
 // Stable means "seen twice with the same size and modification time". A file
 // being written by another program grows between two polls, and importing a
 // half-written match would produce a parse error the user cannot act on.
@@ -55,10 +60,20 @@ type Watcher struct {
 	reported map[string]bool
 	// pending holds files seen once but not yet stable.
 	pending map[string]fileState
+	// skip, when set, names files never to report — the library open in
+	// the caller, which a watched folder may hold and must not merge into
+	// itself. It is asked at every poll, so it follows the caller's state.
+	skip func(path string) bool
 }
 
+// Skip makes the watch pass over every file skip accepts. It is not
+// remembered as reported: a file skipped now is offered once skip lets it
+// through.
+func (w *Watcher) Skip(skip func(path string) bool) { w.skip = skip }
+
 // New starts a watch on dir. Everything already in the directory is recorded
-// as seen and will never be reported.
+// as seen and will never be reported — except native .db files, which the
+// first polls offer.
 //
 // An unreadable directory is an error here rather than on the first poll, so
 // a mistyped path is refused while the user is still looking at the setting.
@@ -84,6 +99,14 @@ func New(dir string) (*Watcher, error) {
 		return nil, err
 	}
 	for path := range present {
+		// A .db already there is another machine's export that arrived while
+		// nobody watched — the usual case with a synchronised folder. It is
+		// offered like a new file: merging it again is idempotent, and
+		// skipping it would lose it for good, since the receiver records
+		// nothing of what it read (ADR-0007, ADR-0096).
+		if ingest.IsLibraryFile(path) {
+			continue
+		}
 		w.reported[path] = true
 	}
 	return w, nil
@@ -122,6 +145,10 @@ func (w *Watcher) Poll() ([]string, error) {
 		if w.reported[path] {
 			continue
 		}
+		if w.skip != nil && w.skip(path) {
+			delete(w.pending, path)
+			continue
+		}
 		before, seen := w.pending[path]
 		switch {
 		case !seen:
@@ -154,7 +181,7 @@ func (w *Watcher) scan() (map[string]fileState, error) {
 			continue
 		}
 		path := filepath.Join(w.dir, e.Name())
-		if !ingest.IsImportable(path) {
+		if !ingest.IsImportable(path) && !ingest.IsLibraryFile(path) {
 			continue
 		}
 		info, err := e.Info()

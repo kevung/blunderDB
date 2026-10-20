@@ -10,6 +10,7 @@
     import { tournamentsStore } from '../stores/tournamentStore';
     import { exportCollectionCoverageStore } from '../stores/exportModalStore.js';
     import { ListLessons } from '../../wailsjs/go/database/Database.js';
+    import { OpenSyncFolderDialog } from '../../wailsjs/go/gui/App.js';
     import { logger } from '../utils/logger.js';
     import { t } from '../i18n';
 
@@ -80,6 +81,8 @@
      * @property {string} [watermarkNote]
      * @property {boolean} [passwordEnabled]
      * @property {string} [password]
+     * @property {boolean} [incremental]
+     * @property {string} [syncFolder]
      */
 
     // The prop is a plain object Svelte 5 cannot track, so options are mirrored in
@@ -186,7 +189,17 @@
     // A ticked mechanism with an empty field blocks the export rather than silently doing nothing.
     let missingOrigin = $derived(exportOptions.watermarkEnabled && !(exportOptions.watermark || '').trim());
     let missingPassword = $derived(exportOptions.passwordEnabled && !(exportOptions.password || ''));
-    let cannotExport = $derived(missingOrigin || missingPassword);
+    let missingSyncFolder = $derived(!!exportOptions.wholeLibrary && !!exportOptions.incremental && !exportOptions.syncFolder);
+    let cannotExport = $derived(missingOrigin || missingPassword || missingSyncFolder);
+
+    async function chooseSyncFolder() {
+        try {
+            const folder = await OpenSyncFolderDialog($t('export.syncFolderDialogTitle'));
+            if (folder) exportOptions.syncFolder = folder;
+        } catch (error) {
+            logger.error('could not choose the sync folder:', error);
+        }
+    }
     let tournaments = $derived($tournamentsStore || []);
 
     // How many of a collection's positions the current selection actually covers, and
@@ -377,6 +390,19 @@
                     <label class="check"
                         ><input type="radio" id="export-scope-library" name="export-scope" checked={!!exportOptions.wholeLibrary} onchange={() => setScope(true)} />{$t('export.scopeLibrary')}</label
                     >
+                </FormRow>
+            {/if}
+            {#if exportOptions.wholeLibrary}
+                <!-- What entered the library since the last export to this folder, for another
+                     machine that watches it (ADR-0096). -->
+                <FormRow label={$t('export.rowSync')} for="export-incremental">
+                    <label class="check" title={$t('export.incrementalHint')}
+                        ><input type="checkbox" id="export-incremental" bind:checked={exportOptions.incremental} />{$t('export.incremental')}</label
+                    >
+                    {#if exportOptions.incremental}
+                        <button type="button" id="export-sync-folder" class:invalid={missingSyncFolder} onclick={chooseSyncFolder}>{$t('export.chooseSyncFolder')}</button>
+                        {#if exportOptions.syncFolder}<span class="count" data-testid="export-sync-folder">{exportOptions.syncFolder}</span>{/if}
+                    {/if}
                 </FormRow>
             {/if}
             <FormRow label={$t('export.rowPositions')} for="export-analysis">

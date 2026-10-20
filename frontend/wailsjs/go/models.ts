@@ -2183,6 +2183,8 @@ export namespace domain {
 	    lessonIDs: number[];
 	    deckIDs: number[];
 	    includeAnkiHistory: boolean;
+	    incremental: boolean;
+	    syncCursor: string;
 	    watermark: string;
 	    watermarkNote: string;
 	    password: string;
@@ -2217,6 +2219,8 @@ export namespace domain {
 	        this.lessonIDs = source["lessonIDs"];
 	        this.deckIDs = source["deckIDs"];
 	        this.includeAnkiHistory = source["includeAnkiHistory"];
+	        this.incremental = source["incremental"];
+	        this.syncCursor = source["syncCursor"];
 	        this.watermark = source["watermark"];
 	        this.watermarkNote = source["watermarkNote"];
 	        this.password = source["password"];

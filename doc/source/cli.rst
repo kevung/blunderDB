@@ -222,6 +222,10 @@ erreur syntaxique sur laquelle personne ne peut agir. Le dossier n'est pas
 parcouru récursivement. Un partage réseau devenu illisible n'arrête pas la
 surveillance, et son contenu ne passe pas pour nouveau à son retour.
 
+Une base ``.db`` qui apparaît dans le dossier est fusionnée comme par
+``import --type database`` : c'est ainsi qu'arrive l'export incrémental d'une
+autre machine (voir :ref:`synchroniser_deux_machines`).
+
 Ctrl-C arrête entre deux fichiers, jamais au milieu de l'un : le fichier en
 cours finit son import et son compte rendu s'affiche avant que la commande ne
 rende la main.
@@ -420,6 +424,13 @@ Exporte le contenu de la base vers des fichiers.
   d'usage, contact) ; utilisé avec ``--watermark``.
 * ``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` (document
   résumant l'export: chemin, taille en octets, nombres).
+* ``--incremental`` — Avec ``--type database`` : n'exporte que ce qui est entré
+  dans la bibliothèque depuis le dernier export incrémental vers le même
+  dossier, puis avance ce repère dans la base exportée. ``--file`` peut alors
+  être un dossier, où un fichier ``sync-<machine>-<date>.db`` est créé (voir
+  :ref:`synchroniser_deux_machines`).
+* ``--sync-cursor`` — Avec ``--incremental`` : nom du repère lu et avancé, à la
+  place du dossier de destination.
 * ``--plan`` — Avec ``--type database`` ou ``matches`` : compte, famille par
   famille, ce que l'export écrirait, sans écrire de fichier (``--file`` est
   alors facultatif). Les comptes sont ceux que l'export rapporte ensuite ; les
@@ -453,6 +464,10 @@ qui n'a pas encore produit de match ne part que si tous les matchs partent.
    ./blunderdb export --db base.db --type mat --match-ids 5 --file match5.mat
    ./blunderdb export --db base.db --type mat --match-ids 5,9,12 --dir sorties/
    ./blunderdb export --db base.db --type mat --dir sorties/
+
+   # Ce qui est nouveau depuis le dernier export vers ce dossier, pour une
+   # autre machine qui le surveille
+   ./blunderdb export --db base.db --type database --incremental --file ~/Sync/vers-portable/
 
    # .dbx : filigrané et protégé par mot de passe
    ./blunderdb export --db cours.db --type database --file cours-diffusion.dbx \

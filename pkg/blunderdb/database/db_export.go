@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"path/filepath"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 )
@@ -34,6 +36,9 @@ func (d *Database) ExportDatabaseCtx(ctx context.Context, opts ExportOptions) (i
 		return ingest.ExportReport{}, fmt.Errorf("cannot sign the watermark: %w", err)
 	}
 
+	if opts.Incremental {
+		opts.ExportPath = SyncExportPath(opts.ExportPath, time.Now())
+	}
 	plan, err := d.exportPlan(ctx, opts)
 	if err != nil {
 		return ingest.ExportReport{}, err
@@ -84,7 +89,52 @@ func (d *Database) PlanExportIDs(opts ExportOptions, family string, offset, limi
 // exportPlan maps the GUI's and the CLI's options onto what ingest exports, through the
 // reading the daemon shares (ingest.OptionsFor).
 func (d *Database) exportPlan(ctx context.Context, opts ExportOptions) (ingest.ExportOptions, error) {
+	opts.SyncCursor = SyncCursorFor(opts)
 	return ingest.OptionsFor(ctx, d.store, "", opts)
+}
+
+// SyncCursorFor names the cursor an incremental export of the desktop or the CLI reads:
+// the caller's when given, else the destination folder, so that each folder another
+// machine watches keeps its own "last synchronised" mark (ADR-0096).
+// ExportPath may name the folder itself, as it does before SyncExportPath picks the file.
+func SyncCursorFor(opts ExportOptions) string {
+	if !opts.Incremental || opts.SyncCursor != "" || opts.ExportPath == "" {
+		return opts.SyncCursor
+	}
+	dir := opts.ExportPath
+	if !isDir(dir) {
+		dir = filepath.Dir(dir)
+	}
+	if abs, err := filepath.Abs(dir); err == nil {
+		dir = abs
+	}
+	return dir
+}
+
+// SyncExportPath names the file an incremental export writes when its destination is a
+// folder; a file path is kept as given. Each name is new because a watched folder reports
+// a file name once: a second export under the same name would never be imported there.
+func SyncExportPath(path string, now time.Time) string {
+	if !isDir(path) {
+		return path
+	}
+	host, _ := os.Hostname()
+	if host == "" {
+		host = "blunderdb"
+	}
+	stem := filepath.Join(path, fmt.Sprintf("sync-%s-%s", host, now.Format("20060102-150405")))
+	name := stem + ".db"
+	for n := 2; ; n++ {
+		if _, err := os.Stat(name); os.IsNotExist(err) {
+			return name
+		}
+		name = fmt.Sprintf("%s-%d.db", stem, n)
+	}
+}
+
+func isDir(path string) bool {
+	info, err := os.Stat(path)
+	return err == nil && info.IsDir()
 }
 
 // MatchIDsReachedBy returns the matches whose moves were played in one of these positions:

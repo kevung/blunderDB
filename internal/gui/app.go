@@ -326,6 +326,16 @@ func (a *App) OpenPositionFolderDialog() (string, error) {
 	})
 }
 
+// OpenSyncFolderDialog asks for the folder an incremental export goes to — the one
+// another machine watches (ADR-0096). The title comes from the interface, in the
+// user's language.
+func (a *App) OpenSyncFolderDialog(title string) (string, error) {
+	return runtime.OpenDirectoryDialog(a.ctx, runtime.OpenDialogOptions{
+		Title:                title,
+		CanCreateDirectories: true,
+	})
+}
+
 // OpenDirectionOutputDialog asks for the folder the tournament display page
 // is written into. Chosen once per Direction and remembered; after that the
 // display refreshes without a gesture.

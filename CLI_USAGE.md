@@ -3387,6 +3387,8 @@ Options:
     	Include filter library in database export (default: true) (default true)
   -format string
     	Output format: text or json (default "text")
+  -incremental
+    	Database export: only what entered the library since the last incremental export to the same folder (or --sync-cursor); --file may then be a folder, where a dated file name is chosen
   -lesson-ids string
     	Comma-separated list of lesson IDs to export (empty = all)
   -lessons
@@ -3407,6 +3409,8 @@ Options:
     	Print one page of the source ids behind a --plan count, for a family: positions, comments, matches, tournaments, directions, rencontres, collections, lessons, ankiDecks, transcriptions, filters
   -played-moves
     	Include played moves in analysis (default: true) (default true)
+  -sync-cursor string
+    	With --incremental: name of the cursor to read and advance (default: the destination folder)
   -tournament-ids string
     	Comma-separated list of tournament IDs to export (empty = all)
   -tournaments
@@ -3457,6 +3461,9 @@ Examples:
   # Mark the exported file with its origin, and protect it with a password
   blunderdb export --db database.db --type database --file cours.db \
       --watermark "Cours de Jean Dupont - 12 mars 2026" --password secret
+
+  # Send another machine what entered the library since the last sync to this folder
+  blunderdb export --db database.db --type database --incremental --file ~/Sync/blunderdb/
 
   # Count what an export would carry, without writing it
   blunderdb export --db database.db --type database --tournament-ids=1 --plan

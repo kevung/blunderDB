@@ -38,6 +38,9 @@ func WholeLibraryOptions() domain.ExportOptions {
 // some ids is then taken out of it. Anything else is a list of positions, and the
 // matches it carries are, unless named, those its positions were played in.
 func OptionsFor(ctx context.Context, src storage.Storage, scope string, opts domain.ExportOptions) (ExportOptions, error) {
+	if opts.Incremental {
+		return incrementalOptions(ctx, src, scope, opts)
+	}
 	if opts.WholeLibrary {
 		return wholeLibraryOptions(opts), nil
 	}

@@ -32,6 +32,7 @@ import { databasePathStore } from '../stores/databaseStore.js';
 import { positionsStore } from '../stores/positionStore.js';
 import { activeModal, statusBarTextStore } from '../stores/uiStore.js';
 import { ExportDatabase } from '../../wailsjs/go/database/Database.js';
+import { OpenExportDatabaseDialog } from '../../wailsjs/go/gui/App.js';
 
 beforeEach(() => {
     // The stores live for the module's lifetime; without this the options chosen by one
@@ -120,5 +121,28 @@ describe('a successful export', () => {
         const sent = vi.mocked(ExportDatabase).mock.calls[0][0];
         expect(sent.watermark).toBe('');
         expect(sent.password).toBe('');
+    });
+
+    test('an incremental export of the library goes to its folder without asking for a file', async () => {
+        await exportDatabase();
+        exportOptionsStore.update((o) => ({ ...o, wholeLibrary: true, incremental: true, syncFolder: '/sync/vers-portable' }));
+        await handleExportCommit();
+
+        expect(vi.mocked(OpenExportDatabaseDialog)).not.toHaveBeenCalled();
+        const sent = vi.mocked(ExportDatabase).mock.calls[0][0];
+        expect(sent.incremental).toBe(true);
+        expect(sent.exportPath).toBe('/sync/vers-portable');
+        // The folder is offered again the next time the dialog opens.
+        expect(get(exportOptionsStore).syncFolder).toBe('/sync/vers-portable');
+    });
+
+    test('a list export is never incremental', async () => {
+        await exportDatabase();
+        exportOptionsStore.update((o) => ({ ...o, wholeLibrary: false, incremental: true, syncFolder: '/sync/x' }));
+        await handleExportCommit();
+
+        const sent = vi.mocked(ExportDatabase).mock.calls[0][0];
+        expect(sent.incremental).toBe(false);
+        expect(sent.exportPath).toBe('/tmp/export.db');
     });
 });

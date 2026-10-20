@@ -44,6 +44,9 @@ func (a *App) StartFolderWatch(dir string, intervalSeconds int) (WatchStatus, er
 	if err != nil {
 		return WatchStatus{}, err
 	}
+	if a.db != nil {
+		w.Skip(a.db.IsOpenDatabase)
+	}
 	interval := watch.ClampInterval(time.Duration(intervalSeconds) * time.Second)
 
 	a.folderWatch.mu.Lock()

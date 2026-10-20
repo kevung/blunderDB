@@ -117,6 +117,8 @@ export function OpenPositionFilesDialog():Promise<Array<string>>;
 
 export function OpenPositionFolderDialog():Promise<string>;
 
+export function OpenSyncFolderDialog(arg1:string):Promise<string>;
+
 export function OpenVideoExternally(arg1:string,arg2:number):Promise<void>;
 
 export function OpeningBookGrade(arg1:openingbook.Answer):Promise<openingbook.Verdict>;

@@ -33,7 +33,8 @@ import {
     exportCollectionCoverageStore,
     exportDecksStore,
     exportScopeStore,
-    resetExportState
+    resetExportState,
+    rememberSyncFolder
 } from '../stores/exportModalStore.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { logger } from '../utils/logger.js';
@@ -221,8 +222,14 @@ export async function buildExportOptions(exportOptions, exportPath) {
     const decks = family(exportOptions.includeAnkiDecks, exportOptions.deckIDs, get(exportDecksStore) || []);
     // A tournament carries its matches: their drafts and aliases follow them as well.
     const someMatches = matches.include || tournaments.include;
+    // An incremental export goes to a folder, which names its cursor; the backend picks a
+    // new file name in it each time.
+    const incremental = wholeLibrary && !!exportOptions.incremental && !!exportOptions.syncFolder;
     const baseOptions = {
-        exportPath,
+        exportPath: incremental ? exportOptions.syncFolder : exportPath,
+        incremental,
+        // The backend names the cursor after the folder.
+        syncCursor: '',
         // The library is the daemon's whole-tenant export (ExportOptions.WholeLibrary); a
         // list goes as identifiers, not positions: the whole set can be tens of MB of JSON
         // on the UI thread.
@@ -289,10 +296,16 @@ export async function handleExportCommit(plan = null) {
     // The file is asked for last, once what goes into it is settled; dismissing the
     // dialog returns to the form.
     let exportPath = '';
-    try {
-        exportPath = await OpenExportDatabaseDialog();
-    } catch (error) {
-        logger.error('Error choosing the export path:', error);
+    const chosen = get(exportOptionsStore);
+    if (chosen.wholeLibrary && chosen.incremental && chosen.syncFolder) {
+        exportPath = chosen.syncFolder;
+        rememberSyncFolder(chosen.syncFolder);
+    } else {
+        try {
+            exportPath = await OpenExportDatabaseDialog();
+        } catch (error) {
+            logger.error('Error choosing the export path:', error);
+        }
     }
     if (!exportPath) {
         logger.log('No export path selected');

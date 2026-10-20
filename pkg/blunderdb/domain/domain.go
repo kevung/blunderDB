@@ -668,6 +668,17 @@ type ExportOptions struct {
 	// study copies.
 	IncludeAnkiHistory bool `json:"includeAnkiHistory"`
 
+	// Incremental exports only what entered the library since the last
+	// incremental export under the same SyncCursor, then advances that cursor
+	// in the PRODUCER's metadata (ADR-0096). The selection fields above are
+	// ignored; each Include… flag still drops its family. Filters and Anki
+	// decks never leave in an incremental export: they are not additions.
+	Incremental bool `json:"incremental"`
+	// SyncCursor names the cursor an incremental export reads and advances:
+	// one per destination. The desktop and the CLI default it to the
+	// destination folder; the daemon to "default".
+	SyncCursor string `json:"syncCursor"`
+
 	// Watermark, WatermarkNote and Password are the two optional mechanisms an export can
 	// carry: a signed statement of where the file comes from, and an encrypted container
 	// around it. Both are chosen by the producer, both are independent, and the recipient's
