@@ -54,7 +54,7 @@ test('LOCALES list matches the shipped locale files', () => {
 });
 
 describe.each(Object.keys(locales).filter((c) => c !== 'en'))('locale %s', (code) => {
-    const flat = flatten(locales[code]);
+    const flat = flatten(/** @type {Record<string, any>} */ (locales)[code]);
     const keys = Object.keys(flat).sort();
 
     test('has exactly the English key set', () => {

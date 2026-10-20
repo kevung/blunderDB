@@ -360,6 +360,18 @@ export namespace database {
 		}
 	}
 	
+	export class Database {
+	
+	
+	    static createFrom(source: any = {}) {
+	        return new Database(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	
+	    }
+	}
 	export class DuelOffer {
 	    cadences: duel.Cadence[];
 	    botLevels: string[];
@@ -4589,11 +4601,13 @@ export namespace gui {
 	        this.running = source["running"];
 	        this.tournamentId = source["tournamentId"];
 	        this.addresses = source["addresses"];
+	        this.publicAddresses = source["publicAddresses"];
 	        this.address = source["address"];
 	        this.url = source["url"];
 	        this.localUrl = source["localUrl"];
 	        this.qr = source["qr"];
 	        this.error = source["error"];
+	        this.errorPort = source["errorPort"];
 	    }
 	}
 	export class UpdateCheckResult {
@@ -4797,6 +4811,7 @@ export namespace ingest {
 	    directions: number;
 	    slots: number;
 	    rencontres: number;
+	    syncHeld?: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new ExportReport(source);
@@ -4826,6 +4841,7 @@ export namespace ingest {
 	        this.directions = source["directions"];
 	        this.slots = source["slots"];
 	        this.rencontres = source["rencontres"];
+	        this.syncHeld = source["syncHeld"];
 	    }
 	}
 	export class FileOutcome {
@@ -4953,6 +4969,90 @@ export namespace ingest {
 	        this.rehomed_comments = source["rehomed_comments"];
 	        this.kept_comments = source["kept_comments"];
 	        this.dry_run = source["dry_run"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class Summary {
+	    savedPositions: number;
+	    skippedDuplicates: number;
+	    matches: number;
+	    matchId?: number;
+	    enriched?: number;
+	    collections?: number;
+	    livingCollectionsSkipped?: string[];
+	    livingCollectionsFrozen?: string[];
+	    livingCollectionsOnManual?: string[];
+	    tournaments?: number;
+	    transcriptions?: number;
+	    aliases?: number;
+	    directions?: number;
+	    rencontres?: number;
+	    unreadable?: string[];
+	    lessons?: number;
+	    decks?: number;
+	    flagsApplied?: number;
+	    deepened?: number;
+	    droppedAnalyses?: number;
+	    batchId?: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new Summary(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.savedPositions = source["savedPositions"];
+	        this.skippedDuplicates = source["skippedDuplicates"];
+	        this.matches = source["matches"];
+	        this.matchId = source["matchId"];
+	        this.enriched = source["enriched"];
+	        this.collections = source["collections"];
+	        this.livingCollectionsSkipped = source["livingCollectionsSkipped"];
+	        this.livingCollectionsFrozen = source["livingCollectionsFrozen"];
+	        this.livingCollectionsOnManual = source["livingCollectionsOnManual"];
+	        this.tournaments = source["tournaments"];
+	        this.transcriptions = source["transcriptions"];
+	        this.aliases = source["aliases"];
+	        this.directions = source["directions"];
+	        this.rencontres = source["rencontres"];
+	        this.unreadable = source["unreadable"];
+	        this.lessons = source["lessons"];
+	        this.decks = source["decks"];
+	        this.flagsApplied = source["flagsApplied"];
+	        this.deepened = source["deepened"];
+	        this.droppedAnalyses = source["droppedAnalyses"];
+	        this.batchId = source["batchId"];
+	    }
+	}
+	export class TransferReport {
+	    exported: ExportReport;
+	    imported: Summary;
+	
+	    static createFrom(source: any = {}) {
+	        return new TransferReport(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.exported = this.convertValues(source["exported"], ExportReport);
+	        this.imported = this.convertValues(source["imported"], Summary);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -7535,20 +7635,6 @@ export namespace storage {
 	        this.aliases = source["aliases"];
 	    }
 	}
-	export class CrawfordRepair {
-	    rehashed: number;
-	    signaturesUnverified: number;
-	
-	    static createFrom(source: any = {}) {
-	        return new CrawfordRepair(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.rehashed = source["rehashed"];
-	        this.signaturesUnverified = source["signaturesUnverified"];
-	    }
-	}
 	export class CollectionEvaluation {
 	    collectionId: number;
 	    living: boolean;
@@ -7611,6 +7697,20 @@ export namespace storage {
 	        this.times_a = source["times_a"];
 	        this.times_b = source["times_b"];
 	        this.well_played = source["well_played"];
+	    }
+	}
+	export class CrawfordRepair {
+	    rehashed: number;
+	    signaturesUnverified: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new CrawfordRepair(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.rehashed = source["rehashed"];
+	        this.signaturesUnverified = source["signaturesUnverified"];
 	    }
 	}
 	export class DecisionLoss {

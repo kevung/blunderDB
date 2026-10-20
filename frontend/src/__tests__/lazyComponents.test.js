@@ -11,6 +11,7 @@ import { TABS } from '../services/tabCatalog.js';
 // The first import of a component compiles it and its whole subtree: slow on a loaded runner.
 const SLOW = 60000;
 
+/** @param {() => Promise<any>} loader */
 const lazyRegistryForTest = (loader) => lazyRegistry({ x: loader });
 
 describe('lazyComponents', () => {

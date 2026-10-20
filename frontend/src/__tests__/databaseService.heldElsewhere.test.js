@@ -1,3 +1,4 @@
+// @ts-nocheck — doublures de test : les signatures typées (Wails, stores) exigent des objets complets.
 /**
  * Opening a file another library group holds brings that group forward instead. When the switch
  * is refused (a Duel, a training session, a job), the status bar keeps the reason, not a claim

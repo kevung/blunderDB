@@ -107,7 +107,7 @@ export const PHOTOGRAPHED = {
     rankedTargetStore: [rankedTargetStore, () => 0],
     // The Matches list as it was painted: a return repaints nothing, and the list is read again
     // only when the library's match count moved meanwhile (refreshAfterShow).
-    matchListStore: [matchListStore, () => emptyMatchList()],
+    matchListStore: [/** @type {any} */ (matchListStore), () => emptyMatchList()],
     rolloutStore: [rolloutStore, () => idleRollout()],
     databaseReadOnlyStore: [databaseReadOnlyStore, () => false]
 };

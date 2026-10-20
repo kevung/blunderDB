@@ -113,8 +113,11 @@ const noop = () => {};
  *   cache: Map<number, Position>, absent: Set<number>, settled: WeakMap<IdSource, number> }} LibraryState
  */
 
+/** @type {(ids: number[]) => Promise<Position[]>} */
+const noLoader = async () => [];
+
 export function createPositionList({
-    loader = async () => [],
+    loader = noLoader,
     windowSize = DEFAULT_WINDOW_SIZE,
     cacheSize = DEFAULT_CACHE_SIZE,
     batchSize = DEFAULT_BATCH_SIZE,
@@ -142,6 +145,7 @@ export function createPositionList({
     const pending = new Map();
     /** @type {Set<number>} ids a fetch asked for and did not get back (deleted) */
     const absent = new Set();
+    /** @type {(ids: number[]) => Promise<Position[]>} */
     let loadFn = loader;
     let loaderCalls = 0;
     // Bumped when another library takes the list (exchangeLibrary): a fetch sent for the

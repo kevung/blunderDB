@@ -63,7 +63,7 @@
 
     // Sorting state for checker analysis table
     let sortColumn = $state('equity'); // default sort by equity
-    let sortDirection = $state('desc'); // default highest to lowest
+    let sortDirection = $state(/** @type {'asc'|'desc'} */ ('desc')); // default highest to lowest
 
     // Auto-switch tab based on current move type in match mode
     $effect(() => {
@@ -296,7 +296,7 @@
     function handleSort(column) {
         const next = nextSort(sortColumn, sortDirection, column, {
             // Default direction: desc for numeric, asc for string
-            defaultDir: sortableColumns[column].type === 'string' ? 'asc' : 'desc'
+            defaultDir: /** @type {'asc'|'desc'} */ (sortableColumns[column].type === 'string' ? 'asc' : 'desc')
         });
         sortColumn = next.column;
         sortDirection = next.direction;

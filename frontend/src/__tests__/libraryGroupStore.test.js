@@ -1,3 +1,4 @@
+// @ts-nocheck — doublures de test : les signatures typées (Wails, stores) exigent des objets complets.
 /**
  * Library groups: several libraries open, one group of tabs each. A switch must be instant: the
  * group comes back from its photograph (views, list, position cache, search, counts) with no

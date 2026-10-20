@@ -20,6 +20,6 @@ test.each(LOCALES)('the %s help bundle loads and fills every tab', async (lang) 
     expect(h.failed).toBe(false);
     expect(h.ready).toBe(true);
     for (const tab of ['manual', 'shortcuts', 'commands', 'about']) {
-        expect(h[tab].length, `${lang}/${tab}`).toBeGreaterThan(100);
+        expect(/** @type {any} */ (h)[tab].length, `${lang}/${tab}`).toBeGreaterThan(100);
     }
 });

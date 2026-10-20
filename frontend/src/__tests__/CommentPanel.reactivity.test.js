@@ -1,3 +1,4 @@
+// @ts-nocheck — doublures de test : les signatures typées (Wails, stores) exigent des objets complets.
 /**
  * CommentPanel.reactivity.test.js
  *

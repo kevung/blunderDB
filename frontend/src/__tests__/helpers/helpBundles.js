@@ -1,3 +1,4 @@
+// @ts-nocheck — doublures de test : les signatures typées (Wails, stores) exigent des objets complets.
 // The help bundles are gzip-compressed JSON under public/help/ (written by cmd/help-gen).
 // Tests read them straight from disk.
 import fs from 'node:fs';

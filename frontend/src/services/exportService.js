@@ -322,12 +322,14 @@ export async function handleExportCommit(plan = null) {
         // Both mechanisms are plain export options: the watermark is sealed and written by
         // the backend, and a password wraps the finished file. Neither changes anything
         // about what is exported.
-        const report = await ExportDatabase({
-            ...baseOptions,
-            watermark: exportOptions.watermarkEnabled ? (exportOptions.watermark || '').trim() : '',
-            watermarkNote: exportOptions.watermarkEnabled ? (exportOptions.watermarkNote || '').trim() : '',
-            password: exportOptions.passwordEnabled ? exportOptions.password || '' : ''
-        });
+        const report = await ExportDatabase(
+            /** @type {any} */ ({
+                ...baseOptions,
+                watermark: exportOptions.watermarkEnabled ? (exportOptions.watermark || '').trim() : '',
+                watermarkNote: exportOptions.watermarkEnabled ? (exportOptions.watermarkNote || '').trim() : '',
+                password: exportOptions.passwordEnabled ? exportOptions.password || '' : ''
+            })
+        );
 
         logger.log('Export completed successfully');
 
