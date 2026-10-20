@@ -79,6 +79,8 @@ export function GetMCPHostStatus():Promise<gui.MCPHostStatus>;
 
 export function GetTournamentDisplayStatus():Promise<gui.TournamentDisplayStatus>;
 
+export function HelpBundle(arg1:string):Promise<string>;
+
 export function ImportFiles(arg1:Array<string>):Promise<gui.ImportFilesSummary>;
 
 export function ImportIssuerIdentity(arg1:string,arg2:string):Promise<domain.IssuerIdentityInfo>;

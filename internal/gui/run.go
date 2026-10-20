@@ -19,6 +19,7 @@ import (
 // is the database the OS passed on the command line, "" if none.
 func Run(assets embed.FS, icon []byte, width, height int, db *database.Database, extraBinds []interface{}, startupFilePath string) error {
 	app := NewApp(db)
+	app.assets = assets
 	app.startupFilePath = startupFilePath
 	for _, bind := range extraBinds {
 		if c, ok := bind.(AssistantConsent); ok {

@@ -1,6 +1,7 @@
 import { logger } from '../../utils/logger.js';
 import { language, LOCALES, FALLBACK_LOCALE } from '../index.js';
 import { writable, derived } from 'svelte/store';
+import { HelpBundle } from '../../../wailsjs/go/gui/App.js';
 
 // Every help bundle (manual/shortcuts/commands/about HTML, ~1.5 MB uncompressed since
 // the manual tab became a rendering of manuel.rst), English included, is fetched on
@@ -12,9 +13,11 @@ import { writable, derived } from 'svelte/store';
 //
 // A bundle is a gzip-compressed JSON file under public/help/ (written by cmd/help-gen),
 // so that the binary, which embeds the built frontend as is, carries ~0.3x of the text.
-// It is inflated here with DecompressionStream, available in every engine Wails uses
-// (WebKitGTK >= 2.40, WKWebView >= 16.4, WebView2). A response that is already plain
-// JSON (a server or a test that inflated it) is read as is.
+// It is inflated here with DecompressionStream (WebKitGTK >= 2.40, WKWebView >= 16.4,
+// Chromium). Older WebViews the app still supports (WebKitGTK 2.36, macOS 11) lack it:
+// the Go binding HelpBundle inflates the same embedded file instead. Without bindings
+// (serve mode) a current browser is required. A response that is already plain JSON
+// (a server or a test that inflated it) is read as is.
 const maps = {};
 
 // Bumped whenever a lazily-loaded help bundle lands, so the derived `help`
@@ -24,11 +27,11 @@ const helpVersion = writable(0);
 const failed = new Set();
 
 async function fetchBundle(lang) {
+    if (typeof DecompressionStream === 'undefined') return JSON.parse(await HelpBundle(lang));
     const response = await fetch(`${import.meta.env.BASE_URL}help/${lang}.bin`);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const bytes = new Uint8Array(await response.arrayBuffer());
     const gzipped = bytes[0] === 0x1f && bytes[1] === 0x8b;
-    if (gzipped && typeof DecompressionStream === 'undefined') throw new Error('DecompressionStream is not available');
     const text = gzipped ? await new Response(new Response(bytes).body.pipeThrough(new DecompressionStream('gzip'))).text() : new TextDecoder().decode(bytes);
     return JSON.parse(text);
 }

@@ -142,6 +142,10 @@ export function GetTournamentDisplayStatus() {
   return window['go']['gui']['App']['GetTournamentDisplayStatus']();
 }
 
+export function HelpBundle(arg1) {
+  return window['go']['gui']['App']['HelpBundle'](arg1);
+}
+
 export function ImportFiles(arg1) {
   return window['go']['gui']['App']['ImportFiles'](arg1);
 }

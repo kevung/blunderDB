@@ -12,6 +12,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"io"
+	"io/fs"
 	"log"
 	"os"
 	"os/exec"
@@ -41,6 +42,8 @@ type App struct {
 	// db is used only by jobs that need both the database and Wails events
 	// (the gammonNet batch); other App methods stay database-free.
 	db *database.Database
+	// assets is the embedded frontend, where the compressed help bundles live (HelpBundle).
+	assets fs.FS
 	// emitHook, when set, receives the background jobs' events in place of
 	// Wails: a test has no window to listen on. Atomic because a test sets
 	// it while a queued batch may already be emitting.

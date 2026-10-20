@@ -33,6 +33,7 @@ var boundAppMethods = []string{
 	"ImportFiles",
 	"ConfigureMCPHost",
 	"GetMCPHostStatus",
+	"HelpBundle",
 	"StartTournamentDisplay",
 	"StopTournamentDisplay",
 	"GetTournamentDisplayStatus",
