@@ -23,7 +23,7 @@ dev:
 	wails dev -tags webkit2_41
 
 build:
-	wails build -tags webkit2_41 -ldflags "-X github.com/kevung/blunderdb/internal/cli.appVersion=$(VERSION)"
+	wails build -trimpath -tags webkit2_41 -ldflags "-X github.com/kevung/blunderdb/internal/cli.appVersion=$(VERSION)"
 
 # main.go embeds frontend/dist; a checkout that never built the frontend has
 # no such directory and every Go command dies on the embed pattern. A stub is

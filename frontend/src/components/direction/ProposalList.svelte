@@ -50,7 +50,16 @@
 
     /* Compte à rebours d'une micro-ronde : un battement de seconde, sans événement. */
     let tick = $state(Date.now());
+    const counting = $derived(
+        proposals.some((a) => {
+            if (a.kind !== 'wait' || !a.until) return false;
+            const at = new Date(a.until).getTime();
+            return Number.isFinite(at) && at >= 946684800000;
+        })
+    );
     $effect(() => {
+        if (!counting) return;
+        tick = Date.now();
         const timer = setInterval(() => (tick = Date.now()), 1000);
         return () => clearInterval(timer);
     });

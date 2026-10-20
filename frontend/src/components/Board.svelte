@@ -554,7 +554,7 @@
 
     // Les doutes ne survivent pas à EDIT : la lecture n'y est qu'une proposition.
     $effect(() => {
-        if ($statusBarModeStore !== 'EDIT') captureDoubtsStore.set([]);
+        if ($statusBarModeStore !== 'EDIT' && get(captureDoubtsStore).length > 0) captureDoubtsStore.set([]);
     });
 
     // Les doutes d'une lecture de capture : numérotation ABSOLUE, donc `mirrored`.

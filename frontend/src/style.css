@@ -60,6 +60,10 @@ body {
     src:
         local(''),
         url('assets/fonts/NotoSansJP-Regular.woff2') format('woff2');
+    /* Ce que le sous-ensemble contient au-delà du latin : kana, ponctuation et formes
+       pleine largeur, plus les kanji de l'interface japonaise (CJK unifié). Le latin
+       reste à Nunito ; la fonte ne se télécharge que si une page l'utilise. */
+    unicode-range: U+3000-30FF, U+3400-9FFF, U+FF00-FFEF;
 }
 
 /* No inherited centring: text starts at the start edge, and the few blocks that are
