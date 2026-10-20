@@ -653,6 +653,58 @@ La même surveillance existe en ligne de commande, avec
 c'est la forme qu'un serveur, une tâche planifiée ou un script peuvent
 utiliser.
 
+.. _synchroniser_deux_machines:
+
+Synchroniser deux machines
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Copier sa base ``.db`` d'une machine à l'autre, ou la ranger dans un dossier
+synchronisé (Syncthing, Dropbox…), finit par l'abîmer : SQLite écrit à côté de
+la base des fichiers de journal qu'une synchronisation de fichiers recopie dans
+le désordre. blunderDB synchronise plutôt deux bibliothèques par **exports
+incrémentaux** déposés dans un dossier que l'autre machine **surveille**. Le
+transport est à votre choix — Syncthing, clé USB, courriel : il n'y a ni
+serveur ni compte.
+
+* Sur la machine A, dans la fenêtre d'export, choisissez *Toute la
+  bibliothèque*, cochez *Seulement ce qui est nouveau depuis le dernier export
+  vers ce dossier* et désignez le dossier avec **Choisir le dossier…**. Chaque
+  export y écrit un fichier ``sync-<machine>-<date>.db`` qui ne contient que ce
+  qui est entré dans la bibliothèque depuis l'export précédent vers ce même
+  dossier ; le premier contient tout.
+* Sur la machine B, faites de ce dossier le :ref:`dossier surveillé
+  <dossier_surveille>`. Chaque fichier ``.db`` qui y apparaît est fusionné sans
+  aperçu, comme par l'import d'une base : une position déjà connue n'est pas
+  dupliquée, un match déjà connu est reconnu, les collections et les leçons se
+  fusionnent par leur nom.
+* Faites de même dans l'autre sens, avec un second dossier.
+
+Ce qu'il faut savoir :
+
+* **Le repère « dernière synchronisation » est chez celui qui exporte**, un par
+  dossier de destination, et n'avance que lorsque le fichier est complet. La
+  machine qui reçoit n'enregistre rien. Un export qui échoue laisse le repère en
+  place : le suivant emporte les mêmes lignes.
+* **La synchronisation se fait par ajout seul.** Une suppression ne se propage
+  pas : supprimer un match sur A ne le supprime pas sur B. Une modification en
+  place non plus : un commentaire réécrit, un match renommé, une analyse refaite
+  sur une position déjà envoyée. Partent les positions, matchs, tournois,
+  collections et leçons entrés depuis le dernier export ; une collection repart
+  aussi quand une position y a été ajoutée. Les filtres enregistrés et les
+  paquets Anki n'en font pas partie : un export de *Toute la bibliothèque* sans
+  la case les emporte.
+* **Ce qu'une machine a reçu repart une fois vers l'autre**, puisque c'est
+  nouveau dans sa bibliothèque ; l'autre le reconnaît sans rien ajouter, et
+  l'échange suivant est vide.
+* **Un export n'est jamais vu à moitié écrit** : il est écrit sous un nom caché
+  puis renommé d'un coup. Un fichier protégé par mot de passe (``.dbx``) n'est
+  pas pris par la surveillance, qui ne peut pas demander le mot de passe.
+
+En ligne de commande, ``blunderdb export --type database --incremental --file
+<dossier>`` d'un côté et ``blunderdb import --type batch --dir <dossier>
+--watch`` de l'autre (voir :ref:`cli`). Le serveur accepte ``"incremental":
+true`` sur ``/v1/exports.sqlite`` (voir :ref:`headless`).
+
 .. _assistant_mcp:
 
 Assistant et MCP
@@ -5217,7 +5269,7 @@ la grille. Une progression
 se superpose ensuite le temps de l'écriture, la fenêtre se ferme d'elle-même et
 le résultat s'affiche dans la barre d'état.
 
-Huit points méritent l'attention :
+Neuf points méritent l'attention :
 
 * **La portée** : depuis une liste — une recherche, une collection —, la ligne
   *Portée* choisit entre la *Liste courante* et *Toute la bibliothèque*. La
@@ -5228,6 +5280,12 @@ Huit points méritent l'attention :
   ``export --type database`` : toutes les familles sont cochées d'emblée, les
   paquets Anki avec leur historique de révision, et les transcriptions en
   cours partent avec le reste.
+* **La synchronisation** : avec *Toute la bibliothèque*, la ligne
+  *Synchronisation* propose *Seulement ce qui est nouveau depuis le dernier
+  export vers ce dossier* et le bouton **Choisir le dossier…**. Le fichier
+  n'est alors plus demandé : il est écrit dans ce dossier sous un nom neuf, et
+  les comptes sont ceux de ce qui est nouveau (voir
+  :ref:`synchroniser_deux_machines`).
 * **Un match part avec son brouillon de transcription**, sous la case
   *Transcriptions* de la ligne *Matchs*, cochée d'emblée ; les matchs qu'un
   tournoi emporte aussi. Un brouillon qui n'a pas encore produit de match ne

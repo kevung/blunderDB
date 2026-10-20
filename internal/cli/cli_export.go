@@ -42,6 +42,8 @@ func (cli *CLI) runExport(args []string) error {
 	watermark := exportCmd.String("watermark", "", "Mark the exported file with where it comes from, e.g. \"Cours de Jean Dupont - 12 mars 2026\"")
 	watermarkNote := exportCmd.String("watermark-note", "", "Free text attached to the watermark (terms of use, contact)")
 	password := exportCmd.String("password", "", "Protect the exported file with a password (produces a .dbx container)")
+	incremental := exportCmd.Bool("incremental", false, "Database export: only what entered the library since the last incremental export to the same folder (or --sync-cursor); --file may then be a folder, where a dated file name is chosen")
+	syncCursor := exportCmd.String("sync-cursor", "", "With --incremental: name of the cursor to read and advance (default: the destination folder)")
 	format := exportCmd.String("format", "text", "Output format: text or json")
 	planCounts := exportCmd.Bool("plan", false, "Print what a database or matches export would write, family by family, without writing a file")
 	planIDs := exportCmd.String("plan-ids", "", "Print one page of the source ids behind a --plan count, for a family: positions, comments, matches, tournaments, directions, rencontres, collections, lessons, ankiDecks, transcriptions, filters")
@@ -93,6 +95,9 @@ func (cli *CLI) runExport(args []string) error {
 		fmt.Println("  # Mark the exported file with its origin, and protect it with a password")
 		fmt.Println("  blunderdb export --db database.db --type database --file cours.db \\")
 		fmt.Println("      --watermark \"Cours de Jean Dupont - 12 mars 2026\" --password secret")
+		fmt.Println()
+		fmt.Println("  # Send another machine what entered the library since the last sync to this folder")
+		fmt.Println("  blunderdb export --db database.db --type database --incremental --file ~/Sync/blunderdb/")
 		fmt.Println()
 		fmt.Println("  # Count what an export would carry, without writing it")
 		fmt.Println("  blunderdb export --db database.db --type database --tournament-ids=1 --plan")
@@ -200,6 +205,8 @@ func (cli *CLI) runExport(args []string) error {
 			MatchIDs:              matchIDs,
 			TournamentIDs:         tournamentIDs,
 			DeckIDs:               deckIDs,
+			Incremental:           *incremental,
+			SyncCursor:            *syncCursor,
 		}
 		if plan.counts {
 			return cli.printExportPlan(opts, plan, text)

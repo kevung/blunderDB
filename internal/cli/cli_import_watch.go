@@ -7,6 +7,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/watch"
 )
 
@@ -67,10 +68,14 @@ func (cli *CLI) importWatch(dirPath, format string, interval time.Duration, fail
 }
 
 // importOneWatched imports one file through the `import --type match` path,
-// whose duplicate detection recognises a file rewritten in place.
+// whose duplicate detection recognises a file rewritten in place. A .db is
+// another machine's incremental export, merged as `import --type database`.
 func (cli *CLI) importOneWatched(path, format string) error {
 	if format != "json" {
 		fmt.Printf("── %s\n", path)
+	}
+	if ingest.IsLibraryFile(path) {
+		return cli.importDatabase(path, format)
 	}
 	return cli.importMatch(path, format)
 }

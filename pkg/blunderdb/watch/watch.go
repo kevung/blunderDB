@@ -14,6 +14,10 @@
 // watch does NOT import what the folder already holds: that is the separate,
 // explicit folder import.
 //
+// A native .db is reported too: it is how another machine's incremental
+// export arrives (ADR-0096), and the caller merges it. An export is renamed
+// into place whole, so its temporary name is never reported.
+//
 // Stable means "seen twice with the same size and modification time". A file
 // being written by another program grows between two polls, and importing a
 // half-written match would produce a parse error the user cannot act on.
@@ -154,7 +158,7 @@ func (w *Watcher) scan() (map[string]fileState, error) {
 			continue
 		}
 		path := filepath.Join(w.dir, e.Name())
-		if !ingest.IsImportable(path) {
+		if !ingest.IsImportable(path) && !ingest.IsLibraryFile(path) {
 			continue
 		}
 		info, err := e.Info()

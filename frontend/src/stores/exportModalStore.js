@@ -13,6 +13,14 @@ export const exportMetadataStore = writable({
     dateOfCreation: ''
 });
 
+// The folder an incremental export last went to: kept across openings of the dialog, so
+// that synchronising again is one tick (ADR-0096). The cursor itself lives in the library.
+let lastSyncFolder = '';
+/** @param {string} folder */
+export function rememberSyncFolder(folder) {
+    lastSyncFolder = folder;
+}
+
 function defaultOptions() {
     return {
         // The current list, or the whole library (the daemon's export).
@@ -45,7 +53,10 @@ function defaultOptions() {
         watermark: '',
         watermarkNote: '',
         passwordEnabled: false,
-        password: ''
+        password: '',
+        // Only what entered the library since the last incremental export to syncFolder.
+        incremental: false,
+        syncFolder: lastSyncFolder
     };
 }
 

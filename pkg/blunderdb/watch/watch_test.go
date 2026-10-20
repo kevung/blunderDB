@@ -103,6 +103,27 @@ func TestWatcherIgnoresWhatItCannotImport(t *testing.T) {
 	}
 }
 
+// Another machine's incremental export arrives as a .db and is reported; the
+// name it is written under until complete is not.
+func TestWatcherReportsAnIncomingLibraryButNotItsPartialFile(t *testing.T) {
+	dir := t.TempDir()
+	w, err := New(dir)
+	if err != nil {
+		t.Fatalf("New: %v", err)
+	}
+	write(t, dir, ".sync.db.part", 10, time.Hour)
+	write(t, dir, "sync.db", 10, time.Hour)
+
+	_, _ = w.Poll()
+	got, err := w.Poll()
+	if err != nil {
+		t.Fatalf("Poll: %v", err)
+	}
+	if len(got) != 1 || filepath.Base(got[0]) != "sync.db" {
+		t.Fatalf("got %v, want only sync.db", got)
+	}
+}
+
 // A temporary file another program renames away must not stay in the
 // watcher's memory for the life of the watch.
 func TestWatcherForgetsAFileThatVanishes(t *testing.T) {

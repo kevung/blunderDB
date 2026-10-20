@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"path/filepath"
 	"slices"
 	"sort"
 	"strconv"
@@ -179,9 +180,23 @@ func ExportSQLite(ctx context.Context, src storage.Storage, scope, path string, 
 		}()
 	}
 
-	report, err := writeExport(ctx, src, scope, path, opts)
+	// An incremental export lands in a folder another machine may be
+	// watching, and the target is written without a journal: build it under
+	// a name no watch reports and rename it whole, so a half-written file is
+	// never imported.
+	writePath := path
+	if opts.Sync != nil {
+		writePath = filepath.Join(filepath.Dir(path), "."+filepath.Base(path)+".part")
+		defer func() { _ = os.Remove(writePath) }()
+	}
+	report, err := writeExport(ctx, src, scope, writePath, opts)
 	if err != nil {
 		return report, err
+	}
+	if writePath != path {
+		if err := os.Rename(writePath, path); err != nil {
+			return report, fmt.Errorf("ingest: move the export into place: %w", err)
+		}
 	}
 	report.Path = finalPath
 
@@ -197,6 +212,13 @@ func ExportSQLite(ctx context.Context, src storage.Storage, scope, path string, 
 	}
 	if report.Skipped > 0 {
 		slog.Warn("export completed with some rows skipped", "skipped", report.Skipped, "path", finalPath)
+	}
+	// The cursor advances only once the file is whole: a failed export
+	// leaves it where it was, and the next one carries the same rows again.
+	if opts.Sync != nil {
+		if err := saveSyncMark(ctx, src, scope, opts.Sync); err != nil {
+			return report, err
+		}
 	}
 	return report, nil
 }

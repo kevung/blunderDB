@@ -39,3 +39,12 @@ func ImportableExtensions() []string {
 	sort.Strings(out)
 	return out
 }
+
+// IsLibraryFile reports whether path names a native blunderDB database, which
+// is merged rather than imported. It is kept apart from IsImportable: a folder
+// import walks a user's directories, where a .db is far more often their own
+// library than one to merge; only the watched folder, where another machine's
+// incremental export lands (ADR-0096), takes it.
+func IsLibraryFile(path string) bool {
+	return strings.EqualFold(filepath.Ext(path), ".db")
+}

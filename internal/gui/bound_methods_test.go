@@ -73,6 +73,7 @@ var boundAppMethods = []string{
 	"OpenLogsFolder",
 	"OpenPositionFilesDialog",
 	"OpenPositionFolderDialog",
+	"OpenSyncFolderDialog",
 	"MediaURL",
 	"CheckVideoMux",
 	"OpenVideoExternally",

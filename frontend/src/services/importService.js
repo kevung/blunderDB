@@ -812,18 +812,46 @@ export async function importMultipleFiles(files) {
 /**
  * Importe les fichiers vus par un dossier surveillé : le même import, sans
  * modale qui prendrait l'écran de l'utilisateur ; la barre de statut notifie.
+ * Une base .db y arrive d'un export incrémental d'une autre machine : elle est
+ * fusionnée sans aperçu, la fusion étant idempotente.
  *
  * @param {string[]} files
  * @returns {Promise<{succeeded: number, skipped: number, failed: number} | null>}
  */
 export async function importWatchedFiles(files) {
+    const isLibrary = (/** @type {string} */ f) => f.toLowerCase().endsWith('.db');
+    const merged = await mergeWatchedLibraries(files.filter(isLibrary));
+    const others = files.filter((f) => !isLibrary(f));
+    if (others.length === 0) return merged;
     try {
-        await importMultipleFilesCore(files, { quiet: true });
+        await importMultipleFilesCore(others, { quiet: true });
     } finally {
         await maybeAutoAnalyzeAfterImport();
     }
     const r = get(fileImportResultsStore);
-    return { succeeded: r.succeeded, skipped: r.skipped, failed: r.failed };
+    return { succeeded: r.succeeded + merged.succeeded, skipped: r.skipped + merged.skipped, failed: r.failed + merged.failed };
+}
+
+/**
+ * Fusionne les bases d'un dossier surveillé, une à une. Une base qui
+ * n'apporte rien compte comme ignorée, comme un match déjà connu.
+ *
+ * @param {string[]} libraries
+ */
+async function mergeWatchedLibraries(libraries) {
+    const counts = { succeeded: 0, skipped: 0, failed: 0 };
+    for (const path of libraries) {
+        try {
+            const result = await CommitImportDatabase(path);
+            if ((result?.added ?? 0) + (result?.matches ?? 0) > 0) counts.succeeded++;
+            else counts.skipped++;
+        } catch (error) {
+            logger.error('could not merge the watched database:', path, error);
+            counts.failed++;
+        }
+    }
+    if (counts.succeeded > 0) await reloadPositions();
+    return counts;
 }
 
 // beginImportBatch opens the batch the end-of-import report will be about,

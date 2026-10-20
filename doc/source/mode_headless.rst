@@ -1040,7 +1040,11 @@ champs, l'export ne porte aucun filigrane ; les demander sans identité
 configurée échoue avec le code ``invalid``, comme un ``password`` : le démon
 ne rend pas de conteneur chiffré. ``positions`` remet des positions entières,
 enregistrées ou non, à la place de ``positionIDs``. ``metadata`` est refusé :
-le démon n'écrit dans le fichier que sa date de création et le filigrane. ``exportPath`` est ignoré. Une clé
+le démon n'écrit dans le fichier que sa date de création et le filigrane.
+``"incremental": true`` n'exporte que ce qui est entré dans le tenant depuis
+le dernier export incrémental sous le même ``syncCursor`` (``default`` s'il
+est absent), et avance ce repère dans le tenant quand le fichier est construit
+(voir :ref:`synchroniser_deux_machines`). ``exportPath`` est ignoré. Une clé
 que les options ne connaissent pas, ou écrite avec une autre casse
 (``collectionIds``), est refusée avec le code ``invalid``, qui la nomme. La
 réponse porte, dans l'en-tête ``X-Blunderdb-Export-Report``, le compte en JSON

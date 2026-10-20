@@ -886,7 +886,18 @@ because the shares and synchronised directories these folders live on report no 
 events anyway, and a fallback that has to exist regardless is better as the only path than
 as the second one. It is a setting the user turns on and points somewhere; blunderDB never
 guesses where somebody's matches live.
-_Avoid_: auto-import, sync folder (nothing is synchronised, and nothing is written back)
+A native `.db` that appears is merged: it is how an *incremental export* from another
+machine arrives.
+_Avoid_: auto-import, sync folder (the folder itself synchronises nothing, and nothing is
+written back)
+
+**Incremental export**:
+An export of the whole library that carries only what entered it since the previous
+incremental export to the same destination (ADR-0096). The *sync cursor* that says "since"
+is the producer's — a high-water mark of row identifiers per family, kept in the exporting
+library's metadata, one per destination — and advances when the file is complete. Two
+libraries converge by exchanging these files; deletions and edits in place do not travel.
+_Avoid_: sync (nothing is reconciled), diff, delta
 
 **Assistant**:
 The in-app client of blunderDB's own MCP tools (ADR-0064): a sentence goes to a language
