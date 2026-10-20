@@ -375,7 +375,7 @@ func (s *matchStore) List(ctx context.Context, scope string, opts storage.MatchL
 		whereSQL, args := buildMatchListWhere(opts)
 		query := `SELECT ` + matchSelectCols + ` FROM match m
 			 LEFT JOIN tournament t ON m.tournament_id = t.id` + whereSQL +
-			` ORDER BY ` + domain.MatchOrderByClause(opts.Sort)
+			` ORDER BY ` + domain.MatchOrderByClauseWithDate(opts.Sort, domain.MatchSortDateSQLite)
 		switch {
 		case opts.Limit > 0:
 			query += ` LIMIT ?`

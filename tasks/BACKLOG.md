@@ -47,11 +47,11 @@ propre issue le jour où il est lancé.
   jour : tester `engine.CanonicalCubeAction` plutôt que les graphies littérales.
 - **Wrapper `Database` vers le contrat `Storage`, tranches 2 à 6** (ADR-0100 ; tranche 1, les
   écritures de match, faite). Chaque tranche délègue un groupe sans changer de comportement ;
-  un écart se tranche d'abord, avec son test. (2) lectures de match : `GetAllMatches` et le
-  repli de `GetLastVisitedMatch` traitent la date sentinelle `0001-01-01T00:00:00Z` comme une
-  absence de date, `List`/`LastVisited` non ; `GetPositionProvenance` n'a pas d'équivalent trié
-  par date ; `Moves` note le coup joué, `GetMovesByGame` non ; `GetMatchMovePositions` ne lit
-  pas `max_cube` (`MaxCube` = 0 au bureau et à la CLI, lu par `MovePositions` côté serveur).
+  un écart se tranche d'abord, avec son test. (2) lectures de match : `GetAllMatches` et
+  `GetMatchMovePositions` délèguent au contrat (date sentinelle triée comme une absence de
+  date, `MaxCube` lu) ; reste le repli de `GetLastVisitedMatch` (sentinelle, `LastVisited`
+  ne la traite pas) ; `GetPositionProvenance` n'a pas d'équivalent trié
+  par date ; `Moves` note le coup joué, `GetMovesByGame` non.
   (3) analyses : fusion de `saveAnalysisLocked`, coups joués de `LoadAnalysis`,
   `DeleteAnalysis` — avec l'item des quatre copies des helpers de fusion. (4) lots gammonNet
   (`positionIDsWithoutAnalysis[ForMatch]`, `db_gammonnet_compare.go`) et gardes d'import

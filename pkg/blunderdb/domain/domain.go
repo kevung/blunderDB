@@ -584,9 +584,21 @@ func SearchOrderByClause(sort string) string {
 // default most-recent-first order (play date, falling back to import date);
 // m.id is the stable tiebreaker so pagination is deterministic.
 func MatchOrderByClause(sort string) string {
+	return MatchOrderByClauseWithDate(sort, "COALESCE(m.match_date, m.import_date)")
+}
+
+// MatchSortDateSQLite is the date expression of a match order for SQLite,
+// where a match without a date is stored as NULL, ” or the zero time and all
+// three fall back to the import date. PostgreSQL stores the zero time as NULL
+// in a TIMESTAMPTZ column, which the default expression already covers.
+const MatchSortDateSQLite = "CASE WHEN m.match_date IS NULL OR m.match_date = '' OR m.match_date = '0001-01-01T00:00:00Z' THEN m.import_date ELSE m.match_date END"
+
+// MatchOrderByClauseWithDate is MatchOrderByClause with the date expression
+// of the "date" sorts chosen by the dialect.
+func MatchOrderByClauseWithDate(sort, dateExpr string) string {
 	switch sort {
 	case "date_asc": // oldest first
-		return "COALESCE(m.match_date, m.import_date) ASC, m.id ASC"
+		return dateExpr + " ASC, m.id ASC"
 	case "length_desc": // longest matches first
 		return "m.match_length DESC, m.id DESC"
 	case "length_asc":
@@ -606,7 +618,7 @@ func MatchOrderByClause(sort string) string {
 	case "opponent": // by player names, case-insensitive
 		return "LOWER(m.player1_name) ASC, LOWER(m.player2_name) ASC, m.id ASC"
 	default: // "date" / "" — most recent first
-		return "COALESCE(m.match_date, m.import_date) DESC, m.id DESC"
+		return dateExpr + " DESC, m.id DESC"
 	}
 }
 

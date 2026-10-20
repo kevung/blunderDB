@@ -19,35 +19,12 @@ func (d *Database) GetAllMatches() ([]Match, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
-	rows, err := d.db.Query(`
-		SELECT m.id, m.player1_name, m.player2_name, m.event, m.location, m.round, 
-		       m.match_length, m.match_date, m.import_date, m.file_path, m.game_count,
-		       m.tournament_id, COALESCE(t.name, '') as tournament_name,
-		       COALESCE(m.last_visited_position, -1) as last_visited_position,
-		       COALESCE(m.comment, '') as comment, COALESCE(m.comment_author, '') as comment_author
-		FROM match m
-		LEFT JOIN tournament t ON m.tournament_id = t.id
-		ORDER BY CASE WHEN m.match_date IS NULL OR m.match_date = '' OR m.match_date = '0001-01-01T00:00:00Z' THEN m.import_date ELSE m.match_date END DESC
-	`)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
 	var matches []Match
-	for rows.Next() {
-		var m Match
-		err := rows.Scan(&m.ID, &m.Player1Name, &m.Player2Name, &m.Event, &m.Location, &m.Round,
-			&m.MatchLength, &m.MatchDate, &m.ImportDate, &m.FilePath, &m.GameCount,
-			&m.TournamentID, &m.TournamentName, &m.LastVisitedPosition, &m.Comment, &m.CommentAuthor)
+	for m, err := range d.store.Matches().List(context.Background(), "", storage.MatchListOpts{}) {
 		if err != nil {
-			slog.Warn("scanning match", "err", err)
-			continue
+			return nil, err
 		}
-		matches = append(matches, m)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
+		matches = append(matches, *m)
 	}
 
 	if err := d.applyMatchBadges(matches); err != nil {
@@ -292,96 +269,16 @@ func (d *Database) GetMatchMovePositions(matchID int64) ([]MatchMovePosition, er
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
-	// Get match info for player names
-	var player1Name, player2Name string
-	err := d.db.QueryRow(`
-		SELECT player1_name, player2_name 
-		FROM match 
-		WHERE id = ?
-	`, matchID).Scan(&player1Name, &player2Name)
-	if err != nil {
-		return nil, fmt.Errorf("match not found: %w", err)
-	}
-
-	// Get all moves across all games in chronological order
-	// Join with game table to get game number and position table to get position data
-	rows, err := d.db.Query(`
-		SELECT 
-			m.id as move_id,
-			m.game_id,
-			g.game_number,
-			m.move_number,
-			`+sqlshared.ActionLabelSQL("m.move_type")+`,
-			m.player,
-			m.position_id,
-			p.state as position_state,
-			p.decision_type, p.player_on_roll, p.dice_1, p.dice_2,
-			p.cube_value, p.cube_owner, p.score_1, p.score_2,
-			p.has_jacoby, p.has_beaver,
-			COALESCE(m.checker_move, '') as checker_move,
-			`+sqlshared.ActionLabelOrEmptySQL("m.cube_action")+` as cube_action,
-			m.decision_ms, m.cube_decision_ms, m.roll_tick_ms, m.tick_ms
-		FROM move m
-		INNER JOIN game g ON m.game_id = g.id
-		INNER JOIN position p ON m.position_id = p.id
-		WHERE g.match_id = ?
-		ORDER BY g.game_number ASC, m.move_number ASC
-	`, matchID)
-	if err != nil {
-		return nil, fmt.Errorf("failed to query moves: %w", err)
-	}
-	defer rows.Close()
-
 	var movePositions []MatchMovePosition
-	for rows.Next() {
-		var moveID, gameID, positionID int64
-		var gameNumber, moveNumber, player int32
-		var moveType, positionState, checkerMove, cubeAction string
-		var pDT, pPOR, pD1, pD2, pCV, pCO, pS1, pS2, pHJ, pHB sql.NullInt64
-		var decisionMS, cubeDecisionMS, rollTick, tick sql.NullInt64
-
-		err := rows.Scan(&moveID, &gameID, &gameNumber, &moveNumber, &moveType, &player, &positionID, &positionState,
-			&pDT, &pPOR, &pD1, &pD2, &pCV, &pCO, &pS1, &pS2, &pHJ, &pHB,
-			&checkerMove, &cubeAction, &decisionMS, &cubeDecisionMS, &rollTick, &tick)
+	for mp, err := range d.store.Matches().MovePositions(context.Background(), "", matchID) {
+		if errors.Is(err, storage.ErrNotFound) {
+			return nil, fmt.Errorf("match not found: %w", err)
+		}
 		if err != nil {
-			slog.Warn("scanning move", "err", err)
-			continue
+			return nil, fmt.Errorf("failed to query moves: %w", err)
 		}
-
-		// Reconstruct position from compact state + denormalized columns
-		position := reconstructPosition(positionID, positionState,
-			int(pDT.Int64), int(pPOR.Int64), int(pD1.Int64), int(pD2.Int64),
-			int(pCV.Int64), int(pCO.Int64), int(pS1.Int64), int(pS2.Int64),
-			int(pHJ.Int64), int(pHB.Int64))
-
-		// Convert player from XG encoding (-1, 1) to blunderDB encoding (0, 1)
-		playerBlunderDB := convertXGPlayerToBlunderDB(player)
-
-		movePos := MatchMovePosition{
-			Position:     position,
-			MoveID:       moveID,
-			GameID:       gameID,
-			GameNumber:   gameNumber,
-			MoveNumber:   moveNumber,
-			MoveType:     moveType,
-			PlayerOnRoll: int32(playerBlunderDB), // Now 0 or 1
-			Player1Name:  player1Name,
-			Player2Name:  player2Name,
-			CheckerMove:  checkerMove,
-			CubeAction:   cubeAction,
-
-			DecisionMS:     sqlshared.NullableMS(decisionMS),
-			CubeDecisionMS: sqlshared.NullableMS(cubeDecisionMS),
-			RollTickMS:     sqlshared.NullableMS(rollTick),
-			TickMS:         sqlshared.NullableMS(tick),
-		}
-
-		movePositions = append(movePositions, movePos)
+		movePositions = append(movePositions, *mp)
 	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-
 	return movePositions, nil
 }
 
