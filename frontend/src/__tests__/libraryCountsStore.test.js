@@ -54,4 +54,11 @@ describe('compteur de bibliothèque', () => {
         await old;
         expect(get(libraryCountsStore)?.positions).toBe(2064);
     });
+
+    it("les demandes d'un même tour partagent une lecture", async () => {
+        estimate.mockResolvedValue({ position_count: 7, match_count: 1, blunder_count: 0, approximate: [] });
+        await Promise.all([refreshLibraryCounts(), refreshLibraryCounts(), refreshLibraryCounts()]);
+        expect(estimate).toHaveBeenCalledTimes(1);
+        expect(get(libraryCountsStore)?.positions).toBe(7);
+    });
 });
