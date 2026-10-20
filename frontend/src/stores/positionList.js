@@ -37,7 +37,7 @@ import { writable } from 'svelte/store';
 // count was still running (a view switched, a mode entered) carries the first page's length,
 // which this settles when the snapshot is read or put back.
 /** @type {WeakMap<IdSource, number>} */
-const settledLengths = new WeakMap();
+let settledLengths = new WeakMap();
 
 /** @param {{ source: IdSource, length: number, provisional?: boolean }} list */
 const snapshotLength = (list) => (list.provisional ? (settledLengths.get(list.source) ?? list.length) : list.length);
@@ -108,6 +108,11 @@ const noop = () => {};
  * @param {number} [options.idPageSize] ids per source call of a paged list.
  * @param {number} [options.idPages] most id pages a paged list keeps.
  */
+/**
+ * @typedef {{ ids: IdList, source: IdSource | null, pagedLength: number, idPageCache: Map<number, number[]>,
+ *   cache: Map<number, Position>, absent: Set<number>, settled: WeakMap<IdSource, number> }} LibraryState
+ */
+
 export function createPositionList({
     loader = async () => [],
     windowSize = DEFAULT_WINDOW_SIZE,
@@ -139,6 +144,9 @@ export function createPositionList({
     const absent = new Set();
     let loadFn = loader;
     let loaderCalls = 0;
+    // Bumped when another library takes the list (exchangeLibrary): a fetch sent for the
+    // previous one brings positions of another file under the same ids, and is dropped.
+    let libraryEpoch = 0;
 
     // ── Cache ────────────────────────────────────────────────────────────
 
@@ -316,9 +324,11 @@ export function createPositionList({
         if (missing.size === 0) return null;
         const batch = [...missing];
         loaderCalls++;
+        const lib = libraryEpoch;
         const request = Promise.resolve()
             .then(() => loadFn(batch))
             .then((rows) => {
+                if (lib !== libraryEpoch) return;
                 for (const row of rows || []) remember(row);
                 // A missing id no longer exists: remember it so browsing does not ask again.
                 for (const id of batch) if (!cache.has(id)) absent.add(id);
@@ -672,6 +682,33 @@ export function createPositionList({
                 cache.delete(id);
                 absent.delete(id);
             }
+        },
+
+        /**
+         * Hand the list, its pages, the position cache and the counted lengths to the library
+         * being left, and take `saved` (another library's, from an earlier call) or an empty
+         * state. Ids name rows of one file: two libraries never share a cache. Nothing is read;
+         * fetches still in flight for the library left are dropped.
+         * @param {LibraryState | null} saved
+         * @returns {LibraryState}
+         */
+        exchangeLibrary(saved) {
+            const out = { ids, source, pagedLength, idPageCache: new Map(idPageCache), cache: new Map(cache), absent: new Set(absent), settled: settledLengths };
+            libraryEpoch++;
+            dropIdPages();
+            pending.clear();
+            cache.clear();
+            absent.clear();
+            indexById = null;
+            ids = saved ? saved.ids : [];
+            source = saved ? saved.source : null;
+            pagedLength = saved ? saved.pagedLength : 0;
+            settledLengths = saved ? saved.settled : new WeakMap();
+            for (const [k, v] of saved?.idPageCache ?? []) idPageCache.set(k, v);
+            for (const [k, v] of saved?.cache ?? []) cache.set(k, v);
+            for (const id of saved?.absent ?? []) absent.add(id);
+            publish(snapshot(source ? null : ids, length()));
+            return out;
         },
 
         /**

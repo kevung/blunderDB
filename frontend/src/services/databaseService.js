@@ -1,5 +1,5 @@
 import { writable, get } from 'svelte/store';
-import { SaveDatabaseDialog, OpenDatabaseDialog, DeleteFile, PrepareDemoDatabase } from '../../wailsjs/go/gui/App.js';
+import { SaveDatabaseDialog, OpenDatabaseDialog, DeleteFile, PrepareDemoDatabase, LibraryGroupHolding } from '../../wailsjs/go/gui/App.js';
 import {
     SetupDatabase,
     CheckDatabaseVersion,
@@ -88,6 +88,35 @@ function showNoDatabaseOpen() {
     refreshLibraryCounts();
 }
 
+/**
+ * The library group holding filePath, 0 when none (or when the backend cannot say).
+ * @param {string} filePath
+ */
+async function groupHolding(filePath) {
+    try {
+        return (await LibraryGroupHolding(filePath)) || 0;
+    } catch {
+        return 0;
+    }
+}
+
+/** @param {string} filePath */
+async function heldByAnotherGroup(filePath) {
+    const holder = await groupHolding(filePath);
+    if (!holder) return false;
+    const { activeGroupId } = await import('../stores/libraryGroupStore.js');
+    return holder !== get(activeGroupId);
+}
+
+/**
+ * What the status bar says when a library group cannot open or take over: a job writing the
+ * active library holds it, or the open itself failed.
+ * @param {unknown} error
+ */
+export function libraryGroupError(error) {
+    return String(error).includes('database is busy') ? tMsg('libraryGroups.busy') : tMsg('commands.errorOpeningDb');
+}
+
 function getMajorVersion(/** @type {string} */ version) {
     return version.split('.')[0];
 }
@@ -97,7 +126,10 @@ export async function newDatabase() {
     let setupFailed = false;
     try {
         const filePath = await SaveDatabaseDialog();
-        if (filePath) {
+        if (filePath && (await heldByAnotherGroup(filePath))) {
+            // Creating would erase a library a group holds open.
+            setStatusBarMessage(tMsg('libraryGroups.alreadyOpen', { name: getFilenameFromPath(filePath) }));
+        } else if (filePath) {
             resetAnalysisAndCommentStores();
             resetAnkiStores();
             resetTranscriptionStores();
@@ -157,6 +189,19 @@ export async function openDatabase() {
     }
 }
 
+// Open a library in a group of its own: the library active until then stays open in its group.
+export async function openDatabaseInNewGroup() {
+    try {
+        const filePath = await OpenDatabaseDialog();
+        if (!filePath) return;
+        const { openInNewGroup } = await import('../stores/libraryGroupStore.js');
+        await openDatabaseByPath(filePath, { inNewGroup: openInNewGroup });
+    } catch (error) {
+        logger.error('Error opening a library in a new group:', error);
+        setStatusBarMessage(tMsg('commands.errorOpeningDb'));
+    }
+}
+
 // Load the embedded sample database (a couple of matches + a tournament with
 // analysis) so users — and the guided tours — have real content to explore.
 // Decompresses to a fresh temp file and reuses the normal open flow.
@@ -177,12 +222,37 @@ export async function loadDemoDatabase() {
 export const protectedCopyPathStore = writable('');
 export const protectedCopyErrorStore = writable('');
 
-export async function openDatabaseByPath(/** @type {string} */ filePath) {
+/**
+ * Open filePath in the active library group, replacing its library. A file another group holds
+ * is not opened twice: that group is brought forward instead.
+ * @param {string} filePath
+ * @param {{ inNewGroup?: (path: string) => Promise<unknown> }} [options] inNewGroup opens the file
+ *        in a group of its own (libraryGroupStore), the active library waiting open in its group
+ */
+export async function openDatabaseByPath(filePath, { inNewGroup } = {}) {
+    const holder = await groupHolding(filePath);
+    const { activeGroupId, activateGroup } = await import('../stores/libraryGroupStore.js');
+    if (holder && (inNewGroup || holder !== get(activeGroupId))) {
+        await activateGroup(holder);
+        setStatusBarMessage(tMsg('libraryGroups.alreadyOpen', { name: getFilenameFromPath(filePath) }));
+        return;
+    }
     if (await IsProtectedCopyPath(filePath).catch(() => false)) {
         protectedCopyErrorStore.set('');
         protectedCopyPathStore.set(filePath);
         openModal(MODAL.PROTECTED_COPY);
         return;
+    }
+
+    if (inNewGroup) {
+        // Before any reset: a refused open leaves the active library and its screen as they were.
+        try {
+            await inNewGroup(filePath);
+        } catch (error) {
+            logger.error('Error opening a library in a new group:', error);
+            setStatusBarMessage(libraryGroupError(error));
+            return;
+        }
     }
 
     // Reset the mode synchronously before any await: a finally block would run
@@ -197,7 +267,7 @@ export async function openDatabaseByPath(/** @type {string} */ filePath) {
 
         (await import('../stores/directionStore.js')).forgetDirection();
         try {
-            await OpenDatabase(filePath);
+            if (!inNewGroup) await OpenDatabase(filePath);
         } catch (error) {
             openFailed = true;
             throw error;

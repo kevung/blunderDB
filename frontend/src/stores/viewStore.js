@@ -388,6 +388,35 @@ function createViewStore() {
         }
     }
 
+    /**
+     * The views of the library being left, photographed, for its group to keep (libraryGroupStore).
+     * @returns {{ views: ViewState[], activeViewId: number }}
+     */
+    function takeGroup() {
+        saveCurrentViewState();
+        return { views: get(views), activeViewId: get(activeViewId) };
+    }
+
+    /**
+     * Put back the views of a library group, or one empty view for a library opened in a new
+     * group. The shown view comes back from its photograph: its board is not fetched again.
+     * @param {{ views: ViewState[], activeViewId: number } | null} group
+     */
+    function giveGroup(group) {
+        if (!group || group.views.length === 0) {
+            const fresh = createDefaultView(nextViewId++);
+            views.set([fresh]);
+            activeViewId.set(fresh.id);
+            restoreViewState(fresh, { replayIndex: false });
+            return;
+        }
+        views.set(group.views);
+        activeViewId.set(group.activeViewId);
+        const target = group.views.find((v) => v.id === group.activeViewId) || group.views[0];
+        restoreViewState(target);
+        settle(target.id);
+    }
+
     function selectPreviousView() {
         const vs = get(views);
         if (vs.length <= 1) return;
@@ -416,6 +445,9 @@ function createViewStore() {
         selectPreviousView,
         selectNextView,
         saveCurrentViewState,
+        takeGroup,
+        giveGroup,
+        viewsLocked,
         serialize,
         deserialize,
         setListSettler,

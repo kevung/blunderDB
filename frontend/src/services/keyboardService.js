@@ -15,7 +15,8 @@ import { trainingHoldsBoardStore } from '../stores/trainingTabStore.js';
 import { trainingEnterKey } from './trainingTabService.js';
 import { toggleAnalysisChallenge } from '../stores/analysisChallengeStore.js';
 
-import { newDatabase, openDatabase, exitApp } from './databaseService.js';
+import { newDatabase, openDatabase, openDatabaseInNewGroup, exitApp } from './databaseService.js';
+import { cycleTab, cycleGroup } from '../stores/libraryGroupStore.js';
 import {
     firstPosition,
     previousPosition,
@@ -381,6 +382,9 @@ export function handleKeyDown(event) {
         runPinnedFilter(pinnedFilterDigit(event));
     } else if (event.ctrlKey && letter('n')) {
         newDatabase();
+    } else if (event.ctrlKey && event.shiftKey && letter('o')) {
+        event.preventDefault();
+        openDatabaseInNewGroup();
     } else if (event.ctrlKey && letter('o')) {
         openDatabase();
     } else if (event.ctrlKey && letter('q')) {
@@ -538,12 +542,17 @@ export function handleKeyDown(event) {
     } else if (event.ctrlKey && letter('g')) {
         event.preventDefault();
         showDatesAndMetadata();
-    } else if ((event.ctrlKey && event.key === 'PageUp') || (!event.ctrlKey && isShiftLetter(event, 'j'))) {
+    } else if (event.ctrlKey && event.shiftKey && (event.key === 'PageUp' || event.key === 'PageDown')) {
+        // From library to library: the next group, on the tab it was left on.
         event.preventDefault();
-        viewStore.selectPreviousView();
+        cycleGroup(event.key === 'PageUp' ? -1 : 1);
+    } else if ((event.ctrlKey && event.key === 'PageUp') || (!event.ctrlKey && isShiftLetter(event, 'j'))) {
+        // From tab to tab across the groups: past a library's last tab comes the next one's first.
+        event.preventDefault();
+        cycleTab(-1);
     } else if ((event.ctrlKey && event.key === 'PageDown') || (!event.ctrlKey && isShiftLetter(event, 'k'))) {
         event.preventDefault();
-        viewStore.selectNextView();
+        cycleTab(1);
     } else if (!event.ctrlKey && letter('p')) {
         togglePipcount();
     } else if (!event.ctrlKey && letter('m')) {

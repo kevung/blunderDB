@@ -3504,5 +3504,12 @@
         "hint_analysis_legacy": "Réécrit au format binaire les analyses stockées au format JSON",
         "hint_trash": "Entrées de la corbeille",
         "hint_vacuum": "Pages libres du fichier, rendues par le compactage"
+    },
+    "libraryGroups": {
+        "openInNewGroup": "Ouvrir une bibliothèque dans un nouveau groupe (Ctrl+Maj+O)",
+        "close": "Fermer la bibliothèque et son groupe",
+        "unnamed": "Sans base",
+        "alreadyOpen": "{name} est déjà ouverte : son groupe est affiché",
+        "busy": "Une tâche écrit dans la bibliothèque active : attendez sa fin ou annulez-la avant de changer de groupe"
     }
 }

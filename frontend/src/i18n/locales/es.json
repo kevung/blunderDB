@@ -3504,5 +3504,12 @@
         "hint_analysis_legacy": "Reescribe en formato binario los análisis guardados en JSON",
         "hint_trash": "Entradas de la papelera",
         "hint_vacuum": "Páginas libres del archivo, devueltas al compactar"
+    },
+    "libraryGroups": {
+        "openInNewGroup": "Abrir una biblioteca en un grupo nuevo (Ctrl+Mayús+O)",
+        "close": "Cerrar la biblioteca y su grupo",
+        "unnamed": "Sin base",
+        "alreadyOpen": "{name} ya está abierta: se muestra su grupo",
+        "busy": "Una tarea está escribiendo en la biblioteca activa: espere a que termine o cancélela antes de cambiar de grupo"
     }
 }

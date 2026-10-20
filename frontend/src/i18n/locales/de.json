@@ -3504,5 +3504,12 @@
         "hint_analysis_legacy": "Schreibt als JSON gespeicherte Analysen im Binärformat neu",
         "hint_trash": "Einträge im Papierkorb",
         "hint_vacuum": "Freie Seiten der Datei, die das Komprimieren zurückgibt"
+    },
+    "libraryGroups": {
+        "openInNewGroup": "Bibliothek in neuer Gruppe öffnen (Strg+Umschalt+O)",
+        "close": "Bibliothek und ihre Gruppe schließen",
+        "unnamed": "Keine Datenbank",
+        "alreadyOpen": "{name} ist bereits geöffnet: ihre Gruppe wird angezeigt",
+        "busy": "Eine Aufgabe schreibt in die aktive Bibliothek: warten Sie auf ihr Ende oder brechen Sie sie ab, bevor Sie die Gruppe wechseln"
     }
 }

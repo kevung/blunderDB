@@ -4354,6 +4354,24 @@ export namespace gui {
 		    return a;
 		}
 	}
+	export class LibraryGroup {
+	    id: number;
+	    path: string;
+	    active: boolean;
+	    readOnly: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new LibraryGroup(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.path = source["path"];
+	        this.active = source["active"];
+	        this.readOnly = source["readOnly"];
+	    }
+	}
 	export class MCPHostConfig {
 	    enabled: boolean;
 	    port: number;

@@ -3504,5 +3504,12 @@
         "hint_analysis_legacy": "Riscrive in formato binario le analisi salvate in JSON",
         "hint_trash": "Voci del cestino",
         "hint_vacuum": "Pagine libere del file, restituite dalla compattazione"
+    },
+    "libraryGroups": {
+        "openInNewGroup": "Apri una libreria in un nuovo gruppo (Ctrl+Maiusc+O)",
+        "close": "Chiudi la libreria e il suo gruppo",
+        "unnamed": "Nessun database",
+        "alreadyOpen": "{name} è già aperta: viene mostrato il suo gruppo",
+        "busy": "Un'attività sta scrivendo nella libreria attiva: attendine la fine o annullala prima di cambiare gruppo"
     }
 }

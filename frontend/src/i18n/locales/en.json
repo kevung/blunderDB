@@ -3504,5 +3504,12 @@
         "hint_analysis_legacy": "Rewrites analyses stored as JSON in the binary format",
         "hint_trash": "Entries in the trash",
         "hint_vacuum": "Free pages of the file, returned by compacting"
+    },
+    "libraryGroups": {
+        "openInNewGroup": "Open a library in a new group (Ctrl+Shift+O)",
+        "close": "Close the library and its group",
+        "unnamed": "No database",
+        "alreadyOpen": "{name} is already open: its group is shown",
+        "busy": "A task is writing the active library: wait for it or cancel it before switching groups"
     }
 }

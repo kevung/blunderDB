@@ -235,3 +235,33 @@ describe('getPositions / getAllPositions', () => {
         await expect(list.getPositions(2, 1)).resolves.toEqual([]);
     });
 });
+
+describe('exchangeLibrary', () => {
+    test('hands list and cache to the library left, and takes the other back intact', async () => {
+        const list = createPositionList({ loader: async (ids) => ids.map((id) => ({ id })) });
+        list.setIds([1, 2, 3]);
+        await list.getPosition(1);
+        const a = list.exchangeLibrary(null);
+        expect(get(list).length).toBe(0);
+        expect(list.cacheSize).toBe(0);
+        list.setIds([7]);
+        const b = list.exchangeLibrary(a);
+        expect(get(list).length).toBe(3);
+        expect(list.peek(1)).toEqual({ id: 2 });
+        list.exchangeLibrary(b);
+        expect(get(list).length).toBe(1);
+    });
+
+    test('a fetch sent for the library left lands nowhere: its ids name rows of another file', async () => {
+        /** @type {(rows: any[]) => void} */
+        let answer = () => {};
+        const list = createPositionList({ loader: () => new Promise((resolve) => (answer = resolve)) });
+        list.setIds([1, 2]);
+        const pending = list.getPosition(0);
+        await Promise.resolve();
+        list.exchangeLibrary({ ids: [1, 2], source: null, pagedLength: 0, idPageCache: new Map(), cache: new Map(), absent: new Set(), settled: new WeakMap() });
+        answer([{ id: 1, from: 'left' }]);
+        await pending;
+        expect(list.peek(0)).toBeUndefined();
+    });
+});
