@@ -69,3 +69,4 @@ go.work
 go.work.sum
 /demodb
 openingbook-run.jsonl
+test-results/
