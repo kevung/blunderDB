@@ -3059,7 +3059,11 @@
             "other": "Das Netz zeigt bereits Turnier #{id}; dieses anzuzeigen ersetzt es.",
             "error": "Anzeige konnte nicht gestartet werden: {error}",
             "address": "Netzwerk",
-            "noLan": "Keine lokale Netzwerkadresse: Handys können diesen Rechner nicht erreichen. Verbinden Sie ihn mit dem Clubnetz und starten Sie die Anzeige erneut."
+            "noLan": "Keine lokale Netzwerkadresse: Handys können diesen Rechner nicht erreichen. Verbinden Sie ihn mit dem Clubnetz und starten Sie die Anzeige erneut.",
+            "errPortInUse": "Port {port} wird auf diesem Rechner bereits verwendet; wählen Sie einen anderen.",
+            "errNoTournament": "Kein Turnier zum Anzeigen.",
+            "errFailed": "Der Anzeigeserver konnte nicht gestartet werden. Versuchen Sie einen anderen Port.",
+            "publicAddress": "Die Adresse {address} ist keine Adresse des lokalen Netzes: Die Seite könnte außerhalb des Clubs lesbar sein. Wählen Sie eine private Adresse oder prüfen Sie Ihre Firewall."
         }
     },
     "palette": {

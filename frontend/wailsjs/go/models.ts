@@ -4525,11 +4525,13 @@ export namespace gui {
 	    running: boolean;
 	    tournamentId: number;
 	    addresses: string[];
+	    publicAddresses: string[];
 	    address: string;
 	    url: string;
 	    localUrl: string;
 	    qr: string;
 	    error: string;
+	    errorPort: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new TournamentDisplayStatus(source);

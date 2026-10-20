@@ -7,6 +7,22 @@
 const devTenant = new URLSearchParams(window.location.search).get('tenant');
 
 /**
+ * L'erreur d'un appel refusé : le message du serveur, avec son code HTTP en `status`. Le refus
+ * « pas de bibliothèque » dit ce qu'il faut faire, parce qu'ouvrir la page sans mandataire est
+ * l'essai le plus courant et qu'un message technique n'y mène nulle part.
+ * @param {Response} response
+ * @param {string} text
+ */
+function failure(response, text) {
+    const raw = extractError(text);
+    const noTenant = response.status === 400 && /X-Tenant-ID/i.test(raw);
+    const message = noTenant
+        ? "Cette page se sert derrière un mandataire qui désigne la bibliothèque (en-tête X-Tenant-ID) ; sans mandataire, essayez en local avec ?tenant=1 dans l'adresse."
+        : raw || `${response.status} ${response.statusText}`;
+    return Object.assign(new Error(message), { status: response.status, readable: noTenant });
+}
+
+/**
  * Appelle une route du contrat. Rend le corps décodé, ou lève une erreur
  * portant le message du serveur — jamais un « quelque chose a échoué ».
  * @param {string} route par exemple 'search.query'
@@ -23,7 +39,7 @@ export async function call(route, body = {}) {
     });
     const text = await response.text();
     if (!response.ok) {
-        throw new Error(extractError(text) || `${response.status} ${response.statusText}`);
+        throw failure(response, text);
     }
     return text ? parseBody(text) : null;
 }
@@ -50,7 +66,7 @@ export async function callConditional(route, body, etag) {
     if (response.status === 304) return { changed: false, etag, body: null };
     const text = await response.text();
     if (!response.ok) {
-        throw new Error(extractError(text) || `${response.status} ${response.statusText}`);
+        throw failure(response, text);
     }
     return { changed: true, etag: response.headers.get('ETag') || '', body: text ? parseBody(text) : null };
 }

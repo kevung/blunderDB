@@ -80,9 +80,17 @@ func TestDisplayHandler_ServesOnlyTheNamedTournamentPage(t *testing.T) {
 
 func TestDisplayHandler_ServesThePageAndRedirectsTheRoot(t *testing.T) {
 	h := displayHandler(&recordingEngine{}, 42)
-	if rec := serveDisplay(h, http.MethodGet, "/app/", "", nil); rec.Code != http.StatusOK ||
+	if rec := serveDisplay(h, http.MethodGet, "/app/?tournoi=42", "", nil); rec.Code != http.StatusOK ||
 		!strings.HasPrefix(rec.Header().Get("Content-Type"), "text/html") {
 		t.Errorf("GET /app/: code=%d type=%q", rec.Code, rec.Header().Get("Content-Type"))
+	}
+	// The full application is never reached: every address that would open the page without
+	// naming this tournament goes to the tournament's.
+	for _, path := range []string{"/app/", "/app/?tournoi=7", "/app/?tournoi=abc", "/app/anything"} {
+		if rec := serveDisplay(h, http.MethodGet, path, "", nil); rec.Code != http.StatusFound ||
+			rec.Header().Get("Location") != "/app/?tournoi=42" {
+			t.Errorf("GET %s: code=%d location=%q", path, rec.Code, rec.Header().Get("Location"))
+		}
 	}
 	rec := serveDisplay(h, http.MethodGet, "/", "", nil)
 	if rec.Code != http.StatusFound || rec.Header().Get("Location") != "/app/?tournoi=42" {
@@ -259,5 +267,51 @@ func TestLiveEngines_AnswerAfterAVacuumBySwap(t *testing.T) {
 	ask("after the vacuum")
 	if a.mcp.engine.srv == first {
 		t.Error("the swap must rebuild the engine on the new connection")
+	}
+}
+
+// Moving the display to a port that is taken keeps the one running, and says so in a code the
+// panel words, never in the system's message.
+func TestStartTournamentDisplay_ABusyPortKeepsTheRunningDisplay(t *testing.T) {
+	db := database.NewDatabase()
+	a := NewApp(db)
+	t.Cleanup(a.stopDisplay)
+	t.Cleanup(func() { _ = db.Close() })
+	openDemo(t, a, db)
+	list, err := db.ListDirections()
+	if err != nil || len(list) == 0 {
+		t.Fatalf("the demo file must hold a Direction: %v", err)
+	}
+	id := list[0].TournamentID
+	port := freePort(t)
+	if st := a.StartTournamentDisplay(TournamentDisplayConfig{TournamentID: id, Port: port}); !st.Running {
+		t.Fatalf("display did not start: %s", st.Error)
+	}
+	busy, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = busy.Close() })
+	busyPort := busy.Addr().(*net.TCPAddr).Port
+	st := a.StartTournamentDisplay(TournamentDisplayConfig{TournamentID: id, Port: busyPort})
+	if st.Error != DisplayPortInUseErr || st.ErrorPort != busyPort || !st.Running {
+		t.Errorf("busy port: %+v", st)
+	}
+	conn, err := net.Dial("tcp", net.JoinHostPort("127.0.0.1", strconv.Itoa(port)))
+	if err != nil {
+		t.Fatalf("the running display must stay up: %v", err)
+	}
+	_ = conn.Close()
+	// Restarting on its own port finds it free at once.
+	for range 5 {
+		if st := a.StartTournamentDisplay(TournamentDisplayConfig{TournamentID: id, Port: port}); !st.Running || st.Error != "" {
+			t.Fatalf("restart on the same port: %+v", st)
+		}
+	}
+}
+
+func TestLanAddresses_PrivateBeforePublic(t *testing.T) {
+	if got := publicAddresses([]string{"192.168.1.5", "125.40.2.124", "10.0.0.2"}); len(got) != 1 || got[0] != "125.40.2.124" {
+		t.Errorf("publicAddresses: %v", got)
 	}
 }

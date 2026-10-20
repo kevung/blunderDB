@@ -3221,10 +3221,24 @@ L'affichage est éteint tant que le directeur ne l'allume pas, et il est **en
 lecture seule** : il ne sert que la page de ce tournoi, aucune autre donnée de la
 base, et rien ne peut y être saisi. Il n'y a **aucun mot de passe** : quiconque
 est sur le réseau local peut lire la page (noms, appariements, résultats) — ce
-qu'un écran mural montre déjà à la salle. Sur une machine reliée à plusieurs
-réseaux, une liste propose ses adresses, celles des réseaux virtuels (conteneurs,
-VPN) en dernier. Sans réseau local, le panneau le dit et ne dessine pas de QR code.
-L'affichage s'arrête quand un autre fichier est ouvert, créé ou fermé.
+qu'un écran mural montre déjà à la salle. Le serveur n'écoute que sur
+l'adresse proposée et sur cette machine. Sur une machine reliée à plusieurs
+réseaux, une liste propose ses adresses : d'abord celles des réseaux privés
+(``192.168.x.x``, ``10.x.x.x``, ``172.16.x.x`` à ``172.31.x.x``), puis celles des
+réseaux virtuels (conteneurs, VPN). Une adresse **hors des plages privées**
+est signalée par un avertissement : la page y serait peut-être lisible au-delà
+du club. Sans réseau local, le panneau le dit et ne dessine pas de QR code.
+L'affichage s'arrête quand un autre fichier est ouvert, créé ou fermé. Lancer
+l'affichage sur un port déjà pris le dit en clair et laisse l'affichage en cours
+tourner ; le relancer sur son propre port le remplace aussitôt.
+
+Le **pare-feu** de la machine du directeur doit laisser entrer le port choisi :
+Windows demande l'autorisation au premier lancement, le pare-feu d'un système
+Linux bloque le port sans rien dire. Les téléphones, eux, doivent être sur le
+même réseau que la machine. Sur un téléphone, la page tient dans la largeur de
+l'écran (les tableaux défilent seuls) et, si l'affichage est arrêté ou
+injoignable, elle écrit « Affichage interrompu : données de HH:MM » au lieu de
+laisser croire qu'elle est à jour.
 
 La **feuille d'appariements** se pose sur la table d'accueil : un clic sur
 *Imprimer la feuille* ouvre le dialogue d'impression du système. Une ligne par

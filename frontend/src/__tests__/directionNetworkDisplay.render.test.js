@@ -12,6 +12,23 @@ vi.mock('../../wailsjs/go/gui/App.js', () => ({
     GetTournamentDisplayStatus: () => Promise.resolve({ running: false, tournamentId: 0, url: '', localUrl: '', qr: '', error: '' }),
     StartTournamentDisplay: (c) => {
         calls.started.push(c);
+        if (c.tournamentId === 8) {
+            return Promise.resolve({ running: false, tournamentId: 0, addresses: [], publicAddresses: [], address: '', url: '', localUrl: '', qr: '', error: 'port_in_use', errorPort: c.port });
+        }
+        if (c.tournamentId === 9) {
+            return Promise.resolve({
+                running: true,
+                tournamentId: 9,
+                addresses: ['125.40.2.124'],
+                publicAddresses: ['125.40.2.124'],
+                address: '125.40.2.124',
+                url: 'http://125.40.2.124:8770/app/?tournoi=9',
+                localUrl: 'http://127.0.0.1:8770/app/?tournoi=9',
+                qr: 'data:image/png;base64,AAAA',
+                error: '',
+                errorPort: 0
+            });
+        }
         if (c.tournamentId === 7) {
             return Promise.resolve({ running: true, tournamentId: 7, addresses: [], address: '', url: '', localUrl: 'http://127.0.0.1:8770/app/?tournoi=7', qr: '', error: '' });
         }
@@ -67,5 +84,25 @@ describe('NetworkDisplay', () => {
         expect(getByTestId('direction-network-nolan').textContent).toBeTruthy();
         expect(container.querySelector('img.qr')).toBeNull();
         expect(queryByTestId('direction-network-url')).toBeNull();
+    });
+
+    test('a busy port is worded for the director, without the system message', async () => {
+        const { getByTestId, container } = render(NetworkDisplay, { props: { tournamentId: 8 } });
+        await tick();
+        await fireEvent.click(getByTestId('direction-network-start'));
+        await tick();
+        await tick();
+        const text = container.querySelector('.error')?.textContent || '';
+        expect(text).toContain('8770');
+        expect(text).not.toMatch(/listen tcp|bind:/);
+    });
+
+    test('warns when the proposed address is not a private one', async () => {
+        const { getByTestId } = render(NetworkDisplay, { props: { tournamentId: 9 } });
+        await tick();
+        await fireEvent.click(getByTestId('direction-network-start'));
+        await tick();
+        await tick();
+        expect(getByTestId('direction-network-public').textContent).toContain('125.40.2.124');
     });
 });

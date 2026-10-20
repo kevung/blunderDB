@@ -3059,7 +3059,11 @@
             "other": "La red ya muestra el torneo #{id}; mostrar este lo sustituye.",
             "error": "No se pudo iniciar la visualización: {error}",
             "address": "Red",
-            "noLan": "Sin dirección de red local: los teléfonos no pueden alcanzar esta máquina. Conéctela a la red del club y vuelva a iniciar la visualización."
+            "noLan": "Sin dirección de red local: los teléfonos no pueden alcanzar esta máquina. Conéctela a la red del club y vuelva a iniciar la visualización.",
+            "errPortInUse": "El puerto {port} ya está en uso en esta máquina; elija otro.",
+            "errNoTournament": "Ningún torneo que mostrar.",
+            "errFailed": "El servidor de visualización no pudo iniciarse. Pruebe otro puerto.",
+            "publicAddress": "La dirección {address} no es una dirección de red local: la página podría leerse fuera del club. Elija una dirección privada o revise su cortafuegos."
         }
     },
     "palette": {

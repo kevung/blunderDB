@@ -3059,7 +3059,11 @@
             "other": "La rete mostra già il torneo #{id}; mostrare questo lo sostituisce.",
             "error": "Impossibile avviare la visualizzazione: {error}",
             "address": "Rete",
-            "noLan": "Nessun indirizzo di rete locale: i telefoni non possono raggiungere questa macchina. Collegala alla rete del club, poi riavvia la visualizzazione."
+            "noLan": "Nessun indirizzo di rete locale: i telefoni non possono raggiungere questa macchina. Collegala alla rete del club, poi riavvia la visualizzazione.",
+            "errPortInUse": "La porta {port} è già in uso su questa macchina; sceglietene un'altra.",
+            "errNoTournament": "Nessun torneo da mostrare.",
+            "errFailed": "Il server di visualizzazione non è partito. Provate un'altra porta.",
+            "publicAddress": "L'indirizzo {address} non è un indirizzo di rete locale: la pagina potrebbe essere leggibile fuori dal club. Scegliete un indirizzo privato o controllate il firewall."
         }
     },
     "palette": {
