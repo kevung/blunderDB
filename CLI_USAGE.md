@@ -3469,7 +3469,7 @@ Options:
   -format string
     	Output format: text or json (default "text")
   -incremental
-    	Database export: only what entered the library since the last incremental export to the same folder (or --sync-cursor); --file may then be a folder, where a dated file name is chosen
+    	Database export: only what entered the library since the last incremental export to the same folder (or --sync-cursor); --file may then be a folder, where a dated file name is chosen, and a file that already exists is refused: it may hold a delta not merged yet
   -lesson-ids string
     	Comma-separated list of lesson IDs to take (empty = all)
   -lessons

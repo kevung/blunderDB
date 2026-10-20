@@ -28,7 +28,7 @@ func (cli *CLI) runExport(args []string) error {
 	watermark := exportCmd.String("watermark", "", "Mark the exported file with where it comes from, e.g. \"Cours de Jean Dupont - 12 mars 2026\"")
 	watermarkNote := exportCmd.String("watermark-note", "", "Free text attached to the watermark (terms of use, contact)")
 	password := exportCmd.String("password", "", "Protect the exported file with a password (produces a .dbx container)")
-	incremental := exportCmd.Bool("incremental", false, "Database export: only what entered the library since the last incremental export to the same folder (or --sync-cursor); --file may then be a folder, where a dated file name is chosen")
+	incremental := exportCmd.Bool("incremental", false, "Database export: only what entered the library since the last incremental export to the same folder (or --sync-cursor); --file may then be a folder, where a dated file name is chosen, and a file that already exists is refused: it may hold a delta not merged yet")
 	syncCursor := exportCmd.String("sync-cursor", "", "With --incremental: name of the cursor to read and advance (default: the destination folder)")
 	format := exportCmd.String("format", "text", "Output format: text or json")
 	planCounts := exportCmd.Bool("plan", false, "Print what a database or matches export would write, family by family, without writing a file")

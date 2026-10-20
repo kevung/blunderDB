@@ -429,7 +429,9 @@ Exporte le contenu de la base vers des fichiers.
   dans la bibliothèque depuis le dernier export incrémental vers le même
   dossier, puis avance ce repère dans la base exportée. ``--file`` peut alors
   être un dossier, où un fichier ``sync-<machine>-<date>.db`` est créé (voir
-  :ref:`synchroniser_deux_machines`).
+  :ref:`synchroniser_deux_machines`). Un nom de fichier déjà pris est refusé :
+  le fichier en place porte le delta précédent, que l'autre machine n'a
+  peut-être pas encore fusionné.
 * ``--sync-cursor`` — Avec ``--incremental`` : nom du repère lu et avancé, à la
   place du dossier de destination.
 * ``--plan`` — Avec ``--type database`` ou ``matches`` : compte, famille par

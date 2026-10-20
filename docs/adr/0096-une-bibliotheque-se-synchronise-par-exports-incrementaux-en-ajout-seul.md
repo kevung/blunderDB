@@ -61,7 +61,17 @@ et de quoi la recevoir sans geste.
    n'impose, et un repère cru au bout du délai sans qu'un export ait relu entre-temps passait
    au-dessus des lignes validées tard.
 4. **Ajout seul.** Une suppression ou une modification en place (commentaire réécrit, analyse
-   refaite sur une position déjà envoyée) ne se propage pas ; la documentation le dit. Les filtres
+   refaite sur une position déjà envoyée) ne se propage pas ; la documentation le dit. Un
+   commentaire **ajouté** à une position déjà envoyée est un ajout : le repère suit aussi les
+   identifiants de `comment`, et la position repart avec tous ses commentaires, que l'import
+   ajoute par texte. Un commentaire réécrit ne repart pas : l'identifiant ne voit pas une
+   écriture en place, et l'import n'écrase jamais une ligne existante, si bien que le nouveau
+   texte arriverait à côté de l'ancien au lieu de le remplacer. Pour qu'un identifiant de
+   commentaire ne resserve jamais, la table `comment` est en `AUTOINCREMENT` sous SQLite
+   (schéma 2.46.0) ; sous PostgreSQL c'est déjà un `BIGSERIAL`. Un repère écrit avant ce suivi
+   lit un repère de commentaire nul : le premier export incrémental après la mise à jour renvoie
+   donc une fois toutes les positions commentées, que l'import reconnaît sans doublon ; le
+   manuel le dit. Les filtres
    enregistrés et les paquets Anki ne partent pas dans un export incrémental : ce ne sont pas des
    ajouts datables par identifiant.
 5. **Le repère avance quand le fichier est complet et que rien n'a été écarté**, dans
@@ -87,8 +97,13 @@ et de quoi la recevoir sans geste.
    cumulée ; la documentation demande de supprimer de temps en temps les fichiers reçus. Retenir
    ce qui a été lu, pour s'en dispenser, serait écrire chez le receveur. Un export
    incrémental s'écrit sous `.<nom>.part` puis est renommé, pour qu'une surveillance ne voie jamais
-   un fichier à moitié écrit ; vers un dossier, il prend un nom neuf `sync-<machine>-<date>.db`,
-   car la surveillance ne signale un nom qu'une fois. La bibliothèque ouverte n'est jamais
+   un fichier à moitié écrit ; vers un dossier, il prend un nom neuf `sync-<machine>-<date>.db`.
+   **Un export incrémental n'écrase jamais un fichier** : vers un nom de fichier déjà pris, il
+   est refusé. Le fichier en place porte le delta précédent, que le repère compte déjà comme
+   envoyé ; si l'autre machine ne l'a pas encore fusionné, l'écraser le perdrait, et celui qui
+   exporte ne peut pas savoir s'il l'a été (décision 1). La surveillance reconnaît un fichier à
+   son nom, sa taille et sa date de modification : un fichier réécrit sous un nom déjà vu
+   (copie à la main, outil de synchronisation) est proposé de nouveau. La bibliothèque ouverte n'est jamais
    proposée à elle-même (`watch.Watcher.Skip`, `Database.IsOpenDatabase`, qui compare les
    fichiers et non les chemins écrits), et sa fusion à la main est refusée
    (`database.ErrImportIsOpenDatabase`).

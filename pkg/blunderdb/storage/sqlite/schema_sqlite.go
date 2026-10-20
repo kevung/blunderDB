@@ -138,7 +138,9 @@ var schemaStatements = []string{
 		FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE
 	)`,
 	`CREATE TABLE IF NOT EXISTS comment (
-		id INTEGER PRIMARY KEY,
+		-- AUTOINCREMENT: an identifier is never reused, so an incremental
+		-- export can follow comments by identifier (ADR-0096).
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		position_id INTEGER,
 		text TEXT,
 		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,

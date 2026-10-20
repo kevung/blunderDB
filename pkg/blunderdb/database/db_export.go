@@ -37,7 +37,9 @@ func (d *Database) ExportDatabaseCtx(ctx context.Context, opts ExportOptions) (i
 	}
 
 	if opts.Incremental {
-		opts.ExportPath = SyncExportPath(opts.ExportPath, time.Now())
+		if opts.ExportPath, err = SyncExportPath(opts.ExportPath, time.Now()); err != nil {
+			return ingest.ExportReport{}, err
+		}
 	}
 	plan, err := d.exportPlan(ctx, opts)
 	if err != nil {
@@ -112,11 +114,16 @@ func SyncCursorFor(opts ExportOptions) string {
 }
 
 // SyncExportPath names the file an incremental export writes when its destination is a
-// folder; a file path is kept as given. Each name is new because a watched folder reports
-// a file name once: a second export under the same name would never be imported there.
-func SyncExportPath(path string, now time.Time) string {
+// folder; a file path is kept as given, and refused when a file is already there. The file
+// an incremental export would replace holds the previous delta, which the cursor counts as
+// sent: if the other machine has not merged it yet, overwriting it loses those rows for
+// good, and the producer cannot know whether it has (ADR-0007).
+func SyncExportPath(path string, now time.Time) (string, error) {
 	if !isDir(path) {
-		return path
+		if _, err := os.Lstat(path); err == nil {
+			return "", fmt.Errorf("an incremental export never overwrites a file: %s may hold a delta the other machine has not merged yet; name its folder, and each export gets a new name", path)
+		}
+		return path, nil
 	}
 	host, _ := os.Hostname()
 	if host == "" {
@@ -125,8 +132,8 @@ func SyncExportPath(path string, now time.Time) string {
 	stem := filepath.Join(path, fmt.Sprintf("sync-%s-%s", host, now.Format("20060102-150405")))
 	name := stem + ".db"
 	for n := 2; ; n++ {
-		if _, err := os.Stat(name); os.IsNotExist(err) {
-			return name
+		if _, err := os.Lstat(name); os.IsNotExist(err) {
+			return name, nil
 		}
 		name = fmt.Sprintf("%s-%d.db", stem, n)
 	}

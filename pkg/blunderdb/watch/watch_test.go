@@ -217,3 +217,31 @@ func TestClampInterval(t *testing.T) {
 		t.Errorf("ClampInterval(1m) = %v, want 1m", got)
 	}
 }
+
+// A file rewritten under a name already reported is offered again: another
+// machine's export can reuse a name, and what it carries now was never merged.
+func TestWatcherOffersAFileRewrittenUnderAKnownName(t *testing.T) {
+	dir := t.TempDir()
+	w, err := New(dir)
+	if err != nil {
+		t.Fatalf("New: %v", err)
+	}
+	write(t, dir, "inc.db", 10, 2*time.Hour)
+	_, _ = w.Poll()
+	if got, _ := w.Poll(); len(got) != 1 {
+		t.Fatalf("first arrival: got %v, want inc.db", got)
+	}
+	if got, _ := w.Poll(); len(got) != 0 {
+		t.Fatalf("an unchanged file was offered again: %v", got)
+	}
+
+	write(t, dir, "inc.db", 20, time.Hour)
+	_, _ = w.Poll()
+	got, err := w.Poll()
+	if err != nil {
+		t.Fatalf("Poll: %v", err)
+	}
+	if len(got) != 1 || filepath.Base(got[0]) != "inc.db" {
+		t.Fatalf("rewritten file: got %v, want inc.db again", got)
+	}
+}

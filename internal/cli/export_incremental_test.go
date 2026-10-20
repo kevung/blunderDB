@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -59,5 +60,72 @@ func TestExportIncrementalIntoAFolder(t *testing.T) {
 	}
 	if r := second.Report; r.Positions != 0 || r.Matches != 0 || r.Collections != 0 || r.Tournaments != 0 {
 		t.Errorf("second incremental export = %+v, want empty", r)
+	}
+}
+
+// An incremental export never replaces a file: the one there holds a delta the
+// cursor already counts as sent, which the other machine may not have merged.
+func TestExportIncrementalRefusesAnExistingFile(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	seedWholeLibrary(t, cli)
+	file := filepath.Join(t.TempDir(), "inc.db")
+	export := func() error {
+		var err error
+		captureStdout(t, func() {
+			err = cli.Run([]string{"export", "--db", dbPath, "--type", "database", "--incremental", "--file", file})
+		})
+		return err
+	}
+	if err := export(); err != nil {
+		t.Fatalf("first export to a new file: %v", err)
+	}
+	before, err := os.ReadFile(file)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := export(); err == nil || !strings.Contains(err.Error(), "never overwrites") {
+		t.Fatalf("second export to the same file: err = %v, want a refusal", err)
+	}
+	after, err := os.ReadFile(file)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(before) != string(after) {
+		t.Error("the refused export changed the previous delta")
+	}
+}
+
+// A comment written on a position an earlier incremental export already sent
+// leaves with the next one; the export after that carries it no more.
+func TestExportIncrementalCarriesANewCommentOnASentPosition(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	s := seedWholeLibrary(t, cli)
+	folder := t.TempDir()
+	export := func() ingest.ExportReport {
+		var out struct {
+			Report ingest.ExportReport `json:"report"`
+		}
+		raw := captureStdout(t, func() {
+			if err := cli.Run([]string{"export", "--db", dbPath, "--type", "database", "--incremental", "--file", folder, "--format", "json"}); err != nil {
+				t.Fatalf("export: %v", err)
+			}
+		})
+		if err := json.Unmarshal([]byte(raw), &out); err != nil {
+			t.Fatal(err)
+		}
+		return out.Report
+	}
+	export()
+	pos := s.positions[0]
+	captureStdout(t, func() {
+		if err := cli.Run([]string{"comment", "add", "--db", dbPath, "--position", strconv.FormatInt(pos, 10), "--text", "premier commentaire", "--author", "K"}); err != nil {
+			t.Fatalf("comment add: %v", err)
+		}
+	})
+	if r := export(); r.Comments == 0 || r.Positions == 0 {
+		t.Fatalf("export after a new comment = %+v, want the comment and its position", r)
+	}
+	if r := export(); r.Comments != 0 || r.Positions != 0 {
+		t.Fatalf("export after that = %+v, want empty", r)
 	}
 }

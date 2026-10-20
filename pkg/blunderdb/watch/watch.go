@@ -10,9 +10,14 @@
 //
 // # What "new" and "stable" mean
 //
-// New means "not present when the watch started, and not reported since". A
-// watch does NOT import what the folder already holds: that is the separate,
-// explicit folder import.
+// New means "not present when the watch started, and not reported since", in
+// the state the file is in now: a file is known by its name, size and
+// modification time, so one rewritten under a name already reported is new
+// again. A synchronised folder can carry another machine's export under a name
+// it used before, and the merge is idempotent, so offering a rewrite costs a
+// few seconds where passing over it would lose its rows. A watch does NOT
+// import what the folder already holds: that is the separate, explicit folder
+// import.
 //
 // A native .db is reported too: it is how another machine's incremental
 // export arrives (ADR-0096), and the caller merges it. Unlike a match, a .db
@@ -54,10 +59,10 @@ type fileState struct {
 // not safe for concurrent use: one goroutine polls it.
 type Watcher struct {
 	dir string
-	// reported holds every path already handed to a caller, plus everything
-	// that was present when the watch started. A path leaves this map only
-	// with the Watcher.
-	reported map[string]bool
+	// reported holds, for every path already handed to a caller and for
+	// everything present when the watch started, the state it was in then.
+	// A path whose state differs from it is offered again.
+	reported map[string]fileState
 	// pending holds files seen once but not yet stable.
 	pending map[string]fileState
 	// skip, when set, names files never to report — the library open in
@@ -91,14 +96,14 @@ func New(dir string) (*Watcher, error) {
 
 	w := &Watcher{
 		dir:      dir,
-		reported: map[string]bool{},
+		reported: map[string]fileState{},
 		pending:  map[string]fileState{},
 	}
 	present, err := w.scan()
 	if err != nil {
 		return nil, err
 	}
-	for path := range present {
+	for path, state := range present {
 		// A .db already there is another machine's export that arrived while
 		// nobody watched — the usual case with a synchronised folder. It is
 		// offered like a new file: merging it again is idempotent, and
@@ -107,7 +112,7 @@ func New(dir string) (*Watcher, error) {
 		if ingest.IsLibraryFile(path) {
 			continue
 		}
-		w.reported[path] = true
+		w.reported[path] = state
 	}
 	return w, nil
 }
@@ -142,7 +147,7 @@ func (w *Watcher) Poll() ([]string, error) {
 
 	var ready []string
 	for path, now := range present {
-		if w.reported[path] {
+		if known, ok := w.reported[path]; ok && known == now {
 			continue
 		}
 		if w.skip != nil && w.skip(path) {
@@ -156,7 +161,7 @@ func (w *Watcher) Poll() ([]string, error) {
 		case before == now:
 			ready = append(ready, path)
 			delete(w.pending, path)
-			w.reported[path] = true
+			w.reported[path] = now
 		default:
 			w.pending[path] = now // still being written
 		}

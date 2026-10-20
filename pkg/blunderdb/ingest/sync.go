@@ -20,9 +20,12 @@ import (
 // The cursor is a high-water mark of row identifiers, one per family. Both
 // backends allocate identifiers that only grow (AUTOINCREMENT, sequences), so
 // "id above the mark" is "entered since", with no clock to trust and no
-// schema change. What it cannot see is an edit in place — a comment
-// rewritten, a deletion — and that is the stated contract: a library
-// synchronises by addition only.
+// schema change. A comment written on a position already sent is an addition
+// too: its own identifier passes the mark, and its position leaves again with
+// every comment it holds, which the import appends by text. What the mark
+// cannot see is an edit in place — a comment rewritten, an analysis redone, a
+// deletion — and that is the stated contract: a library synchronises by
+// addition only.
 //
 // Every doubt resolves into an overlap, never a hole: the import is
 // idempotent, so a row sent twice costs a few seconds, a row never sent is
@@ -57,6 +60,7 @@ type SyncMark struct {
 	Collection       int64 `json:"collection"`
 	CollectionMember int64 `json:"collectionMember"`
 	Lesson           int64 `json:"lesson"`
+	Comment          int64 `json:"comment"`
 }
 
 // SyncCursor is what the producer keeps per destination. Settled is the
@@ -229,6 +233,27 @@ func incrementalOptions(ctx context.Context, src storage.Storage, scope string, 
 		return plan, fmt.Errorf("ingest: list positions: %w", err)
 	}
 	sel.PositionIDs, next.Position = above(ids, since.Position)
+
+	if opts.IncludeComments {
+		// A cursor written before comments were followed reads a zero comment
+		// mark, so its next export sends every commented position once more:
+		// an overlap the import absorbs.
+		var commented []int64
+		for c, err := range src.Comments().ListAll(ctx, scope, storage.ListOpts{}) {
+			if err != nil {
+				return plan, fmt.Errorf("ingest: list comments: %w", err)
+			}
+			if c.ID > since.Comment && c.PositionID > 0 && c.PositionID <= since.Position {
+				commented = append(commented, c.PositionID)
+			}
+			next.Comment = max(next.Comment, c.ID)
+		}
+		if len(commented) > 0 {
+			sel.PositionIDs = append(sel.PositionIDs, commented...)
+			slices.Sort(sel.PositionIDs)
+			sel.PositionIDs = slices.Compact(sel.PositionIDs)
+		}
+	}
 
 	if opts.IncludeMatches {
 		var all []int64

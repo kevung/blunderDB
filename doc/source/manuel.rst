@@ -763,8 +763,11 @@ Ce qu'il faut savoir :
   pas : supprimer un match sur A ne le supprime pas sur B. Une modification en
   place non plus : un commentaire réécrit, un match renommé, une analyse refaite
   sur une position déjà envoyée. Partent les positions, matchs, tournois,
-  collections et leçons entrés depuis le dernier export ; une collection repart
-  aussi quand une position y a été ajoutée. Les filtres enregistrés et les
+  collections, leçons et commentaires entrés depuis le dernier export ; une
+  collection repart aussi quand une position y a été ajoutée, une position quand
+  un commentaire y a été ajouté. Un commentaire réécrit ne repart pas, car la
+  machine qui reçoit ne remplace jamais un texte qu'elle a déjà : pour faire
+  passer une correction, ajoutez-la comme nouveau commentaire. Les filtres enregistrés et les
   paquets Anki n'en font pas partie : un export de *Toute la bibliothèque* sans
   la case les emporte.
 * **Ce qu'une machine a reçu repart une fois vers l'autre**, puisque c'est
@@ -777,6 +780,17 @@ Ce qu'il faut savoir :
   fichiers que le dossier contient encore, sans rien ajouter, mais au prix du
   temps de les relire. Supprimez de temps en temps les fichiers ``sync-…``
   déjà reçus pour que ce démarrage reste rapide.
+* **La première synchronisation après la mise à jour renvoie une fois toutes
+  les positions commentées**, car le repère ne suivait pas encore les
+  commentaires. L'autre machine les reconnaît sans rien dupliquer ; seul le
+  fichier est plus gros que d'habitude.
+* **Un export incrémental n'écrase jamais un fichier.** Le fichier précédent
+  porte peut-être des lignes que l'autre machine n'a pas encore reçues : un
+  export vers un nom de fichier déjà pris est refusé. Désignez le dossier, et
+  chaque export y prend un nom neuf.
+* **Un fichier réécrit sous un nom déjà vu est fusionné de nouveau** : la
+  surveillance reconnaît un fichier à son nom, sa taille et sa date de
+  modification.
 * **La bibliothèque ouverte n'est jamais fusionnée dans elle-même** : si elle
   se trouve dans le dossier surveillé, la surveillance la passe.
 * **Un export qui a dû écarter des lignes** (signalées dans le journal) ne fait

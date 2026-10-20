@@ -915,7 +915,7 @@ func rebuildTable(ctx context.Context, db *sql.DB, table string) error {
 	if err := tx.Commit(); err != nil {
 		return fmt.Errorf("%s: rebuilding: %w", table, err)
 	}
-	slog.Info("anki table rebuilt so a card can be something other than a position", "table", table)
+	slog.Info("table rebuilt to the current schema", "table", table)
 	return nil
 }
 

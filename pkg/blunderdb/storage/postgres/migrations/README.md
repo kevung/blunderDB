@@ -324,3 +324,7 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   statements and put back, as in `028` and `032`.
 
   Schema-visible: bumped `domain.DatabaseVersion` to 2.45.0.
+- 2.46.0 has no file here: it makes SQLite's `comment.id` AUTOINCREMENT so an
+  identifier is never reused (an incremental export follows comments by
+  identifier, ADR-0096). `comment.id` is a `BIGSERIAL` on this side, which
+  never hands a value out twice.
