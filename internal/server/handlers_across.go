@@ -13,9 +13,10 @@ import (
 
 // The across.* family reads several tenants in one request (ADR-0063): the
 // writing tenant (X-Tenant-ID) and every tenant X-Read-Tenants lists, in that
-// order, each answer tagged with the tenant it came from. The family only
-// reads: no route here takes a write, and no other route looks at
-// X-Read-Tenants, so a write stays in X-Tenant-ID by construction. Who may
+// order, each answer tagged with the tenant it came from. The family reads,
+// save across.transferPull, which writes the writer's own tenant only (ADR-0102);
+// no other route looks at X-Read-Tenants, so a write stays in X-Tenant-ID by
+// construction. Who may
 // read whom is the proxy's decision, made before the request arrives; the
 // daemon authorises nothing (ADR-0005).
 //
@@ -459,5 +460,8 @@ func (s *Server) acrossRoutes() []route {
 			page := rows[start : start+min(limit, len(rows)-start)]
 			return acrossClubRankingResp{Rows: page, Total: len(rows)}, nil
 		})},
+		// The one across route that writes: a pull into the writer's own
+		// tenant (handlers_transfer.go).
+		{http.MethodPost, "/v1/across.transferPull", s.handleTransferPull},
 	}
 }

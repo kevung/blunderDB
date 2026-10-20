@@ -22,23 +22,8 @@ func (cli *CLI) runExport(args []string) error {
 	exportType := exportCmd.String("type", "", "Export type: database, positions, matches, mat (required)")
 	outputFile := exportCmd.String("file", "", "Path to the output file (required)")
 	outputDir := exportCmd.String("dir", "", "Output directory for .mat batch export (type=mat, multiple matches)")
-	includeAnalysis := exportCmd.Bool("analysis", true, "Include analysis in database export (default: true)")
-	includeComments := exportCmd.Bool("comments", true, "Include comments in database export (default: true)")
+	sel := selectionFlags(exportCmd, "database export")
 	includeFilterLibrary := exportCmd.Bool("filters", true, "Include filter library in database export (default: true)")
-	includePlayedMoves := exportCmd.Bool("played-moves", true, "Include played moves in analysis (default: true)")
-	includeMatches := exportCmd.Bool("matches", true, "Include matches in database export (default: true)")
-	includeTranscriptions := exportCmd.Bool("transcriptions", true, "Include the transcription drafts of the exported matches in database export (default: true)")
-	includeAliases := exportCmd.Bool("aliases", true, "Include the player and event aliases the exported matches write in database export (default: true)")
-	includeCollections := exportCmd.Bool("collections", true, "Include collections in database export (default: true)")
-	includeTournaments := exportCmd.Bool("tournaments", true, "Include tournaments in database export (default: true)")
-	includeDecks := exportCmd.Bool("decks", true, "Include Anki decks in database export (default: true)")
-	includeLessons := exportCmd.Bool("lessons", true, "Include lessons, with the collections and positions their steps show, in database export (default: true)")
-	includeAnkiHistory := exportCmd.Bool("anki-history", true, "Carry the review history of the exported Anki decks (default: true)")
-	collectionIDsStr := exportCmd.String("collection-ids", "", "Comma-separated list of collection IDs to export (empty = all)")
-	matchIDsStr := exportCmd.String("match-ids", "", "Comma-separated list of match IDs to export (empty = all)")
-	deckIDsStr := exportCmd.String("deck-ids", "", "Comma-separated list of Anki deck IDs to export (empty = all)")
-	lessonIDsStr := exportCmd.String("lesson-ids", "", "Comma-separated list of lesson IDs to export (empty = all)")
-	tournamentIDsStr := exportCmd.String("tournament-ids", "", "Comma-separated list of tournament IDs to export (empty = all)")
 	watermark := exportCmd.String("watermark", "", "Mark the exported file with where it comes from, e.g. \"Cours de Jean Dupont - 12 mars 2026\"")
 	watermarkNote := exportCmd.String("watermark-note", "", "Free text attached to the watermark (terms of use, contact)")
 	password := exportCmd.String("password", "", "Protect the exported file with a password (produces a .dbx container)")
@@ -154,25 +139,11 @@ func (cli *CLI) runExport(args []string) error {
 		return fmt.Errorf("missing required flag: --file")
 	}
 
-	// Parse comma-separated ID lists
-	var ids [5][]int64
-	for i, f := range []struct{ name, raw string }{
-		{"collection-ids", *collectionIDsStr},
-		{"lesson-ids", *lessonIDsStr},
-		{"deck-ids", *deckIDsStr},
-		{"match-ids", *matchIDsStr},
-		{"tournament-ids", *tournamentIDsStr},
-	} {
-		if f.raw == "" {
-			continue
-		}
-		parsed, parseErr := parseIDList(f.raw)
-		if parseErr != nil {
-			return fmt.Errorf("invalid %s: %w", f.name, parseErr)
-		}
-		ids[i] = parsed
+	opts, err := sel.options()
+	if err != nil {
+		return err
 	}
-	collectionIDs, lessonIDs, deckIDs, matchIDs, tournamentIDs := ids[0], ids[1], ids[2], ids[3], ids[4]
+	matchIDs := opts.MatchIDs
 
 	// Initialize database
 	if err := cli.initDatabase(*dbPath); err != nil {
@@ -184,30 +155,10 @@ func (cli *CLI) runExport(args []string) error {
 
 	switch strings.ToLower(*exportType) {
 	case "database":
-		// A list of ids names some of a family: it brings that family in.
-		opts := ExportOptions{
-			ExportPath:            *outputFile,
-			WholeLibrary:          true,
-			IncludeAnalysis:       *includeAnalysis,
-			IncludeComments:       *includeComments,
-			IncludeFilterLibrary:  *includeFilterLibrary,
-			IncludePlayedMoves:    *includePlayedMoves,
-			IncludeMatches:        *includeMatches || len(matchIDs) > 0,
-			IncludeTranscriptions: *includeTranscriptions,
-			IncludeAliases:        *includeAliases,
-			IncludeCollections:    *includeCollections || len(collectionIDs) > 0,
-			IncludeTournaments:    *includeTournaments || len(tournamentIDs) > 0,
-			IncludeAnkiDecks:      *includeDecks || len(deckIDs) > 0,
-			IncludeAnkiHistory:    *includeAnkiHistory,
-			IncludeLessons:        *includeLessons || len(lessonIDs) > 0,
-			LessonIDs:             lessonIDs,
-			CollectionIDs:         collectionIDs,
-			MatchIDs:              matchIDs,
-			TournamentIDs:         tournamentIDs,
-			DeckIDs:               deckIDs,
-			Incremental:           *incremental,
-			SyncCursor:            *syncCursor,
-		}
+		opts.ExportPath = *outputFile
+		opts.IncludeFilterLibrary = *includeFilterLibrary
+		opts.Incremental = *incremental
+		opts.SyncCursor = *syncCursor
 		if plan.counts {
 			return cli.printExportPlan(opts, plan, text)
 		}
@@ -215,7 +166,7 @@ func (cli *CLI) runExport(args []string) error {
 	case "positions":
 		return cli.exportPositions(*outputFile, text)
 	case "matches":
-		return cli.exportMatchesOnly(*outputFile, matchIDs, *includeTranscriptions, *includeAliases, marking, text, plan)
+		return cli.exportMatchesOnly(*outputFile, matchIDs, opts.IncludeTranscriptions, opts.IncludeAliases, marking, text, plan)
 	case "mat":
 		return cli.exportMatchesMAT(matchIDs, *outputFile, *outputDir, text)
 	default:
@@ -595,4 +546,77 @@ func (cli *CLI) exportPositions(outputFile string, text bool) error {
 	}
 	fmt.Printf("Successfully exported %d positions\n", len(positions))
 	return nil
+}
+
+// exportSelection holds the flags that say what an export, or a transfer, takes from a
+// library: one switch per family and one list of ids per family that can be narrowed.
+type exportSelection struct {
+	analysis, comments, playedMoves, matches, transcriptions, aliases *bool
+	collections, tournaments, decks, lessons, ankiHistory             *bool
+	collectionIDs, matchIDs, deckIDs, lessonIDs, tournamentIDs        *string
+}
+
+// selectionFlags declares the selection flags on fs; what names the command's action in
+// the help ("database export", "transfer").
+func selectionFlags(fs *flag.FlagSet, what string) exportSelection {
+	return exportSelection{
+		analysis:       fs.Bool("analysis", true, "Include analysis in "+what+" (default: true)"),
+		comments:       fs.Bool("comments", true, "Include comments in "+what+" (default: true)"),
+		playedMoves:    fs.Bool("played-moves", true, "Include played moves in analysis (default: true)"),
+		matches:        fs.Bool("matches", true, "Include matches in "+what+" (default: true)"),
+		transcriptions: fs.Bool("transcriptions", true, "Include the transcription drafts of the selected matches in "+what+" (default: true)"),
+		aliases:        fs.Bool("aliases", true, "Include the player and event aliases the selected matches write in "+what+" (default: true)"),
+		collections:    fs.Bool("collections", true, "Include collections in "+what+" (default: true)"),
+		tournaments:    fs.Bool("tournaments", true, "Include tournaments in "+what+" (default: true)"),
+		decks:          fs.Bool("decks", true, "Include Anki decks in "+what+" (default: true)"),
+		lessons:        fs.Bool("lessons", true, "Include lessons, with the collections and positions their steps show, in "+what+" (default: true)"),
+		ankiHistory:    fs.Bool("anki-history", true, "Carry the review history of the selected Anki decks (default: true)"),
+		collectionIDs:  fs.String("collection-ids", "", "Comma-separated list of collection IDs to take (empty = all)"),
+		matchIDs:       fs.String("match-ids", "", "Comma-separated list of match IDs to take (empty = all)"),
+		deckIDs:        fs.String("deck-ids", "", "Comma-separated list of Anki deck IDs to take (empty = all)"),
+		lessonIDs:      fs.String("lesson-ids", "", "Comma-separated list of lesson IDs to take (empty = all)"),
+		tournamentIDs:  fs.String("tournament-ids", "", "Comma-separated list of tournament IDs to take (empty = all)"),
+	}
+}
+
+// options reads the parsed flags as whole-library export options. A list of ids names
+// some of a family: it brings that family in.
+func (s exportSelection) options() (ExportOptions, error) {
+	var ids [5][]int64
+	for i, f := range []struct{ name, raw string }{
+		{"collection-ids", *s.collectionIDs},
+		{"lesson-ids", *s.lessonIDs},
+		{"deck-ids", *s.deckIDs},
+		{"match-ids", *s.matchIDs},
+		{"tournament-ids", *s.tournamentIDs},
+	} {
+		if f.raw == "" {
+			continue
+		}
+		parsed, err := parseIDList(f.raw)
+		if err != nil {
+			return ExportOptions{}, fmt.Errorf("invalid %s: %w", f.name, err)
+		}
+		ids[i] = parsed
+	}
+	collectionIDs, lessonIDs, deckIDs, matchIDs, tournamentIDs := ids[0], ids[1], ids[2], ids[3], ids[4]
+	return ExportOptions{
+		WholeLibrary:          true,
+		IncludeAnalysis:       *s.analysis,
+		IncludeComments:       *s.comments,
+		IncludePlayedMoves:    *s.playedMoves,
+		IncludeMatches:        *s.matches || len(matchIDs) > 0,
+		IncludeTranscriptions: *s.transcriptions,
+		IncludeAliases:        *s.aliases,
+		IncludeCollections:    *s.collections || len(collectionIDs) > 0,
+		IncludeTournaments:    *s.tournaments || len(tournamentIDs) > 0,
+		IncludeAnkiDecks:      *s.decks || len(deckIDs) > 0,
+		IncludeAnkiHistory:    *s.ankiHistory,
+		IncludeLessons:        *s.lessons || len(lessonIDs) > 0,
+		LessonIDs:             lessonIDs,
+		CollectionIDs:         collectionIDs,
+		MatchIDs:              matchIDs,
+		TournamentIDs:         tournamentIDs,
+		DeckIDs:               deckIDs,
+	}, nil
 }

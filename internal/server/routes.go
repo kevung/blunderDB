@@ -66,6 +66,7 @@ var streamingCustomPaths = map[string]bool{
 	"/v1/matches.repair":           true,
 	"/v1/exports.json":             true,
 	"/v1/exports.sqlite":           true,
+	transferPullPath:               true,
 	"/v1/gammonnet.analyzeMissing": true,
 	"/v1/gammonnet.sweepStale":     true,
 	"/v1/maintenance.run":          true,

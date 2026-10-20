@@ -104,6 +104,7 @@ func (cli *CLI) handlers() map[string]func([]string) error {
 		"create":      cli.runCreate,
 		"import":      cli.runImport,
 		"export":      cli.runExport,
+		"transfer":    cli.runTransfer,
 		"identity":    cli.runIdentity,
 		"open":        cli.runOpen,
 		"list":        cli.runList,
@@ -179,6 +180,7 @@ func (cli *CLI) printUsage() {
 	fmt.Println("  create    Create a new database with optional metadata")
 	fmt.Println("  import    Import data into the database (match, position, batch)")
 	fmt.Println("  export    Export data from the database")
+	fmt.Println("  transfer  Copy part of one library into another")
 	fmt.Println("  identity  Show or move your issuer identity")
 	fmt.Println("  open      Open a password-protected copy into an ordinary database")
 	fmt.Println("  list      List database contents")

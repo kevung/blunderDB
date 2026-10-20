@@ -69,6 +69,7 @@ var serverOnlyPaths = map[string]string{
 	"/v1/across.collectionsList":     whyAcross,
 	"/v1/across.collectionPositions": whyAcross,
 	"/v1/across.clubRanking":         whyAcross,
+	transferPullPath:                 whyAcross,
 }
 
 // whyAcross is why the across.* reads live outside Paths(): their read set comes from the

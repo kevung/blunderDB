@@ -359,6 +359,26 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/acrossStatsResp"
+  /v1/across.transferPull:
+    post:
+      operationId: across.transferPull
+      tags: [across]
+      x-kind: custom
+      parameters:
+        - name: X-Read-Tenants
+          in: header
+          required: false
+          description: Comma-separated tenants read besides X-Tenant-ID, written by the authenticating proxy (at most 64 with X-Tenant-ID, one header line); honoured only under serve --read-tenants, refused with 400 otherwise; absent, the read is X-Tenant-ID's alone.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
   /v1/analyses.delete:
     post:
       operationId: analyses.delete

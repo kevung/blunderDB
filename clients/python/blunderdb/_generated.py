@@ -74,6 +74,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/across.statsCompute — JSON."
         return self._call("/v1/across.statsCompute", payload)
 
+    def across_transfer_pull(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/across.transferPull — hand-written handler — see openapi.yaml."
+        return self._call("/v1/across.transferPull", payload)
+
     def analyses_delete(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/analyses.delete — JSON."
         return self._call("/v1/analyses.delete", payload)

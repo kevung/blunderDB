@@ -26,6 +26,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/across.positionElsewhere             JSON
      POST /v1/across.searchFind                    NDJSON
      POST /v1/across.statsCompute                  JSON
+     POST /v1/across.transferPull                  custom
    analyses
      POST /v1/analyses.delete                      JSON
      POST /v1/analyses.load                        JSON
