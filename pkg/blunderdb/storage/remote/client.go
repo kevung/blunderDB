@@ -141,14 +141,16 @@ type idleBody struct {
 
 func (b *idleBody) Read(p []byte) (int, error) {
 	n, err := b.ReadCloser.Read(p)
-	if n > 0 {
+	if n > 0 && b.timer != nil {
 		b.timer.Reset(b.d)
 	}
 	return n, err
 }
 
 func (b *idleBody) Close() error {
-	b.timer.Stop()
+	if b.timer != nil {
+		b.timer.Stop()
+	}
 	err := b.ReadCloser.Close()
 	b.cancel()
 	return err
@@ -217,16 +219,16 @@ func (c *client) post(ctx context.Context, scope, method string, req any) (*http
 		}
 		return nil, visible(fmt.Errorf("%w: cannot reach %s (%s): %w", ErrUnavailable, c.base, method, err))
 	}
+	// The request context is released with the body; the timer, when there
+	// is an idle bound, cancels it on silence.
+	ib := &idleBody{ReadCloser: resp.Body, d: c.idle, cancel: cancel}
 	if c.idle > 0 {
-		resp.Body = &idleBody{ReadCloser: resp.Body, timer: time.AfterFunc(c.idle, cancel), d: c.idle, cancel: cancel}
+		ib.timer = time.AfterFunc(c.idle, cancel)
 	}
+	resp.Body = ib
 	if resp.StatusCode/100 != 2 {
 		defer resp.Body.Close()
 		return nil, decodeError(method, resp)
-	}
-	if c.idle == 0 {
-		// No idle bound: the request context is released with the body.
-		resp.Body = &idleBody{ReadCloser: resp.Body, timer: time.NewTimer(time.Hour), d: time.Hour, cancel: cancel}
 	}
 	return resp, nil
 }
