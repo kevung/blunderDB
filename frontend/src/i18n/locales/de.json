@@ -362,6 +362,8 @@
         "tabCommands": "Befehlszeile",
         "tabAbout": "Über",
         "loadFailed": "Die Hilfe konnte nicht geladen werden.",
+        "retry": "Erneut versuchen",
+        "onlineDoc": "Online-Dokumentation",
         "searchPlaceholder": "In der Hilfe suchen (/)",
         "searchNone": "kein Treffer"
     },

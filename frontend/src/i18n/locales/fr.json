@@ -362,6 +362,8 @@
         "tabCommands": "Ligne de commande",
         "tabAbout": "À propos",
         "loadFailed": "L'aide n'a pas pu être chargée.",
+        "retry": "Réessayer",
+        "onlineDoc": "Documentation en ligne",
         "searchPlaceholder": "Rechercher dans l'aide (/)",
         "searchNone": "aucun résultat"
     },
