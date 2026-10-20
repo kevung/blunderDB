@@ -36,6 +36,10 @@ func (e *UnsupportedError) Error() string {
 	return fmt.Sprintf("remote: %s has no /v1 route", e.Method)
 }
 
+// ClientMessage lets the daemon show this message although the error is
+// internal: it names a contract method, nothing of the backend behind it.
+func (e *UnsupportedError) ClientMessage() string { return e.Error() }
+
 // Is matches ErrUnsupported and storage.ErrInternal.
 func (e *UnsupportedError) Is(target error) bool {
 	return target == ErrUnsupported || target == storage.ErrInternal

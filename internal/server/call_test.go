@@ -212,3 +212,19 @@ func TestCallRemoteBackend(t *testing.T) {
 		t.Fatalf("positions.count over remote = %q, %v; want 1", out, err)
 	}
 }
+
+// TestCallRemoteNamesTheUnsupportedMethod: a route whose storage method /v1
+// does not serve answers an internal error, but one that names the method,
+// not the generic text that hides a backend's internals.
+func TestCallRemoteNamesTheUnsupportedMethod(t *testing.T) {
+	ts, _ := newTestServerAndHandler(t)
+	out, err := captureStdout(t, func() error {
+		return RunCall([]string{"met.list", "--backend", "remote", "--dsn", ts.URL})
+	})
+	if err == nil {
+		t.Fatalf("met.list over remote succeeded: %s", out)
+	}
+	if !strings.Contains(out, `"internal"`) || !strings.Contains(out, "MatchEquityTableStore.") || !strings.Contains(out, "has no /v1 route") {
+		t.Fatalf("envelope does not name the method: %s", out)
+	}
+}

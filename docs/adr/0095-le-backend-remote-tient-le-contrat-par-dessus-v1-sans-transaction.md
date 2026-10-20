@@ -29,7 +29,8 @@ lit `storage.SyncDeck`). Le contrat compte environ 300 méthodes.
    l'atomicité — `CreateMoves` interrompu laisse écrits les coups d'avant.
 3. **Toute autre méthode répond `*remote.UnsupportedError`**, qui correspond à
    `remote.ErrUnsupported` et à `storage.ErrInternal` : un échec, jamais un faux succès ni un
-   « introuvable » qui se lirait comme une ligne absente. `remote.Unsupported` les nomme toutes
+   « introuvable » qui se lirait comme une ligne absente. Le démon, qui masque le message d'une erreur interne, laisse voir
+   celui-ci (`ClientMessage`) : il ne nomme qu'une méthode du contrat, rien du backend. `remote.Unsupported` les nomme toutes
    (117 à ce jour) ; `unsupported_gen.go` est produit par `go generate` (`gen_stubs.go`) à
    partir des interfaces et des méthodes écrites à la main, et la compilation échoue tant qu'il
    n'est pas régénéré après un changement de l'un ou de l'autre. Une option que la route ne
