@@ -100,12 +100,17 @@ func Diagram(p *domain.Position) string {
 
 	// The bar: Points[0] and Points[25], stacked outward from the middle gap.
 	barX := boardX + 6*pointW + barW/2
-	for i, idx := range []int{0, 25} {
+	// The player on roll sits at the bottom and enters from the quadrant above
+	// the middle: their bar checkers are above it, the opponent's below.
+	rollerBar := domain.BlackBar
+	if flip {
+		rollerBar = domain.WhiteBar
+	}
+	for _, idx := range []int{domain.WhiteBar, domain.BlackBar} {
 		pt := p.Board.Points[idx]
 		for k := 0; k < pt.Checkers && k < 3; k++ {
 			cy := midY - midGap/2 - checkerR*(1+2*k)
-			// Seen from the player on roll, the board is turned half a turn.
-			if (i == 1) != flip {
+			if idx != rollerBar {
 				cy = midY + midGap/2 + checkerR*(1+2*k)
 			}
 			b.WriteString(checker(barX, cy, pt.Color))
@@ -117,11 +122,11 @@ func Diagram(p *domain.Position) string {
 		v := 1 << p.Cube.Value // the position stores the exponent
 		cy := midY
 		// The player on roll sits at the bottom, so does their cube.
-		switch p.Cube.Owner {
-		case p.PlayerOnRoll:
-			cy = boardBot - 18
-		case domain.Black, domain.White:
+		if p.Cube.Owner == domain.Black || p.Cube.Owner == domain.White {
 			cy = boardTop + 18
+			if p.Cube.Owner == p.PlayerOnRoll {
+				cy = boardBot - 18
+			}
 		}
 		cx := margin + cubeCol/2
 		fmt.Fprintf(&b, `<rect x="%d" y="%d" width="28" height="28" rx="4" fill="#fff" stroke="#222"/><text x="%d" y="%d" font-size="15" font-weight="bold" text-anchor="middle" fill="#222">%d</text>`, cx-14, cy-14, cx, cy+5, v)

@@ -102,13 +102,25 @@ func TestDiagramTurnsCubeAndBarWithThePlayerOnRoll(t *testing.T) {
 				t.Errorf("onRoll %d owner %d: cube on the wrong end (top=%v)", onRoll, owner, got)
 			}
 			above, below := barCheckers(svg)
-			wantAbove, wantBelow := 1, 2 // Points[0] above, Points[25] below, half a turn when White rolls
+			// The side on roll sits at the bottom and enters from the quadrant
+			// above the middle: its bar (Black: Points[25], White: Points[0])
+			// is drawn above, the opponent's below. Points[0] holds 1 checker,
+			// Points[25] holds 2.
+			wantAbove, wantBelow := 2, 1
 			if onRoll == domain.White {
-				wantAbove, wantBelow = 2, 1
+				wantAbove, wantBelow = 1, 2
 			}
 			if len(above) != wantAbove || len(below) != wantBelow {
 				t.Errorf("onRoll %d: bar above %v below %v", onRoll, above, below)
 			}
+		}
+	}
+	// An unowned cube stays in the middle, whoever is on roll (None included).
+	for _, onRoll := range []int{domain.Black, domain.White, domain.None} {
+		p := domain.InitializePosition()
+		p.PlayerOnRoll, p.Cube.Owner, p.Cube.Value = onRoll, domain.None, 0
+		if got := cubeY(Diagram(&p)); got != mid-14 {
+			t.Errorf("onRoll %d: centre cube at y=%d, want %d", onRoll, got, mid-14)
 		}
 	}
 	for away, want := range map[int]string{domain.Crawford: "-1 Cr", domain.PostCrawford: "-1 post-Cr", 3: "-3", domain.Unlimited: "∞"} {
