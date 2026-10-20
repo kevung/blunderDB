@@ -17,6 +17,7 @@ import { toggleAnalysisChallenge } from '../stores/analysisChallengeStore.js';
 
 import { newDatabase, openDatabase, openDatabaseInNewGroup, exitApp } from './databaseService.js';
 import { cycleTab, cycleGroup } from '../stores/libraryGroupStore.js';
+import { swapKeyDown } from './elsewhereService.js';
 import {
     firstPosition,
     previousPosition,
@@ -35,6 +36,7 @@ import {
     toggleMatchPanel,
     toggleTournamentPanel,
     toggleStatsPanel,
+    toggleElsewherePanel,
     toggleTranscriptionPanel,
     toggleSearchPanel,
     toggleEvalMode,
@@ -553,6 +555,12 @@ export function handleKeyDown(event) {
     } else if ((event.ctrlKey && event.key === 'PageDown') || (!event.ctrlKey && isShiftLetter(event, 'k'))) {
         event.preventDefault();
         cycleTab(1);
+    } else if (event.ctrlKey && event.shiftKey && !event.altKey && letter('a')) {
+        event.preventDefault();
+        toggleElsewherePanel();
+    } else if (isBareLetter(event, 'x')) {
+        // The swap: the other library's board in place of this one; its keyup lives in ElsewhereSwap.
+        swapKeyDown(event);
     } else if (!event.ctrlKey && letter('p')) {
         togglePipcount();
     } else if (!event.ctrlKey && letter('m')) {

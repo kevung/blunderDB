@@ -20,6 +20,9 @@ export const TABS = Object.freeze([
     { id: 'anki', labelKey: 'tabbedPanel.anki', icon: 'anki', shortcut: 'Ctrl+K' },
     // Duel après Anki : jouer un match entier contre le Bot (ADR-0072).
     { id: 'duel', labelKey: 'tabbedPanel.duel', icon: 'duel', shortcut: 'Ctrl+H' },
+    // Ailleurs après Commentaires et avant Stats : ce que les autres bibliothèques ouvertes
+    // savent de la position, lu comme on lit son analyse et ses commentaires (ADR-0101).
+    { id: 'elsewhere', labelKey: 'tabbedPanel.elsewhere', icon: 'elsewhere', shortcut: 'Ctrl+Maj+A' },
     { id: 'stats', labelKey: 'tabbedPanel.stats', icon: 'stats', shortcut: 'Ctrl+D' },
     { id: 'transcription', labelKey: 'tabbedPanel.transcription', icon: 'transcription', shortcut: 'Ctrl+Maj+T' },
     { id: 'metadata', labelKey: 'tabbedPanel.metadata', icon: 'metadata', shortcut: 'Ctrl+M' }

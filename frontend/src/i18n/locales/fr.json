@@ -1402,6 +1402,7 @@
         "matches": "Matchs",
         "tournaments": "Tournois",
         "stats": "Stats",
+        "elsewhere": "Ailleurs",
         "eval": "Eval",
         "anki": "Anki",
         "metadata": "Métadonnées",
@@ -3542,5 +3543,38 @@
         "switchFailed": "Impossible d'afficher la bibliothèque {name}",
         "closed": "{name} fermée : {shown} est affichée",
         "duelViews": "Un Duel est en cours : sa vue reste affichée jusqu'à ce qu'il soit suspendu ou terminé"
+    },
+    "elsewhere": {
+        "alone": "Aucune autre bibliothèque n'est ouverte. Ouvrez-en une dans un nouveau groupe (Ctrl+Maj+O) : cette vue dira ce qu'elle sait de la position.",
+        "judgedWith": "Jugé avec les seuils de cette bibliothèque : erreur ≥ {error}, gaffe ≥ {blunder}",
+        "swapHint": "x : voir la position dans l'autre bibliothèque",
+        "refresh": "Relire",
+        "error": "Les autres bibliothèques n'ont pas pu être lues.",
+        "open": "Ouvrir là-bas",
+        "absent": "Ne contient pas cette position.",
+        "notAnalysed": "Pas d'analyse.",
+        "bestCube": "Meilleure action :",
+        "bestMove": "Meilleur coup :",
+        "otherMet": "autre MET : {name}",
+        "otherMetTitle": "Analyse valorisée avec une autre table d'équité de match que celle de cette bibliothèque : ses écarts ne sont pas comparés aux seuils.",
+        "builtinMet": "table intégrée",
+        "playsTruncated": "Jouée dans {total} matchs ; les {shown} derniers importés :",
+        "plays": "Jouée dans {count} match(s) :",
+        "neighbours": "Positions voisines :",
+        "distance": "distance {distance}",
+        "pin": "Épingler",
+        "unpin": "Désépingler",
+        "pinned": "épinglée",
+        "swapLabel": "Position de la bibliothèque {name}",
+        "commentCount": "commentaires : {count}",
+        "noOtherLibrary": "Aucune autre bibliothèque n'est ouverte.",
+        "notHeld": "Les autres bibliothèques ouvertes ne contiennent pas cette position, et aucune voisine n'est épinglée.",
+        "verdict": {
+            "good": "bon",
+            "error": "erreur",
+            "blunder": "gaffe",
+            "unscored": "non évalué",
+            "otherMet": "autre MET"
+        }
     }
 }

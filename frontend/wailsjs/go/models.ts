@@ -4115,6 +4115,42 @@ export namespace gammonnet {
 
 export namespace gui {
 	
+	export class ElsewhereGroupReport {
+	    group!: number;
+	    path!: string;
+	    positionId!: number;
+	    analysis?: any;
+	    metName?: string;
+	    otherMet!: boolean;
+	    comments!: any[];
+	    plays!: any[];
+	    matchesTotal!: number;
+	    playsTruncated!: boolean;
+	    neighbours!: any[];
+	
+	    static createFrom(source: any = {}) {
+	        return new ElsewhereGroupReport(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        Object.assign(this, source);
+	    }
+	}
+	export class ElsewhereView {
+	    zobrist!: number;
+	    judge!: any;
+	    groups!: ElsewhereGroupReport[];
+	
+	    static createFrom(source: any = {}) {
+	        return new ElsewhereView(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        Object.assign(this, source);
+	    }
+	}
 	export class AssistantRequest {
 	    preset: string;
 	    baseURL: string;

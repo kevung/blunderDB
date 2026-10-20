@@ -335,6 +335,47 @@ lire (textes de position, importés un par un) ou la fusion d'une base.
 enregistrée, et la liste des groupes ne l'est pas : au démarrage suivant,
 blunderDB rouvre la dernière base active.
 
+.. _vue_ailleurs:
+
+Ce que les autres bibliothèques savent : l'onglet Ailleurs
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+L'onglet **Ailleurs** (*CTRL-MAJ-A*) dit, pour la position affichée, ce qu'en
+savent les autres bibliothèques ouvertes en groupes. La position y est
+retrouvée par son identité de plateau (son hachage), non par son numéro : un
+même numéro désigne deux positions différentes dans deux bases. Chaque
+bibliothèque a son bloc, bordé de la couleur de son groupe :
+
+* **son analyse** : le meilleur coup, ou la meilleure action de videau, et le
+  moteur qui l'a trouvé. Une analyse valorisée avec une autre table d'équité
+  de match que celle de la bibliothèque active porte la mention *autre MET* ;
+* **ses commentaires**, chacun avec son auteur, ou son signataire et l'état de
+  la signature comme dans le :ref:`panneau des commentaires <panneau_commentaires>` ;
+* **les matchs où la position a été jouée** : joueurs, épreuve, date, numéro
+  du coup, coup ou décision joués et leur coût. Le verdict (*bon*, *erreur*,
+  *gaffe*) est rendu avec les seuils de la bibliothèque **active**, pas avec
+  ceux de l'autre ; un coût calculé avec une autre MET n'est pas comparé et
+  reste marqué *autre MET*. Au-delà de 50 matchs, les 50 derniers importés
+  sont listés et le total est indiqué ;
+* **ses positions voisines**, les cinq plus proches, en vignettes avec leur
+  distance.
+
+Une bibliothèque qui ne contient pas la position le dit, et montre tout de
+même ses voisines. *Ouvrir là-bas*, un clic sur un match ou sur une vignette
+active le groupe de cette bibliothèque et y affiche la position. Rien n'est
+écrit dans aucune base. Le bouton ⟳ relit les autres bibliothèques.
+
+**L'échange sur place.** La touche *x* montre, à la place du plateau, au même
+endroit et à la même taille, la position de l'autre bibliothèque, sous un
+bandeau à sa couleur qui rappelle son nom, son meilleur coup et le nombre de
+ses commentaires. Maintenue, la touche ramène le plateau quand on la relâche ;
+pressée brièvement, l'échange reste affiché jusqu'à la pression suivante.
+Changer de position ou de fenêtre ramène aussi le plateau. Le groupe actif,
+la vue et la liste ne changent pas. La position montrée est, par défaut, la
+même position dans la première autre bibliothèque qui la contient ; le
+bouton *Épingler* sous une vignette de l'onglet Ailleurs choisit plutôt cette
+voisine, jusqu'à *Désépingler* ou un changement de groupe.
+
 .. _configuration:
 
 Configuration

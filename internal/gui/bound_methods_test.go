@@ -12,6 +12,7 @@ import (
 var boundAppMethods = []string{
 	"ActivateLibraryGroup",
 	"CloseLibraryGroup",
+	"ElsewhereInGroups",
 	"LibraryGroupHolding",
 	"ListLibraryGroups",
 	"OpenLibraryGroup",

@@ -65,6 +65,8 @@ export function DeleteFile(arg1:string):Promise<void>;
 
 export function DiscardBearoffCheckpoint(arg1:number,arg2:number):Promise<void>;
 
+export function ElsewhereInGroups(arg1:domain.Position,arg2:number):Promise<gui.ElsewhereView>;
+
 export function EnsureBearoffTables():Promise<void>;
 
 export function EvaluatePositionImmediate(arg1:domain.Position,arg2:number,arg3:number):Promise<gui.GammonNetEvalResult>;

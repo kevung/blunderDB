@@ -1402,6 +1402,7 @@
         "matches": "Matches",
         "tournaments": "Tournaments",
         "stats": "Stats",
+        "elsewhere": "Elsewhere",
         "eval": "Eval",
         "anki": "Anki",
         "metadata": "Metadata",
@@ -3542,5 +3543,38 @@
         "switchFailed": "Could not show the library {name}",
         "closed": "{name} closed: {shown} is shown",
         "duelViews": "A Duel is in progress: its view stays on screen until it is suspended or finished"
+    },
+    "elsewhere": {
+        "alone": "No other library is open. Open one in a new group (Ctrl+Shift+O): this view will tell what it knows of the position.",
+        "judgedWith": "Judged with this library's thresholds: error ≥ {error}, blunder ≥ {blunder}",
+        "swapHint": "x: see the position in the other library",
+        "refresh": "Read again",
+        "error": "The other libraries could not be read.",
+        "open": "Open there",
+        "absent": "Does not hold this position.",
+        "notAnalysed": "No analysis.",
+        "bestCube": "Best action:",
+        "bestMove": "Best move:",
+        "otherMet": "other MET: {name}",
+        "otherMetTitle": "Analysis valued with another match equity table than this library's: its costs are not compared with the thresholds.",
+        "builtinMet": "built-in table",
+        "playsTruncated": "Played in {total} matches; the {shown} latest imported:",
+        "plays": "Played in {count} match(es):",
+        "neighbours": "Neighbouring positions:",
+        "distance": "distance {distance}",
+        "pin": "Pin",
+        "unpin": "Unpin",
+        "pinned": "pinned",
+        "swapLabel": "Position from the library {name}",
+        "commentCount": "comments: {count}",
+        "noOtherLibrary": "No other library is open.",
+        "notHeld": "The other open libraries do not hold this position, and no neighbour is pinned.",
+        "verdict": {
+            "good": "good",
+            "error": "error",
+            "blunder": "blunder",
+            "unscored": "unscored",
+            "otherMet": "other MET"
+        }
     }
 }

@@ -47,6 +47,7 @@ import { rolloutStore, idleRollout } from './rolloutStore.js';
 import { databaseReadOnlyStore } from './databaseStore.js';
 import { commandHistoryStore } from './commandHistoryStore.js';
 import { matchListStore, emptyMatchList } from './matchListStore.js';
+import { elsewhereStore, elsewherePinStore, elsewherePeekStore, idleElsewhere } from './elsewhereStore.js';
 
 /**
  * @typedef {import('svelte/store').Writable<any>} AnyWritable
@@ -157,7 +158,12 @@ export const RELOADED = {
     duelListStore: [duelListStore, () => []],
     directionSummariesStore: [directionSummariesStore, () => []],
     // The status bar reads it again each time the command line opens.
-    commandHistoryStore: [commandHistoryStore, () => []]
+    commandHistoryStore: [commandHistoryStore, () => []],
+    // What the other groups know of the board: their set changes with the active group, and a
+    // pin or a swap names a row of one of them.
+    elsewhereStore: [elsewhereStore, idleElsewhere],
+    elsewherePinStore: [elsewherePinStore, () => null],
+    elsewherePeekStore: [elsewherePeekStore, () => null]
 };
 
 /** Read again by another mechanism when the library changes. */

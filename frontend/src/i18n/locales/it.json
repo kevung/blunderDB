@@ -1402,6 +1402,7 @@
         "matches": "Partite",
         "tournaments": "Tornei",
         "stats": "Statistiche",
+        "elsewhere": "Altrove",
         "eval": "Eval",
         "anki": "Anki",
         "metadata": "Metadati",
@@ -3542,5 +3543,38 @@
         "switchFailed": "Impossibile mostrare la libreria {name}",
         "closed": "{name} chiusa: è mostrata {shown}",
         "duelViews": "È in corso un Duello: la sua vista resta sullo schermo finché non viene sospeso o terminato"
+    },
+    "elsewhere": {
+        "alone": "Nessun'altra biblioteca è aperta. Aprine una in un nuovo gruppo (Ctrl+Maiusc+O): questa vista dirà cosa sa della posizione.",
+        "judgedWith": "Giudicato con le soglie di questa biblioteca: errore ≥ {error}, svarione ≥ {blunder}",
+        "swapHint": "x: vedere la posizione nell'altra biblioteca",
+        "refresh": "Rileggi",
+        "error": "Non è stato possibile leggere le altre biblioteche.",
+        "open": "Apri là",
+        "absent": "Non contiene questa posizione.",
+        "notAnalysed": "Nessuna analisi.",
+        "bestCube": "Migliore azione:",
+        "bestMove": "Mossa migliore:",
+        "otherMet": "altra MET: {name}",
+        "otherMetTitle": "Analisi valutata con un'altra tabella di equity di match rispetto a quella di questa biblioteca: i suoi costi non sono confrontati con le soglie.",
+        "builtinMet": "tabella integrata",
+        "playsTruncated": "Giocata in {total} match; gli ultimi {shown} importati:",
+        "plays": "Giocata in {count} match:",
+        "neighbours": "Posizioni vicine:",
+        "distance": "distanza {distance}",
+        "pin": "Fissa",
+        "unpin": "Sblocca",
+        "pinned": "fissata",
+        "swapLabel": "Posizione della biblioteca {name}",
+        "commentCount": "commenti: {count}",
+        "noOtherLibrary": "Nessun'altra biblioteca è aperta.",
+        "notHeld": "Le altre biblioteche aperte non contengono questa posizione e nessuna vicina è fissata.",
+        "verdict": {
+            "good": "buona",
+            "error": "errore",
+            "blunder": "svarione",
+            "unscored": "non valutata",
+            "otherMet": "altra MET"
+        }
     }
 }

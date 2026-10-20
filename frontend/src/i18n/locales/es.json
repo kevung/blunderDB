@@ -1402,6 +1402,7 @@
         "matches": "Partidas",
         "tournaments": "Torneos",
         "stats": "Estadísticas",
+        "elsewhere": "En otro lugar",
         "eval": "Eval",
         "anki": "Anki",
         "metadata": "Metadatos",
@@ -3542,5 +3543,38 @@
         "switchFailed": "No se pudo mostrar la biblioteca {name}",
         "closed": "{name} cerrada: se muestra {shown}",
         "duelViews": "Hay un Duelo en curso: su vista permanece en pantalla hasta que se suspenda o termine"
+    },
+    "elsewhere": {
+        "alone": "No hay otra biblioteca abierta. Abra una en un grupo nuevo (Ctrl+Mayús+O): esta vista dirá lo que sabe de la posición.",
+        "judgedWith": "Juzgado con los umbrales de esta biblioteca: error ≥ {error}, pifia ≥ {blunder}",
+        "swapHint": "x: ver la posición en la otra biblioteca",
+        "refresh": "Volver a leer",
+        "error": "No se pudieron leer las otras bibliotecas.",
+        "open": "Abrir allí",
+        "absent": "No contiene esta posición.",
+        "notAnalysed": "Sin análisis.",
+        "bestCube": "Mejor acción:",
+        "bestMove": "Mejor jugada:",
+        "otherMet": "otra MET: {name}",
+        "otherMetTitle": "Análisis valorado con otra tabla de equidad de match distinta de la de esta biblioteca: sus costes no se comparan con los umbrales.",
+        "builtinMet": "tabla integrada",
+        "playsTruncated": "Jugada en {total} matches; los {shown} últimos importados:",
+        "plays": "Jugada en {count} match(es):",
+        "neighbours": "Posiciones vecinas:",
+        "distance": "distancia {distance}",
+        "pin": "Fijar",
+        "unpin": "Soltar",
+        "pinned": "fijada",
+        "swapLabel": "Posición de la biblioteca {name}",
+        "commentCount": "comentarios: {count}",
+        "noOtherLibrary": "No hay otra biblioteca abierta.",
+        "notHeld": "Las otras bibliotecas abiertas no contienen esta posición y no hay ninguna vecina fijada.",
+        "verdict": {
+            "good": "buena",
+            "error": "error",
+            "blunder": "pifia",
+            "unscored": "sin evaluar",
+            "otherMet": "otra MET"
+        }
     }
 }

@@ -1402,6 +1402,7 @@
         "matches": "Ottelut",
         "tournaments": "Turnaukset",
         "stats": "Tilastot",
+        "elsewhere": "Muualla",
         "eval": "Eval",
         "anki": "Anki",
         "metadata": "Metatiedot",
@@ -3542,5 +3543,38 @@
         "switchFailed": "Kirjastoa {name} ei voitu näyttää",
         "closed": "{name} suljettu: {shown} näytetään",
         "duelViews": "Kaksintaistelu on käynnissä: sen näkymä pysyy näytöllä, kunnes se keskeytetään tai päättyy"
+    },
+    "elsewhere": {
+        "alone": "Muuta kirjastoa ei ole avattu. Avaa sellainen uuteen ryhmään (Ctrl+Vaihto+O): tämä näkymä kertoo, mitä se tietää asemasta.",
+        "judgedWith": "Arvioitu tämän kirjaston rajoilla: virhe ≥ {error}, moka ≥ {blunder}",
+        "swapHint": "x: näytä asema toisessa kirjastossa",
+        "refresh": "Lue uudelleen",
+        "error": "Muita kirjastoja ei voitu lukea.",
+        "open": "Avaa siellä",
+        "absent": "Ei sisällä tätä asemaa.",
+        "notAnalysed": "Ei analyysia.",
+        "bestCube": "Paras toiminto:",
+        "bestMove": "Paras siirto:",
+        "otherMet": "eri MET: {name}",
+        "otherMetTitle": "Analyysi on arvotettu eri ottelun equity-taulukolla kuin tämän kirjaston: sen kustannuksia ei verrata rajoihin.",
+        "builtinMet": "sisäänrakennettu taulukko",
+        "playsTruncated": "Pelattu {total} ottelussa; {shown} viimeksi tuotua:",
+        "plays": "Pelattu {count} ottelussa:",
+        "neighbours": "Lähiasemat:",
+        "distance": "etäisyys {distance}",
+        "pin": "Kiinnitä",
+        "unpin": "Irrota",
+        "pinned": "kiinnitetty",
+        "swapLabel": "Asema kirjastosta {name}",
+        "commentCount": "kommentteja: {count}",
+        "noOtherLibrary": "Muuta kirjastoa ei ole avattu.",
+        "notHeld": "Muut avoimet kirjastot eivät sisällä tätä asemaa, eikä yhtään lähiasemaa ole kiinnitetty.",
+        "verdict": {
+            "good": "hyvä",
+            "error": "virhe",
+            "blunder": "moka",
+            "unscored": "arvioimaton",
+            "otherMet": "eri MET"
+        }
     }
 }

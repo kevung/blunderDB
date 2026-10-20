@@ -142,6 +142,8 @@ Outils
    "CTRL-D", "Afficher/cacher le panneau Stats."
    "CTRL-E", "Afficher/cacher le panneau Eval."
    "CTRL-MAJ-T", "Afficher/cacher le panneau Transcription (brouillons de matchs)."
+   "CTRL-MAJ-A", "Afficher/cacher l'onglet Ailleurs : ce que les autres bibliothèques ouvertes savent de la position."
+   "x", "Échange sur place : montrer la position de l'autre bibliothèque au lieu du plateau ; maintenue, revenir en la relâchant, sinon à la pression suivante."
    "J / K", "Dans la file des propositions d'un tournoi dirigé : descendre, monter."
    "ENTRÉE", "Dans la file des propositions : confirmer la proposition choisie."
    "TAB (page du tournoi)", "Premier arrêt dans l'onglet Direction : « Aller à la file » ; ENTRÉE pose le focus sur la file des propositions."

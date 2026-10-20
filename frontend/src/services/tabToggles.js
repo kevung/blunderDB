@@ -36,7 +36,8 @@ const TAB_TOGGLES = Object.freeze({
     tournaments: { tab: 'tournaments' },
     stats: { tab: 'stats' },
     search: { tab: 'search', withoutDb: true },
-    transcription: { tab: 'transcription' }
+    transcription: { tab: 'transcription' },
+    elsewhere: { tab: 'elsewhere' }
 });
 
 // The tab to fall back to on a "toggle back" when there is nothing more
@@ -125,6 +126,7 @@ export const toggleCollectionPanelAction = () => toggleTab('collections');
 // Direction open (ADR-0047).
 export const toggleTournamentPanel = () => toggleTab('tournaments');
 export const toggleStatsPanel = () => toggleTab('stats');
+export const toggleElsewherePanel = () => toggleTab('elsewhere');
 export const toggleSearchPanel = () => toggleTab('search');
 // Bound to the `transcribe`/`tr` command and Ctrl+Maj+T.
 export const toggleTranscriptionPanel = () => toggleTab('transcription');

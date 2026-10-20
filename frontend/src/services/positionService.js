@@ -1015,6 +1015,7 @@ export {
     toggleCollectionPanelAction,
     toggleTournamentPanel,
     toggleStatsPanel,
+    toggleElsewherePanel,
     toggleSearchPanel,
     toggleTranscriptionPanel,
     togglePipcount

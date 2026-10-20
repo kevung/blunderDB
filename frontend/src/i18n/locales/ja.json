@@ -1402,6 +1402,7 @@
         "matches": "マッチ",
         "tournaments": "トーナメント",
         "stats": "統計",
+        "elsewhere": "他のライブラリ",
         "eval": "評価",
         "anki": "Anki",
         "metadata": "メタデータ",
@@ -3542,5 +3543,38 @@
         "switchFailed": "ライブラリ {name} を表示できませんでした",
         "closed": "{name} を閉じました。{shown} を表示しています",
         "duelViews": "デュエル進行中です。中断または終了するまで、そのビューは画面に残ります"
+    },
+    "elsewhere": {
+        "alone": "他に開いているライブラリはありません。新しいグループで開いてください（Ctrl+Shift+O）。このビューにそのライブラリがこのポジションについて知っていることが表示されます。",
+        "judgedWith": "このライブラリのしきい値で判定：エラー ≥ {error}、ブランダー ≥ {blunder}",
+        "swapHint": "x：もう一方のライブラリのポジションを表示",
+        "refresh": "再読み込み",
+        "error": "他のライブラリを読み込めませんでした。",
+        "open": "そちらで開く",
+        "absent": "このポジションは含まれていません。",
+        "notAnalysed": "解析なし。",
+        "bestCube": "最善のアクション：",
+        "bestMove": "最善手：",
+        "otherMet": "別のMET：{name}",
+        "otherMetTitle": "このライブラリとは異なるマッチエクイティ表で評価された解析です。損失はしきい値と比較されません。",
+        "builtinMet": "組み込みの表",
+        "playsTruncated": "{total} 試合で出現。最近インポートされた {shown} 試合：",
+        "plays": "{count} 試合で出現：",
+        "neighbours": "近いポジション：",
+        "distance": "距離 {distance}",
+        "pin": "ピン留め",
+        "unpin": "ピン留め解除",
+        "pinned": "ピン留め済み",
+        "swapLabel": "ライブラリ {name} のポジション",
+        "commentCount": "コメント：{count}",
+        "noOtherLibrary": "他に開いているライブラリはありません。",
+        "notHeld": "他に開いているライブラリにはこのポジションがなく、ピン留めされた近いポジションもありません。",
+        "verdict": {
+            "good": "良い",
+            "error": "エラー",
+            "blunder": "ブランダー",
+            "unscored": "未評価",
+            "otherMet": "別のMET"
+        }
     }
 }

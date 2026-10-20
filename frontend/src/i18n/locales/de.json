@@ -1402,6 +1402,7 @@
         "matches": "Partien",
         "tournaments": "Turniere",
         "stats": "Statistik",
+        "elsewhere": "Anderswo",
         "eval": "Eval",
         "anki": "Anki",
         "metadata": "Metadaten",
@@ -3542,5 +3543,38 @@
         "switchFailed": "Die Bibliothek {name} kann nicht angezeigt werden",
         "closed": "{name} geschlossen: {shown} wird angezeigt",
         "duelViews": "Ein Duell läuft: Seine Ansicht bleibt sichtbar, bis es unterbrochen oder beendet ist"
+    },
+    "elsewhere": {
+        "alone": "Keine andere Bibliothek ist geöffnet. Öffnen Sie eine in einer neuen Gruppe (Strg+Umschalt+O): Diese Ansicht zeigt, was sie über die Position weiß.",
+        "judgedWith": "Bewertet mit den Schwellen dieser Bibliothek: Fehler ≥ {error}, Patzer ≥ {blunder}",
+        "swapHint": "x: die Position in der anderen Bibliothek sehen",
+        "refresh": "Neu lesen",
+        "error": "Die anderen Bibliotheken konnten nicht gelesen werden.",
+        "open": "Dort öffnen",
+        "absent": "Enthält diese Position nicht.",
+        "notAnalysed": "Keine Analyse.",
+        "bestCube": "Beste Aktion:",
+        "bestMove": "Bester Zug:",
+        "otherMet": "andere MET: {name}",
+        "otherMetTitle": "Analyse mit einer anderen Match-Equity-Tabelle als der dieser Bibliothek bewertet: Ihre Kosten werden nicht mit den Schwellen verglichen.",
+        "builtinMet": "eingebaute Tabelle",
+        "playsTruncated": "In {total} Matches gespielt; die {shown} zuletzt importierten:",
+        "plays": "In {count} Match(es) gespielt:",
+        "neighbours": "Benachbarte Positionen:",
+        "distance": "Abstand {distance}",
+        "pin": "Anheften",
+        "unpin": "Lösen",
+        "pinned": "angeheftet",
+        "swapLabel": "Position aus der Bibliothek {name}",
+        "commentCount": "Kommentare: {count}",
+        "noOtherLibrary": "Keine andere Bibliothek ist geöffnet.",
+        "notHeld": "Die anderen geöffneten Bibliotheken enthalten diese Position nicht, und keine Nachbarin ist angeheftet.",
+        "verdict": {
+            "good": "gut",
+            "error": "Fehler",
+            "blunder": "Patzer",
+            "unscored": "nicht bewertet",
+            "otherMet": "andere MET"
+        }
     }
 }

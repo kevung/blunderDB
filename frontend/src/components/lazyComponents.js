@@ -75,7 +75,8 @@ export const panels = lazyRegistry({
     stats: () => import('./stats/StatsPanel.svelte'),
     eval: () => import('./EvalPanel.svelte'),
     transcription: () => import('./TranscriptionPanel.svelte'),
-    metadata: () => import('./MetadataPanel.svelte')
+    metadata: () => import('./MetadataPanel.svelte'),
+    elsewhere: () => import('./ElsewherePanel.svelte')
 });
 
 /** Keyed by the MODAL id that opens each one, plus the three opened by their own store. */

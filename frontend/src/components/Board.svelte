@@ -37,6 +37,7 @@
     import { duelBoardPress, duelBoardDrop, duelBoardContextMenu, duelBoardContext, suspendDuel, confirmForfeitDuel, confirmCancelDuel, resignDuel } from '../services/duelService.js';
     import { isMine } from '../services/duelBoard.js';
     import DuelBoardPrompt from './DuelBoardPrompt.svelte';
+    import ElsewhereSwap from './ElsewhereSwap.svelte';
     import { registerKeys } from '../services/keyDispatch.js';
 
     // Read-only mirrors of stores — always current when read inside drawing/handler functions
@@ -651,6 +652,7 @@
     {#if $duelHoldsBoardStore}
         <DuelBoardPrompt anchor={promptAnchor} />
     {/if}
+    <ElsewhereSwap />
     {#if boardMenu}
         <ContextMenu x={boardMenu.x} y={boardMenu.y} items={boardMenu.items} onClose={() => (boardMenu = null)} />
     {/if}
