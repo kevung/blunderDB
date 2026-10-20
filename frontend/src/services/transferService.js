@@ -74,7 +74,8 @@ export async function transferToGroup(dst, items) {
     const message = summary.cancelled
         ? tMsg('transfer.cancelled')
         : tMsg(failed ? 'transfer.doneWithErrors' : 'transfer.done', {
-              positions: summary.positions,
+              // -1: the backend could not count them, and says no number rather than a false one.
+              positions: summary.positions < 0 ? '?' : summary.positions,
               matches: summary.matches,
               held: summary.alreadyHeld,
               collections: summary.collections,

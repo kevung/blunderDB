@@ -49,8 +49,9 @@ func (b TransferBatch) options() database.ExportOptions {
 // header and in the status bar once that group is seen.
 type TransferSummary struct {
 	Group int `json:"group"`
-	// Positions counts the positions the destination did not hold before;
-	// AlreadyHeld the matches it held already.
+	// Positions counts the positions the destination did not hold before,
+	// -1 when they could not be counted; AlreadyHeld the matches it held
+	// already.
 	Positions   int      `json:"positions"`
 	Matches     int      `json:"matches"`
 	AlreadyHeld int      `json:"alreadyHeld"`
@@ -136,8 +137,10 @@ func (a *App) TransferToGroup(dst int, batches []TransferBatch) (TransferSummary
 
 	sum := TransferSummary{Group: dst, Errors: []string{}}
 	// The import counts every position it merged, held or not: the account
-	// tells what dst did not hold before.
-	held, _ := to.CountPositions()
+	// tells what dst did not hold before, by difference. Another import
+	// running into dst meanwhile is counted with it; without a first count
+	// the account says nothing rather than a false number.
+	held, heldErr := to.CountPositions()
 	for _, s := range sources {
 		rep, err := s.from.TransferTo(ctx, to, s.batch.options())
 		im := rep.Imported
@@ -153,10 +156,11 @@ func (a *App) TransferToGroup(dst int, batches []TransferBatch) (TransferSummary
 			sum.Errors = append(sum.Errors, err.Error())
 		}
 	}
-	if now, err := to.CountPositions(); err == nil && now > held {
-		sum.Positions = now - held
+	sum.Positions = -1
+	if now, err := to.CountPositions(); heldErr == nil && err == nil {
+		sum.Positions = max(now-held, 0)
 	}
-	if sum.Positions+sum.Matches > 0 {
+	if sum.Positions != 0 || sum.Matches > 0 {
 		to.RefreshSearchStatistics()
 	}
 	return sum, nil
