@@ -17,7 +17,7 @@ import (
 // came from.
 func (cli *CLI) runTransfer(args []string) error {
 	fs := flag.NewFlagSet("transfer", flag.ContinueOnError)
-	from := fs.String("from", "", "Path to the library to copy from (required; read only)")
+	from := fs.String("from", "", "Path to the library to copy from (required; the transfer writes nothing in it)")
 	to := fs.String("to", "", "Path to the library to copy into (required; created when missing)")
 	sel := selectionFlags(fs, "the transfer")
 	format := fs.String("format", "text", "Output format: text or json")
@@ -29,7 +29,7 @@ func (cli *CLI) runTransfer(args []string) error {
 		fmt.Println("(--collection-ids=1,2). The copy merges like an import of that export: a position")
 		fmt.Println("the destination holds is not added twice, analyses and comments merge, a match,")
 		fmt.Println("a collection or a lesson it already holds is completed, not duplicated.")
-		fmt.Println("Nothing is written that says where the copy came from, and the source is not written.")
+		fmt.Println("Nothing is written that says where the copy came from, nor anything in the source.")
 		fmt.Println()
 		fmt.Println("Options:")
 		fs.PrintDefaults()

@@ -35,6 +35,7 @@ When you provide a CLI command as the first argument, it automatically runs in h
 - `create` - Create a new database with optional metadata
 - `import` - Import data into the database (match, position, batch)
 - `export` - Export data from the database
+- `transfer` - Copy part of one library into another
 - `identity` - Show or move your issuer identity
 - `open` - Open a password-protected copy into an ordinary database
 - `list` - List database contents
@@ -369,6 +370,26 @@ The container is **AES-256-GCM**, with the key derived from the password by **Ar
 **What a password protects.** The file *in transit*: the stray copy in a downloads folder, the attachment forwarded by mistake. Not the database — whoever you gave the password to can open it. The container's header is cleartext, so `blunderdb info` reads the origin without the password.
 
 **What neither does.** Nothing is tracked. blunderDB records nothing on the recipient's side: no registry of who opened a file, no log, no trace carried into a database that imports one. See `docs/adr/0007-watermarks-mark-origin-and-nothing-else.md`.
+
+## Transfer Command
+
+Copy part of one library into another, without a file in between. The selection is the one of
+`export --type database` (every family by default, `--matches=false` drops one,
+`--collection-ids=3,7` narrows one); the merge is the one of importing a `.db`: a position the
+destination already holds is recognised by its hash and not added twice, analyses and comments
+merge, and a match, collection, lesson or Anki deck already there is not duplicated. Copying A
+to B and then B to A therefore creates no duplicate.
+
+```bash
+blunderdb transfer --from club.db --to mine.db
+blunderdb transfer --from club.db --to mine.db --collection-ids=3,7 \
+    --matches=false --tournaments=false --lessons=false --decks=false
+```
+
+Nothing is written that says where the copy came from (no watermark, no import batch, no
+metadata of the source), and nothing is written in the source. The filter library and the
+review history of Anki decks are not copied. The daemon offers the same transfer between two
+tenants as `across.transferPull`, pulled by the tenant that receives it (ADR-0102).
 
 ## Identity Command
 
@@ -3420,13 +3441,13 @@ Export data from the database.
 
 Options:
   -aliases
-    	Include the player and event aliases the exported matches write in database export (default: true) (default true)
+    	Include the player and event aliases the selected matches write in database export (default: true) (default true)
   -analysis
     	Include analysis in database export (default: true) (default true)
   -anki-history
     	Carry the review history of the exported Anki decks (default: true) (default true)
   -collection-ids string
-    	Comma-separated list of collection IDs to export (empty = all)
+    	Comma-separated list of collection IDs to take (empty = all)
   -collections
     	Include collections in database export (default: true) (default true)
   -comments
@@ -3434,7 +3455,7 @@ Options:
   -db string
     	Path to the database file (required)
   -deck-ids string
-    	Comma-separated list of Anki deck IDs to export (empty = all)
+    	Comma-separated list of Anki deck IDs to take (empty = all)
   -decks
     	Include Anki decks in database export (default: true) (default true)
   -dir string
@@ -3448,13 +3469,13 @@ Options:
   -incremental
     	Database export: only what entered the library since the last incremental export to the same folder (or --sync-cursor); --file may then be a folder, where a dated file name is chosen
   -lesson-ids string
-    	Comma-separated list of lesson IDs to export (empty = all)
+    	Comma-separated list of lesson IDs to take (empty = all)
   -lessons
     	Include lessons, with the collections and positions their steps show, in database export (default: true) (default true)
   -limit int
     	With --plan-ids: ids per page (at most 1000, the default)
   -match-ids string
-    	Comma-separated list of match IDs to export (empty = all)
+    	Comma-separated list of match IDs to take (empty = all)
   -matches
     	Include matches in database export (default: true) (default true)
   -offset int
@@ -3470,11 +3491,11 @@ Options:
   -sync-cursor string
     	With --incremental: name of the cursor to read and advance (default: the destination folder)
   -tournament-ids string
-    	Comma-separated list of tournament IDs to export (empty = all)
+    	Comma-separated list of tournament IDs to take (empty = all)
   -tournaments
     	Include tournaments in database export (default: true) (default true)
   -transcriptions
-    	Include the transcription drafts of the exported matches in database export (default: true) (default true)
+    	Include the transcription drafts of the selected matches in database export (default: true) (default true)
   -type string
     	Export type: database, positions, matches, mat (required)
   -watermark string
@@ -5685,6 +5706,68 @@ Examples:
 
   # Drop a draft
   blunderdb transcribe --db database.db --draft 4 --abandon
+```
+
+### `blunderdb transfer`
+
+```
+Usage: blunderdb transfer --from <library.db> --to <library.db> [options]
+
+Copy part of one library into another. The selection is the database export's:
+every family by default, each one left out (--matches=false) or narrowed
+(--collection-ids=1,2). The copy merges like an import of that export: a position
+the destination holds is not added twice, analyses and comments merge, a match,
+a collection or a lesson it already holds is completed, not duplicated.
+Nothing is written that says where the copy came from, nor anything in the source.
+
+Options:
+  -aliases
+    	Include the player and event aliases the selected matches write in the transfer (default: true) (default true)
+  -analysis
+    	Include analysis in the transfer (default: true) (default true)
+  -collection-ids string
+    	Comma-separated list of collection IDs to take (empty = all)
+  -collections
+    	Include collections in the transfer (default: true) (default true)
+  -comments
+    	Include comments in the transfer (default: true) (default true)
+  -deck-ids string
+    	Comma-separated list of Anki deck IDs to take (empty = all)
+  -decks
+    	Include Anki decks in the transfer (default: true) (default true)
+  -format string
+    	Output format: text or json (default "text")
+  -from string
+    	Path to the library to copy from (required; the transfer writes nothing in it)
+  -lesson-ids string
+    	Comma-separated list of lesson IDs to take (empty = all)
+  -lessons
+    	Include lessons, with the collections and positions their steps show, in the transfer (default: true) (default true)
+  -match-ids string
+    	Comma-separated list of match IDs to take (empty = all)
+  -matches
+    	Include matches in the transfer (default: true) (default true)
+  -played-moves
+    	Include played moves in analysis (default: true) (default true)
+  -to string
+    	Path to the library to copy into (required; created when missing)
+  -tournament-ids string
+    	Comma-separated list of tournament IDs to take (empty = all)
+  -tournaments
+    	Include tournaments in the transfer (default: true) (default true)
+  -transcriptions
+    	Include the transcription drafts of the selected matches in the transfer (default: true) (default true)
+
+Examples:
+  # Copy a whole library into another
+  blunderdb transfer --from club.db --to mine.db
+
+  # Copy two collections, with their positions, and nothing else
+  blunderdb transfer --from club.db --to mine.db --collection-ids=3,7 \
+      --matches=false --tournaments=false --lessons=false --decks=false
+
+  # Copy one match back the other way
+  blunderdb transfer --from mine.db --to club.db --match-ids=12 --collections=false --lessons=false --decks=false
 ```
 
 ### `blunderdb trash`

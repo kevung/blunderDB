@@ -23,6 +23,7 @@ func (cli *CLI) runExport(args []string) error {
 	outputFile := exportCmd.String("file", "", "Path to the output file (required)")
 	outputDir := exportCmd.String("dir", "", "Output directory for .mat batch export (type=mat, multiple matches)")
 	sel := selectionFlags(exportCmd, "database export")
+	sel.ankiHistory = exportCmd.Bool("anki-history", true, "Carry the review history of the exported Anki decks (default: true)")
 	includeFilterLibrary := exportCmd.Bool("filters", true, "Include filter library in database export (default: true)")
 	watermark := exportCmd.String("watermark", "", "Mark the exported file with where it comes from, e.g. \"Cours de Jean Dupont - 12 mars 2026\"")
 	watermarkNote := exportCmd.String("watermark-note", "", "Free text attached to the watermark (terms of use, contact)")
@@ -550,6 +551,8 @@ func (cli *CLI) exportPositions(outputFile string, text bool) error {
 
 // exportSelection holds the flags that say what an export, or a transfer, takes from a
 // library: one switch per family and one list of ids per family that can be narrowed.
+// ankiHistory is the export's alone: the native import keeps the recipient's schedule,
+// so a transfer never carries one; nil reads as false.
 type exportSelection struct {
 	analysis, comments, playedMoves, matches, transcriptions, aliases *bool
 	collections, tournaments, decks, lessons, ankiHistory             *bool
@@ -570,7 +573,6 @@ func selectionFlags(fs *flag.FlagSet, what string) exportSelection {
 		tournaments:    fs.Bool("tournaments", true, "Include tournaments in "+what+" (default: true)"),
 		decks:          fs.Bool("decks", true, "Include Anki decks in "+what+" (default: true)"),
 		lessons:        fs.Bool("lessons", true, "Include lessons, with the collections and positions their steps show, in "+what+" (default: true)"),
-		ankiHistory:    fs.Bool("anki-history", true, "Carry the review history of the selected Anki decks (default: true)"),
 		collectionIDs:  fs.String("collection-ids", "", "Comma-separated list of collection IDs to take (empty = all)"),
 		matchIDs:       fs.String("match-ids", "", "Comma-separated list of match IDs to take (empty = all)"),
 		deckIDs:        fs.String("deck-ids", "", "Comma-separated list of Anki deck IDs to take (empty = all)"),
@@ -611,7 +613,7 @@ func (s exportSelection) options() (ExportOptions, error) {
 		IncludeCollections:    *s.collections || len(collectionIDs) > 0,
 		IncludeTournaments:    *s.tournaments || len(tournamentIDs) > 0,
 		IncludeAnkiDecks:      *s.decks || len(deckIDs) > 0,
-		IncludeAnkiHistory:    *s.ankiHistory,
+		IncludeAnkiHistory:    s.ankiHistory != nil && *s.ankiHistory,
 		IncludeLessons:        *s.lessons || len(lessonIDs) > 0,
 		LessonIDs:             lessonIDs,
 		CollectionIDs:         collectionIDs,

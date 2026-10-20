@@ -485,6 +485,59 @@ elle-même : quiconque a reçu le mot de passe peut l'ouvrir. blunderDB
 n'enregistre jamais rien côté destinataire (aucun registre, aucun journal) —
 voir `ADR-0007 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0007-watermarks-mark-origin-and-nothing-else.md>`__.
 
+.. _cli_transfer:
+
+transfer — Copier d'une bibliothèque à une autre
+------------------------------------------------
+
+Copie une partie d'une bibliothèque dans une autre, sans fichier
+intermédiaire à manipuler. La sélection est celle de ``export --type
+database`` ; la fusion est celle de l'import d'une base ``.db`` : une
+position que la destination possède déjà n'est pas ajoutée une seconde fois
+(elle est reconnue à son hachage), ses analyses et ses commentaires se
+fusionnent, et un match, une collection, une leçon ou un paquet Anki déjà
+présent n'est pas dupliqué. Copier de A vers B puis de B vers A ne crée donc
+aucun doublon.
+
+.. code-block:: bash
+
+   ./blunderdb transfer --from <source.db> --to <destination.db> [options]
+
+**Options:**
+
+* ``--from`` — Bibliothèque source (obligatoire ; elle doit exister).
+* ``--to`` — Bibliothèque de destination (obligatoire ; créée si elle
+  n'existe pas). Elle ne peut pas être la source.
+* ``--analysis``, ``--comments``, ``--played-moves``, ``--matches``,
+  ``--transcriptions``, ``--aliases``, ``--collections``, ``--tournaments``,
+  ``--decks``, ``--lessons`` — Comme pour ``export`` : une option à ``false``
+  retire sa famille (défaut : oui pour toutes).
+* ``--collection-ids``, ``--match-ids``, ``--tournament-ids``,
+  ``--deck-ids``, ``--lesson-ids`` — Comme pour ``export`` : une liste d'IDs
+  de la source restreint sa famille à ces éléments et l'inclut.
+* ``--format`` — ``text`` (défaut) ou ``json`` (ce qui a été lu dans la
+  source et ce que la destination en a pris).
+
+Rien n'est écrit qui dise d'où vient la copie : ni filigrane, ni journal
+d'import, ni métadonnée de la source ; la destination garde les siennes, et
+la source ne reçoit rien. La bibliothèque de filtres et l'historique de
+révision des paquets Anki ne sont pas copiés : un paquet arrive sans
+historique, et un paquet du même nom déjà présent garde le sien.
+
+**Exemples:**
+
+.. code-block:: bash
+
+   # Toute une bibliothèque dans une autre
+   ./blunderdb transfer --from club.db --to perso.db
+
+   # Deux collections et leurs positions, rien d'autre
+   ./blunderdb transfer --from club.db --to perso.db --collection-ids 3,7 \
+       --matches=false --tournaments=false --lessons=false --decks=false
+
+Le serveur offre le même transfert entre deux tenants, tiré par le tenant qui
+reçoit (voir :ref:`mode_headless_transfert`).
+
 identity — Identité d'émetteur
 -------------------------------
 

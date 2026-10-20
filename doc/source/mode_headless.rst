@@ -1474,8 +1474,10 @@ résultats des tenants déjà lus : le flux entier est alors en échec.
    curl -s http://127.0.0.1:8080/v1/across.matchesList \
      -H 'X-Tenant-ID: 1' -H 'X-Read-Tenants: 2, 3' -d '{"limit":20}'
 
-Toute écriture reste dans ``X-Tenant-ID`` : aucune autre route ne lit
-``X-Read-Tenants``. Sans l'en-tête, une lecture ``across.*`` ne porte que sur
+Toute écriture reste dans ``X-Tenant-ID`` : aucune route hors ``across.*`` ne
+lit ``X-Read-Tenants``, et la seule de cette famille qui écrit,
+``across.transferPull`` (:ref:`mode_headless_transfert`), écrit chez
+``X-Tenant-ID``. Sans l'en-tête, une lecture ``across.*`` ne porte que sur
 ``X-Tenant-ID``. Un en-tête mal formé (un nom, un élément vide, plus de 64
 tenants) ou envoyé sur plusieurs lignes refuse la requête entière, quelle que
 soit la route. Sur SQLite, qui n'a qu'un tenant, la liste ne peut contenir que
@@ -1522,6 +1524,38 @@ Cinq lectures servent le club et le coach, sur la même liste
   que dans son tenant. La réponse est une page (``limit``, 100 par défaut, 1000
   au plus ; ``offset``) avec ``total``, le nombre de lignes du classement
   entier. Ce n'est pas le classement de saison des tournois dirigés.
+
+.. _mode_headless_transfert:
+
+Tirer une copie d'un tenant lu
+------------------------------
+
+``across.transferPull`` copie une partie d'un tenant de la liste
+``X-Read-Tenants`` dans ``X-Tenant-ID`` : c'est la commande ``transfer`` de la
+ligne de commande (:ref:`cli_transfer`), entre deux tenants. Le corps nomme le
+tenant source (``tenant``, qui doit figurer dans la liste) et, sous
+``export``, la sélection, avec les clés du corps de ``exports.sqlite``
+(``includeMatches``, ``collectionIDs``…) ; sans ``export``, tout le tenant est
+copié. La copie se fusionne comme l'import d'une base ``.db`` : une position
+déjà présente est reconnue à son hachage, un match, une collection ou une leçon
+déjà présents ne sont pas dupliqués, si bien que tirer de 2 vers 1 puis de 1
+vers 2 ne crée aucun doublon. La réponse compte ce qui a été lu (``exported``)
+et ce que le tenant en a pris (``imported``).
+
+.. code-block:: bash
+
+   curl -s http://127.0.0.1:8080/v1/across.transferPull \
+     -H 'X-Tenant-ID: 1' -H 'X-Read-Tenants: 2' \
+     -d '{"tenant":"2","export":{"wholeLibrary":false,"includeCollections":true,"collectionIDs":[3]}}'
+
+Le transfert est toujours **tiré** par le tenant qui reçoit, jamais poussé chez
+un autre : on lit à travers les tenants et on n'écrit que chez soi
+(`ADR-0102 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0102-un-transfert-est-un-export-fusionne-par-l-import-natif.md>`__).
+Rien n'est écrit qui dise d'où vient la copie, ni chez l'un ni chez l'autre :
+``watermark``, ``password``, ``incremental`` et ``metadata`` sont refusés
+(``400``), comme un tenant absent de la liste ou le tenant lui-même. Un
+transfert compte comme un import du tenant qui reçoit (``--quota-imports``,
+``--quota-positions``, ``--quota-bytes``) et s'interrompt à l'arrêt du démon.
 
 .. _headless_sauvegarde:
 

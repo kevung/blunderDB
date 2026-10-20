@@ -220,6 +220,7 @@ var databaseParity = map[string]parityEntry{
 	"DeleteSearchHistoryEntry":          {Server: "/v1/searchHistory.deleteEntry", Why: whyGUIState},
 	"DeleteTournament":                  {Server: "/v1/tournaments.delete", Why: whyGUIEdit},
 	"ExportDatabase":                    {CLI: "export", Server: "/v1/exports.sqlite"},
+	"TransferTo":                        {CLI: "transfer", Why: "the daemon holds one library per tenant: its transfer is across.transferPull between two tenants of the read set (ADR-0102), served outside Paths() like every across route"},
 	"ExportDatabaseCtx":                 {Why: whyCtxVariant},
 	"PlanExport":                        {CLI: "export", Server: "/v1/exports.plan"},
 	"PlanExportCtx":                     {Why: whyCtxVariant},
