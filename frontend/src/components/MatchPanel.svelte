@@ -343,8 +343,9 @@
     async function loadMatches() {
         return logger.perf('MatchPanel:loadMatches', async () => {
             try {
-                await matchListStore.reload();
-                await loadTournaments();
+                // Each side runs a full aggregate on a large library (the page's badges, the
+                // tournaments' badges): side by side, the list waits for the slower, not the sum.
+                await Promise.all([matchListStore.reload(), loadTournaments()]);
             } catch (error) {
                 logger.error('Error loading matches:', error);
             }
