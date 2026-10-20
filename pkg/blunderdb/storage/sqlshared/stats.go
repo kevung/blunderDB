@@ -613,7 +613,11 @@ func (s *StatsStore) MatchDetail(ctx context.Context, scope string, matchID int6
 		` + cubeMultiplierExpr + `,
 		COALESCE(p.match_length, m.match_length, 0), mv.game_id, COALESCE(m.match_length, 0) ` +
 		statsBaseJoin +
-		` WHERE ` + tenant + ` AND m.id = ? AND a.position_id IS NOT NULL AND (` + statsErrExpr + `) IS NOT NULL AND ` + countedExpr(s.DB)
+		` WHERE ` + tenant + ` AND m.id = ? AND a.position_id IS NOT NULL AND (` + statsErrExpr + `) IS NOT NULL AND ` + countedExpr(s.DB) +
+		// The losses are summed in floating point, which is not associative:
+		// a fixed order keeps the same match giving the same figures to the
+		// last bit, whatever plan or heap order the backend picks.
+		` ORDER BY mv.id`
 
 	rows, err := s.DB.Query(ctx, query, append(append([]any{}, targs...), matchID)...)
 	if err != nil {
