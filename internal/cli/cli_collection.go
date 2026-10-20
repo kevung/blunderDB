@@ -238,12 +238,7 @@ func (cli *CLI) showCollection(id int64, format string) error {
 		if pos.DecisionType == CheckerAction {
 			row.DecisionType = "checker"
 		}
-		if analysis, err := cli.db.LoadAnalysis(pos.ID); err == nil && analysis != nil {
-			row.XGID = analysis.XGID
-		}
-		if row.XGID == "" {
-			row.XGID = xgidOf(&pos)
-		}
+		row.XGID = cli.storedOrEncodedXGID(&pos)
 		rows = append(rows, row)
 	}
 
@@ -614,6 +609,16 @@ func (cli *CLI) runCollectionExport(args []string) error {
 	marking := exportMarking{watermark: *watermark, note: *watermarkNote, password: *password}
 	fmt.Printf("Exporting %d collection(s) to: %s\n", len(collectionIDs), *out)
 	return cli.exportDatabaseWithOptions(opts, marking, true)
+}
+
+// storedOrEncodedXGID is the one rule for the XGID a command prints: the one
+// recorded with the analysis when there is one (it carries the match length the
+// source stated), else the encoding of the board. No "XGID=" prefix.
+func (cli *CLI) storedOrEncodedXGID(pos *Position) string {
+	if analysis, err := cli.db.LoadAnalysis(pos.ID); err == nil && analysis != nil && analysis.XGID != "" {
+		return strings.TrimPrefix(analysis.XGID, "XGID=")
+	}
+	return xgidOf(pos)
 }
 
 // xgidOf renders a Position as an XGID when no imported analysis carries one:

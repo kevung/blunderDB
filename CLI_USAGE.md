@@ -2151,7 +2151,7 @@ blunderDB migrate --from sqlite:///path/to/user.db --tenant-id 42 --dry-run
 ```
 
 It copies **positions, their analyses and comments, matches (games + moves),
-tournaments (with match links) and collections (with membership)** under the
+tournaments (with match links), collections (with membership) and lessons (with their steps)** under the
 tenant scope, remapping primary/foreign keys, inside a single destination
 transaction (atomic — a failed run leaves the destination untouched, just
 re-run). Progress and the final tally are emitted as NDJSON to stdout.

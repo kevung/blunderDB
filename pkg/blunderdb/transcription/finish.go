@@ -21,10 +21,12 @@ type SaveResult struct {
 	MatchID int64 `json:"matchId"`
 	// Replaced: the draft was opened from this Match and finishing replaced
 	// it in place, keeping its id.
-	Replaced  bool `json:"replaced"`
-	Games     int  `json:"games"`
-	Moves     int  `json:"moves"`
-	Positions int  `json:"positions"`
+	Replaced bool `json:"replaced"`
+	Games    int  `json:"games"`
+	Moves    int  `json:"moves"`
+	// Positions counts the positions this Match added to the library: one
+	// already held (by Zobrist hash) is not counted again.
+	Positions int `json:"positions"`
 	// ToAnalyze counts the Match's positions without an analysis, what the
 	// canonical analysis has to run on (ADR-0045 §8).
 	ToAnalyze int `json:"toAnalyze"`

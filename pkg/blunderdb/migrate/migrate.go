@@ -7,7 +7,8 @@
 //
 // Scope: it covers the core user data — positions, their analyses and comments,
 // matches (games + moves), tournaments (+ match links) and collections (+
-// membership). App-state families (anki decks/cards, filter library, search and
+// membership) and lessons (+ steps, re-pointed at the migrated collections and
+// positions). App-state families (anki decks/cards, filter library, search and
 // command history, session state) are intentionally NOT migrated, and reported
 // as such in NotMigrated. The library's error and blunder thresholds
 // (ADR-0046) ARE carried: they decide what the counts mean. So are the match
@@ -61,6 +62,7 @@ type Report struct {
 	Moves       int `json:"moves"`
 	Collections int `json:"collections"`
 	Duels       int `json:"duels"`
+	Lessons     int `json:"lessons"`
 
 	// NotMigrated is what the source holds and this tool does not copy.
 	NotMigrated NotMigrated `json:"not_migrated"`
@@ -167,7 +169,40 @@ func (m *mover) run(rep *Report) error {
 	if err := m.copyLibrarySettings(); err != nil {
 		return err
 	}
+	if err := m.copyLessons(rep); err != nil {
+		return err
+	}
 	return m.copyDuels(rep)
+}
+
+// copyLessons carries each Lesson with its Steps in reading order. A Step's
+// Collection and Position are re-pointed through the remaps; one the
+// migration did not carry becomes a text-only Step, as a deletion would.
+func (m *mover) copyLessons(rep *Report) error {
+	heads, err := m.src.Lessons().List(m.ctx, "")
+	if err != nil {
+		return fmt.Errorf("migrate: list lessons: %w", err)
+	}
+	for _, h := range heads {
+		l, err := m.src.Lessons().Get(m.ctx, "", h.ID)
+		if err != nil {
+			return fmt.Errorf("migrate: read lesson %q: %w", h.Name, err)
+		}
+		newID, err := m.dst.Lessons().Create(m.ctx, m.scope, l.Name, l.Description)
+		if err != nil {
+			return fmt.Errorf("migrate: create lesson %q: %w", l.Name, err)
+		}
+		for _, st := range l.Steps {
+			st.CollectionID = m.collID[st.CollectionID]
+			st.PositionID = m.posID[st.PositionID]
+			if _, err := m.dst.Lessons().AddStep(m.ctx, m.scope, newID, st); err != nil {
+				return fmt.Errorf("migrate: add step to lesson %q: %w", l.Name, err)
+			}
+		}
+		rep.Lessons++
+	}
+	m.progress(rep)
+	return nil
 }
 
 // copyOrigin carries the origin of a Match played here: it is a fact of the
@@ -577,6 +612,11 @@ func dryRun(ctx context.Context, src storage.Storage, scope string) (Report, err
 		}
 		rep.Collections++
 	}
+	lessons, err := src.Lessons().List(ctx, "")
+	if err != nil {
+		return rep, err
+	}
+	rep.Lessons = len(lessons)
 	rep.NotMigrated = leftBehind(ctx, src)
 	return rep, nil
 }

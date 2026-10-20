@@ -266,7 +266,13 @@ func (cli *CLI) runSearch(args []string) error {
 	}
 
 	// Output results
-	fmt.Printf("Found %d position(s)\n\n", len(filteredPositions))
+	// Machine formats own stdout: the count goes to stderr so the stream
+	// stays parseable.
+	status := io.Writer(os.Stdout)
+	if params.format == "json" || params.format == "xgid" {
+		status = os.Stderr
+	}
+	fmt.Fprintf(status, "Found %d position(s)\n\n", len(filteredPositions))
 
 	if len(filteredPositions) > 0 {
 		if err := cli.renderResults(os.Stdout, filteredPositions, params.format); err != nil {
@@ -276,7 +282,7 @@ func (cli *CLI) runSearch(args []string) error {
 
 	// Export to new database if requested
 	if params.outputDB != "" {
-		fmt.Printf("\nExporting %d positions to: %s\n", len(filteredPositions), params.outputDB)
+		fmt.Fprintf(status, "\nExporting %d positions to: %s\n", len(filteredPositions), params.outputDB)
 
 		// Get metadata from source database
 		metadata, _ := cli.db.LoadMetadata()
@@ -295,7 +301,7 @@ func (cli *CLI) runSearch(args []string) error {
 			return fmt.Errorf("failed to export database: %w", err)
 		}
 
-		fmt.Println("Export completed successfully")
+		fmt.Fprintln(status, "Export completed successfully")
 	}
 
 	return nil
@@ -338,8 +344,9 @@ func (cli *CLI) renderResults(w io.Writer, positions []Position, format string) 
 
 			// Get analysis if available
 			analysis, err := cli.db.LoadAnalysis(pos.ID)
+			p := pos
+			result.XGID = "XGID=" + cli.storedOrEncodedXGID(&p)
 			if err == nil && analysis != nil {
-				result.XGID = analysis.XGID
 				if analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0 {
 					result.BestMove = analysis.CheckerAnalysis.Moves[0].Move
 					result.Equity = analysis.CheckerAnalysis.Moves[0].Equity
@@ -357,10 +364,8 @@ func (cli *CLI) renderResults(w io.Writer, positions []Position, format string) 
 
 	case "xgid":
 		for _, pos := range positions {
-			analysis, err := cli.db.LoadAnalysis(pos.ID)
-			if err == nil && analysis != nil && analysis.XGID != "" {
-				fmt.Fprintln(w, analysis.XGID)
-			}
+			p := pos
+			fmt.Fprintln(w, "XGID="+cli.storedOrEncodedXGID(&p))
 		}
 
 	default: // table format

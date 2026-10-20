@@ -738,12 +738,11 @@ position sans analyse.
    10  7-7    0     cube        No Double  -0.234
 
 ``--format json`` donne un tableau des mêmes positions. Les champs sont
-``id``, ``score``, ``cube``, ``decision_type`` (``checker`` ou ``cube``) et
-``dice``, toujours présents ; ``best_move``, ``equity`` et ``xgid``
-n'apparaissent que si la position porte une analyse qui les renseigne. La
-ligne ``Found n position(s)`` reste imprimée avant le tableau : un script qui
-n'attend que du JSON doit sauter la première ligne, ou passer par
-``--export``.
+``id``, ``xgid``, ``score``, ``cube``, ``decision_type`` (``checker`` ou
+``cube``) et ``dice``, toujours présents ; ``best_move`` et ``equity``
+n'apparaissent que si la position porte une analyse qui les renseigne. La ligne
+``Found n position(s)`` va sur la sortie d'erreur : la sortie standard ne porte
+que le JSON.
 
 .. code-block:: json
 
@@ -765,12 +764,10 @@ n'attend que du JSON doit sauter la première ligne, ou passer par
      }
    ]
 
-``--format xgid`` imprime un XGID par ligne, et **rien d'autre**. Il
-n'imprime que les positions dont l'analyse enregistrée porte un XGID : une
-position collée dans l'application depuis un export texte, ou un fichier BGF
-qui en transporte un. Les positions apportées par l'import d'un match XG,
-GNUbg ou Jellyfish n'en portent pas, et la sortie est alors vide. La
-sous-commande ``collection show``, elle, régénère le XGID depuis le damier.
+``--format xgid`` imprime un XGID par ligne, préfixé de ``XGID=``, et **rien
+d'autre** sur la sortie standard. Le XGID enregistré avec l'analyse est
+préféré, car il porte la longueur de match de la source ; à défaut, il est
+régénéré depuis le damier. Le même XGID figure dans le champ ``xgid`` du JSON.
 
 **Le langage de requête:**
 
