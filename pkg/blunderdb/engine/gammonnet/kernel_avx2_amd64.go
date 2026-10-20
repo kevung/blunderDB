@@ -20,3 +20,15 @@ func denseAVX2ReLU(w *float32, bias *float32, act *float32, out *float32, in int
 //
 //go:noescape
 func denseAVX2Linear(w *float32, bias *float32, act *float32, out *float32, in int, outDim int)
+
+// denseColsAVX2ReLU est denseAVX2ReLU sur des poids colonne par entrée,
+// w[j*outDim+i]. Même arithmétique, même ordre, jamais de FMA (ADR-0024).
+//
+//go:noescape
+func denseColsAVX2ReLU(w *float32, bias *float32, act *float32, out *float32, in int, outDim int)
+
+// denseColsAVX2Linear est denseAVX2Linear sur des poids colonne par entrée,
+// w[j*outDim+i]. Même arithmétique, même ordre, jamais de FMA (ADR-0024).
+//
+//go:noescape
+func denseColsAVX2Linear(w *float32, bias *float32, act *float32, out *float32, in int, outDim int)

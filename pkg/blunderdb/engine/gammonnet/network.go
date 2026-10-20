@@ -49,10 +49,11 @@ const (
 var embeddedWeights []byte
 
 type layer struct {
-	weight []float32 // row-major, out × in
-	bias   []float32 // out
-	in     int
-	out    int
+	weight   []float32 // row-major, out × in; column-major, in × out, when colMajor
+	bias     []float32 // out
+	in       int
+	out      int
+	colMajor bool
 }
 
 // Network is a loaded set of weights. It is read-only once built and therefore
@@ -182,6 +183,20 @@ func Load(raw []byte) (*Network, error) {
 		}
 		n.layers = append(n.layers, layer{weight: w, bias: b, in: in, out: out})
 	}
+	// The first layer is stored column-major: a batch keeps only the input
+	// columns some position sets (kernel.go), and a column is then one
+	// contiguous copy. The file and its fingerprint keep gammonNet's layout.
+	if len(n.layers) > 0 {
+		lay := &n.layers[0]
+		t := make([]float32, len(lay.weight))
+		for i := 0; i < lay.out; i++ {
+			for j := 0; j < lay.in; j++ {
+				t[j*lay.out+i] = lay.weight[i*lay.in+j]
+			}
+		}
+		lay.weight = t
+		lay.colMajor = true
+	}
 	if pos != len(raw) {
 		return nil, fmt.Errorf("gammonnet: %d trailing bytes after the weights", len(raw)-pos)
 	}
@@ -250,6 +265,30 @@ func (e *Evaluator) Evaluate(features []float32, probs *[NumOutputs]float32) err
 		out := e.a
 		if !useA {
 			out = e.b
+		}
+		if lay.colMajor {
+			// Column by column, each out[i] still sums from its bias in
+			// ascending j: the same float32 sequence as the row loop below.
+			copy(out[:lay.out], lay.bias)
+			for j := 0; j < lay.in; j++ {
+				x := in[j]
+				col := lay.weight[j*lay.out : (j+1)*lay.out]
+				for i, w := range col {
+					out[i] += float32(w * x)
+				}
+			}
+			for i := 0; i < lay.out; i++ {
+				if l < last {
+					if !(out[i] > 0) { // ReLU
+						out[i] = 0
+					}
+				} else {
+					out[i] = sigmoid(out[i])
+				}
+			}
+			in = out[:lay.out]
+			useA = !useA
+			continue
 		}
 		for i := 0; i < lay.out; i++ {
 			sum := lay.bias[i]

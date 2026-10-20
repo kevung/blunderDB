@@ -43,3 +43,30 @@ func denseGo(w, bias, act, out []float32, in, outDim int, relu bool) {
 		}
 	}
 }
+
+// denseColsGo is denseGo over column-major weights, w[j*outDim+i]: only the
+// address of each weight changes, the order of every sum is denseGo's.
+func denseColsGo(w, bias, act, out []float32, in, outDim int, relu bool) {
+	for i := 0; i < outDim; i++ {
+		var acc [EvalBatchWidth]float32
+		b := bias[i]
+		for n := range acc {
+			acc[n] = b
+		}
+		for j := 0; j < in; j++ {
+			wj := w[j*outDim+i]
+			col := act[j*EvalBatchWidth : j*EvalBatchWidth+EvalBatchWidth]
+			for n := 0; n < EvalBatchWidth; n++ {
+				acc[n] += float32(wj * col[n])
+			}
+		}
+		dst := out[i*EvalBatchWidth : i*EvalBatchWidth+EvalBatchWidth]
+		for n := 0; n < EvalBatchWidth; n++ {
+			v := acc[n]
+			if relu && !(v > 0) {
+				v = 0
+			}
+			dst[n] = v
+		}
+	}
+}
