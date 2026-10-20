@@ -87,3 +87,40 @@ func TestOpenReadOnly_WritesNothing(t *testing.T) {
 		t.Error("reading the file read-only changed it")
 	}
 }
+
+// A database in a folder that cannot be written is read all the same, and no
+// -wal/-shm file appears beside it.
+func TestOpenReadOnly_ReadOnlyFolder(t *testing.T) {
+	ctx := context.Background()
+	dir := t.TempDir()
+	path := filepath.Join(dir, "club.db")
+	rw, err := sqlite.Open(ctx, path, nil)
+	if err != nil {
+		t.Fatalf("Open: %v", err)
+	}
+	rw.Close()
+	for _, side := range []string{"-wal", "-shm"} {
+		os.Remove(path + side)
+	}
+	if err := os.Chmod(dir, 0o555); err != nil {
+		t.Fatal(err)
+	}
+	defer os.Chmod(dir, 0o755)
+	if f, err := os.Create(filepath.Join(dir, "probe")); err == nil {
+		f.Close()
+		t.Skip("the folder stays writable (running as root)")
+	}
+	ro, err := sqlite.OpenReadOnly(ctx, path)
+	if err != nil {
+		t.Fatalf("OpenReadOnly in a read-only folder: %v", err)
+	}
+	defer ro.Close()
+	if _, err := ro.Version(ctx); err != nil {
+		t.Fatalf("Version: %v", err)
+	}
+	for _, side := range []string{"-wal", "-shm"} {
+		if _, err := os.Stat(path + side); err == nil {
+			t.Errorf("%s was created", side)
+		}
+	}
+}

@@ -306,14 +306,36 @@ func (s *Storage) IDsVisibleInOrder() bool { return true }
 
 // OpenReadOnly opens an existing database file for reading only (mode=ro):
 // no WAL switch, no bootstrap, no index repair — nothing is written to it,
-// not even a -wal file. A file that is not a blunderDB database is refused.
+// not even a -wal file. A file in a folder that cannot be written (a share, a
+// key, a read-only mount) cannot get its -shm file either: it is then opened
+// immutable, which takes no lock and reads the main file as it stands. A file
+// that is not a blunderDB database is refused.
 func OpenReadOnly(ctx context.Context, path string) (*Storage, error) {
 	abs, err := filepath.Abs(path)
 	if err != nil {
 		return nil, fmt.Errorf("sqlite: %s: %w", path, err)
 	}
+	st, err := openReadOnlyMode(ctx, abs, path, false)
+	if err != nil && isReadOnlyErr(err) {
+		if st2, err2 := openReadOnlyMode(ctx, abs, path, true); err2 == nil {
+			return st2, nil
+		}
+	}
+	return st, err
+}
+
+// isReadOnlyErr tells the failure to create the -shm file of a database in a
+// read-only folder from an unreadable file.
+func isReadOnlyErr(err error) bool {
+	return err != nil && strings.Contains(strings.ToLower(err.Error()), "readonly database")
+}
+
+func openReadOnlyMode(ctx context.Context, abs, path string, immutable bool) (*Storage, error) {
 	q := url.Values{}
 	q.Add("mode", "ro")
+	if immutable {
+		q.Add("immutable", "1")
+	}
 	for _, p := range perConnPragmas {
 		q.Add("_pragma", p[0]+"("+p[1]+")")
 	}
@@ -326,7 +348,13 @@ func OpenReadOnly(ctx context.Context, path string) (*Storage, error) {
 	fresh, err := isFreshDB(ctx, db)
 	if err != nil {
 		db.Close()
-		return nil, fmt.Errorf("%s is not a blunderDB database: %w", path, err)
+		if isReadOnlyErr(err) {
+			return nil, fmt.Errorf("cannot read %s: its folder is read-only and the file needs a write there: %w", path, err)
+		}
+		if strings.Contains(err.Error(), "not a database") {
+			return nil, fmt.Errorf("%s is not a blunderDB database: %w", path, err)
+		}
+		return nil, fmt.Errorf("cannot read %s: %w", path, err)
 	}
 	if fresh {
 		db.Close()

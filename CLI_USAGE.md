@@ -3352,7 +3352,9 @@ matches where it was played and how, and their boards nearest to it. A play's
 cost is judged with the error and blunder thresholds of --db; an analysis
 valued with another match equity table than the one of --db is flagged, and
 its match-play costs are shown but not judged. The other files are opened
-read-only: nothing is written to any of them.
+read-only: nothing is written to any of them, and a file in a read-only folder
+is read as it stands. A file that cannot be read is reported and skipped; the
+others answer, and the command fails only when none could be read.
 
 Options:
   -db string

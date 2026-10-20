@@ -167,3 +167,37 @@ func TestCLI_ElsewhereRefusesWhatIsNotADatabase(t *testing.T) {
 		t.Error("the empty file was written to")
 	}
 }
+
+// One unreadable --other is reported and skipped: the others answer, and the
+// command fails only when none could be read.
+func TestCLI_ElsewhereSkipsAnUnreadableFile(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	dir := tempDir(t)
+	good := filepath.Join(dir, "good.db")
+	other := NewDatabase()
+	if err := other.SetupDatabase(good); err != nil {
+		t.Fatalf("SetupDatabase: %v", err)
+	}
+	other.Close()
+	missing := filepath.Join(dir, "missing.db")
+
+	out := captureStdout(t, func() {
+		if err := cli.Run([]string{"elsewhere", "--db", dbPath, "--other", missing, "--other", good, "--zobrist", "1"}); err != nil {
+			t.Errorf("one readable file among two: %v", err)
+		}
+	})
+	if !strings.Contains(out, "== "+good) || !strings.Contains(out, "Not read:") {
+		t.Errorf("output lacks the answer or the skipped file:\n%s", out)
+	}
+	out = captureStdout(t, func() {
+		if err := cli.Run([]string{"elsewhere", "--db", dbPath, "--other", missing, "--other", good, "--zobrist", "1", "--format", "json"}); err != nil {
+			t.Errorf("json: %v", err)
+		}
+	})
+	if !strings.Contains(out, `"error"`) || !strings.Contains(out, "good.db") {
+		t.Errorf("json lacks the error entry:\n%s", out)
+	}
+	if err := cli.Run([]string{"elsewhere", "--db", dbPath, "--other", missing, "--zobrist", "1"}); err == nil {
+		t.Error("no readable file yet no error")
+	}
+}

@@ -1472,6 +1472,7 @@ résultats des tenants déjà lus : le flux entier est alors en échec.
 .. code-block:: bash
 
    curl -s http://127.0.0.1:8080/v1/across.matchesList \
+     -H 'Content-Type: application/json' \
      -H 'X-Tenant-ID: 1' -H 'X-Read-Tenants: 2, 3' -d '{"limit":20}'
 
 Toute écriture reste dans ``X-Tenant-ID`` : aucune route hors ``across.*`` ne
@@ -1545,6 +1546,7 @@ et ce que le tenant en a pris (``imported``).
 .. code-block:: bash
 
    curl -s http://127.0.0.1:8080/v1/across.transferPull \
+     -H 'Content-Type: application/json' \
      -H 'X-Tenant-ID: 1' -H 'X-Read-Tenants: 2' \
      -d '{"tenant":"2","export":{"wholeLibrary":false,"includeCollections":true,"collectionIDs":[3]}}'
 
