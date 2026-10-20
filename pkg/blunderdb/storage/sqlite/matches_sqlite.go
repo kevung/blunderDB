@@ -919,6 +919,27 @@ const moveInsertSQL = `INSERT INTO move (
 // CreateMove stores a new move and returns its id, updating mv.ID in place. A
 // zero PositionID is stored as NULL (no associated position).
 func (s *matchStore) CreateMove(ctx context.Context, scope string, mv *domain.Move) (int64, error) {
+	decisionErr, closeCube, err := sqlshared.PlayedDecisionArgs(ctx, binder{s.db}.shared(), mv.PositionID, mv.CheckerMove, mv.CubeAction)
+	if err != nil {
+		return 0, fmt.Errorf("sqlite: create move: %w", err)
+	}
+	return createMove(ctx, s.db, mv, decisionErr, closeCube)
+}
+
+// CreateScoredMove is CreateMove for a caller that already holds the move's
+// decision_error_mp and is_close_cube, as PlayedDecisionArgs would compute
+// them from the analysis stored for mv.PositionID: the exporter, which scored
+// the move from the analysis it had just written (SaveAnalysisUncompressed).
+// tx is a WrapTx transaction, whose prepared statements the insert reuses.
+func CreateScoredMove(ctx context.Context, tx storage.Tx, mv *domain.Move, decisionErr any, closeCube int64) (int64, error) {
+	t, ok := tx.(*txImpl)
+	if !ok {
+		return 0, fmt.Errorf("sqlite: create scored move: %T is not a SQLite transaction", tx)
+	}
+	return createMove(ctx, t.db, mv, decisionErr, closeCube)
+}
+
+func createMove(ctx context.Context, db execer, mv *domain.Move, decisionErr any, closeCube int64) (int64, error) {
 	var positionID any
 	if mv.PositionID != 0 {
 		positionID = mv.PositionID
@@ -927,19 +948,15 @@ func (s *matchStore) CreateMove(ctx context.Context, scope string, mv *domain.Mo
 	if mv.LuckMP != nil {
 		luckMP = *mv.LuckMP
 	}
-	moveType, err := actionCode(ctx, s.db, mv.MoveType)
+	moveType, err := actionCode(ctx, db, mv.MoveType)
 	if err != nil {
 		return 0, fmt.Errorf("sqlite: create move: %w", err)
 	}
-	cubeAction, err := actionCode(ctx, s.db, mv.CubeAction)
+	cubeAction, err := actionCode(ctx, db, mv.CubeAction)
 	if err != nil {
 		return 0, fmt.Errorf("sqlite: create move: %w", err)
 	}
-	decisionErr, closeCube, err := sqlshared.PlayedDecisionArgs(ctx, binder{s.db}.shared(), mv.PositionID, mv.CheckerMove, mv.CubeAction)
-	if err != nil {
-		return 0, fmt.Errorf("sqlite: create move: %w", err)
-	}
-	res, err := s.db.ExecContext(ctx, moveInsertSQL,
+	res, err := db.ExecContext(ctx, moveInsertSQL,
 		mv.GameID, mv.MoveNumber, moveType, positionID, mv.Player,
 		mv.Dice[0], mv.Dice[1], mv.CheckerMove, cubeAction, luckMP,
 		sqlshared.MSArg(mv.DecisionMS), sqlshared.MSArg(mv.CubeDecisionMS), decisionErr, closeCube,
@@ -953,7 +970,7 @@ func (s *matchStore) CreateMove(ctx context.Context, scope string, mv *domain.Mo
 	}
 	mv.ID = id
 	if positionID != nil {
-		if _, err := s.db.ExecContext(ctx, positionMatchDateOnMoveSQL, mv.GameID, positionID); err != nil {
+		if _, err := db.ExecContext(ctx, positionMatchDateOnMoveSQL, mv.GameID, positionID); err != nil {
 			return 0, fmt.Errorf("sqlite: date position of move: %w", err)
 		}
 	}
