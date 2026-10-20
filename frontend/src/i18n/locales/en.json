@@ -133,6 +133,7 @@
         "metImport": "Import a .xml MET…",
         "metNote": "gammonNet values match scores with this table, and every analysis it computes records it. An analysis at a match score computed with another table is marked \"different MET\" and left out of the statistics. Changing the table rewrites no analysis. Only explicit gnubg tables are read.",
         "metImported": "Table imported: {name}",
+        "metAlreadyHeld": "Table already present: {name}",
         "metBuiltInImported": "This file is Kazaross-XG2, the built-in table: nothing was added.",
         "checkForUpdates": "Check for updates at startup",
         "checkForUpdatesNote": "Queries GitHub's release page once at startup. Off by default, and never enabled automatically on a package-managed install (Flatpak, a distro package, Homebrew…).",

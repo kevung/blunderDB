@@ -15,6 +15,8 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
 }));
 vi.mock('../../wailsjs/go/gui/App.js', () => ({ OpenMETDialog: vi.fn(() => Promise.resolve('')) }));
 
+import { ImportMET } from '../../wailsjs/go/database/Database.js';
+import { OpenMETDialog } from '../../wailsjs/go/gui/App.js';
 import METBadge from '../components/METBadge.svelte';
 import METSettings from '../components/METSettings.svelte';
 
@@ -35,5 +37,14 @@ describe('MET de la base', () => {
         render(METSettings);
         const select = await waitFor(() => screen.getByRole('combobox'));
         await waitFor(() => expect(/** @type {HTMLInputElement} */ (select).value).toBe('3'));
+    });
+
+    test('réimporter une table connue le dit', async () => {
+        vi.mocked(OpenMETDialog).mockResolvedValueOnce('/tmp/t.xml');
+        vi.mocked(ImportMET).mockResolvedValueOnce({ id: 3, name: 'Rockwell-Kazaross', already_held: true });
+        render(METSettings);
+        await waitFor(() => screen.getByRole('combobox'));
+        (await screen.findAllByRole('button'))[0].click();
+        await waitFor(() => expect(screen.getByText(/déjà présente|already present/i)).toBeTruthy());
     });
 });

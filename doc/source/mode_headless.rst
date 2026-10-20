@@ -1303,9 +1303,13 @@ lecture était fautive avant la version 0.33.0 et qui portaient l'erreur d'un
 double qui n'a jamais eu lieu.
 
 La famille ``met`` gère les tables d'équité de match du tenant :
-``met.list`` les liste ; ``met.import`` en enregistre une depuis le texte d'un
-fichier XML de gnuBG (``source`` ; ``name`` quand le fichier n'en nomme
-aucune) ; ``met.setCurrent`` (``{"id": N}``) en fait la table courante, ``0``
+``met.list`` les liste ; ``met.import`` en enregistre une depuis un fichier XML
+de gnuBG, en texte (``source``, déjà décodé : un fichier déclaré ISO-8859-1 y
+est relu octet par octet) ou en octets bruts (``source_base64``, à préférer
+pour tout fichier qui n'est pas en UTF-8) ; ``name`` sert quand le fichier n'en
+nomme aucune. Une table dont les valeurs sont déjà là est rendue telle quelle,
+avec ``already_held`` à vrai. Seuls UTF-8, US-ASCII et ISO-8859-1 sont lus ;
+tout autre encodage est refusé avec un message qui le nomme ; ``met.setCurrent`` (``{"id": N}``) en fait la table courante, ``0``
 rendant la table intégrée Kazaross-XG2 ; ``met.ofAnalysis``
 (``{"position_id": N}``) rend la table dont l'analyse de la position a été
 valorisée, la table courante et ``different``, vrai quand une analyse de match
