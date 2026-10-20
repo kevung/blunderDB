@@ -123,7 +123,7 @@ export const SHORTCUTS = {
             '[',
             ']'
         ],
-        shadows: [...digits('', 1, 4), 'h', 'l', 'ArrowLeft', 'ArrowRight', 'j', 'k', 'p', 'r', 'Backspace', 'Delete', 'Escape', 'End', 'Space']
+        shadows: [...digits('', 1, 4), 'h', 'l', 'ArrowLeft', 'ArrowRight', 'j', 'k', 'p', 'r', 'x', 'Backspace', 'Delete', 'Escape', 'End', 'Space']
     },
 
     // Always mounted beside the board.
@@ -201,6 +201,8 @@ export const SHORTCUTS = {
             'p',
             'm',
             'r',
+            'x',
+            'Ctrl+Shift+A',
             'F11',
             '/'
         ]

@@ -31,7 +31,10 @@ type ElsewhereView struct {
 // the daemon run, over the Storage of each waiting handle. Neighbours is how
 // many nearest boards each group returns (0: the service default, negative:
 // none). The group lock is held throughout, so no group closes or swaps its
-// handle under the read; nothing is written anywhere.
+// handle under the read; nothing is written anywhere. A job writing a waiting
+// group meanwhile does not block it: the file is in WAL mode and the read takes
+// its own pooled connection, so each statement sees the last committed state
+// (the report's parts may straddle a commit, never a half-written one).
 func (a *App) ElsewhereInGroups(pos database.Position, neighbours int) (*ElsewhereView, error) {
 	if a.db == nil {
 		return nil, errors.New("no database handle")

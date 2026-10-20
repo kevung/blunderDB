@@ -40,6 +40,14 @@ beforeEach(() => {
     ElsewhereInGroups.mockResolvedValue({ zobrist: 7, judge: { settings: {}, metDigest: '' }, groups: [report(1, 31)] });
 });
 
+test('the swap reads the board on screen afresh, never an earlier answer', async () => {
+    await svc.loadElsewhere();
+    ElsewhereInGroups.mockResolvedValue({ zobrist: 7, judge: {}, groups: [{ ...report(1, 31), comments: [{ id: 2, text: 'new' }] }] });
+    await svc.startSwap();
+    expect(ElsewhereInGroups).toHaveBeenCalledTimes(2);
+    expect(get(elsewherePeekStore).report.comments[0].text).toBe('new');
+});
+
 test('the board is read once, without the id that names a row of this library only', async () => {
     await svc.loadElsewhere();
     await svc.loadElsewhere(get(positionStore));
@@ -66,10 +74,28 @@ test('the swap shows the same board in the group that holds it, the pin when the
     svc.endSwap();
 
     const neighbour = { id: 40, board: { points: [1] } };
-    svc.togglePin({ group: 1, path: '/libs/g1.db', positionId: 40, position: neighbour, distance: 2 });
+    const pin = { group: 1, path: '/libs/g1.db', positionId: 40, position: neighbour, distance: 2 };
+    // The pinned board is read as its own board: its report, not the one of the board on screen.
+    ElsewhereInGroups.mockImplementation(async (board) =>
+        board.id === 40
+            ? { zobrist: 8, judge: {}, groups: [{ ...report(1, 40), analysis: { checkerAnalysis: { moves: [{ move: '6/1 6/1' }] } }, comments: [{ id: 1, text: 'voisine' }] }] }
+            : { zobrist: 7, judge: {}, groups: [{ ...report(1, 31), analysis: { checkerAnalysis: { moves: [{ move: '13/7' }] } } }] }
+    );
+    svc.togglePin(pin);
     await svc.startSwap();
-    expect(get(elsewherePeekStore)).toMatchObject({ group: 1, pinned: true, position: neighbour });
-    svc.togglePin({ group: 1, path: '/libs/g1.db', positionId: 40, position: neighbour, distance: 2 });
+    const pinned = get(elsewherePeekStore);
+    expect(pinned).toMatchObject({ group: 1, pinned: true, position: neighbour });
+    expect(pinned.report.positionId).toBe(40);
+    expect(svc.analysisSummary(pinned.report.analysis).best).toBe('6/1 6/1');
+    expect(pinned.report.comments[0].text).toBe('voisine');
+    expect(ElsewhereInGroups).toHaveBeenLastCalledWith(neighbour, -1);
+    svc.endSwap();
+
+    // A pin its group no longer holds shows nothing rather than another board's report.
+    ElsewhereInGroups.mockResolvedValue({ zobrist: 8, judge: {}, groups: [report(1, 0)] });
+    expect(await svc.startSwap()).toBe(false);
+    expect(get(elsewherePeekStore)).toBeNull();
+    svc.togglePin(pin);
     expect(get(elsewherePinStore)).toBeNull();
 });
 

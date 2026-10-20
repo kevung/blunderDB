@@ -101,19 +101,27 @@ export function togglePin(pin) {
     elsewherePinStore.set(now && now.group === pin.group && now.positionId === pin.positionId ? null : pin);
 }
 
+/** The pin, while its group is still open and waiting. */
+function livePin() {
+    const pin = get(elsewherePinStore);
+    return pin && otherGroups().includes(pin.group) ? pin : null;
+}
+
 /**
- * What the swap shows: the pinned board while its group is open, else the same board in the
- * first other group that holds it.
+ * What the swap shows, from a view read for the very board it will draw: with a pin, that
+ * pinned board and its own report in its group; otherwise the board on screen in the first other
+ * group that holds it. The banner describes the drawn board only, so a report of another board
+ * is never borrowed.
  * @param {import('../stores/elsewhereStore.js').ElsewhereView | null} view
  * @param {any} position the board on screen
+ * @param {import('../stores/elsewhereStore.js').ElsewherePin | null} [pin]
  * @returns {import('../stores/elsewhereStore.js').ElsewherePeek | null}
  */
-export function swapTarget(view, position) {
-    const pin = get(elsewherePinStore);
+export function swapTarget(view, position, pin = null) {
     const groups = view?.groups ?? [];
-    if (pin && otherGroups().includes(pin.group)) {
-        const report = groups.find((g) => g.group === pin.group) ?? null;
-        return { group: pin.group, path: pin.path, position: pin.position, report, pinned: true };
+    if (pin) {
+        const report = groups.find((g) => g.group === pin.group && g.positionId === pin.positionId);
+        return report ? { group: pin.group, path: pin.path, position: pin.position, report, pinned: true } : null;
     }
     const held = groups.find((g) => g.positionId);
     if (!held) return null;
@@ -124,7 +132,10 @@ let pressedAt = 0;
 // Moves at every start and end, so a read still under way when the key is released shows nothing.
 let swapGeneration = 0;
 
-/** Show the other library's board in place of this one. */
+/**
+ * Show the other library's board in place of this one. The board drawn is read afresh: a group
+ * may have been written since the last read (a job of its own), and a pin is read as its own board.
+ */
 export async function startSwap() {
     const generation = ++swapGeneration;
     if (otherGroups().length === 0) {
@@ -132,11 +143,19 @@ export async function startSwap() {
         return false;
     }
     const position = get(positionStore);
-    const pinned = get(elsewherePinStore);
-    // A pin needs no read: its board came with it.
-    const view = pinned && otherGroups().includes(pinned.group) ? get(elsewhereStore).view : await loadElsewhere(position);
+    const pin = livePin();
+    let view = null;
+    if (pin) {
+        try {
+            view = await ElsewhereInGroups(JSON.parse(JSON.stringify(pin.position)), -1);
+        } catch (error) {
+            logger.error('Error reading the pinned board:', error);
+        }
+    } else {
+        view = await loadElsewhere(position, { force: true });
+    }
     if (generation !== swapGeneration) return false;
-    const target = swapTarget(view, position);
+    const target = swapTarget(view, position, pin);
     if (!target) {
         statusBarTextStore.set(tMsg('elsewhere.notHeld'));
         return false;
