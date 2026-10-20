@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"strings"
+	"sync"
 	"testing"
 )
 
@@ -138,4 +139,70 @@ func TestCompress_WriteWithoutWriteHeaderStillDecides(t *testing.T) {
 	if string(got) != `{"ok":true}` {
 		t.Errorf("body = %q", got)
 	}
+}
+
+func BenchmarkCompress_SmallJSON(b *testing.B) {
+	h := http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = io.WriteString(w, strings.Repeat(`{"id":1,"name":"Alice"},`, 40))
+	})
+	b.ReportAllocs()
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			get(h, "gzip")
+		}
+	})
+}
+
+func BenchmarkCompress_NDJSON(b *testing.B) {
+	h := ndjsonHandler(50)
+	b.ReportAllocs()
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			get(h, "gzip")
+		}
+	})
+}
+
+// A pooled gzip writer must never leak state from one response to the next,
+// nor be shared by two at once: concurrent requests of different sizes each
+// decompress to exactly what their handler wrote.
+func TestCompress_PooledWritersAreNotSharedAcrossResponses(t *testing.T) {
+	handler := func(n int) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+			w.Header().Set("Content-Type", "application/x-ndjson")
+			for i := 0; i < n; i++ {
+				_, _ = io.WriteString(w, strings.Repeat("x", i+1)+"\n")
+				if f, ok := w.(http.Flusher); ok {
+					f.Flush()
+				}
+			}
+		})
+	}
+	var wg sync.WaitGroup
+	for g := 0; g < 16; g++ {
+		wg.Add(1)
+		go func(g int) {
+			defer wg.Done()
+			for it := 0; it < 50; it++ {
+				n := 1 + (g*7+it)%40
+				var want strings.Builder
+				for i := 0; i < n; i++ {
+					want.WriteString(strings.Repeat("x", i+1) + "\n")
+				}
+				rec := get(handler(n), "gzip")
+				zr, err := gzip.NewReader(rec.Body)
+				if err != nil {
+					t.Errorf("gzip reader: %v", err)
+					return
+				}
+				got, err := io.ReadAll(zr)
+				if err != nil || string(got) != want.String() {
+					t.Errorf("g=%d it=%d: body differs after decompression (err=%v)", g, it, err)
+					return
+				}
+			}
+		}(g)
+	}
+	wg.Wait()
 }

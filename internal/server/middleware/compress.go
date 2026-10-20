@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"compress/gzip"
+	"io"
 	"net/http"
 	"strings"
 	"sync"
@@ -100,13 +101,37 @@ func (c *compressWriter) decide() {
 		// small flush, and a listing flushed per record then comes out larger
 		// than the plain one. Levels 7-9 keep the chained encoder; 7 is the
 		// cheapest. TestCompress_GzipsARepetitiveListing notices a regression.
-		c.gz, _ = gzip.NewWriterLevel(c.ResponseWriter, gzipLevel)
+		c.gz = getGzipWriter(c.ResponseWriter)
 	})
 }
 
 // gzipLevel: see decide. NewWriterLevel only errors on a level outside
 // [-2, 9], which a constant cannot be.
 const gzipLevel = 7
+
+// gzipPool recycles compressors: a level-7 gzip.Writer carries about 1 MB of
+// match tables, and allocating one per response dominates the daemon's
+// allocations. A writer is taken for one response only, Reset onto its
+// ResponseWriter, and returned after Close — never held by two responses.
+var gzipPool = sync.Pool{
+	New: func() any {
+		zw, _ := gzip.NewWriterLevel(io.Discard, gzipLevel)
+		return zw
+	},
+}
+
+func getGzipWriter(w io.Writer) *gzip.Writer {
+	zw := gzipPool.Get().(*gzip.Writer)
+	zw.Reset(w)
+	return zw
+}
+
+// putGzipWriter drops the reference to the response before pooling, so an idle
+// pooled writer does not keep a finished connection alive.
+func putGzipWriter(zw *gzip.Writer) {
+	zw.Reset(io.Discard)
+	gzipPool.Put(zw)
+}
 
 func (c *compressWriter) WriteHeader(status int) {
 	c.decide()
@@ -141,5 +166,7 @@ func (c *compressWriter) Close() {
 	if c.gz != nil && !c.closed {
 		c.closed = true
 		_ = c.gz.Close()
+		putGzipWriter(c.gz)
+		c.gz = nil
 	}
 }
