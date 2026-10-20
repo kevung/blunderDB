@@ -3510,6 +3510,8 @@
         "close": "Fermer la bibliothèque et son groupe",
         "unnamed": "Sans base",
         "alreadyOpen": "{name} est déjà ouverte : son groupe est affiché",
-        "busy": "Une tâche écrit dans la bibliothèque active : attendez sa fin ou annulez-la avant de changer de groupe"
+        "busy": "Une tâche écrit dans la bibliothèque active : attendez sa fin ou annulez-la avant de changer de groupe",
+        "duel": "Un Duel est en cours : suspendez-le ou terminez-le avant de changer de bibliothèque",
+        "training": "Une séance d'entraînement est en cours : terminez-la avant de changer de bibliothèque"
     }
 }

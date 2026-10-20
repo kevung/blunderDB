@@ -3510,6 +3510,8 @@
         "close": "Chiudi la libreria e il suo gruppo",
         "unnamed": "Nessun database",
         "alreadyOpen": "{name} è già aperta: viene mostrato il suo gruppo",
-        "busy": "Un'attività sta scrivendo nella libreria attiva: attendine la fine o annullala prima di cambiare gruppo"
+        "busy": "Un'attività sta scrivendo nella libreria attiva: attendine la fine o annullala prima di cambiare gruppo",
+        "duel": "Un Duello è in corso: sospendilo o terminalo prima di cambiare libreria",
+        "training": "Una sessione di allenamento è in corso: terminala prima di cambiare libreria"
     }
 }

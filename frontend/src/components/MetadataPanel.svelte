@@ -3,7 +3,7 @@
     import { onDestroy } from 'svelte';
     import { LoadMetadata, SaveMetadata, GetIssuanceInfo } from '../../wailsjs/go/database/Database.js';
     import { activeTabStore } from '../stores/uiStore';
-    import { databaseLoadedStore } from '../stores/databaseStore';
+    import { databaseLoadedStore, libraryChangedStore } from '../stores/databaseStore';
     import { t } from '../i18n';
     import PanelHeader from './panels/PanelHeader.svelte';
     import FormGrid from './panels/FormGrid.svelte';
@@ -58,10 +58,18 @@
 
     // Load when tab becomes active, save when leaving
     let wasActive = false;
+    let readUnder = -1;
     $effect(() => {
         const value = $activeTabStore;
+        const library = $libraryChangedStore;
+        if (library !== readUnder) {
+            // The fields were read from another library: never write them into this one.
+            loaded = false;
+            wasActive = false;
+        }
         if (value === 'metadata' && $databaseLoadedStore) {
             loadMetadata().then(() => {
+                readUnder = library;
                 wasActive = true;
             });
         } else if (wasActive) {

@@ -3510,6 +3510,8 @@
         "close": "Sulje kirjasto ja sen ryhmä",
         "unnamed": "Ei tietokantaa",
         "alreadyOpen": "{name} on jo auki: sen ryhmä näytetään",
-        "busy": "Tehtävä kirjoittaa aktiiviseen kirjastoon: odota sen valmistumista tai peruuta se ennen ryhmän vaihtoa"
+        "busy": "Tehtävä kirjoittaa aktiiviseen kirjastoon: odota sen valmistumista tai peruuta se ennen ryhmän vaihtoa",
+        "duel": "Kaksintaistelu on käynnissä: keskeytä tai päätä se ennen kirjaston vaihtamista",
+        "training": "Harjoitusistunto on käynnissä: päätä se ennen kirjaston vaihtamista"
     }
 }

@@ -3510,6 +3510,8 @@
         "close": "Bibliothek und ihre Gruppe schließen",
         "unnamed": "Keine Datenbank",
         "alreadyOpen": "{name} ist bereits geöffnet: ihre Gruppe wird angezeigt",
-        "busy": "Eine Aufgabe schreibt in die aktive Bibliothek: warten Sie auf ihr Ende oder brechen Sie sie ab, bevor Sie die Gruppe wechseln"
+        "busy": "Eine Aufgabe schreibt in die aktive Bibliothek: warten Sie auf ihr Ende oder brechen Sie sie ab, bevor Sie die Gruppe wechseln",
+        "duel": "Ein Duell läuft: unterbrechen oder beenden Sie es, bevor Sie die Bibliothek wechseln",
+        "training": "Eine Trainingssitzung läuft: beenden Sie sie, bevor Sie die Bibliothek wechseln"
     }
 }

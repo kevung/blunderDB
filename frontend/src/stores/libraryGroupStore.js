@@ -9,16 +9,22 @@ import { OpenLibraryGroup, ActivateLibraryGroup, CloseLibraryGroup } from '../..
 import { WindowSetTitle } from '../../wailsjs/runtime/runtime.js';
 import { viewStore } from './viewStore.js';
 import { positionsStore } from './positionStore.js';
-import { databasePathStore } from './databaseStore.js';
+import { databasePathStore, libraryChanged, libraryTitle } from './databaseStore.js';
 import { libraryCountsStore, refreshLibraryCounts } from './libraryCountsStore.js';
 import { searchParamsStore, searchEmptyStore } from './searchParamsStore.js';
-import { matchPanelRefreshTriggerStore } from './uiStore.js';
+import { matchPanelRefreshTriggerStore, statusBarTextStore } from './uiStore.js';
+import { trainingSessionStore } from './trainingTabStore.js';
+import { bumpTranscriptionLibrary } from './transcriptionStore.js';
+import { directionSessionState, forgetDirection, restoreDirection } from './directionStore.js';
+import { takeScopedState, putScopedState } from './libraryScope.js';
+import { tMsg, translate } from '../i18n';
 import { logger } from '../utils/logger.js';
 
 /**
  * @typedef {{ views: any[], activeViewId: number }} ViewsPhoto
  * @typedef {{ path: string, views: ViewsPhoto, list: import('./positionList.js').LibraryState,
- *   search: any, searchEmpty: boolean, counts: any, scroll: number }} GroupPhoto
+ *   search: any, searchEmpty: boolean, counts: any, scroll: number, scoped: Record<string, any>,
+ *   direction: { openId: number | null, tabs: Record<string, string> } }} GroupPhoto
  */
 
 /** The groups in tab-bar order: ids only, the active one's path is databasePathStore. */
@@ -67,26 +73,55 @@ function scrollBox() {
 
 /**
  * Photograph the group on screen and hand its list to it; `incoming` is the list state of the
- * group coming in, null for a library just opened.
+ * group coming in, null for a library just opened. The group's own state (a draft, a review,
+ * the open Direction) goes into the photograph; what the next library starts from is installed
+ * by putScopedState, after this, so a reset never reaches the photograph.
  * @param {import('./positionList.js').LibraryState | null} incoming
  * @returns {GroupPhoto}
  */
 function photograph(incoming) {
     const views = viewStore.takeGroup();
-    return {
+    const photo = {
         path: get(databasePathStore),
         views,
         list: positionsStore.exchangeLibrary(incoming),
         search: get(searchParamsStore),
         searchEmpty: get(searchEmptyStore),
         counts: get(libraryCountsStore),
-        scroll: scrollBox()?.scrollTop ?? 0
+        scroll: scrollBox()?.scrollTop ?? 0,
+        scoped: takeScopedState(),
+        direction: directionSessionState()
     };
+    // Its ids name rows of the library left; its pending session save would land in the next.
+    forgetDirection();
+    // A transcription answer still in flight belongs to the library left.
+    bumpTranscriptionLibrary();
+    return photo;
 }
 
-/** @param {string} path */
-function showTitle(path) {
-    WindowSetTitle(path ? `blunderDB - ${path.split(/[\\/]/).pop()}` : 'blunderDB');
+/** @param {string} path @param {boolean} readOnly */
+function showTitle(path, readOnly) {
+    WindowSetTitle(libraryTitle(path, readOnly, translate('commands.readOnlySuffix')));
+}
+
+/**
+ * Why the group on screen cannot be left now, as a status-bar message; null when it can.
+ * A running Duel holds the board, and a training session's clock and journal follow no group.
+ */
+export function switchRefusal() {
+    if (viewStore.viewsLocked()) return tMsg('libraryGroups.duel');
+    if (get(trainingSessionStore)) return tMsg('libraryGroups.training');
+    return null;
+}
+
+/** A switch refused before anything moved; libraryGroupError shows its status message. */
+export class LibraryGroupRefused extends Error {
+    name = 'LibraryGroupRefused';
+    /** @param {import('../i18n').StatusMessage} status */
+    constructor(status) {
+        super(status.i18nKey);
+        this.status = status;
+    }
 }
 
 /** What may have changed while the group waited, read once it is on screen. */
@@ -101,18 +136,21 @@ function refreshAfterShow() {
  * @param {string} path
  */
 export async function openInNewGroup(path) {
-    if (viewStore.viewsLocked()) throw new Error('views locked');
+    const refusal = switchRefusal();
+    if (refusal) throw new LibraryGroupRefused(refusal);
     const leaving = get(activeGroupId);
     const group = await OpenLibraryGroup(path);
     if (!group || group.id === leaving) return;
     const photo = photograph(null);
     parkedGroupsStore.update((m) => new Map(m).set(leaving, photo));
+    putScopedState(null);
     viewStore.giveGroup(null);
     searchParamsStore.set(null);
     searchEmptyStore.set(false);
     libraryCountsStore.set(null);
     groupIdsStore.update((ids) => [...ids, group.id]);
     activeGroupId.set(group.id);
+    libraryChanged();
 }
 
 /**
@@ -121,7 +159,8 @@ export async function openInNewGroup(path) {
  * refreshed afterwards.
  * @param {number} id
  * @param {number | null} [viewId]
- * @returns {Promise<boolean>} false when refused (a Duel holds the board, a job writes the library)
+ * @returns {Promise<boolean>} false when refused (a Duel holds the board, a training session
+ *   runs, a job writes the library); the status bar says why
  */
 export async function activateGroup(id, viewId = null) {
     const leaving = get(activeGroupId);
@@ -130,14 +169,19 @@ export async function activateGroup(id, viewId = null) {
         return true;
     }
     const target = get(parkedGroupsStore).get(id);
-    if (!target || viewStore.viewsLocked()) return false;
+    if (!target) return false;
+    const refusal = switchRefusal();
+    if (refusal) {
+        statusBarTextStore.set(refusal);
+        return false;
+    }
     const started = performance.now();
     try {
         await ActivateLibraryGroup(id);
     } catch (error) {
         logger.error('Error switching library group:', error);
-        const { setStatusBarMessage, libraryGroupError } = await import('../services/databaseService.js');
-        setStatusBarMessage(libraryGroupError(error));
+        const { libraryGroupError } = await import('../services/databaseService.js');
+        statusBarTextStore.set(libraryGroupError(error));
         return false;
     }
     const photo = photograph(target.list);
@@ -147,6 +191,7 @@ export async function activateGroup(id, viewId = null) {
         next.set(leaving, photo);
         return next;
     });
+    putScopedState(target.scoped);
     activeGroupId.set(id);
     databasePathStore.set(target.path);
     searchParamsStore.set(target.search);
@@ -154,12 +199,14 @@ export async function activateGroup(id, viewId = null) {
     libraryCountsStore.set(target.counts);
     const views = viewId != null && target.views.views.some((v) => v.id === viewId) ? { ...target.views, activeViewId: viewId } : target.views;
     viewStore.giveGroup(views);
-    showTitle(target.path);
+    showTitle(target.path, target.scoped.databaseReadOnlyStore ?? false);
+    libraryChanged();
     lastSwitchMsStore.set(performance.now() - started);
     requestAnimationFrame(() => {
         const box = scrollBox();
         if (box) box.scrollTop = target.scroll;
         refreshAfterShow();
+        restoreDirection(target.direction).catch((error) => logger.error('Error reopening the Direction of a library group:', error));
     });
     return true;
 }

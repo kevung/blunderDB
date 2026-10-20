@@ -52,7 +52,7 @@
     import { positionStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
     import { commentTextStore } from '../stores/uiStore';
-    import { databaseLoadedStore } from '../stores/databaseStore';
+    import { databaseLoadedStore, libraryChangedStore } from '../stores/databaseStore';
     import { panelKeyGuard } from '../services/keyboardService.js';
     import { registerKeys } from '../services/keyDispatch.js';
     import { t, tMsg } from '../i18n';
@@ -708,6 +708,16 @@
     onMount(() => {
         unregisterKeys = registerKeys('tournamentPanel', handleKeyDown);
         refreshDirectionSummaries();
+    });
+
+    // Another library brought forward: its tournaments and Directions, not the previous one's.
+    const libraryAtMount = untrack(() => $libraryChangedStore);
+    $effect(() => {
+        if ($libraryChangedStore === libraryAtMount) return;
+        untrack(() => {
+            refreshDirectionSummaries();
+            if ($openPanels.has(PANEL.TOURNAMENT) && $databaseLoadedStore) loadTournaments();
+        });
     });
 
     onDestroy(() => {

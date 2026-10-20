@@ -3510,6 +3510,8 @@
         "close": "Close the library and its group",
         "unnamed": "No database",
         "alreadyOpen": "{name} is already open: its group is shown",
-        "busy": "A task is writing the active library: wait for it or cancel it before switching groups"
+        "busy": "A task is writing the active library: wait for it or cancel it before switching groups",
+        "duel": "A Duel is in progress: suspend or finish it before switching library",
+        "training": "A training session is in progress: finish it before switching library"
     }
 }

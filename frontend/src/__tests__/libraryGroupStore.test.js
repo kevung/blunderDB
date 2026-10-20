@@ -36,11 +36,24 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
         return null;
     })
 }));
-vi.mock('../../wailsjs/runtime/runtime.js', () => ({ WindowSetTitle: vi.fn(), EventsOn: vi.fn(() => () => {}) }));
+const titles = vi.hoisted(() => /** @type {string[]} */ ([]));
+vi.mock('../../wailsjs/runtime/runtime.js', () => ({
+    WindowSetTitle: vi.fn((/** @type {string} */ title) => titles.push(title)),
+    EventsOn: vi.fn(() => () => {})
+}));
 
 import { viewStore } from '../stores/viewStore.js';
 import { positionsStore, positionStore } from '../stores/positionStore.js';
-import { databasePathStore } from '../stores/databaseStore.js';
+import { databasePathStore, databaseReadOnlyStore, libraryChangedStore } from '../stores/databaseStore.js';
+import { collectionsStore, selectedCollectionStore } from '../stores/collectionStore.js';
+import { tournamentsStore } from '../stores/tournamentStore.js';
+import { transcriptionStore, transcriptionInfoStore } from '../stores/transcriptionStore.js';
+import { lessonStore, lessonStepIndexStore } from '../stores/lessonStore.js';
+import { ankiReviewCardStore } from '../stores/ankiStore.js';
+import { studyQueueStore, studyQueueActiveStore } from '../stores/studyQueueStore.js';
+import { duelStore } from '../stores/duelStore.js';
+import { trainingSessionStore } from '../stores/trainingTabStore.js';
+import { statusBarTextStore } from '../stores/uiStore.js';
 import { searchParamsStore } from '../stores/searchParamsStore.js';
 import { currentPositionIndexStore } from '../stores/uiStore.js';
 import {
@@ -51,6 +64,7 @@ import {
     lastSwitchMsStore,
     openInNewGroup,
     activateGroup,
+    LibraryGroupRefused,
     closeGroup,
     cycleTab,
     cycleGroup,
@@ -69,6 +83,12 @@ beforeEach(async () => {
     // Back to one group showing library A.
     for (const id of get(groupIdsStore)) if (id !== get(activeGroupId)) await closeGroup(id);
     calls.length = 0;
+    titles.length = 0;
+    duelStore.set(null);
+    trainingSessionStore.set(null);
+    transcriptionStore.set(null);
+    collectionsStore.set([]);
+    databaseReadOnlyStore.set(false);
     databasePathStore.set('/libs/a.db');
     searchParamsStore.set({ query: 'cube' });
     showLibrary([11, 12, 13], 2);
@@ -155,6 +175,93 @@ describe('library groups', () => {
     test('a group is named after its file', () => {
         expect(groupName('/home/me/Matches 2026.db')).toBe('Matches 2026');
         expect(groupName('C:\\libs\\club.db')).toBe('club');
+    });
+});
+
+describe('what a group holds of its library', () => {
+    test('lists read from A are emptied for B and read again, on a counter that moves', async () => {
+        const groupA = get(activeGroupId);
+        collectionsStore.set([{ id: 1, name: 'A collection' }]);
+        selectedCollectionStore.set({ id: 1, name: 'A collection' });
+        tournamentsStore.set([{ id: 7, name: 'A tournament' }]);
+        const before = get(libraryChangedStore);
+
+        await openInNewGroup('/libs/b.db');
+        expect(get(collectionsStore)).toEqual([]);
+        expect(get(selectedCollectionStore)).toBeNull();
+        expect(get(tournamentsStore)).toEqual([]);
+        expect(get(libraryChangedStore)).toBe(before + 1);
+
+        collectionsStore.set([{ id: 2, name: 'B collection' }]);
+        expect(await activateGroup(groupA)).toBe(true);
+        // A's lists are read again from A, never shown from B's.
+        expect(get(collectionsStore)).toEqual([]);
+        expect(get(libraryChangedStore)).toBe(before + 2);
+    });
+
+    test('a draft, a Lesson, a review and a study queue survive the round trip, each in its group', async () => {
+        const groupA = get(activeGroupId);
+        const draftA = { id: 5, entries: ['8/5 6/5'] };
+        transcriptionStore.set(draftA);
+        transcriptionInfoStore.set({ name: 'draft A' });
+        lessonStore.set({ id: 3 });
+        lessonStepIndexStore.set(2);
+        ankiReviewCardStore.set({ id: 9 });
+        studyQueueStore.set([41, 42]);
+        studyQueueActiveStore.set(true);
+
+        await openInNewGroup('/libs/b.db');
+        const groupB = get(activeGroupId);
+        // B starts from nothing: no draft of A to type into.
+        expect(get(transcriptionStore)).toBeNull();
+        expect(get(lessonStore)).toBeNull();
+        expect(get(ankiReviewCardStore)).toBeNull();
+        expect(get(studyQueueActiveStore)).toBe(false);
+        const draftB = { id: 5, entries: [] };
+        transcriptionStore.set(draftB);
+
+        expect(await activateGroup(groupA)).toBe(true);
+        expect(get(transcriptionStore)).toBe(draftA);
+        expect(get(transcriptionInfoStore)).toEqual({ name: 'draft A' });
+        expect(get(lessonStepIndexStore)).toBe(2);
+        expect(get(ankiReviewCardStore)).toEqual({ id: 9 });
+        expect(get(studyQueueStore)).toEqual([41, 42]);
+
+        expect(await activateGroup(groupB)).toBe(true);
+        expect(get(transcriptionStore)).toBe(draftB);
+        expect(get(lessonStore)).toBeNull();
+    });
+
+    test('a running Duel refuses the switch, and says so', async () => {
+        const groupA = get(activeGroupId);
+        await openInNewGroup('/libs/b.db');
+        duelStore.set({ state: { ended: false } });
+        calls.length = 0;
+        expect(await activateGroup(groupA)).toBe(false);
+        expect(calls).toEqual([]);
+        expect(get(statusBarTextStore)).toEqual({ i18nKey: 'libraryGroups.duel', i18nParams: null });
+        await expect(openInNewGroup('/libs/c.db')).rejects.toBeInstanceOf(LibraryGroupRefused);
+        duelStore.set(null);
+    });
+
+    test('a training session refuses the switch, and says so', async () => {
+        const groupA = get(activeGroupId);
+        await openInNewGroup('/libs/b.db');
+        trainingSessionStore.set({ kind: 'decision' });
+        expect(await activateGroup(groupA)).toBe(false);
+        expect(get(statusBarTextStore)).toEqual({ i18nKey: 'libraryGroups.training', i18nParams: null });
+        trainingSessionStore.set(null);
+    });
+
+    test('the title keeps the read-only mark of the group brought back', async () => {
+        const groupA = get(activeGroupId);
+        databaseReadOnlyStore.set(true);
+        await openInNewGroup('/libs/b.db');
+        expect(get(databaseReadOnlyStore)).toBe(false);
+        titles.length = 0;
+        expect(await activateGroup(groupA)).toBe(true);
+        expect(get(databaseReadOnlyStore)).toBe(true);
+        expect(titles.at(-1)).toMatch(/^blunderDB - a\.db .+/);
     });
 });
 

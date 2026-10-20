@@ -15,7 +15,7 @@
     import { filterLibraryStore } from '../stores/filterLibraryStore';
     import { loadFilterLibrary, pinnedFilters, setFilterPinned } from '../services/filterLibraryService.js';
     import { searchParamsStore, searchEmptyStore } from '../stores/searchParamsStore';
-    import { databaseLoadedStore } from '../stores/databaseStore';
+    import { databaseLoadedStore, libraryChangedStore } from '../stores/databaseStore';
     import { withDisplayedPositionIDs } from '../services/positionService.js';
     import AssistantPanel from './AssistantPanel.svelte';
     import PanelHeader from './panels/PanelHeader.svelte';
@@ -339,6 +339,7 @@
         }
     }
     $effect(() => {
+        void $libraryChangedStore;
         if ($activeTabStore === 'search' && $databaseLoadedStore) {
             loadHistory();
             loadSavedFilters();

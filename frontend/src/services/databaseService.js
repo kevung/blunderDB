@@ -13,7 +13,7 @@ import {
 import { WindowSetTitle, Quit } from '../../wailsjs/runtime/runtime.js';
 import { SaveLastDatabasePath } from '../../wailsjs/go/main/Config.js';
 
-import { databasePathStore } from '../stores/databaseStore.js';
+import { databasePathStore, databaseReadOnlyStore, libraryChanged, libraryTitle } from '../stores/databaseStore.js';
 import { refreshLibraryCounts } from '../stores/libraryCountsStore.js';
 import { analysisStore, emptyAnalysis, selectedMoveStore } from '../stores/analysisStore.js';
 import { statusBarTextStore, statusBarModeStore, commentTextStore, openModal, closeModal, MODAL, matchPanelRefreshTriggerStore } from '../stores/uiStore.js';
@@ -84,6 +84,7 @@ function resetAnalysisAndCommentStores() {
 // attempt fails: nothing is open then, so the path, the title and the counter say so.
 function showNoDatabaseOpen() {
     databasePathStore.set('');
+    databaseReadOnlyStore.set(false);
     WindowSetTitle('blunderDB');
     refreshLibraryCounts();
 }
@@ -114,6 +115,8 @@ async function heldByAnotherGroup(filePath) {
  * @param {unknown} error
  */
 export function libraryGroupError(error) {
+    // A refusal the group store worded itself (a Duel, a training session).
+    if (error instanceof Error && error.name === 'LibraryGroupRefused') return /** @type {any} */ (error).status;
     return String(error).includes('database is busy') ? tMsg('libraryGroups.busy') : tMsg('commands.errorOpeningDb');
 }
 
@@ -148,11 +151,12 @@ export async function newDatabase() {
                 throw error;
             }
             databasePathStore.set(filePath);
+            databaseReadOnlyStore.set(false);
+            libraryChanged();
             logger.log('databasePathStore:', filePath);
             refreshLibraryCounts();
             setStatusBarMessage(tMsg('commands.dbCreated'));
-            const filename = getFilenameFromPath(filePath);
-            WindowSetTitle(`blunderDB - ${filename}`);
+            WindowSetTitle(libraryTitle(filePath, false, translate('commands.readOnlySuffix')));
             logger.log(`New database created at ${filePath}`);
 
             // The Matches panel may already be visible (default tab): bump its
@@ -279,6 +283,8 @@ export async function openDatabaseByPath(filePath, { inNewGroup } = {}) {
         }
         await SaveLastDatabasePath(filePath);
         databasePathStore.set(filePath);
+        // A new group was announced by openInNewGroup; an open in place is announced here.
+        if (!inNewGroup) libraryChanged();
         logger.log('databasePathStore:', filePath);
         refreshLibraryCounts();
 
@@ -296,13 +302,12 @@ export async function openDatabaseByPath(filePath, { inNewGroup } = {}) {
         // Another instance holds the write lock, so the database opened
         // read-only: say so non-blockingly (title suffix + status message).
         const readOnly = await IsReadOnly().catch(() => false);
-        const filename = getFilenameFromPath(filePath);
+        databaseReadOnlyStore.set(readOnly);
+        WindowSetTitle(libraryTitle(filePath, readOnly, translate('commands.readOnlySuffix')));
         if (readOnly) {
-            WindowSetTitle(`blunderDB - ${filename} ${tMsg('commands.readOnlySuffix')}`);
             setStatusBarMessage(tMsg('commands.dbReadOnly'));
         } else {
             setTransientStatusBarMessage(tMsg('commands.dbOpened'));
-            WindowSetTitle(`blunderDB - ${filename}`);
         }
 
         // Bump the Matches panel's refresh trigger (it may have mounted before
