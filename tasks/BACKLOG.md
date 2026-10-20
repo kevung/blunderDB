@@ -224,6 +224,13 @@ une machine arm64 ne les a pas débloqués ; le registre des décisions amont et
   les écritures par lui ; il touche beaucoup de fichiers mais aucun comportement, et il
   débloque aussi les tests de sortie `--format json` qui aujourd'hui sérialisent. Chantier à
   part, pas « en passant ».
+- **`wails generate module` omet `storage.ElsewherePlay` et `storage.ElsewhereNeighbour`** :
+  les deux classes sont ajoutées à la main dans `frontend/wailsjs/go/models.ts` et une
+  régénération les efface. À garder à chaque régénération, ou à corriger côté générateur.
+- **Suites longues** : `go test -race` du paquet `database` prend ~43 min seul, et les suites
+  gammonNet en `purego` ~40 min, au-delà des délais locaux usuels. Pour exécuter le noyau arm64
+  sans machine dédiée, un `qemu-aarch64` statique (tiré de l'image `tonistiigi/binfmt`) suffit,
+  en passant le binaire deux fois (`qemu-aarch64 BIN BIN -test.run …`, argv0 en premier).
 
 ## Ouvert — Produit / docs
 
