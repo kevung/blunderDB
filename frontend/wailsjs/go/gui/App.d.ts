@@ -219,6 +219,12 @@ export function TransferToGroup(arg1:number,arg2:Array<gui.TransferBatch>):Promi
 
 export function VideoSourceKind(arg1:string):Promise<string>;
 
+export function ViewerCatalogOf(arg1:number):Promise<gui.ViewerCatalog>;
+
+export function ViewerShow(arg1:number,arg2:number):Promise<gui.ViewerItem>;
+
+export function ViewerSteps(arg1:number,arg2:gui.ViewerSource):Promise<Array<gui.ViewerStep>>;
+
 export function YouTubeEmbedURL(arg1:string):Promise<string>;
 
 export function YouTubeWatchURL(arg1:string):Promise<string>;

@@ -4791,6 +4791,123 @@ export namespace gui {
 	    }
 	}
 
+	export class ViewerEntry {
+	    id: number;
+	    label: string;
+	    count: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new ViewerEntry(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.label = source["label"];
+	        this.count = source["count"];
+	    }
+	}
+	export class ViewerCatalog {
+	    matches: ViewerEntry[];
+	    collections: ViewerEntry[];
+	
+	    static createFrom(source: any = {}) {
+	        return new ViewerCatalog(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.matches = this.convertValues(source["matches"], ViewerEntry);
+	        this.collections = this.convertValues(source["collections"], ViewerEntry);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	
+	export class ViewerItem {
+	    position: domain.Position;
+	    analysis?: domain.PositionAnalysis;
+	    comment: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new ViewerItem(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.position = this.convertValues(source["position"], domain.Position);
+	        this.analysis = this.convertValues(source["analysis"], domain.PositionAnalysis);
+	        this.comment = source["comment"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class ViewerSource {
+	    kind: string;
+	    id: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new ViewerSource(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.kind = source["kind"];
+	        this.id = source["id"];
+	    }
+	}
+	export class ViewerStep {
+	    positionId: number;
+	    gameNumber?: number;
+	    moveNumber?: number;
+	    player?: number;
+	    played?: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new ViewerStep(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.positionId = source["positionId"];
+	        this.gameNumber = source["gameNumber"];
+	        this.moveNumber = source["moveNumber"];
+	        this.player = source["player"];
+	        this.played = source["played"];
+	    }
+	}
 }
 
 export namespace image {

@@ -422,6 +422,18 @@ export function VideoSourceKind(arg1) {
   return window['go']['gui']['App']['VideoSourceKind'](arg1);
 }
 
+export function ViewerCatalogOf(arg1) {
+  return window['go']['gui']['App']['ViewerCatalogOf'](arg1);
+}
+
+export function ViewerShow(arg1, arg2) {
+  return window['go']['gui']['App']['ViewerShow'](arg1, arg2);
+}
+
+export function ViewerSteps(arg1, arg2) {
+  return window['go']['gui']['App']['ViewerSteps'](arg1, arg2);
+}
+
 export function YouTubeEmbedURL(arg1) {
   return window['go']['gui']['App']['YouTubeEmbedURL'](arg1);
 }
