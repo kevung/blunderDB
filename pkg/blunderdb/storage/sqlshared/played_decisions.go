@@ -96,6 +96,14 @@ type PlayedDecisionBasis struct {
 	position     *domain.Position
 }
 
+// NewPlayedDecisionBasis is the basis of a position whose analysis the caller
+// holds decoded, as PlayedDecisionAnalysisSQL would read it back: a writer
+// that has just stored a can score the position's moves without decoding it
+// again. pos is PlayPosition of the stored row.
+func NewPlayedDecisionBasis(decisionType int, a *domain.PositionAnalysis, pos *domain.Position) *PlayedDecisionBasis {
+	return &PlayedDecisionBasis{decisionType: decisionType, analysis: a, position: pos}
+}
+
 // ScanPlayedDecisionBasis decodes one row of PlayedDecisionAnalysisSQL. An
 // analysis that cannot be decoded gives a nil basis, which scores NULL and 0
 // like a position without analysis.

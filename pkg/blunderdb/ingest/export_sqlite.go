@@ -23,6 +23,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/searchfilter"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
 
 // This file is THE export of a blunderDB database to a file: the GUI's
@@ -261,6 +262,7 @@ func writeExport(ctx context.Context, src storage.Storage, scope, path string, o
 		collMap: make(map[int64]int64), tourMap: make(map[int64]int64), matchMap: make(map[int64]int64),
 		livingEvals: make(map[int64]*storage.CollectionEvaluation),
 		addedAt:     make(map[int64]map[int64]string),
+		scores:      make(map[int64]moveScore),
 	}
 	for _, step := range []func() error{
 		e.writeMetadata,
@@ -364,6 +366,12 @@ type exporter struct {
 	// a membership keeps its date in the file, as the collection keeps its own.
 	addedAt map[int64]map[int64]string
 	tables  *mets.Carrier // the tables the exported analyses cite, built on first use
+	// scores holds, per source move id, what the move scores against the
+	// analysis written for its position, computed while that analysis was in
+	// hand: writeMatches writes the move with it instead of reading and
+	// decoding the analysis back once per move. Kept small per move: an
+	// export of a large library holds one for every move.
+	scores map[int64]moveScore
 
 	report ExportReport
 }
@@ -697,9 +705,12 @@ func (e *exporter) writeBatch(positions []*domain.Position) error {
 				ac.PlayedMove, ac.PlayedCubeAction = "", ""
 				ac.PlayedMoves, ac.PlayedCubeActions = nil, nil
 			}
-			if err := sqlite.SaveAnalysisUncompressed(e.ctx, e.tx, newID, &ac); err != nil {
+			if basis, err := sqlite.SaveAnalysisUncompressed(e.ctx, e.tx, newID, &ac); err != nil {
 				e.skip("inserting analysis for position", "newID", newID, "oldID", p.ID, "err", err)
 			} else {
+				for _, mv := range moves[p.ID] {
+					e.scores[mv.ID] = scoreMove(basis, mv)
+				}
 				e.report.Analyses++
 				if err := e.carryTable(analysisMET[p.ID], newID); err != nil {
 					return err
@@ -752,6 +763,43 @@ func (e *exporter) carryTable(srcMET, newID int64) error {
 		return fmt.Errorf("cannot export an analysis's match equity table: %w", err)
 	}
 	return nil
+}
+
+// moveScore is what one move stores in move.decision_error_mp (nil when
+// !scored) and move.is_close_cube.
+type moveScore struct {
+	errMP     int64
+	scored    bool
+	closeCube bool
+}
+
+func scoreMove(basis *sqlshared.PlayedDecisionBasis, mv *domain.Move) moveScore {
+	errMP, closeCube := basis.Args(mv.CheckerMove, mv.CubeAction)
+	ms := moveScore{closeCube: closeCube != 0}
+	ms.errMP, ms.scored = errMP.(int64)
+	return ms
+}
+
+// createMove writes the source move mv, already pointed at its exported game
+// and position, with the score its position's analysis gave it when written.
+// A move not scored then (its position written without analysis, or by
+// another source position reaching the same row) is scored by CreateMove
+// from the stored analysis.
+func (e *exporter) createMove(srcID int64, mv *domain.Move) (int64, error) {
+	ms, ok := e.scores[srcID]
+	if !ok {
+		return e.dst.Matches().CreateMove(e.ctx, "", mv)
+	}
+	delete(e.scores, srcID)
+	var errMP any
+	if ms.scored {
+		errMP = ms.errMP
+	}
+	var closeCube int64
+	if ms.closeCube {
+		closeCube = 1
+	}
+	return sqlite.CreateScoredMove(e.ctx, e.dst, mv, errMP, closeCube)
 }
 
 // foldPlayedMoves folds what the move table records against a position into
@@ -1261,7 +1309,7 @@ func (e *exporter) writeMatches() error {
 			mc := *mv
 			mc.GameID = newGameID
 			mc.PositionID = e.posMap[mv.PositionID] // 0 → NULL when not exported
-			newID, err := e.dst.Matches().CreateMove(e.ctx, "", &mc)
+			newID, err := e.createMove(mv.ID, &mc)
 			if err != nil {
 				e.skip("inserting move", "matchID", id, "moveID", mv.ID, "err", err)
 				continue

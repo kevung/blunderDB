@@ -305,21 +305,36 @@ func (s *analysisStore) LoadMany(ctx context.Context, scope string, ids []int64)
 // of blunderDB the recipient runs, and versions before 2.3.0 know only plain
 // JSON — a live database compresses (Save), a file handed to someone else
 // does not. The row must not exist yet (an export writes each position once).
-func SaveAnalysisUncompressed(ctx context.Context, tx *sql.Tx, positionID int64, a *domain.PositionAnalysis) error {
+//
+// It returns the basis the moves played from the position are scored by
+// (sqlshared.PlayedDecisionBasis), built from a rather than read back, so
+// that the exporter, which writes those moves next, need not decode the
+// analysis once per move (CreateScoredMove).
+func SaveAnalysisUncompressed(ctx context.Context, tx *sql.Tx, positionID int64, a *domain.PositionAnalysis) (*sqlshared.PlayedDecisionBasis, error) {
 	a.PositionID = int(positionID)
 	engine.RoundAnalysisForStorage(a)
 	data, err := json.Marshal(a)
 	if err != nil {
-		return fmt.Errorf("sqlite: encode analysis: %w", err)
+		return nil, fmt.Errorf("sqlite: encode analysis: %w", err)
 	}
-	pos, err := positionOf(ctx, tx, positionID, a, nil)
-	if err != nil {
-		return fmt.Errorf("sqlite: save analysis: %w", err)
+	var decisionType int
+	var state []byte
+	var por, d1, d2 *int64
+	err = tx.QueryRowContext(ctx, playDecisionPositionSQL, positionID).Scan(&decisionType, &state, &por, &d1, &d2)
+	found := err == nil
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+		return nil, fmt.Errorf("sqlite: save analysis: read position %d: %w", positionID, err)
+	}
+	played := sqlshared.PlayPosition(state, por, d1, d2)
+	// The columns take the position only where positionOf would read it.
+	var pos *domain.Position
+	if ca := a.ColumnSource().CheckerAnalysis; ca != nil && len(ca.Moves) > 0 {
+		pos = played
 	}
 	c := engine.PopulateAnalysisColumns(a, firstOf(a.PlayedMoves), firstOf(a.PlayedCubeActions), pos)
 	bestCube, err := actionCode(ctx, tx, c.BestCubeAction)
 	if err != nil {
-		return fmt.Errorf("sqlite: save analysis: %w", err)
+		return nil, fmt.Errorf("sqlite: save analysis: %w", err)
 	}
 	if _, err := tx.ExecContext(ctx, analysisInsertSQL,
 		positionID, data,
@@ -328,10 +343,17 @@ func SaveAnalysisUncompressed(ctx context.Context, tx *sql.Tx, positionID int64,
 		c.Player2WinRate, c.Player2GammonRate, c.Player2BackgammonRate,
 		c.IsForced, c.IsCloseCube,
 		c.AnalysisEngine, c.AnalysisDepth, nullableUnix(c.CreationDate)); err != nil {
-		return fmt.Errorf("sqlite: save analysis: %w", err)
+		return nil, fmt.Errorf("sqlite: save analysis: %w", err)
 	}
-	return nil
+	if !found {
+		return nil, nil // PlayedDecisionAnalysisSQL joins the position: no row, no score
+	}
+	return sqlshared.NewPlayedDecisionBasis(decisionType, a, played), nil
 }
+
+// playDecisionPositionSQL reads what of a position its moves are scored by,
+// the position side of PlayedDecisionAnalysisSQL.
+const playDecisionPositionSQL = `SELECT COALESCE(p.decision_type, 0), ` + sqlshared.PlayPositionColumns + ` FROM position p WHERE p.id = ?`
 
 // Delete removes the analysis for positionID.
 // The matches reaching the position lose their match_stats rows with it:
