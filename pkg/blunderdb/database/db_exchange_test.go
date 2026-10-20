@@ -164,7 +164,7 @@ func TestOpenGuard_RefusesBeforeTouchingTheOpenFile(t *testing.T) {
 	d, path := openTemp(t, "a.db")
 	refused := errors.New("held elsewhere")
 	other := filepath.Join(t.TempDir(), "b.db")
-	d.SetOpenGuard(func(p string) error {
+	SetOpenGuard(d, func(p string) error {
 		if p == other {
 			return refused
 		}

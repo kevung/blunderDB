@@ -127,10 +127,11 @@ func (d *Database) SetBeforeSwitch(fn func()) {
 	d.beforeSwitch = fn
 }
 
-// SetOpenGuard registers fn, asked before every OpenDatabase and
+// SetOpenGuard registers fn on d, asked before every OpenDatabase and
 // SetupDatabase: an error refuses the file and leaves the open one in place.
-// nil clears it.
-func (d *Database) SetOpenGuard(fn func(path string) error) {
+// nil clears it. A function, not a method, so the Wails binding of *Database
+// does not grow: the webview must not be able to clear the guard.
+func SetOpenGuard(d *Database, fn func(path string) error) {
 	d.switchMu.Lock()
 	defer d.switchMu.Unlock()
 	d.openGuard = fn
