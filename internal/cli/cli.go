@@ -119,6 +119,7 @@ func (cli *CLI) handlers() map[string]func([]string) error {
 		"search":      cli.runSearch,
 		"trash":       cli.runTrash,
 		"comment":     cli.runComment,
+		"elsewhere":   cli.runElsewhere,
 		"vacuum":      cli.runVacuum,
 		"repair":      cli.runRepair,
 		"reencode":    cli.runReencode,
@@ -211,6 +212,7 @@ func (cli *CLI) printUsage() {
 	fmt.Println("  maintenance  State of health: counters, actions and last runs (status, count, ids, run)")
 	fmt.Println("  delete    Delete data from the database")
 	fmt.Println("  comment   Comments on a position, signed by their author (add, list)")
+	fmt.Println("  elsewhere What other database files know of one board, and its neighbours there")
 	fmt.Println("  trash     What was deleted through the trash, and how to put it back")
 	fmt.Println("  completion  Print a shell completion script (bash, zsh, fish)")
 	fmt.Println("  help      Show this help message")

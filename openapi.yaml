@@ -285,6 +285,30 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/acrossPlayersResp"
+  /v1/across.positionElsewhere:
+    post:
+      operationId: across.positionElsewhere
+      tags: [across]
+      x-kind: json
+      parameters:
+        - name: X-Read-Tenants
+          in: header
+          required: false
+          description: Comma-separated tenants read besides X-Tenant-ID, written by the authenticating proxy (at most 64 with X-Tenant-ID, one header line); honoured only under serve --read-tenants, refused with 400 otherwise; absent, the read is X-Tenant-ID's alone.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/storage_ElsewhereQuery"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/acrossElsewhereResp"
   /v1/across.searchFind:
     post:
       operationId: across.searchFind
@@ -7988,6 +8012,21 @@ components:
         comment:
           $ref: "#/components/schemas/domain_CommentEntry"
           nullable: true
+    acrossElsewhere:
+      type: object
+      properties:
+        tenant:
+          type: string
+    acrossElsewhereResp:
+      type: object
+      properties:
+        zobrist:
+          type: integer
+          format: int64
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/acrossElsewhere"
     acrossIDsReq:
       type: object
       properties:
@@ -9750,6 +9789,9 @@ components:
     storage_DirectionalBiases:
       type: object
       description: "Opaque: see the Go type storage.DirectionalBiases (defined outside internal/server, not expanded here)."
+    storage_ElsewhereQuery:
+      type: object
+      description: "Opaque: see the Go type storage.ElsewhereQuery (defined outside internal/server, not expanded here)."
     storage_Filter:
       type: object
       description: "Opaque: see the Go type storage.Filter (defined outside internal/server, not expanded here)."

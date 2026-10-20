@@ -222,3 +222,43 @@ func TestAcrossClub_Postgres(t *testing.T) {
 		t.Errorf("comments read %v, want the coach's alone [1:note-1]", texts)
 	}
 }
+
+// TestAcrossElsewhere_Postgres: the same board saved by three tenants, a
+// comment written by tenant 2 and one by tenant 3 for itself; under
+// X-Tenant-ID = 1, across.positionElsewhere reports tenants 2 and 3, each with
+// its own copy and its own comment, row-level security filtering each read.
+func TestAcrossElsewhere_Postgres(t *testing.T) {
+	_, srv := newPostgresTestServerAndHandlerWith(t, func(o *Options) { o.TrustReadTenants = true })
+	pos := `{"position":` + initialPositionJSON(t) + `}`
+	ids := map[string]int64{}
+	for _, tenant := range []string{"1", "2", "3"} {
+		rec := serveAcross(t, srv, tenant, "", "/v1/positions.save", pos)
+		var id idResp
+		if rec.Code != 200 || json.Unmarshal(rec.Body.Bytes(), &id) != nil {
+			t.Fatalf("positions.save under %s: %d %s", tenant, rec.Code, rec.Body)
+		}
+		ids[tenant] = id.ID
+	}
+	for _, tenant := range []string{"2", "3"} {
+		body := `{"positionId":` + strconv.FormatInt(ids[tenant], 10) + `,"text":"note-` + tenant + `"}`
+		if rec := serveAcross(t, srv, tenant, "", "/v1/comments.add", body); rec.Code != 200 {
+			t.Fatalf("comments.add under %s: %d %s", tenant, rec.Code, rec.Body)
+		}
+	}
+	rec := serveAcross(t, srv, "1", "2,3", "/v1/across.positionElsewhere", pos)
+	if rec.Code != 200 {
+		t.Fatalf("across.positionElsewhere: %d %s", rec.Code, rec.Body)
+	}
+	var resp acrossElsewhereResp
+	if err := json.Unmarshal(rec.Body.Bytes(), &resp); err != nil {
+		t.Fatalf("decode: %v", err)
+	}
+	if len(resp.Results) != 2 {
+		t.Fatalf("results = %+v, want tenants 2 and 3", resp.Results)
+	}
+	for _, r := range resp.Results {
+		if r.PositionID != ids[r.Tenant] || len(r.Comments) != 1 || r.Comments[0].Text != "note-"+r.Tenant {
+			t.Errorf("tenant %s: position %d comments %+v, want %d and its own note", r.Tenant, r.PositionID, r.Comments, ids[r.Tenant])
+		}
+	}
+}

@@ -62,6 +62,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/across.playerTable — JSON."
         return self._call("/v1/across.playerTable", payload)
 
+    def across_position_elsewhere(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/across.positionElsewhere — JSON."
+        return self._call("/v1/across.positionElsewhere", payload)
+
     def across_search_find(self, payload: Optional[dict] = None) -> Iterator[Any]:
         "POST /v1/across.searchFind — NDJSON stream."
         return self._stream("/v1/across.searchFind", payload)

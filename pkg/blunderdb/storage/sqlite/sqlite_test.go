@@ -33,3 +33,15 @@ func TestReadAcross_SQLite(t *testing.T) {
 		return s
 	}, []string{"1"}, "")
 }
+
+// TestElsewhere_SQLite holds the Elsewhere read on separate files, the shape
+// the CLI reads.
+func TestElsewhere_SQLite(t *testing.T) {
+	storagetest.RunElsewhereTests(t, func() storage.Storage {
+		s, err := sqlite.Open(context.Background(), ":memory:", nil)
+		if err != nil {
+			t.Fatalf("sqlite.Open: %v", err)
+		}
+		return s
+	})
+}

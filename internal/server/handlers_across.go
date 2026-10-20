@@ -8,7 +8,6 @@ import (
 
 	"github.com/kevung/blunderdb/internal/server/middleware"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
-	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -137,6 +136,19 @@ type acrossComment struct {
 	Comment    *domain.CommentEntry `json:"comment"`
 }
 
+// acrossElsewhere is what one read tenant knows of the board asked about.
+type acrossElsewhere struct {
+	Tenant string `json:"tenant"`
+	storage.ElsewhereReport
+}
+
+// acrossElsewhereResp holds one report per read tenant other than the
+// writing one, in the read set's order, under the hash they were read by.
+type acrossElsewhereResp struct {
+	Zobrist uint64            `json:"zobrist"`
+	Results []acrossElsewhere `json:"results"`
+}
+
 // acrossCollection is one collection of a read tenant: a shared library is a
 // tenant the proxy lists, read in place, never copied.
 type acrossCollection struct {
@@ -232,11 +244,7 @@ func boundedLimit(limit int) int {
 // zobristOf is the hash a position is stored under (SavePosition), which
 // names the same board in every tenant.
 func zobristOf(p *domain.Position) uint64 {
-	if p == nil {
-		return 0
-	}
-	norm := p.NormalizeForStorage()
-	return engine.ZobristHash(&norm)
+	return storage.ZobristOf(p)
 }
 
 // readSetOf returns the request's read set, set by the Tenant middleware. Its
@@ -377,6 +385,35 @@ func (s *Server) acrossRoutes() []route {
 			return mapTagged(seq, func(tg storage.Tagged[storage.ZobristComment]) acrossComment {
 				return acrossComment{Tenant: tg.Tenant, Zobrist: tg.Item.Zobrist, PositionID: tg.Item.PositionID, Comment: tg.Item.Comment}
 			})
+		})},
+		// What the other read tenants know of one board (ADR-0103): their
+		// analysis, comments, plays and nearest boards, judged with the
+		// writing tenant's thresholds and table. The writing tenant is left
+		// out: it is "here", not "elsewhere".
+		{http.MethodPost, "/v1/across.positionElsewhere", rpc(func(ctx context.Context, scope string, req storage.ElsewhereQuery) (acrossElsewhereResp, error) {
+			judge, err := storage.JudgeOf(ctx, st(), scope)
+			if err != nil {
+				return acrossElsewhereResp{}, err
+			}
+			set := readSetOf(ctx, scope)
+			others := make(storage.ReadTenants, 0, len(set))
+			for _, t := range set {
+				if t != scope {
+					others = append(others, t)
+				}
+			}
+			got, err := storage.Elsewhere(ctx, storage.SourcesOf(st(), others), req, judge)
+			if err != nil {
+				return acrossElsewhereResp{}, err
+			}
+			resp := acrossElsewhereResp{Zobrist: req.Zobrist, Results: make([]acrossElsewhere, len(got))}
+			if req.Target != nil {
+				resp.Zobrist = storage.ZobristOf(req.Target)
+			}
+			for i, tg := range got {
+				resp.Results[i] = acrossElsewhere{Tenant: tg.Tenant, ElsewhereReport: tg.Item}
+			}
+			return resp, nil
 		})},
 		// The collections of every read tenant: a library tenant listed in
 		// X-Read-Tenants is read where it lives, not copied.

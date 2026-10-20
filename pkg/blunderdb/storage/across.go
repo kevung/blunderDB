@@ -123,19 +123,9 @@ func StreamOne[T any](ctx context.Context, tenants ReadTenants, scope string, re
 // answer. The first error stops the read and is returned alone: a partial
 // answer would pass for the whole set.
 func ReadAcross[T any](ctx context.Context, tenants ReadTenants, read func(ctx context.Context, scope string) (T, error)) ([]Tagged[T], error) {
-	out := make([]Tagged[T], 0, len(tenants))
-	for _, scope := range tenants {
-		tctx, err := tenantContext(ctx, scope)
-		if err != nil {
-			return nil, err
-		}
-		item, err := read(tctx, scope)
-		if err != nil {
-			return nil, err
-		}
-		out = append(out, Tagged[T]{Tenant: scope, Item: item})
-	}
-	return out, nil
+	return ReadSources(ctx, SourcesOf(nil, tenants), func(ctx context.Context, src Source) (T, error) {
+		return read(ctx, src.Scope)
+	})
 }
 
 // StreamAcross chains read's streams, one per tenant of tenants, in order,
