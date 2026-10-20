@@ -410,6 +410,10 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, _ string)
 		data                                   []byte
 		bestCube                               sql.NullString
 		cubeErr, bestMoveErr, forced, closeCub sql.NullInt64
+		// unlabelled is a row whose engine column is NULL: a write that
+		// stored the blob alone left the rates, engine, depth and date unset
+		// along with the columns stored.equal checks.
+		unlabelled bool
 		// The match's own record of what was played, joined in here rather
 		// than looked up row by row: a repair walks every analysis.
 		mvMove, mvCube sql.NullString
@@ -424,6 +428,7 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, _ string)
 		if err := func() error {
 			rows, err := s.db.QueryContext(ctx,
 				`SELECT a.id, a.position_id, a.data, `+sqlshared.ActionLabelSQL("a.best_cube_action")+`, a.cube_error, a.best_move_equity_error, a.is_forced, a.is_close_cube,
+				        a.analysis_engine IS NULL,
 				        (SELECT mv.checker_move FROM move mv WHERE mv.position_id = a.position_id AND COALESCE(mv.checker_move, '') <> '' ORDER BY mv.id LIMIT 1),
 				        (SELECT `+sqlshared.ActionLabelSQL("mv.cube_action")+` FROM move mv WHERE mv.position_id = a.position_id AND `+sqlshared.ActionNotEmptySQL("mv.cube_action")+` ORDER BY mv.id LIMIT 1),
 				        `+sqlshared.PlayPositionColumns+`
@@ -435,7 +440,7 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, _ string)
 			defer rows.Close()
 			for rows.Next() {
 				var r row
-				if err := rows.Scan(&r.id, &r.posID, &r.data, &r.bestCube, &r.cubeErr, &r.bestMoveErr, &r.forced, &r.closeCub, &r.mvMove, &r.mvCube, &r.state, &r.por, &r.d1, &r.d2); err != nil {
+				if err := rows.Scan(&r.id, &r.posID, &r.data, &r.bestCube, &r.cubeErr, &r.bestMoveErr, &r.forced, &r.closeCub, &r.unlabelled, &r.mvMove, &r.mvCube, &r.state, &r.por, &r.d1, &r.d2); err != nil {
 					return fmt.Errorf("sqlite: repair: scan: %w", err)
 				}
 				page = append(page, r)
@@ -472,7 +477,14 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, _ string)
 				sqlshared.PlayPosition(r.state, r.por, r.d1, r.d2))
 			analyses[r.posID] = &a
 			stored := storedPlayedColumns{bestCube: r.bestCube, cubeErr: r.cubeErr, bestMoveErr: r.bestMoveErr, forced: r.forced, closeCube: r.closeCub}
+			labelled, err := s.repairLabel(ctx, r.id, r.posID, r.unlabelled, &a, c)
+			if err != nil {
+				return repaired, err
+			}
 			if stored.equal(c) {
+				if labelled {
+					repaired++
+				}
 				continue
 			}
 			bestCube, err := actionCode(ctx, s.db, c.BestCubeAction)
@@ -493,6 +505,33 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, _ string)
 		}
 		repaired += n
 	}
+}
+
+// repairLabel fills the columns an analysis describes itself with (rates,
+// engine, depth, date) and the position's cube-response flag, for a row whose
+// engine column is NULL while its blob names one. It reports whether it wrote.
+func (s *analysisStore) repairLabel(ctx context.Context, id, positionID int64, unlabelled bool, a *domain.PositionAnalysis, c engine.AnalysisColumns) (bool, error) {
+	if !unlabelled || c.AnalysisEngine == "" {
+		return false, nil
+	}
+	if _, err := s.db.ExecContext(ctx,
+		`UPDATE analysis SET player1_win_rate=?, player1_gammon_rate=?, player1_backgammon_rate=?,
+		 player2_win_rate=?, player2_gammon_rate=?, player2_backgammon_rate=?,
+		 analysis_engine=?, analysis_depth=?, creation_date=? WHERE id=?`,
+		c.Player1WinRate, c.Player1GammonRate, c.Player1BackgammonRate,
+		c.Player2WinRate, c.Player2GammonRate, c.Player2BackgammonRate,
+		c.AnalysisEngine, c.AnalysisDepth, nullableUnix(c.CreationDate), id); err != nil {
+		return false, fmt.Errorf("sqlite: repair: label %d: %w", id, err)
+	}
+	for _, action := range a.PlayedCubeActions {
+		if engine.IsResponseCubeAction(action) {
+			if _, err := s.db.ExecContext(ctx, cubeResponseSQL, positionID); err != nil {
+				return false, fmt.Errorf("sqlite: repair: flag cube response: %w", err)
+			}
+			break
+		}
+	}
+	return true, nil
 }
 
 // WithoutAnalysis streams the positions carrying no analysis at all, by

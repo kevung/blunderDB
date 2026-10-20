@@ -15,7 +15,6 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/mets"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
-	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
 
 // ErrImportCancelled is returned by CommitImportDatabase when the user cancels
@@ -405,10 +404,35 @@ func (r *importRun) sourceAnalysis(id int64, pos *Position) ([]byte, error) {
 	return data, nil
 }
 
+// carryAnalysis merges the source's analysis of position id into the
+// target's positionID through ingest.MergeDBAnalysis, the writer transfer and
+// the server import use: the store derives the analysis columns, so the same
+// content brings the same blunders and statistics whichever path carried it.
+// It reports whether the target's analysis changed.
+func (r *importRun) carryAnalysis(id, positionID int64, pos *Position) (bool, error) {
+	data, err := r.sourceAnalysis(id, pos)
+	if err != nil {
+		if !errors.Is(err, sql.ErrNoRows) {
+			slog.Warn("reading import analysis", "positionID", id, "err", err)
+		}
+		return false, nil
+	}
+	imported, err := decodeAnalysisFromStorage(data)
+	if err != nil {
+		slog.Warn("decoding import analysis", "positionID", id, "err", err)
+		return false, nil
+	}
+	met, err := r.carrier.Target(r.ctx, r.srcMET[id])
+	if err != nil {
+		return false, err
+	}
+	return ingest.MergeDBAnalysis(r.ctx, r.stx, "", positionID, &imported, met)
+}
+
 // mergeExisting folds a source position the target already holds into it:
 // provenance flag, analysis, then comments. It reports whether anything changed.
 func (r *importRun) mergeExisting(id, existingPositionID int64, importPosition *Position, sourceIndividual bool) (bool, error) {
-	ctx, tx, stx, importDB, carrier, srcMET, signed := r.ctx, r.tx, r.stx, r.importDB, r.carrier, r.srcMET, r.signed
+	tx, importDB, signed := r.tx, r.importDB, r.signed
 	r.targetOf[id] = existingPositionID
 	var err error
 	hasMerged := false
@@ -424,61 +448,12 @@ func (r *importRun) mergeExisting(id, existingPositionID int64, importPosition *
 		}
 	}
 
-	// Merge analysis if it exists
-	importAnalysisData, err := r.sourceAnalysis(id, importPosition)
-
-	if err == nil {
-		// Load existing analysis from current database (using transaction)
-		var existingAnalysisData []byte
-		existingErr := tx.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, existingPositionID).Scan(&existingAnalysisData)
-
-		if existingErr == sql.ErrNoRows {
-			// No existing analysis, insert the imported one (re-compress for current format)
-			recompressed, compErr := recompressAnalysisData(importAnalysisData)
-			if compErr != nil {
-				recompressed = importAnalysisData
-			}
-			_, err = tx.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, existingPositionID, recompressed)
-			if err != nil {
-				slog.Warn("inserting analysis for position", "positionID", existingPositionID, "err", err)
-			} else {
-				hasMerged = true
-				if err := carryTable(ctx, stx, carrier, srcMET[id], existingPositionID); err != nil {
-					_ = tx.Rollback()
-					return false, err
-				}
-			}
-		} else if existingErr == nil {
-			existingAnalysis, _ := decodeAnalysisFromStorage(existingAnalysisData)
-			importAnalysis, _ := decodeAnalysisFromStorage(importAnalysisData)
-			existingSide, importedSide, metErr := mergeSides(ctx, stx, carrier, srcMET[id], existingPositionID, &existingAnalysis, &importAnalysis)
-			if metErr != nil {
-				_ = tx.Rollback()
-				return false, metErr
-			}
-			if merged, changed := domain.MergeImportedAnalysis(&existingAnalysis, &importAnalysis); changed {
-				var metID any
-				if met := mets.AfterMerge(merged, existingSide, importedSide); met != 0 {
-					metID = met
-				}
-				written, err := saveMergedAnalysis(tx, existingPositionID, merged, metID)
-				if err != nil {
-					return false, err
-				}
-				if written {
-					hasMerged = true
-				}
-			}
-		}
-		// The moves the target already played here are scored by the
-		// analysis they now read.
-		if hasMerged {
-			if err := stx.Matches().RescorePositionMoves(ctx, "", existingPositionID); err != nil {
-				_ = tx.Rollback()
-				return false, err
-			}
-		}
+	written, err := r.carryAnalysis(id, existingPositionID, importPosition)
+	if err != nil {
+		_ = tx.Rollback()
+		return false, err
 	}
+	hasMerged = written
 
 	// Merge comments: each imported row is appended, with its
 	// author, when the target's joined text does not already contain
@@ -516,7 +491,7 @@ func (r *importRun) mergeExisting(id, existingPositionID int64, importPosition *
 // and comments. It reports false (and no error) when the position row itself
 // could not be inserted.
 func (r *importRun) addNew(id int64, importPosition *Position, sourceIndividual bool) (bool, error) {
-	ctx, tx, stx, importDB, carrier, srcMET, signed := r.ctx, r.tx, r.stx, r.importDB, r.carrier, r.srcMET, r.signed
+	ctx, tx, stx, importDB, signed := r.ctx, r.tx, r.stx, r.importDB, r.signed
 	importPosition.IndividuallyImported = sourceIndividual
 	newPositionID, err := stx.Positions().Save(ctx, "", importPosition)
 	if err != nil {
@@ -525,24 +500,9 @@ func (r *importRun) addNew(id int64, importPosition *Position, sourceIndividual 
 	}
 	r.targetOf[id] = newPositionID
 
-	// Copy analysis if it exists
-	importAnalysisData, err := r.sourceAnalysis(id, importPosition)
-	if err == nil {
-		// Update position_id in the analysis JSON
-		analysis, _ := decodeAnalysisFromStorage(importAnalysisData)
-		analysis.PositionID = int(newPositionID)
-		updatedAnalysisData, err := encodeAnalysisForStorage(&analysis)
-		if err != nil {
-			return false, fmt.Errorf("failed to marshal analysis: %w", err)
-		}
-
-		_, err = tx.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, newPositionID, updatedAnalysisData)
-		if err != nil {
-			slog.Warn("inserting analysis for new position", "positionID", newPositionID, "err", err)
-		} else if err := carryTable(ctx, stx, carrier, srcMET[id], newPositionID); err != nil {
-			_ = tx.Rollback()
-			return false, err
-		}
+	if _, err := r.carryAnalysis(id, newPositionID, importPosition); err != nil {
+		_ = tx.Rollback()
+		return false, err
 	}
 
 	// Copy every comment row, each with its author.
@@ -842,32 +802,6 @@ func readImportCollections(ctx context.Context, importDB *sql.DB) ([]ingest.Sour
 	return ingest.ReadSourceCollections(ctx, sqlite.WrapTx(itx), "")
 }
 
-// carryTable records that the imported analysis now at positionID was valued
-// with the source table srcMET.
-func carryTable(ctx context.Context, stx storage.Stores, carrier *mets.Carrier, srcMET, positionID int64) error {
-	met, err := carrier.Target(ctx, srcMET)
-	if err != nil || met == 0 {
-		return err
-	}
-	return stx.MatchEquityTables().TagAnalyses(ctx, "", met, []int64{positionID})
-}
-
-// mergeSides describes the two analyses an import merges, each with the
-// receiver's id of the table its verdict was valued with, read before the
-// merge mutates either side: the merged verdict keeps the table of the side
-// it came from.
-func mergeSides(ctx context.Context, stx storage.Stores, carrier *mets.Carrier, srcMET, positionID int64, existing, imported *PositionAnalysis) (mets.Side, mets.Side, error) {
-	existingMET, err := stx.MatchEquityTables().OfAnalysis(ctx, "", positionID)
-	if err != nil {
-		return mets.Side{}, mets.Side{}, err
-	}
-	importedMET, err := carrier.Target(ctx, srcMET)
-	if err != nil {
-		return mets.Side{}, mets.Side{}, err
-	}
-	return mets.SideOf(existing, existingMET), mets.SideOf(imported, importedMET), nil
-}
-
 // readImportMETs reads the source's tables and the table of each analysis
 // citing one, and returns a carrier into the receiver. A source from before
 // the tables (schema < 2.31.0) cites none.
@@ -969,25 +903,4 @@ func positionIdentityIndex(q rowQuerier) (map[string]int64, error) {
 		return nil, err
 	}
 	return index, nil
-}
-
-// saveMergedAnalysis writes an imported analysis merged into the stored one.
-// An analysis that cannot be encoded or written is skipped (false, nil), as
-// the rest of the import does; once it is written, the per-match figures of
-// every match reaching the position are stale, and failing to drop them is
-// an error: committing would leave them silently wrong.
-func saveMergedAnalysis(tx *sql.Tx, positionID int64, merged *domain.PositionAnalysis, metID any) (bool, error) {
-	encoded, err := encodeAnalysisForStorage(merged)
-	if err != nil {
-		slog.Warn("encoding merged analysis for position", "positionID", positionID, "err", err)
-		return false, nil
-	}
-	if _, err := tx.Exec(`UPDATE analysis SET data = ?, analysis_engine = NULL, met_id = ? WHERE position_id = ?`, encoded, metID, positionID); err != nil {
-		slog.Warn("updating analysis for position", "positionID", positionID, "err", err)
-		return false, nil
-	}
-	if _, err := tx.Exec(sqlshared.InvalidateMatchStatsOfPositionsSQL+"(?)"+sqlshared.InvalidateMatchStatsOfPositionsSuffix, positionID); err != nil {
-		return false, fmt.Errorf("invalidating match statistics of position %d: %w", positionID, err)
-	}
-	return true, nil
 }

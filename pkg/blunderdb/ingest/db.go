@@ -184,7 +184,7 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 			if err != nil {
 				return sum, err
 			}
-			if err := mergeDBAnalysis(ctx, tx, scope, s.id, s.rec.analysis, met); err != nil {
+			if _, err := MergeDBAnalysis(ctx, tx, scope, s.id, s.rec.analysis, met); err != nil {
 				return sum, err
 			}
 		}
@@ -390,12 +390,15 @@ func MergeCollections(ctx context.Context, tx storage.Stores, scope string, src 
 	return res, nil
 }
 
-// mergeDBAnalysis writes an imported analysis for positionID as
-// domain.MergeImportedAnalysis decides. The read goes through Merge, which
+// MergeDBAnalysis writes an imported analysis for positionID as
+// domain.MergeImportedAnalysis decides, and reports whether it wrote. Every
+// path that brings a library's analyses into another goes through it, so the
+// columns derived from the analysis (errors, forced, rates, engine) are the
+// store's, whichever path carried them. The read goes through Merge, which
 // locks the row (or takes the analysis guard when there is none) until the
 // write: a rollout committed between a plain read and the write would be
 // overwritten.
-func mergeDBAnalysis(ctx context.Context, tx storage.Tx, scope string, positionID int64, imported *domain.PositionAnalysis, importedMET int64) error {
+func MergeDBAnalysis(ctx context.Context, tx storage.Stores, scope string, positionID int64, imported *domain.PositionAnalysis, importedMET int64) (bool, error) {
 	importedSide := mets.SideOf(imported, importedMET)
 	var met, existingMET int64
 	var readErr error
@@ -416,9 +419,9 @@ func mergeDBAnalysis(ctx context.Context, tx storage.Tx, scope string, positionI
 		err = readErr
 	}
 	if err != nil || !wrote || (met == 0 && existingMET == 0) {
-		return err
+		return wrote, err
 	}
-	return tx.MatchEquityTables().TagAnalyses(ctx, scope, met, []int64{positionID})
+	return true, tx.MatchEquityTables().TagAnalyses(ctx, scope, met, []int64{positionID})
 }
 
 // mergeDBCommentsPreloaded appends each imported comment to positionID unless

@@ -3225,6 +3225,13 @@ damier ; et la sentinelle de Crawford de chaque score à partir du match d'où l
 position vient, ou de l'XGID avec lequel elle est entrée. Les analyses ne sont pas touchées : ce sont les valeurs qu'on en
 avait tirées qui sont refaites.
 
+Une base qui a reçu des analyses par l'import d'une autre base (``import --type
+database``, y compris par un dossier de synchronisation surveillé) avec une
+version antérieure à celle-ci garde ces analyses sans leurs colonnes : leurs
+blunders ne sont pas comptés et leurs coups forcés passent pour des décisions.
+``repair`` les remplit à partir de l'analyse stockée ; le même contenu compte
+alors comme s'il était venu par ``transfer``.
+
 .. code-block:: bash
 
    ./blunderdb repair --db <path>
