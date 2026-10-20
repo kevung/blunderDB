@@ -16,7 +16,7 @@ mapfile -t staged < <(git diff --cached --name-only --diff-filter=ACMR)
 go_files=(); front_files=(); svelte=0; help_src=0
 for f in "${staged[@]}"; do
   case "$f" in
-    doc/source/*.rst|doc/source/locale/*.po|frontend/src/i18n/help/*) help_src=1 ;;
+    doc/source/*.rst|doc/source/locale/*.po|frontend/src/i18n/help/*|frontend/public/help/*) help_src=1 ;;
   esac
   case "$f" in
     frontend/wailsjs/*|frontend/dist/*) ;;
@@ -66,7 +66,7 @@ if [ "$help_src" -eq 1 ]; then
   if [ ! -e frontend/dist ]; then mkdir -p frontend/dist && touch frontend/dist/.gitkeep; fi
   echo "pre-commit: help bundles against the docs they render"
   if ! go test -count=1 -run 'TestHelpBundlesAreCurrent' ./cmd/help-gen >/dev/null 2>&1; then
-    echo "pre-commit: help bundles out of date (run: make help, then stage frontend/src/i18n/help/)" >&2
+    echo "pre-commit: help bundles out of date (run: make help, then stage frontend/public/help/)" >&2
     exit 1
   fi
 fi

@@ -22,6 +22,7 @@ import it from '../i18n/locales/it.json';
 import ru from '../i18n/locales/ru.json';
 
 import { LOCALES } from '../i18n';
+import { readHelpBundle } from './helpers/helpBundles.js';
 
 const locales = { en, fi, el, ja, de, es, fr, it, ru };
 
@@ -78,12 +79,11 @@ describe.each(Object.keys(locales).filter((c) => c !== 'en'))('locale %s', (code
     });
 });
 
-describe('help modules', () => {
+describe('help bundles', () => {
     const HELP_TABS = ['manual', 'shortcuts', 'commands', 'about'];
 
-    test.each(Object.keys(locales))('help/%s.js exports all four tabs, non-empty', async (code) => {
-        const mod = await import(`../i18n/help/${code}.js`);
-        const help = mod.default;
+    test.each(Object.keys(locales))('help/%s exports all four tabs, non-empty', (code) => {
+        const help = readHelpBundle(code);
         expect(help).toBeTruthy();
         for (const tab of HELP_TABS) {
             expect(typeof help[tab]).toBe('string');

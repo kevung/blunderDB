@@ -21,7 +21,7 @@ export default defineConfig({
             // Generated Wails bindings, the help corpus, and the tests themselves
             // are not code we measure. No threshold yet: the number is informative
             // until a baseline is agreed on.
-            exclude: ['src/**/*.{test,spec}.{js,ts}', 'src/__tests__/**', 'src/test-setup.js', 'src/i18n/help/**', '**/wailsjs/**']
+            exclude: ['src/**/*.{test,spec}.{js,ts}', 'src/__tests__/**', 'src/test-setup.js', '**/wailsjs/**']
         }
     }
 });

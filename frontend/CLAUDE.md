@@ -9,7 +9,7 @@
 - **Keyboard**: letter shortcuts match `event.key` (`isLetter()` in `src/utils/keys.js`), digit shortcuts
   match `event.code` — layout-independent on AZERTY/QWERTZ.
 - **Generated, never hand-edited**: `wailsjs/` (restart `wails dev` after changing a bound Go
-  method); `src/i18n/help/*.js` (`make help`, ADR-0034).
+  method); `public/help/*.bin` (gzip JSON, `make help`, ADR-0034).
 - **The web front** (`src/web/`) ships as `internal/server/webui/dist/`, committed and embedded:
   run `make web` after touching it — nothing detects a stale bundle (ADR-0039).
 - `App.svelte` stays thin; logic lives in `components/` panels and one store per area under

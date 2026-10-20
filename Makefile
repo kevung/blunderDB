@@ -105,7 +105,7 @@ test-e2e:
 screenshots:
 	cd frontend && SCREENSHOT=1 npx playwright test screenshot
 
-# help regenerates the in-app help bundles (frontend/src/i18n/help/*.js) from
+# help regenerates the in-app help bundles (frontend/public/help/*.bin, gzip-compressed JSON) from
 # the documentation they duplicate — doc/source/raccourcis.rst, cmd_mode.rst and
 # the eight gettext catalogues — plus the hand-written prose fragments under
 # frontend/src/i18n/help/prose/. Writes tracked files: not part of check, but
@@ -113,7 +113,6 @@ screenshots:
 # so a documentation change that forgets this target stops the build.
 help:
 	go run ./cmd/help-gen
-	cd frontend && npx prettier --write src/i18n/help/
 
 golangci: frontend/dist
 	golangci-lint run ./...

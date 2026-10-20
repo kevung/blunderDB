@@ -2,6 +2,7 @@
 # this file; plain grep does not, so `grep -rn` is unaffected).
 frontend/wailsjs
 frontend/src/i18n/help
+frontend/public/help
 internal/server/webui/dist
 openapi.yaml
 **/*.po

@@ -85,7 +85,7 @@ def lire(f, depuis, jusqua):
 def part_commentaires():
     fichiers = subprocess.run(["git", "ls-files", "*.go", "*.svelte", "frontend/src/*.js"],
                               capture_output=True, text=True).stdout.split()
-    fichiers = [f for f in fichiers if not re.search(r"wailsjs/|i18n/help/|webui/dist", f)]
+    fichiers = [f for f in fichiers if not re.search(r"wailsjs/|i18n/help/|public/help/|webui/dist", f)]
     c = t = 0
     for f in fichiers:
         for ligne in open(f, errors="ignore"):

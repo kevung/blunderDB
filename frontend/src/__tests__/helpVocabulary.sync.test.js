@@ -37,7 +37,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { COMMANDS } from '../commandVocabulary.js';
-import helpFr from '../i18n/help/fr.js';
+import { helpBundleLanguages, readHelpBundle } from './helpers/helpBundles.js';
+
+const helpFr = readHelpBundle('fr');
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.join(__dirname, '../../..');
@@ -157,7 +159,7 @@ describe('help translations stay structurally in sync', () => {
 
     test('fr.js has sections, items and rows to compare against', () => {
         for (const tab of TABS) {
-            expect(typeof helpFr[tab], `help/fr.js has no "${tab}" tab`).toBe('string');
+            expect(typeof helpFr[tab], `help/fr has no "${tab}" tab`).toBe('string');
         }
         expect(frShape.commands.tr).toBeGreaterThan(0);
         expect(frShape.shortcuts.tr).toBeGreaterThan(0);
@@ -165,30 +167,26 @@ describe('help translations stay structurally in sync', () => {
         expect(frShape.manual.li + frShape.about.li).toBeGreaterThan(0);
     });
 
-    const helpDir = path.join(__dirname, '../i18n/help');
-    const otherLanguages = fs
-        .readdirSync(helpDir)
-        .filter((f) => f.endsWith('.js') && f !== 'index.js' && f !== 'fr.js')
-        .map((f) => f.replace(/\.js$/, ''));
+    const otherLanguages = helpBundleLanguages().filter((l) => l !== 'fr');
 
     test('the 8 translations are all present', () => {
         expect(otherLanguages.sort()).toEqual(['de', 'el', 'en', 'es', 'fi', 'it', 'ja', 'ru']);
     });
 
-    test.each(otherLanguages)('%s.js has the same h3/li/tr counts as fr.js in every tab', async (lang) => {
-        const mod = await import(`../i18n/help/${lang}.js`);
-        const langShape = Object.fromEntries(TABS.map((tab) => [tab, shape(mod.default[tab] ?? '')]));
-        expect(langShape, `${lang}.js drifted structurally from fr.js (counts are h3/li/tr per tab)`).toEqual(frShape);
+    test.each(otherLanguages)('%s has the same h3/li/tr counts as fr in every tab', async (lang) => {
+        const bundle = readHelpBundle(lang);
+        const langShape = Object.fromEntries(TABS.map((tab) => [tab, shape(bundle[tab] ?? '')]));
+        expect(langShape, `${lang} drifted structurally from fr (counts are h3/li/tr per tab)`).toEqual(frShape);
     });
 
     // Command names and filter tokens are code, not prose: they must survive
     // translation byte for byte. A catalogue that "translated" `write!, wr!, w!`
     // documents a command nobody can type, in one language only — the kind of
     // gap the structural counts above cannot see.
-    test.each(otherLanguages)('%s.js documents every command and boolean filter token verbatim', async (lang) => {
-        const mod = await import(`../i18n/help/${lang}.js`);
+    test.each(otherLanguages)('%s documents every command and boolean filter token verbatim', async (lang) => {
+        const bundle = readHelpBundle(lang);
         const cells = new Set(
-            [...new DOMParser().parseFromString(`<div>${mod.default.commands}</div>`, 'text/html').querySelectorAll('tbody tr')].flatMap((row) => {
+            [...new DOMParser().parseFromString(`<div>${bundle.commands}</div>`, 'text/html').querySelectorAll('tbody tr')].flatMap((row) => {
                 const first = row.querySelector('td')?.textContent.trim() ?? '';
                 return [first.replace(/\s*\[.*\]$/, ''), ...first.split(',').map((t) => t.trim())];
             })

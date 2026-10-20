@@ -17,8 +17,8 @@ export default defineConfig({
         rollupOptions: {
             onwarn(warning, warn) {
                 // Suppress "dynamic import will not move module into another chunk" noise
-                // (help/en.js and locales/en.json are both the static fallback AND
-                // reachable through the lazy loaders — expected, not a bug). The
+                // (locales/en.json is both the static fallback AND reachable through
+                // the lazy loaders — expected, not a bug). The
                 // warning code varies by bundler version (Rollup vs Vite 8's Rolldown),
                 // so match on the message rather than pinning one code.
                 if (warning.message?.includes('dynamic import will not move module')) return;

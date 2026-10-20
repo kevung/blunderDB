@@ -2,14 +2,19 @@ import { logger } from '../../utils/logger.js';
 import { language, LOCALES, FALLBACK_LOCALE } from '../index.js';
 import { writable, derived } from 'svelte/store';
 
-// Every help bundle (manual/shortcuts/commands/about HTML, ~1.5 MB combined
-// since the manual tab became a rendering of manuel.rst), English included, is
-// fetched on demand: the interface only ever needs the language on screen, and
-// nobody reads the help tabs until the modal is shown. English is fetched
-// alongside any other language because it is the per-tab fallback below.
-// Loading is triggered by HelpModal when it opens (or the language changes
-// while it's open), not by a language switch elsewhere in the app.
-const helpLoaders = import.meta.glob('./*.js');
+// Every help bundle (manual/shortcuts/commands/about HTML, ~1.5 MB uncompressed since
+// the manual tab became a rendering of manuel.rst), English included, is fetched on
+// demand: the interface only ever needs the language on screen, and nobody reads the
+// help tabs until the modal is shown. English is fetched alongside any other language
+// because it is the per-tab fallback below. Loading is triggered by HelpModal when it
+// opens (or the language changes while it's open), not by a language switch elsewhere
+// in the app.
+//
+// A bundle is a gzip-compressed JSON file under public/help/ (written by cmd/help-gen),
+// so that the binary, which embeds the built frontend as is, carries ~0.3x of the text.
+// It is inflated here with DecompressionStream, available in every engine Wails uses
+// (WebKitGTK >= 2.40, WKWebView >= 16.4, WebView2). A response that is already plain
+// JSON (a server or a test that inflated it) is read as is.
 const maps = {};
 
 // Bumped whenever a lazily-loaded help bundle lands, so the derived `help`
@@ -18,13 +23,20 @@ const helpVersion = writable(0);
 
 const failed = new Set();
 
+async function fetchBundle(lang) {
+    const response = await fetch(`${import.meta.env.BASE_URL}help/${lang}.bin`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const bytes = new Uint8Array(await response.arrayBuffer());
+    const gzipped = bytes[0] === 0x1f && bytes[1] === 0x8b;
+    if (gzipped && typeof DecompressionStream === 'undefined') throw new Error('DecompressionStream is not available');
+    const text = gzipped ? await new Response(new Response(bytes).body.pipeThrough(new DecompressionStream('gzip'))).text() : new TextDecoder().decode(bytes);
+    return JSON.parse(text);
+}
+
 async function loadBundle(lang) {
     if (maps[lang] || !LOCALES.includes(lang)) return;
-    const loader = helpLoaders[`./${lang}.js`];
-    if (!loader) return;
     try {
-        const mod = await loader();
-        maps[lang] = mod.default ?? mod;
+        maps[lang] = await fetchBundle(lang);
         failed.delete(lang);
     } catch (error) {
         failed.add(lang);

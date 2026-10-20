@@ -4,14 +4,13 @@
  */
 import { test, expect, vi } from 'vitest';
 import { get } from 'svelte/store';
+import { stubHelpFetch } from './helpers/helpBundles.js';
 
 vi.mock('../../wailsjs/go/main/Config.js', () => ({ SaveLanguage: vi.fn() }));
 
 test('loadHelpFor never rejects and falls back', async () => {
     vi.resetModules();
-    vi.doMock('../i18n/help/de.js', () => {
-        throw new Error('chunk failed');
-    });
+    stubHelpFetch(vi, { fail: ['de'] });
     const { loadHelpFor, help } = await import('../i18n/help/index.js');
     const { setLanguage } = await import('../i18n');
     await setLanguage('de');
@@ -24,9 +23,7 @@ test('loadHelpFor never rejects and falls back', async () => {
 
 test('when English cannot load either, help.failed is set', async () => {
     vi.resetModules();
-    vi.doMock('../i18n/help/en.js', () => {
-        throw new Error('chunk failed');
-    });
+    stubHelpFetch(vi, { fail: ['en'] });
     const { loadHelpFor, help } = await import('../i18n/help/index.js');
     await expect(loadHelpFor('en')).resolves.toBeUndefined();
     expect(get(help).failed).toBe(true);

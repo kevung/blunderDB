@@ -22,9 +22,11 @@ vi.mock('../../wailsjs/go/main/Config.js', () => ({
 
 import { t, language, setLanguage, initLanguage, FALLBACK_LOCALE, tMsg, resolveStatusMessage } from '../i18n';
 import { help, loadHelpFor } from '../i18n/help/index.js';
+import { stubHelpFetch } from './helpers/helpBundles.js';
 
 describe('i18n reactivity', () => {
     beforeEach(async () => {
+        stubHelpFetch(vi);
         SaveLanguage.mockClear();
         await initLanguage('en');
     });

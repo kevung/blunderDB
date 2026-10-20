@@ -10,7 +10,8 @@
  */
 
 import { must } from './helpers/must.js';
-import { test, expect, vi, afterEach } from 'vitest';
+import { stubHelpFetch } from './helpers/helpBundles.js';
+import { test, expect, vi, afterEach, beforeEach } from 'vitest';
 import { render, screen, cleanup } from '@testing-library/svelte';
 import { tick } from 'svelte';
 
@@ -20,6 +21,8 @@ vi.mock('../../wailsjs/go/database/Database', () => ({
 
 import { metaStore } from '../stores/metaStore.js';
 import HelpModal from '../components/HelpModal.svelte';
+
+beforeEach(() => stubHelpFetch(vi));
 
 afterEach(() => {
     cleanup();

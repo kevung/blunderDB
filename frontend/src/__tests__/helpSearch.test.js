@@ -3,7 +3,8 @@
  * the current one shown as the selection; "/" reaches the field without closing the help.
  */
 import { must } from './helpers/must.js';
-import { test, expect, vi, afterEach } from 'vitest';
+import { stubHelpFetch } from './helpers/helpBundles.js';
+import { test, expect, vi, afterEach, beforeEach } from 'vitest';
 import { render, screen, cleanup, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
 
@@ -11,6 +12,8 @@ vi.mock('../../wailsjs/go/database/Database', () => ({ GetDatabaseVersion: vi.fn
 
 import { findInHelp, createHelpIndex } from '../utils/helpSearch.js';
 import HelpModal from '../components/HelpModal.svelte';
+
+beforeEach(() => stubHelpFetch(vi));
 
 afterEach(cleanup);
 

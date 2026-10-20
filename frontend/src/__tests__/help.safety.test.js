@@ -16,18 +16,15 @@
 
 import { describe, test, expect } from 'vitest';
 import fs from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { LOCALES } from '../i18n/index.js';
+import { helpBundlePath, readHelpBundle } from './helpers/helpBundles.js';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const HELP_DIR = path.join(__dirname, '../i18n/help');
 const TABS = ['manual', 'shortcuts', 'commands', 'about'];
 
 // HelpModal substitutes exactly these two, HTML-escaping their values first.
 const ALLOWED_PLACEHOLDERS = new Set(['{appVersion}', '{dbVersion}']);
 
-const bundles = LOCALES.map((lang) => [lang, path.join(HELP_DIR, `${lang}.js`)]);
+const bundles = LOCALES.map((lang) => [lang, helpBundlePath(lang)]);
 
 describe('the help corpus is safe to inject with {@html}', () => {
     test('every documentation language has a bundle', () => {
@@ -37,11 +34,11 @@ describe('the help corpus is safe to inject with {@html}', () => {
         }
     });
 
-    test.each(bundles)('%s carries no script, event handler or javascript: URL', async (lang, file) => {
-        const mod = await import(/* @vite-ignore */ file);
+    test.each(bundles)('%s carries no script, event handler or javascript: URL', async (lang) => {
+        const bundle = readHelpBundle(lang);
         for (const tab of TABS) {
-            const html = mod.default[tab];
-            expect(typeof html, `${lang}.js has no "${tab}" tab`).toBe('string');
+            const html = bundle[tab];
+            expect(typeof html, `${lang} has no "${tab}" tab`).toBe('string');
             expect(html, `${lang}/${tab}: <script>`).not.toMatch(/<\s*script/i);
             expect(html, `${lang}/${tab}: <iframe>/<object>/<embed>`).not.toMatch(/<\s*(iframe|object|embed|form)/i);
             expect(html, `${lang}/${tab}: inline event handler`).not.toMatch(/\son[a-z]+\s*=/i);
@@ -49,10 +46,10 @@ describe('the help corpus is safe to inject with {@html}', () => {
         }
     });
 
-    test.each(bundles)('%s interpolates nothing but the two version placeholders', async (lang, file) => {
-        const mod = await import(/* @vite-ignore */ file);
+    test.each(bundles)('%s interpolates nothing but the two version placeholders', async (lang) => {
+        const bundle = readHelpBundle(lang);
         for (const tab of TABS) {
-            const placeholders = mod.default[tab].match(/\{[A-Za-z][A-Za-z0-9_]*\}/g) ?? [];
+            const placeholders = bundle[tab].match(/\{[A-Za-z][A-Za-z0-9_]*\}/g) ?? [];
             const unexpected = placeholders.filter((p) => !ALLOWED_PLACEHOLDERS.has(p));
             expect(unexpected, `${lang}/${tab}: unknown placeholder(s) ${unexpected.join(', ')} — HelpModal only escapes appVersion/dbVersion`).toEqual([]);
             if (tab !== 'about') {
@@ -64,10 +61,10 @@ describe('the help corpus is safe to inject with {@html}', () => {
     // Every external link in the corpus opens a browser window from a desktop
     // app; rel="noopener noreferrer" is what keeps the opened page from
     // reaching back into the WebView through window.opener.
-    test.each(bundles)('%s opens every external link with rel="noopener noreferrer"', async (lang, file) => {
-        const mod = await import(/* @vite-ignore */ file);
+    test.each(bundles)('%s opens every external link with rel="noopener noreferrer"', async (lang) => {
+        const bundle = readHelpBundle(lang);
         for (const tab of TABS) {
-            for (const anchor of mod.default[tab].match(/<a\s[^>]*>/g) ?? []) {
+            for (const anchor of bundle[tab].match(/<a\s[^>]*>/g) ?? []) {
                 expect(anchor, `${lang}/${tab}: link without target/rel hardening`).toMatch(/rel="noopener noreferrer"/);
                 expect(anchor, `${lang}/${tab}: link must be https`).toMatch(/href="https:\/\//);
             }
@@ -75,9 +72,10 @@ describe('the help corpus is safe to inject with {@html}', () => {
     });
 
     // The bundles are a build artefact of cmd/help-gen; a hand-edit is a change
-    // that the next `make help` silently reverts. The banner says so, and this
-    // test makes sure it is still there to be read.
-    test.each(bundles)('%s is marked as generated', (lang, file) => {
-        expect(fs.readFileSync(file, 'utf8').startsWith('// GENERATED FILE')).toBe(true);
+    // that the next `make help` silently reverts, and TestHelpBundlesAreCurrent
+    // catches. A file that is not gzip is not what the loader ships.
+    test.each(bundles)('%s is a gzip file', (lang, file) => {
+        const head = fs.readFileSync(file).subarray(0, 2);
+        expect([...head]).toEqual([0x1f, 0x8b]);
     });
 });

@@ -1,10 +1,17 @@
-// Command help-gen builds the in-app help bundles (frontend/src/i18n/help/*.js)
+// Command help-gen builds the in-app help bundles (frontend/public/help/*.bin)
 // from the documentation that already states the same facts.
 //
 // The manual, shortcuts and commands tabs are rendered from manuel.rst,
 // raccourcis.rst and cmd_mode.rst through the gettext catalogues, in nine
 // languages; only the About tab is hand-written HTML (prose/<lang>.html),
 // copied verbatim (ADR-0034).
+//
+// A bundle is a gzip-compressed JSON object {manual, shortcuts, commands, about}:
+// the help is ~4 MB of HTML for nine languages, and the binary embeds
+// frontend/dist uncompressed. The WebView fetches one language on demand and
+// inflates it with DecompressionStream (frontend/src/i18n/help/index.js). The
+// extension is not .gz so that no server or WebView treats it as a transfer
+// encoding and inflates it behind the loader's back.
 //
 // Usage:
 //
@@ -15,6 +22,9 @@
 package main
 
 import (
+	"bytes"
+	"compress/gzip"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"os"
@@ -76,15 +86,27 @@ func run(root string, check bool) ([]string, error) {
 		if err != nil {
 			return nil, fmt.Errorf("%s: %w", lang, err)
 		}
-		path := filepath.Join(root, "frontend", "src", "i18n", "help", lang+".js")
+		path := filepath.Join(root, "frontend", "public", "help", lang+".bin")
 		if check {
+			// The compressed bytes depend on the Go release; the content is what must match.
 			got, err := os.ReadFile(path)
-			if err != nil || string(got) != want {
-				stale = append(stale, lang+".js")
+			if err != nil {
+				stale = append(stale, lang+".bin")
+				continue
+			}
+			if plain, err := gunzip(got); err != nil || string(plain) != want {
+				stale = append(stale, lang+".bin")
 			}
 			continue
 		}
-		if err := os.WriteFile(path, []byte(want), 0o600); err != nil {
+		packed, err := gzipBytes([]byte(want))
+		if err != nil {
+			return nil, err
+		}
+		if err := os.MkdirAll(filepath.Dir(path), 0o750); err != nil {
+			return nil, err
+		}
+		if err := os.WriteFile(path, packed, 0o600); err != nil {
 			return nil, err
 		}
 	}
@@ -146,7 +168,7 @@ func (g *generator) refTitle(label string, tr translator) (string, error) {
 	return title, nil
 }
 
-// bundle renders the complete JavaScript module for one language.
+// bundle renders the JSON document (uncompressed) for one language.
 func (g *generator) bundle(lang string) (string, error) {
 	prose, err := g.prose(lang)
 	if err != nil {
@@ -173,8 +195,7 @@ func (g *generator) bundle(lang string) (string, error) {
 		rendered[t.tab] = html
 	}
 
-	var b strings.Builder
-	b.WriteString(header)
+	out := map[string]string{}
 	for _, tab := range []string{"manual", "shortcuts", "commands", "about"} {
 		body, ok := rendered[tab]
 		if !ok {
@@ -183,25 +204,44 @@ func (g *generator) bundle(lang string) (string, error) {
 				return "", fmt.Errorf("prose/%s.html has no %q section", lang, tab)
 			}
 		}
-		fmt.Fprintf(&b, "    %s: `\n%s`,\n", tab, jsTemplateLiteral(body))
+		out[tab] = body
 	}
-	out := strings.TrimSuffix(b.String(), ",\n") + "\n};\n"
-	return out, nil
+	var b bytes.Buffer
+	enc := json.NewEncoder(&b)
+	enc.SetEscapeHTML(false)
+	if err := enc.Encode(out); err != nil {
+		return "", err
+	}
+	return b.String(), nil
 }
 
-const header = `// GENERATED FILE — do not edit by hand, and do not translate it here.
-//
-// Produced by ` + "`go run ./cmd/help-gen`" + ` (make help) from:
-//   - doc/source/manuel.rst      → the "manual" tab
-//   - doc/source/raccourcis.rst  → the "shortcuts" tab
-//   - doc/source/cmd_mode.rst    → the "commands" tab
-//   - doc/source/locale/<lang>/LC_MESSAGES/*.po for the eight translations
-//   - frontend/src/i18n/help/prose/<lang>.html → the "about" tab
-//
-// Fix the documentation (and its .po catalogues), or the prose fragment, then
-// run ` + "`make help`" + `. TestHelpBundlesAreCurrent fails if this file is stale.
-export default {
-`
+func gzipBytes(plain []byte) ([]byte, error) {
+	var b bytes.Buffer
+	zw, err := gzip.NewWriterLevel(&b, gzip.BestCompression)
+	if err != nil {
+		return nil, err
+	}
+	if _, err := zw.Write(plain); err != nil {
+		return nil, err
+	}
+	if err := zw.Close(); err != nil {
+		return nil, err
+	}
+	return b.Bytes(), nil
+}
+
+func gunzip(packed []byte) ([]byte, error) {
+	zr, err := gzip.NewReader(bytes.NewReader(packed))
+	if err != nil {
+		return nil, err
+	}
+	defer zr.Close()
+	var b bytes.Buffer
+	if _, err := b.ReadFrom(zr); err != nil {
+		return nil, err
+	}
+	return b.Bytes(), nil
+}
 
 // prose reads the hand-written fragments, split on `<!-- tab: name -->`.
 func (g *generator) prose(lang string) (map[string]string, error) {
@@ -229,12 +269,4 @@ func (g *generator) prose(lang string) (map[string]string, error) {
 	}
 	flush()
 	return out, nil
-}
-
-// jsTemplateLiteral makes a fragment safe to embed in a backtick-quoted
-// JavaScript template literal: a backslash, a backtick or a `${` would end it
-// or start a substitution.
-func jsTemplateLiteral(s string) string {
-	r := strings.NewReplacer(`\`, `\\`, "`", "\\`", "${", "\\${")
-	return r.Replace(s)
 }

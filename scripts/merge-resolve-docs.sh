@@ -31,10 +31,10 @@ for f in files:
 PY
 
 # 2. Les artefacts : on prend un côté, ils seront régénérés juste après.
-for f in $(git diff --diff-filter=U --name-only | grep -E '\.po$|i18n/help/.*\.js$' || true); do
+for f in $(git diff --diff-filter=U --name-only | grep -E '\.po$|public/help/.*\.bin$' || true); do
     git checkout --ours "$f" 2>/dev/null || true
 done
-git add -A doc/source frontend/src/i18n/help 2>/dev/null || true
+git add -A doc/source frontend/public/help frontend/src/i18n/help 2>/dev/null || true
 
 # 3. Régénération des catalogues depuis les sources fusionnées.
 source .venv/bin/activate

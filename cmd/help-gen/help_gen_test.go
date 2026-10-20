@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -227,14 +228,30 @@ func TestParseCSVTable(t *testing.T) {
 	}
 }
 
-func TestJSTemplateLiteralCannotBeBrokenOut(t *testing.T) {
-	for _, in := range []string{"a`b", `a\b`, "a${b}c", "a\\`b"} {
-		out := jsTemplateLiteral(in)
-		if strings.Contains(strings.ReplaceAll(out, "\\`", ""), "`") {
-			t.Errorf("jsTemplateLiteral(%q) = %q leaves a live backtick", in, out)
-		}
-		if strings.Contains(strings.ReplaceAll(out, `\${`, ""), "${") {
-			t.Errorf("jsTemplateLiteral(%q) = %q leaves a live substitution", in, out)
+func TestBundleIsGzipJSONWithAllTabs(t *testing.T) {
+	g, err := newGenerator(repoRoot(t))
+	if err != nil {
+		t.Fatal(err)
+	}
+	doc, err := g.bundle("en")
+	if err != nil {
+		t.Fatal(err)
+	}
+	packed, err := gzipBytes([]byte(doc))
+	if err != nil {
+		t.Fatal(err)
+	}
+	plain, err := gunzip(packed)
+	if err != nil || string(plain) != doc {
+		t.Fatalf("gzip round trip failed: %v", err)
+	}
+	var tabs map[string]string
+	if err := json.Unmarshal(plain, &tabs); err != nil {
+		t.Fatal(err)
+	}
+	for _, tab := range []string{"manual", "shortcuts", "commands", "about"} {
+		if tabs[tab] == "" {
+			t.Errorf("tab %q is empty", tab)
 		}
 	}
 }
