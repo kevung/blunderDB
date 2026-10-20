@@ -1,6 +1,9 @@
 package report
 
 import (
+	"fmt"
+	"regexp"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -60,6 +63,57 @@ func TestDiagramNumbersThePointsAndKeepsDiceClearOfStacks(t *testing.T) {
 	for _, want := range []string{">24</text>", ">1</text>", ">-7</text>"} {
 		if !strings.Contains(svg, want) {
 			t.Errorf("diagram lacks %q", want)
+		}
+	}
+}
+
+func TestDiagramTurnsCubeAndBarWithThePlayerOnRoll(t *testing.T) {
+	cubeY := func(svg string) int {
+		m := regexp.MustCompile(`<rect x="\d+" y="(\d+)" width="28" height="28"`).FindStringSubmatch(svg)
+		if m == nil {
+			t.Fatal("no cube drawn")
+		}
+		y, _ := strconv.Atoi(m[1])
+		return y
+	}
+	barCheckers := func(svg string) (above, below []string) {
+		barX := margin + cubeCol + 6*pointW + barW/2
+		midY := margin + headerH + numH + boardH/2
+		re := regexp.MustCompile(fmt.Sprintf(`<circle cx="%d" cy="(\d+)" r="\d+" fill="(#[0-9a-f]+)"`, barX))
+		for _, m := range re.FindAllStringSubmatch(svg, -1) {
+			y, _ := strconv.Atoi(m[1])
+			if y < midY {
+				above = append(above, m[2])
+			} else {
+				below = append(below, m[2])
+			}
+		}
+		return
+	}
+	mid := margin + headerH + numH + boardH/2
+	for _, onRoll := range []int{domain.Black, domain.White} {
+		for _, owner := range []int{domain.Black, domain.White} {
+			p := domain.InitializePosition()
+			p.PlayerOnRoll, p.Cube.Owner, p.Cube.Value = onRoll, owner, 1
+			p.Board.Points[0] = domain.Point{Checkers: 1, Color: domain.Black}
+			p.Board.Points[25] = domain.Point{Checkers: 2, Color: domain.White}
+			svg := Diagram(&p)
+			if got := cubeY(svg) < mid; got != (owner != onRoll) {
+				t.Errorf("onRoll %d owner %d: cube on the wrong end (top=%v)", onRoll, owner, got)
+			}
+			above, below := barCheckers(svg)
+			wantAbove, wantBelow := 1, 2 // Points[0] above, Points[25] below, half a turn when White rolls
+			if onRoll == domain.White {
+				wantAbove, wantBelow = 2, 1
+			}
+			if len(above) != wantAbove || len(below) != wantBelow {
+				t.Errorf("onRoll %d: bar above %v below %v", onRoll, above, below)
+			}
+		}
+	}
+	for away, want := range map[int]string{domain.Crawford: "-1 Cr", domain.PostCrawford: "-1 post-Cr", 3: "-3", domain.Unlimited: "∞"} {
+		if got := scoreText(away); got != want {
+			t.Errorf("scoreText(%d) = %q, want %q", away, got, want)
 		}
 	}
 }

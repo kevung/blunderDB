@@ -104,7 +104,8 @@ func Diagram(p *domain.Position) string {
 		pt := p.Board.Points[idx]
 		for k := 0; k < pt.Checkers && k < 3; k++ {
 			cy := midY - midGap/2 - checkerR*(1+2*k)
-			if i == 1 {
+			// Seen from the player on roll, the board is turned half a turn.
+			if (i == 1) != flip {
 				cy = midY + midGap/2 + checkerR*(1+2*k)
 			}
 			b.WriteString(checker(barX, cy, pt.Color))
@@ -115,10 +116,11 @@ func Diagram(p *domain.Position) string {
 	if p.Cube.Value >= 0 && p.Cube.Value < 30 {
 		v := 1 << p.Cube.Value // the position stores the exponent
 		cy := midY
+		// The player on roll sits at the bottom, so does their cube.
 		switch p.Cube.Owner {
-		case domain.Black:
+		case p.PlayerOnRoll:
 			cy = boardBot - 18
-		case domain.White:
+		case domain.Black, domain.White:
 			cy = boardTop + 18
 		}
 		cx := margin + cubeCol/2
@@ -142,7 +144,13 @@ func scoreText(away int) string {
 	if away == domain.Unlimited {
 		return "∞"
 	}
-	return fmt.Sprintf("-%d", domain.PointsAway(away))
+	switch away {
+	case domain.Crawford:
+		return "-1 Cr"
+	case domain.PostCrawford:
+		return "-1 post-Cr"
+	}
+	return fmt.Sprintf("-%d", away)
 }
 
 func checker(cx, cy, color int) string {
