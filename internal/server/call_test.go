@@ -183,3 +183,32 @@ func TestRunCallRejectsNamedScope(t *testing.T) {
 		}
 	}
 }
+
+// TestCallRemoteBackend runs `call` over a daemon's /v1: the in-process
+// handlers reach the remote daemon's database through storage/remote, with
+// the configured header on every request.
+func TestCallRemoteBackend(t *testing.T) {
+	ts, _ := newTestServerAndHandler(t)
+	var token string
+	proxy := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		token = r.Header.Get("X-Proxy-Token")
+		ts.Config.Handler.ServeHTTP(w, r)
+	}))
+	t.Cleanup(proxy.Close)
+
+	if _, err := captureStdout(t, func() error {
+		return RunCall([]string{"positions.save", "--backend", "remote", "--dsn", proxy.URL,
+			"--header", "X-Proxy-Token: s3cret", "--json", `{"position":{"decision_type":0}}`})
+	}); err != nil {
+		t.Fatalf("positions.save over remote: %v", err)
+	}
+	if token != "s3cret" {
+		t.Fatalf("--header not forwarded: got %q", token)
+	}
+	out, err := captureStdout(t, func() error {
+		return RunCall([]string{"positions.count", "--backend", "remote", "--dsn", proxy.URL})
+	})
+	if err != nil || strings.TrimSpace(out) != "1" {
+		t.Fatalf("positions.count over remote = %q, %v; want 1", out, err)
+	}
+}

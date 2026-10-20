@@ -49,7 +49,8 @@ method `/v1` has no route for answers a typed `*remote.UnsupportedError`
 transaction across calls. It runs the contract cases its routes cover against
 an in-process daemon (`storagetest.RunContractTestsOnly`). It adds no route to
 the daemon and no authentication: it sends `X-Tenant-ID` and the headers it is
-configured with, and the proxy decides (ADR-0005).
+configured with, and the proxy decides (ADR-0005). `blunderdb call --backend
+remote --dsn <URL>` runs its in-process handlers over it.
 
 ```mermaid
 flowchart TD

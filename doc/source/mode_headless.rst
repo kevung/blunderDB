@@ -2114,10 +2114,15 @@ les tests d'intégration.
      - fichier SQLite (raccourci pour ``--backend sqlite --dsn <chemin>``)
    * - ``--backend <type>``
      - ``sqlite``
-     - ``sqlite`` ou ``postgres``
+     - ``sqlite``, ``postgres`` ou ``remote``
    * - ``--dsn <chaîne>``
      - ``$BLUNDERDB_DSN``
-     - chaîne de connexion du backend
+     - chaîne de connexion du backend ; avec ``remote``, l'URL d'un démon
+       ``serve``
+   * - ``--header "Nom: valeur"``
+     - –
+     - avec ``remote`` : en-tête envoyé au démon à chaque appel, par exemple
+       le jeton du proxy (répétable)
    * - ``--scope <n>``
      - ``1``
      - tenant, un entier décimal positif (envoyé comme ``X-Tenant-ID`` ; un
@@ -2136,6 +2141,13 @@ les tests d'intégration.
      - version envoyée en ``If-Match``, exigée par les gestes de direction
        (:ref:`headless_direction_gestures`) et de transcription
        (:ref:`headless_transcription`)
+
+Avec ``--backend remote``, ``call`` ne lit aucune base : ses gestionnaires
+passent par l'API ``/v1`` du démon que nomme ``--dsn``, avec le tenant de
+``--scope`` et les en-têtes de ``--header``. Le démon ne s'authentifie pas ; le
+proxy placé devant lui décide. Une méthode dont le stockage n'a pas de route
+``/v1`` (une transaction, un service de direction ou de transcription) répond
+une erreur interne qui la nomme.
 
 ``call`` sert les gestes de transcription sans drapeau : il travaille sur un
 fichier local, comme la CLI. Chaque appel est un processus neuf, donc sa propre

@@ -63,10 +63,10 @@ lit `storage.SyncDeck`). Le contrat compte environ 300 méthodes.
 ## Consequences
 
 - Rien ne change pour le démon, sinon que `DuplicatePositionError` remplit `details`.
-- `blunderdb call` pourrait viser un démon distant sans fork : un cas `remote` de
-  `OpenStorage` ferait passer ses gestionnaires en processus sur ce backend, au prix des
-  routes de service qui demandent une transaction. Ce n'est pas fait ici. La CLI, elle, tourne
-  sur `database.Database`, encore propre à SQLite : elle ne visera un démon distant qu'après
-  sa migration vers le contrat, comme l'application de bureau.
+- `blunderdb call --backend remote --dsn <URL>` vise un démon distant sans fork : ses
+  gestionnaires en processus passent par ce backend, avec `--scope` en `X-Tenant-ID` et les
+  `--header "Nom: valeur"` répétés ; une route de service qui demande une transaction y répond
+  le refus typé. La CLI, elle, tourne sur `database.Database`, encore propre à SQLite : elle ne
+  visera un démon distant qu'après sa migration vers le contrat, comme l'application de bureau.
 - Étendre la couverture, c'est écrire la méthode à la main contre une route qui la sert telle
   quelle, relancer `go generate`, et ajouter à `covered` les cas qui passent.
