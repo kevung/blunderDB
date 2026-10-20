@@ -384,9 +384,11 @@ type importRun struct {
 	srcMET   map[int64]int64
 	signed   bool
 	targetOf map[int64]int64
-	// analysesSkipped counts the source analyses the receiver could not
-	// merge (its own blob unreadable, a write refused): the position is
-	// kept, its analysis left as it was, as the rest of the import does.
+	// analysesSkipped counts the source analyses not merged because the
+	// receiver's own blob for that position cannot be decoded: the position
+	// is kept, its analysis left as it was. Nothing else is skipped: a
+	// failure once the merge has begun may leave writes in the shared
+	// transaction, so it aborts the import.
 	analysesSkipped int
 	// sourceVersion is the source's schema version, which tells whether its
 	// gammonNet verdicts on take/pass positions are stale
@@ -426,17 +428,38 @@ func (r *importRun) carryAnalysis(id, positionID int64, pos *Position) (bool, er
 		slog.Warn("decoding import analysis", "positionID", id, "err", err)
 		return false, nil
 	}
+	unreadable, err := r.receiverBlobUnreadable(positionID)
+	if err != nil {
+		return false, err
+	}
+	if unreadable {
+		r.analysesSkipped++
+		return false, nil
+	}
 	met, err := r.carrier.Target(r.ctx, r.srcMET[id])
 	if err != nil {
 		return false, err
 	}
-	wrote, err := ingest.MergeDBAnalysis(r.ctx, r.stx, "", positionID, &imported, met)
-	if err != nil {
-		slog.Warn("merging import analysis", "positionID", positionID, "err", err)
-		r.analysesSkipped++
+	return ingest.MergeDBAnalysis(r.ctx, r.stx, "", positionID, &imported, met)
+}
+
+// receiverBlobUnreadable reports whether the target holds an analysis of
+// positionID it cannot decode. It is checked before the merge writes anything,
+// so skipping that position leaves the transaction as it was.
+func (r *importRun) receiverBlobUnreadable(positionID int64) (bool, error) {
+	var data []byte
+	err := r.tx.QueryRowContext(r.ctx, `SELECT data FROM analysis WHERE position_id = ?`, positionID).Scan(&data)
+	if errors.Is(err, sql.ErrNoRows) {
 		return false, nil
 	}
-	return wrote, nil
+	if err != nil {
+		return false, fmt.Errorf("reading analysis of position %d: %w", positionID, err)
+	}
+	if _, derr := decodeAnalysisFromStorage(data); derr != nil {
+		slog.Warn("analysis held here is unreadable; import leaves it", "positionID", positionID, "err", derr)
+		return true, nil
+	}
+	return false, nil
 }
 
 // mergeExisting folds a source position the target already holds into it:

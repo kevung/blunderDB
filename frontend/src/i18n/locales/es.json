@@ -1303,6 +1303,7 @@
         "livingFrozen": "Colecciones dinámicas congeladas (no se pudo trasladar su consulta): {names}",
         "livingOnManual": "Colecciones dinámicas no vertidas en su lista del mismo nombre: {names}",
         "unreadable": "Omitido (el origen es demasiado antiguo para leerse): {names}",
+        "analysesSkipped": "Análisis no fusionados ({count}): el que contiene esta base es ilegible y se ha dejado tal cual.",
         "dropToImport": "Suelta los archivos para importarlos",
         "reportNewPositions": "Posiciones nuevas",
         "reportFlagged": "Marcadas en el programa de origen",

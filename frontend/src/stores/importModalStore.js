@@ -22,7 +22,8 @@ export const importResultStore = writable({
     rencontres: 0,
     livingCollectionsFrozen: /** @type {string[]} */ ([]),
     livingCollectionsOnManual: /** @type {string[]} */ ([]),
-    unreadable: /** @type {string[]} */ ([])
+    unreadable: /** @type {string[]} */ ([]),
+    analysesSkipped: 0
 });
 
 export const showFileImportModalStore = writable(false);

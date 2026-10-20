@@ -16,7 +16,9 @@ import (
 func analysisColumnsByHash(t *testing.T, d *Database) map[string]string {
 	t.Helper()
 	rows, err := d.db.Query(`SELECT p.zobrist_hash, a.best_cube_action, a.cube_error, a.best_move_equity_error,
-		a.player1_win_rate, a.player2_gammon_rate, a.is_forced, a.is_close_cube, a.analysis_engine, a.analysis_depth,
+		a.player1_win_rate, a.player1_gammon_rate, a.player1_backgammon_rate,
+		a.player2_win_rate, a.player2_gammon_rate, a.player2_backgammon_rate,
+		a.is_forced, a.is_close_cube, a.analysis_engine, a.analysis_depth, a.creation_date,
 		p.is_cube_response
 		FROM analysis a JOIN position p ON p.id = a.position_id`)
 	if err != nil {
@@ -26,7 +28,7 @@ func analysisColumnsByHash(t *testing.T, d *Database) map[string]string {
 	out := map[string]string{}
 	for rows.Next() {
 		var hash int64
-		var cols [10]sql.NullString
+		var cols [15]sql.NullString
 		dest := []any{&hash}
 		for i := range cols {
 			dest = append(dest, &cols[i])
@@ -196,5 +198,79 @@ func TestImportDatabase_SkipsUnmergeableAnalysis(t *testing.T) {
 	var n int
 	if err := dst.db.QueryRow(`SELECT count(*) FROM analysis`).Scan(&n); err != nil || n != 543 {
 		t.Errorf("%d analyses after import, want 543 (%v)", n, err)
+	}
+}
+
+// A merge that fails once begun aborts the import: the shared transaction may
+// already hold part of its writes, so nothing of the import is kept.
+func TestImportDatabase_FailedAnalysisMergeAborts(t *testing.T) {
+	src := newTestDBWithXG(t)
+	path := exportTo(t, src, filepath.Join(t.TempDir(), "source.db"), ingest.WholeLibraryOptions())
+	dst := newTestDB(t)
+	if _, err := dst.db.Exec(`CREATE TRIGGER refuse_analysis BEFORE INSERT ON analysis
+		BEGIN SELECT RAISE(ABORT, 'refused'); END`); err != nil {
+		t.Fatal(err)
+	}
+	res, err := dst.CommitImportDatabase(path)
+	if err == nil {
+		t.Fatalf("import went on past a refused analysis write: %v", res)
+	}
+	var positions int
+	if err := dst.db.QueryRow(`SELECT count(*) FROM position`).Scan(&positions); err != nil || positions != 0 {
+		t.Errorf("%d positions kept after the aborted import, want 0 (%v)", positions, err)
+	}
+}
+
+// The native import used to merge an analysis by replacing its blob alone:
+// the row keeps the rates, engine, depth and date of the blob it held before.
+// Repair finds such a row by comparing its columns with what its blob
+// derives, not by NULL, and a second run finds nothing.
+func TestRepairAnalyses_RederivesColumnsOfReplacedBlob(t *testing.T) {
+	ctx := context.Background()
+	src := newTestDBWithXG(t)
+	d := newTestDB(t)
+	if _, err := src.TransferTo(ctx, d, ingest.WholeLibraryOptions()); err != nil {
+		t.Fatalf("transfer: %v", err)
+	}
+	const label = `player1_win_rate, player1_gammon_rate, player1_backgammon_rate,
+		player2_win_rate, player2_gammon_rate, player2_backgammon_rate,
+		analysis_engine, analysis_depth, creation_date`
+	// Each row takes the blob of the next one, its columns left as they
+	// were: what an UPDATE of data alone leaves behind. The next row's
+	// columns, written by the store, are what that blob derives.
+	for _, q := range []string{
+		`CREATE TEMP TABLE derived AS SELECT id, data, ` + label + ` FROM analysis`,
+		`CREATE TEMP TABLE shifted AS SELECT a.id, (SELECT min(b.id) FROM analysis b WHERE b.id > a.id) AS from_id FROM analysis a`,
+		`DELETE FROM shifted WHERE from_id IS NULL`,
+		`UPDATE analysis SET data = (SELECT x.data FROM shifted s JOIN derived x ON x.id = s.from_id WHERE s.id = analysis.id)
+		 WHERE id IN (SELECT id FROM shifted)`,
+	} {
+		if _, err := d.db.Exec(q); err != nil {
+			t.Fatalf("%s: %v", q, err)
+		}
+	}
+	stale := `SELECT count(*) FROM analysis a JOIN shifted s ON s.id = a.id JOIN derived x ON x.id = s.from_id
+		WHERE (a.player1_win_rate, a.player1_gammon_rate, a.player1_backgammon_rate,
+		       a.player2_win_rate, a.player2_gammon_rate, a.player2_backgammon_rate,
+		       a.analysis_engine, a.analysis_depth, a.creation_date) IS NOT
+		      (x.player1_win_rate, x.player1_gammon_rate, x.player1_backgammon_rate,
+		       x.player2_win_rate, x.player2_gammon_rate, x.player2_backgammon_rate,
+		       x.analysis_engine, x.analysis_depth, x.creation_date)`
+	var before, nulls int
+	if err := d.db.QueryRow(stale).Scan(&before); err != nil || before == 0 {
+		t.Fatalf("fixture holds no stale row (%d, %v)", before, err)
+	}
+	if err := d.db.QueryRow(`SELECT count(*) FROM analysis WHERE player1_win_rate IS NULL`).Scan(&nulls); err != nil || nulls != 0 {
+		t.Fatalf("fixture holds %d NULL rates (%v), want none", nulls, err)
+	}
+	if n, err := d.RepairAnalyses(); err != nil || n < before {
+		t.Fatalf("repair: %d rows, %v; want at least %d", n, err, before)
+	}
+	var after int
+	if err := d.db.QueryRow(stale).Scan(&after); err != nil || after != 0 {
+		t.Errorf("%d rows still carry the columns of their former blob (%v)", after, err)
+	}
+	if n, err := d.RepairAnalyses(); err != nil || n != 0 {
+		t.Errorf("second repair: %d rows, %v; want 0", n, err)
 	}
 }

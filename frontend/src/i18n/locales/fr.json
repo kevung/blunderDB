@@ -1303,6 +1303,7 @@
         "livingFrozen": "Collections vivantes figées (leur requête n'a pas pu être reportée) : {names}",
         "livingOnManual": "Collections vivantes non versées dans votre liste du même nom : {names}",
         "unreadable": "Laissé de côté (la source est trop ancienne pour être lue) : {names}",
+        "analysesSkipped": "Analyses non fusionnées ({count}) : celle que contient cette base est illisible et a été laissée telle quelle.",
         "dropToImport": "Déposez les fichiers pour les importer",
         "reportNewPositions": "Positions nouvelles",
         "reportFlagged": "Marquées dans le logiciel d'origine",

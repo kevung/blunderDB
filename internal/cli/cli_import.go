@@ -693,7 +693,7 @@ func (cli *CLI) importDatabase(filePath, format string) error {
 	fmt.Printf("  positions: %v added, %v merged, %v unchanged\n", res["added"], res["merged"], res["skipped"])
 	fmt.Printf("  matches: %v added, %v already held\n", res["matches"], res["matchesKnown"])
 	if n, ok := res["analysesSkipped"].(int); ok && n > 0 {
-		fmt.Printf("  analyses not merged (see the log): %d\n", n)
+		fmt.Printf("  analyses not merged, the one held here unreadable (left as it was): %d\n", n)
 	}
 	for _, key := range []string{"tournaments", "directions", "rencontres", "collections", "lessons", "decks", "transcriptions", "aliases"} {
 		fmt.Printf("  %s: %v\n", key, res[key])

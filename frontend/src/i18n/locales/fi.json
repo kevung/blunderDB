@@ -1303,6 +1303,7 @@
         "livingFrozen": "Dynaamiset kokoelmat jäädytetty (niiden hakua ei voitu siirtää): {names}",
         "livingOnManual": "Dynaamisia kokoelmia ei lisätty samannimiseen luetteloosi: {names}",
         "unreadable": "Jätetty pois (lähde on liian vanha luettavaksi): {names}",
+        "analysesSkipped": "Yhdistämättä jääneet analyysit ({count}): tämän tietokannan analyysia ei voi lukea, ja se jätettiin ennalleen.",
         "dropToImport": "Pudota tiedostot tuodaksesi ne",
         "reportNewPositions": "Uudet asemat",
         "reportFlagged": "Merkitty lähdeohjelmassa",

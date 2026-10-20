@@ -25,7 +25,8 @@
             rencontres: 0,
             livingCollectionsFrozen: [],
             livingCollectionsOnManual: [],
-            unreadable: []
+            unreadable: [],
+            analysesSkipped: 0
         },
         onCancel,
         onCommit,
@@ -147,6 +148,12 @@
                     <div class="stat-label">{$t('import.rencontresCreated')}</div>
                     <div class="stat-value">{result.rencontres}</div>
                 </div>
+            </div>
+        {/if}
+
+        {#if result.analysesSkipped > 0}
+            <div class="summary warning" data-testid="import.analysesSkipped">
+                <p>{$t('import.analysesSkipped', { count: result.analysesSkipped })}</p>
             </div>
         {/if}
 

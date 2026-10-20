@@ -1303,6 +1303,7 @@
         "livingFrozen": "Dynamische Sammlungen eingefroren (ihre Abfrage konnte nicht übernommen werden): {names}",
         "livingOnManual": "Dynamische Sammlungen nicht in Ihre gleichnamige Liste übernommen: {names}",
         "unreadable": "Nicht übernommen (die Quelle ist zu alt, um gelesen zu werden): {names}",
+        "analysesSkipped": "Nicht zusammengeführte Analysen ({count}): die hier vorhandene ist unlesbar und wurde unverändert gelassen.",
         "dropToImport": "Dateien hier ablegen, um sie zu importieren",
         "reportNewPositions": "Neue Stellungen",
         "reportFlagged": "Im Ursprungsprogramm markiert",

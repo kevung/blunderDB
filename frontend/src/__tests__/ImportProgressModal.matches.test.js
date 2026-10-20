@@ -70,6 +70,11 @@ describe('the result', () => {
         expect(text(container, 'result-rencontres')).toContain('1');
     });
 
+    test('counts the analyses left as they were because the one held here is unreadable', () => {
+        const { container } = mount({ visible: true, mode: 'completed', result: { ...result, analysesSkipped: 2 } });
+        expect(text(container, 'import.analysesSkipped')).toContain('2');
+    });
+
     test('shows no direction block when the source brought none', () => {
         const { container } = mount({ visible: true, mode: 'completed', result });
         expect(text(container, 'result-directions')).toBeNull();
@@ -79,19 +84,22 @@ describe('the result', () => {
         const { container } = mount({
             visible: true,
             mode: 'completed',
-            result: { ...result, livingCollectionsFrozen: [], livingCollectionsOnManual: [], unreadable: [] }
+            result: { ...result, livingCollectionsFrozen: [], livingCollectionsOnManual: [], unreadable: [], analysesSkipped: 0 }
         });
         expect(container.querySelector('.warning')).toBeNull();
     });
 
     test('the stores start with the new fields', () => {
         expect(get(importAnalysisStore)).toMatchObject({ matches: 0, matchesKnown: 0 });
-        expect(get(importResultStore)).toMatchObject({ matchesKnown: 0, directions: 0, rencontres: 0, unreadable: [] });
+        expect(get(importResultStore)).toMatchObject({ matchesKnown: 0, directions: 0, rencontres: 0, unreadable: [], analysesSkipped: 0 });
     });
 });
 
 describe('the keys exist in the nine languages', () => {
-    test.each(['matchesToAdd', 'matchesToSkip', 'matchesAdded', 'matchesKnown', 'directionsRead', 'rencontresCreated', 'livingFrozen', 'livingOnManual', 'unreadable'])('%s', (k) => {
-        for (const l of [en, fr, de, el, es, fi, it, ja, ru]) expect(/** @type {Record<string, string>} */ (l.import)[k]).toBeTruthy();
-    });
+    test.each(['matchesToAdd', 'matchesToSkip', 'matchesAdded', 'matchesKnown', 'directionsRead', 'rencontresCreated', 'livingFrozen', 'livingOnManual', 'unreadable', 'analysesSkipped'])(
+        '%s',
+        (k) => {
+            for (const l of [en, fr, de, el, es, fi, it, ja, ru]) expect(/** @type {Record<string, string>} */ (l.import)[k]).toBeTruthy();
+        }
+    );
 });
