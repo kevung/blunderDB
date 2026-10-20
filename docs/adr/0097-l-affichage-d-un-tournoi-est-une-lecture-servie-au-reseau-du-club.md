@@ -30,10 +30,11 @@ un fichier sur le disque du directeur n'atteint pas un téléphone. L'ADR-0039 f
 4. **Aucune route `/v1` n'est créée** (ADR-0039 règle 4) : `directions.list` et
    `directions.pageHtml` existent pour tous les clients.
 5. **Le bureau sert cet affichage sur le réseau local, sur demande.** Depuis la Direction, un
-   geste lance un serveur HTTP sur toutes les interfaces (port 8770 par défaut) et montre le QR
+   geste lance un serveur HTTP sur l'adresse proposée et sur 127.0.0.1 seulement (port 8770 par défaut) et montre le QR
    code de son adresse. Il est **éteint par défaut** et s'éteint à la fermeture. Ce serveur
    n'expose que :
-   - la page web (`/app/`), qui ne contient aucune donnée ;
+   - la page web (`/app/`), qui ne contient aucune donnée, et seulement sous la forme de
+     l'affichage de ce tournoi : toute autre adresse de la page y redirige ;
    - `POST /v1/directions.pageHtml`, et **seulement pour le tournoi choisi** ; toute autre
      route ou tout autre tournoi répond 404 sans atteindre le moteur.
    Le tenant est posé par le bureau, jamais lu dans la requête. Rien d'autre du fichier ouvert
@@ -49,8 +50,9 @@ un fichier sur le disque du directeur n'atteint pas un téléphone. L'ADR-0039 f
   d'affichage ; la saisie d'un résultat depuis le web reste refusée.
 - Le QR code est produit en Go pur (`github.com/skip2/go-qrcode`, MIT), sans appel réseau.
 - Le QR pointe vers une IPv4 de réseau local, au choix du directeur parmi celles de la machine
-  (interfaces virtuelles — conteneurs, VPN — en dernier) ; sans aucune, le panneau le dit et
-  ne dessine pas de QR vers 127.0.0.1.
+  (adresses privées d'abord, interfaces virtuelles — conteneurs, VPN — ensuite ; une adresse
+  hors des plages privées est signalée) ; sans aucune, le panneau le dit et ne dessine pas de QR
+  vers 127.0.0.1. Relancer l'affichage prend le nouveau port avant de lâcher l'ancien.
 - L'affichage est lié au fichier ouvert : ouvrir, créer ou fermer un fichier l'arrête, car le
   même identifiant désignerait un autre tournoi.
 - La page sert dans la langue du catalogue de la Direction, pas dans celle du téléphone.

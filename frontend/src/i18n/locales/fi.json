@@ -3059,7 +3059,11 @@
             "other": "Verkossa näkyy jo turnaus #{id}; tämän näyttäminen korvaa sen.",
             "error": "Näyttöä ei voitu käynnistää: {error}",
             "address": "Verkko",
-            "noLan": "Ei lähiverkon osoitetta: puhelimet eivät tavoita tätä konetta. Yhdistä se seuran verkkoon ja käynnistä näyttö uudelleen."
+            "noLan": "Ei lähiverkon osoitetta: puhelimet eivät tavoita tätä konetta. Yhdistä se seuran verkkoon ja käynnistä näyttö uudelleen.",
+            "errPortInUse": "Portti {port} on jo käytössä tällä koneella; valitse toinen.",
+            "errNoTournament": "Ei näytettävää turnausta.",
+            "errFailed": "Näyttöpalvelinta ei voitu käynnistää. Kokeile toista porttia.",
+            "publicAddress": "Osoite {address} ei ole paikallisverkon osoite: sivu voi olla luettavissa kerhon ulkopuolelta. Valitse yksityinen osoite tai tarkista palomuurisi."
         }
     },
     "palette": {

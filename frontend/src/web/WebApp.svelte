@@ -8,6 +8,9 @@
 
     // `?tournoi=<id>` : l'affichage d'un seul tournoi, sans rien d'autre — l'adresse que le QR
     // code de la Direction donne aux joueurs, et la seule que le bureau sert sur le réseau du club.
+    // Un `tournoi` qui n'est pas un numéro n'ouvre pas l'application complète : l'adresse voulait
+    // un affichage, la page dit qu'elle n'en a pas.
+    const kioskAsked = new URLSearchParams(window.location.search).has('tournoi');
     const kioskTournament = Number(new URLSearchParams(window.location.search).get('tournoi')) || 0;
 
     let query = $state('');
@@ -106,7 +109,7 @@
     }
 </script>
 
-{#if kioskTournament}
+{#if kioskAsked}
     <TournamentView tournamentId={kioskTournament} />
 {:else}
     <header>

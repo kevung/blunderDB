@@ -14,10 +14,23 @@
     /** @type {{ tournamentId: number }} */
     let { tournamentId } = $props();
 
-    /** @type {{ running: boolean, tournamentId: number, addresses: string[], address: string, url: string, localUrl: string, qr: string, error: string }} */
-    let status = $state({ running: false, tournamentId: 0, addresses: [], address: '', url: '', localUrl: '', qr: '', error: '' });
+    /** @type {{ running: boolean, tournamentId: number, addresses: string[], publicAddresses: string[], address: string, url: string, localUrl: string, qr: string, error: string, errorPort: number }} */
+    let status = $state({ running: false, tournamentId: 0, addresses: [], publicAddresses: [], address: '', url: '', localUrl: '', qr: '', error: '', errorPort: 0 });
     let port = $state(DEFAULT_PORT);
     let busy = $state(false);
+
+    // L'erreur arrive sous forme de code : le panneau la dit en clair, la cause système reste
+    // au journal.
+    const errorText = $derived(
+        status.error === 'port_in_use'
+            ? $t('direction.network.errPortInUse', { port: status.errorPort })
+            : status.error === 'no_tournament'
+              ? $t('direction.network.errNoTournament')
+              : status.error
+                ? $t('direction.network.errFailed')
+                : ''
+    );
+    const addressIsPublic = $derived(status.publicAddresses?.includes(status.address));
 
     const showsThis = $derived(status.running && status.tournamentId === tournamentId);
 
@@ -44,8 +57,8 @@
         busy = true;
         try {
             status = await action();
-        } catch (e) {
-            status = { ...status, error: String(e) };
+        } catch {
+            status = { ...status, error: 'failed' };
         } finally {
             busy = false;
         }
@@ -81,7 +94,7 @@
         {/if}
     </div>
     {#if status.error}
-        <p class="error">{$t('direction.network.error', { error: status.error })}</p>
+        <p class="error">{$t('direction.network.error', { error: errorText })}</p>
     {/if}
     {#if showsThis && !status.url}
         <p class="warning" data-testid="direction-network-nolan">{$t('direction.network.noLan')}</p>
@@ -93,12 +106,15 @@
             <div>
                 <p class="facts">{$t('direction.network.url')}</p>
                 <p class="facts path" data-testid="direction-network-url">{status.url}</p>
+                {#if addressIsPublic}
+                    <p class="warning" data-testid="direction-network-public">{$t('direction.network.publicAddress', { address: status.address })}</p>
+                {/if}
                 {#if status.addresses.length > 1}
                     <label class="facts">
                         {$t('direction.network.address')}
                         <select data-testid="direction-network-address" value={status.address} disabled={busy} onchange={(e) => start(e.currentTarget.value)}>
                             {#each status.addresses as a (a)}
-                                <option value={a}>{a}</option>
+                                <option value={a}>{a}{status.publicAddresses?.includes(a) ? ' ⚠' : ''}</option>
                             {/each}
                         </select>
                     </label>

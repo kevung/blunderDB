@@ -292,15 +292,20 @@ déploiement que cette règle interdit.
 
 Le bureau sert lui-même l'affichage d'un tournoi sur le réseau local, sans
 ``serve`` : la Direction lance sur demande un serveur qui n'expose que la page
-web et ``directions.pageHtml`` pour le seul tournoi choisi, pose lui-même le
-tenant, et montre le QR code de l'adresse (voir le manuel, *L'affichage du
+web et ``directions.pageHtml`` pour le seul tournoi choisi — toute autre adresse
+de la page renvoie vers l'affichage de ce tournoi, jamais vers l'application
+complète —, pose lui-même le tenant, et montre le QR code de l'adresse (voir le manuel, *L'affichage du
 tournoi*). Il n'authentifie personne non plus : quiconque est sur le réseau local
 lit la page.
 
 La page **n'envoie aucun tenant** : c'est le mandataire qui pose l'en-tête,
 comme pour n'importe quel autre client. En développement local, et là
 seulement, ``/app/?tenant=1`` permet d'en nommer un — ce qui ne change rien à
-la sécurité d'un démon qui accepte déjà cet en-tête de quiconque.
+la sécurité d'un démon qui accepte déjà cet en-tête de quiconque. Ouverte sans
+mandataire, la page se charge, mais ses appels de données sont refusés : elle
+l'écrit en toutes lettres (« cette page se sert derrière un mandataire… »)
+plutôt que de rester blanche, et le démon le rappelle dans son journal au
+démarrage.
 
 Les fichiers de la page sont servis **sans tenant**, à dessein : un navigateur
 doit pouvoir charger la page avant que le mandataire ne lui attribue quoi que

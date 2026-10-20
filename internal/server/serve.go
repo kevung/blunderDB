@@ -282,6 +282,9 @@ func RunServe(args []string) error {
 	}
 
 	logger.Warn("authentication is delegated to the reverse-proxy; do not expose this daemon to the public internet")
+	if cfg.enableWebUI {
+		logger.Warn("--web: the page is served under /app/ and reads through /v1 with the tenant the proxy sets; without a proxy the page loads but its data calls are refused (add ?tenant=1 for a local trial)")
+	}
 	if cfg.enableDir {
 		logger.Warn("--direction: the gestures of a Direction are served — anyone the proxy lets through can enter results; restrict /v1/directions.* and /v1/rencontres.* at the proxy")
 	}

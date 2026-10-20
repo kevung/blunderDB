@@ -3059,7 +3059,11 @@
             "other": "Le réseau affiche déjà le tournoi #{id} ; afficher celui-ci le remplace.",
             "error": "Impossible de lancer l'affichage : {error}",
             "address": "Réseau",
-            "noLan": "Aucune adresse de réseau local : les téléphones ne peuvent pas joindre cette machine. Connectez-la au réseau du club, puis relancez l'affichage."
+            "noLan": "Aucune adresse de réseau local : les téléphones ne peuvent pas joindre cette machine. Connectez-la au réseau du club, puis relancez l'affichage.",
+            "errPortInUse": "Le port {port} est déjà pris sur cette machine ; choisissez-en un autre.",
+            "errNoTournament": "Aucun tournoi à afficher.",
+            "errFailed": "Le serveur d'affichage n'a pas pu démarrer. Essayez un autre port.",
+            "publicAddress": "L'adresse {address} n'est pas une adresse de réseau local : la page peut être lisible hors du club. Choisissez une adresse privée, ou vérifiez votre pare-feu."
         }
     },
     "palette": {

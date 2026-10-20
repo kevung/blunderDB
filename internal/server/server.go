@@ -25,6 +25,7 @@ import (
 
 	"github.com/kevung/blunderdb/internal/server/handlers"
 	"github.com/kevung/blunderdb/internal/server/middleware"
+	"github.com/kevung/blunderdb/internal/server/webui"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/duel"
 	"github.com/kevung/blunderdb/pkg/blunderdb/events"
@@ -239,6 +240,9 @@ func (s *Server) chain(mux http.Handler) http.Handler {
 	h = middleware.Tenant(s.publicPaths(), s.opts.SingleTenant, s.opts.TrustReadTenants, func(w http.ResponseWriter, _ *http.Request, msg string) {
 		writeErrorCode(w, CodeInvalid, msg)
 	})(h)
+	if s.opts.EnableWebUI {
+		h = staticBypass(mux, h)
+	}
 	// Compression sits outside the tenant gate and inside logging/metrics: it
 	// must see the handler's Content-Type (hence inside the mux's own layers)
 	// while the byte counts the log line reports stay the uncompressed ones.
@@ -486,4 +490,18 @@ func (s *Server) Run(ctx context.Context) error {
 		}
 		return fmt.Errorf("server: serve: %w", err)
 	}
+}
+
+// staticBypass serves the web page's files before the tenant gate. They hold no data, and a
+// browser reaching the daemon without a proxy must still load the page, which then says why its
+// data calls are refused; gating them would leave a blank page with no message. Only reads under
+// the page's prefix skip the gate: every /v1 call keeps it.
+func staticBypass(static, gated http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodGet && strings.HasPrefix(r.URL.Path, webui.Prefix) {
+			static.ServeHTTP(w, r)
+			return
+		}
+		gated.ServeHTTP(w, r)
+	})
 }
