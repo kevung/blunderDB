@@ -5715,12 +5715,20 @@ Examples:
 ```
 Usage: blunderdb transfer --from <library.db> --to <library.db> [options]
 
-Copy part of one library into another. The selection is the database export's:
-every family by default, each one left out (--matches=false) or narrowed
-(--collection-ids=1,2). The copy merges like an import of that export: a position
-the destination holds is not added twice, analyses and comments merge, a match,
-a collection or a lesson it already holds is completed, not duplicated.
-Nothing is written that says where the copy came from, nor anything in the source.
+Copy part of one library into another. Every family goes by default; each one can
+be left out (--matches=false) or narrowed to some ids (--collection-ids=1,2).
+Without ids, every position of the source goes, filed or not. As soon as ids are
+named, only the positions the families kept reach go, with their analyses and
+comments: a collection's members, a match's moves, a lesson's steps, a deck's cards.
+A match named by id brings its tournament (name, date, place), not the tournament's
+other matches; --tournaments=false copies it without one. An id the source does
+not hold is an error.
+
+The copy merges like an import: a position the destination holds is not added
+twice, analyses and comments merge, a match, a collection or a lesson it already
+holds is completed, not duplicated. Nothing is written that says where the copy
+came from, nor anything in the source: a source at another schema version is
+refused (open an older one once with blunderDB to upgrade it).
 
 Options:
   -aliases
@@ -5740,7 +5748,7 @@ Options:
   -format string
     	Output format: text or json (default "text")
   -from string
-    	Path to the library to copy from (required; the transfer writes nothing in it)
+    	Path to the library to copy from (required, at this blunderDB's schema; the transfer writes nothing in it)
   -lesson-ids string
     	Comma-separated list of lesson IDs to take (empty = all)
   -lessons
@@ -5768,7 +5776,7 @@ Examples:
   blunderdb transfer --from club.db --to mine.db --collection-ids=3,7 \
       --matches=false --tournaments=false --lessons=false --decks=false
 
-  # Copy one match back the other way
+  # Copy one match, with its positions and its tournament, back the other way
   blunderdb transfer --from mine.db --to club.db --match-ids=12 --collections=false --lessons=false --decks=false
 ```
 

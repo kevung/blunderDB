@@ -208,3 +208,192 @@ func TestTransfer_Refusals(t *testing.T) {
 		t.Errorf("a refused transfer wrote %d positions", got.Positions)
 	}
 }
+
+// memberIDs lists the positions filed under the library's only collection,
+// and the position ids outside it.
+func memberIDs(t *testing.T, s storage.Storage) (col int64, in, out []int64) {
+	t.Helper()
+	ctx := context.Background()
+	for c, err := range s.Collections().List(ctx, "") {
+		if err != nil {
+			t.Fatal(err)
+		}
+		col = c.ID
+	}
+	ids, err := s.Collections().PositionIDs(ctx, "", col, storage.ListOpts{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	member := toSet(ids)
+	for p, err := range s.Positions().List(ctx, "", storage.ListOpts{}) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		if member[p.ID] {
+			in = append(in, p.ID)
+		} else {
+			out = append(out, p.ID)
+		}
+	}
+	return col, in, out
+}
+
+func emptyLibrary(t *testing.T) *sqlite.Storage {
+	t.Helper()
+	b, err := sqlite.Open(context.Background(), ":memory:", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { b.Close() })
+	return b
+}
+
+// TestTransfer_NamedCollectionCarriesOnlyItsPositions: the whole-library
+// options with one collection named and the other families off copy that
+// collection's positions and their comments, not the rest of the library —
+// least of all a comment written on a position nobody picked.
+func TestTransfer_NamedCollectionCarriesOnlyItsPositions(t *testing.T) {
+	ctx := context.Background()
+	a := seedLibrary(t, "match_with_comment.xg", "picked")
+	col, in, out := memberIDs(t, a)
+	if len(out) == 0 {
+		t.Fatal("fixture: every position is in the collection")
+	}
+	if _, err := a.Comments().Add(ctx, "", out[0], "private note"); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := a.Comments().Add(ctx, "", in[0], "shared note"); err != nil {
+		t.Fatal(err)
+	}
+	b := emptyLibrary(t)
+	opts := WholeLibraryOptions()
+	opts.CollectionIDs = []int64{col}
+	opts.IncludeMatches, opts.IncludeTournaments, opts.IncludeLessons, opts.IncludeAnkiDecks = false, false, false, false
+	if _, err := Transfer(ctx, TransferEnd{S: a}, TransferEnd{S: b}, opts, nil); err != nil {
+		t.Fatal(err)
+	}
+	got := countLibrary(t, b)
+	if got.Positions != len(in) || got.Collections != 1 || got.Members != len(in) || got.Matches != 0 {
+		t.Errorf("one collection of %d transferred = %+v", len(in), got)
+	}
+	texts, err := b.Comments().ByPositions(ctx, "", allPositionIDs(t, b))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, cs := range texts {
+		for _, c := range cs {
+			if c.Text == "private note" {
+				t.Error("the comment of a position outside the selection was copied")
+			}
+		}
+	}
+}
+
+func allPositionIDs(t *testing.T, s storage.Storage) []int64 {
+	t.Helper()
+	var ids []int64
+	for p, err := range s.Positions().List(context.Background(), "", storage.ListOpts{}) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		ids = append(ids, p.ID)
+	}
+	return ids
+}
+
+// TestTransfer_CollectionIDsAloneCarriesMembers: the daemon's list form
+// (wholeLibrary off, collectionIDs named, no position) copies the collection
+// with its members, never an empty shell.
+func TestTransfer_CollectionIDsAloneCarriesMembers(t *testing.T) {
+	ctx := context.Background()
+	a := seedLibrary(t, "match_with_comment.xg", "picked")
+	col, in, _ := memberIDs(t, a)
+	b := emptyLibrary(t)
+	opts := WholeLibraryOptions()
+	opts.WholeLibrary = false
+	opts.CollectionIDs = []int64{col}
+	opts.IncludeLessons = false
+	if _, err := Transfer(ctx, TransferEnd{S: a}, TransferEnd{S: b}, opts, nil); err != nil {
+		t.Fatal(err)
+	}
+	if got := countLibrary(t, b); got.Collections != 1 || got.Members != len(in) || got.Positions != len(in) {
+		t.Errorf("collection of %d transferred = %+v", len(in), got)
+	}
+}
+
+// TestTransfer_NamedMatchBringsItsTournamentAlone: a match named by id
+// arrives with its tournament's record and its own positions, not with the
+// tournament's other matches.
+func TestTransfer_NamedMatchBringsItsTournamentAlone(t *testing.T) {
+	ctx := context.Background()
+	a := seedLibrary(t, "match_with_comment.xg", "c")
+	if _, err := (XGImporter{S: a}).Import(ctx, "", Source{Format: FormatXG, Path: filepath.Join("..", "..", "..", "testdata", "test.xg")}, nil); err != nil {
+		t.Fatal(err)
+	}
+	tid, err := a.Tournaments().Create(ctx, "", "Open", "2026-01-01", "Paris")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var matches []int64
+	for m, err := range a.Matches().List(ctx, "", storage.MatchListOpts{}) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		matches = append(matches, m.ID)
+		if err := a.Tournaments().AddMatch(ctx, "", tid, m.ID); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if len(matches) != 2 {
+		t.Fatalf("fixture holds %d matches, want 2", len(matches))
+	}
+	b := emptyLibrary(t)
+	opts := WholeLibraryOptions()
+	opts.MatchIDs = matches[:1]
+	opts.IncludeCollections, opts.IncludeLessons, opts.IncludeAnkiDecks = false, false, false
+	if _, err := Transfer(ctx, TransferEnd{S: a}, TransferEnd{S: b}, opts, nil); err != nil {
+		t.Fatal(err)
+	}
+	got := countLibrary(t, b)
+	if got.Matches != 1 || got.Positions == 0 || got.Positions >= countLibrary(t, a).Positions {
+		t.Errorf("one match transferred = %+v", got)
+	}
+	var tournaments int
+	for tr, err := range b.Tournaments().List(ctx, "", storage.ListOpts{}) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		tournaments++
+		if tr.Name != "Open" {
+			t.Errorf("tournament %q arrived, want Open", tr.Name)
+		}
+	}
+	if tournaments != 1 {
+		t.Errorf("%d tournaments arrived, want the match's own", tournaments)
+	}
+}
+
+// TestTransfer_AbsentIDRefused: an id the source does not hold is refused
+// before anything is read, whatever its family.
+func TestTransfer_AbsentIDRefused(t *testing.T) {
+	ctx := context.Background()
+	a := seedLibrary(t, "match_with_comment.xg", "c")
+	b := emptyLibrary(t)
+	for name, mut := range map[string]func(*domain.ExportOptions){
+		"collection": func(o *domain.ExportOptions) { o.CollectionIDs = []int64{999} },
+		"match":      func(o *domain.ExportOptions) { o.MatchIDs = []int64{999} },
+		"tournament": func(o *domain.ExportOptions) { o.TournamentIDs = []int64{999} },
+		"lesson":     func(o *domain.ExportOptions) { o.LessonIDs = []int64{999} },
+		"deck":       func(o *domain.ExportOptions) { o.DeckIDs = []int64{999} },
+		"position":   func(o *domain.ExportOptions) { o.WholeLibrary = false; o.PositionIDs = []int64{999999} },
+	} {
+		opts := WholeLibraryOptions()
+		mut(&opts)
+		if _, err := Transfer(ctx, TransferEnd{S: a}, TransferEnd{S: b}, opts, nil); !errors.Is(err, storage.ErrInvalid) {
+			t.Errorf("%s 999: err = %v, want ErrInvalid", name, err)
+		}
+	}
+	if got := countLibrary(t, b); got.Positions != 0 {
+		t.Errorf("a refused transfer wrote %d positions", got.Positions)
+	}
+}
