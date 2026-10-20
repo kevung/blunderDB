@@ -109,15 +109,33 @@ async function heldByAnotherGroup(filePath) {
     return holder !== get(activeGroupId);
 }
 
+// The jobs that refuse a switch (App.libraryBusy), each with where it is stopped: a watched
+// folder or a tournament shown on the network never ends by itself.
+/** @type {Record<string, string>} */
+const BUSY_JOB_KEYS = {
+    'gammonnet-batch': 'libraryGroups.busyBatch',
+    gammonnet: 'libraryGroups.busyBatch',
+    rollout: 'libraryGroups.busyRollout',
+    'folder-watch': 'libraryGroups.busyWatch',
+    'tournament-display': 'libraryGroups.busyDisplay'
+};
+
 /**
  * What the status bar says when a library group cannot open or take over: a job writing the
- * active library holds it, or the open itself failed.
+ * active library holds it (named, with where to stop it), or the open or the switch failed.
  * @param {unknown} error
+ * @param {{ switching?: string }} [context] the name of the library a switch was to show
  */
-export function libraryGroupError(error) {
+export function libraryGroupError(error, context = {}) {
     // A refusal the group store worded itself (a Duel, a training session).
     if (error instanceof Error && error.name === 'LibraryGroupRefused') return /** @type {any} */ (error).status;
-    return String(error).includes('database is busy') ? tMsg('libraryGroups.busy') : tMsg('commands.errorOpeningDb');
+    const busy = /database is busy(?::\s*([\w-]+))?/.exec(String(error));
+    if (busy) {
+        const job = busy[1] ?? '';
+        return BUSY_JOB_KEYS[job] ? tMsg(BUSY_JOB_KEYS[job]) : tMsg('libraryGroups.busy', { job: job || '?' });
+    }
+    if (context.switching !== undefined) return tMsg('libraryGroups.switchFailed', { name: context.switching });
+    return tMsg('commands.errorOpeningDb');
 }
 
 function getMajorVersion(/** @type {string} */ version) {

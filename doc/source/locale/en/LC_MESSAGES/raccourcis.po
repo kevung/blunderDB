@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-20 13:36+0200\n"
+"POT-Creation-Date: 2026-10-20 16:37+0200\n"
 "PO-Revision-Date: 2025-11-01 23:50+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -850,8 +850,8 @@ msgid "CTRL-1 … CTRL-9"
 msgstr "CTRL-1 … CTRL-9"
 
 #: ../../source/raccourcis.rst:1
-msgid "Aller directement à la n-ième vue."
-msgstr "Go directly to the n-th view."
+msgid "Aller directement à la n-ième vue de la bibliothèque active."
+msgstr "Go straight to the n-th view of the active library."
 
 #: ../../source/raccourcis.rst:1
 msgid "Double-clic sur l'onglet"

@@ -231,9 +231,10 @@ dans une vue tout en parcourant un match dans une autre.
 * **Fermer une vue** : cliquer sur la croix de l'onglet ou appuyer sur
   *CTRL-W*. La dernière vue ne peut pas être fermée.
 
-* **Changer de vue** : cliquer sur un onglet, appuyer sur *CTRL-PageUp* /
-  *CTRL-PageDown* (ou *MAJ-J* / *MAJ-K*) pour passer à la vue précédente /
-  suivante, ou *CTRL-1* à *CTRL-9* pour atteindre directement la n-ième vue.
+* **Changer de vue** : cliquer sur un onglet, appuyer sur *CTRL-Page préc.* /
+  *CTRL-Page suiv.* (ou *MAJ-J* / *MAJ-K*) pour passer à la vue précédente /
+  suivante, ou *CTRL-1* à *CTRL-9* pour atteindre directement la n-ième vue
+  de la bibliothèque active.
 
 * **Renommer une vue** : double-cliquer sur l'onglet, saisir le nouveau nom
   et valider avec *ENTREE*.
@@ -258,36 +259,59 @@ reprend la même couleur. Une seule bibliothèque est active à la fois : c'est
 elle que lisent et écrivent les panneaux, la recherche, les imports et
 l'assistant.
 
-* **Ouvrir une bibliothèque dans un nouveau groupe** : bouton *⧉* à droite
-  de la barre d'onglets, ou *CTRL-MAJ-O*. La bibliothèque active jusque-là
-  reste ouverte dans son groupe. *CTRL-O* remplace, lui, la bibliothèque du
-  groupe actif.
+Avec une seule bibliothèque ouverte, la barre ne montre aucun en-tête : seul
+le titre de la fenêtre nomme la base.
+
+* **Ouvrir une bibliothèque dans un nouveau groupe** : bouton *⧉ Autre
+  bibliothèque* à droite de la barre d'onglets (*⧉* seul dès que deux
+  groupes sont ouverts), *CTRL-MAJ-O*, ou la commande ``open_group``
+  (``og``). La bibliothèque active jusque-là reste ouverte dans son groupe.
+  *CTRL-O* remplace, lui, la bibliothèque du groupe actif ; l'infobulle du
+  bouton *Ouvrir* de la barre d'outils rappelle les deux raccourcis.
 
 * **Changer de bibliothèque** : cliquer un onglet d'un autre groupe active
   sa bibliothèque et cette vue d'un seul geste ; cliquer l'en-tête du groupe
-  la ramène sur la vue où elle a été laissée. *CTRL-MAJ-PageUp* /
-  *CTRL-MAJ-PageDown* passent à la bibliothèque précédente / suivante ;
-  *CTRL-PageUp* / *CTRL-PageDown* (ou *MAJ-J* / *MAJ-K*) parcourent les vues
-  de tous les groupes à la suite.
+  la ramène sur la vue où elle a été laissée. *CTRL-MAJ-Page préc.* /
+  *CTRL-MAJ-Page suiv.* passent à la bibliothèque précédente / suivante ;
+  *CTRL-Page préc.* / *CTRL-Page suiv.* (ou *MAJ-J* / *MAJ-K*) parcourent les
+  vues de tous les groupes à la suite.
 
 * **Fermer un groupe** : la croix de son en-tête ferme la bibliothèque et ses
-  vues. Fermer le groupe actif affiche son voisin.
+  vues. Fermer le groupe actif affiche son voisin ; la barre d'état nomme la
+  bibliothèque fermée et celle affichée.
+
+L'en-tête du groupe actif porte le nom en blanc sur sa couleur ; ceux des
+autres groupes, le nom sur le fond de la barre, souligné en haut de leur
+couleur. Six couleurs se succèdent : un septième groupe reprend la première.
+Les vues sont numérotées dans leur bibliothèque : une base ouverte dans un
+nouveau groupe commence à « #1 », et *CTRL-1* … *CTRL-9* visent les vues du
+groupe actif. Quand les onglets ne tiennent plus dans la largeur de la
+fenêtre, la barre défile (molette, ou le changement de vue qui amène l'onglet
+affiché à l'écran) au lieu de les réduire.
 
 La bascule est immédiate : chaque groupe garde en mémoire ses vues, sa liste
-de positions, la position courante, la recherche en cours, les compteurs et
-le défilement du panneau, et les retrouve sans relire la base. Le travail en
-cours le suit aussi : un brouillon de transcription, une leçon, une révision
-Anki, la file d'étude et la Direction ouverte se retrouvent tels qu'ils ont
-été laissés. Ce qui a pu changer pendant l'absence (compteurs, liste des
-matchs) est relu juste après l'affichage, et les listes propres à chaque base
-(collections, tournois, paquets Anki, brouillons, Duels, historique de
-recherche, filtres enregistrés) sont relues dans la bibliothèque affichée.
+de positions, la position courante, les critères de recherche (même en cours
+de saisie, sans avoir lancé la recherche), la liste des matchs, les compteurs
+et le défilement de chaque liste du panneau, et les retrouve sans relire la
+base. Une bibliothèque ouverte dans un nouveau groupe part d'un formulaire de
+recherche vierge : les matchs et tournois choisis dans un groupe ne
+s'appliquent jamais dans un autre. Le travail en cours le suit aussi : un
+brouillon de transcription, une leçon, une révision Anki, la file d'étude et
+la Direction ouverte se retrouvent tels qu'ils ont été laissés. Ce qui a pu
+changer pendant l'absence est relu juste après l'affichage : les compteurs
+toujours, la liste des matchs seulement si leur nombre a changé. Les listes
+propres à chaque base (collections, tournois, paquets Anki, brouillons,
+Duels, historique de recherche, filtres enregistrés) sont relues dans la
+bibliothèque affichée.
 
 Un même fichier ne s'ouvre pas dans deux groupes : le rouvrir affiche le
 groupe qui le tient déjà. Tant qu'une tâche écrit dans la bibliothèque active
 (import, dossier surveillé, analyse par lots, rollout, affichage de tournoi),
 qu'un Duel est en cours ou qu'une séance d'entraînement n'est pas terminée,
-le changement de groupe est refusé avec un message dans la barre d'état.
+le changement de groupe est refusé, au clic comme au clavier, avec un message
+dans la barre d'état qui nomme la tâche et dit où l'arrêter : un dossier
+surveillé s'arrête dans les Paramètres, l'affichage d'un tournoi dans la
+Direction, un rollout par ``rollout stop``.
 À la fermeture de blunderDB, seule la session de la bibliothèque active est
 enregistrée, et la liste des groupes ne l'est pas : au démarrage suivant,
 blunderDB rouvre la dernière base active.

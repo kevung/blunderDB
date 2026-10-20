@@ -14,7 +14,7 @@ import { humanSide, framesBetween, clockView, normalizeForm, settingsFromForm } 
 import { boardPress, boardContext, canValidateMove, isMine } from './duelBoard.js';
 import { confirmAction } from './confirmService.js';
 import { enterDuelMode, exitDuelMode } from './modeMachine.js';
-import { isLetter, isBareLetter } from '../utils/keys.js';
+import { isLetter, isBareLetter, isShiftLetter } from '../utils/keys.js';
 import { logger } from '../utils/logger.js';
 import { tMsg, translate } from '../i18n';
 
@@ -423,8 +423,11 @@ export function duelKeyGuard(event) {
     }
     if (isBareLetter(event, 'b') || isBareLetter(event, 'p') || event.key === '?' || event.key === 'Escape') return false;
     if (event.ctrlKey && !event.shiftKey && isLetter(event, 'h')) return false;
+    // Tab and library keys reach their handler, which refuses with the reason in the status bar.
+    if (event.ctrlKey && !event.altKey && (event.key === 'PageUp' || event.key === 'PageDown')) return false;
     const target = /** @type {HTMLElement|null} */ (event.target);
     if (target && (target.tagName === 'INPUT' || target.tagName === 'SELECT' || target.tagName === 'TEXTAREA' || target.tagName === 'BUTTON')) return true;
+    if (!event.ctrlKey && (isShiftLetter(event, 'j') || isShiftLetter(event, 'k'))) return false;
     if (event.key === 'Enter' && !event.ctrlKey && !event.altKey) {
         event.preventDefault();
         validateMove();

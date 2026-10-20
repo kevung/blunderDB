@@ -6,6 +6,7 @@
 export const COMMANDS = [
     { name: 'new', aliases: ['ne', 'n'] },
     { name: 'open', aliases: ['op', 'o'] },
+    { name: 'open_group', aliases: ['og'] },
     { name: 'import', aliases: ['i'] },
     { name: 'import_db', aliases: ['idb'] },
     { name: 'export_db', aliases: ['edb'] },

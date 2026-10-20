@@ -73,6 +73,9 @@ export function processCommand(command) {
         callbacks.onNewDatabase?.();
     } else if (command === 'open' || command === 'op' || command === 'o') {
         callbacks.onOpenDatabase?.();
+    } else if (command === 'open_group' || command === 'og') {
+        // Another library beside this one, in its own group of tabs (ADR-0101).
+        import('./services/databaseService.js').then((m) => m.openDatabaseInNewGroup());
     } else if (command === 'import_db' || command === 'idb') {
         callbacks.onImportDatabase?.();
     } else if (command === 'export_db' || command === 'edb') {

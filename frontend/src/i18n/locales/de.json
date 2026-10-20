@@ -187,6 +187,7 @@
         "newDatabase": "Neue Datenbank",
         "nextPosition": "Nächste Position",
         "openDatabase": "Datenbank öffnen",
+        "openInNewGroup": "in einer neuen Gruppe",
         "pastePosition": "Position einfügen",
         "pastePositionSearchTip": "Position auf das Brett einfügen",
         "previousPosition": "Vorherige Position",
@@ -3087,6 +3088,7 @@
         "cmd": {
             "new": "Neue Datenbank",
             "open": "Datenbank öffnen",
+            "open_group": "Datenbank in einer neuen Gruppe öffnen",
             "import": "Positionen oder Matches importieren",
             "import_db": "Andere Datenbank zusammenführen",
             "export_db": "Datenbank exportieren",
@@ -3519,8 +3521,16 @@
         "close": "Bibliothek und ihre Gruppe schließen",
         "unnamed": "Keine Datenbank",
         "alreadyOpen": "{name} ist bereits geöffnet: ihre Gruppe wird angezeigt",
-        "busy": "Eine Aufgabe schreibt in die aktive Bibliothek: warten Sie auf ihr Ende oder brechen Sie sie ab, bevor Sie die Gruppe wechseln",
+        "busy": "Eine Aufgabe ({job}) schreibt in die aktive Bibliothek: Warten Sie auf ihr Ende oder brechen Sie sie ab, bevor Sie die Bibliothek wechseln",
         "duel": "Ein Duell läuft: unterbrechen oder beenden Sie es, bevor Sie die Bibliothek wechseln",
-        "training": "Eine Trainingssitzung läuft: beenden Sie sie, bevor Sie die Bibliothek wechseln"
+        "training": "Eine Trainingssitzung läuft: beenden Sie sie, bevor Sie die Bibliothek wechseln",
+        "openLabel": "Weitere Bibliothek",
+        "busyBatch": "Die GammonNet-Stapelanalyse schreibt in die aktive Bibliothek: Warten Sie auf ihr Ende oder brechen Sie sie ab, bevor Sie die Bibliothek wechseln",
+        "busyRollout": "Ein Rollout schreibt in die aktive Bibliothek: Warten Sie auf sein Ende oder stoppen Sie ihn (rollout stop), bevor Sie die Bibliothek wechseln",
+        "busyWatch": "Der überwachte Ordner importiert in die aktive Bibliothek: Beenden Sie die Überwachung (Einstellungen, Überwachter Ordner), bevor Sie die Bibliothek wechseln",
+        "busyDisplay": "Das Turnier wird im Clubnetz angezeigt: Beenden Sie die Anzeige (Leitung, Im Clubnetz anzeigen), bevor Sie die Bibliothek wechseln",
+        "switchFailed": "Die Bibliothek {name} kann nicht angezeigt werden",
+        "closed": "{name} geschlossen: {shown} wird angezeigt",
+        "duelViews": "Ein Duell läuft: Seine Ansicht bleibt sichtbar, bis es unterbrochen oder beendet ist"
     }
 }

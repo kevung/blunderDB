@@ -76,7 +76,7 @@
             openDatabase(e);
         }}
         aria-label={$t('toolbar.openDatabase')}
-        title="{$t('toolbar.openDatabase')} {toolbarHint('openDatabase', $t)}"
+        title="{$t('toolbar.openDatabase')} {toolbarHint('openDatabase', $t)} · {$t('toolbar.openInNewGroup')} {toolbarHint('openInNewGroup', $t)}"
     >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path

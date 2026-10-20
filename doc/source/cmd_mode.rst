@@ -22,6 +22,7 @@ Opérations globales
 
    "new, ne, n", "Crée une nouvelle base de données."
    "open, op, o", "Ouvre une base de données existante."
+   "open_group, og", "Ouvre une base de données dans un nouveau groupe d'onglets, la base courante restant ouverte dans le sien (voir :ref:`groupes_bibliotheques`)."
    "import_db, idb", "Importe et fusionne une autre base de données."
    "export_db, edb", "Exporte la sélection courante vers une nouvelle base de données."
    "quit, q", "Ferme blunderDB."

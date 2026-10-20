@@ -409,6 +409,11 @@ fenêtre du système.
 .. tip::
    Raccourcis clavier: *CTRL-O*. Commande: ``o``
 
+Pour garder la base courante ouverte à côté de la nouvelle, utiliser plutôt
+*CTRL-MAJ-O*, le bouton *⧉ Autre bibliothèque* à droite de la barre d'onglets
+ou la commande ``og`` : chaque base forme alors son propre groupe d'onglets,
+et un clic passe de l'une à l'autre (voir :ref:`groupes_bibliotheques`).
+
 .. _guide_fusionner_base:
 
 Fusionner une base de données

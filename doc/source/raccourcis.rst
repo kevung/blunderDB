@@ -185,7 +185,7 @@ Onglets de vues
    "CTRL-Page préc., MAJ-J", "Vue précédente, à travers les groupes : avant le premier onglet d'une bibliothèque vient le dernier de la précédente."
    "CTRL-Page suiv., MAJ-K", "Vue suivante, à travers les groupes : après le dernier onglet d'une bibliothèque vient le premier de la suivante."
    "CTRL-MAJ-Page préc. / CTRL-MAJ-Page suiv.", "Bibliothèque précédente / suivante, sur l'onglet où elle a été laissée."
-   "CTRL-1 … CTRL-9", "Aller directement à la n-ième vue."
+   "CTRL-1 … CTRL-9", "Aller directement à la n-ième vue de la bibliothèque active."
    "Double-clic sur l'onglet", "Renommer la vue."
 
 .. _raccourcis_command:

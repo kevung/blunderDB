@@ -11,19 +11,19 @@ import { viewStore } from './viewStore.js';
 import { positionsStore } from './positionStore.js';
 import { databasePathStore, libraryChanged, libraryTitle } from './databaseStore.js';
 import { libraryCountsStore, refreshLibraryCounts } from './libraryCountsStore.js';
-import { searchParamsStore, searchEmptyStore } from './searchParamsStore.js';
 import { matchPanelRefreshTriggerStore, statusBarTextStore } from './uiStore.js';
 import { trainingSessionStore } from './trainingTabStore.js';
 import { bumpTranscriptionLibrary } from './transcriptionStore.js';
+import { matchListStore } from './matchListStore.js';
 import { directionSessionState, forgetDirection, restoreDirection } from './directionStore.js';
 import { takeScopedState, putScopedState } from './libraryScope.js';
 import { tMsg, translate } from '../i18n';
 import { logger } from '../utils/logger.js';
 
 /**
- * @typedef {{ views: any[], activeViewId: number }} ViewsPhoto
+ * @typedef {{ views: any[], activeViewId: number, nextNumber?: number }} ViewsPhoto
  * @typedef {{ path: string, views: ViewsPhoto, list: import('./positionList.js').LibraryState,
- *   search: any, searchEmpty: boolean, counts: any, scroll: number, scoped: Record<string, any>,
+ *   counts: any, scroll: ScrollMark[], scoped: Record<string, any>,
  *   direction: { openId: number | null, tabs: Record<string, string> } }} GroupPhoto
  */
 
@@ -67,8 +67,77 @@ export const tabGroupsStore = derived(
         })
 );
 
-function scrollBox() {
+/**
+ * @typedef {{ tag: string, cls: string, nth: number, top: number, left: number }} ScrollMark
+ *   an element of the panel scrolled away from its origin, found again by tag, class and rank
+ */
+
+function panelRoot() {
     return typeof document === 'undefined' ? null : document.querySelector('[data-testid="tab-content"]');
+}
+
+/**
+ * Where each scrolling box of the panel stands. The panel's frame does not scroll: its lists
+ * and columns do (a Matches list, the Search filters), each its own box, so every box is read.
+ * @returns {ScrollMark[]}
+ */
+function scrollMarks() {
+    const root = panelRoot();
+    if (!root) return [];
+    /** @type {ScrollMark[]} */
+    const marks = [];
+    /** @type {Map<string, number>} */
+    const ranks = new Map();
+    for (const el of [root, ...root.querySelectorAll('*')]) {
+        const key = `${el.tagName}|${el.className}`;
+        const nth = ranks.get(key) ?? 0;
+        ranks.set(key, nth + 1);
+        if (el.scrollTop > 0 || el.scrollLeft > 0) marks.push({ tag: el.tagName, cls: String(el.className), nth, top: el.scrollTop, left: el.scrollLeft });
+    }
+    return marks;
+}
+
+/** @param {ScrollMark} mark */
+function findMarked(mark) {
+    const root = panelRoot();
+    if (!root) return null;
+    const same = [root, ...root.querySelectorAll(mark.tag)].filter((el) => el.tagName === mark.tag && String(el.className) === mark.cls);
+    return same[mark.nth] ?? null;
+}
+
+/** How long a box may take to grow back to its length (a list read again) before giving up. */
+const SCROLL_PATIENCE_MS = 1500;
+
+/**
+ * Put the panel's boxes back where they stood. A list read again after the switch is short at
+ * first: its box is scrolled again each frame until it reaches its place, unless the user moved
+ * it meanwhile.
+ * @param {ScrollMark[]} marks
+ */
+function restoreScroll(marks) {
+    if (!marks.length) return;
+    const until = performance.now() + SCROLL_PATIENCE_MS;
+    /** @type {Map<ScrollMark, number>} */
+    const lastSet = new Map();
+    const step = () => {
+        let pending = false;
+        for (const mark of marks) {
+            const el = findMarked(mark);
+            if (!el) {
+                pending = true;
+                continue;
+            }
+            const was = lastSet.get(mark);
+            if (was !== undefined && Math.abs(el.scrollTop - was) > 1) continue;
+            if (Math.abs(el.scrollTop - mark.top) <= 1 && Math.abs(el.scrollLeft - mark.left) <= 1) continue;
+            el.scrollTop = mark.top;
+            el.scrollLeft = mark.left;
+            lastSet.set(mark, el.scrollTop);
+            if (Math.abs(el.scrollTop - mark.top) > 1) pending = true;
+        }
+        if (pending && performance.now() < until) requestAnimationFrame(step);
+    };
+    step();
 }
 
 /**
@@ -85,10 +154,8 @@ function photograph(incoming) {
         path: get(databasePathStore),
         views,
         list: positionsStore.exchangeLibrary(incoming),
-        search: get(searchParamsStore),
-        searchEmpty: get(searchEmptyStore),
         counts: get(libraryCountsStore),
-        scroll: scrollBox()?.scrollTop ?? 0,
+        scroll: scrollMarks(),
         scoped: takeScopedState(),
         direction: directionSessionState()
     };
@@ -124,10 +191,18 @@ export class LibraryGroupRefused extends Error {
     }
 }
 
-/** What may have changed while the group waited, read once it is on screen. */
-function refreshAfterShow() {
-    refreshLibraryCounts();
-    matchPanelRefreshTriggerStore.update((n) => n + 1);
+/**
+ * What may have changed while the group waited, read once it is on screen. The match list came
+ * back with its photograph: it is read again only if it never was, or if the library's match
+ * count moved, since reading it again repaints every row.
+ * @param {any} countsBefore the counts photographed with the group
+ */
+async function refreshAfterShow(countsBefore) {
+    const group = get(activeGroupId);
+    await refreshLibraryCounts();
+    if (get(activeGroupId) !== group) return;
+    const list = get(matchListStore);
+    if (!list.loaded || get(libraryCountsStore)?.matches !== countsBefore?.matches) matchPanelRefreshTriggerStore.update((n) => n + 1);
 }
 
 /**
@@ -145,8 +220,6 @@ export async function openInNewGroup(path) {
     parkedGroupsStore.update((m) => new Map(m).set(leaving, photo));
     putScopedState(null);
     viewStore.giveGroup(null);
-    searchParamsStore.set(null);
-    searchEmptyStore.set(false);
     libraryCountsStore.set(null);
     groupIdsStore.update((ids) => [...ids, group.id]);
     activeGroupId.set(group.id);
@@ -181,7 +254,7 @@ export async function activateGroup(id, viewId = null) {
     } catch (error) {
         logger.error('Error switching library group:', error);
         const { libraryGroupError } = await import('../services/databaseService.js');
-        statusBarTextStore.set(libraryGroupError(error));
+        statusBarTextStore.set(libraryGroupError(error, { switching: groupName(target.path) }));
         return false;
     }
     const photo = photograph(target.list);
@@ -191,11 +264,11 @@ export async function activateGroup(id, viewId = null) {
         next.set(leaving, photo);
         return next;
     });
+    // The path first: what follows the path (the match list drops another library's ids) acts on
+    // the state left, and the group's own state is put back over it.
+    databasePathStore.set(target.path);
     putScopedState(target.scoped);
     activeGroupId.set(id);
-    databasePathStore.set(target.path);
-    searchParamsStore.set(target.search);
-    searchEmptyStore.set(target.searchEmpty);
     libraryCountsStore.set(target.counts);
     const views = viewId != null && target.views.views.some((v) => v.id === viewId) ? { ...target.views, activeViewId: viewId } : target.views;
     viewStore.giveGroup(views);
@@ -203,9 +276,8 @@ export async function activateGroup(id, viewId = null) {
     libraryChanged();
     lastSwitchMsStore.set(performance.now() - started);
     requestAnimationFrame(() => {
-        const box = scrollBox();
-        if (box) box.scrollTop = target.scroll;
-        refreshAfterShow();
+        restoreScroll(target.scroll);
+        refreshAfterShow(target.counts).catch((error) => logger.error('Error refreshing a library group:', error));
         restoreDirection(target.direction).catch((error) => logger.error('Error reopening the Direction of a library group:', error));
     });
     return true;
@@ -219,6 +291,7 @@ export async function activateGroup(id, viewId = null) {
 export async function closeGroup(id) {
     const ids = get(groupIdsStore);
     if (ids.length <= 1 || !ids.includes(id)) return false;
+    const closing = get(tabGroupsStore).find((g) => g.id === id)?.name ?? '';
     if (id === get(activeGroupId)) {
         const at = ids.indexOf(id);
         const neighbour = ids[at + 1] ?? ids[at - 1];
@@ -236,6 +309,8 @@ export async function closeGroup(id) {
         return next;
     });
     groupIdsStore.update((list) => list.filter((g) => g !== id));
+    // Says what happened, and replaces whatever an earlier refusal left there.
+    statusBarTextStore.set(tMsg('libraryGroups.closed', { name: closing, shown: groupName(get(databasePathStore)) }));
     return true;
 }
 
@@ -260,6 +335,10 @@ export function cycleTab(step) {
     const at = flat.findIndex((t) => t.group === group && t.view === view);
     const next = flat[(at + step + flat.length) % flat.length];
     if (next.group === group) {
+        if (viewStore.viewsLocked()) {
+            statusBarTextStore.set(tMsg('libraryGroups.duelViews'));
+            return Promise.resolve(false);
+        }
         viewStore.switchTo(next.view);
         return Promise.resolve(true);
     }

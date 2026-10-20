@@ -42,15 +42,9 @@ export function sqlSortKey(column, direction) {
 // the seats moves each person's PR and MWC to the other column.
 const ROW_FIELDS = ['player1_name', 'player2_name', 'match_date', 'tournament_id', 'tournament_name', 'event', 'comment', 'pr', 'mwc_loss', 'pr2', 'mwc_loss2', 'mwc7', 'mwc7_p2'];
 
-/**
- * @param {object} [deps]
- * @param {(opts: any) => Promise<any[]>} [deps.list]
- * @param {(opts: any) => Promise<number>} [deps.count]
- * @param {(id: number) => Promise<any>} [deps.getByID]
- * @param {number} [deps.pageSize]
- */
-export function createMatchList({ list = ListMatches, count = CountMatches, getByID = GetMatchByID, pageSize = MATCH_PAGE_SIZE } = {}) {
-    const store = writable({
+/** The list of a library not read yet. */
+export function emptyMatchList() {
+    return {
         rows: /** @type {any[]} */ ([]),
         total: 0,
         text: '',
@@ -60,7 +54,20 @@ export function createMatchList({ list = ListMatches, count = CountMatches, getB
         direction: 'asc',
         loading: false,
         loaded: false
-    });
+    };
+}
+
+/**
+ * @param {object} [deps]
+ * @param {(opts: any) => Promise<any[]>} [deps.list]
+ * @param {(opts: any) => Promise<number>} [deps.count]
+ * @param {(id: number) => Promise<any>} [deps.getByID]
+ * @param {number} [deps.pageSize]
+ */
+// The bindings are read at call time: a store imported for its photograph (libraryScope.js)
+// never touches the backend until the list is read.
+export function createMatchList({ list = (o) => ListMatches(o), count = (o) => CountMatches(o), getByID = (id) => GetMatchByID(id), pageSize = MATCH_PAGE_SIZE } = {}) {
+    const store = writable(emptyMatchList());
     const { subscribe, update } = store;
     let generation = 0;
 
@@ -143,7 +150,17 @@ export function createMatchList({ list = ListMatches, count = CountMatches, getB
         update((s) => (s.ids ? { ...s, ids: null } : s));
     }
 
-    return { subscribe, reload, loadMore, setText, setIDs, setSort, refreshRow, patchRow, dropIDs };
+    /**
+     * Put back the list of a library group (libraryScope.js). A read still in flight belongs to
+     * the library left and is dropped; a list photographed mid-read is read again.
+     * @param {ReturnType<typeof emptyMatchList>} value
+     */
+    function set(value) {
+        generation++;
+        store.set({ ...value, loading: false, loaded: value.loaded && !value.loading });
+    }
+
+    return { subscribe, set, reload, loadMore, setText, setIDs, setSort, refreshRow, patchRow, dropIDs };
 }
 
 export const matchListStore = createMatchList();

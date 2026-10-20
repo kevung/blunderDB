@@ -25,10 +25,13 @@ recopier un match demandait un export puis un import. Le bureau lie un seul `*da
    `Database` du côté de la bibliothèque ou de la poignée : un champ nouveau échoue tant qu'il
    n'est pas classé.
 3. **La bascule est instantanée côté écran.** Les vues, la liste de positions et son cache,
-   la recherche, les compteurs et le défilement d'un groupe sont photographiés quand on le
-   quitte et rendus quand il revient, sans requête ; ce qui a pu vieillir (compteurs, liste des
-   matchs) est relu après l'affichage. Le cache de positions n'est jamais partagé entre deux
-   bibliothèques : un même identifiant y nomme deux lignes différentes.
+   les critères de recherche (ceux du formulaire monté compris), la liste des matchs, les
+   compteurs et le défilement de chaque boîte défilante du panneau sont photographiés quand on
+   le quitte et rendus quand il revient, sans requête ; les compteurs sont relus après
+   l'affichage, la liste des matchs seulement si elle n'a jamais été lue ou si leur nombre a
+   bougé. Le cache de positions n'est jamais partagé entre deux bibliothèques : un même
+   identifiant y nomme deux lignes différentes, comme les ids de matchs et de tournois d'un
+   critère de recherche.
 4. **Un fichier (chemin canonique) ne s'ouvre pas dans deux groupes.** Le rouvrir amène le
    groupe qui le tient. L'assistant MCP et l'affichage de tournoi suivent la poignée liée,
    donc le groupe actif.

@@ -8,7 +8,7 @@
 
 import { test, expect } from '@playwright/test';
 import { installWailsMock } from './helpers/wailsMock.js';
-import { openLibraryMock } from './helpers/fixtures.js';
+import { openLibraryMock, matchSample } from './helpers/fixtures.js';
 import { installTranscriptionEngine, draftRow } from './helpers/transcriptionDraft.js';
 
 const pathB = '/libs/club.db';
@@ -149,4 +149,81 @@ test("what each library holds stays in its group, and A's draft is intact on ret
     await expect(tournaments.getByText('Open de Lyon')).toBeVisible();
     await page.getByTestId('tab-collections').click();
     await expect(collections.getByText('Collection de A')).toBeVisible();
+});
+
+/** Two libraries behind the bound handle; A holds `matches` matches, B none. */
+async function twoLibraries(page, matches = 0) {
+    await page.addInitScript(
+        ({ matches, row }) => {
+            const db = window.go.database.Database;
+            const app = window.go.gui.App;
+            window.__library = 'A';
+            const rows = Array.from({ length: matches }, (_, i) => ({ ...row, id: i + 1, player1_name: `P${i + 1}`, file_path: `/tmp/m${i + 1}.xg` }));
+            db.ListMatches = () => Promise.resolve(window.__library === 'A' ? rows : []);
+            db.CountMatches = () => Promise.resolve(window.__library === 'A' ? rows.length : 0);
+            app.OpenLibraryGroup = (path) => {
+                window.__library = 'B';
+                return Promise.resolve({ id: 2, path, active: true, readOnly: false });
+            };
+            app.ActivateLibraryGroup = (id) => {
+                window.__library = id === 1 ? 'A' : 'B';
+                return Promise.resolve(null);
+            };
+        },
+        { matches, row: matchSample }
+    );
+    await page.goto('/');
+    await expect(page.locator('[data-testid="status-bar"]')).toBeVisible({ timeout: 8000 });
+}
+
+test('the Matches list comes back scrolled where it was left, over a list that really overflows', async ({ page }) => {
+    await twoLibraries(page, 120);
+    await page.getByTestId('tab-matches').click();
+    const list = page.locator('[data-testid="tab-content"] .scroll').first();
+    await expect(list.locator('tbody tr').nth(100)).toBeAttached();
+    // The list really overflows: a scroll that cannot happen proves nothing.
+    expect(await list.evaluate((el) => el.scrollHeight > el.clientHeight + 300)).toBe(true);
+    await list.evaluate((el) => (el.scrollTop = 300));
+    expect(await list.evaluate((el) => el.scrollTop)).toBe(300);
+
+    await page.locator('[data-testid="open-library-group"]').click();
+    await expect(page.locator('[data-testid="library-group"]').nth(1)).toHaveClass(/active/);
+    await page.locator('[data-testid="library-group"][data-group-id="1"]').click();
+    await expect(page.locator('[data-testid="library-group"]').nth(0)).toHaveClass(/active/);
+    await expect.poll(() => list.evaluate((el) => el.scrollTop)).toBe(300);
+});
+
+test('Search criteria typed in A, never run, stay in A; B starts blank', async ({ page }) => {
+    await twoLibraries(page);
+    await page.getByTestId('tab-search').click();
+    const filters = page.locator('.filter-groups');
+    await filters.getByText('Player', { exact: true }).click();
+    const player = filters.locator('input.text-input');
+    await player.fill('Ann');
+
+    await page.locator('[data-testid="open-library-group"]').click();
+    await expect(page.locator('[data-testid="library-group"]').nth(1)).toHaveClass(/active/);
+    await page.getByTestId('tab-search').click();
+    await expect(filters).toBeVisible();
+    await expect(player).toHaveCount(0);
+
+    await page.locator('[data-testid="library-group"][data-group-id="1"]').click();
+    await expect(page.locator('[data-testid="library-group"]').nth(0)).toHaveClass(/active/);
+    await expect(player).toHaveValue('Ann');
+});
+
+test('at 1024 px the tabs keep their width and the row scrolls instead', async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 768 });
+    const add = page.locator('.view-tabs .add-btn');
+    for (let i = 0; i < 22; i++) await add.click();
+    await page.locator('[data-testid="open-library-group"]').click();
+    await expect(page.locator('[data-testid="library-group"]').nth(1)).toHaveClass(/active/);
+    for (let i = 0; i < 10; i++) await add.click();
+    const names = await page.locator('.view-tab .tab-name').evaluateAll((els) => els.map((el) => ({ width: el.getBoundingClientRect().width, cut: el.scrollWidth > el.clientWidth })));
+    expect(names.length).toBeGreaterThan(30);
+    // Every name is drawn whole, none squeezed to a sliver.
+    expect(names.filter((n) => n.cut || n.width < 10)).toEqual([]);
+    const row = page.locator('.view-tab-list');
+    expect(await row.evaluate((el) => el.scrollWidth > el.clientWidth)).toBe(true);
+    await expect(page.locator('.view-tab.active')).toBeInViewport();
 });

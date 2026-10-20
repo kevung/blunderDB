@@ -235,3 +235,13 @@ describe('DuelBoardPrompt', () => {
         expect(queryByTestId('duel-validate')).not.toBeNull();
     });
 });
+
+describe('the tab and library keys during a Duel', () => {
+    test('reach their handler, which refuses with a message instead of swallowing them', () => {
+        open({ side: 0, kind: 'move', position: opening });
+        const key = (/** @type {KeyboardEventInit} */ init) => new KeyboardEvent('keydown', { bubbles: true, cancelable: true, ...init });
+        expect(duelKeyGuard(key({ key: 'PageDown', ctrlKey: true, shiftKey: true }))).toBe(false);
+        expect(duelKeyGuard(key({ key: 'PageUp', ctrlKey: true }))).toBe(false);
+        expect(duelKeyGuard(key({ key: 'PageDown' }))).toBe(true);
+    });
+});

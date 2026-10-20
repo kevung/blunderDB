@@ -187,6 +187,7 @@
         "newDatabase": "Nouvelle base de données",
         "nextPosition": "Position suivante",
         "openDatabase": "Ouvrir une base de données",
+        "openInNewGroup": "dans un nouveau groupe",
         "pastePosition": "Coller la position",
         "pastePositionSearchTip": "Coller la position sur le plateau",
         "previousPosition": "Position précédente",
@@ -3087,6 +3088,7 @@
         "cmd": {
             "new": "Nouvelle base de données",
             "open": "Ouvrir une base de données",
+            "open_group": "Ouvrir une base dans un nouveau groupe",
             "import": "Importer des positions ou des matchs",
             "import_db": "Fusionner une autre base de données",
             "export_db": "Exporter la base de données",
@@ -3519,8 +3521,16 @@
         "close": "Fermer la bibliothèque et son groupe",
         "unnamed": "Sans base",
         "alreadyOpen": "{name} est déjà ouverte : son groupe est affiché",
-        "busy": "Une tâche écrit dans la bibliothèque active : attendez sa fin ou annulez-la avant de changer de groupe",
+        "busy": "Une tâche ({job}) écrit dans la bibliothèque active : attendez sa fin ou annulez-la avant de changer de bibliothèque",
         "duel": "Un Duel est en cours : suspendez-le ou terminez-le avant de changer de bibliothèque",
-        "training": "Une séance d'entraînement est en cours : terminez-la avant de changer de bibliothèque"
+        "training": "Une séance d'entraînement est en cours : terminez-la avant de changer de bibliothèque",
+        "openLabel": "Autre bibliothèque",
+        "busyBatch": "L'analyse GammonNet par lot écrit dans la bibliothèque active : attendez sa fin ou annulez-la avant de changer de bibliothèque",
+        "busyRollout": "Un rollout écrit dans la bibliothèque active : attendez sa fin ou arrêtez-le (rollout stop) avant de changer de bibliothèque",
+        "busyWatch": "Le dossier surveillé importe dans la bibliothèque active : arrêtez la surveillance (Paramètres, Dossier surveillé) avant de changer de bibliothèque",
+        "busyDisplay": "Le tournoi est affiché sur le réseau du club : arrêtez l'affichage (Direction, Afficher sur le réseau du club) avant de changer de bibliothèque",
+        "switchFailed": "Impossible d'afficher la bibliothèque {name}",
+        "closed": "{name} fermée : {shown} est affichée",
+        "duelViews": "Un Duel est en cours : sa vue reste affichée jusqu'à ce qu'il soit suspendu ou terminé"
     }
 }

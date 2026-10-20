@@ -1,5 +1,6 @@
 <script>
     import { logger } from '../utils/logger.js';
+    import { get as getStore } from 'svelte/store';
     import MinMaxFilterRow from './MinMaxFilterRow.svelte';
     import MatchTournamentPickerModal from './MatchTournamentPickerModal.svelte';
     import Modal from './Modal.svelte';
@@ -14,7 +15,7 @@
     import { NUMERIC_FILTERS, NUMERIC_FILTER_BY_LABEL, createFilterState, clear as clearNumeric, toStore as numericToStore, fromStore as numericFromStore } from '../services/filterModel.js';
     import { filterLibraryStore } from '../stores/filterLibraryStore';
     import { loadFilterLibrary, pinnedFilters, setFilterPinned } from '../services/filterLibraryService.js';
-    import { searchParamsStore, searchEmptyStore } from '../stores/searchParamsStore';
+    import { searchParamsStore, searchEmptyStore, attachSearchForm } from '../stores/searchParamsStore';
     import { databaseLoadedStore, libraryChangedStore } from '../stores/databaseStore';
     import { withDisplayedPositionIDs } from '../services/positionService.js';
     import AssistantPanel from './AssistantPanel.svelte';
@@ -675,9 +676,29 @@
         searchExcludePositionStore.set(saved.excludePosition ? JSON.parse(JSON.stringify(saved.excludePosition)) : emptySearchBoardPosition());
     }
 
+    // The criteria of another library replace these on a switch (libraryScope.js): none is blank.
     function restoreSearchState() {
-        const saved = $searchParamsStore;
-        if (!saved) return;
+        // Read from the store itself: a switch writes it and asks for it back in the same turn.
+        const saved = getStore(searchParamsStore);
+        if (!saved) {
+            [...availableFilters, 'Matches & Tournaments'].forEach((f) => (filterEnabled[f] = false));
+            clearNumeric(numeric);
+            searchInCurrentResults = false;
+            searchText = '';
+            commentMode = 'contains';
+            movePattern = '';
+            matchIDsSelected = [];
+            tournamentIDsSelected = [];
+            playerName = '';
+            diceRollOption = 'both';
+            cubeSubType = 'all';
+            creationDateOption = 'min';
+            creationDateMin = '';
+            creationDateMax = '';
+            creationDateRangeMin = '';
+            creationDateRangeMax = '';
+            return;
+        }
         filterEnabled = { ...saved.filterEnabled };
         searchInCurrentResults = saved.searchInCurrentResults;
         searchText = saved.searchText;
@@ -698,6 +719,22 @@
 
     /** @type {(() => void) | null} */
     let unregisterKeys = null;
+    // Set while the form holds criteria just handed over by a library switch: the switch may
+    // unmount the panel in the same turn, and its unmount must not write the form back over them.
+    let handedOver = false;
+    const detachForm = attachSearchForm({
+        save: saveSearchState,
+        restore: () => {
+            handedOver = true;
+            setTimeout(() => (handedOver = false), 0);
+            restoreSearchState();
+            if (structureMode === 'exclude') {
+                structureMode = 'include';
+                searchStructureModeStore.set('include');
+            }
+            includeBoardStash = null;
+        }
+    });
 
     onMount(async () => {
         loadAssistantSettings();
@@ -707,7 +744,8 @@
     });
 
     onDestroy(() => {
-        saveSearchState();
+        detachForm();
+        if (!handedOver) saveSearchState();
         // Don't leak the offered-cube flag into normal position editing.
         searchOfferedCubeStore.set(false);
         unregisterKeys?.();

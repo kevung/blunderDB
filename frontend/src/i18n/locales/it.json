@@ -187,6 +187,7 @@
         "newDatabase": "Nuovo database",
         "nextPosition": "Posizione successiva",
         "openDatabase": "Apri database",
+        "openInNewGroup": "in un nuovo gruppo",
         "pastePosition": "Incolla posizione",
         "pastePositionSearchTip": "Incolla la posizione sulla tavola",
         "previousPosition": "Posizione precedente",
@@ -3087,6 +3088,7 @@
         "cmd": {
             "new": "Nuovo database",
             "open": "Apri un database",
+            "open_group": "Apri un database in un nuovo gruppo",
             "import": "Importa posizioni o match",
             "import_db": "Unisci un altro database",
             "export_db": "Esporta il database",
@@ -3519,8 +3521,16 @@
         "close": "Chiudi la libreria e il suo gruppo",
         "unnamed": "Nessun database",
         "alreadyOpen": "{name} è già aperta: viene mostrato il suo gruppo",
-        "busy": "Un'attività sta scrivendo nella libreria attiva: attendine la fine o annullala prima di cambiare gruppo",
+        "busy": "Un'attività ({job}) sta scrivendo nella libreria attiva: attendine la fine o annullala prima di cambiare libreria",
         "duel": "Un Duello è in corso: sospendilo o terminalo prima di cambiare libreria",
-        "training": "Una sessione di allenamento è in corso: terminala prima di cambiare libreria"
+        "training": "Una sessione di allenamento è in corso: terminala prima di cambiare libreria",
+        "openLabel": "Altra libreria",
+        "busyBatch": "L'analisi in blocco GammonNet sta scrivendo nella libreria attiva: attendine la fine o annullala prima di cambiare libreria",
+        "busyRollout": "Un rollout sta scrivendo nella libreria attiva: attendine la fine o fermalo (rollout stop) prima di cambiare libreria",
+        "busyWatch": "La cartella sorvegliata importa nella libreria attiva: ferma la sorveglianza (Impostazioni, Cartella sorvegliata) prima di cambiare libreria",
+        "busyDisplay": "Il torneo è mostrato sulla rete del club: ferma la visualizzazione (Direzione, Mostra sulla rete del club) prima di cambiare libreria",
+        "switchFailed": "Impossibile mostrare la libreria {name}",
+        "closed": "{name} chiusa: è mostrata {shown}",
+        "duelViews": "È in corso un Duello: la sua vista resta sullo schermo finché non viene sospeso o terminato"
     }
 }

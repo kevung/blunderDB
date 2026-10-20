@@ -187,6 +187,7 @@
         "newDatabase": "Nueva base de datos",
         "nextPosition": "Posición siguiente",
         "openDatabase": "Abrir base de datos",
+        "openInNewGroup": "en un grupo nuevo",
         "pastePosition": "Pegar posición",
         "pastePositionSearchTip": "Pegar posición en el tablero",
         "previousPosition": "Posición anterior",
@@ -3087,6 +3088,7 @@
         "cmd": {
             "new": "Nueva base de datos",
             "open": "Abrir una base de datos",
+            "open_group": "Abrir una base de datos en un grupo nuevo",
             "import": "Importar posiciones o matches",
             "import_db": "Fusionar otra base de datos",
             "export_db": "Exportar la base de datos",
@@ -3519,8 +3521,16 @@
         "close": "Cerrar la biblioteca y su grupo",
         "unnamed": "Sin base",
         "alreadyOpen": "{name} ya está abierta: se muestra su grupo",
-        "busy": "Una tarea está escribiendo en la biblioteca activa: espere a que termine o cancélela antes de cambiar de grupo",
+        "busy": "Una tarea ({job}) está escribiendo en la biblioteca activa: espere a que termine o cancélela antes de cambiar de biblioteca",
         "duel": "Hay un Duelo en curso: suspéndelo o termínalo antes de cambiar de biblioteca",
-        "training": "Hay una sesión de entrenamiento en curso: termínala antes de cambiar de biblioteca"
+        "training": "Hay una sesión de entrenamiento en curso: termínala antes de cambiar de biblioteca",
+        "openLabel": "Otra biblioteca",
+        "busyBatch": "El análisis por lotes GammonNet está escribiendo en la biblioteca activa: espere a que termine o cancélelo antes de cambiar de biblioteca",
+        "busyRollout": "Un rollout está escribiendo en la biblioteca activa: espere a que termine o deténgalo (rollout stop) antes de cambiar de biblioteca",
+        "busyWatch": "La carpeta vigilada importa en la biblioteca activa: detenga la vigilancia (Ajustes, Carpeta vigilada) antes de cambiar de biblioteca",
+        "busyDisplay": "El torneo se muestra en la red del club: detenga la presentación (Dirección, Mostrar en la red del club) antes de cambiar de biblioteca",
+        "switchFailed": "No se pudo mostrar la biblioteca {name}",
+        "closed": "{name} cerrada: se muestra {shown}",
+        "duelViews": "Hay un Duelo en curso: su vista permanece en pantalla hasta que se suspenda o termine"
     }
 }

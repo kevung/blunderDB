@@ -14,6 +14,22 @@
     const grouped = $derived($tabGroupsStore.length > 1);
     const tabCount = $derived($tabGroupsStore.reduce((n, g) => n + g.views.length, 0));
 
+    // Too many tabs for the window: the row scrolls rather than squeezing each tab to a sliver.
+    // The wheel scrolls it sideways, and the tab shown is kept in sight.
+    /** @type {HTMLElement | undefined} */
+    let tabList = $state();
+    /** @param {WheelEvent} event */
+    function scrollSideways(event) {
+        if (!tabList || event.deltaX !== 0 || tabList.scrollWidth <= tabList.clientWidth) return;
+        tabList.scrollLeft += event.deltaY;
+        event.preventDefault();
+    }
+    $effect(() => {
+        void $activeViewId;
+        void $tabGroupsStore;
+        tabList?.querySelector('.view-tab.active')?.scrollIntoView?.({ block: 'nearest', inline: 'nearest' });
+    });
+
     /**
      * A tab of the group on screen switches view; a tab of another group brings its library and
      * that view in one gesture.
@@ -116,7 +132,7 @@
      view or a second library. -->
 <div class="view-tabs" class:collapsed={tabCount <= 1}>
     {#if tabCount > 1}
-        <div class="view-tab-list" role="tablist">
+        <div class="view-tab-list" role="tablist" bind:this={tabList} onwheel={scrollSideways}>
             {#each $tabGroupsStore as group (group.id)}
                 {#if grouped}
                     <div
@@ -165,7 +181,9 @@
     <button class="add-btn" onclick={() => addView()} title={$t('viewTabs.newView')}
         >+{#if tabCount <= 1}<span class="add-label">{$t('viewTabs.newView')}</span>{/if}</button
     >
-    <button class="group-btn" data-testid="open-library-group" onclick={openInNewGroup} title={$t('libraryGroups.openInNewGroup')}>&#x29C9;</button>
+    <button class="group-btn" data-testid="open-library-group" onclick={openInNewGroup} title={$t('libraryGroups.openInNewGroup')} aria-label={$t('libraryGroups.openInNewGroup')}
+        >&#x29C9;{#if !grouped}<span class="add-label">{$t('libraryGroups.openLabel')}</span>{/if}</button
+    >
 </div>
 
 <style>
@@ -201,6 +219,17 @@
         display: flex;
         align-items: stretch;
         min-width: 0;
+        overflow-x: auto;
+        scrollbar-width: none;
+    }
+
+    .view-tab-list::-webkit-scrollbar {
+        display: none;
+    }
+
+    .add-btn,
+    .group-btn {
+        flex-shrink: 0;
     }
 
     .view-tab {
@@ -215,7 +244,7 @@
         white-space: nowrap;
         user-select: none;
         transition: background 0.1s;
-        min-width: 0;
+        flex-shrink: 0;
     }
 
     .view-tab:hover {
@@ -298,12 +327,14 @@
         padding: 0 6px 0 8px;
         margin-left: 6px;
         font-size: var(--font-size-small);
-        color: var(--color-surface);
-        background: var(--group-color);
-        opacity: 0.7;
+        /* A group waiting: the theme's own text on the bar, its colour as a top band. The text
+           never sits on the hue with an opacity, which no theme keeps legible. */
+        color: var(--color-text);
+        box-shadow: inset 0 3px 0 var(--group-color);
         cursor: pointer;
         white-space: nowrap;
         user-select: none;
+        flex-shrink: 0;
         border-radius: var(--radius) var(--radius) 0 0;
     }
 
@@ -311,8 +342,11 @@
         margin-left: 0;
     }
 
+    /* The group on screen: white on its hue, every hue dark enough for 4.5:1 (tokens.css). */
     .group-header.active {
-        opacity: 1;
+        color: var(--group-text);
+        background: var(--group-color);
+        box-shadow: none;
         font-weight: 600;
     }
 

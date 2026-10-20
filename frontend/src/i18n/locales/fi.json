@@ -187,6 +187,7 @@
         "newDatabase": "Uusi tietokanta",
         "nextPosition": "Seuraava asema",
         "openDatabase": "Avaa tietokanta",
+        "openInNewGroup": "uudessa ryhmässä",
         "pastePosition": "Liitä asema",
         "pastePositionSearchTip": "Liitä asema laudalle",
         "previousPosition": "Edellinen asema",
@@ -3087,6 +3088,7 @@
         "cmd": {
             "new": "Uusi tietokanta",
             "open": "Avaa tietokanta",
+            "open_group": "Avaa tietokanta uudessa ryhmässä",
             "import": "Tuo asemia tai otteluita",
             "import_db": "Yhdistä toinen tietokanta",
             "export_db": "Vie tietokanta",
@@ -3519,8 +3521,16 @@
         "close": "Sulje kirjasto ja sen ryhmä",
         "unnamed": "Ei tietokantaa",
         "alreadyOpen": "{name} on jo auki: sen ryhmä näytetään",
-        "busy": "Tehtävä kirjoittaa aktiiviseen kirjastoon: odota sen valmistumista tai peruuta se ennen ryhmän vaihtoa",
+        "busy": "Tehtävä ({job}) kirjoittaa aktiiviseen kirjastoon: odota sen päättymistä tai peruuta se ennen kirjaston vaihtamista",
         "duel": "Kaksintaistelu on käynnissä: keskeytä tai päätä se ennen kirjaston vaihtamista",
-        "training": "Harjoitusistunto on käynnissä: päätä se ennen kirjaston vaihtamista"
+        "training": "Harjoitusistunto on käynnissä: päätä se ennen kirjaston vaihtamista",
+        "openLabel": "Toinen kirjasto",
+        "busyBatch": "GammonNet-eräanalyysi kirjoittaa aktiiviseen kirjastoon: odota sen päättymistä tai peruuta se ennen kirjaston vaihtamista",
+        "busyRollout": "Rollout kirjoittaa aktiiviseen kirjastoon: odota sen päättymistä tai pysäytä se (rollout stop) ennen kirjaston vaihtamista",
+        "busyWatch": "Valvottu kansio tuo aktiiviseen kirjastoon: lopeta valvonta (Asetukset, Valvottu kansio) ennen kirjaston vaihtamista",
+        "busyDisplay": "Turnaus näytetään kerhon verkossa: lopeta näyttäminen (Johtaminen, Näytä seuran verkossa) ennen kirjaston vaihtamista",
+        "switchFailed": "Kirjastoa {name} ei voitu näyttää",
+        "closed": "{name} suljettu: {shown} näytetään",
+        "duelViews": "Kaksintaistelu on käynnissä: sen näkymä pysyy näytöllä, kunnes se keskeytetään tai päättyy"
     }
 }

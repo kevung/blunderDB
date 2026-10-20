@@ -40,11 +40,13 @@ import { searchHistoryStore, lastSearchStore } from './searchHistoryStore.js';
 import { filterLibraryStore } from './filterLibraryStore.js';
 import { directionSummariesStore } from './directionStore.js';
 import { searchExcludePositionStore, emptySearchBoardPosition } from './searchExcludePositionStore.js';
+import { searchCriteriaStore, searchEmptyStore } from './searchParamsStore.js';
 import { positionBeforeFilterLibraryStore, positionIndexBeforeFilterLibraryStore, lastVisitedMatchStore } from './positionStore.js';
 import { rankedDistancesStore, rankedTargetStore } from './rankedStore.js';
 import { rolloutStore, idleRollout } from './rolloutStore.js';
 import { databaseReadOnlyStore } from './databaseStore.js';
 import { commandHistoryStore } from './commandHistoryStore.js';
+import { matchListStore, emptyMatchList } from './matchListStore.js';
 
 /**
  * @typedef {import('svelte/store').Writable<any>} AnyWritable
@@ -98,8 +100,14 @@ export const PHOTOGRAPHED = {
     positionBeforeFilterLibraryStore: [positionBeforeFilterLibraryStore, () => null],
     positionIndexBeforeFilterLibraryStore: [positionIndexBeforeFilterLibraryStore, () => -1],
     searchExcludePositionStore: [searchExcludePositionStore, () => emptySearchBoardPosition()],
+    // The Search criteria, typed or run: match and tournament ids name rows of this library only.
+    searchCriteriaStore: [searchCriteriaStore, () => null],
+    searchEmptyStore: [searchEmptyStore, () => false],
     rankedDistancesStore: [rankedDistancesStore, () => new Map()],
     rankedTargetStore: [rankedTargetStore, () => 0],
+    // The Matches list as it was painted: a return repaints nothing, and the list is read again
+    // only when the library's match count moved meanwhile (refreshAfterShow).
+    matchListStore: [matchListStore, () => emptyMatchList()],
     rolloutStore: [rolloutStore, () => idleRollout()],
     databaseReadOnlyStore: [databaseReadOnlyStore, () => false]
 };
@@ -120,9 +128,9 @@ export const PHOTOGRAPHED_ELSEWHERE = [
     'statusBarModeStore',
     'databasePathStore',
     'databaseLoadedStore',
-    'searchParamsStore',
-    'searchEmptyStore',
     'libraryCountsStore',
+    // Through searchCriteriaStore, which flushes the Search form on screen first.
+    'searchParamsStore',
     // Derived from photographed stores.
     'transcriptionCursorStore',
     'lessonStepStore',
@@ -167,8 +175,6 @@ export const RELOADED_ELSEWHERE = [
     'directionViewLoadedStore',
     'directionPageShownStore',
     'hallOpenStore',
-    // MatchPanel reloads on matchPanelRefreshTriggerStore, bumped once the group is shown.
-    'matchListStore',
     // Keyed on databasePathStore, which differs from one group to the next.
     'ankiDueStore',
     'listBlunderCountStore',

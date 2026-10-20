@@ -81,6 +81,9 @@ function copyEvalContext(context) {
 }
 
 let nextViewId = 2;
+// Ids are unique across the library groups (the tab bar keys on them); the number in a tab's
+// name counts within its library, so a library opened in a new group starts again at #1.
+let nextViewNumber = 2;
 
 function createViewStore() {
     const views = writable(/** @type {ViewState[]} */ ([createDefaultView(1)]));
@@ -263,7 +266,7 @@ function createViewStore() {
             list: current.list,
             evalContext: copyEvalContext(current.evalContext),
             id,
-            name: options.name ? options.name(id, currentId) : `#${id}`
+            name: options.name ? options.name(id, currentId) : `#${nextViewNumber++}`
         };
         views.update((vs) => [...vs, newView]);
         activeViewId.set(id);
@@ -297,6 +300,7 @@ function createViewStore() {
         const vs = get(views);
         return JSON.stringify({
             nextViewId,
+            nextViewNumber,
             activeViewId: get(activeViewId),
             views: vs.map((v) => {
                 const mode = v.mode || 'NORMAL';
@@ -326,7 +330,8 @@ function createViewStore() {
             const data = JSON.parse(json);
             if (!data || !data.views || data.views.length === 0) return false;
 
-            nextViewId = data.nextViewId || data.views.length + 1;
+            nextViewId = Math.max(nextViewId, data.nextViewId || data.views.length + 1);
+            nextViewNumber = data.nextViewNumber || data.nextViewId || data.views.length + 1;
 
             // Side by side: each replay reads at most a first window, as a search does.
             const lists = await Promise.all(data.views.map(async (/** @type {any} */ sv) => (await resolveListFn(sv.origin || LIBRARY_ORIGIN)) || { ids: [] }));
@@ -394,22 +399,24 @@ function createViewStore() {
      */
     function takeGroup() {
         saveCurrentViewState();
-        return { views: get(views), activeViewId: get(activeViewId) };
+        return { views: get(views), activeViewId: get(activeViewId), nextNumber: nextViewNumber };
     }
 
     /**
      * Put back the views of a library group, or one empty view for a library opened in a new
      * group. The shown view comes back from its photograph: its board is not fetched again.
-     * @param {{ views: ViewState[], activeViewId: number } | null} group
+     * @param {{ views: ViewState[], activeViewId: number, nextNumber?: number } | null} group
      */
     function giveGroup(group) {
         if (!group || group.views.length === 0) {
-            const fresh = createDefaultView(nextViewId++);
+            const fresh = { ...createDefaultView(nextViewId++), name: '#1' };
+            nextViewNumber = 2;
             views.set([fresh]);
             activeViewId.set(fresh.id);
             restoreViewState(fresh, { replayIndex: false });
             return;
         }
+        nextViewNumber = group.nextNumber ?? group.views.length + 1;
         views.set(group.views);
         activeViewId.set(group.activeViewId);
         const target = group.views.find((v) => v.id === group.activeViewId) || group.views[0];

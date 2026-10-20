@@ -187,6 +187,7 @@
         "newDatabase": "New Database",
         "nextPosition": "Next Position",
         "openDatabase": "Open Database",
+        "openInNewGroup": "in a new group",
         "pastePosition": "Paste Position",
         "pastePositionSearchTip": "Paste Position to board",
         "previousPosition": "Previous Position",
@@ -3087,6 +3088,7 @@
         "cmd": {
             "new": "New database",
             "open": "Open a database",
+            "open_group": "Open a database in a new group",
             "import": "Import positions or matches",
             "import_db": "Merge another database",
             "export_db": "Export the database",
@@ -3519,8 +3521,16 @@
         "close": "Close the library and its group",
         "unnamed": "No database",
         "alreadyOpen": "{name} is already open: its group is shown",
-        "busy": "A task is writing the active library: wait for it or cancel it before switching groups",
+        "busy": "A task ({job}) is writing the active library: wait for it or cancel it before switching library",
         "duel": "A Duel is in progress: suspend or finish it before switching library",
-        "training": "A training session is in progress: finish it before switching library"
+        "training": "A training session is in progress: finish it before switching library",
+        "openLabel": "Another library",
+        "busyBatch": "The GammonNet batch analysis is writing the active library: wait for it or cancel it before switching library",
+        "busyRollout": "A rollout is writing the active library: wait for it or stop it (rollout stop) before switching library",
+        "busyWatch": "The watched folder imports into the active library: stop the watch (Settings, Watched folder) before switching library",
+        "busyDisplay": "The tournament is shown on the club network: stop showing it (Direction, Show on the club network) before switching library",
+        "switchFailed": "Could not show the library {name}",
+        "closed": "{name} closed: {shown} is shown",
+        "duelViews": "A Duel is in progress: its view stays on screen until it is suspended or finished"
     }
 }
