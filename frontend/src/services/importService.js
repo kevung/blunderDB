@@ -504,6 +504,17 @@ export async function importSingleFile(filePath) {
         await importCaptureFile(filePath);
         return { type: 'capture' };
     }
+    if (refuseConcurrentImport()) return null;
+    fileImportBusyStore.set(true);
+    try {
+        return await importSingleFileGuarded(filePath);
+    } finally {
+        fileImportBusyStore.set(false);
+    }
+}
+
+/** @param {string} filePath */
+async function importSingleFileGuarded(filePath) {
     // A single dropped file gets the end-of-import report only when it
     // produced a MATCH; a lone position just lands on the board.
     const batchID = await beginImportBatch(filePath, extensionOf(filePath));
@@ -843,16 +854,21 @@ function refuseConcurrentImport() {
  * @returns {Promise<{succeeded: number, skipped: number, failed: number} | null>}
  */
 export async function importWatchedFiles(files) {
+    if (refuseConcurrentImport()) return null;
     const isLibrary = (/** @type {string} */ f) => f.toLowerCase().endsWith('.db');
-    const merged = await mergeWatchedLibraries(files.filter(isLibrary));
     const others = files.filter((f) => !isLibrary(f));
-    if (others.length === 0) return merged;
     const group = get(activeGroupId);
+    // The lock is held across the merge and the file import: nothing else may start between them.
+    fileImportBusyStore.set(true);
+    let merged;
     try {
-        await importMultipleFilesCore(others, { quiet: true });
+        merged = await mergeWatchedLibraries(files.filter(isLibrary));
+        if (others.length === 0) return merged;
+        await runFileImport(others, { quiet: true });
     } finally {
-        await maybeAutoAnalyzeAfterImport(group);
+        fileImportBusyStore.set(false);
     }
+    await maybeAutoAnalyzeAfterImport(group);
     const r = get(fileImportResultsStore);
     return { succeeded: r.succeeded + merged.succeeded, skipped: r.skipped + merged.skipped, failed: r.failed + merged.failed };
 }

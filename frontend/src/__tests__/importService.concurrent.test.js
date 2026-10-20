@@ -18,6 +18,14 @@ const ImportFiles = vi.fn(
 );
 const QueueGammonNetBatchIn = vi.fn();
 const CountPositionsWithoutAnalysis = vi.fn(async () => 5);
+/** @type {(v: any) => void} */
+let finishMerge = () => {};
+const CommitImportDatabase = vi.fn(
+    () =>
+        new Promise((resolve) => {
+            finishMerge = () => resolve({ added: 1, matches: 1 });
+        })
+);
 
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
     OpenImportDatabaseDialog: vi.fn(),
@@ -45,7 +53,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     LoadComment: vi.fn(),
     SaveComment: vi.fn(),
     AnalyzeImportDatabase: vi.fn(),
-    CommitImportDatabase: vi.fn(),
+    CommitImportDatabase,
     CancelImport: vi.fn(),
     ImportXGMatch: vi.fn(),
     ImportGnuBGMatch: vi.fn(),
@@ -69,7 +77,7 @@ const setStatusBarMessage = vi.fn();
 vi.mock('../services/databaseService.js', () => ({ setStatusBarMessage: (/** @type {any} */ m) => setStatusBarMessage(m), openDatabaseByPath: vi.fn() }));
 vi.mock('../services/positionService.js', () => ({ loadAllPositions: vi.fn() }));
 
-const { importMultipleFiles } = await import('../services/importService.js');
+const { importMultipleFiles, importWatchedFiles, importSingleFile } = await import('../services/importService.js');
 const { activeGroupId, groupIdsStore, groupActivityStore } = await import('../stores/groupActivityStore.js');
 const { databasePathStore } = await import('../stores/databaseStore.js');
 
@@ -103,5 +111,45 @@ describe('one file import at a time, attached to its group', () => {
         await vi.waitFor(() => expect(ImportFiles).toHaveBeenCalledTimes(2));
         finishA();
         await next;
+    });
+});
+
+describe('the import lock covers every entry point', () => {
+    test('a user import during a watched merge is refused', async () => {
+        vi.clearAllMocks();
+        databasePathStore.set('/libs/a.db');
+        const watched = importWatchedFiles(['/incoming/x.db']);
+        await vi.waitFor(() => expect(CommitImportDatabase).toHaveBeenCalledTimes(1));
+        expect(await importMultipleFiles(['/b.xg'])).toBeNull();
+        expect(ImportFiles).not.toHaveBeenCalled();
+        expect(setStatusBarMessage).toHaveBeenCalledWith({ i18nKey: 'status.importBusy', i18nParams: null });
+        finishMerge();
+        await watched;
+        // The lock is released afterwards.
+        const next = importMultipleFiles(['/c.xg']);
+        await vi.waitFor(() => expect(ImportFiles).toHaveBeenCalledTimes(1));
+        finishA();
+        await next;
+    });
+
+    test('a watched import is refused while an import runs', async () => {
+        vi.clearAllMocks();
+        const first = importMultipleFiles(['/a.xg']);
+        await vi.waitFor(() => expect(ImportFiles).toHaveBeenCalledTimes(1));
+        expect(await importWatchedFiles(['/incoming/x.db'])).toBeNull();
+        expect(CommitImportDatabase).not.toHaveBeenCalled();
+        finishA();
+        await first;
+    });
+
+    test('a single dropped file is refused while a multiple import runs', async () => {
+        vi.clearAllMocks();
+        const first = importMultipleFiles(['/a.xg']);
+        await vi.waitFor(() => expect(ImportFiles).toHaveBeenCalledTimes(1));
+        expect(await importSingleFile('/one.xg')).toBeNull();
+        expect(BeginImportBatch).toHaveBeenCalledTimes(1);
+        expect(setStatusBarMessage).toHaveBeenCalledWith({ i18nKey: 'status.importBusy', i18nParams: null });
+        finishA();
+        await first;
     });
 });
