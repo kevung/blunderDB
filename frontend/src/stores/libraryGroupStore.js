@@ -17,6 +17,7 @@ import { bumpTranscriptionLibrary } from './transcriptionStore.js';
 import { matchListStore } from './matchListStore.js';
 import { directionSessionState, forgetDirection, restoreDirection } from './directionStore.js';
 import { takeScopedState, putScopedState } from './libraryScope.js';
+import { forgetTransferGroup } from './transferBasketStore.js';
 import { groupIdsStore, activeGroupId, takeActivity, importForegroundStore as importForegroundStoreRef } from './groupActivityStore.js';
 
 export { groupIdsStore, activeGroupId, groupActivityStore, importForegroundStore, groupOnScreen, noteGroupJob } from './groupActivityStore.js';
@@ -318,6 +319,7 @@ export async function closeGroup(id) {
     });
     groupIdsStore.update((list) => list.filter((g) => g !== id));
     takeActivity(id);
+    forgetTransferGroup(id);
     // Says what happened, and replaces whatever an earlier refusal left there.
     statusBarTextStore.set(tMsg('libraryGroups.closed', { name: closing, shown: groupName(get(databasePathStore)) }));
     return true;

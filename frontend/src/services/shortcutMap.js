@@ -198,6 +198,7 @@ export const SHORTCUTS = {
             'Shift+J',
             'Shift+K',
             'b',
+            'Shift+B',
             'p',
             'm',
             'r',

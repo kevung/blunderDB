@@ -3576,5 +3576,28 @@
             "unscored": "nicht bewertet",
             "otherMet": "andere MET"
         }
+    },
+    "transfer": {
+        "locked": "Diese Bibliotheksgruppe ist gesperrt: nichts wird hineinkopiert (in ihrer Kopfzeile entsperren)",
+        "nothing": "Nichts zu kopieren: diese Zeilen sind bereits in dieser Bibliothek",
+        "running": "Kopiere in diese Bibliothek…",
+        "failed": "Kopieren fehlgeschlagen: {error}",
+        "cancelled": "Kopieren abgebrochen: bereits Zusammengeführtes bleibt",
+        "done": "Kopiert: {positions} neue Positionen, {matches} neue Matches ({held} bereits vorhanden), {collections} Sammlungen, {lessons} Lektionen",
+        "doneWithErrors": "Kopiert: {positions} neue Positionen, {matches} neue Matches ({held} bereits vorhanden), {collections} Sammlungen, {lessons} Lektionen; {failed} Teil(e) fehlgeschlagen",
+        "basketDraft": "Speichern Sie die Position zuerst: nur eine gespeicherte Position kommt in den Korb",
+        "basketIn": "In den Korb ({n})",
+        "basketOut": "Aus dem Korb ({n})",
+        "basketEmpty": "Der Korb ist leer",
+        "lockOn": "Gruppe gesperrt: nichts kann hineinkopiert werden",
+        "lockOff": "Gruppe entsperrt",
+        "lockGroup": "Diese Gruppe sperren: jede Kopie hinein verweigern",
+        "unlockGroup": "Diese Gruppe entsperren",
+        "basket": "Korb",
+        "basketTitle": "Transferkorb: {n} Zeile(n) — auf eine Gruppe ziehen oder klicken zum Ausleeren (Umschalt+B fügt die Position hinzu)",
+        "pourInto": "In {name} ausleeren",
+        "emptyBasket": "Korb leeren",
+        "dragPosition": "Auf die Kopfzeile einer anderen Bibliothek ziehen, um diese Position dorthin zu kopieren",
+        "dragLesson": "Auf die Kopfzeile einer anderen Bibliothek ziehen, um diese Lektion dorthin zu kopieren"
     }
 }

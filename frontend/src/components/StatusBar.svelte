@@ -15,7 +15,7 @@
     import { transcriptionPromptStore, transcriptionNoticeStore } from '../stores/transcriptionStore.js';
     import { showFileImportModalStore, fileImportModeStore, fileImportMinimizedStore, fileImportProgressStore, fileImportGroupStore } from '../stores/importModalStore.js';
     import { activeGroupId, noteGroupJob } from '../stores/groupActivityStore.js';
-    import { positionsStore, matchContextStore } from '../stores/positionStore';
+    import { positionsStore, matchContextStore, positionStore as boardPositionStore } from '../stores/positionStore';
     import { commandHistoryStore } from '../stores/commandHistoryStore';
     import { gammonNetBatchStore } from '../stores/gammonNetBatchStore';
     import { maintenanceStore, maintenanceEndedStore } from '../stores/maintenanceStore.js';
@@ -24,6 +24,7 @@
     import { EventsOn } from '../../wailsjs/runtime/runtime.js';
     import { t, tMsg, resolveStatusMessage } from '../i18n';
     import { getCommandSuggestions } from '../commandVocabulary.js';
+    import { libraryDrag } from '../utils/libraryDrag.js';
 
     /** @type {function(string): void} */
     let { onCommand = (_cmd) => {} } = $props();
@@ -389,7 +390,14 @@
             {$matchContextStore.movePositions[$matchContextStore.currentIndex]?.game_number || 1}/{lastGameNumber}</span
         >
     {:else}
-        <span class="position-info">{$positionsStore.length > 0 ? $currentPositionIndexStore + 1 : 0} / {$positionsStore.length}</span>
+        <!-- The position on the board, carried from its counter onto another library group. -->
+        <span
+            class="position-info"
+            data-testid="position-counter"
+            title={$t('transfer.dragPosition')}
+            use:libraryDrag={() => ($boardPositionStore?.id ? { group: $activeGroupId, kind: 'position', id: $boardPositionStore.id, label: `#${$boardPositionStore.id}` } : null)}
+            >{$positionsStore.length > 0 ? $currentPositionIndexStore + 1 : 0} / {$positionsStore.length}</span
+        >
     {/if}
     <!-- Compteur de bibliothèque : chaque nombre ouvre ce qu'il compte. -->
     {#if $libraryCountsStore}

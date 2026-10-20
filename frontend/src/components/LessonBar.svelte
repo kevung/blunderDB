@@ -6,6 +6,8 @@
     import { lessonStore, lessonStepIndexStore, lessonStepStore, lessonDoneStore } from '../stores/lessonStore.js';
     import { nextStep, previousStep, closeLesson, toggleStepDone } from '../services/lessonService.js';
     import { openLessonEditor } from '../services/lessonService.js';
+    import { libraryDrag } from '../utils/libraryDrag.js';
+    import { activeGroupId } from '../stores/groupActivityStore.js';
 
     let total = $derived($lessonStore?.steps?.length ?? 0);
     let index = $derived($lessonStepIndexStore);
@@ -17,7 +19,12 @@
 {#if $lessonStore && step}
     <div class="lesson-bar" role="region" aria-label={$t('lesson.title')}>
         <div class="head">
-            <span class="name">{$lessonStore.name}</span>
+            <span
+                class="name"
+                data-testid="lesson-name"
+                title={$t('transfer.dragLesson')}
+                use:libraryDrag={() => ($lessonStore ? { group: $activeGroupId, kind: 'lesson', id: $lessonStore.id, label: $lessonStore.name } : null)}>{$lessonStore.name}</span
+            >
             <span class="progress">{$t('lesson.progress', { i: index + 1, n: total })}</span>
             <span class="done-count">{$t('lesson.doneCount', { done: doneCount, n: total })}</span>
             {#if step.title}<span class="step-title">{step.title}</span>{/if}

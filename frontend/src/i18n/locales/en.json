@@ -3576,5 +3576,28 @@
             "unscored": "unscored",
             "otherMet": "other MET"
         }
+    },
+    "transfer": {
+        "locked": "This library group is locked: nothing is poured into it (unlock it from its header)",
+        "nothing": "Nothing to copy: these rows are already in this library",
+        "running": "Copying into this library…",
+        "failed": "The copy failed: {error}",
+        "cancelled": "Copy cancelled: what was already merged stays",
+        "done": "Copied: {positions} new positions, {matches} new matches ({held} already held), {collections} collections, {lessons} lessons",
+        "doneWithErrors": "Copied: {positions} new positions, {matches} new matches ({held} already held), {collections} collections, {lessons} lessons; {failed} part(s) failed",
+        "basketDraft": "Save the position first: only a stored position goes into the basket",
+        "basketIn": "Into the basket ({n})",
+        "basketOut": "Out of the basket ({n})",
+        "basketEmpty": "The basket is empty",
+        "lockOn": "Group locked: nothing can be poured into it",
+        "lockOff": "Group unlocked",
+        "lockGroup": "Lock this group: refuse every copy into it",
+        "unlockGroup": "Unlock this group",
+        "basket": "Basket",
+        "basketTitle": "Transfer basket: {n} row(s) — drag it onto a group, or click to pour it (Shift+B adds the position)",
+        "pourInto": "Pour into {name}",
+        "emptyBasket": "Empty the basket",
+        "dragPosition": "Drag onto another library's header to copy this position there",
+        "dragLesson": "Drag onto another library's header to copy this lesson there"
     }
 }

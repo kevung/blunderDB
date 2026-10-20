@@ -354,6 +354,13 @@ once, and it stays on the Pile whatever becomes of the Duel.
 _Avoid_: bookmark, stack, to-study list, study queue (computed from the error threshold),
 flag (a Flagged Position is a fact of the source file)
 
+**Basket** (interface: *panier*):
+The desktop's list of rows — Positions, Matches, Collections, Lessons — gathered from any
+open library to be poured at once into one library group, by the same transfer as a drag
+onto that group's header. Its gesture mirrors the Pile's (one key in, the same key out), but
+it lives in the application's memory, never in a library, and names each row by its group.
+_Avoid_: cart, clipboard (the clipboard holds one Position as text), Pile (a Collection)
+
 **Anki deck**:
 A set of Positions — or the 36 Score cards — turned into spaced-repetition cards. A deck of
 scores is created on request and filled by the application; the user never enters a score.

@@ -150,7 +150,10 @@ export function dragReorder(node, params) {
             // Safety: remove the blocker after a short delay in case click never fires
             setTimeout(() => node.removeEventListener('click', suppressClick, { capture: true }), 200);
 
-            if (from >= 0 && to >= 0 && from !== to) {
+            // A row released on a library group's header or the basket was carried there
+            // (libraryDrag), not moved within the list.
+            const carried = !!document.elementFromPoint?.(e.clientX, e.clientY)?.closest('[data-library-drop]');
+            if (!carried && from >= 0 && to >= 0 && from !== to) {
                 onReorder(from + indexOffset, to + indexOffset);
             }
         }

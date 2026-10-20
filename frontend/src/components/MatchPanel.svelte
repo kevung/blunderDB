@@ -79,6 +79,8 @@
     import { matchListStore } from '../stores/matchListStore.js';
     import { databaseLoadedStore, databasePathStore } from '../stores/databaseStore';
     import { libraryCountsStore } from '../stores/libraryCountsStore.js';
+    import { libraryDragAttrs } from '../utils/libraryDrag.js';
+    import { activeGroupId } from '../stores/groupActivityStore.js';
 
     /**
      * `embeddedMatchId`: the panel is hosted by another panel (Tournaments) and shows only the sheet of that
@@ -1212,6 +1214,10 @@
                 sortOptions={{ tristate: true }}
                 selectedKey={selectedMatch?.id}
                 rowClass={(/** @type {Match} */ match) => (matchEdit.isEditing(match.id) ? 'match-editing-row' : '')}
+                rowAttrs={(/** @type {Match} */ match) =>
+                    libraryDragAttrs(() =>
+                        matchEdit.isEditing(match.id) ? null : { group: $activeGroupId, kind: 'match', id: match.id, label: `${match.player1_name || '?'} – ${match.player2_name || '?'}` }
+                    )}
                 onSelect={(/** @type {Match} */ match) => {
                     if (!matchEdit.isEditing(match.id)) selectMatch(match);
                 }}

@@ -322,6 +322,35 @@ bibliothèque de l'import. Le dossier surveillé appartient au groupe où il a
 base à fusionner ou un texte de position attend que ce groupe soit de nouveau
 affiché. Fermer un groupe arrête ses tâches et sa surveillance.
 
+**Copier d'une bibliothèque à l'autre.** Une ligne glissée sur l'en-tête d'un
+autre groupe y est copiée, dans un sens comme dans l'autre : un match de la
+liste des matchs, une collection de la liste des collections, une position
+d'une collection ouverte, la position affichée (on la saisit par son compteur
+« n / N » dans la barre d'état) ou la leçon en cours de lecture (par son nom
+dans la barre de la leçon). L'en-tête visé s'entoure d'un pointillé. La copie
+est celle de la commande ``transfer`` : la sélection d'un export, fusionnée
+par l'import natif, avec les analyses, les commentaires et les coups joués ;
+une collection emporte ses positions, un match sa transcription. Ce que la
+bibliothèque d'arrivée tient déjà n'est pas recopié : copier de A vers B puis
+de B vers A ne crée aucun doublon, et rien n'y dit d'où vient la copie. La
+copie tourne en fond, attachée au groupe d'arrivée : son en-tête porte la
+pastille, et la barre d'état dit, au retour, combien de positions et de matchs
+sont nouveaux et combien étaient déjà là.
+
+Le **panier** rassemble des lignes de plusieurs bibliothèques pour les verser
+en une fois. *MAJ-B* y met la position affichée, ou l'en retire, comme *b*
+pour la Pile ; une ligne glissée sur le panier y entre aussi. Le panier, à
+droite de la barre des onglets, montre son compte ; un clic ouvre son menu
+(*Verser dans …* chaque groupe, *Vider le panier*), et le glisser sur
+l'en-tête d'un groupe l'y verse. Il vit en mémoire, jamais dans une base :
+fermer un groupe en retire ses lignes, et il disparaît à la fermeture de
+blunderDB. Une position encore en brouillon doit d'abord être enregistrée.
+
+Le **cadenas** d'un en-tête verrouille son groupe : rien n'y est plus versé,
+ni par glisser ni par le panier, et la barre d'état le dit. Le verrou ne touche
+ni les imports ni les modifications faites dans le groupe ; un second clic le
+lève.
+
 Le changement de groupe reste refusé, au clic comme au clavier, avec un
 message dans la barre d'état qui nomme la cause et dit où l'arrêter, quand ce
 qui tourne suit l'écran : un rollout, dont le résultat s'affiche sur la

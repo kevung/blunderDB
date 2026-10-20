@@ -1,6 +1,8 @@
 <script>
     import { viewStore } from '../stores/viewStore';
     import { tabGroupsStore, activateGroup, closeGroup, groupActivityStore } from '../stores/libraryGroupStore.js';
+    import { transferBasketStore, lockedGroupsStore } from '../stores/transferBasketStore.js';
+    import { libraryDrag } from '../utils/libraryDrag.js';
     import { registerKeys } from '../services/keyDispatch.js';
     import { t } from '../i18n';
 
@@ -12,6 +14,15 @@
 
     // Several libraries open: the bar shows every group, each behind a header in its colour.
     const grouped = $derived($tabGroupsStore.length > 1);
+    // The basket's menu: pour it into a group, or empty it.
+    let basketMenuOpen = $state(false);
+    /** @param {number} id */
+    async function pourInto(id) {
+        basketMenuOpen = false;
+        await (await transfer()).pourBasket(id);
+    }
+    // Loaded on first use, as databaseService: the bar stays light to mount.
+    const transfer = () => import('../services/transferService.js');
     const tabCount = $derived($tabGroupsStore.reduce((n, g) => n + g.views.length, 0));
 
     // Too many tabs for the window: the row scrolls rather than squeezing each tab to a sliver.
@@ -143,6 +154,8 @@
                         title={group.path}
                         data-testid="library-group"
                         data-group-id={group.id}
+                        data-library-drop={group.id}
+                        class:locked={$lockedGroupsStore.has(group.id)}
                         onclick={() => activateGroup(group.id)}
                         onkeydown={(e) => e.target === e.currentTarget && e.key === 'Enter' && activateGroup(group.id)}
                     >
@@ -159,6 +172,27 @@
                                 aria-label={$t(done ? 'libraryGroups.jobDone' : 'libraryGroups.jobRunning')}
                             ></span>
                         {/if}
+                        <button
+                            class="lock-btn"
+                            class:on={$lockedGroupsStore.has(group.id)}
+                            data-testid="library-group-lock"
+                            aria-pressed={$lockedGroupsStore.has(group.id)}
+                            onclick={(e) => {
+                                e.stopPropagation();
+                                transfer().then((m) => m.toggleGroupLock(group.id));
+                            }}
+                            title={$t($lockedGroupsStore.has(group.id) ? 'transfer.unlockGroup' : 'transfer.lockGroup')}
+                            aria-label={$t($lockedGroupsStore.has(group.id) ? 'transfer.unlockGroup' : 'transfer.lockGroup')}
+                        >
+                            <svg viewBox="0 0 16 16" width="11" height="11" aria-hidden="true"
+                                ><rect x="3" y="7" width="10" height="7" rx="1" fill="currentColor" /><path
+                                    d={$lockedGroupsStore.has(group.id) ? 'M5 7V5a3 3 0 0 1 6 0v2' : 'M5 7V5a3 3 0 0 1 6 0'}
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.6"
+                                /></svg
+                            >
+                        </button>
                         <button class="close-btn" onclick={(e) => handleCloseGroup(e, group.id)} title={$t('libraryGroups.close')}>&times;</button>
                     </div>
                 {/if}
@@ -196,6 +230,48 @@
     <button class="group-btn" data-testid="open-library-group" onclick={openInNewGroup} title={$t('libraryGroups.openInNewGroup')} aria-label={$t('libraryGroups.openInNewGroup')}
         >&#x29C9;{#if !grouped}<span class="add-label">{$t('libraryGroups.openLabel')}</span>{/if}</button
     >
+    {#if grouped || $transferBasketStore.length > 0}
+        <!-- The basket: rows of any group, poured at once into one; dragged onto a header, it pours there. -->
+        <div class="basket">
+            <span
+                class="basket-btn"
+                class:filled={$transferBasketStore.length > 0}
+                role="button"
+                tabindex="0"
+                data-testid="transfer-basket"
+                data-library-drop="basket"
+                title={$t('transfer.basketTitle', { n: $transferBasketStore.length })}
+                aria-label={$t('transfer.basketTitle', { n: $transferBasketStore.length })}
+                aria-expanded={basketMenuOpen}
+                onclick={() => (basketMenuOpen = !basketMenuOpen)}
+                onkeydown={(e) => e.key === 'Enter' && (basketMenuOpen = !basketMenuOpen)}
+                use:libraryDrag={() => ($transferBasketStore.length > 0 ? { kind: 'basket', label: $t('transfer.basketTitle', { n: $transferBasketStore.length }) } : null)}
+                >{$t('transfer.basket')}<span class="basket-count">{$transferBasketStore.length}</span></span
+            >
+            {#if basketMenuOpen}
+                <div class="basket-menu" role="menu" data-testid="transfer-basket-menu">
+                    {#each $tabGroupsStore as group (group.id)}
+                        <button
+                            role="menuitem"
+                            data-testid="transfer-basket-pour"
+                            data-group-id={group.id}
+                            disabled={$transferBasketStore.length === 0 || $lockedGroupsStore.has(group.id)}
+                            onclick={() => pourInto(group.id)}>{$t('transfer.pourInto', { name: group.name || $t('libraryGroups.unnamed') })}</button
+                        >
+                    {/each}
+                    <button
+                        role="menuitem"
+                        data-testid="transfer-basket-empty"
+                        disabled={$transferBasketStore.length === 0}
+                        onclick={() => {
+                            basketMenuOpen = false;
+                            transfer().then((m) => m.emptyBasket());
+                        }}>{$t('transfer.emptyBasket')}</button
+                    >
+                </div>
+            {/if}
+        </div>
+    {/if}
 </div>
 
 <style>
@@ -389,6 +465,85 @@
         .group-badge {
             animation: none;
         }
+    }
+    .lock-btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 0 2px;
+        border: none;
+        background: none;
+        color: inherit;
+        opacity: 0.45;
+        cursor: pointer;
+    }
+    .lock-btn.on,
+    .lock-btn:hover {
+        opacity: 1;
+    }
+    /* Where a dragged row would land; a locked header says it takes nothing. */
+    :global(.group-header.library-drop-over),
+    :global(.basket-btn.library-drop-over) {
+        outline: 2px dashed var(--color-primary);
+        outline-offset: -2px;
+    }
+    :global(.group-header.locked.library-drop-over) {
+        outline-color: var(--color-danger);
+        outline-style: solid;
+    }
+    .basket {
+        position: relative;
+        flex-shrink: 0;
+    }
+    .basket-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 2px 8px;
+        font-size: var(--font-size-small);
+        color: var(--color-text-muted);
+        cursor: pointer;
+        user-select: none;
+    }
+    .basket-btn.filled {
+        color: var(--color-text);
+        cursor: grab;
+    }
+    .basket-count {
+        min-width: 14px;
+        padding: 0 4px;
+        border-radius: 7px;
+        text-align: center;
+        background: var(--color-surface-alt);
+        border: 1px solid var(--color-border);
+    }
+    .basket-menu {
+        position: absolute;
+        right: 0;
+        top: 100%;
+        z-index: 20;
+        display: flex;
+        flex-direction: column;
+        min-width: 180px;
+        padding: 4px 0;
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        box-shadow: 0 2px 8px rgb(0 0 0 / 20%);
+    }
+    .basket-menu button {
+        padding: 4px 12px;
+        text-align: left;
+        border: none;
+        background: none;
+        color: var(--color-text);
+        font-size: var(--font-size-small);
+        cursor: pointer;
+    }
+    .basket-menu button:hover:not(:disabled) {
+        background: var(--color-surface-alt);
+    }
+    .basket-menu button:disabled {
+        opacity: 0.5;
+        cursor: default;
     }
     .group-name {
         max-width: 14em;

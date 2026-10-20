@@ -71,3 +71,24 @@ body {
 #app {
     height: 100vh;
 }
+
+/* A row carried towards another library group (utils/libraryDrag.js): its label follows the pointer. */
+.library-drag-ghost {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    padding: 2px 8px;
+    font-size: var(--font-size-small);
+    color: var(--color-text);
+    background: var(--color-surface);
+    border: 1px solid var(--color-primary);
+    border-radius: 3px;
+    pointer-events: none;
+    white-space: nowrap;
+}
+body.library-dragging,
+body.library-dragging * {
+    cursor: grabbing !important;
+    user-select: none;
+}

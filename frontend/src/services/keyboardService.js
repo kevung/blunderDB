@@ -7,6 +7,7 @@ import { selectedMoveStore } from '../stores/analysisStore.js';
 import { viewStore } from '../stores/viewStore.js';
 import { isLetter, isShiftLetter, isBareLetter } from '../utils/keys.js';
 import { togglePile } from './pileService.js';
+import { toggleBasket } from './transferService.js';
 import { duelKeyGuard } from './duelService.js';
 import { directionOwnsKey, directionTabKey, directionLeavesToPage, directionSearchKey } from './directionKeys.js';
 import { directionFullscreenKey, toggleDirectionFullscreen } from './directionFullscreen.js';
@@ -441,6 +442,8 @@ export function handleKeyDown(event) {
         }
     } else if (isBareLetter(event, 'b')) {
         togglePile();
+    } else if (isShiftLetter(event, 'b')) {
+        toggleBasket();
     } else if (isBareLetter(event, 'k')) {
         if (!showComment && !get(selectedMoveStore)) previousPosition();
     } else if (!event.ctrlKey && event.key === 'ArrowRight') {

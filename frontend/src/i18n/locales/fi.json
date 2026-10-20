@@ -3576,5 +3576,28 @@
             "unscored": "arvioimaton",
             "otherMet": "eri MET"
         }
+    },
+    "transfer": {
+        "locked": "Tämä kirjastoryhmä on lukittu: siihen ei kaadeta mitään (avaa lukitus sen otsikosta)",
+        "nothing": "Ei kopioitavaa: nämä rivit ovat jo tässä kirjastossa",
+        "running": "Kopioidaan tähän kirjastoon…",
+        "failed": "Kopiointi epäonnistui: {error}",
+        "cancelled": "Kopiointi peruttu: jo yhdistetty jää",
+        "done": "Kopioitu: {positions} uutta asemaa, {matches} uutta ottelua ({held} jo olemassa), {collections} kokoelmaa, {lessons} oppituntia",
+        "doneWithErrors": "Kopioitu: {positions} uutta asemaa, {matches} uutta ottelua ({held} jo olemassa), {collections} kokoelmaa, {lessons} oppituntia; {failed} osa(a) epäonnistui",
+        "basketDraft": "Tallenna asema ensin: vain tallennettu asema menee koriin",
+        "basketIn": "Koriin ({n})",
+        "basketOut": "Pois korista ({n})",
+        "basketEmpty": "Kori on tyhjä",
+        "lockOn": "Ryhmä lukittu: siihen ei voi kaataa mitään",
+        "lockOff": "Ryhmän lukitus avattu",
+        "lockGroup": "Lukitse tämä ryhmä: hylkää kaikki kopiot siihen",
+        "unlockGroup": "Avaa tämän ryhmän lukitus",
+        "basket": "Kori",
+        "basketTitle": "Siirtokori: {n} rivi(ä) — vedä se ryhmän päälle tai napsauta kaataaksesi (Vaihto+B lisää aseman)",
+        "pourInto": "Kaada kohteeseen {name}",
+        "emptyBasket": "Tyhjennä kori",
+        "dragPosition": "Vedä toisen kirjaston otsikon päälle kopioidaksesi tämän aseman sinne",
+        "dragLesson": "Vedä toisen kirjaston otsikon päälle kopioidaksesi tämän oppitunnin sinne"
     }
 }

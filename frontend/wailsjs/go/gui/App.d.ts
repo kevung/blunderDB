@@ -181,6 +181,8 @@ export function SaveDatabaseDialog():Promise<string>;
 
 export function SetIssuerName(arg1:string):Promise<domain.IssuerIdentityInfo>;
 
+export function SetLibraryGroupLocked(arg1:number,arg2:boolean):Promise<void>;
+
 export function ShowAlert(arg1:string):Promise<void>;
 
 export function ShowQuestionDialog(arg1:string,arg2:string,arg3:Array<string>,arg4:string):Promise<string>;
@@ -212,6 +214,8 @@ export function StopFolderWatch():Promise<void>;
 export function StopTournamentDisplay():Promise<gui.TournamentDisplayStatus>;
 
 export function SuggestWatchFolder():Promise<string>;
+
+export function TransferToGroup(arg1:number,arg2:Array<gui.TransferBatch>):Promise<gui.TransferSummary>;
 
 export function VideoSourceKind(arg1:string):Promise<string>;
 

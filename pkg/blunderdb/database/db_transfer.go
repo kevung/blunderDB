@@ -27,6 +27,20 @@ func (d *Database) TransferTo(ctx context.Context, dst *Database, opts ExportOpt
 	if open := dst.openPath.Load(); open != nil && d.IsOpenDatabase(*open) {
 		return ingest.TransferReport{}, fmt.Errorf("%w: %w", storage.ErrInvalid, ingest.ErrSelfTransfer)
 	}
+	// The source counts it too: a vacuum would close the pool the export
+	// reads through.
+	release, err := d.holdForRead()
+	if err != nil {
+		return ingest.TransferReport{}, err
+	}
+	defer release()
+	// The destination counts the transfer as one of its imports: a vacuum of
+	// it waits, and its CancelImport stops the transfer.
+	imported, done := dst.beginCancellableImport()
+	defer done()
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+	defer context.AfterFunc(imported, cancel)()
 	transferMu.Lock()
 	defer transferMu.Unlock()
 	d.mu.RLock()
@@ -43,4 +57,26 @@ func (d *Database) TransferTo(ctx context.Context, dst *Database, opts ExportOpt
 	// The rows written above carry their blob alone; derive their provenance
 	// now rather than on the next open, as an import of the file would.
 	return rep, dst.backfillAnalysisProvenance(ctx)
+}
+
+// holdForRead counts a reader of d's library among its imports, so that a
+// vacuum is refused while it reads; it is refused itself while one runs.
+func (d *Database) holdForRead() (func(), error) {
+	d.cancelMu.Lock()
+	defer d.cancelMu.Unlock()
+	if d.exchanging {
+		return nil, &BusyError{Job: JobExchange}
+	}
+	g := d.gateLocked()
+	g.mu.Lock()
+	defer g.mu.Unlock()
+	if g.job != nil && g.job.name == JobVacuum {
+		return nil, &BusyError{Job: JobVacuum}
+	}
+	g.imports++
+	return func() {
+		g.mu.Lock()
+		g.imports--
+		g.mu.Unlock()
+	}, nil
 }

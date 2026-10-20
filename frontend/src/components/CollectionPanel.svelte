@@ -41,6 +41,8 @@
     import ReferenceSuggest from './ReferenceSuggest.svelte';
     import { panelKeyGuard } from '../services/keyboardService.js';
     import { registerKeys } from '../services/keyDispatch.js';
+    import { libraryDragAttrs } from '../utils/libraryDrag.js';
+    import { activeGroupId } from '../stores/groupActivityStore.js';
 
     /** @typedef {import('../../wailsjs/go/models').database.Collection} Collection */
     /** @typedef {{ id: number }} PositionRow */
@@ -708,6 +710,8 @@
                 onSelect={(collection, _index, e) => togglePositionInCollection(collection.id, e)}
                 onActivate={(collection) => openCollection(collection)}
                 onReorder={collectionOrder.reorder}
+                rowAttrs={(collection) =>
+                    libraryDragAttrs(() => (collectionEdit.isEditing(collection.id) ? null : { group: $activeGroupId, kind: 'collection', id: collection.id, label: collection.name }))}
                 emptyText={$t('collection.empty')}
                 emptyActions
                 emptyAction={{ label: $t('collection.newButton'), onClick: () => (creating = true) }}
@@ -845,6 +849,7 @@
                 rowClass={(_position, index) => [$currentPositionIndexStore === index ? 'current' : '', selectedPositionIndices.has(index) ? 'multi-selected' : ''].join(' ')}
                 onSelect={(_position, index, e) => selectAndDisplayPosition(index, e)}
                 onReorder={handlePositionReorder}
+                rowAttrs={(position) => libraryDragAttrs(() => (position?.id ? { group: $activeGroupId, kind: 'position', id: position.id, label: `#${position.id}` } : null))}
                 emptyText={$t('collection.emptyCollection')}
             >
                 {#snippet subheader()}

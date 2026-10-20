@@ -346,6 +346,10 @@ export function SetIssuerName(arg1) {
   return window['go']['gui']['App']['SetIssuerName'](arg1);
 }
 
+export function SetLibraryGroupLocked(arg1, arg2) {
+  return window['go']['gui']['App']['SetLibraryGroupLocked'](arg1, arg2);
+}
+
 export function ShowAlert(arg1) {
   return window['go']['gui']['App']['ShowAlert'](arg1);
 }
@@ -408,6 +412,10 @@ export function StopTournamentDisplay() {
 
 export function SuggestWatchFolder() {
   return window['go']['gui']['App']['SuggestWatchFolder']();
+}
+
+export function TransferToGroup(arg1, arg2) {
+  return window['go']['gui']['App']['TransferToGroup'](arg1, arg2);
 }
 
 export function VideoSourceKind(arg1) {
