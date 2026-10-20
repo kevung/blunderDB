@@ -307,11 +307,13 @@ why it must hold no per-tenant data: the daemon exposes it read-only
 
   Schema-visible: bumped `domain.DatabaseVersion` to 2.41.0.
 - `048_blunder_count_cache.sql` — the blunder count cached per tenant in the
-  metadata row `blunder_count:<tenant>`, as `<threshold>:<count>`. Statement
-  triggers on `position`, `analysis`, `move` and `action_label` delete the row
-  of every tenant a write touches (and every row on TRUNCATE), under a shared
-  advisory lock on the tenant; the reader caches only while holding that lock
-  exclusively, so no write in flight escapes it. A reader that finds the
-  triggers missing does not trust the row.
+  `library_settings` row `blunder_count`, as `<threshold>:<count>` — under RLS
+  and purged with the tenant, like every other setting. Statement triggers on
+  `position`, `analysis`, `move` and `action_label` delete the row of every
+  tenant a write touches, under a shared advisory lock on that tenant (the
+  two-key form `(1651273326, tenant)`); the reader caches only while holding
+  that lock exclusively, so no write in flight escapes it. TRUNCATE is refused
+  on those tables: it would empty every tenant past the triggers. A reader that
+  finds the triggers missing does not trust the row.
 
   Schema-visible: bumped `domain.DatabaseVersion` to 2.44.0.

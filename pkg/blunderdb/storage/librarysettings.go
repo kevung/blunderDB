@@ -58,6 +58,15 @@ const (
 	// recipient of an export is somebody else.
 	LibrarySettingMainPlayerKey = "main_player"
 
+	// LibrarySettingBlunderCountKey caches Counts.Blunders, the one count that
+	// reads every analysis, as "<threshold>:<count>" — valid only at the
+	// threshold it names. Triggers on the counted tables delete it on any write
+	// that could change the count, so a present row is never stale. It is a
+	// derivative of the library's own rows, like match_stats: it records
+	// nothing about who opened the file (ADR-0007), and it stays outside
+	// issuance.CarriedMetadataKeys, the recipient recounting their own copy.
+	LibrarySettingBlunderCountKey = "blunder_count"
+
 	// MaintenanceKeyPrefix starts the key of every row of the maintenance
 	// journal (ADR-0088): one row per operation, its last requested run. The
 	// rows sit beside the thresholds because, like them, they belong to the

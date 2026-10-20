@@ -229,7 +229,6 @@ func RunContractTestsOnly(t *testing.T, factory func() storage.Storage, keep fun
 		{"Pile/Lifecycle", testPileLifecycle},
 		{"Pile/BringsDraft", testPileBringsDraft},
 		{"LibrarySettings/BlunderCountPromisesTheSearch", testBlunderCountPromisesTheSearch},
-		{"LibrarySettings/BlunderCountCacheNeverLies", testBlunderCountCacheNeverLies},
 		{"Rencontre/Lifecycle", testRencontreLifecycle},
 		{"Rencontre/TrashRestores", testRencontreTrashRestores},
 		{"Trash/MatchRestores", testTrashMatchRestores},

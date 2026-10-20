@@ -25,6 +25,10 @@ tracking holders buys a remedy nobody uses at the price of surveillance.
    One exception, ADR-0083: opening a library from before schema 2.41.0 drops gammonNet's
    verdicts on take/pass positions, which judge the wrong decision; the recipient regains a
    right verdict by analysing again. No origin, registry or lineage is written.
+   Not a record either: derivatives of the library's own rows, recomputed from them and
+   cached in the file — `match_stats`, the blunder count (`blunder_count` in the library's
+   settings). They depend on the contents alone, say nothing of who opened the file or when,
+   and an export never carries them (the recipient's copy recomputes its own).
 4. The Watermark is the exact signed canonical JSON in one `metadata` row — no table, no
    `DatabaseVersion` bump, nothing for the serve daemon.
 5. Export copies metadata by allow-list (`issuance.CarriedMetadataKeys` / `issuance.Carried`),
@@ -37,7 +41,8 @@ tracking holders buys a remedy nobody uses at the price of surveillance.
 - Importing a watermarked database into one's own carries nothing over.
 - The signature proves "marked by the holder of that key"; publishing the fingerprint ties it
   to a person. Losing the identity changes later fingerprints; rotation/revocation out of scope.
-- `blunderdb info` reads the origin of any file, protected or not, and never writes.
+- `blunderdb info` reads the origin of any file, protected or not, and writes nothing about
+  it; counting a library may cache its blunder count, a derivative of its rows (decision 3).
 - `.dbx` is a distributed file format: once published it cannot be withdrawn.
 - Rejected: per-recipient watermarks, holder registry, import lineage — each writes on someone
   else's disk; together they make a position database a tracking system.

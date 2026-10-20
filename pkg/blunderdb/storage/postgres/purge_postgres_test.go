@@ -230,6 +230,27 @@ func TestPurgeTenant(t *testing.T) {
 	if err := s.Session().Save(ctx, scopeB, sessionB); err != nil {
 		t.Fatalf("seed session B: %v", err)
 	}
+	// Counting caches the blunder count in each tenant's library_settings, so
+	// the purge must take A's cache row and leave B's.
+	for _, scope := range []string{scopeA, scopeB} {
+		if _, err := s.Metadata().Counts(ctx, scope); err != nil {
+			t.Fatalf("Counts %s: %v", scope, err)
+		}
+	}
+	cacheRows := func(tenant int64) int {
+		var n int
+		if err := s.pool.QueryRow(ctx, `SELECT COUNT(*) FROM library_settings WHERE tenant_id = $1 AND key = 'blunder_count'`, tenant).Scan(&n); err != nil {
+			t.Fatalf("count cache rows: %v", err)
+		}
+		return n
+	}
+	if cacheRows(tenantA) != 1 || cacheRows(tenantB) != 1 {
+		t.Fatalf("seed sanity: the blunder count was not cached per tenant (A %d, B %d)", cacheRows(tenantA), cacheRows(tenantB))
+	}
+	var global int
+	if err := s.pool.QueryRow(ctx, `SELECT COUNT(*) FROM metadata WHERE key LIKE 'blunder_count%'`).Scan(&global); err != nil || global != 0 {
+		t.Fatalf("the global metadata table holds %d blunder count rows (%v), want none", global, err)
+	}
 	wantB := make(map[string]int, len(tables))
 	for _, tbl := range tables {
 		wantB[tbl] = purgeCountRows(t, s.pool, tbl, tenantB)
@@ -249,6 +270,10 @@ func TestPurgeTenant(t *testing.T) {
 		if got := purgeCountRows(t, s.pool, tbl, tenantB); got != wantB[tbl] {
 			t.Errorf("after purge: %s tenant B: got %d rows, want %d (untouched)", tbl, got, wantB[tbl])
 		}
+	}
+
+	if cacheRows(tenantA) != 0 || cacheRows(tenantB) != 1 {
+		t.Errorf("after purge: cache rows A %d, B %d; want 0 and 1", cacheRows(tenantA), cacheRows(tenantB))
 	}
 
 	loadedA, err := s.Session().Load(ctx, scopeA)

@@ -910,7 +910,7 @@ var schemaStatements = []string{
 }
 
 // blunderCountTriggers delete the cached blunder count
-// (storage.BlunderCountMetadataKey) on any write to a table it is counted
+// (storage.LibrarySettingBlunderCountKey) on any write to a table it is counted
 // from, whatever path the write takes: the storage backends, the legacy
 // wrapper's own SQL, a migration. They run on every open (EnsureSchema), so
 // a table rebuilt without them gets them back; until then the cache refuses
@@ -920,7 +920,7 @@ func blunderCountTriggers() []string {
 	for _, table := range sqlshared.BlunderCountTriggerTables {
 		for _, op := range []string{"INSERT", "UPDATE", "DELETE"} {
 			out = append(out, `CREATE TRIGGER IF NOT EXISTS blunder_count_forget_`+table+`_`+strings.ToLower(op)+
-				` AFTER `+op+` ON `+table+` BEGIN DELETE FROM metadata WHERE key = '`+storage.BlunderCountMetadataKey+`'; END`)
+				` AFTER `+op+` ON `+table+` BEGIN DELETE FROM metadata WHERE key = '`+storage.LibrarySettingBlunderCountKey+`'; END`)
 		}
 	}
 	return out

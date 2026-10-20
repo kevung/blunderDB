@@ -3,36 +3,39 @@ package storagetest
 import (
 	"context"
 	"fmt"
-	"strings"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
 
-// testBlunderCountCacheNeverLies holds the cached blunder count to the one
-// promise that makes it worth having: after any write that could change the
-// count — an import, an analysis rewritten or deleted, a play added, a
-// position or a match deleted, the threshold moved — the counter answers what
-// a full recount answers. The oracle drops the cached row and counts again;
-// the cache is primed before each gesture, so a gesture that failed to
-// invalidate it shows as a disagreement.
-func testBlunderCountCacheNeverLies(t *testing.T, s storage.Storage) {
+// RunBlunderCountCache holds the cached blunder count to the one promise that
+// makes it worth having: after any write that could change the count — an
+// import, an analysis rewritten or deleted, a play added, a position or a
+// match deleted, the threshold moved — the counter answers what a full
+// recount answers. The oracle deletes the cached row through exec, the
+// backend's own connection, and counts again; the cache is primed before each
+// gesture, so a gesture that failed to invalidate it shows as a disagreement.
+// The row is reached through exec because no store exposes it: it is the
+// library's settings table, metadata on SQLite, library_settings per tenant
+// on PostgreSQL.
+func RunBlunderCountCache(t *testing.T, s storage.Storage, exec sqlshared.Execer) {
 	ctx := context.Background()
 	md := s.Metadata()
 
-	cacheRows := func() map[string]string {
-		all, err := md.Load(ctx, "")
-		if err != nil {
-			t.Fatalf("Load metadata: %v", err)
+	table, scoped := exec.LibrarySettingsTable()
+	where, whereArgs := `key = ?`, []any{storage.LibrarySettingBlunderCountKey}
+	if scoped {
+		where = exec.ScopeColumn() + ` = ? AND ` + where
+		whereArgs = append([]any{exec.ScopeArg("")}, whereArgs...)
+	}
+	cacheRow := func() (string, bool) {
+		var v string
+		if err := exec.QueryRow(ctx, `SELECT COALESCE(value,'') FROM `+table+` WHERE `+where, whereArgs...).Scan(&v); err != nil {
+			return "", false
 		}
-		rows := map[string]string{}
-		for k, v := range all {
-			if strings.HasPrefix(k, storage.BlunderCountMetadataKey) && v != "" {
-				rows[k] = v
-			}
-		}
-		return rows
+		return v, true
 	}
 	blunders := func(when string) int {
 		c, err := md.Counts(ctx, "")
@@ -42,11 +45,7 @@ func testBlunderCountCacheNeverLies(t *testing.T, s storage.Storage) {
 		return c.Blunders
 	}
 	recount := func(when string) int {
-		dropped := map[string]string{}
-		for k := range cacheRows() {
-			dropped[k] = ""
-		}
-		if err := md.Save(ctx, "", dropped); err != nil {
+		if _, err := exec.Exec(ctx, `DELETE FROM `+table+` WHERE `+where, whereArgs...); err != nil {
 			t.Fatalf("drop the cache %s: %v", when, err)
 		}
 		return blunders(when)
@@ -58,8 +57,8 @@ func testBlunderCountCacheNeverLies(t *testing.T, s storage.Storage) {
 		if cached != truth {
 			t.Fatalf("after %s the counter says %d blunders, a recount %d: the cache lied", gesture, cached, truth)
 		}
-		if len(cacheRows()) != 1 {
-			t.Fatalf("after %s the count was not cached: rows %v", gesture, cacheRows())
+		if _, ok := cacheRow(); !ok {
+			t.Fatalf("after %s the count was not cached", gesture)
 		}
 		return truth
 	}
@@ -72,11 +71,8 @@ func testBlunderCountCacheNeverLies(t *testing.T, s storage.Storage) {
 	if err != nil {
 		t.Fatalf("Load settings: %v", err)
 	}
-	forged := map[string]string{}
-	for k := range cacheRows() {
-		forged[k] = fmt.Sprintf("%d:%d", settings.BlunderThresholdMP, 999)
-	}
-	if err := md.Save(ctx, "", forged); err != nil {
+	if _, err := exec.Exec(ctx, `UPDATE `+table+` SET value = ? WHERE `+where,
+		append([]any{fmt.Sprintf("%d:%d", settings.BlunderThresholdMP, 999)}, whereArgs...)...); err != nil {
 		t.Fatalf("forge the cache: %v", err)
 	}
 	if got := blunders("with a forged cache"); got != 999 {

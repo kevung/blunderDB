@@ -35,18 +35,9 @@ type CountsEstimate struct {
 	Approximate []string `json:"approximate"`
 	// BlundersKnown is false when Blunders was not computed: no honest
 	// estimate of it exists, only the exact count, which scans every analysis
-	// unless its cache (BlunderCountMetadataKey) still holds.
+	// unless its cache (LibrarySettingBlunderCountKey) still holds.
 	BlundersKnown bool `json:"blunders_known"`
 }
-
-// BlunderCountMetadataKey prefixes the metadata row that caches Counts.Blunders,
-// the one count that reads every analysis. Its value is "<threshold>:<count>",
-// valid only at the blunder threshold it names; on a multi-tenant database the
-// key carries ":<tenant>". Triggers on position, analysis, move and
-// action_label delete it on any write that could change the count, so a row
-// that is present is never stale. It describes the library it sits in, which
-// is why it stays outside issuance.CarriedMetadataKeys.
-const BlunderCountMetadataKey = "blunder_count"
 
 // MetadataStore persists the database-level key/value metadata: schema
 // version, match-equity-table id, and the headline counts.

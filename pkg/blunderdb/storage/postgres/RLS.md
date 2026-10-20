@@ -43,7 +43,11 @@ in `rls_postgres.go`:
   that `ApplyRLS` polices each of them, and `TestPurgeTenant` counts what a
   purge leaves behind (#363). `metadata` and
   `schema_migrations` are database infrastructure with no `tenant_id` and no
-  per-tenant data, and stay outside. A forward migration that adds a
+  per-tenant data, and stay outside — a per-tenant derivative such as the
+  cached blunder count lives in `library_settings` (migration 048), under the
+  policy and purged with the tenant. The triggers that invalidate it run as
+  the writing session, so the policy confines their `DELETE` to the tenant
+  whose rows the statement wrote. A forward migration that adds a
   tenant-scoped table installs the policy itself when the database already
   enforces RLS (see `migrations/013_session_state.sql`), so no table is left
   unprotected between the migration and the next `ApplyRLS`.

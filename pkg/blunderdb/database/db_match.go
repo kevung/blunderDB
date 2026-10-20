@@ -546,8 +546,10 @@ const EstimateExactBelow = 200_000
 
 // GetDatabaseStatsEstimate is GetDatabaseStats for the status bar: it never
 // scans a large table. Counts of tables beyond EstimateExactBelow rows are
-// estimates, named in "approximate", and "blunder_count" is absent unless
-// every count is exact. GetDatabaseStats is the exact form.
+// estimates, named in "approximate". "blunder_count" is there when the
+// positions are counted exactly, or when the cached count still holds for the
+// library's threshold; otherwise it is absent, never estimated.
+// GetDatabaseStats is the exact form.
 func (d *Database) GetDatabaseStatsEstimate() (map[string]interface{}, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
