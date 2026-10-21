@@ -60,7 +60,11 @@ Le champ `Database.store` est typé `*sqlite.Storage`, pas `storage.Storage` : s
       détenue par `Analyses().Load` (`LoadMany` sépare un blob illisible d'une lecture
       échouée), commentaires par `Comments().Text` et `AddFrom` ; la source reste lue en SQL,
       fichier de n'importe quel schéma passé que le contrat ne lit pas sans le migrer ;
-   6. typage de `store` par le contrat et interface de fichier local.
+   6. typage de `store` par le contrat et interface de fichier local (faite) — `store` est
+      une `storage.Storage` ; chemin du fichier, vacuum en place et vacuum dans une copie sont
+      `storage.LocalFile`, que seul `sqlite.Storage` implémente et que le wrapper affirme au
+      point d'usage (`Vacuum`, `libraryDir`) ; verrou, lecture seule, PRAGMA et chaîne de
+      migration restent sur le `*sql.DB` que le wrapper ouvre lui-même.
 4. **Contraintes de chaque tranche** : `Database.mu` n'est pas réentrant, une méthode
    déléguée prend le verrou une fois puis appelle le store ; le message d'erreur que voient GUI
    et CLI est conservé quand un appelant le lit (validation de date d'`UpdateMatch`) ; toute la
@@ -70,8 +74,20 @@ Le champ `Database.store` est typé `*sqlite.Storage`, pas `storage.Storage` : s
 
 - La première tranche retire la copie de `positionIsHeldSQL` du wrapper ; l'invariant de
   `CLAUDE.md` et `TestPositionIsHeldPredicateParity` comptent deux copies.
-- Une fois la tranche 6 faite, le bureau peut ouvrir un tenant distant (`storage/remote`,
-  ADR-0095) et tenir plusieurs bibliothèques ouvertes (#689 à #693) en tenant une
-  `storage.Storage` par bibliothèque, sans second chemin de code.
+- La tranche 6 ne suffit pas à ouvrir un tenant distant au bureau (`storage/remote`,
+  ADR-0095) ni plusieurs bibliothèques (#689 à #693) : le wrapper lit encore « une base est
+  ouverte » sur son `*sql.DB`, ne s'ouvre que sur un fichier SQLite, et garde quatre lectures
+  SQL hors cycle de vie du fichier (`tasks/BACKLOG.md`, « Bureau sur un tenant distant »).
+  Ces points levés, une `storage.Storage` par bibliothèque suffit, sans second chemin de code.
+- Écarts tranchés, les trois modes alignés : le repli de `LastVisited` est la tête de `List`
+  (sentinelle triée comme une absence de date, égalité départagée par l'id) ;
+  `GetPositionProvenance` rend les matchs dans l'ordre de `List` (un match sans date à sa
+  date d'import) ; `GetMovesByGame` lit les coups tels qu'enregistrés, sans `ErrorMP` ;
+  `DeleteAnalysis` déscore les coups joués ; une égalité d'équité entre candidats se départage
+  par moteur puis par notation ; `CheckMatchExists("")` rend 0 ; la comparaison gammonNet
+  s'interrompt sur une erreur de lecture de la base ; l'auteur d'un commentaire importé non
+  signé est normalisé, celui d'un commentaire signé recopié octet pour octet
+  (`storage.WithCarriedComment`) ; une ligne du receveur illisible interrompt l'import d'une
+  autre base, et tout retour avant le commit annule sa transaction.
 - Tant qu'une méthode n'est pas déléguée, son écart reste une divergence de parité connue et
   inscrite au backlog, pas un comportement voulu.

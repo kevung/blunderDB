@@ -50,45 +50,22 @@ propre issue le jour où il est lancé.
   code non mappé (`ingest/xgmap.go`) passerait donc pour un vrai Double/Take/Pass et entrerait
   au dénominateur du PR. Aucune occurrence connue dans les corpus. Correctif si ça mord un
   jour : tester `engine.CanonicalCubeAction` plutôt que les graphies littérales.
-- **Wrapper `Database` vers le contrat `Storage`, tranche 6** (ADR-0100 ; tranches 1,
-  écritures de match, 2, lectures de match, 3, analyses, 4, lots gammonNet et gardes
-  d'import, et 5, import d'une autre base, faites). Chaque tranche délègue un
-  groupe sans changer de comportement ; un écart se tranche d'abord, avec son test. La tranche 2
-  a tranché ses écarts ainsi : le repli de `LastVisited` est la tête de `List` (sentinelle triée
-  comme une absence de date, égalité départagée par l'id, les deux backends) ;
-  `GetPositionProvenance` est `MatchesByPosition` puis `List` par ids, donc dans l'ordre de la
-  liste (un match sans date se range à sa date d'import, non plus en dernier) ; `GetMovesByGame`
-  lit `RecordedMoves`, les coups tels qu'enregistrés, sans jointure sur les analyses ni
-  `ErrorMP` (l'export CSV parcourt tous les coups et n'écrit pas ce coût). La tranche 3 :
-  `DeleteAnalysis` est `Analyses().Delete`, qui déscore les coups joués (le wrapper laissait
-  `decision_error_mp` d'une analyse disparue) ; une égalité d'équité entre coups candidats se
-  départage par moteur puis par notation partout ; pour un verdict gammonNet, deux candidats
-  ex aequo du même moteur, rangés jusqu'ici dans leur ordre d'arrivée, le sont désormais par
-  notation (ordre et `Index` changent, `EquityError` non). Restent deux écarts de parité de l'analyse,
-  côté démon : `/v1/analyses.save` remplace (`Save`) quand `SaveAnalysis` fusionne, et
-  `/v1/analyses.load` ne joint pas les coups joués de la table `move` que `LoadAnalysis`
-  ajoute ; et la fusion du videau d'`ingest.mergeAnalysis` garde sa règle propre (une entrée
-  par moteur sans remplacer celle du même moteur).
-  La tranche 4 : le contrat gagne `WithoutAnalysisIDsInMatch` (isolée par tenant), et
-  `WithEngine` au préfixe vide (toutes les analyses) est épinglé par un cas de contrat ; deux
-  écarts tranchés. `CheckMatchExists("")` rend 0, comme `/v1/matches.findByHash` : un hash vide
-  n'identifie rien, alors que le wrapper trouvait un match stocké avec `match_hash = ''`
-  (bibliothèque exportée, migration v1) ; aucun appelant hors liaison Wails. La comparaison
-  gammonNet interrompt son balayage sur une erreur de lecture de la base, là où elle sautait la
-  position avec un avertissement ; une analyse indécodable reste journalisée et sautée. La
-  tranche 5 : le receveur n'est lu et écrit que par le contrat ; trois écarts tranchés et une
-  correction. L'auteur d'un commentaire importé non signé est normalisé (espaces retirés,
-  coupé à `MaxCommentAuthorLen`) comme à l'import du démon, là où le bureau le recopiait tel
-  quel ; celui d'un commentaire signé est recopié octet pour octet par les deux imports et la
-  restauration de la corbeille (`storage.WithCarriedComment`), car la signature couvre
-  l'auteur : le normaliser laissait la note « signée, non vérifiée ». La migration SQLite →
-  PostgreSQL (`migrate/migrate.go`) normalise encore l'auteur d'une note signée. Une ligne du
-  receveur que `Positions().List` ne lit pas interrompt l'analyse et l'import, là où l'index
-  d'identité la sautait (impact quasi nul : `state` est `NOT NULL`). Un refus de version ou
-  une erreur de lecture de la source après l'ouverture de la transaction la laissait ouverte,
-  une connexion tenue ; tout retour avant le commit l'annule désormais. (6) `store` typé
-  `storage.Storage`, `FilePath`/`Vacuum`/`VacuumInto`/vérification derrière une interface de
-  fichier local : prérequis de `storage/remote` au bureau et des bibliothèques multiples.
+- **Bureau sur un tenant distant** (ADR-0100, ADR-0095). `Database.store` est typé
+  `storage.Storage` et les opérations de fichier passent par `storage.LocalFile`, mais le
+  wrapper suppose encore un fichier SQLite ouvert : « une base est ouverte » se lit `d.db !=
+  nil` (environ 150 gardes), l'ouverture (`SetupDatabase`/`OpenDatabase`) ne construit que
+  `sqlite.New`, et quatre lectures restent en SQL sur `d.db` hors cycle de vie du fichier —
+  repli table par table de `GetDatabaseStats` (`db_match.go`), dernier brouillon de
+  transcription (`db_transcription_save.go`), session d'import en bloc `sqlite.BeginBulk`
+  (`db_import_pipeline.go`, propre au fichier, à mettre derrière `LocalFile`), et
+  `Exchange`/`Borrow` qui partagent le pool. Ouvrir un tenant distant demande une garde
+  d'ouverture sur `store`, un point d'entrée qui reçoit une `storage.Storage`, et ces quatre
+  lectures par le contrat ou derrière `LocalFile`.
+- **Écarts de parité de l'analyse, côté démon** : `/v1/analyses.save` remplace (`Save`) quand
+  `SaveAnalysis` fusionne, et `/v1/analyses.load` ne joint pas les coups joués de la table
+  `move` que `LoadAnalysis` ajoute ; la fusion du videau d'`ingest.mergeAnalysis` garde sa
+  règle propre (une entrée par moteur sans remplacer celle du même moteur) ; la migration
+  SQLite → PostgreSQL (`migrate/migrate.go`) normalise encore l'auteur d'une note signée.
 - **`SwapPlayers`/`DeleteCascade` dupliqués** entre `storage/sqlite/matches_sqlite.go` et
   `storage/postgres/matches_postgres.go` ; les partager par des closures SQL dialectales dans
   `sqlshared`.
