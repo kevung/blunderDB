@@ -891,10 +891,6 @@ Ce qu'il faut savoir :
   fichiers que le dossier contient encore, sans rien ajouter, mais au prix du
   temps de les relire. Supprimez de temps en temps les fichiers ``sync-…``
   déjà reçus pour que ce démarrage reste rapide.
-* **La première synchronisation après la mise à jour renvoie une fois toutes
-  les positions commentées**, car le repère ne suivait pas encore les
-  commentaires. L'autre machine les reconnaît sans rien dupliquer ; seul le
-  fichier est plus gros que d'habitude.
 * **Un export incrémental n'écrase jamais un fichier.** Le fichier précédent
   porte peut-être des lignes que l'autre machine n'a pas encore reçues : un
   export vers un nom de fichier déjà pris est refusé. Désignez le dossier, et

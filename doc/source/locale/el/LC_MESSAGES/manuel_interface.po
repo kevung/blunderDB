@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-21 13:38+0200\n"
+"POT-Creation-Date: 2026-10-21 21:51+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -2181,18 +2181,6 @@ msgstr ""
 
 #: ../../source/manuel_interface.rst:894
 msgid ""
-"**La première synchronisation après la mise à jour renvoie une fois "
-"toutes les positions commentées**, car le repère ne suivait pas encore "
-"les commentaires. L'autre machine les reconnaît sans rien dupliquer ; "
-"seul le fichier est plus gros que d'habitude."
-msgstr ""
-"**Ο πρώτος συγχρονισμός μετά την ενημέρωση στέλνει ξανά μία φορά όλες τις"
-" σχολιασμένες θέσεις**, επειδή το σημάδι δεν παρακολουθούσε ακόμη τα "
-"σχόλια. Ο άλλος υπολογιστής τις αναγνωρίζει χωρίς να διπλασιάσει τίποτα· "
-"μόνο το αρχείο είναι μεγαλύτερο από το συνηθισμένο."
-
-#: ../../source/manuel_interface.rst:898
-msgid ""
 "**Un export incrémental n'écrase jamais un fichier.** Le fichier "
 "précédent porte peut-être des lignes que l'autre machine n'a pas encore "
 "reçues : un export vers un nom de fichier déjà pris est refusé. Désignez "
@@ -2203,7 +2191,7 @@ msgstr ""
 "ακόμη: μια εξαγωγή σε όνομα αρχείου που υπάρχει ήδη απορρίπτεται. Ορίστε "
 "τον φάκελο, και κάθε εξαγωγή παίρνει εκεί νέο όνομα."
 
-#: ../../source/manuel_interface.rst:902
+#: ../../source/manuel_interface.rst:898
 msgid ""
 "**Un fichier réécrit sous un nom déjà vu est fusionné de nouveau** : la "
 "surveillance reconnaît un fichier à son nom, sa taille et sa date de "
@@ -2213,7 +2201,7 @@ msgstr ""
 "συγχωνεύεται ξανά**: η παρακολούθηση αναγνωρίζει ένα αρχείο από το όνομα,"
 " το μέγεθος και την ημερομηνία τροποποίησής του."
 
-#: ../../source/manuel_interface.rst:905
+#: ../../source/manuel_interface.rst:901
 msgid ""
 "**La bibliothèque ouverte n'est jamais fusionnée dans elle-même** : si "
 "elle se trouve dans le dossier surveillé, la surveillance la passe."
@@ -2221,7 +2209,7 @@ msgstr ""
 "**Η ανοιχτή βιβλιοθήκη δεν συγχωνεύεται ποτέ με τον εαυτό της**: αν "
 "βρίσκεται στον παρακολουθούμενο φάκελο, η παρακολούθηση την παρακάμπτει."
 
-#: ../../source/manuel_interface.rst:907
+#: ../../source/manuel_interface.rst:903
 msgid ""
 "**Un export qui a dû écarter des lignes** (signalées dans le journal) ne "
 "fait pas avancer le repère : le suivant les retente, avec tout ce qui les"
@@ -2231,7 +2219,7 @@ msgstr ""
 "ημερολόγιο) δεν προωθεί το σημάδι: η επόμενη τις ξαναδοκιμάζει, μαζί με "
 "ό,τι ακολουθεί."
 
-#: ../../source/manuel_interface.rst:909
+#: ../../source/manuel_interface.rst:905
 msgid ""
 "**Un export n'est jamais vu à moitié écrit** : il est écrit sous un nom "
 "caché puis renommé d'un coup. Un fichier protégé par mot de passe "
@@ -2243,7 +2231,7 @@ msgstr ""
 "(``.dbx``) δεν λαμβάνεται από την παρακολούθηση, που δεν μπορεί να "
 "ζητήσει τον κωδικό."
 
-#: ../../source/manuel_interface.rst:913
+#: ../../source/manuel_interface.rst:909
 msgid ""
 "En ligne de commande, ``blunderdb export --type database --incremental "
 "--file <dossier>`` d'un côté et ``blunderdb import --type batch --dir "
@@ -2257,11 +2245,11 @@ msgstr ""
 "δέχεται ``\"incremental\": true`` στο ``/v1/exports.sqlite`` (βλ. "
 ":ref:`headless`)."
 
-#: ../../source/manuel_interface.rst:921
+#: ../../source/manuel_interface.rst:917
 msgid "Assistant et MCP"
 msgstr "Βοηθός και MCP"
 
-#: ../../source/manuel_interface.rst:923
+#: ../../source/manuel_interface.rst:919
 msgid ""
 "L'onglet **Assistant et MCP** règle deux choses, toutes deux désactivées "
 "par défaut."
@@ -2269,7 +2257,7 @@ msgstr ""
 "Η καρτέλα **Βοηθός και MCP** ρυθμίζει δύο πράγματα, και τα δύο "
 "απενεργοποιημένα από προεπιλογή."
 
-#: ../../source/manuel_interface.rst:926
+#: ../../source/manuel_interface.rst:922
 msgid ""
 "Le **serveur MCP local** offre les outils de blunderDB (recherche, "
 "lecture d'une position et de son analyse, statistiques d'un joueur, "
@@ -2299,7 +2287,7 @@ msgstr ""
 "διαγράφεται. Χωρίς ανοιχτό παράθυρο, η εντολή ``blunderdb mcp`` "
 "εξυπηρετεί τα ίδια εργαλεία (βλ. :ref:`cli`)."
 
-#: ../../source/manuel_interface.rst:938
+#: ../../source/manuel_interface.rst:934
 msgid ""
 "L'**assistant interne** est un client de ces mêmes outils. Aucun modèle "
 "n'est embarqué : il s'adresse à un fournisseur compatible OpenAI — Ollama"
@@ -2328,7 +2316,7 @@ msgstr ""
 "όχι σύσταση: καμία σύσταση μοντέλου δεν γίνεται χωρίς βαθμολογία από το "
 "πρόγραμμα μέτρησης που διανέμεται με τον πηγαίο κώδικα."
 
-#: ../../source/manuel_interface.rst:950
+#: ../../source/manuel_interface.rst:946
 msgid ""
 "Une fois activé, l'assistant est un sous-onglet **Assistant** du panneau "
 "Recherche. Une phrase — « mes erreurs de plus de 50 millipoints dans la "
@@ -2353,7 +2341,7 @@ msgstr ""
 "διακομιστή MCP — και κάθε τροποποίηση που προετοιμάζει εμφανίζεται και "
 "γίνεται μόνο μετά το **Επιβεβαίωση**."
 
-#: ../../source/manuel_interface.rst:960
+#: ../../source/manuel_interface.rst:956
 msgid ""
 "La fenêtre de configuration regroupe également des réglages d'affichage "
 "de l'interface. Un curseur d'**échelle de l'interface** permet d'agrandir"
@@ -2377,11 +2365,11 @@ msgstr ""
 "καλύτερη αξιοποίηση του διαθέσιμου χώρου). Όπως και οι άλλες ρυθμίσεις, "
 "αυτές οι επιλογές διατηρούνται από τη μία συνεδρία στην άλλη."
 
-#: ../../source/manuel_interface.rst:973
+#: ../../source/manuel_interface.rst:969
 msgid "Visites guidées et base d'exemple"
 msgstr "Ξεναγήσεις και βάση δείγματος"
 
-#: ../../source/manuel_interface.rst:975
+#: ../../source/manuel_interface.rst:971
 msgid ""
 "Pour faciliter la prise en main, blunderDB propose des **visites "
 "guidées** de l'interface. Le catalogue des visites s'ouvre depuis la "
@@ -2405,7 +2393,7 @@ msgstr ""
 " μπορεί να επαναληφθεί ανά πάσα στιγμή. Κατά την πρώτη εκκίνηση, η γενική"
 " ξενάγηση προτείνεται αυτόματα."
 
-#: ../../source/manuel_interface.rst:985
+#: ../../source/manuel_interface.rst:981
 msgid ""
 "La commande ``demo`` charge une **base d'exemple** permettant de "
 "découvrir les fonctionnalités de l'outil sans importer ses propres "
@@ -2425,15 +2413,15 @@ msgstr ""
 "και ο τόπος είναι φανταστικοί. Οι καθοδηγούμενες περιηγήσεις βασίζονται "
 "σε αυτή τη βάση όταν καμία βάση δεν είναι ανοιχτή."
 
-#: ../../source/manuel_interface.rst:996
+#: ../../source/manuel_interface.rst:992
 msgid "Navigation dans les positions"
 msgstr "Πλοήγηση στις θέσεις"
 
-#: ../../source/manuel_interface.rst:998
+#: ../../source/manuel_interface.rst:994
 msgid "Par défaut, blunderDB permet de:"
 msgstr "Εξ ορισμού, το blunderDB επιτρέπει:"
 
-#: ../../source/manuel_interface.rst:1000
+#: ../../source/manuel_interface.rst:996
 msgid ""
 "faire défiler les différentes positions de la bibliothèque courante — qui"
 " n'est jamais chargée d'un bloc : blunderDB n'en tient que la liste des "
@@ -2447,15 +2435,15 @@ msgstr ""
 "από αυτήν που εμφανίζεται, ώστε μια βάση με πολλές δεκάδες χιλιάδες "
 "θέσεις να ανοίγει το ίδιο γρήγορα με μια μικρή,"
 
-#: ../../source/manuel_interface.rst:1006
+#: ../../source/manuel_interface.rst:1002
 msgid "afficher les informations d'analyse associées à une position,"
 msgstr "την εμφάνιση των πληροφοριών ανάλυσης που σχετίζονται με μια θέση,"
 
-#: ../../source/manuel_interface.rst:1008
+#: ../../source/manuel_interface.rst:1004
 msgid "afficher, ajouter et modifier les commentaires d'une position."
 msgstr "την εμφάνιση, προσθήκη και τροποποίηση των σχολίων μιας θέσης."
 
-#: ../../source/manuel_interface.rst:1010
+#: ../../source/manuel_interface.rst:1006
 msgid ""
 "Le bouton **Aller à la position** de la barre d'outils ouvre une fenêtre "
 "où saisir directement l'indice d'une position pour y sauter, sans avoir à"
@@ -2467,16 +2455,16 @@ msgstr ""
 "εκεί, χωρίς κύλιση. Είναι το γραφικό αντίστοιχο της εντολής ``[number]`` "
 "της γραμμής εντολών (βλ. :ref:`cmd_positions`)."
 
-#: ../../source/manuel_interface.rst:1015
-#: ../../source/manuel_interface.rst:1028
+#: ../../source/manuel_interface.rst:1011
+#: ../../source/manuel_interface.rst:1024
 msgid "Se référer à :ref:`raccourcis` pour les raccourcis disponibles."
 msgstr "Ανατρέξτε στο :ref:`raccourcis` για τις διαθέσιμες συντομεύσεις."
 
-#: ../../source/manuel_interface.rst:1020
+#: ../../source/manuel_interface.rst:1016
 msgid "Édition de positions"
 msgstr "Επεξεργασία θέσεων"
 
-#: ../../source/manuel_interface.rst:1022
+#: ../../source/manuel_interface.rst:1018
 msgid ""
 "L'appui sur la touche *TAB* ouvre le panneau de recherche et permet "
 "d'éditer une position sur le plateau pour l'ajouter à la base de données "
@@ -2490,11 +2478,11 @@ msgstr ""
 "πουλιών, ο κύβος (cube), το σκορ και η σειρά μπορούν να τροποποιηθούν με "
 "τη βοήθεια του ποντικιού (βλ. :ref:`guide_edit_position`)."
 
-#: ../../source/manuel_interface.rst:1033
+#: ../../source/manuel_interface.rst:1029
 msgid "La ligne de commande"
 msgstr "Η γραμμή εντολών"
 
-#: ../../source/manuel_interface.rst:1035
+#: ../../source/manuel_interface.rst:1031
 msgid ""
 "La ligne de commande, intégrée dans la barre d'état, permet de réaliser "
 "l'ensemble des fonctionalités de blunderDB disponibles à l'interface "
@@ -2513,7 +2501,7 @@ msgstr ""
 " χρήση της γραμμής εντολών, η οποία επιτρέπει μια ισχυρή και ομαλή χρήση "
 "του blunderDB, ιδίως για τις λειτουργίες αναζήτησης θέσεων."
 
-#: ../../source/manuel_interface.rst:1044
+#: ../../source/manuel_interface.rst:1040
 msgid ""
 "Pour ouvrir la ligne de commande, appuyer sur la touche *ESPACE*. Pour "
 "envoyer une requête et fermer la ligne de commande, appuyer sur la touche"
@@ -2523,7 +2511,7 @@ msgstr ""
 "υποβάλετε ένα ερώτημα και να κλείσετε τη γραμμή εντολών, πατήστε το "
 "πλήκτρο *ENTER*."
 
-#: ../../source/manuel_interface.rst:1048
+#: ../../source/manuel_interface.rst:1044
 msgid ""
 "blunderDB exécute les requêtes envoyées par l'utilisateur sous réserve "
 "qu'elles soient valides et modifie immédiatement l'état de la base de "
@@ -2535,7 +2523,7 @@ msgstr ""
 "βάσης δεδομένων εφόσον χρειάζεται. Δεν απαιτούνται ρητές ενέργειες "
 "αποθήκευσης από την πλευρά του χρήστη."
 
-#: ../../source/manuel_interface.rst:1053
+#: ../../source/manuel_interface.rst:1049
 msgid ""
 "Se référer à la :ref:`liste des commandes <cmd_mode>` pour la liste de "
 "commandes disponible en ligne de commande."
@@ -2543,11 +2531,11 @@ msgstr ""
 "Ανατρέξτε στο :ref:`λίστα εντολών <cmd_mode>` για τη λίστα των διαθέσιμων"
 " εντολών στη γραμμή εντολών."
 
-#: ../../source/manuel_interface.rst:1059
+#: ../../source/manuel_interface.rst:1055
 msgid "La palette de commandes"
 msgstr "Η παλέτα εντολών"
 
-#: ../../source/manuel_interface.rst:1061
+#: ../../source/manuel_interface.rst:1057
 msgid ""
 "La palette de commandes (*CTRL-MAJ-P*) retrouve par un nom approché ce "
 "que l'on ne sait plus où chercher : une commande de la ligne de commande,"
@@ -2563,7 +2551,7 @@ msgstr ""
 "δίπλα στο άλλο, χωρίς διάκριση πεζών-κεφαλαίων και τόνων: το «μτρκβ» "
 "βρίσκει τη μήτρα του κύβου, το «lyon» τους αγώνες ενός τουρνουά στη Λυών."
 
-#: ../../source/manuel_interface.rst:1068
+#: ../../source/manuel_interface.rst:1064
 msgid ""
 "Les flèches choisissent, *ENTREE* lance, *ECHAP* referme. Une commande se"
 " lance comme si elle avait été tapée ; ``s`` et ``ss`` ouvrent la ligne "
@@ -2577,7 +2565,7 @@ msgstr ""
 "με διπλό κλικ στη βιβλιοθήκη· ένας αγώνας ανοίγει όπως με διπλό κλικ στο "
 "πάνελ Αγώνων."
 
-#: ../../source/manuel_interface.rst:1073
+#: ../../source/manuel_interface.rst:1069
 msgid ""
 "Quand une Direction est ouverte, la palette y ajoute le tournoi : "
 "joueurs, tables, matchs en cours et épreuves (voir :ref:`la recherche "
@@ -2586,3 +2574,23 @@ msgstr ""
 "Όταν είναι ανοιχτή μια Direction, η παλέτα προσθέτει το τουρνουά: "
 "παίκτες, τραπέζια, αγώνες σε εξέλιξη και αγωνίσματα (βλ. :ref:`γρήγορη "
 "αναζήτηση <direction_recherche>`)."
+
+#~ msgid ""
+#~ "**La première synchronisation après la "
+#~ "mise à jour renvoie une fois "
+#~ "toutes les positions commentées**, car "
+#~ "le repère ne suivait pas encore "
+#~ "les commentaires. L'autre machine les "
+#~ "reconnaît sans rien dupliquer ; seul "
+#~ "le fichier est plus gros que "
+#~ "d'habitude."
+#~ msgstr ""
+#~ "**Ο πρώτος συγχρονισμός μετά την "
+#~ "ενημέρωση στέλνει ξανά μία φορά όλες "
+#~ "τις σχολιασμένες θέσεις**, επειδή το "
+#~ "σημάδι δεν παρακολουθούσε ακόμη τα "
+#~ "σχόλια. Ο άλλος υπολογιστής τις "
+#~ "αναγνωρίζει χωρίς να διπλασιάσει τίποτα· "
+#~ "μόνο το αρχείο είναι μεγαλύτερο από "
+#~ "το συνηθισμένο."
+

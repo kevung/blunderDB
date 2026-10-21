@@ -86,6 +86,16 @@
   </branding>
 
   <releases>
+    <release version="0.45.0" date="2026-10-21">
+      <description>
+        <ul>
+          <li>Several libraries open at once, in tab groups, with copying between them, an Elsewhere tab and a split screen</li>
+          <li>Two machines synchronise through incremental exports; exported comments are signed</li>
+          <li>A Reference data panel (MET, take points, gammon values, Neil's numbers)</li>
+          <li>Lessons export to a self-contained HTML page; a tournament shows on the club network with a QR code</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.44.0" date="2026-10-19">
       <description>
         <ul>

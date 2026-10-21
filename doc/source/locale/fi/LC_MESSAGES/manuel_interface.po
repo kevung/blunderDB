@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-21 13:38+0200\n"
+"POT-Creation-Date: 2026-10-21 21:51+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -2116,18 +2116,6 @@ msgstr ""
 
 #: ../../source/manuel_interface.rst:894
 msgid ""
-"**La première synchronisation après la mise à jour renvoie une fois "
-"toutes les positions commentées**, car le repère ne suivait pas encore "
-"les commentaires. L'autre machine les reconnaît sans rien dupliquer ; "
-"seul le fichier est plus gros que d'habitude."
-msgstr ""
-"**Ensimmäinen synkronointi päivityksen jälkeen lähettää kaikki "
-"kommentoidut asemat vielä kerran**, koska merkki ei vielä seurannut "
-"kommentteja. Toinen kone tunnistaa ne kahdentamatta mitään; vain tiedosto"
-" on tavallista suurempi."
-
-#: ../../source/manuel_interface.rst:898
-msgid ""
 "**Un export incrémental n'écrase jamais un fichier.** Le fichier "
 "précédent porte peut-être des lignes que l'autre machine n'a pas encore "
 "reçues : un export vers un nom de fichier déjà pris est refusé. Désignez "
@@ -2138,7 +2126,7 @@ msgstr ""
 "vienti jo käytössä olevaan tiedostonimeen hylätään. Valitse kansio, niin "
 "jokainen vienti saa siellä uuden nimen."
 
-#: ../../source/manuel_interface.rst:902
+#: ../../source/manuel_interface.rst:898
 msgid ""
 "**Un fichier réécrit sous un nom déjà vu est fusionné de nouveau** : la "
 "surveillance reconnaît un fichier à son nom, sa taille et sa date de "
@@ -2148,7 +2136,7 @@ msgstr ""
 "uudelleen**: valvonta tunnistaa tiedoston nimen, koon ja muokkausajan "
 "perusteella."
 
-#: ../../source/manuel_interface.rst:905
+#: ../../source/manuel_interface.rst:901
 msgid ""
 "**La bibliothèque ouverte n'est jamais fusionnée dans elle-même** : si "
 "elle se trouve dans le dossier surveillé, la surveillance la passe."
@@ -2156,7 +2144,7 @@ msgstr ""
 "**Avointa kirjastoa ei koskaan yhdistetä itseensä**: jos se on valvotussa"
 " kansiossa, valvonta ohittaa sen."
 
-#: ../../source/manuel_interface.rst:907
+#: ../../source/manuel_interface.rst:903
 msgid ""
 "**Un export qui a dû écarter des lignes** (signalées dans le journal) ne "
 "fait pas avancer le repère : le suivant les retente, avec tout ce qui les"
@@ -2166,7 +2154,7 @@ msgstr ""
 "siirrä merkkiä eteenpäin: seuraava yrittää niitä uudelleen kaiken niiden "
 "jälkeen tulevan kanssa."
 
-#: ../../source/manuel_interface.rst:909
+#: ../../source/manuel_interface.rst:905
 msgid ""
 "**Un export n'est jamais vu à moitié écrit** : il est écrit sous un nom "
 "caché puis renommé d'un coup. Un fichier protégé par mot de passe "
@@ -2178,7 +2166,7 @@ msgstr ""
 "suojattua tiedostoa (``.dbx``) valvonta ei poimi, koska se ei voi kysyä "
 "salasanaa."
 
-#: ../../source/manuel_interface.rst:913
+#: ../../source/manuel_interface.rst:909
 msgid ""
 "En ligne de commande, ``blunderdb export --type database --incremental "
 "--file <dossier>`` d'un côté et ``blunderdb import --type batch --dir "
@@ -2192,11 +2180,11 @@ msgstr ""
 "``\"incremental\": true`` osoitteessa ``/v1/exports.sqlite`` (katso "
 ":ref:`headless`)."
 
-#: ../../source/manuel_interface.rst:921
+#: ../../source/manuel_interface.rst:917
 msgid "Assistant et MCP"
 msgstr "Avustaja ja MCP"
 
-#: ../../source/manuel_interface.rst:923
+#: ../../source/manuel_interface.rst:919
 msgid ""
 "L'onglet **Assistant et MCP** règle deux choses, toutes deux désactivées "
 "par défaut."
@@ -2204,7 +2192,7 @@ msgstr ""
 "Välilehti **Avustaja ja MCP** säätää kahta asiaa, jotka kumpikin ovat "
 "oletuksena pois päältä."
 
-#: ../../source/manuel_interface.rst:926
+#: ../../source/manuel_interface.rst:922
 msgid ""
 "Le **serveur MCP local** offre les outils de blunderDB (recherche, "
 "lecture d'une position et de son analyse, statistiques d'un joueur, "
@@ -2232,7 +2220,7 @@ msgstr ""
 "poisteta. Ilman avointa ikkunaa ``blunderdb mcp`` tarjoaa samat työkalut "
 "(katso :ref:`cli`)."
 
-#: ../../source/manuel_interface.rst:938
+#: ../../source/manuel_interface.rst:934
 msgid ""
 "L'**assistant interne** est un client de ces mêmes outils. Aucun modèle "
 "n'est embarqué : il s'adresse à un fournisseur compatible OpenAI — Ollama"
@@ -2259,7 +2247,7 @@ msgstr ""
 "``qwen2.5:7b``, on lähtökohta, ei suositus: mitään mallisuositusta ei "
 "anneta ilman lähdekoodin mukana toimitetun mittauskokeen tulosta."
 
-#: ../../source/manuel_interface.rst:950
+#: ../../source/manuel_interface.rst:946
 msgid ""
 "Une fois activé, l'assistant est un sous-onglet **Assistant** du panneau "
 "Recherche. Une phrase — « mes erreurs de plus de 50 millipoints dans la "
@@ -2283,7 +2271,7 @@ msgstr ""
 "palvelimen kirjoittamisesta — ja jokainen sen valmistelema muutos "
 "näytetään, ja se tehdään vasta painikkeella **Vahvista**."
 
-#: ../../source/manuel_interface.rst:960
+#: ../../source/manuel_interface.rst:956
 msgid ""
 "La fenêtre de configuration regroupe également des réglages d'affichage "
 "de l'interface. Un curseur d'**échelle de l'interface** permet d'agrandir"
@@ -2307,11 +2295,11 @@ msgstr ""
 "parempaa hyödyntämistä varten). Muiden asetusten tavoin nämä valinnat "
 "säilyvät istunnosta toiseen."
 
-#: ../../source/manuel_interface.rst:973
+#: ../../source/manuel_interface.rst:969
 msgid "Visites guidées et base d'exemple"
 msgstr "Opastetut kierrokset ja esimerkkitietokanta"
 
-#: ../../source/manuel_interface.rst:975
+#: ../../source/manuel_interface.rst:971
 msgid ""
 "Pour faciliter la prise en main, blunderDB propose des **visites "
 "guidées** de l'interface. Le catalogue des visites s'ouvre depuis la "
@@ -2335,7 +2323,7 @@ msgstr ""
 "tahansa. Ensimmäisellä käynnistyskerralla yleinen kierros tarjotaan "
 "automaattisesti."
 
-#: ../../source/manuel_interface.rst:985
+#: ../../source/manuel_interface.rst:981
 msgid ""
 "La commande ``demo`` charge une **base d'exemple** permettant de "
 "découvrir les fonctionnalités de l'outil sans importer ses propres "
@@ -2355,15 +2343,15 @@ msgstr ""
 "kierrokset käyttävät tätä tietokantaa, kun mitään tietokantaa ei ole "
 "avattu."
 
-#: ../../source/manuel_interface.rst:996
+#: ../../source/manuel_interface.rst:992
 msgid "Navigation dans les positions"
 msgstr "Asemien selaaminen"
 
-#: ../../source/manuel_interface.rst:998
+#: ../../source/manuel_interface.rst:994
 msgid "Par défaut, blunderDB permet de:"
 msgstr "Oletuksena blunderDB mahdollistaa seuraavat:"
 
-#: ../../source/manuel_interface.rst:1000
+#: ../../source/manuel_interface.rst:996
 msgid ""
 "faire défiler les différentes positions de la bibliothèque courante — qui"
 " n'est jamais chargée d'un bloc : blunderDB n'en tient que la liste des "
@@ -2376,15 +2364,15 @@ msgstr ""
 "asemat viidenkymmenen ikkunoissa näytettävän aseman ympäriltä, joten "
 "kymmenientuhansien asemien tietokanta aukeaa yhtä nopeasti kuin pienikin,"
 
-#: ../../source/manuel_interface.rst:1006
+#: ../../source/manuel_interface.rst:1002
 msgid "afficher les informations d'analyse associées à une position,"
 msgstr "näyttää asemaan liittyvät analyysitiedot,"
 
-#: ../../source/manuel_interface.rst:1008
+#: ../../source/manuel_interface.rst:1004
 msgid "afficher, ajouter et modifier les commentaires d'une position."
 msgstr "näyttää, lisätä ja muokata aseman kommentteja."
 
-#: ../../source/manuel_interface.rst:1010
+#: ../../source/manuel_interface.rst:1006
 msgid ""
 "Le bouton **Aller à la position** de la barre d'outils ouvre une fenêtre "
 "où saisir directement l'indice d'une position pour y sauter, sans avoir à"
@@ -2396,16 +2384,16 @@ msgstr ""
 "vierittämistä. Se on komentorivin ``[number]``-komennon graafinen vastine"
 " (katso :ref:`cmd_positions`)."
 
-#: ../../source/manuel_interface.rst:1015
-#: ../../source/manuel_interface.rst:1028
+#: ../../source/manuel_interface.rst:1011
+#: ../../source/manuel_interface.rst:1024
 msgid "Se référer à :ref:`raccourcis` pour les raccourcis disponibles."
 msgstr "Katso saatavilla olevat pikanäppäimet kohdasta :ref:`raccourcis`."
 
-#: ../../source/manuel_interface.rst:1020
+#: ../../source/manuel_interface.rst:1016
 msgid "Édition de positions"
 msgstr "Asemien muokkaus"
 
-#: ../../source/manuel_interface.rst:1022
+#: ../../source/manuel_interface.rst:1018
 msgid ""
 "L'appui sur la touche *TAB* ouvre le panneau de recherche et permet "
 "d'éditer une position sur le plateau pour l'ajouter à la base de données "
@@ -2419,11 +2407,11 @@ msgstr ""
 "ja vuoron jakaumaa voi muokata hiirellä (katso "
 ":ref:`guide_edit_position`)."
 
-#: ../../source/manuel_interface.rst:1033
+#: ../../source/manuel_interface.rst:1029
 msgid "La ligne de commande"
 msgstr "Komentorivi"
 
-#: ../../source/manuel_interface.rst:1035
+#: ../../source/manuel_interface.rst:1031
 msgid ""
 "La ligne de commande, intégrée dans la barre d'état, permet de réaliser "
 "l'ensemble des fonctionalités de blunderDB disponibles à l'interface "
@@ -2442,7 +2430,7 @@ msgstr ""
 " komentorivin käyttöön, joka mahdollistaa blunderDB:n tehokkaan ja "
 "sujuvan käytön, erityisesti asemahakutoiminnoissa."
 
-#: ../../source/manuel_interface.rst:1044
+#: ../../source/manuel_interface.rst:1040
 msgid ""
 "Pour ouvrir la ligne de commande, appuyer sur la touche *ESPACE*. Pour "
 "envoyer une requête et fermer la ligne de commande, appuyer sur la touche"
@@ -2451,7 +2439,7 @@ msgstr ""
 "Avaa komentorivi painamalla *VÄLILYÖNTI*-näppäintä. Lähetä kysely ja "
 "sulje komentorivi painamalla *ENTER*-näppäintä."
 
-#: ../../source/manuel_interface.rst:1048
+#: ../../source/manuel_interface.rst:1044
 msgid ""
 "blunderDB exécute les requêtes envoyées par l'utilisateur sous réserve "
 "qu'elles soient valides et modifie immédiatement l'état de la base de "
@@ -2462,7 +2450,7 @@ msgstr ""
 "ovat kelvollisia, ja muuttaa tarvittaessa tietokannan tilaa välittömästi."
 " Käyttäjältä ei vaadita erillisiä tallennustoimia."
 
-#: ../../source/manuel_interface.rst:1053
+#: ../../source/manuel_interface.rst:1049
 msgid ""
 "Se référer à la :ref:`liste des commandes <cmd_mode>` pour la liste de "
 "commandes disponible en ligne de commande."
@@ -2470,11 +2458,11 @@ msgstr ""
 "Katso komentorivillä käytettävissä olevien komentojen luettelo kohdasta "
 ":ref:`komentoluettelo <cmd_mode>`."
 
-#: ../../source/manuel_interface.rst:1059
+#: ../../source/manuel_interface.rst:1055
 msgid "La palette de commandes"
 msgstr "Komentopaletti"
 
-#: ../../source/manuel_interface.rst:1061
+#: ../../source/manuel_interface.rst:1057
 msgid ""
 "La palette de commandes (*CTRL-MAJ-P*) retrouve par un nom approché ce "
 "que l'on ne sait plus où chercher : une commande de la ligne de commande,"
@@ -2490,7 +2478,7 @@ msgstr ""
 "aksenteista välittämättä: ”kmtrs” löytää kuutiomatriisin, ”lyon” Lyonin "
 "turnauksen ottelut."
 
-#: ../../source/manuel_interface.rst:1068
+#: ../../source/manuel_interface.rst:1064
 msgid ""
 "Les flèches choisissent, *ENTREE* lance, *ECHAP* referme. Une commande se"
 " lance comme si elle avait été tapée ; ``s`` et ``ss`` ouvrent la ligne "
@@ -2504,7 +2492,7 @@ msgstr ""
 "kuin kaksoisnapsautuksella kirjastossa; ottelu avautuu kuin "
 "kaksoisnapsautuksella Otteluiden paneelissa."
 
-#: ../../source/manuel_interface.rst:1073
+#: ../../source/manuel_interface.rst:1069
 msgid ""
 "Quand une Direction est ouverte, la palette y ajoute le tournoi : "
 "joueurs, tables, matchs en cours et épreuves (voir :ref:`la recherche "
@@ -2513,3 +2501,21 @@ msgstr ""
 "Kun Direction on auki, paletti lisää siihen turnauksen: pelaajat, pöydät,"
 " käynnissä olevat ottelut ja kilpailut (ks. :ref:`pikahaku "
 "<direction_recherche>`)."
+
+#~ msgid ""
+#~ "**La première synchronisation après la "
+#~ "mise à jour renvoie une fois "
+#~ "toutes les positions commentées**, car "
+#~ "le repère ne suivait pas encore "
+#~ "les commentaires. L'autre machine les "
+#~ "reconnaît sans rien dupliquer ; seul "
+#~ "le fichier est plus gros que "
+#~ "d'habitude."
+#~ msgstr ""
+#~ "**Ensimmäinen synkronointi päivityksen jälkeen "
+#~ "lähettää kaikki kommentoidut asemat vielä "
+#~ "kerran**, koska merkki ei vielä "
+#~ "seurannut kommentteja. Toinen kone tunnistaa"
+#~ " ne kahdentamatta mitään; vain tiedosto "
+#~ "on tavallista suurempi."
+

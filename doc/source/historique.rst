@@ -42,6 +42,23 @@ ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
   leur fichier source, et ``match repair --id`` ou le bouton ⟲ de la fiche les
   réécrit depuis ce fichier.
 
+0.45.0 (2026-10-21)
+-------------------
+
+- **Plusieurs bibliothèques ouvertes à la fois** : chaque base ouverte forme un groupe d'onglets, sous un en-tête de couleur au nom du fichier, et cliquer un onglet d'un autre groupe active sa bibliothèque et cette vue d'un seul geste. *CTRL-MAJ-O* ou ``open_group`` ouvre une base dans un nouveau groupe, *CTRL-MAJ-Page préc.* / *Page suiv.* passent d'une bibliothèque à l'autre ; l'import, le dossier surveillé et l'analyse par lots restent attachés à la bibliothèque qui les a lancés.
+- **Copier d'une bibliothèque dans une autre** : une position, un match, une collection ou une leçon glissés sur l'en-tête d'un autre groupe y sont copiés en fond ; *MAJ-B* remplit un panier versé en une fois, et un cadenas interdit d'écrire dans un groupe. ``blunderdb transfer`` et la route ``across.transferPull`` du serveur font la même copie.
+- **L'onglet Ailleurs** (*CTRL-MAJ-A*) dit, pour la position affichée, ce qu'en savent les autres bibliothèques ouvertes : analyse jugée avec les seuils de la bibliothèque active, table d'équité différente signalée, commentaires et leur signataire, matchs où elle a été jouée, positions voisines ; tenir la touche *x* dessine la position de l'autre bibliothèque à la place du plateau. ``blunderdb elsewhere`` et la route ``across.positionElsewhere`` en sont les autres formes.
+- **L'écran partagé** (bouton ◫, *CTRL-MAJ-X*) montre côte à côte le groupe actif et une visionneuse en lecture d'un autre groupe ; cliquer la visionneuse échange les rôles. Il demande au moins 1280 pixels de large.
+- **Synchroniser deux machines** : un export incrémental (``export --type database --incremental``) n'emporte que ce qui est entré depuis le précédent export vers la même destination, et le dossier surveillé fusionne les ``.db`` qui y arrivent ; seuls les ajouts voyagent.
+- **Les commentaires sont signés** : un export marqué signe vos commentaires avec votre identité d'émetteur, et le destinataire voit qui les a écrits et s'ils ont été altérés en chemin.
+- **Le panneau Données de référence** (*CTRL-MAJ-R*, ``reference`` ou ``ref``) réunit la MET Kazaross-XG2, les points de prise (videaux 2 et 4, vivant et mort côte à côte), les valeurs du gammon (videaux 1, 2 et 4), une vue agrégée par score et les nombres de Neil, consultables sans base et pendant un Duel ; ``met``, ``tp…`` et ``gv…`` l'ouvrent sur leur onglet.
+- **Exporter une leçon en page HTML autonome** : titre, description, chaque étape avec son texte et son plateau, l'analyse de chaque position repliée comme une réponse de quiz. ``blunderdb lesson export --html`` et la route ``lessons.html`` du serveur produisent la même page.
+- **Afficher un tournoi sur le réseau du club** : la Direction lance un petit serveur web et montre le QR code de son adresse ; un téléphone du même réseau y suit l'arbre, les appariements, les résultats et le classement, mis à jour toutes les dix secondes.
+- **Plus rapide** : l'application démarre plus vite et pèse 3 Mo de moins ; le filtre E (``E>n``) ne compare plus les coups de chaque position, les statistiques d'étude (``stats effect``), les exports CSV et l'export d'une base vont plus vite, et l'export écrit des analyses environ cinq fois plus petites ; le panneau Matchs garde son tri et son filtre d'une bascule à l'autre, et l'aide intégrée se rouvre sans attendre. Les statistiques par match d'une base se calculent en fond dès l'ouverture, au lieu de retenir les panneaux Tournois et Joueurs.
+- **Côté serveur** : ``blunderdb call --backend remote --dsn <URL>`` fait passer ses appels par un démon ``serve`` ; le démon SQLite chargé répond 503 avec ``Retry-After`` au lieu d'une erreur interne, ``--heavy-slots`` borne les lectures lourdes simultanées, et les statistiques par match se remplissent au démarrage. ``blunderdb migrate`` copie par lots (sept minutes au lieu de plus de deux heures sur une base de 300 000 positions) et emporte aussi les leçons.
+- Corrections notables : rouvrir l'aide intégrée ne la fige plus ; modifier, supprimer ou figer une collection inexistante est refusé comme tel par le serveur, et non plus par une erreur interne ou un faux succès.
+- Voir :ref:`groupes_bibliotheques`, :ref:`vue_ailleurs`, :ref:`synchroniser_deux_machines`, :ref:`panneau_reference`, :ref:`lecons`, :ref:`diriger_un_tournoi`, :ref:`cli_transfer` et :ref:`headless`.
+
 0.44.0 (2026-10-19)
 -------------------
 
