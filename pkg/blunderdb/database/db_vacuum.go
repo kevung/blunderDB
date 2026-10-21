@@ -53,6 +53,12 @@ func (d *Database) Vacuum() (VacuumResult, error) {
 	if d.db == nil {
 		return VacuumResult{}, fmt.Errorf("vacuum: no database open")
 	}
+	// A library that is no local file is refused before anything runs: no
+	// purge, no attempt at the swap.
+	local, ok := d.store.(storage.LocalFile)
+	if !ok {
+		return VacuumResult{}, errVacuumNotLocal
+	}
 	ctx := context.Background()
 	// Purge before compacting, so the space the purge frees is space this
 	// VACUUM reclaims rather than space the next one will.
@@ -61,7 +67,7 @@ func (d *Database) Vacuum() (VacuumResult, error) {
 		return VacuumResult{}, err
 	}
 	if !d.readOnly {
-		before, after, err := d.vacuumBySwap(ctx)
+		before, after, err := d.vacuumBySwap(ctx, local)
 		switch {
 		case err == nil:
 			return VacuumResult{SizeBefore: before, SizeAfter: after, TrashPurged: purged}, nil
@@ -70,8 +76,8 @@ func (d *Database) Vacuum() (VacuumResult, error) {
 		}
 		slog.Info("vacuum: another connection holds the file; vacuuming in place")
 	}
-	local, ok := d.store.(storage.LocalFile)
-	if !ok {
+	// The swap attempt reopened the file on a new store: compact that one.
+	if local, ok = d.store.(storage.LocalFile); !ok {
 		return VacuumResult{TrashPurged: purged}, errVacuumNotLocal
 	}
 	res, err := local.Vacuum(ctx)
@@ -98,11 +104,7 @@ var errVacuumNotLocal = errors.New("vacuum: the library is not a local file")
 // process (a read-only instance, a sqlite3 shell) is connected: the copy is
 // dropped and errVacuumSwapUnsafe returned. A failure after the rename point
 // leaves the compacted file in place, which is the whole library.
-func (d *Database) vacuumBySwap(ctx context.Context) (before, after int64, err error) {
-	local, ok := d.store.(storage.LocalFile)
-	if !ok {
-		return 0, 0, errVacuumSwapUnsafe
-	}
+func (d *Database) vacuumBySwap(ctx context.Context, local storage.LocalFile) (before, after int64, err error) {
 	path, err := local.FilePath(ctx)
 	if err != nil || path == "" {
 		return 0, 0, errVacuumSwapUnsafe

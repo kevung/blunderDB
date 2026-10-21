@@ -15,7 +15,7 @@ type contractOnly struct{ storage.Storage }
 
 // The file operations reach the backend through storage.LocalFile only: a
 // store without it has no path to resolve sources against and nothing to
-// compact, and Vacuum says so instead of touching the file.
+// compact, and Vacuum refuses before it purges the trash or touches the file.
 func TestLocalFile_StoreWithoutAFile(t *testing.T) {
 	t.Parallel()
 	path := filepath.Join(tempDir(t), "local.db")
@@ -32,6 +32,11 @@ func TestLocalFile_StoreWithoutAFile(t *testing.T) {
 		t.Fatalf("libraryDir = %q, want %q", got, want)
 	}
 
+	// A trash entry past its retention, which a Vacuum would purge.
+	if _, err := d.db.Exec(`INSERT INTO trash (kind, payload, deleted_at) VALUES ('comment', '{}', '2000-01-01 00:00:00')`); err != nil {
+		t.Fatal(err)
+	}
+
 	d.mu.Lock()
 	d.store = contractOnly{d.store}
 	d.mu.Unlock()
@@ -45,5 +50,12 @@ func TestLocalFile_StoreWithoutAFile(t *testing.T) {
 	}
 	if after := fileSizeOf(t, path); after != before {
 		t.Errorf("Vacuum without a local file changed the file: %d -> %d bytes", before, after)
+	}
+	var trashed int
+	if err := d.db.QueryRow(`SELECT COUNT(*) FROM trash`).Scan(&trashed); err != nil {
+		t.Fatal(err)
+	}
+	if trashed != 1 {
+		t.Errorf("Vacuum without a local file purged the trash: %d entries left, want 1", trashed)
 	}
 }
