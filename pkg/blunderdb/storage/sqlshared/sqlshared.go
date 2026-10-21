@@ -68,6 +68,34 @@ type Execer interface {
 	Transact(ctx context.Context, fn func(Execer) error) error
 }
 
+// Preparer is implemented by an Execer that compiles a statement once for
+// many executions. A write that runs one statement text many times in a
+// transaction prepares it through prepareExec, which falls back to Exec on an
+// Execer without it: pgx already keeps a per-connection cache of every
+// statement text, while database/sql over SQLite recompiles each Exec.
+type Preparer interface {
+	Prepare(ctx context.Context, query string) (Stmt, error)
+}
+
+// Stmt is a prepared statement; Close releases it.
+type Stmt interface {
+	Exec(ctx context.Context, args ...any) error
+	Close() error
+}
+
+// prepareExec returns a function running query with its arguments, compiled
+// once when db is a Preparer, and the function that releases it.
+func prepareExec(ctx context.Context, db Execer, query string) (exec func(args ...any) error, release func(), err error) {
+	if p, ok := db.(Preparer); ok {
+		st, err := p.Prepare(ctx, query)
+		if err != nil {
+			return nil, nil, err
+		}
+		return func(args ...any) error { return st.Exec(ctx, args...) }, func() { _ = st.Close() }, nil
+	}
+	return func(args ...any) error { _, err := db.Exec(ctx, query, args...); return err }, func() {}, nil
+}
+
 // Dialect is the set of facts in which the two backends' SQL actually differs.
 // It is deliberately small: anything that can be written the same way on both
 // (ON CONFLICT upserts, CAST(x AS INTEGER), CURRENT_TIMESTAMP) is written the
