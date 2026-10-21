@@ -14,10 +14,10 @@ import { tick } from 'svelte';
 import { get } from 'svelte/store';
 
 // ── Wails mock (doit être déclaré avant l'import du composant) ──────────────
-vi.mock('../../wailsjs/go/database/Database.js', () => ({
-    LoadCommandHistory: vi.fn(() => Promise.resolve([])),
-    SaveCommand: vi.fn(() => Promise.resolve(undefined))
-}));
+vi.mock('../../wailsjs/go/database/Database.js', async () => {
+    const { createDatabaseMock } = await import('../__mocks__/wails.js');
+    return createDatabaseMock({ LoadCommandHistory: vi.fn(() => Promise.resolve([])) });
+});
 
 // #129: StatusBar now listens for the gammonNet batch's progress events and
 // exposes a cancel button — neither exists in this suite's jsdom environment
@@ -156,6 +156,18 @@ describe('StatusBar — réactivité', () => {
 
         expect(LoadCommandHistory).toHaveBeenCalledOnce();
         expect(document.querySelector('.command-input')).toBeInTheDocument();
+    });
+
+    test("T6b — la ligne de commande prend le focus sans attendre l'historique", async () => {
+        // Keys typed right after Space must land in the input while the history is still loading.
+        vi.mocked(LoadCommandHistory).mockImplementationOnce(() => new Promise(() => {}));
+        render(StatusBar);
+
+        showCommandInputStore.set(true);
+        await tick();
+        await tick();
+
+        expect(document.activeElement).toBe(document.querySelector('.command-input'));
     });
 
     // ── Test 7 : showCommandInputStore false → input masqué ─────────────────

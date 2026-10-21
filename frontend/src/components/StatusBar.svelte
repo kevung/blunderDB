@@ -136,11 +136,11 @@
 
     $effect(() => {
         if ($showCommandInputStore) {
-            loadHistory()
-                .then(() => tick())
-                // Focusing in the same frame as the history render forces a synchronous layout;
-                // after the next frame the browser has laid it out already.
-                .then(() => requestAnimationFrame(() => inputEl?.focus()));
+            // Focus as soon as the input exists: keys typed right after Space must land in it,
+            // not on the board while the history loads. Taken before the history renders and
+            // without scrolling, the focus forces no layout of that list.
+            tick().then(() => inputEl?.focus({ preventScroll: true }));
+            loadHistory();
         }
     });
 
