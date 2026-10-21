@@ -313,6 +313,20 @@
             () => visible, // $derived — tracked
             (/** @type {boolean} */ opened) => {
                 if (embedded) return;
+                if (opened) {
+                    // Kept mounted while hidden (TabbedPanel), the panel may come back to a list
+                    // another library group put in place: the header and the field follow it.
+                    untrack(() => {
+                        const list = get(matchListStore);
+                        if (sort.column !== list.column || sort.direction !== list.direction) sort = { column: list.column, direction: list.direction };
+                        if (filterText.trim() !== list.text) {
+                            clearTimeout(filterTimer);
+                            filterText = list.text;
+                        }
+                        // Back with no database: the rows of the one closed meanwhile must not show.
+                        if (!databaseLoaded) matchListStore.set({ ...list, rows: [], total: 0, loading: false, loaded: false });
+                    });
+                }
                 if (opened && databaseLoaded) {
                     loadMatches().then(async () => {
                         const lvm = lastVisitedMatch;

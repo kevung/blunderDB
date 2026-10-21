@@ -41,7 +41,7 @@ import PanelProbe, { probeLog } from './fixtures/PanelProbe.svelte';
 import { panels } from '../components/lazyComponents.js';
 import { activeTabStore, homeDismissedStore } from '../stores/uiStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
-import { matchListStore } from '../stores/matchListStore.js';
+import { matchListStore, emptyMatchList } from '../stores/matchListStore.js';
 import { applyTabPanels } from '../services/tabHandler.js';
 
 const noop = () => {};
@@ -153,5 +153,36 @@ describe('TabbedPanel keeps the Matches panel mounted', () => {
         expect(document.querySelectorAll('#matchPanel')).toHaveLength(1);
         expect(get(matchListStore).column).toBe(before.column);
         expect(get(matchListStore).direction).toBe(before.direction);
+    });
+
+    test('back after another library group took the list, the header and the field follow that list', async () => {
+        await switchTo('matches');
+        await fireEvent.click(/** @type {HTMLButtonElement} */ (matchPanel()?.querySelector('th.sortable .sort-btn')));
+        const field = /** @type {HTMLInputElement} */ (matchPanel()?.querySelector('input.match-filter'));
+        await fireEvent.input(field, { target: { value: 'smith' } });
+        await new Promise((r) => setTimeout(r, 300));
+        await settle();
+        expect(get(matchListStore).text).toBe('smith');
+
+        await switchTo('analysis');
+        // What a group switch does (libraryScope.putScopedState): the list of a library not read yet.
+        matchListStore.set(emptyMatchList());
+        await switchTo('matches');
+
+        expect(field.value).toBe('');
+        expect(matchPanel()?.querySelector('.sort-arrow')).toBeNull();
+        expect(get(matchListStore).column).toBeNull();
+        expect(get(matchListStore).text).toBe('');
+    });
+
+    test('back with the database closed meanwhile, the previous rows are gone', async () => {
+        await switchTo('matches');
+        expect(get(matchListStore).rows).toHaveLength(1);
+        await switchTo('analysis');
+        databasePathStore.set('');
+        await switchTo('matches');
+
+        expect(get(matchListStore).rows).toHaveLength(0);
+        expect(matchPanel()?.textContent).not.toContain('Alice');
     });
 });
