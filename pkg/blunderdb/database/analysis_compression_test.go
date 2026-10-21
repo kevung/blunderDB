@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"path/filepath"
-	"strings"
 	"testing"
 	"time"
 
@@ -419,9 +418,10 @@ func TestSaveAndLoadAnalysisCompressed(t *testing.T) {
 	}
 }
 
-// TestExportWritesUncompressedJSON verifies that ExportDatabase writes
-// uncompressed JSON to the export file for backward compatibility.
-func TestExportWritesUncompressedJSON(t *testing.T) {
+// TestExportWritesCompressedAnalyses verifies that an export stores its
+// analyses in the live database's binary encoding, and that the file reads
+// back both opened directly and imported into another database.
+func TestExportWritesCompressedAnalyses(t *testing.T) {
 	t.Parallel()
 	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "test_export_src.db")
@@ -467,27 +467,55 @@ func TestExportWritesUncompressedJSON(t *testing.T) {
 		t.Fatalf("ExportDatabase: %v", err)
 	}
 
-	// Open export DB and check that analysis data is raw JSON (starts with '{')
 	exportDB, err := sql.Open("sqlite", exportPath)
 	if err != nil {
 		t.Fatalf("open export DB: %v", err)
 	}
-	defer exportDB.Close()
-
-	var exportedData string
-	err = exportDB.QueryRow(`SELECT data FROM analysis LIMIT 1`).Scan(&exportedData)
+	var blob []byte
+	err = exportDB.QueryRow(`SELECT data FROM analysis LIMIT 1`).Scan(&blob)
+	exportDB.Close()
 	if err != nil {
 		t.Fatalf("query export analysis: %v", err)
 	}
-	if !strings.HasPrefix(exportedData, "{") {
-		t.Errorf("exported analysis data is not raw JSON (starts with %q)", string(exportedData[:1]))
+	if len(blob) == 0 || blob[0] == '{' {
+		t.Fatalf("exported analysis is plain JSON, want the binary encoding")
+	}
+	if _, err := decodeAnalysisFromStorage(blob); err != nil {
+		t.Fatalf("exported analysis does not decode: %v", err)
 	}
 
-	// Verify it's valid JSON
-	var exported PositionAnalysis
-	if err := json.Unmarshal([]byte(exportedData), &exported); err != nil {
-		t.Errorf("exported data is not valid JSON: %v", err)
+	checkMove := func(t *testing.T, db *Database, label string) {
+		t.Helper()
+		positions, err := db.LoadAllPositions()
+		if err != nil || len(positions) != 1 {
+			t.Fatalf("%s: LoadAllPositions = %d positions, %v", label, len(positions), err)
+		}
+		loaded, err := db.LoadAnalysis(positions[0].ID)
+		if err != nil || loaded == nil {
+			t.Fatalf("%s: LoadAnalysis: %v", label, err)
+		}
+		if loaded.CheckerAnalysis == nil || len(loaded.CheckerAnalysis.Moves) != 1 ||
+			loaded.CheckerAnalysis.Moves[0].Move != "13/7" || loaded.CheckerAnalysis.Moves[0].PlayerWinChance != 55.0 {
+			t.Fatalf("%s: analysis did not survive the export: %+v", label, loaded.CheckerAnalysis)
+		}
 	}
+
+	opened := NewDatabase()
+	if err := opened.OpenDatabase(exportPath); err != nil {
+		t.Fatalf("OpenDatabase(export): %v", err)
+	}
+	checkMove(t, opened, "opened")
+	opened.Close()
+
+	dst := NewDatabase()
+	if err := dst.SetupDatabase(filepath.Join(tmpDir, "recipient.db")); err != nil {
+		t.Fatalf("SetupDatabase: %v", err)
+	}
+	closeOnCleanup(t, dst)
+	if _, err := dst.CommitImportDatabase(exportPath); err != nil {
+		t.Fatalf("CommitImportDatabase: %v", err)
+	}
+	checkMove(t, dst, "imported")
 }
 
 // TestAnalysisCompressionSavings measures the compression ratio on a larger

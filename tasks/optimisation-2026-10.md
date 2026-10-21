@@ -231,6 +231,8 @@ Les gains sont estimés à partir des mesures ci-dessus. Effort : S (moins d'un 
 | B9 | gammonNet : quantification int8 ou poids float16 (`.bin` de 2,25 Mo → ~1,1 Mo, noyau ×2) | taille et vitesse du 2-ply | L | Change l'arithmétique : décision amont (gammonNet ADR-0003, invariant « le port suit l'amont ») | `engine/gammonnet` |
 | B10 | UPX pour linux/arm64 ; pas pour macOS | ~−60 % de taille sur disque pour arm64 | S | Démarrage un peu plus lent, faux positifs antivirus ; à proscrire sur macOS (signature) | `build.yml:971` |
 
+**B1, décision : exporter compressé.** Les versions de schéma < 2.3.0 sont celles des releases ≤ 0.16.0 (0.16.0 : `DatabaseVersion` 2.0.0 ; 0.17.0, première à compresser, 74de0d6e4 : 2.3.0 ; aucune release entre les deux). Leur `CheckVersion` ne compare que la majeure (`db.go:1612` de 0.16.0), donc 2.47 passerait ce contrôle ; mais `position.state` n'est plus un `Position` JSON complet : depuis 2.2.0 c'est le tableau JSON de 28 entiers (`EncodeBoardCompact`), depuis 2.31.0 le binaire de 28 octets (`EncodeBoardState`), qu'écrit l'export. 0.16.0 fait `json.Unmarshal` de cette colonne vers un `Position` (`PositionExists`, `LoadAllPositions`…), ce qui échoue sur l'un comme sur l'autre : elle échoue sur les positions bien avant les analyses. Le JSON des analyses ne protégeait plus aucun lecteur. L'export passe par `SaveExportedAnalysis` (encodage de la base vive) ; la lecture des anciens exports JSON reste (`TestImportV220DatabaseIntoV230`).
+
 ### Écarté ou neutre
 - **SDK MCP et x/text** : 0,56 et 0,33 Mo, tous deux utilisés pour de vrai. Le gain ne vaut pas l'effort.
 - **testcontainers** : absent des binaires.
