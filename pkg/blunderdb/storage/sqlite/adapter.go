@@ -6,6 +6,8 @@ import (
 	"errors"
 	"time"
 
+	sqlitedriver "modernc.org/sqlite"
+
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
 
@@ -104,6 +106,14 @@ func (a shared) Transact(ctx context.Context, fn func(sqlshared.Execer) error) e
 func (a shared) RefusesWrites(ctx context.Context) bool {
 	var on int
 	return a.db.QueryRowContext(ctx, `PRAGMA query_only`).Scan(&on) == nil && on != 0
+}
+
+// LockContention reports whether err is SQLITE_BUSY, extended codes
+// included: another writer held the file past busy_timeout, or committed
+// since this connection's read began.
+func (shared) LockContention(err error) bool {
+	var e *sqlitedriver.Error
+	return errors.As(err, &e) && e.Code()&0xff == sqliteBusyCode
 }
 
 // sqlRow translates database/sql's no-row sentinel to the shared one.

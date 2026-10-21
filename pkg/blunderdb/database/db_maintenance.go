@@ -79,9 +79,12 @@ func (d *Database) RunMaintenanceWithProgress(kind string, fn func(done, total i
 	})
 }
 
-// CancelMaintenance ends the in-flight maintenance run between two batches;
-// no-op when idle or when the job holding the library is not maintenance.
+// CancelMaintenance ends the in-flight maintenance run between two batches,
+// and the background match_stats fill, which the desktop shows as the
+// stats.matches line running; no-op when idle or when the job holding the
+// library is not maintenance.
 func (d *Database) CancelMaintenance() {
+	d.cancelMatchStatsFill(true)
 	j := d.currentJob()
 	if j != nil && j.cancel != nil {
 		j.cancel()

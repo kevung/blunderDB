@@ -272,6 +272,8 @@ export function ExportMatchMAT(arg1:number,arg2:string):Promise<void>;
 
 export function ExportTranscriptionMAT(arg1:number,arg2:string):Promise<void>;
 
+export function FillMatchStatsInBackground():Promise<boolean>;
+
 export function FindDuplicateMatches():Promise<Array<domain.DuplicateSuspect>>;
 
 export function FindMatchesToRepair():Promise<Array<database.MatchRepair>>;

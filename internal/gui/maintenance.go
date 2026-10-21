@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 	"github.com/kevung/blunderdb/pkg/blunderdb/maintenance"
 )
 
@@ -43,5 +44,28 @@ func (a *App) StartMaintenance(kind string) {
 func (a *App) CancelMaintenance() {
 	if a.db != nil {
 		a.db.CancelMaintenance()
+	}
+}
+
+// matchStatsFillReport shows the background match_stats fill the open starts
+// (Database.FillMatchStatsInBackground) as the stats.matches maintenance line
+// running: the same chip, the same cancel, the same end events, which the
+// panels reading match_stats wait for.
+func (a *App) matchStatsFillReport() *database.MatchStatsFillReport {
+	kind := string(maintenance.StatsMatches)
+	return &database.MatchStatsFillReport{
+		Progress: func(done, total int) {
+			a.emitBatch("maintenance:progress", map[string]any{"kind": kind, "done": done, "total": total})
+		},
+		End: func(filled int, err error) {
+			switch {
+			case err == nil:
+				a.emitBatch("maintenance:done", maintenance.Run{Kind: maintenance.StatsMatches, Changed: filled, Outcome: maintenance.OutcomeDone})
+			case errors.Is(err, context.Canceled):
+				a.emitBatch("maintenance:cancelled", map[string]string{"kind": kind})
+			default:
+				a.emitBatch("maintenance:error", map[string]string{"kind": kind, "message": err.Error()})
+			}
+		},
 	}
 }

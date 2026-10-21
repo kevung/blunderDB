@@ -626,7 +626,8 @@ large l'emporte.
 
 L'onglet **Maintenance** montre l'état de santé de la base : une ligne par
 opération, avec son compte, sa dernière exécution (date et issue : terminée,
-annulée ou en échec) et son action. Rien n'y est lancé tout seul.
+annulée ou en échec) et son action. Seul le calcul des matchs sans
+statistiques se lance tout seul, à l'ouverture.
 
 * **Positions sans analyse** — les positions qui ne portent aucune analyse ;
   l'action est l'analyse gammonNet décrite plus bas. Les positions que
@@ -634,9 +635,15 @@ annulée ou en échec) et son action. Rien n'y est lancé tout seul.
   restent dans ce compte, qui n'atteint donc pas forcément zéro.
 * **Analyses gammonNet périmées** — décrites plus bas.
 * **Matchs sans statistiques** — les matchs dont les statistiques ne sont pas
-  encore calculées ; l'action les calcule tous. Sinon, la première lecture des
-  statistiques les calcule, ce qui peut être long sur une grosse base : le
-  panneau Statistiques affiche alors ce nombre, qui ouvre cet onglet.
+  encore calculées ; l'action les calcule tous. Une base ouverte en écriture
+  qui en compte les calcule d'elle-même en arrière-plan, par lots : la barre
+  d'état montre la progression de cette ligne et son bouton d'annulation, les
+  badges des tournois et l'onglet Joueurs du panneau Statistiques attendent la
+  fin du calcul, et le reste de l'application reste utilisable. Ouvrir une
+  autre base l'arrête. En lecture seule, ou en ligne de commande, la première
+  lecture des statistiques les calcule, ce qui peut être long sur une grosse
+  base : le panneau Statistiques affiche alors ce nombre, qui ouvre cet
+  onglet.
 * **Colonnes d'analyse** — les colonnes que la recherche et les statistiques
   interrogent sont une projection des analyses stockées, lesquelles restent
   intactes : l'action les recalcule sans rien réimporter.

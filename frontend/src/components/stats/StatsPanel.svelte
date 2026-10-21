@@ -24,7 +24,7 @@
         statsTabStore
     } from '../../stores/statsStore.js';
     import { activeTabStore, configInitialTabStore, openModal, MODAL } from '../../stores/uiStore.js';
-    import { maintenanceEndedStore } from '../../stores/maintenanceStore.js';
+    import { maintenanceEndedStore, maintenanceStore, STATS_MATCHES } from '../../stores/maintenanceStore.js';
     import { MaintenanceStatus } from '../../../wailsjs/go/database/Database.js';
     import CountLink from '../panels/CountLink.svelte';
     import { databaseLoadedStore } from '../../stores/databaseStore.js';
@@ -83,10 +83,13 @@
     // The players table is fetched only while its tab is open: it is a
     // whole-database aggregate, and computing it behind the other three tabs
     // would make every filter change pay for a table nobody is looking at.
+    // While the match statistics fill, the table waits for them: read now, it would compute the
+    // rest of the library itself, in one hold, beside the fill.
+    let statsFilling = $derived($maintenanceStore?.kind === STATS_MATCHES ? $maintenanceStore : null);
     $effect(() => {
         const filter = $statsFilterStore;
         const key = $statsInvalidationKeyStore;
-        if (!$databaseLoadedStore || $statsTabStore !== 'players') return;
+        if (!$databaseLoadedStore || $statsTabStore !== 'players' || statsFilling) return;
         logger.perf('StatsPanel:refreshPlayerTable', () => refreshPlayerTable(filter, key));
     });
 
@@ -208,7 +211,12 @@
         {:else if $statsTabStore === 'breakdowns'}
             <StatsBreakdownsTab result={$statsResultStore} />
         {:else if $statsTabStore === 'players'}
-            {#if $playerTableLoadingStore}
+            {#if statsFilling}
+                <p class="loading-msg" data-testid="players-wait-fill">
+                    {$t('maintenance.line_stats_matches')}
+                    {statsFilling.total > 0 ? `${statsFilling.done}/${statsFilling.total}` : '…'}
+                </p>
+            {:else if $playerTableLoadingStore}
                 <p class="loading-msg">{$t('stats.loading')}</p>
             {:else}
                 <StatsPlayersTab rows={$playerTableStore} onSelectPlayer={showPlayerDashboard} />

@@ -53,6 +53,7 @@
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
     import { commentTextStore } from '../stores/uiStore';
     import { databaseLoadedStore, libraryChangedStore } from '../stores/databaseStore';
+    import { maintenanceStore, maintenanceEndedStore, STATS_MATCHES } from '../stores/maintenanceStore.js';
     import { panelKeyGuard } from '../services/keyboardService.js';
     import { registerKeys } from '../services/keyDispatch.js';
     import { t, tMsg } from '../i18n';
@@ -710,6 +711,20 @@
         refreshDirectionSummaries();
     });
 
+    // The badges come with the match statistics: while they fill, the list comes without them,
+    // and it is read again once the fill ends.
+    let statsFilling = $derived($maintenanceStore?.kind === STATS_MATCHES);
+    $effect(
+        onChange(
+            () => $maintenanceEndedStore,
+            () =>
+                untrack(() => {
+                    if ($openPanels.has(PANEL.TOURNAMENT) && $databaseLoadedStore) loadTournaments();
+                }),
+            untrack(() => $maintenanceEndedStore)
+        )
+    );
+
     // Another library brought forward: its tournaments and Directions, not the previous one's.
     const libraryAtMount = untrack(() => $libraryChangedStore);
     $effect(() => {
@@ -808,9 +823,9 @@
                             <td class="narrow-col no-select count-cell">{tournament.matchCount || 0}</td>
                             <td class="no-select">{tournament.location || ''}</td>
                             <td class="narrow-col no-select stat-col" title={tournament.pr > 0 && tournament.ref_player ? $t('tournament.prReferencePlayer', { player: tournament.ref_player }) : ''}
-                                >{tournament.pr > 0 ? tournament.pr.toFixed(2) : '—'}</td
+                                >{tournament.pr > 0 ? tournament.pr.toFixed(2) : statsFilling ? '…' : '—'}</td
                             >
-                            <td class="narrow-col no-select stat-col">{tournament.mwc_loss > 0 ? (tournament.mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
+                            <td class="narrow-col no-select stat-col">{tournament.mwc_loss > 0 ? (tournament.mwc_loss * 100).toFixed(2) + '%' : statsFilling ? '…' : '—'}</td>
                             <td class="narrow-col no-select stat-col" title={mwc7Tooltip(tournament.mwc7, $t)}>{fmtMwc7(tournament.mwc7)}</td>
                             <td class="actions-col no-select">
                                 <span class="item-actions">

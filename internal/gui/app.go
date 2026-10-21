@@ -134,6 +134,7 @@ func NewApp(db *database.Database) *App {
 			a.stopDisplayForSwitch()
 		})
 		database.SetOpenGuard(db, a.refuseHeldLibrary)
+		database.SetMatchStatsFillReport(db, a.matchStatsFillReport())
 		database.SetBlunderCountReady(db, func() {
 			if a.ctx != nil {
 				runtime.EventsEmit(a.ctx, blunderCountReadyEvent)

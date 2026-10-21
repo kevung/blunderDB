@@ -502,6 +502,10 @@ export function ExportTranscriptionMAT(arg1, arg2) {
   return window['go']['database']['Database']['ExportTranscriptionMAT'](arg1, arg2);
 }
 
+export function FillMatchStatsInBackground() {
+  return window['go']['database']['Database']['FillMatchStatsInBackground']();
+}
+
 export function FindDuplicateMatches() {
   return window['go']['database']['Database']['FindDuplicateMatches']();
 }
