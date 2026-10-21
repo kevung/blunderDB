@@ -2,7 +2,6 @@ package database
 
 import (
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	"log/slog"
 	"path/filepath"
@@ -240,13 +239,13 @@ func loadExportAnalysis(t *testing.T, db *sql.DB) []PositionAnalysis {
 	defer rows.Close()
 	var analyses []PositionAnalysis
 	for rows.Next() {
-		var dataJSON string
-		if err := rows.Scan(&dataJSON); err != nil {
+		var blob []byte
+		if err := rows.Scan(&blob); err != nil {
 			t.Fatalf("scan analysis: %v", err)
 		}
-		var a PositionAnalysis
-		if err := json.Unmarshal([]byte(dataJSON), &a); err != nil {
-			t.Fatalf("unmarshal analysis: %v", err)
+		a, err := decodeAnalysisFromStorage(blob)
+		if err != nil {
+			t.Fatalf("decode analysis: %v", err)
 		}
 		analyses = append(analyses, a)
 	}

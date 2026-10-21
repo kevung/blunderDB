@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"iter"
 
-	"encoding/json"
 	"log/slog"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -299,21 +298,22 @@ func (s *analysisStore) LoadMany(ctx context.Context, scope string, ids []int64)
 	return decoded, nil
 }
 
-// SaveAnalysisUncompressed writes a's analysis row for positionID with its
-// JSON payload left uncompressed, denormalised columns derived as Save would.
-// It exists for one writer: an exported database is read by whatever version
-// of blunderDB the recipient runs, and versions before 2.3.0 know only plain
-// JSON — a live database compresses (Save), a file handed to someone else
-// does not. The row must not exist yet (an export writes each position once).
+// SaveExportedAnalysis writes a's analysis row for positionID inside an
+// export's transaction, encoded as Save encodes it (engine.
+// EncodeAnalysisForStorage) and with the denormalised columns derived as
+// Save would. Every blunderDB that accepts an exported file's schema reads
+// that encoding: the releases that knew only plain-JSON analyses also read
+// position.state as full Position JSON, which an export no longer writes.
+// The row must not exist yet (an export writes each position once).
 //
 // It returns the basis the moves played from the position are scored by
 // (sqlshared.PlayedDecisionBasis), built from a rather than read back, so
 // that the exporter, which writes those moves next, need not decode the
 // analysis once per move (CreateScoredMove).
-func SaveAnalysisUncompressed(ctx context.Context, tx *sql.Tx, positionID int64, a *domain.PositionAnalysis) (*sqlshared.PlayedDecisionBasis, error) {
+func SaveExportedAnalysis(ctx context.Context, tx *sql.Tx, positionID int64, a *domain.PositionAnalysis) (*sqlshared.PlayedDecisionBasis, error) {
 	a.PositionID = int(positionID)
 	engine.RoundAnalysisForStorage(a)
-	data, err := json.Marshal(a)
+	data, err := engine.EncodeAnalysisForStorage(a)
 	if err != nil {
 		return nil, fmt.Errorf("sqlite: encode analysis: %w", err)
 	}

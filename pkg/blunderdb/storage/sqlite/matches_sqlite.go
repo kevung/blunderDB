@@ -929,7 +929,7 @@ func (s *matchStore) CreateMove(ctx context.Context, scope string, mv *domain.Mo
 // CreateScoredMove is CreateMove for a caller that already holds the move's
 // decision_error_mp and is_close_cube, as PlayedDecisionArgs would compute
 // them from the analysis stored for mv.PositionID: the exporter, which scored
-// the move from the analysis it had just written (SaveAnalysisUncompressed).
+// the move from the analysis it had just written (SaveExportedAnalysis).
 // tx is a WrapTx transaction, whose prepared statements the insert reuses.
 func CreateScoredMove(ctx context.Context, tx storage.Tx, mv *domain.Move, decisionErr any, closeCube int64) (int64, error) {
 	t, ok := tx.(*txImpl)

@@ -705,7 +705,7 @@ func (e *exporter) writeBatch(positions []*domain.Position) error {
 				ac.PlayedMove, ac.PlayedCubeAction = "", ""
 				ac.PlayedMoves, ac.PlayedCubeActions = nil, nil
 			}
-			if basis, err := sqlite.SaveAnalysisUncompressed(e.ctx, e.tx, newID, &ac); err != nil {
+			if basis, err := sqlite.SaveExportedAnalysis(e.ctx, e.tx, newID, &ac); err != nil {
 				e.skip("inserting analysis for position", "newID", newID, "oldID", p.ID, "err", err)
 			} else {
 				for _, mv := range moves[p.ID] {
