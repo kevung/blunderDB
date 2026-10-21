@@ -48,6 +48,22 @@ function openingPosition() {
 // Database bindings that touch no database: a parser, the race tables, a constant.
 const PURE_DATABASE_CALLS = ['ParsePositionText', 'ComputeEPCFromPosition', 'GetDatabaseVersion'];
 
+/**
+ * The Matches panel, the tab shown at startup, lists its (empty) rows when it mounts. Those reads
+ * are the panel's, not the feature's: wait for them, and return how many database calls precede
+ * the first step of the test, so that the final check looks at what the test did.
+ */
+async function awaitStartupReads(/** @type {import('@playwright/test').Page} */ page) {
+    await expect.poll(async () => (await getWailsCalls(page, 'ListMatches')).length).toBeGreaterThan(0);
+    return page.evaluate(() => window.__wailsCalls.filter((c) => c.ns === 'database').length);
+}
+
+/** The database calls made after the first `skip`, other than the pure ones. */
+async function impureDatabaseCalls(/** @type {import('@playwright/test').Page} */ page, /** @type {number} */ skip) {
+    const calls = await page.evaluate(() => window.__wailsCalls.filter((c) => c.ns === 'database').map((c) => c.method));
+    return calls.slice(skip).filter((m) => !PURE_DATABASE_CALLS.includes(m));
+}
+
 const XGID = 'XGID=-b----E-C---eE---c-e----B-:0:0:1:31:0:0:0:0:10';
 
 const row = (/** @type {import('@playwright/test').Page} */ page, /** @type {string} */ move) => page.locator(`.eval-panel tr[data-move="${move}"]`);
@@ -71,6 +87,7 @@ test('the Eval panel works end to end without a database', async ({ page }) => {
     await page.goto('/');
     await expect(page.locator('[data-testid="status-bar"]')).toBeVisible({ timeout: 8000 });
     await dismissHomeScreen(page);
+    const startupCalls = await awaitStartupReads(page);
     await page.click('[data-testid="tab-eval"]');
     await expect(page.locator('[data-testid="tab-eval"]')).toHaveClass(/active/);
 
@@ -130,8 +147,7 @@ test('the Eval panel works end to end without a database', async ({ page }) => {
     await expect(row(page, '8/5 6/5')).toBeVisible({ timeout: 4000 });
 
     // Nothing reached the database backend but pure computations, which read no file.
-    const dbCalls = await page.evaluate(() => window.__wailsCalls.filter((c) => c.ns === 'database').map((c) => c.method));
-    expect(dbCalls.filter((m) => !PURE_DATABASE_CALLS.includes(m))).toEqual([]);
+    expect(await impureDatabaseCalls(page, startupCalls)).toEqual([]);
 });
 
 test('a training session runs without a database, and is told, not recorded', async ({ page }) => {
@@ -139,6 +155,7 @@ test('a training session runs without a database, and is told, not recorded', as
     await page.goto('/');
     await expect(page.locator('[data-testid="status-bar"]')).toBeVisible({ timeout: 8000 });
     await dismissHomeScreen(page);
+    const startupCalls = await awaitStartupReads(page);
     await page.keyboard.press('Control+j');
     await expect(page.locator('[data-testid="tab-training"]')).toHaveClass(/active/);
     await expect(page.locator('[data-testid="training-journal-no-database"]')).toHaveText(en.training.journalNoDatabase);
@@ -150,6 +167,5 @@ test('a training session runs without a database, and is told, not recorded', as
     await expect(status(page)).toContainText(en.training.notRecorded.split(':')[0]);
     expect(await getWailsCalls(page, 'SaveTrainingSession')).toEqual([]);
 
-    const dbCalls = await page.evaluate(() => window.__wailsCalls.filter((c) => c.ns === 'database').map((c) => c.method));
-    expect(dbCalls.filter((m) => !PURE_DATABASE_CALLS.includes(m))).toEqual([]);
+    expect(await impureDatabaseCalls(page, startupCalls)).toEqual([]);
 });

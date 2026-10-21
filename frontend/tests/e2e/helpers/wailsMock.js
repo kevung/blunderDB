@@ -19,6 +19,8 @@
  * demandé au backend (voir getWailsCalls).
  */
 
+import { test } from '@playwright/test';
+
 /**
  * @typedef {Object} MockOverrides
  * @property {Record<string, unknown>} [database]  valeur constante retournée par window.go.database.Database.<m>
@@ -32,6 +34,7 @@
  * @param {MockOverrides} [overrides]  valeurs JSON-sérialisables, une par méthode
  */
 export async function installWailsMock(page, overrides = {}) {
+    waitForDeferredAfterGoto(page);
     await page.addInitScript((overrides) => {
         // ── Helpers locaux ───────────────────────────────────────────────────
         const noop = () => {};
@@ -371,4 +374,35 @@ export async function dismissHomeScreen(page) {
     // Constat et clic en un seul tour de page : sous openLibraryMock, l'accueil peut s'effacer
     // entre un count() et un click(), qui attendrait alors un bouton disparu.
     await page.evaluate(() => /** @type {HTMLElement | null} */ (document.querySelector('[data-testid="home-dismiss"]'))?.click());
+}
+
+/**
+ * The dev server answers module by module, and a lazy panel only mounts once its chunk is
+ * there ("Loading…" until then). `main.js` marks `bdb:deferred-loaded` when every deferred
+ * panel and the Direction view are fetched. After each navigation to the app, wait for that
+ * state, so that no spec races the server's speed. The wait has its own budget: the test's
+ * deadline is pushed back for its duration and restored to what the test itself had left.
+ *
+ * @param {import('@playwright/test').Page} page
+ */
+function waitForDeferredAfterGoto(page) {
+    const budget = 60000;
+    for (const name of /** @type {const} */ (['goto', 'reload'])) {
+        const navigate = page[name].bind(page);
+        page[name] = async (...args) => {
+            const response = await navigate(...args);
+            if (!page.url().startsWith('http://localhost')) return response;
+            const info = test.info();
+            // Debugging disables the deadline (0): leave it so.
+            const bounded = info.timeout > 0;
+            const started = Date.now();
+            if (bounded) info.setTimeout(info.timeout + budget);
+            try {
+                await page.waitForFunction(() => performance.getEntriesByName('bdb:deferred-loaded').length > 0, null, { timeout: budget });
+            } finally {
+                if (bounded) info.setTimeout(info.timeout - budget + (Date.now() - started));
+            }
+            return response;
+        };
+    }
 }
