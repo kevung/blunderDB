@@ -50,9 +50,9 @@ propre issue le jour où il est lancé.
   code non mappé (`ingest/xgmap.go`) passerait donc pour un vrai Double/Take/Pass et entrerait
   au dénominateur du PR. Aucune occurrence connue dans les corpus. Correctif si ça mord un
   jour : tester `engine.CanonicalCubeAction` plutôt que les graphies littérales.
-- **Wrapper `Database` vers le contrat `Storage`, tranches 5 et 6** (ADR-0100 ; tranches 1,
-  écritures de match, 2, lectures de match, 3, analyses, et 4, lots gammonNet et gardes
-  d'import, faites). Chaque tranche délègue un
+- **Wrapper `Database` vers le contrat `Storage`, tranche 6** (ADR-0100 ; tranches 1,
+  écritures de match, 2, lectures de match, 3, analyses, 4, lots gammonNet et gardes
+  d'import, et 5, import d'une autre base, faites). Chaque tranche délègue un
   groupe sans changer de comportement ; un écart se tranche d'abord, avec son test. La tranche 2
   a tranché ses écarts ainsi : le repli de `LastVisited` est la tête de `List` (sentinelle triée
   comme une absence de date, égalité départagée par l'id, les deux backends) ;
@@ -75,8 +75,9 @@ propre issue le jour où il est lancé.
   n'identifie rien, alors que le wrapper trouvait un match stocké avec `match_hash = ''`
   (bibliothèque exportée, migration v1) ; aucun appelant hors liaison Wails. La comparaison
   gammonNet interrompt son balayage sur une erreur de lecture de la base, là où elle sautait la
-  position avec un avertissement ; une analyse indécodable reste journalisée et sautée. (5)
-  `db_import_db.go`. (6) `store` typé `storage.Storage`, `FilePath`/`Vacuum`/`VacuumInto`/
+  position avec un avertissement ; une analyse indécodable reste journalisée et sautée. La tranche 5 : un écart tranché, l'auteur d'un commentaire importé
+  est normalisé par le contrat (espaces retirés, longueur bornée) comme à l'import du démon,
+  là où le bureau le recopiait tel quel. (6) `store` typé `storage.Storage`, `FilePath`/`Vacuum`/`VacuumInto`/
   vérification derrière une interface de fichier local : prérequis de `storage/remote` au
   bureau et des bibliothèques multiples.
 - **`SwapPlayers`/`DeleteCascade` dupliqués** entre `storage/sqlite/matches_sqlite.go` et
