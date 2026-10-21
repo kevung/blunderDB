@@ -8,8 +8,6 @@ import (
 	"sort"
 	"time"
 
-	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
-
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
@@ -60,124 +58,46 @@ func (d *Database) saveAnalysisAt(gen uint64, positionID int64, analysis Positio
 // with (0: the built-in one), written in the analysis's own transaction: a
 // verdict stored without its table would be read as Kazaross-XG2 (ADR-0068).
 func (d *Database) saveAnalysisLocked(positionID int64, analysis PositionAnalysis, metID *int64) error {
-
-	// Ensure the positionID is set in the analysis
+	ctx := context.Background()
 	analysis.PositionID = int(positionID)
-
-	// Update last modified date
 	analysis.LastModifiedDate = time.Now()
 
-	// Check if an analysis already exists for the given position ID
-	var existingID int64
-	var existingAnalysisData []byte
-	err := d.db.QueryRow(`SELECT id, data FROM analysis WHERE position_id = ?`, positionID).Scan(&existingID, &existingAnalysisData)
-	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+	var existing *PositionAnalysis
+	stored, err := d.store.Analyses().Load(ctx, "", positionID)
+	switch {
+	case err == nil:
+		existing = stored
+	case !errors.Is(err, storage.ErrNotFound):
 		return err
 	}
 
 	// A gammonNet verdict is written by the rule the serve daemon writes by
 	// too, with or without a stored row, so both leave the same row
-	// (CLI/GUI/server parity); everything below is the merge of any other
-	// caller.
+	// (CLI/GUI/server parity); any other caller's analysis is merged.
 	if metID != nil {
-		var existing *PositionAnalysis
-		if existingID > 0 {
-			decoded, err := decodeAnalysisFromStorage(existingAnalysisData)
-			if err != nil {
-				return err
-			}
-			existing = &decoded
-		}
 		analysis = gammonnet.SupersedeEntries(existing, analysis)
 		if analysis.CreationDate.IsZero() {
 			analysis.CreationDate = time.Now()
 		}
 		return d.saveAnalysisTx(positionID, &analysis, *metID)
 	}
+	analysis = mergeSavedAnalysis(existing, analysis)
 
-	if existingID > 0 {
-		// Parse existing analysis
-		existingAnalysis, err := decodeAnalysisFromStorage(existingAnalysisData)
-		if err != nil {
-			return err
-		}
+	// The store rounds, encodes and derives the scalar columns, then
+	// inserts-or-updates the row keyed by position_id.
+	return d.store.Analyses().Save(ctx, "", positionID, &analysis)
+}
 
-		// Preserve the existing creation date
-		analysis.CreationDate = existingAnalysis.CreationDate
-
-		// Merge checker analysis if both exist
-		if existingAnalysis.CheckerAnalysis != nil && analysis.CheckerAnalysis != nil {
-			analysis.CheckerAnalysis.Moves = mergeCheckerMoves(
-				existingAnalysis.CheckerAnalysis.Moves,
-				analysis.CheckerAnalysis.Moves,
-			)
-		} else if existingAnalysis.CheckerAnalysis != nil && analysis.CheckerAnalysis == nil {
-			// Keep existing checker analysis if new one is nil
-			analysis.CheckerAnalysis = existingAnalysis.CheckerAnalysis
-		}
-
-		// Merge doubling cube analysis, keeping EVERY engine's (ADR-0013), as
-		// ingest/merge.go does. DoublingCubeAnalysis stays the PRIMARY one the
-		// scalar columns read; AllCubeAnalyses carries the whole set.
-		analysis.DoublingCubeAnalysis, analysis.AllCubeAnalyses = mergeCubeAnalyses(
-			existingAnalysis.DoublingCubeAnalysis, existingAnalysis.AllCubeAnalyses,
-			analysis.DoublingCubeAnalysis, analysis.AllCubeAnalyses)
-
-		// Merge played moves (support both old single field and new array field)
-		existingPlayedMoves := existingAnalysis.PlayedMoves
-		if existingAnalysis.PlayedMove != "" && len(existingPlayedMoves) == 0 {
-			existingPlayedMoves = []string{existingAnalysis.PlayedMove}
-		}
-		incomingPlayedMoves := analysis.PlayedMoves
-		if analysis.PlayedMove != "" && len(incomingPlayedMoves) == 0 {
-			incomingPlayedMoves = []string{analysis.PlayedMove}
-		}
-		analysis.PlayedMoves = mergePlayedMoves(existingPlayedMoves, incomingPlayedMoves)
-
-		// Merge played cube actions
-		existingCubeActions := existingAnalysis.PlayedCubeActions
-		if existingAnalysis.PlayedCubeAction != "" && len(existingCubeActions) == 0 {
-			existingCubeActions = []string{existingAnalysis.PlayedCubeAction}
-		}
-		incomingCubeActions := analysis.PlayedCubeActions
-		if analysis.PlayedCubeAction != "" && len(incomingCubeActions) == 0 {
-			incomingCubeActions = []string{analysis.PlayedCubeAction}
-		}
-		analysis.PlayedCubeActions = mergePlayedMoves(existingCubeActions, incomingCubeActions)
-
-		// Rollouts are their own analyses: a caller that does not know them
-		// (an import, the frontend saving what it edited) must not drop them.
-		analysis.Rollouts = domain.MergeRollouts(existingAnalysis.Rollouts, analysis.Rollouts)
-
-		// Clear deprecated single fields after merging
-		analysis.PlayedMove = ""
-		analysis.PlayedCubeAction = ""
-
-		// Sort checker moves by equity after merging
-		if analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0 {
-			sort.Slice(analysis.CheckerAnalysis.Moves, func(i, j int) bool {
-				return analysis.CheckerAnalysis.Moves[i].Equity > analysis.CheckerAnalysis.Moves[j].Equity
-			})
-			// Recalculate indices and equity errors
-			bestEquity := analysis.CheckerAnalysis.Moves[0].Equity
-			for i := range analysis.CheckerAnalysis.Moves {
-				analysis.CheckerAnalysis.Moves[i].Index = i
-				if i == 0 {
-					analysis.CheckerAnalysis.Moves[i].EquityError = nil
-				} else {
-					diff := bestEquity - analysis.CheckerAnalysis.Moves[i].Equity
-					analysis.CheckerAnalysis.Moves[i].EquityError = &diff
-				}
-			}
-		}
-
-	} else {
-		// Set creation date if not already set
+// mergeSavedAnalysis folds analysis into existing, the analysis the position
+// already carries (nil when none): the candidate moves and cube analyses of
+// both, keyed by notation and by engine, the union of what was played, the
+// rollouts of both, the creation date of the stored one. The moves are ranked
+// by equity (engine.RankCheckerMoves).
+func mergeSavedAnalysis(existing *PositionAnalysis, analysis PositionAnalysis) PositionAnalysis {
+	if existing == nil {
 		if analysis.CreationDate.IsZero() {
 			analysis.CreationDate = time.Now()
 		}
-
-		// Convert single played move to array if needed
 		if analysis.PlayedMove != "" && len(analysis.PlayedMoves) == 0 {
 			analysis.PlayedMoves = []string{analysis.PlayedMove}
 			analysis.PlayedMove = ""
@@ -186,34 +106,54 @@ func (d *Database) saveAnalysisLocked(positionID int64, analysis PositionAnalysi
 			analysis.PlayedCubeActions = []string{analysis.PlayedCubeAction}
 			analysis.PlayedCubeAction = ""
 		}
-
-		// Sort checker moves by equity
-		if analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0 {
-			sort.Slice(analysis.CheckerAnalysis.Moves, func(i, j int) bool {
-				return analysis.CheckerAnalysis.Moves[i].Equity > analysis.CheckerAnalysis.Moves[j].Equity
-			})
-			// Recalculate indices and equity errors
-			bestEquity := analysis.CheckerAnalysis.Moves[0].Equity
-			for i := range analysis.CheckerAnalysis.Moves {
-				analysis.CheckerAnalysis.Moves[i].Index = i
-				if i == 0 {
-					analysis.CheckerAnalysis.Moves[i].EquityError = nil
-				} else {
-					diff := bestEquity - analysis.CheckerAnalysis.Moves[i].Equity
-					analysis.CheckerAnalysis.Moves[i].EquityError = &diff
-				}
-			}
+		if analysis.CheckerAnalysis != nil {
+			engine.RankCheckerMoves(analysis.CheckerAnalysis.Moves)
 		}
-
+		return analysis
 	}
 
-	// The store rounds, encodes and derives the scalar columns, then
-	// inserts-or-updates the row keyed by position_id.
-	ctx := context.Background()
-	if metID == nil {
-		return d.store.Analyses().Save(ctx, "", positionID, &analysis)
+	analysis.CreationDate = existing.CreationDate
+
+	if existing.CheckerAnalysis != nil && analysis.CheckerAnalysis != nil {
+		analysis.CheckerAnalysis.Moves = engine.MergeCheckerMoves(
+			existing.CheckerAnalysis.Moves, analysis.CheckerAnalysis.Moves)
+	} else if existing.CheckerAnalysis != nil {
+		analysis.CheckerAnalysis = existing.CheckerAnalysis
 	}
-	return d.saveAnalysisTx(positionID, &analysis, *metID)
+
+	// Every engine's cube analysis is kept (ADR-0013). DoublingCubeAnalysis
+	// stays the PRIMARY one the scalar columns read; AllCubeAnalyses carries
+	// the whole set.
+	analysis.DoublingCubeAnalysis, analysis.AllCubeAnalyses = mergeCubeAnalyses(
+		existing.DoublingCubeAnalysis, existing.AllCubeAnalyses,
+		analysis.DoublingCubeAnalysis, analysis.AllCubeAnalyses)
+
+	// The old single fields still count as a play when the array is empty.
+	analysis.PlayedMoves = mergePlayedMoves(
+		playedOrSingle(existing.PlayedMoves, existing.PlayedMove),
+		playedOrSingle(analysis.PlayedMoves, analysis.PlayedMove))
+	analysis.PlayedCubeActions = mergePlayedMoves(
+		playedOrSingle(existing.PlayedCubeActions, existing.PlayedCubeAction),
+		playedOrSingle(analysis.PlayedCubeActions, analysis.PlayedCubeAction))
+	analysis.PlayedMove = ""
+	analysis.PlayedCubeAction = ""
+
+	// Rollouts are their own analyses: a caller that does not know them
+	// (an import, the frontend saving what it edited) must not drop them.
+	analysis.Rollouts = domain.MergeRollouts(existing.Rollouts, analysis.Rollouts)
+
+	if analysis.CheckerAnalysis != nil {
+		engine.RankCheckerMoves(analysis.CheckerAnalysis.Moves)
+	}
+	return analysis
+}
+
+// playedOrSingle is played, or the legacy single field when played is empty.
+func playedOrSingle(played []string, single string) []string {
+	if single != "" && len(played) == 0 {
+		return []string{single}
+	}
+	return played
 }
 
 // saveAnalysisTx writes analysis and tags it with the table metID in one
@@ -249,31 +189,18 @@ func (d *Database) LoadAnalysis(positionID int64) (*PositionAnalysis, error) {
 	}
 	analysis := *loaded
 
-	// Load ALL played moves/cube actions from move table for this position
-	// This supplements the PlayedMoves/PlayedCubeActions arrays stored in analysis
-	rows, err := d.db.Query(`
-		SELECT checker_move, `+sqlshared.ActionLabelSQL("cube_action")+`
-		FROM move
-		WHERE position_id = ?
-	`, positionID)
-
-	if err == nil {
-		defer rows.Close()
-
-		var checkerMoves, cubeActions []string
-		for rows.Next() {
-			var checkerMove sql.NullString
-			var cubeAction sql.NullString
-			if err := rows.Scan(&checkerMove, &cubeAction); err == nil {
-				checkerMoves = append(checkerMoves, checkerMove.String)
-				cubeActions = append(cubeActions, cubeAction.String)
-			}
-		}
-		if err := rows.Err(); err != nil {
-			return nil, err
-		}
-		mergePlayedActions(&analysis, checkerMoves, cubeActions)
+	// What the matches played at this position supplements the played
+	// actions the analysis stored.
+	byPosition, err := d.store.Matches().MovesByPositions(context.Background(), "", []int64{positionID})
+	if err != nil {
+		return nil, err
 	}
+	var checkerMoves, cubeActions []string
+	for _, mv := range byPosition[positionID] {
+		checkerMoves = append(checkerMoves, mv.CheckerMove)
+		cubeActions = append(cubeActions, mv.CubeAction)
+	}
+	mergePlayedActions(&analysis, checkerMoves, cubeActions)
 
 	// Sort AllCubeAnalyses so XG comes first (for existing data in DB)
 	if len(analysis.AllCubeAnalyses) > 0 {
@@ -335,18 +262,13 @@ func mergePlayedActions(analysis *PositionAnalysis, checkerMoves, cubeActions []
 	}
 }
 
+// DeleteAnalysis removes the analysis of positionID through the contract,
+// which also unscores the moves played there and drops the match_stats rows
+// of the matches reaching it.
 func (d *Database) DeleteAnalysis(positionID int64) error {
-	d.mu.Lock()         // Lock the mutex
-	defer d.mu.Unlock() // Unlock the mutex when the function returns
-
-	_, err := d.db.Exec(`DELETE FROM analysis WHERE position_id = ?`, positionID)
-	if err != nil {
-		return err
-	}
-	if _, err := d.db.Exec(sqlshared.InvalidateMatchStatsOfPositionsSQL+"(?)"+sqlshared.InvalidateMatchStatsOfPositionsSuffix, positionID); err != nil {
-		return err
-	}
-	return nil
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	return d.store.Analyses().Delete(context.Background(), "", positionID)
 }
 
 // RepairAnalyses recomputes the scalar columns of every analysis from its
@@ -363,53 +285,6 @@ func (d *Database) RepairAnalyses() (int, error) {
 		return 0, fmt.Errorf("no database is currently open")
 	}
 	return d.store.Analyses().RepairDenormalisedColumns(context.Background(), "")
-}
-
-// mergeCubeAnalyses folds an incoming cube analysis into what a position
-// already carries, keeping one entry per ENGINE.
-//
-// The primary is the incoming one when present, else the existing one: a
-// caller silent about the cube must not blank it. The set is deduplicated by
-// engine, incoming first (a newer XG replaces XG's entry), and sorted so the
-// display does not depend on import order.
-func mergeCubeAnalyses(existing *DoublingCubeAnalysis, existingAll []DoublingCubeAnalysis,
-	incoming *DoublingCubeAnalysis, incomingAll []DoublingCubeAnalysis) (*DoublingCubeAnalysis, []DoublingCubeAnalysis) {
-
-	// Everything either side knows, incoming first so it wins its engine slot.
-	var candidates []DoublingCubeAnalysis
-	candidates = append(candidates, incomingAll...)
-	if incoming != nil {
-		candidates = append(candidates, *incoming)
-	}
-	candidates = append(candidates, existingAll...)
-	if existing != nil {
-		candidates = append(candidates, *existing)
-	}
-	if len(candidates) == 0 {
-		return nil, nil
-	}
-
-	seen := map[string]bool{}
-	var all []DoublingCubeAnalysis
-	for _, ca := range candidates {
-		if seen[ca.AnalysisEngine] {
-			continue
-		}
-		seen[ca.AnalysisEngine] = true
-		all = append(all, ca)
-	}
-	sortCubeAnalysesByEngine(all)
-
-	primary := incoming
-	if primary == nil {
-		primary = existing
-	}
-	// A single engine needs no set: an array of one is noise in every blob
-	// that carries it, and AllCubeAnalyses is read as "several" everywhere.
-	if len(all) < 2 {
-		return primary, nil
-	}
-	return primary, all
 }
 
 // RebuildMatchStats discards the per-match statistics (match_stats) and

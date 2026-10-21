@@ -7,7 +7,6 @@ import (
 	"encoding/hex"
 	"fmt"
 	"os"
-	"sort"
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -117,109 +116,13 @@ func (d *Database) writeImportedPosition(ctx context.Context, graphs []ingest.Po
 	return firstID, nil
 }
 
-// enginePriority returns a sort priority for analysis engines.
-// XG gets priority 0 (first), GNUbg gets 1, unknown/empty gets 2.
-func enginePriority(engine string) int {
-	switch strings.ToLower(engine) {
-	case "xg":
-		return 0
-	case "gnubg":
-		return 1
-	default:
-		return 2
-	}
-}
-
-// sortCubeAnalysesByEngine sorts cube analyses so XG comes first, then GNUbg, then others.
-func sortCubeAnalysesByEngine(analyses []DoublingCubeAnalysis) {
-	sort.SliceStable(analyses, func(i, j int) bool {
-		return enginePriority(analyses[i].AnalysisEngine) < enginePriority(analyses[j].AnalysisEngine)
-	})
-}
-
-// mergeCheckerMoves merges two sets of checker moves, avoiding duplicates
-// Moves are considered duplicates if they have the same move string
-// Returns moves sorted by equity (highest first), with XG engine preferred as tiebreaker
-func mergeCheckerMoves(existing, incoming []CheckerMove) []CheckerMove {
-	// Use a map to track unique moves by their move string
-	moveMap := make(map[string]CheckerMove)
-
-	// Add existing moves to the map
-	for _, m := range existing {
-		moveMap[m.Move] = m
-	}
-
-	// Add incoming moves, prefer incoming if there's a conflict (newer analysis)
-	for _, m := range incoming {
-		if existingMove, exists := moveMap[m.Move]; exists {
-			// If the incoming move has the same depth or higher quality analysis, use it
-			// Otherwise keep the existing one. The labels are free text ("2-ply",
-			// "XG Roller++"): compare their rank, never the strings.
-			if domain.AnalysisDepthRank(m.AnalysisDepth) >= domain.AnalysisDepthRank(existingMove.AnalysisDepth) {
-				moveMap[m.Move] = m
-			}
-		} else {
-			moveMap[m.Move] = m
-		}
-	}
-
-	// Convert map to slice
-	result := make([]CheckerMove, 0, len(moveMap))
-	for _, m := range moveMap {
-		result = append(result, m)
-	}
-
-	// Sort by equity (highest first), with XG engine preferred as tiebreaker
-	sort.SliceStable(result, func(i, j int) bool {
-		if result[i].Equity != result[j].Equity {
-			return result[i].Equity > result[j].Equity
-		}
-		return enginePriority(result[i].AnalysisEngine) < enginePriority(result[j].AnalysisEngine)
-	})
-
-	// Recalculate equity errors relative to the best move
-	if len(result) > 0 {
-		bestEquity := result[0].Equity
-		for i := range result {
-			result[i].Index = i
-			if i == 0 {
-				result[i].EquityError = nil
-			} else {
-				diff := bestEquity - result[i].Equity
-				result[i].EquityError = &diff
-			}
-		}
-	}
-
-	return result
-}
-
-// mergePlayedMoves merges played moves/cube actions, avoiding duplicates
-func mergePlayedMoves(existing, incoming []string) []string {
-	// Use a map to track unique moves
-	moveSet := make(map[string]bool)
-
-	for _, m := range existing {
-		if m != "" {
-			moveSet[normalizeMove(m)] = true
-		}
-	}
-
-	for _, m := range incoming {
-		if m != "" {
-			moveSet[normalizeMove(m)] = true
-		}
-	}
-
-	// Convert map to slice
-	result := make([]string, 0, len(moveSet))
-	for m := range moveSet {
-		result = append(result, m)
-	}
-
-	sort.Strings(result)
-	return result
-}
+// The analysis merge helpers are engine's, shared with ingest and gammonNet's
+// verdicts (see engine/analysismerge.go).
+var (
+	sortCubeAnalysesByEngine = engine.SortCubeAnalysesByEngine
+	mergePlayedMoves         = engine.UnionPlayed
+	mergeCubeAnalyses        = engine.MergeCubeAnalyses
+)
 
 // normalizeMove is re-exported from package engine (see analysiscodec.go).
 var normalizeMove = engine.NormalizeMove

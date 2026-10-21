@@ -45,7 +45,9 @@ Le champ `Database.store` est typé `*sqlite.Storage`, pas `storage.Storage` : s
       dialectales, `storage/sqlite` et `storage/postgres` ;
    2. lectures de match, écart par écart (date sentinelle, provenance, notation du coup joué,
       `MaxCube`) (faite) ;
-   3. analyses, avec l'unification des helpers de fusion ;
+   3. analyses, avec l'unification des helpers de fusion (faite) — `DeleteAnalysis` est
+      `Analyses().Delete`, qui déscore aussi les coups joués ; la fusion lit par `Load` et
+      écrit par `Save`, ses helpers sont `engine/analysismerge.go` ;
    4. lots gammonNet et gardes d'import ;
    5. import d'une autre base (`db_import_db.go`), une fois stabilisés l'export et les
       commentaires signés ;

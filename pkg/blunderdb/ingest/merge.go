@@ -2,8 +2,6 @@ package ingest
 
 import (
 	"reflect"
-	"sort"
-	"strings"
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -17,126 +15,28 @@ import (
 // mergeAnalysis(nil, incoming) is the insert-path normalisation. The XG parity
 // test holds it byte-faithful.
 
-// enginePriority returns a sort priority for analysis engines (XG first).
-func enginePriority(eng string) int {
-	switch strings.ToLower(eng) {
-	case "xg":
-		return 0
-	case "gnubg":
-		return 1
-	default:
-		return 2
-	}
-}
-
-// sortCubeAnalysesByEngine sorts cube analyses so XG comes first, then GnuBG.
-func sortCubeAnalysesByEngine(analyses []domain.DoublingCubeAnalysis) {
-	sort.SliceStable(analyses, func(i, j int) bool {
-		return enginePriority(analyses[i].AnalysisEngine) < enginePriority(analyses[j].AnalysisEngine)
-	})
-}
-
-// checkerMoveRanksFirst orders candidate moves as XG ranks them: the deeper
-// analysis first, then by equity, XG first on a tie, then by notation. Depth
-// comes before equity because a shallow evaluation's equity is not comparable
-// to a deeper one's — a 2-ply move scoring above the 4-ply best is not better,
-// only less examined — and the first candidate is the one every error is
-// measured from. The order is total: a merge is then deterministic, so
-// re-merging what is stored reproduces it byte for byte and
-// AnalysisStore.Merge can skip the write.
-func checkerMoveRanksFirst(a, b domain.CheckerMove) bool {
-	if da, db := domain.AnalysisDepthRank(a.AnalysisDepth), domain.AnalysisDepthRank(b.AnalysisDepth); da != db {
-		return da > db
-	}
-	if a.Equity != b.Equity {
-		return a.Equity > b.Equity
-	}
-	if pa, pb := enginePriority(a.AnalysisEngine), enginePriority(b.AnalysisEngine); pa != pb {
-		return pa < pb
-	}
-	return a.Move < b.Move
-}
+// The merge helpers are engine's, shared with the wrapper's SaveAnalysis and
+// gammonNet's verdicts; an import ranks the deeper analysis first.
+var (
+	sortCubeAnalysesByEngine = engine.SortCubeAnalysesByEngine
+	mergePlayedMoves         = engine.UnionPlayed
+)
 
 // mergeCheckerMoves merges two sets of checker moves keyed by move string,
-// preferring the higher-depth analysis on conflict, then re-ranks them
-// (checkerMoveRanksFirst) and recomputes per-move equity errors.
+// preferring the higher-depth analysis on conflict, then ranks them deeper
+// analysis first (engine.RankCheckerMovesDepthFirst).
 func mergeCheckerMoves(existing, incoming []domain.CheckerMove) []domain.CheckerMove {
-	moveMap := make(map[string]domain.CheckerMove)
-	for _, m := range existing {
-		moveMap[m.Move] = m
-	}
-	for _, m := range incoming {
-		if existingMove, exists := moveMap[m.Move]; exists {
-			if domain.AnalysisDepthRank(m.AnalysisDepth) >= domain.AnalysisDepthRank(existingMove.AnalysisDepth) {
-				moveMap[m.Move] = m
-			}
-		} else {
-			moveMap[m.Move] = m
-		}
-	}
-
-	result := make([]domain.CheckerMove, 0, len(moveMap))
-	for _, m := range moveMap {
-		result = append(result, m)
-	}
-
-	sort.Slice(result, func(i, j int) bool { return checkerMoveRanksFirst(result[i], result[j]) })
-
-	if len(result) > 0 {
-		bestEquity := result[0].Equity
-		for i := range result {
-			result[i].Index = i
-			if i == 0 {
-				result[i].EquityError = nil
-			} else {
-				diff := bestEquity - result[i].Equity
-				result[i].EquityError = &diff
-			}
-		}
-	}
-
+	result := engine.MergeCheckerMoves(existing, incoming)
+	engine.RankCheckerMovesDepthFirst(result)
 	return result
 }
 
-// mergePlayedMoves unions played moves/cube actions, normalising and sorting.
-func mergePlayedMoves(existing, incoming []string) []string {
-	moveSet := make(map[string]bool)
-	for _, m := range existing {
-		if m != "" {
-			moveSet[engine.NormalizeMove(m)] = true
-		}
-	}
-	for _, m := range incoming {
-		if m != "" {
-			moveSet[engine.NormalizeMove(m)] = true
-		}
-	}
-	result := make([]string, 0, len(moveSet))
-	for m := range moveSet {
-		result = append(result, m)
-	}
-	sort.Strings(result)
-	return result
-}
-
-// sortCheckerMovesByEquity sorts an analysis' checker moves by depth, then
-// equity (checkerMoveRanksFirst), and recomputes indices and equity errors (the final normalisation of both the
-// insert and update paths).
+// sortCheckerMovesByEquity ranks an analysis' checker moves deeper analysis
+// first (engine.RankCheckerMovesDepthFirst): the final normalisation of both
+// the insert and update paths.
 func sortCheckerMovesByEquity(a *domain.PositionAnalysis) {
-	if a.CheckerAnalysis == nil || len(a.CheckerAnalysis.Moves) == 0 {
-		return
-	}
-	moves := a.CheckerAnalysis.Moves
-	sort.Slice(moves, func(i, j int) bool { return checkerMoveRanksFirst(moves[i], moves[j]) })
-	bestEquity := moves[0].Equity
-	for i := range moves {
-		moves[i].Index = i
-		if i == 0 {
-			moves[i].EquityError = nil
-		} else {
-			diff := bestEquity - moves[i].Equity
-			moves[i].EquityError = &diff
-		}
+	if a.CheckerAnalysis != nil {
+		engine.RankCheckerMovesDepthFirst(a.CheckerAnalysis.Moves)
 	}
 }
 
