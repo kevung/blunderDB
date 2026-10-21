@@ -14,7 +14,7 @@ import (
 // StudyEffect measures each studied family of the study plan before and after
 // the day it was first studied (storage.BuildStudyEffect, ADR-0079).
 func (s *StatsStore) StudyEffect(ctx context.Context, scope string, filter storage.StatsFilter) (*storage.StudyEffect, error) {
-	classified, _, _, err := s.classifiedErrors(ctx, scope, filter, classifyOptions{priced: true})
+	classified, _, _, err := s.classifiedErrors(ctx, scope, filter, classifyOptions{priced: true, uncounted: true})
 	if err != nil {
 		return nil, err
 	}
@@ -22,47 +22,111 @@ func (s *StatsStore) StudyEffect(ctx context.Context, scope string, filter stora
 	for i := range classified {
 		rows[i] = classified[i].StudyPlanRow
 	}
-	filter, err = s.withPlayerAliases(ctx, scope, filter)
-	if err != nil {
-		return nil, fmt.Errorf("StudyEffect aliases: %w", err)
-	}
-	whereSQL, args := s.buildStatsWhereClause(scope, filter)
-	q, err := s.DB.Query(ctx,
-		`SELECT COALESCE(p.game_type, 0), p.decision_type, `+s.DB.DateText("m.match_date")+`, COUNT(*) `+
-			statsBaseJoin+whereSQL+` AND COALESCE(p.match_length, m.match_length, 0) > 0
-			GROUP BY p.game_type, p.decision_type, m.match_date`, args...)
-	if err != nil {
-		return nil, errf(s.DB, "StudyEffect decisions", err)
-	}
-	var decisions []storage.StudyEffectDecisions
-	err = func() error {
-		defer q.Close()
-		for q.Next() {
-			var gameType, decisionType int
-			var d storage.StudyEffectDecisions
-			if err := q.Scan(&gameType, &decisionType, &d.Day, &d.Count); err != nil {
-				return err
-			}
-			d.GameType = domain.GameType(gameType).String()
-			d.Kind = studyEffectKind(decisionType)
-			decisions = append(decisions, d)
-		}
-		return q.Err()
-	}()
-	if err != nil {
-		return nil, errf(s.DB, "StudyEffect decisions", err)
-	}
 	studied, err := s.firstStudyDays(ctx, scope)
 	if err != nil {
 		return nil, err
 	}
-	positions, err := s.studyEffectPositions(ctx, scope, filter)
-	if err != nil {
-		return nil, err
+	// The decisions and positions only fill the windows of studied families:
+	// without one, the scan of the filter's decisions is skipped.
+	var decisions []storage.StudyEffectDecisions
+	var positions []storage.StudyEffectPosition
+	if anyStudiedFamily(rows, studied) {
+		filter, err = s.withPlayerAliases(ctx, scope, filter)
+		if err != nil {
+			return nil, fmt.Errorf("StudyEffect aliases: %w", err)
+		}
+		decisions, positions, err = s.studyEffectDecisions(ctx, scope, filter)
+		if err != nil {
+			return nil, err
+		}
 	}
 	e := storage.BuildStudyEffect(rows, decisions, studied)
 	storage.CountStudyEffectPositions(e, positions)
 	return e, nil
+}
+
+// anyStudiedFamily tells whether one of the classified errors that names a
+// family is on a studied position, the condition for BuildStudyEffect to
+// measure any family.
+func anyStudiedFamily(rows []storage.StudyPlanRow, studied map[int64]string) bool {
+	for _, r := range rows {
+		if r.Theme != storage.RecurringThemeNone && studied[r.PositionID] != "" {
+			return true
+		}
+	}
+	return false
+}
+
+// studyEffectDecisions reads in one scan what the windows count: the counted
+// match-play decisions by plan, kind and day, and the positions of those
+// decisions with their first and last match day (as studyEffectPositions),
+// under a filter whose player aliases are already expanded.
+func (s *StatsStore) studyEffectDecisions(ctx context.Context, scope string, filter storage.StatsFilter) ([]storage.StudyEffectDecisions, []storage.StudyEffectPosition, error) {
+	whereSQL, args := s.buildStatsWhereClause(scope, filter)
+	q, err := s.DB.Query(ctx,
+		`SELECT p.id, COALESCE(p.game_type, 0), p.decision_type, `+s.DB.DateText("m.match_date")+`, COUNT(*) `+
+			statsBaseJoin+whereSQL+` AND COALESCE(p.match_length, m.match_length, 0) > 0
+			GROUP BY p.id, p.game_type, p.decision_type, m.match_date`, args...)
+	if err != nil {
+		return nil, nil, errf(s.DB, "StudyEffect decisions", err)
+	}
+	defer q.Close()
+	type family struct {
+		gameType, decisionType int
+		day                    string
+	}
+	type position struct {
+		id                     int64
+		gameType, decisionType int
+	}
+	counts := map[family]int{}
+	var familyOrder []family
+	spans := map[position]*storage.StudyEffectPosition{}
+	var positionOrder []position
+	for q.Next() {
+		var id int64
+		var gameType, decisionType, count int
+		var day string
+		if err := q.Scan(&id, &gameType, &decisionType, &day, &count); err != nil {
+			return nil, nil, errf(s.DB, "StudyEffect decisions", err)
+		}
+		f := family{gameType, decisionType, day}
+		if _, ok := counts[f]; !ok {
+			familyOrder = append(familyOrder, f)
+		}
+		counts[f] += count
+		k := position{id, gameType, decisionType}
+		p, ok := spans[k]
+		if !ok {
+			p = &storage.StudyEffectPosition{PositionID: id,
+				GameType: domain.GameType(gameType).String(), Kind: studyEffectKind(decisionType)}
+			spans[k] = p
+			positionOrder = append(positionOrder, k)
+		}
+		// An undated match bounds no window, as NULLIF(day, '') in SQL.
+		if day != "" {
+			if p.FirstDay == "" || day < p.FirstDay {
+				p.FirstDay = day
+			}
+			if day > p.LastDay {
+				p.LastDay = day
+			}
+		}
+	}
+	if err := q.Err(); err != nil {
+		return nil, nil, errf(s.DB, "StudyEffect decisions", err)
+	}
+	decisions := make([]storage.StudyEffectDecisions, 0, len(familyOrder))
+	for _, f := range familyOrder {
+		decisions = append(decisions, storage.StudyEffectDecisions{
+			GameType: domain.GameType(f.gameType).String(), Kind: studyEffectKind(f.decisionType),
+			Day: f.day, Count: counts[f]})
+	}
+	positions := make([]storage.StudyEffectPosition, 0, len(positionOrder))
+	for _, k := range positionOrder {
+		positions = append(positions, *spans[k])
+	}
+	return decisions, positions, nil
 }
 
 // studyEffectPositions reads the positions of the counted match-play

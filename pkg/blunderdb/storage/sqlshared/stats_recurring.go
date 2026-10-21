@@ -90,10 +90,11 @@ func (s *StatsStore) handledPositions(ctx context.Context, scope string) (map[in
 
 // classifyOptions say how much classifiedErrors reads: priced adds the MWC
 // loss and the difficulty, reference the board and the lesson's state;
-// matchIDs narrows the filter to these matches.
+// matchIDs narrows the filter to these matches; uncounted skips the count of
+// the filter's decisions, a full scan of the join, for a caller that ignores it.
 type classifyOptions struct {
-	priced, reference bool
-	matchIDs          []int64
+	priced, reference, uncounted bool
+	matchIDs                     []int64
 }
 
 // classifiedErrors lists every error of the filter with its theme and, when
@@ -118,8 +119,10 @@ func (s *StatsStore) classifiedErrors(ctx context.Context, scope string, filter 
 	}
 
 	var numDecisions int
-	if err := s.DB.QueryRow(ctx, `SELECT COUNT(*) `+statsBaseJoin+whereSQL, baseArgs...).Scan(&numDecisions); err != nil {
-		return nil, 0, 0, errf(s.DB, "classifiedErrors count", err)
+	if !opts.uncounted {
+		if err := s.DB.QueryRow(ctx, `SELECT COUNT(*) `+statsBaseJoin+whereSQL, baseArgs...).Scan(&numDecisions); err != nil {
+			return nil, 0, 0, errf(s.DB, "classifiedErrors count", err)
+		}
 	}
 
 	// A cube blob is only decoded to price a cube error: the recurring view

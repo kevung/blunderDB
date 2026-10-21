@@ -229,7 +229,26 @@ copie déjà ouverte de la base ; `go tool pprof -top`.
 - Effort : **S-M** (garder « le même calcul que l'onglet Stats » : extraire la ventilation
   plutôt que la recalculer à part). Fichiers : `database/db_study_impact.go`,
   `sqlshared/stats_from_cells.go`.
-- **Neuf.** `stats effect` (3,5 s) a vraisemblablement le même motif, non profilé.
+- `stats effect` (3,5 s) n'a pas ce motif : voir 3.4 bis.
+
+### 3.4 bis `stats effect --player <p>` — 3,5 s → 0,19 s (corrigé)
+
+- Profil CPU (`StudyEffect`, joueur le plus fréquent, base de 33 k matchs) : l'erreur
+  classée (`classifiedErrors`, requête filtrée `E ≥ seuil`) ne coûte que ~0,2 s. Le temps
+  est dans trois balayages complets de la jointure du filtre, tout dans `_sqlite3VdbeExec` :
+  le `COUNT(*)` de `classifiedErrors`, que `StudyEffect` jette (26 %), la ventilation des
+  décisions par jour (40 %) et les positions par jour (30 %).
+- Correction (`sqlshared/stats_study_effect.go`, `stats_recurring.go`) : option
+  `uncounted` qui saute le `COUNT(*)` ; décisions et positions lues en **un** balayage
+  (`GROUP BY p.id, …, m.match_date`, agrégé en Go) ; et ce balayage n'a lieu que si une
+  famille est étudiée, seule condition où `BuildStudyEffect` lit les fenêtres. `match_stats`
+  ne sert pas : il ne porte ni le jour par position ni la ventilation par famille.
+- Mesure CLI, processus complet, alterné avant/après, deux fois chacun :
+  - base telle quelle (aucune étude) : 3,38 / 3,45 s → 0,19 / 0,19 s ;
+  - copie avec 300 positions marquées étudiées (`study_mark`) : 3,35 / 3,77 s →
+    1,18 / 1,24 s.
+- Sortie identique (md5 de la sortie CLI et du JSON de `StudyEffect`, sur les deux copies) ;
+  contrat `storagetest` vert sur SQLite et PostgreSQL.
 
 ### 3.5 `stats.compute` en régime établi (tableau de bord) — 2,97 s par appel
 
