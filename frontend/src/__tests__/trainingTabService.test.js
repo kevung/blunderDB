@@ -14,6 +14,7 @@ import { get } from 'svelte/store';
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
     LoadPosition: vi.fn(() => Promise.resolve(null)),
+    LoadPositionsByIDs: vi.fn(() => Promise.resolve([])),
     SaveTrainingSession: vi.fn(() => Promise.resolve(1)),
     LoadTrainingSessions: vi.fn(() => Promise.resolve([])),
     LoadTrainingNumberStats: vi.fn(() => Promise.resolve([])),
@@ -110,6 +111,12 @@ function recordIndexMoves() {
     return { moves, unsubscribe };
 }
 
+/** Bearoff et Évaluation chargent leurs candidates en un lot : chaque
+ *  identifiant demandé revient, porteur de son id comme le rend le Go. */
+function loadCandidatesInBatch(position = board()) {
+    db.LoadPositionsByIDs.mockImplementation(async (/** @type {number[]} */ ids) => ids.map((id) => ({ ...position, id })));
+}
+
 /** Laisse tourner les micro-tâches en attente, sans horloge simulée. */
 function flush() {
     return new Promise((resolve) => setTimeout(resolve, 0));
@@ -136,6 +143,8 @@ beforeEach(() => {
     // fuite est devenue certaine plutôt que rare.
     db.LoadPosition.mockReset();
     db.LoadPosition.mockResolvedValue(null);
+    db.LoadPositionsByIDs.mockReset();
+    db.LoadPositionsByIDs.mockResolvedValue([]);
     app.GenerateBearoffQuestion.mockReset();
     app.GenerateEvaluationQuestion.mockReset();
     db.CountPositionsByFilters.mockReset();
@@ -354,7 +363,7 @@ describe('fabriquer n’est pas montrer', () => {
 
     test('Bearoff / base : le préchargement ne touche pas au plateau', async () => {
         positionsStore.setIds([7, 8, 9, 10]);
-        db.LoadPosition.mockResolvedValue(board());
+        loadCandidatesInBatch();
         app.GenerateBearoffQuestion.mockResolvedValue(generated());
         const { moves, unsubscribe } = recordIndexMoves();
         expect(await startTrainingSession({ exercise: 'bearoff', seedSource: 'library' })).toBe(true);
@@ -384,7 +393,7 @@ describe('fabriquer n’est pas montrer', () => {
     // auraient laissé l'identifiant final dépendre de l'ordre d'arrivée.
     test('une question tirée de la base arrive par son identifiant, pas par sa copie', async () => {
         positionsStore.setIds([7]);
-        db.LoadPosition.mockResolvedValue(board());
+        loadCandidatesInBatch();
         app.GenerateBearoffQuestion.mockResolvedValue(generated());
         positionStore.set(/** @type {any} */ ({ id: 42 }));
         await startTrainingSession({ exercise: 'bearoff', seedSource: 'library' });
@@ -406,7 +415,7 @@ describe('une question tirée de la base laisse l’onglet ouvert (ADR-0040 règ
         [
             'bearoff',
             () => {
-                db.LoadPosition.mockResolvedValue(board());
+                loadCandidatesInBatch();
                 app.GenerateBearoffQuestion.mockResolvedValue(generated());
             }
         ]
@@ -440,14 +449,14 @@ describe('la source « base » de Bearoff tire parmi les bearoffs de la liste (A
         // recherche est restreinte à la liste, et seul 9 en revient.
         db.CountPositionsByFilters.mockResolvedValue(1);
         db.SearchPositionIDs.mockImplementation(async (_f, offset) => [[9][offset]]);
-        db.LoadPosition.mockResolvedValue(board());
+        loadCandidatesInBatch();
         app.GenerateBearoffQuestion.mockResolvedValue(generated());
 
         expect(await startTrainingSession({ exercise: 'bearoff', seedSource: 'library' })).toBe(true);
         expect(db.CountPositionsByFilters.mock.calls[0][0].gamePhaseFilter).toBe('bearoff');
         expect(db.CountPositionsByFilters.mock.calls[0][0].restrictToPositionIDs).toBe('7,8,9,10');
         // Le préchargement tire aussi : toutes les positions chargées sont la seule candidate.
-        expect(new Set(db.LoadPosition.mock.calls.map((call) => call[0]))).toEqual(new Set([9]));
+        expect(new Set(db.LoadPositionsByIDs.mock.calls.flatMap((call) => call[0]))).toEqual(new Set([9]));
         expect(current().question.positionId).toBe(9);
     });
 
@@ -455,7 +464,7 @@ describe('la source « base » de Bearoff tire parmi les bearoffs de la liste (A
         positionsStore.setIds([7, 8, 9, 10]);
         db.CountPositionsByFilters.mockResolvedValue(2);
         db.SearchPositionIDs.mockImplementation(async (_f, offset) => [[8, 9][offset]]);
-        db.LoadPosition.mockResolvedValue(board());
+        loadCandidatesInBatch();
         app.GenerateBearoffQuestion.mockResolvedValue(generated());
 
         await startTrainingSession({ exercise: 'bearoff', seedSource: 'library' });
@@ -473,7 +482,7 @@ describe('la source « base » de Bearoff tire parmi les bearoffs de la liste (A
         db.CountPositionsByFilters.mockResolvedValue(1);
         const result = searchSource({ searchText: 'w>50' });
         positionsStore.adoptFirstPage(result, await result.window(0, positionsStore.firstPageSize()));
-        db.LoadPosition.mockResolvedValue(board());
+        loadCandidatesInBatch();
         app.GenerateBearoffQuestion.mockResolvedValue(generated());
 
         expect(await startTrainingSession({ exercise: 'bearoff', seedSource: 'library' })).toBe(true);
@@ -488,11 +497,11 @@ describe('la source « base » de Bearoff tire parmi les bearoffs de la liste (A
     test('sans aucune position classée bearoff dans la liste, le tirage retombe sur la liste entière', async () => {
         positionsStore.setIds([7, 8, 9, 10]);
         db.CountPositionsByFilters.mockResolvedValue(0);
-        db.LoadPosition.mockResolvedValue(board());
+        loadCandidatesInBatch();
         app.GenerateBearoffQuestion.mockResolvedValue(generated());
 
         expect(await startTrainingSession({ exercise: 'bearoff', seedSource: 'library' })).toBe(true);
-        expect([7, 8, 9, 10]).toContain(db.LoadPosition.mock.calls[0][0]);
+        expect([7, 8, 9, 10]).toEqual(expect.arrayContaining(db.LoadPositionsByIDs.mock.calls[0][0]));
     });
 });
 
@@ -591,7 +600,7 @@ describe('une session de Bearoff', () => {
     // par diverger de celle qui refuse.
     test('la source « base » tire jusqu’à trouver un bearoff, et laisse le moteur juger', async () => {
         positionsStore.setIds([7, 8, 9, 10]);
-        db.LoadPosition.mockResolvedValue(board());
+        loadCandidatesInBatch();
         app.GenerateBearoffQuestion.mockResolvedValueOnce({ generated: false, refusal: 'notBearoff' })
             .mockResolvedValueOnce({ generated: false, refusal: 'notBearoff' })
             .mockResolvedValue(generated());
@@ -602,7 +611,7 @@ describe('une session de Bearoff', () => {
 
     test('une base sans course refuse en nommant le domaine, pas « aucune question »', async () => {
         positionsStore.setIds([7, 8, 9]);
-        db.LoadPosition.mockResolvedValue(board());
+        loadCandidatesInBatch();
         app.GenerateBearoffQuestion.mockResolvedValue({ generated: false, refusal: 'notBearoff' });
         expect(await startTrainingSession({ exercise: 'bearoff', seedSource: 'library' })).toBe(false);
         expect(get(trainingRefusalStore)).toBe('notBearoff');
@@ -717,7 +726,7 @@ describe('une session d’Évaluation (#322)', () => {
 
     test('la source « base » tire jusqu’à une décision de videau d’argent, et laisse le moteur juger', async () => {
         positionsStore.setIds([7, 8, 9, 10]);
-        db.LoadPosition.mockImplementation((/** @type {any} */ id) => Promise.resolve({ ...board(), id }));
+        loadCandidatesInBatch();
         app.GenerateEvaluationQuestion.mockResolvedValueOnce(/** @type {any} */ ({ generated: false, refusal: 'notMoneyCubeDecision' }))
             .mockResolvedValueOnce(/** @type {any} */ ({ generated: false, refusal: 'notMoneyCubeDecision' }))
             .mockResolvedValue(evaluation({ source: 'library' }));
@@ -733,7 +742,7 @@ describe('une session d’Évaluation (#322)', () => {
 
     test('une base sans décision de videau d’argent refuse en le nommant, et rien ne démarre', async () => {
         positionsStore.setIds([7, 8, 9]);
-        db.LoadPosition.mockResolvedValue(board());
+        loadCandidatesInBatch();
         app.GenerateEvaluationQuestion.mockResolvedValue(/** @type {any} */ ({ generated: false, refusal: 'notMoneyCubeDecision' }));
         expect(await startTrainingSession({ exercise: 'evaluation', seedSource: 'library' })).toBe(false);
         expect(get(trainingSessionStore)).toBeNull();
@@ -751,6 +760,26 @@ describe('une session d’Évaluation (#322)', () => {
         await startTrainingSession({ exercise: 'evaluation', seedSource: 'pool' });
         expect(current().question.numbers[0].tolerance, 'la phrase dit « cinq points »').toBe(5);
         expect(fr.training.toleranceEvaluation).toContain('cinq points');
+    });
+
+    describe('la source « base » charge ses candidates en un appel', () => {
+        // Trente allers-retours par le pont Wails précédaient la première question
+        // quand chaque candidate se chargeait seule.
+        test.each([
+            ['bearoff', () => app.GenerateBearoffQuestion],
+            ['evaluation', () => app.GenerateEvaluationQuestion]
+        ])('%s : un lot pour tout le tirage, et la disparue est sautée', async (exercise, generator) => {
+            positionsStore.setIds([7, 8, 9, 10]);
+            // 7, 8 et 10 ont disparu entre le tirage et le chargement : le lot ne rend que 9.
+            db.LoadPositionsByIDs.mockImplementation(async (/** @type {number[]} */ ids) => ids.filter((id) => id === 9).map((id) => ({ ...board(), id })));
+            generator().mockResolvedValue(exercise === 'bearoff' ? generated() : evaluation({ source: 'library' }));
+
+            expect(await startTrainingSession({ exercise, seedSource: 'library' })).toBe(true);
+            expect(db.LoadPosition, 'plus de chargement une à une').not.toHaveBeenCalled();
+            expect([...db.LoadPositionsByIDs.mock.calls[0][0]].sort((a, b) => a - b)).toEqual([7, 8, 9, 10]);
+            expect(generator().mock.calls[0][0].seed.id, 'seule la présente est soumise au moteur').toBe(9);
+            expect(current().question.positionId).toBe(9);
+        });
     });
 });
 

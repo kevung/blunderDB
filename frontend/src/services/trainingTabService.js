@@ -1,6 +1,7 @@
 import { get } from 'svelte/store';
 import {
     LoadPosition,
+    LoadPositionsByIDs,
     SaveTrainingSession,
     LoadTrainingSessions,
     LoadTrainingNumberStats,
@@ -137,6 +138,18 @@ const EPC_TOLERANCE = 0.5;
 const MAX_LIBRARY_DRAWS = 30;
 
 /**
+ * Les candidates tirées, chargées en un seul aller-retour par le pont Wails
+ * plutôt qu'une par une avant la première question. L'ordre du tirage est
+ * gardé ; une position disparue entre-temps est absente du lot, donc sautée.
+ *
+ * @param {number[]} ids @returns {Promise<any[]>}
+ */
+async function loadCandidates(ids) {
+    if (ids.length === 0) return [];
+    return (await LoadPositionsByIDs(ids)) || [];
+}
+
+/**
  * Tire `count` éléments distincts : sans remise, pour que chaque tirage du
  * budget regarde une candidate de plus.
  * @param {number[]} candidates @param {number} count
@@ -207,9 +220,8 @@ async function buildBearoffQuestion(seedSource, seed) {
         const phased = await drawBearoffIds(MAX_LIBRARY_DRAWS);
         const drawn = phased.length > 0 ? phased : await drawListIds(MAX_LIBRARY_DRAWS);
         let last = 'notBearoff';
-        for (const id of drawn) {
-            const loaded = await LoadPosition(id);
-            if (!loaded) continue;
+        for (const loaded of await loadCandidates(drawn)) {
+            const id = loaded.id;
             const generated = await GenerateBearoffQuestion(/** @type {any} */ ({ source: 'library', seed: loaded }));
             if (!generated?.generated) {
                 last = generated?.refusal || last;
@@ -332,9 +344,8 @@ async function buildEvaluationQuestion(seedSource, seed) {
     if (seedSource === 'library') {
         const { length } = get(positionsStore);
         let last = 'notMoneyCubeDecision';
-        for (const id of await drawListIds(MAX_LIBRARY_DRAWS)) {
-            const loaded = await LoadPosition(id);
-            if (!loaded) continue;
+        for (const loaded of await loadCandidates(await drawListIds(MAX_LIBRARY_DRAWS))) {
+            const id = loaded.id;
             const generated = await GenerateEvaluationQuestion(/** @type {any} */ ({ source: 'library', seed: loaded }));
             if (!generated?.generated) {
                 last = generated?.refusal || last;
