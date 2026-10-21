@@ -172,39 +172,50 @@ mesure PostgreSQL ; §3.3 reste dans A2/B3.
 ## 5. Après #750 et #752
 
 Remède : remplissage de `match_stats` au démarrage du démon SQLite et un seul remplissage par
-portée à la fois (les lecteurs l'attendent) ; transactions d'écriture SQLite en
-`BEGIN IMMEDIATE` (`withTx`, `TransactWrite`), lectures en différé ; `SQLITE_BUSY` →
-`storage.ErrBusy` → `503 unavailable` + `Retry-After` ; `RefusesWrites` mémorisé par base
-ouverte ; pool SQLite du démon `max(10, GOMAXPROCS)` (16 ici, le bureau reste à 10) ; admission
-des routes lourdes (`stats.*`, `search.count/find/ids/query/indexOf`, `matches.list`) à
-`max(2, GOMAXPROCS/2)` = 8 places, file de 8 par place, attente 20 s, puis `503` + `Retry-After`.
+portée à la fois (les lecteurs l'attendent, hors de la porte d'admission) ; transactions SQLite
+en `BEGIN IMMEDIATE` par défaut (`Transact`, `withTx`, et `BeginTx` qui prend le verrou par une
+écriture vide), sauf connexion en lecture seule ; `TransactRead` (différé) pour `stats.compute`
+et `withReadSnapshot`, qui ne tiennent donc plus le verrou d'écriture ; `SQLITE_BUSY` et ses codes
+étendus (`&0xff`) → `storage.ErrBusy` → `503 unavailable` + `Retry-After` (le client `remote` ne
+le relit que sur `details.reason = "busy"`) ; `RefusesWrites` mémorisé par base ouverte ; pool
+SQLite du démon `max(10, GOMAXPROCS)` (16 ici, le bureau reste à 10) ; admission des routes
+lourdes (`stats.*`, `search.count/find/ids/query/indexOf`, `matches.list`) à
+`max(2, GOMAXPROCS/2)` = 8 places sur SQLite, file de 8 par place, attente 20 s, puis `503` +
+`Retry-After` ; `--heavy-slots` règle ce nombre (0 = ce défaut, sans borne sur PostgreSQL ;
+-1 = sans borne).
 
-Même script, `LEVELS="50 200"`, même machine partagée (avant : loadavg ~15 ; après : ~8).
+Le démon embarqué par gammonGo (`pkg/blunderdb/server`, PostgreSQL en production) ne reçoit ni
+l'admission ni le remplissage au démarrage : son pool suit ses propres réglages, et le premier
+lecteur de statistiques d'un tenant remplit les lignes de ce tenant (un remplissage par portée
+à la fois).
 
-| `positions.load` | 50 : p50 / p99 (ms) | 200 : p50 / p99 (ms) |
-|---|---|---|
-| avant | 83,6 / 1 682 | 1 424 / 12 275 |
-| après | 0,6 / 7,7 | 14,2 / 93,5 |
+Même script, `LEVELS="50 200" COLD_N=50`, même machine partagée, avant (`328a5b9e1`) et après
+mesurés coup sur coup sur deux copies de `sample.db` (loadavg ~9-11 dans les deux cas).
+
+| `positions.load` | 50 : p50 / p99 (ms) | 200 : p50 / p99 (ms) | froid 50 : p50 / p99 (ms) |
+|---|---|---|---|
+| avant | 47,6 / 1 853 | 1 016 / 8 610 | 13,0 / 237 |
+| après | 0,6 / 7,4 | 14,7 / 98,1 | 0,6 / 9,6 |
 
 | Run | Avant : RPS, erreurs | Après : RPS, erreurs |
 |---|---|---|
-| chaud, 50 | 18 ; 5 timeout | 24 ; 0 |
-| chaud, 200 | 18 ; 89 (timeout) | 6 561 ; 118 958 `503` sur les seules routes lourdes |
-| froid, 50 | 30 ; 278 (`500 internal` : 263 `stats.compute`, 15 `analyses.save`) | 13 ; 0 |
+| chaud, 50 | 23 ; 1 timeout | 23 ; 0 |
+| chaud, 200 | 26 ; 69 timeout (`search.count`, `search.find`) | 6 034 ; 114 391 `503` sur les seules routes lourdes |
+| froid, 50 | 55 ; 401 `500 internal` (383 `stats.compute`, 18 `analyses.save`) | 25 ; 0 |
 
-- Froid : plus aucun `500` ; le remplissage se fait une fois, les `stats.compute` répondent en
-  5-9 s (p50) puis lisent la table.
-- À 200 clients en boucle fermée sans attente, la file lourde déborde : les routes lourdes
-  reçoivent `503` en < 3 ms (p99) au lieu d'un timeout à 30 s, et les lectures unitaires
-  passent (aucune erreur). Le débit brut compte ces refus. Débit utile des routes lourdes
-  (réponses 200) : 50 clients 9,6 → 12,4 req/s ; 200 clients 9,1 → 6,0 req/s, car le client de
-  charge, en boucle fermée, ne respecte pas `Retry-After` et ses ~6 000 refus/s prennent de la
-  CPU ; froid 14,5 → 6,9 req/s, le remplissage occupant la CPU au lieu d'échouer. Les lourdes
+- Froid : plus aucun `500` ; le remplissage du démarrage précède les lecteurs, et les
+  `stats.compute` répondent comme sur la base chaude (7,9 s p50 pour `all`). Le débit brut
+  d'avant comptait des `stats.compute` qui échouaient en < 1,5 s.
+- Débit utile des routes lourdes (réponses 200) : 50 clients 11,6 → 11,9 req/s ; froid
+  23 → 12,4 req/s (avant, l'essentiel en `search`/`matches.list` pendant que `stats.compute`
+  échouait) ; 200 clients 12,8 → 5,6 req/s. À 200 clients en boucle fermée sans attente, la file
+  lourde déborde : les lourdes reçoivent `503` en < 3,2 ms (p99) au lieu d'un timeout à 30 s,
+  les lectures unitaires passent toutes (aucune erreur), mais le client de charge ne respecte
+  pas `Retry-After` et ses ~3 800 refus/s prennent la CPU des lourdes admises. Les lourdes
   elles-mêmes restent §3.3.
-- Écueil mesuré en cours de route : `BEGIN IMMEDIATE` sur *toutes* les transactions des magasins
-  partagés tenait le verrou d'écriture pendant un `stats.compute` entier (sa transaction de
-  lecture pour les tables de sélection) : écritures en `SQLITE_BUSY` à 10 s. D'où la séparation
-  `Transact` (différé) / `TransactWrite` (immédiat).
+- Écueil mesuré en cours de route : `BEGIN IMMEDIATE` sur un `stats.compute` entier (sa
+  transaction de lecture pour les tables de sélection) tenait le verrou d'écriture : écritures
+  en `SQLITE_BUSY` à 10 s. D'où `TransactRead` pour les lectures longues.
 
 ## 6. Reproduire
 
