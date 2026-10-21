@@ -46,7 +46,7 @@ function installGo(/** @type {Record<string, Record<string, (...a: any[]) => any
 }
 
 const spy = (/** @type {string} */ path, /** @type {string} */ method) => go[path]?.[method] ?? vi.fn();
-const L = (/** @type {string} */ key, /** @type {any} */ params) => get(t)(key, params);
+const L = (/** @type {string} */ key, /** @type {any} */ params = undefined) => get(t)(key, params);
 
 function defaults() {
     return {
@@ -69,7 +69,7 @@ function defaults() {
             GetIssuerIdentity: () => Promise.resolve({ present: true, name: 'Club', fingerprint: 'ab:cd' }),
             BearoffStatus: () => Promise.resolve(null),
             FolderWatchStatus: () => Promise.resolve({ running: false, folder: '' }),
-            StartFolderWatch: (folder) => Promise.resolve({ running: true, folder }),
+            StartFolderWatch: (/** @type {string} */ folder) => Promise.resolve({ running: true, folder }),
             StopFolderWatch: () => Promise.resolve()
         },
         'database.Database': {
@@ -80,6 +80,7 @@ function defaults() {
 
 /** @param {Record<string, Record<string, (...a: any[]) => any>>} [extra] */
 async function mount(extra = {}, tab = '') {
+    /** @type {Record<string, any>} */
     const base = defaults();
     for (const [k, v] of Object.entries(extra)) base[k] = { ...(base[k] ?? {}), ...v };
     installGo(base);
@@ -113,7 +114,7 @@ function button(/** @type {Document} */ doc, /** @type {string} */ label) {
 }
 
 beforeEach(() => {
-    Element.prototype.animate ??= () => ({ cancel() {}, finished: Promise.resolve(), onfinish: null });
+    Element.prototype.animate ??= () => /** @type {any} */ ({ cancel() {}, finished: Promise.resolve(), onfinish: null });
     databasePathStore.set('');
 });
 afterEach(() => {

@@ -163,7 +163,7 @@ beforeEach(() => {
 describe('une session de Scores', () => {
     test('le plateau montre le score de la question, sur une table vide', async () => {
         await startTrainingSession({ exercise: 'scores', limitSeconds: 0 });
-        const q = get(trainingSessionStore)?.question;
+        const q = must(get(trainingSessionStore)?.question);
         const shown = get(positionStore);
         expect(shown.score).toEqual([q.card.awayYou, q.card.awayOpponent]);
         expect(shown.board.points.every((/** @type {any} */ p) => p.checkers === 0)).toBe(true);
