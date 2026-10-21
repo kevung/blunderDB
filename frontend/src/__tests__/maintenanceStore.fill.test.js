@@ -4,7 +4,7 @@ import { get } from 'svelte/store';
 const fill = vi.fn();
 vi.mock('../../wailsjs/go/database/Database.js', () => ({ FillMatchStatsInBackground: () => fill() }));
 
-const { maintenanceStore, startMatchStatsFill, STATS_MATCHES } = await import('../stores/maintenanceStore.js');
+const { maintenanceStore, maintenanceEndedStore, startMatchStatsFill, dropMatchStatsFill, STATS_MATCHES } = await import('../stores/maintenanceStore.js');
 
 describe('startMatchStatsFill', () => {
     beforeEach(() => {
@@ -38,6 +38,26 @@ describe('startMatchStatsFill', () => {
         maintenanceStore.set({ kind: 'vacuum', done: 0, total: 0 });
         fill.mockRejectedValue(new Error('no database open'));
         await startMatchStatsFill();
+        expect(get(maintenanceStore)).toEqual({ kind: 'vacuum', done: 0, total: 0 });
+    });
+
+    it('shows nothing once the fill ended before the call resolved', async () => {
+        fill.mockImplementation(async () => {
+            maintenanceStore.set({ kind: STATS_MATCHES, done: 9, total: 9 });
+            maintenanceStore.set(null);
+            maintenanceEndedStore.update((n) => n + 1);
+            return true;
+        });
+        await startMatchStatsFill();
+        expect(get(maintenanceStore)).toBeNull();
+    });
+
+    it('drops the line of a closed library, never another one', () => {
+        maintenanceStore.set({ kind: STATS_MATCHES, done: 1, total: 9 });
+        dropMatchStatsFill();
+        expect(get(maintenanceStore)).toBeNull();
+        maintenanceStore.set({ kind: 'vacuum', done: 0, total: 0 });
+        dropMatchStatsFill();
         expect(get(maintenanceStore)).toEqual({ kind: 'vacuum', done: 0, total: 0 });
     });
 });

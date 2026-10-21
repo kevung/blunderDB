@@ -116,7 +116,7 @@ func (d *Database) fillMatchStatsLots(ctx context.Context, keep func() bool, pro
 // badges, which would otherwise fill the rest of the library in one read
 // hold; the desktop reads it again once the fill ends.
 func (d *Database) GetAllTournaments() ([]Tournament, error) {
-	filling := d.MatchStatsFilling()
+	filling := d.matchStatsFilling()
 	if !filling {
 		d.prefillMatchStats()
 	}

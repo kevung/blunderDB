@@ -15,10 +15,20 @@ export const STATS_MATCHES = 'stats.matches';
  * Asks the backend to fill the library's missing match statistics in the background, once a
  * library is brought forward. The fill reports as the stats.matches line running, so what waits
  * for those rows waits on maintenanceStore. A line left from another library's fill is dropped:
- * the backend stopped that fill when the file changed.
+ * the backend stopped that fill when the file changed, and says nothing of it.
  */
 export async function startMatchStatsFill() {
-    if (get(maintenanceStore)?.kind === STATS_MATCHES) maintenanceStore.set(null);
+    dropMatchStatsFill();
+    const endedBefore = get(maintenanceEndedStore);
     const started = await FillMatchStatsInBackground().then(Boolean, () => false);
-    if (started && !get(maintenanceStore)) maintenanceStore.set({ kind: STATS_MATCHES, done: 0, total: 0 });
+    // A short fill can report its end before the call that started it resolves: the line is
+    // shown only while no pass has ended since.
+    if (started && !get(maintenanceStore) && get(maintenanceEndedStore) === endedBefore) {
+        maintenanceStore.set({ kind: STATS_MATCHES, done: 0, total: 0 });
+    }
+}
+
+/** Drops the stats.matches line of a fill the backend stopped silently (the file closed or changed). */
+export function dropMatchStatsFill() {
+    if (get(maintenanceStore)?.kind === STATS_MATCHES) maintenanceStore.set(null);
 }

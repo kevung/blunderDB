@@ -836,6 +836,12 @@ func (s *StatsStore) MatchDetail(ctx context.Context, scope string, matchID int6
 func (s *StatsStore) MatchBadges(ctx context.Context, scope string, matchIDs []int64) (map[int64]storage.MatchBadge, error) {
 	return inReadSnapshot(ctx, s, func(s *StatsStore) (map[int64]storage.MatchBadge, error) {
 		readable, err := s.matchStatsReadableFor(ctx, scope, matchIDs)
+		if err != nil && LockContention(s.DB, err) {
+			// Another writer (a background fill, an import) holds the file:
+			// the page reads its badges from the decisions rather than
+			// coming back without them; a later read fills the table.
+			return s.matchBadgesDirect(ctx, scope, matchIDs)
+		}
 		if err != nil {
 			return nil, err
 		}

@@ -1050,10 +1050,6 @@ export function MatchMAT(arg1) {
   return window['go']['database']['Database']['MatchMAT'](arg1);
 }
 
-export function MatchStatsFilling() {
-  return window['go']['database']['Database']['MatchStatsFilling']();
-}
-
 export function MatchTranscriptionLosses(arg1) {
   return window['go']['database']['Database']['MatchTranscriptionLosses'](arg1);
 }

@@ -18,7 +18,7 @@
     import { positionsStore, matchContextStore, positionStore as boardPositionStore } from '../stores/positionStore';
     import { commandHistoryStore } from '../stores/commandHistoryStore';
     import { gammonNetBatchStore } from '../stores/gammonNetBatchStore';
-    import { maintenanceStore, maintenanceEndedStore, startMatchStatsFill } from '../stores/maintenanceStore.js';
+    import { maintenanceStore, maintenanceEndedStore, startMatchStatsFill, dropMatchStatsFill } from '../stores/maintenanceStore.js';
     import { LoadCommandHistory, SaveCommand } from '../../wailsjs/go/database/Database.js';
     import { CancelGammonNetBatch, CancelMaintenance } from '../../wailsjs/go/gui/App.js';
     import { EventsOn } from '../../wailsjs/runtime/runtime.js';
@@ -214,6 +214,11 @@
         if ($databaseLoadedStore) startMatchStatsFill();
     });
     onDestroy(unsubStatsFill);
+    // Closing the library stops its fill without a word: its line goes with it.
+    const unsubStatsFillClose = databaseLoadedStore.subscribe((loaded) => {
+        if (!loaded) dropMatchStatsFill();
+    });
+    onDestroy(unsubStatsFillClose);
     let maintenanceLabel = $derived(
         maintenance ? `${maintenanceOp(maintenance.kind)} ${maintenance.total > 0 ? `${maintenance.done}/${maintenance.total}` : maintenance.done > 0 ? maintenance.done : '…'}` : ''
     );

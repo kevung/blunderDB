@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"path/filepath"
 	"sync"
@@ -150,7 +151,7 @@ func TestFillMatchStatsInBackground_FillsAndReports(t *testing.T) {
 	if last != len(fillFixtures) || r.filled != len(fillFixtures) {
 		t.Fatalf("progress ends at %d, filled %d; want %d", last, r.filled, len(fillFixtures))
 	}
-	if d.MatchStatsFilling() || d.FillMatchStatsInBackground() {
+	if d.matchStatsFilling() || d.FillMatchStatsInBackground() {
 		t.Fatal("a complete library still fills")
 	}
 }
@@ -231,7 +232,7 @@ func TestFillMatchStatsInBackground_StopsWhenTheFileChanges(t *testing.T) {
 	}
 	// Before the second file's temporary directory is checked for leaks.
 	closeOnCleanup(t, d)
-	if d.MatchStatsFilling() {
+	if d.matchStatsFilling() {
 		t.Fatal("the fill of the previous file still counts as running")
 	}
 	resume()
@@ -274,5 +275,47 @@ func TestFillMatchStatsInBackground_OffWithoutReport(t *testing.T) {
 	}
 	if n := missingStats(t, d); n != 0 {
 		t.Fatalf("%d match(es) left unfilled by the synchronous path", n)
+	}
+}
+
+// A page whose own fill loses the write lock to another writer still comes
+// back with its badges, read from the decisions.
+func TestListMatches_BadgesSurviveABusyFill(t *testing.T) {
+	d, path := libraryWithoutMatchStats(t, "busy-page.db")
+	// One pooled connection, so the short busy_timeout below is the one the
+	// page's fill runs on.
+	d.db.SetMaxOpenConns(1)
+	if _, err := d.db.Exec(`PRAGMA busy_timeout = 50`); err != nil {
+		t.Fatal(err)
+	}
+	other, err := sql.Open("sqlite", path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer other.Close()
+	conn, err := other.Conn(context.Background())
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer conn.Close()
+	if _, err := conn.ExecContext(context.Background(), `BEGIN IMMEDIATE`); err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _, _ = conn.ExecContext(context.Background(), `ROLLBACK`) }()
+
+	ms, err := d.ListMatches(storage.MatchListOpts{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(ms) != len(fillFixtures) {
+		t.Fatalf("%d matches, want %d", len(ms), len(fillFixtures))
+	}
+	for _, m := range ms {
+		if m.PR == 0 && m.PR2 == 0 {
+			t.Fatalf("match %d came back without its badges while the file was busy", m.ID)
+		}
+	}
+	if n := missingStats(t, d); n != len(fillFixtures) {
+		t.Fatalf("%d match(es) lack statistics; the busy fill should have written none", n)
 	}
 }

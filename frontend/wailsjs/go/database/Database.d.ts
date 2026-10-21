@@ -546,8 +546,6 @@ export function MatchIDsReachedBy(arg1:Array<number>):Promise<Array<number>>;
 
 export function MatchMAT(arg1:number):Promise<string>;
 
-export function MatchStatsFilling():Promise<boolean>;
-
 export function MatchTranscriptionLosses(arg1:number):Promise<database.TranscriptionLosses>;
 
 export function MaterializeTranscription(arg1:transcript.Header,arg2:Array<transcript.Action>):Promise<database.TranscriptionSaveResult>;

@@ -433,6 +433,19 @@ func RefusesWrites(ctx context.Context, db Execer) bool {
 	return ok && w.RefusesWrites(ctx)
 }
 
+// lockContender is implemented by an Execer that can tell a write lost to
+// another writer from a real failure (SQLite's SQLITE_BUSY).
+type lockContender interface {
+	LockContention(err error) bool
+}
+
+// LockContention reports whether err is db's backend losing the write lock
+// to another writer. A backend that cannot say answers no.
+func LockContention(db Execer, err error) bool {
+	c, ok := db.(lockContender)
+	return ok && err != nil && c.LockContention(err)
+}
+
 // MissingMatchStats — see storage.StatsStore.
 func (s *StatsStore) MissingMatchStats(ctx context.Context, scope string) ([]int64, error) {
 	tenant, args := s.DB.TenantFilter("m", scope)

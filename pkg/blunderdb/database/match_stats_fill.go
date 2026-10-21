@@ -47,8 +47,8 @@ type MatchStatsFillReport struct {
 }
 
 // SetMatchStatsFillReport registers the desktop's report of the background
-// fill and so enables it. A function, not a method, so the Wails binding of
-// *Database does not grow.
+// fill and so enables it. A function, not a method: its callbacks are Go
+// values the Wails binding of *Database could not carry.
 func SetMatchStatsFillReport(d *Database, r *MatchStatsFillReport) {
 	d.statsFill.mu.Lock()
 	defer d.statsFill.mu.Unlock()
@@ -120,9 +120,9 @@ func (d *Database) runMatchStatsFill(ctx context.Context, run *matchStatsFillRun
 	}
 }
 
-// MatchStatsFilling reports whether the background fill runs for the open
+// matchStatsFilling reports whether the background fill runs for the open
 // library.
-func (d *Database) MatchStatsFilling() bool {
+func (d *Database) matchStatsFilling() bool {
 	d.statsFill.mu.Lock()
 	defer d.statsFill.mu.Unlock()
 	return d.statsFill.running != nil
