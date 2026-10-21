@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
@@ -101,6 +102,20 @@ func (a shared) Insert(ctx context.Context, query string, args ...any) (int64, e
 		return 0, err
 	}
 	return id, nil
+}
+
+// FillKey names the scope's tenant within the pool; a transaction has no key.
+func (a shared) FillKey(scope string) (any, bool) {
+	pool, ok := a.db.(*pgxpool.Pool)
+	if !ok {
+		return nil, false
+	}
+	return poolScope{pool, scope}, true
+}
+
+type poolScope struct {
+	pool  *pgxpool.Pool
+	scope string
 }
 
 func (a shared) Transact(ctx context.Context, fn func(sqlshared.Execer) error) error {

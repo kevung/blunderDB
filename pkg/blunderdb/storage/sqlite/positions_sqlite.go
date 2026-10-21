@@ -311,7 +311,7 @@ func (s *positionStore) Update(ctx context.Context, scope string, p *domain.Posi
 			return err
 		}
 		// A new decision type changes which play each move is scored against.
-		_, err := sqlshared.RescorePlayedDecisionsOf(ctx, binder{tx}.shared(), []int64{p.ID})
+		_, err := sqlshared.RescorePlayedDecisionsOf(ctx, binder{db: tx}.shared(), []int64{p.ID})
 		return err
 	})
 	if isUniqueViolation(err) {

@@ -3,7 +3,9 @@ package sqlite
 import (
 	"context"
 	"database/sql"
+	"database/sql/driver"
 	"errors"
+	"fmt"
 	"strings"
 	"time"
 
@@ -26,6 +28,9 @@ type execer interface {
 // it bound to a *sql.DB; txImpl embeds it bound to a stmtTx over a *sql.Tx.
 type binder struct {
 	db execer
+	// probe remembers the handle's query_only answer; nil on a binder over a
+	// transaction or a borrowed connection, which asks that connection.
+	probe *writeProbe
 }
 
 func (b binder) Positions() storage.PositionStore     { return &positionStore{b.db, b.shared()} }
@@ -77,23 +82,77 @@ func (b binder) Training() storage.TrainingStore {
 }
 
 // withTx runs fn atomically over db. When db is a *sql.DB it opens a
-// transaction and commits (or rolls back) around fn; when db is already a
-// transaction — the store is reached through a caller's transaction — fn runs
-// directly and that outer transaction provides atomicity.
+// transaction on one pooled connection and commits (or rolls back) around fn;
+// when db is already a transaction — the store is reached through a caller's
+// transaction — fn runs directly and that outer transaction provides
+// atomicity.
+//
+// The transaction takes the write lock at BEGIN (BEGIN IMMEDIATE): every
+// caller writes, and a deferred transaction that reads and then writes
+// cannot wait for the lock when another writer committed since its read
+// began — SQLite fails it with SQLITE_BUSY at once, busy_timeout
+// notwithstanding. Taken at BEGIN, the lock is waited for like any write.
+// database/sql's BeginTx has no IMMEDIATE, hence the statements.
 func withTx(ctx context.Context, db execer, fn func(execer) error) error {
+	sqlDB, ok := db.(*sql.DB)
+	if !ok {
+		return fn(db)
+	}
+	conn, err := sqlDB.Conn(ctx)
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+	if _, err := conn.ExecContext(ctx, "BEGIN IMMEDIATE"); err != nil {
+		return busyErr(err)
+	}
+	// COMMIT and ROLLBACK run even when ctx is cancelled: the write lock must
+	// not outlive the call that took it.
+	end := context.WithoutCancel(ctx)
+	rollback := func() {
+		if _, err := conn.ExecContext(end, "ROLLBACK"); err != nil && !strings.Contains(err.Error(), "no transaction is active") {
+			// A connection whose transaction could not end must not go
+			// back to the pool still inside it.
+			_ = conn.Raw(func(any) error { return driver.ErrBadConn })
+		}
+	}
+	if err := fn(conn); err != nil {
+		rollback()
+		return busyErr(err)
+	}
+	if _, err := conn.ExecContext(end, "COMMIT"); err != nil {
+		rollback()
+		return busyErr(err)
+	}
+	return nil
+}
+
+// withDeferredTx is withTx with a deferred BEGIN, for a transaction that may
+// only read: it takes the write lock only at its first write, and then
+// cannot wait for it (see withTx).
+func withDeferredTx(ctx context.Context, db execer, fn func(execer) error) error {
 	sqlDB, ok := db.(*sql.DB)
 	if !ok {
 		return fn(db)
 	}
 	tx, err := sqlDB.BeginTx(ctx, nil)
 	if err != nil {
-		return err
+		return busyErr(err)
 	}
 	if err := fn(tx); err != nil {
-		tx.Rollback()
+		_ = tx.Rollback()
+		return busyErr(err)
+	}
+	return busyErr(tx.Commit())
+}
+
+// busyErr marks a write lost to another writer as storage.ErrBusy: nothing
+// was written and the caller may retry, which a daemon client is told.
+func busyErr(err error) error {
+	if err == nil || !isBusyErr(err) || errors.Is(err, storage.ErrBusy) {
 		return err
 	}
-	return tx.Commit()
+	return fmt.Errorf("%w: %w", storage.ErrBusy, err)
 }
 
 // queryInt64s runs a single-column query and returns every value, with the
@@ -125,7 +184,10 @@ const sqliteBusyCode = 5
 // modernc.org/sqlite driver.
 func isBusyErr(err error) bool {
 	var sqliteErr *sqlitedriver.Error
-	return errors.As(err, &sqliteErr) && sqliteErr.Code() == sqliteBusyCode
+	// The driver reports extended codes: SQLITE_BUSY_SNAPSHOT (517), a
+	// deferred transaction whose snapshot another writer outdated, is busy
+	// too.
+	return errors.As(err, &sqliteErr) && sqliteErr.Code()&0xff == sqliteBusyCode
 }
 
 // busyRetryAttempts bounds retryOnBusy: enough to ride out a burst of

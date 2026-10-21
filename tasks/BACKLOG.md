@@ -50,9 +50,9 @@ propre issue le jour où il est lancé.
   code non mappé (`ingest/xgmap.go`) passerait donc pour un vrai Double/Take/Pass et entrerait
   au dénominateur du PR. Aucune occurrence connue dans les corpus. Correctif si ça mord un
   jour : tester `engine.CanonicalCubeAction` plutôt que les graphies littérales.
-- **Wrapper `Database` vers le contrat `Storage`, tranches 5 et 6** (ADR-0100 ; tranches 1,
-  écritures de match, 2, lectures de match, 3, analyses, et 4, lots gammonNet et gardes
-  d'import, faites). Chaque tranche délègue un
+- **Wrapper `Database` vers le contrat `Storage`, tranche 6** (ADR-0100 ; tranches 1,
+  écritures de match, 2, lectures de match, 3, analyses, 4, lots gammonNet et gardes
+  d'import, et 5, import d'une autre base, faites). Chaque tranche délègue un
   groupe sans changer de comportement ; un écart se tranche d'abord, avec son test. La tranche 2
   a tranché ses écarts ainsi : le repli de `LastVisited` est la tête de `List` (sentinelle triée
   comme une absence de date, égalité départagée par l'id, les deux backends) ;
@@ -75,10 +75,20 @@ propre issue le jour où il est lancé.
   n'identifie rien, alors que le wrapper trouvait un match stocké avec `match_hash = ''`
   (bibliothèque exportée, migration v1) ; aucun appelant hors liaison Wails. La comparaison
   gammonNet interrompt son balayage sur une erreur de lecture de la base, là où elle sautait la
-  position avec un avertissement ; une analyse indécodable reste journalisée et sautée. (5)
-  `db_import_db.go`. (6) `store` typé `storage.Storage`, `FilePath`/`Vacuum`/`VacuumInto`/
-  vérification derrière une interface de fichier local : prérequis de `storage/remote` au
-  bureau et des bibliothèques multiples.
+  position avec un avertissement ; une analyse indécodable reste journalisée et sautée. La
+  tranche 5 : le receveur n'est lu et écrit que par le contrat ; trois écarts tranchés et une
+  correction. L'auteur d'un commentaire importé non signé est normalisé (espaces retirés,
+  coupé à `MaxCommentAuthorLen`) comme à l'import du démon, là où le bureau le recopiait tel
+  quel ; celui d'un commentaire signé est recopié octet pour octet par les deux imports et la
+  restauration de la corbeille (`storage.WithCarriedComment`), car la signature couvre
+  l'auteur : le normaliser laissait la note « signée, non vérifiée ». La migration SQLite →
+  PostgreSQL (`migrate/migrate.go`) normalise encore l'auteur d'une note signée. Une ligne du
+  receveur que `Positions().List` ne lit pas interrompt l'analyse et l'import, là où l'index
+  d'identité la sautait (impact quasi nul : `state` est `NOT NULL`). Un refus de version ou
+  une erreur de lecture de la source après l'ouverture de la transaction la laissait ouverte,
+  une connexion tenue ; tout retour avant le commit l'annule désormais. (6) `store` typé
+  `storage.Storage`, `FilePath`/`Vacuum`/`VacuumInto`/vérification derrière une interface de
+  fichier local : prérequis de `storage/remote` au bureau et des bibliothèques multiples.
 - **`SwapPlayers`/`DeleteCascade` dupliqués** entre `storage/sqlite/matches_sqlite.go` et
   `storage/postgres/matches_postgres.go` ; les partager par des closures SQL dialectales dans
   `sqlshared`.

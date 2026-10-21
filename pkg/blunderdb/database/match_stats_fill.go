@@ -13,9 +13,10 @@ import (
 // panel waits with nothing to show. The desktop instead fills it in the
 // background from the open on, a lot at a time (fillMatchStatsLots), and
 // reports the progress as the stats.matches maintenance line does. The CLI
-// and the daemon keep the synchronous path: the CLI's reads fill before they
-// answer (prefillMatchStats), and the daemon's storage readers fill what
-// they read.
+// keeps the synchronous path: its reads fill before they answer
+// (prefillMatchStats). The SQLite daemon starts the storage's FillMatchStats
+// at start, and its readers wait for that one fill (one per scope at a time)
+// rather than each running their own.
 
 // matchStatsFill is the background fill in flight, guarded by its own mutex:
 // bumpGeneration cancels it while holding Database.mu.

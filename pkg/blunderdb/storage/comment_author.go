@@ -48,6 +48,21 @@ func WithCommentSignature(ctx context.Context, signature string) context.Context
 	return context.WithValue(ctx, commentSignatureKey{}, signature)
 }
 
+// WithCarriedComment returns a context whose next comment Add copies a note
+// written elsewhere — an import, a restore. Its signature is kept verbatim
+// and, when there is one, so is its author: the signature covers the author
+// byte for byte, and a normalised name would leave a genuine note
+// unverified. The signature is what vouches for a signed note's author; an
+// unsigned note's author is normalised like any other.
+func WithCarriedComment(ctx context.Context, author, signature string) context.Context {
+	if strings.TrimSpace(signature) != "" {
+		ctx = context.WithValue(ctx, commentAuthorKey{}, author)
+	} else {
+		ctx = WithCommentAuthor(ctx, author)
+	}
+	return WithCommentSignature(ctx, signature)
+}
+
 // CommentSignatureFromContext returns the signature set by
 // WithCommentSignature, or "".
 func CommentSignatureFromContext(ctx context.Context) string {

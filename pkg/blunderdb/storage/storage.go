@@ -123,6 +123,12 @@ type Options struct {
 	// Off by default; ignored by the SQLite backend. The policies themselves are
 	// installed by Storage.ApplyRLS (opt-in).
 	EnableRLS bool
+
+	// MaxConns bounds the SQLite pool: the connections open at once, hence
+	// the reads that run in parallel under WAL. Zero keeps the backend's
+	// default (ConfigurePool); an in-memory database stays on its single
+	// connection. Ignored by PostgreSQL, whose pool its DSN sizes.
+	MaxConns int
 }
 
 // ListOpts bounds and orders a List query. Zero values mean "no limit" /

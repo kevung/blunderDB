@@ -322,7 +322,7 @@ func playerFilterNames(opts storage.MatchListOpts) []string {
 // withPlayerSpellings resolves opts.PlayerName to every spelling of the
 // person through the alias table.
 func (s *matchStore) withPlayerSpellings(ctx context.Context, scope string, opts storage.MatchListOpts) (storage.MatchListOpts, error) {
-	names, err := sqlshared.PlayerSpellings(ctx, binder{s.db}.shared(), scope, opts.PlayerName)
+	names, err := sqlshared.PlayerSpellings(ctx, binder{db: s.db}.shared(), scope, opts.PlayerName)
 	if err != nil {
 		return opts, fmt.Errorf("sqlite: match list aliases: %w", err)
 	}
@@ -701,7 +701,7 @@ func (s *matchStore) PurgeOrphanPositions(ctx context.Context, scope string, ids
 // A match with a draft open on it, or played here, is refused.
 func (s *matchStore) SwapPlayers(ctx context.Context, scope string, id int64) error {
 	err := withTx(ctx, s.db, func(tx execer) error {
-		if err := sqlshared.SwapRefusal(ctx, binder{tx}.shared(), scope, id); err != nil {
+		if err := sqlshared.SwapRefusal(ctx, binder{db: tx}.shared(), scope, id); err != nil {
 			return err
 		}
 		// The seats trade places: each row now describes the other player.
@@ -738,7 +738,7 @@ func (s *matchStore) SwapPlayers(ctx context.Context, scope string, id int64) er
 
 // SwapRefusal — see storage.MatchStore.
 func (s *matchStore) SwapRefusal(ctx context.Context, scope string, id int64) error {
-	return sqlshared.SwapRefusal(ctx, binder{s.db}.shared(), scope, id)
+	return sqlshared.SwapRefusal(ctx, binder{db: s.db}.shared(), scope, id)
 }
 
 // MergePlayers records every other name as an alias of canonical
@@ -746,7 +746,7 @@ func (s *matchStore) SwapRefusal(ctx context.Context, scope string, id int64) er
 // the stats, the players table, the search and every later import read them
 // as canonical.
 func (s *matchStore) MergePlayers(ctx context.Context, scope string, names []string, canonical string) error {
-	return sqlshared.MergeAliases(ctx, shared(binder{s.db}), scope, storage.AliasPlayer, names, canonical)
+	return sqlshared.MergeAliases(ctx, shared(binder{db: s.db}), scope, storage.AliasPlayer, names, canonical)
 }
 
 // SetLastVisitedPosition records the last position index viewed in a match.
@@ -930,7 +930,7 @@ const moveInsertSQL = `INSERT INTO move (
 // CreateMove stores a new move and returns its id, updating mv.ID in place. A
 // zero PositionID is stored as NULL (no associated position).
 func (s *matchStore) CreateMove(ctx context.Context, scope string, mv *domain.Move) (int64, error) {
-	decisionErr, closeCube, err := sqlshared.PlayedDecisionArgs(ctx, binder{s.db}.shared(), mv.PositionID, mv.CheckerMove, mv.CubeAction)
+	decisionErr, closeCube, err := sqlshared.PlayedDecisionArgs(ctx, binder{db: s.db}.shared(), mv.PositionID, mv.CheckerMove, mv.CubeAction)
 	if err != nil {
 		return 0, fmt.Errorf("sqlite: create move: %w", err)
 	}
@@ -1444,12 +1444,12 @@ func (s *matchStore) DiceSequences(ctx context.Context, scope string) iter.Seq2[
 
 // ScoreMoves — see storage.MatchStore.
 func (s *matchStore) ScoreMoves(ctx context.Context, scope string, after int64, limit int) (int64, int, error) {
-	return sqlshared.ScoreMoves(ctx, binder{s.db}.shared(), scope, after, limit)
+	return sqlshared.ScoreMoves(ctx, binder{db: s.db}.shared(), scope, after, limit)
 }
 
 // RescorePositionMoves — see storage.MatchStore.
 func (s *matchStore) RescorePositionMoves(ctx context.Context, scope string, positionID int64) error {
-	return sqlshared.RescorePositionMoves(ctx, binder{s.db}.shared(), scope, positionID)
+	return sqlshared.RescorePositionMoves(ctx, binder{db: s.db}.shared(), scope, positionID)
 }
 
 // qualify prefixes every column of a plain column list (moveSelectCols has its own moveColsOf) with alias —

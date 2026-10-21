@@ -173,6 +173,11 @@ transcripteur, celles d'une base ``.db`` de leur auteur d'origine.
      - travailleurs du moteur que partagent les balayages et les évaluations
        de tous les tenants ; une recherche s'étale sur les travailleurs
        inactifs ; 0 = un par cœur
+   * - ``--heavy-slots <n>``
+     - ``0``
+     - lectures de toute la bibliothèque servies à la fois (voir ci-dessous) ;
+       0 = une par paire de cœurs sur SQLite, sans borne sur PostgreSQL ;
+       -1 = sans borne
    * - ``--analysis-weights <liste>``
      - (vide)
      - ``tenant=poids,…`` : positions servies à un tenant à chaque tour des
@@ -228,7 +233,8 @@ fournies par variable d'environnement (``BLUNDERDB_BACKEND``, ``BLUNDERDB_DSN``,
 ``BLUNDERDB_RATE_LIMIT_RPS``, ``BLUNDERDB_RATE_LIMIT_BURST``,
 ``BLUNDERDB_QUOTA_POSITIONS``, ``BLUNDERDB_QUOTA_BYTES``,
 ``BLUNDERDB_QUOTA_ANALYSIS_SECONDS``, ``BLUNDERDB_QUOTA_IMPORTS``,
-``BLUNDERDB_ANALYSIS_WORKERS``, ``BLUNDERDB_ANALYSIS_WEIGHTS``, ``BLUNDERDB_RLS``,
+``BLUNDERDB_ANALYSIS_WORKERS``, ``BLUNDERDB_HEAVY_SLOTS``,
+``BLUNDERDB_ANALYSIS_WEIGHTS``, ``BLUNDERDB_RLS``,
 ``BLUNDERDB_READ_TENANTS``, ``BLUNDERDB_TS_PATH``, ``BLUNDERDB_IDENTITY_DIR``,
 ``BLUNDERDB_IDENTITY_NAME``, ``BLUNDERDB_IMPORT_DIR``, ``BLUNDERDB_OPS_ADDR``, ``BLUNDERDB_PPROF_ADDR``) :
 un drapeau explicite reste prioritaire sur la variable correspondante.
@@ -2102,6 +2108,23 @@ Quand ``--metrics`` est actif, l'état du pool est exposé en continu sur
 utilisées), ``_idle`` (disponibles), ``_max`` (plafond configuré) et
 ``_wait_count`` (nombre cumulé d'``Acquire`` ayant dû attendre une connexion
 libre).
+
+Avec le backend SQLite, le daemon ouvre une connexion par cœur, dix au moins
+(le bureau en garde dix). Les requêtes qui parcourent toute la bibliothèque
+(``stats.*``, ``search.count``, ``search.find``, ``search.ids``,
+``search.query``, ``search.indexOf``, ``matches.list``) s'exécutent au plus
+une par paire de cœurs, deux au moins, pour laisser des connexions aux
+lectures d'une seule ligne (``--heavy-slots`` fixe un autre nombre ; sur
+PostgreSQL elles ne sont bornées que si on le donne) ; les suivantes attendent
+leur tour, au plus 20 s et huit par place, puis reçoivent ``503`` (code ``unavailable``) avec un
+en-tête ``Retry-After``. Une écriture qui n'obtient pas la base, tenue par un
+autre écrivain au-delà de son attente, reçoit la même réponse : rien n'a été
+écrit, la requête peut être reprise telle quelle.
+
+Au démarrage, un daemon SQLite calcule en arrière-plan les statistiques par
+match qui manquent (la ligne ``stats.matches`` de la maintenance) ; une
+lecture de statistiques arrivée pendant ce calcul l'attend, puis lit le
+résultat.
 
 .. _headless_migrate:
 
