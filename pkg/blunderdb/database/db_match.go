@@ -2,18 +2,13 @@ package database
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"fmt"
 	"log/slog"
 	"strings"
 	"time"
 
-	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
-
-	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
-	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
 // GetAllMatches returns all matches from the database
@@ -89,40 +84,25 @@ func (d *Database) GetMatchByID(matchID int64) (*Match, error) {
 // through their move graph (move → game → match) — the position's provenance.
 // Positions are deduplicated by Zobrist hash, so several matches can reach
 // one; the list is empty for an individually imported position. Each match
-// carries its tournament name; most recent first.
+// carries its tournament name; in the match list's order, most recent first
+// (storage.MatchStore.MatchesByPosition, then List).
 func (d *Database) GetPositionProvenance(positionID int64) ([]Match, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
-	rows, err := d.db.Query(`
-		SELECT DISTINCT m.id, m.player1_name, m.player2_name, m.event, m.location,
-		       m.round, m.match_length, m.match_date, m.import_date, m.file_path,
-		       m.game_count, m.tournament_id, COALESCE(t.name, '') AS tournament_name
-		FROM move mv
-		JOIN game g ON mv.game_id = g.id
-		JOIN match m ON g.match_id = m.id
-		LEFT JOIN tournament t ON m.tournament_id = t.id
-		WHERE mv.position_id = ?
-		ORDER BY m.match_date DESC, m.id DESC
-	`, positionID)
-	if err != nil {
+	ctx := context.Background()
+	ids, err := d.store.Matches().MatchesByPosition(ctx, "", positionID)
+	if err != nil || len(ids) == 0 {
 		return nil, err
 	}
-	defer rows.Close()
-
 	var matches []Match
-	for rows.Next() {
-		var m Match
-		var matchDate, importDate sqlite.LenientTime
-		if err := rows.Scan(&m.ID, &m.Player1Name, &m.Player2Name, &m.Event, &m.Location,
-			&m.Round, &m.MatchLength, &matchDate, &importDate, &m.FilePath,
-			&m.GameCount, &m.TournamentID, &m.TournamentName); err != nil {
+	for m, err := range d.store.Matches().List(ctx, "", storage.MatchListOpts{IDs: ids}) {
+		if err != nil {
 			return nil, err
 		}
-		m.MatchDate, m.ImportDate = matchDate.Time, importDate.Time
-		matches = append(matches, m)
+		matches = append(matches, *m)
 	}
-	return matches, rows.Err()
+	return matches, nil
 }
 
 // SaveLastVisitedPosition saves the last visited position index for a match
@@ -133,61 +113,19 @@ func (d *Database) SaveLastVisitedPosition(matchID int64, positionIndex int) err
 	return d.store.Matches().SetLastVisitedPosition(context.Background(), "", matchID, positionIndex)
 }
 
-// GetLastVisitedMatch returns the most recently visited match (match with highest last_visited_position != -1)
-// If no match has been visited, returns the most recent match (first in date order)
+// GetLastVisitedMatch returns the most recently visited match or, when none
+// has been visited, the match the list shows first
+// (storage.MatchStore.LastVisited). The "no matches" error text is read by
+// the GUI.
 func (d *Database) GetLastVisitedMatch() (*Match, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
-	var m Match
-	var matchDate, importDate sqlite.LenientTime
-	// First try to find a match that has been visited (last_visited_position >= 0)
-	err := d.db.QueryRow(`
-		SELECT m.id, m.player1_name, m.player2_name, m.event, m.location, m.round,
-		       m.match_length, m.match_date, m.import_date, m.file_path, m.game_count,
-		       m.tournament_id, COALESCE(t.name, '') as tournament_name,
-		       COALESCE(m.last_visited_position, -1) as last_visited_position
-		FROM match m
-		LEFT JOIN tournament t ON m.tournament_id = t.id
-		WHERE m.last_visited_position >= 0
-		ORDER BY m.last_visited_at DESC NULLS LAST, m.import_date DESC, m.id DESC
-		LIMIT 1
-	`).Scan(&m.ID, &m.Player1Name, &m.Player2Name, &m.Event, &m.Location, &m.Round,
-		&m.MatchLength, &matchDate, &importDate, &m.FilePath, &m.GameCount,
-		&m.TournamentID, &m.TournamentName, &m.LastVisitedPosition)
-
-	if err == nil {
-		m.MatchDate, m.ImportDate = matchDate.Time, importDate.Time
-		return &m, nil
+	m, err := d.store.Matches().LastVisited(context.Background(), "")
+	if errors.Is(err, storage.ErrNotFound) {
+		return nil, fmt.Errorf("no matches in database")
 	}
-
-	if err != sql.ErrNoRows {
-		return nil, err
-	}
-
-	// No visited match found, return the most recent match
-	err = d.db.QueryRow(`
-		SELECT m.id, m.player1_name, m.player2_name, m.event, m.location, m.round,
-		       m.match_length, m.match_date, m.import_date, m.file_path, m.game_count,
-		       m.tournament_id, COALESCE(t.name, '') as tournament_name,
-		       COALESCE(m.last_visited_position, -1) as last_visited_position
-		FROM match m
-		LEFT JOIN tournament t ON m.tournament_id = t.id
-		ORDER BY `+domain.MatchSortDateSQLite+` DESC
-		LIMIT 1
-	`).Scan(&m.ID, &m.Player1Name, &m.Player2Name, &m.Event, &m.Location, &m.Round,
-		&m.MatchLength, &matchDate, &importDate, &m.FilePath, &m.GameCount,
-		&m.TournamentID, &m.TournamentName, &m.LastVisitedPosition)
-
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, fmt.Errorf("no matches in database")
-		}
-		return nil, err
-	}
-
-	m.MatchDate, m.ImportDate = matchDate.Time, importDate.Time
-	return &m, nil
+	return m, err
 }
 
 // GetGamesByMatch returns all games in a match, by game number
@@ -206,57 +144,20 @@ func (d *Database) GetGamesByMatch(matchID int64) ([]Game, error) {
 	return games, nil
 }
 
-// GetMovesByGame returns all moves in a game
+// GetMovesByGame returns all moves in a game, by move number, each with the
+// cost of its played move when the position is analysed
+// (storage.MatchStore.Moves).
 func (d *Database) GetMovesByGame(gameID int64) ([]Move, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
-	rows, err := d.db.Query(`
-		SELECT id, game_id, move_number, `+sqlshared.ActionLabelSQL("move_type")+`, position_id, player,
-		       dice_1, dice_2, checker_move, `+sqlshared.ActionLabelSQL("cube_action")+`, luck_mp,
-		       decision_ms, cube_decision_ms, roll_tick_ms, tick_ms
-		FROM move
-		WHERE game_id = ?
-		ORDER BY move_number ASC
-	`, gameID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
 	var moves []Move
-	for rows.Next() {
-		var m Move
-		var dice1, dice2 int32
-		var checkerMove, cubeAction sql.NullString
-		var luckMP sql.NullInt32
-		var decision, cube, rollTick, tick sql.NullInt64
-		err := rows.Scan(&m.ID, &m.GameID, &m.MoveNumber, &m.MoveType, &m.PositionID,
-			&m.Player, &dice1, &dice2, &checkerMove, &cubeAction, &luckMP, &decision, &cube,
-			&rollTick, &tick)
+	for mv, err := range d.store.Matches().Moves(context.Background(), "", gameID) {
 		if err != nil {
-			slog.Warn("scanning move", "err", err)
-			continue
+			return nil, err
 		}
-		m.Dice = [2]int32{dice1, dice2}
-		if checkerMove.Valid {
-			m.CheckerMove = checkerMove.String
-		}
-		if cubeAction.Valid {
-			m.CubeAction = cubeAction.String
-		}
-		if luckMP.Valid {
-			v := luckMP.Int32
-			m.LuckMP = &v
-		}
-		m.DecisionMS, m.CubeDecisionMS = sqlshared.NullableMS(decision), sqlshared.NullableMS(cube)
-		m.RollTickMS, m.TickMS = sqlshared.NullableMS(rollTick), sqlshared.NullableMS(tick)
-		moves = append(moves, m)
+		moves = append(moves, *mv)
 	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-
 	return moves, nil
 }
 

@@ -95,6 +95,7 @@ var covered = map[string]bool{
 	"Match/CreateGameMoveCascade":                            true,
 	"Match/DeleteCascade":                                    true,
 	"Matches/LastVisitedFollowsTheVisit":                     true,
+	"Matches/LastVisitedFallbackIsTheListHead":               true,
 	"Match/FindByHash":                                       true,
 	"Match/HashesReadBack":                                   true,
 	"Match/ListFilterSortPaginate":                           true,

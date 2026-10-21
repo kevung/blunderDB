@@ -80,3 +80,102 @@ func TestMatchReadParity_MovePositionsMaxCube(t *testing.T) {
 		t.Errorf("MaxCube = %d, want 7", got[0].Position.MaxCube)
 	}
 }
+
+// With no match visited, GetLastVisitedMatch falls back to the match the list
+// shows first: an undated match (legacy zero time) by its import date, as the
+// contract's LastVisited now sorts it on both backends.
+func TestMatchReadParity_LastVisitedFallbackSortsUndatedByImportDate(t *testing.T) {
+	db := newTestDB(t)
+	insertMatchRow(t, db, "h1", "2020-06-01T00:00:00Z", "2020-07-01T00:00:00Z")
+	zero := insertMatchRow(t, db, "h2", "0001-01-01T00:00:00Z", "2023-01-01T00:00:00Z")
+	insertMatchRow(t, db, "h3", "", "2019-01-01T00:00:00Z")
+
+	m, err := db.GetLastVisitedMatch()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if m.ID != zero {
+		t.Errorf("GetLastVisitedMatch = %d, want the undated match imported last (%d)", m.ID, zero)
+	}
+	listed, err := db.ListMatches(storage.MatchListOpts{Limit: 1})
+	if err != nil || len(listed) != 1 || listed[0].ID != m.ID {
+		t.Errorf("ListMatches first = %v (%v), want %d", listed, err, m.ID)
+	}
+}
+
+// An empty library still answers with the text the GUI reads.
+func TestMatchReadParity_LastVisitedEmptyLibrary(t *testing.T) {
+	db := newTestDB(t)
+	if _, err := db.GetLastVisitedMatch(); err == nil || err.Error() != "no matches in database" {
+		t.Errorf("err = %v, want \"no matches in database\"", err)
+	}
+}
+
+// A position's provenance is ordered as the match list orders: an undated
+// match sorts by its import date, not after every dated one.
+func TestMatchReadParity_ProvenanceInListOrder(t *testing.T) {
+	db := newTestDBWithXG(t)
+	var posID, xgMatch int64
+	if err := db.db.QueryRow(`SELECT mv.position_id, g.match_id FROM move mv JOIN game g ON mv.game_id = g.id
+		WHERE mv.position_id IS NOT NULL LIMIT 1`).Scan(&posID, &xgMatch); err != nil {
+		t.Fatal(err)
+	}
+	undated := insertMatchRow(t, db, "undated", "0001-01-01T00:00:00Z", "2099-01-01T00:00:00Z")
+	res, err := db.db.Exec(`INSERT INTO game (match_id, game_number, initial_score_1, initial_score_2, winner, points_won, move_count)
+		VALUES (?, 1, 0, 0, 0, 0, 1)`, undated)
+	if err != nil {
+		t.Fatal(err)
+	}
+	gameID, _ := res.LastInsertId()
+	if _, err := db.db.Exec(`INSERT INTO move (game_id, move_number, move_type, position_id, player, dice_1, dice_2)
+		VALUES (?, 1, 'checker', ?, 0, 3, 1)`, gameID, posID); err != nil {
+		t.Fatal(err)
+	}
+
+	prov, err := db.GetPositionProvenance(posID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(prov) != 2 || prov[0].ID != undated || prov[1].ID != xgMatch {
+		var ids []int64
+		for _, m := range prov {
+			ids = append(ids, m.ID)
+		}
+		t.Errorf("provenance = %v, want [%d %d]", ids, undated, xgMatch)
+	}
+}
+
+// GetMovesByGame carries the cost of the played move, as the contract's
+// Moves does, wherever the position is analysed.
+func TestMatchReadParity_MovesCarryPlayedError(t *testing.T) {
+	db := newTestDBWithXG(t)
+	matches, err := db.GetAllMatches()
+	if err != nil {
+		t.Fatal(err)
+	}
+	var games []int64
+	for _, m := range matches {
+		gs, err := db.GetGamesByMatch(m.ID)
+		if err != nil {
+			t.Fatal(err)
+		}
+		for _, g := range gs {
+			games = append(games, g.ID)
+		}
+	}
+	scored := 0
+	for _, g := range games {
+		moves, err := db.GetMovesByGame(g)
+		if err != nil {
+			t.Fatal(err)
+		}
+		for _, mv := range moves {
+			if mv.ErrorMP != nil {
+				scored++
+			}
+		}
+	}
+	if scored == 0 {
+		t.Error("no move carries ErrorMP; GetMovesByGame must score the played move")
+	}
+}

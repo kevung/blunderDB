@@ -224,10 +224,10 @@ func (s *matchStore) FindByHash(ctx context.Context, scope string, hash, canonic
 	return 0, false, nil
 }
 
-// matchOrderClause sorts matches by play date, falling back to import date
-// when the match date is unset. Used by LastVisited; List builds its ORDER BY
-// from domain.MatchOrderByClause so the key is configurable.
-const matchOrderClause = ` ORDER BY COALESCE(m.match_date, m.import_date) DESC`
+// matchOrderClause is List's default order — most recent first, an undated
+// match by its import date — so that LastVisited's fallback picks the match
+// the list shows first.
+var matchOrderClause = ` ORDER BY ` + domain.MatchOrderByClause("")
 
 // buildMatchListWhere appends opts filters to the tenant scope. next is the next
 // free placeholder number ($1 is the tenant), so the returned SQL starts with

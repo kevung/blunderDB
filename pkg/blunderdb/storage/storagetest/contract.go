@@ -244,6 +244,7 @@ func RunContractTestsOnly(t *testing.T, factory func() storage.Storage, keep fun
 		{"MatchEquityTable/DifferentLeftOut", testMETDifferentLeftOut},
 		{"MatchStats/SharedPositionsCountOnce", testMatchStatsSharedPositions},
 		{"Matches/LastVisitedFollowsTheVisit", testMatchLastVisitedFollowsTheVisit},
+		{"Matches/LastVisitedFallbackIsTheListHead", testMatchLastVisitedFallbackIsTheListHead},
 		{"Stats/OpponentFilter", testStatsOpponentFilter},
 		{"Positions/SetIndividuallyImported", testPositionSetIndividuallyImported},
 		{"Stats/RollingOrderAcrossGames", testStatsRollingOrderAcrossGames},

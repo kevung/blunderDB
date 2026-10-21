@@ -44,7 +44,7 @@ Le champ `Database.store` est typé `*sqlite.Storage`, pas `storage.Storage` : s
    1. écritures de match (faite) — le prédicat de rétention n'a plus que ses deux copies
       dialectales, `storage/sqlite` et `storage/postgres` ;
    2. lectures de match, écart par écart (date sentinelle, provenance, notation du coup joué,
-      `MaxCube`) ;
+      `MaxCube`) (faite) ;
    3. analyses, avec l'unification des helpers de fusion ;
    4. lots gammonNet et gardes d'import ;
    5. import d'une autre base (`db_import_db.go`), une fois stabilisés l'export et les
