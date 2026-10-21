@@ -2,7 +2,6 @@ package server
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -125,7 +124,7 @@ func (s *Server) collectionRoutes() []route {
 				return 0, err
 			}
 			if !living {
-				return 0, fmt.Errorf("collection %d is not living: nothing to freeze", req.ID)
+				return 0, storage.NotLivingError(req.ID)
 			}
 			return storage.FreezeCollection(ctx, s.opts.Storage, scope, req.ID, filters)
 		})},

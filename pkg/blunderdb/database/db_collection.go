@@ -247,7 +247,7 @@ func (d *Database) FreezeCollection(collectionID int64) (int, error) {
 		return 0, err
 	}
 	if !living {
-		return 0, fmt.Errorf("collection %d is not living: nothing to freeze", collectionID)
+		return 0, storage.NotLivingError(collectionID)
 	}
 	d.mu.Lock()
 	defer d.mu.Unlock()
