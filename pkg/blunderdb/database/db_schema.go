@@ -95,48 +95,36 @@ func (d *Database) GetDatabaseVersion() (string, error) {
 	return DatabaseVersion, nil
 }
 
-func (d *Database) LoadMetadata() (map[string]string, error) {
-	d.mu.RLock()         // Lock the mutex
-	defer d.mu.RUnlock() // Unlock the mutex when the function returns
+// metadataHeaderKeys are the metadata keys LoadMetadata reports: the header
+// the CLI and the GUI show, not the internal keys (watermark, caches).
+var metadataHeaderKeys = []string{"user", "description", "dateOfCreation", "database_version"}
 
-	rows, err := d.db.Query(`SELECT key, value FROM metadata WHERE key IN ('user', 'description', 'dateOfCreation', 'database_version')`)
+// LoadMetadata returns the library's header keys that are present. A key
+// stored without a value reads as "".
+func (d *Database) LoadMetadata() (map[string]string, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	all, err := d.store.Metadata().Load(context.Background(), "")
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
-
-	metadata := make(map[string]string)
-	for rows.Next() {
-		var key, value string
-		if err = rows.Scan(&key, &value); err != nil {
-			return nil, err
+	metadata := make(map[string]string, len(metadataHeaderKeys))
+	for _, key := range metadataHeaderKeys {
+		if value, ok := all[key]; ok {
+			metadata[key] = value
 		}
-		metadata[key] = value
 	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-
 	return metadata, nil
 }
 
+// SaveMetadata writes the given keys in one transaction, replacing the
+// values already stored.
 func (d *Database) SaveMetadata(metadata map[string]string) error {
-	d.mu.Lock()         // Lock the mutex
-	defer d.mu.Unlock() // Unlock the mutex when the function returns
+	d.mu.Lock()
+	defer d.mu.Unlock()
 
-	tx, err := d.db.Begin()
-	if err != nil {
-		return fmt.Errorf("failed to begin transaction: %w", err)
-	}
-	defer tx.Rollback()
-
-	for key, value := range metadata {
-		_, err := tx.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES (?, ?)`, key, value)
-		if err != nil {
-			return err
-		}
-	}
-	return tx.Commit()
+	return d.store.Metadata().Save(context.Background(), "", metadata)
 }
 
 // repairPositionsWithoutScalars fills in the Zobrist hash and the scalar search
