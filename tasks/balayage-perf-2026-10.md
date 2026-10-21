@@ -199,6 +199,23 @@ copie déjà ouverte de la base ; `go tool pprof -top`.
   `sqlshared/match_stats.go`, `sqlshared/match_stats_cells.go`.
 - **Partiellement connu** : les cellules et leur reclustering sont mesurés dans
   `tasks/mesure-bmab-0.37.md` ; le coût du remplissage d'une base de 33 k matchs ne l'est pas.
+- **Fait (#742)**, après #724 et #732. Remesure sur une copie de `sample.db` migrée en 2.48.0,
+  premier `call stats.compute` (66 638 lignes `match_stats`, 605 383 cellules) : **20,9 s**
+  sur machine calme (deux passes, 20,8 et 21,1 s). Profil du remplissage : lectures
+  (`scanEach`, `computeMatchStatsRows` et balayage des cellules) 55 %, écritures 40 %, dont
+  14 % de compilation d'instructions (`sqlite3_prepare_v2`) — l'`INSERT` de 200 lignes des
+  cellules, recompilé à chaque lot, et les 66 638 `INSERT INTO match_stats` d'une ligne.
+  Changement : `match_stats` passe par `insertRows` (200 lignes par instruction) ;
+  l'instruction pleine d'`insertRows` est préparée une fois par transaction
+  (`sqlshared.Preparer`, implémenté par SQLite ; pgx garde déjà un cache d'instructions par
+  connexion, PostgreSQL gagne surtout les 66 638 allers-retours devenus 334). Après : la
+  compilation tombe de 14 % à 4 % du profil, le chemin d'écriture de −33 %, le remplissage de
+  **−12 % environ** (profils CPU comparés à charge égale ; machine chargée à 30+ pendant les
+  chronos, d'où l'absence de mesure murale fiable de l'après). Résultat identique au
+  bit près (`stats.compute` comparé). Le ×2 estimé n'est pas atteint : il supposait des
+  écritures majoritaires, ce sont les lectures qui dominent désormais — piste suivante, la
+  `computeMatchStatsRows` (quatre lectures de `statsBaseJoin`) et le balayage des cellules (une
+  cinquième), à fusionner en un passage par lot.
 
 ### 3.4 `list --type study` — 6,85 s pour 17 lignes
 

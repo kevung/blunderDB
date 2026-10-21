@@ -371,8 +371,8 @@ func (s *StatsStore) refreshMatchStatsBatch(ctx context.Context, scope string, m
 			"error_mp", "pr", "luck_mp", "luck_rolls", "blunders", "analysis_engine", "analysis_depth",
 			"checker_error_mp", "cube_error_mp", "errors", "snowie_error_mp", "snowie_moves", "checker_moves",
 			"mwc_loss", "mwc_games", "mwc_game_ss")
-		insert := `INSERT INTO match_stats (` + strings.Join(cols, ", ") + `) VALUES (` + Placeholders(len(cols)) + `)`
-		for _, r := range rows {
+		if err := insertRows(ctx, tx, "match_stats", cols, len(rows), func(i int) []any {
+			r := rows[i]
 			var prv, eng, depth, mwc, mwcSS any
 			if r.Decisions > 0 {
 				prv = r.PR
@@ -386,13 +386,12 @@ func (s *StatsStore) refreshMatchStatsBatch(ctx context.Context, scope string, m
 			if r.AnalysisDepth != 0 {
 				depth = r.AnalysisDepth
 			}
-			args := append(append([]any{}, targs...), r.MatchID, r.Seat, r.Decisions, r.CheckerDecisions, r.CubeDecisions,
+			return append(append([]any{}, targs...), r.MatchID, r.Seat, r.Decisions, r.CheckerDecisions, r.CubeDecisions,
 				r.ErrorMP, prv, r.LuckMP, r.LuckRolls, r.Blunders, eng, depth,
 				r.CheckerErrorMP, r.CubeErrorMP, r.Errors, r.SnowieErrorMP, r.SnowieMoves, r.CheckerMoves,
 				mwc, r.MWCGames, mwcSS)
-			if _, err := tx.Exec(ctx, insert, args...); err != nil {
-				return fmt.Errorf("match stats insert: %w", err)
-			}
+		}); err != nil {
+			return err
 		}
 		return writeMatchStatsCells(ctx, tx, scope, Placeholders(len(matchIDs)), int64Args(matchIDs), settings)
 	})

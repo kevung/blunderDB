@@ -97,6 +97,47 @@ func (a shared) Insert(ctx context.Context, query string, args ...any) (int64, e
 	return res.LastInsertId()
 }
 
+// preparer is the part of *sql.DB, *sql.Tx and *sql.Conn that compiles a
+// statement once.
+type preparer interface {
+	PrepareContext(ctx context.Context, query string) (*sql.Stmt, error)
+}
+
+var _ sqlshared.Preparer = shared{}
+
+// Prepare compiles query on the bound handle; an execer that cannot prepare
+// gets a statement that runs each execution unprepared.
+func (a shared) Prepare(ctx context.Context, query string) (sqlshared.Stmt, error) {
+	p, ok := a.db.(preparer)
+	if !ok {
+		return unpreparedStmt{a, query}, nil
+	}
+	st, err := p.PrepareContext(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	return sqlStmt{st}, nil
+}
+
+type sqlStmt struct{ st *sql.Stmt }
+
+func (s sqlStmt) Exec(ctx context.Context, args ...any) error {
+	_, err := s.st.ExecContext(ctx, args...)
+	return err
+}
+func (s sqlStmt) Close() error { return s.st.Close() }
+
+type unpreparedStmt struct {
+	db    shared
+	query string
+}
+
+func (s unpreparedStmt) Exec(ctx context.Context, args ...any) error {
+	_, err := s.db.Exec(ctx, s.query, args...)
+	return err
+}
+func (unpreparedStmt) Close() error { return nil }
+
 func (a shared) Transact(ctx context.Context, fn func(sqlshared.Execer) error) error {
 	return withTx(ctx, a.db, func(tx execer) error { return fn(shared{tx}) })
 }

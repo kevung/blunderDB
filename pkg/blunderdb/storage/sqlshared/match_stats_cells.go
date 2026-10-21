@@ -52,9 +52,9 @@ const (
 	cellText = -2
 )
 
-// cellRowsPerInsert bounds the rows of one multi-row INSERT: thirteen columns
-// a row keeps the statement far below every driver's parameter limit.
-const cellRowsPerInsert = 200
+// rowsPerInsert bounds the rows of one multi-row INSERT: at most twenty-two
+// columns a row keeps the statement far below every driver's parameter limit.
+const rowsPerInsert = 200
 
 // errorBucket is the histogram bucket of an error, in millipoints: the lower
 // bound of [0,5) [5,10) [10,25) [25,50) [50,100) [100,∞).
@@ -415,18 +415,35 @@ func lessCell(a, b cellKey) bool {
 	return false
 }
 
-// insertRows inserts n rows into table, cellRowsPerInsert per statement.
+// insertRows inserts n rows into table, rowsPerInsert per statement. The
+// full statements share one text, compiled once for the transaction; only
+// the shorter last one is compiled on its own.
 func insertRows(ctx context.Context, tx Execer, table string, cols []string, n int, row func(i int) []any) error {
 	one := "(" + Placeholders(len(cols)) + ")"
 	head := `INSERT INTO ` + table + ` (` + strings.Join(cols, ", ") + `) VALUES `
-	for start := 0; start < n; start += cellRowsPerInsert {
-		end := min(start+cellRowsPerInsert, n)
-		args := make([]any, 0, (end-start)*len(cols))
+	values := func(rows int) string { return head + strings.TrimSuffix(strings.Repeat(one+",", rows), ",") }
+	args := func(start, end int) []any {
+		a := make([]any, 0, (end-start)*len(cols))
 		for i := start; i < end; i++ {
-			args = append(args, row(i)...)
+			a = append(a, row(i)...)
 		}
-		q := head + strings.TrimSuffix(strings.Repeat(one+",", end-start), ",")
-		if _, err := tx.Exec(ctx, q, args...); err != nil {
+		return a
+	}
+	full := n / rowsPerInsert * rowsPerInsert
+	if full > 0 {
+		exec, release, err := prepareExec(ctx, tx, values(rowsPerInsert))
+		if err != nil {
+			return fmt.Errorf("%s insert: %w", table, err)
+		}
+		defer release()
+		for start := 0; start < full; start += rowsPerInsert {
+			if err := exec(args(start, start+rowsPerInsert)...); err != nil {
+				return fmt.Errorf("%s insert: %w", table, err)
+			}
+		}
+	}
+	if full < n {
+		if _, err := tx.Exec(ctx, values(n-full), args(full, n)...); err != nil {
 			return fmt.Errorf("%s insert: %w", table, err)
 		}
 	}
