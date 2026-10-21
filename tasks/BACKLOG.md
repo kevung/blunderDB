@@ -75,11 +75,20 @@ propre issue le jour où il est lancé.
   n'identifie rien, alors que le wrapper trouvait un match stocké avec `match_hash = ''`
   (bibliothèque exportée, migration v1) ; aucun appelant hors liaison Wails. La comparaison
   gammonNet interrompt son balayage sur une erreur de lecture de la base, là où elle sautait la
-  position avec un avertissement ; une analyse indécodable reste journalisée et sautée. La tranche 5 : un écart tranché, l'auteur d'un commentaire importé
-  est normalisé par le contrat (espaces retirés, longueur bornée) comme à l'import du démon,
-  là où le bureau le recopiait tel quel. (6) `store` typé `storage.Storage`, `FilePath`/`Vacuum`/`VacuumInto`/
-  vérification derrière une interface de fichier local : prérequis de `storage/remote` au
-  bureau et des bibliothèques multiples.
+  position avec un avertissement ; une analyse indécodable reste journalisée et sautée. La
+  tranche 5 : le receveur n'est lu et écrit que par le contrat ; trois écarts tranchés et une
+  correction. L'auteur d'un commentaire importé non signé est normalisé (espaces retirés,
+  coupé à `MaxCommentAuthorLen`) comme à l'import du démon, là où le bureau le recopiait tel
+  quel ; celui d'un commentaire signé est recopié octet pour octet par les deux imports et la
+  restauration de la corbeille (`storage.WithCarriedComment`), car la signature couvre
+  l'auteur : le normaliser laissait la note « signée, non vérifiée ». La migration SQLite →
+  PostgreSQL (`migrate/migrate.go`) normalise encore l'auteur d'une note signée. Une ligne du
+  receveur que `Positions().List` ne lit pas interrompt l'analyse et l'import, là où l'index
+  d'identité la sautait (impact quasi nul : `state` est `NOT NULL`). Un refus de version ou
+  une erreur de lecture de la source après l'ouverture de la transaction la laissait ouverte,
+  une connexion tenue ; tout retour avant le commit l'annule désormais. (6) `store` typé
+  `storage.Storage`, `FilePath`/`Vacuum`/`VacuumInto`/vérification derrière une interface de
+  fichier local : prérequis de `storage/remote` au bureau et des bibliothèques multiples.
 - **`SwapPlayers`/`DeleteCascade` dupliqués** entre `storage/sqlite/matches_sqlite.go` et
   `storage/postgres/matches_postgres.go` ; les partager par des closures SQL dialectales dans
   `sqlshared`.
