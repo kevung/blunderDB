@@ -33,6 +33,22 @@
     // the placeholders of the About tab are escaped in aboutHtml); a language change drops the other languages' nodes.
     /** @type {Record<string, { html: string, el: HTMLElement }>} */
     const domCache = {};
+    // Moving the cached nodes back in restyles every one of them. Grouped by chapter (one <h3>
+    // each), content-visibility skips the style and layout of every chapter off screen, so a
+    // reopening styles a few dozen boxes and the chapter in view instead of the whole manual.
+    /** @param {HTMLElement} el */
+    function groupIntoChapters(el) {
+        /** @type {HTMLElement | null} */
+        let chapter = null;
+        for (const child of [...el.children]) {
+            if (!chapter || child.tagName === 'H3') {
+                chapter = document.createElement('section');
+                chapter.className = 'help-chapter';
+                el.insertBefore(chapter, child);
+            }
+            chapter.appendChild(child);
+        }
+    }
     /** @param {HTMLElement} node @param {{ lang: string, tab: string, html: string }} part */
     function cachedHtml(node, part) {
         /** @param {{ lang: string, tab: string, html: string }} p */
@@ -44,6 +60,7 @@
                 const el = document.createElement('div');
                 el.style.display = 'contents';
                 el.innerHTML = html;
+                groupIntoChapters(el);
                 entry = { html, el };
                 domCache[key] = entry;
             }
@@ -365,10 +382,12 @@
         display: contents;
     }
 
-    /* Only what is near the viewport is laid out: the manual is several hundred blocks long. */
-    .tab-content :global(.help-part > div > *) {
+    /* Only the chapters near the viewport are styled and laid out. One level only: blocks
+       skipped inside a chapter that scrollIntoView just rendered resize a frame later and push
+       a search hit out of view. */
+    .tab-content :global(.help-chapter) {
         content-visibility: auto;
-        contain-intrinsic-size: auto 120px;
+        contain-intrinsic-size: auto 1500px;
     }
 
     .tab-content :global(p),
