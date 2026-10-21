@@ -115,6 +115,8 @@ func TestExchange_EveryFieldIsPlaced(t *testing.T) {
 		"skipDuplicates": true, "commentAuthor": true, "directionMem": true,
 		// A running recount is cancelled by the generation bump.
 		"recount": true,
+		// The handle's report stays with it; a running fill is cancelled by the bump.
+		"statsFill": true,
 	}
 	typ := reflect.TypeOf(Database{})
 	for i := 0; i < typ.NumField(); i++ {

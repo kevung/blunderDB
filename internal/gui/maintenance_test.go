@@ -127,3 +127,22 @@ func TestStartMaintenance_NoopWithoutDatabase(t *testing.T) {
 	a.StartMaintenance(string(maintenance.StatsMatches))
 	a.CancelMaintenance()
 }
+
+// The fill an open starts reports as the stats.matches line running, ending
+// on maintenance:done with the matches it filled, which the panels waiting
+// on that line read.
+func TestMatchStatsFill_ReportsAsTheStatsMatchesLine(t *testing.T) {
+	a, d := matchWithoutStats(t)
+	events := recordEvents(a, nil)
+	if !d.FillMatchStatsInBackground() {
+		t.Fatal("no background fill started")
+	}
+	end, seen := lastEvent(t, events)
+	run, ok := end.payload.(maintenance.Run)
+	if end.name != "maintenance:done" || !ok || run.Kind != maintenance.StatsMatches || run.Changed != 1 {
+		t.Fatalf("ended with %s %+v, want maintenance:done for stats.matches, 1 changed", end.name, end.payload)
+	}
+	if seen[0] != "maintenance:progress" {
+		t.Errorf("events %v: no progress before the end", seen)
+	}
+}

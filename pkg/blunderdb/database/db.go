@@ -116,6 +116,8 @@ type Database struct {
 	path string
 	// recount is the background blunder recount (blunder_recount.go).
 	recount blunderRecount
+	// statsFill is the background match_stats fill (match_stats_fill.go).
+	statsFill matchStatsFill
 }
 
 // ErrDatabaseChanged refuses a background job's write once another database
@@ -165,6 +167,7 @@ func (d *Database) switchFile() {
 func (d *Database) bumpGeneration() {
 	d.generation++
 	d.cancelBlunderRecount()
+	d.cancelMatchStatsFill(false)
 }
 
 // currentGeneration is the generation a background job remembers at its start.

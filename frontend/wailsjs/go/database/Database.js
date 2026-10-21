@@ -502,6 +502,10 @@ export function ExportTranscriptionMAT(arg1, arg2) {
   return window['go']['database']['Database']['ExportTranscriptionMAT'](arg1, arg2);
 }
 
+export function FillMatchStatsInBackground() {
+  return window['go']['database']['Database']['FillMatchStatsInBackground']();
+}
+
 export function FindDuplicateMatches() {
   return window['go']['database']['Database']['FindDuplicateMatches']();
 }
@@ -1044,6 +1048,10 @@ export function MatchIDsReachedBy(arg1) {
 
 export function MatchMAT(arg1) {
   return window['go']['database']['Database']['MatchMAT'](arg1);
+}
+
+export function MatchStatsFilling() {
+  return window['go']['database']['Database']['MatchStatsFilling']();
 }
 
 export function MatchTranscriptionLosses(arg1) {

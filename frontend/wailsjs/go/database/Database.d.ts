@@ -272,6 +272,8 @@ export function ExportMatchMAT(arg1:number,arg2:string):Promise<void>;
 
 export function ExportTranscriptionMAT(arg1:number,arg2:string):Promise<void>;
 
+export function FillMatchStatsInBackground():Promise<boolean>;
+
 export function FindDuplicateMatches():Promise<Array<domain.DuplicateSuspect>>;
 
 export function FindMatchesToRepair():Promise<Array<database.MatchRepair>>;
@@ -543,6 +545,8 @@ export function MakeParticipantAvailable(arg1:number,arg2:string):Promise<servic
 export function MatchIDsReachedBy(arg1:Array<number>):Promise<Array<number>>;
 
 export function MatchMAT(arg1:number):Promise<string>;
+
+export function MatchStatsFilling():Promise<boolean>;
 
 export function MatchTranscriptionLosses(arg1:number):Promise<database.TranscriptionLosses>;
 

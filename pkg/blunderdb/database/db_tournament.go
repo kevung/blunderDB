@@ -4,6 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
+
+	sqlitedriver "modernc.org/sqlite"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -25,6 +28,27 @@ func (d *Database) CreateTournament(name string, date string, location string) (
 // matchStatsFillLot is how many matches one hold of Database.mu fills.
 var matchStatsFillLot = 200
 
+// fillBusyRetries bounds how often in a row one lot is redone after SQLITE_BUSY.
+const fillBusyRetries = 20
+
+// isSQLiteBusy reports whether err is SQLite's SQLITE_BUSY, extended codes included.
+func isSQLiteBusy(err error) bool {
+	var e *sqlitedriver.Error
+	return errors.As(err, &e) && e.Code()&0xff == 5
+}
+
+// sleepCtx waits for d or for ctx's end, whichever comes first.
+func sleepCtx(ctx context.Context, d time.Duration) error {
+	t := time.NewTimer(d)
+	defer t.Stop()
+	select {
+	case <-t.C:
+		return nil
+	case <-ctx.Done():
+		return ctx.Err()
+	}
+}
+
 // betweenFillLots runs while prefillMatchStats holds no lock, after each lot; tests pause the fill there.
 var betweenFillLots = func() {}
 
@@ -34,29 +58,68 @@ var betweenFillLots = func() {}
 // tournament edit) then keeps every later reader, the match list's page
 // among them, waiting for the whole library. Best effort: a backend that
 // cannot fill, or a read-only database, leaves the badges to their own path.
+// It is the CLI's path; the desktop fills in the background from the open on
+// (FillMatchStatsInBackground).
 func (d *Database) prefillMatchStats() {
+	_ = d.fillMatchStatsLots(context.Background(), nil, nil)
+}
+
+// fillMatchStatsLots is the lot loop under prefillMatchStats and the
+// background fill. Each lot holds Database.mu for reading; keep, nil for
+// none, is asked under that hold whether the lot may still write (the open
+// file is the one the fill started on). progress receives the matches still
+// missing after each lot. It returns ctx's error once ctx ends, and
+// ErrDatabaseChanged once keep refuses.
+func (d *Database) fillMatchStatsLots(ctx context.Context, keep func() bool, progress func(missing int)) error {
+	busy := 0
 	for {
-		d.mu.RLock()
-		if d.db == nil {
-			d.mu.RUnlock()
-			return
+		if err := ctx.Err(); err != nil {
+			return err
 		}
-		ctx := context.Background()
+		d.mu.RLock()
+		if d.db == nil || (keep != nil && !keep()) {
+			d.mu.RUnlock()
+			return ErrDatabaseChanged
+		}
 		missing, err := d.store.Stats().MissingMatchStats(ctx, "")
 		if err == nil && len(missing) > 0 {
 			err = d.store.Stats().RefreshMatchStats(ctx, "", missing[:min(matchStatsFillLot, len(missing))])
 		}
 		d.mu.RUnlock()
-		if err != nil || len(missing) == 0 {
-			return
+		if err != nil && isSQLiteBusy(err) && busy < fillBusyRetries {
+			// Another writer (an import, a page filling its own matches) took
+			// the file between this lot's read and its write: the lot is
+			// redone, outside the lock.
+			busy++
+			if err := sleepCtx(ctx, time.Duration(busy)*50*time.Millisecond); err != nil {
+				return err
+			}
+			continue
+		}
+		if err != nil {
+			return err
+		}
+		busy = 0
+		if progress != nil {
+			progress(max(len(missing)-matchStatsFillLot, 0))
+		}
+		if len(missing) == 0 {
+			return nil
 		}
 		betweenFillLots()
 	}
 }
 
 // GetAllTournaments returns all tournaments with their match counts
+//
+// While the background fill runs, the list comes back at once without the
+// badges, which would otherwise fill the rest of the library in one read
+// hold; the desktop reads it again once the fill ends.
 func (d *Database) GetAllTournaments() ([]Tournament, error) {
-	d.prefillMatchStats()
+	filling := d.MatchStatsFilling()
+	if !filling {
+		d.prefillMatchStats()
+	}
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
@@ -72,6 +135,9 @@ func (d *Database) GetAllTournaments() ([]Tournament, error) {
 		tournaments = append(tournaments, *t)
 	}
 
+	if filling {
+		return tournaments, nil
+	}
 	if err := d.applyTournamentBadges(tournaments); err != nil {
 		// Non-fatal
 		_ = err
