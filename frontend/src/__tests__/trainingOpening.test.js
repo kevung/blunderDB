@@ -8,6 +8,7 @@ import { get } from 'svelte/store';
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
     LoadPosition: vi.fn(() => Promise.resolve(null)),
+    LoadPositionsByIDs: vi.fn(() => Promise.resolve([])),
     SaveTrainingSession: vi.fn(() => Promise.resolve(1)),
     LoadTrainingSessions: vi.fn(() => Promise.resolve([])),
     LoadTrainingNumberStats: vi.fn(() => Promise.resolve([])),
