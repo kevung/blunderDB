@@ -1,0 +1,2097 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-21 12:52+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: de\n"
+"Language-Team: de <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/manuel_stats.rst:4
+msgid "Statistiques"
+msgstr "Statistiken"
+
+#: ../../source/manuel_stats.rst:9
+msgid "Panneau Stats"
+msgstr "Stats-Panel"
+
+#: ../../source/manuel_stats.rst:12
+msgid "Introduction"
+msgstr "Einführung"
+
+#: ../../source/manuel_stats.rst:14
+msgid ""
+"Le panneau **Stats** permet d'analyser son niveau de jeu et de suivre sa "
+"progression dans le temps à partir des positions importées dans la base "
+"de données. Il calcule et affiche les indicateurs **PR** (*Performance "
+"Rating*) et **MWC cost** (Match Winning Chance cost) pour l'ensemble des "
+"positions ou un sous-ensemble filtré."
+msgstr ""
+"Das Panel **Stats** ermöglicht es, das eigene Spielniveau zu analysieren "
+"und den Fortschritt im Zeitverlauf anhand der in die Datenbank "
+"importierten Stellungen zu verfolgen. Es berechnet und zeigt die "
+"Kennzahlen **PR** (Performance Rating) und **MWC cost** (Match Winning "
+"Chance cost) für alle Stellungen oder eine gefilterte Teilmenge an."
+
+#: ../../source/manuel_stats.rst:20
+msgid "Le panneau Stats est particulièrement utile pour :"
+msgstr "Das Stats-Panel ist besonders nützlich, um:"
+
+#: ../../source/manuel_stats.rst:22
+msgid ""
+"**situer son niveau** par rapport aux bandes de niveau (*Classe "
+"mondiale*, *Expert*, *Avancé*…) grâce au PR global ;"
+msgstr ""
+"**das eigene Niveau einzuordnen** im Verhältnis zu den Niveaubändern "
+"(*Weltklasse*, *Experte*, *Fortgeschritten*…) anhand des globalen PR;"
+
+#: ../../source/manuel_stats.rst:25
+msgid ""
+"**suivre sa progression** tournoi après tournoi ou match après match "
+"grâce aux graphiques de l'onglet Progression ;"
+msgstr ""
+"**den eigenen Fortschritt zu verfolgen** Turnier für Turnier oder Match "
+"für Match anhand der Diagramme im Tab Progression;"
+
+#: ../../source/manuel_stats.rst:28
+msgid ""
+"**identifier ses points faibles** : onglet Erreurs pour voir la "
+"répartition entre coups joués et décisions de videau, et la distribution "
+"des magnitudes d'erreur ;"
+msgstr ""
+"**die eigenen Schwachstellen zu erkennen**: der Tab Fehler zeigt die "
+"Aufteilung zwischen Steinzügen und Doppler-Entscheidungen sowie die "
+"Verteilung der Fehlergrößen;"
+
+#: ../../source/manuel_stats.rst:32
+msgid ""
+"**comparer les joueurs de la base** entre eux, une ligne par joueur, "
+"grâce à l'onglet Joueurs — utile pour suivre une compétition entière ;"
+msgstr ""
+"**die Spieler der Datenbank untereinander vergleichen**, eine Zeile je "
+"Spieler, über den Reiter Spieler — nützlich, um ein ganzes Turnier zu "
+"verfolgen;"
+
+#: ../../source/manuel_stats.rst:35
+msgid ""
+"**accéder directement aux positions concernées** en cliquant sur "
+"n'importe quel indicateur (drill-down)."
+msgstr ""
+"**direkt zu den betreffenden Stellungen zu gelangen**, indem man auf eine"
+" beliebige Kennzahl klickt (Drill-down)."
+
+#: ../../source/manuel_stats.rst:38
+msgid ""
+"La définition, la formule, l'incertitude et les limites de chaque chiffre"
+" du panneau sont réunies dans :ref:`metriques`."
+msgstr ""
+"Definition, Formel, Unsicherheit und Grenzen jeder Zahl des Panels sind "
+"in :ref:`metriques` zusammengefasst."
+
+#: ../../source/manuel_stats.rst:42
+msgid "Ouverture du panneau"
+msgstr "Öffnen des Panels"
+
+#: ../../source/manuel_stats.rst:44
+msgid "Pour ouvrir le panneau Stats :"
+msgstr "Um das Stats-Panel zu öffnen:"
+
+#: ../../source/manuel_stats.rst:46
+msgid "Appuyer sur *CTRL-D*."
+msgstr "Drücken Sie *CTRL-D*."
+
+#: ../../source/manuel_stats.rst:47
+msgid "Saisir la commande ``stats`` ou ``st`` dans la ligne de commande."
+msgstr "Geben Sie den Befehl ``stats`` oder ``st`` in die Befehlszeile ein."
+
+#: ../../source/manuel_stats.rst:50
+msgid ""
+"Le panneau se rafraîchit automatiquement à chaque modification du filtre."
+" Il ne recalcule pas les statistiques lors d'un simple basculement PR ↔ "
+"MWC : les deux métriques sont calculées simultanément par le backend."
+msgstr ""
+"Das Panel wird bei jeder Änderung des Filters automatisch aktualisiert. "
+"Bei einem einfachen Umschalten PR ↔ MWC werden die Statistiken nicht neu "
+"berechnet: Beide Kennzahlen werden vom Backend gleichzeitig berechnet."
+
+#: ../../source/manuel_stats.rst:55
+msgid "Barre de filtre"
+msgstr "Filterleiste"
+
+#: ../../source/manuel_stats.rst:57
+msgid ""
+"La barre de filtre, en haut du panneau, permet de restreindre le calcul à"
+" un sous-ensemble de positions."
+msgstr ""
+"Die Filterleiste am oberen Rand des Panels ermöglicht es, die Berechnung "
+"auf eine Teilmenge von Stellungen einzuschränken."
+
+#: ../../source/manuel_stats.rst:61
+msgid "Perspective joueur"
+msgstr "Spielerperspektive"
+
+#: ../../source/manuel_stats.rst:63
+msgid ""
+"Le champ **Joueur** filtre les statistiques selon le joueur analysé. "
+"Taper quelques lettres réduit la liste aux noms qui les contiennent ; un "
+"clic ou *Entrée* choisit le joueur, **✕** ou un champ vidé revient à "
+"toutes les perspectives."
+msgstr ""
+"Das Feld **Spieler** filtert die Statistiken nach dem analysierten "
+"Spieler. Einige Buchstaben einzugeben beschränkt die Liste auf die Namen,"
+" die sie enthalten; ein Klick oder *Eingabe* wählt den Spieler, **✕** "
+"oder ein geleertes Feld kehrt zu allen Perspektiven zurück."
+
+#: ../../source/manuel_stats.rst:68
+msgid ""
+"Le filtre est **un seul** pour tous les onglets du panneau et il est "
+"conservé d'une session à l'autre. Il se règle aussi depuis les autres "
+"panneaux : le nom d'un joueur dans l'en-tête d'un match ou dans la barre "
+"au-dessus du plateau ouvre toutes ses statistiques (tournois et dates "
+"sont vidés), et le bouton **Stats** de l'en-tête d'un tournoi ouvre "
+"celles de ce tournoi entier (dates vidées, joueur conservé). Une date de "
+"fin antérieure à la date de début est refusée : le champ reprend la date "
+"appliquée."
+msgstr ""
+"Der Filter ist **ein einziger** für alle Reiter des Bereichs und bleibt "
+"von einer Sitzung zur nächsten erhalten. Er lässt sich auch aus den "
+"anderen Bereichen einstellen: Der Name eines Spielers im Kopf eines "
+"Matches oder in der Leiste über dem Brett öffnet alle seine Statistiken "
+"(Turniere und Daten werden geleert), und die Schaltfläche **Stats** im "
+"Kopf eines Turniers öffnet die dieses ganzen Turniers (Daten geleert, "
+"Spieler beibehalten). Ein Enddatum vor dem Anfangsdatum wird abgelehnt: "
+"Das Feld übernimmt wieder das angewendete Datum."
+
+#: ../../source/manuel_stats.rst:77
+msgid "Filtres disponibles"
+msgstr "Verfügbare Filter"
+
+#: ../../source/manuel_stats.rst:79
+msgid ""
+"**Tournoi(s)** — restriction à un ou plusieurs tournois. Plusieurs "
+"tournois peuvent être sélectionnés simultanément."
+msgstr ""
+"**Turnier(e)** — Beschränkung auf ein oder mehrere Turniere. Es können "
+"mehrere Turniere gleichzeitig ausgewählt werden."
+
+#: ../../source/manuel_stats.rst:82
+msgid ""
+"**Dates** — plage temporelle (*De* … *À*). Si seule la date de début est "
+"renseignée, les positions plus récentes sont incluses."
+msgstr ""
+"**Datum** — Zeitspanne (*Von* … *Bis*). Wenn nur das Startdatum angegeben"
+" ist, werden die neueren Stellungen einbezogen."
+
+#: ../../source/manuel_stats.rst:85
+msgid "**Type de décision** — Tous / Coups joués / Décisions de videau."
+msgstr "**Entscheidungstyp** — Alle / Steinzüge / Doppler-Entscheidungen."
+
+#: ../../source/manuel_stats.rst:87
+msgid ""
+"**Longueur de match** — restriction à des longueurs de match précises (1,"
+" 3, 5, 7, 9, 11, 13, 15, 21 points). Plusieurs longueurs peuvent être "
+"combinées."
+msgstr ""
+"**Matchlänge** — Beschränkung auf bestimmte Matchlängen (1, 3, 5, 7, 9, "
+"11, 13, 15, 21 Punkte). Es können mehrere Längen kombiniert werden."
+
+#: ../../source/manuel_stats.rst:90
+msgid ""
+"**Moteur** et **Profondeur min.** — ne garder que les décisions analysées"
+" par un moteur donné, ou au moins à une profondeur donnée, en plis. Le "
+"menu *Moteur* propose les moteurs présents dans les analyses de la base "
+"(eXtreme Gammon, GNU Backgammon…)."
+msgstr ""
+"**Engine** und **Min. Tiefe** — nur die Entscheidungen behalten, die von "
+"einer bestimmten Engine oder mindestens in einer bestimmten Tiefe (in "
+"Plies) analysiert wurden. Das Menü *Engine* bietet die in den Analysen "
+"der Datenbank vorhandenen Engines an (eXtreme Gammon, GNU Backgammon…)."
+
+#: ../../source/manuel_stats.rst:95
+msgid ""
+"Un bouton **↺ Réinitialiser** remet tous les filtres à zéro, sauf le "
+"joueur."
+msgstr ""
+"Eine Schaltfläche **↺ Zurücksetzen** setzt alle Filter zurück, außer dem "
+"Spieler."
+
+#: ../../source/manuel_stats.rst:98
+msgid ""
+"Les filtres sont persistés dans la configuration de blunderDB "
+"(``config.yaml``) et sont restaurés à la prochaine ouverture."
+msgstr ""
+"Die Filter werden in der Konfiguration von blunderDB (``config.yaml``) "
+"gespeichert und beim nächsten Start wiederhergestellt."
+
+#: ../../source/manuel_stats.rst:102
+msgid "Toggle PR / MWC"
+msgstr "Umschalter PR / MWC"
+
+#: ../../source/manuel_stats.rst:104
+msgid ""
+"Le bouton **PR / MWC** en haut du panneau bascule la métrique affichée "
+"dans tous les onglets."
+msgstr ""
+"Die Schaltfläche **PR / MWC** am oberen Rand des Panels schaltet die in "
+"allen Tabs angezeigte Kennzahl um."
+
+#: ../../source/manuel_stats.rst:107
+msgid "**PR (Performance Rating)**"
+msgstr "**PR (Performance Rating)**"
+
+#: ../../source/manuel_stats.rst:109
+msgid ""
+"L'erreur moyenne d'équité par décision comptée, multipliée par 500 comme "
+"le font eXtreme Gammon et GNUbg : un PR de 5,0 vaut 0,010 d'équité perdue"
+" par décision, soit 10 millipoints (mpt). La règle de comptage exacte — "
+"quelles décisions entrent au dénominateur, comment le score est converti "
+"— est celle de :ref:`metrique_pr`."
+msgstr ""
+"Der durchschnittliche Equity-Fehler pro gezählter Entscheidung, "
+"multipliziert mit 500, wie es eXtreme Gammon und GNUbg tun: Ein PR von "
+"5,0 entspricht 0,010 verlorener Equity pro Entscheidung, also 10 "
+"Millipunkten (mpt). Die genaue Zählregel — welche Entscheidungen in den "
+"Nenner eingehen, wie der Spielstand umgerechnet wird — ist die aus "
+":ref:`metrique_pr`."
+
+#: ../../source/manuel_stats.rst:115
+msgid ""
+"Les bandes de niveau que le panneau dessine derrière la courbe de "
+"progression sont un **repère indicatif propre à blunderDB** : aucune "
+"publication ne fait autorité sur ces seuils. La borne haute de chaque "
+"bande est exclue : un PR de 4 est *Avancé*, pas *Expert*."
+msgstr ""
+"Die Niveaubänder, die das Panel hinter der Fortschrittskurve zeichnet, "
+"sind ein **blunderDB-eigener, indikativer Anhaltspunkt**: Keine "
+"Publikation ist für diese Schwellenwerte maßgeblich. Die Obergrenze jedes"
+" Bandes ist ausgeschlossen: Ein PR von 4 ist *Fortgeschritten*, nicht "
+"*Experte*."
+
+#: ../../source/manuel_stats.rst:1
+msgid "Niveau"
+msgstr "Niveau"
+
+#: ../../source/manuel_stats.rst:1
+msgid "PR"
+msgstr "PR"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Classe mondiale"
+msgstr "Weltklasse"
+
+#: ../../source/manuel_stats.rst:1
+msgid "< 2"
+msgstr "< 2"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Expert"
+msgstr "Experte"
+
+#: ../../source/manuel_stats.rst:1
+msgid "2 – 4"
+msgstr "2 – 4"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Avancé"
+msgstr "Fortgeschritten"
+
+#: ../../source/manuel_stats.rst:1
+msgid "4 – 6"
+msgstr "4 – 6"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Intermédiaire"
+msgstr "Mittelstufe"
+
+#: ../../source/manuel_stats.rst:1
+msgid "6 – 9"
+msgstr "6 – 9"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Occasionnel"
+msgstr "Gelegenheitsspieler"
+
+#: ../../source/manuel_stats.rst:1
+msgid "9 – 12"
+msgstr "9 – 12"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Débutant"
+msgstr "Anfänger"
+
+#: ../../source/manuel_stats.rst:1
+msgid "≥ 12"
+msgstr "≥ 12"
+
+#: ../../source/manuel_stats.rst:132
+msgid "**MWC cost (Match Winning Chance cost)**"
+msgstr "**MWC cost (Match Winning Chance cost)**"
+
+#: ../../source/manuel_stats.rst:134
+msgid ""
+"Probabilité cumulée de victoire de match perdue à cause des erreurs, sur "
+"l'ensemble du jeu de données filtré. Calculé à partir de la MET courante "
+"de la base, par défaut la Kazaross-XG2 embarquée dans blunderDB. Une "
+"analyse au score de match calculée avec une autre table est « MET "
+"différente » et reste hors des statistiques."
+msgstr ""
+"Kumulierte Matchgewinnwahrscheinlichkeit, die aufgrund der Fehler über "
+"den gesamten gefilterten Datensatz verloren geht. Berechnet anhand der "
+"aktuellen MET der Datenbank, standardmäßig der in blunderDB eingebetteten"
+" Kazaross-XG2. Eine Analyse zum Matchstand, die mit einer anderen Tabelle"
+" berechnet wurde, ist „andere MET“ und bleibt außerhalb der Statistiken."
+
+#: ../../source/manuel_stats.rst:141
+msgid ""
+"Le MWC cost **n'est pas applicable** aux positions *money-game* (sans "
+"enjeu de match). Ces positions sont exclues du calcul MWC. Les valeurs "
+"MWC dépendent de la MET utilisée ; elles ne sont pas directement "
+"comparables entre logiciels utilisant des METs différentes."
+msgstr ""
+"Der MWC cost **ist nicht anwendbar** auf *Money-Game*-Stellungen (ohne "
+"Matcheinsatz). Diese Stellungen werden von der MWC-Berechnung "
+"ausgeschlossen. Die MWC-Werte hängen von der verwendeten MET ab; sie sind"
+" nicht direkt zwischen Programmen vergleichbar, die unterschiedliche METs"
+" verwenden."
+
+#: ../../source/manuel_stats.rst:148
+msgid "**Perte MWC (éq. 7 pts)**"
+msgstr "**MWC-Verlust (7-Punkte-Äq.)**"
+
+#: ../../source/manuel_stats.rst:150
+msgid ""
+"La probabilité de gagner le match qu'un joueur a perdue sur l'ensemble de"
+" ses décisions — pions, videau, prise ou refus, avec videau — ramenée à "
+"un match en 7 points. Pour un match en *N* points où le joueur a perdu "
+"*L* de MWC :"
+msgstr ""
+"Die Wahrscheinlichkeit, das Match zu gewinnen, die ein Spieler über alle "
+"seine Entscheidungen verloren hat — Steine, Würfel, Annahme oder Aufgabe,"
+" mit Würfel — umgerechnet auf ein Match über 7 Punkte. Für ein Match über"
+" *N* Punkte, in dem der Spieler *L* an MWC verloren hat:"
+
+#: ../../source/manuel_stats.rst:154
+msgid "L₇ = L × √(7 / N)"
+msgstr "L₇ = L × √(7 / N)"
+
+#: ../../source/manuel_stats.rst:156
+msgid ""
+"Pour un match en 7 points, c'est la perte de MWC du match, celle "
+"qu'affiche eXtreme Gammon. La racine vient du modèle de la formule FIBS :"
+" à force égale, la perte d'un joueur croît comme la racine de la longueur"
+" du match. 7 points est la longueur de référence parce que c'est la plus "
+"courante en tournoi."
+msgstr ""
+"Bei einem Match über 7 Punkte ist dies der MWC-Verlust des Matches, den "
+"auch eXtreme Gammon anzeigt. Die Wurzel stammt aus dem Modell der FIBS-"
+"Formel: Bei gleicher Spielstärke wächst der Verlust eines Spielers mit "
+"der Wurzel der Matchlänge. 7 Punkte sind die Referenzlänge, weil sie in "
+"Turnieren am häufigsten ist."
+
+#: ../../source/manuel_stats.rst:162
+#, no-python-format
+msgid ""
+"Elle se lit comme la part de match perdue face à un joueur parfait : 12,3"
+" % veut dire qu'au lieu de 50 % de chances contre le moteur, le joueur "
+"n'en avait plus que 37,7 % sur un match en 7 points. L'infobulle en donne"
+" la lecture en Elo face au moteur, en inversant la formule FIBS : D = "
+"(2000 / √7) × log₁₀(q / (1 − q)), avec q = 0,5 − L₇. Au-delà d'une perte "
+"de 49 %, la formule n'a plus de valeur finie : l'Elo affiché est alors un"
+" plafond (« ≤ »). Les deux chiffres classent les joueurs dans le même "
+"ordre."
+msgstr ""
+"Sie ist zu lesen als der gegen einen perfekten Spieler verlorene "
+"Matchanteil: 12,3 % bedeutet, dass der Spieler statt 50 % Gewinnchancen "
+"gegen die Engine nur noch 37,7 % in einem Match über 7 Punkte hatte. Der "
+"Tooltip gibt die Lesart als Elo gegen die Engine an, indem die FIBS-"
+"Formel umgekehrt wird: D = (2000 / √7) × log₁₀(q / (1 − q)), mit q = 0,5 "
+"− L₇. Ab einem Verlust von 49 % hat die Formel keinen endlichen Wert "
+"mehr: Das angezeigte Elo ist dann eine Obergrenze (»≤«). Beide Zahlen "
+"ordnen die Spieler gleich."
+
+#: ../../source/manuel_stats.rst:171
+msgid ""
+"Elle complète le PR sans le remplacer : le PR divise les erreurs par un "
+"nombre de décisions, et ce nombre dépend de ce que l'on compte comme "
+"décision (coups forcés, décisions de videau évidentes). La perte MWC ne "
+"compte aucune décision : chaque erreur pèse ce qu'elle a coûté au score "
+"où elle a été commise."
+msgstr ""
+"Sie ergänzt den PR, ohne ihn zu ersetzen: Der PR teilt die Fehler durch "
+"eine Anzahl von Entscheidungen, und diese Anzahl hängt davon ab, was als "
+"Entscheidung zählt (erzwungene Züge, offensichtliche "
+"Würfelentscheidungen). Der MWC-Verlust zählt keine Entscheidungen: Jeder "
+"Fehler wiegt das, was er bei dem Spielstand gekostet hat, bei dem er "
+"gemacht wurde."
+
+#: ../../source/manuel_stats.rst:177
+msgid ""
+"Sur plusieurs matchs (statistiques d'un joueur, d'un tournoi), les pertes"
+" et les racines des longueurs s'additionnent avant le rapport : L₇ = √7 ×"
+" ΣL / Σ√N. Un match en 7 points pèse donc plus qu'un match en 1 point, et"
+" un seul match donne sa propre valeur."
+msgstr ""
+"Über mehrere Matches (Statistiken eines Spielers oder eines Turniers) "
+"werden die Verluste und die Wurzeln der Längen vor der Verhältnisbildung "
+"addiert: L₇ = √7 × ΣL / Σ√N. Ein Match über 7 Punkte wiegt also mehr als "
+"ein Match über 1 Punkt, und ein einzelnes Match ergibt seinen eigenen "
+"Wert."
+
+#: ../../source/manuel_stats.rst:183
+#, no-python-format
+msgid ""
+"Un match isolé est très bruité : quelques grosses erreurs suffisent à le "
+"faire varier du simple au double. Le badge et le bilan d'un match "
+"(:ref:`bilan du match <bilan_match>`) donnent l'intervalle à 95 % en "
+"rééchantillonnant ses parties ; un agrégat (statistiques d'un joueur, "
+"d'un tournoi) le donne en rééchantillonnant ses matchs ; sans filtre "
+"joueur, les deux sièges d'un match forment une seule unité, puisqu'ils "
+"jouent les mêmes positions. Il faut au moins trois parties, ou trois "
+"matchs, et qu'elles ne donnent pas toutes la même perte : sinon pas "
+"d'intervalle. Une ligne par match des statistiques n'en a donc pas : "
+"c'est une seule unité. Ne classez pas des joueurs sur un seul match."
+msgstr ""
+"Ein einzelnes Match ist sehr verrauscht: ein paar grosse Fehler genügen, "
+"damit es sich verdoppelt. Das Abzeichen und die Matchbilanz "
+"(:ref:`Matchbilanz <bilan_match>`) geben das 95-%-Intervall durch "
+"Neuziehen seiner Partien an; ein Aggregat (Statistiken eines Spielers, "
+"eines Turniers) durch Neuziehen seiner Matches; ohne Spielerfilter bilden"
+" die beiden Seiten eines Matches eine einzige Einheit, da sie dieselben "
+"Stellungen spielen. Es braucht mindestens drei Partien oder drei Matches,"
+" und sie dürfen nicht alle denselben Verlust ergeben: sonst gibt es kein "
+"Intervall. Eine Match-Zeile der Statistiken hat daher keines: Sie ist "
+"eine einzige Einheit. Ordnen Sie Spieler nicht nach einem einzigen Match."
+
+#: ../../source/manuel_stats.rst:195
+msgid ""
+"Une partie *money-game* n'a pas de longueur de match : la perte MWC (éq. "
+"7 pts) n'y est pas définie et le panneau l'indique au lieu d'afficher un "
+"nombre. Comme le MWC cost, elle dépend de la MET."
+msgstr ""
+"Eine *Money-Game*-Partie hat keine Matchlänge: Der MWC-Verlust (7-Punkte-"
+"Äq.) ist dort nicht definiert, und das Panel zeigt dies an, statt eine "
+"Zahl anzuzeigen. Wie die MWC-Kosten hängt er von der MET ab."
+
+#: ../../source/manuel_stats.rst:199
+msgid ""
+"Le troisième choix du bouton, **MWC 7 pts**, trace cette perte dans "
+"l'onglet Progression, et l'affiche sur les cartes du tableau de bord et "
+"dans la comparaison pions/videau de l'onglet Erreurs, découpée en pions "
+"et videau sur les mêmes matchs (les deux parts s'additionnent). Le "
+"classement des joueurs a sa colonne. Les graphiques sans équivalent 7 "
+"points (par action de videau) gardent le MWC cost."
+msgstr ""
+"Die dritte Auswahl der Schaltfläche, **MWC 7 pts**, zeichnet diesen "
+"Verlust im Reiter Fortschritt, zeigt ihn auf den Karten des Dashboards "
+"und im Steine-/Videau-Vergleich des Reiters Fehler, aufgeteilt in Steine "
+"und Videau über dieselben Matches (die beiden Anteile ergeben zusammen "
+"die Summe). Die Spielerrangliste hat ihre Spalte. Diagramme ohne 7"
+"-Punkte-Entsprechung (nach Videau-Aktion) behalten die MWC-Kosten."
+
+#: ../../source/manuel_stats.rst:206
+msgid ""
+"Le basculement PR ↔ MWC est instantané : aucun recalcul backend n'est "
+"effectué."
+msgstr ""
+"Das Umschalten PR ↔ MWC erfolgt sofort: Es wird keine Neuberechnung im "
+"Backend durchgeführt."
+
+#: ../../source/manuel_stats.rst:212
+msgid "Le rapport HTML"
+msgstr "Der HTML-Bericht"
+
+#: ../../source/manuel_stats.rst:214
+msgid ""
+"Le bouton **Rapport HTML** de l'en-tête du panneau produit un document "
+"**autonome** : un seul fichier, sans image externe, sans feuille de style"
+" distante, sans script. Les diagrammes y sont des SVG en ligne, dessinés "
+"par le même rendu que le plateau à l'écran, avec votre palette. Il "
+"s'ouvre dans n'importe quel navigateur, s'envoie par courriel, et "
+"**s'imprime en PDF par le navigateur lui-même** — ce qui évite "
+"d'embarquer un générateur de PDF pour produire ce que tout le monde a "
+"déjà."
+msgstr ""
+"Die Schaltfläche **HTML-Bericht** in der Kopfzeile des Panels erzeugt ein"
+" **eigenständiges** Dokument: eine einzige Datei, ohne externes Bild, "
+"ohne entferntes Stylesheet, ohne Skript. Die Diagramme sind eingebettetes"
+" SVG, gezeichnet vom selben Renderer wie das Brett auf dem Bildschirm, "
+"mit Ihrer Palette. Es öffnet sich in jedem Browser, reist per E-Mail und "
+"**wird vom Browser selbst als PDF gedruckt** — was es erspart, einen PDF-"
+"Generator mitzuliefern für etwas, das ohnehin jeder hat."
+
+#: ../../source/manuel_stats.rst:222
+msgid ""
+"Il contient les indicateurs du périmètre courant (positions, matchs, "
+"décisions comptées, PR global, pions et videau), puis les **dix décisions"
+" les plus coûteuses**, chacune avec son diagramme, son coût, le match "
+"d'où elle vient et le meilleur coup lorsqu'une analyse le donne."
+msgstr ""
+"Er enthält die Kennzahlen des aktuellen Bereichs (Stellungen, Matches, "
+"gezählte Entscheidungen, PR gesamt, Steine und Würfel), dann die **zehn "
+"teuersten Entscheidungen**, jede mit ihrem Diagramm, ihren Kosten, dem "
+"Match, aus dem sie stammt, und dem besten Zug, sofern eine Analyse ihn "
+"nennt."
+
+#: ../../source/manuel_stats.rst:227
+msgid ""
+"Le document est construit par le moteur, pas par l'écran : la ligne de "
+"commande (``stats report --html``, voir :ref:`cli_stats`) et le démon "
+"HTTP (route ``stats.report``) produisent le même rapport, dans l'une des "
+"neuf langues de l'interface. Seule l'application graphique dessine les "
+"diagrammes avec la palette du plateau ; les deux autres emploient la "
+"palette par défaut."
+msgstr ""
+"Das Dokument wird von der Engine erstellt, nicht von der Oberfläche: Die "
+"Kommandozeile (``stats report --html``, siehe :ref:`cli_stats`) und der "
+"HTTP-Daemon (Route ``stats.report``) erzeugen denselben Bericht, in einer"
+" der neun Sprachen der Oberfläche. Nur die grafische Anwendung zeichnet "
+"die Diagramme mit der Palette des Bretts; die beiden anderen verwenden "
+"die Standardpalette."
+
+#: ../../source/manuel_stats.rst:233
+msgid ""
+"Le rapport porte le **filtre courant** du panneau Stats. Un rapport qui "
+"ne dit pas son périmètre est un rapport dont les chiffres ne veulent rien"
+" dire : réglez le filtre — un tournoi, une plage de dates, un joueur — "
+"avant de le produire."
+msgstr ""
+"Der Bericht trägt den **aktuellen Filter** des Statistik-Panels. Ein "
+"Bericht, der seinen Bereich nicht nennt, ist ein Bericht, dessen Zahlen "
+"nichts bedeuten: setzen Sie den Filter — ein Turnier, ein Zeitraum, ein "
+"Spieler — bevor Sie ihn erzeugen."
+
+#: ../../source/manuel_stats.rst:239
+msgid "Onglet Tableau de bord"
+msgstr "Tab Übersicht"
+
+#: ../../source/manuel_stats.rst:241
+msgid ""
+"L'onglet **Tableau de bord** donne une vue synthétique des indicateurs "
+"clés. Il se lit de haut en bas : les cartes de niveau, puis ce qui se "
+"travaille (plan d'étude, top blunders), puis les lectures (PR glissant, "
+"avant/après l'étude, biais signés). L'explication de chaque carte est "
+"dans l'info-bulle de son titre."
+msgstr ""
+"Der Reiter **Übersicht** gibt einen zusammenfassenden Überblick über die "
+"Schlüsselindikatoren. Er wird von oben nach unten gelesen: die Niveau-"
+"Karten, dann das, woran gearbeitet wird (Lernplan, Top-Blunder), dann die"
+" Auswertungen (gleitender PR, Vor/nach dem Lernen, Vorzeichenbehaftete "
+"Tendenzen). Die Erklärung jeder Karte steht im Tooltip ihres Titels."
+
+#: ../../source/manuel_stats.rst:247
+msgid "Onglet Tableau de bord du panneau Stats"
+msgstr "Reiter Übersicht des Stats-Panels"
+
+#: ../../source/manuel_stats.rst:251
+msgid "L'onglet Tableau de bord : PR global, PR pions, PR videau."
+msgstr "Der Reiter Übersicht: globaler PR, PR Steine, PR Würfelbecher."
+
+#: ../../source/manuel_stats.rst:254
+msgid "Cartes de niveau"
+msgstr "Niveau-Karten"
+
+#: ../../source/manuel_stats.rst:256
+msgid "Trois cartes affichent le PR (ou MWC) pour :"
+msgstr "Drei Karten zeigen den PR (oder MWC) für:"
+
+#: ../../source/manuel_stats.rst:258
+msgid "**PR global** — toutes les décisions (pions + videau) ;"
+msgstr "**PR gesamt** — alle Entscheidungen (Steine + Doppler);"
+
+#: ../../source/manuel_stats.rst:259
+msgid "**PR pions** — décisions de pions seulement ;"
+msgstr "**PR Steine** — nur Steinentscheidungen;"
+
+#: ../../source/manuel_stats.rst:260
+msgid "**PR videau** — décisions de videau seulement."
+msgstr "**PR Doppler** — nur Doppler-Entscheidungen."
+
+#: ../../source/manuel_stats.rst:262
+msgid ""
+"Cliquer sur une carte charge dans le panneau d'analyse les positions du "
+"sous-ensemble correspondant (drill-down). Une quatrième carte, **Perte "
+"MWC (éq. 7 pts)**, donne cette perte quel que soit le choix du bouton PR "
+"/ MWC, avec son intervalle ; elle ne charge rien."
+msgstr ""
+"Ein Klick auf eine Karte lädt die Stellungen der entsprechenden Teilmenge"
+" in das Analyse-Panel (Drill-down). Eine vierte Karte, **MWC-Verlust (7"
+"-Punkte-Äq.)**, gibt diesen Verlust unabhängig von der Wahl des PR-/MWC-"
+"Schalters samt Intervall an; sie lädt nichts."
+
+#: ../../source/manuel_stats.rst:267
+msgid ""
+"Sous les cartes, la ligne des totaux compte les tournois, les matchs et "
+"les décisions du filtre. Le nombre de tournois ouvre ces tournois dans le"
+" panneau Tournois : un tournoi seul s'ouvre directement ; plusieurs "
+"restreignent la liste, qui porte alors le bouton « N tournois ouverts "
+"depuis les Stats × » : il rend la liste complète."
+msgstr ""
+"Unter den Karten zählt die Summenzeile die Turniere, Matches und "
+"Entscheidungen des Filters. Die Zahl der Turniere öffnet diese Turniere "
+"im Turnier-Panel: Ein einzelnes Turnier öffnet sich direkt; mehrere "
+"schränken die Liste ein, die dann die Schaltfläche « N Turniere aus der "
+"Statistik geöffnet × » trägt: Sie stellt die vollständige Liste wieder "
+"her."
+
+#: ../../source/manuel_stats.rst:273
+msgid ""
+"Le nombre de décisions ouvre leurs positions ; le nombre de matchs ouvre "
+"ces matchs dans le panneau Matchs, sauf quand un type de décision ou un "
+"filtre de provenance est actif : il compte alors moins de matchs que la "
+"liste n'en ouvrirait et reste un simple nombre."
+msgstr ""
+"Die Zahl der Entscheidungen öffnet ihre Stellungen; die Zahl der Matches "
+"öffnet diese Matches im Matches-Bereich, außer wenn ein Entscheidungstyp "
+"oder ein Herkunftsfilter aktiv ist: Sie zählt dann weniger Matches, als "
+"die Liste öffnen würde, und bleibt eine einfache Zahl."
+
+#: ../../source/manuel_stats.rst:279
+msgid "Le nombre total de décisions est affiché en bas de chaque carte au survol."
+msgstr ""
+"Die Gesamtzahl der Entscheidungen wird beim Überfahren am unteren Rand "
+"jeder Karte angezeigt."
+
+#: ../../source/manuel_stats.rst:284
+msgid "Plan d'étude"
+msgstr "Lernplan"
+
+#: ../../source/manuel_stats.rst:286
+msgid ""
+"La carte **Plan d'étude** répond à « que dois-je travailler maintenant ? "
+"». Les erreurs récurrentes (onglet Erreurs) disent où le filtre a perdu "
+"le plus ; elles ne disent pas où l'étude rapporte le plus. Une famille de"
+" positions réellement difficiles coûte cher à tout le monde, et trois "
+"erreurs ne font pas une tendance. Le plan corrige les deux."
+msgstr ""
+"Die Karte **Lernplan** beantwortet die Frage „Was soll ich jetzt üben?“. "
+"Die wiederkehrenden Fehler (Reiter Fehler) zeigen, wo der Filter am "
+"meisten verloren hat; sie zeigen nicht, wo das Lernen am meisten bringt. "
+"Eine Familie wirklich schwieriger Stellungen kostet jeden viel, und drei "
+"Fehler machen noch keinen Trend. Der Plan korrigiert beides."
+
+#: ../../source/manuel_stats.rst:292
+msgid ""
+"Une **famille** est un groupe des erreurs récurrentes : un plan de jeu, "
+"une nature de décision (pions ou videau) et un thème. Les erreurs sans "
+"thème n'en forment pas : elles n'indiquent rien à étudier."
+msgstr ""
+"Eine **Familie** ist eine Gruppe wiederkehrender Fehler: ein Spielplan, "
+"die Art der Entscheidung (Steine oder Doppler) und ein Thema. Fehler ohne"
+" Thema bilden keine: Sie weisen auf nichts hin, was zu lernen wäre."
+
+#: ../../source/manuel_stats.rst:295
+msgid ""
+"Chaque erreur est chiffrée en **MWC**, comme dans le panneau Match : sa "
+"perte ℓ, et sa *difficulté* d, la perte qu'un joueur de référence aurait "
+"subie dans la même position (voir la difficulté par décision du panneau "
+"Match). Une erreur en partie libre n'a pas de MWC : elle est seulement "
+"comptée, « non chiffrée »."
+msgstr ""
+"Jeder Fehler wird in **MWC** beziffert, wie im Match-Panel: sein Verlust "
+"ℓ und seine *Schwierigkeit* d, der Verlust, den ein Referenzspieler in "
+"derselben Stellung erlitten hätte (siehe die Schwierigkeit pro "
+"Entscheidung im Match-Panel). Ein Fehler in einer freien Partie hat "
+"keinen MWC: Er wird nur gezählt, „nicht beziffert“."
+
+#: ../../source/manuel_stats.rst:300
+msgid ""
+"Le **MWC récupérable** d'une famille est la somme de ℓ − d sur ses "
+"erreurs : la fréquence de la famille multipliée par sa perte moyenne au-"
+"delà de la difficulté. C'est ce que vous regagneriez en jouant ces "
+"positions comme le joueur de référence. Une famille d'erreurs évitables "
+"monte, une famille de positions où tout le monde se trompe descend."
+msgstr ""
+"Der **rückgewinnbare MWC** einer Familie ist die Summe von ℓ − d über "
+"ihre Fehler: die Häufigkeit der Familie mal ihr mittlerer Verlust über "
+"die Schwierigkeit hinaus. Das ist es, was Sie zurückgewinnen würden, wenn"
+" Sie diese Stellungen wie der Referenzspieler spielten. Eine Familie "
+"vermeidbarer Fehler steigt, eine Familie von Stellungen, in denen sich "
+"alle irren, sinkt."
+
+#: ../../source/manuel_stats.rst:305
+msgid ""
+"L'**intervalle à 95 %** accompagne chaque chiffre. Une famille entre au "
+"plan à partir de **5 erreurs** et d'un intervalle entièrement au-dessus "
+"de zéro ; le plan est classé par la borne basse de l'intervalle, si bien "
+"qu'à récupérable égal la famille la mieux établie passe devant. Les "
+"autres sont nommées sous la liste, **à confirmer**, sans rang : le plan "
+"ne vous pousse pas vers du bruit. La même ligne compte les erreurs **hors"
+" plan** (sans thème, non chiffrées)."
+msgstr ""
+"Das **95-%-Intervall** begleitet jede Zahl. Eine Familie kommt in den "
+"Plan ab **5 Fehlern** und einem Intervall, das ganz über null liegt; der "
+"Plan wird nach der unteren Grenze des Intervalls geordnet, sodass bei "
+"gleichem Rückgewinnbaren die am besten gesicherte Familie vorn steht. Die"
+" übrigen werden unter der Liste genannt, **zu bestätigen**, ohne Rang: "
+"Der Plan schickt Sie nicht dem Rauschen nach. Dieselbe Zeile zählt die "
+"Fehler **außerhalb des Plans** (ohne Thema, nicht beziffert)."
+
+#: ../../source/manuel_stats.rst:313
+msgid ""
+"Chaque ligne du plan montre son rang, la famille, une barre dont la "
+"longueur est son MWC récupérable rapporté à celui de la première, ce MWC "
+"avec son intervalle, et le nombre d'erreurs. Chaque compte de positions "
+"du plan (par famille, à confirmer, hors plan) est cliquable : il charge "
+"exactement ces positions dans la liste."
+msgstr ""
+"Jede Zeile des Plans zeigt ihren Rang, die Familie, einen Balken, dessen "
+"Länge ihr rückgewinnbarer MWC im Verhältnis zu dem der ersten ist, diesen"
+" MWC mit seinem Intervall und die Anzahl der Fehler. Jede Positionszahl "
+"des Plans (je Familie, zu bestätigen, außerhalb des Plans) ist "
+"anklickbar: Sie lädt genau diese Positionen in die Liste."
+
+#: ../../source/manuel_stats.rst:319
+msgid ""
+"Chaque famille propose trois gestes : **Étudier** ouvre la file d'étude "
+"sur ses positions, l'écart au joueur de référence le plus grand d'abord ;"
+" **Quiz** lance l'exercice Décision du panneau :ref:`Entraînement "
+"<panneau_entrainement>` sur vingt d'entre elles ; **Anki** en fait un "
+"paquet de cartes. En tête de la carte, **Quiz sur les trois premières "
+"familles** tire vingt positions parmi celles des trois familles de tête. "
+"Le plan suit le filtre du panneau : réglez le joueur pour obtenir *votre*"
+" plan. En ligne de commande : ``blunderdb stats plan`` (voir "
+":ref:`cli_stats`)."
+msgstr ""
+"Jede Familie bietet drei Aktionen: **Lernen** öffnet die "
+"Lernwarteschlange mit ihren Stellungen, die größte Abweichung vom "
+"Referenzspieler zuerst; **Quiz** startet die Übung Entscheidung des "
+"Panels :ref:`Training <panneau_entrainement>` mit zwanzig davon; **Anki**"
+" macht daraus einen Kartenstapel. Am Kopf der Karte zieht **Quiz zu den "
+"ersten drei Familien** zwanzig Stellungen aus denen der drei führenden "
+"Familien. Der Plan folgt dem Filter des Panels: Stellen Sie den Spieler "
+"ein, um *Ihren* Plan zu erhalten. Auf der Kommandozeile: ``blunderdb "
+"stats plan`` (siehe :ref:`cli_stats`)."
+
+#: ../../source/manuel_stats.rst:331
+msgid "Avant/après l'étude"
+msgstr "Vor/nach dem Lernen"
+
+#: ../../source/manuel_stats.rst:333
+msgid ""
+"La carte **Avant/après l'étude** ferme la boucle du plan : ce que vous "
+"avez travaillé coûte-t-il moins en match réel ? Sans elle, l'étude se "
+"juge à l'impression ; avec elle, une famille qui ne bouge pas malgré le "
+"travail dit qu'il faut changer de méthode, et une famille en progrès peut"
+" céder sa place dans le plan."
+msgstr ""
+"Die Karte **Vor/nach dem Lernen** schließt den Kreis des Plans: Kostet "
+"Sie das Geübte in echten Matches weniger? Ohne sie wird das Lernen nach "
+"Gefühl beurteilt; mit ihr zeigt eine Familie, die sich trotz der Arbeit "
+"nicht bewegt, dass die Methode gewechselt werden sollte, und eine Familie"
+" mit Fortschritt kann ihren Platz im Plan räumen."
+
+#: ../../source/manuel_stats.rst:339
+msgid ""
+"Une famille (celle du plan) est **étudiée** à la date de la première "
+"action d'étude sur l'une de ses positions : la marque « étudiée » de la "
+"file d'étude, une révision Anki, une réponse en quiz. Créer une carte ou "
+"ranger une position en collection n'en est pas une."
+msgstr ""
+"Eine Familie (die des Plans) gilt am Datum der ersten Lernaktion auf "
+"einer ihrer Stellungen als **gelernt**: die Markierung „gelernt“ der "
+"Lernwarteschlange, eine Anki-Wiederholung, eine Quiz-Antwort. Eine Karte "
+"zu erstellen oder eine Stellung in eine Sammlung einzuordnen zählt nicht."
+
+#: ../../source/manuel_stats.rst:343
+msgid ""
+"Pour chaque famille étudiée, la carte compare deux **fenêtres** : les "
+"matchs joués avant ce jour et ceux joués après (le jour même est écarté)."
+" Dans chacune, le **taux de perte** est la MWC perdue par les erreurs de "
+"la famille, rapportée à toutes les décisions du même plan de jeu et de la"
+" même nature, et affichée en points de MWC pour 100 décisions."
+msgstr ""
+"Für jede gelernte Familie vergleicht die Karte zwei **Fenster**: die vor "
+"diesem Tag gespielten Matches und die danach gespielten (der Tag selbst "
+"bleibt außen vor). In jedem ist die **Verlustrate** der durch die Fehler "
+"der Familie verlorene MWC, bezogen auf alle Entscheidungen desselben "
+"Spielplans und derselben Art, angegeben in MWC-Punkten pro 100 "
+"Entscheidungen."
+
+#: ../../source/manuel_stats.rst:348
+msgid ""
+"Le **gain** est le taux d'avant moins celui d'après, avec son intervalle "
+"à 95 %. Le verdict n'est « en progrès » (ou « en recul ») que si chaque "
+"fenêtre compte au moins **30 décisions** et que l'intervalle exclut zéro "
+"; sinon il reste « indéterminé » ou « trop peu de décisions »."
+msgstr ""
+"Der **Gewinn** ist die Rate davor minus die Rate danach, mit seinem "
+"95-%-Intervall. Das Urteil lautet nur dann „verbessert“ (oder "
+"„verschlechtert“), wenn jedes Fenster mindestens **30 Entscheidungen** "
+"enthält und das Intervall null ausschließt; sonst bleibt es „unbestimmt“ "
+"oder „zu wenige Entscheidungen“."
+
+#: ../../source/manuel_stats.rst:353
+msgid ""
+"À côté de chaque fenêtre, la colonne **Positions** compte les positions "
+"distinctes de ses décisions et les ouvre d'un clic ; le nombre entre "
+"parenthèses reste celui des décisions, dénominateur du taux."
+msgstr ""
+"Neben jedem Zeitfenster zählt die Spalte **Positionen** die verschiedenen"
+" Positionen seiner Entscheidungen und öffnet sie per Klick; die Zahl in "
+"Klammern bleibt die Anzahl der Entscheidungen, der Nenner der Rate."
+
+#: ../../source/manuel_stats.rst:357
+msgid ""
+"C'est un changement, pas un effet : une famille est étudiée parce qu'elle"
+" coûtait, et une part du gain est une régression vers la moyenne ; rien "
+"ne contrôle les adversaires, le format ni les dés. En ligne de commande :"
+" ``blunderdb stats effect`` (voir :ref:`cli_stats`)."
+msgstr ""
+"Das ist eine Veränderung, kein Effekt: Eine Familie wird gelernt, weil "
+"sie kostete, und ein Teil des Gewinns ist Regression zur Mitte; nichts "
+"kontrolliert Gegner, Format oder Würfel. In der Befehlszeile: ``blunderdb"
+" stats effect`` (siehe :ref:`cli_stats`)."
+
+#: ../../source/manuel_stats.rst:365
+msgid "Biais signés"
+msgstr "Vorzeichenbehaftete Tendenzen"
+
+#: ../../source/manuel_stats.rst:367
+msgid ""
+"La carte **Biais signés** dit dans quel sens vous vous trompez, pas "
+"seulement combien. « Vous prenez trop » se corrige mieux qu'un PR : la "
+"règle à revoir est nommée. Chaque biais est la part de décisions fautives"
+" dans un sens moins la part fautive dans l'autre, avec son intervalle à "
+"95 % ; un penchant n'est nommé qu'à partir de **20 décisions** et d'un "
+"intervalle qui exclut zéro."
+msgstr ""
+"Die Karte **Vorzeichenbehaftete Tendenzen** zeigt, in welche Richtung Sie"
+" danebenliegen, nicht nur wie stark. „Sie nehmen zu oft“ lässt sich "
+"besser korrigieren als ein PR: Die zu überprüfende Regel ist benannt. "
+"Jede Tendenz ist der Anteil fehlerhafter Entscheidungen in die eine "
+"Richtung minus der Anteil fehlerhafter Entscheidungen in die andere, mit "
+"ihrem 95-%-Intervall; eine Neigung wird erst ab **20 Entscheidungen** und"
+" einem Intervall, das null ausschließt, benannt."
+
+#: ../../source/manuel_stats.rst:373
+msgid ""
+"**Prise / refus** — sur les réponses au videau : prises fautives (le bot "
+"refuse) moins refus fautifs (le bot prend). C'est exactement votre taux "
+"de prise moins celui du bot sur les mêmes positions."
+msgstr ""
+"**Annehmen / Passen** — bei Antworten auf den Doppler: fehlerhaftes "
+"Annehmen (der Bot passt) minus fehlerhaftes Passen (der Bot nimmt an). "
+"Das ist genau Ihre Annahmerate minus die des Bots in denselben "
+"Stellungen."
+
+#: ../../source/manuel_stats.rst:376
+msgid ""
+"**Doubles** — sur les décisions de doubler : doubles prématurés (le bot "
+"ne double pas, ou la position est trop bonne pour doubler) moins doubles "
+"manqués. Le même biais est donné **par score** (votre away, celui de "
+"l'adversaire, un score post-Crawford compté à 1 point ; la partie libre "
+"dans sa propre case), pour les scores qui comptent assez de décisions."
+msgstr ""
+"**Verdopplungen** — bei Entscheidungen zum Verdoppeln: verfrühte "
+"Verdopplungen (der Bot verdoppelt nicht, oder die Stellung ist zu gut zum"
+" Verdoppeln) minus verpasste Verdopplungen. Dieselbe Tendenz wird **nach "
+"Spielstand** angegeben (Ihr away, das des Gegners, ein Spielstand nach "
+"Crawford als 1 Punkt gezählt; freie Partie in einem eigenen Feld), für "
+"die Spielstände mit genügend Entscheidungen."
+
+#: ../../source/manuel_stats.rst:381
+msgid ""
+"**Blots** — sur les coups de pions avec contact : les coups qui laissent "
+"plus de blots que le meilleur coup moins ceux qui en laissent moins. Un "
+"coup est reconnu par le plateau qu'il laisse, quelle que soit son "
+"écriture (« 13/7(2) », « 8/5*/4 ») ; un coup que le générateur de coups "
+"ne sait toujours pas rejouer est écarté, et la part des coups écartés est"
+" donnée sous le tableau. Le biais compte les blots sans peser leur "
+"exposition : un blot hors de portée compte autant qu'un blot exposé."
+msgstr ""
+"**Blots** — bei Steinzügen mit Kontakt: Züge, die mehr Blots lassen als "
+"der beste Zug, minus solche, die weniger lassen. Ein Zug wird an dem "
+"Brett erkannt, das er hinterlässt, gleich wie er geschrieben ist "
+"(\"13/7(2)\", \"8/5*/4\"); ein Zug, den der Zuggenerator noch immer nicht"
+" nachspielen kann, wird verworfen, und der Anteil der verworfenen Züge "
+"steht unter der Tabelle. Die Tendenz zählt die Blots, ohne ihre "
+"Gefährdung zu gewichten: ein Blot außer Reichweite zählt so viel wie ein "
+"gefährdeter."
+
+#: ../../source/manuel_stats.rst:389
+msgid ""
+"À côté de chaque compte, son coût en millipoints dit si le penchant coûte"
+" ; une position jouée dans plusieurs matchs y compte avec le coup joué "
+"dans chacun. Les biais suivent le filtre du panneau. En ligne de commande"
+" : ``blunderdb stats biases`` (voir :ref:`cli_stats`)."
+msgstr ""
+"Neben jeder Zahl zeigen die Kosten in Millipunkten, ob die Neigung etwas "
+"kostet; eine in mehreren Matches gespielte Stellung zählt dort mit dem "
+"jeweils gespielten Zug. Die Tendenzen folgen dem Filter des Panels. In "
+"der Befehlszeile: ``blunderdb stats biases`` (siehe :ref:`cli_stats`)."
+
+#: ../../source/manuel_stats.rst:394
+msgid ""
+"Chaque compte de décisions (toutes, d'un sens, de l'autre) est suivi "
+"d'une colonne **Positions** : les positions distinctes de ces décisions, "
+"qu'un clic ouvre. Une position jouée dans plusieurs matchs y compte une "
+"décision par match, mais une seule position."
+msgstr ""
+"Auf jede Anzahl von Entscheidungen (alle, in die eine Richtung, in die "
+"andere) folgt eine Spalte **Positionen**: die verschiedenen Positionen "
+"dieser Entscheidungen, die ein Klick öffnet. Eine in mehreren Matches "
+"gespielte Position zählt eine Entscheidung pro Match, aber nur eine "
+"Position."
+
+#: ../../source/manuel_stats.rst:400
+msgid "PR glissant sur N dernières décisions"
+msgstr "Gleitender PR über die letzten N Entscheidungen"
+
+#: ../../source/manuel_stats.rst:402
+msgid ""
+"Une ligne de valeurs PR (ou MWC) calculées sur les *N* dernières "
+"décisions (N = 5, 10, 50, 100, 250, 500, 1000) permet de mesurer la "
+"tendance récente. Les valeurs grisées correspondent à un N supérieur au "
+"nombre de décisions disponibles."
+msgstr ""
+"Eine Zeile mit PR- (oder MWC-)Werten, die über die letzten *N* "
+"Entscheidungen berechnet werden (N = 5, 10, 50, 100, 250, 500, 1000), "
+"ermöglicht es, den jüngsten Trend zu messen. Die ausgegrauten Werte "
+"entsprechen einem N, das größer als die Anzahl der verfügbaren "
+"Entscheidungen ist."
+
+#: ../../source/manuel_stats.rst:407
+msgid "Cliquer sur une valeur charge les *N* dernières positions correspondantes."
+msgstr "Ein Klick auf einen Wert lädt die entsprechenden letzten *N* Stellungen."
+
+#: ../../source/manuel_stats.rst:410
+msgid "Top blunders"
+msgstr "Top-Blunder"
+
+#: ../../source/manuel_stats.rst:412
+msgid ""
+"La liste des 10 pires erreurs (ou MWC cost), triées par magnitude "
+"décroissante. Cliquer sur une ligne charge la position concernée dans le "
+"panneau d'analyse."
+msgstr ""
+"Die Liste der 10 schlimmsten Fehler (oder MWC cost), sortiert nach "
+"absteigender Größe. Ein Klick auf eine Zeile lädt die betreffende "
+"Stellung in das Analyse-Panel."
+
+#: ../../source/manuel_stats.rst:416
+msgid "Onglet Progression"
+msgstr "Tab Progression"
+
+#: ../../source/manuel_stats.rst:418
+msgid "L'onglet **Progression** présente l'évolution du niveau dans le temps."
+msgstr "Der Tab **Progression** zeigt die Entwicklung des Niveaus im Zeitverlauf."
+
+#: ../../source/manuel_stats.rst:420
+msgid ""
+"En tête de l'onglet, un **objectif** : « PR < 5 d'ici douze semaines ». "
+"Une cible, une échéance, et une tendance qui dit où l'on va — rien de "
+"plus. Un objectif qui se mettrait à noter, à féliciter ou à rappeler "
+"serait une autre fonctionnalité, et pas celle-ci."
+msgstr ""
+"Am Kopf des Reiters ein **Ziel**: „PR < 5 binnen zwölf Wochen“. Ein Ziel,"
+" eine Frist und ein Trend, der sagt, wohin es geht — mehr nicht. Ein "
+"Ziel, das anfinge zu benoten, zu beglückwünschen oder zu erinnern, wäre "
+"eine andere Funktion, nicht diese."
+
+#: ../../source/manuel_stats.rst:425
+msgid ""
+"Le bouton **Proposer** suggère une cible à partir du niveau actuel : la "
+"borne basse de la bande où vous êtes, c'est-à-dire l'entrée dans la bande"
+" suivante. Proposer « un peu mieux » ne s'ancrerait à rien ; proposer un "
+"palier en dit un — passer d'intermédiaire à avancé se voit et se raconte."
+msgstr ""
+"Die Schaltfläche **Vorschlagen** schlägt ein Ziel aus dem aktuellen "
+"Niveau vor: die Untergrenze des Bandes, in dem Sie sind, also den "
+"Eintritt ins nächste. „Ein bisschen besser“ vorzuschlagen wäre an nichts "
+"verankert; ein Band vorzuschlagen sagt etwas — von fortgeschritten zu "
+"Experte zu wechseln sieht man und erzählt man."
+
+#: ../../source/manuel_stats.rst:430
+msgid ""
+"La **tendance** est un ajustement par les moindres carrés sur le PR de "
+"vos matchs, projeté à l'échéance. Elle refuse de se prononcer sous trois "
+"matchs : tracer une droite entre deux points serait une affirmation qu'on"
+" ne peut pas tenir. Et la phrase le dit à chaque fois — *une tendance "
+"n'est pas une prédiction*."
+msgstr ""
+"Der **Trend** ist eine Ausgleichsgerade über das PR Ihrer Matches, auf "
+"die Frist hochgerechnet. Er weigert sich, unter drei Matches etwas zu "
+"sagen: eine Gerade zwischen zwei Punkten wäre eine Behauptung, die man "
+"nicht halten kann. Und der Satz sagt es jedes Mal — *ein Trend ist keine "
+"Vorhersage*."
+
+#: ../../source/manuel_stats.rst:436
+msgid ""
+"L'objectif est enregistré dans les **métadonnées de la base**, pas dans "
+"la configuration : il porte sur cette bibliothèque-là, et suit donc le "
+"fichier plutôt que la machine. Aucun changement de schéma : ``metadata`` "
+"est déjà une table de clés et de valeurs, lisible par ``blunderdb info`` "
+"comme par le démon."
+msgstr ""
+"Das Ziel wird in den **Metadaten der Datenbank** gespeichert, nicht in "
+"der Konfiguration: es betrifft diese Bibliothek und folgt daher der Datei"
+" statt der Maschine. Keine Schemaänderung: ``metadata`` ist bereits eine "
+"Schlüssel/Wert-Tabelle, lesbar von ``blunderdb info`` wie vom Daemon."
+
+#: ../../source/manuel_stats.rst:442
+msgid "Courbe par tournoi"
+msgstr "Liniendiagramm pro Turnier"
+
+#: ../../source/manuel_stats.rst:444
+msgid ""
+"Un graphique en ligne affiche le PR (ou MWC) de chaque tournoi : un point"
+" par tournoi, étiqueté de son nom, dans l'ordre chronologique de sa date "
+"— à défaut, celle de son plus ancien match (axe Y : valeur de la "
+"métrique). Des bandes de couleur matérialisent les seuils de niveau."
+msgstr ""
+"Ein Liniendiagramm zeigt den PR (oder MWC) jedes Turniers: ein Punkt pro "
+"Turnier, mit seinem Namen beschriftet, in der chronologischen Reihenfolge"
+" seines Datums — ersatzweise des Datums seines ältesten Matches (Y-Achse:"
+" Wert der Kennzahl). Farbige Bänder markieren die Niveaustufen."
+
+#: ../../source/manuel_stats.rst:449
+msgid ""
+"Cliquer sur un point du graphique ouvre un menu contextuel avec deux "
+"options :"
+msgstr ""
+"Ein Klick auf einen Punkt im Diagramm öffnet ein Kontextmenü mit zwei "
+"Optionen:"
+
+#: ../../source/manuel_stats.rst:451
+msgid "**Ouvrir le tournoi** — ouvre le tournoi dans le panneau Tournois."
+msgstr "**Turnier öffnen** — öffnet das Turnier im Turnier-Panel."
+
+#: ../../source/manuel_stats.rst:452
+msgid ""
+"**Ouvrir les positions** — charge toutes les positions du tournoi dans le"
+" panneau d'analyse."
+msgstr ""
+"**Positionen öffnen** — lädt alle Stellungen des Turniers in das Analyse-"
+"Panel."
+
+#: ../../source/manuel_stats.rst:456
+msgid "Scatter plot par match"
+msgstr "Streudiagramm pro Match"
+
+#: ../../source/manuel_stats.rst:458
+msgid ""
+"Un nuage de points représente chaque match (axe X : date, axe Y : PR ou "
+"MWC). La taille du point est proportionnelle au nombre de décisions dans "
+"le match. Un match sans date n'y figure pas."
+msgstr ""
+"Ein Streudiagramm stellt jedes Match dar (X-Achse: Datum, Y-Achse: PR "
+"oder MWC). Die Punktgröße ist proportional zur Anzahl der Entscheidungen "
+"im Match. Ein Match ohne Datum erscheint nicht."
+
+#: ../../source/manuel_stats.rst:462
+msgid "Cliquer sur un point ouvre un menu contextuel :"
+msgstr "Ein Klick auf einen Punkt öffnet ein Kontextmenü:"
+
+#: ../../source/manuel_stats.rst:464
+msgid "**Ouvrir le match** — ouvre le match dans le panneau des matchs."
+msgstr "**Match öffnen** — öffnet das Match im Matches-Panel."
+
+#: ../../source/manuel_stats.rst:465
+msgid ""
+"**Ouvrir les positions** — charge toutes les positions du match dans le "
+"panneau d'analyse."
+msgstr ""
+"**Positionen öffnen** — lädt alle Stellungen des Matches in das Analyse-"
+"Panel."
+
+#: ../../source/manuel_stats.rst:469
+msgid "Onglet Erreurs"
+msgstr "Tab Fehler"
+
+#: ../../source/manuel_stats.rst:471
+msgid "L'onglet **Erreurs** décompose les sources d'erreurs."
+msgstr "Der Tab **Fehler** schlüsselt die Fehlerquellen auf."
+
+#: ../../source/manuel_stats.rst:473
+msgid "Onglet Erreurs du panneau Stats"
+msgstr "Reiter Fehler des Stats-Panels"
+
+#: ../../source/manuel_stats.rst:477
+msgid "L'onglet Erreurs : répartition du PR par action de videau."
+msgstr "Der Reiter Fehler: Aufschlüsselung des PR nach Würfelbecher-Aktion."
+
+#: ../../source/manuel_stats.rst:480
+msgid "Erreurs récurrentes"
+msgstr "Wiederkehrende Fehler"
+
+#: ../../source/manuel_stats.rst:482
+msgid ""
+"En tête de l'onglet, un tableau regroupe les erreurs du filtre courant — "
+"donc celles d'un seul joueur quand un joueur est filtré — par **plan de "
+"jeu** et par **thème**, la plus coûteuse d'abord. Il répond à la question"
+" « où est-ce que je perds le plus ? » : par exemple, « tenue · trop de "
+"blots »."
+msgstr ""
+"Am Anfang des Reiters gruppiert eine Tabelle die Fehler des aktuellen "
+"Filters — bei gefiltertem Spieler also die eines einzelnen Spielers — "
+"nach **Spielplan** und nach **Thema**, die teuerste Gruppe zuerst. Sie "
+"beantwortet die Frage „Wo verliere ich am meisten?“: zum Beispiel „Halten"
+" · zu viele Blots“."
+
+#: ../../source/manuel_stats.rst:487
+msgid ""
+"Une **erreur** est une décision comptée dont le coût atteint le seuil "
+"*Erreur* de la bibliothèque."
+msgstr ""
+"Ein **Fehler** ist eine gezählte Entscheidung, deren Kosten die Schwelle "
+"*Fehler* der Bibliothek erreichen."
+
+#: ../../source/manuel_stats.rst:489
+msgid ""
+"Le **plan de jeu** est celui du joueur au trait, tel que l'onglet "
+"Ventilations le présente."
+msgstr ""
+"Der **Spielplan** ist der des Spielers am Zug, so wie der Reiter "
+"Aufschlüsselungen ihn darstellt."
+
+#: ../../source/manuel_stats.rst:491
+msgid ""
+"Le **thème** d'un coup de pions est celui que nomment les règles de la "
+"phrase d'explication du :ref:`panneau Analyse <panneau_analyse>` : gammon"
+" sous-estimé, trop de blots, point non fait, trop passif. Celui d'une "
+"décision de videau est le sens de l'erreur, comme dans la direction des "
+"erreurs de videau ci-dessous : double manqué, double prématuré, passe à "
+"tort, prise à tort."
+msgstr ""
+"Das **Thema** eines Steinzugs ist dasjenige, das die Regeln des "
+"Erklärungssatzes im :ref:`Analyse-Panel <panneau_analyse>` benennen: "
+"Gammon unterschätzt, zu viele Blots, Punkt nicht gemacht, zu passiv. Das "
+"einer Würfelentscheidung ist die Richtung des Fehlers, wie bei der "
+"Richtung der Würfelfehler weiter unten: verpasstes Doppeln, verfrühtes "
+"Doppeln, falsches Passen, falsches Nehmen."
+
+#: ../../source/manuel_stats.rst:497
+msgid ""
+"Une erreur qu'aucune règle ne nomme avec assurance n'est pas devinée : "
+"elle sort du classement et apparaît à part, sous le tableau, en une ligne"
+" par plan de jeu (« sans thème identifié : N erreurs, coût X »), "
+"cliquable elle aussi. Ce reste est souvent le plus lourd, car "
+"l'explication ne se prononce qu'à partir de 60 mp, au-dessus du seuil "
+"*Erreur* : classé avec les autres, il coifferait un tableau qui ne dirait"
+" rien."
+msgstr ""
+"Ein Fehler, den keine Regel sicher benennt, wird nicht erraten: Er fällt "
+"aus der Rangfolge und erscheint gesondert unter der Tabelle, als eine "
+"Zeile pro Spielplan (»ohne erkanntes Thema: N Fehler, Kosten X«), "
+"ebenfalls anklickbar. Dieser Rest ist oft der schwerste, denn die "
+"Erklärung äußert sich erst ab 60 mp, oberhalb der Schwelle *Fehler*: mit "
+"den anderen eingeordnet, würde er eine Tabelle anführen, die nichts "
+"aussagt."
+
+#: ../../source/manuel_stats.rst:503
+msgid ""
+"Le **coût** est la part du PR du filtre que le groupe représente : la "
+"formule du PR appliquée aux erreurs du groupe, rapportée à toutes les "
+"décisions comptées. Les coûts des groupes ne dépassent donc jamais le PR."
+msgstr ""
+"Die **Kosten** sind der Anteil am PR des Filters, den die Gruppe "
+"ausmacht: die PR-Formel, angewendet auf die Fehler der Gruppe und bezogen"
+" auf alle gezählten Entscheidungen. Die Kosten der Gruppen übersteigen "
+"den PR daher nie."
+
+#: ../../source/manuel_stats.rst:507
+msgid ""
+"Cliquer sur un groupe, ou sur son nombre d'erreurs, charge ses positions,"
+" de la plus coûteuse à la moins coûteuse. Le thème est recalculé à chaque"
+" affichage, jamais enregistré : comme le plan de jeu, c'est une étiquette"
+" dérivée, non modifiable. En ligne de commande : ``blunderdb stats "
+"recurring`` (voir :ref:`cli_stats`)."
+msgstr ""
+"Ein Klick auf eine Gruppe oder auf ihre Fehlerzahl lädt ihre Stellungen, "
+"von der teuersten zur günstigsten. Das Thema wird bei jeder Anzeige neu "
+"berechnet und nie gespeichert: Wie der Spielplan ist es ein abgeleitetes,"
+" nicht bearbeitbares Etikett. In der Kommandozeile: ``blunderdb stats "
+"recurring`` (siehe :ref:`cli_stats`)."
+
+#: ../../source/manuel_stats.rst:512
+msgid ""
+"Chaque ligne propose trois gestes pour passer de l'erreur à l'étude : "
+"**Quiz sur ce groupe** lance l'exercice Décision du panneau "
+":ref:`Entraînement <panneau_entrainement>` sur les positions du groupe, "
+"**Paquet Anki** en fait un paquet de cartes, **Collection** les range "
+"dans une nouvelle collection. Au-dessus du tableau, **Quiz de mes trois "
+"pires groupes** tire vingt positions au hasard parmi celles des trois "
+"groupes les plus coûteux. En ligne de commande, ``stats recurring "
+"--quiz`` tire ces positions et ``--deck`` crée le paquet."
+msgstr ""
+"Jede Zeile bietet drei Wege vom Fehler zum Lernen: **Quiz zu dieser "
+"Gruppe** startet die Übung Entscheidung des Panels :ref:`Training "
+"<panneau_entrainement>` mit den Stellungen der Gruppe, **Anki-Stapel** "
+"macht daraus einen Kartenstapel, **Sammlung** legt sie in einer neuen "
+"Sammlung ab. Über der Tabelle zieht **Quiz zu meinen drei schlechtesten "
+"Gruppen** zwanzig Stellungen zufällig aus denen der drei teuersten "
+"Gruppen. In der Kommandozeile zieht ``stats recurring --quiz`` diese "
+"Stellungen und ``--deck`` legt den Stapel an."
+
+#: ../../source/manuel_stats.rst:522
+msgid "Répartition par action de videau"
+msgstr "Aufteilung nach Doppler-Aktion"
+
+#: ../../source/manuel_stats.rst:524
+msgid ""
+"Un diagramme en barres affiche le PR (ou MWC) pour chaque type de "
+"décision de videau : *NoDouble*, *DoubleTake*, *DoublePass*, *TooGood*. "
+"Chaque barre indique également le nombre de décisions et le taux de "
+"blunders en infobulle."
+msgstr ""
+"Ein Balkendiagramm zeigt den PR (oder MWC) für jeden Typ von Doppler-"
+"Entscheidung an: *NoDouble*, *DoubleTake*, *DoublePass*, *TooGood*. Jeder"
+" Balken gibt außerdem die Anzahl der Entscheidungen und die Blunder-Rate "
+"in einem Tooltip an."
+
+#: ../../source/manuel_stats.rst:528
+msgid ""
+"Cliquer sur une barre charge les positions correspondant à cette action "
+"de videau, **uniquement celles avec une erreur** (drill-down)."
+msgstr ""
+"Ein Klick auf einen Balken lädt die zu dieser Doppler-Aktion gehörenden "
+"Stellungen, **nur die mit einem Fehler** (Drill-down)."
+
+#: ../../source/manuel_stats.rst:532
+msgid "Direction des erreurs de videau"
+msgstr "Richtung der Doppler-Fehler"
+
+#: ../../source/manuel_stats.rst:534
+msgid ""
+"La répartition ci-dessus indique *combien* coûtent les décisions de "
+"videau ; ce tableau indique dans *quel sens* elles se trompent."
+msgstr ""
+"Die Aufteilung oben sagt, *wie viel* Doppler-Entscheidungen kosten; diese"
+" Tabelle sagt, in *welche Richtung* sie falsch liegen."
+
+#: ../../source/manuel_stats.rst:537
+msgid ""
+"Une position de videau porte deux décisions prises par deux joueurs "
+"différents, présentées ici en deux lignes :"
+msgstr ""
+"Eine Doppler-Stellung trägt zwei Entscheidungen, die von zwei "
+"verschiedenen Spielern getroffen werden und hier in zwei Zeilen "
+"dargestellt sind:"
+
+#: ../../source/manuel_stats.rst:540
+msgid ""
+"**Offrir** — le joueur qui tient le videau double ou ne double pas. Ses "
+"erreurs sont les **doubles manqués** (il fallait doubler) et les "
+"**doubles prématurés** (il ne fallait pas)."
+msgstr ""
+"**Anbieten** — der Spieler, der den Doppler hält, doppelt oder nicht. "
+"Seine Fehler sind die **verpassten Doppel** (es hätte gedoppelt werden "
+"müssen) und die **verfrühten Doppel** (es hätte nicht sein dürfen)."
+
+#: ../../source/manuel_stats.rst:544
+msgid ""
+"**Répondre** — le joueur à qui le videau est offert prend ou passe. Ses "
+"erreurs sont les **passes à tort** (une prise correcte a été passée) et "
+"les **prises à tort** (une passe correcte a été prise)."
+msgstr ""
+"**Antworten** — der Spieler, dem der Doppler angeboten wird, nimmt an "
+"oder gibt auf. Seine Fehler sind die **falschen Pässe** (eine korrekte "
+"Annahme wurde weggegeben) und die **falschen Annahmen** (ein korrekter "
+"Pass wurde angenommen)."
+
+#: ../../source/manuel_stats.rst:548
+msgid ""
+"Les deux lignes restent séparées à dessein : un joueur peut parfaitement "
+"doubler tard *et* prendre large, et un indicateur unique appellerait cela"
+" « équilibré » en perdant les deux moitiés de l'information."
+msgstr ""
+"Die beiden Zeilen bleiben bewusst getrennt: Ein Spieler kann ohne "
+"Weiteres spät doppeln *und* großzügig annehmen, und eine einzige Kennzahl"
+" würde das „ausgeglichen“ nennen und dabei beide Hälften der Information "
+"verlieren."
+
+#: ../../source/manuel_stats.rst:552
+msgid ""
+"Chaque case affiche le nombre de décisions ; l'infobulle donne l'équité "
+"perdue cumulée. Cliquer sur une case charge les positions "
+"correspondantes. Une case à zéro n'est pas cliquable."
+msgstr ""
+"Jede Zelle zeigt die Zahl der Entscheidungen; der Tooltip nennt die "
+"insgesamt verlorene Equity. Ein Klick auf eine Zelle lädt die zugehörigen"
+" Stellungen. Eine Zelle mit null ist nicht anklickbar."
+
+#: ../../source/manuel_stats.rst:557
+msgid ""
+"Ce tableau compte des décisions, il ne porte pas de jugement. À partir de"
+" quel écart une tendance mérite d'être nommée dépend de l'effectif et "
+"d'un point de référence, qui ne sont pas des données du moteur."
+msgstr ""
+"Diese Tabelle zählt Entscheidungen, sie fällt kein Urteil. Ab welchem "
+"Abstand eine Tendenz einen Namen verdient, hängt von der Stichprobengröße"
+" und von einem Bezugspunkt ab — beides sind keine Daten der Engine."
+
+#: ../../source/manuel_stats.rst:562
+msgid "Répartition Checker / Cube"
+msgstr "Aufteilung Checker / Cube"
+
+#: ../../source/manuel_stats.rst:564
+msgid ""
+"Un diagramme comparatif place côte à côte le PR des coups joués et des "
+"décisions de videau. Cliquer sur une barre charge les positions du sous-"
+"ensemble avec erreur."
+msgstr ""
+"Ein Vergleichsdiagramm stellt den PR der Steinzüge und der Doppler-"
+"Entscheidungen nebeneinander dar. Ein Klick auf einen Balken lädt die "
+"Stellungen der Teilmenge mit Fehler."
+
+#: ../../source/manuel_stats.rst:569
+msgid "Histogramme des magnitudes d'erreur"
+msgstr "Histogramm der Fehlergrößen"
+
+#: ../../source/manuel_stats.rst:571
+msgid ""
+"Un histogramme distribue les erreurs selon leur magnitude en millipoints "
+"(mpt, tranches : 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Cliquer sur une"
+" barre charge les positions de la tranche."
+msgstr ""
+"Ein Histogramm verteilt die Fehler nach ihrer Größe in Millipunkten (mpt,"
+" Klassen: 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Ein Klick auf einen "
+"Balken lädt die Stellungen der Klasse."
+
+#: ../../source/manuel_stats.rst:578
+msgid "Entraînement dans le temps"
+msgstr "Training im Zeitverlauf"
+
+#: ../../source/manuel_stats.rst:580
+msgid ""
+"L'onglet **Entraînement** met côte à côte, sur les mêmes fenêtres "
+"calendaires — la **semaine** ou le **mois**, au choix — trois séries qui "
+"mesurent la progression par trois chemins :"
+msgstr ""
+"Der Reiter **Training** stellt über dieselben Kalenderfenster — **Woche**"
+" oder **Monat**, nach Wahl — drei Reihen nebeneinander, die den "
+"Fortschritt auf drei Wegen messen:"
+
+#: ../../source/manuel_stats.rst:584
+msgid ""
+"le **PR du quiz** : celui des sessions de l'exercice Décision du panneau "
+"Entraînement, pondéré par le nombre de décisions jugées. Il est calculé "
+"sur l'échelle du PR réel, donc comparable à lui ;"
+msgstr ""
+"die **Quiz-PR**: die der Sitzungen der Übung Entscheidung im Training-"
+"Panel, gewichtet nach der Zahl der beurteilten Entscheidungen. Sie wird "
+"auf der Skala der echten PR berechnet und ist damit mit ihr vergleichbar;"
+
+#: ../../source/manuel_stats.rst:587
+msgid ""
+"le **PR des matchs** du filtre courant, pondéré par le nombre de "
+"décisions ;"
+msgstr ""
+"die **Match-PR** des aktuellen Filters, gewichtet nach der Zahl der "
+"Entscheidungen;"
+
+#: ../../source/manuel_stats.rst:588
+msgid ""
+"la **rétention Anki** : la part des révisions de cartes déjà apprises "
+"notées *Difficile* ou mieux, lue sur l'axe de droite (en %)."
+msgstr ""
+"die **Anki-Retention**: der Anteil der Wiederholungen bereits gelernter "
+"Karten, die mit *Schwer* oder besser bewertet wurden, auf der rechten "
+"Achse (in %)."
+
+#: ../../source/manuel_stats.rst:591
+msgid ""
+"Sous le graphique, le **PR du quiz par plan de jeu** range les décisions "
+"du quiz tirées de positions de la bibliothèque, les pires plans d'abord, "
+"avec le PR de la dernière fenêtre où le plan a été joué."
+msgstr ""
+"Unter dem Diagramm listet der **Quiz-PR nach Spielplan** die aus "
+"Bibliothekspositionen gezogenen Quiz-Entscheidungen, die schlechtesten "
+"Pläne zuerst, mit dem PR des letzten Fensters, in dem der Plan gespielt "
+"wurde."
+
+#: ../../source/manuel_stats.rst:595
+msgid ""
+"Entre parenthèses, le nombre de décisions ou de révisions derrière chaque"
+" valeur : une fenêtre sans échantillon n'a pas de valeur — un tiret, pas "
+"un zéro. Le nombre de décisions de matchs d'une fenêtre ouvre leurs "
+"positions. Le filtre ne restreint que les matchs ; le journal du quiz et "
+"celui d'Anki sont les vôtres et ne portent pas de joueur. Rien n'est "
+"enregistré en plus : les trois séries sont relues dans les journaux "
+"existants. En ligne de commande : ``blunderdb stats training`` (voir "
+":ref:`cli_stats`)."
+msgstr ""
+"In Klammern steht die Zahl der Entscheidungen oder Wiederholungen hinter "
+"jedem Wert: Ein Fenster ohne Stichprobe hat keinen Wert — einen Strich, "
+"keine Null. Die Zahl der Match-Entscheidungen eines Fensters öffnet ihre "
+"Stellungen. Der Filter schränkt nur die Matches ein; die Journale von "
+"Quiz und Anki gehören Ihnen und tragen keinen Spieler. Es wird nichts "
+"zusätzlich gespeichert: Die drei Reihen werden aus den vorhandenen "
+"Journalen gelesen. In der Befehlszeile: ``blunderdb stats training`` "
+"(siehe :ref:`cli_stats`)."
+
+#: ../../source/manuel_stats.rst:603
+msgid "Onglet Ventilations"
+msgstr "Registerkarte Aufschlüsselungen"
+
+#: ../../source/manuel_stats.rst:605
+msgid ""
+"L'onglet **Ventilations** découpe les mêmes décisions que les chiffres "
+"globaux selon quatre axes. Aucun d'eux ne redéfinit ce qui compte comme "
+"une décision : ce serait un second PR sous le même nom."
+msgstr ""
+"Der Reiter **Aufschlüsselungen** teilt dieselben Entscheidungen, die die "
+"Gesamtzahlen zählen, entlang vier Achsen. Keine davon definiert neu, was "
+"als Entscheidung zählt: Das wäre ein zweiter PR unter demselben Namen."
+
+#: ../../source/manuel_stats.rst:609
+msgid ""
+"**Par phase de partie** — ouverture, milieu de partie, course, sortie des"
+" pions. C'est ce qui répond à « mon PR en course contre mon PR en contact"
+" ». L'étiquette est calculée depuis le plateau (voir "
+":ref:`panneau_recherche`) ; une base dont les phases n'ont jamais été "
+"calculées range tout sous *Non classée*, et ``blunderdb repair`` la "
+"remplit."
+msgstr ""
+"**Nach Spielphase** — Eröffnung, Mittelspiel, Wettlauf, Auswürfeln. Das "
+"beantwortet „mein PR im Wettlauf gegenüber meinem PR im Kontakt“. Die "
+"Kennzeichnung wird aus dem Brett berechnet (siehe "
+":ref:`panneau_recherche`); eine Datenbank, deren Phasen nie berechnet "
+"wurden, ordnet alles unter *Nicht klassifiziert* ein, und ``blunderdb "
+"repair`` füllt sie."
+
+#: ../../source/manuel_stats.rst:615
+msgid ""
+"**Par plan de jeu** — course, blitz, tenue, backgame, amorce contre "
+"amorce… C'est la ventilation pour laquelle le classificateur existe : « "
+"où est-ce que je perds le plus ? », plan par plan. Même étiquette dérivée"
+" que la phase, mêmes réserves, et ``blunderdb repair`` la remplit de la "
+"même façon."
+msgstr ""
+"**Nach Spielplan** — Rennen, Blitz, Holding, Backgame, Prime gegen Prime…"
+" Das ist die Aufschlüsselung, für die der Klassifikator existiert: „Wo "
+"verliere ich am meisten?“, Plan für Plan. Dasselbe abgeleitete Etikett "
+"wie die Phase, dieselben Vorbehalte, und ``blunderdb repair`` füllt es "
+"genauso."
+
+#: ../../source/manuel_stats.rst:621
+msgid ""
+"**Par étiquette** — les ``#mot`` écrits dans les commentaires. Une "
+"position peut en porter plusieurs : **ces lignes ne s'additionnent pas au"
+" total**, et le panneau le dit sous le tableau. Une étiquette qualifie, "
+"elle ne partitionne pas."
+msgstr ""
+"**Nach Kennzeichnung** — die ``#Wort`` in den Kommentaren. Eine Stellung "
+"kann mehrere tragen: **diese Zeilen summieren sich nicht zur "
+"Gesamtzahl**, und das Panel sagt es unter der Tabelle. Eine Kennzeichnung"
+" beschriftet, sie partitioniert nicht."
+
+#: ../../source/manuel_stats.rst:626
+msgid ""
+"**Par score** — l'écart au but des deux camps, lu du côté du joueur au "
+"trait, donc du côté de celui qui décide. La ligne *Money* est la partie "
+"d'argent. Une cellule sans intervalle est **grisée avec son effectif "
+"visible** plutôt que cachée (voir ci-dessous)."
+msgstr ""
+"**Nach Stand** — die Restpunkte beider Seiten, gelesen von der Seite des "
+"Spielers am Zug, also von der Seite dessen, der entscheidet. Die Zeile "
+"*Money* ist das Geldspiel. Eine Zelle mit weniger als zehn Entscheidungen"
+" wird **ausgegraut, mit sichtbarer Anzahl**, statt versteckt: zu wenige "
+"zum Lesen, aber die Auslassung bleibt überprüfbar."
+
+#: ../../source/manuel_stats.rst:631
+msgid ""
+"Les colonnes **Positions** et **Bourdes** comptent des positions "
+"distinctes, et chaque chiffre est un lien : un clic charge exactement ces"
+" positions dans le panneau d'analyse, comme les compteurs de la barre "
+"d'état. *Bourdes* compte les positions où au moins une décision est une "
+"bourde. Une position jouée dans plusieurs matchs (une ouverture, par "
+"exemple) n'y compte qu'une fois ; la colonne **Décisions** la compte à "
+"chaque fois, car c'est le dénominateur du PR."
+msgstr ""
+"Die Spalten **Positionen** und **Patzer** zählen verschiedene Stellungen,"
+" und jede Zahl ist ein Link: Ein Klick lädt genau diese Stellungen in das"
+" Analyse-Panel, wie die Zähler der Statusleiste. *Patzer* zählt die "
+"Stellungen, in denen mindestens eine Entscheidung ein Patzer ist. Eine in"
+" mehreren Partien gespielte Stellung (zum Beispiel eine Eröffnung) zählt "
+"dort nur einmal; die Spalte **Entscheidungen** zählt sie jedes Mal, denn "
+"sie ist der Nenner des PR."
+
+#: ../../source/manuel_stats.rst:638
+msgid ""
+"Chaque ligne porte son **intervalle de confiance à 95 %** (colonne *IC 95"
+" %*), qui remplace le seuil fixe de dix décisions : il dit ce que vaut un"
+" PR, pas seulement combien de décisions le portent. Il rééchantillonne "
+"les **matchs** de la sélection, pas les décisions ni les parties : les "
+"parties d'un match partagent adversaire, séance et fatigue, et les "
+"compter comme indépendantes donnerait un intervalle trop étroit ; sans "
+"filtre joueur, les deux sièges d'un match forment une seule unité. Une "
+"ligne qui repose sur moins de trois matchs, ou dont tous les matchs "
+"donnent le même PR, n'a pas d'intervalle et est grisée, même avec "
+"beaucoup de décisions : deux matchs ne disent rien de la dispersion, et "
+"des matchs identiques disent qu'ils s'accordent, pas que le PR est exact."
+" Pour l'étude : une famille de positions dont l'intervalle reste au-"
+"dessus de votre PR global est une faiblesse établie ; une ligne à "
+"l'intervalle large ne justifie pas encore un plan de travail. Le PR "
+"global du tableau de bord porte le même intervalle, sous sa carte."
+msgstr ""
+"Jede Zeile trägt ihr **95-%-Konfidenzintervall** (Spalte *95 %-KI*), das "
+"die feste Schwelle von zehn Entscheidungen ersetzt: Es sagt, was ein PR "
+"wert ist, nicht nur, wie viele Entscheidungen ihn tragen. Es zieht "
+"Neustichproben der **Matches** der Auswahl, nicht der Entscheidungen oder"
+" Partien: Die Partien eines Matches teilen Gegner, Sitzung und Ermüdung, "
+"und sie als unabhängig zu zählen ergäbe ein zu enges Intervall; ohne "
+"Spielerfilter bilden die beiden Plätze eines Matches eine einzige "
+"Einheit. Eine Zeile, die auf weniger als drei Matches beruht oder deren "
+"Matches alle denselben PR ergeben, hat kein Intervall und wird "
+"ausgegraut, auch bei vielen Entscheidungen: Zwei Matches sagen nichts "
+"über die Streuung, und identische Matches sagen, dass sie übereinstimmen,"
+" nicht dass der PR genau ist. Fürs Lernen: Eine Stellungsfamilie, deren "
+"Intervall über Ihrem Gesamt-PR bleibt, ist eine gesicherte Schwäche; eine"
+" Zeile mit breitem Intervall rechtfertigt noch keinen Arbeitsplan. Der "
+"Gesamt-PR des Dashboards trägt dasselbe Intervall, unter seiner Karte."
+
+#: ../../source/manuel_stats.rst:653
+msgid ""
+"Dans la ventilation par score, un score post-Crawford est lu comme 1-away"
+" : la partie Crawford et les parties post-Crawford au même score tombent "
+"dans la même cellule."
+msgstr ""
+"In der Aufschlüsselung nach Spielstand wird ein Post-Crawford-Stand als "
+"1-away gelesen: Das Crawford-Spiel und die Post-Crawford-Spiele beim "
+"selben Stand landen in derselben Zelle."
+
+#: ../../source/manuel_stats.rst:658
+msgid "Étude et jeu réel"
+msgstr "Lernen und reales Spiel"
+
+#: ../../source/manuel_stats.rst:660
+msgid ""
+"La commande ``blunderdb list --type study --days 30`` met côte à côte, "
+"plan de jeu par plan de jeu, trois nombres : combien de **positions "
+"distinctes** ont été révisées sur la période, quel était le PR **avant** "
+"elle, quel est le PR **depuis**."
+msgstr ""
+"Der Befehl ``blunderdb list --type study --days 30`` stellt drei Zahlen "
+"nebeneinander, Spielplan für Spielplan: wie viele **verschiedene "
+"Stellungen** im Zeitraum wiederholt wurden, wie der PR **davor** war, wie"
+" der PR **seither** ist."
+
+#: ../../source/manuel_stats.rst:665
+msgid ""
+"Trois nombres, et pas un quatrième. Il n'y a **ni colonne de gain ni "
+"flèche**, parce que rien ici ne contrôle quoi que ce soit : le joueur a "
+"pu rencontrer des adversaires plus forts, changer de format, ou "
+"simplement jouer plus de courses ce mois-ci. Le rapprochement est celui "
+"du lecteur ; une colonne qui annoncerait un effet affirmerait une "
+"causalité que ces données ne portent pas. Les nombres, eux, sont exacts."
+msgstr ""
+"Drei Zahlen, und keine vierte. Es gibt **keine Gewinnspalte und keinen "
+"Pfeil**, denn nichts hier kontrolliert irgendetwas: Der Spieler kann "
+"stärkere Gegner getroffen, das Format gewechselt oder schlicht mehr "
+"Rennen gespielt haben. Die Zusammenschau ist Sache des Lesers; eine "
+"Spalte, die einen Effekt verkündet, würde eine Kausalität behaupten, die "
+"diese Daten nicht tragen. Die Zahlen selbst sind exakt."
+
+#: ../../source/manuel_stats.rst:672
+msgid ""
+"Les révisions sont comptées en **positions distinctes** : une carte revue"
+" quatre fois dans le mois est une position étudiée, et compter les "
+"répétitions ferait passer un mois de bachotage pour un mois de "
+"couverture. Les décisions du PR, elles, sont toutes comptées — chacune a "
+"été prise une fois. Un PR appuyé sur moins de dix décisions s'affiche "
+"``—``, avec son effectif visible à côté."
+msgstr ""
+"Wiederholungen werden als **verschiedene Stellungen** gezählt: Eine "
+"viermal im Monat wiederholte Karte ist eine gelernte Stellung, und die "
+"Wiederholungen mitzuzählen ließe einen Monat Pauken wie einen Monat "
+"Abdeckung aussehen. Die Entscheidungen des PR dagegen zählen alle — jede "
+"wurde einmal getroffen. Ein PR auf weniger als zehn Entscheidungen zeigt "
+"``—``, mit sichtbarer Stichprobe daneben."
+
+#: ../../source/manuel_stats.rst:680
+msgid "Onglet Joueurs"
+msgstr "Reiter Spieler"
+
+#: ../../source/manuel_stats.rst:682
+msgid ""
+"Les cinq onglets précédents décrivent **un** joueur ; l'onglet "
+"**Joueurs** les compare tous. Il affiche une ligne par joueur de la base,"
+" ce qui répond au besoin d'un organisateur suivant une compétition "
+"entière plutôt qu'un joueur en particulier."
+msgstr ""
+"Die fünf vorigen Registerkarten beschreiben **einen** Spieler; die "
+"Registerkarte **Spieler** vergleicht sie alle. Sie zeigt eine Zeile je "
+"Spieler der Datenbank, was dem Bedarf eines Organisators entspricht, der "
+"ein ganzes Turnier verfolgt statt eines Spielers."
+
+#: ../../source/manuel_stats.rst:687
+msgid "Onglet Joueurs du panneau Stats"
+msgstr "Reiter Spieler des Stats-Panels"
+
+#: ../../source/manuel_stats.rst:691
+msgid ""
+"L'onglet Joueurs : une ligne par joueur, triable par n'importe quelle "
+"colonne."
+msgstr "Der Reiter Spieler: eine Zeile pro Spieler, sortierbar nach jeder Spalte."
+
+#: ../../source/manuel_stats.rst:694
+msgid "Colonnes, dans l'ordre :"
+msgstr "Spalten, der Reihe nach:"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Colonne"
+msgstr "Spalte"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Signification"
+msgstr "Bedeutung"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Joueur"
+msgstr "Spieler"
+
+#: ../../source/manuel_stats.rst:1
+msgid ""
+"Le nom **tel qu'il figure dans les matchs**. Un joueur enregistré sous "
+"deux orthographes apparaît sur deux lignes, sauf si l'une est un alias de"
+" l'autre (section Corpus des paramètres) : la ligne porte alors le nom "
+"canonique."
+msgstr ""
+"Der Name **so, wie er in den Matches steht**. Ein unter zwei "
+"Schreibweisen erfasster Spieler erscheint auf zwei Zeilen, es sei denn, "
+"die eine ist ein Alias der anderen (Abschnitt Korpus der Einstellungen): "
+"Die Zeile trägt dann den kanonischen Namen."
+
+#: ../../source/manuel_stats.rst:1
+msgid "Matchs"
+msgstr "Matches"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Nombre de matchs disputés dans la période retenue."
+msgstr "Zahl der im gewählten Zeitraum gespielten Matches."
+
+#: ../../source/manuel_stats.rst:1
+msgid "V–D"
+msgstr "S–N"
+
+#: ../../source/manuel_stats.rst:1
+msgid ""
+"Victoires et défaites. Un match inachevé (journal tronqué, abandon) ne "
+"compte ni l'une ni l'autre : V + D peut donc être inférieur au nombre de "
+"matchs."
+msgstr ""
+"Siege und Niederlagen. Ein unvollendetes Match (abgeschnittenes "
+"Protokoll, Aufgabe) zählt weder als das eine noch als das andere: S + N "
+"kann daher kleiner sein als die Zahl der Matches."
+
+#: ../../source/manuel_stats.rst:1
+msgid "Décisions"
+msgstr "Entscheidungen"
+
+#: ../../source/manuel_stats.rst:1
+msgid ""
+"Nombre de décisions comptées — le dénominateur du PR. C'est la colonne "
+"qui dit ce que valent les taux voisins : un PR calculé sur douze "
+"décisions ne signifie rien."
+msgstr ""
+"Zahl der gezählten Entscheidungen — der Nenner des PR. Das ist die "
+"Spalte, die sagt, was die benachbarten Kennzahlen wert sind: Ein über "
+"zwölf Entscheidungen berechneter PR bedeutet nichts."
+
+#: ../../source/manuel_stats.rst:1
+msgid "Performance Rating global."
+msgstr "Gesamt-Performance-Rate."
+
+#: ../../source/manuel_stats.rst:1
+msgid "PR pions, PR videau"
+msgstr "Steine-PR, Doppler-PR"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Le PR ventilé par type de décision."
+msgstr "Der PR nach Entscheidungstyp aufgeteilt."
+
+#: ../../source/manuel_stats.rst:1
+msgid "Snowie"
+msgstr "Snowie"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Snowie Error Rate (voir :ref:`stats_parity`)."
+msgstr "Snowie Error Rate (siehe :ref:`stats_parity`)."
+
+#: ../../source/manuel_stats.rst:1
+msgid "Blunders"
+msgstr "Blunders"
+
+#: ../../source/manuel_stats.rst:1
+msgid ""
+"Nombre d'erreurs atteignant le seuil de blunder de la bibliothèque (0,100"
+" EMG par défaut). Cliquer sur ce nombre charge ces positions dans le "
+"panneau d'analyse."
+msgstr ""
+"Anzahl der Fehler, welche die Blunder-Schwelle der Bibliothek erreichen "
+"(standardmäßig 0,100 EMG). Ein Klick auf diese Zahl lädt diese Positionen"
+" in das Analyse-Panel."
+
+#: ../../source/manuel_stats.rst:1
+msgid "Chance"
+msgstr "Glück"
+
+#: ../../source/manuel_stats.rst:1
+msgid ""
+"Chance moyenne par lancer, en millipoints (mpt), signée : positive si les"
+" dés ont été favorables."
+msgstr ""
+"Durchschnittliches Glück pro Wurf, in Millipunkten (mpt), mit Vorzeichen:"
+" positiv, wenn die Würfel günstig waren."
+
+#: ../../source/manuel_stats.rst:710
+msgid "Utilisation :"
+msgstr "Verwendung:"
+
+#: ../../source/manuel_stats.rst:712
+msgid ""
+"**Trier** — cliquez sur un en-tête de colonne. Le tableau s'ouvre trié "
+"par PR croissant, meilleur joueur en tête, et retient d'une session à "
+"l'autre le dernier tri choisi. Les joueurs dont rien n'a été mesuré "
+"restent en bas quel que soit le sens du tri : un zéro faute de données "
+"n'est pas une performance parfaite."
+msgstr ""
+"**Sortieren** — auf eine Spaltenüberschrift klicken. Die Tabelle öffnet "
+"sich nach aufsteigendem PR sortiert, bester Spieler zuerst, und behält "
+"die zuletzt gewählte Sortierung von einer Sitzung zur nächsten bei. "
+"Spieler, bei denen nichts gemessen wurde, bleiben unabhängig von der "
+"Sortierrichtung unten: eine Null mangels Daten ist keine perfekte "
+"Leistung."
+
+#: ../../source/manuel_stats.rst:717
+msgid ""
+"**Filtrer par colonne** — la ligne de champs sous les en-têtes filtre "
+"chaque colonne : un morceau de nom pour le texte, une borne pour les "
+"nombres (``>=500``, ``>500``, ``<2.5``, ``<=2``), un intervalle (``3-7``)"
+" ou une valeur exacte (``5``). Un champ illisible est encadré de rouge et"
+" ne filtre rien ; une valeur jamais mesurée ne passe aucune borne. Les "
+"filtres de colonne durent le temps de la session. Le **classement** des "
+"joueurs se lit ainsi : tri par PR, colonne *Décisions* filtrée par "
+"``>=500``. Tous les tableaux du panneau Stats — ventilations, corpus, "
+"erreurs récurrentes, temps de réflexion, entraînement, biais, effet de "
+"l'étude — se trient et se filtrent de la même façon."
+msgstr ""
+"**Nach Spalte filtern** — die Feldzeile unter den Überschriften filtert "
+"jede Spalte: ein Namensteil für Text, eine Schranke für Zahlen "
+"(``>=500``, ``>500``, ``<2.5``, ``<=2``), ein Intervall (``3-7``) oder "
+"ein exakter Wert (``5``). Ein unlesbares Feld wird rot umrandet und "
+"filtert nichts; ein nie gemessener Wert passiert keine Schranke. Die "
+"Spaltenfilter gelten für die Dauer der Sitzung. Die **Rangliste** der "
+"Spieler liest sich so: nach PR sortieren, Spalte *Entscheidungen* mit "
+"``>=500`` filtern. Alle Tabellen des Stats-Panels — Aufschlüsselungen, "
+"Korpus, wiederkehrende Fehler, Bedenkzeit, Training, Bias, Studieneffekt "
+"— werden auf dieselbe Weise sortiert und gefiltert."
+
+#: ../../source/manuel_stats.rst:727
+msgid ""
+"**Ouvrir le détail d'un joueur** — cliquez sur une ligne. Le joueur est "
+"sélectionné dans la barre de filtres et l'affichage bascule sur l'onglet "
+"Tableau de bord."
+msgstr ""
+"**Details eines Spielers öffnen** — auf eine Zeile klicken. Der Spieler "
+"wird in der Filterleiste ausgewählt, und die Anzeige wechselt zum Reiter "
+"Übersicht."
+
+#: ../../source/manuel_stats.rst:730
+msgid ""
+"**Ouvrir ses décisions** — le nombre de décisions ouvre leurs positions, "
+"sous les filtres du tableau. Le nombre de matchs et le bilan V–D restent "
+"de simples nombres : ils comptent aussi les matchs sans décision "
+"analysée, qu'aucune liste de matchs ne reproduit."
+msgstr ""
+"**Die eigenen Entscheidungen öffnen** — die Zahl der Entscheidungen "
+"öffnet ihre Stellungen, unter den Filtern der Tabelle. Die Zahl der "
+"Matches und die Siege–Niederlagen-Bilanz bleiben einfache Zahlen: Sie "
+"zählen auch Matches ohne analysierte Entscheidung, die keine Matchliste "
+"wiedergibt."
+
+#: ../../source/manuel_stats.rst:734
+msgid ""
+"**Restreindre la période** — les filtres de dates, de tournois et de "
+"longueur de match s'appliquent normalement, ce qui permet de borner le "
+"tableau aux dates d'une compétition."
+msgstr ""
+"**Zeitraum einschränken** — die Filter für Datum, Turnier und Matchlänge "
+"gelten wie gewohnt, wodurch sich die Tabelle auf die Tage eines Turniers "
+"begrenzen lässt."
+
+#: ../../source/manuel_stats.rst:737
+msgid ""
+"**Comparer deux joueurs** — cochez la case de la première colonne sur "
+"deux lignes. Un bloc apparaît au-dessus du tableau et met leurs "
+"indicateurs face à face ; cocher un troisième joueur remplace le plus "
+"ancien des deux. La case ne sélectionne pas la ligne : cocher compare, "
+"cliquer ouvre le détail."
+msgstr ""
+"**Zwei Spieler vergleichen** — setzen Sie in der ersten Spalte bei zwei "
+"Zeilen ein Häkchen. Über der Tabelle erscheint ein Block, der ihre "
+"Kennzahlen gegenüberstellt; ein dritter Spieler ersetzt den älteren der "
+"beiden. Das Häkchen wählt die Zeile nicht aus: Ankreuzen vergleicht, "
+"Klicken öffnet die Detailansicht."
+
+#: ../../source/manuel_stats.rst:741
+msgid ""
+"**Voir les positions où l'un a mieux joué** — le bouton du bloc de "
+"comparaison liste les positions que les deux joueurs ont eu à jouer et où"
+" l'un a bien joué (en dessous du seuil Erreur de la bibliothèque) et "
+"l'autre non, l'écart le plus large d'abord ; le joueur est jugé sur son "
+"pire coup de la position. *Ouvrir ces positions* les charge dans la vue "
+"analyse. La ligne de commande et le serveur donnent la même liste "
+"(``stats contrast``)."
+msgstr ""
+"**Die Stellungen sehen, in denen einer besser spielte** — die "
+"Schaltfläche des Vergleichsblocks listet die Stellungen, die beide "
+"Spieler zu spielen hatten und in denen einer gut spielte (unter der "
+"Fehlerschwelle der Bibliothek) und der andere nicht, größte Differenz "
+"zuerst; ein Spieler wird nach seinem schlechtesten Zug in der Stellung "
+"beurteilt. *Diese Stellungen öffnen* lädt sie in die Analyseansicht. Die "
+"Kommandozeile und der Server liefern dieselbe Liste (``stats contrast``)."
+
+#: ../../source/manuel_stats.rst:747
+msgid ""
+"**Noter les coups d'abord** — la liste ne compare que les coups dont "
+"l'erreur est notée, et aucun import ne les note : la notation se fait sur"
+" demande. Tant qu'il en reste à noter, le bloc en donne le nombre avec un"
+" bouton *Noter les coups* ; la ligne de commande fait la même chose avec "
+"``repair --move-errors``."
+msgstr ""
+"**Zuerst die Züge bewerten** — die Liste vergleicht nur Züge, deren "
+"Fehler bewertet ist, und kein Import bewertet sie: Die Bewertung erfolgt "
+"auf Anfrage. Solange noch Züge zu bewerten sind, nennt der Block ihre "
+"Anzahl mit einer Schaltfläche *Züge bewerten*; die Kommandozeile tut "
+"dasselbe mit ``repair --move-errors``."
+
+#: ../../source/manuel_stats.rst:752
+msgid ""
+"Dans ce bloc, **seuls les taux reçoivent un verdict**, et le meilleur des"
+" deux est mis en gras. Trois indicateurs n'en reçoivent jamais, et il "
+"vaut de dire pourquoi. La **chance** n'est pas une qualité : un joueur "
+"plus chanceux n'est pas meilleur. Les **matchs, le bilan et les "
+"décisions** situent ce que les taux valent, mais les mettre en "
+"compétition ferait gagner celui qui a simplement joué davantage. Le "
+"**nombre de blunders** ne se compare pas brut — douze sur mille décisions"
+" valent mieux que dix sur cent —, aussi le bloc ajoute-t-il une ligne "
+"*Blunders / 100 déc.* qui, elle, se compare, et laisse le compte à côté "
+"comme contexte."
+msgstr ""
+"In diesem Block **erhalten nur die Raten ein Urteil**, und die bessere "
+"der beiden steht fett. Drei Kennzahlen erhalten nie eines, und es lohnt "
+"sich zu sagen, warum. **Glück** ist keine Qualität: Wer mehr Glück hatte,"
+" spielt nicht besser. **Partien, Bilanz und Entscheidungen** sagen, was "
+"die Raten wert sind, doch sie gegeneinander zu stellen ließe schlicht den"
+" gewinnen, der mehr gespielt hat. Die **Zahl der Blunder** lässt sich "
+"nicht roh vergleichen — zwölf auf tausend Entscheidungen sind besser als "
+"zehn auf hundert —, deshalb ergänzt der Block eine Zeile *Blunder / 100 "
+"Entsch.*, die sich vergleichen lässt, und lässt die Zahl daneben als "
+"Kontext stehen."
+
+#: ../../source/manuel_stats.rst:762
+msgid ""
+"Une égalité n'est pas une victoire : elle n'est mise en gras d'aucun "
+"côté. Un taux qui n'a rien derrière lui s'affiche « — » et ne départage "
+"rien."
+msgstr ""
+"Ein Gleichstand ist kein Sieg: Er wird auf keiner Seite fett gesetzt. "
+"Eine Rate ohne Datengrundlage erscheint als „—“ und entscheidet nichts."
+
+#: ../../source/manuel_stats.rst:766
+msgid ""
+"Dans cet onglet, le choix du **type de décision** est désactivé : le "
+"tableau ventile déjà les décisions de pions et de videau en colonnes "
+"distinctes. Le joueur de la barre de filtres reste actif : le tableau "
+"montre toujours tous les joueurs, et la ligne de celui-ci est mise en "
+"évidence et amenée à l'écran."
+msgstr ""
+"In diesem Reiter ist die Wahl des **Entscheidungstyps** deaktiviert: Die "
+"Tabelle trennt Stein- und Doppler-Entscheidungen bereits in eigene "
+"Spalten. Der Spieler der Filterleiste bleibt aktiv: Die Tabelle zeigt "
+"immer alle Spieler, und die Zeile dieses Spielers wird hervorgehoben und "
+"in den sichtbaren Bereich gebracht."
+
+#: ../../source/manuel_stats.rst:772
+msgid ""
+"Deux vues de corpus figurent dans l'onglet **Corpus** du panneau, en "
+"ligne de commande et par l'API du démon (voir :ref:`cli_stats`) : le "
+"**face-à-face** de deux joueurs (matchs communs, PR de chacun, bilan) et "
+"le **PR par fenêtre calendaire** glissante (1, 3, 6 ou 12 mois). L'onglet"
+" Corpus calcule chaque vue à la demande, sous le filtre courant. Le "
+"**classement** par PR se lit dans l'onglet Joueurs, trié par PR et filtré"
+" sur la colonne *Décisions* ; la ligne de commande et l'API le donnent "
+"aussi (``stats ranking``). Un **filtre de provenance** (champs *Moteur* "
+"et *Profondeur min.* de la barre de filtres) restreint les statistiques "
+"aux décisions analysées ainsi ; il porte sur chaque décision, et les "
+"chiffres qu'il touche sont alors recalculés depuis les décisions. Le "
+"face-à-face et le PR par fenêtre ne l'acceptent pas : tant qu'il est "
+"actif, ils refusent de se calculer. Comme le reste de la barre, il est "
+"conservé d'une session à l'autre."
+msgstr ""
+"Zwei Korpusansichten finden sich im Reiter **Korpus** des Panels, auf der"
+" Kommandozeile und über die API des Daemons (siehe :ref:`cli_stats`): das"
+" **Kopf-an-Kopf** zweier Spieler (gemeinsame Matches, PR jedes Spielers, "
+"Bilanz) und der gleitende **PR pro Kalenderfenster** (1, 3, 6 oder 12 "
+"Monate). Der Reiter Korpus berechnet jede Ansicht auf Anfrage, unter dem "
+"aktuellen Filter. Die **Rangliste** nach PR liest sich im Reiter Spieler,"
+" nach PR sortiert und auf der Spalte *Entscheidungen* gefiltert; die "
+"Kommandozeile und die API liefern sie ebenfalls (``stats ranking``). Ein "
+"**Herkunftsfilter** (Felder *Engine* und *Min. Tiefe* der Filterleiste) "
+"beschränkt die Statistiken auf so analysierte Entscheidungen; er bezieht "
+"sich auf jede Entscheidung, und die davon betroffenen Zahlen werden dann "
+"aus den Entscheidungen neu berechnet. Das Kopf-an-Kopf und der PR pro "
+"Fenster akzeptieren ihn nicht: Solange er aktiv ist, verweigern sie die "
+"Berechnung. Wie der Rest der Leiste bleibt er von einer Sitzung zur "
+"nächsten erhalten."
+
+#: ../../source/manuel_stats.rst:786
+msgid ""
+"Dans l'onglet Corpus, chaque ligne ouvre ce qu'elle résume. Le bilan du "
+"face-à-face ouvre ses matchs dans le panneau Matchs, qui porte alors le "
+"bouton « N matchs ouverts depuis les Stats × » : il rend la liste "
+"complète ; une ligne de face-à-face ouvre son match. Le premier joueur du"
+" face-à-face est d'emblée celui de la barre de filtres. Une ligne de "
+"fenêtre et son nombre de décisions ouvrent ses positions, son nombre de "
+"matchs ouvre les matchs. Un compte de positions du panneau Stats, quel "
+"que soit l'onglet, quitte d'abord le match en cours avant d'ouvrir sa "
+"liste ; la commande ``m`` rouvre ensuite le match au coup sauvegardé."
+msgstr ""
+"Im Reiter Corpus öffnet jede Zeile, was sie zusammenfasst. Die Bilanz des"
+" Direktvergleichs öffnet ihre Matches im Matches-Bereich, der dann die "
+"Schaltfläche „N aus den Stats geöffnete Matches ×“ trägt: Sie stellt die "
+"vollständige Liste wieder her; eine Zeile des Direktvergleichs öffnet ihr"
+" Match. Der erste Spieler des Direktvergleichs ist von vornherein der der"
+" Filterleiste. Eine Zeile eines Zeitfensters und ihre Entscheidungszahl "
+"öffnen ihre Stellungen, ihre Matchzahl öffnet die Matches. Eine "
+"Positionszahl im Stats-Bereich, in welchem Reiter auch immer, verlässt "
+"zuerst das laufende Match, bevor sie ihre Liste öffnet; der Befehl ``m`` "
+"öffnet das Match anschließend wieder beim gespeicherten Zug."
+
+#: ../../source/manuel_stats.rst:796
+msgid ""
+"Un tiret (« — ») signale une valeur **jamais mesurée**, à ne pas "
+"confondre avec zéro. C'est notamment le cas de la colonne Chance pour "
+"tout match importé avant la version 2.15.0 du schéma : la chance n'était "
+"alors pas conservée, et rien ne permet de la reconstituer après coup. "
+"Réimporter le fichier source ne suffit pas : l'import y reconnaît un "
+"doublon et n'applique que les marques d'étude nouvellement levées (le "
+"rapport en donne le nombre). Il faut supprimer le match, puis le "
+"réimporter. Les formats qui ne la transportent pas (BGF, Jellyfish "
+"``.mat``) n'en fourniront jamais."
+msgstr ""
+"Ein Gedankenstrich („—“) steht für einen **nie gemessenen** Wert, nicht "
+"zu verwechseln mit null. Das gilt insbesondere für die Spalte Glück bei "
+"jedem Match, das vor Schemaversion 2.15.0 importiert wurde: Das Glück "
+"wurde damals nicht gespeichert, und nichts erlaubt es, es nachträglich zu"
+" rekonstruieren. Die Quelldatei erneut zu importieren genügt nicht: Der "
+"Import erkennt ein Duplikat und übernimmt nur die neu gesetzten "
+"Lernmarkierungen (der Bericht nennt ihre Zahl). Das Match muss gelöscht "
+"und dann erneut importiert werden. Formate, die es nicht transportieren "
+"(BGF, Jellyfish ``.mat``), werden es nie liefern."
+
+#: ../../source/manuel_stats.rst:806
+msgid "Règle d'agrégation"
+msgstr "Aggregationsregel"
+
+#: ../../source/manuel_stats.rst:809
+msgid ""
+"Le PR d'un tournoi (ou d'un sous-ensemble quelconque) est calculé par la "
+"règle **somme/somme** — jamais comme moyenne des PR individuels des "
+"matchs."
+msgstr ""
+"Der PR eines Turniers (oder einer beliebigen Teilmenge) wird nach der "
+"**Summe/Summe**-Regel berechnet — niemals als Durchschnitt der einzelnen "
+"Match-PRs."
+
+#: ../../source/manuel_stats.rst:813
+msgid "Formule :"
+msgstr "Formel:"
+
+#: ../../source/manuel_stats.rst:815
+msgid ""
+"PR_{tournoi} = 500 \\times \\frac{\\sum_{i} "
+"\\text{erreur}_i}{\\text{nombre total de décisions}}"
+msgstr ""
+"PR_{Turnier} = 500 \\times \\frac{\\sum_{i} "
+"\\text{Fehler}_i}{\\text{Gesamtzahl der Entscheidungen}}"
+
+#: ../../source/manuel_stats.rst:819
+msgid "**Exemple :** un joueur dispute deux matchs dans un tournoi —"
+msgstr "**Beispiel:** ein Spieler bestreitet zwei Matches in einem Turnier —"
+
+#: ../../source/manuel_stats.rst:821
+msgid "Match A : 10 décisions, 0,100 d'équité perdue → PR = 5,0"
+msgstr "Match A: 10 Entscheidungen, 0,100 verlorene Equity → PR = 5,0"
+
+#: ../../source/manuel_stats.rst:822
+msgid "Match B : 90 décisions, 0,540 d'équité perdue → PR = 3,0"
+msgstr "Match B: 90 Entscheidungen, 0,540 verlorene Equity → PR = 3,0"
+
+#: ../../source/manuel_stats.rst:824
+msgid "Moyenne naïve des PR : (5,0 + 3,0) / 2 = **4,0** *(incorrect)*"
+msgstr "Naiver Durchschnitt der PRs: (5,0 + 3,0) / 2 = **4,0** *(falsch)*"
+
+#: ../../source/manuel_stats.rst:826
+msgid "Règle somme/somme : 500 × 0,640 / (10 + 90) = **3,2** *(correct)*"
+msgstr "Summe/Summe-Regel: 500 × 0,640 / (10 + 90) = **3,2** *(korrekt)*"
+
+#: ../../source/manuel_stats.rst:828
+msgid ""
+"La règle somme/somme est la seule qui résiste à la variation de longueur "
+"des matchs (un match en 21 points pèse plus qu'un match en 1 point)."
+msgstr ""
+"Die Summe/Summe-Regel ist die einzige, die mit unterschiedlichen "
+"Matchlängen korrekt umgeht (ein Match über 21 Punkte wiegt mehr als ein "
+"Match über 1 Punkt)."
+
+#: ../../source/manuel_stats.rst:832
+msgid "MWC : limitations"
+msgstr "MWC: Einschränkungen"
+
+#: ../../source/manuel_stats.rst:834
+msgid ""
+"Par défaut, le MWC cost est calculé à partir de la **MET Kazaross-XG2**, "
+"table de référence de facto dans le backgammon compétitif. Les résultats "
+"ne sont pas directement comparables avec des logiciels utilisant d'autres"
+" METs. C'est la même table, lue par le même point d'entrée, que celle "
+"dont l'évaluateur embarqué se sert pour ses décisions de videau au score "
+": les statistiques et le moteur ne peuvent pas diverger là-dessus. Elle "
+"donne ses valeurs propres jusqu'à 25 points à faire de chaque côté ; au-"
+"delà, elle est prolongée par une table de Zadeh calculée comme celle de "
+"GNUbg, jusqu'à 64."
+msgstr ""
+"Standardmäßig wird der MWC cost aus der **MET Kazaross-XG2** berechnet, "
+"der De-facto-Referenztabelle im kompetitiven Backgammon. Die Ergebnisse "
+"sind nicht direkt mit Software vergleichbar, die andere METs verwendet. "
+"Es ist dieselbe Tabelle, gelesen über denselben Einstiegspunkt, die der "
+"eingebaute Evaluator für seine Dopplerentscheidungen beim Spielstand "
+"verwendet: Statistiken und Engine können hier nicht auseinanderlaufen. "
+"Sie liefert ihre eigenen Werte bis zu 25 zu spielenden Punkten auf jeder "
+"Seite; darüber hinaus wird sie durch eine wie bei GNUbg berechnete Zadeh-"
+"Tabelle bis 64 fortgesetzt."
+
+#: ../../source/manuel_stats.rst:843
+msgid ""
+"Les positions *money-game* (sans score de match) sont **exclues** du "
+"calcul MWC. Si votre base de données contient beaucoup de positions "
+"money-game, le MWC cost peut être sous-estimé ou indisponible."
+msgstr ""
+"*Money-Game*-Stellungen (ohne Matchstand) werden von der MWC-Berechnung "
+"**ausgeschlossen**. Wenn Ihre Datenbank viele Money-Game-Stellungen "
+"enthält, kann der MWC cost unterschätzt oder nicht verfügbar sein."
+
+#: ../../source/manuel_stats.rst:847
+msgid ""
+"Le MWC cost est cumulatif sur l'ensemble du jeu de données filtré — pas "
+"un indicateur par décision. Il mesure l'impact total de vos erreurs sur "
+"vos chances de victoire."
+msgstr ""
+"Der MWC cost ist kumulativ über den gesamten gefilterten Datensatz — "
+"keine Kennzahl pro Entscheidung. Er misst die Gesamtauswirkung Ihrer "
+"Fehler auf Ihre Gewinnchancen."
+

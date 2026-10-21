@@ -1,0 +1,2032 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-21 12:52+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/manuel_stats.rst:4
+msgid "Statistiques"
+msgstr "Statistics"
+
+#: ../../source/manuel_stats.rst:9
+msgid "Panneau Stats"
+msgstr "Stats Panel"
+
+#: ../../source/manuel_stats.rst:12
+msgid "Introduction"
+msgstr "Introduction"
+
+#: ../../source/manuel_stats.rst:14
+msgid ""
+"Le panneau **Stats** permet d'analyser son niveau de jeu et de suivre sa "
+"progression dans le temps à partir des positions importées dans la base "
+"de données. Il calcule et affiche les indicateurs **PR** (*Performance "
+"Rating*) et **MWC cost** (Match Winning Chance cost) pour l'ensemble des "
+"positions ou un sous-ensemble filtré."
+msgstr ""
+"The **Stats** panel lets you analyse your play level and track your "
+"progress over time using the positions imported in the database. It "
+"computes and displays **PR** (Performance Rating) and **MWC cost** (Match"
+" Winning Chance cost) for all positions or a filtered subset."
+
+#: ../../source/manuel_stats.rst:20
+msgid "Le panneau Stats est particulièrement utile pour :"
+msgstr "The Stats panel is especially useful for:"
+
+#: ../../source/manuel_stats.rst:22
+msgid ""
+"**situer son niveau** par rapport aux bandes de niveau (*Classe "
+"mondiale*, *Expert*, *Avancé*…) grâce au PR global ;"
+msgstr ""
+"**gauging your level** against the level bands (*World Class*, *Expert*, "
+"*Advanced*…) using the global PR;"
+
+#: ../../source/manuel_stats.rst:25
+msgid ""
+"**suivre sa progression** tournoi après tournoi ou match après match "
+"grâce aux graphiques de l'onglet Progression ;"
+msgstr ""
+"**tracking your progress** tournament by tournament or match by match "
+"using the Progression tab charts;"
+
+#: ../../source/manuel_stats.rst:28
+msgid ""
+"**identifier ses points faibles** : onglet Erreurs pour voir la "
+"répartition entre coups joués et décisions de videau, et la distribution "
+"des magnitudes d'erreur ;"
+msgstr ""
+"**identifying your weak spots**: the Errors tab shows the breakdown "
+"between checker plays and cube decisions, and the distribution of error "
+"magnitudes;"
+
+#: ../../source/manuel_stats.rst:32
+msgid ""
+"**comparer les joueurs de la base** entre eux, une ligne par joueur, "
+"grâce à l'onglet Joueurs — utile pour suivre une compétition entière ;"
+msgstr ""
+"**compare the players in the database** with one another, one row per "
+"player, through the Players tab — useful for following an entire "
+"competition;"
+
+#: ../../source/manuel_stats.rst:35
+msgid ""
+"**accéder directement aux positions concernées** en cliquant sur "
+"n'importe quel indicateur (drill-down)."
+msgstr ""
+"**navigating directly to the relevant positions** by clicking any "
+"indicator (drill-down)."
+
+#: ../../source/manuel_stats.rst:38
+msgid ""
+"La définition, la formule, l'incertitude et les limites de chaque chiffre"
+" du panneau sont réunies dans :ref:`metriques`."
+msgstr ""
+"The definition, formula, uncertainty and limits of each figure in the "
+"panel are gathered in :ref:`metriques`."
+
+#: ../../source/manuel_stats.rst:42
+msgid "Ouverture du panneau"
+msgstr "Opening the panel"
+
+#: ../../source/manuel_stats.rst:44
+msgid "Pour ouvrir le panneau Stats :"
+msgstr "To open the Stats panel:"
+
+#: ../../source/manuel_stats.rst:46
+msgid "Appuyer sur *CTRL-D*."
+msgstr "Press *CTRL-D*."
+
+#: ../../source/manuel_stats.rst:47
+msgid "Saisir la commande ``stats`` ou ``st`` dans la ligne de commande."
+msgstr "Type the ``stats`` or ``st`` command in the command line."
+
+#: ../../source/manuel_stats.rst:50
+msgid ""
+"Le panneau se rafraîchit automatiquement à chaque modification du filtre."
+" Il ne recalcule pas les statistiques lors d'un simple basculement PR ↔ "
+"MWC : les deux métriques sont calculées simultanément par le backend."
+msgstr ""
+"The panel refreshes automatically whenever the filter is changed. It does"
+" not recalculate statistics on a simple PR ↔ MWC toggle: both metrics are"
+" computed simultaneously by the backend."
+
+#: ../../source/manuel_stats.rst:55
+msgid "Barre de filtre"
+msgstr "Filter bar"
+
+#: ../../source/manuel_stats.rst:57
+msgid ""
+"La barre de filtre, en haut du panneau, permet de restreindre le calcul à"
+" un sous-ensemble de positions."
+msgstr ""
+"The filter bar at the top of the panel restricts the computation to a "
+"subset of positions."
+
+#: ../../source/manuel_stats.rst:61
+msgid "Perspective joueur"
+msgstr "Player perspective"
+
+#: ../../source/manuel_stats.rst:63
+msgid ""
+"Le champ **Joueur** filtre les statistiques selon le joueur analysé. "
+"Taper quelques lettres réduit la liste aux noms qui les contiennent ; un "
+"clic ou *Entrée* choisit le joueur, **✕** ou un champ vidé revient à "
+"toutes les perspectives."
+msgstr ""
+"The **Player** field filters the statistics by the analysed player. "
+"Typing a few letters narrows the list to the names containing them; a "
+"click or *Enter* picks the player, **✕** or an emptied field returns to "
+"all perspectives."
+
+#: ../../source/manuel_stats.rst:68
+msgid ""
+"Le filtre est **un seul** pour tous les onglets du panneau et il est "
+"conservé d'une session à l'autre. Il se règle aussi depuis les autres "
+"panneaux : le nom d'un joueur dans l'en-tête d'un match ou dans la barre "
+"au-dessus du plateau ouvre toutes ses statistiques (tournois et dates "
+"sont vidés), et le bouton **Stats** de l'en-tête d'un tournoi ouvre "
+"celles de ce tournoi entier (dates vidées, joueur conservé). Une date de "
+"fin antérieure à la date de début est refusée : le champ reprend la date "
+"appliquée."
+msgstr ""
+"The filter is **one single** filter for all the tabs of the panel and it "
+"is kept from one session to the next. It can also be set from the other "
+"panels: a player's name in a match header or in the bar above the board "
+"opens all their statistics (tournaments and dates are cleared), and the "
+"**Stats** button in a tournament header opens those of that whole "
+"tournament (dates cleared, player kept). An end date earlier than the "
+"start date is refused: the field takes back the applied date."
+
+#: ../../source/manuel_stats.rst:77
+msgid "Filtres disponibles"
+msgstr "Available filters"
+
+#: ../../source/manuel_stats.rst:79
+msgid ""
+"**Tournoi(s)** — restriction à un ou plusieurs tournois. Plusieurs "
+"tournois peuvent être sélectionnés simultanément."
+msgstr ""
+"**Tournament(s)** — restrict to one or more tournaments. Multiple "
+"tournaments can be selected simultaneously."
+
+#: ../../source/manuel_stats.rst:82
+msgid ""
+"**Dates** — plage temporelle (*De* … *À*). Si seule la date de début est "
+"renseignée, les positions plus récentes sont incluses."
+msgstr ""
+"**Dates** — time range (*From* … *To*). If only the start date is set, "
+"more recent positions are included."
+
+#: ../../source/manuel_stats.rst:85
+msgid "**Type de décision** — Tous / Coups joués / Décisions de videau."
+msgstr "**Decision type** — All / Checker plays / Cube decisions."
+
+#: ../../source/manuel_stats.rst:87
+msgid ""
+"**Longueur de match** — restriction à des longueurs de match précises (1,"
+" 3, 5, 7, 9, 11, 13, 15, 21 points). Plusieurs longueurs peuvent être "
+"combinées."
+msgstr ""
+"**Match length** — restrict to specific match lengths (1, 3, 5, 7, 9, 11,"
+" 13, 15, 21 points). Multiple lengths can be combined."
+
+#: ../../source/manuel_stats.rst:90
+msgid ""
+"**Moteur** et **Profondeur min.** — ne garder que les décisions analysées"
+" par un moteur donné, ou au moins à une profondeur donnée, en plis. Le "
+"menu *Moteur* propose les moteurs présents dans les analyses de la base "
+"(eXtreme Gammon, GNU Backgammon…)."
+msgstr ""
+"**Engine** and **Min. depth** — keep only the decisions analysed by a "
+"given engine, or at least at a given depth, in plies. The *Engine* menu "
+"offers the engines present in the database's analyses (eXtreme Gammon, "
+"GNU Backgammon…)."
+
+#: ../../source/manuel_stats.rst:95
+msgid ""
+"Un bouton **↺ Réinitialiser** remet tous les filtres à zéro, sauf le "
+"joueur."
+msgstr "A **↺ Reset** button clears all filters except the player."
+
+#: ../../source/manuel_stats.rst:98
+msgid ""
+"Les filtres sont persistés dans la configuration de blunderDB "
+"(``config.yaml``) et sont restaurés à la prochaine ouverture."
+msgstr ""
+"Filters are saved in the blunderDB configuration (``config.yaml``) and "
+"restored on the next launch."
+
+#: ../../source/manuel_stats.rst:102
+msgid "Toggle PR / MWC"
+msgstr "PR / MWC toggle"
+
+#: ../../source/manuel_stats.rst:104
+msgid ""
+"Le bouton **PR / MWC** en haut du panneau bascule la métrique affichée "
+"dans tous les onglets."
+msgstr ""
+"The **PR / MWC** button at the top of the panel toggles the metric "
+"displayed across all tabs."
+
+#: ../../source/manuel_stats.rst:107
+msgid "**PR (Performance Rating)**"
+msgstr "**PR (Performance Rating)**"
+
+#: ../../source/manuel_stats.rst:109
+msgid ""
+"L'erreur moyenne d'équité par décision comptée, multipliée par 500 comme "
+"le font eXtreme Gammon et GNUbg : un PR de 5,0 vaut 0,010 d'équité perdue"
+" par décision, soit 10 millipoints (mpt). La règle de comptage exacte — "
+"quelles décisions entrent au dénominateur, comment le score est converti "
+"— est celle de :ref:`metrique_pr`."
+msgstr ""
+"The average equity error per counted decision, multiplied by 500 as "
+"eXtreme Gammon and GNUbg do: a PR of 5.0 is 0.010 of equity lost per "
+"decision, i.e. 10 millipoints (mpt). The exact counting rule — which "
+"decisions enter the denominator, how the score is converted — is the one "
+"in :ref:`metrique_pr`."
+
+#: ../../source/manuel_stats.rst:115
+msgid ""
+"Les bandes de niveau que le panneau dessine derrière la courbe de "
+"progression sont un **repère indicatif propre à blunderDB** : aucune "
+"publication ne fait autorité sur ces seuils. La borne haute de chaque "
+"bande est exclue : un PR de 4 est *Avancé*, pas *Expert*."
+msgstr ""
+"The level bands the panel draws behind the progress curve are an "
+"**indicative marker specific to blunderDB**: no publication is "
+"authoritative on these thresholds. The upper bound of each band is "
+"exclusive: a PR of 4 is *Advanced*, not *Expert*."
+
+#: ../../source/manuel_stats.rst:1
+msgid "Niveau"
+msgstr "Level"
+
+#: ../../source/manuel_stats.rst:1
+msgid "PR"
+msgstr "PR"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Classe mondiale"
+msgstr "World Class"
+
+#: ../../source/manuel_stats.rst:1
+msgid "< 2"
+msgstr "< 2"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Expert"
+msgstr "Expert"
+
+#: ../../source/manuel_stats.rst:1
+msgid "2 – 4"
+msgstr "2 – 4"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Avancé"
+msgstr "Advanced"
+
+#: ../../source/manuel_stats.rst:1
+msgid "4 – 6"
+msgstr "4 – 6"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Intermédiaire"
+msgstr "Intermediate"
+
+#: ../../source/manuel_stats.rst:1
+msgid "6 – 9"
+msgstr "6 – 9"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Occasionnel"
+msgstr "Casual"
+
+#: ../../source/manuel_stats.rst:1
+msgid "9 – 12"
+msgstr "9 – 12"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Débutant"
+msgstr "Beginner"
+
+#: ../../source/manuel_stats.rst:1
+msgid "≥ 12"
+msgstr "≥ 12"
+
+#: ../../source/manuel_stats.rst:132
+msgid "**MWC cost (Match Winning Chance cost)**"
+msgstr "**MWC cost (Match Winning Chance cost)**"
+
+#: ../../source/manuel_stats.rst:134
+msgid ""
+"Probabilité cumulée de victoire de match perdue à cause des erreurs, sur "
+"l'ensemble du jeu de données filtré. Calculé à partir de la MET courante "
+"de la base, par défaut la Kazaross-XG2 embarquée dans blunderDB. Une "
+"analyse au score de match calculée avec une autre table est « MET "
+"différente » et reste hors des statistiques."
+msgstr ""
+"Cumulative match winning probability lost due to errors, over the full "
+"filtered dataset. Computed using the database's current MET, by default "
+"the Kazaross-XG2 embedded in blunderDB. A match-score analysis computed "
+"with another table is \"different MET\" and stays out of the statistics."
+
+#: ../../source/manuel_stats.rst:141
+msgid ""
+"Le MWC cost **n'est pas applicable** aux positions *money-game* (sans "
+"enjeu de match). Ces positions sont exclues du calcul MWC. Les valeurs "
+"MWC dépendent de la MET utilisée ; elles ne sont pas directement "
+"comparables entre logiciels utilisant des METs différentes."
+msgstr ""
+"MWC cost **does not apply** to *money-game* positions (with no match "
+"stake). Those positions are excluded from the MWC computation. MWC values"
+" depend on the MET used; they are not directly comparable across software"
+" using different METs."
+
+#: ../../source/manuel_stats.rst:148
+msgid "**Perte MWC (éq. 7 pts)**"
+msgstr "**MWC loss (7-pt eq.)**"
+
+#: ../../source/manuel_stats.rst:150
+msgid ""
+"La probabilité de gagner le match qu'un joueur a perdue sur l'ensemble de"
+" ses décisions — pions, videau, prise ou refus, avec videau — ramenée à "
+"un match en 7 points. Pour un match en *N* points où le joueur a perdu "
+"*L* de MWC :"
+msgstr ""
+"The probability of winning the match that a player lost across all their "
+"decisions — checker plays, cube, take or pass, with cube — scaled to a "
+"7-point match. For an *N*-point match in which the player lost *L* of "
+"MWC:"
+
+#: ../../source/manuel_stats.rst:154
+msgid "L₇ = L × √(7 / N)"
+msgstr "L₇ = L × √(7 / N)"
+
+#: ../../source/manuel_stats.rst:156
+msgid ""
+"Pour un match en 7 points, c'est la perte de MWC du match, celle "
+"qu'affiche eXtreme Gammon. La racine vient du modèle de la formule FIBS :"
+" à force égale, la perte d'un joueur croît comme la racine de la longueur"
+" du match. 7 points est la longueur de référence parce que c'est la plus "
+"courante en tournoi."
+msgstr ""
+"For a 7-point match, this is the match's MWC loss, the one eXtreme Gammon"
+" displays. The square root comes from the FIBS formula's model: at equal "
+"strength, a player's loss grows as the square root of the match length. 7"
+" points is the reference length because it is the most common in "
+"tournaments."
+
+#: ../../source/manuel_stats.rst:162
+#, no-python-format
+msgid ""
+"Elle se lit comme la part de match perdue face à un joueur parfait : 12,3"
+" % veut dire qu'au lieu de 50 % de chances contre le moteur, le joueur "
+"n'en avait plus que 37,7 % sur un match en 7 points. L'infobulle en donne"
+" la lecture en Elo face au moteur, en inversant la formule FIBS : D = "
+"(2000 / √7) × log₁₀(q / (1 − q)), avec q = 0,5 − L₇. Au-delà d'une perte "
+"de 49 %, la formule n'a plus de valeur finie : l'Elo affiché est alors un"
+" plafond (« ≤ »). Les deux chiffres classent les joueurs dans le même "
+"ordre."
+msgstr ""
+"It reads as the share of the match lost against a perfect player: 12.3% "
+"means that instead of 50% winning chances against the engine, the player "
+"had only 37.7% in a 7-point match. The tooltip gives the reading as Elo "
+"against the engine, by inverting the FIBS formula: D = (2000 / √7) × "
+"log₁₀(q / (1 − q)), with q = 0.5 − L₇. Beyond a loss of 49%, the formula "
+"has no finite value: the displayed Elo is then a ceiling (\"≤\"). The two"
+" figures rank players in the same order."
+
+#: ../../source/manuel_stats.rst:171
+msgid ""
+"Elle complète le PR sans le remplacer : le PR divise les erreurs par un "
+"nombre de décisions, et ce nombre dépend de ce que l'on compte comme "
+"décision (coups forcés, décisions de videau évidentes). La perte MWC ne "
+"compte aucune décision : chaque erreur pèse ce qu'elle a coûté au score "
+"où elle a été commise."
+msgstr ""
+"It complements the PR without replacing it: the PR divides errors by a "
+"number of decisions, and that number depends on what is counted as a "
+"decision (forced moves, obvious cube decisions). The MWC loss counts no "
+"decisions: each error weighs what it cost at the score where it was made."
+
+#: ../../source/manuel_stats.rst:177
+msgid ""
+"Sur plusieurs matchs (statistiques d'un joueur, d'un tournoi), les pertes"
+" et les racines des longueurs s'additionnent avant le rapport : L₇ = √7 ×"
+" ΣL / Σ√N. Un match en 7 points pèse donc plus qu'un match en 1 point, et"
+" un seul match donne sa propre valeur."
+msgstr ""
+"Over several matches (a player's or a tournament's statistics), the "
+"losses and the square roots of the lengths are added before taking the "
+"ratio: L₇ = √7 × ΣL / Σ√N. A 7-point match therefore weighs more than a "
+"1-point match, and a single match gives its own value."
+
+#: ../../source/manuel_stats.rst:183
+#, no-python-format
+msgid ""
+"Un match isolé est très bruité : quelques grosses erreurs suffisent à le "
+"faire varier du simple au double. Le badge et le bilan d'un match "
+"(:ref:`bilan du match <bilan_match>`) donnent l'intervalle à 95 % en "
+"rééchantillonnant ses parties ; un agrégat (statistiques d'un joueur, "
+"d'un tournoi) le donne en rééchantillonnant ses matchs ; sans filtre "
+"joueur, les deux sièges d'un match forment une seule unité, puisqu'ils "
+"jouent les mêmes positions. Il faut au moins trois parties, ou trois "
+"matchs, et qu'elles ne donnent pas toutes la même perte : sinon pas "
+"d'intervalle. Une ligne par match des statistiques n'en a donc pas : "
+"c'est une seule unité. Ne classez pas des joueurs sur un seul match."
+msgstr ""
+"A single match is very noisy: a few big errors are enough to make it vary"
+" by a factor of two. The badge and the match summary (:ref:`match summary"
+" <bilan_match>`) give the 95% interval by resampling its games; an "
+"aggregate (a player's or a tournament's statistics) gives it by "
+"resampling its matches; without a player filter, the two seats of a match"
+" form a single unit, since they play the same positions. At least three "
+"games, or three matches, are needed, and they must not all give the same "
+"loss: otherwise there is no interval. A per-match row of the statistics "
+"therefore has none: it is a single unit. Do not rank players on a single "
+"match."
+
+#: ../../source/manuel_stats.rst:195
+msgid ""
+"Une partie *money-game* n'a pas de longueur de match : la perte MWC (éq. "
+"7 pts) n'y est pas définie et le panneau l'indique au lieu d'afficher un "
+"nombre. Comme le MWC cost, elle dépend de la MET."
+msgstr ""
+"A *money-game* has no match length: the MWC loss (7-pt eq.) is not "
+"defined there and the panel says so instead of displaying a number. Like "
+"the MWC cost, it depends on the MET."
+
+#: ../../source/manuel_stats.rst:199
+msgid ""
+"Le troisième choix du bouton, **MWC 7 pts**, trace cette perte dans "
+"l'onglet Progression, et l'affiche sur les cartes du tableau de bord et "
+"dans la comparaison pions/videau de l'onglet Erreurs, découpée en pions "
+"et videau sur les mêmes matchs (les deux parts s'additionnent). Le "
+"classement des joueurs a sa colonne. Les graphiques sans équivalent 7 "
+"points (par action de videau) gardent le MWC cost."
+msgstr ""
+"The button's third choice, **MWC 7 pts**, plots this loss in the "
+"Progression tab, and shows it on the dashboard cards and in the "
+"checker/cube comparison of the Errors tab, split into checker and cube on"
+" the same matches (the two parts add up). The player ranking has its "
+"column. Charts with no 7-point equivalent (per cube action) keep the MWC "
+"cost."
+
+#: ../../source/manuel_stats.rst:206
+msgid ""
+"Le basculement PR ↔ MWC est instantané : aucun recalcul backend n'est "
+"effectué."
+msgstr "The PR ↔ MWC toggle is instant: no backend recalculation is performed."
+
+#: ../../source/manuel_stats.rst:212
+msgid "Le rapport HTML"
+msgstr "The HTML report"
+
+#: ../../source/manuel_stats.rst:214
+msgid ""
+"Le bouton **Rapport HTML** de l'en-tête du panneau produit un document "
+"**autonome** : un seul fichier, sans image externe, sans feuille de style"
+" distante, sans script. Les diagrammes y sont des SVG en ligne, dessinés "
+"par le même rendu que le plateau à l'écran, avec votre palette. Il "
+"s'ouvre dans n'importe quel navigateur, s'envoie par courriel, et "
+"**s'imprime en PDF par le navigateur lui-même** — ce qui évite "
+"d'embarquer un générateur de PDF pour produire ce que tout le monde a "
+"déjà."
+msgstr ""
+"The **HTML report** button in the panel's header produces a **self-"
+"contained** document: a single file, with no external image, no remote "
+"stylesheet, no script. The diagrams are inline SVG, drawn by the same "
+"renderer as the board on screen, with your palette. It opens in any "
+"browser, travels by e-mail, and **prints to PDF from the browser itself**"
+" — which avoids embedding a PDF generator to produce what everybody "
+"already has."
+
+#: ../../source/manuel_stats.rst:222
+msgid ""
+"Il contient les indicateurs du périmètre courant (positions, matchs, "
+"décisions comptées, PR global, pions et videau), puis les **dix décisions"
+" les plus coûteuses**, chacune avec son diagramme, son coût, le match "
+"d'où elle vient et le meilleur coup lorsqu'une analyse le donne."
+msgstr ""
+"It carries the current scope's figures (positions, matches, counted "
+"decisions, global, checker and cube PR), then the **ten most expensive "
+"decisions**, each with its diagram, its cost, the match it comes from and"
+" the best move when an analysis gives one."
+
+#: ../../source/manuel_stats.rst:227
+msgid ""
+"Le document est construit par le moteur, pas par l'écran : la ligne de "
+"commande (``stats report --html``, voir :ref:`cli_stats`) et le démon "
+"HTTP (route ``stats.report``) produisent le même rapport, dans l'une des "
+"neuf langues de l'interface. Seule l'application graphique dessine les "
+"diagrammes avec la palette du plateau ; les deux autres emploient la "
+"palette par défaut."
+msgstr ""
+"The document is built by the engine, not by the screen: the command line "
+"(``stats report --html``, see :ref:`cli_stats`) and the HTTP daemon "
+"(route ``stats.report``) produce the same report, in any of the nine "
+"interface languages. Only the graphical application draws the diagrams "
+"with the board palette; the other two use the default palette."
+
+#: ../../source/manuel_stats.rst:233
+msgid ""
+"Le rapport porte le **filtre courant** du panneau Stats. Un rapport qui "
+"ne dit pas son périmètre est un rapport dont les chiffres ne veulent rien"
+" dire : réglez le filtre — un tournoi, une plage de dates, un joueur — "
+"avant de le produire."
+msgstr ""
+"The report carries the Stats panel's **current filter**. A report that "
+"does not state its scope is a report whose figures mean nothing: set the "
+"filter — a tournament, a date range, a player — before producing it."
+
+#: ../../source/manuel_stats.rst:239
+msgid "Onglet Tableau de bord"
+msgstr "Dashboard tab"
+
+#: ../../source/manuel_stats.rst:241
+msgid ""
+"L'onglet **Tableau de bord** donne une vue synthétique des indicateurs "
+"clés. Il se lit de haut en bas : les cartes de niveau, puis ce qui se "
+"travaille (plan d'étude, top blunders), puis les lectures (PR glissant, "
+"avant/après l'étude, biais signés). L'explication de chaque carte est "
+"dans l'info-bulle de son titre."
+msgstr ""
+"The **Dashboard** tab gives a synthetic view of the key indicators. It "
+"reads from top to bottom: the level cards, then what is worked on (study "
+"plan, top blunders), then the readings (rolling PR, before/after study, "
+"signed biases). The explanation of each card is in the tooltip of its "
+"title."
+
+#: ../../source/manuel_stats.rst:247
+msgid "Onglet Tableau de bord du panneau Stats"
+msgstr "Dashboard tab of the Stats panel"
+
+#: ../../source/manuel_stats.rst:251
+msgid "L'onglet Tableau de bord : PR global, PR pions, PR videau."
+msgstr "The Dashboard tab: global PR, checker PR, cube PR."
+
+#: ../../source/manuel_stats.rst:254
+msgid "Cartes de niveau"
+msgstr "Level cards"
+
+#: ../../source/manuel_stats.rst:256
+msgid "Trois cartes affichent le PR (ou MWC) pour :"
+msgstr "Three cards display the PR (or MWC) for:"
+
+#: ../../source/manuel_stats.rst:258
+msgid "**PR global** — toutes les décisions (pions + videau) ;"
+msgstr "**PR Global** — all decisions (checker + cube);"
+
+#: ../../source/manuel_stats.rst:259
+msgid "**PR pions** — décisions de pions seulement ;"
+msgstr "**Checker PR** — checker decisions only;"
+
+#: ../../source/manuel_stats.rst:260
+msgid "**PR videau** — décisions de videau seulement."
+msgstr "**PR Cube** — cube decisions only."
+
+#: ../../source/manuel_stats.rst:262
+msgid ""
+"Cliquer sur une carte charge dans le panneau d'analyse les positions du "
+"sous-ensemble correspondant (drill-down). Une quatrième carte, **Perte "
+"MWC (éq. 7 pts)**, donne cette perte quel que soit le choix du bouton PR "
+"/ MWC, avec son intervalle ; elle ne charge rien."
+msgstr ""
+"Clicking a card loads the positions in the corresponding subset into the "
+"analysis panel (drill-down). A fourth card, **MWC loss (7-pt eq.)**, "
+"gives this loss whatever the PR / MWC button is set to, with its "
+"interval; it loads nothing."
+
+#: ../../source/manuel_stats.rst:267
+msgid ""
+"Sous les cartes, la ligne des totaux compte les tournois, les matchs et "
+"les décisions du filtre. Le nombre de tournois ouvre ces tournois dans le"
+" panneau Tournois : un tournoi seul s'ouvre directement ; plusieurs "
+"restreignent la liste, qui porte alors le bouton « N tournois ouverts "
+"depuis les Stats × » : il rend la liste complète."
+msgstr ""
+"Below the cards, the totals line counts the filter's tournaments, matches"
+" and decisions. The tournament count opens those tournaments in the "
+"Tournaments panel: a single tournament opens directly; several restrict "
+"the list, which then carries the button « N tournaments opened from Stats"
+" × »: it restores the full list."
+
+#: ../../source/manuel_stats.rst:273
+msgid ""
+"Le nombre de décisions ouvre leurs positions ; le nombre de matchs ouvre "
+"ces matchs dans le panneau Matchs, sauf quand un type de décision ou un "
+"filtre de provenance est actif : il compte alors moins de matchs que la "
+"liste n'en ouvrirait et reste un simple nombre."
+msgstr ""
+"The number of decisions opens their positions; the number of matches "
+"opens those matches in the Matches panel, except when a decision type or "
+"a provenance filter is active: it then counts fewer matches than the list"
+" would open and stays a plain number."
+
+#: ../../source/manuel_stats.rst:279
+msgid "Le nombre total de décisions est affiché en bas de chaque carte au survol."
+msgstr ""
+"The total number of decisions is shown at the bottom of each card on "
+"hover."
+
+#: ../../source/manuel_stats.rst:284
+msgid "Plan d'étude"
+msgstr "Study plan"
+
+#: ../../source/manuel_stats.rst:286
+msgid ""
+"La carte **Plan d'étude** répond à « que dois-je travailler maintenant ? "
+"». Les erreurs récurrentes (onglet Erreurs) disent où le filtre a perdu "
+"le plus ; elles ne disent pas où l'étude rapporte le plus. Une famille de"
+" positions réellement difficiles coûte cher à tout le monde, et trois "
+"erreurs ne font pas une tendance. Le plan corrige les deux."
+msgstr ""
+"The **Study plan** card answers \"what should I work on now?\". Recurring"
+" mistakes (Errors tab) say where the filter lost the most; they do not "
+"say where study pays off the most. A family of truly hard positions costs"
+" everyone dearly, and three mistakes do not make a trend. The plan "
+"corrects both."
+
+#: ../../source/manuel_stats.rst:292
+msgid ""
+"Une **famille** est un groupe des erreurs récurrentes : un plan de jeu, "
+"une nature de décision (pions ou videau) et un thème. Les erreurs sans "
+"thème n'en forment pas : elles n'indiquent rien à étudier."
+msgstr ""
+"A **family** is a group of recurring mistakes: a game plan, a kind of "
+"decision (checkers or cube) and a theme. Mistakes without a theme form "
+"none: they point to nothing to study."
+
+#: ../../source/manuel_stats.rst:295
+msgid ""
+"Chaque erreur est chiffrée en **MWC**, comme dans le panneau Match : sa "
+"perte ℓ, et sa *difficulté* d, la perte qu'un joueur de référence aurait "
+"subie dans la même position (voir la difficulté par décision du panneau "
+"Match). Une erreur en partie libre n'a pas de MWC : elle est seulement "
+"comptée, « non chiffrée »."
+msgstr ""
+"Each mistake is priced in **MWC**, as in the Match panel: its loss ℓ, and"
+" its *difficulty* d, the loss a reference player would have suffered in "
+"the same position (see the per-decision difficulty in the Match panel). A"
+" mistake in a free game has no MWC: it is only counted, \"unpriced\"."
+
+#: ../../source/manuel_stats.rst:300
+msgid ""
+"Le **MWC récupérable** d'une famille est la somme de ℓ − d sur ses "
+"erreurs : la fréquence de la famille multipliée par sa perte moyenne au-"
+"delà de la difficulté. C'est ce que vous regagneriez en jouant ces "
+"positions comme le joueur de référence. Une famille d'erreurs évitables "
+"monte, une famille de positions où tout le monde se trompe descend."
+msgstr ""
+"The **recoverable MWC** of a family is the sum of ℓ − d over its "
+"mistakes: the family's frequency times its average loss beyond the "
+"difficulty. It is what you would regain by playing these positions like "
+"the reference player. A family of avoidable mistakes rises, a family of "
+"positions where everyone errs falls."
+
+#: ../../source/manuel_stats.rst:305
+msgid ""
+"L'**intervalle à 95 %** accompagne chaque chiffre. Une famille entre au "
+"plan à partir de **5 erreurs** et d'un intervalle entièrement au-dessus "
+"de zéro ; le plan est classé par la borne basse de l'intervalle, si bien "
+"qu'à récupérable égal la famille la mieux établie passe devant. Les "
+"autres sont nommées sous la liste, **à confirmer**, sans rang : le plan "
+"ne vous pousse pas vers du bruit. La même ligne compte les erreurs **hors"
+" plan** (sans thème, non chiffrées)."
+msgstr ""
+"The **95% interval** accompanies every figure. A family enters the plan "
+"from **5 mistakes** and an interval entirely above zero; the plan is "
+"ranked by the lower bound of the interval, so that at equal recoverable "
+"the best-established family comes first. The others are named under the "
+"list, **to be confirmed**, without a rank: the plan does not push you "
+"toward noise. The same line counts the mistakes **outside the plan** "
+"(without a theme, not quantified)."
+
+#: ../../source/manuel_stats.rst:313
+msgid ""
+"Chaque ligne du plan montre son rang, la famille, une barre dont la "
+"longueur est son MWC récupérable rapporté à celui de la première, ce MWC "
+"avec son intervalle, et le nombre d'erreurs. Chaque compte de positions "
+"du plan (par famille, à confirmer, hors plan) est cliquable : il charge "
+"exactement ces positions dans la liste."
+msgstr ""
+"Each row of the plan shows its rank, the family, a bar whose length is "
+"its recoverable MWC relative to that of the first, this MWC with its "
+"interval, and the number of mistakes. Every count of positions in the "
+"plan (per family, to confirm, outside the plan) is clickable: it loads "
+"exactly those positions into the list."
+
+#: ../../source/manuel_stats.rst:319
+msgid ""
+"Chaque famille propose trois gestes : **Étudier** ouvre la file d'étude "
+"sur ses positions, l'écart au joueur de référence le plus grand d'abord ;"
+" **Quiz** lance l'exercice Décision du panneau :ref:`Entraînement "
+"<panneau_entrainement>` sur vingt d'entre elles ; **Anki** en fait un "
+"paquet de cartes. En tête de la carte, **Quiz sur les trois premières "
+"familles** tire vingt positions parmi celles des trois familles de tête. "
+"Le plan suit le filtre du panneau : réglez le joueur pour obtenir *votre*"
+" plan. En ligne de commande : ``blunderdb stats plan`` (voir "
+":ref:`cli_stats`)."
+msgstr ""
+"Each family offers three actions: **Study** opens the study queue on its "
+"positions, the largest gap to the reference player first; **Quiz** starts"
+" the Decision exercise of the :ref:`Training <panneau_entrainement>` "
+"panel on twenty of them; **Anki** turns them into a deck of cards. At the"
+" top of the card, **Quiz on the top three families** draws twenty "
+"positions from those of the three leading families. The plan follows the "
+"panel's filter: set the player to get *your* plan. On the command line: "
+"``blunderdb stats plan`` (see :ref:`cli_stats`)."
+
+#: ../../source/manuel_stats.rst:331
+msgid "Avant/après l'étude"
+msgstr "Before/after study"
+
+#: ../../source/manuel_stats.rst:333
+msgid ""
+"La carte **Avant/après l'étude** ferme la boucle du plan : ce que vous "
+"avez travaillé coûte-t-il moins en match réel ? Sans elle, l'étude se "
+"juge à l'impression ; avec elle, une famille qui ne bouge pas malgré le "
+"travail dit qu'il faut changer de méthode, et une famille en progrès peut"
+" céder sa place dans le plan."
+msgstr ""
+"The **Before/after study** card closes the plan's loop: does what you "
+"worked on cost you less in real matches? Without it, study is judged by "
+"feel; with it, a family that does not move despite the work says you "
+"should change method, and a family that improves can give up its place in"
+" the plan."
+
+#: ../../source/manuel_stats.rst:339
+msgid ""
+"Une famille (celle du plan) est **étudiée** à la date de la première "
+"action d'étude sur l'une de ses positions : la marque « étudiée » de la "
+"file d'étude, une révision Anki, une réponse en quiz. Créer une carte ou "
+"ranger une position en collection n'en est pas une."
+msgstr ""
+"A family (the plan's family) is **studied** on the date of the first "
+"study action on one of its positions: the \"studied\" mark in the study "
+"queue, an Anki review, a quiz answer. Creating a card or filing a "
+"position in a collection does not count."
+
+#: ../../source/manuel_stats.rst:343
+msgid ""
+"Pour chaque famille étudiée, la carte compare deux **fenêtres** : les "
+"matchs joués avant ce jour et ceux joués après (le jour même est écarté)."
+" Dans chacune, le **taux de perte** est la MWC perdue par les erreurs de "
+"la famille, rapportée à toutes les décisions du même plan de jeu et de la"
+" même nature, et affichée en points de MWC pour 100 décisions."
+msgstr ""
+"For each studied family, the card compares two **windows**: the matches "
+"played before that day and those played after it (the day itself is left "
+"out). In each, the **loss rate** is the MWC lost by the family's "
+"mistakes, relative to all decisions of the same game plan and the same "
+"kind, and shown in MWC points per 100 decisions."
+
+#: ../../source/manuel_stats.rst:348
+msgid ""
+"Le **gain** est le taux d'avant moins celui d'après, avec son intervalle "
+"à 95 %. Le verdict n'est « en progrès » (ou « en recul ») que si chaque "
+"fenêtre compte au moins **30 décisions** et que l'intervalle exclut zéro "
+"; sinon il reste « indéterminé » ou « trop peu de décisions »."
+msgstr ""
+"The **gain** is the before rate minus the after rate, with its 95% "
+"interval. The verdict is \"improved\" (or \"worse\") only if each window "
+"has at least **30 decisions** and the interval excludes zero; otherwise "
+"it stays \"undetermined\" or \"too few decisions\"."
+
+#: ../../source/manuel_stats.rst:353
+msgid ""
+"À côté de chaque fenêtre, la colonne **Positions** compte les positions "
+"distinctes de ses décisions et les ouvre d'un clic ; le nombre entre "
+"parenthèses reste celui des décisions, dénominateur du taux."
+msgstr ""
+"Next to each window, the **Positions** column counts the distinct "
+"positions of its decisions and opens them with a click; the number in "
+"brackets remains the number of decisions, the rate's denominator."
+
+#: ../../source/manuel_stats.rst:357
+msgid ""
+"C'est un changement, pas un effet : une famille est étudiée parce qu'elle"
+" coûtait, et une part du gain est une régression vers la moyenne ; rien "
+"ne contrôle les adversaires, le format ni les dés. En ligne de commande :"
+" ``blunderdb stats effect`` (voir :ref:`cli_stats`)."
+msgstr ""
+"This is a change, not an effect: a family is studied because it was "
+"costing you, and part of the gain is regression to the mean; nothing "
+"controls for opponents, format or dice. On the command line: ``blunderdb "
+"stats effect`` (see :ref:`cli_stats`)."
+
+#: ../../source/manuel_stats.rst:365
+msgid "Biais signés"
+msgstr "Signed biases"
+
+#: ../../source/manuel_stats.rst:367
+msgid ""
+"La carte **Biais signés** dit dans quel sens vous vous trompez, pas "
+"seulement combien. « Vous prenez trop » se corrige mieux qu'un PR : la "
+"règle à revoir est nommée. Chaque biais est la part de décisions fautives"
+" dans un sens moins la part fautive dans l'autre, avec son intervalle à "
+"95 % ; un penchant n'est nommé qu'à partir de **20 décisions** et d'un "
+"intervalle qui exclut zéro."
+msgstr ""
+"The **Signed biases** card tells you in which direction you go wrong, not"
+" just how much. \"You take too much\" is easier to fix than a PR: the "
+"rule to review is named. Each bias is the share of faulty decisions in "
+"one direction minus the share of faulty decisions in the other, with its "
+"95% interval; a tendency is named only from **20 decisions** and an "
+"interval that excludes zero."
+
+#: ../../source/manuel_stats.rst:373
+msgid ""
+"**Prise / refus** — sur les réponses au videau : prises fautives (le bot "
+"refuse) moins refus fautifs (le bot prend). C'est exactement votre taux "
+"de prise moins celui du bot sur les mêmes positions."
+msgstr ""
+"**Take / pass** — on cube responses: faulty takes (the bot passes) minus "
+"faulty passes (the bot takes). This is exactly your take rate minus the "
+"bot's on the same positions."
+
+#: ../../source/manuel_stats.rst:376
+msgid ""
+"**Doubles** — sur les décisions de doubler : doubles prématurés (le bot "
+"ne double pas, ou la position est trop bonne pour doubler) moins doubles "
+"manqués. Le même biais est donné **par score** (votre away, celui de "
+"l'adversaire, un score post-Crawford compté à 1 point ; la partie libre "
+"dans sa propre case), pour les scores qui comptent assez de décisions."
+msgstr ""
+"**Doubles** — on doubling decisions: premature doubles (the bot does not "
+"double, or the position is too good to double) minus missed doubles. The "
+"same bias is given **by score** (your away, your opponent's, a post-"
+"Crawford score counted as 1 point; money play in its own cell), for the "
+"scores with enough decisions."
+
+#: ../../source/manuel_stats.rst:381
+msgid ""
+"**Blots** — sur les coups de pions avec contact : les coups qui laissent "
+"plus de blots que le meilleur coup moins ceux qui en laissent moins. Un "
+"coup est reconnu par le plateau qu'il laisse, quelle que soit son "
+"écriture (« 13/7(2) », « 8/5*/4 ») ; un coup que le générateur de coups "
+"ne sait toujours pas rejouer est écarté, et la part des coups écartés est"
+" donnée sous le tableau. Le biais compte les blots sans peser leur "
+"exposition : un blot hors de portée compte autant qu'un blot exposé."
+msgstr ""
+"**Blots** — on checker plays with contact: plays that leave more blots "
+"than the best play minus those that leave fewer. A play is recognized by "
+"the board it leaves, whatever its notation (\"13/7(2)\", \"8/5*/4\"); a "
+"play the move generator still cannot replay is discarded, and the share "
+"of discarded plays is given under the table. The bias counts blots "
+"without weighing their exposure: a blot out of reach counts as much as an"
+" exposed one."
+
+#: ../../source/manuel_stats.rst:389
+msgid ""
+"À côté de chaque compte, son coût en millipoints dit si le penchant coûte"
+" ; une position jouée dans plusieurs matchs y compte avec le coup joué "
+"dans chacun. Les biais suivent le filtre du panneau. En ligne de commande"
+" : ``blunderdb stats biases`` (voir :ref:`cli_stats`)."
+msgstr ""
+"Next to each count, its cost in millipoints tells you whether the "
+"tendency costs you; a position played in several matches counts there "
+"with the move played in each. The biases follow the panel's filter. On "
+"the command line: ``blunderdb stats biases`` (see :ref:`cli_stats`)."
+
+#: ../../source/manuel_stats.rst:394
+msgid ""
+"Chaque compte de décisions (toutes, d'un sens, de l'autre) est suivi "
+"d'une colonne **Positions** : les positions distinctes de ces décisions, "
+"qu'un clic ouvre. Une position jouée dans plusieurs matchs y compte une "
+"décision par match, mais une seule position."
+msgstr ""
+"Each count of decisions (all, one way, the other way) is followed by a "
+"**Positions** column: the distinct positions of those decisions, which a "
+"click opens. A position played in several matches counts one decision per"
+" match, but a single position."
+
+#: ../../source/manuel_stats.rst:400
+msgid "PR glissant sur N dernières décisions"
+msgstr "Rolling PR over last N decisions"
+
+#: ../../source/manuel_stats.rst:402
+msgid ""
+"Une ligne de valeurs PR (ou MWC) calculées sur les *N* dernières "
+"décisions (N = 5, 10, 50, 100, 250, 500, 1000) permet de mesurer la "
+"tendance récente. Les valeurs grisées correspondent à un N supérieur au "
+"nombre de décisions disponibles."
+msgstr ""
+"A row of PR (or MWC) values computed over the last *N* decisions (N = 5, "
+"10, 50, 100, 250, 500, 1000) lets you measure the recent trend. Greyed "
+"values correspond to an N larger than the number of available decisions."
+
+#: ../../source/manuel_stats.rst:407
+msgid "Cliquer sur une valeur charge les *N* dernières positions correspondantes."
+msgstr "Clicking a value loads the corresponding last *N* positions."
+
+#: ../../source/manuel_stats.rst:410
+msgid "Top blunders"
+msgstr "Top blunders"
+
+#: ../../source/manuel_stats.rst:412
+msgid ""
+"La liste des 10 pires erreurs (ou MWC cost), triées par magnitude "
+"décroissante. Cliquer sur une ligne charge la position concernée dans le "
+"panneau d'analyse."
+msgstr ""
+"The list of the 10 worst errors (or MWC cost), sorted by descending "
+"magnitude. Clicking a row loads the relevant position in the analysis "
+"panel."
+
+#: ../../source/manuel_stats.rst:416
+msgid "Onglet Progression"
+msgstr "Progression tab"
+
+#: ../../source/manuel_stats.rst:418
+msgid "L'onglet **Progression** présente l'évolution du niveau dans le temps."
+msgstr "The **Progression** tab shows how your level evolves over time."
+
+#: ../../source/manuel_stats.rst:420
+msgid ""
+"En tête de l'onglet, un **objectif** : « PR < 5 d'ici douze semaines ». "
+"Une cible, une échéance, et une tendance qui dit où l'on va — rien de "
+"plus. Un objectif qui se mettrait à noter, à féliciter ou à rappeler "
+"serait une autre fonctionnalité, et pas celle-ci."
+msgstr ""
+"At the top of the tab, a **goal**: “PR < 5 within twelve weeks”. A "
+"target, a deadline, and a trend that says where you are heading — nothing"
+" more. A goal that started grading, congratulating or reminding would be "
+"a different feature, not this one."
+
+#: ../../source/manuel_stats.rst:425
+msgid ""
+"Le bouton **Proposer** suggère une cible à partir du niveau actuel : la "
+"borne basse de la bande où vous êtes, c'est-à-dire l'entrée dans la bande"
+" suivante. Proposer « un peu mieux » ne s'ancrerait à rien ; proposer un "
+"palier en dit un — passer d'intermédiaire à avancé se voit et se raconte."
+msgstr ""
+"The **Suggest** button proposes a target from your current level: the "
+"lower bound of the band you are in, that is, the entry into the next one."
+" Proposing “a bit better” would be anchored to nothing; proposing a band "
+"says something — going from intermediate to advanced can be seen and "
+"told."
+
+#: ../../source/manuel_stats.rst:430
+msgid ""
+"La **tendance** est un ajustement par les moindres carrés sur le PR de "
+"vos matchs, projeté à l'échéance. Elle refuse de se prononcer sous trois "
+"matchs : tracer une droite entre deux points serait une affirmation qu'on"
+" ne peut pas tenir. Et la phrase le dit à chaque fois — *une tendance "
+"n'est pas une prédiction*."
+msgstr ""
+"The **trend** is a least-squares fit over your matches' PR, projected to "
+"the deadline. It refuses to speak below three matches: drawing a line "
+"between two points would be a claim that cannot be held. And the sentence"
+" says so every time — *a trend is not a prediction*."
+
+#: ../../source/manuel_stats.rst:436
+msgid ""
+"L'objectif est enregistré dans les **métadonnées de la base**, pas dans "
+"la configuration : il porte sur cette bibliothèque-là, et suit donc le "
+"fichier plutôt que la machine. Aucun changement de schéma : ``metadata`` "
+"est déjà une table de clés et de valeurs, lisible par ``blunderdb info`` "
+"comme par le démon."
+msgstr ""
+"The goal is stored in the **database's metadata**, not in the "
+"configuration: it is about that library, so it follows the file rather "
+"than the machine. No schema change: ``metadata`` is already a key/value "
+"table, readable by ``blunderdb info`` as by the daemon."
+
+#: ../../source/manuel_stats.rst:442
+msgid "Courbe par tournoi"
+msgstr "Tournament line chart"
+
+#: ../../source/manuel_stats.rst:444
+msgid ""
+"Un graphique en ligne affiche le PR (ou MWC) de chaque tournoi : un point"
+" par tournoi, étiqueté de son nom, dans l'ordre chronologique de sa date "
+"— à défaut, celle de son plus ancien match (axe Y : valeur de la "
+"métrique). Des bandes de couleur matérialisent les seuils de niveau."
+msgstr ""
+"A line chart shows the PR (or MWC) of each tournament: one point per "
+"tournament, labelled with its name, in the chronological order of its "
+"date — failing that, the date of its oldest match (Y axis: the metric's "
+"value). Coloured bands mark the level thresholds."
+
+#: ../../source/manuel_stats.rst:449
+msgid ""
+"Cliquer sur un point du graphique ouvre un menu contextuel avec deux "
+"options :"
+msgstr "Clicking a point on the chart opens a context menu with two options:"
+
+#: ../../source/manuel_stats.rst:451
+msgid "**Ouvrir le tournoi** — ouvre le tournoi dans le panneau Tournois."
+msgstr "**Open tournament** — opens the tournament in the Tournaments panel."
+
+#: ../../source/manuel_stats.rst:452
+msgid ""
+"**Ouvrir les positions** — charge toutes les positions du tournoi dans le"
+" panneau d'analyse."
+msgstr ""
+"**Open positions** — loads all positions from the tournament into the "
+"analysis panel."
+
+#: ../../source/manuel_stats.rst:456
+msgid "Scatter plot par match"
+msgstr "Match scatter plot"
+
+#: ../../source/manuel_stats.rst:458
+msgid ""
+"Un nuage de points représente chaque match (axe X : date, axe Y : PR ou "
+"MWC). La taille du point est proportionnelle au nombre de décisions dans "
+"le match. Un match sans date n'y figure pas."
+msgstr ""
+"A scatter plot shows each match (X axis: date, Y axis: PR or MWC). The "
+"size of each point is proportional to the number of decisions in the "
+"match. A match without a date does not appear."
+
+#: ../../source/manuel_stats.rst:462
+msgid "Cliquer sur un point ouvre un menu contextuel :"
+msgstr "Clicking a point opens a context menu:"
+
+#: ../../source/manuel_stats.rst:464
+msgid "**Ouvrir le match** — ouvre le match dans le panneau des matchs."
+msgstr "**Open match** — opens the match in the Matches panel."
+
+#: ../../source/manuel_stats.rst:465
+msgid ""
+"**Ouvrir les positions** — charge toutes les positions du match dans le "
+"panneau d'analyse."
+msgstr ""
+"**Open positions** — loads all positions from the match into the analysis"
+" panel."
+
+#: ../../source/manuel_stats.rst:469
+msgid "Onglet Erreurs"
+msgstr "Errors tab"
+
+#: ../../source/manuel_stats.rst:471
+msgid "L'onglet **Erreurs** décompose les sources d'erreurs."
+msgstr "The **Errors** tab breaks down error sources."
+
+#: ../../source/manuel_stats.rst:473
+msgid "Onglet Erreurs du panneau Stats"
+msgstr "Errors tab of the Stats panel"
+
+#: ../../source/manuel_stats.rst:477
+msgid "L'onglet Erreurs : répartition du PR par action de videau."
+msgstr "The Errors tab: PR breakdown by cube action."
+
+#: ../../source/manuel_stats.rst:480
+msgid "Erreurs récurrentes"
+msgstr "Recurring errors"
+
+#: ../../source/manuel_stats.rst:482
+msgid ""
+"En tête de l'onglet, un tableau regroupe les erreurs du filtre courant — "
+"donc celles d'un seul joueur quand un joueur est filtré — par **plan de "
+"jeu** et par **thème**, la plus coûteuse d'abord. Il répond à la question"
+" « où est-ce que je perds le plus ? » : par exemple, « tenue · trop de "
+"blots »."
+msgstr ""
+"At the top of the tab, a table groups the errors of the current filter — "
+"so those of a single player when a player is filtered — by **game plan** "
+"and by **theme**, the most costly first. It answers the question \"where "
+"am I losing the most?\": for example, \"holding · too many blots\"."
+
+#: ../../source/manuel_stats.rst:487
+msgid ""
+"Une **erreur** est une décision comptée dont le coût atteint le seuil "
+"*Erreur* de la bibliothèque."
+msgstr ""
+"An **error** is a counted decision whose cost reaches the library's "
+"*Error* threshold."
+
+#: ../../source/manuel_stats.rst:489
+msgid ""
+"Le **plan de jeu** est celui du joueur au trait, tel que l'onglet "
+"Ventilations le présente."
+msgstr ""
+"The **game plan** is that of the player on roll, as the Breakdowns tab "
+"presents it."
+
+#: ../../source/manuel_stats.rst:491
+msgid ""
+"Le **thème** d'un coup de pions est celui que nomment les règles de la "
+"phrase d'explication du :ref:`panneau Analyse <panneau_analyse>` : gammon"
+" sous-estimé, trop de blots, point non fait, trop passif. Celui d'une "
+"décision de videau est le sens de l'erreur, comme dans la direction des "
+"erreurs de videau ci-dessous : double manqué, double prématuré, passe à "
+"tort, prise à tort."
+msgstr ""
+"The **theme** of a checker play is the one named by the rules of the "
+"explanation sentence in the :ref:`Analysis panel <panneau_analyse>`: "
+"gammon underestimated, too many blots, point not made, too passive. That "
+"of a cube decision is the direction of the error, as in the cube error "
+"direction below: missed double, premature double, wrong pass, wrong take."
+
+#: ../../source/manuel_stats.rst:497
+msgid ""
+"Une erreur qu'aucune règle ne nomme avec assurance n'est pas devinée : "
+"elle sort du classement et apparaît à part, sous le tableau, en une ligne"
+" par plan de jeu (« sans thème identifié : N erreurs, coût X »), "
+"cliquable elle aussi. Ce reste est souvent le plus lourd, car "
+"l'explication ne se prononce qu'à partir de 60 mp, au-dessus du seuil "
+"*Erreur* : classé avec les autres, il coifferait un tableau qui ne dirait"
+" rien."
+msgstr ""
+"An error that no rule names with confidence is not guessed: it leaves the"
+" ranking and appears apart, under the table, as one line per game plan "
+"(\"no theme identified: N errors, cost X\"), clickable too. This "
+"remainder is often the heaviest, because the explanation only speaks from"
+" 60 mp, above the *Error* threshold: ranked with the others, it would top"
+" a table that said nothing."
+
+#: ../../source/manuel_stats.rst:503
+msgid ""
+"Le **coût** est la part du PR du filtre que le groupe représente : la "
+"formule du PR appliquée aux erreurs du groupe, rapportée à toutes les "
+"décisions comptées. Les coûts des groupes ne dépassent donc jamais le PR."
+msgstr ""
+"The **cost** is the share of the filter's PR that the group represents: "
+"the PR formula applied to the group's errors, divided by all counted "
+"decisions. The costs of the groups therefore never exceed the PR."
+
+#: ../../source/manuel_stats.rst:507
+msgid ""
+"Cliquer sur un groupe, ou sur son nombre d'erreurs, charge ses positions,"
+" de la plus coûteuse à la moins coûteuse. Le thème est recalculé à chaque"
+" affichage, jamais enregistré : comme le plan de jeu, c'est une étiquette"
+" dérivée, non modifiable. En ligne de commande : ``blunderdb stats "
+"recurring`` (voir :ref:`cli_stats`)."
+msgstr ""
+"Clicking a group, or its error count, loads its positions, from the most "
+"costly to the least costly. The theme is recomputed at every display, "
+"never stored: like the game plan, it is a derived label that cannot be "
+"edited. On the command line: ``blunderdb stats recurring`` (see "
+":ref:`cli_stats`)."
+
+#: ../../source/manuel_stats.rst:512
+msgid ""
+"Chaque ligne propose trois gestes pour passer de l'erreur à l'étude : "
+"**Quiz sur ce groupe** lance l'exercice Décision du panneau "
+":ref:`Entraînement <panneau_entrainement>` sur les positions du groupe, "
+"**Paquet Anki** en fait un paquet de cartes, **Collection** les range "
+"dans une nouvelle collection. Au-dessus du tableau, **Quiz de mes trois "
+"pires groupes** tire vingt positions au hasard parmi celles des trois "
+"groupes les plus coûteux. En ligne de commande, ``stats recurring "
+"--quiz`` tire ces positions et ``--deck`` crée le paquet."
+msgstr ""
+"Each row offers three ways to go from the error to study: **Quiz this "
+"group** starts the Decision exercise of the :ref:`Training "
+"<panneau_entrainement>` panel on the group's positions, **Anki deck** "
+"makes a deck of cards from them, **Collection** files them in a new "
+"collection. Above the table, **Quiz my three worst groups** draws twenty "
+"positions at random from those of the three costliest groups. On the "
+"command line, ``stats recurring --quiz`` draws these positions and "
+"``--deck`` creates the deck."
+
+#: ../../source/manuel_stats.rst:522
+msgid "Répartition par action de videau"
+msgstr "Breakdown by cube action"
+
+#: ../../source/manuel_stats.rst:524
+msgid ""
+"Un diagramme en barres affiche le PR (ou MWC) pour chaque type de "
+"décision de videau : *NoDouble*, *DoubleTake*, *DoublePass*, *TooGood*. "
+"Chaque barre indique également le nombre de décisions et le taux de "
+"blunders en infobulle."
+msgstr ""
+"A bar chart displays the PR (or MWC) for each type of cube decision: "
+"*NoDouble*, *DoubleTake*, *DoublePass*, *TooGood*. Each bar also shows "
+"the number of decisions and the blunder rate in a tooltip."
+
+#: ../../source/manuel_stats.rst:528
+msgid ""
+"Cliquer sur une barre charge les positions correspondant à cette action "
+"de videau, **uniquement celles avec une erreur** (drill-down)."
+msgstr ""
+"Clicking a bar loads the positions matching that cube action, **only "
+"those with an error** (drill-down)."
+
+#: ../../source/manuel_stats.rst:532
+msgid "Direction des erreurs de videau"
+msgstr "Direction of cube errors"
+
+#: ../../source/manuel_stats.rst:534
+msgid ""
+"La répartition ci-dessus indique *combien* coûtent les décisions de "
+"videau ; ce tableau indique dans *quel sens* elles se trompent."
+msgstr ""
+"The breakdown above says *how much* cube decisions cost; this table says "
+"in *which direction* they go wrong."
+
+#: ../../source/manuel_stats.rst:537
+msgid ""
+"Une position de videau porte deux décisions prises par deux joueurs "
+"différents, présentées ici en deux lignes :"
+msgstr ""
+"A cube position carries two decisions taken by two different players, "
+"presented here as two rows:"
+
+#: ../../source/manuel_stats.rst:540
+msgid ""
+"**Offrir** — le joueur qui tient le videau double ou ne double pas. Ses "
+"erreurs sont les **doubles manqués** (il fallait doubler) et les "
+"**doubles prématurés** (il ne fallait pas)."
+msgstr ""
+"**Offer** — the player holding the cube doubles or does not. Their errors"
+" are the **missed doubles** (a double was called for) and the **premature"
+" doubles** (it was not)."
+
+#: ../../source/manuel_stats.rst:544
+msgid ""
+"**Répondre** — le joueur à qui le videau est offert prend ou passe. Ses "
+"erreurs sont les **passes à tort** (une prise correcte a été passée) et "
+"les **prises à tort** (une passe correcte a été prise)."
+msgstr ""
+"**Answer** — the player being offered the cube takes or passes. Their "
+"errors are the **wrong passes** (a correct take was passed) and the "
+"**wrong takes** (a correct pass was taken)."
+
+#: ../../source/manuel_stats.rst:548
+msgid ""
+"Les deux lignes restent séparées à dessein : un joueur peut parfaitement "
+"doubler tard *et* prendre large, et un indicateur unique appellerait cela"
+" « équilibré » en perdant les deux moitiés de l'information."
+msgstr ""
+"The two rows are deliberately kept apart: a player can perfectly well "
+"double late *and* take loosely, and a single figure would call that "
+"\"balanced\" while losing both halves of the information."
+
+#: ../../source/manuel_stats.rst:552
+msgid ""
+"Chaque case affiche le nombre de décisions ; l'infobulle donne l'équité "
+"perdue cumulée. Cliquer sur une case charge les positions "
+"correspondantes. Une case à zéro n'est pas cliquable."
+msgstr ""
+"Each cell shows the number of decisions; the tooltip gives the cumulated "
+"equity lost. Clicking a cell loads the matching positions. A cell at zero"
+" is not clickable."
+
+#: ../../source/manuel_stats.rst:557
+msgid ""
+"Ce tableau compte des décisions, il ne porte pas de jugement. À partir de"
+" quel écart une tendance mérite d'être nommée dépend de l'effectif et "
+"d'un point de référence, qui ne sont pas des données du moteur."
+msgstr ""
+"This table counts decisions, it passes no judgement. At what gap a "
+"tendency deserves to be named depends on the sample size and on a point "
+"of reference, neither of which the engine holds."
+
+#: ../../source/manuel_stats.rst:562
+msgid "Répartition Checker / Cube"
+msgstr "Checker / Cube comparison"
+
+#: ../../source/manuel_stats.rst:564
+msgid ""
+"Un diagramme comparatif place côte à côte le PR des coups joués et des "
+"décisions de videau. Cliquer sur une barre charge les positions du sous-"
+"ensemble avec erreur."
+msgstr ""
+"A comparison chart places checker plays and cube decisions side by side. "
+"Clicking a bar loads the positions in the subset with an error."
+
+#: ../../source/manuel_stats.rst:569
+msgid "Histogramme des magnitudes d'erreur"
+msgstr "Error magnitude histogram"
+
+#: ../../source/manuel_stats.rst:571
+msgid ""
+"Un histogramme distribue les erreurs selon leur magnitude en millipoints "
+"(mpt, tranches : 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Cliquer sur une"
+" barre charge les positions de la tranche."
+msgstr ""
+"A histogram distributes errors by magnitude in millipoints (mpt, buckets:"
+" 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Clicking a bar loads the "
+"positions in the bucket."
+
+#: ../../source/manuel_stats.rst:578
+msgid "Entraînement dans le temps"
+msgstr "Training over time"
+
+#: ../../source/manuel_stats.rst:580
+msgid ""
+"L'onglet **Entraînement** met côte à côte, sur les mêmes fenêtres "
+"calendaires — la **semaine** ou le **mois**, au choix — trois séries qui "
+"mesurent la progression par trois chemins :"
+msgstr ""
+"The **Training** tab sets side by side, over the same calendar windows — "
+"the **week** or the **month**, as you choose — three series that measure "
+"progress in three ways:"
+
+#: ../../source/manuel_stats.rst:584
+msgid ""
+"le **PR du quiz** : celui des sessions de l'exercice Décision du panneau "
+"Entraînement, pondéré par le nombre de décisions jugées. Il est calculé "
+"sur l'échelle du PR réel, donc comparable à lui ;"
+msgstr ""
+"the **quiz PR**: that of the Decision exercise sessions in the Training "
+"panel, weighted by the number of decisions judged. It is computed on the "
+"real PR scale, so it is comparable to it;"
+
+#: ../../source/manuel_stats.rst:587
+msgid ""
+"le **PR des matchs** du filtre courant, pondéré par le nombre de "
+"décisions ;"
+msgstr ""
+"the **match PR** of the current filter, weighted by the number of "
+"decisions;"
+
+#: ../../source/manuel_stats.rst:588
+msgid ""
+"la **rétention Anki** : la part des révisions de cartes déjà apprises "
+"notées *Difficile* ou mieux, lue sur l'axe de droite (en %)."
+msgstr ""
+"the **Anki retention**: the share of reviews of already learned cards "
+"graded *Hard* or better, read on the right axis (in %)."
+
+#: ../../source/manuel_stats.rst:591
+msgid ""
+"Sous le graphique, le **PR du quiz par plan de jeu** range les décisions "
+"du quiz tirées de positions de la bibliothèque, les pires plans d'abord, "
+"avec le PR de la dernière fenêtre où le plan a été joué."
+msgstr ""
+"Below the chart, the **quiz PR by plan of play** lists the quiz decisions"
+" drawn from library positions, the worst plans first, with the PR of the "
+"last window in which the plan was played."
+
+#: ../../source/manuel_stats.rst:595
+msgid ""
+"Entre parenthèses, le nombre de décisions ou de révisions derrière chaque"
+" valeur : une fenêtre sans échantillon n'a pas de valeur — un tiret, pas "
+"un zéro. Le nombre de décisions de matchs d'une fenêtre ouvre leurs "
+"positions. Le filtre ne restreint que les matchs ; le journal du quiz et "
+"celui d'Anki sont les vôtres et ne portent pas de joueur. Rien n'est "
+"enregistré en plus : les trois séries sont relues dans les journaux "
+"existants. En ligne de commande : ``blunderdb stats training`` (voir "
+":ref:`cli_stats`)."
+msgstr ""
+"In parentheses, the number of decisions or reviews behind each value: a "
+"window without samples has no value — a dash, not a zero. A window's "
+"number of match decisions opens their positions. The filter restricts the"
+" matches only; the quiz and Anki journals are yours and carry no player. "
+"Nothing more is recorded: the three series are read back from the "
+"existing journals. On the command line: ``blunderdb stats training`` (see"
+" :ref:`cli_stats`)."
+
+#: ../../source/manuel_stats.rst:603
+msgid "Onglet Ventilations"
+msgstr "Breakdowns tab"
+
+#: ../../source/manuel_stats.rst:605
+msgid ""
+"L'onglet **Ventilations** découpe les mêmes décisions que les chiffres "
+"globaux selon quatre axes. Aucun d'eux ne redéfinit ce qui compte comme "
+"une décision : ce serait un second PR sous le même nom."
+msgstr ""
+"The **Breakdowns** tab slices the same decisions the global figures count"
+" along four axes. None of them redefines what counts as a decision: that "
+"would be a second PR wearing the same name."
+
+#: ../../source/manuel_stats.rst:609
+msgid ""
+"**Par phase de partie** — ouverture, milieu de partie, course, sortie des"
+" pions. C'est ce qui répond à « mon PR en course contre mon PR en contact"
+" ». L'étiquette est calculée depuis le plateau (voir "
+":ref:`panneau_recherche`) ; une base dont les phases n'ont jamais été "
+"calculées range tout sous *Non classée*, et ``blunderdb repair`` la "
+"remplit."
+msgstr ""
+"**By game phase** — opening, middlegame, race, bearoff. This is what "
+"answers “my PR in the race versus my PR in contact”. The label is "
+"computed from the board (see :ref:`panneau_recherche`); a database whose "
+"phases were never computed files everything under *Unclassified*, and "
+"``blunderdb repair`` fills it in."
+
+#: ../../source/manuel_stats.rst:615
+msgid ""
+"**Par plan de jeu** — course, blitz, tenue, backgame, amorce contre "
+"amorce… C'est la ventilation pour laquelle le classificateur existe : « "
+"où est-ce que je perds le plus ? », plan par plan. Même étiquette dérivée"
+" que la phase, mêmes réserves, et ``blunderdb repair`` la remplit de la "
+"même façon."
+msgstr ""
+"**By plan of play** — race, blitz, holding, backgame, prime vs prime… "
+"This is the breakdown the classifier exists for: “where do I lose the "
+"most?”, plan by plan. The same derived label as the phase, the same "
+"caveats, and ``blunderdb repair`` fills it the same way."
+
+#: ../../source/manuel_stats.rst:621
+msgid ""
+"**Par étiquette** — les ``#mot`` écrits dans les commentaires. Une "
+"position peut en porter plusieurs : **ces lignes ne s'additionnent pas au"
+" total**, et le panneau le dit sous le tableau. Une étiquette qualifie, "
+"elle ne partitionne pas."
+msgstr ""
+"**By tag** — the ``#word`` written in the comments. A position may carry "
+"several: **these rows do not sum to the total**, and the panel says so "
+"under the table. A tag labels; it does not partition."
+
+#: ../../source/manuel_stats.rst:626
+msgid ""
+"**Par score** — l'écart au but des deux camps, lu du côté du joueur au "
+"trait, donc du côté de celui qui décide. La ligne *Money* est la partie "
+"d'argent. Une cellule sans intervalle est **grisée avec son effectif "
+"visible** plutôt que cachée (voir ci-dessous)."
+msgstr ""
+"**By score** — both sides' away score, read from the side of the player "
+"on roll, that is from the side of whoever is deciding. The *Money* row is"
+" money play. A cell with fewer than ten decisions is **greyed with its "
+"count still visible** rather than hidden: too few to read, but the "
+"omission stays auditable."
+
+#: ../../source/manuel_stats.rst:631
+msgid ""
+"Les colonnes **Positions** et **Bourdes** comptent des positions "
+"distinctes, et chaque chiffre est un lien : un clic charge exactement ces"
+" positions dans le panneau d'analyse, comme les compteurs de la barre "
+"d'état. *Bourdes* compte les positions où au moins une décision est une "
+"bourde. Une position jouée dans plusieurs matchs (une ouverture, par "
+"exemple) n'y compte qu'une fois ; la colonne **Décisions** la compte à "
+"chaque fois, car c'est le dénominateur du PR."
+msgstr ""
+"The **Positions** and **Blunders** columns count distinct positions, and "
+"every figure is a link: a click loads exactly these positions into the "
+"analysis panel, like the counters of the status bar. *Blunders* counts "
+"the positions where at least one decision is a blunder. A position played"
+" in several matches (an opening, for example) counts only once there; the"
+" **Decisions** column counts it each time, because it is the denominator "
+"of the PR."
+
+#: ../../source/manuel_stats.rst:638
+msgid ""
+"Chaque ligne porte son **intervalle de confiance à 95 %** (colonne *IC 95"
+" %*), qui remplace le seuil fixe de dix décisions : il dit ce que vaut un"
+" PR, pas seulement combien de décisions le portent. Il rééchantillonne "
+"les **matchs** de la sélection, pas les décisions ni les parties : les "
+"parties d'un match partagent adversaire, séance et fatigue, et les "
+"compter comme indépendantes donnerait un intervalle trop étroit ; sans "
+"filtre joueur, les deux sièges d'un match forment une seule unité. Une "
+"ligne qui repose sur moins de trois matchs, ou dont tous les matchs "
+"donnent le même PR, n'a pas d'intervalle et est grisée, même avec "
+"beaucoup de décisions : deux matchs ne disent rien de la dispersion, et "
+"des matchs identiques disent qu'ils s'accordent, pas que le PR est exact."
+" Pour l'étude : une famille de positions dont l'intervalle reste au-"
+"dessus de votre PR global est une faiblesse établie ; une ligne à "
+"l'intervalle large ne justifie pas encore un plan de travail. Le PR "
+"global du tableau de bord porte le même intervalle, sous sa carte."
+msgstr ""
+"Each row carries its **95 % confidence interval** (column *95 % CI*), "
+"which replaces the fixed ten-decision threshold: it says what a PR is "
+"worth, not only how many decisions carry it. It resamples the **matches**"
+" of the selection, not the decisions or the games: the games of a match "
+"share opponent, session and fatigue, and counting them as independent "
+"would give too narrow an interval; with no player filter, the two seats "
+"of a match form a single unit. A row that rests on fewer than three "
+"matches, or whose matches all give the same PR, has no interval and is "
+"greyed out, even with many decisions: two matches say nothing about the "
+"dispersion, and identical matches say they agree, not that the PR is "
+"exact. For study: a family of positions whose interval stays above your "
+"overall PR is an established weakness; a row with a wide interval does "
+"not yet justify a study plan. The dashboard's overall PR carries the same"
+" interval, under its card."
+
+#: ../../source/manuel_stats.rst:653
+msgid ""
+"Dans la ventilation par score, un score post-Crawford est lu comme 1-away"
+" : la partie Crawford et les parties post-Crawford au même score tombent "
+"dans la même cellule."
+msgstr ""
+"In the breakdown by score, a post-Crawford score is read as 1-away: the "
+"Crawford game and the post-Crawford games at the same score fall into the"
+" same cell."
+
+#: ../../source/manuel_stats.rst:658
+msgid "Étude et jeu réel"
+msgstr "Study and real play"
+
+#: ../../source/manuel_stats.rst:660
+msgid ""
+"La commande ``blunderdb list --type study --days 30`` met côte à côte, "
+"plan de jeu par plan de jeu, trois nombres : combien de **positions "
+"distinctes** ont été révisées sur la période, quel était le PR **avant** "
+"elle, quel est le PR **depuis**."
+msgstr ""
+"The command ``blunderdb list --type study --days 30`` puts three numbers "
+"side by side, plan of play by plan of play: how many **distinct "
+"positions** were revised over the period, what the PR was **before** it, "
+"what the PR is **since**."
+
+#: ../../source/manuel_stats.rst:665
+msgid ""
+"Trois nombres, et pas un quatrième. Il n'y a **ni colonne de gain ni "
+"flèche**, parce que rien ici ne contrôle quoi que ce soit : le joueur a "
+"pu rencontrer des adversaires plus forts, changer de format, ou "
+"simplement jouer plus de courses ce mois-ci. Le rapprochement est celui "
+"du lecteur ; une colonne qui annoncerait un effet affirmerait une "
+"causalité que ces données ne portent pas. Les nombres, eux, sont exacts."
+msgstr ""
+"Three numbers, and no fourth. There is **no gain column and no arrow**, "
+"because nothing here controls for anything: the player may have met "
+"stronger opponents, changed format, or simply played more races this "
+"month. The rapprochement is the reader's; a column announcing an effect "
+"would claim a causality these data do not carry. The numbers themselves "
+"are exact."
+
+#: ../../source/manuel_stats.rst:672
+msgid ""
+"Les révisions sont comptées en **positions distinctes** : une carte revue"
+" quatre fois dans le mois est une position étudiée, et compter les "
+"répétitions ferait passer un mois de bachotage pour un mois de "
+"couverture. Les décisions du PR, elles, sont toutes comptées — chacune a "
+"été prise une fois. Un PR appuyé sur moins de dix décisions s'affiche "
+"``—``, avec son effectif visible à côté."
+msgstr ""
+"Reviews are counted as **distinct positions**: a card revised four times "
+"in the month is one position studied, and counting the repetitions would "
+"make a month of cramming look like a month of coverage. The PR's "
+"decisions, on the other hand, are all counted — each was taken once. A PR"
+" resting on fewer than ten decisions shows ``—``, with its sample visible"
+" beside it."
+
+#: ../../source/manuel_stats.rst:680
+msgid "Onglet Joueurs"
+msgstr "Players tab"
+
+#: ../../source/manuel_stats.rst:682
+msgid ""
+"Les cinq onglets précédents décrivent **un** joueur ; l'onglet "
+"**Joueurs** les compare tous. Il affiche une ligne par joueur de la base,"
+" ce qui répond au besoin d'un organisateur suivant une compétition "
+"entière plutôt qu'un joueur en particulier."
+msgstr ""
+"The five previous tabs describe **one** player; the **Players** tab "
+"compares them all. It shows one row per player in the database, which "
+"answers the need of an organiser following a whole competition rather "
+"than one particular player."
+
+#: ../../source/manuel_stats.rst:687
+msgid "Onglet Joueurs du panneau Stats"
+msgstr "Players tab of the Stats panel"
+
+#: ../../source/manuel_stats.rst:691
+msgid ""
+"L'onglet Joueurs : une ligne par joueur, triable par n'importe quelle "
+"colonne."
+msgstr "The Players tab: one row per player, sortable by any column."
+
+#: ../../source/manuel_stats.rst:694
+msgid "Colonnes, dans l'ordre :"
+msgstr "Columns, in order:"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Colonne"
+msgstr "Column"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Signification"
+msgstr "Meaning"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Joueur"
+msgstr "Player"
+
+#: ../../source/manuel_stats.rst:1
+msgid ""
+"Le nom **tel qu'il figure dans les matchs**. Un joueur enregistré sous "
+"deux orthographes apparaît sur deux lignes, sauf si l'une est un alias de"
+" l'autre (section Corpus des paramètres) : la ligne porte alors le nom "
+"canonique."
+msgstr ""
+"The name **as it appears in the matches**. A player recorded under two "
+"spellings shows up on two rows, unless one is an alias of the other "
+"(Corpus section of the settings): the row then carries the canonical "
+"name."
+
+#: ../../source/manuel_stats.rst:1
+msgid "Matchs"
+msgstr "Matches"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Nombre de matchs disputés dans la période retenue."
+msgstr "Number of matches played within the retained period."
+
+#: ../../source/manuel_stats.rst:1
+msgid "V–D"
+msgstr "W–L"
+
+#: ../../source/manuel_stats.rst:1
+msgid ""
+"Victoires et défaites. Un match inachevé (journal tronqué, abandon) ne "
+"compte ni l'une ni l'autre : V + D peut donc être inférieur au nombre de "
+"matchs."
+msgstr ""
+"Wins and losses. An unfinished match (truncated log, resignation) counts "
+"as neither: W + L can therefore be lower than the number of matches."
+
+#: ../../source/manuel_stats.rst:1
+msgid "Décisions"
+msgstr "Decisions"
+
+#: ../../source/manuel_stats.rst:1
+msgid ""
+"Nombre de décisions comptées — le dénominateur du PR. C'est la colonne "
+"qui dit ce que valent les taux voisins : un PR calculé sur douze "
+"décisions ne signifie rien."
+msgstr ""
+"Number of counted decisions — the PR's denominator. This is the column "
+"that says what the neighbouring rates are worth: a PR computed over "
+"twelve decisions means nothing."
+
+#: ../../source/manuel_stats.rst:1
+msgid "Performance Rating global."
+msgstr "Overall Performance Rating."
+
+#: ../../source/manuel_stats.rst:1
+msgid "PR pions, PR videau"
+msgstr "Checker PR, Cube PR"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Le PR ventilé par type de décision."
+msgstr "The PR split by decision type."
+
+#: ../../source/manuel_stats.rst:1
+msgid "Snowie"
+msgstr "Snowie"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Snowie Error Rate (voir :ref:`stats_parity`)."
+msgstr "Snowie Error Rate (see :ref:`stats_parity`)."
+
+#: ../../source/manuel_stats.rst:1
+msgid "Blunders"
+msgstr "Blunders"
+
+#: ../../source/manuel_stats.rst:1
+msgid ""
+"Nombre d'erreurs atteignant le seuil de blunder de la bibliothèque (0,100"
+" EMG par défaut). Cliquer sur ce nombre charge ces positions dans le "
+"panneau d'analyse."
+msgstr ""
+"Number of errors reaching the library's blunder threshold (0.100 EMG by "
+"default). Clicking this number loads those positions into the analysis "
+"panel."
+
+#: ../../source/manuel_stats.rst:1
+msgid "Chance"
+msgstr "Luck"
+
+#: ../../source/manuel_stats.rst:1
+msgid ""
+"Chance moyenne par lancer, en millipoints (mpt), signée : positive si les"
+" dés ont été favorables."
+msgstr ""
+"Average luck per roll, in millipoints (mpt), signed: positive if the dice"
+" were favourable."
+
+#: ../../source/manuel_stats.rst:710
+msgid "Utilisation :"
+msgstr "Use:"
+
+#: ../../source/manuel_stats.rst:712
+msgid ""
+"**Trier** — cliquez sur un en-tête de colonne. Le tableau s'ouvre trié "
+"par PR croissant, meilleur joueur en tête, et retient d'une session à "
+"l'autre le dernier tri choisi. Les joueurs dont rien n'a été mesuré "
+"restent en bas quel que soit le sens du tri : un zéro faute de données "
+"n'est pas une performance parfaite."
+msgstr ""
+"**Sort** — click a column header. The table opens sorted by ascending PR,"
+" best player first, and remembers the last sort chosen from one session "
+"to the next. Players for whom nothing was measured stay at the bottom "
+"whichever way the sort goes: a zero for lack of data is not a perfect "
+"performance."
+
+#: ../../source/manuel_stats.rst:717
+msgid ""
+"**Filtrer par colonne** — la ligne de champs sous les en-têtes filtre "
+"chaque colonne : un morceau de nom pour le texte, une borne pour les "
+"nombres (``>=500``, ``>500``, ``<2.5``, ``<=2``), un intervalle (``3-7``)"
+" ou une valeur exacte (``5``). Un champ illisible est encadré de rouge et"
+" ne filtre rien ; une valeur jamais mesurée ne passe aucune borne. Les "
+"filtres de colonne durent le temps de la session. Le **classement** des "
+"joueurs se lit ainsi : tri par PR, colonne *Décisions* filtrée par "
+"``>=500``. Tous les tableaux du panneau Stats — ventilations, corpus, "
+"erreurs récurrentes, temps de réflexion, entraînement, biais, effet de "
+"l'étude — se trient et se filtrent de la même façon."
+msgstr ""
+"**Filter by column** — the row of fields under the headers filters each "
+"column: a piece of a name for text, a bound for numbers (``>=500``, "
+"``>500``, ``<2.5``, ``<=2``), a range (``3-7``) or an exact value "
+"(``5``). An unreadable field is outlined in red and filters nothing; a "
+"value never measured passes no bound. Column filters last for the "
+"session. The player **ranking** reads like this: sort by PR, *Decisions* "
+"column filtered by ``>=500``. All the tables of the Stats panel — "
+"breakdowns, corpus, recurring errors, thinking time, training, bias, "
+"study effect — are sorted and filtered the same way."
+
+#: ../../source/manuel_stats.rst:727
+msgid ""
+"**Ouvrir le détail d'un joueur** — cliquez sur une ligne. Le joueur est "
+"sélectionné dans la barre de filtres et l'affichage bascule sur l'onglet "
+"Tableau de bord."
+msgstr ""
+"**Open a player's detail** — click a row. The player is selected in the "
+"filter bar and the display switches to the Dashboard tab."
+
+#: ../../source/manuel_stats.rst:730
+msgid ""
+"**Ouvrir ses décisions** — le nombre de décisions ouvre leurs positions, "
+"sous les filtres du tableau. Le nombre de matchs et le bilan V–D restent "
+"de simples nombres : ils comptent aussi les matchs sans décision "
+"analysée, qu'aucune liste de matchs ne reproduit."
+msgstr ""
+"**Open one's decisions** — the number of decisions opens their positions,"
+" under the table's filters. The number of matches and the W–L record "
+"remain plain numbers: they also count matches without any analysed "
+"decision, which no match list reproduces."
+
+#: ../../source/manuel_stats.rst:734
+msgid ""
+"**Restreindre la période** — les filtres de dates, de tournois et de "
+"longueur de match s'appliquent normalement, ce qui permet de borner le "
+"tableau aux dates d'une compétition."
+msgstr ""
+"**Narrow the period** — the date, tournament and match-length filters "
+"apply as usual, which makes it possible to bound the table to the dates "
+"of a competition."
+
+#: ../../source/manuel_stats.rst:737
+msgid ""
+"**Comparer deux joueurs** — cochez la case de la première colonne sur "
+"deux lignes. Un bloc apparaît au-dessus du tableau et met leurs "
+"indicateurs face à face ; cocher un troisième joueur remplace le plus "
+"ancien des deux. La case ne sélectionne pas la ligne : cocher compare, "
+"cliquer ouvre le détail."
+msgstr ""
+"**Compare two players** — tick the box in the first column on two rows. A"
+" block appears above the table and sets their figures face to face; "
+"ticking a third player replaces the older of the two. The box does not "
+"select the row: ticking compares, clicking opens the detail."
+
+#: ../../source/manuel_stats.rst:741
+msgid ""
+"**Voir les positions où l'un a mieux joué** — le bouton du bloc de "
+"comparaison liste les positions que les deux joueurs ont eu à jouer et où"
+" l'un a bien joué (en dessous du seuil Erreur de la bibliothèque) et "
+"l'autre non, l'écart le plus large d'abord ; le joueur est jugé sur son "
+"pire coup de la position. *Ouvrir ces positions* les charge dans la vue "
+"analyse. La ligne de commande et le serveur donnent la même liste "
+"(``stats contrast``)."
+msgstr ""
+"**See the positions where one played better** — the button of the "
+"comparison block lists the positions both players had to play and where "
+"one played well (below the library's Error threshold) and the other did "
+"not, widest gap first; a player is judged on their worst play of the "
+"position. *Open these positions* loads them into the analysis view. The "
+"command line and the server give the same list (``stats contrast``)."
+
+#: ../../source/manuel_stats.rst:747
+msgid ""
+"**Noter les coups d'abord** — la liste ne compare que les coups dont "
+"l'erreur est notée, et aucun import ne les note : la notation se fait sur"
+" demande. Tant qu'il en reste à noter, le bloc en donne le nombre avec un"
+" bouton *Noter les coups* ; la ligne de commande fait la même chose avec "
+"``repair --move-errors``."
+msgstr ""
+"**Score the plays first** — the list only compares plays whose error is "
+"scored, and no import scores them: scoring is done on request. While some"
+" remain to be scored, the block gives their number with a *Score the "
+"plays* button; the command line does the same with ``repair --move-"
+"errors``."
+
+#: ../../source/manuel_stats.rst:752
+msgid ""
+"Dans ce bloc, **seuls les taux reçoivent un verdict**, et le meilleur des"
+" deux est mis en gras. Trois indicateurs n'en reçoivent jamais, et il "
+"vaut de dire pourquoi. La **chance** n'est pas une qualité : un joueur "
+"plus chanceux n'est pas meilleur. Les **matchs, le bilan et les "
+"décisions** situent ce que les taux valent, mais les mettre en "
+"compétition ferait gagner celui qui a simplement joué davantage. Le "
+"**nombre de blunders** ne se compare pas brut — douze sur mille décisions"
+" valent mieux que dix sur cent —, aussi le bloc ajoute-t-il une ligne "
+"*Blunders / 100 déc.* qui, elle, se compare, et laisse le compte à côté "
+"comme contexte."
+msgstr ""
+"In that block, **only the rates get a verdict**, and the better of the "
+"two is set in bold. Three figures never get one, and it is worth saying "
+"why. **Luck** is not a quality: a luckier player is not a better one. "
+"**Matches, record and decisions** say what the rates are worth, but "
+"putting them in competition would let whoever simply played more win. The"
+" **blunder count** does not compare raw — twelve out of a thousand "
+"decisions beat ten out of a hundred — so the block adds a *Blunders / 100"
+" dec.* line, which does compare, and leaves the count beside it as "
+"context."
+
+#: ../../source/manuel_stats.rst:762
+msgid ""
+"Une égalité n'est pas une victoire : elle n'est mise en gras d'aucun "
+"côté. Un taux qui n'a rien derrière lui s'affiche « — » et ne départage "
+"rien."
+msgstr ""
+"A tie is not a win: it is set in bold on neither side. A rate with "
+"nothing behind it shows as “—” and decides nothing."
+
+#: ../../source/manuel_stats.rst:766
+msgid ""
+"Dans cet onglet, le choix du **type de décision** est désactivé : le "
+"tableau ventile déjà les décisions de pions et de videau en colonnes "
+"distinctes. Le joueur de la barre de filtres reste actif : le tableau "
+"montre toujours tous les joueurs, et la ligne de celui-ci est mise en "
+"évidence et amenée à l'écran."
+msgstr ""
+"In this tab, the **decision type** choice is disabled: the table already "
+"breaks checker and cube decisions down into separate columns. The player "
+"of the filter bar stays active: the table always shows all the players, "
+"and this player's row is highlighted and scrolled into view."
+
+#: ../../source/manuel_stats.rst:772
+msgid ""
+"Deux vues de corpus figurent dans l'onglet **Corpus** du panneau, en "
+"ligne de commande et par l'API du démon (voir :ref:`cli_stats`) : le "
+"**face-à-face** de deux joueurs (matchs communs, PR de chacun, bilan) et "
+"le **PR par fenêtre calendaire** glissante (1, 3, 6 ou 12 mois). L'onglet"
+" Corpus calcule chaque vue à la demande, sous le filtre courant. Le "
+"**classement** par PR se lit dans l'onglet Joueurs, trié par PR et filtré"
+" sur la colonne *Décisions* ; la ligne de commande et l'API le donnent "
+"aussi (``stats ranking``). Un **filtre de provenance** (champs *Moteur* "
+"et *Profondeur min.* de la barre de filtres) restreint les statistiques "
+"aux décisions analysées ainsi ; il porte sur chaque décision, et les "
+"chiffres qu'il touche sont alors recalculés depuis les décisions. Le "
+"face-à-face et le PR par fenêtre ne l'acceptent pas : tant qu'il est "
+"actif, ils refusent de se calculer. Comme le reste de la barre, il est "
+"conservé d'une session à l'autre."
+msgstr ""
+"Two corpus views are in the panel's **Corpus** tab, on the command line "
+"and through the daemon API (see :ref:`cli_stats`): the **head-to-head** "
+"of two players (common matches, each one's PR, record) and the rolling "
+"**PR per calendar window** (1, 3, 6 or 12 months). The Corpus tab "
+"computes each view on demand, under the current filter. The PR "
+"**ranking** is read in the Players tab, sorted by PR and filtered on the "
+"*Decisions* column; the command line and the API also give it (``stats "
+"ranking``). A **provenance filter** (*Engine* and *Min. depth* fields of "
+"the filter bar) restricts the statistics to decisions analysed that way; "
+"it applies to each decision, and the figures it affects are then "
+"recomputed from the decisions. The head-to-head and the PR per window do "
+"not accept it: while it is active, they refuse to compute. Like the rest "
+"of the bar, it is kept from one session to the next."
+
+#: ../../source/manuel_stats.rst:786
+msgid ""
+"Dans l'onglet Corpus, chaque ligne ouvre ce qu'elle résume. Le bilan du "
+"face-à-face ouvre ses matchs dans le panneau Matchs, qui porte alors le "
+"bouton « N matchs ouverts depuis les Stats × » : il rend la liste "
+"complète ; une ligne de face-à-face ouvre son match. Le premier joueur du"
+" face-à-face est d'emblée celui de la barre de filtres. Une ligne de "
+"fenêtre et son nombre de décisions ouvrent ses positions, son nombre de "
+"matchs ouvre les matchs. Un compte de positions du panneau Stats, quel "
+"que soit l'onglet, quitte d'abord le match en cours avant d'ouvrir sa "
+"liste ; la commande ``m`` rouvre ensuite le match au coup sauvegardé."
+msgstr ""
+"In the Corpus tab, each row opens what it summarises. The head-to-head "
+"record opens its matches in the Matches panel, which then carries the "
+"button \"N matches opened from Stats ×\": it restores the full list; a "
+"head-to-head row opens its match. The first player of the head-to-head is"
+" by default the one of the filter bar. A window row and its decision "
+"count open its positions, its match count opens the matches. A position "
+"count in the Stats panel, in whichever tab, first leaves the current "
+"match before opening its list; the ``m`` command then reopens the match "
+"at the saved move."
+
+#: ../../source/manuel_stats.rst:796
+msgid ""
+"Un tiret (« — ») signale une valeur **jamais mesurée**, à ne pas "
+"confondre avec zéro. C'est notamment le cas de la colonne Chance pour "
+"tout match importé avant la version 2.15.0 du schéma : la chance n'était "
+"alors pas conservée, et rien ne permet de la reconstituer après coup. "
+"Réimporter le fichier source ne suffit pas : l'import y reconnaît un "
+"doublon et n'applique que les marques d'étude nouvellement levées (le "
+"rapport en donne le nombre). Il faut supprimer le match, puis le "
+"réimporter. Les formats qui ne la transportent pas (BGF, Jellyfish "
+"``.mat``) n'en fourniront jamais."
+msgstr ""
+"A dash (\"—\") marks a value that was **never measured**, not to be "
+"confused with zero. That is notably the case of the Luck column for any "
+"match imported before schema version 2.15.0: luck was not stored then, "
+"and nothing allows it to be reconstructed afterwards. Re-importing the "
+"source file is not enough: the import recognises a duplicate and applies "
+"only the study marks newly raised (the report gives their number). The "
+"match must be deleted, then imported again. Formats that do not carry it "
+"(BGF, Jellyfish ``.mat``) never will."
+
+#: ../../source/manuel_stats.rst:806
+msgid "Règle d'agrégation"
+msgstr "Aggregation rule"
+
+#: ../../source/manuel_stats.rst:809
+msgid ""
+"Le PR d'un tournoi (ou d'un sous-ensemble quelconque) est calculé par la "
+"règle **somme/somme** — jamais comme moyenne des PR individuels des "
+"matchs."
+msgstr ""
+"The PR of a tournament (or any subset) is computed using the **sum/sum** "
+"rule — never as an average of individual match PRs."
+
+#: ../../source/manuel_stats.rst:813
+msgid "Formule :"
+msgstr "Formula:"
+
+#: ../../source/manuel_stats.rst:815
+msgid ""
+"PR_{tournoi} = 500 \\times \\frac{\\sum_{i} "
+"\\text{erreur}_i}{\\text{nombre total de décisions}}"
+msgstr ""
+"PR_{tournament} = 500 \\times \\frac{\\sum_{i} "
+"\\text{error}_i}{\\text{total number of decisions}}"
+
+#: ../../source/manuel_stats.rst:819
+msgid "**Exemple :** un joueur dispute deux matchs dans un tournoi —"
+msgstr "**Example:** a player plays two matches in a tournament —"
+
+#: ../../source/manuel_stats.rst:821
+msgid "Match A : 10 décisions, 0,100 d'équité perdue → PR = 5,0"
+msgstr "Match A: 10 decisions, 0.100 of lost equity → PR = 5.0"
+
+#: ../../source/manuel_stats.rst:822
+msgid "Match B : 90 décisions, 0,540 d'équité perdue → PR = 3,0"
+msgstr "Match B: 90 decisions, 0.540 of lost equity → PR = 3.0"
+
+#: ../../source/manuel_stats.rst:824
+msgid "Moyenne naïve des PR : (5,0 + 3,0) / 2 = **4,0** *(incorrect)*"
+msgstr "Naive average of PRs: (5.0 + 3.0) / 2 = **4.0** *(incorrect)*"
+
+#: ../../source/manuel_stats.rst:826
+msgid "Règle somme/somme : 500 × 0,640 / (10 + 90) = **3,2** *(correct)*"
+msgstr "Sum/sum rule: 500 × 0.640 / (10 + 90) = **3.2** *(correct)*"
+
+#: ../../source/manuel_stats.rst:828
+msgid ""
+"La règle somme/somme est la seule qui résiste à la variation de longueur "
+"des matchs (un match en 21 points pèse plus qu'un match en 1 point)."
+msgstr ""
+"The sum/sum rule is the only one that handles varying match lengths "
+"correctly (a 21-point match carries more weight than a 1-point match)."
+
+#: ../../source/manuel_stats.rst:832
+msgid "MWC : limitations"
+msgstr "MWC: limitations"
+
+#: ../../source/manuel_stats.rst:834
+msgid ""
+"Par défaut, le MWC cost est calculé à partir de la **MET Kazaross-XG2**, "
+"table de référence de facto dans le backgammon compétitif. Les résultats "
+"ne sont pas directement comparables avec des logiciels utilisant d'autres"
+" METs. C'est la même table, lue par le même point d'entrée, que celle "
+"dont l'évaluateur embarqué se sert pour ses décisions de videau au score "
+": les statistiques et le moteur ne peuvent pas diverger là-dessus. Elle "
+"donne ses valeurs propres jusqu'à 25 points à faire de chaque côté ; au-"
+"delà, elle est prolongée par une table de Zadeh calculée comme celle de "
+"GNUbg, jusqu'à 64."
+msgstr ""
+"By default, MWC cost is computed from the **Kazaross-XG2 MET**, the de "
+"facto reference table in competitive backgammon. Results are not directly"
+" comparable with software using other METs. It is the same table, read "
+"through the same entry point, that the embedded evaluator uses for its "
+"cube decisions at a match score: the statistics and the engine cannot "
+"diverge on this. It gives its own values up to 25 points to go on each "
+"side; beyond that, it is extended by a Zadeh table computed the same way "
+"as GNUbg's, up to 64."
+
+#: ../../source/manuel_stats.rst:843
+msgid ""
+"Les positions *money-game* (sans score de match) sont **exclues** du "
+"calcul MWC. Si votre base de données contient beaucoup de positions "
+"money-game, le MWC cost peut être sous-estimé ou indisponible."
+msgstr ""
+"*Money-game* positions (with no match score) are **excluded** from the "
+"MWC computation. If your database contains many money-game positions, the"
+" MWC cost may be underestimated or unavailable."
+
+#: ../../source/manuel_stats.rst:847
+msgid ""
+"Le MWC cost est cumulatif sur l'ensemble du jeu de données filtré — pas "
+"un indicateur par décision. Il mesure l'impact total de vos erreurs sur "
+"vos chances de victoire."
+msgstr ""
+"The MWC cost is cumulative over the full filtered dataset — not a per-"
+"decision indicator. It measures the total impact of your errors on your "
+"winning chances."
+

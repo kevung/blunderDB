@@ -16,7 +16,7 @@ import (
 
 // TestEvalMeasure (ADR-0012) measures gammonNet 2-ply against the exact
 // two-sided table where both answer: the figures blunderDB may print next to
-// the word "evaluated" in doc/source/manuel.rst.
+// the word "evaluated" in doc/source/manuel_eval.rst.
 //
 // Money only: the two-sided table carries no gammon-rate breakdown, so there is no
 // exact oracle for a match-score verdict.

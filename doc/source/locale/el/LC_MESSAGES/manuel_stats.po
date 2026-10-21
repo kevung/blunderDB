@@ -1,0 +1,2087 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-21 12:52+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: el\n"
+"Language-Team: el <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/manuel_stats.rst:4
+msgid "Statistiques"
+msgstr "Στατιστικά"
+
+#: ../../source/manuel_stats.rst:9
+msgid "Panneau Stats"
+msgstr "Πίνακας Stats"
+
+#: ../../source/manuel_stats.rst:12
+msgid "Introduction"
+msgstr "Εισαγωγή"
+
+#: ../../source/manuel_stats.rst:14
+msgid ""
+"Le panneau **Stats** permet d'analyser son niveau de jeu et de suivre sa "
+"progression dans le temps à partir des positions importées dans la base "
+"de données. Il calcule et affiche les indicateurs **PR** (*Performance "
+"Rating*) et **MWC cost** (Match Winning Chance cost) pour l'ensemble des "
+"positions ou un sous-ensemble filtré."
+msgstr ""
+"Ο πίνακας **Stats** επιτρέπει την ανάλυση του επιπέδου παιχνιδιού και την"
+" παρακολούθηση της προόδου στο χρόνο με βάση τις θέσεις που έχουν "
+"εισαχθεί στη βάση δεδομένων. Υπολογίζει και εμφανίζει τους δείκτες **PR**"
+" (*Performance Rating*) και **MWC cost** (Match Winning Chance cost) για "
+"το σύνολο των θέσεων ή για ένα φιλτραρισμένο υποσύνολο."
+
+#: ../../source/manuel_stats.rst:20
+msgid "Le panneau Stats est particulièrement utile pour :"
+msgstr "Ο πίνακας Stats είναι ιδιαίτερα χρήσιμος για:"
+
+#: ../../source/manuel_stats.rst:22
+msgid ""
+"**situer son niveau** par rapport aux bandes de niveau (*Classe "
+"mondiale*, *Expert*, *Avancé*…) grâce au PR global ;"
+msgstr ""
+"**τον προσδιορισμό του επιπέδου σας** σε σχέση με τις ζώνες επιπέδου "
+"(*Παγκόσμια κλάση*, *Ειδικός*, *Προχωρημένος*…) χάρη στο συνολικό PR·"
+
+#: ../../source/manuel_stats.rst:25
+msgid ""
+"**suivre sa progression** tournoi après tournoi ou match après match "
+"grâce aux graphiques de l'onglet Progression ;"
+msgstr ""
+"**την παρακολούθηση της προόδου σας** τουρνουά προς τουρνουά ή αγώνα προς"
+" αγώνα χάρη στα γραφήματα της καρτέλας Progression·"
+
+#: ../../source/manuel_stats.rst:28
+msgid ""
+"**identifier ses points faibles** : onglet Erreurs pour voir la "
+"répartition entre coups joués et décisions de videau, et la distribution "
+"des magnitudes d'erreur ;"
+msgstr ""
+"**τον εντοπισμό των αδυναμιών σας**: η καρτέλα Erreurs εμφανίζει την "
+"κατανομή μεταξύ κινήσεων πουλιών και αποφάσεων κύβου, καθώς και την "
+"κατανομή των μεγεθών σφάλματος·"
+
+#: ../../source/manuel_stats.rst:32
+msgid ""
+"**comparer les joueurs de la base** entre eux, une ligne par joueur, "
+"grâce à l'onglet Joueurs — utile pour suivre une compétition entière ;"
+msgstr ""
+"**σύγκριση των παικτών της βάσης** μεταξύ τους, μία γραμμή ανά παίκτη, "
+"μέσω της καρτέλας Παίκτες — χρήσιμο για την παρακολούθηση μιας ολόκληρης "
+"διοργάνωσης·"
+
+#: ../../source/manuel_stats.rst:35
+msgid ""
+"**accéder directement aux positions concernées** en cliquant sur "
+"n'importe quel indicateur (drill-down)."
+msgstr ""
+"**την άμεση πρόσβαση στις σχετικές θέσεις** κάνοντας κλικ σε οποιονδήποτε"
+" δείκτη (drill-down)."
+
+#: ../../source/manuel_stats.rst:38
+msgid ""
+"La définition, la formule, l'incertitude et les limites de chaque chiffre"
+" du panneau sont réunies dans :ref:`metriques`."
+msgstr ""
+"Ο ορισμός, ο τύπος, η αβεβαιότητα και τα όρια κάθε αριθμού του πίνακα "
+"συγκεντρώνονται στο :ref:`metriques`."
+
+#: ../../source/manuel_stats.rst:42
+msgid "Ouverture du panneau"
+msgstr "Άνοιγμα του πίνακα"
+
+#: ../../source/manuel_stats.rst:44
+msgid "Pour ouvrir le panneau Stats :"
+msgstr "Για να ανοίξετε τον πίνακα Stats:"
+
+#: ../../source/manuel_stats.rst:46
+msgid "Appuyer sur *CTRL-D*."
+msgstr "Πατήστε *CTRL-D*."
+
+#: ../../source/manuel_stats.rst:47
+msgid "Saisir la commande ``stats`` ou ``st`` dans la ligne de commande."
+msgstr "Πληκτρολογήστε την εντολή ``stats`` ή ``st`` στη γραμμή εντολών."
+
+#: ../../source/manuel_stats.rst:50
+msgid ""
+"Le panneau se rafraîchit automatiquement à chaque modification du filtre."
+" Il ne recalcule pas les statistiques lors d'un simple basculement PR ↔ "
+"MWC : les deux métriques sont calculées simultanément par le backend."
+msgstr ""
+"Ο πίνακας ανανεώνεται αυτόματα σε κάθε τροποποίηση του φίλτρου. Δεν "
+"επανυπολογίζει τα στατιστικά κατά την απλή εναλλαγή PR ↔ MWC: και οι δύο "
+"μετρικές υπολογίζονται ταυτόχρονα από το backend."
+
+#: ../../source/manuel_stats.rst:55
+msgid "Barre de filtre"
+msgstr "Γραμμή φίλτρου"
+
+#: ../../source/manuel_stats.rst:57
+msgid ""
+"La barre de filtre, en haut du panneau, permet de restreindre le calcul à"
+" un sous-ensemble de positions."
+msgstr ""
+"Η γραμμή φίλτρου, στο επάνω μέρος του πίνακα, επιτρέπει τον περιορισμό "
+"του υπολογισμού σε ένα υποσύνολο θέσεων."
+
+#: ../../source/manuel_stats.rst:61
+msgid "Perspective joueur"
+msgstr "Οπτική γωνία παίκτη"
+
+#: ../../source/manuel_stats.rst:63
+msgid ""
+"Le champ **Joueur** filtre les statistiques selon le joueur analysé. "
+"Taper quelques lettres réduit la liste aux noms qui les contiennent ; un "
+"clic ou *Entrée* choisit le joueur, **✕** ou un champ vidé revient à "
+"toutes les perspectives."
+msgstr ""
+"Το πεδίο **Παίκτης** φιλτράρει τα στατιστικά ανά αναλυόμενο παίκτη. "
+"Πληκτρολογώντας μερικά γράμματα η λίστα περιορίζεται στα ονόματα που τα "
+"περιέχουν· ένα κλικ ή *Enter* επιλέγει τον παίκτη, το **✕** ή ένα κενό "
+"πεδίο επαναφέρει όλες τις οπτικές γωνίες."
+
+#: ../../source/manuel_stats.rst:68
+msgid ""
+"Le filtre est **un seul** pour tous les onglets du panneau et il est "
+"conservé d'une session à l'autre. Il se règle aussi depuis les autres "
+"panneaux : le nom d'un joueur dans l'en-tête d'un match ou dans la barre "
+"au-dessus du plateau ouvre toutes ses statistiques (tournois et dates "
+"sont vidés), et le bouton **Stats** de l'en-tête d'un tournoi ouvre "
+"celles de ce tournoi entier (dates vidées, joueur conservé). Une date de "
+"fin antérieure à la date de début est refusée : le champ reprend la date "
+"appliquée."
+msgstr ""
+"Το φίλτρο είναι **ένα και μοναδικό** για όλες τις καρτέλες του πάνελ και "
+"διατηρείται από τη μία συνεδρία στην άλλη. Ρυθμίζεται επίσης από τα άλλα "
+"πάνελ: το όνομα ενός παίκτη στην κεφαλίδα ενός αγώνα ή στη γραμμή πάνω "
+"από το ταμπλό ανοίγει όλα τα στατιστικά του (τα τουρνουά και οι "
+"ημερομηνίες καθαρίζονται), και το κουμπί **Stats** στην κεφαλίδα ενός "
+"τουρνουά ανοίγει εκείνα ολόκληρου του τουρνουά (οι ημερομηνίες "
+"καθαρίζονται, ο παίκτης διατηρείται). Μια ημερομηνία λήξης προγενέστερη "
+"της ημερομηνίας έναρξης απορρίπτεται: το πεδίο παίρνει ξανά την "
+"εφαρμοσμένη ημερομηνία."
+
+#: ../../source/manuel_stats.rst:77
+msgid "Filtres disponibles"
+msgstr "Διαθέσιμα φίλτρα"
+
+#: ../../source/manuel_stats.rst:79
+msgid ""
+"**Tournoi(s)** — restriction à un ou plusieurs tournois. Plusieurs "
+"tournois peuvent être sélectionnés simultanément."
+msgstr ""
+"**Τουρνουά** — περιορισμός σε ένα ή περισσότερα τουρνουά. Μπορούν να "
+"επιλεγούν πολλά τουρνουά ταυτόχρονα."
+
+#: ../../source/manuel_stats.rst:82
+msgid ""
+"**Dates** — plage temporelle (*De* … *À*). Si seule la date de début est "
+"renseignée, les positions plus récentes sont incluses."
+msgstr ""
+"**Ημερομηνίες** — χρονικό εύρος (*Από* … *Έως*). Αν συμπληρωθεί μόνο η "
+"ημερομηνία έναρξης, περιλαμβάνονται οι πιο πρόσφατες θέσεις."
+
+#: ../../source/manuel_stats.rst:85
+msgid "**Type de décision** — Tous / Coups joués / Décisions de videau."
+msgstr "**Τύπος απόφασης** — Όλα / Κινήσεις πουλιών / Αποφάσεις κύβου."
+
+#: ../../source/manuel_stats.rst:87
+msgid ""
+"**Longueur de match** — restriction à des longueurs de match précises (1,"
+" 3, 5, 7, 9, 11, 13, 15, 21 points). Plusieurs longueurs peuvent être "
+"combinées."
+msgstr ""
+"**Διάρκεια αγώνα** — περιορισμός σε συγκεκριμένα μήκη αγώνα (1, 3, 5, 7, "
+"9, 11, 13, 15, 21 πόντοι). Μπορούν να συνδυαστούν πολλά μήκη."
+
+#: ../../source/manuel_stats.rst:90
+msgid ""
+"**Moteur** et **Profondeur min.** — ne garder que les décisions analysées"
+" par un moteur donné, ou au moins à une profondeur donnée, en plis. Le "
+"menu *Moteur* propose les moteurs présents dans les analyses de la base "
+"(eXtreme Gammon, GNU Backgammon…)."
+msgstr ""
+"**Μηχανή** και **Ελάχ. βάθος** — κρατούνται μόνο οι αποφάσεις που "
+"αναλύθηκαν από μια δεδομένη μηχανή, ή τουλάχιστον σε ένα δεδομένο βάθος, "
+"σε plies. Το μενού *Μηχανή* προτείνει τις μηχανές που υπάρχουν στις "
+"αναλύσεις της βάσης (eXtreme Gammon, GNU Backgammon…)."
+
+#: ../../source/manuel_stats.rst:95
+msgid ""
+"Un bouton **↺ Réinitialiser** remet tous les filtres à zéro, sauf le "
+"joueur."
+msgstr "Ένα κουμπί **↺ Επαναφορά** μηδενίζει όλα τα φίλτρα, εκτός από τον παίκτη."
+
+#: ../../source/manuel_stats.rst:98
+msgid ""
+"Les filtres sont persistés dans la configuration de blunderDB "
+"(``config.yaml``) et sont restaurés à la prochaine ouverture."
+msgstr ""
+"Τα φίλτρα αποθηκεύονται στις ρυθμίσεις του blunderDB (``config.yaml``) "
+"και επαναφέρονται κατά το επόμενο άνοιγμα."
+
+#: ../../source/manuel_stats.rst:102
+msgid "Toggle PR / MWC"
+msgstr "Εναλλαγή PR / MWC"
+
+#: ../../source/manuel_stats.rst:104
+msgid ""
+"Le bouton **PR / MWC** en haut du panneau bascule la métrique affichée "
+"dans tous les onglets."
+msgstr ""
+"Το κουμπί **PR / MWC** στο επάνω μέρος του πίνακα εναλλάσσει την "
+"εμφανιζόμενη μετρική σε όλες τις καρτέλες."
+
+#: ../../source/manuel_stats.rst:107
+msgid "**PR (Performance Rating)**"
+msgstr "**PR (Performance Rating)**"
+
+#: ../../source/manuel_stats.rst:109
+msgid ""
+"L'erreur moyenne d'équité par décision comptée, multipliée par 500 comme "
+"le font eXtreme Gammon et GNUbg : un PR de 5,0 vaut 0,010 d'équité perdue"
+" par décision, soit 10 millipoints (mpt). La règle de comptage exacte — "
+"quelles décisions entrent au dénominateur, comment le score est converti "
+"— est celle de :ref:`metrique_pr`."
+msgstr ""
+"Το μέσο σφάλμα equity ανά μετρούμενη απόφαση, πολλαπλασιασμένο επί 500 "
+"όπως κάνουν το eXtreme Gammon και το GNUbg: ένα PR 5,0 ισοδυναμεί με "
+"0,010 χαμένου equity ανά απόφαση, δηλαδή 10 χιλιοστοπόντους (mpt). Ο "
+"ακριβής κανόνας μέτρησης — ποιες αποφάσεις μπαίνουν στον παρονομαστή, πώς"
+" μετατρέπεται το σκορ — είναι αυτός του :ref:`metrique_pr`."
+
+#: ../../source/manuel_stats.rst:115
+msgid ""
+"Les bandes de niveau que le panneau dessine derrière la courbe de "
+"progression sont un **repère indicatif propre à blunderDB** : aucune "
+"publication ne fait autorité sur ces seuils. La borne haute de chaque "
+"bande est exclue : un PR de 4 est *Avancé*, pas *Expert*."
+msgstr ""
+"Οι ζώνες επιπέδου που ο πίνακας σχεδιάζει πίσω από την καμπύλη προόδου "
+"είναι ένα **ενδεικτικό σημείο αναφοράς του ίδιου του blunderDB**: καμία "
+"δημοσίευση δεν αποτελεί αυθεντία για αυτά τα κατώφλια. Το άνω όριο κάθε "
+"ζώνης εξαιρείται: ένα PR ίσο με 4 είναι *Προχωρημένος*, όχι *Ειδικός*."
+
+#: ../../source/manuel_stats.rst:1
+msgid "Niveau"
+msgstr "Επίπεδο"
+
+#: ../../source/manuel_stats.rst:1
+msgid "PR"
+msgstr "PR"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Classe mondiale"
+msgstr "Παγκόσμια κλάση"
+
+#: ../../source/manuel_stats.rst:1
+msgid "< 2"
+msgstr "< 2"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Expert"
+msgstr "Expert"
+
+#: ../../source/manuel_stats.rst:1
+msgid "2 – 4"
+msgstr "2 – 4"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Avancé"
+msgstr "Προχωρημένος"
+
+#: ../../source/manuel_stats.rst:1
+msgid "4 – 6"
+msgstr "4 – 6"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Intermédiaire"
+msgstr "Μέσος"
+
+#: ../../source/manuel_stats.rst:1
+msgid "6 – 9"
+msgstr "6 – 9"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Occasionnel"
+msgstr "Περιστασιακός"
+
+#: ../../source/manuel_stats.rst:1
+msgid "9 – 12"
+msgstr "9 – 12"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Débutant"
+msgstr "Αρχάριος"
+
+#: ../../source/manuel_stats.rst:1
+msgid "≥ 12"
+msgstr "≥ 12"
+
+#: ../../source/manuel_stats.rst:132
+msgid "**MWC cost (Match Winning Chance cost)**"
+msgstr "**MWC cost (Match Winning Chance cost)**"
+
+#: ../../source/manuel_stats.rst:134
+msgid ""
+"Probabilité cumulée de victoire de match perdue à cause des erreurs, sur "
+"l'ensemble du jeu de données filtré. Calculé à partir de la MET courante "
+"de la base, par défaut la Kazaross-XG2 embarquée dans blunderDB. Une "
+"analyse au score de match calculée avec une autre table est « MET "
+"différente » et reste hors des statistiques."
+msgstr ""
+"Σωρευτική πιθανότητα νίκης αγώνα που χάνεται εξαιτίας των σφαλμάτων, σε "
+"ολόκληρο το φιλτραρισμένο σύνολο δεδομένων. Υπολογίζεται με βάση την "
+"τρέχουσα MET της βάσης, από προεπιλογή τη Kazaross-XG2 που είναι "
+"ενσωματωμένη στο blunderDB. Μια ανάλυση στο σκορ αγώνα που υπολογίστηκε "
+"με άλλον πίνακα είναι «διαφορετική MET» και μένει εκτός των στατιστικών."
+
+#: ../../source/manuel_stats.rst:141
+msgid ""
+"Le MWC cost **n'est pas applicable** aux positions *money-game* (sans "
+"enjeu de match). Ces positions sont exclues du calcul MWC. Les valeurs "
+"MWC dépendent de la MET utilisée ; elles ne sont pas directement "
+"comparables entre logiciels utilisant des METs différentes."
+msgstr ""
+"Το MWC cost **δεν εφαρμόζεται** στις θέσεις *money-game* (χωρίς "
+"διακύβευμα αγώνα). Αυτές οι θέσεις εξαιρούνται από τον υπολογισμό MWC. Οι"
+" τιμές MWC εξαρτώνται από τη MET που χρησιμοποιείται· δεν είναι άμεσα "
+"συγκρίσιμες μεταξύ λογισμικών που χρησιμοποιούν διαφορετικές METs."
+
+#: ../../source/manuel_stats.rst:148
+msgid "**Perte MWC (éq. 7 pts)**"
+msgstr "**Απώλεια MWC (ισοδ. 7 πόντων)**"
+
+#: ../../source/manuel_stats.rst:150
+msgid ""
+"La probabilité de gagner le match qu'un joueur a perdue sur l'ensemble de"
+" ses décisions — pions, videau, prise ou refus, avec videau — ramenée à "
+"un match en 7 points. Pour un match en *N* points où le joueur a perdu "
+"*L* de MWC :"
+msgstr ""
+"Η πιθανότητα νίκης στον αγώνα που ένας παίκτης έχασε στο σύνολο των "
+"αποφάσεών του — πούλια, κύβος, αποδοχή ή άρνηση, με κύβο — αναγόμενη σε "
+"αγώνα 7 πόντων. Για αγώνα *N* πόντων όπου ο παίκτης έχασε *L* MWC:"
+
+#: ../../source/manuel_stats.rst:154
+msgid "L₇ = L × √(7 / N)"
+msgstr "L₇ = L × √(7 / N)"
+
+#: ../../source/manuel_stats.rst:156
+msgid ""
+"Pour un match en 7 points, c'est la perte de MWC du match, celle "
+"qu'affiche eXtreme Gammon. La racine vient du modèle de la formule FIBS :"
+" à force égale, la perte d'un joueur croît comme la racine de la longueur"
+" du match. 7 points est la longueur de référence parce que c'est la plus "
+"courante en tournoi."
+msgstr ""
+"Για αγώνα 7 πόντων, είναι η απώλεια MWC του αγώνα, αυτή που εμφανίζει το "
+"eXtreme Gammon. Η ρίζα προέρχεται από το μοντέλο του τύπου FIBS: με ίση "
+"δύναμη, η απώλεια ενός παίκτη αυξάνεται όπως η ρίζα του μήκους του αγώνα."
+" Οι 7 πόντοι είναι το μήκος αναφοράς επειδή είναι το πιο συνηθισμένο στα "
+"τουρνουά."
+
+#: ../../source/manuel_stats.rst:162
+#, no-python-format
+msgid ""
+"Elle se lit comme la part de match perdue face à un joueur parfait : 12,3"
+" % veut dire qu'au lieu de 50 % de chances contre le moteur, le joueur "
+"n'en avait plus que 37,7 % sur un match en 7 points. L'infobulle en donne"
+" la lecture en Elo face au moteur, en inversant la formule FIBS : D = "
+"(2000 / √7) × log₁₀(q / (1 − q)), avec q = 0,5 − L₇. Au-delà d'une perte "
+"de 49 %, la formule n'a plus de valeur finie : l'Elo affiché est alors un"
+" plafond (« ≤ »). Les deux chiffres classent les joueurs dans le même "
+"ordre."
+msgstr ""
+"Διαβάζεται ως το μερίδιο του αγώνα που χάθηκε απέναντι σε τέλειο παίκτη: "
+"το 12,3 % σημαίνει ότι αντί για 50 % πιθανότητες απέναντι στη μηχανή, ο "
+"παίκτης είχε μόνο 37,7 % σε αγώνα 7 πόντων. Το tooltip δίνει την ανάγνωση"
+" σε Elo απέναντι στη μηχανή, αντιστρέφοντας τον τύπο FIBS: D = (2000 / "
+"√7) × log₁₀(q / (1 − q)), με q = 0,5 − L₇. Πέρα από απώλεια 49 %, ο τύπος"
+" δεν έχει πεπερασμένη τιμή: το εμφανιζόμενο Elo είναι τότε ανώτατο όριο "
+"(«≤»). Οι δύο αριθμοί κατατάσσουν τους παίκτες με την ίδια σειρά."
+
+#: ../../source/manuel_stats.rst:171
+msgid ""
+"Elle complète le PR sans le remplacer : le PR divise les erreurs par un "
+"nombre de décisions, et ce nombre dépend de ce que l'on compte comme "
+"décision (coups forcés, décisions de videau évidentes). La perte MWC ne "
+"compte aucune décision : chaque erreur pèse ce qu'elle a coûté au score "
+"où elle a été commise."
+msgstr ""
+"Συμπληρώνει το PR χωρίς να το αντικαθιστά: το PR διαιρεί τα λάθη με έναν "
+"αριθμό αποφάσεων, και αυτός ο αριθμός εξαρτάται από το τι θεωρείται "
+"απόφαση (αναγκαστικές κινήσεις, προφανείς αποφάσεις κύβου). Η απώλεια MWC"
+" δεν μετρά καμία απόφαση: κάθε λάθος ζυγίζει όσο κόστισε στο σκορ όπου "
+"έγινε."
+
+#: ../../source/manuel_stats.rst:177
+msgid ""
+"Sur plusieurs matchs (statistiques d'un joueur, d'un tournoi), les pertes"
+" et les racines des longueurs s'additionnent avant le rapport : L₇ = √7 ×"
+" ΣL / Σ√N. Un match en 7 points pèse donc plus qu'un match en 1 point, et"
+" un seul match donne sa propre valeur."
+msgstr ""
+"Σε πολλούς αγώνες (στατιστικά ενός παίκτη ή ενός τουρνουά), οι απώλειες "
+"και οι ρίζες των μηκών προστίθενται πριν από τον λόγο: L₇ = √7 × ΣL / "
+"Σ√N. Ένας αγώνας 7 πόντων ζυγίζει λοιπόν περισσότερο από έναν αγώνα 1 "
+"πόντου, και ένας μόνο αγώνας δίνει τη δική του τιμή."
+
+#: ../../source/manuel_stats.rst:183
+#, no-python-format
+msgid ""
+"Un match isolé est très bruité : quelques grosses erreurs suffisent à le "
+"faire varier du simple au double. Le badge et le bilan d'un match "
+"(:ref:`bilan du match <bilan_match>`) donnent l'intervalle à 95 % en "
+"rééchantillonnant ses parties ; un agrégat (statistiques d'un joueur, "
+"d'un tournoi) le donne en rééchantillonnant ses matchs ; sans filtre "
+"joueur, les deux sièges d'un match forment une seule unité, puisqu'ils "
+"jouent les mêmes positions. Il faut au moins trois parties, ou trois "
+"matchs, et qu'elles ne donnent pas toutes la même perte : sinon pas "
+"d'intervalle. Une ligne par match des statistiques n'en a donc pas : "
+"c'est une seule unité. Ne classez pas des joueurs sur un seul match."
+msgstr ""
+"Ένας μεμονωμένος αγώνας έχει μεγάλο θόρυβο: μερικά μεγάλα λάθη αρκούν για"
+" να διπλασιαστεί η τιμή. Το σήμα και ο απολογισμός του αγώνα "
+"(:ref:`απολογισμός αγώνα <bilan_match>`) δίνουν το διάστημα 95 % με "
+"επαναδειγματοληψία των παρτίδων του· ένα σύνολο (στατιστικά παίκτη ή "
+"τουρνουά) το δίνει με επαναδειγματοληψία των αγώνων του· χωρίς φίλτρο "
+"παίκτη, οι δύο θέσεις ενός αγώνα αποτελούν μία μονάδα, αφού παίζουν τις "
+"ίδιες θέσεις. Χρειάζονται τουλάχιστον τρεις παρτίδες ή τρεις αγώνες, και "
+"να μη δίνουν όλοι την ίδια απώλεια: αλλιώς δεν υπάρχει διάστημα. Μια "
+"γραμμή ανά αγώνα στα στατιστικά δεν έχει επομένως διάστημα: είναι μία "
+"μόνο μονάδα. Μην κατατάσσετε παίκτες βάσει ενός μόνο αγώνα."
+
+#: ../../source/manuel_stats.rst:195
+msgid ""
+"Une partie *money-game* n'a pas de longueur de match : la perte MWC (éq. "
+"7 pts) n'y est pas définie et le panneau l'indique au lieu d'afficher un "
+"nombre. Comme le MWC cost, elle dépend de la MET."
+msgstr ""
+"Μια παρτίδα *money-game* δεν έχει μήκος αγώνα: η απώλεια MWC (ισοδ. 7 "
+"πόντων) δεν ορίζεται εκεί και το πάνελ το δηλώνει αντί να εμφανίσει "
+"αριθμό. Όπως το κόστος MWC, εξαρτάται από το MET."
+
+#: ../../source/manuel_stats.rst:199
+msgid ""
+"Le troisième choix du bouton, **MWC 7 pts**, trace cette perte dans "
+"l'onglet Progression, et l'affiche sur les cartes du tableau de bord et "
+"dans la comparaison pions/videau de l'onglet Erreurs, découpée en pions "
+"et videau sur les mêmes matchs (les deux parts s'additionnent). Le "
+"classement des joueurs a sa colonne. Les graphiques sans équivalent 7 "
+"points (par action de videau) gardent le MWC cost."
+msgstr ""
+"Η τρίτη επιλογή του κουμπιού, **MWC 7 pts**, σχεδιάζει αυτή την απώλεια "
+"στην καρτέλα Πρόοδος, και την εμφανίζει στις κάρτες του πίνακα ελέγχου "
+"και στη σύγκριση πούλια/κύβου της καρτέλας Λάθη, αναλυμένη σε πούλια και "
+"κύβο στους ίδιους αγώνες (τα δύο μέρη αθροίζονται). Η κατάταξη των "
+"παικτών έχει τη δική της στήλη. Τα γραφήματα χωρίς ισοδύναμο 7 πόντων "
+"(ανά ενέργεια κύβου) κρατούν το MWC cost."
+
+#: ../../source/manuel_stats.rst:206
+msgid ""
+"Le basculement PR ↔ MWC est instantané : aucun recalcul backend n'est "
+"effectué."
+msgstr ""
+"Η εναλλαγή PR ↔ MWC είναι ακαριαία: δεν πραγματοποιείται κανένας "
+"επανυπολογισμός στο backend."
+
+#: ../../source/manuel_stats.rst:212
+msgid "Le rapport HTML"
+msgstr "Η αναφορά HTML"
+
+#: ../../source/manuel_stats.rst:214
+msgid ""
+"Le bouton **Rapport HTML** de l'en-tête du panneau produit un document "
+"**autonome** : un seul fichier, sans image externe, sans feuille de style"
+" distante, sans script. Les diagrammes y sont des SVG en ligne, dessinés "
+"par le même rendu que le plateau à l'écran, avec votre palette. Il "
+"s'ouvre dans n'importe quel navigateur, s'envoie par courriel, et "
+"**s'imprime en PDF par le navigateur lui-même** — ce qui évite "
+"d'embarquer un générateur de PDF pour produire ce que tout le monde a "
+"déjà."
+msgstr ""
+"Το κουμπί **Αναφορά HTML** στην κεφαλίδα του πίνακα παράγει ένα "
+"**αυτόνομο** έγγραφο: ένα μόνο αρχείο, χωρίς εξωτερική εικόνα, χωρίς "
+"απομακρυσμένο φύλλο στυλ, χωρίς σενάριο. Τα διαγράμματα είναι "
+"ενσωματωμένο SVG, σχεδιασμένα από τον ίδιο μηχανισμό με το ταμπλό στην "
+"οθόνη, με τη δική σας παλέτα. Ανοίγει σε οποιονδήποτε περιηγητή, "
+"ταξιδεύει με ηλεκτρονικό ταχυδρομείο, και **τυπώνεται σε PDF από τον ίδιο"
+" τον περιηγητή** — πράγμα που αποφεύγει την ενσωμάτωση γεννήτριας PDF για"
+" κάτι που όλοι έχουν ήδη."
+
+#: ../../source/manuel_stats.rst:222
+msgid ""
+"Il contient les indicateurs du périmètre courant (positions, matchs, "
+"décisions comptées, PR global, pions et videau), puis les **dix décisions"
+" les plus coûteuses**, chacune avec son diagramme, son coût, le match "
+"d'où elle vient et le meilleur coup lorsqu'une analyse le donne."
+msgstr ""
+"Περιέχει τους δείκτες του τρέχοντος εύρους (θέσεις, αγώνες, μετρημένες "
+"αποφάσεις, PR συνολικό, κινήσεων και κύβου), έπειτα τις **δέκα πιο "
+"ακριβές αποφάσεις**, καθεμιά με το διάγραμμά της, το κόστος της, τον "
+"αγώνα από τον οποίο προέρχεται και την καλύτερη κίνηση όταν μια ανάλυση "
+"τη δίνει."
+
+#: ../../source/manuel_stats.rst:227
+msgid ""
+"Le document est construit par le moteur, pas par l'écran : la ligne de "
+"commande (``stats report --html``, voir :ref:`cli_stats`) et le démon "
+"HTTP (route ``stats.report``) produisent le même rapport, dans l'une des "
+"neuf langues de l'interface. Seule l'application graphique dessine les "
+"diagrammes avec la palette du plateau ; les deux autres emploient la "
+"palette par défaut."
+msgstr ""
+"Το έγγραφο κατασκευάζεται από τη μηχανή, όχι από την οθόνη: η γραμμή "
+"εντολών (``stats report --html``, βλ. :ref:`cli_stats`) και ο δαίμονας "
+"HTTP (διαδρομή ``stats.report``) παράγουν την ίδια αναφορά, σε μία από "
+"τις εννέα γλώσσες της διεπαφής. Μόνο η γραφική εφαρμογή σχεδιάζει τα "
+"διαγράμματα με την παλέτα του ταμπλό· οι άλλες δύο χρησιμοποιούν την "
+"προεπιλεγμένη παλέτα."
+
+#: ../../source/manuel_stats.rst:233
+msgid ""
+"Le rapport porte le **filtre courant** du panneau Stats. Un rapport qui "
+"ne dit pas son périmètre est un rapport dont les chiffres ne veulent rien"
+" dire : réglez le filtre — un tournoi, une plage de dates, un joueur — "
+"avant de le produire."
+msgstr ""
+"Η αναφορά φέρει το **τρέχον φίλτρο** του πίνακα Στατιστικών. Μια αναφορά "
+"που δεν δηλώνει το εύρος της είναι μια αναφορά της οποίας οι αριθμοί δεν "
+"σημαίνουν τίποτα: ρυθμίστε το φίλτρο — ένα τουρνουά, ένα εύρος "
+"ημερομηνιών, έναν παίκτη — πριν την παραγάγετε."
+
+#: ../../source/manuel_stats.rst:239
+msgid "Onglet Tableau de bord"
+msgstr "Καρτέλα Πίνακας"
+
+#: ../../source/manuel_stats.rst:241
+msgid ""
+"L'onglet **Tableau de bord** donne une vue synthétique des indicateurs "
+"clés. Il se lit de haut en bas : les cartes de niveau, puis ce qui se "
+"travaille (plan d'étude, top blunders), puis les lectures (PR glissant, "
+"avant/après l'étude, biais signés). L'explication de chaque carte est "
+"dans l'info-bulle de son titre."
+msgstr ""
+"Η καρτέλα **Πίνακας** δίνει μια συνθετική εικόνα των βασικών δεικτών. "
+"Διαβάζεται από πάνω προς τα κάτω: οι κάρτες επιπέδου, μετά ό,τι "
+"δουλεύεται (πλάνο μελέτης, top blunders), μετά οι αναγνώσεις (κυλιόμενο "
+"PR, πριν/μετά τη μελέτη, προσημασμένες μεροληψίες). Η εξήγηση κάθε κάρτας"
+" βρίσκεται στο εργαλειοδείκτη (tooltip) του τίτλου της."
+
+#: ../../source/manuel_stats.rst:247
+msgid "Onglet Tableau de bord du panneau Stats"
+msgstr "Καρτέλα Πίνακας του πίνακα Stats"
+
+#: ../../source/manuel_stats.rst:251
+msgid "L'onglet Tableau de bord : PR global, PR pions, PR videau."
+msgstr "Η καρτέλα Πίνακας: συνολικό PR, PR πουλιών, PR κύβου."
+
+#: ../../source/manuel_stats.rst:254
+msgid "Cartes de niveau"
+msgstr "Κάρτες επιπέδου"
+
+#: ../../source/manuel_stats.rst:256
+msgid "Trois cartes affichent le PR (ou MWC) pour :"
+msgstr "Τρεις κάρτες εμφανίζουν το PR (ή το MWC) για:"
+
+#: ../../source/manuel_stats.rst:258
+msgid "**PR global** — toutes les décisions (pions + videau) ;"
+msgstr "**PR Συνολικό** — όλες τις αποφάσεις (κινήσεις + κύβος)·"
+
+#: ../../source/manuel_stats.rst:259
+msgid "**PR pions** — décisions de pions seulement ;"
+msgstr "**PR πουλιών** — μόνο τις αποφάσεις κινήσεων·"
+
+#: ../../source/manuel_stats.rst:260
+msgid "**PR videau** — décisions de videau seulement."
+msgstr "**PR Κύβος** — μόνο τις αποφάσεις κύβου."
+
+#: ../../source/manuel_stats.rst:262
+msgid ""
+"Cliquer sur une carte charge dans le panneau d'analyse les positions du "
+"sous-ensemble correspondant (drill-down). Une quatrième carte, **Perte "
+"MWC (éq. 7 pts)**, donne cette perte quel que soit le choix du bouton PR "
+"/ MWC, avec son intervalle ; elle ne charge rien."
+msgstr ""
+"Κάνοντας κλικ σε μια κάρτα φορτώνονται στον πίνακα ανάλυσης οι θέσεις του"
+" αντίστοιχου υποσυνόλου (drill-down). Μια τέταρτη κάρτα, **Απώλεια MWC "
+"(ισοδ. 7 πόντων)**, δίνει αυτή την απώλεια ανεξάρτητα από την επιλογή του"
+" κουμπιού PR / MWC, με το διάστημά της· δεν φορτώνει τίποτα."
+
+#: ../../source/manuel_stats.rst:267
+msgid ""
+"Sous les cartes, la ligne des totaux compte les tournois, les matchs et "
+"les décisions du filtre. Le nombre de tournois ouvre ces tournois dans le"
+" panneau Tournois : un tournoi seul s'ouvre directement ; plusieurs "
+"restreignent la liste, qui porte alors le bouton « N tournois ouverts "
+"depuis les Stats × » : il rend la liste complète."
+msgstr ""
+"Κάτω από τις κάρτες, η γραμμή συνόλων μετρά τα τουρνουά, τους αγώνες και "
+"τις αποφάσεις του φίλτρου. Ο αριθμός των τουρνουά ανοίγει αυτά τα "
+"τουρνουά στο πάνελ Τουρνουά: ένα μόνο τουρνουά ανοίγει απευθείας· "
+"περισσότερα περιορίζουν τη λίστα, η οποία φέρει τότε το κουμπί « N "
+"τουρνουά ανοιγμένα από τα Στατιστικά × »: αυτό επαναφέρει την πλήρη "
+"λίστα."
+
+#: ../../source/manuel_stats.rst:273
+msgid ""
+"Le nombre de décisions ouvre leurs positions ; le nombre de matchs ouvre "
+"ces matchs dans le panneau Matchs, sauf quand un type de décision ou un "
+"filtre de provenance est actif : il compte alors moins de matchs que la "
+"liste n'en ouvrirait et reste un simple nombre."
+msgstr ""
+"Ο αριθμός των αποφάσεων ανοίγει τις θέσεις τους· ο αριθμός των αγώνων "
+"ανοίγει αυτούς τους αγώνες στο πάνελ Αγώνες, εκτός όταν είναι ενεργός "
+"ένας τύπος απόφασης ή ένα φίλτρο προέλευσης: μετρά τότε λιγότερους αγώνες"
+" από όσους θα άνοιγε η λίστα και μένει απλός αριθμός."
+
+#: ../../source/manuel_stats.rst:279
+msgid "Le nombre total de décisions est affiché en bas de chaque carte au survol."
+msgstr ""
+"Ο συνολικός αριθμός των αποφάσεων εμφανίζεται στο κάτω μέρος κάθε κάρτας "
+"κατά την αιώρηση του δείκτη."
+
+#: ../../source/manuel_stats.rst:284
+msgid "Plan d'étude"
+msgstr "Πλάνο μελέτης"
+
+#: ../../source/manuel_stats.rst:286
+msgid ""
+"La carte **Plan d'étude** répond à « que dois-je travailler maintenant ? "
+"». Les erreurs récurrentes (onglet Erreurs) disent où le filtre a perdu "
+"le plus ; elles ne disent pas où l'étude rapporte le plus. Une famille de"
+" positions réellement difficiles coûte cher à tout le monde, et trois "
+"erreurs ne font pas une tendance. Le plan corrige les deux."
+msgstr ""
+"Η κάρτα **Πλάνο μελέτης** απαντά στο «τι πρέπει να δουλέψω τώρα;». Τα "
+"επαναλαμβανόμενα λάθη (καρτέλα Erreurs) δείχνουν πού έχασε περισσότερο το"
+" φίλτρο· δεν δείχνουν πού αποδίδει περισσότερο η μελέτη. Μια οικογένεια "
+"πραγματικά δύσκολων θέσεων κοστίζει ακριβά σε όλους, και τρία λάθη δεν "
+"κάνουν τάση. Το πλάνο διορθώνει και τα δύο."
+
+#: ../../source/manuel_stats.rst:292
+msgid ""
+"Une **famille** est un groupe des erreurs récurrentes : un plan de jeu, "
+"une nature de décision (pions ou videau) et un thème. Les erreurs sans "
+"thème n'en forment pas : elles n'indiquent rien à étudier."
+msgstr ""
+"Μια **οικογένεια** είναι μια ομάδα επαναλαμβανόμενων λαθών: ένα σχέδιο "
+"παιχνιδιού, ένα είδος απόφασης (πούλια ή κύβος) και ένα θέμα. Τα λάθη "
+"χωρίς θέμα δεν σχηματίζουν οικογένεια: δεν υποδεικνύουν τίποτα προς "
+"μελέτη."
+
+#: ../../source/manuel_stats.rst:295
+msgid ""
+"Chaque erreur est chiffrée en **MWC**, comme dans le panneau Match : sa "
+"perte ℓ, et sa *difficulté* d, la perte qu'un joueur de référence aurait "
+"subie dans la même position (voir la difficulté par décision du panneau "
+"Match). Une erreur en partie libre n'a pas de MWC : elle est seulement "
+"comptée, « non chiffrée »."
+msgstr ""
+"Κάθε λάθος αποτιμάται σε **MWC**, όπως στον πίνακα Match: η απώλειά του ℓ"
+" και η *δυσκολία* του d, η απώλεια που θα είχε υποστεί ένας παίκτης "
+"αναφοράς στην ίδια θέση (βλ. τη δυσκολία ανά απόφαση του πίνακα Match). "
+"Ένα λάθος σε ελεύθερο παιχνίδι δεν έχει MWC: απλώς μετριέται, «μη "
+"αποτιμημένο»."
+
+#: ../../source/manuel_stats.rst:300
+msgid ""
+"Le **MWC récupérable** d'une famille est la somme de ℓ − d sur ses "
+"erreurs : la fréquence de la famille multipliée par sa perte moyenne au-"
+"delà de la difficulté. C'est ce que vous regagneriez en jouant ces "
+"positions comme le joueur de référence. Une famille d'erreurs évitables "
+"monte, une famille de positions où tout le monde se trompe descend."
+msgstr ""
+"Το **ανακτήσιμο MWC** μιας οικογένειας είναι το άθροισμα του ℓ − d στα "
+"λάθη της: η συχνότητα της οικογένειας επί τη μέση απώλειά της πέρα από τη"
+" δυσκολία. Είναι όσα θα κερδίζατε παίζοντας αυτές τις θέσεις όπως ο "
+"παίκτης αναφοράς. Μια οικογένεια αποφεύξιμων λαθών ανεβαίνει, μια "
+"οικογένεια θέσεων όπου όλοι κάνουν λάθος κατεβαίνει."
+
+#: ../../source/manuel_stats.rst:305
+msgid ""
+"L'**intervalle à 95 %** accompagne chaque chiffre. Une famille entre au "
+"plan à partir de **5 erreurs** et d'un intervalle entièrement au-dessus "
+"de zéro ; le plan est classé par la borne basse de l'intervalle, si bien "
+"qu'à récupérable égal la famille la mieux établie passe devant. Les "
+"autres sont nommées sous la liste, **à confirmer**, sans rang : le plan "
+"ne vous pousse pas vers du bruit. La même ligne compte les erreurs **hors"
+" plan** (sans thème, non chiffrées)."
+msgstr ""
+"Το **διάστημα 95 %** συνοδεύει κάθε αριθμό. Μια οικογένεια μπαίνει στο "
+"πλάνο από **5 λάθη** και ένα διάστημα εξ ολοκλήρου πάνω από το μηδέν· το "
+"πλάνο ταξινομείται με το κάτω όριο του διαστήματος, ώστε σε ίσο "
+"ανακτήσιμο να προηγείται η πιο τεκμηριωμένη οικογένεια. Οι υπόλοιπες "
+"αναφέρονται κάτω από τη λίστα, **προς επιβεβαίωση**, χωρίς κατάταξη: το "
+"πλάνο δεν σας ωθεί προς τον θόρυβο. Η ίδια γραμμή μετράει τα λάθη **εκτός"
+" πλάνου** (χωρίς θέμα, χωρίς αριθμητική εκτίμηση)."
+
+#: ../../source/manuel_stats.rst:313
+msgid ""
+"Chaque ligne du plan montre son rang, la famille, une barre dont la "
+"longueur est son MWC récupérable rapporté à celui de la première, ce MWC "
+"avec son intervalle, et le nombre d'erreurs. Chaque compte de positions "
+"du plan (par famille, à confirmer, hors plan) est cliquable : il charge "
+"exactement ces positions dans la liste."
+msgstr ""
+"Κάθε γραμμή του πλάνου δείχνει την κατάταξή της, την οικογένεια, μια "
+"μπάρα της οποίας το μήκος είναι το ανακτήσιμο MWC της σε σχέση με αυτό "
+"της πρώτης, αυτό το MWC με το διάστημά του, και τον αριθμό των λαθών. "
+"Κάθε πλήθος θέσεων του πλάνου (ανά οικογένεια, προς επιβεβαίωση, εκτός "
+"πλάνου) είναι κλικαρίσιμο: φορτώνει στη λίστα ακριβώς αυτές τις θέσεις."
+
+#: ../../source/manuel_stats.rst:319
+msgid ""
+"Chaque famille propose trois gestes : **Étudier** ouvre la file d'étude "
+"sur ses positions, l'écart au joueur de référence le plus grand d'abord ;"
+" **Quiz** lance l'exercice Décision du panneau :ref:`Entraînement "
+"<panneau_entrainement>` sur vingt d'entre elles ; **Anki** en fait un "
+"paquet de cartes. En tête de la carte, **Quiz sur les trois premières "
+"familles** tire vingt positions parmi celles des trois familles de tête. "
+"Le plan suit le filtre du panneau : réglez le joueur pour obtenir *votre*"
+" plan. En ligne de commande : ``blunderdb stats plan`` (voir "
+":ref:`cli_stats`)."
+msgstr ""
+"Κάθε οικογένεια προσφέρει τρεις ενέργειες: το **Μελέτη** ανοίγει την ουρά"
+" μελέτης με τις θέσεις της, πρώτη η μεγαλύτερη απόκλιση από τον παίκτη "
+"αναφοράς· το **Κουίζ** ξεκινά την άσκηση Απόφαση του πίνακα "
+":ref:`Εκπαίδευση <panneau_entrainement>` με είκοσι από αυτές· το **Anki**"
+" τις κάνει πακέτο καρτών. Στην κορυφή της κάρτας, το **Κουίζ στις τρεις "
+"πρώτες οικογένειες** επιλέγει είκοσι θέσεις από τις τρεις κορυφαίες "
+"οικογένειες. Το πλάνο ακολουθεί το φίλτρο του πίνακα: ορίστε τον παίκτη "
+"για να έχετε *το δικό σας* πλάνο. Στη γραμμή εντολών: ``blunderdb stats "
+"plan`` (βλ. :ref:`cli_stats`)."
+
+#: ../../source/manuel_stats.rst:331
+msgid "Avant/après l'étude"
+msgstr "Πριν/μετά τη μελέτη"
+
+#: ../../source/manuel_stats.rst:333
+msgid ""
+"La carte **Avant/après l'étude** ferme la boucle du plan : ce que vous "
+"avez travaillé coûte-t-il moins en match réel ? Sans elle, l'étude se "
+"juge à l'impression ; avec elle, une famille qui ne bouge pas malgré le "
+"travail dit qu'il faut changer de méthode, et une famille en progrès peut"
+" céder sa place dans le plan."
+msgstr ""
+"Η κάρτα **Πριν/μετά τη μελέτη** κλείνει τον κύκλο του πλάνου: αυτό που "
+"δουλέψατε σάς κοστίζει λιγότερο σε πραγματικούς αγώνες; Χωρίς αυτήν, η "
+"μελέτη κρίνεται με την εντύπωση· με αυτήν, μια οικογένεια που δεν "
+"κινείται παρά τη δουλειά δείχνει ότι πρέπει να αλλάξετε μέθοδο, και μια "
+"οικογένεια που βελτιώνεται μπορεί να παραχωρήσει τη θέση της στο πλάνο."
+
+#: ../../source/manuel_stats.rst:339
+msgid ""
+"Une famille (celle du plan) est **étudiée** à la date de la première "
+"action d'étude sur l'une de ses positions : la marque « étudiée » de la "
+"file d'étude, une révision Anki, une réponse en quiz. Créer une carte ou "
+"ranger une position en collection n'en est pas une."
+msgstr ""
+"Μια οικογένεια (αυτή του πλάνου) θεωρείται **μελετημένη** από την "
+"ημερομηνία της πρώτης ενέργειας μελέτης σε μία από τις θέσεις της: το "
+"σημάδι «μελετημένο» της ουράς μελέτης, μια επανάληψη Anki, μια απάντηση "
+"σε κουίζ. Η δημιουργία κάρτας ή η ταξινόμηση μιας θέσης σε συλλογή δεν "
+"μετράει."
+
+#: ../../source/manuel_stats.rst:343
+msgid ""
+"Pour chaque famille étudiée, la carte compare deux **fenêtres** : les "
+"matchs joués avant ce jour et ceux joués après (le jour même est écarté)."
+" Dans chacune, le **taux de perte** est la MWC perdue par les erreurs de "
+"la famille, rapportée à toutes les décisions du même plan de jeu et de la"
+" même nature, et affichée en points de MWC pour 100 décisions."
+msgstr ""
+"Για κάθε μελετημένη οικογένεια, η κάρτα συγκρίνει δύο **παράθυρα**: τους "
+"αγώνες που παίχτηκαν πριν από εκείνη την ημέρα και όσους παίχτηκαν μετά "
+"(η ίδια η ημέρα αποκλείεται). Σε καθένα, ο **ρυθμός απώλειας** είναι το "
+"MWC που χάθηκε από τα λάθη της οικογένειας, σε σχέση με όλες τις "
+"αποφάσεις του ίδιου σχεδίου παιχνιδιού και της ίδιας φύσης, και "
+"εμφανίζεται σε μονάδες MWC ανά 100 αποφάσεις."
+
+#: ../../source/manuel_stats.rst:348
+msgid ""
+"Le **gain** est le taux d'avant moins celui d'après, avec son intervalle "
+"à 95 %. Le verdict n'est « en progrès » (ou « en recul ») que si chaque "
+"fenêtre compte au moins **30 décisions** et que l'intervalle exclut zéro "
+"; sinon il reste « indéterminé » ou « trop peu de décisions »."
+msgstr ""
+"Το **κέρδος** είναι ο ρυθμός πριν μείον τον ρυθμό μετά, με το διάστημά "
+"του στο 95 %. Η κρίση είναι «βελτίωση» (ή «επιδείνωση») μόνο αν κάθε "
+"παράθυρο έχει τουλάχιστον **30 αποφάσεις** και το διάστημα αποκλείει το "
+"μηδέν· διαφορετικά μένει «αδιευκρίνιστο» ή «πολύ λίγες αποφάσεις»."
+
+#: ../../source/manuel_stats.rst:353
+msgid ""
+"À côté de chaque fenêtre, la colonne **Positions** compte les positions "
+"distinctes de ses décisions et les ouvre d'un clic ; le nombre entre "
+"parenthèses reste celui des décisions, dénominateur du taux."
+msgstr ""
+"Δίπλα σε κάθε παράθυρο, η στήλη **Θέσεις** μετρά τις διακριτές θέσεις των"
+" αποφάσεών του και τις ανοίγει με ένα κλικ· ο αριθμός σε παρένθεση "
+"παραμένει ο αριθμός των αποφάσεων, ο παρονομαστής του ρυθμού."
+
+#: ../../source/manuel_stats.rst:357
+msgid ""
+"C'est un changement, pas un effet : une famille est étudiée parce qu'elle"
+" coûtait, et une part du gain est une régression vers la moyenne ; rien "
+"ne contrôle les adversaires, le format ni les dés. En ligne de commande :"
+" ``blunderdb stats effect`` (voir :ref:`cli_stats`)."
+msgstr ""
+"Είναι μια αλλαγή, όχι ένα αποτέλεσμα: μια οικογένεια μελετάται επειδή "
+"κόστιζε, και μέρος του κέρδους είναι οπισθοδρόμηση προς τον μέσο όρο· "
+"τίποτα δεν ελέγχει τους αντιπάλους, τη μορφή ή τα ζάρια. Στη γραμμή "
+"εντολών: ``blunderdb stats effect`` (βλ. :ref:`cli_stats`)."
+
+#: ../../source/manuel_stats.rst:365
+msgid "Biais signés"
+msgstr "Προσημασμένες μεροληψίες"
+
+#: ../../source/manuel_stats.rst:367
+msgid ""
+"La carte **Biais signés** dit dans quel sens vous vous trompez, pas "
+"seulement combien. « Vous prenez trop » se corrige mieux qu'un PR : la "
+"règle à revoir est nommée. Chaque biais est la part de décisions fautives"
+" dans un sens moins la part fautive dans l'autre, avec son intervalle à "
+"95 % ; un penchant n'est nommé qu'à partir de **20 décisions** et d'un "
+"intervalle qui exclut zéro."
+msgstr ""
+"Η κάρτα **Προσημασμένες μεροληψίες** λέει προς ποια κατεύθυνση κάνετε "
+"λάθος, όχι μόνο πόσο. Το «δέχεστε υπερβολικά» διορθώνεται καλύτερα από "
+"ένα PR: ο κανόνας προς αναθεώρηση κατονομάζεται. Κάθε μεροληψία είναι το "
+"ποσοστό των εσφαλμένων αποφάσεων προς τη μία κατεύθυνση μείον το ποσοστό "
+"προς την άλλη, με το διάστημά της στο 95 %· μια τάση κατονομάζεται μόνο "
+"από **20 αποφάσεις** και με διάστημα που αποκλείει το μηδέν."
+
+#: ../../source/manuel_stats.rst:373
+msgid ""
+"**Prise / refus** — sur les réponses au videau : prises fautives (le bot "
+"refuse) moins refus fautifs (le bot prend). C'est exactement votre taux "
+"de prise moins celui du bot sur les mêmes positions."
+msgstr ""
+"**Αποδοχή / απόρριψη** — στις απαντήσεις στον κύβο: εσφαλμένες αποδοχές "
+"(το bot απορρίπτει) μείον εσφαλμένες απορρίψεις (το bot δέχεται). Είναι "
+"ακριβώς το ποσοστό αποδοχής σας μείον αυτό του bot στις ίδιες θέσεις."
+
+#: ../../source/manuel_stats.rst:376
+msgid ""
+"**Doubles** — sur les décisions de doubler : doubles prématurés (le bot "
+"ne double pas, ou la position est trop bonne pour doubler) moins doubles "
+"manqués. Le même biais est donné **par score** (votre away, celui de "
+"l'adversaire, un score post-Crawford compté à 1 point ; la partie libre "
+"dans sa propre case), pour les scores qui comptent assez de décisions."
+msgstr ""
+"**Διπλασιασμοί** — στις αποφάσεις διπλασιασμού: πρόωροι διπλασιασμοί (το "
+"bot δεν διπλασιάζει, ή η θέση είναι πολύ καλή για διπλασιασμό) μείον "
+"χαμένοι διπλασιασμοί. Η ίδια μεροληψία δίνεται **ανά σκορ** (το away σας,"
+" του αντιπάλου, ένα σκορ μετά το Crawford μετράει ως 1 πόντος· το "
+"ελεύθερο παιχνίδι στο δικό του κελί), για τα σκορ με αρκετές αποφάσεις."
+
+#: ../../source/manuel_stats.rst:381
+msgid ""
+"**Blots** — sur les coups de pions avec contact : les coups qui laissent "
+"plus de blots que le meilleur coup moins ceux qui en laissent moins. Un "
+"coup est reconnu par le plateau qu'il laisse, quelle que soit son "
+"écriture (« 13/7(2) », « 8/5*/4 ») ; un coup que le générateur de coups "
+"ne sait toujours pas rejouer est écarté, et la part des coups écartés est"
+" donnée sous le tableau. Le biais compte les blots sans peser leur "
+"exposition : un blot hors de portée compte autant qu'un blot exposé."
+msgstr ""
+"**Blots** — στις κινήσεις πουλιών με επαφή: οι κινήσεις που αφήνουν "
+"περισσότερα blots από την καλύτερη κίνηση μείον όσες αφήνουν λιγότερα. "
+"Μια κίνηση αναγνωρίζεται από το ταμπλό που αφήνει, όπως κι αν γράφεται "
+"(\"13/7(2)\", \"8/5*/4\")· μια κίνηση που η γεννήτρια κινήσεων "
+"εξακολουθεί να μην μπορεί να αναπαράγει απορρίπτεται, και το ποσοστό των "
+"κινήσεων που απορρίφθηκαν δίνεται κάτω από τον πίνακα. Η μεροληψία "
+"μετράει τα blots χωρίς να ζυγίζει την έκθεσή τους: ένα blot εκτός "
+"εμβέλειας μετράει όσο ένα εκτεθειμένο."
+
+#: ../../source/manuel_stats.rst:389
+msgid ""
+"À côté de chaque compte, son coût en millipoints dit si le penchant coûte"
+" ; une position jouée dans plusieurs matchs y compte avec le coup joué "
+"dans chacun. Les biais suivent le filtre du panneau. En ligne de commande"
+" : ``blunderdb stats biases`` (voir :ref:`cli_stats`)."
+msgstr ""
+"Δίπλα σε κάθε μέτρηση, το κόστος της σε χιλιοστά του πόντου δείχνει αν η "
+"τάση κοστίζει· μια θέση που παίχτηκε σε πολλά ματς μετράει εκεί με την "
+"κίνηση που παίχτηκε σε καθένα. Οι μεροληψίες ακολουθούν το φίλτρο του "
+"πίνακα. Στη γραμμή εντολών: ``blunderdb stats biases`` (βλ. "
+":ref:`cli_stats`)."
+
+#: ../../source/manuel_stats.rst:394
+msgid ""
+"Chaque compte de décisions (toutes, d'un sens, de l'autre) est suivi "
+"d'une colonne **Positions** : les positions distinctes de ces décisions, "
+"qu'un clic ouvre. Une position jouée dans plusieurs matchs y compte une "
+"décision par match, mais une seule position."
+msgstr ""
+"Κάθε μέτρηση αποφάσεων (όλες, προς τη μία κατεύθυνση, προς την άλλη) "
+"ακολουθείται από μια στήλη **Θέσεις**: τις διακριτές θέσεις αυτών των "
+"αποφάσεων, που ανοίγουν με ένα κλικ. Μια θέση που παίχτηκε σε πολλά ματς "
+"μετρά μία απόφαση ανά ματς, αλλά μία μόνο θέση."
+
+#: ../../source/manuel_stats.rst:400
+msgid "PR glissant sur N dernières décisions"
+msgstr "Κυλιόμενο PR στις τελευταίες N αποφάσεις"
+
+#: ../../source/manuel_stats.rst:402
+msgid ""
+"Une ligne de valeurs PR (ou MWC) calculées sur les *N* dernières "
+"décisions (N = 5, 10, 50, 100, 250, 500, 1000) permet de mesurer la "
+"tendance récente. Les valeurs grisées correspondent à un N supérieur au "
+"nombre de décisions disponibles."
+msgstr ""
+"Μια γραμμή τιμών PR (ή MWC) που υπολογίζονται στις τελευταίες *N* "
+"αποφάσεις (N = 5, 10, 50, 100, 250, 500, 1000) επιτρέπει τη μέτρηση της "
+"πρόσφατης τάσης. Οι αχνές τιμές αντιστοιχούν σε N μεγαλύτερο από τον "
+"αριθμό των διαθέσιμων αποφάσεων."
+
+#: ../../source/manuel_stats.rst:407
+msgid "Cliquer sur une valeur charge les *N* dernières positions correspondantes."
+msgstr ""
+"Κάνοντας κλικ σε μια τιμή φορτώνονται οι τελευταίες *N* αντίστοιχες "
+"θέσεις."
+
+#: ../../source/manuel_stats.rst:410
+msgid "Top blunders"
+msgstr "Κορυφαία σφάλματα (Top blunders)"
+
+#: ../../source/manuel_stats.rst:412
+msgid ""
+"La liste des 10 pires erreurs (ou MWC cost), triées par magnitude "
+"décroissante. Cliquer sur une ligne charge la position concernée dans le "
+"panneau d'analyse."
+msgstr ""
+"Η λίστα των 10 χειρότερων σφαλμάτων (ή MWC cost), ταξινομημένων κατά "
+"φθίνον μέγεθος. Κάνοντας κλικ σε μια γραμμή φορτώνεται η σχετική θέση "
+"στον πίνακα ανάλυσης."
+
+#: ../../source/manuel_stats.rst:416
+msgid "Onglet Progression"
+msgstr "Καρτέλα Progression"
+
+#: ../../source/manuel_stats.rst:418
+msgid "L'onglet **Progression** présente l'évolution du niveau dans le temps."
+msgstr "Η καρτέλα **Progression** παρουσιάζει την εξέλιξη του επιπέδου στο χρόνο."
+
+#: ../../source/manuel_stats.rst:420
+msgid ""
+"En tête de l'onglet, un **objectif** : « PR < 5 d'ici douze semaines ». "
+"Une cible, une échéance, et une tendance qui dit où l'on va — rien de "
+"plus. Un objectif qui se mettrait à noter, à féliciter ou à rappeler "
+"serait une autre fonctionnalité, et pas celle-ci."
+msgstr ""
+"Στην κορυφή της καρτέλας, ένας **στόχος**: «PR < 5 μέσα σε δώδεκα "
+"εβδομάδες». Ένας στόχος, μια προθεσμία, και μια τάση που λέει προς τα πού"
+" πάτε — τίποτα παραπάνω. Ένας στόχος που θα άρχιζε να βαθμολογεί, να "
+"συγχαίρει ή να υπενθυμίζει θα ήταν άλλη λειτουργία, όχι αυτή."
+
+#: ../../source/manuel_stats.rst:425
+msgid ""
+"Le bouton **Proposer** suggère une cible à partir du niveau actuel : la "
+"borne basse de la bande où vous êtes, c'est-à-dire l'entrée dans la bande"
+" suivante. Proposer « un peu mieux » ne s'ancrerait à rien ; proposer un "
+"palier en dit un — passer d'intermédiaire à avancé se voit et se raconte."
+msgstr ""
+"Το κουμπί **Πρόταση** προτείνει έναν στόχο από το τρέχον επίπεδο: το κάτω"
+" όριο της ζώνης όπου βρίσκεστε, δηλαδή την είσοδο στην επόμενη. Το να "
+"προτείνεις «λίγο καλύτερα» δεν θα αγκυρωνόταν πουθενά· το να προτείνεις "
+"μια ζώνη λέει κάτι — το πέρασμα από μέσο σε προχωρημένο φαίνεται και "
+"λέγεται."
+
+#: ../../source/manuel_stats.rst:430
+msgid ""
+"La **tendance** est un ajustement par les moindres carrés sur le PR de "
+"vos matchs, projeté à l'échéance. Elle refuse de se prononcer sous trois "
+"matchs : tracer une droite entre deux points serait une affirmation qu'on"
+" ne peut pas tenir. Et la phrase le dit à chaque fois — *une tendance "
+"n'est pas une prédiction*."
+msgstr ""
+"Η **τάση** είναι προσαρμογή ελαχίστων τετραγώνων στο PR των αγώνων σας, "
+"προβαλλόμενη στην προθεσμία. Αρνείται να αποφανθεί κάτω από τρεις αγώνες:"
+" το να χαράξεις ευθεία ανάμεσα σε δύο σημεία θα ήταν ισχυρισμός που δεν "
+"στέκει. Και η φράση το λέει κάθε φορά — *μια τάση δεν είναι πρόβλεψη*."
+
+#: ../../source/manuel_stats.rst:436
+msgid ""
+"L'objectif est enregistré dans les **métadonnées de la base**, pas dans "
+"la configuration : il porte sur cette bibliothèque-là, et suit donc le "
+"fichier plutôt que la machine. Aucun changement de schéma : ``metadata`` "
+"est déjà une table de clés et de valeurs, lisible par ``blunderdb info`` "
+"comme par le démon."
+msgstr ""
+"Ο στόχος αποθηκεύεται στα **μεταδεδομένα της βάσης**, όχι στη διαμόρφωση:"
+" αφορά αυτή τη βιβλιοθήκη, άρα ακολουθεί το αρχείο και όχι το μηχάνημα. "
+"Καμία αλλαγή σχήματος: το ``metadata`` είναι ήδη πίνακας κλειδιών/τιμών, "
+"αναγνώσιμος από το ``blunderdb info`` όπως και από τον δαίμονα."
+
+#: ../../source/manuel_stats.rst:442
+msgid "Courbe par tournoi"
+msgstr "Γραμμικό γράφημα ανά τουρνουά"
+
+#: ../../source/manuel_stats.rst:444
+msgid ""
+"Un graphique en ligne affiche le PR (ou MWC) de chaque tournoi : un point"
+" par tournoi, étiqueté de son nom, dans l'ordre chronologique de sa date "
+"— à défaut, celle de son plus ancien match (axe Y : valeur de la "
+"métrique). Des bandes de couleur matérialisent les seuils de niveau."
+msgstr ""
+"Ένα γράφημα γραμμής εμφανίζει το PR (ή MWC) κάθε τουρνουά: ένα σημείο ανά"
+" τουρνουά, με το όνομά του ως ετικέτα, με τη χρονολογική σειρά της "
+"ημερομηνίας του — ελλείψει αυτής, εκείνης του παλαιότερου αγώνα του "
+"(άξονας Y: τιμή της μετρικής). Έγχρωμες ζώνες σημειώνουν τα όρια "
+"επιπέδου."
+
+#: ../../source/manuel_stats.rst:449
+msgid ""
+"Cliquer sur un point du graphique ouvre un menu contextuel avec deux "
+"options :"
+msgstr ""
+"Κάνοντας κλικ σε ένα σημείο του γραφήματος ανοίγει ένα μενού "
+"περιβάλλοντος με δύο επιλογές:"
+
+#: ../../source/manuel_stats.rst:451
+msgid "**Ouvrir le tournoi** — ouvre le tournoi dans le panneau Tournois."
+msgstr "**Άνοιγμα τουρνουά** — ανοίγει το τουρνουά στον πίνακα Τουρνουά."
+
+#: ../../source/manuel_stats.rst:452
+msgid ""
+"**Ouvrir les positions** — charge toutes les positions du tournoi dans le"
+" panneau d'analyse."
+msgstr ""
+"**Άνοιγμα θέσεων** — φορτώνει όλες τις θέσεις του τουρνουά στον πίνακα "
+"ανάλυσης."
+
+#: ../../source/manuel_stats.rst:456
+msgid "Scatter plot par match"
+msgstr "Διάγραμμα διασποράς ανά αγώνα"
+
+#: ../../source/manuel_stats.rst:458
+msgid ""
+"Un nuage de points représente chaque match (axe X : date, axe Y : PR ou "
+"MWC). La taille du point est proportionnelle au nombre de décisions dans "
+"le match. Un match sans date n'y figure pas."
+msgstr ""
+"Ένα διάγραμμα διασποράς αναπαριστά κάθε αγώνα (άξονας X: ημερομηνία, "
+"άξονας Y: PR ή MWC). Το μέγεθος του σημείου είναι ανάλογο του αριθμού "
+"αποφάσεων στον αγώνα. Ένας αγώνας χωρίς ημερομηνία δεν εμφανίζεται."
+
+#: ../../source/manuel_stats.rst:462
+msgid "Cliquer sur un point ouvre un menu contextuel :"
+msgstr "Κάνοντας κλικ σε ένα σημείο ανοίγει ένα μενού περιβάλλοντος:"
+
+#: ../../source/manuel_stats.rst:464
+msgid "**Ouvrir le match** — ouvre le match dans le panneau des matchs."
+msgstr "**Άνοιγμα αγώνα** — ανοίγει τον αγώνα στον πίνακα αγώνων."
+
+#: ../../source/manuel_stats.rst:465
+msgid ""
+"**Ouvrir les positions** — charge toutes les positions du match dans le "
+"panneau d'analyse."
+msgstr ""
+"**Άνοιγμα θέσεων** — φορτώνει όλες τις θέσεις του αγώνα στον πίνακα "
+"ανάλυσης."
+
+#: ../../source/manuel_stats.rst:469
+msgid "Onglet Erreurs"
+msgstr "Καρτέλα Erreurs"
+
+#: ../../source/manuel_stats.rst:471
+msgid "L'onglet **Erreurs** décompose les sources d'erreurs."
+msgstr "Η καρτέλα **Erreurs** αναλύει τις πηγές των σφαλμάτων."
+
+#: ../../source/manuel_stats.rst:473
+msgid "Onglet Erreurs du panneau Stats"
+msgstr "Καρτέλα Errors του πίνακα Stats"
+
+#: ../../source/manuel_stats.rst:477
+msgid "L'onglet Erreurs : répartition du PR par action de videau."
+msgstr "Η καρτέλα Errors: κατανομή του PR ανά ενέργεια κύβου."
+
+#: ../../source/manuel_stats.rst:480
+msgid "Erreurs récurrentes"
+msgstr "Επαναλαμβανόμενα λάθη"
+
+#: ../../source/manuel_stats.rst:482
+msgid ""
+"En tête de l'onglet, un tableau regroupe les erreurs du filtre courant — "
+"donc celles d'un seul joueur quand un joueur est filtré — par **plan de "
+"jeu** et par **thème**, la plus coûteuse d'abord. Il répond à la question"
+" « où est-ce que je perds le plus ? » : par exemple, « tenue · trop de "
+"blots »."
+msgstr ""
+"Στην κορυφή της καρτέλας, ένας πίνακας ομαδοποιεί τα λάθη του τρέχοντος "
+"φίλτρου — άρα μόνο ενός παίκτη όταν έχει φιλτραριστεί ένας παίκτης — ανά "
+"**σχέδιο παιχνιδιού** και ανά **θέμα**, με πρώτο το πιο δαπανηρό. Απαντά "
+"στο ερώτημα «πού χάνω τα περισσότερα;»: για παράδειγμα, «κράτημα · πολλά "
+"blots»."
+
+#: ../../source/manuel_stats.rst:487
+msgid ""
+"Une **erreur** est une décision comptée dont le coût atteint le seuil "
+"*Erreur* de la bibliothèque."
+msgstr ""
+"Ένα **λάθος** είναι μια μετρημένη απόφαση της οποίας το κόστος φτάνει το "
+"όριο *Λάθος* της βιβλιοθήκης."
+
+#: ../../source/manuel_stats.rst:489
+msgid ""
+"Le **plan de jeu** est celui du joueur au trait, tel que l'onglet "
+"Ventilations le présente."
+msgstr ""
+"Το **σχέδιο παιχνιδιού** είναι αυτό του παίκτη που έχει σειρά, όπως το "
+"παρουσιάζει η καρτέλα Αναλύσεις."
+
+#: ../../source/manuel_stats.rst:491
+msgid ""
+"Le **thème** d'un coup de pions est celui que nomment les règles de la "
+"phrase d'explication du :ref:`panneau Analyse <panneau_analyse>` : gammon"
+" sous-estimé, trop de blots, point non fait, trop passif. Celui d'une "
+"décision de videau est le sens de l'erreur, comme dans la direction des "
+"erreurs de videau ci-dessous : double manqué, double prématuré, passe à "
+"tort, prise à tort."
+msgstr ""
+"Το **θέμα** μιας κίνησης πούλιων είναι αυτό που ονομάζουν οι κανόνες της "
+"πρότασης εξήγησης του :ref:`Πίνακα Ανάλυσης <panneau_analyse>`: "
+"υποτιμημένο gammon, πολλά blots, σημείο που δεν έγινε, υπερβολικά "
+"παθητικό. Το θέμα μιας απόφασης κύβου είναι η κατεύθυνση του λάθους, όπως"
+" στην κατεύθυνση των λαθών κύβου παρακάτω: χαμένο διπλασιασμό, πρόωρο "
+"διπλασιασμό, λανθασμένο πάσο, λανθασμένη αποδοχή."
+
+#: ../../source/manuel_stats.rst:497
+msgid ""
+"Une erreur qu'aucune règle ne nomme avec assurance n'est pas devinée : "
+"elle sort du classement et apparaît à part, sous le tableau, en une ligne"
+" par plan de jeu (« sans thème identifié : N erreurs, coût X »), "
+"cliquable elle aussi. Ce reste est souvent le plus lourd, car "
+"l'explication ne se prononce qu'à partir de 60 mp, au-dessus du seuil "
+"*Erreur* : classé avec les autres, il coifferait un tableau qui ne dirait"
+" rien."
+msgstr ""
+"Ένα λάθος που κανένας κανόνας δεν ονομάζει με βεβαιότητα δεν εικάζεται: "
+"βγαίνει από την κατάταξη και εμφανίζεται χωριστά, κάτω από τον πίνακα, σε"
+" μία γραμμή ανά σχέδιο παιχνιδιού («χωρίς αναγνωρισμένο θέμα: N λάθη, "
+"κόστος X»), επίσης με δυνατότητα κλικ. Αυτό το υπόλοιπο είναι συχνά το "
+"βαρύτερο, επειδή η εξήγηση εκφέρεται μόνο από 60 mp και πάνω, πάνω από το"
+" όριο *Λάθος*: κατατεταγμένο με τα άλλα, θα βρισκόταν επικεφαλής ενός "
+"πίνακα που δεν θα έλεγε τίποτα."
+
+#: ../../source/manuel_stats.rst:503
+msgid ""
+"Le **coût** est la part du PR du filtre que le groupe représente : la "
+"formule du PR appliquée aux erreurs du groupe, rapportée à toutes les "
+"décisions comptées. Les coûts des groupes ne dépassent donc jamais le PR."
+msgstr ""
+"Το **κόστος** είναι το μερίδιο του PR του φίλτρου που αντιπροσωπεύει η "
+"ομάδα: ο τύπος του PR εφαρμοσμένος στα λάθη της ομάδας, σε σχέση με όλες "
+"τις μετρημένες αποφάσεις. Τα κόστη των ομάδων δεν ξεπερνούν λοιπόν ποτέ "
+"το PR."
+
+#: ../../source/manuel_stats.rst:507
+msgid ""
+"Cliquer sur un groupe, ou sur son nombre d'erreurs, charge ses positions,"
+" de la plus coûteuse à la moins coûteuse. Le thème est recalculé à chaque"
+" affichage, jamais enregistré : comme le plan de jeu, c'est une étiquette"
+" dérivée, non modifiable. En ligne de commande : ``blunderdb stats "
+"recurring`` (voir :ref:`cli_stats`)."
+msgstr ""
+"Το κλικ σε μια ομάδα, ή στον αριθμό των λαθών της, φορτώνει τις θέσεις "
+"της, από την πιο δαπανηρή στη λιγότερο δαπανηρή. Το θέμα υπολογίζεται εκ "
+"νέου σε κάθε εμφάνιση και δεν αποθηκεύεται ποτέ: όπως το σχέδιο "
+"παιχνιδιού, είναι μια παράγωγη ετικέτα που δεν επεξεργάζεται. Στη γραμμή "
+"εντολών: ``blunderdb stats recurring`` (βλ. :ref:`cli_stats`)."
+
+#: ../../source/manuel_stats.rst:512
+msgid ""
+"Chaque ligne propose trois gestes pour passer de l'erreur à l'étude : "
+"**Quiz sur ce groupe** lance l'exercice Décision du panneau "
+":ref:`Entraînement <panneau_entrainement>` sur les positions du groupe, "
+"**Paquet Anki** en fait un paquet de cartes, **Collection** les range "
+"dans une nouvelle collection. Au-dessus du tableau, **Quiz de mes trois "
+"pires groupes** tire vingt positions au hasard parmi celles des trois "
+"groupes les plus coûteux. En ligne de commande, ``stats recurring "
+"--quiz`` tire ces positions et ``--deck`` crée le paquet."
+msgstr ""
+"Κάθε γραμμή προσφέρει τρεις τρόπους για να περάσετε από το λάθος στη "
+"μελέτη: το **Κουίζ για αυτή την ομάδα** ξεκινά την άσκηση Απόφαση του "
+"πίνακα :ref:`Εκπαίδευση <panneau_entrainement>` με τις θέσεις της ομάδας,"
+" η **Τράπουλα Anki** φτιάχνει από αυτές μια τράπουλα καρτών, η "
+"**Συλλογή** τις βάζει σε μια νέα συλλογή. Πάνω από τον πίνακα, το **Κουίζ"
+" για τις τρεις χειρότερες ομάδες μου** κληρώνει είκοσι θέσεις από εκείνες"
+" των τριών πιο δαπανηρών ομάδων. Στη γραμμή εντολών, το ``stats recurring"
+" --quiz`` κληρώνει αυτές τις θέσεις και το ``--deck`` δημιουργεί την "
+"τράπουλα."
+
+#: ../../source/manuel_stats.rst:522
+msgid "Répartition par action de videau"
+msgstr "Κατανομή ανά ενέργεια κύβου"
+
+#: ../../source/manuel_stats.rst:524
+msgid ""
+"Un diagramme en barres affiche le PR (ou MWC) pour chaque type de "
+"décision de videau : *NoDouble*, *DoubleTake*, *DoublePass*, *TooGood*. "
+"Chaque barre indique également le nombre de décisions et le taux de "
+"blunders en infobulle."
+msgstr ""
+"Ένα ραβδόγραμμα εμφανίζει το PR (ή το MWC) για κάθε τύπο απόφασης κύβου: "
+"*NoDouble*, *DoubleTake*, *DoublePass*, *TooGood*. Κάθε ράβδος "
+"υποδεικνύει επίσης τον αριθμό των αποφάσεων και το ποσοστό σφαλμάτων σε "
+"επεξηγηματική ετικέτα."
+
+#: ../../source/manuel_stats.rst:528
+msgid ""
+"Cliquer sur une barre charge les positions correspondant à cette action "
+"de videau, **uniquement celles avec une erreur** (drill-down)."
+msgstr ""
+"Κάνοντας κλικ σε μια ράβδο φορτώνονται οι θέσεις που αντιστοιχούν σε αυτή"
+" την ενέργεια κύβου, **μόνο εκείνες με σφάλμα** (drill-down)."
+
+#: ../../source/manuel_stats.rst:532
+msgid "Direction des erreurs de videau"
+msgstr "Κατεύθυνση των λαθών κύβου"
+
+#: ../../source/manuel_stats.rst:534
+msgid ""
+"La répartition ci-dessus indique *combien* coûtent les décisions de "
+"videau ; ce tableau indique dans *quel sens* elles se trompent."
+msgstr ""
+"Η παραπάνω κατανομή δείχνει *πόσο* κοστίζουν οι αποφάσεις κύβου· ο "
+"πίνακας αυτός δείχνει προς *ποια κατεύθυνση* σφάλλουν."
+
+#: ../../source/manuel_stats.rst:537
+msgid ""
+"Une position de videau porte deux décisions prises par deux joueurs "
+"différents, présentées ici en deux lignes :"
+msgstr ""
+"Μια θέση κύβου φέρει δύο αποφάσεις που λαμβάνονται από δύο διαφορετικούς "
+"παίκτες, οι οποίες παρουσιάζονται εδώ σε δύο γραμμές:"
+
+#: ../../source/manuel_stats.rst:540
+msgid ""
+"**Offrir** — le joueur qui tient le videau double ou ne double pas. Ses "
+"erreurs sont les **doubles manqués** (il fallait doubler) et les "
+"**doubles prématurés** (il ne fallait pas)."
+msgstr ""
+"**Προσφορά** — ο παίκτης που κατέχει τον κύβο διπλασιάζει ή όχι. Τα λάθη "
+"του είναι τα **χαμένα διπλασιάσματα** (έπρεπε να διπλασιάσει) και τα "
+"**πρόωρα διπλασιάσματα** (δεν έπρεπε)."
+
+#: ../../source/manuel_stats.rst:544
+msgid ""
+"**Répondre** — le joueur à qui le videau est offert prend ou passe. Ses "
+"erreurs sont les **passes à tort** (une prise correcte a été passée) et "
+"les **prises à tort** (une passe correcte a été prise)."
+msgstr ""
+"**Απάντηση** — ο παίκτης στον οποίο προσφέρεται ο κύβος δέχεται ή "
+"πασάρει. Τα λάθη του είναι τα **λανθασμένα πάσα** (μια σωστή αποδοχή "
+"πασαρίστηκε) και οι **λανθασμένες αποδοχές** (ένα σωστό πάσο έγινε "
+"αποδεκτό)."
+
+#: ../../source/manuel_stats.rst:548
+msgid ""
+"Les deux lignes restent séparées à dessein : un joueur peut parfaitement "
+"doubler tard *et* prendre large, et un indicateur unique appellerait cela"
+" « équilibré » en perdant les deux moitiés de l'information."
+msgstr ""
+"Οι δύο γραμμές παραμένουν χωριστές σκόπιμα: ένας παίκτης μπορεί κάλλιστα "
+"να διπλασιάζει αργά *και* να δέχεται χαλαρά, και ένας ενιαίος δείκτης θα "
+"το αποκαλούσε «ισορροπημένο» χάνοντας και τα δύο μισά της πληροφορίας."
+
+#: ../../source/manuel_stats.rst:552
+msgid ""
+"Chaque case affiche le nombre de décisions ; l'infobulle donne l'équité "
+"perdue cumulée. Cliquer sur une case charge les positions "
+"correspondantes. Une case à zéro n'est pas cliquable."
+msgstr ""
+"Κάθε κελί εμφανίζει το πλήθος των αποφάσεων· το tooltip δίνει τη "
+"συσσωρευμένη χαμένη ισοδυναμία. Το κλικ σε ένα κελί φορτώνει τις "
+"αντίστοιχες θέσεις. Ένα κελί με μηδέν δεν είναι κλικαρίσιμο."
+
+#: ../../source/manuel_stats.rst:557
+msgid ""
+"Ce tableau compte des décisions, il ne porte pas de jugement. À partir de"
+" quel écart une tendance mérite d'être nommée dépend de l'effectif et "
+"d'un point de référence, qui ne sont pas des données du moteur."
+msgstr ""
+"Ο πίνακας αυτός μετρά αποφάσεις, δεν κρίνει. Από ποια απόκλιση και έπειτα"
+" μια τάση αξίζει να ονομαστεί εξαρτάται από το μέγεθος του δείγματος και "
+"από ένα σημείο αναφοράς, που δεν είναι δεδομένα της μηχανής."
+
+#: ../../source/manuel_stats.rst:562
+msgid "Répartition Checker / Cube"
+msgstr "Σύγκριση Checker / Cube"
+
+#: ../../source/manuel_stats.rst:564
+msgid ""
+"Un diagramme comparatif place côte à côte le PR des coups joués et des "
+"décisions de videau. Cliquer sur une barre charge les positions du sous-"
+"ensemble avec erreur."
+msgstr ""
+"Ένα συγκριτικό διάγραμμα τοποθετεί δίπλα-δίπλα το PR των κινήσεων πουλιών"
+" και των αποφάσεων κύβου. Κάνοντας κλικ σε μια ράβδο φορτώνονται οι "
+"θέσεις του υποσυνόλου με σφάλμα."
+
+#: ../../source/manuel_stats.rst:569
+msgid "Histogramme des magnitudes d'erreur"
+msgstr "Ιστόγραμμα των μεγεθών σφάλματος"
+
+#: ../../source/manuel_stats.rst:571
+msgid ""
+"Un histogramme distribue les erreurs selon leur magnitude en millipoints "
+"(mpt, tranches : 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Cliquer sur une"
+" barre charge les positions de la tranche."
+msgstr ""
+"Ένα ιστόγραμμα κατανέμει τα σφάλματα σύμφωνα με το μέγεθός τους σε "
+"millipoints (mpt, διαστήματα: 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). "
+"Κάνοντας κλικ σε μια ράβδο φορτώνονται οι θέσεις του διαστήματος."
+
+#: ../../source/manuel_stats.rst:578
+msgid "Entraînement dans le temps"
+msgstr "Η εκπαίδευση στον χρόνο"
+
+#: ../../source/manuel_stats.rst:580
+msgid ""
+"L'onglet **Entraînement** met côte à côte, sur les mêmes fenêtres "
+"calendaires — la **semaine** ou le **mois**, au choix — trois séries qui "
+"mesurent la progression par trois chemins :"
+msgstr ""
+"Η καρτέλα **Εκπαίδευση** τοποθετεί δίπλα-δίπλα, στα ίδια ημερολογιακά "
+"παράθυρα — την **εβδομάδα** ή τον **μήνα**, κατ' επιλογήν — τρεις σειρές "
+"που μετρούν την πρόοδο με τρεις τρόπους:"
+
+#: ../../source/manuel_stats.rst:584
+msgid ""
+"le **PR du quiz** : celui des sessions de l'exercice Décision du panneau "
+"Entraînement, pondéré par le nombre de décisions jugées. Il est calculé "
+"sur l'échelle du PR réel, donc comparable à lui ;"
+msgstr ""
+"το **PR του κουίζ**: αυτό των συνεδριών της άσκησης Απόφαση του πίνακα "
+"Εκπαίδευση, σταθμισμένο με τον αριθμό των κριθεισών αποφάσεων. "
+"Υπολογίζεται στην κλίμακα του πραγματικού PR, άρα είναι συγκρίσιμο με "
+"αυτό·"
+
+#: ../../source/manuel_stats.rst:587
+msgid ""
+"le **PR des matchs** du filtre courant, pondéré par le nombre de "
+"décisions ;"
+msgstr ""
+"το **PR των αγώνων** του τρέχοντος φίλτρου, σταθμισμένο με τον αριθμό των"
+" αποφάσεων·"
+
+#: ../../source/manuel_stats.rst:588
+msgid ""
+"la **rétention Anki** : la part des révisions de cartes déjà apprises "
+"notées *Difficile* ou mieux, lue sur l'axe de droite (en %)."
+msgstr ""
+"η **διατήρηση του Anki**: το ποσοστό των επαναλήψεων ήδη μαθημένων καρτών"
+" που βαθμολογήθηκαν *Δύσκολο* ή καλύτερα, στον δεξιό άξονα (σε %)."
+
+#: ../../source/manuel_stats.rst:591
+msgid ""
+"Sous le graphique, le **PR du quiz par plan de jeu** range les décisions "
+"du quiz tirées de positions de la bibliothèque, les pires plans d'abord, "
+"avec le PR de la dernière fenêtre où le plan a été joué."
+msgstr ""
+"Κάτω από το γράφημα, το **PR κουίζ ανά πλάνο παιχνιδιού** απαριθμεί τις "
+"αποφάσεις του κουίζ από θέσεις της βιβλιοθήκης, με τα χειρότερα πλάνα "
+"πρώτα, μαζί με το PR του τελευταίου παραθύρου στο οποίο παίχτηκε το "
+"πλάνο."
+
+#: ../../source/manuel_stats.rst:595
+msgid ""
+"Entre parenthèses, le nombre de décisions ou de révisions derrière chaque"
+" valeur : une fenêtre sans échantillon n'a pas de valeur — un tiret, pas "
+"un zéro. Le nombre de décisions de matchs d'une fenêtre ouvre leurs "
+"positions. Le filtre ne restreint que les matchs ; le journal du quiz et "
+"celui d'Anki sont les vôtres et ne portent pas de joueur. Rien n'est "
+"enregistré en plus : les trois séries sont relues dans les journaux "
+"existants. En ligne de commande : ``blunderdb stats training`` (voir "
+":ref:`cli_stats`)."
+msgstr ""
+"Σε παρένθεση, ο αριθμός των αποφάσεων ή των επαναλήψεων πίσω από κάθε "
+"τιμή: ένα παράθυρο χωρίς δείγματα δεν έχει τιμή — παύλα, όχι μηδέν. Ο "
+"αριθμός των αποφάσεων αγώνων ενός παραθύρου ανοίγει τις θέσεις τους. Το "
+"φίλτρο περιορίζει μόνο τους αγώνες· το ημερολόγιο του κουίζ και του Anki "
+"είναι δικά σας και δεν φέρουν παίκτη. Τίποτα άλλο δεν καταγράφεται: οι "
+"τρεις σειρές διαβάζονται ξανά από τα υπάρχοντα ημερολόγια. Στη γραμμή "
+"εντολών: ``blunderdb stats training`` (βλ. :ref:`cli_stats`)."
+
+#: ../../source/manuel_stats.rst:603
+msgid "Onglet Ventilations"
+msgstr "Καρτέλα Αναλύσεις"
+
+#: ../../source/manuel_stats.rst:605
+msgid ""
+"L'onglet **Ventilations** découpe les mêmes décisions que les chiffres "
+"globaux selon quatre axes. Aucun d'eux ne redéfinit ce qui compte comme "
+"une décision : ce serait un second PR sous le même nom."
+msgstr ""
+"Η καρτέλα **Αναλύσεις** τεμαχίζει τις ίδιες αποφάσεις που μετρούν τα "
+"συνολικά μεγέθη κατά τέσσερις άξονες. Κανένας δεν επαναπροσδιορίζει τι "
+"μετρά ως απόφαση: θα ήταν ένα δεύτερο PR με το ίδιο όνομα."
+
+#: ../../source/manuel_stats.rst:609
+msgid ""
+"**Par phase de partie** — ouverture, milieu de partie, course, sortie des"
+" pions. C'est ce qui répond à « mon PR en course contre mon PR en contact"
+" ». L'étiquette est calculée depuis le plateau (voir "
+":ref:`panneau_recherche`) ; une base dont les phases n'ont jamais été "
+"calculées range tout sous *Non classée*, et ``blunderdb repair`` la "
+"remplit."
+msgstr ""
+"**Ανά φάση παιχνιδιού** — άνοιγμα, μέσο παιχνίδι, κούρσα, μάζεμα. Αυτό "
+"απαντά στο «το PR μου στην κούρσα έναντι του PR μου στην επαφή». Η "
+"ετικέτα υπολογίζεται από το ταμπλό (βλ. :ref:`panneau_recherche`)· μια "
+"βάση της οποίας οι φάσεις δεν υπολογίστηκαν ποτέ τα κατατάσσει όλα ως "
+"*Αταξινόμητη*, και η ``blunderdb repair`` τη συμπληρώνει."
+
+#: ../../source/manuel_stats.rst:615
+msgid ""
+"**Par plan de jeu** — course, blitz, tenue, backgame, amorce contre "
+"amorce… C'est la ventilation pour laquelle le classificateur existe : « "
+"où est-ce que je perds le plus ? », plan par plan. Même étiquette dérivée"
+" que la phase, mêmes réserves, et ``blunderdb repair`` la remplit de la "
+"même façon."
+msgstr ""
+"**Ανά σχέδιο παιχνιδιού** — κούρσα, blitz, άγκυρα, backgame, φράγμα κατά "
+"φράγματος… Αυτή είναι η ανάλυση για την οποία υπάρχει ο ταξινομητής: «πού"
+" χάνω περισσότερα;», σχέδιο προς σχέδιο. Ίδια παράγωγη ετικέτα με τη "
+"φάση, ίδιες επιφυλάξεις, και το ``blunderdb repair`` τη γεμίζει με τον "
+"ίδιο τρόπο."
+
+#: ../../source/manuel_stats.rst:621
+msgid ""
+"**Par étiquette** — les ``#mot`` écrits dans les commentaires. Une "
+"position peut en porter plusieurs : **ces lignes ne s'additionnent pas au"
+" total**, et le panneau le dit sous le tableau. Une étiquette qualifie, "
+"elle ne partitionne pas."
+msgstr ""
+"**Ανά ετικέτα** — τα ``#λέξη`` γραμμένα στα σχόλια. Μια θέση μπορεί να "
+"φέρει πολλές: **αυτές οι γραμμές δεν αθροίζονται στο σύνολο**, και ο "
+"πίνακας το λέει από κάτω. Μια ετικέτα χαρακτηρίζει, δεν διαμερίζει."
+
+#: ../../source/manuel_stats.rst:626
+msgid ""
+"**Par score** — l'écart au but des deux camps, lu du côté du joueur au "
+"trait, donc du côté de celui qui décide. La ligne *Money* est la partie "
+"d'argent. Une cellule sans intervalle est **grisée avec son effectif "
+"visible** plutôt que cachée (voir ci-dessous)."
+msgstr ""
+"**Ανά σκορ** — οι πόντοι που λείπουν και στα δύο στρατόπεδα, διαβασμένοι "
+"από την πλευρά του παίκτη που παίζει, δηλαδή από την πλευρά αυτού που "
+"αποφασίζει. Η γραμμή *Money* είναι το παιχνίδι για χρήματα. Ένα κελί με "
+"λιγότερες από δέκα αποφάσεις είναι **γκριζαρισμένο με το πλήθος του "
+"ορατό** αντί να κρύβεται: πολύ λίγες για να διαβαστούν, αλλά η παράλειψη "
+"παραμένει επαληθεύσιμη."
+
+#: ../../source/manuel_stats.rst:631
+msgid ""
+"Les colonnes **Positions** et **Bourdes** comptent des positions "
+"distinctes, et chaque chiffre est un lien : un clic charge exactement ces"
+" positions dans le panneau d'analyse, comme les compteurs de la barre "
+"d'état. *Bourdes* compte les positions où au moins une décision est une "
+"bourde. Une position jouée dans plusieurs matchs (une ouverture, par "
+"exemple) n'y compte qu'une fois ; la colonne **Décisions** la compte à "
+"chaque fois, car c'est le dénominateur du PR."
+msgstr ""
+"Οι στήλες **Θέσεις** και **Σοβαρά λάθη** μετρούν διακριτές θέσεις, και "
+"κάθε αριθμός είναι σύνδεσμος: ένα κλικ φορτώνει ακριβώς αυτές τις θέσεις "
+"στον πίνακα ανάλυσης, όπως οι μετρητές της γραμμής κατάστασης. Το *Σοβαρά"
+" λάθη* μετράει τις θέσεις όπου τουλάχιστον μία απόφαση είναι σοβαρό "
+"λάθος. Μια θέση που παίχτηκε σε πολλούς αγώνες (ένα άνοιγμα, για "
+"παράδειγμα) μετράει εκεί μόνο μία φορά· η στήλη **Αποφάσεις** την μετράει"
+" κάθε φορά, διότι είναι ο παρονομαστής του PR."
+
+#: ../../source/manuel_stats.rst:638
+msgid ""
+"Chaque ligne porte son **intervalle de confiance à 95 %** (colonne *IC 95"
+" %*), qui remplace le seuil fixe de dix décisions : il dit ce que vaut un"
+" PR, pas seulement combien de décisions le portent. Il rééchantillonne "
+"les **matchs** de la sélection, pas les décisions ni les parties : les "
+"parties d'un match partagent adversaire, séance et fatigue, et les "
+"compter comme indépendantes donnerait un intervalle trop étroit ; sans "
+"filtre joueur, les deux sièges d'un match forment une seule unité. Une "
+"ligne qui repose sur moins de trois matchs, ou dont tous les matchs "
+"donnent le même PR, n'a pas d'intervalle et est grisée, même avec "
+"beaucoup de décisions : deux matchs ne disent rien de la dispersion, et "
+"des matchs identiques disent qu'ils s'accordent, pas que le PR est exact."
+" Pour l'étude : une famille de positions dont l'intervalle reste au-"
+"dessus de votre PR global est une faiblesse établie ; une ligne à "
+"l'intervalle large ne justifie pas encore un plan de travail. Le PR "
+"global du tableau de bord porte le même intervalle, sous sa carte."
+msgstr ""
+"Κάθε γραμμή φέρει το **διάστημα εμπιστοσύνης 95 %** της (στήλη *ΔΕ 95 "
+"%*), που αντικαθιστά το σταθερό όριο των δέκα αποφάσεων: λέει πόσο αξίζει"
+" ένα PR, όχι μόνο πόσες αποφάσεις το στηρίζουν. Κάνει επαναδειγματοληψία "
+"των **αγώνων** της επιλογής, όχι των αποφάσεων ούτε των παρτίδων: οι "
+"παρτίδες ενός αγώνα μοιράζονται αντίπαλο, συνεδρία και κόπωση, και η "
+"μέτρησή τους ως ανεξάρτητων θα έδινε υπερβολικά στενό διάστημα· χωρίς "
+"φίλτρο παίκτη, οι δύο θέσεις ενός αγώνα αποτελούν μία μονάδα. Μια γραμμή "
+"που στηρίζεται σε λιγότερους από τρεις αγώνες, ή της οποίας όλοι οι "
+"αγώνες δίνουν το ίδιο PR, δεν έχει διάστημα και εμφανίζεται αχνή, ακόμη "
+"και με πολλές αποφάσεις: δύο αγώνες δεν λένε τίποτα για τη διασπορά, και "
+"πανομοιότυποι αγώνες λένε ότι συμφωνούν, όχι ότι το PR είναι ακριβές. Για"
+" τη μελέτη: μια οικογένεια θέσεων της οποίας το διάστημα μένει πάνω από "
+"το συνολικό σας PR είναι τεκμηριωμένη αδυναμία· μια γραμμή με πλατύ "
+"διάστημα δεν δικαιολογεί ακόμη πρόγραμμα μελέτης. Το συνολικό PR του "
+"πίνακα ελέγχου φέρει το ίδιο διάστημα, κάτω από την κάρτα του."
+
+#: ../../source/manuel_stats.rst:653
+msgid ""
+"Dans la ventilation par score, un score post-Crawford est lu comme 1-away"
+" : la partie Crawford et les parties post-Crawford au même score tombent "
+"dans la même cellule."
+msgstr ""
+"Στην ανάλυση ανά σκορ, ένα σκορ μετά το Crawford διαβάζεται ως 1-away: το"
+" παιχνίδι Crawford και τα παιχνίδια μετά το Crawford στο ίδιο σκορ "
+"καταλήγουν στο ίδιο κελί."
+
+#: ../../source/manuel_stats.rst:658
+msgid "Étude et jeu réel"
+msgstr "Μελέτη και πραγματικό παιχνίδι"
+
+#: ../../source/manuel_stats.rst:660
+msgid ""
+"La commande ``blunderdb list --type study --days 30`` met côte à côte, "
+"plan de jeu par plan de jeu, trois nombres : combien de **positions "
+"distinctes** ont été révisées sur la période, quel était le PR **avant** "
+"elle, quel est le PR **depuis**."
+msgstr ""
+"Η εντολή ``blunderdb list --type study --days 30`` βάζει δίπλα-δίπλα "
+"τρεις αριθμούς, σχέδιο προς σχέδιο: πόσες **διακριτές θέσεις** "
+"επαναλήφθηκαν στην περίοδο, ποιο ήταν το PR **πριν** από αυτήν, ποιο "
+"είναι το PR **έκτοτε**."
+
+#: ../../source/manuel_stats.rst:665
+msgid ""
+"Trois nombres, et pas un quatrième. Il n'y a **ni colonne de gain ni "
+"flèche**, parce que rien ici ne contrôle quoi que ce soit : le joueur a "
+"pu rencontrer des adversaires plus forts, changer de format, ou "
+"simplement jouer plus de courses ce mois-ci. Le rapprochement est celui "
+"du lecteur ; une colonne qui annoncerait un effet affirmerait une "
+"causalité que ces données ne portent pas. Les nombres, eux, sont exacts."
+msgstr ""
+"Τρεις αριθμοί, και όχι τέταρτος. Δεν υπάρχει **ούτε στήλη κέρδους ούτε "
+"βέλος**, γιατί τίποτα εδώ δεν ελέγχει τίποτα: ο παίκτης μπορεί να "
+"συνάντησε ισχυρότερους αντιπάλους, να άλλαξε μορφή, ή απλώς να έπαιξε "
+"περισσότερες κούρσες αυτόν τον μήνα. Η σύγκριση ανήκει στον αναγνώστη· "
+"μια στήλη που θα ανήγγελλε αποτέλεσμα θα ισχυριζόταν αιτιότητα που αυτά "
+"τα δεδομένα δεν φέρουν. Οι αριθμοί, πάντως, είναι ακριβείς."
+
+#: ../../source/manuel_stats.rst:672
+msgid ""
+"Les révisions sont comptées en **positions distinctes** : une carte revue"
+" quatre fois dans le mois est une position étudiée, et compter les "
+"répétitions ferait passer un mois de bachotage pour un mois de "
+"couverture. Les décisions du PR, elles, sont toutes comptées — chacune a "
+"été prise une fois. Un PR appuyé sur moins de dix décisions s'affiche "
+"``—``, avec son effectif visible à côté."
+msgstr ""
+"Οι επαναλήψεις μετρώνται σε **διακριτές θέσεις**: μια κάρτα που "
+"επαναλήφθηκε τέσσερις φορές τον μήνα είναι μία θέση που μελετήθηκε, και "
+"το να μετρηθούν οι επαναλήψεις θα έκανε έναν μήνα παπαγαλίας να μοιάζει "
+"με μήνα κάλυψης. Οι αποφάσεις του PR, αντίθετα, μετρώνται όλες — καθεμιά "
+"πάρθηκε μία φορά. Ένα PR που στηρίζεται σε λιγότερες από δέκα αποφάσεις "
+"εμφανίζεται ``—``, με το δείγμα του ορατό δίπλα."
+
+#: ../../source/manuel_stats.rst:680
+msgid "Onglet Joueurs"
+msgstr "Καρτέλα Παίκτες"
+
+#: ../../source/manuel_stats.rst:682
+msgid ""
+"Les cinq onglets précédents décrivent **un** joueur ; l'onglet "
+"**Joueurs** les compare tous. Il affiche une ligne par joueur de la base,"
+" ce qui répond au besoin d'un organisateur suivant une compétition "
+"entière plutôt qu'un joueur en particulier."
+msgstr ""
+"Οι πέντε προηγούμενες καρτέλες περιγράφουν **έναν** παίκτη· η καρτέλα "
+"**Παίκτες** τους συγκρίνει όλους. Εμφανίζει μια γραμμή ανά παίκτη της "
+"βάσης, πράγμα που απαντά στην ανάγκη ενός διοργανωτή που παρακολουθεί ένα"
+" ολόκληρο τουρνουά αντί για έναν παίκτη."
+
+#: ../../source/manuel_stats.rst:687
+msgid "Onglet Joueurs du panneau Stats"
+msgstr "Καρτέλα Players του πίνακα Stats"
+
+#: ../../source/manuel_stats.rst:691
+msgid ""
+"L'onglet Joueurs : une ligne par joueur, triable par n'importe quelle "
+"colonne."
+msgstr ""
+"Η καρτέλα Players: μία γραμμή ανά παίκτη, ταξινομήσιμη κατά οποιαδήποτε "
+"στήλη."
+
+#: ../../source/manuel_stats.rst:694
+msgid "Colonnes, dans l'ordre :"
+msgstr "Στήλες, με τη σειρά:"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Colonne"
+msgstr "Στήλη"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Signification"
+msgstr "Σημασία"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Joueur"
+msgstr "Παίκτης"
+
+#: ../../source/manuel_stats.rst:1
+msgid ""
+"Le nom **tel qu'il figure dans les matchs**. Un joueur enregistré sous "
+"deux orthographes apparaît sur deux lignes, sauf si l'une est un alias de"
+" l'autre (section Corpus des paramètres) : la ligne porte alors le nom "
+"canonique."
+msgstr ""
+"Το όνομα **όπως εμφανίζεται στους αγώνες**. Ένας παίκτης καταχωρισμένος "
+"με δύο γραφές εμφανίζεται σε δύο γραμμές, εκτός αν η μία είναι ψευδώνυμο "
+"της άλλης (ενότητα Σώμα αγώνων των ρυθμίσεων): η γραμμή φέρει τότε το "
+"κανονικό όνομα."
+
+#: ../../source/manuel_stats.rst:1
+msgid "Matchs"
+msgstr "Αγώνες"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Nombre de matchs disputés dans la période retenue."
+msgstr "Πλήθος αγώνων που παίχτηκαν στην επιλεγμένη περίοδο."
+
+#: ../../source/manuel_stats.rst:1
+msgid "V–D"
+msgstr "Ν–Η"
+
+#: ../../source/manuel_stats.rst:1
+msgid ""
+"Victoires et défaites. Un match inachevé (journal tronqué, abandon) ne "
+"compte ni l'une ni l'autre : V + D peut donc être inférieur au nombre de "
+"matchs."
+msgstr ""
+"Νίκες και ήττες. Ένας ημιτελής αγώνας (κολοβωμένο αρχείο, εγκατάλειψη) "
+"δεν μετρά ούτε ως νίκη ούτε ως ήττα: το Ν + Η μπορεί επομένως να είναι "
+"μικρότερο από το πλήθος των αγώνων."
+
+#: ../../source/manuel_stats.rst:1
+msgid "Décisions"
+msgstr "Αποφάσεις"
+
+#: ../../source/manuel_stats.rst:1
+msgid ""
+"Nombre de décisions comptées — le dénominateur du PR. C'est la colonne "
+"qui dit ce que valent les taux voisins : un PR calculé sur douze "
+"décisions ne signifie rien."
+msgstr ""
+"Πλήθος μετρημένων αποφάσεων — ο παρονομαστής του PR. Είναι η στήλη που "
+"λέει τι αξίζουν οι διπλανοί δείκτες: ένα PR υπολογισμένο σε δώδεκα "
+"αποφάσεις δεν σημαίνει τίποτα."
+
+#: ../../source/manuel_stats.rst:1
+msgid "Performance Rating global."
+msgstr "Συνολικό Performance Rating."
+
+#: ../../source/manuel_stats.rst:1
+msgid "PR pions, PR videau"
+msgstr "PR πουλιών, PR κύβου"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Le PR ventilé par type de décision."
+msgstr "Το PR αναλυμένο ανά τύπο απόφασης."
+
+#: ../../source/manuel_stats.rst:1
+msgid "Snowie"
+msgstr "Snowie"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Snowie Error Rate (voir :ref:`stats_parity`)."
+msgstr "Snowie Error Rate (βλ. :ref:`stats_parity`)."
+
+#: ../../source/manuel_stats.rst:1
+msgid "Blunders"
+msgstr "Σοβαρά λάθη"
+
+#: ../../source/manuel_stats.rst:1
+msgid ""
+"Nombre d'erreurs atteignant le seuil de blunder de la bibliothèque (0,100"
+" EMG par défaut). Cliquer sur ce nombre charge ces positions dans le "
+"panneau d'analyse."
+msgstr ""
+"Πλήθος σφαλμάτων που φτάνουν το κατώφλι blunder της βιβλιοθήκης (0,100 "
+"EMG εξ ορισμού). Ένα κλικ σε αυτόν τον αριθμό φορτώνει αυτές τις θέσεις "
+"στο πάνελ ανάλυσης."
+
+#: ../../source/manuel_stats.rst:1
+msgid "Chance"
+msgstr "Τύχη"
+
+#: ../../source/manuel_stats.rst:1
+msgid ""
+"Chance moyenne par lancer, en millipoints (mpt), signée : positive si les"
+" dés ont été favorables."
+msgstr ""
+"Μέση τύχη ανά ζαριά, σε millipoints (mpt), με πρόσημο: θετική αν τα ζάρια"
+" ήταν ευνοϊκά."
+
+#: ../../source/manuel_stats.rst:710
+msgid "Utilisation :"
+msgstr "Χρήση:"
+
+#: ../../source/manuel_stats.rst:712
+msgid ""
+"**Trier** — cliquez sur un en-tête de colonne. Le tableau s'ouvre trié "
+"par PR croissant, meilleur joueur en tête, et retient d'une session à "
+"l'autre le dernier tri choisi. Les joueurs dont rien n'a été mesuré "
+"restent en bas quel que soit le sens du tri : un zéro faute de données "
+"n'est pas une performance parfaite."
+msgstr ""
+"**Ταξινόμηση** — κάντε κλικ σε μια κεφαλίδα στήλης. Ο πίνακας ανοίγει "
+"ταξινομημένος κατά αύξον PR, με τον καλύτερο παίκτη πρώτο, και θυμάται "
+"από τη μία συνεδρία στην άλλη την τελευταία ταξινόμηση που επιλέχθηκε. Οι"
+" παίκτες για τους οποίους δεν μετρήθηκε τίποτα παραμένουν στο κάτω μέρος "
+"όποια και αν είναι η φορά της ταξινόμησης: ένα μηδέν ελλείψει δεδομένων "
+"δεν είναι τέλεια απόδοση."
+
+#: ../../source/manuel_stats.rst:717
+msgid ""
+"**Filtrer par colonne** — la ligne de champs sous les en-têtes filtre "
+"chaque colonne : un morceau de nom pour le texte, une borne pour les "
+"nombres (``>=500``, ``>500``, ``<2.5``, ``<=2``), un intervalle (``3-7``)"
+" ou une valeur exacte (``5``). Un champ illisible est encadré de rouge et"
+" ne filtre rien ; une valeur jamais mesurée ne passe aucune borne. Les "
+"filtres de colonne durent le temps de la session. Le **classement** des "
+"joueurs se lit ainsi : tri par PR, colonne *Décisions* filtrée par "
+"``>=500``. Tous les tableaux du panneau Stats — ventilations, corpus, "
+"erreurs récurrentes, temps de réflexion, entraînement, biais, effet de "
+"l'étude — se trient et se filtrent de la même façon."
+msgstr ""
+"**Φιλτράρισμα ανά στήλη** — η γραμμή πεδίων κάτω από τις κεφαλίδες "
+"φιλτράρει κάθε στήλη: ένα κομμάτι ονόματος για το κείμενο, ένα όριο για "
+"τους αριθμούς (``>=500``, ``>500``, ``<2.5``, ``<=2``), ένα διάστημα "
+"(``3-7``) ή μια ακριβή τιμή (``5``). Ένα μη αναγνώσιμο πεδίο περιβάλλεται"
+" με κόκκινο και δεν φιλτράρει τίποτα· μια τιμή που δεν μετρήθηκε ποτέ δεν"
+" περνά κανένα όριο. Τα φίλτρα στηλών διαρκούν όσο η συνεδρία. Η "
+"**κατάταξη** των παικτών διαβάζεται έτσι: ταξινόμηση κατά PR, στήλη "
+"*Αποφάσεις* φιλτραρισμένη με ``>=500``. Όλοι οι πίνακες του πάνελ Stats —"
+" αναλύσεις, σώμα δεδομένων, επαναλαμβανόμενα λάθη, χρόνος σκέψης, "
+"εξάσκηση, μεροληψία, αποτέλεσμα της μελέτης — ταξινομούνται και "
+"φιλτράρονται με τον ίδιο τρόπο."
+
+#: ../../source/manuel_stats.rst:727
+msgid ""
+"**Ouvrir le détail d'un joueur** — cliquez sur une ligne. Le joueur est "
+"sélectionné dans la barre de filtres et l'affichage bascule sur l'onglet "
+"Tableau de bord."
+msgstr ""
+"**Άνοιγμα λεπτομερειών παίκτη** — κάντε κλικ σε μια γραμμή. Ο παίκτης "
+"επιλέγεται στη γραμμή φίλτρων και η προβολή μεταβαίνει στην καρτέλα "
+"Πίνακας."
+
+#: ../../source/manuel_stats.rst:730
+msgid ""
+"**Ouvrir ses décisions** — le nombre de décisions ouvre leurs positions, "
+"sous les filtres du tableau. Le nombre de matchs et le bilan V–D restent "
+"de simples nombres : ils comptent aussi les matchs sans décision "
+"analysée, qu'aucune liste de matchs ne reproduit."
+msgstr ""
+"**Άνοιγμα των αποφάσεών του** — ο αριθμός των αποφάσεων ανοίγει τις "
+"θέσεις τους, υπό τα φίλτρα του πίνακα. Ο αριθμός των αγώνων και το "
+"ισοζύγιο Ν–Η μένουν απλοί αριθμοί: μετρούν και τους αγώνες χωρίς "
+"αναλυμένη απόφαση, που καμία λίστα αγώνων δεν αναπαράγει."
+
+#: ../../source/manuel_stats.rst:734
+msgid ""
+"**Restreindre la période** — les filtres de dates, de tournois et de "
+"longueur de match s'appliquent normalement, ce qui permet de borner le "
+"tableau aux dates d'une compétition."
+msgstr ""
+"**Περιορισμός της περιόδου** — τα φίλτρα ημερομηνιών, τουρνουά και μήκους"
+" αγώνα ισχύουν κανονικά, πράγμα που επιτρέπει τον περιορισμό του πίνακα "
+"στις ημερομηνίες μιας διοργάνωσης."
+
+#: ../../source/manuel_stats.rst:737
+msgid ""
+"**Comparer deux joueurs** — cochez la case de la première colonne sur "
+"deux lignes. Un bloc apparaît au-dessus du tableau et met leurs "
+"indicateurs face à face ; cocher un troisième joueur remplace le plus "
+"ancien des deux. La case ne sélectionne pas la ligne : cocher compare, "
+"cliquer ouvre le détail."
+msgstr ""
+"**Σύγκριση δύο παικτών** — τσεκάρετε το κουτί της πρώτης στήλης σε δύο "
+"γραμμές. Πάνω από τον πίνακα εμφανίζεται ένα πλαίσιο που παραθέτει τους "
+"δείκτες τους αντικριστά· τσεκάροντας τρίτο παίκτη αντικαθίσταται ο "
+"παλαιότερος από τους δύο. Το κουτί δεν επιλέγει τη γραμμή: το τσεκάρισμα "
+"συγκρίνει, το κλικ ανοίγει τη λεπτομέρεια."
+
+#: ../../source/manuel_stats.rst:741
+msgid ""
+"**Voir les positions où l'un a mieux joué** — le bouton du bloc de "
+"comparaison liste les positions que les deux joueurs ont eu à jouer et où"
+" l'un a bien joué (en dessous du seuil Erreur de la bibliothèque) et "
+"l'autre non, l'écart le plus large d'abord ; le joueur est jugé sur son "
+"pire coup de la position. *Ouvrir ces positions* les charge dans la vue "
+"analyse. La ligne de commande et le serveur donnent la même liste "
+"(``stats contrast``)."
+msgstr ""
+"**Δείτε τις θέσεις όπου ο ένας έπαιξε καλύτερα** — το κουμπί του μπλοκ "
+"σύγκρισης παραθέτει τις θέσεις που έπρεπε να παίξουν και οι δύο παίκτες "
+"και όπου ο ένας έπαιξε καλά (κάτω από το όριο Σφάλματος της βιβλιοθήκης) "
+"και ο άλλος όχι, με τη μεγαλύτερη διαφορά πρώτη· ο παίκτης κρίνεται από "
+"την χειρότερη κίνησή του στη θέση. Το *Άνοιγμα αυτών των θέσεων* τις "
+"φορτώνει στην προβολή ανάλυσης. Η γραμμή εντολών και ο διακομιστής δίνουν"
+" την ίδια λίστα (``stats contrast``)."
+
+#: ../../source/manuel_stats.rst:747
+msgid ""
+"**Noter les coups d'abord** — la liste ne compare que les coups dont "
+"l'erreur est notée, et aucun import ne les note : la notation se fait sur"
+" demande. Tant qu'il en reste à noter, le bloc en donne le nombre avec un"
+" bouton *Noter les coups* ; la ligne de commande fait la même chose avec "
+"``repair --move-errors``."
+msgstr ""
+"**Πρώτα βαθμολόγηση των κινήσεων** — η λίστα συγκρίνει μόνο κινήσεις των "
+"οποίων το σφάλμα έχει βαθμολογηθεί, και καμία εισαγωγή δεν τις "
+"βαθμολογεί: η βαθμολόγηση γίνεται κατόπιν αιτήματος. Όσο απομένουν "
+"κινήσεις προς βαθμολόγηση, το μπλοκ δίνει τον αριθμό τους με ένα κουμπί "
+"*Βαθμολόγηση κινήσεων*· η γραμμή εντολών κάνει το ίδιο με ``repair "
+"--move-errors``."
+
+#: ../../source/manuel_stats.rst:752
+msgid ""
+"Dans ce bloc, **seuls les taux reçoivent un verdict**, et le meilleur des"
+" deux est mis en gras. Trois indicateurs n'en reçoivent jamais, et il "
+"vaut de dire pourquoi. La **chance** n'est pas une qualité : un joueur "
+"plus chanceux n'est pas meilleur. Les **matchs, le bilan et les "
+"décisions** situent ce que les taux valent, mais les mettre en "
+"compétition ferait gagner celui qui a simplement joué davantage. Le "
+"**nombre de blunders** ne se compare pas brut — douze sur mille décisions"
+" valent mieux que dix sur cent —, aussi le bloc ajoute-t-il une ligne "
+"*Blunders / 100 déc.* qui, elle, se compare, et laisse le compte à côté "
+"comme contexte."
+msgstr ""
+"Στο πλαίσιο αυτό **μόνο οι ρυθμοί παίρνουν ετυμηγορία**, και ο καλύτερος "
+"από τους δύο μπαίνει με έντονα. Τρεις δείκτες δεν παίρνουν ποτέ, και "
+"αξίζει να ειπωθεί γιατί. Η **τύχη** δεν είναι προσόν: ένας πιο τυχερός "
+"παίκτης δεν είναι καλύτερος. Οι **αγώνες, το ρεκόρ και οι αποφάσεις** "
+"δείχνουν τι αξίζουν οι ρυθμοί, αλλά αν τα βάζαμε σε ανταγωνισμό θα "
+"κέρδιζε όποιος απλώς έπαιξε περισσότερο. Το **πλήθος των blunder** δεν "
+"συγκρίνεται ωμό — δώδεκα στις χίλιες αποφάσεις είναι καλύτερα από δέκα "
+"στις εκατό —, γι' αυτό το πλαίσιο προσθέτει μια γραμμή *Blunder / 100 "
+"αποφ.* που όντως συγκρίνεται, και αφήνει το πλήθος δίπλα ως συμφραζόμενο."
+
+#: ../../source/manuel_stats.rst:762
+msgid ""
+"Une égalité n'est pas une victoire : elle n'est mise en gras d'aucun "
+"côté. Un taux qui n'a rien derrière lui s'affiche « — » et ne départage "
+"rien."
+msgstr ""
+"Η ισοπαλία δεν είναι νίκη: δεν μπαίνει με έντονα σε καμία πλευρά. Ένας "
+"ρυθμός χωρίς τίποτα από πίσω εμφανίζεται ως «—» και δεν κρίνει τίποτα."
+
+#: ../../source/manuel_stats.rst:766
+msgid ""
+"Dans cet onglet, le choix du **type de décision** est désactivé : le "
+"tableau ventile déjà les décisions de pions et de videau en colonnes "
+"distinctes. Le joueur de la barre de filtres reste actif : le tableau "
+"montre toujours tous les joueurs, et la ligne de celui-ci est mise en "
+"évidence et amenée à l'écran."
+msgstr ""
+"Σε αυτή την καρτέλα, η επιλογή του **τύπου απόφασης** είναι "
+"απενεργοποιημένη: ο πίνακας κατανέμει ήδη τις αποφάσεις πουλιών και κύβου"
+" σε ξεχωριστές στήλες. Ο παίκτης της γραμμής φίλτρων παραμένει ενεργός: ο"
+" πίνακας δείχνει πάντα όλους τους παίκτες, και η γραμμή αυτού του παίκτη "
+"επισημαίνεται και φέρνεται στην οθόνη."
+
+#: ../../source/manuel_stats.rst:772
+msgid ""
+"Deux vues de corpus figurent dans l'onglet **Corpus** du panneau, en "
+"ligne de commande et par l'API du démon (voir :ref:`cli_stats`) : le "
+"**face-à-face** de deux joueurs (matchs communs, PR de chacun, bilan) et "
+"le **PR par fenêtre calendaire** glissante (1, 3, 6 ou 12 mois). L'onglet"
+" Corpus calcule chaque vue à la demande, sous le filtre courant. Le "
+"**classement** par PR se lit dans l'onglet Joueurs, trié par PR et filtré"
+" sur la colonne *Décisions* ; la ligne de commande et l'API le donnent "
+"aussi (``stats ranking``). Un **filtre de provenance** (champs *Moteur* "
+"et *Profondeur min.* de la barre de filtres) restreint les statistiques "
+"aux décisions analysées ainsi ; il porte sur chaque décision, et les "
+"chiffres qu'il touche sont alors recalculés depuis les décisions. Le "
+"face-à-face et le PR par fenêtre ne l'acceptent pas : tant qu'il est "
+"actif, ils refusent de se calculer. Comme le reste de la barre, il est "
+"conservé d'une session à l'autre."
+msgstr ""
+"Δύο όψεις του σώματος δεδομένων υπάρχουν στην καρτέλα **Corpus** του "
+"πάνελ, στη γραμμή εντολών και μέσω του API του δαίμονα (βλ. "
+":ref:`cli_stats`): το **πρόσωπο με πρόσωπο** δύο παικτών (κοινοί αγώνες, "
+"PR του καθενός, απολογισμός) και το κυλιόμενο **PR ανά ημερολογιακό "
+"παράθυρο** (1, 3, 6 ή 12 μήνες). Η καρτέλα Corpus υπολογίζει κάθε όψη "
+"κατά απαίτηση, υπό το τρέχον φίλτρο. Η **κατάταξη** κατά PR διαβάζεται "
+"στην καρτέλα Παίκτες, ταξινομημένη κατά PR και φιλτραρισμένη στη στήλη "
+"*Αποφάσεις*· η γραμμή εντολών και το API την παρέχουν επίσης (``stats "
+"ranking``). Ένα **φίλτρο προέλευσης** (πεδία *Μηχανή* και *Ελάχ. βάθος* "
+"της γραμμής φίλτρων) περιορίζει τα στατιστικά στις αποφάσεις που "
+"αναλύθηκαν έτσι· αφορά κάθε απόφαση και τα νούμερα που επηρεάζει "
+"υπολογίζονται τότε εκ νέου από τις αποφάσεις. Το πρόσωπο με πρόσωπο και "
+"το PR ανά παράθυρο δεν το δέχονται: όσο είναι ενεργό, αρνούνται να "
+"υπολογιστούν. Όπως και η υπόλοιπη γραμμή, διατηρείται από τη μία συνεδρία"
+" στην άλλη."
+
+#: ../../source/manuel_stats.rst:786
+msgid ""
+"Dans l'onglet Corpus, chaque ligne ouvre ce qu'elle résume. Le bilan du "
+"face-à-face ouvre ses matchs dans le panneau Matchs, qui porte alors le "
+"bouton « N matchs ouverts depuis les Stats × » : il rend la liste "
+"complète ; une ligne de face-à-face ouvre son match. Le premier joueur du"
+" face-à-face est d'emblée celui de la barre de filtres. Une ligne de "
+"fenêtre et son nombre de décisions ouvrent ses positions, son nombre de "
+"matchs ouvre les matchs. Un compte de positions du panneau Stats, quel "
+"que soit l'onglet, quitte d'abord le match en cours avant d'ouvrir sa "
+"liste ; la commande ``m`` rouvre ensuite le match au coup sauvegardé."
+msgstr ""
+"Στην καρτέλα Corpus, κάθε γραμμή ανοίγει ό,τι συνοψίζει. Το ισοζύγιο της "
+"αντιπαράθεσης ανοίγει τους αγώνες του στο πάνελ Αγώνες, που φέρει τότε το"
+" κουμπί «N αγώνες ανοιγμένοι από τα Stats ×»: επαναφέρει ολόκληρη τη "
+"λίστα· μια γραμμή αντιπαράθεσης ανοίγει τον αγώνα της. Ο πρώτος παίκτης "
+"της αντιπαράθεσης είναι εξαρχής εκείνος της γραμμής φίλτρων. Μια γραμμή "
+"παραθύρου και ο αριθμός αποφάσεών της ανοίγουν τις θέσεις της, ο αριθμός "
+"αγώνων της ανοίγει τους αγώνες. Ένας αριθμός θέσεων του πάνελ Stats, σε "
+"οποιαδήποτε καρτέλα, βγαίνει πρώτα από τον τρέχοντα αγώνα πριν ανοίξει τη"
+" λίστα του· η εντολή ``m`` ξανανοίγει έπειτα τον αγώνα στην αποθηκευμένη "
+"κίνηση."
+
+#: ../../source/manuel_stats.rst:796
+msgid ""
+"Un tiret (« — ») signale une valeur **jamais mesurée**, à ne pas "
+"confondre avec zéro. C'est notamment le cas de la colonne Chance pour "
+"tout match importé avant la version 2.15.0 du schéma : la chance n'était "
+"alors pas conservée, et rien ne permet de la reconstituer après coup. "
+"Réimporter le fichier source ne suffit pas : l'import y reconnaît un "
+"doublon et n'applique que les marques d'étude nouvellement levées (le "
+"rapport en donne le nombre). Il faut supprimer le match, puis le "
+"réimporter. Les formats qui ne la transportent pas (BGF, Jellyfish "
+"``.mat``) n'en fourniront jamais."
+msgstr ""
+"Μια παύλα («—») σημαίνει τιμή που **δεν μετρήθηκε ποτέ**, να μη συγχέεται"
+" με το μηδέν. Αυτό ισχύει ιδίως για τη στήλη Τύχη σε κάθε αγώνα που "
+"εισήχθη πριν από την έκδοση 2.15.0 του σχήματος: η τύχη δεν διατηρούνταν "
+"τότε, και τίποτα δεν επιτρέπει την εκ των υστέρων ανασύστασή της. Η "
+"επανεισαγωγή του αρχείου προέλευσης δεν αρκεί: η εισαγωγή αναγνωρίζει "
+"διπλότυπο και εφαρμόζει μόνο τις σημάνσεις μελέτης που ανατέθηκαν εκ νέου"
+" (η αναφορά δίνει τον αριθμό τους). Ο αγώνας πρέπει να διαγραφεί και "
+"έπειτα να εισαχθεί ξανά. Οι μορφές που δεν τη μεταφέρουν (BGF, Jellyfish "
+"``.mat``) δεν θα τη δώσουν ποτέ."
+
+#: ../../source/manuel_stats.rst:806
+msgid "Règle d'agrégation"
+msgstr "Κανόνας συνάθροισης"
+
+#: ../../source/manuel_stats.rst:809
+msgid ""
+"Le PR d'un tournoi (ou d'un sous-ensemble quelconque) est calculé par la "
+"règle **somme/somme** — jamais comme moyenne des PR individuels des "
+"matchs."
+msgstr ""
+"Το PR ενός τουρνουά (ή οποιουδήποτε υποσυνόλου) υπολογίζεται με τον "
+"κανόνα **άθροισμα/άθροισμα** — ποτέ ως μέσος όρος των επιμέρους PR των "
+"αγώνων."
+
+#: ../../source/manuel_stats.rst:813
+msgid "Formule :"
+msgstr "Τύπος:"
+
+#: ../../source/manuel_stats.rst:815
+msgid ""
+"PR_{tournoi} = 500 \\times \\frac{\\sum_{i} "
+"\\text{erreur}_i}{\\text{nombre total de décisions}}"
+msgstr ""
+"PR_{tournoi} = 500 \\times \\frac{\\sum_{i} "
+"\\text{erreur}_i}{\\text{nombre total de décisions}}"
+
+#: ../../source/manuel_stats.rst:819
+msgid "**Exemple :** un joueur dispute deux matchs dans un tournoi —"
+msgstr "**Παράδειγμα:** ένας παίκτης παίζει δύο αγώνες σε ένα τουρνουά —"
+
+#: ../../source/manuel_stats.rst:821
+msgid "Match A : 10 décisions, 0,100 d'équité perdue → PR = 5,0"
+msgstr "Αγώνας A: 10 αποφάσεις, 0,100 χαμένης ισοδυναμίας → PR = 5,0"
+
+#: ../../source/manuel_stats.rst:822
+msgid "Match B : 90 décisions, 0,540 d'équité perdue → PR = 3,0"
+msgstr "Αγώνας B: 90 αποφάσεις, 0,540 χαμένης ισοδυναμίας → PR = 3,0"
+
+#: ../../source/manuel_stats.rst:824
+msgid "Moyenne naïve des PR : (5,0 + 3,0) / 2 = **4,0** *(incorrect)*"
+msgstr "Αφελής μέσος όρος των PR: (5,0 + 3,0) / 2 = **4,0** *(λανθασμένο)*"
+
+#: ../../source/manuel_stats.rst:826
+msgid "Règle somme/somme : 500 × 0,640 / (10 + 90) = **3,2** *(correct)*"
+msgstr "Κανόνας άθροισμα/άθροισμα: 500 × 0,640 / (10 + 90) = **3,2** *(σωστό)*"
+
+#: ../../source/manuel_stats.rst:828
+msgid ""
+"La règle somme/somme est la seule qui résiste à la variation de longueur "
+"des matchs (un match en 21 points pèse plus qu'un match en 1 point)."
+msgstr ""
+"Ο κανόνας άθροισμα/άθροισμα είναι ο μόνος που χειρίζεται σωστά τη "
+"διακύμανση του μήκους των αγώνων (ένας αγώνας 21 πόντων ζυγίζει "
+"περισσότερο από έναν αγώνα 1 πόντου)."
+
+#: ../../source/manuel_stats.rst:832
+msgid "MWC : limitations"
+msgstr "MWC: περιορισμοί"
+
+#: ../../source/manuel_stats.rst:834
+msgid ""
+"Par défaut, le MWC cost est calculé à partir de la **MET Kazaross-XG2**, "
+"table de référence de facto dans le backgammon compétitif. Les résultats "
+"ne sont pas directement comparables avec des logiciels utilisant d'autres"
+" METs. C'est la même table, lue par le même point d'entrée, que celle "
+"dont l'évaluateur embarqué se sert pour ses décisions de videau au score "
+": les statistiques et le moteur ne peuvent pas diverger là-dessus. Elle "
+"donne ses valeurs propres jusqu'à 25 points à faire de chaque côté ; au-"
+"delà, elle est prolongée par une table de Zadeh calculée comme celle de "
+"GNUbg, jusqu'à 64."
+msgstr ""
+"Από προεπιλογή, το MWC cost υπολογίζεται από τη **MET Kazaross-XG2**, τον"
+" de facto πίνακα αναφοράς στο αγωνιστικό τάβλι. Τα αποτελέσματα δεν είναι"
+" άμεσα συγκρίσιμα με λογισμικά που χρησιμοποιούν άλλα MET. Είναι ο ίδιος "
+"πίνακας, διαβασμένος από το ίδιο σημείο εισόδου, με εκείνον που "
+"χρησιμοποιεί ο ενσωματωμένος αξιολογητής για τις αποφάσεις κύβου του στο "
+"σκορ: τα στατιστικά και η μηχανή δεν μπορούν να αποκλίνουν σε αυτό. Δίνει"
+" δικές του τιμές έως 25 πόντους προς κατάκτηση από κάθε πλευρά· πέρα από "
+"εκεί, επεκτείνεται με έναν πίνακα Zadeh υπολογισμένο όπως αυτόν του "
+"GNUbg, μέχρι τους 64."
+
+#: ../../source/manuel_stats.rst:843
+msgid ""
+"Les positions *money-game* (sans score de match) sont **exclues** du "
+"calcul MWC. Si votre base de données contient beaucoup de positions "
+"money-game, le MWC cost peut être sous-estimé ou indisponible."
+msgstr ""
+"Οι θέσεις *money-game* (χωρίς σκορ αγώνα) **εξαιρούνται** από τον "
+"υπολογισμό MWC. Αν η βάση δεδομένων σας περιέχει πολλές θέσεις money-"
+"game, το MWC cost μπορεί να υποεκτιμηθεί ή να μην είναι διαθέσιμο."
+
+#: ../../source/manuel_stats.rst:847
+msgid ""
+"Le MWC cost est cumulatif sur l'ensemble du jeu de données filtré — pas "
+"un indicateur par décision. Il mesure l'impact total de vos erreurs sur "
+"vos chances de victoire."
+msgstr ""
+"Το MWC cost είναι σωρευτικό σε ολόκληρο το φιλτραρισμένο σύνολο δεδομένων"
+" — όχι δείκτης ανά απόφαση. Μετρά τη συνολική επίδραση των σφαλμάτων σας "
+"στις πιθανότητες νίκης σας."
+

@@ -17,10 +17,10 @@ Sphinx, nine languages: French is the source, `source/locale/` holds the gettext
 - **A metric or a study tool is documented in full**: definition, exact formula, what counts
   as a decision, unit, how to read it, uncertainty, limits, how it differs from XG/gnubg — and
   its motivation: the question it answers and how it helps the player study
-  (`source/metriques.rst`; the screen stays in `manuel.rst`).
+  (`source/metriques.rst`; the screen stays in the manual, `manuel_*.rst`).
 - **A new page is proposed with its price**: one French line ≈ twenty catalogue lines across
   the eight languages. Prefer a sentence on an existing page or a `:ref:`.
-- **The in-app help is generated** from `manuel.rst`, `raccourcis.rst`, `cmd_mode.rst` and
+- **The in-app help is generated** from `manuel.rst` (its toctree of `manuel_*.rst` chapters), `raccourcis.rst`, `cmd_mode.rst` and
   `frontend/src/i18n/help/prose/`: run `make help` after changing them; `go test ./cmd/help-gen`
   fails while a bundle is stale (ADR-0034).
 - Japanese: RST inline markup touching CJK needs an escaped space (`\ `) in the `msgstr`.
