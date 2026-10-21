@@ -10,7 +10,6 @@ import (
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
-	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -115,17 +114,6 @@ func (d *Database) writeImportedPosition(ctx context.Context, graphs []ingest.Po
 	d.positionsSinceStats += len(graphs)
 	return firstID, nil
 }
-
-// The analysis merge helpers are engine's, shared with ingest and gammonNet's
-// verdicts (see engine/analysismerge.go).
-var (
-	sortCubeAnalysesByEngine = engine.SortCubeAnalysesByEngine
-	mergePlayedMoves         = engine.UnionPlayed
-	mergeCubeAnalyses        = engine.MergeCubeAnalyses
-)
-
-// normalizeMove is re-exported from package engine (see analysiscodec.go).
-var normalizeMove = engine.NormalizeMove
 
 // ErrDuplicateMatch is returned when attempting to import a match that already exists
 var ErrDuplicateMatch = fmt.Errorf("duplicate match: this match has already been imported")

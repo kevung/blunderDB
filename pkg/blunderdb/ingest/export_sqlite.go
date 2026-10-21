@@ -805,7 +805,7 @@ func (e *exporter) createMove(srcID int64, mv *domain.Move) (int64, error) {
 // foldPlayedMoves folds what the move table records against a position into
 // the analysis's own played-move lists, deduplicated and sorted, so the
 // exported analysis says everything that was ever played there. Checker moves
-// are normalised (mergePlayedMoves); cube actions are kept as written.
+// are normalised (engine.UnionPlayed); cube actions are kept as written.
 func foldPlayedMoves(a *domain.PositionAnalysis, moves []*domain.Move) {
 	var playedMoves, cubeActions []string
 	if a.PlayedMove != "" {
@@ -822,7 +822,7 @@ func foldPlayedMoves(a *domain.PositionAnalysis, moves []*domain.Move) {
 			cubeActions = append(cubeActions, mv.CubeAction)
 		}
 	}
-	a.PlayedMoves = mergePlayedMoves(a.PlayedMoves, playedMoves)
+	a.PlayedMoves = engine.UnionPlayed(a.PlayedMoves, playedMoves)
 	set := make(map[string]bool)
 	for _, c := range append(a.PlayedCubeActions, cubeActions...) {
 		if c != "" {
