@@ -107,7 +107,7 @@ func (d *Database) saveAnalysisLocked(positionID int64, analysis PositionAnalysi
 
 		// Merge checker analysis if both exist
 		if existingAnalysis.CheckerAnalysis != nil && analysis.CheckerAnalysis != nil {
-			analysis.CheckerAnalysis.Moves = mergeCheckerMoves(
+			analysis.CheckerAnalysis.Moves = engine.MergeCheckerMoves(
 				existingAnalysis.CheckerAnalysis.Moves,
 				analysis.CheckerAnalysis.Moves,
 			)
@@ -153,24 +153,10 @@ func (d *Database) saveAnalysisLocked(positionID int64, analysis PositionAnalysi
 		analysis.PlayedMove = ""
 		analysis.PlayedCubeAction = ""
 
-		// Sort checker moves by equity after merging
-		if analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0 {
-			sort.Slice(analysis.CheckerAnalysis.Moves, func(i, j int) bool {
-				return analysis.CheckerAnalysis.Moves[i].Equity > analysis.CheckerAnalysis.Moves[j].Equity
-			})
-			// Recalculate indices and equity errors
-			bestEquity := analysis.CheckerAnalysis.Moves[0].Equity
-			for i := range analysis.CheckerAnalysis.Moves {
-				analysis.CheckerAnalysis.Moves[i].Index = i
-				if i == 0 {
-					analysis.CheckerAnalysis.Moves[i].EquityError = nil
-				} else {
-					diff := bestEquity - analysis.CheckerAnalysis.Moves[i].Equity
-					analysis.CheckerAnalysis.Moves[i].EquityError = &diff
-				}
-			}
+		// Rank checker moves by equity after merging
+		if analysis.CheckerAnalysis != nil {
+			engine.RankCheckerMoves(analysis.CheckerAnalysis.Moves)
 		}
-
 	} else {
 		// Set creation date if not already set
 		if analysis.CreationDate.IsZero() {
@@ -187,24 +173,10 @@ func (d *Database) saveAnalysisLocked(positionID int64, analysis PositionAnalysi
 			analysis.PlayedCubeAction = ""
 		}
 
-		// Sort checker moves by equity
-		if analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0 {
-			sort.Slice(analysis.CheckerAnalysis.Moves, func(i, j int) bool {
-				return analysis.CheckerAnalysis.Moves[i].Equity > analysis.CheckerAnalysis.Moves[j].Equity
-			})
-			// Recalculate indices and equity errors
-			bestEquity := analysis.CheckerAnalysis.Moves[0].Equity
-			for i := range analysis.CheckerAnalysis.Moves {
-				analysis.CheckerAnalysis.Moves[i].Index = i
-				if i == 0 {
-					analysis.CheckerAnalysis.Moves[i].EquityError = nil
-				} else {
-					diff := bestEquity - analysis.CheckerAnalysis.Moves[i].Equity
-					analysis.CheckerAnalysis.Moves[i].EquityError = &diff
-				}
-			}
+		// Rank checker moves by equity
+		if analysis.CheckerAnalysis != nil {
+			engine.RankCheckerMoves(analysis.CheckerAnalysis.Moves)
 		}
-
 	}
 
 	// The store rounds, encodes and derives the scalar columns, then
@@ -358,53 +330,6 @@ func (d *Database) RepairAnalyses() (int, error) {
 		return 0, fmt.Errorf("no database is currently open")
 	}
 	return d.store.Analyses().RepairDenormalisedColumns(context.Background(), "")
-}
-
-// mergeCubeAnalyses folds an incoming cube analysis into what a position
-// already carries, keeping one entry per ENGINE.
-//
-// The primary is the incoming one when present, else the existing one: a
-// caller silent about the cube must not blank it. The set is deduplicated by
-// engine, incoming first (a newer XG replaces XG's entry), and sorted so the
-// display does not depend on import order.
-func mergeCubeAnalyses(existing *DoublingCubeAnalysis, existingAll []DoublingCubeAnalysis,
-	incoming *DoublingCubeAnalysis, incomingAll []DoublingCubeAnalysis) (*DoublingCubeAnalysis, []DoublingCubeAnalysis) {
-
-	// Everything either side knows, incoming first so it wins its engine slot.
-	var candidates []DoublingCubeAnalysis
-	candidates = append(candidates, incomingAll...)
-	if incoming != nil {
-		candidates = append(candidates, *incoming)
-	}
-	candidates = append(candidates, existingAll...)
-	if existing != nil {
-		candidates = append(candidates, *existing)
-	}
-	if len(candidates) == 0 {
-		return nil, nil
-	}
-
-	seen := map[string]bool{}
-	var all []DoublingCubeAnalysis
-	for _, ca := range candidates {
-		if seen[ca.AnalysisEngine] {
-			continue
-		}
-		seen[ca.AnalysisEngine] = true
-		all = append(all, ca)
-	}
-	sortCubeAnalysesByEngine(all)
-
-	primary := incoming
-	if primary == nil {
-		primary = existing
-	}
-	// A single engine needs no set: an array of one is noise in every blob
-	// that carries it, and AllCubeAnalyses is read as "several" everywhere.
-	if len(all) < 2 {
-		return primary, nil
-	}
-	return primary, all
 }
 
 // RebuildMatchStats discards the per-match statistics (match_stats) and

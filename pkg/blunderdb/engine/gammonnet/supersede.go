@@ -1,7 +1,6 @@
 package gammonnet
 
 import (
-	"sort"
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -54,14 +53,14 @@ func SupersedeEntries(existing *domain.PositionAnalysis, verdict domain.Position
 	switch {
 	case kept.CheckerAnalysis != nil && out.CheckerAnalysis != nil:
 		out.CheckerAnalysis = &domain.CheckerAnalysis{
-			Moves: mergeCheckerMoves(kept.CheckerAnalysis.Moves, out.CheckerAnalysis.Moves),
+			Moves: engine.MergeCheckerMoves(kept.CheckerAnalysis.Moves, out.CheckerAnalysis.Moves),
 		}
 	case out.CheckerAnalysis == nil:
 		out.CheckerAnalysis = kept.CheckerAnalysis
 	}
 	rankCheckerMoves(out.CheckerAnalysis)
 
-	out.DoublingCubeAnalysis, out.AllCubeAnalyses = mergeCubeAnalyses(
+	out.DoublingCubeAnalysis, out.AllCubeAnalyses = engine.MergeCubeAnalyses(
 		kept.DoublingCubeAnalysis, kept.AllCubeAnalyses,
 		out.DoublingCubeAnalysis, out.AllCubeAnalyses)
 
@@ -69,12 +68,12 @@ func SupersedeEntries(existing *domain.PositionAnalysis, verdict domain.Position
 	if kept.PlayedMove != "" && len(played) == 0 {
 		played = []string{kept.PlayedMove}
 	}
-	out.PlayedMoves = unionPlayed(played, out.PlayedMoves)
+	out.PlayedMoves = engine.UnionPlayed(played, out.PlayedMoves)
 	actions := kept.PlayedCubeActions
 	if kept.PlayedCubeAction != "" && len(actions) == 0 {
 		actions = []string{kept.PlayedCubeAction}
 	}
-	out.PlayedCubeActions = unionPlayed(actions, out.PlayedCubeActions)
+	out.PlayedCubeActions = engine.UnionPlayed(actions, out.PlayedCubeActions)
 
 	out.Rollouts = domain.MergeRollouts(kept.Rollouts, out.Rollouts)
 	return out
@@ -117,129 +116,9 @@ func withoutOurEntries(a *domain.PositionAnalysis) domain.PositionAnalysis {
 	return out
 }
 
-// enginePriority orders engines for display and ties: XG, then GNUbg, then
-// the others.
-func enginePriority(eng string) int {
-	switch strings.ToLower(eng) {
-	case "xg":
-		return 0
-	case "gnubg":
-		return 1
-	default:
-		return 2
-	}
-}
-
-// mergeCheckerMoves keys moves by notation; on a conflict the entry at the
-// deeper (or equal) depth rank wins. The labels are free text, so their rank
-// is compared, never the strings.
-func mergeCheckerMoves(existing, incoming []domain.CheckerMove) []domain.CheckerMove {
-	byMove := make(map[string]domain.CheckerMove, len(existing)+len(incoming))
-	order := make([]string, 0, len(existing)+len(incoming))
-	put := func(m domain.CheckerMove) {
-		if _, ok := byMove[m.Move]; !ok {
-			order = append(order, m.Move)
-		}
-		byMove[m.Move] = m
-	}
-	for _, m := range existing {
-		put(m)
-	}
-	for _, m := range incoming {
-		if prev, ok := byMove[m.Move]; ok &&
-			domain.AnalysisDepthRank(m.AnalysisDepth) < domain.AnalysisDepthRank(prev.AnalysisDepth) {
-			continue
-		}
-		put(m)
-	}
-	out := make([]domain.CheckerMove, 0, len(order))
-	for _, k := range order {
-		out = append(out, byMove[k])
-	}
-	return out
-}
-
-// rankCheckerMoves sorts the moves by equity, XG first on a tie, and
-// recomputes each one's index and error to the best.
+// rankCheckerMoves ranks c's moves by equity (engine.RankCheckerMoves).
 func rankCheckerMoves(c *domain.CheckerAnalysis) {
-	if c == nil || len(c.Moves) == 0 {
-		return
+	if c != nil {
+		engine.RankCheckerMoves(c.Moves)
 	}
-	moves := c.Moves
-	sort.SliceStable(moves, func(i, j int) bool {
-		if moves[i].Equity != moves[j].Equity {
-			return moves[i].Equity > moves[j].Equity
-		}
-		return enginePriority(moves[i].AnalysisEngine) < enginePriority(moves[j].AnalysisEngine)
-	})
-	best := moves[0].Equity
-	for i := range moves {
-		moves[i].Index = i
-		moves[i].EquityError = nil
-		if i > 0 {
-			diff := best - moves[i].Equity
-			moves[i].EquityError = &diff
-		}
-	}
-}
-
-// mergeCubeAnalyses keeps one cube entry per engine, incoming first so it
-// wins its engine's slot. The primary is the incoming one when present, else
-// the existing one; a single engine needs no set.
-func mergeCubeAnalyses(existing *domain.DoublingCubeAnalysis, existingAll []domain.DoublingCubeAnalysis,
-	incoming *domain.DoublingCubeAnalysis, incomingAll []domain.DoublingCubeAnalysis) (*domain.DoublingCubeAnalysis, []domain.DoublingCubeAnalysis) {
-	var candidates []domain.DoublingCubeAnalysis
-	candidates = append(candidates, incomingAll...)
-	if incoming != nil {
-		candidates = append(candidates, *incoming)
-	}
-	candidates = append(candidates, existingAll...)
-	if existing != nil {
-		candidates = append(candidates, *existing)
-	}
-	if len(candidates) == 0 {
-		return nil, nil
-	}
-	seen := map[string]bool{}
-	var all []domain.DoublingCubeAnalysis
-	for _, ca := range candidates {
-		if seen[ca.AnalysisEngine] {
-			continue
-		}
-		seen[ca.AnalysisEngine] = true
-		all = append(all, ca)
-	}
-	sort.SliceStable(all, func(i, j int) bool {
-		return enginePriority(all[i].AnalysisEngine) < enginePriority(all[j].AnalysisEngine)
-	})
-	primary := incoming
-	if primary == nil {
-		primary = existing
-	}
-	if len(all) < 2 {
-		return primary, nil
-	}
-	return primary, all
-}
-
-// unionPlayed unions played moves or cube actions in their normal notation,
-// sorted.
-func unionPlayed(existing, incoming []string) []string {
-	set := make(map[string]bool, len(existing)+len(incoming))
-	for _, m := range existing {
-		if m != "" {
-			set[engine.NormalizeMove(m)] = true
-		}
-	}
-	for _, m := range incoming {
-		if m != "" {
-			set[engine.NormalizeMove(m)] = true
-		}
-	}
-	out := make([]string, 0, len(set))
-	for m := range set {
-		out = append(out, m)
-	}
-	sort.Strings(out)
-	return out
 }
