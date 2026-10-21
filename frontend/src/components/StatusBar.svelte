@@ -138,7 +138,9 @@
         if ($showCommandInputStore) {
             loadHistory()
                 .then(() => tick())
-                .then(() => inputEl?.focus());
+                // Focusing in the same frame as the history render forces a synchronous layout;
+                // after the next frame the browser has laid it out already.
+                .then(() => requestAnimationFrame(() => inputEl?.focus()));
         }
     });
 

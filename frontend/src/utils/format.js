@@ -11,6 +11,48 @@ function activeLocale() {
     return get(language);
 }
 
+// Building an Intl formatter costs far more than formatting with one, and a list formats every
+// cell: formatters are kept per (kind, options) for the active language, and the whole cache is
+// dropped when the language changes so it never holds more than one locale.
+/** @type {Map<string, any>} */
+const formatters = new Map();
+let formattersLocale = '';
+
+/**
+ * @template T
+ * @param {string} kind
+ * @param {object | undefined} options
+ * @param {(locale: string) => T} build
+ * @returns {T}
+ */
+function cachedFormatter(kind, options, build) {
+    const locale = activeLocale();
+    if (locale !== formattersLocale) {
+        formatters.clear();
+        formattersLocale = locale;
+    }
+    const key = options === undefined ? kind : `${kind}|${JSON.stringify(options)}`;
+    let f = formatters.get(key);
+    if (f === undefined) {
+        f = build(locale);
+        formatters.set(key, f);
+    }
+    return f;
+}
+
+const DATE_OPTIONS = /** @type {Intl.DateTimeFormatOptions} */ ({ year: 'numeric', month: '2-digit', day: '2-digit' });
+const DATE_TIME_OPTIONS = /** @type {Intl.DateTimeFormatOptions} */ ({ year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+
+/** @param {Intl.DateTimeFormatOptions} options */
+function dateTimeFormat(options) {
+    return cachedFormatter('date', options, (locale) => new Intl.DateTimeFormat(locale, options));
+}
+
+/** @param {Intl.NumberFormatOptions | undefined} options */
+function numberFormat(options) {
+    return cachedFormatter('number', options, (locale) => new Intl.NumberFormat(locale, options));
+}
+
 function toDate(/** @type {Date | string | number | null | undefined} */ value) {
     if (value == null || value === '') return null;
     const d = value instanceof Date ? value : new Date(value);
@@ -24,7 +66,7 @@ function toDate(/** @type {Date | string | number | null | undefined} */ value) 
 export function formatDate(/** @type {Date | string | number | null | undefined} */ value, /** @type {Intl.DateTimeFormatOptions | undefined} */ options = undefined) {
     const d = toDate(value);
     if (!d) return '';
-    return new Intl.DateTimeFormat(activeLocale(), options ?? { year: 'numeric', month: '2-digit', day: '2-digit' }).format(d);
+    return dateTimeFormat(options ?? DATE_OPTIONS).format(d);
 }
 
 /**
@@ -66,19 +108,19 @@ export function formatUtcDay(/** @type {number} */ ms) {
 export function formatDateTime(/** @type {Date | string | number | null | undefined} */ value, /** @type {Intl.DateTimeFormatOptions | undefined} */ options = undefined) {
     const d = toDate(value);
     if (!d) return '';
-    return new Intl.DateTimeFormat(activeLocale(), options ?? { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }).format(d);
+    return dateTimeFormat(options ?? DATE_TIME_OPTIONS).format(d);
 }
 
 /** Format a plain number (grouping/decimal separators) in the active language. */
 export function formatNumber(/** @type {number | null | undefined} */ value, /** @type {Intl.NumberFormatOptions | undefined} */ options = undefined) {
     if (value == null || typeof value !== 'number' || Number.isNaN(value)) return '';
-    return new Intl.NumberFormat(activeLocale(), options).format(value);
+    return numberFormat(options).format(value);
 }
 
 /** Format a ratio (0..1) as a percentage in the active language. */
 export function formatPercent(/** @type {number | null | undefined} */ value, /** @type {Intl.NumberFormatOptions | undefined} */ options = undefined) {
     if (value == null || typeof value !== 'number' || Number.isNaN(value)) return '';
-    return new Intl.NumberFormat(activeLocale(), { style: 'percent', ...options }).format(value);
+    return numberFormat({ style: 'percent', ...options }).format(value);
 }
 
 /**
@@ -86,5 +128,5 @@ export function formatPercent(/** @type {number | null | undefined} */ value, /*
  * wrong outside English/French (Russian has three categories).
  */
 export function pluralCategory(/** @type {number} */ n, /** @type {Intl.PluralRulesOptions | undefined} */ options = undefined) {
-    return new Intl.PluralRules(activeLocale(), options).select(n);
+    return cachedFormatter('plural', options, (locale) => new Intl.PluralRules(locale, options)).select(n);
 }

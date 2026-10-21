@@ -87,7 +87,7 @@
      * @property {import('svelte').Snippet} [header]
      * @property {import('svelte').Snippet} [subheader]
      * @property {number} [rowHeight]
-     * @property {number} [virtualizeAbove]
+     * @property {number} [virtualizeFrom]
      * @property {number} [buffer]
      * @property {() => void} [onNearEnd]
      * @property {import('svelte').Snippet<[any, number]>} cells
@@ -133,8 +133,8 @@
         subheader = undefined,
         /** Fixed row height in px, the basis of the window arithmetic. */
         rowHeight = 28,
-        /** Below this many rows the whole list is rendered (drag reorder, no spacers). */
-        virtualizeAbove = 200,
+        /** From this many rows on the list is windowed; below it is rendered whole (drag reorder, no spacers). */
+        virtualizeFrom = 200,
         /** Rows rendered beyond the visible ones, on each side. */
         buffer = 10,
         /** The window reached the last loaded rows: load more, when the list is paged. */
@@ -196,7 +196,7 @@
     // The first rendered row sets the real pitch (cell padding, icon buttons).
     let measured = $state(0);
     const rh = $derived(measured || rowHeight);
-    const virtual = $derived(rows.length > virtualizeAbove);
+    const virtual = $derived(rows.length >= virtualizeFrom);
     // jsdom and a hidden panel report no height; assume a screenful then.
     const visibleCount = $derived(Math.ceil((viewportHeight || 600) / rh));
     const first = $derived(virtual ? Math.max(0, Math.floor(scrollTop / rh) - buffer) : 0);

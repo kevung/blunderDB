@@ -175,6 +175,19 @@ describe('virtualization', () => {
         expect(container.querySelector('tr.spacer')).not.toBeNull();
     });
 
+    test('a list of exactly 200 rows is windowed', () => {
+        const rows = BIG.slice(0, 200);
+        const { container } = mount({ rows });
+        expect(container.querySelectorAll('tbody tr:not(.spacer)').length).toBeLessThan(200);
+        expect(container.querySelector('tr.spacer')).not.toBeNull();
+    });
+
+    test('a list of 199 rows is rendered whole', () => {
+        const { container } = mount({ rows: BIG.slice(0, 199) });
+        expect(container.querySelectorAll('tbody tr').length).toBe(199);
+        expect(container.querySelector('tr.spacer')).toBeNull();
+    });
+
     test('a short list is rendered whole, without spacers', () => {
         const { container } = mount();
         expect(container.querySelectorAll('tbody tr').length).toBe(3);
