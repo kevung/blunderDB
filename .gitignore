@@ -70,3 +70,7 @@ go.work.sum
 /demodb
 openingbook-run.jsonl
 test-results/
+
+# scripts/bench-sweep.sh: its binary, local bases, sampled imports and results
+/bench/
+/bin/
