@@ -782,6 +782,48 @@ func (s *matchStore) CreateGame(ctx context.Context, scope string, g *domain.Gam
 	return id, nil
 }
 
+// CreateGames stores the games in order, as CreateGame does one by one, in one
+// round trip: the inserts, then one match_stats invalidation per match.
+func (s *matchStore) CreateGames(ctx context.Context, scope string, gs []*domain.Game) error {
+	bt, ok := s.db.(batcher)
+	if !ok || len(gs) < 2 {
+		for _, g := range gs {
+			if _, err := s.CreateGame(ctx, scope, g); err != nil {
+				return err
+			}
+		}
+		return nil
+	}
+	tenant := tenantID(scope)
+	b := &pgx.Batch{}
+	var matchIDs []int64
+	seen := map[int64]bool{}
+	for _, g := range gs {
+		b.Queue(gameInsertSQL, tenant, g.MatchID, g.GameNumber,
+			g.InitialScore[0], g.InitialScore[1], g.Winner, g.PointsWon, g.MoveCount)
+		if !seen[g.MatchID] {
+			seen[g.MatchID] = true
+			matchIDs = append(matchIDs, g.MatchID)
+		}
+	}
+	b.Queue(`DELETE FROM match_stats WHERE match_id = ANY($1) AND tenant_id = $2`, matchIDs, tenant)
+	res := bt.SendBatch(ctx, b)
+	for _, g := range gs {
+		if err := res.QueryRow().Scan(&g.ID); err != nil {
+			_ = res.Close()
+			return fmt.Errorf("postgres: create game: %w", referenced(err))
+		}
+	}
+	if _, err := res.Exec(); err != nil {
+		_ = res.Close()
+		return fmt.Errorf("postgres: invalidate match stats: %w", err)
+	}
+	if err := res.Close(); err != nil {
+		return fmt.Errorf("postgres: create games: %w", referenced(err))
+	}
+	return nil
+}
+
 // Games streams the games of a match ordered by game number.
 func (s *matchStore) Games(ctx context.Context, scope string, matchID int64) iter.Seq2[*domain.Game, error] {
 	return func(yield func(*domain.Game, error) bool) {

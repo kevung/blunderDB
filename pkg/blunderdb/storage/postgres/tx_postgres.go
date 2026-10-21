@@ -24,6 +24,18 @@ type txImpl struct {
 }
 
 var _ storage.Tx = (*txImpl)(nil)
+var _ storage.StatsRefresher = (*txImpl)(nil)
+
+// RefreshStats analyses the tables a library copy fills. Without it, a
+// migration's move inserts fire the multi_played trigger with a plan drawn
+// up for empty tables: a BitmapAnd that reads the whole tenant_id index of
+// move on every insert, quadratic over the copy.
+func (t *txImpl) RefreshStats(ctx context.Context) error {
+	if _, err := t.tx.Exec(ctx, `ANALYZE position, analysis, match, game, move`); err != nil {
+		return fmt.Errorf("postgres: refresh stats: %w", err)
+	}
+	return nil
+}
 
 // Commit makes the transaction's changes durable.
 func (t *txImpl) Commit() error {

@@ -24,6 +24,17 @@ type Tx interface {
 	Rollback() error
 }
 
+// StatsRefresher is implemented by a transaction whose planner reads table
+// statistics that a bulk load inside it leaves behind: PostgreSQL plans the
+// writes of one long transaction from statistics gathered before its rows
+// existed, and may pick a plan whose cost grows with the rows already written.
+// RefreshStats re-gathers them, the transaction's own uncommitted rows
+// included. A bulk copy calls it as the tables grow; a backend without the
+// concern does not implement it.
+type StatsRefresher interface {
+	RefreshStats(ctx context.Context) error
+}
+
 // GuardedBeginner is implemented by a backend that can open a transaction holding, from its
 // first statement to its end, a lock other processes on the same database also respect: the
 // guard a read-check-write sequence needs when the check (a version a client stated) must

@@ -17,6 +17,7 @@
 package migrate
 
 import (
+	"cmp"
 	"context"
 	"errors"
 	"fmt"
@@ -485,9 +486,15 @@ func (m *mover) copyTournaments(rep *Report) error {
 	return nil
 }
 
+// matchChunk is how many matches share one CreateGames and one CreateMoves:
+// a server backend pays a round trip per call, not per row.
+const matchChunk = 200
+
 // copyMatches copies matches with their games and moves, remapping match→game→
-// move foreign keys and each move's position id, then re-links the match to its
-// (already-remapped) tournament.
+// move foreign keys and each move's position id. A match is saved already
+// pointing at its (remapped) tournament; the tournament orders are set once
+// per tournament at the end, so no match costs a read of its tournament's
+// current order.
 func (m *mover) copyMatches(rep *Report) error {
 	var matches []*domain.Match
 	for mt, err := range m.src.Matches().List(m.ctx, "", storage.MatchListOpts{}) {
@@ -498,66 +505,141 @@ func (m *mover) copyMatches(rep *Report) error {
 		matches = append(matches, &mc)
 	}
 
-	for _, mt := range matches {
-		srcTournament := mt.TournamentID
-
-		mc := *mt
-		mc.ID = 0
-		mc.TournamentID = nil // re-linked below via the tournament remap
-		newMatchID, err := m.dst.Matches().Save(m.ctx, m.scope, &mc)
-		if err != nil {
-			return fmt.Errorf("migrate: save match %d: %w", mt.ID, err)
+	// Oldest first: a move lowers its position's match_date to its match's
+	// date, so in this order each position is dated once. Newest first, every
+	// match would rewrite the opening positions again, and each rewrite inside
+	// the one migration transaction leaves a row version the next must walk.
+	slices.SortStableFunc(matches, func(a, b *domain.Match) int {
+		if c := a.MatchDate.Compare(b.MatchDate); c != 0 {
+			return c
 		}
-		rep.Matches++
-
-		if err := m.copyGames(rep, mt.ID, newMatchID); err != nil {
-			return err
+		return cmp.Compare(a.ID, b.ID)
+	})
+	newMatch := make(map[int64]int64, len(matches))
+	if err := m.refreshStats(); err != nil {
+		return err
+	}
+	nextRefresh := matchChunk
+	for start := 0; start < len(matches); start += matchChunk {
+		if start >= nextRefresh {
+			if err := m.refreshStats(); err != nil {
+				return err
+			}
+			nextRefresh *= 2
 		}
-		if err := m.copyOrigin(mt.ID, newMatchID); err != nil {
-			return err
-		}
-
-		if srcTournament != nil {
-			if newTID, ok := m.tourID[*srcTournament]; ok {
-				if err := m.dst.Tournaments().AddMatch(m.ctx, m.scope, newTID, newMatchID); err != nil {
-					return fmt.Errorf("migrate: link match %d to tournament: %w", mt.ID, err)
+		chunk := matches[start:min(start+matchChunk, len(matches))]
+		for _, mt := range chunk {
+			mc := *mt
+			mc.ID = 0
+			mc.TournamentID = nil
+			mc.TournamentSortOrder = 0
+			if mt.TournamentID != nil {
+				if newTID, ok := m.tourID[*mt.TournamentID]; ok {
+					mc.TournamentID = &newTID
 				}
 			}
+			newMatchID, err := m.dst.Matches().Save(m.ctx, m.scope, &mc)
+			if err != nil {
+				return fmt.Errorf("migrate: save match %d: %w", mt.ID, err)
+			}
+			newMatch[mt.ID] = newMatchID
+			rep.Matches++
+			if err := m.copyOrigin(mt.ID, newMatchID); err != nil {
+				return err
+			}
 		}
+		if err := m.copyGames(rep, chunk, newMatch); err != nil {
+			return err
+		}
+	}
+	if err := m.orderTournaments(matches, newMatch); err != nil {
+		return err
 	}
 	m.progress(rep)
 	return nil
 }
 
-// copyGames copies the games of a match, then all their moves in one
-// CreateMoves: one pipeline per match rather than a round trip per move.
-func (m *mover) copyGames(rep *Report, oldMatchID, newMatchID int64) error {
-	var games []*domain.Game
-	for g, err := range m.src.Matches().Games(m.ctx, "", oldMatchID) {
-		if err != nil {
-			return fmt.Errorf("migrate: list games of match %d: %w", oldMatchID, err)
-		}
-		gc := *g
-		games = append(games, &gc)
+// refreshStats lets the destination re-plan against the rows copied so far,
+// when it needs to (storage.StatsRefresher). copyMatches calls it before the
+// first chunk and each time the copied matches double: a handful of calls,
+// each plan stays within a factor of two of the table it runs on.
+func (m *mover) refreshStats() error {
+	rs, ok := m.dst.(storage.StatsRefresher)
+	if !ok {
+		return nil
 	}
+	if err := rs.RefreshStats(m.ctx); err != nil {
+		return fmt.Errorf("migrate: %w", err)
+	}
+	return nil
+}
+
+// orderTournaments gives each copied tournament its matches in the order the
+// source shows them (sort order, then most recent first, as
+// Tournaments().Matches lists them, ties in insertion order), numbered from 0
+// as AddMatch would.
+func (m *mover) orderTournaments(matches []*domain.Match, newMatch map[int64]int64) error {
+	byTournament := map[int64][]*domain.Match{}
+	for _, mt := range matches {
+		if mt.TournamentID == nil {
+			continue
+		}
+		if _, ok := m.tourID[*mt.TournamentID]; ok {
+			byTournament[*mt.TournamentID] = append(byTournament[*mt.TournamentID], mt)
+		}
+	}
+	for oldTID, list := range byTournament {
+		slices.SortStableFunc(list, func(a, b *domain.Match) int {
+			if a.TournamentSortOrder != b.TournamentSortOrder {
+				return a.TournamentSortOrder - b.TournamentSortOrder
+			}
+			if c := b.MatchDate.Compare(a.MatchDate); c != 0 {
+				return c
+			}
+			return cmp.Compare(a.ID, b.ID)
+		})
+		ids := make([]int64, len(list))
+		for i, mt := range list {
+			ids[i] = newMatch[mt.ID]
+		}
+		if err := m.dst.Tournaments().ReorderMatches(m.ctx, m.scope, m.tourID[oldTID], ids); err != nil {
+			return fmt.Errorf("migrate: order matches of tournament %d: %w", oldTID, err)
+		}
+	}
+	return nil
+}
+
+// copyGames copies the games of a chunk of matches in one CreateGames, then
+// all their moves in one CreateMoves.
+func (m *mover) copyGames(rep *Report, chunk []*domain.Match, newMatch map[int64]int64) error {
+	var games, srcGames []*domain.Game
+	for _, mt := range chunk {
+		for g, err := range m.src.Matches().Games(m.ctx, "", mt.ID) {
+			if err != nil {
+				return fmt.Errorf("migrate: list games of match %d: %w", mt.ID, err)
+			}
+			src := *g
+			gc := *g
+			gc.ID = 0
+			gc.MatchID = newMatch[mt.ID]
+			srcGames = append(srcGames, &src)
+			games = append(games, &gc)
+		}
+	}
+	if err := m.dst.Matches().CreateGames(m.ctx, m.scope, games); err != nil {
+		return fmt.Errorf("migrate: create games of matches %d-%d: %w", chunk[0].ID, chunk[len(chunk)-1].ID, err)
+	}
+	rep.Games += len(games)
 
 	var moves []*domain.Move
-	for _, g := range games {
-		gc := *g
-		gc.ID = 0
-		gc.MatchID = newMatchID
-		newGameID, err := m.dst.Matches().CreateGame(m.ctx, m.scope, &gc)
-		if err != nil {
-			return fmt.Errorf("migrate: create game %d: %w", g.ID, err)
-		}
-		rep.Games++
-
-		if moves, err = m.readMoves(moves, g.ID, newGameID); err != nil {
+	var err error
+	for i, g := range srcGames {
+		if moves, err = m.readMoves(moves, g.ID, games[i].ID); err != nil {
 			return err
 		}
 	}
 	if err := m.dst.Matches().CreateMoves(m.ctx, m.scope, moves); err != nil {
-		return fmt.Errorf("migrate: create moves of match %d: %w", oldMatchID, err)
+		return fmt.Errorf("migrate: create moves of matches %d-%d: %w", chunk[0].ID, chunk[len(chunk)-1].ID, err)
 	}
 	rep.Moves += len(moves)
 	return nil

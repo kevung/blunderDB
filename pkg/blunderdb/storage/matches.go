@@ -202,6 +202,11 @@ type MatchStore interface {
 	// CreateGame stores a new game and returns its id.
 	CreateGame(ctx context.Context, scope string, g *domain.Game) (int64, error)
 
+	// CreateGames stores the games in order, updating each g.ID in place, as
+	// CreateGame would one by one. A server backend sends them in one round
+	// trip instead of two per game.
+	CreateGames(ctx context.Context, scope string, gs []*domain.Game) error
+
 	// Games streams the games of a match by game number, then id: an
 	// imported file can number two games alike.
 	Games(ctx context.Context, scope string, matchID int64) iter.Seq2[*domain.Game, error]

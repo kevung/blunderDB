@@ -251,3 +251,16 @@ func TestMigrateAcrossBatches_Postgres(t *testing.T) {
 	}
 	migrate.CheckCopiesAcrossBatches(t, dst)
 }
+
+func TestMigrateMatchesAcrossChunks_Postgres(t *testing.T) {
+	ctx := context.Background()
+	dst, err := postgres.Open(ctx, startPostgres(t), nil)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer dst.Close()
+	if err := dst.Migrate(ctx); err != nil {
+		t.Fatalf("migrate dst schema: %v", err)
+	}
+	migrate.CheckCopiesMatchesAcrossChunks(t, dst)
+}

@@ -156,6 +156,7 @@ func RunContractTestsOnly(t *testing.T, factory func() storage.Storage, keep fun
 		{"Search/WindowsAgree", testSearchWindowsAgree},
 		{"Search/EncounterCountsEveryOccurrence", testSearchEncounterCountsEveryOccurrence},
 		{"Match/CreateMovesEqualsCreateMove", testCreateMovesEqualsCreateMove},
+		{"Match/CreateGamesEqualsCreateGame", testCreateGamesEqualsCreateGame},
 		{"Search/SortPipAndDate", testSearchSortPipAndDate},
 		{"Match/MoveLuckRoundTrip", testMoveLuckRoundTrip},
 		{"Match/MoveDecisionTimeRoundTrip", testMoveDecisionTimeRoundTrip},

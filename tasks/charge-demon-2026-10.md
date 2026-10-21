@@ -153,14 +153,34 @@ rapides.
   (lots de 1000 : `SaveMany` des positions et des analyses, positions créées nommées fraîches,
   lectures source par lot, coups d'un match en un `CreateMoves`) : phase des positions en
   **2 min 04 s** (312 586 positions, ×25), tournois en 3 s.
-- Reste lent : la phase des matchs. 8 152 matchs sur 33 319 en 17 min, à un débit qui
-  baisse (~560 puis ~235 matchs/min) : ≥ 1 h 45 restantes, arrêtée. Causes vues :
-  `Tournaments().AddMatch` lit `MAX(tournament_sort_order) … WHERE tournament_id = $1` sans
-  index sur `match(tournament_id)` (parcours séquentiel par match, quadratique), et ouvre un
-  savepoint par match, si bien que la transaction déborde ses 64 sous-transactions
-  (`pg_stat_get_backend_subxact` : `overflowed = t`) ; `CreateGame` coûte un aller-retour et
-  un `DELETE FROM match_stats` par partie (268 724). Piste : un index (changement de schéma)
-  ou un rattachement par lots, et des parties par lots.
+- Phase des matchs, avant : 8 152 matchs sur 33 319 en 17 min, à un débit qui baisse (~560
+  puis ~235 matchs/min), arrêtée (≥ 1 h 45 restantes). Profil `pg_stat_statements`
+  (`track = all`) : 70 % du temps dans le trigger `multi_played_move_insert` —
+  `multi_played_of` à 5,3 ms par appel et l'`UPDATE position` qui l'appelle à 2,7 ms —, l'insert
+  de coup lui-même passant de 3,5 à 7,2 ms à mesure que `move` grossit. Cause : la transaction
+  unique de la copie planifie sur des statistiques prises tables vides ; `multi_played_of` y
+  prend un `BitmapAnd` de `idx_move_position` et de `move_tenant_id_key`, qui relit à chaque
+  coup tout l'index `tenant_id` (un seul locataire) : quadratique. Un `ANALYZE` dans la
+  transaction voit ses propres lignes non validées et rend un parcours de `idx_move_position`
+  seul. Secondaires : `AddMatch` (`MAX(tournament_sort_order)` sans index, 3,9 ms, et un
+  savepoint par match), `CreateGame` (deux allers-retours par partie).
+- Correctifs : `storage.StatsRefresher` (PostgreSQL : `ANALYZE` des tables de bibliothèque),
+  appelé avant le premier lot de matchs puis à chaque doublement ; matchs copiés du plus
+  ancien au plus récent, pour que chaque position ne soit datée qu'une fois ; match enregistré
+  déjà rattaché à son tournoi, ordre des tournois posé en un `ReorderMatches` par tournoi à la
+  fin (plus de `MAX` ni de savepoint par match, ordre affiché de la source conservé) ; parties
+  par `CreateGames` (nouveau contrat, un pipeline) et coups par `CreateMoves`, par lots de
+  200 matchs. Pas d'index ajouté : SQLite n'en a pas non plus sur `match(tournament_id)`, et
+  la copie ne lit plus cet ordre.
+- Après, même base, même conteneur : migration complète en **7 min 28 s** (positions 1 min
+  24 s, tournois 3 s, matchs **6 min 00 s**, commit compris), contre > 1 h 45 extrapolées
+  pour les seuls matchs. Insert de coup à 0,4 ms. Comptes identiques à la source (312 586
+  positions, 312 544 analyses, 183 commentaires, 5 011 tournois, 33 319 matchs, 268 724
+  parties, 332 152 coups) ; export JSON source et destination identiques ligne à ligne aux
+  identifiants près ; ordre des matchs identique dans les 5 011 tournois.
+- Reste hors de cette branche : `AddMatch` du démon lit toujours `MAX(tournament_sort_order)`
+  par parcours séquentiel (un appel isolé, pas quadratique) ; une importation PostgreSQL
+  longue dans une seule transaction aurait le même piège de statistiques.
 
 ### 3.5 Cause d'un 500 perdue derrière gzip — #751
 
