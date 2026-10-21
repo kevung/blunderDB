@@ -93,7 +93,8 @@
         return a.doublingCubeAnalysis ? 1 : 0;
     }
 
-    // Heroicons outlines, drawn by the `icon` snippet below.
+    // Heroicons outlines. They are declared once as <symbol>s of a sprite and referenced by <use>:
+    // a deck row carries four icons, and an <svg> built per icon costs more in layout than in script.
     const ICON = {
         back: 'M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18',
         plus: 'M12 4.5v15m7.5-7.5h-15',
@@ -566,20 +567,25 @@
     </span>
 {/snippet}
 
-{#snippet icon(path, size = 14)}
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width={size} height={size}>
-        {#each Array.isArray(path) ? path : [path] as d, i (i)}
-            <path stroke-linecap="round" stroke-linejoin="round" {d} />
-        {/each}
-    </svg>
+{#snippet icon(name, size = 14)}
+    <svg width={size} height={size} aria-hidden="true"><use href="#anki-icon-{name}" /></svg>
 {/snippet}
 
 <div class="anki-panel">
+    <svg class="icon-sprite" aria-hidden="true" width="0" height="0">
+        {#each Object.entries(ICON) as [name, path] (name)}
+            <symbol id="anki-icon-{name}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                {#each Array.isArray(path) ? path : [path] as d, i (i)}
+                    <path stroke-linecap="round" stroke-linejoin="round" {d} />
+                {/each}
+            </symbol>
+        {/each}
+    </svg>
     {#if viewMode === 'review' && reviewCard}
         <!-- Review Mode -->
         <!-- svelte-ignore a11y_no_static_element_interactions -->
         <div class="view-header" oncontextmenu={openCardMenu} title={$t('anki.cardMenuHint')}>
-            <button class="btn-back" onclick={backToList} title={$t('anki.backToDeckList') + ' (Esc)'}>{@render icon(ICON.back)}</button>
+            <button class="btn-back" onclick={backToList} title={$t('anki.backToDeckList') + ' (Esc)'}>{@render icon('back')}</button>
             <span class="view-title">{selectedDeck?.name}</span>
             <span class="review-count">#{reviewSessionCount + 1}</span>
             {#if cramMode}
@@ -674,7 +680,7 @@
     {:else if viewMode === 'settings' && selectedDeck}
         <!-- Settings Mode -->
         <div class="view-header">
-            <button class="btn-back" onclick={backToList} title={$t('common.back')}>{@render icon(ICON.back)}</button>
+            <button class="btn-back" onclick={backToList} title={$t('common.back')}>{@render icon('back')}</button>
             <span class="view-title">{$t('anki.settingsTitle', { name: selectedDeck.name })}</span>
         </div>
         <div class="settings-body">
@@ -735,7 +741,7 @@
     {:else if viewMode === 'log' && selectedDeck}
         <!-- Review log: a reading of what was answered, never a control. -->
         <div class="view-header">
-            <button class="btn-back" onclick={() => ankiViewModeStore.set('settings')} title={$t('common.back')}>{@render icon(ICON.back)}</button>
+            <button class="btn-back" onclick={() => ankiViewModeStore.set('settings')} title={$t('common.back')}>{@render icon('back')}</button>
             <span class="view-title">{$t('anki.reviewLogTitle', { name: selectedDeck.name })}</span>
         </div>
         {#if reviewLog.length === 0}
@@ -770,14 +776,14 @@
                 {@render deckCount(selectedDeck, stats.learningCount, $t('anki.learningShort', { n: stats.learningCount }), 'learning', 'anki-learning')}
                 {@render deckCount(selectedDeck, stats.reviewCount, $t('anki.reviewShort', { n: stats.reviewCount }), 'review', 'anki-review')}
                 {#snippet actions()}
-                    <button class="icon-btn" data-testid="anki-settings" onclick={openSettings} title={$t('anki.deckSettingsTooltip')}>{@render icon(ICON.gear)}</button>
-                    <button class="icon-btn" onclick={(e) => resetDeck(selectedDeck, e)} title={$t('anki.resetTooltip')}>{@render icon(ICON.sync)}</button>
+                    <button class="icon-btn" data-testid="anki-settings" onclick={openSettings} title={$t('anki.deckSettingsTooltip')}>{@render icon('gear')}</button>
+                    <button class="icon-btn" onclick={(e) => resetDeck(selectedDeck, e)} title={$t('anki.resetTooltip')}>{@render icon('sync')}</button>
                     {#if canUndoFromList}
                         <button class="btn-outline" data-testid="anki-undo-last" onclick={undoLastReview} title={$t('anki.undoReview') + ' (u)'}>{$t('anki.undoReview')}</button>
                     {/if}
                     <button class="btn-outline" data-testid="anki-cram" onclick={() => startSession(true)} disabled={!anki.canCram(stats)} title={$t('anki.cramTooltip')}>{$t('anki.cram')}</button>
                     <button class="btn-launch" data-testid="anki-study" onclick={() => startSession(false)} disabled={!anki.canStudy(stats, selectedDeck)}>
-                        {@render icon(ICON.play, 12)}
+                        {@render icon('play', 12)}
                         {#if pausedSession && pausedSession.deckId === selectedDeck.id}
                             {$t('anki.resumeShort', { reviewed: pausedSession.sessionCount })}
                         {:else}
@@ -826,8 +832,8 @@
                     {:else}
                         <span class="search-hint">{$t('anki.positionsCount', { count: $positionsStore?.length ?? 0 })}</span>
                     {/if}
-                    <button class="btn-outline" onclick={createDeck} title={$t('common.create')}>{@render icon(ICON.check)}</button>
-                    <button class="btn-outline" onclick={() => (showCreateForm = false)}>{@render icon(ICON.cross)}</button>
+                    <button class="btn-outline" onclick={createDeck} title={$t('common.create')}>{@render icon('check')}</button>
+                    <button class="btn-outline" onclick={() => (showCreateForm = false)}>{@render icon('cross')}</button>
                 </div>
             </div>
         {/if}
@@ -852,7 +858,7 @@
                         <div class="deck-edit">
                             <input type="text" bind:value={deckEdit.draft.name} class="edit-field" onkeydown={deckEdit.onKeyDown} />
                             <input type="text" bind:value={deckEdit.draft.description} class="edit-field" placeholder={$t('anki.colDescription')} onkeydown={deckEdit.onKeyDown} />
-                            <button class="icon-btn" onclick={() => deckEdit.save()} title={$t('common.save')}>{@render icon(ICON.check, 12)}</button>
+                            <button class="icon-btn" onclick={() => deckEdit.save()} title={$t('common.save')}>{@render icon('check', 12)}</button>
                         </div>
                     </td>
                 {:else}
@@ -864,10 +870,10 @@
                     <td class="narrow-col count-cell num">{@render deckCount(deck, deck.dueCount, deck.dueCount ? String(deck.dueCount) : '', 'pastDue', null)}</td>
                     <td class="actions-col">
                         <span class="item-actions">
-                            <button class="icon-btn" onclick={(e) => startEditing(deck, e)} title={$t('anki.renameTooltip')}>{@render icon(ICON.edit, 12)}</button>
-                            <button class="icon-btn" onclick={(e) => syncDeck(deck, e)} title={$t('anki.syncTooltip')}>{@render icon(ICON.sync, 12)}</button>
-                            <button class="icon-btn" data-testid="anki-export-apkg" onclick={(e) => exportDeck(deck, e)} title={$t('anki.exportApkgTooltip')}>{@render icon(ICON.download, 12)}</button>
-                            <button class="icon-btn delete" onclick={(e) => deleteDeck(deck, e)} title={$t('anki.deleteDeckTooltip')}>{@render icon(ICON.trash, 12)}</button>
+                            <button class="icon-btn" onclick={(e) => startEditing(deck, e)} title={$t('anki.renameTooltip')}>{@render icon('edit', 12)}</button>
+                            <button class="icon-btn" onclick={(e) => syncDeck(deck, e)} title={$t('anki.syncTooltip')}>{@render icon('sync', 12)}</button>
+                            <button class="icon-btn" data-testid="anki-export-apkg" onclick={(e) => exportDeck(deck, e)} title={$t('anki.exportApkgTooltip')}>{@render icon('download', 12)}</button>
+                            <button class="icon-btn delete" onclick={(e) => deleteDeck(deck, e)} title={$t('anki.deleteDeckTooltip')}>{@render icon('trash', 12)}</button>
                         </span>
                     </td>
                 {/if}
@@ -881,6 +887,13 @@
 </div>
 
 <style>
+    .icon-sprite {
+        position: absolute;
+        width: 0;
+        height: 0;
+        overflow: hidden;
+    }
+
     .anki-panel {
         display: flex;
         flex-direction: column;
