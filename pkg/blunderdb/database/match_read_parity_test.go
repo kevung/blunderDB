@@ -145,9 +145,9 @@ func TestMatchReadParity_ProvenanceInListOrder(t *testing.T) {
 	}
 }
 
-// GetMovesByGame carries the cost of the played move, as the contract's
-// Moves does, wherever the position is analysed.
-func TestMatchReadParity_MovesCarryPlayedError(t *testing.T) {
+// GetMovesByGame reads the moves as recorded: no cost of the played move,
+// even on an analysed position, so the export reads no analysis.
+func TestMatchReadParity_MovesCarryNoPlayedError(t *testing.T) {
 	db := newTestDBWithXG(t)
 	matches, err := db.GetAllMatches()
 	if err != nil {
@@ -163,19 +163,20 @@ func TestMatchReadParity_MovesCarryPlayedError(t *testing.T) {
 			games = append(games, g.ID)
 		}
 	}
-	scored := 0
+	moves := 0
 	for _, g := range games {
-		moves, err := db.GetMovesByGame(g)
+		got, err := db.GetMovesByGame(g)
 		if err != nil {
 			t.Fatal(err)
 		}
-		for _, mv := range moves {
+		for _, mv := range got {
+			moves++
 			if mv.ErrorMP != nil {
-				scored++
+				t.Fatalf("move %d carries ErrorMP = %d; GetMovesByGame must not score", mv.ID, *mv.ErrorMP)
 			}
 		}
 	}
-	if scored == 0 {
-		t.Error("no move carries ErrorMP; GetMovesByGame must score the played move")
+	if moves == 0 {
+		t.Fatal("the fixture has no move")
 	}
 }

@@ -144,15 +144,16 @@ func (d *Database) GetGamesByMatch(matchID int64) ([]Game, error) {
 	return games, nil
 }
 
-// GetMovesByGame returns all moves in a game, by move number, each with the
-// cost of its played move when the position is analysed
-// (storage.MatchStore.Moves).
+// GetMovesByGame returns all moves in a game, by move number, as the match
+// recorded them, without the cost of the played move: its one caller, the
+// CSV export, walks every move of the library and writes no cost
+// (storage.MatchStore.RecordedMoves).
 func (d *Database) GetMovesByGame(gameID int64) ([]Move, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
 	var moves []Move
-	for mv, err := range d.store.Matches().Moves(context.Background(), "", gameID) {
+	for mv, err := range d.store.Matches().RecordedMoves(context.Background(), "", gameID) {
 		if err != nil {
 			return nil, err
 		}

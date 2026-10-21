@@ -1064,6 +1064,32 @@ func (s *matchStore) Moves(ctx context.Context, scope string, gameID int64) iter
 	}
 }
 
+// RecordedMoves — see storage.MatchStore.
+func (s *matchStore) RecordedMoves(ctx context.Context, scope string, gameID int64) iter.Seq2[*domain.Move, error] {
+	return func(yield func(*domain.Move, error) bool) {
+		rows, err := s.db.QueryContext(ctx,
+			`SELECT `+moveSelectCols+` FROM move WHERE game_id = ? ORDER BY move_number`, gameID)
+		if err != nil {
+			yield(nil, fmt.Errorf("sqlite: list recorded moves: %w", err))
+			return
+		}
+		defer rows.Close()
+		for rows.Next() {
+			mv, err := scanMove(rows)
+			if err != nil {
+				yield(nil, fmt.Errorf("sqlite: list recorded moves: %w", err))
+				return
+			}
+			if !yield(&mv, nil) {
+				return
+			}
+		}
+		if err := rows.Err(); err != nil {
+			yield(nil, fmt.Errorf("sqlite: list recorded moves: %w", err))
+		}
+	}
+}
+
 // MovesByMatch streams every move of a match in chronological order (by game,
 // then move). One query instead of Games + a Moves call per game: callers
 // regroup by Move.GameID. Single-tenant store, so scope is ignored (as in Moves).

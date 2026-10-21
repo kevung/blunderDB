@@ -6,6 +6,7 @@ package storagetest
 
 import (
 	"context"
+	"reflect"
 	"testing"
 	"time"
 
@@ -166,6 +167,29 @@ func testStatsMatchMoveGrades(t *testing.T, s storage.Storage) {
 	}
 	checkMoves("MovesByMatch", s.Matches().MovesByMatch(ctx, "", matchID))
 	checkMoves("Moves", s.Matches().Moves(ctx, "", gameID))
+
+	// RecordedMoves is the same read without the cost: every column of Moves,
+	// in the same order, and ErrorMP nil even on an analysed Position.
+	var scored, recorded []domain.Move
+	for mv, err := range s.Matches().Moves(ctx, "", gameID) {
+		if err != nil {
+			t.Fatalf("Moves: %v", err)
+		}
+		mv.ErrorMP = nil
+		scored = append(scored, *mv)
+	}
+	for mv, err := range s.Matches().RecordedMoves(ctx, "", gameID) {
+		if err != nil {
+			t.Fatalf("RecordedMoves: %v", err)
+		}
+		if mv.ErrorMP != nil {
+			t.Errorf("RecordedMoves: move %d carries ErrorMP = %d", mv.ID, *mv.ErrorMP)
+		}
+		recorded = append(recorded, *mv)
+	}
+	if len(recorded) != len(wantMP) || !reflect.DeepEqual(recorded, scored) {
+		t.Errorf("RecordedMoves = %+v, want Moves without ErrorMP %+v", recorded, scored)
+	}
 
 	// A match without analysed Moves grades nothing, and says so without error.
 	empty := domain.Match{Player1Name: "Nobody", Player2Name: "Nowhere"}

@@ -64,8 +64,9 @@ propre issue le jour où il est lancé.
   ses écarts ainsi : le repli de `LastVisited` est la tête de `List` (sentinelle triée comme une
   absence de date, égalité départagée par l'id, les deux backends) ; `GetPositionProvenance`
   est `MatchesByPosition` puis `List` par ids, donc dans l'ordre de la liste (un match sans
-  date se range à sa date d'import, non plus en dernier) ; `GetMovesByGame` lit `Moves` et
-  porte désormais `ErrorMP` (l'export CSV des coups ne l'écrit pas).
+  date se range à sa date d'import, non plus en dernier) ; `GetMovesByGame` lit
+  `RecordedMoves`, les coups tels qu'enregistrés, sans jointure sur les analyses ni `ErrorMP`
+  (l'export CSV parcourt tous les coups et n'écrit pas ce coût).
   (3) analyses : fusion de `saveAnalysisLocked`, coups joués de `LoadAnalysis`,
   `DeleteAnalysis` — avec l'item des quatre copies des helpers de fusion. (4) lots gammonNet
   (`positionIDsWithoutAnalysis[ForMatch]`, `db_gammonnet_compare.go`) et gardes d'import
