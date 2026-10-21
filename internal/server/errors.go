@@ -127,6 +127,24 @@ type errSetter interface {
 	SetErr(error)
 }
 
+// recordErr stashes err on the first writer of the Unwrap chain that accepts
+// it, as http.ResponseController looks for its own interfaces: a wrapper added
+// later (compression, tracing) stays transparent without having to forward
+// SetErr itself.
+func recordErr(w http.ResponseWriter, err error) {
+	for w != nil {
+		if es, ok := w.(errSetter); ok {
+			es.SetErr(err)
+			return
+		}
+		u, ok := w.(interface{ Unwrap() http.ResponseWriter })
+		if !ok {
+			return
+		}
+		w = u.Unwrap()
+	}
+}
+
 // internalErrorMessage is the only text a client ever sees for an internal
 // error. The real cause (a DSN, a file path, a SQL statement) belongs to the
 // server-side log, never to the wire — see errorBodyFor.
@@ -165,15 +183,11 @@ func errorBodyFor(w http.ResponseWriter, err error) errorBody {
 		// text inside: constraint and column names, which would let a caller
 		// tell one refusal from another. Same message as any absent row; the
 		// cause goes to the log.
-		if es, ok := w.(errSetter); ok {
-			es.SetErr(err)
-		}
+		recordErr(w, err)
 		msg = notFoundMessage
 	}
 	if code == CodeInternal {
-		if es, ok := w.(errSetter); ok {
-			es.SetErr(err)
-		}
+		recordErr(w, err)
 		msg = internalErrorMessage
 		// An error that knows its message holds no backend internal — the
 		// contract method storage/remote cannot serve — shows that message.
