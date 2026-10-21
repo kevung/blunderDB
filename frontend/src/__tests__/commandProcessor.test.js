@@ -18,6 +18,7 @@ import { translate, resolveStatusMessage } from '../i18n';
 const statusText = () => resolveStatusMessage(get(statusBarTextStore), translate);
 import { currentPositionIndexStore, statusBarTextStore, activeModal, MODAL, activeTabStore } from '../stores/uiStore.js';
 import { referenceSectionStore } from '../stores/referenceStore.js';
+import { duelStore, duelHoldsBoardStore } from '../stores/duelStore.js';
 import { positionsStore } from '../stores/positionStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { statusBarModeStore } from '../stores/uiStore.js';
@@ -673,6 +674,22 @@ describe('processCommand', () => {
         processCommand('gv2');
         expect(get(activeTabStore)).toBe('reference');
         expect(get(referenceSectionStore)).toBe('gammonValues');
+    });
+
+    test('during a duel, met opens the reference panel and the duel stays on', () => {
+        duelStore.set(/** @type {any} */ ({ state: { ended: false } }));
+        try {
+            activeTabStore.set('duel');
+            processCommand('met');
+            expect(get(activeTabStore)).toBe('reference');
+            expect(get(referenceSectionStore)).toBe('met');
+            expect(get(duelHoldsBoardStore)).toBe(true);
+            // Leaving the panel goes back to the duel, not to the library.
+            processCommand('ref');
+            expect(get(activeTabStore)).toBe('duel');
+        } finally {
+            duelStore.set(null);
+        }
     });
 
     test('ref toggles the reference panel', () => {

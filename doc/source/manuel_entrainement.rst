@@ -557,7 +557,8 @@ l'onglet est replié.
 L'empreinte SHA-256 du germe des dés, publiée par l'Arbitre dès la création,
 se lit dans l'infobulle de l'invite de la bande d'en-tête, puis avec le germe dans l'origine du Match terminé. Le plateau
 passe en mode **DUEL** : la bibliothèque ne se parcourt plus, l'édition, le
-panneau Eval et les autres onglets ne s'ouvrent pas, et le moteur se tait —
+panneau Eval et les autres onglets ne s'ouvrent pas, hormis le
+:ref:`panneau Données de référence <panneau_reference>`, et le moteur se tait —
 aucune évaluation, aucun candidat. Seules restent la Pile (``B``), le
 pipcount (``P``, sauf s'il est masqué pour le Duel) et l'aide.
 
@@ -601,42 +602,3 @@ durée enregistrée dans le Match.
 À la fin, le Match est écrit, son analyse se lance et l'onglet Matchs s'ouvre
 sur lui. En ligne de commande, ``blunderdb duel`` pilote le même Duel (voir
 :ref:`cli_duel`).
-
-
-.. _panneau_reference:
-
-Panneau Données de référence
-----------------------------
-
-Le panneau **Données de référence** réunit les tables du score. Il s'ouvre par
-*CTRL-MAJ-R* ou la commande ``ref``, sans base ouverte. Les commandes ``met``,
-``tp2``, ``tp4`` et leurs variantes ``_live`` / ``_last``, ``gv1``, ``gv2`` et
-``gv4`` l'ouvrent sur l'onglet de la table demandée. Les lignes et les colonnes
-sont les points restants pour gagner le match : la ligne est le joueur dont on
-parle, la colonne son adversaire. Cinq onglets :
-
-* **MET** — la table d'équité de match Kazaross-XG2, de 1 à 15 points restants,
-  en pour cent de chances de gagner le match ;
-* **Points de prise** — au videau 2 (de 2 à 9 points restants) et au videau 4
-  (de 3 à 9), chacun en deux grilles côte à côte : course longue (videau
-  vivant) et dernier lancer (videau mort) ;
-* **Valeurs du gammon** — aux videaux 1, 2 et 4 ;
-* **Agrégé** — une grille de 2 à 9 points restants dont chaque case porte trois
-  lignes : le point de prise au videau 2 (vivant / mort), au videau 4 (vivant /
-  mort), puis les valeurs du gammon aux videaux 1, 2 et 4, en couleur atténuée.
-  Un tiret marque une valeur que la table ne définit pas à ce score ;
-* **Nombres de Neil** — un raccourci de tête de la MET, dû à Neil Kazaross.
-
-**Les nombres de Neil.** L'équité du meneur s'estime par
-E ≃ 50 % + (écart de score) × Neil(*n*), où *n* est le nombre de points
-restants du **suiveur**. Les nombres valent 10 à 3 points restants, 9 à 4,
-8 à 5, 7 à 6, 6 à 8, 5 à 11, 4 à 15, 3½ à 19 et 3 à 25 (mémo : « 8 is 6, 11 is
-5, 15 is 4 ») ; entre deux, ils s'interpolent linéairement (6½ à 7, 5⅔ à 9,
-5⅓ à 10, 4¾ à 12). Par exemple, à 3 points restants contre 5, l'estimation est
-50 + 2 × 8 = 66 %, et la MET donne 64,8 %. L'onglet montre la ligne des
-nombres, puis une grille meneur × suiveur, de 2 à 15 points restants : chaque
-case donne l'estimation et, en petit, son écart avec la MET Kazaross-XG2, pour
-voir où le raccourci dévie. Le raccourci ne tient pas quand le meneur est à 1
-ou 2 points : la ligne du meneur à 2 points montre la valeur de la MET, en
-couleur atténuée et sans écart. Source : Kit Woolsey, `Match Equity Table
-<https://bkgm.com/articles/GOL/demo/equity.htm>`__, GammOnLine, 1999.

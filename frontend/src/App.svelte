@@ -94,7 +94,7 @@
     import { startTrainingSession } from './services/trainingTabService.js';
     import { TRAINING_EXERCISES, exerciseForCommand } from './services/trainingTab.js';
     import { showTab, showTrainingPanel, showDuelPanel } from './services/tabToggles.js';
-    import { duelHoldsBoardStore, duelFoldedStore } from './stores/duelStore.js';
+    import { duelHoldsBoardStore, duelFoldedStore, tabOpensDuringDuel } from './stores/duelStore.js';
     import HomeScreen from './components/HomeScreen.svelte';
     import SplitViewer from './components/SplitViewer.svelte';
     import { splitStore } from './stores/splitStore.js';
@@ -227,8 +227,8 @@
         untrack(() => {
             logger.perf('App:activeTabHandler', () => {
                 const prevTab = previousTab;
-                // A Duel holds the board: no other tab opens over it (ADR-0072 rule 9).
-                if ($duelHoldsBoardStore && tab !== 'duel') {
+                // A Duel holds the board: no other tab opens over it but the reference tables (ADR-0072 rule 9).
+                if ($duelHoldsBoardStore && !tabOpensDuringDuel(tab)) {
                     activeTabStore.set('duel');
                     return;
                 }

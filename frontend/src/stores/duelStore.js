@@ -25,6 +25,13 @@ export const duelAnimatingStore = writable(false);
  */
 export const duelHoldsBoardStore = derived(duelStore, ($duel) => !!$duel?.state && !$duel.state.ended);
 
+/**
+ * Les onglets qu'un Duel laisse ouvrir : le sien, et les tables de référence, qui ne tiennent
+ * pas le plateau et ne disent rien de la position (ADR-0072 règle 9).
+ * @param {string} tab
+ */
+export const tabOpensDuringDuel = (tab) => tab === 'duel' || tab === 'reference';
+
 /** L'onglet Duel est replié (Ctrl+H) : horloges et score restent dans la barre d'état. */
 export const duelFoldedStore = writable(false);
 

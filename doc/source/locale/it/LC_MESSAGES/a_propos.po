@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-21 15:20+0200\n"
+"POT-Creation-Date: 2026-10-21 15:41+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -212,14 +212,16 @@ msgid ""
 "la table d'équité de match Kazaross-XG2 est l'œuvre de *Neil Kazaross*, "
 "comme les nombres de Neil, son raccourci de tête, publiés par *Kit "
 "Woolsey* dans `Match Equity Table "
-"<https://bkgm.com/articles/GOL/demo/equity.htm>`__ (GammOnLine, 1999) ;"
+"<https://bkgm.com/articles/GOL/demo/equity.htm>`__ (GammOnLine, 1999) et "
+"résumés par `pion.ch <https://pion.ch/backgammon/mem-met.php>`__ ;"
 msgstr ""
 "la tabella di equità di match Kazaross-XG2 è opera di *Neil Kazaross*, "
 "come i numeri di Neil, la sua scorciatoia mentale, pubblicati da *Kit "
 "Woolsey* in `Match Equity Table "
-"<https://bkgm.com/articles/GOL/demo/equity.htm>`__ (GammOnLine, 1999);"
+"<https://bkgm.com/articles/GOL/demo/equity.htm>`__ (GammOnLine, 1999) e "
+"riassunti da `pion.ch <https://pion.ch/backgammon/mem-met.php>`__;"
 
-#: ../../source/a_propos.rst:96
+#: ../../source/a_propos.rst:97
 msgid ""
 "les tables de take points et de valeurs de gammon sont tirées de *The "
 "Theory of Backgammon* de *Dirk Schiemann* ;"
@@ -227,7 +229,7 @@ msgstr ""
 "le tabelle dei take point e dei valori di gammon sono tratte da *The "
 "Theory of Backgammon* di *Dirk Schiemann*;"
 
-#: ../../source/a_propos.rst:99
+#: ../../source/a_propos.rst:100
 msgid ""
 "les tables de bearoff unilatérale (6 points, 15 pions, pour l'EPC) et "
 "bilatérale (6 points, 6 pions, pour les verdicts de videau en course) "
@@ -245,7 +247,7 @@ msgstr ""
 "per byte a quello di gnubg, la cui impronta SHA-256 serve da riferimento."
 " GNUbg è software libero sotto licenza GPL;"
 
-#: ../../source/a_propos.rst:106
+#: ../../source/a_propos.rst:107
 msgid ""
 "les fichiers de match sont lus par `xgparser "
 "<https://github.com/kevung/xgparser>`__, `gnubgparser "
@@ -259,7 +261,7 @@ msgstr ""
 "<https://github.com/kevung/bgfparser>`__ e `ogxmparser "
 "<https://github.com/kevung/ogxmparser>`__ (MIT);"
 
-#: ../../source/a_propos.rst:112
+#: ../../source/a_propos.rst:113
 msgid ""
 "côté Go : `modernc.org/sqlite <https://gitlab.com/cznic/sqlite>`__ "
 "(BSD-3-Clause), `pgx <https://github.com/jackc/pgx>`__, `Wails "
@@ -271,7 +273,7 @@ msgstr ""
 "<https://wails.io>`__ e `go-fsrs <https://github.com/open-spaced-"
 "repetition/go-fsrs>`__ (MIT);"
 
-#: ../../source/a_propos.rst:117
+#: ../../source/a_propos.rst:118
 msgid ""
 "côté interface : `Svelte <https://svelte.dev>`__, `two.js "
 "<https://two.js.org>`__, `Chart.js <https://www.chartjs.org>`__ et "
@@ -281,7 +283,7 @@ msgstr ""
 "<https://two.js.org>`__, `Chart.js <https://www.chartjs.org>`__ e "
 "`driver.js <https://driverjs.com>`__ (MIT);"
 
-#: ../../source/a_propos.rst:121
+#: ../../source/a_propos.rst:122
 msgid ""
 "les polices `Nunito <https://github.com/googlefonts/nunito>`__ et `Noto "
 "Sans JP <https://fonts.google.com/noto/specimen/Noto+Sans+JP>`__ (SIL "

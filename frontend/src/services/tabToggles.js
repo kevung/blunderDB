@@ -7,7 +7,7 @@ import { positionsStore, positionStore } from '../stores/positionStore.js';
 import { currentPositionIndexStore, statusBarModeStore, activeTabStore, showPipcountStore } from '../stores/uiStore.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { logger } from '../utils/logger.js';
-import { duelHoldsBoardStore, duelFoldedStore } from '../stores/duelStore.js';
+import { duelHoldsBoardStore, duelFoldedStore, tabOpensDuringDuel } from '../stores/duelStore.js';
 import { tMsg } from '../i18n';
 import { referenceSectionStore } from '../stores/referenceStore.js';
 
@@ -69,13 +69,18 @@ export function toggleTab(id) {
     }
 
     // A Duel holds the board: the library is not browsed, the engine is silent
-    // (ADR-0072 rule 9). Its own tab only.
+    // (ADR-0072 rule 9). Its own tab only, and the reference tables.
     const current = get(activeTabStore);
-    if (get(duelHoldsBoardStore)) {
-        if (entry.tab !== 'duel') setStatusBarMessage(tMsg('duel.locked'));
-        else if (current === 'duel') duelFoldedStore.update((folded) => !folded);
-        else duelFoldedStore.set(false);
-        if (entry.tab !== 'duel' || current === 'duel') return;
+    if (get(duelHoldsBoardStore) && !tabOpensDuringDuel(entry.tab)) {
+        setStatusBarMessage(tMsg('duel.locked'));
+        return;
+    }
+    if (get(duelHoldsBoardStore) && entry.tab === 'duel') {
+        if (current === 'duel') {
+            duelFoldedStore.update((folded) => !folded);
+            return;
+        }
+        duelFoldedStore.set(false);
     }
 
     if (current === entry.tab) {
