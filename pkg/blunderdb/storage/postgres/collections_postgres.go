@@ -115,11 +115,15 @@ func (s *collectionStore) List(ctx context.Context, scope string) iter.Seq2[*sto
 
 // Update changes a collection's name and description.
 func (s *collectionStore) Update(ctx context.Context, scope string, id int64, name, description string) error {
-	if _, err := s.db.Exec(ctx,
+	tag, err := s.db.Exec(ctx,
 		`UPDATE collection SET name = $1, description = $2, updated_at = now()
 		 WHERE id = $3 AND tenant_id = $4`,
-		name, description, id, tenantID(scope)); err != nil {
+		name, description, id, tenantID(scope))
+	if err != nil {
 		return fmt.Errorf("postgres: update collection %d: %w", id, err)
+	}
+	if tag.RowsAffected() == 0 {
+		return fmt.Errorf("postgres: update collection %d: %w", id, storage.ErrNotFound)
 	}
 	return nil
 }
@@ -127,10 +131,14 @@ func (s *collectionStore) Update(ctx context.Context, scope string, id int64, na
 // Delete removes a collection; its position memberships cascade off the
 // collection_position foreign key.
 func (s *collectionStore) Delete(ctx context.Context, scope string, id int64) error {
-	if _, err := s.db.Exec(ctx,
+	tag, err := s.db.Exec(ctx,
 		`DELETE FROM collection WHERE id = $1 AND tenant_id = $2`,
-		id, tenantID(scope)); err != nil {
+		id, tenantID(scope))
+	if err != nil {
 		return fmt.Errorf("postgres: delete collection %d: %w", id, err)
+	}
+	if tag.RowsAffected() == 0 {
+		return fmt.Errorf("postgres: delete collection %d: %w", id, storage.ErrNotFound)
 	}
 	return nil
 }

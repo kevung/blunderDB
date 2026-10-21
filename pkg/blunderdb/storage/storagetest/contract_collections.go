@@ -329,9 +329,8 @@ func testCollectionRenameAndDelete(t *testing.T, s storage.Storage) {
 	if _, err := s.Positions().Load(c, "", pos); err != nil {
 		t.Errorf("position must survive its collection: %v", err)
 	}
-	// Deleting an unknown id is a no-op, not an error.
-	if err := cols.Delete(c, "", openings); err != nil {
-		t.Errorf("Delete of an unknown collection: %v", err)
+	if err := cols.Delete(c, "", openings); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("Delete of an unknown collection: got %v, want ErrNotFound", err)
 	}
 }
 
@@ -699,5 +698,28 @@ func testCollectionIDWindows(t *testing.T, s storage.Storage) {
 	}
 	if _, found, err := s.Collections().IndexOfPosition(c, "", empty, ids[0]); err != nil || found {
 		t.Errorf("IndexOfPosition in an empty collection: found=%v err=%v", found, err)
+	}
+}
+
+// testCollectionUnknownID pins that a write naming no collection reports
+// ErrNotFound instead of succeeding silently.
+func testCollectionUnknownID(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	const missing = 987654
+	if err := s.Collections().Update(ctx, "", missing, "n", "d"); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("Update: got %v, want ErrNotFound", err)
+	}
+	if err := s.Collections().Delete(ctx, "", missing); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("Delete: got %v, want ErrNotFound", err)
+	}
+	id, err := s.Collections().Create(ctx, "", "c", "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := s.Collections().Delete(ctx, "", id); err != nil {
+		t.Fatalf("Delete existing: %v", err)
+	}
+	if err := s.Collections().Delete(ctx, "", id); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("second Delete: got %v, want ErrNotFound", err)
 	}
 }
