@@ -143,6 +143,7 @@ Outils
    "CTRL-D", "Afficher/cacher le panneau Stats."
    "CTRL-E", "Afficher/cacher le panneau Eval."
    "CTRL-MAJ-T", "Afficher/cacher le panneau Transcription (brouillons de matchs)."
+   "CTRL-MAJ-R", "Afficher/cacher le panneau Données de référence : MET, points de prise, valeurs du gammon, vue agrégée et nombres de Neil."
    "CTRL-MAJ-A", "Afficher/cacher l'onglet Ailleurs : ce que les autres bibliothèques ouvertes savent de la position."
    "CTRL-MAJ-X", "Écran partagé : le groupe actif et une visionneuse en lecture d'une autre bibliothèque côte à côte ; refusé sous 1280 pixels de large."
    "x", "Échange sur place : montrer la position de l'autre bibliothèque au lieu du plateau ; maintenue, revenir en la relâchant, sinon à la pression suivante."

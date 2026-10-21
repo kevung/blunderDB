@@ -22,7 +22,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
 
 import { COMMANDS } from '../commandVocabulary.js';
 import { processCommand, initCommandProcessor } from '../commandProcessor.js';
-import { activeModal, statusBarTextStore, statusBarModeStore, currentPositionIndexStore } from '../stores/uiStore.js';
+import { activeModal, statusBarTextStore, statusBarModeStore, currentPositionIndexStore, activeTabStore } from '../stores/uiStore.js';
 import { positionsStore } from '../stores/positionStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 
@@ -39,7 +39,7 @@ function trackingCallbacks(touched) {
     );
 }
 
-const OBSERVED = [activeModal, statusBarTextStore, statusBarModeStore, currentPositionIndexStore];
+const OBSERVED = [activeModal, statusBarTextStore, statusBarModeStore, currentPositionIndexStore, activeTabStore];
 
 describe('commandVocabulary ↔ commandProcessor sync', () => {
     beforeEach(() => {
@@ -52,6 +52,7 @@ describe('commandVocabulary ↔ commandProcessor sync', () => {
         statusBarTextStore.set('');
         statusBarModeStore.set('');
         currentPositionIndexStore.set(0);
+        activeTabStore.set('matches');
     });
 
     test.each(COMMANDS.flatMap((cmd) => [cmd.name, ...cmd.aliases]).map((form) => [form]))('`%s` is handled by processCommand', async (form) => {

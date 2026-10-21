@@ -1338,9 +1338,6 @@
         "title": "Avertissement",
         "confirmTitle": "Confirmation"
     },
-    "datatable": {
-        "title": "Tableau de données"
-    },
     "cubeMatrix": {
         "title": "Matrice du videau",
         "computing": "calcul en cours…",
@@ -1358,9 +1355,6 @@
         "legendRefused": "non évaluable",
         "currentScore": "score de la position",
         "note": "Le score de la position est remplacé par celui de chaque case ; son videau, lui, est conservé. La grille est post-Crawford : pendant la partie Crawford le videau n'est pas en jeu."
-    },
-    "met": {
-        "title": "Table d'équité de match"
     },
     "merge": {
         "canonicalName": "Nom canonique :",
@@ -1412,7 +1406,8 @@
         "hiddenTabs": "Onglets masqués",
         "ankiDue": "{n} cartes à réviser",
         "training": "Entraînement",
-        "duel": "Duel"
+        "duel": "Duel",
+        "reference": "Référence"
     },
     "transcription": {
         "conflict": "Le brouillon a été modifié ailleurs : il est rechargé tel qu’il est maintenant, et l’annulation est réinitialisée.",
@@ -3129,6 +3124,7 @@
             "direct": "Diriger un tournoi",
             "m": "Revenir au dernier match visité",
             "met": "Table d'équité de match",
+            "reference": "Données de référence : MET, points de prise, valeurs du gammon, Neil",
             "cm": "Matrice du videau",
             "tags": "Vocabulaire de tags",
             "train": "Entraînement",
@@ -3623,5 +3619,22 @@
         "noDouble": "Pas de double",
         "doubleTake": "Double, prend",
         "doublePass": "Double, passe"
+    },
+    "reference": {
+        "title": "Données de référence",
+        "met": "MET",
+        "takePoints": "Points de prise",
+        "gammonValues": "Valeurs du gammon",
+        "aggregated": "Agrégé",
+        "neil": "Nombres de Neil",
+        "metLegend": "% de chances de gagner le match",
+        "cube": "Videau {n}",
+        "longRaces": "Courses longues (vivant)",
+        "lastRoll": "Dernier lancer (mort)",
+        "axisHint": "lignes / colonnes = points restants pour gagner le match",
+        "neilFormula": "E ≃ 50 % + écart × Neil(n), n = points restants du suiveur",
+        "neilAxis": "lignes = meneur, colonnes = suiveur (points restants) ; en petit : écart avec la MET",
+        "neilFallback": "Meneur à 1 ou 2 points : valeur de la MET",
+        "source": "Source"
     }
 }

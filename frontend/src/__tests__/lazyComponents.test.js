@@ -42,7 +42,7 @@ describe('lazyComponents', () => {
             const loaded = get(panels.components);
             for (const tab of TABS) expect(typeof loaded[tab.id], tab.id).toBe('function');
             for (const component of Object.values(get(modals.components))) expect(typeof component).toBe('function');
-            expect(Object.keys(get(modals.components)).length).toBe(16);
+            expect(Object.keys(get(modals.components)).length).toBe(14);
         },
         SLOW
     );

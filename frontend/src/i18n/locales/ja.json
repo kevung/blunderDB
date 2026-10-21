@@ -1338,9 +1338,6 @@
         "title": "警告",
         "confirmTitle": "確認"
     },
-    "datatable": {
-        "title": "データテーブル"
-    },
     "cubeMatrix": {
         "title": "キューブ判断のマトリクス",
         "computing": "計算中…",
@@ -1358,9 +1355,6 @@
         "legendRefused": "評価不可",
         "currentScore": "ポジションのスコア",
         "note": "ポジション自身のスコアは各セルのスコアに置き換わりますが、キューブはそのままです。グリッドはクロフォード後のものです。クロフォードゲーム中はキューブを使えません。"
-    },
-    "met": {
-        "title": "MET（マッチ equity テーブル）"
     },
     "merge": {
         "canonicalName": "正規名:",
@@ -1412,7 +1406,8 @@
         "hiddenTabs": "非表示のタブ",
         "ankiDue": "復習待ち {n} 枚",
         "training": "トレーニング",
-        "duel": "デュエル"
+        "duel": "デュエル",
+        "reference": "参照表"
     },
     "transcription": {
         "conflict": "下書きが別の場所で変更されました。現在の状態で再読み込みし、元に戻す履歴をリセットしました。",
@@ -3129,6 +3124,7 @@
             "direct": "トーナメントを運営",
             "m": "最後に見たマッチに戻る",
             "met": "マッチエクイティ表",
+            "reference": "参照データ：MET、テイクポイント、ギャモン価値、Neil",
             "cm": "キューブマトリクス",
             "tags": "タグ一覧",
             "train": "トレーニング",
@@ -3623,5 +3619,22 @@
         "noDouble": "ノーダブル",
         "doubleTake": "ダブル、テイク",
         "doublePass": "ダブル、パス"
+    },
+    "reference": {
+        "title": "参照データ",
+        "met": "MET",
+        "takePoints": "テイクポイント",
+        "gammonValues": "ギャモン価値",
+        "aggregated": "集約",
+        "neil": "ニールの数",
+        "metLegend": "マッチに勝つ確率（%）",
+        "cube": "キューブ {n}",
+        "longRaces": "長いレース（ライブ）",
+        "lastRoll": "ラストロール（デッド）",
+        "axisHint": "行／列 = マッチ勝利までの残りポイント",
+        "neilFormula": "E ≃ 50% + 点差 × Neil(n)、n = 追う側の残りポイント",
+        "neilAxis": "行 = リード側、列 = 追う側（残りポイント）；小さい数字：METとの差",
+        "neilFallback": "リード側が残り1〜2点：METの値",
+        "source": "出典"
     }
 }

@@ -238,6 +238,8 @@ export const OUTSIDE = [
     'clipboardPositionStore',
     'transcriptionNoticeStore',
     'duelNowStore',
+    // The tab shown in the reference panel: static tables, the same in every library.
+    'referenceSectionStore',
     'duelAnimatingStore',
     'duelPipcountHiddenStore',
     'showPipcountStore',

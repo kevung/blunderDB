@@ -1016,6 +1016,8 @@ export {
     toggleTournamentPanel,
     toggleStatsPanel,
     toggleElsewherePanel,
+    toggleReferencePanel,
+    showReferencePanel,
     toggleSearchPanel,
     toggleTranscriptionPanel,
     togglePipcount

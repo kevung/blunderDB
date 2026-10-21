@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-20 16:37+0200\n"
+"POT-Creation-Date: 2026-10-21 15:20+0200\n"
 "PO-Revision-Date: 2025-02-06 00:12+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -180,12 +180,27 @@ msgstr ""
 "instead of the board; any other tab brings the board back."
 
 #: ../../source/cmd_mode.rst:1
+msgid "reference, ref"
+msgstr "reference, ref"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Affiche/cache le panneau Données de référence : MET, points de prise, "
+"valeurs du gammon, vue agrégée et nombres de Neil (voir "
+":ref:`panneau_reference`)."
+msgstr ""
+"Shows/hides the Reference data panel: MET, take points, gammon values, "
+"aggregated view and Neil's numbers (see :ref:`panneau_reference`)."
+
+#: ../../source/cmd_mode.rst:1
 msgid "met"
 msgstr "met"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table d'équité de match Kazaross-XG2."
-msgstr "Open the Kazaross-XG2 match equity table."
+msgid ""
+"Ouvre le panneau Données de référence sur la table d'équité de match "
+"Kazaross-XG2."
+msgstr "Opens the Reference data panel on the Kazaross-XG2 match equity table."
 
 #: ../../source/cmd_mode.rst:1
 msgid "cm"
@@ -275,74 +290,110 @@ msgid "tp2"
 msgstr "tp2"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des takepoints avec videau à 2."
-msgstr "Open the takepoint table with a 2-cube."
+msgid ""
+"Ouvre le panneau Données de référence sur les points de prise, où figure "
+"la table du videau à 2."
+msgstr ""
+"Opens the Reference data panel on the take points, showing the table for "
+"the cube at 2."
 
 #: ../../source/cmd_mode.rst:1
 msgid "tp2_live"
 msgstr "tp2_live"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des takepoints avec videau à 2 pour les courses longues."
-msgstr "Open the takepoint table with a 2-cube for long race positions."
+msgid ""
+"Ouvre le panneau Données de référence sur les points de prise, où figure "
+"la table du videau à 2 pour les courses longues."
+msgstr ""
+"Opens the Reference data panel on the take points, showing the table for "
+"the cube at 2 for long races."
 
 #: ../../source/cmd_mode.rst:1
 msgid "tp2_last"
 msgstr "tp2_last"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des takepoints avec videau à 2 mort."
-msgstr "Open the takepoint table with a 2-cube for last roll positions."
+msgid ""
+"Ouvre le panneau Données de référence sur les points de prise, où figure "
+"la table du videau à 2 mort."
+msgstr ""
+"Opens the Reference data panel on the take points, showing the table for "
+"the dead cube at 2."
 
 #: ../../source/cmd_mode.rst:1
 msgid "tp4"
 msgstr "tp4"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des takepoints avec videau à 4."
-msgstr "Open the takepoint table with a 4-cube."
+msgid ""
+"Ouvre le panneau Données de référence sur les points de prise, où figure "
+"la table du videau à 4."
+msgstr ""
+"Opens the Reference data panel on the take points, showing the table for "
+"the cube at 4."
 
 #: ../../source/cmd_mode.rst:1
 msgid "tp4_live"
 msgstr "tp4_live"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des takepoints avec videau à 4 pour les courses longues."
-msgstr "Open the takepoint table with a 4-cube for long race positions."
+msgid ""
+"Ouvre le panneau Données de référence sur les points de prise, où figure "
+"la table du videau à 4 pour les courses longues."
+msgstr ""
+"Opens the Reference data panel on the take points, showing the table for "
+"the cube at 4 for long races."
 
 #: ../../source/cmd_mode.rst:1
 msgid "tp4_last"
 msgstr "tp4_last"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des takepoints avec videau à 4 mort."
-msgstr "Open the takepoint table with a 4-cube for last roll positions."
+msgid ""
+"Ouvre le panneau Données de référence sur les points de prise, où figure "
+"la table du videau à 4 mort."
+msgstr ""
+"Opens the Reference data panel on the take points, showing the table for "
+"the dead cube at 4."
 
 #: ../../source/cmd_mode.rst:1
 msgid "gv1"
 msgstr "gv1"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des valeurs de gammon avec videau à 1."
-msgstr "Open the gammon value table with a 1-cube."
+msgid ""
+"Ouvre le panneau Données de référence sur les valeurs du gammon, où "
+"figure la table du videau à 1."
+msgstr ""
+"Opens the Reference data panel on the gammon values, showing the table "
+"for the cube at 1."
 
 #: ../../source/cmd_mode.rst:1
 msgid "gv2"
 msgstr "gv2"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des valeurs de gammon avec videau à 2."
-msgstr "Open the gammon value table with a 2-cube."
+msgid ""
+"Ouvre le panneau Données de référence sur les valeurs du gammon, où "
+"figure la table du videau à 2."
+msgstr ""
+"Opens the Reference data panel on the gammon values, showing the table "
+"for the cube at 2."
 
 #: ../../source/cmd_mode.rst:1
 msgid "gv4"
 msgstr "gv4"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des valeurs de gammon avec videau à 4."
-msgstr "Open the gammon value table with a 4-cube."
+msgid ""
+"Ouvre le panneau Données de référence sur les valeurs du gammon, où "
+"figure la table du videau à 4."
+msgstr ""
+"Opens the Reference data panel on the gammon values, showing the table "
+"for the cube at 4."
 
-#: ../../source/cmd_mode.rst:55
+#: ../../source/cmd_mode.rst:56
 msgid "Positions et navigation"
 msgstr "Positions and navigation"
 
@@ -562,7 +613,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "Navigate to the last visited match."
 
-#: ../../source/cmd_mode.rst:86
+#: ../../source/cmd_mode.rst:87
 msgid "Édition et recherche"
 msgstr "Editing and search"
 
@@ -602,11 +653,11 @@ msgstr ""
 "Search among the positions on screen: current results, open collection or"
 " match under review."
 
-#: ../../source/cmd_mode.rst:102
+#: ../../source/cmd_mode.rst:103
 msgid "Filtres de recherche"
 msgstr "Search Filters"
 
-#: ../../source/cmd_mode.rst:104
+#: ../../source/cmd_mode.rst:105
 msgid ""
 "Cette table est la référence de la grammaire de recherche : la ligne de "
 "commande, la bibliothèque de filtres et le drapeau ``--query`` de "
@@ -621,7 +672,7 @@ msgstr ""
 " ``search`` flag that does the same thing (see :ref:`cli`); a dash marks "
 "a filter that only the grammar expresses."
 
-#: ../../source/cmd_mode.rst:111
+#: ../../source/cmd_mode.rst:112
 msgid ""
 "Cinq jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
 "recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
@@ -641,7 +692,7 @@ msgstr ""
 "compare against an empty board; it is the flags of the third column that "
 "must be used there instead."
 
-#: ../../source/cmd_mode.rst:120
+#: ../../source/cmd_mode.rst:121
 msgid ""
 "Un seul jeton **classe** au lieu de restreindre : ``like`` ordonne le "
 "résultat par distance croissante à une position cible, et tous les autres"
@@ -651,7 +702,7 @@ msgstr ""
 " by ascending distance to a target position, and every other token "
 "narrows the set it ranks."
 
-#: ../../source/cmd_mode.rst:124
+#: ../../source/cmd_mode.rst:125
 msgid ""
 "Les erreurs et les équités se comptent en **millièmes d'équité** — les "
 "*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
@@ -661,11 +712,11 @@ msgstr ""
 "*millipoints* of the table below: ``E>100`` keeps the moves that cost at "
 "least a tenth of a point, one point being worth 1000 millipoints."
 
-#: ../../source/cmd_mode.rst:128
+#: ../../source/cmd_mode.rst:129
 msgid "Deux recherches complètes :"
 msgstr "Two full searches:"
 
-#: ../../source/cmd_mode.rst:130
+#: ../../source/cmd_mode.rst:131
 #, no-python-format
 msgid ""
 "``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
@@ -674,7 +725,7 @@ msgstr ""
 "``s p>30 w40,60 xco`` — more than 30 pips behind, between 40% and 60% "
 "winning chances, no comment."
 
-#: ../../source/cmd_mode.rst:132
+#: ../../source/cmd_mode.rst:133
 msgid ""
 "``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
 "millièmes, et un commentaire venu d'eXtreme Gammon."
@@ -1884,7 +1935,7 @@ msgstr ""
 "``like42*`` widens the target's class to every kind of decision and to "
 "both regimes, money and match. See :ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:249
+#: ../../source/cmd_mode.rst:250
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``m`` et ``t`` s'ouvrent par"
 " un guillemet ou une apostrophe et se ferment par l'un des deux. Un jeton"
@@ -1902,11 +1953,11 @@ msgstr ""
 "of identifier and tag lists: it appears in no value, and ``ma1;2`` is not"
 " a token (write ``ma1 ma2``)."
 
-#: ../../source/cmd_mode.rst:254
+#: ../../source/cmd_mode.rst:255
 msgid "Transcrire depuis un terminal"
 msgstr "Transcribing from a terminal"
 
-#: ../../source/cmd_mode.rst:256
+#: ../../source/cmd_mode.rst:257
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -1925,7 +1976,7 @@ msgstr ""
 "the revision returned by the previous call; every call is its own "
 "session, with no ``sessionId`` and no undo from one call to the next."
 
-#: ../../source/cmd_mode.rst:267
+#: ../../source/cmd_mode.rst:268
 msgid "Commandes diverses"
 msgstr "Various commands"
 
@@ -2019,3 +2070,30 @@ msgstr "Clear the command history."
 
 #~ msgid "Date d'ajout de la position après x (AAAA/MM/JJ)."
 #~ msgstr "Date of position addition after x (YYYY/MM/DD)."
+
+#~ msgid "Ouvre la table des takepoints avec videau à 2."
+#~ msgstr "Open the takepoint table with a 2-cube."
+
+#~ msgid "Ouvre la table des takepoints avec videau à 2 pour les courses longues."
+#~ msgstr "Open the takepoint table with a 2-cube for long race positions."
+
+#~ msgid "Ouvre la table des takepoints avec videau à 2 mort."
+#~ msgstr "Open the takepoint table with a 2-cube for last roll positions."
+
+#~ msgid "Ouvre la table des takepoints avec videau à 4."
+#~ msgstr "Open the takepoint table with a 4-cube."
+
+#~ msgid "Ouvre la table des takepoints avec videau à 4 pour les courses longues."
+#~ msgstr "Open the takepoint table with a 4-cube for long race positions."
+
+#~ msgid "Ouvre la table des takepoints avec videau à 4 mort."
+#~ msgstr "Open the takepoint table with a 4-cube for last roll positions."
+
+#~ msgid "Ouvre la table des valeurs de gammon avec videau à 1."
+#~ msgstr "Open the gammon value table with a 1-cube."
+
+#~ msgid "Ouvre la table des valeurs de gammon avec videau à 2."
+#~ msgstr "Open the gammon value table with a 2-cube."
+
+#~ msgid "Ouvre la table des valeurs de gammon avec videau à 4."
+#~ msgstr "Open the gammon value table with a 4-cube."

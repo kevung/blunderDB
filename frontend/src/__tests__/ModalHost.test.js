@@ -26,7 +26,6 @@ function goStub() {
 }
 
 import ModalHost from '../components/ModalHost.svelte';
-import { MODAL_TABLES } from '../components/modalTables.js';
 import { activeModal, MODAL, openModal } from '../stores/uiStore.js';
 import { confirmModalStore, confirmAction } from '../services/confirmService.js';
 
@@ -91,22 +90,5 @@ describe('ModalHost', () => {
         await pressEscape(container);
         expect(dialogs(container).length).toBe(0);
         await expect(answer).resolves.toBe(false);
-    });
-
-    test('every reference table renders the expected number of columns', async () => {
-        const { container } = render(ModalHost);
-        for (const [id, tables] of Object.entries(MODAL_TABLES)) {
-            openModal(id);
-            await waitFor(() => expect(container.querySelector('[role="dialog"] table')).not.toBeNull(), { timeout: 5000 });
-            const sections = container.querySelectorAll('[role="dialog"] table');
-            expect(sections.length, id).toBe(tables.length);
-            sections.forEach((table, i) => {
-                const headers = table.querySelectorAll('thead th');
-                expect(headers.length, `${id} table ${i}`).toBe(tables[i].colCount + 1);
-                expect(headers[1].textContent).toBe(String(tables[i].colOffset));
-            });
-            activeModal.set(null);
-            await tick();
-        }
     });
 });

@@ -64,23 +64,13 @@ export function pageStepSize(setting, count) {
 
 // ── Modal identifiers (exclusive — only one modal at a time) ──
 export const MODAL = {
-    MET: 'met',
     CUBE_MATRIX: 'cubeMatrix',
     TAGS: 'tags',
     LESSON_EDITOR: 'lessonEditor',
-    TAKE_POINT_2_LAST: 'takePoint2Last',
-    TAKE_POINT_2_LIVE: 'takePoint2Live',
-    TAKE_POINT_4_LAST: 'takePoint4Last',
-    TAKE_POINT_4_LIVE: 'takePoint4Live',
-    GAMMON_VALUE_1: 'gammonValue1',
-    GAMMON_VALUE_2: 'gammonValue2',
-    GAMMON_VALUE_4: 'gammonValue4',
     WARNING: 'warning',
     PROTECTED_COPY: 'protectedCopy',
     GO_TO_POSITION: 'goToPosition',
     EXPORT_DATABASE: 'exportDatabase',
-    TAKE_POINT_2: 'takePoint2',
-    TAKE_POINT_4: 'takePoint4',
     HELP: 'help',
     COMMAND: 'command',
     CONFIG: 'config',

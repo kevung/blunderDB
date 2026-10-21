@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-05 04:23+0200\n"
+"POT-Creation-Date: 2026-10-21 15:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -192,10 +192,18 @@ msgstr ""
 "はそのリポジトリの ``docs`` フォルダにあります。"
 
 #: ../../source/a_propos.rst:91
-msgid "la table d'équité de match Kazaross-XG2 est l'œuvre de *Neil Kazaross* ;"
-msgstr "Kazaross-XG2 マッチエクイティテーブルは *Neil Kazaross* の著作物です。"
+msgid ""
+"la table d'équité de match Kazaross-XG2 est l'œuvre de *Neil Kazaross*, "
+"comme les nombres de Neil, son raccourci de tête, publiés par *Kit "
+"Woolsey* dans `Match Equity Table "
+"<https://bkgm.com/articles/GOL/demo/equity.htm>`__ (GammOnLine, 1999) ;"
+msgstr ""
+"Kazaross-XG2 マッチエクイティテーブルは *Neil Kazaross* "
+"の著作で、彼の暗算用の近道であるニールの数も同様です。これらは *Kit Woolsey* が `Match Equity Table "
+"<https://bkgm.com/articles/GOL/demo/equity.htm>`__ (GammOnLine、1999 年) "
+"で公開しました。"
 
-#: ../../source/a_propos.rst:93
+#: ../../source/a_propos.rst:96
 msgid ""
 "les tables de take points et de valeurs de gammon sont tirées de *The "
 "Theory of Backgammon* de *Dirk Schiemann* ;"
@@ -203,7 +211,7 @@ msgstr ""
 "テイクポイントとギャモン値の表は *Dirk Schiemann* の著書 *The Theory of Backgammon* "
 "から引用しています。"
 
-#: ../../source/a_propos.rst:96
+#: ../../source/a_propos.rst:99
 msgid ""
 "les tables de bearoff unilatérale (6 points, 15 pions, pour l'EPC) et "
 "bilatérale (6 points, 6 pions, pour les verdicts de videau en course) "
@@ -218,7 +226,7 @@ msgstr ""
 "``makebearoff`` ツールを移植して blunderDB 自身が計算します。結果は gnubg "
 "が生成するものとバイト単位で同一であり、その SHA-256 の指紋が基準となります。GNUbg は GPL ライセンスのフリーソフトウェアです。"
 
-#: ../../source/a_propos.rst:103
+#: ../../source/a_propos.rst:106
 msgid ""
 "les fichiers de match sont lus par `xgparser "
 "<https://github.com/kevung/xgparser>`__, `gnubgparser "
@@ -231,7 +239,7 @@ msgstr ""
 "<https://github.com/kevung/bgfparser>`__\\ 、\\ `ogxmparser "
 "<https://github.com/kevung/ogxmparser>`__\\ （MIT）で読み込まれます。"
 
-#: ../../source/a_propos.rst:109
+#: ../../source/a_propos.rst:112
 msgid ""
 "côté Go : `modernc.org/sqlite <https://gitlab.com/cznic/sqlite>`__ "
 "(BSD-3-Clause), `pgx <https://github.com/jackc/pgx>`__, `Wails "
@@ -243,7 +251,7 @@ msgstr ""
 "<https://wails.io>`__、\\ `go-fsrs <https://github.com/open-spaced-"
 "repetition/go-fsrs>`__\\ （MIT）。"
 
-#: ../../source/a_propos.rst:114
+#: ../../source/a_propos.rst:117
 msgid ""
 "côté interface : `Svelte <https://svelte.dev>`__, `two.js "
 "<https://two.js.org>`__, `Chart.js <https://www.chartjs.org>`__ et "
@@ -253,7 +261,7 @@ msgstr ""
 "<https://two.js.org>`__、\\ `Chart.js <https://www.chartjs.org>`__、\\ "
 "`driver.js <https://driverjs.com>`__\\ （MIT）。"
 
-#: ../../source/a_propos.rst:118
+#: ../../source/a_propos.rst:121
 msgid ""
 "les polices `Nunito <https://github.com/googlefonts/nunito>`__ et `Noto "
 "Sans JP <https://fonts.google.com/noto/specimen/Noto+Sans+JP>`__ (SIL "
@@ -262,3 +270,9 @@ msgstr ""
 "フォント `Nunito <https://github.com/googlefonts/nunito>`__ と `Noto Sans JP "
 "<https://fonts.google.com/noto/specimen/Noto+Sans+JP>`__\\ （SIL Open Font"
 " License 1.1）。"
+
+#~ msgid ""
+#~ "la table d'équité de match Kazaross-"
+#~ "XG2 est l'œuvre de *Neil Kazaross* "
+#~ ";"
+#~ msgstr "Kazaross-XG2 マッチエクイティテーブルは *Neil Kazaross* の著作物です。"

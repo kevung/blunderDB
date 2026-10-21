@@ -11,7 +11,7 @@ import { logger } from './utils/logger.js';
 // NOTE: status messages are emitted as tMsg() descriptors so the status bar can
 // re-translate them live when the language changes.
 import { tMsg } from './i18n';
-import { withDisplayedPositionIDs, searchQueryBoard } from './services/positionService.js';
+import { withDisplayedPositionIDs, searchQueryBoard, showReferencePanel, toggleReferencePanel } from './services/positionService.js';
 import { openContactSheet } from './services/contactSheet.js';
 import { runRolloutCommand } from './services/rolloutService.js';
 import { listLessons, openLesson, openLessonEditor } from './services/lessonService.js';
@@ -150,8 +150,10 @@ export function processCommand(command) {
         callbacks.toggleTournamentPanel?.();
     } else if (command === 'm') {
         callbacks.toggleMatchMode?.();
+    } else if (command === 'reference' || command === 'ref') {
+        toggleReferencePanel();
     } else if (command === 'met') {
-        openModal(MODAL.MET);
+        showReferencePanel('met');
     } else if (command === 'cm') {
         openModal(MODAL.CUBE_MATRIX);
     } else if (command === 'tags') {
@@ -170,19 +172,19 @@ export function processCommand(command) {
     } else if (command === 'duel') {
         callbacks.onDuel?.();
     } else if (command === 'tp2_last') {
-        openModal(MODAL.TAKE_POINT_2_LAST);
+        showReferencePanel('takePoints');
     } else if (command === 'tp2_live') {
-        openModal(MODAL.TAKE_POINT_2_LIVE);
+        showReferencePanel('takePoints');
     } else if (command === 'tp4_last') {
-        openModal(MODAL.TAKE_POINT_4_LAST);
+        showReferencePanel('takePoints');
     } else if (command === 'tp4_live') {
-        openModal(MODAL.TAKE_POINT_4_LIVE);
+        showReferencePanel('takePoints');
     } else if (command === 'gv1') {
-        openModal(MODAL.GAMMON_VALUE_1);
+        showReferencePanel('gammonValues');
     } else if (command === 'gv2') {
-        openModal(MODAL.GAMMON_VALUE_2);
+        showReferencePanel('gammonValues');
     } else if (command === 'gv4') {
-        openModal(MODAL.GAMMON_VALUE_4);
+        showReferencePanel('gammonValues');
     } else if (command === 'meta') {
         if (databaseLoaded) {
             callbacks.toggleMetadataPanel?.();
@@ -190,9 +192,9 @@ export function processCommand(command) {
             statusBarTextStore.set(tMsg('commands.noDatabaseLoaded'));
         }
     } else if (command === 'tp2') {
-        openModal(MODAL.TAKE_POINT_2);
+        showReferencePanel('takePoints');
     } else if (command === 'tp4') {
-        openModal(MODAL.TAKE_POINT_4);
+        showReferencePanel('takePoints');
     } else if (command === 'cl' || command === 'clear') {
         ClearCommandHistory()
             .then(() => {

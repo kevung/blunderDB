@@ -1338,9 +1338,6 @@
         "title": "Warnung",
         "confirmTitle": "Bestätigung"
     },
-    "datatable": {
-        "title": "Datentabelle"
-    },
     "cubeMatrix": {
         "title": "Dopplerwürfel-Matrix",
         "computing": "wird berechnet…",
@@ -1358,9 +1355,6 @@
         "legendRefused": "nicht bewertbar",
         "currentScore": "Punktestand der Position",
         "note": "Der Punktestand der Position wird durch den jeder Zelle ersetzt; ihr Dopplerwürfel bleibt erhalten. Das Raster gilt nach Crawford: während des Crawford-Spiels ist der Würfel nicht im Spiel."
-    },
-    "met": {
-        "title": "MET-Tabelle"
     },
     "merge": {
         "canonicalName": "Kanonischer Name:",
@@ -1412,7 +1406,8 @@
         "hiddenTabs": "Ausgeblendete Tabs",
         "ankiDue": "{n} Karten zu wiederholen",
         "training": "Training",
-        "duel": "Duell"
+        "duel": "Duell",
+        "reference": "Referenz"
     },
     "transcription": {
         "conflict": "Der Entwurf wurde anderswo geändert: Er wurde im aktuellen Stand neu geladen, der Rückgängig-Verlauf wurde zurückgesetzt.",
@@ -3129,6 +3124,7 @@
             "direct": "Turnier leiten",
             "m": "Zurück zum zuletzt besuchten Match",
             "met": "Match-Equity-Tabelle",
+            "reference": "Referenzdaten: MET, Take-Points, Gammon-Werte, Neil",
             "cm": "Doppelwürfel-Matrix",
             "tags": "Tag-Verzeichnis",
             "train": "Training",
@@ -3623,5 +3619,22 @@
         "noDouble": "Kein Doppel",
         "doubleTake": "Doppel, angenommen",
         "doublePass": "Doppel, abgelehnt"
+    },
+    "reference": {
+        "title": "Referenzdaten",
+        "met": "MET",
+        "takePoints": "Take-Points",
+        "gammonValues": "Gammon-Werte",
+        "aggregated": "Zusammengefasst",
+        "neil": "Neils Zahlen",
+        "metLegend": "% Gewinnchance für das Match",
+        "cube": "Würfel {n}",
+        "longRaces": "Lange Rennen (lebend)",
+        "lastRoll": "Letzter Wurf (tot)",
+        "axisHint": "Zeilen / Spalten = noch fehlende Punkte zum Matchgewinn",
+        "neilFormula": "E ≃ 50 % + Vorsprung × Neil(n), n = fehlende Punkte des Zurückliegenden",
+        "neilAxis": "Zeilen = Führender, Spalten = Zurückliegender (fehlende Punkte); klein: Abweichung von der MET",
+        "neilFallback": "Führender 1 oder 2 vor Schluss: MET-Wert",
+        "source": "Quelle"
     }
 }

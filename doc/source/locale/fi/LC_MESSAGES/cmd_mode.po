@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-20 16:37+0200\n"
+"POT-Creation-Date: 2026-10-21 15:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -181,12 +181,27 @@ msgstr ""
 " mikä tahansa muu välilehti tuo laudan takaisin."
 
 #: ../../source/cmd_mode.rst:1
+msgid "reference, ref"
+msgstr "reference, ref"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Affiche/cache le panneau Données de référence : MET, points de prise, "
+"valeurs du gammon, vue agrégée et nombres de Neil (voir "
+":ref:`panneau_reference`)."
+msgstr ""
+"Näyttää/piilottaa Viitetiedot-paneelin: MET, ottopisteet, gammonarvot, "
+"koottu näkymä ja Neilin luvut (ks. :ref:`panneau_reference`)."
+
+#: ../../source/cmd_mode.rst:1
 msgid "met"
 msgstr "met"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table d'équité de match Kazaross-XG2."
-msgstr "Avaa Kazaross-XG2-ottelutaulukon (match equity table)."
+msgid ""
+"Ouvre le panneau Données de référence sur la table d'équité de match "
+"Kazaross-XG2."
+msgstr "Avaa Viitetiedot-paneelin Kazaross-XG2-ottelun tasapainotaulukon kohdalle."
 
 #: ../../source/cmd_mode.rst:1
 msgid "cm"
@@ -275,74 +290,110 @@ msgid "tp2"
 msgstr "tp2"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des takepoints avec videau à 2."
-msgstr "Avaa take-pisteiden taulukon kuution arvolla 2."
+msgid ""
+"Ouvre le panneau Données de référence sur les points de prise, où figure "
+"la table du videau à 2."
+msgstr ""
+"Avaa Viitetiedot-paneelin ottopisteiden kohdalle, jossa on kuution 2 "
+"taulukko."
 
 #: ../../source/cmd_mode.rst:1
 msgid "tp2_live"
 msgstr "tp2_live"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des takepoints avec videau à 2 pour les courses longues."
-msgstr "Avaa take-pisteiden taulukon kuution arvolla 2 pitkille kilpajuoksuille."
+msgid ""
+"Ouvre le panneau Données de référence sur les points de prise, où figure "
+"la table du videau à 2 pour les courses longues."
+msgstr ""
+"Avaa Viitetiedot-paneelin ottopisteiden kohdalle, jossa on kuution 2 "
+"taulukko pitkille kilpajuoksuille."
 
 #: ../../source/cmd_mode.rst:1
 msgid "tp2_last"
 msgstr "tp2_last"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des takepoints avec videau à 2 mort."
-msgstr "Avaa take-pisteiden taulukon kuution arvolla 2 viimeiselle heitolle."
+msgid ""
+"Ouvre le panneau Données de référence sur les points de prise, où figure "
+"la table du videau à 2 mort."
+msgstr ""
+"Avaa Viitetiedot-paneelin ottopisteiden kohdalle, jossa on kuolleen "
+"kuution 2 taulukko."
 
 #: ../../source/cmd_mode.rst:1
 msgid "tp4"
 msgstr "tp4"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des takepoints avec videau à 4."
-msgstr "Avaa take-pisteiden taulukon kuution arvolla 4."
+msgid ""
+"Ouvre le panneau Données de référence sur les points de prise, où figure "
+"la table du videau à 4."
+msgstr ""
+"Avaa Viitetiedot-paneelin ottopisteiden kohdalle, jossa on kuution 4 "
+"taulukko."
 
 #: ../../source/cmd_mode.rst:1
 msgid "tp4_live"
 msgstr "tp4_live"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des takepoints avec videau à 4 pour les courses longues."
-msgstr "Avaa take-pisteiden taulukon kuution arvolla 4 pitkille kilpajuoksuille."
+msgid ""
+"Ouvre le panneau Données de référence sur les points de prise, où figure "
+"la table du videau à 4 pour les courses longues."
+msgstr ""
+"Avaa Viitetiedot-paneelin ottopisteiden kohdalle, jossa on kuution 4 "
+"taulukko pitkille kilpajuoksuille."
 
 #: ../../source/cmd_mode.rst:1
 msgid "tp4_last"
 msgstr "tp4_last"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des takepoints avec videau à 4 mort."
-msgstr "Avaa take-pisteiden taulukon kuution arvolla 4 viimeiselle heitolle."
+msgid ""
+"Ouvre le panneau Données de référence sur les points de prise, où figure "
+"la table du videau à 4 mort."
+msgstr ""
+"Avaa Viitetiedot-paneelin ottopisteiden kohdalle, jossa on kuolleen "
+"kuution 4 taulukko."
 
 #: ../../source/cmd_mode.rst:1
 msgid "gv1"
 msgstr "gv1"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des valeurs de gammon avec videau à 1."
-msgstr "Avaa gammon-arvojen taulukon kuution arvolla 1."
+msgid ""
+"Ouvre le panneau Données de référence sur les valeurs du gammon, où "
+"figure la table du videau à 1."
+msgstr ""
+"Avaa Viitetiedot-paneelin gammonarvojen kohdalle, jossa on kuution 1 "
+"taulukko."
 
 #: ../../source/cmd_mode.rst:1
 msgid "gv2"
 msgstr "gv2"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des valeurs de gammon avec videau à 2."
-msgstr "Avaa gammon-arvojen taulukon kuution arvolla 2."
+msgid ""
+"Ouvre le panneau Données de référence sur les valeurs du gammon, où "
+"figure la table du videau à 2."
+msgstr ""
+"Avaa Viitetiedot-paneelin gammonarvojen kohdalle, jossa on kuution 2 "
+"taulukko."
 
 #: ../../source/cmd_mode.rst:1
 msgid "gv4"
 msgstr "gv4"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des valeurs de gammon avec videau à 4."
-msgstr "Avaa gammon-arvojen taulukon kuution arvolla 4."
+msgid ""
+"Ouvre le panneau Données de référence sur les valeurs du gammon, où "
+"figure la table du videau à 4."
+msgstr ""
+"Avaa Viitetiedot-paneelin gammonarvojen kohdalle, jossa on kuution 4 "
+"taulukko."
 
-#: ../../source/cmd_mode.rst:55
+#: ../../source/cmd_mode.rst:56
 msgid "Positions et navigation"
 msgstr "Asemat ja navigointi"
 
@@ -563,7 +614,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "Navigoi viimeksi käytyyn otteluun."
 
-#: ../../source/cmd_mode.rst:86
+#: ../../source/cmd_mode.rst:87
 msgid "Édition et recherche"
 msgstr "Muokkaus ja haku"
 
@@ -603,11 +654,11 @@ msgstr ""
 "Hae näytetyistä asemista: nykyiset tulokset, avoin kokoelma tai "
 "läpikäytävä ottelu."
 
-#: ../../source/cmd_mode.rst:102
+#: ../../source/cmd_mode.rst:103
 msgid "Filtres de recherche"
 msgstr "Hakusuodattimet"
 
-#: ../../source/cmd_mode.rst:104
+#: ../../source/cmd_mode.rst:105
 msgid ""
 "Cette table est la référence de la grammaire de recherche : la ligne de "
 "commande, la bibliothèque de filtres et le drapeau ``--query`` de "
@@ -622,7 +673,7 @@ msgstr ""
 "olemassa, saman asian tekevän ``search``-valitsimen (ks. :ref:`cli`); "
 "viiva merkitsee suodatinta, jonka vain kielioppi osaa ilmaista."
 
-#: ../../source/cmd_mode.rst:111
+#: ../../source/cmd_mode.rst:112
 msgid ""
 "Cinq jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
 "recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
@@ -642,7 +693,7 @@ msgstr ""
 "vertautuvat tyhjään lautaan; siellä on käytettävä kolmannen sarakkeen "
 "valitsimia."
 
-#: ../../source/cmd_mode.rst:120
+#: ../../source/cmd_mode.rst:121
 msgid ""
 "Un seul jeton **classe** au lieu de restreindre : ``like`` ordonne le "
 "résultat par distance croissante à une position cible, et tous les autres"
@@ -652,7 +703,7 @@ msgstr ""
 "järjestää tuloksen kasvavan etäisyyden mukaan kohdeasemasta, ja kaikki "
 "muut tunnukset rajaavat näin järjestettyä joukkoa."
 
-#: ../../source/cmd_mode.rst:124
+#: ../../source/cmd_mode.rst:125
 msgid ""
 "Les erreurs et les équités se comptent en **millièmes d'équité** — les "
 "*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
@@ -662,11 +713,11 @@ msgstr ""
 "taulukon *millipisteinä*: ``E>100`` poimii siirrot, jotka ovat maksaneet "
 "vähintään kymmenesosan pisteestä, sillä yksi piste on 1000 tuhannesosaa."
 
-#: ../../source/cmd_mode.rst:128
+#: ../../source/cmd_mode.rst:129
 msgid "Deux recherches complètes :"
 msgstr "Kaksi täydellistä hakua:"
 
-#: ../../source/cmd_mode.rst:130
+#: ../../source/cmd_mode.rst:131
 #, no-python-format
 msgid ""
 "``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
@@ -675,7 +726,7 @@ msgstr ""
 "``s p>30 w40,60 xco`` — yli 30 pipiä jäljessä, voittomahdollisuus 40–60 "
 "%, ei yhtään kommenttia."
 
-#: ../../source/cmd_mode.rst:132
+#: ../../source/cmd_mode.rst:133
 msgid ""
 "``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
 "millièmes, et un commentaire venu d'eXtreme Gammon."
@@ -1883,7 +1934,7 @@ msgstr ""
 "päätöstyyppeihin ja molempiin pelimuotoihin, rahapeliin ja otteluun. Ks. "
 ":ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:249
+#: ../../source/cmd_mode.rst:250
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``m`` et ``t`` s'ouvrent par"
 " un guillemet ou une apostrophe et se ferment par l'un des deux. Un jeton"
@@ -1902,11 +1953,11 @@ msgstr ""
 "esiinny missään arvossa, eikä ``ma1;2`` ole tunniste (kirjoita ``ma1 "
 "ma2``)."
 
-#: ../../source/cmd_mode.rst:254
+#: ../../source/cmd_mode.rst:255
 msgid "Transcrire depuis un terminal"
 msgstr "Litterointi päätteestä"
 
-#: ../../source/cmd_mode.rst:256
+#: ../../source/cmd_mode.rst:257
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -1925,7 +1976,7 @@ msgstr ""
 " edellisen kutsun palauttaman revision; jokainen kutsu on oma istuntonsa,"
 " ilman ``sessionId``-tunnistetta ja ilman kumoamista kutsusta toiseen."
 
-#: ../../source/cmd_mode.rst:267
+#: ../../source/cmd_mode.rst:268
 msgid "Commandes diverses"
 msgstr "Sekalaisia komentoja"
 
@@ -2016,3 +2067,34 @@ msgstr "Tyhjentää komentohistorian."
 
 #~ msgid "Date d'ajout de la position après x (AAAA/MM/JJ)."
 #~ msgstr "Aseman lisäyspäivä x:n jälkeen (VVVV/KK/PP)."
+
+#~ msgid "Ouvre la table des takepoints avec videau à 2."
+#~ msgstr "Avaa take-pisteiden taulukon kuution arvolla 2."
+
+#~ msgid "Ouvre la table des takepoints avec videau à 2 pour les courses longues."
+#~ msgstr ""
+#~ "Avaa take-pisteiden taulukon kuution "
+#~ "arvolla 2 pitkille kilpajuoksuille."
+
+#~ msgid "Ouvre la table des takepoints avec videau à 2 mort."
+#~ msgstr "Avaa take-pisteiden taulukon kuution arvolla 2 viimeiselle heitolle."
+
+#~ msgid "Ouvre la table des takepoints avec videau à 4."
+#~ msgstr "Avaa take-pisteiden taulukon kuution arvolla 4."
+
+#~ msgid "Ouvre la table des takepoints avec videau à 4 pour les courses longues."
+#~ msgstr ""
+#~ "Avaa take-pisteiden taulukon kuution "
+#~ "arvolla 4 pitkille kilpajuoksuille."
+
+#~ msgid "Ouvre la table des takepoints avec videau à 4 mort."
+#~ msgstr "Avaa take-pisteiden taulukon kuution arvolla 4 viimeiselle heitolle."
+
+#~ msgid "Ouvre la table des valeurs de gammon avec videau à 1."
+#~ msgstr "Avaa gammon-arvojen taulukon kuution arvolla 1."
+
+#~ msgid "Ouvre la table des valeurs de gammon avec videau à 2."
+#~ msgstr "Avaa gammon-arvojen taulukon kuution arvolla 2."
+
+#~ msgid "Ouvre la table des valeurs de gammon avec videau à 4."
+#~ msgstr "Avaa gammon-arvojen taulukon kuution arvolla 4."

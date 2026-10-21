@@ -1338,9 +1338,6 @@
         "title": "Advertencia",
         "confirmTitle": "Confirmación"
     },
-    "datatable": {
-        "title": "Tabla de datos"
-    },
     "cubeMatrix": {
         "title": "Matriz del cubo",
         "computing": "calculando…",
@@ -1358,9 +1355,6 @@
         "legendRefused": "no evaluable",
         "currentScore": "marcador de la posición",
         "note": "El marcador propio de la posición se sustituye por el de cada casilla; su cubo se conserva. La cuadrícula es posterior a Crawford: durante la partida Crawford el cubo no está en juego."
-    },
-    "met": {
-        "title": "Tabla de equity de partida"
     },
     "merge": {
         "canonicalName": "Nombre canónico:",
@@ -1412,7 +1406,8 @@
         "hiddenTabs": "Pestañas ocultas",
         "ankiDue": "{n} tarjetas por repasar",
         "training": "Entrenamiento",
-        "duel": "Duelo"
+        "duel": "Duelo",
+        "reference": "Referencia"
     },
     "transcription": {
         "conflict": "El borrador se modificó en otro lugar: se ha recargado tal como está ahora y el historial de deshacer se ha reiniciado.",
@@ -3129,6 +3124,7 @@
             "direct": "Dirigir un torneo",
             "m": "Volver al último match visitado",
             "met": "Tabla de equidad de match",
+            "reference": "Datos de referencia: MET, puntos de toma, valores del gammon, Neil",
             "cm": "Matriz del cubo",
             "tags": "Vocabulario de etiquetas",
             "train": "Entrenamiento",
@@ -3623,5 +3619,22 @@
         "noDouble": "Sin doblar",
         "doubleTake": "Dobla, acepta",
         "doublePass": "Dobla, rechaza"
+    },
+    "reference": {
+        "title": "Datos de referencia",
+        "met": "MET",
+        "takePoints": "Puntos de toma",
+        "gammonValues": "Valores del gammon",
+        "aggregated": "Agregado",
+        "neil": "Números de Neil",
+        "metLegend": "% de probabilidad de ganar el partido",
+        "cube": "Cubo {n}",
+        "longRaces": "Carreras largas (vivo)",
+        "lastRoll": "Última tirada (muerto)",
+        "axisHint": "filas / columnas = puntos que faltan para ganar el partido",
+        "neilFormula": "E ≃ 50 % + ventaja × Neil(n), n = puntos que le faltan a quien va detrás",
+        "neilAxis": "filas = quien va delante, columnas = quien va detrás (puntos que faltan); en pequeño: diferencia con la MET",
+        "neilFallback": "Quien va delante a 1 o 2 puntos: valor de la MET",
+        "source": "Fuente"
     }
 }

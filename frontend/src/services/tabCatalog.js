@@ -25,5 +25,8 @@ export const TABS = Object.freeze([
     { id: 'elsewhere', labelKey: 'tabbedPanel.elsewhere', icon: 'elsewhere', shortcut: 'Ctrl+Maj+A' },
     { id: 'stats', labelKey: 'tabbedPanel.stats', icon: 'stats', shortcut: 'Ctrl+D' },
     { id: 'transcription', labelKey: 'tabbedPanel.transcription', icon: 'transcription', shortcut: 'Ctrl+Maj+T' },
+    // Les tables du score (MET, points de prise, valeurs du gammon, Neil) : consultées, pas
+    // calculées ; elles s'ouvrent sans base.
+    { id: 'reference', labelKey: 'tabbedPanel.reference', icon: 'reference', shortcut: 'Ctrl+Maj+R' },
     { id: 'metadata', labelKey: 'tabbedPanel.metadata', icon: 'metadata', shortcut: 'Ctrl+M' }
 ]);
