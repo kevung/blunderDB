@@ -11,7 +11,9 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/testcontainers/testcontainers-go"
 	tcpg "github.com/testcontainers/testcontainers-go/modules/postgres"
 
@@ -235,4 +237,57 @@ func TestMigrateCarriesMETs_Postgres(t *testing.T) {
 		t.Fatal(err)
 	}
 	checkMETsMigrated(t, dst, "1")
+}
+
+// TestMigrateAcrossBatches_Postgres runs the batch-boundary check into
+// PostgreSQL, whose SaveMany pipelines what SQLite loops over.
+func TestMigrateAcrossBatches_Postgres(t *testing.T) {
+	ctx := context.Background()
+	dst, err := postgres.Open(ctx, startPostgres(t), nil)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer dst.Close()
+	if err := dst.Migrate(ctx); err != nil {
+		t.Fatalf("migrate dst schema: %v", err)
+	}
+	migrate.CheckCopiesAcrossBatches(t, dst)
+}
+
+func TestMigrateMatchesAcrossChunks_Postgres(t *testing.T) {
+	ctx := context.Background()
+	dsn := startPostgres(t)
+	dst, err := postgres.Open(ctx, dsn, nil)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer dst.Close()
+	if err := dst.Migrate(ctx); err != nil {
+		t.Fatalf("migrate dst schema: %v", err)
+	}
+	migrate.CheckCopiesMatchesAcrossChunks(t, dst)
+
+	// The copy reached RefreshStats, not only its type assertion: the manual
+	// ANALYZE counter of move moved. Statistics reach the view shortly after
+	// the commit, hence the wait.
+	conn, err := pgx.Connect(ctx, dsn)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer conn.Close(ctx)
+	var analyzed int64
+	for deadline := time.Now().Add(10 * time.Second); time.Now().Before(deadline); time.Sleep(100 * time.Millisecond) {
+		if _, err := conn.Exec(ctx, `SELECT pg_stat_clear_snapshot()`); err != nil {
+			t.Fatal(err)
+		}
+		if err := conn.QueryRow(ctx, `SELECT analyze_count FROM pg_stat_user_tables WHERE relname = 'move'`).Scan(&analyzed); err != nil {
+			t.Fatal(err)
+		}
+		if analyzed > 0 {
+			break
+		}
+	}
+	if analyzed == 0 {
+		t.Error("the migration never analysed move: RefreshStats was not reached")
+	}
 }

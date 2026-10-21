@@ -159,6 +159,17 @@ func (s matchStore) CreateGame(ctx context.Context, scope string, g *domain.Game
 	return r.ID, nil
 }
 
+// CreateGames has no batch route: it sends matches.createGame once per game,
+// so a failure midway leaves the games before it written.
+func (s matchStore) CreateGames(ctx context.Context, scope string, gs []*domain.Game) error {
+	for _, g := range gs {
+		if _, err := s.CreateGame(ctx, scope, g); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func (s matchStore) Games(ctx context.Context, scope string, matchID int64) iter.Seq2[*domain.Game, error] {
 	return stream[*domain.Game](ctx, s.c, scope, "matches.games", matchIDReq{matchID})
 }

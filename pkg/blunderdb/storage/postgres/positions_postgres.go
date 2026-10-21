@@ -148,6 +148,21 @@ func (s *positionStore) Save(ctx context.Context, scope string, p *domain.Positi
 	return id, err
 }
 
+// positionInsertArgs are positionInsertSQL's arguments for a position of
+// columns cols and storage-normalised form norm.
+func positionInsertArgs(tenant int64, cols engine.PositionColumns, norm *domain.Position) []any {
+	return []any{
+		tenant, int64(cols.ZobristHash), cols.DecisionType, norm.PlayerOnRoll, cols.Dice1, cols.Dice2,
+		cols.CubeValue, cols.CubeOwner, cols.Score1, cols.Score2,
+		cols.HasJacoby != 0, cols.HasBeaver != 0,
+		cols.Pip1, cols.Pip2, cols.PipDiff, cols.Off1, cols.Off2,
+		cols.BackCheckers1, cols.BackCheckers2, cols.NoContact, int(cols.GamePhase), int(cols.GameType),
+		int64(cols.Occupancy1), int64(cols.Occupancy2), int64(cols.PointMask1), int64(cols.PointMask2),
+		engine.EncodeBoardState(norm.Board), norm.IndividuallyImported, norm.Flagged,
+		cols.MaxCube,
+	}
+}
+
 // SaveCreated is Save, reporting whether the INSERT added the row: ON CONFLICT
 // DO NOTHING returns no row exactly when another write got there first.
 func (s *positionStore) SaveCreated(ctx context.Context, scope string, p *domain.Position) (int64, bool, error) {
@@ -156,15 +171,7 @@ func (s *positionStore) SaveCreated(ctx context.Context, scope string, p *domain
 	cols := engine.PopulatePositionColumns(p)
 
 	var id int64
-	err := s.db.QueryRow(ctx, positionInsertSQL,
-		tenant, int64(cols.ZobristHash), cols.DecisionType, norm.PlayerOnRoll, cols.Dice1, cols.Dice2,
-		cols.CubeValue, cols.CubeOwner, cols.Score1, cols.Score2,
-		cols.HasJacoby != 0, cols.HasBeaver != 0,
-		cols.Pip1, cols.Pip2, cols.PipDiff, cols.Off1, cols.Off2,
-		cols.BackCheckers1, cols.BackCheckers2, cols.NoContact, int(cols.GamePhase), int(cols.GameType),
-		int64(cols.Occupancy1), int64(cols.Occupancy2), int64(cols.PointMask1), int64(cols.PointMask2),
-		engine.EncodeBoardState(norm.Board), norm.IndividuallyImported, norm.Flagged,
-		cols.MaxCube).Scan(&id)
+	err := s.db.QueryRow(ctx, positionInsertSQL, positionInsertArgs(tenant, cols, &norm)...).Scan(&id)
 	created := err == nil
 	switch {
 	case errors.Is(err, pgx.ErrNoRows):
@@ -554,4 +561,59 @@ func (s *positionStore) LoadByIDs(ctx context.Context, scope string, ids []int64
 		}
 	}
 	return out, nil
+}
+
+// saveManyChunk bounds the statements one SaveMany pipeline carries, so a
+// caller handing over a whole library does not queue it all in memory at
+// once.
+const saveManyChunk = 1000
+
+// SaveMany — see storage.PositionStore. The inserts of a chunk go out as one
+// pipeline; a position whose hash is already stored (in the tenant, or
+// earlier in ps) gets no row back and takes SaveCreated's path, which raises
+// its marks and finds its id.
+func (s *positionStore) SaveMany(ctx context.Context, scope string, ps []*domain.Position) ([]int64, []bool, error) {
+	bt, ok := s.db.(batcher)
+	if !ok || len(ps) < 2 {
+		return storage.SaveEach(ctx, s, scope, ps)
+	}
+	tenant := tenantID(scope)
+	ids := make([]int64, len(ps))
+	created := make([]bool, len(ps))
+	for start := 0; start < len(ps); start += saveManyChunk {
+		chunk := ps[start:min(start+saveManyChunk, len(ps))]
+		norms := make([]domain.Position, len(chunk))
+		b := &pgx.Batch{}
+		for i, p := range chunk {
+			norms[i] = p.NormalizeForStorage()
+			b.Queue(positionInsertSQL, positionInsertArgs(tenant, engine.PopulatePositionColumns(p), &norms[i])...)
+		}
+		res := bt.SendBatch(ctx, b)
+		var dup []int
+		for i := range chunk {
+			var id int64
+			switch err := res.QueryRow().Scan(&id); {
+			case errors.Is(err, pgx.ErrNoRows):
+				dup = append(dup, i)
+			case err != nil:
+				_ = res.Close()
+				return nil, nil, fmt.Errorf("postgres: save position: %w", err)
+			default:
+				ids[start+i], created[start+i] = id, true
+				norms[i].ID = id
+				*chunk[i] = norms[i]
+			}
+		}
+		if err := res.Close(); err != nil {
+			return nil, nil, fmt.Errorf("postgres: save position: %w", err)
+		}
+		for _, i := range dup {
+			id, _, err := s.SaveCreated(ctx, scope, chunk[i])
+			if err != nil {
+				return nil, nil, err
+			}
+			ids[start+i] = id
+		}
+	}
+	return ids, created, nil
 }

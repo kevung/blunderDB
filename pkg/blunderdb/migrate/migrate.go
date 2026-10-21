@@ -17,10 +17,15 @@
 package migrate
 
 import (
+	"cmp"
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
+	"maps"
+	"slices"
 	"strings"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/mets"
@@ -151,28 +156,37 @@ func (m *mover) run(rep *Report) error {
 	m.tourID = make(map[int64]int64)
 	m.collID = make(map[int64]int64)
 
-	if err := m.copyTables(); err != nil {
+	// Before any copy: a destination that cannot refresh its statistics says
+	// so now, not after the positions phase.
+	if err := m.refreshStats(); err != nil {
 		return err
 	}
-	if err := m.copyPositions(rep); err != nil {
-		return err
+
+	phases := []struct {
+		name string
+		copy func() error
+		rows func() int
+	}{
+		{"tables", m.copyTables, func() int { return 0 }},
+		{"positions", func() error { return m.copyPositions(rep) }, func() int { return rep.Positions }},
+		{"tournaments", func() error { return m.copyTournaments(rep) }, func() int { return rep.Tournaments }},
+		{"matches", func() error { return m.copyMatches(rep) }, func() int { return rep.Matches }},
+		{"collections", func() error { return m.copyCollections(rep) }, func() int { return rep.Collections }},
+		{"library settings", m.copyLibrarySettings, func() int { return 0 }},
+		{"lessons", func() error { return m.copyLessons(rep) }, func() int { return rep.Lessons }},
+		{"duels", func() error { return m.copyDuels(rep) }, func() int { return rep.Duels }},
 	}
-	if err := m.copyTournaments(rep); err != nil {
-		return err
+	for _, ph := range phases {
+		began := time.Now()
+		if err := ph.copy(); err != nil {
+			return err
+		}
+		// One line per phase: a long migration says where it is, and how long
+		// each family took.
+		slog.Info("migrate: phase copied", "phase", ph.name, "rows", ph.rows(),
+			"elapsed", time.Since(began).Round(time.Millisecond))
 	}
-	if err := m.copyMatches(rep); err != nil {
-		return err
-	}
-	if err := m.copyCollections(rep); err != nil {
-		return err
-	}
-	if err := m.copyLibrarySettings(); err != nil {
-		return err
-	}
-	if err := m.copyLessons(rep); err != nil {
-		return err
-	}
-	return m.copyDuels(rep)
+	return nil
 }
 
 // copyLessons carries each Lesson with its Steps in reading order. A Step's
@@ -313,10 +327,16 @@ func (m *mover) copyTables() error {
 	return m.dst.MatchEquityTables().SetCurrent(m.ctx, m.scope, id)
 }
 
+// copyBatch is how many positions one round of copyPositions carries: one
+// pipeline of inserts, one of analyses, a handful of reads around them.
+const copyBatch = 1000
+
 // copyPositions copies every position (and its analysis + comments), building
 // the position id remap that later families rely on. The source list is drained
-// before issuing per-position follow-up reads to avoid grabbing a second
-// connection inside the iterator.
+// before issuing follow-up reads to avoid grabbing a second connection inside
+// the iterator. Positions go by copyBatch: a destination across a network pays
+// a round trip per statement, and one per row made a library of 300 000
+// positions take hours.
 func (m *mover) copyPositions(rep *Report) error {
 	var positions []*domain.Position
 	for p, err := range m.src.Positions().List(m.ctx, "", storage.ListOpts{}) {
@@ -327,56 +347,122 @@ func (m *mover) copyPositions(rep *Report) error {
 		positions = append(positions, &pc)
 	}
 
-	for _, p := range positions {
-		oldID := p.ID
-		pc := *p
-		pc.ID = 0
-		newID, err := m.dst.Positions().Save(m.ctx, m.scope, &pc)
-		if err != nil {
-			return fmt.Errorf("migrate: save position %d: %w", oldID, err)
+	for start := 0; start < len(positions); start += copyBatch {
+		if err := m.ctx.Err(); err != nil {
+			return err
 		}
-		m.posID[oldID] = newID
-		rep.Positions++
-
-		a, err := m.src.Analyses().Load(m.ctx, "", oldID)
-		if err == nil {
-			if err := m.dst.Analyses().Save(m.ctx, m.scope, newID, a); err != nil {
-				return fmt.Errorf("migrate: save analysis for position %d: %w", oldID, err)
-			}
-			if err := m.copyAnalysisTable(oldID, newID); err != nil {
-				return err
-			}
-			rep.Analyses++
-		} else if !isNotFound(err) {
-			return fmt.Errorf("migrate: load analysis for position %d: %w", oldID, err)
+		if err := m.copyPositionBatch(rep, positions[start:min(start+copyBatch, len(positions))]); err != nil {
+			return err
 		}
-
-		for c, err := range m.src.Comments().ByPosition(m.ctx, "", oldID) {
-			if err != nil {
-				return fmt.Errorf("migrate: read comments for position %d: %w", oldID, err)
-			}
-			if _, err := m.dst.Comments().AddFrom(storage.WithCommentSignature(storage.WithCommentAuthor(m.ctx, c.Author), c.Signature), m.scope, newID, c.Text, c.Origin); err != nil {
-				return fmt.Errorf("migrate: add comment for position %d: %w", oldID, err)
-			}
-			rep.Comments++
-		}
+	}
+	if err := m.checkAnalysesRead(rep, len(positions)); err != nil {
+		return err
 	}
 	m.progress(rep)
 	return nil
 }
 
-// copyAnalysisTable names on newID's analysis the table oldID's was valued
-// with; Save leaves a new analysis on the built-in one.
-func (m *mover) copyAnalysisTable(oldID, newID int64) error {
-	srcMET, err := m.src.MatchEquityTables().OfAnalysis(m.ctx, "", oldID)
+// copyPositionBatch copies one batch of positions with their analyses, the
+// tables those were valued with, and their comments. A position the
+// destination did not hold before is named fresh to the analysis store: the
+// migration made it, so nothing else reaches it yet and there is no
+// ownership to check.
+func (m *mover) copyPositionBatch(rep *Report, batch []*domain.Position) error {
+	oldIDs := make([]int64, len(batch))
+	copies := make([]*domain.Position, len(batch))
+	for i, p := range batch {
+		oldIDs[i] = p.ID
+		pc := *p
+		pc.ID = 0
+		copies[i] = &pc
+	}
+	newIDs, created, err := m.dst.Positions().SaveMany(m.ctx, m.scope, copies)
 	if err != nil {
-		return fmt.Errorf("migrate: read table of analysis %d: %w", oldID, err)
+		return fmt.Errorf("migrate: save positions %d-%d: %w", oldIDs[0], oldIDs[len(oldIDs)-1], err)
 	}
-	met, err := m.tables.Target(m.ctx, srcMET)
-	if err != nil || met == 0 {
-		return err
+	var fresh []int64
+	for i, oldID := range oldIDs {
+		m.posID[oldID] = newIDs[i]
+		if created[i] {
+			fresh = append(fresh, newIDs[i])
+		}
 	}
-	return m.dst.MatchEquityTables().TagAnalyses(m.ctx, m.scope, met, []int64{newID})
+	rep.Positions += len(batch)
+
+	analyses, err := m.src.Analyses().LoadMany(m.ctx, "", oldIDs)
+	if err != nil {
+		return fmt.Errorf("migrate: load analyses of positions %d-%d: %w", oldIDs[0], oldIDs[len(oldIDs)-1], err)
+	}
+	if len(analyses) > 0 {
+		byNew := make(map[int64]*domain.PositionAnalysis, len(analyses))
+		for oldID, a := range analyses {
+			byNew[m.posID[oldID]] = a
+		}
+		if err := m.dst.Analyses().SaveMany(storage.WithFreshPositions(m.ctx, fresh), m.scope, byNew); err != nil {
+			return fmt.Errorf("migrate: save analyses of positions %d-%d: %w", oldIDs[0], oldIDs[len(oldIDs)-1], err)
+		}
+		if err := m.copyAnalysisTables(slices.Sorted(maps.Keys(analyses))); err != nil {
+			return err
+		}
+		rep.Analyses += len(analyses)
+	}
+
+	comments, err := m.src.Comments().ByPositions(m.ctx, "", oldIDs)
+	if err != nil {
+		return fmt.Errorf("migrate: read comments of positions %d-%d: %w", oldIDs[0], oldIDs[len(oldIDs)-1], err)
+	}
+	for _, oldID := range oldIDs {
+		for _, c := range comments[oldID] {
+			if _, err := m.dst.Comments().AddFrom(storage.WithCarriedComment(m.ctx, c.Author, c.Signature), m.scope, m.posID[oldID], c.Text, c.Origin); err != nil {
+				return fmt.Errorf("migrate: add comment for position %d: %w", oldID, err)
+			}
+			rep.Comments++
+		}
+	}
+	return nil
+}
+
+// checkAnalysesRead fails the migration when fewer analyses came across than
+// the source holds: LoadMany leaves out a payload it cannot decode, and a
+// migration must not drop one in silence.
+func (m *mover) checkAnalysesRead(rep *Report, positions int) error {
+	without, err := m.src.Analyses().CountWithoutAnalysis(m.ctx, "")
+	if err != nil {
+		return fmt.Errorf("migrate: count positions without analysis: %w", err)
+	}
+	if held := positions - without; rep.Analyses < held {
+		return fmt.Errorf("migrate: %d of the source's %d analyses could not be read", held-rep.Analyses, held)
+	}
+	return nil
+}
+
+// copyAnalysisTables names on the copied analyses of oldIDs the tables the
+// source's were valued with; Save leaves a new analysis on the built-in one.
+func (m *mover) copyAnalysisTables(oldIDs []int64) error {
+	srcMETs, err := m.src.MatchEquityTables().OfAnalyses(m.ctx, "", oldIDs)
+	if err != nil {
+		return fmt.Errorf("migrate: read tables of analyses: %w", err)
+	}
+	byTable := map[int64][]int64{}
+	for _, oldID := range oldIDs {
+		srcMET, ok := srcMETs[oldID]
+		if !ok {
+			continue
+		}
+		met, err := m.tables.Target(m.ctx, srcMET)
+		if err != nil {
+			return err
+		}
+		if met != 0 {
+			byTable[met] = append(byTable[met], m.posID[oldID])
+		}
+	}
+	for _, met := range slices.Sorted(maps.Keys(byTable)) {
+		if err := m.dst.MatchEquityTables().TagAnalyses(m.ctx, m.scope, met, byTable[met]); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (m *mover) copyTournaments(rep *Report) error {
@@ -406,9 +492,15 @@ func (m *mover) copyTournaments(rep *Report) error {
 	return nil
 }
 
+// matchChunk is how many matches share one CreateGames and one CreateMoves:
+// a server backend pays a round trip per call, not per row.
+const matchChunk = 200
+
 // copyMatches copies matches with their games and moves, remapping match→game→
-// move foreign keys and each move's position id, then re-links the match to its
-// (already-remapped) tournament.
+// move foreign keys and each move's position id. A match is saved already
+// pointing at its (remapped) tournament; the tournament orders are set once
+// per tournament at the end, so no match costs a read of its tournament's
+// current order.
 func (m *mover) copyMatches(rep *Report) error {
 	var matches []*domain.Match
 	for mt, err := range m.src.Matches().List(m.ctx, "", storage.MatchListOpts{}) {
@@ -419,91 +511,166 @@ func (m *mover) copyMatches(rep *Report) error {
 		matches = append(matches, &mc)
 	}
 
-	for _, mt := range matches {
-		srcTournament := mt.TournamentID
-
-		mc := *mt
-		mc.ID = 0
-		mc.TournamentID = nil // re-linked below via the tournament remap
-		newMatchID, err := m.dst.Matches().Save(m.ctx, m.scope, &mc)
-		if err != nil {
-			return fmt.Errorf("migrate: save match %d: %w", mt.ID, err)
+	// Oldest first: a move lowers its position's match_date to its match's
+	// date, so in this order each position is dated once. Newest first, every
+	// match would rewrite the opening positions again, and each rewrite inside
+	// the one migration transaction leaves a row version the next must walk.
+	slices.SortStableFunc(matches, func(a, b *domain.Match) int {
+		if c := a.MatchDate.Compare(b.MatchDate); c != 0 {
+			return c
 		}
-		rep.Matches++
-
-		if err := m.copyGames(rep, mt.ID, newMatchID); err != nil {
-			return err
+		return cmp.Compare(a.ID, b.ID)
+	})
+	newMatch := make(map[int64]int64, len(matches))
+	if err := m.refreshStats(); err != nil {
+		return err
+	}
+	nextRefresh := matchChunk
+	for start := 0; start < len(matches); start += matchChunk {
+		if start >= nextRefresh {
+			if err := m.refreshStats(); err != nil {
+				return err
+			}
+			nextRefresh *= 2
 		}
-		if err := m.copyOrigin(mt.ID, newMatchID); err != nil {
-			return err
-		}
-
-		if srcTournament != nil {
-			if newTID, ok := m.tourID[*srcTournament]; ok {
-				if err := m.dst.Tournaments().AddMatch(m.ctx, m.scope, newTID, newMatchID); err != nil {
-					return fmt.Errorf("migrate: link match %d to tournament: %w", mt.ID, err)
+		chunk := matches[start:min(start+matchChunk, len(matches))]
+		for _, mt := range chunk {
+			mc := *mt
+			mc.ID = 0
+			mc.TournamentID = nil
+			mc.TournamentSortOrder = 0
+			if mt.TournamentID != nil {
+				if newTID, ok := m.tourID[*mt.TournamentID]; ok {
+					mc.TournamentID = &newTID
 				}
 			}
+			newMatchID, err := m.dst.Matches().Save(m.ctx, m.scope, &mc)
+			if err != nil {
+				return fmt.Errorf("migrate: save match %d: %w", mt.ID, err)
+			}
+			newMatch[mt.ID] = newMatchID
+			rep.Matches++
+			if err := m.copyOrigin(mt.ID, newMatchID); err != nil {
+				return err
+			}
 		}
+		if err := m.copyGames(rep, chunk, newMatch); err != nil {
+			return err
+		}
+	}
+	if err := m.orderTournaments(matches, newMatch); err != nil {
+		return err
 	}
 	m.progress(rep)
 	return nil
 }
 
-func (m *mover) copyGames(rep *Report, oldMatchID, newMatchID int64) error {
-	var games []*domain.Game
-	for g, err := range m.src.Matches().Games(m.ctx, "", oldMatchID) {
-		if err != nil {
-			return fmt.Errorf("migrate: list games of match %d: %w", oldMatchID, err)
-		}
-		gc := *g
-		games = append(games, &gc)
+// refreshStats lets the destination re-plan against the rows copied so far,
+// when it needs to (storage.StatsRefresher). copyMatches calls it before the
+// first chunk and each time the copied matches double: a handful of calls,
+// each plan stays within a factor of two of the table it runs on.
+func (m *mover) refreshStats() error {
+	rs, ok := m.dst.(storage.StatsRefresher)
+	if !ok {
+		return nil
 	}
+	if err := rs.RefreshStats(m.ctx); err != nil {
+		return fmt.Errorf("migrate: %w", err)
+	}
+	return nil
+}
 
-	for _, g := range games {
-		gc := *g
-		gc.ID = 0
-		gc.MatchID = newMatchID
-		newGameID, err := m.dst.Matches().CreateGame(m.ctx, m.scope, &gc)
-		if err != nil {
-			return fmt.Errorf("migrate: create game %d: %w", g.ID, err)
+// orderTournaments gives each copied tournament its matches in the order the
+// source shows them (sort order, then most recent first, as
+// Tournaments().Matches lists them, ties in insertion order), numbered from 0
+// as AddMatch would.
+func (m *mover) orderTournaments(matches []*domain.Match, newMatch map[int64]int64) error {
+	byTournament := map[int64][]*domain.Match{}
+	for _, mt := range matches {
+		if mt.TournamentID == nil {
+			continue
 		}
-		rep.Games++
-
-		if err := m.copyMoves(rep, g.ID, newGameID); err != nil {
-			return err
+		if _, ok := m.tourID[*mt.TournamentID]; ok {
+			byTournament[*mt.TournamentID] = append(byTournament[*mt.TournamentID], mt)
+		}
+	}
+	for oldTID, list := range byTournament {
+		slices.SortStableFunc(list, func(a, b *domain.Match) int {
+			if a.TournamentSortOrder != b.TournamentSortOrder {
+				return a.TournamentSortOrder - b.TournamentSortOrder
+			}
+			if c := b.MatchDate.Compare(a.MatchDate); c != 0 {
+				return c
+			}
+			return cmp.Compare(a.ID, b.ID)
+		})
+		ids := make([]int64, len(list))
+		for i, mt := range list {
+			ids[i] = newMatch[mt.ID]
+		}
+		if err := m.dst.Tournaments().ReorderMatches(m.ctx, m.scope, m.tourID[oldTID], ids); err != nil {
+			return fmt.Errorf("migrate: order matches of tournament %d: %w", oldTID, err)
 		}
 	}
 	return nil
 }
 
-func (m *mover) copyMoves(rep *Report, oldGameID, newGameID int64) error {
+// copyGames copies the games of a chunk of matches in one CreateGames, then
+// all their moves in one CreateMoves.
+func (m *mover) copyGames(rep *Report, chunk []*domain.Match, newMatch map[int64]int64) error {
+	var games, srcGames []*domain.Game
+	for _, mt := range chunk {
+		for g, err := range m.src.Matches().Games(m.ctx, "", mt.ID) {
+			if err != nil {
+				return fmt.Errorf("migrate: list games of match %d: %w", mt.ID, err)
+			}
+			src := *g
+			gc := *g
+			gc.ID = 0
+			gc.MatchID = newMatch[mt.ID]
+			srcGames = append(srcGames, &src)
+			games = append(games, &gc)
+		}
+	}
+	if err := m.dst.Matches().CreateGames(m.ctx, m.scope, games); err != nil {
+		return fmt.Errorf("migrate: create games of matches %d-%d: %w", chunk[0].ID, chunk[len(chunk)-1].ID, err)
+	}
+	rep.Games += len(games)
+
 	var moves []*domain.Move
+	var err error
+	for i, g := range srcGames {
+		if moves, err = m.readMoves(moves, g.ID, games[i].ID); err != nil {
+			return err
+		}
+	}
+	if err := m.dst.Matches().CreateMoves(m.ctx, m.scope, moves); err != nil {
+		return fmt.Errorf("migrate: create moves of matches %d-%d: %w", chunk[0].ID, chunk[len(chunk)-1].ID, err)
+	}
+	rep.Moves += len(moves)
+	return nil
+}
+
+// readMoves appends to moves the moves of the source game oldGameID,
+// re-pointed at newGameID and at the copied positions.
+func (m *mover) readMoves(moves []*domain.Move, oldGameID, newGameID int64) ([]*domain.Move, error) {
 	for mv, err := range m.src.Matches().Moves(m.ctx, "", oldGameID) {
 		if err != nil {
-			return fmt.Errorf("migrate: list moves of game %d: %w", oldGameID, err)
+			return nil, fmt.Errorf("migrate: list moves of game %d: %w", oldGameID, err)
 		}
-		mc := *mv
-		moves = append(moves, &mc)
-	}
-
-	for _, mv := range moves {
 		mc := *mv
 		mc.ID = 0
 		mc.GameID = newGameID
 		if mv.PositionID > 0 {
 			newPos, ok := m.posID[mv.PositionID]
 			if !ok {
-				return fmt.Errorf("migrate: move %d references unknown position %d", mv.ID, mv.PositionID)
+				return nil, fmt.Errorf("migrate: move %d references unknown position %d", mv.ID, mv.PositionID)
 			}
 			mc.PositionID = newPos
 		}
-		if _, err := m.dst.Matches().CreateMove(m.ctx, m.scope, &mc); err != nil {
-			return fmt.Errorf("migrate: create move %d: %w", mv.ID, err)
-		}
-		rep.Moves++
+		moves = append(moves, &mc)
 	}
-	return nil
+	return moves, nil
 }
 
 func (m *mover) copyCollections(rep *Report) error {

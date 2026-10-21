@@ -16,8 +16,29 @@ func WithFreshPosition(ctx context.Context, positionID int64) context.Context {
 	return context.WithValue(ctx, freshPositionKey{}, positionID)
 }
 
-// IsFreshPosition reports whether ctx carries WithFreshPosition for positionID.
+type freshPositionsKey struct{}
+
+// WithFreshPositions is WithFreshPosition for every one of ids at once: the
+// hint a bulk copy passes to AnalysisStore.SaveMany for the positions
+// PositionStore.SaveMany just reported created.
+func WithFreshPositions(ctx context.Context, ids []int64) context.Context {
+	set := make(map[int64]struct{}, len(ids))
+	for _, id := range ids {
+		set[id] = struct{}{}
+	}
+	return context.WithValue(ctx, freshPositionsKey{}, set)
+}
+
+// IsFreshPosition reports whether ctx carries WithFreshPosition or
+// WithFreshPositions for positionID.
 func IsFreshPosition(ctx context.Context, positionID int64) bool {
-	id, ok := ctx.Value(freshPositionKey{}).(int64)
-	return ok && id == positionID
+	if id, ok := ctx.Value(freshPositionKey{}).(int64); ok && id == positionID {
+		return true
+	}
+	set, ok := ctx.Value(freshPositionsKey{}).(map[int64]struct{})
+	if !ok {
+		return false
+	}
+	_, fresh := set[positionID]
+	return fresh
 }

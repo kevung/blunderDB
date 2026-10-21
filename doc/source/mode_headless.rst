@@ -2153,12 +2153,23 @@ La migration copie les **positions, leurs analyses et commentaires, les matchs
 et celle dont chaque analyse a été valorisée), en réattribuant les clés
 primaires et étrangères, le
 tout dans une **seule transaction** côté destination : l'opération est atomique
-(un échec laisse la destination intacte, il suffit de relancer). La progression
-et le bilan final sont émis en NDJSON sur la sortie standard. Si la base source
-est assez ancienne pour nécessiter sa propre mise à niveau de schéma sur place,
-celle-ci s'exécute d'abord et émet ses propres événements
-``"schema-migration"`` (phase/effectué/total) avant que la copie ligne à ligne
-ne commence.
+(un échec laisse la destination intacte, il suffit de relancer). Les positions,
+leurs analyses et les coups sont écrits par lots. La progression et le bilan
+final sont émis en NDJSON sur la sortie standard ; chaque famille copiée laisse
+en outre une ligne dans le journal (sortie d'erreur) avec son nombre de lignes
+et sa durée. Si la base source est assez ancienne pour nécessiter sa propre mise
+à niveau de schéma sur place, celle-ci s'exécute d'abord et émet ses propres
+événements ``"schema-migration"`` (phase/effectué/total) avant que la copie ne
+commence.
+
+Pendant la copie, la transaction tient un verrou ``SHARE UPDATE EXCLUSIVE``
+sur les tables de positions, d'analyses, de matchs, de parties et de coups :
+deux ``migrate`` simultanés, même vers des tenants différents, passent l'un
+après l'autre et l'autovacuum les laisse de côté ; les lectures et écritures du
+démon ne sont pas bloquées. Le rôle du DSN doit pouvoir lancer ``ANALYZE`` sur
+ces tables — en être propriétaire, être superutilisateur ou, depuis
+PostgreSQL 17, détenir le droit ``MAINTAIN`` — sinon ``migrate`` s'arrête avant
+de rien copier.
 
 .. list-table::
    :header-rows: 1

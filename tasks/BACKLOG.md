@@ -71,8 +71,7 @@ propre issue le jour où il est lancé.
 - **Écarts de parité de l'analyse, côté démon** : `/v1/analyses.save` remplace (`Save`) quand
   `SaveAnalysis` fusionne, et `/v1/analyses.load` ne joint pas les coups joués de la table
   `move` que `LoadAnalysis` ajoute ; la fusion du videau d'`ingest.mergeAnalysis` garde sa
-  règle propre (une entrée par moteur sans remplacer celle du même moteur) ; la migration
-  SQLite → PostgreSQL (`migrate/migrate.go`) normalise encore l'auteur d'une note signée.
+  règle propre (une entrée par moteur sans remplacer celle du même moteur).
 - **`SwapPlayers`/`DeleteCascade` dupliqués** entre `storage/sqlite/matches_sqlite.go` et
   `storage/postgres/matches_postgres.go` ; les partager par des closures SQL dialectales dans
   `sqlshared`.

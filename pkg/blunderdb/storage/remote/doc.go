@@ -8,6 +8,9 @@
 //   - Each method is one /v1 call, atomic only as far as that route's handler
 //     is. There is no transaction across calls: BeginTx answers ErrUnsupported
 //     rather than pretend a rollback it cannot perform.
+//   - A batch method with no batch route — Positions.SaveMany,
+//     Analyses.SaveMany, Matches.CreateGames, Matches.CreateMoves — makes
+//     one call per row, so a failure midway leaves the rows before it written.
 //   - A contract method with no /v1 route answers an *UnsupportedError (it
 //     matches ErrUnsupported and storage.ErrInternal), never a fake success.
 //     Unsupported lists them all; unsupported_gen.go is regenerated with

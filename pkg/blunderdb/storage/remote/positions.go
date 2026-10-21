@@ -144,3 +144,8 @@ func (s positionStore) RepairCrawfordSentinel(ctx context.Context, scope string)
 	err := s.c.call(ctx, scope, "positions.repairCrawford", nil, &r)
 	return r.Repaired, err
 }
+
+// SaveMany has no batch route: it asks positions.save once per position.
+func (s positionStore) SaveMany(ctx context.Context, scope string, ps []*domain.Position) ([]int64, []bool, error) {
+	return storage.SaveEach(ctx, s, scope, ps)
+}

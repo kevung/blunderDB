@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 type positionIDReq struct {
@@ -49,4 +50,9 @@ func (s analysisStore) RepairDenormalisedColumns(ctx context.Context, scope stri
 	}
 	err := s.c.call(ctx, scope, "analyses.repair", nil, &r)
 	return r.Repaired, err
+}
+
+// SaveMany has no batch route: it asks analyses.save once per analysis.
+func (s analysisStore) SaveMany(ctx context.Context, scope string, analyses map[int64]*domain.PositionAnalysis) error {
+	return storage.SaveAnalysesEach(ctx, s, scope, analyses)
 }

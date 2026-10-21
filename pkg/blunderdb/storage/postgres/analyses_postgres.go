@@ -6,6 +6,8 @@ import (
 	"errors"
 	"fmt"
 	"iter"
+	"maps"
+	"slices"
 
 	"github.com/jackc/pgx/v5"
 
@@ -725,4 +727,115 @@ func (s *analysisStore) engineBatch(ctx context.Context, scope string, last int6
 // ReencodeAnalyses — see storage.AnalysisStore.
 func (s *analysisStore) ReencodeAnalyses(ctx context.Context, scope string, after int64, limit int) (int64, int, error) {
 	return sqlshared.ReencodeAnalyses(ctx, binder{s.db}.shared(), scope, after, limit)
+}
+
+// SaveMany — see storage.AnalysisStore. A position not named fresh is saved
+// as Save saves it. The fresh ones go by chunks of saveManyChunk: one read of
+// their plays, one pipeline of upserts, one update of the cube-response
+// flags. Nothing reaches a fresh position yet, so the played actions are the
+// analysis's own, as Save would find them, and the ownership check, the stats
+// invalidation and the rescoring Save does have nothing to act on.
+func (s *analysisStore) SaveMany(ctx context.Context, scope string, analyses map[int64]*domain.PositionAnalysis) error {
+	bt, ok := s.db.(batcher)
+	if !ok {
+		return storage.SaveAnalysesEach(ctx, s, scope, analyses)
+	}
+	var fresh []int64
+	for _, id := range slices.Sorted(maps.Keys(analyses)) {
+		if storage.IsFreshPosition(ctx, id) {
+			fresh = append(fresh, id)
+			continue
+		}
+		if err := s.Save(ctx, scope, id, analyses[id]); err != nil {
+			return err
+		}
+	}
+	tenant := tenantID(scope)
+	codes := map[string]int64{}
+	for start := 0; start < len(fresh); start += saveManyChunk {
+		chunk := fresh[start:min(start+saveManyChunk, len(fresh))]
+		plays, err := s.playPositions(ctx, tenant, chunk)
+		if err != nil {
+			return err
+		}
+		b := &pgx.Batch{}
+		var responses []int64
+		for _, id := range chunk {
+			a := analyses[id]
+			c, err := s.prepare(ctx, tenant, id, a, &storage.PlayedActions{Position: plays[id]})
+			if err != nil {
+				return err
+			}
+			data, err := engine.EncodeAnalysisForStorage(a)
+			if err != nil {
+				return fmt.Errorf("postgres: encode analysis: %w", err)
+			}
+			bestCube, known := codes[c.BestCubeAction]
+			if !known {
+				if bestCube, err = actionCode(ctx, s.db, tenant, c.BestCubeAction); err != nil {
+					return fmt.Errorf("postgres: save analysis: %w", err)
+				}
+				codes[c.BestCubeAction] = bestCube
+			}
+			b.Queue(analysisUpsertSQL,
+				tenant, id, data,
+				bestCube, c.CubeError, c.BestMoveErrorArg(),
+				c.Player1WinRate, c.Player1GammonRate, c.Player1BackgammonRate,
+				c.Player2WinRate, c.Player2GammonRate, c.Player2BackgammonRate,
+				c.IsForced != 0, c.IsCloseCube != 0,
+				c.AnalysisEngine, c.AnalysisDepth, nullableUnix(c.CreationDate))
+			if slices.ContainsFunc(a.PlayedCubeActions, engine.IsResponseCubeAction) {
+				responses = append(responses, id)
+			}
+		}
+		res := bt.SendBatch(ctx, b)
+		for _, id := range chunk {
+			tag, err := res.Exec()
+			if err != nil {
+				_ = res.Close()
+				return fmt.Errorf("postgres: save analysis: %w", referenced(err))
+			}
+			if tag.RowsAffected() == 0 {
+				_ = res.Close()
+				return fmt.Errorf("postgres: save analysis for position %d: %w", id, storage.ErrNotFound)
+			}
+		}
+		if err := res.Close(); err != nil {
+			return fmt.Errorf("postgres: save analysis: %w", referenced(err))
+		}
+		if len(responses) > 0 {
+			if _, err := s.db.Exec(ctx,
+				`UPDATE position SET is_cube_response = TRUE WHERE tenant_id = $1 AND id = ANY($2)`,
+				tenant, responses); err != nil {
+				return fmt.Errorf("postgres: flag cube response: %w", err)
+			}
+		}
+	}
+	return nil
+}
+
+// playPositions is positionOf for several positions in one read: what of
+// each stored position its checker plays depend on, nil (or absent) when it
+// has none.
+func (s *analysisStore) playPositions(ctx context.Context, tenant int64, ids []int64) (map[int64]*domain.Position, error) {
+	rows, err := s.db.Query(ctx, `SELECT p.id, `+sqlshared.PlayPositionColumns+` FROM position p
+		WHERE p.tenant_id = $1 AND p.id = ANY($2)`, tenant, ids)
+	if err != nil {
+		return nil, fmt.Errorf("postgres: read positions to replay their plays: %w", err)
+	}
+	defer rows.Close()
+	out := make(map[int64]*domain.Position, len(ids))
+	for rows.Next() {
+		var id int64
+		var state []byte
+		var por, d1, d2 *int64
+		if err := rows.Scan(&id, &state, &por, &d1, &d2); err != nil {
+			return nil, fmt.Errorf("postgres: read positions to replay their plays: %w", err)
+		}
+		out[id] = sqlshared.PlayPosition(state, por, d1, d2)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("postgres: read positions to replay their plays: %w", err)
+	}
+	return out, nil
 }

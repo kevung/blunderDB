@@ -147,6 +147,55 @@ rapides.
   `requireOwned`, un `SELECT COUNT(*) … = ANY` par ligne) et `Comments().ByPosition`.
 - Gain estimé : quelques minutes au lieu de plusieurs heures (copie par lots).
 - Effort : **M**. **Neuf.** Il bloque aussi la mesure PostgreSQL de ce test.
+- Mesure (branche `perf/migrate-batch`, même base, PostgreSQL 16 en conteneur local, fsync
+  coupé des deux côtés) : avant, plafond de 10 min atteint dans la phase des positions,
+  tas `analysis` à 19 Mo sur 100 Mo, soit **≥ 52 min** extrapolées pour cette phase. Après
+  (lots de 1000 : `SaveMany` des positions et des analyses, positions créées nommées fraîches,
+  lectures source par lot, coups d'un match en un `CreateMoves`) : phase des positions en
+  **2 min 04 s** (312 586 positions, ×25), tournois en 3 s.
+- Phase des matchs, avant : 8 152 matchs sur 33 319 en 17 min, à un débit qui baisse (~560
+  puis ~235 matchs/min), arrêtée (≥ 1 h 45 restantes). Profil `pg_stat_statements`
+  (`track = all`) : 70 % du temps dans le trigger `multi_played_move_insert` —
+  `multi_played_of` à 5,3 ms par appel et l'`UPDATE position` qui l'appelle à 2,7 ms —, l'insert
+  de coup lui-même passant de 3,5 à 7,2 ms à mesure que `move` grossit. Cause : la transaction
+  unique de la copie planifie sur des statistiques prises tables vides ; `multi_played_of` y
+  prend un `BitmapAnd` de `idx_move_position` et de `move_tenant_id_key`, qui relit à chaque
+  coup tout l'index `tenant_id` (un seul locataire) : quadratique. Un `ANALYZE` dans la
+  transaction voit ses propres lignes non validées et rend un parcours de `idx_move_position`
+  seul. Secondaires : `AddMatch` (`MAX(tournament_sort_order)` sans index, 3,9 ms, et un
+  savepoint par match), `CreateGame` (deux allers-retours par partie).
+- Correctifs : `storage.StatsRefresher` (PostgreSQL : `ANALYZE` des tables de bibliothèque),
+  appelé avant le premier lot de matchs puis à chaque doublement ; matchs copiés du plus
+  ancien au plus récent, pour que chaque position ne soit datée qu'une fois ; match enregistré
+  déjà rattaché à son tournoi, ordre des tournois posé en un `ReorderMatches` par tournoi à la
+  fin (plus de `MAX` ni de savepoint par match, ordre affiché de la source conservé) ; parties
+  par `CreateGames` (nouveau contrat, un pipeline) et coups par `CreateMoves`, par lots de
+  200 matchs. Pas d'index ajouté : SQLite n'en a pas non plus sur `match(tournament_id)`, et
+  la copie ne lit plus cet ordre.
+- Après, même base, même conteneur : migration complète en **7 min 28 s** (positions 1 min
+  24 s, tournois 3 s, matchs **6 min 00 s**, commit compris), contre > 1 h 45 extrapolées
+  pour les seuls matchs. Insert de coup à 0,4 ms. Comptes identiques à la source (312 586
+  positions, 312 544 analyses, 183 commentaires, 5 011 tournois, 33 319 matchs, 268 724
+  parties, 332 152 coups) ; export JSON source et destination identiques ligne à ligne aux
+  identifiants près ; ordre des matchs identique dans les 5 011 tournois.
+- Garde-fous : le rafraîchissement vérifie d'abord le droit d'`ANALYZE` (propriétaire ou
+  membre du rôle propriétaire, superuser, ou `MAINTAIN` en PostgreSQL 17) sur les cinq tables
+  et refuse la migration avant toute copie : un `ANALYZE` refusé ne fait qu'avertir, et la copie
+  retomberait sur le plan quadratique. `ANALYZE` dans la transaction tient `SHARE UPDATE
+  EXCLUSIVE` jusqu'au commit : deux `migrate` simultanés se sérialisent, l'autovacuum écarte ces
+  tables, le démon lit et écrit sans attendre. Une analyse source illisible n'est qu'un
+  avertissement de la lecture par lot ; le compte est contrôlé en fin de phase des positions
+  (`N of the source's M analyses could not be read`), la transaction est annulée et la
+  destination reste vide (`TestRunFailsOnUnreadableAnalysis`).
+- Ordre affiché des matchs dans un tournoi (`tournament_sort_order`, puis `match_date DESC`)
+  reproduit à l'identique ; l'ancien `migrate` ajoutait chaque match en fin de tournoi dans
+  l'ordre de copie, ce qui ne donnait pas le même ordre que la source.
+- Mineur, laissé : deux positions source fusionnées par hash dans la destination (`skip`)
+  tombent sur la même clé de `byNew` ; une seule analyse est gardée et le rapport compte les
+  deux. Sur une destination vide, la source n'a pas de doublon de hash : sans effet.
+- Reste hors de cette branche : `AddMatch` du démon lit toujours `MAX(tournament_sort_order)`
+  par parcours séquentiel (un appel isolé, pas quadratique) ; une importation PostgreSQL
+  longue dans une seule transaction aurait le même piège de statistiques.
 
 ### 3.5 Cause d'un 500 perdue derrière gzip — #751
 
@@ -224,6 +273,47 @@ scripts/bench-daemon-load.sh ~/src/bench-scale/mesure-0.37/sg/sample.db > rappor
 LEVELS="10 50" DURATION=60s COLD_N=0 scripts/bench-daemon-load.sh base.db
 PG_DSN=postgres://… scripts/bench-daemon-load.sh base.db   # migre le gabarit chaud, tenant 1
 ```
+
+Vérifier une migration PostgreSQL contre sa source (démon sur chaque côté, export JSON de
+toute la bibliothèque, comparaison en multiensemble aux identifiants près, puis ordre des
+matchs par tournoi) :
+
+```bash
+SRC=base.db; DSN="postgres://postgres:bench@127.0.0.1:55432/dst?sslmode=disable"
+./blunderdb serve --db "$SRC" --addr 127.0.0.1:18731 --log-level warn & P1=$!
+./blunderdb serve --backend postgres --dsn "$DSN" --addr 127.0.0.1:18732 --log-level warn & P2=$!
+R="--retry 120 --retry-delay 1 --retry-connrefused --retry-all-errors -sf"
+curl $R http://127.0.0.1:18731/healthz >/dev/null; curl $R http://127.0.0.1:18732/healthz >/dev/null
+curl -s -X POST -H 'X-Tenant-ID: 1' http://127.0.0.1:18731/v1/exports.json -o src.json
+curl -s -X POST -H 'X-Tenant-ID: 1' http://127.0.0.1:18732/v1/exports.json -o dst.json
+kill $P1 $P2
+python3 -I - src.json dst.json <<'PY'   # attendu : only src 0 only dst 0
+import json, sys, hashlib, collections
+def strip(o):   # les identifiants sont réattribués par la copie
+    if isinstance(o, dict):
+        return {k: strip(v) for k, v in o.items() if k not in ('id', 'position_id', 'positionId')}
+    return [strip(v) for v in o] if isinstance(o, list) else o
+def load(p):
+    c, ex = collections.Counter(), {}
+    for l in open(p):
+        s = json.dumps(strip(json.loads(l)), sort_keys=True)
+        h = hashlib.sha1(s.encode()).hexdigest(); c[h] += 1; ex.setdefault(h, s)
+    return c, ex
+(a, ea), (b, eb) = load(sys.argv[1]), load(sys.argv[2])
+print("lines", sum(a.values()), sum(b.values()),
+      "only src", sum((a - b).values()), "only dst", sum((b - a).values()))
+for h in list(a - b)[:1]: print("SRC", ea[h][:1500])
+for h in list(b - a)[:1]: print("DST", eb[h][:1500])
+PY
+# Ordre affiché : rang de chaque match dans son tournoi, joueurs en hexadécimal.
+Q="SELECT t.name, row_number() OVER (PARTITION BY t.id ORDER BY m.tournament_sort_order, m.match_date DESC, m.id), %s FROM match m JOIN tournament t ON t.id = m.tournament_id"
+sqlite3 -separator $'\t' "$SRC" "$(printf "$Q" "hex(m.player1_name), hex(m.player2_name)")" | sort > o-src.tsv
+psql "$DSN" -AtF $'\t' -c "$(printf "$Q" "upper(encode(convert_to(m.player1_name,'UTF8'),'hex')), upper(encode(convert_to(m.player2_name,'UTF8'),'hex'))") WHERE m.tenant_id = 1" | sort > o-dst.tsv
+cmp o-src.tsv o-dst.tsv && echo "ordre identique"
+```
+
+Le départage final par `m.id` suppose des égalités de date rares ; une différence n'est un
+écart que si elle tombe hors d'un groupe de matchs de même rang et de même date.
 
 Une passe SQLite complète (gabarits + 3 niveaux + froid) dure ~4 min. Rapports, vidages,
 profils et journaux du démon restent dans `bench/daemon-load.*` (ignoré par git). Ne pas

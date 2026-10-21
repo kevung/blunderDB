@@ -813,6 +813,17 @@ func (s *matchStore) CreateGame(ctx context.Context, scope string, g *domain.Gam
 	return id, nil
 }
 
+// CreateGames stores the games in order; SQLite pays no round trip, so it is
+// CreateGame one by one.
+func (s *matchStore) CreateGames(ctx context.Context, scope string, gs []*domain.Game) error {
+	for _, g := range gs {
+		if _, err := s.CreateGame(ctx, scope, g); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // Games streams the games of a match ordered by game number.
 func (s *matchStore) Games(ctx context.Context, scope string, matchID int64) iter.Seq2[*domain.Game, error] {
 	return func(yield func(*domain.Game, error) bool) {

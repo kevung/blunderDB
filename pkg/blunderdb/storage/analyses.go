@@ -3,6 +3,8 @@ package storage
 import (
 	"context"
 	"iter"
+	"maps"
+	"slices"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
@@ -30,6 +32,13 @@ type AnalysisRecord struct {
 type AnalysisStore interface {
 	// Save stores (or replaces) the analysis for positionID.
 	Save(ctx context.Context, scope string, positionID int64, a *domain.PositionAnalysis) error
+
+	// SaveMany is Save for each analysis of analyses, keyed by position id, in
+	// as few round trips as the backend allows. A position the context names
+	// fresh (WithFreshPositions) is written without the reads a fresh one
+	// cannot need; the others are saved as Save saves them. A bulk copy calls
+	// it so as not to pay one round trip per analysis.
+	SaveMany(ctx context.Context, scope string, analyses map[int64]*domain.PositionAnalysis) error
 
 	// Merge reads the stored analysis of positionID once, hands it to merge
 	// (nil when there is none) and saves what merge returns, rounded and
@@ -152,4 +161,16 @@ func ReencodeAllAnalyses(ctx context.Context, store AnalysisStore, scope string,
 		}
 		next = n
 	}
+}
+
+// SaveAnalysesEach is SaveMany as a loop of Save, by ascending position id,
+// for a backend for which one round trip per analysis costs little or for
+// which no batch exists.
+func SaveAnalysesEach(ctx context.Context, store AnalysisStore, scope string, analyses map[int64]*domain.PositionAnalysis) error {
+	for _, id := range slices.Sorted(maps.Keys(analyses)) {
+		if err := store.Save(ctx, scope, id, analyses[id]); err != nil {
+			return err
+		}
+	}
+	return nil
 }
