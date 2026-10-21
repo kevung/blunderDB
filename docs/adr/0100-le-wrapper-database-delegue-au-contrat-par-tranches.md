@@ -54,8 +54,12 @@ Le champ `Database.store` est typé `*sqlite.Storage`, pas `storage.Storage` : s
       `FindByHash` sur `match_hash` seul, et la garde de session en bloc d'`ImportFiles` lit
       `Positions().ListIDs` borné à un ; `computeMatchHashFromStoredData`, qui ne sert qu'à la
       migration v1, rejoint `db_migration_v1.go` (schéma et migrations hors inventaire) ;
-   5. import d'une autre base (`db_import_db.go`), une fois stabilisés l'export et les
-      commentaires signés ;
+   5. import d'une autre base (`db_import_db.go`) (faite) — le receveur n'est lu et écrit
+      que par le contrat, dans une transaction `BeginTx` : version par `Metadata`, index
+      d'identité par `Positions().List`, provenance par `SetIndividuallyImported`, analyse
+      détenue par `Analyses().Load` (`LoadMany` sépare un blob illisible d'une lecture
+      échouée), commentaires par `Comments().Text` et `AddFrom` ; la source reste lue en SQL,
+      fichier de n'importe quel schéma passé que le contrat ne lit pas sans le migrer ;
    6. typage de `store` par le contrat et interface de fichier local.
 4. **Contraintes de chaque tranche** : `Database.mu` n'est pas réentrant, une méthode
    déléguée prend le verrou une fois puis appelle le store ; le message d'erreur que voient GUI
