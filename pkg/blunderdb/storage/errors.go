@@ -25,6 +25,10 @@ var (
 
 	// ErrInternal — an unexpected backend failure.
 	ErrInternal = errors.New("storage: internal error")
+
+	// ErrBusy — another writer held the database past the backend's wait:
+	// nothing was written, and the same request may succeed when retried.
+	ErrBusy = errors.New("storage: busy")
 )
 
 // The refusals of MatchStore.SwapPlayers. Both match ErrInvalid; their

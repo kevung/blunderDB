@@ -37,6 +37,7 @@ import (
 	"fmt"
 	"sort"
 	"strings"
+	"sync"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -358,7 +359,7 @@ func scanEach(ctx context.Context, db Execer, query string, args []any, fn func(
 // refreshMatchStatsBatch recomputes and replaces the rows of one batch of
 // matches in a single transaction.
 func (s *StatsStore) refreshMatchStatsBatch(ctx context.Context, scope string, matchIDs []int64, settings storage.LibrarySettings) error {
-	return s.DB.Transact(ctx, func(tx Execer) error {
+	err := transactWrite(ctx, s.DB, func(tx Execer) error {
 		rows, err := s.computeMatchStatsRows(ctx, tx, scope, matchIDs, settings)
 		if err != nil {
 			return err
@@ -395,6 +396,71 @@ func (s *StatsStore) refreshMatchStatsBatch(ctx context.Context, scope string, m
 		}
 		return writeMatchStatsCells(ctx, tx, scope, Placeholders(len(matchIDs)), int64Args(matchIDs), settings)
 	})
+	if LockContention(s.DB, err) && !errors.Is(err, storage.ErrBusy) {
+		return fmt.Errorf("%w: match stats: %w", storage.ErrBusy, err)
+	}
+	return err
+}
+
+// writeTransacter is implemented by an Execer whose plain transaction would
+// not wait for the write lock it later needs (SQLite's deferred BEGIN).
+type writeTransacter interface {
+	TransactWrite(ctx context.Context, fn func(Execer) error) error
+}
+
+// transactWrite runs fn in a transaction that is to write: one holding the
+// write lock from its start where the backend tells the two apart.
+func transactWrite(ctx context.Context, db Execer, fn func(Execer) error) error {
+	if w, ok := db.(writeTransacter); ok {
+		return w.TransactWrite(ctx, fn)
+	}
+	return db.Transact(ctx, fn)
+}
+
+// fillKeyer is implemented by an Execer bound to a pool: FillKey names the
+// table a fill of the scope writes, so that two fills of it can be told to
+// be one. A transaction answers no.
+type fillKeyer interface {
+	FillKey(scope string) (any, bool)
+}
+
+// matchStatsFills holds the fills in flight, one per key.
+var matchStatsFills = fillGate{running: map[any]chan struct{}{}}
+
+// fillGate lets one fill of a scope run at a time. Concurrent readers of a
+// cold library would each start the whole fill, rewrite the same matches and
+// fight over the write lock; a reader arriving during a fill waits for it to
+// end, then runs its own, which finds nothing missing — or picks up where a
+// fill cut by its caller's cancellation stopped.
+type fillGate struct {
+	mu      sync.Mutex
+	running map[any]chan struct{}
+}
+
+func (g *fillGate) do(ctx context.Context, key any, fn func() (int, error)) (int, error) {
+	for {
+		g.mu.Lock()
+		done, busy := g.running[key]
+		if !busy {
+			done = make(chan struct{})
+			g.running[key] = done
+			g.mu.Unlock()
+			break
+		}
+		g.mu.Unlock()
+		select {
+		case <-done:
+		case <-ctx.Done():
+			return 0, ctx.Err()
+		}
+	}
+	defer func() {
+		g.mu.Lock()
+		close(g.running[key])
+		delete(g.running, key)
+		g.mu.Unlock()
+	}()
+	return fn()
 }
 
 // RefreshMatchStats recomputes the rows of matchIDs now — what an import
@@ -468,10 +534,25 @@ func (s *StatsStore) MissingMatchStats(ctx context.Context, scope string) ([]int
 
 // FillMatchStats — see storage.StatsStore.
 func (s *StatsStore) FillMatchStats(ctx context.Context, scope string, progress func(done, total int)) (int, error) {
+	if k, ok := s.DB.(fillKeyer); ok {
+		if key, ok := k.FillKey(scope); ok {
+			// Every statistics read comes here: a filled library answers
+			// from this probe without queueing behind the other readers.
+			if ids, err := s.MissingMatchStats(ctx, scope); err != nil || len(ids) == 0 {
+				return 0, err
+			}
+			return matchStatsFills.do(ctx, key, func() (int, error) { return s.fillMatchStats(ctx, scope, progress) })
+		}
+	}
+	return s.fillMatchStats(ctx, scope, progress)
+}
+
+func (s *StatsStore) fillMatchStats(ctx context.Context, scope string, progress func(done, total int)) (int, error) {
 	ids, err := s.MissingMatchStats(ctx, scope)
 	if err != nil || len(ids) == 0 {
 		return 0, err
 	}
+	beforeMatchStatsFill(len(ids))
 	// A reader that cannot write must not answer from an incomplete table:
 	// the figures would quietly leave out the matches it lacks.
 	if RefusesWrites(ctx, s.DB) {
@@ -593,6 +674,10 @@ func (s *StatsStore) missingMatchStatsAmong(ctx context.Context, scope string, m
 	}
 	return ids, nil
 }
+
+// beforeMatchStatsFill runs when a fill finds matches to compute; a test
+// counts the fills a burst of readers starts.
+var beforeMatchStatsFill = func(missing int) {}
 
 // afterMatchStatsProbe runs between a reader's completeness probe and its
 // read; a test slips a writer's invalidation in there.

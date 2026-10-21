@@ -2103,6 +2103,22 @@ utilisées), ``_idle`` (disponibles), ``_max`` (plafond configuré) et
 ``_wait_count`` (nombre cumulé d'``Acquire`` ayant dû attendre une connexion
 libre).
 
+Avec le backend SQLite, le daemon ouvre une connexion par cœur, dix au moins
+(le bureau en garde dix). Les requêtes qui parcourent toute la bibliothèque
+(``stats.*``, ``search.count``, ``search.find``, ``search.ids``,
+``search.query``, ``search.indexOf``, ``matches.list``) s'exécutent au plus
+une par paire de cœurs, deux au moins, pour laisser des connexions aux
+lectures d'une seule ligne ; les suivantes attendent leur tour, au plus
+20 s et huit par place, puis reçoivent ``503`` (code ``unavailable``) avec un
+en-tête ``Retry-After``. Une écriture qui n'obtient pas la base, tenue par un
+autre écrivain au-delà de son attente, reçoit la même réponse : rien n'a été
+écrit, la requête peut être reprise telle quelle.
+
+Au démarrage, un daemon SQLite calcule en arrière-plan les statistiques par
+match qui manquent (la ligne ``stats.matches`` de la maintenance) ; une
+lecture de statistiques arrivée pendant ce calcul l'attend, puis lit le
+résultat.
+
 .. _headless_migrate:
 
 Migrer une base SQLite vers PostgreSQL

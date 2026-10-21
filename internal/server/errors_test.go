@@ -77,3 +77,20 @@ func TestErrorBodyFor_NotFoundHidesDriverText(t *testing.T) {
 		t.Errorf("plain not_found message = %q, want %q", body.Message, plain.Error())
 	}
 }
+
+// TestWriteStorageError_BusyIsRetryable: a write that lost the database to
+// another writer answers 503 unavailable with Retry-After, never a 500 the
+// client could not tell from a fault, and its driver text stays in the log.
+func TestWriteStorageError_BusyIsRetryable(t *testing.T) {
+	w := httptest.NewRecorder()
+	writeStorageError(w, fmt.Errorf("%w: match stats: database is locked (5) (SQLITE_BUSY)", storage.ErrBusy))
+	if w.Code != http.StatusServiceUnavailable {
+		t.Errorf("status = %d, want 503", w.Code)
+	}
+	if got := w.Header().Get("Retry-After"); got == "" {
+		t.Error("no Retry-After header")
+	}
+	if body := w.Body.String(); !strings.Contains(body, `"code":"unavailable"`) || strings.Contains(body, "SQLITE_BUSY") {
+		t.Errorf("body = %s, want code unavailable without the driver text", body)
+	}
+}

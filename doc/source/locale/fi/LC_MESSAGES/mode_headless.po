@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-20 17:11+0200\n"
+"POT-Creation-Date: 2026-10-21 18:05+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -170,26 +170,26 @@ msgstr ""
 "”XG”, muun tiedoston muistiinpanot sen litteroijan nimellä ja "
 "``.db``-tietokannan muistiinpanot niiden alkuperäisen tekijän nimellä."
 
-#: ../../source/mode_headless.rst:86 ../../source/mode_headless.rst:2202
+#: ../../source/mode_headless.rst:86 ../../source/mode_headless.rst:2218
 msgid "**Options:**"
 msgstr "**Valinnat:**"
 
-#: ../../source/mode_headless.rst:92 ../../source/mode_headless.rst:2144
-#: ../../source/mode_headless.rst:2208
+#: ../../source/mode_headless.rst:92 ../../source/mode_headless.rst:2160
+#: ../../source/mode_headless.rst:2224
 msgid "Option"
 msgstr "Valinta"
 
-#: ../../source/mode_headless.rst:93 ../../source/mode_headless.rst:2145
-#: ../../source/mode_headless.rst:2209
+#: ../../source/mode_headless.rst:93 ../../source/mode_headless.rst:2161
+#: ../../source/mode_headless.rst:2225
 msgid "Défaut"
 msgstr "Oletus"
 
-#: ../../source/mode_headless.rst:94 ../../source/mode_headless.rst:2146
-#: ../../source/mode_headless.rst:2210
+#: ../../source/mode_headless.rst:94 ../../source/mode_headless.rst:2162
+#: ../../source/mode_headless.rst:2226
 msgid "Signification"
 msgstr "Merkitys"
 
-#: ../../source/mode_headless.rst:95 ../../source/mode_headless.rst:2211
+#: ../../source/mode_headless.rst:95 ../../source/mode_headless.rst:2227
 msgid "``--db <chemin>``"
 msgstr "``--db <polku>``"
 
@@ -197,23 +197,23 @@ msgstr "``--db <polku>``"
 #: ../../source/mode_headless.rst:189 ../../source/mode_headless.rst:194
 #: ../../source/mode_headless.rst:199 ../../source/mode_headless.rst:205
 #: ../../source/mode_headless.rst:210 ../../source/mode_headless.rst:216
-#: ../../source/mode_headless.rst:2148 ../../source/mode_headless.rst:2151
-#: ../../source/mode_headless.rst:2154 ../../source/mode_headless.rst:2158
-#: ../../source/mode_headless.rst:2212 ../../source/mode_headless.rst:2222
-#: ../../source/mode_headless.rst:2239 ../../source/mode_headless.rst:2242
-#: ../../source/mode_headless.rst:2245
+#: ../../source/mode_headless.rst:2164 ../../source/mode_headless.rst:2167
+#: ../../source/mode_headless.rst:2170 ../../source/mode_headless.rst:2174
+#: ../../source/mode_headless.rst:2228 ../../source/mode_headless.rst:2238
+#: ../../source/mode_headless.rst:2255 ../../source/mode_headless.rst:2258
+#: ../../source/mode_headless.rst:2261
 msgid "–"
 msgstr "–"
 
-#: ../../source/mode_headless.rst:97 ../../source/mode_headless.rst:2213
+#: ../../source/mode_headless.rst:97 ../../source/mode_headless.rst:2229
 msgid "fichier SQLite (raccourci pour ``--backend sqlite --dsn <chemin>``)"
 msgstr "SQLite-tiedosto (oikotie komennolle ``--backend sqlite --dsn <polku>``)"
 
-#: ../../source/mode_headless.rst:98 ../../source/mode_headless.rst:2214
+#: ../../source/mode_headless.rst:98 ../../source/mode_headless.rst:2230
 msgid "``--backend <type>``"
 msgstr "``--backend <tyyppi>``"
 
-#: ../../source/mode_headless.rst:99 ../../source/mode_headless.rst:2215
+#: ../../source/mode_headless.rst:99 ../../source/mode_headless.rst:2231
 msgid "``sqlite``"
 msgstr "``sqlite``"
 
@@ -221,11 +221,11 @@ msgstr "``sqlite``"
 msgid "backend de stockage : ``sqlite`` ou ``postgres``"
 msgstr "tallennustaustajärjestelmä: ``sqlite`` tai ``postgres``"
 
-#: ../../source/mode_headless.rst:101 ../../source/mode_headless.rst:2217
+#: ../../source/mode_headless.rst:101 ../../source/mode_headless.rst:2233
 msgid "``--dsn <chaîne>``"
 msgstr "``--dsn <merkkijono>``"
 
-#: ../../source/mode_headless.rst:102 ../../source/mode_headless.rst:2218
+#: ../../source/mode_headless.rst:102 ../../source/mode_headless.rst:2234
 msgid "``$BLUNDERDB_DSN``"
 msgstr "``$BLUNDERDB_DSN``"
 
@@ -4666,11 +4666,48 @@ msgstr ""
 " ja ``_wait_count`` (niiden ``Acquire``-kutsujen kertynyt määrä, joiden "
 "on täytynyt odottaa vapaata yhteyttä)."
 
-#: ../../source/mode_headless.rst:2109
+#: ../../source/mode_headless.rst:2106
+msgid ""
+"Avec le backend SQLite, le daemon ouvre une connexion par cœur, dix au "
+"moins (le bureau en garde dix). Les requêtes qui parcourent toute la "
+"bibliothèque (``stats.*``, ``search.count``, ``search.find``, "
+"``search.ids``, ``search.query``, ``search.indexOf``, ``matches.list``) "
+"s'exécutent au plus une par paire de cœurs, deux au moins, pour laisser "
+"des connexions aux lectures d'une seule ligne ; les suivantes attendent "
+"leur tour, au plus 20 s et huit par place, puis reçoivent ``503`` (code "
+"``unavailable``) avec un en-tête ``Retry-After``. Une écriture qui "
+"n'obtient pas la base, tenue par un autre écrivain au-delà de son "
+"attente, reçoit la même réponse : rien n'a été écrit, la requête peut "
+"être reprise telle quelle."
+msgstr ""
+"SQLite-taustajärjestelmällä daemon avaa yhden yhteyden ydintä kohden, "
+"vähintään kymmenen (työpöytäsovellus pitää kymmenen). Koko kirjaston "
+"läpikäyvät pyynnöt (``stats.*``, ``search.count``, ``search.find``, "
+"``search.ids``, ``search.query``, ``search.indexOf``, ``matches.list``) "
+"suoritetaan enintään yksi ydinparia kohden, vähintään kaksi, jotta "
+"yhteyksiä jää yhden rivin lukuihin; seuraavat odottavat vuoroaan, "
+"enintään 20 s ja kahdeksan paikkaa kohden, ja saavat sitten vastauksen "
+"``503`` (koodi ``unavailable``) ``Retry-After``-otsakkeen kera. "
+"Kirjoitus, joka ei saa tietokantaa, koska toinen kirjoittaja pitää sitä "
+"yli odotusaikansa, saa saman vastauksen: mitään ei kirjoitettu, ja "
+"pyynnön voi toistaa sellaisenaan."
+
+#: ../../source/mode_headless.rst:2117
+msgid ""
+"Au démarrage, un daemon SQLite calcule en arrière-plan les statistiques "
+"par match qui manquent (la ligne ``stats.matches`` de la maintenance) ; "
+"une lecture de statistiques arrivée pendant ce calcul l'attend, puis lit "
+"le résultat."
+msgstr ""
+"Käynnistyessään SQLite-daemon laskee taustalla puuttuvat ottelukohtaiset "
+"tilastot (ylläpidon rivi ``stats.matches``); tämän laskennan aikana "
+"saapuva tilastojen luku odottaa sitä ja lukee sitten tuloksen."
+
+#: ../../source/mode_headless.rst:2125
 msgid "Migrer une base SQLite vers PostgreSQL"
 msgstr "SQLite-tietokannan siirtäminen PostgreSQL:ään"
 
-#: ../../source/mode_headless.rst:2111
+#: ../../source/mode_headless.rst:2127
 msgid ""
 "``blunderdb migrate`` copie une base SQLite mono-utilisateur vers un "
 "backend PostgreSQL, sous un tenant choisi — l'entier que le reverse-proxy"
@@ -4682,7 +4719,7 @@ msgstr ""
 "jonka käänteisvälityspalvelin lähettää ``X-Tenant-ID``-otsakkeessa tälle "
 "käyttäjälle — tämä on tapa ”ladata” työpöytäkirjasto palvelinasennukseen."
 
-#: ../../source/mode_headless.rst:2127
+#: ../../source/mode_headless.rst:2143
 msgid ""
 "La migration copie les **positions, leurs analyses et commentaires, les "
 "matchs (parties + coups), les tournois (avec leurs liens de match) et les"
@@ -4709,27 +4746,27 @@ msgstr ""
 "ensin ja lähettää omat ``\"schema-migration\"``-tapahtumansa "
 "(vaihe/tehty/yhteensä), ennen kuin rivi riviltä kopiointi alkaa."
 
-#: ../../source/mode_headless.rst:2147
+#: ../../source/mode_headless.rst:2163
 msgid "``--from <uri>``"
 msgstr "``--from <uri>``"
 
-#: ../../source/mode_headless.rst:2149
+#: ../../source/mode_headless.rst:2165
 msgid "base SQLite source (``sqlite:///<chemin>`` ou un simple chemin)"
 msgstr "lähde-SQLite-tietokanta (``sqlite:///<polku>`` tai pelkkä polku)"
 
-#: ../../source/mode_headless.rst:2150
+#: ../../source/mode_headless.rst:2166
 msgid "``--to <dsn>``"
 msgstr "``--to <dsn>``"
 
-#: ../../source/mode_headless.rst:2152
+#: ../../source/mode_headless.rst:2168
 msgid "DSN PostgreSQL de destination (``postgres://…``)"
 msgstr "kohde-PostgreSQL:n DSN (``postgres://…``)"
 
-#: ../../source/mode_headless.rst:2153
+#: ../../source/mode_headless.rst:2169
 msgid "``--tenant-id <n>``"
 msgstr "``--tenant-id <n>``"
 
-#: ../../source/mode_headless.rst:2155
+#: ../../source/mode_headless.rst:2171
 msgid ""
 "tenant de destination, un entier décimal positif (obligatoire sauf en "
 "``--dry-run`` ; un nom comme ``mon-tenant`` est refusé)"
@@ -4737,23 +4774,23 @@ msgstr ""
 "kohdetenant, positiivinen desimaalikokonaisluku (pakollinen paitsi "
 "``--dry-run``-tilassa; nimi kuten ``mon-tenant`` hylätään)"
 
-#: ../../source/mode_headless.rst:2157
+#: ../../source/mode_headless.rst:2173
 msgid "``--dry-run``"
 msgstr "``--dry-run``"
 
-#: ../../source/mode_headless.rst:2159
+#: ../../source/mode_headless.rst:2175
 msgid "compte ce qui serait copié sans rien écrire"
 msgstr "laskee, mitä kopioitaisiin, kirjoittamatta mitään"
 
-#: ../../source/mode_headless.rst:2160
+#: ../../source/mode_headless.rst:2176
 msgid "``--on-conflict <politique>``"
 msgstr "``--on-conflict <käytäntö>``"
 
-#: ../../source/mode_headless.rst:2161
+#: ../../source/mode_headless.rst:2177
 msgid "``\"\"``"
 msgstr "``\"\"``"
 
-#: ../../source/mode_headless.rst:2162
+#: ../../source/mode_headless.rst:2178
 msgid ""
 "``\"\"`` interrompt si le tenant a déjà des données ; ``skip`` fusionne "
 "(déduplication des positions par hash Zobrist)"
@@ -4761,7 +4798,7 @@ msgstr ""
 "``\"\"`` keskeyttää, jos tenantilla on jo tietoja; ``skip`` yhdistää "
 "(asemien deduplikointi Zobrist-hashin perusteella)"
 
-#: ../../source/mode_headless.rst:2167
+#: ../../source/mode_headless.rst:2183
 msgid ""
 "Ne sont pas migrés les états applicatifs : decks/cartes Anki, "
 "bibliothèque de filtres, historique de recherche et de commandes, et "
@@ -4774,11 +4811,11 @@ msgstr ""
 " määrän lopuksi. Virhe- ja blunder-kynnykset sen sijaan kopioidaan (katso"
 " :ref:`headless_sauvegarde`)."
 
-#: ../../source/mode_headless.rst:2176
+#: ../../source/mode_headless.rst:2192
 msgid "Le dispatcher générique ``call``"
 msgstr "Yleiskäyttöinen ``call``-välittäjä"
 
-#: ../../source/mode_headless.rst:2178
+#: ../../source/mode_headless.rst:2194
 msgid ""
 "En complément des sous-commandes historiques (:ref:`cli`), ``blunderdb "
 "call`` expose **toutes** les opérations de stockage directement, en "
@@ -4792,11 +4829,11 @@ msgstr ""
 " komennon ``POST /v1/<perhe>.<metodi>`` kanssa. Tämä on hyödyllistä "
 "skriptauksessa ja integraatiotesteissä."
 
-#: ../../source/mode_headless.rst:2216
+#: ../../source/mode_headless.rst:2232
 msgid "``sqlite``, ``postgres`` ou ``remote``"
 msgstr "``sqlite``, ``postgres`` tai ``remote``"
 
-#: ../../source/mode_headless.rst:2219
+#: ../../source/mode_headless.rst:2235
 msgid ""
 "chaîne de connexion du backend ; avec ``remote``, l'URL d'un démon "
 "``serve``"
@@ -4804,11 +4841,11 @@ msgstr ""
 "taustajärjestelmän yhteysmerkkijono; ``remote``-arvolla "
 "``serve``-palvelun URL"
 
-#: ../../source/mode_headless.rst:2221
+#: ../../source/mode_headless.rst:2237
 msgid "``--header \"Nom: valeur\"``"
 msgstr "``--header \"Nimi: arvo\"``"
 
-#: ../../source/mode_headless.rst:2223
+#: ../../source/mode_headless.rst:2239
 msgid ""
 "avec ``remote`` : en-tête envoyé au démon à chaque appel, par exemple le "
 "jeton du proxy (répétable)"
@@ -4816,15 +4853,15 @@ msgstr ""
 "``remote``-arvolla: otsake, joka lähetetään palvelulle jokaisessa "
 "kutsussa, esimerkiksi välityspalvelimen tunniste (toistettava)"
 
-#: ../../source/mode_headless.rst:2225
+#: ../../source/mode_headless.rst:2241
 msgid "``--timeout <durée>``"
 msgstr "``--timeout <kesto>``"
 
-#: ../../source/mode_headless.rst:2226
+#: ../../source/mode_headless.rst:2242
 msgid "``1m``"
 msgstr "``1m``"
 
-#: ../../source/mode_headless.rst:2227
+#: ../../source/mode_headless.rst:2243
 msgid ""
 "avec ``remote`` : délai de connexion et d'attente des en-têtes de la "
 "réponse du démon, puis d'un silence du corps (aucun octet reçu pendant "
@@ -4835,15 +4872,15 @@ msgstr ""
 "vastauksen otsakkeita, sitten vaikenevaa runkoa (ei yhtään tavua tänä "
 "aikana); ``0`` pitää oletusarvon, negatiivinen kesto poistaa kaiken rajan"
 
-#: ../../source/mode_headless.rst:2231
+#: ../../source/mode_headless.rst:2247
 msgid "``--scope <n>``"
 msgstr "``--scope <n>``"
 
-#: ../../source/mode_headless.rst:2232
+#: ../../source/mode_headless.rst:2248
 msgid "``1``"
 msgstr "``1``"
 
-#: ../../source/mode_headless.rst:2233
+#: ../../source/mode_headless.rst:2249
 msgid ""
 "tenant, un entier décimal positif (envoyé comme ``X-Tenant-ID`` ; un nom "
 "comme ``alice`` est refusé)"
@@ -4851,40 +4888,40 @@ msgstr ""
 "tenant, positiivinen desimaalikokonaisluku (lähetetään ``X-Tenant-"
 "ID``-otsakkeena; nimi kuten ``alice`` hylätään)"
 
-#: ../../source/mode_headless.rst:2235
+#: ../../source/mode_headless.rst:2251
 msgid "``--json <chaîne>``"
 msgstr "``--json <merkkijono>``"
 
-#: ../../source/mode_headless.rst:2236
+#: ../../source/mode_headless.rst:2252
 #, no-python-brace-format
 msgid "``{}``"
 msgstr "``{}``"
 
-#: ../../source/mode_headless.rst:2237
+#: ../../source/mode_headless.rst:2253
 msgid "corps de la requête au format JSON"
 msgstr "pyynnön runko JSON-muodossa"
 
-#: ../../source/mode_headless.rst:2238
+#: ../../source/mode_headless.rst:2254
 msgid "``--json-file <chemin>``"
 msgstr "``--json-file <polku>``"
 
-#: ../../source/mode_headless.rst:2240
+#: ../../source/mode_headless.rst:2256
 msgid "lit le corps de la requête depuis un fichier"
 msgstr "lukee pyynnön rungon tiedostosta"
 
-#: ../../source/mode_headless.rst:2241
+#: ../../source/mode_headless.rst:2257
 msgid "``--list``"
 msgstr "``--list``"
 
-#: ../../source/mode_headless.rst:2243
+#: ../../source/mode_headless.rst:2259
 msgid "affiche toutes les méthodes ``<famille>.<méthode>`` et quitte"
 msgstr "näyttää kaikki metodit ``<perhe>.<metodi>`` ja lopettaa"
 
-#: ../../source/mode_headless.rst:2244
+#: ../../source/mode_headless.rst:2260
 msgid "``--if-match <version>``"
 msgstr "``--if-match <version>``"
 
-#: ../../source/mode_headless.rst:2246
+#: ../../source/mode_headless.rst:2262
 msgid ""
 "version envoyée en ``If-Match``, exigée par les gestes de direction "
 "(:ref:`headless_direction_gestures`) et de transcription "
@@ -4894,7 +4931,7 @@ msgstr ""
 "johdon toiminnot (:ref:`headless_direction_gestures`) ja litteroinnin "
 "toiminnot (:ref:`headless_transcription`)"
 
-#: ../../source/mode_headless.rst:2250
+#: ../../source/mode_headless.rst:2266
 msgid ""
 "Avec ``--backend remote``, ``call`` ne lit aucune base : ses "
 "gestionnaires passent par l'API ``/v1`` du démon que nomme ``--dsn`` (une"
@@ -4919,7 +4956,7 @@ msgstr ""
 "sellaisenaan, ja vain tavoittamaton tai ``--timeout``-ajan yli vaikeneva "
 "daemon luetaan »daemon unavailable»."
 
-#: ../../source/mode_headless.rst:2260
+#: ../../source/mode_headless.rst:2276
 msgid ""
 "Une méthode dont le stockage n'a pas de route ``/v1`` (une transaction, "
 "un service de Direction, de Rencontre, de Duel, de table de match, de "
@@ -4938,7 +4975,7 @@ msgstr ""
 "``exports.json``, ``exports.plan``, myös inkrementaaliset): kutsu "
 "daemonia suoraan."
 
-#: ../../source/mode_headless.rst:2268
+#: ../../source/mode_headless.rst:2284
 msgid ""
 "``call`` sert les gestes de transcription sans drapeau : il travaille sur"
 " un fichier local, comme la CLI. Chaque appel est un processus neuf, donc"
@@ -4950,7 +4987,7 @@ msgstr ""
 "istuntonsa: ``sessionId`` voidaan jättää pois, eikä kumoamista voi tehdä "
 "kutsusta toiseen."
 
-#: ../../source/mode_headless.rst:2273
+#: ../../source/mode_headless.rst:2289
 #, no-python-brace-format
 msgid ""
 "La réponse JSON (ou le flux NDJSON pour les endpoints ``*.list``) est "
@@ -4972,11 +5009,11 @@ msgstr ""
 "``--if-match``-valitsimelle. ``call`` palvelee Direction-eleet ilman "
 "valitsinta, kuten CLI, koska se ajetaan paikallisesti."
 
-#: ../../source/mode_headless.rst:2285
+#: ../../source/mode_headless.rst:2301
 msgid "Outils pour un assistant IA (MCP)"
 msgstr "Työkalut tekoälyavustajalle (MCP)"
 
-#: ../../source/mode_headless.rst:2287
+#: ../../source/mode_headless.rst:2303
 msgid ""
 "blunderDB n'embarque aucun modèle de langage : il offre ses outils à "
 "l'assistant que vous utilisez déjà (Claude Code, Claude Desktop, un "
@@ -4988,31 +5025,31 @@ msgstr ""
 "Context Protocol* -protokollan kautta. Avustaja hakee, lukee ja selittää;"
 " blunderDB vastaa omilla luvuillaan."
 
-#: ../../source/mode_headless.rst:2292
+#: ../../source/mode_headless.rst:2308
 msgid "Les outils passent par les mêmes gestionnaires que ``/v1`` et ``call`` :"
 msgstr "Työkalut kulkevat samojen käsittelijöiden kautta kuin ``/v1`` ja ``call``:"
 
-#: ../../source/mode_headless.rst:2298
+#: ../../source/mode_headless.rst:2314
 msgid "Outil"
 msgstr "Työkalu"
 
-#: ../../source/mode_headless.rst:2299
+#: ../../source/mode_headless.rst:2315
 msgid "Ce qu'il rend"
 msgstr "Mitä se palauttaa"
 
-#: ../../source/mode_headless.rst:2300
+#: ../../source/mode_headless.rst:2316
 msgid "``database_overview``"
 msgstr "``database_overview``"
 
-#: ../../source/mode_headless.rst:2301
+#: ../../source/mode_headless.rst:2317
 msgid "comptes, période des matchs, version du schéma, joueurs fréquents"
 msgstr "lukumäärät, otteluiden ajanjakso, skeemaversio, usein esiintyvät pelaajat"
 
-#: ../../source/mode_headless.rst:2302
+#: ../../source/mode_headless.rst:2318
 msgid "``search_positions``"
 msgstr "``search_positions``"
 
-#: ../../source/mode_headless.rst:2303
+#: ../../source/mode_headless.rst:2319
 msgid ""
 "positions d'une recherche dans la grammaire de la barre de commande "
 "(décrite dans l'outil), avec sa forme canonique"
@@ -5020,11 +5057,11 @@ msgstr ""
 "komentorivin kieliopilla tehdyn haun asemat (kuvattu työkalussa) "
 "kanonisessa muodossaan"
 
-#: ../../source/mode_headless.rst:2305
+#: ../../source/mode_headless.rst:2321
 msgid "``search_comments``, ``position_comments``, ``saved_searches``"
 msgstr "``search_comments``, ``position_comments``, ``saved_searches``"
 
-#: ../../source/mode_headless.rst:2306
+#: ../../source/mode_headless.rst:2322
 msgid ""
 "commentaires contenant des mots ; tous les commentaires d'une position, "
 "chacun avec son auteur ; recherches enregistrées"
@@ -5032,11 +5069,11 @@ msgstr ""
 "tiettyjä sanoja sisältävät kommentit; position kaikki kommentit, kukin "
 "tekijänsä kanssa; tallennetut haut"
 
-#: ../../source/mode_headless.rst:2308
+#: ../../source/mode_headless.rst:2324
 msgid "``get_position``"
 msgstr "``get_position``"
 
-#: ../../source/mode_headless.rst:2309
+#: ../../source/mode_headless.rst:2325
 msgid ""
 "une position, son analyse (meilleurs coups ou videau), le coup joué et le"
 " commentaire"
@@ -5044,23 +5081,23 @@ msgstr ""
 "asema, sen analyysi (parhaat siirrot tai tuplaus), pelattu siirto ja "
 "kommentti"
 
-#: ../../source/mode_headless.rst:2311
+#: ../../source/mode_headless.rst:2327
 msgid "``explain_error``"
 msgstr "``explain_error``"
 
-#: ../../source/mode_headless.rst:2312
+#: ../../source/mode_headless.rst:2328
 msgid "le thème de l'erreur, son coût en millipoints et la meilleure décision"
 msgstr "virheen teema, sen hinta millipisteinä ja paras ratkaisu"
 
-#: ../../source/mode_headless.rst:2313
+#: ../../source/mode_headless.rst:2329
 msgid "``similar_positions``, ``decode_position``, ``legal_moves``, ``race_epc``"
 msgstr "``similar_positions``, ``decode_position``, ``legal_moves``, ``race_epc``"
 
-#: ../../source/mode_headless.rst:2315
+#: ../../source/mode_headless.rst:2331
 msgid "positions voisines ; lecture d'un XGID ; coups légaux ; EPC de course"
 msgstr "lähellä olevat asemat; XGID:n lukeminen; sallitut siirrot; kisan EPC"
 
-#: ../../source/mode_headless.rst:2316
+#: ../../source/mode_headless.rst:2332
 msgid ""
 "``list_players``, ``player_aliases``, ``player_stats``, "
 "``recurring_errors``, ``training_stats``, ``training_missed``"
@@ -5068,7 +5105,7 @@ msgstr ""
 "``list_players``, ``player_aliases``, ``player_stats``, "
 "``recurring_errors``, ``training_stats``, ``training_missed``"
 
-#: ../../source/mode_headless.rst:2318
+#: ../../source/mode_headless.rst:2334
 msgid ""
 "joueurs ; leurs alias et les graphies proposées ; PR global, pions, "
 "videau, par phase ; erreurs qui reviennent ; PR du quiz et rétention Anki"
@@ -5079,11 +5116,11 @@ msgstr ""
 "muistissapito todelliseen PR:ään verrattuna; tietovisassa epäonnistuneet "
 "asemat"
 
-#: ../../source/mode_headless.rst:2321
+#: ../../source/mode_headless.rst:2337
 msgid "``head_to_head``, ``pr_by_window``, ``player_ranking``"
 msgstr "``head_to_head``, ``pr_by_window``, ``player_ranking``"
 
-#: ../../source/mode_headless.rst:2322
+#: ../../source/mode_headless.rst:2338
 msgid ""
 "face-à-face de deux joueurs ; PR par fenêtre calendaire ; classement par "
 "PR"
@@ -5091,43 +5128,43 @@ msgstr ""
 "kahden pelaajan keskinäiset ottelut; PR kalenteri-ikkunoittain; ranking "
 "PR:n mukaan"
 
-#: ../../source/mode_headless.rst:2324
+#: ../../source/mode_headless.rst:2340
 msgid "``list_matches``, ``get_match``, ``list_tournaments``"
 msgstr "``list_matches``, ``get_match``, ``list_tournaments``"
 
-#: ../../source/mode_headless.rst:2325
+#: ../../source/mode_headless.rst:2341
 msgid "matchs, détail d'un match, tournois"
 msgstr "ottelut, yksittäisen ottelun tiedot, turnaukset"
 
-#: ../../source/mode_headless.rst:2326
+#: ../../source/mode_headless.rst:2342
 msgid "``list_collections``, ``collection_positions``, ``study_decks``"
 msgstr "``list_collections``, ``collection_positions``, ``study_decks``"
 
-#: ../../source/mode_headless.rst:2327
+#: ../../source/mode_headless.rst:2343
 msgid "collections et leurs positions ; paquets de révision"
 msgstr "kokoelmat ja niiden asemat; opiskelupakat"
 
-#: ../../source/mode_headless.rst:2328
+#: ../../source/mode_headless.rst:2344
 msgid "``list_lessons``, ``lesson``"
 msgstr "``list_lessons``, ``lesson``"
 
-#: ../../source/mode_headless.rst:2329
+#: ../../source/mode_headless.rst:2345
 msgid "leçons ; les étapes d'une leçon, dans l'ordre"
 msgstr "oppitunnit; oppitunnin vaiheet järjestyksessä"
 
-#: ../../source/mode_headless.rst:2330
+#: ../../source/mode_headless.rst:2346
 msgid "``quiz_draw``, ``quiz_grade``"
 msgstr "``quiz_draw``, ``quiz_grade``"
 
-#: ../../source/mode_headless.rst:2331
+#: ../../source/mode_headless.rst:2347
 msgid "tire une position sans sa réponse, puis note la réponse donnée"
 msgstr "arpoo aseman ilman vastausta ja arvioi sitten annetun vastauksen"
 
-#: ../../source/mode_headless.rst:2332
+#: ../../source/mode_headless.rst:2348
 msgid "``evaluate``"
 msgstr "``evaluate``"
 
-#: ../../source/mode_headless.rst:2333
+#: ../../source/mode_headless.rst:2349
 msgid ""
 "évaluation gammonNet d'une position donnée en texte, sans l'enregistrer :"
 " meilleurs coups ou décision de videau"
@@ -5135,42 +5172,42 @@ msgstr ""
 "tekstinä annetun aseman gammonNet-arvio tallentamatta sitä: parhaat "
 "siirrot tai tuplauspäätös"
 
-#: ../../source/mode_headless.rst:2335
+#: ../../source/mode_headless.rst:2351
 msgid "``anki_next``"
 msgstr "``anki_next``"
 
-#: ../../source/mode_headless.rst:2336
+#: ../../source/mode_headless.rst:2352
 msgid "la prochaine carte due d'un paquet de révision"
 msgstr "tarkistuspakan seuraava erääntynyt kortti"
 
-#: ../../source/mode_headless.rst:2337
+#: ../../source/mode_headless.rst:2353
 msgid "``transcribe_list``, ``transcribe_get``, ``transcribe_mat``"
 msgstr "``transcribe_list``, ``transcribe_get``, ``transcribe_mat``"
 
-#: ../../source/mode_headless.rst:2338
+#: ../../source/mode_headless.rst:2354
 msgid "transcriptions de matchs ; détail d'une transcription ; son texte ``.mat``"
 msgstr "ottelujen litteroinnit; yhden litteroinnin tiedot; sen ``.mat``-teksti"
 
-#: ../../source/mode_headless.rst:2340
+#: ../../source/mode_headless.rst:2356
 msgid "``direction_list``, ``direction_standings``, ``direction_season``"
 msgstr "``direction_list``, ``direction_standings``, ``direction_season``"
 
-#: ../../source/mode_headless.rst:2341
+#: ../../source/mode_headless.rst:2357
 msgid "tournois dirigés ; classement d'un tournoi ; classement de saison"
 msgstr "johdetut turnaukset; turnauksen sijoitukset; kauden sijoitus"
 
-#: ../../source/mode_headless.rst:2342
+#: ../../source/mode_headless.rst:2358
 msgid "``rollout``"
 msgstr "``rollout``"
 
-#: ../../source/mode_headless.rst:2343
+#: ../../source/mode_headless.rst:2359
 #, no-python-format
 msgid ""
 "rollout d'une position de la base : équité, intervalle à 95 % et JSD par "
 "candidat"
 msgstr "kirjaston aseman rollout: ekvity, 95 %:n väli ja JSD ehdokasta kohti"
 
-#: ../../source/mode_headless.rst:2345
+#: ../../source/mode_headless.rst:2361
 msgid ""
 "``club_matches``, ``club_match_positions``, ``club_comments``, "
 "``club_library``, ``club_library_positions``, ``club_ranking``"
@@ -5178,7 +5215,7 @@ msgstr ""
 "``club_matches``, ``club_match_positions``, ``club_comments``, "
 "``club_library``, ``club_library_positions``, ``club_ranking``"
 
-#: ../../source/mode_headless.rst:2347
+#: ../../source/mode_headless.rst:2363
 msgid ""
 "lectures à travers les tenants que liste le proxy "
 "(:ref:`headless_tenants_lus`) : matchs des élèves, positions d'un match "
@@ -5190,7 +5227,7 @@ msgstr ""
 "kirjoitetut kommentit, jaettu kirjasto, seuran ranking; ilman ``X-Read-"
 "Tenants``-otsaketta vain tämä tenantti"
 
-#: ../../source/mode_headless.rst:2352
+#: ../../source/mode_headless.rst:2368
 msgid ""
 "Seuls ces outils écrivent — ``save_position``, ``comment_position`` (qui "
 "signe de l'argument ``author``, sinon de l'en-tête ``X-User-Name``), "
@@ -5221,7 +5258,7 @@ msgstr ""
 "tarjolla argumentin ``store``, joka tallentaa rolloutin aseman analyysin "
 "viereen. Mikään työkalu ei poista mitään."
 
-#: ../../source/mode_headless.rst:2367
+#: ../../source/mode_headless.rst:2383
 msgid ""
 "**En local**, l'assistant lance ``blunderdb mcp`` sur un fichier (voir "
 ":ref:`cli`). Pour Claude Code :"
@@ -5229,7 +5266,7 @@ msgstr ""
 "**Paikallisesti** avustaja käynnistää komennon ``blunderdb mcp`` "
 "tiedostolle (ks. :ref:`cli`). Claude Codelle:"
 
-#: ../../source/mode_headless.rst:2374
+#: ../../source/mode_headless.rst:2390
 msgid ""
 "**Sur le démon**, les mêmes outils répondent en HTTP sur ``POST /mcp`` "
 "(transport *streamable HTTP*, sans session). Comme ``/v1``, ``/mcp`` "
@@ -5254,7 +5291,7 @@ msgstr ""
 "``/mcp``-pyynnön lisäksi, joka sen kuljettaa. Työkalukutsu maksaa siis "
 "useita pyyntöjä; mitään ei vapauteta."
 
-#: ../../source/mode_headless.rst:2385
+#: ../../source/mode_headless.rst:2401
 msgid ""
 "Comme ``call``, ``blunderdb mcp`` migre le schéma d'une base ancienne à "
 "l'ouverture, même sans ``--write``."

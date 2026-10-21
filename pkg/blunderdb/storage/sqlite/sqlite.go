@@ -54,6 +54,10 @@ func Open(ctx context.Context, dsn string, opts *storage.Options) (*Storage, err
 		return nil, fmt.Errorf("sqlite: open %q: %w", dsn, err)
 	}
 	ConfigurePool(db, dsn)
+	if opts != nil && opts.MaxConns > 0 && dsn != ":memory:" {
+		db.SetMaxOpenConns(opts.MaxConns)
+		db.SetMaxIdleConns(opts.MaxConns)
+	}
 	fresh, err := isFreshDB(ctx, db)
 	if err != nil {
 		db.Close()
@@ -69,7 +73,7 @@ func Open(ctx context.Context, dsn string, opts *storage.Options) (*Storage, err
 	if opts != nil {
 		progress = opts.MigrationProgress
 	}
-	st := &Storage{binder: binder{db: db}, sqlDB: db, ownsDB: true, migrationProgress: progress}
+	st := &Storage{binder: binder{db: db, probe: &writeProbe{}}, sqlDB: db, ownsDB: true, migrationProgress: progress}
 	if !fresh {
 		if err := st.restoreBulkIndexes(ctx); err != nil {
 			db.Close()
@@ -107,7 +111,7 @@ func (s *Storage) restoreBulkIndexes(ctx context.Context) error {
 // connection: Close is a no-op and the caller stays responsible for closing
 // db. Used by the Database wrapper.
 func New(db *sql.DB) *Storage {
-	return &Storage{binder: binder{db: db}, sqlDB: db, ownsDB: false}
+	return &Storage{binder: binder{db: db, probe: &writeProbe{}}, sqlDB: db, ownsDB: false}
 }
 
 // perConnPragmas are the connection-scoped PRAGMAs every SQLite connection
@@ -287,7 +291,7 @@ func (s *Storage) Migrate(ctx context.Context) error {
 // (sqlshared.RescoreAllPlayedDecisions): the migration step that adds the
 // per-move columns runs it on the raw handle.
 func RescorePlayedDecisions(ctx context.Context, db *sql.DB) (int, error) {
-	return sqlshared.RescoreAllPlayedDecisions(ctx, binder{db}.shared())
+	return sqlshared.RescoreAllPlayedDecisions(ctx, binder{db: db}.shared())
 }
 
 // DropGammonNetResponseAnalyses empties the gammonNet verdicts stored on
@@ -295,7 +299,7 @@ func RescorePlayedDecisions(ctx context.Context, db *sql.DB) (int, error) {
 // migration step that moves the transcribed answers runs it on the raw
 // handle.
 func DropGammonNetResponseAnalyses(ctx context.Context, db *sql.DB) (int, error) {
-	return sqlshared.DropGammonNetResponseAnalyses(ctx, binder{db}.shared())
+	return sqlshared.DropGammonNetResponseAnalyses(ctx, binder{db: db}.shared())
 }
 
 // IDsVisibleInOrder reports that SQLite's identifiers become visible in the
@@ -362,7 +366,7 @@ func openReadOnlyMode(ctx context.Context, abs, path string, immutable bool) (*S
 		db.Close()
 		return nil, fmt.Errorf("%s is not a blunderDB database (empty, or no metadata table)", path)
 	}
-	return &Storage{binder: binder{db: db}, sqlDB: db, ownsDB: true}, nil
+	return &Storage{binder: binder{db: db, probe: &writeProbe{}}, sqlDB: db, ownsDB: true}, nil
 }
 
 // FileComments is Comments over a file read as it stands, never migrated —

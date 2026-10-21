@@ -169,7 +169,44 @@ rapides.
 `RefusesWrites` et la taille du pool (S), puis l'admission par classe (M) ; #753 avant toute
 mesure PostgreSQL ; §3.3 reste dans A2/B3.
 
-## 5. Reproduire
+## 5. Après #750 et #752
+
+Remède : remplissage de `match_stats` au démarrage du démon SQLite et un seul remplissage par
+portée à la fois (les lecteurs l'attendent) ; transactions d'écriture SQLite en
+`BEGIN IMMEDIATE` (`withTx`, `TransactWrite`), lectures en différé ; `SQLITE_BUSY` →
+`storage.ErrBusy` → `503 unavailable` + `Retry-After` ; `RefusesWrites` mémorisé par base
+ouverte ; pool SQLite du démon `max(10, GOMAXPROCS)` (16 ici, le bureau reste à 10) ; admission
+des routes lourdes (`stats.*`, `search.count/find/ids/query/indexOf`, `matches.list`) à
+`max(2, GOMAXPROCS/2)` = 8 places, file de 8 par place, attente 20 s, puis `503` + `Retry-After`.
+
+Même script, `LEVELS="50 200"`, même machine partagée (avant : loadavg ~15 ; après : ~8).
+
+| `positions.load` | 50 : p50 / p99 (ms) | 200 : p50 / p99 (ms) |
+|---|---|---|
+| avant | 83,6 / 1 682 | 1 424 / 12 275 |
+| après | 0,6 / 7,7 | 14,2 / 93,5 |
+
+| Run | Avant : RPS, erreurs | Après : RPS, erreurs |
+|---|---|---|
+| chaud, 50 | 18 ; 5 timeout | 24 ; 0 |
+| chaud, 200 | 18 ; 89 (timeout) | 6 561 ; 118 958 `503` sur les seules routes lourdes |
+| froid, 50 | 30 ; 278 (`500 internal` : 263 `stats.compute`, 15 `analyses.save`) | 13 ; 0 |
+
+- Froid : plus aucun `500` ; le remplissage se fait une fois, les `stats.compute` répondent en
+  5-9 s (p50) puis lisent la table.
+- À 200 clients en boucle fermée sans attente, la file lourde déborde : les routes lourdes
+  reçoivent `503` en < 3 ms (p99) au lieu d'un timeout à 30 s, et les lectures unitaires
+  passent (aucune erreur). Le débit brut compte ces refus. Débit utile des routes lourdes
+  (réponses 200) : 50 clients 9,6 → 12,4 req/s ; 200 clients 9,1 → 6,0 req/s, car le client de
+  charge, en boucle fermée, ne respecte pas `Retry-After` et ses ~6 000 refus/s prennent de la
+  CPU ; froid 14,5 → 6,9 req/s, le remplissage occupant la CPU au lieu d'échouer. Les lourdes
+  elles-mêmes restent §3.3.
+- Écueil mesuré en cours de route : `BEGIN IMMEDIATE` sur *toutes* les transactions des magasins
+  partagés tenait le verrou d'écriture pendant un `stats.compute` entier (sa transaction de
+  lecture pour les tables de sélection) : écritures en `SQLITE_BUSY` à 10 s. D'où la séparation
+  `Transact` (différé) / `TransactWrite` (immédiat).
+
+## 6. Reproduire
 
 ```bash
 scripts/bench-daemon-load.sh ~/src/bench-scale/mesure-0.37/sg/sample.db > rapport.md

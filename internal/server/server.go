@@ -150,8 +150,13 @@ func New(opts Options) (*Server, error) {
 	s.knownPaths = make(map[string]bool)
 	s.uploadPaths = uploadPaths()
 	s.allowedMethod = make(map[string]string)
+	heavy := newHeavyGate(opts.HeavySlots)
 	for _, rt := range s.routes() {
-		mux.HandleFunc(rt.method+" "+rt.pattern, rt.handler)
+		h := rt.handler
+		if heavy != nil && heavyRoute(rt.pattern) {
+			h = heavy.wrap(h)
+		}
+		mux.HandleFunc(rt.method+" "+rt.pattern, h)
 		s.knownPaths[rt.pattern] = true
 		s.allowedMethod[rt.pattern] = rt.method
 	}

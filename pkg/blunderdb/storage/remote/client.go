@@ -301,6 +301,8 @@ func envelopeError(method, code, message string, details map[string]any) error {
 		return fmt.Errorf("%w: %s", unsupported(method), message)
 	case "internal":
 		return fmt.Errorf("%w: %s", storage.ErrInternal, message)
+	case "unavailable":
+		return fmt.Errorf("%w: %s", storage.ErrBusy, message)
 	case "rate_limited", "quota_exceeded":
 		return visible(fmt.Errorf("%w: %s: %s: %s; wait and retry, or raise --rate-limit-rps/--rate-limit-burst on the daemon", ErrRateLimited, method, code, message))
 	case "forbidden", "unauthorized":

@@ -64,7 +64,7 @@ func (s *matchStore) ReanchorAnsweredDoubles(ctx context.Context, scope string) 
 			landed = append(landed, newID)
 		}
 		// A moved move is scored by the analysis of the row it lands on.
-		if _, err := sqlshared.RescorePlayedDecisionsOf(ctx, binder{tx}.shared(), landed); err != nil {
+		if _, err := sqlshared.RescorePlayedDecisionsOf(ctx, binder{db: tx}.shared(), landed); err != nil {
 			return fmt.Errorf("rescore answered moves: %w", err)
 		}
 		if err := RefreshPositionMatchDates(ctx, tx, left); err != nil {

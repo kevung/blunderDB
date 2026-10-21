@@ -10,6 +10,7 @@ import (
 	"net/http/pprof"
 	"os"
 	"os/signal"
+	"runtime"
 	"strconv"
 	"strings"
 	"sync"
@@ -240,6 +241,10 @@ func RunServe(args []string) error {
 		logger.Info("Row-Level Security enabled (per-tenant policies installed)")
 	}
 
+	if cfg.backend == "sqlite" {
+		go fillMatchStats(ctx, st, logger)
+	}
+
 	var identity *issuance.Identity
 	if cfg.identityDir != "" {
 		identity, err = loadServeIdentity(cfg.identityDir, cfg.identityName)
@@ -274,6 +279,7 @@ func RunServe(args []string) error {
 		AnalysisWeights:  cfg.analysisWeights,
 		Identity:         identity,
 		ImportDir:        cfg.importDir,
+		HeavySlots:       max(2, runtime.GOMAXPROCS(0)/2),
 	})
 	if err != nil {
 		return err
@@ -359,10 +365,33 @@ func eventsDSN(backend, dsn string) string {
 	return ""
 }
 
+// fillMatchStats fills the served file's missing match_stats rows from the
+// start, as the desktop does at open: otherwise the first statistics readers
+// pay the whole fill, minutes on a large library, and every reader arriving
+// meanwhile waits for it. Readers arriving during this fill wait for it too
+// (one fill per scope at a time) and then read the table. A PostgreSQL daemon
+// serves tenants it does not list at start; each tenant's first reader fills
+// its own scope.
+func fillMatchStats(ctx context.Context, st storage.Storage, logger *slog.Logger) {
+	start := time.Now()
+	n, err := st.Stats().FillMatchStats(ctx, "", nil)
+	switch {
+	case err != nil && ctx.Err() == nil:
+		logger.Warn("match statistics fill failed; readers fill what they read", "err", err)
+	case n > 0:
+		logger.Info("match statistics filled", "matches", n, "elapsed", time.Since(start).Round(time.Millisecond))
+	}
+}
+
+// daemonSQLiteConns sizes the daemon's SQLite pool: one connection per CPU,
+// at least the desktop's ten. Under WAL every connection reads in parallel,
+// and the daemon's readers are many clients rather than one window.
+func daemonSQLiteConns() int { return max(10, runtime.GOMAXPROCS(0)) }
+
 // OpenStorage opens the requested backend. enableRLS turns on PostgreSQL
 // Row-Level Security enforcement (per-connection app.tenant_id); ignored by SQLite.
 func OpenStorage(ctx context.Context, backend, dsn string, enableRLS bool) (storage.Storage, error) {
-	opts := &storage.Options{EnableRLS: enableRLS}
+	opts := &storage.Options{EnableRLS: enableRLS, MaxConns: daemonSQLiteConns()}
 	switch strings.ToLower(backend) {
 	case "sqlite", "":
 		if dsn == "" {

@@ -207,6 +207,12 @@ type Options struct {
 	// caller reach it.
 	ImportDir string
 
+	// HeavySlots bounds the requests that scan the library (stats.*,
+	// search.count/find/ids/query/indexOf, matches.list) running at once, so
+	// they leave connections to the reads of one row. Zero (the default)
+	// admits them all; RunServe sets it from the CPU count.
+	HeavySlots int
+
 	// Identity signs the watermark of an exports.sqlite response that asked
 	// for one — "the daemon's own" identity, as opposed to the desktop's
 	// per-person key (see ingest.SealWatermark). nil (the default) means
