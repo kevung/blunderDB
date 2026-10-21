@@ -646,6 +646,31 @@ func (s *analysisStore) WithoutAnalysisIDs(ctx context.Context, _ string) ([]int
 	return ids, rows.Err()
 }
 
+// WithoutAnalysisIDsInMatch — see storage.AnalysisStore. DISTINCT because
+// several moves of one match can reach one position.
+func (s *analysisStore) WithoutAnalysisIDsInMatch(ctx context.Context, _ string, matchID int64) ([]int64, error) {
+	rows, err := s.db.QueryContext(ctx, `SELECT DISTINCT p.id
+		 FROM position p
+		 JOIN move mv ON mv.position_id = p.id
+		 JOIN game g ON g.id = mv.game_id
+		 WHERE g.match_id = ?
+		   AND NOT EXISTS (SELECT 1 FROM analysis a WHERE a.position_id = p.id)
+		 ORDER BY p.id`, matchID)
+	if err != nil {
+		return nil, fmt.Errorf("sqlite: list match ids without analysis: %w", err)
+	}
+	defer rows.Close()
+	var ids []int64
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			return nil, fmt.Errorf("sqlite: list match ids without analysis: %w", err)
+		}
+		ids = append(ids, id)
+	}
+	return ids, rows.Err()
+}
+
 // CountWithoutAnalysis is WithoutAnalysisIDs's predicate as a COUNT.
 func (s *analysisStore) CountWithoutAnalysis(ctx context.Context, _ string) (int, error) {
 	var n int

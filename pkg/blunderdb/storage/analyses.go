@@ -88,9 +88,16 @@ type AnalysisStore interface {
 	// no id.
 	CountWithoutAnalysis(ctx context.Context, scope string) (int, error)
 
+	// WithoutAnalysisIDsInMatch is WithoutAnalysisIDs restricted to the
+	// positions a move of matchID reaches, each once, ascending. The move row
+	// is the only link between a position and a match. A position shared
+	// with another match counts all the same: a gap is a gap whoever reaches
+	// it. An unknown match has none.
+	WithoutAnalysisIDsInMatch(ctx context.Context, scope string, matchID int64) ([]int64, error)
+
 	// WithEngine streams, by ascending position id, the analyses whose
 	// provenance column (analysis_engine) starts with enginePrefix or is not
-	// derived yet (NULL). Rows of any other engine are skipped on the column
+	// derived yet (NULL); an empty prefix streams every analysis. Rows of any other engine are skipped on the column
 	// alone, their payload never decoded: a corpus of XG analyses costs the
 	// read of one column per row, not a decompression and a JSON decode per row.
 	//

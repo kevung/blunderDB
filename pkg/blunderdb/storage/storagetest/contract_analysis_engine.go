@@ -81,6 +81,19 @@ func testAnalysisWithEngineSkipsOtherEngines(t *testing.T, s storage.Storage) {
 	if n != 3 {
 		t.Errorf("early break after %d records, want 3", n)
 	}
+
+	// An empty prefix is every analysis, whatever its engine: the sweep that
+	// looks for analyses somebody else wrote decodes them all.
+	all := 0
+	for _, err := range s.Analyses().WithEngine(ctx, "", "") {
+		if err != nil {
+			t.Fatalf("WithEngine(\"\"): %v", err)
+		}
+		all++
+	}
+	if all != total {
+		t.Errorf("WithEngine(\"\") yielded %d analyses, want all %d", all, total)
+	}
 }
 
 // distinctPos returns a position unique to n < 16384: n written in base 4 as
