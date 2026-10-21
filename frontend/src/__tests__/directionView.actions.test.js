@@ -22,7 +22,7 @@ import { resolveConfirm } from '../services/confirmService.js';
 import { statusBarTextStore } from '../stores/uiStore.js';
 import { t } from '../i18n';
 
-const tr = (/** @type {string} */ k, /** @type {any} */ p) => get(t)(k, p);
+const tr = (/** @type {string} */ k, /** @type {any} */ p = undefined) => get(t)(k, p);
 const players = [
     { id: 'pa', name: 'Alice', state: 'free', wins: 0, losses: 0 },
     { id: 'pb', name: 'Bruno', state: 'free', wins: 0, losses: 0 }
