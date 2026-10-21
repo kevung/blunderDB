@@ -59,8 +59,9 @@ var scenarios = map[string]scenario{
 	"named-tenants": {mixedOps, namedTenant, isRejected},
 }
 
-// scenarioNames lists the scenario keys for --help and error messages.
-const scenarioNames = "mixed | read-heavy | write-heavy | named-tenants"
+// scenarioNames lists the scenario keys for --help and error messages;
+// "library" is built at run time from the served base (library.go).
+const scenarioNames = "mixed | read-heavy | write-heavy | named-tenants | library"
 
 func is2xx(status int) bool      { return status >= 200 && status < 300 }
 func isRejected(status int) bool { return status == 400 }

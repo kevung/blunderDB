@@ -11,13 +11,17 @@
 package main
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"io"
 	"math/rand"
 	"net/http"
 	"os"
+	"strings"
 	"sync"
 	"time"
 )
@@ -32,6 +36,7 @@ type config struct {
 	concurrency int
 	output      string
 	seed        int64
+	maxMatches  int
 }
 
 func main() {
@@ -45,9 +50,18 @@ func main() {
 	flag.IntVar(&cfg.concurrency, "concurrency", 50, "number of concurrent worker goroutines")
 	flag.StringVar(&cfg.output, "output", "report.json", "path for the JSON report (a .md companion is written too)")
 	flag.Int64Var(&cfg.seed, "seed", 1, "PRNG seed for reproducible runs")
+	flag.IntVar(&cfg.maxMatches, "max-matches", 30000, "library scenario: matches.list pages are drawn at offsets below this")
 	flag.Parse()
 
 	sc, ok := scenarios[cfg.scenario]
+	if cfg.scenario == "library" {
+		var err error
+		if sc, err = librarySetup(cfg.target, numericTenant(1), cfg.maxMatches); err != nil {
+			fmt.Fprintf(os.Stderr, "loadtest: %v\n", err)
+			os.Exit(1)
+		}
+		ok = true
+	}
 	if !ok {
 		fmt.Fprintf(os.Stderr, "unknown scenario %q (want %s)\n", cfg.scenario, scenarioNames)
 		os.Exit(2)
@@ -163,24 +177,73 @@ func flush(mu *sync.Mutex, dst *[]sample, src []sample) {
 
 // doRequest issues one request for op o under the given X-Tenant-ID and
 // returns its sample. A status ok rejects, a transport error or a context
-// expiry counts as a failure.
+// expiry counts as a failure, and so does a stream that ends on an error
+// line: its status was sent before the error happened.
 func doRequest(client *http.Client, target, tenant string, ok func(int) bool, o op, rng *rand.Rand) sample {
 	path, body := o.build(rng)
 	t0 := time.Now()
 	req, err := http.NewRequestWithContext(context.Background(), http.MethodPost, target+path, jsonBody(body))
 	if err != nil {
-		return sample{op: o.name, dur: time.Since(t0), fail: true}
+		return sample{op: o.name, dur: time.Since(t0), fail: true, code: "request"}
 	}
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("X-Tenant-ID", tenant)
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return sample{op: o.name, dur: time.Since(t0), fail: true}
+		return sample{op: o.name, dur: time.Since(t0), fail: true, code: transportCode(err)}
 	}
-	_, _ = io.Copy(io.Discard, resp.Body)
+	data, err := io.ReadAll(resp.Body)
 	resp.Body.Close()
-	return sample{op: o.name, dur: time.Since(t0), fail: !ok(resp.StatusCode)}
+	s := sample{op: o.name, dur: time.Since(t0), status: resp.StatusCode}
+	switch {
+	case err != nil:
+		s.fail, s.code = true, transportCode(err)
+	case !ok(resp.StatusCode):
+		s.fail, s.code = true, fmt.Sprintf("%d %s", resp.StatusCode, errorCode(data))
+	case resp.StatusCode < 300 && streamError(data):
+		s.fail, s.code = true, "stream "+errorCode(lastLine(data))
+	}
+	return s
+}
+
+func transportCode(err error) string {
+	if errors.Is(err, context.DeadlineExceeded) || os.IsTimeout(err) {
+		return "timeout"
+	}
+	return "transport"
+}
+
+// errorCode reads the code of an error envelope, with a hint of its message
+// when it names the lock SQLite gave up on.
+func errorCode(body []byte) string {
+	var env struct {
+		Error struct {
+			Code    string `json:"code"`
+			Message string `json:"message"`
+		} `json:"error"`
+	}
+	if json.Unmarshal(body, &env) != nil || env.Error.Code == "" {
+		return "?"
+	}
+	m := strings.ToLower(env.Error.Message)
+	if strings.Contains(m, "busy") || strings.Contains(m, "locked") {
+		return env.Error.Code + "/busy"
+	}
+	return env.Error.Code
+}
+
+func lastLine(data []byte) []byte {
+	data = bytes.TrimRight(data, "\n")
+	if i := bytes.LastIndexByte(data, '\n'); i >= 0 {
+		return data[i+1:]
+	}
+	return data
+}
+
+// streamError reports whether an NDJSON answer ends on its error line.
+func streamError(data []byte) bool {
+	return bytes.HasPrefix(lastLine(data), []byte(`{"error":`))
 }
 
 func mdName(jsonPath string) string {
