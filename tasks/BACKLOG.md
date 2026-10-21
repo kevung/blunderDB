@@ -81,8 +81,7 @@ propre issue le jour où il est lancé.
   coupé à `MaxCommentAuthorLen`) comme à l'import du démon, là où le bureau le recopiait tel
   quel ; celui d'un commentaire signé est recopié octet pour octet par les deux imports et la
   restauration de la corbeille (`storage.WithCarriedComment`), car la signature couvre
-  l'auteur : le normaliser laissait la note « signée, non vérifiée ». La migration SQLite →
-  PostgreSQL (`migrate/migrate.go`) normalise encore l'auteur d'une note signée. Une ligne du
+  l'auteur : le normaliser laissait la note « signée, non vérifiée ». Une ligne du
   receveur que `Positions().List` ne lit pas interrompt l'analyse et l'import, là où l'index
   d'identité la sautait (impact quasi nul : `state` est `NOT NULL`). Un refus de version ou
   une erreur de lecture de la source après l'ouverture de la transaction la laissait ouverte,

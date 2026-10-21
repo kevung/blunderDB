@@ -156,6 +156,12 @@ func (m *mover) run(rep *Report) error {
 	m.tourID = make(map[int64]int64)
 	m.collID = make(map[int64]int64)
 
+	// Before any copy: a destination that cannot refresh its statistics says
+	// so now, not after the positions phase.
+	if err := m.refreshStats(); err != nil {
+		return err
+	}
+
 	phases := []struct {
 		name string
 		copy func() error
@@ -407,7 +413,7 @@ func (m *mover) copyPositionBatch(rep *Report, batch []*domain.Position) error {
 	}
 	for _, oldID := range oldIDs {
 		for _, c := range comments[oldID] {
-			if _, err := m.dst.Comments().AddFrom(storage.WithCommentSignature(storage.WithCommentAuthor(m.ctx, c.Author), c.Signature), m.scope, m.posID[oldID], c.Text, c.Origin); err != nil {
+			if _, err := m.dst.Comments().AddFrom(storage.WithCarriedComment(m.ctx, c.Author, c.Signature), m.scope, m.posID[oldID], c.Text, c.Origin); err != nil {
 				return fmt.Errorf("migrate: add comment for position %d: %w", oldID, err)
 			}
 			rep.Comments++

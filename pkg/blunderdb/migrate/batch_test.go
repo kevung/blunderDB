@@ -8,6 +8,7 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
+	"github.com/kevung/blunderdb/pkg/blunderdb/issuance"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
@@ -42,6 +43,7 @@ func CheckCopiesAcrossBatches(t *testing.T, dst storage.Storage) {
 	src := openMemory(t)
 
 	n := copyBatch + 7
+	const signedAt, signedText, signedAuthor = 4, "watch the gap", "  Coach Martin "
 	var zobrists []uint64
 	for i := range n {
 		p := domain.InitializePosition()
@@ -65,6 +67,21 @@ func CheckCopiesAcrossBatches(t *testing.T, dst storage.Storage) {
 				}
 			}
 		}
+		if i == signedAt {
+			// Signed with an author a normalisation would trim: the copy must
+			// keep it byte for byte, or the note arrives signed but unverified.
+			coach, err := issuance.NewIdentity("Coach")
+			if err != nil {
+				t.Fatal(err)
+			}
+			sig, err := issuance.SealComment(coach, signedText, signedAuthor, zobrists[i])
+			if err != nil {
+				t.Fatal(err)
+			}
+			if _, err := src.Comments().AddFrom(storage.WithCarriedComment(ctx, signedAuthor, sig), "", id, signedText, domain.CommentOriginUser); err != nil {
+				t.Fatalf("Add signed comment: %v", err)
+			}
+		}
 		if i == copyBatch+2 {
 			// Already in the destination, with an analysis the copy replaces.
 			pc := p
@@ -83,7 +100,7 @@ func CheckCopiesAcrossBatches(t *testing.T, dst storage.Storage) {
 	if err != nil {
 		t.Fatalf("Run: %v", err)
 	}
-	if rep.Positions != n || rep.Analyses != (n+2)/3 || rep.Comments != 2*((n+248)/250) {
+	if rep.Positions != n || rep.Analyses != (n+2)/3 || rep.Comments != 2*((n+248)/250)+1 {
 		t.Fatalf("report = %+v for %d positions", rep, n)
 	}
 
@@ -128,6 +145,15 @@ func CheckCopiesAcrossBatches(t *testing.T, dst storage.Storage) {
 		}
 		if w, g := texts(wantC[srcIDs[z]]), texts(gotC[dstIDs[z]]); !slices.Equal(w, g) {
 			t.Fatalf("position %d: comments %q, want %q", i, g, w)
+		}
+		if i == signedAt {
+			if len(gotC[dstIDs[z]]) != 1 {
+				t.Fatalf("signed position: %d comments, want 1", len(gotC[dstIDs[z]]))
+			}
+			c := gotC[dstIDs[z]][0]
+			if c.Author != signedAuthor || c.Signer == nil || !c.Signer.Verified {
+				t.Errorf("signed comment arrives with author %q, signer %+v; want %q, verified", c.Author, c.Signer, signedAuthor)
+			}
 		}
 	}
 }

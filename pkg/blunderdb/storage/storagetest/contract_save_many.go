@@ -112,12 +112,24 @@ func testAnalysisSaveManyEqualsSave(t *testing.T, s storage.Storage) {
 	analyses := map[int64]*domain.PositionAnalysis{
 		ids[0]: checker(),
 		ids[1]: {PlayedCubeActions: []string{"Take"}},
-		ids[2]: {PlayedCubeActions: []string{"Double"}},
+		ids[2]: {PlayedCubeActions: []string{"Double"}, DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{
+			AnalysisDepth: "3-ply", PlayerWinChances: 71.5, PlayerGammonChances: 22.1,
+			OpponentWinChances: 28.5, OpponentGammonChances: 6.3,
+			CubefulNoDoubleEquity: 0.61, CubefulNoDoubleError: -0.08,
+			CubefulDoubleTakeEquity: 0.69, CubefulDoublePassEquity: 1,
+			CubefulDoublePassError: 0.31, BestCubeAction: "Double, Take",
+			WrongPassPercentage: 12.5, WrongTakePercentage: 3.5,
+		}},
 		unitID: checker(),
 	}
 	analyses[unitID].AnalysisType = "GnuBG 2-ply"
 	if err := s.Analyses().SaveMany(storage.WithFreshPositions(ctx, fresh), "", analyses); err != nil {
 		t.Fatalf("SaveMany analyses: %v", err)
+	}
+	// The scalar columns (best move error, rates, best cube action) are the
+	// projection Save writes: a repair from the stored JSON changes nothing.
+	if n, err := s.Analyses().RepairDenormalisedColumns(ctx, ""); err != nil || n != 0 {
+		t.Errorf("RepairDenormalisedColumns after SaveMany = %d, %v; want 0 rows changed", n, err)
 	}
 
 	got, err := s.Analyses().LoadMany(ctx, "", []int64{unitID, ids[0]})
