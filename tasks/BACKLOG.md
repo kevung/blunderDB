@@ -61,7 +61,9 @@ propre issue le jour où il est lancé.
   `ErrorMP` (l'export CSV parcourt tous les coups et n'écrit pas ce coût). La tranche 3 :
   `DeleteAnalysis` est `Analyses().Delete`, qui déscore les coups joués (le wrapper laissait
   `decision_error_mp` d'une analyse disparue) ; une égalité d'équité entre coups candidats se
-  départage par moteur puis par notation partout. Restent deux écarts de parité de l'analyse,
+  départage par moteur puis par notation partout ; pour un verdict gammonNet, deux candidats
+  ex aequo du même moteur, rangés jusqu'ici dans leur ordre d'arrivée, le sont désormais par
+  notation (ordre et `Index` changent, `EquityError` non). Restent deux écarts de parité de l'analyse,
   côté démon : `/v1/analyses.save` remplace (`Save`) quand `SaveAnalysis` fusionne, et
   `/v1/analyses.load` ne joint pas les coups joués de la table `move` que `LoadAnalysis`
   ajoute ; et la fusion du videau d'`ingest.mergeAnalysis` garde sa règle propre (une entrée

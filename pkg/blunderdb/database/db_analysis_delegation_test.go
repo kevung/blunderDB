@@ -5,9 +5,9 @@ import (
 )
 
 // Deleting an analysis unscores the moves played from its position, as the
-// contract's Delete does for the serve daemon: a move scored by an analysis
-// that no longer exists would keep counting as an error in the search's E
-// filter and in the match statistics.
+// contract's Delete does for the serve daemon: decision_error_mp is a
+// projection of the position's analysis, so a move whose position carries no
+// analysis carries no score.
 func TestDeleteAnalysisUnscoresPlayedMoves(t *testing.T) {
 	db := newTestDBWithXG(t)
 
