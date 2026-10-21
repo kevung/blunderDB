@@ -89,7 +89,7 @@ var wantIndexes = []string{
 	"idx_position_cube_take",
 	"idx_position_dice", "idx_position_flagged",
 	"idx_position_game_type", "idx_position_individual",
-	"idx_position_match_date", "idx_position_no_contact", "idx_position_off",
+	"idx_position_match_date", "idx_position_multi_played", "idx_position_no_contact", "idx_position_off",
 	"idx_position_phase_off", "idx_position_pip_1", "idx_position_pip_diff",
 	"idx_position_score_cube", "idx_position_zobrist",
 	"idx_table_setting_rencontre", "idx_table_setting_tournament",

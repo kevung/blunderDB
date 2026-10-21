@@ -4,9 +4,7 @@ import (
 	"context"
 	"fmt"
 	"math"
-	"slices"
 	"sort"
-	"strconv"
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -110,7 +108,7 @@ type player1Moves struct {
 	checkerMoves []string
 	cubeActions  []string
 	// plays counts the distinct (checker move, cube action) pairs as stored,
-	// before normalisation: exactly what multiPlayedSQL tells apart, so a row
+	// before normalisation: exactly what position.multi_played tells apart, so a row
 	// the SQL let through as multi-played is one the Go phase re-scores.
 	plays int
 }
@@ -200,52 +198,6 @@ func sortedKeys(set map[string]bool) []string {
 	return keys
 }
 
-// multiPlayedSQL is true for a position on which player 1 recorded more than
-// one distinct play (checker move or cube action) in the move table —
-// positions deduplicated across matches and played differently each time. On
-// those the denormalised error column, which scores a single play, cannot
-// answer a move-error filter; the search lets them through to
-// matchesMoveErrorFilter. Written per row, correlated on p.id, rather than as
-// a set listed up front: listing it reads every move of the library before the
-// first page can come back, where this reads the moves of the rows the scan
-// reaches. A move written two ways counts twice here; the Go re-check
-// normalises, so the cost is one needless decode, never a wrong answer.
-func multiPlayedSQL(db Execer, scope string) (string, []any) {
-	tenant, args := db.TenantFilter("m1", scope)
-	return `EXISTS (SELECT 1 FROM move m1
-		JOIN move m2 ON m2.position_id = m1.position_id AND m2.id > m1.id AND m2.player = 1
-		WHERE m1.position_id = p.id AND ` + tenant + ` AND m1.player = 1
-		  AND (COALESCE(m1.checker_move, '') <> COALESCE(m2.checker_move, '')
-		    OR ` + ActionCodeOrEmptySQL("m1.cube_action") + ` <> ` + ActionCodeOrEmptySQL("m2.cube_action") + `))`, args
-}
-
-// multiPlayedIDListSQL is multiPlayedSQL for a scan that reads the whole
-// result: the positions are listed once (multiPlayedPlayer1Positions) and
-// written into the text as an id list, so no chunk of the scan reruns a
-// subquery. The ids are integers formatted here, never user text. "" when no
-// position was played two ways.
-func multiPlayedIDListSQL(ctx context.Context, db Execer, scope string) (string, error) {
-	set, err := multiPlayedPlayer1Positions(ctx, db, scope)
-	if err != nil || len(set) == 0 {
-		return "", err
-	}
-	ids := make([]int64, 0, len(set))
-	for id := range set {
-		ids = append(ids, id)
-	}
-	slices.Sort(ids)
-	var b strings.Builder
-	b.WriteString("p.id IN (")
-	for i, id := range ids {
-		if i > 0 {
-			b.WriteByte(',')
-		}
-		b.WriteString(strconv.FormatInt(id, 10))
-	}
-	b.WriteByte(')')
-	return b.String(), nil
-}
-
 // decisionTimeBounds is the `tm` filter as a condition on the duration columns
 // of the move table under alias (seconds in the filter, milliseconds in the
 // table), "" when the filter carries no readable bound. Either duration may
@@ -282,16 +234,16 @@ func decisionTimeSQL(db Execer, scope, filter string) (string, []any) {
 		` AND mt.player = 1 AND (` + cond + `))`, args
 }
 
-// multiPlayedPlayer1Positions lists the positions multiPlayedSQL selects, as a
-// set: the status bar's blunder count needs the whole set, not a per-row test.
+// multiPlayedPlayer1Positions lists the positions player 1 recorded more
+// than one distinct play on (checker move or cube action) — positions
+// deduplicated across matches and played differently each time — as a set:
+// the status bar's blunder count needs the whole set, not a per-row test.
+// It reads position.multi_played, which triggers on move keep true on every
+// write (MultiPlayedSQL is its definition).
 func multiPlayedPlayer1Positions(ctx context.Context, db Execer, scope string) (map[int64]bool, error) {
-	tenant, args := db.TenantFilter("m1", scope)
+	tenant, args := db.TenantFilter("p", scope)
 	rows, err := db.Query(ctx,
-		`SELECT DISTINCT m1.position_id FROM move m1
-		 JOIN move m2 ON m2.position_id = m1.position_id AND m2.id > m1.id AND m2.player = 1
-		 WHERE `+tenant+` AND m1.player = 1 AND m1.position_id IS NOT NULL
-		   AND (COALESCE(m1.checker_move, '') <> COALESCE(m2.checker_move, '')
-		     OR `+ActionCodeOrEmptySQL("m1.cube_action")+` <> `+ActionCodeOrEmptySQL("m2.cube_action")+`)`,
+		`SELECT p.id FROM position p WHERE `+tenant+` AND `+db.Bool("p.multi_played", true),
 		args...)
 	if err != nil {
 		return nil, errf(db, "multi-played positions", err)

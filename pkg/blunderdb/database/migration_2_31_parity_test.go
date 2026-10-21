@@ -54,6 +54,7 @@ func write2_30Library(t *testing.T, path string, swap bool) {
 			t.Fatal(err)
 		}
 	}
+	dropMultiPlayed(t, d)
 	legacy := map[int64][]byte{}
 	if err := d.forEachRow(`SELECT id, data FROM analysis WHERE id % 2 = 0`, nil, func(r *sql.Rows) {
 		var id int64

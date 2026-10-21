@@ -318,6 +318,73 @@ func TestMigrate_049_UndatedMatchUnderRLS(t *testing.T) {
 	}
 }
 
+// TestMigrate_052_MultiPlayedUnderRLS replays 052's fill on a two-tenant
+// library whose RLS is FORCEd on its owner: the indicator is wiped, the
+// migration rerun, and each tenant's position played two ways must come out
+// set, the one played one way clear, FORCE back on.
+func TestMigrate_052_MultiPlayedUnderRLS(t *testing.T) {
+	ctx := context.Background()
+	s, conn, _ := openAsRLSOwner(t)
+	ms := s.Matches()
+	type seeded struct {
+		scope   string
+		pid     int64
+		twoWays bool
+	}
+	seed := func(scope string, die int, plays ...string) seeded {
+		t.Helper()
+		p := domain.InitializePosition()
+		p.Dice = [2]int{die, 1}
+		pid, err := s.Positions().Save(ctx, scope, &p)
+		if err != nil {
+			t.Fatal(err)
+		}
+		for i, play := range plays {
+			matchID, err := ms.Save(ctx, scope, &domain.Match{Player1Name: "Ann", Player2Name: "Bob", MatchLength: 7})
+			if err != nil {
+				t.Fatal(err)
+			}
+			gameID, err := ms.CreateGame(ctx, scope, &domain.Game{MatchID: matchID, GameNumber: 1})
+			if err != nil {
+				t.Fatal(err)
+			}
+			if _, err := ms.CreateMove(ctx, scope, &domain.Move{GameID: gameID, MoveNumber: int32(i + 1), MoveType: "checker",
+				PositionID: pid, Player: 1, CheckerMove: play}); err != nil {
+				t.Fatal(err)
+			}
+		}
+		return seeded{scope, pid, len(plays) > 1 && plays[0] != plays[1]}
+	}
+	rows := []seeded{
+		seed("1", 3, "13/11 24/23", "13/11 6/4"),
+		seed("2", 3, "13/11 24/23", "13/11 6/4"),
+		seed("2", 5, "8/5 6/5", "8/5 6/5"),
+	}
+	if err := s.ApplyRLS(ctx); err != nil {
+		t.Fatalf("ApplyRLS: %v", err)
+	}
+	execUnforced(t, conn, []string{"position"}, []string{
+		`UPDATE position SET multi_played = NOT multi_played`,
+		`DELETE FROM schema_migrations WHERE version = '052_multi_played'`,
+	})
+
+	if err := s.Migrate(ctx); err != nil {
+		t.Fatalf("Migrate under RLS: %v", err)
+	}
+	assertForced(t, conn, "position", "move")
+	for _, r := range rows {
+		asTenant(t, conn, r.scope, func() {
+			var got bool
+			if err := conn.QueryRow(ctx, `SELECT multi_played FROM position WHERE id = $1`, r.pid).Scan(&got); err != nil {
+				t.Fatal(err)
+			}
+			if got != r.twoWays {
+				t.Errorf("tenant %s position %d: multi_played = %v after 052, want %v", r.scope, r.pid, got, r.twoWays)
+			}
+		})
+	}
+}
+
 // TestMETForeignKeyRejectsCrossTenant: analysis.met_id names a match equity
 // table of the analysis's own tenant, and deleting that table clears met_id
 // alone.
