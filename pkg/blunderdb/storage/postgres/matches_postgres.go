@@ -790,7 +790,7 @@ func (s *matchStore) Games(ctx context.Context, scope string, matchID int64) ite
 			        COALESCE(initial_score_1,0), COALESCE(initial_score_2,0),
 			        COALESCE(winner,0), COALESCE(points_won,0), COALESCE(move_count,0)
 			 FROM game WHERE match_id = $1 AND tenant_id = $2
-			 ORDER BY game_number`,
+			 ORDER BY game_number, id`,
 			matchID, tenantID(scope))
 		if err != nil {
 			yield(nil, fmt.Errorf("postgres: list games: %w", err))
@@ -1262,7 +1262,7 @@ func (s *matchStore) LibraryMoves(ctx context.Context, scope string) iter.Seq2[*
 			 INNER JOIN match m ON g.match_id = m.id
 			 WHERE mv.tenant_id = $1
 			 ORDER BY `+domain.MatchOrderByClause("")+`,
-			   g.game_number, mv.move_number, mv.id`, tenantID(scope))
+			   g.game_number, g.id, mv.move_number, mv.id`, tenantID(scope))
 		if err != nil {
 			yield(nil, fmt.Errorf("postgres: list library moves: %w", err))
 			return

@@ -202,7 +202,8 @@ type MatchStore interface {
 	// CreateGame stores a new game and returns its id.
 	CreateGame(ctx context.Context, scope string, g *domain.Game) (int64, error)
 
-	// Games streams the games of a match in order.
+	// Games streams the games of a match by game number, then id: an
+	// imported file can number two games alike.
 	Games(ctx context.Context, scope string, matchID int64) iter.Seq2[*domain.Game, error]
 
 	// CreateMove stores a new move and returns its id.
@@ -224,7 +225,7 @@ type MatchStore interface {
 
 	// LibraryMoves streams every recorded move of the library, as
 	// RecordedMoves reads them (ErrorMP nil), in one pass: matches in List's
-	// default order, then by game number, then by move number. It serves the
+	// default order, then in Games' order, then by move number. It serves the
 	// walks over a whole library that would otherwise cost a query per game.
 	LibraryMoves(ctx context.Context, scope string) iter.Seq2[*domain.LibraryMove, error]
 

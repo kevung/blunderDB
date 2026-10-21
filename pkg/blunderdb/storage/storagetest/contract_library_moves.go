@@ -15,7 +15,8 @@ import (
 // testMatchLibraryMoves pins LibraryMoves to the walk it replaces — List, then
 // each match's Games, then each game's RecordedMoves — on a library whose
 // insertion order is none of the orders read: matches saved oldest first and
-// one undated, games and moves created out of number order.
+// one undated, games and moves created out of number order, two games of a
+// match numbered alike.
 func testMatchLibraryMoves(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 	ms := s.Matches()
@@ -33,7 +34,7 @@ func testMatchLibraryMoves(t *testing.T, s storage.Storage) {
 		if err != nil {
 			t.Fatalf("Save match: %v", err)
 		}
-		for _, gn := range []int32{2, 1} {
+		for _, gn := range []int32{2, 1, 2} {
 			gameID, err := ms.CreateGame(ctx, "", &domain.Game{MatchID: matchID, GameNumber: gn, Winner: 1, PointsWon: 1})
 			if err != nil {
 				t.Fatalf("CreateGame: %v", err)
@@ -83,8 +84,8 @@ func testMatchLibraryMoves(t *testing.T, s storage.Storage) {
 			}
 		}
 	}
-	if len(want) != 18 {
-		t.Fatalf("walk read %d moves, want 18", len(want))
+	if len(want) != 27 {
+		t.Fatalf("walk read %d moves, want 27", len(want))
 	}
 
 	var got []domain.LibraryMove
