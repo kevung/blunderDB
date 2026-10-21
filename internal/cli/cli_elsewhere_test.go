@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strconv"
 	"strings"
 	"testing"
@@ -126,7 +127,11 @@ func TestCLI_ElsewhereSchemaRefusalSaysWhichSideMoves(t *testing.T) {
 // An older file is refused, and left as it was: upgrading it is a write.
 func TestCLI_ElsewhereRefusesAnOlderFile(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)
-	old := filepath.Join(tempDir(t), "old?#%.db")
+	name := "old?#%.db"
+	if runtime.GOOS == "windows" {
+		name = "old#%.db" // Windows forbids '?' in a file name
+	}
+	old := filepath.Join(tempDir(t), name)
 	other := NewDatabase()
 	if err := other.SetupDatabase(old); err != nil {
 		t.Fatalf("SetupDatabase: %v", err)

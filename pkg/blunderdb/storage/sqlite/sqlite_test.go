@@ -4,6 +4,7 @@ import (
 	"context"
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -54,7 +55,11 @@ func TestElsewhere_SQLite(t *testing.T) {
 // -wal/-shm sidecars a WAL file is read through; they hold no content.
 func TestOpenReadOnly_WritesNothing(t *testing.T) {
 	ctx := context.Background()
-	path := filepath.Join(t.TempDir(), "club ?#%.db")
+	name := "club ?#%.db"
+	if runtime.GOOS == "windows" {
+		name = "club #%.db" // Windows forbids '?' in a file name
+	}
+	path := filepath.Join(t.TempDir(), name)
 	rw, err := sqlite.Open(ctx, path, nil)
 	if err != nil {
 		t.Fatalf("Open: %v", err)
