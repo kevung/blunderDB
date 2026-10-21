@@ -40,3 +40,31 @@ func TestImportStopsOnUnreadableReceiverRow(t *testing.T) {
 		t.Errorf("receiver holds %d positions after the refused import, want 1", n)
 	}
 }
+
+// A refused import releases its transaction: the version check runs once the
+// transaction is open, and a refusal there must not leave a connection held.
+func TestCommitImportDatabaseReleasesTxOnVersionRefusal(t *testing.T) {
+	src := newTestDB(t)
+	pos := initialPosition()
+	if _, err := src.SavePosition(&pos); err != nil {
+		t.Fatal(err)
+	}
+	path := exportTo(t, src, filepath.Join(t.TempDir(), "future.db"), ExportOptions{AllPositions: true})
+	raw, err := openExistingSQLite(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := raw.Exec(`UPDATE metadata SET value = '999.0.0' WHERE key = 'database_version'`); err != nil {
+		t.Fatal(err)
+	}
+	raw.Close()
+
+	dst := newTestDB(t)
+	before := dst.db.Stats().InUse
+	if _, err := dst.CommitImportDatabase(path); err == nil {
+		t.Fatal("CommitImportDatabase accepted a newer major version")
+	}
+	if after := dst.db.Stats().InUse; after != before {
+		t.Errorf("connections in use: %d before, %d after the refusal", before, after)
+	}
+}

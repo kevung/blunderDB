@@ -300,9 +300,8 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 			continue
 		}
 
-		// Assigned, not declared: the rollback defer reads this very err.
-		var importPositionJSON string
-		if importPositionJSON, err = positionIdentityJSON(importPosition); err != nil {
+		importPositionJSON, err := positionIdentityJSON(importPosition)
+		if err != nil {
 			return nil, err
 		}
 
@@ -606,7 +605,9 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 		return nil, err
 	}
 
-	// Ensure rollback on error or cancellation
+	// Every return before the commit rolls back, whatever error it carries
+	// (a refused version, a failed read, a cancellation): none leaves the
+	// transaction holding a connection.
 	committed := false
 	defer func() {
 		if !committed {
@@ -704,9 +705,8 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 			continue
 		}
 
-		// Assigned, not declared: the rollback defer reads this very err.
-		var importPositionJSON string
-		if importPositionJSON, err = positionIdentityJSON(importPosition); err != nil {
+		importPositionJSON, err := positionIdentityJSON(importPosition)
+		if err != nil {
 			return nil, err
 		}
 
