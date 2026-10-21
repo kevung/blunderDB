@@ -53,14 +53,21 @@ propre issue le jour où il est lancé.
 - **Bureau sur un tenant distant** (ADR-0100, ADR-0095). `Database.store` est typé
   `storage.Storage` et les opérations de fichier passent par `storage.LocalFile`, mais le
   wrapper suppose encore un fichier SQLite ouvert : « une base est ouverte » se lit `d.db !=
-  nil` (environ 150 gardes), l'ouverture (`SetupDatabase`/`OpenDatabase`) ne construit que
-  `sqlite.New`, et quatre lectures restent en SQL sur `d.db` hors cycle de vie du fichier —
-  repli table par table de `GetDatabaseStats` (`db_match.go`), dernier brouillon de
-  transcription (`db_transcription_save.go`), session d'import en bloc `sqlite.BeginBulk`
-  (`db_import_pipeline.go`, propre au fichier, à mettre derrière `LocalFile`), et
-  `Exchange`/`Borrow` qui partagent le pool. Ouvrir un tenant distant demande une garde
-  d'ouverture sur `store`, un point d'entrée qui reçoit une `storage.Storage`, et ces quatre
-  lectures par le contrat ou derrière `LocalFile`.
+  nil` (environ 150 gardes) et l'ouverture (`SetupDatabase`/`OpenDatabase`) ne construit que
+  `sqlite.New`. Restent en SQL sur `d.db` :
+  - à déléguer au contrat : la lecture de version (`CheckVersion`, `CheckDatabaseVersion`,
+    `db_schema.go`, vers `Metadata().Version`, qui rend `ErrNotFound` sur une ligne absente
+    là où le wrapper rend `sql.ErrNoRows`), le repli table par table de `GetDatabaseStats`
+    (`db_match.go`, vers `Metadata().Counts`), le dernier brouillon de transcription
+    (`db_transcription_save.go`) ;
+  - propres au fichier, à mettre derrière `LocalFile` ou à garder sur le handle : la session
+    d'import en bloc `sqlite.BeginBulk` (`db_import_pipeline.go`), la vérification
+    (`CountOrphans`, `CheckSchema`, `CheckConstraints`, `CheckCounters`, `db_verify.go`),
+    `Exchange`/`Borrow` qui partagent le pool, et `RawConn` (`scripts/demodb`).
+  Ouvrir un tenant distant demande une garde d'ouverture sur `store`, un point d'entrée qui
+  reçoit une `storage.Storage`, les lectures du premier groupe par le contrat, et les
+  opérations du second refusées (comme `Vacuum`, `errVacuumNotLocal`) sur un store sans
+  `LocalFile`.
 - **Écarts de parité de l'analyse, côté démon** : `/v1/analyses.save` remplace (`Save`) quand
   `SaveAnalysis` fusionne, et `/v1/analyses.load` ne joint pas les coups joués de la table
   `move` que `LoadAnalysis` ajoute ; la fusion du videau d'`ingest.mergeAnalysis` garde sa

@@ -27,8 +27,8 @@ Inventaire au moment de la décision (fichiers `database/db_*.go`, schéma et mi
 | Import | `CheckMatchExists`, `computeMatchHashFromStoredData`, garde d'`ImportFiles`, `db_import_db.go` | `FindByHash`, … | `db_import_db.go` (import d'une autre base) est le gros morceau |
 | Fichier SQLite | `db.go` (ouverture, PRAGMA), `db_vacuum.go`, `db_verify.go`, `libraryDir`, `store.FilePath`/`Vacuum`/`VacuumInto` | aucun : propre au fichier local | à garder, derrière une interface étroite |
 
-Le champ `Database.store` est typé `*sqlite.Storage`, pas `storage.Storage` : seules
-`FilePath`, `Vacuum` et `VacuumInto` sortent du contrat.
+Au moment de la décision, le champ `Database.store` est typé `*sqlite.Storage`, pas
+`storage.Storage` : seules `FilePath`, `Vacuum` et `VacuumInto` sortent du contrat.
 
 ## Decision
 
@@ -63,8 +63,13 @@ Le champ `Database.store` est typé `*sqlite.Storage`, pas `storage.Storage` : s
    6. typage de `store` par le contrat et interface de fichier local (faite) — `store` est
       une `storage.Storage` ; chemin du fichier, vacuum en place et vacuum dans une copie sont
       `storage.LocalFile`, que seul `sqlite.Storage` implémente et que le wrapper affirme au
-      point d'usage (`Vacuum`, `libraryDir`) ; verrou, lecture seule, PRAGMA et chaîne de
-      migration restent sur le `*sql.DB` que le wrapper ouvre lui-même.
+      point d'usage (`Vacuum`, `libraryDir`) ; `LoadMetadata`/`SaveMetadata` sont
+      `Metadata().Load`/`Save` (une clé d'en-tête sans valeur se lit `""`). Verrou, lecture
+      seule, PRAGMA, chaîne de migration et vérification (`db_verify.go`) restent sur le
+      `*sql.DB` que le wrapper ouvre lui-même. La vérification y reste : elle compare le
+      fichier au DDL SQLite (`sqlite.SchemaDrift`, `foreign_key_check`, compteurs dérivés),
+      ce qu'aucune autre bibliothèque n'a à vérifier côté bureau — celle d'un tenant distant
+      est l'affaire du démon qui tient sa base.
 4. **Contraintes de chaque tranche** : `Database.mu` n'est pas réentrant, une méthode
    déléguée prend le verrou une fois puis appelle le store ; le message d'erreur que voient GUI
    et CLI est conservé quand un appelant le lit (validation de date d'`UpdateMatch`) ; toute la
@@ -76,7 +81,7 @@ Le champ `Database.store` est typé `*sqlite.Storage`, pas `storage.Storage` : s
   `CLAUDE.md` et `TestPositionIsHeldPredicateParity` comptent deux copies.
 - La tranche 6 ne suffit pas à ouvrir un tenant distant au bureau (`storage/remote`,
   ADR-0095) ni plusieurs bibliothèques (#689 à #693) : le wrapper lit encore « une base est
-  ouverte » sur son `*sql.DB`, ne s'ouvre que sur un fichier SQLite, et garde quatre lectures
+  ouverte » sur son `*sql.DB`, ne s'ouvre que sur un fichier SQLite, et garde des lectures
   SQL hors cycle de vie du fichier (`tasks/BACKLOG.md`, « Bureau sur un tenant distant »).
   Ces points levés, une `storage.Storage` par bibliothèque suffit, sans second chemin de code.
 - Écarts tranchés, les trois modes alignés : le repli de `LastVisited` est la tête de `List`
