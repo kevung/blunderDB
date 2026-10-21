@@ -21,6 +21,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/duel"
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcription"
 )
@@ -42,7 +43,7 @@ type Database struct {
 	// afterActionColumnDrop, nil outside tests, runs between the DROP and
 	// the RENAME of a 2.31 action-column swap, so a test can cut there.
 	afterActionColumnDrop func() error
-	store                 *sqlite.Storage // SQLite Storage backend, wraps db (P2)
+	store                 storage.Storage // the library behind the contract, wraps db
 	// importBatchID stamps every match the in-flight import writes, 0 when none
 	// runs. One at a time, like importCancel.
 	importBatchID int64
@@ -79,13 +80,13 @@ type Database struct {
 	transcriptSvc *transcription.Service
 	// transcriptOn is the store transcriptSvc was made on: a service left on
 	// a store that has since been replaced is dropped, not used.
-	transcriptOn *sqlite.Storage
+	transcriptOn storage.Storage
 	// duelSvc is the Arbiter over this handle's store (db_duel.go); duelMu
 	// guards the pointer and duelBoard.
 	duelMu  sync.Mutex
 	duelSvc *duel.Service
 	// duelOn is the store duelSvc was made on, as transcriptOn.
-	duelOn *sqlite.Storage
+	duelOn storage.Storage
 	// duelBoard is the Duel the desktop shows at the board, 0 for none: the
 	// one it suspends when it leaves it. Other open Duels of the library
 	// belong to whoever opened them — a daemon, a CLI — and are left running.

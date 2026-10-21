@@ -107,12 +107,16 @@ func (d *Database) FindMatchesToRepair() ([]MatchRepair, error) {
 	return out, nil
 }
 
-// libraryDir is the directory of the open SQLite file, "" for an in-memory
-// one: where a relative source path is looked for first. Callers hold d.mu.
+// libraryDir is the directory of the open library file, "" for an in-memory
+// one or a library that is no local file: where a relative source path is
+// looked for first. Callers hold d.mu.
 func (d *Database) libraryDir(ctx context.Context) string {
-	var seq int
-	var name, file string
-	if err := d.db.QueryRowContext(ctx, `PRAGMA database_list`).Scan(&seq, &name, &file); err != nil || file == "" {
+	local, ok := d.store.(storage.LocalFile)
+	if !ok {
+		return ""
+	}
+	file, err := local.FilePath(ctx)
+	if err != nil || file == "" {
 		return ""
 	}
 	return filepath.Dir(file)

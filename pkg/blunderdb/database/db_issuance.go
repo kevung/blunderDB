@@ -8,6 +8,7 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/issuance"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
@@ -22,9 +23,9 @@ func (d *Database) readMeta(key string) (string, error) {
 	return readMetaKey(context.Background(), d.store, key)
 }
 
-// readMetaKey is readMeta over any SQLite Storage — the open wrapper's, or one built around
+// readMetaKey is readMeta over any Storage — the open wrapper's, or one built around
 // a file InspectIssuance is only peeking into.
-func readMetaKey(ctx context.Context, store *sqlite.Storage, key string) (string, error) {
+func readMetaKey(ctx context.Context, store storage.Storage, key string) (string, error) {
 	values, err := store.Metadata().Load(ctx, "")
 	if err != nil {
 		return "", err

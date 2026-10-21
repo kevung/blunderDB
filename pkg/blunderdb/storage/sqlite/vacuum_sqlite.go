@@ -406,6 +406,8 @@ func (s *Storage) VacuumInto(ctx context.Context, target string) (int64, error) 
 	return sizeBefore, nil
 }
 
+var _ storage.LocalFile = (*Storage)(nil)
+
 // FilePath is the file the main database lives in, "" for ":memory:".
 func (s *Storage) FilePath(ctx context.Context) (string, error) {
 	if s.sqlDB == nil {

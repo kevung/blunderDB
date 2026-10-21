@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
@@ -69,13 +70,21 @@ func (d *Database) Vacuum() (VacuumResult, error) {
 		}
 		slog.Info("vacuum: another connection holds the file; vacuuming in place")
 	}
-	res, err := d.store.Vacuum(ctx)
+	local, ok := d.store.(storage.LocalFile)
+	if !ok {
+		return VacuumResult{TrashPurged: purged}, errVacuumNotLocal
+	}
+	res, err := local.Vacuum(ctx)
 	return VacuumResult{SizeBefore: res.SizeBefore, SizeAfter: res.SizeAfter, TrashPurged: purged}, err
 }
 
 // errVacuumSwapUnsafe is vacuumBySwap declining: the file cannot be replaced
 // right now, the in-place VACUUM still can run.
 var errVacuumSwapUnsafe = errors.New("vacuum: the file cannot be replaced")
+
+// errVacuumNotLocal is a Vacuum on a library that is no file of this
+// machine: there is nothing here to compact.
+var errVacuumNotLocal = errors.New("vacuum: the library is not a local file")
 
 // vacuumBySwap vacuums by file replacement (sqlite.Storage.VacuumInto): the
 // compacted copy is written beside the file, every connection of this
@@ -90,7 +99,11 @@ var errVacuumSwapUnsafe = errors.New("vacuum: the file cannot be replaced")
 // dropped and errVacuumSwapUnsafe returned. A failure after the rename point
 // leaves the compacted file in place, which is the whole library.
 func (d *Database) vacuumBySwap(ctx context.Context) (before, after int64, err error) {
-	path, err := d.store.FilePath(ctx)
+	local, ok := d.store.(storage.LocalFile)
+	if !ok {
+		return 0, 0, errVacuumSwapUnsafe
+	}
+	path, err := local.FilePath(ctx)
 	if err != nil || path == "" {
 		return 0, 0, errVacuumSwapUnsafe
 	}
@@ -98,7 +111,7 @@ func (d *Database) vacuumBySwap(ctx context.Context) (before, after int64, err e
 	if err := os.Remove(tmp); err != nil && !errors.Is(err, os.ErrNotExist) {
 		return 0, 0, fmt.Errorf("vacuum: removing a leftover copy: %w", err)
 	}
-	before, err = d.store.VacuumInto(ctx, tmp)
+	before, err = local.VacuumInto(ctx, tmp)
 	if err != nil {
 		return before, 0, err
 	}

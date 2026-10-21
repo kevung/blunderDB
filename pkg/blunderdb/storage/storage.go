@@ -98,12 +98,28 @@ type Storage interface {
 
 // VacuumResult reports the file-size effect of a backend's Vacuum, in bytes.
 // Vacuum is a backend capability rather than a Storage method: only the
-// SQLite backend has a file to compact (sqlite.Storage.Vacuum), and the
+// SQLite backend has a file to compact (LocalFile.Vacuum), and the
 // daemon duck-types it the way it does PurgeTenant, so PostgreSQL needs no
 // stub. Both sizes are 0 for an in-memory database.
 type VacuumResult struct {
 	SizeBefore int64 `json:"sizeBefore"`
 	SizeAfter  int64 `json:"sizeAfter"`
+}
+
+// LocalFile is what a backend over one library file on this machine offers
+// beyond the contract: the file's path, and its compaction in place or into a
+// copy. Only the SQLite backend implements it; a caller holding a Storage
+// asserts it, and a backend without a local file (PostgreSQL, remote) simply
+// has none of these operations.
+type LocalFile interface {
+	// FilePath is the path of the main database file, "" for an in-memory
+	// database.
+	FilePath(ctx context.Context) (string, error)
+	// Vacuum compacts the file in place.
+	Vacuum(ctx context.Context) (VacuumResult, error)
+	// VacuumInto writes a compacted copy of the file to target and returns
+	// the size of the file it copied.
+	VacuumInto(ctx context.Context, target string) (int64, error)
 }
 
 // ErrVacuumNotShrunk is a Vacuum whose pages were compacted but whose file
