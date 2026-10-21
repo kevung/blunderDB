@@ -201,17 +201,20 @@
     let likeMaxDistance = $state(0);
 
     async function onLikeLimitChange(/** @type {Event & { currentTarget: HTMLInputElement }} */ event) {
-        const n = parseInt(event.currentTarget.value, 10);
-        if (!Number.isFinite(n)) return;
-        likeLimit = Math.min(Math.max(n, 1), MAX_LIKE_LIMIT);
-        await SaveLikeLimit(likeLimit);
+        const field = event.currentTarget;
+        const n = parseInt(field.value, 10);
+        if (Number.isFinite(n)) likeLimit = Math.min(Math.max(n, 1), MAX_LIKE_LIMIT);
+        // An unchanged state does not repaint the field: it would keep showing the refused text.
+        field.value = String(likeLimit);
+        if (Number.isFinite(n)) await SaveLikeLimit(likeLimit);
     }
 
     async function onLikeMaxDistanceChange(/** @type {Event & { currentTarget: HTMLInputElement }} */ event) {
-        const n = parseInt(event.currentTarget.value, 10);
-        if (!Number.isFinite(n)) return;
-        likeMaxDistance = Math.max(n, 0);
-        await SaveLikeMaxDistance(likeMaxDistance);
+        const field = event.currentTarget;
+        const n = parseInt(field.value, 10);
+        if (Number.isFinite(n)) likeMaxDistance = Math.max(n, 0);
+        field.value = String(likeMaxDistance);
+        if (Number.isFinite(n)) await SaveLikeMaxDistance(likeMaxDistance);
     }
 
     // Board colour settings, in display order. Each maps a store key to a label.
@@ -456,6 +459,8 @@
         const target = /** @type {HTMLInputElement} */ (event.currentTarget);
         const mp = equityToMP(target.value);
         await applyLibrarySettings({ ...librarySettings, [key]: mp });
+        // A refused pair restores the previous settings object, which does not repaint the field.
+        target.value = mpToEquity(librarySettings[key]).toFixed(3);
     }
 
     /** @param {{errorThresholdMP: number, blunderThresholdMP: number}} next */
@@ -603,20 +608,29 @@
 
     function onGnPruneKChange(/** @type {Event & { currentTarget: HTMLInputElement }} */ event) {
         const k = Number(event.currentTarget.value);
-        if (!Number.isFinite(k) || k < 1) return;
+        if (!Number.isFinite(k) || k < 1) {
+            event.currentTarget.value = String(gnPruneK);
+            return;
+        }
         gnPruneK = k;
         SaveGammonNetPruneK(gnPruneK).catch((error) => logger.error('Error saving gammonNet prune k:', error));
     }
 
     function onGnCandidatesChange(/** @type {Event & { currentTarget: HTMLInputElement }} */ event) {
         const n = Number(event.currentTarget.value);
-        if (!Number.isFinite(n) || n < 1) return;
+        if (!Number.isFinite(n) || n < 1) {
+            event.currentTarget.value = String(gnCandidates);
+            return;
+        }
         gnCandidates = n;
         SaveGammonNetCandidates(gnCandidates).catch((error) => logger.error('Error saving gammonNet candidate count:', error));
     }
 
-    function onWatchToggle(/** @type {Event & { currentTarget: HTMLInputElement }} */ event) {
-        void applyWatch(event.currentTarget.checked, watchFolder, watchInterval);
+    async function onWatchToggle(/** @type {Event & { currentTarget: HTMLInputElement }} */ event) {
+        const box = event.currentTarget;
+        await applyWatch(box.checked, watchFolder, watchInterval);
+        // A refusal leaves watchOn at false, unchanged: the box would stay ticked.
+        box.checked = watchOn;
     }
 
     function onWatchIntervalChange(/** @type {Event & { currentTarget: HTMLInputElement }} */ event) {
