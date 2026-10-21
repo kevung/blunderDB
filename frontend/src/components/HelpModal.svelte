@@ -382,16 +382,12 @@
         display: contents;
     }
 
-    /* Only what is near the viewport is styled and laid out: the manual is several hundred
-       blocks long. A chapter off screen is skipped whole; inside the one in view, each block. */
+    /* Only the chapters near the viewport are styled and laid out. One level only: blocks
+       skipped inside a chapter that scrollIntoView just rendered resize a frame later and push
+       a search hit out of view. */
     .tab-content :global(.help-chapter) {
         content-visibility: auto;
         contain-intrinsic-size: auto 1500px;
-    }
-
-    .tab-content :global(.help-chapter > *) {
-        content-visibility: auto;
-        contain-intrinsic-size: auto 120px;
     }
 
     .tab-content :global(p),
