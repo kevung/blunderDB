@@ -339,6 +339,8 @@ func openReadOnlyMode(ctx context.Context, abs, path string, immutable bool) (*S
 	for _, p := range perConnPragmas {
 		q.Add("_pragma", p[0]+"("+p[1]+")")
 	}
+	// query_only is how RefusesWrites sees a mode=ro connection.
+	q.Add("_pragma", "query_only(1)")
 	dsn := fileURI(abs) + "?" + q.Encode()
 	db, err := sql.Open("sqlite", dsn)
 	if err != nil {

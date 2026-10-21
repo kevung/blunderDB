@@ -10,6 +10,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/storagetest"
 )
 
@@ -127,5 +128,32 @@ func TestOpenReadOnly_ReadOnlyFolder(t *testing.T) {
 		if _, err := os.Stat(path + side); err == nil {
 			t.Errorf("%s was created", side)
 		}
+	}
+}
+
+// A mode=ro Storage says it refuses writes, so the player table falls back to
+// the direct computation instead of trying to fill match_stats; a writable one
+// still says it accepts them.
+func TestOpenReadOnly_RefusesWrites(t *testing.T) {
+	ctx := context.Background()
+	path := filepath.Join(t.TempDir(), "club.db")
+	rw, err := sqlite.Open(ctx, path, nil)
+	if err != nil {
+		t.Fatalf("Open: %v", err)
+	}
+	if sqlshared.RefusesWrites(ctx, sqlite.SharedExecer(rw)) {
+		t.Error("a writable store reports refusing writes")
+	}
+	rw.Close()
+	ro, err := sqlite.OpenReadOnly(ctx, path)
+	if err != nil {
+		t.Fatalf("OpenReadOnly: %v", err)
+	}
+	defer ro.Close()
+	if !sqlshared.RefusesWrites(ctx, sqlite.SharedExecer(ro)) {
+		t.Error("a read-only store does not report refusing writes")
+	}
+	if _, err := ro.Stats().PlayerTable(ctx, "", storage.StatsFilter{}); err != nil {
+		t.Errorf("PlayerTable on a read-only store: %v", err)
 	}
 }
