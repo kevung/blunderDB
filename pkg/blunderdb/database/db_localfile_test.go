@@ -28,7 +28,16 @@ func TestLocalFile_StoreWithoutAFile(t *testing.T) {
 	if _, ok := d.store.(storage.LocalFile); !ok {
 		t.Fatal("the SQLite store does not implement storage.LocalFile")
 	}
-	if got, want := d.libraryDir(context.Background()), filepath.Dir(path); got != want {
+	// SQLite reports the resolved path; a temp dir may sit behind a symlink
+	// (/var -> /private/var on macOS), so both sides are resolved.
+	resolve := func(p string) string {
+		r, err := filepath.EvalSymlinks(p)
+		if err != nil {
+			t.Fatal(err)
+		}
+		return r
+	}
+	if got, want := resolve(d.libraryDir(context.Background())), resolve(filepath.Dir(path)); got != want {
 		t.Fatalf("libraryDir = %q, want %q", got, want)
 	}
 
