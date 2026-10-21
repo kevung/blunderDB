@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"fmt"
 	"iter"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -90,6 +91,12 @@ type CollectionStore interface {
 
 	// PositionIndexMap returns, for every stored position id, its display index.
 	PositionIndexMap(ctx context.Context, scope string) (map[int64]int, error)
+}
+
+// NotLivingError says a hand-made collection has no query to freeze. It is the
+// caller's mistake (ErrInvalid), so every mode reports it as a client error.
+func NotLivingError(id int64) error {
+	return fmt.Errorf("%w: collection %d is not living: nothing to freeze", ErrInvalid, id)
 }
 
 // FreezeCollection turns a LIVING collection into an ordinary one: the
