@@ -1251,6 +1251,41 @@ func (s *matchStore) RecordedMoves(ctx context.Context, scope string, gameID int
 	}
 }
 
+// LibraryMoves — see storage.MatchStore. One join read in a stream; its
+// order is List's default order, so a walk pairs each row with the match the
+// list shows at that place.
+func (s *matchStore) LibraryMoves(ctx context.Context, scope string) iter.Seq2[*domain.LibraryMove, error] {
+	return func(yield func(*domain.LibraryMove, error) bool) {
+		rows, err := s.db.Query(ctx,
+			`SELECT `+moveSelectColsMV+`, g.match_id, COALESCE(g.game_number,0)
+			 FROM move mv INNER JOIN game g ON mv.game_id = g.id
+			 INNER JOIN match m ON g.match_id = m.id
+			 WHERE mv.tenant_id = $1
+			 ORDER BY `+domain.MatchOrderByClause("")+`,
+			   g.game_number, mv.move_number, mv.id`, tenantID(scope))
+		if err != nil {
+			yield(nil, fmt.Errorf("postgres: list library moves: %w", err))
+			return
+		}
+		defer rows.Close()
+		for rows.Next() {
+			var lm domain.LibraryMove
+			mv, err := scanMove(sqlshared.TrailingScan{Row: rows, Extra: []any{&lm.MatchID, &lm.GameNumber}})
+			if err != nil {
+				yield(nil, fmt.Errorf("postgres: list library moves: %w", err))
+				return
+			}
+			lm.Move = mv
+			if !yield(&lm, nil) {
+				return
+			}
+		}
+		if err := rows.Err(); err != nil {
+			yield(nil, fmt.Errorf("postgres: list library moves: %w", err))
+		}
+	}
+}
+
 // MovesByMatch streams every move of a match in chronological order (by game,
 // then move). One query instead of Games + a Moves call per game: callers
 // regroup by Move.GameID. Mirrors Moves' columns and MovePositions' match join.

@@ -222,6 +222,12 @@ type MatchStore interface {
 	// every move of a library and needs only what the match recorded.
 	RecordedMoves(ctx context.Context, scope string, gameID int64) iter.Seq2[*domain.Move, error]
 
+	// LibraryMoves streams every recorded move of the library, as
+	// RecordedMoves reads them (ErrorMP nil), in one pass: matches in List's
+	// default order, then by game number, then by move number. It serves the
+	// walks over a whole library that would otherwise cost a query per game.
+	LibraryMoves(ctx context.Context, scope string) iter.Seq2[*domain.LibraryMove, error]
+
 	// MovesByMatch streams every move of a match in one pass, ordered by game
 	// then move number, in one query; callers regroup by Move.GameID.
 	MovesByMatch(ctx context.Context, scope string, matchID int64) iter.Seq2[*domain.Move, error]

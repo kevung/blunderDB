@@ -201,6 +201,8 @@ var databaseParity = map[string]parityEntry{
 	"GetLesson":                         {CLI: "lesson show", Server: "/v1/lessons.get"},
 	"UpdateLesson":                      {CLI: "lesson edit", Server: "/v1/lessons.update"},
 	"DeleteLesson":                      {CLI: "lesson delete", Server: "/v1/lessons.delete"},
+	"EachLibraryMove":                   {CLI: "list --type moves --format csv", Why: "the CLI's tabular export; the daemon serves no table, and a client walks /v1/matches.list, matches.games and matches.moves, as storage/remote's LibraryMoves does"},
+	"EachPositionAnalysis":              {CLI: "list --type positions|analyses --format csv", Why: "the CLI's tabular export; a daemon client pages /v1/positions.list with /v1/analyses.loadByIds"},
 	"AddLessonStep":                     {CLI: "lesson add-step", Server: "/v1/lessons.addStep"},
 	"UpdateLessonStep":                  {CLI: "lesson edit-step", Server: "/v1/lessons.updateStep"},
 	"RemoveLessonStep":                  {CLI: "lesson remove-step", Server: "/v1/lessons.removeStep"},

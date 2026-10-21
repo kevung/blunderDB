@@ -260,80 +260,19 @@ func (d *Database) LoadAnalysis(positionID int64) (*PositionAnalysis, error) {
 	if err == nil {
 		defer rows.Close()
 
-		// Collect all moves from the database
-		dbCheckerMoves := make(map[string]bool)
-		dbCubeActions := make(map[string]bool)
-
+		var checkerMoves, cubeActions []string
 		for rows.Next() {
 			var checkerMove sql.NullString
 			var cubeAction sql.NullString
 			if err := rows.Scan(&checkerMove, &cubeAction); err == nil {
-				if checkerMove.Valid && checkerMove.String != "" {
-					dbCheckerMoves[normalizeMove(checkerMove.String)] = true
-				}
-				if cubeAction.Valid && cubeAction.String != "" {
-					dbCubeActions[cubeAction.String] = true
-				}
+				checkerMoves = append(checkerMoves, checkerMove.String)
+				cubeActions = append(cubeActions, cubeAction.String)
 			}
 		}
 		if err := rows.Err(); err != nil {
 			return nil, err
 		}
-
-		// Merge with existing PlayedMoves array
-		existingMoves := make(map[string]bool)
-		for _, m := range analysis.PlayedMoves {
-			existingMoves[normalizeMove(m)] = true
-		}
-		// Backward compatibility: include old single PlayedMove field
-		if analysis.PlayedMove != "" {
-			existingMoves[normalizeMove(analysis.PlayedMove)] = true
-		}
-
-		// Combine all moves
-		for m := range dbCheckerMoves {
-			existingMoves[m] = true
-		}
-
-		// Convert to slice
-		analysis.PlayedMoves = make([]string, 0, len(existingMoves))
-		for m := range existingMoves {
-			analysis.PlayedMoves = append(analysis.PlayedMoves, m)
-		}
-		sort.Strings(analysis.PlayedMoves)
-
-		// Do the same for cube actions
-		existingCubeActions := make(map[string]bool)
-		for _, a := range analysis.PlayedCubeActions {
-			existingCubeActions[a] = true
-		}
-		// Backward compatibility: include old single PlayedCubeAction field
-		if analysis.PlayedCubeAction != "" {
-			existingCubeActions[analysis.PlayedCubeAction] = true
-		}
-
-		for a := range dbCubeActions {
-			existingCubeActions[a] = true
-		}
-
-		analysis.PlayedCubeActions = make([]string, 0, len(existingCubeActions))
-		for a := range existingCubeActions {
-			analysis.PlayedCubeActions = append(analysis.PlayedCubeActions, a)
-		}
-		sort.Strings(analysis.PlayedCubeActions)
-
-		// For backward compatibility, also set the old single fields if there's exactly one
-		if len(analysis.PlayedMoves) == 1 {
-			analysis.PlayedMove = analysis.PlayedMoves[0]
-		} else if len(analysis.PlayedMoves) > 0 {
-			// Set to first one for backward compatibility with old frontend
-			analysis.PlayedMove = analysis.PlayedMoves[0]
-		}
-		if len(analysis.PlayedCubeActions) == 1 {
-			analysis.PlayedCubeAction = analysis.PlayedCubeActions[0]
-		} else if len(analysis.PlayedCubeActions) > 0 {
-			analysis.PlayedCubeAction = analysis.PlayedCubeActions[0]
-		}
+		mergePlayedActions(&analysis, checkerMoves, cubeActions)
 	}
 
 	// Sort AllCubeAnalyses so XG comes first (for existing data in DB)
@@ -342,6 +281,58 @@ func (d *Database) LoadAnalysis(positionID int64) (*PositionAnalysis, error) {
 	}
 
 	return &analysis, nil
+}
+
+// mergePlayedActions folds the moves recorded against a position into its
+// analysis's played actions: the union of what the analysis stored and what
+// the matches played there, normalised, sorted, the legacy single fields set
+// to the first. An empty entry is not a play.
+func mergePlayedActions(analysis *PositionAnalysis, checkerMoves, cubeActions []string) {
+	existingMoves := make(map[string]bool)
+	for _, m := range analysis.PlayedMoves {
+		existingMoves[normalizeMove(m)] = true
+	}
+	// Backward compatibility: include old single PlayedMove field
+	if analysis.PlayedMove != "" {
+		existingMoves[normalizeMove(analysis.PlayedMove)] = true
+	}
+	for _, m := range checkerMoves {
+		if m != "" {
+			existingMoves[normalizeMove(m)] = true
+		}
+	}
+	analysis.PlayedMoves = make([]string, 0, len(existingMoves))
+	for m := range existingMoves {
+		analysis.PlayedMoves = append(analysis.PlayedMoves, m)
+	}
+	sort.Strings(analysis.PlayedMoves)
+
+	existingCubeActions := make(map[string]bool)
+	for _, a := range analysis.PlayedCubeActions {
+		existingCubeActions[a] = true
+	}
+	// Backward compatibility: include old single PlayedCubeAction field
+	if analysis.PlayedCubeAction != "" {
+		existingCubeActions[analysis.PlayedCubeAction] = true
+	}
+	for _, a := range cubeActions {
+		if a != "" {
+			existingCubeActions[a] = true
+		}
+	}
+	analysis.PlayedCubeActions = make([]string, 0, len(existingCubeActions))
+	for a := range existingCubeActions {
+		analysis.PlayedCubeActions = append(analysis.PlayedCubeActions, a)
+	}
+	sort.Strings(analysis.PlayedCubeActions)
+
+	// The old single fields, read by older frontends, hold the first.
+	if len(analysis.PlayedMoves) > 0 {
+		analysis.PlayedMove = analysis.PlayedMoves[0]
+	}
+	if len(analysis.PlayedCubeActions) > 0 {
+		analysis.PlayedCubeAction = analysis.PlayedCubeActions[0]
+	}
 }
 
 func (d *Database) DeleteAnalysis(positionID int64) error {

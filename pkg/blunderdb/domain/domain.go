@@ -1145,6 +1145,15 @@ type MoveAnalysis struct {
 	OpponentBackgammonRate float64 `json:"opponent_backgammon_rate"`
 }
 
+// LibraryMove is a recorded Move with the game and match it was played in:
+// the row of a walk over every move of a library, which reads the match and
+// the game number in the same pass instead of once per game.
+type LibraryMove struct {
+	Move
+	MatchID    int64 `json:"match_id"`
+	GameNumber int32 `json:"game_number"`
+}
+
 // MatchMovePosition combines position data with match context
 type MatchMovePosition struct {
 	Position     Position `json:"position"`       // The position (stored from player on roll POV)
