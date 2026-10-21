@@ -345,9 +345,10 @@
     async function loadMatches() {
         return logger.perf('MatchPanel:loadMatches', async () => {
             try {
-                // Each side runs a full aggregate on a large library (the page's badges, the
-                // tournaments' badges): side by side, the list waits for the slower, not the sum.
-                await Promise.all([matchListStore.reload(), loadTournaments()]);
+                // The tournaments only feed the edit autocomplete, and their badges cost a full
+                // aggregate on a large library: the list must not wait for them.
+                loadTournaments();
+                await matchListStore.reload();
             } catch (error) {
                 logger.error('Error loading matches:', error);
             }

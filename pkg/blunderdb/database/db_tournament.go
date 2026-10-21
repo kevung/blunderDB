@@ -22,8 +22,41 @@ func (d *Database) CreateTournament(name string, date string, location string) (
 	return d.store.Tournaments().Create(context.Background(), "", name, date, location)
 }
 
+// matchStatsFillLot is how many matches one hold of Database.mu fills.
+var matchStatsFillLot = 200
+
+// betweenFillLots runs while prefillMatchStats holds no lock, after each lot; tests pause the fill there.
+var betweenFillLots = func() {}
+
+// prefillMatchStats computes the match_stats rows the tournament badges read,
+// a lot at a time, releasing Database.mu between lots. The badges would fill
+// them all inside one read hold, and a writer queued on Lock (an import, a
+// tournament edit) then keeps every later reader, the match list's page
+// among them, waiting for the whole library. Best effort: a backend that
+// cannot fill, or a read-only database, leaves the badges to their own path.
+func (d *Database) prefillMatchStats() {
+	for {
+		d.mu.RLock()
+		if d.db == nil {
+			d.mu.RUnlock()
+			return
+		}
+		ctx := context.Background()
+		missing, err := d.store.Stats().MissingMatchStats(ctx, "")
+		if err == nil && len(missing) > 0 {
+			err = d.store.Stats().RefreshMatchStats(ctx, "", missing[:min(matchStatsFillLot, len(missing))])
+		}
+		d.mu.RUnlock()
+		if err != nil || len(missing) == 0 {
+			return
+		}
+		betweenFillLots()
+	}
+}
+
 // GetAllTournaments returns all tournaments with their match counts
 func (d *Database) GetAllTournaments() ([]Tournament, error) {
+	d.prefillMatchStats()
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
