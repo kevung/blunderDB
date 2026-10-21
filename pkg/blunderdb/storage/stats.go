@@ -778,6 +778,11 @@ type StatsStore interface {
 	// by Compute's direct per-match pass over the decisions.
 	MatchSeries(ctx context.Context, scope string, filter StatsFilter) ([]MatchStats, error)
 
+	// PerGameType is Compute's PerGameType alone: the same figures, by the
+	// same road (cells or direct pass) Compute takes for that filter, without
+	// the rest of the dashboard.
+	PerGameType(ctx context.Context, scope string, filter StatsFilter) ([]GameTypeStats, error)
+
 	// HeadToHead is the record of two players against each other: the
 	// matches where one sat against the other (aliases of neither are
 	// folded), each player's PR in each of them and over all of them, and
