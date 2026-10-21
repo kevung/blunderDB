@@ -213,7 +213,7 @@ var ErrImportIsOpenDatabase = errors.New("the file to import is the database alr
 // byte), and the source's author, origin and signature — only a note that was
 // the producer's own holds its position here as the user's (ADR-0099).
 func insertImportedComment(ctx context.Context, stores storage.Stores, positionID int64, c importedComment) error {
-	ctx = storage.WithCommentSignature(storage.WithCommentAuthor(ctx, c.author), c.signature)
+	ctx = storage.WithCarriedComment(ctx, c.author, c.signature)
 	_, err := stores.Comments().AddFrom(ctx, "", positionID, c.text, domain.CommentOrigin(c.origin))
 	return err
 }

@@ -447,7 +447,7 @@ func mergeDBCommentsPreloaded(ctx context.Context, tx storage.Tx, scope string, 
 		if trimmed == "" || strings.Contains(existing, trimmed) {
 			continue
 		}
-		if _, err := tx.Comments().AddFrom(storage.WithCommentSignature(storage.WithCommentAuthor(ctx, c.Author), c.Signature), scope, positionID, text, c.Origin); err != nil {
+		if _, err := tx.Comments().AddFrom(storage.WithCarriedComment(ctx, c.Author, c.Signature), scope, positionID, text, c.Origin); err != nil {
 			return err
 		}
 		if existing == "" {
