@@ -94,3 +94,23 @@ Mesure (`measure-startup.mjs`, médianes de 5, builds en alternance, machine cha
 « Prêt » suit désormais le premier rendu (avant : il le précédait de 0,1 à 0,7 s). La
 durée des tâches longues après « prêt » n'a pas été remesurée (`preload.mjs` n'est pas dans le dépôt).
 
+
+## Le panneau Matchs derrière l'accueil
+
+Sans base, l'onglet actif par défaut (Matchs, le plus gros chunk : 90 kB) était chargé au
+montage, avant « prêt », sous un écran d'accueil qui le cache. Il est désormais laissé au
+préchargement oisif (où il passe toujours en premier) et demandé dès qu'une base s'ouvre ou
+que l'accueil est écarté (`activePanelToLoad`, `TabbedPanel.homeScreen.test.js`).
+
+Mesure (`measure-startup.mjs`, builds en alternance, machine chargée et inégale d'une série à
+l'autre), en ms ; l'écart « App montée → prêt » est le seul que le changement touche :
+
+| Série | prêt avant | prêt après | montée → prêt avant | montée → prêt après |
+|---|---:|---:|---:|---:|
+| ×1, 11 essais | 1429 | 1288 | 288 | 206 |
+| ×1, 11 essais, ordre inversé | 621 | 623 | 74 | 64 |
+| ×4, 9 essais | 2704 | 2155 | 1144 | 778 |
+| ×4, 9 essais, ordre inversé | 989 | 869 | 291 | 192 |
+
+JS chargé avant « prêt » : 1223 → 1098 kB, à chaque essai. Le gain sur « prêt » est dans le
+bruit à ×1, de l'ordre de 0,1 s à ×4.

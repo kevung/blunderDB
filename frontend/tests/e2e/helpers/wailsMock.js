@@ -392,7 +392,15 @@ function waitForDeferredAfterGoto(page) {
         page[name] = async (...args) => {
             const response = await navigate(...args);
             if (!page.url().startsWith('http://localhost')) return response;
-            const info = test.info();
+            /** @type {import('@playwright/test').TestInfo} */
+            let info;
+            try {
+                info = test.info();
+            } catch {
+                // Outside a spec (scripts/measure-startup.mjs on a production build): no deadline to
+                // move, and the caller times the app as it loads.
+                return response;
+            }
             // Debugging disables the deadline (0): leave it so.
             const bounded = info.timeout > 0;
             const started = Date.now();
