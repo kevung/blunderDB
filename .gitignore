@@ -12,6 +12,7 @@ tmp
 build/bin/
 build/linux/completions/
 frontend/dist/
+frontend/dist-measure/
 node_modules/
 frontend/playwright-report/
 frontend/test-results/
