@@ -20,9 +20,10 @@ type latencyStats struct {
 
 // endpointStat is the per-endpoint breakdown.
 type endpointStat struct {
-	Count   int          `json:"count"`
-	Errors  int          `json:"errors"`
-	Latency latencyStats `json:"latency_ms"`
+	Count        int            `json:"count"`
+	Errors       int            `json:"errors"`
+	ErrorsByCode map[string]int `json:"errors_by_code,omitempty"`
+	Latency      latencyStats   `json:"latency_ms"`
 }
 
 // report is the JSON document written at the end of a run.
@@ -36,15 +37,20 @@ type report struct {
 	TotalRequests int                     `json:"total_requests"`
 	RPSAchieved   float64                 `json:"rps_achieved"`
 	Errors        int                     `json:"errors"`
+	ErrorsByCode  map[string]int          `json:"errors_by_code,omitempty"`
 	Latency       latencyStats            `json:"latency_ms"`
 	ByEndpoint    map[string]endpointStat `json:"by_endpoint"`
 }
 
 // sample is one recorded request outcome.
 type sample struct {
-	op   string
-	dur  time.Duration
-	fail bool
+	op     string
+	dur    time.Duration
+	fail   bool
+	status int
+	// code classes a failure: "<status> <envelope code>", "stream <code>",
+	// "timeout" or "transport".
+	code string
 }
 
 // percentile returns the p-th percentile (0..100) of a sorted millisecond
@@ -78,6 +84,8 @@ func buildReport(cfg config, elapsed time.Duration, samples []sample) report {
 	all := make([]time.Duration, 0, len(samples))
 	byOpDur := map[string][]time.Duration{}
 	byOpErr := map[string]int{}
+	byOpCode := map[string]map[string]int{}
+	byCode := map[string]int{}
 	errors := 0
 	for _, s := range samples {
 		all = append(all, s.dur)
@@ -85,15 +93,21 @@ func buildReport(cfg config, elapsed time.Duration, samples []sample) report {
 		if s.fail {
 			errors++
 			byOpErr[s.op]++
+			if byOpCode[s.op] == nil {
+				byOpCode[s.op] = map[string]int{}
+			}
+			byOpCode[s.op][s.code]++
+			byCode[s.code]++
 		}
 	}
 
 	byEndpoint := map[string]endpointStat{}
 	for op, durs := range byOpDur {
 		byEndpoint[op] = endpointStat{
-			Count:   len(durs),
-			Errors:  byOpErr[op],
-			Latency: statsOf(durs),
+			Count:        len(durs),
+			Errors:       byOpErr[op],
+			ErrorsByCode: byOpCode[op],
+			Latency:      statsOf(durs),
 		}
 	}
 
@@ -112,6 +126,7 @@ func buildReport(cfg config, elapsed time.Duration, samples []sample) report {
 		TotalRequests: len(samples),
 		RPSAchieved:   rps,
 		Errors:        errors,
+		ErrorsByCode:  byCode,
 		Latency:       statsOf(all),
 		ByEndpoint:    byEndpoint,
 	}
@@ -149,11 +164,11 @@ func (r report) markdown() string {
 	fmt.Fprintf(&b, "| max | %.1f ms |\n\n", r.Latency.Max)
 
 	fmt.Fprintf(&b, "## By endpoint\n\n")
-	fmt.Fprintf(&b, "| Endpoint | Count | Errors | p50 | p95 | p99 |\n|---|---|---|---|---|---|\n")
+	fmt.Fprintf(&b, "| Endpoint | Count | Errors | p50 | p95 | p99 | max | Error codes |\n|---|---|---|---|---|---|---|---|\n")
 	for _, op := range sortedKeys(r.ByEndpoint) {
 		e := r.ByEndpoint[op]
-		fmt.Fprintf(&b, "| %s | %d | %d | %.1f | %.1f | %.1f |\n",
-			op, e.Count, e.Errors, e.Latency.P50, e.Latency.P95, e.Latency.P99)
+		fmt.Fprintf(&b, "| %s | %d | %d | %.1f | %.1f | %.1f | %.1f | %s |\n",
+			op, e.Count, e.Errors, e.Latency.P50, e.Latency.P95, e.Latency.P99, e.Latency.Max, codesLabel(e.ErrorsByCode))
 	}
 	return b.String()
 }
@@ -172,4 +187,17 @@ func sortedKeys(m map[string]endpointStat) []string {
 	}
 	sort.Strings(keys)
 	return keys
+}
+
+func codesLabel(m map[string]int) string {
+	keys := make([]string, 0, len(m))
+	for k := range m {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	parts := make([]string, 0, len(keys))
+	for _, k := range keys {
+		parts = append(parts, fmt.Sprintf("%s ×%d", k, m[k]))
+	}
+	return strings.Join(parts, ", ")
 }
