@@ -46,6 +46,14 @@ func (g *gameLosses) elo(seat, matchLength int) domain.MWC7 {
 	if !g.priced[seat] {
 		return domain.MWC7{}
 	}
+	games, ss := g.spread(seat)
+	return domain.MatchMWC7FromSpread(g.total[seat], matchLength, games, ss)
+}
+
+// spread is domain.MatchMWC7Spread over seat's losses, one per game the
+// match's counted decisions reach, in game order: what match_stats keeps so
+// a badge gives back elo without the games.
+func (g *gameLosses) spread(seat int) (games int, ss float64) {
 	ids := make([]int64, 0, len(g.games))
 	for id := range g.games {
 		ids = append(ids, id)
@@ -55,7 +63,7 @@ func (g *gameLosses) elo(seat, matchLength int) domain.MWC7 {
 	for i, id := range ids {
 		losses[i] = g.bySeat[seat][id]
 	}
-	return domain.MatchMWC7(g.total[seat], matchLength, losses)
+	return domain.MatchMWC7Spread(losses)
 }
 
 // eloUnit is one player's (one seat's) MWC loss over one match.

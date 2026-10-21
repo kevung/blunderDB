@@ -176,6 +176,7 @@ func RunContractTestsOnly(t *testing.T, factory func() storage.Storage, keep fun
 		{"Search/TagFilterIsDelimited", testTagSearchIsDelimited},
 		{"Search/CommentRestrictionLosesNothing", testCommentRestrictionLosesNothing},
 		{"Stats/MatchDetail", testStatsMatchDetail},
+		{"Stats/BadgesFollowWrites", testStatsBadgesFollowWrites},
 		{"Stats/MatchStatsOracle", testMatchStatsOracle},
 		{"Stats/HeadToHeadWindowsRanking", testHeadToHeadWindowsRanking},
 		{"Stats/CountDrilldowns", testStatsCountDrilldowns},

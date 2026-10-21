@@ -96,22 +96,39 @@ func newMWC7(loss7, low, high float64, hasInterval bool, matches int) MWC7 {
 // bootstrap's, G/(G−1)·Σ(l_g − l̄)² for the sum of G games, computed rather
 // than drawn so the figure is deterministic and costs one pass.
 func MatchMWC7(loss float64, matchLength int, gameLosses []float64) MWC7 {
-	if !MWC7Defined(matchLength) {
-		return MWC7{}
-	}
-	k := mwc7Scale(matchLength)
+	games, ss := MatchMWC7Spread(gameLosses)
+	return MatchMWC7FromSpread(loss, matchLength, games, ss)
+}
+
+// MatchMWC7Spread is what MatchMWC7 keeps of the per-game split: the number
+// of games and the sum of their squared deviations from the mean game. A
+// store that keeps these two figures beside the loss gives back the same
+// MWC7 through MatchMWC7FromSpread without the games.
+func MatchMWC7Spread(gameLosses []float64) (games int, ss float64) {
 	g := len(gameLosses)
 	if g < IntervalMinUnits {
-		return newMWC7(k*loss, 0, 0, false, 1)
+		return g, 0
 	}
 	mean := 0.0
 	for _, l := range gameLosses {
 		mean += l
 	}
 	mean /= float64(g)
-	ss := 0.0
 	for _, l := range gameLosses {
 		ss += (l - mean) * (l - mean)
+	}
+	return g, ss
+}
+
+// MatchMWC7FromSpread is MatchMWC7 from the spread MatchMWC7Spread gave.
+func MatchMWC7FromSpread(loss float64, matchLength, games int, ss float64) MWC7 {
+	if !MWC7Defined(matchLength) {
+		return MWC7{}
+	}
+	k := mwc7Scale(matchLength)
+	g := games
+	if g < IntervalMinUnits {
+		return newMWC7(k*loss, 0, 0, false, 1)
 	}
 	half := mwc7Z * math.Sqrt(float64(g)/float64(g-1)*ss)
 	return newMWC7(k*loss, k*(loss-half), k*(loss+half), spread(half, loss), 1)

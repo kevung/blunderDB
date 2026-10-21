@@ -724,14 +724,16 @@ type StatsStore interface {
 
 	// MatchBadges returns the per-player PR/MWC badge for the given matches,
 	// keyed by match id. A nil/empty matchIDs computes badges for every match in
-	// scope (a whole-database scan); pass the ids of the page being displayed to
-	// bound the work. Matches with no counted decisions are absent from the map
-	// (their badge stays zero-valued).
+	// scope; pass the ids of the page being displayed to bound the work. A
+	// writer reads them from MatchStats, filling first the rows those matches
+	// lack; a reader that cannot write and finds rows missing computes them
+	// from the decisions, with the same result. Matches with no counted
+	// decisions are absent from the map (their badge stays zero-valued).
 	MatchBadges(ctx context.Context, scope string, matchIDs []int64) (map[int64]MatchBadge, error)
 
 	// TournamentBadges returns the aggregate PR/MWC badge for every tournament in
-	// scope, keyed by tournament id. Tournaments with no counted decisions are
-	// absent from the map.
+	// scope, keyed by tournament id, read from MatchStats as MatchBadges is.
+	// Tournaments with no counted decisions are absent from the map.
 	TournamentBadges(ctx context.Context, scope string) (map[int64]TournamentBadge, error)
 
 	// RecurringErrors groups the filter's errors (counted decisions costing
@@ -858,6 +860,14 @@ type MatchStatsRow struct {
 	SnowieErrorMP int64 `json:"snowie_error_mp"`
 	SnowieMoves   int   `json:"snowie_moves"`
 	CheckerMoves  int   `json:"checker_moves"`
+	// The seat's MWC loss over its counted decisions, MWCPriced false when
+	// none has a value at its score, and the per-game spread
+	// domain.MatchMWC7Spread keeps (MWCGames counts the games either seat's
+	// counted decisions reach): the badges' MWC7 without the decisions.
+	MWCLoss   float64 `json:"mwc_loss"`
+	MWCPriced bool    `json:"mwc_priced"`
+	MWCGames  int     `json:"mwc_games"`
+	MWCGameSS float64 `json:"mwc_game_ss"`
 }
 
 // HeadToHead is the record of two players against each other (StatsStore.HeadToHead).

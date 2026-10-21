@@ -60,8 +60,9 @@ const InvalidateMatchStatsOfPositionsSQL = `DELETE FROM match_stats WHERE match_
 const InvalidateMatchStatsOfPositionsSuffix = `)`
 
 // DropOlderShapeMatchStatsSQL deletes the rows an earlier build of the same
-// schema version wrote: before the error split and the Snowie parts were
-// columns (they are NULL there and nowhere else), or before the breakdown
+// schema version wrote, or the rows an older schema left: before the error
+// split, the Snowie parts and the MWC spread were columns (mwc_games and
+// checker_moves are NULL there and nowhere else), or before the breakdown
 // cells were written beside them (a seat with a counted decision and no
 // phase cell, see match_stats_cells.go). Run at every open, after
 // the columns exist; the matches it empties are then missing, recomputed by
@@ -71,7 +72,7 @@ const DropOlderShapeMatchStatsSQL = `DELETE FROM match_stats WHERE ` + OlderShap
 
 // OlderShapeMatchStatsPredicate selects those rows, for a probe that writes
 // nothing when there is nothing to repair. Kind 1 is cellPhase.
-const OlderShapeMatchStatsPredicate = `checker_moves IS NULL
+const OlderShapeMatchStatsPredicate = `checker_moves IS NULL OR mwc_games IS NULL
 	OR (decisions > 0 AND NOT EXISTS (SELECT 1 FROM match_stats_cell c
 		WHERE c.match_id = match_stats.match_id AND c.seat = match_stats.seat AND c.kind = 1))`
 
@@ -285,9 +286,42 @@ func (s *StatsStore) computeMatchStatsRows(ctx context.Context, db Execer, scope
 		return nil, fmt.Errorf("match stats luck: %w", err)
 	}
 
+	// The MWC loss of the counted decisions, per seat and game, converted as
+	// MatchBadges converts them: what the badges and the players table's
+	// MWC7 read back instead of the decisions. Summed in move order, so a
+	// recomputation (a seat swap, a refill) gives the same float to the bit.
+	games := map[int64]*gameLosses{}
+	if err := scanEach(ctx, d,
+		`SELECT g.match_id, `+seatExpr+`, mv.game_id, `+statsErrExpr+`, COALESCE(p.score_1, 0), COALESCE(p.score_2, 0), `+
+			cubeMultiplierExpr+`, COALESCE(p.match_length, m.match_length, 0) `+statsBaseJoin+where+
+			` ORDER BY g.match_id, mv.game_id, mv.id`,
+		whereArgs, func(r Rows) error {
+			var id, game, errMP int64
+			var seat, away0, away1, cube, length int
+			if err := r.Scan(&id, &seat, &game, &errMP, &away0, &away1, &cube, &length); err != nil {
+				return err
+			}
+			gl := games[id]
+			if gl == nil {
+				gl = newGameLosses()
+				games[id] = gl
+			}
+			gl.add(seat-1, game, decisionMWCLoss(errMP, away0, away1, cube, length))
+			return nil
+		}); err != nil {
+		return nil, fmt.Errorf("match stats MWC: %w", err)
+	}
+
 	out := make([]storage.MatchStatsRow, 0, len(rows))
 	for k, row := range rows {
 		row.PR = pr(row.ErrorMP, row.Decisions)
+		if gl := games[k.match]; gl != nil {
+			row.MWCGames = len(gl.games)
+			if seat := k.seat - 1; gl.priced[seat] {
+				row.MWCPriced, row.MWCLoss = true, gl.total[seat]
+				_, row.MWCGameSS = gl.spread(seat)
+			}
+		}
 		if p, ok := best[k]; ok {
 			row.AnalysisEngine, row.AnalysisDepth = p.engine, p.depth
 		}
@@ -335,12 +369,16 @@ func (s *StatsStore) refreshMatchStatsBatch(ctx context.Context, scope string, m
 		tcols, targs := tx.TenantColumns(scope)
 		cols := append(append([]string{}, tcols...), "match_id", "seat", "decisions", "checker_decisions", "cube_decisions",
 			"error_mp", "pr", "luck_mp", "luck_rolls", "blunders", "analysis_engine", "analysis_depth",
-			"checker_error_mp", "cube_error_mp", "errors", "snowie_error_mp", "snowie_moves", "checker_moves")
+			"checker_error_mp", "cube_error_mp", "errors", "snowie_error_mp", "snowie_moves", "checker_moves",
+			"mwc_loss", "mwc_games", "mwc_game_ss")
 		insert := `INSERT INTO match_stats (` + strings.Join(cols, ", ") + `) VALUES (` + Placeholders(len(cols)) + `)`
 		for _, r := range rows {
-			var prv, eng, depth any
+			var prv, eng, depth, mwc, mwcSS any
 			if r.Decisions > 0 {
 				prv = r.PR
+			}
+			if r.MWCPriced {
+				mwc, mwcSS = r.MWCLoss, r.MWCGameSS
 			}
 			if r.AnalysisEngine != "" {
 				eng = r.AnalysisEngine
@@ -350,7 +388,8 @@ func (s *StatsStore) refreshMatchStatsBatch(ctx context.Context, scope string, m
 			}
 			args := append(append([]any{}, targs...), r.MatchID, r.Seat, r.Decisions, r.CheckerDecisions, r.CubeDecisions,
 				r.ErrorMP, prv, r.LuckMP, r.LuckRolls, r.Blunders, eng, depth,
-				r.CheckerErrorMP, r.CubeErrorMP, r.Errors, r.SnowieErrorMP, r.SnowieMoves, r.CheckerMoves)
+				r.CheckerErrorMP, r.CubeErrorMP, r.Errors, r.SnowieErrorMP, r.SnowieMoves, r.CheckerMoves,
+				mwc, r.MWCGames, mwcSS)
 			if _, err := tx.Exec(ctx, insert, args...); err != nil {
 				return fmt.Errorf("match stats insert: %w", err)
 			}
@@ -481,6 +520,68 @@ func (s *StatsStore) matchStatsReadable(ctx context.Context, scope string) (bool
 	return !olderShape, nil
 }
 
+// matchStatsReadableFor is matchStatsReadable for a read of matchIDs alone:
+// a writer fills the rows those matches lack, not the whole library's, so a
+// page of the match list costs that page. A reader that cannot write answers
+// yes only when none of them lacks its rows and the table holds no row of an
+// older shape. No ids is the whole scope.
+func (s *StatsStore) matchStatsReadableFor(ctx context.Context, scope string, matchIDs []int64) (bool, error) {
+	if len(matchIDs) == 0 {
+		return s.matchStatsReadable(ctx, scope)
+	}
+	missing, err := s.missingMatchStatsAmong(ctx, scope, matchIDs)
+	if err != nil {
+		return false, err
+	}
+	if RefusesWrites(ctx, s.DB) {
+		if len(missing) > 0 {
+			return false, nil
+		}
+		var olderShape bool
+		if err := s.DB.QueryRow(ctx, `SELECT EXISTS (SELECT 1 FROM match_stats WHERE `+OlderShapeMatchStatsPredicate+`)`).Scan(&olderShape); err != nil {
+			return false, errf(s.DB, "match stats shape", err)
+		}
+		afterMatchStatsProbe()
+		return !olderShape, nil
+	}
+	// A refresh can drop the rows of a match it shares a position with
+	// (sharePositions); the next round recomputes them, which drops nothing
+	// more, as in FillMatchStats.
+	for len(missing) > 0 {
+		if err := s.RefreshMatchStats(ctx, scope, missing); err != nil {
+			return false, err
+		}
+		if missing, err = s.missingMatchStatsAmong(ctx, scope, matchIDs); err != nil {
+			return false, err
+		}
+	}
+	return true, nil
+}
+
+// missingMatchStatsAmong is MissingMatchStats restricted to matchIDs.
+func (s *StatsStore) missingMatchStatsAmong(ctx context.Context, scope string, matchIDs []int64) ([]int64, error) {
+	tenant, targs := s.DB.TenantFilter("m", scope)
+	var ids []int64
+	for start := 0; start < len(matchIDs); start += matchStatsBatch {
+		chunk := matchIDs[start:min(start+matchStatsBatch, len(matchIDs))]
+		err := scanEach(ctx, s.DB,
+			`SELECT m.id FROM match m WHERE `+tenant+` AND m.id IN (`+Placeholders(len(chunk))+`)`+
+				` AND NOT EXISTS (SELECT 1 FROM match_stats ms WHERE ms.match_id = m.id) ORDER BY m.id`,
+			append(append([]any{}, targs...), int64Args(chunk)...), func(r Rows) error {
+				var id int64
+				if err := r.Scan(&id); err != nil {
+					return err
+				}
+				ids = append(ids, id)
+				return nil
+			})
+		if err != nil {
+			return nil, errf(s.DB, "missing match stats", err)
+		}
+	}
+	return ids, nil
+}
+
 // afterMatchStatsProbe runs between a reader's completeness probe and its
 // read; a test slips a writer's invalidation in there.
 var afterMatchStatsProbe = func() {}
@@ -523,17 +624,21 @@ func (s *StatsStore) MatchStats(ctx context.Context, scope string, matchIDs []in
 	tenant, args := s.DB.TenantFilter("ms", scope)
 	q := `SELECT ms.match_id, ms.seat, ms.decisions, ms.checker_decisions, ms.cube_decisions, ms.error_mp,
 		COALESCE(ms.pr, 0), ms.luck_mp, ms.luck_rolls, ms.blunders, COALESCE(ms.analysis_engine, ''), COALESCE(ms.analysis_depth, 0),
-		ms.checker_error_mp, ms.cube_error_mp, ms.errors, ms.snowie_error_mp, ms.snowie_moves, ms.checker_moves
+		ms.checker_error_mp, ms.cube_error_mp, ms.errors, ms.snowie_error_mp, ms.snowie_moves, ms.checker_moves,
+		COALESCE(ms.mwc_loss, 0), CASE WHEN ms.mwc_loss IS NULL THEN 0 ELSE 1 END, COALESCE(ms.mwc_games, 0), COALESCE(ms.mwc_game_ss, 0)
 		FROM match_stats ms WHERE ` + tenant
 	var out []storage.MatchStatsRow
 	collect := func(query string, qargs []any) error {
 		return scanEach(ctx, s.DB, query, qargs, func(r Rows) error {
 			var row storage.MatchStatsRow
+			var priced int
 			if err := r.Scan(&row.MatchID, &row.Seat, &row.Decisions, &row.CheckerDecisions, &row.CubeDecisions, &row.ErrorMP,
 				&row.PR, &row.LuckMP, &row.LuckRolls, &row.Blunders, &row.AnalysisEngine, &row.AnalysisDepth,
-				&row.CheckerErrorMP, &row.CubeErrorMP, &row.Errors, &row.SnowieErrorMP, &row.SnowieMoves, &row.CheckerMoves); err != nil {
+				&row.CheckerErrorMP, &row.CubeErrorMP, &row.Errors, &row.SnowieErrorMP, &row.SnowieMoves, &row.CheckerMoves,
+				&row.MWCLoss, &priced, &row.MWCGames, &row.MWCGameSS); err != nil {
 				return err
 			}
+			row.MWCPriced = priced == 1
 			out = append(out, row)
 			return nil
 		})
