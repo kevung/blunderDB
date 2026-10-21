@@ -238,7 +238,7 @@ func (s *analysisStore) write(ctx context.Context, positionID int64, a *domain.P
 			return fmt.Errorf("sqlite: save analysis: %w", referenced(err))
 		}
 		// The moves played here are scored against the analysis just written.
-		if _, err := sqlshared.RescorePlayedDecisions(ctx, binder{tx}.shared(), map[int64]*domain.PositionAnalysis{positionID: a}); err != nil {
+		if _, err := sqlshared.RescorePlayedDecisions(ctx, binder{db: tx}.shared(), map[int64]*domain.PositionAnalysis{positionID: a}); err != nil {
 			return err
 		}
 
@@ -367,7 +367,7 @@ func (s *analysisStore) Delete(ctx context.Context, scope string, positionID int
 			`DELETE FROM analysis WHERE position_id = ?`, positionID); err != nil {
 			return fmt.Errorf("sqlite: delete analysis for position %d: %w", positionID, err)
 		}
-		_, err := sqlshared.RescorePlayedDecisions(ctx, binder{tx}.shared(), map[int64]*domain.PositionAnalysis{positionID: nil})
+		_, err := sqlshared.RescorePlayedDecisions(ctx, binder{db: tx}.shared(), map[int64]*domain.PositionAnalysis{positionID: nil})
 		return err
 	})
 }
@@ -528,7 +528,7 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, _ string)
 				repaired++
 			}
 		}
-		n, err := sqlshared.RescorePlayedDecisions(ctx, binder{s.db}.shared(), analyses)
+		n, err := sqlshared.RescorePlayedDecisions(ctx, binder{db: s.db}.shared(), analyses)
 		if err != nil {
 			return repaired, fmt.Errorf("sqlite: repair: %w", err)
 		}
@@ -776,5 +776,5 @@ func (s *analysisStore) engineBatch(ctx context.Context, last int64, enginePrefi
 
 // ReencodeAnalyses — see storage.AnalysisStore.
 func (s *analysisStore) ReencodeAnalyses(ctx context.Context, scope string, after int64, limit int) (int64, int, error) {
-	return sqlshared.ReencodeAnalyses(ctx, binder{s.db}.shared(), scope, after, limit)
+	return sqlshared.ReencodeAnalyses(ctx, binder{db: s.db}.shared(), scope, after, limit)
 }

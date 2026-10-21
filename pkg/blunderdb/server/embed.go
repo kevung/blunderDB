@@ -140,6 +140,10 @@ func Bootstrap(ctx context.Context, cfg Config) (http.Handler, io.Closer, error)
 		logger.Info("blunderdb embed: Row-Level Security enabled")
 	}
 
+	// No HeavySlots and no start fill of match_stats: the embedding host runs
+	// on PostgreSQL in production, whose pool its own settings size, and each tenant's
+	// first statistics reader fills that tenant's rows (one fill per scope at
+	// a time, sqlshared.FillMatchStats).
 	srv, err := internalserver.New(internalserver.Options{
 		Storage:            st,
 		Logger:             logger,

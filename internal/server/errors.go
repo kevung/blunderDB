@@ -33,8 +33,10 @@ const (
 	// CodeIdempotencyMismatch: an Idempotency-Key already names another
 	// request (method, path or body differ); mint a new key (422).
 	CodeIdempotencyMismatch = "idempotency_key_reused"
-	// CodeUnavailable: the daemon is stopping and takes nothing new; retry
-	// against another instance or later (503).
+	// CodeUnavailable: the daemon is stopping and takes nothing new, or the
+	// database was held by another writer past its wait; retry against
+	// another instance or later (503, with Retry-After when it is the
+	// database).
 	CodeUnavailable = "unavailable"
 	// CodeQuotaExceeded: the tenant spent its engine time for the day, or
 	// runs as many imports as it may (429). details.quota names which.
@@ -99,6 +101,8 @@ func codeForErr(err error) string {
 		return CodeConflict
 	case errors.Is(err, storage.ErrInvalid):
 		return CodeInvalid
+	case errors.Is(err, storage.ErrBusy):
+		return CodeUnavailable
 	default:
 		return CodeInternal
 	}
@@ -150,6 +154,13 @@ func recordErr(w http.ResponseWriter, err error) {
 // server-side log, never to the wire — see errorBodyFor.
 const internalErrorMessage = "internal error"
 
+// busyMessage is the text of a storage.ErrBusy answer, and busyRetryAfter
+// its Retry-After: a writer holds the database for seconds at most.
+const (
+	busyMessage    = "the database is busy with another write; retry shortly"
+	busyRetryAfter = "2"
+)
+
 // notFoundMessage replaces a not_found message that carries a driver error.
 const notFoundMessage = "not found"
 
@@ -196,12 +207,25 @@ func errorBodyFor(w http.ResponseWriter, err error) errorBody {
 			msg = pub.ClientMessage()
 		}
 	}
+	if errors.Is(err, storage.ErrBusy) {
+		// The driver's text names the lock, not anything the client can act
+		// on beyond retrying.
+		if es, ok := w.(errSetter); ok {
+			es.SetErr(err)
+		}
+		msg = busyMessage
+	}
 	body := errorBody{Code: code, Message: msg}
 	// An error that knows more than its message (a conflict's current
 	// revision) hands it over as details.
 	var d interface{ ErrorDetails() map[string]any }
 	if code != CodeInternal && errors.As(err, &d) {
 		body.Details = d.ErrorDetails()
+	}
+	if errors.Is(err, storage.ErrBusy) {
+		// Tells a lost write from the other unavailable answers: only this
+		// one may be retried as is.
+		body.Details = map[string]any{"reason": "busy"}
 	}
 	return body
 }
@@ -210,6 +234,9 @@ func errorBodyFor(w http.ResponseWriter, err error) errorBody {
 // masking, then the matching HTTP status.
 func writeStorageError(w http.ResponseWriter, err error) {
 	body := errorBodyFor(w, err)
+	if errors.Is(err, storage.ErrBusy) {
+		w.Header().Set("Retry-After", busyRetryAfter)
+	}
 	writeErrorDetails(w, body.Code, body.Message, body.Details)
 }
 

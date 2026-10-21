@@ -10,3 +10,11 @@ func SetAfterMatchStatsProbe(f func()) (restore func()) {
 
 // CubeMultiplierExpr is cubeMultiplierExpr, over aliases p and mv.
 var CubeMultiplierExpr = cubeMultiplierExpr
+
+// SetBeforeMatchStatsFill installs f where a fill finds matches to compute,
+// and returns what restores the previous hook.
+func SetBeforeMatchStatsFill(f func(missing int)) (restore func()) {
+	prev := beforeMatchStatsFill
+	beforeMatchStatsFill = f
+	return func() { beforeMatchStatsFill = prev }
+}

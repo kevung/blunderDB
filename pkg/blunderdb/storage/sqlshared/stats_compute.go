@@ -114,7 +114,7 @@ func (s *StatsStore) run(ctx context.Context, scope string, filter storage.Stats
 
 	// One transaction pins one connection, which the session-local selection
 	// tables need, and gives every pass the same snapshot.
-	err = s.DB.Transact(ctx, func(tx Execer) error {
+	err = transactRead(ctx, s.DB, func(tx Execer) error {
 		ts := &StatsStore{DB: tx}
 		q.join = statsBaseJoin
 		// A reader asks within the snapshot it then reads.

@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"sync/atomic"
 	"time"
 
 	sqlitedriver "modernc.org/sqlite"
@@ -15,7 +16,10 @@ import (
 // sqlshared.Execer the backend-agnostic stores run against, and answers the
 // dialect questions for SQLite: '?' placeholders as-is, no tenant column on the
 // domain tables, text dates and integer aggregates that need no cast.
-type shared struct{ db execer }
+type shared struct {
+	db    execer
+	probe *writeProbe
+}
 
 var _ sqlshared.Execer = shared{}
 
@@ -138,15 +142,72 @@ func (s unpreparedStmt) Exec(ctx context.Context, args ...any) error {
 }
 func (unpreparedStmt) Close() error { return nil }
 
+// Transact takes the write lock at BEGIN (withTx): the shared stores'
+// transactions write, most after a read. A connection that refuses writes
+// gets a deferred one, which is all it can open.
 func (a shared) Transact(ctx context.Context, fn func(sqlshared.Execer) error) error {
-	return withTx(ctx, a.db, func(tx execer) error { return fn(shared{tx}) })
+	run := func(tx execer) error { return fn(shared{db: tx}) }
+	if _, pool := a.db.(*sql.DB); !pool {
+		return run(a.db) // inside a caller's transaction, which is atomic
+	}
+	if a.RefusesWrites(ctx) {
+		return withDeferredTx(ctx, a.db, run)
+	}
+	return withTx(ctx, a.db, run)
+}
+
+// TransactRead is Transact for a transaction that only reads: one snapshot,
+// one pinned connection, and no write lock held for its length.
+func (a shared) TransactRead(ctx context.Context, fn func(sqlshared.Execer) error) error {
+	return withDeferredTx(ctx, a.db, func(tx execer) error { return fn(shared{db: tx}) })
 }
 
 // RefusesWrites reports the connection's query_only setting, which the
-// read-only fallback turns on.
+// read-only fallback turns on. Over the pool the answer is read once: the
+// setting comes with the DSN and holds for the handle's life, and asking it
+// before every statistics read would take a pooled connection each time.
 func (a shared) RefusesWrites(ctx context.Context) bool {
+	if a.probe != nil {
+		if v, ok := a.probe.get(); ok {
+			return v
+		}
+	}
 	var on int
-	return a.db.QueryRowContext(ctx, `PRAGMA query_only`).Scan(&on) == nil && on != 0
+	if err := a.db.QueryRowContext(ctx, `PRAGMA query_only`).Scan(&on); err != nil {
+		return false
+	}
+	if a.probe != nil {
+		a.probe.set(on != 0)
+	}
+	return on != 0
+}
+
+// writeProbe caches a handle's query_only answer once it has been read.
+type writeProbe struct{ state atomic.Int32 } // 0 unknown, 1 writes, 2 refuses
+
+func (p *writeProbe) get() (refuses, known bool) {
+	switch p.state.Load() {
+	case 1:
+		return false, true
+	case 2:
+		return true, true
+	}
+	return false, false
+}
+
+func (p *writeProbe) set(refuses bool) {
+	if refuses {
+		p.state.Store(2)
+	} else {
+		p.state.Store(1)
+	}
+}
+
+// FillKey names the file the pool reaches: one SQLite file is one tenant, so
+// the scope does not tell two fills apart. A transaction has no key.
+func (a shared) FillKey(string) (any, bool) {
+	sqlDB, ok := a.db.(*sql.DB)
+	return sqlDB, ok
 }
 
 // LockContention reports whether err is SQLITE_BUSY, extended codes

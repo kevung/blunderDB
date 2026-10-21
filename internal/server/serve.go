@@ -10,6 +10,7 @@ import (
 	"net/http/pprof"
 	"os"
 	"os/signal"
+	"runtime"
 	"strconv"
 	"strings"
 	"sync"
@@ -59,6 +60,7 @@ Flags:
 type serveConfig struct {
 	quotas          TenantQuotas
 	analysisWorkers int
+	heavySlots      int
 	analysisWeights map[string]int
 	backend         string
 	dsn             string
@@ -129,6 +131,7 @@ func parseServeArgs(args []string) (*serveConfig, error) {
 		quotaPositions  = fs.Int64("quota-positions", int64(envIntOr("BLUNDERDB_QUOTA_POSITIONS", 0)), quotaPositionsHelp)
 		quotaBytes      = fs.Int64("quota-bytes", int64(envIntOr("BLUNDERDB_QUOTA_BYTES", 0)), "per-tenant bound on disk space held (tables and indexes, shared out by row count on PostgreSQL), checked when an import starts like --quota-positions: refused (413) past it (0 = unlimited)")
 		quotaAnalysis   = fs.Int64("quota-analysis-seconds", int64(envIntOr("BLUNDERDB_QUOTA_ANALYSIS_SECONDS", 0)), "per-tenant engine CPU seconds per UTC day (each unit's wall time plus the idle workers its search spread over), over sweeps, comparisons, cube matrices, evaluations and rollouts (0 = unlimited)")
+		heavySlots      = fs.Int("heavy-slots", envIntOr("BLUNDERDB_HEAVY_SLOTS", 0), "library-wide reads (stats.*, search.count/find/ids/query/indexOf, matches.list) run at once; the others wait their turn, then get 503 (0 = one per two cores, at least two, on SQLite and unbounded on PostgreSQL; -1 = unbounded)")
 		analysisWorkers = fs.Int("analysis-workers", envIntOr("BLUNDERDB_ANALYSIS_WORKERS", 0), "engine workers every tenant's sweeps and evaluations share, taking the tenants in turn; a search spreads over the idle ones (0 = one per core)")
 		analysisWeights = fs.String("analysis-weights", os.Getenv("BLUNDERDB_ANALYSIS_WEIGHTS"), "tenant=weight,… : positions a tenant is served per turn of the shared engine workers (unlisted = 1)")
 		quotaImports    = fs.Int("quota-imports", envIntOr("BLUNDERDB_QUOTA_IMPORTS", 0), "per-tenant imports running at once (0 = unlimited)")
@@ -151,6 +154,9 @@ func parseServeArgs(args []string) (*serveConfig, error) {
 	if *quotaPositions < 0 || *quotaBytes < 0 || *quotaAnalysis < 0 || *quotaImports < 0 {
 		return nil, fmt.Errorf("serve: a quota is a bound, 0 or more (0 = unlimited)")
 	}
+	if *heavySlots < -1 {
+		return nil, fmt.Errorf("serve: --heavy-slots is -1 (unbounded), 0 (by backend) or more")
+	}
 	if *analysisWorkers < 0 {
 		return nil, fmt.Errorf("serve: --analysis-workers is 0 (one per core) or more")
 	}
@@ -160,6 +166,7 @@ func parseServeArgs(args []string) (*serveConfig, error) {
 	}
 	cfg := &serveConfig{
 		analysisWorkers: *analysisWorkers,
+		heavySlots:      *heavySlots,
 		analysisWeights: weights,
 		quotas:          TenantQuotas{MaxPositions: *quotaPositions, MaxStoredBytes: *quotaBytes, AnalysisSecondsPerDay: *quotaAnalysis, MaxConcurrentImports: *quotaImports},
 		backend:         *backend,
@@ -240,6 +247,18 @@ func RunServe(args []string) error {
 		logger.Info("Row-Level Security enabled (per-tenant policies installed)")
 	}
 
+	// Closed once the start fill ends: a statistics read waits for it before
+	// it takes a library-wide slot (heavyGate), which it would hold idle.
+	statsReady := make(chan struct{})
+	if sqliteBackend(cfg.backend) {
+		go func() {
+			defer close(statsReady)
+			fillMatchStats(ctx, st, logger)
+		}()
+	} else {
+		close(statsReady)
+	}
+
 	var identity *issuance.Identity
 	if cfg.identityDir != "" {
 		identity, err = loadServeIdentity(cfg.identityDir, cfg.identityName)
@@ -253,7 +272,7 @@ func RunServe(args []string) error {
 		OpsAddr: cfg.opsAddr,
 		// SQLite has no tenant column: serving several tenants from it would
 		// hand them all the same rows.
-		SingleTenant:     cfg.backend == "sqlite",
+		SingleTenant:     sqliteBackend(cfg.backend),
 		TrustReadTenants: cfg.readTenants,
 		Storage:          st,
 		Logger:           logger,
@@ -274,6 +293,8 @@ func RunServe(args []string) error {
 		AnalysisWeights:  cfg.analysisWeights,
 		Identity:         identity,
 		ImportDir:        cfg.importDir,
+		HeavySlots:       heavySlotsFor(cfg.backend, cfg.heavySlots),
+		StatsReady:       statsReady,
 	})
 	if err != nil {
 		return err
@@ -359,10 +380,52 @@ func eventsDSN(backend, dsn string) string {
 	return ""
 }
 
+// fillMatchStats fills the served file's missing match_stats rows from the
+// start, as the desktop does at open: otherwise the first statistics readers
+// pay the whole fill, minutes on a large library, and every reader arriving
+// meanwhile waits for it. Readers arriving during this fill wait for it too
+// (one fill per scope at a time) and then read the table. A PostgreSQL daemon
+// serves tenants it does not list at start; each tenant's first reader fills
+// its own scope.
+func fillMatchStats(ctx context.Context, st storage.Storage, logger *slog.Logger) {
+	start := time.Now()
+	n, err := st.Stats().FillMatchStats(ctx, "", nil)
+	switch {
+	case err != nil && ctx.Err() == nil:
+		logger.Warn("match statistics fill failed; readers fill what they read", "err", err)
+	case n > 0:
+		logger.Info("match statistics filled", "matches", n, "elapsed", time.Since(start).Round(time.Millisecond))
+	}
+}
+
+// sqliteBackend reports whether --backend names SQLite, as OpenStorage reads it.
+func sqliteBackend(backend string) bool {
+	b := strings.ToLower(backend)
+	return b == "sqlite" || b == ""
+}
+
+// heavySlotsFor resolves --heavy-slots. By default only SQLite is bounded:
+// its pool (daemonSQLiteConns) is what the library-wide reads exhaust, while
+// a PostgreSQL pool is sized by its own settings and shared by every tenant.
+func heavySlotsFor(backend string, flag int) int {
+	switch {
+	case flag > 0:
+		return flag
+	case flag < 0 || !sqliteBackend(backend):
+		return 0
+	}
+	return max(2, runtime.GOMAXPROCS(0)/2)
+}
+
+// daemonSQLiteConns sizes the daemon's SQLite pool: one connection per CPU,
+// at least the desktop's ten. Under WAL every connection reads in parallel,
+// and the daemon's readers are many clients rather than one window.
+func daemonSQLiteConns() int { return max(10, runtime.GOMAXPROCS(0)) }
+
 // OpenStorage opens the requested backend. enableRLS turns on PostgreSQL
 // Row-Level Security enforcement (per-connection app.tenant_id); ignored by SQLite.
 func OpenStorage(ctx context.Context, backend, dsn string, enableRLS bool) (storage.Storage, error) {
-	opts := &storage.Options{EnableRLS: enableRLS}
+	opts := &storage.Options{EnableRLS: enableRLS, MaxConns: daemonSQLiteConns()}
 	switch strings.ToLower(backend) {
 	case "sqlite", "":
 		if dsn == "" {
