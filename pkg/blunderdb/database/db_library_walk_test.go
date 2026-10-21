@@ -98,3 +98,26 @@ func TestEachPositionAnalysis_IsLoadAnalysisPerPosition(t *testing.T) {
 		t.Errorf("walked %d positions (%d analysed), want %d with some analysed", i, analysed, len(positions))
 	}
 }
+
+// An error from fn stops the walk on the page it came from, with the next
+// page already being read: the walk returns that error, calls fn no more, and
+// leaves no read running against the database it hands back.
+func TestEachPositionAnalysis_StopsOnFnError(t *testing.T) {
+	db := newTestDBWithXG(t)
+	saved := positionWalkPage
+	positionWalkPage = 7
+	t.Cleanup(func() { positionWalkPage = saved })
+
+	stop := errors.New("stop")
+	n := 0
+	err := db.EachPositionAnalysis(func(*Position, *PositionAnalysis) error {
+		n++
+		if n == positionWalkPage+2 {
+			return stop
+		}
+		return nil
+	})
+	if !errors.Is(err, stop) || n != positionWalkPage+2 {
+		t.Errorf("err = %v after %d calls, want %v after %d", err, n, stop, positionWalkPage+2)
+	}
+}
