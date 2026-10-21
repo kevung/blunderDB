@@ -88,7 +88,6 @@ grep -rl 'python-brace-format' doc/source/locale/ 2>/dev/null \
 
 status=0
 for po in doc/source/locale/*/LC_MESSAGES/*.po; do
-  case "$po" in doc/source/locale/fr/*) continue ;; esac   # French is the source
   if ! msgfmt -c -o /dev/null "$po" 2>/tmp/doc-po-update.$$; then
     echo "msgfmt refuses $po:" >&2
     grep -v 'header field' /tmp/doc-po-update.$$ >&2 || true

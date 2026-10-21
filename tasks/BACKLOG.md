@@ -254,12 +254,6 @@ une machine arm64 ne les a pas débloqués ; le registre des décisions amont et
   humains : **winget** (`wingetcreate submit`, voir `packaging/winget/README.md`) et
   **Flathub** (build hors-ligne vendorant Go+npm, `docs/recherche/P16-distribution-desktop.md`
   en donne la recette ; effort de plusieurs semaines, non commencé).
-- **Catalogues `doc/source/locale/fr/`** : suivis par git, ils ne contiennent que des entrées
-  vides — le français est la langue source, Sphinx le rend depuis les `.rst`. Rien ne les
-  compile et `doc-i18n-check.sh` ne les regarde pas ; ce sont des fichiers inertes qui
-  brouillent toute vérification globale des catalogues. Candidats à la suppression ; à
-  trancher avant : voudra-t-on un jour traduire *depuis* le français vers un français
-  simplifié.
 
 ### Étude : du diagnostic à l'action
 
