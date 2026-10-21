@@ -2162,6 +2162,15 @@ et sa durée. Si la base source est assez ancienne pour nécessiter sa propre mi
 événements ``"schema-migration"`` (phase/effectué/total) avant que la copie ne
 commence.
 
+Pendant la copie, la transaction tient un verrou ``SHARE UPDATE EXCLUSIVE``
+sur les tables de positions, d'analyses, de matchs, de parties et de coups :
+deux ``migrate`` simultanés, même vers des tenants différents, passent l'un
+après l'autre et l'autovacuum les laisse de côté ; les lectures et écritures du
+démon ne sont pas bloquées. Le rôle du DSN doit pouvoir lancer ``ANALYZE`` sur
+ces tables — en être propriétaire, être superutilisateur ou, depuis
+PostgreSQL 17, détenir le droit ``MAINTAIN`` — sinon ``migrate`` s'arrête avant
+de rien copier.
+
 .. list-table::
    :header-rows: 1
    :widths: 24 12 40
