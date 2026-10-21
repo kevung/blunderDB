@@ -236,3 +236,18 @@ func TestMigrateCarriesMETs_Postgres(t *testing.T) {
 	}
 	checkMETsMigrated(t, dst, "1")
 }
+
+// TestMigrateAcrossBatches_Postgres runs the batch-boundary check into
+// PostgreSQL, whose SaveMany pipelines what SQLite loops over.
+func TestMigrateAcrossBatches_Postgres(t *testing.T) {
+	ctx := context.Background()
+	dst, err := postgres.Open(ctx, startPostgres(t), nil)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer dst.Close()
+	if err := dst.Migrate(ctx); err != nil {
+		t.Fatalf("migrate dst schema: %v", err)
+	}
+	migrate.CheckCopiesAcrossBatches(t, dst)
+}

@@ -20,6 +20,13 @@ type PositionStore interface {
 	// created: the caller that may undo its save is the one that made it.
 	SaveCreated(ctx context.Context, scope string, p *domain.Position) (id int64, created bool, err error)
 
+	// SaveMany is SaveCreated for each of ps, in order, in as few round trips
+	// as the backend allows: ids[i] and created[i] answer for ps[i], and each
+	// ps[i] is updated as SaveCreated updates it. Two of ps with one hash
+	// share an id, and only the first can be created. A bulk copy calls it so
+	// as not to pay one round trip per position.
+	SaveMany(ctx context.Context, scope string, ps []*domain.Position) (ids []int64, created []bool, err error)
+
 	// Reinstate stores p again under its own id p.ID, for a position deleted
 	// earlier and put back from the trash: what named it by id finds it
 	// again. When p's Zobrist hash is stored already in scope, that row is
@@ -167,4 +174,19 @@ func ClassOf(target *domain.Position) SimilarOptions {
 		opts.Money = &money
 	}
 	return opts
+}
+
+// SaveEach is SaveMany as a loop of SaveCreated, for a backend for which one
+// round trip per position costs little or for which no batch exists.
+func SaveEach(ctx context.Context, store PositionStore, scope string, ps []*domain.Position) ([]int64, []bool, error) {
+	ids := make([]int64, len(ps))
+	created := make([]bool, len(ps))
+	for i, p := range ps {
+		id, c, err := store.SaveCreated(ctx, scope, p)
+		if err != nil {
+			return nil, nil, err
+		}
+		ids[i], created[i] = id, c
+	}
+	return ids, created, nil
 }

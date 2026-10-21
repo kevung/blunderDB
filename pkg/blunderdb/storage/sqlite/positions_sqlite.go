@@ -573,3 +573,9 @@ func boolToInt(b bool) int {
 	}
 	return 0
 }
+
+// SaveMany — see storage.PositionStore. A local database pays no round trip:
+// the loop is the batch.
+func (s *positionStore) SaveMany(ctx context.Context, scope string, ps []*domain.Position) ([]int64, []bool, error) {
+	return storage.SaveEach(ctx, s, scope, ps)
+}

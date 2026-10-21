@@ -778,3 +778,9 @@ func (s *analysisStore) engineBatch(ctx context.Context, last int64, enginePrefi
 func (s *analysisStore) ReencodeAnalyses(ctx context.Context, scope string, after int64, limit int) (int64, int, error) {
 	return sqlshared.ReencodeAnalyses(ctx, binder{s.db}.shared(), scope, after, limit)
 }
+
+// SaveMany — see storage.AnalysisStore. A local database pays no round trip:
+// the loop is the batch.
+func (s *analysisStore) SaveMany(ctx context.Context, scope string, analyses map[int64]*domain.PositionAnalysis) error {
+	return storage.SaveAnalysesEach(ctx, s, scope, analyses)
+}
