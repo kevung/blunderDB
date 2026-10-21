@@ -191,6 +191,22 @@ func (s matchStore) Moves(ctx context.Context, scope string, gameID int64) iter.
 	}{gameID})
 }
 
+// RecordedMoves reads matches.moves, the only /v1 route for a game's moves,
+// and drops the cost the daemon computed: same answer as the local
+// backends, without their saving.
+func (s matchStore) RecordedMoves(ctx context.Context, scope string, gameID int64) iter.Seq2[*domain.Move, error] {
+	return func(yield func(*domain.Move, error) bool) {
+		for mv, err := range s.Moves(ctx, scope, gameID) {
+			if mv != nil {
+				mv.ErrorMP = nil
+			}
+			if !yield(mv, err) {
+				return
+			}
+		}
+	}
+}
+
 func (s matchStore) MovesByMatch(ctx context.Context, scope string, matchID int64) iter.Seq2[*domain.Move, error] {
 	return stream[*domain.Move](ctx, s.c, scope, "matches.movesByMatch", matchIDReq{matchID})
 }

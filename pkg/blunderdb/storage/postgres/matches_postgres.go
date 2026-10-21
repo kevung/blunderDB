@@ -224,10 +224,10 @@ func (s *matchStore) FindByHash(ctx context.Context, scope string, hash, canonic
 	return 0, false, nil
 }
 
-// matchOrderClause sorts matches by play date, falling back to import date
-// when the match date is unset. Used by LastVisited; List builds its ORDER BY
-// from domain.MatchOrderByClause so the key is configurable.
-const matchOrderClause = ` ORDER BY COALESCE(m.match_date, m.import_date) DESC`
+// matchOrderClause is List's default order — most recent first, an undated
+// match by its import date — so that LastVisited's fallback picks the match
+// the list shows first.
+var matchOrderClause = ` ORDER BY ` + domain.MatchOrderByClause("")
 
 // buildMatchListWhere appends opts filters to the tenant scope. next is the next
 // free placeholder number ($1 is the tenant), so the returned SQL starts with
@@ -1220,6 +1220,33 @@ func (s *matchStore) Moves(ctx context.Context, scope string, gameID int64) iter
 		}
 		if err := rows.Err(); err != nil {
 			yield(nil, fmt.Errorf("postgres: list moves: %w", err))
+		}
+	}
+}
+
+// RecordedMoves — see storage.MatchStore.
+func (s *matchStore) RecordedMoves(ctx context.Context, scope string, gameID int64) iter.Seq2[*domain.Move, error] {
+	return func(yield func(*domain.Move, error) bool) {
+		rows, err := s.db.Query(ctx,
+			`SELECT `+moveSelectCols+` FROM move WHERE game_id = $1 AND tenant_id = $2 ORDER BY move_number`,
+			gameID, tenantID(scope))
+		if err != nil {
+			yield(nil, fmt.Errorf("postgres: list recorded moves: %w", err))
+			return
+		}
+		defer rows.Close()
+		for rows.Next() {
+			mv, err := scanMove(rows)
+			if err != nil {
+				yield(nil, fmt.Errorf("postgres: list recorded moves: %w", err))
+				return
+			}
+			if !yield(&mv, nil) {
+				return
+			}
+		}
+		if err := rows.Err(); err != nil {
+			yield(nil, fmt.Errorf("postgres: list recorded moves: %w", err))
 		}
 	}
 }

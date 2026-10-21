@@ -50,13 +50,15 @@ propre issue le jour où il est lancé.
   code non mappé (`ingest/xgmap.go`) passerait donc pour un vrai Double/Take/Pass et entrerait
   au dénominateur du PR. Aucune occurrence connue dans les corpus. Correctif si ça mord un
   jour : tester `engine.CanonicalCubeAction` plutôt que les graphies littérales.
-- **Wrapper `Database` vers le contrat `Storage`, tranches 2 à 6** (ADR-0100 ; tranche 1, les
-  écritures de match, faite). Chaque tranche délègue un groupe sans changer de comportement ;
-  un écart se tranche d'abord, avec son test. (2) lectures de match : `GetAllMatches` et
-  `GetMatchMovePositions` délèguent au contrat (date sentinelle triée comme une absence de
-  date, `MaxCube` lu) ; reste le repli de `GetLastVisitedMatch` (sentinelle, `LastVisited`
-  ne la traite pas) ; `GetPositionProvenance` n'a pas d'équivalent trié
-  par date ; `Moves` note le coup joué, `GetMovesByGame` non.
+- **Wrapper `Database` vers le contrat `Storage`, tranches 3 à 6** (ADR-0100 ; tranches 1,
+  écritures de match, et 2, lectures de match, faites). Chaque tranche délègue un groupe sans
+  changer de comportement ; un écart se tranche d'abord, avec son test. La tranche 2 a tranché
+  ses écarts ainsi : le repli de `LastVisited` est la tête de `List` (sentinelle triée comme une
+  absence de date, égalité départagée par l'id, les deux backends) ; `GetPositionProvenance`
+  est `MatchesByPosition` puis `List` par ids, donc dans l'ordre de la liste (un match sans
+  date se range à sa date d'import, non plus en dernier) ; `GetMovesByGame` lit
+  `RecordedMoves`, les coups tels qu'enregistrés, sans jointure sur les analyses ni `ErrorMP`
+  (l'export CSV parcourt tous les coups et n'écrit pas ce coût).
   (3) analyses : fusion de `saveAnalysisLocked`, coups joués de `LoadAnalysis`,
   `DeleteAnalysis` — avec l'item des quatre copies des helpers de fusion. (4) lots gammonNet
   (`positionIDsWithoutAnalysis[ForMatch]`, `db_gammonnet_compare.go`) et gardes d'import

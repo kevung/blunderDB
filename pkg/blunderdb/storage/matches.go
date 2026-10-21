@@ -217,6 +217,11 @@ type MatchStore interface {
 	// Moves streams the moves of a game in order.
 	Moves(ctx context.Context, scope string, gameID int64) iter.Seq2[*domain.Move, error]
 
+	// RecordedMoves is Moves without the cost of the played move: ErrorMP
+	// stays nil, so the analyses are not read. It serves a caller that walks
+	// every move of a library and needs only what the match recorded.
+	RecordedMoves(ctx context.Context, scope string, gameID int64) iter.Seq2[*domain.Move, error]
+
 	// MovesByMatch streams every move of a match in one pass, ordered by game
 	// then move number, in one query; callers regroup by Move.GameID.
 	MovesByMatch(ctx context.Context, scope string, matchID int64) iter.Seq2[*domain.Move, error]
