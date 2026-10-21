@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"errors"
 	"log/slog"
 	"net/http"
@@ -41,5 +42,29 @@ func TestInternalErrorCauseIsLoggedWithAndWithoutGzip(t *testing.T) {
 				t.Errorf("cause lost from the log line:\n%s", out)
 			}
 		})
+	}
+}
+
+type testKeyedReq struct{}
+
+func (testKeyedReq) readKey() readKey { return readKey{} }
+
+// A conditional read route wraps the writer in etagWriter; the cause of the
+// handler's internal error must still reach the log.
+func TestConditionalReadInternalErrorCauseIsLogged(t *testing.T) {
+	var buf strings.Builder
+	logger := slog.New(slog.NewTextHandler(&buf, nil))
+	version := func(context.Context, string, readKey) (string, string, error) { return "v1", "", nil }
+	var h http.Handler = rpcRead(version, func(context.Context, string, testKeyedReq) (int, error) {
+		return 0, errors.New("database is locked (5)")
+	})
+	h = middleware.Logging(logger, map[string]bool{}, nil)(h)
+
+	req := httptest.NewRequest(http.MethodPost, "/v1/x", strings.NewReader("{}"))
+	h.ServeHTTP(httptest.NewRecorder(), req)
+
+	out := buf.String()
+	if !strings.Contains(out, "level=ERROR") || !strings.Contains(out, "database is locked (5)") {
+		t.Errorf("cause lost from the log line:\n%s", out)
 	}
 }

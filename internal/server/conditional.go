@@ -141,3 +141,6 @@ func (e *etagWriter) WriteHeader(code int) {
 	}
 	e.ResponseWriter.WriteHeader(code)
 }
+
+// Unwrap lets http.ResponseController and recordErr reach the writer underneath.
+func (e *etagWriter) Unwrap() http.ResponseWriter { return e.ResponseWriter }
