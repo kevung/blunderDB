@@ -17,12 +17,7 @@ import (
 // sat in. Names are canonical (aliases folded), as the table's rows are.
 func (s *StatsStore) playerMWC7(ctx context.Context, scope string, f storage.StatsFilter, aliases storage.AliasMap) (map[string]domain.MWC7, error) {
 	statsWhere, statsArgs := s.buildStatsWhereClause(scope, f)
-	type unit struct {
-		match  int64
-		name   string
-		length int
-	}
-	losses := map[unit]float64{}
+	losses := map[playerMWC7Unit]float64{}
 	err := scanEach(ctx, s.DB,
 		`SELECT `+moverNameExpr+`, m.id, COALESCE(`+statsErrExpr+`, 0), COALESCE(p.score_1, 0), COALESCE(p.score_2, 0), mv.player,
 			`+cubeMultiplierExpr+`, COALESCE(p.match_length, m.match_length, 0), COALESCE(m.match_length, 0) `+
@@ -38,18 +33,33 @@ func (s *StatsStore) playerMWC7(ctx context.Context, scope string, f storage.Sta
 				return nil
 			}
 			if loss := decisionMWCLoss(errMP, away0, away1, cube, length); !math.IsNaN(loss) {
-				losses[unit{match, aliases.Canonical(name), matchN}] += loss
+				losses[playerMWC7Unit{match, aliases.Canonical(name), matchN}] += loss
 			}
 			return nil
 		})
 	if err != nil {
 		return nil, fmt.Errorf("PlayerTable MWC7: %w", err)
 	}
-	keys := make([]unit, 0, len(losses))
+	return poolPlayerMWC7(losses), nil
+}
+
+// playerMWC7Unit is one player's (canonical name) loss over one match.
+type playerMWC7Unit struct {
+	match  int64
+	name   string
+	length int
+}
+
+// poolPlayerMWC7 pools each player's units in (name, match) order, so the
+// result does not depend on the order the rows arrived in.
+func poolPlayerMWC7(losses map[playerMWC7Unit]float64) map[string]domain.MWC7 {
+	keys := make([]playerMWC7Unit, 0, len(losses))
 	for k := range losses {
 		keys = append(keys, k)
 	}
-	slices.SortFunc(keys, func(a, b unit) int { return cmp.Or(cmp.Compare(a.name, b.name), cmp.Compare(a.match, b.match)) })
+	slices.SortFunc(keys, func(a, b playerMWC7Unit) int {
+		return cmp.Or(cmp.Compare(a.name, b.name), cmp.Compare(a.match, b.match))
+	})
 	pools := map[string]*domain.MWC7Pool{}
 	for _, k := range keys {
 		p := pools[k.name]
@@ -63,5 +73,5 @@ func (s *StatsStore) playerMWC7(ctx context.Context, scope string, f storage.Sta
 	for name, p := range pools {
 		out[name] = p.Result()
 	}
-	return out, nil
+	return out
 }

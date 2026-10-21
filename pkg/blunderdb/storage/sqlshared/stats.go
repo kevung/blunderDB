@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -833,6 +834,21 @@ func (s *StatsStore) MatchDetail(ctx context.Context, scope string, matchID int6
 // MatchDetail; both share statsBaseJoin + countedExpr so a match's badge PR
 // equals its detail PR.
 func (s *StatsStore) MatchBadges(ctx context.Context, scope string, matchIDs []int64) (map[int64]storage.MatchBadge, error) {
+	return inReadSnapshot(ctx, s, func(s *StatsStore) (map[int64]storage.MatchBadge, error) {
+		readable, err := s.matchStatsReadableFor(ctx, scope, matchIDs)
+		if err != nil {
+			return nil, err
+		}
+		if readable {
+			return s.matchBadgesFromTable(ctx, scope, matchIDs)
+		}
+		return s.matchBadgesDirect(ctx, scope, matchIDs)
+	})
+}
+
+// matchBadgesDirect is MatchBadges over the decisions: the path of a reader
+// that cannot fill match_stats.
+func (s *StatsStore) matchBadgesDirect(ctx context.Context, scope string, matchIDs []int64) (map[int64]storage.MatchBadge, error) {
 	tenant, args := s.DB.TenantFilter("p", scope)
 	query := `SELECT g.match_id, ` + statsErrExpr + ` as err_mp,
 		COALESCE(p.score_1, 0), COALESCE(p.score_2, 0), mv.player,
@@ -911,12 +927,27 @@ func (s *StatsStore) MatchBadges(ctx context.Context, scope string, matchIDs []i
 // why the badge is the reference player's own PR rather than a both-players
 // pool.
 func (s *StatsStore) TournamentBadges(ctx context.Context, scope string) (map[int64]storage.TournamentBadge, error) {
-	// Read before the decisions' cursor opens: a cursor still open on the
-	// connection would hold it across these queries.
-	main, aliases, err := mainPlayer(ctx, s.DB, scope)
-	if err != nil {
-		return nil, fmt.Errorf("TournamentBadges main player: %w", err)
-	}
+	return inReadSnapshot(ctx, s, func(s *StatsStore) (map[int64]storage.TournamentBadge, error) {
+		readable, err := s.matchStatsReadable(ctx, scope)
+		if err != nil {
+			return nil, err
+		}
+		// Read before the decisions' cursor opens: a cursor still open on
+		// the connection would hold it across these queries.
+		main, aliases, err := mainPlayer(ctx, s.DB, scope)
+		if err != nil {
+			return nil, fmt.Errorf("TournamentBadges main player: %w", err)
+		}
+		if readable {
+			return s.tournamentBadgesFromTable(ctx, scope, main, aliases)
+		}
+		return s.tournamentBadgesDirect(ctx, scope, main, aliases)
+	})
+}
+
+// tournamentBadgesDirect is TournamentBadges over the decisions: the path of
+// a reader that cannot fill match_stats.
+func (s *StatsStore) tournamentBadgesDirect(ctx context.Context, scope, main string, aliases storage.AliasMap) (map[int64]storage.TournamentBadge, error) {
 	tenant, targs := s.DB.TenantFilter("p", scope)
 	query := `SELECT m.tournament_id, ` + statsErrExpr + ` as err_mp,
 		COALESCE(p.score_1, 0), COALESCE(p.score_2, 0), mv.player,
@@ -1131,7 +1162,12 @@ func (s *StatsStore) playerTable(ctx context.Context, scope string, filter stora
 	}
 	decisions, matches, snowieErr, luck = canonicalPlayerInputs(aliases, decisions, matches, snowieErr, luck)
 	out := storage.BuildPlayerRows(decisions, matches, snowieErr, luck)
-	mwc7, err := s.playerMWC7(ctx, scope, f, aliases)
+	var mwc7 map[string]domain.MWC7
+	if readable {
+		mwc7, err = s.playerMWC7FromTable(ctx, scope, f, aliases)
+	} else {
+		mwc7, err = s.playerMWC7(ctx, scope, f, aliases)
+	}
 	if err != nil {
 		return nil, err
 	}

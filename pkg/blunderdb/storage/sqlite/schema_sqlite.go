@@ -300,7 +300,12 @@ var schemaStatements = []string{
 	// decision's error, snowie_moves the analysed checker decisions, and
 	// checker_moves every checker decision with a position, analysed or not
 	// (the players table's denominator). Those six are NULL on a row an
-	// earlier 2.30.0 build wrote, which the open recomputes. A derived table:
+	// earlier 2.30.0 build wrote, which the open recomputes. mwc_loss is the
+	// seat's MWC loss over its counted decisions (NULL when none has a value
+	// at its score), mwc_games and mwc_game_ss the per-game spread its MWC7
+	// interval needs (domain.MatchMWC7Spread): the badges and the players
+	// table read them instead of the decisions. mwc_games is NULL only on a
+	// row written before 2.48.0, which the open drops. A derived table:
 	// always recomputable from the moves, and it holds no position.
 	`CREATE TABLE IF NOT EXISTS match_stats (
 		match_id INTEGER NOT NULL REFERENCES match(id) ON DELETE CASCADE,
@@ -322,6 +327,9 @@ var schemaStatements = []string{
 		snowie_error_mp INTEGER,
 		snowie_moves INTEGER,
 		checker_moves INTEGER,
+		mwc_loss REAL,
+		mwc_games INTEGER,
+		mwc_game_ss REAL,
 		PRIMARY KEY (match_id, seat)
 	)`,
 	`CREATE INDEX IF NOT EXISTS idx_match_stats_pr ON match_stats(pr) WHERE pr IS NOT NULL`,

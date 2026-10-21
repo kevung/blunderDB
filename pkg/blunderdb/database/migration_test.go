@@ -5234,3 +5234,61 @@ func TestMigrate_2_46_0_to_2_47_0_CommentSignature(t *testing.T) {
 		t.Fatalf("a comment from before the migration must read unsigned: %+v", e)
 	}
 }
+
+// TestMigrate_2_47_0_to_2_48_0_MatchStatsMWC opens a 2.47.0 library whose
+// match_stats rows predate the MWC columns and checks the migration adds
+// them, drops those rows, and that the badges read from the refilled table
+// carry the MWC7 the decisions give.
+func TestMigrate_2_47_0_to_2_48_0_MatchStatsMWC(t *testing.T) {
+	t.Parallel()
+	dbPath := filepath.Join(tempDir(t), "test_v2470_mwc.db")
+	createOldDatabase(t, dbPath, "2.31.0")
+	d := NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open: %v", err)
+	}
+	matchID, err := d.ImportXGMatch("testdata/charlot1-charlot2_7p_2025-11-08-2305.xg")
+	if err != nil {
+		t.Fatalf("ImportXGMatch: %v", err)
+	}
+	want, err := d.store.Stats().MatchBadges(context.Background(), "", []int64{matchID})
+	if err != nil || !want[matchID].MWC7.Available {
+		t.Fatalf("badges before: %+v, %v; want an MWC7", want, err)
+	}
+	for _, stmt := range []string{
+		`ALTER TABLE match_stats DROP COLUMN mwc_loss`,
+		`ALTER TABLE match_stats DROP COLUMN mwc_games`,
+		`ALTER TABLE match_stats DROP COLUMN mwc_game_ss`,
+		`UPDATE metadata SET value = '2.47.0' WHERE key = 'database_version'`,
+	} {
+		if _, err := d.db.Exec(stmt); err != nil {
+			t.Fatalf("%s: %v", stmt, err)
+		}
+	}
+	if err := d.Close(); err != nil {
+		t.Fatalf("close: %v", err)
+	}
+
+	d = NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open v2.47.0 database: %v", err)
+	}
+	closeOnCleanup(t, d)
+	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {
+		t.Fatalf("version after migration = %q, %v; want %q", v, err, DatabaseVersion)
+	}
+	var rows int
+	if err := d.db.QueryRow(`SELECT COUNT(*) FROM match_stats`).Scan(&rows); err != nil || rows != 0 {
+		t.Fatalf("match_stats after migration: %d rows (%v); the rows without the MWC columns must be dropped", rows, err)
+	}
+	got, err := d.store.Stats().MatchBadges(context.Background(), "", []int64{matchID})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if g, w := got[matchID], want[matchID]; g.MWC7 != w.MWC7 || g.MWC7P2 != w.MWC7P2 || g.PR != w.PR {
+		t.Fatalf("badges after migration = %+v; want %+v", g, w)
+	}
+	if err := d.db.QueryRow(`SELECT COUNT(*) FROM match_stats WHERE mwc_games IS NULL`).Scan(&rows); err != nil || rows != 0 {
+		t.Fatalf("refilled match_stats: %d rows without mwc_games (%v)", rows, err)
+	}
+}

@@ -9,7 +9,7 @@ import (
 )
 
 // JSON compares two marshalled statistics results field by field:
-// exactly, save the MWC sums (any field whose name starts with MWC, and
+// exactly, save the MWC sums (any field whose name starts with MWC or mwc, and
 // everything under it), which add the same float64 losses in another order
 // — per decision by date, or per match cell — and so may part at the last
 // bit; the direct order is not total either.
@@ -32,7 +32,7 @@ func sameStatsValue(a, b any, mwc bool) bool {
 			return false
 		}
 		for k, v := range x {
-			if !sameStatsValue(v, y[k], mwc || strings.HasPrefix(k, "MWC")) {
+			if !sameStatsValue(v, y[k], mwc || strings.HasPrefix(strings.ToUpper(k), "MWC")) {
 				return false
 			}
 		}
