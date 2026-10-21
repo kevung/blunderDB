@@ -135,7 +135,7 @@
     let loadingStats = $state(false);
 
     // Sorting state, cycled by the table header (asc → desc → unsorted)
-    let sort = $state({ column: null, direction: 'asc' });
+    let sort = $state(/** @type {{ column: string | null, direction: string }} */ ({ column: null, direction: 'asc' }));
     /** @type {any} */
     let table = $state(null); // PanelTable instance: keyboard navigation and scrolling
 
@@ -320,7 +320,7 @@
                         const list = get(matchListStore);
                         if (sort.column !== list.column || sort.direction !== list.direction) sort = { column: list.column, direction: list.direction };
                         if (filterText.trim() !== list.text) {
-                            clearTimeout(filterTimer);
+                            if (filterTimer) clearTimeout(filterTimer);
                             filterText = list.text;
                         }
                         // Back with no database: the rows of the one closed meanwhile must not show.
