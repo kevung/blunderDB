@@ -820,7 +820,7 @@ func (s *matchStore) Games(ctx context.Context, scope string, matchID int64) ite
 			`SELECT id, COALESCE(match_id,0), COALESCE(game_number,0),
 			        COALESCE(initial_score_1,0), COALESCE(initial_score_2,0),
 			        COALESCE(winner,0), COALESCE(points_won,0), COALESCE(move_count,0)
-			 FROM game WHERE match_id = ? ORDER BY game_number`, matchID)
+			 FROM game WHERE match_id = ? ORDER BY game_number, id`, matchID)
 		if err != nil {
 			yield(nil, fmt.Errorf("sqlite: list games: %w", err))
 			return
@@ -1086,6 +1086,40 @@ func (s *matchStore) RecordedMoves(ctx context.Context, scope string, gameID int
 		}
 		if err := rows.Err(); err != nil {
 			yield(nil, fmt.Errorf("sqlite: list recorded moves: %w", err))
+		}
+	}
+}
+
+// LibraryMoves — see storage.MatchStore. One join read in a stream; its
+// order is List's default order, so a walk pairs each row with the match the
+// list shows at that place.
+func (s *matchStore) LibraryMoves(ctx context.Context, scope string) iter.Seq2[*domain.LibraryMove, error] {
+	return func(yield func(*domain.LibraryMove, error) bool) {
+		rows, err := s.db.QueryContext(ctx,
+			`SELECT `+moveColsOf("mv.")+`, g.match_id, COALESCE(g.game_number,0)
+			 FROM move mv INNER JOIN game g ON mv.game_id = g.id
+			 INNER JOIN match m ON g.match_id = m.id
+			 ORDER BY `+domain.MatchOrderByClauseWithDate("", domain.MatchSortDateSQLite)+`,
+			   g.game_number, g.id, mv.move_number, mv.id`)
+		if err != nil {
+			yield(nil, fmt.Errorf("sqlite: list library moves: %w", err))
+			return
+		}
+		defer rows.Close()
+		for rows.Next() {
+			var lm domain.LibraryMove
+			mv, err := scanMove(sqlshared.TrailingScan{Row: rows, Extra: []any{&lm.MatchID, &lm.GameNumber}})
+			if err != nil {
+				yield(nil, fmt.Errorf("sqlite: list library moves: %w", err))
+				return
+			}
+			lm.Move = mv
+			if !yield(&lm, nil) {
+				return
+			}
+		}
+		if err := rows.Err(); err != nil {
+			yield(nil, fmt.Errorf("sqlite: list library moves: %w", err))
 		}
 	}
 }

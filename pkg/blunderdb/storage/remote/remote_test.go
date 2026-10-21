@@ -96,6 +96,7 @@ var covered = map[string]bool{
 	"Match/DeleteCascade":                                    true,
 	"Matches/LastVisitedFollowsTheVisit":                     true,
 	"Matches/LastVisitedFallbackIsTheListHead":               true,
+	"Matches/LibraryMoves":                                   true,
 	"Match/FindByHash":                                       true,
 	"Match/HashesReadBack":                                   true,
 	"Match/ListFilterSortPaginate":                           true,

@@ -207,6 +207,48 @@ func (s matchStore) RecordedMoves(ctx context.Context, scope string, gameID int6
 	}
 }
 
+// LibraryMoves has no /v1 route of its own: it walks List, then each match's
+// games and their RecordedMoves, the order the local backends read in one
+// join. Each level is collected before the next is read, so no two streams
+// of the client are open at once.
+func (s matchStore) LibraryMoves(ctx context.Context, scope string) iter.Seq2[*domain.LibraryMove, error] {
+	return func(yield func(*domain.LibraryMove, error) bool) {
+		var matchIDs []int64
+		for m, err := range s.List(ctx, scope, storage.MatchListOpts{}) {
+			if err != nil {
+				yield(nil, err)
+				return
+			}
+			matchIDs = append(matchIDs, m.ID)
+		}
+		for _, matchID := range matchIDs {
+			var games []*domain.Game
+			for g, err := range s.Games(ctx, scope, matchID) {
+				if err != nil {
+					yield(nil, err)
+					return
+				}
+				games = append(games, g)
+			}
+			for _, g := range games {
+				var moves []*domain.Move
+				for mv, err := range s.RecordedMoves(ctx, scope, g.ID) {
+					if err != nil {
+						yield(nil, err)
+						return
+					}
+					moves = append(moves, mv)
+				}
+				for _, mv := range moves {
+					if !yield(&domain.LibraryMove{Move: *mv, MatchID: matchID, GameNumber: g.GameNumber}, nil) {
+						return
+					}
+				}
+			}
+		}
+	}
+}
+
 func (s matchStore) MovesByMatch(ctx context.Context, scope string, matchID int64) iter.Seq2[*domain.Move, error] {
 	return stream[*domain.Move](ctx, s.c, scope, "matches.movesByMatch", matchIDReq{matchID})
 }

@@ -790,7 +790,7 @@ func (s *matchStore) Games(ctx context.Context, scope string, matchID int64) ite
 			        COALESCE(initial_score_1,0), COALESCE(initial_score_2,0),
 			        COALESCE(winner,0), COALESCE(points_won,0), COALESCE(move_count,0)
 			 FROM game WHERE match_id = $1 AND tenant_id = $2
-			 ORDER BY game_number`,
+			 ORDER BY game_number, id`,
 			matchID, tenantID(scope))
 		if err != nil {
 			yield(nil, fmt.Errorf("postgres: list games: %w", err))
@@ -1247,6 +1247,41 @@ func (s *matchStore) RecordedMoves(ctx context.Context, scope string, gameID int
 		}
 		if err := rows.Err(); err != nil {
 			yield(nil, fmt.Errorf("postgres: list recorded moves: %w", err))
+		}
+	}
+}
+
+// LibraryMoves — see storage.MatchStore. One join read in a stream; its
+// order is List's default order, so a walk pairs each row with the match the
+// list shows at that place.
+func (s *matchStore) LibraryMoves(ctx context.Context, scope string) iter.Seq2[*domain.LibraryMove, error] {
+	return func(yield func(*domain.LibraryMove, error) bool) {
+		rows, err := s.db.Query(ctx,
+			`SELECT `+moveSelectColsMV+`, g.match_id, COALESCE(g.game_number,0)
+			 FROM move mv INNER JOIN game g ON mv.game_id = g.id
+			 INNER JOIN match m ON g.match_id = m.id
+			 WHERE mv.tenant_id = $1
+			 ORDER BY `+domain.MatchOrderByClause("")+`,
+			   g.game_number, g.id, mv.move_number, mv.id`, tenantID(scope))
+		if err != nil {
+			yield(nil, fmt.Errorf("postgres: list library moves: %w", err))
+			return
+		}
+		defer rows.Close()
+		for rows.Next() {
+			var lm domain.LibraryMove
+			mv, err := scanMove(sqlshared.TrailingScan{Row: rows, Extra: []any{&lm.MatchID, &lm.GameNumber}})
+			if err != nil {
+				yield(nil, fmt.Errorf("postgres: list library moves: %w", err))
+				return
+			}
+			lm.Move = mv
+			if !yield(&lm, nil) {
+				return
+			}
+		}
+		if err := rows.Err(); err != nil {
+			yield(nil, fmt.Errorf("postgres: list library moves: %w", err))
 		}
 	}
 }

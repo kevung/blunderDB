@@ -2,6 +2,7 @@ package cli
 
 import (
 	"encoding/csv"
+	"errors"
 	"fmt"
 	"os"
 	"strconv"
@@ -61,31 +62,28 @@ var analysisColumns = []string{
 
 // exportPositionsCSV writes one row per position.
 func (cli *CLI) exportPositionsCSV(limit int) error {
-	positions, err := cli.db.LoadAllPositions()
-	if err != nil {
-		return fmt.Errorf("failed to get positions: %w", err)
-	}
 	w := csv.NewWriter(os.Stdout)
 	defer w.Flush()
 	if err := w.Write(positionColumns); err != nil {
 		return err
 	}
-	for i, pos := range positions {
-		if limit > 0 && i >= limit {
-			break
+	written := 0
+	err := cli.db.EachPositionAnalysis(func(p *domain.Position, a *domain.PositionAnalysis) error {
+		if limit > 0 && written >= limit {
+			return errWalkDone
 		}
-		p := pos
 		pipBlack, pipWhite := p.ComputePipCounts()
 		pip1, pip2 := strconv.Itoa(pipBlack), strconv.Itoa(pipWhite)
 		cols := engine.PopulateAnalysisColumns(nil, "", "", nil)
-		if a, err := cli.db.LoadAnalysis(p.ID); err == nil && a != nil {
-			cols = engine.PopulateAnalysisColumns(a, firstPlayed(a.PlayedMoves), firstPlayed(a.PlayedCubeActions), &p)
+		if a != nil {
+			cols = engine.PopulateAnalysisColumns(a, firstPlayed(a.PlayedMoves), firstPlayed(a.PlayedCubeActions), p)
 		}
-		if err := w.Write([]string{
+		written++
+		return w.Write([]string{
 			strconv.FormatInt(p.ID, 10),
-			xgidOf(&p),
+			xgidOf(p),
 			decisionTypeToken(p.DecisionType),
-			engine.ClassifyGamePhase(&p).String(),
+			engine.ClassifyGamePhase(p).String(),
 			strconv.Itoa(p.Score[0]), strconv.Itoa(p.Score[1]),
 			strconv.Itoa(p.Cube.Value), colorToken(p.Cube.Owner),
 			strconv.Itoa(p.PlayerOnRoll),
@@ -96,66 +94,55 @@ func (cli *CLI) exportPositionsCSV(limit int) error {
 			strconv.FormatInt(cols.BestMoveEquityError, 10),
 			strconv.FormatInt(cols.IsForced, 10),
 			strconv.FormatInt(cols.IsCloseCube, 10),
-		}); err != nil {
-			return err
-		}
+		})
+	})
+	if err != nil && !errors.Is(err, errWalkDone) {
+		return fmt.Errorf("failed to get positions: %w", err)
 	}
 	return nil
 }
+
+// errWalkDone stops a library walk once the row limit is written.
+var errWalkDone = errors.New("row limit reached")
 
 // exportMovesCSV writes one row per recorded move, with the match it belongs
 // to spelt out on every row: a table that has to be joined before it says
 // anything is a table nobody uses.
 func (cli *CLI) exportMovesCSV(limit int) error {
-	matches, err := cli.db.GetAllMatches()
-	if err != nil {
-		return fmt.Errorf("failed to get matches: %w", err)
-	}
 	w := csv.NewWriter(os.Stdout)
 	defer w.Flush()
 	if err := w.Write(moveColumns); err != nil {
 		return err
 	}
 	written := 0
-	for _, m := range matches {
-		games, err := cli.db.GetGamesByMatch(m.ID)
-		if err != nil {
-			return fmt.Errorf("match %d: %w", m.ID, err)
+	err := cli.db.EachLibraryMove(func(m *domain.Match, gameNumber int32, mv *domain.Move) error {
+		if limit > 0 && written >= limit {
+			return errWalkDone
 		}
-		for _, g := range games {
-			moves, err := cli.db.GetMovesByGame(g.ID)
-			if err != nil {
-				return fmt.Errorf("game %d: %w", g.ID, err)
-			}
-			for _, mv := range moves {
-				if limit > 0 && written >= limit {
-					return nil
-				}
-				luck := ""
-				if mv.LuckMP != nil {
-					luck = strconv.FormatInt(int64(*mv.LuckMP), 10)
-				}
-				if err := w.Write([]string{
-					strconv.FormatInt(mv.ID, 10),
-					strconv.FormatInt(mv.GameID, 10),
-					strconv.FormatInt(int64(g.GameNumber), 10),
-					strconv.FormatInt(m.ID, 10),
-					m.MatchDate.Format("2006-01-02"),
-					m.Player1Name, m.Player2Name,
-					strconv.FormatInt(int64(m.MatchLength), 10),
-					strconv.FormatInt(int64(mv.MoveNumber), 10),
-					mv.MoveType,
-					strconv.FormatInt(mv.PositionID, 10),
-					strconv.FormatInt(int64(mv.Player), 10),
-					strconv.FormatInt(int64(mv.Dice[0]), 10), strconv.FormatInt(int64(mv.Dice[1]), 10),
-					mv.CheckerMove, mv.CubeAction, luck,
-					optionalMS(mv.DecisionMS), optionalMS(mv.CubeDecisionMS),
-				}); err != nil {
-					return err
-				}
-				written++
-			}
+		luck := ""
+		if mv.LuckMP != nil {
+			luck = strconv.FormatInt(int64(*mv.LuckMP), 10)
 		}
+		written++
+		return w.Write([]string{
+			strconv.FormatInt(mv.ID, 10),
+			strconv.FormatInt(mv.GameID, 10),
+			strconv.FormatInt(int64(gameNumber), 10),
+			strconv.FormatInt(m.ID, 10),
+			m.MatchDate.Format("2006-01-02"),
+			m.Player1Name, m.Player2Name,
+			strconv.FormatInt(int64(m.MatchLength), 10),
+			strconv.FormatInt(int64(mv.MoveNumber), 10),
+			mv.MoveType,
+			strconv.FormatInt(mv.PositionID, 10),
+			strconv.FormatInt(int64(mv.Player), 10),
+			strconv.FormatInt(int64(mv.Dice[0]), 10), strconv.FormatInt(int64(mv.Dice[1]), 10),
+			mv.CheckerMove, mv.CubeAction, luck,
+			optionalMS(mv.DecisionMS), optionalMS(mv.CubeDecisionMS),
+		})
+	})
+	if err != nil && !errors.Is(err, errWalkDone) {
+		return fmt.Errorf("failed to get moves: %w", err)
 	}
 	return nil
 }
@@ -171,25 +158,20 @@ func optionalMS(ms *int64) string {
 
 // exportAnalysesCSV writes one row per stored analysis.
 func (cli *CLI) exportAnalysesCSV(limit int) error {
-	positions, err := cli.db.LoadAllPositions()
-	if err != nil {
-		return fmt.Errorf("failed to get positions: %w", err)
-	}
 	w := csv.NewWriter(os.Stdout)
 	defer w.Flush()
 	if err := w.Write(analysisColumns); err != nil {
 		return err
 	}
 	written := 0
-	for _, pos := range positions {
+	err := cli.db.EachPositionAnalysis(func(pos *domain.Position, a *domain.PositionAnalysis) error {
 		if limit > 0 && written >= limit {
-			break
+			return errWalkDone
 		}
-		a, err := cli.db.LoadAnalysis(pos.ID)
-		if err != nil || a == nil {
-			continue
+		if a == nil {
+			return nil
 		}
-		cols := engine.PopulateAnalysisColumns(a, firstPlayed(a.PlayedMoves), firstPlayed(a.PlayedCubeActions), &pos)
+		cols := engine.PopulateAnalysisColumns(a, firstPlayed(a.PlayedMoves), firstPlayed(a.PlayedCubeActions), pos)
 
 		bestMove, bestEquity := "", ""
 		engineName, depth := "", ""
@@ -203,7 +185,8 @@ func (cli *CLI) exportAnalysesCSV(limit int) error {
 				engineName, depth = dca.AnalysisEngine, dca.AnalysisDepth
 			}
 		}
-		if err := w.Write([]string{
+		written++
+		return w.Write([]string{
 			strconv.FormatInt(pos.ID, 10),
 			engineName, depth, a.AnalysisType,
 			bestMove, bestEquity,
@@ -216,10 +199,10 @@ func (cli *CLI) exportAnalysesCSV(limit int) error {
 			strconv.FormatInt(cols.Player2WinRate, 10),
 			strconv.FormatInt(cols.Player2GammonRate, 10),
 			strconv.FormatInt(cols.Player2BackgammonRate, 10),
-		}); err != nil {
-			return err
-		}
-		written++
+		})
+	})
+	if err != nil && !errors.Is(err, errWalkDone) {
+		return fmt.Errorf("failed to get positions: %w", err)
 	}
 	return nil
 }
