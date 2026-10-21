@@ -2,20 +2,27 @@ import { describe, test, expect, vi, afterEach, beforeEach } from 'vitest';
 import { render, screen, cleanup, fireEvent, waitFor } from '@testing-library/svelte';
 
 const countPositions = vi.fn(() => Promise.resolve(12));
-vi.mock('../../wailsjs/go/database/Database.js', () => ({
-    LoadCommandHistory: vi.fn(() => Promise.resolve([])),
-    SaveCommand: vi.fn(() => Promise.resolve(undefined)),
-    GetDatabaseStatsEstimate: vi.fn(() => Promise.resolve({ position_count: 10, match_count: 1, blunder_count: 340, approximate: [] })),
-    GetLibrarySettings: vi.fn(() => Promise.resolve({ errorThresholdMP: 80, blunderThresholdMP: 175 })),
-    CountPositionsByFilters: (/** @type {any[]} */ ...a) => countPositions(...a),
-    CountPositions: vi.fn(() => Promise.resolve(10)),
-    ListPositionIDs: vi.fn(() => Promise.resolve([]))
-}));
+// The full-surface mock: StatusBar starts the background match-stats fill once a library is
+// loaded, and a binding missing from a partial mock would reject outside any test.
+vi.mock('../../wailsjs/go/database/Database.js', async () => {
+    const { createDatabaseMock } = await import('../__mocks__/wails.js');
+    return createDatabaseMock({
+        LoadCommandHistory: vi.fn(() => Promise.resolve([])),
+        GetDatabaseStatsEstimate: vi.fn(() => Promise.resolve({ position_count: 10, match_count: 1, blunder_count: 340, approximate: [] })),
+        GetLibrarySettings: vi.fn(() => Promise.resolve({ errorThresholdMP: 80, blunderThresholdMP: 175 })),
+        CountPositionsByFilters: (/** @type {any[]} */ ...a) => countPositions(...a),
+        CountPositions: vi.fn(() => Promise.resolve(10)),
+        ListPositionIDs: vi.fn(() => Promise.resolve([]))
+    });
+});
 vi.mock('../../wailsjs/go/gui/App.js', () => ({ CancelGammonNetBatch: vi.fn(() => Promise.resolve(undefined)) }));
 vi.mock('../../wailsjs/runtime/runtime.js', () => ({ EventsOn: vi.fn(() => () => {}) }));
 const processCommand = vi.fn();
 vi.mock('../commandProcessor.js', () => ({ processCommand: (/** @type {any[]} */ ...a) => processCommand(...a) }));
 
+// Loaded first, alone: StatusBar's graph imports these bindings from several modules at once,
+// and two concurrent first loads would each run the async factory and wait on each other.
+import '../../wailsjs/go/database/Database.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionsStore } from '../stores/positionStore.js';
 import { refreshLibraryCounts } from '../stores/libraryCountsStore.js';
