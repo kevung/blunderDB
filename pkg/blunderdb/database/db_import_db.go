@@ -208,17 +208,13 @@ func loadImportedComments(db queryer, positionID int64, cols sourceCommentColumn
 // ErrImportIsOpenDatabase refuses to merge the open library into itself.
 var ErrImportIsOpenDatabase = errors.New("the file to import is the database already open")
 
-// insertImportedComment appends c to positionID as ingest.DBImporter does:
-// the exact text (a signature covers it byte for byte), and the source's
-// author, origin and signature — only a note that was the producer's own
-// holds its position here as the user's (ADR-0099).
-func insertImportedComment(tx *sql.Tx, positionID int64, c importedComment) error {
-	var signature any
-	if c.signature != "" {
-		signature = c.signature
-	}
-	_, err := tx.Exec(`INSERT INTO comment (position_id, text, origin, author, signature) VALUES (?, ?, ?, ?, ?)`,
-		positionID, c.text, string(domain.ParseCommentOrigin(c.origin)), c.author, signature)
+// insertImportedComment appends c to positionID through the contract, as
+// ingest.DBImporter does: the exact text (a signature covers it byte for
+// byte), and the source's author, origin and signature — only a note that was
+// the producer's own holds its position here as the user's (ADR-0099).
+func insertImportedComment(ctx context.Context, stores storage.Stores, positionID int64, c importedComment) error {
+	ctx = storage.WithCommentSignature(storage.WithCommentAuthor(ctx, c.author), c.signature)
+	_, err := stores.Comments().AddFrom(ctx, "", positionID, c.text, domain.CommentOrigin(c.origin))
 	return err
 }
 
@@ -532,7 +528,7 @@ func (r *importRun) mergeExisting(id, existingPositionID int64, importPosition *
 			if err != nil || trimmed == "" || strings.Contains(existingComment, trimmed) {
 				continue
 			}
-			if ierr := insertImportedComment(tx, existingPositionID, c); ierr != nil {
+			if ierr := insertImportedComment(r.ctx, r.stx, existingPositionID, c); ierr != nil {
 				slog.Warn("inserting comment for position", "positionID", existingPositionID, "err", ierr)
 				continue
 			}
@@ -571,7 +567,7 @@ func (r *importRun) addNew(id int64, importPosition *Position, sourceIndividual 
 		slog.Warn("reading import comment", "positionID", id, "err", err)
 	}
 	for _, c := range importComments {
-		if err := insertImportedComment(tx, newPositionID, c); err != nil {
+		if err := insertImportedComment(ctx, stx, newPositionID, c); err != nil {
 			slog.Warn("inserting comment for new position", "positionID", newPositionID, "err", err)
 		}
 	}
