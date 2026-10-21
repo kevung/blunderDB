@@ -147,6 +147,20 @@ rapides.
   `requireOwned`, un `SELECT COUNT(*) … = ANY` par ligne) et `Comments().ByPosition`.
 - Gain estimé : quelques minutes au lieu de plusieurs heures (copie par lots).
 - Effort : **M**. **Neuf.** Il bloque aussi la mesure PostgreSQL de ce test.
+- Mesure (branche `perf/migrate-batch`, même base, PostgreSQL 16 en conteneur local, fsync
+  coupé des deux côtés) : avant, plafond de 10 min atteint dans la phase des positions,
+  tas `analysis` à 19 Mo sur 100 Mo, soit **≥ 52 min** extrapolées pour cette phase. Après
+  (lots de 1000 : `SaveMany` des positions et des analyses, positions créées nommées fraîches,
+  lectures source par lot, coups d'un match en un `CreateMoves`) : phase des positions en
+  **2 min 04 s** (312 586 positions, ×25), tournois en 3 s.
+- Reste lent : la phase des matchs. 8 152 matchs sur 33 319 en 17 min, à un débit qui
+  baisse (~560 puis ~235 matchs/min) : ≥ 1 h 45 restantes, arrêtée. Causes vues :
+  `Tournaments().AddMatch` lit `MAX(tournament_sort_order) … WHERE tournament_id = $1` sans
+  index sur `match(tournament_id)` (parcours séquentiel par match, quadratique), et ouvre un
+  savepoint par match, si bien que la transaction déborde ses 64 sous-transactions
+  (`pg_stat_get_backend_subxact` : `overflowed = t`) ; `CreateGame` coûte un aller-retour et
+  un `DELETE FROM match_stats` par partie (268 724). Piste : un index (changement de schéma)
+  ou un rattachement par lots, et des parties par lots.
 
 ### 3.5 Cause d'un 500 perdue derrière gzip — #751
 
