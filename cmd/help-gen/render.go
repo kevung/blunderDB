@@ -146,6 +146,14 @@ func (g *generator) renderBlocks(blocks []block, tr translator) (string, error) 
 			// h3, h4, h5 for the manual's three levels, floored at h5.
 			level := min(v.level+1, 5)
 			write("<h%d>%s</h%d>\n", level, escapeHTML(title), level)
+		case toctree:
+			for _, name := range v.docs {
+				html, err := g.renderDoc(name, tr.lang)
+				if err != nil {
+					return "", fmt.Errorf("%s: %w", name, err)
+				}
+				b.WriteString(html)
+			}
 		case paragraph:
 			html, err := g.trInline(v.text, tr)
 			if err != nil {

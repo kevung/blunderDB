@@ -39,6 +39,10 @@ type literal struct {
 
 type bulletList struct{ items []string }
 
+// toctree lists the documents a summary page is made of; the help renders them
+// in its place, each through its own catalogue.
+type toctree struct{ docs []string }
+
 // blockquote is an indented body (manuel.rst's term definitions), parsed by
 // the same reader.
 type blockquote struct{ blocks []block }
@@ -55,6 +59,7 @@ func (bulletList) isBlock() {}
 func (blockquote) isBlock() {}
 func (literal) isBlock()    {}
 func (table) isBlock()      {}
+func (toctree) isBlock()    {}
 
 // document is one parsed .rst file; link targets come from scanTargets.
 type document struct {
@@ -148,6 +153,14 @@ func parseBlocks(lines []string, path string, levels *[]string) ([]block, error)
 				blocks = append(blocks, literal{class: "math", text: strings.Join(trimBlank(body), "\n")})
 			case "code-block", "code":
 				blocks = append(blocks, literal{class: "code", text: strings.Join(trimBlank(body), "\n"), verbatim: true})
+			case "toctree":
+				var docs []string
+				for _, l := range body {
+					if s := strings.TrimSpace(l); s != "" && !strings.HasPrefix(s, ":") {
+						docs = append(docs, s)
+					}
+				}
+				blocks = append(blocks, toctree{docs: docs})
 			case "figure", "image":
 				// The help shows no pictures; the text around them stands alone.
 			default:

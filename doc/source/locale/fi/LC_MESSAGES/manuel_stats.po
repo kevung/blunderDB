@@ -1,0 +1,2043 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-21 12:52+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: fi\n"
+"Language-Team: fi <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/manuel_stats.rst:4
+msgid "Statistiques"
+msgstr "Tilastot"
+
+#: ../../source/manuel_stats.rst:9
+msgid "Panneau Stats"
+msgstr "Stats-paneeli"
+
+#: ../../source/manuel_stats.rst:12
+msgid "Introduction"
+msgstr "Johdanto"
+
+#: ../../source/manuel_stats.rst:14
+msgid ""
+"Le panneau **Stats** permet d'analyser son niveau de jeu et de suivre sa "
+"progression dans le temps à partir des positions importées dans la base "
+"de données. Il calcule et affiche les indicateurs **PR** (*Performance "
+"Rating*) et **MWC cost** (Match Winning Chance cost) pour l'ensemble des "
+"positions ou un sous-ensemble filtré."
+msgstr ""
+"**Stats-paneeli** mahdollistaa oman pelitason analysoinnin ja kehityksen "
+"seuraamisen ajan myötä tietokantaan tuotujen asemien perusteella. Se "
+"laskee ja näyttää tunnusluvut **PR** (*Performance Rating*) ja **MWC "
+"cost** (Match Winning Chance cost) kaikille asemille tai suodatetulle "
+"osajoukolle."
+
+#: ../../source/manuel_stats.rst:20
+msgid "Le panneau Stats est particulièrement utile pour :"
+msgstr "Stats-paneeli on erityisen hyödyllinen seuraaviin tarkoituksiin:"
+
+#: ../../source/manuel_stats.rst:22
+msgid ""
+"**situer son niveau** par rapport aux bandes de niveau (*Classe "
+"mondiale*, *Expert*, *Avancé*…) grâce au PR global ;"
+msgstr ""
+"**oman tason arviointi** tasovyöhykkeisiin nähden (*Maailmanluokka*, "
+"*Ekspertti*, *Edistynyt*…) kokonais-PR:n avulla;"
+
+#: ../../source/manuel_stats.rst:25
+msgid ""
+"**suivre sa progression** tournoi après tournoi ou match après match "
+"grâce aux graphiques de l'onglet Progression ;"
+msgstr ""
+"**oman kehityksen seuranta** turnaus turnaukselta tai ottelu ottelulta "
+"Progression-välilehden kaavioiden avulla;"
+
+#: ../../source/manuel_stats.rst:28
+msgid ""
+"**identifier ses points faibles** : onglet Erreurs pour voir la "
+"répartition entre coups joués et décisions de videau, et la distribution "
+"des magnitudes d'erreur ;"
+msgstr ""
+"**omien heikkouksien tunnistaminen**: Erreurs-välilehti näyttää jakauman "
+"pelinappulasiirtojen ja kuutiopäätösten välillä sekä virheiden "
+"suuruusjakauman;"
+
+#: ../../source/manuel_stats.rst:32
+msgid ""
+"**comparer les joueurs de la base** entre eux, une ligne par joueur, "
+"grâce à l'onglet Joueurs — utile pour suivre une compétition entière ;"
+msgstr ""
+"**vertailla tietokannan pelaajia** keskenään, yksi rivi pelaajaa kohden, "
+"Pelaajat-välilehdellä — kätevä kokonaisen kilpailun seuraamiseen;"
+
+#: ../../source/manuel_stats.rst:35
+msgid ""
+"**accéder directement aux positions concernées** en cliquant sur "
+"n'importe quel indicateur (drill-down)."
+msgstr ""
+"**siirtyminen suoraan asiaankuuluviin asemiin** napsauttamalla mitä "
+"tahansa tunnuslukua (drill-down)."
+
+#: ../../source/manuel_stats.rst:38
+msgid ""
+"La définition, la formule, l'incertitude et les limites de chaque chiffre"
+" du panneau sont réunies dans :ref:`metriques`."
+msgstr ""
+"Paneelin jokaisen luvun määritelmä, kaava, epävarmuus ja rajat on koottu "
+"sivulle :ref:`metriques`."
+
+#: ../../source/manuel_stats.rst:42
+msgid "Ouverture du panneau"
+msgstr "Paneelin avaaminen"
+
+#: ../../source/manuel_stats.rst:44
+msgid "Pour ouvrir le panneau Stats :"
+msgstr "Avaa Stats-paneeli näin:"
+
+#: ../../source/manuel_stats.rst:46
+msgid "Appuyer sur *CTRL-D*."
+msgstr "Paina *CTRL-D*."
+
+#: ../../source/manuel_stats.rst:47
+msgid "Saisir la commande ``stats`` ou ``st`` dans la ligne de commande."
+msgstr "Kirjoita komento ``stats`` tai ``st`` komentoriville."
+
+#: ../../source/manuel_stats.rst:50
+msgid ""
+"Le panneau se rafraîchit automatiquement à chaque modification du filtre."
+" Il ne recalcule pas les statistiques lors d'un simple basculement PR ↔ "
+"MWC : les deux métriques sont calculées simultanément par le backend."
+msgstr ""
+"Paneeli päivittyy automaattisesti aina, kun suodatinta muutetaan. Se ei "
+"laske tilastoja uudelleen pelkän PR ↔ MWC -vaihdon yhteydessä: backend "
+"laskee molemmat mittarit samanaikaisesti."
+
+#: ../../source/manuel_stats.rst:55
+msgid "Barre de filtre"
+msgstr "Suodatinpalkki"
+
+#: ../../source/manuel_stats.rst:57
+msgid ""
+"La barre de filtre, en haut du panneau, permet de restreindre le calcul à"
+" un sous-ensemble de positions."
+msgstr ""
+"Paneelin yläosassa oleva suodatinpalkki mahdollistaa laskennan rajaamisen"
+" asemien osajoukkoon."
+
+#: ../../source/manuel_stats.rst:61
+msgid "Perspective joueur"
+msgstr "Pelaajanäkökulma"
+
+#: ../../source/manuel_stats.rst:63
+msgid ""
+"Le champ **Joueur** filtre les statistiques selon le joueur analysé. "
+"Taper quelques lettres réduit la liste aux noms qui les contiennent ; un "
+"clic ou *Entrée* choisit le joueur, **✕** ou un champ vidé revient à "
+"toutes les perspectives."
+msgstr ""
+"**Pelaaja**-kenttä suodattaa tilastot analysoidun pelaajan mukaan. "
+"Muutaman kirjaimen kirjoittaminen supistaa luettelon niitä sisältäviin "
+"nimiin; napsautus tai *Enter* valitsee pelaajan, **✕** tai tyhjennetty "
+"kenttä palauttaa kaikki näkökulmat."
+
+#: ../../source/manuel_stats.rst:68
+msgid ""
+"Le filtre est **un seul** pour tous les onglets du panneau et il est "
+"conservé d'une session à l'autre. Il se règle aussi depuis les autres "
+"panneaux : le nom d'un joueur dans l'en-tête d'un match ou dans la barre "
+"au-dessus du plateau ouvre toutes ses statistiques (tournois et dates "
+"sont vidés), et le bouton **Stats** de l'en-tête d'un tournoi ouvre "
+"celles de ce tournoi entier (dates vidées, joueur conservé). Une date de "
+"fin antérieure à la date de début est refusée : le champ reprend la date "
+"appliquée."
+msgstr ""
+"Suodatin on **yksi ja sama** paneelin kaikille välilehdille ja se säilyy "
+"istunnosta toiseen. Sen voi asettaa myös muista paneeleista: pelaajan "
+"nimi ottelun otsikossa tai laudan yläpuolisessa palkissa avaa kaikki "
+"hänen tilastonsa (turnaukset ja päivämäärät tyhjennetään), ja turnauksen "
+"otsikon **Stats**-painike avaa koko kyseisen turnauksen tilastot "
+"(päivämäärät tyhjennetään, pelaaja säilyy). Alkupäivää aikaisempi "
+"loppupäivä hylätään: kenttä palauttaa voimassa olevan päivämäärän."
+
+#: ../../source/manuel_stats.rst:77
+msgid "Filtres disponibles"
+msgstr "Saatavilla olevat suodattimet"
+
+#: ../../source/manuel_stats.rst:79
+msgid ""
+"**Tournoi(s)** — restriction à un ou plusieurs tournois. Plusieurs "
+"tournois peuvent être sélectionnés simultanément."
+msgstr ""
+"**Turnaukset** — rajaus yhteen tai useampaan turnaukseen. Useita "
+"turnauksia voi valita samanaikaisesti."
+
+#: ../../source/manuel_stats.rst:82
+msgid ""
+"**Dates** — plage temporelle (*De* … *À*). Si seule la date de début est "
+"renseignée, les positions plus récentes sont incluses."
+msgstr ""
+"**Päivämäärät** — aikaväli (*Alkaen* … *Asti*). Jos vain alkupäivä on "
+"asetettu, uudemmat asemat sisällytetään."
+
+#: ../../source/manuel_stats.rst:85
+msgid "**Type de décision** — Tous / Coups joués / Décisions de videau."
+msgstr "**Päätöstyyppi** — Kaikki / Pelinappulasiirrot / Kuutiopäätökset."
+
+#: ../../source/manuel_stats.rst:87
+msgid ""
+"**Longueur de match** — restriction à des longueurs de match précises (1,"
+" 3, 5, 7, 9, 11, 13, 15, 21 points). Plusieurs longueurs peuvent être "
+"combinées."
+msgstr ""
+"**Ottelun pituus** — rajaus tiettyihin ottelupituuksiin (1, 3, 5, 7, 9, "
+"11, 13, 15, 21 pistettä). Useita pituuksia voi yhdistää."
+
+#: ../../source/manuel_stats.rst:90
+msgid ""
+"**Moteur** et **Profondeur min.** — ne garder que les décisions analysées"
+" par un moteur donné, ou au moins à une profondeur donnée, en plis. Le "
+"menu *Moteur* propose les moteurs présents dans les analyses de la base "
+"(eXtreme Gammon, GNU Backgammon…)."
+msgstr ""
+"**Moottori** ja **Vähimmäissyvyys** — säilytä vain tietyn moottorin tai "
+"tiettyä syvyyttä vähintään analysoimat päätökset, plyinä. "
+"*Moottori*-valikko tarjoaa tietokannan analyyseissa esiintyvät moottorit "
+"(eXtreme Gammon, GNU Backgammon…)."
+
+#: ../../source/manuel_stats.rst:95
+msgid ""
+"Un bouton **↺ Réinitialiser** remet tous les filtres à zéro, sauf le "
+"joueur."
+msgstr ""
+"**↺ Palauta**-painike tyhjentää kaikki suodattimet pelaajaa lukuun "
+"ottamatta."
+
+#: ../../source/manuel_stats.rst:98
+msgid ""
+"Les filtres sont persistés dans la configuration de blunderDB "
+"(``config.yaml``) et sont restaurés à la prochaine ouverture."
+msgstr ""
+"Suodattimet tallennetaan blunderDB:n asetuksiin (``config.yaml``) ja "
+"palautetaan seuraavalla käynnistyskerralla."
+
+#: ../../source/manuel_stats.rst:102
+msgid "Toggle PR / MWC"
+msgstr "PR / MWC -vaihto"
+
+#: ../../source/manuel_stats.rst:104
+msgid ""
+"Le bouton **PR / MWC** en haut du panneau bascule la métrique affichée "
+"dans tous les onglets."
+msgstr ""
+"Paneelin yläosassa oleva **PR / MWC** -painike vaihtaa kaikissa "
+"välilehdissä näytettävän mittarin."
+
+#: ../../source/manuel_stats.rst:107
+msgid "**PR (Performance Rating)**"
+msgstr "**PR (Performance Rating)**"
+
+#: ../../source/manuel_stats.rst:109
+msgid ""
+"L'erreur moyenne d'équité par décision comptée, multipliée par 500 comme "
+"le font eXtreme Gammon et GNUbg : un PR de 5,0 vaut 0,010 d'équité perdue"
+" par décision, soit 10 millipoints (mpt). La règle de comptage exacte — "
+"quelles décisions entrent au dénominateur, comment le score est converti "
+"— est celle de :ref:`metrique_pr`."
+msgstr ""
+"Keskimääräinen equity-virhe laskettua päätöstä kohden kerrottuna 500:lla,"
+" kuten eXtreme Gammon ja GNUbg tekevät: PR 5,0 vastaa 0,010 menetettyä "
+"equitya päätöstä kohden, eli 10 millipistettä (mpt). Tarkka "
+"laskentasääntö — mitkä päätökset kuuluvat nimittäjään, miten pistetilanne"
+" muunnetaan — on sivulla :ref:`metrique_pr`."
+
+#: ../../source/manuel_stats.rst:115
+msgid ""
+"Les bandes de niveau que le panneau dessine derrière la courbe de "
+"progression sont un **repère indicatif propre à blunderDB** : aucune "
+"publication ne fait autorité sur ces seuils. La borne haute de chaque "
+"bande est exclue : un PR de 4 est *Avancé*, pas *Expert*."
+msgstr ""
+"Tasovyöhykkeet, jotka paneeli piirtää kehityskäyrän taakse, ovat "
+"**blunderDB:n oma suuntaa antava viitekehys**: yksikään julkaisu ei ole "
+"näiden rajojen auktoriteetti. Kunkin vyöhykkeen yläraja on poissulkeva: "
+"PR 4 on *Edistynyt*, ei *Ekspertti*."
+
+#: ../../source/manuel_stats.rst:1
+msgid "Niveau"
+msgstr "Taso"
+
+#: ../../source/manuel_stats.rst:1
+msgid "PR"
+msgstr "PR"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Classe mondiale"
+msgstr "Maailmanluokka"
+
+#: ../../source/manuel_stats.rst:1
+msgid "< 2"
+msgstr "< 2"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Expert"
+msgstr "Expert"
+
+#: ../../source/manuel_stats.rst:1
+msgid "2 – 4"
+msgstr "2 – 4"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Avancé"
+msgstr "Edistynyt"
+
+#: ../../source/manuel_stats.rst:1
+msgid "4 – 6"
+msgstr "4 – 6"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Intermédiaire"
+msgstr "Keskitaso"
+
+#: ../../source/manuel_stats.rst:1
+msgid "6 – 9"
+msgstr "6 – 9"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Occasionnel"
+msgstr "Harrastelija"
+
+#: ../../source/manuel_stats.rst:1
+msgid "9 – 12"
+msgstr "9 – 12"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Débutant"
+msgstr "Aloittelija"
+
+#: ../../source/manuel_stats.rst:1
+msgid "≥ 12"
+msgstr "≥ 12"
+
+#: ../../source/manuel_stats.rst:132
+msgid "**MWC cost (Match Winning Chance cost)**"
+msgstr "**MWC cost (Match Winning Chance cost)**"
+
+#: ../../source/manuel_stats.rst:134
+msgid ""
+"Probabilité cumulée de victoire de match perdue à cause des erreurs, sur "
+"l'ensemble du jeu de données filtré. Calculé à partir de la MET courante "
+"de la base, par défaut la Kazaross-XG2 embarquée dans blunderDB. Une "
+"analyse au score de match calculée avec une autre table est « MET "
+"différente » et reste hors des statistiques."
+msgstr ""
+"Virheiden vuoksi menetetty kumulatiivinen ottelun voittotodennäköisyys "
+"koko suodatetussa aineistossa. Laskettu tietokannan nykyisellä MET:llä, "
+"oletuksena blunderDB:hen sisältyvällä Kazaross-XG2:lla. Toisella "
+"taulukolla laskettu ottelun pistetilanteen analyysi on ”eri MET” ja jää "
+"tilastojen ulkopuolelle."
+
+#: ../../source/manuel_stats.rst:141
+msgid ""
+"Le MWC cost **n'est pas applicable** aux positions *money-game* (sans "
+"enjeu de match). Ces positions sont exclues du calcul MWC. Les valeurs "
+"MWC dépendent de la MET utilisée ; elles ne sont pas directement "
+"comparables entre logiciels utilisant des METs différentes."
+msgstr ""
+"MWC cost **ei sovellu** *money-game* -asemiin (joissa ei ole "
+"ottelupanosta). Nämä asemat jätetään pois MWC-laskennasta. MWC-arvot "
+"riippuvat käytetystä MET:stä; ne eivät ole suoraan vertailukelpoisia eri "
+"MET:ejä käyttävien ohjelmistojen välillä."
+
+#: ../../source/manuel_stats.rst:148
+msgid "**Perte MWC (éq. 7 pts)**"
+msgstr "**MWC-tappio (7 pisteen ekv.)**"
+
+#: ../../source/manuel_stats.rst:150
+msgid ""
+"La probabilité de gagner le match qu'un joueur a perdue sur l'ensemble de"
+" ses décisions — pions, videau, prise ou refus, avec videau — ramenée à "
+"un match en 7 points. Pour un match en *N* points où le joueur a perdu "
+"*L* de MWC :"
+msgstr ""
+"Todennäköisyys voittaa ottelu, jonka pelaaja on menettänyt kaikilla "
+"päätöksillään — siirrot, tuplauskuutio, kuution ottaminen tai hylkääminen"
+" — suhteutettuna 7 pisteen otteluun. *N* pisteen ottelussa, jossa pelaaja"
+" on menettänyt *L* MWC:tä:"
+
+#: ../../source/manuel_stats.rst:154
+msgid "L₇ = L × √(7 / N)"
+msgstr "L₇ = L × √(7 / N)"
+
+#: ../../source/manuel_stats.rst:156
+msgid ""
+"Pour un match en 7 points, c'est la perte de MWC du match, celle "
+"qu'affiche eXtreme Gammon. La racine vient du modèle de la formule FIBS :"
+" à force égale, la perte d'un joueur croît comme la racine de la longueur"
+" du match. 7 points est la longueur de référence parce que c'est la plus "
+"courante en tournoi."
+msgstr ""
+"7 pisteen ottelussa tämä on ottelun MWC-tappio, sama jonka eXtreme Gammon"
+" näyttää. Neliöjuuri tulee FIBS-kaavan mallista: yhtä vahvalla pelaajalla"
+" tappio kasvaa ottelun pituuden neliöjuuren mukaan. 7 pistettä on "
+"vertailupituus, koska se on turnauksissa yleisin."
+
+#: ../../source/manuel_stats.rst:162
+#, no-python-format
+msgid ""
+"Elle se lit comme la part de match perdue face à un joueur parfait : 12,3"
+" % veut dire qu'au lieu de 50 % de chances contre le moteur, le joueur "
+"n'en avait plus que 37,7 % sur un match en 7 points. L'infobulle en donne"
+" la lecture en Elo face au moteur, en inversant la formule FIBS : D = "
+"(2000 / √7) × log₁₀(q / (1 − q)), avec q = 0,5 − L₇. Au-delà d'une perte "
+"de 49 %, la formule n'a plus de valeur finie : l'Elo affiché est alors un"
+" plafond (« ≤ »). Les deux chiffres classent les joueurs dans le même "
+"ordre."
+msgstr ""
+"Se luetaan täydelliseen pelaajaan nähden menetettynä osuutena ottelusta: "
+"12,3 % tarkoittaa, että 50 %:n voittomahdollisuuden sijaan moottoria "
+"vastaan pelaajalla oli enää 37,7 % 7 pisteen ottelussa. Työkaluvihje "
+"antaa saman Elo-lukuna moottoria vastaan kääntämällä FIBS-kaavan: D = "
+"(2000 / √7) × log₁₀(q / (1 − q)), missä q = 0,5 − L₇. 49 %:n tappion "
+"jälkeen kaavalla ei ole enää äärellistä arvoa: näytetty Elo on silloin "
+"yläraja (»≤«). Kumpikin luku asettaa pelaajat samaan järjestykseen."
+
+#: ../../source/manuel_stats.rst:171
+msgid ""
+"Elle complète le PR sans le remplacer : le PR divise les erreurs par un "
+"nombre de décisions, et ce nombre dépend de ce que l'on compte comme "
+"décision (coups forcés, décisions de videau évidentes). La perte MWC ne "
+"compte aucune décision : chaque erreur pèse ce qu'elle a coûté au score "
+"où elle a été commise."
+msgstr ""
+"Se täydentää PR:ää korvaamatta sitä: PR jakaa virheet päätösten "
+"lukumäärällä, ja tämä lukumäärä riippuu siitä, mitä päätöksenä pidetään "
+"(pakotetut siirrot, ilmeiset kuutiopäätökset). MWC-tappio ei laske "
+"päätöksiä: kukin virhe painaa sen, mitä se maksoi tilanteessa, jossa se "
+"tehtiin."
+
+#: ../../source/manuel_stats.rst:177
+msgid ""
+"Sur plusieurs matchs (statistiques d'un joueur, d'un tournoi), les pertes"
+" et les racines des longueurs s'additionnent avant le rapport : L₇ = √7 ×"
+" ΣL / Σ√N. Un match en 7 points pèse donc plus qu'un match en 1 point, et"
+" un seul match donne sa propre valeur."
+msgstr ""
+"Usean ottelun yli (pelaajan tai turnauksen tilastot) tappiot ja "
+"pituuksien neliöjuuret lasketaan yhteen ennen suhdetta: L₇ = √7 × ΣL / "
+"Σ√N. 7 pisteen ottelu painaa siis enemmän kuin 1 pisteen ottelu, ja "
+"yksittäinen ottelu antaa oman arvonsa."
+
+#: ../../source/manuel_stats.rst:183
+#, no-python-format
+msgid ""
+"Un match isolé est très bruité : quelques grosses erreurs suffisent à le "
+"faire varier du simple au double. Le badge et le bilan d'un match "
+"(:ref:`bilan du match <bilan_match>`) donnent l'intervalle à 95 % en "
+"rééchantillonnant ses parties ; un agrégat (statistiques d'un joueur, "
+"d'un tournoi) le donne en rééchantillonnant ses matchs ; sans filtre "
+"joueur, les deux sièges d'un match forment une seule unité, puisqu'ils "
+"jouent les mêmes positions. Il faut au moins trois parties, ou trois "
+"matchs, et qu'elles ne donnent pas toutes la même perte : sinon pas "
+"d'intervalle. Une ligne par match des statistiques n'en a donc pas : "
+"c'est une seule unité. Ne classez pas des joueurs sur un seul match."
+msgstr ""
+"Yksittäinen ottelu on hyvin kohinainen: muutama iso virhe riittää "
+"kaksinkertaistamaan arvon. Merkki ja ottelun yhteenveto (:ref:`ottelun "
+"yhteenveto <bilan_match>`) antavat 95 %:n välin otostamalla sen pelit "
+"uudelleen; kooste (pelaajan tai turnauksen tilastot) antaa sen "
+"otostamalla ottelunsa uudelleen; ilman pelaajasuodatinta ottelun kaksi "
+"paikkaa muodostavat yhden yksikön, koska ne pelaavat samat asemat. "
+"Tarvitaan vähintään kolme peliä tai kolme ottelua, eivätkä ne saa kaikki "
+"antaa samaa tappiota: muuten väliä ei ole. Tilastojen ottelukohtaisella "
+"rivillä sitä ei siis ole: se on yksi yksikkö. Älä järjestä pelaajia yhden"
+" ottelun perusteella."
+
+#: ../../source/manuel_stats.rst:195
+msgid ""
+"Une partie *money-game* n'a pas de longueur de match : la perte MWC (éq. "
+"7 pts) n'y est pas définie et le panneau l'indique au lieu d'afficher un "
+"nombre. Comme le MWC cost, elle dépend de la MET."
+msgstr ""
+"*Money-game*-pelillä ei ole ottelun pituutta: MWC-tappiota (7 pisteen "
+"ekv.) ei ole siinä määritelty, ja paneeli ilmoittaa sen numeron "
+"näyttämisen sijaan. Kuten MWC-kustannus, se riippuu MET:stä."
+
+#: ../../source/manuel_stats.rst:199
+msgid ""
+"Le troisième choix du bouton, **MWC 7 pts**, trace cette perte dans "
+"l'onglet Progression, et l'affiche sur les cartes du tableau de bord et "
+"dans la comparaison pions/videau de l'onglet Erreurs, découpée en pions "
+"et videau sur les mêmes matchs (les deux parts s'additionnent). Le "
+"classement des joueurs a sa colonne. Les graphiques sans équivalent 7 "
+"points (par action de videau) gardent le MWC cost."
+msgstr ""
+"Painikkeen kolmas valinta, **MWC 7 pts**, piirtää tämän tappion Kehitys-"
+"välilehdelle ja näyttää sen koontinäytön korteissa sekä Virheet-"
+"välilehden siirto-/kuutiovertailussa, jaettuna siirtoihin ja kuutioon "
+"samoissa otteluissa (osat summautuvat). Pelaajien sijoituksella on oma "
+"sarakkeensa. Kaaviot, joilla ei ole 7 pisteen vastinetta (kuutiotoiminnon"
+" mukaan), säilyttävät MWC cost -arvon."
+
+#: ../../source/manuel_stats.rst:206
+msgid ""
+"Le basculement PR ↔ MWC est instantané : aucun recalcul backend n'est "
+"effectué."
+msgstr "PR ↔ MWC -vaihto on välitön: backend ei suorita uudelleenlaskentaa."
+
+#: ../../source/manuel_stats.rst:212
+msgid "Le rapport HTML"
+msgstr "HTML-raportti"
+
+#: ../../source/manuel_stats.rst:214
+msgid ""
+"Le bouton **Rapport HTML** de l'en-tête du panneau produit un document "
+"**autonome** : un seul fichier, sans image externe, sans feuille de style"
+" distante, sans script. Les diagrammes y sont des SVG en ligne, dessinés "
+"par le même rendu que le plateau à l'écran, avec votre palette. Il "
+"s'ouvre dans n'importe quel navigateur, s'envoie par courriel, et "
+"**s'imprime en PDF par le navigateur lui-même** — ce qui évite "
+"d'embarquer un générateur de PDF pour produire ce que tout le monde a "
+"déjà."
+msgstr ""
+"Paneelin otsikon **HTML-raportti**-painike tuottaa **itsenäisen** "
+"asiakirjan: yksi tiedosto, ei ulkoista kuvaa, ei etätyylitiedostoa, ei "
+"skriptiä. Kaaviot ovat upotettua SVG:tä, piirretty samalla piirtimellä "
+"kuin lauta näytöllä, sinun paletillasi. Se aukeaa missä tahansa "
+"selaimessa, kulkee sähköpostitse ja **tulostuu PDF:ksi itse selaimesta** "
+"— mikä säästää PDF-generaattorin mukaan ottamiselta sellaisen "
+"tuottamiseen, joka kaikilla jo on."
+
+#: ../../source/manuel_stats.rst:222
+msgid ""
+"Il contient les indicateurs du périmètre courant (positions, matchs, "
+"décisions comptées, PR global, pions et videau), puis les **dix décisions"
+" les plus coûteuses**, chacune avec son diagramme, son coût, le match "
+"d'où elle vient et le meilleur coup lorsqu'une analyse le donne."
+msgstr ""
+"Se sisältää nykyisen alueen tunnusluvut (asemat, ottelut, lasketut "
+"päätökset, kokonais-, siirto- ja kuutio-PR), sitten **kymmenen kalleinta "
+"päätöstä**, kukin kaavionsa, kustannuksensa, sen ottelun josta se tulee, "
+"ja parhaan siirron kun analyysi sen antaa."
+
+#: ../../source/manuel_stats.rst:227
+msgid ""
+"Le document est construit par le moteur, pas par l'écran : la ligne de "
+"commande (``stats report --html``, voir :ref:`cli_stats`) et le démon "
+"HTTP (route ``stats.report``) produisent le même rapport, dans l'une des "
+"neuf langues de l'interface. Seule l'application graphique dessine les "
+"diagrammes avec la palette du plateau ; les deux autres emploient la "
+"palette par défaut."
+msgstr ""
+"Asiakirjan rakentaa moottori, ei näyttö: komentorivi (``stats report "
+"--html``, katso :ref:`cli_stats`) ja HTTP-palvelu (reitti "
+"``stats.report``) tuottavat saman raportin jollakin käyttöliittymän "
+"yhdeksästä kielestä. Vain graafinen sovellus piirtää kaaviot laudan "
+"paletilla; kaksi muuta käyttävät oletuspalettia."
+
+#: ../../source/manuel_stats.rst:233
+msgid ""
+"Le rapport porte le **filtre courant** du panneau Stats. Un rapport qui "
+"ne dit pas son périmètre est un rapport dont les chiffres ne veulent rien"
+" dire : réglez le filtre — un tournoi, une plage de dates, un joueur — "
+"avant de le produire."
+msgstr ""
+"Raportti kantaa Tilastot-paneelin **nykyistä suodatinta**. Raportti joka "
+"ei kerro aluettaan on raportti jonka luvut eivät merkitse mitään: aseta "
+"suodatin — turnaus, päivämääräväli, pelaaja — ennen kuin tuotat sen."
+
+#: ../../source/manuel_stats.rst:239
+msgid "Onglet Tableau de bord"
+msgstr "Yleiskatsaus-välilehti"
+
+#: ../../source/manuel_stats.rst:241
+msgid ""
+"L'onglet **Tableau de bord** donne une vue synthétique des indicateurs "
+"clés. Il se lit de haut en bas : les cartes de niveau, puis ce qui se "
+"travaille (plan d'étude, top blunders), puis les lectures (PR glissant, "
+"avant/après l'étude, biais signés). L'explication de chaque carte est "
+"dans l'info-bulle de son titre."
+msgstr ""
+"**Yleiskatsaus**-välilehti antaa tiiviin kuvan keskeisistä "
+"tunnusluvuista. Se luetaan ylhäältä alas: tasokortit, sitten se, mitä "
+"työstetään (opintosuunnitelma, top blunders), sitten tulkinnat (liukuva "
+"PR, ennen/jälkeen opiskelun, etumerkilliset vinoumat). Jokaisen kortin "
+"selitys on sen otsikon vihjekuplassa."
+
+#: ../../source/manuel_stats.rst:247
+msgid "Onglet Tableau de bord du panneau Stats"
+msgstr "Stats-paneelin Yleiskatsaus-välilehti"
+
+#: ../../source/manuel_stats.rst:251
+msgid "L'onglet Tableau de bord : PR global, PR pions, PR videau."
+msgstr "Yleiskatsaus-välilehti: kokonais-PR, pelinappula-PR, kuutio-PR."
+
+#: ../../source/manuel_stats.rst:254
+msgid "Cartes de niveau"
+msgstr "Tasokortit"
+
+#: ../../source/manuel_stats.rst:256
+msgid "Trois cartes affichent le PR (ou MWC) pour :"
+msgstr "Kolme korttia näyttää PR:n (tai MWC:n) seuraaville:"
+
+#: ../../source/manuel_stats.rst:258
+msgid "**PR global** — toutes les décisions (pions + videau) ;"
+msgstr "**PR Yhteensä** — kaikki päätökset (nappulasiirrot + kuutio);"
+
+#: ../../source/manuel_stats.rst:259
+msgid "**PR pions** — décisions de pions seulement ;"
+msgstr "**Pelinappula-PR** — vain nappulapäätökset;"
+
+#: ../../source/manuel_stats.rst:260
+msgid "**PR videau** — décisions de videau seulement."
+msgstr "**PR Kuutio** — vain kuutiopäätökset."
+
+#: ../../source/manuel_stats.rst:262
+msgid ""
+"Cliquer sur une carte charge dans le panneau d'analyse les positions du "
+"sous-ensemble correspondant (drill-down). Une quatrième carte, **Perte "
+"MWC (éq. 7 pts)**, donne cette perte quel que soit le choix du bouton PR "
+"/ MWC, avec son intervalle ; elle ne charge rien."
+msgstr ""
+"Kortin napsauttaminen lataa analyysipaneeliin vastaavan osajoukon asemat "
+"(drill-down). Neljäs kortti, **MWC-tappio (7 pisteen ekv.)**, antaa tämän"
+" tappion riippumatta PR / MWC -painikkeen valinnasta, välillään; se ei "
+"lataa mitään."
+
+#: ../../source/manuel_stats.rst:267
+msgid ""
+"Sous les cartes, la ligne des totaux compte les tournois, les matchs et "
+"les décisions du filtre. Le nombre de tournois ouvre ces tournois dans le"
+" panneau Tournois : un tournoi seul s'ouvre directement ; plusieurs "
+"restreignent la liste, qui porte alors le bouton « N tournois ouverts "
+"depuis les Stats × » : il rend la liste complète."
+msgstr ""
+"Korttien alla summarivi laskee suodattimen turnaukset, ottelut ja "
+"päätökset. Turnausten määrä avaa nämä turnaukset Turnaukset-paneelissa: "
+"yksittäinen turnaus avautuu suoraan; useampi rajaa luettelon, jossa on "
+"silloin painike « N turnausta avattu tilastoista × »: se palauttaa koko "
+"luettelon."
+
+#: ../../source/manuel_stats.rst:273
+msgid ""
+"Le nombre de décisions ouvre leurs positions ; le nombre de matchs ouvre "
+"ces matchs dans le panneau Matchs, sauf quand un type de décision ou un "
+"filtre de provenance est actif : il compte alors moins de matchs que la "
+"liste n'en ouvrirait et reste un simple nombre."
+msgstr ""
+"Päätösten määrä avaa niiden asemat; otteluiden määrä avaa nuo ottelut "
+"Ottelut-paneelissa, paitsi kun päätöstyyppi tai alkuperäsuodatin on "
+"käytössä: silloin se laskee vähemmän otteluita kuin luettelo avaisi ja "
+"jää pelkäksi luvuksi."
+
+#: ../../source/manuel_stats.rst:279
+msgid "Le nombre total de décisions est affiché en bas de chaque carte au survol."
+msgstr ""
+"Päätösten kokonaismäärä näytetään kunkin kortin alaosassa, kun osoitin on"
+" sen päällä."
+
+#: ../../source/manuel_stats.rst:284
+msgid "Plan d'étude"
+msgstr "Opintosuunnitelma"
+
+#: ../../source/manuel_stats.rst:286
+msgid ""
+"La carte **Plan d'étude** répond à « que dois-je travailler maintenant ? "
+"». Les erreurs récurrentes (onglet Erreurs) disent où le filtre a perdu "
+"le plus ; elles ne disent pas où l'étude rapporte le plus. Une famille de"
+" positions réellement difficiles coûte cher à tout le monde, et trois "
+"erreurs ne font pas une tendance. Le plan corrige les deux."
+msgstr ""
+"**Opintosuunnitelma**-kortti vastaa kysymykseen ”mitä minun pitäisi "
+"harjoitella nyt?”. Toistuvat virheet (Erreurs-välilehti) kertovat, missä "
+"suodatin hävisi eniten; ne eivät kerro, missä opiskelu tuottaa eniten. "
+"Perheellinen todella vaikeita asemia maksaa kaikille paljon, eivätkä "
+"kolme virhettä tee trendiä. Suunnitelma korjaa molemmat."
+
+#: ../../source/manuel_stats.rst:292
+msgid ""
+"Une **famille** est un groupe des erreurs récurrentes : un plan de jeu, "
+"une nature de décision (pions ou videau) et un thème. Les erreurs sans "
+"thème n'en forment pas : elles n'indiquent rien à étudier."
+msgstr ""
+"**Perhe** on toistuvien virheiden ryhmä: pelisuunnitelma, päätöksen laji "
+"(nappulat tai kuutio) ja teema. Teemattomat virheet eivät muodosta "
+"perhettä: ne eivät osoita mitään opiskeltavaa."
+
+#: ../../source/manuel_stats.rst:295
+msgid ""
+"Chaque erreur est chiffrée en **MWC**, comme dans le panneau Match : sa "
+"perte ℓ, et sa *difficulté* d, la perte qu'un joueur de référence aurait "
+"subie dans la même position (voir la difficulté par décision du panneau "
+"Match). Une erreur en partie libre n'a pas de MWC : elle est seulement "
+"comptée, « non chiffrée »."
+msgstr ""
+"Jokainen virhe mitataan **MWC**:nä kuten Match-paneelissa: sen tappio ℓ "
+"ja sen *vaikeus* d, eli tappio, jonka viitepelaaja olisi kärsinyt samassa"
+" asemassa (ks. Match-paneelin päätöskohtainen vaikeus). Vapaan pelin "
+"virheellä ei ole MWC:tä: se vain lasketaan, ”mittaamattomana”."
+
+#: ../../source/manuel_stats.rst:300
+msgid ""
+"Le **MWC récupérable** d'une famille est la somme de ℓ − d sur ses "
+"erreurs : la fréquence de la famille multipliée par sa perte moyenne au-"
+"delà de la difficulté. C'est ce que vous regagneriez en jouant ces "
+"positions comme le joueur de référence. Une famille d'erreurs évitables "
+"monte, une famille de positions où tout le monde se trompe descend."
+msgstr ""
+"Perheen **takaisin saatava MWC** on ℓ − d:n summa sen virheiden yli: "
+"perheen esiintymistiheys kerrottuna sen keskimääräisellä vaikeuden "
+"ylittävällä tappiolla. Se on se, minkä saisit takaisin pelaamalla nämä "
+"asemat kuten viitepelaaja. Vältettävien virheiden perhe nousee, asemien "
+"perhe, joissa kaikki erehtyvät, laskee."
+
+#: ../../source/manuel_stats.rst:305
+msgid ""
+"L'**intervalle à 95 %** accompagne chaque chiffre. Une famille entre au "
+"plan à partir de **5 erreurs** et d'un intervalle entièrement au-dessus "
+"de zéro ; le plan est classé par la borne basse de l'intervalle, si bien "
+"qu'à récupérable égal la famille la mieux établie passe devant. Les "
+"autres sont nommées sous la liste, **à confirmer**, sans rang : le plan "
+"ne vous pousse pas vers du bruit. La même ligne compte les erreurs **hors"
+" plan** (sans thème, non chiffrées)."
+msgstr ""
+"**95 %:n luottamusväli** seuraa jokaista lukua. Perhe pääsee "
+"suunnitelmaan **5 virheestä** alkaen ja kun väli on kokonaan nollan "
+"yläpuolella; suunnitelma järjestetään välin alarajan mukaan, joten yhtä "
+"suuressa takaisin saatavassa parhaiten perusteltu perhe kulkee edellä. "
+"Muut mainitaan luettelon alla, **vahvistettavina**, ilman sijaa: "
+"suunnitelma ei työnnä sinua kohinaan. Sama rivi laskee **suunnitelman "
+"ulkopuoliset** virheet (ilman teemaa, arvioimattomat)."
+
+#: ../../source/manuel_stats.rst:313
+msgid ""
+"Chaque ligne du plan montre son rang, la famille, une barre dont la "
+"longueur est son MWC récupérable rapporté à celui de la première, ce MWC "
+"avec son intervalle, et le nombre d'erreurs. Chaque compte de positions "
+"du plan (par famille, à confirmer, hors plan) est cliquable : il charge "
+"exactement ces positions dans la liste."
+msgstr ""
+"Suunnitelman jokainen rivi näyttää sijansa, perheen, palkin, jonka pituus"
+" on sen takaisin saatava MWC suhteessa ensimmäisen vastaavaan, tämän "
+"MWC:n välineen kanssa ja virheiden määrän. Jokainen suunnitelman "
+"asemamäärä (perheittäin, vahvistettavat, suunnitelman ulkopuoliset) on "
+"napsautettava: se lataa luetteloon täsmälleen nämä asemat."
+
+#: ../../source/manuel_stats.rst:319
+msgid ""
+"Chaque famille propose trois gestes : **Étudier** ouvre la file d'étude "
+"sur ses positions, l'écart au joueur de référence le plus grand d'abord ;"
+" **Quiz** lance l'exercice Décision du panneau :ref:`Entraînement "
+"<panneau_entrainement>` sur vingt d'entre elles ; **Anki** en fait un "
+"paquet de cartes. En tête de la carte, **Quiz sur les trois premières "
+"familles** tire vingt positions parmi celles des trois familles de tête. "
+"Le plan suit le filtre du panneau : réglez le joueur pour obtenir *votre*"
+" plan. En ligne de commande : ``blunderdb stats plan`` (voir "
+":ref:`cli_stats`)."
+msgstr ""
+"Jokainen perhe tarjoaa kolme toimintoa: **Opiskele** avaa opiskelujonon "
+"sen asemilla, suurin ero viitepelaajaan ensin; **Tietovisa** käynnistää "
+":ref:`Harjoittelu <panneau_entrainement>`-paneelin Päätös-harjoituksen "
+"kahdellakymmenellä niistä; **Anki** tekee niistä korttipakan. Kortin "
+"yläosassa **Tietovisa kolmesta ensimmäisestä perheestä** poimii "
+"kaksikymmentä asemaa kolmen kärkiperheen asemista. Suunnitelma seuraa "
+"paneelin suodatinta: aseta pelaaja saadaksesi *oman* suunnitelmasi. "
+"Komentorivillä: ``blunderdb stats plan`` (ks. :ref:`cli_stats`)."
+
+#: ../../source/manuel_stats.rst:331
+msgid "Avant/après l'étude"
+msgstr "Ennen/jälkeen opiskelun"
+
+#: ../../source/manuel_stats.rst:333
+msgid ""
+"La carte **Avant/après l'étude** ferme la boucle du plan : ce que vous "
+"avez travaillé coûte-t-il moins en match réel ? Sans elle, l'étude se "
+"juge à l'impression ; avec elle, une famille qui ne bouge pas malgré le "
+"travail dit qu'il faut changer de méthode, et une famille en progrès peut"
+" céder sa place dans le plan."
+msgstr ""
+"**Ennen/jälkeen opiskelun** -kortti sulkee suunnitelman kehän: maksaako "
+"se, mitä olet harjoitellut, sinulle vähemmän oikeissa otteluissa? Ilman "
+"sitä opiskelua arvioidaan tuntumalla; sen kanssa perhe, joka ei liiku "
+"työstä huolimatta, kertoo, että menetelmää on vaihdettava, ja edistyvä "
+"perhe voi luovuttaa paikkansa suunnitelmassa."
+
+#: ../../source/manuel_stats.rst:339
+msgid ""
+"Une famille (celle du plan) est **étudiée** à la date de la première "
+"action d'étude sur l'une de ses positions : la marque « étudiée » de la "
+"file d'étude, une révision Anki, une réponse en quiz. Créer une carte ou "
+"ranger une position en collection n'en est pas une."
+msgstr ""
+"Perhe (suunnitelman perhe) on **opiskeltu** siitä päivästä, jona johonkin"
+" sen asemaan kohdistuu ensimmäinen opiskelutoimi: opiskelujonon "
+"”opiskeltu”-merkintä, Anki-kertaus tai tietovisan vastaus. Kortin "
+"luominen tai aseman lisääminen kokoelmaan ei lasketa."
+
+#: ../../source/manuel_stats.rst:343
+msgid ""
+"Pour chaque famille étudiée, la carte compare deux **fenêtres** : les "
+"matchs joués avant ce jour et ceux joués après (le jour même est écarté)."
+" Dans chacune, le **taux de perte** est la MWC perdue par les erreurs de "
+"la famille, rapportée à toutes les décisions du même plan de jeu et de la"
+" même nature, et affichée en points de MWC pour 100 décisions."
+msgstr ""
+"Jokaiselle opiskellulle perheelle kortti vertaa kahta **ikkunaa**: ennen "
+"kyseistä päivää pelattuja otteluita ja sen jälkeen pelattuja (itse päivä "
+"jätetään pois). Kummassakin **tappioaste** on perheen virheiden hävitty "
+"MWC suhteessa kaikkiin saman pelisuunnitelman ja saman lajin päätöksiin, "
+"ja se esitetään MWC-pisteinä sataa päätöstä kohti."
+
+#: ../../source/manuel_stats.rst:348
+msgid ""
+"Le **gain** est le taux d'avant moins celui d'après, avec son intervalle "
+"à 95 %. Le verdict n'est « en progrès » (ou « en recul ») que si chaque "
+"fenêtre compte au moins **30 décisions** et que l'intervalle exclut zéro "
+"; sinon il reste « indéterminé » ou « trop peu de décisions »."
+msgstr ""
+"**Hyöty** on aiempi aste miinus myöhempi aste, 95 %:n välin kanssa. "
+"Tuomio on ”parantunut” (tai ”heikentynyt”) vain, jos kummassakin "
+"ikkunassa on vähintään **30 päätöstä** ja väli ei sisällä nollaa; muuten "
+"se jää tilaan ”epäselvä” tai ”liian vähän päätöksiä”."
+
+#: ../../source/manuel_stats.rst:353
+msgid ""
+"À côté de chaque fenêtre, la colonne **Positions** compte les positions "
+"distinctes de ses décisions et les ouvre d'un clic ; le nombre entre "
+"parenthèses reste celui des décisions, dénominateur du taux."
+msgstr ""
+"Kunkin ikkunan vieressä sarake **Asemat** laskee sen päätösten erilliset "
+"asemat ja avaa ne napsautuksella; suluissa oleva luku on yhä päätösten "
+"määrä, osuuden nimittäjä."
+
+#: ../../source/manuel_stats.rst:357
+msgid ""
+"C'est un changement, pas un effet : une famille est étudiée parce qu'elle"
+" coûtait, et une part du gain est une régression vers la moyenne ; rien "
+"ne contrôle les adversaires, le format ni les dés. En ligne de commande :"
+" ``blunderdb stats effect`` (voir :ref:`cli_stats`)."
+msgstr ""
+"Tämä on muutos, ei vaikutus: perhe opiskellaan, koska se maksoi, ja osa "
+"hyödystä on regressiota kohti keskiarvoa; mikään ei kontrolloi "
+"vastustajia, formaattia tai noppia. Komentoriviltä: ``blunderdb stats "
+"effect`` (ks. :ref:`cli_stats`)."
+
+#: ../../source/manuel_stats.rst:365
+msgid "Biais signés"
+msgstr "Etumerkilliset vinoumat"
+
+#: ../../source/manuel_stats.rst:367
+msgid ""
+"La carte **Biais signés** dit dans quel sens vous vous trompez, pas "
+"seulement combien. « Vous prenez trop » se corrige mieux qu'un PR : la "
+"règle à revoir est nommée. Chaque biais est la part de décisions fautives"
+" dans un sens moins la part fautive dans l'autre, avec son intervalle à "
+"95 % ; un penchant n'est nommé qu'à partir de **20 décisions** et d'un "
+"intervalle qui exclut zéro."
+msgstr ""
+"**Etumerkilliset vinoumat** -kortti kertoo, mihin suuntaan erehdyt, ei "
+"vain kuinka paljon. ”Otat liikaa” korjautuu paremmin kuin PR: "
+"tarkistettava sääntö on nimetty. Jokainen vinouma on virheellisten "
+"päätösten osuus yhteen suuntaan miinus virheellisten osuus toiseen "
+"suuntaan, 95 %:n välin kanssa; taipumus nimetään vasta **20 päätöksestä**"
+" alkaen ja kun väli ei sisällä nollaa."
+
+#: ../../source/manuel_stats.rst:373
+msgid ""
+"**Prise / refus** — sur les réponses au videau : prises fautives (le bot "
+"refuse) moins refus fautifs (le bot prend). C'est exactement votre taux "
+"de prise moins celui du bot sur les mêmes positions."
+msgstr ""
+"**Ottaminen / hylkääminen** — kuution vastauksissa: virheelliset otot "
+"(botti hylkää) miinus virheelliset hylkäykset (botti ottaa). Tämä on "
+"täsmälleen oma ottoprosenttisi miinus botin ottoprosentti samoissa "
+"asemissa."
+
+#: ../../source/manuel_stats.rst:376
+msgid ""
+"**Doubles** — sur les décisions de doubler : doubles prématurés (le bot "
+"ne double pas, ou la position est trop bonne pour doubler) moins doubles "
+"manqués. Le même biais est donné **par score** (votre away, celui de "
+"l'adversaire, un score post-Crawford compté à 1 point ; la partie libre "
+"dans sa propre case), pour les scores qui comptent assez de décisions."
+msgstr ""
+"**Tuplaukset** — tuplauspäätöksissä: ennenaikaiset tuplaukset (botti ei "
+"tuplaa, tai asema on liian hyvä tuplattavaksi) miinus väliin jääneet "
+"tuplaukset. Sama vinouma annetaan **tilanteen mukaan** (oma away, "
+"vastustajan away, Crawfordin jälkeinen tilanne lasketaan yhdeksi "
+"pisteeksi; vapaa peli omassa ruudussaan) tilanteille, joissa on tarpeeksi"
+" päätöksiä."
+
+#: ../../source/manuel_stats.rst:381
+msgid ""
+"**Blots** — sur les coups de pions avec contact : les coups qui laissent "
+"plus de blots que le meilleur coup moins ceux qui en laissent moins. Un "
+"coup est reconnu par le plateau qu'il laisse, quelle que soit son "
+"écriture (« 13/7(2) », « 8/5*/4 ») ; un coup que le générateur de coups "
+"ne sait toujours pas rejouer est écarté, et la part des coups écartés est"
+" donnée sous le tableau. Le biais compte les blots sans peser leur "
+"exposition : un blot hors de portée compte autant qu'un blot exposé."
+msgstr ""
+"**Blotit** — kontaktillisissa nappulasiirroissa: siirrot, jotka jättävät "
+"enemmän blotteja kuin paras siirto, miinus ne, jotka jättävät vähemmän. "
+"Siirto tunnistetaan sen jättämästä laudasta, olipa se kirjoitettu miten "
+"tahansa (\"13/7(2)\", \"8/5*/4\"); siirto, jota siirtogeneraattori ei "
+"edelleenkään osaa toistaa, hylätään, ja hylättyjen siirtojen osuus "
+"annetaan taulukon alla. Vinouma laskee blotit painottamatta niiden "
+"altistusta: ulottumattomissa oleva blotti lasketaan yhtä paljon kuin "
+"alttiina oleva."
+
+#: ../../source/manuel_stats.rst:389
+msgid ""
+"À côté de chaque compte, son coût en millipoints dit si le penchant coûte"
+" ; une position jouée dans plusieurs matchs y compte avec le coup joué "
+"dans chacun. Les biais suivent le filtre du panneau. En ligne de commande"
+" : ``blunderdb stats biases`` (voir :ref:`cli_stats`)."
+msgstr ""
+"Jokaisen luvun vieressä sen hinta millipisteinä kertoo, maksaako "
+"taipumus; useassa ottelussa pelattu asema lasketaan siinä kussakin "
+"pelatulla siirrolla. Vinoumat seuraavat paneelin suodatinta. "
+"Komentoriviltä: ``blunderdb stats biases`` (ks. :ref:`cli_stats`)."
+
+#: ../../source/manuel_stats.rst:394
+msgid ""
+"Chaque compte de décisions (toutes, d'un sens, de l'autre) est suivi "
+"d'une colonne **Positions** : les positions distinctes de ces décisions, "
+"qu'un clic ouvre. Une position jouée dans plusieurs matchs y compte une "
+"décision par match, mais une seule position."
+msgstr ""
+"Jokaista päätösmäärää (kaikki, yhteen suuntaan, toiseen suuntaan) seuraa "
+"sarake **Asemat**: näiden päätösten erilliset asemat, jotka napsautus "
+"avaa. Useassa ottelussa pelattu asema lasketaan yhdeksi päätökseksi "
+"ottelua kohden, mutta yhdeksi asemaksi."
+
+#: ../../source/manuel_stats.rst:400
+msgid "PR glissant sur N dernières décisions"
+msgstr "Liukuva PR viimeisten N päätöksen perusteella"
+
+#: ../../source/manuel_stats.rst:402
+msgid ""
+"Une ligne de valeurs PR (ou MWC) calculées sur les *N* dernières "
+"décisions (N = 5, 10, 50, 100, 250, 500, 1000) permet de mesurer la "
+"tendance récente. Les valeurs grisées correspondent à un N supérieur au "
+"nombre de décisions disponibles."
+msgstr ""
+"Rivi PR- (tai MWC-) arvoja, jotka on laskettu viimeisten *N* päätöksen "
+"perusteella (N = 5, 10, 50, 100, 250, 500, 1000), mahdollistaa "
+"viimeaikaisen kehityssuunnan mittaamisen. Harmaannetut arvot vastaavat "
+"N:ää, joka on suurempi kuin käytettävissä olevien päätösten määrä."
+
+#: ../../source/manuel_stats.rst:407
+msgid "Cliquer sur une valeur charge les *N* dernières positions correspondantes."
+msgstr "Arvon napsauttaminen lataa vastaavat viimeiset *N* asemaa."
+
+#: ../../source/manuel_stats.rst:410
+msgid "Top blunders"
+msgstr "Top blunders"
+
+#: ../../source/manuel_stats.rst:412
+msgid ""
+"La liste des 10 pires erreurs (ou MWC cost), triées par magnitude "
+"décroissante. Cliquer sur une ligne charge la position concernée dans le "
+"panneau d'analyse."
+msgstr ""
+"Luettelo 10 pahimmasta virheestä (tai MWC cost), lajiteltuna suuruuden "
+"mukaan laskevasti. Rivin napsauttaminen lataa kyseisen aseman "
+"analyysipaneeliin."
+
+#: ../../source/manuel_stats.rst:416
+msgid "Onglet Progression"
+msgstr "Progression-välilehti"
+
+#: ../../source/manuel_stats.rst:418
+msgid "L'onglet **Progression** présente l'évolution du niveau dans le temps."
+msgstr "**Progression**-välilehti esittää tason kehityksen ajan myötä."
+
+#: ../../source/manuel_stats.rst:420
+msgid ""
+"En tête de l'onglet, un **objectif** : « PR < 5 d'ici douze semaines ». "
+"Une cible, une échéance, et une tendance qui dit où l'on va — rien de "
+"plus. Un objectif qui se mettrait à noter, à féliciter ou à rappeler "
+"serait une autre fonctionnalité, et pas celle-ci."
+msgstr ""
+"Välilehden yläreunassa **tavoite**: ”PR < 5 kahdessatoista viikossa”. "
+"Tavoite, määräaika ja suuntaus joka kertoo mihin ollaan menossa — ei "
+"muuta. Tavoite joka alkaisi arvostella, onnitella tai muistuttaa olisi "
+"eri toiminto, ei tämä."
+
+#: ../../source/manuel_stats.rst:425
+msgid ""
+"Le bouton **Proposer** suggère une cible à partir du niveau actuel : la "
+"borne basse de la bande où vous êtes, c'est-à-dire l'entrée dans la bande"
+" suivante. Proposer « un peu mieux » ne s'ancrerait à rien ; proposer un "
+"palier en dit un — passer d'intermédiaire à avancé se voit et se raconte."
+msgstr ""
+"**Ehdota**-painike ehdottaa tavoitetta nykytasosta: sen vyöhykkeen "
+"alarajaa jossa olet, eli seuraavaan siirtymistä. ”Vähän parempaa” "
+"ehdottaminen ei ankkuroituisi mihinkään; portaan ehdottaminen sanoo "
+"jotain — keskitasolta edistyneeksi siirtyminen näkyy ja kerrotaan."
+
+#: ../../source/manuel_stats.rst:430
+msgid ""
+"La **tendance** est un ajustement par les moindres carrés sur le PR de "
+"vos matchs, projeté à l'échéance. Elle refuse de se prononcer sous trois "
+"matchs : tracer une droite entre deux points serait une affirmation qu'on"
+" ne peut pas tenir. Et la phrase le dit à chaque fois — *une tendance "
+"n'est pas une prédiction*."
+msgstr ""
+"**Suuntaus** on pienimmän neliösumman sovitus otteluidesi PR-lukuihin, "
+"projisoituna määräaikaan. Se kieltäytyy lausumasta alle kolmen ottelun: "
+"suoran vetäminen kahden pisteen välille olisi väite jota ei voi pitää. Ja"
+" lause sanoo sen joka kerta — *suuntaus ei ole ennuste*."
+
+#: ../../source/manuel_stats.rst:436
+msgid ""
+"L'objectif est enregistré dans les **métadonnées de la base**, pas dans "
+"la configuration : il porte sur cette bibliothèque-là, et suit donc le "
+"fichier plutôt que la machine. Aucun changement de schéma : ``metadata`` "
+"est déjà une table de clés et de valeurs, lisible par ``blunderdb info`` "
+"comme par le démon."
+msgstr ""
+"Tavoite tallennetaan **tietokannan metatietoihin**, ei asetuksiin: se "
+"koskee sitä kirjastoa, joten se seuraa tiedostoa eikä konetta. Ei "
+"skeemamuutosta: ``metadata`` on jo avain/arvo-taulu, jonka lukevat sekä "
+"``blunderdb info`` että demoni."
+
+#: ../../source/manuel_stats.rst:442
+msgid "Courbe par tournoi"
+msgstr "Turnauskohtainen viivakaavio"
+
+#: ../../source/manuel_stats.rst:444
+msgid ""
+"Un graphique en ligne affiche le PR (ou MWC) de chaque tournoi : un point"
+" par tournoi, étiqueté de son nom, dans l'ordre chronologique de sa date "
+"— à défaut, celle de son plus ancien match (axe Y : valeur de la "
+"métrique). Des bandes de couleur matérialisent les seuils de niveau."
+msgstr ""
+"Viivakaavio näyttää jokaisen turnauksen PR:n (tai MWC:n): yksi piste "
+"turnausta kohden, nimellään merkittynä, turnauksen päivämäärän mukaisessa"
+" aikajärjestyksessä — sen puuttuessa vanhimman ottelun päivämäärän mukaan"
+" (Y-akseli: mittarin arvo). Värilliset kaistat osoittavat tasorajat."
+
+#: ../../source/manuel_stats.rst:449
+msgid ""
+"Cliquer sur un point du graphique ouvre un menu contextuel avec deux "
+"options :"
+msgstr ""
+"Kaavion pisteen napsauttaminen avaa pikavalikon, jossa on kaksi "
+"vaihtoehtoa:"
+
+#: ../../source/manuel_stats.rst:451
+msgid "**Ouvrir le tournoi** — ouvre le tournoi dans le panneau Tournois."
+msgstr "**Avaa turnaus** — avaa turnauksen Turnaukset-paneelissa."
+
+#: ../../source/manuel_stats.rst:452
+msgid ""
+"**Ouvrir les positions** — charge toutes les positions du tournoi dans le"
+" panneau d'analyse."
+msgstr "**Avaa asemat** — lataa turnauksen kaikki asemat analyysipaneeliin."
+
+#: ../../source/manuel_stats.rst:456
+msgid "Scatter plot par match"
+msgstr "Ottelukohtainen hajontakaavio"
+
+#: ../../source/manuel_stats.rst:458
+msgid ""
+"Un nuage de points représente chaque match (axe X : date, axe Y : PR ou "
+"MWC). La taille du point est proportionnelle au nombre de décisions dans "
+"le match. Un match sans date n'y figure pas."
+msgstr ""
+"Hajontakaavio esittää jokaisen ottelun (X-akseli: päivämäärä, Y-akseli: "
+"PR tai MWC). Pisteen koko on verrannollinen ottelun päätösten määrään. "
+"Ottelu, jolla ei ole päivämäärää, ei näy kaaviossa."
+
+#: ../../source/manuel_stats.rst:462
+msgid "Cliquer sur un point ouvre un menu contextuel :"
+msgstr "Pisteen napsauttaminen avaa pikavalikon:"
+
+#: ../../source/manuel_stats.rst:464
+msgid "**Ouvrir le match** — ouvre le match dans le panneau des matchs."
+msgstr "**Avaa ottelu** — avaa ottelun Ottelut-paneelissa."
+
+#: ../../source/manuel_stats.rst:465
+msgid ""
+"**Ouvrir les positions** — charge toutes les positions du match dans le "
+"panneau d'analyse."
+msgstr "**Avaa asemat** — lataa ottelun kaikki asemat analyysipaneeliin."
+
+#: ../../source/manuel_stats.rst:469
+msgid "Onglet Erreurs"
+msgstr "Erreurs-välilehti"
+
+#: ../../source/manuel_stats.rst:471
+msgid "L'onglet **Erreurs** décompose les sources d'erreurs."
+msgstr "**Erreurs**-välilehti erittelee virheiden lähteet."
+
+#: ../../source/manuel_stats.rst:473
+msgid "Onglet Erreurs du panneau Stats"
+msgstr "Stats-paneelin Errors-välilehti"
+
+#: ../../source/manuel_stats.rst:477
+msgid "L'onglet Erreurs : répartition du PR par action de videau."
+msgstr "Errors-välilehti: PR:n jakautuminen kuutiotoiminnon mukaan."
+
+#: ../../source/manuel_stats.rst:480
+msgid "Erreurs récurrentes"
+msgstr "Toistuvat virheet"
+
+#: ../../source/manuel_stats.rst:482
+msgid ""
+"En tête de l'onglet, un tableau regroupe les erreurs du filtre courant — "
+"donc celles d'un seul joueur quand un joueur est filtré — par **plan de "
+"jeu** et par **thème**, la plus coûteuse d'abord. Il répond à la question"
+" « où est-ce que je perds le plus ? » : par exemple, « tenue · trop de "
+"blots »."
+msgstr ""
+"Välilehden alussa taulukko ryhmittelee nykyisen suodattimen virheet — eli"
+" yhden pelaajan virheet, kun pelaaja on suodatettu — **pelisuunnitelman**"
+" ja **teeman** mukaan, kallein ensin. Se vastaa kysymykseen ”missä "
+"menetän eniten?”: esimerkiksi ”pito · liikaa blotteja”."
+
+#: ../../source/manuel_stats.rst:487
+msgid ""
+"Une **erreur** est une décision comptée dont le coût atteint le seuil "
+"*Erreur* de la bibliothèque."
+msgstr ""
+"**Virhe** on laskettu päätös, jonka kustannus yltää kirjaston "
+"*Virhe*-rajaan."
+
+#: ../../source/manuel_stats.rst:489
+msgid ""
+"Le **plan de jeu** est celui du joueur au trait, tel que l'onglet "
+"Ventilations le présente."
+msgstr ""
+"**Pelisuunnitelma** on vuorossa olevan pelaajan, sellaisena kuin "
+"Erittelyt-välilehti sen esittää."
+
+#: ../../source/manuel_stats.rst:491
+msgid ""
+"Le **thème** d'un coup de pions est celui que nomment les règles de la "
+"phrase d'explication du :ref:`panneau Analyse <panneau_analyse>` : gammon"
+" sous-estimé, trop de blots, point non fait, trop passif. Celui d'une "
+"décision de videau est le sens de l'erreur, comme dans la direction des "
+"erreurs de videau ci-dessous : double manqué, double prématuré, passe à "
+"tort, prise à tort."
+msgstr ""
+"Nappulasiirron **teema** on se, jonka :ref:`Analyysipaneelin "
+"<panneau_analyse>` selityslauseen säännöt nimeävät: gammon aliarvioitu, "
+"liikaa blotteja, pistettä ei tehty, liian passiivinen. Kuutiopäätöksen "
+"teema on virheen suunta, kuten jäljempänä kuutiovirheiden suunnassa: "
+"ohitettu tuplaus, ennenaikainen tuplaus, virheellinen pass, virheellinen "
+"take."
+
+#: ../../source/manuel_stats.rst:497
+msgid ""
+"Une erreur qu'aucune règle ne nomme avec assurance n'est pas devinée : "
+"elle sort du classement et apparaît à part, sous le tableau, en une ligne"
+" par plan de jeu (« sans thème identifié : N erreurs, coût X »), "
+"cliquable elle aussi. Ce reste est souvent le plus lourd, car "
+"l'explication ne se prononce qu'à partir de 60 mp, au-dessus du seuil "
+"*Erreur* : classé avec les autres, il coifferait un tableau qui ne dirait"
+" rien."
+msgstr ""
+"Virhettä, jota mikään sääntö ei nimeä varmasti, ei arvata: se jää pois "
+"luokituksesta ja näkyy erikseen taulukon alla, yhtenä rivinä "
+"pelisuunnitelmaa kohti (»tunnistamatonta teemaa ei ole: N virhettä, hinta"
+" X»), sekin napsautettavana. Tämä jäännös on usein raskain, koska selitys"
+" ottaa kantaa vasta 60 mp:stä alkaen, *Virhe*-kynnyksen yläpuolella: "
+"muiden joukossa luokiteltuna se johtaisi taulukkoa, joka ei kertoisi "
+"mitään."
+
+#: ../../source/manuel_stats.rst:503
+msgid ""
+"Le **coût** est la part du PR du filtre que le groupe représente : la "
+"formule du PR appliquée aux erreurs du groupe, rapportée à toutes les "
+"décisions comptées. Les coûts des groupes ne dépassent donc jamais le PR."
+msgstr ""
+"**Kustannus** on osuus suodattimen PR:stä, jonka ryhmä edustaa: ryhmän "
+"virheisiin sovellettu PR-kaava suhteutettuna kaikkiin laskettuihin "
+"päätöksiin. Ryhmien kustannukset eivät siis koskaan ylitä PR:ää."
+
+#: ../../source/manuel_stats.rst:507
+msgid ""
+"Cliquer sur un groupe, ou sur son nombre d'erreurs, charge ses positions,"
+" de la plus coûteuse à la moins coûteuse. Le thème est recalculé à chaque"
+" affichage, jamais enregistré : comme le plan de jeu, c'est une étiquette"
+" dérivée, non modifiable. En ligne de commande : ``blunderdb stats "
+"recurring`` (voir :ref:`cli_stats`)."
+msgstr ""
+"Ryhmää tai sen virheiden määrää napsauttamalla ladataan sen asemat, "
+"kalleimmasta halvimpaan. Teema lasketaan uudelleen jokaisella näytöllä "
+"eikä sitä tallenneta koskaan: pelisuunnitelman tavoin se on johdettu "
+"tunniste, jota ei voi muokata. Komentoriviltä: ``blunderdb stats "
+"recurring`` (ks. :ref:`cli_stats`)."
+
+#: ../../source/manuel_stats.rst:512
+msgid ""
+"Chaque ligne propose trois gestes pour passer de l'erreur à l'étude : "
+"**Quiz sur ce groupe** lance l'exercice Décision du panneau "
+":ref:`Entraînement <panneau_entrainement>` sur les positions du groupe, "
+"**Paquet Anki** en fait un paquet de cartes, **Collection** les range "
+"dans une nouvelle collection. Au-dessus du tableau, **Quiz de mes trois "
+"pires groupes** tire vingt positions au hasard parmi celles des trois "
+"groupes les plus coûteux. En ligne de commande, ``stats recurring "
+"--quiz`` tire ces positions et ``--deck`` crée le paquet."
+msgstr ""
+"Jokainen rivi tarjoaa kolme tapaa siirtyä virheestä opiskeluun: "
+"**Tietovisa tästä ryhmästä** käynnistää :ref:`Harjoittelu "
+"<panneau_entrainement>`-paneelin Päätös-harjoituksen ryhmän asemilla, "
+"**Anki-pakka** tekee niistä korttipakan, **Kokoelma** tallentaa ne uuteen"
+" kokoelmaan. Taulukon yläpuolella **Tietovisa kolmesta pahimmasta "
+"ryhmästäni** arpoo kaksikymmentä asemaa kolmen kalleimman ryhmän "
+"asemista. Komentorivillä ``stats recurring --quiz`` arpoo nämä asemat ja "
+"``--deck`` luo pakan."
+
+#: ../../source/manuel_stats.rst:522
+msgid "Répartition par action de videau"
+msgstr "Jakauma kuutiotoimen mukaan"
+
+#: ../../source/manuel_stats.rst:524
+msgid ""
+"Un diagramme en barres affiche le PR (ou MWC) pour chaque type de "
+"décision de videau : *NoDouble*, *DoubleTake*, *DoublePass*, *TooGood*. "
+"Chaque barre indique également le nombre de décisions et le taux de "
+"blunders en infobulle."
+msgstr ""
+"Pylväskaavio näyttää PR:n (tai MWC:n) jokaiselle kuutiopäätöksen "
+"tyypille: *NoDouble*, *DoubleTake*, *DoublePass*, *TooGood*. Jokainen "
+"pylväs näyttää myös päätösten määrän ja blunder-osuuden työkaluvihjeessä."
+
+#: ../../source/manuel_stats.rst:528
+msgid ""
+"Cliquer sur une barre charge les positions correspondant à cette action "
+"de videau, **uniquement celles avec une erreur** (drill-down)."
+msgstr ""
+"Pylvään napsauttaminen lataa kyseistä kuutiotoimea vastaavat asemat, "
+"**vain ne, joissa on virhe** (drill-down)."
+
+#: ../../source/manuel_stats.rst:532
+msgid "Direction des erreurs de videau"
+msgstr "Kuutiovirheiden suunta"
+
+#: ../../source/manuel_stats.rst:534
+msgid ""
+"La répartition ci-dessus indique *combien* coûtent les décisions de "
+"videau ; ce tableau indique dans *quel sens* elles se trompent."
+msgstr ""
+"Yllä oleva jakauma kertoo, *paljonko* kuutiopäätökset maksavat; tämä "
+"taulukko kertoo, *mihin suuntaan* ne menevät pieleen."
+
+#: ../../source/manuel_stats.rst:537
+msgid ""
+"Une position de videau porte deux décisions prises par deux joueurs "
+"différents, présentées ici en deux lignes :"
+msgstr ""
+"Kuutioasemaan liittyy kaksi eri pelaajan tekemää päätöstä, jotka "
+"esitetään tässä kahtena rivinä:"
+
+#: ../../source/manuel_stats.rst:540
+msgid ""
+"**Offrir** — le joueur qui tient le videau double ou ne double pas. Ses "
+"erreurs sont les **doubles manqués** (il fallait doubler) et les "
+"**doubles prématurés** (il ne fallait pas)."
+msgstr ""
+"**Tarjoaminen** — kuutiota hallussaan pitävä pelaaja tuplaa tai jättää "
+"tuplaamatta. Hänen virheitään ovat **jääneet tuplaukset** (olisi pitänyt "
+"tuplata) ja **ennenaikaiset tuplaukset** (ei olisi pitänyt)."
+
+#: ../../source/manuel_stats.rst:544
+msgid ""
+"**Répondre** — le joueur à qui le videau est offert prend ou passe. Ses "
+"erreurs sont les **passes à tort** (une prise correcte a été passée) et "
+"les **prises à tort** (une passe correcte a été prise)."
+msgstr ""
+"**Vastaaminen** — pelaaja, jolle kuutio tarjotaan, ottaa vastaan tai "
+"luovuttaa. Hänen virheitään ovat **virheelliset luovutukset** (oikea "
+"vastaanotto luovutettiin) ja **virheelliset vastaanotot** (oikea luovutus"
+" otettiin vastaan)."
+
+#: ../../source/manuel_stats.rst:548
+msgid ""
+"Les deux lignes restent séparées à dessein : un joueur peut parfaitement "
+"doubler tard *et* prendre large, et un indicateur unique appellerait cela"
+" « équilibré » en perdant les deux moitiés de l'information."
+msgstr ""
+"Kaksi riviä pidetään erillään tarkoituksella: pelaaja voi aivan hyvin "
+"tuplata myöhään *ja* ottaa vastaan löysästi, ja yksi ainoa tunnusluku "
+"kutsuisi sitä ”tasapainoiseksi” ja hukkaisi tiedon molemmat puoliskot."
+
+#: ../../source/manuel_stats.rst:552
+msgid ""
+"Chaque case affiche le nombre de décisions ; l'infobulle donne l'équité "
+"perdue cumulée. Cliquer sur une case charge les positions "
+"correspondantes. Une case à zéro n'est pas cliquable."
+msgstr ""
+"Kussakin ruudussa näkyy päätösten määrä; työkaluvihje antaa kertyneen "
+"menetetyn equityn. Ruudun napsautus lataa vastaavat asemat. Nollassa "
+"oleva ruutu ei ole napsautettava."
+
+#: ../../source/manuel_stats.rst:557
+msgid ""
+"Ce tableau compte des décisions, il ne porte pas de jugement. À partir de"
+" quel écart une tendance mérite d'être nommée dépend de l'effectif et "
+"d'un point de référence, qui ne sont pas des données du moteur."
+msgstr ""
+"Tämä taulukko laskee päätöksiä, se ei tuomitse. Se, mistä erosta alkaen "
+"taipumus ansaitsee nimen, riippuu otoskoosta ja vertailukohdasta, eivätkä"
+" ne ole moottorin tietoja."
+
+#: ../../source/manuel_stats.rst:562
+msgid "Répartition Checker / Cube"
+msgstr "Checker / Cube -vertailu"
+
+#: ../../source/manuel_stats.rst:564
+msgid ""
+"Un diagramme comparatif place côte à côte le PR des coups joués et des "
+"décisions de videau. Cliquer sur une barre charge les positions du sous-"
+"ensemble avec erreur."
+msgstr ""
+"Vertailukaavio asettaa rinnakkain pelinappulasiirtojen ja kuutiopäätösten"
+" PR:n. Pylvään napsauttaminen lataa osajoukon asemat, joissa on virhe."
+
+#: ../../source/manuel_stats.rst:569
+msgid "Histogramme des magnitudes d'erreur"
+msgstr "Virheiden suuruusjakauman histogrammi"
+
+#: ../../source/manuel_stats.rst:571
+msgid ""
+"Un histogramme distribue les erreurs selon leur magnitude en millipoints "
+"(mpt, tranches : 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Cliquer sur une"
+" barre charge les positions de la tranche."
+msgstr ""
+"Histogrammi jakaa virheet niiden suuruuden mukaan millipisteinä (mpt, "
+"luokat: 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Pylvään napsauttaminen "
+"lataa luokan asemat."
+
+#: ../../source/manuel_stats.rst:578
+msgid "Entraînement dans le temps"
+msgstr "Harjoittelu ajan myötä"
+
+#: ../../source/manuel_stats.rst:580
+msgid ""
+"L'onglet **Entraînement** met côte à côte, sur les mêmes fenêtres "
+"calendaires — la **semaine** ou le **mois**, au choix — trois séries qui "
+"mesurent la progression par trois chemins :"
+msgstr ""
+"**Harjoittelu**-välilehti asettaa rinnakkain samoissa kalenteri-"
+"ikkunoissa — valintasi mukaan **viikko** tai **kuukausi** — kolme sarjaa,"
+" jotka mittaavat edistymistä kolmella tavalla:"
+
+#: ../../source/manuel_stats.rst:584
+msgid ""
+"le **PR du quiz** : celui des sessions de l'exercice Décision du panneau "
+"Entraînement, pondéré par le nombre de décisions jugées. Il est calculé "
+"sur l'échelle du PR réel, donc comparable à lui ;"
+msgstr ""
+"**visan PR**: Harjoittelu-paneelin Päätös-harjoituksen istuntojen PR, "
+"painotettuna arvioitujen päätösten määrällä. Se lasketaan todellisen PR:n"
+" asteikolla, joten se on vertailukelpoinen sen kanssa;"
+
+#: ../../source/manuel_stats.rst:587
+msgid ""
+"le **PR des matchs** du filtre courant, pondéré par le nombre de "
+"décisions ;"
+msgstr "nykyisen suodattimen **otteluiden PR**, painotettuna päätösten määrällä;"
+
+#: ../../source/manuel_stats.rst:588
+msgid ""
+"la **rétention Anki** : la part des révisions de cartes déjà apprises "
+"notées *Difficile* ou mieux, lue sur l'axe de droite (en %)."
+msgstr ""
+"**Ankin pysyvyys**: jo opittujen korttien kertausten osuus, jotka on "
+"arvioitu *Vaikea* tai paremmaksi, luettuna oikealta akselilta (%)."
+
+#: ../../source/manuel_stats.rst:591
+msgid ""
+"Sous le graphique, le **PR du quiz par plan de jeu** range les décisions "
+"du quiz tirées de positions de la bibliothèque, les pires plans d'abord, "
+"avec le PR de la dernière fenêtre où le plan a été joué."
+msgstr ""
+"Kaavion alla **visan PR pelisuunnitelman mukaan** listaa kirjaston "
+"asemista arvotut visan päätökset, huonoimmat suunnitelmat ensin, sekä "
+"viimeisen ikkunan PR:n, jossa suunnitelmaa pelattiin."
+
+#: ../../source/manuel_stats.rst:595
+msgid ""
+"Entre parenthèses, le nombre de décisions ou de révisions derrière chaque"
+" valeur : une fenêtre sans échantillon n'a pas de valeur — un tiret, pas "
+"un zéro. Le nombre de décisions de matchs d'une fenêtre ouvre leurs "
+"positions. Le filtre ne restreint que les matchs ; le journal du quiz et "
+"celui d'Anki sont les vôtres et ne portent pas de joueur. Rien n'est "
+"enregistré en plus : les trois séries sont relues dans les journaux "
+"existants. En ligne de commande : ``blunderdb stats training`` (voir "
+":ref:`cli_stats`)."
+msgstr ""
+"Sulkeissa kunkin arvon takana oleva päätösten tai kertausten määrä: "
+"ikkunalla ilman otosta ei ole arvoa — viiva, ei nolla. Ikkunan otteluiden"
+" päätösten määrä avaa niiden asemat. Suodatin rajaa vain ottelut; visan "
+"ja Ankin lokit ovat omiasi eivätkä sisällä pelaajaa. Mitään ei tallenneta"
+" lisää: kolme sarjaa luetaan olemassa olevista lokeista. Komentorivillä: "
+"``blunderdb stats training`` (katso :ref:`cli_stats`)."
+
+#: ../../source/manuel_stats.rst:603
+msgid "Onglet Ventilations"
+msgstr "Erittelyt-välilehti"
+
+#: ../../source/manuel_stats.rst:605
+msgid ""
+"L'onglet **Ventilations** découpe les mêmes décisions que les chiffres "
+"globaux selon quatre axes. Aucun d'eux ne redéfinit ce qui compte comme "
+"une décision : ce serait un second PR sous le même nom."
+msgstr ""
+"**Erittelyt**-välilehti jakaa samat päätökset, jotka kokonaisluvut "
+"laskevat, neljälle akselille. Yksikään niistä ei määrittele uudelleen, "
+"mikä on päätös: se olisi toinen PR samalla nimellä."
+
+#: ../../source/manuel_stats.rst:609
+msgid ""
+"**Par phase de partie** — ouverture, milieu de partie, course, sortie des"
+" pions. C'est ce qui répond à « mon PR en course contre mon PR en contact"
+" ». L'étiquette est calculée depuis le plateau (voir "
+":ref:`panneau_recherche`) ; une base dont les phases n'ont jamais été "
+"calculées range tout sous *Non classée*, et ``blunderdb repair`` la "
+"remplit."
+msgstr ""
+"**Pelin vaiheen mukaan** — avaus, keskipeli, kilpajuoksu, nappuloiden "
+"poisto. Tämä vastaa kysymykseen ”PR:ni kilpajuoksussa verrattuna PR:ääni "
+"kontaktissa”. Merkintä lasketaan laudasta (katso "
+":ref:`panneau_recherche`); tietokanta, jonka vaiheita ei ole koskaan "
+"laskettu, sijoittaa kaiken kohtaan *Luokittelematon*, ja ``blunderdb "
+"repair`` täyttää sen."
+
+#: ../../source/manuel_stats.rst:615
+msgid ""
+"**Par plan de jeu** — course, blitz, tenue, backgame, amorce contre "
+"amorce… C'est la ventilation pour laquelle le classificateur existe : « "
+"où est-ce que je perds le plus ? », plan par plan. Même étiquette dérivée"
+" que la phase, mêmes réserves, et ``blunderdb repair`` la remplit de la "
+"même façon."
+msgstr ""
+"**Pelisuunnitelman mukaan** — kilpajuoksu, blitz, ankkuri, backgame, "
+"muuri muuria vastaan… Tämä on se erittely, jota varten luokittelija on "
+"olemassa: ”missä häviän eniten?”, suunnitelma suunnitelmalta. Sama "
+"johdettu merkintä kuin vaiheella, samat varaukset, ja ``blunderdb "
+"repair`` täyttää sen samoin."
+
+#: ../../source/manuel_stats.rst:621
+msgid ""
+"**Par étiquette** — les ``#mot`` écrits dans les commentaires. Une "
+"position peut en porter plusieurs : **ces lignes ne s'additionnent pas au"
+" total**, et le panneau le dit sous le tableau. Une étiquette qualifie, "
+"elle ne partitionne pas."
+msgstr ""
+"**Merkinnän mukaan** — kommentteihin kirjoitetut ``#sana``. Asemalla voi "
+"olla useita: **nämä rivit eivät summaudu kokonaismäärään**, ja paneeli "
+"sanoo sen taulukon alla. Merkintä nimeää, se ei jaa osiin."
+
+#: ../../source/manuel_stats.rst:626
+msgid ""
+"**Par score** — l'écart au but des deux camps, lu du côté du joueur au "
+"trait, donc du côté de celui qui décide. La ligne *Money* est la partie "
+"d'argent. Une cellule sans intervalle est **grisée avec son effectif "
+"visible** plutôt que cachée (voir ci-dessous)."
+msgstr ""
+"**Tilanteen mukaan** — molempien puolten puuttuvat pisteet, luettuna "
+"vuorossa olevan puolelta, siis päättäjän puolelta. *Money*-rivi on raha "
+"peli. Alle kymmenen päätöksen solu on **harmaannettu, määrä yhä "
+"näkyvissä**, eikä piilotettu: liian vähän luettavaksi, mutta puute pysyy "
+"tarkistettavana."
+
+#: ../../source/manuel_stats.rst:631
+msgid ""
+"Les colonnes **Positions** et **Bourdes** comptent des positions "
+"distinctes, et chaque chiffre est un lien : un clic charge exactement ces"
+" positions dans le panneau d'analyse, comme les compteurs de la barre "
+"d'état. *Bourdes* compte les positions où au moins une décision est une "
+"bourde. Une position jouée dans plusieurs matchs (une ouverture, par "
+"exemple) n'y compte qu'une fois ; la colonne **Décisions** la compte à "
+"chaque fois, car c'est le dénominateur du PR."
+msgstr ""
+"**Asemat**- ja **Törkeät virheet**-sarakkeet laskevat erillisiä asemia, "
+"ja jokainen luku on linkki: napsautus lataa täsmälleen nämä asemat "
+"analyysipaneeliin, kuten tilarivin laskurit. *Törkeät virheet* laskee "
+"asemat, joissa vähintään yksi päätös on törkeä virhe. Useassa ottelussa "
+"pelattu asema (esimerkiksi avaus) lasketaan siinä vain kerran; "
+"**Päätökset**-sarake laskee sen joka kerta, koska se on PR:n nimittäjä."
+
+#: ../../source/manuel_stats.rst:638
+msgid ""
+"Chaque ligne porte son **intervalle de confiance à 95 %** (colonne *IC 95"
+" %*), qui remplace le seuil fixe de dix décisions : il dit ce que vaut un"
+" PR, pas seulement combien de décisions le portent. Il rééchantillonne "
+"les **matchs** de la sélection, pas les décisions ni les parties : les "
+"parties d'un match partagent adversaire, séance et fatigue, et les "
+"compter comme indépendantes donnerait un intervalle trop étroit ; sans "
+"filtre joueur, les deux sièges d'un match forment une seule unité. Une "
+"ligne qui repose sur moins de trois matchs, ou dont tous les matchs "
+"donnent le même PR, n'a pas d'intervalle et est grisée, même avec "
+"beaucoup de décisions : deux matchs ne disent rien de la dispersion, et "
+"des matchs identiques disent qu'ils s'accordent, pas que le PR est exact."
+" Pour l'étude : une famille de positions dont l'intervalle reste au-"
+"dessus de votre PR global est une faiblesse établie ; une ligne à "
+"l'intervalle large ne justifie pas encore un plan de travail. Le PR "
+"global du tableau de bord porte le même intervalle, sous sa carte."
+msgstr ""
+"Jokaisella rivillä on **95 %:n luottamusväli** (sarake *95 %:n LV*), joka"
+" korvaa kiinteän kymmenen päätöksen kynnyksen: se kertoo, mitä PR on "
+"arvoltaan, ei vain montako päätöstä sen takana on. Se tekee "
+"uudelleenotannan valinnan **otteluista**, ei päätöksistä eikä peleistä: "
+"ottelun pelit jakavat vastustajan, istunnon ja väsymyksen, ja niiden "
+"laskeminen riippumattomiksi antaisi liian kapean välin; ilman "
+"pelaajasuodatinta ottelun kaksi paikkaa muodostavat yhden yksikön. Rivi, "
+"joka perustuu alle kolmeen otteluun tai jonka ottelut antavat kaikki "
+"saman PR:n, on ilman väliä ja himmennetty, vaikka päätöksiä olisi paljon:"
+" kaksi ottelua ei kerro hajonnasta mitään, ja identtiset ottelut kertovat"
+" vain, että ne ovat samaa mieltä, ei että PR olisi tarkka. Opiskeluun: "
+"asemaperhe, jonka väli pysyy kokonais-PR:si yläpuolella, on todettu "
+"heikkous; rivi, jolla on leveä väli, ei vielä oikeuta opintosuunnitelmaa."
+" Koontinäytön kokonais-PR:llä on sama väli kortin alla."
+
+#: ../../source/manuel_stats.rst:653
+msgid ""
+"Dans la ventilation par score, un score post-Crawford est lu comme 1-away"
+" : la partie Crawford et les parties post-Crawford au même score tombent "
+"dans la même cellule."
+msgstr ""
+"Pistekohtaisessa erittelyssä Crawford-jälkeinen tilanne luetaan 1-away-"
+"tilanteeksi: Crawford-peli ja Crawford-jälkeiset pelit samalla "
+"pistetilanteella päätyvät samaan soluun."
+
+#: ../../source/manuel_stats.rst:658
+msgid "Étude et jeu réel"
+msgstr "Harjoittelu ja oikea peli"
+
+#: ../../source/manuel_stats.rst:660
+msgid ""
+"La commande ``blunderdb list --type study --days 30`` met côte à côte, "
+"plan de jeu par plan de jeu, trois nombres : combien de **positions "
+"distinctes** ont été révisées sur la période, quel était le PR **avant** "
+"elle, quel est le PR **depuis**."
+msgstr ""
+"Komento ``blunderdb list --type study --days 30`` asettaa kolme lukua "
+"rinnakkain, pelisuunnitelma kerrallaan: kuinka monta **eri asemaa** "
+"jaksolla kerrattiin, mikä PR oli **ennen** sitä, mikä PR on **sen "
+"jälkeen**."
+
+#: ../../source/manuel_stats.rst:665
+msgid ""
+"Trois nombres, et pas un quatrième. Il n'y a **ni colonne de gain ni "
+"flèche**, parce que rien ici ne contrôle quoi que ce soit : le joueur a "
+"pu rencontrer des adversaires plus forts, changer de format, ou "
+"simplement jouer plus de courses ce mois-ci. Le rapprochement est celui "
+"du lecteur ; une colonne qui annoncerait un effet affirmerait une "
+"causalité que ces données ne portent pas. Les nombres, eux, sont exacts."
+msgstr ""
+"Kolme lukua, eikä neljättä. **Ei hyötysaraketta eikä nuolta**, koska "
+"mikään tässä ei vakioi mitään: pelaaja on voinut kohdata vahvempia "
+"vastustajia, vaihtaa formaattia tai yksinkertaisesti pelata enemmän "
+"kilpajuoksuja tänä kuussa. Yhteys on lukijan tekemä; efektiä julistava "
+"sarake väittäisi syy-yhteyttä, jota nämä tiedot eivät kanna. Luvut sen "
+"sijaan ovat tarkkoja."
+
+#: ../../source/manuel_stats.rst:672
+msgid ""
+"Les révisions sont comptées en **positions distinctes** : une carte revue"
+" quatre fois dans le mois est une position étudiée, et compter les "
+"répétitions ferait passer un mois de bachotage pour un mois de "
+"couverture. Les décisions du PR, elles, sont toutes comptées — chacune a "
+"été prise une fois. Un PR appuyé sur moins de dix décisions s'affiche "
+"``—``, avec son effectif visible à côté."
+msgstr ""
+"Kertaukset lasketaan **eri asemina**: neljä kertaa kuussa kerrattu kortti"
+" on yksi opiskeltu asema, ja toistojen laskeminen saisi kuukauden "
+"pänttäämisen näyttämään kuukauden kattavuudelta. PR:n päätökset sen "
+"sijaan lasketaan kaikki — jokainen tehtiin kerran. Alle kymmeneen "
+"päätökseen nojaava PR näkyy merkkinä ``—``, otoskoko näkyvissä vieressä."
+
+#: ../../source/manuel_stats.rst:680
+msgid "Onglet Joueurs"
+msgstr "Pelaajat-välilehti"
+
+#: ../../source/manuel_stats.rst:682
+msgid ""
+"Les cinq onglets précédents décrivent **un** joueur ; l'onglet "
+"**Joueurs** les compare tous. Il affiche une ligne par joueur de la base,"
+" ce qui répond au besoin d'un organisateur suivant une compétition "
+"entière plutôt qu'un joueur en particulier."
+msgstr ""
+"Viisi edellistä välilehteä kuvaavat **yhtä** pelaajaa; "
+"**Pelaajat**-välilehti vertaa kaikkia. Se näyttää yhden rivin kutakin "
+"tietokannan pelaajaa kohti, mikä vastaa koko kilpailua seuraavan "
+"järjestäjän tarpeeseen yksittäisen pelaajan sijaan."
+
+#: ../../source/manuel_stats.rst:687
+msgid "Onglet Joueurs du panneau Stats"
+msgstr "Stats-paneelin Players-välilehti"
+
+#: ../../source/manuel_stats.rst:691
+msgid ""
+"L'onglet Joueurs : une ligne par joueur, triable par n'importe quelle "
+"colonne."
+msgstr ""
+"Players-välilehti: yksi rivi per pelaaja, lajiteltavissa minkä tahansa "
+"sarakkeen mukaan."
+
+#: ../../source/manuel_stats.rst:694
+msgid "Colonnes, dans l'ordre :"
+msgstr "Sarakkeet järjestyksessä:"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Colonne"
+msgstr "Sarake"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Signification"
+msgstr "Merkitys"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Joueur"
+msgstr "Pelaaja"
+
+#: ../../source/manuel_stats.rst:1
+msgid ""
+"Le nom **tel qu'il figure dans les matchs**. Un joueur enregistré sous "
+"deux orthographes apparaît sur deux lignes, sauf si l'une est un alias de"
+" l'autre (section Corpus des paramètres) : la ligne porte alors le nom "
+"canonique."
+msgstr ""
+"Nimi **sellaisena kuin se otteluissa esiintyy**. Kahdella kirjoitusasulla"
+" tallentunut pelaaja näkyy kahdella rivillä, ellei toinen ole toisen "
+"alias (asetusten Korpus-osio): rivillä on silloin kanoninen nimi."
+
+#: ../../source/manuel_stats.rst:1
+msgid "Matchs"
+msgstr "Ottelut"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Nombre de matchs disputés dans la période retenue."
+msgstr "Valitulla ajanjaksolla pelattujen otteluiden määrä."
+
+#: ../../source/manuel_stats.rst:1
+msgid "V–D"
+msgstr "V–T"
+
+#: ../../source/manuel_stats.rst:1
+msgid ""
+"Victoires et défaites. Un match inachevé (journal tronqué, abandon) ne "
+"compte ni l'une ni l'autre : V + D peut donc être inférieur au nombre de "
+"matchs."
+msgstr ""
+"Voitot ja tappiot. Kesken jäänyt ottelu (katkennut loki, luovutus) ei "
+"laske kumpaakaan: V + T voi siis olla pienempi kuin otteluiden määrä."
+
+#: ../../source/manuel_stats.rst:1
+msgid "Décisions"
+msgstr "Päätökset"
+
+#: ../../source/manuel_stats.rst:1
+msgid ""
+"Nombre de décisions comptées — le dénominateur du PR. C'est la colonne "
+"qui dit ce que valent les taux voisins : un PR calculé sur douze "
+"décisions ne signifie rien."
+msgstr ""
+"Laskettujen päätösten määrä — PR:n nimittäjä. Tämä sarake kertoo, mitä "
+"viereiset luvut ovat arvoltaan: kahdestatoista päätöksestä laskettu PR ei"
+" merkitse mitään."
+
+#: ../../source/manuel_stats.rst:1
+msgid "Performance Rating global."
+msgstr "Kokonais-Performance Rating."
+
+#: ../../source/manuel_stats.rst:1
+msgid "PR pions, PR videau"
+msgstr "Nappula-PR, kuutio-PR"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Le PR ventilé par type de décision."
+msgstr "PR eriteltynä päätöstyypin mukaan."
+
+#: ../../source/manuel_stats.rst:1
+msgid "Snowie"
+msgstr "Snowie"
+
+#: ../../source/manuel_stats.rst:1
+msgid "Snowie Error Rate (voir :ref:`stats_parity`)."
+msgstr "Snowie Error Rate (katso :ref:`stats_parity`)."
+
+#: ../../source/manuel_stats.rst:1
+msgid "Blunders"
+msgstr "Karkeat virheet"
+
+#: ../../source/manuel_stats.rst:1
+msgid ""
+"Nombre d'erreurs atteignant le seuil de blunder de la bibliothèque (0,100"
+" EMG par défaut). Cliquer sur ce nombre charge ces positions dans le "
+"panneau d'analyse."
+msgstr ""
+"Kirjaston blunderin kynnykseen yltävien virheiden määrä (oletuksena 0,100"
+" EMG). Tämän luvun napsauttaminen lataa nämä asemat analyysipaneeliin."
+
+#: ../../source/manuel_stats.rst:1
+msgid "Chance"
+msgstr "Tuuri"
+
+#: ../../source/manuel_stats.rst:1
+msgid ""
+"Chance moyenne par lancer, en millipoints (mpt), signée : positive si les"
+" dés ont été favorables."
+msgstr ""
+"Keskimääräinen tuuri heittoa kohden, millipisteinä (mpt), etumerkillä: "
+"positiivinen, jos nopat olivat suotuisat."
+
+#: ../../source/manuel_stats.rst:710
+msgid "Utilisation :"
+msgstr "Käyttö:"
+
+#: ../../source/manuel_stats.rst:712
+msgid ""
+"**Trier** — cliquez sur un en-tête de colonne. Le tableau s'ouvre trié "
+"par PR croissant, meilleur joueur en tête, et retient d'une session à "
+"l'autre le dernier tri choisi. Les joueurs dont rien n'a été mesuré "
+"restent en bas quel que soit le sens du tri : un zéro faute de données "
+"n'est pas une performance parfaite."
+msgstr ""
+"**Järjestä** — napsauta sarakeotsikkoa. Taulukko avautuu nousevan PR:n "
+"mukaan, paras pelaaja ensin, ja muistaa viimeksi valitun järjestyksen "
+"istunnosta toiseen. Pelaajat, joista ei ole mitattu mitään, pysyvät "
+"alimpina järjestyssuunnasta riippumatta: tiedon puutteesta johtuva nolla "
+"ei ole täydellinen suoritus."
+
+#: ../../source/manuel_stats.rst:717
+msgid ""
+"**Filtrer par colonne** — la ligne de champs sous les en-têtes filtre "
+"chaque colonne : un morceau de nom pour le texte, une borne pour les "
+"nombres (``>=500``, ``>500``, ``<2.5``, ``<=2``), un intervalle (``3-7``)"
+" ou une valeur exacte (``5``). Un champ illisible est encadré de rouge et"
+" ne filtre rien ; une valeur jamais mesurée ne passe aucune borne. Les "
+"filtres de colonne durent le temps de la session. Le **classement** des "
+"joueurs se lit ainsi : tri par PR, colonne *Décisions* filtrée par "
+"``>=500``. Tous les tableaux du panneau Stats — ventilations, corpus, "
+"erreurs récurrentes, temps de réflexion, entraînement, biais, effet de "
+"l'étude — se trient et se filtrent de la même façon."
+msgstr ""
+"**Suodata sarakkeittain** — otsikoiden alla oleva kenttärivi suodattaa "
+"kunkin sarakkeen: nimen osa tekstille, raja numeroille (``>=500``, "
+"``>500``, ``<2.5``, ``<=2``), väli (``3-7``) tai tarkka arvo (``5``). "
+"Lukukelvoton kenttä saa punaisen kehyksen eikä suodata mitään; arvo, jota"
+" ei ole koskaan mitattu, ei läpäise mitään rajaa. Sarakesuodattimet "
+"kestävät istunnon ajan. Pelaajien **sijoitus** luetaan näin: järjestys "
+"PR:n mukaan, *Päätökset*-sarake suodatettuna ``>=500``. Kaikki Stats-"
+"paneelin taulukot — erittelyt, korpus, toistuvat virheet, miettimisaika, "
+"harjoittelu, vinouma, opiskelun vaikutus — järjestetään ja suodatetaan "
+"samalla tavalla."
+
+#: ../../source/manuel_stats.rst:727
+msgid ""
+"**Ouvrir le détail d'un joueur** — cliquez sur une ligne. Le joueur est "
+"sélectionné dans la barre de filtres et l'affichage bascule sur l'onglet "
+"Tableau de bord."
+msgstr ""
+"**Avaa pelaajan tiedot** — napsauta riviä. Pelaaja valitaan "
+"suodatinpalkissa ja näkymä vaihtuu Yleiskatsaus-välilehdelle."
+
+#: ../../source/manuel_stats.rst:730
+msgid ""
+"**Ouvrir ses décisions** — le nombre de décisions ouvre leurs positions, "
+"sous les filtres du tableau. Le nombre de matchs et le bilan V–D restent "
+"de simples nombres : ils comptent aussi les matchs sans décision "
+"analysée, qu'aucune liste de matchs ne reproduit."
+msgstr ""
+"**Avaa omat päätöksensä** — päätösten määrä avaa niiden asemat taulukon "
+"suodattimien alla. Otteluiden määrä ja V–H-tase pysyvät pelkkinä lukuina:"
+" ne laskevat myös ottelut, joissa ei ole analysoitua päätöstä, eikä "
+"mikään otteluluettelo toista niitä."
+
+#: ../../source/manuel_stats.rst:734
+msgid ""
+"**Restreindre la période** — les filtres de dates, de tournois et de "
+"longueur de match s'appliquent normalement, ce qui permet de borner le "
+"tableau aux dates d'une compétition."
+msgstr ""
+"**Rajaa ajanjaksoa** — päivämäärä-, turnaus- ja ottelupituussuodattimet "
+"toimivat tavalliseen tapaan, joten taulukon voi rajata yhden kilpailun "
+"päiviin."
+
+#: ../../source/manuel_stats.rst:737
+msgid ""
+"**Comparer deux joueurs** — cochez la case de la première colonne sur "
+"deux lignes. Un bloc apparaît au-dessus du tableau et met leurs "
+"indicateurs face à face ; cocher un troisième joueur remplace le plus "
+"ancien des deux. La case ne sélectionne pas la ligne : cocher compare, "
+"cliquer ouvre le détail."
+msgstr ""
+"**Vertaa kahta pelaajaa** — rastita ensimmäisen sarakkeen ruutu kahdella "
+"rivillä. Taulukon yläpuolelle ilmestyy lohko, joka asettaa heidän lukunsa"
+" vastakkain; kolmannen pelaajan rastittaminen korvaa vanhemman kahdesta. "
+"Ruutu ei valitse riviä: rastitus vertaa, napsautus avaa tiedot."
+
+#: ../../source/manuel_stats.rst:741
+msgid ""
+"**Voir les positions où l'un a mieux joué** — le bouton du bloc de "
+"comparaison liste les positions que les deux joueurs ont eu à jouer et où"
+" l'un a bien joué (en dessous du seuil Erreur de la bibliothèque) et "
+"l'autre non, l'écart le plus large d'abord ; le joueur est jugé sur son "
+"pire coup de la position. *Ouvrir ces positions* les charge dans la vue "
+"analyse. La ligne de commande et le serveur donnent la même liste "
+"(``stats contrast``)."
+msgstr ""
+"**Katso paikat, joissa toinen pelasi paremmin** — vertailulohkon painike "
+"listaa paikat, jotka molemmat pelaajat joutuivat pelaamaan ja joissa "
+"toinen pelasi hyvin (kirjaston Virhe-kynnyksen alapuolella) ja toinen ei,"
+" suurin ero ensin; pelaaja arvioidaan paikan huonoimman siirtonsa mukaan."
+" *Avaa nämä paikat* lataa ne analyysinäkymään. Komentorivi ja palvelin "
+"antavat saman listan (``stats contrast``)."
+
+#: ../../source/manuel_stats.rst:747
+msgid ""
+"**Noter les coups d'abord** — la liste ne compare que les coups dont "
+"l'erreur est notée, et aucun import ne les note : la notation se fait sur"
+" demande. Tant qu'il en reste à noter, le bloc en donne le nombre avec un"
+" bouton *Noter les coups* ; la ligne de commande fait la même chose avec "
+"``repair --move-errors``."
+msgstr ""
+"**Pisteytä siirrot ensin** — luettelo vertaa vain siirtoja, joiden virhe "
+"on pisteytetty, eikä mikään tuonti pisteytä niitä: pisteytys tehdään "
+"pyynnöstä. Niin kauan kuin pisteytettäviä on jäljellä, lohko näyttää "
+"niiden määrän ja painikkeen *Pisteytä siirrot*; komentorivi tekee saman "
+"komennolla ``repair --move-errors``."
+
+#: ../../source/manuel_stats.rst:752
+msgid ""
+"Dans ce bloc, **seuls les taux reçoivent un verdict**, et le meilleur des"
+" deux est mis en gras. Trois indicateurs n'en reçoivent jamais, et il "
+"vaut de dire pourquoi. La **chance** n'est pas une qualité : un joueur "
+"plus chanceux n'est pas meilleur. Les **matchs, le bilan et les "
+"décisions** situent ce que les taux valent, mais les mettre en "
+"compétition ferait gagner celui qui a simplement joué davantage. Le "
+"**nombre de blunders** ne se compare pas brut — douze sur mille décisions"
+" valent mieux que dix sur cent —, aussi le bloc ajoute-t-il une ligne "
+"*Blunders / 100 déc.* qui, elle, se compare, et laisse le compte à côté "
+"comme contexte."
+msgstr ""
+"Lohkossa **vain suhdeluvut saavat tuomion**, ja parempi kahdesta "
+"lihavoidaan. Kolme lukua ei saa sitä koskaan, ja syy kannattaa sanoa. "
+"**Onni** ei ole ansio: onnekkaampi pelaaja ei ole parempi. **Ottelut, "
+"tulos ja päätökset** kertovat mitä suhdeluvut ovat arvoltaan, mutta "
+"niiden kilpailuttaminen antaisi voiton sille, joka vain pelasi enemmän. "
+"**Blundereiden määrää** ei verrata raakana — kaksitoista tuhannesta "
+"päätöksestä on parempi kuin kymmenen sadasta —, joten lohko lisää rivin "
+"*Blunderit / 100 päät.*, joka on vertailukelpoinen, ja jättää määrän "
+"viereen taustaksi."
+
+#: ../../source/manuel_stats.rst:762
+msgid ""
+"Une égalité n'est pas une victoire : elle n'est mise en gras d'aucun "
+"côté. Un taux qui n'a rien derrière lui s'affiche « — » et ne départage "
+"rien."
+msgstr ""
+"Tasatulos ei ole voitto: sitä ei lihavoida kummallakaan puolella. "
+"Suhdeluku, jonka takana ei ole mitään, näkyy merkkinä ”—” eikä ratkaise "
+"mitään."
+
+#: ../../source/manuel_stats.rst:766
+msgid ""
+"Dans cet onglet, le choix du **type de décision** est désactivé : le "
+"tableau ventile déjà les décisions de pions et de videau en colonnes "
+"distinctes. Le joueur de la barre de filtres reste actif : le tableau "
+"montre toujours tous les joueurs, et la ligne de celui-ci est mise en "
+"évidence et amenée à l'écran."
+msgstr ""
+"Tässä välilehdessä **päätöstyypin** valinta on pois käytöstä: taulukko "
+"jakaa nappula- ja kuutiopäätökset jo erillisiin sarakkeisiin. "
+"Suodatinpalkin pelaaja pysyy aktiivisena: taulukko näyttää aina kaikki "
+"pelaajat, ja tämän pelaajan rivi korostetaan ja tuodaan näkyviin."
+
+#: ../../source/manuel_stats.rst:772
+msgid ""
+"Deux vues de corpus figurent dans l'onglet **Corpus** du panneau, en "
+"ligne de commande et par l'API du démon (voir :ref:`cli_stats`) : le "
+"**face-à-face** de deux joueurs (matchs communs, PR de chacun, bilan) et "
+"le **PR par fenêtre calendaire** glissante (1, 3, 6 ou 12 mois). L'onglet"
+" Corpus calcule chaque vue à la demande, sous le filtre courant. Le "
+"**classement** par PR se lit dans l'onglet Joueurs, trié par PR et filtré"
+" sur la colonne *Décisions* ; la ligne de commande et l'API le donnent "
+"aussi (``stats ranking``). Un **filtre de provenance** (champs *Moteur* "
+"et *Profondeur min.* de la barre de filtres) restreint les statistiques "
+"aux décisions analysées ainsi ; il porte sur chaque décision, et les "
+"chiffres qu'il touche sont alors recalculés depuis les décisions. Le "
+"face-à-face et le PR par fenêtre ne l'acceptent pas : tant qu'il est "
+"actif, ils refusent de se calculer. Comme le reste de la barre, il est "
+"conservé d'une session à l'autre."
+msgstr ""
+"Paneelin **Corpus**-välilehdellä, komentorivillä ja daemonin API:n kautta"
+" (katso :ref:`cli_stats`) on kaksi korpusnäkymää: kahden pelaajan "
+"**kasvokkain**-vertailu (yhteiset ottelut, kummankin PR, tase) ja liukuva"
+" **PR kalenteri-ikkunassa** (1, 3, 6 tai 12 kuukautta). Corpus-välilehti "
+"laskee kunkin näkymän pyydettäessä nykyisen suodattimen alla. "
+"**Sijoitus** PR:n mukaan luetaan Pelaajat-välilehdeltä järjestettynä PR:n"
+" mukaan ja suodatettuna *Päätökset*-sarakkeelta; komentorivi ja API "
+"antavat sen myös (``stats ranking``). **Alkuperäsuodatin** "
+"(suodatinpalkin kentät *Moottori* ja *Vähimmäissyvyys*) rajaa tilastot "
+"niin analysoituihin päätöksiin; se koskee jokaista päätöstä, ja sen "
+"koskettamat luvut lasketaan silloin uudelleen päätöksistä. Kasvokkain-"
+"vertailu ja ikkunakohtainen PR eivät hyväksy sitä: niin kauan kuin se on "
+"aktiivinen, ne kieltäytyvät laskemasta. Kuten muu palkki, se säilyy "
+"istunnosta toiseen."
+
+#: ../../source/manuel_stats.rst:786
+msgid ""
+"Dans l'onglet Corpus, chaque ligne ouvre ce qu'elle résume. Le bilan du "
+"face-à-face ouvre ses matchs dans le panneau Matchs, qui porte alors le "
+"bouton « N matchs ouverts depuis les Stats × » : il rend la liste "
+"complète ; une ligne de face-à-face ouvre son match. Le premier joueur du"
+" face-à-face est d'emblée celui de la barre de filtres. Une ligne de "
+"fenêtre et son nombre de décisions ouvrent ses positions, son nombre de "
+"matchs ouvre les matchs. Un compte de positions du panneau Stats, quel "
+"que soit l'onglet, quitte d'abord le match en cours avant d'ouvrir sa "
+"liste ; la commande ``m`` rouvre ensuite le match au coup sauvegardé."
+msgstr ""
+"Corpus-välilehdellä jokainen rivi avaa sen, minkä se tiivistää. "
+"Kaksinpelin tase avaa sen ottelut Ottelut-paneelissa, jossa on silloin "
+"painike ”N ottelua avattu Statsista ×”: se palauttaa koko luettelon; "
+"kaksinpelirivi avaa ottelunsa. Kaksinpelin ensimmäinen pelaaja on alun "
+"perin suodatinpalkin pelaaja. Aikaikkunan rivi ja sen päätösten määrä "
+"avaavat sen asemat, sen otteluiden määrä avaa ottelut. Stats-paneelin "
+"asemien määrä, millä välilehdellä tahansa, poistuu ensin käynnissä "
+"olevasta ottelusta ennen luettelonsa avaamista; komento ``m`` avaa "
+"ottelun sen jälkeen uudelleen tallennetun siirron kohdalla."
+
+#: ../../source/manuel_stats.rst:796
+msgid ""
+"Un tiret (« — ») signale une valeur **jamais mesurée**, à ne pas "
+"confondre avec zéro. C'est notamment le cas de la colonne Chance pour "
+"tout match importé avant la version 2.15.0 du schéma : la chance n'était "
+"alors pas conservée, et rien ne permet de la reconstituer après coup. "
+"Réimporter le fichier source ne suffit pas : l'import y reconnaît un "
+"doublon et n'applique que les marques d'étude nouvellement levées (le "
+"rapport en donne le nombre). Il faut supprimer le match, puis le "
+"réimporter. Les formats qui ne la transportent pas (BGF, Jellyfish "
+"``.mat``) n'en fourniront jamais."
+msgstr ""
+"Viiva (”—”) merkitsee arvoa, jota **ei ole koskaan mitattu**; sitä ei "
+"pidä sekoittaa nollaan. Näin on erityisesti Tuuri-sarakkeen kohdalla "
+"kaikissa otteluissa, jotka tuotiin ennen skeemaversiota 2.15.0: tuuria ei"
+" silloin tallennettu, eikä mikään salli sen palauttamista jälkikäteen. "
+"Lähdetiedoston tuominen uudelleen ei riitä: tuonti tunnistaa "
+"kaksoiskappaleen ja ottaa käyttöön vain uudet opiskelumerkinnät (raportti"
+" kertoo niiden määrän). Ottelu on poistettava ja tuotava sitten "
+"uudelleen. Muodot, jotka eivät sitä kuljeta (BGF, Jellyfish ``.mat``), "
+"eivät sitä koskaan tarjoa."
+
+#: ../../source/manuel_stats.rst:806
+msgid "Règle d'agrégation"
+msgstr "Yhdistämissääntö"
+
+#: ../../source/manuel_stats.rst:809
+msgid ""
+"Le PR d'un tournoi (ou d'un sous-ensemble quelconque) est calculé par la "
+"règle **somme/somme** — jamais comme moyenne des PR individuels des "
+"matchs."
+msgstr ""
+"Turnauksen (tai minkä tahansa osajoukon) PR lasketaan "
+"**summa/summa**-säännöllä — ei koskaan yksittäisten otteluiden PR:ien "
+"keskiarvona."
+
+#: ../../source/manuel_stats.rst:813
+msgid "Formule :"
+msgstr "Kaava:"
+
+#: ../../source/manuel_stats.rst:815
+msgid ""
+"PR_{tournoi} = 500 \\times \\frac{\\sum_{i} "
+"\\text{erreur}_i}{\\text{nombre total de décisions}}"
+msgstr ""
+"PR_{turnaus} = 500 \\times \\frac{\\sum_{i} "
+"\\text{virhe}_i}{\\text{päätösten kokonaismäärä}}"
+
+#: ../../source/manuel_stats.rst:819
+msgid "**Exemple :** un joueur dispute deux matchs dans un tournoi —"
+msgstr "**Esimerkki:** pelaaja pelaa kaksi ottelua turnauksessa —"
+
+#: ../../source/manuel_stats.rst:821
+msgid "Match A : 10 décisions, 0,100 d'équité perdue → PR = 5,0"
+msgstr "Ottelu A: 10 päätöstä, 0,100 ekviteettiä menetetty → PR = 5,0"
+
+#: ../../source/manuel_stats.rst:822
+msgid "Match B : 90 décisions, 0,540 d'équité perdue → PR = 3,0"
+msgstr "Ottelu B: 90 päätöstä, 0,540 ekviteettiä menetetty → PR = 3,0"
+
+#: ../../source/manuel_stats.rst:824
+msgid "Moyenne naïve des PR : (5,0 + 3,0) / 2 = **4,0** *(incorrect)*"
+msgstr "Naiivi PR:ien keskiarvo: (5,0 + 3,0) / 2 = **4,0** *(virheellinen)*"
+
+#: ../../source/manuel_stats.rst:826
+msgid "Règle somme/somme : 500 × 0,640 / (10 + 90) = **3,2** *(correct)*"
+msgstr "Summa/summa-sääntö: 500 × 0,640 / (10 + 90) = **3,2** *(oikein)*"
+
+#: ../../source/manuel_stats.rst:828
+msgid ""
+"La règle somme/somme est la seule qui résiste à la variation de longueur "
+"des matchs (un match en 21 points pèse plus qu'un match en 1 point)."
+msgstr ""
+"Summa/summa-sääntö on ainoa, joka käsittelee oikein otteluiden "
+"vaihtelevat pituudet (21 pisteen ottelu painaa enemmän kuin 1 pisteen "
+"ottelu)."
+
+#: ../../source/manuel_stats.rst:832
+msgid "MWC : limitations"
+msgstr "MWC: rajoitukset"
+
+#: ../../source/manuel_stats.rst:834
+msgid ""
+"Par défaut, le MWC cost est calculé à partir de la **MET Kazaross-XG2**, "
+"table de référence de facto dans le backgammon compétitif. Les résultats "
+"ne sont pas directement comparables avec des logiciels utilisant d'autres"
+" METs. C'est la même table, lue par le même point d'entrée, que celle "
+"dont l'évaluateur embarqué se sert pour ses décisions de videau au score "
+": les statistiques et le moteur ne peuvent pas diverger là-dessus. Elle "
+"donne ses valeurs propres jusqu'à 25 points à faire de chaque côté ; au-"
+"delà, elle est prolongée par une table de Zadeh calculée comme celle de "
+"GNUbg, jusqu'à 64."
+msgstr ""
+"Oletuksena MWC cost lasketaan **Kazaross-XG2-MET**:stä, kilpailullisen "
+"backgammonin de facto -viitetaulukosta. Tulokset eivät ole suoraan "
+"verrattavissa ohjelmistoihin, jotka käyttävät muita METejä. Se on sama "
+"taulukko, luettuna saman sisääntulokohdan kautta, jota sisäänrakennettu "
+"arviointimoottori käyttää pistetilanteen mukaisiin kuutiopäätöksiinsä: "
+"tilastot ja moottori eivät voi poiketa toisistaan tässä. Se antaa omat "
+"arvonsa 25 tehtävään pisteeseen asti kummallakin puolella; sen ylitse "
+"sitä jatketaan Zadehin taulukolla, joka lasketaan kuten GNUbg:ssä, 64 "
+"pisteeseen asti."
+
+#: ../../source/manuel_stats.rst:843
+msgid ""
+"Les positions *money-game* (sans score de match) sont **exclues** du "
+"calcul MWC. Si votre base de données contient beaucoup de positions "
+"money-game, le MWC cost peut être sous-estimé ou indisponible."
+msgstr ""
+"*Money-game* -asemat (joissa ei ole ottelun pistetilannetta) **jätetään "
+"pois** MWC-laskennasta. Jos tietokantasi sisältää paljon money-game-"
+"asemia, MWC cost voi olla aliarvioitu tai ei käytettävissä."
+
+#: ../../source/manuel_stats.rst:847
+msgid ""
+"Le MWC cost est cumulatif sur l'ensemble du jeu de données filtré — pas "
+"un indicateur par décision. Il mesure l'impact total de vos erreurs sur "
+"vos chances de victoire."
+msgstr ""
+"MWC cost on kumulatiivinen koko suodatetussa aineistossa — ei "
+"päätöskohtainen tunnusluku. Se mittaa virheidesi kokonaisvaikutusta "
+"voittomahdollisuuksiisi."
+

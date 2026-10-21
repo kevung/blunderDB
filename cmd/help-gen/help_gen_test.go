@@ -196,8 +196,23 @@ func TestCodeBlockIsRenderedVerbatimAndUnknownDirectiveRefused(t *testing.T) {
 	if want := `<pre class="code">ffmpeg -i 'a b.webm' &#123;x&#125;</pre>`; !strings.Contains(html, want) {
 		t.Errorf("rendered:\n%s\nwant %s", html, want)
 	}
-	if _, err := parseBlocks([]string{".. toctree::", "", "   a"}, "t.rst", &[]string{}); err == nil {
+	if _, err := parseBlocks([]string{".. only:: html", "", "   a"}, "t.rst", &[]string{}); err == nil {
 		t.Error("a directive the help cannot render must stop the build, not vanish")
+	}
+}
+
+// The manual is a summary page whose chapters the help renders in its place.
+func TestToctreeListsItsDocumentsWithoutOptions(t *testing.T) {
+	blocks, err := parseBlocks([]string{".. toctree::", "   :maxdepth: 2", "", "   a", "   b"}, "t.rst", &[]string{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(blocks) != 1 {
+		t.Fatalf("blocks = %#v", blocks)
+	}
+	tt, ok := blocks[0].(toctree)
+	if !ok || strings.Join(tt.docs, ",") != "a,b" {
+		t.Errorf("toctree = %#v, want docs a,b", blocks[0])
 	}
 }
 

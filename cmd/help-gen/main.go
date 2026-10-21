@@ -1,9 +1,9 @@
 // Command help-gen builds the in-app help bundles (frontend/public/help/*.bin)
 // from the documentation that already states the same facts.
 //
-// The manual, shortcuts and commands tabs are rendered from manuel.rst,
-// raccourcis.rst and cmd_mode.rst through the gettext catalogues, in nine
-// languages; only the About tab is hand-written HTML (prose/<lang>.html),
+// The manual, shortcuts and commands tabs are rendered from manuel.rst (and the
+// chapters its toctree lists), raccourcis.rst and cmd_mode.rst through the
+// gettext catalogues, in nine languages; only the About tab is hand-written HTML (prose/<lang>.html),
 // copied verbatim (ADR-0034).
 //
 // A bundle is a gzip-compressed JSON object {manual, shortcuts, commands, about}:
@@ -168,6 +168,23 @@ func (g *generator) refTitle(label string, tr translator) (string, error) {
 	return title, nil
 }
 
+// renderDoc renders one .rst document through its own catalogue.
+func (g *generator) renderDoc(name, lang string) (string, error) {
+	doc, err := parseRST(filepath.Join(g.root, "doc", "source", name+".rst"))
+	if err != nil {
+		return "", err
+	}
+	tr := translator{lang: lang}
+	if lang != sourceLang {
+		cat, err := g.catalogueFor(lang, name)
+		if err != nil {
+			return "", err
+		}
+		tr.cats = []catalogue{cat}
+	}
+	return g.renderTab(doc, tr)
+}
+
 // bundle renders the JSON document (uncompressed) for one language.
 func (g *generator) bundle(lang string) (string, error) {
 	prose, err := g.prose(lang)
@@ -176,19 +193,7 @@ func (g *generator) bundle(lang string) (string, error) {
 	}
 	rendered := map[string]string{}
 	for _, t := range tabs {
-		doc, err := parseRST(filepath.Join(g.root, "doc", "source", t.doc+".rst"))
-		if err != nil {
-			return "", err
-		}
-		tr := translator{lang: lang}
-		if lang != sourceLang {
-			cat, err := g.catalogueFor(lang, t.doc)
-			if err != nil {
-				return "", err
-			}
-			tr.cats = []catalogue{cat}
-		}
-		html, err := g.renderTab(doc, tr)
+		html, err := g.renderDoc(t.doc, lang)
 		if err != nil {
 			return "", fmt.Errorf("%s: %w", t.doc, err)
 		}

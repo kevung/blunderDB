@@ -1,0 +1,683 @@
+.. _manuel_bibliotheque:
+
+Analyse, commentaires et recherche
+==================================
+
+.. _panneau_analyse:
+
+Panneau Analyse
+---------------
+
+Le panneau **Analyse** (*CTRL-L*) affiche les données d'analyse de la position
+courante importées depuis eXtreme Gammon (XG), GNUbg, BGBlitz ou gammonNet. Il présente
+les meilleures alternatives (coups de pions ou décisions de videau) avec leurs
+valeurs d'équité et les erreurs correspondantes. La touche *d* bascule entre
+l'analyse des coups de pions et l'analyse du cube. Lors de la navigation dans
+un match, le coup effectivement joué est mis en évidence dans la liste des
+alternatives. Appuyer sur *CTRL-L* ou exécuter la commande ``list`` pour
+afficher ou masquer le panneau.
+
+Une position sans analyse l'indique, avec un bouton **Évaluer** qui l'ouvre
+dans le panneau Eval.
+
+Le bouton **Défi** de la barre d'outils, placé après celui du pipcount (touche
+*m*), sert à se prononcer avant de voir l'analyse en parcourant des positions :
+résultats d'une recherche, revue d'un match, révision de ses erreurs. Activé,
+il recouvre d'une zone grise toute l'analyse du panneau, pions et videau ; un
+clic sur la zone la dévoile. Elle revient à chaque changement de position. Le
+défi est un masque d'affichage : dévoiler n'enregistre rien dans la base. Le
+réglage tient jusqu'à la fermeture de blunderDB, comme celui du pipcount.
+En revue de match, le défi masque aussi les marques, les pertes et la difficulté
+de la liste des coups ; celles du coup affiché se dévoilent avec son analyse.
+
+Sous les tableaux, une **phrase** dit parfois ce que la décision jouée a
+coûté et pourquoi : « Vous perdez 120 mp : le coup joué laisse trois blots
+là où 13/7 8/7 n'en laisse qu'un. » Elle est produite par six règles
+mesurables — l'exposition, un point du jan fait ou manqué, les chances de
+gammon abandonnées, une sécurité qui coûte plus qu'elle ne rapporte, et les
+deux sens d'une erreur de videau (doubler trop tard ou trop tôt, prendre trop
+large ou passer trop serré).
+
+La règle qui compte est celle du **silence** : la phrase n'apparaît que si une
+règle s'applique de façon confiante, et sur une erreur qui dépasse le seuil à
+partir duquel les moteurs s'accordent à dire qu'elle en est une. Le reste du
+temps, il n'y a pas de phrase — ni cadre vide, ni « nous ne savons pas ». Une
+explication fausse coûte plus cher que pas d'explication : elle apprend
+quelque chose d'inexact.
+
+La même phrase accompagne l'erreur là où vous venez de la commettre : au dos
+d'une **carte Anki**, sous l'analyse dévoilée, et dans le **verdict du quiz**
+de l'exercice Décision, sous le coût en mp. Les mêmes règles de silence y
+valent : un coup juste, ou une erreur qu'aucune règle n'explique, n'ajoute
+rien.
+
+Lorsqu'une position a été jugée par **plusieurs moteurs**, une bande en tête
+du panneau les met côte à côte : une ligne par moteur, avec sa profondeur et
+sa réponse — le verdict de videau, ou son propre meilleur coup. Elle dit
+d'abord s'ils sont d'accord, et c'est le désaccord qui la justifie : « XG dit
+double, prend ; gammonNet dit pas de double » se lit d'un coup d'œil, là où
+il fallait comparer deux tableaux en diagonale.
+
+Le meilleur coup d'un moteur est le meilleur **de ce moteur** : la liste des
+coups candidats est triée par équité, tous moteurs confondus, et son premier
+élément n'est donc le meilleur coup d'aucun d'eux en particulier.
+
+La bande n'apparaît que s'il y a effectivement plusieurs moteurs, et elle
+n'existe que dans ce panneau : le panneau Eval présente **une** décision,
+celle du moteur embarqué (`ADR-0017 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0017-the-panel-shows-position-facts-plus-the-one-decision-the-board-asks.md>`__),
+et une comparaison n'y aurait pas sa place.
+
+Les coups sont écrits comme on les lit sur le plateau, ici comme dans le
+panneau Eval : le pion le moins avancé bouge d'abord, et **un pion qui
+enchaîne plusieurs dés ne s'écrit qu'une fois** — un 64 joué avec le même
+pion se lit ``24/14``, et ``24/14*`` s'il frappe en arrivant. Le détail de
+l'enchaînement ne réapparaît que lorsqu'il dit quelque chose de plus : une
+frappe *en cours de route* conserve son point de passage, ``24/18* 18/14``,
+sans quoi la frappe en 18 disparaîtrait de la notation.
+
+L'équité d'une analyse importée suit la même règle que le panneau Eval : la
+colonne annonce son référentiel, « Équité (money) » ou « Équité (match) »
+selon le score de la position analysée, jamais un simple « Équité » muet sur
+l'échelle. Les règles **Jacoby** et **Beaver** actives sur une position en
+money game s'affichent, elles aussi, en badges sous le tableau de décision de
+videau.
+
+.. _rollouts:
+
+Rollouts
+~~~~~~~~
+
+Le panneau **Analyse** sait **rouler** une position : jouer des centaines de
+parties à partir de chaque coup choisi, ou de chaque action de videau, pour
+départager deux choix que l'évaluation directe sépare à peine. Dans la table
+des coups candidats, *Ctrl+clic* ajoute ou retire un coup de la sélection et
+*Maj+clic* l'étend jusqu'au coup cliqué ; le clic simple sélectionne un seul
+coup, comme d'ordinaire. Un **clic droit** sur la sélection — ou sur un autre
+coup, qui devient la sélection — ouvre un menu dont l'entrée **Rollout
+(Standard)** lance aussitôt le rollout des coups sélectionnés avec le réglage
+choisi. Sur une décision de videau, le clic droit roule la décision entière. Le
+raccourci *Maj+R* du panneau fait de même (sans sélection, elle roule les meilleurs
+candidats de la position), comme la commande ``rollout`` (alias ``ro``).
+Pendant le rollout, une barre fine sous la table suit les parties jouées ;
+**Annuler**, l'entrée **Annuler le rollout** du menu, *Échap* ou *Maj+R* de nouveau
+l'arrêtent sans rien écrire. Le réglage — **Rapide**, **Standard** ou
+**Libre** — se choisit dans l'onglet **gammonNet** de la configuration
+(voir :ref:`configuration <rollout_reglage>`).
+
+Le même menu propose **Copier la position et l'analyse**, l'image que copie
+*CTRL-X CTRL-X* : le plateau et le haut de la liste des coups, ou l'analyse de
+videau entière. Dès qu'un coup est sélectionné, une seconde entrée, **Copier
+la position et les coups sélectionnés**, s'y ajoute : l'image ne garde que ces
+coups, dans l'ordre du classement, chacun précédé de son rang parmi tous les
+candidats et avec son écart au meilleur coup de la position, non au meilleur
+de la sélection. Sur une décision de videau, seule la première figure. Les cellules des tables d'analyse ne se sélectionnent pas comme du
+texte : les clics de sélection n'y laissent pas de surlignage.
+
+Le résultat est **stocké à côté de l'analyse, jamais à sa place** : une
+analyse importée n'est pas modifiée. Chaque coup roulé porte son résultat dans
+sa propre ligne de la table, dans une colonne **Rollout** qui n'apparaît que
+lorsque la position a un rollout : l'équité et la demi-largeur de son
+intervalle de confiance à 95 %, sur l'échelle de la colonne d'équité. Survoler
+la cellule donne le détail : l'écart-type, la **JSD** (l'écart au meilleur coup
+en écarts-types de la différence : à partir de la limite, le coup est tranché
+et cesse d'être joué), le nombre de parties et la **Configuration** — le moteur
+et la signature complète des paramètres : deux rollouts de même signature sont
+les mêmes nombres. Le rollout s'arrête dès que les coups sont départagés. Le
+rollout d'une décision de videau, qui n'a pas de ligne de coup, s'affiche en
+tableau sous la décision. Un rollout joue le videau dans ses
+parties : le classement est fiable, l'équité absolue un peu moins, ce que le
+bloc rappelle. Il ne joue pas le beaver : sa ligne *double, prend* est celle
+d'une simple prise, même sur une position en money sous la règle Beaver, là où
+l'analyse directe compte le beaver. Une position qui n'est pas dans la base se roule, mais ne se
+stocke pas.
+
+La commande ``ro search`` roule, l'une après l'autre, les positions de la liste affichée — résultats de recherche, match ou
+collection — qui n'ont pas encore ce rollout ; une confirmation donne le total
+avant de commencer. Chaque position est écrite
+dès qu'elle est finie : annuler garde ce qui est fait, et relancer reprend où
+l'on s'est arrêté. L'avancement survit à la fermeture du panneau.
+
+Une base ouverte **en lecture seule**, parce qu'une autre instance de
+blunderDB la tient, refuse d'emblée un rollout qui serait stocké : un message
+le dit avant que la première partie ne soit jouée.
+
+.. _panneau_commentaires:
+
+Panneau Commentaires
+--------------------
+
+Le panneau **Commentaires** (*CTRL-P*) affiche, ajoute et modifie les
+commentaires associés à la position courante. Une position peut en porter
+plusieurs, écrites par des personnes différentes : ils sont tous affichés en fil,
+du plus récent au plus ancien, chacun avec le nom de son auteur, et les vôtres
+passent en tête. Les
+commentaires importés depuis les fichiers XG sont automatiquement associés aux
+positions correspondantes. Appuyer sur *CTRL-P* ou exécuter la commande
+``comment`` pour afficher ou masquer le panneau.
+
+Le nom attribué à vos commentaires se règle dans les préférences, onglet
+*Interface*, champ **Votre nom** ; vide, vos commentaires ne portent pas
+d'auteur. Les commentaires d'un import XG sont attribués à ``XG``, ceux d'un
+fichier de match à son transcripteur. Réécrire un commentaire vous l'attribue.
+La recherche ``au"Alice"`` retient les positions qu'Alice a commentées ; hors de
+l'interface, ``blunderdb comment add --author`` écrit un commentaire attribué à
+cet auteur et ``blunderdb comment list`` les relit (voir :ref:`cli`). Ce nom est
+du texte libre : il n'atteste rien, à la différence de la signature décrite plus
+bas.
+
+Chaque commentaire venu d'un fichier porte une **étiquette de provenance**
+(``XG``, ``GNU BG``, ``BGF``, ou *importé* lorsque la provenance n'a pas été
+enregistrée). Les commentaires que vous avez écrits n'en portent pas : c'est le
+cas courant, et le signaler à chaque ligne serait du bruit. Modifier un
+commentaire importé vous l'attribue : après la modification, la phrase est la
+vôtre.
+
+Cette distinction a une conséquence visible ailleurs : supprimer un match
+n'efface plus une position sur laquelle **vous** aviez écrit. Une note reprise
+du fichier source, elle, disparaît avec le match qui l'a apportée.
+
+Un commentaire reçu dans une base exportée avec un filigrane porte la
+**signature** de son émetteur : le fil affiche « commentaire de *émetteur* »
+suivi de l'empreinte de sa clé, précédé de ✓. Deux personnes peuvent porter le
+même nom, pas la même empreinte : comparez-la à celle que l'émetteur vous a
+communiquée.
+
+Un commentaire qui ne correspond plus à ce qui a été signé est conservé mais
+marqué ⚠ *non vérifié* : texte ou auteur modifié dans le fichier, commentaire
+déplacé sur une autre position, ou position dont l'identité a été corrigée
+depuis. La signature couvre en effet l'identité de la position : quand
+``blunderdb repair`` recale la sentinelle de Crawford d'une position (et la
+fusionne au besoin avec sa jumelle), ou quand la réparation d'un match déplace
+vos notes sur la position corrigée, les commentaires signés qu'elle porte ne se
+vérifient plus, sans que leur texte ait changé ; ``blunderdb repair`` en donne
+le nombre. Une signature que blunderDB ne sait pas lire s'affiche ⚠ *signature
+illisible*. Modifier un commentaire signé retire la signature : la phrase est
+alors la vôtre.
+
+Un commentaire reçu d'une autre base garde sa provenance : une note que son
+auteur avait écrite retient sa position quand un match est supprimé, comme les
+vôtres ; une remarque qu'il tenait d'un fichier XG garde son étiquette ``XG`` et
+disparaît avec le match. Cela vaut pour une base exportée par une version de
+blunderDB qui signe déjà les commentaires ; venu d'un fichier plus ancien, un
+commentaire porte l'étiquette *importé* et disparaît avec le match.
+``blunderdb comment list`` donne la provenance dans sa colonne *Origin* et la
+signature dans sa colonne *Signed by*.
+
+.. _tags:
+
+Les tags
+~~~~~~~~
+
+Un **tag** est un ``#mot`` écrit dans un commentaire. Rien ne le déclare,
+aucune table ne le porte, et c'est voulu : le vocabulaire est votre prose, et
+exiger une déclaration avant de pouvoir taguer transformerait une habitude en
+paperasse.
+
+Ce qui manquait, c'était l'autre moitié : **voir** le vocabulaire qu'on s'est
+construit, et cliquer un tag plutôt que se rappeler comment on l'écrivait. La
+commande ``tags``, ou le bouton ``#`` de l'en-tête du panneau, ouvre la fenêtre du
+vocabulaire : les tags de cette base, chacun avec le **nombre de positions**
+qui le portent, cliquables pour lancer la recherche correspondante. Sous la
+liste figurent les tags recommandés que la base n'utilise pas encore — un
+vocabulaire tiré de la littérature du backgammon (``#blitz``, ``#prime``,
+``#holding``, ``#backgame``, ``#containment``, ``#crunch``, ``#ace-point``,
+``#timing``…), suggéré et jamais imposé : un tag absent de cette liste vaut
+exactement autant qu'un tag qui y figure.
+
+Pendant la frappe, taper ``#`` propose les tags que **cette base** utilise
+déjà, puis les recommandés. C'est ce qui évite d'écrire ``#back-game`` un jour
+et ``#backgame`` le lendemain, ce que rien d'autre ne rattraperait.
+
+La recherche par tag s'écrit ``#prime`` dans la ligne de commande. Elle est
+**délimitée** : ``#prime`` ne trouve pas ``#priming``, là où une recherche de
+texte ordinaire, qui cherche une sous-chaîne, ne sait pas les distinguer.
+Plusieurs tags se **cumulent** — ``s #prime #backgame`` demande les positions
+qui portent les deux — parce qu'une position porte plusieurs tags : en nommer
+deux ne peut vouloir dire que « les deux ». C'est l'inverse du filtre de phase
+ou de provenance, où une position n'a qu'une valeur et où nommer deux valeurs
+ne peut vouloir dire que « l'une ou l'autre ».
+
+La même liste s'obtient hors de l'interface avec ``blunderdb list --type
+tags`` (voir :ref:`cli`).
+
+.. _corbeille:
+
+La corbeille
+------------
+
+Supprimer une position, une collection, un commentaire, une carte Anki ou un
+match passe par une **corbeille** : la suppression a bien lieu, mais une copie de ce qui
+disparaît est gardée trente jours. La commande ``trash`` ouvre la fenêtre qui
+les liste, avec pour chacune *Restaurer* et *Supprimer*, et un bouton
+*Vider la corbeille*.
+
+Une position restaurée revient avec **son analyse et ses commentaires** — la
+rendre nue serait une restauration de nom seulement —, sa marque « étudiée »
+et les réponses d'entraînement données sur elle. Elle reprend son ancien
+numéro ; si la même position a été enregistrée entre-temps, c'est celle-là qui
+est gardée, car une position n'existe qu'une fois : elle reçoit la marque, les
+réponses et les commentaires qui lui manquent, et garde son analyse si elle en
+a une. Si son numéro est pris par une autre, elle en reçoit un nouveau. Une collection revient avec sa
+liste ; les positions qu'elle contenait, elles, n'avaient jamais été
+supprimées — une collection est une vue sur elles.
+
+Un match supprimé emporte ses parties, ses coups, leurs analyses et les
+positions que plus rien d'autre ne retient, avec les notes venues du fichier
+source : la corbeille garde tout cela. Restauré, il revient sous son numéro
+et sa date d'import d'origine, avec ses parties, ses coups et ses
+statistiques, et le journal de son import le nomme de nouveau ; les positions
+que la suppression avait purgées reviennent comme une position restaurée,
+celles restées dans la bibliothèque restent telles qu'elles sont devenues. Il
+reprend sa place dans son tournoi ; si le tournoi a été supprimé, il revient
+hors tournoi. Il reprend sa place de Direction si elle existe encore, oppose
+les mêmes joueurs et est libre ; sinon elle reste au directeur et le match
+revient sans elle. Dans ces cas, la barre d'état le signale. La
+restauration est refusée, et l'entrée reste dans la corbeille, si un autre
+match occupe son numéro, ou si un match de même empreinte de fichier a été
+importé entre-temps ; un match sans empreinte, saisi ou joué dans blunderDB,
+n'est pas comparé ainsi.
+
+Ce qui a plus de trente jours est supprimé par la commande ``vacuum``, jamais à
+l'ouverture d'une base : ne pas faire de ``vacuum``, c'est tout garder.
+
+.. note:: La corbeille ne voyage pas : un export ne l'emporte pas.
+
+.. _panneau_recherche:
+
+Panneau Recherche
+-----------------
+
+Le panneau **Recherche** (*CTRL-F* ou *TAB*) permet de filtrer les positions
+selon des critères combinables librement : structure de pions, type de décision
+de videau, magnitude d'erreur, dates, tags, etc. La touche *TAB* ouvre
+simultanément le panneau de recherche et l'éditeur de position, permettant de
+définir une structure de pions à rechercher sur le plateau.
+
+.. figure:: img/panel_search.png
+   :width: 100%
+   :alt: Panneau Recherche
+
+   Le panneau Recherche : filtres numériques, structure de pions au plateau,
+   onglets *Au moins* / *Sauf*.
+
+Les filtres se règlent dans le sous-onglet **Critères**. Quand une recherche ne
+trouve rien, le panneau l'affiche (« Aucune position ne correspond ») avec un
+bouton **Effacer les filtres**, sans se contenter de la barre d'état.
+
+Pour chercher parmi les positions affichées, utiliser la commande ``ss``
+suivie de filtres (ex: ``ss nc``, ``ss E>40``). ``ss`` cherche dans la liste à
+l'écran : les résultats de la recherche précédente, la collection ouverte ou
+les positions du match en cours de revue, que la commande soit tapée
+directement ou depuis le panneau de recherche (*TAB*). La case à cocher
+*Rechercher dans les résultats actuels* du panneau suit la même règle ; la
+case *Ouvrir dans un nouvel onglet* affiche les résultats dans une nouvelle
+vue (voir :ref:`onglets_vues`) plutôt que dans la vue courante. En
+collection et en match, ``s`` est refusé : il chercherait dans toute la
+bibliothèque et remplacerait la liste affichée.
+
+Les résultats d'une recherche ``ss`` lancée depuis une collection ou un match
+se quittent avec *Esc*, en un seul appui dès que ni un champ ni le panneau qui a
+le focus n'a quelque chose à fermer (un coup sélectionné dans l'analyse, par
+exemple) : blunderDB revient à la collection entière, ou au match sur le coup
+étudié, et à la position quittée.
+Ce retour ne suit que ``ss`` : ``s``, lancé depuis le panneau de recherche
+ouvert sur une collection ou un match, cherche dans toute la bibliothèque, et
+*Esc* ne ramène plus à la liste quittée.
+
+Une recherche sur une grande base se montre avant d'être comptée : la première
+page de résultats s'affiche aussitôt, et la barre d'état indique « Recherche… »
+avec le temps écoulé tant que le nombre total n'est pas connu ; il remplace
+alors la longueur provisoire de la liste. Une seule recherche court à la
+fois : en lancer une autre abandonne la précédente. *Esc* interrompt la
+recherche en cours et arrête son balayage de la base ; si la première page
+était déjà affichée, elle reste, seule, et la barre d'état le dit.
+
+Le panneau propose un contrôle explicite du **type de décision** recherché :
+*Indifférent* (aucun filtre), *Pions* (décisions de coup) ou *Videau*
+(décisions de cube). Lorsque *Videau* est sélectionné, une seconde liste précise
+le sous-type : *Tous*, *Double / Pas de double* (le joueur au trait doit décider
+de doubler) ou *Prise / Passe* (réponse à un doublement adverse). Le contrôle est
+synchronisé avec le plateau : modifier les dés ou le videau sur le plateau met à
+jour le type de décision, et inversement. En mode *Prise / Passe*, le videau est
+affiché au centre du plateau à la valeur offerte ; cette valeur reste éditable.
+
+La **phase de partie** — ouverture, milieu de partie, course, sortie des pions —
+est une étiquette calculée par blunderDB à partir du plateau seul, jamais
+modifiable, et disponible en recherche par le jeton ``ph:`` de la ligne de
+commande (``ph:race``, répétable : ``ph:race ph:bearoff``). Trois de ses quatre
+frontières sont celles que GNU Backgammon emploie pour aiguiller ses réseaux ; la
+quatrième, où s'arrête l'ouverture, est une convention de blunderDB : une
+position en est encore à l'ouverture tant qu'aucun des deux camps n'a déplacé
+plus de quatre pions de leurs points de départ, qu'aucun pion n'est sorti et
+qu'aucun n'est sur la barre.
+
+.. note:: L'étiquette est recalculée par la commande ``blunderdb repair``. Sur
+   une base ouverte pour la première fois avec cette version, le calcul est fait
+   une fois, à l'ouverture. Une base dont les phases n'ont jamais été calculées
+   ne renvoie rien pour ``ph:`` — rien, plutôt qu'une réponse fausse.
+
+Le jeton ``like`` **classe** au lieu de restreindre : sa présence ordonne le
+résultat par distance croissante à une position cible — ``like`` la position
+courante, ``like42`` celle d'indice 42 — et les autres jetons restreignent
+l'ensemble ainsi classé, si bien que ``s like42 E>80`` se lit « les voisines
+de la 42 où j'ai fauté ». La distance est une distance de transport en
+pions-pas, la quantité de mouvement de pions qui sépare deux positions, vue du
+joueur au trait.
+
+Une voisine est le même **problème**, pas le même dessin : le classement se
+prend dans la classe de la cible — même type de décision, même régime (argent
+ou match) pour une décision de videau, et un match différent du sien, car les
+positions qui l'entourent dans sa propre partie sont ses structures les plus
+proches sans jamais être ses voisines. Les dés, le score et le videau restent
+hors classe ; les jetons ordinaires les filtrent quand on le veut. ``like42*`` élargit la classe à tous
+les types de décision et aux deux régimes, jamais au match de la cible ;
+``like<12`` écarte ce qui est à plus de douze pions-pas. Un classement qui ne
+trouve rien rend une liste vide et le dit, plutôt que dix positions sans
+rapport.
+
+En mode **édition**, ``s like`` prend pour cible le plateau **dessiné** : on
+dessine à peu près la position dont on se souvient, on lance, et la
+bibliothèque répond — là où la recherche par structure exige le dessin juste.
+Le plateau est alors lu comme une position et non comme un motif : un point
+laissé vide compte comme des pions sortis, ce qui est exact pour une position
+réelle et fausse le calcul pour un dessin laissé à moitié.
+
+Chaque voisine porte sa distance sous les tableaux d'analyse, avec la position
+dont elle est proche. C'est ce qui permet de juger si l'on regarde une voisine
+ou une coïncidence, et c'est la raison d'être du plafond. Le classement se
+lance aussi sans passer par la ligne de commande : *CTRL-MAJ-L*, ou l'entrée
+**Positions voisines** du menu contextuel du plateau.
+
+Le jeton ``n`` compte les **rencontres** : ``n>3`` retient les positions
+rencontrées au moins trois fois dans la base, tous matchs et tous joueurs
+confondus. C'est une
+autre question que « qu'ai-je raté » — une position rencontrée vingt fois et
+bien jouée dix-neuf reste celle qu'il faut savoir par cœur. Le compte porte
+sur les décisions, pas sur les matchs : la même position deux fois dans un
+match compte pour deux, parce que c'étaient deux décisions. Combiné à un
+filtre de joueur, il ne compte plus que les occurrences de ce joueur : ``n>3
+pl!"Alice"`` retient les positions qu'Alice a eu à jouer au moins trois fois,
+et ``pl"Alice"`` celles des matchs qu'elle a disputés ; ``op"Bob"`` restreint
+de même le compte aux matchs contre Bob.
+
+Le **plan de jeu** est une seconde étiquette dérivée, à côté de la phase, et
+elle répond à la question qu'un paquet de filtres sauvegardés ne sait pas
+poser : « montre-moi mes erreurs en holding game ». Jeton ``gt:``, répétable
+(``gt:holding gt:mutualholding``), du point de vue du **joueur au trait** — le
+plan dans lequel se prenait la décision.
+
+Les dix plans reconnus, dans l'ordre où les règles les épuisent, du plus
+spécifique au plus général :
+
+* ``race`` — les pions les plus arriérés des deux camps se sont croisés :
+  aucun contact n'est plus possible. Frontière de GNU Backgammon.
+* ``bearin`` — le joueur au trait rentre ses pions alors que l'adversaire tient
+  encore une ancre dans son jan.
+* ``crunch`` — le joueur au trait a au plus six pions hors de ses points 1 et
+  2. Règle de GNU Backgammon, seuil de son auteur.
+* ``backgame`` — deux ancres ou plus dans le jan adverse.
+* ``acepoint`` — une seule ancre, sur le point 1 adverse, avec au moins vingt
+  pions de retard.
+* ``blitz`` — trois points du jan faits ou plus, et l'adversaire à la barre ou
+  avec un blot à frapper dans ce jan.
+* ``primevprime`` — les deux camps tiennent une amorce d'au moins quatre
+  points, et chacun a un pion enfermé derrière celle de l'autre.
+* ``mutualholding`` — les deux camps tiennent une ancre haute.
+* ``holding`` — le joueur au trait tient une ancre haute, l'adversaire non.
+* ``contact`` — contact, et aucun des plans ci-dessus. L'ouverture atterrit ici.
+
+Trois de ces règles sont celles de GNU Backgammon et sont sourcées ; les
+autres sont des **conventions de blunderDB**. La littérature du backgammon
+décrit les plans de jeu sans en chiffrer les frontières, et aucune mesure
+d'accord entre classificateurs n'est publiée pour ce problème. Les seuils non
+sourcés — trois points du jan pour un blitz, quatre points pour une amorce,
+vingt pions de retard pour un ace-point game — sont donc énoncés ici plutôt
+que cachés dans le code, et ils sont versionnés : les changer et relancer
+``blunderdb repair`` ré-étiquette toute la base.
+
+.. note:: Une seule étiquette est conservée par position, celle du joueur au
+   trait. Une étiquette dérivée n'est jamais modifiable, jamais exportée comme
+   une vérité, et une base dont les plans n'ont jamais été calculés ne renvoie
+   rien pour ``gt:`` — comme pour ``ph:``.
+
+Le filtre **Marquée** retient les positions que vous avez marquées (*flag*) dans
+le logiciel d'origine du match. Seul eXtreme Gammon produit cette information,
+enregistrée coup par coup dans le fichier ``.xg`` ; blunderDB la lit à l'import
+et la conserve. Une décision de videau marquée donne deux positions marquées, le
+double et la prise/passe, blunderDB scindant en deux ce que le fichier source
+enregistre comme une seule décision.
+
+.. note:: Le marquage n'est pas rétroactif : les matchs déjà présents dans la
+   base ne portent pas cette information, puisqu'elle n'existe que dans les
+   fichiers source. Il suffit de réimporter le fichier ``.xg`` concerné —
+   l'import détecte le doublon et n'ajoute rien d'autre que les marques, sans
+   toucher aux commentaires ni aux analyses existants. Le marquage ne peut ni
+   être posé ni être retiré depuis blunderDB : pour une liste de travail
+   temporaire, utilisez plutôt une collection.
+
+Le filtre **Commentaire** interroge les commentaires attachés aux positions
+selon trois modes exclusifs. *contient le texte* recherche un ou plusieurs mots
+dans le texte des commentaires (champ de saisie, mots séparés par ``;``, au
+moins un doit correspondre) ; *a un commentaire* retient toute position portant
+un commentaire, quel qu'en soit le contenu ; *sans commentaire* retient au
+contraire les positions non annotées — utile, combiné à un filtre d'erreur ou de
+date, pour dresser la liste de ce qu'il reste à commenter.
+
+.. note:: Les commentaires importés depuis un fichier de match (XG, GNUbg)
+   comptent comme des commentaires. Pour ne retenir que les vôtres, ajoutez le
+   jeton ``co:user`` sur la ligne de commande (``co:xg``, ``co:gnubg``,
+   ``co:bgf`` et ``co:unknown`` désignent les autres provenances). Par ailleurs,
+   les commentaires attachés à un *match* ou à un *tournoi* ne sont pas
+   concernés : ils annotent le match ou le tournoi, non ses positions.
+
+Le filtre **Matchs & Tournois** s'appuie sur un sélecteur commun (fenêtre modale)
+plutôt que sur la saisie d'identifiants numériques : deux listes à cocher, une
+pour les matchs et une pour les tournois, chacune filtrable par texte (joueur,
+date, événement pour les matchs ; nom, date, lieu pour les tournois), avec des
+boutons *Tout* / *Aucun* qui n'agissent que sur le sous-ensemble actuellement
+filtré. Cocher un tournoi coche automatiquement (et grise) ses matchs membres
+dans la liste des matchs, rendant visible le fait qu'un tournoi équivaut à
+l'ensemble de ses matchs.
+
+La bande du panneau de recherche porte un sélecteur *Critères* (les filtres) |
+*Historique* | *Enregistrés* — avec un quatrième segment, *Assistant*, quand
+l'assistant interne est activé — et, sur *Critères*, le bouton **Rechercher**
+à son extrémité droite. L'onglet
+**Historique** liste les recherches passées avec leur date et leur commande :
+un clic sélectionne une recherche et affiche la position associée sur le
+plateau, un double-clic la ré-exécute. Chaque entrée peut être enregistrée
+dans la bibliothèque de filtres (icône signet, en donnant un nom au filtre) ou
+supprimée. L'onglet **Enregistrés** contient la **bibliothèque de filtres** :
+double-cliquer sur un filtre enregistré pour relancer la recherche
+correspondante (voir :ref:`annexe_filtres`). La commande ``history`` (alias
+``hi``) ouvre le panneau de recherche.
+
+L'étoile d'un filtre de la bibliothèque l'**épingle**. Les filtres épinglés
+s'affichent en pastilles en haut du panneau, quel que soit l'onglet ouvert,
+numérotées dans l'ordre de la bibliothèque : un clic sur une pastille lance le
+filtre, et ``ALT-1`` … ``ALT-9`` lancent le filtre épinglé de ce rang depuis
+n'importe quel écran en mode NORMAL ou EDIT, sans ouvrir le panneau. Le filtre
+pose alors la même question qu'au double-clic, structure de pions comprise.
+L'épingle appartient à la base : elle suit le filtre renommé, disparaît avec le
+filtre supprimé et ne voyage pas avec l'export de la bibliothèque.
+
+Une recherche relancée garde son classement : ``s like42`` classe contre la
+position 42, et ``s like`` contre le plateau enregistré avec la recherche —
+celui qu'on feuilletait ou qu'on avait dessiné. Une entrée qui n'a pas gardé
+de plateau n'est pas relancée contre celui de l'écran, et la barre d'état le
+dit.
+
+.. tip:: Se référer à la :ref:`liste des commandes <cmd_mode>` pour la liste des filtres
+   disponibles.
+
+.. _panneau_collections:
+
+Panneau Collections
+-------------------
+
+.. figure:: img/panel_collections.png
+   :width: 100%
+   :alt: Panneau Collections
+
+   Le panneau Collections : nom, nombre de positions, description,
+   dernière modification.
+
+Dans les panneaux Collections, Tournois, Anki et Transcription, le bouton
+**+** de l'en-tête, suivi du nom de ce qu'il crée (**+ Nouvelle collection**,
+**+ Nouveau tournoi**, **+ Nouveau paquet**, **+ Nouvelle transcription**), est
+l'unique geste de création : il ouvre le champ
+de saisie, que *Échap* ou **Annuler** referme dans les panneaux Collections et
+Tournois. Dans la liste des matchs, l'icône ⌨ ouvre la transcription du match
+et l'icône ✎ en corrige les métadonnées.
+
+Le panneau **Collections** (*CTRL-B*) permet de gérer des collections de
+positions. Les collections peuvent être créées, renommées et supprimées. Des
+positions peuvent y être ajoutées ou retirées (touche *Suppr*, confirmation
+demandée). Double-cliquer sur une collection pour parcourir ses positions
+avec les touches *GAUCHE* et *DROITE*. La commande ``ss`` cherche parmi les
+positions de la collection ouverte ; *Esc* ramène ensuite à la collection
+(voir :ref:`panneau_recherche`). L'ordre des collections et des
+positions au sein des collections peut être modifié par glisser-déposer.
+Appuyer sur *CTRL-B* ou exécuter la commande ``collection`` pour afficher ou
+masquer le panneau.
+
+En tête d'une collection ouverte, le nombre de positions est un lien qui les
+remet dans le parcours, depuis la première ; la case **dans cette collection**
+y ajoute ou en retire la position affichée. Une liste vide propose
+**+ Nouvelle collection**.
+
+La **Pile** est la collection du geste « à revoir plus tard » : un double-clic
+hors du plateau, la touche *b* ou le bouton marque-page de la barre d'outils
+met la position affichée sur la Pile, et le même geste l'en retire. Un
+marque-page au coin du plateau dit que la position y est, sans autre message. Le geste vaut partout où une position est
+affichée : revue, recherche, édition, Eval, Transcription, quiz, Duel. La
+remise à zéro du plateau passe par le menu du clic droit (voir
+:ref:`menu du plateau <board_menu_contextuel>`). La Pile est une collection ordinaire — renommée,
+réordonnée, exportée, vidée comme une autre ; elle est créée au premier usage,
+et recréée si elle a été supprimée. Une position qui n'est pas encore dans la
+bibliothèque (un brouillon du plateau de recherche ou d'évaluation) y est
+écrite sur-le-champ, comme une position apportée seule, puis mise sur la Pile.
+La ligne de commande fait le même geste par ``collection pile``.
+
+Une collection peut être **vivante** : sa composition n'est plus une liste
+faite à la main mais le résultat d'une **recherche**, réévalué chaque fois
+qu'on l'ouvre. Le bouton ◇ en tête de la collection la rend vivante avec la
+dernière recherche lancée ; ◈ signale qu'elle l'est déjà, et le même bouton
+la rend à sa liste. Rien n'est détruit en la rendant vivante : les positions
+qu'elle contenait sont toujours là quand on revient en arrière.
+
+Le bouton ❄, visible sur une collection vivante, la **fige** : les positions
+que la recherche sélectionne à cet instant deviennent la composition d'une
+collection ordinaire, dans l'ordre de la recherche, et la requête s'efface.
+Les positions qu'elle contenait avant d'être vivante sont remplacées.
+
+Une collection vivante dont la requête porte un jeton que cette version ne
+connaît plus **refuse de s'ouvrir** en le disant, plutôt que de renvoyer toute
+la base. C'est la seule panne qu'un filtre enregistré ne doit pas avoir :
+s'élargir en silence.
+
+Une collection vivante **reste vivante dans un export** de la base : sa requête
+voyage avec elle et se réévalue, chez le destinataire, sur les positions du
+fichier. Quand l'export emporte les positions des collections, il emporte
+celles que la requête sélectionne au moment de l'export, jusqu'au plafond de
+5 000 positions. Une requête qui désigne des positions, des matchs ou des
+tournois par leur numéro est réécrite sur les numéros du fichier ; si l'un
+d'eux reste hors du fichier, la collection part **figée**, avec les positions
+que la requête sélectionne au moment de l'export.
+
+Un paquet de répétition espacée fondé sur une collection vivante rejoue sa
+requête à chaque ouverture de séance : les positions que la recherche
+sélectionne depuis la dernière fois y entrent, et les cartes déjà là gardent
+leur planification. Une évaluation est bornée par un **plafond** de 5 000
+positions ; quand la requête en sélectionne davantage, seules les premières,
+dans l'ordre de la recherche, alimentent le paquet, et la barre d'état le dit
+avec le nombre réel de positions sélectionnées.
+
+.. _positions_reference:
+
+Le bouton **Proposer…** de l'en-tête ouvre les **positions de référence** :
+une courte liste de positions à étudier, choisie parmi vos erreurs pour que
+chacune en résume beaucoup. Étudier les dix pires erreurs donne souvent dix
+variantes d'un même problème, ou des positions singulières qui n'apprennent
+rien sur les autres ; une position de référence est au centre de plusieurs de
+vos erreurs, de structure voisine, et sa leçon sert à toutes.
+
+* Les erreurs sont celles du :ref:`plan d'étude <plan_etude>` : chiffrées en
+  MWC et rangées par famille (plan de jeu, nature, thème). Deux erreurs d'une
+  famille sont **voisines** à au plus 12 pions-pas de distance ``like`` ; une
+  erreur de videau n'a pour voisines que celles du même score.
+* Chaque position vaut le **MWC récupérable** (perte moins difficulté) de ses
+  voisines et d'elle-même : ce que sa leçon rapporterait si elle servait à
+  toutes. Une leçon **serrée** (le second choix coûte moins d'une demi-erreur)
+  ou un verdict **instable** (une autre profondeur ou un rollout dit autre
+  chose) compte pour moitié ; un rollout qui confirme est signalé. Le chiffre
+  en tête de chaque ligne est le MWC couvert, la raison donne le chiffre
+  compté quand la leçon compte pour moitié.
+* La liste est **variée** : une position retenue couvre ses voisines, qui ne
+  rapportent plus rien aux suivantes, et aucune position proposée n'est un
+  quasi-doublon d'une autre. Une position **déjà traitée** — commentée, dans
+  une collection, une carte Anki ou marquée « étudiée » — n'est jamais
+  proposée, et ses voisines sont tenues pour couvertes.
+
+La **portée** est toute la base, le match en cours, un tournoi ou le filtre du
+panneau Statistiques ; le joueur est celui de ce filtre. La **taille** est de
+10, 20 ou 50 positions. Chaque ligne donne sa famille, son score s'il s'agit
+du videau, le MWC qu'elle couvre et sa raison : combien d'erreurs et de
+matchs elle résume, la taille de sa famille parmi vos décisions, son propre
+récupérable, l'écart avec le second choix. Cliquer sur une ligne ouvre la
+position ; les cases cochées deviennent en un clic une **collection**, un
+**paquet Anki** ou un **quiz**. En ligne de commande :
+``blunderdb collection suggest`` (voir :ref:`cli_collection`).
+
+.. _lecons:
+
+Leçons
+~~~~~~
+
+Une **leçon** est une suite d'étapes qu'un coach écrit une fois pour un élève
+et lui remet dans un fichier de base (voir la commande ``lesson export`` de
+:doc:`cli`). Chaque étape a un titre, un texte et peut montrer une collection,
+une position, les deux ou aucune. La commande ``le`` liste les leçons de la
+base dans la barre d'état ; ``le 2`` ouvre la leçon 2 ; ``le edit`` ouvre
+l'éditeur de leçons.
+
+Une **barre de lecture** apparaît alors au-dessus du plateau : nom de la
+leçon, numéro de l'étape, titre, puis le texte. *Précédente* et *Suivante*
+changent d'étape ; l'étape amène sur le plateau la collection ou la position
+qu'elle montre, que l'on parcourt ensuite par les gestes habituels. *Fermer*
+quitte la leçon. Une étape dont la collection ou la position a été supprimée
+garde son texte.
+
+La case *Étape faite* de la barre marque l'étape courante comme faite ; un
+second clic retire la marque, et la barre compte les étapes faites. C'est le
+seul geste qui écrive quelque chose : lire une leçon, changer d'étape ou
+l'ouvrir n'enregistre rien, ni l'étape atteinte ni l'ouverture. La marque
+s'écrit dans la base ouverte, celle de l'élève, et aucun export ne l'emporte.
+Importer un fichier qui contient une leçon la crée ; une leçon de même nom déjà
+présente n'est pas touchée.
+
+**L'éditeur de leçons** s'ouvre par ``le edit`` (``le edit 2`` sur la leçon 2)
+ou par le bouton *Modifier* de la barre de lecture. À gauche, la liste des
+leçons et un champ pour en créer une ; à droite, le nom et la description de la
+leçon choisie, puis ses étapes. Chaque étape a un titre, un texte, une
+collection choisie dans la liste et une position : *Position courante* y
+attache la position affichée sur le plateau, *Détacher la position* l'en
+retire. *Enregistrer l'étape* écrit ses changements ; les flèches la déplacent
+d'un cran ; *Ajouter une étape* en ajoute une à la fin. *Lire* ferme l'éditeur
+et ouvre la leçon à sa première étape ; *Exporter en page web* enregistre la
+leçon en un seul fichier HTML autonome (titre, description, chaque étape avec
+son texte et son plateau, l'analyse enregistrée de chaque position repliée
+comme une réponse de quiz, l'origine du filigrane en pied de page), à publier
+tel quel : il ne contient ni script ni appel réseau ; *Supprimer* efface la leçon et ses
+étapes, sans toucher aux collections ni aux positions qu'elles montraient. Les
+leçons se créent et se modifient aussi par la ligne de commande ou par l'API
+(:ref:`headless_lecons`).
+
+Une sauvegarde — l'export de toute la bibliothèque depuis la fenêtre d'export
+ou par la ligne de commande — emporte toutes les leçons. Dans la fenêtre
+d'export, la ligne *Leçons* les choisit une à une : chaque leçon
+cochée part avec les collections et les positions que ses étapes montrent, et
+le fichier peut être filigrané ou protégé par mot de passe (``.dbx``) comme tout
+export. Sans cette case, un export partiel (une sélection de positions, de
+collections ou de matchs) n'emporte pas les leçons.
+
