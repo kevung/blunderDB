@@ -243,6 +243,7 @@ func RunContractTestsOnly(t *testing.T, factory func() storage.Storage, keep fun
 		{"Lesson/Progress", testLessonProgress},
 		{"MatchEquityTable/Lifecycle", testMETLifecycle},
 		{"MatchEquityTable/DifferentLeftOut", testMETDifferentLeftOut},
+		{"MatchEquityTable/MixedMatchLeavesThePlayersTable", testMETMixedMatchLeavesThePlayersTable},
 		{"MatchStats/SharedPositionsCountOnce", testMatchStatsSharedPositions},
 		{"Matches/LastVisitedFollowsTheVisit", testMatchLastVisitedFollowsTheVisit},
 		{"Stats/OpponentFilter", testStatsOpponentFilter},
@@ -375,6 +376,13 @@ func statsFixtureMatchInBatch(t *testing.T, s storage.Storage, slotBase int, p1,
 // statsFixtureMatchOn is statsFixtureMatchInBatch played at a given instant.
 func statsFixtureMatchOn(t *testing.T, s storage.Storage, slotBase int, p1, p2 string, batchID int64, at time.Time) (matchID int64, posIDs [2]int64) {
 	t.Helper()
+	return statsFixtureMatchBy(t, s, slotBase, p1, p2, batchID, at, "")
+}
+
+// statsFixtureMatchBy is statsFixtureMatchOn with its analyses signed by an
+// engine, so a provenance filter can select them.
+func statsFixtureMatchBy(t *testing.T, s storage.Storage, slotBase int, p1, p2 string, batchID int64, at time.Time, engine string) (matchID int64, posIDs [2]int64) {
+	t.Helper()
 	ctx := context.Background()
 
 	m := domain.Match{Player1Name: p1, Player2Name: p2, MatchLength: 7,
@@ -405,8 +413,8 @@ func statsFixtureMatchOn(t *testing.T, s storage.Storage, slotBase int, p1, p2 s
 		a := domain.PositionAnalysis{
 			PlayedMoves: []string{"13/11 24/23"},
 			CheckerAnalysis: &domain.CheckerAnalysis{Moves: []domain.CheckerMove{
-				{Move: "8/6 6/4", Equity: 0.50},
-				{Move: "13/11 24/23", Equity: 0.45, EquityError: &equityError},
+				{Move: "8/6 6/4", Equity: 0.50, AnalysisEngine: engine},
+				{Move: "13/11 24/23", Equity: 0.45, EquityError: &equityError, AnalysisEngine: engine},
 			}},
 		}
 		if err := s.Analyses().Save(ctx, "", posID, &a); err != nil {

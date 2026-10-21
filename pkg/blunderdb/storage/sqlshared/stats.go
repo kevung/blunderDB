@@ -1181,8 +1181,9 @@ func (s *StatsStore) playerTable(ctx context.Context, scope string, filter stora
 // decisions themselves: the path of a filter match_stats cannot apply.
 func (s *StatsStore) playerSumsDirect(ctx context.Context, scope string, f storage.StatsFilter, settings storage.LibrarySettings) (decisions []storage.PlayerDecisionStat, snowieErr map[string]int64, luck map[string]storage.PlayerLuckAcc, err error) {
 	d := s.DB
-	statsWhere, statsArgs := s.buildStatsWhereClause(scope, f)
+	statsWhere, statsArgs := s.playerStatsWhereClause(scope, f)
 	baseWhere, baseArgs := s.buildBaseWhereClause(scope, f)
+	baseWhere, baseArgs = s.withMatchMET(scope, baseWhere, baseArgs)
 	matchWhere, matchArgs := s.buildMatchWhereClause(scope, f)
 
 	// ── Counted decisions, per player and decision type ───────────────────────
@@ -1280,6 +1281,22 @@ func (s *StatsStore) playerSumsDirect(ctx context.Context, scope string, f stora
 	}
 
 	return decisions, snowieErr, luck, nil
+}
+
+// playerStatsWhereClause is buildStatsWhereClause for the players table,
+// whose PR and MWC7 are per-match aggregates: a match counts only when every
+// analysis of it carries the current table (ADR-0068 §4), as match_stats
+// reads it.
+func (s *StatsStore) playerStatsWhereClause(scope string, f storage.StatsFilter) (string, []any) {
+	where, args := s.buildStatsWhereClause(scope, f)
+	return s.withMatchMET(scope, where, args)
+}
+
+// withMatchMET appends the per-match MET predicate (metComparableMatch) to a
+// decision WHERE clause over alias m.
+func (s *StatsStore) withMatchMET(scope, where string, args []any) (string, []any) {
+	clause, a := metComparableMatch(s.DB, scope)
+	return where + " AND " + clause, append(args, a...)
 }
 
 // canonicalPlayerInputs renames every alias to its canonical name in the

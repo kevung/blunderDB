@@ -16,7 +16,7 @@ import (
 // converted as the statistics convert them, one unit per match the player
 // sat in. Names are canonical (aliases folded), as the table's rows are.
 func (s *StatsStore) playerMWC7(ctx context.Context, scope string, f storage.StatsFilter, aliases storage.AliasMap) (map[string]domain.MWC7, error) {
-	statsWhere, statsArgs := s.buildStatsWhereClause(scope, f)
+	statsWhere, statsArgs := s.playerStatsWhereClause(scope, f)
 	losses := map[playerMWC7Unit]float64{}
 	err := scanEach(ctx, s.DB,
 		`SELECT `+moverNameExpr+`, m.id, COALESCE(`+statsErrExpr+`, 0), COALESCE(p.score_1, 0), COALESCE(p.score_2, 0), mv.player,
