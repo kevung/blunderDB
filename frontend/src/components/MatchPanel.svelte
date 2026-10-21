@@ -1117,6 +1117,8 @@
     }
 
     function handleClickOutside(/** @type {MouseEvent} */ event) {
+        // Kept mounted behind another tab (TabbedPanel): the other panel's clicks are not ours to blur.
+        if (!visible) return;
         // A `document` listener sees every click, modals included: it must never
         // blur the focused element, or modal text fields become unclickable.
         if (get(isAnyModalOpen)) return;

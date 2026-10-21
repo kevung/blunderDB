@@ -47,7 +47,8 @@ let field;
 beforeEach(() => {
     databasePathStore.set('/tmp/test.db');
     activeModal.set(null);
-    openPanels.set(new Set([PANEL.MATCHES]));
+    // The click-away listener acts only while the panel is shown: PANEL.MATCH is its « visible ».
+    openPanels.set(new Set([PANEL.MATCH]));
     // Stands in for a text field of a dialog: outside the match panel, like every modal.
     field = document.createElement('input');
     field.id = 'a-field-in-a-dialog';
@@ -98,9 +99,6 @@ describe('MatchPanel deferred focus', () => {
     // took the caret in between — the command line, whose input closes itself
     // on blur — must keep it.
     test('does not take the caret from a field focused before the timer', async () => {
-        // PANEL.MATCH is the flag the panel reads as « visible » (the click-away
-        // tests above do not need it, and set PANEL.MATCHES).
-        openPanels.set(new Set([PANEL.MATCH]));
         render(MatchPanel);
         field.focus();
 
