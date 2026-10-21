@@ -1117,10 +1117,23 @@ func (e *exporter) keepDates(table string, id int64, created, updated string) {
 }
 
 func (e *exporter) writeTournaments() error {
-	for _, id := range e.tournamentIDs {
-		t, err := e.src.Tournaments().Get(e.ctx, e.scope, id)
+	if len(e.tournamentIDs) == 0 {
+		return nil
+	}
+	// One List rather than a Get per tournament: each Get aggregates the
+	// match table, which no index serves by tournament_id alone, so the
+	// reads would grow as tournaments times matches.
+	byID := make(map[int64]*domain.Tournament, len(e.tournamentIDs))
+	for t, err := range e.src.Tournaments().List(e.ctx, e.scope, storage.ListOpts{}) {
 		if err != nil {
-			e.skip("reading tournament", "tournamentID", id, "err", err)
+			return fmt.Errorf("ingest: reading tournaments: %w", err)
+		}
+		byID[t.ID] = t
+	}
+	for _, id := range e.tournamentIDs {
+		t, ok := byID[id]
+		if !ok {
+			e.skip("reading tournament", "tournamentID", id, "err", storage.ErrNotFound)
 			continue
 		}
 		res, err := e.tx.ExecContext(e.ctx,
