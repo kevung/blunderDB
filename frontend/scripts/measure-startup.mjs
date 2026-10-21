@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable no-console -- a command-line script: its output is the table it prints */
 /**
  * Time to a usable window, measured on the production bundle (`npm run build` first).
  *
@@ -12,6 +13,9 @@
  *
  * `--cpu` throttles the CPU (Chromium's DevTools rate): the WebKitGTK WebView of a
  * modest laptop parses and runs JavaScript well below a desktop Chromium.
+ *
+ * The builds are served from BLUNDERDB_E2E_PORT upwards (default 4179), one port each:
+ * a port held by another worktree's server would measure that server's bundle.
  */
 import { spawn } from 'node:child_process';
 import { chromium } from '@playwright/test';
@@ -29,6 +33,7 @@ const runs = Number(args.runs ?? 9);
 const cpu = Number(args.cpu ?? 1);
 const lang = args.lang ?? 'fr';
 const dists = (args.dist ?? 'dist').split(',');
+const basePort = Number(process.env.BLUNDERDB_E2E_PORT || 4179);
 
 /** @param {string} dist @param {number} port */
 async function serve(dist, port) {
@@ -40,7 +45,7 @@ async function serve(dist, port) {
     return server;
 }
 
-const servers = await Promise.all(dists.map((dist, i) => serve(dist, 4179 + i)));
+const servers = await Promise.all(dists.map((dist, i) => serve(dist, basePort + i)));
 const browser = await chromium.launch();
 /** @type {Record<string, number>[][]} */
 const samples = dists.map(() => []);
@@ -54,7 +59,7 @@ try {
                 await cdp.send('Emulation.setCPUThrottlingRate', { rate: cpu });
             }
             await installWailsMock(page, { config: { GetLanguage: lang } });
-            await page.goto(`http://localhost:${4179 + d}/`);
+            await page.goto(`http://localhost:${basePort + d}/`);
             await page.waitForFunction(() => performance.getEntriesByName('bdb:ready').length > 0, null, { timeout: 60000 });
             // The paint entries land a frame or two after the marks.
             await page.waitForFunction(() => performance.getEntriesByName('first-contentful-paint').length > 0, null, { timeout: 60000 });

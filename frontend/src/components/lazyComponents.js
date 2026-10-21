@@ -100,6 +100,20 @@ export const modals = lazyRegistry({
 });
 
 /**
+ * The panel the bottom panel must fetch now for its active tab, or null to leave it to the
+ * idle preload. Behind the home screen the panel cannot be seen, so fetching it would only
+ * delay the first paint (the default tab, Matches, is the largest chunk); it is fetched once
+ * a database opens or the home screen is set aside, or earlier by the preload.
+ *
+ * @param {string} tab
+ * @param {{ homeScreenShown: boolean }} state
+ * @returns {string | null}
+ */
+export function activePanelToLoad(tab, { homeScreenShown }) {
+    return homeScreenShown ? null : tab;
+}
+
+/**
  * Runs `task` when the main thread is idle, or after a short pause where there is no idle callback (WebKit).
  * @param {() => void} task
  */
