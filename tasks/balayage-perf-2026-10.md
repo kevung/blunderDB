@@ -184,6 +184,30 @@ copie déjà ouverte de la base ; `go tool pprof -top`.
 - **Neuf** pour le CSV. Même remède que optim A1 (livré pour `search`) ; même motif que
   l'item « Export `.apkg` : analyses une par position » de `BACKLOG.md`.
 
+**Après les exports en flux (#739), puis le recouvrement des pages.** `EachPositionAnalysis`
+lit par pages de 2 000 (positions, `LoadMany`, `MovesByPositions`) : plus de N+1, RSS bornée.
+Profil sur la même base (copie, 312 587 / 312 545 lignes) : le temps restait partagé, en
+série, entre la lecture d'une page (~6 s de fil principal : `positions.List` 2,3 s,
+`MovesByPositions` 2,7 s, `LoadMany` 1,4 s plus l'attente du décodage parallèle) et le
+calcul des colonnes par l'appelant (~3,7 s, dont `PlayedCandidate` 1,5 s et
+`CountLegalPlays` 1,3 s). Le CPU total (~37 s) est dominé par le décodage du format hérité
+(`json.Unmarshal` 22 s, zstd 4,8 s), déjà réparti sur tous les cœurs.
+
+Remède livré (`database/db_library_walk.go`, sortie inchangée, md5 identiques ordre
+compris) : la page suivante est lue pendant que l'appelant consomme la courante (deux pages
+au plus en mémoire : maxrss 300 → 426 Mo, +42 %, sur les deux exports, coût de la seconde
+page de 2 000 positions), les coups joués d'une page sont lus pendant que ses analyses décodent,
+et la tranche des positions est allouée à sa taille (630 Mo d'allocations en moins).
+Médiane de 3, alternées, machine chargée (load 7–11) :
+
+| Export CSV | avant | après |
+|---|---|---|
+| `list --type positions` | 12,1 s | 6,7 s |
+| `list --type analyses` | 12,6 s | 8,2 s |
+
+Reste : sur cette base, le décodage du format hérité (`reencode` le supprime) ; le calcul
+des colonnes (coup joué, coups légaux) borne désormais le chemin critique.
+
 ### 3.3 Première lecture de statistiques (remplissage de `match_stats`) — 23,5 s par appel
 
 - `StatsStore.Compute` → `matchStatsReadable` → `FillMatchStats`

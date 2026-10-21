@@ -56,22 +56,56 @@ func (d *Database) EachLibraryMove(fn func(m *Match, gameNumber int32, mv *Move)
 // recorded moves are read a page at a time (storage.AnalysisStore.LoadMany,
 // storage.MatchStore.MovesByPositions), and fn runs outside the lock. An
 // error from fn stops the walk and is returned.
+//
+// The next page is read while fn consumes the current one: reading a page
+// (statements, decoding of the analyses) and what a caller does with its rows
+// (an export's column computation and formatting) cost about the same, so
+// overlapping them nearly halves the walk. At most two pages are held.
 func (d *Database) EachPositionAnalysis(fn func(pos *Position, a *PositionAnalysis) error) error {
-	for offset := 0; ; offset += positionWalkPage {
-		positions, analyses, err := d.positionAnalysisPage(offset)
-		if err != nil {
-			return err
+	type page struct {
+		positions []Position
+		analyses  map[int64]*PositionAnalysis
+		err       error
+	}
+	pages := make(chan page, 1)
+	fetch := func(offset int) {
+		positions, analyses, err := readWalkPage(d, offset)
+		pages <- page{positions, analyses, err}
+	}
+	// The read in flight must not touch the database once the caller has it
+	// back, whether fn returned an error or panicked.
+	inFlight := true
+	defer func() {
+		if inFlight {
+			<-pages
 		}
-		for i := range positions {
-			if err := fn(&positions[i], analyses[positions[i].ID]); err != nil {
+	}()
+	go fetch(0)
+	for offset := 0; ; offset += positionWalkPage {
+		p := <-pages
+		inFlight = false
+		if p.err != nil {
+			return p.err
+		}
+		last := len(p.positions) < positionWalkPage
+		if !last {
+			inFlight = true
+			go fetch(offset + positionWalkPage)
+		}
+		for i := range p.positions {
+			if err := fn(&p.positions[i], p.analyses[p.positions[i].ID]); err != nil {
 				return err
 			}
 		}
-		if len(positions) < positionWalkPage {
+		if last {
 			return nil
 		}
 	}
 }
+
+// readWalkPage reads one page of EachPositionAnalysis; a variable so that a
+// test sees when a read starts and ends.
+var readWalkPage = (*Database).positionAnalysisPage
 
 // positionAnalysisPage reads the page of EachPositionAnalysis at offset.
 func (d *Database) positionAnalysisPage(offset int) ([]Position, map[int64]*PositionAnalysis, error) {
@@ -79,7 +113,7 @@ func (d *Database) positionAnalysisPage(offset int) ([]Position, map[int64]*Posi
 	defer d.mu.RUnlock()
 
 	ctx := context.Background()
-	var positions []Position
+	positions := make([]Position, 0, positionWalkPage)
 	for pos, err := range d.store.Positions().List(ctx, "", storage.ListOpts{Offset: offset, Limit: positionWalkPage}) {
 		if err != nil {
 			return nil, nil, err
@@ -93,13 +127,22 @@ func (d *Database) positionAnalysisPage(offset int) ([]Position, map[int64]*Posi
 	for i := range positions {
 		ids[i] = positions[i].ID
 	}
+	// The two reads are independent and each holds its own pooled
+	// connection: the recorded moves are scanned while the analyses decode.
+	var played map[int64][]*Move
+	var playedErr error
+	playedDone := make(chan struct{})
+	go func() {
+		defer close(playedDone)
+		played, playedErr = d.store.Matches().MovesByPositions(ctx, "", ids)
+	}()
 	analyses, err := d.store.Analyses().LoadMany(ctx, "", ids)
+	<-playedDone
 	if err != nil {
 		return nil, nil, err
 	}
-	played, err := d.store.Matches().MovesByPositions(ctx, "", ids)
-	if err != nil {
-		return nil, nil, err
+	if playedErr != nil {
+		return nil, nil, playedErr
 	}
 	for id, a := range analyses {
 		var checkerMoves, cubeActions []string
