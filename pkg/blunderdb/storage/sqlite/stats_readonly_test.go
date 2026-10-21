@@ -427,3 +427,71 @@ func TestPerScoreMoneyAndPostCrawfordAgreeOnBothPaths(t *testing.T) {
 		t.Errorf("want a money cell and a 1-away/3-away cell, got %s", asJSON(t, got.PerScore))
 	}
 }
+
+// A match only part of whose analyses carry the current table leaves the
+// players table whole on both paths: a reader that cannot fill match_stats
+// counts no decision of it toward PR or MWC7, as the table does (ADR-0068 §4).
+func TestPlayerTableMixedMETReadOnlyMatchesWritable(t *testing.T) {
+	ctx := context.Background()
+	path := demoCopy(t)
+	w, err := Open(ctx, path, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer w.Close()
+	ro := openQueryOnly(t, path)
+
+	filters := []storage.StatsFilter{
+		{DecisionType: -1},
+		{DecisionType: -1, PlayerName: "Ada Fairweather"},
+	}
+	read := func(st storage.Storage) []string {
+		t.Helper()
+		out := make([]string, len(filters))
+		for i, f := range filters {
+			rows, err := st.Stats().PlayerTable(ctx, "", f)
+			if err != nil {
+				t.Fatalf("PlayerTable %+v: %v", f, err)
+			}
+			out[i] = asJSON(t, rows)
+		}
+		return out
+	}
+	before := read(w)
+
+	var matchID int64
+	if err := w.sqlDB.QueryRow(`SELECT m.id FROM match m WHERE m.match_length BETWEEN 1 AND 99998
+		AND (m.player1_name = 'Ada Fairweather' OR m.player2_name = 'Ada Fairweather') ORDER BY m.id LIMIT 1`).Scan(&matchID); err != nil {
+		t.Fatal(err)
+	}
+	ids, err := w.Stats().PositionIDsByMatch(ctx, "", matchID)
+	if err != nil || len(ids) < 2 {
+		t.Fatalf("PositionIDsByMatch(%d) = %d ids, %v", matchID, len(ids), err)
+	}
+	met, err := w.MatchEquityTables().Save(ctx, "", domain.MatchEquityTable{Name: "Rockwell-Kazaross", Digest: "rk", Source: "<met/>"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := w.MatchEquityTables().TagAnalyses(ctx, "", met, ids[:len(ids)/2]); err != nil {
+		t.Fatal(err)
+	}
+
+	want := read(w)
+	for i := range filters {
+		if want[i] == before[i] {
+			t.Errorf("filter %+v: tagging half of match %d changed nothing in the players table", filters[i], matchID)
+		}
+	}
+	if err := sqlshared.InvalidateAllMatchStats(ctx, w.binder.shared(), ""); err != nil {
+		t.Fatal(err)
+	}
+	got := read(ro)
+	for i, f := range filters {
+		if got[i] != want[i] {
+			t.Errorf("filter %+v:\n read-only %s\n writable  %s", f, got[i], want[i])
+		}
+	}
+	if n := matchStatsRows(t, w); n != 0 {
+		t.Errorf("read-only players table wrote %d match_stats rows", n)
+	}
+}
