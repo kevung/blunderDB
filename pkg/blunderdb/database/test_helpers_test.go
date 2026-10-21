@@ -198,3 +198,21 @@ func (d *Database) loadPositionByIDUnlocked(positionID int64) (Position, error) 
 	}
 	return *pos, nil
 }
+
+// dropMultiPlayed takes position.multi_played and its triggers off a fresh
+// library being aged into an older schema: the triggers name move columns
+// an older step retypes, and no library before 2.49.0 had them.
+func dropMultiPlayed(t *testing.T, d *Database) {
+	t.Helper()
+	for _, stmt := range []string{
+		`DROP TRIGGER IF EXISTS multi_played_move_insert`,
+		`DROP TRIGGER IF EXISTS multi_played_move_update`,
+		`DROP TRIGGER IF EXISTS multi_played_move_delete`,
+		`DROP INDEX IF EXISTS idx_position_multi_played`,
+		`ALTER TABLE position DROP COLUMN multi_played`,
+	} {
+		if _, err := d.db.Exec(stmt); err != nil {
+			t.Fatalf("%s: %v", stmt, err)
+		}
+	}
+}

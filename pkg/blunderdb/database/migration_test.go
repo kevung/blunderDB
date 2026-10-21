@@ -11,6 +11,7 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -3809,6 +3810,7 @@ func TestMigrate_2_30_0_to_2_31_0(t *testing.T) {
 	if len(wantMatchDate) == 0 || len(wantCreation) == 0 {
 		t.Fatalf("fixture dates: %d positions, %d analyses; want some of each", len(wantMatchDate), len(wantCreation))
 	}
+	dropMultiPlayed(t, d)
 	for _, stmt := range []string{
 		`ALTER TABLE move DROP COLUMN error_mp`,
 		`DROP INDEX idx_analysis_met`,
@@ -5290,5 +5292,74 @@ func TestMigrate_2_47_0_to_2_48_0_MatchStatsMWC(t *testing.T) {
 	}
 	if err := d.db.QueryRow(`SELECT COUNT(*) FROM match_stats WHERE mwc_games IS NULL`).Scan(&rows); err != nil || rows != 0 {
 		t.Fatalf("refilled match_stats: %d rows without mwc_games (%v)", rows, err)
+	}
+}
+
+// TestMigrate_2_48_0_to_2_49_0_MultiPlayed opens a 2.48.0 library without
+// position.multi_played, one of whose positions player 1 played two ways,
+// and checks the migration fills the indicator to the moves' count and
+// installs the triggers that keep it.
+func TestMigrate_2_48_0_to_2_49_0_MultiPlayed(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	dbPath := filepath.Join(tempDir(t), "test_v2480_multi_played.db")
+	createOldDatabase(t, dbPath, "2.31.0")
+	d := NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open: %v", err)
+	}
+	if _, err := d.ImportXGMatch("testdata/charlot1-charlot2_7p_2025-11-08-2305.xg"); err != nil {
+		t.Fatalf("ImportXGMatch: %v", err)
+	}
+	var target int64
+	if err := d.db.QueryRow(`SELECT position_id FROM move
+		WHERE player = 1 AND checker_move IS NOT NULL AND checker_move <> '' AND position_id IS NOT NULL
+		ORDER BY id LIMIT 1`).Scan(&target); err != nil {
+		t.Fatalf("pick a played position: %v", err)
+	}
+	for _, stmt := range []string{
+		`DROP TRIGGER multi_played_move_insert`,
+		`DROP TRIGGER multi_played_move_update`,
+		`DROP TRIGGER multi_played_move_delete`,
+		`DROP INDEX idx_position_multi_played`,
+		`ALTER TABLE position DROP COLUMN multi_played`,
+		// A second play on the same position, as a later match would bring.
+		`INSERT INTO move (game_id, move_number, move_type, position_id, player, checker_move)
+		 SELECT game_id, 999, move_type, position_id, 1, 'made/up' FROM move
+		  WHERE position_id = ` + strconv.FormatInt(target, 10) + ` AND player = 1 LIMIT 1`,
+		`UPDATE metadata SET value = '2.48.0' WHERE key = 'database_version'`,
+	} {
+		if _, err := d.db.Exec(stmt); err != nil {
+			t.Fatalf("%s: %v", stmt, err)
+		}
+	}
+	if err := d.Close(); err != nil {
+		t.Fatalf("close: %v", err)
+	}
+
+	d = NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open v2.48.0 database: %v", err)
+	}
+	closeOnCleanup(t, d)
+	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {
+		t.Fatalf("version after migration = %q, %v; want %q", v, err, DatabaseVersion)
+	}
+	var flagged int
+	if err := d.db.QueryRow(`SELECT multi_played FROM position WHERE id = ?`, target).Scan(&flagged); err != nil || flagged != 1 {
+		t.Fatalf("position %d played two ways: multi_played = %d (%v), want 1", target, flagged, err)
+	}
+	prober, ok := d.store.Search().(interface {
+		MultiPlayedDrift(ctx context.Context, scope string) ([]int64, error)
+	})
+	if !ok {
+		t.Fatal("SQLite search store has no MultiPlayedDrift")
+	}
+	if drift, err := prober.MultiPlayedDrift(ctx, ""); err != nil || len(drift) > 0 {
+		t.Fatalf("multi_played differs from the moves after migration on %v (%v)", drift, err)
+	}
+	var triggers int
+	if err := d.db.QueryRow(`SELECT COUNT(*) FROM sqlite_master WHERE type = 'trigger' AND name LIKE 'multi_played_move_%'`).Scan(&triggers); err != nil || triggers != 3 {
+		t.Fatalf("multi_played triggers after migration: %d (%v), want 3", triggers, err)
 	}
 }

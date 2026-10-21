@@ -334,3 +334,11 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   an edit (ADR-0099).
 
   Schema-visible: bumped `domain.DatabaseVersion` to 2.47.0.
+- `052_multi_played.sql` — `position.multi_played`, set when player 1
+  recorded two distinct plays on the position, so the move-error search reads
+  one column instead of comparing the moves of every row it scans. Statement
+  triggers on `move` keep it on every write; the existing rows are filled
+  with FORCE lifted, as in `049`. SQLite's side is
+  `sqlite.multiPlayedTriggers`, the same definition (`sqlshared.MultiPlayedSQL`).
+
+  Schema-visible: bumped `domain.DatabaseVersion` to 2.49.0.

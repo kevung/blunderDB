@@ -36,7 +36,7 @@ const statsErrExpr = "mv.decision_error_mp"
 
 // positionErrExpr is the error the position's analysis columns score, for the
 // searches over positions that join no move; they settle a position played
-// several ways in Go (multiPlayedSQL).
+// several ways in Go (position.multi_played).
 const positionErrExpr = "CASE WHEN p.decision_type = 1 THEN a.cube_error ELSE a.best_move_equity_error END"
 
 // The Error and Blunder thresholds are the library's settings

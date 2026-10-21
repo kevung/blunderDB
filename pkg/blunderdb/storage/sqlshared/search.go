@@ -57,7 +57,7 @@ type searchWhereClause struct {
 	useSQLFilters bool
 	bitboardTight bool
 	// moveErrorInGo is set by a move-error search: the rows player 1 played
-	// more than one way escape the SQL column (multiPlayedSQL lets them
+	// more than one way escape the SQL column (position.multi_played lets them
 	// through) and are scored in Go.
 	moveErrorInGo bool
 	// effInclude is f.Filter with the points shared with ExcludeFilter
@@ -128,51 +128,35 @@ func (s *SearchStore) appendRateClauses(scope string, f domain.SearchFilters, wh
 
 // appendMoveErrorClause adds the move-error filter and reports whether Go
 // must settle it afterwards.
-func (s *SearchStore) appendMoveErrorClause(ctx context.Context, scope string, f domain.SearchFilters, whole bool, where *strings.Builder, argsp *[]any) (found bool, err error) {
-	args := *argsp
-	defer func() { *argsp = args }()
+func (s *SearchStore) appendMoveErrorClause(f domain.SearchFilters, where *strings.Builder, argsp *[]any) bool {
 	// The denormalised error column scores ONE play (the first of
 	// PlayedMoves, see AnalysisStore.Save). A position played several ways
-	// is let through and settled in Go by matchesMoveErrorFilter on the
-	// largest error: the column can only under-state it. A page tests that
-	// per row, correlated, so the first page does not wait for a pass over
-	// every move of the library. A scan that reads the whole result anyway
-	// lists those positions once instead: one pass over the moves costs
-	// less than a correlated subquery on every row the column rejects.
-	if f.MoveErrorFilter != "" {
-		eMin, eMax, eHasMin, eHasMax := searchfilter.ParseFloatFilterExpr(f.MoveErrorFilter, "E")
-		eqMin := int(math.Round(eMin))
-		eqMax := int(math.Round(eMax))
-		var cond string
-		if eHasMin && eHasMax {
-			cond = positionErrExpr + " BETWEEN ? AND ?"
-			args = append(args, eqMin, eqMax)
-		} else if eHasMin {
-			cond = positionErrExpr + " >= ?"
-			args = append(args, eqMin)
-		} else if eHasMax {
-			cond = positionErrExpr + " <= ?"
-			args = append(args, eqMax)
-		}
-		if cond != "" {
-			if whole {
-				multi, err := multiPlayedIDListSQL(ctx, s.DB, scope)
-				if err != nil {
-					return false, err
-				}
-				if multi != "" {
-					cond += " OR " + multi
-				}
-			} else {
-				multi, multiArgs := multiPlayedSQL(s.DB, scope)
-				cond += " OR " + multi
-				args = append(args, multiArgs...)
-			}
-			found = true
-			where.WriteString(" AND (" + cond + ")")
-		}
+	// is let through by its multi_played indicator and settled in Go by
+	// matchesMoveErrorFilter on the largest error: the column can only
+	// under-state it. The indicator is kept by triggers on move, so the
+	// clause reads two columns of the row and no move at all.
+	if f.MoveErrorFilter == "" {
+		return false
 	}
-	return found, nil
+	eMin, eMax, eHasMin, eHasMax := searchfilter.ParseFloatFilterExpr(f.MoveErrorFilter, "E")
+	eqMin := int(math.Round(eMin))
+	eqMax := int(math.Round(eMax))
+	var cond string
+	switch {
+	case eHasMin && eHasMax:
+		cond = positionErrExpr + " BETWEEN ? AND ?"
+		*argsp = append(*argsp, eqMin, eqMax)
+	case eHasMin:
+		cond = positionErrExpr + " >= ?"
+		*argsp = append(*argsp, eqMin)
+	case eHasMax:
+		cond = positionErrExpr + " <= ?"
+		*argsp = append(*argsp, eqMax)
+	default:
+		return false
+	}
+	where.WriteString(" AND (" + cond + " OR " + s.DB.Bool("p.multi_played", true) + ")")
+	return true
 }
 
 // buildWhere translates f into the WHERE clause of the search query: cheap
@@ -181,13 +165,6 @@ func (s *SearchStore) appendMoveErrorClause(ctx context.Context, scope string, f
 // which is what needAnalysis/useSQLFilters/bitboardTight/moveErrorInGo/
 // effInclude in the returned searchWhereClause are for.
 func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.SearchFilters) (searchWhereClause, error) {
-	return s.buildWhereFor(ctx, scope, f, false)
-}
-
-// buildWhereFor is buildWhere for a scan that will read the whole result
-// (whole) or may stop at a page: the two can phrase the move-error filter
-// differently, never with a different answer.
-func (s *SearchStore) buildWhereFor(ctx context.Context, scope string, f domain.SearchFilters, whole bool) (searchWhereClause, error) {
 	useSQLFilters := !f.MirrorFilter
 	moveErrorInGo := false
 
@@ -362,11 +339,7 @@ func (s *SearchStore) buildWhereFor(ctx context.Context, scope string, f domain.
 		}
 
 		s.appendRateClauses(scope, f, &where, &args)
-		found, err := s.appendMoveErrorClause(ctx, scope, f, whole, &where, &args)
-		if err != nil {
-			return searchWhereClause{}, err
-		}
-		if found {
+		if s.appendMoveErrorClause(f, &where, &args) {
 			moveErrorInGo = true
 		}
 
@@ -434,7 +407,7 @@ func (s *SearchStore) Rank(ctx context.Context, scope string, f domain.SearchFil
 	if !f.LikeFilter {
 		return nil, fmt.Errorf("Rank needs a query carrying the `like` token; use Find for an unordered search")
 	}
-	wc, err := s.buildWhereFor(ctx, scope, f, true)
+	wc, err := s.buildWhere(ctx, scope, f)
 	if err != nil {
 		return nil, err
 	}
@@ -485,7 +458,7 @@ func (s *SearchStore) Rank(ctx context.Context, scope string, f domain.SearchFil
 // find returns the survivors as the scan read them, chunk after chunk, so
 // that no position is copied into one slice holding them all.
 func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFilters, opts storage.ListOpts) ([][]domain.Position, error) {
-	wc, err := s.buildWhereFor(ctx, scope, f, opts.Limit <= 0)
+	wc, err := s.buildWhere(ctx, scope, f)
 	if err != nil {
 		return nil, err
 	}
@@ -684,7 +657,7 @@ func (s *SearchStore) scanChunk(ctx context.Context, f domain.SearchFilters, wc 
 // no Go phase it is a projection on p.id: no row is decoded, no position
 // reconstructed.
 func (s *SearchStore) FindIDs(ctx context.Context, scope string, f domain.SearchFilters, opts storage.ListOpts) ([]int64, error) {
-	wc, err := s.buildWhereFor(ctx, scope, f, opts.Limit <= 0)
+	wc, err := s.buildWhere(ctx, scope, f)
 	if err != nil {
 		return nil, err
 	}
@@ -725,7 +698,7 @@ func (s *SearchStore) FindIDs(ctx context.Context, scope string, f domain.Search
 // Count returns how many positions the search finds: one COUNT in SQL when
 // no Go phase is left, else a chunked scan that holds one chunk at a time.
 func (s *SearchStore) Count(ctx context.Context, scope string, f domain.SearchFilters) (int, error) {
-	wc, err := s.buildWhereFor(ctx, scope, f, true)
+	wc, err := s.buildWhere(ctx, scope, f)
 	if err != nil {
 		return 0, err
 	}

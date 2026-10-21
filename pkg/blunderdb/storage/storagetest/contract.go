@@ -146,6 +146,7 @@ func RunContractTestsOnly(t *testing.T, factory func() storage.Storage, keep fun
 		{"Search/FilterByCubeResponse", testSearchFilterByCubeResponse},
 		{"Search/FilterByAnalysisDecodesCompressedBlob", testSearchFilterByAnalysisDecodesCompressedBlob},
 		{"Search/MoveErrorFilterMaxOverPlays", testSearchMoveErrorFilterMaxOverPlays},
+		{"Search/MultiPlayedFollowsWrites", testMultiPlayedFollowsWrites},
 		{"Search/DecisionTimeFilter", testSearchDecisionTimeFilter},
 		{"Search/DecisionTimeWithMoveError", testSearchDecisionTimeWithMoveError},
 		{"Search/Pagination", testSearchPagination},

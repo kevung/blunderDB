@@ -91,6 +91,12 @@ var schemaStatements = []string{
 		-- match store keeps it true when a move is written, a match date is
 		-- edited or a match is deleted.
 		match_date INTEGER,
+		-- Set when player 1 recorded two distinct plays on the position
+		-- (sqlshared.MultiPlayedSQL): the error columns of its analysis score
+		-- one play, so a move-error search re-scores these rows in Go.
+		-- Derived from move only, kept by the multi_played_move_* triggers
+		-- whatever path writes a move, never edited.
+		multi_played INTEGER NOT NULL DEFAULT 0,
 		CHECK (dice_1 BETWEEN 0 AND 6),
 		CHECK (dice_2 BETWEEN 0 AND 6),
 		-- cube_value is the EXPONENT (0 = cube at 1), never negative.
@@ -911,6 +917,7 @@ var schemaStatements = []string{
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_met            ON analysis(met_id) WHERE met_id IS NOT NULL`,
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_creation_date  ON analysis(creation_date)`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_match_date     ON position(match_date)`,
+	`CREATE        INDEX IF NOT EXISTS idx_position_multi_played   ON position(id) WHERE multi_played = 1`,
 	`CREATE        INDEX IF NOT EXISTS idx_import_batch_file_batch ON import_batch_file(batch_id)`,
 	`CREATE        INDEX IF NOT EXISTS idx_import_batch_file_path  ON import_batch_file(path, size, mtime)`,
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_backgammon2    ON analysis(player2_backgammon_rate)`,
@@ -961,6 +968,70 @@ func EnsureBlunderCountTriggers(ctx context.Context, db *sql.DB) error {
 	return nil
 }
 
+// multiPlayedTriggers keep position.multi_played equal to its definition
+// (sqlshared.MultiPlayedSQL) on every write to move — an import, a position
+// merged into another, the players of a match swapped, a match deleted (its
+// moves go by cascade, which fires them) — whatever path the write takes.
+// An insert can only set the indicator and a delete only clear it, so each
+// re-reads the moves of a position whose indicator could change, no other.
+func multiPlayedTriggers() []string {
+	return []string{
+		`CREATE TRIGGER IF NOT EXISTS multi_played_move_insert AFTER INSERT ON move
+			WHEN NEW.player = 1 AND NEW.position_id IS NOT NULL
+			BEGIN UPDATE position SET multi_played = 1
+				WHERE id = NEW.position_id AND multi_played = 0 AND ` + sqlshared.MultiPlayedSQL("NEW.position_id") + `; END`,
+		`CREATE TRIGGER IF NOT EXISTS multi_played_move_delete AFTER DELETE ON move
+			WHEN OLD.player = 1 AND OLD.position_id IS NOT NULL
+			BEGIN UPDATE position SET multi_played = 0
+				WHERE id = OLD.position_id AND multi_played = 1 AND NOT ` + sqlshared.MultiPlayedSQL("OLD.position_id") + `; END`,
+		`CREATE TRIGGER IF NOT EXISTS multi_played_move_update AFTER UPDATE OF position_id, player, checker_move, cube_action ON move
+			WHEN OLD.player = 1 OR NEW.player = 1
+			BEGIN UPDATE position SET multi_played = ` + sqlshared.MultiPlayedSQL("position.id") + `
+				WHERE id IN (OLD.position_id, NEW.position_id); END`,
+	}
+}
+
+// BackfillMultiPlayedSQL sets position.multi_played from the moves already
+// written, in one pass grouped on position: what the triggers would have
+// left had they existed when the moves were written. Only the rows whose
+// value changes are written — a few hundred in a library of hundreds of
+// thousands — so the pass does not rewrite the table.
+const BackfillMultiPlayedSQL = `WITH multi(position_id) AS (
+	SELECT position_id FROM move
+	 WHERE player = 1 AND position_id IS NOT NULL
+	 GROUP BY position_id
+	HAVING COUNT(DISTINCT COALESCE(checker_move, '') || '|' || COALESCE(cube_action, 0)) > 1)
+UPDATE position SET multi_played = 1 - multi_played
+ WHERE multi_played <> (id IN (SELECT position_id FROM multi))`
+
+// EnsureMultiPlayedTriggers creates the triggers that keep
+// position.multi_played true, where they are missing. Skipped until move and
+// position.multi_played both exist: a migration step older than the column
+// runs before them, and the step that adds the column fills it and calls
+// this.
+func EnsureMultiPlayedTriggers(ctx context.Context, db *sql.DB) error {
+	tables, err := objectNames(ctx, db, "table")
+	if err != nil {
+		return err
+	}
+	if !tables["move"] || !tables["position"] {
+		return nil
+	}
+	cols, err := columnNames(ctx, db, "position")
+	if err != nil {
+		return err
+	}
+	if !cols["multi_played"] {
+		return nil
+	}
+	for _, stmt := range multiPlayedTriggers() {
+		if _, err := db.ExecContext(ctx, stmt); err != nil {
+			return fmt.Errorf("sqlite: multi-played trigger: %w", err)
+		}
+	}
+	return nil
+}
+
 // Bootstrap creates the full schema at domain.DatabaseVersion on a fresh
 // database and records the schema version. It is run by Open for an empty
 // database and by the Database wrapper's SetupDatabase. Every statement is
@@ -973,6 +1044,9 @@ func Bootstrap(ctx context.Context, db *sql.DB) error {
 		}
 	}
 	if err := EnsureBlunderCountTriggers(ctx, db); err != nil {
+		return err
+	}
+	if err := EnsureMultiPlayedTriggers(ctx, db); err != nil {
 		return err
 	}
 	if _, err := db.ExecContext(ctx,
@@ -1038,6 +1112,9 @@ func EnsureSchema(ctx context.Context, db *sql.DB) error {
 		}
 	}
 	if err := EnsureBlunderCountTriggers(ctx, db); err != nil {
+		return err
+	}
+	if err := EnsureMultiPlayedTriggers(ctx, db); err != nil {
 		return err
 	}
 	have, err := indexNames(ctx, db)
