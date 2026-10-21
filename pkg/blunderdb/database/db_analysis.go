@@ -335,18 +335,13 @@ func mergePlayedActions(analysis *PositionAnalysis, checkerMoves, cubeActions []
 	}
 }
 
+// DeleteAnalysis removes the analysis of positionID through the contract,
+// which also unscores the moves played there and drops the match_stats rows
+// of the matches reaching it.
 func (d *Database) DeleteAnalysis(positionID int64) error {
-	d.mu.Lock()         // Lock the mutex
-	defer d.mu.Unlock() // Unlock the mutex when the function returns
-
-	_, err := d.db.Exec(`DELETE FROM analysis WHERE position_id = ?`, positionID)
-	if err != nil {
-		return err
-	}
-	if _, err := d.db.Exec(sqlshared.InvalidateMatchStatsOfPositionsSQL+"(?)"+sqlshared.InvalidateMatchStatsOfPositionsSuffix, positionID); err != nil {
-		return err
-	}
-	return nil
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	return d.store.Analyses().Delete(context.Background(), "", positionID)
 }
 
 // RepairAnalyses recomputes the scalar columns of every analysis from its
