@@ -125,10 +125,10 @@ func decodeSourcePosition(state string, dt, por, d1, d2, cv, co, s1, s2, hj, hb 
 	return pos, nil
 }
 
-// queryer is satisfied by both *sql.DB (the import source, and
-// AnalyzeImportDatabase's read-only current database) and *sql.Tx
-// (CommitImportDatabase's write transaction) — loadJoinedCommentText runs
-// against either.
+// queryer is what the source-side readers need of the database being
+// imported. The source is read as a file of any past schema, which the
+// contract cannot read without migrating it; the receiver goes through the
+// contract alone.
 type queryer interface {
 	Query(query string, args ...any) (*sql.Rows, error)
 }
@@ -230,6 +230,7 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 	if d.db == nil {
 		return nil, fmt.Errorf("no database is currently open")
 	}
+	ctx := context.Background()
 
 	// Open the import database
 	importDB, err := openExistingSQLite(importPath)
@@ -245,9 +246,7 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 		return nil, fmt.Errorf("import database is invalid or missing version information")
 	}
 
-	// Check the current database version
-	var currentDBVersion string
-	err = d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&currentDBVersion)
+	currentDBVersion, err := d.store.Version(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -265,7 +264,7 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 
 	// OPTIMIZATION: Build a hash map of all current positions ONCE
 	// This converts O(n²) to O(n) complexity
-	currentPositionsMap, err := positionIdentityIndex(d.db)
+	currentPositionsMap, err := positionIdentityIndex(ctx, d.store.Positions())
 	if err != nil {
 		return nil, err
 	}
@@ -324,14 +323,18 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 			var importAnalysisData []byte
 			err = importDB.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, id).Scan(&importAnalysisData)
 			if err == nil {
-				var existingAnalysisData []byte
-				existingErr := d.db.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, existingPositionID).Scan(&existingAnalysisData)
-
-				if existingErr == sql.ErrNoRows {
+				existing, unreadable, existingErr := receiverAnalysis(ctx, d.store, existingPositionID)
+				switch {
+				case existingErr != nil:
+				case existing == nil && !unreadable:
 					// New analysis to add
 					hasNewData = true
-				} else if existingErr == nil {
-					existingAnalysis, _ := decodeAnalysisFromStorage(existingAnalysisData)
+				default:
+					// An unreadable blob here weighs as an empty analysis.
+					var existingAnalysis domain.PositionAnalysis
+					if existing != nil {
+						existingAnalysis = *existing
+					}
 					importAnalysis, _ := decodeAnalysisFromStorage(importAnalysisData)
 					if _, changed := domain.MergeImportedAnalysis(&existingAnalysis, &importAnalysis); changed {
 						hasNewData = true
@@ -345,7 +348,7 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 				return nil, err
 			}
 			if importComment != "" {
-				existingComment, err := loadJoinedCommentText(d.db, existingPositionID)
+				existingComment, err := d.store.Comments().Text(ctx, "", existingPositionID)
 				if err != nil {
 					return nil, err
 				}
@@ -375,7 +378,7 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 		return nil, err
 	}
 
-	matches, err := planImportMatches(context.Background(), importDB, d.store)
+	matches, err := planImportMatches(ctx, importDB, d.store)
 	if err != nil {
 		return nil, err
 	}
@@ -396,11 +399,10 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 }
 
 // importRun is the state CommitImportDatabase shares with the per-position
-// steps it delegates: one transaction on the target, the read-only source, and
-// the maps that tie source ids to target ids.
+// steps it delegates: one transaction on the target, seen through the Storage
+// contract, the read-only source, and the maps that tie source ids to target ids.
 type importRun struct {
 	ctx         context.Context
-	tx          *sql.Tx
 	stx         storage.Tx
 	importDB    *sql.DB
 	carrier     *mets.Carrier
@@ -470,25 +472,35 @@ func (r *importRun) carryAnalysis(id, positionID int64, pos *Position) (bool, er
 // positionID it cannot decode. It is checked before the merge writes anything,
 // so skipping that position leaves the transaction as it was.
 func (r *importRun) receiverBlobUnreadable(positionID int64) (bool, error) {
-	var data []byte
-	err := r.tx.QueryRowContext(r.ctx, `SELECT data FROM analysis WHERE position_id = ?`, positionID).Scan(&data)
-	if errors.Is(err, sql.ErrNoRows) {
-		return false, nil
+	_, unreadable, err := receiverAnalysis(r.ctx, r.stx, positionID)
+	if unreadable {
+		slog.Warn("analysis held here is unreadable; import leaves it", "positionID", positionID)
 	}
-	if err != nil {
-		return false, fmt.Errorf("reading analysis of position %d: %w", positionID, err)
+	return unreadable, err
+}
+
+// receiverAnalysis reads the target's analysis of positionID through the
+// contract: nil when it holds none, unreadable when it holds one that cannot
+// be decoded. Load fails alike on a failed read and on an undecodable row;
+// LoadMany leaves the latter out without failing, which tells them apart.
+func receiverAnalysis(ctx context.Context, stores storage.Stores, positionID int64) (*domain.PositionAnalysis, bool, error) {
+	a, err := stores.Analyses().Load(ctx, "", positionID)
+	if err == nil {
+		return a, false, nil
 	}
-	if _, derr := decodeAnalysisFromStorage(data); derr != nil {
-		slog.Warn("analysis held here is unreadable; import leaves it", "positionID", positionID, "err", derr)
-		return true, nil
+	if errors.Is(err, storage.ErrNotFound) {
+		return nil, false, nil
 	}
-	return false, nil
+	if _, lerr := stores.Analyses().LoadMany(ctx, "", []int64{positionID}); lerr != nil {
+		return nil, false, fmt.Errorf("reading analysis of position %d: %w", positionID, lerr)
+	}
+	return nil, true, nil
 }
 
 // mergeExisting folds a source position the target already holds into it:
 // provenance flag, analysis, then comments. It reports whether anything changed.
 func (r *importRun) mergeExisting(id, existingPositionID int64, importPosition *Position, sourceIndividual bool) (bool, error) {
-	tx, importDB, commentCols := r.tx, r.importDB, r.commentCols
+	importDB, commentCols := r.importDB, r.commentCols
 	r.targetOf[id] = existingPositionID
 	var err error
 	hasMerged := false
@@ -497,16 +509,13 @@ func (r *importRun) mergeExisting(id, existingPositionID int64, importPosition *
 	// position raises the flag on the position we already hold, and a
 	// source position that was not individually imported never lowers it.
 	if sourceIndividual {
-		if _, err := tx.Exec(
-			`UPDATE position SET individually_imported = 1
-			 WHERE id = ? AND individually_imported = 0`, existingPositionID); err != nil {
+		if err := r.stx.Positions().SetIndividuallyImported(r.ctx, "", existingPositionID, true); err != nil {
 			slog.Warn("marking position individually imported", "positionID", existingPositionID, "err", err)
 		}
 	}
 
 	written, err := r.carryAnalysis(id, existingPositionID, importPosition)
 	if err != nil {
-		_ = tx.Rollback()
 		return false, err
 	}
 	hasMerged = written
@@ -519,7 +528,7 @@ func (r *importRun) mergeExisting(id, existingPositionID int64, importPosition *
 	if err != nil {
 		slog.Warn("reading import comment", "positionID", id, "err", err)
 	} else if len(importComments) > 0 {
-		existingComment, err := loadJoinedCommentText(tx, existingPositionID)
+		existingComment, err := r.stx.Comments().Text(r.ctx, "", existingPositionID)
 		if err != nil {
 			slog.Warn("reading existing comment", "positionID", existingPositionID, "err", err)
 		}
@@ -547,7 +556,7 @@ func (r *importRun) mergeExisting(id, existingPositionID int64, importPosition *
 // and comments. It reports false (and no error) when the position row itself
 // could not be inserted.
 func (r *importRun) addNew(id int64, importPosition *Position, sourceIndividual bool) (bool, error) {
-	ctx, tx, stx, importDB, commentCols := r.ctx, r.tx, r.stx, r.importDB, r.commentCols
+	ctx, stx, importDB, commentCols := r.ctx, r.stx, r.importDB, r.commentCols
 	importPosition.IndividuallyImported = sourceIndividual
 	newPositionID, err := stx.Positions().Save(ctx, "", importPosition)
 	if err != nil {
@@ -557,7 +566,6 @@ func (r *importRun) addNew(id int64, importPosition *Position, sourceIndividual 
 	r.targetOf[id] = newPositionID
 
 	if _, err := r.carryAnalysis(id, newPositionID, importPosition); err != nil {
-		_ = tx.Rollback()
 		return false, err
 	}
 
@@ -591,21 +599,18 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 		return nil, fmt.Errorf("no database is currently open")
 	}
 
-	// Begin transaction for ACID compliance
-	tx, err := d.db.Begin()
+	// One transaction on the target, through the Storage contract: every
+	// write of the import lands or none does.
+	stx, err := d.store.BeginTx(ctx)
 	if err != nil {
 		return nil, err
 	}
-	// The same transaction seen through the Storage contract: brand-new
-	// positions are written with PositionStore.Save, so they get their Zobrist
-	// hash and scalar search columns like every other position (see the
-	// "add it" branch below). Commit/Rollback stay on tx.
-	stx := sqlite.WrapTx(tx)
 
 	// Ensure rollback on error or cancellation
+	committed := false
 	defer func() {
-		if err != nil || ctx.Err() != nil {
-			tx.Rollback()
+		if !committed {
+			_ = stx.Rollback()
 			if ctx.Err() != nil {
 				slog.Info("transaction rolled back due to user cancellation")
 			} else {
@@ -629,9 +634,7 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 		return nil, fmt.Errorf("import database is invalid or missing version information")
 	}
 
-	// Check the current database version
-	var currentDBVersion string
-	err = tx.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&currentDBVersion)
+	currentDBVersion, err := stx.Metadata().Version(ctx, "")
 	if err != nil {
 		return nil, err
 	}
@@ -657,7 +660,7 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 
 	// OPTIMIZATION: Build a hash map of all current positions ONCE
 	// This converts O(n²) to O(n) complexity
-	currentPositionsMap, err := positionIdentityIndex(tx)
+	currentPositionsMap, err := positionIdentityIndex(ctx, stx.Positions())
 	if err != nil {
 		return nil, err
 	}
@@ -677,7 +680,7 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 	// targetOf maps each source position id to the id it holds here, for the
 	// collections merged after the positions.
 	targetOf := map[int64]int64{}
-	run := &importRun{ctx: ctx, tx: tx, stx: stx, importDB: importDB, carrier: carrier, srcMET: srcMET, commentCols: commentCols, targetOf: targetOf, sourceVersion: importDBVersion}
+	run := &importRun{ctx: ctx, stx: stx, importDB: importDB, carrier: carrier, srcMET: srcMET, commentCols: commentCols, targetOf: targetOf, sourceVersion: importDBVersion}
 
 	for rows.Next() {
 		// Check for cancellation
@@ -783,10 +786,11 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 	}
 
 	// Commit the transaction - this makes all changes atomic
-	err = tx.Commit()
+	err = stx.Commit()
 	if err != nil {
 		return nil, err
 	}
+	committed = true
 	// The rows written above carry their blob alone; derive their provenance
 	// now rather than on the next open.
 	if err := d.backfillAnalysisProvenance(ctx); err != nil {
@@ -941,24 +945,22 @@ func heldByZobrist(positions storage.PositionStore, pos *Position) (int64, bool,
 
 // positionIdentityIndex maps every stored position's identity JSON to its id,
 // so an import checks each incoming position against the current database in
-// O(1) instead of a query per position. A row that fails to scan is skipped:
-// it cannot be matched, and the import must not fail on it.
-func positionIdentityIndex(q rowQuerier) (map[string]int64, error) {
+// O(1) instead of a query per position. MaxCube is a session rule, not
+// identity, and a source position is decoded without it: it is left out of
+// the key on this side too.
+func positionIdentityIndex(ctx context.Context, positions storage.PositionStore) (map[string]int64, error) {
 	index := make(map[string]int64)
-	err := forEachRow(q, `SELECT `+positionSelectCols+` FROM position`, nil, func(rows *sql.Rows) error {
-		position, err := scanPositionRow(rows)
+	for p, err := range positions.List(ctx, "", storage.ListOpts{}) {
 		if err != nil {
-			return nil
+			return nil, err
 		}
-		identity, err := positionIdentityJSON(position)
+		pos := *p
+		pos.MaxCube = 0
+		identity, err := positionIdentityJSON(pos)
 		if err != nil {
-			return err
+			return nil, err
 		}
-		index[identity] = position.ID
-		return nil
-	})
-	if err != nil {
-		return nil, err
+		index[identity] = pos.ID
 	}
 	return index, nil
 }
