@@ -88,7 +88,11 @@ L'essentiel :
   blunderDB. Sa `documentation
   <https://github.com/PileOfCells/backgammon-tournoi/tree/main/docs>`__ se trouve dans le dossier ``docs`` de son dépôt ;
 
-* la table d'équité de match Kazaross-XG2 est l'œuvre de *Neil Kazaross* ;
+* la table d'équité de match Kazaross-XG2 est l'œuvre de *Neil Kazaross*, comme
+  les nombres de Neil, son raccourci de tête, publiés par *Kit Woolsey* dans
+  `Match Equity Table <https://bkgm.com/articles/GOL/demo/equity.htm>`__
+  (GammOnLine, 1999) et résumés par `pion.ch
+  <https://pion.ch/backgammon/mem-met.php>`__ ;
 
 * les tables de take points et de valeurs de gammon sont tirées de *The Theory
   of Backgammon* de *Dirk Schiemann* ;

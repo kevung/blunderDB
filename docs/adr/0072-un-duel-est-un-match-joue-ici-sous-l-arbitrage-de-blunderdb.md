@@ -74,6 +74,8 @@ import ne fournit complètement : la durée de chaque décision.
    l'horloge, et après elle rien ne se reprend. Le moteur se tait tant que le Duel est en
    cours — ni panneau Eval, ni candidats, ni indice, ni tuteur : l'analyse se lance à la fin
    et la revue s'ouvre dessus. Sans cela le Performance Rating du Match ne mesurerait rien.
+   Seul le panneau Données de référence s'ouvre par-dessus : il ne tient pas le plateau et ne
+   dit rien de la position, comme la MET imprimée qu'un joueur garde à côté de sa table.
    L'Arbitre joue seul ce qui n'est pas une décision : le lancer quand le videau n'est pas
    disponible, le tour passé, le coup unique.
 10. **Un Duel est un brouillon jusqu'à sa fin, et ne fabrique aucun résultat.** Il s'écrit

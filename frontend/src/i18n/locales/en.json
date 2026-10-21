@@ -1338,9 +1338,6 @@
         "title": "Warning",
         "confirmTitle": "Confirmation"
     },
-    "datatable": {
-        "title": "Data table"
-    },
     "cubeMatrix": {
         "title": "Cube matrix",
         "computing": "computing…",
@@ -1358,9 +1355,6 @@
         "legendRefused": "not evaluable",
         "currentScore": "the position's score",
         "note": "The position's own score is replaced by each cell's; its cube is kept. The grid is post-Crawford: during the Crawford game the cube is not in play."
-    },
-    "met": {
-        "title": "Match equity table"
     },
     "merge": {
         "canonicalName": "Canonical name:",
@@ -1412,7 +1406,8 @@
         "hiddenTabs": "Hidden tabs",
         "ankiDue": "{n} cards to review",
         "training": "Training",
-        "duel": "Duel"
+        "duel": "Duel",
+        "reference": "Reference"
     },
     "transcription": {
         "conflict": "The draft was changed elsewhere: it has been reloaded as it now stands, and the undo history was reset.",
@@ -3129,6 +3124,7 @@
             "direct": "Direct a tournament",
             "m": "Back to the last visited match",
             "met": "Match equity table",
+            "reference": "Reference data: MET, take points, gammon values, Neil",
             "cm": "Cube matrix",
             "tags": "Tag vocabulary",
             "train": "Training",
@@ -3623,5 +3619,22 @@
         "noDouble": "No double",
         "doubleTake": "Double, take",
         "doublePass": "Double, pass"
+    },
+    "reference": {
+        "title": "Reference data",
+        "met": "MET",
+        "takePoints": "Take points",
+        "gammonValues": "Gammon values",
+        "aggregated": "Aggregated",
+        "neil": "Neil's numbers",
+        "metLegend": "% chance to win the match",
+        "cube": "Cube {n}",
+        "longRaces": "Long races (live)",
+        "lastRoll": "Last roll (dead)",
+        "axisHint": "rows / columns = points still needed to win the match",
+        "neilFormula": "E ≃ 50% + lead × Neil(n), n = trailer's points to go",
+        "neilAxis": "rows = leader, columns = trailer (points to go); small: gap to the MET",
+        "neilFallback": "Leader 1 or 2 away: MET value",
+        "source": "Source"
     }
 }

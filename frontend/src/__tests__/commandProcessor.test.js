@@ -16,7 +16,9 @@ import { translate, resolveStatusMessage } from '../i18n';
 // the status bar can re-translate live. Resolve it to the English string the
 // way StatusBar does (via the translate function) for these assertions.
 const statusText = () => resolveStatusMessage(get(statusBarTextStore), translate);
-import { currentPositionIndexStore, statusBarTextStore, activeModal, MODAL } from '../stores/uiStore.js';
+import { currentPositionIndexStore, statusBarTextStore, activeModal, MODAL, activeTabStore } from '../stores/uiStore.js';
+import { referenceSectionStore } from '../stores/referenceStore.js';
+import { duelStore, duelHoldsBoardStore } from '../stores/duelStore.js';
 import { positionsStore } from '../stores/positionStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { statusBarModeStore } from '../stores/uiStore.js';
@@ -646,9 +648,56 @@ describe('processCommand', () => {
     });
 
     // -- modal commands ------------------------------------------------------
-    test('met opens MET modal', () => {
+    // -- reference tables: the panel, on the tab of the table asked for ------
+    test.each([
+        ['met', 'met'],
+        ['tp2', 'takePoints'],
+        ['tp2_live', 'takePoints'],
+        ['tp2_last', 'takePoints'],
+        ['tp4', 'takePoints'],
+        ['tp4_live', 'takePoints'],
+        ['tp4_last', 'takePoints'],
+        ['gv1', 'gammonValues'],
+        ['gv2', 'gammonValues'],
+        ['gv4', 'gammonValues']
+    ])('%s opens the reference panel on %s, without a database', (command, section) => {
+        activeTabStore.set('matches');
+        referenceSectionStore.set('neil');
+        processCommand(command);
+        expect(get(activeTabStore)).toBe('reference');
+        expect(get(referenceSectionStore)).toBe(section);
+        expect(get(activeModal)).toBeNull();
+    });
+
+    test('a second table command keeps the panel open and only changes its tab', () => {
         processCommand('met');
-        expect(get(activeModal)).toBe(MODAL.MET);
+        processCommand('gv2');
+        expect(get(activeTabStore)).toBe('reference');
+        expect(get(referenceSectionStore)).toBe('gammonValues');
+    });
+
+    test('during a duel, met opens the reference panel and the duel stays on', () => {
+        duelStore.set(/** @type {any} */ ({ state: { ended: false } }));
+        try {
+            activeTabStore.set('duel');
+            processCommand('met');
+            expect(get(activeTabStore)).toBe('reference');
+            expect(get(referenceSectionStore)).toBe('met');
+            expect(get(duelHoldsBoardStore)).toBe(true);
+            // Leaving the panel goes back to the duel, not to the library.
+            processCommand('ref');
+            expect(get(activeTabStore)).toBe('duel');
+        } finally {
+            duelStore.set(null);
+        }
+    });
+
+    test('ref toggles the reference panel', () => {
+        activeTabStore.set('matches');
+        processCommand('ref');
+        expect(get(activeTabStore)).toBe('reference');
+        processCommand('ref');
+        expect(get(activeTabStore)).toBe('matches');
     });
 
     // `import` sans argument choisit un fichier ; avec un argument il lit
@@ -669,51 +718,6 @@ describe('processCommand', () => {
     test('cm opens the cube matrix modal', () => {
         processCommand('cm');
         expect(get(activeModal)).toBe(MODAL.CUBE_MATRIX);
-    });
-
-    test('tp2_last opens TAKE_POINT_2_LAST modal', () => {
-        processCommand('tp2_last');
-        expect(get(activeModal)).toBe(MODAL.TAKE_POINT_2_LAST);
-    });
-
-    test('tp2_live opens TAKE_POINT_2_LIVE modal', () => {
-        processCommand('tp2_live');
-        expect(get(activeModal)).toBe(MODAL.TAKE_POINT_2_LIVE);
-    });
-
-    test('tp4_last opens TAKE_POINT_4_LAST modal', () => {
-        processCommand('tp4_last');
-        expect(get(activeModal)).toBe(MODAL.TAKE_POINT_4_LAST);
-    });
-
-    test('tp4_live opens TAKE_POINT_4_LIVE modal', () => {
-        processCommand('tp4_live');
-        expect(get(activeModal)).toBe(MODAL.TAKE_POINT_4_LIVE);
-    });
-
-    test('gv1 opens GAMMON_VALUE_1 modal', () => {
-        processCommand('gv1');
-        expect(get(activeModal)).toBe(MODAL.GAMMON_VALUE_1);
-    });
-
-    test('gv2 opens GAMMON_VALUE_2 modal', () => {
-        processCommand('gv2');
-        expect(get(activeModal)).toBe(MODAL.GAMMON_VALUE_2);
-    });
-
-    test('gv4 opens GAMMON_VALUE_4 modal', () => {
-        processCommand('gv4');
-        expect(get(activeModal)).toBe(MODAL.GAMMON_VALUE_4);
-    });
-
-    test('tp2 opens TAKE_POINT_2 modal', () => {
-        processCommand('tp2');
-        expect(get(activeModal)).toBe(MODAL.TAKE_POINT_2);
-    });
-
-    test('tp4 opens TAKE_POINT_4 modal', () => {
-        processCommand('tp4');
-        expect(get(activeModal)).toBe(MODAL.TAKE_POINT_4);
     });
 
     // -- meta command --------------------------------------------------------

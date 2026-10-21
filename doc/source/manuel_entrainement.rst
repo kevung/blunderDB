@@ -261,8 +261,8 @@ puis *Révéler*, puis cliquer ceux qu'on a ratés —, et le plateau montre le 
 tiré sur une table vide.
 
 Chaque colonne ne porte que les cases que les tables de référence — celles
-qu'affichent les commandes ``tp2_live``, ``tp2_last``, ``tp4_live``,
-``tp4_last``, ``gv1``, ``gv2`` et ``gv4`` — définissent pour sa face : trois
+du :ref:`panneau Données de référence <panneau_reference>` — définissent pour
+sa face : trois
 nombres à 2a-2a,
 quatorze au plus, et une seule colonne à score égal. Une ligne qu'aucune des
 deux faces ne définit ne figure pas sur la fiche — il n'y a donc aucune case
@@ -557,7 +557,8 @@ l'onglet est replié.
 L'empreinte SHA-256 du germe des dés, publiée par l'Arbitre dès la création,
 se lit dans l'infobulle de l'invite de la bande d'en-tête, puis avec le germe dans l'origine du Match terminé. Le plateau
 passe en mode **DUEL** : la bibliothèque ne se parcourt plus, l'édition, le
-panneau Eval et les autres onglets ne s'ouvrent pas, et le moteur se tait —
+panneau Eval et les autres onglets ne s'ouvrent pas, hormis le
+:ref:`panneau Données de référence <panneau_reference>`, et le moteur se tait —
 aucune évaluation, aucun candidat. Seules restent la Pile (``B``), le
 pipcount (``P``, sauf s'il est masqué pour le Duel) et l'aide.
 
@@ -601,4 +602,3 @@ durée enregistrée dans le Match.
 À la fin, le Match est écrit, son analyse se lance et l'onglet Matchs s'ouvre
 sur lui. En ligne de commande, ``blunderdb duel`` pilote le même Duel (voir
 :ref:`cli_duel`).
-

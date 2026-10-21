@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-20 16:37+0200\n"
+"POT-Creation-Date: 2026-10-21 15:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -182,12 +182,28 @@ msgstr ""
 "das Turnier statt des Boards; jeder andere Reiter holt das Board zurück."
 
 #: ../../source/cmd_mode.rst:1
+msgid "reference, ref"
+msgstr "reference, ref"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Affiche/cache le panneau Données de référence : MET, points de prise, "
+"valeurs du gammon, vue agrégée et nombres de Neil (voir "
+":ref:`panneau_reference`)."
+msgstr ""
+"Zeigt/verbirgt das Panel Referenzdaten: MET, Take Points, Gammon-Werte, "
+"zusammengefasste Ansicht und Neils Zahlen (siehe "
+":ref:`panneau_reference`)."
+
+#: ../../source/cmd_mode.rst:1
 msgid "met"
 msgstr "met"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table d'équité de match Kazaross-XG2."
-msgstr "Öffnet die Match-Equity-Tabelle Kazaross-XG2."
+msgid ""
+"Ouvre le panneau Données de référence sur la table d'équité de match "
+"Kazaross-XG2."
+msgstr "Öffnet das Panel Referenzdaten bei der Match-Equity-Tabelle Kazaross-XG2."
 
 #: ../../source/cmd_mode.rst:1
 msgid "cm"
@@ -278,74 +294,110 @@ msgid "tp2"
 msgstr "tp2"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des takepoints avec videau à 2."
-msgstr "Öffnet die Takepoint-Tabelle bei Dopplerstand 2."
+msgid ""
+"Ouvre le panneau Données de référence sur les points de prise, où figure "
+"la table du videau à 2."
+msgstr ""
+"Öffnet das Panel Referenzdaten bei den Take Points mit der Tabelle für "
+"den Würfel auf 2."
 
 #: ../../source/cmd_mode.rst:1
 msgid "tp2_live"
 msgstr "tp2_live"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des takepoints avec videau à 2 pour les courses longues."
-msgstr "Öffnet die Takepoint-Tabelle bei Dopplerstand 2 für lange Rennen."
+msgid ""
+"Ouvre le panneau Données de référence sur les points de prise, où figure "
+"la table du videau à 2 pour les courses longues."
+msgstr ""
+"Öffnet das Panel Referenzdaten bei den Take Points mit der Tabelle für "
+"den Würfel auf 2 bei langen Rennen."
 
 #: ../../source/cmd_mode.rst:1
 msgid "tp2_last"
 msgstr "tp2_last"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des takepoints avec videau à 2 mort."
-msgstr "Öffnet die Takepoint-Tabelle bei Dopplerstand 2 für den letzten Wurf."
+msgid ""
+"Ouvre le panneau Données de référence sur les points de prise, où figure "
+"la table du videau à 2 mort."
+msgstr ""
+"Öffnet das Panel Referenzdaten bei den Take Points mit der Tabelle für "
+"den toten Würfel auf 2."
 
 #: ../../source/cmd_mode.rst:1
 msgid "tp4"
 msgstr "tp4"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des takepoints avec videau à 4."
-msgstr "Öffnet die Takepoint-Tabelle bei Dopplerstand 4."
+msgid ""
+"Ouvre le panneau Données de référence sur les points de prise, où figure "
+"la table du videau à 4."
+msgstr ""
+"Öffnet das Panel Referenzdaten bei den Take Points mit der Tabelle für "
+"den Würfel auf 4."
 
 #: ../../source/cmd_mode.rst:1
 msgid "tp4_live"
 msgstr "tp4_live"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des takepoints avec videau à 4 pour les courses longues."
-msgstr "Öffnet die Takepoint-Tabelle bei Dopplerstand 4 für lange Rennen."
+msgid ""
+"Ouvre le panneau Données de référence sur les points de prise, où figure "
+"la table du videau à 4 pour les courses longues."
+msgstr ""
+"Öffnet das Panel Referenzdaten bei den Take Points mit der Tabelle für "
+"den Würfel auf 4 bei langen Rennen."
 
 #: ../../source/cmd_mode.rst:1
 msgid "tp4_last"
 msgstr "tp4_last"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des takepoints avec videau à 4 mort."
-msgstr "Öffnet die Takepoint-Tabelle bei Dopplerstand 4 für den letzten Wurf."
+msgid ""
+"Ouvre le panneau Données de référence sur les points de prise, où figure "
+"la table du videau à 4 mort."
+msgstr ""
+"Öffnet das Panel Referenzdaten bei den Take Points mit der Tabelle für "
+"den toten Würfel auf 4."
 
 #: ../../source/cmd_mode.rst:1
 msgid "gv1"
 msgstr "gv1"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des valeurs de gammon avec videau à 1."
-msgstr "Öffnet die Gammon-Wert-Tabelle bei Dopplerstand 1."
+msgid ""
+"Ouvre le panneau Données de référence sur les valeurs du gammon, où "
+"figure la table du videau à 1."
+msgstr ""
+"Öffnet das Panel Referenzdaten bei den Gammon-Werten mit der Tabelle für "
+"den Würfel auf 1."
 
 #: ../../source/cmd_mode.rst:1
 msgid "gv2"
 msgstr "gv2"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des valeurs de gammon avec videau à 2."
-msgstr "Öffnet die Gammon-Wert-Tabelle bei Dopplerstand 2."
+msgid ""
+"Ouvre le panneau Données de référence sur les valeurs du gammon, où "
+"figure la table du videau à 2."
+msgstr ""
+"Öffnet das Panel Referenzdaten bei den Gammon-Werten mit der Tabelle für "
+"den Würfel auf 2."
 
 #: ../../source/cmd_mode.rst:1
 msgid "gv4"
 msgstr "gv4"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des valeurs de gammon avec videau à 4."
-msgstr "Öffnet die Gammon-Wert-Tabelle bei Dopplerstand 4."
+msgid ""
+"Ouvre le panneau Données de référence sur les valeurs du gammon, où "
+"figure la table du videau à 4."
+msgstr ""
+"Öffnet das Panel Referenzdaten bei den Gammon-Werten mit der Tabelle für "
+"den Würfel auf 4."
 
-#: ../../source/cmd_mode.rst:55
+#: ../../source/cmd_mode.rst:56
 msgid "Positions et navigation"
 msgstr "Positionen und Navigation"
 
@@ -573,7 +625,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "Navigiert zum zuletzt besuchten Match."
 
-#: ../../source/cmd_mode.rst:86
+#: ../../source/cmd_mode.rst:87
 msgid "Édition et recherche"
 msgstr "Bearbeitung und Suche"
 
@@ -613,11 +665,11 @@ msgstr ""
 "Unter den angezeigten Stellungen suchen: aktuelle Ergebnisse, geöffnete "
 "Sammlung oder durchgesehenes Match."
 
-#: ../../source/cmd_mode.rst:102
+#: ../../source/cmd_mode.rst:103
 msgid "Filtres de recherche"
 msgstr "Suchfilter"
 
-#: ../../source/cmd_mode.rst:104
+#: ../../source/cmd_mode.rst:105
 msgid ""
 "Cette table est la référence de la grammaire de recherche : la ligne de "
 "commande, la bibliothèque de filtres et le drapeau ``--query`` de "
@@ -633,7 +685,7 @@ msgstr ""
 ":ref:`cli`); ein Gedankenstrich zeigt einen Filter an, den nur die "
 "Grammatik ausdrückt."
 
-#: ../../source/cmd_mode.rst:111
+#: ../../source/cmd_mode.rst:112
 msgid ""
 "Cinq jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
 "recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
@@ -653,7 +705,7 @@ msgstr ""
 "vergleichen diese Token mit einem leeren Brett; dort sind die Optionen "
 "der dritten Spalte zu verwenden."
 
-#: ../../source/cmd_mode.rst:120
+#: ../../source/cmd_mode.rst:121
 msgid ""
 "Un seul jeton **classe** au lieu de restreindre : ``like`` ordonne le "
 "résultat par distance croissante à une position cible, et tous les autres"
@@ -663,7 +715,7 @@ msgstr ""
 "das Ergebnis nach aufsteigender Entfernung zu einer Zielstellung, und "
 "alle anderen Token schränken die so geordnete Menge ein."
 
-#: ../../source/cmd_mode.rst:124
+#: ../../source/cmd_mode.rst:125
 msgid ""
 "Les erreurs et les équités se comptent en **millièmes d'équité** — les "
 "*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
@@ -674,11 +726,11 @@ msgstr ""
 "ein Zehntel Punkt gekostet haben, wobei ein Punkt 1000 Tausendsteln "
 "entspricht."
 
-#: ../../source/cmd_mode.rst:128
+#: ../../source/cmd_mode.rst:129
 msgid "Deux recherches complètes :"
 msgstr "Zwei vollständige Suchen:"
 
-#: ../../source/cmd_mode.rst:130
+#: ../../source/cmd_mode.rst:131
 #, no-python-format
 msgid ""
 "``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
@@ -687,7 +739,7 @@ msgstr ""
 "``s p>30 w40,60 xco`` — mehr als 30 Pips Rückstand, zwischen 40 % und 60 "
 "% Gewinnchance, kein Kommentar."
 
-#: ../../source/cmd_mode.rst:132
+#: ../../source/cmd_mode.rst:133
 msgid ""
 "``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
 "millièmes, et un commentaire venu d'eXtreme Gammon."
@@ -1918,7 +1970,7 @@ msgstr ""
 "Entscheidungsarten und auf beide Spielformen, Geldspiel und Match. Siehe "
 ":ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:249
+#: ../../source/cmd_mode.rst:250
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``m`` et ``t`` s'ouvrent par"
 " un guillemet ou une apostrophe et se ferment par l'un des deux. Un jeton"
@@ -1937,11 +1989,11 @@ msgstr ""
 "Listen von Kennungen und Tags: Es kommt in keinem Wert vor, und ``ma1;2``"
 " ist kein Token (``ma1 ma2`` schreiben)."
 
-#: ../../source/cmd_mode.rst:254
+#: ../../source/cmd_mode.rst:255
 msgid "Transcrire depuis un terminal"
 msgstr "Von einem Terminal aus transkribieren"
 
-#: ../../source/cmd_mode.rst:256
+#: ../../source/cmd_mode.rst:257
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -1961,7 +2013,7 @@ msgstr ""
 "eine eigene Sitzung, ohne ``sessionId`` und ohne Rückgängigmachen von "
 "einem Aufruf zum nächsten."
 
-#: ../../source/cmd_mode.rst:267
+#: ../../source/cmd_mode.rst:268
 msgid "Commandes diverses"
 msgstr "Verschiedene Befehle"
 
@@ -2056,3 +2108,30 @@ msgstr "Löscht den Befehlsverlauf."
 
 #~ msgid "Date d'ajout de la position après x (AAAA/MM/JJ)."
 #~ msgstr "Datum des Hinzufügens der Position nach x (JJJJ/MM/TT)."
+
+#~ msgid "Ouvre la table des takepoints avec videau à 2."
+#~ msgstr "Öffnet die Takepoint-Tabelle bei Dopplerstand 2."
+
+#~ msgid "Ouvre la table des takepoints avec videau à 2 pour les courses longues."
+#~ msgstr "Öffnet die Takepoint-Tabelle bei Dopplerstand 2 für lange Rennen."
+
+#~ msgid "Ouvre la table des takepoints avec videau à 2 mort."
+#~ msgstr "Öffnet die Takepoint-Tabelle bei Dopplerstand 2 für den letzten Wurf."
+
+#~ msgid "Ouvre la table des takepoints avec videau à 4."
+#~ msgstr "Öffnet die Takepoint-Tabelle bei Dopplerstand 4."
+
+#~ msgid "Ouvre la table des takepoints avec videau à 4 pour les courses longues."
+#~ msgstr "Öffnet die Takepoint-Tabelle bei Dopplerstand 4 für lange Rennen."
+
+#~ msgid "Ouvre la table des takepoints avec videau à 4 mort."
+#~ msgstr "Öffnet die Takepoint-Tabelle bei Dopplerstand 4 für den letzten Wurf."
+
+#~ msgid "Ouvre la table des valeurs de gammon avec videau à 1."
+#~ msgstr "Öffnet die Gammon-Wert-Tabelle bei Dopplerstand 1."
+
+#~ msgid "Ouvre la table des valeurs de gammon avec videau à 2."
+#~ msgstr "Öffnet die Gammon-Wert-Tabelle bei Dopplerstand 2."
+
+#~ msgid "Ouvre la table des valeurs de gammon avec videau à 4."
+#~ msgstr "Öffnet die Gammon-Wert-Tabelle bei Dopplerstand 4."

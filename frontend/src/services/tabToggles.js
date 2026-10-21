@@ -7,8 +7,9 @@ import { positionsStore, positionStore } from '../stores/positionStore.js';
 import { currentPositionIndexStore, statusBarModeStore, activeTabStore, showPipcountStore } from '../stores/uiStore.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { logger } from '../utils/logger.js';
-import { duelHoldsBoardStore, duelFoldedStore } from '../stores/duelStore.js';
+import { duelHoldsBoardStore, duelFoldedStore, tabOpensDuringDuel } from '../stores/duelStore.js';
 import { tMsg } from '../i18n';
+import { referenceSectionStore } from '../stores/referenceStore.js';
 
 // ── Tab toggles ──────────────────────────────────────────────────────────────
 //
@@ -20,7 +21,8 @@ import { tMsg } from '../i18n';
 //               it is)
 //   withoutDb   opens with no database: the tab works on the board alone
 //               (search's query board is a scratch board, like Eval's), or
-//               on generated questions (training, which then records nothing)
+//               on generated questions (training, which then records nothing),
+//               or on static tables (reference)
 const TAB_TOGGLES = Object.freeze({
     analysis: { tab: 'analysis' },
     comments: {
@@ -37,7 +39,8 @@ const TAB_TOGGLES = Object.freeze({
     stats: { tab: 'stats' },
     search: { tab: 'search', withoutDb: true },
     transcription: { tab: 'transcription' },
-    elsewhere: { tab: 'elsewhere' }
+    elsewhere: { tab: 'elsewhere' },
+    reference: { tab: 'reference', withoutDb: true }
 });
 
 // The tab to fall back to on a "toggle back" when there is nothing more
@@ -66,13 +69,18 @@ export function toggleTab(id) {
     }
 
     // A Duel holds the board: the library is not browsed, the engine is silent
-    // (ADR-0072 rule 9). Its own tab only.
+    // (ADR-0072 rule 9). Its own tab only, and the reference tables.
     const current = get(activeTabStore);
-    if (get(duelHoldsBoardStore)) {
-        if (entry.tab !== 'duel') setStatusBarMessage(tMsg('duel.locked'));
-        else if (current === 'duel') duelFoldedStore.update((folded) => !folded);
-        else duelFoldedStore.set(false);
-        if (entry.tab !== 'duel' || current === 'duel') return;
+    if (get(duelHoldsBoardStore) && !tabOpensDuringDuel(entry.tab)) {
+        setStatusBarMessage(tMsg('duel.locked'));
+        return;
+    }
+    if (get(duelHoldsBoardStore) && entry.tab === 'duel') {
+        if (current === 'duel') {
+            duelFoldedStore.update((folded) => !folded);
+            return;
+        }
+        duelFoldedStore.set(false);
     }
 
     if (current === entry.tab) {
@@ -127,6 +135,12 @@ export const toggleCollectionPanelAction = () => toggleTab('collections');
 export const toggleTournamentPanel = () => toggleTab('tournaments');
 export const toggleStatsPanel = () => toggleTab('stats');
 export const toggleElsewherePanel = () => toggleTab('elsewhere');
+// Ctrl+Maj+R et `ref` basculent le panneau ; `met`, `tp…`, `gv…` l'ouvrent sur leur onglet.
+export const toggleReferencePanel = () => toggleTab('reference');
+/** @param {import('../stores/referenceStore.js').ReferenceSection} section */
+export function showReferencePanel(section) {
+    if (showTab('reference')) referenceSectionStore.set(section);
+}
 export const toggleSearchPanel = () => toggleTab('search');
 // Bound to the `transcribe`/`tr` command and Ctrl+Maj+T.
 export const toggleTranscriptionPanel = () => toggleTab('transcription');

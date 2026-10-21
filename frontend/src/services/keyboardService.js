@@ -39,6 +39,7 @@ import {
     toggleTournamentPanel,
     toggleStatsPanel,
     toggleElsewherePanel,
+    toggleReferencePanel,
     toggleTranscriptionPanel,
     toggleSearchPanel,
     toggleEvalMode,
@@ -473,6 +474,10 @@ export function handleKeyDown(event) {
     } else if (event.ctrlKey && letter('b')) {
         event.preventDefault();
         toggleCollectionPanelAction();
+    } else if (event.ctrlKey && event.shiftKey && letter('r')) {
+        // Before the Ctrl-R branch, which does not exclude Shift.
+        event.preventDefault();
+        toggleReferencePanel();
     } else if (event.ctrlKey && letter('r')) {
         reloadAllPositions();
     } else if (event.ctrlKey && event.code === 'Tab') {

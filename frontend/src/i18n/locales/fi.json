@@ -1338,9 +1338,6 @@
         "title": "Varoitus",
         "confirmTitle": "Vahvistus"
     },
-    "datatable": {
-        "title": "Taulukko"
-    },
     "cubeMatrix": {
         "title": "Tuplauskuution matriisi",
         "computing": "lasketaan…",
@@ -1358,9 +1355,6 @@
         "legendRefused": "ei arvioitavissa",
         "currentScore": "aseman pistetilanne",
         "note": "Aseman oma pistetilanne korvataan kunkin ruudun tilanteella; sen kuutio säilyy. Ruudukko on Crawfordin jälkeinen: Crawford-pelissä kuutio ei ole pelissä."
-    },
-    "met": {
-        "title": "Match equity -taulukko"
     },
     "merge": {
         "canonicalName": "Kanoninen nimi:",
@@ -1412,7 +1406,8 @@
         "hiddenTabs": "Piilotetut välilehdet",
         "ankiDue": "{n} korttia kerrattavana",
         "training": "Harjoittelu",
-        "duel": "Kaksintaistelu"
+        "duel": "Kaksintaistelu",
+        "reference": "Viitetaulukot"
     },
     "transcription": {
         "conflict": "Luonnosta muutettiin muualla: se ladattiin uudelleen nykyisessä muodossaan, ja kumoamishistoria nollattiin.",
@@ -3129,6 +3124,7 @@
             "direct": "Johda turnausta",
             "m": "Palaa viimeksi katsottuun otteluun",
             "met": "Ottelun equity-taulukko",
+            "reference": "Viitetiedot: MET, ottopisteet, gammonin arvot, Neil",
             "cm": "Kuutiomatriisi",
             "tags": "Tagisanasto",
             "train": "Harjoittelu",
@@ -3623,5 +3619,22 @@
         "noDouble": "Ei tuplausta",
         "doubleTake": "Tuplaus, otto",
         "doublePass": "Tuplaus, luovutus"
+    },
+    "reference": {
+        "title": "Viitetiedot",
+        "met": "MET",
+        "takePoints": "Ottopisteet",
+        "gammonValues": "Gammonin arvot",
+        "aggregated": "Koottu",
+        "neil": "Neilin luvut",
+        "metLegend": "% todennäköisyys voittaa ottelu",
+        "cube": "Kuutio {n}",
+        "longRaces": "Pitkät kilpajuoksut (elävä)",
+        "lastRoll": "Viimeinen heitto (kuollut)",
+        "axisHint": "rivit / sarakkeet = ottelun voittoon puuttuvat pisteet",
+        "neilFormula": "E ≃ 50 % + johto × Neil(n), n = perässä olevan puuttuvat pisteet",
+        "neilAxis": "rivit = johtaja, sarakkeet = perässä oleva (puuttuvat pisteet); pienellä: ero MET:iin",
+        "neilFallback": "Johtaja 1 tai 2 pisteen päässä: MET-arvo",
+        "source": "Lähde"
     }
 }

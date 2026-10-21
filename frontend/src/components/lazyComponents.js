@@ -76,12 +76,12 @@ export const panels = lazyRegistry({
     eval: () => import('./EvalPanel.svelte'),
     transcription: () => import('./TranscriptionPanel.svelte'),
     metadata: () => import('./MetadataPanel.svelte'),
-    elsewhere: () => import('./ElsewherePanel.svelte')
+    elsewhere: () => import('./ElsewherePanel.svelte'),
+    reference: () => import('./ReferencePanel.svelte')
 });
 
 /** Keyed by the MODAL id that opens each one, plus the three opened by their own store. */
 export const modals = lazyRegistry({
-    met: () => import('./MetModal.svelte'),
     cubeMatrix: () => import('./CubeMatrixModal.svelte'),
     tags: () => import('./TagsModal.svelte'),
     lessonEditor: () => import('./LessonEditorModal.svelte'),
@@ -94,7 +94,6 @@ export const modals = lazyRegistry({
     resumeBatch: () => import('./ResumeBatchModal.svelte'),
     log: () => import('./LogModal.svelte'),
     contactSheet: () => import('./ContactSheetModal.svelte'),
-    dataTable: () => import('./DataTableModal.svelte'),
     importProgress: () => import('./ImportProgressModal.svelte'),
     fileImportProgress: () => import('./FileImportProgressModal.svelte')
 });

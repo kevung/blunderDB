@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-20 16:37+0200\n"
+"POT-Creation-Date: 2026-10-21 15:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -181,12 +181,30 @@ msgstr ""
 "en lugar del tablero; cualquier otra pestaña devuelve el tablero."
 
 #: ../../source/cmd_mode.rst:1
+msgid "reference, ref"
+msgstr "reference, ref"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Affiche/cache le panneau Données de référence : MET, points de prise, "
+"valeurs du gammon, vue agrégée et nombres de Neil (voir "
+":ref:`panneau_reference`)."
+msgstr ""
+"Muestra/oculta el panel Datos de referencia: MET, puntos de toma, valores"
+" del gammon, vista agregada y números de Neil (véase "
+":ref:`panneau_reference`)."
+
+#: ../../source/cmd_mode.rst:1
 msgid "met"
 msgstr "met"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table d'équité de match Kazaross-XG2."
-msgstr "Abre la tabla de equidad de match Kazaross-XG2."
+msgid ""
+"Ouvre le panneau Données de référence sur la table d'équité de match "
+"Kazaross-XG2."
+msgstr ""
+"Abre el panel Datos de referencia en la tabla de equidad de partida "
+"Kazaross-XG2."
 
 #: ../../source/cmd_mode.rst:1
 msgid "cm"
@@ -277,74 +295,110 @@ msgid "tp2"
 msgstr "tp2"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des takepoints avec videau à 2."
-msgstr "Abre la tabla de takepoints con el cubo a 2."
+msgid ""
+"Ouvre le panneau Données de référence sur les points de prise, où figure "
+"la table du videau à 2."
+msgstr ""
+"Abre el panel Datos de referencia en los puntos de toma, donde figura la "
+"tabla del cubo a 2."
 
 #: ../../source/cmd_mode.rst:1
 msgid "tp2_live"
 msgstr "tp2_live"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des takepoints avec videau à 2 pour les courses longues."
-msgstr "Abre la tabla de takepoints con el cubo a 2 para carreras largas."
+msgid ""
+"Ouvre le panneau Données de référence sur les points de prise, où figure "
+"la table du videau à 2 pour les courses longues."
+msgstr ""
+"Abre el panel Datos de referencia en los puntos de toma, donde figura la "
+"tabla del cubo a 2 para las carreras largas."
 
 #: ../../source/cmd_mode.rst:1
 msgid "tp2_last"
 msgstr "tp2_last"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des takepoints avec videau à 2 mort."
-msgstr "Abre la tabla de takepoints con el cubo a 2 muerto."
+msgid ""
+"Ouvre le panneau Données de référence sur les points de prise, où figure "
+"la table du videau à 2 mort."
+msgstr ""
+"Abre el panel Datos de referencia en los puntos de toma, donde figura la "
+"tabla del cubo muerto a 2."
 
 #: ../../source/cmd_mode.rst:1
 msgid "tp4"
 msgstr "tp4"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des takepoints avec videau à 4."
-msgstr "Abre la tabla de takepoints con el cubo a 4."
+msgid ""
+"Ouvre le panneau Données de référence sur les points de prise, où figure "
+"la table du videau à 4."
+msgstr ""
+"Abre el panel Datos de referencia en los puntos de toma, donde figura la "
+"tabla del cubo a 4."
 
 #: ../../source/cmd_mode.rst:1
 msgid "tp4_live"
 msgstr "tp4_live"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des takepoints avec videau à 4 pour les courses longues."
-msgstr "Abre la tabla de takepoints con el cubo a 4 para carreras largas."
+msgid ""
+"Ouvre le panneau Données de référence sur les points de prise, où figure "
+"la table du videau à 4 pour les courses longues."
+msgstr ""
+"Abre el panel Datos de referencia en los puntos de toma, donde figura la "
+"tabla del cubo a 4 para las carreras largas."
 
 #: ../../source/cmd_mode.rst:1
 msgid "tp4_last"
 msgstr "tp4_last"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des takepoints avec videau à 4 mort."
-msgstr "Abre la tabla de takepoints con el cubo a 4 muerto."
+msgid ""
+"Ouvre le panneau Données de référence sur les points de prise, où figure "
+"la table du videau à 4 mort."
+msgstr ""
+"Abre el panel Datos de referencia en los puntos de toma, donde figura la "
+"tabla del cubo muerto a 4."
 
 #: ../../source/cmd_mode.rst:1
 msgid "gv1"
 msgstr "gv1"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des valeurs de gammon avec videau à 1."
-msgstr "Abre la tabla de valores de gammon con el cubo a 1."
+msgid ""
+"Ouvre le panneau Données de référence sur les valeurs du gammon, où "
+"figure la table du videau à 1."
+msgstr ""
+"Abre el panel Datos de referencia en los valores del gammon, donde figura"
+" la tabla del cubo a 1."
 
 #: ../../source/cmd_mode.rst:1
 msgid "gv2"
 msgstr "gv2"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des valeurs de gammon avec videau à 2."
-msgstr "Abre la tabla de valores de gammon con el cubo a 2."
+msgid ""
+"Ouvre le panneau Données de référence sur les valeurs du gammon, où "
+"figure la table du videau à 2."
+msgstr ""
+"Abre el panel Datos de referencia en los valores del gammon, donde figura"
+" la tabla del cubo a 2."
 
 #: ../../source/cmd_mode.rst:1
 msgid "gv4"
 msgstr "gv4"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des valeurs de gammon avec videau à 4."
-msgstr "Abre la tabla de valores de gammon con el cubo a 4."
+msgid ""
+"Ouvre le panneau Données de référence sur les valeurs du gammon, où "
+"figure la table du videau à 4."
+msgstr ""
+"Abre el panel Datos de referencia en los valores del gammon, donde figura"
+" la tabla del cubo a 4."
 
-#: ../../source/cmd_mode.rst:55
+#: ../../source/cmd_mode.rst:56
 msgid "Positions et navigation"
 msgstr "Posiciones y navegación"
 
@@ -569,7 +623,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "Navegar por el último match visitado."
 
-#: ../../source/cmd_mode.rst:86
+#: ../../source/cmd_mode.rst:87
 msgid "Édition et recherche"
 msgstr "Edición y búsqueda"
 
@@ -609,11 +663,11 @@ msgstr ""
 "Buscar entre las posiciones mostradas: resultados actuales, colección "
 "abierta o partida en revisión."
 
-#: ../../source/cmd_mode.rst:102
+#: ../../source/cmd_mode.rst:103
 msgid "Filtres de recherche"
 msgstr "Filtros de búsqueda"
 
-#: ../../source/cmd_mode.rst:104
+#: ../../source/cmd_mode.rst:105
 msgid ""
 "Cette table est la référence de la grammaire de recherche : la ligne de "
 "commande, la bibliothèque de filtres et le drapeau ``--query`` de "
@@ -628,7 +682,7 @@ msgstr ""
 "cuando existe, la opción de ``search`` que hace lo mismo (ver "
 ":ref:`cli`); un guion señala un filtro que solo la gramática expresa."
 
-#: ../../source/cmd_mode.rst:111
+#: ../../source/cmd_mode.rst:112
 msgid ""
 "Cinq jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
 "recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
@@ -648,7 +702,7 @@ msgstr ""
 "se comparan con un tablero vacío; son las opciones de la tercera columna "
 "las que hay que emplear ahí."
 
-#: ../../source/cmd_mode.rst:120
+#: ../../source/cmd_mode.rst:121
 msgid ""
 "Un seul jeton **classe** au lieu de restreindre : ``like`` ordonne le "
 "résultat par distance croissante à une position cible, et tous les autres"
@@ -658,7 +712,7 @@ msgstr ""
 "resultado por distancia creciente a una posición objetivo, y todos los "
 "demás tokens restringen el conjunto así ordenado."
 
-#: ../../source/cmd_mode.rst:124
+#: ../../source/cmd_mode.rst:125
 msgid ""
 "Les erreurs et les équités se comptent en **millièmes d'équité** — les "
 "*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
@@ -668,11 +722,11 @@ msgstr ""
 "*milipuntos* de la tabla siguiente: ``E>100`` conserva las jugadas que "
 "costaron al menos una décima de punto, valiendo un punto 1000 milésimas."
 
-#: ../../source/cmd_mode.rst:128
+#: ../../source/cmd_mode.rst:129
 msgid "Deux recherches complètes :"
 msgstr "Dos búsquedas completas:"
 
-#: ../../source/cmd_mode.rst:130
+#: ../../source/cmd_mode.rst:131
 #, no-python-format
 msgid ""
 "``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
@@ -681,7 +735,7 @@ msgstr ""
 "``s p>30 w40,60 xco`` — más de 30 pips de retraso, entre 40 % y 60 % de "
 "probabilidad de victoria, sin comentario."
 
-#: ../../source/cmd_mode.rst:132
+#: ../../source/cmd_mode.rst:133
 msgid ""
 "``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
 "millièmes, et un commentaire venu d'eXtreme Gammon."
@@ -1908,7 +1962,7 @@ msgstr ""
 "``like42*`` amplía la clase del objetivo a todos los tipos de decisión y "
 "a ambos regímenes, dinero y partido. Ver :ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:249
+#: ../../source/cmd_mode.rst:250
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``m`` et ``t`` s'ouvrent par"
 " un guillemet ou une apostrophe et se ferment par l'un des deux. Un jeton"
@@ -1926,11 +1980,11 @@ msgstr ""
 "separador de las listas de identificadores y de etiquetas: no figura en "
 "ningún valor, y ``ma1;2`` no es un token (escribir ``ma1 ma2``)."
 
-#: ../../source/cmd_mode.rst:254
+#: ../../source/cmd_mode.rst:255
 msgid "Transcrire depuis un terminal"
 msgstr "Transcribir desde un terminal"
 
-#: ../../source/cmd_mode.rst:256
+#: ../../source/cmd_mode.rst:257
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -1949,7 +2003,7 @@ msgstr ""
 " la revisión devuelta por la llamada anterior; cada llamada es su propia "
 "sesión, sin ``sessionId`` ni deshacer de una llamada a otra."
 
-#: ../../source/cmd_mode.rst:267
+#: ../../source/cmd_mode.rst:268
 msgid "Commandes diverses"
 msgstr "Comandos diversos"
 
@@ -2045,3 +2099,30 @@ msgstr "Borra el historial de comandos."
 
 #~ msgid "Date d'ajout de la position après x (AAAA/MM/JJ)."
 #~ msgstr "Fecha de adición de la posición posterior a x (AAAA/MM/DD)."
+
+#~ msgid "Ouvre la table des takepoints avec videau à 2."
+#~ msgstr "Abre la tabla de takepoints con el cubo a 2."
+
+#~ msgid "Ouvre la table des takepoints avec videau à 2 pour les courses longues."
+#~ msgstr "Abre la tabla de takepoints con el cubo a 2 para carreras largas."
+
+#~ msgid "Ouvre la table des takepoints avec videau à 2 mort."
+#~ msgstr "Abre la tabla de takepoints con el cubo a 2 muerto."
+
+#~ msgid "Ouvre la table des takepoints avec videau à 4."
+#~ msgstr "Abre la tabla de takepoints con el cubo a 4."
+
+#~ msgid "Ouvre la table des takepoints avec videau à 4 pour les courses longues."
+#~ msgstr "Abre la tabla de takepoints con el cubo a 4 para carreras largas."
+
+#~ msgid "Ouvre la table des takepoints avec videau à 4 mort."
+#~ msgstr "Abre la tabla de takepoints con el cubo a 4 muerto."
+
+#~ msgid "Ouvre la table des valeurs de gammon avec videau à 1."
+#~ msgstr "Abre la tabla de valores de gammon con el cubo a 1."
+
+#~ msgid "Ouvre la table des valeurs de gammon avec videau à 2."
+#~ msgstr "Abre la tabla de valores de gammon con el cubo a 2."
+
+#~ msgid "Ouvre la table des valeurs de gammon avec videau à 4."
+#~ msgstr "Abre la tabla de valores de gammon con el cubo a 4."

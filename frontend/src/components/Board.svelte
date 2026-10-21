@@ -12,7 +12,7 @@
     import { onMount, onDestroy } from 'svelte';
     import Two from 'two.js';
     import { get } from 'svelte/store';
-    import { statusBarModeStore, isAnyModalOpen, activeModal, MODAL, pipcountVisibleStore, activeTabStore } from '../stores/uiStore';
+    import { statusBarModeStore, isAnyModalOpen, pipcountVisibleStore, activeTabStore } from '../stores/uiStore';
     import { subscribeBoardRedrawTriggers as subscribeSharedRedrawTriggers } from '../services/boardRedraw.js';
     import { boardOrientationStore } from '../stores/boardOrientationStore.js';
     import { boardIsMirrored, labelsFlipped, screenOfModelPoint } from '../services/boardOrientation.js';
@@ -42,8 +42,6 @@
 
     // Read-only mirrors of stores — always current when read inside drawing/handler functions
     let mode = $derived($statusBarModeStore);
-    let showTakePoint2Modal = $derived($activeModal === MODAL.TAKE_POINT_2);
-    let showTakePoint4Modal = $derived($activeModal === MODAL.TAKE_POINT_4);
     // No PANEL entry for the comment tab: CommentPanel is mounted by TabbedPanel per active tab.
     let showComment = $derived($activeTabStore === 'comments');
     // Préférence, surchargée pendant une question de Pions (uiStore.pipcountVisibleStore) ;
@@ -249,7 +247,7 @@
 
     /** @param {KeyboardEvent} event */
     function handleKeyDown(event) {
-        if ((mode !== 'EDIT' && mode !== 'EVAL') || showTakePoint2Modal || showTakePoint4Modal) return; // Disable shortcuts when TakePoint2Modal or TakePoint4Modal is open
+        if (mode !== 'EDIT' && mode !== 'EVAL') return;
 
         if (event.key === 'Backspace' && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
             event.preventDefault();

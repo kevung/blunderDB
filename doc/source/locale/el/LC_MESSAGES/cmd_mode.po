@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-20 16:37+0200\n"
+"POT-Creation-Date: 2026-10-21 15:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -182,12 +182,30 @@ msgstr ""
 "ταμπλό."
 
 #: ../../source/cmd_mode.rst:1
+msgid "reference, ref"
+msgstr "reference, ref"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Affiche/cache le panneau Données de référence : MET, points de prise, "
+"valeurs du gammon, vue agrégée et nombres de Neil (voir "
+":ref:`panneau_reference`)."
+msgstr ""
+"Εμφανίζει/αποκρύπτει τον πίνακα Δεδομένα αναφοράς: MET, σημεία αποδοχής, "
+"τιμές του gammon, συγκεντρωτική προβολή και αριθμοί του Neil (βλ. "
+":ref:`panneau_reference`)."
+
+#: ../../source/cmd_mode.rst:1
 msgid "met"
 msgstr "met"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table d'équité de match Kazaross-XG2."
-msgstr "Ανοίγει τον πίνακα ισοδυναμίας αγώνα Kazaross-XG2."
+msgid ""
+"Ouvre le panneau Données de référence sur la table d'équité de match "
+"Kazaross-XG2."
+msgstr ""
+"Ανοίγει τον πίνακα Δεδομένα αναφοράς στον πίνακα ισοδυναμίας αγώνα "
+"Kazaross-XG2."
 
 #: ../../source/cmd_mode.rst:1
 msgid "cm"
@@ -278,74 +296,110 @@ msgid "tp2"
 msgstr "tp2"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des takepoints avec videau à 2."
-msgstr "Ανοίγει τον πίνακα takepoint με κύβο στο 2."
+msgid ""
+"Ouvre le panneau Données de référence sur les points de prise, où figure "
+"la table du videau à 2."
+msgstr ""
+"Ανοίγει τον πίνακα Δεδομένα αναφοράς στα σημεία αποδοχής, όπου βρίσκεται "
+"ο πίνακας του κύβου στο 2."
 
 #: ../../source/cmd_mode.rst:1
 msgid "tp2_live"
 msgstr "tp2_live"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des takepoints avec videau à 2 pour les courses longues."
-msgstr "Ανοίγει τον πίνακα takepoint με κύβο στο 2 για θέσεις μακράς κούρσας."
+msgid ""
+"Ouvre le panneau Données de référence sur les points de prise, où figure "
+"la table du videau à 2 pour les courses longues."
+msgstr ""
+"Ανοίγει τον πίνακα Δεδομένα αναφοράς στα σημεία αποδοχής, όπου βρίσκεται "
+"ο πίνακας του κύβου στο 2 για τους μακρούς αγώνες δρόμου."
 
 #: ../../source/cmd_mode.rst:1
 msgid "tp2_last"
 msgstr "tp2_last"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des takepoints avec videau à 2 mort."
-msgstr "Ανοίγει τον πίνακα takepoint με κύβο στο 2 για θέσεις τελευταίας ζαριάς."
+msgid ""
+"Ouvre le panneau Données de référence sur les points de prise, où figure "
+"la table du videau à 2 mort."
+msgstr ""
+"Ανοίγει τον πίνακα Δεδομένα αναφοράς στα σημεία αποδοχής, όπου βρίσκεται "
+"ο πίνακας του νεκρού κύβου στο 2."
 
 #: ../../source/cmd_mode.rst:1
 msgid "tp4"
 msgstr "tp4"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des takepoints avec videau à 4."
-msgstr "Ανοίγει τον πίνακα takepoint με κύβο στο 4."
+msgid ""
+"Ouvre le panneau Données de référence sur les points de prise, où figure "
+"la table du videau à 4."
+msgstr ""
+"Ανοίγει τον πίνακα Δεδομένα αναφοράς στα σημεία αποδοχής, όπου βρίσκεται "
+"ο πίνακας του κύβου στο 4."
 
 #: ../../source/cmd_mode.rst:1
 msgid "tp4_live"
 msgstr "tp4_live"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des takepoints avec videau à 4 pour les courses longues."
-msgstr "Ανοίγει τον πίνακα takepoint με κύβο στο 4 για θέσεις μακράς κούρσας."
+msgid ""
+"Ouvre le panneau Données de référence sur les points de prise, où figure "
+"la table du videau à 4 pour les courses longues."
+msgstr ""
+"Ανοίγει τον πίνακα Δεδομένα αναφοράς στα σημεία αποδοχής, όπου βρίσκεται "
+"ο πίνακας του κύβου στο 4 για τους μακρούς αγώνες δρόμου."
 
 #: ../../source/cmd_mode.rst:1
 msgid "tp4_last"
 msgstr "tp4_last"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des takepoints avec videau à 4 mort."
-msgstr "Ανοίγει τον πίνακα takepoint με κύβο στο 4 για θέσεις τελευταίας ζαριάς."
+msgid ""
+"Ouvre le panneau Données de référence sur les points de prise, où figure "
+"la table du videau à 4 mort."
+msgstr ""
+"Ανοίγει τον πίνακα Δεδομένα αναφοράς στα σημεία αποδοχής, όπου βρίσκεται "
+"ο πίνακας του νεκρού κύβου στο 4."
 
 #: ../../source/cmd_mode.rst:1
 msgid "gv1"
 msgstr "gv1"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des valeurs de gammon avec videau à 1."
-msgstr "Ανοίγει τον πίνακα τιμών gammon με κύβο στο 1."
+msgid ""
+"Ouvre le panneau Données de référence sur les valeurs du gammon, où "
+"figure la table du videau à 1."
+msgstr ""
+"Ανοίγει τον πίνακα Δεδομένα αναφοράς στις τιμές του gammon, όπου "
+"βρίσκεται ο πίνακας του κύβου στο 1."
 
 #: ../../source/cmd_mode.rst:1
 msgid "gv2"
 msgstr "gv2"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des valeurs de gammon avec videau à 2."
-msgstr "Ανοίγει τον πίνακα τιμών gammon με κύβο στο 2."
+msgid ""
+"Ouvre le panneau Données de référence sur les valeurs du gammon, où "
+"figure la table du videau à 2."
+msgstr ""
+"Ανοίγει τον πίνακα Δεδομένα αναφοράς στις τιμές του gammon, όπου "
+"βρίσκεται ο πίνακας του κύβου στο 2."
 
 #: ../../source/cmd_mode.rst:1
 msgid "gv4"
 msgstr "gv4"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des valeurs de gammon avec videau à 4."
-msgstr "Ανοίγει τον πίνακα τιμών gammon με κύβο στο 4."
+msgid ""
+"Ouvre le panneau Données de référence sur les valeurs du gammon, où "
+"figure la table du videau à 4."
+msgstr ""
+"Ανοίγει τον πίνακα Δεδομένα αναφοράς στις τιμές του gammon, όπου "
+"βρίσκεται ο πίνακας του κύβου στο 4."
 
-#: ../../source/cmd_mode.rst:55
+#: ../../source/cmd_mode.rst:56
 msgid "Positions et navigation"
 msgstr "Θέσεις και πλοήγηση"
 
@@ -572,7 +626,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "Πλοήγηση στον τελευταίο αγώνα που επισκεφθήκατε."
 
-#: ../../source/cmd_mode.rst:86
+#: ../../source/cmd_mode.rst:87
 msgid "Édition et recherche"
 msgstr "Επεξεργασία και αναζήτηση"
 
@@ -612,11 +666,11 @@ msgstr ""
 "Αναζήτηση ανάμεσα στις εμφανιζόμενες θέσεις: τρέχοντα αποτελέσματα, "
 "ανοιχτή συλλογή ή αγώνας υπό επισκόπηση."
 
-#: ../../source/cmd_mode.rst:102
+#: ../../source/cmd_mode.rst:103
 msgid "Filtres de recherche"
 msgstr "Φίλτρα αναζήτησης"
 
-#: ../../source/cmd_mode.rst:104
+#: ../../source/cmd_mode.rst:105
 msgid ""
 "Cette table est la référence de la grammaire de recherche : la ligne de "
 "commande, la bibliothèque de filtres et le drapeau ``--query`` de "
@@ -632,7 +686,7 @@ msgstr ""
 "(δείτε :ref:`cli`)· μια παύλα σημαίνει φίλτρο που το εκφράζει μόνο η "
 "γραμματική."
 
-#: ../../source/cmd_mode.rst:111
+#: ../../source/cmd_mode.rst:112
 msgid ""
 "Cinq jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
 "recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
@@ -652,7 +706,7 @@ msgstr ""
 "εντολών, όπου δεν υπάρχει ταμπλό, τα διακριτικά αυτά συγκρίνονται με κενό"
 " ταμπλό· εκεί πρέπει να χρησιμοποιούνται οι επιλογές της τρίτης στήλης."
 
-#: ../../source/cmd_mode.rst:120
+#: ../../source/cmd_mode.rst:121
 msgid ""
 "Un seul jeton **classe** au lieu de restreindre : ``like`` ordonne le "
 "résultat par distance croissante à une position cible, et tous les autres"
@@ -662,7 +716,7 @@ msgstr ""
 "ταξινομεί το αποτέλεσμα κατά αύξουσα απόσταση από μια θέση-στόχο, και όλα"
 " τα άλλα διακριτικά περιορίζουν το σύνολο που κατατάσσεται έτσι."
 
-#: ../../source/cmd_mode.rst:124
+#: ../../source/cmd_mode.rst:125
 msgid ""
 "Les erreurs et les équités se comptent en **millièmes d'équité** — les "
 "*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
@@ -673,11 +727,11 @@ msgstr ""
 "κόστισαν τουλάχιστον ένα δέκατο του πόντου, αφού ένας πόντος αξίζει 1000 "
 "χιλιοστά."
 
-#: ../../source/cmd_mode.rst:128
+#: ../../source/cmd_mode.rst:129
 msgid "Deux recherches complètes :"
 msgstr "Δύο πλήρεις αναζητήσεις:"
 
-#: ../../source/cmd_mode.rst:130
+#: ../../source/cmd_mode.rst:131
 #, no-python-format
 msgid ""
 "``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
@@ -686,7 +740,7 @@ msgstr ""
 "``s p>30 w40,60 xco`` — πάνω από 30 pips καθυστέρηση, μεταξύ 40 % και 60 "
 "% πιθανότητες νίκης, κανένα σχόλιο."
 
-#: ../../source/cmd_mode.rst:132
+#: ../../source/cmd_mode.rst:133
 msgid ""
 "``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
 "millièmes, et un commentaire venu d'eXtreme Gammon."
@@ -1908,7 +1962,7 @@ msgstr ""
 "τύπους απόφασης και στα δύο καθεστώτα, χρήματα και αγώνας. Δείτε "
 ":ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:249
+#: ../../source/cmd_mode.rst:250
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``m`` et ``t`` s'ouvrent par"
 " un guillemet ou une apostrophe et se ferment par l'un des deux. Un jeton"
@@ -1927,11 +1981,11 @@ msgstr ""
 "ετικετών: δεν εμφανίζεται σε καμία τιμή, και το ``ma1;2`` δεν είναι "
 "διακριτικό (γράψτε ``ma1 ma2``)."
 
-#: ../../source/cmd_mode.rst:254
+#: ../../source/cmd_mode.rst:255
 msgid "Transcrire depuis un terminal"
 msgstr "Μεταγραφή από τερματικό"
 
-#: ../../source/cmd_mode.rst:256
+#: ../../source/cmd_mode.rst:257
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -1951,7 +2005,7 @@ msgstr ""
 "είναι δική της συνεδρία, χωρίς ``sessionId`` και χωρίς αναίρεση από τη "
 "μία κλήση στην άλλη."
 
-#: ../../source/cmd_mode.rst:267
+#: ../../source/cmd_mode.rst:268
 msgid "Commandes diverses"
 msgstr "Διάφορες εντολές"
 
@@ -2045,3 +2099,34 @@ msgstr "Διαγράφει το ιστορικό εντολών."
 
 #~ msgid "Date d'ajout de la position après x (AAAA/MM/JJ)."
 #~ msgstr "Ημερομηνία προσθήκης της θέσης μετά το x (ΕΕΕΕ/ΜΜ/ΗΗ)."
+
+#~ msgid "Ouvre la table des takepoints avec videau à 2."
+#~ msgstr "Ανοίγει τον πίνακα takepoint με κύβο στο 2."
+
+#~ msgid "Ouvre la table des takepoints avec videau à 2 pour les courses longues."
+#~ msgstr "Ανοίγει τον πίνακα takepoint με κύβο στο 2 για θέσεις μακράς κούρσας."
+
+#~ msgid "Ouvre la table des takepoints avec videau à 2 mort."
+#~ msgstr ""
+#~ "Ανοίγει τον πίνακα takepoint με κύβο "
+#~ "στο 2 για θέσεις τελευταίας ζαριάς."
+
+#~ msgid "Ouvre la table des takepoints avec videau à 4."
+#~ msgstr "Ανοίγει τον πίνακα takepoint με κύβο στο 4."
+
+#~ msgid "Ouvre la table des takepoints avec videau à 4 pour les courses longues."
+#~ msgstr "Ανοίγει τον πίνακα takepoint με κύβο στο 4 για θέσεις μακράς κούρσας."
+
+#~ msgid "Ouvre la table des takepoints avec videau à 4 mort."
+#~ msgstr ""
+#~ "Ανοίγει τον πίνακα takepoint με κύβο "
+#~ "στο 4 για θέσεις τελευταίας ζαριάς."
+
+#~ msgid "Ouvre la table des valeurs de gammon avec videau à 1."
+#~ msgstr "Ανοίγει τον πίνακα τιμών gammon με κύβο στο 1."
+
+#~ msgid "Ouvre la table des valeurs de gammon avec videau à 2."
+#~ msgstr "Ανοίγει τον πίνακα τιμών gammon με κύβο στο 2."
+
+#~ msgid "Ouvre la table des valeurs de gammon avec videau à 4."
+#~ msgstr "Ανοίγει τον πίνακα τιμών gammon με κύβο στο 4."

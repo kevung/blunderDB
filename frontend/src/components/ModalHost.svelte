@@ -41,7 +41,6 @@
     import { handleExportCommit, handleExportCancel, setExportScope, openExportPositions, openExportMatches, planExport, plannedIds } from '../services/exportService.js';
     import { toggleHelpModal } from '../services/keyboardService.js';
     import { confirmModalStore, resolveConfirm } from '../services/confirmService.js';
-    import { MODAL_TABLES } from './modalTables.js';
 
     import WarningModal from './WarningModal.svelte';
     import ProtectedCopyModal from './ProtectedCopyModal.svelte';
@@ -54,7 +53,7 @@
     const loaded = modals.components;
     $effect(() => {
         const modal = $activeModal;
-        if (modal) modals.load(modal in MODAL_TABLES ? 'dataTable' : modal);
+        if (modal) modals.load(modal);
         if ($showImportProgressModalStore) modals.load('importProgress');
         if ($showFileImportModalStore) modals.load('fileImportProgress');
     });
@@ -72,11 +71,6 @@
 {#if $loaded.resumeBatch}
     {@const Modal = $loaded.resumeBatch}
     <Modal visible={$activeModal === MODAL.RESUME_BATCH} onClose={() => closeModal()} />
-{/if}
-
-{#if $loaded.met}
-    {@const Modal = $loaded.met}
-    <Modal visible={$activeModal === MODAL.MET} onClose={() => closeModal()} />
 {/if}
 
 {#if $loaded.cubeMatrix}
@@ -101,12 +95,6 @@
 {#if $loaded.contactSheet}
     {@const Modal = $loaded.contactSheet}
     <Modal visible={$activeModal === MODAL.CONTACT_SHEET} onClose={() => closeModal()} />
-{/if}
-{#if $loaded.dataTable}
-    {@const DataTableModal = $loaded.dataTable}
-    {#each Object.entries(MODAL_TABLES) as [modal, tables] (modal)}
-        <DataTableModal visible={$activeModal === modal} onClose={() => closeModal()} {tables} />
-    {/each}
 {/if}
 
 <WarningModal message={$warningMessageStore} visible={$activeModal === MODAL.WARNING} onClose={closeWarningModal} />
