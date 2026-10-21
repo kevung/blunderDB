@@ -359,7 +359,7 @@ func scanEach(ctx context.Context, db Execer, query string, args []any, fn func(
 // refreshMatchStatsBatch recomputes and replaces the rows of one batch of
 // matches in a single transaction.
 func (s *StatsStore) refreshMatchStatsBatch(ctx context.Context, scope string, matchIDs []int64, settings storage.LibrarySettings) error {
-	err := transactWrite(ctx, s.DB, func(tx Execer) error {
+	err := s.DB.Transact(ctx, func(tx Execer) error {
 		rows, err := s.computeMatchStatsRows(ctx, tx, scope, matchIDs, settings)
 		if err != nil {
 			return err
@@ -402,17 +402,17 @@ func (s *StatsStore) refreshMatchStatsBatch(ctx context.Context, scope string, m
 	return err
 }
 
-// writeTransacter is implemented by an Execer whose plain transaction would
-// not wait for the write lock it later needs (SQLite's deferred BEGIN).
-type writeTransacter interface {
-	TransactWrite(ctx context.Context, fn func(Execer) error) error
+// readTransacter is implemented by an Execer whose plain transaction holds
+// the write lock from its start (SQLite): TransactRead opens one that does
+// not, for a transaction that only reads.
+type readTransacter interface {
+	TransactRead(ctx context.Context, fn func(Execer) error) error
 }
 
-// transactWrite runs fn in a transaction that is to write: one holding the
-// write lock from its start where the backend tells the two apart.
-func transactWrite(ctx context.Context, db Execer, fn func(Execer) error) error {
-	if w, ok := db.(writeTransacter); ok {
-		return w.TransactWrite(ctx, fn)
+// transactRead runs fn in a transaction that only reads.
+func transactRead(ctx context.Context, db Execer, fn func(Execer) error) error {
+	if r, ok := db.(readTransacter); ok {
+		return r.TransactRead(ctx, fn)
 	}
 	return db.Transact(ctx, fn)
 }
@@ -691,7 +691,7 @@ func (s *StatsStore) withReadSnapshot(ctx context.Context, fn func(*StatsStore) 
 	if !RefusesWrites(ctx, s.DB) {
 		return fn(s)
 	}
-	return s.DB.Transact(ctx, func(tx Execer) error { return fn(&StatsStore{DB: tx}) })
+	return transactRead(ctx, s.DB, func(tx Execer) error { return fn(&StatsStore{DB: tx}) })
 }
 
 // inReadSnapshot is withReadSnapshot for a reader returning a value.

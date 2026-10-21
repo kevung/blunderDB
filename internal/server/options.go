@@ -210,8 +210,12 @@ type Options struct {
 	// HeavySlots bounds the requests that scan the library (stats.*,
 	// search.count/find/ids/query/indexOf, matches.list) running at once, so
 	// they leave connections to the reads of one row. Zero (the default)
-	// admits them all; RunServe sets it from the CPU count.
+	// admits them all; RunServe sets it from --heavy-slots.
 	HeavySlots int
+
+	// StatsReady, when set, is closed once the start fill of match_stats
+	// ends; a stats.* request waits for it before taking a HeavySlots slot.
+	StatsReady <-chan struct{}
 
 	// Identity signs the watermark of an exports.sqlite response that asked
 	// for one — "the daemon's own" identity, as opposed to the desktop's

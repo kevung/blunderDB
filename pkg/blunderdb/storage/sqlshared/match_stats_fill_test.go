@@ -4,12 +4,14 @@ import (
 	"compress/gzip"
 	"context"
 	"database/sql"
+	"errors"
 	"io"
 	"os"
 	"path/filepath"
 	"sync"
 	"sync/atomic"
 	"testing"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
@@ -112,5 +114,64 @@ func TestColdStatsReadersFillOnce(t *testing.T) {
 	}
 	if len(missing) != 0 {
 		t.Errorf("%d match(es) still lack their rows", len(missing))
+	}
+}
+
+// TestColdStatsFillOutlivesItsLeader: the reader whose fill others wait for
+// leaves (its request is cancelled); a waiter then runs the fill itself
+// instead of returning the leader's cancellation.
+func TestColdStatsFillOutlivesItsLeader(t *testing.T) {
+	ctx := context.Background()
+	path := copyDemoDB(t)
+	raw, err := sql.Open("sqlite", sqlite.DSN(path))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := raw.Exec(`DELETE FROM match_stats`); err != nil {
+		t.Fatal(err)
+	}
+	raw.Close()
+	st, err := sqlite.Open(ctx, path, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer st.Close()
+
+	leaderIn, proceed := make(chan struct{}), make(chan struct{})
+	var fills atomic.Int32
+	defer sqlshared.SetBeforeMatchStatsFill(func(int) {
+		if fills.Add(1) == 1 {
+			close(leaderIn)
+			<-proceed
+		}
+	})()
+
+	leaderCtx, cancel := context.WithCancel(ctx)
+	leaderErr := make(chan error, 1)
+	go func() {
+		_, err := st.Stats().FillMatchStats(leaderCtx, "", nil)
+		leaderErr <- err
+	}()
+	<-leaderIn
+	waiterErr := make(chan error, 1)
+	go func() {
+		_, err := st.Stats().FillMatchStats(ctx, "", nil)
+		waiterErr <- err
+	}()
+	time.Sleep(50 * time.Millisecond) // the waiter reaches the gate
+	cancel()
+	close(proceed)
+	if err := <-leaderErr; !errors.Is(err, context.Canceled) {
+		t.Errorf("leader: %v, want context.Canceled", err)
+	}
+	if err := <-waiterErr; err != nil {
+		t.Errorf("waiter: %v", err)
+	}
+	if n := fills.Load(); n != 2 {
+		t.Errorf("fills started = %d, want 2 (the cut one, then the waiter's)", n)
+	}
+	missing, err := st.Stats().MissingMatchStats(ctx, "")
+	if err != nil || len(missing) != 0 {
+		t.Errorf("after the waiter's fill: %d missing, err %v", len(missing), err)
 	}
 }

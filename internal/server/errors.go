@@ -208,6 +208,11 @@ func errorBodyFor(w http.ResponseWriter, err error) errorBody {
 	if code != CodeInternal && errors.As(err, &d) {
 		body.Details = d.ErrorDetails()
 	}
+	if errors.Is(err, storage.ErrBusy) {
+		// Tells a lost write from the other unavailable answers: only this
+		// one may be retried as is.
+		body.Details = map[string]any{"reason": "busy"}
+	}
 	return body
 }
 

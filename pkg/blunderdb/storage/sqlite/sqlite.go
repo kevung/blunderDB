@@ -233,11 +233,29 @@ func (s *Storage) Close() error {
 	return s.sqlDB.Close()
 }
 
+// writeLockSQL writes nothing yet takes the database's write lock.
+const writeLockSQL = `DELETE FROM metadata WHERE 0`
+
 // BeginTx starts a transaction whose family accessors run inside it.
 func (s *Storage) BeginTx(ctx context.Context) (storage.Tx, error) {
+	// Asked before the transaction holds a connection: a one-connection pool
+	// (":memory:", the read-only fallback) would have none left to ask on.
+	readOnly := shared(s.binder).RefusesWrites(ctx)
 	tx, err := s.sqlDB.BeginTx(ctx, nil)
 	if err != nil {
-		return nil, fmt.Errorf("sqlite: begin tx: %w", err)
+		return nil, fmt.Errorf("sqlite: begin tx: %w", busyErr(err))
+	}
+	// Every caller writes, most after a read (an import looks its rows up
+	// first). A write as the first statement takes the lock while busy_timeout
+	// still applies — BEGIN IMMEDIATE by other means, which database/sql's
+	// BeginTx cannot ask for; a read first would have the later write fail at
+	// once when another writer committed meanwhile.
+	if readOnly {
+		return newTxImpl(tx), nil
+	}
+	if _, err := tx.ExecContext(ctx, writeLockSQL); err != nil && !strings.Contains(err.Error(), "no such table") {
+		_ = tx.Rollback()
+		return nil, fmt.Errorf("sqlite: begin tx: %w", busyErr(err))
 	}
 	return newTxImpl(tx), nil
 }

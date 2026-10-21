@@ -47,8 +47,18 @@ func heavyRoute(pattern string) bool {
 	return strings.HasPrefix(pattern, "/v1/stats.")
 }
 
-func (g *heavyGate) wrap(next http.HandlerFunc) http.HandlerFunc {
+// wrap admits next through the gate. A non-nil ready is waited for first,
+// outside the gate: a statistics read during the start fill would otherwise
+// hold a slot while it waits for the fill.
+func (g *heavyGate) wrap(next http.HandlerFunc, ready <-chan struct{}) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if ready != nil {
+			select {
+			case <-ready:
+			case <-r.Context().Done():
+				return // cancelled: nobody is listening
+			}
+		}
 		select {
 		case g.slots <- struct{}{}:
 		default:

@@ -142,17 +142,24 @@ func (s unpreparedStmt) Exec(ctx context.Context, args ...any) error {
 }
 func (unpreparedStmt) Close() error { return nil }
 
-// Transact opens a deferred transaction: the shared stores use it for read
-// snapshots too (Compute pins one connection for its session tables), which
-// must not hold the write lock for their whole length.
+// Transact takes the write lock at BEGIN (withTx): the shared stores'
+// transactions write, most after a read. A connection that refuses writes
+// gets a deferred one, which is all it can open.
 func (a shared) Transact(ctx context.Context, fn func(sqlshared.Execer) error) error {
-	return withDeferredTx(ctx, a.db, func(tx execer) error { return fn(shared{db: tx}) })
+	run := func(tx execer) error { return fn(shared{db: tx}) }
+	if _, pool := a.db.(*sql.DB); !pool {
+		return run(a.db) // inside a caller's transaction, which is atomic
+	}
+	if a.RefusesWrites(ctx) {
+		return withDeferredTx(ctx, a.db, run)
+	}
+	return withTx(ctx, a.db, run)
 }
 
-// TransactWrite is Transact for a transaction that writes: it takes the
-// write lock at BEGIN (withTx).
-func (a shared) TransactWrite(ctx context.Context, fn func(sqlshared.Execer) error) error {
-	return withTx(ctx, a.db, func(tx execer) error { return fn(shared{db: tx}) })
+// TransactRead is Transact for a transaction that only reads: one snapshot,
+// one pinned connection, and no write lock held for its length.
+func (a shared) TransactRead(ctx context.Context, fn func(sqlshared.Execer) error) error {
+	return withDeferredTx(ctx, a.db, func(tx execer) error { return fn(shared{db: tx}) })
 }
 
 // RefusesWrites reports the connection's query_only setting, which the

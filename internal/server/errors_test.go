@@ -90,6 +90,9 @@ func TestWriteStorageError_BusyIsRetryable(t *testing.T) {
 	if got := w.Header().Get("Retry-After"); got == "" {
 		t.Error("no Retry-After header")
 	}
+	if body := w.Body.String(); !strings.Contains(body, `"reason":"busy"`) {
+		t.Errorf("body = %s, want details.reason busy", body)
+	}
 	if body := w.Body.String(); !strings.Contains(body, `"code":"unavailable"`) || strings.Contains(body, "SQLITE_BUSY") {
 		t.Errorf("body = %s, want code unavailable without the driver text", body)
 	}

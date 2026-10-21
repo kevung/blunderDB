@@ -302,7 +302,12 @@ func envelopeError(method, code, message string, details map[string]any) error {
 	case "internal":
 		return fmt.Errorf("%w: %s", storage.ErrInternal, message)
 	case "unavailable":
-		return fmt.Errorf("%w: %s", storage.ErrBusy, message)
+		// Only a write that lost the database is the caller's to retry as
+		// is; a daemon stopping or refusing a library-wide read is not.
+		if details["reason"] == "busy" {
+			return fmt.Errorf("%w: %s", storage.ErrBusy, message)
+		}
+		return visible(fmt.Errorf("%w: %s: %s: %s", ErrUnavailable, method, code, message))
 	case "rate_limited", "quota_exceeded":
 		return visible(fmt.Errorf("%w: %s: %s: %s; wait and retry, or raise --rate-limit-rps/--rate-limit-burst on the daemon", ErrRateLimited, method, code, message))
 	case "forbidden", "unauthorized":

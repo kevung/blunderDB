@@ -184,7 +184,10 @@ const sqliteBusyCode = 5
 // modernc.org/sqlite driver.
 func isBusyErr(err error) bool {
 	var sqliteErr *sqlitedriver.Error
-	return errors.As(err, &sqliteErr) && sqliteErr.Code() == sqliteBusyCode
+	// The driver reports extended codes: SQLITE_BUSY_SNAPSHOT (517), a
+	// deferred transaction whose snapshot another writer outdated, is busy
+	// too.
+	return errors.As(err, &sqliteErr) && sqliteErr.Code()&0xff == sqliteBusyCode
 }
 
 // busyRetryAttempts bounds retryOnBusy: enough to ride out a burst of

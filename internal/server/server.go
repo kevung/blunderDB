@@ -154,7 +154,11 @@ func New(opts Options) (*Server, error) {
 	for _, rt := range s.routes() {
 		h := rt.handler
 		if heavy != nil && heavyRoute(rt.pattern) {
-			h = heavy.wrap(h)
+			var ready <-chan struct{}
+			if strings.HasPrefix(rt.pattern, "/v1/stats.") {
+				ready = opts.StatsReady
+			}
+			h = heavy.wrap(h, ready)
 		}
 		mux.HandleFunc(rt.method+" "+rt.pattern, h)
 		s.knownPaths[rt.pattern] = true
