@@ -140,8 +140,19 @@ func decodeBinaryBlob(data []byte) (domain.PositionAnalysis, error) {
 }
 
 func decodeBinaryBlobWith(dec *zstd.Decoder, data []byte) (domain.PositionAnalysis, error) {
+	payload, err := binaryBlobPayloadWith(dec, data)
+	if err != nil {
+		return domain.PositionAnalysis{}, err
+	}
+	return UnmarshalAnalysisBinary(payload)
+}
+
+// binaryBlobPayloadWith restores the zstd magic and decompresses: the
+// payload, not the frame, is what the codec fixes byte for byte — the zstd
+// encoder may frame the same payload differently from one release to the next.
+func binaryBlobPayloadWith(dec *zstd.Decoder, data []byte) ([]byte, error) {
 	if data[1] != binFormatVersion {
-		return domain.PositionAnalysis{}, fmt.Errorf("%w: version %d", ErrUnknownAnalysisFormat, data[1])
+		return nil, fmt.Errorf("%w: version %d", ErrUnknownAnalysisFormat, data[1])
 	}
 	frame := make([]byte, 0, len(zstdMagic)+len(data)-binHeaderLen)
 	frame = append(frame, zstdMagic...)
@@ -149,11 +160,11 @@ func decodeBinaryBlobWith(dec *zstd.Decoder, data []byte) (domain.PositionAnalys
 	payload, err := dec.DecodeAll(frame, nil)
 	if err != nil {
 		if errors.Is(err, zstd.ErrDecoderSizeExceeded) {
-			return domain.PositionAnalysis{}, ErrAnalysisTooLarge
+			return nil, ErrAnalysisTooLarge
 		}
-		return domain.PositionAnalysis{}, err
+		return nil, err
 	}
-	return UnmarshalAnalysisBinary(payload)
+	return payload, nil
 }
 
 // CompressAnalysisData turns the JSON of a PositionAnalysis into a blob of

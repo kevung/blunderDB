@@ -187,24 +187,27 @@ func TestBinaryRoundTripOnLegacyAnalyses(t *testing.T) {
 }
 
 // TestBinaryRoundTripOnDemoAnalyses requires every analysis of the current
-// demo database to be a binary blob that decodes and re-encodes to the very
-// same bytes: a write path that drifted from the codec would show here.
+// demo database to be a binary blob whose payload decodes and re-marshals to
+// the very same bytes: a write path that drifted from the codec would show
+// here. The zstd frame around it is left out: no reader compares stored
+// frames (merges compare AnalysisContentKey), and a compression library
+// release may frame the same payload differently.
 func TestBinaryRoundTripOnDemoAnalyses(t *testing.T) {
 	for id, blob := range demoAnalysisBlobs(t) {
 		if !isBinaryBlob(blob) {
 			t.Fatalf("position %d: the demo database holds a non-binary blob", id)
 		}
-		a, err := DecodeAnalysisFromStorage(blob)
+		payload, err := binaryBlobPayloadWith(zstdDecoder, blob)
+		if err != nil {
+			t.Fatalf("position %d: decompress: %v", id, err)
+		}
+		a, err := UnmarshalAnalysisBinary(payload)
 		if err != nil {
 			t.Fatalf("position %d: decode: %v", id, err)
 		}
 		requireExactRoundTrip(t, "demo", a)
-		fresh, err := EncodeAnalysisForStorage(&a)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if !bytes.Equal(fresh, blob) {
-			t.Fatalf("position %d: re-encoding the demo blob changes its bytes", id)
+		if !bytes.Equal(MarshalAnalysisBinary(&a), payload) {
+			t.Fatalf("position %d: re-marshalling the demo payload changes its bytes", id)
 		}
 	}
 }
