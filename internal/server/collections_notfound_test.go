@@ -23,8 +23,8 @@ func TestCollectionRoutes_UnknownIDIsNotFound(t *testing.T) {
 		t.Fatal(err)
 	}
 	h := srv.Handler()
-	for _, route := range []string{"get", "freeze", "evaluate", "setFilter"} {
-		req := httptest.NewRequest(http.MethodPost, "/v1/collections."+route, bytes.NewReader([]byte(`{"id":1}`)))
+	for _, route := range []string{"get", "freeze", "evaluate", "setFilter", "update", "delete"} {
+		req := httptest.NewRequest(http.MethodPost, "/v1/collections."+route, bytes.NewReader([]byte(`{"id":1,"name":"x"}`)))
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("X-Tenant-ID", "1")
 		rec := httptest.NewRecorder()

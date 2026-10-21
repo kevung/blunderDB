@@ -108,10 +108,14 @@ func (s *collectionStore) List(ctx context.Context, scope string) iter.Seq2[*sto
 
 // Update changes a collection's name and description.
 func (s *collectionStore) Update(ctx context.Context, scope string, id int64, name, description string) error {
-	if _, err := s.db.ExecContext(ctx,
+	res, err := s.db.ExecContext(ctx,
 		`UPDATE collection SET name = ?, description = ?, updated_at = datetime('now')
-		 WHERE id = ?`, name, description, id); err != nil {
+		 WHERE id = ?`, name, description, id)
+	if err != nil {
 		return fmt.Errorf("sqlite: update collection %d: %w", id, err)
+	}
+	if n, _ := res.RowsAffected(); n == 0 {
+		return fmt.Errorf("sqlite: update collection %d: %w", id, storage.ErrNotFound)
 	}
 	return nil
 }
@@ -119,8 +123,12 @@ func (s *collectionStore) Update(ctx context.Context, scope string, id int64, na
 // Delete removes a collection; its position memberships cascade off the
 // collection_position foreign key.
 func (s *collectionStore) Delete(ctx context.Context, scope string, id int64) error {
-	if _, err := s.db.ExecContext(ctx, `DELETE FROM collection WHERE id = ?`, id); err != nil {
+	res, err := s.db.ExecContext(ctx, `DELETE FROM collection WHERE id = ?`, id)
+	if err != nil {
 		return fmt.Errorf("sqlite: delete collection %d: %w", id, err)
+	}
+	if n, _ := res.RowsAffected(); n == 0 {
+		return fmt.Errorf("sqlite: delete collection %d: %w", id, storage.ErrNotFound)
 	}
 	return nil
 }
