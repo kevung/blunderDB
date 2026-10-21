@@ -135,7 +135,7 @@
     let loadingStats = $state(false);
 
     // Sorting state, cycled by the table header (asc → desc → unsorted)
-    let sort = $state({ column: null, direction: 'asc' });
+    let sort = $state(/** @type {{ column: string | null, direction: string }} */ ({ column: null, direction: 'asc' }));
     /** @type {any} */
     let table = $state(null); // PanelTable instance: keyboard navigation and scrolling
 
@@ -313,6 +313,20 @@
             () => visible, // $derived — tracked
             (/** @type {boolean} */ opened) => {
                 if (embedded) return;
+                if (opened) {
+                    // Kept mounted while hidden (TabbedPanel), the panel may come back to a list
+                    // another library group put in place: the header and the field follow it.
+                    untrack(() => {
+                        const list = get(matchListStore);
+                        if (sort.column !== list.column || sort.direction !== list.direction) sort = { column: list.column, direction: list.direction };
+                        if (filterText.trim() !== list.text) {
+                            if (filterTimer) clearTimeout(filterTimer);
+                            filterText = list.text;
+                        }
+                        // Back with no database: the rows of the one closed meanwhile must not show.
+                        if (!databaseLoaded) matchListStore.set({ ...list, rows: [], total: 0, loading: false, loaded: false });
+                    });
+                }
                 if (opened && databaseLoaded) {
                     loadMatches().then(async () => {
                         const lvm = lastVisitedMatch;
@@ -1117,6 +1131,8 @@
     }
 
     function handleClickOutside(/** @type {MouseEvent} */ event) {
+        // Kept mounted behind another tab (TabbedPanel): the other panel's clicks are not ours to blur.
+        if (!visible) return;
         // A `document` listener sees every click, modals included: it must never
         // blur the focused element, or modal text fields become unclickable.
         if (get(isAnyModalOpen)) return;

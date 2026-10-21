@@ -374,6 +374,22 @@ const SCENARIOS = [
         measure: (/** @type {import('@playwright/test').Page} */ page) =>
             page.evaluate((tab) => window.__bench.run(() => window.__bench.click(`[data-testid="tab-${tab}"]`), { until: () => !!document.querySelector(`[data-testid="tab-${tab}"].active`) }), id)
     })),
+    // A tab switch back and forth: the target was visited before, so a panel kept mounted only unhides.
+    ...[
+        ['analysis', 'matches'],
+        ['matches', 'analysis']
+    ].map(([from, to]) => ({
+        name: `bascule ${from} → ${to} (déjà visité)`,
+        prepare: async (/** @type {import('@playwright/test').Page} */ page) => {
+            for (const id of [to, from]) {
+                await page.evaluate((f) => window.__bench.click(`[data-testid="tab-${f}"]`), id);
+                await page.waitForFunction(tabActive(id));
+                await page.evaluate(() => window.__bench.resourcesQuiet(300));
+            }
+        },
+        measure: (/** @type {import('@playwright/test').Page} */ page) =>
+            page.evaluate((tab) => window.__bench.run(() => window.__bench.click(`[data-testid="tab-${tab}"]`), { until: () => !!document.querySelector(`[data-testid="tab-${tab}"].active`) }), to)
+    })),
     {
         name: 'ouvrir leçon (le 1)',
         prepare: async (page) => {

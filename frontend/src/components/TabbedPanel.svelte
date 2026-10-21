@@ -2,6 +2,10 @@
   TabbedPanel démonte le panneau d'un onglet quitté ({#if}) : son $state repart
   à zéro à chaque visite, et ses $effect sont inactifs hors onglet. Ce qui doit
   survivre va dans un store (tasks/ui-reactivity/).
+  Exception : les panneaux de KEEP_MOUNTED restent montés, cachés, une fois visités.
+  Démonter puis remonter leur tableau coûte plus que la bascule elle-même ; ils
+  tiennent leur ouverture et leur fermeture de `openPanels`, et chacun de leurs
+  effets globaux (clavier, clic hors du panneau, chargement) s'y arrête.
 -->
 <script>
     import { onMount } from 'svelte';
@@ -29,6 +33,17 @@
     });
     const failedPanels = panels.failed;
     const Panel = $derived($loadedPanels[$activeTabStore]);
+
+    // Only a panel whose every global effect is gated on its `openPanels` entry may be kept:
+    // hidden, it stays subscribed to its stores. The Stats panel recomputes on each
+    // invalidation, Collections reloads on each position: neither qualifies.
+    const KEEP_MOUNTED = new Set(['matches']);
+    // Insertion order is render order: a kept panel is never moved in the DOM.
+    const visitedKept = new SvelteSet();
+    $effect(() => {
+        const tab = $activeTabStore;
+        if (KEEP_MOUNTED.has(tab) && $loadedPanels[tab]) visitedKept.add(tab);
+    });
 
     // Props passed through to panels
     let { onLoadPositionsByFilters, onCloseAnalysis, onCloseComment, onOpenCollection, onAddToFilterLibrary } = $props();
@@ -369,6 +384,8 @@
                     <span>{$t('common.loading')}…</span>
                 </div>
             {/if}
+        {:else if KEEP_MOUNTED.has($activeTabStore)}
+            <!-- Rendered by the kept panels below. -->
         {:else if $activeTabStore === 'analysis'}
             <Panel onClose={onCloseAnalysis} />
         {:else if $activeTabStore === 'comments'}
@@ -380,6 +397,12 @@
         {:else}
             <Panel />
         {/if}
+        {#each [...visitedKept] as id (id)}
+            {@const KeptPanel = $loadedPanels[id]}
+            <div class="kept-panel" hidden={$activeTabStore !== id} data-testid="kept-panel-{id}">
+                <KeptPanel />
+            </div>
+        {/each}
     </div>
 </div>
 
@@ -514,6 +537,15 @@
         to {
             transform: rotate(360deg);
         }
+    }
+
+    /* The wrapper adds no box: the panel lays out as a direct child of .tab-content. */
+    .kept-panel {
+        display: contents;
+    }
+
+    .kept-panel[hidden] {
+        display: none;
     }
 
     .tab-content.folded {

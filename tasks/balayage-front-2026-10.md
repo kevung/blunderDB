@@ -115,6 +115,12 @@ Lecture :
 - Fichiers : `src/utils/format.js`, `src/utils/mwc7.js`, `src/components/TabbedPanel.svelte`.
 - Le cache de formateurs est neuf. Le remontage à chaque bascule est connu (il est décrit
   dans les specs), son coût jamais chiffré.
+- Suite : le panneau Matchs reste monté, caché, une fois visité (`KEEP_MOUNTED` de
+  `TabbedPanel.svelte`) ; seul lui, car ses effets globaux s'arrêtent tous sur `openPanels`
+  (Stats recalcule à chaque invalidation, Collections recharge à chaque position). Scénario
+  « bascule analysis → matches (déjà visité) », médianes de 9, machine chargée (loadavg 12 à
+  30) : script 11 → 5,6 ms au calme, 23 → 4,8 et 54 → 16 ms sous charge ; CPU fil principal
+  −25 à −45 %. Le retour vers Analyse ne change pas. Le coût : ~830 nœuds DOM gardés.
 
 ### 3. Ouvrir l'onglet Anki : 102 ms de CPU
 - Où va le temps : 90 % natif. Le JS est éparpillé : le snippet `icon`
