@@ -178,6 +178,7 @@ func testMatchStatsOracle(t *testing.T, s storage.Storage) {
 			t.Errorf("filter %+v: MatchSeries %s, Compute's PerMatch %s", f, got, want)
 		}
 	}
+	checkPerGameType(ctx, t, s)
 	// By decision type, the table's split against MatchDetail's.
 	for _, dt := range []int{0, 1} {
 		series, err := s.Stats().MatchSeries(ctx, "", storage.StatsFilter{DecisionType: dt})
@@ -424,4 +425,29 @@ func seriesKey(t *testing.T, s storage.Storage, f storage.StatsFilter, fromSerie
 		out += fmt.Sprintf("[%d %s %d %v]", m.ID, m.Date, m.NumDecisions, m.PR)
 	}
 	return out
+}
+
+// checkPerGameType holds PerGameType to Compute's PerGameType for every filter,
+// by either road (cells, or direct passes for a provenance filter).
+func checkPerGameType(ctx context.Context, t *testing.T, s storage.Storage) {
+	t.Helper()
+	for _, f := range []storage.StatsFilter{
+		{DecisionType: -1},
+		{DecisionType: 0, PlayerName: "Alice"},
+		{DecisionType: -1, DateFrom: "2020-01-01"},
+		{DecisionType: -1, DateTo: "2020-01-01"},
+		{DecisionType: -1, PlayerName: "Alice", AnalysisEngine: "XG"},
+	} {
+		rows, err := s.Stats().PerGameType(ctx, "", f)
+		if err != nil {
+			t.Fatalf("PerGameType %+v: %v", f, err)
+		}
+		full, err := s.Stats().Compute(ctx, "", f)
+		if err != nil {
+			t.Fatalf("Compute %+v: %v", f, err)
+		}
+		if got, want := fmt.Sprintf("%+v", rows), fmt.Sprintf("%+v", full.PerGameType); got != want {
+			t.Errorf("filter %+v: PerGameType %s, Compute's %s", f, got, want)
+		}
+	}
 }

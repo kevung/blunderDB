@@ -105,17 +105,24 @@ func (d *Database) reviewsByGameType(cutoff string) (map[string]int, error) {
 	return d.store.Anki().ReviewsByGameType(context.Background(), "", cutoff)
 }
 
-// statsByGameType runs the ordinary statistics over a date window and keeps
-// the per-plan breakdown. Running the SAME computation the Stats tab shows is
-// the point: a second PR, computed here, would be a second PR.
+// statsByGameType is the Stats tab's per-plan breakdown over a date window.
+// Running the SAME computation the Stats tab shows is the point: a second PR,
+// computed here, would be a second PR. Only that breakdown is computed; the
+// rest of the dashboard would be thrown away.
 func (d *Database) statsByGameType(from, to string) (map[string]GameTypeStats, error) {
-	stats, err := d.ComputeStats(StatsFilter{DateFrom: from, DateTo: to, DecisionType: -1})
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	if d.store == nil {
+		return nil, fmt.Errorf("study impact: %w", storage.ErrInternal)
+	}
+	rows, err := d.store.Stats().PerGameType(context.Background(), "",
+		toStorageStatsFilter(StatsFilter{DateFrom: from, DateTo: to, DecisionType: -1}))
 	if err != nil {
 		return nil, fmt.Errorf("study impact: %w", err)
 	}
-	out := make(map[string]GameTypeStats, len(stats.PerGameType))
-	for _, row := range stats.PerGameType {
-		out[row.GameType] = row
+	out := make(map[string]GameTypeStats, len(rows))
+	for _, row := range rows {
+		out[row.GameType] = GameTypeStats(row)
 	}
 	return out, nil
 }

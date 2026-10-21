@@ -430,69 +430,77 @@ func mwcFromCells(phase []phaseCell, cube []cubeCell, result *storage.StatsResul
 	units.fill(result)
 }
 
+// cellTally sums the cells of one key: error, decisions, blunders.
+type cellTally struct{ sumErr, n, blunders int64 }
+
+// foldCells folds the cells of one kind, grouped by key and match, into one
+// tally per key in key order, and the units of its intervals.
+func (s *StatsStore) foldCells(ctx context.Context, kind int, cols, where string, args []any, fn func(k1, k2 int, t cellTally, iv domain.Interval)) error {
+	d := s.DB
+	sums := d.Bigint(`SUM(c.error_mp)`) + `, ` + d.Bigint(`SUM(c.decisions)`) + `, ` + d.Bigint(`SUM(c.blunders)`)
+	type tally = cellTally
+	type key struct{ k1, k2 int64 }
+	var order []key
+	tallies := map[key]*tally{}
+	units := matchUnits[key]{}
+	err := scanEach(ctx, d, `SELECT `+cols+`, c.match_id, `+sums+cellsJoin+cellKind(where, kind)+
+		` GROUP BY `+cols+`, c.match_id ORDER BY `+cols+`, c.match_id`,
+		args, func(r Rows) error {
+			var k key
+			var match int64
+			var t tally
+			dest := []any{&k.k1}
+			if kind == cellScore {
+				dest = append(dest, &k.k2)
+			}
+			if err := r.Scan(append(dest, &match, &t.sumErr, &t.n, &t.blunders)...); err != nil {
+				return err
+			}
+			if kind == cellScore {
+				k = cellScoreKey(k)
+			}
+			cur := tallies[k]
+			if cur == nil {
+				cur = &tally{}
+				tallies[k] = cur
+				order = append(order, k)
+			}
+			cur.sumErr += t.sumErr
+			cur.n += t.n
+			cur.blunders += t.blunders
+			units.add(k, match, t.sumErr, t.n)
+			return nil
+		})
+	if err != nil {
+		return err
+	}
+	for _, k := range order {
+		// Grouped by the stored value, NULL (cellNull) apart from 0,
+		// and shown with NULL read as 0, as the direct pass's COALESCE
+		// does.
+		k1, k2 := int(k.k1), int(k.k2)
+		if kind == cellScore && k1 < 0 && k2 < 0 {
+			k1, k2 = moneyKey, moneyKey
+		} else {
+			if k1 == cellNull {
+				k1 = 0
+			}
+			if k2 == cellNull {
+				k2 = 0
+			}
+		}
+		fn(k1, k2, *tallies[k], units.interval(k))
+	}
+	return nil
+}
+
 // breakdownsFromCells is computePerPhase, computePerGameType and computePerScore,
 // and PRGlobal's interval (computePRInterval): every one sums its cells per
 // match, the unit of the intervals.
 func (s *StatsStore) breakdownsFromCells(ctx context.Context, phase []phaseCell, where string, args []any, result *storage.StatsResult) error {
-	d := s.DB
-	sums := d.Bigint(`SUM(c.error_mp)`) + `, ` + d.Bigint(`SUM(c.decisions)`) + `, ` + d.Bigint(`SUM(c.blunders)`)
-	type tally struct{ sumErr, n, blunders int64 }
-	type key struct{ k1, k2 int64 }
-	// read folds the cells of one kind, grouped by key and match, into one
-	// tally per key in key order, and the units of its intervals.
+	type tally = cellTally
 	read := func(kind int, cols string, fn func(k1, k2 int, t tally, iv domain.Interval)) error {
-		var order []key
-		tallies := map[key]*tally{}
-		units := matchUnits[key]{}
-		err := scanEach(ctx, d, `SELECT `+cols+`, c.match_id, `+sums+cellsJoin+cellKind(where, kind)+
-			` GROUP BY `+cols+`, c.match_id ORDER BY `+cols+`, c.match_id`,
-			args, func(r Rows) error {
-				var k key
-				var match int64
-				var t tally
-				dest := []any{&k.k1}
-				if kind == cellScore {
-					dest = append(dest, &k.k2)
-				}
-				if err := r.Scan(append(dest, &match, &t.sumErr, &t.n, &t.blunders)...); err != nil {
-					return err
-				}
-				if kind == cellScore {
-					k = cellScoreKey(k)
-				}
-				cur := tallies[k]
-				if cur == nil {
-					cur = &tally{}
-					tallies[k] = cur
-					order = append(order, k)
-				}
-				cur.sumErr += t.sumErr
-				cur.n += t.n
-				cur.blunders += t.blunders
-				units.add(k, match, t.sumErr, t.n)
-				return nil
-			})
-		if err != nil {
-			return err
-		}
-		for _, k := range order {
-			// Grouped by the stored value, NULL (cellNull) apart from 0,
-			// and shown with NULL read as 0, as the direct pass's COALESCE
-			// does.
-			k1, k2 := int(k.k1), int(k.k2)
-			if kind == cellScore && k1 < 0 && k2 < 0 {
-				k1, k2 = moneyKey, moneyKey
-			} else {
-				if k1 == cellNull {
-					k1 = 0
-				}
-				if k2 == cellNull {
-					k2 = 0
-				}
-			}
-			fn(k1, k2, *tallies[k], units.interval(k))
-		}
-		return nil
+		return s.foldCells(ctx, kind, cols, where, args, fn)
 	}
 	global := matchUnits[struct{}]{}
 	byPhase := map[int]*tally{}
@@ -521,13 +529,8 @@ func (s *StatsStore) breakdownsFromCells(ctx context.Context, phase []phaseCell,
 			NumDecisions: int(t.n), BlunderCount: int(t.blunders),
 		})
 	}
-	if err := read(cellGameType, "c.k1", func(k, _ int, t tally, iv domain.Interval) {
-		result.PerGameType = append(result.PerGameType, storage.GameTypeStats{
-			GameType: domain.GameType(k).String(), PR: pr(t.sumErr, int(t.n)), PRInterval: iv,
-			NumDecisions: int(t.n), BlunderCount: int(t.blunders),
-		})
-	}); err != nil {
-		return fmt.Errorf("per-game-type (cells): %w", err)
+	if err := s.gameTypeFromCells(ctx, where, args, result); err != nil {
+		return err
 	}
 	if err := read(cellScore, "c.k1, c.k2", func(k1, k2 int, t tally, iv domain.Interval) {
 		result.PerScore = append(result.PerScore, scoreCell(k1, k2, true, storage.ScoreCellStats{
@@ -541,6 +544,26 @@ func (s *StatsStore) breakdownsFromCells(ctx context.Context, phase []phaseCell,
 	// that one save for NULL scores, read as 0 and kept apart.
 	sortScoreCells(result.PerScore)
 	return nil
+}
+
+// gameTypeFromCells is computePerGameType over the cells.
+func (s *StatsStore) gameTypeFromCells(ctx context.Context, where string, args []any, result *storage.StatsResult) error {
+	if err := s.foldCells(ctx, cellGameType, "c.k1", where, args, func(k, _ int, t cellTally, iv domain.Interval) {
+		result.PerGameType = append(result.PerGameType, storage.GameTypeStats{
+			GameType: domain.GameType(k).String(), PR: pr(t.sumErr, int(t.n)), PRInterval: iv,
+			NumDecisions: int(t.n), BlunderCount: int(t.blunders),
+		})
+	}); err != nil {
+		return fmt.Errorf("per-game-type (cells): %w", err)
+	}
+	return nil
+}
+
+// perGameTypeFromCells is computeFromCells reduced to its per-plan
+// breakdown: the one read of the cells that breakdown takes, nothing else.
+func (s *StatsStore) perGameTypeFromCells(ctx context.Context, q statsQuery, result *storage.StatsResult) error {
+	where, args := s.cellsWhere(q.scope, q.filter)
+	return s.gameTypeFromCells(ctx, where, args, result)
 }
 
 // moneyKey is the pair of aways money is counted under, both columns.

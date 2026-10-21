@@ -28,6 +28,16 @@ func (s statsStore) Compute(ctx context.Context, scope string, filter storage.St
 	return r, nil
 }
 
+// PerGameType is composed over stats.compute: the daemon serves the whole
+// result, and a route of its own would only save the transfer.
+func (s statsStore) PerGameType(ctx context.Context, scope string, filter storage.StatsFilter) ([]storage.GameTypeStats, error) {
+	r, err := s.Compute(ctx, scope, filter)
+	if err != nil {
+		return nil, err
+	}
+	return r.PerGameType, nil
+}
+
 func (s statsStore) PositionIDsBySelection(ctx context.Context, scope string, filter storage.StatsFilter, sel storage.SelectionSpec) ([]int64, error) {
 	var r positionIDsResp
 	err := s.c.call(ctx, scope, "stats.positionIdsBySelection", struct {

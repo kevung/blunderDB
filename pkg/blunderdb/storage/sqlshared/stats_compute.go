@@ -39,6 +39,50 @@ type statsQuery struct {
 // Compute runs each statistics pass in turn and returns the assembled result.
 // The passes are in stats_compute.go, one per section; see the file header.
 func (s *StatsStore) Compute(ctx context.Context, scope string, filter storage.StatsFilter) (*storage.StatsResult, error) {
+	return s.run(ctx, scope, filter, (*StatsStore).computeFromCells, []statsPass{
+		(*StatsStore).computeTotals,
+		(*StatsStore).computePRInterval,
+		(*StatsStore).computePRByDecisionType,
+		(*StatsStore).computeSnowieGlobal,
+		(*StatsStore).computePerTournament,
+		(*StatsStore).computePerMatch,
+		(*StatsStore).computeCubeActionBreakdown,
+		(*StatsStore).computeCubeDirections,
+		(*StatsStore).computeErrorHistogram,
+		(*StatsStore).computeTopBlunders,
+		(*StatsStore).computeRollingPR,
+		(*StatsStore).computeMWCPass,
+		// The breakdowns, last: each reuses the same counted
+		// predicate and error column as the passes above, so none of them can
+		// disagree with the global figures they slice.
+		(*StatsStore).computePerPhase,
+		(*StatsStore).computePerGameType,
+		(*StatsStore).computePerScore,
+		(*StatsStore).computePerTag,
+	})
+}
+
+// PerGameType — see storage.StatsStore. It goes down Compute's road, cells
+// or direct passes, and runs only the per-plan breakdown at its end.
+func (s *StatsStore) PerGameType(ctx context.Context, scope string, filter storage.StatsFilter) ([]storage.GameTypeStats, error) {
+	r, err := s.run(ctx, scope, filter, (*StatsStore).perGameTypeFromCells, []statsPass{(*StatsStore).computePerGameType})
+	if err != nil {
+		return nil, err
+	}
+	return r.PerGameType, nil
+}
+
+// statsPass fills one part of the result from the decisions directly.
+type statsPass func(*StatsStore, context.Context, statsQuery, *storage.StatsResult) error
+
+// run settles once how a filter is answered — from match_stats and its cells,
+// or by the direct passes over the decisions — and answers it with fromCells
+// or with direct, in one read transaction. Compute and the readers of one of
+// its parts share it, so a part read alone cannot take another road than the
+// Stats tab and come back with another figure.
+func (s *StatsStore) run(ctx context.Context, scope string, filter storage.StatsFilter,
+	fromCells func(*StatsStore, context.Context, statsQuery, *storage.StatsResult) error, direct []statsPass,
+) (*storage.StatsResult, error) {
 	filter, err := s.withPlayerAliases(ctx, scope, filter)
 	if err != nil {
 		return nil, fmt.Errorf("Compute aliases: %w", err)
@@ -81,7 +125,7 @@ func (s *StatsStore) Compute(ctx context.Context, scope string, filter storage.S
 			}
 		}
 		if useTable {
-			return ts.computeFromCells(ctx, q, result)
+			return fromCells(ts, ctx, q, result)
 		}
 		if !readOnly {
 			join, err := ts.materializeSelection(ctx, scope, filter)
@@ -93,29 +137,9 @@ func (s *StatsStore) Compute(ctx context.Context, scope string, filter storage.S
 			ts = &StatsStore{DB: selectionExecer{tx}}
 		}
 
-		for _, pass := range []func(context.Context, statsQuery, *storage.StatsResult) error{
-			ts.computeTotals,
-			ts.computePRInterval,
-			ts.computePRByDecisionType,
-			ts.computeSnowieGlobal,
-			ts.computePerTournament,
-			ts.computePerMatch,
-			ts.computeCubeActionBreakdown,
-			ts.computeCubeDirections,
-			ts.computeErrorHistogram,
-			ts.computeTopBlunders,
-			ts.computeRollingPR,
-			ts.computeMWCPass,
-			// The breakdowns, last: each reuses the same counted
-			// predicate and error column as the passes above, so none of them can
-			// disagree with the global figures they slice.
-			ts.computePerPhase,
-			ts.computePerGameType,
-			ts.computePerScore,
-			ts.computePerTag,
-		} {
+		for _, pass := range direct {
 			start := time.Now()
-			if err := pass(ctx, q, result); err != nil {
+			if err := pass(ts, ctx, q, result); err != nil {
 				return err
 			}
 			// Which pass a slow Stats panel waits on, without a profiler.
