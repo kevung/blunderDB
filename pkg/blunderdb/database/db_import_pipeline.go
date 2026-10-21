@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
@@ -56,16 +57,17 @@ func (d *Database) ImportFiles(paths []string, opts ImportFilesOptions) ([]inges
 	batchID, sqlDB := d.importBatchID, d.db
 	journal := d.importJournal
 	batches := d.store.ImportBatches()
+	positions := d.store.Positions()
 	d.mu.RUnlock()
 
 	// An in-memory database has one connection: a dedicated bulk connection
 	// would leave none to anyone else.
 	if len(paths) >= bulkImportMinFiles && sqlDB.Stats().MaxOpenConnections != 1 {
-		var held bool
-		if err := sqlDB.QueryRowContext(ctx, `SELECT EXISTS(SELECT 1 FROM position)`).Scan(&held); err != nil {
+		held, err := positions.ListIDs(ctx, "", storage.ListOpts{Limit: 1})
+		if err != nil {
 			return nil, err
 		}
-		fresh := !held
+		fresh := len(held) == 0
 		sess, err := sqlite.BeginBulk(ctx, sqlDB, sqlite.BulkOptions{Unsafe: fresh, DropIndexes: fresh})
 		if err != nil {
 			return nil, err

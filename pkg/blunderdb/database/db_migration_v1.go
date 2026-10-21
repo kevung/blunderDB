@@ -9,7 +9,9 @@ package database
 
 import (
 	"context"
+	"crypto/sha256"
 	"database/sql"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"log/slog"
@@ -582,4 +584,69 @@ func (d *Database) migrate_1_9_0_to_2_0_0(ctx context.Context) error {
 	_, _ = d.db.Exec(`ANALYZE`)
 
 	return nil
+}
+
+// computeMatchHashFromStoredData computes a hash for existing matches in the database
+// This is used during migration when we don't have access to the original XG file
+func computeMatchHashFromStoredData(db *sql.DB, matchID int64, p1Name, p2Name string, matchLength int32) string {
+	var hashBuilder strings.Builder
+
+	// Include metadata (normalized)
+	p1 := strings.TrimSpace(strings.ToLower(p1Name))
+	p2 := strings.TrimSpace(strings.ToLower(p2Name))
+	hashBuilder.WriteString(fmt.Sprintf("meta:%s|%s|%d|", p1, p2, matchLength))
+
+	// Query all games for this match
+	gameRows, err := db.Query(`
+		SELECT id, game_number, initial_score_1, initial_score_2, winner, points_won 
+		FROM game WHERE match_id = ? ORDER BY game_number`, matchID)
+	if err != nil {
+		// Fallback to simple hash
+		hash := sha256.Sum256([]byte(hashBuilder.String()))
+		return hex.EncodeToString(hash[:])
+	}
+	defer gameRows.Close()
+
+	for gameRows.Next() {
+		var gameID int64
+		var gameNum, initScore1, initScore2, winner, pointsWon int32
+		if err := gameRows.Scan(&gameID, &gameNum, &initScore1, &initScore2, &winner, &pointsWon); err != nil {
+			continue
+		}
+
+		hashBuilder.WriteString(fmt.Sprintf("g%d:%d,%d,%d,%d|", gameNum, initScore1, initScore2, winner, pointsWon))
+
+		// Query all moves for this game. A query error skips the game (the
+		// hash degrades, as it always has); an iteration error gives up.
+		err := forEachRow(db, `
+			SELECT move_number, move_type, dice_1, dice_2, checker_move, cube_action 
+			FROM move WHERE game_id = ? ORDER BY move_number`, []any{gameID}, func(moveRows *sql.Rows) error {
+			var moveNum int32
+			var moveType string
+			var dice1, dice2 int32
+			var checkerMove, cubeAction sql.NullString
+			if err := moveRows.Scan(&moveNum, &moveType, &dice1, &dice2, &checkerMove, &cubeAction); err != nil {
+				return nil
+			}
+
+			hashBuilder.WriteString(fmt.Sprintf("m%d:%s,", moveNum, moveType))
+			if moveType == "checker" && checkerMove.Valid {
+				hashBuilder.WriteString(fmt.Sprintf("d%d%d,p%s|", dice1, dice2, checkerMove.String))
+			}
+			if moveType == "cube" && cubeAction.Valid {
+				hashBuilder.WriteString(fmt.Sprintf("c%s|", cubeAction.String))
+			}
+			return nil
+		})
+		if err != nil {
+			return ""
+		}
+	}
+	if err := gameRows.Err(); err != nil {
+		return ""
+	}
+
+	// Compute SHA256 hash
+	hash := sha256.Sum256([]byte(hashBuilder.String()))
+	return hex.EncodeToString(hash[:])
 }
