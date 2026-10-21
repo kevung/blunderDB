@@ -50,21 +50,27 @@ propre issue le jour où il est lancé.
   code non mappé (`ingest/xgmap.go`) passerait donc pour un vrai Double/Take/Pass et entrerait
   au dénominateur du PR. Aucune occurrence connue dans les corpus. Correctif si ça mord un
   jour : tester `engine.CanonicalCubeAction` plutôt que les graphies littérales.
-- **Wrapper `Database` vers le contrat `Storage`, tranches 3 à 6** (ADR-0100 ; tranches 1,
-  écritures de match, et 2, lectures de match, faites). Chaque tranche délègue un groupe sans
-  changer de comportement ; un écart se tranche d'abord, avec son test. La tranche 2 a tranché
-  ses écarts ainsi : le repli de `LastVisited` est la tête de `List` (sentinelle triée comme une
-  absence de date, égalité départagée par l'id, les deux backends) ; `GetPositionProvenance`
-  est `MatchesByPosition` puis `List` par ids, donc dans l'ordre de la liste (un match sans
-  date se range à sa date d'import, non plus en dernier) ; `GetMovesByGame` lit
-  `RecordedMoves`, les coups tels qu'enregistrés, sans jointure sur les analyses ni `ErrorMP`
-  (l'export CSV parcourt tous les coups et n'écrit pas ce coût).
-  (3) analyses : fusion de `saveAnalysisLocked`, coups joués de `LoadAnalysis`,
-  `DeleteAnalysis` — avec l'item des quatre copies des helpers de fusion. (4) lots gammonNet
-  (`positionIDsWithoutAnalysis[ForMatch]`, `db_gammonnet_compare.go`) et gardes d'import
-  (`CheckMatchExists`, `computeMatchHashFromStoredData`). (5) `db_import_db.go`. (6) `store`
-  typé `storage.Storage`, `FilePath`/`Vacuum`/`VacuumInto`/vérification derrière une interface
-  de fichier local : prérequis de `storage/remote` au bureau et des bibliothèques multiples.
+- **Wrapper `Database` vers le contrat `Storage`, tranches 4 à 6** (ADR-0100 ; tranches 1,
+  écritures de match, 2, lectures de match, et 3, analyses, faites). Chaque tranche délègue un
+  groupe sans changer de comportement ; un écart se tranche d'abord, avec son test. La tranche 2
+  a tranché ses écarts ainsi : le repli de `LastVisited` est la tête de `List` (sentinelle triée
+  comme une absence de date, égalité départagée par l'id, les deux backends) ;
+  `GetPositionProvenance` est `MatchesByPosition` puis `List` par ids, donc dans l'ordre de la
+  liste (un match sans date se range à sa date d'import, non plus en dernier) ; `GetMovesByGame`
+  lit `RecordedMoves`, les coups tels qu'enregistrés, sans jointure sur les analyses ni
+  `ErrorMP` (l'export CSV parcourt tous les coups et n'écrit pas ce coût). La tranche 3 :
+  `DeleteAnalysis` est `Analyses().Delete`, qui déscore les coups joués (le wrapper laissait
+  `decision_error_mp` d'une analyse disparue) ; une égalité d'équité entre coups candidats se
+  départage par moteur puis par notation partout. Restent deux écarts de parité de l'analyse,
+  côté démon : `/v1/analyses.save` remplace (`Save`) quand `SaveAnalysis` fusionne, et
+  `/v1/analyses.load` ne joint pas les coups joués de la table `move` que `LoadAnalysis`
+  ajoute ; et la fusion du videau d'`ingest.mergeAnalysis` garde sa règle propre (une entrée
+  par moteur sans remplacer celle du même moteur).
+  (4) lots gammonNet (`positionIDsWithoutAnalysis[ForMatch]`, `db_gammonnet_compare.go`) et
+  gardes d'import (`CheckMatchExists`, `computeMatchHashFromStoredData`). (5)
+  `db_import_db.go`. (6) `store` typé `storage.Storage`, `FilePath`/`Vacuum`/`VacuumInto`/
+  vérification derrière une interface de fichier local : prérequis de `storage/remote` au
+  bureau et des bibliothèques multiples.
 - **`SwapPlayers`/`DeleteCascade` dupliqués** entre `storage/sqlite/matches_sqlite.go` et
   `storage/postgres/matches_postgres.go` ; les partager par des closures SQL dialectales dans
   `sqlshared`.
@@ -90,14 +96,6 @@ propre issue le jour où il est lancé.
   `RescorePositionMoves`, aucune requête ne la lit. Pour que `E` s'y appuie (SQL exact, sans
   phase Go), il faut une tenue à jour à chaque écriture d'analyse ou de coup et un moyen de
   distinguer « pas noté » de « non notable » (NULL ambigu).
-- **Quatre copies des helpers de fusion d'analyse** : la fusion des coups (clé par notation, la
-  profondeur la plus grande gagne, tri par équité), celle du videau et l'union des coups joués
-  existent dans `database/db_import_common.go` et `database/db_analysis.go`, `ingest/merge.go`
-  et `engine/gammonnet/supersede.go` (`enginePriority`, `mergeCheckerMoves`,
-  `mergeCubeAnalyses`). Elles divergent : `ingest` départage une égalité d'équité par la
-  notation (ordre total), les autres non (ordre de map). À faire : une seule implémentation (au
-  niveau `engine`, qui a `NormalizeMove`) appelée par les quatre, avec la règle de départage
-  d'`ingest`.
 - **PostgreSQL, écriture par tenant** : `positions_postgres.go` enveloppe la `pgconn.PgError`
   dans `ErrConflict` (texte du pilote vers le client, sans oracle) ; `Tournaments().AddMatch`
   avec un match étranger ou absent réussit en silence (UPDATE 0 ligne) ; `Analyses.Save` en
