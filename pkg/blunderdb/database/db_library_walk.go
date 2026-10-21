@@ -69,26 +69,31 @@ func (d *Database) EachPositionAnalysis(fn func(pos *Position, a *PositionAnalys
 	}
 	pages := make(chan page, 1)
 	fetch := func(offset int) {
-		positions, analyses, err := d.positionAnalysisPage(offset)
+		positions, analyses, err := readWalkPage(d, offset)
 		pages <- page{positions, analyses, err}
 	}
+	// The read in flight must not touch the database once the caller has it
+	// back, whether fn returned an error or panicked.
+	inFlight := true
+	defer func() {
+		if inFlight {
+			<-pages
+		}
+	}()
 	go fetch(0)
 	for offset := 0; ; offset += positionWalkPage {
 		p := <-pages
+		inFlight = false
 		if p.err != nil {
 			return p.err
 		}
 		last := len(p.positions) < positionWalkPage
 		if !last {
+			inFlight = true
 			go fetch(offset + positionWalkPage)
 		}
 		for i := range p.positions {
 			if err := fn(&p.positions[i], p.analyses[p.positions[i].ID]); err != nil {
-				if !last {
-					// The read in flight must not touch the database once
-					// the caller has it back.
-					<-pages
-				}
 				return err
 			}
 		}
@@ -97,6 +102,10 @@ func (d *Database) EachPositionAnalysis(fn func(pos *Position, a *PositionAnalys
 		}
 	}
 }
+
+// readWalkPage reads one page of EachPositionAnalysis; a variable so that a
+// test sees when a read starts and ends.
+var readWalkPage = (*Database).positionAnalysisPage
 
 // positionAnalysisPage reads the page of EachPositionAnalysis at offset.
 func (d *Database) positionAnalysisPage(offset int) ([]Position, map[int64]*PositionAnalysis, error) {

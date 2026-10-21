@@ -195,7 +195,8 @@ calcul des colonnes par l'appelant (~3,7 s, dont `PlayedCandidate` 1,5 s et
 
 Remède livré (`database/db_library_walk.go`, sortie inchangée, md5 identiques ordre
 compris) : la page suivante est lue pendant que l'appelant consomme la courante (deux pages
-au plus en mémoire), les coups joués d'une page sont lus pendant que ses analyses décodent,
+au plus en mémoire : maxrss 300 → 426 Mo, +42 %, sur les deux exports, coût de la seconde
+page de 2 000 positions), les coups joués d'une page sont lus pendant que ses analyses décodent,
 et la tranche des positions est allouée à sa taille (630 Mo d'allocations en moins).
 Médiane de 3, alternées, machine chargée (load 7–11) :
 
