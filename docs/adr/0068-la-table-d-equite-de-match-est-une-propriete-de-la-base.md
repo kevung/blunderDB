@@ -40,6 +40,12 @@ nombre dise avec quelle table il a été calculé.
    analyse en money n'est jamais différente : la MET n'y intervient pas (ADR-0016, règle 3).
    Changer la table courante ne réécrit aucune analyse (ADR-0013) ; il change seulement ce
    que les comparaisons retiennent.
+   **Exception : les badges de tournoi.** Ils agrègent le PR et le MWC7 du joueur de
+   référence sur les matchs du tournoi sans filtre MET. Un tournoi est un ensemble clos de
+   matchs du joueur, en pratique analysés sous la même table ; filtrer ferait perdre son
+   badge, ou le rendrait partiel, à un ancien tournoi analysé sous une autre table, ce qui
+   coûte plus qu'un biais de quelques centièmes de PR. Les badges de match, lus sur un seul
+   match pour lui-même, restent hors de cette règle comme de la comparaison.
 5. **Une table voyage avec les analyses qui la citent.** Un export qui emporte une analyse
    d'empreinte non nulle emporte la ligne `match_equity_table` correspondante, sans son
    drapeau courant : à l'import, les tables sont fusionnées par empreinte et arrivent non
