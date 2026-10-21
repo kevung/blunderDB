@@ -35,6 +35,7 @@ var tenantIsolationCases = []tenantIsolationCase{
 	{"TranscriptionRevision", checkTranscriptionRevisionIsolation},
 	{"Duel", checkDuelIsolation},
 	{"Analysis", checkAnalysisIsolation},
+	{"AnalysisGapsInMatch", checkAnalysisGapsInMatchIsolation},
 	{"Collection", checkCollectionIsolation},
 	{"LivingCollection", checkLivingCollectionIsolation},
 	{"Tournament", checkTournamentIsolation},
@@ -207,6 +208,38 @@ func checkAnalysisIsolation(t *testing.T, ctx context.Context, s storage.Storage
 	// proves b cannot read a's analysis by a's id.
 	if _, err := s.Analyses().Load(ctx, b, idA); !errors.Is(err, storage.ErrNotFound) {
 		t.Errorf("Load(%s, id from %s): got %v, want ErrNotFound", b, a, err)
+	}
+}
+
+// checkAnalysisGapsInMatchIsolation: a's match, asked for by its id under b,
+// has no gap — the join reaches a's moves and positions only under a.
+func checkAnalysisGapsInMatchIsolation(t *testing.T, ctx context.Context, s storage.Storage, a, b string) {
+	p := checkerPos()
+	posID, err := s.Positions().Save(ctx, a, &p)
+	if err != nil {
+		t.Fatalf("Save position(%s): %v", a, err)
+	}
+	m := domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: 5}
+	matchID, err := s.Matches().Save(ctx, a, &m)
+	if err != nil {
+		t.Fatalf("Save match(%s): %v", a, err)
+	}
+	g := domain.Game{MatchID: matchID, GameNumber: 1}
+	gameID, err := s.Matches().CreateGame(ctx, a, &g)
+	if err != nil {
+		t.Fatalf("CreateGame(%s): %v", a, err)
+	}
+	mv := domain.Move{GameID: gameID, MoveNumber: 1, MoveType: "checker", PositionID: posID,
+		Dice: [2]int32{3, 1}, CheckerMove: "8/5 6/5"}
+	if _, err := s.Matches().CreateMove(ctx, a, &mv); err != nil {
+		t.Fatalf("CreateMove(%s): %v", a, err)
+	}
+
+	if ids, err := s.Analyses().WithoutAnalysisIDsInMatch(ctx, a, matchID); err != nil || len(ids) != 1 || ids[0] != posID {
+		t.Fatalf("WithoutAnalysisIDsInMatch(%s, own match): %v, %v; want [%d]", a, ids, err, posID)
+	}
+	if ids, err := s.Analyses().WithoutAnalysisIDsInMatch(ctx, b, matchID); err != nil || len(ids) != 0 {
+		t.Errorf("WithoutAnalysisIDsInMatch(%s, match from %s): %v, %v; want none", b, a, ids, err)
 	}
 }
 

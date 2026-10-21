@@ -18,24 +18,22 @@ import (
 // somebody else wrote — the only ones a comparison has anything to compare
 // against. A position analysed solely by gammonNet would be compared with
 // itself.
+//
+// Every analysis is decoded: its analysis_engine column names one entry, not
+// all of them, so a row the column calls gammonNet's may still carry another
+// engine's. The store logs and leaves out a payload it cannot decode.
 func (d *Database) positionIDsWithForeignAnalysis() ([]int64, error) {
 	d.mu.RLock()
-	ids, err := queryInt64s(d.db, `SELECT position_id FROM analysis ORDER BY position_id`)
+	analyses := d.store.Analyses()
 	d.mu.RUnlock()
-	if err != nil {
-		return nil, err
-	}
 	var foreign []int64
-	for _, id := range ids {
-		a, err := d.LoadAnalysis(id)
+	for rec, err := range analyses.WithEngine(context.Background(), "", "") {
 		if err != nil {
-			slog.Warn("gammonnet comparison: loading stored analysis failed, position left out", "position_id", id, "error", err)
-			continue
+			return nil, err
 		}
-		if a == nil || gammonnet.IsOurAnalysis(a) {
-			continue
+		if !gammonnet.IsOurAnalysis(rec.Analysis) {
+			foreign = append(foreign, rec.PositionID)
 		}
-		foreign = append(foreign, id)
 	}
 	return foreign, nil
 }

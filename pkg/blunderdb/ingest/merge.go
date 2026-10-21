@@ -15,13 +15,6 @@ import (
 // mergeAnalysis(nil, incoming) is the insert-path normalisation. The XG parity
 // test holds it byte-faithful.
 
-// The merge helpers are engine's, shared with the wrapper's SaveAnalysis and
-// gammonNet's verdicts; an import ranks the deeper analysis first.
-var (
-	sortCubeAnalysesByEngine = engine.SortCubeAnalysesByEngine
-	mergePlayedMoves         = engine.UnionPlayed
-)
-
 // mergeCheckerMoves merges two sets of checker moves keyed by move string,
 // preferring the higher-depth analysis on conflict, then ranks them deeper
 // analysis first (engine.RankCheckerMovesDepthFirst).
@@ -81,7 +74,7 @@ func mergeAnalysis(existing *domain.PositionAnalysis, incoming domain.PositionAn
 				if !hasIncoming {
 					allCube = append(allCube, *a.DoublingCubeAnalysis)
 				}
-				sortCubeAnalysesByEngine(allCube)
+				engine.SortCubeAnalysesByEngine(allCube)
 				a.AllCubeAnalyses = allCube
 			} else {
 				if len(existing.AllCubeAnalyses) > 0 {
@@ -102,7 +95,7 @@ func mergeAnalysis(existing *domain.PositionAnalysis, incoming domain.PositionAn
 		if a.PlayedMove != "" && len(incomingPlayedMoves) == 0 {
 			incomingPlayedMoves = []string{a.PlayedMove}
 		}
-		a.PlayedMoves = mergePlayedMoves(existingPlayedMoves, incomingPlayedMoves)
+		a.PlayedMoves = engine.UnionPlayed(existingPlayedMoves, incomingPlayedMoves)
 
 		// Merge played cube actions.
 		existingCubeActions := existing.PlayedCubeActions
@@ -113,7 +106,7 @@ func mergeAnalysis(existing *domain.PositionAnalysis, incoming domain.PositionAn
 		if a.PlayedCubeAction != "" && len(incomingCubeActions) == 0 {
 			incomingCubeActions = []string{a.PlayedCubeAction}
 		}
-		a.PlayedCubeActions = mergePlayedMoves(existingCubeActions, incomingCubeActions)
+		a.PlayedCubeActions = engine.UnionPlayed(existingCubeActions, incomingCubeActions)
 
 		// Rollouts are their own analyses: a caller that does not know them
 		// (an import, the frontend saving what it edited) must not drop them.
@@ -229,7 +222,7 @@ func deepenAnalysis(existing *domain.PositionAnalysis, incoming domain.PositionA
 				changed = true
 			}
 			if changed {
-				sortCubeAnalysesByEngine(all)
+				engine.SortCubeAnalysesByEngine(all)
 				a.AllCubeAnalyses = all
 			}
 		}

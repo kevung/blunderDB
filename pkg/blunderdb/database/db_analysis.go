@@ -124,15 +124,15 @@ func mergeSavedAnalysis(existing *PositionAnalysis, analysis PositionAnalysis) P
 	// Every engine's cube analysis is kept (ADR-0013). DoublingCubeAnalysis
 	// stays the PRIMARY one the scalar columns read; AllCubeAnalyses carries
 	// the whole set.
-	analysis.DoublingCubeAnalysis, analysis.AllCubeAnalyses = mergeCubeAnalyses(
+	analysis.DoublingCubeAnalysis, analysis.AllCubeAnalyses = engine.MergeCubeAnalyses(
 		existing.DoublingCubeAnalysis, existing.AllCubeAnalyses,
 		analysis.DoublingCubeAnalysis, analysis.AllCubeAnalyses)
 
 	// The old single fields still count as a play when the array is empty.
-	analysis.PlayedMoves = mergePlayedMoves(
+	analysis.PlayedMoves = engine.UnionPlayed(
 		playedOrSingle(existing.PlayedMoves, existing.PlayedMove),
 		playedOrSingle(analysis.PlayedMoves, analysis.PlayedMove))
-	analysis.PlayedCubeActions = mergePlayedMoves(
+	analysis.PlayedCubeActions = engine.UnionPlayed(
 		playedOrSingle(existing.PlayedCubeActions, existing.PlayedCubeAction),
 		playedOrSingle(analysis.PlayedCubeActions, analysis.PlayedCubeAction))
 	analysis.PlayedMove = ""
@@ -204,7 +204,7 @@ func (d *Database) LoadAnalysis(positionID int64) (*PositionAnalysis, error) {
 
 	// Sort AllCubeAnalyses so XG comes first (for existing data in DB)
 	if len(analysis.AllCubeAnalyses) > 0 {
-		sortCubeAnalysesByEngine(analysis.AllCubeAnalyses)
+		engine.SortCubeAnalysesByEngine(analysis.AllCubeAnalyses)
 	}
 
 	return &analysis, nil
@@ -217,15 +217,15 @@ func (d *Database) LoadAnalysis(positionID int64) (*PositionAnalysis, error) {
 func mergePlayedActions(analysis *PositionAnalysis, checkerMoves, cubeActions []string) {
 	existingMoves := make(map[string]bool)
 	for _, m := range analysis.PlayedMoves {
-		existingMoves[normalizeMove(m)] = true
+		existingMoves[engine.NormalizeMove(m)] = true
 	}
 	// Backward compatibility: include old single PlayedMove field
 	if analysis.PlayedMove != "" {
-		existingMoves[normalizeMove(analysis.PlayedMove)] = true
+		existingMoves[engine.NormalizeMove(analysis.PlayedMove)] = true
 	}
 	for _, m := range checkerMoves {
 		if m != "" {
-			existingMoves[normalizeMove(m)] = true
+			existingMoves[engine.NormalizeMove(m)] = true
 		}
 	}
 	analysis.PlayedMoves = make([]string, 0, len(existingMoves))

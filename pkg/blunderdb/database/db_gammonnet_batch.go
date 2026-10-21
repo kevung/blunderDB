@@ -24,10 +24,7 @@ import (
 func (d *Database) CountPositionsWithoutAnalysis() (int, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
-
-	var n int
-	err := d.db.QueryRow(`SELECT COUNT(*) FROM position p WHERE NOT EXISTS (SELECT 1 FROM analysis a WHERE a.position_id = p.id)`).Scan(&n)
-	return n, err
+	return d.store.Analyses().CountWithoutAnalysis(context.Background(), "")
 }
 
 // positionIDsWithoutAnalysis snapshots the ids to process — a snapshot, not a
@@ -36,22 +33,7 @@ func (d *Database) CountPositionsWithoutAnalysis() (int, error) {
 func (d *Database) positionIDsWithoutAnalysis() ([]int64, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
-
-	rows, err := d.db.Query(`SELECT p.id FROM position p WHERE NOT EXISTS (SELECT 1 FROM analysis a WHERE a.position_id = p.id) ORDER BY p.id`)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	var ids []int64
-	for rows.Next() {
-		var id int64
-		if err := rows.Scan(&id); err != nil {
-			return nil, err
-		}
-		ids = append(ids, id)
-	}
-	return ids, rows.Err()
+	return d.store.Analyses().WithoutAnalysisIDs(context.Background(), "")
 }
 
 // AnalyzeMissingWithGammonNet writes a gammonNet analysis for every position
@@ -366,28 +348,14 @@ func evaluateOnePositionWithGammonNet(pos *Position, id int64, searcher *gammonn
 }
 
 // positionIDsWithoutAnalysisForMatch is positionIDsWithoutAnalysis narrowed
-// to the positions one match actually walks through — the same "no analysis
-// row at all" predicate, reached through the move -> game -> match chain a
-// Position is never linked to a Match by any other way (a Position row knows
-// nothing of the match it came from; the `move` row is the link).
-//
-// DISTINCT is load-bearing: positions are deduplicated by Zobrist hash, so
-// several moves of one match can reach the same Position, which would
-// otherwise be analysed several times. A Position shared with another match is
-// analysed all the same — by the gap rule (ADR-0013) it gets the write a full
-// sweep would give.
+// to the positions one match walks through, each once
+// (storage.AnalysisStore.WithoutAnalysisIDsInMatch). A Position shared with
+// another match is analysed all the same — by the gap rule (ADR-0013) it gets
+// the write a full sweep would give.
 func (d *Database) positionIDsWithoutAnalysisForMatch(matchID int64) ([]int64, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
-
-	return queryInt64s(d.db, `
-		SELECT DISTINCT p.id
-		  FROM position p
-		  JOIN move mv ON mv.position_id = p.id
-		  JOIN game g ON mv.game_id = g.id
-		 WHERE g.match_id = ?
-		   AND NOT EXISTS (SELECT 1 FROM analysis a WHERE a.position_id = p.id)
-		 ORDER BY p.id`, matchID)
+	return d.store.Analyses().WithoutAnalysisIDsInMatch(context.Background(), "", matchID)
 }
 
 // CountMatchPositionsToAnalyze is how many of this match's positions have no

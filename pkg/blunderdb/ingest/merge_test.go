@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 )
 
 // The merge/dedup/sort logic is unexported, so it is tested here. Position-level
@@ -102,34 +103,34 @@ func moveNames(moves []domain.CheckerMove) []string {
 	return names
 }
 
-// --- mergePlayedMoves ---------------------------------------------------
+// --- engine.UnionPlayed ---------------------------------------------------
 
 func TestMergePlayedMovesUnionsAndNormalizesOrder(t *testing.T) {
 	existing := []string{"5/2 5/4"}
 	incoming := []string{"5/4 5/2", "24/18"} // "5/4 5/2" normalizes the same as "5/2 5/4"
 
-	got := mergePlayedMoves(existing, incoming)
+	got := engine.UnionPlayed(existing, incoming)
 
 	want := []string{"24/18", "5/2 5/4"} // sort.Strings order
 	if len(got) != len(want) {
-		t.Fatalf("mergePlayedMoves(%v, %v) = %v, want %v", existing, incoming, got, want)
+		t.Fatalf("engine.UnionPlayed(%v, %v) = %v, want %v", existing, incoming, got, want)
 	}
 	for i := range want {
 		if got[i] != want[i] {
-			t.Errorf("mergePlayedMoves()[%d] = %q, want %q (full: %v)", i, got[i], want[i], got)
+			t.Errorf("engine.UnionPlayed()[%d] = %q, want %q (full: %v)", i, got[i], want[i], got)
 		}
 	}
 }
 
 func TestMergePlayedMovesDropsEmptyEntries(t *testing.T) {
-	got := mergePlayedMoves([]string{"", "13/7"}, []string{""})
+	got := engine.UnionPlayed([]string{"", "13/7"}, []string{""})
 	if len(got) != 1 || got[0] != "13/7" {
-		t.Errorf("mergePlayedMoves should drop empty strings: got %v", got)
+		t.Errorf("engine.UnionPlayed should drop empty strings: got %v", got)
 	}
 }
 
 func TestMergePlayedMovesNoDuplicatesAcrossExistingAndIncoming(t *testing.T) {
-	got := mergePlayedMoves([]string{"13/7"}, []string{"13/7"})
+	got := engine.UnionPlayed([]string{"13/7"}, []string{"13/7"})
 	if len(got) != 1 {
 		t.Errorf("the same move on both sides should collapse to one entry, got %v", got)
 	}

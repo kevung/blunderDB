@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -152,7 +153,7 @@ func (d *Database) positionAnalysisPage(offset int) ([]Position, map[int64]*Posi
 		}
 		mergePlayedActions(a, checkerMoves, cubeActions)
 		if len(a.AllCubeAnalyses) > 0 {
-			sortCubeAnalysesByEngine(a.AllCubeAnalyses)
+			engine.SortCubeAnalysesByEngine(a.AllCubeAnalyses)
 		}
 	}
 	return positions, analyses, nil

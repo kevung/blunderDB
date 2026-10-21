@@ -461,7 +461,7 @@ func (d *Database) getPlayer1MovesForPosition(positionID int64) ([]string, []str
 			continue
 		}
 		if cm.Valid && cm.String != "" {
-			checkerMoves[normalizeMove(cm.String)] = true
+			checkerMoves[engine.NormalizeMove(cm.String)] = true
 		}
 		if ca.Valid && ca.String != "" {
 			cubeActions[ca.String] = true
@@ -520,7 +520,7 @@ func MatchesMoveErrorFilter(p *Position, filter string, d *Database) bool {
 		// Find the played move in the analysis moves and get its error
 		for _, played := range playedMoves {
 			for i, m := range analysis.CheckerAnalysis.Moves {
-				if strings.EqualFold(normalizeMove(m.Move), normalizeMove(played)) {
+				if strings.EqualFold(engine.NormalizeMove(m.Move), engine.NormalizeMove(played)) {
 					if i == 0 {
 						moveError = 0
 					} else if m.EquityError != nil {

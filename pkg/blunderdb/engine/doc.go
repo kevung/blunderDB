@@ -4,9 +4,10 @@
 // back).
 //
 // It is deliberately a flat package of independent files rather than a
-// layered one: the codecs read the derived quantities they store, quiz.go and
-// explain.go compare moves through the codec's NormalizeMove, met.go reads
-// met_table.go, and nothing else here calls anything else here.
+// layered one: the codecs read the derived quantities they store, quiz.go,
+// explain.go and analysismerge.go's UnionPlayed compare moves through the
+// codec's NormalizeMove, met.go reads met_table.go, and nothing else here
+// calls anything else here.
 //
 //	zobrist.go       the position identity — one 64-bit key per position,
 //	                 per tenant, the key SavePosition dedups on (ADR-0001).
@@ -41,6 +42,10 @@
 //	                 reading of a cube label (CanonicalCubeAction).
 //	analysisbin.go   the binary payload inside that blob (ADR-0070): every
 //	                 field of a PositionAnalysis, floats bit for bit.
+//	analysismerge.go merging two analyses of one position: candidate moves
+//	                 keyed by notation, cube verdicts ranked by engine, played
+//	                 moves unioned — the one copy the wrapper's SaveAnalysis,
+//	                 ingest and gammonNet's verdicts share.
 //	gamephase.go     ClassifyGamePhase and ClassifyGameType: labels derived
 //	gametype.go      from the board alone, stored in indexed columns.
 //	movenotation.go  comparing one move written by two engines.

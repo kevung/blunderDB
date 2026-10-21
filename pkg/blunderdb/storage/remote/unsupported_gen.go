@@ -20,6 +20,7 @@ var Unsupported = []string{
 	"AnalysisStore.WithEngine",
 	"AnalysisStore.WithoutAnalysis",
 	"AnalysisStore.WithoutAnalysisIDs",
+	"AnalysisStore.WithoutAnalysisIDsInMatch",
 	"AnkiStore.DeckCards",
 	"AnkiStore.RandomCard",
 	"AnkiStore.Sync",
@@ -158,6 +159,10 @@ func (analysisStore) WithoutAnalysis(_ context.Context, _ string, _ storage.List
 
 func (analysisStore) WithoutAnalysisIDs(_ context.Context, _ string) (r0 []int64, err error) {
 	return r0, unsupported("AnalysisStore.WithoutAnalysisIDs")
+}
+
+func (analysisStore) WithoutAnalysisIDsInMatch(_ context.Context, _ string, _ int64) (r0 []int64, err error) {
+	return r0, unsupported("AnalysisStore.WithoutAnalysisIDsInMatch")
 }
 
 func (ankiStore) DeckCards(_ context.Context, _ string, _ int64) iter.Seq2[*domain.AnkiCard, error] {

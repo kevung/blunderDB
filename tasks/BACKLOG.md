@@ -50,8 +50,9 @@ propre issue le jour où il est lancé.
   code non mappé (`ingest/xgmap.go`) passerait donc pour un vrai Double/Take/Pass et entrerait
   au dénominateur du PR. Aucune occurrence connue dans les corpus. Correctif si ça mord un
   jour : tester `engine.CanonicalCubeAction` plutôt que les graphies littérales.
-- **Wrapper `Database` vers le contrat `Storage`, tranches 4 à 6** (ADR-0100 ; tranches 1,
-  écritures de match, 2, lectures de match, et 3, analyses, faites). Chaque tranche délègue un
+- **Wrapper `Database` vers le contrat `Storage`, tranches 5 et 6** (ADR-0100 ; tranches 1,
+  écritures de match, 2, lectures de match, 3, analyses, et 4, lots gammonNet et gardes
+  d'import, faites). Chaque tranche délègue un
   groupe sans changer de comportement ; un écart se tranche d'abord, avec son test. La tranche 2
   a tranché ses écarts ainsi : le repli de `LastVisited` est la tête de `List` (sentinelle triée
   comme une absence de date, égalité départagée par l'id, les deux backends) ;
@@ -68,8 +69,13 @@ propre issue le jour où il est lancé.
   `/v1/analyses.load` ne joint pas les coups joués de la table `move` que `LoadAnalysis`
   ajoute ; et la fusion du videau d'`ingest.mergeAnalysis` garde sa règle propre (une entrée
   par moteur sans remplacer celle du même moteur).
-  (4) lots gammonNet (`positionIDsWithoutAnalysis[ForMatch]`, `db_gammonnet_compare.go`) et
-  gardes d'import (`CheckMatchExists`, `computeMatchHashFromStoredData`). (5)
+  La tranche 4 : le contrat gagne `WithoutAnalysisIDsInMatch` (isolée par tenant), et
+  `WithEngine` au préfixe vide (toutes les analyses) est épinglé par un cas de contrat ; deux
+  écarts tranchés. `CheckMatchExists("")` rend 0, comme `/v1/matches.findByHash` : un hash vide
+  n'identifie rien, alors que le wrapper trouvait un match stocké avec `match_hash = ''`
+  (bibliothèque exportée, migration v1) ; aucun appelant hors liaison Wails. La comparaison
+  gammonNet interrompt son balayage sur une erreur de lecture de la base, là où elle sautait la
+  position avec un avertissement ; une analyse indécodable reste journalisée et sautée. (5)
   `db_import_db.go`. (6) `store` typé `storage.Storage`, `FilePath`/`Vacuum`/`VacuumInto`/
   vérification derrière une interface de fichier local : prérequis de `storage/remote` au
   bureau et des bibliothèques multiples.

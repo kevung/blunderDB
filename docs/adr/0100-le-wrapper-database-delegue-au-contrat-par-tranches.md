@@ -48,7 +48,12 @@ Le champ `Database.store` est typé `*sqlite.Storage`, pas `storage.Storage` : s
    3. analyses, avec l'unification des helpers de fusion (faite) — `DeleteAnalysis` est
       `Analyses().Delete`, qui déscore aussi les coups joués ; la fusion lit par `Load` et
       écrit par `Save`, ses helpers sont `engine/analysismerge.go` ;
-   4. lots gammonNet et gardes d'import ;
+   4. lots gammonNet et gardes d'import (faite) — les trous d'analyse sont
+      `CountWithoutAnalysis`, `WithoutAnalysisIDs` et `WithoutAnalysisIDsInMatch` (ajoutée au
+      contrat), la comparaison lit `WithEngine` au préfixe vide, `CheckMatchExists` est
+      `FindByHash` sur `match_hash` seul, et la garde de session en bloc d'`ImportFiles` lit
+      `Positions().ListIDs` borné à un ; `computeMatchHashFromStoredData`, qui ne sert qu'à la
+      migration v1, rejoint `db_migration_v1.go` (schéma et migrations hors inventaire) ;
    5. import d'une autre base (`db_import_db.go`), une fois stabilisés l'export et les
       commentaires signés ;
    6. typage de `store` par le contrat et interface de fichier local.
