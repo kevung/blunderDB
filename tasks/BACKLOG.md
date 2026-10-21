@@ -69,8 +69,13 @@ propre issue le jour où il est lancé.
   `/v1/analyses.load` ne joint pas les coups joués de la table `move` que `LoadAnalysis`
   ajoute ; et la fusion du videau d'`ingest.mergeAnalysis` garde sa règle propre (une entrée
   par moteur sans remplacer celle du même moteur).
-  La tranche 4 n'a tranché aucun écart : le contrat gagne `WithoutAnalysisIDsInMatch`, et
-  `WithEngine` au préfixe vide (toutes les analyses) est épinglé par un cas de contrat. (5)
+  La tranche 4 : le contrat gagne `WithoutAnalysisIDsInMatch` (isolée par tenant), et
+  `WithEngine` au préfixe vide (toutes les analyses) est épinglé par un cas de contrat ; deux
+  écarts tranchés. `CheckMatchExists("")` rend 0, comme `/v1/matches.findByHash` : un hash vide
+  n'identifie rien, alors que le wrapper trouvait un match stocké avec `match_hash = ''`
+  (bibliothèque exportée, migration v1) ; aucun appelant hors liaison Wails. La comparaison
+  gammonNet interrompt son balayage sur une erreur de lecture de la base, là où elle sautait la
+  position avec un avertissement ; une analyse indécodable reste journalisée et sautée. (5)
   `db_import_db.go`. (6) `store` typé `storage.Storage`, `FilePath`/`Vacuum`/`VacuumInto`/
   vérification derrière une interface de fichier local : prérequis de `storage/remote` au
   bureau et des bibliothèques multiples.
