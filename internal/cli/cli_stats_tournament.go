@@ -17,7 +17,8 @@ func (cli *CLI) runStatsTournament(args []string) error {
 	fs := flag.NewFlagSet("stats tournament", flag.ContinueOnError)
 	dbPath := fs.String("db", "", "Path to the database file (required)")
 	id := fs.Int64("id", 0, "Tournament ID (required; `list --type tournaments` lists them)")
-	player := fs.String("player", "", "Player to review (default: the one in the most matches of the tournament)")
+	var players moveList
+	fs.Var(&players, "player", "Player to review (repeatable; default: the one in the most matches of the tournament)")
 	format := fs.String("format", "text", "Output format: text or json")
 	fs.Usage = func() {
 		fmt.Println("Usage: blunderdb stats tournament --db <file> --id <n> [options]")
@@ -36,7 +37,7 @@ func (cli *CLI) runStatsTournament(args []string) error {
 		fmt.Println()
 		fmt.Println("Examples:")
 		fmt.Println("  blunderdb stats tournament --db database.db --id 3")
-		fmt.Println("  blunderdb stats tournament --db database.db --id 3 --player \"Alice\" --format json")
+		fmt.Println("  blunderdb stats tournament --db database.db --id 3 --player \"Alice\" --player \"Bob\" --format json")
 	}
 	if err := fs.Parse(args); err != nil {
 		return err
@@ -48,14 +49,23 @@ func (cli *CLI) runStatsTournament(args []string) error {
 	if err := cli.initDatabase(*dbPath); err != nil {
 		return err
 	}
-	review, err := cli.db.GetTournamentReview(*id, *player)
+	reviews, err := cli.db.GetTournamentReviews(*id, players)
 	if err != nil {
 		return statsErr("tournament review", err)
 	}
 	if strings.ToLower(*format) == "json" {
-		return printJSON(review)
+		// One player keeps the single object; several give a list.
+		if len(reviews) == 1 {
+			return printJSON(reviews[0])
+		}
+		return printJSON(reviews)
 	}
-	printTournamentReview(review)
+	for i, r := range reviews {
+		if i > 0 {
+			fmt.Println()
+		}
+		printTournamentReview(r)
+	}
 	return nil
 }
 

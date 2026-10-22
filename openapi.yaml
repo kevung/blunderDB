@@ -7073,6 +7073,25 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/storage_TournamentReview"
+  /v1/stats.tournamentReviews:
+    post:
+      operationId: stats.tournamentReviews
+      tags: [stats]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/tournamentReviewsReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/storage_TournamentReview"
   /v1/stats.training:
     post:
       operationId: stats.training
@@ -10220,6 +10239,16 @@ components:
           format: int64
         player:
           type: string
+    tournamentReviewsReq:
+      type: object
+      properties:
+        tournamentId:
+          type: integer
+          format: int64
+        players:
+          type: array
+          items:
+            type: string
     tournamentUpdateReq:
       type: object
       properties:

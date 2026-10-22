@@ -754,6 +754,10 @@ export function GetTournamentReview(arg1, arg2) {
   return window['go']['database']['Database']['GetTournamentReview'](arg1, arg2);
 }
 
+export function GetTournamentReviews(arg1, arg2) {
+  return window['go']['database']['Database']['GetTournamentReviews'](arg1, arg2);
+}
+
 export function GradeQuizChecker(arg1, arg2) {
   return window['go']['database']['Database']['GradeQuizChecker'](arg1, arg2);
 }

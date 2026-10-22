@@ -120,6 +120,15 @@ func (s statsStore) TournamentReview(ctx context.Context, scope string, tourname
 	return r, err
 }
 
+func (s statsStore) TournamentReviews(ctx context.Context, scope string, tournamentID int64, players []string) ([]storage.TournamentReview, error) {
+	var r []storage.TournamentReview
+	err := s.c.call(ctx, scope, "stats.tournamentReviews", struct {
+		TournamentID int64    `json:"tournamentId"`
+		Players      []string `json:"players"`
+	}{tournamentID, players}, &r)
+	return r, err
+}
+
 func (s statsStore) MatchTimeSummary(ctx context.Context, scope string, matchID int64) (storage.MatchTimeSummary, error) {
 	var r storage.MatchTimeSummary
 	err := s.c.call(ctx, scope, "stats.matchTimeSummary", matchIDReq{matchID}, &r)

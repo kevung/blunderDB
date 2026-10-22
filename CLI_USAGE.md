@@ -5334,12 +5334,12 @@ Options:
     	Output format: text or json (default "text")
   -id list --type tournaments
     	Tournament ID (required; list --type tournaments lists them)
-  -player string
-    	Player to review (default: the one in the most matches of the tournament)
+  -player value
+    	Player to review (repeatable; default: the one in the most matches of the tournament)
 
 Examples:
   blunderdb stats tournament --db database.db --id 3
-  blunderdb stats tournament --db database.db --id 3 --player "Alice" --format json
+  blunderdb stats tournament --db database.db --id 3 --player "Alice" --player "Bob" --format json
 ```
 
 ### `blunderdb stats tournaments`

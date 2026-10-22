@@ -18,6 +18,23 @@ type reviewMatchRow struct {
 	tournament int64
 }
 
+// TournamentReviews reviews each player in turn; storage.TournamentReview
+// resolves an empty name to the tournament's main player.
+func (s *StatsStore) TournamentReviews(ctx context.Context, scope string, tournamentID int64, players []string) ([]storage.TournamentReview, error) {
+	if len(players) == 0 {
+		players = []string{""}
+	}
+	out := make([]storage.TournamentReview, 0, len(players))
+	for _, p := range players {
+		r, err := s.TournamentReview(ctx, scope, tournamentID, p)
+		if err != nil {
+			return nil, err
+		}
+		out = append(out, r)
+	}
+	return out, nil
+}
+
 // TournamentReview gathers a player's matches of the tournament and of the
 // usual window, reads each through MatchDecisionLosses — the badges'
 // decisions and conversion — and the study plan of the player's errors in the
