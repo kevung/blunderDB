@@ -394,6 +394,8 @@
         "searchWouldReplaceCollection": "s searches the whole library and would replace the collection on screen: use ss to search within the collection.",
         "searchWouldReplaceMatch": "s searches the whole library and would replace the match on screen: use ss to search within the match.",
         "tagsAdded": "Tags added: {tags}",
+        "tagsAlreadyPresent": "Tags already present: {tags}",
+        "tagInvalid": "A tag cannot contain ';'",
         "unknown": "Unknown command: {command}",
         "noMatchesFound": "No matches found"
     },

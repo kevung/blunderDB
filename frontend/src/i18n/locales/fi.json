@@ -394,6 +394,8 @@
         "searchWouldReplaceCollection": "s hakee koko kirjastosta ja korvaisi näytetyn kokoelman: käytä ss-komentoa hakeaksesi kokoelman sisältä.",
         "searchWouldReplaceMatch": "s hakee koko kirjastosta ja korvaisi näytetyn ottelun: käytä ss-komentoa hakeaksesi ottelun sisältä.",
         "tagsAdded": "Tunnisteet lisätty: {tags}",
+        "tagsAlreadyPresent": "Tunnisteet ovat jo olemassa: {tags}",
+        "tagInvalid": "Tunniste ei voi sisältää merkkiä ';'",
         "unknown": "Tuntematon komento: {command}",
         "noMatchesFound": "Otteluita ei löytynyt"
     },

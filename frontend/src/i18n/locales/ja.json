@@ -394,6 +394,8 @@
         "searchWouldReplaceCollection": "s はライブラリ全体を検索し、表示中のコレクションを置き換えてしまいます。コレクション内を検索するには ss を使ってください。",
         "searchWouldReplaceMatch": "s はライブラリ全体を検索し、表示中のマッチ (match) を置き換えてしまいます。マッチ内を検索するには ss を使ってください。",
         "tagsAdded": "タグを追加しました: {tags}",
+        "tagsAlreadyPresent": "タグは既にあります: {tags}",
+        "tagInvalid": "タグに ';' は使えません",
         "unknown": "不明なコマンド: {command}",
         "noMatchesFound": "マッチが見つかりません"
     },

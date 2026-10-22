@@ -602,6 +602,24 @@ describe('processCommand', () => {
             expect(get(commentTextStore)).toBe('see #blunder here');
         });
 
+        test('says so when every tag was already present', () => {
+            commentTextStore.set('see #blunder here');
+            processCommand('#blunder');
+            expect(statusText()).toContain('already present');
+        });
+
+        test('trailing punctuation does not defeat deduplication', () => {
+            commentTextStore.set('a #blitz. game');
+            processCommand('#blitz');
+            expect(SaveComment).not.toHaveBeenCalled();
+        });
+
+        test('refuses a tag holding ;', () => {
+            processCommand('#a;b');
+            expect(SaveComment).not.toHaveBeenCalled();
+            expect(statusText()).toContain("cannot contain ';'");
+        });
+
         test('several words each become a tag, once', () => {
             processCommand('#a b #a');
             expect(stored().split('\n')[0]).toBe('#a #b');

@@ -394,6 +394,8 @@
         "searchWouldReplaceCollection": "s cerca in tutta la libreria e sostituirebbe la collezione visualizzata: usa ss per cercare nella collezione.",
         "searchWouldReplaceMatch": "s cerca in tutta la libreria e sostituirebbe il match visualizzato: usa ss per cercare nel match.",
         "tagsAdded": "Tag aggiunti: {tags}",
+        "tagsAlreadyPresent": "Tag già presenti: {tags}",
+        "tagInvalid": "Un tag non può contenere ';'",
         "unknown": "Comando sconosciuto: {command}",
         "noMatchesFound": "Nessuna partita trovata"
     },

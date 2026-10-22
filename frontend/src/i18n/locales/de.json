@@ -394,6 +394,8 @@
         "searchWouldReplaceCollection": "s durchsucht die ganze Bibliothek und würde die angezeigte Sammlung ersetzen: Mit ss suchen Sie innerhalb der Sammlung.",
         "searchWouldReplaceMatch": "s durchsucht die ganze Bibliothek und würde das angezeigte Match ersetzen: Mit ss suchen Sie innerhalb des Matches.",
         "tagsAdded": "Tags hinzugefügt: {tags}",
+        "tagsAlreadyPresent": "Tags bereits vorhanden: {tags}",
+        "tagInvalid": "Ein Tag darf kein ';' enthalten",
         "unknown": "Unbekannter Befehl: {command}",
         "noMatchesFound": "Keine Matches gefunden"
     },

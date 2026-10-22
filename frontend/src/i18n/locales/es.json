@@ -394,6 +394,8 @@
         "searchWouldReplaceCollection": "s busca en toda la biblioteca y reemplazaría la colección mostrada: use ss para buscar dentro de la colección.",
         "searchWouldReplaceMatch": "s busca en toda la biblioteca y reemplazaría el match mostrado: use ss para buscar dentro del match.",
         "tagsAdded": "Etiquetas añadidas: {tags}",
+        "tagsAlreadyPresent": "Etiquetas ya presentes: {tags}",
+        "tagInvalid": "Una etiqueta no puede contener «;»",
         "unknown": "Comando desconocido: {command}",
         "noMatchesFound": "No se encontraron partidas"
     },

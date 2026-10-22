@@ -394,6 +394,8 @@
         "searchWouldReplaceCollection": "s cherche dans toute la bibliothèque et remplacerait la collection affichée : utilisez ss pour chercher dans la collection.",
         "searchWouldReplaceMatch": "s cherche dans toute la bibliothèque et remplacerait le match affiché : utilisez ss pour chercher dans le match.",
         "tagsAdded": "Étiquettes ajoutées : {tags}",
+        "tagsAlreadyPresent": "Étiquettes déjà présentes : {tags}",
+        "tagInvalid": "Une étiquette ne peut pas contenir « ; »",
         "unknown": "Commande inconnue : {command}",
         "noMatchesFound": "Aucun match trouvé"
     },
