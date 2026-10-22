@@ -63,7 +63,6 @@ const notSearch = (c) => c.mode !== 'EDIT';
 /** @param {ActionContext} c */
 const stored = (c) => !!c.positionId && !SCRATCH.includes(c.mode ?? '');
 
-/** @type {Record<string, Action[]>} */
 /**
  * The send group of a kind of object: one copy per other open base, and the lot.
  * @param {string} copyLabel
@@ -77,6 +76,7 @@ function send(copyLabel, when = () => true) {
     ];
 }
 
+/** @type {Record<string, Action[]>} */
 export const CATALOG = {
     position: [
         // At the first level and again in their group, where the rest of their family is.

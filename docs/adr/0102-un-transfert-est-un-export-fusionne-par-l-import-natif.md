@@ -66,5 +66,26 @@ ces règles, et les copies de l'export ont déjà dérivé par le passé.
   ajoutée à l'export l'est aussi, dès que l'import natif la lit.
 - Le coût est un aller-retour par un fichier temporaire (`os.TempDir`) : acceptable pour des
   sélections de l'ordre de la bibliothèque, et c'est le prix de n'avoir qu'une règle.
-- Le glisser-déposer entre groupes d'onglets, le panier et le verrou par groupe restent à
-  faire côté bureau ; ils appelleront `Database.TransferTo` sans règle propre.
+- Le glisser-déposer entre groupes d'onglets, le lot et la protection par groupe appellent
+  `Database.TransferTo` sans règle propre (voir l'amendement).
+
+## Amendement — le poste d'échange du bureau
+
+Le bureau échange depuis un seul endroit, le panneau « Autres bases » : pour la position
+affichée, une ligne par autre base ouverte (présente, absente, présente avec une autre
+analyse) et deux gestes, *Copier vers* et *Récupérer depuis*, qui sont le même transfert dans
+les deux sens. Le panier de la barre d'onglets disparaît au profit d'un **lot** intégré au
+panneau, à base d'arrivée explicite ; le menu contextuel (groupe *Envoyer*) y mène aussi.
+
+- `TransferBatch` porte `TournamentIDs` : un tournoi part avec tous ses matchs, un match seul
+  n'emporte que la fiche de son tournoi. La règle reste celle de `ingest.Transfer` ; un lot qui
+  nomme à la fois des tournois et d'autres lignes part en deux transferts, pour qu'un match nommé
+  seul y garde la fiche de son tournoi.
+- Les copies de position annulables forment l'**historique de la session** (reçus de
+  `CopyPosition`), repris du plus récent au plus ancien jusqu'à la fermeture ; dans une même
+  base, une copie plus récente doit être reprise d'abord (`ErrLaterCopyFirst`). Chaque reprise
+  garde la règle sûre de `TakeBackPositionCopy` : refus si la position ou la base a changé.
+- Le verrou devient « Protéger des copies » et se mémorise par chemin de fichier dans les
+  préférences du poste, jamais dans la base (ADR-0007).
+- Le serveur n'a pas de *Copier vers* : un tenant n'écrit que chez lui (ADR-0065) ;
+  `across.transferPull` couvre *Récupérer depuis*.

@@ -12,14 +12,14 @@ import { copyToGroup, addToBasket } from './transferService.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { AddPositionToCollection } from '../../wailsjs/go/database/Database.js';
 import { logger } from '../utils/logger.js';
-import { tMsg } from '../i18n';
+import { t, tMsg } from '../i18n';
 
 /** The open bases other than the one on screen, by name. @returns {{ id: number, name: string }[]} */
 export function otherBases() {
     const active = get(activeGroupId);
     return get(tabGroupsStore)
         .filter((g) => g.id !== active)
-        .map((g) => ({ id: g.id, name: g.name || tMsg('libraryGroups.unnamed') }));
+        .map((g) => ({ id: g.id, name: g.name || get(t)('libraryGroups.unnamed') }));
 }
 
 /**
