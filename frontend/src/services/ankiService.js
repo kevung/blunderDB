@@ -42,6 +42,7 @@ import { showPosition, leaveStudiedModeForList } from './positionService.js';
 import { parseFilters } from '../commandProcessor.js';
 import { buildSearchFilterPayload } from './searchFilterService.js';
 import { logger } from '../utils/logger.js';
+import { readOfLibrary } from '../stores/groupActivityStore.js';
 
 // ---------------------------------------------------------------------------
 // Pure helpers
@@ -211,9 +212,9 @@ export function canCram(/** @type {import("../../wailsjs/go/models").domain.Anki
 
 /** Reload the decks (and the collections the create form offers) into their stores. */
 export async function loadDecks() {
-    const decks = (await GetAllAnkiDecks()) || [];
+    const decks = (await readOfLibrary(() => GetAllAnkiDecks())) || [];
     ankiDecksStore.set(decks);
-    const colls = (await GetAllCollections()) || [];
+    const colls = (await readOfLibrary(() => GetAllCollections())) || [];
     collectionsStore.set(colls);
     return decks;
 }

@@ -61,6 +61,7 @@
     import { t, tMsg } from '../i18n';
     import { get } from 'svelte/store';
     import { noteSelection, forgetSelection } from '../stores/exchangeObjectStore.js';
+    import { readOfLibrary } from '../stores/groupActivityStore.js';
 
     /** @typedef {import('../../wailsjs/go/models').domain.Tournament} Tournament */
     /** @typedef {import('../../wailsjs/go/models').domain.Match} Match */
@@ -260,7 +261,7 @@
 
     async function loadTournaments() {
         try {
-            const loaded = await GetAllTournaments();
+            const loaded = await readOfLibrary(() => GetAllTournaments());
             tournamentsStore.set(loaded || []);
         } catch (error) {
             logger.error('Error loading tournaments:', error);

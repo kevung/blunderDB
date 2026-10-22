@@ -18,7 +18,7 @@ import { matchListStore } from './matchListStore.js';
 import { directionSessionState, forgetDirection, restoreDirection } from './directionStore.js';
 import { takeScopedState, putScopedState } from './libraryScope.js';
 import { forgetTransferGroup } from './transferBasketStore.js';
-import { groupIdsStore, activeGroupId, takeActivity, importForegroundStore as importForegroundStoreRef, groupSwitchingStore, holdingSwitch } from './groupActivityStore.js';
+import { groupIdsStore, activeGroupId, takeActivity, libraryReplaced, importForegroundStore as importForegroundStoreRef, groupSwitchingStore, holdingSwitch } from './groupActivityStore.js';
 
 export { groupIdsStore, activeGroupId, groupActivityStore, importForegroundStore, groupOnScreen, noteGroupJob, groupSwitchingStore } from './groupActivityStore.js';
 import { tMsg, translate } from '../i18n';
@@ -231,6 +231,7 @@ export async function openInNewGroup(path) {
 async function openGroup(path) {
     const leaving = get(activeGroupId);
     const group = await OpenLibraryGroup(path);
+    if (group) libraryReplaced();
     if (!group || group.id === leaving) return;
     const photo = photograph(null);
     parkedGroupsStore.update((m) => new Map(m).set(leaving, photo));
@@ -278,6 +279,7 @@ async function switchGroup(id, viewId) {
     const started = performance.now();
     try {
         await ActivateLibraryGroup(id);
+        libraryReplaced();
     } catch (error) {
         logger.error('Error switching library group:', error);
         const { libraryGroupError } = await import('../services/databaseService.js');

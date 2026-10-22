@@ -10,6 +10,7 @@ import { databasePathStore } from '../stores/databaseStore.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { tMsg } from '../i18n';
 import { logger } from '../utils/logger.js';
+import { readOfLibrary } from '../stores/groupActivityStore.js';
 
 // Whether the position on the board is on the Pile: the board's marker and the toolbar button.
 export const onPileStore = writable(false);
@@ -51,7 +52,7 @@ export async function togglePile() {
         onPileStore.set(result.onPile);
         pileChangedStore.update((n) => n + 1);
         // The Pile's count changed, and the first toggle creates the Pile itself.
-        collectionsStore.set((await GetAllCollections()) || []);
+        collectionsStore.set((await readOfLibrary(() => GetAllCollections())) || []);
     } catch (error) {
         logger.error('Error toggling the Pile:', error);
         setStatusBarMessage(tMsg('status.pileError'));

@@ -111,6 +111,7 @@
     import { saveVideoResume, videoResumeMs } from '../services/videoResume.js';
     import { loadVideoRotation, nextRotation, saveVideoRotation } from '../services/videoRotation.js';
     import { toCssPx } from '../utils/uiZoom.js';
+    import { readOfLibrary } from '../stores/groupActivityStore.js';
 
     // Mirrors Go's transcript.DefaultMatchLength: the form shows it before any call.
     /** @typedef {import('../services/transcriptionKeys.js').KeyState} KeyState */
@@ -236,7 +237,7 @@
             return;
         }
         try {
-            transcriptionListStore.set((await ListTranscriptions()) ?? []);
+            transcriptionListStore.set((await readOfLibrary(() => ListTranscriptions())) ?? []);
             error = '';
         } catch (err) {
             logger.error('Failed to list the transcription drafts:', err);

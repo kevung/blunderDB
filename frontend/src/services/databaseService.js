@@ -24,7 +24,7 @@ import { forgetDuel } from './duelService.js';
 import { resetLessonStores } from '../stores/lessonStore.js';
 import { logger } from '../utils/logger.js';
 import { forgetPaneCopyInto } from '../stores/transferBasketStore.js';
-import { activeGroupId, groupSwitchingStore, holdingSwitch } from '../stores/groupActivityStore.js';
+import { activeGroupId, groupSwitchingStore, holdingSwitch, libraryReplaced } from '../stores/groupActivityStore.js';
 // NOTE: these UI messages are translated at emission time via the non-reactive
 // `translate` helper; already-displayed messages do not retranslate on language change.
 import { translate, tMsg } from '../i18n';
@@ -306,7 +306,7 @@ export async function openDatabaseByPath(filePath, { inNewGroup } = {}) {
         try {
             // In place, the group's handle changes library: a switch would photograph the wrong
             // one, and a write still on its way would land in the library coming.
-            if (!inNewGroup) opened = (await holdingSwitch(async () => (await OpenDatabase(filePath), true))) === true;
+            if (!inNewGroup) opened = (await holdingSwitch(async () => (await OpenDatabase(filePath), libraryReplaced(), true))) === true;
         } catch (error) {
             openFailed = true;
             throw error;

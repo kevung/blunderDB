@@ -19,6 +19,7 @@ import { replaySearchArgs } from './searchFilterService.js';
 import { loadPositionsByFilters } from './positionService.js';
 import { tMsg } from '../i18n';
 import { logger } from '../utils/logger.js';
+import { readOfLibrary } from '../stores/groupActivityStore.js';
 
 /** @typedef {{ id: number, name: string, command: string, pinned?: boolean }} SavedFilter */
 
@@ -28,7 +29,7 @@ import { logger } from '../utils/logger.js';
  */
 export async function loadFilterLibrary() {
     try {
-        const lib = (await LoadFilters()) || [];
+        const lib = (await readOfLibrary(() => LoadFilters())) || [];
         filterLibraryStore.set(lib);
         return lib;
     } catch (_error) {

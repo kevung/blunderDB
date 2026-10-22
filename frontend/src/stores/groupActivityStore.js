@@ -69,6 +69,33 @@ export async function holdingSwitch(fn) {
     }
 }
 
+/** Counts the libraries the bound handle has carried: a read knows which one it was sent to. */
+let libraryEpoch = 0;
+
+/** The bound handle now carries another library (a switch, an open): reads begun before belong to the one left. */
+export function libraryReplaced() {
+    libraryEpoch++;
+}
+
+/** Never settles: what a read of the library left would have said. */
+const dropped = () => new Promise(() => {});
+
+/**
+ * Runs read, a read of the library on screen, and gives its answer only if that library is still
+ * the one on screen: an answer of the library left must not be shown in the one coming, and a
+ * read of the new one follows the switch anyway.
+ * @template T
+ * @param {() => Promise<T>} read
+ * @returns {Promise<T>}
+ */
+export function readOfLibrary(read) {
+    const at = libraryEpoch;
+    return read().then(
+        (value) => (at === libraryEpoch ? value : dropped()),
+        (error) => (at === libraryEpoch ? Promise.reject(error) : dropped())
+    );
+}
+
 /** Whether the import in flight runs one file at a time on the bound handle: no switch then. */
 export const importForegroundStore = writable(false);
 

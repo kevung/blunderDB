@@ -86,7 +86,7 @@
     import { databaseLoadedStore, databasePathStore } from '../stores/databaseStore';
     import { libraryCountsStore } from '../stores/libraryCountsStore.js';
     import { libraryDragAttrs } from '../utils/libraryDrag.js';
-    import { activeGroupId } from '../stores/groupActivityStore.js';
+    import { activeGroupId, readOfLibrary } from '../stores/groupActivityStore.js';
 
     /**
      * `embeddedMatchId`: the panel is hosted by another panel (Tournaments) and shows only the sheet of that
@@ -383,7 +383,7 @@
 
     async function loadTournaments() {
         try {
-            const loaded = await GetAllTournaments();
+            const loaded = await readOfLibrary(() => GetAllTournaments());
             tournamentsStore.set(loaded || []);
         } catch (error) {
             logger.error('Error loading tournaments:', error);

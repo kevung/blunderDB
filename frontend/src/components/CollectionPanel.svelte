@@ -45,7 +45,7 @@
     import { panelKeyGuard } from '../services/keyboardService.js';
     import { registerKeys } from '../services/keyDispatch.js';
     import { libraryDragAttrs } from '../utils/libraryDrag.js';
-    import { activeGroupId } from '../stores/groupActivityStore.js';
+    import { activeGroupId, readOfLibrary } from '../stores/groupActivityStore.js';
 
     /** @typedef {import('../../wailsjs/go/models').database.Collection} Collection */
     /** @typedef {{ id: number }} PositionRow */
@@ -250,7 +250,7 @@
 
     async function loadCollections() {
         try {
-            const loaded = await GetAllCollections();
+            const loaded = await readOfLibrary(() => GetAllCollections());
             collectionsStore.set(loaded || []);
             // A membership change here may have taken the board's position off the Pile.
             refreshPileState();

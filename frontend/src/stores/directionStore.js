@@ -62,6 +62,7 @@ import { OpenDirectionOutputDialog, OpenLocalPage, SaveCSV } from '../../wailsjs
 import { language, messageBlock, tMsg } from '../i18n';
 import { statusBarTextStore, activeTabStore } from './uiStore.js';
 import { logger } from '../utils/logger.js';
+import { readOfLibrary } from './groupActivityStore.js';
 
 /*
  * La Direction ouverte (ADR-0047) : une seule à la fois, rien à sauver (chaque décision est
@@ -335,7 +336,7 @@ export function defaultConfig(name) {
 /** Recharge la liste des tournois dirigés. */
 export async function refreshDirectionSummaries() {
     try {
-        directionSummariesStore.set((await ListDirections()) || []);
+        directionSummariesStore.set((await readOfLibrary(() => ListDirections())) || []);
     } catch (e) {
         logger.error('direction: listing failed', e);
         directionSummariesStore.set([]);

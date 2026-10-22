@@ -13,6 +13,7 @@
     import { loadPositionsFromSelection } from '../services/positionLoader.js';
     import { t } from '../i18n';
     import { logger } from '../utils/logger.js';
+    import { readOfLibrary } from '../stores/groupActivityStore.js';
 
     /** @type {{ onClose?: () => void, onCollectionCreated?: () => void }} */
     let { onClose = () => {}, onCollectionCreated = () => {} } = $props();
@@ -39,7 +40,7 @@
     onMount(async () => {
         if (get(tournamentsStore).length === 0) {
             try {
-                tournamentsStore.set((await GetAllTournaments()) ?? []);
+                tournamentsStore.set((await readOfLibrary(() => GetAllTournaments())) ?? []);
             } catch (e) {
                 logger.error('could not list the tournaments:', e);
             }
