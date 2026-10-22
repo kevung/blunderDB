@@ -35,8 +35,8 @@ func TestSaveDisplayedEvaluationFillsAScratchBoardOnce(t *testing.T) {
 		t.Fatalf("SaveAnalysis (scratch): %v", err)
 	}
 
-	written, err := d.SaveDisplayedEvaluation(id, displayedVerdict(t, pos))
-	if err != nil || !written {
+	written, err := d.SaveDisplayedEvaluation(id, displayedVerdict(t, pos), 0)
+	if err != nil || written != EvaluationWritten {
 		t.Fatalf("SaveDisplayedEvaluation = %v, %v; want true, nil", written, err)
 	}
 	got, err := d.LoadAnalysis(id)
@@ -50,8 +50,8 @@ func TestSaveDisplayedEvaluationFillsAScratchBoardOnce(t *testing.T) {
 		t.Errorf("XGID = %q, the scratch board's must be kept", got.XGID)
 	}
 
-	again, err := d.SaveDisplayedEvaluation(id, displayedVerdict(t, pos))
-	if err != nil || again {
+	again, err := d.SaveDisplayedEvaluation(id, displayedVerdict(t, pos), 0)
+	if err != nil || again != EvaluationKept {
 		t.Errorf("second SaveDisplayedEvaluation = %v, %v; want false, nil", again, err)
 	}
 }
@@ -74,8 +74,8 @@ func TestSaveDisplayedEvaluationKeepsAnExistingAnalysis(t *testing.T) {
 		t.Fatalf("SaveAnalysis: %v", err)
 	}
 
-	written, err := d.SaveDisplayedEvaluation(id, displayedVerdict(t, pos))
-	if err != nil || written {
+	written, err := d.SaveDisplayedEvaluation(id, displayedVerdict(t, pos), 0)
+	if err != nil || written != EvaluationKept {
 		t.Fatalf("SaveDisplayedEvaluation = %v, %v; want false, nil", written, err)
 	}
 	got, err := d.LoadAnalysis(id)
@@ -102,8 +102,8 @@ func TestSaveDisplayedEvaluationStoresMoves(t *testing.T) {
 	if verdict.CheckerAnalysis == nil {
 		t.Fatal("expected moves for a position with dice")
 	}
-	written, err := d.SaveDisplayedEvaluation(id, verdict)
-	if err != nil || !written {
+	written, err := d.SaveDisplayedEvaluation(id, verdict, 0)
+	if err != nil || written != EvaluationWritten {
 		t.Fatalf("SaveDisplayedEvaluation = %v, %v; want true, nil", written, err)
 	}
 	got, err := d.LoadAnalysis(id)
@@ -121,7 +121,27 @@ func TestSaveDisplayedEvaluationStoresMoves(t *testing.T) {
 func TestSaveDisplayedEvaluationRefusesAnEmptyVerdict(t *testing.T) {
 	t.Parallel()
 	d := newBatchTestDB(t)
-	if _, err := d.SaveDisplayedEvaluation(1, PositionAnalysis{}); err == nil {
+	if _, err := d.SaveDisplayedEvaluation(1, PositionAnalysis{}, 0); err == nil {
 		t.Error("an empty verdict must be refused")
+	}
+}
+
+// A verdict valued with another table than the library's current one is not
+// written: its label would name a table that did not value it.
+func TestSaveDisplayedEvaluationRefusesAnotherTable(t *testing.T) {
+	t.Parallel()
+	d := newBatchTestDB(t)
+
+	pos := racePosition(6, 19, 0)
+	id, err := d.SavePosition(&pos)
+	if err != nil {
+		t.Fatalf("SavePosition: %v", err)
+	}
+	got, err := d.SaveDisplayedEvaluation(id, displayedVerdict(t, pos), 42)
+	if err != nil || got != EvaluationMETChanged {
+		t.Fatalf("SaveDisplayedEvaluation = %v, %v; want metChanged, nil", got, err)
+	}
+	if a, err := d.LoadAnalysis(id); err == nil && analysisHasEvaluation(a) {
+		t.Errorf("a verdict was written under another table: %+v", a)
 	}
 }

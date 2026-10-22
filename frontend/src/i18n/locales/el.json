@@ -1727,6 +1727,7 @@
         "scratchBoardAlreadyStoredEvalAdded": "Η θέση υπάρχει ήδη στη βάση (αρ. {id}): προστέθηκε η αξιολόγηση gammonNet",
         "scratchBoardAlreadyStoredAnalysisKept": "Η θέση υπάρχει ήδη στη βάση (αρ. {id}): η ανάλυσή της διατηρείται, η εμφανιζόμενη αξιολόγηση δεν αποθηκεύεται",
         "scratchBoardEvalNotSaved": "Η θέση αρ. {id} αποθηκεύτηκε, αλλά όχι η αξιολόγησή της (σφάλμα)",
+        "scratchBoardEvalMetChanged": "Η θέση αρ. {id} αποθηκεύτηκε χωρίς την αξιολόγησή της: ο πίνακας equity άλλαξε από τον υπολογισμό",
         "importedPositionSaved": "Η εισαγόμενη θέση και ανάλυση αποθηκεύτηκαν με επιτυχία",
         "pastedPositionSaved": "Η επικολλημένη θέση και ανάλυση αποθηκεύτηκαν με επιτυχία",
         "importDone": "Η εισαγωγή ολοκληρώθηκε: {succeeded} εισήχθησαν, {skipped} παραλείφθηκαν, {failed} απέτυχαν",

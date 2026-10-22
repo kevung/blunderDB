@@ -187,7 +187,7 @@ export function ShowAlert(arg1:string):Promise<void>;
 
 export function ShowQuestionDialog(arg1:string,arg2:string,arg3:Array<string>,arg4:string):Promise<string>;
 
-export function StartEvaluationAtRest(arg1:domain.Position,arg2:number,arg3:number,arg4:number):Promise<void>;
+export function StartEvaluationAtRest(arg1:domain.Position,arg2:number,arg3:number,arg4:number,arg5:number):Promise<void>;
 
 export function StartFolderWatch(arg1:string,arg2:number):Promise<gui.WatchStatus>;
 

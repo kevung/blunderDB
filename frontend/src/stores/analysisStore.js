@@ -57,7 +57,8 @@ export const evalAnalysisStore = writable(null);
 
 // The Eval panel's gammonNet verdict, as the engine returned it and the batch
 // stores it (the moves with dice set, the cube otherwise), with the signature
-// of the board it describes: CTRL-S writes it only onto that very board.
+// of the board it was computed for and the id of the match equity table that
+// valued it: CTRL-S writes it only onto that very board, under that table.
 // Null while the engine has not answered, has declined, or off the Eval tab.
-/** @type {import('svelte/store').Writable<{ signature: string, analysis: { analysisType: string, checkerAnalysis?: { moves: any[] }, doublingCubeAnalysis?: any } } | null>} */
+/** @type {import('svelte/store').Writable<{ signature: string, metId: number, analysis: { analysisType: string, checkerAnalysis?: { moves: any[] }, doublingCubeAnalysis?: any } } | null>} */
 export const evalVerdictStore = writable(null);

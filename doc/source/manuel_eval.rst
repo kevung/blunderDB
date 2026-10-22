@@ -107,7 +107,8 @@ position, telle que l'analyse par lot l'aurait écrite : la recherche
 une analyse (importée, gammonNet à une autre profondeur, rollout), cette
 analyse est conservée telle quelle et la barre d'état dit que l'évaluation
 affichée n'a pas été enregistrée ; sans évaluation affichée (moteur en cours
-ou position refusée), seule la position est écrite. Si l'analyse
+ou position refusée), seule la position est écrite, de même si la table d'équité de
+match a changé depuis le calcul, ce que la barre d'état signale. Si l'analyse
 automatique gammonNet est activée, son lot démarre ensuite, comme après un
 import. La barre d'état annonce le numéro de la position, y compris quand
 elle figurait déjà dans la base : elle y est alors marquée comme importée

@@ -1727,6 +1727,7 @@
         "scratchBoardAlreadyStoredEvalAdded": "Позиция уже есть в базе (№ {id}): оценка gammonNet добавлена",
         "scratchBoardAlreadyStoredAnalysisKept": "Позиция уже есть в базе (№ {id}): её анализ сохранён, показанная оценка не записана",
         "scratchBoardEvalNotSaved": "Позиция № {id} сохранена, но не её оценка (ошибка)",
+        "scratchBoardEvalMetChanged": "Позиция № {id} сохранена без оценки: таблица эквити матча изменилась после расчёта",
         "importedPositionSaved": "Импортированные позиция и анализ успешно сохранены",
         "pastedPositionSaved": "Вставленные позиция и анализ успешно сохранены",
         "importDone": "Импорт завершён: {succeeded} импортировано, {skipped} пропущено, {failed} не удалось",

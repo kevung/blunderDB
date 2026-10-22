@@ -88,6 +88,11 @@
     let evalRaceOverride = $state(null);
     // Pre-roll fact vector (ADR-0017), mover-relative; converted to bottom/top below.
     let evalPreRoll = $state(null);
+    // The board the result on screen was computed for, and the match equity
+    // table that valued it: CTRL-S stores the verdict only on that board and
+    // under that table (evalVerdictStore).
+    let evalSignature = $state('');
+    let evalMetId = $state(0);
 
     // Exact keeps its win probability (ADR-0012), but its table is money-only:
     // at a match score the equities and verdict come from the match-aware
@@ -106,6 +111,7 @@
     /** @type {ReturnType<typeof setTimeout> | null} */
     let evalRestTimer = null;
     let evalGeneration = 0; // guards a late "done" against a position the user already left
+    let escalationSignature = ''; // the board of the escalation evalGeneration names
 
     // The signature is the effect's only tracked dependency; everything else is
     // untrack()ed, since reading the $state it writes loops
@@ -147,6 +153,8 @@
 
         evalGeneration += 1;
         const generation = evalGeneration;
+        const signature = positionSignature;
+        escalationSignature = signature;
 
         if (evalRestTimer) {
             clearTimeout(evalRestTimer);
@@ -159,7 +167,7 @@
                 GetGammonNetCandidates().then((candidates) =>
                     EvaluatePositionImmediate(pos, pruneK, candidates).then((result) => {
                         if (generation !== evalGeneration) return; // superseded while awaiting
-                        applyEvalResult(result);
+                        applyEvalResult(result, signature);
                     })
                 )
             )
@@ -175,7 +183,7 @@
             Promise.all([GetGammonNetDisplayPly(), GetGammonNetPruneK(), GetGammonNetCandidates()])
                 .then(([ply, pruneK, candidates]) => {
                     if (generation !== evalGeneration) return;
-                    StartEvaluationAtRest(pos, ply, pruneK, candidates).catch((error) => {
+                    StartEvaluationAtRest(pos, ply, pruneK, candidates, generation).catch((error) => {
                         logger.error('gammonNet evaluation-at-rest failed to start:', error);
                         if (generation !== evalGeneration) return;
                         evalFailed = true;
@@ -194,7 +202,10 @@
     // The depth label names what actually produced the result; "cancelled"
     // leaves the 0-ply result as is. Moves and Cube never come together: touch
     // only the one present, or the other side flashes back to pending.
-    function applyEvalResult(result) {
+    /** @param {any} result @param {string} signature the board it was computed for */
+    function applyEvalResult(result, signature) {
+        evalSignature = signature;
+        evalMetId = result?.metId ?? 0;
         evalSettled = true;
         evalFailed = false;
         evalFailedMessage = '';
@@ -228,9 +239,15 @@
             .catch(() => {});
 
         unsubEval = [
-            EventsOn('gammonnet-eval:done', (result) => applyEvalResult(result)),
+            // A search a newer gesture superseded can still answer: its tag
+            // names the escalation it belongs to.
+            EventsOn('gammonnet-eval:done', (result) => {
+                if (result?.tag !== evalGeneration) return;
+                applyEvalResult(result, escalationSignature);
+            }),
             EventsOn('gammonnet-eval:cancelled', () => {}),
             EventsOn('gammonnet-eval:error', (e) => {
+                if (e?.tag !== evalGeneration) return;
                 logger.error('gammonNet evaluation-at-rest error:', e);
                 evalFailed = true;
                 evalFailedMessage = String(e);
@@ -472,11 +489,12 @@
 
     function evalVerdictSnapshot() {
         if (evalRefused) return null;
-        const signature = positionSignature;
+        const signature = evalSignature;
+        const metId = evalMetId;
         if (hasDiceSet) {
-            return evalMoves.length ? { signature, analysis: { analysisType: 'CheckerMove', checkerAnalysis: { moves: evalMoves } } } : null;
+            return evalMoves.length ? { signature, metId, analysis: { analysisType: 'CheckerMove', checkerAnalysis: { moves: evalMoves } } } : null;
         }
-        return evalCubeAnalysis ? { signature, analysis: { analysisType: 'DoublingCube', doublingCubeAnalysis: evalCubeAnalysis } } : null;
+        return evalCubeAnalysis ? { signature, metId, analysis: { analysisType: 'DoublingCube', doublingCubeAnalysis: evalCubeAnalysis } } : null;
     }
 
     function evalAnalysisSnapshot() {

@@ -9,24 +9,38 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
+// DisplayedEvaluationOutcome is what SaveDisplayedEvaluation did with the
+// verdict, for the caller to say.
+type DisplayedEvaluationOutcome string
+
+const (
+	// EvaluationWritten: the verdict now stands on the position.
+	EvaluationWritten DisplayedEvaluationOutcome = "written"
+	// EvaluationKept: the position already carried an evaluation, kept whole.
+	EvaluationKept DisplayedEvaluationOutcome = "kept"
+	// EvaluationMETChanged: the library's match equity table changed since
+	// the verdict was computed; it would be labelled with a table that did
+	// not value it (ADR-0068), so nothing is written.
+	EvaluationMETChanged DisplayedEvaluationOutcome = "metChanged"
+)
+
 // SaveDisplayedEvaluation writes a gammonNet verdict the Eval panel computed
 // on the board (the moves when dice are set, the cube otherwise) onto a
 // stored position, unless that position already carries an evaluation.
+// metID is the table the verdict was valued with (0: the built-in one).
 //
 // The verdict is gammonnet.EvaluatePositionWithMET's own output, the one the
 // batch writes, so it is already on the storage scale (ADR-0019); it is
-// valued with the library's current table and written by the same rule as
-// the batch (SupersedeEntries, with its table id).
+// written by the batch's rule (SupersedeEntries) with its table id.
 //
 // An existing evaluation — any engine, any depth, a rollout — is kept
 // whole: a 0-ply verdict on screen must never replace an imported XG
-// analysis or a deeper gammonNet one. The caller learns which happened from
-// the returned bool, and says so. A row holding only an XGID (a scratch
+// analysis or a deeper gammonNet one. A row holding only an XGID (a scratch
 // board saved before) counts as unevaluated and receives the verdict.
-func (d *Database) SaveDisplayedEvaluation(positionID int64, verdict PositionAnalysis) (bool, error) {
+func (d *Database) SaveDisplayedEvaluation(positionID int64, verdict PositionAnalysis, metID int64) (DisplayedEvaluationOutcome, error) {
 	hasMoves := verdict.CheckerAnalysis != nil && len(verdict.CheckerAnalysis.Moves) > 0
 	if !hasMoves && verdict.DoublingCubeAnalysis == nil {
-		return false, errors.New("save displayed evaluation: the verdict holds neither moves nor a cube analysis")
+		return "", errors.New("save displayed evaluation: the verdict holds neither moves nor a cube analysis")
 	}
 
 	d.mu.Lock()
@@ -37,15 +51,18 @@ func (d *Database) SaveDisplayedEvaluation(positionID int64, verdict PositionAna
 	switch {
 	case err == nil:
 		if analysisHasEvaluation(stored) {
-			return false, nil
+			return EvaluationKept, nil
 		}
 	case !errors.Is(err, storage.ErrNotFound):
-		return false, err
+		return "", err
 	}
 
-	metID, _, err := mets.Current(ctx, d.store, "")
+	current, _, err := mets.Current(ctx, d.store, "")
 	if err != nil {
-		return false, err
+		return "", err
+	}
+	if current != metID {
+		return EvaluationMETChanged, nil
 	}
 
 	out := PositionAnalysis{AnalysisEngineVersion: gammonnet.EngineVersion}
@@ -58,9 +75,9 @@ func (d *Database) SaveDisplayedEvaluation(positionID int64, verdict PositionAna
 		out.DoublingCubeAnalysis = &cube
 	}
 	if err := d.saveAnalysisLocked(positionID, out, &metID); err != nil {
-		return false, err
+		return "", err
 	}
-	return true, nil
+	return EvaluationWritten, nil
 }
 
 // analysisHasEvaluation reports whether a stored analysis says something

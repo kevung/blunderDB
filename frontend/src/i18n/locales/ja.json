@@ -1727,6 +1727,7 @@
         "scratchBoardAlreadyStoredEvalAdded": "ポジションはすでにデータベースにあります（No.{id}）：gammonNet 評価を追加しました",
         "scratchBoardAlreadyStoredAnalysisKept": "ポジションはすでにデータベースにあります（No.{id}）：既存の解析を保持し、表示中の評価は保存しません",
         "scratchBoardEvalNotSaved": "ポジション No.{id} を保存しましたが、評価は保存できませんでした（エラー）",
+        "scratchBoardEvalMetChanged": "ポジション No.{id} を評価なしで保存しました：計算後にマッチエクイティテーブルが変更されました",
         "importedPositionSaved": "インポートしたポジションと分析を保存しました",
         "pastedPositionSaved": "貼り付けたポジションと分析を保存しました",
         "importDone": "インポート完了：{succeeded}件インポート、{skipped}件スキップ、{failed}件失敗",

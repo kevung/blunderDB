@@ -1727,6 +1727,7 @@
         "scratchBoardAlreadyStoredEvalAdded": "Posición ya presente en la base de datos (n.º {id}): evaluación gammonNet añadida",
         "scratchBoardAlreadyStoredAnalysisKept": "Posición ya presente en la base de datos (n.º {id}): se conserva su análisis, la evaluación mostrada no se guarda",
         "scratchBoardEvalNotSaved": "Posición n.º {id} guardada, pero no su evaluación (error)",
+        "scratchBoardEvalMetChanged": "Posición n.º {id} guardada sin su evaluación: la tabla de equity ha cambiado desde el cálculo",
         "importedPositionSaved": "Posición y análisis importados guardados correctamente",
         "pastedPositionSaved": "Posición y análisis pegados guardados correctamente",
         "importDone": "Importación completada: {succeeded} importadas, {skipped} omitidas, {failed} fallidas",

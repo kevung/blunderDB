@@ -9,10 +9,13 @@ import { render, cleanup } from '@testing-library/svelte';
 import { get } from 'svelte/store';
 
 const evaluatePositionImmediate = vi.fn();
+const startEvaluationAtRest = vi.fn().mockResolvedValue(undefined);
+/** @type {Record<string, (payload: any) => void>} */
+const listeners = {};
 
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
     EvaluatePositionImmediate: (/** @type {any[]} */ ...args) => evaluatePositionImmediate(...args),
-    StartEvaluationAtRest: vi.fn().mockResolvedValue(undefined),
+    StartEvaluationAtRest: (/** @type {any[]} */ ...args) => startEvaluationAtRest(...args),
     CancelEvaluationAtRest: vi.fn().mockResolvedValue(undefined)
 }));
 
@@ -25,7 +28,10 @@ vi.mock('../../wailsjs/go/main/Config.js', () => ({
 }));
 
 vi.mock('../../wailsjs/runtime/runtime.js', () => ({
-    EventsOn: vi.fn(() => () => {})
+    EventsOn: vi.fn((/** @type {string} */ name, /** @type {(payload: any) => void} */ fn) => {
+        listeners[name] = fn;
+        return () => {};
+    })
 }));
 
 import { statusBarModeStore } from '../stores/uiStore.js';
@@ -58,6 +64,7 @@ describe('EvalPanel exposes its verdict for CTRL-S', () => {
         const verdict = must(get(evalVerdictStore));
         expect(verdict.signature).toBe(JSON.stringify(get(positionStore)));
         expect(verdict.analysis).toEqual({ analysisType: 'CheckerMove', checkerAnalysis: { moves: [move] } });
+        expect(verdict.metId).toBe(0);
     });
 
     test('no dice: the cube record as the engine gave it, without the panel facts', async () => {
@@ -83,5 +90,48 @@ describe('EvalPanel exposes its verdict for CTRL-S', () => {
         statusBarModeStore.set('NORMAL');
         await vi.advanceTimersByTimeAsync(0);
         expect(get(evalVerdictStore)).toBeNull();
+    });
+
+    test('the metId of the result travels with the verdict', async () => {
+        evaluatePositionImmediate.mockResolvedValue({ moves: [move], metId: 5 });
+        positionStore.set({ ...emptyPosition(), dice: [3, 3] });
+        render(EvalPanel);
+        await vi.advanceTimersByTimeAsync(0);
+
+        expect(must(get(evalVerdictStore)).metId).toBe(5);
+    });
+
+    test('a late "done" from a search a newer gesture superseded is dropped', async () => {
+        const stale = { ...move, move: '24/18 13/10' };
+        const fresh = { ...move, move: '8/2 6/3' };
+        evaluatePositionImmediate.mockResolvedValue({ moves: [move] });
+        positionStore.set({ ...emptyPosition(), dice: [3, 3] });
+        render(EvalPanel);
+        await vi.advanceTimersByTimeAsync(600); // the at-rest search of board A starts
+        expect(startEvaluationAtRest).toHaveBeenCalled();
+        const staleTag = must(startEvaluationAtRest.mock.calls.at(-1))[4];
+
+        evaluatePositionImmediate.mockResolvedValue({ moves: [fresh] });
+        positionStore.set({ ...emptyPosition(), dice: [6, 5] }); // board B
+        await vi.advanceTimersByTimeAsync(0);
+        const boardB = JSON.stringify(get(positionStore));
+
+        listeners['gammonnet-eval:done']({ moves: [stale], tag: staleTag });
+        await vi.advanceTimersByTimeAsync(0);
+
+        let verdict = must(get(evalVerdictStore));
+        expect(verdict.signature).toBe(boardB);
+        expect(verdict.analysis.checkerAnalysis?.moves).toEqual([fresh]);
+
+        await vi.advanceTimersByTimeAsync(600); // board B's own at-rest search
+        const freshTag = must(startEvaluationAtRest.mock.calls.at(-1))[4];
+        expect(freshTag).not.toBe(staleTag);
+        const deeper = { ...fresh, analysisDepth: '3-ply' };
+        listeners['gammonnet-eval:done']({ moves: [deeper], tag: freshTag });
+        await vi.advanceTimersByTimeAsync(0);
+
+        verdict = must(get(evalVerdictStore));
+        expect(verdict.signature).toBe(boardB);
+        expect(verdict.analysis.checkerAnalysis?.moves).toEqual([deeper]);
     });
 });

@@ -1727,6 +1727,7 @@
         "scratchBoardAlreadyStoredEvalAdded": "Position bereits in der Datenbank (Nr. {id}): gammonNet-Bewertung hinzugefügt",
         "scratchBoardAlreadyStoredAnalysisKept": "Position bereits in der Datenbank (Nr. {id}): ihre Analyse bleibt erhalten, die angezeigte Bewertung wird nicht gespeichert",
         "scratchBoardEvalNotSaved": "Position Nr. {id} gespeichert, ihre Bewertung jedoch nicht (Fehler)",
+        "scratchBoardEvalMetChanged": "Position Nr. {id} ohne ihre Bewertung gespeichert: Die Match-Equity-Tabelle hat sich seit der Berechnung geändert",
         "importedPositionSaved": "Importierte Position und Analyse erfolgreich gespeichert",
         "pastedPositionSaved": "Eingefügte Position und Analyse erfolgreich gespeichert",
         "importDone": "Import abgeschlossen: {succeeded} importiert, {skipped} übersprungen, {failed} fehlgeschlagen",

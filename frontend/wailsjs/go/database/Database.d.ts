@@ -698,7 +698,7 @@ export function SaveCommand(arg1:string):Promise<void>;
 
 export function SaveComment(arg1:number,arg2:string):Promise<void>;
 
-export function SaveDisplayedEvaluation(arg1:number,arg2:domain.PositionAnalysis):Promise<boolean>;
+export function SaveDisplayedEvaluation(arg1:number,arg2:domain.PositionAnalysis,arg3:number):Promise<string>;
 
 export function SaveEditPosition(arg1:string,arg2:string):Promise<void>;
 

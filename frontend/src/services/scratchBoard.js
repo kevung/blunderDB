@@ -65,7 +65,7 @@ export async function saveScratchBoard() {
     const position = { ...JSON.parse(JSON.stringify(onScreen)), id: 0 };
     // Read before any await: the verdict must describe the board being saved.
     const shown = get(evalVerdictStore);
-    const verdict = shown && shown.signature === JSON.stringify(onScreen ?? null) ? shown.analysis : null;
+    const verdict = shown && shown.signature === JSON.stringify(onScreen ?? null) ? shown : null;
 
     const refusal = positionRefusal(position);
     if (refusal) {
@@ -98,19 +98,21 @@ export async function saveScratchBoard() {
  * Write the panel's verdict onto the stored position and say what became of it.
  * @param {number} id
  * @param {boolean} existed
- * @param {{ analysisType: string }} verdict the engine's output (evalVerdictStore)
+ * @param {{ metId: number, analysis: { analysisType: string } }} verdict the engine's output (evalVerdictStore)
  */
 async function saveVerdict(id, existed, verdict) {
-    let written;
+    let outcome;
     try {
-        written = await SaveDisplayedEvaluation(id, /** @type {any} */ (verdict));
+        outcome = await SaveDisplayedEvaluation(id, /** @type {any} */ (verdict.analysis), verdict.metId);
     } catch (error) {
         logger.error('saveScratchBoard: saving the evaluation failed:', error);
         setStatusBarMessage(tMsg('status.scratchBoardEvalNotSaved', { id }));
         return;
     }
-    if (written) {
+    if (outcome === 'written') {
         setStatusBarMessage(tMsg(existed ? 'status.scratchBoardAlreadyStoredEvalAdded' : 'status.scratchBoardSavedWithEval', { id }));
+    } else if (outcome === 'metChanged') {
+        setStatusBarMessage(tMsg('status.scratchBoardEvalMetChanged', { id }));
     } else if (existed) {
         setStatusBarMessage(tMsg('status.scratchBoardAlreadyStoredAnalysisKept', { id }));
     }

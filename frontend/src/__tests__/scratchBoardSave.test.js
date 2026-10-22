@@ -21,7 +21,7 @@ const db = vi.hoisted(() => ({
     SaveIndividualPosition: vi.fn(),
     UpdatePosition: vi.fn(() => Promise.resolve()),
     SaveAnalysis: vi.fn(() => Promise.resolve()),
-    SaveDisplayedEvaluation: vi.fn(() => Promise.resolve(true)),
+    SaveDisplayedEvaluation: vi.fn(() => Promise.resolve('written')),
     SaveComment: vi.fn(() => Promise.resolve()),
     LoadComment: vi.fn(() => Promise.resolve('')),
     LoadAnalysis: vi.fn(() => Promise.resolve(null)),
@@ -541,17 +541,17 @@ describe('saving the Eval scratch board (#399)', () => {
     test('the verdict shown for this board is written with the position, and the status says so', async () => {
         await openEvalFromLibrary();
         const analysis = { analysisType: 'CheckerMove', checkerAnalysis: { moves: [{ index: 0, move: '24/18 13/8', equity: 0.1, analysisDepth: '2-ply' }] } };
-        evalVerdictStore.set({ signature: JSON.stringify(get(positionStore)), analysis });
+        evalVerdictStore.set({ signature: JSON.stringify(get(positionStore)), metId: 3, analysis });
 
         await saveCurrentPosition();
 
-        expect(db.SaveDisplayedEvaluation).toHaveBeenCalledWith(99, analysis);
+        expect(db.SaveDisplayedEvaluation).toHaveBeenCalledWith(99, analysis, 3);
         expect(lastStatus()).toEqual({ i18nKey: 'status.scratchBoardSavedWithEval', i18nParams: { id: 99 } });
     });
 
     test('a verdict computed for another board is not written', async () => {
         await openEvalFromLibrary();
-        evalVerdictStore.set({ signature: 'another board', analysis: { analysisType: 'DoublingCube', doublingCubeAnalysis: {} } });
+        evalVerdictStore.set({ signature: 'another board', metId: 0, analysis: { analysisType: 'DoublingCube', doublingCubeAnalysis: {} } });
 
         await saveCurrentPosition();
 
@@ -561,15 +561,26 @@ describe('saving the Eval scratch board (#399)', () => {
 
     test('a known position keeps its analysis, and the status says the verdict was not saved', async () => {
         db.SaveIndividualPosition.mockResolvedValue({ id: 1234, existed: true });
-        db.SaveDisplayedEvaluation.mockResolvedValueOnce(false);
+        db.SaveDisplayedEvaluation.mockResolvedValueOnce('kept');
         await openEvalFromLibrary();
-        evalVerdictStore.set({ signature: JSON.stringify(get(positionStore)), analysis: { analysisType: 'DoublingCube', doublingCubeAnalysis: { analysisDepth: '0-ply' } } });
+        evalVerdictStore.set({ signature: JSON.stringify(get(positionStore)), metId: 0, analysis: { analysisType: 'DoublingCube', doublingCubeAnalysis: { analysisDepth: '0-ply' } } });
 
         await saveCurrentPosition();
 
         expect(db.SaveAnalysis).not.toHaveBeenCalled();
-        expect(db.SaveDisplayedEvaluation).toHaveBeenCalledWith(1234, expect.anything());
+        expect(db.SaveDisplayedEvaluation).toHaveBeenCalledWith(1234, expect.anything(), 0);
         expect(lastStatus()).toEqual({ i18nKey: 'status.scratchBoardAlreadyStoredAnalysisKept', i18nParams: { id: 1234 } });
+    });
+
+    test('a verdict valued with a table the library no longer uses is not written, and the status says so', async () => {
+        db.SaveDisplayedEvaluation.mockResolvedValueOnce('metChanged');
+        await openEvalFromLibrary();
+        evalVerdictStore.set({ signature: JSON.stringify(get(positionStore)), metId: 7, analysis: { analysisType: 'DoublingCube', doublingCubeAnalysis: { analysisDepth: '0-ply' } } });
+
+        await saveCurrentPosition();
+
+        expect(db.SaveDisplayedEvaluation).toHaveBeenCalledWith(99, expect.anything(), 7);
+        expect(lastStatus()).toEqual({ i18nKey: 'status.scratchBoardEvalMetChanged', i18nParams: { id: 99 } });
     });
 
     test('outside a scratch board the save is still refused', async () => {

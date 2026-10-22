@@ -51,10 +51,17 @@ func (d *Database) AnalysisMETStatus(positionID int64) (mets.Status, error) {
 // nil for the built-in one, or when no file is open. A function, not a
 // method, so the Wails binding never exposes it.
 func CurrentMET(d *Database) (*engine.MET, error) {
+	_, m, err := CurrentMETWithID(d)
+	return m, err
+}
+
+// CurrentMETWithID is CurrentMET with the table's id (0: the built-in one),
+// which a verdict carries to its write so it is labelled with the table
+// that valued it (ADR-0068).
+func CurrentMETWithID(d *Database) (int64, *engine.MET, error) {
 	st, _ := CurrentStore(d)
 	if st == nil {
-		return nil, nil
+		return 0, nil, nil
 	}
-	_, m, err := mets.Current(context.Background(), st, "")
-	return m, err
+	return mets.Current(context.Background(), st, "")
 }
