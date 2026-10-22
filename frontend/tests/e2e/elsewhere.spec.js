@@ -5,12 +5,15 @@
  * (présence, analyse, autre MET, commentaire signé, match joué, voisines) et reste lisible à
  * 1366 px ; Copier vers / Récupérer depuis copient la position et Annuler reprend les copies de la
  * session, de la plus récente à la plus ancienne ; le lot se remplit au clavier (MAJ-B) et se
- * copie vers la base nommée ; x montre sa position à la place du plateau, puis revient.
+ * copie vers la base nommée ; x montre sa position à la place du plateau, puis revient. Le groupe
+ * Envoyer du menu contextuel du plateau copie vers l'autre base ou ajoute au lot ; « Protéger des
+ * copies » est mémorisé pour le fichier et revient à la session suivante.
  */
 
 import { test, expect } from '@playwright/test';
 import { installWailsMock } from './helpers/wailsMock.js';
 import { openLibraryMock } from './helpers/fixtures.js';
+import en from '../../src/i18n/locales/en.json' with { type: 'json' };
 
 const pathB = '/libs/club.db';
 const board = {
@@ -184,4 +187,33 @@ test('the lot, filled with SHIFT-B, is copied at once into the base it names', a
     expect(calls).toHaveLength(1);
     expect(calls[0][0]).toBe(1);
     expect(calls[0][1][0].group).toBe(2);
+});
+
+test('the Send group of the board copies the position to the other base, or adds it to the lot', async ({ page }) => {
+    await page.locator('#backgammon-board').click({ button: 'right' });
+    const menu = page.getByRole('menu', { name: en.common.contextMenu }).first();
+    await menu.getByRole('menuitem', { name: en.actions.group.send }).hover();
+    await page.getByRole('menuitem', { name: /Copy the position to/ }).click();
+    await expect.poll(async () => (await callsOf(page, 'CopyPositionToGroup')).length).toBe(1);
+    const [[src, , dst]] = await callsOf(page, 'CopyPositionToGroup');
+    expect([src, dst]).toEqual([2, 1]);
+    await expect(page.locator('[data-testid="transfer-undo"]')).toContainText('1');
+
+    await page.locator('#backgammon-board').click({ button: 'right' });
+    await page.getByRole('menu', { name: en.common.contextMenu }).first().getByRole('menuitem', { name: en.actions.group.send }).hover();
+    await page.getByRole('menuitem', { name: 'Add to the lot' }).click();
+    await page.keyboard.press('Control+Shift+A');
+    await expect(page.locator('[data-testid="transfer-lot-item"]')).toHaveCount(1);
+});
+
+test('« Protect from copies » is remembered for the file, and holds again in the next session', async ({ page }) => {
+    const lock = page.locator('[data-testid="library-group-lock"]').first();
+    await lock.click();
+    await expect(lock).toHaveAttribute('aria-pressed', 'true');
+    expect(await callsOf(page, 'SetLibraryGroupLocked')).toContainEqual([1, true]);
+
+    await page.reload();
+    await expect(page.locator('[data-testid="status-bar"]')).toBeVisible({ timeout: 8000 });
+    // The file opens again in group 1: its protection is asked of the backend once more.
+    await expect.poll(async () => await callsOf(page, 'SetLibraryGroupLocked')).toContainEqual([1, true]);
 });
