@@ -12,7 +12,7 @@
 
 import { test, expect } from '@playwright/test';
 import { installWailsMock } from './helpers/wailsMock.js';
-import { openLibraryMock } from './helpers/fixtures.js';
+import { openLibraryMock, positionC } from './helpers/fixtures.js';
 import en from '../../src/i18n/locales/en.json' with { type: 'json' };
 
 const pathB = '/libs/club.db';
@@ -61,7 +61,14 @@ const elsewhere = {
     ]
 };
 
-test.beforeEach(async ({ page }) => {
+/** The calls made to method, by their arguments. */
+const callsOf = (page, method) => page.evaluate((m) => window.__wailsCalls.filter((c) => c.method === m).map((c) => c.args), method);
+
+/**
+ * Opens a second base next to the first. `app` and `database` add to the mock's answers; with
+ * `land: false` the wait for the new base's first position view is skipped (it holds none).
+ */
+async function openTwoBases(page, { app = {}, database = {}, land = true } = {}) {
     await page.setViewportSize({ width: 1366, height: 768 });
     await installWailsMock(
         page,
@@ -76,8 +83,10 @@ test.beforeEach(async ({ page }) => {
                 SetLibraryGroupLocked: null,
                 TransferToGroup: { group: 1, positions: 1, matches: 0, tournaments: 0, alreadyHeld: 0, collections: 0, lessons: 0, errors: [], cancelled: false },
                 CopyPositionToGroup: { group: 1, positions: 1, matches: 0, tournaments: 0, alreadyHeld: 0, collections: 0, lessons: 0, errors: [], cancelled: false, receipt: 7 },
-                UndoPositionCopy: null
-            }
+                UndoPositionCopy: null,
+                ...app
+            },
+            database
         })
     );
     await page.goto('/');
@@ -86,6 +95,7 @@ test.beforeEach(async ({ page }) => {
     const callsBefore = await page.evaluate(() => window.__wailsCalls.length);
     await page.locator('[data-testid="open-library-group"]').click();
     await expect(page.locator('[data-testid="library-group"]').nth(1)).toHaveClass(/active/);
+    if (!land) return;
     // The new library lands on its position (and its Matches tab) once its list is read: the
     // position's view is the last call of that landing.
     await expect.poll(() => page.evaluate((n) => window.__wailsCalls.slice(n).some((c) => c.method === 'LoadPositionView'), callsBefore)).toBe(true);
@@ -98,122 +108,148 @@ test.beforeEach(async ({ page }) => {
             return (await views()) === n;
         })
         .toBe(true);
+}
+
+test.describe('with a second base open', () => {
+    test.beforeEach(async ({ page }) => {
+        await openTwoBases(page, {});
+    });
+
+    test('the Elsewhere tab tells what the other library knows of the position, readable at 1366 px', async ({ page }) => {
+        await page.keyboard.press('Control+Shift+A');
+        const panel = page.locator('[data-testid="elsewhere-panel"]');
+        await expect(panel).toBeVisible();
+        const group = panel.locator('[data-testid="elsewhere-group"]');
+        await expect(group).toHaveCount(1);
+        await expect(group).toContainText('mine');
+        await expect(group).toContainText('13/7 8/7');
+        await expect(group.locator('[data-testid="elsewhere-other-met"]')).toContainText('Kazaross');
+        await expect(group).toContainText('Le coach préfère construire.');
+        await expect(group).toContainText('Alice');
+        const overflow = await panel.evaluate((el) => el.scrollWidth - el.clientWidth);
+        expect(overflow).toBeLessThanOrEqual(0);
+
+        // Opening a result brings its group forward.
+        await group.locator('[data-testid="elsewhere-open"]').click();
+        await expect.poll(() => page.evaluate(() => window.__wailsCalls.some((c) => c.method === 'ActivateLibraryGroup'))).toBe(true);
+    });
+
+    test("x shows the other library's board in place of this one, then puts it back", async ({ page }) => {
+        const boardEl = page.locator('#backgammon-board');
+        // The focus off any panel: a panel that holds it keeps its bare letters.
+        await page.evaluate(() => /** @type {HTMLElement | null} */ (document.activeElement)?.blur());
+        const before = await boardEl.boundingBox();
+
+        await page.keyboard.press('x');
+        const swap = page.locator('[data-testid="elsewhere-swap"]');
+        await expect(swap).toBeVisible();
+        await expect(swap).toContainText('mine');
+        const shown = await swap.boundingBox();
+        expect(Math.abs(shown.x - before.x)).toBeLessThan(2);
+        expect(Math.abs(shown.width - before.width)).toBeLessThan(2);
+        expect(Math.abs(shown.height - before.height)).toBeLessThan(2);
+        // The swap changes neither the group nor the view.
+        await expect(page.locator('[data-testid="library-group"]').nth(1)).toHaveClass(/active/);
+
+        await page.keyboard.press('x');
+        await expect(swap).toHaveCount(0);
+
+        // Held, it returns on release.
+        await page.keyboard.down('x');
+        await expect(swap).toBeVisible();
+        await page.waitForTimeout(400);
+        await page.keyboard.up('x');
+        await expect(swap).toHaveCount(0);
+    });
+
+    test('copy to the other base and fetch from it, then undo both, newest first', async ({ page }) => {
+        await page.keyboard.press('Control+Shift+A');
+        const group = page.locator('[data-testid="elsewhere-group"]');
+        await expect(group.locator('[data-testid="elsewhere-status"]')).toBeVisible();
+
+        await group.locator('[data-testid="elsewhere-copy-to"]').click();
+        await expect.poll(async () => (await callsOf(page, 'CopyPositionToGroup')).length).toBe(1);
+        const [[src, , dst]] = await callsOf(page, 'CopyPositionToGroup');
+        expect([src, dst]).toEqual([2, 1]);
+
+        await group.locator('[data-testid="elsewhere-fetch-from"]').click();
+        await expect.poll(async () => (await callsOf(page, 'CopyPositionToGroup')).length).toBe(2);
+        expect((await callsOf(page, 'CopyPositionToGroup'))[1]).toEqual([1, 31, 2]);
+
+        const undo = page.locator('[data-testid="transfer-undo"]');
+        await expect(undo).toContainText('2');
+        await undo.click();
+        await expect.poll(async () => (await callsOf(page, 'UndoPositionCopy')).length).toBe(1);
+        await expect(undo).toContainText('1');
+        await undo.click();
+        await expect.poll(async () => (await callsOf(page, 'UndoPositionCopy')).length).toBe(2);
+        await expect(undo).toHaveCount(0);
+    });
+
+    test('the lot, filled with SHIFT-B, is copied at once into the base it names', async ({ page }) => {
+        await page.keyboard.press('Control+Shift+A');
+        await page.evaluate(() => /** @type {HTMLElement | null} */ (document.activeElement)?.blur());
+        await page.keyboard.press('Shift+B');
+        const lot = page.locator('[data-testid="transfer-lot"]');
+        await expect(lot.locator('[data-testid="transfer-lot-item"]')).toHaveCount(1);
+
+        await lot.locator('[data-testid="transfer-lot-copy"]').click();
+        await expect(lot.locator('[data-testid="transfer-lot-item"]')).toHaveCount(0);
+        const calls = await callsOf(page, 'TransferToGroup');
+        expect(calls).toHaveLength(1);
+        expect(calls[0][0]).toBe(1);
+        expect(calls[0][1][0].group).toBe(2);
+    });
+
+    test('the Send group of the board copies the position to the other base, or adds it to the lot', async ({ page }) => {
+        await page.locator('#backgammon-board').click({ button: 'right' });
+        const menu = page.getByRole('menu', { name: en.common.contextMenu }).first();
+        await menu.getByRole('menuitem', { name: en.actions.group.send }).hover();
+        await page.getByRole('menuitem', { name: /Copy the position to/ }).click();
+        await expect.poll(async () => (await callsOf(page, 'CopyPositionToGroup')).length).toBe(1);
+        const [[src, , dst]] = await callsOf(page, 'CopyPositionToGroup');
+        expect([src, dst]).toEqual([2, 1]);
+        await expect(page.locator('[data-testid="transfer-undo"]')).toContainText('1');
+
+        await page.locator('#backgammon-board').click({ button: 'right' });
+        await page.getByRole('menu', { name: en.common.contextMenu }).first().getByRole('menuitem', { name: en.actions.group.send }).hover();
+        await page.getByRole('menuitem', { name: 'Add to the lot' }).click();
+        await page.keyboard.press('Control+Shift+A');
+        await expect(page.locator('[data-testid="transfer-lot-item"]')).toHaveCount(1);
+    });
+
+    test('« Protect from copies » is remembered for the file, and holds again in the next session', async ({ page }) => {
+        const lock = page.locator('[data-testid="library-group-lock"]').first();
+        await lock.click();
+        await expect(lock).toHaveAttribute('aria-pressed', 'true');
+        expect(await callsOf(page, 'SetLibraryGroupLocked')).toContainEqual([1, true]);
+
+        await page.reload();
+        await expect(page.locator('[data-testid="status-bar"]')).toBeVisible({ timeout: 8000 });
+        // The file opens again in group 1: its protection is asked of the backend once more.
+        await expect.poll(async () => await callsOf(page, 'SetLibraryGroupLocked')).toContainEqual([1, true]);
+    });
 });
 
-test('the Elsewhere tab tells what the other library knows of the position, readable at 1366 px', async ({ page }) => {
-    await page.keyboard.press('Control+Shift+A');
-    const panel = page.locator('[data-testid="elsewhere-panel"]');
-    await expect(panel).toBeVisible();
-    const group = panel.locator('[data-testid="elsewhere-group"]');
-    await expect(group).toHaveCount(1);
-    await expect(group).toContainText('mine');
-    await expect(group).toContainText('13/7 8/7');
-    await expect(group.locator('[data-testid="elsewhere-other-met"]')).toContainText('Kazaross');
-    await expect(group).toContainText('Le coach préfère construire.');
-    await expect(group).toContainText('Alice');
-    const overflow = await panel.evaluate((el) => el.scrollWidth - el.clientWidth);
-    expect(overflow).toBeLessThanOrEqual(0);
+test.describe('the states of the Elsewhere panel', () => {
+    test('alone, it invites to open a base', async ({ page }) => {
+        await page.setViewportSize({ width: 1366, height: 768 });
+        await installWailsMock(page, openLibraryMock());
+        await page.goto('/');
+        await expect(page.locator('[data-testid="status-bar"]')).toBeVisible({ timeout: 8000 });
+        await page.keyboard.press('Control+Shift+A');
+        await expect(page.locator('[data-testid="elsewhere-alone"]')).toBeVisible();
+        await expect(page.locator('[data-testid="elsewhere-open-base"]')).toBeVisible();
+        await expect(page.locator('[data-testid="elsewhere-group"]')).toHaveCount(0);
+    });
 
-    // Opening a result brings its group forward.
-    await group.locator('[data-testid="elsewhere-open"]').click();
-    await expect.poll(() => page.evaluate(() => window.__wailsCalls.some((c) => c.method === 'ActivateLibraryGroup'))).toBe(true);
-});
-
-test("x shows the other library's board in place of this one, then puts it back", async ({ page }) => {
-    const boardEl = page.locator('#backgammon-board');
-    // The focus off any panel: a panel that holds it keeps its bare letters.
-    await page.evaluate(() => /** @type {HTMLElement | null} */ (document.activeElement)?.blur());
-    const before = await boardEl.boundingBox();
-
-    await page.keyboard.press('x');
-    const swap = page.locator('[data-testid="elsewhere-swap"]');
-    await expect(swap).toBeVisible();
-    await expect(swap).toContainText('mine');
-    const shown = await swap.boundingBox();
-    expect(Math.abs(shown.x - before.x)).toBeLessThan(2);
-    expect(Math.abs(shown.width - before.width)).toBeLessThan(2);
-    expect(Math.abs(shown.height - before.height)).toBeLessThan(2);
-    // The swap changes neither the group nor the view.
-    await expect(page.locator('[data-testid="library-group"]').nth(1)).toHaveClass(/active/);
-
-    await page.keyboard.press('x');
-    await expect(swap).toHaveCount(0);
-
-    // Held, it returns on release.
-    await page.keyboard.down('x');
-    await expect(swap).toBeVisible();
-    await page.waitForTimeout(400);
-    await page.keyboard.up('x');
-    await expect(swap).toHaveCount(0);
-});
-
-/** The calls made to method, by their arguments. */
-const callsOf = (page, method) => page.evaluate((m) => window.__wailsCalls.filter((c) => c.method === m).map((c) => c.args), method);
-
-test('copy to the other base and fetch from it, then undo both, newest first', async ({ page }) => {
-    await page.keyboard.press('Control+Shift+A');
-    const group = page.locator('[data-testid="elsewhere-group"]');
-    await expect(group.locator('[data-testid="elsewhere-status"]')).toBeVisible();
-
-    await group.locator('[data-testid="elsewhere-copy-to"]').click();
-    await expect.poll(async () => (await callsOf(page, 'CopyPositionToGroup')).length).toBe(1);
-    const [[src, , dst]] = await callsOf(page, 'CopyPositionToGroup');
-    expect([src, dst]).toEqual([2, 1]);
-
-    await group.locator('[data-testid="elsewhere-fetch-from"]').click();
-    await expect.poll(async () => (await callsOf(page, 'CopyPositionToGroup')).length).toBe(2);
-    expect((await callsOf(page, 'CopyPositionToGroup'))[1]).toEqual([1, 31, 2]);
-
-    const undo = page.locator('[data-testid="transfer-undo"]');
-    await expect(undo).toContainText('2');
-    await undo.click();
-    await expect.poll(async () => (await callsOf(page, 'UndoPositionCopy')).length).toBe(1);
-    await expect(undo).toContainText('1');
-    await undo.click();
-    await expect.poll(async () => (await callsOf(page, 'UndoPositionCopy')).length).toBe(2);
-    await expect(undo).toHaveCount(0);
-});
-
-test('the lot, filled with SHIFT-B, is copied at once into the base it names', async ({ page }) => {
-    await page.keyboard.press('Control+Shift+A');
-    await page.evaluate(() => /** @type {HTMLElement | null} */ (document.activeElement)?.blur());
-    await page.keyboard.press('Shift+B');
-    const lot = page.locator('[data-testid="transfer-lot"]');
-    await expect(lot.locator('[data-testid="transfer-lot-item"]')).toHaveCount(1);
-
-    await lot.locator('[data-testid="transfer-lot-copy"]').click();
-    await expect(lot.locator('[data-testid="transfer-lot-item"]')).toHaveCount(0);
-    const calls = await callsOf(page, 'TransferToGroup');
-    expect(calls).toHaveLength(1);
-    expect(calls[0][0]).toBe(1);
-    expect(calls[0][1][0].group).toBe(2);
-});
-
-test('the Send group of the board copies the position to the other base, or adds it to the lot', async ({ page }) => {
-    await page.locator('#backgammon-board').click({ button: 'right' });
-    const menu = page.getByRole('menu', { name: en.common.contextMenu }).first();
-    await menu.getByRole('menuitem', { name: en.actions.group.send }).hover();
-    await page.getByRole('menuitem', { name: /Copy the position to/ }).click();
-    await expect.poll(async () => (await callsOf(page, 'CopyPositionToGroup')).length).toBe(1);
-    const [[src, , dst]] = await callsOf(page, 'CopyPositionToGroup');
-    expect([src, dst]).toEqual([2, 1]);
-    await expect(page.locator('[data-testid="transfer-undo"]')).toContainText('1');
-
-    await page.locator('#backgammon-board').click({ button: 'right' });
-    await page.getByRole('menu', { name: en.common.contextMenu }).first().getByRole('menuitem', { name: en.actions.group.send }).hover();
-    await page.getByRole('menuitem', { name: 'Add to the lot' }).click();
-    await page.keyboard.press('Control+Shift+A');
-    await expect(page.locator('[data-testid="transfer-lot-item"]')).toHaveCount(1);
-});
-
-test('« Protect from copies » is remembered for the file, and holds again in the next session', async ({ page }) => {
-    const lock = page.locator('[data-testid="library-group-lock"]').first();
-    await lock.click();
-    await expect(lock).toHaveAttribute('aria-pressed', 'true');
-    expect(await callsOf(page, 'SetLibraryGroupLocked')).toContainEqual([1, true]);
-
-    await page.reload();
-    await expect(page.locator('[data-testid="status-bar"]')).toBeVisible({ timeout: 8000 });
-    // The file opens again in group 1: its protection is asked of the backend once more.
-    await expect.poll(async () => await callsOf(page, 'SetLibraryGroupLocked')).toContainEqual([1, true]);
+    test('an other analysis there is kept by a copy, and the panel says so', async ({ page }) => {
+        await openTwoBases(page, {
+            database: { LoadPositionView: { analysis: { positionId: positionC.id, checkerAnalysis: { moves: [{ move: '24/18 13/7' }] } }, comment: '' } }
+        });
+        await page.keyboard.press('Control+Shift+A');
+        const group = page.locator('[data-testid="elsewhere-group"]');
+        await expect(group.locator('[data-testid="elsewhere-status"]')).toContainText(en.elsewhere.status.otherAnalysis);
+        await expect(group.locator('[data-testid="elsewhere-kept"]')).toBeVisible();
+    });
 });
