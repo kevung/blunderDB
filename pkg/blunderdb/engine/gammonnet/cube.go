@@ -311,7 +311,10 @@ func matchWinningChance(state MatchState, probs *[NumOutputs]float32) (float64, 
 	if !ok1 || !ok2 {
 		return 0, false
 	}
-	return winMass*winMWC + loseMass*loseMWC, true
+	// float64(x*y) bars fused multiply-add (arm64, GOAMD64=v3): levelDead
+	// rounds the same two products, and the Crawford value must equal this
+	// one to the bit.
+	return float64(winMass*winMWC) + float64(loseMass*loseMWC), true
 }
 
 // matchEquity is 2×MWC−1 — gn_match_equity (ADR-0016). ok is false only when
@@ -391,8 +394,12 @@ func branchMwc(state MatchState, outcomes [numOutcomes]float64, stake int, onRol
 // levelDead is M_dead(p; k), linear between the two gammon-mix anchors, at
 // the queried p. Never cache it at the position's own p: levelSolve reads
 // it at the pieces' endpoints.
+//
+// Both products are rounded before the sum (float64 bars fusion), as in
+// matchWinningChance: a fused one would part the cubeful Crawford value from
+// the cubeless one on arm64.
 func levelDead(lv *matchLevel, p float64) float64 {
-	return (1.0-p)*lv.loseAvg + p*lv.winAvg
+	return float64((1.0-p)*lv.loseAvg) + float64(p*lv.winAvg)
 }
 
 // levelLive is the fully-live curve of one stake level: janowskiEquity's
