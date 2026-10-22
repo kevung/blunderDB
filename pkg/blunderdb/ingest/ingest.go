@@ -111,6 +111,14 @@ type Summary struct {
 	// one answer to "did this import add it" that a concurrent writer cannot
 	// falsify.
 	CreatedPositions []int64 `json:"-"`
+	// CreatedMatches, CreatedTournaments and CreatedCollections are the ids
+	// of the rows a native .db import inserted, and AddedMembers the
+	// positions it gave, by collection id, to collections the target held
+	// already: what a copy can take back (database.TakeBackCopy).
+	CreatedMatches     []int64           `json:"-"`
+	CreatedTournaments []int64           `json:"-"`
+	CreatedCollections []int64           `json:"-"`
+	AddedMembers       map[int64][]int64 `json:"-"`
 }
 
 // ExportOptions says how an export is made. Format picks the exporter; the

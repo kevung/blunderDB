@@ -46,6 +46,10 @@ type MatchMerge struct {
 
 	MatchMap      map[int64]int64
 	TournamentMap map[int64]int64
+	// CreatedMatches and CreatedTournaments are the target ids of the rows
+	// this merge inserted, as opposed to those it found held already.
+	CreatedMatches     []int64
+	CreatedTournaments []int64
 
 	// keptDates holds the source dates of each tournament this merge created,
 	// by target id: filing a match advances updated_at, so they are written
@@ -200,6 +204,7 @@ func mergeTournaments(ctx context.Context, tx storage.Stores, scope string, sour
 		res.keptDates[id] = [2]string{t.CreatedAt, t.UpdatedAt}
 		byName[t.Name] = id
 		res.TournamentMap[t.ID] = id
+		res.CreatedTournaments = append(res.CreatedTournaments, id)
 		res.Tournaments++
 	}
 	return nil
@@ -274,6 +279,7 @@ func mergeMatchRows(ctx context.Context, tx storage.Stores, scope string, source
 			}
 		}
 		res.MatchMap[m.ID] = id
+		res.CreatedMatches = append(res.CreatedMatches, id)
 		res.Matches++
 		created = append(created, id)
 	}
@@ -473,4 +479,6 @@ func (s *Summary) applyMatchMerge(m MatchMerge) {
 	s.Directions = m.Directions
 	s.Rencontres = m.Rencontres
 	s.Unreadable = m.Unreadable
+	s.CreatedMatches = m.CreatedMatches
+	s.CreatedTournaments = m.CreatedTournaments
 }

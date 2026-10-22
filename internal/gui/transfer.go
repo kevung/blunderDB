@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
+	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 )
 
 // TransferBatch is what one library group gives to a transfer: rows named by
@@ -79,6 +80,10 @@ type TransferSummary struct {
 	Lessons     int      `json:"lessons"`
 	Errors      []string `json:"errors"`
 	Cancelled   bool     `json:"cancelled"`
+	// Receipt names, in the session's history of copies, what this transfer
+	// created and can take back (UndoPositionCopy); 0 when it created
+	// nothing, or created Lessons, whose steps a take-back would cut.
+	Receipt int `json:"receipt"`
 }
 
 // ErrLibraryGroupLocked refuses a transfer into a group its user locked.
@@ -139,8 +144,10 @@ func (a *App) TransferToGroup(dst int, batches []TransferBatch) (TransferSummary
 	// running into dst meanwhile is counted with it; without a first count
 	// the account says nothing rather than a false number.
 	held, heldErr := to.CountPositions()
+	var reports []ingest.TransferReport
 	for _, s := range sources {
 		rep, err := s.from.TransferTo(ctx, to, s.batch.options())
+		reports = append(reports, rep)
 		im := rep.Imported
 		sum.Matches += im.Matches
 		sum.Tournaments += im.Tournaments
@@ -161,6 +168,17 @@ func (a *App) TransferToGroup(dst int, batches []TransferBatch) (TransferSummary
 	}
 	if sum.Positions != 0 || sum.Matches > 0 {
 		to.RefreshSearchStatistics()
+	}
+	if sum.Lessons > 0 {
+		return sum, nil
+	}
+	r, err := database.SealCopy(ctx, to, reports...)
+	if err != nil {
+		sum.Errors = append(sum.Errors, err.Error())
+		return sum, nil
+	}
+	if !r.Empty() {
+		sum.Receipt = a.paneCopy.keep(dst, func(d *database.Database) error { return database.TakeBackCopy(d, r) })
 	}
 	return sum, nil
 }
@@ -228,17 +246,15 @@ func (a *App) borrowTransferEnds(dst int, srcs []int) (transferEnds, error) {
 }
 
 // PositionCopy is the account of one position carried from a split-screen
-// pane onto the other: the transfer's summary, and, when this copy added the
-// position to the destination, the receipt that takes it back
-// (UndoPositionCopy); 0 when the destination held it already.
+// pane onto the other: the transfer's summary, whose receipt takes it back
+// (UndoPositionCopy), 0 when the destination held it already.
 type PositionCopy struct {
 	TransferSummary
-	Receipt int `json:"receipt"`
 }
 
-// paneCopies is the session's history of position copies the desktop can
-// take back, oldest first, held until the application closes; each receipt
-// names the file the copy went into.
+// paneCopies is the session's history of copies the desktop can take back,
+// positions or matches, tournaments and collections, oldest first, held until
+// the application closes; each receipt names the file the copy went into.
 type paneCopies struct {
 	mu      sync.Mutex
 	next    int
@@ -246,9 +262,20 @@ type paneCopies struct {
 }
 
 type paneCopy struct {
-	token   int
-	group   int
-	receipt database.PositionCopyReceipt
+	token int
+	group int
+	// takeBack removes the copy from the library it went into, or refuses
+	// with database.ErrPositionChanged / database.ErrCopyChanged.
+	takeBack func(d *database.Database) error
+}
+
+// keep adds a copy into group to the history and returns its token.
+func (p *paneCopies) keep(group int, takeBack func(d *database.Database) error) int {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	p.next++
+	p.history = append(p.history, paneCopy{token: p.next, group: group, takeBack: takeBack})
+	return p.next
 }
 
 // find is the index of the copy whose token is receipt, -1 when the history
@@ -301,11 +328,7 @@ func (a *App) CopyPositionToGroup(src int, id int64, dst int) (PositionCopy, err
 	if err != nil || !r.Created {
 		return out, nil
 	}
-	a.paneCopy.mu.Lock()
-	defer a.paneCopy.mu.Unlock()
-	a.paneCopy.next++
-	a.paneCopy.history = append(a.paneCopy.history, paneCopy{token: a.paneCopy.next, group: ends.dst, receipt: r})
-	out.Receipt = a.paneCopy.next
+	out.Receipt = a.paneCopy.keep(ends.dst, func(d *database.Database) error { return database.TakeBackPositionCopy(d, r) })
 	return out, nil
 }
 
@@ -314,9 +337,10 @@ func (a *App) CopyPositionToGroup(src int, id int64, dst int) (PositionCopy, err
 var ErrLaterCopyFirst = errors.New("a later copy into this library must be taken back first")
 
 // UndoPositionCopy takes back a copy of the session's history by the receipt
-// CopyPositionToGroup gave: the position leaves the destination with what
-// came with it, provided that group still has the same library open and the
-// position is as the copy left it (database.ErrPositionChanged otherwise,
+// CopyPositionToGroup or TransferToGroup gave: what the copy created leaves
+// the destination with what came with it, provided that group still has the
+// same library open and holds it as the copy left it
+// (database.ErrPositionChanged / database.ErrCopyChanged otherwise,
 // and the copy leaves the history: it can no longer be taken back). Copies
 // into one group come back newest first (ErrLaterCopyFirst). After a
 // transient failure the same receipt can be tried again.
@@ -334,9 +358,9 @@ func (a *App) UndoPositionCopy(receipt int) error {
 		}
 	}
 	if err := a.writeGroup(c.group, func(d *database.Database) error {
-		return database.TakeBackPositionCopy(d, c.receipt)
+		return c.takeBack(d)
 	}); err != nil {
-		if errors.Is(err, database.ErrPositionChanged) {
+		if errors.Is(err, database.ErrPositionChanged) || errors.Is(err, database.ErrCopyChanged) {
 			a.paneCopy.drop(i)
 		}
 		return err

@@ -1,8 +1,8 @@
 // Exchanges between open libraries (ADR-0101, ADR-0102): a row dragged onto another group's
 // header, copied from the « Autres bases » panel or the context menu, or the lot copied into a
 // base, goes through the backend's one transfer (TransferToGroup → Database.TransferTo), in the
-// background, attached to the group it writes. A position copied alone keeps a receipt: the
-// session's history takes it back, newest first.
+// background, attached to the group it writes. A copy that created something keeps a receipt:
+// the session's history takes it back, newest first.
 import { get } from 'svelte/store';
 import { TransferToGroup, SetLibraryGroupLocked, CopyPositionToGroup, UndoPositionCopy } from '../../wailsjs/go/gui/App.js';
 import { transferBasketStore, lockedGroupsStore, transferHistoryStore, protectedPaths, rememberProtection } from '../stores/transferBasketStore.js';
@@ -72,7 +72,20 @@ export async function transferToGroup(dst, items) {
         if (noteGroupJob(dst, 'done', 'transfer', message)) setStatusBarMessage(message);
         return false;
     }
-    return transferDone(dst, summary).ok;
+    const { ok } = transferDone(dst, summary);
+    keepReceipt(dst, ok, summary);
+    return ok;
+}
+
+/**
+ * A copy that created something in dst joins the session's history, to take back from the
+ * status bar or the « Autres bases » panel.
+ * @param {number} dst
+ * @param {boolean} ok
+ * @param {{ receipt?: number }} summary
+ */
+function keepReceipt(dst, ok, summary) {
+    if (ok && summary.receipt) transferHistoryStore.update((h) => [...h, { dst, receipt: summary.receipt, name: groupName(pathOf(dst)) }]);
 }
 
 /**
@@ -132,7 +145,7 @@ export async function copyPositionToPane(dst, item) {
     // The copy was asked from what is on screen: the account is said now, whichever base was written.
     const { ok, message } = transferDone(dst, copy);
     setStatusBarMessage(message);
-    if (ok && copy.receipt) transferHistoryStore.update((h) => [...h, { dst, receipt: copy.receipt, name: groupName(pathOf(dst)) }]);
+    keepReceipt(dst, ok, copy);
     return ok;
 }
 
@@ -164,7 +177,7 @@ export async function undoPaneCopy() {
     try {
         await UndoPositionCopy(undo.receipt);
     } catch (error) {
-        logger.error('taking back a position copy failed:', error);
+        logger.error('taking back a copy failed:', error);
         // A copy written on since, or a base that opened another file, is gone for good; any
         // other refusal (a protection, a passing failure) keeps it to try again.
         if (String(error).includes('has changed since the copy')) transferHistoryStore.update((h) => h.filter((u) => u !== undo));

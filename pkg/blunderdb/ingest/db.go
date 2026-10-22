@@ -213,6 +213,8 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 		return sum, err
 	}
 	sum.Collections = merged.Changed
+	sum.CreatedCollections = merged.Created
+	sum.AddedMembers = merged.Added
 	sum.LivingCollectionsSkipped = merged.LivingSkipped
 	sum.LivingCollectionsFrozen = merged.LivingFrozen
 	sum.LivingCollectionsOnManual = merged.LivingOnManual
@@ -288,6 +290,10 @@ func ReadSourceCollections(ctx context.Context, source storage.Stores, scope str
 type CollectionMerge struct {
 	// Changed counts the collections created or given new members.
 	Changed int
+	// Created are the ids of the collections this merge inserted; Added the
+	// members it gave, by target collection id, to those it found held.
+	Created []int64
+	Added   map[int64][]int64
 	// LivingSkipped names the source collections with members whose
 	// namesake in the target is living: its membership is its query, so
 	// those members are not added.
@@ -358,6 +364,7 @@ func MergeCollections(ctx context.Context, tx storage.Stores, scope string, src 
 				return res, err
 			}
 			target = storage.Collection{ID: id, Name: sc.Coll.Name}
+			res.Created = append(res.Created, id)
 			members := sc.Members
 			if q := strings.TrimSpace(sc.Coll.FilterQuery); q != "" {
 				if carried, ok := carriedLivingQuery(q, targetOf, maps.Matches, maps.Tournaments); ok {
@@ -385,6 +392,12 @@ func MergeCollections(ctx context.Context, tx storage.Stores, scope string, src 
 		if len(ids) > 0 {
 			if err := tx.Collections().AddPositions(ctx, scope, target.ID, ids); err != nil {
 				return res, err
+			}
+			if exists {
+				if res.Added == nil {
+					res.Added = map[int64][]int64{}
+				}
+				res.Added[target.ID] = append(res.Added[target.ID], ids...)
 			}
 		}
 		if !exists || len(ids) > 0 {

@@ -105,6 +105,16 @@ describe('transferService', () => {
         expect(TransferToGroup).toHaveBeenCalledWith(2, [{ group: 1, positionIDs: [], matchIDs: [3], collectionIDs: [], lessonIDs: [], tournamentIDs: [] }]);
     });
 
+    it('keeps the receipt of a match copy that created rows, to take it back', async () => {
+        vi.mocked(TransferToGroup).mockResolvedValue({ ...done, receipt: 5 });
+        expect(await transferToGroup(2, [{ group: 1, kind: 'match', id: 3, label: '' }])).toBe(true);
+        expect(get(transferHistoryStore)).toEqual([{ dst: 2, receipt: 5, name: 'club' }]);
+        vi.mocked(UndoPositionCopy).mockResolvedValue(undefined);
+        expect(await undoPaneCopy()).toBe(true);
+        expect(UndoPositionCopy).toHaveBeenCalledWith(5);
+        expect(get(transferHistoryStore)).toEqual([]);
+    });
+
     it('drops nothing on the group the row comes from', () => {
         dropTransferItem(1, { group: 1, kind: 'match', id: 3, label: '' });
         expect(TransferToGroup).not.toHaveBeenCalled();
