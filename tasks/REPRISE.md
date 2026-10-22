@@ -18,11 +18,17 @@ Pas de release, pas de tag.
 
 ## Tests
 
-- Sur l'arbre final de main (38da94734) : `go build ./...`, `go vet`, `go test` de internal/cli (dont
-  TestDatabaseParity), internal/server/..., database, storage, cmd/* verts ; vitest 4545/4545 ;
-  doc-i18n-check sans manque. e2e `elsewhere.spec.js` 10/10 (port libre, `--workers=1`, `--timeout=40000`).
-- Contrat PostgreSQL (`-tags postgres`, BLUNDERDB_REQUIRE_PG=1) vert sur la branche stats.
-- Non relancés sur l'arbre final : `go test ./...` complet, `-race`, e2e complet, golangci-lint — laissés à la CI.
+CI `build.yml` de main **verte** sur dcaff7c70 (run 39825966857, 31 jobs success, dont test-os macOS,
+golangci-lint, svelte-check, frontend-e2e 336 passés sans flaky). Pour y arriver après la fusion du lot :
+
+- svelte-check : 1253 → 1241 erreurs (plafond `.svelte-check-budget` abaissé à 1241) ; errcheck dans
+  `cmd/blunderdb-loadtest/scenario_test.go`.
+- macOS (arm64) : TestCrawfordSearchWithCubeIsTheCubelessSearch rouge depuis float16 — la fusion FMA
+  de `a*b+c` par le compilateur Go arrondissait différemment les chemins avec et sans cube ; barrières
+  `float64(a*b)` dans `cube.go` (reproduit avec GOAMD64=v3 ; amd64 de base et golds inchangés).
+  Parité au bit amd64/arm64 du reste du moteur : #793.
+- e2e : mocks Wails de `TranscriptionCandidates` manquants (24 échecs) ; vol de focus réel du panneau
+  des matchs sur un menu contextuel ouvert dans les 100 ms (`utils/panelFocus.js`).
 
 ## Branches restantes
 
@@ -34,7 +40,7 @@ Aucune branche `feat/*` en cours. Worktrees locaux de mesure gardés : `../blund
 1. Vérifier la CI de main (build.yml) après ces fusions.
 2. Lot gammonGo restant : #788 (tournamentReview en lot), #789 (garantie openapi intervalle/effectif),
    #783 (transcriptions.import, le plus gros), #790 (ADR Nicomaque : ADR d'abord, pas de code).
-3. Suites ouvertes pendant le lot : #791 (EventsDSN dans `Bootstrap`, relais des gestes entre
+3. Suites ouvertes pendant le lot : #793 (parité au bit amd64/arm64, FMA), #791 (EventsDSN dans `Bootstrap`, relais des gestes entre
    instances), #792 (le classement des candidats au bureau attend un jeton HoldCore sous `d.mu.RLock` ;
    tests -race de RankAllPlaysWithMET).
 4. #664 livre d'ouverture : rapatrier `book.jsonl.gz` de smith quand le calcul est terminé.
