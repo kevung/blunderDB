@@ -186,9 +186,16 @@ garde les N premières lignes du texte ; le JSON donne tout, avec les
 mois, chacune couvrant ce mois et les précédents de la fenêtre
 (``--window month``, ``quarter`` ou un nombre de mois).
 
+``--by-phase`` découpe chaque fenêtre par phase de jeu (ouverture, milieu de
+partie, course, sortie…) : sous chaque ligne, une ligne par phase avec ses
+matchs, ses décisions et son PR, les mêmes chiffres que la ventilation par
+phase de ``stats breakdown`` restreinte à la fenêtre ; une phase sans décision
+comptée dans la fenêtre n'y figure pas. Le démon HTTP les rend dans
+``per_phase`` quand la requête ``stats.prByWindow`` porte ``"byPhase": true``.
+
 .. code-block:: bash
 
-   ./blunderdb stats windows --db <fichier> [--player <nom>] [--window quarter]
+   ./blunderdb stats windows --db <fichier> [--player <nom>] [--window quarter] [--by-phase]
 
 **stats ranking** — Le classement des joueurs par PR, le plus bas en tête,
 parmi ceux qui ont au moins ``--min-decisions`` décisions comptées (500 par

@@ -5405,6 +5405,8 @@ that month and the ones before it in the window. A window without a counted
 decision shows a dash, not a PR.
 
 Options:
+  -by-phase
+    	Split each window by game phase (opening, middle game, race, bear-off...)
   -db string
     	Path to the database file (required)
   -decision-type string
@@ -5429,6 +5431,7 @@ Options:
 Examples:
   blunderdb stats windows --db database.db --player "Alice"
   blunderdb stats windows --db database.db --player "Alice" --window quarter --format json
+  blunderdb stats windows --db database.db --player "Alice" --by-phase
 ```
 
 ### `blunderdb study mark`

@@ -576,6 +576,10 @@ export function PRByWindow(arg1:database.StatsFilter,arg2:number):Promise<Array<
 
 export function PRByWindowCtx(arg1:context.Context,arg2:database.StatsFilter,arg3:number):Promise<Array<storage.WindowStats>>;
 
+export function PRByWindowPhases(arg1:database.StatsFilter,arg2:number):Promise<Array<storage.WindowStats>>;
+
+export function PRByWindowPhasesCtx(arg1:context.Context,arg2:database.StatsFilter,arg3:number):Promise<Array<storage.WindowStats>>;
+
 export function Pairs(arg1:number):Promise<Record<string, Array<storage.PairMember>>>;
 
 export function ParseDirectoryCSV(arg1:number,arg2:string):Promise<service.DirectoryImport>;

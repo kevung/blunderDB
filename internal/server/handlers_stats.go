@@ -30,6 +30,8 @@ type tournamentIDsResp struct {
 type statsWindowReq struct {
 	Filter storage.StatsFilter `json:"filter"`
 	Months int                 `json:"months"`
+	// ByPhase fills each point's per_phase (storage.StatsStore.PRByWindowPhases).
+	ByPhase bool `json:"byPhase"`
 }
 
 type statsRankingReq struct {
@@ -195,8 +197,12 @@ func (s *Server) statsRoutes() []route {
 		{http.MethodPost, "/v1/stats.headToHead", rpc(func(ctx context.Context, scope string, req statsHeadToHeadReq) (*storage.HeadToHead, error) {
 			return ss().HeadToHead(ctx, scope, req.PlayerA, req.PlayerB, req.Filter)
 		})},
-		// Le PR sur une fenêtre calendaire glissante de Months mois.
+		// Le PR sur une fenêtre calendaire glissante de Months mois, découpé
+		// par phase de jeu si ByPhase.
 		{http.MethodPost, "/v1/stats.prByWindow", rpc(func(ctx context.Context, scope string, req statsWindowReq) ([]storage.WindowStats, error) {
+			if req.ByPhase {
+				return ss().PRByWindowPhases(ctx, scope, req.Filter, req.Months)
+			}
 			return ss().PRByWindow(ctx, scope, req.Filter, req.Months)
 		})},
 		// Les matchs qu'un chiffre du corpus compte : ce qu'ouvre une ligne.

@@ -9867,6 +9867,8 @@ components:
         months:
           type: integer
           format: int32
+        byPhase:
+          type: boolean
     storage_Alias:
       type: object
       description: "Opaque: see the Go type storage.Alias (defined outside internal/server, not expanded here)."

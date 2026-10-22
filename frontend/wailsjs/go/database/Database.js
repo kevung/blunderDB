@@ -1110,6 +1110,14 @@ export function PRByWindowCtx(arg1, arg2, arg3) {
   return window['go']['database']['Database']['PRByWindowCtx'](arg1, arg2, arg3);
 }
 
+export function PRByWindowPhases(arg1, arg2) {
+  return window['go']['database']['Database']['PRByWindowPhases'](arg1, arg2);
+}
+
+export function PRByWindowPhasesCtx(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['PRByWindowPhasesCtx'](arg1, arg2, arg3);
+}
+
 export function Pairs(arg1) {
   return window['go']['database']['Database']['Pairs'](arg1);
 }

@@ -811,6 +811,12 @@ type StatsStore interface {
 	// provenance filter is refused with ErrInvalid.
 	PRByWindow(ctx context.Context, scope string, filter StatsFilter, months int) ([]WindowStats, error)
 
+	// PRByWindowPhases is PRByWindow with each point's PerPhase filled: the
+	// same window split by the game phase of each decision (ADR-0035), read
+	// from the cells Compute's PerPhase reads, so a curve of the PR by phase
+	// over the months costs one call instead of one per phase.
+	PRByWindowPhases(ctx context.Context, scope string, filter StatsFilter, months int) ([]WindowStats, error)
+
 	// MatchIDs lists the matches a corpus figure counts: those where a seat
 	// of the filter's players (every player when none) holds a counted
 	// decision, oldest first. Read as PRByWindow reads; a provenance filter
@@ -912,6 +918,19 @@ type HeadToHeadMatch struct {
 type WindowStats struct {
 	From         string  `json:"from"`
 	To           string  `json:"to"`
+	NumMatches   int     `json:"num_matches"`
+	NumDecisions int     `json:"num_decisions"`
+	PR           float64 `json:"pr"`
+	// PerPhase, filled by PRByWindowPhases alone, splits the point by game
+	// phase, in the order of domain.GamePhase; a phase without a counted
+	// decision in the window is left out.
+	PerPhase []WindowPhaseStats `json:"per_phase,omitempty"`
+}
+
+// WindowPhaseStats is one game phase of a WindowStats point.
+type WindowPhaseStats struct {
+	// Phase is the stable token of domain.GamePhase ("opening", "race", …).
+	Phase        string  `json:"phase"`
 	NumMatches   int     `json:"num_matches"`
 	NumDecisions int     `json:"num_decisions"`
 	PR           float64 `json:"pr"`
