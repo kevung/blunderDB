@@ -27,7 +27,10 @@ sa spec en donne la transposition en Go.
    seulement si un jeton est libre, et l'exécute lui-même sinon : l'emboîtement ne peut pas
    s'interbloquer. `ProcessCores()` (GOMAXPROCS jetons) est le budget de tout le processus ;
    une goroutine qui cherche seule de son côté (une position d'un lot, une cellule de la
-   matrice) en tient un (`HoldCore`). Rien d'empilé ne demande plus de GOMAXPROCS goroutines,
+   matrice) en tient un (`HoldCore`). Une recherche sérielle et interactive à 0 ou 1 pli — le
+   panneau en direct (`EvaluatePosition`), les candidats d'une transcription — n'en prend pas :
+   elle dépasse le budget d'une goroutine pendant quelques millisecondes, là où attendre un
+   jeton derrière un lot figerait le geste le temps d'une position profonde. Rien d'empilé ne demande plus de GOMAXPROCS goroutines,
    et ce qu'un lot laisse libre sert aux recherches en cours.
 4. **`CoresFor(ply)`** : le budget du processus à partir de 2 plis, série en dessous (seuil
    mesuré, ADR-0011). `NewBatchSearcher` et le panneau le prennent ; `WithWorkers(n)` reste

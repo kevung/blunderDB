@@ -78,6 +78,10 @@ func (c *Cores) Hold() (release func()) {
 	return func() { once.Do(func() { <-c.tokens }) }
 }
 
+// Cap is the number of tokens of the budget, fixed when it was made (for
+// ProcessCores, GOMAXPROCS at first use, whatever it has become since).
+func (c *Cores) Cap() int { return cap(c.tokens) }
+
 func (c *Cores) tryTake() bool {
 	select {
 	case c.tokens <- struct{}{}:
