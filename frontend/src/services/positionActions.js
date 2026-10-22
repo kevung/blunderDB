@@ -16,7 +16,7 @@ import { sendPositionToEval, evaluateInNewView, loadPositionsByFilters, saveCurr
 import { copyBoardImage, copyBoardWithAnalysisImage, copyPosition, copyXGID, exportBoardImage } from './clipboardService.js';
 import { rankNeighboursOfCurrentPosition } from './rankService.js';
 import { runRolloutCommand } from './rolloutService.js';
-import { setPositionStudied } from './studyQueueService.js';
+import { setPositionStudied, knownStudied, refreshStudied } from './studyQueueService.js';
 import { toggleCommentPanel } from './tabToggles.js';
 import { setStatusBarMessage } from './databaseService.js';
 import * as anki from './ankiService.js';
@@ -45,6 +45,12 @@ async function commentPosition() {
     document.getElementById('commentTextArea')?.focus();
 }
 
+// The studied mark is read as soon as a position is on the board, so the menu, built
+// synchronously, offers the one of the two actions that applies.
+positionStore.subscribe((position) => {
+    if (position?.id) refreshStudied(position.id);
+});
+
 /**
  * The context of the position actions: the position on the board, and the handlers that act on it.
  *
@@ -58,6 +64,7 @@ export function positionContext({ displayPosition = () => get(positionStore), po
         mode: get(statusBarModeStore),
         positionId,
         dbOpen: !!get(databasePathStore),
+        studiedMark: knownStudied(positionId),
         challengeOn: !!get(analysisChallengeStore),
         ankiDecks: get(ankiDecksStore),
         do: {

@@ -29,6 +29,7 @@
     import ContextMenu from './ContextMenu.svelte';
     import { menuFor } from '../services/actionCatalog.js';
     import { positionContext } from '../services/positionActions.js';
+    import { knownStudied, refreshStudied } from '../services/studyQueueService.js';
     import { onPileStore, refreshPileState, togglePile } from '../services/pileService.js';
     import { duelHoldsBoardStore, duelStore } from '../stores/duelStore.js';
     import { duelBoardPress, duelBoardDrop, duelBoardContextMenu, duelBoardContext, suspendDuel, confirmForfeitDuel, confirmCancelDuel, resignDuel } from '../services/duelService.js';
@@ -373,6 +374,11 @@
         // Decks load only once the Anki tab is visited: fetch here, non-blocking,
         // and rebuild the menu when they arrive.
         const position = get(positionStore);
+        if (position?.id && knownStudied(position.id) === undefined) {
+            refreshStudied(position.id).then(() => {
+                if (boardMenu?.x === x && boardMenu?.y === y) boardMenu = { ...boardMenu, items: build() };
+            });
+        }
         if (position?.id && get(ankiDecksStore).length === 0) {
             anki.loadDecks()
                 .then(() => {

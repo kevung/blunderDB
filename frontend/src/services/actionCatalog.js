@@ -21,6 +21,7 @@ import { chordLabel } from '../utils/keyNames.js';
  * @property {Record<string, (arg?: any) => any>} do   the handlers, by action id
  * @property {number} [positionId]                   the stored position (0: a board not stored)
  * @property {boolean} [dbOpen]
+ * @property {boolean} [studiedMark]                the position carries the studied mark (undefined: not read yet)
  * @property {boolean} [challengeOn]                 the analysis challenge is on
  * @property {{ id: number, name: string }[]} [ankiDecks]
  *
@@ -74,8 +75,8 @@ export const CATALOG = {
 
         { id: 'comment', label: 'actions.comment', group: 'annotate', when: studied },
         { id: 'addTag', label: 'actions.addTag', group: 'annotate', when: studied },
-        { id: 'markStudied', label: 'actions.markStudied', group: 'annotate', when: studied },
-        { id: 'unmarkStudied', label: 'actions.unmarkStudied', group: 'annotate', when: studied },
+        { id: 'markStudied', label: 'actions.markStudied', group: 'annotate', when: (c) => studied(c) && c.studiedMark !== true },
+        { id: 'unmarkStudied', label: 'actions.unmarkStudied', group: 'annotate', when: (c) => studied(c) && c.studiedMark !== false },
 
         { id: 'neighbours', label: 'board.menu.neighbours', group: 'navigate', when: stored },
         { id: 'sameStructure', label: 'actions.sameStructure', group: 'navigate', when: (c) => c.mode === 'NORMAL' && !!c.dbOpen },

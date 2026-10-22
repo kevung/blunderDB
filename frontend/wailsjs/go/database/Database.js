@@ -846,6 +846,10 @@ export function IndexOfPositionByFilters(arg1, arg2) {
   return window['go']['database']['Database']['IndexOfPositionByFilters'](arg1, arg2);
 }
 
+export function IsPositionStudied(arg1) {
+  return window['go']['database']['Database']['IsPositionStudied'](arg1);
+}
+
 export function IsOpenDatabase(arg1) {
   return window['go']['database']['Database']['IsOpenDatabase'](arg1);
 }

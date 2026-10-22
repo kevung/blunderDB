@@ -1,5 +1,5 @@
 import { get } from 'svelte/store';
-import { ImportStudyQueue, StudyBacklog, SetPositionStudied, StudyPlanQueue } from '../../wailsjs/go/database/Database.js';
+import { ImportStudyQueue, StudyBacklog, SetPositionStudied, IsPositionStudied, StudyPlanQueue } from '../../wailsjs/go/database/Database.js';
 import { studyQueueStore, studyQueueIndexStore, studyQueueActiveStore, studyQueueCurrentStore, studyQueueBacklogStore, studyQueueLastMarkedStore } from '../stores/studyQueueStore.js';
 import { showImportedPosition } from './importService.js';
 import { setStatusBarMessage } from './databaseService.js';
@@ -128,10 +128,40 @@ export async function setPositionStudied(positionId, studied) {
     if (!positionId) return;
     try {
         await SetPositionStudied(positionId, studied);
+        studiedMarks.set(positionId, studied);
         setStatusBarMessage(tMsg(studied ? 'studyQueue.marked' : 'studyQueue.unmarked'));
     } catch (error) {
         logger.error('could not write the studied mark:', error);
         setStatusBarMessage(tMsg('studyQueue.markFailed'));
+    }
+}
+
+/** The studied mark as last read or written, by position: the menus build synchronously. */
+const studiedMarks = new Map();
+
+/**
+ * The studied mark of a position, as last known; undefined until read.
+ * @param {number} positionId
+ * @returns {boolean | undefined}
+ */
+export function knownStudied(positionId) {
+    return studiedMarks.get(positionId);
+}
+
+/**
+ * Reads the studied mark of a position from the library and remembers it.
+ * @param {number} positionId
+ * @returns {Promise<boolean | undefined>}
+ */
+export async function refreshStudied(positionId) {
+    if (!positionId) return undefined;
+    try {
+        const studied = await IsPositionStudied(positionId);
+        studiedMarks.set(positionId, studied);
+        return studied;
+    } catch (error) {
+        logger.error('could not read the studied mark:', error);
+        return undefined;
     }
 }
 

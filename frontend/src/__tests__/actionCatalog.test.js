@@ -43,6 +43,13 @@ describe('actionCatalog', () => {
         expect(labels(submenu(items, 'analyze'))[0]).toBe('board.menu.evaluate');
     });
 
+    test('the studied mark: only the action that applies to the state is offered', () => {
+        const ctx = { mode: 'NORMAL', positionId: 42, dbOpen: true, do: allHandlers('position') };
+        const marks = (/** @type {boolean} */ studiedMark) => labels(submenu(menuFor('position', { ...ctx, studiedMark }, t), 'annotate')).filter((l) => /Studied$/.test(l));
+        expect(marks(false)).toEqual(['actions.markStudied']);
+        expect(marks(true)).toEqual(['actions.unmarkStudied']);
+    });
+
     test('an action without a handler is not offered, and an emptied group disappears', () => {
         const handlers = allHandlers('position');
         for (const id of ['comment', 'addTag', 'markStudied', 'unmarkStudied']) delete handlers[id];
