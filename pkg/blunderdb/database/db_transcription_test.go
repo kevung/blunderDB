@@ -19,6 +19,7 @@ import (
 // plumbing: row round trip, the Entry surviving between gestures, close.
 
 func TestCreateTranscription_ListsAndDefaults(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	state, err := db.CreateTranscription(transcript.Header{
@@ -57,6 +58,7 @@ func TestCreateTranscription_ListsAndDefaults(t *testing.T) {
 // A money draft is Jacoby by default; an all-zero header says "unstated", not
 // "Jacoby off".
 func TestCreateTranscription_MoneyIsJacobyByDefault(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	state, err := db.CreateTranscription(transcript.Header{MatchLength: 0})
@@ -73,6 +75,7 @@ func TestCreateTranscription_MoneyIsJacobyByDefault(t *testing.T) {
 // fill. A draft that reloaded from the row between the two would lose the
 // first die — which is why an open draft keeps a live editor.
 func TestApplyTranscriptionGesture_EntrySurvivesBetweenCalls(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	state, err := db.CreateTranscription(transcript.Header{MatchLength: 7})
@@ -102,6 +105,7 @@ func TestApplyTranscriptionGesture_EntrySurvivesBetweenCalls(t *testing.T) {
 // A gesture that changes an Action is written to the row at once (ADR-0045
 // rule 1): reopening the draft finds it, undo stack and Entry aside.
 func TestApplyTranscriptionGesture_PersistsTheDocument(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	state, err := db.CreateTranscription(transcript.Header{MatchLength: 7})
@@ -130,6 +134,7 @@ func TestApplyTranscriptionGesture_PersistsTheDocument(t *testing.T) {
 }
 
 func TestAbandonTranscription_DeletesTheDraft(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	state, err := db.CreateTranscription(transcript.Header{MatchLength: 7})
@@ -195,6 +200,7 @@ func readTranscriptionRow(t *testing.T, db *Database, id int64) *storage.Transcr
 // database and its WAL (never the -shm, which SQLite rebuilds) while the
 // original handle is still open, unclosed and uncheckpointed.
 func TestTranscription_SurvivesAnAbruptStop(t *testing.T) {
+	t.Parallel()
 	dir := tempDir(t)
 	live := NewDatabase()
 	livePath := filepath.Join(dir, "live.db")
@@ -298,6 +304,7 @@ func copyCrashedLibrary(t *testing.T, src, dst string) {
 // engine's back: a gesture that does not write leaves it there, and a gesture
 // that writes replaces it with the document it made.
 func TestApplyTranscriptionGesture_OnlyAnActionCostsAWrite(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	state, err := db.CreateTranscription(transcript.Header{MatchLength: 7})
@@ -354,6 +361,7 @@ func TestApplyTranscriptionGesture_OnlyAnActionCostsAWrite(t *testing.T) {
 // 2): its two dice are the opening roll, player 1's die then player 2's, and the
 // higher one gives the play to its side — the candidates offered are that side's.
 func TestApplyTranscriptionGesture_FirstPlay(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	state, err := db.CreateTranscription(transcript.Header{MatchLength: 7})
@@ -398,6 +406,7 @@ func TestApplyTranscriptionGesture_FirstPlay(t *testing.T) {
 // A first play rolled as a double is written as typed — no re-roll is
 // transcribed — and marked: no opening roll is a double.
 func TestApplyTranscriptionGesture_FirstPlayDoubleIsMarked(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	state, err := db.CreateTranscription(transcript.Header{MatchLength: 7})
@@ -418,6 +427,7 @@ func TestApplyTranscriptionGesture_FirstPlayDoubleIsMarked(t *testing.T) {
 // The money draft the form offers: a length of 0 with the session's rules, which
 // are flags of every Position and never Actions (ADR-0028, ADR-0044).
 func TestCreateTranscription_MoneyRulesAreKept(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	state, err := db.CreateTranscription(transcript.Header{MatchLength: 0, Jacoby: false, Beaver: true})
@@ -433,6 +443,7 @@ func TestCreateTranscription_MoneyRulesAreKept(t *testing.T) {
 // TestTranscriptionMAT_IsTheExportRenderer: the ".mat text" pane is a view OF
 // THE EXPORT (transcript.MatchParts + ingest.RenderMAT), and writes no row.
 func TestTranscriptionMAT_IsTheExportRenderer(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	state, err := db.CreateTranscription(transcript.Header{
@@ -466,6 +477,7 @@ func TestTranscriptionMAT_IsTheExportRenderer(t *testing.T) {
 // must reach the stack, report both sides, and leave the ROW without the
 // undone gesture, so a crash cannot resurrect it.
 func TestApplyTranscriptionGesture_UndoAndRedo(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	state, err := db.CreateTranscription(transcript.Header{MatchLength: 7})
@@ -511,6 +523,7 @@ func TestApplyTranscriptionGesture_UndoAndRedo(t *testing.T) {
 // A stack with nothing on it is a keystroke that does nothing — never an error
 // the panel has to show.
 func TestApplyTranscriptionGesture_UndoOnAnEmptyStack(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	state, err := db.CreateTranscription(transcript.Header{MatchLength: 7})
 	if err != nil {
@@ -527,6 +540,7 @@ func TestApplyTranscriptionGesture_UndoOnAnEmptyStack(t *testing.T) {
 // behind — and the SESSION agrees with what was handed back, so the next `h`
 // counts from the cell the user is looking at (fonctionnel.md §1.4).
 func TestApplyTranscriptionGesture_CursorLandsOnTheInconsistency(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	state, err := db.CreateTranscription(transcript.Header{MatchLength: 7})
 	if err != nil {
@@ -566,6 +580,7 @@ func TestApplyTranscriptionGesture_CursorLandsOnTheInconsistency(t *testing.T) {
 // Reopening a draft puts the Cursor at the end, Inconsistencies or not: a kept
 // Inconsistency must not drag the user back at every open.
 func TestOpenTranscription_DoesNotJumpToAnInconsistency(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	state, err := db.CreateTranscription(transcript.Header{MatchLength: 7})
 	if err != nil {
@@ -644,6 +659,7 @@ func TestCreateTranscription_DatesAndCreditsTheDraft(t *testing.T) {
 // TestSaveTranscription_AttachesTheTournament: the header's tournament is the
 // Match's once saved, and clearing it detaches the Match at the next save.
 func TestSaveTranscription_AttachesTheTournament(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	id := matDraft(t, db, filepath.Join("testdata", "test.mat"))
 

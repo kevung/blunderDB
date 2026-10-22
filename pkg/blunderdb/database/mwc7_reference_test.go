@@ -13,6 +13,7 @@ import (
 // drawn from its games; on a seven-point match it is the MWC loss itself,
 // within a point of percent of the total MWC cost eXtreme Gammon reports.
 func TestMWC7_ReferenceMatches(t *testing.T) {
+	t.Parallel()
 	files := []string{
 		"test.xg",
 		"HsbtMarseille_main_ronde4_LamourDeCaslouGildas_UngerKevin_7p.xg",

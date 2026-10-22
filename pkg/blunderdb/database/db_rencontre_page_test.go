@@ -14,6 +14,7 @@ import (
 // TestWallPage_OneLinePerTableWhicheverEvent is the acceptance criterion itself: as many <li>
 // lines as the room has tables, regardless of how many events share it.
 func TestWallPage_OneLinePerTableWhicheverEvent(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	frenchStrings(t, d, "fr")
 	a := startedDirection(t, d, 16)
@@ -60,6 +61,7 @@ func TestWallPage_OneLinePerTableWhicheverEvent(t *testing.T) {
 // TestWallPage_LinksToEachAttachedEvent checks the second half of the acceptance criteria: a
 // link per event, and its announced round count.
 func TestWallPage_LinksToEachAttachedEvent(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	frenchStrings(t, d, "fr")
 	a := startedDirection(t, d, 16)
@@ -91,6 +93,7 @@ func TestWallPage_LinksToEachAttachedEvent(t *testing.T) {
 // (D6.5's own criterion) — the wall page is written right away, and an attached Tournament's own
 // page lands in a subfolder of its own, its OutputDir column left untouched.
 func TestRencontreOutputDir_RedirectsMemberPages(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	frenchStrings(t, d, "fr")
 	a := startedDirection(t, d, 16)

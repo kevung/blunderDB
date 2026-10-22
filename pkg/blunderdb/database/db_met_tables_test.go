@@ -17,6 +17,7 @@ import (
 // it; changing the current table rewrites nothing and turns the analysis
 // "MET différente". The gnubg copy of Kazaross-XG2 is the built-in table.
 func TestGammonNetBatchRecordsTheCurrentMET(t *testing.T) {
+	t.Parallel()
 	d := newBatchTestDB(t)
 
 	builtin, err := d.ImportMET("pkg/blunderdb/engine/testdata/met/Kazaross-XG2.xml")
@@ -79,6 +80,7 @@ func TestGammonNetBatchRecordsTheCurrentMET(t *testing.T) {
 // the table, merged by digest with the receiver's copy and not made current,
 // and the analyses name the receiver's id for it (ADR-0068, rule 5).
 func TestImportDatabaseCarriesTheMET(t *testing.T) {
+	t.Parallel()
 	path := filepath.Join(t.TempDir(), "club.db")
 	src := NewDatabase()
 	if err := src.SetupDatabase(path); err != nil {
@@ -156,6 +158,7 @@ func TestImportDatabaseCarriesTheMET(t *testing.T) {
 // receiver names a carried table by the digest of its source, and the
 // source file is left as it was (ADR-0007).
 func TestImportDatabaseRecomputesAForgedMETDigest(t *testing.T) {
+	t.Parallel()
 	path := filepath.Join(t.TempDir(), "forged.db")
 	src := NewDatabase()
 	if err := src.SetupDatabase(path); err != nil {

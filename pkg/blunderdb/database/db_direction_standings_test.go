@@ -57,6 +57,7 @@ func playToTheEnd(t *testing.T, d *Database, tID int64) {
 
 // TestStandingsAndClose: a tournament played to its end ranks everyone, and closing freezes it.
 func TestStandingsAndClose(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 24)
 	playToTheEnd(t, d, tID)
@@ -106,6 +107,7 @@ func TestStandingsAndClose(t *testing.T) {
 // TestTiesShareTheirPlacesAndPrizes: there is no tie-break, by design. Ties stay ties and share
 // the prizes of the places they occupy.
 func TestTiesShareTheirPlacesAndPrizes(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID, err := d.CreateTournament("Dotation", "2026-09-12", "")
 	if err != nil {
@@ -187,6 +189,7 @@ func TestTiesShareTheirPlacesAndPrizes(t *testing.T) {
 
 // TestStandingsCSV: the export is the engine's own, and it opens in a spreadsheet.
 func TestStandingsCSV(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 24)
 	playToTheEnd(t, d, tID)
@@ -213,6 +216,7 @@ func TestStandingsCSV(t *testing.T) {
 // A player who leaves keeps the rank their record earned: the best player of the evening,
 // gone before the end, is not ranked below those who were eliminated.
 func TestStandings_WithdrawnKeepsTheirRank(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := directedAt(t, d, 8, `{"name":"Mardi","tables":{"count":4},
 		"phases":[{"kind":"swiss_lives","length":5,"lives":3,"mode":"rounds"}]}`)

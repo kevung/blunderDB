@@ -76,6 +76,7 @@ func TestEstimateRecountsForgottenBlundersInBackground(t *testing.T) {
 // Closing the file stops its recount: nothing reports a count of a file that
 // is gone.
 func TestCloseCancelsBlunderRecount(t *testing.T) {
+	t.Parallel()
 	db := newTestDBWithXG(t)
 	pushPositionIDsPastEstimate(t, db)
 	if _, err := db.GetDatabaseStatsEstimate(); err != nil {

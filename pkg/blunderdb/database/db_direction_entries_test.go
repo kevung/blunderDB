@@ -29,6 +29,7 @@ func preparedDirection(t *testing.T, d *Database) int64 {
 // TestEnterOneByOne: twenty entries in a row, which is what a director types before a club
 // tournament. Each one is written straight away and survives a reopen.
 func TestEnterOneByOne(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := preparedDirection(t, d)
 
@@ -69,6 +70,7 @@ func TestEnterOneByOne(t *testing.T) {
 // TestEntryIdentifiersAreDistinct: two people who sign the same get distinct identifiers.
 // blunderDB has no notion of a person behind a name, and merging them here would invent one.
 func TestEntryIdentifiersAreDistinct(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := preparedDirection(t, d)
 
@@ -99,6 +101,7 @@ func TestEntryIdentifiersAreDistinct(t *testing.T) {
 // TestCorrectingAnEntryKeepsItsIdentifier: correcting a name must not undo a Slot. The
 // identifier is what a Slot points at.
 func TestCorrectingAnEntryKeepsItsIdentifier(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := preparedDirection(t, d)
 
@@ -135,6 +138,7 @@ func TestCorrectingAnEntryKeepsItsIdentifier(t *testing.T) {
 // TestWithdrawImmediateAndDeferred: withdrawing now loses the running match by forfeit;
 // withdrawing later lets it finish.
 func TestWithdrawImmediateAndDeferred(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 24)
 	m := runningMatch(t, d, tID)
@@ -189,6 +193,7 @@ func TestWithdrawImmediateAndDeferred(t *testing.T) {
 // TestEntrySuggestionsComeFromThePlayers: the entry field offers the Players of this database,
 // so choosing one fixes the spelling the Matches carry.
 func TestEntrySuggestionsComeFromThePlayers(t *testing.T) {
+	t.Parallel()
 	d := newTestDBWithXG(t)
 	sugg, err := d.EntrySuggestions()
 	if err != nil {
@@ -207,6 +212,7 @@ func TestEntrySuggestionsComeFromThePlayers(t *testing.T) {
 // TestOpponentsAreNames: what a director checks before pairing two people by hand is who they
 // have already met, by name.
 func TestOpponentsAreNames(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 24)
 	m := runningMatch(t, d, tID)
@@ -252,6 +258,7 @@ func participantState(t *testing.T, d *Database, tID int64, id string) string {
 // TestUpdateWithdrawnKeepsWithdrawal: correcting a withdrawn player's club must not silently
 // put them back in play, and it is ONE decision in the journal.
 func TestUpdateWithdrawnKeepsWithdrawal(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 8)
 	if _, err := d.WithdrawParticipant(tID, "aa", false); err != nil {
@@ -320,6 +327,7 @@ func TestOldCorrectionPairStillReads(t *testing.T) {
 
 // TestReinstateParticipant: coming back is a named gesture, not a side effect.
 func TestReinstateParticipant(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 8)
 	if _, err := d.ReinstateParticipant(tID, "aa"); err == nil {
@@ -386,6 +394,7 @@ func TestMakeParticipantAbsentUntilTime(t *testing.T) {
 
 // TestMakeParticipantAbsentNeedsADeadline: neither an hour nor a round is not an absence.
 func TestMakeParticipantAbsentNeedsADeadline(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 8)
 	if _, err := d.MakeParticipantAbsent(tID, "aa", "", 0); err == nil {
@@ -396,6 +405,7 @@ func TestMakeParticipantAbsentNeedsADeadline(t *testing.T) {
 // TestMakeParticipantAbsentUntilRoundNeedsARoundsPhase: a round deadline only means something
 // where rounds are counted.
 func TestMakeParticipantAbsentUntilRoundNeedsARoundsPhase(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 8) // continuous mode, no rounds
 	if _, err := d.MakeParticipantAbsent(tID, "aa", "", 3); err == nil {
@@ -406,6 +416,7 @@ func TestMakeParticipantAbsentUntilRoundNeedsARoundsPhase(t *testing.T) {
 // TestMakeParticipantAbsentUntilRound: in a swiss by rounds, "back at round N" is the other half
 // of D7.1.
 func TestMakeParticipantAbsentUntilRound(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID, err := d.CreateTournament("Open de Lyon", "2026-09-12", "Lyon")
 	if err != nil {

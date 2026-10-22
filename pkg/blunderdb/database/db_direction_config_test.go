@@ -43,6 +43,7 @@ func changeCodes(changes []ConfigChange) string {
 }
 
 func TestDirectionConfig_PreviewNamesEveryChange(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := preparedDirection(t, d)
 
@@ -70,6 +71,7 @@ func TestDirectionConfig_PreviewNamesEveryChange(t *testing.T) {
 // The unmodified configuration is the case the settings view opens on: no change, but the locks
 // must already be there — that is how the view knows what to grey out.
 func TestDirectionConfig_PreviewOfNoChangeStillLocks(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 16)
 	runningMatch(t, d, tID)
@@ -96,6 +98,7 @@ func TestDirectionConfig_PreviewOfNoChangeStillLocks(t *testing.T) {
 }
 
 func TestDirectionConfig_KindOfAStartedPhaseIsRefused(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 16)
 	runningMatch(t, d, tID)
@@ -122,6 +125,7 @@ func TestDirectionConfig_KindOfAStartedPhaseIsRefused(t *testing.T) {
 
 // The switch lowered at 22 h: the change that made this issue exist.
 func TestDirectionConfig_LowerTheSwitchMidTournament(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 16)
 	runningMatch(t, d, tID)
@@ -155,6 +159,7 @@ func TestDirectionConfig_LowerTheSwitchMidTournament(t *testing.T) {
 // A consolation decided on the Saturday evening: a phase added AFTER the current one does not
 // interrupt what is being played.
 func TestDirectionConfig_PhaseAddedAfterTheCurrentOne(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 16)
 	runningMatch(t, d, tID)
@@ -194,6 +199,7 @@ func TestDirectionConfig_PhaseAddedAfterTheCurrentOne(t *testing.T) {
 }
 
 func TestDirectionConfig_AnOpenedPhaseIsNotRemovable(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 16)
 	runningMatch(t, d, tID)
@@ -224,6 +230,7 @@ func TestDirectionConfig_AnOpenedPhaseIsNotRemovable(t *testing.T) {
 // Reopen, correct, reclose: the point of reopening is that the final standings take the
 // correction into account.
 func TestDirectionConfig_ReopenCorrectReclose(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 8)
 	playToTheEnd(t, d, tID)
@@ -296,6 +303,7 @@ func TestDirectionConfig_ReopenCorrectReclose(t *testing.T) {
 // A table out of service (`tables.unavailable`): adding it and taking it back are both changes,
 // and both are named, or "save" would look like a no-op.
 func TestDirectionConfig_PreviewNamesAnUnavailableTable(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := preparedDirection(t, d)
 
@@ -328,6 +336,7 @@ func TestDirectionConfig_PreviewNamesAnUnavailableTable(t *testing.T) {
 
 // A reserved table is a change too, including when only what it is reserved FOR changes.
 func TestDirectionConfig_PreviewNamesAReservedTable(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := preparedDirection(t, d)
 
@@ -358,6 +367,7 @@ func TestDirectionConfig_PreviewNamesAReservedTable(t *testing.T) {
 // The board breaks under a match being played: the list says so, and names a free table to
 // move it to — the director should not have to go and count them.
 func TestDirectionConfig_UnavailableTableUnderARunningMatch(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 12)
 	runningMatch(t, d, tID)
@@ -406,6 +416,7 @@ func TestDirectionConfig_UnavailableTableUnderARunningMatch(t *testing.T) {
 // A drawn bracket's consolation is refused by the engine itself: the preview shows the refusal
 // before the click, and saving it anyway returns the same refusal.
 func TestDirectionConfig_ConsolationOfADrawnBracketIsRefused(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := directedAt(t, d, 8, `{"name":"Court","tables":{"count":4},"phases":[{"kind":"bracket","length":3}]}`)
 	if _, err := d.ConfirmAllProposals(tID); err != nil {

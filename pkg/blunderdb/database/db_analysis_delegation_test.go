@@ -9,6 +9,7 @@ import (
 // projection of the position's analysis, so a move whose position carries no
 // analysis carries no score.
 func TestDeleteAnalysisUnscoresPlayedMoves(t *testing.T) {
+	t.Parallel()
 	db := newTestDBWithXG(t)
 
 	var positionID int64

@@ -10,6 +10,7 @@ import (
 // TestSeasonRanking: two finished tournaments of a period are summed per person by the scale;
 // a tournament outside the period does not count; the club Elo is zero-sum.
 func TestSeasonRanking(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	dates := []string{"2026-01-10", "2026-02-14", "2025-12-01"}
 	for _, date := range dates {
@@ -76,6 +77,7 @@ func TestSeasonRanking(t *testing.T) {
 // TestSeasonRankingRefusesHomonyms: two entrants of one finished event under one name would be
 // one row, played twice and rated against themselves; the season refuses and says where.
 func TestSeasonRankingRefusesHomonyms(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	id := startedDirection(t, d, 8)
 	if err := d.UpdateTournament(id, "Open double", "2026-03-01", "Lyon"); err != nil {

@@ -10,6 +10,7 @@ import (
 
 // EachLibraryMove reads what the per-match getters read, in their order.
 func TestEachLibraryMove_IsThePerGameWalk(t *testing.T) {
+	t.Parallel()
 	db := newTestDBWithXG(t)
 	type row struct {
 		matchID    int64

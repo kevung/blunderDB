@@ -10,6 +10,7 @@ import (
 // of each player add up to the MWC loss the match list shows for that player,
 // on real analysed matches (one single game, the others several).
 func TestMatchDecisionLossesSumToMatchMWCLoss(t *testing.T) {
+	t.Parallel()
 	for _, file := range []string{
 		"test.xg",
 		"charlot1-charlot2_7p_2025-11-08-2305.xg",

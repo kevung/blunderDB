@@ -85,6 +85,7 @@ func TestDirectionBatches_TheQueueCarriesItsDeadline(t *testing.T) {
 // Without an interval, the behaviour is exactly lot 1's: the director asks for pairings when
 // they want, and gets them.
 func TestDirectionBatches_NoIntervalIsTheOldBehaviour(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := batchDirection(t, d, 16, 0)
 	if _, err := d.ConfirmAllProposals(tID); err != nil {
@@ -160,6 +161,7 @@ func TestDirectionBatches_ABreakMarksAndBlocksNothing(t *testing.T) {
 // Nothing launches by itself. The deadline passing turns a wait into proposals, and there it
 // stops: the director stays the only one who decides.
 func TestDirectionBatches_TheDeadlineProposesAndLaunchesNothing(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := batchDirection(t, d, 16, 20)
 	if _, err := d.ConfirmAllProposals(tID); err != nil {

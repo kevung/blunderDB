@@ -12,6 +12,7 @@ import (
 // A second instance opens the library read-only; moving the Cursor of a draft
 // writes nothing, so it works there, and leaves the revision alone.
 func TestTranscription_ReadOnlyInstanceMovesTheCursor(t *testing.T) {
+	t.Parallel()
 	path := filepath.Join(t.TempDir(), "shared.db")
 	writer := NewDatabase()
 	if err := writer.SetupDatabase(path); err != nil {
@@ -52,6 +53,7 @@ func TestTranscription_ReadOnlyInstanceMovesTheCursor(t *testing.T) {
 // would write is not recorded, and the desktop gets the draft as the row now
 // holds it, flagged as a conflict, its undo stack reset.
 func TestTranscription_ConflictHandsBackTheFreshDraft(t *testing.T) {
+	t.Parallel()
 	path := filepath.Join(t.TempDir(), "conflict.db")
 	db := NewDatabase()
 	if err := db.SetupDatabase(path); err != nil {
@@ -97,6 +99,7 @@ func TestTranscription_ConflictHandsBackTheFreshDraft(t *testing.T) {
 // Finishing a draft another writer moved writes no Match: the desktop gets the
 // draft as it now stands, flagged as a conflict, and can finish again.
 func TestTranscription_FinishConflictHandsBackTheFreshDraft(t *testing.T) {
+	t.Parallel()
 	path := filepath.Join(t.TempDir(), "finish-conflict.db")
 	db := NewDatabase()
 	if err := db.SetupDatabase(path); err != nil {

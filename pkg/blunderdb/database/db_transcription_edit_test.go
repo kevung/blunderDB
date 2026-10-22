@@ -10,6 +10,7 @@ import (
 // One draft per Match: editing a match that already has a draft open returns
 // that draft, with what was typed into it.
 func TestEditMatchTranscription_ReopensTheMatchsDraft(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	saved, err := db.FinishTranscription(matDraft(t, db, filepath.Join("testdata", "test.mat")))
 	if err != nil {
@@ -48,6 +49,7 @@ func TestEditMatchTranscription_ReopensTheMatchsDraft(t *testing.T) {
 
 // Abandoning a draft opened on a Match leaves the Match as it was.
 func TestAbandonTranscription_LeavesTheEditedMatch(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	saved, err := db.FinishTranscription(matDraft(t, db, filepath.Join("testdata", "test.mat")))
 	if err != nil {
@@ -69,6 +71,7 @@ func TestAbandonTranscription_LeavesTheEditedMatch(t *testing.T) {
 
 // Closing releases the session only: the draft stays in the list.
 func TestCloseTranscription_KeepsTheDraft(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	id := matDraft(t, db, filepath.Join("testdata", "test.mat"))
 	if err := db.CloseTranscription(id); err != nil {
@@ -85,6 +88,7 @@ func TestCloseTranscription_KeepsTheDraft(t *testing.T) {
 // An imported match is counted: the analyses and comments of its positions
 // are what a .mat cannot carry.
 func TestMatchTranscriptionLosses_CountsAnImportedMatch(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	saved, err := db.FinishTranscription(matDraft(t, db, filepath.Join("testdata", "test.mat")))
 	if err != nil {
@@ -123,6 +127,7 @@ func TestMatchTranscriptionLosses_CountsAnImportedMatch(t *testing.T) {
 // An edit draft whose Match was deleted is a draft that never produced one:
 // Terminer creates a new Match instead of failing on the missing one.
 func TestFinishTranscription_EditDraftOfADeletedMatchCreatesOne(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	saved, err := db.FinishTranscription(matDraft(t, db, filepath.Join("testdata", "test.mat")))
 	if err != nil {
@@ -148,6 +153,7 @@ func TestFinishTranscription_EditDraftOfADeletedMatchCreatesOne(t *testing.T) {
 // Editing an imported match keeps the hashes of the file it came from: the
 // same file imported again is still recognised as a duplicate.
 func TestFinishTranscription_ImportedMatchKeepsItsHashes(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	path := filepath.Join("testdata", "test.mat")
 	matchID, err := db.ImportGnuBGMatch(path)

@@ -12,6 +12,7 @@ import (
 // lands in the library it was lent, never in the one the bound handle carries
 // next.
 func TestBorrow_KeepsItsLibraryAcrossAnExchange(t *testing.T) {
+	t.Parallel()
 	bound, pathA := openTemp(t, "a.db")
 	parked, _ := openTemp(t, "b.db")
 	lent, err := Borrow(bound)
@@ -43,6 +44,7 @@ func TestBorrow_KeepsItsLibraryAcrossAnExchange(t *testing.T) {
 // A job on a borrowed handle holds the library's slot wherever the library
 // goes, and does not stop the exchange; a job on the bound handle still does.
 func TestBorrow_SharesTheJobSlotAndLetsTheExchangeThrough(t *testing.T) {
+	t.Parallel()
 	bound, _ := openTemp(t, "a.db")
 	parked, _ := openTemp(t, "b.db")
 	lent, err := Borrow(bound)
@@ -84,6 +86,7 @@ func TestBorrow_SharesTheJobSlotAndLetsTheExchangeThrough(t *testing.T) {
 // The import batch opened on the bound handle moves to the borrower, which
 // finishes it; the lender is left with none.
 func TestHandOverImportBatch_MovesTheOpenBatch(t *testing.T) {
+	t.Parallel()
 	bound, _ := openTemp(t, "a.db")
 	id, err := bound.BeginImportBatch("x", "mixed")
 	if err != nil {
@@ -105,6 +108,7 @@ func TestHandOverImportBatch_MovesTheOpenBatch(t *testing.T) {
 // A vacuum replaces the file under every handle of the library: refused while
 // a borrowed handle runs a job or an import, and no import starts during it.
 func TestVacuum_RefusedWhileABorrowedHandleWrites(t *testing.T) {
+	t.Parallel()
 	bound, _ := openTemp(t, "a.db")
 	lent, err := Borrow(bound)
 	if err != nil {

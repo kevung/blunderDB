@@ -34,6 +34,7 @@ func frenchStrings(t *testing.T, d *Database, lang string) {
 }
 
 func TestDirectionPage_OpensOffline(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	frenchStrings(t, d, "fr")
 	tID := startedDirection(t, d, 16)
@@ -68,6 +69,7 @@ func TestDirectionPage_OpensOffline(t *testing.T) {
 // The page shows NAMES and WORDS. An identifier or a raw code on a wall display is a bug the
 // players see before the director does.
 func TestDirectionPage_ShowsNamesNotIdentifiers(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	frenchStrings(t, d, "fr")
 	tID := startedDirection(t, d, 16)
@@ -97,6 +99,7 @@ func TestDirectionPage_ShowsNamesNotIdentifiers(t *testing.T) {
 }
 
 func TestDirectionPage_SpeaksTheInterfacesLanguage(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 16)
 	runningMatch(t, d, tID)
@@ -121,6 +124,7 @@ func TestDirectionPage_SpeaksTheInterfacesLanguage(t *testing.T) {
 // After the folder is chosen once, the display updates with no gesture: writing is a
 // consequence, so it must be free to call at every event and silent when there is nothing to do.
 func TestDirectionPage_WrittenAtomicallyOrNotAtAll(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	frenchStrings(t, d, "fr")
 	tID := startedDirection(t, d, 16)
@@ -167,6 +171,7 @@ func TestDirectionPage_WrittenAtomicallyOrNotAtAll(t *testing.T) {
 // A folder that has gone away — an unplugged USB key — is reported and stops nothing. The
 // director keeps directing.
 func TestDirectionPage_MissingFolderDoesNotStopTheTournament(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	frenchStrings(t, d, "fr")
 	tID := startedDirection(t, d, 16)
@@ -213,6 +218,7 @@ func TestDirectionPage_CostOfARewrite(t *testing.T) {
 // box for the score — readable at a metre, and printable without hunting for Ctrl+P.
 
 func TestDirectionSheet_OneLinePerMatch(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	frenchStrings(t, d, "fr")
 	tID := startedDirection(t, d, 16)
@@ -258,6 +264,7 @@ func TestDirectionSheet_OneLinePerMatch(t *testing.T) {
 }
 
 func TestDirectionSheet_SpeaksTheInterfacesLanguage(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 16)
 	runningMatch(t, d, tID)
@@ -275,6 +282,7 @@ func TestDirectionSheet_SpeaksTheInterfacesLanguage(t *testing.T) {
 // Printing must not require choosing a folder first: that would be a click, and the budget is
 // three.
 func TestDirectionSheet_PrintableWithNoFolderChosen(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	frenchStrings(t, d, "fr")
 	tID := startedDirection(t, d, 16)
@@ -309,6 +317,7 @@ func TestDirectionSheet_PrintableWithNoFolderChosen(t *testing.T) {
 // An earlier round stays printable: a director who is asked for the sheet of round 2 while
 // round 5 is running must get round 2.
 func TestDirectionSheet_AnEarlierRound(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	frenchStrings(t, d, "fr")
 	tID := startedDirection(t, d, 16)
@@ -347,6 +356,7 @@ func TestDirectionSheet_AnEarlierRound(t *testing.T) {
 // instant for the whole batch. Eight successive time.Now() made eight rounds of one match each,
 // and the pairing sheet printed one line per page.
 func TestDirectionSheet_LaunchingTogetherIsOneRound(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	frenchStrings(t, d, "fr")
 	tID := startedDirection(t, d, 32)
@@ -377,6 +387,7 @@ func TestDirectionSheet_LaunchingTogetherIsOneRound(t *testing.T) {
 // Accents and long names are neither cut nor overlapped: the sheet is read at a metre, and a
 // name that came out as "Jean-Baptiste de la Villemarqu" would be read as a different player.
 func TestDirectionSheet_LongAccentedNamesSurvive(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	frenchStrings(t, d, "fr")
 	tID := preparedDirection(t, d)

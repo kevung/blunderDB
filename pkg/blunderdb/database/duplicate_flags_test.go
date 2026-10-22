@@ -15,6 +15,7 @@ import (
 // is ErrDuplicateMatch, typed with how many marks it carried; a re-import
 // carrying none reports zero.
 func TestReimportedDuplicateDeliversItsStudyMarks(t *testing.T) {
+	t.Parallel()
 	ctx := context.Background()
 	d := NewDatabase()
 	if err := d.SetupDatabase(filepath.Join(t.TempDir(), "flags.db")); err != nil {

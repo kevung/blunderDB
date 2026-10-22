@@ -26,6 +26,7 @@ func journalByPath(t *testing.T, db *Database, batchID int64) map[string]domain.
 // Every file of a batch is journaled with what it gave: a new match, the match
 // that covers a duplicate, an enrichment, or the error.
 func TestImportFiles_JournalsEachFile(t *testing.T) {
+	t.Parallel()
 	files := pipelineFixture(t)
 	db := newTestDB(t)
 	id, err := db.BeginImportBatch("fixture", "mixed")
@@ -64,6 +65,7 @@ func TestImportFiles_JournalsEachFile(t *testing.T) {
 // mtime), retries the ones that failed, and recognises a known file moved
 // elsewhere by its digest without parsing it.
 func TestResumeImportBatch(t *testing.T) {
+	t.Parallel()
 	files := pipelineFixture(t)
 	db := newTestDB(t)
 	id, err := db.BeginImportBatch("fixture", "mixed")
@@ -161,6 +163,7 @@ func TestImportFiles_BulkModeJournalsEachFile(t *testing.T) {
 // or a copy whose deeper analyses replaced the stored ones — is journaled as a
 // duplicate of the match that covers it, and a resumed batch leaves it out.
 func TestImportFiles_SkippedDuplicateIsJournaledAndResumeSkipsIt(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	src := filepath.Join("testdata", "test.mat")
 	if _, err := db.BeginImportBatch("first", "batch"); err != nil {

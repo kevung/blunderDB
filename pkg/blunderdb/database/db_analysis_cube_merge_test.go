@@ -8,6 +8,7 @@ import (
 // (ADR-0013: engines merge inside one row, each entry tagged), as
 // ingest/merge.go already does.
 func TestSaveAnalysisKeepsEveryEnginesCubeAnalysis(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	pos := InitializePosition()
 	pos.DecisionType = CubeAction
@@ -89,6 +90,7 @@ func TestSaveAnalysisKeepsEveryEnginesCubeAnalysis(t *testing.T) {
 // One engine carries no set: an array of one would be noise in every blob that
 // held it, and AllCubeAnalyses is read as "several" everywhere.
 func TestSaveAnalysisLeavesASingleEngineWithoutASet(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	pos := InitializePosition()
 	pos.DecisionType = CubeAction

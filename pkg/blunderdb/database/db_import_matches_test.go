@@ -16,6 +16,7 @@ import (
 // tournament, the draft and the alias with it, the living query is renumbered
 // onto the target's rows, and a second import of the same file adds nothing.
 func TestCommitImportDatabase_Matches(t *testing.T) {
+	t.Parallel()
 	ctx := context.Background()
 	dir := t.TempDir()
 

@@ -237,6 +237,7 @@ func snapshot(t *testing.T, d *Database) map[string]string {
 // whatever path names it — through a symbolic link included — and merging
 // it into itself by hand is refused; another library beside it still is.
 func TestWatchedFolderSkipsTheOpenLibrary(t *testing.T) {
+	t.Parallel()
 	dir := t.TempDir()
 	self := filepath.Join(dir, "self.db")
 	d := openLibrary(t, self)

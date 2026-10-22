@@ -675,6 +675,7 @@ func TestMigrationChainVersionProgression(t *testing.T) {
 
 	for _, startVersion := range versions {
 		t.Run(fmt.Sprintf("from_%s", startVersion), func(t *testing.T) {
+			t.Parallel()
 			tmpDir := tempDir(t)
 			dbPath := filepath.Join(tmpDir, "test.db")
 			createOldDatabase(t, dbPath, startVersion)
@@ -2910,6 +2911,7 @@ func TestMigrate_2_22_0_to_2_23_0_AnkiCardKinds(t *testing.T) {
 // append-only enforceable: the (tournament_id, seq) primary key, where a
 // second write at the same seq collides instead of overwriting.
 func TestDirectionSchema_2_24_0(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	ctx := context.Background()
 
@@ -3000,6 +3002,7 @@ func TestDirectionSchema_2_24_0(t *testing.T) {
 // (ADR-0056): deleting a Rencontre detaches its Tournaments and never deletes
 // one; deleting a Tournament takes its pair members with it.
 func TestRencontreSchema_2_25_0(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	ctx := context.Background()
 

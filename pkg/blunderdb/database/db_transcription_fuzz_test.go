@@ -293,6 +293,7 @@ func FuzzTranscriptionSession(f *testing.F) {
 // TestTranscriptionSessionSeeded runs the session scenario on pseudo-random
 // programs from fixed seeds, so the properties hold on every push.
 func TestTranscriptionSessionSeeded(t *testing.T) {
+	t.Parallel()
 	n := 16
 	if testing.Short() {
 		n = 4
@@ -315,6 +316,7 @@ func TestTranscriptionSessionSeeded(t *testing.T) {
 // library, not a gesture, so undoing the gesture before a save must not take it
 // away — or the next save would create a SECOND Match.
 func TestTranscriptionUndoAfterSaveKeepsTheMatch(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	st, err := db.CreateTranscription(transcript.Header{MatchLength: 7})
 	if err != nil {

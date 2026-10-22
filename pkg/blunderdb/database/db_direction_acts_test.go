@@ -53,6 +53,7 @@ func proposalJSON(t *testing.T, a tournoi.Action) string {
 // TestConfirmProposal_OneGesture: confirming a proposal is one call, and the view that comes
 // back is already replayed — the panel never has to ask twice.
 func TestConfirmProposal_OneGesture(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 24)
 
@@ -90,6 +91,7 @@ func TestConfirmProposal_OneGesture(t *testing.T) {
 // TestConfirmAll_WholeQueue: the whole queue goes in one gesture, whatever its length. That is
 // the two-click budget the UX document holds this to.
 func TestConfirmAll_WholeQueue(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 24)
 
@@ -133,6 +135,7 @@ func TestConfirmAll_WholeQueue(t *testing.T) {
 // TestIgnoredProposalComesBack: a proposal the director does not confirm is offered again,
 // identical. Ignoring is not an event — it is simply not acting.
 func TestIgnoredProposalComesBack(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 24)
 
@@ -160,6 +163,7 @@ func TestIgnoredProposalComesBack(t *testing.T) {
 // TestManualPairingAcceptedAndFlagged: the director pairs two free players the engine did not
 // propose. It is accepted; only the impossible is refused.
 func TestManualPairingAcceptedAndFlagged(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 24)
 
@@ -201,6 +205,7 @@ func TestManualPairingAcceptedAndFlagged(t *testing.T) {
 
 // TestFreeParticipantsShrinksAsMatchesStart: the waiting queue is derived, never stored.
 func TestFreeParticipantsShrinksAsMatchesStart(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 24)
 
@@ -228,6 +233,7 @@ func TestFreeParticipantsShrinksAsMatchesStart(t *testing.T) {
 // the first free table — the one a proposal would get, unavailable tables skipped — and, when
 // none is left, still shows in the grid, under a "no table" cell rather than nowhere.
 func TestManualPairingTakesAFreeTable(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID, err := d.CreateTournament("Open de Lyon", "2026-09-12", "Lyon")
 	if err != nil {

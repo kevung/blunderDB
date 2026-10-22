@@ -15,6 +15,7 @@ import (
 // agree id for id and in the same order. Some positions are given a second,
 // different play by player 1, which is what that filter treats apart.
 func TestSearchUnboundedMatchesPagedOnRealMatches(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	for _, f := range []string{
 		"charlot1-charlot2_7p_2025-11-08-2305.xg",

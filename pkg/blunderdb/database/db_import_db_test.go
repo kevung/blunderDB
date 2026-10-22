@@ -458,6 +458,7 @@ func TestImport_CommitMergesAllCommentRows(t *testing.T) {
 // errors.Is as both ErrImportCancelled and the context error, not reported as
 // a failure. Tested directly rather than by racing a real CancelImport.
 func TestWrapImportCancelled(t *testing.T) {
+	t.Parallel()
 	err := wrapImportCancelled(context.Canceled)
 	if !errors.Is(err, ErrImportCancelled) {
 		t.Errorf("errors.Is(err, ErrImportCancelled) = false; err = %v", err)
@@ -566,6 +567,7 @@ func TestImport_KeepsRollouts(t *testing.T) {
 // keys the commit uses, the matches the import would create and those the
 // target already holds by fingerprint.
 func TestAnalyzeImportDatabase_CountsMatches(t *testing.T) {
+	t.Parallel()
 	ctx := context.Background()
 	dir := t.TempDir()
 	srcPath := filepath.Join(dir, "a.db")

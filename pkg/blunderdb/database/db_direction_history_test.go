@@ -9,6 +9,7 @@ import (
 
 // TestHistoryIsReadable: every decision is there, in order, with names rather than identifiers.
 func TestHistoryIsReadable(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 24)
 	m := runningMatch(t, d, tID)
@@ -56,6 +57,7 @@ func TestHistoryIsReadable(t *testing.T) {
 // TestHistoryFiltersByPlayer: how a director answers "what happened to Hugo?" without reading
 // the whole log.
 func TestHistoryFiltersByPlayer(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 24)
 	m := runningMatch(t, d, tID)
@@ -110,6 +112,7 @@ func TestHistoryFiltersByPlayer(t *testing.T) {
 // TestNoteIsTheDirectorsOwnWords: the one place in the log where free text goes, and it is
 // refused by nothing — including after the close, which is exactly when one gets written.
 func TestNoteIsTheDirectorsOwnWords(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 24)
 
@@ -137,6 +140,7 @@ func TestNoteIsTheDirectorsOwnWords(t *testing.T) {
 // TestSinceLastGesture: what changed while the director was somewhere else. A director who also
 // plays comes back between two of their own matches and needs that first, not the whole log.
 func TestSinceLastGesture(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 24)
 
