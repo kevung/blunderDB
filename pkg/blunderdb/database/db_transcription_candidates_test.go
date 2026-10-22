@@ -2,8 +2,11 @@ package database
 
 import (
 	"errors"
+	"runtime"
 	"testing"
+	"time"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
 )
@@ -38,5 +41,39 @@ func TestTranscriptionCandidates_EveryPlayRanked(t *testing.T) {
 		if c.Rank != i+1 || c.Analysis == nil || c.Index < 0 || c.Index >= legal {
 			t.Fatalf("candidate %d = %+v, want rank %d with its analysis", i, c, i+1)
 		}
+	}
+}
+
+// A keystroke's ranking never queues behind a batch that holds every core:
+// it is a serial 0-ply search of about a millisecond, run under d.mu.RLock,
+// where waiting for a token would stall the panel for a whole deep position.
+// Not parallel: it takes the whole process budget while it runs.
+func TestTranscriptionCandidates_NeverWaitsForACore(t *testing.T) {
+	db := newTestDB(t)
+	state, err := db.CreateTranscription(transcript.Header{MatchLength: 7})
+	if err != nil {
+		t.Fatalf("CreateTranscription: %v", err)
+	}
+	for _, die := range []int{3, 1} {
+		if _, err = db.ApplyTranscriptionGesture(state.ID, transcript.Gesture{Kind: transcript.GestureEnterDie, Die: die}); err != nil {
+			t.Fatalf("enter die: %v", err)
+		}
+	}
+	for range runtime.GOMAXPROCS(0) {
+		release := gammonnet.HoldCore()
+		defer release()
+	}
+	done := make(chan error, 1)
+	go func() {
+		_, err := db.TranscriptionCandidates(state.ID)
+		done <- err
+	}()
+	select {
+	case err := <-done:
+		if err != nil {
+			t.Fatalf("TranscriptionCandidates: %v", err)
+		}
+	case <-time.After(30 * time.Second):
+		t.Fatal("TranscriptionCandidates waited for a core while a batch held them all")
 	}
 }

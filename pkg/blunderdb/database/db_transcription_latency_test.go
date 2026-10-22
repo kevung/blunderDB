@@ -1,14 +1,12 @@
-package gui
+package database
 
 import (
-	"context"
 	"testing"
 	"time"
 
 	"github.com/kevung/blunderdb/internal/cputime"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
-	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
-	"github.com/kevung/blunderdb/pkg/blunderdb/transcription"
+	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
 )
 
 // Les seuils de latence de la saisie d'une transcription (ux.md §7). Le rejeu
@@ -66,30 +64,72 @@ func allRolls() [][2]int {
 	return out
 }
 
-// rankRoll is Database.TranscriptionCandidates on a bare position — its
-// Ranker, a searcher made for the call, pruning off — and returns how many
-// plays were ranked. Every legal play must be.
-func rankRoll(t *testing.T, _ *App, pos domain.Position, roll [2]int) int {
+// transcribedMidGame is a draft whose Cursor stands at a contact position a
+// few turns into a game, the ranking's expensive case, with no roll typed.
+// Each turn picks the first legal play, so the position is fixed.
+func transcribedMidGame(t *testing.T) (*Database, int64) {
 	t.Helper()
-	p := pos
-	p.Dice = transcriptCandidateDice(roll)
-	rank := func(_ context.Context, q domain.Position) ([]domain.CheckerMove, error) {
-		release := gammonnet.HoldCore()
-		defer release()
-		return gammonnet.RankAllPlaysWithMET(nil, q, nil)
+	db := newTestDB(t)
+	state, err := db.CreateTranscription(transcript.Header{MatchLength: 7})
+	if err != nil {
+		t.Fatalf("CreateTranscription: %v", err)
 	}
-	got := transcription.RankCandidates(context.Background(), p, rank)
+	for _, roll := range [][2]int{{3, 1}, {6, 4}, {5, 2}, {4, 3}, {6, 2}, {5, 3}} {
+		for _, g := range []transcript.Gesture{
+			{Kind: transcript.GestureEnterDie, Die: roll[0]},
+			{Kind: transcript.GestureEnterDie, Die: roll[1]},
+			{Kind: transcript.GestureSelectCandidate, Candidate: 0},
+			{Kind: transcript.GestureValidate},
+		} {
+			if _, err := db.ApplyTranscriptionGesture(state.ID, g); err != nil {
+				t.Fatalf("roll %v, gesture %s: %v", roll, g.Kind, err)
+			}
+		}
+	}
+	return db, state.ID
+}
+
+// rankRoll types roll in the draft (two dice typed over a full roll start it
+// again), then times Database.TranscriptionCandidates
+// alone — read lock, the library's match equity table, the ranking — in
+// process CPU time. Every legal play must come back ranked.
+func rankRoll(t *testing.T, db *Database, id int64, roll [2]int) (plays int, cost time.Duration) {
+	t.Helper()
+	for _, g := range []transcript.Gesture{
+		{Kind: transcript.GestureEnterDie, Die: roll[0]},
+		{Kind: transcript.GestureEnterDie, Die: roll[1]},
+	} {
+		if _, err := db.ApplyTranscriptionGesture(id, g); err != nil {
+			t.Fatalf("roll %v, gesture %s: %v", roll, g.Kind, err)
+		}
+	}
+	clock := cputime.Start()
+	got, err := db.TranscriptionCandidates(id)
+	cost = clock.Elapsed()
+	if err != nil {
+		t.Fatalf("roll %v: TranscriptionCandidates: %v", roll, err)
+	}
 	if len(got.Candidates) == 0 {
 		t.Fatalf("roll %v has no legal play on a contact board", roll)
 	}
 	if got.Unranked || got.Candidates[len(got.Candidates)-1].Rank == 0 {
 		t.Fatalf("roll %v: not every play ranked (unranked=%v)", roll, got.Unranked)
 	}
-	return len(got.Candidates)
+	return len(got.Candidates), cost
 }
 
-// transcriptCandidateDice puts the high die first, as transcript.CandidateDice.
-func transcriptCandidateDice(r [2]int) [2]int { return [2]int{max(r[0], r[1]), min(r[0], r[1])} }
+// bestOf is the cheapest of n rankings of roll.
+func bestOf(t *testing.T, db *Database, id int64, roll [2]int, n int) (plays int, best time.Duration) {
+	t.Helper()
+	best = time.Duration(1<<63 - 1)
+	for i := 0; i < n; i++ {
+		var e time.Duration
+		if plays, e = rankRoll(t, db, id, roll); e < best {
+			best = e
+		}
+	}
+	return plays, best
+}
 
 // TestTranscriptionDoublesLatency guards the widest lists: a double on a
 // contact board ranks every one of its plays, pruning off. Ceiling: ux.md §7's
@@ -97,18 +137,10 @@ func transcriptCandidateDice(r [2]int) [2]int { return [2]int{max(r[0], r[1]), m
 // measured on an idle machine.
 func TestTranscriptionDoublesLatency(t *testing.T) {
 	const ceiling = 30 * time.Millisecond
-	pos := contactPosition()
-	rankRoll(t, nil, pos, [2]int{6, 5})
+	db, id := transcribedMidGame(t)
+	rankRoll(t, db, id, [2]int{6, 5})
 	for _, roll := range [][2]int{{2, 2}, {1, 1}} {
-		best := time.Duration(1<<63 - 1)
-		plays := 0
-		for i := 0; i < 5; i++ {
-			clock := cputime.Start()
-			plays = rankRoll(t, nil, pos, roll)
-			if e := clock.Elapsed(); e < best {
-				best = e
-			}
-		}
+		plays, best := bestOf(t, db, id, roll, 5)
 		t.Logf("roll %v, %d plays ranked at 0-ply unpruned: %v", roll, plays, best)
 		if best > ceiling && !raceEnabled {
 			t.Errorf("ranking roll %v took %v, over the %v guard of ux.md §7", roll, best, ceiling)
@@ -121,21 +153,10 @@ func TestTranscriptionDoublesLatency(t *testing.T) {
 // times the cost, the margin a shared CI runner needs.
 func TestTranscriptionRollLatencyPerKeystroke(t *testing.T) {
 	const ceiling = 30 * time.Millisecond
-
-	pos := contactPosition()
-	app := &App{}
+	db, id := transcribedMidGame(t)
 	// Warm-up: a running application has already paid for the scratch.
-	rankRoll(t, app, pos, [2]int{6, 5})
-
-	best := time.Duration(1<<63 - 1)
-	plays := 0
-	for i := 0; i < 5; i++ {
-		clock := cputime.Start()
-		plays = rankRoll(t, app, pos, [2]int{3, 1})
-		if e := clock.Elapsed(); e < best {
-			best = e
-		}
-	}
+	rankRoll(t, db, id, [2]int{6, 5})
+	plays, best := bestOf(t, db, id, [2]int{3, 1}, 5)
 	t.Logf("one roll, %d plays ranked at 0-ply: %v", plays, best)
 	if best > ceiling && !raceEnabled {
 		t.Errorf("ranking one roll took %v, over the %v guard of ux.md §7", best, ceiling)
@@ -181,26 +202,26 @@ func TestTranscriptionRankedSweepCost(t *testing.T) {
 		t.Skip("a measurement of a gesture that does not exist; -short skips it")
 	}
 	const guard = 500 * time.Millisecond
-
-	pos := contactPosition()
-	app := &App{}
+	db, id := transcribedMidGame(t)
 	rolls := allRolls()
-	rankRoll(t, app, pos, rolls[0])
+	rankRoll(t, db, id, rolls[0])
 
 	best := time.Duration(1<<63 - 1)
 	plays := 0
 	for i := 0; i < 3; i++ {
-		start := time.Now()
+		var sweep time.Duration
 		plays = 0
 		for _, roll := range rolls {
-			plays += rankRoll(t, app, pos, roll)
+			n, e := rankRoll(t, db, id, roll)
+			plays += n
+			sweep += e
 		}
-		if e := time.Since(start); e < best {
-			best = e
+		if sweep < best {
+			best = sweep
 		}
 	}
 	t.Logf("the 21 rolls, each ranked at 0-ply, %d plays: %v (%v per roll)", plays, best, best/21)
 	if best > guard && !raceEnabled {
-		t.Errorf("ranking the 21 rolls took %v, over the %v guard — an order of magnitude worse than the 39 ms measured on 2026-09-07", best, guard)
+		t.Errorf("ranking the 21 rolls took %v, over the %v guard", best, guard)
 	}
 }

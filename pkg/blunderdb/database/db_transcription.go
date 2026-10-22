@@ -148,7 +148,8 @@ func (d *Database) ApplyTranscriptionGesture(id int64, g transcript.Gesture) (*T
 
 // TranscriptionCandidates lists the plays of the roll being entered in the
 // draft's session, both dice typed: every legal play, ranked at 0-ply without
-// pruning, as the daemon's transcriptions.candidates ranks them. Writes nothing.
+// pruning, as the daemon's transcriptions.candidates ranks them. It never waits
+// for a core a batch holds (rankTranscribedPlays). Writes nothing.
 func (d *Database) TranscriptionCandidates(id int64) (*transcription.Candidates, error) {
 	var out *transcription.Candidates
 	err := d.withTranscripts(func(svc *transcription.Service) (err error) {
@@ -159,14 +160,19 @@ func (d *Database) TranscriptionCandidates(id int64) (*transcription.Candidates,
 }
 
 // rankTranscribedPlays is the desktop's Ranker: the library's own match
-// equity table, a searcher made for the call, pruning off. Caller holds d.mu.
+// equity table, a pooled serial searcher, pruning off. Caller holds d.mu.
+//
+// It takes no token of gammonnet.ProcessCores, unlike a search of a batch: a
+// 0-ply ranking forks nothing and lasts about a millisecond, so it can only
+// overrun the budget by one goroutine for that long, whereas waiting for a
+// token behind a saturating batch would stall a keystroke for a whole deep
+// position, with the library held under d.mu.RLock all the while. The daemon
+// does queue it, on its own analysis pool, for tenant fairness.
 func (d *Database) rankTranscribedPlays(ctx context.Context, pos domain.Position) ([]domain.CheckerMove, error) {
 	_, met, err := mets.Current(ctx, d.store, "")
 	if err != nil {
 		return nil, err
 	}
-	release := gammonnet.HoldCore()
-	defer release()
 	return gammonnet.RankAllPlaysWithMET(nil, pos, met)
 }
 

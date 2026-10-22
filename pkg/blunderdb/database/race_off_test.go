@@ -1,5 +1,5 @@
 //go:build !race
 
-package gui
+package database
 
 const raceEnabled = false

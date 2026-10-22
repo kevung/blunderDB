@@ -331,8 +331,9 @@ chaque Action ; un plantage ne perd que la pile d'annulation.
   entre le rejeu incrémental et le rejeu complet sur un document couvrant tous les `kind` et
   toutes les incohérences.
 - **Latence de la liste 0-ply** — MESURÉE le 2026-09-07
-  (`internal/gui/transcription_latency_test.go`, position de contact, 892 coups sur les
-  21 jets). Le geste de chaque tour — `domain.LegalMoves` d'un jet puis le classement 0-ply
+  (`pkg/blunderdb/database/db_transcription_latency_test.go`, qui chronomètre
+  `Database.TranscriptionCandidates` lui-même, verrou et lecture de la MET compris, sur un
+  brouillon en milieu de partie). Le geste de chaque tour — `domain.LegalMoves` d'un jet puis le classement 0-ply
   de ses coups, les deux appels que fait `computeCandidates` — coûte **0,8 à 1,2 ms**, soit
   un trentième de son seuil de 30 ms. Le coup joué au plateau, qui balaie les 21 jets pour
   déduire lequel a été lancé, coûte **5 à 6,6 ms** ; son seuil est posé à 60 ms, le double
@@ -342,3 +343,12 @@ chaque Action ; un plantage ne perd que la pile d'annulation.
   jusqu'à 177 ms sous charge. Il ne l'est que pour un geste qui n'existe pas — rien dans
   l'application ne classe vingt et un jets — et il reste mesuré, sans seuil serré, comme
   prix de la question que §4.1 laisse ouverte.
+- **Le classement ne prend pas de jeton de cœur.** Un lot d'analyse tient un jeton de
+  `ProcessCores` par position (ADR-0093) ; si le classement d'une frappe en demandait un, il
+  attendrait, base tenue sous `d.mu.RLock`, la fin d'une position du lot — des secondes à
+  haute profondeur. Mesuré : le classement 0-ply d'un jet coûte 0,6 à 1,4 ms et ne forke
+  pas ; il dépasse donc le budget d'une goroutine pendant une milliseconde au plus, comme le
+  panneau d'analyse en direct. `rankTranscribedPlays` est exempté ;
+  `TestTranscriptionCandidates_NeverWaitsForACore` tient la décision en occupant tous les
+  jetons pendant l'appel. Le démon, lui, file le classement sur son pool d'analyse : il y
+  garde l'équité entre tenants, pas le budget du processus.
