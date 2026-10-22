@@ -16,6 +16,7 @@ import { tick } from 'svelte';
 import { get } from 'svelte/store';
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
+    TranscriptionCandidates: vi.fn(),
     ListTranscriptions: vi.fn().mockResolvedValue([]),
     CreateTranscription: vi.fn(),
     OpenTranscription: vi.fn(),
@@ -25,16 +26,13 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
 // ici il ne doit qu'exister, pour que la saisie du premier coup ne bute pas
 // dessus.
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
-    LegalMoves: vi.fn().mockResolvedValue([]),
-    EvaluatePositionImmediate: vi.fn().mockResolvedValue({ moves: [] })
-}));
-vi.mock('../../wailsjs/go/main/Config.js', () => ({
-    GetGammonNetPruneK: vi.fn().mockResolvedValue(0)
+    LegalMoves: vi.fn().mockResolvedValue([])
 }));
 
-import { ListTranscriptions, CreateTranscription, OpenTranscription, ApplyTranscriptionGesture } from '../../wailsjs/go/database/Database.js';
-import { LegalMoves, EvaluatePositionImmediate } from '../../wailsjs/go/gui/App.js';
+import { ListTranscriptions, CreateTranscription, OpenTranscription, ApplyTranscriptionGesture, TranscriptionCandidates } from '../../wailsjs/go/database/Database.js';
+import { LegalMoves } from '../../wailsjs/go/gui/App.js';
 
+import { candidatesAnswer } from './helpers/transcriptionCandidates.js';
 import TranscriptionPanel from '../components/TranscriptionPanel.svelte';
 import { transcriptionListStore, transcriptionStore, transcriptionKeyStore, clearTranscription, transcriptionPromptStore } from '../stores/transcriptionStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
@@ -153,7 +151,7 @@ describe('le premier coup d’une partie', () => {
     async function openedPanel() {
         // Un jet sans coup serait une danse, que le panneau enregistre seul.
         /** @type {any} */ (LegalMoves).mockResolvedValue([{ notation: '13/8 13/11' }]);
-        /** @type {any} */ (EvaluatePositionImmediate).mockResolvedValue({ moves: [{ index: 0, move: '13/8 13/11', equity: 0.1 }] });
+        /** @type {any} */ (TranscriptionCandidates).mockResolvedValue(candidatesAnswer([{ notation: '13/8 13/11' }], [{ index: 0, move: '13/8 13/11', equity: 0.1 }]));
         transcriptionStore.set(stateFor(annotated()));
         const rendered = render(TranscriptionPanel);
         await tick();
@@ -172,10 +170,13 @@ describe('le premier coup d’une partie', () => {
         await press('Digit3');
         await tick();
 
-        expect(/** @type {any} */ (ApplyTranscriptionGesture).mock.calls.map((/** @type {any} */ c) => c[1])).toEqual([
+        // Les candidats répondent aussitôt (select_candidate), mais rien ne valide le jet.
+        const sent = /** @type {any} */ (ApplyTranscriptionGesture).mock.calls.map((/** @type {any} */ c) => c[1]);
+        expect(sent.slice(0, 2)).toEqual([
             { Kind: 'enter_die', Die: 6 },
             { Kind: 'enter_die', Die: 3 }
         ]);
+        expect(sent.map((/** @type {any} */ g) => g.Kind)).not.toContain('validate');
     });
 
     test('un double se saisit tel quel : aucune relance n’est transcrite', async () => {
@@ -190,19 +191,21 @@ describe('le premier coup d’une partie', () => {
 
     test('le plus fort des deux dés a le trait', async () => {
         // Le moteur donne le coup au camp du dé le plus fort dès le second dé.
-        /** @type {any} */ (ApplyTranscriptionGesture).mockImplementation((/** @type {any} */ _id, /** @type {any} */ gesture) =>
-            Promise.resolve(
+        let strongest = false;
+        /** @type {any} */ (ApplyTranscriptionGesture).mockImplementation((/** @type {any} */ _id, /** @type {any} */ gesture) => {
+            if (gesture.Die === 5) strongest = true;
+            return Promise.resolve(
                 stateFor(
-                    gesture.Die === 5
+                    strongest
                         ? annotated({ entry: { at: 0, replacing: false, side: 1, dice: [2, 5], selected: false, kind: 'checker', game_start: true } })
                         : annotated({ entry: { at: 0, replacing: false, side: 0, dice: [2, 0], selected: false, kind: 'checker', game_start: true } })
                 )
-            )
-        );
+            );
+        });
         // Le jet du gagnant a des coups : sans cela ce serait une danse, et la
         // machine repartirait à zéro (ce que couvre TranscriptionPanel.turn).
         /** @type {any} */ (LegalMoves).mockResolvedValue([{ notation: '13/8 13/11' }]);
-        /** @type {any} */ (EvaluatePositionImmediate).mockResolvedValue({ moves: [{ index: 0, move: '13/8 13/11', equity: 0.1 }] });
+        /** @type {any} */ (TranscriptionCandidates).mockResolvedValue(candidatesAnswer([{ notation: '13/8 13/11' }], [{ index: 0, move: '13/8 13/11', equity: 0.1 }]));
         await openedPanel();
         await press('Digit2');
         await press('Digit5');

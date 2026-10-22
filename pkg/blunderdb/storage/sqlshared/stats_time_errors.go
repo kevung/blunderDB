@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"sort"
+	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -13,7 +14,7 @@ import (
 // is its checker play and the cube decision before it together; the error is
 // scored from the Position's current analysis, as the search's E filter does,
 // the blunder line the library's.
-func (s *StatsStore) TimeErrors(ctx context.Context, scope string) ([]storage.TimeErrorRow, error) {
+func (s *StatsStore) TimeErrors(ctx context.Context, scope string, matchIDs []int64) ([]storage.TimeErrorRow, error) {
 	settings, err := librarySettings(ctx, s.DB, scope)
 	if err != nil {
 		return nil, errf(s.DB, "TimeErrors settings", err)
@@ -29,7 +30,7 @@ func (s *StatsStore) TimeErrors(ctx context.Context, scope string) ([]storage.Ti
 	}
 	cells := map[key]*acc{}
 	scorer := PlayScorer{}
-	err = s.walkTimedDecisions(ctx, scope, func(name string, bucket int, mv *domain.Move, data []byte) {
+	err = s.walkTimedDecisions(ctx, scope, matchIDs, func(name string, bucket int, mv *domain.Move, data []byte) {
 		a := cells[key{name, bucket}]
 		if a == nil {
 			a = &acc{positions: map[int64]bool{}}
@@ -71,20 +72,26 @@ func (s *StatsStore) TimeErrors(ctx context.Context, scope string) ([]storage.Ti
 // walkTimedDecisions hands each timed decision on with its player's name, its
 // duration band and its analysis blob. It is the one reading of the timed
 // decisions, shared by TimeErrors and the "time_band" selection, so a list
-// holds exactly what its count counts.
-func (s *StatsStore) walkTimedDecisions(ctx context.Context, scope string, visit func(name string, bucket int, mv *domain.Move, data []byte)) error {
+// holds exactly what its count counts. A non-empty matchIDs keeps the
+// decisions of those Matches alone.
+func (s *StatsStore) walkTimedDecisions(ctx context.Context, scope string, matchIDs []int64, visit func(name string, bucket int, mv *domain.Move, data []byte)) error {
 	tenant, args := s.DB.TenantFilter("mv", scope)
 	// Scored by the caller rather than read from move.error_mp: no analysis
 	// path writes that column, and only timed (Duel) plays are decoded, so the
 	// cost stays with the few rows the table reads and nothing is added to the
 	// import.
-	rows, err := s.DB.Query(ctx,
-		`SELECT COALESCE(m.player1_name, ''), COALESCE(m.player2_name, ''), mv.player,
-			mv.decision_ms, mv.cube_decision_ms, `+scoredMoveCols(s.DB)+`
+	query := `SELECT COALESCE(m.player1_name, ''), COALESCE(m.player2_name, ''), mv.player,
+			mv.decision_ms, mv.cube_decision_ms, ` + scoredMoveCols(s.DB) + `
 		 FROM move mv JOIN game g ON g.id = mv.game_id JOIN match m ON m.id = g.match_id
 		 LEFT JOIN analysis a ON a.position_id = mv.position_id
-		 WHERE `+tenant+` AND (mv.decision_ms IS NOT NULL OR mv.cube_decision_ms IS NOT NULL)`,
-		args...)
+		 WHERE ` + tenant + ` AND (mv.decision_ms IS NOT NULL OR mv.cube_decision_ms IS NOT NULL)`
+	if len(matchIDs) > 0 {
+		query += ` AND m.id IN (` + strings.TrimSuffix(strings.Repeat("?,", len(matchIDs)), ",") + `)`
+		for _, id := range matchIDs {
+			args = append(args, id)
+		}
+	}
+	rows, err := s.DB.Query(ctx, query, args...)
 	if err != nil {
 		return errf(s.DB, "TimeErrors query", err)
 	}
@@ -129,10 +136,10 @@ func timeBucketOf(ms int64) int {
 
 // timeBandIDs lists the distinct positions of player's timed decisions in one
 // duration band, in the order TimeErrors counts them as Positions.
-func (s *StatsStore) timeBandIDs(ctx context.Context, scope, player string, bucket int) ([]int64, error) {
+func (s *StatsStore) timeBandIDs(ctx context.Context, scope, player string, bucket int, matchIDs []int64) ([]int64, error) {
 	seen := map[int64]bool{}
 	ids := []int64{}
-	err := s.walkTimedDecisions(ctx, scope, func(name string, b int, mv *domain.Move, _ []byte) {
+	err := s.walkTimedDecisions(ctx, scope, matchIDs, func(name string, b int, mv *domain.Move, _ []byte) {
 		if name != player || b != bucket || mv.PositionID == 0 || seen[mv.PositionID] {
 			return
 		}

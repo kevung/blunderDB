@@ -1326,6 +1326,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/stats.studyPlanQueue — JSON."
         return self._call("/v1/stats.studyPlanQueue", payload)
 
+    def stats_summary(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/stats.summary — JSON."
+        return self._call("/v1/stats.summary", payload)
+
     def stats_time_errors(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/stats.timeErrors — JSON."
         return self._call("/v1/stats.timeErrors", payload)
@@ -1433,6 +1437,10 @@ class GeneratedAPI(BaseClient):
     def transcriptions_apply(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
         "POST /v1/transcriptions.apply — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."
         return self._call("/v1/transcriptions.apply", payload, if_match=if_match, idempotency_key=idempotency_key)
+
+    def transcriptions_candidates(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/transcriptions.candidates — JSON."
+        return self._call("/v1/transcriptions.candidates", payload)
 
     def transcriptions_close(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/transcriptions.close — JSON."

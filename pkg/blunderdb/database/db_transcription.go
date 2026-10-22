@@ -6,6 +6,9 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
+	"github.com/kevung/blunderdb/pkg/blunderdb/mets"
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcription"
 )
@@ -141,6 +144,30 @@ func (d *Database) ApplyTranscriptionGesture(id int64, g transcript.Gesture) (*T
 	return d.transcriptState(func(svc *transcription.Service) (*transcription.State, error) {
 		return svc.Apply(context.Background(), "", id, transcription.Expect{}, g)
 	})
+}
+
+// TranscriptionCandidates lists the plays of the roll being entered in the
+// draft's session, both dice typed: every legal play, ranked at 0-ply without
+// pruning, as the daemon's transcriptions.candidates ranks them. Writes nothing.
+func (d *Database) TranscriptionCandidates(id int64) (*transcription.Candidates, error) {
+	var out *transcription.Candidates
+	err := d.withTranscripts(func(svc *transcription.Service) (err error) {
+		out, err = svc.Candidates(context.Background(), "", id, "", d.rankTranscribedPlays)
+		return err
+	})
+	return out, err
+}
+
+// rankTranscribedPlays is the desktop's Ranker: the library's own match
+// equity table, a searcher made for the call, pruning off. Caller holds d.mu.
+func (d *Database) rankTranscribedPlays(ctx context.Context, pos domain.Position) ([]domain.CheckerMove, error) {
+	_, met, err := mets.Current(ctx, d.store, "")
+	if err != nil {
+		return nil, err
+	}
+	release := gammonnet.HoldCore()
+	defer release()
+	return gammonnet.RankAllPlaysWithMET(nil, pos, met)
 }
 
 // TranscriptionMAT renders the draft as .mat text through the library's own

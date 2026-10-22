@@ -22,6 +22,19 @@ func (d *Database) PRByWindowCtx(ctx context.Context, filter StatsFilter, months
 	return d.store.Stats().PRByWindow(ctx, "", toStorageStatsFilter(filter), months)
 }
 
+// PRByWindowPhasesCtx is PRByWindowCtx with each point split by game phase
+// (storage.StatsStore.PRByWindowPhases).
+func (d *Database) PRByWindowPhasesCtx(ctx context.Context, filter StatsFilter, months int) ([]storage.WindowStats, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	return d.store.Stats().PRByWindowPhases(ctx, "", toStorageStatsFilter(filter), months)
+}
+
+// PRByWindowPhases is PRByWindowPhasesCtx for the GUI binding.
+func (d *Database) PRByWindowPhases(filter StatsFilter, months int) ([]storage.WindowStats, error) {
+	return d.PRByWindowPhasesCtx(context.Background(), filter, months)
+}
+
 // StatsMatchIDsCtx lists the matches a corpus figure counts under filter
 // (storage.StatsStore.MatchIDs): what a ranking row, a window or a player
 // opens in the match list.

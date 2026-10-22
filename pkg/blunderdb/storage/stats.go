@@ -241,9 +241,11 @@ type SelectionSpec struct {
 	Window     string
 	// Player and TimeBucket, for Kind "time_band", name one row of the time
 	// errors. Like that table, the selection reads every timed decision of
-	// the database and ignores the filter.
+	// the database, or of MatchIDs alone when it is non-empty, and ignores
+	// the filter.
 	Player     string
 	TimeBucket int
+	MatchIDs   []int64
 }
 
 // The dimensions of the breakdowns a SelectionSpec of Kind "breakdown" names.
@@ -719,8 +721,10 @@ type StatsStore interface {
 
 	// TimeErrors crosses the time a player took over a decision with the error
 	// it cost: one row per player and duration band that holds a decision, the
-	// players named as the Matches name them, the bands in order.
-	TimeErrors(ctx context.Context, scope string) ([]TimeErrorRow, error)
+	// players named as the Matches name them, the bands in order. A
+	// non-empty matchIDs reads the decisions of those Matches alone (the
+	// review of a tournament or a session); empty reads the whole database.
+	TimeErrors(ctx context.Context, scope string, matchIDs []int64) ([]TimeErrorRow, error)
 
 	// MatchBadges returns the per-player PR/MWC badge for the given matches,
 	// keyed by match id. A nil/empty matchIDs computes badges for every match in
@@ -806,6 +810,12 @@ type StatsStore interface {
 	// match_stats (or, read-only, from the decisions as HeadToHead does); a
 	// provenance filter is refused with ErrInvalid.
 	PRByWindow(ctx context.Context, scope string, filter StatsFilter, months int) ([]WindowStats, error)
+
+	// PRByWindowPhases is PRByWindow with each point's PerPhase filled: the
+	// same window split by the game phase of each decision (ADR-0035), read
+	// from the cells Compute's PerPhase reads, so a curve of the PR by phase
+	// over the months costs one call instead of one per phase.
+	PRByWindowPhases(ctx context.Context, scope string, filter StatsFilter, months int) ([]WindowStats, error)
 
 	// MatchIDs lists the matches a corpus figure counts: those where a seat
 	// of the filter's players (every player when none) holds a counted
@@ -908,6 +918,19 @@ type HeadToHeadMatch struct {
 type WindowStats struct {
 	From         string  `json:"from"`
 	To           string  `json:"to"`
+	NumMatches   int     `json:"num_matches"`
+	NumDecisions int     `json:"num_decisions"`
+	PR           float64 `json:"pr"`
+	// PerPhase, filled by PRByWindowPhases alone, splits the point by game
+	// phase, in the order of domain.GamePhase; a phase without a counted
+	// decision in the window is left out.
+	PerPhase []WindowPhaseStats `json:"per_phase,omitempty"`
+}
+
+// WindowPhaseStats is one game phase of a WindowStats point.
+type WindowPhaseStats struct {
+	// Phase is the stable token of domain.GamePhase ("opening", "race", …).
+	Phase        string  `json:"phase"`
 	NumMatches   int     `json:"num_matches"`
 	NumDecisions int     `json:"num_decisions"`
 	PR           float64 `json:"pr"`

@@ -30,6 +30,8 @@ type tournamentIDsResp struct {
 type statsWindowReq struct {
 	Filter storage.StatsFilter `json:"filter"`
 	Months int                 `json:"months"`
+	// ByPhase fills each point's per_phase (storage.StatsStore.PRByWindowPhases).
+	ByPhase bool `json:"byPhase"`
 }
 
 type statsRankingReq struct {
@@ -101,6 +103,15 @@ func (s *Server) statsRoutes() []route {
 		})},
 		{http.MethodPost, "/v1/stats.compute", rpc(func(ctx context.Context, scope string, req statsComputeReq) (*storage.StatsResult, error) {
 			return ss().Compute(ctx, scope, req.Filter)
+		})},
+		// La part publique de stats.compute (storage.StatsSummary) : niveau,
+		// intervalles, phases et scores, sans identifiant ni TopBlunders.
+		{http.MethodPost, "/v1/stats.summary", rpc(func(ctx context.Context, scope string, req statsComputeReq) (*storage.StatsSummary, error) {
+			r, err := ss().Compute(ctx, scope, req.Filter)
+			if err != nil {
+				return nil, err
+			}
+			return storage.SummaryOf(r), nil
 		})},
 		// Le rapport HTML autonome du filtre, du même générateur que la GUI et
 		// `stats report`.
@@ -186,8 +197,12 @@ func (s *Server) statsRoutes() []route {
 		{http.MethodPost, "/v1/stats.headToHead", rpc(func(ctx context.Context, scope string, req statsHeadToHeadReq) (*storage.HeadToHead, error) {
 			return ss().HeadToHead(ctx, scope, req.PlayerA, req.PlayerB, req.Filter)
 		})},
-		// Le PR sur une fenêtre calendaire glissante de Months mois.
+		// Le PR sur une fenêtre calendaire glissante de Months mois, découpé
+		// par phase de jeu si ByPhase.
 		{http.MethodPost, "/v1/stats.prByWindow", rpc(func(ctx context.Context, scope string, req statsWindowReq) ([]storage.WindowStats, error) {
+			if req.ByPhase {
+				return ss().PRByWindowPhases(ctx, scope, req.Filter, req.Months)
+			}
 			return ss().PRByWindow(ctx, scope, req.Filter, req.Months)
 		})},
 		// Les matchs qu'un chiffre du corpus compte : ce qu'ouvre une ligne.
@@ -226,8 +241,9 @@ func (s *Server) statsRoutes() []route {
 		{http.MethodPost, "/v1/stats.matchTimeSummary", rpc(func(ctx context.Context, scope string, req matchIDReq) (storage.MatchTimeSummary, error) {
 			return ss().MatchTimeSummary(ctx, scope, req.MatchID)
 		})},
-		{http.MethodPost, "/v1/stats.timeErrors", rpc(func(ctx context.Context, scope string, _ struct{}) ([]storage.TimeErrorRow, error) {
-			return ss().TimeErrors(ctx, scope)
+		// Durée × erreur, de toute la base ou des seuls matchs de MatchIDs.
+		{http.MethodPost, "/v1/stats.timeErrors", rpc(func(ctx context.Context, scope string, req matchBadgesReq) ([]storage.TimeErrorRow, error) {
+			return ss().TimeErrors(ctx, scope, req.MatchIDs)
 		})},
 		{http.MethodPost, "/v1/stats.matchBadges", rpc(func(ctx context.Context, scope string, req matchBadgesReq) (matchBadgesResp, error) {
 			badges, err := ss().MatchBadges(ctx, scope, req.MatchIDs)

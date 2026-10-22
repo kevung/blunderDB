@@ -318,6 +318,7 @@ func (cli *CLI) runStatsWindows(args []string) error {
 	fs := flag.NewFlagSet("stats windows", flag.ContinueOnError)
 	player := fs.String("player", "", "Only this player's decisions")
 	window := fs.String("window", "month", "Sliding window: month, quarter, or a number of months")
+	byPhase := fs.Bool("by-phase", false, "Split each window by game phase (opening, middle game, race, bear-off...)")
 	c := newCorpusStatsFlags(fs)
 	fs.Usage = func() {
 		fmt.Println("Usage: blunderdb stats windows --db <file> [options]")
@@ -332,6 +333,7 @@ func (cli *CLI) runStatsWindows(args []string) error {
 		fmt.Println("Examples:")
 		fmt.Println("  blunderdb stats windows --db database.db --player \"Alice\"")
 		fmt.Println("  blunderdb stats windows --db database.db --player \"Alice\" --window quarter --format json")
+		fmt.Println("  blunderdb stats windows --db database.db --player \"Alice\" --by-phase")
 	}
 	if err := fs.Parse(args); err != nil {
 		return err
@@ -354,7 +356,11 @@ func (cli *CLI) runStatsWindows(args []string) error {
 	var res []storage.WindowStats
 	err = withInterruptibleContext(func() {}, func(ctx context.Context) error {
 		var err error
-		res, err = cli.db.PRByWindowCtx(ctx, filter, months)
+		if *byPhase {
+			res, err = cli.db.PRByWindowPhasesCtx(ctx, filter, months)
+		} else {
+			res, err = cli.db.PRByWindowCtx(ctx, filter, months)
+		}
 		return err
 	})
 	if err != nil {
@@ -371,6 +377,9 @@ func (cli *CLI) runStatsWindows(args []string) error {
 	fmt.Fprintln(w, "FROM\tTO\tMATCHES\tDECISIONS\tPR")
 	for _, p := range res {
 		fmt.Fprintf(w, "%s\t%s\t%d\t%d\t%s\n", p.From, p.To, p.NumMatches, p.NumDecisions, prCell(p.PR, p.NumDecisions))
+		for _, ph := range p.PerPhase {
+			fmt.Fprintf(w, "  %s\t\t%d\t%d\t%s\n", ph.Phase, ph.NumMatches, ph.NumDecisions, prCell(ph.PR, ph.NumDecisions))
+		}
 	}
 	return w.Flush()
 }

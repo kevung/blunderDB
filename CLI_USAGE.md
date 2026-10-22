@@ -4059,7 +4059,7 @@ Options:
   -from string
     	Start date filter YYYY-MM-DD (stats only)
   -ids stats matches
-    	With --type matches: keep only these match IDs, comma-separated (as stats matches prints them)
+    	With --type matches or timeerrors: keep only these match IDs, comma-separated (as stats matches prints them)
   -limit int
     	Maximum number of items to list (default 10)
   -metric string
@@ -5280,6 +5280,40 @@ Examples:
   blunderdb stats report --db database.db --html --player "Alice" --lang fr
 ```
 
+### `blunderdb stats summary`
+
+```
+Usage: blunderdb stats summary --db <file> [options]
+
+The filter's level without any identifier: counts, PR (checker, cube) with
+its 95% interval, MWC loss per 7-point match, PR by game phase and by score.
+No position, match, tournament, opponent or tag appears in it.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -decision-type string
+    	Decision type: all, checker, or cube (default "all")
+  -engine string
+    	Only the decisions analysed by this engine (exact name, as stored)
+  -format string
+    	Output format: text or json (default "text")
+  -from string
+    	Start date filter YYYY-MM-DD (matches)
+  -min-depth int
+    	Only the decisions analysed at least this deep (plies)
+  -player string
+    	Only this player's decisions
+  -to string
+    	End date filter YYYY-MM-DD (matches)
+  -tournament string
+    	Filter the matches by tournament IDs, comma-separated
+
+Examples:
+  blunderdb stats summary --db database.db --player "Alice"
+  blunderdb stats summary --db database.db --player "Alice" --format json
+```
+
 ### `blunderdb stats tournament`
 
 ```
@@ -5386,6 +5420,8 @@ that month and the ones before it in the window. A window without a counted
 decision shows a dash, not a PR.
 
 Options:
+  -by-phase
+    	Split each window by game phase (opening, middle game, race, bear-off...)
   -db string
     	Path to the database file (required)
   -decision-type string
@@ -5410,6 +5446,7 @@ Options:
 Examples:
   blunderdb stats windows --db database.db --player "Alice"
   blunderdb stats windows --db database.db --player "Alice" --window quarter --format json
+  blunderdb stats windows --db database.db --player "Alice" --by-phase
 ```
 
 ### `blunderdb study mark`

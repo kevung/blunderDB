@@ -6985,6 +6985,24 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/domain_StudyQueueEntry"
+  /v1/stats.summary:
+    post:
+      operationId: stats.summary
+      tags: [stats]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/statsComputeReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/storage_StatsSummary"
+                nullable: true
   /v1/stats.timeErrors:
     post:
       operationId: stats.timeErrors
@@ -6994,7 +7012,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
+              $ref: "#/components/schemas/matchBadgesReq"
       responses:
         "200":
           description: OK
@@ -7510,6 +7528,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/transcription_State"
+                nullable: true
+  /v1/transcriptions.candidates:
+    post:
+      operationId: transcriptions.candidates
+      tags: [transcriptions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/transcriptionSessionReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/transcription_Candidates"
                 nullable: true
   /v1/transcriptions.close:
     post:
@@ -9895,6 +9931,8 @@ components:
         months:
           type: integer
           format: int32
+        byPhase:
+          type: boolean
     storage_Alias:
       type: object
       description: "Opaque: see the Go type storage.Alias (defined outside internal/server, not expanded here)."
@@ -10006,6 +10044,9 @@ components:
     storage_StatsResult:
       type: object
       description: "Opaque: see the Go type storage.StatsResult (defined outside internal/server, not expanded here)."
+    storage_StatsSummary:
+      type: object
+      description: "Opaque: see the Go type storage.StatsSummary (defined outside internal/server, not expanded here)."
     storage_StudyEffect:
       type: object
       description: "Opaque: see the Go type storage.StudyEffect (defined outside internal/server, not expanded here)."
@@ -10276,6 +10317,9 @@ components:
           format: int64
         sessionId:
           type: string
+    transcription_Candidates:
+      type: object
+      description: "Opaque: see the Go type transcription.Candidates (defined outside internal/server, not expanded here). side and dice of the roll being entered (dice high first) and candidates, every legal play, each with index (what select_candidate names), notation, steps, rank (1 for the best, 0 when unranked) and analysis, its 0-ply evaluation (equity, equityError from the best, chances). Ranked plays come best first; unranked true lists them in the generator's order. An empty list is a dance."
     transcription_Losses:
       type: object
       description: "Opaque: see the Go type transcription.Losses (defined outside internal/server, not expanded here)."
@@ -10284,7 +10328,7 @@ components:
       description: "Opaque: see the Go type transcription.SaveResult (defined outside internal/server, not expanded here)."
     transcription_State:
       type: object
-      description: "Opaque: see the Go type transcription.State (defined outside internal/server, not expanded here)."
+      description: "Opaque: see the Go type transcription.State (defined outside internal/server, not expanded here). id, revision, sessionId, canUndo, canRedo and annotated, the draft replayed as the desktop draws it. annotated.document.header.video_source is the media the Repères refer to (absent when none is attached). Each annotated.actions[i] carries its Repères roll_tick_ms and tick_ms (milliseconds from the start of the media) and the durations they give, decision_ms and cube_decision_ms, with decision_estimated when a checker play's duration is an upper bound estimated up to the next action; a key is absent when unknown."
     transcription_Summary:
       type: object
       description: "Opaque: see the Go type transcription.Summary (defined outside internal/server, not expanded here)."

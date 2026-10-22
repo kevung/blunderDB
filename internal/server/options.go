@@ -76,10 +76,10 @@ type Options struct {
 	// as absent; the reads are served either way.
 	EnableDirection bool
 	// Transcription serves the transcription gestures (create, open, apply,
-	// undo, redo, close, finish, abandon, editMatch; ADR-0057 rule 5). OFF by
-	// default for the reason EnableWebUI is: writing through a daemon that
-	// authenticates nobody is the operator's decision. The reads are served
-	// either way.
+	// undo, redo, candidates, close, finish, abandon, editMatch, materialize;
+	// ADR-0057 rule 5). OFF by default for the reason EnableWebUI is: writing
+	// through a daemon that authenticates nobody is the operator's decision.
+	// The reads are served either way.
 	Transcription bool
 	// Duel serves the gestures of a Duel (create, open, act, suspend, stop,
 	// discard; ADR-0072 rule 11). OFF by default for the reason EnableWebUI is:

@@ -14,6 +14,7 @@ import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
+    TranscriptionCandidates: vi.fn(),
     ListTranscriptions: vi.fn().mockResolvedValue([]),
     CreateTranscription: vi.fn(),
     OpenTranscription: vi.fn(),
@@ -21,11 +22,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     TranscriptionMAT: vi.fn().mockResolvedValue('')
 }));
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
-    LegalMoves: vi.fn().mockResolvedValue([]),
-    EvaluatePositionImmediate: vi.fn().mockResolvedValue({ moves: [] })
-}));
-vi.mock('../../wailsjs/go/main/Config.js', () => ({
-    GetGammonNetPruneK: vi.fn().mockResolvedValue(0)
+    LegalMoves: vi.fn().mockResolvedValue([])
 }));
 
 import { ApplyTranscriptionGesture, ListTranscriptions } from '../../wailsjs/go/database/Database.js';

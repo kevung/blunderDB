@@ -186,9 +186,16 @@ garde les N premières lignes du texte ; le JSON donne tout, avec les
 mois, chacune couvrant ce mois et les précédents de la fenêtre
 (``--window month``, ``quarter`` ou un nombre de mois).
 
+``--by-phase`` découpe chaque fenêtre par phase de jeu (ouverture, milieu de
+partie, course, sortie…) : sous chaque ligne, une ligne par phase avec ses
+matchs, ses décisions et son PR, les mêmes chiffres que la ventilation par
+phase de ``stats breakdown`` restreinte à la fenêtre ; une phase sans décision
+comptée dans la fenêtre n'y figure pas. Le démon HTTP les rend dans
+``per_phase`` quand la requête ``stats.prByWindow`` porte ``"byPhase": true``.
+
 .. code-block:: bash
 
-   ./blunderdb stats windows --db <fichier> [--player <nom>] [--window quarter]
+   ./blunderdb stats windows --db <fichier> [--player <nom>] [--window quarter] [--by-phase]
 
 **stats ranking** — Le classement des joueurs par PR, le plus bas en tête,
 parmi ceux qui ont au moins ``--min-decisions`` décisions comptées (500 par
@@ -281,6 +288,21 @@ direction des erreurs de videau : l'onglet *Ventilations* du panneau Stats (voir
 
    ./blunderdb stats breakdown --db base.db --player "Alice"
    ./blunderdb stats breakdown --db base.db --format json
+
+**stats summary** — Le niveau du filtre sans aucun identifiant : effectifs, PR
+(pions, videau) et son intervalle à 95 %, perte de MWC par match en 7 points,
+PR par phase de jeu et par score, chaque ligne avec son effectif et son
+intervalle. Aucune position, aucun match, tournoi, adversaire ni étiquette n'y
+figure, ni les décisions les plus coûteuses : c'est ce qu'un profil public ou
+une carte de visite peut montrer sans rien divulguer. Le démon HTTP le sert à
+la route ``stats.summary`` ; ``stats.compute`` reste inchangé. Les options sont ``--player``,
+``--tournament``, ``--from``, ``--to``, ``--decision-type`` et ``--format`` ;
+il n'a pas de ``--window``.
+
+.. code-block:: bash
+
+   ./blunderdb stats summary --db base.db --player "Alice"
+   ./blunderdb stats summary --db base.db --player "Alice" --format json
 
 **stats report** — Le rapport HTML du panneau Stats (voir :ref:`rapport_html`) :
 les indicateurs du filtre et ses dix décisions les plus coûteuses avec leur

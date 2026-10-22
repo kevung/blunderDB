@@ -1,18 +1,21 @@
 package gui
 
 import (
-	"sort"
+	"context"
 	"testing"
 	"time"
 
 	"github.com/kevung/blunderdb/internal/cputime"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
+	"github.com/kevung/blunderdb/pkg/blunderdb/transcription"
 )
 
 // Les seuils de latence de la saisie d'une transcription (ux.md §7). Le rejeu
-// est mesuré dans transcript ; ici, l'autre moitié du tour : les deux appels
-// du panneau (`computeCandidates` : domain.LegalMoves puis
-// EvaluatePositionImmediate), sur le chemin interactif série, pas celui du lot.
+// est mesuré dans transcript ; ici, l'autre moitié du tour : le classement que
+// le panneau demande (`computeCandidates` → Database.TranscriptionCandidates :
+// tous les coups légaux, 0-ply sans élagage), sur le chemin interactif série,
+// pas celui du lot.
 // Les seuils tiennent compte d'un facteur trois à quatre sous charge ; sous le
 // détecteur de courses, qui ne mesure pas le chemin livré, ils se contentent du
 // relevé : le job court sans -race et le nightly les tiennent.
@@ -63,22 +66,54 @@ func allRolls() [][2]int {
 	return out
 }
 
-// rankRoll is `computeCandidates` in Go; it returns how many plays were
-// ranked.
-func rankRoll(t *testing.T, app *App, pos domain.Position, roll [2]int) int {
+// rankRoll is Database.TranscriptionCandidates on a bare position — its
+// Ranker, a searcher made for the call, pruning off — and returns how many
+// plays were ranked. Every legal play must be.
+func rankRoll(t *testing.T, _ *App, pos domain.Position, roll [2]int) int {
 	t.Helper()
 	p := pos
-	p.Dice = roll
-	plays := domain.LegalMoves(&p)
-	res, err := app.evaluateGammonNet(p, 0, 0, 0)
-	if err != nil {
-		t.Fatalf("roll %v: %v", roll, err)
+	p.Dice = transcriptCandidateDice(roll)
+	rank := func(_ context.Context, q domain.Position) ([]domain.CheckerMove, error) {
+		release := gammonnet.HoldCore()
+		defer release()
+		return gammonnet.RankAllPlaysWithMET(nil, q, nil)
 	}
-	sort.SliceStable(res.Moves, func(i, j int) bool { return res.Moves[i].Equity > res.Moves[j].Equity })
-	if len(plays) == 0 {
+	got := transcription.RankCandidates(context.Background(), p, rank)
+	if len(got.Candidates) == 0 {
 		t.Fatalf("roll %v has no legal play on a contact board", roll)
 	}
-	return len(plays)
+	if got.Unranked || got.Candidates[len(got.Candidates)-1].Rank == 0 {
+		t.Fatalf("roll %v: not every play ranked (unranked=%v)", roll, got.Unranked)
+	}
+	return len(got.Candidates)
+}
+
+// transcriptCandidateDice puts the high die first, as transcript.CandidateDice.
+func transcriptCandidateDice(r [2]int) [2]int { return [2]int{max(r[0], r[1]), min(r[0], r[1])} }
+
+// TestTranscriptionDoublesLatency guards the widest lists: a double on a
+// contact board ranks every one of its plays, pruning off. Ceiling: ux.md §7's
+// 30 ms in process CPU time, the best of several tries, a few times the cost
+// measured on an idle machine.
+func TestTranscriptionDoublesLatency(t *testing.T) {
+	const ceiling = 30 * time.Millisecond
+	pos := contactPosition()
+	rankRoll(t, nil, pos, [2]int{6, 5})
+	for _, roll := range [][2]int{{2, 2}, {1, 1}} {
+		best := time.Duration(1<<63 - 1)
+		plays := 0
+		for i := 0; i < 5; i++ {
+			clock := cputime.Start()
+			plays = rankRoll(t, nil, pos, roll)
+			if e := clock.Elapsed(); e < best {
+				best = e
+			}
+		}
+		t.Logf("roll %v, %d plays ranked at 0-ply unpruned: %v", roll, plays, best)
+		if best > ceiling && !raceEnabled {
+			t.Errorf("ranking roll %v took %v, over the %v guard of ux.md §7", roll, best, ceiling)
+		}
+	}
 }
 
 // TestTranscriptionRollLatencyPerKeystroke guards the roll's plays being on

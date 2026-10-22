@@ -298,11 +298,15 @@ func TestHeadToHeadWindowsAndSeriesReadOnlyMatchWritable(t *testing.T) {
 			if err != nil {
 				t.Fatalf("PRByWindow %+v: %v", f, err)
 			}
+			phased, err := st.Stats().PRByWindowPhases(ctx, "", f, 3)
+			if err != nil {
+				t.Fatalf("PRByWindowPhases %+v: %v", f, err)
+			}
 			series, err := st.Stats().MatchSeries(ctx, "", f)
 			if err != nil {
 				t.Fatalf("MatchSeries %+v: %v", f, err)
 			}
-			out = append(out, asJSON(t, h2h), asJSON(t, win), asJSON(t, series))
+			out = append(out, asJSON(t, h2h), asJSON(t, win), asJSON(t, phased), asJSON(t, series))
 		}
 		return out
 	}

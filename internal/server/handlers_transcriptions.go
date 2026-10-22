@@ -8,6 +8,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
+	"github.com/kevung/blunderdb/pkg/blunderdb/mets"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcription"
@@ -132,6 +135,12 @@ func (s *Server) transcriptionRoutes() []route {
 			}
 			return s.transcripts().Apply(ctx, scope, req.ID, expectOf(ctx, req.SessionID), transcript.Gesture{Kind: transcript.GestureRedo})
 		})))},
+		{http.MethodPost, "/v1/transcriptions.candidates", rpc(func(ctx context.Context, scope string, req transcriptionSessionReq) (*transcription.Candidates, error) {
+			if err := s.sessionOf(req.SessionID); err != nil {
+				return nil, err
+			}
+			return s.transcripts().Candidates(ctx, scope, req.ID, req.SessionID, s.candidateRanker(scope))
+		})},
 		{http.MethodPost, "/v1/transcriptions.close", rpcVoid(func(_ context.Context, scope string, req transcriptionSessionReq) error {
 			if err := s.sessionOf(req.SessionID); err != nil {
 				return err
@@ -228,3 +237,28 @@ func parseRevision(h string) (int64, bool) {
 }
 
 func revisionETag(rev int64) string { return `"` + strconv.FormatInt(rev, 10) + `"` }
+
+// candidateRanker ranks the plays of a roll being transcribed at 0-ply, every
+// play and no cap: a transcriber picks what was played, often not among the
+// best. It is neither refused nor charged by the analysis quota — it is the
+// typing aid, not an analysis (ADR-0044: the engine ranks, it never chooses) —
+// but it queues on the shared workers like any evaluation, so a burst of
+// keystrokes takes its tenant's turn and never more than the pool's cores.
+func (s *Server) candidateRanker(scope string) transcription.Ranker {
+	return func(ctx context.Context, pos domain.Position) ([]domain.CheckerMove, error) {
+		_, met, err := mets.Current(ctx, s.opts.Storage, scope)
+		if err != nil {
+			return nil, err
+		}
+		var moves []domain.CheckerMove
+		ran := s.analysis.run(ctx, scope, func(get searcherFor) {
+			searcher, release := boundSearcher(ctx, get, 0, 0)
+			moves, err = gammonnet.RankAllPlaysWithMET(searcher, pos, met)
+			release()
+		})
+		if !ran {
+			return nil, errPoolClosed
+		}
+		return moves, err
+	}
+}

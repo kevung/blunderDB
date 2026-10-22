@@ -28,7 +28,8 @@ type TenantQuotas struct {
 
 	// AnalysisSecondsPerDay is the engine CPU time a tenant may
 	// spend per UTC day, summed over every engine computation it asks for:
-	// sweeps, comparisons, a cube matrix, a bare evaluation, rollouts. Past
+	// sweeps, comparisons, a cube matrix, a bare evaluation, rollouts — not
+	// the ranking of a transcribed roll's plays, a typing aid. Past
 	// it, a request is refused (429), a running sweep or rollout stops at its
 	// next step and a comparison answers what it had, flagged quotaExceeded.
 	// Every computation runs on the shared workers (analysisPool) and each

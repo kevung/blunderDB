@@ -22,6 +22,7 @@ import { tick } from 'svelte';
 import { get } from 'svelte/store';
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
+    TranscriptionCandidates: vi.fn(),
     ListTranscriptions: vi.fn().mockResolvedValue([]),
     CreateTranscription: vi.fn(),
     OpenTranscription: vi.fn(),
@@ -29,16 +30,13 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     TranscriptionMAT: vi.fn().mockResolvedValue('')
 }));
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
-    LegalMoves: vi.fn(),
-    EvaluatePositionImmediate: vi.fn()
-}));
-vi.mock('../../wailsjs/go/main/Config.js', () => ({
-    GetGammonNetPruneK: vi.fn().mockResolvedValue(0)
+    LegalMoves: vi.fn()
 }));
 
-import { ApplyTranscriptionGesture } from '../../wailsjs/go/database/Database.js';
-import { LegalMoves, EvaluatePositionImmediate } from '../../wailsjs/go/gui/App.js';
+import { ApplyTranscriptionGesture, TranscriptionCandidates } from '../../wailsjs/go/database/Database.js';
+import { LegalMoves } from '../../wailsjs/go/gui/App.js';
 
+import { candidatesAnswer } from './helpers/transcriptionCandidates.js';
 import TranscriptionPanel from '../components/TranscriptionPanel.svelte';
 import { transcriptionStore, clearTranscription } from '../stores/transcriptionStore.js';
 import { positionStore } from '../stores/positionStore.js';
@@ -134,7 +132,7 @@ beforeEach(() => {
     activeTabStore.set('transcription');
     statusBarModeStore.set('TRANSCRIBE');
     /** @type {any} */ (LegalMoves).mockResolvedValue([{ notation: '24/18 13/10', steps: [] }]);
-    /** @type {any} */ (EvaluatePositionImmediate).mockResolvedValue({ moves: [{ index: 0, move: '24/18 13/10', equity: 0 }] });
+    /** @type {any} */ (TranscriptionCandidates).mockResolvedValue(candidatesAnswer([{ notation: '24/18 13/10', steps: [] }], [{ index: 0, move: '24/18 13/10', equity: 0 }]));
     let at = ACTIONS.length;
     /** @type {any} */ (ApplyTranscriptionGesture).mockImplementation((/** @type {any} */ _id, /** @type {any} */ gesture) => {
         if (gesture.Kind === 'cursor_back') at = Math.max(0, at - 1);

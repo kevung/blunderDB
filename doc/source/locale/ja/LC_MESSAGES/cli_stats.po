@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 10:06+0200\n"
+"POT-Creation-Date: 2026-10-22 17:31+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -39,7 +39,7 @@ msgstr ""
 "stats`` で取得します。"
 
 #: ../../source/cli_stats.rst:20 ../../source/cli_stats.rst:148
-#: ../../source/cli_stats.rst:254 ../../source/cli_stats.rst:294
+#: ../../source/cli_stats.rst:261 ../../source/cli_stats.rst:316
 msgid "**Options:**"
 msgstr "**オプション：**"
 
@@ -118,8 +118,8 @@ msgstr ""
 "列は、そのグループがフィルターの PR に占める割合です。"
 
 #: ../../source/cli_stats.rst:49 ../../source/cli_stats.rst:160
-#: ../../source/cli_stats.rst:217 ../../source/cli_stats.rst:262
-#: ../../source/cli_stats.rst:278 ../../source/cli_stats.rst:307
+#: ../../source/cli_stats.rst:224 ../../source/cli_stats.rst:269
+#: ../../source/cli_stats.rst:285 ../../source/cli_stats.rst:329
 msgid "**Exemples:**"
 msgstr "**例：**"
 
@@ -314,7 +314,24 @@ msgstr ""
 "**stats windows** — 移動するカレンダー期間での PR です。月ごとに 1 "
 "行で、各行はその月と期間内のそれ以前の月を対象にします( ``--window month`` 、 ``quarter`` 、または月数)。"
 
-#: ../../source/cli_stats.rst:193
+#: ../../source/cli_stats.rst:189
+msgid ""
+"``--by-phase`` découpe chaque fenêtre par phase de jeu (ouverture, milieu"
+" de partie, course, sortie…) : sous chaque ligne, une ligne par phase "
+"avec ses matchs, ses décisions et son PR, les mêmes chiffres que la "
+"ventilation par phase de ``stats breakdown`` restreinte à la fenêtre ; "
+"une phase sans décision comptée dans la fenêtre n'y figure pas. Le démon "
+"HTTP les rend dans ``per_phase`` quand la requête ``stats.prByWindow`` "
+"porte ``\"byPhase\": true``."
+msgstr ""
+"``--by-phase``\\ "
+"は各ウィンドウをゲームフェーズ（オープニング、ミドルゲーム、レース、ベアオフ…）ごとに分割します。各行の下に、フェーズごとにマッチ数、決定数、PR"
+" を示す行が付き、ウィンドウに限定した ``stats breakdown``\\ "
+"のフェーズ別内訳と同じ数値です。ウィンドウ内に集計された決定のないフェーズは表示されません。HTTP デーモンは、\\ "
+"``stats.prByWindow``\\ リクエストに ``\"byPhase\": true``\\ が含まれるとき、これらを "
+"``per_phase``\\ で返します。"
+
+#: ../../source/cli_stats.rst:200
 msgid ""
 "**stats ranking** — Le classement des joueurs par PR, le plus bas en "
 "tête, parmi ceux qui ont au moins ``--min-decisions`` décisions comptées "
@@ -325,7 +342,7 @@ msgstr ""
 "decisions`` 以上(既定は 500)のプレイヤーが対象です。PR が等しい 2 人は同じ順位になります。 ``--limit N`` "
 "は上位 N 人を残します。"
 
-#: ../../source/cli_stats.rst:201
+#: ../../source/cli_stats.rst:208
 msgid ""
 "**stats engines** — Les moteurs d'analyse présents dans la base, sous le "
 "nom exact que ``--engine`` attend ; le même choix que le menu *Moteur* du"
@@ -334,7 +351,7 @@ msgstr ""
 "**stats engines** — データベースにある解析エンジンを、``--engine`` が受け付ける正確な名前で表示します。Stats"
 " パネルの *エンジン* メニューと同じ選択肢です。"
 
-#: ../../source/cli_stats.rst:209
+#: ../../source/cli_stats.rst:216
 msgid ""
 "**Options communes:** ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, "
 "``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube``, ``--format "
@@ -350,7 +367,7 @@ msgstr ""
 "<n>`` (解析の最小深度)があり、 ``list --type stats`` と ``list --type players`` "
 "も受け付けます。 ``h2h`` と ``windows`` はマッチごとの統計を読むため、各判断に対して働く出所フィルタは拒否します。"
 
-#: ../../source/cli_stats.rst:227
+#: ../../source/cli_stats.rst:234
 msgid ""
 "**stats matches** — Les matchs qu'un chiffre du corpus compte : ceux où "
 "le joueur (tout joueur sans ``--player``) a une décision comptée sous le "
@@ -361,7 +378,7 @@ msgstr ""
 "なしでは全プレイヤー)に数えられた判断があるマッチを、古いものから新しいものへ並べます。その識別子は ``list --type matches "
 "--ids`` に渡せます。"
 
-#: ../../source/cli_stats.rst:237
+#: ../../source/cli_stats.rst:244
 msgid ""
 "**stats tournaments** — Les tournois que compte le nombre de tournois du "
 "Tableau de bord : ceux qui portent une décision comptée du joueur (de "
@@ -371,7 +388,7 @@ msgstr ""
 "ダッシュボードのトーナメント数が数えるトーナメント：フィルターのもとでプレイヤー（``--player`` "
 "がなければ任意のプレイヤー）のカウントされた判断を含むもの、ID 順。"
 
-#: ../../source/cli_stats.rst:246
+#: ../../source/cli_stats.rst:253
 msgid ""
 "**stats progression** — Le PR de chaque match par ordre de date, le PR de"
 " chaque tournoi et le PR glissant sur les N dernières décisions : "
@@ -380,7 +397,7 @@ msgstr ""
 "**stats progression** — 各マッチの PR を日付順に、各トーナメントの PR と直近 N 件の判断の移動 PR "
 "を表示します。Stats パネルの *Progression* タブに相当します(:ref:`stats` を参照)。"
 
-#: ../../source/cli_stats.rst:256
+#: ../../source/cli_stats.rst:263
 msgid ""
 "``--player <nom>``, ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, "
 "``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — Le même "
@@ -390,13 +407,13 @@ msgstr ""
 "``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — ``list "
 "--type stats`` と同じフィルタです。"
 
-#: ../../source/cli_stats.rst:259
+#: ../../source/cli_stats.rst:266
 msgid ""
 "``--format text|json`` — Le JSON porte les matchs, les tournois et les PR"
 " glissants."
 msgstr "``--format text|json`` — JSON にはマッチ、トーナメント、移動 PR が含まれます。"
 
-#: ../../source/cli_stats.rst:269
+#: ../../source/cli_stats.rst:276
 msgid ""
 "**stats breakdown** — Le PR du filtre ventilé par phase de jeu, plan de "
 "jeu, étiquette de commentaire, score (away contre away) et action de "
@@ -408,7 +425,26 @@ msgstr ""
 "を、ゲームのフェーズ、ゲームプラン、コメントタグ、スコア(アウェイ対アウェイ)、キューブアクションごとに分け、キューブミスの方向も示します。Stats"
 " パネルの *内訳* タブに相当します(:ref:`stats` を参照)。オプションは ``stats progression`` と同じです。"
 
-#: ../../source/cli_stats.rst:285
+#: ../../source/cli_stats.rst:292
+msgid ""
+"**stats summary** — Le niveau du filtre sans aucun identifiant : "
+"effectifs, PR (pions, videau) et son intervalle à 95 %, perte de MWC par "
+"match en 7 points, PR par phase de jeu et par score, chaque ligne avec "
+"son effectif et son intervalle. Aucune position, aucun match, tournoi, "
+"adversaire ni étiquette n'y figure, ni les décisions les plus coûteuses :"
+" c'est ce qu'un profil public ou une carte de visite peut montrer sans "
+"rien divulguer. Le démon HTTP le sert à la route ``stats.summary`` ; "
+"``stats.compute`` reste inchangé. Les options sont ``--player``, "
+"``--tournament``, ``--from``, ``--to``, ``--decision-type`` et "
+"``--format`` ; il n'a pas de ``--window``."
+msgstr ""
+"**stats summary** — 識別子を一切含まないフィルターのレベル：件数、PR（チェッカー、キューブ）とその 95 % 区間、7 "
+"ポイントマッチあたりの MWC 損失、ゲームフェーズ別・スコア別の PR "
+"で、各行に件数と区間が付きます。ポジション、マッチ、トーナメント、対戦相手、タグは一切現れず、最も高くついた決定も含まれません。公開プロフィールや名刺が何も漏らさずに示せる内容です。HTTP"
+" デーモンは ``stats.summary``\\ ルートでこれを提供し、\\ ``stats.compute`` は変わりません。オプションは ``--player``、``--tournament``、``--from``、``--to``、"
+"``--decision-type``、``--format`` で、``--window`` はありません。"
+
+#: ../../source/cli_stats.rst:307
 msgid ""
 "**stats report** — Le rapport HTML du panneau Stats (voir "
 ":ref:`rapport_html`) : les indicateurs du filtre et ses dix décisions les"
@@ -421,15 +457,15 @@ msgstr ""
 "として印刷できる単一の自己完結ファイルにまとめます。HTTP デーモンは同じジェネレーターから、ルート \\ ``stats.report``\\"
 " で提供します。"
 
-#: ../../source/cli_stats.rst:296
+#: ../../source/cli_stats.rst:318
 msgid "``--html`` — Obligatoire : le HTML est le seul format."
 msgstr "``--html`` — 必須:HTML が唯一の形式です。"
 
-#: ../../source/cli_stats.rst:297
+#: ../../source/cli_stats.rst:319
 msgid "``--output <fichier>`` — Le fichier écrit (défaut : la sortie standard)."
 msgstr "``--output <fichier>`` — 書き出すファイルです(デフォルト:標準出力)。"
 
-#: ../../source/cli_stats.rst:298
+#: ../../source/cli_stats.rst:320
 msgid ""
 "``--lang <code>`` — La langue du rapport : ``fr``, ``en``, ``de``, "
 "``el``, ``es``, ``fi``, ``it``, ``ja`` ou ``ru`` (défaut ``en``)."
@@ -438,7 +474,7 @@ msgstr ""
 "レポートの言語:``fr``、``en``、``de``、``el``、``es``、``fi``、``it``、``ja``、``ru``\\ "
 "(デフォルトは ``en``)。"
 
-#: ../../source/cli_stats.rst:300
+#: ../../source/cli_stats.rst:322
 msgid ""
 "``--player <nom>``, ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, "
 "``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — Le filtre :"
@@ -448,8 +484,9 @@ msgstr ""
 "``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — "
 "フィルタ:レポートはその対象範囲を明示します。"
 
-#: ../../source/cli_stats.rst:304
+#: ../../source/cli_stats.rst:326
 msgid ""
 "Les diagrammes y sont dessinés avec la palette par défaut ; seule "
 "l'application graphique emploie la palette du plateau choisie à l'écran."
 msgstr "図はここでは既定のパレットで描かれます。画面で選んだボードのパレットを使うのはグラフィカルアプリケーションだけです。"
+

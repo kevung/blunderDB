@@ -340,7 +340,7 @@ func (s *StatsStore) PositionIDsBySelection(ctx context.Context, scope string, f
 		}
 		return storage.StudyEffectWindowIDs(positions, sel.GameType, sel.FamilyKind, sel.StudiedOn, sel.Window), nil
 	case "time_band":
-		return s.timeBandIDs(ctx, scope, sel.Player, sel.TimeBucket)
+		return s.timeBandIDs(ctx, scope, sel.Player, sel.TimeBucket, sel.MatchIDs)
 	}
 	// The blunder threshold is the library's, read where the Players table
 	// reads it, so the drill-down lists what its Blunders column counts.
