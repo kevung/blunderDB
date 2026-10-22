@@ -834,6 +834,10 @@ export function ImportStudyQueue(arg1, arg2) {
   return window['go']['database']['Database']['ImportStudyQueue'](arg1, arg2);
 }
 
+export function ImportTranscription(arg1) {
+  return window['go']['database']['Database']['ImportTranscription'](arg1);
+}
+
 export function ImportXGMatch(arg1) {
   return window['go']['database']['Database']['ImportXGMatch'](arg1);
 }

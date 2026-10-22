@@ -217,6 +217,7 @@ contiendrait.
    ./blunderdb transcribe --db <path> --match <id> --edit [--accept-losses]
    ./blunderdb transcribe --db <path> --draft <id> --finish|--abandon
    ./blunderdb transcribe --db <path> --materialize <document.json>
+   ./blunderdb transcribe --db <path> --import <fichier.mat|document.json>
 
 **Options:**
 
@@ -239,6 +240,8 @@ contiendrait.
   tout ce qui y est écrit est perdu.
 * ``--materialize`` — Document JSON (``header`` et ``actions``, dés compris) à
   écrire en match d'un seul coup, ou pas du tout.
+* ``--import`` — Fichier ``.mat`` ou document de transcription JSON sur lequel
+  ouvrir un nouveau brouillon.
 
 ``--check`` nomme chaque incohérence avec le numéro de l'action et la partie où
 elle se trouve : coup illégal, deux tours de suite pour le même joueur, action
@@ -264,6 +267,15 @@ d'actions arrivé d'ailleurs. Les règles sont appliquées strictement : la
 première action refusée fait échouer la commande avec son rang (à partir de 0)
 et son motif, et rien n'est écrit. Les durées de décision du document
 (``decision_ms``, ``cube_decision_ms``) sont reportées sur les coups.
+
+``--import`` ouvre un nouveau brouillon sur un fichier ``.mat`` ou sur un
+document de transcription JSON (``header``, ``actions``, et facultativement
+``format_version`` et ``next_score``, la forme sous laquelle un brouillon est
+enregistré). Les incohérences du fichier sont gardées et marquées, comme dans
+tout brouillon : on les corrige avant que ``--finish`` écrive le match. Un
+fichier qu'aucune relecture ne peut lire — JSON illisible, sorte d'action
+inconnue, joueur, dé ou point hors du plateau, ``.mat`` sans partie — fait
+échouer la commande et n'ouvre aucun brouillon.
 
 Seules trois autres options écrivent, par les mêmes méthodes que le panneau
 Transcription : ``--edit`` ouvre un brouillon sur un match existant,

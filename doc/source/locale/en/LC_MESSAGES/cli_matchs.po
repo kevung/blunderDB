@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 16:30+0200\n"
+"POT-Creation-Date: 2026-10-22 22:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -149,7 +149,7 @@ msgstr ""
 "carry their 95 % interval over the matches (column ``95 % CI``), and "
 "``list --type players`` a column ``L7``."
 
-#: ../../source/cli_matchs.rst:63 ../../source/cli_matchs.rst:221
+#: ../../source/cli_matchs.rst:63 ../../source/cli_matchs.rst:222
 msgid "**Options:**"
 msgstr "**Options:**"
 
@@ -431,35 +431,35 @@ msgstr ""
 "draft — exactly one of the three. A match is read through the ``.mat`` it"
 " would export, so what is replayed is what an export would contain."
 
-#: ../../source/cli_matchs.rst:223
+#: ../../source/cli_matchs.rst:224
 msgid "``--mat`` — Fichier ``.mat`` à rejouer."
 msgstr "``--mat`` — ``.mat`` file to replay."
 
-#: ../../source/cli_matchs.rst:224
+#: ../../source/cli_matchs.rst:225
 msgid "``--db`` — Base de données, pour ``--match`` et ``--draft``."
 msgstr "``--db`` — Database, for ``--match`` and ``--draft``."
 
-#: ../../source/cli_matchs.rst:225
+#: ../../source/cli_matchs.rst:226
 msgid "``--match`` — Identifiant du match de la bibliothèque à rejouer."
 msgstr "``--match`` — Id of the library match to replay."
 
-#: ../../source/cli_matchs.rst:226
+#: ../../source/cli_matchs.rst:227
 msgid "``--draft`` — Identifiant du brouillon de transcription à rejouer."
 msgstr "``--draft`` — Id of the transcription draft to replay."
 
-#: ../../source/cli_matchs.rst:227
+#: ../../source/cli_matchs.rst:228
 msgid "``--check`` — Liste les incohérences trouvées (comportement par défaut)."
 msgstr "``--check`` — List the inconsistencies found (the default behaviour)."
 
-#: ../../source/cli_matchs.rst:228
+#: ../../source/cli_matchs.rst:229
 msgid "``--render`` — Réécrit la transcription en ``.mat`` à ce chemin."
 msgstr "``--render`` — Write the transcription back as ``.mat`` to this path."
 
-#: ../../source/cli_matchs.rst:229
+#: ../../source/cli_matchs.rst:230
 msgid "``--format`` — Format de sortie: ``text`` (défaut) ou ``json``."
 msgstr "``--format`` — Output format: ``text`` (default) or ``json``."
 
-#: ../../source/cli_matchs.rst:230
+#: ../../source/cli_matchs.rst:231
 msgid ""
 "``--edit`` — Ouvre un brouillon sur le ``--match`` (ou rend celui qui y "
 "est déjà ouvert)."
@@ -467,7 +467,7 @@ msgstr ""
 "``--edit`` — Opens a draft on the ``--match`` (or returns the one already"
 " open on it)."
 
-#: ../../source/cli_matchs.rst:232
+#: ../../source/cli_matchs.rst:233
 msgid ""
 "``--accept-losses`` — Avec ``--edit`` sur un match importé : accepte que "
 "ses analyses et commentaires puissent être perdus."
@@ -475,7 +475,7 @@ msgstr ""
 "``--accept-losses`` — With ``--edit`` on an imported match: accepts that "
 "its analyses and comments may be lost."
 
-#: ../../source/cli_matchs.rst:234
+#: ../../source/cli_matchs.rst:235
 msgid ""
 "``--finish`` — Termine le ``--draft`` : écrit son match, ou remplace "
 "celui dont il a été ouvert, et libère le brouillon."
@@ -483,7 +483,7 @@ msgstr ""
 "``--finish`` — Finishes the ``--draft``: writes its match, or replaces "
 "the one it was opened from, and releases the draft."
 
-#: ../../source/cli_matchs.rst:236
+#: ../../source/cli_matchs.rst:237
 msgid ""
 "``--abandon`` — Abandonne le ``--draft`` : le supprime sans match ; un "
 "match dont il a été ouvert reste tel quel."
@@ -491,7 +491,7 @@ msgstr ""
 "``--abandon`` — Abandons the ``--draft``: deletes it without a match; a "
 "match it was opened from stays as it is."
 
-#: ../../source/cli_matchs.rst:238
+#: ../../source/cli_matchs.rst:239
 msgid ""
 "``--yes`` — Avec ``--abandon`` sur un brouillon jamais terminé : confirme"
 " que tout ce qui y est écrit est perdu."
@@ -499,7 +499,7 @@ msgstr ""
 "``--yes`` — With ``--abandon`` on a draft that never produced a match: "
 "confirms that everything typed in it is lost."
 
-#: ../../source/cli_matchs.rst:240
+#: ../../source/cli_matchs.rst:241
 msgid ""
 "``--materialize`` — Document JSON (``header`` et ``actions``, dés "
 "compris) à écrire en match d'un seul coup, ou pas du tout."
@@ -508,6 +508,14 @@ msgstr ""
 "included) to write as a match in one go, or not at all."
 
 #: ../../source/cli_matchs.rst:243
+msgid ""
+"``--import`` — Fichier ``.mat`` ou document de transcription JSON sur "
+"lequel ouvrir un nouveau brouillon."
+msgstr ""
+"``--import`` — ``.mat`` file or JSON transcription document to open a new"
+" draft on."
+
+#: ../../source/cli_matchs.rst:246
 msgid ""
 "``--check`` nomme chaque incohérence avec le numéro de l'action et la "
 "partie où elle se trouve : coup illégal, deux tours de suite pour le même"
@@ -529,7 +537,7 @@ msgstr ""
 "score line is not the one the previous games give, replayed at the "
 "written score."
 
-#: ../../source/cli_matchs.rst:252
+#: ../../source/cli_matchs.rst:255
 msgid ""
 "Une incohérence est **rapportée, jamais opposée** : rien n'est refusé "
 "pour elle et le code de sortie reste 0 quoi que la relecture trouve. Un "
@@ -546,7 +554,7 @@ msgstr ""
 "where a broken file and a game containing an illegal play are not "
 "confused with one another."
 
-#: ../../source/cli_matchs.rst:259
+#: ../../source/cli_matchs.rst:262
 msgid ""
 "``--render`` réécrit la transcription en ``.mat``, ce qui permet de "
 "vérifier l'aller-retour sur un fichier réel, en dehors des tests."
@@ -554,7 +562,7 @@ msgstr ""
 "``--render`` writes the transcription back out as ``.mat``, which is how "
 "the round trip is checked on a real file outside the tests."
 
-#: ../../source/cli_matchs.rst:262
+#: ../../source/cli_matchs.rst:265
 msgid ""
 "``--materialize`` écrit, sans brouillon, le match que joue un document "
 "d'actions arrivé d'ailleurs. Les règles sont appliquées strictement : la "
@@ -570,7 +578,27 @@ msgstr ""
 "document (``decision_ms``, ``cube_decision_ms``) are carried over onto "
 "the moves."
 
-#: ../../source/cli_matchs.rst:268
+#: ../../source/cli_matchs.rst:271
+msgid ""
+"``--import`` ouvre un nouveau brouillon sur un fichier ``.mat`` ou sur un"
+" document de transcription JSON (``header``, ``actions``, et "
+"facultativement ``format_version`` et ``next_score``, la forme sous "
+"laquelle un brouillon est enregistré). Les incohérences du fichier sont "
+"gardées et marquées, comme dans tout brouillon : on les corrige avant que"
+" ``--finish`` écrive le match. Un fichier qu'aucune relecture ne peut "
+"lire — JSON illisible, sorte d'action inconnue, joueur, dé ou point hors "
+"du plateau, ``.mat`` sans partie — fait échouer la commande et n'ouvre "
+"aucun brouillon."
+msgstr ""
+"``--import`` opens a new draft on a ``.mat`` file or on a JSON "
+"transcription document (``header``, ``actions``, and optionally "
+"``format_version`` and ``next_score``, the shape a draft is stored in). "
+"The file's inconsistencies are kept and marked, as in any draft: they are"
+" corrected before ``--finish`` writes the match. A file no replay can "
+"read — unreadable JSON, unknown action kind, player, die or point off the"
+" board, ``.mat`` without a game — fails the command and opens no draft."
+
+#: ../../source/cli_matchs.rst:280
 msgid ""
 "Seules trois autres options écrivent, par les mêmes méthodes que le "
 "panneau Transcription : ``--edit`` ouvre un brouillon sur un match "
@@ -590,15 +618,15 @@ msgstr ""
 "comments that a ``.mat`` does not: ``--edit`` reports at most their count"
 " and refuses without ``--accept-losses``."
 
-#: ../../source/cli_matchs.rst:276
+#: ../../source/cli_matchs.rst:288
 msgid "**Exemple:**"
 msgstr "**Example:**"
 
-#: ../../source/cli_matchs.rst:289
+#: ../../source/cli_matchs.rst:301
 msgid "duel — Jouer un Duel"
 msgstr "duel — Play a Duel"
 
-#: ../../source/cli_matchs.rst:291
+#: ../../source/cli_matchs.rst:303
 msgid ""
 "Joue un Duel sans interface, une Action par appel. Chaque appel est son "
 "propre processus : il reprend le Duel dans la base, joue une Action et la"
@@ -610,11 +638,11 @@ msgstr ""
 "writes it back. The durations of the moves of a Duel played this way are "
 "unknown, never zero."
 
-#: ../../source/cli_matchs.rst:307
+#: ../../source/cli_matchs.rst:319
 msgid "**Sous-commandes :**"
 msgstr "**Subcommands:**"
 
-#: ../../source/cli_matchs.rst:309
+#: ../../source/cli_matchs.rst:321
 msgid ""
 "``create`` — Démarre un Duel et joue jusqu'à la première décision d'un "
 "Côté externe. ``--length`` (1 à 25 points) ou ``--money`` ; ``--start`` "
@@ -672,7 +700,7 @@ msgstr ""
 "money session between two Bots is refused, since it would never end, "
 "except as a single game."
 
-#: ../../source/cli_matchs.rst:335
+#: ../../source/cli_matchs.rst:347
 msgid ""
 "``show`` — Score, ce que le Duel attend et, pour un coup, les jeux "
 "légaux. Le germe des dés n'est jamais affiché avant la fin : l'empreinte "
@@ -682,11 +710,11 @@ msgstr ""
 "legal plays. The dice seed is never shown before the end: the fingerprint"
 " stands for it."
 
-#: ../../source/cli_matchs.rst:337
+#: ../../source/cli_matchs.rst:349
 msgid "``list`` — Les Duels en suspens."
 msgstr "``list`` — The suspended Duels."
 
-#: ../../source/cli_matchs.rst:338
+#: ../../source/cli_matchs.rst:350
 msgid ""
 "``roll``, ``move``, ``double``, ``take``, ``pass``, ``resign`` — Une "
 "Action du Côté que le Duel attend (``--side 1|2`` pour le nommer) ; "
@@ -700,7 +728,7 @@ msgstr ""
 " the value of a resignation; ``--revision`` refuses the Action if the "
 "Duel has moved on."
 
-#: ../../source/cli_matchs.rst:342
+#: ../../source/cli_matchs.rst:354
 msgid ""
 "``contribute`` — L'apport d'un Côté externe au germe combiné (``--side "
 "1|2``, ``--value``, 1 à 64 octets), une seule fois, avant le premier "
@@ -714,7 +742,7 @@ msgstr ""
 "the HMAC-SHA256 of the sealed seed over each Side's contribution preceded"
 " by its length, and the Match's origin carries the contributions."
 
-#: ../../source/cli_matchs.rst:347
+#: ../../source/cli_matchs.rst:359
 msgid ""
 "``forfeit`` — Le Côté ``--side`` (requis) abandonne le match : la partie "
 "en cours va à l'autre Côté pour les points qui le portent à la longueur "
@@ -726,7 +754,7 @@ msgstr ""
 "length (in money play, a single game at the cube's value), and the Match "
 "is written as won by it."
 
-#: ../../source/cli_matchs.rst:351
+#: ../../source/cli_matchs.rst:363
 msgid ""
 "``stop`` — Arrête une session en argent et écrit son Match tel qu'il est,"
 " la partie en cours sans vainqueur. Un match en points est refusé : il ne"
@@ -738,10 +766,10 @@ msgstr ""
 "written only whole (``forfeit``, ``discard``). Stopping is not "
 "forfeiting."
 
-#: ../../source/cli_matchs.rst:354
+#: ../../source/cli_matchs.rst:366
 msgid "``discard`` — Jette le Duel : rien n'en est écrit."
 msgstr "``discard`` — Throws the Duel away: nothing is written."
 
-#: ../../source/cli_matchs.rst:356
+#: ../../source/cli_matchs.rst:368
 msgid "Toutes prennent ``--db`` et ``--format`` (``text`` ou ``json``)."
 msgstr "All take ``--db`` and ``--format`` (``text`` or ``json``)."

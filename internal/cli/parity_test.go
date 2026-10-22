@@ -311,6 +311,7 @@ var databaseParity = map[string]parityEntry{
 	"TranscriptionMAT":                  {Server: "/v1/transcriptions.exportMat", Why: whyTranscriptionMAT},
 	"FinishTranscription":               {Server: "/v1/transcriptions.finish", CLI: "transcribe --finish", Why: whyTranscription},
 	"MaterializeTranscription":          {Server: "/v1/transcriptions.materialize", CLI: "transcribe --materialize", Why: whyTranscription},
+	"ImportTranscription":               {Server: "/v1/transcriptions.import", CLI: "transcribe --import", Why: whyTranscription},
 	"AbandonTranscription":              {Server: "/v1/transcriptions.abandon", CLI: "transcribe --abandon", Why: whyTranscription},
 	"EditMatchTranscription":            {Server: "/v1/transcriptions.editMatch", CLI: "transcribe --edit", Why: whyTranscription},
 	"TranscriptionCandidates":           {Server: "/v1/transcriptions.candidates", Why: whyTranscription},

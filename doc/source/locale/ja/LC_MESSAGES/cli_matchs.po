@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 16:30+0200\n"
+"POT-Creation-Date: 2026-10-22 22:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -134,7 +134,7 @@ msgstr ""
 "と、フェーズ別、ラベル別、スコア別の行が、マッチにわたる 95 % 区間(列 ``95 % CI``)を持ち、``list --type "
 "players`` には ``L7`` 列があります。"
 
-#: ../../source/cli_matchs.rst:63 ../../source/cli_matchs.rst:221
+#: ../../source/cli_matchs.rst:63 ../../source/cli_matchs.rst:222
 msgid "**Options:**"
 msgstr "**オプション：**"
 
@@ -380,41 +380,41 @@ msgstr ""
 "ファイル、ライブラリのマッチ、記譜の下書きのいずれか一つだけです。マッチはエクスポート時に生成される\\ ``.mat``\\ "
 "を通して読まれるため、再生されるのはエクスポートが含むはずのものです。"
 
-#: ../../source/cli_matchs.rst:223
+#: ../../source/cli_matchs.rst:224
 msgid "``--mat`` — Fichier ``.mat`` à rejouer."
 msgstr "``--mat`` — 再生する\\ ``.mat``\\ ファイル。"
 
-#: ../../source/cli_matchs.rst:224
+#: ../../source/cli_matchs.rst:225
 msgid "``--db`` — Base de données, pour ``--match`` et ``--draft``."
 msgstr "``--db`` — データベース。\\ ``--match`` および ``--draft`` 用。"
 
-#: ../../source/cli_matchs.rst:225
+#: ../../source/cli_matchs.rst:226
 msgid "``--match`` — Identifiant du match de la bibliothèque à rejouer."
 msgstr "``--match`` — 再生するライブラリのマッチの識別子。"
 
-#: ../../source/cli_matchs.rst:226
+#: ../../source/cli_matchs.rst:227
 msgid "``--draft`` — Identifiant du brouillon de transcription à rejouer."
 msgstr "``--draft`` — 再生する記譜の下書きの識別子。"
 
-#: ../../source/cli_matchs.rst:227
+#: ../../source/cli_matchs.rst:228
 msgid "``--check`` — Liste les incohérences trouvées (comportement par défaut)."
 msgstr "``--check`` — 見つかった不整合を列挙する（既定の動作）。"
 
-#: ../../source/cli_matchs.rst:228
+#: ../../source/cli_matchs.rst:229
 msgid "``--render`` — Réécrit la transcription en ``.mat`` à ce chemin."
 msgstr "``--render`` — 記譜をこのパスに\\ ``.mat``\\ として書き戻す。"
 
-#: ../../source/cli_matchs.rst:229
+#: ../../source/cli_matchs.rst:230
 msgid "``--format`` — Format de sortie: ``text`` (défaut) ou ``json``."
 msgstr "``--format`` — 出力フォーマット：\\ ``text``\\ （デフォルト）または\\ ``json``\\ 。"
 
-#: ../../source/cli_matchs.rst:230
+#: ../../source/cli_matchs.rst:231
 msgid ""
 "``--edit`` — Ouvre un brouillon sur le ``--match`` (ou rend celui qui y "
 "est déjà ouvert)."
 msgstr "``--edit`` — ``--match`` に対して下書きを開きます(すでに開かれている下書きがあればそれを返します)。"
 
-#: ../../source/cli_matchs.rst:232
+#: ../../source/cli_matchs.rst:233
 msgid ""
 "``--accept-losses`` — Avec ``--edit`` sur un match importé : accepte que "
 "ses analyses et commentaires puissent être perdus."
@@ -422,19 +422,19 @@ msgstr ""
 "``--accept-losses`` — 取り込み済みのマッチに対する ``--edit`` "
 "と併用:その分析とコメントが失われうることを受け入れます。"
 
-#: ../../source/cli_matchs.rst:234
+#: ../../source/cli_matchs.rst:235
 msgid ""
 "``--finish`` — Termine le ``--draft`` : écrit son match, ou remplace "
 "celui dont il a été ouvert, et libère le brouillon."
 msgstr "``--finish`` — ``--draft`` を完了します:そのマッチを書き込むか、開いた元のマッチを置き換え、下書きを解放します。"
 
-#: ../../source/cli_matchs.rst:236
+#: ../../source/cli_matchs.rst:237
 msgid ""
 "``--abandon`` — Abandonne le ``--draft`` : le supprime sans match ; un "
 "match dont il a été ouvert reste tel quel."
 msgstr "``--abandon`` — ``--draft`` を破棄します:マッチを作らずに削除します。開いた元のマッチはそのまま残ります。"
 
-#: ../../source/cli_matchs.rst:238
+#: ../../source/cli_matchs.rst:239
 msgid ""
 "``--yes`` — Avec ``--abandon`` sur un brouillon jamais terminé : confirme"
 " que tout ce qui y est écrit est perdu."
@@ -442,7 +442,7 @@ msgstr ""
 "``--yes`` — マッチを一度も生み出していない下書きに ``--abandon`` "
 "を使うとき、その中に書かれたすべてが失われることを確認します。"
 
-#: ../../source/cli_matchs.rst:240
+#: ../../source/cli_matchs.rst:241
 msgid ""
 "``--materialize`` — Document JSON (``header`` et ``actions``, dés "
 "compris) à écrire en match d'un seul coup, ou pas du tout."
@@ -451,6 +451,12 @@ msgstr ""
 "``actions``)を、一度にマッチとして書き込むか、まったく書き込まないか。"
 
 #: ../../source/cli_matchs.rst:243
+msgid ""
+"``--import`` — Fichier ``.mat`` ou document de transcription JSON sur "
+"lequel ouvrir un nouveau brouillon."
+msgstr "``--import`` — 新しい下書きを開く元となる ``.mat`` ファイルまたは JSON の転記ドキュメント。"
+
+#: ../../source/cli_matchs.rst:246
 msgid ""
 "``--check`` nomme chaque incohérence avec le numéro de l'action et la "
 "partie où elle se trouve : coup illégal, deux tours de suite pour le même"
@@ -467,7 +473,7 @@ msgstr ""
 " が実際に指された手を残さなかったときに書く ``???`` "
 "のセルであり、ダンスではありません。申告スコアの不一致とは、スコア行が前のゲームから導かれるものと異なるゲームであり、書かれたスコアで再生されます。"
 
-#: ../../source/cli_matchs.rst:252
+#: ../../source/cli_matchs.rst:255
 msgid ""
 "Une incohérence est **rapportée, jamais opposée** : rien n'est refusé "
 "pour elle et le code de sortie reste 0 quoi que la relecture trouve. Un "
@@ -481,7 +487,7 @@ msgstr ""
 "読めないファイル、開けないデータベース、書き込めない出力です。所見に基づいて動作させたいスクリプトは\\ ``--format json``\\ "
 "で読み取ります。そこでは壊れたファイルと不正な手を含むゲームが混同されません。"
 
-#: ../../source/cli_matchs.rst:259
+#: ../../source/cli_matchs.rst:262
 msgid ""
 "``--render`` réécrit la transcription en ``.mat``, ce qui permet de "
 "vérifier l'aller-retour sur un fichier réel, en dehors des tests."
@@ -489,7 +495,7 @@ msgstr ""
 "``--render`` は記譜を\\ ``.mat``\\ "
 "として書き戻します。これにより、テストの外で実際のファイルについて往復変換を確認できます。"
 
-#: ../../source/cli_matchs.rst:262
+#: ../../source/cli_matchs.rst:265
 msgid ""
 "``--materialize`` écrit, sans brouillon, le match que joue un document "
 "d'actions arrivé d'ailleurs. Les règles sont appliquées strictement : la "
@@ -503,7 +509,26 @@ msgstr ""
 " "
 "から数えます)と理由を示して失敗し、何も書き込まれません。ドキュメントの判断時間(``decision_ms``、``cube_decision_ms``)は各手に引き継がれます。"
 
-#: ../../source/cli_matchs.rst:268
+#: ../../source/cli_matchs.rst:271
+msgid ""
+"``--import`` ouvre un nouveau brouillon sur un fichier ``.mat`` ou sur un"
+" document de transcription JSON (``header``, ``actions``, et "
+"facultativement ``format_version`` et ``next_score``, la forme sous "
+"laquelle un brouillon est enregistré). Les incohérences du fichier sont "
+"gardées et marquées, comme dans tout brouillon : on les corrige avant que"
+" ``--finish`` écrive le match. Un fichier qu'aucune relecture ne peut "
+"lire — JSON illisible, sorte d'action inconnue, joueur, dé ou point hors "
+"du plateau, ``.mat`` sans partie — fait échouer la commande et n'ouvre "
+"aucun brouillon."
+msgstr ""
+"``--import`` は ``.mat`` ファイルまたは JSON の転記ドキュメント（\\ ``header``\\ 、\\ "
+"``actions``\\ 、任意で ``format_version`` と ``next_score``\\ "
+"。下書きが保存される形式）から新しい下書きを開きます。ファイルの不整合は、どの下書きとも同じく保持され、マークされます。\\ "
+"``--finish`` がマッチを書き込む前に修正します。どの再生でも読めないファイル（読めない "
+"JSON、未知のアクション種別、盤外のプレイヤー・ダイス・ポイント、ゲームのない ``.mat``\\ "
+"）はコマンドを失敗させ、下書きを開きません。"
+
+#: ../../source/cli_matchs.rst:280
 msgid ""
 "Seules trois autres options écrivent, par les mêmes méthodes que le "
 "panneau Transcription : ``--edit`` ouvre un brouillon sur un match "
@@ -521,15 +546,15 @@ msgstr ""
 "が必要で、書かれた内容はすべて失われます。取り込み済みのマッチは ``.mat`` に含まれない分析とコメントを持っています。``--edit``"
 " は最大でその件数を示し、``--accept-losses`` がなければ拒否します。"
 
-#: ../../source/cli_matchs.rst:276
+#: ../../source/cli_matchs.rst:288
 msgid "**Exemple:**"
 msgstr "**例：**"
 
-#: ../../source/cli_matchs.rst:289
+#: ../../source/cli_matchs.rst:301
 msgid "duel — Jouer un Duel"
 msgstr "duel — デュエルをプレイする"
 
-#: ../../source/cli_matchs.rst:291
+#: ../../source/cli_matchs.rst:303
 msgid ""
 "Joue un Duel sans interface, une Action par appel. Chaque appel est son "
 "propre processus : il reprend le Duel dans la base, joue une Action et la"
@@ -540,11 +565,11 @@ msgstr ""
 "アクションずつデュエルを進めます。呼び出しごとに別プロセスとなり、データベースからデュエルを再開し、1 "
 "アクションを進めて書き戻します。この方法で進めたデュエルのムーブの所要時間は不明であり、ゼロではありません。"
 
-#: ../../source/cli_matchs.rst:307
+#: ../../source/cli_matchs.rst:319
 msgid "**Sous-commandes :**"
 msgstr "**サブコマンド：**"
 
-#: ../../source/cli_matchs.rst:309
+#: ../../source/cli_matchs.rst:321
 msgid ""
 "``create`` — Démarre un Duel et joue jusqu'à la première décision d'un "
 "Côté externe. ``--length`` (1 à 25 points) ou ``--money`` ; ``--start`` "
@@ -595,7 +620,7 @@ msgstr ""
 " つのボットの場合、マッチ全体がこの呼び出しの中で行われます(``--side1 bot:instant --side2 "
 "bot:instant``)。2 つのボットの間のマネーゲームのセッションは、1 ゲームのみの場合を除き、終わらないため拒否されます。"
 
-#: ../../source/cli_matchs.rst:335
+#: ../../source/cli_matchs.rst:347
 msgid ""
 "``show`` — Score, ce que le Duel attend et, pour un coup, les jeux "
 "légaux. Le germe des dés n'est jamais affiché avant la fin : l'empreinte "
@@ -604,11 +629,11 @@ msgstr ""
 "``show``\\ — "
 "スコア、デュエルが待っているもの、ムーブの場合は合法的なプレイを表示します。サイコロのシードは終了前には表示されず、フィンガープリントがその代わりとなります。"
 
-#: ../../source/cli_matchs.rst:337
+#: ../../source/cli_matchs.rst:349
 msgid "``list`` — Les Duels en suspens."
 msgstr "``list``\\ — 保留中のデュエル。"
 
-#: ../../source/cli_matchs.rst:338
+#: ../../source/cli_matchs.rst:350
 msgid ""
 "``roll``, ``move``, ``double``, ``take``, ``pass``, ``resign`` — Une "
 "Action du Côté que le Duel attend (``--side 1|2`` pour le nommer) ; "
@@ -621,7 +646,7 @@ msgstr ""
 "``--play``\\ はムーブを記法で、任意の順序で渡します。\\ ``--level``\\ (1~3)はリザインの価値を、\\ "
 "``--revision``\\ はデュエルが進んでいる場合にアクションを拒否します。"
 
-#: ../../source/cli_matchs.rst:342
+#: ../../source/cli_matchs.rst:354
 msgid ""
 "``contribute`` — L'apport d'un Côté externe au germe combiné (``--side "
 "1|2``, ``--value``, 1 à 64 octets), une seule fois, avant le premier "
@@ -634,7 +659,7 @@ msgstr ""
 "バイト)。最初のロールの前に一度だけ行えます。最後の寄与でダイスが始まります。ロールは、封印されたシードを鍵とし、各サイドの寄与をその長さを前置して並べたものに対する"
 " HMAC-SHA256 から得られ、マッチの由来は寄与を持ちます。"
 
-#: ../../source/cli_matchs.rst:347
+#: ../../source/cli_matchs.rst:359
 msgid ""
 "``forfeit`` — Le Côté ``--side`` (requis) abandonne le match : la partie "
 "en cours va à l'autre Côté pour les points qui le portent à la longueur "
@@ -644,7 +669,7 @@ msgstr ""
 "``forfeit`` — ``--side`` "
 "のサイド（必須）がマッチを放棄します。進行中のゲームは、相手サイドをマッチの長さに届かせるポイントで相手のものとなり（マネーゲームではキューブの値でのシングル）、マッチは相手の勝ちとして保存されます。"
 
-#: ../../source/cli_matchs.rst:351
+#: ../../source/cli_matchs.rst:363
 msgid ""
 "``stop`` — Arrête une session en argent et écrit son Match tel qu'il est,"
 " la partie en cours sans vainqueur. Un match en points est refusé : il ne"
@@ -655,10 +680,10 @@ msgstr ""
 "マネーゲームのセッションを終了し、そのマッチを現状のまま保存します。進行中のゲームは勝者なしです。ポイントマッチは拒否されます。最後まで終えたものだけが保存されます（\\"
 " ``forfeit``\\ 、\\ ``discard``\\ ）。終了は放棄ではありません。"
 
-#: ../../source/cli_matchs.rst:354
+#: ../../source/cli_matchs.rst:366
 msgid "``discard`` — Jette le Duel : rien n'en est écrit."
 msgstr "``discard``\\ — デュエルを破棄します。何も書き込まれません。"
 
-#: ../../source/cli_matchs.rst:356
+#: ../../source/cli_matchs.rst:368
 msgid "Toutes prennent ``--db`` et ``--format`` (``text`` ou ``json``)."
 msgstr "すべてのサブコマンドが ``--db`` と ``--format``\\ (``text`` または ``json``)を受け付けます。"

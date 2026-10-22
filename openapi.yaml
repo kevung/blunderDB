@@ -7681,6 +7681,32 @@ paths:
             generator's source analysis (a file upload/download, or a route
             registered from a runtime table) — see internal/server for the actual
             implementation.
+  /v1/transcriptions.import:
+    post:
+      operationId: transcriptions.import
+      tags: [transcriptions]
+      x-kind: json
+      x-idempotency-key: true
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: false
+          description: A key the client draws per gesture; a retry under it replays the first answer instead of writing again.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/transcriptionImportReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/transcription_State"
+                nullable: true
   /v1/transcriptions.list:
     post:
       operationId: transcriptions.list
@@ -10286,6 +10312,9 @@ components:
     transcript_Action:
       type: object
       description: "Opaque: see the Go type transcript.Action (defined outside internal/server, not expanded here)."
+    transcript_Document:
+      type: object
+      description: "Opaque: see the Go type transcript.Document (defined outside internal/server, not expanded here)."
     transcript_Gesture:
       type: object
       description: "Opaque: see the Go type transcript.Gesture (defined outside internal/server, not expanded here)."
@@ -10322,6 +10351,15 @@ components:
         id:
           type: integer
           format: int64
+    transcriptionImportReq:
+      type: object
+      properties:
+        mat:
+          type: string
+          nullable: true
+        document:
+          $ref: "#/components/schemas/transcript_Document"
+          nullable: true
     transcriptionMATResp:
       type: object
       properties:

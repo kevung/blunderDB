@@ -33,6 +33,7 @@ func (cli *CLI) runTranscribe(args []string) error {
 	abandon := transcribeCmd.Bool("abandon", false, "Abandon the --draft: delete it without a match; a match it was opened from is left untouched")
 	edit := transcribeCmd.Bool("edit", false, "Open a draft on the --match (or return the one already open on it), for a correction finished with --finish")
 	materialize := transcribeCmd.String("materialize", "", "JSON document of Actions (header and actions, dice included) to write as a match in one step, or nothing (requires --db)")
+	importFile := transcribeCmd.String("import", "", "Open a new draft on this .mat or transcription document (JSON), to correct and finish (requires --db)")
 	yes := transcribeCmd.Bool("yes", false, "With --abandon on a draft that never produced a match: confirm that everything typed in it is lost")
 	acceptLosses := transcribeCmd.Bool("accept-losses", false, "With --edit on an imported match: accept that the analyses and comments a .mat cannot carry may be lost")
 
@@ -61,6 +62,10 @@ func (cli *CLI) runTranscribe(args []string) error {
 		fmt.Println()
 		fmt.Println("--render writes the transcription back as a .mat file,")
 		fmt.Println("which is how the round trip is checked on real files.")
+		fmt.Println()
+		fmt.Println("--import opens a new draft on a .mat or a transcription")
+		fmt.Println("document (JSON): its inconsistencies are kept and marked,")
+		fmt.Println("to be corrected before --finish writes the match.")
 		fmt.Println()
 		fmt.Println("Three options write, and only these: --finish writes a")
 		fmt.Println("draft's match and releases the draft, --abandon deletes a")
@@ -95,6 +100,9 @@ func (cli *CLI) runTranscribe(args []string) error {
 		fmt.Println("  # Write a match played elsewhere from its Actions; the first illegal Action refuses all")
 		fmt.Println("  blunderdb transcribe --db database.db --materialize match.json")
 		fmt.Println()
+		fmt.Println("  # Open a draft on a .mat (or a transcription document), then finish it")
+		fmt.Println("  blunderdb transcribe --db database.db --import match.mat")
+		fmt.Println()
 		fmt.Println("  # Drop a draft")
 		fmt.Println("  blunderdb transcribe --db database.db --draft 4 --abandon")
 	}
@@ -109,6 +117,13 @@ func (cli *CLI) runTranscribe(args []string) error {
 	}
 	text := formatLower != "json"
 
+	if *importFile != "" {
+		if *materialize != "" || *finish || *abandon || *edit || *matFile != "" || *matchID != 0 || *draftID != 0 {
+			transcribeCmd.Usage()
+			return fmt.Errorf("--import takes --db and nothing else to act on")
+		}
+		return cli.transcribeImport(*dbPath, *importFile, text)
+	}
 	if *materialize != "" {
 		if *finish || *abandon || *edit || *matFile != "" || *matchID != 0 || *draftID != 0 {
 			transcribeCmd.Usage()

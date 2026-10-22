@@ -5845,6 +5845,10 @@ file, the database or the output failed.
 --render writes the transcription back as a .mat file,
 which is how the round trip is checked on real files.
 
+--import opens a new draft on a .mat or a transcription
+document (JSON): its inconsistencies are kept and marked,
+to be corrected before --finish writes the match.
+
 Three options write, and only these: --finish writes a
 draft's match and releases the draft, --abandon deletes a
 draft without a match, --edit opens a draft on an existing
@@ -5871,6 +5875,8 @@ Options:
     	Finish the --draft: write its match (or replace the one it was opened from) and release the draft
   -format string
     	Output format: text or json (default "text")
+  -import string
+    	Open a new draft on this .mat or transcription document (JSON), to correct and finish (requires --db)
   -mat string
     	Jellyfish/gnubg .mat file to replay
   -match int
@@ -5902,6 +5908,9 @@ Examples:
 
   # Write a match played elsewhere from its Actions; the first illegal Action refuses all
   blunderdb transcribe --db database.db --materialize match.json
+
+  # Open a draft on a .mat (or a transcription document), then finish it
+  blunderdb transcribe --db database.db --import match.mat
 
   # Drop a draft
   blunderdb transcribe --db database.db --draft 4 --abandon

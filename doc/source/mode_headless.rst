@@ -415,9 +415,10 @@ La famille ``transcriptions.*`` permet à un client externe de transcrire un
 match geste par geste, avec la même logique que le bureau. Les lectures
 (``list``, ``get``, ``exportMat``, ``losses``) sont toujours servies. Les
 gestes (``create``, ``open``, ``editMatch``, ``apply``, ``undo``, ``redo``,
-``candidates``, ``close``, ``finish``, ``abandon``, ``materialize``) ne le sont
-qu'avec ``serve --transcription`` (``Config.Transcription`` pour un hôte qui
-embarque le moteur) : sans ce drapeau, ces routes répondent 404.
+``candidates``, ``close``, ``finish``, ``abandon``, ``materialize``,
+``import``) ne le sont qu'avec ``serve --transcription``
+(``Config.Transcription`` pour un hôte qui embarque le moteur) : sans ce
+drapeau, ces routes répondent 404.
 
 ``create`` et ``open`` rendent l'état du brouillon, sa ``revision`` et un
 ``sessionId``. ``apply``, ``undo``, ``redo``, ``close`` et ``finish`` nomment
@@ -482,6 +483,20 @@ celui que donneraient ``create``, un ``apply`` par action puis ``finish`` : mêm
 empreintes, aucune origine « jouée ici ». La durée de décision d'une action
 (``decision_ms``, ``cube_decision_ms``) est reportée sur son coup ; absente,
 elle reste inconnue. La réponse est celle de ``finish``.
+
+``import`` ouvre un nouveau brouillon sur un document écrit ailleurs, sous
+``Idempotency-Key`` : soit le texte d'un fichier ``.mat`` (``mat``), soit un
+document de transcription (``document`` : ``header``, ``actions``, et
+facultativement ``format_version`` et ``next_score``) — l'un des deux, sinon
+**400**. Contrairement à ``materialize``, rien n'est refusé pour une
+incohérence : elle est gardée et marquée, et le client la corrige avant
+``finish``. Seul est refusé (**400**, rien n'est écrit) ce qu'aucune relecture
+ne peut lire : un ``.mat`` sans partie, un format de document plus récent, une
+sorte d'action inconnue, un joueur, un dé ou un point hors du plateau ;
+``details.rank`` donne alors le rang de l'action fautive (-1 pour l'en-tête).
+Un document sans ``format_version`` est lu dans le format courant. La réponse
+est celle de ``create`` : l'état du brouillon, sa révision et son
+``sessionId``.
 
 .. warning::
 

@@ -231,7 +231,7 @@ func TestTranscriptionExpiredSession410ThenReopen(t *testing.T) {
 // are still served.
 func TestTranscriptionWritesAbsentWithoutTheFlag(t *testing.T) {
 	ts := newTestServer(t)
-	for _, path := range []string{"/v1/transcriptions.create", "/v1/transcriptions.open", "/v1/transcriptions.apply",
+	for _, path := range []string{"/v1/transcriptions.create", "/v1/transcriptions.import", "/v1/transcriptions.open", "/v1/transcriptions.apply",
 		"/v1/transcriptions.undo", "/v1/transcriptions.redo", "/v1/transcriptions.close",
 		"/v1/transcriptions.finish", "/v1/transcriptions.abandon", "/v1/transcriptions.editMatch"} {
 		if status, _ := gesture(t, ts, testTenant, path, 1, map[string]any{"id": 1}); status != http.StatusNotFound {

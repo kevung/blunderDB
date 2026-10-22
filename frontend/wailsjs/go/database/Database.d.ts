@@ -439,6 +439,8 @@ export function ImportReport(arg1:number):Promise<domain.ImportBatch>;
 
 export function ImportStudyQueue(arg1:number,arg2:number):Promise<Array<domain.StudyQueueEntry>>;
 
+export function ImportTranscription(arg1:string):Promise<database.TranscriptionState>;
+
 export function ImportXGMatch(arg1:string):Promise<number>;
 
 export function ImportXGPPosition(arg1:string):Promise<number>;

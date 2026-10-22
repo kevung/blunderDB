@@ -1470,6 +1470,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/transcriptions.get — hand-written handler — see openapi.yaml."
         return self._call("/v1/transcriptions.get", payload)
 
+    def transcriptions_import(self, payload: Optional[dict] = None, *, idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/transcriptions.import — JSON. Accepts an Idempotency-Key."
+        return self._call("/v1/transcriptions.import", payload, idempotency_key=idempotency_key)
+
     def transcriptions_list(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/transcriptions.list — JSON."
         return self._call("/v1/transcriptions.list", payload)
