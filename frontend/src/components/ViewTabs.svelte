@@ -153,7 +153,7 @@
                         class:active={group.active}
                         role="button"
                         tabindex="0"
-                        title={group.path}
+                        title={group.path || group.name}
                         data-testid="library-group"
                         data-group-id={group.id}
                         data-library-drop={group.id}
@@ -161,7 +161,7 @@
                         onclick={() => activateGroup(group.id)}
                         onkeydown={(e) => e.target === e.currentTarget && e.key === 'Enter' && activateGroup(group.id)}
                     >
-                        <span class="group-name">{group.name || $t('libraryGroups.unnamed')}</span>
+                        <span class="group-name" data-testid="library-group-name">{group.name || $t('libraryGroups.unnamed')}</span>
                         <!-- A job of this library ran or finished while it was off screen. -->
                         {#if !group.active && $groupActivityStore.get(group.id)}
                             {@const done = $groupActivityStore.get(group.id)?.state === 'done'}
@@ -216,7 +216,7 @@
                         {#if group.active && editingId === view.id}
                             <input bind:this={editInput} bind:value={editingName} class="rename-input" onblur={finishRename} onkeydown={handleRenameKeydown} />
                         {:else}
-                            <span class="tab-name">{view.name}</span>
+                            <span class="tab-name" title={view.name}>{view.name}</span>
                         {/if}
                         {#if group.active && group.views.length > 1}
                             <button class="close-btn" onclick={(e) => handleClose(e, view.id)} title={$t('viewTabs.closeView')}>&times;</button>
@@ -297,6 +297,9 @@
         overflow-y: hidden;
         gap: 0;
         padding-left: 4px;
+        /* The labels are controls, not text to copy. */
+        user-select: none;
+        -webkit-user-select: none;
     }
 
     .view-tabs.collapsed {
@@ -358,7 +361,9 @@
         margin-bottom: -1px;
     }
 
+    /* A long name is shortened with an ellipsis (full name in the tooltip), never squeezed out. */
     .tab-name {
+        max-width: 16em;
         overflow: hidden;
         text-overflow: ellipsis;
     }
@@ -368,6 +373,8 @@
         font-size: var(--font-size-small);
         border: 1px solid var(--color-border);
         padding: 1px 3px;
+        user-select: text;
+        -webkit-user-select: text;
         outline: none;
         background: var(--color-surface);
     }
@@ -560,6 +567,7 @@
         cursor: default;
     }
     .group-name {
+        flex-shrink: 0;
         max-width: 14em;
         overflow: hidden;
         text-overflow: ellipsis;
