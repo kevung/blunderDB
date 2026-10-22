@@ -116,6 +116,8 @@ func RunContractTestsOnly(t *testing.T, factory func() storage.Storage, keep fun
 		{"Collection/IDWindows", testCollectionIDWindows},
 		{"List/PagingIsAWindow", testListPaging},
 		{"Analysis/WithoutAnalysisIsTheGapRule", testWithoutAnalysis},
+		{"Analysis/WithoutAnalysisCountsEmptyRows", testWithoutAnalysisEmptyRow},
+		{"Analysis/CountPositionsWithAnalysisRow", testCountPositionsWithAnalysisRow},
 		{"Comment/CRUD", testCommentCRUD},
 		{"Comment/Upsert", testCommentUpsert},
 		{"Comment/SearchAcrossPositions", testCommentSearchAcrossPositions},

@@ -14,6 +14,7 @@ import (
 // each answers *UnsupportedError.
 var Unsupported = []string{
 	"AliasStore.KeepCreatedAt",
+	"AnalysisStore.CountPositionsWithAnalysisRow",
 	"AnalysisStore.CountWithoutAnalysis",
 	"AnalysisStore.Merge",
 	"AnalysisStore.ReencodeAnalyses",
@@ -135,6 +136,10 @@ var Unsupported = []string{
 
 func (aliasStore) KeepCreatedAt(_ context.Context, _ string, _ storage.AliasKind, _ string, _ string) error {
 	return unsupported("AliasStore.KeepCreatedAt")
+}
+
+func (analysisStore) CountPositionsWithAnalysisRow(_ context.Context, _ string) (r0 int, err error) {
+	return r0, unsupported("AnalysisStore.CountPositionsWithAnalysisRow")
 }
 
 func (analysisStore) CountWithoutAnalysis(_ context.Context, _ string) (r0 int, err error) {

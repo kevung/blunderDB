@@ -15,12 +15,12 @@ import (
 )
 
 // The gammonNet batch (ADR-0013): "an evaluation only ever fills a gap." A
-// Position carrying ANY analysis, from any engine, is never touched: the
-// query is "no analysis row at all". It lives on *Database so the CLI shares
+// Position carrying ANY evaluation, from any engine, is never touched: the
+// query is "no analysis row, or one without any evaluation". It lives on *Database so the CLI shares
 // it; gui.App wraps it for progress and cancellation.
 
 // CountPositionsWithoutAnalysis reports how many positions have no analysis
-// row at all — the batch's known-in-advance total.
+// row, or only an empty one — the batch's known-in-advance total.
 func (d *Database) CountPositionsWithoutAnalysis() (int, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()

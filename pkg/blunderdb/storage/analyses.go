@@ -97,6 +97,11 @@ type AnalysisStore interface {
 	// no id.
 	CountWithoutAnalysis(ctx context.Context, scope string) (int, error)
 
+	// CountPositionsWithAnalysisRow counts the positions that own an analysis
+	// row, whatever it holds, even the XGID alone. A copy that must not lose
+	// a row (migration) counts rows, not the positions still to analyse.
+	CountPositionsWithAnalysisRow(ctx context.Context, scope string) (int, error)
+
 	// WithoutAnalysisIDsInMatch is WithoutAnalysisIDs restricted to the
 	// positions a move of matchID reaches, each once, ascending. The move row
 	// is the only link between a position and a match. A position shared

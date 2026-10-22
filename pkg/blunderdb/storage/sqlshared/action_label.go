@@ -184,3 +184,15 @@ func FixedActionLabelsSQL() string {
 	}
 	return "(" + strings.Join(parts, ", ") + ")"
 }
+
+// NoEvaluationSQL is true of an analysis row that carries no evaluation at
+// all: no entry gave the provenance columns (empty engine, depth rank -1) and
+// no win probability was derived. A board saved on its own leaves such a row,
+// holding the XGID alone. alias names the analysis table in the query, and the
+// predicate is false on a row that is not there and on a row whose provenance
+// is not derived yet (NULL); both backends spell it the
+// same.
+func NoEvaluationSQL(alias string) string {
+	return "COALESCE(" + alias + ".analysis_engine, '?') = '' AND COALESCE(" + alias + ".analysis_depth, 0) = -1 AND COALESCE(" +
+		alias + ".player1_win_rate, 0) = 0 AND COALESCE(" + alias + ".player2_win_rate, 0) = 0"
+}

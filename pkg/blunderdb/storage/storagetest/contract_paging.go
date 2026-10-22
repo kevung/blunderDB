@@ -124,11 +124,115 @@ func drainTournaments(t *testing.T, seq func(func(*domain.Tournament, error) boo
 	return out
 }
 
+// evaluatedAnalysis is an analysis that carries an evaluation, so it is not a
+// gap; a bare PositionAnalysis{} is the reduced row a board saved without
+// evaluation leaves, which is one.
+func evaluatedAnalysis() *domain.PositionAnalysis {
+	return &domain.PositionAnalysis{AnalysisType: "DoublingCube",
+		DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{
+			AnalysisDepth: "3-ply", AnalysisEngine: "GNUbg",
+			PlayerWinChances: 0.55, OpponentWinChances: 0.45, BestCubeAction: "No Double"}}
+}
+
+// An analysis with no evaluation at all (no checker move, no cube analysis)
+// counts as missing: a board saved on its own leaves one, and the batch must
+// still analyse it.
+func testWithoutAnalysisEmptyRow(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	p := checkerPos()
+	p.Board.Points[10].Checkers = 4
+	p.Board.Points[10].Color = domain.Black
+	id, err := s.Positions().Save(ctx, "", &p)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := s.Analyses().Save(ctx, "", id, &domain.PositionAnalysis{XGID: "only-xgid"}); err != nil {
+		t.Fatal(err)
+	}
+	has := func() bool {
+		ids, err := s.Analyses().WithoutAnalysisIDs(ctx, "")
+		if err != nil {
+			t.Fatal(err)
+		}
+		return slices.Contains(ids, id)
+	}
+	if !has() {
+		t.Fatal("a position whose analysis holds only an XGID is not reported missing")
+	}
+	n, err := s.Analyses().CountWithoutAnalysis(ctx, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	ids, err := s.Analyses().WithoutAnalysisIDs(ctx, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if n != len(ids) {
+		t.Errorf("CountWithoutAnalysis = %d, want %d", n, len(ids))
+	}
+	seen := false
+	for q, err := range s.Analyses().WithoutAnalysis(ctx, "", storage.ListOpts{}) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		seen = seen || q.ID == id
+	}
+	if !seen {
+		t.Error("WithoutAnalysis omits the empty-analysis position")
+	}
+	if err := s.Analyses().Save(ctx, "", id, evaluatedAnalysis()); err != nil {
+		t.Fatal(err)
+	}
+	if has() {
+		t.Error("position still missing once evaluated")
+	}
+}
+
 // WithoutAnalysis is what the daemon's catch-up sweep asks for, and its
 // meaning is ADR-0013's gap rule: a position with NO analysis row, not
 // a position with no gammonNet analysis. One already analysed by XG or GNUbg is
 // not a gap and must never come back from here — filling it would overwrite
 // somebody's imported analysis with a computed one.
+// CountPositionsWithAnalysisRow counts rows, whatever they hold: a position
+// without a row is not counted, one with an empty row or a full analysis is.
+func testCountPositionsWithAnalysisRow(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	count := func() int {
+		n, err := s.Analyses().CountPositionsWithAnalysisRow(ctx, "")
+		if err != nil {
+			t.Fatal(err)
+		}
+		return n
+	}
+	base := count()
+	var ids []int64
+	for i := 0; i < 3; i++ {
+		p := checkerPos()
+		p.Board.Points[9].Checkers = i + 1
+		p.Board.Points[9].Color = domain.Black
+		id, err := s.Positions().Save(ctx, "", &p)
+		if err != nil {
+			t.Fatal(err)
+		}
+		ids = append(ids, id)
+	}
+	if got := count(); got != base {
+		t.Errorf("positions without a row: count %d, want %d", got, base)
+	}
+	if err := s.Analyses().Save(ctx, "", ids[0], &domain.PositionAnalysis{XGID: "only-xgid"}); err != nil {
+		t.Fatal(err)
+	}
+	if got := count(); got != base+1 {
+		t.Errorf("after an empty row: count %d, want %d", got, base+1)
+	}
+	if err := s.Analyses().Save(ctx, "", ids[1], evaluatedAnalysis()); err != nil {
+		t.Fatal(err)
+	}
+	if got := count(); got != base+2 {
+		t.Errorf("after a full analysis: count %d, want %d", got, base+2)
+	}
+}
+
 func testWithoutAnalysis(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 
@@ -143,7 +247,7 @@ func testWithoutAnalysis(t *testing.T, s storage.Storage) {
 		}
 		// Every other one gets an analysis.
 		if i%2 == 0 {
-			if err := s.Analyses().Save(ctx, "", id, &domain.PositionAnalysis{}); err != nil {
+			if err := s.Analyses().Save(ctx, "", id, evaluatedAnalysis()); err != nil {
 				t.Fatalf("save analysis %d: %v", i, err)
 			}
 			analysed = id
@@ -204,7 +308,7 @@ func testWithoutAnalysis(t *testing.T, s storage.Storage) {
 	}
 
 	// Filling a gap closes it.
-	if err := s.Analyses().Save(ctx, "", bare, &domain.PositionAnalysis{}); err != nil {
+	if err := s.Analyses().Save(ctx, "", bare, evaluatedAnalysis()); err != nil {
 		t.Fatal(err)
 	}
 	for _, id := range ids(storage.ListOpts{}) {
