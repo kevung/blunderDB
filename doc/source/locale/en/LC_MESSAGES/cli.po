@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 10:06+0200\n"
+"POT-Creation-Date: 2026-10-22 15:30+0200\n"
 "PO-Revision-Date: 2026-04-20 17:00+0200\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -176,6 +176,16 @@ msgstr "export"
 #: ../../source/cli.rst:1
 msgid "Exporte des données."
 msgstr "Export data."
+
+#: ../../source/cli.rst:1
+msgid "transfer"
+msgstr "transfer"
+
+#: ../../source/cli.rst:1
+msgid ""
+"Copie une partie d'une bibliothèque dans une autre, sans fichier "
+"intermédiaire."
+msgstr "Copies part of a library into another, with no intermediate file."
 
 #: ../../source/cli.rst:1
 msgid "identity"
@@ -350,6 +360,28 @@ msgstr ""
 "position (XGID or OGID)."
 
 #: ../../source/cli.rst:1
+msgid "capture"
+msgstr "capture"
+
+#: ../../source/cli.rst:1
+msgid ""
+"Lit la position que montre une capture d'écran d'un plateau eXtreme "
+"Gammon."
+msgstr "Reads the position shown by a screenshot of an eXtreme Gammon board."
+
+#: ../../source/cli.rst:1
+msgid "openingbook"
+msgstr "openingbook"
+
+#: ../../source/cli.rst:1
+msgid ""
+"Le coup d'ouverture ou la réponse d'une partie à un score, tiré du livre "
+"d'ouverture embarqué et jugé contre lui."
+msgstr ""
+"The opening move, or a game's reply at a given score, drawn from the "
+"embedded opening book and judged against it."
+
+#: ../../source/cli.rst:1
 msgid "bearoff"
 msgstr "bearoff"
 
@@ -521,41 +553,41 @@ msgstr "serve, migrate, call"
 msgid "Mode serveur et migration vers PostgreSQL : voir :ref:`headless`."
 msgstr "Server mode and migration to PostgreSQL: see :ref:`headless`."
 
-#: ../../source/cli.rst:119
+#: ../../source/cli.rst:122
 msgid ""
 "Chaque commande accepte l'option ``--help`` pour afficher son aide "
 "détaillée."
 msgstr "Each command accepts the ``--help`` option to display its detailed help."
 
-#: ../../source/cli.rst:133
+#: ../../source/cli.rst:136
 msgid "Exemples de flux de travail"
 msgstr "Workflow examples"
 
-#: ../../source/cli.rst:136
+#: ../../source/cli.rst:139
 msgid "Import d'un répertoire de tournoi"
 msgstr "Import a tournament directory"
 
-#: ../../source/cli.rst:145
+#: ../../source/cli.rst:148
 msgid "Sauvegarde régulière"
 msgstr "Regular backup"
 
-#: ../../source/cli.rst:152
+#: ../../source/cli.rst:155
 msgid "Analyse des erreurs"
 msgstr "Error analysis"
 
-#: ../../source/cli.rst:164
+#: ../../source/cli.rst:167
 msgid "Codes de retour"
 msgstr "Exit codes"
 
-#: ../../source/cli.rst:166
+#: ../../source/cli.rst:169
 msgid "``0`` — Succès."
 msgstr "``0`` — Success."
 
-#: ../../source/cli.rst:167
+#: ../../source/cli.rst:170
 msgid "``1`` — Erreur."
 msgstr "``1`` — Error."
 
-#: ../../source/cli.rst:169
+#: ../../source/cli.rst:172
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr "This makes the CLI suitable for use in scripts with error handling:"
 
@@ -8927,4 +8959,3 @@ msgstr "This makes the CLI suitable for use in scripts with error handling:"
 #~ "database schema version this binary "
 #~ "writes; it is the first thing to"
 #~ " attach to a bug report."
-

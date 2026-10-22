@@ -63,6 +63,10 @@ func composite(name string) []string {
 		return cli.NewCLI().OpeningBookSubcommands()
 	case "maintenance":
 		return cli.NewCLI().MaintenanceSubcommands()
+	case "players":
+		// "" is the alias table, which `players` keeps beside its
+		// sub-commands.
+		return append([]string{""}, cli.NewCLI().PlayersSubcommands()...)
 	case "match":
 		// "" is the command's own flags, which it keeps beside its
 		// sub-command.

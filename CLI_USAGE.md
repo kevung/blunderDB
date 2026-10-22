@@ -4431,6 +4431,84 @@ Also: `players merge --db FILE --into CANONICAL NAME...`,
 `players matches --db FILE NAME` (see their --help).
 ```
 
+### `blunderdb players main`
+
+```
+Usage: blunderdb players main --db FILE [--dry-run] [NAME]
+       blunderdb players main --db FILE --clear
+
+Without NAME, print the Main player. With NAME, make them the Main player:
+every match where they (or one of their aliases) sit second has its players
+swapped, all in one transaction, and every later import puts them first.
+A match with a transcription draft open, or played here, is left as it is.
+
+Options:
+  -clear
+    	Forget the Main player (no match is swapped back)
+  -db string
+    	Path to the database file (required)
+  -dry-run
+    	Show the matches the designation would swap, change nothing
+  -format string
+    	Output format: text or json (default "text")
+
+Examples:
+  blunderdb players main --db base.db --dry-run "John Doe"
+  blunderdb players main --db base.db "John Doe"
+```
+
+### `blunderdb players matches`
+
+```
+Usage: blunderdb players matches --db FILE NAME
+
+Print the ids of the matches NAME plays, at either seat and under any alias.
+
+Options:
+  -db string
+    	Path to the database file (required)
+
+Examples:
+  blunderdb players matches --db base.db "John Doe"
+```
+
+### `blunderdb players merge`
+
+```
+Usage: blunderdb players merge --db FILE --into CANONICAL NAME [NAME...]
+
+Make every NAME another spelling of CANONICAL (same as `players alias add`
+for each): the stats, the players table and the search read them as one
+person, every later import stores CANONICAL, and the matches already stored
+keep the names their files wrote.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -into string
+    	The canonical name the others become spellings of (required)
+
+Examples:
+  blunderdb players merge --db base.db --into "John Doe" "Doe J." "J. Doe"
+```
+
+### `blunderdb players swap`
+
+```
+Usage: blunderdb players swap --db FILE MATCH_ID
+
+Swap the two players of a match: the file named them in the wrong order.
+No position or analysis changes: each player keeps their statistics, under the other seat.
+Refused while a transcription draft is open on the match, and for a match played here.
+
+Options:
+  -db string
+    	Path to the database file (required)
+
+Examples:
+  blunderdb players swap --db base.db 42
+```
+
 ### `blunderdb reencode`
 
 ```
@@ -5819,7 +5897,9 @@ Subcommands:
 Options:
   --db string          Path to the database file (required)
   --kind string        position, collection, comment, match (delete); narrows list, which also takes anki_card
+  --id int             Trash entry (restore, discard) or object (delete) id
   --limit int          Maximum entries listed (default 50)
+  --older-than int     empty: drop only entries older than this many days (0 = all)
   --format string      text (default) or json
 
 `blunderdb delete` still deletes outright: a script that deletes a

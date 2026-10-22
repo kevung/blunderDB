@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 10:06+0200\n"
+"POT-Creation-Date: 2026-10-22 15:30+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -182,6 +182,16 @@ msgstr "export"
 #: ../../source/cli.rst:1
 msgid "Exporte des données."
 msgstr "Vie tietoja."
+
+#: ../../source/cli.rst:1
+msgid "transfer"
+msgstr "transfer"
+
+#: ../../source/cli.rst:1
+msgid ""
+"Copie une partie d'une bibliothèque dans une autre, sans fichier "
+"intermédiaire."
+msgstr "Kopioi osan kirjastosta toiseen ilman välitiedostoa."
 
 #: ../../source/cli.rst:1
 msgid "identity"
@@ -362,6 +372,28 @@ msgstr ""
 "kuutiotuomion."
 
 #: ../../source/cli.rst:1
+msgid "capture"
+msgstr "capture"
+
+#: ../../source/cli.rst:1
+msgid ""
+"Lit la position que montre une capture d'écran d'un plateau eXtreme "
+"Gammon."
+msgstr "Lukee aseman, jonka eXtreme Gammon -laudan kuvakaappaus näyttää."
+
+#: ../../source/cli.rst:1
+msgid "openingbook"
+msgstr "openingbook"
+
+#: ../../source/cli.rst:1
+msgid ""
+"Le coup d'ouverture ou la réponse d'une partie à un score, tiré du livre "
+"d'ouverture embarqué et jugé contre lui."
+msgstr ""
+"Avaussiirto tai pelin vastaus tiettyyn pistetilanteeseen, poimittu "
+"upotetusta avauskirjasta ja arvioitu sitä vasten."
+
+#: ../../source/cli.rst:1
 msgid "bearoff"
 msgstr "bearoff"
 
@@ -539,7 +571,7 @@ msgstr "serve, migrate, call"
 msgid "Mode serveur et migration vers PostgreSQL : voir :ref:`headless`."
 msgstr "Palvelintila ja siirto PostgreSQL:ään: ks. :ref:`headless`."
 
-#: ../../source/cli.rst:119
+#: ../../source/cli.rst:122
 msgid ""
 "Chaque commande accepte l'option ``--help`` pour afficher son aide "
 "détaillée."
@@ -547,35 +579,35 @@ msgstr ""
 "Jokainen komento hyväksyy ``--help``-valitsimen yksityiskohtaisen ohjeen "
 "näyttämiseksi."
 
-#: ../../source/cli.rst:133
+#: ../../source/cli.rst:136
 msgid "Exemples de flux de travail"
 msgstr "Työnkulkuesimerkkejä"
 
-#: ../../source/cli.rst:136
+#: ../../source/cli.rst:139
 msgid "Import d'un répertoire de tournoi"
 msgstr "Turnaushakemiston tuonti"
 
-#: ../../source/cli.rst:145
+#: ../../source/cli.rst:148
 msgid "Sauvegarde régulière"
 msgstr "Säännöllinen varmuuskopiointi"
 
-#: ../../source/cli.rst:152
+#: ../../source/cli.rst:155
 msgid "Analyse des erreurs"
 msgstr "Virheiden analysointi"
 
-#: ../../source/cli.rst:164
+#: ../../source/cli.rst:167
 msgid "Codes de retour"
 msgstr "Paluukoodit"
 
-#: ../../source/cli.rst:166
+#: ../../source/cli.rst:169
 msgid "``0`` — Succès."
 msgstr "``0`` — Onnistui."
 
-#: ../../source/cli.rst:167
+#: ../../source/cli.rst:170
 msgid "``1`` — Erreur."
 msgstr "``1`` — Virhe."
 
-#: ../../source/cli.rst:169
+#: ../../source/cli.rst:172
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr ""
 "Tämä tekee CLI:stä sopivan käytettäväksi skripteissä virheenkäsittelyn "
@@ -8722,4 +8754,3 @@ msgstr ""
 #~ "binäärin kirjoittaman tietokantaskeeman version; "
 #~ "se on ensimmäinen asia, joka liitetään"
 #~ " virheraporttiin."
-

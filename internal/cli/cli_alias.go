@@ -11,6 +11,12 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 )
 
+// PlayersSubcommands returns the sub-commands of `blunderdb players` that carry
+// their own flags: the exported view cmd/cli-doc-gen walks.
+func (cli *CLI) PlayersSubcommands() []string {
+	return []string{"main", "matches", "merge", "swap"}
+}
+
 // runPlayers is `blunderdb players alias …`: the other spellings of a player.
 func (cli *CLI) runPlayers(args []string) error {
 	if len(args) > 0 {
