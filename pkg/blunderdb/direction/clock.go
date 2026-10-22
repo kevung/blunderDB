@@ -1,16 +1,16 @@
 package direction
 
 import (
-	"sort"
 	"time"
 
 	tournoi "github.com/PileOfCells/backgammon-tournoi"
+	"github.com/PileOfCells/backgammon-tournoi/rules"
 	"github.com/PileOfCells/backgammon-tournoi/sim"
 )
 
 // What the clock strip reads besides the engine's counters.
 //
-// Three numbers a director asks for and the engine does not state as such:
+// Three numbers a director asks for; their arithmetic is the shared tournament rules':
 //
 //   - the PLAYING TIME: the time during which at least one match was running — the union of
 //     the matches' [start, end) intervals, a running match counting up to now. Gaps with every
@@ -25,77 +25,18 @@ func PlayingTime(st *tournoi.State, now time.Time) time.Duration {
 	if st == nil {
 		return 0
 	}
-	type span struct{ a, b time.Time }
-	var spans []span
-	for _, id := range st.MatchOrder {
-		m := st.Matches[id]
-		if m == nil || m.Start.IsZero() || m.Status == tournoi.Cancelled {
-			continue
-		}
-		end := m.End
-		if m.Status == tournoi.Running || end.IsZero() || end.After(now) {
-			end = now
-		}
-		if end.After(m.Start) {
-			spans = append(spans, span{m.Start, end})
-		}
-	}
-	sort.Slice(spans, func(i, j int) bool { return spans[i].a.Before(spans[j].a) })
-	var total time.Duration
-	var cur span
-	for i, s := range spans {
-		if i == 0 {
-			cur = s
-			continue
-		}
-		if !s.a.After(cur.b) {
-			if s.b.After(cur.b) {
-				cur.b = s.b
-			}
-			continue
-		}
-		total += cur.b.Sub(cur.a)
-		cur = s
-	}
-	if len(spans) > 0 {
-		total += cur.b.Sub(cur.a)
-	}
-	return total
+	return rules.PlayingTime(st.RulesMatches(), now)
 }
 
 // DayOfPlay is the calendar day of now counted from start's (1 = the same day), in now's
 // location; 0 when nothing has started.
-func DayOfPlay(start, now time.Time) int {
-	if start.IsZero() {
-		return 0
-	}
-	s := start.In(now.Location())
-	a := time.Date(s.Year(), s.Month(), s.Day(), 12, 0, 0, 0, time.UTC)
-	b := time.Date(now.Year(), now.Month(), now.Day(), 12, 0, 0, 0, time.UTC)
-	return int(b.Sub(a).Hours()/24) + 1
-}
+func DayOfPlay(start, now time.Time) int { return rules.DayOfPlay(start, now) }
 
 // AfterBreaks lays `play` out from now and returns when it ends, skipping every break: a
 // break already under way delays the start, and a break met on the way adds its length.
 func AfterBreaks(now time.Time, play time.Duration, breaks []tournoi.TimeRange) time.Time {
-	bs := append([]tournoi.TimeRange(nil), breaks...)
-	sort.Slice(bs, func(i, j int) bool { return bs[i].Start.Before(bs[j].Start) })
-	t := now
-	left := play
-	for _, b := range bs {
-		if !b.End.After(t) {
-			continue
-		}
-		if b.Start.After(t) {
-			if run := b.Start.Sub(t); run >= left {
-				break
-			} else {
-				left -= run
-			}
-		}
-		t = b.End
-	}
-	return t.Add(left)
+	cfg := tournoi.Config{Breaks: breaks}
+	return rules.AfterBreaks(now, play, cfg.BreakIntervals())
 }
 
 // forecastRuns is the number of simulated ends. The median of 15 is stable to a few minutes
@@ -113,6 +54,5 @@ func (d *Direction) EstimatedEnd(now time.Time) (time.Time, bool) {
 	if err != nil || len(runs) == 0 {
 		return time.Time{}, false
 	}
-	median := runs[len(runs)/2]
-	return AfterBreaks(now, time.Duration(median*float64(time.Minute)), d.st.Config.Breaks), true
+	return rules.EstimatedEnd(now, sim.Durations(runs), d.st.Config.BreakIntervals())
 }
