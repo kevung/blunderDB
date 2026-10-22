@@ -16,7 +16,7 @@ import { translate, resolveStatusMessage } from '../i18n';
 // the status bar can re-translate live. Resolve it to the English string the
 // way StatusBar does (via the translate function) for these assertions.
 const statusText = () => resolveStatusMessage(get(statusBarTextStore), translate);
-import { currentPositionIndexStore, statusBarTextStore, activeModal, MODAL, activeTabStore } from '../stores/uiStore.js';
+import { commentTextStore, currentPositionIndexStore, statusBarTextStore, activeModal, MODAL, activeTabStore } from '../stores/uiStore.js';
 import { referenceSectionStore } from '../stores/referenceStore.js';
 import { duelStore, duelHoldsBoardStore } from '../stores/duelStore.js';
 import { positionsStore } from '../stores/positionStore.js';
@@ -566,11 +566,46 @@ describe('processCommand', () => {
     test('# command saves the comment to the current position id (not the array index)', () => {
         // Regression: SaveComment expects a position *id*, not the array index.
         vi.mocked(SaveComment).mockClear();
+        commentTextStore.set('');
         positionsStore.set([{ id: 10 }, { id: 20 }, { id: 30 }]);
         currentPositionIndexStore.set(1); // index 1 -> position id 20
         processCommand('#blunder');
         expect(SaveComment).toHaveBeenCalledTimes(1);
         expect(vi.mocked(SaveComment).mock.calls[0][0]).toBe(20);
+    });
+
+    describe('# command, end to end', () => {
+        const stored = () => String(vi.mocked(SaveComment).mock.calls.at(-1)?.[1] ?? '');
+        const searchTags = (/** @type {string} */ q) => parseFilters([q], q).tagFilter;
+        const holdsTag = (/** @type {string} */ comment, /** @type {string} */ q) => {
+            const wanted = searchTags(q);
+            return (comment.match(/#[^\s#]+/g) || []).some((/** @type {string} */ t) => t.toLowerCase() === wanted);
+        };
+
+        beforeEach(() => {
+            vi.mocked(SaveComment).mockClear();
+            positionsStore.set([{ id: 7 }]);
+            currentPositionIndexStore.set(0);
+            commentTextStore.set('');
+        });
+
+        test('writes #x with its #, and the search #x finds the comment', () => {
+            processCommand('#blunder');
+            expect(stored()).toContain('#blunder');
+            expect(holdsTag(stored(), '#blunder')).toBe(true);
+        });
+
+        test('does not add a tag the comment already holds', () => {
+            commentTextStore.set('see #blunder here');
+            processCommand('#blunder');
+            expect(SaveComment).not.toHaveBeenCalled();
+            expect(get(commentTextStore)).toBe('see #blunder here');
+        });
+
+        test('several words each become a tag, once', () => {
+            processCommand('#a b #a');
+            expect(stored().split('\n')[0]).toBe('#a #b');
+        });
     });
 
     // -- simple callback commands --------------------------------------------
