@@ -562,6 +562,7 @@ var databaseParity = map[string]parityEntry{
 	"CountTrash":                        {CLI: "trash", Server: "/v1/trash.count"},
 	"StudyBacklog":                      {CLI: "study queue", Server: "/v1/study.backlog"},
 	"SetPositionStudied":                {CLI: "study mark", Server: "/v1/study.setStudied"},
+	"IsPositionStudied":                 {CLI: "study status", Server: "/v1/study.isStudied"},
 	"ImportStudyQueue":                  {CLI: "list", Server: "/v1/imports.studyQueue"},
 	"Tags":                              {CLI: "list", Server: "/v1/comments.tags"},
 	"ComputeRecurringErrors":            {CLI: "stats recurring", Server: "/v1/stats.recurringErrors"},

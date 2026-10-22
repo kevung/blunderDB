@@ -271,6 +271,10 @@ func (s *Server) ingestRoutes() []route {
 		route{http.MethodPost, "/v1/study.setStudied", rpcVoid(func(ctx context.Context, scope string, req studySetStudiedReq) error {
 			return s.opts.Storage.ImportBatches().SetStudied(ctx, scope, req.PositionID, req.Studied)
 		})},
+		route{http.MethodPost, "/v1/study.isStudied", rpc(func(ctx context.Context, scope string, req studyIsStudiedReq) (bool, error) {
+			at, err := s.opts.Storage.ImportBatches().StudyMark(ctx, scope, req.PositionID)
+			return at != 0, err
+		})},
 		// The batch's per-file journal: which file gave which match.
 		route{http.MethodPost, "/v1/imports.files", rpc(func(ctx context.Context, scope string, req importReportReq) ([]domain.ImportFileEntry, error) {
 			return s.opts.Storage.ImportBatches().Files(ctx, scope, req.BatchID)
@@ -707,6 +711,11 @@ type importStudyQueueReq struct {
 	BatchID int64    `json:"batchId"`
 	Players []string `json:"players,omitempty"`
 	Limit   int      `json:"limit,omitempty"`
+}
+
+// studyIsStudiedReq asks whether one position carries the "studied" mark.
+type studyIsStudiedReq struct {
+	PositionID int64 `json:"positionId"`
 }
 
 // studySetStudiedReq writes (Studied true) or withdraws the "studied" mark of

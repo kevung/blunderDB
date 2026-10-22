@@ -444,11 +444,11 @@ export function IndexOfPosition(arg1:number):Promise<number>;
 
 export function IndexOfPositionByFilters(arg1:domain.SearchFilters,arg2:number):Promise<number>;
 
-export function IsPositionStudied(arg1:number):Promise<boolean>;
-
 export function IsOpenDatabase(arg1:string):Promise<boolean>;
 
 export function IsPositionOnPile(arg1:domain.Position):Promise<boolean>;
+
+export function IsPositionStudied(arg1:number):Promise<boolean>;
 
 export function IsProtectedCopyPath(arg1:string):Promise<boolean>;
 

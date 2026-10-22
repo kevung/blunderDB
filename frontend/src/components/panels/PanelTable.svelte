@@ -81,6 +81,7 @@
      * @property {(row: any, index: number, event?: Event) => void} [onSelect]
      * @property {(row: any, index: number, event?: Event) => void} [onActivate]
      * @property {(row: any, index: number) => import('../../services/actionCatalog.js').MenuItem[]} [rowMenu]
+     * @property {(row: any, index: number) => Promise<unknown>} [rowMenuSettled]
      * @property {(from: number, to: number) => void} [onReorder]
      * @property {string} [emptyText]
      * @property {boolean} [emptyActions]
@@ -122,6 +123,8 @@
         onActivate = undefined,
         /** The row's context menu, opened by a right click, the Menu key or Shift+F10: (row, index) => items. */
         rowMenu = undefined,
+        /** What the row's menu waits on to be exact (a state read asynchronously): the menu opens at once, then is rebuilt. */
+        rowMenuSettled = undefined,
         /** (from, to): enables pointer drag reordering of the rows. */
         onReorder = undefined,
         emptyText = '',
@@ -320,7 +323,11 @@
     function openRowMenu(e, row, index) {
         if (!rowMenu) return;
         const request = menuRequest(e, () => rowMenu(row, index));
-        if (request) rowMenuAt = request;
+        if (!request) return;
+        rowMenuAt = request;
+        rowMenuSettled?.(row, index).then(() => {
+            if (rowMenuAt === request) rowMenuAt = { ...request, items: rowMenu(row, index) };
+        });
     }
 </script>
 

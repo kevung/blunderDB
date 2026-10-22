@@ -373,6 +373,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/stats.training                       JSON
    study
      POST /v1/study.backlog                        JSON
+     POST /v1/study.isStudied                      JSON
      POST /v1/study.setStudied                     JSON
    tenant
      POST /ops/tenant.purge                        custom

@@ -5314,6 +5314,23 @@ Examples:
   blunderdb study queue --db database.db --limit 10 --format json
 ```
 
+### `blunderdb study status`
+
+```
+Usage: blunderdb study status [options]
+
+Tell whether a position carries the studied mark.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -id int
+    	Position ID (required)
+
+Examples:
+  blunderdb study status --db database.db --id 1234
+```
+
 ### `blunderdb study unmark`
 
 ```

@@ -7034,6 +7034,23 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/domain_StudyQueueEntry"
+  /v1/study.isStudied:
+    post:
+      operationId: study.isStudied
+      tags: [study]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/studyIsStudiedReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: boolean
   /v1/study.setStudied:
     post:
       operationId: study.setStudied
@@ -9945,6 +9962,12 @@ components:
         size:
           type: integer
           format: int32
+    studyIsStudiedReq:
+      type: object
+      properties:
+        positionId:
+          type: integer
+          format: int64
     studySetStudiedReq:
       type: object
       properties:

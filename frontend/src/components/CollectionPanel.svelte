@@ -40,6 +40,7 @@
     import PanelTable from './panels/PanelTable.svelte';
     import { menuFor } from '../services/actionCatalog.js';
     import { positionContext } from '../services/positionActions.js';
+    import { refreshStudied } from '../services/studyQueueService.js';
     import ReferenceSuggest from './ReferenceSuggest.svelte';
     import { panelKeyGuard } from '../services/keyboardService.js';
     import { registerKeys } from '../services/keyDispatch.js';
@@ -869,6 +870,7 @@
                 rowClass={(_position, index) => [$currentPositionIndexStore === index ? 'current' : '', selectedPositionIndices.has(index) ? 'multi-selected' : ''].join(' ')}
                 onSelect={(_position, index, e) => selectAndDisplayPosition(index, e)}
                 rowMenu={positionRowMenu}
+                rowMenuSettled={(row) => refreshStudied(row.id)}
                 onReorder={handlePositionReorder}
                 rowAttrs={(position) => libraryDragAttrs(() => (position?.id ? { group: $activeGroupId, kind: 'position', id: position.id, label: `#${position.id}` } : null))}
                 emptyText={$t('collection.emptyCollection')}
