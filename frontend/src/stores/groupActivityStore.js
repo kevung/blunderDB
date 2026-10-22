@@ -76,13 +76,28 @@ export function libraryReplaced() {
     libraryEpoch++;
 }
 
-/** Never settles: what a read of the library left would have said. */
-const dropped = () => new Promise(() => {});
+/**
+ * What a read of the library left rejects with: its answer belongs to another library. A caller
+ * drops it silently (no error shown, no list emptied) and lowers what it raised in a finally; a
+ * read of the library coming follows the switch anyway.
+ */
+export class LibraryLeft extends Error {
+    constructor() {
+        super('library left before the read was answered');
+        this.name = 'LibraryLeft';
+    }
+}
+
+/** @param {unknown} error whether it is a read of the library left, to drop without a word */
+export function isLibraryLeft(error) {
+    return error instanceof LibraryLeft;
+}
 
 /**
  * Runs read, a read of the library on screen, and gives its answer only if that library is still
- * the one on screen: an answer of the library left must not be shown in the one coming, and a
- * read of the new one follows the switch anyway.
+ * the one on screen: an answer of the library left must not be shown in the one coming. It then
+ * rejects with LibraryLeft rather than never settling, so that no caller stays suspended with a
+ * flag raised (« Chargement… », buttons disabled).
  * @template T
  * @param {() => Promise<T>} read
  * @returns {Promise<T>}
@@ -90,8 +105,8 @@ const dropped = () => new Promise(() => {});
 export function readOfLibrary(read) {
     const at = libraryEpoch;
     return read().then(
-        (value) => (at === libraryEpoch ? value : dropped()),
-        (error) => (at === libraryEpoch ? Promise.reject(error) : dropped())
+        (value) => (at === libraryEpoch ? value : Promise.reject(new LibraryLeft())),
+        (error) => Promise.reject(at === libraryEpoch ? error : new LibraryLeft())
     );
 }
 

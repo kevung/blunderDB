@@ -62,7 +62,7 @@ import { OpenDirectionOutputDialog, OpenLocalPage, SaveCSV } from '../../wailsjs
 import { language, messageBlock, tMsg } from '../i18n';
 import { statusBarTextStore, activeTabStore } from './uiStore.js';
 import { logger } from '../utils/logger.js';
-import { readOfLibrary } from './groupActivityStore.js';
+import { readOfLibrary, isLibraryLeft } from './groupActivityStore.js';
 
 /*
  * La Direction ouverte (ADR-0047) : une seule à la fois, rien à sauver (chaque décision est
@@ -338,6 +338,7 @@ export async function refreshDirectionSummaries() {
     try {
         directionSummariesStore.set((await readOfLibrary(() => ListDirections())) || []);
     } catch (e) {
+        if (isLibraryLeft(e)) return;
         logger.error('direction: listing failed', e);
         directionSummariesStore.set([]);
     }

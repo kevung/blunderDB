@@ -17,7 +17,7 @@ import { enterDuelMode, exitDuelMode } from './modeMachine.js';
 import { isLetter, isBareLetter, isShiftLetter } from '../utils/keys.js';
 import { logger } from '../utils/logger.js';
 import { tMsg, translate } from '../i18n';
-import { readOfLibrary } from '../stores/groupActivityStore.js';
+import { readOfLibrary, isLibraryLeft } from '../stores/groupActivityStore.js';
 
 /** One frame of a Bot's move on the board, in ms. */
 const FRAME_MS = 450;
@@ -65,6 +65,7 @@ export async function refreshDuels() {
     try {
         duelListStore.set((await readOfLibrary(() => ListDuels())) ?? []);
     } catch (error) {
+        if (isLibraryLeft(error)) return;
         logger.error('could not list the Duels:', error);
         duelListStore.set([]);
     }

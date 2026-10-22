@@ -3,7 +3,7 @@
     import NewButton from './panels/NewButton.svelte';
     import PanelHeader from './panels/PanelHeader.svelte';
     import { formatDateTime } from '../utils/format.js';
-    import { onMount, onDestroy } from 'svelte';
+    import { onMount, onDestroy, untrack } from 'svelte';
     import { SvelteSet } from 'svelte/reactivity';
     import { createReorder } from '../utils/reorder.js';
     import { createInlineEdit } from '../utils/inlineEdit.svelte.js';
@@ -45,7 +45,7 @@
     import { panelKeyGuard } from '../services/keyboardService.js';
     import { registerKeys } from '../services/keyDispatch.js';
     import { libraryDragAttrs } from '../utils/libraryDrag.js';
-    import { activeGroupId, readOfLibrary } from '../stores/groupActivityStore.js';
+    import { activeGroupId, readOfLibrary, isLibraryLeft } from '../stores/groupActivityStore.js';
 
     /** @typedef {import('../../wailsjs/go/models').database.Collection} Collection */
     /** @typedef {{ id: number }} PositionRow */
@@ -257,14 +257,37 @@
             // A membership change here may have taken the board's position off the Pile.
             refreshPileState();
         } catch (error) {
+            if (isLibraryLeft(error)) return;
             logger.error('Error loading collections:', error);
             statusBarTextStore.set(tMsg('collection.errorLoading'));
         }
     }
 
+    /** The rows mounted, with the position each shows: they ask for their rank again after a write. */
+    // eslint-disable-next-line svelte/prefer-svelte-reactivity -- bookkeeping, never rendered
+    const shownRows = new Map();
+
+    /** @param {number} id */
+    function fetchIndex(id) {
+        const generation = indexGeneration;
+        IndexOfPosition(id)
+            .then((i) => {
+                if (generation === indexGeneration) positionIndexMap = { ...positionIndexMap, [id]: i + 1 };
+            })
+            .catch(() => {});
+    }
+
+    /**
+     * A write may shift every rank: the rows mounted ask for theirs again (an action runs only at
+     * mount, so emptying the map would leave them at « ? » until scrolled), the others on mount.
+     */
     function loadPositionIndexMap() {
         indexGeneration++;
-        positionIndexMap = {};
+        const shown = new Set(shownRows.values());
+        // Untracked: called from the effect on writes, which must not rerun on each rank answered.
+        const kept = untrack(() => Object.entries(positionIndexMap).filter(([id]) => shown.has(Number(id))));
+        positionIndexMap = Object.fromEntries(kept);
+        for (const id of shown) fetchIndex(id);
     }
 
     /**
@@ -273,14 +296,18 @@
      * @param {number} id
      */
     function wantIndex(node, id) {
-        const generation = indexGeneration;
-        if (positionIndexMap[id] === undefined) {
-            IndexOfPosition(id)
-                .then((i) => {
-                    if (generation === indexGeneration) positionIndexMap = { ...positionIndexMap, [id]: i + 1 };
-                })
-                .catch(() => {});
-        }
+        shownRows.set(node, id);
+        if (untrack(() => positionIndexMap[id]) === undefined) fetchIndex(id);
+        return {
+            /** @param {number} next */
+            update(next) {
+                shownRows.set(node, next);
+                if (untrack(() => positionIndexMap[next]) === undefined) fetchIndex(next);
+            },
+            destroy() {
+                shownRows.delete(node);
+            }
+        };
     }
 
     /** @param {number} positionId */

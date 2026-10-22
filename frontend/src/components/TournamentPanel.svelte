@@ -61,7 +61,7 @@
     import { t, tMsg } from '../i18n';
     import { get } from 'svelte/store';
     import { noteSelection, forgetSelection } from '../stores/exchangeObjectStore.js';
-    import { readOfLibrary } from '../stores/groupActivityStore.js';
+    import { readOfLibrary, isLibraryLeft } from '../stores/groupActivityStore.js';
 
     /** @typedef {import('../../wailsjs/go/models').domain.Tournament} Tournament */
     /** @typedef {import('../../wailsjs/go/models').domain.Match} Match */
@@ -264,6 +264,7 @@
             const loaded = await readOfLibrary(() => GetAllTournaments());
             tournamentsStore.set(loaded || []);
         } catch (error) {
+            if (isLibraryLeft(error)) return;
             logger.error('Error loading tournaments:', error);
         } finally {
             listLoaded = true;
@@ -287,6 +288,7 @@
         try {
             availableMatches = (await readOfLibrary(() => ListMatches({ Unassigned: true, Text: addMatchSearch.trim(), Limit: 50 }))) || [];
         } catch (error) {
+            if (isLibraryLeft(error)) return;
             logger.error('Error loading matches:', error);
             availableMatches = [];
         }
@@ -578,6 +580,7 @@
             try {
                 analysis = await readOfLibrary(() => LoadAnalysis(startMovePos.position.id));
             } catch (_e) {
+                if (isLibraryLeft(_e)) return;
                 /* ignored */
             }
 

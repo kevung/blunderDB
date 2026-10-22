@@ -42,7 +42,8 @@ import {
     RemovePositionFromCollection,
     CountCollectionPositions,
     ListCollectionPositionIDs,
-    UpdateCollection
+    UpdateCollection,
+    IndexOfPosition
 } from '../../wailsjs/go/database/Database.js';
 import { confirmAction } from '../services/confirmService.js';
 
@@ -406,5 +407,19 @@ describe('CollectionPanel — a write to the library', () => {
         vi.mocked(GetAllCollections).mockClear();
         dbMutationCounterStore.update((n) => n + 1);
         await vi.waitFor(() => expect(GetAllCollections).toHaveBeenCalledTimes(1));
+    });
+
+    test('the rows shown in a collection keep their index: they ask for it again', async () => {
+        activeCollectionStore.set(SAMPLE_COLLECTIONS[0]);
+        selectedCollectionStore.set(SAMPLE_COLLECTIONS[0]);
+        collectionPositionsStore.set([{ id: 201 }, { id: 202 }]);
+        vi.mocked(IndexOfPosition).mockImplementation((id) => Promise.resolve(id - 201));
+        const { container } = render(CollectionPanel, { props: {} });
+        const indices = () => [...container.querySelectorAll('td.id-cell')].map((td) => td.textContent?.trim());
+        await vi.waitFor(() => expect(indices()).toEqual(['1', '2']));
+        // A write may shift every rank: the rows already mounted ask for theirs again.
+        vi.mocked(IndexOfPosition).mockImplementation((id) => Promise.resolve(id - 191));
+        dbMutationCounterStore.update((n) => n + 1);
+        await vi.waitFor(() => expect(indices()).toEqual(['11', '12']));
     });
 });

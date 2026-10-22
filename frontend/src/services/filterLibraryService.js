@@ -19,7 +19,7 @@ import { replaySearchArgs } from './searchFilterService.js';
 import { loadPositionsByFilters } from './positionService.js';
 import { tMsg } from '../i18n';
 import { logger } from '../utils/logger.js';
-import { readOfLibrary } from '../stores/groupActivityStore.js';
+import { readOfLibrary, isLibraryLeft } from '../stores/groupActivityStore.js';
 
 /** @typedef {{ id: number, name: string, command: string, pinned?: boolean }} SavedFilter */
 
@@ -33,6 +33,7 @@ export async function loadFilterLibrary() {
         filterLibraryStore.set(lib);
         return lib;
     } catch (_error) {
+        if (isLibraryLeft(_error)) return;
         filterLibraryStore.set([]);
         return [];
     }

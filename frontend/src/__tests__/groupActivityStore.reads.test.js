@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { readOfLibrary, libraryReplaced } from '../stores/groupActivityStore.js';
+import { readOfLibrary, libraryReplaced, isLibraryLeft } from '../stores/groupActivityStore.js';
 
 /** A promise and the function that settles it. */
 function deferred() {
@@ -9,17 +9,6 @@ function deferred() {
     let reject = () => {};
     const promise = new Promise((r, j) => ((resolve = r), (reject = j)));
     return { promise, resolve, reject };
-}
-
-/** Whether p settled within a few turns of the event loop. */
-async function settles(/** @type {Promise<unknown>} */ p) {
-    let settled = false;
-    p.then(
-        () => (settled = true),
-        () => (settled = true)
-    );
-    for (let i = 0; i < 5; i++) await Promise.resolve();
-    return settled;
 }
 
 describe('reads of the library on screen', () => {
@@ -35,7 +24,8 @@ describe('reads of the library on screen', () => {
         const read = readOfLibrary(() => answer.promise);
         libraryReplaced();
         answer.resolve(['of the library left']);
-        expect(await settles(read)).toBe(false);
+        // Rejected, not left pending: a caller waiting on it lowers its loading flag.
+        await expect(read).rejects.toSatisfy(isLibraryLeft);
     });
 
     it('a failure of the library left is not reported in the one coming', async () => {
@@ -43,6 +33,6 @@ describe('reads of the library on screen', () => {
         const read = readOfLibrary(() => answer.promise);
         libraryReplaced();
         answer.reject(new Error('gone'));
-        expect(await settles(read)).toBe(false);
+        await expect(read).rejects.toSatisfy(isLibraryLeft);
     });
 });

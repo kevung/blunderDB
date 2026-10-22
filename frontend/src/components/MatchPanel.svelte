@@ -86,7 +86,7 @@
     import { databaseLoadedStore, databasePathStore } from '../stores/databaseStore';
     import { libraryCountsStore } from '../stores/libraryCountsStore.js';
     import { libraryDragAttrs } from '../utils/libraryDrag.js';
-    import { activeGroupId, readOfLibrary } from '../stores/groupActivityStore.js';
+    import { activeGroupId, readOfLibrary, isLibraryLeft } from '../stores/groupActivityStore.js';
 
     /**
      * `embeddedMatchId`: the panel is hosted by another panel (Tournaments) and shows only the sheet of that
@@ -386,6 +386,7 @@
             const loaded = await readOfLibrary(() => GetAllTournaments());
             tournamentsStore.set(loaded || []);
         } catch (error) {
+            if (isLibraryLeft(error)) return;
             logger.error('Error loading tournaments:', error);
         }
     }
@@ -817,6 +818,7 @@
         try {
             analysis = await readOfLibrary(() => LoadAnalysis(movePos.position.id));
         } catch (_error) {
+            if (isLibraryLeft(_error)) return;
             /* ignored */
         }
 

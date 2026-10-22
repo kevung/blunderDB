@@ -10,7 +10,7 @@
     import PanelTable from '../panels/PanelTable.svelte';
     import CountLink from '../panels/CountLink.svelte';
     import { loadPositionsFromStatsSelection } from '../../services/positionLoader.js';
-    import { readOfLibrary } from '../../stores/groupActivityStore.js';
+    import { readOfLibrary, isLibraryLeft } from '../../stores/groupActivityStore.js';
 
     /** @type {{ player: string, bucket: number, decisions: number, scored: number, mean_error_mp: number, blunders: number, positions: number }[]} */
     let rows = $state([]);
@@ -21,6 +21,7 @@
         try {
             rows = (await readOfLibrary(() => GetTimeErrors([]))) || [];
         } catch (error) {
+            if (isLibraryLeft(error)) return;
             logger.error('Error loading time/error table:', error);
             rows = [];
         }

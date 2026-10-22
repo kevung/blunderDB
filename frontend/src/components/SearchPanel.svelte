@@ -24,7 +24,7 @@
     import { assistantSettingsStore, loadAssistantSettings } from '../services/assistantService.js';
     import { SaveSearchHistory, LoadSearchHistory, DeleteSearchHistoryEntry, DeleteFilter, LoadEditPosition, LoadExcludePosition } from '../../wailsjs/go/database/Database.js';
     import { registerKeys } from '../services/keyDispatch.js';
-    import { readOfLibrary } from '../stores/groupActivityStore.js';
+    import { readOfLibrary, isLibraryLeft } from '../stores/groupActivityStore.js';
 
     let { onLoadPositionsByFilters, onAddToFilterLibrary } = $props();
 
@@ -353,6 +353,7 @@
             const history = await readOfLibrary(() => LoadSearchHistory());
             searchHistoryStore.set(history || []);
         } catch (error) {
+            if (isLibraryLeft(error)) return;
             logger.error('Error loading search history:', error);
         }
     }

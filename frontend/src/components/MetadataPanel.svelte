@@ -8,7 +8,7 @@
     import PanelHeader from './panels/PanelHeader.svelte';
     import FormGrid from './panels/FormGrid.svelte';
     import FormRow from './panels/FormRow.svelte';
-    import { readOfLibrary } from '../stores/groupActivityStore.js';
+    import { readOfLibrary, isLibraryLeft } from '../stores/groupActivityStore.js';
 
     let user = $state('');
     let description = $state('');
@@ -34,6 +34,7 @@
         try {
             issuance = await readOfLibrary(() => GetIssuanceInfo());
         } catch (error) {
+            if (isLibraryLeft(error)) return;
             logger.error('Error loading issuance info:', error);
             issuance = null;
         }

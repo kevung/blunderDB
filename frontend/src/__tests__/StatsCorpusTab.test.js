@@ -33,6 +33,7 @@ import StatsFilterBar from '../components/stats/StatsFilterBar.svelte';
 import { statsFilterStore } from '../stores/statsStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { must } from './helpers/must.js';
+import { libraryReplaced } from '../stores/groupActivityStore.js';
 
 const filter = { playerName: '', tournamentIDs: [], dateFrom: '', dateTo: '', decisionType: -1, matchLength: [], analysisEngine: 'gnubg', minAnalysisDepth: 2 };
 
@@ -79,5 +80,20 @@ describe('StatsFilterBar — provenance', () => {
         const depth = await findByLabelText('Min. depth');
         await fireEvent.change(depth, { target: { value: '3' } });
         await waitFor(() => expect(get(statsFilterStore).minAnalysisDepth).toBe(3));
+    });
+
+    test('a calculation whose library left before its answer lowers « Loading » and frees the buttons', async () => {
+        /** @type {(v: unknown) => void} */
+        let answer = () => {};
+        vi.mocked(PRByWindow).mockImplementationOnce(() => new Promise((r) => (answer = r)));
+        const { container } = render(StatsCorpusTab, { props: { filter } });
+        const compute = /** @type {HTMLButtonElement} */ (must(container.querySelector('section:nth-of-type(2) button')));
+        await fireEvent.click(compute);
+        expect(container.querySelector('.corpus-busy')).toBeTruthy();
+        libraryReplaced();
+        answer([{ from: '1999-01-01', to: '1999-03-31', num_matches: 1, num_decisions: 1, pr: 9 }]);
+        await waitFor(() => expect(container.querySelector('.corpus-busy')).toBeNull());
+        expect(compute.disabled).toBe(false);
+        expect(container.textContent).not.toContain('1999-01-01');
     });
 });

@@ -10,7 +10,7 @@
     import { MODAL, openModal } from '../stores/uiStore';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
     import { t, tMsg } from '../i18n';
-    import { writingOnScreen, readOfLibrary } from '../stores/groupActivityStore.js';
+    import { writingOnScreen, readOfLibrary, isLibraryLeft } from '../stores/groupActivityStore.js';
     import { setStatusBarMessage } from '../services/databaseService.js';
     import { formatDateTime } from '../utils/format.js';
     import PanelHeader from './panels/PanelHeader.svelte';
@@ -178,6 +178,7 @@
                 allComments = [];
             }
         } catch (error) {
+            if (isLibraryLeft(error)) return;
             logger.error('Error loading comments:', error);
             allComments = [];
         }
@@ -187,6 +188,7 @@
         try {
             displayedComments = (await readOfLibrary(() => SearchComments(q))) || [];
         } catch (_error) {
+            if (isLibraryLeft(_error)) return;
             displayedComments = [];
         }
     }
