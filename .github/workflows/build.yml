@@ -297,8 +297,8 @@ jobs:
   # comment) and skips its parallel/concurrent tests under -short, which
   # every push and PR passes — so on an ordinary push, nothing ever runs
   # TestParallelSearchIsBitIdentical or TestConcurrentSearchesAgree under the
-  # race detector at all, and the search gold file (gammonnet-gold in
-  # fuzz.yml) never runs at push time either. This job is deliberately
+  # race detector at all (the search gold file runs at push time only in
+  # `parity-amd64-v3` below, without -race). This job is deliberately
   # narrow — only tests whose name matches Parallel/Concurrent/Batch, no
   # -short, plus TestSharedBudgetSearchesAgree (searches sharing the process
   # core budget) — so it can afford -race on every push without becoming the
@@ -342,9 +342,9 @@ jobs:
   # GOAMD64=v3 — arm64's rounding, reproduced on an x86 runner — and runs what
   # pins its answer: the evaluation digest (bit-exact), the network, cube and
   # search golds against the C reference, and the assembler check that no
-  # engine package emits a fused instruction on either target. Narrow and
-  # under 30 s, so it runs on every push; macOS arm64 runs the same digest in
-  # `test-os` below.
+  # engine package emits a fused instruction on either target. Narrow (tens
+  # of seconds, the search gold most of it), so it runs on every push; macOS
+  # arm64 runs the same digest in `test-os` below.
   parity-amd64-v3:
     runs-on: ubuntu-latest
     timeout-minutes: 10

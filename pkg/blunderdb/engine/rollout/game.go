@@ -125,6 +125,8 @@ func (t *table) toRoot(mover uint8, v float64, c cubeState) float64 {
 // the native scale of the same side.
 func (t *table) fromSearch(v float64) float64 {
 	if t.match {
+		// The compiler turns /2 into *0.5 and, once inlined, fuses it into a
+		// caller's 1 - x on arm64: the conversion keeps that product rounded.
 		return float64((v + 1) / 2)
 	}
 	return v

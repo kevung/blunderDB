@@ -22,7 +22,9 @@ default amd64 build, and the same drift had turned a Crawford cube test red on m
    float32), a conversion the compiler must round and so cannot fuse. It is a no-op on default
    amd64, so no value there moves.
 3. **The sigmoid uses `portableExp`** (`exp.go`), Go's pure algorithm with the same barriers,
-   instead of `math.Exp`. Over every float32 input the sigmoid's float32 result is unchanged.
+   instead of `math.Exp`. That the sigmoid's float32 result is unchanged was checked once,
+   exhaustively, over every float32 input on an FMA-capable amd64; only the corpus digest
+   (decision 4) holds it continuously.
 4. **Held by three tests.** `TestEngineEmitsNoFusedMultiplyAdd` reads the compiler's `-S`
    listing of `engine/...` for arm64 and amd64-v3 and fails on any fused instruction (a canary
    package proves the detector). `TestEvaluationBitsMatchThePinnedDigest` pins the SHA-256 of
