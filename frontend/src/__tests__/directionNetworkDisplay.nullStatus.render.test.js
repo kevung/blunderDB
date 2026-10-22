@@ -41,7 +41,7 @@ async function mountRunning() {
     return view;
 }
 
-/** @param {ReturnType<typeof render>} view */
+/** @param {{ getByTestId: (id: string) => HTMLElement, queryByTestId: (id: string) => HTMLElement | null }} view */
 async function expectStopped(view) {
     await tick();
     await tick();

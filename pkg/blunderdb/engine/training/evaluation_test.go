@@ -45,8 +45,18 @@ var generator = func() *Generator {
 }()
 
 func ask(req EvaluationRequest) EvaluationQuestion {
-	return generator.evaluation(req, seededRNG(), time.Now)
+	return generator.evaluation(req, seededRNG(), stopped)
 }
+
+// stopped is a clock that never moves. The walk's deadline is wall-clock: on a
+// loaded runner a cold ply can cross it, and the walk then falls back to a
+// pool seed at zero plies — which is rule 5 working, not the property these
+// tests read. The deadline itself is held by its own test, on a clock that
+// jumps.
+var stopped = func() func() time.Time {
+	frozen := time.Now()
+	return func() time.Time { return frozen }
+}()
 
 // boardOf lays out a board from own-frame sides — the pool's own convention.
 func boardOf(black, white side) domain.Board {
@@ -150,7 +160,7 @@ func TestAContactPositionIsAsked(t *testing.T) {
 func TestARacePositionIsAsked(t *testing.T) {
 	rng := seededRNG()
 	for i := 0; i < 20; i++ {
-		q := generator.evaluation(EvaluationRequest{Source: SourcePool}, rng, time.Now)
+		q := generator.evaluation(EvaluationRequest{Source: SourcePool}, rng, stopped)
 		assertAskable(t, q)
 		if hasContact(&q.Position.Board) {
 			t.Fatalf("draw %d: a pool question has contact — « contact just broken » is a race", i)
@@ -190,7 +200,7 @@ func TestTheBoardSourceNeverAsksTheSeedItself(t *testing.T) {
 	seed := opening()
 	rng := seededRNG()
 	for i := 0; i < 10; i++ {
-		q := generator.evaluation(EvaluationRequest{Source: SourceBoard, Seed: &seed}, rng, time.Now)
+		q := generator.evaluation(EvaluationRequest{Source: SourceBoard, Seed: &seed}, rng, stopped)
 		assertAskable(t, q)
 		if q.Position.Board == seed.Board && q.Position.PlayerOnRoll == seed.PlayerOnRoll {
 			t.Fatalf("draw %d asked the seed back: the board source is its neighbourhood, never itself", i)

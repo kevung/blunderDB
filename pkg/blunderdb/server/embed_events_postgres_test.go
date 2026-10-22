@@ -10,6 +10,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"strconv"
@@ -114,14 +115,17 @@ func TestBootstrapRelaysGestures(t *testing.T) {
 		tsB.URL+"/v1/events?transcription="+strconv.FormatInt(draft.ID, 10), nil)
 	req.Header.Set(TenantHeader, "1")
 	resp, err := http.DefaultClient.Do(req)
-	if err != nil || resp.StatusCode != http.StatusOK {
+	if err != nil {
 		t.Fatalf("subscribe: %v", err)
 	}
 	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("subscribe: status %d", resp.StatusCode)
+	}
 	events := make(chan string, 16)
 	subscribed := make(chan struct{})
-	go func() {
-		sc := bufio.NewScanner(resp.Body)
+	go func(body io.Reader) {
+		sc := bufio.NewScanner(body)
 		var once bool
 		for sc.Scan() {
 			line := sc.Text()
@@ -133,7 +137,7 @@ func TestBootstrapRelaysGestures(t *testing.T) {
 				events <- strings.TrimPrefix(line, "event: ")
 			}
 		}
-	}()
+	}(resp.Body)
 	select {
 	case <-subscribed:
 	case <-time.After(10 * time.Second):

@@ -90,7 +90,8 @@ const (
 
 // questionDeadline bounds the WALK, as race's does: past it the generator
 // drops the walk and falls back to a pool seed at k = 0 (rule 5). A walk ply
-// costs about 0.2 ms, so ten plies never come near it on a working machine.
+// costs about 1 ms on a cold searcher and microseconds once its cache is warm,
+// so ten plies never come near it on a machine that is not starved.
 // The truth that follows is not preempted — gammonNet has no checkpoint
 // inside a search — and its cost is held by the budget test in engine/race.
 const questionDeadline = 50 * time.Millisecond
