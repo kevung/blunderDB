@@ -1213,7 +1213,10 @@
     "viewTabs": {
         "closeView": "Sulje näkymä",
         "variantOf": "Muunnelma näkymästä #{n}",
-        "newView": "Uusi näkymä"
+        "newView": "Uusi näkymä",
+        "scrollLeft": "Vieritä välilehtiä vasemmalle",
+        "scrollRight": "Vieritä välilehtiä oikealle",
+        "allViews": "Kaikki näkymät"
     },
     "goToPosition": {
         "placeholder": "Anna aseman numero",

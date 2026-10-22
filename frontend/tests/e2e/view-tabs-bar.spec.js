@@ -185,3 +185,49 @@ test('a scrolling row keeps the + in sight, and the active tab wins when both ca
     await expect(first).toHaveClass(/active/);
     await expect(page.locator('.view-tab.active')).toBeInViewport();
 });
+
+test('an overflowing row shows arrows and fades, shrinks tabs to a minimum, and lists every view in a menu', async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 768 });
+    await openTwoGroups(page);
+    // Few tabs: nothing hidden, so no arrow and no fade.
+    await expect(page.getByTestId('tabs-scroll-left')).toHaveCount(0);
+    await expect(page.getByTestId('tabs-scroll-right')).toHaveCount(0);
+
+    const add = page.locator('.view-tabs .add-btn');
+    for (let i = 0; i < 30; i++) await add.click();
+    const row = page.locator('.view-tab-list');
+    await expect(page.getByTestId('tabs-scroll-right')).toBeVisible();
+    await expect(page.getByTestId('tabs-scroll-left')).toBeVisible();
+
+    // Tabs shrink to a minimum width, not to a sliver, before the row scrolls.
+    const widths = await page.locator('.view-tab').evaluateAll((els) => els.map((e) => e.getBoundingClientRect().width));
+    expect(Math.min(...widths)).toBeGreaterThanOrEqual(80);
+
+    // Jump to the start: left arrow disabled and no left fade; fade only on the hidden side.
+    await row.evaluate((el) => (el.scrollLeft = 0));
+    await expect(page.getByTestId('tabs-scroll-left')).toBeDisabled();
+    await expect(page.getByTestId('tabs-fade-left')).toHaveCount(0);
+    await expect(page.getByTestId('tabs-fade-right')).toHaveCount(1);
+
+    // A click on the right arrow scrolls one step.
+    await page.getByTestId('tabs-scroll-right').click();
+    await expect.poll(() => row.evaluate((el) => el.scrollLeft)).toBeGreaterThan(50);
+    await expect(page.getByTestId('tabs-fade-left')).toHaveCount(1);
+
+    // Held, it keeps scrolling until the end, where it is disabled.
+    const right = await page.getByTestId('tabs-scroll-right').boundingBox();
+    await page.mouse.move(right.x + right.width / 2, right.y + right.height / 2);
+    await page.mouse.down();
+    await expect(page.getByTestId('tabs-scroll-right')).toBeDisabled({ timeout: 8000 });
+    await page.mouse.up();
+
+    // The menu lists every view of both libraries, the current one marked; a click activates it.
+    await page.getByTestId('all-views').click();
+    const items = page.getByTestId('all-views-item');
+    await expect(items).toHaveCount(await page.locator('.view-tab').count());
+    await expect(page.locator('[data-testid="all-views-item"][aria-current="true"]')).toHaveCount(1);
+    await page.locator('[data-testid="all-views-item"][data-group-id="1"]').first().click();
+    await expect(page.getByTestId('all-views-menu')).toHaveCount(0);
+    await expect(page.getByTestId('library-group').nth(0)).toHaveClass(/active/);
+    await expect(page.locator('.view-tab.active')).toBeInViewport();
+});

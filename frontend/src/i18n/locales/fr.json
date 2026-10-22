@@ -1213,7 +1213,10 @@
     "viewTabs": {
         "closeView": "Fermer la vue",
         "variantOf": "Variante de #{n}",
-        "newView": "Nouvelle vue"
+        "newView": "Nouvelle vue",
+        "scrollLeft": "Défiler les onglets vers la gauche",
+        "scrollRight": "Défiler les onglets vers la droite",
+        "allViews": "Toutes les vues"
     },
     "goToPosition": {
         "placeholder": "Saisir le numéro de position",

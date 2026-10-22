@@ -1213,7 +1213,10 @@
     "viewTabs": {
         "closeView": "Ansicht schließen",
         "variantOf": "Variante von #{n}",
-        "newView": "Neue Ansicht"
+        "newView": "Neue Ansicht",
+        "scrollLeft": "Tabs nach links scrollen",
+        "scrollRight": "Tabs nach rechts scrollen",
+        "allViews": "Alle Ansichten"
     },
     "goToPosition": {
         "placeholder": "Positionsnummer eingeben",

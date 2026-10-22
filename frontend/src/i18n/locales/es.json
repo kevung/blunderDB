@@ -1213,7 +1213,10 @@
     "viewTabs": {
         "closeView": "Cerrar vista",
         "variantOf": "Variante de #{n}",
-        "newView": "Nueva vista"
+        "newView": "Nueva vista",
+        "scrollLeft": "Desplazar las pestañas a la izquierda",
+        "scrollRight": "Desplazar las pestañas a la derecha",
+        "allViews": "Todas las vistas"
     },
     "goToPosition": {
         "placeholder": "Introduce el número de posición",

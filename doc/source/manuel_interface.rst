@@ -305,8 +305,15 @@ couleur. Six couleurs se succèdent : un septième groupe reprend la première.
 Les vues sont numérotées dans leur bibliothèque : une base ouverte dans un
 nouveau groupe commence à « #1 », et *CTRL-1* … *CTRL-9* visent les vues du
 groupe actif. Quand les onglets ne tiennent plus dans la largeur de la
-fenêtre, la barre défile (molette, ou le changement de vue qui amène l'onglet
-affiché à l'écran) au lieu de les réduire.
+fenêtre, les onglets rétrécissent d'abord (le nom se termine par une
+ellipse, le nom complet est dans l'infobulle) jusqu'à une largeur minimale ;
+au-delà la barre défile (molette, ou le changement de vue qui amène l'onglet
+affiché à l'écran). Des flèches *‹* et *›* apparaissent alors aux deux bords de
+la rangée : un clic défile d'un cran, un appui maintenu défile en continu, et
+la flèche est grisée en bout de liste. Un dégradé marque le bord où des onglets
+sont cachés. Le bouton *∨* des outils, à droite, ouvre le menu *Toutes les
+vues* : les vues de chaque bibliothèque, la vue courante cochée ; un clic
+active la vue et son groupe.
 
 La bascule est immédiate : chaque groupe garde en mémoire ses vues, sa liste
 de positions, la position courante, les critères de recherche (même en cours

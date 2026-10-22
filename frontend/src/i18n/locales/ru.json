@@ -1213,7 +1213,10 @@
     "viewTabs": {
         "closeView": "Закрыть вид",
         "variantOf": "Вариант #{n}",
-        "newView": "Новый вид"
+        "newView": "Новый вид",
+        "scrollLeft": "Прокрутить вкладки влево",
+        "scrollRight": "Прокрутить вкладки вправо",
+        "allViews": "Все виды"
     },
     "goToPosition": {
         "placeholder": "Введите номер позиции",

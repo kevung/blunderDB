@@ -1213,7 +1213,10 @@
     "viewTabs": {
         "closeView": "ビューを閉じる",
         "variantOf": "#{n} の変化",
-        "newView": "新規ビュー"
+        "newView": "新規ビュー",
+        "scrollLeft": "タブを左へスクロール",
+        "scrollRight": "タブを右へスクロール",
+        "allViews": "すべてのビュー"
     },
     "goToPosition": {
         "placeholder": "ポジション番号を入力",

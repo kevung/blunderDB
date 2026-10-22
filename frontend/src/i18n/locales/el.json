@@ -1213,7 +1213,10 @@
     "viewTabs": {
         "closeView": "Κλείσιμο προβολής",
         "variantOf": "Παραλλαγή της #{n}",
-        "newView": "Νέα προβολή"
+        "newView": "Νέα προβολή",
+        "scrollLeft": "Κύλιση καρτελών αριστερά",
+        "scrollRight": "Κύλιση καρτελών δεξιά",
+        "allViews": "Όλες οι προβολές"
     },
     "goToPosition": {
         "placeholder": "Εισαγάγετε αριθμό θέσης",
