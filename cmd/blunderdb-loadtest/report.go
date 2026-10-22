@@ -23,7 +23,18 @@ type endpointStat struct {
 	Count        int            `json:"count"`
 	Errors       int            `json:"errors"`
 	ErrorsByCode map[string]int `json:"errors_by_code,omitempty"`
+	Backpressure backpressure   `json:"backpressure"`
 	Latency      latencyStats   `json:"latency_ms"`
+}
+
+// backpressure counts the 503s of the daemon's admission gate, which the
+// client retries instead of reporting as errors: Requests is how many had to
+// wait at least once, Retries the waits in all, Shed those still refused after
+// the last retry.
+type backpressure struct {
+	Requests int `json:"requests"`
+	Retries  int `json:"retries"`
+	Shed     int `json:"shed"`
 }
 
 // report is the JSON document written at the end of a run.
@@ -38,6 +49,7 @@ type report struct {
 	RPSAchieved   float64                 `json:"rps_achieved"`
 	Errors        int                     `json:"errors"`
 	ErrorsByCode  map[string]int          `json:"errors_by_code,omitempty"`
+	Backpressure  backpressure            `json:"backpressure"`
 	Latency       latencyStats            `json:"latency_ms"`
 	ByEndpoint    map[string]endpointStat `json:"by_endpoint"`
 }
@@ -48,6 +60,10 @@ type sample struct {
 	dur    time.Duration
 	fail   bool
 	status int
+	// retries is how many 503 waits preceded the final answer; shed marks a
+	// final answer that was still a 503.
+	retries int
+	shed    bool
 	// code classes a failure: "<status> <envelope code>", "stream <code>",
 	// "timeout" or "transport".
 	code string
@@ -86,8 +102,21 @@ func buildReport(cfg config, elapsed time.Duration, samples []sample) report {
 	byOpErr := map[string]int{}
 	byOpCode := map[string]map[string]int{}
 	byCode := map[string]int{}
+	byOpBP := map[string]backpressure{}
+	var bp backpressure
 	errors := 0
 	for _, s := range samples {
+		if s.retries > 0 || s.shed {
+			b := byOpBP[s.op]
+			for _, p := range []*backpressure{&b, &bp} {
+				p.Requests++
+				p.Retries += s.retries
+				if s.shed {
+					p.Shed++
+				}
+			}
+			byOpBP[s.op] = b
+		}
 		all = append(all, s.dur)
 		byOpDur[s.op] = append(byOpDur[s.op], s.dur)
 		if s.fail {
@@ -107,6 +136,7 @@ func buildReport(cfg config, elapsed time.Duration, samples []sample) report {
 			Count:        len(durs),
 			Errors:       byOpErr[op],
 			ErrorsByCode: byOpCode[op],
+			Backpressure: byOpBP[op],
 			Latency:      statsOf(durs),
 		}
 	}
@@ -127,6 +157,7 @@ func buildReport(cfg config, elapsed time.Duration, samples []sample) report {
 		RPSAchieved:   rps,
 		Errors:        errors,
 		ErrorsByCode:  byCode,
+		Backpressure:  bp,
 		Latency:       statsOf(all),
 		ByEndpoint:    byEndpoint,
 	}
@@ -158,6 +189,7 @@ func (r report) markdown() string {
 	fmt.Fprintf(&b, "| Total requests | %d |\n", r.TotalRequests)
 	fmt.Fprintf(&b, "| RPS achieved | %.1f |\n", r.RPSAchieved)
 	fmt.Fprintf(&b, "| Errors | %d |\n", r.Errors)
+	fmt.Fprintf(&b, "| Back-pressure (503) | %d requests, %d retries, %d shed |\n", r.Backpressure.Requests, r.Backpressure.Retries, r.Backpressure.Shed)
 	fmt.Fprintf(&b, "| p50 | %.1f ms |\n", r.Latency.P50)
 	fmt.Fprintf(&b, "| p95 | %.1f ms |\n", r.Latency.P95)
 	fmt.Fprintf(&b, "| p99 | %.1f ms |\n", r.Latency.P99)

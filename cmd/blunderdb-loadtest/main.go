@@ -21,9 +21,12 @@ import (
 	"math/rand"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/kevung/blunderdb/internal/server"
 )
 
 type config struct {
@@ -82,6 +85,8 @@ func main() {
 	fmt.Printf("done: %d requests in %.1fs → %.0f rps, %d errors, p50=%.1fms p95=%.1fms p99=%.1fms\n",
 		rep.TotalRequests, rep.DurationS, rep.RPSAchieved, rep.Errors,
 		rep.Latency.P50, rep.Latency.P95, rep.Latency.P99)
+	fmt.Printf("back-pressure: %d requests waited on a 503 (%d retries), %d still shed after %d retries\n",
+		rep.Backpressure.Requests, rep.Backpressure.Retries, rep.Backpressure.Shed, maxRetries)
 	fmt.Printf("reports: %s + %s\n", cfg.output, mdName(cfg.output))
 }
 
@@ -175,27 +180,77 @@ func flush(mu *sync.Mutex, dst *[]sample, src []sample) {
 	mu.Unlock()
 }
 
+// Back-pressure policy. A 503 from a heavy route is the daemon's admission
+// gate saying "full, come back": it is protecting itself, not broken, so the
+// client waits (the server's Retry-After when it sends one, an
+// exponential step otherwise, both capped) and tries again a bounded number of
+// times. A 503 from any other route (a storage "busy" on a write, say) stays
+// an error. Variables rather than constants so tests can shrink the waits.
+var (
+	maxRetries = 5
+	baseWait   = 50 * time.Millisecond
+	maxWait    = 2 * time.Second
+)
+
+// retryWait is how long to wait before retry number attempt (0-based) after a
+// 503 whose Retry-After header is retryAfter (empty when absent).
+func retryWait(attempt int, retryAfter string) time.Duration {
+	w := baseWait << attempt
+	if secs, err := strconv.Atoi(strings.TrimSpace(retryAfter)); err == nil && secs >= 0 {
+		w = time.Duration(secs) * time.Second
+	}
+	if w > maxWait {
+		w = maxWait
+	}
+	return w
+}
+
 // doRequest issues one request for op o under the given X-Tenant-ID and
-// returns its sample. A status ok rejects, a transport error or a context
-// expiry counts as a failure, and so does a stream that ends on an error
-// line: its status was sent before the error happened.
+// returns its sample. The latency is that of the last attempt alone: the waits
+// between retries are not the daemon's. A 503 from a heavy route is retried as
+// back-pressure and never counts as a failure, even when the retries run out
+// (the sample is then marked shed);
+// any other status ok rejects, a transport error or a context expiry counts
+// as a failure, and so does a stream that ends on an error line: its status
+// was sent before the error happened.
 func doRequest(client *http.Client, target, tenant string, ok func(int) bool, o op, rng *rand.Rand) sample {
 	path, body := o.build(rng)
+	heavy := server.HeavyRoute(path)
+	retries := 0
+	for {
+		s, retryAfter := doOnce(client, target+path, body, tenant, ok, o.name)
+		s.retries = retries
+		if !heavy || s.status != http.StatusServiceUnavailable {
+			return s
+		}
+		s.fail, s.code = false, ""
+		if retries >= maxRetries {
+			s.shed = true
+			return s
+		}
+		time.Sleep(retryWait(retries, retryAfter))
+		retries++
+	}
+}
+
+// doOnce performs a single attempt and returns its sample (duration of the
+// attempt) with the Retry-After header of the response.
+func doOnce(client *http.Client, url string, body []byte, tenant string, ok func(int) bool, name string) (sample, string) {
 	t0 := time.Now()
-	req, err := http.NewRequestWithContext(context.Background(), http.MethodPost, target+path, jsonBody(body))
+	req, err := http.NewRequestWithContext(context.Background(), http.MethodPost, url, jsonBody(body))
 	if err != nil {
-		return sample{op: o.name, dur: time.Since(t0), fail: true, code: "request"}
+		return sample{op: name, dur: time.Since(t0), fail: true, code: "request"}, ""
 	}
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("X-Tenant-ID", tenant)
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return sample{op: o.name, dur: time.Since(t0), fail: true, code: transportCode(err)}
+		return sample{op: name, dur: time.Since(t0), fail: true, code: transportCode(err)}, ""
 	}
 	data, err := io.ReadAll(resp.Body)
 	resp.Body.Close()
-	s := sample{op: o.name, dur: time.Since(t0), status: resp.StatusCode}
+	s := sample{op: name, dur: time.Since(t0), status: resp.StatusCode}
 	switch {
 	case err != nil:
 		s.fail, s.code = true, transportCode(err)
@@ -204,7 +259,7 @@ func doRequest(client *http.Client, target, tenant string, ok func(int) bool, o 
 	case resp.StatusCode < 300 && streamError(data):
 		s.fail, s.code = true, "stream "+errorCode(lastLine(data))
 	}
-	return s
+	return s, resp.Header.Get("Retry-After")
 }
 
 func transportCode(err error) string {

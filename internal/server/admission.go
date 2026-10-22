@@ -47,6 +47,10 @@ func heavyRoute(pattern string) bool {
 	return strings.HasPrefix(pattern, "/v1/stats.")
 }
 
+// HeavyRoute reports whether pattern is behind the admission gate, for clients
+// that must tell its 503 (retry later, nothing is wrong) from a storage 503.
+func HeavyRoute(pattern string) bool { return heavyRoute(pattern) }
+
 // wrap admits next through the gate. A non-nil ready is waited for first,
 // outside the gate: a statistics read during the start fill would otherwise
 // hold a slot while it waits for the fill.
