@@ -23,6 +23,8 @@ import { clearTranscription, bumpTranscriptionLibrary } from '../stores/transcri
 import { forgetDuel } from './duelService.js';
 import { resetLessonStores } from '../stores/lessonStore.js';
 import { logger } from '../utils/logger.js';
+import { forgetPaneCopyInto } from '../stores/transferBasketStore.js';
+import { activeGroupId } from '../stores/groupActivityStore.js';
 // NOTE: these UI messages are translated at emission time via the non-reactive
 // `translate` helper; already-displayed messages do not retranslate on language change.
 import { translate, tMsg } from '../i18n';
@@ -170,6 +172,7 @@ export async function newDatabase() {
             }
             databasePathStore.set(filePath);
             databaseReadOnlyStore.set(false);
+            forgetPaneCopyInto(get(activeGroupId));
             libraryChanged();
             logger.log('databasePathStore:', filePath);
             refreshLibraryCounts();
@@ -301,6 +304,8 @@ export async function openDatabaseByPath(filePath, { inNewGroup } = {}) {
             openFailed = true;
             throw error;
         }
+        // The group's library is another one now: its ids name other rows.
+        if (!inNewGroup) forgetPaneCopyInto(get(activeGroupId));
         await SaveLastDatabasePath(filePath);
         databasePathStore.set(filePath);
         // A new group was announced by openInNewGroup; an open in place is announced here.

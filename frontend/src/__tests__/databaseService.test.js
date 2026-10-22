@@ -90,6 +90,8 @@ import { statusBarTextStore, statusBarModeStore, commentTextStore, activeModal, 
 import { ankiDecksStore, selectedAnkiDeckStore, ankiViewModeStore, ankiAnswerShownStore } from '../stores/ankiStore.js';
 import { transcriptionStore } from '../stores/transcriptionStore.js';
 import { lessonStore, lessonStepIndexStore } from '../stores/lessonStore.js';
+import { transferUndoStore } from '../stores/transferBasketStore.js';
+import { activeGroupId } from '../stores/groupActivityStore.js';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -528,5 +530,29 @@ describe('changing library lets go of the open transcription draft', () => {
         vi.mocked(SaveDatabaseDialog).mockResolvedValue('/tmp/new.db');
         await newDatabase();
         expect(get(transcriptionStore)).toBeNull();
+    });
+});
+
+// ── a copy between split panes to take back ──────────────────────────────────
+
+describe('a copy into a group that opens or creates another library', () => {
+    test('opening another library in place forgets the copy into that group, not into another', async () => {
+        activeGroupId.set(2);
+        transferUndoStore.set({ dst: 2, receipt: 5, name: 'club' });
+        await openDatabaseByPath('/tmp/other.db');
+        expect(get(transferUndoStore)).toBe(null);
+
+        transferUndoStore.set({ dst: 1, receipt: 6, name: 'mine' });
+        await openDatabaseByPath('/tmp/third.db');
+        expect(get(transferUndoStore)).toEqual({ dst: 1, receipt: 6, name: 'mine' });
+    });
+
+    test('creating a library in place forgets the copy into that group', async () => {
+        activeGroupId.set(2);
+        transferUndoStore.set({ dst: 2, receipt: 7, name: 'club' });
+        vi.mocked(SaveDatabaseDialog).mockResolvedValue('/tmp/fresh.db');
+        vi.mocked(SetupDatabase).mockResolvedValue(undefined);
+        await newDatabase();
+        expect(get(transferUndoStore)).toBe(null);
     });
 });

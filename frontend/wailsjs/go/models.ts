@@ -4161,7 +4161,7 @@ export namespace gui {
 	    lessons: number;
 	    errors: string[];
 	    cancelled: boolean;
-	    created: number;
+	    receipt: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new PositionCopy(source);
@@ -4177,7 +4177,7 @@ export namespace gui {
 	        this.lessons = source["lessons"];
 	        this.errors = source["errors"];
 	        this.cancelled = source["cancelled"];
-	        this.created = source["created"];
+	        this.receipt = source["receipt"];
 	    }
 	}
 

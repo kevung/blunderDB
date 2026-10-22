@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"sync"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
-	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // TransferBatch is what one library group gives to a transfer: rows named by
@@ -89,52 +89,28 @@ func (a *App) SetLibraryGroupLocked(id int, locked bool) error {
 // dst whichever group comes on screen; closing either group stops it.
 // A batch of dst itself has nothing to copy and is skipped.
 func (a *App) TransferToGroup(dst int, batches []TransferBatch) (TransferSummary, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-	a.libs.mu.Lock()
-	a.libs.init()
-	if dst == 0 {
-		dst = a.libs.active
+	var groups []int
+	for _, b := range batches {
+		if !b.empty() {
+			groups = append(groups, b.Group)
+		}
 	}
-	if a.libs.locked[dst] {
-		a.libs.mu.Unlock()
-		return TransferSummary{Group: dst}, ErrLibraryGroupLocked
-	}
-	_, to, err := a.borrowLibraryLocked(dst)
+	ends, err := a.borrowTransferEnds(dst, groups)
 	if err != nil {
-		a.libs.mu.Unlock()
-		return TransferSummary{Group: dst}, err
+		return TransferSummary{Group: ends.dst}, err
 	}
-	defer to.Close() // lets the borrowed library go; closes nothing
-	if to.IsReadOnly() {
-		a.libs.mu.Unlock()
-		return TransferSummary{Group: dst}, errors.New("the destination library is open read-only")
-	}
+	defer ends.release()
+	dst, to, ctx := ends.dst, ends.to, ends.ctx
 	type source struct {
 		batch TransferBatch
 		from  *database.Database
 	}
 	var sources []source
-	release := []func(){a.imports.addCancel(dst, to, cancel)}
-	defer func() {
-		for _, r := range release {
-			r()
-		}
-	}()
 	for _, b := range batches {
-		if b.Group == dst || b.empty() {
-			continue
+		if from := ends.from[b.Group]; from != nil && !b.empty() {
+			sources = append(sources, source{b, from})
 		}
-		_, from, err := a.borrowLibraryLocked(b.Group)
-		if err != nil {
-			a.libs.mu.Unlock()
-			return TransferSummary{Group: dst}, err
-		}
-		defer from.Close()
-		release = append(release, a.imports.addCancel(b.Group, from, cancel))
-		sources = append(sources, source{b, from})
 	}
-	a.libs.mu.Unlock()
 
 	sum := TransferSummary{Group: dst, Errors: []string{}}
 	// The import counts every position it merged, held or not: the account
@@ -167,77 +143,155 @@ func (a *App) TransferToGroup(dst int, batches []TransferBatch) (TransferSummary
 	return sum, nil
 }
 
+// transferEnds are the libraries of a transfer, borrowed: the destination's
+// and one per source group, so the transfer keeps writing whichever group
+// comes on screen; closing either group stops it through ctx.
+type transferEnds struct {
+	dst     int
+	to      *database.Database
+	from    map[int]*database.Database
+	ctx     context.Context
+	release func()
+}
+
+// borrowTransferEnds borrows dst's library (0: the active group) for writing
+// and the libraries of srcs, dst itself left out, refusing a locked or
+// read-only destination.
+func (a *App) borrowTransferEnds(dst int, srcs []int) (transferEnds, error) {
+	ctx, cancel := context.WithCancel(context.Background())
+	var release []func()
+	ends := transferEnds{ctx: ctx, from: map[int]*database.Database{}, release: func() {
+		for i := len(release) - 1; i >= 0; i-- {
+			release[i]()
+		}
+		cancel()
+	}}
+	a.libs.mu.Lock()
+	defer a.libs.mu.Unlock()
+	a.libs.init()
+	if dst == 0 {
+		dst = a.libs.active
+	}
+	ends.dst = dst
+	fail := func(err error) (transferEnds, error) {
+		ends.release()
+		return transferEnds{dst: dst}, err
+	}
+	if a.libs.locked[dst] {
+		return fail(ErrLibraryGroupLocked)
+	}
+	_, to, err := a.borrowLibraryLocked(dst)
+	if err != nil {
+		return fail(err)
+	}
+	release = append(release, func() { to.Close() }) // lets the borrowed library go; closes nothing
+	if to.IsReadOnly() {
+		return fail(errors.New("the destination library is open read-only"))
+	}
+	ends.to = to
+	release = append(release, a.imports.addCancel(dst, to, cancel))
+	for _, g := range srcs {
+		if g == dst || ends.from[g] != nil {
+			continue
+		}
+		_, from, err := a.borrowLibraryLocked(g)
+		if err != nil {
+			return fail(err)
+		}
+		release = append(release, func() { from.Close() })
+		release = append(release, a.imports.addCancel(g, from, cancel))
+		ends.from[g] = from
+	}
+	return ends, nil
+}
+
 // PositionCopy is the account of one position carried from a split-screen
-// pane onto the other: the transfer's summary, and the position's id in the
-// destination when this copy added it (0 when dst held it already), the only
-// case the copy can be taken back.
+// pane onto the other: the transfer's summary, and, when this copy added the
+// position to the destination, the receipt that takes it back
+// (UndoPositionCopy); 0 when the destination held it already.
 type PositionCopy struct {
 	TransferSummary
-	Created int64 `json:"created"`
+	Receipt int `json:"receipt"`
+}
+
+// paneCopies keeps the last copy between split panes the desktop can take
+// back; its receipt names the file the copy went into.
+type paneCopies struct {
+	mu   sync.Mutex
+	next int
+	last *paneCopy
+}
+
+type paneCopy struct {
+	token   int
+	group   int
+	receipt database.PositionCopyReceipt
 }
 
 // CopyPositionToGroup copies position id of group src into the library of
-// group dst through TransferToGroup, and says whether dst held it before, by
-// its Zobrist hash: a position is one per hash in a library.
+// group dst (Database.CopyPositionTo, under dst's lock from the look-up to
+// the write), and keeps its receipt when the copy added the position.
 func (a *App) CopyPositionToGroup(src int, id int64, dst int) (PositionCopy, error) {
-	var hash uint64
-	if err := a.readGroup(src, func(d *database.Database) error {
-		p, err := d.LoadPosition(int(id))
-		if err != nil {
-			return err
-		}
-		hash = storage.ZobristOf(p)
-		return nil
-	}); err != nil {
-		return PositionCopy{TransferSummary: TransferSummary{Group: dst}}, err
-	}
-	_, heldBefore, err := a.positionInGroup(dst, hash)
+	ends, err := a.borrowTransferEnds(dst, []int{src})
 	if err != nil {
-		return PositionCopy{TransferSummary: TransferSummary{Group: dst}}, err
+		return PositionCopy{TransferSummary: TransferSummary{Group: ends.dst}}, err
 	}
-	sum, err := a.TransferToGroup(dst, []TransferBatch{{Group: src, PositionIDs: []int64{id}}})
+	defer ends.release()
+	sum := TransferSummary{Group: ends.dst, Errors: []string{}}
+	from := ends.from[src]
+	if from == nil {
+		return PositionCopy{TransferSummary: sum}, nil
+	}
+	held, heldErr := ends.to.CountPositions()
+	r, err := database.CopyPosition(ends.ctx, from, ends.to, id)
+	im := r.Report.Imported
+	sum.AlreadyHeld = im.SkippedDuplicates
+	sum.Cancelled = errors.Is(err, context.Canceled)
+	if err != nil && !sum.Cancelled {
+		sum.Errors = append(sum.Errors, err.Error())
+	}
+	sum.Positions = -1
+	if now, err := ends.to.CountPositions(); heldErr == nil && err == nil {
+		sum.Positions = max(now-held, 0)
+	}
+	if sum.Positions != 0 {
+		ends.to.RefreshSearchStatistics()
+	}
 	out := PositionCopy{TransferSummary: sum}
-	if err != nil || heldBefore || sum.Cancelled || len(sum.Errors) > 0 {
-		return out, err
+	if err != nil || !r.Created {
+		return out, nil
 	}
-	if created, found, err := a.positionInGroup(dst, hash); err == nil && found {
-		out.Created = created
-	}
+	a.paneCopy.mu.Lock()
+	defer a.paneCopy.mu.Unlock()
+	a.paneCopy.next++
+	a.paneCopy.last = &paneCopy{token: a.paneCopy.next, group: ends.dst, receipt: r}
+	out.Receipt = a.paneCopy.next
 	return out, nil
 }
 
-// UndoPositionCopy takes back a copy CopyPositionToGroup made: the position
-// it added to dst leaves dst, with what came with it.
-func (a *App) UndoPositionCopy(dst int, id int64) error {
-	if id <= 0 {
+// UndoPositionCopy takes back the copy whose receipt CopyPositionToGroup
+// gave, the last one only: the position leaves the destination with what
+// came with it, provided that group still has the same library open and the
+// position is as the copy left it (database.ErrPositionChanged otherwise).
+func (a *App) UndoPositionCopy(receipt int) error {
+	a.paneCopy.mu.Lock()
+	c := a.paneCopy.last
+	if c == nil || receipt <= 0 || c.token != receipt {
+		a.paneCopy.mu.Unlock()
 		return errors.New("nothing to take back")
 	}
+	a.paneCopy.last = nil
+	a.paneCopy.mu.Unlock()
 	a.libs.mu.Lock()
-	locked := a.libs.locked[dst]
+	locked := a.libs.locked[c.group]
 	a.libs.mu.Unlock()
 	if locked {
 		return ErrLibraryGroupLocked
 	}
-	return a.readGroup(dst, func(d *database.Database) error {
+	return a.readGroup(c.group, func(d *database.Database) error {
 		if d.IsReadOnly() {
 			return errors.New("the library is open read-only")
 		}
-		return d.DeletePosition(id)
+		return database.TakeBackPositionCopy(d, c.receipt)
 	})
-}
-
-// positionInGroup looks up the position stored under hash in group's library.
-func (a *App) positionInGroup(group int, hash uint64) (int64, bool, error) {
-	var id int64
-	var found bool
-	err := a.readGroup(group, func(d *database.Database) error {
-		st, _ := database.CurrentStore(d)
-		if st == nil {
-			return errors.New("no database open")
-		}
-		var err error
-		id, found, err = st.Positions().Exists(context.Background(), "", hash)
-		return err
-	})
-	return id, found, err
 }

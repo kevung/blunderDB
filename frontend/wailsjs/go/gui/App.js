@@ -422,8 +422,8 @@ export function TransferToGroup(arg1, arg2) {
   return window['go']['gui']['App']['TransferToGroup'](arg1, arg2);
 }
 
-export function UndoPositionCopy(arg1, arg2) {
-  return window['go']['gui']['App']['UndoPositionCopy'](arg1, arg2);
+export function UndoPositionCopy(arg1) {
+  return window['go']['gui']['App']['UndoPositionCopy'](arg1);
 }
 
 export function VideoSourceKind(arg1) {

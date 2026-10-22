@@ -39,20 +39,20 @@ describe('transferService', () => {
     });
 
     it('copies a position dropped on the other split pane straight in, and offers to take it back', async () => {
-        vi.mocked(CopyPositionToGroup).mockResolvedValue({ ...done, matches: 0, created: 41 });
+        vi.mocked(CopyPositionToGroup).mockResolvedValue({ ...done, matches: 0, receipt: 3 });
         dropTransferItem({ pane: 2 }, { group: 1, kind: 'position', id: 7, label: '#7' });
-        await vi.waitFor(() => expect(get(transferUndoStore)).toEqual({ dst: 2, id: 41, name: 'club' }));
+        await vi.waitFor(() => expect(get(transferUndoStore)).toEqual({ dst: 2, receipt: 3, name: 'club' }));
         expect(CopyPositionToGroup).toHaveBeenCalledWith(1, 7, 2);
         expect(TransferToGroup).not.toHaveBeenCalled();
         expect(lastMessage()).toEqual(expect.objectContaining({ i18nKey: 'transfer.done' }));
         expect(await undoPaneCopy()).toBe(true);
-        expect(UndoPositionCopy).toHaveBeenCalledWith(2, 41);
+        expect(UndoPositionCopy).toHaveBeenCalledWith(3);
         expect(get(transferUndoStore)).toBe(null);
         expect(lastMessage()).toEqual(expect.objectContaining({ i18nKey: 'transfer.undone' }));
     });
 
     it('offers nothing to take back when the pane held the position, and a locked pane refuses', async () => {
-        vi.mocked(CopyPositionToGroup).mockResolvedValue({ ...done, positions: 0, matches: 0, created: 0 });
+        vi.mocked(CopyPositionToGroup).mockResolvedValue({ ...done, positions: 0, matches: 0, receipt: 0 });
         dropTransferItem({ pane: 2 }, { group: 1, kind: 'position', id: 7, label: '#7' });
         await vi.waitFor(() => expect(CopyPositionToGroup).toHaveBeenCalled());
         await Promise.resolve();

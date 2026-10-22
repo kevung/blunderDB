@@ -131,7 +131,7 @@ export async function copyPositionToPane(dst, item) {
     // Both panes are in sight: the account is said now, whichever of them was written.
     const { ok, message } = transferDone(dst, copy);
     setStatusBarMessage(message);
-    if (ok && copy.created) transferUndoStore.set({ dst, id: copy.created, name: groupName(pathOf(dst)) });
+    if (ok && copy.receipt) transferUndoStore.set({ dst, receipt: copy.receipt, name: groupName(pathOf(dst)) });
     return ok;
 }
 
@@ -141,7 +141,7 @@ export async function undoPaneCopy() {
     if (!undo) return false;
     transferUndoStore.set(null);
     try {
-        await UndoPositionCopy(undo.dst, undo.id);
+        await UndoPositionCopy(undo.receipt);
     } catch (error) {
         logger.error('taking back a position copy failed:', error);
         setStatusBarMessage(tMsg('transfer.undoFailed', { error: String(error) }));

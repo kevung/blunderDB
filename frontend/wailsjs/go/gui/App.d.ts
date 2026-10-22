@@ -219,7 +219,7 @@ export function SuggestWatchFolder():Promise<string>;
 
 export function TransferToGroup(arg1:number,arg2:Array<gui.TransferBatch>):Promise<gui.TransferSummary>;
 
-export function UndoPositionCopy(arg1:number,arg2:number):Promise<void>;
+export function UndoPositionCopy(arg1:number):Promise<void>;
 
 export function VideoSourceKind(arg1:string):Promise<string>;
 
