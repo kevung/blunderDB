@@ -485,10 +485,10 @@ empreintes, aucune origine « jouée ici ». La durée de décision d'une action
 elle reste inconnue. La réponse est celle de ``finish``.
 
 ``import`` ouvre un nouveau brouillon sur un document écrit ailleurs, sous
-``Idempotency-Key`` : soit le texte d'un fichier ``.mat`` (``mat``), soit un
-document de transcription (``document`` : ``header``, ``actions``, et
-facultativement ``format_version`` et ``next_score``) — l'un des deux, sinon
-**400**. Contrairement à ``materialize``, rien n'est refusé pour une
+``Idempotency-Key`` : soit le texte d'un fichier ``.mat`` (``mat``), soit les
+actions d'un document de transcription (``actions``, avec facultativement
+``header``, ``format_version`` et ``next_score`` : le document d'un brouillon
+s'envoie tel quel) — l'un des deux, sinon **400**. Contrairement à ``materialize``, rien n'est refusé pour une
 incohérence : elle est gardée et marquée, et le client la corrige avant
 ``finish``. Seul est refusé (**400**, rien n'est écrit) ce qu'aucune relecture
 ne peut lire : un ``.mat`` sans partie, un format de document plus récent, une

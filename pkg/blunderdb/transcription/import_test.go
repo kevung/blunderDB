@@ -184,3 +184,53 @@ func TestImportRefusesWhatNoReplayCanMean(t *testing.T) {
 		t.Fatalf("%d draft(s) written by refused imports", len(drafts))
 	}
 }
+
+// A stored draft's own document imports back to the same draft: the .mat it
+// renders is the .mat the first draft renders.
+func TestImportStoredDocumentRoundTrip(t *testing.T) {
+	ctx := context.Background()
+	raw, err := os.ReadFile(filepath.Join("..", "..", "..", "testdata", "charlot1-charlot2_7p_2025-11-08-2305.mat"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	svc := New(newStore(t), Options{})
+	first, err := svc.ImportMAT(ctx, "", string(raw))
+	if err != nil {
+		t.Fatal(err)
+	}
+	stored, err := svc.Get(ctx, "", first.ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	blob, err := DurableJSON(stored.Annotated.Document)
+	if err != nil {
+		t.Fatal(err)
+	}
+	// With a byte-order mark, as an editor may save it: still a document.
+	second, err := svc.Import(ctx, "", "\uFEFF"+string(blob))
+	if err != nil {
+		t.Fatalf("re-import of the stored document: %v", err)
+	}
+	want, err := svc.MAT(ctx, "", first.ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	got, err := svc.MAT(ctx, "", second.ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got != want {
+		t.Fatalf("the re-imported draft renders another .mat:\n%s\n---\n%s", got, want)
+	}
+}
+
+func TestImportMATWithByteOrderMark(t *testing.T) {
+	raw, err := os.ReadFile(filepath.Join("..", "..", "..", "testdata", "gnubg_selfplay_drops_7p.mat"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	svc := New(newStore(t), Options{})
+	if _, err := svc.Import(context.Background(), "", "\uFEFF"+string(raw)); err != nil {
+		t.Fatalf("a .mat with a byte-order mark: %v", err)
+	}
+}

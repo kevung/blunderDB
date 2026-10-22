@@ -118,7 +118,7 @@ func (cli *CLI) runTranscribe(args []string) error {
 	text := formatLower != "json"
 
 	if *importFile != "" {
-		if *materialize != "" || *finish || *abandon || *edit || *matFile != "" || *matchID != 0 || *draftID != 0 {
+		if *materialize != "" || *finish || *abandon || *edit || *check || *render != "" || *matFile != "" || *matchID != 0 || *draftID != 0 {
 			transcribeCmd.Usage()
 			return fmt.Errorf("--import takes --db and nothing else to act on")
 		}

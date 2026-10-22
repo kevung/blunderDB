@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -31,6 +32,12 @@ func TestTranscribeImport(t *testing.T) {
 	}
 	if _, err := runTranscribeOnFile(t, "--db", dbPath, "--import", bad); err == nil {
 		t.Fatal("an unreadable document was imported")
+	}
+	for _, extra := range [][]string{{"--check"}, {"--render", filepath.Join(t.TempDir(), "out.mat")}, {"--draft", "1"}} {
+		args := append([]string{"--db", dbPath, "--import", bad}, extra...)
+		if _, err := runTranscribeOnFile(t, args...); err == nil || !strings.Contains(err.Error(), "nothing else to act on") {
+			t.Fatalf("--import with %v: %v", extra, err)
+		}
 	}
 	if _, err := runTranscribeOnFile(t, "--import", bad); err == nil {
 		t.Fatal("--import without --db")

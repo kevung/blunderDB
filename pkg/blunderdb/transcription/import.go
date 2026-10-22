@@ -51,7 +51,10 @@ func (s *Service) ImportDocument(ctx context.Context, scope string, doc transcri
 
 // Import sniffs text: a JSON object is a transcription document, anything
 // else a .mat. It serves the callers that take a file without saying which.
+// A byte-order mark, which some editors write at the head of a file, is not
+// part of either format.
 func (s *Service) Import(ctx context.Context, scope, text string) (*State, error) {
+	text = strings.TrimPrefix(text, "\uFEFF")
 	if strings.HasPrefix(strings.TrimSpace(text), "{") {
 		doc, err := DecodeDocument([]byte(text))
 		if err != nil {
@@ -130,7 +133,7 @@ func checkImport(doc transcript.Document) error {
 				return invalidImport(i, "the roll %v is not two dice", a.Dice)
 			}
 			for _, st := range a.Steps {
-				if !onBoard(st.From) || !onBoard(st.To) {
+				if !onBoard(st.From) || (!onBoard(st.To) && st.To != domain.Off) {
 					return invalidImport(i, "the step %d/%d is off the board", st.From, st.To)
 				}
 			}
@@ -146,6 +149,8 @@ func checkImport(doc transcript.Document) error {
 	return nil
 }
 
+// onBoard is a point a step may leave from: a point or a bar. A step may also
+// end at domain.Off, a checker borne off.
 func onBoard(pt int) bool { return pt >= 0 && pt <= domain.NumPoints+1 }
 
 // replayable is the last guard before a document becomes a draft: one that

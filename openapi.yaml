@@ -8115,6 +8115,9 @@ components:
     TenantQuotas:
       type: object
       description: "Unresolved local type TenantQuotas."
+    "[2]int":
+      type: object
+      description: "Unresolved local type [2]int."
     acrossAnalyses:
       type: object
       properties:
@@ -10312,9 +10315,6 @@ components:
     transcript_Action:
       type: object
       description: "Opaque: see the Go type transcript.Action (defined outside internal/server, not expanded here)."
-    transcript_Document:
-      type: object
-      description: "Opaque: see the Go type transcript.Document (defined outside internal/server, not expanded here)."
     transcript_Gesture:
       type: object
       description: "Opaque: see the Go type transcript.Gesture (defined outside internal/server, not expanded here)."
@@ -10357,8 +10357,20 @@ components:
         mat:
           type: string
           nullable: true
-        document:
-          $ref: "#/components/schemas/transcript_Document"
+        header:
+          $ref: "#/components/schemas/transcript_Header"
+          nullable: true
+        actions:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/transcript_Action"
+        format_version:
+          type: integer
+          format: int32
+          nullable: true
+        next_score:
+          $ref: "#/components/schemas/[2]int"
           nullable: true
     transcriptionMATResp:
       type: object
