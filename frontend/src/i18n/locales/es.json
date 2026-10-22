@@ -3541,6 +3541,7 @@
         "openLabel": "Otra biblioteca",
         "busyRollout": "Un rollout está escribiendo en la biblioteca activa: espere a que termine o deténgalo (rollout stop) antes de cambiar de biblioteca",
         "busyImport": "Una importación escribe archivo por archivo en la biblioteca activa: espere a que termine antes de cambiar de biblioteca",
+        "switching": "Cambio de biblioteca en curso: espere a que termine",
         "jobRunning": "Una tarea en segundo plano trabaja en esta biblioteca",
         "jobDone": "Una tarea en segundo plano terminó en esta biblioteca: muéstrela para ver el resultado",
         "busyDisplay": "El torneo se muestra en la red del club: detenga la presentación (Dirección, Mostrar en la red del club) antes de cambiar de biblioteca",
@@ -3623,7 +3624,8 @@
         "frozenHint": "Haz clic (o Ctrl+Alt+←/→) para activar esta biblioteca",
         "paneLabel": "Panel congelado de la biblioteca {name}",
         "activeLibrary": "Biblioteca activa: {name}",
-        "sameLibraryNotInList": "Esta posición no está en la lista activa: las dos vistas no pueden intercambiarse."
+        "sameLibraryNotInList": "Esta posición no está en la lista activa: las dos vistas no pueden intercambiarse.",
+        "sameLibraryMatchMode": "Un match reproducido no tiene lista donde encontrar la posición: dos vistas de una misma biblioteca no se intercambian en modo match."
     },
     "reference": {
         "title": "Datos de referencia",

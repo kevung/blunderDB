@@ -18,9 +18,9 @@ import { matchListStore } from './matchListStore.js';
 import { directionSessionState, forgetDirection, restoreDirection } from './directionStore.js';
 import { takeScopedState, putScopedState } from './libraryScope.js';
 import { forgetTransferGroup } from './transferBasketStore.js';
-import { groupIdsStore, activeGroupId, takeActivity, importForegroundStore as importForegroundStoreRef } from './groupActivityStore.js';
+import { groupIdsStore, activeGroupId, takeActivity, importForegroundStore as importForegroundStoreRef, groupSwitchingStore, holdingSwitch } from './groupActivityStore.js';
 
-export { groupIdsStore, activeGroupId, groupActivityStore, importForegroundStore, groupOnScreen, noteGroupJob } from './groupActivityStore.js';
+export { groupIdsStore, activeGroupId, groupActivityStore, importForegroundStore, groupOnScreen, noteGroupJob, groupSwitchingStore } from './groupActivityStore.js';
 import { tMsg, translate } from '../i18n';
 import { moveItem } from '../utils/moveItem.js';
 import { logger } from '../utils/logger.js';
@@ -220,6 +220,15 @@ async function refreshAfterShow(countsBefore, stale = false) {
 export async function openInNewGroup(path) {
     const refusal = switchRefusal();
     if (refusal) throw new LibraryGroupRefused(refusal);
+    if (get(groupSwitchingStore)) throw new LibraryGroupRefused(tMsg('libraryGroups.switching'));
+    await holdingSwitch(() => openGroup(path));
+}
+
+/**
+ * openInNewGroup under the switch lock.
+ * @param {string} path
+ */
+async function openGroup(path) {
     const leaving = get(activeGroupId);
     const group = await OpenLibraryGroup(path);
     if (!group || group.id === leaving) return;
@@ -243,6 +252,17 @@ export async function openInNewGroup(path) {
  *   runs, a job writes the library); the status bar says why
  */
 export async function activateGroup(id, viewId = null) {
+    // A key held down repeats: the switches after the first wait for none, they are dropped.
+    const done = await holdingSwitch(() => switchGroup(id, viewId));
+    return done ?? false;
+}
+
+/**
+ * activateGroup under the switch lock.
+ * @param {number} id
+ * @param {number | null} viewId
+ */
+async function switchGroup(id, viewId) {
     const leaving = get(activeGroupId);
     if (id === leaving) {
         if (viewId != null) viewStore.switchTo(viewId);

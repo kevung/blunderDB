@@ -25,6 +25,8 @@ vi.mock('../stores/positionStore.js', () => ({
 const { statusBarTextStore, currentPositionIndexStore } = await import('../stores/uiStore.js');
 const { parkedGroupsStore, activeGroupId, groupIdsStore } = await import('../stores/libraryGroupStore.js');
 const { splitStore, splitShakeStore, splitFrozenStore } = await import('../stores/splitStore.js');
+const { groupSwitchingStore } = await import('../stores/groupActivityStore.js');
+const { matchContextStore } = await import('../stores/positionStore.js');
 const svc = await import('../services/splitService.js');
 
 const off = { on: false, left: null, right: null, sameSide: 'left' };
@@ -100,6 +102,35 @@ test('two views of one library trade places: the frozen position comes live, the
     findIndex.mockImplementationOnce(async () => -1);
     expect(await svc.activatePane('left')).toBe(false);
     expect(get(statusBarTextStore)).toMatchObject({ i18nKey: 'split.sameLibraryNotInList' });
+});
+
+test('in match mode two views of one library do not trade places, and the status bar says why', async () => {
+    groupIdsStore.set([1]);
+    splitStore.set({ on: true, left: 1, right: 1, sameSide: 'left' });
+    splitFrozenStore.set({ positionId: 12, refreeze: null });
+    matchContextStore.set({ isMatchMode: true });
+    findIndex.mockClear();
+    try {
+        expect(await svc.activatePane('right')).toBe(false);
+    } finally {
+        matchContextStore.set({ isMatchMode: false });
+    }
+    expect(get(statusBarTextStore)).toMatchObject({ i18nKey: 'split.sameLibraryMatchMode' });
+    expect(findIndex).not.toHaveBeenCalled();
+    expect(get(splitStore).sameSide).toBe('left');
+});
+
+test('a switch in flight drops the pane key repeating behind it: no second activation, no shake', async () => {
+    splitStore.set({ on: true, left: 1, right: 2, sameSide: 'left' });
+    const shakes = get(splitShakeStore).n;
+    groupSwitchingStore.set(true);
+    try {
+        expect(await svc.activatePane('right')).toBe(false);
+    } finally {
+        groupSwitchingStore.set(false);
+    }
+    expect(activateGroup).not.toHaveBeenCalled();
+    expect(get(splitShakeStore).n).toBe(shakes);
 });
 
 test('the frozen pane starts where its group was left: a match on its move, else the position', () => {

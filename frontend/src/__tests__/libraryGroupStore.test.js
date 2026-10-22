@@ -395,6 +395,63 @@ describe('what the status bar says', () => {
     });
 });
 
+describe('a switch in flight', () => {
+    /** ActivateLibraryGroup held until the returned function is called. */
+    function holdActivation() {
+        /** @type {() => void} */
+        let release = () => {};
+        vi.mocked(ActivateLibraryGroup).mockImplementationOnce(
+            () =>
+                new Promise((resolve) => {
+                    release = () => resolve(undefined);
+                })
+        );
+        return () => release();
+    }
+
+    test('a second activation during the first is dropped: each group keeps its own photograph', async () => {
+        const groupA = get(activeGroupId);
+        // openDatabaseByPath sets the path once the group is open; done by hand here.
+        await openInNewGroup('/libs/b.db');
+        databasePathStore.set('/libs/b.db');
+        const groupB = get(activeGroupId);
+        await openInNewGroup('/libs/c.db');
+        databasePathStore.set('/libs/c.db');
+        const groupC = get(activeGroupId);
+        const release = holdActivation();
+        const first = activateGroup(groupA);
+        expect(await activateGroup(groupB)).toBe(false);
+        release();
+        expect(await first).toBe(true);
+        expect(get(activeGroupId)).toBe(groupA);
+        expect(get(databasePathStore)).toBe('/libs/a.db');
+        const parked = get(parkedGroupsStore);
+        expect([...parked.keys()].sort()).toEqual([groupB, groupC].sort());
+        expect(parked.get(groupB)?.path).toBe('/libs/b.db');
+        expect(parked.get(groupC)?.path).toBe('/libs/c.db');
+        expect(await activateGroup(groupB)).toBe(true);
+    });
+
+    test('a save, an update or a delete during the switch is refused: the board shown is the group leaving', async () => {
+        const groupA = get(activeGroupId);
+        await openInNewGroup('/libs/b.db');
+        const release = holdActivation();
+        const switching = activateGroup(groupA);
+        const { saveScratchBoard } = await import('../services/scratchBoard.js');
+        const { updatePosition, deletePosition } = await import('../services/positionService.js');
+        expect(await saveScratchBoard()).toBeNull();
+        expect(get(statusBarTextStore)).toMatchObject({ i18nKey: 'libraryGroups.switching' });
+        statusBarTextStore.set('');
+        await updatePosition();
+        expect(get(statusBarTextStore)).toMatchObject({ i18nKey: 'libraryGroups.switching' });
+        statusBarTextStore.set('');
+        await deletePosition();
+        expect(get(statusBarTextStore)).toMatchObject({ i18nKey: 'libraryGroups.switching' });
+        release();
+        expect(await switching).toBe(true);
+    });
+});
+
 describe('the switch on a large library', () => {
     test('a list of 100 000 positions comes back in a few milliseconds', async () => {
         const groupA = get(activeGroupId);

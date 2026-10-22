@@ -34,6 +34,15 @@ describe('panelLayoutStore — panel size', () => {
         expect(get(panelWidthStore)).toBe(DEFAULT_PANEL_WIDTH);
     });
 
+    test('a width that is no width takes the default, not the floor of the clamp', async () => {
+        for (const width of [null, undefined, 0, Number.NaN]) {
+            panelWidthStore.set(1);
+            GetPanelWidth.mockResolvedValueOnce(width);
+            await initPanelSize();
+            expect(get(panelWidthStore)).toBe(DEFAULT_PANEL_WIDTH);
+        }
+    });
+
     test('savePanelWidth updates the store and persists', () => {
         savePanelWidth(600);
         expect(get(panelWidthStore)).toBe(600);

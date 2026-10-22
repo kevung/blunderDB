@@ -3541,6 +3541,7 @@
         "openLabel": "Another library",
         "busyRollout": "A rollout is writing the active library: wait for it or stop it (rollout stop) before switching library",
         "busyImport": "An import is writing the active library file by file: wait for it to finish before switching library",
+        "switching": "A library switch is in progress: wait for it to finish",
         "jobRunning": "A background task is working in this library",
         "jobDone": "A background task finished in this library: show it to see the result",
         "busyDisplay": "The tournament is shown on the club network: stop showing it (Direction, Show on the club network) before switching library",
@@ -3623,7 +3624,8 @@
         "frozenHint": "Click (or Ctrl+Alt+←/→) to activate this library",
         "paneLabel": "Frozen pane of the library {name}",
         "activeLibrary": "Active library: {name}",
-        "sameLibraryNotInList": "This position is not in the active list: the two views cannot trade places."
+        "sameLibraryNotInList": "This position is not in the active list: the two views cannot trade places.",
+        "sameLibraryMatchMode": "A replayed match has no list to find the position in: two views of one library do not trade places in match mode."
     },
     "reference": {
         "title": "Reference data",

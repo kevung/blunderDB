@@ -443,16 +443,19 @@ affiche son compteur *n / N*.
 
 Un clic dans le volet figé, ou *CTRL-ALT-←* / *CTRL-ALT-→*, active sa
 bibliothèque ; le contour passe de l'autre côté et rien d'autre ne bouge. Avec
-une seule bibliothèque, les deux vues échangent leurs positions. Barre
-d'outils, onglets, panneaux et barre d'état restent en un exemplaire et
+une seule bibliothèque, les deux vues échangent leurs positions, sauf en mode
+match : un match rejoué n'a pas de liste où retrouver la position, la barre
+d'état le dit. Barre d'outils, onglets, panneaux et barre d'état restent en un exemplaire et
 parlent toujours de la bibliothèque active : sa pastille et son nom précèdent
 les onglets des panneaux et le message de la barre d'état, et le titre de la
 fenêtre la nomme. Le clavier, *CTRL-S*, les imports et les commandes vont au
 volet actif. Pendant un Duel, une séance d'entraînement ou un import, le
 changement est refusé : le volet cliqué tremble et la barre d'état dit
-pourquoi.
+pourquoi. Tant qu'un changement de bibliothèque n'est pas achevé, un second est
+ignoré, et *CTRL-S*, la mise à jour et la suppression d'une position sont
+refusées.
 
-Glisser le compteur ou le plateau d'un volet sur l'autre copie la position
+Glisser le compteur d'un volet sur l'autre copie la position
 dans la bibliothèque de ce volet, avec son analyse et son commentaire, sauf si
 son groupe est verrouillé ; la barre d'état propose alors *Annuler*. À partir
 de 1600 pixels de large, le panneau reste à côté des plateaux ; entre 1280 et

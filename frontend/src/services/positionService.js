@@ -27,6 +27,7 @@ import { lastSearchStore } from '../stores/searchHistoryStore.js';
 import { searchEmptyStore } from '../stores/searchParamsStore.js';
 import { listOriginStore, searchOrigin, LIBRARY_ORIGIN } from '../stores/listOriginStore.js';
 import { viewStore } from '../stores/viewStore.js';
+import { groupSwitchingStore } from '../stores/groupActivityStore.js';
 import { currentPositionIndexStore, statusBarTextStore, statusBarModeStore, commentTextStore, activeTabStore } from '../stores/uiStore.js';
 import { rankedDistancesStore, rankedTargetStore } from '../stores/rankedStore.js';
 import { GetLikeLimit, GetLikeMaxDistance } from '../../wailsjs/go/main/Config.js';
@@ -824,6 +825,12 @@ export async function loadPositionsByFilters({
 export { firstPosition, previousPosition, nextPosition, lastPosition, gotoPosition } from './positionNavigation.js';
 
 export async function deletePosition() {
+    // During a group switch the backend may already be bound to the library coming: the board
+    // shown belongs to the one leaving.
+    if (get(groupSwitchingStore)) {
+        setStatusBarMessage(tMsg('libraryGroups.switching'));
+        return;
+    }
     if (!get(databasePathStore)) {
         setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
         return;
@@ -865,6 +872,12 @@ export function duplicatePositionId(error) {
 }
 
 export async function updatePosition() {
+    // During a group switch the backend may already be bound to the library coming: the board
+    // shown belongs to the one leaving.
+    if (get(groupSwitchingStore)) {
+        setStatusBarMessage(tMsg('libraryGroups.switching'));
+        return;
+    }
     if (!get(databasePathStore)) {
         setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
         return;

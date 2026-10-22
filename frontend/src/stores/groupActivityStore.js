@@ -15,6 +15,29 @@ export const activeGroupId = writable(1);
 export const groupActivityStore = writable(/** @type {Map<number, GroupActivity>} */ (new Map()));
 /** The groups whose library a job wrote while they were off screen: read again on their return. */
 const staleGroups = new Set();
+/**
+ * Whether a switch of group is in flight. Between its first await and the state put back, the
+ * screen still shows the group left while the backend may already be bound to the one coming:
+ * a second switch would photograph the wrong group, and a write would land in the wrong library.
+ */
+export const groupSwitchingStore = writable(false);
+
+/**
+ * Runs fn holding the switch lock; undefined, without running it, when a switch holds it already.
+ * @template T
+ * @param {() => Promise<T>} fn
+ * @returns {Promise<T | undefined>}
+ */
+export async function holdingSwitch(fn) {
+    if (get(groupSwitchingStore)) return undefined;
+    groupSwitchingStore.set(true);
+    try {
+        return await fn();
+    } finally {
+        groupSwitchingStore.set(false);
+    }
+}
+
 /** Whether the import in flight runs one file at a time on the bound handle: no switch then. */
 export const importForegroundStore = writable(false);
 

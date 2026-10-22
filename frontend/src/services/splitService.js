@@ -8,6 +8,7 @@ import { get } from 'svelte/store';
 import { splitStore, splitShakeStore, splitFrozenStore } from '../stores/splitStore.js';
 import { statusBarTextStore, currentPositionIndexStore } from '../stores/uiStore.js';
 import { groupIdsStore, activeGroupId, parkedGroupsStore, activateGroup } from '../stores/libraryGroupStore.js';
+import { groupSwitchingStore, holdingSwitch } from '../stores/groupActivityStore.js';
 import { positionStore, matchContextStore, positionsStore } from '../stores/positionStore.js';
 import { tMsg } from '../i18n';
 
@@ -150,10 +151,11 @@ function shake(side) {
  */
 export async function activatePane(side) {
     const state = get(splitStore);
-    if (!state.on) return false;
+    // A switch in flight: the key repeating behind it is dropped, nothing shakes.
+    if (!state.on || get(groupSwitchingStore)) return false;
     const active = get(activeGroupId);
     const groups = paneGroups(state, get(groupIdsStore), active);
-    if (groups.left === groups.right) return swapSameLibrary(state, side);
+    if (groups.left === groups.right) return (await holdingSwitch(() => swapSameLibrary(state, side))) ?? false;
     const target = groups[side];
     if (target === active) return true;
     const ok = await activateGroup(target);
@@ -169,8 +171,14 @@ export async function activatePane(side) {
  */
 async function swapSameLibrary(state, side) {
     if (state.sameSide === side) return true;
+    // A match replayed walks its moves, not the list: the frozen position has no index there.
+    if (get(matchContextStore)?.isMatchMode) {
+        statusBarTextStore.set(tMsg('split.sameLibraryMatchMode'));
+        shake(side);
+        return false;
+    }
     const frozen = get(splitFrozenStore).positionId;
-    const index = !get(matchContextStore)?.isMatchMode && frozen != null ? await positionsStore.findIndex(frozen) : -1;
+    const index = frozen != null ? await positionsStore.findIndex(frozen) : -1;
     if (index == null || index < 0) {
         statusBarTextStore.set(tMsg('split.sameLibraryNotInList'));
         shake(side);

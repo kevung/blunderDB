@@ -184,6 +184,20 @@ test('at 2560 px the panel stays beside the two boards, both readable', async ({
     await page.screenshot({ path: test.info().outputPath('split-2560.png') });
 });
 
+for (const width of [1600, 2560]) {
+    test(`at ${width} px the panel beside the boards keeps its width`, async ({ page }) => {
+        await openTwoGroups(page, width, 1000);
+        await page.locator('[data-testid="toggle-split"]').click();
+        await expect(page.locator('[data-testid="split-viewer"] [data-testid="split-count"]')).toHaveText('1 / 3');
+        const panel = page.locator('.panel-wrapper');
+        await expect(panel).toHaveClass(/side/);
+        await expect.poll(async () => Math.round((await panel.boundingBox()).width)).toBeGreaterThanOrEqual(415);
+        // The two boards share what is left, beside the panel and not under it.
+        const pane = await page.locator('[data-testid="split-live"]').boundingBox();
+        expect(pane.x + pane.width).toBeLessThanOrEqual((await panel.boundingBox()).x + 1);
+    });
+}
+
 test('a narrow window refuses the split and says why', async ({ page }) => {
     await openTwoGroups(page, 1100, 768);
     await page.locator('[data-testid="toggle-split"]').click();

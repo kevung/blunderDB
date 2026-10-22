@@ -77,7 +77,10 @@ export const panelWidthStore = writable(DEFAULT_PANEL_WIDTH);
 // churn on a store); this only seeds that local state once, at launch.
 export async function initPanelSize() {
     try {
-        panelWidthStore.set(await GetPanelWidth());
+        // A width that is no width (an old config, a binding answering nothing) is the default,
+        // not the clamp's floor: the side panel would open 150 px wide beside the boards.
+        const width = await GetPanelWidth();
+        panelWidthStore.set(Number.isFinite(width) && width > 0 ? width : DEFAULT_PANEL_WIDTH);
     } catch (err) {
         logger.error('Failed to load panel width, using default:', err);
     }
