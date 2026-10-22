@@ -321,6 +321,24 @@ export async function installMonkeyEngine(page, opts) {
             db.SuggestTranscriptionMatFilename = () => slow(() => 'match.mat');
             db.ExportTranscriptionMAT = () => slow(() => null);
             app.OpenExportMatDialog = () => slow(() => '');
+
+            // transcription.Candidates: the plays joined to the ranking by notation, the
+            // unranked ones after (rank 0); none recognised is the unranked answer.
+            const candidatesOf = (plays, ranked) => {
+                const index = new Map();
+                plays.forEach((p, i) => index.has(p.notation) || index.set(p.notation, i));
+                const list = [];
+                for (const m of ranked) {
+                    const i = index.get(m.move);
+                    if (i !== undefined) list.push({ index: i, notation: plays[i].notation, steps: plays[i].steps, rank: list.length + 1, analysis: m });
+                }
+                const base = { side: 0, dice: [0, 0] };
+                const rest = (taken) => plays.flatMap((p, i) => (taken.has(i) ? [] : [{ index: i, notation: p.notation, steps: p.steps, rank: 0 }]));
+                if (list.length === 0) return { ...base, unranked: true, candidates: rest(new Set()) };
+                return { ...base, unranked: false, candidates: [...list, ...rest(new Set(list.map((c) => c.index)))] };
+            };
+
+            db.TranscriptionCandidates = () => slow(() => clone(candidatesOf(plays, moves)));
             app.LegalMoves = () => slow(() => clone(plays));
             app.EvaluatePositionImmediate = () => slow(() => ({ moves: clone(moves), refused: false }));
         },

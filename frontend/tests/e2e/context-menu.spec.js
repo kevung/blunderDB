@@ -28,20 +28,20 @@ test('the board menu: → opens a group on its first action, ← comes back, Ent
     await expect(page.getByRole('menuitem', { name: en.actions.copyImage })).toBeVisible();
     await expect(page.getByRole('menuitem', { name: en.actions.copyXGID })).toHaveCount(0);
 
-    expect(await focused(page)).toBe(en.board.menu.evaluate);
+    await expect.poll(() => focused(page)).toBe(en.board.menu.evaluate);
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('ArrowDown');
-    expect(await focused(page)).toContain(en.actions.group.copy);
+    await expect.poll(() => focused(page)).toContain(en.actions.group.copy);
     await page.keyboard.press('ArrowRight');
     await expect(page.getByRole('menuitem', { name: en.actions.group.copy })).toHaveAttribute('aria-expanded', 'true');
-    expect(await focused(page)).toContain(en.actions.copyImage);
+    await expect.poll(() => focused(page)).toContain(en.actions.copyImage);
     await page.keyboard.press('ArrowLeft');
     await expect(page.getByRole('menuitem', { name: en.actions.copyXGID })).toHaveCount(0);
-    expect(await focused(page)).toContain(en.actions.group.copy);
+    await expect.poll(() => focused(page)).toContain(en.actions.group.copy);
 
     await page.keyboard.press('ArrowRight');
     await page.keyboard.press('ArrowDown');
-    expect(await focused(page)).toBe(en.actions.copyXGID);
+    await expect.poll(() => focused(page)).toBe(en.actions.copyXGID);
     await page.keyboard.press('Enter');
     await expect(menu(page)).toHaveCount(0);
     await expect(page.getByTestId('status-bar-message')).toHaveText(en.status.xgidCopied);
