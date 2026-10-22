@@ -117,9 +117,12 @@ const ReadTenantsHeader = middleware.ReadTenantsHeader
 
 // Bootstrap opens the storage backend, runs migrations, installs RLS policies
 // when enabled, builds the engine server and returns its http.Handler plus an
-// io.Closer for the storage pool and, on PostgreSQL, the event transport. Mount the handler behind your own auth and
-// inject X-Tenant-ID per request — the tenant's positive decimal integer, a
-// name is refused with 400 (ADR-0005); the engine performs NO authentication.
+// io.Closer for the storage pool and, on PostgreSQL, the event transport. On
+// PostgreSQL with Config.Transcription, a failing LISTEN (a pgbouncer in
+// transaction mode, say) makes Bootstrap fail, as it makes serve fail. Mount
+// the handler behind your own auth and inject X-Tenant-ID per request — the
+// tenant's positive decimal integer, a name is refused with 400 (ADR-0005);
+// the engine performs NO authentication.
 // X-Read-Tenants, when Config.TrustReadTenants is set, is the embedder's to
 // write as well: strip the client's before setting it (ADR-0063).
 func Bootstrap(ctx context.Context, cfg Config) (http.Handler, io.Closer, error) {

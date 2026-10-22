@@ -17,9 +17,21 @@ import (
 	"testing"
 	"time"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/testcontainers/testcontainers-go"
 	tcpg "github.com/testcontainers/testcontainers-go/modules/postgres"
 )
+
+// transportBackends counts the connections of every event transport on the database.
+func transportBackends(t *testing.T, conn *pgx.Conn) int {
+	t.Helper()
+	var n int
+	if err := conn.QueryRow(context.Background(),
+		`SELECT count(*) FROM pg_stat_activity WHERE application_name LIKE 'blunderdb-events-%' OR application_name LIKE 'blunderdb-notify-%'`).Scan(&n); err != nil {
+		t.Fatal(err)
+	}
+	return n
+}
 
 func bootstrapOn(t *testing.T, dsn string) (*httptest.Server, func()) {
 	t.Helper()
@@ -68,6 +80,12 @@ func TestBootstrapRelaysGestures(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	conn, err := pgx.Connect(ctx, dsn)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = conn.Close(context.Background()) })
 
 	tsA, closeA := bootstrapOn(t, dsn)
 	defer tsA.Close()
@@ -130,7 +148,18 @@ func TestBootstrapRelaysGestures(t *testing.T) {
 			if ev == "transcription" {
 				closedB = true
 				cancel()
+				both := transportBackends(t, conn)
+				if both == 0 {
+					t.Fatal("no transport connection while both instances run")
+				}
 				closeB()
+				deadline := time.Now().Add(10 * time.Second)
+				for transportBackends(t, conn) >= both {
+					if time.Now().After(deadline) {
+						t.Fatalf("closing B left its transport connections open (%d of %d)", both, both)
+					}
+					time.Sleep(50 * time.Millisecond)
+				}
 				return
 			}
 		case <-deadline:
