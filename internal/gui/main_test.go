@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"github.com/kevung/blunderdb/pkg/blunderdb/issuance/issuancetest"
 	"os"
 	"testing"
 
@@ -27,5 +28,5 @@ func TestMain(m *testing.M) {
 	if err := engine.LoadOneSided(oneSided); err != nil {
 		panic("gui tests: loading the one-sided table: " + err.Error())
 	}
-	os.Exit(m.Run())
+	os.Exit(issuancetest.Run(m.Run))
 }

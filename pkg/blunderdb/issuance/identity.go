@@ -120,8 +120,36 @@ func (id *Identity) save(configDir string) error {
 	if err != nil {
 		return err
 	}
-	// 0600: the file is enough to sign in the Issuer's name.
-	return os.WriteFile(IdentityPath(configDir), raw, 0o600)
+	return writeFileAtomic(IdentityPath(configDir), raw, 0o600)
+}
+
+// writeFileAtomic writes through a temporary file in the same directory, then renames it, so
+// a crash or a concurrent writer never leaves a truncated identity. 0600: the file is enough
+// to sign in the Issuer's name.
+func writeFileAtomic(path string, data []byte, perm os.FileMode) (err error) {
+	tmp, err := os.CreateTemp(filepath.Dir(path), filepath.Base(path)+".tmp-*")
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if err != nil {
+			_ = tmp.Close()
+			_ = os.Remove(tmp.Name())
+		}
+	}()
+	if err = tmp.Chmod(perm); err != nil {
+		return err
+	}
+	if _, err = tmp.Write(data); err != nil {
+		return err
+	}
+	if err = tmp.Sync(); err != nil {
+		return err
+	}
+	if err = tmp.Close(); err != nil {
+		return err
+	}
+	return os.Rename(tmp.Name(), path)
 }
 
 // PublicKey exposes the verifying key embedded in every Envelope this identity seals.

@@ -574,3 +574,34 @@ func TestCarriedVideoSourceAndFileName(t *testing.T) {
 		}
 	}
 }
+
+func TestIdentitySaveIsAtomic(t *testing.T) {
+	dir := t.TempDir()
+	id := mustIdentity(t, "Jean")
+	if err := id.save(dir); err != nil {
+		t.Fatal(err)
+	}
+	if err := id.save(dir); err != nil {
+		t.Fatal(err)
+	}
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(entries) != 1 {
+		t.Fatalf("leftover files after save: %v", entries)
+	}
+	if runtime.GOOS != "windows" {
+		info, err := os.Stat(IdentityPath(dir))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if info.Mode().Perm() != 0o600 {
+			t.Fatalf("mode = %v, want 0600", info.Mode().Perm())
+		}
+	}
+	back, err := LoadIdentity(dir)
+	if err != nil || back == nil || back.Fingerprint() != id.Fingerprint() {
+		t.Fatalf("reload: %v %v", back, err)
+	}
+}

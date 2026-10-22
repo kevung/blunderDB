@@ -1,6 +1,7 @@
 package database
 
 import (
+	"github.com/kevung/blunderdb/pkg/blunderdb/issuance/issuancetest"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -20,5 +21,5 @@ func TestMain(m *testing.M) {
 	if err := os.Chdir(repoRoot); err != nil {
 		panic(err)
 	}
-	os.Exit(m.Run())
+	os.Exit(issuancetest.Run(m.Run))
 }
