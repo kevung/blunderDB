@@ -409,13 +409,16 @@ jobs:
   # produce a number worth comparing, and pretending otherwise would put a
   # meaningless graph in front of whoever reads this.
   #
-  # So this job asserts two things a runner CAN answer honestly: the daemon
-  # survives the run, and every request it accepted came back 2xx. A 503 from
-  # the heavy-query admission gate (2 slots on a runner) is the daemon
-  # protecting itself, not a failure: the client retries it with a bounded
-  # wait and reports it apart ("backpressure"), outside the error count. The report
-  # is kept as an artefact for anyone who wants to look at the latencies, and
-  # deliberately not gated on a threshold.
+  # So this job asserts what a runner CAN answer honestly: the daemon
+  # survives the run, every request it accepted came back 2xx, and the gate
+  # does not starve a route. A 503 from the heavy-query admission gate (2 slots
+  # on a runner) is the daemon protecting itself, not a failure: the client
+  # retries it with a bounded wait and reports it apart ("backpressure"),
+  # outside the error count. What stays gated is that every endpoint obtained
+  # successes and that no more than half the requests were shed, so a leaked
+  # slot still turns the job red. The report is kept as an artefact for anyone
+  # who wants to look at the latencies, and the latencies are deliberately not
+  # gated on a threshold.
   loadtest:
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -473,6 +476,14 @@ jobs:
               sys.exit("the loadtest issued no request at all")
           if errors:
               sys.exit(f"{errors} of {total} requests failed")
+          # Back-pressure is tolerated, starvation is not: each endpoint must
+          # have succeeded at least once, and shed requests stay a minority.
+          for op, e in r.get('by_endpoint', {}).items():
+              shed = (e.get('backpressure') or {}).get('shed', 0)
+              if e['count'] - e.get('errors', 0) - shed <= 0:
+                  sys.exit(f"{op}: no request succeeded ({shed} shed of {e['count']})")
+          if bp.get('shed', 0) * 2 > total:
+              sys.exit(f"{bp['shed']} of {total} requests shed by the admission gate")
           PY
         shell: bash
 

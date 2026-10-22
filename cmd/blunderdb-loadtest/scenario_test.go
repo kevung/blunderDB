@@ -119,7 +119,7 @@ func TestDoRequestRetriesBackpressure(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	o := op{name: "x", build: func(*rand.Rand) (string, []byte) { return "/x", []byte(`{}`) }}
+	o := op{name: "x", build: func(*rand.Rand) (string, []byte) { return "/v1/stats.compute", []byte(`{}`) }}
 	rng := rand.New(rand.NewSource(1))
 	s := doRequest(ts.Client(), ts.URL, "1", is2xx, o, rng)
 	if s.fail || s.shed || s.retries != 2 || calls != 3 {
@@ -147,5 +147,18 @@ func TestRetryWait(t *testing.T) {
 	}
 	if got := retryWait(0, "3600"); got != maxWait {
 		t.Fatalf("capped: %v", got)
+	}
+}
+
+// A 503 from a route outside the gate is a storage answer, not back-pressure.
+func TestDoRequestKeepsOtherUnavailableAsError(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusServiceUnavailable)
+	}))
+	defer ts.Close()
+	o := op{name: "w", build: func(*rand.Rand) (string, []byte) { return "/v1/positions.save", []byte(`{}`) }}
+	s := doRequest(ts.Client(), ts.URL, "1", is2xx, o, rand.New(rand.NewSource(1)))
+	if !s.fail || s.shed || s.retries != 0 {
+		t.Fatalf("%+v", s)
 	}
 }
