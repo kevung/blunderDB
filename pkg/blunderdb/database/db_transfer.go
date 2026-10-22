@@ -21,6 +21,14 @@ var transferMu sync.Mutex
 // transfer between open libraries; the daemon's is ingest.Transfer between two
 // tenants.
 func (d *Database) TransferTo(ctx context.Context, dst *Database, opts ExportOptions) (ingest.TransferReport, error) {
+	return d.transferWith(ctx, dst, opts, nil, nil)
+}
+
+// transferWith is TransferTo with two hooks run while both libraries are
+// locked: before ahead of the copy, after once it is written, with its
+// report. The locks keep out the Database methods of either library, not a
+// borrowed handle or another Database on the same file.
+func (d *Database) transferWith(ctx context.Context, dst *Database, opts ExportOptions, before func(ctx context.Context) error, after func(ctx context.Context, rep ingest.TransferReport) error) (ingest.TransferReport, error) {
 	if dst == nil || d == dst {
 		return ingest.TransferReport{}, fmt.Errorf("%w: %w", storage.ErrInvalid, ingest.ErrSelfTransfer)
 	}
@@ -50,13 +58,24 @@ func (d *Database) TransferTo(ctx context.Context, dst *Database, opts ExportOpt
 	if d.db == nil || dst.db == nil {
 		return ingest.TransferReport{}, fmt.Errorf("no database is currently open")
 	}
+	if before != nil {
+		if err := before(ctx); err != nil {
+			return ingest.TransferReport{}, err
+		}
+	}
 	rep, err := ingest.Transfer(ctx, ingest.TransferEnd{S: d.store}, ingest.TransferEnd{S: dst.store}, opts, nil)
 	if err != nil {
 		return rep, err
 	}
 	// The rows written above carry their blob alone; derive their provenance
 	// now rather than on the next open, as an import of the file would.
-	return rep, dst.backfillAnalysisProvenance(ctx)
+	if err := dst.backfillAnalysisProvenance(ctx); err != nil {
+		return rep, err
+	}
+	if after != nil {
+		return rep, after(ctx, rep)
+	}
+	return rep, nil
 }
 
 // holdForRead counts a reader of d's library among its imports, so that a

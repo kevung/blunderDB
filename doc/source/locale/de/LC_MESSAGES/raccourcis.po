@@ -712,12 +712,19 @@ msgstr "STRG-UMSCHALT-X"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Écran partagé : le groupe actif et une visionneuse en lecture d'une autre"
-" bibliothèque côte à côte ; refusé sous 1280 pixels de large."
+"Écran partagé : deux plateaux, une bibliothèque de chaque côté ; refusé "
+"sous 1280 pixels de large."
 msgstr ""
-"Geteilter Bildschirm: die aktive Gruppe und ein schreibgeschützter "
-"Betrachter einer anderen Bibliothek nebeneinander; unter 1280 Pixel "
-"Breite abgelehnt."
+"Geteilter Bildschirm: zwei Bretter, eine Bibliothek auf jeder Seite; "
+"unter 1280 Pixel Breite verweigert."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-ALT-← / CTRL-ALT-→"
+msgstr "STRG-ALT-← / STRG-ALT-→"
+
+#: ../../source/raccourcis.rst:1
+msgid "Écran partagé : active le volet de gauche / de droite."
+msgstr "Geteilter Bildschirm: aktiviert den linken / rechten Bereich."
 
 #: ../../source/raccourcis.rst:1
 msgid "x"

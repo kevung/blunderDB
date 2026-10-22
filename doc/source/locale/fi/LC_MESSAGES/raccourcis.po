@@ -702,11 +702,19 @@ msgstr "CTRL-VAIHTO-X"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Écran partagé : le groupe actif et une visionneuse en lecture d'une autre"
-" bibliothèque côte à côte ; refusé sous 1280 pixels de large."
+"Écran partagé : deux plateaux, une bibliothèque de chaque côté ; refusé "
+"sous 1280 pixels de large."
 msgstr ""
-"Jaettu näyttö: aktiivinen ryhmä ja toisen kirjaston vain luku -katselin "
-"rinnakkain; hylätään alle 1280 pikselin leveydellä."
+"Jaettu näyttö: kaksi lautaa, yksi kirjasto kummallakin puolella; evätään "
+"alle 1280 pikselin leveydellä."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-ALT-← / CTRL-ALT-→"
+msgstr "CTRL-ALT-← / CTRL-ALT-→"
+
+#: ../../source/raccourcis.rst:1
+msgid "Écran partagé : active le volet de gauche / de droite."
+msgstr "Jaettu näyttö: aktivoi vasemman / oikean ruudun."
 
 #: ../../source/raccourcis.rst:1
 msgid "x"

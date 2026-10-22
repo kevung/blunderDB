@@ -15,6 +15,53 @@ export const activeGroupId = writable(1);
 export const groupActivityStore = writable(/** @type {Map<number, GroupActivity>} */ (new Map()));
 /** The groups whose library a job wrote while they were off screen: read again on their return. */
 const staleGroups = new Set();
+/**
+ * Whether a switch of group is in flight. Between its first await and the state put back, the
+ * screen still shows the group left while the backend may already be bound to the one coming:
+ * a second switch would photograph the wrong group, and a write would land in the wrong library.
+ */
+export const groupSwitchingStore = writable(false);
+
+/** The writes to the library on screen still awaiting the backend's answer. */
+const writesInFlight = new Set();
+
+/**
+ * Runs fn, a write that names rows of the library on screen by id; undefined, without running
+ * it, while a switch holds the lock. A switch begun meanwhile waits for it to be answered.
+ * @template T
+ * @param {() => Promise<T>} fn
+ * @returns {Promise<T | undefined>}
+ */
+export async function writingOnScreen(fn) {
+    if (get(groupSwitchingStore)) return undefined;
+    const write = fn();
+    writesInFlight.add(write);
+    try {
+        return await write;
+    } finally {
+        writesInFlight.delete(write);
+    }
+}
+
+/**
+ * Runs fn holding the switch lock; undefined, without running it, when a switch holds it already.
+ * @template T
+ * @param {() => Promise<T>} fn
+ * @returns {Promise<T | undefined>}
+ */
+export async function holdingSwitch(fn) {
+    if (get(groupSwitchingStore)) return undefined;
+    groupSwitchingStore.set(true);
+    try {
+        // Each Wails call runs in its own goroutine: a write sent before the switch could
+        // otherwise reach the backend after it, and land in the library coming.
+        await Promise.allSettled([...writesInFlight]);
+        return await fn();
+    } finally {
+        groupSwitchingStore.set(false);
+    }
+}
+
 /** Whether the import in flight runs one file at a time on the bound handle: no switch then. */
 export const importForegroundStore = writable(false);
 

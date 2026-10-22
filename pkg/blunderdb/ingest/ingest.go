@@ -106,6 +106,11 @@ type Summary struct {
 	// opened none. /v1/imports.* fills it so a client can ask for the full
 	// end-of-import report afterwards.
 	BatchID int64 `json:"batchId,omitempty"`
+	// CreatedPositions are the ids of the positions a native .db import
+	// inserted in its transaction, those it found already held left out: the
+	// one answer to "did this import add it" that a concurrent writer cannot
+	// falsify.
+	CreatedPositions []int64 `json:"-"`
 }
 
 // ExportOptions says how an export is made. Format picks the exporter; the

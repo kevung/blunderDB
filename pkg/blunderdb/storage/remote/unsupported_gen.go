@@ -98,6 +98,7 @@ var Unsupported = []string{
 	"MetadataStore.Save",
 	"MetadataStore.SetVersion",
 	"MetadataStore.StoredBytes",
+	"PositionStore.HoldForDelete",
 	"PositionStore.RaiseFlag",
 	"PositionStore.Reinstate",
 	"RencontreStore.Attach",
@@ -472,6 +473,10 @@ func (metadataStore) SetVersion(_ context.Context, _ string, _ string) error {
 
 func (metadataStore) StoredBytes(_ context.Context, _ string) (r0 int64, err error) {
 	return r0, unsupported("MetadataStore.StoredBytes")
+}
+
+func (positionStore) HoldForDelete(_ context.Context, _ string, _ int64) error {
+	return unsupported("PositionStore.HoldForDelete")
 }
 
 func (positionStore) RaiseFlag(_ context.Context, _ string, _ *domain.Position) (r0 bool, err error) {

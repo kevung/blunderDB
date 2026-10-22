@@ -56,12 +56,26 @@ type ViewerItem struct {
 // one). The group lock is held throughout, so no switch or close moves the
 // library under the read.
 func (a *App) readGroup(group int, read func(d *database.Database) error) error {
+	return a.onGroup(group, false, read)
+}
+
+// writeGroup is readGroup for a write: a locked group (SetLibraryGroupLocked)
+// or a library open read-only refuses it, asked under the same hold of
+// libs.mu that keeps the group bound while fn runs.
+func (a *App) writeGroup(group int, write func(d *database.Database) error) error {
+	return a.onGroup(group, true, write)
+}
+
+func (a *App) onGroup(group int, writes bool, fn func(d *database.Database) error) error {
 	if a.db == nil {
 		return errors.New("no database handle")
 	}
 	a.libs.mu.Lock()
 	defer a.libs.mu.Unlock()
 	a.libs.init()
+	if writes && a.libs.locked[group] {
+		return ErrLibraryGroupLocked
+	}
 	carrier := a.db
 	if group != 0 && group != a.libs.active {
 		carrier = a.libs.parked[group]
@@ -72,7 +86,10 @@ func (a *App) readGroup(group int, read func(d *database.Database) error) error 
 	if st, _ := database.CurrentStore(carrier); st == nil {
 		return errors.New("no database open")
 	}
-	return read(carrier)
+	if writes && carrier.IsReadOnly() {
+		return errors.New("the library is open read-only")
+	}
+	return fn(carrier)
 }
 
 // ViewerSteps lists the stops of src in group, in order.

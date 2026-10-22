@@ -137,3 +137,130 @@ func TestTransferToGroup_LockRefuses(t *testing.T) {
 		t.Error("locking a group that does not exist succeeded")
 	}
 }
+
+// A position carried from one pane onto the other lands in the destination
+// alone, and can be taken back; the copy of a position the destination held
+// already offers nothing to take back, and taking back leaves the source as
+// it was.
+func TestCopyPositionToGroup_UndoTakesBackOnlyWhatItAdded(t *testing.T) {
+	a, _ := twoGroups(t)
+	if s, err := a.ImportFilesIn(1, []string{filepath.Join("..", "..", "testdata", "test.mat")}, "test"); err != nil || s.Succeeded != 1 {
+		t.Fatalf("import into A: %+v, %v", s, err)
+	}
+	ids := everything(t, a, 1).PositionIDs
+	before := positionsOf(t, a, 1)
+
+	cp, err := a.CopyPositionToGroup(1, ids[0], 2)
+	if err != nil || cp.Receipt == 0 || cp.Positions != 1 {
+		t.Fatalf("copy A → B: %+v, %v", cp, err)
+	}
+	if n := positionsOf(t, a, 2); n != 1 {
+		t.Fatalf("B holds %d positions after one copy, want 1", n)
+	}
+	again, err := a.CopyPositionToGroup(1, ids[0], 2)
+	if err != nil || again.Receipt != 0 {
+		t.Fatalf("second copy: %+v, %v — want nothing to take back", again, err)
+	}
+	if err := a.UndoPositionCopy(cp.Receipt); err != nil {
+		t.Fatal(err)
+	}
+	if n := positionsOf(t, a, 2); n != 0 {
+		t.Fatalf("B holds %d positions after the undo, want 0", n)
+	}
+	if n := positionsOf(t, a, 1); n != before {
+		t.Fatalf("A holds %d positions after the undo, want %d", n, before)
+	}
+	if err := a.SetLibraryGroupLocked(2, true); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := a.CopyPositionToGroup(1, ids[0], 2); !errors.Is(err, ErrLibraryGroupLocked) {
+		t.Fatalf("copy into a locked group: %v, want ErrLibraryGroupLocked", err)
+	}
+}
+
+// copiedIntoB imports test.mat into group A and carries its first position
+// into group B, returning the copy and the position's id in B.
+func copiedIntoB(t *testing.T, a *App) (PositionCopy, int64) {
+	t.Helper()
+	if s, err := a.ImportFilesIn(1, []string{filepath.Join("..", "..", "testdata", "test.mat")}, "test"); err != nil || s.Succeeded != 1 {
+		t.Fatalf("import into A: %+v, %v", s, err)
+	}
+	cp, err := a.CopyPositionToGroup(1, everything(t, a, 1).PositionIDs[0], 2)
+	if err != nil || cp.Receipt == 0 {
+		t.Fatalf("copy A → B: %+v, %v", cp, err)
+	}
+	return cp, everything(t, a, 2).PositionIDs[0]
+}
+
+// A copy the destination has written on since — a comment, a collection —
+// is not taken back: the delete would carry that work away with it.
+func TestUndoPositionCopy_RefusesAPositionChangedSince(t *testing.T) {
+	for name, change := range map[string]func(d *database.Database, id int64) error{
+		"comment": func(d *database.Database, id int64) error { return d.AddComment(id, "noted after the copy") },
+		"collection": func(d *database.Database, id int64) error {
+			c, err := d.CreateCollection("kept", "")
+			if err != nil {
+				return err
+			}
+			return d.AddPositionToCollection(c, id)
+		},
+	} {
+		t.Run(name, func(t *testing.T) {
+			a, _ := twoGroups(t)
+			cp, id := copiedIntoB(t, a)
+			if err := a.readGroup(2, func(d *database.Database) error { return change(d, id) }); err != nil {
+				t.Fatal(err)
+			}
+			if err := a.UndoPositionCopy(cp.Receipt); !errors.Is(err, database.ErrPositionChanged) {
+				t.Fatalf("undo after a change: %v, want ErrPositionChanged", err)
+			}
+			if n := positionsOf(t, a, 2); n != 1 {
+				t.Fatalf("B holds %d positions after the refused undo, want 1", n)
+			}
+		})
+	}
+}
+
+// A group that opened another library since the copy names other rows by
+// the same id: the copy is not taken back from it.
+func TestUndoPositionCopy_RefusesAnotherLibraryInTheGroup(t *testing.T) {
+	a, db := twoGroups(t)
+	cp, _ := copiedIntoB(t, a)
+	if err := a.ActivateLibraryGroup(2); err != nil {
+		t.Fatal(err)
+	}
+	if err := db.OpenDatabase(newLibraryFile(t, t.TempDir(), "c.db", 1)); err != nil {
+		t.Fatal(err)
+	}
+	if err := a.UndoPositionCopy(cp.Receipt); err == nil {
+		t.Fatal("undo into a group that opened another library succeeded")
+	}
+	if n := positionsOf(t, a, 2); n != 1 {
+		t.Fatalf("the other library holds %d positions after the refused undo, want 1", n)
+	}
+	if err := a.UndoPositionCopy(cp.Receipt); err == nil {
+		t.Fatal("a receipt was taken back twice")
+	}
+}
+
+// An undo refused for a reason that passes — the group locked meanwhile —
+// keeps its receipt: once the group is unlocked, the same undo succeeds.
+func TestUndoPositionCopy_KeepsTheReceiptAfterATransientRefusal(t *testing.T) {
+	a, _ := twoGroups(t)
+	cp, _ := copiedIntoB(t, a)
+	if err := a.SetLibraryGroupLocked(2, true); err != nil {
+		t.Fatal(err)
+	}
+	if err := a.UndoPositionCopy(cp.Receipt); !errors.Is(err, ErrLibraryGroupLocked) {
+		t.Fatalf("undo into a locked group: %v, want ErrLibraryGroupLocked", err)
+	}
+	if err := a.SetLibraryGroupLocked(2, false); err != nil {
+		t.Fatal(err)
+	}
+	if err := a.UndoPositionCopy(cp.Receipt); err != nil {
+		t.Fatalf("undo once unlocked: %v", err)
+	}
+	if n := positionsOf(t, a, 2); n != 0 {
+		t.Fatalf("B holds %d positions after the undo, want 0", n)
+	}
+}

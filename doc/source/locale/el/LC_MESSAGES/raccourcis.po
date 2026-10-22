@@ -712,11 +712,19 @@ msgstr "CTRL-SHIFT-X"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Écran partagé : le groupe actif et une visionneuse en lecture d'une autre"
-" bibliothèque côte à côte ; refusé sous 1280 pixels de large."
+"Écran partagé : deux plateaux, une bibliothèque de chaque côté ; refusé "
+"sous 1280 pixels de large."
 msgstr ""
-"Διαιρεμένη οθόνη: η ενεργή ομάδα και ένας προβολέας μόνο ανάγνωσης άλλης "
-"βιβλιοθήκης δίπλα-δίπλα· απορρίπτεται κάτω από 1280 pixel πλάτος."
+"Διαιρεμένη οθόνη: δύο ταμπλό, μία βιβλιοθήκη σε κάθε πλευρά· απορρίπτεται"
+" κάτω από 1280 εικονοστοιχεία πλάτος."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-ALT-← / CTRL-ALT-→"
+msgstr "CTRL-ALT-← / CTRL-ALT-→"
+
+#: ../../source/raccourcis.rst:1
+msgid "Écran partagé : active le volet de gauche / de droite."
+msgstr "Διαιρεμένη οθόνη: ενεργοποιεί το αριστερό / δεξί τμήμα."
 
 #: ../../source/raccourcis.rst:1
 msgid "x"

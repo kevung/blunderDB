@@ -2,12 +2,12 @@
 // header, or the basket poured into a group, is copied by the backend's one transfer
 // (TransferToGroup → Database.TransferTo), in the background, attached to the group it writes.
 import { get } from 'svelte/store';
-import { TransferToGroup, SetLibraryGroupLocked } from '../../wailsjs/go/gui/App.js';
-import { transferBasketStore, lockedGroupsStore } from '../stores/transferBasketStore.js';
+import { TransferToGroup, SetLibraryGroupLocked, CopyPositionToGroup, UndoPositionCopy } from '../../wailsjs/go/gui/App.js';
+import { transferBasketStore, lockedGroupsStore, transferUndoStore } from '../stores/transferBasketStore.js';
 import { activeGroupId, groupIdsStore, noteGroupJob } from '../stores/groupActivityStore.js';
 import { positionStore } from '../stores/positionStore.js';
 import { databasePathStore, libraryChanged } from '../stores/databaseStore.js';
-import { tabGroupsStore } from '../stores/libraryGroupStore.js';
+import { tabGroupsStore, groupName } from '../stores/libraryGroupStore.js';
 import { refreshLibraryCounts } from '../stores/libraryCountsStore.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { tMsg } from '../i18n';
@@ -70,6 +70,16 @@ export async function transferToGroup(dst, items) {
         if (noteGroupJob(dst, 'done', 'transfer', message)) setStatusBarMessage(message);
         return false;
     }
+    return transferDone(dst, summary).ok;
+}
+
+/**
+ * Says how a transfer into dst ended: on screen, the panels read the library again; off screen,
+ * its header carries the badge. Says whether it ran to its end, and what was said.
+ * @param {number} dst
+ * @param {import('../../wailsjs/go/models').gui.TransferSummary} summary
+ */
+function transferDone(dst, summary) {
     const failed = summary.errors?.length ?? 0;
     const message = summary.cancelled
         ? tMsg('transfer.cancelled')
@@ -82,13 +92,67 @@ export async function transferToGroup(dst, items) {
               lessons: summary.lessons,
               failed
           });
-    // On screen, the panels read the library again; off screen, its header carries the badge.
     if (noteGroupJob(dst, 'done', 'transfer', message)) {
         setStatusBarMessage(message);
         libraryChanged();
         refreshLibraryCounts();
     }
-    return !summary.cancelled && failed === 0;
+    return { ok: !summary.cancelled && failed === 0, message };
+}
+
+/**
+ * A position carried from one split-screen pane onto the other: copied straight into the
+ * library of that pane (a locked group refuses), and, when the copy added it there, offered to
+ * take back from the status bar.
+ * @param {number} dst
+ * @param {TransferItem} item
+ */
+export async function copyPositionToPane(dst, item) {
+    if (isLocked(dst)) {
+        setStatusBarMessage(tMsg('transfer.locked'));
+        return false;
+    }
+    if (item.group === dst) {
+        setStatusBarMessage(tMsg('transfer.nothing'));
+        return false;
+    }
+    transferUndoStore.set(null);
+    noteGroupJob(dst, 'running', 'transfer');
+    let copy;
+    try {
+        copy = await CopyPositionToGroup(item.group, item.id, dst);
+    } catch (error) {
+        logger.error('copying a position between split panes failed:', error);
+        const message = tMsg('transfer.failed', { error: String(error) });
+        noteGroupJob(dst, 'done', 'transfer', message);
+        setStatusBarMessage(message);
+        return false;
+    }
+    // Both panes are in sight: the account is said now, whichever of them was written.
+    const { ok, message } = transferDone(dst, copy);
+    setStatusBarMessage(message);
+    if (ok && copy.receipt) transferUndoStore.set({ dst, receipt: copy.receipt, name: groupName(pathOf(dst)) });
+    return ok;
+}
+
+/** Takes back the last position carried between split panes. */
+export async function undoPaneCopy() {
+    const undo = get(transferUndoStore);
+    if (!undo) return false;
+    transferUndoStore.set(null);
+    try {
+        await UndoPositionCopy(undo.receipt);
+    } catch (error) {
+        logger.error('taking back a position copy failed:', error);
+        setStatusBarMessage(tMsg('transfer.undoFailed', { error: String(error) }));
+        return false;
+    }
+    setStatusBarMessage(tMsg('transfer.undone', { name: undo.name }));
+    if (undo.dst === get(activeGroupId)) {
+        libraryChanged();
+        refreshLibraryCounts();
+    }
+    return true;
 }
 
 /**
@@ -172,12 +236,18 @@ export async function toggleGroupLock(id) {
 }
 
 /**
- * Where a drag ended: a group's header (its id) or the basket. The basket itself can be dragged
- * onto a header, which pours it there.
- * @param {number | 'basket'} target
+ * Where a drag ended: a group's header (its id), a split-screen pane ({ pane: its group }) or the
+ * basket. The basket itself can be dragged onto a header, which pours it there.
+ * @param {number | 'basket' | { pane: number }} target
  * @param {TransferItem | { kind: 'basket' }} dragged
  */
 export function dropTransferItem(target, dragged) {
+    if (typeof target === 'object') {
+        if (dragged.kind === 'position') copyPositionToPane(target.pane, /** @type {TransferItem} */ (dragged));
+        else if (dragged.kind !== 'basket') transferToGroup(target.pane, [/** @type {TransferItem} */ (dragged)]);
+        else pourBasket(target.pane);
+        return;
+    }
     if (dragged.kind === 'basket') {
         if (target !== 'basket') pourBasket(target);
         return;

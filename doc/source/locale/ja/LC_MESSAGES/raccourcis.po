@@ -662,9 +662,17 @@ msgstr "CTRL-SHIFT-X"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Écran partagé : le groupe actif et une visionneuse en lecture d'une autre"
-" bibliothèque côte à côte ; refusé sous 1280 pixels de large."
-msgstr "分割画面：アクティブなグループと別のライブラリの閲覧専用ビューアを並べて表示。幅 1280 ピクセル未満では使えません。"
+"Écran partagé : deux plateaux, une bibliothèque de chaque côté ; refusé "
+"sous 1280 pixels de large."
+msgstr "分割画面：2 つの盤面、左右に 1 つずつのライブラリ。幅 1280 ピクセル未満では拒否されます。"
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-ALT-← / CTRL-ALT-→"
+msgstr "CTRL-ALT-← / CTRL-ALT-→"
+
+#: ../../source/raccourcis.rst:1
+msgid "Écran partagé : active le volet de gauche / de droite."
+msgstr "分割画面：左 / 右のペインをアクティブにします。"
 
 #: ../../source/raccourcis.rst:1
 msgid "x"

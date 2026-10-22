@@ -704,11 +704,19 @@ msgstr "CTRL-SHIFT-X"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Écran partagé : le groupe actif et une visionneuse en lecture d'une autre"
-" bibliothèque côte à côte ; refusé sous 1280 pixels de large."
+"Écran partagé : deux plateaux, une bibliothèque de chaque côté ; refusé "
+"sous 1280 pixels de large."
 msgstr ""
-"Разделённый экран: активная группа и просмотрщик только для чтения другой"
-" библиотеки рядом; отклоняется при ширине меньше 1280 пикселей."
+"Разделённый экран: две доски, по библиотеке с каждой стороны; отклоняется"
+" при ширине меньше 1280 пикселей."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-ALT-← / CTRL-ALT-→"
+msgstr "CTRL-ALT-← / CTRL-ALT-→"
+
+#: ../../source/raccourcis.rst:1
+msgid "Écran partagé : active le volet de gauche / de droite."
+msgstr "Разделённый экран: делает активной левую / правую панель."
 
 #: ../../source/raccourcis.rst:1
 msgid "x"

@@ -701,11 +701,19 @@ msgstr "CTRL-SHIFT-X"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Écran partagé : le groupe actif et une visionneuse en lecture d'une autre"
-" bibliothèque côte à côte ; refusé sous 1280 pixels de large."
+"Écran partagé : deux plateaux, une bibliothèque de chaque côté ; refusé "
+"sous 1280 pixels de large."
 msgstr ""
-"Split screen: the active group and a read-only viewer of another library "
-"side by side; refused below 1280 pixels wide."
+"Split screen: two boards, one library on each side; refused below 1280 "
+"pixels wide."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-ALT-← / CTRL-ALT-→"
+msgstr "CTRL-ALT-← / CTRL-ALT-→"
+
+#: ../../source/raccourcis.rst:1
+msgid "Écran partagé : active le volet de gauche / de droite."
+msgstr "Split screen: activates the left / right pane."
 
 #: ../../source/raccourcis.rst:1
 msgid "x"

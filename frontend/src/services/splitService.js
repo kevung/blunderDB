@@ -1,24 +1,44 @@
-// The split screen (ADR-0101). Two panes of the same width: the live group, and a read-only viewer
-// of a library group (its board, analysis and comment, walked through its library, a match move
-// by move or a collection). Clicking the viewer activates its group: the two libraries trade
-// roles and each keeps its pane. Below SPLIT_MIN_WIDTH the split is refused and the in-place swap
-// (x) offered instead.
+// The split screen (ADR-0101 §8). Only the board area is cut in two: each pane holds a library
+// group on a fixed side and never changes side. The active group's pane is live; the other is
+// frozen (its board where the group was left, and its analysis) and dimmed. Clicking it, or
+// Ctrl+Alt+←/→, activates its group through activateGroup and nothing else moves. Toolbar, tabs,
+// panels and the one status bar always speak for the active group. Below SPLIT_MIN_WIDTH the
+// split is refused; under SPLIT_PANEL_BESIDE_WIDTH the panel goes under the boards.
 import { get } from 'svelte/store';
-import { splitStore } from '../stores/splitStore.js';
-import { statusBarTextStore } from '../stores/uiStore.js';
+import { splitStore, splitShakeStore, splitFrozenStore } from '../stores/splitStore.js';
+import { statusBarTextStore, currentPositionIndexStore } from '../stores/uiStore.js';
 import { groupIdsStore, activeGroupId, parkedGroupsStore, activateGroup } from '../stores/libraryGroupStore.js';
+import { groupSwitchingStore, holdingSwitch } from '../stores/groupActivityStore.js';
 import { positionStore, matchContextStore, positionsStore } from '../stores/positionStore.js';
-import { currentPositionIndexStore } from '../stores/uiStore.js';
 import { tMsg } from '../i18n';
 
-/** Narrower than this (CSS pixels), a pane could not show a board and its panel side by side. */
+/** Narrower than this (CSS pixels), two boards and the panel do not fit. */
 export const SPLIT_MIN_WIDTH = 1280;
+/** From this width (CSS pixels) the panel stays beside the boards; below, it goes under them. */
+export const SPLIT_PANEL_BESIDE_WIDTH = 1600;
+
+/** @param {number} width */
+export const splitPanelBeside = (width) => width >= SPLIT_PANEL_BESIDE_WIDTH;
+
+const REMEMBERED = 'blunderdb.split';
+
+// Until the last session's split is put back (or found absent), the split off at startup is not
+// a choice of the user and must not overwrite the one remembered.
+let remembering = false;
+
+/** Whether changes of the split are kept for the next session yet. */
+export const splitRemembering = () => remembering;
+
+/** Startup is past the point where the last split could be put back. */
+export function markSplitRestored() {
+    remembering = true;
+}
 
 /**
- * The live pane changed width without the window doing so: what sizes itself on the window's
+ * The board area changed shape without the window doing so: what sizes itself on the window's
  * resize (the board, the panels) measures again once the new layout is in place.
  */
-function relayout() {
+export function relayout() {
     requestAnimationFrame(() => window.dispatchEvent(new Event('resize')));
 }
 
@@ -29,7 +49,64 @@ export function windowWidth() {
 }
 
 /**
- * Turn the split on or off. Too narrow a window refuses it and offers the swap.
+ * The groups the two panes hold. A side whose group closed takes the first other group, else
+ * the one left; with no group named yet, the active one goes left.
+ * @param {import('../stores/splitStore.js').SplitState} state
+ * @param {number[]} ids
+ * @param {number} active
+ * @returns {{ left: number, right: number }}
+ */
+export function paneGroups(state, ids, active) {
+    let left = state.left != null && ids.includes(state.left) ? state.left : null;
+    let right = state.right != null && ids.includes(state.right) ? state.right : null;
+    if (left == null && right == null) {
+        left = active;
+        right = ids.find((id) => id !== active) ?? active;
+    } else if (left == null) {
+        left = ids.find((id) => id !== right) ?? /** @type {number} */ (right);
+    } else if (right == null) {
+        right = ids.find((id) => id !== left) ?? left;
+    }
+    // The active group is always on screen: a group neither side holds takes the right side.
+    if (active !== left && active !== right) right = active;
+    return { left, right: /** @type {number} */ (right) };
+}
+
+/**
+ * The side whose pane is live.
+ * @param {import('../stores/splitStore.js').SplitState} state
+ * @param {{ left: number, right: number }} groups
+ * @param {number} active
+ * @returns {'left' | 'right'}
+ */
+export function liveSide(state, groups, active) {
+    if (groups.left === groups.right) return state.sameSide;
+    return groups.left === active ? 'left' : 'right';
+}
+
+/**
+ * The active group moved from `from` to `to`. A group a pane holds leaves both sides as they
+ * are; a group neither holds (activated from its tab, or just opened) takes the live side.
+ * @param {import('../stores/splitStore.js').SplitState} state
+ * @param {number} from
+ * @param {number} to
+ * @param {number[]} ids
+ * @returns {import('../stores/splitStore.js').SplitState}
+ */
+export function followActivation(state, from, to, ids) {
+    if (!state.on || from === to) return state;
+    const groups = paneGroups(state, ids.includes(from) ? ids : [...ids, from], from);
+    if (to === groups.left || to === groups.right) {
+        if (state.left === groups.left && state.right === groups.right) return state;
+        return { ...state, ...groups };
+    }
+    const side = liveSide(state, groups, from);
+    return { ...state, ...groups, [side]: to };
+}
+
+/**
+ * Turn the split on or off. Too narrow a window refuses it and says why. The active group takes
+ * the left side, the first other group the right one (the same library when it is alone).
  * @param {number} [width]
  * @returns {boolean} whether the split is on afterwards
  */
@@ -44,7 +121,9 @@ export function toggleSplit(width = windowWidth()) {
         statusBarTextStore.set(tMsg('split.tooNarrow', { min: SPLIT_MIN_WIDTH }));
         return false;
     }
-    splitStore.set({ ...now, on: true });
+    const active = get(activeGroupId);
+    const groups = paneGroups({ on: true, left: null, right: null, sameSide: 'left' }, get(groupIdsStore), active);
+    splitStore.set({ on: true, ...groups, sameSide: 'left' });
     relayout();
     return true;
 }
@@ -58,38 +137,58 @@ export function closeSplitIfNarrow(width = windowWidth()) {
     statusBarTextStore.set(tMsg('split.closedNarrow', { min: SPLIT_MIN_WIDTH }));
 }
 
-/**
- * The group the viewer shows: the one it names while it is open, else the first other group,
- * else the active one (a second look at the same library).
- * @param {number | null} wanted
- * @param {number[]} ids
- * @param {number} active
- */
-export function viewerGroup(wanted, ids, active) {
-    if (wanted != null && ids.includes(wanted)) return wanted;
-    return ids.find((id) => id !== active) ?? active;
+/** @param {'left' | 'right'} side */
+function shake(side) {
+    splitShakeStore.update((s) => ({ side, n: s.n + 1 }));
 }
 
 /**
- * The active group moved from `from` to `to`: when the viewer's group came on screen, the viewer
- * takes the group left and the two panes trade sides, so each library stays where it was seen.
- * @param {import('../stores/splitStore.js').SplitState} state
- * @param {number} from
- * @param {number} to
- * @param {number[]} ids
- * @returns {import('../stores/splitStore.js').SplitState}
+ * Bring the pane of `side` live. Another library: its group is activated, and a refusal (a Duel,
+ * a training session, an import: switchRefusal) leaves the focus where it was, shakes the pane
+ * and lets the status bar say why. The same library on both sides: the two views trade places.
+ * @param {'left' | 'right'} side
+ * @returns {Promise<boolean>} whether that pane is live afterwards
  */
-export function followActivation(state, from, to, ids) {
-    if (from === to || viewerGroup(state.group, ids, from) !== to) return state;
-    return { ...state, group: from, side: state.side === 'left' ? 'right' : 'left' };
-}
-
-/** Bring the viewer's group live, in its pane. */
-export async function activateViewer() {
+export async function activatePane(side) {
     const state = get(splitStore);
-    const target = viewerGroup(state.group, get(groupIdsStore), get(activeGroupId));
-    if (target === get(activeGroupId)) return false;
-    return activateGroup(target);
+    // A switch in flight: the key repeating behind it is dropped, nothing shakes.
+    if (!state.on || get(groupSwitchingStore)) return false;
+    const active = get(activeGroupId);
+    const groups = paneGroups(state, get(groupIdsStore), active);
+    if (groups.left === groups.right) return (await holdingSwitch(() => swapSameLibrary(state, side))) ?? false;
+    const target = groups[side];
+    if (target === active) return true;
+    const ok = await activateGroup(target);
+    if (!ok) shake(side);
+    return ok;
+}
+
+/**
+ * Two views of one library: the frozen one comes live on its position, and the position left
+ * freezes in the other pane. A match replayed has no list to find the position in: refused.
+ * @param {import('../stores/splitStore.js').SplitState} state
+ * @param {'left' | 'right'} side
+ */
+async function swapSameLibrary(state, side) {
+    if (state.sameSide === side) return true;
+    // A match replayed walks its moves, not the list: the frozen position has no index there.
+    if (get(matchContextStore)?.isMatchMode) {
+        statusBarTextStore.set(tMsg('split.sameLibraryMatchMode'));
+        shake(side);
+        return false;
+    }
+    const frozen = get(splitFrozenStore).positionId;
+    const index = frozen != null ? await positionsStore.findIndex(frozen) : -1;
+    if (index == null || index < 0) {
+        statusBarTextStore.set(tMsg('split.sameLibraryNotInList'));
+        shake(side);
+        return false;
+    }
+    const leaving = positionsStore.idAt(get(currentPositionIndexStore)) ?? get(positionStore)?.id ?? null;
+    splitStore.update((s) => ({ ...s, sameSide: side }));
+    splitFrozenStore.update((f) => ({ ...f, refreeze: { positionId: leaving, n: (f.refreeze?.n ?? 0) + 1 } }));
+    currentPositionIndexStore.set(index);
+    return true;
 }
 
 /**
@@ -98,8 +197,8 @@ export async function activateViewer() {
  */
 
 /**
- * Where the viewer of a group starts: where that group was left. A match replayed stays on its
- * move; otherwise the library, on the position shown.
+ * Where the frozen pane of a group starts: where that group was left. A match replayed stays on
+ * its move; otherwise the library, on the position shown.
  * @param {any} photo a parked group's photograph (libraryGroupStore), or null for the active group
  * @returns {ViewerStart}
  */
@@ -120,4 +219,65 @@ export function viewerStart(photo) {
 /** @param {number} group */
 export function viewerStartOf(group) {
     return group === get(activeGroupId) ? viewerStart(null) : viewerStart(get(parkedGroupsStore).get(group) ?? null);
+}
+
+/**
+ * The split as it is kept from one session to the next: on or off, and the file on each side.
+ * @param {import('../stores/splitStore.js').SplitState} state
+ * @param {(group: number | null) => string} pathOf
+ */
+export function rememberSplit(state, pathOf) {
+    try {
+        localStorage.setItem(REMEMBERED, JSON.stringify({ on: state.on, left: pathOf(state.left), right: pathOf(state.right) }));
+    } catch {
+        // Storage refused (private profile): the split is simply not remembered.
+    }
+}
+
+/** @returns {{ on: boolean, left: string, right: string } | null} */
+export function rememberedSplit() {
+    try {
+        const saved = JSON.parse(localStorage.getItem(REMEMBERED) ?? 'null');
+        if (saved && typeof saved.left === 'string' && typeof saved.right === 'string') return { on: !!saved.on, left: saved.left, right: saved.right };
+    } catch {
+        // Unreadable: nothing remembered.
+    }
+    return null;
+}
+
+/**
+ * Put back the split of the last session, once the last library is open: the other side's file
+ * is opened in a group of its own and the library that was active comes back on screen.
+ * @param {string} activePath
+ * @param {(path: string) => Promise<number | null>} openOther opens path in a new group and
+ *   brings the active group back; resolves to the new group, or null when it could not be opened
+ * @param {number} [width]
+ * @returns {Promise<boolean>}
+ */
+export async function restoreSplit(activePath, openOther, width = windowWidth()) {
+    try {
+        return await putBackSplit(activePath, openOther, width);
+    } finally {
+        markSplitRestored();
+    }
+}
+
+/** @param {string} activePath @param {(path: string) => Promise<number | null>} openOther @param {number} width */
+async function putBackSplit(activePath, openOther, width) {
+    const saved = rememberedSplit();
+    if (!saved?.on || !activePath || width < SPLIT_MIN_WIDTH) return false;
+    if (activePath !== saved.left && activePath !== saved.right) return false;
+    const home = get(activeGroupId);
+    const otherPath = activePath === saved.left ? saved.right : saved.left;
+    let other = home;
+    if (otherPath && otherPath !== activePath) {
+        const opened = await openOther(otherPath);
+        if (opened == null || get(activeGroupId) !== home) return false;
+        other = opened;
+    }
+    const left = activePath === saved.left ? home : other;
+    const right = left === home ? other : home;
+    splitStore.set({ on: true, left, right, sameSide: 'left' });
+    relayout();
+    return true;
 }

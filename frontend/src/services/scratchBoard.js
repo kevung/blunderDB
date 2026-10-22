@@ -26,6 +26,7 @@
 import { get } from 'svelte/store';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionStore } from '../stores/positionStore.js';
+import { groupSwitchingStore } from '../stores/groupActivityStore.js';
 import { emptyAnalysis, evalVerdictStore } from '../stores/analysisStore.js';
 import { SaveDisplayedEvaluation } from '../../wailsjs/go/database/Database.js';
 import { statusBarModeStore } from '../stores/uiStore.js';
@@ -49,6 +50,12 @@ export const SCRATCH_SAVE_MODES = Object.freeze(['EDIT', 'EVAL']);
  *   scratch board, a refused board, a backend error).
  */
 export async function saveScratchBoard() {
+    // During a group switch the backend may already be bound to the library coming: the board
+    // shown belongs to the one leaving.
+    if (get(groupSwitchingStore)) {
+        setStatusBarMessage(tMsg('libraryGroups.switching'));
+        return null;
+    }
     if (!get(databasePathStore)) {
         setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
         return null;

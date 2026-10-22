@@ -710,12 +710,19 @@ msgstr "CTRL-MAYÚS-X"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Écran partagé : le groupe actif et une visionneuse en lecture d'une autre"
-" bibliothèque côte à côte ; refusé sous 1280 pixels de large."
+"Écran partagé : deux plateaux, une bibliothèque de chaque côté ; refusé "
+"sous 1280 pixels de large."
 msgstr ""
-"Pantalla dividida: el grupo activo y un visor de solo lectura de otra "
-"biblioteca uno al lado del otro; se rechaza por debajo de 1280 píxeles de"
-" ancho."
+"Pantalla dividida: dos tableros, una biblioteca a cada lado; rechazada "
+"por debajo de 1280 píxeles de ancho."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-ALT-← / CTRL-ALT-→"
+msgstr "CTRL-ALT-← / CTRL-ALT-→"
+
+#: ../../source/raccourcis.rst:1
+msgid "Écran partagé : active le volet de gauche / de droite."
+msgstr "Pantalla dividida: activa el panel izquierdo / derecho."
 
 #: ../../source/raccourcis.rst:1
 msgid "x"

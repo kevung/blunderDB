@@ -432,19 +432,37 @@ bouton *Épingler* sous une vignette de l'onglet Ailleurs choisit plutôt cette
 voisine, jusqu'à *Désépingler* ou un changement de groupe.
 
 **L'écran partagé.** Sur un grand écran, le bouton ◫ de la barre des onglets
-(*CTRL-MAJ-X*) partage la fenêtre en deux volets de même largeur. L'un porte
-le groupe actif, entier ; l'autre une visionneuse en lecture d'une autre
-bibliothèque ouverte (de la même, s'il n'y en a qu'une) : son plateau,
-l'analyse de la position et son commentaire. La visionneuse parcourt toute la
-bibliothèque, un match rejoué coup par coup (la partie, le coup et ce qui a
-été joué s'affichent au-dessus du plateau) ou une collection, au choix de sa
-liste déroulante, avec ses boutons ⏮ ◀ ▶ ⏭. Elle s'ouvre là où cette
-bibliothèque a été quittée. Rien de ce qu'elle montre n'est écrit nulle part.
-Cliquer la visionneuse, hors de ses boutons, active sa bibliothèque : les deux
-volets échangent leurs rôles et chaque bibliothèque garde son côté ;
-*CTRL-MAJ-PAGE PRÉC.* / *PAGE SUIV.* fait de même au clavier. Sous 1280 pixels de large,
-l'écran partagé se refuse et propose l'échange sur place (*x*) ; il se ferme
-si la fenêtre devient trop étroite.
+(*CTRL-MAJ-X*) coupe en deux la seule zone du plateau. Chaque volet porte une
+bibliothèque ouverte et garde son côté : le groupe actif à gauche à
+l'ouverture, la première autre bibliothèque à droite (la même, s'il n'y en a
+qu'une ; l'en-tête dit alors *même base*). Le volet actif est vivant, cerné de
+la couleur de son groupe. L'autre est figé et atténué : le plateau de sa
+bibliothèque là où elle a été laissée, l'analyse de la position et son
+commentaire ; rien de ce qu'il montre n'est écrit nulle part. Chaque volet
+affiche son compteur *n / N*.
+
+Un clic dans le volet figé, ou *CTRL-ALT-←* / *CTRL-ALT-→*, active sa
+bibliothèque ; le contour passe de l'autre côté et rien d'autre ne bouge. Avec
+une seule bibliothèque, les deux vues échangent leurs positions, sauf en mode
+match : un match rejoué n'a pas de liste où retrouver la position, la barre
+d'état le dit. Barre d'outils, onglets, panneaux et barre d'état restent en un exemplaire et
+parlent toujours de la bibliothèque active : sa pastille et son nom précèdent
+les onglets des panneaux et le message de la barre d'état, et le titre de la
+fenêtre la nomme. Le clavier, *CTRL-S*, les imports et les commandes vont au
+volet actif. Pendant un Duel, une séance d'entraînement ou un import, le
+changement est refusé : le volet cliqué tremble et la barre d'état dit
+pourquoi. Tant qu'un changement de bibliothèque n'est pas achevé, un second est
+ignoré, et *CTRL-S*, la mise à jour et la suppression d'une position sont
+refusées.
+
+Glisser le compteur d'un volet, ou le plateau du volet figé, sur l'autre volet
+copie la position dans la bibliothèque de ce volet, avec son analyse et son commentaire, sauf si
+son groupe est verrouillé ; la barre d'état propose alors *Annuler*. À partir
+de 1600 pixels de large, le panneau reste à côté des plateaux ; entre 1280 et
+1600, il passe dessous ; sous 1280, l'écran partagé se refuse et propose
+l'échange sur place (*x*), et il se ferme si la fenêtre devient trop étroite.
+L'écran partagé et la bibliothèque de chaque côté sont repris à la session
+suivante.
 
 .. _configuration:
 

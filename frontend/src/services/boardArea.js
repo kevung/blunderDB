@@ -4,8 +4,8 @@
  * (ADR-0047), où ils défilent et passent au champ suivant.
  */
 
-/** Ce qui, dans la zone principale, n'est pas le plateau. */
-const NOT_THE_BOARD = '.direction-view';
+/** Ce qui, dans la zone principale, n'est pas le plateau : la page Direction, le volet figé de l'écran partagé. */
+const NOT_THE_BOARD = '.direction-view, .split-viewer';
 
 /**
  * @param {Element | null | undefined} el
