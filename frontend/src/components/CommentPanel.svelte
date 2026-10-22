@@ -10,7 +10,7 @@
     import { MODAL, openModal } from '../stores/uiStore';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
     import { t, tMsg } from '../i18n';
-    import { writingOnScreen } from '../stores/groupActivityStore.js';
+    import { writingOnScreen, readOfLibrary } from '../stores/groupActivityStore.js';
     import { setStatusBarMessage } from '../services/databaseService.js';
     import { formatDateTime } from '../utils/format.js';
     import PanelHeader from './panels/PanelHeader.svelte';
@@ -173,7 +173,7 @@
         try {
             const pos = $positionStore;
             if (pos && pos.id) {
-                allComments = (await GetCommentsByPosition(pos.id)) || [];
+                allComments = (await readOfLibrary(() => GetCommentsByPosition(pos.id))) || [];
             } else {
                 allComments = [];
             }
@@ -185,7 +185,7 @@
 
     async function filterComments(/** @type {string} */ q) {
         try {
-            displayedComments = (await SearchComments(q)) || [];
+            displayedComments = (await readOfLibrary(() => SearchComments(q))) || [];
         } catch (_error) {
             displayedComments = [];
         }

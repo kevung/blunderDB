@@ -11,6 +11,7 @@
     import { narrowToMonths } from '../../utils/statsWindow.js';
     import CountLink from '../panels/CountLink.svelte';
     import PanelTable from '../panels/PanelTable.svelte';
+    import { readOfLibrary } from '../../stores/groupActivityStore.js';
 
     /** @type {{ filter: object }} */
     let { filter } = $props();
@@ -62,7 +63,7 @@
         return run('windows', async () => {
             windowsError = '';
             try {
-                windows = (await PRByWindow(filter, Number(months))) ?? [];
+                windows = (await readOfLibrary(() => PRByWindow(filter, Number(months)))) ?? [];
             } catch (err) {
                 windows = null;
                 windowsError = err?.message ?? String(err);

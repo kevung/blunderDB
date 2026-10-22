@@ -97,7 +97,7 @@ describe('LessonEditorModal', () => {
 
 describe('a write to the library while the editor is open', () => {
     test('reads the lessons again: a copy may have brought one', async () => {
-        render(LessonEditorModal, { visible: true });
+        render(LessonEditorModal, { props: { visible: true, onClose: () => {} } });
         await waitFor(() => expect(api.ListLessons).toHaveBeenCalled());
         await waitFor(() => expect(api.GetLesson).toHaveBeenCalled());
         api.ListLessons.mockClear();

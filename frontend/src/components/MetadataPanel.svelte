@@ -8,6 +8,7 @@
     import PanelHeader from './panels/PanelHeader.svelte';
     import FormGrid from './panels/FormGrid.svelte';
     import FormRow from './panels/FormRow.svelte';
+    import { readOfLibrary } from '../stores/groupActivityStore.js';
 
     let user = $state('');
     let description = $state('');
@@ -31,7 +32,7 @@
             logger.error('Error loading metadata:', error);
         }
         try {
-            issuance = await GetIssuanceInfo();
+            issuance = await readOfLibrary(() => GetIssuanceInfo());
         } catch (error) {
             logger.error('Error loading issuance info:', error);
             issuance = null;

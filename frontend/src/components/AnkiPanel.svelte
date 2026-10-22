@@ -40,6 +40,7 @@
     import ExplanationLine from './ExplanationLine.svelte';
     import AnswerMask from './AnswerMask.svelte';
     import { buildScoreCard, UNORDERED_SCORES } from '../services/scoreCard.js';
+    import { readOfLibrary } from '../stores/groupActivityStore.js';
 
     // Read-only store mirrors.
     let decks = $derived($ankiDecksStore || []);
@@ -194,7 +195,7 @@
     async function openReviewLog() {
         if (!selectedDeck) return;
         try {
-            reviewLog = (await GetAnkiReviewLog(selectedDeck.id, REVIEW_LOG_LIMIT)) || [];
+            reviewLog = (await readOfLibrary(() => GetAnkiReviewLog(selectedDeck.id, REVIEW_LOG_LIMIT))) || [];
             ankiViewModeStore.set('log');
         } catch (e) {
             fail(e);

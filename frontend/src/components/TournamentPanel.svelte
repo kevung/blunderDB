@@ -285,7 +285,7 @@
 
     async function loadAllMatches() {
         try {
-            availableMatches = (await ListMatches({ Unassigned: true, Text: addMatchSearch.trim(), Limit: 50 })) || [];
+            availableMatches = (await readOfLibrary(() => ListMatches({ Unassigned: true, Text: addMatchSearch.trim(), Limit: 50 }))) || [];
         } catch (error) {
             logger.error('Error loading matches:', error);
             availableMatches = [];
@@ -576,7 +576,7 @@
 
             let analysis = null;
             try {
-                analysis = await LoadAnalysis(startMovePos.position.id);
+                analysis = await readOfLibrary(() => LoadAnalysis(startMovePos.position.id));
             } catch (_e) {
                 /* ignored */
             }

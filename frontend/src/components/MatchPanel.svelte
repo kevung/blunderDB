@@ -815,7 +815,7 @@
 
         let analysis = null;
         try {
-            analysis = await LoadAnalysis(movePos.position.id);
+            analysis = await readOfLibrary(() => LoadAnalysis(movePos.position.id));
         } catch (_error) {
             /* ignored */
         }
