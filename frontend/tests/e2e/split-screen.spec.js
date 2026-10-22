@@ -28,7 +28,7 @@ async function openTwoGroups(page, width, height) {
                 ActivateLibraryGroup: null,
                 CloseLibraryGroup: null,
                 ViewerCatalogOf: { matches: [], collections: [] },
-                CopyPositionToGroup: { group: 1, positions: 1, matches: 0, alreadyHeld: 0, collections: 0, lessons: 0, errors: [], cancelled: false, created: 99 },
+                CopyPositionToGroup: { group: 1, positions: 1, matches: 0, alreadyHeld: 0, collections: 0, lessons: 0, errors: [], cancelled: false, receipt: 7 },
                 UndoPositionCopy: null
             }
         })
@@ -161,7 +161,7 @@ test('a position dragged from one pane onto the other is copied there, and can b
     // The drop activated nothing.
     expect(await callsOf(page, 'ActivateLibraryGroup')).toEqual([]);
     await page.locator('[data-testid="transfer-undo"]').click();
-    await expect.poll(() => callsOf(page, 'UndoPositionCopy')).toEqual([[2, 99]]);
+    await expect.poll(() => callsOf(page, 'UndoPositionCopy')).toEqual([[7]]);
     await expect(page.locator('[data-testid="transfer-undo"]')).toHaveCount(0);
 });
 
