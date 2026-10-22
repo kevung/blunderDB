@@ -224,6 +224,38 @@ func EvaluatePositionWithMET(searcher *Searcher, pos domain.Position, met *engin
 	return evaluateConfigured(&gnPos, &pos, searcher, cfg, state, candidates)
 }
 
+// RankAllPlaysWithMET values EVERY legal play of pos, dice set, at 0-ply with
+// the pruning pass off, best first, in pos's referential as
+// EvaluatePositionWithMET reports it. A transcriber picks the play that was
+// made, often one the pruning network would have cut. searcher may be nil
+// (one is made) and is re-aimed like EvaluatePositionWith's.
+func RankAllPlaysWithMET(searcher *Searcher, pos domain.Position, met *engine.MET) ([]domain.CheckerMove, error) {
+	if pos.Dice[0] < 1 || pos.Dice[0] > 6 || pos.Dice[1] < 1 || pos.Dice[1] > 6 {
+		return nil, fmt.Errorf("gammonnet: dice %v out of range", pos.Dice)
+	}
+	gnPos, err := FromDomain(&pos)
+	if err != nil {
+		return nil, err
+	}
+	cfg, state, err := ConfigForPositionMET(&pos, met, 0, 0)
+	if err != nil {
+		return nil, err
+	}
+	cfg.PruneK = 0
+	if searcher == nil {
+		if searcher, err = NewSearcher(cfg); err != nil {
+			return nil, err
+		}
+	} else if err := searcher.Reconfigure(cfg); err != nil {
+		return nil, err
+	}
+	scale, ok := NewEquityScale(state)
+	if !ok {
+		return nil, fmt.Errorf("gammonnet: no equity referential at score %v", pos.Score)
+	}
+	return evaluateMoves(&gnPos, &pos, searcher, DepthLabel(0), 0, scale)
+}
+
 // evaluateConfigured is the body the two entry points share, with the
 // searcher already aimed at cfg.
 func evaluateConfigured(gnPos *Position, pos *domain.Position, searcher *Searcher, cfg SearchConfig, state *MatchState, candidates int) (EvalResult, error) {

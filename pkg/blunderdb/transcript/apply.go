@@ -1074,6 +1074,14 @@ func entryPosition(doc Document) domain.Position {
 // generator produces them on [CandidateDice]. They are what the user picks from: the
 // engine RANKS and RECOGNISES, it never chooses (ADR-0044).
 func Candidates(doc Document) []domain.LegalPlay {
+	pos := CandidatePosition(doc)
+	return domain.LegalMoves(&pos)
+}
+
+// CandidatePosition is the Position the roll being entered is played from,
+// side on roll and [CandidateDice] set: the one [Candidates] lists the plays
+// of, and the one an engine ranks them in. Dice not both entered stay 0.
+func CandidatePosition(doc Document) domain.Position {
 	e := proposedEntry(doc)
 	if doc.Entry != nil {
 		e = *doc.Entry
@@ -1082,7 +1090,7 @@ func Candidates(doc Document) []domain.LegalPlay {
 	pos.Dice = CandidateDice(e.Dice)
 	pos.PlayerOnRoll = e.Side
 	pos.DecisionType = domain.CheckerAction
-	return domain.LegalMoves(&pos)
+	return pos
 }
 
 // Editor is the undo stack around [Apply]. The stack is in memory and nowhere else: a

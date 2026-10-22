@@ -178,6 +178,10 @@ var opaqueNotes = map[string]string{
 		"wholeLibrary, allPositions, positionIDs, positions, the include… switches, collectionIDs, matchIDs, " +
 		"tournamentIDs, lessonIDs, deckIDs, watermark, watermarkNote. A key left out keeps the whole-library " +
 		"preset; an unknown key, metadata or password is refused with invalid; exportPath is ignored.",
+	"transcription.Candidates": "side and dice of the roll being entered (dice high first) and candidates, every legal " +
+		"play, each with index (what select_candidate names), notation, steps, rank (1 for the best, 0 when unranked) " +
+		"and analysis, its 0-ply evaluation (equity, equityError from the best, chances). Ranked plays come best " +
+		"first; unranked true lists them in the generator's order. An empty list is a dance.",
 	"transcription.State": "id, revision, sessionId, canUndo, canRedo and annotated, the draft replayed as the desktop " +
 		"draws it. annotated.document.header.video_source is the media the Repères refer to (absent when none is " +
 		"attached). Each annotated.actions[i] carries its Repères roll_tick_ms and tick_ms (milliseconds from the " +

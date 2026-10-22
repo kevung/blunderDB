@@ -409,3 +409,62 @@ func TestTranscriptionStateExposesVideoRepèresAndDurations(t *testing.T) {
 		t.Errorf("actions[2].cube_decision_ms present without the previous action's Repère")
 	}
 }
+
+// The plays of the roll being typed come back ranked at 0-ply, every one of
+// them however many, without touching the analysis quota.
+func TestTranscriptionCandidatesRankedUncappedOutsideQuota(t *testing.T) {
+	if heavyRoute("/v1/transcriptions.candidates") {
+		t.Fatal("the candidates of one roll read no library: not behind the heavy gate")
+	}
+	st, err := sqlite.Open(context.Background(), ":memory:", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { st.Close() })
+	srv, err := New(Options{Storage: st, Transcription: true, AnalysisWorkers: 1, Quotas: TenantQuotas{AnalysisSecondsPerDay: 1}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	srv.quota.charge("1", time.Hour) // today's analysis time is spent
+	ts := httptest.NewServer(srv.Handler())
+	t.Cleanup(ts.Close)
+
+	draft := typeAction(t, ts, "1", createDraft(t, ts, "1"), 3, 1)
+	req := map[string]any{"id": draft.ID, "sessionId": draft.SessionID}
+	if status, body := gesture(t, ts, "1", "/v1/transcriptions.candidates", 0, req); status != http.StatusBadRequest {
+		t.Fatalf("no roll typed: status %d (%s), want 400", status, body)
+	}
+	for _, d := range []int{2, 2} {
+		draft = gestureState(t, ts, "1", "/v1/transcriptions.apply", draft.Revision,
+			map[string]any{"id": draft.ID, "sessionId": draft.SessionID, "gesture": transcript.Gesture{Kind: transcript.GestureEnterDie, Die: d}})
+	}
+	status, body := gesture(t, ts, "1", "/v1/transcriptions.candidates", 0, req)
+	if status != http.StatusOK {
+		t.Fatalf("status %d: %s", status, body)
+	}
+	var got transcription.Candidates
+	if err := json.Unmarshal(body, &got); err != nil {
+		t.Fatal(err)
+	}
+	var legal int
+	srv.transcripts().WithEditor("1", draft.ID, func(ed *transcript.Editor) { legal = len(transcript.Candidates(ed.Doc)) })
+	if legal <= 20 {
+		t.Fatalf("2-2 here has %d plays: pick a roll past the evaluate cap of 20", legal)
+	}
+	if got.Unranked || len(got.Candidates) != legal || got.Dice != [2]int{2, 2} {
+		t.Fatalf("unranked=%v dice=%v, %d candidates, want ranked 2-2 and %d", got.Unranked, got.Dice, len(got.Candidates), legal)
+	}
+	seen := map[int]bool{}
+	for i, c := range got.Candidates {
+		if c.Rank != i+1 || c.Analysis == nil || seen[c.Index] {
+			t.Fatalf("candidate %d = %+v, want rank %d with its analysis, index unique", i, c, i+1)
+		}
+		seen[c.Index] = true
+		if i > 0 && c.Analysis.Equity > got.Candidates[i-1].Analysis.Equity {
+			t.Fatalf("candidate %d ranked above a better play", i)
+		}
+	}
+	if spent, _ := srv.quota.usage("1"); spent != time.Hour {
+		t.Fatalf("analysis time %v after ranking, want the hour charged before, nothing more", spent)
+	}
+}

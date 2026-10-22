@@ -415,8 +415,8 @@ La famille ``transcriptions.*`` permet à un client externe de transcrire un
 match geste par geste, avec la même logique que le bureau. Les lectures
 (``list``, ``get``, ``exportMat``, ``losses``) sont toujours servies. Les
 gestes (``create``, ``open``, ``editMatch``, ``apply``, ``undo``, ``redo``,
-``close``, ``finish``, ``abandon``, ``materialize``) ne le sont qu'avec ``serve
---transcription`` : sans ce drapeau, ces routes répondent 404.
+``candidates``, ``close``, ``finish``, ``abandon``, ``materialize``) ne le sont
+qu'avec ``serve --transcription`` : sans ce drapeau, ces routes répondent 404.
 
 ``create`` et ``open`` rendent l'état du brouillon, sa ``revision`` et un
 ``sessionId``. ``apply``, ``undo``, ``redo``, ``close`` et ``finish`` nomment
@@ -452,6 +452,16 @@ renvoient les repères ; chaque ``annotated.actions[i]`` porte ses repères
 et les durées qu'ils donnent (``decision_ms``, ``cube_decision_ms``), avec
 ``decision_estimated`` quand la durée d'un coup est une borne haute estimée
 jusqu'à l'action suivante. Une clé inconnue est absente.
+
+``candidates`` (``id``, ``sessionId``) rend les coups légaux du jet en cours de
+saisie, les deux dés entrés (sinon **400**) : tous, sans plafond, classés au
+0-ply sans élagage, du meilleur au moins bon. Chaque coup porte ``index`` (celui
+que nomme ``select_candidate``), sa notation, ses pas, son rang et son
+évaluation (``analysis``). Si le classement échoue (score hors de la table
+d'équité), ``unranked`` est vrai et les coups suivent l'ordre du générateur. Ce
+classement ne décompte pas le quota d'analyse et ne le consulte pas ; il passe
+par les mêmes workers que les évaluations, à son tour parmi les tenants, et
+n'est pas soumis à la porte des lectures lourdes (``--heavy-slots``).
 
 ``finish`` enregistre le Match et supprime le brouillon, ``abandon`` le
 supprime sans Match, ``close`` ne libère que la session. ``editMatch`` ouvre un
