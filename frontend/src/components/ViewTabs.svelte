@@ -461,8 +461,11 @@
         border-bottom: 1px solid var(--color-border);
         flex-shrink: 0;
         height: 26px;
-        overflow-x: auto;
-        overflow-y: hidden;
+        /* Visible: the tools' dropdown menus hang below the bar and must not be clipped by it; the
+           tab row clips and scrolls itself, in .view-tab-list. */
+        overflow: visible;
+        position: relative;
+        z-index: 5;
         gap: 0;
         padding-left: 4px;
         /* The labels are controls, not text to copy. */

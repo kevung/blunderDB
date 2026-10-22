@@ -268,3 +268,23 @@ for (const width of [1024, 1366, 1920]) {
         expect(ad.x + ad.width).toBeLessThanOrEqual(rects.tools.left + 0.5);
     });
 }
+
+test('the all-views menu opens visible, not clipped by the bar, and stays open', async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 768 });
+    await openTwoGroups(page);
+    for (let i = 0; i < 12; i++) await page.locator('.add-btn').click();
+    await page.getByTestId('all-views').click();
+    const menu = page.getByTestId('all-views-menu');
+    await expect(menu).toBeVisible();
+    const hit = await menu.evaluate((el) => {
+        const b = el.getBoundingClientRect();
+        const top = document.elementFromPoint(b.left + b.width / 2, b.top + b.height / 2);
+        const bottom = document.elementFromPoint(b.left + b.width / 2, b.bottom - 4);
+        return { inMenu: !!top && el.contains(top), bottomInMenu: !!bottom && el.contains(bottom), height: b.height };
+    });
+    expect(hit.height).toBeGreaterThan(40);
+    expect(hit.inMenu).toBe(true);
+    expect(hit.bottomInMenu).toBe(true);
+    await page.waitForTimeout(400);
+    await expect(menu).toBeVisible();
+});
