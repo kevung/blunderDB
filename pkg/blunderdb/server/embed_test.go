@@ -8,6 +8,7 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/kevung/blunderdb/internal/server/middleware"
 )
@@ -144,5 +145,31 @@ func TestBootstrapTrustReadTenants(t *testing.T) {
 	}
 	if TenantHeader != middleware.TenantHeader || ReadTenantsHeader != "X-Read-Tenants" {
 		t.Errorf("exported header names drifted: %q, %q", TenantHeader, ReadTenantsHeader)
+	}
+}
+
+// TestBootstrapTranscriptionGestures: Config.Transcription reaches
+// internal/server.Options. Off (the default) the gestures are not routed;
+// on, a draft can be created.
+func TestBootstrapTranscriptionGestures(t *testing.T) {
+	post := func(cfg Config) int {
+		cfg.Backend, cfg.DSN = "sqlite", ":memory:"
+		h, closer, err := Bootstrap(context.Background(), cfg)
+		if err != nil {
+			t.Fatalf("Bootstrap: %v", err)
+		}
+		defer closer.Close()
+		rec := httptest.NewRecorder()
+		req := httptest.NewRequest(http.MethodPost, "/v1/transcriptions.create", bytes.NewReader([]byte(`{"header":{"matchLength":7}}`)))
+		req.Header.Set(middleware.TenantHeader, "1")
+		req.Header.Set("Content-Type", "application/json")
+		h.ServeHTTP(rec, req)
+		return rec.Code
+	}
+	if got := post(Config{}); got != http.StatusNotFound {
+		t.Errorf("default: status = %d, want 404", got)
+	}
+	if got := post(Config{Transcription: true, TranscriptionTTL: time.Minute}); got != http.StatusOK {
+		t.Errorf("Transcription on: status = %d, want 200", got)
 	}
 }
