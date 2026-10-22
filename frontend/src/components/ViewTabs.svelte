@@ -1,8 +1,9 @@
 <script>
     import { viewStore } from '../stores/viewStore';
-    import { tabGroupsStore, activateGroup, closeGroup, groupActivityStore } from '../stores/libraryGroupStore.js';
+    import { tabGroupsStore, activateGroup, closeGroup, groupActivityStore, moveGroupView, moveGroup } from '../stores/libraryGroupStore.js';
     import { transferBasketStore, lockedGroupsStore } from '../stores/transferBasketStore.js';
     import { libraryDrag } from '../utils/libraryDrag.js';
+    import { tabDrag } from '../utils/tabDrag.js';
     import { registerKeys } from '../services/keyDispatch.js';
     import { t } from '../i18n';
     import { splitStore } from '../stores/splitStore.js';
@@ -141,11 +142,17 @@
     $effect(() => registerKeys('viewTabs', handleKeydown));
 </script>
 
+{#snippet addButton()}
+    <button class="add-btn" data-testid="add-view" onclick={() => addView()} title={$t('viewTabs.newView')}
+        >+{#if tabCount <= 1}<span class="add-label">{$t('viewTabs.newView')}</span>{/if}</button
+    >
+{/snippet}
+
 <!-- A single view of a single library collapses the bar to the bare "+"; it expands with a second
      view or a second library. -->
 <div class="view-tabs" class:collapsed={tabCount <= 1}>
     {#if tabCount > 1}
-        <div class="view-tab-list" role="tablist" bind:this={tabList} onwheel={scrollSideways}>
+        <div class="view-tab-list" role="tablist" bind:this={tabList} onwheel={scrollSideways} use:tabDrag={{ onMoveView: moveGroupView, onMoveGroup: moveGroup }}>
             {#each $tabGroupsStore as group (group.id)}
                 {#if grouped}
                     <div
@@ -153,7 +160,7 @@
                         class:active={group.active}
                         role="button"
                         tabindex="0"
-                        title={group.path}
+                        title={group.path || group.name}
                         data-testid="library-group"
                         data-group-id={group.id}
                         data-library-drop={group.id}
@@ -161,7 +168,7 @@
                         onclick={() => activateGroup(group.id)}
                         onkeydown={(e) => e.target === e.currentTarget && e.key === 'Enter' && activateGroup(group.id)}
                     >
-                        <span class="group-name">{group.name || $t('libraryGroups.unnamed')}</span>
+                        <span class="group-name" data-testid="library-group-name">{group.name || $t('libraryGroups.unnamed')}</span>
                         <!-- A job of this library ran or finished while it was off screen. -->
                         {#if !group.active && $groupActivityStore.get(group.id)}
                             {@const done = $groupActivityStore.get(group.id)?.state === 'done'}
@@ -209,6 +216,7 @@
                         aria-selected={selected}
                         tabindex="0"
                         data-group-id={group.id}
+                        data-view-id={view.id}
                         onclick={() => handleTabClick(group.id, view.id, group.active)}
                         ondblclick={() => group.active && handleDoubleClick(view)}
                         onkeydown={(e) => handleTabKeydown(e, group.id, view.id, group.active)}
@@ -216,73 +224,79 @@
                         {#if group.active && editingId === view.id}
                             <input bind:this={editInput} bind:value={editingName} class="rename-input" onblur={finishRename} onkeydown={handleRenameKeydown} />
                         {:else}
-                            <span class="tab-name">{view.name}</span>
+                            <span class="tab-name" title={view.name}>{view.name}</span>
                         {/if}
                         {#if group.active && group.views.length > 1}
                             <button class="close-btn" onclick={(e) => handleClose(e, view.id)} title={$t('viewTabs.closeView')}>&times;</button>
                         {/if}
                     </div>
                 {/each}
+                <!-- A new view joins the group on screen: its button sits right after that group's last tab. -->
+                {#if group.active}
+                    {@render addButton()}
+                {/if}
             {/each}
         </div>
     {/if}
-    <button class="add-btn" onclick={() => addView()} title={$t('viewTabs.newView')}
-        >+{#if tabCount <= 1}<span class="add-label">{$t('viewTabs.newView')}</span>{/if}</button
-    >
-    <button class="group-btn" data-testid="open-library-group" onclick={openInNewGroup} title={$t('libraryGroups.openInNewGroup')} aria-label={$t('libraryGroups.openInNewGroup')}
-        >&#x29C9;{#if !grouped}<span class="add-label">{$t('libraryGroups.openLabel')}</span>{/if}</button
-    >
-    <button
-        class="group-btn"
-        class:on={$splitStore.on}
-        data-testid="toggle-split"
-        onclick={() => toggleSplit()}
-        title={$t('split.toggle')}
-        aria-label={$t('split.toggle')}
-        aria-pressed={$splitStore.on}>&#x25EB;</button
-    >
-    {#if grouped || $transferBasketStore.length > 0}
-        <!-- The basket: rows of any group, poured at once into one; dragged onto a header, it pours there. -->
-        <div class="basket">
-            <span
-                class="basket-btn"
-                class:filled={$transferBasketStore.length > 0}
-                role="button"
-                tabindex="0"
-                data-testid="transfer-basket"
-                data-library-drop="basket"
-                title={$t('transfer.basketTitle', { n: $transferBasketStore.length })}
-                aria-label={$t('transfer.basketTitle', { n: $transferBasketStore.length })}
-                aria-expanded={basketMenuOpen}
-                onclick={() => (basketMenuOpen = !basketMenuOpen)}
-                onkeydown={(e) => e.key === 'Enter' && (basketMenuOpen = !basketMenuOpen)}
-                use:libraryDrag={() => ($transferBasketStore.length > 0 ? { kind: 'basket', label: $t('transfer.basketTitle', { n: $transferBasketStore.length }) } : null)}
-                >{$t('transfer.basket')}<span class="basket-count">{$transferBasketStore.length}</span></span
-            >
-            {#if basketMenuOpen}
-                <div class="basket-menu" role="menu" data-testid="transfer-basket-menu">
-                    {#each $tabGroupsStore as group (group.id)}
+    {#if tabCount <= 1}
+        {@render addButton()}
+    {/if}
+    <div class="view-tab-tools">
+        <button class="group-btn" data-testid="open-library-group" onclick={openInNewGroup} title={$t('libraryGroups.openInNewGroup')} aria-label={$t('libraryGroups.openInNewGroup')}
+            >&#x29C9;{#if !grouped}<span class="add-label">{$t('libraryGroups.openLabel')}</span>{/if}</button
+        >
+        <button
+            class="group-btn"
+            class:on={$splitStore.on}
+            data-testid="toggle-split"
+            onclick={() => toggleSplit()}
+            title={$t('split.toggle')}
+            aria-label={$t('split.toggle')}
+            aria-pressed={$splitStore.on}>&#x25EB;</button
+        >
+        {#if grouped || $transferBasketStore.length > 0}
+            <!-- The basket: rows of any group, poured at once into one; dragged onto a header, it pours there. -->
+            <div class="basket">
+                <span
+                    class="basket-btn"
+                    class:filled={$transferBasketStore.length > 0}
+                    role="button"
+                    tabindex="0"
+                    data-testid="transfer-basket"
+                    data-library-drop="basket"
+                    title={$t('transfer.basketTitle', { n: $transferBasketStore.length })}
+                    aria-label={$t('transfer.basketTitle', { n: $transferBasketStore.length })}
+                    aria-expanded={basketMenuOpen}
+                    onclick={() => (basketMenuOpen = !basketMenuOpen)}
+                    onkeydown={(e) => e.key === 'Enter' && (basketMenuOpen = !basketMenuOpen)}
+                    use:libraryDrag={() => ($transferBasketStore.length > 0 ? { kind: 'basket', label: $t('transfer.basketTitle', { n: $transferBasketStore.length }) } : null)}
+                    >{$t('transfer.basket')}<span class="basket-count">{$transferBasketStore.length}</span></span
+                >
+                {#if basketMenuOpen}
+                    <div class="basket-menu" role="menu" data-testid="transfer-basket-menu">
+                        {#each $tabGroupsStore as group (group.id)}
+                            <button
+                                role="menuitem"
+                                data-testid="transfer-basket-pour"
+                                data-group-id={group.id}
+                                disabled={$transferBasketStore.length === 0 || $lockedGroupsStore.has(group.id)}
+                                onclick={() => pourInto(group.id)}>{$t('transfer.pourInto', { name: group.name || $t('libraryGroups.unnamed') })}</button
+                            >
+                        {/each}
                         <button
                             role="menuitem"
-                            data-testid="transfer-basket-pour"
-                            data-group-id={group.id}
-                            disabled={$transferBasketStore.length === 0 || $lockedGroupsStore.has(group.id)}
-                            onclick={() => pourInto(group.id)}>{$t('transfer.pourInto', { name: group.name || $t('libraryGroups.unnamed') })}</button
+                            data-testid="transfer-basket-empty"
+                            disabled={$transferBasketStore.length === 0}
+                            onclick={() => {
+                                basketMenuOpen = false;
+                                transfer().then((m) => m.emptyBasket());
+                            }}>{$t('transfer.emptyBasket')}</button
                         >
-                    {/each}
-                    <button
-                        role="menuitem"
-                        data-testid="transfer-basket-empty"
-                        disabled={$transferBasketStore.length === 0}
-                        onclick={() => {
-                            basketMenuOpen = false;
-                            transfer().then((m) => m.emptyBasket());
-                        }}>{$t('transfer.emptyBasket')}</button
-                    >
-                </div>
-            {/if}
-        </div>
-    {/if}
+                    </div>
+                {/if}
+            </div>
+        {/if}
+    </div>
 </div>
 
 <style>
@@ -297,6 +311,9 @@
         overflow-y: hidden;
         gap: 0;
         padding-left: 4px;
+        /* The labels are controls, not text to copy. */
+        user-select: none;
+        -webkit-user-select: none;
     }
 
     .view-tabs.collapsed {
@@ -320,6 +337,14 @@
         min-width: 0;
         overflow-x: auto;
         scrollbar-width: none;
+    }
+
+    /* Tools and operations, apart from the tabs and aligned to the right. */
+    .view-tab-tools {
+        display: flex;
+        align-items: stretch;
+        margin-left: auto;
+        flex-shrink: 0;
     }
 
     .view-tab-list::-webkit-scrollbar {
@@ -346,6 +371,16 @@
         flex-shrink: 0;
     }
 
+    /* Where a dragged tab or group would land; the extra class outranks the active header's rule. */
+    .view-tabs .view-tab.tab-drop-before,
+    .view-tabs .group-header.tab-drop-before {
+        box-shadow: inset 3px 0 0 var(--color-primary);
+    }
+    .view-tabs .view-tab.tab-drop-after,
+    .view-tabs .group-header.tab-drop-after {
+        box-shadow: inset -3px 0 0 var(--color-primary);
+    }
+
     .view-tab:hover {
         background: color-mix(in srgb, var(--color-text) 6%, var(--color-surface-alt));
     }
@@ -358,7 +393,9 @@
         margin-bottom: -1px;
     }
 
+    /* A long name is shortened with an ellipsis (full name in the tooltip), never squeezed out. */
     .tab-name {
+        max-width: 16em;
         overflow: hidden;
         text-overflow: ellipsis;
     }
@@ -368,6 +405,8 @@
         font-size: var(--font-size-small);
         border: 1px solid var(--color-border);
         padding: 1px 3px;
+        user-select: text;
+        -webkit-user-select: text;
         outline: none;
         background: var(--color-surface);
     }
@@ -560,6 +599,7 @@
         cursor: default;
     }
     .group-name {
+        flex-shrink: 0;
         max-width: 14em;
         overflow: hidden;
         text-overflow: ellipsis;

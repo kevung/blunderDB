@@ -11,6 +11,7 @@
     import { logger } from '../utils/logger.js';
     import { formatDate as formatDateI18n } from '../utils/format.js';
     import { SvelteSet } from 'svelte/reactivity';
+    import { groupIdsStore } from '../stores/groupActivityStore.js';
     import PlayerStatsLink from './PlayerStatsLink.svelte';
 
     let match = $state(null);
@@ -132,10 +133,15 @@
     // a position that is not on screen.
     let visible = $derived(!$boardBannerKeyStore && (($matchContextStore.isMatchMode && !!$matchContextStore.matchID) || !!match || !!draftInfo));
 
+    // With several libraries open the bar's place is kept even when it has nothing to say, so that
+    // moving from one group to another never moves the board.
+    let reserved = $derived($groupIdsStore.length > 1);
+
     // Board.svelte measures only on 'resize': dispatch one (after a rAF, once the
     // layout has reflowed) when the bar appears or goes.
     $effect(() => {
         visible; // tracked dep
+        reserved;
         requestAnimationFrame(() => window.dispatchEvent(new Event('resize')));
     });
 </script>
@@ -168,6 +174,8 @@
             <span class="on-roll">{draftInfo.onRoll}</span>
         {/if}
     </div>
+{:else if reserved}
+    <div class="match-info-bar" data-testid="match-info-slot" aria-hidden="true"></div>
 {/if}
 
 <style>
