@@ -238,7 +238,7 @@ func gnuBGInitPostCrawfordMET() {
 		if i-2 >= 0 {
 			pc2 = postCrawfordMET[i-2]
 		}
-		postCrawfordMET[i] = rG*0.5*pc4 + (1.0-rG)*0.5*pc2
+		postCrawfordMET[i] = float32(rG*0.5*pc4) + float32((1.0-rG)*0.5*pc2)
 
 		if i == 1 {
 			postCrawfordMET[i] -= rFD2
@@ -279,7 +279,7 @@ func gnuBGInitPreCrawfordMET() {
 		if i-1 >= 0 {
 			pcI1 = pc[i-1]
 		}
-		met[i][0] = rG1*0.5*pcI2 + (1.0-rG1)*0.5*pcI1
+		met[i][0] = float32(rG1*0.5*pcI2) + float32((1.0-rG1)*0.5*pcI1)
 		met[0][i] = 1.0 - met[i][0]
 	}
 
@@ -292,46 +292,46 @@ func gnuBGInitPreCrawfordMET() {
 				// --- D1bar ---
 				nCPV := getCPV(i, j, nCubeValue)
 				num := getMET(i-nCubeValue, j) -
-					rG2*getMET(i, j-4*nCPV) -
-					(1.0-rG2)*getMET(i, j-2*nCPV)
-				den := rG1*getMET(i-4*nCPV, j) +
-					(1.0-rG1)*getMET(i-2*nCPV, j) -
-					rG2*getMET(i, j-4*nCPV) -
-					(1.0-rG2)*getMET(i, j-2*nCPV)
+					float32(rG2*getMET(i, j-4*nCPV)) -
+					float32((1.0-rG2)*getMET(i, j-2*nCPV))
+				den := float32(rG1*getMET(i-4*nCPV, j)) +
+					float32((1.0-rG1)*getMET(i-2*nCPV, j)) -
+					float32(rG2*getMET(i, j-4*nCPV)) -
+					float32((1.0-rG2)*getMET(i, j-2*nCPV))
 				d1bar[i][j][nCube] = num / den
 
 				if i != j {
 					nCPV2 := getCPV(j, i, nCubeValue)
 					numJI := getMET(j-nCubeValue, i) -
-						rG2*getMET(j, i-4*nCPV2) -
-						(1.0-rG2)*getMET(j, i-2*nCPV2)
-					denJI := rG1*getMET(j-4*nCPV2, i) +
-						(1.0-rG1)*getMET(j-2*nCPV2, i) -
-						rG2*getMET(j, i-4*nCPV2) -
-						(1.0-rG2)*getMET(j, i-2*nCPV2)
+						float32(rG2*getMET(j, i-4*nCPV2)) -
+						float32((1.0-rG2)*getMET(j, i-2*nCPV2))
+					denJI := float32(rG1*getMET(j-4*nCPV2, i)) +
+						float32((1.0-rG1)*getMET(j-2*nCPV2, i)) -
+						float32(rG2*getMET(j, i-4*nCPV2)) -
+						float32((1.0-rG2)*getMET(j, i-2*nCPV2))
 					d1bar[j][i][nCube] = numJI / denJI
 				}
 
 				// --- D2bar ---
 				nCPV = getCPV(j, i, nCubeValue)
 				num = getMET(j-nCubeValue, i) -
-					rG2*getMET(j, i-4*nCPV) -
-					(1.0-rG2)*getMET(j, i-2*nCPV)
-				den = rG1*getMET(j-4*nCPV, i) +
-					(1.0-rG1)*getMET(j-2*nCPV, i) -
-					rG2*getMET(j, i-4*nCPV) -
-					(1.0-rG2)*getMET(j, i-2*nCPV)
+					float32(rG2*getMET(j, i-4*nCPV)) -
+					float32((1.0-rG2)*getMET(j, i-2*nCPV))
+				den = float32(rG1*getMET(j-4*nCPV, i)) +
+					float32((1.0-rG1)*getMET(j-2*nCPV, i)) -
+					float32(rG2*getMET(j, i-4*nCPV)) -
+					float32((1.0-rG2)*getMET(j, i-2*nCPV))
 				d2bar[i][j][nCube] = num / den
 
 				if i != j {
 					nCPV2 := getCPV(i, j, nCubeValue)
 					numJI := getMET(i-nCubeValue, j) -
-						rG2*getMET(i, j-4*nCPV2) -
-						(1.0-rG2)*getMET(i, j-2*nCPV2)
-					denJI := rG1*getMET(i-4*nCPV2, j) +
-						(1.0-rG1)*getMET(i-2*nCPV2, j) -
-						rG2*getMET(i, j-4*nCPV2) -
-						(1.0-rG2)*getMET(i, j-2*nCPV2)
+						float32(rG2*getMET(i, j-4*nCPV2)) -
+						float32((1.0-rG2)*getMET(i, j-2*nCPV2))
+					denJI := float32(rG1*getMET(i-4*nCPV2, j)) +
+						float32((1.0-rG1)*getMET(i-2*nCPV2, j)) -
+						float32(rG2*getMET(i, j-4*nCPV2)) -
+						float32((1.0-rG2)*getMET(i, j-2*nCPV2))
 					d2bar[j][i][nCube] = numJI / denJI
 				}
 
@@ -342,9 +342,9 @@ func gnuBGInitPreCrawfordMET() {
 						d1[j][i][nCube] = d1bar[j][i][nCube]
 					}
 				} else {
-					d1[i][j][nCube] = 1.0 + (d2[i][j][nCube+1]+rDelta)*(d1bar[i][j][nCube]-1.0)
+					d1[i][j][nCube] = 1.0 + float32((d2[i][j][nCube+1]+rDelta)*(d1bar[i][j][nCube]-1.0))
 					if i != j {
-						d1[j][i][nCube] = 1.0 + (d2[j][i][nCube+1]+rDelta)*(d1bar[j][i][nCube]-1.0)
+						d1[j][i][nCube] = 1.0 + float32((d2[j][i][nCube+1]+rDelta)*(d1bar[j][i][nCube]-1.0))
 					}
 				}
 
@@ -355,16 +355,16 @@ func gnuBGInitPreCrawfordMET() {
 						d2[j][i][nCube] = d2bar[j][i][nCube]
 					}
 				} else {
-					d2[i][j][nCube] = 1.0 + (d1[i][j][nCube+1]+rDelta)*(d2bar[i][j][nCube]-1.0)
+					d2[i][j][nCube] = 1.0 + float32((d1[i][j][nCube+1]+rDelta)*(d2bar[i][j][nCube]-1.0))
 					if i != j {
-						d2[j][i][nCube] = 1.0 + (d1[j][i][nCube+1]+rDelta)*(d2bar[j][i][nCube]-1.0)
+						d2[j][i][nCube] = 1.0 + float32((d1[j][i][nCube+1]+rDelta)*(d2bar[j][i][nCube]-1.0))
 					}
 				}
 
 				// --- Compute MET entry at cube level 0 ---
 				if nCube == 0 && i > 0 && j > 0 {
-					met[i][j] = ((d2[i][j][0]+rDeltaBar-0.5)*getMET(i-1, j) +
-						(d1[i][j][0]+rDeltaBar-0.5)*getMET(i, j-1)) /
+					met[i][j] = (float32((d2[i][j][0]+rDeltaBar-0.5)*getMET(i-1, j)) +
+						float32((d1[i][j][0]+rDeltaBar-0.5)*getMET(i, j-1))) /
 						(d1[i][j][0] + rDeltaBar + d2[i][j][0] + rDeltaBar - 1.0)
 					if i != j {
 						met[j][i] = 1.0 - met[i][j]

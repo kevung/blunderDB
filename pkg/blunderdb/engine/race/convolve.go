@@ -47,14 +47,14 @@ type moments struct {
 func distMoments(p []float64) moments {
 	var m moments
 	for n, pn := range p {
-		m.mean += float64(n) * pn
+		m.mean += float64(float64(n) * pn)
 	}
 	var m2, m3, m4 float64
 	for n, pn := range p {
 		d := float64(n) - m.mean
-		m2 += d * d * pn
-		m3 += d * d * d * pn
-		m4 += d * d * d * d * pn
+		m2 += float64(d * d * pn)
+		m3 += float64(d * d * d * pn)
+		m4 += float64(d * d * d * d * pn)
 	}
 	m.std = math.Sqrt(m2)
 	if m.std > 1e-9 {
@@ -86,7 +86,7 @@ func winProbRaw(us, them []int) (p float64, mu, mt moments, err error) {
 	}
 	for n, pn := range du {
 		if pn > 0 {
-			p += pn * tail[n]
+			p += float64(pn * tail[n])
 		}
 	}
 	return p, distMoments(du), distMoments(dt), nil
@@ -135,7 +135,7 @@ func EstimatedWinProbPoints(us, them []int) (float64, error) {
 	}
 	corr := 0.0
 	for i, x := range correctionFeatures(p, mu, mt) {
-		corr += correctionCoeffs[i] * x
+		corr += float64(correctionCoeffs[i] * x)
 	}
 	p += corr
 	return math.Max(0, math.Min(1, p)), nil

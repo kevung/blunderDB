@@ -106,11 +106,11 @@ func CubeInputsFromProbs(probs *[NumOutputs]float32) CubeInputs {
 
 	winPoints := 1.0
 	if win > 0.0 {
-		winPoints = (outcomes[outWinSingle] + 2.0*outcomes[outWinGammon] + 3.0*outcomes[outWinBackgammon]) / win
+		winPoints = (outcomes[outWinSingle] + float64(2.0*outcomes[outWinGammon]) + float64(3.0*outcomes[outWinBackgammon])) / win
 	}
 	losePoints := 1.0
 	if lose > 0.0 {
-		losePoints = (outcomes[outLoseSingle] + 2.0*outcomes[outLoseGammon] + 3.0*outcomes[outLoseBackgammon]) / lose
+		losePoints = (outcomes[outLoseSingle] + float64(2.0*outcomes[outLoseGammon]) + float64(3.0*outcomes[outLoseBackgammon])) / lose
 	}
 
 	return CubeInputs{Win: win, WinPoints: winPoints, LosePoints: losePoints}
@@ -143,7 +143,7 @@ func DefaultEfficiency(owner CubeOwner) float64 {
 // by construction — it is also E_dead, verbatim: a dead cube is never turned
 // again, so cubeful and cubeless equity coincide.
 func janowskiE(p, w, l float64) float64 {
-	return p*w - (1.0-p)*l
+	return float64(p*w) - float64((1.0-p)*l)
 }
 
 // livePoints are the fixed breakpoints of the x=1 (fully live) equity curve.
@@ -162,7 +162,7 @@ func segment(p, x0, y0, x1, y1 float64) float64 {
 	if x1-x0 <= 0.0 {
 		return y1
 	}
-	return y0 + (y1-y0)*((p-x0)/(x1-x0))
+	return y0 + float64((y1-y0)*((p-x0)/(x1-x0)))
 }
 
 // janowskiEquity is the Janowski equity of one cube state, per unit of cube,
@@ -205,7 +205,7 @@ func janowskiEquity(p, w, l float64, owner CubeOwner, efficiency float64) float6
 		}
 	}
 
-	return (1.0-efficiency)*dead + efficiency*live
+	return float64((1.0-efficiency)*dead) + float64(efficiency*live)
 }
 
 // TakePoint is TP(x) or CP(x), picked by owner. CubeOwned returns CP(x), my
@@ -216,12 +216,12 @@ func janowskiEquity(p, w, l float64, owner CubeOwner, efficiency float64) float6
 // whose W and L floors keep the denominator positive).
 func TakePoint(in CubeInputs, owner CubeOwner, efficiency float64) (tp float64, ok bool) {
 	w, l := in.WinPoints, in.LosePoints
-	denom := w + l + efficiency/2.0
+	denom := w + l + float64(efficiency/2.0)
 	if denom <= 0.0 {
 		return 0, false
 	}
 	if owner == CubeOwned {
-		return (l + 0.5 + efficiency/2.0) / denom, true
+		return (l + 0.5 + float64(efficiency/2.0)) / denom, true
 	}
 	return (l - 0.5) / denom, true
 }
@@ -388,7 +388,7 @@ func branchMwc(state MatchState, outcomes [numOutcomes]float64, stake int, onRol
 	if mass <= 0.0 {
 		return m1, true
 	}
-	return (single/mass)*m1 + (gammon/mass)*m2 + (bg/mass)*m3, true
+	return float64((single/mass)*m1) + float64((gammon/mass)*m2) + float64((bg/mass)*m3), true
 }
 
 // levelDead is M_dead(p; k), linear between the two gammon-mix anchors, at
@@ -439,7 +439,7 @@ func levelLive(lv *matchLevel, p float64, owner CubeOwner) float64 {
 
 // levelBlend is M(x) = (1-x)*M_dead + x*M_live.
 func levelBlend(lv *matchLevel, p float64, owner CubeOwner, efficiency float64) float64 {
-	return (1.0-efficiency)*levelDead(lv, p) + efficiency*levelLive(lv, p, owner)
+	return float64((1.0-efficiency)*levelDead(lv, p)) + float64(efficiency*levelLive(lv, p, owner))
 }
 
 // levelSegment is one piece of a level curve, named by its endpoints like
@@ -504,8 +504,8 @@ func levelSolve(lv *matchLevel, owner CubeOwner, blend, target float64) float64 
 			continue
 		}
 		if blend >= 0.0 {
-			v0 = (1.0-blend)*levelDead(lv, s.x0) + blend*s.y0
-			v1 = (1.0-blend)*levelDead(lv, s.x1) + blend*s.y1
+			v0 = float64((1.0-blend)*levelDead(lv, s.x0)) + float64(blend*s.y0)
+			v1 = float64((1.0-blend)*levelDead(lv, s.x1)) + float64(blend*s.y1)
 		}
 		if math.IsNaN(v0) || math.IsNaN(v1) {
 			return math.NaN()
@@ -517,7 +517,7 @@ func levelSolve(lv *matchLevel, owner CubeOwner, blend, target float64) float64 
 			if v1-v0 <= 0.0 {
 				return s.x0
 			}
-			return s.x0 + (s.x1-s.x0)*((target-v0)/(v1-v0))
+			return s.x0 + float64((s.x1-s.x0)*((target-v0)/(v1-v0)))
 		}
 	}
 	return 1.0

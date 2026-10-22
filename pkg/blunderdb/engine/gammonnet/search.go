@@ -829,7 +829,7 @@ func (s *Searcher) positionEquity(pos *Position, depth, level int, state *MatchS
 
 	var sum float64
 	for r := 0; r < NumRolls; r++ {
-		sum += s.rolls[r].weight * best[r]
+		sum += float64(s.rolls[r].weight * best[r])
 	}
 	return sum, true
 }
@@ -948,7 +948,7 @@ func (s *Searcher) deepenGroups(groups [][]Candidate, depth int, state *MatchSta
 			var sum float64
 			b := base + i*NumRolls
 			for r := 0; r < NumRolls; r++ {
-				sum += s.rolls[r].weight * best[b+r]
+				sum += float64(s.rolls[r].weight * best[b+r])
 			}
 			cands[i].Equity = -sum
 		}

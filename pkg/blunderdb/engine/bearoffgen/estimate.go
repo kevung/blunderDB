@@ -68,7 +68,7 @@ func (d Domain) EstimateDuration(rate float64, workers int) time.Duration {
 	n := float64(NumPositions(d.Points, d.Checkers))
 	speedup := 1.0
 	if workers > 1 {
-		speedup = 1 + float64(workers-1)*ParallelEfficiency
+		speedup = 1 + float64(float64(workers-1)*ParallelEfficiency)
 	}
 	return time.Duration(rate * n * n * n / speedup * float64(time.Second))
 }
@@ -85,7 +85,7 @@ func (d Domain) MeasuredRate(elapsed time.Duration, workers int) float64 {
 	}
 	speedup := 1.0
 	if workers > 1 {
-		speedup = 1 + float64(workers-1)*ParallelEfficiency
+		speedup = 1 + float64(float64(workers-1)*ParallelEfficiency)
 	}
 	n := float64(NumPositions(d.Points, d.Checkers))
 	return elapsed.Seconds() * speedup / (n * n * n)

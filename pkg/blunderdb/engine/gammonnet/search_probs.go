@@ -157,7 +157,7 @@ func (s *Searcher) weighRolls(mine *[NumRolls][NumOutputs]float32) [NumOutputs]f
 	var total [NumOutputs]float64
 	for r := 0; r < NumRolls; r++ {
 		for i := range total {
-			total[i] += s.rolls[r].weight * float64(mine[r][i])
+			total[i] += float64(s.rolls[r].weight * float64(mine[r][i]))
 		}
 	}
 	var out [NumOutputs]float32

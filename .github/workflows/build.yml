@@ -334,6 +334,42 @@ jobs:
         run: go test -race -count=1 -run 'Parallel|Concurrent|Batch|SharedBudget' -v -timeout 300s ./pkg/blunderdb/engine/gammonnet/
         shell: bash
 
+  # Bit parity across platforms is an engine invariant
+  # (`engine/gammonnet/CLAUDE.md`, ADR-0106): arm64 and amd64 must give the
+  # same equities to the last bit. The Go compiler fuses a*b + c into one FMA
+  # on arm64 always and on amd64 from GOAMD64=v3, so building the default
+  # amd64 suite never exercises a fused path. This job rebuilds the engine at
+  # GOAMD64=v3 — arm64's rounding, reproduced on an x86 runner — and runs what
+  # pins its answer: the evaluation digest (bit-exact), the network, cube and
+  # search golds against the C reference, and the assembler check that no
+  # engine package emits a fused instruction on either target. Narrow and
+  # under 30 s, so it runs on every push; macOS arm64 runs the same digest in
+  # `test-os` below.
+  parity-amd64-v3:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GOAMD64: v3
+      BLUNDERDB_GOLD: "1"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup GoLang
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          check-latest: true
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: Create frontend dist stub
+        run: mkdir -p frontend/dist && touch frontend/dist/.gitkeep
+        shell: bash
+
+      - name: go test, GOAMD64=v3 (digest, golds, no fused instruction)
+        run: go test -count=1 -run 'TestEvaluationBitsMatchThePinnedDigest|TestEngineEmitsNoFusedMultiplyAdd|TestNetworkParityAgainstReference|TestCubeDecideMatchesTheGoldFile|TestSearchMatchesTheGoldFile' -v -timeout 300s ./pkg/blunderdb/engine/gammonnet/
+        shell: bash
+
   # Runs the shared storage contract, RLS, SQLite→PostgreSQL migration and
   # LISTEN/NOTIFY transport tests against a real PostgreSQL via testcontainers-go. These live behind
   # the `postgres` build tag (see postgres_test.go) because they need Docker;

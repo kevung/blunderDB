@@ -30,3 +30,8 @@ and the header of `cube.go` first. Each invariant below is a bug if violated, ev
   takes no token — the live panel (`EvaluatePosition`), the transcription candidates — since
   waiting behind a batch would stall a gesture for a whole deep position. A new fork site passes
   `TestParallelSearchFingerprint` (ADR-0093).
+- **Every platform gives the same bits.** arm64 and amd64 at `GOAMD64=v3` reproduce default
+  amd64 exactly, across `engine/...`: a summed product is written `float64(a*b)` (the compiler
+  fuses it into an FMA otherwise), and the sigmoid uses `portableExp`, never `math.Exp`
+  (fused in assembly). `TestEngineEmitsNoFusedMultiplyAdd` reads the assembler; an
+  intentional change of the arithmetic re-pins `evaluationDigest` from default amd64 (ADR-0106).

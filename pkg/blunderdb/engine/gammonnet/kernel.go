@@ -207,7 +207,7 @@ func (e *Evaluator) EvaluateBatch(features *[EvalBatchWidth][NumFeatures]float32
 	}
 
 	// The output layer's sigmoid stays in Go: five neurons per position, and
-	// math.Exp in float64 is what the scalar path does (network.go).
+	// portableExp in float64 is what the scalar path does (network.go).
 	for lane := 0; lane < EvalBatchWidth; lane++ {
 		for i := 0; i < NumOutputs; i++ {
 			probs[lane][i] = sigmoid(in[i*EvalBatchWidth+lane])

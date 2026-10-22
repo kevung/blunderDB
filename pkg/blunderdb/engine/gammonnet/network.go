@@ -366,7 +366,7 @@ func (e *Evaluator) Evaluate(features []float32, probs *[NumOutputs]float32) err
 }
 
 func sigmoid(x float32) float32 {
-	return float32(1.0 / (1.0 + math.Exp(float64(-x))))
+	return float32(1.0 / (1.0 + portableExp(float64(-x))))
 }
 
 // postprocess clamps the nested-event inequalities, mirroring the reference's

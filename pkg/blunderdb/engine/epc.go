@@ -250,12 +250,12 @@ func (db *BearoffDatabase) getDistribution(posID int) ([]float64, error) {
 func averageRolls(probs []float64) (mean, stddev float64) {
 	var sx, sx2 float64
 	for i := 1; i < 32; i++ {
-		p := float64(i) * probs[i]
+		p := float64(float64(i) * probs[i])
 		sx += p
-		sx2 += float64(i) * p
+		sx2 += float64(float64(i) * p)
 	}
 	mean = sx
-	variance := sx2 - sx*sx
+	variance := sx2 - float64(sx*sx)
 	if variance < 0 {
 		variance = 0
 	}
@@ -329,7 +329,7 @@ func ComputeEPCPoints(anBoard []int) (*EPCResult, error) {
 	}
 
 	meanRolls, stddev := averageRolls(probs)
-	epc := meanRolls * avgPipsPerRoll
+	epc := float64(meanRolls * avgPipsPerRoll)
 
 	// Compute pip count
 	pipCount := 0

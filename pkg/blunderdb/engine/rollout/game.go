@@ -125,7 +125,7 @@ func (t *table) toRoot(mover uint8, v float64, c cubeState) float64 {
 // the native scale of the same side.
 func (t *table) fromSearch(v float64) float64 {
 	if t.match {
-		return (v + 1) / 2
+		return float64((v + 1) / 2)
 	}
 	return v
 }
@@ -312,7 +312,7 @@ func (w *worker) rollLuck(pos *gammonnet.Position, c cubeState, d1, d2 int) (mea
 			if a == b {
 				weight = 1
 			}
-			sum += weight * v
+			sum += float64(weight * v)
 			if a == hi && b == lo {
 				actual = v
 				if n > 0 {

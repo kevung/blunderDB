@@ -165,7 +165,7 @@ func (a *accumulator) add(o outcome) {
 	a.n++
 	d := o.value - a.mean
 	a.mean += d / float64(a.n)
-	a.m2 += d * (o.value - a.mean)
+	a.m2 += float64(d * (o.value - a.mean))
 	for i := range a.chances {
 		a.chances[i] += o.chances[i]
 	}
@@ -567,7 +567,7 @@ func (t *table) nativeDoublePass() float64 {
 // estimates taken as independent, as gnubg's check_jsds does. Common dice
 // correlate them positively, so this overstates the spread: conservative.
 func jsd(a, sa, b, sb float64) float64 {
-	return math.Abs(a-b) / math.Max(math.Sqrt(sa*sa+sb*sb), jsdFloor)
+	return math.Abs(a-b) / math.Max(math.Sqrt(float64(sa*sa)+float64(sb*sb)), jsdFloor)
 }
 
 // candidates reads accs, its chances turned to the answerer when the
