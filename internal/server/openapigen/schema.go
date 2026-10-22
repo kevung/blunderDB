@@ -178,6 +178,16 @@ var opaqueNotes = map[string]string{
 		"wholeLibrary, allPositions, positionIDs, positions, the include… switches, collectionIDs, matchIDs, " +
 		"tournamentIDs, lessonIDs, deckIDs, watermark, watermarkNote. A key left out keeps the whole-library " +
 		"preset; an unknown key, metadata or password is refused with invalid; exportPath is ignored.",
+	"storage.TournamentReview": "Every pr_interval and usual_interval is a 95 % interval: available, low, high and units " +
+		"(independent units: the games of one match for a round, the matches for any aggregate, cells included). " +
+		"low and high mean nothing unless available is true, which needs at least 3 units that do not all agree; " +
+		"otherwise only units is set. A PR interval's low is floored at 0. Each cell of by_rank, by_pressure " +
+		"and by_clock is always present, in a fixed order (by_rank: four slices of the player's counted decisions, " +
+		"30 each, the last open; by_pressure: dmp, crawford, post_crawford, other; by_clock: quick, considered), " +
+		"with decisions the counted decisions behind the tournament side (usual_decisions behind the usual side); " +
+		"a cell nobody played has decisions 0, pr 0 and no interval. A versus verdict is worse, better or usual " +
+		"from its delta interval, and insufficient, with delta, low and high meaningless, when either side lacks an " +
+		"interval or has fewer than 20 decisions, or the usual level is unavailable.",
 	"transcription.Candidates": "side and dice of the roll being entered (dice high first) and candidates, every legal " +
 		"play, each with index (what select_candidate names), notation, steps, rank (1 for the best, 0 when unranked) " +
 		"and analysis, its 0-ply evaluation (equity, equityError from the best, chances). Ranked plays come best " +
