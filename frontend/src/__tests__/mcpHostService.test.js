@@ -16,7 +16,7 @@ vi.mock('../../wailsjs/runtime/runtime.js', () => ({
 const commands = vi.hoisted(() => /** @type {string[]} */ ([]));
 vi.mock('../commandProcessor.js', () => ({ processCommand: (c) => commands.push(c) }));
 
-import { openSearchView, showPositionById, initMCPHost } from '../services/mcpHostService.js';
+import { openSearchView, showPositionById, initMCPHost, MCP_WRITES_COALESCED_MS } from '../services/mcpHostService.js';
 import { viewStore } from '../stores/viewStore.js';
 import { statusBarModeStore, statusBarTextStore, matchPanelRefreshTriggerStore, dbMutationCounterStore } from '../stores/uiStore';
 
@@ -53,11 +53,36 @@ describe('openSearchView', () => {
 
 describe('a write tool', () => {
     test('the library on screen is read again by every panel', async () => {
-        await initMCPHost();
-        const matches = get(matchPanelRefreshTriggerStore);
-        const mutations = get(dbMutationCounterStore);
-        handlers['mcp:wrote']?.();
-        expect(get(matchPanelRefreshTriggerStore)).toBe(matches + 1);
-        expect(get(dbMutationCounterStore)).toBe(mutations + 1);
+        vi.useFakeTimers();
+        try {
+            await initMCPHost();
+            const matches = get(matchPanelRefreshTriggerStore);
+            const mutations = get(dbMutationCounterStore);
+            handlers['mcp:wrote']?.();
+            await vi.advanceTimersByTimeAsync(MCP_WRITES_COALESCED_MS);
+            expect(get(matchPanelRefreshTriggerStore)).toBe(matches + 1);
+            expect(get(dbMutationCounterStore)).toBe(mutations + 1);
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+
+    test('an agent chaining hundreds of writes makes the panels read a handful of times, not hundreds', async () => {
+        vi.useFakeTimers();
+        try {
+            await initMCPHost();
+            const mutations = get(dbMutationCounterStore);
+            for (let i = 0; i < 300; i++) {
+                handlers['mcp:wrote']?.();
+                await vi.advanceTimersByTimeAsync(5);
+            }
+            await vi.advanceTimersByTimeAsync(MCP_WRITES_COALESCED_MS);
+            const reads = get(dbMutationCounterStore) - mutations;
+            // 1.5 s of writes: read along the way, and once more after the last.
+            expect(reads).toBeGreaterThan(0);
+            expect(reads).toBeLessThanOrEqual(Math.ceil(1500 / MCP_WRITES_COALESCED_MS) + 1);
+        } finally {
+            vi.useRealTimers();
+        }
     });
 });

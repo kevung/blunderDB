@@ -3,7 +3,7 @@ import { EventsOn } from '../../wailsjs/runtime/runtime.js';
 import { ConfigureMCPHost, GetMCPHostStatus } from '../../wailsjs/go/gui/App.js';
 import { GetMCPHost, SaveMCPHost } from '../../wailsjs/go/main/Config.js';
 import { viewStore } from '../stores/viewStore.js';
-import { libraryWritten } from '../stores/groupActivityStore.js';
+import { libraryWritten, activeGroupId } from '../stores/groupActivityStore.js';
 import { statusBarModeStore, statusBarTextStore } from '../stores/uiStore';
 import { processCommand } from '../commandProcessor.js';
 import { tMsg } from '../i18n';
@@ -24,14 +24,36 @@ function stopped() {
 
 let subscribed = false;
 
+/**
+ * How long the writes of the tools are gathered before the panels read the library again: an
+ * agent chaining hundreds of writes would otherwise make every panel read it hundreds of times.
+ */
+export const MCP_WRITES_COALESCED_MS = 250;
+
+/** The groups the tools wrote since the last read, and the read due for them. */
+const writtenGroups = new Set();
+/** @type {ReturnType<typeof setTimeout> | null} */
+let writesDue = null;
+
+/** A tool wrote through the bound handle, which carries the group on screen when it wrote. */
+function mcpWrote() {
+    writtenGroups.add(get(activeGroupId));
+    if (writesDue) return;
+    writesDue = setTimeout(() => {
+        writesDue = null;
+        const groups = [...writtenGroups];
+        writtenGroups.clear();
+        for (const group of groups) libraryWritten(group);
+    }, MCP_WRITES_COALESCED_MS);
+}
+
 /** Listen to the display tools and start the server if the user enabled it. */
 export async function initMCPHost() {
     if (!subscribed) {
         subscribed = true;
         EventsOn('mcp:open-view', (/** @type {{ name: string, query: string }} */ e) => openSearchView(e.name, e.query));
         EventsOn('mcp:show-position', (/** @type {{ id: number }} */ e) => showPositionById(e.id));
-        // The tools write through the bound handle: the library on screen.
-        EventsOn('mcp:wrote', () => libraryWritten(null));
+        EventsOn('mcp:wrote', mcpWrote);
     }
     try {
         await applyMCPHost(await GetMCPHost());
