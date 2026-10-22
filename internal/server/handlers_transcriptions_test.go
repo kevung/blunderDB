@@ -337,3 +337,75 @@ func TestTranscriptionMaterialize(t *testing.T) {
 		t.Fatalf("a refused document must leave the one match written before: %s", body)
 	}
 }
+
+// A web client draws the video's timeline from State alone: the source, the
+// Repères of each Action and the durations they give, measured or estimated,
+// under the JSON names the desktop reads.
+func TestTranscriptionStateExposesVideoRepèresAndDurations(t *testing.T) {
+	ts := newTranscriptionServer(t, time.Minute)
+	st := createDraft(t, ts, "1")
+	const src = "https://example.org/match.mp4"
+	st = gestureState(t, ts, "1", "/v1/transcriptions.apply", st.Revision,
+		map[string]any{"id": st.ID, "sessionId": st.SessionID, "gesture": transcript.Gesture{Kind: transcript.GestureSetVideo, VideoSource: src}})
+
+	var raw []byte
+	play := func(d1, d2 int, roll int64, tick *int64) {
+		t.Helper()
+		validate := transcript.Gesture{Kind: transcript.GestureValidate}
+		if tick != nil {
+			validate.TickMS, validate.HasTick = *tick, true
+		}
+		for _, g := range []transcript.Gesture{
+			{Kind: transcript.GestureEnterDie, Die: d1, TickMS: roll, HasTick: true},
+			{Kind: transcript.GestureEnterDie, Die: d2},
+			{Kind: transcript.GestureSelectCandidate, Candidate: 0},
+			validate,
+		} {
+			var status int
+			status, raw = gesture(t, ts, "1", "/v1/transcriptions.apply", st.Revision,
+				map[string]any{"id": st.ID, "sessionId": st.SessionID, "gesture": g})
+			st = decodeState(t, status, raw)
+		}
+	}
+	ms := func(v int64) *int64 { return &v }
+	play(3, 1, 1000, ms(5000))
+	play(6, 4, 6000, nil) // no action Repère: estimated up to the next roll
+	play(5, 2, 9000, ms(10000))
+
+	var got struct {
+		Annotated struct {
+			Document struct {
+				Header map[string]any `json:"header"`
+			} `json:"document"`
+			Actions []map[string]any `json:"actions"`
+		} `json:"annotated"`
+	}
+	if err := json.Unmarshal(raw, &got); err != nil {
+		t.Fatal(err)
+	}
+	if v := got.Annotated.Document.Header["video_source"]; v != src {
+		t.Fatalf("annotated.document.header.video_source = %v, want %q", v, src)
+	}
+	if len(got.Annotated.Actions) != 3 {
+		t.Fatalf("%d actions, want 3", len(got.Annotated.Actions))
+	}
+	want := []map[string]any{
+		{"roll_tick_ms": 1000.0, "tick_ms": 5000.0, "decision_ms": 4000.0},
+		{"roll_tick_ms": 6000.0, "decision_ms": 3000.0, "decision_estimated": true, "cube_decision_ms": 1000.0},
+		{"roll_tick_ms": 9000.0, "tick_ms": 10000.0, "decision_ms": 1000.0},
+	}
+	for i, w := range want {
+		for k, v := range w {
+			if got.Annotated.Actions[i][k] != v {
+				t.Errorf("actions[%d].%s = %v, want %v", i, k, got.Annotated.Actions[i][k], v)
+			}
+		}
+	}
+	if _, ok := got.Annotated.Actions[1]["tick_ms"]; ok {
+		t.Errorf("actions[1].tick_ms present for an Action typed without a Repère")
+	}
+	// Nothing estimates a cube decision: the previous play has no Repère.
+	if _, ok := got.Annotated.Actions[2]["cube_decision_ms"]; ok {
+		t.Errorf("actions[2].cube_decision_ms present without the previous action's Repère")
+	}
+}

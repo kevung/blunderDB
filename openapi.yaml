@@ -10235,7 +10235,7 @@ components:
       description: "Opaque: see the Go type transcription.SaveResult (defined outside internal/server, not expanded here)."
     transcription_State:
       type: object
-      description: "Opaque: see the Go type transcription.State (defined outside internal/server, not expanded here)."
+      description: "Opaque: see the Go type transcription.State (defined outside internal/server, not expanded here). id, revision, sessionId, canUndo, canRedo and annotated, the draft replayed as the desktop draws it. annotated.document.header.video_source is the media the Repères refer to (absent when none is attached). Each annotated.actions[i] carries its Repères roll_tick_ms and tick_ms (milliseconds from the start of the media) and the durations they give, decision_ms and cube_decision_ms, with decision_estimated when a checker play's duration is an upper bound estimated up to the next action; a key is absent when unknown."
     transcription_Summary:
       type: object
       description: "Opaque: see the Go type transcription.Summary (defined outside internal/server, not expanded here)."

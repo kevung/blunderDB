@@ -178,4 +178,10 @@ var opaqueNotes = map[string]string{
 		"wholeLibrary, allPositions, positionIDs, positions, the include… switches, collectionIDs, matchIDs, " +
 		"tournamentIDs, lessonIDs, deckIDs, watermark, watermarkNote. A key left out keeps the whole-library " +
 		"preset; an unknown key, metadata or password is refused with invalid; exportPath is ignored.",
+	"transcription.State": "id, revision, sessionId, canUndo, canRedo and annotated, the draft replayed as the desktop " +
+		"draws it. annotated.document.header.video_source is the media the Repères refer to (absent when none is " +
+		"attached). Each annotated.actions[i] carries its Repères roll_tick_ms and tick_ms (milliseconds from the " +
+		"start of the media) and the durations they give, decision_ms and cube_decision_ms, with " +
+		"decision_estimated when a checker play's duration is an upper bound estimated up to the next action; " +
+		"a key is absent when unknown.",
 }

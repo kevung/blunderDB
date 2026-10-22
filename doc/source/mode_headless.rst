@@ -445,6 +445,14 @@ perdue (inactivité, redémarrage, autre instance) ne perd aucun geste.
 ``transcriptions.get`` rend la révision en ``ETag`` et répond 304 à un
 ``If-None-Match`` qui la nomme.
 
+L'état rend le suivi vidéo tel que le bureau l'affiche, sans recalcul côté
+client : ``annotated.document.header.video_source`` est la vidéo à laquelle
+renvoient les repères ; chaque ``annotated.actions[i]`` porte ses repères
+(``roll_tick_ms``, ``tick_ms``, en millisecondes depuis le début de la vidéo)
+et les durées qu'ils donnent (``decision_ms``, ``cube_decision_ms``), avec
+``decision_estimated`` quand la durée d'un coup est une borne haute estimée
+jusqu'à l'action suivante. Une clé inconnue est absente.
+
 ``finish`` enregistre le Match et supprime le brouillon, ``abandon`` le
 supprime sans Match, ``close`` ne libère que la session. ``editMatch`` ouvre un
 brouillon sur un Match existant et rend, pour un match importé, le décompte
