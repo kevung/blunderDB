@@ -710,6 +710,11 @@ type StatsStore interface {
 	// tournament of another tenant, or none, is ErrNotFound.
 	TournamentReview(ctx context.Context, scope string, tournamentID int64, player string) (TournamentReview, error)
 
+	// TournamentReviews is TournamentReview for several players in one call,
+	// in the order asked; no player at all is the default one. The first
+	// failure ends the call.
+	TournamentReviews(ctx context.Context, scope string, tournamentID int64, players []string) ([]TournamentReview, error)
+
 	// MatchTimeSummary adds up the decision times of a Match per player, and
 	// counts what overran the Cadence it was played under (match_origin). A
 	// Match with no recorded time gives a summary of unknowns.

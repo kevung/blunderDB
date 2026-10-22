@@ -399,6 +399,8 @@ export function GetTournamentMatches(arg1:number):Promise<Array<domain.Match>>;
 
 export function GetTournamentReview(arg1:number,arg2:string):Promise<storage.TournamentReview>;
 
+export function GetTournamentReviews(arg1:number,arg2:Array<string>):Promise<Array<storage.TournamentReview>>;
+
 export function GradeQuizChecker(arg1:number,arg2:domain.Board):Promise<engine.QuizVerdict>;
 
 export function GradeQuizCheckerMove(arg1:number,arg2:string):Promise<engine.QuizVerdict>;

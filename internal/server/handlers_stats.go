@@ -238,6 +238,9 @@ func (s *Server) statsRoutes() []route {
 		{http.MethodPost, "/v1/stats.tournamentReview", rpc(func(ctx context.Context, scope string, req tournamentReviewReq) (storage.TournamentReview, error) {
 			return ss().TournamentReview(ctx, scope, req.TournamentID, req.Player)
 		})},
+		{http.MethodPost, "/v1/stats.tournamentReviews", rpc(func(ctx context.Context, scope string, req tournamentReviewsReq) ([]storage.TournamentReview, error) {
+			return ss().TournamentReviews(ctx, scope, req.TournamentID, req.Players)
+		})},
 		{http.MethodPost, "/v1/stats.matchTimeSummary", rpc(func(ctx context.Context, scope string, req matchIDReq) (storage.MatchTimeSummary, error) {
 			return ss().MatchTimeSummary(ctx, scope, req.MatchID)
 		})},
@@ -259,6 +262,13 @@ func (s *Server) statsRoutes() []route {
 // rebuildMatchStatsResp reports how many matches had their statistics recomputed.
 type rebuildMatchStatsResp struct {
 	Matches int `json:"matches"`
+}
+
+// tournamentReviewsReq names the tournament and the players of several
+// tournament reviews; no player is the one in the most of its matches.
+type tournamentReviewsReq struct {
+	TournamentID int64    `json:"tournamentId"`
+	Players      []string `json:"players"`
 }
 
 // tournamentReviewReq names the tournament and the player of a tournament

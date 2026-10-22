@@ -5327,6 +5327,11 @@ families. A verdict (worse, better, usual) needs an interval and at least
 20 decisions on both sides, and a usual level of 5 matches; otherwise it reads
 insufficient.
 
+--player repeats to review several players in one call. With --format json, one
+player gives an object, two or more a list in the order asked; a script whose
+player count varies should call the stats.tournamentReviews route, which always
+returns a list.
+
 Options:
   -db string
     	Path to the database file (required)
@@ -5334,12 +5339,12 @@ Options:
     	Output format: text or json (default "text")
   -id list --type tournaments
     	Tournament ID (required; list --type tournaments lists them)
-  -player string
-    	Player to review (default: the one in the most matches of the tournament)
+  -player value
+    	Player to review (repeatable; default: the one in the most matches of the tournament)
 
 Examples:
   blunderdb stats tournament --db database.db --id 3
-  blunderdb stats tournament --db database.db --id 3 --player "Alice" --format json
+  blunderdb stats tournament --db database.db --id 3 --player "Alice" --player "Bob" --format json
 ```
 
 ### `blunderdb stats tournaments`

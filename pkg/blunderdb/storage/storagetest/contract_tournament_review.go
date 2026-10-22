@@ -158,4 +158,21 @@ func testStatsTournamentReview(t *testing.T, s storage.Storage) {
 	if named.Matches != 1 || len(named.Rounds) != 1 || named.Rounds[0].Opponent != "Alice" || named.Usual.Available {
 		t.Errorf("Bob played one round and has no usual level: %+v", named)
 	}
+
+	// Several players in one call give the single calls' reviews, in the
+	// order asked; none is the default player.
+	many, err := s.Stats().TournamentReviews(ctx, "", tid, []string{"Bob", ""})
+	if err != nil {
+		t.Fatalf("TournamentReviews: %v", err)
+	}
+	if len(many) != 2 || many[0].Player != named.Player || many[0].Matches != named.Matches || many[1].Player != review.Player {
+		t.Errorf("reviews must match the single calls in order: %+v", many)
+	}
+	none, err := s.Stats().TournamentReviews(ctx, "", tid, nil)
+	if err != nil || len(none) != 1 || none[0].Player != review.Player {
+		t.Errorf("no player is the default one: %+v, %v", none, err)
+	}
+	if _, err := s.Stats().TournamentReviews(ctx, "", tid+otherTID+100, []string{"Bob"}); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("an unknown tournament is ErrNotFound, got %v", err)
+	}
 }

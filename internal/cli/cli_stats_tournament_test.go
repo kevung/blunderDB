@@ -40,6 +40,29 @@ func TestCLI_StatsTournament(t *testing.T) {
 		t.Errorf("review: %+v", review)
 	}
 
+	// One --player gives an object, two a list in the order asked.
+	jsonOf := func(players ...string) string {
+		args := []string{"stats", "tournament", "--db", dbPath, "--id", strconv.FormatInt(tid, 10), "--format", "json"}
+		for _, p := range players {
+			args = append(args, "--player", p)
+		}
+		return captureStdout(t, func() {
+			if err := cli.Run(args); err != nil {
+				t.Fatalf("stats tournament: %v", err)
+			}
+		})
+	}
+	var one map[string]any
+	if err := json.Unmarshal([]byte(jsonOf("Alice")), &one); err != nil || one["player"] != "Alice" {
+		t.Errorf("one player is an object: %v %v", err, one)
+	}
+	var two []struct {
+		Player string `json:"player"`
+	}
+	if err := json.Unmarshal([]byte(jsonOf("Bob", "Alice")), &two); err != nil || len(two) != 2 || two[0].Player != "Bob" || two[1].Player != "Alice" {
+		t.Errorf("two players are a list in the order asked: %v %+v", err, two)
+	}
+
 	text := captureStdout(t, func() {
 		if err := cli.Run([]string{"stats", "tournament", "--db", dbPath, "--id", strconv.FormatInt(tid, 10)}); err != nil {
 			t.Fatalf("stats tournament: %v", err)

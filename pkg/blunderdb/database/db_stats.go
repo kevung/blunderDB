@@ -589,6 +589,14 @@ func (d *Database) GetTournamentReview(tournamentID int64, player string) (stora
 	return d.store.Stats().TournamentReview(context.Background(), "", tournamentID, player)
 }
 
+// GetTournamentReviews is GetTournamentReview for several players in one
+// call, in the order asked; no player is the default one.
+func (d *Database) GetTournamentReviews(tournamentID int64, players []string) ([]storage.TournamentReview, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	return d.store.Stats().TournamentReviews(context.Background(), "", tournamentID, players)
+}
+
 // GetMatchTimeSummary adds up the decision times of a match per player and
 // counts the turns played past the reserve of the Cadence it was played under,
 // for the Match panel's time summary.
