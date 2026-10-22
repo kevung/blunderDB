@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 17:31+0200\n"
+"POT-Creation-Date: 2026-10-22 22:11+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -39,8 +39,8 @@ msgstr ""
 "-taulukko (ks. :ref:`stats`). Yleiset tilastot pysyvät komennon ``list "
 "--type stats`` alla."
 
-#: ../../source/cli_stats.rst:20 ../../source/cli_stats.rst:148
-#: ../../source/cli_stats.rst:261 ../../source/cli_stats.rst:316
+#: ../../source/cli_stats.rst:20 ../../source/cli_stats.rst:152
+#: ../../source/cli_stats.rst:265 ../../source/cli_stats.rst:320
 msgid "**Options:**"
 msgstr "**Valitsimet:**"
 
@@ -128,9 +128,9 @@ msgstr ""
 " ottaa kantaa vasta 60 mp:stä alkaen, *Virhe*-kynnyksen yläpuolella. "
 "*COST (PR)* -sarake on osuus suodattimen PR:stä, jonka ryhmä edustaa."
 
-#: ../../source/cli_stats.rst:49 ../../source/cli_stats.rst:160
-#: ../../source/cli_stats.rst:224 ../../source/cli_stats.rst:269
-#: ../../source/cli_stats.rst:285 ../../source/cli_stats.rst:329
+#: ../../source/cli_stats.rst:49 ../../source/cli_stats.rst:164
+#: ../../source/cli_stats.rst:228 ../../source/cli_stats.rst:273
+#: ../../source/cli_stats.rst:289 ../../source/cli_stats.rst:333
 msgid "**Exemples:**"
 msgstr "**Esimerkkejä:**"
 
@@ -267,12 +267,21 @@ msgstr ""
 #: ../../source/cli_stats.rst:133
 msgid ""
 "Sans ``--player``, le joueur est le plus présent dans les matchs du "
-"tournoi."
+"tournoi. ``--player`` se répète pour passer plusieurs joueurs en un "
+"appel. En JSON, un seul joueur donne un objet et deux ou plus une liste, "
+"dans l'ordre demandé ; un script dont le nombre de joueurs varie utilise "
+"la route ``stats.tournamentReviews`` (ou ``GetTournamentReviews``), qui "
+"rend toujours une liste."
 msgstr ""
-"Ilman ``--player``-valitsinta pelaaja on turnauksen otteluissa eniten "
-"mukana ollut."
+"Ilman ``--player``-valitsinta pelaaja on se, joka esiintyy turnauksen "
+"useimmissa otteluissa. ``--player`` voidaan toistaa, jolloin useita "
+"pelaajia tarkastellaan yhdellä kutsulla. JSON-muodossa yksi pelaaja antaa"
+" objektin ja kaksi tai useampi listan pyydetyssä järjestyksessä; skripti,"
+" jonka pelaajamäärä vaihtelee, käyttää reittiä "
+"``stats.tournamentReviews`` (tai ``GetTournamentReviews``), joka "
+"palauttaa aina listan."
 
-#: ../../source/cli_stats.rst:140
+#: ../../source/cli_stats.rst:144
 msgid ""
 "**stats training** — Le PR du quiz Décision, le PR des matchs et la "
 "rétention Anki, repliés par fenêtre calendaire, comme l'onglet "
@@ -282,11 +291,11 @@ msgstr ""
 "koottuna kalenteri-ikkunoittain kuten Stats-paneelin "
 "*Harjoittelu*-välilehti (katso :ref:`stats`)."
 
-#: ../../source/cli_stats.rst:150
+#: ../../source/cli_stats.rst:154
 msgid "``--window week|month`` — La fenêtre calendaire (défaut ``week``)."
 msgstr "``--window week|month`` — Kalenteri-ikkuna (oletus ``week``)."
 
-#: ../../source/cli_stats.rst:151
+#: ../../source/cli_stats.rst:155
 msgid ""
 "``--player <nom>``, ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, "
 "``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — Le filtre "
@@ -296,7 +305,7 @@ msgstr ""
 "``--to <VVVV-KK-PP>``, ``--decision-type all|checker|cube`` — Otteluiden "
 "suodatin; visan ja Ankin lokit eivät sisällä pelaajaa."
 
-#: ../../source/cli_stats.rst:154
+#: ../../source/cli_stats.rst:158
 msgid ""
 "``--format text|json`` — Le JSON porte aussi la liste des sessions de "
 "quiz ; le texte et le JSON donnent le PR du quiz par plan de jeu."
@@ -304,7 +313,7 @@ msgstr ""
 "``--format text|json`` — JSON sisältää myös visaistuntojen luettelon; "
 "teksti ja JSON antavat visan PR:n pelisuunnitelman mukaan."
 
-#: ../../source/cli_stats.rst:157
+#: ../../source/cli_stats.rst:161
 msgid ""
 "Chaque série garde son nombre d'échantillons : une fenêtre sans décision "
 "y est un tiret en texte, un compte nul en JSON, jamais un zéro."
@@ -312,7 +321,7 @@ msgstr ""
 "Jokainen sarja säilyttää otoskokonsa: ikkuna ilman päätöksiä on tekstissä"
 " viiva ja JSONissa nollalukumäärä, ei koskaan nolla-arvo."
 
-#: ../../source/cli_stats.rst:167
+#: ../../source/cli_stats.rst:171
 msgid ""
 "**stats h2h** — Deux joueurs l'un contre l'autre : les matchs qu'ils ont "
 "disputés ensemble, le PR de chacun dans chaque match et sur l'ensemble, "
@@ -322,7 +331,7 @@ msgstr ""
 "pelaamansa ottelut, kummankin PR jokaisessa ottelussa ja yhteensä sekä "
 "loppuun asti pelattujen otteluiden tase."
 
-#: ../../source/cli_stats.rst:175
+#: ../../source/cli_stats.rst:179
 msgid ""
 "**stats contrast** — Les positions que deux joueurs ont tous deux eu à "
 "jouer et où l'un a bien joué (sous le seuil Erreur) et l'autre non, "
@@ -336,7 +345,7 @@ msgstr ""
 "siirtonsa mukaan. ``--limit N`` säilyttää tekstin N ensimmäistä riviä; "
 "JSON antaa kaiken, ``position_id``-arvoineen."
 
-#: ../../source/cli_stats.rst:185
+#: ../../source/cli_stats.rst:189
 msgid ""
 "**stats windows** — Le PR sur une fenêtre calendaire glissante : une "
 "ligne par mois, chacune couvrant ce mois et les précédents de la fenêtre "
@@ -346,7 +355,7 @@ msgstr ""
 "kuukautta kohden, jokainen kattaa kyseisen kuukauden ja ikkunan aiemmat "
 "kuukaudet (``--window month``, ``quarter`` tai kuukausien lukumäärä)."
 
-#: ../../source/cli_stats.rst:189
+#: ../../source/cli_stats.rst:193
 msgid ""
 "``--by-phase`` découpe chaque fenêtre par phase de jeu (ouverture, milieu"
 " de partie, course, sortie…) : sous chaque ligne, une ligne par phase "
@@ -364,7 +373,7 @@ msgstr ""
 "ne kentässä ``per_phase``, kun ``stats.prByWindow``-pyynnössä on "
 "``\"byPhase\": true``."
 
-#: ../../source/cli_stats.rst:200
+#: ../../source/cli_stats.rst:204
 msgid ""
 "**stats ranking** — Le classement des joueurs par PR, le plus bas en "
 "tête, parmi ceux qui ont au moins ``--min-decisions`` décisions comptées "
@@ -376,7 +385,7 @@ msgstr ""
 "(oletuksena 500); kaksi yhtä suurta PR:ää jakavat sijan. ``--limit N`` "
 "säilyttää N ensimmäistä."
 
-#: ../../source/cli_stats.rst:208
+#: ../../source/cli_stats.rst:212
 msgid ""
 "**stats engines** — Les moteurs d'analyse présents dans la base, sous le "
 "nom exact que ``--engine`` attend ; le même choix que le menu *Moteur* du"
@@ -386,7 +395,7 @@ msgstr ""
 "sillä nimellä, jota ``--engine`` odottaa; sama valinta kuin Stats-"
 "paneelin *Moottori*-valikossa."
 
-#: ../../source/cli_stats.rst:216
+#: ../../source/cli_stats.rst:220
 msgid ""
 "**Options communes:** ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, "
 "``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube``, ``--format "
@@ -404,7 +413,7 @@ msgstr ""
 " ja ``windows`` lukevat ottelukohtaiset tilastot ja hylkäävät "
 "alkuperäsuodattimen, joka koskee jokaista päätöstä."
 
-#: ../../source/cli_stats.rst:234
+#: ../../source/cli_stats.rst:238
 msgid ""
 "**stats matches** — Les matchs qu'un chiffre du corpus compte : ceux où "
 "le joueur (tout joueur sans ``--player``) a une décision comptée sous le "
@@ -416,7 +425,7 @@ msgstr ""
 " laskettu päätös, vanhimmasta uusimpaan. Niiden tunnisteet annetaan "
 "komennolle ``list --type matches --ids``."
 
-#: ../../source/cli_stats.rst:244
+#: ../../source/cli_stats.rst:248
 msgid ""
 "**stats tournaments** — Les tournois que compte le nombre de tournois du "
 "Tableau de bord : ceux qui portent une décision comptée du joueur (de "
@@ -426,7 +435,7 @@ msgstr ""
 "laskee: ne, joissa on pelaajan (ilman ``--player``-valitsinta kenen "
 "tahansa pelaajan) laskettu päätös suodattimen alla, tunnisteen mukaan."
 
-#: ../../source/cli_stats.rst:253
+#: ../../source/cli_stats.rst:257
 msgid ""
 "**stats progression** — Le PR de chaque match par ordre de date, le PR de"
 " chaque tournoi et le PR glissant sur les N dernières décisions : "
@@ -436,7 +445,7 @@ msgstr ""
 "järjestyksessä, jokaisen turnauksen PR ja liukuva PR viimeisiltä N "
 "päätökseltä: Stats-paneelin *Progression*-välilehti (katso :ref:`stats`)."
 
-#: ../../source/cli_stats.rst:263
+#: ../../source/cli_stats.rst:267
 msgid ""
 "``--player <nom>``, ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, "
 "``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — Le même "
@@ -446,7 +455,7 @@ msgstr ""
 "``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — Sama "
 "suodatin kuin komennossa ``list --type stats``."
 
-#: ../../source/cli_stats.rst:266
+#: ../../source/cli_stats.rst:270
 msgid ""
 "``--format text|json`` — Le JSON porte les matchs, les tournois et les PR"
 " glissants."
@@ -454,7 +463,7 @@ msgstr ""
 "``--format text|json`` — JSON sisältää ottelut, turnaukset ja liukuvat "
 "PR:t."
 
-#: ../../source/cli_stats.rst:276
+#: ../../source/cli_stats.rst:280
 msgid ""
 "**stats breakdown** — Le PR du filtre ventilé par phase de jeu, plan de "
 "jeu, étiquette de commentaire, score (away contre away) et action de "
@@ -468,7 +477,7 @@ msgstr ""
 "paneelin *Erittelyt*-välilehti (katso :ref:`stats`). Valitsimet ovat "
 "samat kuin komennossa ``stats progression``."
 
-#: ../../source/cli_stats.rst:292
+#: ../../source/cli_stats.rst:296
 msgid ""
 "**stats summary** — Le niveau du filtre sans aucun identifiant : "
 "effectifs, PR (pions, videau) et son intervalle à 95 %, perte de MWC par "
@@ -488,11 +497,11 @@ msgstr ""
 "vastustajaa eikä tunnistetta, eikä kalleimpia päätöksiä: se on se, minkä "
 "julkinen profiili tai käyntikortti voi näyttää paljastamatta mitään. "
 "HTTP-palvelu tarjoaa sen reitillä ``stats.summary``; ``stats.compute`` "
-"pysyy ennallaan. Valitsimet ovat ``--player``, ``--tournament``, ``--from``, "
-"``--to``, ``--decision-type`` ja ``--format``; ``--window``-valitsinta "
-"ei ole."
+"pysyy ennallaan. Valitsimet ovat ``--player``, ``--tournament``, "
+"``--from``, ``--to``, ``--decision-type`` ja ``--format``; "
+"``--window``-valitsinta ei ole."
 
-#: ../../source/cli_stats.rst:307
+#: ../../source/cli_stats.rst:311
 msgid ""
 "**stats report** — Le rapport HTML du panneau Stats (voir "
 ":ref:`rapport_html`) : les indicateurs du filtre et ses dix décisions les"
@@ -506,15 +515,15 @@ msgstr ""
 " PDF:ksi. HTTP-palvelu tarjoaa sen reitillä ``stats.report`` samasta "
 "generaattorista."
 
-#: ../../source/cli_stats.rst:318
+#: ../../source/cli_stats.rst:322
 msgid "``--html`` — Obligatoire : le HTML est le seul format."
 msgstr "``--html`` — Pakollinen: HTML on ainoa muoto."
 
-#: ../../source/cli_stats.rst:319
+#: ../../source/cli_stats.rst:323
 msgid "``--output <fichier>`` — Le fichier écrit (défaut : la sortie standard)."
 msgstr "``--output <fichier>`` — Kirjoitettava tiedosto (oletus: vakiotuloste)."
 
-#: ../../source/cli_stats.rst:320
+#: ../../source/cli_stats.rst:324
 msgid ""
 "``--lang <code>`` — La langue du rapport : ``fr``, ``en``, ``de``, "
 "``el``, ``es``, ``fi``, ``it``, ``ja`` ou ``ru`` (défaut ``en``)."
@@ -522,7 +531,7 @@ msgstr ""
 "``--lang <code>`` — Raportin kieli: ``fr``, ``en``, ``de``, ``el``, "
 "``es``, ``fi``, ``it``, ``ja`` tai ``ru`` (oletus ``en``)."
 
-#: ../../source/cli_stats.rst:322
+#: ../../source/cli_stats.rst:326
 msgid ""
 "``--player <nom>``, ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, "
 "``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — Le filtre :"
@@ -532,7 +541,7 @@ msgstr ""
 "``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — Suodatin: "
 "raportti nimeää rajauksensa."
 
-#: ../../source/cli_stats.rst:326
+#: ../../source/cli_stats.rst:330
 msgid ""
 "Les diagrammes y sont dessinés avec la palette par défaut ; seule "
 "l'application graphique emploie la palette du plateau choisie à l'écran."
@@ -540,3 +549,10 @@ msgstr ""
 "Kaaviot piirretään siinä oletuspaletilla; vain graafinen sovellus käyttää"
 " näytöllä valittua laudan palettia."
 
+#~ msgid ""
+#~ "Sans ``--player``, le joueur est le "
+#~ "plus présent dans les matchs du "
+#~ "tournoi."
+#~ msgstr ""
+#~ "Ilman ``--player``-valitsinta pelaaja on "
+#~ "turnauksen otteluissa eniten mukana ollut."

@@ -128,14 +128,18 @@ habituels), puis au plus trois familles d'erreurs du tournoi.
 
 .. code-block:: bash
 
-   ./blunderdb stats tournament --db <fichier> --id <n> [--player <nom>] [--format text|json]
+   ./blunderdb stats tournament --db <fichier> --id <n> [--player <nom>]... [--format text|json]
 
 Sans ``--player``, le joueur est le plus présent dans les matchs du tournoi.
+``--player`` se répète pour passer plusieurs joueurs en un appel. En JSON, un
+seul joueur donne un objet et deux ou plus une liste, dans l'ordre demandé ; un
+script dont le nombre de joueurs varie utilise la route ``stats.tournamentReviews``
+(ou ``GetTournamentReviews``), qui rend toujours une liste.
 
 .. code-block:: bash
 
    ./blunderdb stats tournament --db base.db --id 3
-   ./blunderdb stats tournament --db base.db --id 3 --player "Alice" --format json
+   ./blunderdb stats tournament --db base.db --id 3 --player "Alice" --player "Bob" --format json
 
 **stats training** — Le PR du quiz Décision, le PR des matchs et la rétention
 Anki, repliés par fenêtre calendaire, comme l'onglet *Entraînement* du panneau

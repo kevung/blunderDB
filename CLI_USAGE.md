@@ -5327,6 +5327,11 @@ families. A verdict (worse, better, usual) needs an interval and at least
 20 decisions on both sides, and a usual level of 5 matches; otherwise it reads
 insufficient.
 
+--player repeats to review several players in one call. With --format json, one
+player gives an object, two or more a list in the order asked; a script whose
+player count varies should call the stats.tournamentReviews route, which always
+returns a list.
+
 Options:
   -db string
     	Path to the database file (required)

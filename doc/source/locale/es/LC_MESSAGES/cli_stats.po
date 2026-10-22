@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 17:31+0200\n"
+"POT-Creation-Date: 2026-10-22 22:11+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -39,8 +39,8 @@ msgstr ""
 " panel Stats (véase :ref:`stats`). Las estadísticas globales siguen en "
 "``list --type stats``."
 
-#: ../../source/cli_stats.rst:20 ../../source/cli_stats.rst:148
-#: ../../source/cli_stats.rst:261 ../../source/cli_stats.rst:316
+#: ../../source/cli_stats.rst:20 ../../source/cli_stats.rst:152
+#: ../../source/cli_stats.rst:265 ../../source/cli_stats.rst:320
 msgid "**Options:**"
 msgstr "**Opciones:**"
 
@@ -129,9 +129,9 @@ msgstr ""
 " pronuncia a partir de 60 mp, por encima del umbral *Error*. La columna "
 "*COST (PR)* es la parte del PR del filtro que representa el grupo."
 
-#: ../../source/cli_stats.rst:49 ../../source/cli_stats.rst:160
-#: ../../source/cli_stats.rst:224 ../../source/cli_stats.rst:269
-#: ../../source/cli_stats.rst:285 ../../source/cli_stats.rst:329
+#: ../../source/cli_stats.rst:49 ../../source/cli_stats.rst:164
+#: ../../source/cli_stats.rst:228 ../../source/cli_stats.rst:273
+#: ../../source/cli_stats.rst:289 ../../source/cli_stats.rst:333
 msgid "**Exemples:**"
 msgstr "**Ejemplos:**"
 
@@ -271,12 +271,20 @@ msgstr ""
 #: ../../source/cli_stats.rst:133
 msgid ""
 "Sans ``--player``, le joueur est le plus présent dans les matchs du "
-"tournoi."
+"tournoi. ``--player`` se répète pour passer plusieurs joueurs en un "
+"appel. En JSON, un seul joueur donne un objet et deux ou plus une liste, "
+"dans l'ordre demandé ; un script dont le nombre de joueurs varie utilise "
+"la route ``stats.tournamentReviews`` (ou ``GetTournamentReviews``), qui "
+"rend toujours une liste."
 msgstr ""
-"Sin ``--player``, el jugador es el más presente en los partidos del "
-"torneo."
+"Sin ``--player``, el jugador es el que más aparece en los partidos del "
+"torneo. ``--player`` se repite para revisar varios jugadores en una "
+"llamada. En JSON, un solo jugador da un objeto y dos o más una lista, en "
+"el orden pedido; un script cuyo número de jugadores varía usa la ruta "
+"``stats.tournamentReviews`` (o ``GetTournamentReviews``), que siempre "
+"devuelve una lista."
 
-#: ../../source/cli_stats.rst:140
+#: ../../source/cli_stats.rst:144
 msgid ""
 "**stats training** — Le PR du quiz Décision, le PR des matchs et la "
 "rétention Anki, repliés par fenêtre calendaire, comme l'onglet "
@@ -286,11 +294,11 @@ msgstr ""
 "retención de Anki, agrupados por ventana de calendario, como la pestaña "
 "*Entrenamiento* del panel Stats (véase :ref:`stats`)."
 
-#: ../../source/cli_stats.rst:150
+#: ../../source/cli_stats.rst:154
 msgid "``--window week|month`` — La fenêtre calendaire (défaut ``week``)."
 msgstr "``--window week|month`` — La ventana de calendario (por defecto ``week``)."
 
-#: ../../source/cli_stats.rst:151
+#: ../../source/cli_stats.rst:155
 msgid ""
 "``--player <nom>``, ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, "
 "``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — Le filtre "
@@ -300,7 +308,7 @@ msgstr ""
 "``--to <AAAA-MM-DD>``, ``--decision-type all|checker|cube`` — El filtro "
 "de partidas; los diarios del quiz y de Anki no llevan jugador."
 
-#: ../../source/cli_stats.rst:154
+#: ../../source/cli_stats.rst:158
 msgid ""
 "``--format text|json`` — Le JSON porte aussi la liste des sessions de "
 "quiz ; le texte et le JSON donnent le PR du quiz par plan de jeu."
@@ -308,7 +316,7 @@ msgstr ""
 "``--format text|json`` — El JSON incluye además la lista de sesiones del "
 "quiz; el texto y el JSON dan el PR del quiz por plan de juego."
 
-#: ../../source/cli_stats.rst:157
+#: ../../source/cli_stats.rst:161
 msgid ""
 "Chaque série garde son nombre d'échantillons : une fenêtre sans décision "
 "y est un tiret en texte, un compte nul en JSON, jamais un zéro."
@@ -316,7 +324,7 @@ msgstr ""
 "Cada serie conserva su número de muestras: una ventana sin decisiones es "
 "un guion en texto y un recuento nulo en JSON, nunca un valor cero."
 
-#: ../../source/cli_stats.rst:167
+#: ../../source/cli_stats.rst:171
 msgid ""
 "**stats h2h** — Deux joueurs l'un contre l'autre : les matchs qu'ils ont "
 "disputés ensemble, le PR de chacun dans chaque match et sur l'ensemble, "
@@ -326,7 +334,7 @@ msgstr ""
 "disputaron juntos, el PR de cada uno en cada partida y en conjunto, y el "
 "balance de las partidas llevadas hasta el final."
 
-#: ../../source/cli_stats.rst:175
+#: ../../source/cli_stats.rst:179
 msgid ""
 "**stats contrast** — Les positions que deux joueurs ont tous deux eu à "
 "jouer et où l'un a bien joué (sous le seuil Erreur) et l'autre non, "
@@ -340,7 +348,7 @@ msgstr ""
 "la posición. ``--limit N`` conserva las N primeras líneas del texto; el "
 "JSON lo da todo, con los ``position_id``."
 
-#: ../../source/cli_stats.rst:185
+#: ../../source/cli_stats.rst:189
 msgid ""
 "**stats windows** — Le PR sur une fenêtre calendaire glissante : une "
 "ligne par mois, chacune couvrant ce mois et les précédents de la fenêtre "
@@ -350,7 +358,7 @@ msgstr ""
 " fila por mes, cada una cubriendo ese mes y los anteriores de la ventana "
 "(``--window month``, ``quarter`` o un número de meses)."
 
-#: ../../source/cli_stats.rst:189
+#: ../../source/cli_stats.rst:193
 msgid ""
 "``--by-phase`` découpe chaque fenêtre par phase de jeu (ouverture, milieu"
 " de partie, course, sortie…) : sous chaque ligne, une ligne par phase "
@@ -368,7 +376,7 @@ msgstr ""
 "en ``per_phase`` cuando la petición ``stats.prByWindow`` lleva "
 "``\"byPhase\": true``."
 
-#: ../../source/cli_stats.rst:200
+#: ../../source/cli_stats.rst:204
 msgid ""
 "**stats ranking** — Le classement des joueurs par PR, le plus bas en "
 "tête, parmi ceux qui ont au moins ``--min-decisions`` décisions comptées "
@@ -380,7 +388,7 @@ msgstr ""
 "contadas (500 por defecto); dos PR iguales comparten un puesto. ``--limit"
 " N`` conserva los N primeros."
 
-#: ../../source/cli_stats.rst:208
+#: ../../source/cli_stats.rst:212
 msgid ""
 "**stats engines** — Les moteurs d'analyse présents dans la base, sous le "
 "nom exact que ``--engine`` attend ; le même choix que le menu *Moteur* du"
@@ -390,7 +398,7 @@ msgstr ""
 "nombre exacto que espera ``--engine``; la misma elección que el menú "
 "*Motor* del panel Stats."
 
-#: ../../source/cli_stats.rst:216
+#: ../../source/cli_stats.rst:220
 msgid ""
 "**Options communes:** ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, "
 "``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube``, ``--format "
@@ -408,7 +416,7 @@ msgstr ""
 "también aceptan. ``h2h`` y ``windows`` leen las estadísticas por partida "
 "y rechazan el filtro de procedencia, que se aplica a cada decisión."
 
-#: ../../source/cli_stats.rst:234
+#: ../../source/cli_stats.rst:238
 msgid ""
 "**stats matches** — Les matchs qu'un chiffre du corpus compte : ceux où "
 "le joueur (tout joueur sans ``--player``) a une décision comptée sous le "
@@ -420,7 +428,7 @@ msgstr ""
 "decisión contada bajo el filtro, de la más antigua a la más reciente. Sus"
 " identificadores se pasan a ``list --type matches --ids``."
 
-#: ../../source/cli_stats.rst:244
+#: ../../source/cli_stats.rst:248
 msgid ""
 "**stats tournaments** — Les tournois que compte le nombre de tournois du "
 "Tableau de bord : ceux qui portent une décision comptée du joueur (de "
@@ -430,7 +438,7 @@ msgstr ""
 "Panel: los que contienen una decisión contada del jugador (de cualquier "
 "jugador sin ``--player``) bajo el filtro, por identificador."
 
-#: ../../source/cli_stats.rst:253
+#: ../../source/cli_stats.rst:257
 msgid ""
 "**stats progression** — Le PR de chaque match par ordre de date, le PR de"
 " chaque tournoi et le PR glissant sur les N dernières décisions : "
@@ -440,7 +448,7 @@ msgstr ""
 "de cada torneo y el PR móvil sobre las últimas N decisiones: la pestaña "
 "*Progression* del panel Stats (véase :ref:`stats`)."
 
-#: ../../source/cli_stats.rst:263
+#: ../../source/cli_stats.rst:267
 msgid ""
 "``--player <nom>``, ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, "
 "``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — Le même "
@@ -450,7 +458,7 @@ msgstr ""
 "``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — El mismo "
 "filtro que ``list --type stats``."
 
-#: ../../source/cli_stats.rst:266
+#: ../../source/cli_stats.rst:270
 msgid ""
 "``--format text|json`` — Le JSON porte les matchs, les tournois et les PR"
 " glissants."
@@ -458,7 +466,7 @@ msgstr ""
 "``--format text|json`` — El JSON contiene las partidas, los torneos y los"
 " PR móviles."
 
-#: ../../source/cli_stats.rst:276
+#: ../../source/cli_stats.rst:280
 msgid ""
 "**stats breakdown** — Le PR du filtre ventilé par phase de jeu, plan de "
 "jeu, étiquette de commentaire, score (away contre away) et action de "
@@ -472,7 +480,7 @@ msgstr ""
 "del panel Stats (véase :ref:`stats`). Las opciones son las de ``stats "
 "progression``."
 
-#: ../../source/cli_stats.rst:292
+#: ../../source/cli_stats.rst:296
 msgid ""
 "**stats summary** — Le niveau du filtre sans aucun identifiant : "
 "effectifs, PR (pions, videau) et son intervalle à 95 %, perte de MWC par "
@@ -495,7 +503,7 @@ msgstr ""
 "no cambia. Las opciones son ``--player``, ``--tournament``, ``--from``, "
 "``--to``, ``--decision-type`` y ``--format``; no tiene ``--window``."
 
-#: ../../source/cli_stats.rst:307
+#: ../../source/cli_stats.rst:311
 msgid ""
 "**stats report** — Le rapport HTML du panneau Stats (voir "
 ":ref:`rapport_html`) : les indicateurs du filtre et ses dix décisions les"
@@ -509,17 +517,17 @@ msgstr ""
 "navegador imprime en PDF. El demonio HTTP lo sirve en la ruta "
 "``stats.report``, desde el mismo generador."
 
-#: ../../source/cli_stats.rst:318
+#: ../../source/cli_stats.rst:322
 msgid "``--html`` — Obligatoire : le HTML est le seul format."
 msgstr "``--html`` — Obligatorio: HTML es el único formato."
 
-#: ../../source/cli_stats.rst:319
+#: ../../source/cli_stats.rst:323
 msgid "``--output <fichier>`` — Le fichier écrit (défaut : la sortie standard)."
 msgstr ""
 "``--output <fichier>`` — El archivo escrito (por defecto: salida "
 "estándar)."
 
-#: ../../source/cli_stats.rst:320
+#: ../../source/cli_stats.rst:324
 msgid ""
 "``--lang <code>`` — La langue du rapport : ``fr``, ``en``, ``de``, "
 "``el``, ``es``, ``fi``, ``it``, ``ja`` ou ``ru`` (défaut ``en``)."
@@ -527,7 +535,7 @@ msgstr ""
 "``--lang <code>`` — El idioma del informe: ``fr``, ``en``, ``de``, "
 "``el``, ``es``, ``fi``, ``it``, ``ja`` o ``ru`` (por defecto ``en``)."
 
-#: ../../source/cli_stats.rst:322
+#: ../../source/cli_stats.rst:326
 msgid ""
 "``--player <nom>``, ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, "
 "``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — Le filtre :"
@@ -537,7 +545,7 @@ msgstr ""
 "``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — El filtro: "
 "el informe nombra su ámbito."
 
-#: ../../source/cli_stats.rst:326
+#: ../../source/cli_stats.rst:330
 msgid ""
 "Les diagrammes y sont dessinés avec la palette par défaut ; seule "
 "l'application graphique emploie la palette du plateau choisie à l'écran."
@@ -545,3 +553,11 @@ msgstr ""
 "Los diagramas se dibujan allí con la paleta por defecto; solo la "
 "aplicación gráfica usa la paleta del tablero elegida en pantalla."
 
+#~ msgid ""
+#~ "Sans ``--player``, le joueur est le "
+#~ "plus présent dans les matchs du "
+#~ "tournoi."
+#~ msgstr ""
+#~ "Sin ``--player``, el jugador es el "
+#~ "más presente en los partidos del "
+#~ "torneo."
